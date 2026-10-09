@@ -1,0 +1,547 @@
+---
+module_id: MOD-QMINES5-WEB
+ttl: task_bound
+title: S5 全网外部挖矿新考题草稿（S5-001~S5-028，拟议 PQ-0284+）
+campaign: st-pqmine-20260927
+date: '2026-09-27'
+pit_cutoff: '2025-09-09'
+count: 28
+notes: >
+  出题来源=9 轮 WebSearch 量化行业专业实践（台账见同目录 s5_ledger.md）。
+  去重基准=results_all.yaml 283 题 + RETIREMENT_REGISTER.md 30 题（逐题 dedup_check 字段）。
+  状态全部为 draft：未经 90_consolidated 汇总去重与质量闸，禁直接注册。
+  频率枚举：per_exam=每次考试执行｜on_register=入库/晋级时点｜weekly/monthly/quarterly=周期机检｜one_shot=单次断言。
+  与 S2（因子路）存在 3 题潜在交叉（S5-006/007/008），已在 dedup_check 标注，汇总去重时合并裁定。
+candidates:
+- candidate_id: S5-001
+  proposed_q_id: PQ-0284（占位，intake 时正门分配）
+  layer: L1
+  status: draft
+  frequency: one_shot
+  title: 日线 bar 字段边界合法性全量断言
+  body: 对闭卷窗（<=2025-09-09）kline_daily 全 A 行做字段级合法性断言：high>=low、close 与 open 均落在 [low,high] 内、volume>=0、OHLC 均为正数。逐行扫描（非抽样）统计违例行数。
+  threshold: 违例行数=0（任一 high<low 或 close∉[low,high] 或 volume<0 即违例）
+  machine_check: SELECT count(*) FROM kline_daily WHERE trade_date<='2025-09-09' AND (high<low OR close>high OR close<low OR open>high OR open<low OR volume<0 OR open<=0)
+  origin:
+    paradigm: 行情数据质量边界检查（outlier/bounds validation 是 vendor 数据 QA 第一道闸）
+    search_round: R1
+    url: https://medium.com/@axionquant/outlier-detection-in-market-data-b455b435777d
+  dedup_check:
+    nearest: [PQ-0012, PQ-0020, PQ-0131]
+    why_distinct: PQ-0012/0131 审复权算子对齐链路抽样；PQ-0020 审断档登记完整率。本题审原始 bar 字段内蕴逻辑一致性，全量非抽样，语义不同。
+    retirement_check: 退役 30 题均为因子预测力题，无数据质量题，无翻案风险。
+  outcome: pass（违例=0）或 fail(infra)（存在脏 bar 无清洗闸拦截）
+  min_confidence: 0.85
+- candidate_id: S5-002
+  proposed_q_id: PQ-0285（占位）
+  layer: L1
+  status: draft
+  frequency: one_shot
+  title: 未复权收盘跳变超出交易所涨跌停上限的可解释性
+  body: 闭卷窗内全 A 未复权 close-to-close 日收益绝对值 >11% 的行（主板理论极限 10%，取 1% 容差），必须逐行落在可解释集：{创业板/科创板 ±20% 域、ST ±5% 之外的制度性放宽、除权除息日（adj_factor 当日变化）、新股上市初期无涨跌幅限制段}。统计不可解释行数。
+  threshold: 不可解释行数=0（或 ≤万且逐行登记原因）
+  machine_check: SQL 找出 |ret|>0.11 的 (symbol,trade_date)，JOIN adj_factor 变化日与板块归属/上市日期表，集合差计数
+  origin:
+    paradigm: 价格跳变须可归因于制度事件，否则判坏点（异常检测共识：先解释后删除）
+    search_round: R1+R7
+    url: https://www.kdnuggets.com/we-used-5-outlier-detection-methods-on-a-real-dataset-they-disagreed-on-96-of-flagged-samples
+  dedup_check:
+    nearest: [PQ-0012, PQ-0131]
+    why_distinct: 复权链路题审算子时点合规；本题审行情本身跳变与制度规则的覆盖关系，是坏点探测不是对齐审计。
+    retirement_check: 无同义退役题。
+  outcome: pass（跳变全部制度可解释）或 fail(infra)（存在不可解释坏点且无探测记录）
+  min_confidence: 0.7
+- candidate_id: S5-003
+  proposed_q_id: PQ-0286（占位）
+  layer: L1
+  status: draft
+  frequency: quarterly
+  title: 主行情表双源抽样对账（vendor reconciliation）
+  body: 从注册渠道（MINIQMT/TUSHARE/BAOSTOCK/TDX 任一第二源）对闭卷窗抽样 ≥500 个 (symbol,trade_date) 重取未复权收盘价与成交量，与 kline_daily 主表比对，统计相对偏差 >0.5% 的行占比。
+  threshold: 偏差行占比 ≤0.5% 且每个偏差行有登记解释（分红除权日口径差/集合竞价段差异）
+  machine_check: 抽样探针脚本经注册渠道 API 重取后 SQL 比对；占比=偏差行/抽样行
+  origin:
+    paradigm: 多 vendor 交叉对账（reconciliation checks）是机构数据运维标准动作
+    search_round: R1
+    url: https://www.quora.com/How-do-traders-deal-with-issues-of-data-quality-and-accuracy-when-using-stock-data-for-quantitative-trading
+  dedup_check:
+    nearest: [PQ-0173]
+    why_distinct: PQ-0173 是 BDI 单表内重复行同值幂等核验；本题是跨源价格值域对账，不同对象不同方法。
+    retirement_check: 无同义退役题。
+  outcome: pass（占比达标）或 fail(infra)（超阈值且无解释登记）
+  min_confidence: 0.6
+- candidate_id: S5-004
+  proposed_q_id: PQ-0287（占位）
+  layer: L1
+  status: draft
+  frequency: one_shot
+  title: 交易日历双向完整性（幽灵日与缺失日）
+  body: 双向断言：(a) kline_daily 中不存在任何非交易日（周末+官方节假日）有 bar 的幽灵日期；(b) 每个应考交易日均有 ≥1000 只个股有效 bar（缺失日须与 known_data_gaps.yaml 登记逐条对上）。
+  threshold: 幽灵日=0 且 未登记缺失日=0
+  machine_check: SELECT DISTINCT trade_date 与交易日历表反 JOIN；按日 count(distinct symbol) 与阈值比对，缺口 LEFT JOIN known_data_gaps
+  origin:
+    paradigm: 数据完整性=时间轴完整性（gap/phantom detection 是 completeness 维度标准检查）
+    search_round: R1
+    url: https://docs.datarobot.com/en/docs/reference/data-ref/data-quality-ref.html
+  dedup_check:
+    nearest: [PQ-0020, PQ-0130]
+    why_distinct: PQ-0020 审 tick_data 断档登记率（单源单表）；本题审日线全表对日历的双向一致性（含幽灵日方向，PQ-0020 未覆盖）。
+    retirement_check: 无同义退役题。
+  outcome: pass（双向零违例）或 fail(infra)（幽灵日/未登记缺失日>0）
+  min_confidence: 0.8
+- candidate_id: S5-005
+  proposed_q_id: PQ-0288（占位）
+  layer: L1
+  status: draft
+  frequency: on_register
+  title: 数据新鲜度哨兵对活跃源线的全覆盖率
+  body: 源线谱全部 status:active 源线（A 档 16 条 + 已落库 B 档线）均配置 staleness 哨兵（按 U3 登记节奏的滞后告警）。断言：哨兵配置覆盖率=100%，且哨兵未配置的活跃线=0。
+  threshold: 覆盖率=100%（未配置哨兵的活跃源线数=0）
+  machine_check: 读哨兵配置文件/表 distinct 源线集 vs 源线谱 active 集，集合差计数
+  origin:
+    paradigm: feed freshness monitoring/staleness alerts 是 timeliness 维度标配
+    search_round: R1
+    url: https://docs.datarobot.com/en/docs/reference/data-ref/data-quality-ref.html
+  dedup_check:
+    nearest: [PQ-0130, PQ-0142, PQ-0160, PQ-0196]
+    why_distinct: U3 题逐线核验登记节奏与库内实况一致性；本题审哨兵监控面（告警机制）对全部活跃线的配置覆盖，是监控基建题不是单线口径题。
+    retirement_check: 无同义退役题。
+  outcome: pass（全覆盖）或 fail(infra)（存在裸奔活跃线）
+  min_confidence: 0.75
+- candidate_id: S5-006
+  proposed_q_id: PQ-0289（占位）
+  layer: L3
+  status: draft
+  frequency: on_register
+  title: factor_registry 活跃因子的 ICIR 登记完整性
+  body: factor_registry.yaml 175 因子中凡标 active（或等效可用态）者，登记页必含闭卷窗实测 ICIR（IC 均值/IC 标准差）且非空。行业惯例 ICIR≥0.3 方可持续跟踪（0.3~0.5 良好，>0.5 优秀）。断言：active 因子 ICIR 字段非空率=100%，且 |ICIR|<0.3 仍标 active 的因子须带显式豁免理由字段。
+  threshold: 非空率=100% 且 无豁免理由的低 ICIR 活跃因子=0
+  machine_check: YAML 解析 factor_registry，逐 active 因子断言 icir 字段存在且数值型；阈值比对+豁免字段检查
+  origin:
+    paradigm: 因子验收标准 triplet=IC 均值、IC IR（IC 信息比）、IC t 值；ICIR 是稳定性核心指标
+    search_round: R2
+    url: https://www.risk.net（R2 搜索限频，范式出自行业共识：ICIR 门槛 0.3，MSCI/WorldQuant 因子检验清单；与 S2 路交叉，汇总时合并裁定）
+  dedup_check:
+    nearest: [PQ-0119, PQ-0120, PQ-0121, PQ-0122]
+    why_distinct: 既有 IC 题对具体因子实测预测力；本题审登记资产（registry metadata）的验收完备性——175 因子全集的过程闸。与 S2 潜在交叉。
+    retirement_check: 退役题是具体因子方向性预测题，本题不触任何因子多空结论，无翻案风险。
+  outcome: pass（登记完备）或 fail(infra)（活跃因子无稳定性证据登记）
+  min_confidence: 0.6
+- candidate_id: S5-007
+  proposed_q_id: PQ-0290（占位）
+  layer: L3
+  status: draft
+  frequency: quarterly
+  title: 因子收益相关性拥挤闸（factor-level crowding）
+  body: 对全部 active 因子两两计算闭卷窗因子收益（多空组合日收益）相关矩阵：|ρ|>0.7 的因子对必须登记处置方案（合并/降级/保留理由）。断言：超阈值未处置因子对=0，且相关矩阵工件存在可复算。
+  threshold: 超阈未处置对=0 且 相关矩阵工件存在且与登记数一致
+  machine_check: 由因子收益表算 Pearson 矩阵，筛 |ρ|>0.7 对，LEFT JOIN 处置登记表计数
+  origin:
+    paradigm: 因子拥挤度量=长腿成分两两相关抬升+估值差收窄（MSCI Factor Crowding Model 五维之一）
+    search_round: R9
+    url: https://www.msci.com（Bhaskarla, Lang & Ramanathan, The Factor Crowding Model, MSCI Research Insight 2017）
+  dedup_check:
+    nearest: [PQ-0106]
+    why_distinct: PQ-0106 是策略级合并闸（strategy_correlation_gate 0.85）；本题是因子级拥挤闸（0.7），对象与阈值均不同层。
+    retirement_check: 退役题无因子相关性管理题。
+  outcome: pass（超阈对全部有处置）或 fail(infra)（拥挤裸奔）
+  min_confidence: 0.6
+- candidate_id: S5-008
+  proposed_q_id: PQ-0291（占位）
+  layer: L3
+  status: draft
+  frequency: on_register
+  title: 活跃因子 IC 衰减曲线工件完整性
+  body: 全部 active 因子须出货 IC 衰减曲线（h=1/5/10/20 交易日的滞后 IC 序列）工件，并登记半衰期或衰减比 IC(20)/IC(1)。断言：工件覆盖率=100%，且衰减比>1（20 日强于 1 日、疑前视或频率错配）的因子逐个有显式解释。
+  threshold: 覆盖率=100% 且 衰减比>1 且无解释的因子=0
+  machine_check: 检查因子工件目录/表 per-factor decay 字段；复算衰减比断言
+  origin:
+    paradigm: factor decay 分析（IC vs horizon 曲线+半衰期）是因子验证清单标准项
+    search_round: R2
+    url: https://www.risk.net（R2 限频；范式=López de Prado Advances in Financial Machine Learning 因子衰减章节，行业共识清单项）
+  dedup_check:
+    nearest: [PQ-0011, PQ-0110, PQ-0111, PQ-0112]
+    why_distinct: 退役/既有题为单因子在固定 horizon 的预测力实测；本题审全登记表衰减工件的过程完备性。与 S2 交叉，汇总合并。
+    retirement_check: 不重跑任何退役因子的预测力结论，仅审工件存在性，无翻案。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.55
+- candidate_id: S5-009
+  proposed_q_id: PQ-0292（占位）
+  layer: L5
+  status: draft
+  frequency: on_register
+  title: 策略晋级的 DSR（缩水夏普）与试验次数登记
+  body: 任一策略/参数组晋级入库时，晋级记录必含：本家族累计试验次数 N（同族参数/特征/窗口变体计数）与按 Bailey-López de Prado DSR 公式折算的期望最大夏普基准下的 DSR 值。断言：登记字段非空率=100%，且 raw SR>期望最大 SR 但 DSR≤0 的晋级=0（此类晋级应被闸拒绝）。
+  threshold: 字段非空率=100% 且 DSR≤0 的晋级记录=0
+  machine_check: 读晋级审计事件，断言 trials_n 与 dsr 字段存在非空；DSR 复算（需 skew/kurtosis/N）比对
+  origin:
+    paradigm: Deflated Sharpe Ratio——修正选择偏差、回测过拟合与非正态性的夏普
+    search_round: R3
+    url: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2460551（Bailey & López de Prado, The Deflated Sharpe Ratio, JPM 40(5):94-107, 2014）
+  dedup_check:
+    nearest: [PQ-0104]
+    why_distinct: PQ-0104 审 E1C 三轨同空间预注册台账（space_hash/N_eff）存在性且判 insufficient；本题是晋级闸的 DSR 判据要求，机制对象不同（晋级记录字段 vs 预注册空间账）。
+    retirement_check: 无同义退役题。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.6
+- candidate_id: S5-010
+  proposed_q_id: PQ-0293（占位）
+  layer: L5
+  status: draft
+  frequency: on_register
+  title: 入库闸的 PBO（回测过拟合概率）判据
+  body: strategy_screen 入库闸对经参数扫描产生的候选策略，须附 CSCV（组合对称交叉验证）法测得的 PBO 值。断言：带参数扫描的入库候选 PBO 字段覆盖率=100%，且 PBO>0.5（样本内排名与样本外排名无关联以上）仍获通过的入库=0。
+  threshold: 覆盖率=100% 且 PBO>0.5 的通过记录=0
+  machine_check: strategy_screen 表 JOIN 参数扫描标记，断言 pbo 列；CSCV 复算抽样核验
+  origin:
+    paradigm: Probability of Backtest Overfitting + CSCV（Bailey, Borwein, López de Prado & Zhu）
+    search_round: R3
+    url: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253（The Probability of Backtest Overfitting）
+  dedup_check:
+    nearest: [PQ-0044]
+    why_distinct: PQ-0044 审入库闸通过率分布（<30%）；本题审入库判据中是否含 PBO 这一度量，是判据完备性题。
+    retirement_check: 无同义退役题。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.55
+- candidate_id: S5-011
+  proposed_q_id: PQ-0294（占位）
+  layer: L6
+  status: draft
+  frequency: on_register
+  title: 多重检验阈值升级规则登记（Bonferroni/DSR 联动）
+  body: 同一假设族的第 N 个候选入考时，判据阈值应随族内累计试验数升级（Bonferroni 型：IC 阈值按 1/N 折减或 DSR 等效）。断言：注册审计中每个 register 事件携带 family_id+family_trial_seq，且同族 seq>1 的判据阈值≥首题阈值（文字判据做结构化抽取后机械比对）。
+  threshold: family 字段非空率=100% 且 同族阈值未升级未登记理由的后续题=0
+  machine_check: 解析 meta_question 判据字段+审计事件族计数，机械比对阈值递进
+  origin:
+    paradigm: selection bias 下的多重检验校正（DSR 的 N trials 输入；行业红线：同数据反复挖因须加息）
+    search_round: R3
+    url: https://arxiv.org（Paulsen 2016, Noise Fit, Estimation Error and a Sharpe Information Criterion，沿 DSR 框架）
+  dedup_check:
+    nearest: [PQ-0098]
+    why_distinct: PQ-0098 审 IC 考试统计功效与降阈值事件落账；本题审注册侧族内试验计数与阈值递进机制，对象不同（入库 vs 考试）。
+    retirement_check: 无同义退役题。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.5
+- candidate_id: S5-012
+  proposed_q_id: PQ-0295（占位）
+  layer: L5
+  status: draft
+  frequency: per_exam
+  title: 回测引擎确定性（同输入双跑逐位一致）
+  body: 对回测引擎取同一代码版本+同一输入快照（同宇宙/同因子矩阵/同参数），连续执行两次，对日度净值序列取哈希比对。另对含随机数环节（随机抽样/打乱）的模块断言随机种子显式登记。抽样 3 个在库策略各跑一轮。
+  threshold: 3/3 策略双跑净值哈希一致=100%，且随机模块种子登记率=100%
+  machine_check: subprocess 双跑+nav 序列 sha256 比对；代码内 random/np.random 调用点审计 seed 参数
+  origin:
+    paradigm: 回测可复现性（reproducible research pipeline）——不可复现的回测不具证据资格
+    search_round: R7
+    url: https://github.com/microsoft/qlib（Qlib 量化研究平台以可复现管线为设计目标；R7 搜索限频，范式为开源框架共识）
+  dedup_check:
+    nearest: []
+    why_distinct: 283 题与退役题均未触及回测引擎确定性/可复现性，是净空白面。
+    retirement_check: 无风险。
+  outcome: pass（确定性成立）或 fail(infra)（同输入不同输出且无种子/浮点序登记）
+  min_confidence: 0.8
+- candidate_id: S5-013
+  proposed_q_id: PQ-0296（占位）
+  layer: L1
+  status: draft
+  frequency: one_shot
+  title: 回测宇宙的幸存者偏差断言（退市股在 Universe 内）
+  body: 取闭卷窗任一月末决策日截面：回测宇宙定义中，截至该日已上市且其后退市的股票（kline_daily 末根 bar 早于 2025-09-09 且不再更新）应可进入当期宇宙。断言：(a) 行情库中可识别退市股 ≥50 只；(b) 宇宙构建代码不含「今日仍在市名单回溯投影」逻辑（审查 universe builder 对退市股的过滤谓词）；(c) 任取 2015-2025 十个年末截面，宇宙含退市前股票的比例=100%。
+  threshold: 退市股可识别且入宇率=100% 且 builder 无回溯投影谓词
+  machine_check: SQL 识别末 bar 早于切点的 symbol 集；审宇宙构建代码过滤条件；截面 JOIN 断言
+  origin:
+    paradigm: survivorship bias——「只用今日仍在市公司回测历史」系统性膨胀收益；vendor 必答问题清单
+    search_round: R5
+    url: "https://algoseek.com（Survivorship Bias in Backtesting: What to Ask a Data Vendor）"
+  dedup_check:
+    nearest: [PQ-0013, PQ-0014]
+    why_distinct: PQ-0013/0014 审板块成分映射 PIT 与成分快照存证；本题审个股宇宙对退市股的纳含，对象不同（个股生存性 vs 板块成分时点）。
+    retirement_check: 无同义退役题（退役题中无宇宙生存性题）。
+  outcome: pass 或 fail(infra)（宇宙幸存者偏差未受控）
+  min_confidence: 0.75
+- candidate_id: S5-014
+  proposed_q_id: PQ-0297（占位）
+  layer: L5
+  status: draft
+  frequency: per_exam
+  title: 退市收益显式处置（ghost alpha 闸）
+  body: 回测/组合持仓遇成分股退市时，必须有显式平仓或按退市对价计价的记录，禁止静默消失（静默消失=退市股贡献被从净值中无声剔除，制造 ghost alpha）。断言：持仓账中凡进入退市流程的 symbol，均有 close-out 或 delisting_return 标记记录，覆盖率=100%。
+  threshold: 退市持仓显式处置覆盖率=100%（静默消失=0）
+  machine_check: 识别退市 symbol 集 JOIN sim_trade_log/持仓账，无处置记录计数
+  origin:
+    paradigm: 缺失退市收益（尤其破产 -100%）在因子回测中制造 ghost alpha；PIT 宇宙须含退市收益
+    search_round: R5
+    url: https://www.quantrocket.com（A Primer on Survivorship Bias；同类实证见 parallax 因子回测退市收益研究）
+  dedup_check:
+    nearest: [S5-013（同族姊妹题）]
+    why_distinct: S5-013 审宇宙纳含（数据面），本题审持仓处置（账务面），互补不重复。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.7
+- candidate_id: S5-015
+  proposed_q_id: PQ-0298（占位）
+  layer: L1
+  status: draft
+  frequency: one_shot
+  title: 财务数据修订版本保留语义（vintage 不可覆写）
+  body: 三财务表（income/balance/cashflow）对同一 (symbol, report_end_date) 的后续修订（更正公告、追溯重述）必须以新增行（不同 ann_date/版本号）保留，禁止原地 UPDATE 覆盖初值。断言：(a) 表内存在同键多 ann_date 行的修订链证据≥1 条即证明版本化语义；(b) 审计装载代码无同键 UPDATE 路径；(c) 若零修订链，须登记「源本身无修订」证据。
+  threshold: 版本化语义成立（有修订链或登记无修订证明），同键覆写路径=0
+  machine_check: SELECT symbol,report_end_date,COUNT(DISTINCT ann_date) HAVING>1；grep 装载代码 INSERT/UPDATE 语义
+  origin:
+    paradigm: point-in-time 基本面数据的初值/修订值分轨存证（vintage preservation）
+    search_round: R5
+    url: https://algoseek.com（vendor PIT 问题清单：修订是否覆盖初值是必问题）
+  dedup_check:
+    nearest: [PQ-0022, PQ-0155, PQ-0185]
+    why_distinct: PQ-0022/0155 审取数侧 ann_date 口径抽样合规；PQ-0185 审 FRED vintage 快照入库存证（零样本 insufficient）。本题审财务表存储层的修订保留语义（INSERT vs UPDATE），对象与层面均不同。
+    retirement_check: 无风险（PQ-0024 退役不涉存储语义）。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.7
+- candidate_id: S5-016
+  proposed_q_id: PQ-0299（占位）
+  layer: L5
+  status: draft
+  frequency: per_exam
+  title: 涨跌停不可成交约束的引擎执行断言
+  body: A 股制度下涨停价买单通常无法成交、跌停价卖单无法成交。断言回测成交账：不存在「以涨停价买入且当日封板（close=high=涨停价）」或「以跌停价卖出且当日跌停封板」的成交记录；且引擎代码含显式涨跌停可成交性判定（limit-up/down fill check）。
+  threshold: 涨跌停违规成交=0 且 引擎 limit 检查代码存在（可定位函数/谓词）
+  machine_check: sim_trade_log JOIN kline_daily 判 close==high 且涨幅≈10%/20% 制度价的成交行计数；grep 引擎代码
+  origin:
+    paradigm: A 股回测价格限制（price limit）可成交性约束——不模拟则多头涨停接刀、空头跌停出逃虚增收益
+    search_round: R7
+    url: https://github.com/microsoft/qlib（R7 限频；A 股框架 RQAlpha/Qlib 均内置涨跌停不可成交默认假设）
+  dedup_check:
+    nearest: [PQ-0094]
+    why_distinct: PQ-0094 审单票仓位硬上限；本题审成交可行性约束，对象不同。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.8
+- candidate_id: S5-017
+  proposed_q_id: PQ-0300（占位）
+  layer: L5
+  status: draft
+  frequency: per_exam
+  title: T+1 制度约束断言（当日买当日卖=0）
+  body: A 股 T+1 下当日买入份额不可当日卖出。断言回测成交账：同一 (symbol, trade_date) 内既有买成交又有后续卖成交的记录=0；且引擎持仓账含可卖数量（available_qty）与总持仓分离字段。
+  threshold: 同日买卖违例=0 且 available_qty 字段存在
+  machine_check: sim_trade_log 按 (symbol,date,side) 自 JOIN 计数；information_schema 验持仓表列
+  origin:
+    paradigm: A 股 T+1 交易制度模拟（约束日频反转策略的可实现性）
+    search_round: R7
+    url: https://github.com/microsoft/qlib（R7 限频；A 股框架制度约束共识）
+  dedup_check:
+    nearest: []
+    why_distinct: 283 题无 T+1 制度模拟题，净空白。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.8
+- candidate_id: S5-018
+  proposed_q_id: PQ-0301（占位）
+  layer: L5
+  status: draft
+  frequency: per_exam
+  title: 停牌日不可交易与持仓估值断言
+  body: 停牌股（当日无 bar）不可成交，持仓须按最近可得价估值且净值连续。断言：(a) 成交账中不存在 (symbol,trade_date) 落在 kline_daily 无 bar 日的成交；(b) 持仓估值对停牌股用前收盘并登记停牌状态；(c) 复牌无跳账（停牌期间净值不中断）。
+  threshold: 停牌日成交=0 且 估值规则登记非空
+  machine_check: 成交表 LEFT JOIN kline_daily ON (symbol,trade_date) WHERE bar IS NULL；估值代码审读
+  origin:
+    paradigm: suspension handling——2015-2016 千股停牌潮证明停牌是 A 股回测一等公民约束
+    search_round: R7
+    url: https://github.com/microsoft/qlib（R7 限频；A 股框架停牌处理共识）
+  dedup_check:
+    nearest: [PQ-0020]
+    why_distinct: PQ-0020 审断档登记完整率（数据面）；本题审停牌约束在交易与估值面的执行（引擎面）。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.75
+- candidate_id: S5-019
+  proposed_q_id: PQ-0302（占位）
+  layer: L5
+  status: draft
+  frequency: per_exam
+  title: 成交量参与率上限断言（容量约束）
+  body: 回测单 bar 成交量占该 bar 总成交量比例须有显式上限（默认 ≤10%）。断言：sim_trade_log 成交量/kline_daily 对应 bar 成交量 >10% 的记录=0，且参与率上限参数在配置中登记非硬编码散落。
+  threshold: 超限成交=0 且 上限参数已配置化登记
+  machine_check: JOIN 计算占比分布断言；配置文件 grep participation 参数
+  origin:
+    paradigm: capacity/ADV participation constraint——冲击成本 ∝ σ√(参与率)，参与率上限是容量管理第一道闸
+    search_round: R4
+    url: https://prachub.com（Trexquant 面经：temporary impact ∝ volatility × sqrt(participation)；square-root law 实证见 studylib 算法交易指南）
+  dedup_check:
+    nearest: [PQ-0094, PQ-0049]
+    why_distinct: 两题审仓位/权重上限（持仓面）；本题审单笔成交对市场容量的占比（交易面），量纲不同。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.7
+- candidate_id: S5-020
+  proposed_q_id: PQ-0303（占位）
+  layer: L5
+  status: draft
+  frequency: on_register
+  title: 冲击成本模型形式登记与参数可复算
+  body: 焊成本/滑点模型须采用可辩护形式：square-root law（impact≈k·σ·√(Q/V)）或显式登记的替代形式（线性/固定 bp），参数 k 与数据来源登记，且给定 (σ,Q,V) 输入可复算输出。断言：成本模型代码存在可定位函数、参数经配置加载（非散落魔数）、复算一致性=100%。
+  threshold: 模型形式已登记 且 参数复算一致率=100%（抽样 20 组）
+  machine_check: 定位成本函数→以登记参数代入抽样输入→比对引擎内部取值
+  origin:
+    paradigm: market impact square-root law（Loeb 1983 起的普适实证规律）；Almgren-Chriss 框架
+    search_round: R4
+    url: "https://pages.stern.nyu.edu（Hasbrouck, Securities Trading: Principles and Procedures；square-root law 综述见 arithmion.com 订单簿文章）"
+  dedup_check:
+    nearest: [PQ-0053]
+    why_distinct: PQ-0053 审滑点偏差校准（实测 vs 假设 ≤2bp，零样本 insufficient）；本题审成本模型的形式登记与参数可复算性，是模型治理题不是校准精度题。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.6
+- candidate_id: S5-021
+  proposed_q_id: PQ-0304（占位）
+  layer: L5
+  status: draft
+  frequency: per_exam
+  title: 实现缺口（implementation shortfall）分解字段完备性
+  body: 模拟成交报告对每笔执行须能分解：决策价（arrival/decision price）→延迟成本（decision price 到执行开始价）+执行成本（执行价 vs 执行开始价）。断言：成交账含 decision_price/execution_price 字段且非空覆盖率=100%（模拟环境下决策价=信号生成时点价），分解可复算。
+  threshold: 字段覆盖=100% 且 抽样 50 笔分解复算偏差=0
+  machine_check: information_schema 验列+抽样复算 IS=delay+execution 恒等式
+  origin:
+    paradigm: implementation shortfall = price impact + cost of delay（Perold/Hasbrouck 分解）；post-trade TCA 标准报表
+    search_round: R4
+    url: https://pages.stern.nyu.edu（Hasbrouck 教材 IS 分解章节）
+  dedup_check:
+    nearest: [PQ-0053, PQ-0090]
+    why_distinct: PQ-0053 滑点偏差、PQ-0090 IR 归因账零样本；本题审成交账的成本分解结构完备性（schema 层），不同对象。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.6
+- candidate_id: S5-022
+  proposed_q_id: PQ-0305（占位）
+  layer: L6
+  status: draft
+  frequency: quarterly
+  title: 生产模型清单 SR 11-7 六要素齐备率
+  body: 依 SR 11-7 模型清单最低字段：全部生产模型/策略在 inventory（strategy_registry 或等效）中登记 {用途 purpose, 责任人 owner, 风险分级 tier, 验证状态 validation_status, 上线日期, 最近复核日期}。断言：在产模型清单覆盖率=100% 且六要素逐字段非空率=100%（新模型首次使用前入册）。
+  threshold: 覆盖率=100% 且 六要素非空率=100%
+  machine_check: 生产入口点枚举 vs inventory 表 LEFT JOIN 计未入册；逐列非空计数
+  origin:
+    paradigm: SR 11-7 model inventory——全面模型清单是模型风险管理的地基（含 decommissioned 记录）
+    search_round: R6
+    url: https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm（Fed SR 11-7 / OCC 2011-12）
+  dedup_check:
+    nearest: [PQ-0094]
+    why_distinct: PQ-0094 审单票上限参数；本题审模型治理清单完备性，全新治理面。与 strategy_registry 挂钩但考的是 SR11-7 字段面。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.7
+- candidate_id: S5-023
+  proposed_q_id: PQ-0306（占位）
+  layer: L6
+  status: draft
+  frequency: on_register
+  title: 独立验证人分离断言（developer≠validator）
+  body: SR 11-7 要求验证由独立于开发与使用的合格方执行。断言：模型/策略验证记录（考试回写、验证审计事件）中 developer/validator 为同一 session 或同一 actor 的行=0；等效补偿控制（无独立方时的双人复核标记）须登记。
+  threshold: developer==validator 行=0（或补偿控制登记率=100%）
+  machine_check: 审计表 JOIN 开发 claim 记录按 actor 比对
+  origin:
+    paradigm: SR 11-7 independent validation & effective challenge（独立性+质疑权）
+    search_round: R6
+    url: https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm
+  dedup_check:
+    nearest: [PQ-0103]
+    why_distinct: PQ-0103 审回写鉴权（claim_mismatch 拒绝）；本题审验证独立性角色分离，对象不同。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.55
+- candidate_id: S5-024
+  proposed_q_id: PQ-0307（占位）
+  layer: L6
+  status: draft
+  frequency: quarterly
+  title: 高风险 tier 模型的持续监控与基准对齐登记
+  body: SR 11-7 要求 ongoing monitoring + benchmarking，频率与风险分级成比例。断言：tier=high 模型 100% 登记监控指标+监控周期+基准模型（benchmark）三元组；且登记周期内监控事件在审计账落账率=100%（逾期=触发再验证流程记录）。
+  threshold: 三元组登记率=100% 且 周期内监控落账率=100%
+  machine_check: inventory 表 tier=high 子集字段断言；审计事件按周期窗口计数
+  origin:
+    paradigm: SR 11-7 ongoing monitoring + benchmarking（模型退化跟踪，结果恶化触发再验证/退役）
+    search_round: R6
+    url: https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm
+  dedup_check:
+    nearest: [PQ-0052, PQ-0097]
+    why_distinct: 两题审 GPU 周五考试循环任务账；本题审模型分级监控登记与落账，机制不同（分级监控 vs 考试调度）。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.5
+- candidate_id: S5-025
+  proposed_q_id: PQ-0308（占位）
+  layer: L5
+  status: draft
+  frequency: per_exam
+  title: 训练/测试切分的 purge+embargo 约束断言
+  body: 含重叠标签（h=1/5/20 日前瞻收益）的样本做任何 train/test 切分（walk-forward/k-fold/OOS）时，测试段起点之前 ≥label_horizon 的训练样本必须被 purge，且测试段之后 ≥label_horizon 禁入训练（embargo）。断言：抽样 3 个在考学习型流程的切分索引，训练样本与测试段间隔 <label_horizon 的违例=0。
+  threshold: purge/embargo 违例样本=0（3/3 流程）
+  machine_check: 导出切分索引→按 label_horizon 计算间隔→计数违例
+  origin:
+    paradigm: purged k-fold CV + embargo（López de Prado 2018）；purged rolling walk-forward（arXiv 2026）
+    search_round: R8
+    url: https://skfolio.org（CombinatorialPurgedCV 实现；arXiv 2026 IS-WFA-OOS 协议）
+  dedup_check:
+    nearest: [PQ-0024（退役）]
+    why_distinct: 退役 PQ-0024 是「PIT 口径 vs 非对齐口径 IC 差」的因子预测力对照实测（no_alpha 退役）。本题审切分机制的 purge 约束执行，是过程闸不触任何因子结论，非翻案。
+    retirement_check: 显式对照过 PQ-0024，语义不同层面（机制 vs 因子结论），确认无翻案。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.7
+- candidate_id: S5-026
+  proposed_q_id: PQ-0309（占位）
+  layer: L5
+  status: draft
+  frequency: per_exam
+  title: 超额收益基准口径一致性（价格指数 vs 全收益指数）
+  body: 策略报告的 benchmark/excess return 计算所用指数序列须显式登记口径（价格指数 PR 或全收益 TR）；成分股分红再投资差异会使长期 TR/PR 年化差 1-3%。断言：全部在产策略报告的基准序列口径登记率=100%，且同报告内策略收益口径（含分红 hfq）与基准口径混用（策略 TR vs 基准 PR）的行=0。
+  threshold: 口径登记率=100% 且 混用行=0
+  machine_check: 策略报告表 benchmark 字段 JOIN 指数口径登记表；hfq 标志比对
+  origin:
+    paradigm: benchmark data integrity——vendor 数据必答清单之一（是否总收益口径）
+    search_round: R5
+    url: https://algoseek.com（vendor 必答问题含价格/总收益口径）
+  dedup_check:
+    nearest: []
+    why_distinct: 283 题无基准口径一致性题，净空白。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.65
+- candidate_id: S5-027
+  proposed_q_id: PQ-0310（占位）
+  layer: L1
+  status: draft
+  frequency: weekly
+  title: 主行情表主键唯一性（uniqueness 维度）
+  body: 数据质量唯一性维度断言：kline_daily 及其衍生表（hfq 等）按声明主键 (symbol, trade_date)（含分区列按表定义）分组计数 >1 的重复组=0；若装载语义允许幂等重采同值行，则「同键异值」冲突组必须=0（同键同值组须有幂等装载注释）。
+  threshold: 同键异值组=0 且 同键同值组占比≤登记容忍并注明幂等
+  machine_check: SELECT symbol,trade_date,COUNT(*) ... GROUP BY HAVING COUNT(*)>1 逐表执行
+  origin:
+    paradigm: DAMA 六维之 uniqueness——主键重复是行情库最常见装载事故
+    search_round: R1
+    url: https://docs.datarobot.com/en/docs/reference/data-ref/data-quality-ref.html（数据质量检查分类参考）
+  dedup_check:
+    nearest: [PQ-0173]
+    why_distinct: PQ-0173 是 BDI 指数表单表核验（U4 审计一行）；本题是全主行情表族的常设唯一性闸。
+    retirement_check: 无风险。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.8
+- candidate_id: S5-028
+  proposed_q_id: PQ-0311（占位）
+  layer: L5
+  status: draft
+  frequency: on_register
+  title: 夏普比率标准误与最短记录长度（MinTRL）登记
+  body: 策略晋级报告除点估计 Sharpe 外，须登记其标准误（SE(SR)≈√((1+SR²/2)/(n-1))，非正态用 Lo-Mackinlay 修正）与给定置信水平/目标 SR 下的最短记录长度 MinTRL。断言：晋级报告字段非空率=100%，且样本长度 n<MinTRL 仍晋级且无补偿理由的记录=0。
+  threshold: 字段非空率=100% 且 n<MinTRL 无理由晋级=0
+  machine_check: 解析晋级报告 schema+复算 SE/MinTRL 抽样比对
+  origin:
+    paradigm: track record 显著性——Sharpe 的估计误差与 MinTRL（Bailey & López de Prado Sharpe Ratio Efficient Frontier 框架）
+    search_round: R3
+    url: "https://arxiv.org（Paulsen 2016 沿 DSR/SE 框架；canonical: Bailey & López de Prado, JFR 2012）"
+  dedup_check:
+    nearest: [PQ-0091]
+    why_distinct: PQ-0091 是择时回测收益结论（已退役）；本题审晋级报告的统计显著性字段完备性，过程治理题。
+    retirement_check: 不复算择时策略收益结论，无翻案。
+  outcome: pass 或 fail(infra)
+  min_confidence: 0.55

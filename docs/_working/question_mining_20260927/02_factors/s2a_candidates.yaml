@@ -1,0 +1,253 @@
+# ============================================================================
+# S2a 因子挖矿草稿·瘦身收口版（factor_registry.yaml 按出现序第 1~88 个因子）
+# 战役: question_mining_20260927 | 代理: S2a(重拉收口版) | 日期: 2026-09-27
+# 版本说明: 前次运行已完成 28 题初稿后中断；本版经逐项机器复核后裁剪收口为 20 题
+#   （保留原 candidate_id 编号，S2b 稿 dedup_note 中的 S2A-xxx 交叉引用不受影响）。
+#   裁掉 8 题: S2A-003(id-class 错位 1 例,低信息量)/008(pass 基线,问题发现价值最低)/
+#   014(RSI 裸信号,教科书型)/016(拥挤度,融资腿缺数据仅子集可复算)/017(跷跷板,阈值系
+#   挖矿自设非登记原生)/018(地量,事件稀疏检验功效低)/027(BTC 阈值声明,与 026 同族可并)/
+#   028(均线翻转率,单因子成本面)——被裁题摘要留存于 s2a_ledger.md §四。
+# 复核记录(2026-09-27): 前 88 因子 22 字段统计与 20 个 file:line 锚点经 python 逐项复算
+#   全部吻合；修正 2 处——MOM-008 锚点 L4878→L4879；frequency 枚举 event_driven→event
+#   （对齐 meta_question_registry input_schema 词表 daily/weekly/monthly/quarterly/event/realtime/static）。
+# 事实基础(全部复核通过): 前 88 因子全部 status=candidate；code_path/code_symbol/
+#   belongs_to_strategies/regime_invalid 空 88/88；params/inputs/evidence/outputs 空 85/88
+#   （仅 CRYPTO 族 3 因子填）；regime_valid 空 53/88；tags 缺 FCT-MOM-010(L5027)；
+#   pit_policy 88/88='price_only'；lookback_period 85/88=1；neutralization 全='none'；
+#   factor_class 枚举外 3 例(TECH-069 risk_rule L2360/TECH-070 technical_indicator L2435/
+#   MOM-002 knowledge_only L4434)；id-class 错位 1 例(MOM-015 class=sentiment L5623)。
+#   doc_ref 全部指向 docs/_archive/29_factor_strategy_extraction.md（在库可回查）。
+#   strategy_registry.yaml 仅引用 FCT-INTRADAY-029×4/FCT-MOM-030×2/FCT-INTRADAY-030×1
+#   （均在第 89+ 序号段），前 88 因子零策略消费——与 belongs_to_strategies 全空双向自洽。
+# 枚举: layer=L0..L6 | status=draft | frequency∈{static,daily,weekly,monthly,quarterly,event,realtime}
+# ============================================================================
+
+# ---------- 甲、登记完整性/依赖在册面（纯登记册元数据，static 可机解） ----------
+
+- candidate_id: S2A-001
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml L17（登记五要素"缺一不收"②公式可复算=formula+params）；实测前 88 因子 params 空 85/88、tags 空 1/88（FCT-MOM-010 L5027）
+  question: 因子登记表准入五要素门是否被机检执行——前 88 个因子（FCT-INTRADAY-015~028、FCT-TECH-055~073、FCT-LIQ-024~033、FCT-TECH-074~085、FCT-MOM-001~028、FCT-CRYPTO-*-00x、FCT-EVENT-001/002）的 params 非空率与 tags 非空率是否均达 100%（formula 内联完整参数者须带显式豁免标记，不得静默空置）？
+  threshold: 扫描 factor_registry.yaml 前 88 条目：params 非空率=100% 且 tags 非空率=100%，或每条空置条目带 inline_params_exempt/等价显式豁免字段；否则 fail。实测预填：params 空 85、tags 空 1（FCT-MOM-010）。
+  min_confidence: 0.8
+  expected_outcome: fail——85/88 params 空置（含 20 日均线、ATR14、RSI6<20 等参数型公式），准入五要素"缺一不收"未在入库时机械执行。
+  dedup_note: PQ-0001~0003 审计的是 meta_question 治理表入库闸，PQ-0068 系竞价因子数据构造；本题首查 factor_registry 自身五要素执行率，283 题与 30 退役题均无 factor_registry 登记完整性题（关键词 factor_registry 零命中）。
+
+- candidate_id: S2A-002
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml L55-56（entry_schema：factor_class 十类枚举、factor_id 格式=FCT-{CLASS}-{NNN}）；违例实据 FCT-TECH-069='risk_rule'(L2360)、FCT-TECH-070='technical_indicator'(L2435)、FCT-MOM-002='knowledge_only'(L4434)
+  question: 前 88 因子的 factor_class 字段是否 100% 落在登记头声明的十类枚举内？枚举外取值（risk_rule/technical_indicator/knowledge_only）是否构成 schema 违例？
+  threshold: 逐条断言 factor_class ∈ 十类枚举集；违例数=0 为 pass。实测预填：违例=3（FCT-TECH-069/FCT-TECH-070/FCT-MOM-002）。
+  min_confidence: 0.8
+  expected_outcome: fail——3 条目使用枚举外 class，登记头"factor_class 十类之一"准入条款被绕过。
+  dedup_note: 与 PQ-0002（meta_question 标题归一化去重）异域异表；本题为 factor_registry schema 枚举合规首查；S2B-006 查 89~175 段（违例集互补）。
+
+- candidate_id: S2A-004
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml pit_policy 全量实测='price_only'（88/88）；语义冲突实据：FCT-EVENT-001(L6660)/FCT-EVENT-002(L6734) 事件类、FCT-MOM-026(L6438) 研报密度、FCT-LIQ-028(L3028) ETF 申赎、FCT-MOM-015(L5623) 连板情绪——均非纯价格输入
+  question: pit_policy='price_only' 对依赖公告时戳/事件日/申赎清单/研报发布的因子在语义上是否成立？非价格输入因子的 pit_policy 是否应声明事件/公告时戳对齐字段（如 ann_date/event_date/publish_ts）？
+  threshold: 对 formula 或 alpha_source 含{公告,事件,议息,政策,申赎,研报,发布}关键词的条目，断言 pit_policy≠'price_only' 且含时戳字段声明；违例数=0 为 pass。实测预填：违例≥6。
+  min_confidence: 0.8
+  expected_outcome: fail——88/88 齿轮式占位 'price_only'，事件/研报/申赎族 PIT 声明形同虚设；若照此实现将复制 PQ-0024 式前视泄漏（未对齐口径膨胀 IC）。
+  dedup_note: PQ-0024 是 EP 因子双口径 IC 对照（已退役），本题是登记面 pit_policy 声明完备性审计，不重跑任何 IC；S2B-020 同族审计查 89~175 段（违例集互补）。
+
+- candidate_id: S2A-005
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml lookback_period 字段实测 85/88=1（占位）、CRYPTO 族=20；与公式矛盾实据：FCT-TECH-055 20 日均线(L1324)、FCT-TECH-064 ATR14(L1990)、FCT-TECH-066 RSI6/14(L2138)、FCT-LIQ-025 250 日分位(L2806)
+  question: lookback_period 字段值与各因子 formula 声明的主回看窗是否一致（占位值 1 vs 公式 14/20/250 日窗）？
+  threshold: 逐条解析 formula 数字回看窗，断言 lookback_period 与之一致率≥95%（CRYPTO 族 lookback_days=20 与字段 20 一致为正例）。实测预填：一致率≈3%。
+  min_confidence: 0.8
+  expected_outcome: fail——85/88 字段=1 系占位，字段失真使任何按 lookback_period 驱动的数据准备/回测窗口机检失效。
+  dedup_note: 无同义题；S2A-001 查 params 缺失，本题查已填字段的语义正确性，互补不重叠。
+
+- candidate_id: S2A-006
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml L30（状态适配强制项：翻译拆解的因子必须填 regime_valid/regime_invalid，"空值条目视为待补，C3/C4 批次强制补齐"）；实测 regime_invalid 空 88/88、regime_valid 空 53/88
+  question: 前 88 因子（全部 doc_ref 指向 29_factor_strategy_extraction.md 翻译拆解）的 regime_valid/regime_invalid 双字段是否达成"强制补齐"承诺？
+  threshold: doc_ref 含 29_factor_strategy_extraction.md 的条目 regime 双字段非空率=100%。实测预填：regime_invalid 0%、regime_valid 39.8%。
+  min_confidence: 0.8
+  expected_outcome: fail——G07 教训条款（无状态标注的因子在退潮期伪装全天候）在翻译拆解批次未执行。
+  dedup_note: 退役册 PQ-0046/0081 是波动状态因子的预测力检验；本题是 regime 标注登记完备性，异面；S2B-012 查 89~175 段倒挂面。
+
+- candidate_id: S2A-007
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml entry_schema inputs 字段（L58 附近）；实测 inputs 空 85/88（仅 CRYPTO 族 3 因子填 ['close']）
+  question: 因子→数据源依赖在册率——前 88 因子的 inputs 字段是否非空且每项可映射到已登记数据资产（data_asset_registry/CH 库表），使"因子依赖哪些数据线"可机检？
+  threshold: inputs 非空率=100% 且每元素与 data_asset_registry 资产名或 CH 表名字典交集非空。实测预填：非空率 3.4%，映射不可机检。
+  min_confidence: 0.8
+  expected_outcome: fail——依赖图断链：任何"输入数据覆盖率/PIT 合规"类上游客题（S1 面）无法按因子粒度机械下钻。
+  dedup_note: S1 数据源矿区考题查数据线自身质量；本题查因子登记对依赖的声明义务，方向相反不重复；S2B-022 查已实现 31 条的义务更强版本。
+
+- candidate_id: S2A-009
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml belongs_to_strategies 实测空 88/88 + strategy_registry.yaml 交叉引用实测（FCT-INTRADAY-029×4、FCT-MOM-030×2、FCT-INTRADAY-030×1——均落在第 89+ 序号段，前 88 因子零引用）
+  question: 策略↔因子消费关系双向一致性——前 88 因子（全 candidate 态）是否确实零策略消费（belongs_to_strategies 空 ⟺ strategy_registry 无引用），且被 strategy_registry 引用的因子（029/030 段）belongs_to_strategies 已回填？
+  threshold: 双向断言：①strategy_registry.yaml 中 FCT-* 引用落在前 88 范围的计数=0；②凡被引用因子其 belongs_to_strategies 非空率=100%。①实测=0（pass 腿）；②需对 89+ 段复算。
+  min_confidence: 0.8
+  expected_outcome: 前半 pass（candidate 未被消费与登记自洽）；后半（被引用因子回填率）预判 fail——若 029/030 亦空则消费账双向断链。
+  dedup_note: PQ-0117（单因子权重上限审计）查组合约束实现；本题查登记表↔策略表引用一致性，异面。
+
+# ---------- 乙、相关簇/去马甲面（族级，⑤） ----------
+
+- candidate_id: S2A-010
+  layer: L2
+  status: draft
+  frequency: daily
+  origin: factor_registry.yaml L23（去马甲判据：同 class 因子日度秩相关>=0.85 → 挂 variant_of）；族成员 FCT-LIQ-024(L2732)/025(L2806)/026(L2880)/029(L3102)/030(L3176)/031(L3250) 量能族
+  question: 量能族 6 个可复算因子（底部量能节奏/地量/半日量占比/天量换手/换手率分位/立桩量）按登记 formula 在全 A 池日度截面上两两秩相关是否全部<0.85（登记表自身去马甲判据）？≥0.85 的对是否缺 variant_of 挂接？
+  threshold: 全 A 池 2019-2023 IS 窗逐日计算 6 因子截面秩相关矩阵：max pairwise corr<0.85 且 ≥0.85 对数=0 → pass；任一对≥0.85 且无 variant_of 声明 → fail。
+  min_confidence: 0.8
+  expected_outcome: 预判边界态——口径分化（地量=绝对低分位、换手率分位=相对活跃度）大概率<0.85，但 FCT-LIQ-029 天量换手与 FCT-LIQ-030 换手率分位在极端放量日同向，需实测；撞线即触发去马甲条款。
+  dedup_note: 283 题无任何因子间相关性/去马甲题（关键词"去马甲/相关簇"零命中）；退役 30 题全部单因子预测力题；S2B-005/018/027 为本判据在其他簇/段的延伸。
+
+- candidate_id: S2A-011
+  layer: L2
+  status: draft
+  frequency: daily
+  origin: factor_registry.yaml 超买超卖子簇 FCT-TECH-062 乖离率±15%(L1842)/066 RSI(L2138)/068 区间位置百分位(L2286)；判据同 L23 去马甲条款
+  question: 均值回归向子簇 3 因子（乖离率/RSI/区间分位）两两日度秩相关是否<0.85？若乖离率与 RSI 相关≥0.85，登记表按去马甲判据是否应合并或挂 variant_of？
+  threshold: 全 A 池 IS 窗（2019-2023）日度截面秩相关矩阵：≥0.85 对数=0 → pass；≥0.85 对存在且 variant_of 空 → fail。
+  min_confidence: 0.8
+  expected_outcome: 预判 pass——BIAS20 与 RSI14 经非线性映射相关通常 0.6~0.8；区间位置（250 日分位）与短窗超买超卖相关低。
+  dedup_note: 与 S2A-010 不同簇（量能 vs 均值回归）；无同义既有题。
+
+# ---------- 丙、有效性面（①，避开退役簇：均线斜率族/尾盘主买族/EP/股东户数/PEAD 均不复考） ----------
+
+- candidate_id: S2A-012
+  layer: L2
+  status: draft
+  frequency: monthly
+  origin: factor_registry.yaml FCT-MOM-008 历史新高因子(L4879 起)，formula 即 52 周高点因子（George & Hwang 2004 PTH），alpha_source 自认经典动量
+  question: FCT-MOM-008（52 周高点 PTH=现价/52 周最高价）在全 A 池月频截面秩 IC 是否达到登记表晋级门槛（L21：IS 2019-2023 |IC|>=0.02 且 t 检验 p<0.05 且覆盖>=60% 交易日）？
+  threshold: 全 A（剔除 ST/上市<1 年）月末 PTH 因子对次月收益秩 IC：均值 |IC|>=0.02 且 Newey-West t 对应 p<0.05，且月度覆盖>=60%；样本外（2024-2025-09）IC>=0.01。
+  min_confidence: 0.8
+  expected_outcome: pass 预判——PTH 为 A 股公开实证较强动量变形；若 fail 属新 no_alpha 证据照登。
+  dedup_note: PQ-0084 是"板块新高家数占比"（因板块成分 PIT 映射零行 insufficient），本题是个股 PTH（仅 kline 日线即可，无映射依赖）；PQ-0039 是板块动量排名自相关——均不同义。
+
+- candidate_id: S2A-013
+  layer: L2
+  status: draft
+  frequency: daily
+  origin: factor_registry.yaml FCT-TECH-073(L2658~2660) formula 内嵌具体回补概率 77.8%/60%/35%/8.2% 且 alpha_source 自认"来源市场不明，入库后需用 A股数据重新标定"
+  question: 登记表缺口回补概率分级值（Tiny 77.8%/Small 60%/Medium 35%/Large 8.2%）在 A 股全池日线上是否成立？偏差超过 15 个百分点的档位是否按 alpha_source 自认义务回填 A 股实测值？
+  threshold: 全 A 2015-01~2025-09 普通缺口（open>前 high 或 open<前 low，跳空|gap|/ATR14 分级），回补=后续 20 交易日内触及缺口沿：逐档实测回补率与登记值偏差≤15pp → pass；任一档超限且登记值未标 uncalibrated → fail。
+  min_confidence: 0.8
+  expected_outcome: fail 预判——登记值系外来市场未标定数字，A 股 T+1 与涨跌停结构下大概率偏离；fail 即触发"入库后需重新标定"义务。
+  dedup_note: 283 题无缺口回补题（关键词"缺口"62 命中均为数据链路/复权语境，非回补概率）；ATR 关键词零命中。
+
+- candidate_id: S2A-015
+  layer: L2
+  status: draft
+  frequency: event
+  origin: factor_registry.yaml FCT-MOM-015(L5623~5625) formula：一波≥8 板高度龙打出后，通常一个半月内有四波≥6 板补涨龙行情；alpha_source 自认"周期参数待回测"
+  question: 连板高度周期律的具体断言（≥8 板事件后 30 个交易日内出现≥6 板连板股次数≥1 的比率>60%，且"四波"计数分布可复现）在全 A 涨停生态上是否成立？
+  threshold: 全 A 2019-01~2025-09 涨停（close=round(prev_close×1.1,2)，ST 池按 5% 另列）连板高度时序：≥8 板事件 n 个，事件后 30 交易日内最高连板≥6 的比率>60% → pass；同时报告每事件"≥6 板行情"波数分布 vs 登记值"四波"。
+  min_confidence: 0.8
+  expected_outcome: 待考——n 个≥8 板事件预计 15~30 个（2019/2020/2022-2023 题材年多、2024 少），比率与"四波"具体数均可能偏离；fail 属登记参数未标定义务。
+  dedup_note: 全库"连板"零命中，首题；与退役 PQ-0037（emotion_index 极端情绪反转）信号源不同。
+
+- candidate_id: S2A-019
+  layer: L2
+  status: draft
+  frequency: event
+  origin: factor_registry.yaml FCT-EVENT-001(L6660~6662) 议息会议事件：formula 含"不加息则靴子落地大概率高开反弹；加息则 99.99% 创新低"；alpha_source 自认"99.99% 为绝对化表述改条件概率待回测"
+  question: FCT-EVENT-001 的两个方向性断言的条件概率化检验——FOMC 决议日次日上证高开率是否显著>50%（不加息样本）？加息样本后 20 日创新低率是否如登记所称≈100%？
+  threshold: 议息日在库（PQ SL-A10 U6 证据：1982-2025 去重 292 个，切点前可考）：分决议方向分组，报告高开率/20 日新低率点估计+95%CI；"99.99%"断言判 false 当加息组新低率 CI 上界<99% 或加息样本 n<10 不足以支撑绝对化表述。
+  min_confidence: 0.8
+  expected_outcome: fail 预判——加息样本窗内 n 小（2022-2023 加息周期约 11 次），绝对化表述结构性不可证；高开率是否>50% 真实待考。
+  dedup_note: SL-A10 U6（PQ-01xx 批）是 FRED 全球风险因子退役证伪方案的端到端重放演练（因子回归+议息日事件研究的方法论背书），非 FCT-EVENT-001 登记断言的检验；本题按登记条目命题，事件日历可直接复用其 292 个在库议息日。
+
+# ---------- 丁、衰减/容量/换手成本面（②③④） ----------
+
+- candidate_id: S2A-020
+  layer: L2
+  status: draft
+  frequency: daily
+  origin: factor_registry.yaml FCT-LIQ-030 换手率分位(L3176~3178)+FCT-TECH-070 量比五分位(L2435~2437)，登记 frequency 均=daily；判据=IC 衰减与调仓频率匹配（charter 六面②）
+  question: 量能活跃度双因子（换手率相对分位/量比五分位）的 IC 半衰期是否与其登记 frequency=daily 匹配——IC(1d)→IC(5d) 衰减比<0.5（半衰期<5 交易日）？若半衰期>10 交易日则 daily 频率登记失配。
+  threshold: 全 A 池 IS+OOS 窗逐日秩 IC 序列（前瞻 1/5/10/20 日）：半衰期=IC 首次跌破 0.5×IC(1d) 的前瞻期；两因子均 5 日内 → pass（匹配）；任一>10 日 → 该因子 frequency 失配 fail。
+  min_confidence: 0.8
+  expected_outcome: pass 预判——量能类信号衰减快是共识，半衰期预计 1~3 日；本题同时产出衰减曲线供调仓频率设定。
+  dedup_note: 退役 PQ-0081 半衰期是波动状态 AR(1) 持续性（25.7 日 vs 5-15 日判据）；本题是量能因子 IC 衰减与调仓频率匹配，对象与判据均不同；S2B-004 是衰减元数据登记完备性（治理面），异面。
+
+- candidate_id: S2A-021
+  layer: L2
+  status: draft
+  frequency: monthly
+  origin: factor_registry.yaml FCT-LIQ-030(L3176~3178) 换手率分位因子（登记 universe=UNI-RULE-001 全 A 可交易池）；容量判据=20% ADV 参与率（charter 六面③）
+  question: 换手率分位因子多空组合（Top/Bottom 10%）的可承载容量——按单票不超过其 20 日均成交额 20% 参与率约束，组合单边建仓可承接规模中位数是否≥2 亿元？
+  threshold: IS 窗每个调仓日对多空两腿逐票计算 min(20%×ADV20, 流通市值 1%)，聚合组合容量取截面中位数：≥2 亿元 → pass；同时报告 10/90 分位与小票腿（市值后 30%）容量占比。
+  min_confidence: 0.8
+  expected_outcome: fail 预判——换手率因子在小票上信号更强，小票腿容量拖累组合中位数低于 2 亿；fail 即触发消费方流动性下限过滤义务。
+  dedup_note: 全库"换手率"零命中、容量类考题仅有 PQ-0117（单因子权重上限 15% 约束实现审计，insufficient）；本题是因子级容量实测，异面；S2B-024 是容量字段单位声明（治理面）。
+
+- candidate_id: S2A-022
+  layer: L2
+  status: draft
+  frequency: monthly
+  origin: factor_registry.yaml FCT-MOM-008(L4879 起) 历史新高因子月频消费场景（entry_role 默认 ranking）；成本判据=双边 0.3%（charter 六面④）
+  question: PTH 因子月频调仓的组合换手与成本消化——单边月换手是否≤80%？双边 0.15%×2 成本拖累是否≤多空毛收益的 1/3？
+  threshold: IS 2019-2023+OOS 月频回测：换手率=月度组合权重变动绝对和/2；两条件（换手≤80%/月 且 成本拖累≤毛收益 1/3，毛收益≤0 时按"成本不可消化"fail）同时过 → pass。
+  min_confidence: 0.8
+  expected_outcome: pass 预判——52 周高点因子月频换手典型 30~50%，成本占比低；产出为策略层（S3）提供积木成本参数。
+  dedup_note: PQ-0119 是动量因子 5 日再平衡 IC（PQ-0091 语境）；本题只算 PTH 月频换手与成本占比，无重合；S2B-023 是成本元数据登记完备性（治理面）。
+
+# ---------- 戊、数据依赖面（⑥，族级） ----------
+
+- candidate_id: S2A-023
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml FCT-INTRADAY-015~028(L288~1250) 分时族 14 因子全族 inputs 空；FCT-INTRADAY-024 竞价验证(L954)/027 竞价微结构(L1176) 依赖集合竞价簿数据；既有 PQ 证据：auction_book/auction_snapshot/tick_depth_5 切点前 0 行
+  question: 分时族 14 因子的输入依赖在册性与可评估性——每因子 inputs 是否指向在册分钟级/竞价数据源？竞价类因子（024/027）在其输入数据切点前 0 行的现实下是否应标 blocked 而非可晋级的 candidate？
+  threshold: ①14 因子 inputs 非空率=100% 且每项映射 CH 分钟/auction 表名；②输入表切点前 0 行的因子必须带 blocked/data_pending 标记。实测预填：①=0/14，②无任何标记 → 双 fail。
+  min_confidence: 0.8
+  expected_outcome: fail——登记未声明依赖+数据双缺，分时族在闭卷窗整体不可评估；复考前置=回填分钟/竞价历史。
+  dedup_note: 既有竞价题（PQ-0068 批）判的是"竞价失衡因子能否构造"（insufficient，数据零行）；本题判"登记的依赖声明义务"，且覆盖全族 14 因子而非单个因子。
+
+- candidate_id: S2A-024
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml FCT-LIQ-027 ETF 折溢价(L2954~2956)+FCT-LIQ-028 ETF 申赎资金流向(L3028~3030)；折溢价需 ETF 市价+净值(IOPV)，申赎需申赎清单/份额变动
+  question: ETF 族两因子的输入数据在册性——ETF 净值/IOPV 与申赎数据源是否已在 data_asset_registry 登记且切点前覆盖≥80% 交易日？
+  threshold: ①两因子 inputs 字段声明净值/申赎源；②源在 CH 切点前对主流宽基 ETF（510300/510050/159915 等≥5 只）覆盖率≥80% 交易日。任一缺 → fail。
+  min_confidence: 0.8
+  expected_outcome: fail 预判——inputs 全空（85/88 背景下），且库内 ETF 净值/申赎源未见登记；"ETF"关键词全库 283 题零命中，属未开垦依赖面。
+  dedup_note: S2A-023 覆盖分时族；本题覆盖 ETF 族，数据源不同（净值/申赎 vs 分钟/竞价簿）。
+
+- candidate_id: S2A-025
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml FCT-MOM-026 机构研报覆盖密度(L6438~6440)；factor_family_glossary expectations 族自认"数据真源=自建研报明细聚合（对标朝阳永续）……研报覆盖 2019 前稀薄（评估 IS 窗 2019 起）"
+  question: 研报覆盖密度因子的数据底座——研报明细源是否在册且切点前自 2019 起对≥30 个申万一级行业的月度覆盖连续（月度有研报行业数≥30 的月份占比≥80%）？
+  threshold: 探针：研报源表（c3_fundamental.consensus_daily/DS-229 或研报明细表）切点前行数、按行业×月聚合覆盖矩阵：2019-01~2025-09 月度覆盖行业数中位数≥30 且达标月份占比≥80% → pass。
+  min_confidence: 0.8
+  expected_outcome: 待考偏 fail——登记 glossary 自认 2019 前稀薄；若 2019 后覆盖仍不足，FCT-MOM-026 与 glossary expectations 族 6 因子（EXP-01~06）在闭卷窗均不可评。
+  dedup_note: PQ-0015 是财联社电报密度（新闻源，已退役）；本题是研报源覆盖，源不同、且是登记依赖面非预测力面。
+
+- candidate_id: S2A-026
+  layer: L2
+  status: draft
+  frequency: static
+  origin: factor_registry.yaml FCT-CRYPTO-MOM-001(L5324)/002(L5399)/CRYPTO-VOL-001(L5474)，inputs=['close'] 且 pit_policy='price_only'；未声明 BTC/ETH 日线数据源与 7×24→A股交易日对齐规则
+  question: 加密族 3 因子的 PIT 与日界对齐声明——7×24 交易的 BTC/ETH 日线按何 UTC 时界截断对齐 A 股交易日？该规则与数据源是否在登记中声明？
+  threshold: ①加密族 pit_policy 含日界截断规则声明（如 UTC 00:00 截断/北京时间 08:00 截断）且指明数据源表名；②源表切点前覆盖≥80% 自然日。实测预填：pit_policy='price_only' 无声明 → fail。
+  min_confidence: 0.8
+  expected_outcome: fail——不同截断口径会产生不同的 20 日动量/波动率序列（日界漂移效应在 7×24 资产上非平凡），无声明即不可复算，违反"公式可复算"五要素精神；VOL-001 的 80%/40% 阈值分位/绝对二义与阈值标定来源缺失同属本族声明缺口（吸收被裁 S2A-027 的考点）。
+  dedup_note: PQ-0029/0048 是 Hyperliquid 费率传导 no_alpha（已退役，属加密传导族的不同输入——费率 vs 现货日线）；本题是登记对齐声明审计，不触任何 IC 复算，无翻案面；与退役波动状态族 PQ-0046/0081 严格切分（对象=BTC 登记声明，非 A 股指数预测力）。
