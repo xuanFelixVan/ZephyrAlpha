@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] depgraph不存在→exit 1;三图任一为空→exit 2(blueprint图不参与此检查)
-# [TESTS] tests/test_align_panoramas.py
+# [TESTS] tests/gov/governance/test_align_panoramas.py
 # [A_module] module_id=MOD-GOV_ALIGN_PANORAMAS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  合法 manual 对齐检测器：CI/人工按需调用，只读检测不做自动修复

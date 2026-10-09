@@ -203,7 +203,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
             "tests/test_task_completion_gate.py",
             "tests/safety/test_circuit_breaker.py",
             "tests/test_contract_template_manager.py",
-            "tests/integration/test_gate_e2e.py",
+            "tests/gov/gate/test_gate_e2e.py",
         ],
         "config_files": [],
         "governance_scripts": [
@@ -446,7 +446,7 @@ def _is_skeleton_file(rel_path: str) -> bool:
             return True
         non_blank = [l for l in content.split("\n") if l.strip() and not l.strip().startswith("#")]
         return len(non_blank) < 10
-    except Exception:
+    except Exception:  # noqa: BLE001 — 不可读蓝图保守判 stub（fail-true 防误接线）
         return True
 
 
@@ -655,11 +655,7 @@ def _extract_note(section_text: str) -> str:
             continue
         # 稳定短语匹配：新旧模板行均含「蓝图-代码同步强制约定」（2026-09-12 L0 宪法替换后
         # 模板去 §编号化，匹配器不得锚定编号文本，否则旧文案行会被误认为人工 note）。
-        if (
-            "蓝图-代码同步强制约定" in stripped
-            or "蓝图声称的文件必须" in stripped
-            or "AUTOGEN" in stripped
-        ):
+        if "蓝图-代码同步强制约定" in stripped or "蓝图声称的文件必须" in stripped or "AUTOGEN" in stripped:
             continue
         return stripped.lstrip("> ").strip()
     return ""

@@ -99,7 +99,7 @@ MOD-INF-038 提供通用状态机引擎，解决全项目 11+ 个独立状态机
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-038` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-038` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -334,7 +334,7 @@ class Transition(Generic[S]):
 |--------|------|:----:|
 | 通用状态机基类 | `src/zephyr/shared/state_machine.py` | 待创建 |
 | 状态机注册表 | `src/zephyr/shared/_state-machine-registry.yaml` | 待创建 |
-| 单元测试 | `tests/test_state_machine.py` | 待创建 |
+| 单元测试 | `tests/gov/audit/test_state_machine.py` | 待创建 |
 
 ## §12 集成目标
 
@@ -375,7 +375,7 @@ class Transition(Generic[S]):
 ```
 STEP 1: 创建 src/zephyr/shared/state_machine.py — StateMachine[S] 泛型基类
 STEP 2: 创建 src/zephyr/shared/_state-machine-registry.yaml — 注册表种子
-STEP 3: 创建 tests/test_state_machine.py — 单元测试
+STEP 3: 创建 tests/gov/audit/test_state_machine.py — 单元测试
 STEP 4: 迁移 MOD-TASK_SYSTEM 任务系统状态机（最大消费者，验证基类可用性）
 STEP 5: 迁移 MOD-INF-023 漂移检测器状态机
 STEP 6: 迁移 MOD-INF-021 回滚系统状态机
@@ -416,7 +416,7 @@ STEP 9: 更新 REG-SM-001 entry_count
 - [x] 通用基类代码已创建
 - [ ] 至少一个消费者已迁移（task_repo.py 不存在，零消费者）
 - [x] REG-SM-001 已注册 task-lifecycle（entry_count: 1）
-- [ ] 单元测试已创建（tests/test_state_machine.py）
+- [ ] 单元测试已创建（tests/gov/audit/test_state_machine.py）
 - [ ] 剩余 10 个状态机实例迁移
 
 ## 成熟度

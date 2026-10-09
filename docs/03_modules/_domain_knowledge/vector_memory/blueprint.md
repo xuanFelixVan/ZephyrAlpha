@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
 status: Active
-version: "0.12.10"
+version: "0.12.11"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -858,7 +858,7 @@ class FeedbackEntry(BaseModel):
 
 | # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
 |---|---------|---------|------------|---------|
-| 1 | 单元测试 | InProcessVectorMemory/EmbeddingRouter/HybridRetriever/ProvenanceEnforcer/IndexHealthMonitor/CollectionManager | `tests/vector_memory/test_vector_memory.py` | 覆盖率 > 80% |
+| 1 | 单元测试 | InProcessVectorMemory/EmbeddingRouter/HybridRetriever/ProvenanceEnforcer/IndexHealthMonitor/CollectionManager | `tests/ai/memory/test_vector_memory.py` | 覆盖率 > 80% |
 | 2 | 集成测试 | VMS→CE 检索链路 | CE build 阶段成功检索 KE 条目 | 端到端通过 |
 | 3 | 测试替身 | InMemoryFakeVMS（in_memory_fake_vms.py） | 消费方（CE/Orc/FLE）单元测试独立于 VMS 状态 | InMemoryFakeVMS 接口与 InProcessVectorMemory 一致 |
 | 4 | 确定性嵌入 | DeterministicEmbedder（基于 content_hash 生成固定伪向量） | 测试环境下嵌入结果稳定可复现 | 相同输入→相同向量 |
@@ -1116,7 +1116,7 @@ class FeedbackEntry(BaseModel):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §6 可观测性 + §6.2 退化矩阵 + §17 容量升级 |
-| 产出位置 | `scripts/governance/vms_health_check.py`（cron 脚本） |
+| 产出位置 | 裁定#485 退役（原 `vms_health_check` cron 脚本已删，2026-10-10 H-6 清偿；G7 自愈判据归 VMS 运行时面） |
 | 验收标准 | 每日自动 TTL 清理 + compaction + 异常告警 |
 | G7 检查项 | 30 天无手动维护，系统自愈率 > 95%？ |
 
@@ -1498,10 +1498,10 @@ class FeedbackEntry(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/memory/test_vms_adversarial_hijack.py` | ✅ 已实现 | |
-| `tests/memory/test_vms_adversarial_injection.py` | ✅ 已实现 | |
-| `tests/memory/test_vms_automation.py` | ✅ 已实现 | |
-| `tests/memory/test_vms_lifecycle.py` | ✅ 已实现 | |
+| `tests/ai/memory/test_vms_adversarial_hijack.py` | ✅ 已实现 | |
+| `tests/ai/memory/test_vms_adversarial_injection.py` | ✅ 已实现 | |
+| `tests/ai/memory/test_vms_automation.py` | ✅ 已实现 | |
+| `tests/ai/memory/test_vms_lifecycle.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

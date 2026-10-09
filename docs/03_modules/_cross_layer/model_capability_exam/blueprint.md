@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估"
 doc_type: blueprint
 status: Active
-version: "2.3.12"
+version: "2.3.13"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -92,8 +92,8 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 | 10 | `provider_data.py` | §3.1 | 模型提供商数据 | 已实现 | — |
 | 11 | `scripts/quick_profile.py` | §4.1 | Quick 模式 CLI 入口（--from-passport/--model/--list） | 已实现 | — |
 | 12 | `data/brain/job_matrix.yaml` | §4.2 | 岗位匹配矩阵（9 维幻觉权重 + 岗位定义） | 已实现 | — |
-| 13 | `tests/test_exam_orchestrator.py` | §9 | ExamOrchestrator 测试（含九维幻觉检测） | 已实现 | — |
-| 14 | `tests/test_job_matcher.py` | §9 | JobMatcher 测试（36 tests） | 已实现 | — |
+| 13 | `tests/ai/model/test_exam_orchestrator.py` | §9 | ExamOrchestrator 测试（含九维幻觉检测） | 已实现 | — |
+| 14 | `tests/ai/model/test_job_matcher.py` | §9 | JobMatcher 测试（36 tests） | 已实现 | — |
 
 ### §0.2 对齐验证矩阵
 
@@ -129,7 +129,7 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-036` 的 14 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-036` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -1019,8 +1019,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/f_lifecycle/test_f10_red_blue.py` | ✅ 已实现 | |
-| `tests/model/test_model_capability_exam.py` | ✅ 已实现 | |
+| `tests/ai/model/test_model_capability_exam.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

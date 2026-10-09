@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.49"
+version: "0.8.51"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -51,7 +51,7 @@ ssot_claims:
   - {claim: "自指硬化协议SSoT", scope: "module"}
 responsibility_domain: 
 design_maturity: design
-build_status: stable
+build_status: planned
 ---
 
 # Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器
@@ -299,7 +299,7 @@ build_status: stable
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 375 个 file 节点 | design | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 374 个 file 节点 | design | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -310,8 +310,8 @@ build_status: stable
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-GATE_ENGINE | MOD-GATE_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
-| file_count | 375 文件 | 28 文件（§0.1） | ❌ |
+| build_status | planned | planned | ✅ |
+| file_count | 374 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -784,7 +784,7 @@ class ManualApprovalGate:
 | 测试类型 | 覆盖范围 | 位置 |
 |----------|---------|------|
 | 单元测试 | gate_engine / circuit_breaker / contract_template_manager / task_completion_gate | `tests/test_*.py` |
-| 集成测试 | G0-G7端到端门禁评估链路 | `tests/integration/test_gate_e2e.py` |
+| 集成测试 | G0-G7端到端门禁评估链路 | `tests/gov/gate/test_gate_e2e.py` |
 | 门禁YAML校验 | 每条entry_condition的PASS/FAIL两路径 | `validate_gate_discipline.py` |
 | 容量压测 | BM-01~05五场景(见§17) | `scripts/benchmark/gate_engine_load_gen.py` |
 | 哈希链验证 | 全链完整性+单决策重放 | `audit_chain_verifier.py` |
@@ -898,7 +898,7 @@ class ManualApprovalGate:
 |-----------|------------|------|-------------|---------|
 | 门禁注册表Catalogs副本 | docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml | 声明式注册表 | MOD-INF-015 | — |
 | 门禁测试(单元) | tests/test_gate_*.py | 单元测试 | — | — |
-| 门禁测试(集成) | tests/integration/test_gate_e2e.py | 集成测试 | — | — |
+| 门禁测试(集成) | tests/gov/gate/test_gate_e2e.py | 集成测试 | — | — |
 | 门禁治理脚本 | scripts/governance/d6_security/validate_gate_discipline.py | 注册一致性校验 | — | script-manifest.yaml |
 | 审计数据 | data/audit/gate_chain.db + data/audit/gate_chain.jsonl | 哈希链持久化 | audit_chain_verifier.py | — |
 | 决策快照 | data/audit/snapshots_hot/ → snapshots_warm/ → snapshots_archive/ | 快照生命周期 | audit_chain_verifier.py | — |
@@ -1026,7 +1026,7 @@ class ManualApprovalGate:
 | 对应蓝图契约 | §4.1 GateEngine.evaluate() + §12.1 CT-ORC-GATE-001 |
 | 产出位置 | `src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py` + `src/zephyr/data/persistence/task_repo.py` |
 | 验收标准 | TaskCard.status DRAFT→TODO自动触发G0；REVIEW→COMPLETED自动触发G7 |
-| 验证命令 | `python -m pytest tests/integration/test_gate_e2e.py -k test_auto_trigger` |
+| 验证命令 | `python -m pytest tests/gov/gate/test_gate_e2e.py -k test_auto_trigger` |
 | G7 检查项 | 上游task_repo.py已列出？下游GateResult消费方已适配？回滚方案可执行？ |
 | AI 自治范围 | human_gated——修改TaskRepository需Owner审批 |
 | 检查点 | task_repo.py中transition()调用gate_engine.evaluate()成功 |
@@ -1068,7 +1068,7 @@ class ManualApprovalGate:
 | # | 检查项 | 通过标准 | 类型 | 状态 |
 |---|--------|---------|:----:|:----:|
 | 1 | gate_engine.py无BOM+可导入 | `python -c "from zephyr.gates.gate_engine import GateEngine"` exit 0 | 完成 | ✅ |
-| 2 | CT-ORC-GATE-001测试通过 | `pytest tests/integration/test_gate_e2e.py` exit 0 | 完成 | ☐ |
+| 2 | CT-ORC-GATE-001测试通过 | `pytest tests/gov/gate/test_gate_e2e.py` exit 0 | 完成 | ☐ |
 | 3 | CT-SCRIPT-GATE-001测试通过 | `pytest tests/test_gate_engine.py -k test_exit_code` exit 0 | 完成 | ☐ |
 | 4 | SLO已定义且可测量 | §5.4每项SLI有测量方式 | 就绪 | ☐ |
 | 5 | 退化策略已实现 | §6.2每个组件有降级逻辑 | 就绪 | ☐ |
@@ -1485,7 +1485,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/ch_final_gate.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/commit_gates/data_supply_chain_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/decision_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/derivation_annotation_gate.py` | ✅ 已实现 | |
@@ -1494,6 +1493,9 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/commit_gates/frontend_truth_source_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/git_call_budget_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/map_family/construction_workflow_map_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/noqa_validation_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/pure_shim_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/read_side/__init__.py` | ✅ 已实现 | |
@@ -1507,7 +1509,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/takeover_pending_gate.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/commit_gates/trading_day_cycle_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/registry_alignment.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/admission/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py` | ✅ 已实现 | |
@@ -1519,141 +1520,8 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/action/test_action_reversibility.py` | ✅ 已实现 | |
-| `tests/ai/test_ai_capability_guard.py` | ✅ 已实现 | |
-| `tests/audit/audit_core/test_audit_chain_verifier.py` | ✅ 已实现 | |
-| `tests/autonomy/test_autonomy_credit.py` | ✅ 已实现 | |
-| `tests/autonomy/test_autonomy_maturity.py` | ✅ 已实现 | |
-| `tests/blueprint/test_blueprint_code_reconciler.py` | ✅ 已实现 | |
-| `tests/blueprint/test_blueprint_validator.py` | ✅ 已实现 | |
-| `tests/config/test_config_complexity_budget.py` | ✅ 已实现 | |
-| `tests/config/test_config_governance.py` | ✅ 已实现 | |
-| `tests/data/test_data_quality_gate.py` | ✅ 已实现 | |
-| `tests/db/test_db_integrity.py` | ✅ 已实现 | |
-| `tests/drift/test_drift_detector_gate.py` | ✅ 已实现 | |
-| `tests/gate/test_ci_cd_pre_scanner.py` | ✅ 已实现 | |
-| `tests/gate/test_concurrent_change_deconfliction.py` | ✅ 已实现 | |
-| `tests/gate/test_conflict_arbitration.py` | ✅ 已实现 | |
-| `tests/gate/test_cve_scanner.py` | ✅ 已实现 | |
-| `tests/gate/test_deployment_suppression.py` | ✅ 已实现 | |
-| `tests/gate/test_dynamic_llm_cost_router.py` | ✅ 已实现 | |
-| `tests/gate/test_emergency_takeover.py` | ✅ 已实现 | |
-| `tests/gate/test_federated_security.py` | ✅ 已实现 | |
-| `tests/gate/test_flag_lifecycle_manager.py` | ✅ 已实现 | |
-| `tests/gate/test_gate_context.py` | ✅ 已实现 | |
-| `tests/gate/test_gate_health.py` | ✅ 已实现 | |
-| `tests/gate/test_gate_integrity_guard.py` | ✅ 已实现 | |
-| `tests/gate/test_gate_override.py` | ✅ 已实现 | |
-| `tests/gate/test_gate_pipeline.py` | ✅ 已实现 | |
-| `tests/gate/test_gate_simulator.py` | ✅ 已实现 | |
-| `tests/gate/test_gate_types.py` | ✅ 已实现 | |
-| `tests/gate/test_license_compliance.py` | ✅ 已实现 | |
-| `tests/gate/test_merkle_audit_root.py` | ✅ 已实现 | |
-| `tests/gate/test_meta_performance_gate.py` | ✅ 已实现 | |
-| `tests/gate/test_parameterized_safety_gate.py` | ✅ 已实现 | |
-| `tests/gate/test_scope_creep_monitor.py` | ✅ 已实现 | |
-| `tests/gov_enforcement/read_side/test_fms_hygiene_gate.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_blueprint_id_legacy_reconciler.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_gate_chain_multiproc_append.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_pg_probe.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_stash_lifecycle.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_undefined_name_baseline_reconciler.py` | ✅ 已实现 | |
-| `tests/governance/code_quality/test_detect_forward_reference.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/gate_test_helpers.py` | ⚠️ 骨架 | |
-| `tests/governance/commit_gates/test_algo_note_sync_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_approval_resolver.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_bare_subprocess_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_blueprint_amodule_cross_check_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_blueprint_node_id_hardcode_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_capability_lookup_audit_log.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_capability_lookup_bypass_policy.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_capability_lookup_required_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_ch_final_gate_no_final_reads.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_check_yaml_anchor_consistency.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_commit_scope_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_consumers_accuracy_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_depgraph_freshness_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_depgraph_pre_registration_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_derived_file_deletion_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_doc_header_suite_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_domain_name_zh_direct_access_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_errcode_consistency_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_file_placement_ttl_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_foreign_change_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_forged_gw_marker_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_held_overlap_ailocks.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_hot_file_base_freshness_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_import_integrity_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_manual_only_permanent_gate_noqa.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_new_file_depgraph_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_noqa_validation_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_own_scope_promoted_gates.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_p4_merged_gates.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_precommit_offline_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_protected_paths_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_reconciler_health_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_registry_batch_edit_and_mass_deletion_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_registry_code_anchor_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_registry_mass_deletion_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_registry_yaml_parse_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_scripts_import_integrity_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_secret_registry_consistency_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_split_coordination_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_strategy_factory_map_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_syntax_validation_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_test_residue_ssot_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_tests_coverage_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_translation_coverage_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_undefined_name_gate.py` | ✅ 已实现 | |
-| `tests/governance/commit_gates/test_worktree_required_gate.py` | ✅ 已实现 | |
-| `tests/governance/redblue_wave73/test_v1_v3_forged_node_and_domain.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/gate_engine/test_adversarial_gate_integration.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/gate_engine/test_adversarial_validation.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/gate_engine/test_adversarial_validation_gate.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/invariants/test_en_001_circular_dependency.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/invariants/test_en_002_enforcement_validator.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/invariants/test_en_003_contract_compatibility.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/invariants/test_post_doc_review.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/invariants/test_zero_residue_check.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/test_adaptive_threshold.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/test_adversarial_strategies.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/test_breaking_change_detector.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/test_end_to_end_walkthrough.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/test_kiss_enforcer.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/test_secrets_guard.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/test_triple_alignment.py` | ✅ 已实现 | |
-| `tests/governance/test_alignment_gates_red_blue.py` | ✅ 已实现 | |
-| `tests/governance/test_ch_probe_json_serialization_canary.py` | ✅ 已实现 | |
-| `tests/governance/test_enforcement_surface_reconcile_canary.py` | ✅ 已实现 | |
-| `tests/governance/test_gate_failure_probes.py` | ✅ 已实现 | |
-| `tests/governance/test_generate_gate_face_reconciliation.py` | ✅ 已实现 | |
-| `tests/governance/test_preflight_bare_sql_alignment.py` | ✅ 已实现 | |
-| `tests/governance/test_pst_modified_scope.py` | ✅ 已实现 | |
-| `tests/governance/test_risk_tier_registry.py` | ✅ 已实现 | |
-| `tests/governance/test_session_takeover_ledger.py` | ✅ 已实现 | |
-| `tests/governance/test_split_coordination.py` | ✅ 已实现 | |
-| `tests/llm_security/test_llm_cost_router.py` | ✅ 已实现 | |
-| `tests/risk/test_risk_ssot.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l1_l27.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l28_l29.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l36_l37.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l38_l39.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l40_l41.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l42_l43.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l44_l45.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l46_l47.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l48_l49.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l50_l51.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l52_l53.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l54_l55.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l56_l57.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l58_l59.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l60_l61.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l62_l63.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l64_l65.py` | ✅ 已实现 | |
-| `tests/safety/test_safety_gate_l66_l67.py` | ✅ 已实现 | |
-| `tests/session/test_cross_commit_dependency.py` | ✅ 已实现 | |
-| `tests/task/test_task_types.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/test_construction_workflow_map_gate.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
