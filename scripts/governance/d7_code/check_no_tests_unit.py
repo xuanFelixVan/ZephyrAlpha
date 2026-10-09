@@ -85,6 +85,19 @@ _EXEMPT_PATH_PATTERNS = [
     re.compile(r"^docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline\.yaml$"),
     # 检测器自身必须字面含检测模式（正则/docstring/报错文案），自豁免
     re.compile(r"^scripts/governance/d7_code/check_no_tests_unit\.py$"),
+    # --- 案卷普查册/机生清单类豁免（2026-10-09 st-chiefc-20261009 SD 车道平权扩容批）---
+    # 案卷普查册/机生清单把历史路径（含 tests/unit/ 存量 token）作为记录对象/交割键逐字
+    # 收录，属清单数据非旧路径重引入（同 fms_deadref_baseline 机生册先例；死信专案
+    # 01_ledger §三受阻件两案实证：02_reference_census.md 普查册正文照录 1 处
+    # tests/unit/=其记录对象本身、05_tests_restore_manifest.yaml 交割清单逐字收录被删
+    # 测试树原路径=交割索引键）。
+    # [复审期限 2027-01-09] D8 格式类规则：本批为期限豁免（留痕+复审期限，禁常态化），
+    # 季度合并审计同窗（宪法 §4 内收判据 w5_1）复查命中率；零触发零消费即退役。
+    # 收窄设计：仅豁免清单/册数据面（.md/.yaml/.yml/.json/.csv），普查/清单同名的 .py
+    # 代码面照常扫描（代码里的 tests/unit/ 是活引用不是清单条目）。
+    re.compile(r"census[^/]*\.(md|ya?ml|json|csv)$"),  # 普查册 *census*.{md,yaml,yml,json,csv}
+    re.compile(r"manifest[^/]*\.(ya?ml|json|csv)$"),  # 机生清单 *manifest*.{yaml,yml,json,csv}
+    re.compile(r"_data/[^/]*\.csv$"),  # 机生数据清单目录 _data/*.csv（当前扫描面外，防御扫描面扩展回归）
 ]
 
 
