@@ -2426,3 +2426,13 @@ weak_consumer_modules_le2:
   - "af:pit_manager"  # non_test=2 stage=E4
   - "af:strategy_validation_pipeline"  # non_test=2 stage=E4
   - "af:e2_stationary_bootstrap"  # non_test=1 stage=E4
+
+# ---- F4 后续班 DB 化验回填（2026-10-04，Owner 解除车道 DB 军令状；走 DatabaseService reader）----
+db_results:
+  c1_backtest.strategy_screen: {rows: 1401, strategies: 574, latest_batch: "SIM-DEV-2026-09", verdicts: {screened_in: 381, deferred_c4: 321, rejected: 216, translated_c4: 206, oos_tested: 169}}
+  c1_backtest.hypothesis_precheck: {rows: 309, candidates: 231, verdicts: {precheck_rejected: 155, precheck_passed: 114, precheck_deferred: 40}}
+  c1_backtest.sim_daily_report: {rows: 258, days: 11, note: "日期列=report_date（处方列名笔误现场纠正）"}
+  c1_backtest.regime_snapshot_history: {rows: 3632}
+  c1_backtest.alloc_budget_daily: {rows: 30, days: 11}
+  c1_backtest.decision_daily: {rows: 136}
+  executed_by: st-map9-f4-20261003

@@ -64809,6 +64809,21 @@ creation_tokens:
   token: strategy-pipeline-algo-flow-graduated-package-feed-20261009
   created_by: st-chiefc-20261009-D
   capability: strategy_pipeline_algo_flow
+- file: docs/_working/chief_fullchain_20261006/r5_exemption.md
+  token: deadcure-campaign-r5exempt-chief-fullchain-20261006-20261009
+  created_by: st-deadcure-g1-chief
+  capability: deadcure-campaign
+  merge_evaluation: "R5 豁免标记件（复活随批）：目录名为 36 份已落地文档的引用锚点，改名即断链——单目录单标记件，无同真源可派生"
+- file: docs/_working/question_mining_20260927/r5_exemption.md
+  token: deadcure-campaign-r5exempt-question-mining-20260927-20261009
+  created_by: st-deadcure-g1-chief
+  capability: deadcure-campaign
+  merge_evaluation: "R5 豁免标记件（复活随批）：目录名为 4 份已落地文档引用锚点；单目录单标记件"
+- file: docs/_working/registry_incident_20260922/r5_exemption.md
+  token: deadcure-campaign-r5exempt-registry-incident-20260922-20261009
+  created_by: st-deadcure-g1-chief
+  capability: deadcure-campaign
+  merge_evaluation: "R5 豁免标记件（复活随批）：目录名为 14 份已落地文档引用锚点；单目录单标记件"
 file_token:
 - note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
   path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
