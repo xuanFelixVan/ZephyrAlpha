@@ -1,6 +1,6 @@
 rule_id: TRAE-028
 title: 文档治理-结构与命名
-version: 1.7.5
+version: 1.7.6
 layer: L1_foundation
 module_id: TRAE-028
 depends_on:
@@ -1162,6 +1162,10 @@ sections:
       - spec.md
       - .gitkeep
       - _index.yaml
+      # Owner 2026-10-09「G4 办①」批准（双重授权链：裁定#496 批文 + 本句口径）；
+      # 只豁免 AGENTS.md 一个名字，其余重名照拦；见 change_history 1.7.6 条目与红证。
+      - AGENTS.md
+
       skip_dirs_docs:
       - _DO_NOT_USE_old_tree
       - _archive
@@ -1539,9 +1543,16 @@ metadata:
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.7.5"
-  last_modified: "2026-07-04"
+  version: "1.7.6"
+  last_modified: "2026-10-09"
   change_history:
+  - version: "1.7.6"
+    date: "2026-10-09"
+    author: "st-deadcure-20261009 (死信清偿专车，Owner 口径执行)"
+    change: "N-16 豁免清单增 AGENTS.md（Owner 2026-10-09「G4 办①」双重授权链：40 件全批 A 批文已登记=裁定#496
+      +本句口径；related_rulings 挂 #496 不新开裁定号）——放行的正是 #ARCH-360 批准的『目录级嵌套局部宪法导航件』
+      机制（data//scripts//src/zephyr/ 三处 AGENTS.md 已入库，docs/ 下这份因 N-16 三名同袋死信三次）。
+      豁免只针对 AGENTS.md 这一个名字，其余重名照旧硬拦（红证见死信专案台账 01_ledger §三）。"
   - version: "1.7.5"
     date: "2026-07-04"
     author: "AI-Assistant"

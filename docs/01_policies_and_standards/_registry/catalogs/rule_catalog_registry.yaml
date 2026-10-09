@@ -738,7 +738,7 @@ files:
   title: 文档治理-结构与命名
   doc_type: ''
   status: ''
-  version: 1.7.5
+  version: 1.7.6
   rule_form: ''
   scope: doc_structure_naming
   stability: stable
