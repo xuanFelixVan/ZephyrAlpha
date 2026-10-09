@@ -68136,3 +68136,11 @@ entries:
   desc_en: ""
   plain_zh: "校准卡考试执行器：读预注册考试卡，对数据算响应曲线、IC、时滞、牛熊分段四件套，机械判门柱出分数行落分数册记试次账。判据零裁量，一票否决。"
   responsibility_layer: business
+- module_path: scripts/data_ops/audit_ti_row_versions.py
+  domain_id: D_DATA
+  name_zh: "技术指标行版本重复审计器"
+  name_en: "Audit Ti Row Versions"
+  desc_zh: "按 (period,单日) 分片只读统计 technical_indicator 同键多行的重复率、值分叉率与 ingest_ts 可裁决率，产出日序列供 A/B 定案"
+  desc_en: ""
+  plain_zh: "同一支股票同一时刻的技术指标本该只有一行，现在表里存了好几种不同版本叠在一起；这把尺就是每天去数到底有多少个键是重复的、重复的里面有多少个值还不一样、以及能不能靠入库时间挑出该用的那一版。它只读不改，专门给要不要改表或改读法这个决定提供数字"
+  responsibility_layer: business

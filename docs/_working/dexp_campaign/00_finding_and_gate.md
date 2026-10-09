@@ -202,4 +202,57 @@ VM 内执行过 `sudo fstrim -v /`（discard 提示，非删数据，已如实�
   一旦重算口径真变（后复权族先例），行序就不再是 harmless。
 - **建议（业务资产面＝Owner 门位，本班不自裁）**：二选一或并用——
   ①给 dwm 回填加"同键同值不重灌"前置判据（止住增量）；②按季 OPTIMIZE 收敛 daily 段（回收存量）。
+## 10. dwm 全史回填两天四遍·只读归因（批复③附加项，缺陷归数据车道）
+
+实测证据（全部现读，无推断）：
+
+| 项 | 读数 | 取数方式 |
+|---|---|---|
+| 计划任务 | `tilib_indicator_backfill_nightly` 在册，下次 2026-10-10 02:30 | `schtasks /query /fo CSV` |
+| 单趟耗时 | 24 片完成 02:40:58→11:25:20，片时合计 **535min≈8.9h** | `data/runtime/dwm_shard_state/daily_shard_*.json` |
+| 同键版本数 | 抽样 002789/2026-08-13 四行 `ingest_ts`＝10-08 21:32／10-09 04:42／06:51／10:38；daily 全史 max 7 版/键 | CH 现读 |
+| 出血速率 | 2026 daily 段两次现读 2,039,333 → 2,409,575 行（约 1.9h **+18%**）；全段 23,112,162 行 / 8,925,969 键＝**2.59×** | CH 现读 |
+| 单趟写入量 | **今日入库 11,227,985 行**（全为 period=daily），≈该段现存量的 48.6%（11.2M/23.1M）；此刻 `system.processes` 无 TI 查询＝趟次间歇 | `SELECT count() ... toDate(ingest_ts)=today()` |
+
+四条根因：
+
+- **R1 入口每晚自毁幂等记忆**：`scripts/data/backfill_night.ps1:7` 起跑即
+  `Remove-Item（-Recurse／-Force）data\runtime\dwm_shard_state` ⇒ 上一趟"已完成片"被抹掉 ⇒ 与
+  runner 的 `[INVARIANTS]`「重跑跳过 exit=0 片（幂等：同键覆盖，重叠无害）」**直接矛盾**；
+  而"重叠无害"的前提在该表**引擎无版本列**上不成立——未合并期读到哪一版由行序决定，行数还按趟数线性涨。
+- **R2 无单实例互斥**：runner 里 grep `lock|lease|single|互斥` 零命中 ⇒ 计划任务与手动续跑可并行/接力
+  （10-08 21:32 与 10-09 02:30 两趟叠加即为证）。
+- **R3 超时片永不留 state**：日志尾部实见 `TimeoutExpired ... timed out after 7200 seconds`
+  （daily shard_024），而 state 目录恰好缺这一片 ⇒ 每趟重灌该片 100 只票的全史，且这片**结构性补不上**。
+  另有 2 片 `exit=1`（shard 8／15），同样每趟重做。
+- **R4 每趟范围＝全史**：命令行实见 `--periods daily --start-daily 2021-01-01`（≈5.6 年 × 2,500 票/片）。
+
+非缺陷澄清：版本间目前只差浮点末位（max 9.1e-13，见 §9），所以这四遍**没有改读数**，
+改的是磁盘与"读到哪版"的不确定性；一旦重算口径真变（后复权族先例），行序即决定答案。
+
+## 11. 回填止盈细案（呈批：P1-P4 属数据车道施工，P5 属生产库大动作＝Owner 门位）
+
+顺序铁律：**先 P1 止血，再 P5 收存量**——否则一边 OPTIMIZE 收敛一边被下一趟灌回原体积。
+
+- **P1 值级跳过（主案，止住增量）**：`backfill_technical_indicator_dwm.py` 写前加一步——
+  按本片 symbol 现读最新版指纹（`argMax(col, ingest_ts)` 或 `cityHash64` 拼接列），
+  与新算结果逐列比对，**只在相对差 >1e-9 时 INSERT**；跳过条数写进该片 state（可观测）。
+  标价：按现测（末位噪声 ≤1e-12 量级）今晚这趟几乎零插入（≈8.9M 行全跳过）；
+  阈值本身是判据——太松会吞掉真实口径变更，太紧等于没改，**须 Owner 认这个 1e-9**。
+  红蓝：拿一行故意改 1e-6 的样本验证它必须被插入；拿 1e-13 的样本验证它必须被跳过。
+- **P2 停止自毁 state**：删掉 `backfill_night.ps1:7` 那行清除；改为 state 里带
+  `symbols_sha256`＋`start_daily` 指纹，输入变了才失效。回滚＝恢复该行（一行）。
+- **P3 单实例互斥**：runner 入口取一把命名锁（活体持有即退出并 log），杜绝计划任务与手动续跑并行。
+- **P4 分片与超时**：单片 7200s 对 100 票×5.6 年不够 ⇒ 片内再按年分块（或按实测单票耗时动态切片），
+  超时片必须写 `exit=timeout` 的 state，而不是静默无 state。
+- **P5 存量收敛（生产库，Owner 门位，本班不执行）**：按月分区推进
+  `OPTIMIZE TABLE c1_market.technical_indicator PARTITION ID '<daily,YYYYMM>' FINAL`，一次一月，
+  盯 `system.merges` 与 VM 内空闲；预计回收 **≈27.5 GiB**（现算 43.1 GiB × (1 − 8,925,969/23,112,162)）。
+  前置：G 盘备份链新鲜（读 `system.backups`，判据已由本班 `ch_chain_fresh()` 把关）＋
+  VM 空闲 ≥ 单月分区体量；排 23:30 后低峰；每月一片跑完即对拍 `count()` 与去重键数。
+  不可逆性说明：合并语义无损且幂等，但耗时占 IO，且**回收的空间要再经 vhdx 压缩才归还宿主**。
+- **验收尺（已就绪，待落地）**：`python scripts/data_ops/audit_ti_row_versions.py --days <日> --periods daily`
+  出 dup_ratio／divergence_ratio／行膨胀三把尺；P1 生效后连跑 3 晚应见版本数不再 +1/天，
+  P5 每片后 `row_inflation_ratio` 向 1.0 收敛。
+
 

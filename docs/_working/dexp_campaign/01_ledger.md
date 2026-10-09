@@ -85,3 +85,106 @@ ttl: task_bound
 | R-4 | 态② 25 棚内容级复核 | 移交属主车道（§4） |
 | R-5 | TI 重复行缺陷（非本战役） | 见 `02_ti_duplicate_rows_found.md`，业务资产门位 |
 | R-6 | VHDX 压缩门位 | 见 `00_finding_and_gate.md` §6 选项表 |
+
+---
+
+# 【折入】两枚 initializing 死锁棚移交单（Owner 裁定 #6；原拟单列为 05 号件，同上原因折入）
+
+## 处置选项（按 git 自己的处方，非我发明）
+
+```bash
+# git 对该状态的官方处方（错误信息原文即此）：
+git -C D:/ZephyrAlpha worktree remove --force --force .aidrafts/st-mx07-W2
+git -C D:/ZephyrAlpha worktree remove --force --force .aidrafts/st-tclose-fwire-20261004
+# 之后清 admin 元数据（只删目录已不存在的条目，安全）：
+git -C D:/ZephyrAlpha worktree prune --dry-run --verbose
+```
+
+## 为什么我不自己按下去
+
+1. 根宪法 §1 条 3 / §3 条 4：**他会话在途违规不代修**，`initializing` 锁＝有人开过 `worktree add`，
+   我无法证明那一刻不是**正在发生的施工**（我只能证明我的会话启动那一刻它已卡着）。
+2. 接管台账（`session_takeover_ledger`）对 worktree 的处方明确写着
+   `Rx: owned worktree ...：先核成果 merge 回主区或 abort 放弃；worktree remove 走裁定通道登记，`
+   **`禁裸 git worktree remove`**——双 `--force` 正是被禁的裸删形态之一，需登记后执行。
+3. 体量小（合计 0.51 G），对本战役 26.4 G 的结论无影响，不值得用一次不可逆误删去换。
+
+## 佐证材料位置
+
+- 逐件判据：`docs/_working/dexp_campaign/03_evidence_summary.yaml` → `per_item_disposition`
+  （含 `path/branch/head/size_gb/result/rollback`）。
+- 第二道闸（≥20MB 非 tracked 件反查）：两棚均在 91 件态① 清单内，审计结论 0 命中。
+- 回滚不需要：两棚 HEAD 均为 dev 祖先且零脏件，重建命令已入账
+  （`git -C D:/ZephyrAlpha worktree add .aidrafts/<名> session/<名>`）。
+
+
+
+## 交接卡·熔断期停手（2026-10-09 23:56，sid=st-dexp-20261009）
+
+**停手原因（实测）**：TRAE-079 O2 会话级熔断——计数真源不在主区，而在池工工作树台账：
+`.runtime/commit_queue/worktrees/w0/.runtime/gate_audit/allow_overlap_usage.jsonl` 本会话近 24h **7 条**、
+`w1` **10 条**（主区同名台账 **0 条**）。两把闸都 ≥5 ⇒ 本班任何袋必死（0040/0041/0043/0044 已四连死实证）。
+**解除必须动这两个文件所在通道或阈值，"Owner 报备"文本不拨开关**。
+附带发现（交门主，本班不改判据）：这些记录里 `hot_files=[]`、`eviction_excused=None`
+⇒ 他伤豁免白名单 `_judge_eviction_excuse(ts, [])` 永不命中——写侧漏填 hot_files，令 O2 的豁免腿形同虚设。
+
+### 已在地面、待落的四袋（内容全部已实现＋自证，勿重做）
+1. **P2 止血袋（三件同袋，缺一即回归）**
+   - `scripts/data/backfill_night.ps1`：删除每晚抹 `dwm_shard_state` 的生产行（注释全 ASCII，非 ASCII 字节=0）
+   - `scripts/data/tilib_dwm_shard_runner.py`：新增 `shard_already_done(rec, today)` 当日戳判据
+     ＋`--state-dir`（测试可指 tmp_path，零生产写）；循环跳过改走该判据
+   - `tests/data/data/data/test_tilib_dwm_shard_state_stamp.py`：8 例（tests/ 免 creation_token）
+   - 红证四条**已逐一实测**：把判据改回"只看 exit==0" ⇒ 3 例立红（昨日戳必重算/缺戳必重算/隔日整片重算）；
+     把抹 state 行塞回 ps1 ⇒ 第 4 例立红；恢复后 8 passed。
+   - 明晨验证口径（新）：夜跑后各片 `finished_at=当日`；`SELECT count() ... toDate(ingest_ts)=today()`
+     远低于 11,227,985；**旧口径"state 目录存活"单独用会掩盖冻结**（删自毁而不加当日戳＝指标停摆）。
+2. **token 先行袋**：`capability_canonical_file_registry.yaml`（车道侧＝HEAD 基底＋本班 5 行纯插入，
+   自证＝删回本块逐字节等于 HEAD；主区那本含他人未落地条目，一字节未动）
+3. **主批袋**：`ch_reader`（⑤-b 响亮化）＋`audit_ti_row_versions.py`（尺）＋翻译册条目＋
+   `01_ledger.md`/`02_ti_duplicate_rows_found.md` 折入全文＋`00_finding_and_gate.md` §10/§11＋reconciler 测试 7 例
+4. **指标读侧袋**：`indicator_reader.py`（第三条路＋SQL_READ_ROWS 常量化＋ALGO_FLOW 锚＋docstring 约束2 改写）
+   ＋`docs/03_modules/_domain_factor/algo_flow/indicator_reader.yaml`（手写如实机器块，parse_algo_flow 3 层 7 节点）
+
+### 熔解后的投法（顺序即依赖，命令照抄）
+```bash
+TIP=$(git -C D:/ZephyrAlpha rev-parse dev)
+cd D:/ZephyrAlpha/.aidrafts/st-dexp-20261009
+# 单域袋（含 token 先行袋、P2 袋的 ps1+runner 若同域）
+python D:/ZephyrAlpha/scripts/commit_queue.py --queue-root D:/ZephyrAlpha/.runtime/commit_queue   enqueue --session <sid> --files "<同域清单>" --base-head $TIP --message-file <msg.txt>
+# 跨域原子袋（入队口 COMMIT-SCOPE 无多域逃生位，只能走 git_commit；base 取车道头→先刷新车道基座）
+python D:/ZephyrAlpha/scripts/git_commit.py --session <sid> --files "<多域清单>"   --message-file <msg.txt> --enqueue --allow-multi-domain
+```
+铁律四条（今晚每条都付过学费）：①重投同一件前必 `git show dev:<f>` 与盘面对拍，已进 HEAD 的件**剔出袋**；
+②`base_head` 显式取 dev 尖，否则我自己前一次落地会把我打成"双侧皆改真冲突"；
+③新 `.py` 的 token 与翻译条目必须**先进 dev 再投件**、且与本体同袋；
+④内容修复后的死袋禁 requeue（队列处方原文），只重投新袋；旧死信交 dead-archive 归档。
+
+### 待落期间的外部状态
+- HEAD 红窗 6 例：5 例等第 3 袋（引用 `engine_probe_failures`），1 例等第 4 袋（引用 `_projection`）。
+- 翻译册 claim 已放（23:37，进程外核实＝锁目录消失＋registry 无记录），图书馆以**当前 dev** 为基线超集；
+  本班第 3 袋重投时按"HEAD 基底＋只插本班一条"重基，不碰他队行。
+- dwm 今晚 02:30 夜跑仍是旧行为（全史重灌，≈11M 行）——这是裁定 2 的 (c) 分支，可接受代价已入账。
+
+### 放行留痕（2026-10-10 00:18，Owner 放行令经总统筹转达）
+清前/清后逐本计数（只删 `session_id=st-dexp-20261009` 行，他行零动；行数算术已断言）：
+```
+w0  清前 598 行  本班 7 条(近24h 7)  清后 591  残留 0
+w1  清前 528 行  本班 10 条(近24h 10) 清后 518  残留 0
+w2  清前 309 行  本班 1 条(近24h 1)   清后 308  残留 0
+w3  清前 348 行  本班 2 条(近24h 2)   清后 346  残留 0
+合计清除本班 20 条；放行依据=门处方「向 Owner 报备后人工放行」＋本批成因实证（chiefc 吸收＋base-head 自冲突＋A-13 豁免腿因 hot_files=[] 失效）。
+踩坑记录：`safe_write_text` 的 base 用 `content_sha256(read_text())`（解码后），
+若按 `sha256(read_bytes())`（台账是 CRLF）传基线会**恒判 stale_base 连拒 5 次**——不是并发争抢，是行尾口径。
+会话已重注册：keeper pid 24264（logical=True，心跳 9s），heartbeat daemon pid 17968，reaper keep 已重订。
+
+### 自报勘误两条（00:37，随主批袋落地）
+1. **口径错**：P2 袋 ps1 注释与本卡早前把"今日 daily 段插入 11,227,985 行"写成"单趟插入量"。实为
+   **日界口径差**：`toDate(ingest_ts)` 走列时区 UTC＝11.23M，而 `ingest_ts >= toDateTime('2026-10-09 00:00:00')`
+   走服务器时区＝14.09M（差 8 小时），两者都是"一整天多趟累计"，**不是单趟**。
+   正确表述：10-09 单日 daily 段累计插入 14.09M 行（服务器时区日界）／11.23M 行（UTC 日界），
+   来自同日约 3-4 趟重灌；单趟量级≈3.5-4M 行。落地后我把注释改回这个口径（后续小袋带 ps1 一行注释修正）。
+2. **红窗数字错**：我此前两报"HEAD 红 6 例"。逐符号复核后的真值＝**1 例**
+   （`tests/legacy_zephyr/factor/test_indicator_reader.py` 引用 `ir._projection`，该符号随最后一袋落地）；
+   其余原以为红的引用（`engine_probe_failures`/`get_table_engine_strict`/census 三例）经 HEAD 实测已具备——
+   chiefc 那笔吸收式提交把我 ch_writer 侧改动带进 dev 时连带治愈了它们。测法：
+   对每个已落测试文件抽 `alias.symbol` 引用，逐个回查 dev 源文件是否定义该符号（不做整树跑测）。
