@@ -1,0 +1,340 @@
+schema: exam_cost_reexam/v1
+tag: fresh
+window:
+- '2025-09-01'
+- '2026-09-19'
+config: 'config/exam_scale_cost_gate.yaml (批C 预注册冻结档: 五档单调+全成本存活+E7≤8x)'
+caliber_note: 裁定#325 口径：逐条判档出数字证据，禁全绿表述；死刑参照件仅记录不参与名单
+n_trial_ledger: 'ledger_error: TrialLedgerError: N 账本 CAS 写重试耗尽: 注册表族文件删除行数 13 超阈值
+  max(1, ceil(0.5%×90))=1 且未显式 allow_mass_edit，拒写——批量编辑请走外科脚本/裁定通道并显式传 allow_mass_edit=True'
+pool_size: 17
+cost_qualified:
+- CAND-8d000bf3ccc3
+- CAND-c4ec6332c07f
+- CAND-e3da6fa71af1
+cost_qualified_n: 3
+mirror_4440:
+  verdict: COST_FAIL
+  annual_turnover_x: 86.25
+  blocked: true
+  note: 照妖镜判据：4440 必须被成本门拦截（blocked=true 为过）
+rows:
+- strategy_id: FACT-4db4c41e
+  file: c4_fact_4db4c41e.py
+  death_row_ref: true
+  verdict: COST_FAIL
+  annual_turnover_x: 0.49
+  tier_sharpes:
+    '0.0': -0.196
+    '5.0': -0.198
+    '10.0': -0.2
+    '20.0': -0.2039
+    '40.0': -0.2118
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: true
+  frozen_caliber_sharpe: -0.198
+  reasons:
+  - 全成本档(40bp) sharpe=-0.212 < 存活地板 0.00——纸面亮实盘死
+  wall_sec: 1.1
+- strategy_id: FACT-4f749668
+  file: c4_fact_4f749668.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 41.04
+  tier_sharpes:
+    '0.0': -0.2282
+    '5.0': -0.4059
+    '10.0': -0.5836
+    '20.0': -0.9391
+    '40.0': -1.6498
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: false
+  frozen_caliber_sharpe: -0.406
+  reasons:
+  - 全成本档(40bp) sharpe=-1.650 < 存活地板 0.00——纸面亮实盘死
+  - 'E7 换手门: 年化单边换手 41.0x > 上限 8x（日均 0.1682 × 244）——成本拖累超预注册预算'
+  wall_sec: 0.8
+- strategy_id: FACT-4228020a
+  file: c4_fact_4228020a.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 41.31
+  tier_sharpes:
+    '0.0': -0.3174
+    '5.0': -0.4994
+    '10.0': -0.6814
+    '20.0': -1.0454
+    '40.0': -1.7724
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: false
+  frozen_caliber_sharpe: -0.499
+  reasons:
+  - 全成本档(40bp) sharpe=-1.772 < 存活地板 0.00——纸面亮实盘死
+  - 'E7 换手门: 年化单边换手 41.3x > 上限 8x（日均 0.1693 × 244）——成本拖累超预注册预算'
+  wall_sec: 0.7
+- strategy_id: FACT-e293e217
+  file: c4_fact_e293e217.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 30.35
+  tier_sharpes:
+    '0.0': -0.7111
+    '5.0': -0.8559
+    '10.0': -1.0007
+    '20.0': -1.29
+    '40.0': -1.8682
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: false
+  frozen_caliber_sharpe: -0.856
+  reasons:
+  - 全成本档(40bp) sharpe=-1.868 < 存活地板 0.00——纸面亮实盘死
+  - 'E7 换手门: 年化单边换手 30.4x > 上限 8x（日均 0.1244 × 244）——成本拖累超预注册预算'
+  wall_sec: 0.6
+- strategy_id: FACT-e831084c
+  file: c4_fact_e831084c.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 65.34
+  tier_sharpes:
+    '0.0': -1.0409
+    '5.0': -1.3162
+    '10.0': -1.5914
+    '20.0': -2.1413
+    '40.0': -3.2379
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: false
+  frozen_caliber_sharpe: -1.316
+  reasons:
+  - 全成本档(40bp) sharpe=-3.238 < 存活地板 0.00——纸面亮实盘死
+  - 'E7 换手门: 年化单边换手 65.3x > 上限 8x（日均 0.2678 × 244）——成本拖累超预注册预算'
+  wall_sec: 0.6
+- strategy_id: FACT-4b200528
+  file: c4_fact_4b200528.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 70.59
+  tier_sharpes:
+    '0.0': -0.5414
+    '5.0': -0.7871
+    '10.0': -1.0328
+    '20.0': -1.5236
+    '40.0': -2.5028
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: false
+  frozen_caliber_sharpe: -0.787
+  reasons:
+  - 全成本档(40bp) sharpe=-2.503 < 存活地板 0.00——纸面亮实盘死
+  - 'E7 换手门: 年化单边换手 70.6x > 上限 8x（日均 0.2893 × 244）——成本拖累超预注册预算'
+  wall_sec: 0.7
+- strategy_id: CAND-8d000bf3ccc3
+  file: c4_8d000bf3ccc3_pb_poe.py
+  death_row_ref: false
+  verdict: COST_PASS
+  annual_turnover_x: 3.71
+  tier_sharpes:
+    '0.0': 0.6684
+    '5.0': 0.6566
+    '10.0': 0.6449
+    '20.0': 0.6214
+    '40.0': 0.5744
+  monotonic: true
+  full_cost_survived: true
+  turnover_within_cap: true
+  frozen_caliber_sharpe: 0.657
+  reasons:
+  - '成本门通过: 档位 sharpe [0.668, 0.657, 0.645, 0.621, 0.574] 单调且全成本档存活（40bp=0.574），年化换手
+    3.7x<=8x'
+  wall_sec: 18.4
+- strategy_id: CAND-c4ec6332c07f
+  file: c4_c4ec6332c07f_trend_score.py
+  death_row_ref: false
+  verdict: COST_PASS
+  annual_turnover_x: 5.25
+  tier_sharpes:
+    '0.0': 0.9343
+    '5.0': 0.8805
+    '10.0': 0.8265
+    '20.0': 0.7185
+    '40.0': 0.5033
+  monotonic: true
+  full_cost_survived: true
+  turnover_within_cap: true
+  frozen_caliber_sharpe: 0.88
+  reasons:
+  - '成本门通过: 档位 sharpe [0.934, 0.88, 0.827, 0.719, 0.503] 单调且全成本档存活（40bp=0.503），年化换手
+    5.2x<=8x'
+  wall_sec: 0.4
+- strategy_id: CAND-e3da6fa71af1
+  file: c4_e3da6fa71af1_panic_rebound.py
+  death_row_ref: false
+  verdict: COST_PASS
+  annual_turnover_x: 0.95
+  tier_sharpes:
+    '0.0': 0.7737
+    '5.0': 0.7632
+    '10.0': 0.7525
+    '20.0': 0.7313
+    '40.0': 0.6884
+  monotonic: true
+  full_cost_survived: true
+  turnover_within_cap: true
+  frozen_caliber_sharpe: 0.763
+  reasons:
+  - '成本门通过: 档位 sharpe [0.774, 0.763, 0.752, 0.731, 0.688] 单调且全成本档存活（40bp=0.688），年化换手
+    1.0x<=8x'
+  wall_sec: 0.1
+- strategy_id: CAND-4440d07f973f
+  file: c4_4440d07f973f_ultrashort.py
+  death_row_ref: true
+  verdict: COST_FAIL
+  annual_turnover_x: 86.25
+  tier_sharpes:
+    '0.0': -0.5939
+    '5.0': -0.9046
+    '10.0': -1.216
+    '20.0': -1.8389
+    '40.0': -3.0745
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: false
+  frozen_caliber_sharpe: -0.905
+  reasons:
+  - 全成本档(40bp) sharpe=-3.075 < 存活地板 0.00——纸面亮实盘死
+  - 'E7 换手门: 年化单边换手 86.3x > 上限 8x（日均 0.3535 × 244）——成本拖累超预注册预算'
+  wall_sec: 8.7
+- strategy_id: CAND-eaddc3f9db4e
+  file: c4_eaddc3f9db4e_rsrs_r2.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 3.34
+  tier_sharpes:
+    '0.0': -0.2365
+    '5.0': -0.2621
+    '10.0': -0.2878
+    '20.0': -0.339
+    '40.0': -0.4411
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: true
+  frozen_caliber_sharpe: -0.262
+  reasons:
+  - 全成本档(40bp) sharpe=-0.441 < 存活地板 0.00——纸面亮实盘死
+  wall_sec: 0.3
+- strategy_id: CAND-d06cab686cef
+  file: c4_d06cab686cef_rsrs_opt.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 3.34
+  tier_sharpes:
+    '0.0': -0.367
+    '5.0': -0.3927
+    '10.0': -0.4184
+    '20.0': -0.4698
+    '40.0': -0.5718
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: true
+  frozen_caliber_sharpe: -0.393
+  reasons:
+  - 全成本档(40bp) sharpe=-0.572 < 存活地板 0.00——纸面亮实盘死
+  wall_sec: 0.1
+- strategy_id: CAND-29eb91dbaf60
+  file: c4_29eb91dbaf60_crash_dodge.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 0.49
+  tier_sharpes:
+    '0.0': -0.1227
+    '5.0': -0.1258
+    '10.0': -0.1289
+    '20.0': -0.1351
+    '40.0': -0.1474
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: true
+  frozen_caliber_sharpe: -0.126
+  reasons:
+  - 全成本档(40bp) sharpe=-0.147 < 存活地板 0.00——纸面亮实盘死
+  wall_sec: 0.1
+- strategy_id: CAND-a4543012b464
+  file: c4_a4543012b464_trend5.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 63.54
+  tier_sharpes:
+    '0.0': -0.4608
+    '5.0': -0.5932
+    '10.0': -0.7256
+    '20.0': -0.9906
+    '40.0': -1.5201
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: false
+  frozen_caliber_sharpe: -0.593
+  reasons:
+  - 全成本档(40bp) sharpe=-1.520 < 存活地板 0.00——纸面亮实盘死
+  - 'E7 换手门: 年化单边换手 63.5x > 上限 8x（日均 0.2604 × 244）——成本拖累超预注册预算'
+  wall_sec: 4.4
+- strategy_id: CAND-e2e7f033d97c
+  file: c4_e2e7f033d97c_kd_cross.py
+  death_row_ref: true
+  verdict: COST_FAIL
+  annual_turnover_x: 20.01
+  tier_sharpes:
+    '0.0': -2.5165
+    '5.0': -2.5855
+    '10.0': -2.6542
+    '20.0': -2.7904
+    '40.0': -3.0581
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: false
+  frozen_caliber_sharpe: -2.586
+  reasons:
+  - 全成本档(40bp) sharpe=-3.058 < 存活地板 0.00——纸面亮实盘死
+  - 'E7 换手门: 年化单边换手 20.0x > 上限 8x（日均 0.0820 × 244）——成本拖累超预注册预算'
+  wall_sec: 1.7
+- strategy_id: CAND-bd42540f86e4
+  file: c4_bd42540f86e4_pe_pb.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 15.45
+  tier_sharpes:
+    '0.0': -0.8914
+    '5.0': -0.9717
+    '10.0': -1.052
+    '20.0': -1.2119
+    '40.0': -1.5292
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: false
+  frozen_caliber_sharpe: -0.972
+  reasons:
+  - 全成本档(40bp) sharpe=-1.529 < 存活地板 0.00——纸面亮实盘死
+  - 'E7 换手门: 年化单边换手 15.4x > 上限 8x（日均 0.0633 × 244）——成本拖累超预注册预算'
+  wall_sec: 5.0
+- strategy_id: CAND-6a6ec8869ddb
+  file: c4_6a6ec8869ddb_momentum62.py
+  death_row_ref: false
+  verdict: COST_FAIL
+  annual_turnover_x: 58.51
+  tier_sharpes:
+    '0.0': 0.5199
+    '5.0': 0.3335
+    '10.0': 0.1471
+    '20.0': -0.2257
+    '40.0': -0.9703
+  monotonic: true
+  full_cost_survived: false
+  turnover_within_cap: false
+  frozen_caliber_sharpe: 0.333
+  reasons:
+  - 全成本档(40bp) sharpe=-0.970 < 存活地板 0.00——纸面亮实盘死
+  - 'E7 换手门: 年化单边换手 58.5x > 上限 8x（日均 0.2398 × 244）——成本拖累超预注册预算'
+  wall_sec: 12.4
