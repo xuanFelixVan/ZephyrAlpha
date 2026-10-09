@@ -4377,6 +4377,63 @@ entries:
   - 裁定#373
   - 裁定#385
   - 裁定#478
+- ruling_id: 裁定#499
+  date: "2026-10-09"
+  title: trae_065 触发面扩面新增 asset_state_assertion（D3 标准与阈值路由，AI 代裁；GPU 摊销负存在误报案治本第三件 F3）
+  status: active
+  summary: "st-examchief-20261009 依二号总队指令（Owner 2026-10-09 两份施工令）F3 项执行。\n【病灶】GPU 摊销 P1+L1 已落地（c8da8a8056/cf16fa43fd）却被规划轮误报\"未做\"——\n负存在断言零证据义务，散文便签与记忆被当状态证据。\n【Rx】docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml\nv1.0.0→v1.1.0：triggers 增 operation: asset_state_assertion；新节\nasset_state_assertion（正查义务=lookup state 三源证据包附指针；散文便签不构成\n状态证据；馆零命中≠不存在，降级阶梯挂 offzone_retrieval_boundary_sop）；\n不变量 CAP-LOOKUP-INV-007（violation_action=reject_deliverable）。\n【路由】D3（标准与阈值/判据面——把人的纪律变机器判据，G3-4）；该册\nmodification_permission=immutable_core，本裁定=Owner 施工令授权链下的变更记录，\n授权=二号总队指令 F3 项原文。\n【审计通道】.runtime/lookup_audit/ 既有面承接（lookup state 复用\nwrite_lookup_audit_log，零新审计设施）。\n【复测判据】\"GPU 摊销做了吗\"单命令复现：python -m zephyr.library.lookup state\n\"GPU 摊销\" 须四项命中（c8da8a8056+cf16fa43fd+p1_wiring_benchmark.md+prereg L2 挂账便签）。"
+  category: 治理
+  evidence: docs/_working/examcard_campaign/01_w1_f06_root_cause.md（病灶证据链）；F2 对账（2816 件场外区面）；F1 硬验收输出
+  adjudicator: st-examchief-20261009
+  superseded_by: ""
+  affected_files:
+  - docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/sop/library_sop/offzone_retrieval_boundary_sop.md
+  - docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md
+  related_rulings:
+  - 裁定#372
+  - 裁定#494
+- ruling_id: 裁定#500
+  date: "2026-10-09"
+  title: CASEBOOK-010 资产状态断言事故案卷库开册+case 0 首录 GPU 摊销误报案（F5；条目增删随裁定走的册内纪律）
+  status: active
+  summary: "st-examchief-20261009 依二号总队指令 F5 项执行（Owner 2026-10-09 施工令授权链）。\n【Rx】casebook_registry 增 CASEBOOK-010（form=yaml_ledger，实体台账=\ndocs/_working/examcard_campaign/asset_assertion_cases.yaml，case_id 从 0 起）；\ncase 0 首录本案：案由（已落地被报未做）/根因四层（表层凭记忆断言→流程层断言零证据\n义务→制度层场外区检索边界未登记→工具层馆前门无 git log 通道）/治本五件\n（F1 lookup state+F2 边界册+F3 trae_065 v1.1.0+F4 mining_sop §7.5+F5 本件）/\n复测判据（lookup state \"GPU 摊销\" 四项命中，缺一返工）。\n【净零】无新 gate；台账为既有 casebook 形态（form: yaml_ledger 同 CASEBOOK-009 先例）。\n【同批共用】prereg 回填字段指针化（measured_at/run_id/commit 三元组）与 W2 标定\n回填同批共用同一结构——落 config/search_space_prereg.yaml（W2 批落地）。"
+  category: 治理
+  evidence: docs/_working/examcard_campaign/asset_assertion_cases.yaml（case 0 全文）；裁定#499（F3 同战役批）
+  adjudicator: st-examchief-20261009
+  superseded_by: ""
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml
+  - docs/_working/examcard_campaign/asset_assertion_cases.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml
+  - docs/_working/examcard_campaign/asset_assertion_cases.yaml
+  related_rulings:
+  - 裁定#493
+  - 裁定#499
+- ruling_id: 裁定#501
+  date: "2026-10-09"
+  title: TDM confidence 闭环 v1 判据冻结+回写接线（D3+D5 路由，AI 代裁；考试卡 D7 决策落地件 W5）
+  status: active
+  summary: "st-examchief-20261009 依二号总队指令 W5 项执行（Owner 2026-10-09 施工令授权链；\n方案真源 docs/_working/2026-10-09-tdm-exam-card-system-plan.md D7 拍板）。\n【冻结判据（v1，禁事后挪门柱 G4-5）】\n升级 proposed/untested→verified：该节点 examined 卡分数行 verdict=pass 且\npillars_all_pass=true 且 oos_ok=true 且 regimes >= {bull,bear}（双行情段）——三条件\n缺一不可（W4 纪律：单变量候选关系过 OOS+双行情段才升级）。\n降级 verified→proposed：decay_scan 分数行 verdict=fail（衰减扫描触发，\n频率=节点 decay_scan_frequency 真源）。\n其余 fail：confidence 不动，只标候选关系。\n【G1-1 内收判定】回写=独立小工具 scripts/backtest/writeback_exam_confidence.py\n（MOD-BT-242）：并入 decision_map.py 会把\"分数册消费\"混进\"图载荷/校验\"职责\n（跨域不同对象=不并另立，判据 G1-1③）；分数册=exam_scores_v1.yaml（D4 三层存储\n之成绩汇总面，首分落地时建册禁空册）。\n【外科术式】TDM 编辑=节点块内 confidence 行替换，禁整文件重排（保手工排版）；\n写后必过 load_decision_map 全图校验；写经 safe_write_text CAS；缺省 dry-run。\n【演示位】一卡出分=confidence 自动变化的实弹演示随 W4 首批分数落地（前置②\ndexp TI 读侧确定性修复在途，未确认前分数面暂缓——阻塞如实登记非跳过）。"
+  category: 治理
+  evidence: tests/backtest/test_writeback_exam_confidence.py 13/13（判据红蓝+外科替换+dry-run 零写+fail-closed）
+  adjudicator: st-examchief-20261009
+  superseded_by: ""
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - scripts/backtest/writeback_exam_confidence.py
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - scripts/backtest/writeback_exam_confidence.py
+  - tests/backtest/test_writeback_exam_confidence.py
+  related_rulings:
+  - 裁定#499
+  - 裁定#413
 - ruling_id: 裁定#502
   date: "2026-10-09"
   title: 热册单口写·直写轨退役：batch_creation_tokens 改意图 API 薄壳，YAML 直写路径整体删除（register→publish→render 三步内置）
@@ -4385,42 +4442,17 @@ entries:
   category: 治理
   approved_paths:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-- ruling_id: 裁定#6
-  date: "2026-06-20"
-  title: 路径SSoT（路径真源铁律）
-  status: active
-  summary: 所有路径相关常量必须从单一真源派生，禁止多真源同步。审计数据目录、REPO_ROOT 等路径 常量集中到 zephyr.shared.io.paths 模块，其他模块 import 复用而非自定义。治本逻辑： 单一真源=单一变更点=零漂移风险；多真源=同步负担=必然漂移。落地：paths.py 集中定义 REPO_ROOT/AUDIT_DIR/GOV_DIR 等路径常量，全项目通过 import zephyr.shared.io.paths 复用。
-  category: 治本
-  related_arch: []
-  superseded_by: null
-  affected_files:
-  - d:\ZephyrAlpha\src\zephyr\shared\io\paths.py
-  related_rulings: []
 - ruling_id: 裁定#503
+  date: "2026-10-10"
   title: REAL-KEY-REFERENCE-SCAN 增设『封闭枚举＋owner_sign 裁定引用』准入面（甲改门）＋QMT·实盘键名×5 测试件复活授权链落正式通道（含风险认知声明）
-  date: '2026-10-10'
-  category: 治理
   status: active
-  summary: '【授权链（Owner 双令，本裁定=把对话批复落成 §9.11 正式通道）】
-
-    ① Owner 2026-10-09 批复第 2 条：批 QMT·实盘键名×5 白名单——F-1b 红证持出的 5 件（含该字面量的真实测试件）由死信二期专车按白名单口径落地复活，登记白名单依据=Owner
-    本批复原文；其余 35 件持出照旧逐件判。
-
-    ② Owner 2026-10-10 批复：在死信二期专车呈报『三道禁令全在册（白名单=代码常量无登记面／处方明写禁改白名单＋禁拆分绕过／对话批准不自动构成豁免）』并逐条标价后，Owner 回「按甲改门」，并下执行令：准入面三锁照实现、红证三向缺一不算完、边界=只动准入面其他扫描逻辑零触碰、准入清单任何新增=新裁定+Owner（本设计下
-    AI 无法自扩）。
-
-    【风险认知声明（Owner 已标价知情）】本裁定动的是**安全门本体**（NL-2 判据②，redline 族）。缓解=准入面**限定为封闭枚举**：写死 5 条精确路径，禁模式匹配、禁通配、禁目录前缀；第二锁要求引用**带
-    owner_sign 的在册裁定号**（AI 代裁不具备资格，专防『自登一条裁定即绕红线』——本期已实证过存在伪造 Owner 署名的会话，故此洞非假想）；第三锁每次放行必写审计行（裁定号+路径+时间）。三锁全在=放行，任一失配=照拦且拒绝理由可查。
-
-    【判据面（为何这 5 件值得动门）】5 件均为真实回归测试件而非案卷：其 fixture 中的键名是**被测数据**（loader 对真实 .env.qmt 格式含实盘键共存的容忍度／红线负面清单断言），改成描述性引用会使测试不再测其目标＝总队
-    F-1b 当初拒绝代改语义的同一条理由（防虚构覆盖）。复活前置=车道内 pytest 当场绿，已实测五件 60 passed（非存在性判据）。
-
-    【序（执行令原样）】本裁定先落（RULE-RULING 同 commit 原子）→ 门改＋红证三向 → 5 件复活 → 白名单项销账。
-
-    【边界与失效条件】门的其他扫描逻辑零触碰；准入清单新增须新裁定＋Owner 实签；若发现任一枚列名件被改写为不含被测键名（准入面被当作常规通道滥用）⇒ 本准入面立即整体回退（回滚=revert 本门改动
-    commit，裁定保留为已执行记录）。'
-  evidence: 红证三向 tests/gov/governance/redline/test_real_key_admission_surface.py：①未列名件含该字面量→仍拦 ②伪造/无 owner_sign
-    裁定引用→拦 ③列名+有效 owner_sign 裁定→放行并落审计行；五件复活实测 python -m pytest <5 件> -q → 60 passed
+  summary: "【授权链（Owner 双令，本裁定=把对话批复落成 §9.11 正式通道）】\n① Owner 2026-10-09 批复第 2 条：批 QMT·实盘键名×5 白名单——F-1b 红证持出的 5 件（含该字面量的真实测试件）由死信二期专车按白名单口径落地复活，登记白名单依据=Owner 本批复原文；其余 35 件持出照旧逐件判。\n② Owner 2026-10-10 批复：在死信二期专车呈报『三道禁令全在册（白名单=代码常量无登记面／处方明写禁改白名单＋禁拆分绕过／对话批准不自动构成豁免）』并逐条标价后，Owner 回「按甲改门」，并下执行令：准入面三锁照实现、红证三向缺一不算完、边界=只动准入面其他扫描逻辑零触碰、准入清单任何新增=新裁定+Owner（本设计下 AI 无法自扩）。\n【风险认知声明（Owner 已标价知情）】本裁定动的是**安全门本体**（NL-2 判据②，redline 族）。缓解=准入面**限定为封闭枚举**：写死 5 条精确路径，禁模式匹配、禁通配、禁目录前缀；第二锁要求引用**带 owner_sign 的在册裁定号**（AI 代裁不具备资格，专防『自登一条裁定即绕红线』——本期已实证过存在伪造 Owner 署名的会话，故此洞非假想）；第三锁每次放行必写审计行（裁定号+路径+时间）。三锁全在=放行，任一失配=照拦且拒绝理由可查。\n【判据面（为何这 5 件值得动门）】5 件均为真实回归测试件而非案卷：其 fixture 中的键名是**被测数据**（loader 对真实 .env.qmt 格式含实盘键共存的容忍度／红线负面清单断言），改成描述性引用会使测试不再测其目标＝总队 F-1b 当初拒绝代改语义的同一条理由（防虚构覆盖）。复活前置=车道内 pytest 当场绿，已实测五件 60 passed（非存在性判据）。\n【序（执行令原样）】本裁定先落（RULE-RULING 同 commit 原子）→ 门改＋红证三向 → 5 件复活 → 白名单项销账。\n【边界与失效条件】门的其他扫描逻辑零触碰；准入清单新增须新裁定＋Owner 实签；若发现任一枚列名件被改写为不含被测键名（准入面被当作常规通道滥用）⇒ 本准入面立即整体回退（回滚=revert 本门改动 commit，裁定保留为已执行记录）。"
+  category: 治理
+  evidence: 红证三向 tests/gov/governance/redline/test_real_key_admission_surface.py：①未列名件含该字面量→仍拦 ②伪造/无 owner_sign 裁定引用→拦 ③列名+有效 owner_sign 裁定→放行并落审计行；五件复活实测 python -m pytest <5 件> -q → 60 passed
+  owner_sign: Owner 2026-10-09 批复第 2 条「Owner 批 [实盘键名]×5 白名单——F-1b 红证持出的 5 件（含该字面量的真实测试件）由你 Phase 1 舰队按白名单口径落地复活（登记白名单依据=Owner 本批复原文）；其余 35 件持出照旧逐件判」＋ Owner 2026-10-10 回「按甲改门」并下执行令（授权链=批＋按甲改门双令，准入面三锁与红证三向为令内约束条件）。逐字复现说明（不是漏写）：批复原文里的键名以 [实盘键名] 代写，因为**被本裁定授权修改的这道门对文档面同样生效**（在册处方 fix=改成描述性引用），裁定册若逐字照抄即自触该门＝本册自己的白名单依据反而进不了库。原文逐字节存于 Owner 2026-10-09/10-10 通道与死袋 q-20261009-st-deadcure2-20261009-0008 的 message 字段，依据效力以该指针承接。
+  adjudicator: st-deadcure2-20261009
+  related_arch: []
+  superseded_by: ""
   affected_files:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   - src/zephyr/ai_layer/redline/negative_list_gates.py
@@ -4445,10 +4477,24 @@ entries:
   - 裁定#490
   - 裁定#494
   - 裁定#495
+- ruling_id: 裁定#504
+  date: "2026-10-10"
+  title: 宪法 §0 第 6 步升位：FRONT_DOOR 提为进场必经一站（RULE-REGISTRY 原位改写，行数不变）
+  status: active
+  summary: Owner 2026-10-10 批文执行令（「批准」原文=owner_sign）：宪法 AGENTS.md §0 第 6 步原位改写——RULE-REGISTRY 从「查注册表先读 ROOR」升位为「进场先读 docs/library/FRONT_DOOR.md（52 行门牌，机生零漂移）一站达 ROOR 与 lookup 单口查询」。同批骑手：generate_front_door 模板高频命令列表补「lookup state <关键词>（负存在断言三源查证）」一行（FRONT_DOOR 查询五单口表+llms.txt 英文路由各一处），重跑生成器 --check 零漂移。热册纪律三证：git show HEAD 基底+added=={裁定#504}/removed=={}+frontmatter parse OK。本裁定与 AGENTS.md 改写同 commit 原子（RULE-RULING）。adjudicator=st-regsolo-20261010（Owner 批文直派，宪法属 Owner 保留面——本件=Owner 已批文授权的原位改写，非 AI 自裁扩权）。
+  category: 治理
+  owner_sign: Owner 2026-10-10「批准」原文（批文执行令随令附）
+  approved_paths:
+  - AGENTS.md
+  - docs/registry_of_registries.yaml
+- ruling_id: 裁定#6
+  date: "2026-06-20"
+  title: 路径SSoT（路径真源铁律）
+  status: active
+  summary: 所有路径相关常量必须从单一真源派生，禁止多真源同步。审计数据目录、REPO_ROOT 等路径 常量集中到 zephyr.shared.io.paths 模块，其他模块 import 复用而非自定义。治本逻辑： 单一真源=单一变更点=零漂移风险；多真源=同步负担=必然漂移。落地：paths.py 集中定义 REPO_ROOT/AUDIT_DIR/GOV_DIR 等路径常量，全项目通过 import zephyr.shared.io.paths 复用。
+  category: 治本
   related_arch: []
-  superseded_by: ''
-  adjudicator: st-deadcure2-20261009
-  owner_sign: Owner 2026-10-09 批复第 2 条「Owner 批 [实盘键名]×5 白名单——F-1b 红证持出的 5 件（含该字面量的真实测试件）由你 Phase 1 舰队按白名单口径落地复活（登记白名单依据=Owner
-    本批复原文）；其余 35 件持出照旧逐件判」＋ Owner 2026-10-10 回「按甲改门」并下执行令（授权链=批＋按甲改门双令，准入面三锁与红证三向为令内约束条件）。逐字复现说明（不是漏写）：批复原文里的键名以
-    [实盘键名] 代写，因为**被本裁定授权修改的这道门对文档面同样生效**（在册处方 fix=改成描述性引用），裁定册若逐字照抄即自触该门＝本册自己的白名单依据反而进不了库。原文逐字节存于 Owner
-    2026-10-09/10-10 通道与死袋 q-20261009-st-deadcure2-20261009-0008 的 message 字段，依据效力以该指针承接。
+  superseded_by: null
+  affected_files:
+  - d:\ZephyrAlpha\src\zephyr\shared\io\paths.py
+  related_rulings: []

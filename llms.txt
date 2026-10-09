@@ -8,9 +8,9 @@
 - [.trae/rules/project_rules.md](.trae/rules/project_rules.md): IDE-injected second entry (520 lines).
 
 ## Query single entries (never write paths from memory)
-- [Library INDEX](docs/library/INDEX.md): 7 halls index; query via `python -m zephyr.library.lookup <keyword>`
+- [Library INDEX](docs/library/INDEX.md): 7 halls index; query via `python -m zephyr.library.lookup <keyword>`; negative-existence assertion via `python -m zephyr.library.lookup state "<keyword>"` (three-source verification)
 - [FRONT-DOOR](docs/library/FRONT_DOOR.md): task-routed operation entries (Chinese, canonical door)
-- [Registry of Registries](docs/registry_of_registries.yaml): which registry governs what (1100 lines, read targeted)
+- [Registry of Registries](docs/registry_of_registries.yaml): which registry governs what (1102 lines, read targeted)
 - [Registry master index](docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml): generated catalog of 61 registries
 - [Data asset registry](docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml): table/dataset/source SSOT
 

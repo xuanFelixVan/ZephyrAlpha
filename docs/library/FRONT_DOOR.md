@@ -19,6 +19,7 @@ generated_by: scripts/governance/generators/generate_front_door.py
 | 模块/依赖全景 | `python scripts/governance/extract_depgraph.py --summary` | PostgreSQL depgraph，禁裸连 |
 | 全图全库对齐 | `alignment_checklist.md`；`python scripts/governance/align_all.py` | 对齐键=module_id/step_id |
 | 数据表真源 | 表名 grep `docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml`（REG-DATAFLOW-001）；库连接走 `zephyr.infrastructure.database_service` | lookup 暂不索引表名 |
+| 负存在断言（证伪某能力不存在） | `python -m zephyr.library.lookup state "<关键词>"`（三源查证） | 负存在结论必须三源查证，禁单点记忆断言 |
 
 ## 图书馆七馆（计数由生成器注入，勿手填）
 
