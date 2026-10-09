@@ -332,3 +332,34 @@ python scripts/lock_files.py release-all st-dexp-20261009           # 释放本�
 # data/runtime/process_reaper_keep.txt 退订第 317 行 st-dexp-20261009\session_keeper.py
 #   判据：删除集=={该行}，其余 316 行字节零动（逐行实测，非散文声明）
 ```
+
+## 15. 车道处置单（总统筹裁定②，防 00:17 式接管连坐复发）
+
+### 15.1 merge 是 no-op 的逐件证明（lane blob vs dev blob，`git hash-object` 同口径）
+
+| 车道件 | lane | dev | 判定 |
+|--------|------|-----|------|
+| `scripts/data/backfill_night.ps1` | `360aa3f8c3` | `360aa3f8c3` | SAME |
+| `scripts/data/tilib_dwm_shard_runner.py` | `84d91ac865` | `84d91ac865` | SAME |
+| `src/zephyr/factor/indicator_reader.py` | `2793a00f1e` | `2793a00f1e` | SAME |
+| `docs/_working/dexp_campaign/01_ledger.md` | `9a0a0662a2` | `f95b5b0b1e` | 车道落后（dev 含 §14，车道停在 §13 前像） |
+| `docs/03_modules/_domain_factor/algo_flow/indicator_reader.yaml` | `40aeec0a01` | `f413172249` | 车道落后（dev 含补边段版） |
+| `scripts/data_ops/audit_ti_row_versions.py` | `6e766ee35f` | 0062 落地后同值 | 在飞件 |
+
+⇒ 除下表两件历史草稿外，**车道没有任何 dev 未持有的字节**，merge 回主区＝零变化。
+
+### 15.2 真残行清单（车道外主区也各存一份同内容，日班择一）
+
+| 件 | 未入库行 | 性质 | 建议 |
+|----|---------|------|------|
+| `docs/_working/dexp_campaign/04_ti_dup_quantified.md` | 12 行（L7/L10/L14-L16/L18/L20/L22-L23/L25-L27） | P0 机制描述的前一版叙述链（结论已由 §8＋§00 以另一种措辞落册，`file:line` 探针链未落） | 保留作工棚记录或折入 §8 附注；**不必单独入库** |
+| `docs/_working/dexp_campaign/05_worktree_handoff_zongdui.md` | 4 行（L5/L7/L9/L11） | 两枚初始化死锁棚移交单的表头与 `st-mx07-W2`（0.26G，`fatal: cannot remove a locked worktree`）行 | 建议折入 01_ledger 移交段，由总队确认后销文 |
+| `docs/_working/disk_reorg_campaign/vhdx_precheck_20261009.md` | 整件 | 生成器产物（`99_delivery.md` 已记处置＝生成器重出纠旧文案） | 不入库，随车道清 |
+| `data/audit-trail/vhdx_growth_series.jsonl` | 2 行 | 哨兵手动试跑序列（10-09 15:55） | 运行态序列，不入库 |
+
+### 15.3 remove 通道的留痕要求（我不裸删）
+
+`git worktree remove .aidrafts/st-dexp-20261009` 按接管显化处方须走裁定通道登记后方可执行。
+执行前应满足：①本节 15.1 六件全 SAME-or-stale；②15.2 四件已折入或判废；③`lock_files.py list
+--session st-dexp-20261009` 报 CLEAN（04:0x 实测已 CLEAN）；④keeper/heartbeat daemon 已停
+（49092/17968/40300/55744 实测 stopped；24264 因 cmdline 不含 sid 无法归属，未动）。
