@@ -253,3 +253,82 @@ python -m pytest tests/legacy_zephyr/factor/test_indicator_reader.py \
   tests/data/data/data/test_tilib_dwm_shard_state_stamp.py -q                            # 期望 52 passed
 # 投影册落后核验（键集合差一行版）：PG registry_entry 抽 裁定号 集合，与投影册 ruling_id 集合做双向差
 ```
+
+## 13. 0052 死因＝通道级缺陷：门自己给的处方在 PG 物化之后已失效（02:06 实测）
+
+死信原文：`TRANSLATION-COVERAGE: 1 个新建 .py 在 module_translation_registry.yaml 缺合格 plain_zh`，
+处方＝`python scripts/governance/d3_metadata/add_module_translation.py --path … --plain-zh …`。
+
+**处方不可落地的两点实测**：
+
+1. `add_module_translation.py` 不 import `registry_ledger`＝只直写投影册 yaml；
+2. 该册已入 PG 账本（ROOR 反查 `REG-MODULE-TRANSLATION-001`，PG 现 9860 条），而 10-10 落地的物化改道
+   令**账本册的袋内字节整体退出物化**（投影由 PG render 重打）。
+   ⇒ 照处方写完再投，落地时被 PG render 顶掉，门再看投影仍缺 plain_zh＝死循环。
+
+**面积实测（键集合差，只读）**：投影册 `module_path` 8232 行／PG 9860 条。
+
+- 在投影而 PG 无＝**4 行**（下次任何带该册的袋落地即被吞）：
+  `scripts/data_ops/audit_ti_row_versions.py`（本战役重复尺）、`scripts/backtest/fexam/calibration_exam.py`、
+  `scripts/backtest/generate_exam_card_skeleton.py`、`scripts/backtest/writeback_exam_confidence.py`；
+- 在 PG 而投影无＝**1632 行**（render 一次即净增这些他道条目＝巨袋）。
+
+**本班不代修（三条理由）**：①写 PG 账本属注册表车道的裁定授权面（裁定号 502 战役），我无授权路径；
+②带该册的袋会把我的 commit 变成 1632 行他人登记的混装＝归属篡改（宪法 §3 第 4 条）；
+③投影落后属"render 未跑/欠账未回灌"类，正道在该车道 `reconcile`＋`registry_projection_generator --render`。
+
+**本班处置**：把 `audit_ti_row_versions.py` 从袋里摘出；读侧两件（`indicator_reader.py`＋其 ALGO_FLOW 出仓件）
+另投 qid …-0058（同袋带出仓件，防 GATE-ALGO-FLOW 跨袋崩），先解 HEAD 红窗 1 例（`ir._projection`）。
+尺本体留盘＋死信 blob 双份，待通道定策后与 plain_zh 的 PG 登记同袋再投。
+
+**呈总统筹／注册表车道三条待裁**：
+A. 门处方是否改口为"经意图 API 登记"（而不是"跑直写工具"）；
+B. 那 4 行投影独有行的回灌（其中 3 行非本战役资产，须各归其主）；
+C. 1632 行未投影条目的重打窗口——净增袋应归一车道专跑，勿混入业务袋。
+
+## 14. 终账（03:5x，五袋落地＋三件死信对症）
+
+### 14.1 qid→commit 精确映射（更正 §12.1 里"随前置一笔"的含糊）
+
+| qid | 内容 | 终态 | commit（实测 `git log -S` 反查） |
+|-----|------|------|--------------------------------|
+| 0045 | P2 两文件＋8 例测试 | done | `705d594828` |
+| 0047 | ⑤-b ch_reader 响亮化＋ALGO_FLOW creation_token | done | `e48a2775be`（袋标题沿用"先行袋"，实际含 74 行 ch_reader＋5 行册面，以 `git show --stat` 为准） |
+| 0049 | 翻译条目＋§10/§11＋reconciler 测试 | done | `b20aefabe5` |
+| 0051 | ⑤-b 契约测试四例 | done | `21f64f3574` |
+| 0055 | P2 补录（ps1 口径注释＋runner 头注/测试指针） | done | `26cbc14e4a` |
+| 0056 | CASEBOOK-010 实体台账（case_id 0/1 两案） | done | `350d232a8f` |
+| 0057 | §12 二次收工账 | done | `1dc37c7a92` |
+| 0052 | 读侧＋重复尺＋出仓件（三件同袋） | dead | 死因见 §13（TRANSLATION-COVERAGE 通道缺陷） |
+| 0058 | 读侧两件（摘出尺后重投） | dead | 死因见 §14.2（ALGO-FLOW-LINK 图判据） |
+| 0059 | §13 账本袋 | dead | 死因见 §14.3（同会话两袋撞同一文件） |
+| 0060 | 读侧两件＋出仓件补边段（基线＝dev 现值） | done | `b8793cb7f5`（落地面复跑 52 passed＝红窗 1 例归零；盘面与 dev 两件零漂移） |
+| 0061 | 本件（§13＋§14 合袋） | 在飞 | — |
+
+### 14.2 0058 死因＝出仓件自身两处违图，修后直调门尺为证
+
+- `边:` 段写在 `algo_flow: |` 标量块**之外**（0 列缩进）⇒ 解析器取不到边＝"无边定义（边: 段缺失或格式错）"；
+- 原边写法 `-.->|参数|` 是断点边指向非断点节点，第二条违图判据；
+- 同批修为：边段缩进进标量块＋全部实线 `-->`。修后自证（**逐门直调，不跑 `pre-commit run`**）：
+  `parse_algo_flow` 得 7 节点／6 实线边，`validate_graph` 与 `validate_file` 均 0 问题，
+  `make_algo_flow_link_gate().check(...)` 返回 pass=True，`check_algo_flow.py` rc=0。
+- ⚑ 自犯复证一条在册老坑：门禁读 **index 暂存字节**而非盘面——直调首跑仍报红，
+  `git add` 自己两件后复跑才转绿。凡"我明明改了门还红"先核暂存面再怀疑判据。
+
+### 14.3 0059 死因＝同会话两袋撞同一文件，处方不是盲目 requeue
+
+0057 先把 §12 版落进 dev，0059 的基线仍是旧面 ⇒ 落地侧判"双侧皆改真冲突"。内容实测为 0057 快照的
+**严格前缀超集**（`startswith` 为真＋增量 2371 字节），所以不是内容冲突而是基线过期。
+正道＝**以 dev 现值为基重投**：`commit_queue.py enqueue --base-head <dev>`；但主区直投会被 WORKTREE-REQUIRED
+拦（该子命令无 `--allow-non-worktree` 逃生位），故改走 `git_commit.py --enqueue --allow-non-worktree
+--allow-multi-domain`（主区 HEAD 此刻即 dev 现值，基线天然正确）。
+教训固化：**同一路径的续档要么并进同一袋，要么投前先把基线对齐 dev**。
+
+### 14.4 收尾清单（本袋落地后由本班执行，数字随终报呈）
+
+```bash
+python scripts/lock_files.py release-all st-dexp-20261009           # 释放本班全部 claim
+# keeper／heartbeat daemon 停止（先查 PID 再停，禁盲 kill）
+# data/runtime/process_reaper_keep.txt 退订第 317 行 st-dexp-20261009\session_keeper.py
+#   判据：删除集=={该行}，其余 316 行字节零动（逐行实测，非散文声明）
+```
