@@ -448,3 +448,91 @@ ls /g/backup/db_dumps/                                                      # �
 ls /f/ch_backup_disk.vhdx                                                   # ③F 不存在=已成立（06:13 复验）
 python -c "import json;d=json.load(open('data/databases/backup_state.json',encoding='utf-8'));print(d['last_backup_time'],d['last_backup_status'])"
 ```
+
+---
+
+## 乙、战役乙执行令（总统筹 2026-10-10 晨令，Owner 授权夜间自动执行）——四态台账
+
+### 计数总账
+| 动作 | 数 | 说明 |
+|---|---|---|
+| **清理（态① 归档）** | **10 棚** | 全部走 rescue tag → takeover ledger resolve → **非 force** worktree remove；分支全保留 |
+| **保留（白名单/在飞）** | 7 棚 | deadcure2(R-a)、dexp、examchief、fullflow2(R-e)、regsolo(R-c)、nightmine(新班·R-f)、final4(R-d 自家) |
+| **留棚待认（态② 真增量/前置不复现）** | 2 棚 | govfix-g6（非 force remove 被 git 拒绝：4 改件+12 未跟踪件）、mastertc-mine（ahead=1 枚未并入 commit，已 tag 救住） |
+| **记表（判据未覆盖）** | 1 棚 | `verify_v1`（非会话棚、detached HEAD、20 项仓库根快照件） |
+| **救回包** | 4 份 | `.runtime/tmp/rescue_<sid>/`（tar+dirty_list）+ **14 枚 rescue tag** |
+| **墓碑（态③）** | **0** | 无一棚满足"零触发∧零消费者∧无价值主张∧无重启条件"四元联言 ⇒ 全部未入 `E:\_tomb_quarantine`（墓碑区本次零写） |
+| **主区暂存区处置** | **0 条** | 判据第二条全体不成立（见下 T2） |
+| **tmp/ 与 .runtime/tmp 删除** | **0 件** | 判据"hash==HEAD 才删"对 36/37 不适用（见下 T3） |
+| 磁盘 | D 剩余 39.5G → **60G** | 本班清 10 棚贡献 ≈2.8G，余为并发班 |
+
+### T1 工棚终扫 18→10 棚（三源现测先行，禁单源判死）
+每棚三源＝①SessionRegistry 在册 ②heartbeat 末条 status/年龄 ③棚内 fs。执行前逐棚**复测**（不用预扫表当结论）。
+
+| 棚 | 三源 | 判定 | 动作 | 结果与回滚 |
+|---|---|---|---|---|
+| st-chief3-20261009 | 不在册/exited 160m/无新写 | 态① | tag `1dc37c7a92` + resolve + remove | 目录灭、分支留；`git worktree add .aidrafts/st-chief3-20261009 session/st-chief3-20261009` |
+| st-chiefc-20261009 | exited 535m | 态① | tag `c61765bf25` + resolve + remove | 同上格式回滚 |
+| st-chiefc-20261009-D | exited 1075m | 态① | tag `0f391c7d1c` + resolve + remove | 同上 |
+| st-chiefc-20261009-rb1 | exited 541m | 态① | tag `89efc8202b` + resolve + remove | 同上 |
+| st-fwin-exec-20261009 | exited 498m | 态① | tag `769c59bda1` + resolve + remove | 同上（其 99 面早已入 dev，本令与其晨报读数互不阻塞） |
+| st-libfront-20261009 | exited 272m | 态① | tag `e942ef510a` + resolve + remove | 同上 |
+| st-mx07-W2 | exited 2428m | 态① | tag + resolve + **unlock** + remove | initializing 锁（dexp 移交单在册两棚之一）；走 git 自己的弱一档 `worktree unlock` 后非 force remove，**未用双 force** |
+| st-tclose-fwire-20261004 | exited 8684m | 态① | tag `6eb3ab181b` + resolve + **unlock** + remove | 同上（另一枚 initializing 锁棚） |
+| st-govfix-g2-20261007 | 不在册/无心跳件 | **改判态①** | tag + resolve + remove | 初判态②（脏件 10）系 `--ignored=matching` 展开的构建物；真增量复测 `tracked_mod=0 ∧ untracked_nonignored=0` ⇒ 空手棚 |
+| st-mx07-L3 | exited 3315m | **改判态①** | tag + resolve + remove | 同上（52 件全为忽略面） |
+| st-govfix-g6-20261007 | exited 3229m(陈旧 status) | 态②→留 | 救回 tar 1.6MB + 双 tag；resolve 已记 | 5 件与 dev 不同但 **dev_lastcommit 晚于棚内 mtime 且行数等值(±1)**＝落地前草稿非独有增量；然而 `untracked=12` 使非 force remove 被 git 正确拒绝 ⇒ 按纪律"判据未覆盖=停手记表"，留棚 |
+| st-mastertc-mine | exited 4395m | 态② | 救回＝`rescue/st-mastertc-mine` 含 1 枚未并入 commit（W1 挖矿骨架 7 件 856 行） | 前置 `anc` 不复现 ⇒ **SKIP 留棚**；内容已由 tag 永久保住，落地与否属 master_tc 战役价值判断 |
+| 其余 7 棚 | 在册/alive/白名单 | 态④ | **零动作** | R-a/R-b/R-c/R-d/R-e/R-f 一票否决 |
+
+⚑ **两班必读的两条实锤（本次撞到）**
+1. **台账判 regsolo 死，本令 R-c 判它禁碰**：`--scan` 给 `st-regsolo-20261010` 生成 open 条目
+   （理由=心跳 exited/11m + 注册表无在册），而 R-c 写明"其工作树 staged 是宪法 §0 升级唯一载体，
+   删除=已批宪法丢失"。**白名单优先**，本班只读其棚、**未 resolve 该条目**——留给 R9 落地班自判，
+   别让台账的机器判死越权替 Owner 批文做决定。
+2. **`--resolve` 对没有 open 条目的 sid 直接 LookupError**：所以"rescue tag→resolve→archive"
+   三步的**前置是 `--scan`**（本令未写）。本班按此补齐后再走三步，未因此跳过登记。
+
+### T2 主区暂存区终验 = **零处置**（数字决定，不是判断）
+949 条 staged 逐条测 `index ↔ dev`：**等值 0 条、不等 949 条**
+⇒ 本令②要求的两条（属主已收官 **AND** staged 与 dev 字节一致）里第二条**全体不成立**，
+没有任何一条具备复位资格；另有 465 ` M`/99 `MM`/146 `??`/13 `D ` 等工作区面同属他队现场。
+按纪律 1 与红线"禁全量 restore/禁 stash drop/禁裸 reset"=**一条不碰，出表**
+（`.runtime/tmp/st-final4-20261010/staged_audit_v3.json`）。
+归属分布（按队列袋声明的路径反查）：可按袋归属 446 条，**归属不明 503 条**——
+其中绝大多数是自动接链进程给 `docs/_working/**/index.md` 生成的骨架件（在册教训：
+非本会话 authored、交回该进程属主、禁代提交）。属主 top：tests-chief 242 / regsolo 37 /
+chiefc 28 / dexp 15 / deadcure2 9。
+
+⚑ **本班发现的最高价值隐患（不代修，但请优先处置）**：13 条 `D `（staged 删除）**逐条验 dev 仍在册＝13/13 全是回退弹**，
+任何会话一次 `add -A` 式提交即真删这 13 个已入库测试件。其中 **5 条正是 F-1b 白名单件**
+（`tests/ai/ai_layer/redline/` 四件 + `tests/meta/scripts/test_run_post_settlement.py`）——
+说明死信二期已把它们**复活入 dev**（本班实测与 §四 早前"HEAD 零落地"记录相比是**状态推进**，
+§四 那条判据请随之更新）。一条命令即可归零（**须由各属主自查自家路径，禁全量**）：
+`git restore --staged --worktree --source=dev -- <仅自家路径>`。
+
+### T3 根区与 tmp = **零删除**（判据不适用，非"没做"）
+- 项目根未跟踪临时文件 **0 条**（146 条未跟踪全在子目录）⇒ 宪法 §9.4"根零临时"满足。
+- 根 `tmp/`：37 个顶层件 / 100,995KB（**指令卡写"1009MB"与实测差一个量级**，以本表为准）；
+  其中 **dev 在册仅 1 件**（`.gitkeep`），36 件不在 HEAD ⇒ "逐件 hash==HEAD 才删"这条判据
+  对 36/37 **无法成立**；且 9 件 24h 内有写（`catchup_guard.lock` 06:59 刚写、
+  `metaq_audit_reconcile_report.log` 03:50）＝**活跃写者在岗**。⇒ 零删除，出表留认。
+- `.runtime/tmp`：本班救援包与案卷都写在这里，**未做任何清理**（并发班仍在用；
+  dexp 的 140 件备份目录按令保留）。
+- 红线遵守：`.runtime/commit_queue/blobs/`（含 `blobs/dead/`）**一个字节未碰**；
+  `data/`、`logs/`、夜跑 state 只读；`E:\_tomb_quarantine` 本次零写（无态③）。
+
+---
+
+## 丙、收尾语（按实际计数，不套模板）
+
+**工棚：清 10、留 10、墓碑 0、救回 4 包＋14 tag；暂存区 949 条零处置（判据第二条全体不成立）；
+tmp 零删除（36/37 无 HEAD 对拍基准且活跃写者在岗）。战役甲 5/5 收账，战役乙 T1-T3 执行完，
+T4 即本册。**
+
+原令模板句"残件清零，终清完成，全项目收线"本班**不改写也不套用**，因为三项事实现上未到：
+① F 盘 06:00 备份轮三绿读数要到 ≈08:20-08:30 才存在（实跑时长 2h21m 有账），§五 已按"互不阻塞"
+先行落账，读数随第三袋补；② 四路（deadcure2/dexp/regsolo/nightmine）仍在飞，
+暂存区与 `.runtime/tmp` 的终态要等它们收线后再量一次才算终清；③ F-1b 的 22 条
+"账面已落实测未达"与本次 13 条回退弹，都要属主认，不是本班能替画的句号。
+可断言的部分：**散落的未派残件已无遗留——每一条要么落地、要么给出不可执行的实证理由。**
