@@ -7,8 +7,13 @@ $env:PATH = "C:\Users\fanzi\AppData\Local\Programs\Python\Python312;C:\Users\fan
 # Shard-state wipe REMOVED 2026-10-09 (st-dexp-20261009, dexp campaign root cause R1;
 # zongtongchou ruling, P2 first cut). Wiping the whole state dir every night was the
 # crude way to force a re-pass, and it is what made every nightly pass re-insert the
-# entire daily history: measured 11,227,985 rows inserted by one pass on 2026-10-09
-# (48.6% of the daily partition, unmerged versions per key up to 7).
+# entire daily history. Measured caliber (corrected the same day, see
+# docs\_working\dexp_campaign\01_ledger.md self-report 1): the 2026-10-09 daily
+# segment took 14.09M cumulative inserts under the server-tz day boundary and
+# 11.23M under the UTC day boundary, produced by about 3-4 re-passes that day, so
+# one pass is roughly 3.5-4M rows (the day total is 48.6% of that segment's live
+# rows; unmerged versions per key reached 7). Never quote either day total as
+# "rows inserted by one pass".
 # The runner now decides staleness itself: shard_already_done() in
 # scripts\data\tilib_dwm_shard_runner.py skips a shard only when its recorded
 # finished_at is the current day and exit was 0, so a same-night restart re-inserts

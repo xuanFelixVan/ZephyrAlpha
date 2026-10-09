@@ -8,14 +8,16 @@
 # [MATURITY] stable
 # [INVARIANTS] 单进程串行分片（并发=内存总闸 Code 241 复发）；每片独立子进程跑
 #  backfill_technical_indicator_dwm.py --symbols-file <片清单>（进程级内存隔离）；
-#  每片完成写 data/runtime/dwm_shard_state/<period>_shard_<i>.json，重跑跳过 exit=0 片
-#  （幂等：ReplacingMergeTree 同键覆盖，重叠无害）；失败片记录 error 后继续下一片。
+#  每片完成写 data/runtime/dwm_shard_state/<period>_shard_<i>.json，重跑跳过**当日**且 exit=0 片
+#  （2026-10-09 实测：该表引擎无版本列，未合并期同键多版并存且非 FINAL 读返回哪版由行序决定，
+#    所以"同键覆盖、重叠无害"不成立——重叠＝行数按趟数涨＋读数不确定；故跳过判据加当日戳）；
+#  失败片记录 error 后继续下一片。
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 单片 exit!=0 不中断（隔毒片），全部跑完汇总 rc=1
-# [TESTS] 本 CLI 以 --help 自测；破坏面=指标表同键覆盖（幂等）
+# [TESTS] 本 CLI 以 --help 自测；跳过判据与当日戳由 tests/data/data/data/test_tilib_dwm_shard_state_stamp.py 钉（8 例，含四条红证）
 # [TTL] permanent
 """tilib 夜跑 dwm 指标回填分片编排器（2026-09-22 tracked 化，裁定#399）。
 
@@ -23,7 +25,9 @@
 - 每片 = 独立子进程跑 backfill_technical_indicator_dwm.py --symbols-file <片清单>
   → 进程级内存隔离，单片阵亡不污染主进程，崩了续跑下一片。
 - 每片完成写 data/runtime/dwm_shard_state/<period>_shard_<i>.json
-  → 重跑本脚本自动跳过已完成片（幂等：ReplacingMergeTree 同键覆盖，重叠无害）。
+  → 重跑跳过**当日**已完成片（shard_already_done）；隔到次日整片重算，同一晚重启零重插。
+    旧写法"跳过任何 exit=0 片"配得上"每晚抹掉 state 目录"才不断更——那对组合正是
+    全史每晚重灌的成因（2026-10-10 P2 治本，ps1 与判据同批改）。
 - 失败片记录 error 后继续下一片（隔离毒片），全部跑完后汇总 exit 非零。
 
 用法：
