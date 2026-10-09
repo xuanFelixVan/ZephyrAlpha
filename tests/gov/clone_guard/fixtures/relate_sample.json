@@ -1,0 +1,27 @@
+{
+  "_description": "relate Path B (datasketch MinHash LSH) 真实输出样本——验证后集成纪律 fixture",
+  "_engine": "datasketch MinHash LSH (in-process, no CLI)",
+  "_path_b_ruling": "clone-guard-engine-verification-ruling.md §2.1/§3.1-P1: Zig 二进制无预编译资产，改用 datasketch 替代",
+  "_corpus": [
+    "near_dup_a.py",
+    "different.py"
+  ],
+  "_query_file": "near_dup_b.py (Type-2 clone of near_dup_a: variable rename price->cost, tax->rate, title->heading, rows->lines)",
+  "_normalization": "docstring+string+comment strip -> identifier normalize (ID/N) -> k=5 shingle -> MinHash(128) -> LSH(0.7)",
+  "_note": "similarity 为 MinHash Jaccard 估计值；Type-2 克隆经标识符归一化后 sim≈1.0（跨运行稳定）",
+  "degraded": false,
+  "findings_count": 1,
+  "findings": [
+    {
+      "finding_id": "RL-0-near_dup_b.py-near_dup_a.py",
+      "severity": "review",
+      "clone_type": "T2",
+      "similarity": 1.0,
+      "source_file": "near_dup_b.py",
+      "existing_file": "near_dup_a.py",
+      "source_function": "unknown",
+      "existing_function": "unknown",
+      "import_suggestion": null
+    }
+  ]
+}
