@@ -175,6 +175,18 @@ def _build_providers() -> dict[str, ProviderConfig]:
             cost_per_1k_input=0.003,
             cost_per_1k_output=0.015,
         ),
+        # W6（st-examchief-20261009）：Qoder 免费云端千问 Flash 3.8（Owner 暂时安排口径）——
+        # 车道B假说/LLM 轨可选工作承接位；本地 3090 专属回测不抢占。密钥沿用 .env QWEN_*
+        # 三键（经 get_secret_or_default 读取=secrets.py 合规），LSG 双向扫描照走网关主链。
+        "qwen": ProviderConfig(
+            base_url=os.getenv("QWEN_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"),
+            default_model=os.getenv("QWEN_MODEL", "qwen-flash"),
+            api_key_env="QWEN_API_KEY",
+            fallback="deepseek",
+            max_context_tokens=128_000,
+            cost_per_1k_input=0.0,
+            cost_per_1k_output=0.0,
+        ),
     }
 
 

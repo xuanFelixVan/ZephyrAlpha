@@ -24,14 +24,20 @@ $log = Join-Path $logDir "f06_grid.log"
 
 "==== F06 grid pipeline fired at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ====" | Out-File -FilePath $log -Append -Encoding utf8
 
-# PS5.1 landmine (see run_factory_lane_c.ps1 2026-09-15 note): do NOT pipe python stderr
-# through Out-File under ErrorActionPreference=Stop (any stderr line becomes ErrorRecord).
+# PS5.1 landmine (see run_factory_lane_c.ps1 2026-09-15 note): under ErrorActionPreference=Stop
+# a stderr line from a STILL-RUNNING native child becomes a terminating NativeCommandError;
+# the pipeline stops, PS kills the child and exits 1 with zero log output. 2026-10-09 W1
+# root cause (st-examchief-20261009 trap trace): the `*>>` form here is the SAME landmine
+# (pandas FutureWarning at first eval killed every window since 09-19); fix mirrors the
+# cmd.exe /c native-redirect pattern proven daily by run_factory_lane_c.ps1 / run_c4_exam.ps1.
 # Sequential: batch A census-extend (focus stratify) then batch B subspace enumerate.
-$py = "python"
-& $py scripts\backtest\factory_grid_executor.py --n-samples 6000 --seed 20260916 --stratify-dims G_universe,A1_factor_normalize,B_top_n *>> $log
+cmd.exe /c "python scripts\backtest\factory_grid_executor.py --n-samples 6000 --seed 20260916 --stratify-dims G_universe,A1_factor_normalize,B_top_n >> $log 2>&1"
 "batch A exit=$LASTEXITCODE" | Out-File -FilePath $log -Append -Encoding utf8
 
-& $py scripts\backtest\factory_grid_executor.py --n-samples 99999 --seed 20260916 --subspace-json "{\"D1_rebalance_freq\":[\"weekly\"],\"E_single_cap\":[\"cap10\"],\"D2_rebalance_trigger\":[\"periodic\"],\"G_universe\":[\"hs300\",\"zz500\"]}" *>> $log
+# batch B JSON: PS single-quoted literal keeps `\"` verbatim through cmd to python argv
+# (2026-10-09 quoting probe: doubled-quote form arrives quote-stripped and breaks json.loads).
+$batchBJson = '{\"D1_rebalance_freq\":[\"weekly\"],\"E_single_cap\":[\"cap10\"],\"D2_rebalance_trigger\":[\"periodic\"],\"G_universe\":[\"hs300\",\"zz500\"]}'
+cmd.exe /c ('python scripts\backtest\factory_grid_executor.py --n-samples 99999 --seed 20260916 --subspace-json ' + $batchBJson + ' >> "' + $log + '" 2>&1')
 "batch B exit=$LASTEXITCODE" | Out-File -FilePath $log -Append -Encoding utf8
 
 "==== F06 grid pipeline done at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ====" | Out-File -FilePath $log -Append -Encoding utf8

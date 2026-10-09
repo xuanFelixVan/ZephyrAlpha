@@ -1,6 +1,6 @@
 rule_id: TRAE-065
 title: 能力反查强制铁律（RULE-CAPABILITY-LOOKUP，裁定 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD）
-version: '1.0.0'
+version: '1.1.0'
 layer: L1_foundation
 module_id: TRAE-065
 depends_on:
@@ -36,6 +36,7 @@ triggers:
 - operation: session_worktree_start
 - operation: session_worktree_commit
 - operation: git_commit_gateway_commit
+- operation: asset_state_assertion
 - gate_id: CAPABILITY-LOOKUP-REQUIRED
 sections:
   capability_lookup_required:
@@ -130,6 +131,23 @@ sections:
     - '❌ rule_discovery server 不注册到 mcp.json——AI 无法通过 MCP 调用（G2 病根）'
     - '❌ capability_lookup.find/get 不写 audit log——可追溯性断裂（G3 病根）'
     - '❌ gate 故障时 AI 静默 workaround——100% AI 开发场景最大风险（G7 病根）'
+  asset_state_assertion:
+    section_type: procedure
+    title: 资产状态断言三源正查（v1.1.0 F3 增，裁定#499；GPU 摊销负存在误报案治本）
+    conditions:
+    - type: trigger
+      check: 对任何资产/工程/环节作"未做/不存在/无此类/零覆盖"负存在断言或"已做/已存在"正存在断言前（规划/盘点/排产/交付物全适用）
+      pass: MUST 先跑 python -m zephyr.library.lookup state "<关键词>"（三源证据包=馆索引+git log 近90天+工棚面），输出附为交付物内证据指针
+      fail: 凭记忆/便签/会话印象断言 → GPU 摊销案复辙（已落地 c8da8a8056/cf16fa43fd 被报"未做"）
+    actions:
+    - type: mandatory
+      step: '铁律8: 资产状态断言前三源正查——lookup state 输出（或工具不可用时的手工阶梯记录：git log --grep/-S + docs/_working/ 内容 grep，见 library_sop/offzone_retrieval_boundary_sop.md）MUST 作为证据指针写入交付物；散文便签（yaml 注释/README 备注）与会话记忆不构成状态证据；馆索引零命中≠不存在（场外区按设计不入馆）'
+    invariants:
+    - id: CAP-LOOKUP-INV-007
+      title: 资产状态断言三源正查
+      description: 对资产的负/正存在断言 MUST 附三源证据指针（lookup state 输出或手工阶梯记录）；无指针断言禁入规划/盘点/排产交付物
+      enforcement: 审计面=.runtime/lookup_audit/（lookup state 复用 write_lookup_audit_log）；纪律面=mining_sop_policy §7.5
+      violation_action: reject_deliverable
 references:
   rule_ids:
   - TRAE-054
@@ -178,3 +196,9 @@ provenance:
   extracted_at: '2026-07-19T00:00:00'
   extracted_by: scaffold-generated
   reason: 显化"能力反查强制 + 逃生通道治本"规则，写入所有 AI 操作时必看的位置。防止 AI 凭记忆推断规则（幻觉温床）+ 防止 gate 故障时静默 workaround（100% AI 开发场景最大风险）。裁定 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD 7
+revisions:
+- version: '1.1.0'
+  date: '2026-10-09'
+  change: triggers 增 asset_state_assertion + 新节（铁律8 三源正查 + CAP-LOOKUP-INV-007）；F3 治本件（GPU 摊销负存在误报案）
+  ruling: 裁定#499
+  adjudicator: st-examchief-20261009
