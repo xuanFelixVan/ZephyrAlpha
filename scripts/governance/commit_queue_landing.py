@@ -1383,6 +1383,24 @@ class MergeSwallowVerifyError(SnapshotVerifyError):
     恒携 ``dead_result``（调用方见之即死信带处方，不烧 snapshot_retry 计数）。
     """
 
+
+# ── B 件物化纪元探针（热册单口写战役 st-regsolo-20261010，2026-10-09）──────────
+# 守护进程经 sys.modules 缓存本模块（_drain_once 函数内 lazy import 首次后复用），
+# 改码不重启守护=新逻辑永不装载（10-09 A-12 复发血泪）。本常量=装载验证探针：
+# 重启后 run_daemon 启动日志打印本值即证新码在岗（commit_belt_daemon 同批加打印）。
+LANDING_MATERIALIZATION_EPOCH = "regsolo-b-20261009-pg-render-materialization"
+
+
+class PgRenderUnavailable(SnapshotVerifyError):
+    """已入账本册 PG 现读不可用（B 件，2026-10-09）。
+
+    账本册物化唯一真源=PG registry_snapshot 现读 render（裁定#502 战役 B 件）；
+    PG 宕机/连接失败=环境类瞬态（继承 SnapshotVerifyError→退 pending 重放，
+    计数耗尽死信带处方），**禁静默退回袋内旧快照字节**——那正是本件退役的
+    蒸发通道。注意与「未入账本册」（无已发布快照，走既有三向合并）的区分：
+    pg_source 以异常文案区分两种 ProjectionUnavailable，本类只收环境侧。
+    """
+
     def __init__(self, message: str) -> None:
         super().__init__(
             message,
@@ -2208,6 +2226,62 @@ class WorktreeLanding:
             return True
         return bool(self._entry_base_blob(item, rel))
 
+    def _ledger_registry_id(self, rel: str) -> str | None:
+        """ROOR 反查该路径是否已入 PG 账本（registry_id 或 None=未入账本册）。
+
+        结果按实例缓存（ROOR 索引一次装载；落地批内同册多次命中零重读）。
+        ROOR 读失败=判不了 → None（fail-open 落回既有三向合并，与 cutover 前行为一致）。
+        """
+        cache = getattr(self, "_ledger_registry_id_cache", None)
+        if cache is None:
+            cache = {}
+            self._ledger_registry_id_cache = cache
+        if rel in cache:
+            return cache[rel]
+        rid: str | None = None
+        try:
+            from zephyr.governance.registry_ledger.baseline import load_roor_index  # noqa: PLC0415
+
+            idx = load_roor_index(self.repo_root)
+            entry = idx.get(rel)
+            if isinstance(entry, dict) and entry.get("registry_id"):
+                rid = str(entry["registry_id"])
+        except Exception:  # noqa: BLE001 — 反查失败=按未入账本册处理（fail-open 退 legacy 合并）
+            rid = None
+        cache[rel] = rid
+        return rid
+
+    def _pg_render_registry_text(self, rel: str) -> str | None:
+        """已入账本册从 PG registry_snapshot 现读最新版渲染（B 件物化真源切换）。
+
+        Returns:
+            渲染文本（已入账本册）；None=未入账本册（无 registry_id/无已发布快照，
+            调用方落回既有三向合并）。
+
+        Raises:
+            PgRenderUnavailable: 账本册 PG 不可达/读失败（环境类瞬态——退 pending
+            重放，禁退回袋内旧快照字节）。
+        """
+        rid = self._ledger_registry_id(rel)
+        if not rid:
+            return None
+        from zephyr.governance.registry_projection.pg_source import (  # noqa: PLC0415
+            ProjectionUnavailable,
+            load_latest_snapshot,
+        )
+        from zephyr.governance.registry_projection.renderer import render  # noqa: PLC0415
+
+        try:
+            snapshot = load_latest_snapshot(rid, rel)
+            return render(snapshot)
+        except ProjectionUnavailable as exc:
+            if "无已发布快照" in str(exc):
+                return None  # 未入账本册（册在 ROOR 但从未发布快照）→ cutover 前行为
+            raise PgRenderUnavailable(
+                f"[landing] 已入账本册 {rel}（{rid}）PG 现读不可用: {exc}"
+                "——退 pending 重试（账本册禁退袋内旧快照字节，裁定#502 战役 B 件）"
+            ) from exc
+
     def _merge_registry_file(self, item: dict, rel: str, theirs_bytes: bytes, old_dev: str) -> bytes | None:
         """注册表族单文件三向合并（W2）；冲突/结构漂移抛 RuntimeError → 死信回人工。
 
@@ -2229,6 +2303,25 @@ class WorktreeLanding:
             return theirs_bytes  # 基底也无此文件＝真·新增件落地，无合并语义
         if ours_text == theirs_text:
             return None  # 快照与 dev 一致 → 零合并零提交（幂等 noop）
+        # ── B 件（热册单口写战役 st-regsolo-20261010，2026-10-09）：已入账本册=PG 现读 render ──
+        # 病根链（10-09 三起 token 蒸发/-271 回滚险情机制面）：注册表族物化从袋内旧快照
+        # 派生字节（快进短路整档覆写/条目级合并皆以袋字节为 theirs 真源），而账本才是
+        # 唯一真源、YAML=机生只读投影（裁定#502）。已入账本册在此改从 PG
+        # registry_snapshot 现读最新版渲染：袋内该文件字节整体不再进入物化（旧快照
+        # 覆写路径对账本册结构性退役）；未入账本册（ROOR 无 registry_id）返回 None
+        # 落回既有条目级三向合并（cutover 安全，逐册迁移逐册切换）。
+        pg_text = self._pg_render_registry_text(rel)
+        if pg_text is not None:
+            if pg_text == ours_text:
+                meta = item.get("meta")
+                if not isinstance(meta, dict):
+                    meta = {}
+                    item["meta"] = meta
+                prev = str(meta.get("noop_audit") or "")
+                note = f"{rel}: PG render==dev（确定性投影吸收，袋侧注册表字节已由账本面代表）"
+                meta["noop_audit"] = f"{prev}; {note}" if prev else note
+                return None
+            return pg_text.encode("utf-8")
         base_sha = item.get("base_head") or ""
         base_text: str | None = None
         if base_sha and self._git_repo("cat-file", "-e", base_sha, check=False).returncode == 0:
@@ -2324,6 +2417,12 @@ class WorktreeLanding:
                 raise RuntimeError(f"快照路径校验拒绝: {rel}（{exc}）") from exc
             abs_path = self.worktree_path / rel
             if entry.get("action") == "delete":
+                if self._ledger_registry_id(rel):
+                    raise RuntimeError(
+                        f"[landing] 注册表族热册 {rel} 已入 PG 账本，禁袋删（裁定#502 战役 B 件）——"
+                        f"退役唯一通道=意图 API api.retire（authority_ref 强制）+publish+投影重打；"
+                        f"本袋请撤除该 delete 项或改道账本退役流程"
+                    )
                 try:
                     os.remove(abs_path)
                 except FileNotFoundError:

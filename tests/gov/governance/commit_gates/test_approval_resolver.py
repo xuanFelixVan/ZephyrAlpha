@@ -233,6 +233,25 @@ class TestAbsolutePathNormalization:
         v = resolve_approval([_RULES_HIT], None, tmp_path)
         assert v.approved is True and v.source == SOURCE_RULING
 
+    def test_session_worktree_path_normalized(self, tmp_path):
+        """会话 worktree（session_worktree_start 物理树 <repo>/.aidrafts/<sid>/）同归一：
+        命中绝对路径形如 <repo>/.aidrafts/<sid>/docs/.../ruling_registry.yaml，锚主仓根
+        后剥出 .aidrafts/<sid>/ 前缀才是真实仓相对位置（2026-10-09 st-regsolo-20261010
+        A 袋死信实证：活跃裁定授权覆盖却因前缀未剥恒不命中，与 serializer 同病家族）。
+        """
+        _make_ruling_registry(tmp_path, [_ruling()])
+        wt_hit = tmp_path / ".aidrafts" / "st-demo-20261010" / _RULES_HIT
+        v = resolve_approval([str(wt_hit)], None, tmp_path)
+        assert v.approved is True, "会话 worktree 内命中路径必须剥到主仓相对再判定"
+        assert v.source == SOURCE_RULING
+
+    def test_session_worktree_marker_channel_unaffected(self, tmp_path):
+        """剥前缀不得放大授权面：.aidrafts 树内未覆盖路径仍拒绝。"""
+        _make_ruling_registry(tmp_path, [_ruling()])
+        other = tmp_path / ".aidrafts" / "st-demo-20261010" / "docs" / "elsewhere.md"
+        v = resolve_approval([str(other)], None, tmp_path)
+        assert v.approved is False and v.source == SOURCE_NONE
+
     def test_serializer_landing_worktree_path_normalized(self, tmp_path):
         """serializer 落地工作树路径也要归一：命中绝对路径实测形如
         <repo>/.runtime/commit_queue/worktrees/w0/docs/.../ruling_registry.yaml，

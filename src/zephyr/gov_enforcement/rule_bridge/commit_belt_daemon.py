@@ -826,6 +826,19 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
         return 2
     seen_dead: set[str] = _load_seen_watermark(root)  # A-11：预载持久水位，重启只记真新增
     _loop_state: dict = {"env_aborts": 0, "epoch": None}
+    # B 件装载纪元探针（热册单口写战役 st-regsolo-20261010，2026-10-09）：守护经
+    # sys.modules 缓存 landing 模块，改码不重启=新逻辑永不装载（A-12 复发血泪）。
+    # 启动即打印所载 landing 模块的物化纪元，落地验证=日志出现 regsolo-b 纪元值。
+    try:
+        from scripts.governance import commit_queue_landing as _cql_epoch  # noqa: PLC0415
+
+        logger.info(
+            "[belt_daemon] landing materialization epoch=%s (pid=%s)",
+            getattr(_cql_epoch, "LANDING_MATERIALIZATION_EPOCH", "pre-B(<2026-10-09)"),
+            os.getpid(),
+        )
+    except Exception:  # noqa: BLE001 — 探针绝不阻断守护启动
+        logger.warning("[belt_daemon] landing epoch 探针失败（继续启动）", exc_info=True)
     _ledger_dead_letters(root, seen_dead)  # 启动登记（首次=真存量，此后=增量）
     _save_seen_watermark(root, seen_dead)  # A-11：扫后落水位
     _check_ledger_backlog()  # 启动即自检积压

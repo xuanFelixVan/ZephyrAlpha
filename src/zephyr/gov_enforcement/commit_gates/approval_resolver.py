@@ -207,12 +207,18 @@ _WT_PREFIX_PLURAL = "".join([".", "runtime/commit_queue/worktrees/"])
 
 
 def _strip_worktree_prefix(rel: str) -> str:
-    """剥 serializer 落地工作树前缀（worktree/ 与 worktrees/<slot>/ → 主仓相对路径）。
+    """剥会话/serializer 工作树前缀 → 主仓相对路径。
 
-    单数形态（裁定#480 手术③时序倒置治本，q-...-0013 死信实证）：B 段专用落地树
-    ``<repo>/.runtime/commit_queue/worktree/``（08 号文 §4.2 步骤 3）——锚主仓根后
-    命中路径剥出该前缀，不剥则 approved_paths（仓库相对 posix 登记）恒不匹配，
-    落地链里 active 裁定（如 #461 明文覆盖 ruling_registry.yaml）"有授权也审批不过"。
+    三种形态（均为"锚主仓根后命中路径仍带树前缀，不剥则 approved_paths
+    （仓库相对 posix 登记）恒不匹配——有授权也审批不过"同病家族）：
+
+    1. serializer 单数落地树（裁定#480 手术③时序倒置治本，q-...-0013 死信实证）：
+       ``<repo>/.runtime/commit_queue/worktree/``
+    2. serializer 复数通道池：``<repo>/.runtime/commit_queue/worktrees/<slot>/``
+    3. 会话 worktree（2026-10-09 st-regsolo-20261010 实测补：session_worktree_start
+       物理树 ``<repo>/.aidrafts/<sid>/``——worktree 内 commit 的 PROTECTED-PATHS
+       判定剥出该前缀才是真实仓相对路径；同日 A 袋死信实证=会话 worktree 内
+       携 ruling_registry.yaml 的袋被 #479 活跃裁定授权却因前缀未剥恒不命中）
     """
     if rel.startswith(_WT_PREFIX_SINGULAR):
         parts = rel.split("/")
@@ -222,6 +228,10 @@ def _strip_worktree_prefix(rel: str) -> str:
         parts = rel.split("/")
         # .runtime / commit_queue / worktrees / <slot> / <真实相对路径>
         return "/".join(parts[4:]) if len(parts) > 4 else rel
+    if rel.startswith(".aidrafts/"):
+        parts = rel.split("/")
+        # .aidrafts / <sid> / <真实相对路径>（sid 单段；不存在嵌套会话树形态）
+        return "/".join(parts[2:]) if len(parts) > 2 else rel
     return rel
 
 
