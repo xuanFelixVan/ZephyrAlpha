@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 管线馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：91｜馆内总数：91
+- 条目数（本页列出）：138｜馆内总数：138
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -20,7 +20,51 @@ doc_type: "index"
 | FILE:scripts/register_aux_tasks.ps1 | file | active | scripts/register_aux_tasks.ps1 |
 | FILE:scripts/register_counter_trend_feeder_tasks.ps1 | file | active | scripts/register_counter_trend_feeder_tasks.ps1 |
 | FILE:scripts/register_guard_tasks.ps1 | file | active | scripts/register_guard_tasks.ps1 |
+| FILE:scripts/tasks/register/register_ai_l1_scan_task.ps1 | file | active | scripts/tasks/register/register_ai_l1_scan_task.ps1 |
+| FILE:scripts/tasks/register/register_aux_tasks.ps1 | file | active | scripts/tasks/register/register_aux_tasks.ps1 |
+| FILE:scripts/tasks/register/register_budget_report_task.ps1 | file | active | scripts/tasks/register/register_budget_report_task.ps1 |
+| FILE:scripts/tasks/register/register_c4_exam_task.ps1 | file | active | scripts/tasks/register/register_c4_exam_task.ps1 |
+| FILE:scripts/tasks/register/register_config_check_task.ps1 | file | active | scripts/tasks/register/register_config_check_task.ps1 |
+| FILE:scripts/tasks/register/register_counter_trend_feeder_tasks.ps1 | file | active | scripts/tasks/register/register_counter_trend_feeder_tasks.ps1 |
+| FILE:scripts/tasks/register/register_decision_chain_sentinel_task.ps1 | file | active | scripts/tasks/register/register_decision_chain_sentinel_task.ps1 |
+| FILE:scripts/tasks/register/register_desktop_shell_startup.ps1 | file | active | scripts/tasks/register/register_desktop_shell_startup.ps1 |
+| FILE:scripts/tasks/register/register_drift_watchdog_task.ps1 | file | active | scripts/tasks/register/register_drift_watchdog_task.ps1 |
+| FILE:scripts/tasks/register/register_f06_grid_task.ps1 | file | active | scripts/tasks/register/register_f06_grid_task.ps1 |
+| FILE:scripts/tasks/register/register_factory_lane_c_task.ps1 | file | active | scripts/tasks/register/register_factory_lane_c_task.ps1 |
+| FILE:scripts/tasks/register/register_gate_fulltree_audit_task.ps1 | file | active | scripts/tasks/register/register_gate_fulltree_audit_task.ps1 |
+| FILE:scripts/tasks/register/register_guard_tasks.ps1 | file | active | scripts/tasks/register/register_guard_tasks.ps1 |
+| FILE:scripts/tasks/register/register_health_monitor_probe_task.ps1 | file | active | scripts/tasks/register/register_health_monitor_probe_task.ps1 |
+| FILE:scripts/tasks/register/register_library_ledger_backup_task.ps1 | file | active | scripts/tasks/register/register_library_ledger_backup_task.ps1 |
+| FILE:scripts/tasks/register/register_measure_calibration_task.ps1 | file | active | scripts/tasks/register/register_measure_calibration_task.ps1 |
+| FILE:scripts/tasks/register/register_metaq_audit_reconcile_task.ps1 | file | active | scripts/tasks/register/register_metaq_audit_reconcile_task.ps1 |
+| FILE:scripts/tasks/register/register_model_exam_task.ps1 | file | active | scripts/tasks/register/register_model_exam_task.ps1 |
+| FILE:scripts/tasks/register/register_model_intel_scan_task.ps1 | file | active | scripts/tasks/register/register_model_intel_scan_task.ps1 |
+| FILE:scripts/tasks/register/register_ollama_serve_task.ps1 | file | active | scripts/tasks/register/register_ollama_serve_task.ps1 |
+| FILE:scripts/tasks/register/register_paper_session_task.ps1 | file | active | scripts/tasks/register/register_paper_session_task.ps1 |
+| FILE:scripts/tasks/register/register_pattern_mining_task.ps1 | file | active | scripts/tasks/register/register_pattern_mining_task.ps1 |
+| FILE:scripts/tasks/register/register_post_settlement_task.ps1 | file | active | scripts/tasks/register/register_post_settlement_task.ps1 |
+| FILE:scripts/tasks/register/register_resource_morning_report_task.ps1 | file | active | scripts/tasks/register/register_resource_morning_report_task.ps1 |
+| FILE:scripts/tasks/register/register_resource_regen_check_task.ps1 | file | active | scripts/tasks/register/register_resource_regen_check_task.ps1 |
+| FILE:scripts/tasks/register/register_resource_sampler_scan_task.ps1 | file | active | scripts/tasks/register/register_resource_sampler_scan_task.ps1 |
+| FILE:scripts/tasks/register/register_resource_sampler_writeback_task.ps1 | file | active | scripts/tasks/register/register_resource_sampler_writeback_task.ps1 |
+| FILE:scripts/tasks/register/register_resource_view_publish_task.ps1 | file | active | scripts/tasks/register/register_resource_view_publish_task.ps1 |
+| FILE:scripts/tasks/register/register_sector_eqw_task.ps1 | file | active | scripts/tasks/register/register_sector_eqw_task.ps1 |
+| FILE:scripts/tasks/register/register_sector_synth_task.ps1 | file | active | scripts/tasks/register/register_sector_synth_task.ps1 |
+| FILE:scripts/tasks/register/register_sim_bridge_execute_task.ps1 | file | active | scripts/tasks/register/register_sim_bridge_execute_task.ps1 |
+| FILE:scripts/tasks/register/register_tilib_backfill_task.ps1 | file | active | scripts/tasks/register/register_tilib_backfill_task.ps1 |
+| FILE:scripts/tasks/run/run_backtest.py | file | active | scripts/tasks/run/run_backtest.py |
+| FILE:scripts/tasks/run/run_boot_sla_probe.py | file | active | scripts/tasks/run/run_boot_sla_probe.py |
+| FILE:scripts/tasks/run/run_c4_exam.ps1 | file | active | scripts/tasks/run/run_c4_exam.ps1 |
+| FILE:scripts/tasks/run/run_deepseek_v4_exam.py | file | active | scripts/tasks/run/run_deepseek_v4_exam.py |
+| FILE:scripts/tasks/run/run_f06_grid.ps1 | file | active | scripts/tasks/run/run_f06_grid.ps1 |
+| FILE:scripts/tasks/run/run_factory_lane_c.ps1 | file | active | scripts/tasks/run/run_factory_lane_c.ps1 |
+| FILE:scripts/tasks/run/run_post_settlement.py | file | active | scripts/tasks/run/run_post_settlement.py |
+| FILE:scripts/tasks/run/run_post_settlement_daily.ps1 | file | active | scripts/tasks/run/run_post_settlement_daily.ps1 |
+| FILE:scripts/tasks/run/run_qwen3_baseline_exam.py | file | active | scripts/tasks/run/run_qwen3_baseline_exam.py |
+| FILE:scripts/tasks/run/run_sim_bridge_execute_daily.ps1 | file | active | scripts/tasks/run/run_sim_bridge_execute_daily.ps1 |
+| FILE:scripts/tasks/run/run_ttl_rejudge_daily.ps1 | file | active | scripts/tasks/run/run_ttl_rejudge_daily.ps1 |
 | FILE:src/zephyr/data/config/tasks.yaml | file | active | src/zephyr/data/config/tasks.yaml |
+| FILE:tests/data/data/test_tasks_yaml_task_id_unique.py | file | active | tests/data/data/test_tasks_yaml_task_id_unique.py |
 | TOOL:mcp:_base_server | mcp_tool | active | mcp:_base_server |
 | TOOL:mcp:base_server | mcp_tool | active | mcp:base_server |
 | TOOL:mcp:blueprint_search | mcp_tool | active | mcp:blueprint_search |
@@ -64,6 +108,7 @@ doc_type: "index"
 | TASK:schtasks:/ZephyrAlpha_C4Exam_Full0916 | task | active | schtasks:\ZephyrAlpha_C4Exam_Full0916 |
 | TASK:schtasks:/ZephyrAlpha_C4Exam_OneShot0915 | task | active | schtasks:\ZephyrAlpha_C4Exam_OneShot0915 |
 | TASK:schtasks:/ZephyrAlpha_CHHealthProbe | task | active | schtasks:\ZephyrAlpha_CHHealthProbe |
+| TASK:schtasks:/ZephyrAlpha_CommitPerfReport | task | active | schtasks:\ZephyrAlpha_CommitPerfReport |
 | TASK:schtasks:/ZephyrAlpha_ConfigCheck | task | active | schtasks:\ZephyrAlpha_ConfigCheck |
 | TASK:schtasks:/ZephyrAlpha_DataScheduler | task | active | schtasks:\ZephyrAlpha_DataScheduler |
 | TASK:schtasks:/ZephyrAlpha_DeadmanSwitch | task | active | schtasks:\ZephyrAlpha_DeadmanSwitch |
@@ -74,6 +119,7 @@ doc_type: "index"
 | TASK:schtasks:/ZephyrAlpha_FactoryLaneC_Full0916 | task | active | schtasks:\ZephyrAlpha_FactoryLaneC_Full0916 |
 | TASK:schtasks:/ZephyrAlpha_FactoryLaneC_OneShot0915 | task | active | schtasks:\ZephyrAlpha_FactoryLaneC_OneShot0915 |
 | TASK:schtasks:/ZephyrAlpha_GateFullTreeAudit | task | active | schtasks:\ZephyrAlpha_GateFullTreeAudit |
+| TASK:schtasks:/ZephyrAlpha_HealthMonitorProbe | task | active | schtasks:\ZephyrAlpha_HealthMonitorProbe |
 | TASK:schtasks:/ZephyrAlpha_IndexMinuteEOD | task | active | schtasks:\ZephyrAlpha_IndexMinuteEOD |
 | TASK:schtasks:/ZephyrAlpha_IntradayFundFlow | task | active | schtasks:\ZephyrAlpha_IntradayFundFlow |
 | TASK:schtasks:/ZephyrAlpha_LibraryLedgerBackup | task | active | schtasks:\ZephyrAlpha_LibraryLedgerBackup |
@@ -93,6 +139,7 @@ doc_type: "index"
 | TASK:schtasks:/ZephyrAlpha_ResourceSamplerScan | task | active | schtasks:\ZephyrAlpha_ResourceSamplerScan |
 | TASK:schtasks:/ZephyrAlpha_ResourceSamplerWriteback | task | active | schtasks:\ZephyrAlpha_ResourceSamplerWriteback |
 | TASK:schtasks:/ZephyrAlpha_ResourceViewPublish | task | active | schtasks:\ZephyrAlpha_ResourceViewPublish |
+| TASK:schtasks:/ZephyrAlpha_SectorEqwIntraday | task | active | schtasks:\ZephyrAlpha_SectorEqwIntraday |
 | TASK:schtasks:/ZephyrAlpha_SectorSnapshot | task | active | schtasks:\ZephyrAlpha_SectorSnapshot |
 | TASK:schtasks:/ZephyrAlpha_SimBridgeExecute | task | active | schtasks:\ZephyrAlpha_SimBridgeExecute |
 | TASK:schtasks:/ZephyrAlpha_TTLRejudgeDaily | task | active | schtasks:\ZephyrAlpha_TTLRejudgeDaily |

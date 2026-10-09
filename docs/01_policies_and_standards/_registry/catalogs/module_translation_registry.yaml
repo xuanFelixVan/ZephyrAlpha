@@ -68144,3 +68144,11 @@ entries:
   desc_en: ""
   plain_zh: "同一支股票同一时刻的技术指标本该只有一行，现在表里存了好几种不同版本叠在一起；这把尺就是每天去数到底有多少个键是重复的、重复的里面有多少个值还不一样、以及能不能靠入库时间挑出该用的那一版。它只读不改，专门给要不要改表或改读法这个决定提供数字"
   responsibility_layer: business
+- module_path: src/zephyr/library/ruling_precedent.py
+  domain_id: D_GOVERNANCE
+  name_zh: "裁定先例机检"
+  name_en: "Ruling Precedent Lookup"
+  desc_zh: "按八类路由（D1-D8）机械归类检索裁定册只读投影；裁定路由政策 v2 E2 强制前置的执行面"
+  desc_en: ""
+  plain_zh: "裁新事项前先用它查一查过去同类的事是怎么裁的（引用老裁定号），避免同类事重复裁或裁得前后不一。"
+  responsibility_layer: governance

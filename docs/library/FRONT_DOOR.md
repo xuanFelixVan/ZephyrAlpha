@@ -24,13 +24,13 @@ generated_by: scripts/governance/generators/generate_front_door.py
 
 | 馆 | 页 | 在编数 |
 |---|---|---|
-| 代码馆 | docs/library/code.md | 28000 |
-| 数据馆 | docs/library/data.md | 345 |
-| 文档馆 | docs/library/doc.md | 5458 |
-| 制度馆 | docs/library/rule.md | 88 |
-| 闸门馆 | docs/library/gate.md | 303 |
-| 管线馆 | docs/library/pipeline.md | 89 |
-| 基建与备份馆 | docs/library/backup.md | 0 |
+| 代码馆 | docs/library/code.md | 35822 |
+| 数据馆 | docs/library/data.md | 357 |
+| 文档馆 | docs/library/doc.md | 5597 |
+| 制度馆 | docs/library/rule.md | 91 |
+| 闸门馆 | docs/library/gate.md | 331 |
+| 管线馆 | docs/library/pipeline.md | 138 |
+| 基建与备份馆 | docs/library/backup.md | 25 |
 
 ## 高频紧急路径
 

@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 制度馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：88｜馆内总数：88
+- 条目数（本页列出）：91｜馆内总数：91
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -16,6 +16,7 @@ doc_type: "index"
 | FILE:src/zephyr/clone_guard/rules/no-duplicate-try-except.yaml | file | active | src/zephyr/clone_guard/rules/no-duplicate-try-except.yaml |
 | FILE:src/zephyr/clone_guard/rules/no-pass-in-except.yaml | file | active | src/zephyr/clone_guard/rules/no-pass-in-except.yaml |
 | FILE:tests/ex_core/rules/test_trading_rule_packs.py | file | active | tests/ex_core/rules/test_trading_rule_packs.py |
+| FILE:tests/trade/ex_core/rules/test_trading_rule_packs.py | file | active | tests/trade/ex_core/rules/test_trading_rule_packs.py |
 | MOD:src/zephyr/ex_core/rules/__init__.py | module | active | src/zephyr/ex_core/rules/__init__.py |
 | MOD:src/zephyr/ex_core/rules/ashare.py | module | active | src/zephyr/ex_core/rules/ashare.py |
 | MOD:src/zephyr/ex_core/rules/base.py | module | active | src/zephyr/ex_core/rules/base.py |
@@ -30,6 +31,7 @@ doc_type: "index"
 | REG:docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml |
+| REG:docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml |
@@ -85,6 +87,7 @@ doc_type: "index"
 | REG:docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/rule_registry_collection.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/rule_registry_collection.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml |
+| REG:docs/01_policies_and_standards/_registry/catalogs/schema_migrations.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/schema_migrations.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/scripts_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/scripts_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/standard_family_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/standard_family_registry.yaml |

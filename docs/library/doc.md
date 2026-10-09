@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 文档馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：300｜馆内总数：5521
+- 条目数（本页列出）：300｜馆内总数：5597
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -21,6 +21,7 @@ doc_type: "index"
 | DOC:docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md | doc | active | docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md |
 | DOC:docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml | doc | active | docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml |
 | DOC:docs/01_policies_and_standards/_registry/reports/index.md | doc | active | docs/01_policies_and_standards/_registry/reports/index.md |
+| DOC:docs/01_policies_and_standards/_registry/reports/rule_face_reconciliation_registry.yaml | doc | active | docs/01_policies_and_standards/_registry/reports/rule_face_reconciliation_registry.yaml |
 | DOC:docs/01_policies_and_standards/_registry/schemas/frontmatter_schema.json | doc | active | docs/01_policies_and_standards/_registry/schemas/frontmatter_schema.json |
 | DOC:docs/01_policies_and_standards/_registry/schemas/index.md | doc | active | docs/01_policies_and_standards/_registry/schemas/index.md |
 | DOC:docs/01_policies_and_standards/_registry/schemas/session_log_schema.yaml | doc | active | docs/01_policies_and_standards/_registry/schemas/session_log_schema.yaml |
@@ -168,6 +169,7 @@ doc_type: "index"
 | DOC:docs/01_policies_and_standards/rules/trae_084_precommit_incremental_discipline.yaml | doc | active | docs/01_policies_and_standards/rules/trae_084_precommit_incremental_discipline.yaml |
 | DOC:docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml | doc | active | docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml |
 | DOC:docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml | doc | active | docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml |
+| DOC:docs/01_policies_and_standards/rules/trae_087_meta_question_registry.yaml | doc | active | docs/01_policies_and_standards/rules/trae_087_meta_question_registry.yaml |
 | DOC:docs/01_policies_and_standards/sop/README.md | doc | active | docs/01_policies_and_standards/sop/README.md |
 | DOC:docs/01_policies_and_standards/sop/audit_prompts_20_ai.md | doc | active | docs/01_policies_and_standards/sop/audit_prompts_20_ai.md |
 | DOC:docs/01_policies_and_standards/sop/automation_sop/automation_crew_policy.md | doc | active | docs/01_policies_and_standards/sop/automation_sop/automation_crew_policy.md |
@@ -184,11 +186,13 @@ doc_type: "index"
 | DOC:docs/01_policies_and_standards/sop/construction_sop/frontend_component_split_policy.md | doc | active | docs/01_policies_and_standards/sop/construction_sop/frontend_component_split_policy.md |
 | DOC:docs/01_policies_and_standards/sop/construction_sop/index.md | doc | active | docs/01_policies_and_standards/sop/construction_sop/index.md |
 | DOC:docs/01_policies_and_standards/sop/construction_sop/lane_construction_discipline_policy.md | doc | active | docs/01_policies_and_standards/sop/construction_sop/lane_construction_discipline_policy.md |
+| DOC:docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md | doc | active | docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md |
 | DOC:docs/01_policies_and_standards/sop/data_audit_sop/index.md | doc | active | docs/01_policies_and_standards/sop/data_audit_sop/index.md |
 | DOC:docs/01_policies_and_standards/sop/data_audit_sop/industry_chain_data_audit_policy.md | doc | active | docs/01_policies_and_standards/sop/data_audit_sop/industry_chain_data_audit_policy.md |
 | DOC:docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md | doc | active | docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md |
 | DOC:docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md | doc | active | docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md |
 | DOC:docs/01_policies_and_standards/sop/data_ops_sop/index.md | doc | active | docs/01_policies_and_standards/sop/data_ops_sop/index.md |
+| DOC:docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/agent_constitution_l0.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/agent_constitution_l0.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md |
@@ -196,6 +200,7 @@ doc_type: "index"
 | DOC:docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml | doc | active | docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml | doc | active | docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/index.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/index.md |
+| DOC:docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/landing_journey_registry.yaml | doc | active | docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/landing_journey_registry.yaml |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/construction_ledger_method_policy.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/construction_ledger_method_policy.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md |
@@ -209,6 +214,7 @@ doc_type: "index"
 | DOC:docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md | doc | active | docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md |
 | DOC:docs/01_policies_and_standards/sop/mining_sop/skeleton_mining_policy.md | doc | active | docs/01_policies_and_standards/sop/mining_sop/skeleton_mining_policy.md |
 | DOC:docs/01_policies_and_standards/sop/mining_sop/trading_decision_map_pathfinding_policy.md | doc | active | docs/01_policies_and_standards/sop/mining_sop/trading_decision_map_pathfinding_policy.md |
+| DOC:docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md | doc | active | docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md |
 | DOC:docs/01_policies_and_standards/sop/ops_sop/emergency_runbook.md | doc | active | docs/01_policies_and_standards/sop/ops_sop/emergency_runbook.md |
 | DOC:docs/01_policies_and_standards/sop/ops_sop/index.md | doc | active | docs/01_policies_and_standards/sop/ops_sop/index.md |
 | DOC:docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_policy.md | doc | active | docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_policy.md |
@@ -305,11 +311,5 @@ doc_type: "index"
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/62_d_plan.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/62_d_plan.md |
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/63_d_position.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/63_d_position.md |
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/64_d_regime.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/64_d_regime.md |
-| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/65_d_risk.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/65_d_risk.md |
-| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/66_d_sec_scripts.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/66_d_sec_scripts.md |
-| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/67_d_sell_decision.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/67_d_sell_decision.md |
-| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/68_d_siglegacy.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/68_d_siglegacy.md |
-| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/69_d_sigqc.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/69_d_sigqc.md |
-| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/70_d_simulation.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/70_d_simulation.md |
 
-（仅列前 300 条，共 5521 条——全量请走总口查询）
+（仅列前 300 条，共 5597 条——全量请走总口查询）

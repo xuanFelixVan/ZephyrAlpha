@@ -24,6 +24,7 @@ Usage::
     python -m zephyr.library.lookup 融资融券            # G15-① 别名轴：→杠杆→margin_trading
     python -m zephyr.library.lookup --backtest --strategy my_strat --since 2026-09-01 --until 2026-09-22
     python -m zephyr.library.lookup kline_1min --session st-xxx   # 审计留痕（裁定#460 ②，fail-open）
+    python -m zephyr.library.lookup state "GPU 摊销"   # state 子命令：资产状态三源证据包（馆索引+git log+工棚/挂账面）
 # [ALGO_FLOW] external: docs/03_modules/_domain_library/algo_flow/lookup.yaml
 """
 
@@ -49,6 +50,7 @@ __all__ = ["lookup_assets"]  # noqa: n114-final  n114-final豁免: __all__是Pyt
 
 _BACKTEST_HOME_PREFIX: Final[str] = "data/backtest_artifacts/"
 _COMMIT_GUIDE_PREFIX: Final[str] = "commit-guide:"
+_RULING_PREFIX: Final[str] = "ruling:"
 _COMMIT_GUIDE_PLAYBOOK_REL: Final[str] = (
     "docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md"
 )
@@ -56,6 +58,28 @@ _BACKTEST_LOG_HINT: Final[str] = (
     "回测运行日志抽屉：logs/c1_repro/、logs/c1_real_*.log（族级入册=T10，明细见 registry_of_logs.yaml）"
 )
 _VOCAB_REL: Final[str] = "docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml"
+
+# ─── state 子命令常量（F1 资产状态断言·三源模式，st-examchief-20261009）───────
+_STATE_WORKSHOP_REL: Final[str] = "docs/_working"
+_STATE_CONFIG_REL: Final[str] = "config"
+_STATE_GIT_SINCE: Final[str] = "--since=90.days"
+_STATE_SOURCE_LINE_CAP: Final[int] = 15  # 单源输出行上限（F1 规格 2）
+_STATE_INDEX_ROW_CAP: Final[int] = 10  # 源① 馆内条目上限
+_STATE_GIT_PATHS_DIR_CAP: Final[int] = 6  # 源② touched-paths·目录命中组总配额（工棚战役目录）
+_STATE_GIT_PATHS_DIR_SUB_CAP: Final[int] = 3  # 源② 目录命中组·单目录子查询配额
+_STATE_GIT_PATHS_OTHER_CAP: Final[int] = 2  # 源② touched-paths·内容命中组配额（挂账册等）
+_STATE_GIT_PATHSPEC_CAP: Final[int] = 40  # 源③回喂源②的 pathspec 总量上限
+_STATE_GIT_PICKAXE_CAP: Final[int] = 5  # 源② pickaxe 全串配额
+_STATE_GIT_PICKAXE_WORD_CAP: Final[int] = 2  # 源② pickaxe 逐词配额（防高频词淹没）
+_STATE_GIT_GREP_CAP: Final[int] = 15  # 源② grep 通道配额（合并后仍截 15）
+_STATE_GIT_LINE_WIDTH: Final[int] = 200  # oneline 超长提交消息截断宽
+_STATE_EXCERPT_WIDTH: Final[int] = 180  # 源③ 命中行摘录截断宽
+_STATE_EXCERPTS_PER_FILE: Final[int] = 1  # 源③ 单文件摘录上限（全词同现文件各取其最佳 1 行）
+_STATE_EXCERPT_BUDGET_TOTAL: Final[int] = 3  # 源③ 摘录总额（其余预算让位给文件列名行）
+_STATE_SCAN_MAX_FILE_BYTES: Final[int] = 1_000_000  # 内容扫描单文件字节上限
+_STATE_SCAN_MAX_FILES: Final[int] = 6000  # 内容扫描文件总数上限
+_STATE_SCAN_HITLINES_PER_FILE: Final[int] = 200  # 单文件内容命中采集上限
+_STATE_SKIP_DIRS: Final[frozenset[str]] = frozenset({"__pycache__", "node_modules"})
 
 
 def _load_lookup_axis() -> tuple[dict[str, str], dict[str, list[str]]]:
@@ -376,6 +400,399 @@ def _write_cli_audit(session_id: str, query_payload: dict[str, Any], result_coun
         logging.getLogger(__name__).warning("library.lookup: --session 审计留痕失败（fail-open）: %s", exc)
 
 
+# ═══ state 子命令（F1 资产状态断言·三源模式，st-examchief-20261009）═════════════
+# 起因：docs/_working/ 是图书馆场外区（fs_collector._SKIP_DIRS 跳过，梵蒂冈条款），馆查
+# 不到场外落地证据，而 agent 无便捷 git log 通道——规划轮曾误报 GPU 摊销"未做"。
+# state 一条命令返回三源证据包：①馆索引 ②git log（grep/pickaxe/touched-paths 三通道）
+# ③工棚+挂账面（docs/_working + config 内容扫描）。只读零副作用；负存在断言
+# （"查过且无"）由 -- no hits -- 与 sources-with-hits 计数承载。
+
+
+def _state_words(query: str) -> list[str]:
+    """搜词拆分：按空白拆词去重保序（"GPU 摊销"→["GPU","摊销"]；中文 git 通道逐词可用）。"""
+    words: list[str] = []
+    for word in query.split():
+        if word not in words:
+            words.append(word)
+    return words
+
+
+def _state_snapshot_line() -> str:
+    """时间戳头（规格 2）：ISO8601 带本地时区偏移（如 +08:00），三源共用同一读数。"""
+    from datetime import UTC, datetime  # noqa: PLC0415 — 惰性 stdlib（保 import 计时面，R4 同法）
+
+    return f"state-snapshot at {datetime.now(UTC).astimezone().isoformat(timespec='seconds')}"
+
+
+def _state_truncate(line: str, width: int) -> str:
+    """定宽截断（超长提交消息/命中行摘录保输出可读，哈希与前缀证据保全）。"""
+    text = line.rstrip()
+    return text if len(text) <= width else text[:width] + "…"
+
+
+def _run_git(args: list[str], repo_root: Any) -> str:
+    """只读 git 调用：stdout 按 UTF-8 解码（win32 下 git 输出恒 UTF-8，errors=replace 防炸）。
+
+    经 run_subprocess_hidden 统一入口（TRAE-067 铁律2 CREATE_NO_WINDOW，BARE-SUBPROCESS 处方）。
+    """
+    import subprocess  # noqa: PLC0415 — 惰性 stdlib（保 import 计时面，R4 同法）
+
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+    try:
+        proc = run_subprocess_hidden(
+            ["git", *args],
+            cwd=str(repo_root),
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+        )
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return ""
+    return proc.stdout if proc.returncode == 0 else ""
+
+
+def _git_log_lines(args: list[str], repo_root: Any, cap: int) -> list[str]:
+    """git log --all --oneline 包装：非空行取前 cap 条（空仓/无命中返回空表）。"""
+    out = _run_git(["log", "--all", "--oneline", *args], repo_root)
+    return [line for line in out.splitlines() if line.strip()][:cap]
+
+
+def _state_source_index(query: str) -> tuple[list[str], bool]:
+    """源① 馆索引：复用 lookup_assets 现有只读查询路径（lib_assets 账本，≤10 条）。
+
+    全 query 先查；不足额再逐词补充（词表归一轴照常生效）。DB 故障=源级隔离：
+    记错误行、has=False，绝不拖垮证据包其余两源。
+    """
+    q = query.strip()
+    rows: list[dict[str, Any]] = []
+    try:
+        rows = lookup_assets(q, limit=_STATE_INDEX_ROW_CAP)
+        if len(rows) < _STATE_INDEX_ROW_CAP:
+            seen = {r.get("asset_id") for r in rows}
+            for word in _state_words(q):
+                if word == q:
+                    continue
+                for row in lookup_assets(word, limit=_STATE_INDEX_ROW_CAP):
+                    if row.get("asset_id") in seen:
+                        continue
+                    seen.add(row.get("asset_id"))
+                    rows.append(row)
+                    if len(rows) >= _STATE_INDEX_ROW_CAP:
+                        break
+                if len(rows) >= _STATE_INDEX_ROW_CAP:
+                    break
+    except Exception as exc:  # noqa: BLE001 — 源级隔离（单源故障不阻断三源证据包）
+        return [f"(index source error: {exc})"], False
+    lines = [
+        f"{r.get('asset_id', '?')}\t{r.get('home', '?')}\t{_state_truncate(str(r.get('title') or ''), 80)}"
+        for r in rows[:_STATE_INDEX_ROW_CAP]
+    ]
+    return lines, bool(lines)
+
+
+def _state_source_gitlog(
+    query: str, dir_hit_paths: list[str], other_hit_paths: list[str], repo_root: Any
+) -> tuple[list[str], bool]:
+    """源② git log 三通道（--all --oneline，近 90 天，总 ≤15 行，每行带通道标注）：
+
+    - channel:paths   —— 源③命中文件的落库提交，两组分查：目录命中组（工棚战役目录，
+      "做没做"最直接证据，配额 6）+ 内容命中组（挂账册等，配额 2）；
+    - channel:pickaxe —— -S 内容增删证据：query 去空格全串优先，逐词补充（每词配额 2）；
+    - channel:grep    —— -i --grep 提交消息：全串优先，逐词补充（配额 15）。
+
+    逐词拆分是硬需求：实测 "GPU 摊销" 全串 grep 零命中（目标提交消息只含 "GPU"），
+    且 90 天窗口内 GPU 命中 105 条、目标提交列第 23/44 位——目录命中组按目录分组的
+    定向反查（如 gpu_rewrite/ 整目录 90 天仅 4 条落库提交）是让 c8da/cf16 类证据
+    稳定浮现的正解。stash 派生提交（subject 前缀 "WIP on "/"index on "/"On "）非落库
+    证据，过滤不显。
+    """
+    words = _state_words(query)
+    nospace = "".join(words)
+    ordered: list[tuple[str, list[str]]] = []
+    if dir_hit_paths:
+        # 按目录分组、目录序=源③排名序（dir_hit_paths 已按文件排名排好）逐目录子查询——
+        # 全 pathspec 并集会让高频被 touch 的目录（如他会话战役目录 g_backtest_gpu/）
+        # 的新提交反超目标提交；单目录子查（如 gpu_rewrite/ 90 天仅 4 条）则目标提交恒在顶部。
+        from pathlib import PurePosixPath  # noqa: PLC0415 — 惰性 stdlib（保 import 计时面）
+
+        dir_groups: dict[str, list[str]] = {}
+        for path_text in dir_hit_paths:
+            dir_key = str(PurePosixPath(path_text).parent)
+            dir_groups.setdefault(dir_key, []).append(path_text)
+        merged_dir_lines: list[str] = []
+        seen_dir_hashes: set[str] = set()
+        for dir_key in dir_groups:
+            if len(merged_dir_lines) >= _STATE_GIT_PATHS_DIR_CAP:
+                break
+            for raw in _git_log_lines([_STATE_GIT_SINCE, "--", dir_key], repo_root, _STATE_GIT_PATHS_DIR_SUB_CAP):
+                commit_hash, _, subject = raw.partition(" ")
+                if subject.startswith(("WIP on ", "index on ", "On ")):  # stash 派生提交=非落库证据
+                    continue
+                if commit_hash in seen_dir_hashes:
+                    continue
+                seen_dir_hashes.add(commit_hash)
+                merged_dir_lines.append(raw)
+                if len(merged_dir_lines) >= _STATE_GIT_PATHS_DIR_CAP:
+                    break
+        if merged_dir_lines:
+            ordered.append(("paths", merged_dir_lines))
+    if other_hit_paths:
+        ordered.append(
+            (
+                "paths",
+                _git_log_lines(
+                    [_STATE_GIT_SINCE, "--", *other_hit_paths[:_STATE_GIT_PATHSPEC_CAP]],
+                    repo_root,
+                    _STATE_GIT_PATHS_OTHER_CAP,
+                ),
+            )
+        )
+    pickaxe: list[str] = []
+    if nospace:
+        pickaxe.extend(_git_log_lines([_STATE_GIT_SINCE, f"-S{nospace}"], repo_root, _STATE_GIT_PICKAXE_CAP))
+    for word in words:
+        pickaxe.extend(_git_log_lines([_STATE_GIT_SINCE, f"-S{word}"], repo_root, _STATE_GIT_PICKAXE_WORD_CAP))
+    if pickaxe:
+        ordered.append(("pickaxe", pickaxe))
+    grep: list[str] = []
+    q = query.strip()
+    if q:
+        grep.extend(_git_log_lines(["-i", f"--grep={q}", _STATE_GIT_SINCE], repo_root, _STATE_GIT_GREP_CAP))
+    for word in words:
+        if len(grep) >= _STATE_GIT_GREP_CAP:
+            break
+        grep.extend(
+            _git_log_lines(["-i", f"--grep={word}", _STATE_GIT_SINCE], repo_root, _STATE_GIT_GREP_CAP - len(grep))
+        )
+    if grep:
+        ordered.append(("grep", grep))
+    seen: set[str] = set()
+    lines: list[str] = []
+    for channel, raw_lines in ordered:
+        for raw in raw_lines:
+            commit_hash, _, subject = raw.partition(" ")
+            if subject.startswith(("WIP on ", "index on ", "On ")):  # stash 派生提交=非落库证据
+                continue
+            if commit_hash in seen:
+                continue
+            seen.add(commit_hash)
+            lines.append(f"{_state_truncate(raw, _STATE_GIT_LINE_WIDTH)}  [channel:{channel}]")
+            if len(lines) >= _STATE_SOURCE_LINE_CAP:
+                return lines, True
+    return lines, bool(lines)
+
+
+def _scan_file_words(path: Any, lowered_words: list[str]) -> tuple[set[int], list[tuple[int, str, int]], int]:
+    """单文件内容扫描（大小写不敏感子串）。
+
+    返回 (命中词索引集, [(行号, 行文本, 命中词数)], 全词同现行数)——全词同现
+    （一行内齐含全部搜词）是最强短语级相关性信号，驱动源③排序与摘录位。
+    二进制（首 8KB 含 NUL）/超限文件跳过内容；命中行只采集前 _STATE_SCAN_HITLINES_PER_FILE 条。
+    """
+    try:
+        if path.stat().st_size > _STATE_SCAN_MAX_FILE_BYTES:
+            return set(), [], 0
+        data = path.read_bytes()
+    except OSError:
+        return set(), [], 0
+    if b"\x00" in data[:8192]:
+        return set(), [], 0
+    text = data.decode("utf-8", errors="replace")
+    hit_indexes: set[int] = set()
+    hits: list[tuple[int, str, int]] = []
+    cooccurrence = 0
+    full_cover = len(lowered_words)
+    for lineno, raw in enumerate(text.splitlines(), 1):
+        lowered = raw.lower()
+        matched = [i for i, w in enumerate(lowered_words) if w in lowered]
+        if not matched:
+            continue
+        hit_indexes.update(matched)
+        if len(matched) == full_cover:
+            cooccurrence += 1
+        if len(hits) < _STATE_SCAN_HITLINES_PER_FILE:
+            hits.append((lineno, raw.strip(), len(matched)))
+    return hit_indexes, hits, cooccurrence
+
+
+def _state_source_workshop(
+    query: str, workshop_root: Any, config_root: Any
+) -> tuple[list[str], list[str], list[str], bool]:
+    """源③ 工棚面+挂账面：docs/_working 目录名+文件名+内容子串扫描 + config/*.yaml 内容扫描。
+
+    返回 (输出行, 目录命中相对路径组, 其余命中相对路径组, has_hits)。排序=(-全词同现行数,
+    -目录名命中词数, -文件名命中词数, -命中词覆盖数, -内容命中行数, 路径)：全词同现
+    （如挂账便签一行齐含 gpu+摊销）置顶；战役目录（目录名含搜词，如 gpu_rewrite/）
+    下的文件优先列名。摘录策略=全词同现文件各取最佳 1 行、总额 3 行，其余以头部行列名
+    （1 行/文件）直到 15 行预算耗尽——列名本身就是"文件命中"证据。两组命中路径回喂
+    源② touched-paths 通道分查——场外区（fs_collector._SKIP_DIRS 跳过）的落地文件
+    由此接回 git 证据链。
+    """
+    import os  # noqa: PLC0415 — 惰性 stdlib（保 import 计时面，R4 同法）
+    from pathlib import Path as _Path  # noqa: PLC0415
+
+    words = _state_words(query)
+    if not words:
+        return [], [], [], False
+    lowered_words = [w.lower() for w in words]
+    records: list[tuple[str, set[int], int, int, int, int, list[tuple[int, str, int]], bool]] = []
+    scanned = 0
+    truncated = False
+
+    def _record(  # noqa: PLR0913 — 记录组装器，八参皆必要（排名轴+输出轴+分组轴）
+        display: str,
+        name_idx: set[int],
+        dir_idx: set[int],
+        content_idx: set[int],
+        hits: list[tuple[int, str, int]],
+        cooc: int,
+        is_dir_hit: bool,
+    ) -> None:
+        word_union = name_idx | content_idx
+        excerpts = sorted(hits, key=lambda h: (-h[2], h[0]))[:_STATE_EXCERPTS_PER_FILE]
+        records.append((display, word_union, cooc, len(dir_idx), len(name_idx), len(hits), excerpts, is_dir_hit))
+
+    def _display_for(path: Any, base: Any, fallback: Any) -> str:
+        try:
+            return path.relative_to(base).as_posix()
+        except ValueError:
+            return fallback.as_posix()
+
+    if workshop_root and _Path(workshop_root).is_dir():
+        workshop_root = _Path(workshop_root)
+        # 展示/回喂 git 的基准=仓库根（<repo>/docs/_working 上溯两级）；注入异常树时退 rel
+        display_base = workshop_root.parent.parent if workshop_root.parent != workshop_root else workshop_root
+        for dirpath, dirnames, filenames in os.walk(workshop_root):
+            dirnames[:] = [d for d in dirnames if d not in _STATE_SKIP_DIRS and not d.startswith(".")]
+            for filename in filenames:
+                if scanned >= _STATE_SCAN_MAX_FILES:
+                    truncated = True
+                    break
+                path = _Path(dirpath) / filename
+                scanned += 1
+                rel = path.relative_to(workshop_root)
+                rel_text = rel.as_posix().lower()
+                name_hits = {i for i, w in enumerate(lowered_words) if w in rel_text}
+                dir_parts = [p.lower() for p in rel.parts[:-1]]
+                dir_hits = {i for i, w in enumerate(lowered_words) if any(w in part for part in dir_parts)}
+                content_hits, hit_lines, cooc = _scan_file_words(path, lowered_words)
+                if not name_hits and not content_hits:
+                    continue
+                _record(
+                    _display_for(path, display_base, rel),
+                    name_hits,
+                    dir_hits,
+                    content_hits,
+                    hit_lines,
+                    cooc,
+                    bool(dir_hits),
+                )
+            if truncated:
+                break
+    if config_root and _Path(config_root).is_dir():
+        config_root = _Path(config_root)
+        display_base = config_root.parent if config_root.parent != config_root else config_root
+        for pattern in ("*.yaml", "*.yml"):
+            for path in sorted(config_root.glob(pattern)):
+                if scanned >= _STATE_SCAN_MAX_FILES:
+                    truncated = True
+                    break
+                scanned += 1
+                content_idx, hit_lines, cooc = _scan_file_words(path, lowered_words)
+                if not hit_lines:
+                    continue
+                _record(_display_for(path, display_base, path), set(), set(), content_idx, hit_lines, cooc, False)
+            if truncated:
+                break
+    records.sort(key=lambda rec: (-rec[2], -rec[3], -rec[4], -len(rec[1]), -rec[5], rec[0]))
+    lines: list[str] = []
+    dir_hit_paths: list[str] = []
+    other_hit_paths: list[str] = []
+    excerpt_budget = _STATE_EXCERPT_BUDGET_TOTAL
+    for rec in records:
+        display, word_hits, cooc, _dir_n, _name_n, _hit_n, excerpts, is_dir_hit = rec
+        if len(lines) >= _STATE_SOURCE_LINE_CAP:
+            break
+        (dir_hit_paths if is_dir_hit else other_hit_paths).append(display)
+        lines.append(f"{display}  [words {len(word_hits)}/{len(lowered_words)}]")
+        # 摘录策略：全词同现文件各取其最佳 1 行（如挂账便签的 measured 注释行），
+        # 总额 3 行——其余 12 行预算让位给文件列名（列名本身即"文件命中"证据）。
+        if cooc > 0 and excerpt_budget > 0 and excerpts:
+            lineno, text, _ = excerpts[0]
+            lines.append(f"  L{lineno}: {_state_truncate(text, _STATE_EXCERPT_WIDTH)}")
+            excerpt_budget -= 1
+    if truncated and len(lines) < _STATE_SOURCE_LINE_CAP:
+        lines.append(f"(scan truncated at {_STATE_SCAN_MAX_FILES} files)")
+    return (
+        lines,
+        dir_hit_paths[:_STATE_GIT_PATHSPEC_CAP],
+        other_hit_paths[:_STATE_GIT_PATHSPEC_CAP],
+        bool(lines),
+    )
+
+
+def lookup_state(
+    query: str,
+    *,
+    repo_root: Any = None,
+    workshop_root: Any = None,
+    config_root: Any = None,
+) -> int:
+    """state 面：资产状态三源证据包（只读零副作用；馆查询走现有只读路径）。
+
+    Args:
+        query: 状态断言查询串（如 "GPU 摊销"）。
+        repo_root: git 仓库根（默认 REPO_ROOT；测试注入临时仓）。
+        workshop_root: 工棚根（默认 <repo>/docs/_working；测试注入 tmp_path 假树）。
+        config_root: 挂账面根（默认 <repo>/config；测试注入 tmp_path）。
+
+    Returns:
+        退出码：任一源命中=0；三源全零=1（负存在断言依据）。
+
+    输出契约：每源一节 ``== source-N: <名称> ==`` + ``state-snapshot at <ISO8601+08:00>`` 头，
+    命中行原样；零命中打 ``-- no hits --``；结尾 ``sources-with-hits: N/3``。
+    """
+    from pathlib import Path as _Path  # noqa: PLC0415 — 惰性 stdlib（保 import 计时面，R4 同法）
+
+    from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415 — 懒加载避免 import 期依赖
+
+    q = (query or "").strip()
+    if not q:
+        print("(state: empty query)")
+        return 1
+    root = _Path(repo_root) if repo_root else _Path(REPO_ROOT)
+    workshop = _Path(workshop_root) if workshop_root else root / _STATE_WORKSHOP_REL
+    config = _Path(config_root) if config_root else root / _STATE_CONFIG_REL
+    try:  # win32 管道态 stdout 默认 locale 编码，重配置 UTF-8 防中文/特殊字符炸 print
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except (OSError, ValueError):
+        pass
+    snapshot = _state_snapshot_line()
+    workshop_lines, dir_hit_paths, other_hit_paths, workshop_has = _state_source_workshop(q, workshop, config)
+    git_lines, git_has = _state_source_gitlog(q, dir_hit_paths, other_hit_paths, root)
+    index_lines, index_has = _state_source_index(q)
+    sections: list[tuple[str, list[str], bool]] = [
+        ("source-1: 馆索引 (lib_assets)", index_lines, index_has),
+        ("source-2: git log (--grep/-S/touched-paths, --all, 90d)", git_lines, git_has),
+        ("source-3: 工棚+挂账面 (docs/_working + config)", workshop_lines, workshop_has),
+    ]
+    sources_with_hits = 0
+    for name, lines, has_hits in sections:
+        print(f"== {name} ==")
+        print(snapshot)
+        if has_hits and lines:
+            sources_with_hits += 1
+            for line in lines:
+                print(line)
+        else:
+            print("-- no hits --")
+    print(f"sources-with-hits: {sources_with_hits}/3")
+    return 0 if sources_with_hits else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI 入口：打印查询结果表。
 
@@ -390,7 +807,9 @@ def main(argv: list[str] | None = None) -> int:
 
     """
     parser = argparse.ArgumentParser(prog="zephyr.library.lookup", description="图书馆总口查询（T5 两轴过滤器）")
-    parser.add_argument("query", nargs="?", default="", help="查询串（ID/home/标题模糊匹配）")
+    parser.add_argument(
+        "query", nargs="?", default="", help="查询串（ID/home/标题模糊匹配；ruling: 前缀=裁定先例机检面）"
+    )
     parser.add_argument("limit_pos", nargs="?", type=int, default=None, help="上限（位置式旧用法）")
     parser.add_argument("--limit", type=int, default=20, help="上限（默认 20，最大 10000）")
     parser.add_argument("--kind", default=None, help="kind 精确过滤（12 枚举，如 table/module/file）")
@@ -409,10 +828,18 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="session 标识（裁定#460 ②：提供则写 lookup audit 留痕，fail-open；缺省行为零变化）",
     )
-    args = parser.parse_args(argv)
+    raw_argv = sys.argv[1:] if argv is None else list(argv)
+    state_face = bool(raw_argv) and raw_argv[0] == "state"
+    if state_face:
+        raw_argv = raw_argv[1:]  # state 子命令与其余查询面互斥（F1）：占位词不进主 query 位置
+    args = parser.parse_args(raw_argv)
 
     session_id = (args.session or "").strip()
-    if args.backtest:
+    if state_face:
+        rc = lookup_state(args.query)
+        result_count = 1 if rc == 0 else 0
+        payload: dict[str, Any] = {"query": args.query, "face": "state"}
+    elif args.backtest:
         rc = _query_backtest(args.strategy, args.since, args.until, max(1, min(args.limit, 10000)))
         result_count = 1 if rc == 0 else 0
         payload: dict[str, Any] = {"query": args.strategy, "face": "backtest"}
@@ -424,6 +851,12 @@ def main(argv: list[str] | None = None) -> int:
         rc = _query_commit_guide(args.query[len(_COMMIT_GUIDE_PREFIX) :])
         result_count = 1 if rc == 0 else 0
         payload = {"query": args.query, "face": "commit_guide"}
+    elif args.query.startswith(_RULING_PREFIX):
+        from zephyr.library.ruling_precedent import query_face  # noqa: PLC0415 — 懒加载防环（MOD-LIB-007 面）
+
+        rc = query_face(args.query[len(_RULING_PREFIX) :])
+        result_count = 1 if rc == 0 else 0
+        payload = {"query": args.query, "face": "ruling_precedent"}
     else:
         rc, rows = _run_main_query(args, parser)
         result_count = len(rows)

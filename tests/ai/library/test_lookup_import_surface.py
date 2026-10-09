@@ -37,8 +37,11 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 #: 组④基线（见模块 docstring 实测记录）
 BASELINE_IMPORT_MS = 2588.4  # 改前 max
 BASELINE_IMPORT_MODULES = 1372  # 改前条数
-IMPORT_BUDGET_MS = 220.0  # 改后实测 max 196.8ms × 1.10
-IMPORT_BUDGET_MODULES = 700  # 改后实测 256 条，留 2.7× 余量仍 < 基线一半
+# 2026-10-09 重定基（st-libfront-20261009）：测量面补 PYTHONNOUSERSITE=1 隔离 F88 引导钩后，
+# 同机 5 读 172.5~214.0ms / 256~271 条——预算=新 max 214.0×1.10≈235；显著性下界不变
+# （< 改前 max/2=1294ms，判别力 5.5× 保留）。判别对象仍是"查馆 import 面回弹"。
+IMPORT_BUDGET_MS = 235.0
+IMPORT_BUDGET_MODULES = 700  # 新实测 max 271 条，仍 < 基线一半，余量不动
 
 #: 与"查馆"无关的写侧/门禁重件：改前被父包急切重导出连坐拉入，改后必须缺席
 HEAVY_UNRELATED = (
@@ -59,29 +62,46 @@ class _PoolDownError(RuntimeError):
 @pytest.fixture(scope="module")
 def import_profile() -> dict:
     """跑一次 `-X importtime` 子进程，返回 {self_sum_ms, modules, names}。"""
-    env = dict(os.environ, PYTHONPATH=str(REPO_ROOT / "src"), PYTHONUNBUFFERED="1")
-    proc = subprocess.run(  # noqa: S603 — 受控解释器自调用，非外部输入
-        [sys.executable, "-X", "importtime", "-c", "import zephyr.library.lookup"],
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        cwd=str(REPO_ROOT),
-        env=env,
-        check=True,
+    # PYTHONNOUSERSITE=1（st-libfront-20261009）：把 usercustomize 引导钩（F88 LSG 运行时
+    # 拦截器，09-27 基线之后接通）隔离出测量面——钩子在裸解释器 `pass` 就拉入 gate_engine/
+    # defense_runner 等重件（约 1.7s），不隔离则本组断言对任何仓内状态恒红、丧失判别力。
+    # 基线读数（改后 196.8ms/256 条）测于钩子接通前，本旗恢复与基线同口径；钩子自身
+    # 行为面归 LSG/安全域门禁管，不在本组语义内。
+    env = dict(
+        os.environ,
+        PYTHONPATH=str(REPO_ROOT / "src"),
+        PYTHONUNBUFFERED="1",
+        PYTHONNOUSERSITE="1",
     )
-    total_us = 0
-    names: set[str] = set()
-    for line in proc.stderr.splitlines():
-        parts = line.rstrip().split("|")
-        if len(parts) != 3 or not parts[0].startswith("import time:"):
-            continue
-        try:  # 表头行 "import time: self [us] | cumulative | imported package" 跳过
-            total_us += int(parts[0].split(":")[1].strip())
-        except ValueError:
-            continue
-        names.add(parts[2].strip())
-    return {"self_sum_ms": total_us / 1000, "modules": len(names), "names": names}
+    # 三跑取 max（st-libfront-20261009）：与基线记录协议同口径（改后实测=三读 max 196.8ms）
+    # ——本机负载下单跑波动实测 139.9~228.2ms，单跑判定对噪声假红。
+    best: dict = {"self_sum_ms": 0.0, "modules": 0, "names": set()}
+    for _run in range(3):
+        proc = subprocess.run(  # noqa: S603 — 受控解释器自调用，非外部输入
+            [sys.executable, "-X", "importtime", "-c", "import zephyr.library.lookup"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(REPO_ROOT),
+            env=env,
+            check=True,
+        )
+        total_us = 0
+        names: set[str] = set()
+        for line in proc.stderr.splitlines():
+            parts = line.rstrip().split("|")
+            if len(parts) != 3 or not parts[0].startswith("import time:"):
+                continue
+            try:  # 表头行 "import time: self [us] | cumulative | imported package" 跳过
+                total_us += int(parts[0].split(":")[1].strip())
+            except ValueError:
+                continue
+            names.add(parts[2].strip())
+        best["self_sum_ms"] = max(best["self_sum_ms"], total_us / 1000)
+        best["modules"] = max(best["modules"], len(names))
+        best["names"] |= names  # 重件缺席断言按并集（任一跑出现即违例）
+    return best
 
 
 # ─────────────────────────── 组②：异常面不变宽 ───────────────────────────
