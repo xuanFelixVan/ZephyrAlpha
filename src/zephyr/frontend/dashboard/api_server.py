@@ -1426,11 +1426,17 @@ def sources_status() -> dict[str, Any]:
 
 
 # ── 数据下载监管真源（Owner 2026-09-03：表级下载实况——146 表新鲜度一页看全）────
+# 行数字段口径（Owner 2026-10-09 批复③-c）：rows=system.parts 求和的物理行数，
+# ReplacingMergeTree 未合并前同键多版全计入（daily 段实测 2.59×）⇒ 前端加 † 标注，
+# 禁把本字段当逻辑行数与 FINAL 读数对账。
 _SQL_TABLE_FRESH = (
     # 三库全表全集（含空表——子查询聚合+LEFT JOIN 保证 0 parts 表也出现，灰灯"未启动"DS-12）；
     # 注意：CH LEFT JOIN 未命中填类型默认值（非 NULL），故用子查询预聚合——未匹配自然
     # 得 parts=0/空串，禁改回"LEFT JOIN system.parts + count(p.name)"（默认行会被计数成 1）。
     # 表状态真源=system.tables+parts，禁再回退到 parts-only 口径（16 张空表曾整页隐身）。
+    # 注意 rows_=system.parts 求和＝物理行数：ReplacingMergeTree 未合并前同键多版全计入
+    # （2026-10-09 实测 daily 段 23,112,162 行 / 8,925,969 键＝2.59×），不等于 FINAL 实读行数；
+    # 前端因此把该列标为"行数（物理）"，禁当逻辑行数消费。
     "SELECT t.database, t.name, p.parts, p.rows_, p.earliest, p.latest "
     "FROM system.tables t "
     "LEFT JOIN ("

@@ -29,7 +29,7 @@ var DL_COLS = {
   tier:   { label: "存储层", w: 60,  str: 1, get: function (t) { var a = dlAssetOf(t); return a ? (a.tier || "warm") : "\uFF5E"; } },
   source: { label: "数据源", w: 100, str: 1, get: function (t) { return t.source || ""; } },
   vpn:    { label: "VPN", w: 110, str: 1, get: function (t) { return t.vpn_need || "\uFF5E"; } },
-  rows:   { label: "行数", w: 70,  num: 1, get: function (t) { return t.rows || 0; } },
+  rows:   { label: "行数（物理）", w: 96,  num: 1, get: function (t) { return t.rows || 0; } },
   fail:   { label: "关联告警", w: 130, num: 1, get: function (t) { return t.fail_cnt || 0; } }
 };
 function dlSortBy(key) {
@@ -156,6 +156,8 @@ function dlRender() {
     var fail = t.fail_cnt
       ? '<span class="down">' + t.fail_cnt + ' 条</span><br><span class="dim" style="font-size:10px">' + t.fail_last + '</span>'
       : '<span class="dim">—</span>';
+    /* 行数列＝system.parts 物理求和：ReplacingMergeTree 未合并前同键多版全计入，可大于 FINAL 实读 */
+    var rowsTxt = t.rows >= 1e8 ? (t.rows / 1e8).toFixed(1) + ' 亿' : t.rows >= 1e4 ? (t.rows / 1e4).toFixed(1) + ' 万' : t.rows.toLocaleString();
     h += '<tr>'
       + '<td><b>' + (t.name_zh || t.table) + '</b>' + (t.name_zh ? ' <span class="dim" style="font-size:10px">' + t.table + '</span>' : '')
       + (t.schedule_zh ? '<br><span class="dim" style="font-size:10px">⏰ ' + t.schedule_zh + '</span>' : '') + '</td>'
@@ -171,10 +173,10 @@ function dlRender() {
       + '<td style="font-size:11px">' + dlAssetTierCell(dlAssetOf(t)) + '</td>'
       + '<td style="font-size:11px">' + t.source + '</td>'
       + '<td style="font-size:11px">' + vpn + '</td>'
-      + '<td style="font-size:11px">' + (t.rows >= 1e8 ? (t.rows / 1e8).toFixed(1) + ' 亿' : t.rows >= 1e4 ? (t.rows / 1e4).toFixed(1) + ' 万' : t.rows.toLocaleString()) + '</td>'
+      + '<td style="font-size:11px">' + rowsTxt + '</td>'
       + '<td style="font-size:11px">' + fail + '</td></tr>';
   });
-  box.innerHTML = h + '</table><div class="dim" style="font-size:11px;padding:6px 2px">' + rows.length + ' / ' + st.tables.length + ' 张表</div>';
+  box.innerHTML = h + '</table><div class="dim" style="font-size:11px;padding:6px 2px">' + rows.length + ' / ' + st.tables.length + ' 张表 · 行数（物理）=system.parts 求和，含未合并重复版本行</div>';
 }
 
 /* F6（迁移台账 2026-09-09）：tick_data 今日新增按 data_source 分组渲染（mini/桥 两段并存）。
