@@ -8469,6 +8469,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_scores_v1.yaml
+  token: exam-score-registry-exam-scores-v1-20261009
+  capability: exam_score_registry
+  created_by: st-examchief-20261009
+  merge_evaluation: "考试卡分数册（D4 三层存储之成绩汇总面，方案 §6）；与卡定义面/fexam 分数册分工互斥"
 - file: docs/03_modules/_domain_backtest/index.md
   token: index-navigation-03-modules-domain-backtest-20260919
   capability: index_navigation
@@ -38545,6 +38550,11 @@ creation_tokens:
   capability: fig13_followup_books
   created_by: st-fig13-followup-20261006
   merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
+- file: docs/_working/final4_campaign/99_delivery.md
+  token: final4-campaign-closeout-99-delivery-20261009
+  capability: final4_campaign_closeout
+  created_by: st-final4-20261010
+  merge_evaluation: "净零：本班战役目录唯一终报册，非替代非合并；_working 暂存面 task_bound"
 - file: docs/_working/final_delivery_campaign/00_orchestration.md
   token: final-delivery-campaign-00-orchestration-20260929
   capability: final_delivery_campaign
