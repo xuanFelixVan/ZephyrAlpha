@@ -745,3 +745,30 @@ P-7 本体（点火/托管分离：`launch_detached_backup`＋`settle_previous_i
 
 ### 后续（当晚执行，结果以后续记录为准）
 自检门脚本=.runtime/tmp/fwin_gate_check.sh（五项全量取现值，两遍≥30min 一致才放行）→ 停窗（21:30 后，避开 22:30 lane_g sweep 与 :17/:47 news tick）→ Stop-VM → Remove-VMHardDiskDrive(SCSI 0.3) → Start-VM 验证链 → vhdx 改名隔离 → 删除+回收实测 → 三处口径+裁定入册。
+
+## 二十三、F 盘摘除执行班终章（2026-10-09 17:2x 收口——摘盘+回收+收口波）
+
+> 承 §二十二（白班调查+断写）。Owner 追问「现在停窗可以吗」→ 活体核查全净（锁空闲/CH 零在飞零重查询/lane C 绿）后于 17:15 提前停窗（硬避让窗外，15:45 收盘结算已过、距 20:00 lane C 余 2h47m）。
+
+### 摘除时间线（17:13-17:25）
+- 17:13 活体核查全净 → 17:15 Stop-VM（干净 Off）→ Remove-VMHardDiskDrive(SCSI 0.3)（剩余 0.1 boot/0.2 data/0.4 G）→ 17:15:09 Start-VM（33 秒完成引导）。
+- **开机缺陷截获**：fstab 同挂载点双条目（chbackup_local 的 UUID 行在前赢了、bind 行被忽略）→ 首启 bind 未挂、/mnt/chbackup_local=root 盘空目录、CH backups 盘 free_space=0。修复=删死 UUID 行（F 设备已物理不存在）留 bind 行 + 手动 bind 即时恢复 + CH 重启刷新读数（双盘 free_space 一致 675.9G）+ **二次 Stop/Start 真机验证**（bind 随引导自动挂载、CH 自启 active）。
+- 验证链全绿：8123 通 / technical_indicator=403,026,436 行 / trade_calendar max(pretrade_date)=2028-10-06 / c1_market 195 表+c3_fundamental 34 表 / 调度心跳正常 / lane C 链绿。
+
+### 门检两遍（提前至盘后执行，Owner 问「现在能不能门检」）
+- pass1=16:29、pass2=17:05（间隔 35 分钟≥30 分钟判据），每遍全量五项取现值+演练复跑（当日第 2/3 份 rc=0 报告 162938/170858，四条件全绿）。
+- 对比口径：稳定性读数逐项**全等**（F mtime 07:58:16、sdc written_sectors 213,693,656 delta=0、vhdx size、manifest、回滚件）；活性读数**同向**（G vhdx mtime 16:10:22→16:29:43 前进=通过条件）。五项两遍全绿 → 依双令②自裁放行。
+
+### 检查点一三样（11:35 午休自然点火，非人工触发——点火者=队列 worktree w1 post-commit 的 backup.ps1）
+1. CH 段绿：当日 3 轮 BACKUP_CREATED（09:37/12:09/16:08，其中 09:05-09:37 一轮横跨开盘 CH 顶住）。
+2. G manifest 新备份可见：inc.zip 51.28G@16:08 落 /mnt/chbackup2（G），market.zip 基线未动。
+3. rsync 段定性：原句受控复现 exit 0 零传输——bind 后源=目的地同 inode，优雅空转，**无需移交车道 E**。
+
+### 回收对拍（逐位相等）
+F free 568,297,074,688 → 1,588,657,991,680 B；实测回收 **1,020,360,916,992 B = 950.35 GiB**，与 vhdx 字节数逐位相等；F 盘 ch_backup_disk 族零残留。隔离名 ch_backup_disk.vhdx.ISOLATED_20261009 于删除前曾短暂在位（门检放行后即删）。
+
+### 升旗（非本班脸，不代修）
+**backup.ps1 尾部缺陷**：车道 E 06:01 改动后，所有 run 在 CH 段（BACKUP_CREATED）完成后、报告/状态回写前消失——run A/B 无报告、state last_ch_backup_time 仍停 10-08 → cadence 永到期 → 当日 3 轮冗余全量备份；对照 05:27 旧代码 run 完整交报告=强相关。影响：冗余备份负载+状态真源失真+「每日报告绿」终验口径受损（CH 侧 system.backups 真值不受影响）。候车道 E 处置；其 rsync/stat 路径经 bind 后已验工作正常。
+
+### 收口
+三处口径（storage_map.md 双链行+阶段 5 行 / infrastructure_registry.yaml access_method+note / G:\backup\README.md 活阶段）+裁定#497 入册（next_ruling_id 现取原子占号 497）同批队列提交。终验=明晨 06:00 首个全自动备份三绿（报告绿+G mtime 前进+F 不存在）。

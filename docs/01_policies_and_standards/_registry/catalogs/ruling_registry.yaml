@@ -4528,3 +4528,49 @@ entries:
   superseded_by: ''
   adjudicator: st-chiefc-20261009
   owner_sign: Owner 2026-10-09 批文「40 件全批 A：G1+G3 交总队并袋，其余专车直投；G9/G10 也 A」（经死信清偿专案批文记录通道，本裁定=授权链原子登记）
+
+- ruling_id: "裁定#497"
+  title: F 盘 CH 备份链摘除执行实录（Owner 2026-10-09 双令授权：不等 11-01 直接施工+两遍全量检查一致即自裁放行；断写-门检-摘盘-回收全链当日落地）
+  date: '2026-10-09'
+  category: 基础设施
+  status: active
+  summary: |-
+    st-fwin-exec-20261009 依 Owner 2026-10-09 双令执行裁定#414②（#445 原文"执行时点仍待 Owner 点名"由双令闭合）。
+    【写入链实锤】F vhdx 唯一写入者=ZephyrAlpha-DailyBackup(06:00)+队列 post-commit 触发→backup.ps1 CH 段
+    （BACKUP TO Disk('backups')，VM 内 /mnt/chbackup_local=SCSI 0.3 的 F vhdx）+rsync 双写→/mnt/chbackup2
+    （SCSI 0.4=G vhdx）；VM 内 cron/timer 排除、backup_ch_vm.ps1 已封印，无第二写入者。
+    【断写 07:58】VM 挂载层 bind 改道（/mnt/chbackup2→/mnt/chbackup_local）+sdc 卸载+fstab 补 nofail/bind 行；
+    零 CH 重启、零 backup.ps1 改动。冻结三重证据：无挂载点/diskstats written_sectors 基线 213693656 全日
+    delta=0/ext4 superblock s_wtime=umount 时刻。当日 3 轮自然备份全部落 G（inc.zip 51.28G@16:08）+rsync
+    原句受控复现 exit 0 优雅空转（无需移交车道 E 修补）。
+    【门检两遍放行】16:29/17:05 两遍全量五项（每遍取现值+演练复跑 rc=0：当日 3 份 rc=0 报告），间隔 35 分钟；
+    稳定性读数逐项全等（F mtime 07:58:16/sdc delta=0/manifest 全等）、活性读数同向（G mtime 前进=通过条件）
+    →依双令②自裁放行，无人为签核。
+    【摘盘 17:15-17:19（Owner 追问"现在停窗可以吗"=停窗提前授权；活体核查全净后执行）】Stop-VM→
+    Remove-VMHardDiskDrive(SCSI 0.3)→Start-VM。
+    【开机缺陷截获与修复】fstab 同挂载点双条目（UUID 行在前致 bind 行被忽略）→首启 bind 未挂、CH backups 盘
+    free_space=0；修复=删死 UUID 行留 bind 行+CH 重启刷新+二次 Stop/Start 真机验证（bind 随引导自动挂载、
+    CH 自启、双盘 free_space 一致）。验证链：8123 通/technical_indicator 403,026,436 行/trade_calendar
+    max(pretrade_date)=2028-10-06/c1_market 195 表+c3_fundamental 34 表/调度心跳正常/lane C 链绿。
+    【回收对拍】隔离改名→删除；F free 568,297,074,688→1,588,657,991,680 B，实测回收 1,020,360,916,992 B
+    =950.35 GiB，与 vhdx 字节数逐位相等；F 盘零残留。
+    【残余风险与移交】①backup.ps1 尾部缺陷升旗车道 E：其 06:01 改动后所有 run 于 CH 段完成后、报告/状态回写
+    前消失（当日 run A/B 无报告；state last_ch_backup_time 仍 10-08→cadence 永到期→3 轮冗余全量备份；
+    05:27 旧代码 run 完整交报告=强相关）——共享文件不代修，候其车道处置；②restore.ps1:264 F 路径=inventory
+    展示腿 Test-Path 降级无功能依赖；③scripts/backup/README.md:94/171 F 引用候车道 E 顺带清；④G 链单物理
+    副本=既有已接受风险（#414 口径不变），offsite 月度手动照旧。
+    复活窗（30 天）回滚口径：vhdx 已物理删除；复活=从 G 链重造 F 链（或依 11-01 自动演练结论评估）；
+    重挂命令存档=Add-VMHardDiskDrive -VMName zephyr-ch -Path "F:\ch_backup_disk.vhdx" -ControllerType SCSI
+    -ControllerNumber 0 -ControllerLocation 3（仅当 F 链重建时适用）。
+  evidence: .runtime/tmp/fwin_gate_check.sh 两遍输出+logs/restore_drill_20261009_{080527,162938,170858}.json+system.backups 当日 BACKUP_CREATED×3+/proc/diskstats 基线+F 盘 df 前后对拍+VM fstab/mount/journalctl+LEDGER_final.md §二十二/§二十三
+  affected_files:
+  - docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/storage_map.md
+  - docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/disk_reorg_campaign/LEDGER_final.md
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: ['裁定#414', '裁定#445']
+  superseded_by: ''
+  adjudicator: st-fwin-exec-20261009
+  owner_sign: Owner 2026-10-09 双令原文「①不等 11-01 演练窗，立即调查并直接施工 F 盘摘除；②不设 Owner GO 检查点——连续两遍全量检查结果一致即自裁放行物理删除。本令即 A2 批文的执行授权」+当日追问「现在停窗可以吗」（停窗提前授权）

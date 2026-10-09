@@ -42,7 +42,7 @@ design_maturity: production
 | 冷库 / 冷储 / 历史分区 Parquet | `F:/zephyr_cold`（DuckDB 直读 Parquet；清单 `archive_manifest.jsonl`） |
 | 冷库归档/恢复操作 | `python scripts/ch/archiver.py archive-range\|list\|stats\|restore`（五重安全阀 v1.3.0 契约） |
 | 备份 / backup / 还原 | `G:/backup`（`scripts/backup/backup.ps1` 六阶段备份；`restore.ps1` 恢复） |
-| CH 备份 | 双链：F 盘 `ch_backup_disk.vhdx`（主链）+ G 盘 `ch_backup_disk2.vhdx`（第二链，SCSI 热挂） |
+| CH 备份 | 单链归 G：`G:\ch_backup_disk2.vhdx`（SCSI 热挂，VM 内经 bind 挂载 /mnt/chbackup2→/mnt/chbackup_local 单写）。F 链 `ch_backup_disk.vhdx` 已于 2026-10-09 摘除（裁定#414 废止双链、裁定#497 执行实录：实测回收 950.35 GiB，对拍=vhdx 字节数逐位相等） |
 | 代码仓备份 | `G:/backup/git_bundles`（留 2 份） |
 | 工作区快照 | `G:/backup/working_vault`（14 天滚动） |
 | DB 导出 | `G:/backup/db_dumps`（14 天滚动） |
@@ -59,7 +59,7 @@ design_maturity: production
 
 ## 4. 遗留与待办指针（截至 2026-09-23）
 
-- 阶段 5（~2026-10-05）：F 旧 CH 链盘（`ch_backup_disk.vhdx`）摘除评估 + `ch_vm_backup` B 瘦身裁决。
+- 阶段 5（2026-10-09 已完成）：F 旧 CH 链盘摘除落地（950.35 GiB 实测回收，裁定#497）；`ch_vm_backup` B 瘦身裁决另案（591G 冻结档候恢复降级确认，非本裁定范围）。
 - 阶段 7：vhdx 压缩（需 Owner 在场窗，禁未批执行）。
 - F 侧旧 vault/offrepo 留观至 2026-09-28 到期删。
 - 施工与对账流程细则见战役件 a3（task_bound）；永久通则以本手册 §3 为准。
