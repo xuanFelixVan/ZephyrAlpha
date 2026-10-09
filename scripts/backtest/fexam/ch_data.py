@@ -10,7 +10,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH 不可达/超时 → CHAccessError；空结果返回空 DataFrame 不报错
-# [TESTS] tests/backtest/fexam/test_ic_exam.py（经上层间接）; tests/backtest/fexam/test_regime_series.py（regime 默认源直测）
+# [TESTS] tests/backtest/fexam/test_ic_exam.py（经上层间接 + TestChDataPanelLatestIngest 直测 load_panel 版本语义）; tests/backtest/fexam/test_regime_series.py（regime 默认源直测）
 # [MODIFY-GUARD] docs/_working/matrix_campaign/90_execution_log.md（CH只读契约，禁加写路径）
 # [TTL] permanent
 # create-guard-not-dup: fexam专用CH只读装载层（表名经TableRegistry，与dataflow/northbound等命中无功能交集）
@@ -80,8 +80,10 @@ class CHAccessError(RuntimeError):
 _OPENER = request.build_opener(request.ProxyHandler({}))
 
 #: SQL 集中化（NO-BARE-SQL 正道：全模块查询模板唯一定义点；只读，禁拼接 DDL/INSERT）
+#: 同键多版本的裁决列（ReplacingMergeTree 无版本列，未合并前同键可有多行且值分叉）
+VERSION_COL = "ingest_ts"
 SQL_SYSTEM_COLUMNS = "SELECT name FROM system.columns WHERE database='{db}' AND table='{tbl}' FORMAT TSV"
-SQL_PANEL = "SELECT trade_date, symbol, {column} AS v FROM {table} WHERE {conds} ORDER BY trade_date, symbol FORMAT TSV"
+SQL_PANEL = "SELECT trade_date, symbol, {column} AS v{version_sel} FROM {table} WHERE {conds} ORDER BY trade_date, symbol{version_order} FORMAT TSV"
 SQL_REGIME = (
     "SELECT trade_date, p_r1, p_r2, p_r3, p_r4 FROM c1_backtest.regime_snapshot_history "
     "WHERE trade_date >= '{start}' AND trade_date <= '{end}' ORDER BY trade_date FORMAT TSV"
@@ -156,16 +158,31 @@ def load_panel(
     """单列宽面板：index=date(DatetimeIndex), columns=symbol, float32。空数据=空DataFrame。
 
     period 过滤仅对含 period 列的表生效（kline 族无 period 列）。
+    同键多版本时取"最新入库"版（见下方 has_version 注释）。
     """
+    cols = table_columns(table, cache=_col_cache)
     conds = [f"trade_date >= '{start}'", f"trade_date <= '{end}'", f"{column} IS NOT NULL"]
-    if "period" in table_columns(table, cache=_col_cache):
+    if "period" in cols:
         conds.insert(0, f"period='{period}'")
-    sql = SQL_PANEL.format(column=column, table=table, conds=" AND ".join(conds))
+    # 表带版本列时把它一起取出并进 ORDER BY：ReplacingMergeTree 未合并前同键可有多行
+    # 且值分叉，只按 (trade_date, symbol) 排序时行序=part 物理序（非确定性），
+    # aggfunc="last" 取到的就是任意一版而非最新入库版（2026-10-09 总统筹批复③-a）
+    has_version = VERSION_COL in cols
+    sql = SQL_PANEL.format(
+        column=column,
+        table=table,
+        conds=" AND ".join(conds),
+        version_sel=f", {VERSION_COL}" if has_version else "",
+        version_order=f", {VERSION_COL}" if has_version else "",
+    )
     df = ch_query_df(sql)
     if df.empty:
         return pd.DataFrame()
-    df.columns = ["trade_date", "symbol", "v"]
+    df.columns = ["trade_date", "symbol", "v"] + ([VERSION_COL] if has_version else [])
     df["trade_date"] = pd.to_datetime(df["trade_date"])
+    if has_version:
+        df[VERSION_COL] = pd.to_datetime(df[VERSION_COL], errors="coerce")
+        df = df.sort_values(["trade_date", "symbol", VERSION_COL], kind="stable")
     wide = df.pivot_table(index="trade_date", columns="symbol", values="v", aggfunc="last")
     return wide.astype("float32")
 

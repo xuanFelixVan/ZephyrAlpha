@@ -90,9 +90,33 @@ _TI_META = {
     "updated_at",
 }
 
+#: 同键多版本的裁决列：该表引擎无版本参数，未合并前同一 (symbol, trade_date) 可留多版且值不同，
+#: 取哪一版必须显式裁决（2026-10-09 总统筹批复③-b）
+TI_VERSION_COL = "ingest_ts"
+
 
 def _ti_columns(cli) -> list[str]:
     return [r[0] for r in cli.execute(SQL_TI_COLS)]
+
+
+def collapse_ti_latest(ti: pd.DataFrame) -> pd.DataFrame:
+    """TI 原始帧 → 数值基座帧：同键多版时取"最新入库"版（纯函数，零网络可测）。
+
+    旧实现是 `drop_duplicates(["date","s"], keep="first")`，而 SQL 无 ORDER BY ⇒
+    "first" 取的是 CH 物理返回序的第一版（ReplacingMergeTree 未合并前任一版都可能在首位），
+    方向与语义都不对（2026-10-09 总统筹批复③-b）。
+    """
+    base_cols = [c for c in ti.columns if c not in _TI_META]
+    has_version = TI_VERSION_COL in ti.columns
+    sel = ["trade_date", "symbol_canonical"] + base_cols + ([TI_VERSION_COL] if has_version else [])
+    out = ti[sel].copy()
+    out = out.rename(columns={"trade_date": "date", "symbol_canonical": "s"})
+    for c in base_cols:
+        out[c] = pd.to_numeric(out[c], errors="coerce")
+    if has_version:
+        out[TI_VERSION_COL] = pd.to_datetime(out[TI_VERSION_COL], errors="coerce")
+        out = out.sort_values(["date", "s", TI_VERSION_COL], kind="stable").drop(columns=[TI_VERSION_COL])
+    return out.drop_duplicates(["date", "s"], keep="last")
 
 
 def load_whitelist(path: Path | None = None) -> dict:
@@ -372,12 +396,7 @@ def fetch_panel(universe_n: int, days: int) -> dict:
         columns=ti_cols,
     )
     ti = ti[ti["period"] == "daily"]
-    base_cols = [c for c in ti.columns if c not in _TI_META]
-    ti_num = ti[["trade_date", "symbol_canonical"] + base_cols].copy()
-    ti_num = ti_num.rename(columns={"trade_date": "date", "symbol_canonical": "s"})
-    for c in base_cols:
-        ti_num[c] = pd.to_numeric(ti_num[c], errors="coerce")
-    ti_num = ti_num.drop_duplicates(["date", "s"], keep="first")
+    ti_num = collapse_ti_latest(ti)
     ti_num = ti_num.merge(feats[["date", "s"]], on=["date", "s"], how="inner")
     ti_num = ti_num.dropna(axis=1, thresh=int(len(ti_num) * 0.7))
     base_cols = [c for c in ti_num.columns if c not in ("date", "s")]

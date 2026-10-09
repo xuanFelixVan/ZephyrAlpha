@@ -46,6 +46,7 @@ gate/governance 路径）⇒ `JUDGMENT`（硬红，W-180 红线）；其余 ⇒ 
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import re
 import subprocess
@@ -74,6 +75,9 @@ _JUDGMENT_PATH_RX = re.compile(
 )
 # 豁免面：严格通道实现本体、测试、归档件（尺对它们只作 INFO）
 _EXEMPT_RX = re.compile(r"(^|/)(tests?/|_archive/|vendor/)|ch_(reader|writer|probe)\.py$")
+
+#: git grep 预筛式（形状尺缺省面：带接收者的 query/query_table 调用）
+_SHAPE_GREP = r"(ch_reader|ch_writer|reader|writer|creader|cwriter)[[:space:]]*\.[[:space:]]*query(_table)?\("
 
 
 @dataclass
@@ -237,11 +241,13 @@ def scan_text(text: str, rel_path: str) -> list[ChReaderShapeFinding]:
     return findings
 
 
-def _iter_head_files(root: Path) -> list[tuple[str, str]]:
+def _iter_head_files(root: Path, grep_pat: str = "") -> list[tuple[str, str]]:
     """HEAD 树里"提到字符串读接口"的候选 .py（(rel_path, blob_sha)）。
 
     先用 `git grep` 预筛（一次子进程），再按 blob 批读——避免对 8000+ 文件逐个 `git show`。
+    grep_pat 缺省用形状尺的正则；⑤-c 普查传自己的预筛式（同一套 git 管道，不另立第二份）。
     """
+    pattern = grep_pat or _SHAPE_GREP
     out = subprocess.run(
         [
             "git",
@@ -251,7 +257,7 @@ def _iter_head_files(root: Path) -> list[tuple[str, str]]:
             "-I",
             "-l",
             "-E",
-            r"(ch_reader|ch_writer|reader|writer|creader|cwriter)[[:space:]]*\.[[:space:]]*query(_table)?\(",
+            pattern,
             "HEAD",
             "--",
             "src",
@@ -375,6 +381,125 @@ def to_markdown(findings: list[ChReaderShapeFinding], scanned: int, skipped: int
     return "\n".join(out)
 
 
+#: ⑤-c 存量契约普查：AST 认调用点（行正则会把注释/文档面误计成消费者，普查要喂 Owner 的迁移决策）
+_LEGACY_API = frozenset({"count", "query", "query_table"})
+_STRICT_API = frozenset({"count_strict", "query_rows", "query_rows_table"})
+_RECV_NAMES = frozenset({"ch_reader", "ch_writer", "reader", "writer", "creader", "cwriter"})
+_CENSUS_GREP = r"(ch_reader|ch_writer|reader|writer|creader|cwriter)[[:space:]]*\.[[:space:]]*(count|query)"
+
+
+def _census_aliases(tree: ast.AST) -> tuple[dict[str, str], dict[str, tuple[str, str]]]:
+    """读通道两种别名：模块别名（`import ch_reader as rdr`）与符号别名（`from … import count as c`）。
+
+    返回 (本地模块名→通道名, 本地符号名→(通道名, 原始符号名))。符号别名必须还原成**原始名**
+    再判 API，否则 `count as row_count` 的调用以别名参与比对而漏计（本班测试抓到的第一版缺陷）。
+    """
+    mods: dict[str, str] = {}
+    names: dict[str, tuple[str, str]] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module:
+            tail = node.module.rsplit(".", 1)[-1]
+            if tail in _RECV_NAMES:
+                for a in node.names:
+                    names[a.asname or a.name] = (tail, a.name)
+        elif isinstance(node, ast.Import):
+            for a in node.names:
+                tail = a.name.rsplit(".", 1)[-1]
+                if tail in _RECV_NAMES:
+                    mods[a.asname or tail] = tail
+    return mods, names
+
+
+def _census_file(text: str, rel: str) -> list[dict]:
+    """单文件调用点枚举；语法错由调用方计入"普查面不完整"，不得当零命中。"""
+    tree = ast.parse(text)
+    mods, names = _census_aliases(tree)
+    rows: list[dict] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        fn = node.func
+        recv: str | None
+        api: str | None
+        if isinstance(fn, ast.Attribute):
+            base = fn.value
+            recv = base.id if isinstance(base, ast.Name) else (base.attr if isinstance(base, ast.Attribute) else None)
+            recv = mods.get(recv, recv) if recv else recv
+            api = fn.attr
+        elif isinstance(fn, ast.Name):
+            hit = names.get(fn.id)
+            if hit is None:
+                continue
+            recv, api = hit
+        else:
+            continue
+        if api not in _LEGACY_API | _STRICT_API or recv not in _RECV_NAMES:
+            continue
+        rows.append(
+            {
+                "file": rel,
+                "line": int(getattr(node, "lineno", 0)),
+                "api": str(api),
+                "severity": _severity_for(rel),
+                "channel": "STRICT" if api in _STRICT_API else "SILENT_CONTRACT",
+            }
+        )
+    return rows
+
+
+def census_legacy_calls(root: Path) -> tuple[list[dict], int]:
+    """普查 ch_reader/ch_writer 读接口调用面并分级（总统筹批复⑤-c，不改任何判据口径）。
+
+    分级沿用本尺的 `_severity_for`（同一真源，不另立第二把路径判据）：
+      JUDGMENT     ⇒ docstring 已明令禁用的"判据类读数"，须迁 strict 通道
+      NON_JUDGMENT ⇒ 展示/内部计算，可暂留存量契约
+    走 strict 通道（count_strict/query_rows*）的单列 STRICT，不计入待迁面。
+    """
+    pairs = _iter_head_files(root, _CENSUS_GREP)
+    texts = _read_blobs_batch(root, [sha for _, sha in pairs])
+    rows: list[dict] = []
+    unreadable = 0
+    for rel, sha in pairs:
+        text = texts.get(sha)
+        if text is None:
+            unreadable += 1
+            continue
+        try:
+            rows.extend(_census_file(text, rel))
+        except SyntaxError:
+            unreadable += 1
+    return rows, unreadable
+
+
+def census_summary(rows: list[dict], incomplete: int = 0) -> str:
+    """普查汇总：待迁面（判据路径×静默契约）按文件聚合，展示面只给总数。"""
+    pend = [r for r in rows if r["channel"] == "SILENT_CONTRACT" and r["severity"] == "JUDGMENT"]
+    disp = [r for r in rows if r["channel"] == "SILENT_CONTRACT" and r["severity"] == "NON_JUDGMENT"]
+    exempt = [r for r in rows if r["channel"] == "SILENT_CONTRACT" and r["severity"] == "EXEMPT"]
+    strict = [r for r in rows if r["channel"] == "STRICT"]
+    lines = [
+        f"[CENSUS] 命中 {len(rows)} 处：待迁 strict {len(pend)}｜展示可留 {len(disp)}｜"
+        f"豁免（reader/writer/probe 本体与测试）{len(exempt)}｜已在 strict 通道 {len(strict)}｜"
+        f"普查面不完整（读不到或语法错）{incomplete}",
+        "",
+        "## 待迁面（判据路径 × 静默契约，⑤-c 第②步）",
+    ]
+    by_file: dict[str, list[dict]] = {}
+    for r in pend:
+        by_file.setdefault(r["file"], []).append(r)
+    for f in sorted(by_file):
+        rs = sorted(by_file[f], key=lambda x: x["line"])
+        apis = "/".join(sorted({x["api"] for x in rs}))
+        lines.append(f"- `{f}` ×{len(rs)}（{apis}）：行 " + ", ".join(str(x["line"]) for x in rs[:12]))
+    if not pend:
+        lines.append("- （零命中 ⇒ 普查清零，可呈批翻「未知即抛」）")
+    lines.append("")
+    lines.append("## 展示面（可暂留存量契约）")
+    for r in sorted(disp, key=lambda x: (x["file"], x["line"])):
+        lines.append(f"- `{r['file']}:{r['line']}` {r['api']}()")
+    return "\n".join(lines)
+
+
 def main(argv: list[str] | None = None) -> int:
     """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="W-180.2 CH 读接口形状违约静态尺")
@@ -383,8 +508,27 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out-md", default=None)
     ap.add_argument("--out-jsonl", default=None)
     ap.add_argument("--strict", action="store_true", help="非判据路径命中也算红")
+    ap.add_argument(
+        "--census",
+        action="store_true",
+        help="⑤-c 存量契约普查：列 count()/query()/query_table() 调用面并分级（只普查不改判据，恒 exit 0）",
+    )
     args = ap.parse_args(argv)
     root = Path(args.root).resolve()
+
+    if args.census:
+        rows, incomplete = census_legacy_calls(root)
+        text = census_summary(rows, incomplete)
+        if args.out_md:
+            p = Path(args.out_md)
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(text + "\n", encoding="utf-8")
+        if args.out_jsonl:
+            p = Path(args.out_jsonl)
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
+        print(text)
+        return 0
 
     findings, scanned, skipped = run(root, args.files)
     gen = f"{len(findings)} findings"
