@@ -827,7 +827,15 @@ def _message_claim_gate(args, files: list[str], message: str) -> int | None:
     return 8
 
 
-def _run_preflight(gw, args, files: list[str], *, mode: str, extra_skip: frozenset[str] = frozenset()) -> int | None:
+def _run_preflight(
+    gw,
+    args,
+    files: list[str],
+    *,
+    mode: str,
+    extra_skip: frozenset[str] = frozenset(),
+    bag_contents: dict[str, str] | None = None,
+) -> int | None:
     """P0-A 锁外预检：blocking 时打印一过式失败清单并返回 exit 8；否则 None 放行。"""
     if (
         getattr(args, "skip_preflight", False)
@@ -856,6 +864,7 @@ def _run_preflight(gw, args, files: list[str], *, mode: str, extra_skip: frozens
             _preflight_skip_set(args) | extra_skip,
             audit_event=mode,
             commit_message=_msg,
+            bag_contents=bag_contents,
         )
     except Exception as exc:  # noqa: BLE001 — 预检自身异常=放行走锁内现行路径
         logger.warning("preflight 异常降级放行（锁内兜底）: %s", exc)
@@ -898,25 +907,10 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
     except Exception as e:  # noqa: BLE001 — 预检网关构造失败不阻断入队（落地侧权威）
         logger.warning("preflight gateway 初始化失败，入队预校验跳过: %s", e)
         _pf_gw = None
-    if _pf_gw is not None:
-        pf_exit = _run_preflight(
-            _pf_gw,
-            args,
-            files,
-            mode="enqueue",
-            extra_skip=frozenset({"CLAIM-REQUIRED"}),
-        )
-        if pf_exit is not None:
-            return pf_exit
-    # Rx-1 入队口 ruff/format 快检（st-finaldel-crx-20260929）：阻断谱前两名入队口快败
-    _rx_exit = _ruff_preclean_gate(args, files, args.project_root)
-    if _rx_exit is not None:
-        return _rx_exit
-    # F3 消息账 vs 代码账对账快检（st-govfix-g1-20261007）：声称代码变更但袋无代码入队前死
-    _claim_exit = _message_claim_gate(args, files, message)
-    if _claim_exit is not None:
-        return _claim_exit
-    _ensure_scripts_package_importable(str(_PROJECT_ROOT))
+    # 2026-10-10 总统筹增补令·物化域②：袋内容先读后预检——内容型判定面=袋 diff
+    # （HEAD vs 袋）而非主区共享暂存区（含他会话未落地 WIP=幻影删除假阳性，-0012
+    # 实证报 387 删实为 +56/−0）。读块整体前移（原在预检后），bag_contents 经
+    # run_preflight 透传给 REGISTRY-MASS-DELETION 袋面分支；直提链不传=零变更。
     from scripts.commit_queue import (  # noqa: PLC0415
         EnqueueOptions,
         _read_files_from_worktree,  # noqa: PLC0415
@@ -925,9 +919,6 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
 
     wt = Path(args.project_root)
 
-    # 路径归一（#ARCH-310 P0-1b 热修，2026-09-12 实弹 DENIED 教训）：CLI 上游
-    # _check_staged_delete_fallback 会把清单转成绝对反斜杠路径，而
-    # _read_files_from_worktree 只收正斜杠仓库相对路径——统一归一再进队列。
     def _norm_to_rel(f: str) -> str:
         p = Path(f)
         if p.is_absolute():
@@ -938,11 +929,6 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
         return p.as_posix()
 
     rel_files = [_norm_to_rel(f) for f in files]
-    # 删除项先分区再读快照（2026-09-14 实弹 DENIED 教训）：_read_files_from_worktree
-    # 对盘上缺失文件直接 QueueReject，原 try 内的 deletes 兜底永不可达=死代码。
-    # 缺失文件改走 EnqueueOptions.deletes 通道（66 号 §6.1 action=delete，landing
-    # _apply_snapshot 已支持），与 requeue 快照重建同口径；缺失且未被 git 跟踪=
-    # 清单笔误，fail-closed 拒绝。
     missing = [f for f in rel_files if not (wt / f).exists()]
     deletes = _git_tracked_subset(wt, missing)
     untracked_missing = sorted(set(missing) - set(deletes))
@@ -958,6 +944,28 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
     except Exception as exc:  # noqa: BLE001 — 轻检拒绝（QueueReject）fail-closed 报错
         print(f"DENIED: {exc}", file=sys.stderr)
         return 2
+    bag_contents = {rel: data.decode("utf-8", errors="replace") for rel, data in payload}
+
+    if _pf_gw is not None:
+        pf_exit = _run_preflight(
+            _pf_gw,
+            args,
+            files,
+            mode="enqueue",
+            extra_skip=frozenset({"CLAIM-REQUIRED"}),
+            bag_contents=bag_contents,
+        )
+        if pf_exit is not None:
+            return pf_exit
+    # Rx-1 入队口 ruff/format 快检（st-finaldel-crx-20260929）：阻断谱前两名入队口快败
+    _rx_exit = _ruff_preclean_gate(args, files, args.project_root)
+    if _rx_exit is not None:
+        return _rx_exit
+    # F3 消息账 vs 代码账对账快检（st-govfix-g1-20261007）：声称代码变更但袋无代码入队前死
+    _claim_exit = _message_claim_gate(args, files, message)
+    if _claim_exit is not None:
+        return _claim_exit
+    _ensure_scripts_package_importable(str(_PROJECT_ROOT))
     if not payload and not deletes:
         print("ERROR: --enqueue 空文件清单（文件缺失且未跟踪）", file=sys.stderr)
         return 1

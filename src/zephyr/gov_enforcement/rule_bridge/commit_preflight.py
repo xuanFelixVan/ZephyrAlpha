@@ -667,6 +667,7 @@ def run_preflight(
     specs: list[GateSpec] | None = None,
     audit_event: str = "direct",
     commit_message: str = "",
+    bag_contents: dict[str, str] | None = None,
 ) -> CommitPreflightResult:
     """锁外预检白名单 gate（一过式收集，不短路）。
 
@@ -681,6 +682,10 @@ def run_preflight(
             REGISTRY-MASS-DELETION 的 [allow-mass-deletion:]）以此为输入面——
             2026-09-18 治本：此前预检不传 message，带合法逃生标记的批次被预检
             假红硬拦，而锁内权威链/落地侧会放行（预检与权威判据错位）。
+        bag_contents: 入队面袋内容（{rel: 文本}，2026-10-10 总统筹增补令·物化域②）。
+            传入时内容型判定面=袋 diff（HEAD vs 袋）而非主区共享暂存区——主区
+            index 含他会话未落地 WIP，读它=幻影删除假阳性（-0012 实证：报 387 删
+            实为 +56/−0 纯追加）。直提链不传（None）=行为零变更。
 
     Returns:
         CommitPreflightResult——findings 非空=应快败；degraded=设施异常不阻断。
@@ -694,7 +699,13 @@ def run_preflight(
         targets = [s for s in specs if s.gate_id in PREFLIGHT_GATES and s.gate_id not in skip_gate_ids]
         for spec in targets:
             try:
-                result = spec.check(gateway, list(files), session_id=session_id, commit_message=commit_message)
+                result = spec.check(
+                    gateway,
+                    list(files),
+                    session_id=session_id,
+                    commit_message=commit_message,
+                    bag_contents=bag_contents,
+                )
                 passed, detail = (
                     (result[0], result[1] if len(result) > 1 else "") if isinstance(result, tuple) else (True, "")
                 )

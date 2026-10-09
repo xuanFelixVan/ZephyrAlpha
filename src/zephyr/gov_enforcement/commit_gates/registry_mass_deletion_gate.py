@@ -212,6 +212,45 @@ def make_registry_mass_deletion_gate() -> GateSpec:
         message = str(kwargs.get("commit_message", "") or "")
         marker = _ALLOW_MARKER_RE.search(message)
 
+        # 袋面观测分支（2026-10-10 总统筹增补令·物化域②）：入队预检传 bag_contents
+        # （袋内 {rel: 文本}）时，判定面=袋 diff（HEAD vs 袋内容）而非主区共享暂存区
+        # ——主区 index 含他会话未落地 WIP，预检读它=幻影删除假阳性（-0012 实证：
+        # 报 387 删实为 +56/−0 纯追加），假阳性逼出滥用 [allow-mass-deletion] 的风险。
+        # 直提链不传本参 → 行为零变更。
+        bag_contents = kwargs.get("bag_contents")
+        if isinstance(bag_contents, dict) and bag_contents:
+            hits_bag: list[str] = []
+            for rel, bag_text in bag_contents.items():
+                rel_posix = str(rel).replace("\\", "/")
+                if not _is_watch_file(rel_posix) or not rel_posix.endswith(".yaml"):
+                    continue
+                try:
+                    head_result = gateway.run_git(["git", "show", f"HEAD:{rel_posix}"])
+                    if head_result.returncode != 0:
+                        continue  # 新增文件无 HEAD 基线 → fail-open 跳过
+                    head_text = head_result.stdout
+                except Exception:  # noqa: BLE001 — fail-open
+                    continue
+                deleted, added = _line_delta(head_text, bag_text)
+                n_head = _yaml_entry_count(head_text)
+                n_bag = _yaml_entry_count(bag_text)
+                entry_shrunk = n_head is not None and n_bag is not None and n_bag < n_head
+                net_delete = deleted > added
+                k_head = _entry_identity_keys(head_text)
+                k_bag = _entry_identity_keys(bag_text)
+                lost_keys = (k_head - k_bag) if (k_head is not None and k_bag is not None) else set()
+                if net_delete or entry_shrunk or lost_keys:
+                    hits_bag.append(
+                        f"  {rel_posix}: 净删行 deleted={deleted} added={added}"
+                        + (f"（条目数 {n_head} -> {n_bag} 减少）" if entry_shrunk else "")
+                        + (f"（条目身份消失 {len(lost_keys)} 条，示例 {sorted(lost_keys)[:3]}）" if lost_keys else "")
+                    )
+            if hits_bag and not marker:
+                detail = "REGISTRY-MASS-DELETION（袋面）: 登记表净删/身份消失，硬阻断:\n" + "\n".join(hits_bag)
+                logger.error(detail)
+                return False, detail
+            return True, ""
+
         # 登记表是 .yaml——直接用底层 git diff 全量文件清单（.py 过滤器不适用）
         try:
             result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])

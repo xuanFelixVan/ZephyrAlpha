@@ -674,6 +674,32 @@ def _declared_identity_from_plan(plan: dict[str, tuple[str, ...]]):
     return _identity
 
 
+def _theirs_drops_ours_entries(ours_text: str, theirs_text: str, identity_fn: object) -> set[str]:
+    """theirs 相对 ours（dev 现役）的条目身份丢失集（① 号增补收紧判据，纯函数零 IO）。
+
+    与 _theirs_drops_base_entries（base 面）互补：base 面判不了（锚点/别名形态）
+    时，ours 面仍可判——dev 现役条目在 theirs 缺席=整档快进即回退。解析失败=空集
+    （完全判不了，调用方保快进走既有死锁逃生）。
+    """
+    try:
+        ours_fams, err = _split_registry_entries(ours_text, identity_fn)
+        if err or not ours_fams:
+            return set()
+        theirs_fams, err2 = _split_registry_entries(theirs_text, identity_fn)
+        if err2:
+            return set()
+        drops: set[str] = set()
+        for fam, family in ours_fams.items():
+            t_family = theirs_fams.get(fam)
+            t_ids = {b.identity for b in (t_family.blocks if t_family else [])}
+            for block in family.blocks:
+                if block.identity and block.identity not in t_ids:
+                    drops.add(f"{fam}:{block.identity}")
+        return drops
+    except Exception:  # noqa: BLE001 — 判别设施异常=判不了（空集走既有 fail-open 逃生）
+        return set()
+
+
 def _family_identity_fn(
     rel_path: str,
     ours_text: str | None = None,
@@ -1114,8 +1140,20 @@ def three_way_merge_registry_yaml(
             )
         else:
             if guard_err is not None:
+                # ① 号增补收紧（2026-10-10 总统筹增补令·物化域①）：判不了"theirs 丢 base
+                # 条目"≠可以丢 dev 现役——补一道 ours 面可判丢失检查，theirs 相对 dev 丢
+                # 现役条目即拒绝快进转死信（-0012 实证=守门判不了时 fail-open 整档取
+                # theirs 即回退他道已落条目）；完全判不了（锚点/别名形态，条目面不可切）
+                # 才保快进（q-0002/0003 死锁逃生不回退）。
+                drops_vs_ours = _theirs_drops_ours_entries(ours_text, theirs_text, identity_fn)
+                if drops_vs_ours:
+                    return None, (
+                        f"{rel_path}: 快进守门判不了（{guard_err.splitlines()[0][:120]}）且 theirs "
+                        f"相对 dev 丢现役条目 {len(drops_vs_ours)} 条（如 {sorted(drops_vs_ours)[:3]}）"
+                        "——拒绝整档快进，死信回人工（增补令·物化域①）"
+                    )
                 logger.info(
-                    "[landing] %s 快进守门判不了（%s）——fail-open 保快进",
+                    "[landing] %s 快进守门判不了（%s）且 ours 面零丢失可判——fail-open 保快进",
                     rel_path,
                     guard_err.splitlines()[0][:120],
                 )
@@ -2226,6 +2264,37 @@ class WorktreeLanding:
             return True
         return bool(self._entry_base_blob(item, rel))
 
+    def _assert_ours_entries_survive(
+        self, rel: str, ours_text: str, merged: str, base_text: str | None, theirs_text: str, bag_paths: set[str]
+    ) -> set[str]:
+        """合并产物 vs dev 现役条目身份零丢失复核（增补令·物化域①轻量闸，纯函数零 IO）。
+
+        Returns: 丢失身份集（空=通过）；解析/判别失败=空集 fail-open（结构面由
+        合并器与解析护栏把守，本闸只加零丢失方向，不做第二裁判）。
+        """
+        try:
+            identity_fn = _family_identity_fn(rel, ours_text, theirs_text, base_text)
+            ours_fams, err = _split_registry_entries(ours_text, identity_fn)
+            if err or not ours_fams:
+                return set()
+            merged_fams, err2 = _split_registry_entries(merged, identity_fn)
+            if err2:
+                return set()
+            lost: set[str] = set()
+            for fam, family in ours_fams.items():
+                merged_family = merged_fams.get(fam)
+                merged_ids = {b.identity for b in (merged_family.blocks if merged_family else [])}
+                for block in family.blocks:
+                    if block.identity and block.identity not in merged_ids:
+                        # retired_check 批准的合法退役不算丢（theirs 删+盘上/HEAD 双不存在）
+                        entry_data = block.data if isinstance(block.data, dict) else None
+                        if entry_data is not None and self._registry_entry_retired(entry_data, bag_paths):
+                            continue
+                        lost.add(f"{fam}:{block.identity}")
+            return lost
+        except Exception:  # noqa: BLE001 — 复核设施异常 fail-open（不做第二裁判）
+            return set()
+
     def _ledger_registry_id(self, rel: str) -> str | None:
         """ROOR 反查该路径是否已入 PG 账本（registry_id 或 None=未入账本册）。
 
@@ -2383,6 +2452,17 @@ class WorktreeLanding:
         if conflict:
             raise RuntimeError(f"[landing] 注册表三向合并失败（死信回退人工）: {conflict}")
         merged = self._heal_derived_totals(rel, merged)
+        # ── ① 号增补轻量闸（2026-10-10 总统筹增补令·物化域①）：合并产物 HEAD 面新鲜度
+        # 复核——ours（dev 现役）条目身份必须全数存活于合并产物。病灶实证（-0012）：
+        # 在途袋以热册 315 面整档快照为基，他道落 316 后"基底漂移不总触发"，若非会话
+        # 自检即整档回退掉已落地条目。账本册已走 PG render 分支（结构性免疫，不经此）；
+        # 本闸封非账本册三向合并路径的零丢失方向（retired_check 批准的合法退役除外）。
+        lost = self._assert_ours_entries_survive(rel, ours_text, merged, base_text, theirs_text, bag_paths)
+        if lost:
+            raise RuntimeError(
+                f"[landing] {rel} HEAD 面新鲜度复核：合并产物丢失 dev 现役条目 {len(lost)} 条"
+                f"（如 {sorted(lost)[:3]}）——基底漂移漏拦，死信回人工（增补令·物化域①）"
+            )
         if merged == ours_text:
             # 落地前自证读回（防 done 零变化，2026-09-28，q-0006 假成功治本）：零变化
             # 必须有合法解释——吸收有解（他袋已落/陈旧携带/合法退役/自愈覆盖）→ 合法
