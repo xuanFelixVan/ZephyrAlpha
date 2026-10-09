@@ -70,3 +70,8 @@ python .runtime/tmp/st-deadcure-20261009/tools/redblue.py
 git show --stat e48349275d | head -5
 git cat-file -p 6324c9e0f6fd^:tests 2>/dev/null | head -0; git ls-tree -r --name-only HEAD tests/ | wc -l
 ```
+
+## §G 波收尾回执（生成件，勿手改）
+
+- G5 袋 22 件／token 袋＋G6-G8 数据 4 件＋G7/G9/G10 文档 5 件／53 件复活甲乙两袋——逐件 `git show HEAD:<path>` 与车道 index 字节对拍，明细见 01_ledger §G 二节表。
+- 授权链消费裁定#496（同一批文不重复登记）；G4 因 GATE-NAMING N-16 文件名唯一性受阻呈 Owner。

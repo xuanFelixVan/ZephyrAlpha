@@ -1,9 +1,5 @@
 ---
 ttl: task_bound
-completes_when: 死信清偿专案复活批：原战役未落地交付件按袋 blob 逐件复原，经 F-1b/A-12 交割复核后随战役册转归档
----
----
-ttl: task_bound
 title: 条件化做T E4 双门考试 V3 · verdict 留档（机械生成自 result.yaml）
 sid: st-t0-matrix-20260924
 created: "2026-09-24"
