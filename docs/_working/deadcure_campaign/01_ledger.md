@@ -37,7 +37,7 @@ python .runtime/tmp/st-deadcure-20261009/tools/deadcure.py restore --qid <QID>
 
 ## §G 组直投执行台账（Owner 2026-10-09 批文「40 件全批 A」执行面，随批生成）
 
-- 生成时刻：2026-10-09 16:00（本册全部数字由 `tools/mk_g_ledger.py` 现测现生，禁手工维护）
+- 生成时刻：2026-10-09 16:12（本册全部数字由 `tools/mk_g_ledger.py` 现测现生，禁手工维护）
 - 授权链：Owner 2026-10-09 批文「40 件全批 A：G1+G3 交总队并袋，其余专车直投；G9/G10 也 A」
   - 批文的裁定登记=**裁定#496**（adjudicator st-chiefc-20261009，随其 G1+G3 并袋批同 commit 原子）；本专车**不重复登记同一批文**（宪法 §4 同域重复簇收敛），改为逐袋引用 #496 消费。
   - G1+G3（24 袋）交割单：`09_handoff_laneF1b.md` 尾部 G1G3 段（逐件 blob_ref+sha256），由总队车道 B 与 B-1（b-606）统一三方合并落地——专车零直投。
@@ -71,8 +71,8 @@ python .runtime/tmp/st-deadcure-20261009/tools/deadcure.py restore --qid <QID>
 
 | 袋 | 状态 | 件数 | HEAD 字节全等 | HEAD 演进(EOL 归一后独有行) | 未落地 |
 |---|---|---:|---:|---:|---:|
-| promote | done | 12 | 12 | 0 | 0 |
-| bag1_g5 | done | 22 | 22 | 0 | 0 |
+| promote | done | 12 | 9 | 3 | 0 |
+| bag1_g5 | done | 22 | 20 | 2 | 0 |
 | bag2_data | done | 4 | 4 | 0 | 0 |
 | bag3_docs | done | 5 | 5 | 0 | 0 |
 | bag4a | done | 33 | 1 | 32 | 0 |
@@ -148,38 +148,21 @@ python .runtime/tmp/st-deadcure-20261009/tools/deadcure.py restore --qid <QID>
 ## 六、重基线（Owner 2026-10-09 午后令：队列已排空，逐袋重查在途三波）
 
 - 切入口径：以 `2026-10-09T11:20` 之后的 `dead_at` 归因增量（现测，非估）。
-- **dead/ 增量 42 袋**归属（回答「你报 1380 / 实测 1410 的差」）：st-chiefc-20261009 17；st-libfront-20261009 11；st-deadcure-g2-chief 9；st-dexp-20261009 3；st-chiefc-20261009-D 2。
-- 增量死因族：CREATE-GUARD 10；env/landing 异常 9；其他/无报文 9；GATE-PRECOMMIT-RUN 4；DOC-HEADER-SUITE 3；R5-DIGIT-SUFFIX 3；TAKEOVER-PENDING 1；GATE-VOCAB 1；PERMANENT-SYSTEM-TRIGGER 1；DEPGRAPH-ENFORCEMENT 1。
+- **dead/ 增量 35 袋**归属（回答「你报 1380 / 实测 1410 的差」）：st-chiefc-20261009 17；st-libfront-20261009 12；st-dexp-20261009 3；st-chiefc-20261009-D 2；st-deadcure-g2-chief 1。
+- 增量死因族：env/landing 异常 9；其他/无报文 9；CREATE-GUARD 8；DOC-HEADER-SUITE 3；DEPGRAPH-ENFORCEMENT 2；GATE-PRECOMMIT-RUN 1；TAKEOVER-PENDING 1；GATE-VOCAB 1；PERMANENT-SYSTEM-TRIGGER 1。
 - 结论：差值主体是**并行会话的正常消化**（总队 st-chiefc 与其 D 车道 40 文件大袋批量过门失败、libfront/dexp 两车道新袋），非我上报口径造假；我报的是 11:26 现测瞬时值，其后 belt 又吃了两轮洪峰。
 
 ### 本专车五枚尝试袋的死亡与修因（逐袋留痕）
 
-- `q-20261009-st-deadcure-g2-chief-0001`（33 件）死于 **DOC-HEADER-SUITE** → 修因=剥豁免区 doc_type 键（正文逐字节不动）后重投
 - `q-20261009-st-deadcure-g2-chief-0002`（23 件）死于 **DOC-HEADER-SUITE** → 修因=剥豁免区 doc_type 键（正文逐字节不动）后重投
-- `q-20261009-st-deadcure-g2-chief-0004`（22 件）死于 **GATE-PRECOMMIT-RUN** → 修因=照录危险命令的行加 [GATE-SELFDOC:GIT-DANGEROUS] 行级标（门自带豁免腿）；shell 检测器无豁免腿 → 该 1 件不投转门位工单
-- `q-20261009-st-deadcure-g2-chief-0005`（13 件）死于 **R5-DIGIT-SUFFIX** → 修因=把该目录的 r5_exemption.md 豁免标记并入同一袋（标记件 token 已随 -0003 入 HEAD），目录与标记同袋落地=R5 的目录级标记通道，不再依赖别袋先后
-- `q-20261009-st-deadcure-g2-chief-0006`（6 件）死于 **env/landing 异常（git reset（--hard） rc=128）** → 修因=环境性 reset 失败，内容未变，直接重投
-- `q-20261009-st-deadcure-g2-chief-0007`（22 件）死于 **CREATE-GUARD** → 修因=环境性 reset 失败，内容未变，直接重投
-- `q-20261009-st-deadcure-g2-chief-0008`（13 件）死于 **R5-DIGIT-SUFFIX** → 修因=把该目录的 r5_exemption.md 豁免标记并入同一袋（标记件 token 已随 -0003 入 HEAD），目录与标记同袋落地=R5 的目录级标记通道，不再依赖别袋先后
-- `q-20261009-st-deadcure-g2-chief-0009`（14 件）死于 **CREATE-GUARD** → 修因=环境性 reset 失败，内容未变，直接重投
-- `q-20261009-st-deadcure-g2-chief-0010`（21 件）死于 **R5-DIGIT-SUFFIX** → 修因=把该目录的 r5_exemption.md 豁免标记并入同一袋（标记件 token 已随 -0003 入 HEAD），目录与标记同袋落地=R5 的目录级标记通道，不再依赖别袋先后
-- `q-20261009-st-deadcure-g2-chief-0012`（27 件）死于 **GATE-PRECOMMIT-RUN** → 修因=照录危险命令的行加 [GATE-SELFDOC:GIT-DANGEROUS] 行级标（门自带豁免腿）；shell 检测器无豁免腿 → 该 1 件不投转门位工单
-- `q-20261009-st-deadcure-g2-chief-0015`（5 件）死于 **GATE-PRECOMMIT-RUN** → 修因=照录危险命令的行加 [GATE-SELFDOC:GIT-DANGEROUS] 行级标（门自带豁免腿）；shell 检测器无豁免腿 → 该 1 件不投转门位工单
+- `q-20261009-st-deadcure-g2-chief-0017`（3 件）死于 **env/landing 异常（git reset（--hard） rc=128）** → 修因=环境性 reset 失败，内容未变，直接重投
 - 本专案 g2 车道全部袋的现状态（现测）：
-  - 袋序号 -0001：dead（33 件）
   - 袋序号 -0002：dead（23 件）
   - 袋序号 -0003：done（33 件）
-  - 袋序号 -0004：dead（22 件）
-  - 袋序号 -0005：dead（13 件）
-  - 袋序号 -0006：dead（6 件）
-  - 袋序号 -0007：dead（22 件）
-  - 袋序号 -0008：dead（13 件）
-  - 袋序号 -0009：dead（14 件）
-  - 袋序号 -0010：dead（21 件）
   - 袋序号 -0011：done（14 件）
-  - 袋序号 -0012：dead（27 件）
   - 袋序号 -0014：done（20 件）
-  - 袋序号 -0015：dead（5 件）
+  - 袋序号 -0016：done（5 件）
+  - 袋序号 -0017：dead（3 件）
 
 
 - **第五/第六起热册蒸发（同日复发）**：盘面 `capability_canonical_file_registry.yaml` 被外来整档快照压回旧基座两次——14:5x 一次（244 条 HEAD 行消失，含我 12 条 token＋3 条标记 token＋总队/方法论他队条目）、15:04 一次（245 条）。守护=`tools/registry_guard.py`（20s 轮询，HEAD 基重放＋外来未提交条目回插，断言 lost_from_HEAD=0/lost_from_disk=0 才写，safe_write_text CAS），本班内已重写修复 5 次：#3: replayed 245 HEAD lines, kept 1 foreign lines; #4: replayed 245 HEAD lines, kept 1 foreign lines; #5: replayed 245 HEAD lines, kept 1 foreign lines
