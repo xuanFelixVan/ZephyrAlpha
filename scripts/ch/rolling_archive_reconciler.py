@@ -136,6 +136,172 @@ def _backup_fresh(inject_backup_failure: bool = False) -> tuple[bool, str]:
     return True, "backup ok(含 CH)"
 
 
+CH_BACKUP_MAX_AGE_H = 26  # CH 段 24h 节律 + 2h  slack
+BACKUP_CONFIG_FILE = PROJECT_ROOT / "scripts" / "backup" / "backup_config.yaml"
+VHDX_GROWTH_SERIES = PROJECT_ROOT / "data" / "audit-trail" / "vhdx_growth_series.jsonl"
+
+
+def _load_backup_state() -> dict[str, Any]:
+    try:
+        with open(BACKUP_STATE_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def _age_hours(ts: Any) -> float | None:
+    if not ts:
+        return None
+    try:
+        last = datetime.fromisoformat(str(ts))
+    except (TypeError, ValueError):
+        return None
+    if last.tzinfo is None:
+        last = last.replace(tzinfo=timezone.utc)
+    return (datetime.now(timezone.utc) - last).total_seconds() / 3600
+
+
+def _ch_newest_backup_created_age_h() -> tuple[float | None, str]:
+    """读 CH 服务端 system.backups 最近一条 BACKUP_CREATED 的距今小时数。
+
+    为什么不看 backup_state.json 的时间戳：2026-10-09 实测——该文件
+    ``last_ch_backup_time`` 停在 10-08T07:37，而 CH 服务端记着 10-09 01:05→01:37Z
+    一条 BACKUP_CREATED（389.67 GB）。原因=成功那轮在写回 Stage 4 之前死掉，
+    账本时间戳没推进。**用账本判新鲜度会把好链判红**，故尺锚在服务端事实。
+    """
+    import http.client
+
+    try:
+        from zephyr.data.ch_config import ensure_ch_env_loaded
+        from zephyr.shared.security.secrets import get_secret_or_default
+
+        ensure_ch_env_loaded()
+        host = get_secret_or_default("CLICKHOUSE_HOST", "")
+        port = int(get_secret_or_default("CLICKHOUSE_HTTP_PORT", "8123"))
+        user = get_secret_or_default("CLICKHOUSE_USER", "default")
+        pwd = get_secret_or_default("CLICKHOUSE_PASSWORD", "")
+        conn = http.client.HTTPConnection(host, port, timeout=60)
+        conn.request(
+            "POST",
+            "/",
+            body=(
+                "SELECT dateDiff('second', max(end_time), now()) "
+                "FROM system.backups WHERE status='BACKUP_CREATED' FORMAT TSV"
+            ),
+            headers={"X-ClickHouse-User": user, "X-ClickHouse-Key": pwd},
+        )
+        raw = conn.getresponse().read().decode("utf-8", "replace").strip()
+        conn.close()
+    except Exception as e:  # noqa: BLE001
+        return None, f"system.backups 采集失败: {e.__class__.__name__}"
+    if not raw or not raw.replace(".", "").replace("-", "").isdigit():
+        # fail-closed：无数据/非数都判红，绝不当"新鲜"放行（CH 出错可能返回空串）
+        return None, f"system.backups 无有效读数(fail-closed): {raw[:60]!r}"
+    return round(float(raw) / 3600, 1), "ok"
+
+
+def ch_chain_fresh(max_age_h: int = CH_BACKUP_MAX_AGE_H) -> tuple[bool, str]:
+    """预检专用：CH 恢复链新鲜度探针（裁定#380④ 仪表修正 #2，2026-10-09）。
+
+    为什么不复用 ``_backup_fresh``：整轮备份节律 8h 而 CH 段 24h，写侧把
+    "本轮未到 CH 节律" 正常记成 ``last_ch_backup_status=skipped``
+    （backup.ps1:482），字符串比较 ``== 'ok'`` ⇒ **完全健康的链每天约 2/3 时段被
+    误标红**（09-27 预检单即红在此）。本探针改判"服务端最近一条 BACKUP_CREATED
+    距今时长"，锚在事实而非账本旗，且采集失败一律判红（fail-closed）。
+
+    与阀#1 的边界：``_backup_fresh`` 仍服务归档阀#1（:329）**语义不动**——
+    "只在 CH 刚备份完才允许删分区" 是刻意保守，改它会静默提高删除频率，
+    属数据操作门位，不在仪表修正范围内（见 99_delivery 裁定回执）。
+    """
+    age_h, why = _ch_newest_backup_created_age_h()
+    if age_h is None:
+        return False, f"CH 链不可判({why})"
+    st = _load_backup_state()
+    verified = bool(st.get("last_ch_backup_verified"))
+    if age_h > max_age_h:
+        return False, f"CH 链陈旧 {age_h:.0f}h (>{max_age_h}h, 源=system.backups)"
+    if not verified:
+        return False, f"CH 链 {age_h:.0f}h 内新鲜但 last_ch_backup_verified 非真"
+    return True, f"CH 链新鲜 {age_h:.0f}h (system.backups) + verified"
+
+
+def last_compaction_days() -> tuple[float | None, str]:
+    """距上次成功压缩的天数——真源=backup_state.json（仪表修正 #1）。
+
+    修因：原判据从 ``load_state()``（rolling_archive_state.json）取
+    ``last_vhdx_compaction``，而压缩成功记录实际写在 backup_state.json
+    （``last_vhdx_compaction`` / ``last_vhdx_compaction_result=ok`` /
+    ``last_vhdx_compaction_reclaimed_gb``）⇒ 该指标**恒 None**、``due`` **恒真**，
+    "距上次压缩 ≥90 天" 这条触发条件从未生效过。
+    """
+    st = _load_backup_state()
+    if str(st.get("last_vhdx_compaction_result") or "") != "ok":
+        return None, "无 last_vhdx_compaction_result=ok 记录"
+    age_h = _age_hours(st.get("last_vhdx_compaction"))
+    if age_h is None:
+        return None, "last_vhdx_compaction 时间戳不可解析"
+    return round(age_h / 24, 1), "ok"
+
+
+def d_drive_red_line_gb() -> tuple[float | None, str]:
+    """从 capacity_guard 机读块取 D 盘红线（仪表修正 #3 的读者）。
+
+    修因：注释（backup_config.yaml:130）声明红线含 D≥50G/E≥50G，但机读块
+    ``capacity_guard.min_free_gb`` 只登记 F/G ⇒ D 线**无任何机读读者**，
+    D 跌到 33.6G 无人拦。本函数是那把尺的读者之一（不新增第二真源）。
+    """
+    try:
+        with open(BACKUP_CONFIG_FILE, encoding="utf-8") as f:
+            cfg = yaml.safe_load(f) or {}
+    except (FileNotFoundError, yaml.YAMLError):
+        return None, "backup_config.yaml 不可读"
+    mins = (cfg.get("capacity_guard") or {}).get("min_free_gb") or {}
+    val = mins.get("D")
+    if val is None:
+        return None, "capacity_guard.min_free_gb 缺 D 键"
+    try:
+        return float(val), "ok"
+    except (TypeError, ValueError):
+        return None, "D 键值非数"
+
+
+def record_vhdx_growth(vhdx_gb: Any, d_free_gb: Any) -> dict[str, Any]:
+    """每日体积哨兵（仪表修正 #4）：记 vhdx/D 剩余并算日差与红线判定。
+
+    为什么要：日预检只存当日快照、无差分，于是"vhdx 以 3.9GiB/天回填、
+    一次压缩约撑 8 个月"这类说法既无法证伪也没被证过——实测既有序列
+    （vhdx_precheck_*.md 的 vhdx_size_gb）显示 10-03→10-09 六天基本持平
+    （584.7→586.5），而压缩后头两天曾回弹 +13~16 GiB/天。增速**不是常数**，
+    必须逐日记账才谈得上排窗。
+    """
+    rec: dict[str, Any] = {
+        "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "vhdx_gb": vhdx_gb,
+        "d_free_gb": d_free_gb,
+        "delta_vs_prev_gb": None,
+        "d_red_line_gb": None,
+        "d_below_red_line": None,
+    }
+    prev = None
+    if VHDX_GROWTH_SERIES.exists():
+        try:
+            lines = [x for x in VHDX_GROWTH_SERIES.read_text(encoding="utf-8").splitlines() if x.strip()]
+            prev = json.loads(lines[-1]) if lines else None
+        except (json.JSONDecodeError, OSError):
+            prev = None
+    if isinstance(vhdx_gb, (int, float)) and prev and isinstance(prev.get("vhdx_gb"), (int, float)):
+        rec["delta_vs_prev_gb"] = round(vhdx_gb - prev["vhdx_gb"], 2)
+    line, why = d_drive_red_line_gb()
+    rec["d_red_line_gb"] = line
+    rec["d_red_line_reason"] = why
+    if line is not None and isinstance(d_free_gb, (int, float)):
+        rec["d_below_red_line"] = bool(d_free_gb < line)
+    VHDX_GROWTH_SERIES.parent.mkdir(parents=True, exist_ok=True)
+    with open(VHDX_GROWTH_SERIES, "a", encoding="utf-8") as f:
+        f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    return rec
+
+
 def list_past_line_partitions(params: dict[str, Any]) -> list[dict[str, Any]]:
     """列出过线分区：完整月分区且 partition_end < 今天-(保留期+滞回)。只读。"""
     import http.client
@@ -360,7 +526,7 @@ def evaluate(
     return result
 
 
-def vhdx_precheck(notify_only: bool = True) -> dict[str, Any]:
+def vhdx_precheck(notify_only: bool = True, force: bool = False) -> dict[str, Any]:
     """vhdx 季度压缩预检单（裁定#380④：只提醒不执行，实际压缩等 Owner 点名）。
 
     随备份成功事件运行（backup.ps1 STAGE 4b 同窗）；触发条件=季初首 7 天内
@@ -372,14 +538,7 @@ def vhdx_precheck(notify_only: bool = True) -> dict[str, Any]:
     today = datetime.now()
     quarter_start_month = (today.month - 1) // 3 * 3 + 1
     in_quarter_start = today.day <= 7 and today.month == quarter_start_month
-    state_ = load_state()
-    last_comp = state_.get("last_vhdx_compaction")  # ISO 日期串，无=从未记录
-    days_since = None
-    if last_comp:
-        try:
-            days_since = (today - datetime.fromisoformat(last_comp)).days
-        except (ValueError, TypeError):
-            days_since = None
+    days_since, days_why = last_compaction_days()
     due = in_quarter_start or (days_since is None or days_since >= 90)
 
     precheck: dict[str, Any] = {
@@ -387,10 +546,10 @@ def vhdx_precheck(notify_only: bool = True) -> dict[str, Any]:
         "due": due,
         "in_quarter_start_window": in_quarter_start,
         "days_since_last_compaction": days_since,
+        "days_since_source_note": days_why,
     }
-    if not due:
-        return precheck
-
+    # 注：`due` 只 gate **预检单成文**，不 gate 采集——日增速哨兵必须天天记，
+    # 否则"距上次压缩 <90 天"的年份里序列会整段断掉（仪表修正 #4 的本意）。
     # 五项指标（只读采集）
     try:
         from zephyr.data.ch_config import ensure_ch_env_loaded
@@ -435,15 +594,63 @@ def vhdx_precheck(notify_only: bool = True) -> dict[str, Any]:
     except Exception:  # noqa: BLE001
         precheck["vhdx_size_gb"] = "采集失败(需管理员)"
 
-    precheck["backup_fresh"] = _backup_fresh()[1]
-    precheck["note"] = "提醒条目——绝不自动执行压缩；实际停机压缩等 Owner 点名（裁定#380④/#381）"
+    d_free: Any = None
+    try:
+        out_d = subprocess.run(
+            ["powershell", "-NoProfile", "-Command", "(Get-Volume -DriveLetter D).SizeRemaining/1GB"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        d_free = round(float(out_d.stdout.strip()), 2)
+        precheck["d_free_gb"] = d_free
+    except Exception:  # noqa: BLE001
+        precheck["d_free_gb"] = "采集失败"
+
+    # 仪表修正 #4：逐日体积/增速哨兵（含 D 红线判定，D 线自此有了机读读者）
+    try:
+        growth = record_vhdx_growth(precheck.get("vhdx_size_gb"), d_free)
+        precheck["vhdx_delta_gb"] = growth.get("delta_vs_prev_gb")
+        precheck["d_red_line_gb"] = growth.get("d_red_line_gb")
+        precheck["d_below_red_line"] = growth.get("d_below_red_line")
+    except Exception as e:  # noqa: BLE001 — 哨兵故障不得连累预检本体
+        precheck["vhdx_growth_probe_error"] = f"{e.__class__.__name__}: {str(e)[:120]}"
+
+    # 仪表修正 #2：预检不再用"整体备份旗/节律 skip"当 CH 链判据，并列出**全部**红项
+    # （原实现只回填 _backup_fresh() 的第一个红字符串，会把 CH 项一起藏掉）
+    red_items: list[str] = []
+    ok_ch, why_ch = ch_chain_fresh()
+    precheck["ch_chain_fresh"] = ok_ch
+    precheck["ch_chain_note"] = why_ch
+    if not ok_ch:
+        red_items.append(f"ch_chain: {why_ch}")
+    ok_all, why_all = _backup_fresh()
+    precheck["backup_flag_overall"] = why_all if ok_all else f"failed ({why_all})"
+    if not ok_all:
+        red_items.append(f"overall_backup_flag: {why_all}（注=整轮旗含非 CH 阶段，非 CH 链判据，见 ch_chain_note）")
+    precheck["ready_for_owner_window"] = bool(ok_ch)
+    precheck["blocking_items"] = red_items
+    precheck["note"] = (
+        "提醒条目——绝不自动执行压缩；实际停机压缩等 Owner 点名（裁定#380④/#381）。"
+        "排窗须按实测增速与回收量（5.5/42.16 GiB 两次实跑、停机 4.3-4.8h），"
+        "勿用 guest 空闲空间倒推收益，勿用本单旧口径'60-120 分钟'。"
+    )
+
+    if not (due or force):
+        # 未到期：采集与日序列已记账，但不生成预检单（免噪音）
+        return precheck
 
     PLAN_DIR.mkdir(parents=True, exist_ok=True)
     precheck_file = PLAN_DIR / f"vhdx_precheck_{today.strftime('%Y%m%d')}.md"
     with open(precheck_file, "w", encoding="utf-8") as f:
         f.write("---\nttl: task_bound\n---\n# vhdx 季度压缩预检单（自动生成·提醒条目）\n\n```json\n")
         f.write(json.dumps(precheck, ensure_ascii=False, indent=1))
-        f.write("\n```\n\n五项全绿时呈 Owner 点名压缩（停机 60-120 分钟窗，全局冻结档）。\n")
+        f.write(
+            "\n```\n\nCH 链新鲜时呈 Owner 点名压缩（全局冻结档）。"
+            "**停机窗请按实跑口径 4.3-4.8 小时排**（09-28=17440s／09-30=15373s），"
+            "勿用旧文案 60-120 分钟；回收量按 5.5~42 GiB 区间保守排，"
+            "勿用 guest 空闲空间倒推。\n"
+        )
     precheck["precheck_file"] = str(precheck_file)
     print(f"[vhdx-precheck] 到期提醒：预检单已生成 {precheck_file}（仅提醒，不执行）")
     return precheck
@@ -456,6 +663,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--kill", action="store_true", help="一键回退手动模式")
     p.add_argument("--resume", action="store_true", help="熔断复位+解除 kill")
     p.add_argument("--precheck", action="store_true", help="vhdx 季度压缩预检单（提醒条目，不执行）")
+    p.add_argument("--force-precheck", action="store_true", help="即使未到期也重写当日预检单（仪表改版后纠旧单用）")
     p.add_argument("--inject-backup-failure", action="store_true", help="红蓝注入：伪造备份失败")
     p.add_argument("--inject-verify-mismatch", action="store_true", help="红蓝注入：伪造对账不符")
     return p
@@ -472,7 +680,7 @@ def main(argv: list[str] | None = None) -> int:
         print("kill/circuit 已复位")
         return 0
     if args.precheck:
-        print(json.dumps(vhdx_precheck(), ensure_ascii=False, indent=1))
+        print(json.dumps(vhdx_precheck(force=args.force_precheck), ensure_ascii=False, indent=1))
         return 0
     result = evaluate(
         args.mode,

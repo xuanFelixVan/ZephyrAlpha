@@ -140,3 +140,9 @@ capacity_guard:
   min_free_gb:
     F: 700
     G: 500
+    # D/E 两键 2026-10-09 补登记（裁定#380④ 仪表修正 #3）：§一.1 红线一直含
+    # D≥50G/E≥50G，但机读块只有 F/G ⇒ D 线零读者，D 曾跌到 33.6G 无人拦。
+    # 读者=backup.ps1 Test-CapacityGuardBreach（按目标盘）＋
+    #   scripts/ch/rolling_archive_reconciler.py d_drive_red_line_gb()（按 D 盘余量告警）。
+    D: 50
+    E: 50
