@@ -8,13 +8,13 @@ name: 提交死因案例册
 description: >-
   提交指路指南生成器的第三真源：从 2026-09-22/23 死信战役（112 封实测+overnight_decisions 流水）
   蒸馏的死因→处方对。每条带实弹证据（qid/commit），处方与 gate_digest_registry.yaml 的 gate 联动
-  （gate 字段由生成器校验在册）。成本数据口径：created_at→dead_at 分钟（含排队等待）。
+  （gate 字段由生成器校验在册）。成本数据口径：created_at→dead_at 分钟（含排队等待）。2026-10-09 st-chiefc-20261009 回灌当日战场配方 10 案例（DEATH-022~031）。
 owner: MOD-INF-005
 tier: tier_1_governance
 status: active
-version: 1.0.0
+version: 1.1.0
 created: '2026-09-24'
-last_updated: '2026-09-24'
+last_updated: '2026-10-09'
 unique_key: case_id
 entry_schema:
   case_id: string (required, unique)
@@ -161,3 +161,68 @@ cases:
     prescription: "①写前做三方条目集对账（HEAD/盘面/index 各自 safe_load 抽 creation_tokens 集合比对，任一守恒闸拒写即停勿强写）②写后立即入袋（袋读盘面快照，落地走三向合并不受盘面翻转影响）③整段修复用段级重建+CAS（safe_write_text expected_base_sha256），禁 git checkout 整片覆盖 ④证据交黑手取证包治本（G1 还原审计闸/G2 还原 CAS 化）"
     cost_note: "单次损失 15-60min（重写+重登记+死信循环）；2026-09-22 蒸发事故 116 条净损的同机制前案"
     evidence: [st-commitsys-20260924-tripwire, .runtime/quarantine/drift_20260923T*]
+
+  - case_id: DEATH-022-HOT-REGISTRY-TOKEN-FIRST-BAG
+    symptom: "热册（capability_canonical_file_registry）token 登记被 REGISTRY-YAML-PARSE 指纹门拦（staged 指纹不等于投影状态文件）或写入被盘面旧态蒸发回吞（CREATE-GUARD 复拦无 token）"
+    gate: REGISTRY-YAML-PARSE
+    root_cause: "热册=PG 投影：私改投影册无效（W-M1 投影执法，须意图 API+生成器重打）；盘面并发写手/还原机制 CAS-less 覆盖使未提交写入蒸发（DEATH-021 同机制）"
+    prescription: "token 先行袋两段式：token 袋=HEAD 基+creation_tokens 列表尾纯增插入（di_seam_exemptions 行之前）独立先行落地，内容袋随后；禁手改投影；蒸发战=A-12 守门 f6b92806c4+A-13 他伤豁免 2b91a6d7a3 先例"
+    cost_note: "2026-10-09 全场会话反复死于同批门（今日最高频死因）"
+    evidence: [f6b92806c4, 2b91a6d7a3]
+  - case_id: DEATH-023-MODULE-ID-COLLISION-UNPRECHECKED
+    symptom: "BLUEPRINT-FORMAT/MODULE-ID-CONSISTENCY 拦：module_id 全仓撞号"
+    gate: BLUEPRINT-FORMAT
+    root_cause: "模块号先造后查：合规格式不等于唯一——MOD-BT-214 三撞/MOD-L06-001 裸撞实证"
+    prescription: "新建 src .py 前先 grep 目标号全仓预查唯一；合规轨=MOD-{LAYER}-NNN 或派生轨 MOD-{DOMAIN}[-NNN]（真源 validate_module_id_naming.py），禁任意后缀"
+    cost_note: "今日单号三撞实录"
+    evidence: [MOD-BT-214, MOD-L06-001]
+  - case_id: DEATH-024-MAP-MOUNTS-DECLARATION-MISSING
+    symptom: "新建 src .py 有 token 仍被 CREATE-GUARD 硬拦——挂图申报缺失"
+    gate: CREATE-GUARD
+    root_cause: "挂图申报必填面（Owner 2026-10-04 三点批准）：token 条目须声明 map_mounts 或 no_mount_reason，两者皆无硬阻断；图族不可达则挂点判不在册 fail-closed"
+    prescription: "token 条目加 map_mounts（逐条 \"<map_id>:<node_id>\" 两端在册）或 no_mount_reason（非空理由逃生，审计 create_guard_map_mounts_escape.jsonl 季度复核）；存量零迁移仅新增文件生效"
+    evidence: []
+  - case_id: DEATH-025-DEPGRAPH-PLANNED-OVER50
+    symptom: "DEPGRAPH-ENFORCEMENT 拦新 src .py——build_status=planned 且实质行数超 50"
+    gate: DEPGRAPH-ENFORCEMENT
+    root_cause: "先施工后登记：planned 态代码超 50 行即拦；新文件无 depgraph 记录由 NEW-FILE-DEPGRAPH-ENFORCEMENT 子检查拦"
+    prescription: "写前 apply_depgraph.py --add-design-node 预登记；完工后 apply_depgraph.py --transition-build-status <node_id> production"
+    evidence: []
+  - case_id: DEATH-026-MODULE-ID-SRC-TEST-SHARED
+    symptom: "MODULE-ID-CONSISTENCY 拦：src 与 test 共用同一 module_id"
+    gate: MODULE-ID-CONSISTENCY
+    root_cause: "跨文件唯一性判据不含 src/test 同 id 豁免——测试文件须独立轨号"
+    prescription: "src 与 test 各取独立 module_id，禁共用"
+    evidence: []
+  - case_id: DEATH-027-RULES-FILE-QUEUE-LANDING-BLOCK
+    symptom: "规则文件（AGENTS.md/RULES_MANIFEST 面）经队列入队，落地侧裸 pre-commit 以 CHANGING_IN_COMMIT 类判据连拦"
+    gate: QUEUE-MECHANICS
+    root_cause: "queue 落地跑裸 pre-commit 无 own-scope 语境=结构性拦；gateway 直提语境 own-scope 使 CHANGING_IN_COMMIT 为解释位不阻断"
+    prescription: "规则文件改动走 git_commit.py gateway 直提（--session --files），不走 --enqueue；队列只投 own-scope 兼容批"
+    cost_note: "今日 0004/0035 两袋连死实证"
+    evidence: [q-0004, q-0035]
+  - case_id: DEATH-028-ALLOW-OVERLAP-CIRCUIT-BREAKER
+    symptom: "HELD-OVERLAP 用 --allow-overlap 重试被熔断（5 次/24h 窗口）拒绝"
+    gate: HELD-OVERLAP
+    root_cause: "allow_overlap 熔断器防滥用；A-13 他伤豁免已落地——纯自伤负例仍熔断；归属判定：热册被蒸发后的重试属他伤非自伤"
+    prescription: "他伤（锁被他 session 占/热册被蒸发后重试）留证据走豁免；纯自伤等锁释放勿硬闯熔断窗"
+    evidence: [2b91a6d7a3]
+  - case_id: DEATH-029-TAKEOVER-GHOST-HEARTBEAT
+    symptom: "TAKEOVER-PENDING 拦提交（死会话 held/dirty/staging 面咬合）；或长睡眠后本会话心跳过期被 reaper 判 ghost 全场袋死"
+    gate: TAKEOVER-PENDING
+    root_cause: "死会话遗留资源面未接管即重投；长会话不定期 session_worktree_start 刷新心跳（mark_logical），长睡眠间隙心跳过期"
+    prescription: "四步——ghost 心跳清除、claim 核零泄漏、session_takeover_ledger.py --resolve <sid> --by <接管者>、重投；预防=长会话定期 session_worktree_start 刷新心跳，长批先登记 process_reaper_keep.txt"
+    cost_note: "今日 0127/0148 两实证"
+    evidence: [q-0127, q-0148]
+  - case_id: DEATH-030-RENDER-REORDER-TRIPLE-PROOF
+    symptom: "机生渲染重排（整文件重写零真删）仍触发 REGISTRY-MASS-DELETION 净删/身份信号"
+    gate: REGISTRY-MASS-DELETION
+    root_cause: "门按行/条目差集判定不辨识语义意图；共享暂存区副本陈旧也会误报"
+    prescription: "message 加 [allow-mass-deletion:<理由至少 10 字>]；渲染重排零真删须条目级三证（HEAD/盘面/index 逐条对账）；共享册 git add 自愈"
+    evidence: []
+  - case_id: DEATH-031-FILES-FLAG-REPEAT-OWNERSHIP
+    symptom: "--files 重复传旗只留末值导致袋缺文件；或袋 done 后未核归属，暂存区吸收他会话内容不自知"
+    gate: QUEUE-MECHANICS
+    root_cause: "argparse 重复旗覆盖（只留末值）+共享暂存区吸收效应"
+    prescription: "--files 逗号分隔清单一次传全（禁重复传旗）；袋落地后必 git log -1 --name-only 核真实归属"
+    evidence: []
