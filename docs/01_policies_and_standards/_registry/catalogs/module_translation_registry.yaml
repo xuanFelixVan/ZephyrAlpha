@@ -844,6 +844,14 @@ algo_submodules:
   node_id: A1
   plain_zh: 先看 commit message 有没有逃生通道或规则修改标记，决定要不要深入校验
   module_id: MOD-GOV_RULE_EXECUTION_PAIRING_GATE
+- module_path: src/zephyr/gov_enforcement/commit_gates/tdm_mount_coverage_gate.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: TDM挂载覆盖门
+  plain_zh: TDM 挂载覆盖门禁：新增或修改代码文件时自动核对该文件是否已按挂载总筹裁决挂到纵向图对应节点上，没挂就拦下提交，防止代码和地图脱节变成孤儿
+  domain_id: D_GOV_ENFORCEMENT
+  responsibility_layer: governance
 - module_path: src/zephyr/gov_enforcement/rule_bridge/__init__.py
   name_en: zephyr.gov_enforcement.rule_bridge（包 __init__）
   name_zh: ① 子模块导出聚合
@@ -1048,6 +1056,14 @@ algo_submodules:
   node_id: A1
   plain_zh: 判断提交文件是否命中业务代码或 trae_060 规则文件，命中才执行快照更新
   module_id: MOD-GOV_RUNTIME_VIOLATION_SNAPSHOT_RECONCILER
+- module_path: src/zephyr/governance/audit/tdm_mount_coverage_reconciler.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: TDM挂载义务存量对账器
+  plain_zh: 提交后事件触发的全量重扫：模块册一变更就重算人口对挂载并集与豁免册的差额，孤儿判红落盘告警不阻断，与提交门禁共享同一套判定助手防口径漂移
+  domain_id: D_GOV_AUDIT
+  responsibility_layer: governance
 - module_path: src/zephyr/governance/audit/translation_coverage_reconciler.py
   name_en: _is_in_scope
   name_zh: ① 检测范围判定
@@ -2452,22 +2468,6 @@ algo_submodules:
   node_id: A1
   plain_zh: params 对象优先，旧关键字参数经参数对象构造函数过渡，混用显式拒绝
   module_id: MOD-TRADING-001
-- module_path: src/zephyr/gov_enforcement/commit_gates/tdm_mount_coverage_gate.py
-  domain_id: D_GOV_ENFORCEMENT
-  name_zh: "TDM挂载覆盖门"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "TDM 挂载覆盖门禁：新增或修改代码文件时自动核对该文件是否已按挂载总筹裁决挂到纵向图对应节点上，没挂就拦下提交，防止代码和地图脱节变成孤儿"
-  responsibility_layer: governance
-- module_path: src/zephyr/governance/audit/tdm_mount_coverage_reconciler.py
-  domain_id: D_GOV_AUDIT
-  name_zh: "TDM挂载义务存量对账器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "提交后事件触发的全量重扫：模块册一变更就重算人口对挂载并集与豁免册的差额，孤儿判红落盘告警不阻断，与提交门禁共享同一套判定助手防口径漂移"
-  responsibility_layer: governance
 battle_map_cross_cutting:
 - category: benchmark_mapping
   name_zh: 外部对标清单（Benchmark Mapping）
@@ -5858,6 +5858,14 @@ entries:
   plain_zh: 测试suite注册表，机器学习的注册表，登记和查询已注册的条目（test suite registry）
   domain_id: D_AUDITTEST
   responsibility_layer: governance
+- module_path: docs/01_policies_and_standards/_registry/reports/rule_face_reconciliation.yaml
+  desc_en: ""
+  desc_zh: 每条规则一行：真执法面与被提及面双口径分列，附双零匹配名单
+  name_en: Rule Face Reconciliation Report
+  name_zh: 规则执法面双口径对账表
+  plain_zh: 这张表回答一个问题：86 条铁律里，哪些真的有代码在管，哪些只是嘴上提过。生成器每次重算，谁也别想手改数字。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: docs/01_policies_and_standards/_registry/schemas/session_log_schema.yaml
   desc_en: ""
   desc_zh: ""
@@ -6672,6 +6680,14 @@ entries:
   name_zh: 日度决策快照表
   plain_zh: 每天收盘后自动记账今天拍板的结果：市场状态、给多少仓位上限、启用哪些策略包、各层门的状态、今天做不做交易和为什么，一行写清可供审计，重拍只追加新行不改旧账
   domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: schemas/categories/factor_signal.py
+  desc_en: ""
+  desc_zh: c1_market.factor_signal 表 DDL 唯一真源（CTR-002 FactorSignal 契约落库面，buffer 默认落点）；字段口径=契约+buffer TSV 列序+DS-003/004 三分合一；ReplacingMergeTree 同键重放幂等
+  name_en: factor_signal DDL-as-code
+  name_zh: 因子信号表DDL真源
+  plain_zh: 因子算出来的买卖信号要稳稳落进数据库，全靠这份建表说明书：一张长表按因子、股票、截面时点各记一行，算错了重跑会自动覆盖当天旧行不重复记账，空值表示还没算出来禁止瞎凑数，跟隔壁特征值表是一对兄弟件但各管各的账。
+  domain_id: D_DATA
   responsibility_layer: business
 - module_path: schemas/categories/fundamental/consensus_daily.py
   desc_en: ""
@@ -7927,14 +7943,6 @@ entries:
   plain_zh: 事件溯源唯一真源（钱包快照由事件流推导可全量重建），模拟盘平台蓝图批1（日志地基），测试守卫 test_sim_paper_ledger.py
   domain_id: D_BACKTEST
   responsibility_layer: business
-- module_path: schemas/categories/factor_signal.py
-  domain_id: D_DATA
-  name_zh: "因子信号表DDL真源"
-  name_en: "factor_signal DDL-as-code"
-  desc_zh: "c1_market.factor_signal 表 DDL 唯一真源（CTR-002 FactorSignal 契约落库面，buffer 默认落点）；字段口径=契约+buffer TSV 列序+DS-003/004 三分合一；ReplacingMergeTree 同键重放幂等"
-  desc_en: ""
-  plain_zh: "因子算出来的买卖信号要稳稳落进数据库，全靠这份建表说明书：一张长表按因子、股票、截面时点各记一行，算错了重跑会自动覆盖当天旧行不重复记账，空值表示还没算出来禁止瞎凑数，跟隔壁特征值表是一对兄弟件但各管各的账。"
-  responsibility_layer: business
 - module_path: scripts/_archive/governance/d3_metadata/assign_module_id.py
   desc_en: ""
   desc_zh: ""
@@ -8913,6 +8921,222 @@ entries:
   plain_zh: 这个文件是给策略工厂看仪表盘的：它去读两本账（一本记着哪些策略在考试中掉队了，一本记着每天赚亏多少钱），然后把这些情况用大白话汇总成一行提示，告诉进货环节和假说审核环节最近市场的真实反馈。它自己不记账不打分，账本读不到就安静跳过，绝不拖累主流程。
   domain_id: D_BACKTEST
   responsibility_layer: business
+- module_path: scripts/backtest/fexam/__init__.py
+  desc_en: ""
+  desc_zh: 全量考试套件包初始化，收编批0-5全部子模块
+  name_en: fexam suite package
+  name_zh: fexam考试套件包入口
+  plain_zh: 这是考试工厂的大门牌：把从生成考卷、跑考试、出成绩册的所有零件归到一个屋檐下，外面只认这一个入口。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/allocator_shadow.py
+  desc_en: ""
+  desc_zh: 五套资金分配法同窗影子对比+序贯统计证据量，只报证据不判终胜负
+  name_en: fexam allocator shadow
+  name_zh: fexam批4分配器影子考
+  plain_zh: 这是五种分钱方法的比武场：同一份信号同一时间段让五种仓位分配法各跑一遍，比较谁赚得多回撤小，但只报告当前证据量不急着判谁最终赢。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/bootstrap_gpu/__init__.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: bootstrap核包入口
+  plain_zh: 统计核包初始化门牌
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/bootstrap_gpu/bench.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: bootstrap核基准计时
+  plain_zh: 两千次千六百点提速留档
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/bootstrap_gpu/kernel.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: bootstrap统一族GPU核
+  plain_zh: 三原函数索引注入对拍35全过
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/bootstrap_gpu/parity_test.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: bootstrap核对拍测试
+  plain_zh: 同索引矩阵注入逐位对拍
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/calibration_exam.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 校准卡执行器
+  plain_zh: 校准卡考试执行器：读预注册考试卡，对数据算响应曲线、IC、时滞、牛熊分段四件套，机械判门柱出分数行落分数册记试次账。判据零裁量，一票否决。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/campaign_report.py
+  desc_en: ""
+  desc_zh: 考试总册+家底总表八册合成+四张缺口单+原问题匹配表，全机生禁手填
+  name_en: fexam campaign reporter
+  name_zh: fexam批5总册汇总器
+  plain_zh: 这是成绩公布栏：把四场考试的成绩册汇成一张总表，顺手盘点全部家底哪些接通了哪些断链，再把攒的问题清单和考试结果对上号。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/ch_data.py
+  desc_en: ""
+  desc_zh: CH只读SELECT装载前向收益/因子指标列面板/regime态，fail-closed
+  name_en: fexam CH loader
+  name_zh: fexam CH只读装载层
+  plain_zh: 这是考试车的油管：从行情数据库里只读地抽数据（不发任何写指令），把价格、因子值、市场状态装成考试能直接用的表格。数据库连不上就报警停考，绝不编造假数据。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/conditional_exam.py
+  desc_en: ""
+  desc_zh: 相位分层+层间HAC检验+Bonferroni校正的条件增益考试（预注册卡判据冻结实现）
+  name_en: conditional_exam
+  name_zh: CYC族条件变量考场检验器
+  plain_zh: 这个脚本给CYC族四个循环类指标办一场条件变量考试：先看20日动量基线活不活，再把每天全市场股票按各指标的相位值分成几层，比较不同层里动量的预测力差异大不大。用统计学检验（层间差值的HAC检验再乘11做校正）判断这个指标有没有资格当策略的分层开关。跑一次就定生死，结果写进分数册，考官规则全部来自预注册卡禁止临场改。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/emotion_linkage_exam.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 情绪指数联动首考引擎
+  plain_zh: 做什么：按预注册冻结口径考情绪指数水位对大盘后5日收益的预测力，算月度桶IC、ICIR、OOS衰减retain三条线并出合格判。解决什么：上次考试用了同窗起算的收益被判同步量无前瞻，这次标签从t+1日起算零重叠。怎么做：只读拉情绪表和000300收盘，月度桶内算Spearman相关，HOLDOUT窗三线AND判分，附PIT三检，verdict落JSON。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/exit_sim/__init__.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 离场仿真包入口
+  plain_zh: 仿真器包初始化门牌
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/exit_sim/exit_simulator.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: ATR离场仿真器
+  plain_zh: 双臂同口径对照装置，无前视建模
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/exit_sim/prereg_frozen.yaml
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 离场仿真冻结卡
+  plain_zh: 事前冻结判据双臂对照
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/gpu_ic/__init__.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: IC核包入口
+  plain_zh: 对拍件包初始化门牌
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/gpu_ic/bench_numpy.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: IC核numpy基线
+  plain_zh: 二十列基线计时留档
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/gpu_ic/gpu_rank_ic.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: IC核GPU移植双后端
+  plain_zh: 双库同构秩IC逐位等值
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/gpu_ic/parity_test.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: IC核对拍测试
+  plain_zh: 逐位零差五用例边界
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/gpu_ic/smoke_gpu.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: IC核GPU冒烟
+  plain_zh: 空窗前置自动预检拒跑
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/grid_adapter/emit_configs.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 网格考配置发射器
+  plain_zh: 策略族翻译成网格配置
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/grid_adapter/fire_grid.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 网格考点火器
+  plain_zh: 五门前置拒绝误点火
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/grid_adapter/validate_dry_run.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 网格考干跑验证
+  plain_zh: 只读校验不占显卡
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/ic_exam.py
+  desc_en: ""
+  desc_zh: 向量秩IC/ICIR/换手/分体制/衰减五项度量+三态机判+断点续跑，批1因子批3指标共用
+  name_en: fexam IC exam engine
+  name_zh: fexam批1批3 IC考试引擎
+  plain_zh: 这是阅卷机：给每个因子或指标算出它预测股价的本事（IC）有多强多稳，按提前公布的及格线判合格回炉或淘汰，中途停电了能从断点继续不用重考。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/paper_pool_gate.py
+  desc_en: ""
+  desc_zh: 裁定489③进池判据：三线AND+聚合层Bonferroni/DSR多重检验校正，DSR数学全仓SSOT委托
+  name_en: paper pool entry gate
+  name_zh: paper池进池判据门
+  plain_zh: 考试pass不等于能进paper池。这个门在考试之后再加一道关卡：一批143个候选里总有靠运气过线的，本门按裁定489③把候选总数当试验次数做Bonferroni和DSR校正，把运气折掉，只让真技巧进池；校正公式不自己写，全部复用仓里唯一的DSR计算器
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/roster.py
+  desc_en: ""
+  desc_zh: 四册解析+可考性机判分类+prereg冻结口径，名单全部来自册零手工挑题
+  name_en: fexam roster generator
+  name_zh: fexam批0应考名单机生器
+  plain_zh: 这是点名册印刷机：把策略册、因子册、指标册里的每一条资产自动点出名字造册，并预先判断谁能上考场谁缺材料，考法和及格线提前盖章冻结防止事后挪门柱。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/run_fexam.py
+  desc_en: ""
+  desc_zh: 八子命令单入口（roster/factor/strategy/indicator/allocator/summary/inventory/metaq/selftest），prereg只读防挪门柱
+  name_en: fexam CLI entry
+  name_zh: fexam CLI单入口
+  plain_zh: 这是整个考试系统的遥控器：一条命令选择点名、开考、出分、盘点或对账，考法和及格线只能读不能改，保证每晚自动跑都守同一套规则。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/strategy_exam.py
+  desc_en: ""
+  desc_zh: alpha合成+月频top20标准装置+引擎IS/OOS双窗+DSR记账+checkpoint幂等
+  name_en: fexam strategy exam
+  name_zh: fexam批2策略整装考
+  plain_zh: 这是整装策略的 standardized 考场：把策略册里每条策略的选股因子装上统一的买卖规则跑一遍历史行情，分上半场下半场各打一次分，全部成绩和考试次数自动记账。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
 - module_path: scripts/backtest/forward_post.py
   desc_en: ""
   desc_zh: E4 及格策略→模拟盘每日对账：预测vs实际偏差、滑点实测、不达标退回 E6
@@ -8927,6 +9151,14 @@ entries:
   name_en: Backtest Backlog Generator
   name_zh: 回测对象登记表生成器
   plain_zh: 把交易决策地图上的一百多个环节自动整理成一张回测待办清单：哪些先测（生死线三件套）、哪些后测、哪些是纯结构不用测、哪些代码还没造出来不能测。每次重跑都会保留已经定好的验收标准和对象编号，防止有人偷偷改考试门槛。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/generate_exam_card_skeleton.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 考试卡骨架生成器
+  plain_zh: 考试卡骨架生成器：读交易决策地图的186个环节节点，自动生成每个节点的考试卡骨架文件（考卷：假设/窗口/分桶/判据门柱留空待预注册）。解决环节验证零覆盖的问题。重跑只增不删，手工卡永不被冲。
   domain_id: D_BACKTEST
   responsibility_layer: business
 - module_path: scripts/backtest/generate_framework_plan_from_tdm.py
@@ -8951,6 +9183,14 @@ entries:
   name_en: ""
   name_zh: 图谱增补暂存器
   plain_zh: 给产业链地图自动找新关系的 scout：翻新闻让大模型找'A给B供货'这类关系，带原文证据和置信度落到暂存清单；地图正本一动不动，等老板审完清单才准入图。防幻觉三道锁：主体必须原文出现、必须给原文摘录、置信度不够就扔。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/grid_stats_engine.py
+  desc_en: ""
+  desc_zh: G-D 逐格四件套+SPA/StepM 多重检验+分半窗滚动重考；READY_NOT_FIRED 不点火
+  name_en: Grid Stats Engine
+  name_zh: 共振矩阵逐格统计引擎
+  plain_zh: 把每一个策略格子的成绩算成四个数：多少人考、考得稳不稳（自相关修正后的夏普）、再收多少手续费就白干、扣掉碰运气成分后还剩几分；顺带识别一批里哪些格子是真行哪些是运气，并用前半段后半段各考一遍看成绩是不是靠得住。只算分不改成绩单，正式启用要等 Owner 发令
   domain_id: D_BACKTEST
   responsibility_layer: business
 - module_path: scripts/backtest/hypothesis_precheck.py
@@ -9113,6 +9353,14 @@ entries:
   plain_zh: 把搜索引擎读来的论文摘要，让本地小模型翻译成一条条可以考试验证的策略点子，登记进策略进货台账
   domain_id: D_BACKTEST
   responsibility_layer: business
+- module_path: scripts/backtest/lead_lag_validator.py
+  desc_en: ""
+  desc_zh: G-C.4 观察轨 P2：滞后相关+BHY FDR+分窗稳定性；负结果保留
+  name_en: Lead-lag Validator
+  name_zh: lead-lag 统计验证器
+  plain_zh: 检查两个行情序列是不是一个先动另一个后动：一格一格试不同的时间差算相关，把所有试出来的结果放一起做多重校验，防止碰巧像的混进来；再把时间段切成前后几段各验一遍看领先关系稳不稳。只出验证报告不下结论，考得不好也如实留档
+  domain_id: D_BACKTEST
+  responsibility_layer: business
 - module_path: scripts/backtest/league_archive.py
   desc_en: ""
   desc_zh: 参赛档案manifest三指纹打包（git hash+因子清单+数据截止日）
@@ -9214,6 +9462,14 @@ entries:
   plain_zh: 给板块状态这套尺子做考前承诺、考后对账的跑批件：先按冻结卡把判档标准钉死，再用历史数据一格一格算出结果，够证据就判成立、不够就老实写样本不足。当天信号只准用当天收盘前的数，收益往后错一天算，所有多重检验格子全部披露，禁写全绿。
   domain_id: D_ASHARE_SIGNAL
   responsibility_layer: business
+- module_path: scripts/backtest/sector_surface.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 板块强度四路面板
+  plain_zh: 把每只股票按行业分堆，算出每个行业每天强不强（四路：涨停结构、成交活跃度、多日动量、资金流），合成 0-100 的行业强度分并挑出最强的前 15%%，再给回测引擎当'强板块给个股加分/弱板块打折'的弹药；只读数据不改任何账。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
 - module_path: scripts/backtest/sim_attribution_report.py
   desc_en: ""
   desc_zh: 读 sim_pocket_daily 钱包日账，逐策略逐日三分毛利/成本/净利，输出双基准相对与风险贡献长表
@@ -9313,6 +9569,22 @@ entries:
   name_en: T0 Material Line
   name_zh: 做T材料线
   plain_zh: 把做T考试的规则和成交模型跑成一条条可复用的语料材料，供做T考试与复盘用，闭卷数据碰不到
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/t0_material_line_fast.py
+  desc_en: ""
+  desc_zh: 材料线建模循环的 numba 路径并行加速核（resample reduceat + M0 逐路径扫描），同语义复刻 t0_material_line.run_model_m0，判据复用 cost_trio_exam
+  name_en: T0 material line path-parallel core
+  name_zh: 做T材料线路径并行核
+  plain_zh: 原来做T材料线给全市场算语料要一个票一个票地慢慢算，要跑一天。这个工具把每只票每天的计算改成同时一起算，快了很多倍。算出来的结果和老方法一模一样（逐位核对过），判分规则完全没动。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/t0_material_line_parity.py
+  desc_en: ""
+  desc_zh: legacy 逐日循环 vs 路径并行核的逐位对拍+计时对比 harness（索引注入法），fast 切挂前后回归通道
+  name_en: T0 material line parity harness
+  name_zh: 材料线路径并行对拍harness
+  plain_zh: 这个工具专门验证快版和慢版算材料线的结果是不是完全一样。它把同一份数据喂给两个版本，一格一格对答案，还顺手计时看快版到底快了多少。每次改动快版后跑一遍它就知道有没有改坏。
   domain_id: D_BACKTEST
   responsibility_layer: business
 - module_path: scripts/backtest/t0_rule_engine.py
@@ -10138,6 +10410,14 @@ entries:
   plain_zh: 管因子权重的唯一出处并卡住谁有资格往地图上写权重：不在权柄清单里的路径想写就直接拒绝，防止两套权重各说各话
   domain_id: D_BACKTEST
   responsibility_layer: business
+- module_path: scripts/backtest/writeback_exam_confidence.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 置信度回写器
+  plain_zh: 置信度回写器：读考试卡分数册，按冻结判据自动改写交易决策地图里每个环节的置信度标记。考试过门柱+样本外+牛熊双行情=升级，衰减扫描不过=降级。缺省只报告，--apply 才实写。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
 - module_path: scripts/backup/backup_config.yaml
   desc_en: ""
   desc_zh: ""
@@ -10176,6 +10456,14 @@ entries:
   plain_zh: 每个月自动把备份出来的数据库副本恢复到一个临时库，核对总账三张表的行数和线上一致后删掉临时库，确保备份真的能还原而不是摆设。
   domain_id: D_DATA
   responsibility_layer: business
+- module_path: scripts/backup/retention_derived.py
+  desc_en: ""
+  desc_zh: 从 backup_config.yaml 纯函数派生 P95 时限读数；keep.txt 只读抄录生成 3 天影子快照到 .runtime/audit
+  name_en: retention derived limits and keep shadow
+  name_zh: 备份时限派生器+免死影子账
+  plain_zh: 它干两件事：一是看备份配置算出各环节该多快跑完的及格线，二是把进程保护名单偷偷拍张快照存三天——万一名单被谁改了或者保护进程被误杀，拿快照一对就能查出改了什么。
+  domain_id: D_GOVERNANCE
+  responsibility_layer: governance
 - module_path: scripts/battle_map_coverage_audit.py
   desc_en: ""
   desc_zh: ""
@@ -10278,6 +10566,14 @@ entries:
   name_en: apply_fundamental_tables_ddl
   name_zh: 应用fundamentaltablesddl
   plain_zh: ClickHouse c3_fundamental 财务三表 DDL 部署 + 精度验证脚本（audit 1.2 治本）。
+  domain_id: D_DATA
+  responsibility_layer: business
+- module_path: scripts/ch/apply_hfq_lineage_engine_upgrade.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: hfq血缘引擎升级编排器
+  plain_zh: 把三张后复权行情表（日/周/月）从裸ReplacingMergeTree升到带血缘版本参数的ReplacingMergeTree，让裁定口径数据在引擎层判赢；先补列再影子表重建最后原子换名，默认只打印计划，加--yes才执行，出事可一键换名回滚
   domain_id: D_DATA
   responsibility_layer: business
 - module_path: scripts/ch/apply_hypothesis_precheck_ddl.py
@@ -10887,6 +11183,14 @@ entries:
   plain_zh: 有 7 天的历史分笔数据在网盘上还没传上来。这个看门狗每天去看一眼，网盘一上传就自动下载进数据库，全程不用人管
   domain_id: D_DATA
   responsibility_layer: business
+- module_path: scripts/data/emotion_index_snapshot.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 情绪指数append-only每日快照器
+  plain_zh: 做什么：每天把 ClickHouse 的 emotion_index 情绪指数表整表镜像成一个带时间戳的 gzip 快照文件落到 data/emotion_index_snapshots，并往台账追加一行校验记录。解决什么：上次考试发现这张表能事后改写历史且没有逐日留痕，出了问题说不清当时长什么样。怎么做：只读查询全表、按固定键序写成 JSONL 压缩件，同名即拒绝、只增不改，提供按日期取当时状态的 PIT 读取函数。
+  domain_id: D_DATA
+  responsibility_layer: business
 - module_path: scripts/data/finish_p0_1.py
   desc_en: ""
   desc_zh: ""
@@ -10999,6 +11303,30 @@ entries:
   plain_zh: 采集退化期写入的三天坏 tick 数据清场工具：先整表备份到备份表再删除，删完必须复验零残留，以备份表内容为准
   domain_id: D_DATA
   responsibility_layer: business
+- module_path: scripts/data_ops/audit_ti_row_versions.py
+  desc_en: ""
+  desc_zh: 按 (period,单日) 分片只读统计 technical_indicator 同键多行的重复率、值分叉率与 ingest_ts 可裁决率，产出日序列供 A/B 定案
+  name_en: Audit Ti Row Versions
+  name_zh: 技术指标行版本重复审计器
+  plain_zh: 同一支股票同一时刻的技术指标本该只有一行，现在表里存了好几种不同版本叠在一起；这把尺就是每天去数到底有多少个键是重复的、重复的里面有多少个值还不一样、以及能不能靠入库时间挑出该用的那一版。它只读不改，专门给要不要改表或改读法这个决定提供数字
+  domain_id: D_DATA
+  responsibility_layer: business
+- module_path: scripts/data_ops/l3_alt_health_money_flow.py
+  desc_en: ""
+  desc_zh: 只读体检 c1_market.money_flow：行数/覆盖/全零价格列/日历感知新鲜度/交易日历缺口量化/重复/塌陷
+  name_en: L3 alt-data health check for money flow line
+  name_zh: A06主力资金流线数据健康体检器
+  plain_zh: 这个脚本负责给主力资金流这份数据做体检：除了常规的行数、时间跨度、缺值和更新是否及时，它还会拿交易日历对日子，把数据里缺掉的交易日一个个数出来（比如查出来2025年10月到2026年5月之间有一大段窟窿），另外盯住价格列全是零这种看着有数其实没数的情况。全部只读，结论打印在屏幕上，有问题就报警告退出。
+  domain_id: D_DATA
+  responsibility_layer: business
+- module_path: scripts/data_ops/l3_alt_health_shareholder_count.py
+  desc_en: ""
+  desc_zh: 只读体检 c3_fundamental.shareholder_count：行数/双轴覆盖/缺失率/日历感知新鲜度/PIT违例/重复
+  name_en: L3 alt-data health check for shareholder count line
+  name_zh: A13股东户数线数据健康体检器
+  plain_zh: 这个脚本负责给股东户数这份数据做体检：查它一共有多少行、时间跨度多长、缺了多少值、最近有没有照常更新，再专门盯两类会坑死回测的毛病——披露日期早于报告期的脏数据和同一条记录被重复入库。全部只读，不动任何数据，结论直接打印在屏幕上，有问题就报警告退出。
+  domain_id: D_DATA
+  responsibility_layer: business
 - module_path: scripts/demos/demo_e2e_pipeline.py
   desc_en: ""
   desc_zh: ""
@@ -11078,6 +11406,14 @@ entries:
   plain_zh: 自动修复 __init__.py __all__ 孤儿模块
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
+- module_path: scripts/gate_dry_run.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 全门链本地干跑器
+  plain_zh: 提交前把三段门禁一次跑完并全部列出硬拦，让你一次改完再提交，不用反复撞墙试错
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: scripts/generate_manifest.py
   desc_en: Generate complete script_manifest.yaml from scripts/ tree scan.
   desc_zh: 双 manifest 体系说明（P1-T4 校正，2026-06-26）
@@ -11094,6 +11430,14 @@ entries:
   plain_zh: 把二十三个交易相关域的模块清单和交易决策全景图挂载的模块做双向对账，自动分出已挂、没挂的孤儿和从外域伸进交易流程的三类名单，产出覆盖账本供总筹对审和初挂草案用
   domain_id: D_TRADING
   responsibility_layer: business
+- module_path: scripts/generate_mount_obligation_manifest.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 挂载义务清单机生器
+  plain_zh: 自动盘点交易决策图全家该挂载的模块义务，产出已挂、豁免、标记三分类加孤儿红段的对账清单，供总筹对审与reconciler判红用，替代人工拼账
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: scripts/generate_pathway_registry.py
   desc_en: ""
   desc_zh: 从所有 MOD 蓝图的 §路径索引 章节自动生成 system-pathway-registry.yaml。
@@ -11585,6 +11929,14 @@ entries:
   plain_zh: 治理·共享的模块翻译加载器：负责把模块翻译读进来或写出去，屏蔽底层格式细节，治理·共享调用方不用操心。
   domain_id: D_GOV_SCRIPTS
   responsibility_layer: governance
+- module_path: scripts/governance/_shared/mount_obligation.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 挂载义务判定共享助手
+  plain_zh: 挂载义务怎么判定全项目只算这一份：提交门禁、义务清单机生器、覆盖率账本三个消费方都调它，防止各写一套集合逻辑口径漂移
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: scripts/governance/_shared/plugin_contract_schema.yaml
   desc_en: ""
   desc_zh: ""
@@ -11855,6 +12207,14 @@ entries:
   plain_zh: 提交队列的仓库里堆了两万多个历史内容块，大部分再也没人用。这个工具把没人引用超过七天的块搬到归档区（不是删除），搬前记账、可随时搬回来。
   domain_id: D_GOV_RULE
   responsibility_layer: governance
+- module_path: scripts/governance/card_review_automation.py
+  desc_en: ""
+  desc_zh: 任务卡工单制接口②：自动跑两轮 batch_review 并出具 verify 就绪度报告，恒不代盖章
+  name_en: Card Review Automation
+  name_zh: 任务卡两轮预审自动化
+  plain_zh: 给施工车道用的收尾工具：对一张任务卡自动连续做两轮七维度预审，第一轮有问题就停，最后告诉你这张卡能不能进入核销（verify）。它只出报告不代你盖章，盖章要人工或车道确认后自己调 verify，防止机器自己给自己验收。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: scripts/governance/chaos_drill/rb4_target.py
   desc_en: ""
   desc_zh: ""
@@ -11902,6 +12262,14 @@ entries:
   name_zh: 状态健康带监控器
   plain_zh: 盯着 283 个问题各自处于什么状态，超出健康比例就报警
   domain_id: D_GOV_ENFORCEMENT
+  responsibility_layer: governance
+- module_path: scripts/governance/check_registry_field_legality.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: registry field legality checker
+  name_zh: 登记册字段合法性校验器
+  plain_zh: 它像登记册的体检员：逐册检查字段名有没有写错年代（比如老写法 created 该叫 created_at），裁定册的状态词有没有用错表。改名大扫除前后各跑一次，前面列出错名单，后面确认清干净了。
+  domain_id: D_GOV_AUDIT
   responsibility_layer: governance
 - module_path: scripts/governance/check_registry_of_logs.py
   desc_en: ""
@@ -11966,6 +12334,14 @@ entries:
   name_zh: 前置
   plain_zh: collect_write_audit_4663.py — WriteAudit SACL 精确归因采集器（#ARCH-279 裁定B3）前置（一次性，Owner 管理员）：scripts/governance/enable_write_audit_sacls.ps1——auditpol 启用 File System 成功审计 + 热目录集 SACL（Everyone 写/删成功）。
   domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
+- module_path: scripts/governance/commit_claim_check.py
+  desc_en: ""
+  desc_zh: 对账 commit message 中声称的代码变更与提交袋内实际代码文件，袋零代码而消息提及代码路径即拒收（Rx-1 同位锁外预检）
+  name_en: commit claim check
+  name_zh: 提交消息账vs代码账复查门
+  plain_zh: 它像交作业前的核对员：你说修了哪个代码文件，它就翻开你的提交袋子看里面真有没有代码；袋子空空却嘴上说改了代码，就打回去——要么把真代码放进去，要么老实声明这是纯文档提交
+  domain_id: D_GOVERNANCE
   responsibility_layer: governance
 - module_path: scripts/governance/commit_derived_sync.py
   desc_en: ""
@@ -12681,6 +13057,14 @@ entries:
   plain_zh: 门禁的名册有好几本，各记各的账总会对不上。这个工具把几本名册放在一起逐条对账，谁多了谁少了谁写错了，生成一张差异报告，让维护的人一眼看到哪里漂了，不用再靠人肉翻册子。
   domain_id: D_GOV_CODE_QUALITY
   responsibility_layer: governance
+- module_path: scripts/governance/d3_metadata/register_tokens_ledger.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: register tokens ledger
+  name_zh: token账本一键登记器
+  plain_zh: 把新建文件的token通过意图API三步（登记入PG账本、发布快照、重打投影册）一键完成，替代已被封禁的直写通道
+  domain_id: D_GOV
+  responsibility_layer: governance
 - module_path: scripts/governance/d3_metadata/validate_architecture.py
   desc_en: ""
   desc_zh: ""
@@ -13176,6 +13560,14 @@ entries:
   plain_zh: 治理·生成器的生成资产注册表：把生成资产集中登记在一张名单上，谁要用就来查，保证治理·生成器看到的是同一份。
   domain_id: D_GOV_SCRIPTS
   responsibility_layer: governance
+- module_path: scripts/governance/d5_architecture/generators/generate_backtest_coverage_ledger.py
+  desc_en: ""
+  desc_zh: 三真源机生回测覆盖总册 yaml（七层金字塔自动化/已考/未考/缺口+13维旋钮覆盖+试次摘要）
+  name_en: Generate Backtest Coverage Ledger
+  name_zh: 回测覆盖账本生成器
+  plain_zh: 扫描试次账本、考场产物与环节对标表，自动生成回测金字塔每层的自动化状态、已考未考与缺口清单
+  domain_id: D_DATA
+  responsibility_layer: business
 - module_path: scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py
   desc_en: ""
   desc_zh: ""
@@ -13345,6 +13737,14 @@ entries:
   plain_zh: 前端缺口视图派生器（四件套 4c）——两本缺口总账的机器派生替代。
   domain_id: D_ARCH_SCRIPTS
   responsibility_layer: governance
+- module_path: scripts/governance/d5_architecture/generators/generate_governance_legislation_map.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 图16立法流生成器
+  plain_zh: 治理立法流图（图16）的机生件：把裁定从诞生到退休的状态规矩和九台机器读进一张图，实例条数直连裁定账本现算，同账本重跑两遍一字不差，图坏了跑一遍就修好。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: scripts/governance/d5_architecture/generators/generate_integration_topology.py
   desc_en: ""
   desc_zh: ""
@@ -13375,6 +13775,14 @@ entries:
   name_zh: 自动生成架构文档库导航总览
   plain_zh: 治理·生成器的生成 navigation名册：生成 navigation都录进去，治理·生成器想查随时翻，避免信息散落在各处。
   domain_id: ""
+- module_path: scripts/governance/d5_architecture/generators/generate_panorama_master_map.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 全景总图生成器
+  plain_zh: 读全景总图真源yaml，校验节点集与全景图目录双闭、每图文件实存、边端点闭合，全绿才渲染出mermaid总图（图的索引）。新图先登记图目录再进总图，双跑逐字节幂等。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: scripts/governance/d5_architecture/generators/generate_panorama_registry.py
   desc_en: ""
   desc_zh: ""
@@ -13783,6 +14191,14 @@ entries:
   name_en: Validate Gate Yaml
   name_zh: 验证门禁Yaml
   plain_zh: 治理·D5 架构的门禁 YAML校验：按既定规则核对门禁 YAML，不合规就拦住或报出来，防止治理·D5 架构出问题。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
+- module_path: scripts/governance/d5_architecture/validators/validate_governance_legislation_map.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 图16立法流校验器
+  plain_zh: 图16 立法流图的质检员：六种裁定状态一个不许自造、终态不许再出边、七条禁边不许绕、实例条数和账本对不上就报红，提交前把图拦在门口。
   domain_id: D_GOV_SCRIPTS
   responsibility_layer: governance
 - module_path: scripts/governance/d5_architecture/validators/validate_handoff_package.py
@@ -14628,6 +15044,14 @@ entries:
   plain_zh: 袋子进队列前先做两件事：扫有没有没解决完的合并冲突记号，再快速跑一遍关键门禁。有问题当场拒绝并告诉你怎么修，不让它排队排几个小时后被处决。
   domain_id: D_GOV_RULE
   responsibility_layer: governance
+- module_path: scripts/governance/entrance_gate_hook.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 施工进场检票钩子
+  plain_zh: AI 施工队第一次往业务代码区写文件时拦截检查：本会话开工前有没有走过正门反查（能力反查或图书馆查询）。没走正门就拒绝写入并给出一条现成的正门命令，走了就放行并记录首写时间戳，让'先查后建'从君子协定变成结构强制。
+  domain_id: D_GOVERNANCE
+  responsibility_layer: governance
 - module_path: scripts/governance/evaporation_blackbox.py
   desc_en: Periodic repo state snapshot for evaporation forensics
   desc_zh: 定期快照仓库状态（暂存树/未跟踪计数/stash/reflog）供蒸发案取证与恢复指引
@@ -14745,6 +15169,14 @@ entries:
   name_zh: 包入口
   plain_zh: 治理·生成器包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口（在 generators 下）。
   domain_id: ""
+- module_path: scripts/governance/generators/backfill_created_from_filename.py
+  desc_en: ""
+  desc_zh: 扫 working 区文件名含 ISO 日期的 md，回填 frontmatter created（CAS 逐件写，--apply 才落盘）
+  name_en: created backfill from filename
+  name_zh: created 字段回填器
+  plain_zh: 它帮文档补生日：很多挖矿簿没写创建日期，导致过期清理时不知道它多老了。这个工具从文件名里的日期（比如 2026-09-24-xxx.md）读出创建日，自动填进文件头部，先预览再动手，绝不覆盖已有的日期。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: scripts/governance/generators/check_gate_inventory_drift.py
   desc_en: ""
   desc_zh: ""
@@ -16171,6 +16603,14 @@ entries:
   plain_zh: 把七十多个登记册全部翻一遍，找出重复条目、撞号、写错的枚举值。能自动修的重复才动手，真冲突只报告等人裁。修前先演练，修错可回滚。
   domain_id: D_GOV_RULE
   responsibility_layer: governance
+- module_path: scripts/governance/registry_migration/ledger_reconcile_head.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 账本对账器
+  plain_zh: 对比PG账本与HEAD投影册的token条目差异，自动补登缺失条目，防止渲染丢字
+  domain_id: D_GOV
+  responsibility_layer: governance
 - module_path: scripts/governance/registry_migration/wave0_phase0_gate.py
   desc_en: Five-command acceptance CLI (scan/import/publish/reconcile/gate) writing reports under .runtime/registry_ledger/
   desc_zh: scan/import/publish/reconcile/gate 五命令验收通道，报告落 .runtime/registry_ledger/
@@ -16951,6 +17391,102 @@ entries:
   plain_zh: — AI 对话文件锁协议（硬规则执行工具）
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
+- module_path: scripts/matrix_rescued_tmp/hmm_retrain/prep_data.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: HMM 重训数据准备
+  plain_zh: 从行情库把沪深300指数的量价和涨跌家数读出来，按考试大纲切成训练窗、验证窗和前向缓冲三段，做成重训能直接吃的特征表。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/hmm_retrain/retrain.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: HMM 状态识别器重训回炉
+  plain_zh: 针对老模型认不清市场状态的毛病重新训练 HMM，再用四张成绩单（涨跌命中、对角纯度、状态滞后）和 SMA200 基线对答案，决定它能不能重新上岗。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/probes/emo_adequacy.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 情绪指数样本充分性检查
+  plain_zh: 情绪数据开考前先点一下人数：各档样本量够不够、覆盖全不全，只查家底不算成绩，样本太薄的考卷直接免考。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/probes/emo_exam.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 情绪指数首考四卷
+  plain_zh: 按冻结好的预注册考纲给情绪指数考四张卷子，看它对未来收益有没有真预测力；判据逐字执行不许改，防止考完再改答案。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/probes/emo_explore.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 情绪数据表结构探查
+  plain_zh: 第一次摸情绪数据这张表：看有哪些列、数据长什么样，只读不写，给后面出考卷摸清题库。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/probes/emo_explore2.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 情绪数据 PIT 深探
+  plain_zh: 深挖情绪数据的时点质量：同一时刻有没有改过答案、时间戳站不站得住、往前翻会不会偷看未来数据，把坑提前找出来。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/probes/emo_pit.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 情绪数据时点实测
+  plain_zh: 用实际数据核对情绪指数的时间纪律：记录时点、可用时点和行情对齐会不会互相穿越，保证考试不作弊。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/probes/grid_oos_analyze.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 324 格网格样本外判卷
+  plain_zh: 324 个参数组合的样本外成绩出来后，这份脚本按预注册标准判卷：数一数几个及格、冠军是谁，防止考后挑好看的格子。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/probes/grid_oos_dsr.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 网格考试 DSR 台账
+  plain_zh: 给 324 格考试记去重后的成绩账本，同一批回测只在账本上记一次数，防止重复计数把成绩吹胖。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/rowvec/bench_scaling.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 行向量化缩放计时基准
+  plain_zh: 拿真实行情整史和合成序列当考卷，量一量向量化指标算法在不同数据规模下要跑多久，给新旧两条路的速度差距留下台账。
+  domain_id: D_FACTOR
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/rowvec/panelized_indicators.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 指标链行物化向量化影子版
+  plain_zh: 把技术指标从一行一行慢慢算改成整表一次性批量算，速度提几十倍；这是影子实验版，算出的每个数字和老办法逐位一致，生产真源仍在 src 域。
+  domain_id: D_FACTOR
+  responsibility_layer: business
+- module_path: scripts/matrix_rescued_tmp/rowvec/parity_check.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 新旧指标路径对拍计时器
+  plain_zh: 让新老两套指标算法跑同一份数据，逐列核对结果是否一分不差，顺带记下各自耗时，是换算法前的验收员。
+  domain_id: D_FACTOR
+  responsibility_layer: business
 - module_path: scripts/mcp/generate_ide_config.py
   desc_en: ""
   desc_zh: 从 config/mcp.json 生成各 IDE MCP 配置文件（MOD-INF-013 §5.3 Step 2）。
@@ -19476,6 +20012,14 @@ entries:
   plain_zh: VibeCodingQualityGate — 代码质量门禁（stub, tests 待实装后补全实现）
   domain_id: D_AUTONOMY_CORE
   responsibility_layer: ai
+- module_path: src/zephyr/backtest/accel/bootstrap_kernel.py
+  desc_en: ""
+  desc_zh: bootstrap统一族xp纯函数核：WRC t统计量/E2 Sharpe差/多元相关三热循环的向量化实现
+  name_en: Bootstrap Statistics Acceleration Kernel
+  name_zh: Bootstrap统计加速核
+  plain_zh: 把三处跑得慢的统计重抽样循环合成一个向量化加速核，CPU跟GPU共用同一份代码，结果和原实现逐位一致才准上线
+  domain_id: D_BACKTEST
+  responsibility_layer: business
 - module_path: src/zephyr/backtest/core/__init__.py
   desc_en: ""
   desc_zh: ""
@@ -22680,6 +23224,14 @@ entries:
   plain_zh: 执行核心的体温计。下单快不快它实时记账，超过红线就按铃，全在一台机器内存里跑。
   domain_id: D_EX_CORE
   responsibility_layer: business
+- module_path: src/zephyr/ex_core/phase_discriminator.py
+  desc_en: ""
+  desc_zh: 判别集合竞价/连续竞价/午休/收盘集合竞价/临停相位；判不出=记红不拒单（裁定#488 B段 C445）
+  name_en: A-share trading phase discriminator
+  name_zh: A股交易相位判别器
+  plain_zh: 它负责看现在是不是可以下单的时间段：开盘集合竞价、上午下午连续竞价、午休、收盘集合竞价，还是股票临时停牌。如果时间信息不完整判不出来，它只标记警告记录红色，不会因此拒绝下单。
+  domain_id: D_EX_CORE
+  responsibility_layer: business
 - module_path: src/zephyr/ex_core/position_reconciler.py
   desc_en: ""
   desc_zh: ""
@@ -23320,6 +23872,14 @@ entries:
   plain_zh: 因子包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
   domain_id: D_FACTOR
   responsibility_layer: business
+- module_path: src/zephyr/factor/ah_premium_factor.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: AH Premium Factor
+  name_zh: AH溢价因子
+  plain_zh: 把同一公司港股价格换算成人民币后与A股价格对比，算出A股比港股贵多少的溢价率，供跨市场比价和折溢价套利信号使用；输入A股收盘价、港股收盘价和汇率即可算，不联网也能算。
+  domain_id: D_FACTOR
+  responsibility_layer: business
 - module_path: src/zephyr/factor/alpha_signal_pipeline.py
   desc_en: ""
   desc_zh: 阿尔法信号管线，依赖管线、D-SIGLEGACY-01工作
@@ -23496,6 +24056,14 @@ entries:
   plain_zh: 算因子两两之间的 IC 相关性，用层次或 DBSCAN 把高度相似的因子聚成一簇， 每簇挑质量最好的当代表——因子库去重、避拥挤就用它。
   domain_id: D_FACTOR
   responsibility_layer: business
+- module_path: src/zephyr/factor/analysis/gpu_layered_spread_kernel.py
+  desc_en: ""
+  desc_zh: compute_layer_spread 的逐日截面分箱批算 xp 核：stable argsort 秩映射+qcut 边界查找表+Kahan 补偿和，与 pandas 原路径逐位一致
+  name_en: gpu_layered_spread_kernel
+  name_zh: 分层价差xp核
+  plain_zh: 每天把股票按因子值分成五组，算最高组减最低组的收益差。老办法一天跑一遍 pandas 排序分组很慢；这个新核把同样的活用 numpy 批量算，结果一位不差，五千六百列面板从 7.26 秒降到 1.08 秒，出问题可用环境变量一键退回老算法。
+  domain_id: D_FACTOR
+  responsibility_layer: business
 - module_path: src/zephyr/factor/analysis/ic_decay.py
   desc_en: ""
   desc_zh: D-FACTOR-ANA-03 IC 衰减分析——不同 lag 的 IC 衰减曲线与半衰期。
@@ -23598,6 +24166,14 @@ entries:
   name_en: ""
   name_zh: 解决 A 股因子 IC 计算的"上游污染"
   plain_zh: 25号memo Phase 4.1 Mask-First 可交易性掩码（tradability_mask，MVP 最高优先）。解决 A 股因子 IC 计算的"上游污染"——停牌/涨跌停/流动性不足标的未排除导致IC 虚高。消融实证（arXiv:2507.07107）：mask 合约是单一最大贡献者（+0.44 Sharpe），忽略上游污染使表观 IC 虚高 18% 但实现 Sharpe -0.44。
+  domain_id: D_FACTOR
+  responsibility_layer: business
+- module_path: src/zephyr/factor/analysis/tech_factor_pipeline.py
+  desc_en: ""
+  desc_zh: CNS-01 接线件：指标宽表→因子值面板→合成信号一键链（PIT 透传）
+  name_en: tech factor pipeline
+  name_zh: TECH 因子计算链
+  plain_zh: 它把技术指标宽表里的列读出来变成因子值，再合成为一个综合信号分数，是指标存了没人算到因子真能用之间缺的那条传送带。只建链不吹牛：IC 证据要等数据库实弹跑批才算数。
   domain_id: D_FACTOR
   responsibility_layer: business
 - module_path: src/zephyr/factor/analysis/three_level_judgment.py
@@ -24256,6 +24832,14 @@ entries:
   plain_zh: 技术指标接因子的声明台账：每个因子对应哪个指标哪一列用什么换算算子都在这里登记，是整条换算链的唯一真源，纯数据零逻辑不抛错，非法声明由换算桥校验拦截，每列必须在该指标的注册输出清单里
   domain_id: D_FACTOR
   responsibility_layer: business
+- module_path: src/zephyr/factor/technical_indicators/bench_scaling.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 行物化向量化规模计时
+  plain_zh: 一个测速工具：数据量从二百五根到整史逐档测试批量算法快多少倍，再拿假数据单独测滑窗小算子的提速，结果写成表放临时目录
+  domain_id: D_FACTOR
+  responsibility_layer: business
 - module_path: src/zephyr/factor/technical_indicators/chips.py
   desc_en: ""
   desc_zh: CYQ 筹码分布（迭代衰减模型）/SCR 筹码集中度/CYC 成本均线（通达信口径）三指标，指标输入首次引入换手率
@@ -24286,6 +24870,22 @@ entries:
   name_en: ""
   name_zh: 动量类技术指标
   plain_zh: 动量类技术指标（43 个；2026-09-14 A股标配批+3、批2a +1、批2b +8、批6 +9；2026-09-20 批7 清欠 +6：RMI/PFE/FOSC/CTI/VHF/ER）。
+  domain_id: D_FACTOR
+  responsibility_layer: business
+- module_path: src/zephyr/factor/technical_indicators/panelized_indicators.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 指标链行物化向量化
+  plain_zh: 算技术指标时原来一行一行慢慢抠数字，速度慢在这；这个模块把整张表一次性批量算完打包成行，快了几十倍，算出来的每个数字和老办法一模一样（误差不超过十的负九次方）
+  domain_id: D_FACTOR
+  responsibility_layer: business
+- module_path: src/zephyr/factor/technical_indicators/parity_check.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 行物化向量化对拍器
+  plain_zh: 一个验收工具：让老办法和新办法各算一遍所有指标，逐列逐格比对新旧结果是否一模一样、顺带测速度，读库不写库，切生产前后都要跑它把关
   domain_id: D_FACTOR
   responsibility_layer: business
 - module_path: src/zephyr/factor/technical_indicators/reversal.py
@@ -24350,6 +24950,14 @@ entries:
   name_en: ""
   name_zh: 87个WorldQuant Alpha公式库
   plain_zh: 把WorldQuant公开的101个Alpha公式里不依赖行业分类数据的87个逐个搬进代码：先备好一套时序小工具（排名、延迟、差分、相关、衰减加权等），再逐个写出公式，每个公式只用行情和成交额这些免费数据，天然守点-in-time不偷看未来，逐个接上IC/IR验证，登记进因子库。
+  domain_id: D_FACTOR
+  responsibility_layer: business
+- module_path: src/zephyr/factor/wq_alpha_87_wiring.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: WQ87 factor wiring
+  name_zh: WQ87 因子接线件
+  plain_zh: 把87个WorldQuant公式批量装进因子注册表，让考试链能按名字取用并算出IC成绩；接线动作幂等可重跑，撞名即报错不顶替
   domain_id: D_FACTOR
   responsibility_layer: business
 - module_path: src/zephyr/feedback_loop/__init__.py
@@ -29864,13 +30472,21 @@ entries:
   plain_zh: 三图族提交门：提交时核对对应全景图与登记现状一致，不一致就拦下提交，防止地图和地盘脱节dev_deli
   domain_id: D_GOV_ENFORCEMENT
   responsibility_layer: governance
-- module_path: src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "策略卡生命周期图结构门禁"
-  name_en: "strategy card lifecycle map gate"
-  desc_zh: "图15 提交面结构门禁：触发式校验卡生命周期图 YAML 的枚举闭集/状态机良构/禁边不可绕/双轴/计数一致性，判据单一真源在校验器"
+- module_path: src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
   desc_en: ""
-  plain_zh: "这张门禁管的是策略预注册卡的'法律地位'：封了卡的假设谁也不能偷偷改回在测再考一遍。你提交时只要碰了图15 那六件真源，它就把图重新体检一遍——状态词表是不是闭集、状态机有没有断头路、禁止边能不能绕过去；体检不过就拦下提交，逼你先修真源再回来。"
+  desc_zh: ""
+  name_en: ""
+  name_zh: 图16立法流提交门
+  plain_zh: 治理立法流图的守门员：有人改这张图或它的生成器时自动核对结构，状态枚举自造、禁边丢失或实例混进图节点就拦下提交，防止地图和裁定账本脱节。
+  domain_id: D_GOV_CODE_QUALITY
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py
+  desc_en: ""
+  desc_zh: 图15 提交面结构门禁：触发式校验卡生命周期图 YAML 的枚举闭集/状态机良构/禁边不可绕/双轴/计数一致性，判据单一真源在校验器
+  name_en: strategy card lifecycle map gate
+  name_zh: 策略卡生命周期图结构门禁
+  plain_zh: 这张门禁管的是策略预注册卡的'法律地位'：封了卡的假设谁也不能偷偷改回在测再考一遍。你提交时只要碰了图15 那六件真源，它就把图重新体检一遍——状态词表是不是闭集、状态机有没有断头路、禁止边能不能绕过去；体检不过就拦下提交，逼你先修真源再回来。
+  domain_id: D_GOV_CODE_QUALITY
   responsibility_layer: governance
 - module_path: src/zephyr/gov_enforcement/commit_gates/map_family/trading_day_cycle_map_gate.py
   desc_en: ""
@@ -30453,6 +31069,14 @@ entries:
   name_en: Gate Auto Registrar
   name_zh: YAML 驱动的 in-process gate 自动注册器
   plain_zh: 治理门禁·规则桥接的自动 registrar防护：盯着自动 registrar的边界，谁想越线就挡住，保治理门禁·规则桥接不出事。
+  domain_id: D_GOV_CODE_QUALITY
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/rule_bridge/gate_blob_cache.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 门禁子计算内容寻址缓存基座
+  plain_zh: 把门禁检查里重复算的中间结果（比如同一个 YAML 册的条目数、同一个源码文件的符号表）按内容指纹存起来，内容没变就直接用上次的答案，省掉重复解析和重复 git 查询；只是加速，不改变任何判定结论。
   domain_id: D_GOV_CODE_QUALITY
   responsibility_layer: governance
 - module_path: src/zephyr/gov_enforcement/rule_bridge/gate_cache_preflight.py
@@ -31761,6 +32385,13 @@ entries:
   plain_zh: 数据源可靠性，治理管控（data source reliability）
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
+- module_path: src/zephyr/governance/data_governance/entity_graph_uscc_bridge.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: entity graph uscc enrichment bridge
+  name_zh: 股权图uscc富化消歧桥
+  plain_zh: 它是股东名单的认人助手：拿着股东名字去公司名册里对号，能对上的贴上统一社会信用代码，对不准的列几个候选让人挑，一个都对不上的先挂起。它只出对号建议不动真数据，防止认错人画出假股权链。
+  domain_id: D_GOV_DATA
 - module_path: src/zephyr/governance/data_governance/exchange_partition_detector.py
   desc_en: ""
   desc_zh: Exchange Partition Detector — v0.12.0 交易所网络分区检测器。
@@ -37705,12 +38336,12 @@ entries:
   domain_id: D_INTELLIGENCE
   responsibility_layer: ai
 - module_path: src/zephyr/intelligence/news_score_daily.py
-  domain_id: D_INTELLIGENCE
-  name_zh: "逐条新闻情绪分日更"
-  name_en: ""
-  desc_zh: ""
   desc_en: ""
-  plain_zh: "每天早上自动把昨天的新闻逐条打情绪分存进 news_sentiment_score 表，漏了的日子自动补，也能手动补任意历史区间，断了能接着跑"
+  desc_zh: ""
+  name_en: ""
+  name_zh: 逐条新闻情绪分日更
+  plain_zh: 每天早上自动把昨天的新闻逐条打情绪分存进 news_sentiment_score 表，漏了的日子自动补，也能手动补任意历史区间，断了能接着跑
+  domain_id: D_INTELLIGENCE
   responsibility_layer: ai
 - module_path: src/zephyr/intelligence/news_sentiment_analyzer.py
   desc_en: ""
@@ -38102,6 +38733,14 @@ entries:
   name_en: ""
   name_zh: 关系树一键查询
   plain_zh: 给一个功能关键词，从依赖图展开它全部关联的代码文档数据表和管线，打印成一棵树
+  domain_id: D_GOVERNANCE
+  responsibility_layer: governance
+- module_path: src/zephyr/library/ruling_precedent.py
+  desc_en: ""
+  desc_zh: 按八类路由（D1-D8）机械归类检索裁定册只读投影；裁定路由政策 v2 E2 强制前置的执行面
+  name_en: Ruling Precedent Lookup
+  name_zh: 裁定先例机检
+  plain_zh: 裁新事项前先用它查一查过去同类的事是怎么裁的（引用老裁定号），避免同类事重复裁或裁得前后不一。
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
 - module_path: src/zephyr/library/snapshot_store.py
@@ -39402,6 +40041,14 @@ entries:
   name_en: Multi Strategy Capital Allocator
   name_zh: 资金分配输入非法
   plain_zh: 组合分配的多策略资金管理器：统一负责多策略资金的安排和收尾，组合分配别处要用都通过它，避免各管一段乱套。
+  domain_id: D_PF_ALLOC
+  responsibility_layer: business
+- module_path: src/zephyr/pf_alloc/core/portfolio_netting.py
+  desc_en: Net multi-strategy weight faces (algebraic sum per symbol, sign preserved) and split capital budgets per strategy before netting
+  desc_zh: 多策略权重面净额轧平（同标的代数和、符号保留）与预算切分（逐策略缩放后再轧平）
+  name_en: Portfolio Netting and Capital Split
+  name_zh: 组合净额轧平与预算切分
+  plain_zh: 把多个策略的持仓权重合并轧平并按预算比例切分资金，输出组合级净持仓
   domain_id: D_PF_ALLOC
   responsibility_layer: business
 - module_path: src/zephyr/pf_alloc/core/regime_bma_weighting.py
@@ -43444,6 +44091,14 @@ entries:
   plain_zh: 卖出决策包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口（在 services 下）。
   domain_id: D_SELL_DECISION
   responsibility_layer: business
+- module_path: src/zephyr/sell_decision/services/exit_execution_orchestrator.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 离场执行编排器
+  plain_zh: 把卖出扫描信号编排成可执行计划：时段路由、分批提示、熔断期梯度减仓次序都由它串起来，模拟盘只出防御姿态指令不碰真实订单
+  domain_id: D_SELL_DECISION
+  responsibility_layer: business
 - module_path: src/zephyr/service_layer_owners.yaml
   desc_en: ""
   desc_zh: ""
@@ -45947,6 +46602,14 @@ entries:
   plain_zh: 拿着底仓做当天高抛低吸的流水线：先听做T信号，符合价差和次数规矩才动手，卖出后必须买回来、买入后必须卖出去，当天账必须做平；平衡腿没成交就自动反向撤回来，撤不回来立刻报警留痕；快收盘还没做平就按收盘价强制做平，绝不隔夜变仓。
   domain_id: D_ASHARE_SIGNAL
   responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/limit_up/event_axis.py
+  desc_en: ""
+  desc_zh: A股涨停生命周期事件显式层：封板/开板炸/炸板互斥单选事件轴纯函数核
+  name_en: limit-up event axis
+  name_zh: 涨停事件轴
+  plain_zh: 它把每天每只股票的涨停状态变成三种明确事件：封住了、开盘就板被砸开、盘中摸板没封住。给涨停生态的下游统计一个统一的事件口径，不再各算各的。
+  domain_id: D_ASHARE_SIGNAL
+  responsibility_layer: business
 - module_path: src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py
   desc_en: ""
   desc_zh: ""
@@ -46258,6 +46921,14 @@ entries:
   plain_zh: 量化短期强度引擎，信号的引擎，执行核心逻辑的处理引擎（quant short term strength）
   domain_id: D_ASHARE_SIGNAL
   responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/resonance_pair.py
+  desc_en: ""
+  desc_zh: 15M 上沿×1M 双峰组合态判定纯函数核（READY_NOT_FIRED 不点火）
+  name_en: resonance pair definer
+  name_zh: 共振条件对定义器
+  plain_zh: 它回答一个问题：15分钟图的压力上沿和1分钟图的最近双峰，是不是顶在了同一个价位附近。只给共振成立/不成立的判定结论，绝不发出买卖指令——点火永远是下游的事。
+  domain_id: D_ASHARE_SIGNAL
+  responsibility_layer: business
 - module_path: src/zephyr/signal_ashare/risk_event_consumer.py
   desc_en: ""
   desc_zh: ""
@@ -46535,6 +47206,54 @@ entries:
   plain_zh: 信号历史写入管道（c1_market.market_signal_history，一张窄表两管道）。
   domain_id: D_SIGNAL
   responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 资金流方向源线判据转化器
+  plain_zh: 把每日主力资金净流入和股价序列，换算成这个股票短期被资金看好还是看空的判读标签
+  domain_id: D_ASHARE_SIGNAL
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/source_line/fundamental_pricing_lag_criterion.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 基本面定价滞后判据转化器
+  plain_zh: 把基本面定价滞后源线数据加工成滞后修复判据信号，供决策图挂载消费
+  domain_id: D_ASHARE_SIGNAL
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/source_line/kline_momentum_criterion.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: K线动量判据转化器
+  plain_zh: 把K线动量源线数据加工成可执行的动量判据信号，供决策图挂载消费
+  domain_id: D_ASHARE_SIGNAL
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/source_line/news_sentiment_criterion.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 快讯情绪源线判据转化器
+  plain_zh: 把一段时间内的新闻快讯情绪分按新旧加权汇总，算出当下市场情绪是热是冷并给出四档标签
+  domain_id: D_ASHARE_SIGNAL
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 板块轮动强弱判据
+  plain_zh: 看板块指数谁强谁弱：相对强度打分高且连续跑赢大盘够久才认定轮动领先，双门防一日游假信号
+  domain_id: D_ASHARE_SIGNAL
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: Tick分笔微观结构判据
+  plain_zh: 用逐笔成交数据算买卖不平衡和冲击成本，判断当天微观结构能不能预测明天涨跌，方向不明就给平局不硬编
+  domain_id: D_ASHARE_SIGNAL
+  responsibility_layer: business
 - module_path: src/zephyr/signal_ashare/stock_relation_gnn.py
   desc_en: ""
   desc_zh: ""
@@ -46733,6 +47452,14 @@ entries:
   name_en: ""
   name_zh: 产业链传导与供应链动量
   plain_zh: 上游供应商和下游客户的涨跌会领先传导到本公司：用产业链关系图和领先1到5天的动量算出有效传导链，只保留解释力够强的。
+  domain_id: D_ASHARE_SIGNAL
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/swing_sequence.py
+  desc_en: ""
+  desc_zh: 复用缠论分型的 LH/HH/HL/LL 序列标注与双峰提取纯函数核
+  name_en: swing sequence
+  name_zh: 摆动结构序列
+  plain_zh: 它把K线图上的高点和低点串成一条摆动轨迹，并标注每个高点比前一个高还是低、每个低点比前一个高还是低，还能找出最近的一对双峰。极值识别完全复用缠论分型，自己不做第二套。
   domain_id: D_ASHARE_SIGNAL
   responsibility_layer: business
 - module_path: src/zephyr/signal_ashare/tradability_preflight.py
@@ -47345,6 +48072,14 @@ entries:
   plain_zh: 以前新策略挂上图之后，组合级别的整体回测得有人在页面上手动点。这个模块把这件事变成全自动：一收到挂图完成的通知，它就刷新方案清单、跑一遍整装组合回测、把成绩单和验收结论存档；同样的方案重复通知就不再重跑，跑坏了会自动报警。
   domain_id: D_BACKTEST
   responsibility_layer: business
+- module_path: src/zephyr/strategy_pipeline/graduated_package_feed.py
+  desc_en: ""
+  desc_zh: 从 c5 条件 GREEN 的晋级池管线读晋级事件落地件（graduated_packages.yaml）产出已毕业包集；缺省空集安全态，禁手填
+  name_en: Graduated package feed channel
+  name_zh: 已毕业包合法填充通道
+  plain_zh: 它负责回答'现在有哪些考试毕业的策略包可以直接用'：只有当晋级管线在主区落了正式的毕业名单文件时才把名单读出来，否则一律返回空（一个包都不启用，安全态）。名单永远来自管线文件，不允许谁在代码里手写进去。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
 - module_path: src/zephyr/strategy_pipeline/intake.py
   desc_en: ""
   desc_zh: ""
@@ -47407,6 +48142,14 @@ entries:
   name_en: ""
   name_zh: 台账数据源（及格集/p 值/相关矩阵）
   plain_zh: 从批测成绩单里把合格策略挑出来给入库管线用：按双窗口门槛判断及格不及格，算出每条的统计显著性分数，再两两算收益相关度看谁和谁是一家人。只查不写，是入库决策的数据底座。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: src/zephyr/strategy_pipeline/t0_condition_pack.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 做T条件包日件执行体
+  plain_zh: 日线数据到位后自动被事件唤醒，串行跑三步子进程把次日盘中做T要用的条件输入包生产出来，按交易日防重复、失败就告警并留队重试
   domain_id: D_BACKTEST
   responsibility_layer: business
 - module_path: src/zephyr/trading/__init__.py
@@ -50850,6 +51593,14 @@ entries:
   name_zh: Ba状态Machine测试
   plain_zh: 测试：确保ba 状态状态机不出岔子，让问题在上线前现形。
   domain_id: ""
+- module_path: tests/backtest/fexam/test_fire_grid_gates.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 点火器G1日志收卷门回归
+  plain_zh: 它专门盯网格点火器的红绿灯：对面车队收工没收工，不能靠猜——测试用假目录假时钟把每一种情况都演一遍，保证绿灯只在真安全时亮
+  domain_id: D_BACKTEST
+  responsibility_layer: business
 - module_path: tests/backtest/test_anomaly_diagnoser.py
   desc_en: ""
   desc_zh: ""
@@ -56087,6 +56838,14 @@ entries:
   plain_zh: "治本 2026-07-24 (): --reconciler-verify 模式要求主工作区"
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
+- module_path: tests/gov/governance/d5_architecture/test_generate_backtest_coverage_ledger.py
+  desc_en: ""
+  desc_zh: fixtures 断言渲染形态；缺真源/计数断言失败必报错不静默；幂等与--check 漂移
+  name_en: Test Generate Backtest Coverage Ledger
+  name_zh: 回测覆盖总册生成器红绿测试
+  plain_zh: 给账本生成器当考官：故意抽掉原材料，看它是不是老实报错而不是编数；再用同一批材料算两遍，看两本账是否一模一样；最后核对手改过的账会被查出来。全在临时沙盒里做，不碰真实账本和考场。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: tests/gov_code_dedup/__init__.py
   desc_en: ""
   desc_zh: ""
@@ -60078,6 +60837,14 @@ entries:
   name_zh: P4-3 check_commit_message.py 单测
   plain_zh: 测试：检查提交消息是否符合预期，别让毛病悄悄溜过去。
   domain_id: ""
+- module_path: tests/governance/test_commit_claim_check.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 提交对账复查门红蓝例
+  plain_zh: 给那个交作业核对员出考卷：嘴上说改了代码袋子却是空的要打回、真代码在袋里要放行、声明纯文档要放行，一题一题验到全对为止
+  domain_id: D_GOVERNANCE
+  responsibility_layer: governance
 - module_path: tests/governance/test_commit_queue_readback_discovery.py
   desc_en: ""
   desc_zh: merged==ours三态分流判别尺（合法noop/吞没拒绝）+派生标量自动发现器收编判据与参数化heal尺
@@ -63524,6 +64291,14 @@ entries:
   name_zh: 交易审查单测
   plain_zh: 校验四模式扫描、报告三要素和版本化。
   domain_id: D_REPORTING
+  responsibility_layer: business
+- module_path: tests/research/factor/test_layered_spread_kernel_parity.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 分层多空价差核逐位对拍随行
+  plain_zh: 快算版和慢算版各算一遍分层买卖差价，一个数字一个数字比对必须一模一样，还要验证快算版确实快得多，防止有人改着改着把快版改错了或改慢了
+  domain_id: D_FACTOR
   responsibility_layer: business
 - module_path: tests/research/test_auto_feature_discoverer.py
   desc_en: ""
@@ -67316,6 +68091,14 @@ entries:
   name_zh: wal_writer 单测
   plain_zh: 测试：WAL 写入器这块逻辑要经得起考验，有毛病立刻报出来。
   domain_id: ""
+- module_path: tests/zephyr/factor/technical_indicators/test_panelized_indicators.py
+  desc_en: ""
+  desc_zh: ""
+  name_en: ""
+  name_zh: 行物化向量化单测
+  plain_zh: 用假行情数据验证新批量算法的每个小算子和老算法结果一致、缺数和无穷大的处理一致、用完的临时替换一定还原不污染别人
+  domain_id: D_FACTOR
+  responsibility_layer: business
 - module_path: tests/zephyr/runtime/__init__.py
   desc_en: ""
   desc_zh: ""
@@ -67369,786 +68152,3 @@ entries:
   plain_zh: 数据域的板块快照收集器：定期采集板块行情快照并落盘，供复盘和分析使用。
   domain_id: D_DATA
   responsibility_layer: business
-- module_path: scripts/governance/card_review_automation.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "任务卡两轮预审自动化"
-  name_en: "Card Review Automation"
-  desc_zh: "任务卡工单制接口②：自动跑两轮 batch_review 并出具 verify 就绪度报告，恒不代盖章"
-  desc_en: ""
-  plain_zh: "给施工车道用的收尾工具：对一张任务卡自动连续做两轮七维度预审，第一轮有问题就停，最后告诉你这张卡能不能进入核销（verify）。它只出报告不代你盖章，盖章要人工或车道确认后自己调 verify，防止机器自己给自己验收。"
-  responsibility_layer: governance
-- module_path: scripts/governance/d5_architecture/generators/generate_panorama_master_map.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "全景总图生成器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "读全景总图真源yaml，校验节点集与全景图目录双闭、每图文件实存、边端点闭合，全绿才渲染出mermaid总图（图的索引）。新图先登记图目录再进总图，双跑逐字节幂等。"
-  responsibility_layer: governance
-- module_path: scripts/governance/d3_metadata/register_tokens_ledger.py
-  domain_id: D_GOV
-  name_zh: "token账本一键登记器"
-  name_en: "register tokens ledger"
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把新建文件的token通过意图API三步（登记入PG账本、发布快照、重打投影册）一键完成，替代已被封禁的直写通道"
-  responsibility_layer: governance
-- module_path: scripts/governance/registry_migration/ledger_reconcile_head.py
-  domain_id: D_GOV
-  name_zh: "账本对账器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "对比PG账本与HEAD投影册的token条目差异，自动补登缺失条目，防止渲染丢字"
-  responsibility_layer: governance
-- module_path: docs/01_policies_and_standards/_registry/reports/rule_face_reconciliation.yaml
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "规则执法面双口径对账表"
-  name_en: "Rule Face Reconciliation Report"
-  desc_zh: "每条规则一行：真执法面与被提及面双口径分列，附双零匹配名单"
-  desc_en: ""
-  plain_zh: "这张表回答一个问题：86 条铁律里，哪些真的有代码在管，哪些只是嘴上提过。生成器每次重算，谁也别想手改数字。"
-  responsibility_layer: governance
-- module_path: scripts/governance/d5_architecture/generators/generate_governance_legislation_map.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "图16立法流生成器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "治理立法流图（图16）的机生件：把裁定从诞生到退休的状态规矩和九台机器读进一张图，实例条数直连裁定账本现算，同账本重跑两遍一字不差，图坏了跑一遍就修好。"
-  responsibility_layer: governance
-- module_path: scripts/governance/d5_architecture/validators/validate_governance_legislation_map.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "图16立法流校验器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "图16 立法流图的质检员：六种裁定状态一个不许自造、终态不许再出边、七条禁边不许绕、实例条数和账本对不上就报红，提交前把图拦在门口。"
-  responsibility_layer: governance
-- module_path: src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "图16立法流提交门"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "治理立法流图的守门员：有人改这张图或它的生成器时自动核对结构，状态枚举自造、禁边丢失或实例混进图节点就拦下提交，防止地图和裁定账本脱节。"
-  responsibility_layer: governance
-- module_path: scripts/governance/d5_architecture/generators/generate_backtest_coverage_ledger.py
-  domain_id: D_DATA
-  name_zh: "回测覆盖账本生成器"
-  name_en: "Generate Backtest Coverage Ledger"
-  desc_zh: "三真源机生回测覆盖总册 yaml（七层金字塔自动化/已考/未考/缺口+13维旋钮覆盖+试次摘要）"
-  desc_en: ""
-  plain_zh: "扫描试次账本、考场产物与环节对标表，自动生成回测金字塔每层的自动化状态、已考未考与缺口清单"
-  responsibility_layer: business
-- module_path: tests/gov/governance/d5_architecture/test_generate_backtest_coverage_ledger.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "回测覆盖总册生成器红绿测试"
-  name_en: "Test Generate Backtest Coverage Ledger"
-  desc_zh: "fixtures 断言渲染形态；缺真源/计数断言失败必报错不静默；幂等与--check 漂移"
-  desc_en: ""
-  plain_zh: "给账本生成器当考官：故意抽掉原材料，看它是不是老实报错而不是编数；再用同一批材料算两遍，看两本账是否一模一样；最后核对手改过的账会被查出来。全在临时沙盒里做，不碰真实账本和考场。"
-  responsibility_layer: governance
-- module_path: scripts/backtest/fexam/ch_data.py
-  domain_id: D_BACKTEST
-  name_zh: "fexam CH只读装载层"
-  name_en: "fexam CH loader"
-  desc_zh: "CH只读SELECT装载前向收益/因子指标列面板/regime态，fail-closed"
-  desc_en: ""
-  plain_zh: "这是考试车的油管：从行情数据库里只读地抽数据（不发任何写指令），把价格、因子值、市场状态装成考试能直接用的表格。数据库连不上就报警停考，绝不编造假数据。"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/__init__.py
-  domain_id: D_BACKTEST
-  name_zh: "fexam考试套件包入口"
-  name_en: "fexam suite package"
-  desc_zh: "全量考试套件包初始化，收编批0-5全部子模块"
-  desc_en: ""
-  plain_zh: "这是考试工厂的大门牌：把从生成考卷、跑考试、出成绩册的所有零件归到一个屋檐下，外面只认这一个入口。"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/roster.py
-  domain_id: D_BACKTEST
-  name_zh: "fexam批0应考名单机生器"
-  name_en: "fexam roster generator"
-  desc_zh: "四册解析+可考性机判分类+prereg冻结口径，名单全部来自册零手工挑题"
-  desc_en: ""
-  plain_zh: "这是点名册印刷机：把策略册、因子册、指标册里的每一条资产自动点出名字造册，并预先判断谁能上考场谁缺材料，考法和及格线提前盖章冻结防止事后挪门柱。"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/ic_exam.py
-  domain_id: D_BACKTEST
-  name_zh: "fexam批1批3 IC考试引擎"
-  name_en: "fexam IC exam engine"
-  desc_zh: "向量秩IC/ICIR/换手/分体制/衰减五项度量+三态机判+断点续跑，批1因子批3指标共用"
-  desc_en: ""
-  plain_zh: "这是阅卷机：给每个因子或指标算出它预测股价的本事（IC）有多强多稳，按提前公布的及格线判合格回炉或淘汰，中途停电了能从断点继续不用重考。"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/strategy_exam.py
-  domain_id: D_BACKTEST
-  name_zh: "fexam批2策略整装考"
-  name_en: "fexam strategy exam"
-  desc_zh: "alpha合成+月频top20标准装置+引擎IS/OOS双窗+DSR记账+checkpoint幂等"
-  desc_en: ""
-  plain_zh: "这是整装策略的 standardized 考场：把策略册里每条策略的选股因子装上统一的买卖规则跑一遍历史行情，分上半场下半场各打一次分，全部成绩和考试次数自动记账。"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/allocator_shadow.py
-  domain_id: D_BACKTEST
-  name_zh: "fexam批4分配器影子考"
-  name_en: "fexam allocator shadow"
-  desc_zh: "五套资金分配法同窗影子对比+序贯统计证据量，只报证据不判终胜负"
-  desc_en: ""
-  plain_zh: "这是五种分钱方法的比武场：同一份信号同一时间段让五种仓位分配法各跑一遍，比较谁赚得多回撤小，但只报告当前证据量不急着判谁最终赢。"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/campaign_report.py
-  domain_id: D_BACKTEST
-  name_zh: "fexam批5总册汇总器"
-  name_en: "fexam campaign reporter"
-  desc_zh: "考试总册+家底总表八册合成+四张缺口单+原问题匹配表，全机生禁手填"
-  desc_en: ""
-  plain_zh: "这是成绩公布栏：把四场考试的成绩册汇成一张总表，顺手盘点全部家底哪些接通了哪些断链，再把攒的问题清单和考试结果对上号。"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/run_fexam.py
-  domain_id: D_BACKTEST
-  name_zh: "fexam CLI单入口"
-  name_en: "fexam CLI entry"
-  desc_zh: "八子命令单入口（roster/factor/strategy/indicator/allocator/summary/inventory/metaq/selftest），prereg只读防挪门柱"
-  desc_en: ""
-  plain_zh: "这是整个考试系统的遥控器：一条命令选择点名、开考、出分、盘点或对账，考法和及格线只能读不能改，保证每晚自动跑都守同一套规则。"
-  responsibility_layer: business
-- module_path: scripts/generate_mount_obligation_manifest.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "挂载义务清单机生器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "自动盘点交易决策图全家该挂载的模块义务，产出已挂、豁免、标记三分类加孤儿红段的对账清单，供总筹对审与reconciler判红用，替代人工拼账"
-  responsibility_layer: governance
-- module_path: scripts/governance/_shared/mount_obligation.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "挂载义务判定共享助手"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "挂载义务怎么判定全项目只算这一份：提交门禁、义务清单机生器、覆盖率账本三个消费方都调它，防止各写一套集合逻辑口径漂移"
-  responsibility_layer: governance
-- module_path: src/zephyr/strategy_pipeline/t0_condition_pack.py
-  domain_id: D_BACKTEST
-  name_zh: "做T条件包日件执行体"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "日线数据到位后自动被事件唤醒，串行跑三步子进程把次日盘中做T要用的条件输入包生产出来，按交易日防重复、失败就告警并留队重试"
-  responsibility_layer: business
-- module_path: src/zephyr/sell_decision/services/exit_execution_orchestrator.py
-  domain_id: D_SELL_DECISION
-  name_zh: "离场执行编排器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把卖出扫描信号编排成可执行计划：时段路由、分批提示、熔断期梯度减仓次序都由它串起来，模拟盘只出防御姿态指令不碰真实订单"
-  responsibility_layer: business
-- module_path: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "Tick分笔微观结构判据"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "用逐笔成交数据算买卖不平衡和冲击成本，判断当天微观结构能不能预测明天涨跌，方向不明就给平局不硬编"
-  responsibility_layer: business
-- module_path: src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "板块轮动强弱判据"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "看板块指数谁强谁弱：相对强度打分高且连续跑赢大盘够久才认定轮动领先，双门防一日游假信号"
-  responsibility_layer: business
-- module_path: src/zephyr/gov_enforcement/rule_bridge/gate_blob_cache.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "门禁子计算内容寻址缓存基座"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把门禁检查里重复算的中间结果（比如同一个 YAML 册的条目数、同一个源码文件的符号表）按内容指纹存起来，内容没变就直接用上次的答案，省掉重复解析和重复 git 查询；只是加速，不改变任何判定结论。"
-  responsibility_layer: governance
-- module_path: scripts/backtest/fexam/bootstrap_gpu/kernel.py
-  domain_id: D_BACKTEST
-  name_zh: "bootstrap统一族GPU核"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "三原函数索引注入对拍35全过"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/bootstrap_gpu/parity_test.py
-  domain_id: D_BACKTEST
-  name_zh: "bootstrap核对拍测试"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "同索引矩阵注入逐位对拍"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/gpu_ic/smoke_gpu.py
-  domain_id: D_BACKTEST
-  name_zh: "IC核GPU冒烟"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "空窗前置自动预检拒跑"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/exit_sim/exit_simulator.py
-  domain_id: D_BACKTEST
-  name_zh: "ATR离场仿真器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "双臂同口径对照装置，无前视建模"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/grid_adapter/emit_configs.py
-  domain_id: D_BACKTEST
-  name_zh: "网格考配置发射器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "策略族翻译成网格配置"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/bootstrap_gpu/bench.py
-  domain_id: D_BACKTEST
-  name_zh: "bootstrap核基准计时"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "两千次千六百点提速留档"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/bootstrap_gpu/__init__.py
-  domain_id: D_BACKTEST
-  name_zh: "bootstrap核包入口"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "统计核包初始化门牌"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/gpu_ic/gpu_rank_ic.py
-  domain_id: D_BACKTEST
-  name_zh: "IC核GPU移植双后端"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "双库同构秩IC逐位等值"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/gpu_ic/parity_test.py
-  domain_id: D_BACKTEST
-  name_zh: "IC核对拍测试"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "逐位零差五用例边界"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/gpu_ic/bench_numpy.py
-  domain_id: D_BACKTEST
-  name_zh: "IC核numpy基线"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "二十列基线计时留档"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/gpu_ic/__init__.py
-  domain_id: D_BACKTEST
-  name_zh: "IC核包入口"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "对拍件包初始化门牌"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/exit_sim/prereg_frozen.yaml
-  domain_id: D_BACKTEST
-  name_zh: "离场仿真冻结卡"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "事前冻结判据双臂对照"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/exit_sim/__init__.py
-  domain_id: D_BACKTEST
-  name_zh: "离场仿真包入口"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "仿真器包初始化门牌"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/grid_adapter/fire_grid.py
-  domain_id: D_BACKTEST
-  name_zh: "网格考点火器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "五门前置拒绝误点火"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/grid_adapter/validate_dry_run.py
-  domain_id: D_BACKTEST
-  name_zh: "网格考干跑验证"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "只读校验不占显卡"
-  responsibility_layer: business
-- module_path: src/zephyr/factor/analysis/gpu_layered_spread_kernel.py
-  domain_id: D_FACTOR
-  name_zh: "分层价差xp核"
-  name_en: "gpu_layered_spread_kernel"
-  desc_zh: "compute_layer_spread 的逐日截面分箱批算 xp 核：stable argsort 秩映射+qcut 边界查找表+Kahan 补偿和，与 pandas 原路径逐位一致"
-  desc_en: ""
-  plain_zh: "每天把股票按因子值分成五组，算最高组减最低组的收益差。老办法一天跑一遍 pandas 排序分组很慢；这个新核把同样的活用 numpy 批量算，结果一位不差，五千六百列面板从 7.26 秒降到 1.08 秒，出问题可用环境变量一键退回老算法。"
-  responsibility_layer: business
-- module_path: scripts/governance/check_registry_field_legality.py
-  domain_id: D_GOV_AUDIT
-  name_zh: "登记册字段合法性校验器"
-  name_en: "registry field legality checker"
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "它像登记册的体检员：逐册检查字段名有没有写错年代（比如老写法 created 该叫 created_at），裁定册的状态词有没有用错表。改名大扫除前后各跑一次，前面列出错名单，后面确认清干净了。"
-  responsibility_layer: governance
-- module_path: scripts/backtest/grid_stats_engine.py
-  domain_id: D_BACKTEST
-  name_zh: "共振矩阵逐格统计引擎"
-  name_en: "Grid Stats Engine"
-  desc_zh: "G-D 逐格四件套+SPA/StepM 多重检验+分半窗滚动重考；READY_NOT_FIRED 不点火"
-  desc_en: ""
-  plain_zh: "把每一个策略格子的成绩算成四个数：多少人考、考得稳不稳（自相关修正后的夏普）、再收多少手续费就白干、扣掉碰运气成分后还剩几分；顺带识别一批里哪些格子是真行哪些是运气，并用前半段后半段各考一遍看成绩是不是靠得住。只算分不改成绩单，正式启用要等 Owner 发令"
-  responsibility_layer: business
-- module_path: src/zephyr/governance/data_governance/entity_graph_uscc_bridge.py
-  domain_id: D_GOV_DATA
-  name_zh: "股权图uscc富化消歧桥"
-  name_en: "entity graph uscc enrichment bridge"
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "它是股东名单的认人助手：拿着股东名字去公司名册里对号，能对上的贴上统一社会信用代码，对不准的列几个候选让人挑，一个都对不上的先挂起。它只出对号建议不动真数据，防止认错人画出假股权链。"
-- module_path: scripts/backtest/lead_lag_validator.py
-  domain_id: D_BACKTEST
-  name_zh: "lead-lag 统计验证器"
-  name_en: "Lead-lag Validator"
-  desc_zh: "G-C.4 观察轨 P2：滞后相关+BHY FDR+分窗稳定性；负结果保留"
-  desc_en: ""
-  plain_zh: "检查两个行情序列是不是一个先动另一个后动：一格一格试不同的时间差算相关，把所有试出来的结果放一起做多重校验，防止碰巧像的混进来；再把时间段切成前后几段各验一遍看领先关系稳不稳。只出验证报告不下结论，考得不好也如实留档"
-  responsibility_layer: business
-- module_path: src/zephyr/factor/analysis/tech_factor_pipeline.py
-  domain_id: D_FACTOR
-  name_zh: "TECH 因子计算链"
-  name_en: "tech factor pipeline"
-  desc_zh: "CNS-01 接线件：指标宽表→因子值面板→合成信号一键链（PIT 透传）"
-  desc_en: ""
-  plain_zh: "它把技术指标宽表里的列读出来变成因子值，再合成为一个综合信号分数，是指标存了没人算到因子真能用之间缺的那条传送带。只建链不吹牛：IC 证据要等数据库实弹跑批才算数。"
-  responsibility_layer: business
-- module_path: src/zephyr/signal_ashare/limit_up/event_axis.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "涨停事件轴"
-  name_en: "limit-up event axis"
-  desc_zh: "A股涨停生命周期事件显式层：封板/开板炸/炸板互斥单选事件轴纯函数核"
-  desc_en: ""
-  plain_zh: "它把每天每只股票的涨停状态变成三种明确事件：封住了、开盘就板被砸开、盘中摸板没封住。给涨停生态的下游统计一个统一的事件口径，不再各算各的。"
-  responsibility_layer: business
-- module_path: src/zephyr/signal_ashare/swing_sequence.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "摆动结构序列"
-  name_en: "swing sequence"
-  desc_zh: "复用缠论分型的 LH/HH/HL/LL 序列标注与双峰提取纯函数核"
-  desc_en: ""
-  plain_zh: "它把K线图上的高点和低点串成一条摆动轨迹，并标注每个高点比前一个高还是低、每个低点比前一个高还是低，还能找出最近的一对双峰。极值识别完全复用缠论分型，自己不做第二套。"
-  responsibility_layer: business
-- module_path: src/zephyr/signal_ashare/resonance_pair.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "共振条件对定义器"
-  name_en: "resonance pair definer"
-  desc_zh: "15M 上沿×1M 双峰组合态判定纯函数核（READY_NOT_FIRED 不点火）"
-  desc_en: ""
-  plain_zh: "它回答一个问题：15分钟图的压力上沿和1分钟图的最近双峰，是不是顶在了同一个价位附近。只给共振成立/不成立的判定结论，绝不发出买卖指令——点火永远是下游的事。"
-  responsibility_layer: business
-- module_path: scripts/governance/generators/backfill_created_from_filename.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "created 字段回填器"
-  name_en: "created backfill from filename"
-  desc_zh: "扫 working 区文件名含 ISO 日期的 md，回填 frontmatter created（CAS 逐件写，--apply 才落盘）"
-  desc_en: ""
-  plain_zh: "它帮文档补生日：很多挖矿簿没写创建日期，导致过期清理时不知道它多老了。这个工具从文件名里的日期（比如 2026-09-24-xxx.md）读出创建日，自动填进文件头部，先预览再动手，绝不覆盖已有的日期。"
-  responsibility_layer: governance
-- module_path: scripts/backup/retention_derived.py
-  domain_id: D_GOVERNANCE
-  name_zh: "备份时限派生器+免死影子账"
-  name_en: "retention derived limits and keep shadow"
-  desc_zh: "从 backup_config.yaml 纯函数派生 P95 时限读数；keep.txt 只读抄录生成 3 天影子快照到 .runtime/audit"
-  desc_en: ""
-  plain_zh: "它干两件事：一是看备份配置算出各环节该多快跑完的及格线，二是把进程保护名单偷偷拍张快照存三天——万一名单被谁改了或者保护进程被误杀，拿快照一对就能查出改了什么。"
-  responsibility_layer: governance
-- module_path: scripts/governance/entrance_gate_hook.py
-  domain_id: D_GOVERNANCE
-  name_zh: "施工进场检票钩子"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "AI 施工队第一次往业务代码区写文件时拦截检查：本会话开工前有没有走过正门反查（能力反查或图书馆查询）。没走正门就拒绝写入并给出一条现成的正门命令，走了就放行并记录首写时间戳，让'先查后建'从君子协定变成结构强制。"
-  responsibility_layer: governance
-- module_path: src/zephyr/factor/technical_indicators/panelized_indicators.py
-  domain_id: D_FACTOR
-  name_zh: "指标链行物化向量化"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "算技术指标时原来一行一行慢慢抠数字，速度慢在这；这个模块把整张表一次性批量算完打包成行，快了几十倍，算出来的每个数字和老办法一模一样（误差不超过十的负九次方）"
-  responsibility_layer: business
-- module_path: src/zephyr/factor/technical_indicators/parity_check.py
-  domain_id: D_FACTOR
-  name_zh: "行物化向量化对拍器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "一个验收工具：让老办法和新办法各算一遍所有指标，逐列逐格比对新旧结果是否一模一样、顺带测速度，读库不写库，切生产前后都要跑它把关"
-  responsibility_layer: business
-- module_path: src/zephyr/factor/technical_indicators/bench_scaling.py
-  domain_id: D_FACTOR
-  name_zh: "行物化向量化规模计时"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "一个测速工具：数据量从二百五根到整史逐档测试批量算法快多少倍，再拿假数据单独测滑窗小算子的提速，结果写成表放临时目录"
-  responsibility_layer: business
-- module_path: tests/zephyr/factor/technical_indicators/test_panelized_indicators.py
-  domain_id: D_FACTOR
-  name_zh: "行物化向量化单测"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "用假行情数据验证新批量算法的每个小算子和老算法结果一致、缺数和无穷大的处理一致、用完的临时替换一定还原不污染别人"
-  responsibility_layer: business
-- module_path: src/zephyr/backtest/accel/bootstrap_kernel.py
-  domain_id: D_BACKTEST
-  name_zh: "Bootstrap统计加速核"
-  name_en: "Bootstrap Statistics Acceleration Kernel"
-  desc_zh: "bootstrap统一族xp纯函数核：WRC t统计量/E2 Sharpe差/多元相关三热循环的向量化实现"
-  desc_en: ""
-  plain_zh: "把三处跑得慢的统计重抽样循环合成一个向量化加速核，CPU跟GPU共用同一份代码，结果和原实现逐位一致才准上线"
-  responsibility_layer: business
-- module_path: scripts/gate_dry_run.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "全门链本地干跑器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "提交前把三段门禁一次跑完并全部列出硬拦，让你一次改完再提交，不用反复撞墙试错"
-  responsibility_layer: governance
-- module_path: scripts/governance/commit_claim_check.py
-  domain_id: D_GOVERNANCE
-  name_zh: "提交消息账vs代码账复查门"
-  name_en: "commit claim check"
-  desc_zh: "对账 commit message 中声称的代码变更与提交袋内实际代码文件，袋零代码而消息提及代码路径即拒收（Rx-1 同位锁外预检）"
-  desc_en: ""
-  plain_zh: "它像交作业前的核对员：你说修了哪个代码文件，它就翻开你的提交袋子看里面真有没有代码；袋子空空却嘴上说改了代码，就打回去——要么把真代码放进去，要么老实声明这是纯文档提交"
-  responsibility_layer: governance
-- module_path: tests/backtest/fexam/test_fire_grid_gates.py
-  domain_id: D_BACKTEST
-  name_zh: "点火器G1日志收卷门回归"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "它专门盯网格点火器的红绿灯：对面车队收工没收工，不能靠猜——测试用假目录假时钟把每一种情况都演一遍，保证绿灯只在真安全时亮"
-  responsibility_layer: business
-- module_path: tests/governance/test_commit_claim_check.py
-  domain_id: D_GOVERNANCE
-  name_zh: "提交对账复查门红蓝例"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "给那个交作业核对员出考卷：嘴上说改了代码袋子却是空的要打回、真代码在袋里要放行、声明纯文档要放行，一题一题验到全对为止"
-  responsibility_layer: governance
-- module_path: tests/research/factor/test_layered_spread_kernel_parity.py
-  domain_id: D_FACTOR
-  name_zh: "分层多空价差核逐位对拍随行"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "快算版和慢算版各算一遍分层买卖差价，一个数字一个数字比对必须一模一样，还要验证快算版确实快得多，防止有人改着改着把快版改错了或改慢了"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/rowvec/bench_scaling.py
-  domain_id: D_FACTOR
-  name_zh: "行向量化缩放计时基准"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "拿真实行情整史和合成序列当考卷，量一量向量化指标算法在不同数据规模下要跑多久，给新旧两条路的速度差距留下台账。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/rowvec/panelized_indicators.py
-  domain_id: D_FACTOR
-  name_zh: "指标链行物化向量化影子版"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把技术指标从一行一行慢慢算改成整表一次性批量算，速度提几十倍；这是影子实验版，算出的每个数字和老办法逐位一致，生产真源仍在 src 域。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/rowvec/parity_check.py
-  domain_id: D_FACTOR
-  name_zh: "新旧指标路径对拍计时器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "让新老两套指标算法跑同一份数据，逐列核对结果是否一分不差，顺带记下各自耗时，是换算法前的验收员。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/hmm_retrain/prep_data.py
-  domain_id: D_BACKTEST
-  name_zh: "HMM 重训数据准备"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "从行情库把沪深300指数的量价和涨跌家数读出来，按考试大纲切成训练窗、验证窗和前向缓冲三段，做成重训能直接吃的特征表。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/hmm_retrain/retrain.py
-  domain_id: D_BACKTEST
-  name_zh: "HMM 状态识别器重训回炉"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "针对老模型认不清市场状态的毛病重新训练 HMM，再用四张成绩单（涨跌命中、对角纯度、状态滞后）和 SMA200 基线对答案，决定它能不能重新上岗。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/probes/emo_adequacy.py
-  domain_id: D_BACKTEST
-  name_zh: "情绪指数样本充分性检查"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "情绪数据开考前先点一下人数：各档样本量够不够、覆盖全不全，只查家底不算成绩，样本太薄的考卷直接免考。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/probes/emo_exam.py
-  domain_id: D_BACKTEST
-  name_zh: "情绪指数首考四卷"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "按冻结好的预注册考纲给情绪指数考四张卷子，看它对未来收益有没有真预测力；判据逐字执行不许改，防止考完再改答案。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/probes/emo_explore.py
-  domain_id: D_BACKTEST
-  name_zh: "情绪数据表结构探查"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "第一次摸情绪数据这张表：看有哪些列、数据长什么样，只读不写，给后面出考卷摸清题库。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/probes/emo_explore2.py
-  domain_id: D_BACKTEST
-  name_zh: "情绪数据 PIT 深探"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "深挖情绪数据的时点质量：同一时刻有没有改过答案、时间戳站不站得住、往前翻会不会偷看未来数据，把坑提前找出来。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/probes/emo_pit.py
-  domain_id: D_BACKTEST
-  name_zh: "情绪数据时点实测"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "用实际数据核对情绪指数的时间纪律：记录时点、可用时点和行情对齐会不会互相穿越，保证考试不作弊。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/probes/grid_oos_analyze.py
-  domain_id: D_BACKTEST
-  name_zh: "324 格网格样本外判卷"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "324 个参数组合的样本外成绩出来后，这份脚本按预注册标准判卷：数一数几个及格、冠军是谁，防止考后挑好看的格子。"
-  responsibility_layer: business
-- module_path: scripts/matrix_rescued_tmp/probes/grid_oos_dsr.py
-  domain_id: D_BACKTEST
-  name_zh: "网格考试 DSR 台账"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "给 324 格考试记去重后的成绩账本，同一批回测只在账本上记一次数，防止重复计数把成绩吹胖。"
-  responsibility_layer: business
-- module_path: scripts/data_ops/l3_alt_health_shareholder_count.py
-  domain_id: D_DATA
-  name_zh: "A13股东户数线数据健康体检器"
-  name_en: "L3 alt-data health check for shareholder count line"
-  desc_zh: "只读体检 c3_fundamental.shareholder_count：行数/双轴覆盖/缺失率/日历感知新鲜度/PIT违例/重复"
-  desc_en: ""
-  plain_zh: "这个脚本负责给股东户数这份数据做体检：查它一共有多少行、时间跨度多长、缺了多少值、最近有没有照常更新，再专门盯两类会坑死回测的毛病——披露日期早于报告期的脏数据和同一条记录被重复入库。全部只读，不动任何数据，结论直接打印在屏幕上，有问题就报警告退出。"
-  responsibility_layer: business
-- module_path: scripts/data_ops/l3_alt_health_money_flow.py
-  domain_id: D_DATA
-  name_zh: "A06主力资金流线数据健康体检器"
-  name_en: "L3 alt-data health check for money flow line"
-  desc_zh: "只读体检 c1_market.money_flow：行数/覆盖/全零价格列/日历感知新鲜度/交易日历缺口量化/重复/塌陷"
-  desc_en: ""
-  plain_zh: "这个脚本负责给主力资金流这份数据做体检：除了常规的行数、时间跨度、缺值和更新是否及时，它还会拿交易日历对日子，把数据里缺掉的交易日一个个数出来（比如查出来2025年10月到2026年5月之间有一大段窟窿），另外盯住价格列全是零这种看着有数其实没数的情况。全部只读，结论打印在屏幕上，有问题就报警告退出。"
-  responsibility_layer: business
-- module_path: src/zephyr/pf_alloc/core/portfolio_netting.py
-  domain_id: D_PF_ALLOC
-  name_zh: "组合净额轧平与预算切分"
-  name_en: "Portfolio Netting and Capital Split"
-  desc_zh: "多策略权重面净额轧平（同标的代数和、符号保留）与预算切分（逐策略缩放后再轧平）"
-  desc_en: "Net multi-strategy weight faces (algebraic sum per symbol, sign preserved) and split capital budgets per strategy before netting"
-  plain_zh: "把多个策略的持仓权重合并轧平并按预算比例切分资金，输出组合级净持仓"
-  responsibility_layer: business
-- module_path: src/zephyr/signal_ashare/source_line/kline_momentum_criterion.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "K线动量判据转化器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把K线动量源线数据加工成可执行的动量判据信号，供决策图挂载消费"
-  responsibility_layer: business
-- module_path: src/zephyr/signal_ashare/source_line/fundamental_pricing_lag_criterion.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "基本面定价滞后判据转化器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把基本面定价滞后源线数据加工成滞后修复判据信号，供决策图挂载消费"
-  responsibility_layer: business
-- module_path: src/zephyr/factor/ah_premium_factor.py
-  domain_id: D_FACTOR
-  name_zh: "AH溢价因子"
-  name_en: "AH Premium Factor"
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把同一公司港股价格换算成人民币后与A股价格对比，算出A股比港股贵多少的溢价率，供跨市场比价和折溢价套利信号使用；输入A股收盘价、港股收盘价和汇率即可算，不联网也能算。"
-  responsibility_layer: business
-- module_path: scripts/data/emotion_index_snapshot.py
-  domain_id: D_DATA
-  name_zh: "情绪指数append-only每日快照器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "做什么：每天把 ClickHouse 的 emotion_index 情绪指数表整表镜像成一个带时间戳的 gzip 快照文件落到 data/emotion_index_snapshots，并往台账追加一行校验记录。解决什么：上次考试发现这张表能事后改写历史且没有逐日留痕，出了问题说不清当时长什么样。怎么做：只读查询全表、按固定键序写成 JSONL 压缩件，同名即拒绝、只增不改，提供按日期取当时状态的 PIT 读取函数。"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/paper_pool_gate.py
-  domain_id: D_BACKTEST
-  name_zh: "paper池进池判据门"
-  name_en: "paper pool entry gate"
-  desc_zh: "裁定489③进池判据：三线AND+聚合层Bonferroni/DSR多重检验校正，DSR数学全仓SSOT委托"
-  desc_en: ""
-  plain_zh: "考试pass不等于能进paper池。这个门在考试之后再加一道关卡：一批143个候选里总有靠运气过线的，本门按裁定489③把候选总数当试验次数做Bonferroni和DSR校正，把运气折掉，只让真技巧进池；校正公式不自己写，全部复用仓里唯一的DSR计算器"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/emotion_linkage_exam.py
-  domain_id: D_BACKTEST
-  name_zh: "情绪指数联动首考引擎"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "做什么：按预注册冻结口径考情绪指数水位对大盘后5日收益的预测力，算月度桶IC、ICIR、OOS衰减retain三条线并出合格判。解决什么：上次考试用了同窗起算的收益被判同步量无前瞻，这次标签从t+1日起算零重叠。怎么做：只读拉情绪表和000300收盘，月度桶内算Spearman相关，HOLDOUT窗三线AND判分，附PIT三检，verdict落JSON。"
-  responsibility_layer: business
-- module_path: scripts/ch/apply_hfq_lineage_engine_upgrade.py
-  domain_id: D_DATA
-  name_zh: "hfq血缘引擎升级编排器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把三张后复权行情表（日/周/月）从裸ReplacingMergeTree升到带血缘版本参数的ReplacingMergeTree，让裁定口径数据在引擎层判赢；先补列再影子表重建最后原子换名，默认只打印计划，加--yes才执行，出事可一键换名回滚"
-  responsibility_layer: business
-- module_path: src/zephyr/factor/wq_alpha_87_wiring.py
-  domain_id: D_FACTOR
-  name_zh: "WQ87 因子接线件"
-  name_en: "WQ87 factor wiring"
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把87个WorldQuant公式批量装进因子注册表，让考试链能按名字取用并算出IC成绩；接线动作幂等可重跑，撞名即报错不顶替"
-  responsibility_layer: business
-- module_path: scripts/backtest/sector_surface.py
-  domain_id: D_BACKTEST
-  name_zh: "板块强度四路面板"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把每只股票按行业分堆，算出每个行业每天强不强（四路：涨停结构、成交活跃度、多日动量、资金流），合成 0-100 的行业强度分并挑出最强的前 15%%，再给回测引擎当'强板块给个股加分/弱板块打折'的弹药；只读数据不改任何账。"
-  responsibility_layer: business
-- module_path: scripts/backtest/t0_material_line_fast.py
-  domain_id: D_BACKTEST
-  name_zh: "做T材料线路径并行核"
-  name_en: "T0 material line path-parallel core"
-  desc_zh: "材料线建模循环的 numba 路径并行加速核（resample reduceat + M0 逐路径扫描），同语义复刻 t0_material_line.run_model_m0，判据复用 cost_trio_exam"
-  desc_en: ""
-  plain_zh: "原来做T材料线给全市场算语料要一个票一个票地慢慢算，要跑一天。这个工具把每只票每天的计算改成同时一起算，快了很多倍。算出来的结果和老方法一模一样（逐位核对过），判分规则完全没动。"
-  responsibility_layer: business
-- module_path: scripts/backtest/t0_material_line_parity.py
-  domain_id: D_BACKTEST
-  name_zh: "材料线路径并行对拍harness"
-  name_en: "T0 material line parity harness"
-  desc_zh: "legacy 逐日循环 vs 路径并行核的逐位对拍+计时对比 harness（索引注入法），fast 切挂前后回归通道"
-  desc_en: ""
-  plain_zh: "这个工具专门验证快版和慢版算材料线的结果是不是完全一样。它把同一份数据喂给两个版本，一格一格对答案，还顺手计时看快版到底快了多少。每次改动快版后跑一遍它就知道有没有改坏。"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/conditional_exam.py
-  domain_id: D_BACKTEST
-  name_zh: "CYC族条件变量考场检验器"
-  name_en: "conditional_exam"
-  desc_zh: "相位分层+层间HAC检验+Bonferroni校正的条件增益考试（预注册卡判据冻结实现）"
-  desc_en: ""
-  plain_zh: "这个脚本给CYC族四个循环类指标办一场条件变量考试：先看20日动量基线活不活，再把每天全市场股票按各指标的相位值分成几层，比较不同层里动量的预测力差异大不大。用统计学检验（层间差值的HAC检验再乘11做校正）判断这个指标有没有资格当策略的分层开关。跑一次就定生死，结果写进分数册，考官规则全部来自预注册卡禁止临场改。"
-  responsibility_layer: business
-- module_path: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "资金流方向源线判据转化器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把每日主力资金净流入和股价序列，换算成这个股票短期被资金看好还是看空的判读标签"
-  responsibility_layer: business
-- module_path: src/zephyr/signal_ashare/source_line/news_sentiment_criterion.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "快讯情绪源线判据转化器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把一段时间内的新闻快讯情绪分按新旧加权汇总，算出当下市场情绪是热是冷并给出四档标签"
-  responsibility_layer: business
-- module_path: src/zephyr/ex_core/phase_discriminator.py
-  domain_id: D_EX_CORE
-  name_zh: "A股交易相位判别器"
-  name_en: "A-share trading phase discriminator"
-  desc_zh: "判别集合竞价/连续竞价/午休/收盘集合竞价/临停相位；判不出=记红不拒单（裁定#488 B段 C445）"
-  desc_en: ""
-  plain_zh: "它负责看现在是不是可以下单的时间段：开盘集合竞价、上午下午连续竞价、午休、收盘集合竞价，还是股票临时停牌。如果时间信息不完整判不出来，它只标记警告记录红色，不会因此拒绝下单。"
-  responsibility_layer: business
-- module_path: src/zephyr/strategy_pipeline/graduated_package_feed.py
-  domain_id: D_BACKTEST
-  name_zh: "已毕业包合法填充通道"
-  name_en: "Graduated package feed channel"
-  desc_zh: "从 c5 条件 GREEN 的晋级池管线读晋级事件落地件（graduated_packages.yaml）产出已毕业包集；缺省空集安全态，禁手填"
-  desc_en: ""
-  plain_zh: "它负责回答'现在有哪些考试毕业的策略包可以直接用'：只有当晋级管线在主区落了正式的毕业名单文件时才把名单读出来，否则一律返回空（一个包都不启用，安全态）。名单永远来自管线文件，不允许谁在代码里手写进去。"
-  responsibility_layer: business
-- module_path: scripts/backtest/generate_exam_card_skeleton.py
-  domain_id: D_BACKTEST
-  name_zh: "考试卡骨架生成器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "考试卡骨架生成器：读交易决策地图的186个环节节点，自动生成每个节点的考试卡骨架文件（考卷：假设/窗口/分桶/判据门柱留空待预注册）。解决环节验证零覆盖的问题。重跑只增不删，手工卡永不被冲。"
-  responsibility_layer: business
-- module_path: scripts/backtest/writeback_exam_confidence.py
-  domain_id: D_BACKTEST
-  name_zh: "置信度回写器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "置信度回写器：读考试卡分数册，按冻结判据自动改写交易决策地图里每个环节的置信度标记。考试过门柱+样本外+牛熊双行情=升级，衰减扫描不过=降级。缺省只报告，--apply 才实写。"
-  responsibility_layer: business
-- module_path: scripts/backtest/fexam/calibration_exam.py
-  domain_id: D_BACKTEST
-  name_zh: "校准卡执行器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "校准卡考试执行器：读预注册考试卡，对数据算响应曲线、IC、时滞、牛熊分段四件套，机械判门柱出分数行落分数册记试次账。判据零裁量，一票否决。"
-  responsibility_layer: business
-- module_path: scripts/data_ops/audit_ti_row_versions.py
-  domain_id: D_DATA
-  name_zh: "技术指标行版本重复审计器"
-  name_en: "Audit Ti Row Versions"
-  desc_zh: "按 (period,单日) 分片只读统计 technical_indicator 同键多行的重复率、值分叉率与 ingest_ts 可裁决率，产出日序列供 A/B 定案"
-  desc_en: ""
-  plain_zh: "同一支股票同一时刻的技术指标本该只有一行，现在表里存了好几种不同版本叠在一起；这把尺就是每天去数到底有多少个键是重复的、重复的里面有多少个值还不一样、以及能不能靠入库时间挑出该用的那一版。它只读不改，专门给要不要改表或改读法这个决定提供数字"
-  responsibility_layer: business
-- module_path: src/zephyr/library/ruling_precedent.py
-  domain_id: D_GOVERNANCE
-  name_zh: "裁定先例机检"
-  name_en: "Ruling Precedent Lookup"
-  desc_zh: "按八类路由（D1-D8）机械归类检索裁定册只读投影；裁定路由政策 v2 E2 强制前置的执行面"
-  desc_en: ""
-  plain_zh: "裁新事项前先用它查一查过去同类的事是怎么裁的（引用老裁定号），避免同类事重复裁或裁得前后不一。"
-  responsibility_layer: governance
