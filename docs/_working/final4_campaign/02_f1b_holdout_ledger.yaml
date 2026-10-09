@@ -1,0 +1,645 @@
+generated_by: 终清四号一次性脚本（非永久资产，净零；复算命令见同册 99_delivery.md §八）
+source_ledger_sha256:
+  stale_holdouts.json: 97ad5213503fc4001a04b0c8bddce25b2a4e6956ff48c22497345b8d2cb81731
+  reconcile.jsonl: 48fe04ec3b2b370273c806de6b39e16bcc8dada6b778cef4d8751439940c9d23
+caliber: 40 条 entries 展开=70 路径串；反斜杠归一；glob 行单列为 GLOB_VIRTUAL 不当件判
+counts:
+  entries: 40
+  path_strings: 70
+  head_check:
+    NOT_IN_HEAD: 50
+    IN_HEAD: 15
+    LANDED_ELSEWHERE: 5
+  claimed_align_but_not_in_head: 22
+finding: 台账 disposition 以 stale_align_* 自称'已对齐并落地'的路径串里，有 22 条按 basename 在 dev HEAD 全查无（既非原名也非改名）——台账判据与 HEAD 实测不符，属'账面已落实测未达'族。F-1b 属主须逐件认：漏投／改名未记／还是判据口径不同，三种成因处置不同。
+items:
+- path: tests/trade/trading/test_health_monitor_probe.py
+  family: trade-01
+  disposition: stale_holdout
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261007-st-cure-p01-20261006-0083
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/legacy_zephyr/zephyr/factor/technical_indicator_factors/test_technical_indicator_factors.py
+  family: legacy_zephyr-01
+  disposition: stale_holdout
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261007-st-cure-p12a-20261006-0051
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/meta/pipeline/test_pipeline_orchestrator_root.py
+  family: meta-01
+  disposition: stale_align_module_skip
+  head_check: IN_HEAD
+  evidence_path: tests/meta/pipeline/test_pipeline_orchestrator_root.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p05-20261006-0042
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/data/data/backup/test_restore_drill.py
+  family: data-01
+  disposition: stale_holdout_red_registered
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261007-st-cure-p10-20261006-0044
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/meta/scripts/test_run_post_settlement.py
+  family: meta-01
+  disposition: stale_holdout_gate_protected
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态④留（死信二期在办勿碰）
+  source_qid: q-20261007-st-cure-p05-20261006-0042
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/data/data/db/test_db_integration.py
+  family: data-02
+  disposition: true_positive_red_held_for_depgraph_lane
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②转工单（真阳性哨兵，禁当过时件批删）
+  source_qid: q-20261007-st-cure-p10-20261006-0044
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/backtest/test_eval_tech_indicator_ic.py
+  family: research-01
+  disposition: stale_holdout_src_never_existed
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261006-st-cure-p12a-20261006-0020
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/backtest/test_lane_b_ledger_reconcile.py
+  family: research-01
+  disposition: stale_holdout_src_never_existed
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261006-st-cure-p01-20261006-0021
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/pf_alloc/test_allocation_team_wiring.py
+  family: research-01
+  disposition: stale_holdout_src_api_drift
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261007-st-cure-p01-20261006-0056
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/backtest/test_f06_e5_synergy_wiring.py
+  family: research-01
+  disposition: stale_holdout_src_api_drift
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261007-st-cure-p01-20261006-0083
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/backtest/test_n_trial_ledger.py
+  family: research-01
+  disposition: stale_holdout_src_api_drift
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261006-st-cure-p01-20261006-0027
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/backtest/test_reexam_cpcv_harness.py
+  family: research-01
+  disposition: stale_holdout_src_api_drift
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261007-st-cure-p01-20261006-0086
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/research/pf_alloc/test_pf_alloc_event_wiring.py
+  family: research-05
+  disposition: env_skip_heavy
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②转工单（长窗运行预算）
+  source_qid: q-20261007-st-cure-p09-20261006-0038
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/research/ml_experiment/test_adversarial_ml.py
+  family: research-04
+  disposition: stale_align_import_migrated
+  head_check: IN_HEAD
+  evidence_path: tests/research/research/ml_experiment/test_adversarial_ml.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p12b-20261006-0039
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/research/signal_ashare/test_environment_switch.py
+  family: research-08
+  disposition: stale_align_anchor_plus1
+  head_check: IN_HEAD
+  evidence_path: tests/research/research/signal_ashare/test_environment_switch.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p05-20261006-0038
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/infra/infrastructure/mcp/test_mcp_health_check_recovery.py
+  family: infra-02
+  disposition: true_positive_red_held_for_src_lane
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②转工单（真阳性哨兵，禁当过时件批删）
+  source_qid: q-20261007-st-cure-p05b-20261006-0015
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/infra/infrastructure/test_schema_migrations.py
+  family: infra-04
+  disposition: stale_holdout_src_gone
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261006-st-cure-p01-20261006-0006
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/ai/ai/intelligence/test_gguf_model_manager.py
+  family: ai-01
+  disposition: stale_align_anchor_plus1
+  head_check: IN_HEAD
+  evidence_path: tests/ai/ai/intelligence/test_gguf_model_manager.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p05b-20261006-0024
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/ai/ai/** → tests/ai/** (64 files, ai-02/03)
+  family: ai-02/03
+  disposition: stale_align_face_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 查无
+  terminal: 待认（见 head_check）
+  source_qid: ''
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/budget/test_budget_forecaster.py
+  family: gov-04
+  disposition: stale_holdout_retired_surface
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261007-st-cure-p10-20261006-0045
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/research/backtest/test_promotion_combo_gate.py
+  family: research-02/03/04/06+gov-06
+  disposition: stale_align_blueprint_header
+  head_check: IN_HEAD
+  evidence_path: tests/research/research/backtest/test_promotion_combo_gate.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p09-20261006-0036
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/research/backtest/test_strategy_lifecycle_advisor.py
+  family: research-02/03/04/06+gov-06
+  disposition: stale_align_blueprint_header
+  head_check: IN_HEAD
+  evidence_path: tests/research/research/backtest/test_strategy_lifecycle_advisor.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p09-20261006-0036
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/research/factor/test_distribution_feature_engineer.py
+  family: research-02/03/04/06+gov-06
+  disposition: stale_align_blueprint_header
+  head_check: IN_HEAD
+  evidence_path: tests/research/research/factor/test_distribution_feature_engineer.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p09-20261006-0037
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/research/ml_train/test_density_quantile_trainer.py
+  family: research-02/03/04/06+gov-06
+  disposition: stale_align_blueprint_header
+  head_check: IN_HEAD
+  evidence_path: tests/research/research/ml_train/test_density_quantile_trainer.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p09-20261006-0038
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/research/research/signal_ashare/ml_forecast/test_causal_factor_validator.py
+  family: research-02/03/04/06+gov-06
+  disposition: stale_align_blueprint_header
+  head_check: IN_HEAD
+  evidence_path: tests/research/research/signal_ashare/ml_forecast/test_causal_factor_validator.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p09-20261006-0039
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/f_lifecycle/test_f1_event_trigger.py
+  family: research-02/03/04/06+gov-06
+  disposition: stale_align_blueprint_header
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05b-20261006-0023
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/ai/ai_layer/redline/test_annual_review.py
+  family: ai-03
+  disposition: stale_holdout_gate_protected
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态④留（死信二期在办勿碰）
+  source_qid: q-20261007-st-cure-p01-20261006-0072
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/ai/ai_layer/redline/test_negative_list.py
+  family: ai-03
+  disposition: stale_holdout_gate_protected
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态④留（死信二期在办勿碰）
+  source_qid: q-20261007-st-cure-p01-20261006-0072
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/ai/ai_layer/redline/test_session_env_guard.py
+  family: ai-03
+  disposition: stale_holdout_gate_protected
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态④留（死信二期在办勿碰）
+  source_qid: q-20261007-st-cure-p01-20261006-0072
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/ai/ai_layer/redline/test_sev_router.py
+  family: ai-03
+  disposition: stale_holdout_gate_protected
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态④留（死信二期在办勿碰）
+  source_qid: q-20261007-st-cure-p01-20261006-0072
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/git/test_w5_blob_cache.py
+  family: gov-10
+  disposition: stale_holdout_src_never_existed
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261007-st-bt-fast-w5-20261006-0002
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/access_control/test_session_ensure_alive.py
+  family: gov-11
+  disposition: stale_holdout_src_api_removed
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261007-st-cure-p01-20261006-0075
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/audit/test_cycle_dependency_audit_isolation.py
+  family: gov-12
+  disposition: stale_align_canary_symbol
+  head_check: IN_HEAD
+  evidence_path: tests/gov/governance/audit/test_cycle_dependency_audit_isolation.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p05-20261006-0040
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/commit_gates/test_data_supply_chain_map_gate.py
+  family: gov-16
+  disposition: stale_align_gate_moved_map_family
+  head_check: LANDED_ELSEWHERE
+  evidence_path: tests/gov/governance/commit_gates/map_family/test_data_supply_chain_map_gate.py
+  state_now: HEAD已入库
+  terminal: 态①已落地（改名/换目录，新路径见 evidence）
+  source_qid: q-20261007-st-cure-p01-20261006-0102
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/commit_gates/test_dev_delivery_map_gate.py
+  family: gov-16
+  disposition: stale_align_gate_moved_map_family
+  head_check: LANDED_ELSEWHERE
+  evidence_path: tests/gov/governance/commit_gates/map_family/test_dev_delivery_map_gate.py
+  state_now: HEAD已入库
+  terminal: 态①已落地（改名/换目录，新路径见 evidence）
+  source_qid: q-20261007-st-cure-p01-20261006-0121
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/commit_gates/map_family/test_construction_workflow_map_gate.py
+  family: gov-16/18
+  disposition: stale_align_capacity_move
+  head_check: LANDED_ELSEWHERE
+  evidence_path: tests/gov/governance/commit_gates/test_construction_workflow_map_gate.py
+  state_now: HEAD已入库
+  terminal: 态①已落地（改名/换目录，新路径见 evidence）
+  source_qid: ''
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/commit_gates/map_family/test_data_supply_chain_map_gate.py
+  family: gov-16/18
+  disposition: stale_align_capacity_move
+  head_check: IN_HEAD
+  evidence_path: tests/gov/governance/commit_gates/map_family/test_data_supply_chain_map_gate.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p05-20261006-0040
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/commit_gates/map_family/test_dev_delivery_map_gate.py
+  family: gov-16/18
+  disposition: stale_align_capacity_move
+  head_check: IN_HEAD
+  evidence_path: tests/gov/governance/commit_gates/map_family/test_dev_delivery_map_gate.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p05-20261006-0040
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/commit_gates/map_family/test_frontend_map_gate.py
+  family: gov-16/18
+  disposition: stale_align_capacity_move
+  head_check: LANDED_ELSEWHERE
+  evidence_path: tests/gov/governance/commit_gates/test_frontend_map_gate.py
+  state_now: HEAD已入库
+  terminal: 态①已落地（改名/换目录，新路径见 evidence）
+  source_qid: ''
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/commit_gates/map_family/test_strategy_card_lifecycle_map_gate.py
+  family: gov-16/18
+  disposition: stale_align_capacity_move
+  head_check: LANDED_ELSEWHERE
+  evidence_path: tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py
+  state_now: HEAD已入库
+  terminal: 态①已落地（改名/换目录，新路径见 evidence）
+  source_qid: ''
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/commit_gates/map_family/test_strategy_factory_map_gate.py
+  family: gov-16/18
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 查无
+  terminal: 待认（见 head_check）
+  source_qid: ''
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/commit_gates/map_family/test_trading_day_cycle_map_gate.py
+  family: gov-16/18
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0040
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/d3_metadata/test_check_pure_assertion.py
+  family: gov-19
+  disposition: stale_align_anchor_plus1_ospath
+  head_check: IN_HEAD
+  evidence_path: tests/gov/governance/d3_metadata/test_check_pure_assertion.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p01-20261006-0107
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/observability/test_app_panel_unit.py
+  family: gov-22
+  disposition: stale_align_tab_count
+  head_check: IN_HEAD
+  evidence_path: tests/gov/governance/observability/test_app_panel_unit.py
+  state_now: HEAD已入库
+  terminal: 态①已落地可销账
+  source_qid: q-20261007-st-cure-p01-20261006-0107
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/integration/test_all_scripts.py
+  family: gov-21
+  disposition: env_skip_heavy
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②转工单（长窗运行预算）
+  source_qid: q-20261007-st-cure-p01-20261006-0107
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/registry_projection/test_fidelity_gate.py
+  family: gov-23
+  disposition: true_positive_red_held_for_registry_lane
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②转工单（真阳性哨兵，禁当过时件批删）
+  source_qid: q-20261006-st-cure-p12b-20261006-0022
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/rule_bridge/test_commit_pipeline_redblue.py
+  family: gov-24
+  disposition: env_skip_git_state
+  head_check: IN_HEAD
+  evidence_path: tests/gov/governance/rule_bridge/test_commit_pipeline_redblue.py
+  state_now: HEAD已入库
+  terminal: 态②转工单（长窗运行预算）
+  source_qid: q-20261007-st-cure-p05-20261006-0035
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/drift/test_gct_integration.py
+  family: gov-20/gov-26
+  disposition: stale_align_mixed
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p01-20261006-0107
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/shared/test_post_sync_validation.py
+  family: gov-20/gov-26
+  disposition: stale_align_mixed
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_gate_replay_selfproof.py
+  family: gov-28
+  disposition: stale_holdout_src_never_existed
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261007-st-cure-p01-20261006-0122
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_backfill_registry_consumption.py
+  family: gov-27
+  disposition: stale_holdout_src_never_existed
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261006-st-cure-p12a-20261006-0020
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_chart_wiring_inventory.py
+  family: gov-27
+  disposition: stale_align_anchor_plus1
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261006-st-cure-p12a-20261006-0014
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_chart_wiring_inventory.py
+  family: gov-27
+  disposition: stale_holdout_src_never_existed
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②待属主认
+  source_qid: q-20261006-st-cure-p12a-20261006-0014
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_apply_dataflowgraph_smoke.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_apply_decisiongraph.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_apply_decisiongraph_smoke.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_apply_depgraph_smoke.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_apply_depgraph_transition_sync.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_architecture_health_dashboard_metrics.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_architecture_health_dashboard_metrics_p2.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_audit_fix_lanes_rulers.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_audit_return_contract_usage.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_audit_worktree_ops_telemetry.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_blueprint_frontmatter_reconciler.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_chief_lease.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_commit_chain_campaign_20260922.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_commit_door_provenance.py
+  family: gov-flat
+  disposition: stale_align_capacity_move
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 待认（见 head_check）
+  source_qid: q-20261006-st-cure-p01-20261006-0019
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/audit/test_audit_worktree_ops_telemetry.py
+  family: gov-27
+  disposition: stale_align_absence_canary
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 查无
+  terminal: 待认（见 head_check）
+  source_qid: ''
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_registry_alignment_layer2.py
+  family: gov-30
+  disposition: true_positive_red_held_for_registry_lane
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②转工单（真阳性哨兵，禁当过时件批删）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
+- path: tests/gov/governance/test_trd_a20_a21_dual_gates.py
+  family: gov-30
+  disposition: true_positive_red_held_for_registry_lane
+  head_check: NOT_IN_HEAD
+  evidence_path: 按 basename 全 HEAD 查无
+  state_now: 队列blob
+  terminal: 态②转工单（真阳性哨兵，禁当过时件批删）
+  source_qid: q-20261007-st-cure-p05-20261006-0041
+  rollback: 三态取回即还原；判死走 E:\_tomb_quarantine 30 天复活窗
