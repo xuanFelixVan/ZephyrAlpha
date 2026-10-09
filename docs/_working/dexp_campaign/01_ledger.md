@@ -188,3 +188,68 @@ w3  清前 348 行  本班 2 条(近24h 2)   清后 346  残留 0
    其余原以为红的引用（`engine_probe_failures`/`get_table_engine_strict`/census 三例）经 HEAD 实测已具备——
    chiefc 那笔吸收式提交把我 ch_writer 侧改动带进 dev 时连带治愈了它们。测法：
    对每个已落测试文件抽 `alias.symbol` 引用，逐个回查 dev 源文件是否定义该符号（不做整树跑测）。
+
+## 12. 二次收工账（01:55，放行令 00:30 执行完＋收尾清单）
+
+### 12.1 投递账（落一袋验一袋，qid→commit 逐笔实测）
+
+| 序 | 袋 | 内容 | 态 | 落地 commit | 验真判据（进程外实测） |
+|----|----|------|-----|------------|----------------------|
+| 1 | 0045 | P2 止血两文件＋8 例测试 | done | `705d594828` | dev ps1 无抹 state 生产行；dev runner 含 `shard_already_done`；测试件在 dev |
+| 2 | 0047 | creation_token＋ch_reader 响亮化 | done | 随 `b20aefabe5` 前置一笔 | dev CAP 册 token 行命中（10218 行）；dev ch_reader `_note_unknown_engine` 三处命中 |
+| 3 | 0049 | 翻译条目＋01/02/00 折入＋reconciler 测试 | done | `b20aefabe5` | §10/§11 在 dev；翻译册键集合差＝本会话 1 条 |
+| 4 | 0051 | 响亮化契约测试四例 | done | `21f64f3574` | dev 测试含 `TestLegacyCountLoudWarning` |
+| 5 | 0052 | 指标读侧 argMax 第三条路＋重复尺＋ALGO_FLOW 出仓件 | 在队 pending | — | 盘面预跑 52 passed（13+31+8） |
+| 6 | 0055 | P2 补录（ps1 口径注释＋runner 头注/测试指针） | 在队 pending | — | 改动行全为注释或 docstring（机械核） |
+| 7 | 0056 | CASEBOOK-010 实体台账（首录＋第二录） | 在队 pending | — | 册号与 creation_token 均已在 dev（他袋先行落） |
+
+### 12.2 belt 主区对平（放行令第 4 步的处置与理由）
+
+两个 P2 文件**未执行** `git restore --source=HEAD --staged --worktree`：盘面此刻还压着 0055 在飞的补录
+注释，restore＝丢本会话未落地成果。改用等价且更强的逐行机械核对平：
+
+- ps1 盘面 vs dev 差异全部在注释行（口径纠正段 6 行替 2 行），非 ASCII 字节实测 0，PSParser tokenize 通过；
+- runner 盘面 vs dev 差异过滤后非注释行仅 4 行，且全部位于模块 docstring 内 ⇒ 功能码零漂移；
+- 盘面含 `def shard_already_done`＝True、dev 同含当日戳判据＝True ⇒ 夜跑读到的就是新码，
+  "袋落了但夜跑仍用旧码"这一失效形态不成立。
+- 0055 落地后盘面将 ==dev，日班免动作（备份留 `.runtime/tmp/dexp/post_p2/`）。
+
+### 12.3 三清单
+
+- **已交付（以 dev 实测为准，非自报）**：③-a/③-b/③-c 三处裸 SQL 路径改最新入库语义、⑤-b 响亮告警＋
+  `engine_probe_failures` 计数＋四例契约测试、⑤-c 普查尺与读数表（349/49/248/21/31）、P2 止血（判据＋测试）、
+  TI 重复行定量尺与 §9 面积、dwm 两天四遍归因 §10、止盈细案 §11（P1 阈值 1e-9 已批／P5 排窗已批）、
+  CASEBOOK-010 第二录内容（0056 落地面待验）。
+- **未交付／移交**：0052/0055/0056 三袋在队（若死按 dead_reason 对症，勿盲目 requeue）；
+  P1/P3/P4/P5 施工归数据车道（序 P2→P1→P3/P4→P5；P5 排窗 23:30 后逐月，先 P1 后 P5 是铁律，
+  首月执行前一行动作知情 Owner）；E-1 早 06:00 实验按预写判读表走＝零人为动作；
+  二号总队 W4 前置②已由 ③ 三件解锁，但 `list_chat_sessions` 查无活跃会话可投⇒须 Owner 转达；
+  `.runtime/tmp/dexp/`（约 146 件/5.4MB）为本会话自造暂存，三袋全落即清。
+- **待 Owner／总统筹**：①全量"未知即抛"翻转（普查尺已落地，翻案判据＝普查面清零）②P5 排窗确认③下两条
+  账面断裂的归口。
+
+### 12.4 本班新发现的账面断裂两条（只读实测，未代修）
+
+1. **RULING 投影册落后账本三条**：`REG-RULING-001` 在 PG `registry_ledger.registry_entry` 有 320 个裁定号，
+   投影册 `docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml` 只有 317 个，
+   键集合差＝在账本而投影缺 **499／500／501** 三号，反向（投影有而账本无）0 条。
+   后果＝引用这三号的文档在"以投影册为尺"的门禁上是悬空引用；实测他道的 casebook 册条目引用 499 号且已落地，
+   说明该门当前只 WARN 或改读 PG，故本班 0056 照投（内容引用属实，非伪造署名）。
+   修法正道＝`python scripts/governance/registry_projection/registry_projection_generator.py --render
+   --registry-id REG-RULING-001 ...` 重打投影，禁手改 GENERATED 册；归口＝裁定号 502 战役（belt/PG render 侧）。
+2. **CASEBOOK-010 账实差**：册面 `entry_scale: "1 案"`，而实体台账落地面为 2 案（case_id 0／1）。
+   归口＝册主车道，本班不改他人总册。
+
+### 12.5 复核命令（整段可复制）
+
+```bash
+git show dev:scripts/data/backfill_night.ps1 | grep -c "Remove-Item.*dwm_shard_state"    # 期望 0
+git show dev:scripts/data/tilib_dwm_shard_runner.py | grep -c "def shard_already_done"   # 期望 1
+git show dev:src/zephyr/data/ch_reader.py | grep -c "_note_unknown_engine"               # 期望 3
+git show dev:docs/_working/dexp_campaign/99_delivery.md | grep -c "自我更正"             # 期望 2（放行令指定收尾验）
+python scripts/commit_queue.py status --session st-dexp-20261009                         # 三袋终态
+python -m pytest tests/legacy_zephyr/factor/test_indicator_reader.py \
+  tests/data/data/data/test_ch_reader_strict.py \
+  tests/data/data/data/test_tilib_dwm_shard_state_stamp.py -q                            # 期望 52 passed
+# 投影册落后核验（键集合差一行版）：PG registry_entry 抽 裁定号 集合，与投影册 ruling_id 集合做双向差
+```
