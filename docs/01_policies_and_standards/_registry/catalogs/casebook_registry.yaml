@@ -3,6 +3,8 @@
 # 净零声明：收编五本"路径身份"散落登记状态（堵点本/抢救台账/审查两卷/MEMORY 索引/data-failures 案卷），
 #   为全图族 casebooks 字段提供唯一反查册（同域重复簇→收敛唯一，宪法 §4 内收判据）。
 # 维护纪律：条目增删/改名须随裁定或挂图批走（低频）；计数以盘面为准勿在散文写死；
+# 2026-10-08 裁定#493（Owner 批）：CASEBOOK-006/007/008 作废为 reserved_void 空号，
+#   永不回填，下一新册号从 CASEBOOK-009 顺延（详见册尾 reserved_void 注记段）。
 # 2026-10-08 裁定#492（Owner 批）：CASEBOOK-006/007/008 作废为 reserved_void 空号，
 #   永不回填，下一新册号从 CASEBOOK-009 顺延（详见册尾 reserved_void 注记段）。
 #   治理类库（非业务资产库）不挂 TDM 交叉轴——已登记 tests/trading/test_decision_map.py
@@ -13,7 +15,7 @@ ttl: permanent
 title: "永久病历本登记册（casebook registry，纵向地图家族 casebooks 字段唯一反查册）"
 status: active
 version: "1.0.0"
-date: "2026-10-04"
+date: "2026-10-09"
 owner: ZephyrAlpha-Owner
 governing_sop: docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md
 casebooks:
@@ -69,34 +71,6 @@ casebooks:
       仓外 ZCode 记忆库索引（跨会话教训沉淀）。图11 facts/病历层按 10 主题簇挂载
       （交链相关 98 条）；禁写 machine_facts 机生面（防腐三律 1）。仓外资产=登记指针
       不复制内容（INV-1），仓内会话引用须注明"仓外路径、以记忆库为准"。
-  - casebook_id: CASEBOOK-006
-    name_zh: 已知数据缺口台账（known_data_gaps）
-    physical_path: src/zephyr/data/config/known_data_gaps.yaml
-    form: yaml_ledger
-    domain: D_DATA
-    status: active
-    scope_zh: >
-      supply_sentinel 断供检测 gap_id 绑定台账（长期静默豁免凭据面）。图12 挂载 DSC-14/DSC-16。
-      （2026-10-07 补授：E-12 处方原件随 f2z §六配方遗失，本条按 chief 会话记录重建，
-      挂载落点以图12 语义层现值为准。）
-  - casebook_id: CASEBOOK-007
-    name_zh: 采集打卡账本（integrator_progress task_runs）
-    physical_path: data/integrator_progress.db
-    form: sqlite_table
-    domain: D_DATA
-    status: active
-    scope_zh: >
-      逐任务执行留痕（应跑对打卡分母来源——DSC-20 档期对账与 trigger_facts 机数证据正门）。
-      图12 挂载 DSC-20。（2026-10-07 补授，重建来源同上。）
-  - casebook_id: CASEBOOK-008
-    name_zh: 归档清单（archive_manifest）
-    physical_path: data/archive_manifest.jsonl
-    form: jsonl_ledger
-    domain: D_DATA
-    status: active
-    scope_zh: >
-      冷备归档逐表回执（含 compress_ratio——DSC-10B 可证终点双实锚之一）。图12 挂载
-      DSC-10A/DSC-10B。（2026-10-07 补授，重建来源同上。）
   - casebook_id: CASEBOOK-009
     name_zh: 回测覆盖账本（backtest_coverage_ledger）
     physical_path: docs/_working/fullcirc_closeout_chief/backtest_coverage_ledger.yaml
@@ -109,6 +83,18 @@ casebooks:
       （2026-10-08 裁定：账本形态非图形态）。机生真源=generate_backtest_coverage_ledger.py
       （三真源扫描：H9 对标 182 环节四类/F6R 锚行/考场证据普查），
       消费方=晨报/发车闸/晋级池/图书馆查询。图9 挂载注记预留（禁直写图面）。
+  - casebook_id: CASEBOOK-010
+    name_zh: 资产状态断言事故案卷库（asset assertion cases）
+    physical_path: docs/_working/examcard_campaign/asset_assertion_cases.yaml
+    form: yaml_ledger
+    domain: D_GOV
+    status: active
+    entry_scale: "1 案（case_id=0 起，2026-10-09 开册首录）"
+    scope_zh: >
+      规划/盘点/排产交付物中负/正存在断言失实案（GPU 摊销误报案治本第五件 F5）。
+      纪律面=mining_sop_policy §7.5 + trae_065 v1.1.0 asset_state_assertion 触发面
+      （裁定#499）；检索面=library_sop/offzone_retrieval_boundary_sop.md。
+      case_id 从 0 起（本册正好开册，Owner 施工令 F5 项）。
 
 outside_registry:
   - name_zh: 提交撞墙死因案例册
@@ -117,3 +103,20 @@ outside_registry:
   - name_zh: data/sla/ 源 SLA 台账（已退役）
     identity: 无册号（永久不授）
     note: MOD-DATA-066 source_sla_tracker 2026-10-04 Owner 批退役（功能被 MOD-L00-004 supply_sentinel 族代替），台账停更残件随冷库例行归档，禁挂任何图 casebooks（图12 E-3 处置）。
+
+reserved_void:
+  - casebook_id: CASEBOOK-006
+    reason: 处方遗失作废（E-12 原件随 f2z §六配方遗失；2026-10-07 补授重建被勿造假凑数原则否决）
+    date: "2026-10-08"
+    ruling: "裁定#493"
+    policy: 永不回填，下一新册号从 CASEBOOK-009 顺延
+  - casebook_id: CASEBOOK-007
+    reason: 同 CASEBOOK-006（同一处方链，同批作废）
+    date: "2026-10-08"
+    ruling: "裁定#493"
+    policy: 永不回填，下一新册号从 CASEBOOK-009 顺延
+  - casebook_id: CASEBOOK-008
+    reason: 同 CASEBOOK-006（同一处方链，同批作废）
+    date: "2026-10-08"
+    ruling: "裁定#493"
+    policy: 永不回填，下一新册号从 CASEBOOK-009 顺延
