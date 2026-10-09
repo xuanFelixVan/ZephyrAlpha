@@ -1250,6 +1250,9 @@ def enqueue_item(
                 "base_head": base_head,
                 "message": msg,
                 "files": blob_entries,
+                # 总统筹增补令P1（2026-10-10）：顶层字段序列化——此前只入 meta.depends_on，
+                # 读顶层 item["depends_on"] 的消费方恒 None=依赖序旗标不可信
+                "depends_on": list(depends_on or []),
                 "meta": {
                     # Rx-5：队列优先级（int，缺省 0，越大越先出队；显式落 0=新件自描述，
                     # 读侧 _item_priority get 缺省兼容无键旧件）
@@ -2059,6 +2062,36 @@ def _pick_head(heads: list) -> tuple:
 
     now_ts = datetime.now().astimezone().timestamp()
 
+    # 前置态校验（2026-10-10 总统筹增补令P1：depends_on 序列化进袋后，drain 侧消费
+    # 闭环——前置未 done 的后继袋本轮压到队尾挂起（不拾取），防前置未落地时被撞真门。
+    # satisfied=前置全在 done/；predecessor 落 dead/ 时不放行（死信处方的重排/归档决策
+    # 自然解锁），缺省无 depends_on=恒 satisfied。挂起件由告警行留观测痕。
+    done_ids: set[str] = set()
+    try:
+        done_dir = heads[0].parent.parent / "done"
+        done_ids = {f.stem for f in done_dir.glob("q-*.json")}
+    except OSError:
+        done_ids = set()
+
+    def _deps_unsatisfied(path: Path) -> bool:
+        item_d = _read_item(path)
+        if not item_d:
+            return False
+        deps = item_d.get("depends_on") or (item_d.get("meta") or {}).get("depends_on") or []
+        deps = [d for d in deps if d]
+        if not deps:
+            return False
+        missing = [d for d in deps if d not in done_ids]
+        if missing:
+            logger.warning(
+                "[drain] %s 前置未落地挂起（depends_on 缺 %d：如 %s）——本轮压队尾",
+                path.name,
+                len(missing),
+                missing[:3],
+            )
+            return True
+        return False
+
     def _rank(path: Path) -> tuple:
         """(-priority, lane_key, 到达时刻, qid, path) 排序键；lane_key 0=interactive/1=machine
         （升序即 interactive 在前）；时刻不可解析时退化文件 mtime。"""
@@ -2086,8 +2119,14 @@ def _pick_head(heads: list) -> tuple:
             ts = max(ts, now_ts) + penalty
         return -prio, (1 if lane == "machine" else 0), ts, str(path.name), path
 
-    ranked = [_rank(h) for h in heads[:_HEAD_SCAN_BOUND]]
+    # 前置未满足件压到队尾（增补令P1：dep 序旗标消费闭环——不拾取不撞门，留 pending
+    # 等前置 done；全阻塞时返回 None 本轮结束，下次自举重校）
+    satisfied = [h for h in heads[:_HEAD_SCAN_BOUND] if not _deps_unsatisfied(h)]
+    scan = satisfied if satisfied else []
+    ranked = [_rank(h) for h in scan]
     ordered = sorted(ranked, key=lambda r: (r[0], r[1], r[2], r[3]))
+    if not ordered:
+        return None, "machine"
     machine = [r for r in ranked if r[1] == 1]
     oldest_machine = min(machine, key=lambda r: (r[2], r[3])) if machine else None
     if oldest_machine and (now_ts - oldest_machine[2]) > _MACHINE_LANE_STARVATION_SEC:
