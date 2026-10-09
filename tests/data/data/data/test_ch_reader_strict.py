@@ -317,3 +317,80 @@ class TestEngineProbePoisoning:
         out = ch_reader.inject_final(f"SELECT c FROM {self._T}")
         assert "FINAL" not in out
         assert self._T not in ch_writer.engine_probe_failures
+
+
+class TestLegacyCountLoudWarning:
+    """⑤-b（批复 b+c 第①步）：存量 count()/query_table() 引擎未知时"语义不变、报警必响"。
+
+    与旧行为的**唯一**差别是告警与失败计数——返回值、FINAL 注入决策都不动，
+    存量消费者零迁移（判据类的迁移动作在⑤-c 普查之后逐批做，不在本步大爆炸）。
+    """
+
+    _T = "c9_probe.legacy_contract"
+
+    @pytest.fixture(autouse=True)
+    def _isolate_failures(self):
+        snapshot = dict(ch_writer.engine_probe_failures)
+        yield
+        ch_writer.engine_probe_failures.clear()
+        ch_writer.engine_probe_failures.update(snapshot)
+
+    @classmethod
+    def _guard(cls):
+        if not hasattr(ch_reader, "_note_unknown_engine"):
+            pytest.skip("ch_reader 的⑤-b 响亮化未落地（源袋先行），落地后本组用例自动生效")
+
+    def _probe_fails(self, monkeypatch, reply):
+        seen: list[str] = []
+        monkeypatch.setattr(ch_writer, "get_table_engine", lambda table: "")
+
+        def fake_query(sql, timeout=600):
+            seen.append(sql)
+            return reply
+
+        monkeypatch.setattr(ch_writer, "query", fake_query)
+        return seen
+
+    def test_count_contract_unchanged_but_loud(self, monkeypatch, caplog):
+        self._guard()
+        seen = self._probe_fails(monkeypatch, "42\n")
+        caplog.set_level("WARNING", logger="zephyr.data.ch_reader")
+        assert ch_reader.count(self._T) == 42  # 返回值语义不变
+        assert "FINAL" not in seen[0], "未知引擎却注入 FINAL＝行为被改动"
+        assert any("GATE-P0-ENGINE-PROBE" in r.getMessage() for r in caplog.records), "降级静默＝假绿"
+        assert ch_writer.engine_probe_failures[self._T] == 1
+
+    def test_query_table_contract_unchanged_but_loud(self, monkeypatch, caplog):
+        self._guard()
+        seen = self._probe_fails(monkeypatch, "a\tb\n")
+        caplog.set_level("WARNING", logger="zephyr.data.ch_reader")
+        assert ch_reader.query_table(self._T) == "a\tb\n"
+        assert "FINAL" not in seen[0]
+        assert any(
+            "GATE-P0-ENGINE-PROBE" in r.getMessage() and "query_table()" in r.getMessage() for r in caplog.records
+        )
+        assert ch_writer.engine_probe_failures[self._T] == 1
+
+    def test_failure_count_accumulates_across_calls(self, monkeypatch):
+        self._guard()
+        self._probe_fails(monkeypatch, "42\n")
+        ch_reader.count(self._T)
+        ch_reader.count(self._T)
+        assert ch_writer.engine_probe_failures[self._T] == 2, "失败计数不累计＝可观测面失真"
+
+    def test_known_replacing_engine_injects_final_and_stays_quiet(self, monkeypatch, caplog):
+        """阴性腿：引擎确证 Replacing 时不得报警——否则这道告警会把正常路径也淹掉。"""
+        self._guard()
+        seen: list[str] = []
+        monkeypatch.setattr(ch_writer, "get_table_engine", lambda table: "ReplacingMergeTree")
+
+        def fake_query(sql, timeout=600):
+            seen.append(sql)
+            return "7\n"
+
+        monkeypatch.setattr(ch_writer, "query", fake_query)
+        caplog.set_level("WARNING", logger="zephyr.data.ch_reader")
+        assert ch_reader.count(self._T) == 7
+        assert " FINAL" in seen[0]
+        assert not [r for r in caplog.records if "GATE-P0-ENGINE-PROBE" in r.getMessage()]
+        assert self._T not in ch_writer.engine_probe_failures
