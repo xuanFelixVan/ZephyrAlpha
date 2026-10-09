@@ -721,3 +721,27 @@ P-7 本体（点火/托管分离：`launch_detached_backup`＋`settle_previous_i
 【第二链日检 10-07】PASS·连续性确认（inc=35,593,818,468B≈35.6G=今晨 06:30 备份完成后数分钟同步 ✓✓ 双写及时性修复后连续健康；ratio=0.093 静默期阈值误报同前注；state failed=B2 聚合非 CH 阶段，待审计班）——第 13/14 天（10-05 摘盘证据链）
 【第二链日检 10-08】PASS（inc=45,798,343,028B≈45.8G=今晨 06:48 备份完成后 2 分钟同步 ✓ ratio=0.119——第二链已连续 14 天逐日跟随主链；CH 直查宿主侧空响应走 VM 内网兜底成功）。**14/14 天证据窗口满窗收官**——10-05 摘盘证据链完整成立：F 第一链摘除的技术前提（第二链连续增量完整+每日验证）全部满足，执行候 Owner 点名 CH 服务重启窗。
 【第二链日检 10-09】窗口满窗后首日复核——系统持续健康（最新备份 10-08 06:48 已在第二链同步 45.8G；state 04:24 skipped=cadence 未到正确行为；今日 CH 到期候触发）。**探针退役**：14/14 天证据窗口 10-08 满窗收官，10-05 摘盘技术前提全满足（候 Owner 点名 CH 重启窗执行）；后续监测移交 F:\zephyr_cold\AUDIT_SOP.md 周期审计（日/周/月/季）。
+
+## 二十二、F 盘摘除执行班（st-fwin-exec-20261009，2026-10-09 白班——调查+断写实录）
+
+> Owner 2026-10-09 双令授权：①不等 11-01 演练窗立即调查并直接施工 F 盘摘除；②不设 Owner GO 检查点——连续两遍全量检查一致即自裁放行物理删除。本节=执行留痕，物理删除前仍有自检门（五项×两遍一致）把守。
+
+### 写入链调查结论（T1 实锤，全只读）
+- **F vhdx 唯一写入者=host 侧 `ZephyrAlpha-DailyBackup`（每日 06:00）+ backup_reconciler post-commit 触发 → backup.ps1 CH 段**：SSH 进 VM 发 `BACKUP DATABASE c1_market, c3_fundamental TO Disk('backups',…) ASYNC`（backup.ps1:524-529）→ CH 命名盘 'backups' path=/mnt/chbackup_local/（config.d/backup_disk.xml）=SCSI 0.3 的 F vhdx（VM 内 sdc）→ BACKUP_CREATED 后 rsync 双写 /mnt/chbackup_local/*.zip → /mnt/chbackup2/（SCSI 0.4=G vhdx，VM 内 sdd）（backup.ps1:599，`sudo -n rsync`）。
+- **排除项**：backup_ch_vm.ps1 已 RETIRED 封印（2026-10-04 早退出口，task Disabled）；VM 内 ubuntu/root crontab 全空、systemd timers 全为 Ubuntu 标准维护件——VM 内部无写入者。每日 06:4x F mtime + 07:1x G mtime 与上述链路时序逐一吻合。
+- 挂载实况：sdc=UUID=aef6f504…→/mnt/chbackup_local（**原 fstab 无 nofail=直接摘盘会挂起开机**，已修）；sdd=UUID=8989dc46…→/mnt/chbackup2（原有 nofail）。
+
+### 断写实录（Phase 2，挂载层改道，2026-10-09 07:58 +0800）
+- **方案=最小爆破半径**：不动 backup.ps1（车道 E 当日在改）、不动 CH 配置（零重启、零生产扰动）、不改任何任务定义。VM 内 `umount /mnt/chbackup_local`（sdc 干净卸载）→ `mount --bind /mnt/chbackup2 /mnt/chbackup_local`——CH/backup.ps1/rsync 全部路径语义不变，物理落盘全部改走 sdd(G)。
+- fstab 同步修两处（备份=/etc/fstab.bak.20261009）：chbackup_local 行补 nofail（摘盘后重启安全）+追加 bind 行 `/mnt/chbackup2 /mnt/chbackup_local none bind,nofail 0 0`（重启后改道持久化）；`mount -fav` 验证通过。
+- **07:58:16 两 vhdx mtime 同秒更新归因**=断写操作自身（umount sdc 的 ext4 超级块回写；G 侧为内核同窗 flush），两文件大小零变化（1020360916992/1032239185920 不变）；此后进入冻结观测。
+- **冻结证据基线**：/proc/diskstats sdc written_sectors=213693656（08:03 采样）——sdc 已无挂载点，物理不可写；后续采样 DELTA 恒 0 由门检脚本自动判。
+- **回滚命令（三件，任一独立可逆）**：①`Add-VMHardDiskDrive -VMName zephyr-ch -Path "F:\ch_backup_disk.vhdx" -ControllerType SCSI -ControllerNumber 0 -ControllerLocation 3`（摘盘后重挂）②VM 内 `sudo umount /mnt/chbackup_local && sudo mount UUID=aef6f504-6ab3-41e6-a715-617780810f9a /mnt/chbackup_local`（还原挂载）③`sudo cp /etc/fstab.bak.20261009 /etc/fstab`（还原 fstab）。
+
+### T3 演练 rc=0 首证（清 E-7 欠账，=自检门证据③）+ T2/T4 实测
+- 2026-10-09 08:05 手动跑 restore_drill.py：status=passed，四条件全绿（c1 表集/c2 行方向/c3 内容指纹/c4 pg_restore 分类），**pg_restore_rc=0 零 stderr**（GBK 误判无从发生），errors=None。报告=logs/restore_drill_20261009_080527.json。
+- T2 实测：G vhdx mtime 10-08 07:16（10-08 备份完成后 28 分钟同步）+两链 manifest 逐字节同构（market.zip 298,968,010,737B Oct-3 / inc.zip 45,798,343,028B 10-08，两盘 stat 全等）——第二链 14/14 满窗收官后持续健康。
+- T4 实测：今日 06:00 DailyBackup 三连 lock_held skip（05:27 持锁 run=纯 host 镜像/vault 段 2h20m、07:48 结束未触 CH）；reaper live；lane C 链路绿。
+
+### 后续（当晚执行，结果以后续记录为准）
+自检门脚本=.runtime/tmp/fwin_gate_check.sh（五项全量取现值，两遍≥30min 一致才放行）→ 停窗（21:30 后，避开 22:30 lane_g sweep 与 :17/:47 news tick）→ Stop-VM → Remove-VMHardDiskDrive(SCSI 0.3) → Start-VM 验证链 → vhdx 改名隔离 → 删除+回收实测 → 三处口径+裁定入册。
