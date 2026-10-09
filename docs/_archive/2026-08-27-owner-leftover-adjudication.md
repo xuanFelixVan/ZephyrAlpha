@@ -92,7 +92,7 @@ date: 2026-08-27
 
 ### 裁定结果：**Owner 操作项 + 工程兜底两件**
 
-1. **Owner 执行（唯一解）**：管理员 shell 跑 `winmgmt /verifyrepository` 诊断 → `Restart-Service Winmgmt` → 复跑 tests/infrastructure/test_mcp_full_lifecycle_e2e.py 验证 5 条转绿。
+1. **Owner 执行（唯一解）**：管理员 shell 跑 `winmgmt /verifyrepository` 诊断 → `Restart-Service Winmgmt` → 复跑 tests/infra/infrastructure/mcp/test_mcp_full_lifecycle_e2e.py 验证 5 条转绿。
 2. **工程兜底（AI 可做）**：boot 链加 WMI 健康预检（失败时给出「WMI 服务异常，请重启 Winmgmt」的明确降级文案而非裸 RuntimeError 堆栈）——auto_runtime_core._ensure_ollama_available 已部分具备，补齐诊断输出。
 
 ---

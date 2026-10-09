@@ -224,7 +224,7 @@ Panel 布局 (_layout) ──[Bokeh WebSocket]──▶ 浏览器卡片
 | 2 | 组件注册 | `components/__init__.py` 追加 | #1 |
 | 3 | Tab 接线 + DI | `app_panel.py` 四处改动 | #1 |
 | 4 | 周期回调刷新 | 同 #3（builder 内） | #3 |
-| 5 | 单测 | `tests/frontend/dashboard/components/test_qmt_bridge_health.py` | #1 |
+| 5 | 单测 | `tests/infra/frontend/test_qmt_bridge_health.py` | #1 |
 | 6 | 手工验收 | 起 panel serve 肉眼验证三色卡片+3秒刷新 | #3 |
 
 ## 10. 修订记录

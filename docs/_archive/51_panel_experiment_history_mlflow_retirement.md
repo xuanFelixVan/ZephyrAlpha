@@ -150,7 +150,7 @@ ttl: permanent
 - `build_tabs` 的 `tabs_spec`（L300-311）在"回测结果"后插入 `("实验历史", self._tab_experiment_history)`。
 - 文件头 docstring "10 个 Tab"→"11 个 Tab"。
 
-#### B4. 新建 `tests/frontend/dashboard/components/test_experiment_history.py`（路径按现有测试布局，执行时确认目录）
+#### B4. 新建 `tests/research/research/experiment_tracking/test_experiment_history.py`（路径按现有测试布局，执行时确认目录）
 - `fetch_experiment_history`：用 `FallbackBackend` 写 2 个 mock C1 run 到 tmp_path → 断言列出 2 条。
 - `fetch_c1_comparison`：写 1 个含 nav CSV + verdict metrics 的 run → 断言解析出双 nav 曲线 + 4 个 verdict 行。
 - `render_experiment_history`（pn=None）：返回 dict payload，断言含 runs 列表。
@@ -196,7 +196,7 @@ ttl: permanent
 
 ## 五、Verification（验证步骤）
 
-1. **单测**：`pytest tests/experiment_tracking/ tests/frontend/dashboard/components/test_experiment_history.py -v` 全绿。⚠️ v1.2.0 补充断言：① P1-4 节流——"快速连选 3 个 run → 仅触发 1 次回调"；② P1-7 CSV 鲁棒性——"nav CSV 损坏/缺 `nav` 列 → `degraded_reason='NAV CSV 解析失败'` + Alert 显示"。
+1. **单测**：`pytest tests/experiment_tracking/ tests/research/research/experiment_tracking/test_experiment_history.py -v` 全绿。⚠️ v1.2.0 补充断言：① P1-4 节流——"快速连选 3 个 run → 仅触发 1 次回调"；② P1-7 CSV 鲁棒性——"nav CSV 损坏/缺 `nav` 列 → `degraded_reason='NAV CSV 解析失败'` + Alert 显示"。
 2. **mlflow 残留检查**：`rg "import mlflow|_MLflowBackend" src/zephyr/` 无命中（仅 docstring 历史提及可接受，执行时清理为"tracking run"措辞）。
 3. **端到端**：跑 C1 mock 生成 2 个 fallback run → `python -c "from zephyr.experiment_tracking.query import list_runs; print(list_runs('c1-validation'))"` 返回 2 条。
 4. **Panel 可视化**：`panel serve src/zephyr/frontend/dashboard/app_panel.py --port 5006` → 浏览器「实验历史」Tab 列出 2 个 C1 run → 选中 → 见双净值曲线叠加 + 四项 verdict 表 + 指标 diff + summary 折叠。
@@ -380,7 +380,7 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 **补法**（补充 §四.4 决策）：
 - 退役触发条件（满足即删 `_render_nav_png` + `test_with_portfolios_writes_png`）：
   1. Panel 双曲线图（P0-1 归一化 + P0-2 对齐）上线
-  2. `pytest tests/frontend/dashboard/components/test_experiment_history.py` 全绿
+  2. `pytest tests/research/research/experiment_tracking/test_experiment_history.py` 全绿
   3. 用户确认"Panel 看图够用，不再需要 PNG"
 - 登记到 `architecture_issue_registry.yaml` 的 `#ARCH-OBS-EXP-TRACK-001` 条目，记为"PNG 退役 pending"。
 

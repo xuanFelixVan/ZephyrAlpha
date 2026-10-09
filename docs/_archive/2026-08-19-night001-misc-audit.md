@@ -74,16 +74,16 @@ commit a539c1fcb6（2026-08-16 merge ai/AI-FIX-001 → dev）自述治理范围�
 前 20 条缺口样本（unique_key = module_path）：
 
 1. src/zephyr/infrastructure/asset_inventory/telemetry.py
-2. tests/feedback/test_teacher_transfer.py
+2. tests/gov/feedback/learning_evolution/test_teacher_transfer.py
 3. src/zephyr/shared/infra/process_pool.py
-4. tests/feedback/test_training_data_gov.py
+4. tests/gov/feedback/learning_evolution/test_training_data_gov.py
 5. tests/feedback/test_cognitive_load.py
 6. scripts/governance/d7_code/detect_silent_degradation.py
 7. schemas/categories/market_hog_spot_index.py
 8. scripts/governance/meta/pre_op_check.py
-9. tests/audit/test_value_added_baseline.py
+9. tests/gov/audit/drift_integrity/test_value_added_baseline.py
 10. tests/governance/orchestrator/test_objective_tracker.py
-11. tests/test_tick_replay_data_handler.py
+11. tests/research/research/backtest/test_tick_replay_data_handler.py
 12. tests/asset_inventory/test_classifier_asset_inventory.py
 13. src/zephyr/infrastructure/a2a_protocol/layer2_communication/a2a_state.py
 14. tests/trading/test_finalizer.py

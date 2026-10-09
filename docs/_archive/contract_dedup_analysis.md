@@ -260,7 +260,7 @@ from zephyr.trading.trading_contracts.{sub}.{name} import *  # noqa: F401,F403
 | 2 | shared/contracts 22个shim目标路径已修正 | `grep "zephyr.execution.trading" src/zephyr/shared/contracts/` 应返回空 |
 | 3 | 所有import仍可正常解析 | `python -c "import zephyr.trading.trading_contracts"` exit 0 |
 | 4 | governance.trading_contracts import仍可解析 | `python -c "from zephyr.governance.trading_contracts.market import market_data"` exit 0 |
-| 5 | 无功能回归 | `python -m pytest tests/test_trading_contracts.py -q` exit 0 |
+| 5 | 无功能回归 | `python -m pytest tests/trade/trading/integration/test_trading_contracts.py -q` exit 0 |
 
 ## 11. 注意事项
 
