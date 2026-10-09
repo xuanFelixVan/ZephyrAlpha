@@ -1,0 +1,49 @@
+# ALGO_FLOW 外部真源——portfolio_netting（_domain_pf_alloc 域，真源 src/zephyr/pf_alloc/core/portfolio_netting.py）
+# 2026-10-09 D-0/C-9 落地：P2-1 口径=docstring 单行 external 锚+机器块外部真源；
+# 算法公共面变化时同步更新本块（extractor 经 external 锚加载走同一 parse_algo_flow 管线）。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.pf_alloc.core.portfolio_netting
+source_of_truth: src/zephyr/pf_alloc/core/portfolio_netting.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: strategies dict
+    #   fields: 策略名→权重面 DataFrame（index=交易日, columns=标的, 值=带符号目标权重）
+    # - id: I2
+    #   name: budget dict（split_capital 专属）
+    #   fields: 策略名→资金比例（>=0 有限值；键集合与面策略集合全等）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: fail-closed 校验
+    #   name_en: validate
+    #   intro: 面非空/索引列唯一且无 NaN/策略名非空；budget 非空非负有限无未知策略名无漏供——违者 ValueError 禁静默修正
+    #   inputs: I1 I2
+    #   outputs: 合法权重面
+    # - id: A2
+    #   name_zh: 预算切分
+    #   name_en: split_capital
+    #   intro: 逐列乘各自 budget[s]（Series 对齐 MultiIndex 整列广播，无逐行循环）——sleeve 账本独立互不挪用
+    #   inputs: A1
+    #   outputs: 缩放后组合面
+    # - id: A3
+    #   name_zh: 诚实轧平
+    #   name_en: honest_net
+    #   intro: concat(keys=策略名)→groupby(symbol) sum/count/size——count==成员数保留代数和否则 NaN（缺供不掩盖不 fillna）
+    #   inputs: A1 A2
+    #   outputs: 净面
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 组合净权重面
+    #   name_en: net_weight_face
+    #   intro: index=日期并集, columns=标的字典序, 符号保留（正=净多/负=净空/零=对冲）；同票反向等量→净零
+    #   downstream: L-4 范围③④（调权全链/组合聚合层）；MOD-PA-003 下游可选
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A1 --> A3
+    # A3 --> O1
+    # [/ALGO_FLOW]
