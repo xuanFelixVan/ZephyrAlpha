@@ -930,11 +930,15 @@ def _log_allow_overlap_usage(project_root: object, session_id: str, files: list[
                 continue
         audit_dir = root / ".runtime" / "gate_audit"
         audit_dir.mkdir(parents=True, exist_ok=True)
+        now_utc = datetime.now(timezone.utc)
         record = {
-            "ts": datetime.now(timezone.utc).isoformat(),
+            "ts": now_utc.isoformat(),
             "session": session_id,
             "files": len(files),
             "hot_files": sorted(hot),
+            # 他伤豁免标记（TRAE-079 增补令）：记账时按白名单判定写入，计数时跳过
+            # ——零迁移零新门；白名单外恒为 False（纯自伤照常计数熔断）。
+            "eviction_excused": _judge_eviction_excuse(now_utc, hot),
         }
         with (audit_dir / "allow_overlap_usage.jsonl").open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -948,13 +952,69 @@ def _log_allow_overlap_usage(project_root: object, session_id: str, files: list[
 _HOT_OVERLAP_WINDOW_SECONDS = 86400  # 24h 滚动窗
 _HOT_OVERLAP_BLOCK_THRESHOLD = 5  # 窗内 ≥5 次热文件 overlap → 后续阻断
 
+# ── TRAE-079 他伤豁免（总统筹第四号增补令，2026-10-09）────────────────────────
+# 病情：熔断计数不区分自伤/他伤。热册"外来整档蒸发战"（A-12 病灶）期间，受害会话被迫
+# 带 allow_overlap 重试，配额被同一根因烧光——实证：①st-libfront-20261009 七连投死链
+# （dead/ q-0001~0007：0001 死因=CREATE-GUARD 读盘被抹、0007 死因=本熔断，会话是受害者
+# 不是滥用者）；②st-chiefc-20261009 因 capability 册被他道陈旧快照抹条目被迫重试，
+# C-4/C-5 两袋（dead/ q-0120/0121，died_at 14:06/14:10）死于同一熔断。
+# 登记面（写死白名单，防无限扩大）——"已登记外来蒸发事件"事件源清单：
+#   1) docs/_working/deadcure_campaign/08_hot_registry_eviction_evidence.md 台账
+#      （§一：06:29 CREATE-GUARD 死袋 + 06:33-06:47 盘面读数 20→0→5→0→5 整档回退序列）
+#   2) commit c3d37dee53（2026-10-09 09:41 +0800）：capability 册第三次被陈旧快照压回
+#      旧基座、12 条已落地 token 从盘面消失的佐证 commit
+#   3) commit 45a76ba1a7（2026-10-09 13:09 +0800）：REQUEUE 留痕——0083 死因=registry
+#      被陈旧快照再抹（HEAD 有 token 而盘面 0）、自 HEAD 回灌后重排
+# 判据：usage 记录时刻落在事件窗内 且 hot_files 命中事件热册 → 他伤（eviction_excused，
+# 计数豁免）；白名单外=纯自伤，照常计数熔断。窗口收口后不自动续期——新蒸发事件须在
+# 本常量另立条目并附同等证据（台账/commit 佐证），禁止无证据扩面。
+_EVICTION_EXCUSE_EVENTS: tuple[dict[str, str], ...] = (
+    {
+        "event_id": "cap_canonical_registry_stale_snapshot_eviction_20261009",
+        "hot_path_substring": "capability_canonical_file_registry.yaml",
+        "window_start": "2026-10-09T04:00:00+08:00",  # 台账首发作 04:35（留缓冲）
+        "window_end": "2026-10-09T14:00:00+08:00",  # 45a76ba1a7 REQUEUE 13:09 后收口
+    },
+)
+
+
+def _judge_eviction_excuse(ts: object, hot_files: object) -> bool:
+    """判定一次热文件 allow_overlap 使用是否"他伤"（外来整档蒸发所致，白名单判据）。
+
+    他伤=使用时刻落在白名单事件窗内且热文件命中事件热册——受害会话的重试不计入熔断；
+    纯自伤（白名单外）返回 False，照常计数。判定失败一律 False（不豁免，保守计数）。
+    """
+    try:
+        from datetime import datetime  # noqa: PLC0415
+
+        if not isinstance(ts, datetime):
+            return False
+        files = list(hot_files) if isinstance(hot_files, (list, tuple)) else []
+        for event in _EVICTION_EXCUSE_EVENTS:
+            window_start = datetime.fromisoformat(str(event["window_start"]))
+            window_end = datetime.fromisoformat(str(event["window_end"]))
+            if not (window_start <= ts <= window_end):
+                continue
+            needle = str(event.get("hot_path_substring", ""))
+            if not needle:
+                continue
+            for hot in files:
+                if needle in str(hot).replace("\\", "/"):
+                    return True
+    except (ValueError, TypeError, KeyError, OSError):
+        return False
+    return False
+
 
 def _check_hot_overlap_escalation(project_root: object, session_id: str) -> tuple[bool, str]:
     """滚动窗热文件 allow_overlap 升级判定（#ARCH-264 O2）。
 
+    他伤豁免（TRAE-079 增补令）：``eviction_excused=True`` 的记录（记账时按白名单
+    判定写入）不入计数；旧格式无字段记录按白名单现场判定（零迁移）。
+
     Returns:
-        (blocked, reason)：session 在近 24h 内热文件 allow_overlap ≥阈值 → True+原因。
-        审计文件缺失/损坏/格式异常 → fail-open 不阻断（治理降级不卡工作流）。
+        (blocked, reason)：session 在近 24h 内热文件 allow_overlap（剔他伤后）≥阈值
+        → True+原因。审计文件缺失/损坏/格式异常 → fail-open 不阻断（治理降级不卡工作流）。
     """
     try:
         from datetime import datetime, timedelta, timezone  # noqa: PLC0415
@@ -985,6 +1045,13 @@ def _check_hot_overlap_escalation(project_root: object, session_id: str) -> tupl
             except (ValueError, TypeError, OSError):
                 continue
             if ts >= cutoff:
+                # 他伤豁免（TRAE-079 增补令）：excused 记录不入熔断计数。新格式记录带
+                # eviction_excused 标记；旧格式无字段的按白名单现场判定（零迁移）。
+                excused = rec.get("eviction_excused")
+                if excused is None:
+                    excused = _judge_eviction_excuse(ts, rec.get("hot_files") or [])
+                if excused:
+                    continue
                 count += 1
         if count >= _HOT_OVERLAP_BLOCK_THRESHOLD:
             return True, (

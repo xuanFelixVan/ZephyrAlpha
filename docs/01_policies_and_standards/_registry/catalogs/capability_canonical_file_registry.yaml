@@ -34277,6 +34277,21 @@ creation_tokens:
   capability: chiefc_campaign
   created_by: st-chiefc-20261009
   merge_evaluation: "G 车道 R01-R16 自裁台账（16 项处置+证据+adjudicator 署名单文件），替代零旧条目——净零新增 1 台账件（Owner B 清单批转登记载体；同名大写版 token 因 N-01/N-13 命名门 retire 换装）"
+- file: docs/_working/chiefc_campaign/a13_breaker_arch_issue.md
+  token: chiefc-campaign-a13-breaker-arch-issue-20261009
+  created_by: st-chiefc-20261009
+  capability: chiefc_campaign
+  merge_evaluation: "跨域不同对象不并另立：chiefc 战役树台账（A13 熔断他伤豁免议题+复发监视），无既有资产可承接"
+- file: docs/_working/chiefc_campaign/a13_recurrence_watch.md
+  token: chiefc-campaign-a13-recurrence-watch-20261009
+  created_by: st-chiefc-20261009
+  capability: chiefc_campaign
+  merge_evaluation: "跨域不同对象不并另立：chiefc 战役树台账（A13 熔断他伤豁免议题+复发监视），无既有资产可承接"
+- file: docs/_working/chiefc_campaign/index.md
+  token: chiefc-campaign-index-20261009
+  created_by: st-chiefc-20261009
+  capability: chiefc_campaign
+  merge_evaluation: "跨域不同对象不并另立：chiefc 战役树台账（A13 熔断他伤豁免议题+复发监视），无既有资产可承接"
 - file: docs/_working/circulation_chief/00_orchestration.md
   token: circulation-chief-doc-00-orchestration-20261001
   capability: circulation-chief-doc
@@ -64882,6 +64897,11 @@ creation_tokens:
   created_by: st-dexp-20261009
   capability: dexp_disk_triage
   merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: scripts/data_ops/audit_ti_row_versions.py
+  token: ti-row-version-audit-audit-ti-row-versions-20261009
+  created_by: st-dexp-20261009
+  capability: ti_row_version_audit
+  merge_evaluation: "新对象=ReplacingMergeTree 无版本列的行版本重复尺（dup/值分叉/ingest_ts 可裁决三把尺）；同目录 l3_alt_health_* 判列健康度、scripts/data/audit_technical_indicator_coverage 判列非空覆盖率，均不同对象零重叠"
 file_token:
 - note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
   path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
