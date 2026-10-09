@@ -4574,3 +4574,48 @@ entries:
   superseded_by: ''
   adjudicator: st-fwin-exec-20261009
   owner_sign: Owner 2026-10-09 双令原文「①不等 11-01 演练窗，立即调查并直接施工 F 盘摘除；②不设 Owner GO 检查点——连续两遍全量检查结果一致即自裁放行物理删除。本令即 A2 批文的执行授权」+当日追问「现在停窗可以吗」（停窗提前授权）
+
+- ruling_id: "裁定#498"
+  title: 死信二期家族内务：一期专车 6 枚孤儿车道按内容级判据收口（rescue tag + 未跟踪件 blobs 双证，worktree remove 走本裁定通道），全会话接管封路面积 119→17 路径
+  date: '2026-10-09'
+  category: 治理
+  status: active
+  summary: |
+    st-deadcure2-20261009 依《死信二期总指令》§三 Phase 0b（家族内务，非代修）与
+    session_takeover_ledger 自开处方「owned worktree dirty：先核成果 merge 回主区或 abort 放弃；
+    worktree remove 走裁定通道登记，禁裸 git worktree remove」执行。
+    【判据（E1 内容对比）】逐件比 车道字节 × `git show dev:<path>` 行集（EOL 归一）：
+    ① st-deadcure-g1-chief 100 件=dev_identical 57／dev 更新代 4／"超集"35／content_diff 4；
+    ② restore-chief 70 tracked+4 未跟踪=identical 24／"超集"33／dev 更新代 4／diff 5／absent_in_dev 4；
+    ③ g2 75=identical 73／diff 2；g3 1=dev 更新代；g4 4=identical；promote 65=identical 24／"超集"33／
+    dev 更新代 4／diff 4。合计有值 0 件。
+    【关键伪影（防后人重踩）】两车道共 68 件被行计数判为"车道超集"，逐条取行验明其独有行=
+    `doc_type: campaign_doc`／`doc_type: "census"`——正是一期按 DOC-HEADER-SUITE [EXEMPT-ZONE-FM]
+    "只删该键、正文逐字节不动"剥离后已落地内容的**旧代**；复活即把豁免区禁键重新引入。
+    另 2 件（t0_ceiling_verdict/t0_conditional_e4_v3_verdict）多出行为一期自犯双插 frontmatter 的
+    错误版（一期台账已记并收尾按原袋复原），HEAD 侧为修复版。
+    【零丢失三证】`git stash create`→rescue tag 六枚（g1=ec92443c9e／restore=13790d51f0／
+    g2=b1aed46f48／g3=ef0c23255d／g4=a546cd736d／promote=18e4cc8c97；另 st-deadcure-20261009 与
+    chief-20261009 tracked 面 clean 无需 tag）；逐件回读 tag 内字节与盘面 EOL 归一全等（100/100、
+    69/69、75/75、1/1、4/4、12/12 零失验）；未跟踪件实测 `stash create --include-untracked` **被忽略**
+    （产出 commit 仅 2 父，无未跟踪父）→ 另抓 75 枚（18+53+4）至二期 tmp 并 sha256 对拍，
+    且全部 75 枚 sha256 命中 `.runtime/commit_queue/blobs/<同值>`（=被死袋引用的持久面）。
+    【效果读数】takeover open 条目 144→138；其命中面（=TAKEOVER-PENDING 可封路径）唯一数
+    119→17；本家族贡献的 102 条封路全部解除。Phase 1 复活要写的
+    docs/03_modules/MOD-SELL-020/blueprint.md、docs/_working/chief_fullchain_20261006/*、
+    tests/gov/governance/d5_architecture/* 由 BLOCK 转 PASS（零写门探针实测）。
+    残余唯一封路者=`st-chiefc-20261009-rb1`（总队活车道：注册表 logical=True、
+    heartbeat 末行 status=alive 且其 pid 3048 存活，却因 session_takeover_ledger.py:764-789 取
+    注册表 pid 位判死而入面）→ 属他会话在途面，按宪法 §3.4 owner 责任制不代修，判死口径修正
+    要件另册升旗（死信二期 01_phase0_ledger §七 9-1）。
+    【复活窗（30 天）回滚口径】`git worktree add .aidrafts/<sid> session/<sid>` 复车，
+    再 `git stash apply rescue/<sid>` 复未提交字节；未跟踪件亦可自
+    `.runtime/commit_queue/blobs/<sha256>` 按名取回。分支 session/* 全部保留未删。
+  evidence: 内容级分诊产物 .runtime/tmp/st-deadcure2-20261009/common/lane_*.jsonl（6 份）+ family_sweep.json（tag sha 与逐件字节回验）+ rescue_untracked/（75 枚 sha 对拍）+ 零写门探针 make_takeover_pending_gate().check 前后读数
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: ['裁定#373', '裁定#385', '裁定#478']
+  superseded_by: ''
+  adjudicator: st-deadcure2-20261009
