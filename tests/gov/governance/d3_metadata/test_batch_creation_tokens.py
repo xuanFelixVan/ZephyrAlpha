@@ -2,11 +2,13 @@
 # [MODULE] tests.governance.d3_metadata.test_batch_creation_tokens
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] pytest; yaml; scripts.governance.d3_metadata.batch_creation_tokens
-# [CONSUMERS] 批量 token 工具质量守卫（纯插入/幂等/锚点 fail-closed）
+# [CONSUMERS] 批量 token 工具质量守卫（意图 API 薄壳编排/幂等/W4 防呆/直写轨退役不变量）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 全部用例构造于 tmp 副本 registry（monkeypatch _REGISTRY，不碰生产）
-# [MODIFY-GUARD] 与工具同批演进
+# [INVARIANTS] 全部用例 monkeypatch 账本三步注入点（api.register/publish_snapshot/projection run），
+#   不碰生产 PG；直写轨退役不变量=登记全程投影 YAML 字节零变化
+# [MODIFY-GUARD] 2026-10-09 st-regsolo-20261010 随裁定#502 直写轨退役同批重写（原插入锚/守恒闸/
+#   CAS 回滚用例随被删机械退役，语义由账本层测试 tests/governance/test_registry_ledger.py 承接）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -14,7 +16,13 @@
 # [TESTS] self
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""batch_creation_tokens 工具测试——极限红蓝对抗 F1 治本守卫。"""
+"""batch_creation_tokens 工具测试——裁定#502 直写轨退役后的意图 API 薄壳守卫。
+
+三层断言面：
+1. 编排正确性：register 逐条 payload / publish 一次 / render 一次 / 落位校验。
+2. 幂等与失败面：OK_NOOP 跳过、CONFLICT_DUPLICATE WARN 继续、登记失败不 publish。
+3. 退役不变量：全程不触碰投影 YAML 字节；锚点参数收下忽略。
+"""
 
 from __future__ import annotations
 
@@ -26,407 +34,251 @@ import yaml
 
 import scripts.governance.d3_metadata.batch_creation_tokens as bct
 
-_REPO = Path(__file__).resolve().parents[4]
+_API_REG = "zephyr.governance.registry_ledger.api.register"
+_PUBLISH = "zephyr.governance.registry_ledger.baseline.publish_snapshot"
+_PROJ_RUN = "zephyr.governance.registry_projection.projection_generator.run"
 
-_REG_BODY = """creation_tokens:
-- file: docs/existing/anchor.md
-  token: anchor-token-20260913
-  created_by: someone
-  capability: anchor_cap
-- file: docs/existing/other.md
-  token: other-token-20260913
-  created_by: someone
-  capability: anchor_cap
-di_seam_exemptions:
-- module_path: fake.Thing
-  reason: test
-- file: src/stray/dead_entry.py
-  token: stray-token-20260913
-  created_by: someone
-  capability: stray_cap_zone
-"""
+
+class _Result:
+    """api.Result 形状最小替身（code/detail 契约）。"""
+
+    def __init__(self, code: str, detail: dict | None = None):
+        self.code = code
+        self.detail = detail or {}
 
 
 @pytest.fixture()
-def lab(tmp_path: Path, monkeypatch):
-    """tmp 副本 registry + 假 git 扫描（不走真 git）。"""
+def ledger(tmp_path: Path, monkeypatch):
+    """账本三步注入点替身 + tmp 投影册（登记全程字节零变化断言基线）。"""
     reg = tmp_path / "capability_canonical_file_registry.yaml"
-    reg.write_text(_REG_BODY, encoding="utf-8")
+    reg.write_text(
+        "creation_tokens:\n- file: docs/existing/a.md\n  token: a-token-20260913\n"
+        "  created_by: someone\n  capability: cap\ndi_seam_exemptions:\n- module_path: fake.Thing\n  reason: test\n",
+        encoding="utf-8",
+    )
     monkeypatch.setattr(bct, "_REGISTRY", reg)
     monkeypatch.setattr(bct, "_REPO", tmp_path)
-    fake_files = [
-        "docs/_working/lab/a/seg_001.md",
-        "docs/_working/lab/a/seg_002.md",
-        "docs/_working/lab/b/seg_003.md",
-    ]
-    monkeypatch.setattr(bct, "_git_output", lambda *a: fake_files if "ls-files" in a else [])
-    return reg, fake_files
+
+    state = {"registered": [], "publish_calls": 0, "render_calls": 0}
+
+    def fake_register(registry_id, family_key, payload, *, reason, session_id, actor_kind="agent", **kw):
+        assert registry_id == bct._REGISTRY_ID
+        assert family_key == bct._FAMILY
+        assert len(str(reason)) >= 10
+        state["registered"].append(dict(payload))
+        return _Result("OK", {"entry_key": f"file={payload['file']}|token={payload['token']}"})
+
+    def fake_publish(registry_id, *, repo_root=None, session_id="", **kw):
+        state["publish_calls"] += 1
+        assert repo_root == tmp_path
+        return {"registry_id": registry_id, "noop": False, "snapshot_version": 999, "entry_count": 1}
+
+    def fake_render(root, mode="check", **kw):
+        state["render_calls"] += 1
+        assert mode == "render"
+        assert kw.get("registry_id") == bct._REGISTRY_ID
+        assert kw.get("physical_path") == bct._REGISTRY_REL
+
+        class R:
+            ok = True
+            quadrant = "clean"
+            wrote = False
+            evidence_path = ""
+            detail = {"ledger_revision": 999}
+
+            def to_dict(self):
+                return {}
+
+        return R()
+
+    monkeypatch.setattr(_API_REG, fake_register)
+    monkeypatch.setattr(_PUBLISH, fake_publish)
+    monkeypatch.setattr(_PROJ_RUN, fake_render)
+    monkeypatch.setattr(bct, "_registered_files_from_ledger", lambda: {e["file"] for e in state["registered"]})
+    return state, reg
 
 
-def test_batch_insert_and_yaml_valid(lab):
-    reg, files = lab
-    rc = bct.main() if False else None  # noqa: F633 — 直接调内部保证 argv 隔离
-    block = bct.build_block(files, "sess-A", "lab_cap", "20260913")
-    bct.insert_block(block, "anchor_cap")
-    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
-    toks = [e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]
-    assert len(toks) == 3
-    assert all(e["created_by"] == "sess-A" for e in toks)
-    assert toks[0]["file"] == "docs/_working/lab/a/seg_001.md"
-    # token 内 capability 归一化（lab_cap→lab-cap，token 正则只允许小写字母数字连字符）
-    assert toks[0]["token"] == "lab-cap-seg-001-20260913"
-    # 纯插入：既有条目不动（含死区条目原样保留——本工具不治理历史死区）
-    assert any(e["token"] == "anchor-token-20260913" for e in data["creation_tokens"])
-    assert len(data["di_seam_exemptions"]) == 2
+def _block(n: int = 2, created_by: str = "st-test") -> str:
+    return bct.build_block(
+        [f"docs/_working/lab/seg_{i:03d}.md" for i in range(1, n + 1)], created_by, "lab_cap", "20261009"
+    )
 
 
-def test_idempotent_skip_registered(lab):
-    reg, files = lab
-    registered = bct.load_registered()
-    assert bct.scan_unregistered("docs/_working/lab", registered) == files
-    # 登记 a/seg_001 后重扫只剩 2
-    block = bct.build_block(files[:1], "sess-A", "lab_cap", "20260913")
-    bct.insert_block(block, "anchor_cap")
-    registered2 = bct.load_registered()
-    assert bct.scan_unregistered("docs/_working/lab", registered2) == files[1:]
+def test_happy_path_registers_publishes_renders(ledger):
+    state, _ = ledger
+    bct.insert_block(_block(3), "lab_cap", expect_files=[f"docs/_working/lab/seg_{i:03d}.md" for i in range(1, 4)])
+    assert len(state["registered"]) == 3
+    assert state["publish_calls"] == 1
+    assert state["render_calls"] == 1
+    payloads = state["registered"]
+    assert payloads[0]["token"] == "lab-cap-seg-001-20261009"
+    assert payloads[0]["created_by"] == "st-test"
+    assert payloads[0]["capability"] == "lab_cap"
+    assert set(payloads[0]) == {"file", "token", "created_by", "capability"}
 
 
-def test_anchor_missing_fail_closed(lab, capsys):
-    with pytest.raises(bct.TokenInsertError) as ei:
-        bct.insert_block("- file: x\n  token: y\n  created_by: z\n  capability: c\n", "no_such_anchor")
-    assert "fail-closed" in str(ei.value)
-    assert "no_such_anchor" in str(ei.value)
+def test_merge_evaluation_lands_in_payload(ledger):
+    state, _ = ledger
+    block = bct.build_block(["docs/x.md"], "st-test", "lab_cap", "20261009", merge_evaluation="零同域消费方，新对象")
+    bct.insert_block(block, "lab_cap")
+    assert state["registered"][0]["merge_evaluation"] == "零同域消费方，新对象"
 
 
-def test_cli_dry_run_zero_write(lab, monkeypatch, capsys):
+def test_idempotent_noop_skipped(ledger, monkeypatch):
+    state, _ = ledger
+    monkeypatch.setattr(_API_REG, lambda *a, **k: _Result("OK_NOOP", {"version": 5}))
+    monkeypatch.setattr(bct, "_registered_files_from_ledger", lambda: {"docs/_working/lab/seg_001.md"})
+    bct.insert_block(_block(1), "lab_cap", expect_files=["docs/_working/lab/seg_001.md"])
+    assert state["publish_calls"] == 1  # noop 也走发布（幂等由发布层自判）
+
+
+def test_conflict_duplicate_warns_and_continues(ledger, monkeypatch, capsys):
+    state, _ = ledger
+    codes = iter(["OK", "CONFLICT_DUPLICATE", "OK"])
+
+    def fake_register(*a, **k):
+        return _Result(next(codes), {"entry_key": "x"})
+
+    monkeypatch.setattr(_API_REG, fake_register)
+    bct.insert_block(_block(3), "lab_cap")
+    assert state["publish_calls"] == 1
+    assert "CONFLICT_DUPLICATE" in capsys.readouterr().err
+
+
+def test_register_reject_code_aborts_before_publish(ledger, monkeypatch):
+    state, _ = ledger
+    monkeypatch.setattr(_API_REG, lambda *a, **k: _Result("SCHEMA_INVALID", {"cause": "bad payload"}))
+    with pytest.raises(bct.TokenInsertError, match="SCHEMA_INVALID"):
+        bct.insert_block(_block(2), "lab_cap")
+    assert state["publish_calls"] == 0
+    assert state["render_calls"] == 0
+
+
+def test_register_exception_wraps_as_token_insert_error(ledger, monkeypatch):
+    state, _ = ledger
+
+    def boom(*a, **k):
+        raise RuntimeError("pg unreachable")
+
+    monkeypatch.setattr(_API_REG, boom)
+    with pytest.raises(bct.TokenInsertError, match="pg unreachable"):
+        bct.insert_block(_block(1), "lab_cap")
+    assert state["publish_calls"] == 0
+
+
+def test_render_failure_raises(ledger, monkeypatch):
+    class BadR:
+        ok = False
+        quadrant = "conflict"
+        wrote = False
+        evidence_path = "evidence.diff"
+        detail = {"error": "self-check failed"}
+
+        def to_dict(self):
+            return {}
+
+    monkeypatch.setattr(_PROJ_RUN, lambda root, mode="check", **k: BadR())
+    with pytest.raises(bct.TokenInsertError, match="conflict"):
+        bct.insert_block(_block(1), "lab_cap")
+
+
+def test_verify_landing_missing_raises(ledger, monkeypatch):
+    monkeypatch.setattr(bct, "_registered_files_from_ledger", lambda: set())
+    with pytest.raises(bct.TokenInsertError, match="未落位"):
+        bct.insert_block(_block(1), "lab_cap", expect_files=["docs/_working/lab/seg_001.md"])
+
+
+def test_verify_landing_unavailable_raises(ledger, monkeypatch):
+    monkeypatch.setattr(bct, "_registered_files_from_ledger", lambda: None)
+    with pytest.raises(bct.TokenInsertError, match="落位校验不可用"):
+        bct.insert_block(_block(1), "lab_cap", expect_files=["docs/_working/lab/seg_001.md"])
+
+
+def test_registration_never_touches_projection_yaml_bytes(ledger):
+    """直写轨退役核心不变量：登记全程投影册字节零变化。"""
+    state, reg = ledger
+    before = reg.read_bytes()
+    bct.insert_block(_block(3), "lab_cap")
+    assert reg.read_bytes() == before
+
+
+def test_parse_block_entries_rejects_bad_token():
+    with pytest.raises(bct.TokenInsertError, match="token 非法格式"):
+        bct._parse_block_entries("- file: a.md\n  token: BAD_TOKEN!\n  created_by: s\n  capability: c\n")
+
+
+def test_parse_block_entries_rejects_missing_keys():
+    with pytest.raises(bct.TokenInsertError, match="缺必填键"):
+        bct._parse_block_entries("- file: a.md\n  created_by: s\n")
+
+
+def test_parse_block_entries_rejects_non_list():
+    with pytest.raises(bct.TokenInsertError, match="非 YAML 列表|非非空列表"):
+        bct._parse_block_entries("creation_tokens: []\n")
+
+
+def test_parse_block_entries_drops_none_fields(ledger):
+    entries = bct._parse_block_entries("- file: a.md\n  token: abc-token-20260913\n  created_by: s\n  capability: c\n")
+    assert entries == [{"file": "a.md", "token": "abc-token-20260913", "created_by": "s", "capability": "c"}]
+
+
+def test_resolve_anchor_passthrough():
+    assert bct.resolve_anchor("  capability: x\n", "wanted") == "wanted"
+
+
+def test_load_registered_ledger_first(ledger, monkeypatch):
+    monkeypatch.setattr(bct, "_registered_files_from_ledger", lambda: {"docs/ledger/a.md"})
+    assert bct.load_registered() == {"docs/ledger/a.md"}
+
+
+def test_load_registered_yaml_fallback_when_ledger_down(ledger, monkeypatch):
+    state, reg = ledger
+    monkeypatch.setattr(bct, "_registered_files_from_ledger", lambda: None)
+    assert bct.load_registered() == {"docs/existing/a.md"}
+
+
+def test_cli_dry_run_zero_write(ledger, monkeypatch, capsys):
+    state, _ = ledger
+    monkeypatch.setattr(bct, "_git_output", lambda *a: ["docs/_working/lab/new.md"] if "ls-files" in a else [])
     monkeypatch.setattr(
         sys,
         "argv",
-        ["bct", "--prefix", "docs/_working/lab", "--created-by", "sess-A", "--capability", "lab_cap", "--dry-run"],
-    )
-    rc = bct.main()
-    assert rc == 0
-    assert "DRY-RUN" in capsys.readouterr().out
-    # registry 零变化
-    assert "lab_cap" not in lab[0].read_text(encoding="utf-8")
-
-
-def test_cli_real_run(lab, monkeypatch, capsys):
-    monkeypatch.setattr(
-        sys,
-        "argv",
-        ["bct", "--prefix", "docs/_working/lab", "--created-by", "sess-A", "--capability", "lab_cap"],
-    )
-    rc = bct.main()
-    assert rc == 0
-    data = yaml.safe_load(lab[0].read_text(encoding="utf-8"))
-    assert len([e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]) == 3
-    assert "已插入 3 条" in capsys.readouterr().out
-    # 回退锚点（lab_cap 段内不存在→回退段内最后一条 anchor_cap）后仍须落位正确段，
-    # 不得落入尾部死区（2026-09-13 实弹教训：旧版全文件 findall 取到死区锚）
-    dse = [e for e in data["di_seam_exemptions"] if e.get("capability") == "lab_cap"]
-    assert dse == [], "回退锚点不得命中尾部死区"
-
-
-def test_anchor_never_lands_in_trailing_dead_zone(lab):
-    """实弹教训回归（2026-09-13 factory-bottleneck 批）：registry 尾部 di_seam_exemptions
-    段混有 capability 行（历史错位死区）——锚点 MUST 限定 creation_tokens 段内，
-    条目落进死区=YAML 合法但 CREATE-GUARD 读不到（登记静默丢失）。"""
-    reg, files = lab
-    block = bct.build_block(files, "sess-A", "lab_cap", "20260913")
-    bct.insert_block(block, "anchor_cap")  # 段内锚
-    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
-    toks = [e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]
-    assert len(toks) == 3, "条目必须落位 creation_tokens 段"
-    dse = [e for e in data["di_seam_exemptions"] if e.get("capability") == "lab_cap"]
-    assert dse == [], "条目不得落入 di_seam_exemptions 死区"
-    # 死区锚点显式拒写（fail-closed——stray_cap_zone 只存在于死区）
-    with pytest.raises(bct.TokenInsertError) as ei:
-        bct.insert_block("- file: x\n  token: y\n  created_by: z\n  capability: c\n", "stray_cap_zone")
-    assert "fail-closed" in str(ei.value)
-
-
-# ---------------------------------------------------------------------------
-# 2026-09-15 治理上报件1 收口：写后 parse/语义双自检 + 失败回滚（scaffold 同通道复用）
-# ---------------------------------------------------------------------------
-
-
-def test_resolve_anchor_prefers_exact_then_last(lab):
-    reg, _ = lab
-    text = reg.read_text(encoding="utf-8")
-    sec_start, sec_end = bct._creation_tokens_section(text)
-    section = text[sec_start:sec_end]
-    assert bct.resolve_anchor(section, "anchor_cap") == "anchor_cap"  # 段内同名命中
-    assert bct.resolve_anchor(section, "no_such") == "anchor_cap"  # 回退段内最后一条
-    with pytest.raises(bct.TokenInsertError):
-        bct.resolve_anchor("", "anything")  # 段内无锚点 → fail-closed
-
-
-def test_section_missing_raises_token_insert_error(tmp_path, monkeypatch):
-    reg = tmp_path / "reg.yaml"
-    reg.write_text("di_seam_exemptions: []\n", encoding="utf-8")
-    monkeypatch.setattr(bct, "_REGISTRY", reg)
-    with pytest.raises(bct.TokenInsertError) as ei:
-        bct._creation_tokens_section(reg.read_text(encoding="utf-8"))
-    assert "fail-closed" in str(ei.value)
-
-
-def test_post_write_issues_detects_broken_yaml_and_missing_landing(lab):
-    reg, _ = lab
-    reg.write_text("creation_tokens:\n  - [broken\n", encoding="utf-8")
-    issues = bct._post_write_issues(None)
-    assert issues and "解析失败" in issues[0]
-    reg.write_text("creation_tokens:\n- file: a.md\n  token: t\n", encoding="utf-8")
-    issues = bct._post_write_issues(["ghost.md"])
-    assert issues and "未落位" in issues[0]
-    assert bct._post_write_issues(["a.md"]) == []
-
-
-def test_insert_block_rollback_on_verify_failure(lab, monkeypatch):
-    """写后自检失败 → 回滚写前字节（scaffold 件1 收口的核心保证）。"""
-    reg, _ = lab
-    pre = reg.read_bytes()
-    monkeypatch.setattr(bct, "_post_write_issues", lambda files: ["boom"])
-    with pytest.raises(bct.TokenInsertError) as ei:
-        bct.insert_block("- file: x.md\n  token: t-1\n  created_by: s\n  capability: anchor_cap\n", "anchor_cap")
-    assert "回滚" in str(ei.value)
-    assert reg.read_bytes() == pre, "自检失败必须回滚到写前字节"
-
-
-def test_insert_block_semantic_missing_triggers_rollback(lab):
-    """端到端（零打桩）：块插入的 file 与 expect_files 不符 = 语义落位失败 → 回滚。"""
-    reg, _ = lab
-    pre = reg.read_bytes()
-    with pytest.raises(bct.TokenInsertError) as ei:
-        bct.insert_block(
-            "- file: docs/real.md\n  token: real-1\n  created_by: s\n  capability: anchor_cap\n",
-            "anchor_cap",
-            expect_files=["docs/ghost.md"],
-        )
-    assert "未落位" in str(ei.value)
-    assert reg.read_bytes() == pre, "语义落位失败必须回滚到写前字节"
-    # 回滚后 registry 仍 parse 合法且无残留
-    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
-    assert all(e["file"] != "docs/real.md" for e in data["creation_tokens"])
-
-
-def test_insert_block_with_expect_files_happy_path(lab):
-    reg, files = lab
-    block = bct.build_block(files, "sess-A", "lab_cap", "20260913")
-    bct.insert_block(block, "anchor_cap", expect_files=files)  # 全部落位 → 通过
-    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
-    assert len([e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]) == 3
-
-
-def test_insert_block_survives_concurrent_interleaved_write(lab, monkeypatch):
-    """战伤回归（2026-09-16 st-commitspeed 高频写覆写丢 token，f09d2bc81e 前科复发）：
-    insert_block 读基线后、CAS 落盘前，他会话抢先整段写入——CAS 拒写必须触发
-    重读基线重放，最终双方条目并存（后写不吞先写）。非库路径的全文覆写不在此测。"""
-    import zephyr.shared.io.file_utils as fu
-
-    reg, _files = lab
-    real_safe_write = fu.safe_write_text
-    state = {"interleaved": False}
-
-    def interleaved_writer(*args, **kwargs):
-        if not state["interleaved"]:
-            state["interleaved"] = True
-            cur = reg.read_text(encoding="utf-8")
-            idx = cur.index("di_seam_exemptions:")
-            other = (
-                "- file: docs/existing/raced.md\n"
-                "  token: raced-token-20260916\n"
-                "  created_by: sess-other\n"
-                "  capability: other_new_cap\n"
-            )
-            reg.write_text(cur[:idx] + other + cur[idx:], encoding="utf-8")
-        return real_safe_write(*args, **kwargs)
-
-    monkeypatch.setattr(fu, "safe_write_text", interleaved_writer)
-
-    block = bct.build_block(["docs/_working/lab/a/seg_001.md"], "sess-A", "race_cap", "20260916")
-    bct.insert_block(block, "anchor_cap")  # CAS 拒→重读→重放，不得抛 TokenInsertError
-
-    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
-    caps = [e["capability"] for e in data["creation_tokens"]]
-    assert "race_cap" in caps, "我方条目必须存活"
-    assert "other_new_cap" in caps, "他会话条目必须存活（后写不吞先写）"
-    assert data["creation_tokens"][-1]["capability"] in {"race_cap", "other_new_cap", "anchor_cap", "stray_cap_zone"}
-
-
-# ── B22 治本：写侧"只增不减"守恒闸（2026-09-19，全流通战役热册蒸发第 1/5 例的机制补强）──
-_HEAD_EXTRA = """creation_tokens:
-- file: docs/existing/anchor.md
-  token: anchor-token-20260913
-  created_by: someone
-  capability: anchor_cap
-- file: docs/existing/other.md
-  token: other-token-20260913
-  created_by: someone
-  capability: anchor_cap
-- file: docs/existing/evicted-by-stale-snapshot.md
-  token: evicted-token-20260919
-  created_by: st-other-lane
-  capability: anchor_cap
-di_seam_exemptions: []
-"""
-
-
-def _patch_git(monkeypatch, fake_files, head_text=None):
-    """同时喂 ls-files 与 show HEAD:<registry> 两个 git 面（HEAD 面=None 表示读不到）。"""
-
-    def _fake(*a):
-        if "ls-files" in a:
-            return fake_files
-        if a and a[0] == "show" and head_text is not None:
-            return [ln for ln in head_text.splitlines() if ln.strip()]
-        return []
-
-    monkeypatch.setattr(bct, "_git_output", _fake)
-
-
-def test_stale_base_vs_head_refuses_write(lab, monkeypatch, capsys):
-    """写前闸：盘上基底相对 HEAD 已缺条目 ⇒ 拒写 + 点名少了哪几条 + **磁盘零改动**。"""
-    reg, files = lab
-    pre = reg.read_bytes()
-    _patch_git(monkeypatch, files, _HEAD_EXTRA)  # HEAD 有 3 条，盘上只有 2 条
-    block = bct.build_block(files[:1], "sess-A", "lab_cap", "20260919")
-    with pytest.raises(bct.TokenInsertError) as ei:
-        bct.insert_block(block, "anchor_cap")
-    msg = str(ei.value)
-    assert "只增不减" in msg and "evicted-token-20260919" in msg, f"未点名被蒸发条目: {msg}"
-    assert reg.read_bytes() == pre, "拒写必须是真零写入（fail-safe=不写）"
-    assert "未落盘任何改动" in msg
-    assert capsys is not None
-
-
-def test_head_matched_base_still_lands(lab, monkeypatch):
-    """阴性对照：基底与 HEAD 一致（正常路径）⇒ 守恒闸不得拦，登记照旧成功。"""
-    reg, files = lab
-    _patch_git(monkeypatch, files, _REG_BODY)
-    block = bct.build_block(files[:1], "sess-A", "lab_cap", "20260919")
-    bct.insert_block(block, "anchor_cap")  # 不得抛
-    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
-    assert len(data["creation_tokens"]) == 3, "正常路径条目数应只增"
-    assert [e["token"] for e in data["creation_tokens"] if e["capability"] == "lab_cap"] == ["lab-cap-seg-001-20260919"]
-
-
-def test_head_unreadable_skips_pre_gate_without_fabricating(lab, monkeypatch):
-    """HEAD 读不到（临时副本/非 git 环境）⇒ 跳过对照面，**不得**拿空集当基线把所有写入判死。"""
-    reg, files = lab
-    _patch_git(monkeypatch, files, None)
-    assert bct._head_entry_keys() is None
-    block = bct.build_block(files[:1], "sess-A", "lab_cap", "20260919")
-    bct.insert_block(block, "anchor_cap")  # 不抛=未被假基线误杀
-    assert len(yaml.safe_load(reg.read_text(encoding="utf-8"))["creation_tokens"]) == 3
-
-
-def test_concurrent_overwrite_after_write_is_refused_and_named(lab, monkeypatch):
-    """写后闸实弹面：他会话在我们落盘后整片压回陈旧快照 ⇒ 必须判"条目数净减"并拒收。
-
-    回滚同样不得整片覆写对方——磁盘已推进 ⇒ 放弃回滚，报错里写明"未回滚，需人工分诊"。
-    """
-    import zephyr.shared.io.file_utils as fu
-
-    reg, files = lab
-    _patch_git(monkeypatch, files, _REG_BODY)
-    real_safe_write = fu.safe_write_text
-    state = {"raced": False}
-    shorter = (
-        "creation_tokens:\n"
-        "- file: docs/existing/other.md\n  token: other-token-20260913\n"
-        "  created_by: someone\n  capability: anchor_cap\n"
-        "di_seam_exemptions: []\n"
-    )
-
-    def racy_writer(*args, **kwargs):
-        res = real_safe_write(*args, **kwargs)
-        if not state["raced"]:
-            state["raced"] = True
-            reg.write_text(shorter, encoding="utf-8")  # 模拟他会话压回只含 1 条的陈旧快照
-        return res
-
-    monkeypatch.setattr(fu, "safe_write_text", racy_writer)
-    block = bct.build_block(files[:1], "sess-A", "lab_cap", "20260919")
-    with pytest.raises(bct.TokenInsertError) as ei:
-        bct.insert_block(block, "anchor_cap")
-    msg = str(ei.value)
-    assert "净减" in msg and "只增不减" in msg, f"守恒闸未触发: {msg}"
-    assert "anchor-token-20260913" in msg, f"未点名被蒸发条目: {msg}"
-    assert "未回滚" in msg and "人工分诊" in msg, f"回滚面失守（会二次蒸发）: {msg}"
-
-
-def test_rollback_refuses_when_disk_moved(lab):
-    """回滚基底校验：磁盘已被推进 ⇒ 返回 False 且**不改一个字节**（不制造第二次蒸发）。"""
-    reg, _files = lab
-    pre = reg.read_bytes()
-    assert bct._rollback(pre, expect_sha="0" * 64) is False
-    assert reg.read_bytes() == pre
-
-
-def test_rollback_restores_when_disk_untouched(lab):
-    """回滚正向腿：磁盘未动 ⇒ 按 expect_sha 放行并逐字节还原（含 CRLF 原样）。"""
-    from zephyr.shared.io.file_utils import content_sha256
-
-    reg, _files = lab
-    pre = reg.read_bytes()
-    reg.write_text("creation_tokens:\n- file: x.md\n  token: t\n", encoding="utf-8")
-    assert bct._rollback(pre, expect_sha="") is True
-    assert reg.read_bytes() == pre
-    assert bct._rollback(pre, expect_sha=content_sha256(reg.read_text(encoding="utf-8"))) is True
-    assert reg.read_bytes() == pre
-
-
-# ---------------------------------------------------------------------------
-# 裁定#375 内收判据门禁化（2026-09-20 P9③）：--merge-evaluation 登记通道。
-# CREATE-GUARD 对缺 merge_evaluation 的新建资产 warn+审计，本工具是补填正门。
-# ---------------------------------------------------------------------------
-
-
-def test_build_block_with_merge_evaluation(lab):
-    """--merge-evaluation 非空 → 每条 token 落 merge_evaluation 字段（YAML 合法）。"""
-    reg, files = lab
-    me = "grep+计划任务+注册表三查零同域消费方，新对象"
-    block = bct.build_block(files, "sess-A", "lab_cap", "20260920", merge_evaluation=me)
-    bct.insert_block(block, "anchor_cap")
-    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
-    toks = [e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]
-    assert len(toks) == 3
-    assert all(e.get("merge_evaluation") == me for e in toks), "三条均应携带 merge_evaluation"
-
-
-def test_build_block_without_merge_evaluation_omits_field(lab):
-    """缺省 → 条目无该字段（向后兼容：不破坏既有无参调用路径）。"""
-    reg, files = lab
-    block = bct.build_block(files, "sess-A", "lab_cap", "20260920")
-    assert "merge_evaluation" not in block
-    bct.insert_block(block, "anchor_cap")
-    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
-    toks = [e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]
-    assert len(toks) == 3
-    assert all("merge_evaluation" not in e for e in toks)
-
-
-def test_yaml_quote_escapes_and_flattens():
-    """特殊字符转义+换行压平（保持单行 YAML 双引号标量）。"""
-    q = bct._yaml_quote('含"引号"与\\反斜杠\n换行\t制表')
-    assert "\n" not in q and "\t" not in q, "多行/制表必须压平"
-    assert '\\"' in q and "\\\\" in q, "双引号与反斜杠必须转义"
-
-
-def test_cli_merge_evaluation_hint_and_landing(lab, monkeypatch, capsys):
-    """CLI 红证双向：缺省提示补填（不阻断）；--merge-evaluation 携带则字段落条目。"""
-    # ① 缺省：dry-run 输出补填提示（rc=0 不阻断）
-    monkeypatch.setattr(
-        sys,
-        "argv",
-        ["bct", "--prefix", "docs/_working/lab", "--created-by", "sess-A", "--capability", "lab_cap", "--dry-run"],
+        ["bct", "--prefix", "docs/_working/lab", "--created-by", "st-x", "--capability", "lab", "--dry-run"],
     )
     assert bct.main() == 0
-    out1 = capsys.readouterr().out
-    assert "提示" in out1 and "--merge-evaluation" in out1, "缺省应提示补填"
-    assert "lab_cap" not in lab[0].read_text(encoding="utf-8"), "dry-run 零写入"
-    # ② 携带：真实落盘，三条均含 merge_evaluation
+    out = capsys.readouterr().out
+    assert "DRY-RUN" in out
+    assert state["registered"] == [] and state["publish_calls"] == 0 and state["render_calls"] == 0
+
+
+def test_cli_real_run_end_to_end(ledger, monkeypatch, capsys):
+    state, reg = ledger
+    before = reg.read_bytes()
+    monkeypatch.setattr(bct, "_git_output", lambda *a: ["docs/_working/lab/new.md"] if "ls-files" in a else [])
+    monkeypatch.setattr(
+        sys, "argv", ["bct", "--prefix", "docs/_working/lab", "--created-by", "st-x", "--capability", "lab"]
+    )
+    assert bct.main() == 0
+    out = capsys.readouterr().out
+    assert "OK: 已登记 1 条" in out
+    assert len(state["registered"]) == 1
+    assert reg.read_bytes() == before  # 退役不变量：CLI 全程不写投影册
+
+
+def test_cli_wide_prefix_blocked_without_flag(ledger, monkeypatch, capsys):
+    state, _ = ledger
+    monkeypatch.setattr(
+        bct, "_git_output", lambda *a: [f"d{i % 2}/f{i}.md" for i in range(60)] if "ls-files" in a else []
+    )
+    monkeypatch.setattr(sys, "argv", ["bct", "--prefix", "docs", "--created-by", "st-x", "--capability", "lab"])
+    assert bct.main() == 1
+    assert "宽前缀批拦截" in capsys.readouterr().err
+    assert state["registered"] == []
+
+
+def test_cli_anchor_arg_accepted_and_ignored(ledger, monkeypatch, capsys):
+    state, _ = ledger
+    monkeypatch.setattr(bct, "_git_output", lambda *a: ["docs/_working/lab/new.md"] if "ls-files" in a else [])
     monkeypatch.setattr(
         sys,
         "argv",
@@ -435,16 +287,49 @@ def test_cli_merge_evaluation_hint_and_landing(lab, monkeypatch, capsys):
             "--prefix",
             "docs/_working/lab",
             "--created-by",
-            "sess-A",
+            "st-x",
             "--capability",
-            "lab_cap",
-            "--merge-evaluation",
-            "grep+计划任务+注册表三查零同域消费方，新对象",
+            "lab",
+            "--anchor-capability",
+            "whatever",
         ],
     )
     assert bct.main() == 0
-    assert "已插入 3 条" in capsys.readouterr().out
-    data = yaml.safe_load(lab[0].read_text(encoding="utf-8"))
-    toks = [e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]
-    assert len(toks) == 3
-    assert all(e["merge_evaluation"] == "grep+计划任务+注册表三查零同域消费方，新对象" for e in toks)
+    assert "已随直写轨退役" in capsys.readouterr().out
+
+
+def test_cli_no_new_files_short_circuits(ledger, monkeypatch, capsys):
+    state, _ = ledger
+    monkeypatch.setattr(bct, "_registered_files_from_ledger", lambda: {"docs/_working/lab/new.md"})
+    monkeypatch.setattr(bct, "_git_output", lambda *a: ["docs/_working/lab/new.md"] if "ls-files" in a else [])
+    monkeypatch.setattr(
+        sys, "argv", ["bct", "--prefix", "docs/_working/lab", "--created-by", "st-x", "--capability", "lab"]
+    )
+    assert bct.main() == 0
+    assert "无待登记文件" in capsys.readouterr().out
+    assert state["publish_calls"] == 0
+
+
+def test_wide_prefix_issues_counts_and_top_dirs():
+    issues = bct._wide_prefix_issues([f"a/f{i}.md" for i in range(51)])
+    assert any("上限" in i for i in issues)
+    issues = bct._wide_prefix_issues(["a/x.md", "b/y.md"])
+    assert any("一级目录" in i for i in issues)
+    assert bct._wide_prefix_issues(["a/x.md"]) == []
+
+
+def test_yaml_quote_escapes_and_flattens():
+    assert bct._yaml_quote('多"行"\n文本\\x') == '"多\\"行\\" 文本\\\\x"'
+
+
+def test_build_block_invalid_token_exits():
+    # capability 带非法字符 → token "bad!cap-x-20261009" 不匹配 _TOKEN_RE → sys.exit(1)
+    with pytest.raises(SystemExit):
+        bct.build_block(["docs/x.md"], "s", "bad!cap", "20261009")
+
+
+def test_detect_file_type_table():
+    assert bct.detect_file_type("src/zephyr/x.py") == "new_src_py"
+    assert bct.detect_file_type("docs/01_policies_and_standards/_registry/catalogs/x.yaml") == "registry_yaml"
+    assert bct.detect_file_type("docs/_working/x.md") == "working_md"
+    assert bct.detect_file_type("misc.bin") is None

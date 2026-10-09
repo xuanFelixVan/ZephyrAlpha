@@ -1,3 +1,4 @@
+<!-- GENERATED FILE — regenerate: python scripts/governance/registry_projection/registry_projection_generator.py --render --registry-id REG-RULING-001 --physical-path docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml && git diff --exit-code；手改必被覆盖（PG registry_ledger 账本=唯一真源，裁定#502） -->
 # [A_config] module_id=CFG-ruling-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
 module_id: REG-RULING-001
 ttl: permanent
@@ -3753,13 +3754,7 @@ entries:
   date: "2026-10-04"
   title: 首波三图准入裁：图11 交付流水线/图12 数据供给链/图13 交易日循环经四道门准入纵轴全景图体系
   status: active
-  summary: "六图战役（st-mapbuild-20260924）首波三图准入裁定的落地登记。编号沿革（二次重编 6ab478e326a）：
-战役内原编 #411，因主区已落地 #411（翻译册 dedupe）撞号让号 #414；再因主区抢先落地 #414（四盘一盘一责终裁定）二次撞号作废，2026-09-30 经取号器重占 #451（.runtime/ruling_claims/claim_451.json 在案；宪法 RULE-RULING 裁定#20-B 同 commit 原子登记铁律），由接管会话 st-tclose-integ-20261004 随整合批落地（Owner 令『原会话死无对证，你把他们的工作做了』）。
-生效事实：①三图经四道门（独立触发+终点/跨模块交接/不被现有图覆盖/机生真源，机制=裁定#409 同款）判定准入纵轴全景图体系，对齐 key 分别=module_id+路径（图11）/node_id DSC-*+module_id（图12）/node_id+module_id（图13）；
-②图12 已于 2026-10-03 随 st-vm12surg 十一图升级入 alignment_checklist §3 正式表（validate_data_supply_chain_map+DATA-SUPPLY-CHAIN-MAP gate+对抗测试+挂轴同批闭环）；
-③图13 已随 st-tclose-fig13reg 十二图升级入 align_all 第十一节（2026-10-04）；
-④图11 转正批（§3 行/gate/挂轴）由 fig11 专道在飞承接，本条不预设其完成。
-范围=准入判定与挂轴配方（FACTORY-MAP 四件套配方同源），不含各图施工债、血肉填充与图12 P0-1 备份摘除等在册待裁项。"
+  summary: "六图战役（st-mapbuild-20260924）首波三图准入裁定的落地登记。编号沿革（二次重编 6ab478e326a）： 战役内原编 #411，因主区已落地 #411（翻译册 dedupe）撞号让号 #414；再因主区抢先落地 #414（四盘一盘一责终裁定）二次撞号作废，2026-09-30 经取号器重占 #451（.runtime/ruling_claims/claim_451.json 在案；宪法 RULE-RULING 裁定#20-B 同 commit 原子登记铁律），由接管会话 st-tclose-integ-20261004 随整合批落地（Owner 令『原会话死无对证，你把他们的工作做了』）。 生效事实：①三图经四道门（独立触发+终点/跨模块交接/不被现有图覆盖/机生真源，机制=裁定#409 同款）判定准入纵轴全景图体系，对齐 key 分别=module_id+路径（图11）/node_id DSC-*+module_id（图12）/node_id+module_id（图13）； ②图12 已于 2026-10-03 随 st-vm12surg 十一图升级入 alignment_checklist §3 正式表（validate_data_supply_chain_map+DATA-SUPPLY-CHAIN-MAP gate+对抗测试+挂轴同批闭环）； ③图13 已随 st-tclose-fig13reg 十二图升级入 align_all 第十一节（2026-10-04）； ④图11 转正批（§3 行/gate/挂轴）由 fig11 专道在飞承接，本条不预设其完成。 范围=准入判定与挂轴配方（FACTORY-MAP 四件套配方同源），不含各图施工债、血肉填充与图12 P0-1 备份摘除等在册待裁项。"
   category: 架构
   related_arch: []
   related_files:
@@ -3767,18 +3762,14 @@ entries:
   - docs/_working/map_build/99_pending_owner.md
   - docs/_working/night_sweep/fig14_fig15_spec.md
   superseded_by: null
-  related_rulings: ["裁定#409", "裁定#481"]
+  related_rulings:
+  - 裁定#409
+  - 裁定#481
 - ruling_id: 裁定#452
   date: "2026-10-04"
   title: 收口总裁：六图战役整编落地通道与二次让号机制执行（272 件整合批收口）
   status: active
-  summary: "六图战役收口总裁的落地登记。编号沿革（二次重编 6ab478e326a）：
-战役内原编 #412（收口总裁），因主区已落地 #412（akshare 克隆退役）撞号让号 #415；再因主区抢先落地 #415（唯一在任总包+热册单写者）二次撞号作废，2026-09-30 经取号器重占 #452（.runtime/ruling_claims/claim_452.json 在案；裁定#20-B 同 commit 原子登记铁律），由接管会话 st-tclose-integ-20261004 随整合批落地。
-生效事实与范围：①收口通道=死会话接管（st-mapbuild-20260924 已死无对证）+死袋 blob 抢救（wave2 manifest sha256 逐件锚定）+整合批分批落地，工单=docs/_working/fullcirc_closeout_chief/integ_workorder.md；
-②清点结论入册：『272 件』实为死盘脏项计数（git status --porcelain 行数，wave2 抢救班破案），非工单项清单——真实余债以工单清点为准（政策 17 锚块+断链/背离修复、两图 gate 子台与聚合台接线、checklist §3/§6 行、align_all 第十三/十四节、卡生成器抢救、两裁定本登记）；
-③边界维持：两图本体 yaml/词表/已落地校验器判据面零改动（图15 校验器两常量 import 崩修复除外——死字节潜伏 bug 治疗非判据变更）；
-④图15 实例面 8 条红账（F-05/F-07/X09/F-03×2/族账×3）与幂等红账（卡语料 89→103 自然生长）维持登记态，归卡谱系专项与图本体重生成车道，不在本裁清偿；
-⑤map_build/99_pending_owner.md §已知会 第10条与 night_sweep/fig14_fig15_spec.md §5 债务段随本条销账。"
+  summary: "六图战役收口总裁的落地登记。编号沿革（二次重编 6ab478e326a）： 战役内原编 #412（收口总裁），因主区已落地 #412（akshare 克隆退役）撞号让号 #415；再因主区抢先落地 #415（唯一在任总包+热册单写者）二次撞号作废，2026-09-30 经取号器重占 #452（.runtime/ruling_claims/claim_452.json 在案；裁定#20-B 同 commit 原子登记铁律），由接管会话 st-tclose-integ-20261004 随整合批落地。 生效事实与范围：①收口通道=死会话接管（st-mapbuild-20260924 已死无对证）+死袋 blob 抢救（wave2 manifest sha256 逐件锚定）+整合批分批落地，工单=docs/_working/fullcirc_closeout_chief/integ_workorder.md； ②清点结论入册：『272 件』实为死盘脏项计数（git status --porcelain 行数，wave2 抢救班破案），非工单项清单——真实余债以工单清点为准（政策 17 锚块+断链/背离修复、两图 gate 子台与聚合台接线、checklist §3/§6 行、align_all 第十三/十四节、卡生成器抢救、两裁定本登记）； ③边界维持：两图本体 yaml/词表/已落地校验器判据面零改动（图15 校验器两常量 import 崩修复除外——死字节潜伏 bug 治疗非判据变更）； ④图15 实例面 8 条红账（F-05/F-07/X09/F-03×2/族账×3）与幂等红账（卡语料 89→103 自然生长）维持登记态，归卡谱系专项与图本体重生成车道，不在本裁清偿； ⑤map_build/99_pending_owner.md §已知会 第10条与 night_sweep/fig14_fig15_spec.md §5 债务段随本条销账。"
   category: 治理
   related_arch: []
   related_files:
@@ -3787,7 +3778,8 @@ entries:
   - docs/_working/night_sweep/fig14_fig15_spec.md
   - docs/_working/total_command_closeout/wave2/bag_2_1_report.md
   superseded_by: null
-  related_rulings: ["裁定#451"]
+  related_rulings:
+  - 裁定#451
 - ruling_id: 裁定#453
   date: "2026-09-30"
   title: emoreplay 交接确认登记（补-6 采甲：历史"已批"判未批+处方①原文捞回重呈）
@@ -4143,58 +4135,27 @@ entries:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   related_rulings:
   - 裁定#409
-- ruling_id: 裁定#6
-  date: "2026-06-20"
-  title: 路径SSoT（路径真源铁律）
-  status: active
-  summary: 所有路径相关常量必须从单一真源派生，禁止多真源同步。审计数据目录、REPO_ROOT 等路径 常量集中到 zephyr.shared.io.paths 模块，其他模块 import 复用而非自定义。治本逻辑： 单一真源=单一变更点=零漂移风险；多真源=同步负担=必然漂移。落地：paths.py 集中定义 REPO_ROOT/AUDIT_DIR/GOV_DIR 等路径常量，全项目通过 import zephyr.shared.io.paths 复用。
-  category: 治本
-  related_arch: []
-  superseded_by: null
-  affected_files:
-  - d:\ZephyrAlpha\src\zephyr\shared\io\paths.py
-  related_rulings: []
-- ruling_id: "裁定#485"
+- ruling_id: 裁定#485
+  date: "2026-10-04"
   title: 图9 E8 PA 空号三裁定+E9 命名法（真身名在前/module_ref 恒指真路径/名实一对一）
-  date: '2026-10-04'
-  category: 治理架构
   status: active
-  summary: |-
-    Owner 2026-10-04 裁定原文直录（对图9 挂载层两呈裁项）。
-    ① E8 十个从未铸造的 PA 号（PA-005/008-012/016-019）三条裁定：空号不是模块不上图——
-    E8 的 MOD-PA-002..024 区间打包语义改为实际在册枚举，区间只许覆盖连续已铸造成员，
-    十个空号从挂载面剔除；空号登记为跳号永不复用（BT-201 撞号事故制度化：复用空号=给
-    未来考古埋雷，同 BT-092 三重撞号成因；真身需要时找铸造权威取新号）；跳号原因入台账
-    （"区间申报未铸造"），在 path_ownership/编号面板注记防未来 AI 重复考古。
-    ② E9-M-003 节点名"决策标注数据集"与裁定真身 sim_attribution_report 的命名张力：
-    机械真身优先，图面名跟随真身——真身名在前、俗称降为括注，module_ref 恒指真路径
-    （图面另立命名=SOP v1.1.2 域主体统一禁近义词漂移立法所防之病）；若 census 行确有
-    独立 decision_annotation 真身模块则两件各自挂载、名实一对一不并也不混。
-    执行注记：经实勘 decision_annotation_dataset 真身实存（src/zephyr/ml_train/
-    decision_annotation_dataset.py，MOD-ML-014），落入条件分支——M-003 改名模拟盘归因
-    报告（真身名在前），M-004 保持决策标注数据集专名并改指真身 MOD-ML-014；PA 区间改
-    连续段枚举 MOD-PA-002..004,006..007,013..015,020..024（主干+机制节点两处）。
+  summary: "Owner 2026-10-04 裁定原文直录（对图9 挂载层两呈裁项）。\n① E8 十个从未铸造的 PA 号（PA-005/008-012/016-019）三条裁定：空号不是模块不上图——\nE8 的 MOD-PA-002..024 区间打包语义改为实际在册枚举，区间只许覆盖连续已铸造成员，\n十个空号从挂载面剔除；空号登记为跳号永不复用（BT-201 撞号事故制度化：复用空号=给\n未来考古埋雷，同 BT-092 三重撞号成因；真身需要时找铸造权威取新号）；跳号原因入台账\n（\"区间申报未铸造\"），在 path_ownership/编号面板注记防未来 AI 重复考古。\n② E9-M-003 节点名\"决策标注数据集\"与裁定真身 sim_attribution_report 的命名张力：\n机械真身优先，图面名跟随真身——真身名在前、俗称降为括注，module_ref 恒指真路径\n（图面另立命名=SOP v1.1.2 域主体统一禁近义词漂移立法所防之病）；若 census 行确有\n独立 decision_annotation 真身模块则两件各自挂载、名实一对一不并也不混。\n执行注记：经实勘 decision_annotation_dataset 真身实存（src/zephyr/ml_train/\ndecision_annotation_dataset.py，MOD-ML-014），落入条件分支——M-003 改名模拟盘归因\n报告（真身名在前），M-004 保持决策标注数据集专名并改指真身 MOD-ML-014；PA 区间改\n连续段枚举 MOD-PA-002..004,006..007,013..015,020..024（主干+机制节点两处）。"
+  category: 治理架构
+  superseded_by: ""
   affected_files:
   - config/strategy_production_map.yaml
   - docs/_working/map_census/fac9_04_census_ledger.yaml
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  related_rulings: ['裁定#484']
-  superseded_by: ''
+  related_rulings:
+  - 裁定#484
 - ruling_id: 裁定#486
-  date: '2026-10-05'
+  date: "2026-10-05"
   title: 图16 治理立法流图准入+新全景图立项卡呈批制（Owner 双批，一裁两项）
   status: active
-  summary: 'Owner 2026-10-05 双批（图16 立项施工总包令内嵌裁定，随批 st-fig16-20261005 经意图API 正道入册；一裁两项）。
-
-    ①图16 治理立法流图准入（立项卡呈批制首例）：立图，状态机形态，机生自 pg_ledger（REG-RULING-001 裁定注册链：意图API→publish_snapshot→render
-    投影）。四道门全过——门①独立触发与终点（触发=裁定事件，终点=生效/取代/废弃终态）；门②跨模块交接（呈报→取号→登记→门禁74→消费→取代五站交接）；门③GOMAP 运行时章程不含立法（治理运行地图管运行面、本图管立法面，跨域不同对象不并，w5_1
-    判据）；门④机生真源强（pg_ledger 账本+裁定册双面在册，REG-RULING-001 唯一真源）。两道保险丝：结构下限≥12 有意义节点否则停工呈 chief 降级评估为注册表面板；裁定实例=数据行非节点（INV-1
-    同款，实例计数只进 counts 段）。取代 census §4 图16 行「并 GOMAP 扩治理排程层」倾向（该评估基于 PG 化前 7 步手工流程前提，7f0beccac4 cutover
-    后前提已失效）。
-
-    ②新图立项卡呈批制（同批批准，自第 17 张图起永久生效）：一切新全景图立项一律立项卡呈 Owner 批制——chief 只出卡（四道门论证+schema 设计）不开门（GO/NO-GO 权恒归
-    Owner）；本条=图16 准入程序的下不为例条款与未来之法（先例：图14/图15 立项卡曾 chief 卡+批一体，本条封口）。'
+  summary: "Owner 2026-10-05 双批（图16 立项施工总包令内嵌裁定，随批 st-fig16-20261005 经意图API 正道入册；一裁两项）。\n①图16 治理立法流图准入（立项卡呈批制首例）：立图，状态机形态，机生自 pg_ledger（REG-RULING-001 裁定注册链：意图API→publish_snapshot→render 投影）。四道门全过——门①独立触发与终点（触发=裁定事件，终点=生效/取代/废弃终态）；门②跨模块交接（呈报→取号→登记→门禁74→消费→取代五站交接）；门③GOMAP 运行时章程不含立法（治理运行地图管运行面、本图管立法面，跨域不同对象不并，w5_1 判据）；门④机生真源强（pg_ledger 账本+裁定册双面在册，REG-RULING-001 唯一真源）。两道保险丝：结构下限≥12 有意义节点否则停工呈 chief 降级评估为注册表面板；裁定实例=数据行非节点（INV-1 同款，实例计数只进 counts 段）。取代 census §4 图16 行「并 GOMAP 扩治理排程层」倾向（该评估基于 PG 化前 7 步手工流程前提，7f0beccac4 cutover 后前提已失效）。\n②新图立项卡呈批制（同批批准，自第 17 张图起永久生效）：一切新全景图立项一律立项卡呈 Owner 批制——chief 只出卡（四道门论证+schema 设计）不开门（GO/NO-GO 权恒归 Owner）；本条=图16 准入程序的下不为例条款与未来之法（先例：图14/图15 立项卡曾 chief 卡+批一体，本条封口）。"
   category: 治理架构
+  related_arch: []
+  superseded_by: null
   affected_files:
   - config/governance_legislation_map.yaml
   - docs/_working/map_build/fig16_legislation/00_skeleton.md
@@ -4204,32 +4165,72 @@ entries:
   - scripts/governance/d5_architecture/generators/generate_governance_legislation_map.py
   - scripts/governance/d5_architecture/validators/validate_governance_legislation_map.py
   - src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
-  related_arch: []
   related_rulings:
   - 裁定#409
   - 裁定#451
   - 裁定#20-D
-  superseded_by: null
-- ruling_id: "裁定#491"
-  title: 轴归一手术 F2 终审放行+F3 落地——BM 格子↔TDM/工厂互挂引用（按建议办+两条款）
-  date: '2026-10-05'
-  category: 治理架构
+- ruling_id: 裁定#487
+  date: "2026-10-08"
+  title: PKG 包层收编正名（module_id_registry 扩面第三制+四号补登）
   status: active
-  summary: |-
-    Owner/GLM-5.3 总筹 2026-10-05 F2 终审签字放行（verdict=docs/_working/axis_unify/03_f2_verdict.md，
-    executor st-axisunify-flash-20261005；裁定#483 后置项收口）。总判=按建议办+两条补充条款+四放行条件。
-    ①手术形批：TDM/工厂 YAML 逐节点 battle_map_refs 五联锚加一联（纯加字段零删改）；
-    条款1 零叙事删除——module_translation_registry §battle_map_steps 一字不动，互挂=叙事版权归属非删除，
-    BM 格子叙事降级"挂载描述"继续存在；条款2 infra 实现件一律 R4 自有、方法论叙事件才归入——
-    按此全量自查 R2：17 条改判 R4（引擎/管道/采集机械族）+17 条 borderline 论证保留（纪律/判读方法论）。
-    ②C 级 134 条按建议办：含 C-083 BM-SELL-08 做T→TDM-P-P2 做T族互挂成立、C-071..073 A股止损族→
-    TDM-X-S1 止损族同款；两处 BM flow_stage 桶均不动（#483 判据：展示顺序≠叙事所有权；三表冻结红线）。
-    B 级 159 按提案办；A 级 48 免审列册。③留空白名单批：TDM-E-L9 知识供给轴（横向支撑无生命周期格子）+
-    TDM-C 币圈族（crypto-dev-paused-20261004 冻结令）无 refs=合法态，validator 留空白名单语义引用本裁定。
-    ④F3 落地读数：71 节点 199 条 refs（TDM 63 节点+工厂 8 stage；E0/E8 因条款2 改判后无研究段格子挂靠=
-    留空披露）；运行时三消费零触碰；BM 三表/锚点零触碰（PG 只读）。
-    ⑤F4 一致性防线：check_decision_map 增 R12 腿（死引用=error 红攻实证/交易段无回链=warn 君子协定
-    聚合计数/留空白名单），复用形=join_checker 设计稿键归一+存在性判定，零新 gate 零新册。
+  summary: "Owner 2026-10-08 放行（chief 前报述明裁定全文——\"PKG-* 是真实存在的 package 层身份\n约定（regime 族 4 活例），module_id_registry 扩面吸收 PKG 命名空间为 package 层法定\n前缀，4 个既有号一次性补登记……你说派我就写指令\"——Owner 回复点名\"PKG 补登小批\"=放行）。\n内容：①allocation_rules 新增 package_format=PKG-{package-kebab} 第三制（与 MOD 文档\n规则/代码模块两制并列；分配前提=包有非空 __init__ 且确需包级锚定）；②四号补登\nPKG-regime/PKG-regime-core/PKG-regime-features/PKG-bt-regime-validation（btfix 45号\n§4 呈报件，backtest/regime_validation/__init__.py 头自认领零注册的定号悬案）；\n③total_registered 74→78 与 MODULE-ID-CONSISTENCY 计数同步；registry_version 2.5.0。\n呈报链：st-btfix-20261005 45号 §4 → chief 终裁（60号战役收官报）→ Owner 放行。"
+  category: 架构
+  related_arch: []
+  superseded_by: null
+  affected_files:
+  - architecture_model/module_id_registry.yaml
+  - docs/_working/map_build/45_depgraph_miscover_fix.md
+  approved_paths:
+  - architecture_model/module_id_registry.yaml
+  related_rulings:
+  - 裁定#486
+- ruling_id: 裁定#488
+  date: "2026-10-07"
+  title: 总包夜战 2026-10-06 全量⏳处置——Owner 保留七项登记关账+其余代裁基准分项表（一次落册）
+  status: active
+  summary: "总包裁定台 st-mastertc-l10 依 Owner 2026-10-06 对话授权（原文：全部未完成任务开工、遇到问题\n自己裁定、最终不留待裁定内容）+宪法§9.11 正式通道，将总包战役（st-mastertc-20261006，基线\n014ccf5b18）⏳ 全量处置一次落册。scope=本夜 126 卡中全部 ⏳ 卡的处置授权与方向裁定；分项如下。\n【A 段：Owner 保留门位（本夜禁代裁，登记+跳过即关账，晨会呈 Owner）】\n①C63 实盘拒单启用（实盘资金/生产流转）②C287 实盘准入 live（实盘资金/生产流转）\n③C109 F 盘 716G 摘除（物理删除三段式）④C410 清盘真删（物理删除三段式）\n⑤C267 剩余 0 字节库真删（物理删除三段式；归档+留档可做）⑥C36/C37 VM 依赖两卡（VM 离线）\n⑦C45 intake_ledger_recon rebuild（VM 依赖）。\n【B 段：代裁基准（本裁定批准生效，各车道照办，引用本裁定号即可）】\nC81 L07-C03→收编唯一（HANDOVER_INSTRUCTION 建议）；C82 L08-C03→接线（有注入点）；\nC398 F119→双引擎并存至 2026-10-08 继任窗复核；C102 排产账本→TTL 面+PG 外镜像；\nC103 OrderFileStore→quarantine 语义（隔离可恢复）；C19 severity 变体→维持 warn+登记台账；\nC21 AutoRuntime→维持封存；C24 ROOR 8 候选→仅批带 successor 且零消费者的净删候选，余维持；\nC38 D 盘→维持现状+周报；C65 余菜单→按 99 册建议逐条批；C320 图15 human_gate→按\nrisk_tier_registry 默认 medium 落册；C445 相位判别器→AI 侧施工，判据暂记「判不出=记红不拒单」；\nC490 镜像树迁移批 W0+165GiB 豁免按归档处方批，8 候选并入 C24 口径；\nimmutable_tree 24h 实测汇报补成册；AI 进化点火→维持封存至 W6 窗；\nC300 commit_queue_interactive→维持现状（已 enabled）+窗口=下维护窗；\nC410/C109/C63/C287/C36/C37/C45→归 A 段 Owner 保留。\n【效力与边界】A 段七项本夜不施工、不删任何东西；本裁定不翻转任何 flag 出厂值（C300 维持\n现状=非翻转）；净零声明：一条总裁定收编全表，不另立单项裁定（C81/C82/C398 已含于分项表）。"
+  category: 治理架构
+  superseded_by: ""
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/master_tc_20261006/00_orchestration.md
+  - docs/_working/master_tc_20261006/lanes/L10_rulings/00_workbook.md
+  related_rulings:
+  - 裁定#20-B
+  - 裁定#495
+- ruling_id: 裁定#489
+  date: "2026-10-07"
+  title: 矩阵战役 2026-10-07 六项 Owner 裁定落册——指标退役/CYC留观/HMM两段式/及格线v1/v1_value暂不开/t0立项第二波（一次落册）
+  status: active
+  summary: "st-matrix-20261007 依 Owner 2026-10-07 对话批令（\"全部同意\"+六项逐项确认），将考试战役六项\n待裁一次落册。分项如下。\n【①10 退役候选指标处置】证据=indicator_exam_scores_v1（干净窗 5 日 IC 全部 0.0004~0.0042，\ndirection 均 null）。裁定：6 件退役（MOM-032 加速振荡器/MOM-036 挤压（零件身份保留，策略层\n触发件可用）/REV-003 MACD背离/VOL-016 盘整指数（与体制帘子功能重复）/VOLUME-015 威廉累积派发\n（斜率/背离版可另立新条目重考）/TREND-036 三阶高通（零件身份保留））——technical_indicator_\nregistry status→retired 随本裁定同 commit。CYC 族 4 件（CYC-001/002/004/005）留观：非方向\n预测器，5 日方向 IC 属科目错配；改考\"条件变量考场\"（预注册判据=分层增益显著性，一次窗口定\n生死，不过即整族归档）。复活条件：全网调查车道（经典指标算法疑点对表 TA-Lib/tulip/pandas_ta\n+文献）若证伪我方实现或考法，按新条目复活重考。\n【②HMM 两段式】SMA200 立即设为生产默认体制帘子（P0-3，本裁定即授权，代码切换车道施工，册头\n标注 regime_source=sma200）；HMM 封顶再攻一次：v3 处方=重训报告（rescued_tmp_20261007/\nhmm_retrain/REPORT.md）滞后攻点（sma50 距离/ret_10d 快特征或概率滞回）+up_hivol carve 收窄，\n预注册判据=四表全过线冻结不变，一次窗口；不过即永久退役进负结果档案。\n【③及格线 v1】IC>0.02/ICIR>0.3/retain≥0.5 冻结为 v1；护栏两条：进池环节叠 Bonferroni/DSR\n多重检验校正（143 候选×运气=必然假阳，单指标阈值挡不住聚合层）；v1 定位临时，3 个月 paper\n池实测命中率回调。\n【④value_reversal v1_value 通道】现不开（弃行）：T3b 冻结卡未出分前禁开通用通道（防预注册\n后门）；出分后过线凭考号提新裁定，不过线自然弃行。\n【⑤t0_material_line】批准立项（23.3h→<2h，GPU 普查 A- 级\"价值最大单点\"）；排序=P1-1 指标链\n向量化落地后第二波开工，复用同款逐位对拍+双跑验收。\n【⑥R1/R2 地图名实错位】推迟——证据在地图值班队，Owner 指定值班队=本会话系，调档补齐后另立\n裁定呈批。\n净零声明：一条总裁定收编六项，不另立单项裁定；本裁定不翻转任何 flag 出厂值。"
+  category: 量化研究治理
+  superseded_by: ""
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml
+  - docs/_working/matrix_campaign/master_backlog_v2.md
+  related_rulings:
+  - 裁定#488
+- ruling_id: 裁定#490
+  date: "2026-10-08"
+  title: 审计闭合夜战授权+裁定#488 两处勘误（C19/C18 卡号对调更正、C441 机制与授权面更正撤回"批准翻转"）
+  status: active
+  summary: "A 段【授权】：依 Owner 2026-10-08 对话令（\"施工外部审计以上所有内容…并发施工…遇到问题自己裁定…至到全部完成\"），授权总包 st-acure-20261008-chief 执行外部审查（docs/_working/external_audit_mastertc/）P0×10 必修+P1×10+❓AI 可施工项的闭合施工：死袋复活落地、台账勘误、桌面清单回补、l8 分支内容落地、循环检查两轮零失败+红蓝对抗修复。边界=宪法 §5 Owner 门位不代裁：flag 出厂翻转（C441/C85/C300 翻转面）、实盘资金（C63/C287）、生产流转、注册表净删执行（C24/C411 候选仅呈报）、物理删除（C109/C410/C267）——此类登记留呈晨会。\nB 段【勘误一·C19/C18】：裁定#488 B 段\"C19 severity 变体→维持 warn+登记台账\"所载事由实属 C18（qmine R2 architecture_issue_registry 非标 severity 变体）——卡号错挂系落册笔误。更正：C18=已裁（维持 warn+登记台账，借本条通道）；C19 原事由（qmine R3：3 密钥门死触发定性呈报）恢复待裁，回补未完成面。\nC 段【勘误二·C441】：#488 交付报告面\"词表门判据已改写（BLOCK_FLIP_CLEAN_STREAK=20）批准翻转\"两处失真更正——(1) 该判据属 C27 的 FMS-HYGIENE 门（fms_hygiene_gate.py:119），词表门本体 tag_vocab_gate.py TAG_VOCAB_GATE_MODE=\"warn\" 无 streak 机制；(2) \"批准翻转\"表述撤回：mode 翻转仍=OWNER-GATE（fms_hygiene_gate.py L114-116 立法原文），任何 block 翻转须 Owner 单项裁定。外部审计 lane_e P0-E1/lane_g P0-3/P0-5 实证在案。\nD 段【净零】：一条总裁定收编授权+两处勘误；对 HEAD 纯插入，既有条目零触碰。"
+  category: 治理
+  evidence: 外部审查 00_audit_report.md §三 P0-4/P0-5/P0-6 + lane_e_retire_ai.md P0-E1 + lane_g_open53_cards.md P0-3/P0-5；Owner 对话令原文见 00_orchestration.md 头注
+  superseded_by: ""
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings:
+  - 裁定#488
+  - 裁定#495
+- ruling_id: 裁定#491
+  date: "2026-10-05"
+  title: 轴归一手术 F2 终审放行+F3 落地——BM 格子↔TDM/工厂互挂引用（按建议办+两条款）
+  status: active
+  summary: "Owner/GLM-5.3 总筹 2026-10-05 F2 终审签字放行（verdict=docs/_working/axis_unify/03_f2_verdict.md，\nexecutor st-axisunify-flash-20261005；裁定#483 后置项收口）。总判=按建议办+两条补充条款+四放行条件。\n①手术形批：TDM/工厂 YAML 逐节点 battle_map_refs 五联锚加一联（纯加字段零删改）；\n条款1 零叙事删除——module_translation_registry §battle_map_steps 一字不动，互挂=叙事版权归属非删除，\nBM 格子叙事降级\"挂载描述\"继续存在；条款2 infra 实现件一律 R4 自有、方法论叙事件才归入——\n按此全量自查 R2：17 条改判 R4（引擎/管道/采集机械族）+17 条 borderline 论证保留（纪律/判读方法论）。\n②C 级 134 条按建议办：含 C-083 BM-SELL-08 做T→TDM-P-P2 做T族互挂成立、C-071..073 A股止损族→\nTDM-X-S1 止损族同款；两处 BM flow_stage 桶均不动（#483 判据：展示顺序≠叙事所有权；三表冻结红线）。\nB 级 159 按提案办；A 级 48 免审列册。③留空白名单批：TDM-E-L9 知识供给轴（横向支撑无生命周期格子）+\nTDM-C 币圈族（crypto-dev-paused-20261004 冻结令）无 refs=合法态，validator 留空白名单语义引用本裁定。\n④F3 落地读数：71 节点 199 条 refs（TDM 63 节点+工厂 8 stage；E0/E8 因条款2 改判后无研究段格子挂靠=\n留空披露）；运行时三消费零触碰；BM 三表/锚点零触碰（PG 只读）。\n⑤F4 一致性防线：check_decision_map 增 R12 腿（死引用=error 红攻实证/交易段无回链=warn 君子协定\n聚合计数/留空白名单），复用形=join_checker 设计稿键归一+存在性判定，零新 gate 零新册。"
+  category: 治理架构
+  superseded_by: ""
   affected_files:
   - config/trading_decision_map.yaml
   - config/strategy_production_map.yaml
@@ -4237,232 +4238,64 @@ entries:
   - docs/_working/axis_unify/04_write_batch.md
   - scripts/governance/d5_architecture/generators/check_decision_map.py
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  related_rulings: ['裁定#483', '裁定#482', '裁定#486']
-  superseded_by: ''
-- ruling_id: "裁定#488"
-  title: 总包夜战 2026-10-06 全量⏳处置——Owner 保留七项登记关账+其余代裁基准分项表（一次落册）
-  date: '2026-10-07'
-  category: 治理架构
-  status: active
-  summary: |-
-    总包裁定台 st-mastertc-l10 依 Owner 2026-10-06 对话授权（原文：全部未完成任务开工、遇到问题
-    自己裁定、最终不留待裁定内容）+宪法§9.11 正式通道，将总包战役（st-mastertc-20261006，基线
-    014ccf5b18）⏳ 全量处置一次落册。scope=本夜 126 卡中全部 ⏳ 卡的处置授权与方向裁定；分项如下。
-    【A 段：Owner 保留门位（本夜禁代裁，登记+跳过即关账，晨会呈 Owner）】
-    ①C63 实盘拒单启用（实盘资金/生产流转）②C287 实盘准入 live（实盘资金/生产流转）
-    ③C109 F 盘 716G 摘除（物理删除三段式）④C410 清盘真删（物理删除三段式）
-    ⑤C267 剩余 0 字节库真删（物理删除三段式；归档+留档可做）⑥C36/C37 VM 依赖两卡（VM 离线）
-    ⑦C45 intake_ledger_recon rebuild（VM 依赖）。
-    【B 段：代裁基准（本裁定批准生效，各车道照办，引用本裁定号即可）】
-    C81 L07-C03→收编唯一（HANDOVER_INSTRUCTION 建议）；C82 L08-C03→接线（有注入点）；
-    C398 F119→双引擎并存至 2026-10-08 继任窗复核；C102 排产账本→TTL 面+PG 外镜像；
-    C103 OrderFileStore→quarantine 语义（隔离可恢复）；C19 severity 变体→维持 warn+登记台账；
-    C21 AutoRuntime→维持封存；C24 ROOR 8 候选→仅批带 successor 且零消费者的净删候选，余维持；
-    C38 D 盘→维持现状+周报；C65 余菜单→按 99 册建议逐条批；C320 图15 human_gate→按
-    risk_tier_registry 默认 medium 落册；C445 相位判别器→AI 侧施工，判据暂记「判不出=记红不拒单」；
-    C490 镜像树迁移批 W0+165GiB 豁免按归档处方批，8 候选并入 C24 口径；
-    immutable_tree 24h 实测汇报补成册；AI 进化点火→维持封存至 W6 窗；
-    C300 commit_queue_interactive→维持现状（已 enabled）+窗口=下维护窗；
-    C410/C109/C63/C287/C36/C37/C45→归 A 段 Owner 保留。
-    【效力与边界】A 段七项本夜不施工、不删任何东西；本裁定不翻转任何 flag 出厂值（C300 维持
-    现状=非翻转）；净零声明：一条总裁定收编全表，不另立单项裁定（C81/C82/C398 已含于分项表）。
-  affected_files:
-  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  - docs/_working/master_tc_20261006/00_orchestration.md
-  - docs/_working/master_tc_20261006/lanes/L10_rulings/00_workbook.md
-  related_rulings: ['裁定#20-B', '裁定#495']  # #495 边界演进指回（墓碑/shadow 制承接，非推翻）
-  superseded_by: ''
-- ruling_id: "裁定#489"
-  title: 矩阵战役 2026-10-07 六项 Owner 裁定落册——指标退役/CYC留观/HMM两段式/及格线v1/v1_value暂不开/t0立项第二波（一次落册）
-  date: '2026-10-07'
-  category: 量化研究治理
-  status: active
-  summary: |-
-    st-matrix-20261007 依 Owner 2026-10-07 对话批令（"全部同意"+六项逐项确认），将考试战役六项
-    待裁一次落册。分项如下。
-    【①10 退役候选指标处置】证据=indicator_exam_scores_v1（干净窗 5 日 IC 全部 0.0004~0.0042，
-    direction 均 null）。裁定：6 件退役（MOM-032 加速振荡器/MOM-036 挤压（零件身份保留，策略层
-    触发件可用）/REV-003 MACD背离/VOL-016 盘整指数（与体制帘子功能重复）/VOLUME-015 威廉累积派发
-    （斜率/背离版可另立新条目重考）/TREND-036 三阶高通（零件身份保留））——technical_indicator_
-    registry status→retired 随本裁定同 commit。CYC 族 4 件（CYC-001/002/004/005）留观：非方向
-    预测器，5 日方向 IC 属科目错配；改考"条件变量考场"（预注册判据=分层增益显著性，一次窗口定
-    生死，不过即整族归档）。复活条件：全网调查车道（经典指标算法疑点对表 TA-Lib/tulip/pandas_ta
-    +文献）若证伪我方实现或考法，按新条目复活重考。
-    【②HMM 两段式】SMA200 立即设为生产默认体制帘子（P0-3，本裁定即授权，代码切换车道施工，册头
-    标注 regime_source=sma200）；HMM 封顶再攻一次：v3 处方=重训报告（rescued_tmp_20261007/
-    hmm_retrain/REPORT.md）滞后攻点（sma50 距离/ret_10d 快特征或概率滞回）+up_hivol carve 收窄，
-    预注册判据=四表全过线冻结不变，一次窗口；不过即永久退役进负结果档案。
-    【③及格线 v1】IC>0.02/ICIR>0.3/retain≥0.5 冻结为 v1；护栏两条：进池环节叠 Bonferroni/DSR
-    多重检验校正（143 候选×运气=必然假阳，单指标阈值挡不住聚合层）；v1 定位临时，3 个月 paper
-    池实测命中率回调。
-    【④value_reversal v1_value 通道】现不开（弃行）：T3b 冻结卡未出分前禁开通用通道（防预注册
-    后门）；出分后过线凭考号提新裁定，不过线自然弃行。
-    【⑤t0_material_line】批准立项（23.3h→<2h，GPU 普查 A- 级"价值最大单点"）；排序=P1-1 指标链
-    向量化落地后第二波开工，复用同款逐位对拍+双跑验收。
-    【⑥R1/R2 地图名实错位】推迟——证据在地图值班队，Owner 指定值班队=本会话系，调档补齐后另立
-    裁定呈批。
-    净零声明：一条总裁定收编六项，不另立单项裁定；本裁定不翻转任何 flag 出厂值。
-  affected_files:
-  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  - docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml
-  - docs/_working/matrix_campaign/master_backlog_v2.md
-  related_rulings: ['裁定#488']
-  superseded_by: ''
-
-- ruling_id: "裁定#490"
-  title: 审计闭合夜战授权+裁定#488 两处勘误（C19/C18 卡号对调更正、C441 机制与授权面更正撤回"批准翻转"）
-  date: '2026-10-08'
-  category: 治理
-  status: active
-  summary: |-
-    A 段【授权】：依 Owner 2026-10-08 对话令（"施工外部审计以上所有内容…并发施工…遇到问题自己裁定…至到全部完成"），授权总包 st-acure-20261008-chief 执行外部审查（docs/_working/external_audit_mastertc/）P0×10 必修+P1×10+❓AI 可施工项的闭合施工：死袋复活落地、台账勘误、桌面清单回补、l8 分支内容落地、循环检查两轮零失败+红蓝对抗修复。边界=宪法 §5 Owner 门位不代裁：flag 出厂翻转（C441/C85/C300 翻转面）、实盘资金（C63/C287）、生产流转、注册表净删执行（C24/C411 候选仅呈报）、物理删除（C109/C410/C267）——此类登记留呈晨会。
-    B 段【勘误一·C19/C18】：裁定#488 B 段"C19 severity 变体→维持 warn+登记台账"所载事由实属 C18（qmine R2 architecture_issue_registry 非标 severity 变体）——卡号错挂系落册笔误。更正：C18=已裁（维持 warn+登记台账，借本条通道）；C19 原事由（qmine R3：3 密钥门死触发定性呈报）恢复待裁，回补未完成面。
-    C 段【勘误二·C441】：#488 交付报告面"词表门判据已改写（BLOCK_FLIP_CLEAN_STREAK=20）批准翻转"两处失真更正——(1) 该判据属 C27 的 FMS-HYGIENE 门（fms_hygiene_gate.py:119），词表门本体 tag_vocab_gate.py TAG_VOCAB_GATE_MODE="warn" 无 streak 机制；(2) "批准翻转"表述撤回：mode 翻转仍=OWNER-GATE（fms_hygiene_gate.py L114-116 立法原文），任何 block 翻转须 Owner 单项裁定。外部审计 lane_e P0-E1/lane_g P0-3/P0-5 实证在案。
-    D 段【净零】：一条总裁定收编授权+两处勘误；对 HEAD 纯插入，既有条目零触碰。
-  evidence: 外部审查 00_audit_report.md §三 P0-4/P0-5/P0-6 + lane_e_retire_ai.md P0-E1 + lane_g_open53_cards.md P0-3/P0-5；Owner 对话令原文见 00_orchestration.md 头注
-  affected_files:
-    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  related_rulings: ['裁定#488', '裁定#495']  # #495 边界演进指回（保留面继承+墓碑/shadow 制，非推翻）
-  superseded_by: ''
-
-- ruling_id: "裁定#487"
-  title: PKG 包层收编正名（module_id_registry 扩面第三制+四号补登）
-  date: "2026-10-08"
-  category: 架构
-  status: active
-  summary: |-
-    Owner 2026-10-08 放行（chief 前报述明裁定全文——"PKG-* 是真实存在的 package 层身份
-    约定（regime 族 4 活例），module_id_registry 扩面吸收 PKG 命名空间为 package 层法定
-    前缀，4 个既有号一次性补登记……你说派我就写指令"——Owner 回复点名"PKG 补登小批"=放行）。
-    内容：①allocation_rules 新增 package_format=PKG-{package-kebab} 第三制（与 MOD 文档
-    规则/代码模块两制并列；分配前提=包有非空 __init__ 且确需包级锚定）；②四号补登
-    PKG-regime/PKG-regime-core/PKG-regime-features/PKG-bt-regime-validation（btfix 45号
-    §4 呈报件，backtest/regime_validation/__init__.py 头自认领零注册的定号悬案）；
-    ③total_registered 74→78 与 MODULE-ID-CONSISTENCY 计数同步；registry_version 2.5.0。
-    呈报链：st-btfix-20261005 45号 §4 → chief 终裁（60号战役收官报）→ Owner 放行。
-  affected_files:
-  - architecture_model/module_id_registry.yaml
-  - docs/_working/map_build/45_depgraph_miscover_fix.md
-  related_arch: []
-  related_rulings: ["裁定#486"]
-  superseded_by: null
-  approved_paths:
-  - architecture_model/module_id_registry.yaml
-- ruling_id: "裁定#492"
+  related_rulings:
+  - 裁定#483
+  - 裁定#482
+  - 裁定#486
+- ruling_id: 裁定#492
   date: "2026-10-08"
   title: 勘误：图书馆施工簿（s3_library_step2.md）引用"裁定#460②"错位——#460 在册实为 auto_mount V2 定版，图书馆面授权真源=#398-七+#399-四
-  category: 流程
   status: active
-  summary: |-
-    全流通总包交接令 R8（st-fullflow2-20261008）登记勘误：图书馆总口审计闭环施工簿
-    （docs/_working/total_circulation_night/s3_library_step2.md，A4 车道 st-circ-a4-20260930，
-    标题与正文两处）引用"裁定#460②"作为施工授权锚——册面核实 裁定#460 实为"t0 甲位三版本
-    定版：auto_mount.py V2 为唯一真源（Z-C1 收口）"（2026-09-30，架构类），全条无图书馆/
-    lookup/landing 语义，②号子步亦非图书馆授权位。图书馆面真实授权链：裁定#398-七
-    （2026-09-22，"图书馆宪法挂图——方案批准（等长一行入口进宪法 §6 检索序，指向
-    zephyr.library.lookup）"）+裁定#399-四（"#398 余项全批准确认：…图书馆宪法挂图（批准
-    生效可落地）"）。原会话已故无法追补正引，本条代追补：s3_library_step2.md 的授权锚
-    应读作"#398-七（经 #399-四确认）"，其施工成果本身（lookup --session 审计/copilot
-    指针/能力卡#45/SOP 第四口）不经本勘误动摇——授权锚错位不影响成果效力，仅正引归位。
-    教训留档：施工簿标题引用裁定号前须 grep ruling_registry 册面核实号段语义（同病先例：
-    #376 勘误"原称 #304 系撞号前旧口径"、standards.yaml 错引 #335→#337 随批修正）。
+  summary: "全流通总包交接令 R8（st-fullflow2-20261008）登记勘误：图书馆总口审计闭环施工簿\n（docs/_working/total_circulation_night/s3_library_step2.md，A4 车道 st-circ-a4-20260930，\n标题与正文两处）引用\"裁定#460②\"作为施工授权锚——册面核实 裁定#460 实为\"t0 甲位三版本\n定版：auto_mount.py V2 为唯一真源（Z-C1 收口）\"（2026-09-30，架构类），全条无图书馆/\nlookup/landing 语义，②号子步亦非图书馆授权位。图书馆面真实授权链：裁定#398-七\n（2026-09-22，\"图书馆宪法挂图——方案批准（等长一行入口进宪法 §6 检索序，指向\nzephyr.library.lookup）\"）+裁定#399-四（\"#398 余项全批准确认：…图书馆宪法挂图（批准\n生效可落地）\"）。原会话已故无法追补正引，本条代追补：s3_library_step2.md 的授权锚\n应读作\"#398-七（经 #399-四确认）\"，其施工成果本身（lookup --session 审计/copilot\n指针/能力卡#45/SOP 第四口）不经本勘误动摇——授权锚错位不影响成果效力，仅正引归位。\n教训留档：施工簿标题引用裁定号前须 grep ruling_registry 册面核实号段语义（同病先例：\n#376 勘误\"原称 #304 系撞号前旧口径\"、standards.yaml 错引 #335→#337 随批修正）。"
+  category: 流程
+  related_arch: []
+  superseded_by: null
   affected_files:
   - docs/_working/total_circulation_night/s3_library_step2.md
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  related_arch: []
-  related_rulings: ["裁定#460", "裁定#398", "裁定#399"]
-  superseded_by: null
   approved_paths:
   - docs/_working/total_circulation_night/s3_library_step2.md
-- ruling_id: "裁定#493"
-  title: CASEBOOK-006/007/008 空号作废（处方遗失，永不回填）
+  related_rulings:
+  - 裁定#460
+  - 裁定#398
+  - 裁定#399
+- ruling_id: 裁定#493
   date: "2026-10-08"
-  category: 治理
+  title: CASEBOOK-006/007/008 空号作废（处方遗失，永不回填）
   status: active
-  summary: |-
-    Owner 已批裁定原文：「006/007/008 因处方遗失作废，永不回填，新册从下一新号顺延」。
-    背景：E-12 处方原件随 f2z §六配方遗失；2026-10-07 三册按 chief 会话记录「补授」重建，
-    违勿造假凑数原则，本裁定将其作废为 reserved_void 空号并从册体撤除，永不回填，
-    下一新册号从 CASEBOOK-009 顺延。同批落 reserved_void 注记段+条件激活防重门
-    （tests/governance/test_casebook_reserved_void_gate.py，ec2b5a1028 先行在册——
-    本批落地即自动 activation，伪造占用 006/007/008 将显红）。
-    勘误备注：casebook 册头曾在途批预写「裁定#492」引注，#492 实际被 st-fullflow2-20261008
-    的 R8 引用勘误竞得（编号赛跑），本批落册时一并纠正为 #493。
+  summary: "Owner 已批裁定原文：「006/007/008 因处方遗失作废，永不回填，新册从下一新号顺延」。\n背景：E-12 处方原件随 f2z §六配方遗失；2026-10-07 三册按 chief 会话记录「补授」重建，\n违勿造假凑数原则，本裁定将其作废为 reserved_void 空号并从册体撤除，永不回填，\n下一新册号从 CASEBOOK-009 顺延。同批落 reserved_void 注记段+条件激活防重门\n（tests/governance/test_casebook_reserved_void_gate.py，ec2b5a1028 先行在册——\n本批落地即自动 activation，伪造占用 006/007/008 将显红）。\n勘误备注：casebook 册头曾在途批预写「裁定#492」引注，#492 实际被 st-fullflow2-20261008\n的 R8 引用勘误竞得（编号赛跑），本批落册时一并纠正为 #493。"
+  category: 治理
+  superseded_by: null
   affected_files:
   - docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml
   - tests/governance/test_casebook_reserved_void_gate.py
   related_rulings: []
-  superseded_by: null
-- ruling_id: "裁定#494"
-  title: 矩阵战役 2026-10-08 三项落册——HMM 改判"实现停用·算法待优化"+CYC 族转轨 A+退役两轨制/裁定路由政策骨架（Owner 复审产物，修正 #489② 的概念/实现捆绑判）
-  date: '2026-10-08'
-  category: 量化研究治理
+- ruling_id: 裁定#494
+  date: "2026-10-08"
+  title: 矩阵战役 2026-10-08 三项落册——HMM 改判"实现停用·算法待优化"+CYC 族转轨 A+退役两轨制/裁定路由政策骨架（Owner 复审产物，修正
   status: active
-  summary: |-
-    st-matrix-20261007 依 Owner 2026-10-08 对话批令（"改/A/落"三项逐项确认），对 #489② 的 HMM
-    判死做概念/实现分离修正并落地裁定路由政策骨架。分项如下。
-    【①HMM 改判】Owner 论点=大盘状态是行业共识概念（主观客全员在用），不合格的只能是实现而非
-    概念；#489②"体制识别方向永久退役"把概念与实现捆判，切宽了。改判：HMM 体制识别器从"永久退役"
-    改为"实现停用·算法待优化"（注册状态语义=deprecated）。三件事随档：下岗原因=三次考试（J 道原考
-    混淆对角 20.6%/v2 重训/v3 一次窗口 conditionally_qualified，滞后 10>5、up 分量 0.552<0.613）
-    全不过线，证据=hmm_v3_exam_v1.md；职责承载者=SMA200 帘子（L2 已切默认，regime_source=
-    sma200_default）；重启条件（写死防无限重试循环）=仅限两条——(a)不同代际算法族（jump model/
-    BOCPD 等 L6 调研在册者，非高斯 HMM 再调参）+新预注册卡+Owner 开窗；(b)某策略明确需要多态体制
-    输入且 SMA200 不够用时随策略重考。use_hmm=False 默认维持（研究用 opt-in 不变）。
-    【②CYC 族 4 条转轨 A】IND-CYC-001/002/004/005 从 retired 改 deprecated（停用·待优化，轨 A）：
-    下岗原因=W3 条件考场 Bonferroni 全不显著（best_p_adj 0.362/0.531/1.0/1.0>0.05）保留在注记；
-    重启条件=作为策略层零件被引用时随策略重考；独立信号路已走完（一次窗口已消耗）。
-    【③两轨制+裁定路由政策骨架】（占号勘误：PG token note 写 #490，实际裁定号=#494，他队 #490-493 先落）adjudication_routing_policy.md 落 governance_sop 族（creation_token
-    已入 PG 账本 REG-CAPCAN-001 快照 v116）：裁定哲学三公理（可逆性不对称/概念与实现分离/证据先于
-    裁定）+八类路由总表（D1 生死处置两轨制【本裁定生效】/D2 通道门禁/D3 标准阈值/D4 方向路线/
-    D5 资源优先级/D6 事故冲突/D7 数据口径/D8 例外豁免）+L1-L3 自治挂钩。定位=路由层（什么事走哪条
-    路谁拍板），与 deep_adjudication_method_policy（怎么组织裁定战役）互挂不复制；裁定登记语义仍归
-    RULE-RULING+本册；人机门位仍归宪法 §5。净零：零新 gate/零新注册表/零新字段（复用 deprecated/
-    retired 既有枚举）。
-    净零声明：一条总裁定收编三项；本裁定不翻转任何 flag 出厂值；capability 投影册本批不携带
-    （token=PG 在账，yaml 投影待下轮 render 增量显现，fig13 先例）。
+  summary: "st-matrix-20261007 依 Owner 2026-10-08 对话批令（\"改/A/落\"三项逐项确认），对 #489② 的 HMM\n判死做概念/实现分离修正并落地裁定路由政策骨架。分项如下。\n【①HMM 改判】Owner 论点=大盘状态是行业共识概念（主观客全员在用），不合格的只能是实现而非\n概念；#489②\"体制识别方向永久退役\"把概念与实现捆判，切宽了。改判：HMM 体制识别器从\"永久退役\"\n改为\"实现停用·算法待优化\"（注册状态语义=deprecated）。三件事随档：下岗原因=三次考试（J 道原考\n混淆对角 20.6%/v2 重训/v3 一次窗口 conditionally_qualified，滞后 10>5、up 分量 0.552<0.613）\n全不过线，证据=hmm_v3_exam_v1.md；职责承载者=SMA200 帘子（L2 已切默认，regime_source=\nsma200_default）；重启条件（写死防无限重试循环）=仅限两条——(a)不同代际算法族（jump model/\nBOCPD 等 L6 调研在册者，非高斯 HMM 再调参）+新预注册卡+Owner 开窗；(b)某策略明确需要多态体制\n输入且 SMA200 不够用时随策略重考。use_hmm=False 默认维持（研究用 opt-in 不变）。\n【②CYC 族 4 条转轨 A】IND-CYC-001/002/004/005 从 retired 改 deprecated（停用·待优化，轨 A）：\n下岗原因=W3 条件考场 Bonferroni 全不显著（best_p_adj 0.362/0.531/1.0/1.0>0.05）保留在注记；\n重启条件=作为策略层零件被引用时随策略重考；独立信号路已走完（一次窗口已消耗）。\n【③两轨制+裁定路由政策骨架】（占号勘误：PG token note 写 #490，实际裁定号=#494，他队 #490-493 先落）adjudication_routing_policy.md 落 governance_sop 族（creation_token\n已入 PG 账本 REG-CAPCAN-001 快照 v116）：裁定哲学三公理（可逆性不对称/概念与实现分离/证据先于\n裁定）+八类路由总表（D1 生死处置两轨制【本裁定生效】/D2 通道门禁/D3 标准阈值/D4 方向路线/\nD5 资源优先级/D6 事故冲突/D7 数据口径/D8 例外豁免）+L1-L3 自治挂钩。定位=路由层（什么事走哪条\n路谁拍板），与 deep_adjudication_method_policy（怎么组织裁定战役）互挂不复制；裁定登记语义仍归\nRULE-RULING+本册；人机门位仍归宪法 §5。净零：零新 gate/零新注册表/零新字段（复用 deprecated/\nretired 既有枚举）。\n净零声明：一条总裁定收编三项；本裁定不翻转任何 flag 出厂值；capability 投影册本批不携带\n（token=PG 在账，yaml 投影待下轮 render 增量显现，fig13 先例）。"
+  category: 量化研究治理
+  superseded_by: ""
   affected_files:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   - docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml
   - docs/_working/matrix_campaign/mining/hmm_v3_exam_v1.md
   - docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
   - docs/01_policies_and_standards/sop/README.md
-  related_rulings: ['裁定#489', '裁定#488']
-  superseded_by: ''
-  # 注：#489② HMM 段由本裁定①修正（概念/实现分离），其余五段不受影响。
-- ruling_id: "裁定#495"
+  related_rulings:
+  - 裁定#489
+  - 裁定#488
+- ruling_id: 裁定#495
+  date: "2026-10-09"
   title: 修宪批文·裁定路由政策 v2.0 晋升+宪法 §5 门位修订+risk_tier_registry v1.1.0（Owner 2026-10-09 回批「批」，五件套同 commit 原子）
-  date: '2026-10-09'
-  category: 治理
   status: active
-  summary: |-
-    st-chiefc-20261009 依 Owner 2026-10-09 对话回批「批」（《Owner呈批菜单·重路由版》A1-A5 全批），
-    落地裁定路由政策 v2.0 五件套同 commit 原子（RULE-RULING）。分项如下。
-    【①Gate 0 修正】「零触发零消费」仅作存量判退的联言条件之一，永不做单判；增量工程判立=
-    三轴价值主张（速度/治理质量/算法质量）存在性，三件套（基线→目标→验收判据）齐才可开工。
-    【②Owner 保留面收敛为六类】资金与实盘交易（含交易核心域 production 流转）/法律合规义务/
-    物理不可逆删除（生产盘/无备份生产数据）/花钱（采购/扩容/充值）/对外发布与资产出域（代码/
-    数据/密钥外发、开源、上传外部服务）/宪法本身；门位识别机器化=按域查表禁自报分类。
-    【③业务资产四规则】数据/数据源/因子/策略/指标概念级退役（轨 B）=Owner，轨 A"待重新优化
-    算法"标签=AI；数据表安全删除（真重复/空表机械判据三件全真+#311 隔离）=AI；数据驻留公理=
-    业务数据任意时刻∈{主库,冷库}；上实盘=Owner（含于保留面第 1 类）。
-    【④墓碑制净删下放】治理资产注册表/真源条目净删→墓碑制（deprecated/retired+30 天复活窗+
-    引用即复活评估+物理清账=季度打包）；flag 出厂翻转→shadow 制（≥7 天+自动回退判据+变更留痕）；
-    非交易核心域首次转 production→可回退晋升（附降级命令+行为变更 message 声明）。
-    【⑤互斥处理】对 #488 A 段/#490「净删执行/flag 翻转=Owner 门位」表述=边界演进非推翻：
-    物理删除/资金面内核由保留面第 1/4 类完整继承，安全承接=墓碑/shadow 双制；#488/#490 不标
-    superseded，本批在两条目补 related_rulings 指回。#415② 热册写侧唯一=队列序列化器：无冲突不动；
-    #391 禁止悬空授权：本裁定即其要求的正式登记动作。
-    【⑥判据版本化禁追溯】既有裁定不因本裁定重审；此前按旧门位呈批/搁置事项按 v2 路由重新分派
-    即视为处置；首个三轴基线快照随政策册附表 A 入册。
-    【⑦测试随批】risk_tier 新鲜度测试新家重建（旧源被 7fa19b8249b 旧路径删除波扫掉仅余 pyc）+
-    v1.1.0 契约断言；能红证据=三攻击实测全红（删保留面/回挂下放面/版本回退各 1 failed）+恢复复绿
-    10 passed。
-    净零声明：零新 gate/零新注册表/零新字段（adjudicator=修复 v1 数据洞+owner_sign=Owner 实裁
-    标记，条目级非 schema 扩面）；处置状态复用既有枚举。
-    附带勘误：本册 index 中 #494 条目曾被无主 staged 删除（袋快照机制会吸收到他会话提交）——
-    本批 git add 以 HEAD+工作区为准恢复，#494 内容零丢失。
+  summary: "st-chiefc-20261009 依 Owner 2026-10-09 对话回批「批」（《Owner呈批菜单·重路由版》A1-A5 全批），\n落地裁定路由政策 v2.0 五件套同 commit 原子（RULE-RULING）。分项如下。\n【①Gate 0 修正】「零触发零消费」仅作存量判退的联言条件之一，永不做单判；增量工程判立=\n三轴价值主张（速度/治理质量/算法质量）存在性，三件套（基线→目标→验收判据）齐才可开工。\n【②Owner 保留面收敛为六类】资金与实盘交易（含交易核心域 production 流转）/法律合规义务/\n物理不可逆删除（生产盘/无备份生产数据）/花钱（采购/扩容/充值）/对外发布与资产出域（代码/\n数据/密钥外发、开源、上传外部服务）/宪法本身；门位识别机器化=按域查表禁自报分类。\n【③业务资产四规则】数据/数据源/因子/策略/指标概念级退役（轨 B）=Owner，轨 A\"待重新优化\n算法\"标签=AI；数据表安全删除（真重复/空表机械判据三件全真+#311 隔离）=AI；数据驻留公理=\n业务数据任意时刻∈{主库,冷库}；上实盘=Owner（含于保留面第 1 类）。\n【④墓碑制净删下放】治理资产注册表/真源条目净删→墓碑制（deprecated/retired+30 天复活窗+\n引用即复活评估+物理清账=季度打包）；flag 出厂翻转→shadow 制（≥7 天+自动回退判据+变更留痕）；\n非交易核心域首次转 production→可回退晋升（附降级命令+行为变更 message 声明）。\n【⑤互斥处理】对 #488 A 段/#490「净删执行/flag 翻转=Owner 门位」表述=边界演进非推翻：\n物理删除/资金面内核由保留面第 1/4 类完整继承，安全承接=墓碑/shadow 双制；#488/#490 不标\nsuperseded，本批在两条目补 related_rulings 指回。#415② 热册写侧唯一=队列序列化器：无冲突不动；\n#391 禁止悬空授权：本裁定即其要求的正式登记动作。\n【⑥判据版本化禁追溯】既有裁定不因本裁定重审；此前按旧门位呈批/搁置事项按 v2 路由重新分派\n即视为处置；首个三轴基线快照随政策册附表 A 入册。\n【⑦测试随批】risk_tier 新鲜度测试新家重建（旧源被 7fa19b8249b 旧路径删除波扫掉仅余 pyc）+\nv1.1.0 契约断言；能红证据=三攻击实测全红（删保留面/回挂下放面/版本回退各 1 failed）+恢复复绿\n10 passed。\n净零声明：零新 gate/零新注册表/零新字段（adjudicator=修复 v1 数据洞+owner_sign=Owner 实裁\n标记，条目级非 schema 扩面）；处置状态复用既有枚举。\n附带勘误：本册 index 中 #494 条目曾被无主 staged 删除（袋快照机制会吸收到他会话提交）——\n本批 git add 以 HEAD+工作区为准恢复，#494 内容零丢失。"
+  category: 治理
   evidence: 桌面《修宪批文草案_裁定路由v2_2026-10-09》《政策册v2施工文本_adjudication_routing_policy》《裁定路由政策v2.0_挖矿定稿_2026-10-09》（19 攻击面对抗扫描挖干）+《Owner呈批菜单_重路由版_2026-10-09》批复记录「批」（A1-A5）
+  owner_sign: Owner 2026-10-09 回批「批」（A1 修宪+A2-A5 全批，见《Owner呈批菜单_重路由版》批复记录）
+  adjudicator: st-chiefc-20261009
+  superseded_by: ""
   affected_files:
   - AGENTS.md
   - docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
@@ -4472,39 +4305,20 @@ entries:
   approved_paths:
   - AGENTS.md
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  related_rulings: ['裁定#488', '裁定#490', '裁定#494']
-  superseded_by: ''
-  adjudicator: st-chiefc-20261009
-  owner_sign: Owner 2026-10-09 回批「批」（A1 修宪+A2-A5 全批，见《Owner呈批菜单_重路由版》批复记录）
-
-- ruling_id: "裁定#496"
+  related_rulings:
+  - 裁定#488
+  - 裁定#490
+  - 裁定#494
+- ruling_id: 裁定#496
+  date: "2026-10-09"
   title: 死信清偿 G1+G3 交总队并袋统一三方合并单批落地（Owner 2026-10-09 批文「40 件全批 A」，授权链随首组落地袋同 commit 原子）
-  date: '2026-10-09'
-  category: 治理
   status: active
-  summary: |-
-    st-chiefc-20261009（BU 车道）依 Owner 2026-10-09 批文「40 件全批 A：G1+G3 交总队并袋，
-    其余专车直投；G9/G10 也 A」（deadcure 专案 10_owner_menu_deadcure40.md 批文记录），将
-    G1 20 袋+G3 4 袋+B-1（b-606 分支 c5024b0e+21fcdcc2）统一三方合并单批落地（禁分批零散投）。
-    【①G1 SPM 手术面】config/strategy_production_map.yaml 三方合并（base=4e53c6698 ×
-    ours=工作树 G1 终版袋 c4f96ddcf1「图手术终版」× theirs=分支 G3 面 T7 归一+C2 handoffs）
-    merge-file 0 冲突，FAC-E1F 双保去重后 validate_strategy_production_map PASS nodes=341
-    edges=17；docs/03_modules/path_ownership_map.yaml 取 ownership 册再生成版（aaec9b25e9，
-    与 -0009 袋字节全等）。
-    【②G3 六图】data_supply_chain/governance_operations/panorama_master/fig11+fig16 skeleton
-    直落分支版（袋 blob 与分支字节全等收敛）；governance_legislation 生成器回灌（账本 active=291，
-    validator PASS）；dev_delivery 采生成器重放（机生权威，validator PASS nodes=30 edges=31）。
-    【③B-1 L1 成品】boot_hooks.py（T8a tech_stack 自检，HEAD 自 merge-base 未动=纯快进）+
-    budget_engine.py（R12 聚合不变式 +36/-0 纯超集）+tests 两件（17+3 用例），pytest 20 passed。
-    【④D6 无主变更】st-fc-spm 不在 session_registry（会话死），其工作树未暂存面（SPM 终版/
-    dev_delivery 12:00 终刷/ownership 册）按无主变更恢复优先全部并入零丢弃；其 index 中间态经
-    相似度判读为同族演进中间版（被终版超集覆盖，存档 merge_ws）。
-    【⑤对拍留证+残留】交割包=docs/_working/deadcure_campaign/11_handoff_G1G3.md（逐件
-    blob_ref+sha256），对拍表=.runtime/tmp/st-chiefc-20261009/bu_merge_triage.md+数据 JSON
-    （24 袋逐件三方哈希）。残留两项：DSC 语义注解层为袋面手改痕迹生成器重放会剥离（需回灌
-    fig12 skeleton 真源）；panorama B-pan 注记更正需回灌 generator master 输入。
-    净零声明：零新 gate/零新注册表/零新模块（测试两件为分支成品随批）；creation_token 登记 1 条。
+  summary: "st-chiefc-20261009（BU 车道）依 Owner 2026-10-09 批文「40 件全批 A：G1+G3 交总队并袋，\n其余专车直投；G9/G10 也 A」（deadcure 专案 10_owner_menu_deadcure40.md 批文记录），将\nG1 20 袋+G3 4 袋+B-1（b-606 分支 c5024b0e+21fcdcc2）统一三方合并单批落地（禁分批零散投）。\n【①G1 SPM 手术面】config/strategy_production_map.yaml 三方合并（base=4e53c6698 ×\nours=工作树 G1 终版袋 c4f96ddcf1「图手术终版」× theirs=分支 G3 面 T7 归一+C2 handoffs）\nmerge-file 0 冲突，FAC-E1F 双保去重后 validate_strategy_production_map PASS nodes=341\nedges=17；docs/03_modules/path_ownership_map.yaml 取 ownership 册再生成版（aaec9b25e9，\n与 -0009 袋字节全等）。\n【②G3 六图】data_supply_chain/governance_operations/panorama_master/fig11+fig16 skeleton\n直落分支版（袋 blob 与分支字节全等收敛）；governance_legislation 生成器回灌（账本 active=291，\nvalidator PASS）；dev_delivery 采生成器重放（机生权威，validator PASS nodes=30 edges=31）。\n【③B-1 L1 成品】boot_hooks.py（T8a tech_stack 自检，HEAD 自 merge-base 未动=纯快进）+\nbudget_engine.py（R12 聚合不变式 +36/-0 纯超集）+tests 两件（17+3 用例），pytest 20 passed。\n【④D6 无主变更】st-fc-spm 不在 session_registry（会话死），其工作树未暂存面（SPM 终版/\ndev_delivery 12:00 终刷/ownership 册）按无主变更恢复优先全部并入零丢弃；其 index 中间态经\n相似度判读为同族演进中间版（被终版超集覆盖，存档 merge_ws）。\n【⑤对拍留证+残留】交割包=docs/_working/deadcure_campaign/11_handoff_G1G3.md（逐件\nblob_ref+sha256），对拍表=.runtime/tmp/st-chiefc-20261009/bu_merge_triage.md+数据 JSON\n（24 袋逐件三方哈希）。残留两项：DSC 语义注解层为袋面手改痕迹生成器重放会剥离（需回灌\nfig12 skeleton 真源）；panorama B-pan 注记更正需回灌 generator master 输入。\n净零声明：零新 gate/零新注册表/零新模块（测试两件为分支成品随批）；creation_token 登记 1 条。"
+  category: 治理
   evidence: 10_owner_menu_deadcure40.md 批文记录「40 件全批 A：G1+G3 交总队并袋，其余专车直投；G9/G10 也 A」+ 24 死信袋逐件 blob sha256 三方对拍（bu_merge_triage_data.json）+ validators（SPM nodes=341/DSC nodes=43/dev_delivery nodes=30/legislation 零 error）+ pytest 20 passed
+  owner_sign: Owner 2026-10-09 批文「40 件全批 A：G1+G3 交总队并袋，其余专车直投；G9/G10 也 A」（经死信清偿专案批文记录通道，本裁定=授权链原子登记）
+  adjudicator: st-chiefc-20261009
+  superseded_by: ""
   affected_files:
   - config/strategy_production_map.yaml
   - config/data_supply_chain_map.yaml
@@ -4524,45 +4338,18 @@ entries:
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
   approved_paths:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  related_rulings: ['裁定#495']
-  superseded_by: ''
-  adjudicator: st-chiefc-20261009
-  owner_sign: Owner 2026-10-09 批文「40 件全批 A：G1+G3 交总队并袋，其余专车直投；G9/G10 也 A」（经死信清偿专案批文记录通道，本裁定=授权链原子登记）
-
-- ruling_id: "裁定#497"
+  related_rulings:
+  - 裁定#495
+- ruling_id: 裁定#497
+  date: "2026-10-09"
   title: F 盘 CH 备份链摘除执行实录（Owner 2026-10-09 双令授权：不等 11-01 直接施工+两遍全量检查一致即自裁放行；断写-门检-摘盘-回收全链当日落地）
-  date: '2026-10-09'
-  category: 基础设施
   status: active
-  summary: |-
-    st-fwin-exec-20261009 依 Owner 2026-10-09 双令执行裁定#414②（#445 原文"执行时点仍待 Owner 点名"由双令闭合）。
-    【写入链实锤】F vhdx 唯一写入者=ZephyrAlpha-DailyBackup(06:00)+队列 post-commit 触发→backup.ps1 CH 段
-    （BACKUP TO Disk('backups')，VM 内 /mnt/chbackup_local=SCSI 0.3 的 F vhdx）+rsync 双写→/mnt/chbackup2
-    （SCSI 0.4=G vhdx）；VM 内 cron/timer 排除、backup_ch_vm.ps1 已封印，无第二写入者。
-    【断写 07:58】VM 挂载层 bind 改道（/mnt/chbackup2→/mnt/chbackup_local）+sdc 卸载+fstab 补 nofail/bind 行；
-    零 CH 重启、零 backup.ps1 改动。冻结三重证据：无挂载点/diskstats written_sectors 基线 213693656 全日
-    delta=0/ext4 superblock s_wtime=umount 时刻。当日 3 轮自然备份全部落 G（inc.zip 51.28G@16:08）+rsync
-    原句受控复现 exit 0 优雅空转（无需移交车道 E 修补）。
-    【门检两遍放行】16:29/17:05 两遍全量五项（每遍取现值+演练复跑 rc=0：当日 3 份 rc=0 报告），间隔 35 分钟；
-    稳定性读数逐项全等（F mtime 07:58:16/sdc delta=0/manifest 全等）、活性读数同向（G mtime 前进=通过条件）
-    →依双令②自裁放行，无人为签核。
-    【摘盘 17:15-17:19（Owner 追问"现在停窗可以吗"=停窗提前授权；活体核查全净后执行）】Stop-VM→
-    Remove-VMHardDiskDrive(SCSI 0.3)→Start-VM。
-    【开机缺陷截获与修复】fstab 同挂载点双条目（UUID 行在前致 bind 行被忽略）→首启 bind 未挂、CH backups 盘
-    free_space=0；修复=删死 UUID 行留 bind 行+CH 重启刷新+二次 Stop/Start 真机验证（bind 随引导自动挂载、
-    CH 自启、双盘 free_space 一致）。验证链：8123 通/technical_indicator 403,026,436 行/trade_calendar
-    max(pretrade_date)=2028-10-06/c1_market 195 表+c3_fundamental 34 表/调度心跳正常/lane C 链绿。
-    【回收对拍】隔离改名→删除；F free 568,297,074,688→1,588,657,991,680 B，实测回收 1,020,360,916,992 B
-    =950.35 GiB，与 vhdx 字节数逐位相等；F 盘零残留。
-    【残余风险与移交】①backup.ps1 尾部缺陷升旗车道 E：其 06:01 改动后所有 run 于 CH 段完成后、报告/状态回写
-    前消失（当日 run A/B 无报告；state last_ch_backup_time 仍 10-08→cadence 永到期→3 轮冗余全量备份；
-    05:27 旧代码 run 完整交报告=强相关）——共享文件不代修，候其车道处置；②restore.ps1:264 F 路径=inventory
-    展示腿 Test-Path 降级无功能依赖；③scripts/backup/README.md:94/171 F 引用候车道 E 顺带清；④G 链单物理
-    副本=既有已接受风险（#414 口径不变），offsite 月度手动照旧。
-    复活窗（30 天）回滚口径：vhdx 已物理删除；复活=从 G 链重造 F 链（或依 11-01 自动演练结论评估）；
-    重挂命令存档=Add-VMHardDiskDrive -VMName zephyr-ch -Path "F:\ch_backup_disk.vhdx" -ControllerType SCSI
-    -ControllerNumber 0 -ControllerLocation 3（仅当 F 链重建时适用）。
+  summary: "st-fwin-exec-20261009 依 Owner 2026-10-09 双令执行裁定#414②（#445 原文\"执行时点仍待 Owner 点名\"由双令闭合）。\n【写入链实锤】F vhdx 唯一写入者=ZephyrAlpha-DailyBackup(06:00)+队列 post-commit 触发→backup.ps1 CH 段\n（BACKUP TO Disk('backups')，VM 内 /mnt/chbackup_local=SCSI 0.3 的 F vhdx）+rsync 双写→/mnt/chbackup2\n（SCSI 0.4=G vhdx）；VM 内 cron/timer 排除、backup_ch_vm.ps1 已封印，无第二写入者。\n【断写 07:58】VM 挂载层 bind 改道（/mnt/chbackup2→/mnt/chbackup_local）+sdc 卸载+fstab 补 nofail/bind 行；\n零 CH 重启、零 backup.ps1 改动。冻结三重证据：无挂载点/diskstats written_sectors 基线 213693656 全日\ndelta=0/ext4 superblock s_wtime=umount 时刻。当日 3 轮自然备份全部落 G（inc.zip 51.28G@16:08）+rsync\n原句受控复现 exit 0 优雅空转（无需移交车道 E 修补）。\n【门检两遍放行】16:29/17:05 两遍全量五项（每遍取现值+演练复跑 rc=0：当日 3 份 rc=0 报告），间隔 35 分钟；\n稳定性读数逐项全等（F mtime 07:58:16/sdc delta=0/manifest 全等）、活性读数同向（G mtime 前进=通过条件）\n→依双令②自裁放行，无人为签核。\n【摘盘 17:15-17:19（Owner 追问\"现在停窗可以吗\"=停窗提前授权；活体核查全净后执行）】Stop-VM→\nRemove-VMHardDiskDrive(SCSI 0.3)→Start-VM。\n【开机缺陷截获与修复】fstab 同挂载点双条目（UUID 行在前致 bind 行被忽略）→首启 bind 未挂、CH backups 盘\nfree_space=0；修复=删死 UUID 行留 bind 行+CH 重启刷新+二次 Stop/Start 真机验证（bind 随引导自动挂载、\nCH 自启、双盘 free_space 一致）。验证链：8123 通/technical_indicator 403,026,436 行/trade_calendar\nmax(pretrade_date)=2028-10-06/c1_market 195 表+c3_fundamental 34 表/调度心跳正常/lane C 链绿。\n【回收对拍】隔离改名→删除；F free 568,297,074,688→1,588,657,991,680 B，实测回收 1,020,360,916,992 B\n=950.35 GiB，与 vhdx 字节数逐位相等；F 盘零残留。\n【残余风险与移交】①backup.ps1 尾部缺陷升旗车道 E：其 06:01 改动后所有 run 于 CH 段完成后、报告/状态回写\n前消失（当日 run A/B 无报告；state last_ch_backup_time 仍 10-08→cadence 永到期→3 轮冗余全量备份；\n05:27 旧代码 run 完整交报告=强相关）——共享文件不代修，候其车道处置；②restore.ps1:264 F 路径=inventory\n展示腿 Test-Path 降级无功能依赖；③scripts/backup/README.md:94/171 F 引用候车道 E 顺带清；④G 链单物理\n副本=既有已接受风险（#414 口径不变），offsite 月度手动照旧。\n复活窗（30 天）回滚口径：vhdx 已物理删除；复活=从 G 链重造 F 链（或依 11-01 自动演练结论评估）；\n重挂命令存档=Add-VMHardDiskDrive -VMName zephyr-ch -Path \"F:\\ch_backup_disk.vhdx\" -ControllerType SCSI\n-ControllerNumber 0 -ControllerLocation 3（仅当 F 链重建时适用）。"
+  category: 基础设施
   evidence: .runtime/tmp/fwin_gate_check.sh 两遍输出+logs/restore_drill_20261009_{080527,162938,170858}.json+system.backups 当日 BACKUP_CREATED×3+/proc/diskstats 基线+F 盘 df 前后对拍+VM fstab/mount/journalctl+LEDGER_final.md §二十二/§二十三
+  owner_sign: Owner 2026-10-09 双令原文「①不等 11-01 演练窗，立即调查并直接施工 F 盘摘除；②不设 Owner GO 检查点——连续两遍全量检查结果一致即自裁放行物理删除。本令即 A2 批文的执行授权」+当日追问「现在停窗可以吗」（停窗提前授权）
+  adjudicator: st-fwin-exec-20261009
+  superseded_by: ""
   affected_files:
   - docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/storage_map.md
   - docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
@@ -4570,52 +4357,42 @@ entries:
   - docs/_working/disk_reorg_campaign/LEDGER_final.md
   approved_paths:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  related_rulings: ['裁定#414', '裁定#445']
-  superseded_by: ''
-  adjudicator: st-fwin-exec-20261009
-  owner_sign: Owner 2026-10-09 双令原文「①不等 11-01 演练窗，立即调查并直接施工 F 盘摘除；②不设 Owner GO 检查点——连续两遍全量检查结果一致即自裁放行物理删除。本令即 A2 批文的执行授权」+当日追问「现在停窗可以吗」（停窗提前授权）
-
-- ruling_id: "裁定#498"
+  related_rulings:
+  - 裁定#414
+  - 裁定#445
+- ruling_id: 裁定#498
+  date: "2026-10-09"
   title: 死信二期家族内务：一期专车 6 枚孤儿车道按内容级判据收口（rescue tag + 未跟踪件 blobs 双证，worktree remove 走本裁定通道），全会话接管封路面积 119→17 路径
-  date: '2026-10-09'
-  category: 治理
   status: active
-  summary: |
-    st-deadcure2-20261009 依《死信二期总指令》§三 Phase 0b（家族内务，非代修）与
-    session_takeover_ledger 自开处方「owned worktree dirty：先核成果 merge 回主区或 abort 放弃；
-    worktree remove 走裁定通道登记，禁裸 git worktree remove」执行。
-    【判据（E1 内容对比）】逐件比 车道字节 × `git show dev:<path>` 行集（EOL 归一）：
-    ① st-deadcure-g1-chief 100 件=dev_identical 57／dev 更新代 4／"超集"35／content_diff 4；
-    ② restore-chief 70 tracked+4 未跟踪=identical 24／"超集"33／dev 更新代 4／diff 5／absent_in_dev 4；
-    ③ g2 75=identical 73／diff 2；g3 1=dev 更新代；g4 4=identical；promote 65=identical 24／"超集"33／
-    dev 更新代 4／diff 4。合计有值 0 件。
-    【关键伪影（防后人重踩）】两车道共 68 件被行计数判为"车道超集"，逐条取行验明其独有行=
-    `doc_type: campaign_doc`／`doc_type: "census"`——正是一期按 DOC-HEADER-SUITE [EXEMPT-ZONE-FM]
-    "只删该键、正文逐字节不动"剥离后已落地内容的**旧代**；复活即把豁免区禁键重新引入。
-    另 2 件（t0_ceiling_verdict/t0_conditional_e4_v3_verdict）多出行为一期自犯双插 frontmatter 的
-    错误版（一期台账已记并收尾按原袋复原），HEAD 侧为修复版。
-    【零丢失三证】`git stash create`→rescue tag 六枚（g1=ec92443c9e／restore=13790d51f0／
-    g2=b1aed46f48／g3=ef0c23255d／g4=a546cd736d／promote=18e4cc8c97；另 st-deadcure-20261009 与
-    chief-20261009 tracked 面 clean 无需 tag）；逐件回读 tag 内字节与盘面 EOL 归一全等（100/100、
-    69/69、75/75、1/1、4/4、12/12 零失验）；未跟踪件实测 `stash create --include-untracked` **被忽略**
-    （产出 commit 仅 2 父，无未跟踪父）→ 另抓 75 枚（18+53+4）至二期 tmp 并 sha256 对拍，
-    且全部 75 枚 sha256 命中 `.runtime/commit_queue/blobs/<同值>`（=被死袋引用的持久面）。
-    【效果读数】takeover open 条目 144→138；其命中面（=TAKEOVER-PENDING 可封路径）唯一数
-    119→17；本家族贡献的 102 条封路全部解除。Phase 1 复活要写的
-    docs/03_modules/MOD-SELL-020/blueprint.md、docs/_working/chief_fullchain_20261006/*、
-    tests/gov/governance/d5_architecture/* 由 BLOCK 转 PASS（零写门探针实测）。
-    残余唯一封路者=`st-chiefc-20261009-rb1`（总队活车道：注册表 logical=True、
-    heartbeat 末行 status=alive 且其 pid 3048 存活，却因 session_takeover_ledger.py:764-789 取
-    注册表 pid 位判死而入面）→ 属他会话在途面，按宪法 §3.4 owner 责任制不代修，判死口径修正
-    要件另册升旗（死信二期 01_phase0_ledger §七 9-1）。
-    【复活窗（30 天）回滚口径】`git worktree add .aidrafts/<sid> session/<sid>` 复车，
-    再 `git stash apply rescue/<sid>` 复未提交字节；未跟踪件亦可自
-    `.runtime/commit_queue/blobs/<sha256>` 按名取回。分支 session/* 全部保留未删。
+  summary: "st-deadcure2-20261009 依《死信二期总指令》§三 Phase 0b（家族内务，非代修）与\nsession_takeover_ledger 自开处方「owned worktree dirty：先核成果 merge 回主区或 abort 放弃；\nworktree remove 走裁定通道登记，禁裸 git worktree remove」执行。\n【判据（E1 内容对比）】逐件比 车道字节 × `git show dev:<path>` 行集（EOL 归一）：\n① st-deadcure-g1-chief 100 件=dev_identical 57／dev 更新代 4／\"超集\"35／content_diff 4；\n② restore-chief 70 tracked+4 未跟踪=identical 24／\"超集\"33／dev 更新代 4／diff 5／absent_in_dev 4；\n③ g2 75=identical 73／diff 2；g3 1=dev 更新代；g4 4=identical；promote 65=identical 24／\"超集\"33／\ndev 更新代 4／diff 4。合计有值 0 件。\n【关键伪影（防后人重踩）】两车道共 68 件被行计数判为\"车道超集\"，逐条取行验明其独有行=\n`doc_type: campaign_doc`／`doc_type: \"census\"`——正是一期按 DOC-HEADER-SUITE [EXEMPT-ZONE-FM]\n\"只删该键、正文逐字节不动\"剥离后已落地内容的**旧代**；复活即把豁免区禁键重新引入。\n另 2 件（t0_ceiling_verdict/t0_conditional_e4_v3_verdict）多出行为一期自犯双插 frontmatter 的\n错误版（一期台账已记并收尾按原袋复原），HEAD 侧为修复版。\n【零丢失三证】`git stash create`→rescue tag 六枚（g1=ec92443c9e／restore=13790d51f0／\ng2=b1aed46f48／g3=ef0c23255d／g4=a546cd736d／promote=18e4cc8c97；另 st-deadcure-20261009 与\nchief-20261009 tracked 面 clean 无需 tag）；逐件回读 tag 内字节与盘面 EOL 归一全等（100/100、\n69/69、75/75、1/1、4/4、12/12 零失验）；未跟踪件实测 `stash create --include-untracked` **被忽略**\n（产出 commit 仅 2 父，无未跟踪父）→ 另抓 75 枚（18+53+4）至二期 tmp 并 sha256 对拍，\n且全部 75 枚 sha256 命中 `.runtime/commit_queue/blobs/<同值>`（=被死袋引用的持久面）。\n【效果读数】takeover open 条目 144→138；其命中面（=TAKEOVER-PENDING 可封路径）唯一数\n119→17；本家族贡献的 102 条封路全部解除。Phase 1 复活要写的\ndocs/03_modules/MOD-SELL-020/blueprint.md、docs/_working/chief_fullchain_20261006/*、\ntests/gov/governance/d5_architecture/* 由 BLOCK 转 PASS（零写门探针实测）。\n残余唯一封路者=`st-chiefc-20261009-rb1`（总队活车道：注册表 logical=True、\nheartbeat 末行 status=alive 且其 pid 3048 存活，却因 session_takeover_ledger.py:764-789 取\n注册表 pid 位判死而入面）→ 属他会话在途面，按宪法 §3.4 owner 责任制不代修，判死口径修正\n要件另册升旗（死信二期 01_phase0_ledger §七 9-1）。\n【复活窗（30 天）回滚口径】`git worktree add .aidrafts/<sid> session/<sid>` 复车，\n再 `git stash apply rescue/<sid>` 复未提交字节；未跟踪件亦可自\n`.runtime/commit_queue/blobs/<sha256>` 按名取回。分支 session/* 全部保留未删。\n"
+  category: 治理
   evidence: 内容级分诊产物 .runtime/tmp/st-deadcure2-20261009/common/lane_*.jsonl（6 份）+ family_sweep.json（tag sha 与逐件字节回验）+ rescue_untracked/（75 枚 sha 对拍）+ 零写门探针 make_takeover_pending_gate().check 前后读数
+  adjudicator: st-deadcure2-20261009
+  superseded_by: ""
   affected_files:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   approved_paths:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  related_rulings: ['裁定#373', '裁定#385', '裁定#478']
-  superseded_by: ''
-  adjudicator: st-deadcure2-20261009
+  related_rulings:
+  - 裁定#373
+  - 裁定#385
+  - 裁定#478
+- ruling_id: 裁定#502
+  date: "2026-10-09"
+  title: 热册单口写·直写轨退役：batch_creation_tokens 改意图 API 薄壳，YAML 直写路径整体删除（register→publish→render 三步内置）
+  status: active
+  summary: "Owner 2026-10-09 令「热册战争根治」（与死信二期/二号/F 盘并行），本裁定=其 A 件通道门禁路由（AI 代裁，adjudicator=st-regsolo-20261010，依裁定路由政策 v2.0 §2.2 E1/E2+§2.4 G4：改既有工具零新册，D2 治理代码面）。【病根】热册真源=PG registry_ledger 账本、YAML=机生投影（W-M1 转正），但 batch_creation_tokens 直写 YAML 的旧轨仍活=账本永远欠账、投影 render 一到即冲掉直写内容（10-09 三起 token 蒸发/-271 回滚险情共同增量源）；register_asset.py:170 调幻影客户端 register_tokens_ledger.py（全仓不存在）rc!=0 静默 fallback 回直写。【处】①batch_creation_tokens.py 改意图 API 薄壳：CLI/进程内签名全兼容（scaffold/dead_letter_doctor 零改动），insert_block 语义=YAML 纯插入→账本登记+publish_snapshot+投影重打；插入锚/守恒闸/CAS 回滚等直写机械整体删除，守恒语义由账本层立法下沉（register 幂等 OK_NOOP/CONFLICT_DUPLICATE 拒绝+投影四象限 PG-wins）；②register_asset 降级通道随直写轨退役（登记失败即报错，绝不降级直写）；③MODT 缺 2+RULING 缺 5（#494-498）直写欠账经 reconcile_registry 法定回灌+publish+render 收口（本裁定同批）；④RULING 册跨族重复副本（family=rulings 的 #486，#451/#452 同病先例）以本裁定为 authority_ref 退役。【红证】陈旧袋/注入袋干跑双红复现（快进路径与条目合并路径 rogue 均搭袋道入 dev）；校准批 register→publish(v132)→render 语义差集精确（+1 登记/-3 账本已退役条目随投影跟上）；29 测试全绿。【效果】热册增量唯一口=意图 API；投影=确定性机生只读；直写时代「账本欠账→render 蒸发」事故链结构性不可能。related=裁定#495（A-12 快进守门同病灶先例）、裁定#498（死信二期家族内务）。"
+  category: 治理
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- ruling_id: 裁定#6
+  date: "2026-06-20"
+  title: 路径SSoT（路径真源铁律）
+  status: active
+  summary: 所有路径相关常量必须从单一真源派生，禁止多真源同步。审计数据目录、REPO_ROOT 等路径 常量集中到 zephyr.shared.io.paths 模块，其他模块 import 复用而非自定义。治本逻辑： 单一真源=单一变更点=零漂移风险；多真源=同步负担=必然漂移。落地：paths.py 集中定义 REPO_ROOT/AUDIT_DIR/GOV_DIR 等路径常量，全项目通过 import zephyr.shared.io.paths 复用。
+  category: 治本
+  related_arch: []
+  superseded_by: null
+  affected_files:
+  - d:\ZephyrAlpha\src\zephyr\shared\io\paths.py
+  related_rulings: []

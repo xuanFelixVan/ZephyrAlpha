@@ -49,11 +49,9 @@ TRANSLATION-COVERAGE / DEPGRAPH gate 轮番阻断，重来一遍又要排大队�
 from __future__ import annotations
 
 import argparse
-import json as _json
 import re
 import subprocess
 import sys
-import time
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[2]
@@ -146,67 +144,29 @@ def check_module_header(path: Path) -> tuple[list[str], list[str]]:
 
 
 def _step_token(path: str, session: str, capability: str, merge_eval: str) -> tuple[int, str]:
-    # 意图API正道（2026-10-05 升级）：wave-2 cutover 后 capability YAML=PG 只读投影，
-    # batch_creation_tokens 写 YAML 会被下次 render 冲掉（另一对话实锤根因）。
-    # 正道三步：register(意图API)→publish(snapshot)→render(投影重生成)=render-proof。
-    # entries YAML 临时文件走 .runtime/tmp/（24h TTL，正门路径）。
-    token = re.sub(r"[^a-z0-9-]", "-", f"{capability}-{Path(path).stem}".lower())[:60]
-    if not token.endswith("-" + "2026"):
-        token += "-2026"
-    entries = [
-        {
-            "file": path,
-            "token": token,
-            "created_by": session,
-            "capability": capability,
-            **({"merge_evaluation": merge_eval} if merge_eval else {}),
-        }
-    ]
-    entries_file = Path(".runtime/tmp") / f"register_asset_{session}_{int(time.time())}.yaml"
-    entries_file.parent.mkdir(parents=True, exist_ok=True)
-    entries_file.write_text(yaml_dump_entries(entries), encoding="utf-8")
+    # 意图API正道（裁定#502，st-regsolo-20261010 直写轨退役）：batch_creation_tokens.py
+    # 本体已是意图 API 薄壳（register→publish_snapshot→render 三步内置），直接调用即可。
+    # 历史病灶：曾调幻影客户端 register_tokens_ledger.py（全仓不存在）→ rc!=0 静默
+    # fallback 回直写——降级通道随直写轨一并退役，登记失败即报错（PG 不可达不直写）。
     cmd = [
         sys.executable,
-        "scripts/governance/d3_metadata/register_tokens_ledger.py",
-        "--session",
+        "scripts/governance/d3_metadata/batch_creation_tokens.py",
+        "--prefix",
+        path,
+        "--created-by",
         session,
-        str(entries_file),
+        "--capability",
+        capability,
     ]
+    if merge_eval:
+        cmd += ["--merge-evaluation", merge_eval]
     rc, out = _run(cmd)
-    # 意图API不可用时降级到旧通道（fail-safe，旧方法总比没有好）
     if rc != 0:
-        print(f"  WARN: intent API failed (rc={rc}), falling back to batch_creation_tokens")
-        cmd = [
-            sys.executable,
-            "scripts/governance/d3_metadata/batch_creation_tokens.py",
-            "--prefix",
-            path,
-            "--created-by",
-            session,
-            "--capability",
-            capability,
-        ]
-        if merge_eval:
-            cmd += ["--merge-evaluation", merge_eval]
-        rc, out = _run(cmd)
-    # 清理临时 entries 文件
-    try:
-        entries_file.unlink(missing_ok=True)
-    except Exception:  # noqa: BLE001 — 临时文件清理 best-effort
-        pass
+        print(
+            "  FAIL: creation_token 账本登记失败（直写轨已退役，裁定#502）——"
+            "检查 PG 可达性后重跑；绝不降级直写 YAML（投影手改必被覆盖）"
+        )
     return rc, out
-
-
-def yaml_dump_entries(entries: list[dict]) -> str:
-    """极简 YAML dump（不加 pyyaml 依赖，条目键固定无嵌套标量）。"""
-    lines = []
-    for e in entries:
-        for k, v in e.items():
-            lines.append(
-                f"  {k}: {_json.dumps(str(v), ensure_ascii=False) if isinstance(v, str) and (' ' in v or ':' in v or '"' in v) else v}"
-            )
-        lines.append("")  # YAML list separation
-    return "\n".join(lines)
 
 
 def _step_translation(path: str, domain: str, name_zh: str, plain: str) -> tuple[int, str]:

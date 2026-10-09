@@ -49,7 +49,8 @@ creation_tokens 字段登记。无 token 的 .py / .yaml 文件 -> 硬阻断，�
 1. **不硬阻断**：存量 token 条目全部无此字段，硬阻断=全量打红（把存量债判给
    无辜提交人，违反 own-scope 问责原则）。留过渡窗，登记为待季度审计升级评估。
 2. **登记通道**：``batch_creation_tokens.py --merge-evaluation <一句话>`` 登记
-   时携带；存量条目事后手工补字段即消除 warn。
+   时携带（裁定#502 后该工具=意图 API 薄壳，登记进 PG 账本）；存量条目事后走
+   api.update 在账本条目补字段即消除 warn（投影 YAML 手改无效，必被 render 覆盖）。
 3. **扩展现有 gate 而非新 gate**：复用已加载的 registry 与 own-scope 过滤面
    （净零申报：无新册无新规则文件，行为变更登记进 gate_registry.yaml）。
 
@@ -1215,9 +1216,9 @@ def _warn_merge_evaluation(
     logger.warning(
         "CREATE-GUARD warn(裁定#375 内收判据): %d 个新建资产 token 条目缺 %s 字段: %s. "
         "四判据(同真源可派生->必并|零触发零消费->退役|同域重复簇->收敛唯一|跨域不同对象->不并)"
-        "要求立项时做合并评估并留一句话结论. 修复: 在 capability_canonical_file_registry.yaml "
-        '对应 creation_tokens 条目补 %s: "<结论一句话>"'
-        "(或 batch_creation_tokens.py --merge-evaluation 登记时携带). "
+        "要求立项时做合并评估并留一句话结论. 修复: batch_creation_tokens.py --merge-evaluation "
+        "重登记(幂等, 登记进 PG 账本)或事后 api.update 在账本条目补 %s(投影 YAML 手改无效, "
+        "裁定#502 直写轨已退役). "
         "首期 warn-only, 季度审计评估升级.",
         len(missing),
         _MERGE_EVAL_FIELD,

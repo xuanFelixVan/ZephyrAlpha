@@ -464,10 +464,12 @@ def _fake_token_registry(tmp_path: Path) -> Path:
 def test_apply_creation_token_registers_via_batch_functions(
     sandbox: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """半集成：真 load_registered/build_block/锚点解析 + 假 insert_block（零生产写）。"""
+    """半集成：真 load_registered/build_block/锚点垫片 + 假 insert_block（零生产写）。"""
     import scripts.governance.d3_metadata.batch_creation_tokens as bct
 
     monkeypatch.setattr(bct, "_REGISTRY", _fake_token_registry(tmp_path))
+    # 账本只读面打桩（裁定#502 后 load_registered 账本优先）：测试隔离——退投影 YAML 假册
+    monkeypatch.setattr(bct, "_registered_files_from_ledger", lambda: None)
     called: dict = {}
 
     def fake_insert(block, anchor, expect_files=None):
@@ -494,8 +496,9 @@ def test_apply_creation_token_registers_via_batch_functions(
     assert "file: docs/_working/alpha/report_a.md" in called["block"]
     assert "created_by: st-alpha-20261003" in called["block"]
     assert "capability: st-alpha-20261003" in called["block"]
-    # 锚点解析来自真 _creation_tokens_section/resolve_anchor（段内最后一条 capability）
-    assert called["anchor"] == "cap"
+    # 锚点解析=裁定#502 兼容垫片（恒等透传，doctor 传入的派生 capability 原样返回；
+    # 账本登记无插入锚语义，锚值已不参与任何写位计算）
+    assert called["anchor"] == "st-alpha-20261003"
     # 额度消耗 + 审计
     assert dld.load_state(sandbox)["counts"]["st-alpha-20261003::creation_token"] == 1
     audit = dld._read_audit(sandbox)
@@ -540,6 +543,8 @@ def test_apply_creation_token_nothing_to_do_is_idempotent(
 
     reg = _fake_token_registry(tmp_path)
     monkeypatch.setattr(bct, "_REGISTRY", reg)
+    # 账本只读面打桩（裁定#502 后 load_registered 账本优先）：测试隔离——退投影 YAML 假册
+    monkeypatch.setattr(bct, "_registered_files_from_ledger", lambda: None)
     called = {}
     monkeypatch.setattr(bct, "insert_block", lambda *a, **k: called.setdefault("hit", True))
     # 死因点名的两个文件都预先登进假 registry
