@@ -29865,12 +29865,12 @@ entries:
   domain_id: D_GOV_ENFORCEMENT
   responsibility_layer: governance
 - module_path: src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "策略卡生命周期图结构门禁"
+  name_en: "strategy card lifecycle map gate"
+  desc_zh: "图15 提交面结构门禁：触发式校验卡生命周期图 YAML 的枚举闭集/状态机良构/禁边不可绕/双轴/计数一致性，判据单一真源在校验器"
   desc_en: ""
-  desc_zh: 图15（策略卡生命周期图）提交面结构校验门：动态复用 validate_strategy_card_lifecycle_map 结构判据（词表闭集/状态机良构/禁边），error>0 或真源损坏即阻断
-  name_en: strategy card lifecycle map gate
-  name_zh: 图15卡生命周期图门
-  plain_zh: 策略卡生老病死图（图15）的守门员：卡的状态规矩被提交改动时自动核对，画错或漏了禁边就不让提交
-  domain_id: D_GOV_ENFORCEMENT
+  plain_zh: "这张门禁管的是策略预注册卡的'法律地位'：封了卡的假设谁也不能偷偷改回在测再考一遍。你提交时只要碰了图15 那六件真源，它就把图重新体检一遍——状态词表是不是闭集、状态机有没有断头路、禁止边能不能绕过去；体检不过就拦下提交，逼你先修真源再回来。"
   responsibility_layer: governance
 - module_path: src/zephyr/gov_enforcement/commit_gates/map_family/trading_day_cycle_map_gate.py
   desc_en: ""
@@ -68095,4 +68095,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把一段时间内的新闻快讯情绪分按新旧加权汇总，算出当下市场情绪是热是冷并给出四档标签"
+  responsibility_layer: business
+- module_path: src/zephyr/ex_core/phase_discriminator.py
+  domain_id: D_EX_CORE
+  name_zh: "A股交易相位判别器"
+  name_en: "A-share trading phase discriminator"
+  desc_zh: "判别集合竞价/连续竞价/午休/收盘集合竞价/临停相位；判不出=记红不拒单（裁定#488 B段 C445）"
+  desc_en: ""
+  plain_zh: "它负责看现在是不是可以下单的时间段：开盘集合竞价、上午下午连续竞价、午休、收盘集合竞价，还是股票临时停牌。如果时间信息不完整判不出来，它只标记警告记录红色，不会因此拒绝下单。"
+  responsibility_layer: business
+- module_path: src/zephyr/strategy_pipeline/graduated_package_feed.py
+  domain_id: D_BACKTEST
+  name_zh: "已毕业包合法填充通道"
+  name_en: "Graduated package feed channel"
+  desc_zh: "从 c5 条件 GREEN 的晋级池管线读晋级事件落地件（graduated_packages.yaml）产出已毕业包集；缺省空集安全态，禁手填"
+  desc_en: ""
+  plain_zh: "它负责回答'现在有哪些考试毕业的策略包可以直接用'：只有当晋级管线在主区落了正式的毕业名单文件时才把名单读出来，否则一律返回空（一个包都不启用，安全态）。名单永远来自管线文件，不允许谁在代码里手写进去。"
   responsibility_layer: business

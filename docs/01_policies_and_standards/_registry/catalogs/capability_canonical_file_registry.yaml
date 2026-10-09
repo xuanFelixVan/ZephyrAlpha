@@ -34272,6 +34272,11 @@ creation_tokens:
   capability: chief_fullchain_campaign
   created_by: st-workingchief-20261006
   merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chiefc_campaign/g_lane_r01_r16_ledger.md
+  token: chiefc-g-lane-ledger-20261009
+  capability: chiefc_campaign
+  created_by: st-chiefc-20261009
+  merge_evaluation: "G 车道 R01-R16 自裁台账（16 项处置+证据+adjudicator 署名单文件），替代零旧条目——净零新增 1 台账件（Owner B 清单批转登记载体；同名大写版 token 因 N-01/N-13 命名门 retire 换装）"
 - file: docs/_working/circulation_chief/00_orchestration.md
   token: circulation-chief-doc-00-orchestration-20261001
   capability: circulation-chief-doc
@@ -64718,6 +64723,92 @@ creation_tokens:
   created_by: st-chiefc-20261009
   capability: t2_subspace
   merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接"
+- file: docs/_working/deadcure_campaign/11_handoff_G1G3.md
+  token: deadcure-handoff-11-handoff-g1g3-20261009
+  created_by: st-chiefc-20261009
+  capability: deadcure_handoff
+  merge_evaluation: "死信清偿 G1G3 交割包=落地回执+对拍凭证（同真源可派生自 triage 数据但为交割法定载体不并；有触发有消费=G1G3 24 件落地凭证）；同域唯一交割册"
+- file: src/zephyr/ex_core/phase_discriminator.py
+  token: phase-discriminator-phase-discriminator-20261009
+  created_by: st-chiefc-20261009-D
+  capability: phase_discriminator
+  merge_evaluation: "C445 相位判别真源件新立，无同真源可并"
+- file: src/zephyr/strategy_pipeline/graduated_package_feed.py
+  token: graduated-package-feed-graduated-package-feed-20261009
+  created_by: st-chiefc-20261009-D
+  capability: graduated_package_feed
+  merge_evaluation: "C5 毕业包通道新立，替代对象=GRADUATED_PACKAGES 手填路径（禁手填裁定#305），零旧条可并"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_HOLDOUT/nav_IBT-A.csv
+  token: exam-cost-reexam-nav-ibt-a-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_HOLDOUT/run_summary.yaml
+  token: exam-cost-reexam-run-summary-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_HOLDOUT/trades_IBT-A.csv
+  token: exam-cost-reexam-trades-ibt-a-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_IS/nav_IBT-A.csv
+  token: exam-cost-reexam-nav-ibt-a-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_IS/run_summary.yaml
+  token: exam-cost-reexam-run-summary-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_IS/trades_IBT-A.csv
+  token: exam-cost-reexam-trades-ibt-a-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/nav_IBT-A.csv
+  token: exam-cost-reexam-nav-ibt-a-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/redblue_round1.yaml
+  token: exam-cost-reexam-redblue-round1-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/run_summary.yaml
+  token: exam-cost-reexam-run-summary-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/sensitivity.yaml
+  token: exam-cost-reexam-sensitivity-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/cost_qualified_list.yaml
+  token: exam-cost-reexam-cost-qualified-list-20261009
+  created_by: st-chiefc-20261009-D
+  capability: exam_cost_reexam
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/03_modules/_domain_pf_alloc/algo_flow/portfolio_netting.yaml
+  token: pf-alloc-algo-flow-portfolio-netting-20261009
+  created_by: st-chiefc-20261009-D
+  capability: pf_alloc_algo_flow
+- file: docs/03_modules/_domain_execution_core/algo_flow/bridge_instruction_kernel.yaml
+  token: ex-core-algo-flow-bridge-instruction-kernel-20261009
+  created_by: st-chiefc-20261009-D
+  capability: ex_core_algo_flow
+- file: docs/03_modules/_domain_execution_core/algo_flow/phase_discriminator.yaml
+  token: ex-core-algo-flow-phase-discriminator-20261009
+  created_by: st-chiefc-20261009-D
+  capability: ex_core_algo_flow
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/graduated_package_feed.yaml
+  token: strategy-pipeline-algo-flow-graduated-package-feed-20261009
+  created_by: st-chiefc-20261009-D
+  capability: strategy_pipeline_algo_flow
 file_token:
 - note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
   path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
