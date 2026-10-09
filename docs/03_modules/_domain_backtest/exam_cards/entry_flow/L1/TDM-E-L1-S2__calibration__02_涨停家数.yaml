@@ -1,0 +1,47 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/02_涨停家数
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: 涨停家数·广度校准卡
+hypothesis: 涨停家数（含一字）分桶对次日指数收益有单调预测力：家数越多=情绪越热，过热档（分位>90%）反向。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（裁定#501 纪律）；窗口取自方案 §8 与 condition_package 同期口径
+buckets:
+  type: quantile_decile
+  'on': 当日信号值
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，方案 §7 三件套）
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日（时滞曲线建档）
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor（条件稳定性）
+target:
+  primary: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  secondary: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  note: 广度面主卡；方案 §8 顺序首卡
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
+preregistered_by: st-examchief-20261009
+preregistered_at: '2026-10-09'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001

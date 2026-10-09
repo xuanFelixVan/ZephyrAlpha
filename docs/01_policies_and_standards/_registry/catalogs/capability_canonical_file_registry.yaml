@@ -38130,6 +38130,11 @@ creation_tokens:
   capability: examcard_campaign
   created_by: st-examchief-20261009
   merge_evaluation: "战役作业簿（工棚 task_bound）：W1 根因册+证据件+后续车道作业簿；战役收官按交付纪律归档，禁并入正式注册表族。"
+- file: docs/_working/examcard_campaign/99_delivery.md
+  token: examcard-campaign-99-delivery-20261009
+  capability: examcard_campaign
+  created_by: st-examchief-20261009
+  merge_evaluation: "考试卡战役终报册归 examcard_campaign 族"
 - file: docs/_working/examcard_campaign/asset_assertion_cases.yaml
   token: examcard-campaign-asset-assertion-cases-20261009
   capability: examcard_campaign

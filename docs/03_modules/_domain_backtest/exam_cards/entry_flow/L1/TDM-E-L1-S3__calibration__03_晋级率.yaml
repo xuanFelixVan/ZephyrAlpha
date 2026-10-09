@@ -1,0 +1,47 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S3/calibration/03_晋级率
+node_id: TDM-E-L1-S3
+family: calibration
+title_zh: 晋级率（2板率/3板率）·结果校准卡
+hypothesis: 晋级率分桶对次日情绪六段转移有预测力：2 板率>50% 且 3 板率不塌=情绪主线延续。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（裁定#501 纪律）；窗口取自方案 §8 与 condition_package 同期口径
+buckets:
+  type: quantile_decile
+  'on': 2板率与3板率复合分位
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，方案 §7 三件套）
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日（时滞曲线建档）
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor（条件稳定性）
+target:
+  primary: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  secondary: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  note: 晋级率=接力资金意愿
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S3.confidence
+preregistered_by: st-examchief-20261009
+preregistered_at: '2026-10-09'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
