@@ -4396,3 +4396,59 @@ entries:
   affected_files:
   - d:\ZephyrAlpha\src\zephyr\shared\io\paths.py
   related_rulings: []
+- ruling_id: 裁定#503
+  title: REAL-KEY-REFERENCE-SCAN 增设『封闭枚举＋owner_sign 裁定引用』准入面（甲改门）＋QMT·实盘键名×5 测试件复活授权链落正式通道（含风险认知声明）
+  date: '2026-10-10'
+  category: 治理
+  status: active
+  summary: '【授权链（Owner 双令，本裁定=把对话批复落成 §9.11 正式通道）】
+
+    ① Owner 2026-10-09 批复第 2 条：批 QMT·实盘键名×5 白名单——F-1b 红证持出的 5 件（含该字面量的真实测试件）由死信二期专车按白名单口径落地复活，登记白名单依据=Owner
+    本批复原文；其余 35 件持出照旧逐件判。
+
+    ② Owner 2026-10-10 批复：在死信二期专车呈报『三道禁令全在册（白名单=代码常量无登记面／处方明写禁改白名单＋禁拆分绕过／对话批准不自动构成豁免）』并逐条标价后，Owner 回「按甲改门」，并下执行令：准入面三锁照实现、红证三向缺一不算完、边界=只动准入面其他扫描逻辑零触碰、准入清单任何新增=新裁定+Owner（本设计下
+    AI 无法自扩）。
+
+    【风险认知声明（Owner 已标价知情）】本裁定动的是**安全门本体**（NL-2 判据②，redline 族）。缓解=准入面**限定为封闭枚举**：写死 5 条精确路径，禁模式匹配、禁通配、禁目录前缀；第二锁要求引用**带
+    owner_sign 的在册裁定号**（AI 代裁不具备资格，专防『自登一条裁定即绕红线』——本期已实证过存在伪造 Owner 署名的会话，故此洞非假想）；第三锁每次放行必写审计行（裁定号+路径+时间）。三锁全在=放行，任一失配=照拦且拒绝理由可查。
+
+    【判据面（为何这 5 件值得动门）】5 件均为真实回归测试件而非案卷：其 fixture 中的键名是**被测数据**（loader 对真实 .env.qmt 格式含实盘键共存的容忍度／红线负面清单断言），改成描述性引用会使测试不再测其目标＝总队
+    F-1b 当初拒绝代改语义的同一条理由（防虚构覆盖）。复活前置=车道内 pytest 当场绿，已实测五件 60 passed（非存在性判据）。
+
+    【序（执行令原样）】本裁定先落（RULE-RULING 同 commit 原子）→ 门改＋红证三向 → 5 件复活 → 白名单项销账。
+
+    【边界与失效条件】门的其他扫描逻辑零触碰；准入清单新增须新裁定＋Owner 实签；若发现任一枚列名件被改写为不含被测键名（准入面被当作常规通道滥用）⇒ 本准入面立即整体回退（回滚=revert 本门改动
+    commit，裁定保留为已执行记录）。'
+  evidence: 红证三向 tests/gov/governance/redline/test_real_key_admission_surface.py：①未列名件含该字面量→仍拦 ②伪造/无 owner_sign
+    裁定引用→拦 ③列名+有效 owner_sign 裁定→放行并落审计行；五件复活实测 python -m pytest <5 件> -q → 60 passed
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - src/zephyr/ai_layer/redline/negative_list_gates.py
+  - tests/gov/governance/redline/test_real_key_admission_surface.py
+  - docs/_working/deadcure_campaign2/01_phase0_ledger.md
+  - tests/ai/ai_layer/redline/test_annual_review.py
+  - tests/ai/ai_layer/redline/test_negative_list.py
+  - tests/ai/ai_layer/redline/test_session_env_guard.py
+  - tests/ai/ai_layer/redline/test_sev_router.py
+  - tests/meta/scripts/test_run_post_settlement.py
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - src/zephyr/ai_layer/redline/negative_list_gates.py
+  - tests/gov/governance/redline/test_real_key_admission_surface.py
+  - docs/_working/deadcure_campaign2/01_phase0_ledger.md
+  - tests/ai/ai_layer/redline/test_annual_review.py
+  - tests/ai/ai_layer/redline/test_negative_list.py
+  - tests/ai/ai_layer/redline/test_session_env_guard.py
+  - tests/ai/ai_layer/redline/test_sev_router.py
+  - tests/meta/scripts/test_run_post_settlement.py
+  related_rulings:
+  - 裁定#490
+  - 裁定#494
+  - 裁定#495
+  related_arch: []
+  superseded_by: ''
+  adjudicator: st-deadcure2-20261009
+  owner_sign: Owner 2026-10-09 批复第 2 条「Owner 批 [实盘键名]×5 白名单——F-1b 红证持出的 5 件（含该字面量的真实测试件）由你 Phase 1 舰队按白名单口径落地复活（登记白名单依据=Owner
+    本批复原文）；其余 35 件持出照旧逐件判」＋ Owner 2026-10-10 回「按甲改门」并下执行令（授权链=批＋按甲改门双令，准入面三锁与红证三向为令内约束条件）。逐字复现说明（不是漏写）：批复原文里的键名以
+    [实盘键名] 代写，因为**被本裁定授权修改的这道门对文档面同样生效**（在册处方 fix=改成描述性引用），裁定册若逐字照抄即自触该门＝本册自己的白名单依据反而进不了库。原文逐字节存于 Owner
+    2026-10-09/10-10 通道与死袋 q-20261009-st-deadcure2-20261009-0008 的 message 字段，依据效力以该指针承接。
