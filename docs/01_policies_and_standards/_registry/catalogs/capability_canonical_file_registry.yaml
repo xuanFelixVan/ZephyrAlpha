@@ -64835,6 +64835,53 @@ creation_tokens:
   token: n5-sector-agg-test-20260918
   capability: sector_tests_recover
   created_by: st-tdchain-20260917
+- file: src/zephyr/library/ruling_precedent.py
+  token: ruling-precedent-ruling-precedent-20261009
+  created_by: st-libfront-20261009
+  capability: ruling_precedent
+  map_mounts:
+  - governance_legislation_map:D16-N7
+  merge_evaluation: "裁定先例机检薄 CLI：内收判据实跑，零新 gate/零新注册表/零新字段"
+- file: docs/_working/2026-10-09-workorder-value-proposal-card-template.md
+  token: value-proposal-workorder-template-2026-10-09-workorder-value-proposal-card-template-20261009
+  created_by: st-libfront-20261009
+  capability: value_proposal_workorder_template
+  merge_evaluation: "价值主张立项卡模板：并入既有工单格式，零新表；真源=裁定路由政策 Gate 0+任务卡工单制政策，模板为投影载体非第二真源"
+- file: docs/_working/dexp_campaign/00_finding_and_gate.md
+  token: dexp-disk-triage-00-finding-and-gate-20261009
+  created_by: st-dexp-20261009
+  capability: dexp_disk_triage
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/01_ledger.md
+  token: dexp-disk-triage-01-ledger-20261009
+  created_by: st-dexp-20261009
+  capability: dexp_disk_triage
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/02_ti_duplicate_rows_found.md
+  token: dexp-disk-triage-02-ti-duplicate-rows-found-20261009
+  created_by: st-dexp-20261009
+  capability: dexp_disk_triage
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/03_evidence_summary.yaml
+  token: dexp-disk-triage-03-evidence-summary-20261009
+  created_by: st-dexp-20261009
+  capability: dexp_disk_triage
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/99_delivery.md
+  token: dexp-disk-triage-99-delivery-20261009
+  created_by: st-dexp-20261009
+  capability: dexp_disk_triage
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/index.md
+  token: dexp-disk-triage-index-20261009
+  created_by: st-dexp-20261009
+  capability: dexp_disk_triage
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/lanes/index.md
+  token: dexp-disk-triage-index-20261009
+  created_by: st-dexp-20261009
+  capability: dexp_disk_triage
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
 file_token:
 - note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
   path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
