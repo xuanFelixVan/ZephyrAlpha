@@ -1,0 +1,43 @@
+# [A_test] module_id: MOD-GOV_shared_evolver | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [MODULE] tests.test_shared_evolver
+# [DOMAIN] D_GOVERNANCE
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [CONSUMERS]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=TEST-MOD-INF-017-TEST_SHARED_EVOLVER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
+from zephyr.gov_code_quality.code_dedup.shared_evolver import (
+    EvolutionEntry,
+    SharedEvolver,
+)
+
+
+class TestSharedEvolver:
+    def test_instantiation(self):
+        evolver = SharedEvolver()
+        assert evolver is not None
+
+    def test_evaluate(self):
+        evolver = SharedEvolver()
+        result = evolver.evaluate("func_a", call_count=5, health_score=90)
+        assert isinstance(result, EvolutionEntry)
+
+    def test_get_autonomous_functions(self):
+        evolver = SharedEvolver()
+        result = evolver.get_autonomous_functions()
+        assert isinstance(result, list)
+
+    def test_get_restricted_functions(self):
+        evolver = SharedEvolver()
+        result = evolver.get_restricted_functions()
+        assert isinstance(result, list)
+
+    def test_evaluate_zero_callers(self):
+        evolver = SharedEvolver()
+        result = evolver.evaluate("func_a", call_count=0, health_score=50)
+        assert isinstance(result, EvolutionEntry)
