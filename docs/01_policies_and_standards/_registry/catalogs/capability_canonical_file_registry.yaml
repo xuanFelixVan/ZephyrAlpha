@@ -38550,6 +38550,11 @@ creation_tokens:
   capability: fig13_followup_books
   created_by: st-fig13-followup-20261006
   merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
+- file: docs/_working/final4_campaign/02_f1b_holdout_ledger.yaml
+  token: final4-f1b-holdout-ledger-02-f1b-holdout-ledger-20261009
+  capability: final4_f1b_holdout_ledger
+  created_by: st-final4-20261010
+  merge_evaluation: "净零：F-1b 持出件逐件台账，机生非手维护；不替代任何既有册"
 - file: docs/_working/final4_campaign/99_delivery.md
   token: final4-campaign-closeout-99-delivery-20261009
   capability: final4_campaign_closeout
