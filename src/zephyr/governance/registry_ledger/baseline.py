@@ -154,18 +154,38 @@ def load_roor_index(repo_root: Path) -> dict[str, dict]:
 
     同路径多注册（如 REG-CAPCAN-001 与其子集视图 REG-GEN-001，P-5 内收对象）→
     ROOR 文档序首个为准（正主在前、派生视图在后），机械确定不猜。
+    retired 感知（裁定#503，2026-10-10 总统筹增补令·P1）：status=retired（墓碑）的
+    条目不参与 first-wins——即便它排在文档序首位也让位给非墓碑同路径条目。
+    病根=ROOR 双挂号（同路径挂 REG-CAPCAN-001 与空壳 REG-GEN-001）：任何路径→id
+    反查取到空壳账本即持 0 条覆盖上万条投影（间歇性蒸发候选，A-12 真凶候选）。
+    本函数是全仓唯一路径反查入口（render/物化/迁移/预检五通道同源），dedup 在此
+    单点收紧即全通道闭环；红证=test_roor_path_resolution（构造 GEN 首位+墓碑仍返 CAPCAN）。
     """
     import yaml  # noqa: PLC0415
 
     roor_file = repo_root / ROOR_PATH
     index: dict[str, dict] = {}
 
+    def _is_tombstoned(node: dict) -> bool:
+        status = str(node.get("status", "")).lower()
+        return status.startswith("retired") or status.startswith("墓碑")
+
     def _walk(node: object) -> None:
         if isinstance(node, dict):
             pp = node.get("physical_path")
             if isinstance(pp, str) and node.get("registry_id"):
                 key = pp.replace("\\", "/")
-                if key not in index:  # first-wins（文档序=正主优先）
+                tomb = _is_tombstoned(node)
+                if key not in index:
+                    if not tomb:  # first-wins（文档序=正主优先；墓碑条目不让座占位）
+                        index[key] = {
+                            "registry_id": str(node["registry_id"]),
+                            "maintenance": str(node.get("maintenance", "manual")),
+                        }
+                elif tomb and not _is_tombstoned(index[key]):
+                    pass  # 在册正主非墓碑 → 墓碑后来者不覆盖（防御序漂移）
+                elif not tomb and _is_tombstoned(index[key]):
+                    # 正主后到而先到者是墓碑 → 正主夺回（墓碑永不占位）
                     index[key] = {
                         "registry_id": str(node["registry_id"]),
                         "maintenance": str(node.get("maintenance", "manual")),

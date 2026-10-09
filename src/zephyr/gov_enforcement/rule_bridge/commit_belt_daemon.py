@@ -465,6 +465,48 @@ def _projection_drift_probe(project_root: Path) -> None:
         if local_match and (now - last) < _PROJECTION_PROBE_COOLDOWN_S:
             return  # 本地干净+冷却窗内：不进生成器（防每事件重渲）
         _projection_last_probe["t"] = now
+        # ── A-12 断源预拌和（2026-10-10 总统筹增补令·第 4 次实弹处方机械化）──
+        # render 前先做一轮"HEAD 有而 PG 缺的条目先回灌再 render"（insert-only），
+        # 把死信二期当晚手工拆弹动作变成 PG-wins render 的机械前置——清欠追不上
+        # 出血的根因=render 用可能落后的 PG 快照整档覆盖盘面。两道熔断防毒化：
+        # 盘面解析炸/盘面条目数对 PG 偏差 >5%（整册错写类事故形态）→ 跳过回灌只
+        # 记账，绝不把垃圾回灌进账本。reconcile/publish 失败 fail-open（render 照走
+        # 旧快照=现行为，下一事件重试 premix）。
+        try:
+            import yaml as _yaml_premix
+
+            from zephyr.governance.registry_ledger.baseline import (  # noqa: PLC0415
+                publish_snapshot,
+                reconcile_registry,
+            )
+
+            _disk = _yaml_premix.safe_load(target.read_text(encoding="utf-8")) if target.exists() else None
+            _premix_ok = False
+            if isinstance(_disk, dict):
+                try:
+                    from zephyr.governance.registry_projection.pg_source import load_latest_snapshot  # noqa: PLC0415
+
+                    _pg_snap = load_latest_snapshot(rid, phys)
+                except Exception:  # noqa: BLE001 — PG 无快照=无从比数，放行 reconcile
+                    _pg_snap = None
+                if _pg_snap is None:
+                    _premix_ok = True
+                else:
+                    _disk_n = sum(len(v) for v in _disk.values() if isinstance(v, list))
+                    _pg_n = sum(_pg_snap.entry_counts().values())
+                    _premix_ok = _pg_n == 0 or abs(_disk_n - _pg_n) <= max(5, int(_pg_n * 0.05))
+            if _premix_ok:
+                reconcile_registry(root, phys, session_id="belt_daemon_premix")
+                publish_snapshot(rid, repo_root=root, session_id="belt_daemon_premix")
+            else:
+                record_registry_drift(
+                    phys,
+                    added=0,
+                    removed=0,
+                    detail="render premix skipped: 盘面/PG 条目数偏差>5%（整册错写类形态，禁回灌防毒化）",
+                )
+        except Exception:  # noqa: BLE001 — premix 失败不阻断探针（render 照走，下一事件重试）
+            logger.warning("render premix reconcile 失败（render 照走旧快照）", exc_info=True)
         projection_run(root, mode="render", registry_id=rid, physical_path=phys, actor_session="belt_daemon")
     except Exception:  # noqa: BLE001 — 探针绝不阻断 daemon 主循环
         logger.warning("projection drift probe 异常（下一事件重试）", exc_info=True)

@@ -477,7 +477,9 @@ tiers:
         maintenance: manual（aliases/description 随生成器增减同步）
         entry_count: 13951
         counting_rule: creation_tokens 数组条目数
-        status: active
+        status: retired（墓碑，裁定#503：PG 0 条空壳映射——同一物理路径的账本正主=REG-CAPCAN-001（文档序首位，PG v134/14427 条）；本条降级为纯生成器名搜索别名（P-5 内收对象），禁作 render/物化的路径→registry_id 反查目标——load_roor_index 已按 status=retired 跳过（dedup 升级，红证 test_roor_path_resolution））
+        tombstone_date: "2026-10-10"
+        tombstone_authority: 裁定#503
         description: >-
           12 个架构生成器的发现索引——capability_canonical_file_registry.yaml 中
           domain_architecture_generators 条目的别名+outputs 子集。AI 搜索任一生成器名
