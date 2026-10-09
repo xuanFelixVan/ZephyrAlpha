@@ -64733,10 +64733,12 @@ creation_tokens:
   created_by: st-chiefc-20261009-D
   capability: phase_discriminator
   merge_evaluation: "C445 相位判别真源件新立，无同真源可并"
+  no_mount_reason: "C445 相位判别真源件（裁定#488 B 段，判不出=记红不拒单），无 TDMAP 挂锚；enforce 接线与启用走裁定通道（#488 A 段 C63/#490 Owner 门位）"
 - file: src/zephyr/strategy_pipeline/graduated_package_feed.py
   token: graduated-package-feed-graduated-package-feed-20261009
   created_by: st-chiefc-20261009-D
   capability: graduated_package_feed
+  no_mount_reason: "C5 毕业包只读拉取通道（裁定#305 第 2 点禁手填延续），无 TDMAP 挂锚；消费接线=select_packages 注入位，晋级落地件契约见本件 docstring"
   merge_evaluation: "C5 毕业包通道新立，替代对象=GRADUATED_PACKAGES 手填路径（禁手填裁定#305），零旧条可并"
 - file: docs/_working/integrated_backtest/artifacts_v2/W_HOLDOUT/nav_IBT-A.csv
   token: exam-cost-reexam-nav-ibt-a-20261009
