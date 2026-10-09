@@ -308,7 +308,7 @@ audit_dimensions:
       - "是否有废弃≥180天未归档？"
     script_names:
       - "d8_doc_sync/validate_document_ttl.py"
-      - "d8_doc_sync/validate_document_lifecycle.py"
+      - "d5_architecture/validators/lifecycle/validate_module_lifecycle.py"
       - "d3_metadata/validate_superseded_by.py"
       - "d3_metadata/detect_skip_active_status.py"
       - "d3_metadata/detect_stale_version.py"

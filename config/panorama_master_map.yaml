@@ -8,7 +8,7 @@ schema_version: '0.1'
 map_id: panorama_master_map
 name_zh: 全景总图（图之图）
 ssot_note_zh: >-
-  nodes=alignment_checklist §3 全景图家族全集（13 正式+2 待转正），每节点 file 指向该图
+  nodes=alignment_checklist §3 全景图家族全集（16 正式+0 待转正），每节点 file 指向该图
   §3 在册真源或其对齐工具（PG 真源图 file=对齐工具脚本，YAML 真源图 file=图 yaml 本体）；
   节点 map_id 与 yaml 真源 frontmatter map_id 逐字一致（TDMAP-001/DSCMAP-012/GOMAP-001
   为册面实名）。横纵轴判据=宪章 §8.1 两轴分类+battle_map 裁定#483。图16（治理立法）已立，
@@ -68,7 +68,7 @@ nodes:
   name_zh: 交付流水线全景图
   axis: vertical
   file: config/dev_delivery_map.yaml
-  one_line_zh: 图11 纵轴·交付流水线——28 环节施工变更唯一入口（待转正）
+  one_line_zh: 图11 纵轴·交付流水线——28 环节施工变更唯一入口（2026-10-04 转正 st-fig1113reg）
 - map_id: DSCMAP-012
   name_zh: 数据供给链图
   axis: vertical
@@ -78,7 +78,7 @@ nodes:
   name_zh: 交易日循环全景图
   axis: vertical
   file: config/trading_day_cycle_map.yaml
-  one_line_zh: 图13 纵轴·交易日循环——交易决策流的交易日时序投影（待转正）
+  one_line_zh: 图13 纵轴·交易日循环——交易决策流的交易日时序投影（2026-10-04 转正 st-fig1113reg）
 - map_id: construction_workflow_map
   name_zh: AI 施工升级流图
   axis: vertical

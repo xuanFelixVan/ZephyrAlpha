@@ -463,10 +463,10 @@ step_anchors:
     skeleton_verifiability: partial
     build_status: partial
     anchor_kind: script
-    exec_source: script:scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+    exec_source: script:scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
     gates: [TTL-METADATA, FILE-PLACEMENT-TTL]
     executable:
-      - scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+      - scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
       - scripts/governance/d8_doc_sync/update_progress.py
       - scripts/governance/d8_doc_sync/auto_sync_all_registries.py
     cli_anchors: []
@@ -483,7 +483,7 @@ step_anchors:
     evidence:
       - '2026-09-24 骨架 §1 D14-12 行 + 簿02 §4：d8_doc_sync 三件实测在盘；两目标件在 archive 不在原目录'
       - '2026-09-25 本车道只读复跑：TTL-METADATA / FILE-PLACEMENT-TTL 在册；三件规则锚符号命中'
-    module_ref: scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+    module_ref: scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
     exec_evidence:
       - 复跑 ls scripts/governance/d8_doc_sync/ 三件俱在（生命周期校验/进度更新/册同步）
       - 2026-09-25 只读复跑：TTL-METADATA / FILE-PLACEMENT-TTL 在册
