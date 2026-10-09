@@ -75,6 +75,12 @@ session: st-nightsweep-sw17-20260929
 - E11｜灾备块（C296：P-6 ch_vm 全量重做 F 盘/P-10 PT4H 硬时限）＋甲-1 g_mirror ch_vm_backup 反向复活防回退锚（C319）｜等：补正式裁定+批防回退锚（禁只修不防）｜中
 - E12｜ConfigCheck 日红安全窗重启+F132 计划任务三件（C401/C377/99#41：任务级 action 变更/对账宿主挂靠/重启窗）｜等：任务级三项批注（11:10 重启后 exit 0 回绿实证）｜中
 - E13｜AI 排产账本落点 durability（C102）＋OrderFileStore 归档语义（C103）＋R5 三处真源收敛（C299）｜等：逐项裁定｜低
+- E13 证据追加（2026-10-09 st-chief4-20260927 班实测，**非裁定、不改判据**，仅把新硬证据并到本条以免旧措辞误导）：
+  - C102 新增硬证据：`.runtime` 有一条 7 天清扫器 `src/zephyr/governance/audit/reconciliation_registry.py:7752-7798`（os.walk 全 .runtime，仅剪 commit_queue/__pycache__/_wt_*；非 `.jsonl` 且 >7d → guard_remove）。被它命中的正是排产账的自愈凭据 `confirm_intents/*.json` 与互斥锁 `orders.jsonl.gate.lock`（后者头注自称"只创建永不删除"，见 `src/zephyr/ai_layer/scheduling/confirm_gate.py:5`）。实测留痕：`.runtime/logs/reconcile_worker_*.log` 记 `GATE-RUNTIME-CLEANUP deleted=2682`。
+  - 合规性判读（不替 Owner 裁）：`directory_contract.yaml:187` 把 `.runtime/` 列为 neutral、default_ttl=null，根宪法 §9 条目 4 只禁"向 .runtime 根直写" ⇒ 现落点**不违规但不 durable**，两者要分开裁。
+  - C103 具体悬点已定位：reject 把工单写 `state='dead'`（`confirm_gate.py:868`）而全仓唯一读者仍是本件自身（`confirm_gate.py:357` → `evaluate_confirm`）；状态词表真源 `config/schedule_gate_policy.yaml:110` 未被引用（硬编码字面量）；`orders.jsonl` 原地替换、永不删行、无轮转 ⇒ 待裁="文件快照 vs PG `ai_scheduling.ai_work_order` 谁是长期真源"（另见`docs/_working/fullflow_mining/05_missing_p0/wiring_C_confirm_hardening.md` §二处置）。
+  - 施工时机证据：`.runtime/ai_scheduling` 当前**不存在**（ls 实测），故改判落点的迁移成本此刻为 0（无历史字节要搬）。
+  - 本条附带发现（可独立修，非门位）：`ConfirmGate` 写 `actor`（`confirm_gate.py:1060`）而 `src/zephyr/ai_layer/scheduling/dispatcher.py:227` 读 `decided_by` ⇒ 仪表盘"谁拍的板"恒 None。
 
 ## ⑥ 裁定追认
 
