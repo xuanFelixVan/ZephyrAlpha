@@ -1,0 +1,777 @@
+# 生成器=.runtime/tmp/dexp/gen_evidence_yaml.py（勿手改；重跑覆盖）
+generated_at: '2026-10-09 13:07:33'
+session_id: st-dexp-20261009
+free_gb_now: 59.823
+triage_denominator:
+  dirs_scanned: 126
+  STATE1_CLEAN_MERGED:
+    count: 91
+    size_gb: 23.88
+  STATE2_INCREMENT:
+    count: 25
+    size_gb: 6.09
+  STATE4_ACTIVE_OWNER:
+    count: 10
+    size_gb: 2.71
+  STATE3_TOMBSTONED:
+    count: 0
+    size_gb: 0
+disposition:
+  already_gone: 1
+  failed: 6
+  removed: 84
+  still_present: 2
+  state1_still_on_disk: 2
+  state1_still_in_worktree_list: 2
+redblue:
+  audit_sheds_ge_20mb_nontacked_flagged: 0
+  judge_flips_red_on_injected_ignored_file: true
+  judge_flips_red_on_one_byte_edit: true
+  injection_artifacts: ['triage_red.jsonl', 'triage_red2.jsonl', 'triage_red3.jsonl']
+  state4_sheds: ["st-chiefc-20261009", "st-chiefc-20261009-D", "st-deadcure-chief-20261009", "st-deadcure-g1-chief", "st-deadcure-g2-chief", "st-deadcure-promote-chief", "st-deadcure-restore-chief", "st-dexp-20261009", "st-fullflow2-20261008", "st-libfront-20261009"]
+state1_still_present_list: [".aidrafts/st-mx07-W2", ".aidrafts/st-tclose-fwire-20261004"]
+per_item_disposition:  # 逐件账（.runtime/tmp 有 24h TTL，故提升为常驻证据）
+  - path: '.aidrafts/AI-PROBE-001'
+    branch: 'session/AI-PROBE-001'
+    head: ''
+    size_gb: 0.27
+    result: 'ALREADY_GONE'
+    free_gb_before: 33.601
+    free_gb_after: 
+    rollback: ''
+  - path: '.aidrafts/st-chief2close-20261008'
+    branch: 'session/st-chief2close-20261008'
+    head: 'fcd81fa102e7'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 33.601
+    free_gb_after: 33.91
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-chief2close-20261008 session/st-chief2close-20261008'
+  - path: '.aidrafts/st-fflow-c1-20261008'
+    branch: 'session/st-fflow-c1-20261008'
+    head: '1c9231519089'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 33.91
+    free_gb_after: 34.208
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-fflow-c1-20261008 session/st-fflow-c1-20261008'
+  - path: '.aidrafts/st-mastertc-l0'
+    branch: 'session/st-mastertc-l0'
+    head: '600abe99917e'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 34.208
+    free_gb_after: 34.501
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l0 session/st-mastertc-l0'
+  - path: '.aidrafts/st-mastertc-l7'
+    branch: 'session/st-mastertc-l7'
+    head: 'be19c796342d'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 34.501
+    free_gb_after: 34.794
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l7 session/st-mastertc-l7'
+  - path: '.aidrafts/st-matrix-20261007'
+    branch: 'session/st-matrix-20261007'
+    head: '3e6a630b78da'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 34.794
+    free_gb_after: 35.093
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-matrix-20261007 session/st-matrix-20261007'
+  - path: '.aidrafts/st-mx07-L6'
+    branch: 'session/st-mx07-L6'
+    head: '38a92658ae9e'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 35.092
+    free_gb_after: 35.376
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-L6 session/st-mx07-L6'
+  - path: '.aidrafts/st-storageswap-20260930'
+    branch: 'session/st-storageswap-20260930'
+    head: '271889ebd1d9'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 35.385
+    free_gb_after: 35.687
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-storageswap-20260930 session/st-storageswap-20260930'
+  - path: '.aidrafts/st-tests-chief-20261004'
+    branch: 'session/st-tests-chief-20261004'
+    head: '1c9231519089'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 35.687
+    free_gb_after: 35.985
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-tests-chief-20261004 session/st-tests-chief-20261004'
+  - path: '.aidrafts/st-acure-20261008-chief'
+    branch: 'session/st-acure-20261008-chief'
+    head: 'fbbfb410c3b3'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 35.985
+    free_gb_after: 36.29
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-acure-20261008-chief session/st-acure-20261008-chief'
+  - path: '.aidrafts/st-chief7z-20261009'
+    branch: 'session/st-chief7z-20261009'
+    head: 'f3edb356140e'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 36.29
+    free_gb_after: 36.591
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-chief7z-20261009 session/st-chief7z-20261009'
+  - path: '.aidrafts/st-fig13-bone-20261004'
+    branch: 'session/st-fig13-bone-20261004'
+    head: '6d820610b598'
+    size_gb: 0.23
+    result: 'REMOVED'
+    free_gb_before: 36.591
+    free_gb_after: 36.841
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-fig13-bone-20261004 session/st-fig13-bone-20261004'
+  - path: '.aidrafts/st-govfix-g3-20261007'
+    branch: 'session/st-govfix-g3-20261007'
+    head: 'dc83fcc943d2'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 36.84
+    free_gb_after: 37.141
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-govfix-g3-20261007 session/st-govfix-g3-20261007'
+  - path: '.aidrafts/st-mastertc-l1'
+    branch: 'session/st-mastertc-l1'
+    head: '600abe99917e'
+    size_gb: 0.26
+    result: 'FAILED'
+    free_gb_before: 37.141
+    free_gb_after: 37.443
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l1 session/st-mastertc-l1'
+  - path: '.aidrafts/st-mastertc-l9'
+    branch: 'session/st-mastertc-l9'
+    head: '7e4a2949f0dd'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 37.443
+    free_gb_after: 37.736
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l9 session/st-mastertc-l9'
+  - path: '.aidrafts/st-mx07-chief'
+    branch: 'session/st-mx07-chief'
+    head: '3fdbb0c2e697'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 37.731
+    free_gb_after: 38.038
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-chief session/st-mx07-chief'
+  - path: '.aidrafts/st-mx07-L8'
+    branch: 'session/st-mx07-L8'
+    head: '224e447318d5'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 38.044
+    free_gb_after: 38.342
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-L8 session/st-mx07-L8'
+  - path: '.aidrafts/st-t3a-casebook'
+    branch: 'session/st-t3a-casebook'
+    head: 'a1affd7544cd'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 38.342
+    free_gb_after: 38.646
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-t3a-casebook session/st-t3a-casebook'
+  - path: '.aidrafts/st-vm12acc-20261007'
+    branch: 'session/st-vm12acc-20261007'
+    head: '4e53c6698452'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 38.643
+    free_gb_after: 38.943
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-vm12acc-20261007 session/st-vm12acc-20261007'
+  - path: '.aidrafts/st-acure-b1'
+    branch: 'session/st-acure-b1'
+    head: 'a3d2c658040b'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 38.943
+    free_gb_after: 39.241
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-acure-b1 session/st-acure-b1'
+  - path: '.aidrafts/st-fig13-followup-20261006'
+    branch: 'session/st-fig13-followup-20261006'
+    head: '7e0f5bf73935'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 39.241
+    free_gb_after: 39.553
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-fig13-followup-20261006 session/st-fig13-followup-20261006'
+  - path: '.aidrafts/st-govfix-g5-20261007'
+    branch: 'session/st-govfix-g5-20261007'
+    head: 'dd98757ab4a4'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 39.553
+    free_gb_after: 39.847
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-govfix-g5-20261007 session/st-govfix-g5-20261007'
+  - path: '.aidrafts/st-mastertc-l11'
+    branch: 'session/st-mastertc-l11'
+    head: '44f445c47e48'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 39.847
+    free_gb_after: 40.14
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l11 session/st-mastertc-l11'
+  - path: '.aidrafts/st-mastertc-loop'
+    branch: 'session/st-mastertc-loop'
+    head: '706d7a3772a8'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 40.14
+    free_gb_after: 40.432
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-loop session/st-mastertc-loop'
+  - path: '.aidrafts/st-mx07-L1'
+    branch: 'session/st-mx07-L1'
+    head: '62cb580db26e'
+    size_gb: 0.26
+    result: 'FAILED'
+    free_gb_before: 40.432
+    free_gb_after: 40.741
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-L1 session/st-mx07-L1'
+  - path: '.aidrafts/st-mx07-L9'
+    branch: 'session/st-mx07-L9'
+    head: '551960b57ec9'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 40.741
+    free_gb_after: 41.04
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-L9 session/st-mx07-L9'
+  - path: '.aidrafts/st-t3b-dedup'
+    branch: 'session/st-t3b-dedup'
+    head: '9e8b136eae3e'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 41.039
+    free_gb_after: 41.328
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-t3b-dedup session/st-t3b-dedup'
+  - path: '.aidrafts/st-vm12ops-20261007'
+    branch: 'session/st-vm12ops-20261007'
+    head: 'a3d2c658040b'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 41.328
+    free_gb_after: 41.636
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-vm12ops-20261007 session/st-vm12ops-20261007'
+  - path: '.aidrafts/st-acure-e1'
+    branch: 'session/st-acure-e1'
+    head: '551960b57ec9'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 41.635
+    free_gb_after: 41.928
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-acure-e1 session/st-acure-e1'
+  - path: '.aidrafts/st-finalaudit-r3-20261008'
+    branch: 'session/st-finalaudit-r3-20261008'
+    head: '3fdbb0c2e697'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 41.928
+    free_gb_after: 42.24
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-finalaudit-r3-20261008 session/st-finalaudit-r3-20261008'
+  - path: '.aidrafts/st-mastertc-l1b'
+    branch: 'session/st-mastertc-l1b'
+    head: '45c1f0b2243a'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 42.24
+    free_gb_after: 42.531
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l1b session/st-mastertc-l1b'
+  - path: '.aidrafts/st-mx07-L10'
+    branch: 'session/st-mx07-L10'
+    head: '551960b57ec9'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 42.528
+    free_gb_after: 42.821
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-L10 session/st-mx07-L10'
+  - path: '.aidrafts/st-mx07-W1'
+    branch: 'session/st-mx07-W1'
+    head: '278f283636c7'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 42.821
+    free_gb_after: 43.128
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-W1 session/st-mx07-W1'
+  - path: '.aidrafts/st-t3c-ops'
+    branch: 'session/st-t3c-ops'
+    head: '692065891021'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 43.128
+    free_gb_after: 43.432
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-t3c-ops session/st-t3c-ops'
+  - path: '.aidrafts/st-vm12r2-20261007'
+    branch: 'session/st-vm12r2-20261007'
+    head: '24635c23091e'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 43.432
+    free_gb_after: 43.724
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-vm12r2-20261007 session/st-vm12r2-20261007'
+  - path: '.aidrafts/st-acure-m1'
+    branch: 'session/st-acure-m1'
+    head: 'd775bc3e45a7'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 43.724
+    free_gb_after: 44.036
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-acure-m1 session/st-acure-m1'
+  - path: '.aidrafts/st-cli-1'
+    branch: 'session/st-cli-1'
+    head: '44e4fc50ab6b'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 44.036
+    free_gb_after: 44.338
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-cli-1 session/st-cli-1'
+  - path: '.aidrafts/st-fms-tc-20260927'
+    branch: 'session/st-fms-tc-20260927'
+    head: 'd69125b1de57'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 44.337
+    free_gb_after: 44.639
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-fms-tc-20260927 session/st-fms-tc-20260927'
+  - path: '.aidrafts/st-mastertc-l2'
+    branch: 'session/st-mastertc-l2'
+    head: 'cc622367eaa0'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 44.639
+    free_gb_after: 44.932
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l2 session/st-mastertc-l2'
+  - path: '.aidrafts/st-mastertc-mine2'
+    branch: 'session/st-mastertc-mine2'
+    head: '739b6fe466f4'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 44.932
+    free_gb_after: 45.226
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-mine2 session/st-mastertc-mine2'
+  - path: '.aidrafts/st-mx07-L11'
+    branch: 'session/st-mx07-L11'
+    head: '9785cb6f23b6'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 45.225
+    free_gb_after: 45.502
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-L11 session/st-mx07-L11'
+  - path: '.aidrafts/st-mx07-W2'
+    branch: 'session/st-mx07-W2'
+    head: '8da5593324ce'
+    size_gb: 0.27
+    result: 'FAILED'
+    free_gb_before: 45.497
+    free_gb_after: 45.498
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-W2 session/st-mx07-W2'
+  - path: '.aidrafts/st-t3series-20261006'
+    branch: 'session/st-t3series-20261006'
+    head: 'a1affd7544cd'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 45.528
+    free_gb_after: 45.824
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-t3series-20261006 session/st-t3series-20261006'
+  - path: '.aidrafts/st-wm1-wave0-20260924'
+    branch: 'session/st-wm1-wave0-20260924'
+    head: 'fcd81fa102e7'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 45.824
+    free_gb_after: 46.131
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-wm1-wave0-20260924 session/st-wm1-wave0-20260924'
+  - path: '.aidrafts/st-acure-r1'
+    branch: 'session/st-acure-r1'
+    head: '1bb7935c0027'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 46.131
+    free_gb_after: 46.43
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-acure-r1 session/st-acure-r1'
+  - path: '.aidrafts/st-closeout-basereq-20261006'
+    branch: 'session/st-closeout-basereq-20261006'
+    head: 'fcd81fa102e7'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 46.427
+    free_gb_after: 46.728
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-closeout-basereq-20261006 session/st-closeout-basereq-20261006'
+  - path: '.aidrafts/st-entrance-gate-20261007'
+    branch: 'session/st-entrance-gate-20261007'
+    head: 'f072e86aa6e1'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 46.728
+    free_gb_after: 47.036
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-entrance-gate-20261007 session/st-entrance-gate-20261007'
+  - path: '.aidrafts/st-fr-resurrect'
+    branch: 'session/st-fr-resurrect'
+    head: 'fcd81fa102e7'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 47.036
+    free_gb_after: 47.34
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-fr-resurrect session/st-fr-resurrect'
+  - path: '.aidrafts/st-map9-chief-20261008'
+    branch: 'session/st-map9-chief-20261008'
+    head: 'a1affd7544cd'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 47.34
+    free_gb_after: 47.641
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-map9-chief-20261008 session/st-map9-chief-20261008'
+  - path: '.aidrafts/st-mastertc-l3b'
+    branch: 'session/st-mastertc-l3b'
+    head: '739b6fe466f4'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 47.641
+    free_gb_after: 47.934
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l3b session/st-mastertc-l3b'
+  - path: '.aidrafts/st-mastertc-mini'
+    branch: 'session/st-mastertc-mini'
+    head: '95a5e4e78c2d'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 47.934
+    free_gb_after: 48.236
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-mini session/st-mastertc-mini'
+  - path: '.aidrafts/st-mx07-L12'
+    branch: 'session/st-mx07-L12'
+    head: 'ee30722678db'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 48.236
+    free_gb_after: 48.533
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-L12 session/st-mx07-L12'
+  - path: '.aidrafts/st-mx07-W3'
+    branch: 'session/st-mx07-W3'
+    head: 'df854ec40633'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 48.533
+    free_gb_after: 48.836
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-W3 session/st-mx07-W3'
+  - path: '.aidrafts/st-tclose-20261004'
+    branch: 'session/st-tclose-20261004'
+    head: 'a1affd7544cd'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 48.833
+    free_gb_after: 49.136
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-tclose-20261004 session/st-tclose-20261004'
+  - path: '.aidrafts/st-workingchief-20261006'
+    branch: 'session/st-workingchief-20261006'
+    head: 'f072e86aa6e1'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 49.135
+    free_gb_after: 49.442
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-workingchief-20261006 session/st-workingchief-20261006'
+  - path: '.aidrafts/st-backup-cold-20260924'
+    branch: 'session/st-backup-cold-20260924'
+    head: 'f07c41c1cffb'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 49.442
+    free_gb_after: 49.739
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-backup-cold-20260924 session/st-backup-cold-20260924'
+  - path: '.aidrafts/st-cure-p05b-20261006'
+    branch: 'session/st-cure-p05b-20261006'
+    head: 'cd3a154464bb'
+    size_gb: 0.23
+    result: 'REMOVED'
+    free_gb_before: 49.739
+    free_gb_after: 50.001
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-cure-p05b-20261006 session/st-cure-p05b-20261006'
+  - path: '.aidrafts/st-extaudit-20261007'
+    branch: 'session/st-extaudit-20261007'
+    head: '99d071bb1d1e'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 50.001
+    free_gb_after: 50.292
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-extaudit-20261007 session/st-extaudit-20261007'
+  - path: '.aidrafts/st-mapcensus-20260924'
+    branch: 'session/st-mapcensus-20260924'
+    head: '551960b57ec9'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 50.292
+    free_gb_after: 50.595
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mapcensus-20260924 session/st-mapcensus-20260924'
+  - path: '.aidrafts/st-mastertc-l4'
+    branch: 'session/st-mastertc-l4'
+    head: 'a621b9776517'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 50.594
+    free_gb_after: 50.89
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l4 session/st-mastertc-l4'
+  - path: '.aidrafts/st-mastertc-rb'
+    branch: 'session/st-mastertc-rb'
+    head: '3f47dbd6d54b'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 50.89
+    free_gb_after: 51.183
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-rb session/st-mastertc-rb'
+  - path: '.aidrafts/st-mx07-L2'
+    branch: 'session/st-mx07-L2'
+    head: '38a92658ae9e'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 51.183
+    free_gb_after: 51.484
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-L2 session/st-mx07-L2'
+  - path: '.aidrafts/st-mx07-W4'
+    branch: 'session/st-mx07-W4'
+    head: '8da5593324ce'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 51.484
+    free_gb_after: 51.779
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-W4 session/st-mx07-W4'
+  - path: '.aidrafts/st-tclose-fwire-20261004'
+    branch: 'session/st-tclose-fwire-20261004'
+    head: '6eb3ab181bfd'
+    size_gb: 0.24
+    result: 'FAILED'
+    free_gb_before: 51.779
+    free_gb_after: 51.779
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-tclose-fwire-20261004 session/st-tclose-fwire-20261004'
+  - path: '.aidrafts/st-bcure-20261008'
+    branch: 'session/st-bcure-20261008'
+    head: 'fcd81fa102e7'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 51.779
+    free_gb_after: 52.08
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-bcure-20261008 session/st-bcure-20261008'
+  - path: '.aidrafts/st-datasop-20260930'
+    branch: 'session/st-datasop-20260930'
+    head: 'fcd81fa102e7'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 52.08
+    free_gb_after: 52.379
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-datasop-20260930 session/st-datasop-20260930'
+  - path: '.aidrafts/st-fcd-merge'
+    branch: 'session/st-fcd-merge'
+    head: 'a3d2c658040b'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 52.381
+    free_gb_after: 52.687
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-fcd-merge session/st-fcd-merge'
+  - path: '.aidrafts/st-fullscore-20260930'
+    branch: 'session/st-fullscore-20260930'
+    head: '4245e0c62b0d'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 52.687
+    free_gb_after: 52.989
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-fullscore-20260930 session/st-fullscore-20260930'
+  - path: '.aidrafts/st-mastertc-close'
+    branch: 'session/st-mastertc-close'
+    head: '04f94e865a79'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 52.989
+    free_gb_after: 53.279
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-close session/st-mastertc-close'
+  - path: '.aidrafts/st-mastertc-l5'
+    branch: 'session/st-mastertc-l5'
+    head: '02a191ec33dd'
+    size_gb: 0.26
+    result: 'FAILED'
+    free_gb_before: 53.279
+    free_gb_after: 53.577
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l5 session/st-mastertc-l5'
+  - path: '.aidrafts/st-mastertc-recover'
+    branch: 'session/st-mastertc-recover'
+    head: '95a5e4e78c2d'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 53.577
+    free_gb_after: 53.871
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-recover session/st-mastertc-recover'
+  - path: '.aidrafts/st-mx07-W5'
+    branch: 'session/st-mx07-W5'
+    head: 'df854ec40633'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 53.871
+    free_gb_after: 54.171
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-W5 session/st-mx07-W5'
+  - path: '.aidrafts/st-tclose-rootcure-20261006'
+    branch: 'session/st-tclose-rootcure-20261006'
+    head: '78d22f15589c'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 54.171
+    free_gb_after: 54.472
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-tclose-rootcure-20261006 session/st-tclose-rootcure-20261006'
+  - path: '.aidrafts/st-bt-fast-w5-20261006'
+    branch: 'session/st-bt-fast-w5-20261006'
+    head: '124afb685fe9'
+    size_gb: 0.25
+    result: 'REMOVED'
+    free_gb_before: 54.472
+    free_gb_after: 54.759
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-bt-fast-w5-20261006 session/st-bt-fast-w5-20261006'
+  - path: '.aidrafts/st-fflow-a-20261008'
+    branch: 'session/st-fflow-a-20261008'
+    head: '1c9231519089'
+    size_gb: 0.26
+    result: 'REMOVED'
+    free_gb_before: 54.759
+    free_gb_after: 55.057
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-fflow-a-20261008 session/st-fflow-a-20261008'
+  - path: '.aidrafts/st-fwin-exec-20261009'
+    branch: 'session/st-fwin-exec-20261009'
+    head: 'fd4d6b4fbdd0'
+    size_gb: 0.27
+    result: 'REMOVED'
+    free_gb_before: 55.057
+    free_gb_after: 55.359
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-fwin-exec-20261009 session/st-fwin-exec-20261009'
+  - path: '.aidrafts/st-mastertc-final'
+    branch: 'session/st-mastertc-final'
+    head: '38a92658ae9e'
+    size_gb: 0.26
+    result: 'FAILED'
+    free_gb_before: 55.359
+    free_gb_after: 55.66
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-final session/st-mastertc-final'
+  - path: '.aidrafts/st-mx07-W2'
+    branch: 'session/st-mx07-W2'
+    head: ''
+    size_gb: 0
+    result: 'STILL_PRESENT'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-W2 session/st-mx07-W2'
+  - path: '.aidrafts/st-tclose-fwire-20261004'
+    branch: 'session/st-tclose-fwire-20261004'
+    head: ''
+    size_gb: 0
+    result: 'STILL_PRESENT'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-tclose-fwire-20261004 session/st-tclose-fwire-20261004'
+  - path: '.aidrafts/st-mastertc-l5b'
+    branch: 'session/st-mastertc-l5b'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l5b session/st-mastertc-l5b'
+  - path: '.aidrafts/st-mastertc-sweep'
+    branch: 'session/st-mastertc-sweep'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-sweep session/st-mastertc-sweep'
+  - path: '.aidrafts/st-mx07-L4'
+    branch: 'session/st-mx07-L4'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-L4 session/st-mx07-L4'
+  - path: '.aidrafts/st-mx07-W6'
+    branch: 'session/st-mx07-W6'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-W6 session/st-mx07-W6'
+  - path: '.aidrafts/st-tclose-truedel-20261006'
+    branch: 'session/st-tclose-truedel-20261006'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-tclose-truedel-20261006 session/st-tclose-truedel-20261006'
+  - path: '.aidrafts/st-chief-mount-20261003'
+    branch: 'session/st-chief-mount-20261003'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-chief-mount-20261003 session/st-chief-mount-20261003'
+  - path: '.aidrafts/st-fflow-b-20261008'
+    branch: 'session/st-fflow-b-20261008'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-fflow-b-20261008 session/st-fflow-b-20261008'
+  - path: '.aidrafts/st-govfix-g1-20261007'
+    branch: 'session/st-govfix-g1-20261007'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-govfix-g1-20261007 session/st-govfix-g1-20261007'
+  - path: '.aidrafts/st-mastertc-final2'
+    branch: 'session/st-mastertc-final2'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-final2 session/st-mastertc-final2'
+  - path: '.aidrafts/st-mastertc-l5c'
+    branch: 'session/st-mastertc-l5c'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mastertc-l5c session/st-mastertc-l5c'
+  - path: '.aidrafts/st-matrix-20261006'
+    branch: 'session/st-matrix-20261006'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-matrix-20261006 session/st-matrix-20261006'
+  - path: '.aidrafts/st-mx07-L5'
+    branch: 'session/st-mx07-L5'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-mx07-L5 session/st-mx07-L5'
+  - path: '.aidrafts/st-poscap-fix-20261008'
+    branch: 'session/st-poscap-fix-20261008'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-poscap-fix-20261008 session/st-poscap-fix-20261008'
+  - path: '.aidrafts/st-tdm-chief-20261004'
+    branch: 'session/st-tdm-chief-20261004'
+    head: ''
+    size_gb: 0
+    result: 'REMOVED'
+    free_gb_before: 
+    free_gb_after: 
+    rollback: 'git -C D:/ZephyrAlpha worktree add .aidrafts/st-tdm-chief-20261004 session/st-tdm-chief-20261004'
