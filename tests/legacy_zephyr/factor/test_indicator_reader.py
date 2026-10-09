@@ -109,3 +109,60 @@ class TestRealSmoke:
             pytest.skip(f"CH 不可达: {e}")
         assert not df.empty, "000852 daily 2026-08 应有数据（增量任务在跑）"
         assert df["atr_14"].notna().any()
+
+
+class TestRowVersionDedupe:
+    """读侧按 ingest_ts 去重（2026-10-09 第三条路）的契约尺。
+
+    为什么必须有：technical_indicator=ReplacingMergeTree 且 ORDER BY 无版本列，
+    合并前同键多版并存（实测 daily 2026 全年 38.4% 的键值互不相同、最多 6 版；
+    重复键里约 12-15% 是"最早版≠最新版"），旧 SQL 非 FINAL 直读会把同一 bar 返回多行。
+    """
+
+    def _sql_of(self, monkeypatch):
+        from zephyr.data import ch_writer
+
+        seen = {}
+
+        def fake(sql, timeout=600):
+            seen["sql"] = sql
+            return ""
+
+        monkeypatch.setattr(ch_writer, "query", fake)
+        import zephyr.factor.indicator_reader as ir
+
+        ir.read_indicator(symbol="000001", period="daily", columns=["atr_14"], start="2026-09-01", end="2026-09-10")
+        return seen.get("sql", "")
+
+    def test_groups_by_table_key_and_uses_argmax(self, monkeypatch):
+        sql = self._sql_of(monkeypatch)
+        assert "GROUP BY symbol, period, trade_time" in sql
+        assert "argMax(" in sql and "ingest_ts" in sql
+
+    def test_no_alias_colliding_with_where(self, monkeypatch):
+        """红证：别名若与 WHERE 引用列同名，CH 报 Code 184 ILLEGAL_AGGREGATION。"""
+        sql = self._sql_of(monkeypatch)
+        assert "AS trade_date" not in sql and "AS atr_14" not in sql, "别名撞名会直接查询失败"
+
+    def test_row_shape_preserved_for_tsv_mapping(self, monkeypatch):
+        """TSV 无表头按顺序映射 ⇒ SELECT 顺序必须逐一等于 frame_cols 的投影（键列直取、
+        其余按 ingest_ts 取最新版）。用括号感知切分，勿按 ", " 切（argMax(a, b) 会被切断）。"""
+        import zephyr.factor.indicator_reader as ir
+
+        sql = self._sql_of(monkeypatch)
+        body = sql.split(" FROM ", 1)[0].replace("SELECT ", "", 1)
+        parts, depth, cur = [], 0, ""
+        for ch in body:
+            if ch == "(":
+                depth += 1
+            elif ch == ")":
+                depth -= 1
+            if ch == "," and depth == 0:
+                parts.append(cur.strip())
+                cur = ""
+            else:
+                cur += ch
+        if cur.strip():
+            parts.append(cur.strip())
+        expected = [ir._projection(c) for c in ["trade_date", "trade_time", "symbol", "period", "atr_14"]]
+        assert parts == expected

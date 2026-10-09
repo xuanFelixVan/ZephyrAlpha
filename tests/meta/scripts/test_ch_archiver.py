@@ -161,15 +161,36 @@ class TestExportInjectsFinal:
 
     def test_final_injected_for_replacing_table(self, monkeypatch):
         """ReplacingMergeTree 表导出带 FINAL（逻辑视图=消费者所读）。"""
-        monkeypatch.setattr(archiver.ch_reader.ch_writer, "is_replacing_engine", lambda t: True)
+        monkeypatch.setattr(archiver.ch_reader.ch_writer, "get_table_engine", lambda t: "ReplacingMergeTree")
         sql = archiver.ch_reader.inject_final("SELECT * FROM c1_market.kline_5min WHERE x = 1 FORMAT Parquet")
         assert "FROM c1_market.kline_5min FINAL WHERE" in sql
 
     def test_final_not_injected_for_plain_table(self, monkeypatch):
-        """非 ReplacingMergeTree 表（如 tick_data）不注入 FINAL。"""
-        monkeypatch.setattr(archiver.ch_reader.ch_writer, "is_replacing_engine", lambda t: False)
-        sql = archiver.ch_reader.inject_final("SELECT * FROM c1_market.tick_data WHERE x = 1 FORMAT Parquet")
+        """确证非 Replacing 的表不注入 FINAL。
+
+        2026-10-09 纠错两条：① 旧版举例 `tick_data` 是**假事实**——实测
+        `system.tables.engine(c1_market.tick_data) = ReplacingMergeTree`，
+        拿它当"plain 表"例子会教错；现改用真 MergeTree 表 `cross_validation_log`。
+        ② 旧版 stub 的是 `is_replacing_engine`，而 inject_final 现读 `get_table_engine`
+        （P0 治本：要区分"确证非 Replacing"与"引擎未知"）——stub 错接缝会让本例假绿。
+        """
+        monkeypatch.setattr(archiver.ch_reader.ch_writer, "get_table_engine", lambda t: "MergeTree")
+        sql = archiver.ch_reader.inject_final("SELECT * FROM c1_market.cross_validation_log WHERE x = 1 FORMAT Parquet")
         assert "FINAL" not in sql
+
+    def test_unknown_engine_injects_nothing_but_warns(self, monkeypatch, caplog):
+        """引擎未知（空返回）：保守不注入，但必须响亮——不得静默等同"非 Replacing"。"""
+        monkeypatch.setattr(archiver.ch_reader.ch_writer, "get_table_engine", lambda t: "")
+        ch_writer_mod = archiver.ch_reader.ch_writer
+        ch_writer_mod.engine_probe_failures.pop("c1_market.cross_validation_log", None)
+        caplog.set_level("WARNING", logger="zephyr.data.ch_reader")
+        with caplog.at_level("WARNING"):
+            sql = archiver.ch_reader.inject_final(
+                "SELECT * FROM c1_market.cross_validation_log WHERE x = 1 FORMAT Parquet"
+            )
+        assert "FINAL" not in sql
+        warned = any("GATE-P0-ENGINE-PROBE" in r.getMessage() for r in caplog.records)
+        assert warned or ch_writer_mod.engine_probe_failures, "未知引擎降级必须可观测（告警或失败计数至少一样）"
 
 
 # ============== verify 强化 + 独立 export（18 号 §10 开放问题 6，AI-NIGHT-001）==============

@@ -138,12 +138,12 @@ class TestQueryStrictContract:
 
 class TestCountStrict:
     def _probe(self, monkeypatch, replacing=True, probe_exc: Exception | None = None):
-        def probe(table):
+        def engine(table):
             if probe_exc is not None:
                 raise probe_exc
-            return replacing
+            return "ReplacingMergeTree" if replacing else "MergeTree"
 
-        monkeypatch.setattr(ch_writer, "is_replacing_engine", probe)
+        monkeypatch.setattr(ch_writer, "get_table_engine", engine)
 
     def test_success_with_final_and_where(self, monkeypatch):
         self._probe(monkeypatch, replacing=True)
@@ -185,21 +185,17 @@ class TestCountStrict:
 
 class TestInjectFinalStrict:
     def test_existing_final_no_probe(self, monkeypatch):
-        monkeypatch.setattr(
-            ch_writer, "is_replacing_engine", lambda t: (_ for _ in ()).throw(AssertionError("不应探测"))
-        )
+        monkeypatch.setattr(ch_writer, "get_table_engine", lambda t: (_ for _ in ()).throw(AssertionError("不应探测")))
         sql = "SELECT count() FROM t FINAL"
         assert ch_reader.inject_final_strict(sql) == sql
 
     def test_system_table_no_probe(self, monkeypatch):
-        monkeypatch.setattr(
-            ch_writer, "is_replacing_engine", lambda t: (_ for _ in ()).throw(AssertionError("不应探测"))
-        )
+        monkeypatch.setattr(ch_writer, "get_table_engine", lambda t: (_ for _ in ()).throw(AssertionError("不应探测")))
         sql = "SELECT partition FROM system.parts WHERE active = 1"
         assert ch_reader.inject_final_strict(sql) == sql
 
     def test_replacing_table_injected(self, monkeypatch):
-        monkeypatch.setattr(ch_writer, "is_replacing_engine", lambda t: True)
+        monkeypatch.setattr(ch_writer, "get_table_engine", lambda t: "ReplacingMergeTree")
         out = ch_reader.inject_final_strict("SELECT count() FROM c1_market.kline_daily")
         assert out == "SELECT count() FROM c1_market.kline_daily FINAL"
 
@@ -207,14 +203,14 @@ class TestInjectFinalStrict:
         def boom(table):
             raise RuntimeError("probe down")
 
-        monkeypatch.setattr(ch_writer, "is_replacing_engine", boom)
+        monkeypatch.setattr(ch_writer, "get_table_engine", boom)
         with pytest.raises(ClickHouseQueryError):
             ch_reader.inject_final_strict("SELECT count() FROM c1_market.kline_daily")
 
 
 class TestQueryRows:
     def test_passthrough_with_strict_final(self, monkeypatch):
-        monkeypatch.setattr(ch_writer, "is_replacing_engine", lambda t: True)
+        monkeypatch.setattr(ch_writer, "get_table_engine", lambda t: "ReplacingMergeTree")
         seen = {}
 
         def fake_query_strict(sql, timeout=600):
@@ -226,7 +222,7 @@ class TestQueryRows:
         assert "FROM t FINAL" in seen["sql"]
 
     def test_query_rows_table_wiring(self, monkeypatch):
-        monkeypatch.setattr(ch_writer, "is_replacing_engine", lambda t: False)
+        monkeypatch.setattr(ch_writer, "get_table_engine", lambda t: "MergeTree")
         seen = {}
 
         def fake_query_strict(sql, timeout=600):
@@ -255,3 +251,69 @@ class TestLegacySilentContractUnchanged:
 
     def test_exception_type_shared_between_modules(self):
         assert ch_reader.ClickHouseQueryError is ch_writer.ClickHouseQueryError
+
+
+# ============== P0 治本（2026-10-09）：引擎探测失败禁污染进程级缓存 ==============
+
+
+class TestEngineProbePoisoning:
+    """红证：探针失败后 FINAL 注入必须仍生效，或显式报红——两者都不满足即本类必红。
+
+    病根：`get_table_engine()` 旧实现无条件写缓存，把失败得到的 "" 当权威值缓存，
+    一次瞬态故障（如 system.* 内省整片失败）⇒ 该进程永久认为"引擎未知"，
+    且 `is_replacing_engine()` 对"未知"与"确证非 Replacing"都给 False，
+    连严格通道 `_final_suffix_strict()` 一起静默跳过 FINAL。
+    """
+
+    _T = "c1_market.technical_indicator"
+
+    @pytest.fixture(autouse=True)
+    def _clean_cache(self):
+        ch_writer.table_engine_cache.pop(self._T, None)
+        ch_writer.engine_probe_failures.pop(self._T, None)
+        yield
+        ch_writer.table_engine_cache.pop(self._T, None)
+        ch_writer.engine_probe_failures.pop(self._T, None)
+
+    def test_probe_failure_is_not_cached(self, monkeypatch):
+        """失败（空返回）绝不写权威缓存——否则污染终身。"""
+        monkeypatch.setattr(ch_writer, "query", lambda sql, timeout=600: "")
+        assert ch_writer.get_table_engine(self._T) == ""
+        assert self._T not in ch_writer.table_engine_cache, "失败被缓存＝P0 复发"
+        assert ch_writer.engine_probe_failures.get(self._T) == 1
+
+    def test_probe_self_heals_after_transient_failure(self, monkeypatch):
+        """瞬态故障后恢复：下一次调用必须重新探测并正常注入 FINAL。"""
+        seq = iter(["", "", "ReplacingMergeTree"])
+        monkeypatch.setattr(ch_writer, "query", lambda sql, timeout=600: next(seq))
+        assert ch_writer.get_table_engine(self._T) == ""
+        sql = f"SELECT c FROM {self._T} WHERE 1"
+        assert "FINAL" not in ch_reader.inject_final(sql)  # 未知时保守不注入
+        out = ch_reader.inject_final(sql)
+        assert "FINAL" in out, "自愈后注入必须恢复，否则红"
+        assert f"FROM {self._T} FINAL" in out
+
+    def test_strict_raises_on_unknown_engine(self, monkeypatch):
+        """严格通道：未知＝抛，不得当成"非 Replacing"安静放行。"""
+        monkeypatch.setattr(ch_writer, "query", lambda sql, timeout=600: "")
+        with pytest.raises(ClickHouseQueryError):
+            ch_reader.inject_final_strict(f"SELECT c FROM {self._T}")
+
+    def test_inject_final_warns_loudly_on_unknown_engine(self, monkeypatch, caplog):
+        """非严格通道：不注入可以，但必须留下可 grep 的响亮告警（不得静默）。"""
+        monkeypatch.setattr(ch_writer, "query", lambda sql, timeout=600: "")
+        # 钉到具体 logger：依赖 root 级别在跨文件顺序下会被先导入的模块配置影响
+        caplog.set_level("WARNING", logger="zephyr.data.ch_reader")
+        caplog.set_level("WARNING", logger="zephyr.data.ch_writer")
+        with caplog.at_level("WARNING"):
+            ch_reader.inject_final(f"SELECT c FROM {self._T}")
+        msgs = [r.getMessage() for r in caplog.records]
+        assert any("GATE-P0-ENGINE-PROBE" in m for m in msgs), "降级未报警＝静默假绿"
+        assert self._T in ch_writer.engine_probe_failures, "失败未计入可观测面"
+
+    def test_known_non_replacing_engine_still_not_injected(self, monkeypatch):
+        """反向不误伤：确证 MergeTree（非 Replacing）⇒ 不注入且不报未知。"""
+        monkeypatch.setattr(ch_writer, "query", lambda sql, timeout=600: "MergeTree")
+        out = ch_reader.inject_final(f"SELECT c FROM {self._T}")
+        assert "FINAL" not in out
+        assert self._T not in ch_writer.engine_probe_failures
