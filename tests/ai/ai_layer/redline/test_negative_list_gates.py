@@ -26,7 +26,9 @@ import pytest
 
 from zephyr.ai_layer.redline.negative_list import REAL_KEY_MARKER
 from zephyr.ai_layer.redline.negative_list_gates import (
+    _REAL_KEY_ADMISSION,
     CONSTITUTION_LINE_LIMIT,
+    RULING_REGISTRY_REL,
     make_constitution_line_limit_gate,
     make_real_key_reference_scan_gate,
     make_task_order_docs_lock_gate,
@@ -221,3 +223,127 @@ def test_real_key_incremental_scope_new_ref_still_blocked(fake_gateway_factory):
         gateway, ["docs/_working/obj_s/DESIGN.md"], session_id="s1"
     )
     assert passed is False and "docs/_working/obj_s/DESIGN.md" in detail
+
+
+# ═══════════════ 裁定#503 准入面三锁红证（内收批：同门同件，一件一 module_id 家法）═══════════════
+# 原独立文件 tests/ai/ai_layer/redline/test_real_key_admission_surface.py 的两枚袋（-0014/-0018）都死于
+# MODULE-ID-CONSISTENCY（dev 现测 2479 个 A_test module_id 仅 6 个重复＝一件一 id），故按内收判据并为本件的新增段，
+# 不另起 module_id、不留第二声明位。红证三向语义一字未改。
+ADMITTED = sorted(_REAL_KEY_ADMISSION)[0]
+KEY_LINE = "KEY = '" + REAL_KEY_MARKER + "_ACCOUNT'\n"
+
+
+def _write_ruling(root: Path, ruling_id: str, *, owner_sign: str = "", status: str = "active") -> None:
+    """在 tmp 项目根造一面裁定册（只放被引用的那一条）。"""
+    p = root / RULING_REGISTRY_REL
+    p.parent.mkdir(parents=True, exist_ok=True)
+    entry = {"ruling_id": ruling_id, "status": status, "summary": "准入面授权链"}
+    if owner_sign:
+        entry["owner_sign"] = owner_sign
+    p.write_text(
+        "entries:\n" + __import__("yaml").safe_dump([entry], allow_unicode=True, sort_keys=False), encoding="utf-8"
+    )
+
+
+def _audit_records(tmp_path: Path) -> list[dict]:
+    f = tmp_path / ".runtime/gate_audit/real_key_reference_scan.jsonl"
+    assert f.exists(), "审计文件未生成=审计面失效"
+    return [json.loads(ln) for ln in f.read_text(encoding="utf-8").splitlines() if ln.strip()]
+
+
+# ────────────────────────── 向①：封闭枚举 ──────────────────────────
+
+
+def test_lock1_admission_list_is_closed_enumeration():
+    """锁①本体：清单必须是精确路径封闭枚举——禁通配/禁目录前缀/禁模式字符。"""
+    assert len(_REAL_KEY_ADMISSION) == 5
+    for path, rid in _REAL_KEY_ADMISSION.items():
+        assert "*" not in path and "?" not in path and not path.endswith("/"), path
+        assert path == path.replace("\\", "/"), path
+        assert rid == "裁定#503", path
+
+
+def test_unlisted_path_with_marker_still_blocked_even_with_valid_ruling(tmp_path, fake_gateway_factory):
+    """向①：裁定有效，但路径不在封闭枚举内 → 照样硬阻断（准入面不是通用豁免）。"""
+    _write_ruling(tmp_path, "裁定#503", owner_sign="Owner 2026-10-10 回「按甲改门」")
+    gateway = fake_gateway_factory(staged={"src/zephyr/demo/loader.py": KEY_LINE})
+    passed, detail = make_real_key_reference_scan_gate().check(
+        gateway, ["src/zephyr/demo/loader.py"], session_id="s-red-1"
+    )
+    assert passed is False
+    assert REAL_KEY_MARKER in detail
+    assert _audit_records(tmp_path)[0]["action"] == "block"
+
+
+def test_directory_prefix_is_not_admitted(tmp_path, fake_gateway_factory):
+    """向①补刀：列名件的**同目录兄弟件**不得被顺带放行（防目录级蔓延）。"""
+    _write_ruling(tmp_path, "裁定#503", owner_sign="Owner 2026-10-10 回「按甲改门」")
+    sibling = str(Path(ADMITTED).parent / "test_not_in_list.py")
+    assert sibling not in _REAL_KEY_ADMISSION
+    gateway = fake_gateway_factory(staged={sibling: KEY_LINE})
+    passed, _ = make_real_key_reference_scan_gate().check(gateway, [sibling], session_id="s-red-1b")
+    assert passed is False
+
+
+# ─────────────────── 向②：伪造引用 / 无 owner_sign ───────────────────
+
+
+def test_forged_ruling_reference_blocked(tmp_path, fake_gateway_factory):
+    """向②a：枚举里的裁定号在面上根本不存在（册缺失）⇒ 拦（fail-closed）。"""
+    gateway = fake_gateway_factory(staged={ADMITTED: KEY_LINE})
+    passed, _ = make_real_key_reference_scan_gate().check(gateway, [ADMITTED], session_id="s-red-2a")
+    assert passed is False
+
+
+def test_ruling_without_owner_sign_blocked(tmp_path, fake_gateway_factory):
+    """向②b：在册但**无 owner_sign**（＝AI 代裁）⇒ 拦。此锁专防自登裁定绕红线。"""
+    _write_ruling(tmp_path, "裁定#503", owner_sign="")
+    gateway = fake_gateway_factory(staged={ADMITTED: KEY_LINE})
+    passed, _ = make_real_key_reference_scan_gate().check(gateway, [ADMITTED], session_id="s-red-2b")
+    assert passed is False
+
+
+def test_superseded_ruling_blocked(tmp_path, fake_gateway_factory):
+    """向②c：有 owner_sign 但 status≠active（已被取代/已废弃）⇒ 拦。"""
+    _write_ruling(tmp_path, "裁定#503", owner_sign="Owner 2026-10-10 回「按甲改门」", status="superseded")
+    gateway = fake_gateway_factory(staged={ADMITTED: KEY_LINE})
+    passed, _ = make_real_key_reference_scan_gate().check(gateway, [ADMITTED], session_id="s-red-2c")
+    assert passed is False
+
+
+def test_unparseable_ruling_registry_blocks(tmp_path, fake_gateway_factory):
+    """向②d：册在但读不出结构（他人热册半写/坏面）⇒ 拦，不静默放行。"""
+    p = tmp_path / RULING_REGISTRY_REL
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text("entries: [ this is not : valid : yaml", encoding="utf-8")
+    gateway = fake_gateway_factory(staged={ADMITTED: KEY_LINE})
+    passed, _ = make_real_key_reference_scan_gate().check(gateway, [ADMITTED], session_id="s-red-2d")
+    assert passed is False
+
+
+# ─────────────────── 向③：放行 + 审计行 ───────────────────
+
+
+@pytest.mark.parametrize("rel", sorted(_REAL_KEY_ADMISSION))
+def test_listed_path_with_owner_sign_ruling_passes_and_audits(rel, tmp_path, fake_gateway_factory):
+    """向③：5 条列名件逐条放行，且每次放行写审计行（裁定号+路径+时间+会话）。"""
+    _write_ruling(tmp_path, "裁定#503", owner_sign="Owner 2026-10-10 回「按甲改门」")
+    gateway = fake_gateway_factory(staged={rel: KEY_LINE})
+    passed, detail = make_real_key_reference_scan_gate().check(gateway, [rel], session_id="s-red-3")
+    assert passed is True, detail
+    rec = _audit_records(tmp_path)[-1]
+    assert rec["action"] == "admit"
+    assert rec["ruling_id"] == ["裁定#503"]
+    assert rec["paths"] == [rel]
+    assert rec["timestamp"] and rec["session_id"] == "s-red-3"
+
+
+def test_admission_does_not_touch_other_scan_logic(tmp_path, fake_gateway_factory):
+    """边界令（执行令第 5 条）：准入面只决定"这一条路放行不"，其他扫描口径零变化——
+    同袋里既有列名件放行、又有未列名件被拦时，仍整体阻断且只报未列名者。"""
+    _write_ruling(tmp_path, "裁定#503", owner_sign="Owner 2026-10-10 回「按甲改门」")
+    other = "docs/01_policies_and_standards/sop/leak.md"
+    gateway = fake_gateway_factory(staged={ADMITTED: KEY_LINE, other: KEY_LINE})
+    passed, detail = make_real_key_reference_scan_gate().check(gateway, [ADMITTED, other], session_id="s-red-5")
+    assert passed is False
+    assert other in detail and ADMITTED not in detail

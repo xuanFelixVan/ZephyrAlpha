@@ -97,6 +97,43 @@ TASK_ORDER_GLOB: Final = "TO-*.yaml"
 TASK_ORDER_FIELDS: Final[tuple[str, ...]] = ("definition_of_done", "red_lines", "acceptance")
 _REAL_KEY_WHITELIST: Final[tuple[str, ...]] = ("secret_registry.yaml", "SECRETS.md")
 
+# ────────── 裁定#503 准入面（Owner 2026-10-09「批」＋2026-10-10「按甲改门」双令）──────────
+# 与上面的白名单**分轴**：白名单=按 basename 的常态豁免（本面零改动），准入面=按精确路径的
+# 个案豁免，且必须同时命中一条带 owner_sign 的在册裁定。三锁缺一即照拦（fail-closed）。
+# 锁①封闭枚举：只列这 5 条精确路径——禁通配、禁模式匹配、禁目录前缀，新增须新裁定＋Owner 实签。
+_REAL_KEY_ADMISSION: Final[dict[str, str]] = {
+    "tests/ai/ai_layer/redline/test_annual_review.py": "裁定#503",
+    "tests/ai/ai_layer/redline/test_negative_list.py": "裁定#503",
+    "tests/ai/ai_layer/redline/test_session_env_guard.py": "裁定#503",
+    "tests/ai/ai_layer/redline/test_sev_router.py": "裁定#503",
+    "tests/meta/scripts/test_run_post_settlement.py": "裁定#503",
+}
+RULING_REGISTRY_REL: Final = "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml"
+
+
+def _ruling_carries_owner_sign(ruling_id: str, repo_root: Path) -> bool:
+    """锁②：引用必须命中在册、status=active 且**带 owner_sign** 的裁定号。
+
+    AI 代裁（有 adjudicator 无 owner_sign）不具备准入资格——此锁专防"自登一条裁定即绕红线"
+    （本期已实证存在伪造 Owner 署名的会话，非假想风险）。读不到册/解析失败/字段缺失一律 False，
+    宁拦不错放。
+    """
+    try:
+        data = yaml.safe_load((repo_root / RULING_REGISTRY_REL).read_bytes().decode("utf-8", "replace"))
+        entries = (data or {}).get("entries") or []
+        for e in entries:
+            if isinstance(e, dict) and str(e.get("ruling_id")) == ruling_id:
+                return bool(str(e.get("owner_sign") or "").strip()) and str(e.get("status") or "") == "active"
+        return False
+    except Exception:  # noqa: BLE001 — 册不可读=准入面失效，回到硬阻断语义
+        return False
+
+
+def _admission_hit(rel: str, repo_root: Path) -> str | None:
+    """三锁合取（路径精确命中 AND owner_sign 在册裁定有效）→ 返回裁定号，否则 None。"""
+    rid = _REAL_KEY_ADMISSION.get(rel.replace("\\", "/"))
+    return rid if rid and _ruling_carries_owner_sign(rid, repo_root) else None
+
 
 def _audit(gateway, gate_id: str, record: dict[str, Any]) -> None:
     """gate 审计落盘（jsonl append 到 gateway.project_root/.runtime/gate_audit/；fail-open）。
@@ -147,7 +184,12 @@ def scan_real_key_hits(files_with_text: dict[str, str]) -> list[str]:
 
 
 def make_real_key_reference_scan_gate() -> GateSpec:
-    """构造 REAL-KEY-REFERENCE-SCAN 门禁（NL-2 判据②，own-scope，命中即阻断，无逃生标记）。"""
+    """构造 REAL-KEY-REFERENCE-SCAN 门禁（NL-2 判据②，own-scope，命中即阻断）。
+
+    无逃生标记的含义保持不变：**不存在**通用 escape flag/白名单扩口。唯一例外=裁定#503
+    准入面（Owner 双令），且它不是"标记"而是三锁合取：封闭枚举 5 条精确路径 AND 引用带
+    owner_sign 的在册裁定 AND 每次放行写审计行。清单外任何路径、任何 AI 代裁裁定都放不过。
+    """
 
     def _check(gateway, files: list[str], **kwargs: Any) -> tuple[bool, str]:
         staged = _staged_all_files(gateway)
@@ -161,6 +203,8 @@ def make_real_key_reference_scan_gate() -> GateSpec:
             gate_name="REAL-KEY-REFERENCE-SCAN",
         )
         candidates: dict[str, str] = {}
+        admitted: dict[str, str] = {}
+        root = Path(str(getattr(gateway, "project_root", ".")))
         for rel in own:
             if _is_real_key_whitelisted(rel):
                 continue
@@ -172,7 +216,26 @@ def make_real_key_reference_scan_gate() -> GateSpec:
                 continue  # 增量口径：own-diff 未新增实盘键名字样（存量正文行不连坐——NL-2 判据
                 # ②原文"own-diff 中出现"的实现对齐修，2026-09-27；否则载有该字样验收行的
                 # OBJ_S DESIGN 等文档任何合法编辑恒被拦）
+            rid = _admission_hit(rel, root)
+            if rid:
+                admitted[rel] = rid
+                continue
             candidates[rel] = text
+        if admitted:
+            # 锁③：每一次放行都留审计行（裁定号+路径+时间+会话），事后人人可查谁放的门
+            _audit(
+                gateway,
+                "REAL-KEY-REFERENCE-SCAN",
+                {
+                    "timestamp": now_utc().isoformat(),
+                    "gate": "REAL-KEY-REFERENCE-SCAN",
+                    "rule_id": NL_REAL_KEYS,
+                    "action": "admit",
+                    "session_id": kwargs.get("session_id") or "?",
+                    "ruling_id": sorted({v for v in admitted.values()}),
+                    "paths": sorted(admitted),
+                },
+            )
         if not candidates:
             return True, ""
         hits = scan_real_key_hits(candidates)
