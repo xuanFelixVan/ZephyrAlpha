@@ -10275,3 +10275,14 @@ entries:
   last_updated: "2026-10-08"
   related_rulings:
   - 裁定#449
+- issue_id: "#ARCH-382"
+  owner: Owner（2026-10-09 热册战争根治总令："把图书馆的唯一入口+钩子+说明书架构复制到热册"，与死信二期/二号/F 盘并行，专班会话在案）
+  title: 热册单口写战役 A 件（直写轨退役=裁定#502 入册+投影随批）ruling_registry.yaml 写入——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体
+  status: decided
+  created: "2026-10-09"
+  category: governance
+  severity: P3低
+  description: Owner 2026-10-09 令热册战争根治（热册写入唯一口=PG 意图 API、YAML=确定性机生只读投影、belt 物化=从 PG 现读），总包 st-regsolo-20261010 执行。PROTECTED-PATHS gate 的 [ARCH-APPROVAL] 标记正则仅认 ARCH-* 议题号，本议题即 A 袋正门标记的登记载体（#ARCH-360/361/381 同款先例；裁定#502 自身含 approved_paths 自举字段=#495-501 家法，但防伪回查读主区盘面册在入袋前不可见，故按 #ARCH-363 串行先例载体先落）：A 袋 commit message 挂 [ARCH-APPROVAL:#ARCH-382]，审批真源=Owner 热册战争根治总令原文（2026-10-09 会话在案），gate 逃生审计+本登记双留痕。 内容=ruling_registry.yaml 机生投影随批（+裁定#502/跨族重复副本 #486 以 #502 为 authority_ref 退役/#494-498 五条直写欠账已先经 reconcile_registry 法定回灌 PG）。
+  last_updated: "2026-10-09"
+  related_rulings:
+  - 裁定#502
