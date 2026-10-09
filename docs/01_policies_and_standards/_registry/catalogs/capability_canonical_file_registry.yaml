@@ -64824,6 +64824,11 @@ creation_tokens:
   created_by: st-deadcure-g1-chief
   capability: deadcure-campaign
   merge_evaluation: "R5 豁免标记件（复活随批）：目录名为 14 份已落地文档引用锚点；单目录单标记件"
+- file: docs/_working/tdm_mount/fx_evidence_pack_v1.md
+  token: chiefc-tdm-mount-fx-evidence-pack-v1-20261009
+  capability: tdm_mount
+  created_by: st-chiefc-20261009
+  merge_evaluation: "TDM 挂载呈裁证据包 v1 落地补登（原 laneX-tdm-mount-20261007 staged 件从未落 HEAD 且零 token，G 车道 R11 冻结登记随件落地；非新真源，补票防悬空）"
 file_token:
 - note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
   path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
