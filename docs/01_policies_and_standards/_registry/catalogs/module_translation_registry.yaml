@@ -68112,3 +68112,27 @@ entries:
   desc_en: ""
   plain_zh: "它负责回答'现在有哪些考试毕业的策略包可以直接用'：只有当晋级管线在主区落了正式的毕业名单文件时才把名单读出来，否则一律返回空（一个包都不启用，安全态）。名单永远来自管线文件，不允许谁在代码里手写进去。"
   responsibility_layer: business
+- module_path: scripts/backtest/generate_exam_card_skeleton.py
+  domain_id: D_BACKTEST
+  name_zh: "考试卡骨架生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "考试卡骨架生成器：读交易决策地图的186个环节节点，自动生成每个节点的考试卡骨架文件（考卷：假设/窗口/分桶/判据门柱留空待预注册）。解决环节验证零覆盖的问题。重跑只增不删，手工卡永不被冲。"
+  responsibility_layer: business
+- module_path: scripts/backtest/writeback_exam_confidence.py
+  domain_id: D_BACKTEST
+  name_zh: "置信度回写器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "置信度回写器：读考试卡分数册，按冻结判据自动改写交易决策地图里每个环节的置信度标记。考试过门柱+样本外+牛熊双行情=升级，衰减扫描不过=降级。缺省只报告，--apply 才实写。"
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/calibration_exam.py
+  domain_id: D_BACKTEST
+  name_zh: "校准卡执行器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校准卡考试执行器：读预注册考试卡，对数据算响应曲线、IC、时滞、牛熊分段四件套，机械判门柱出分数行落分数册记试次账。判据零裁量，一票否决。"
+  responsibility_layer: business
