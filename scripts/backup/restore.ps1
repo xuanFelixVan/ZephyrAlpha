@@ -261,7 +261,7 @@ function Do-Inventory {
 
     # CH backup (on VHDX attached to VM)
     Write-Host "[ClickHouse backup (VHDX)]" -ForegroundColor Cyan
-    $vhdx = "F:\ch_backup_disk.vhdx"
+    $vhdx = "G:\ch_backup_disk2.vhdx"
     if (Test-Path $vhdx) {
         $vhdxGB = [math]::Round((Get-Item $vhdx).Length / 1GB, 2)
         Write-Host "  VHDX:    $vhdx (${vhdxGB} GB)"

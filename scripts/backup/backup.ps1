@@ -1211,16 +1211,25 @@ $stateJson = ($state | ConvertTo-Json -Depth 3) -replace "`r`n", "`n"
 # this line to write its gate verdicts into THIS state file (the consumed one).
 Write-Host "State saved: $StateFile"
 
-# (E-1 carrier, 2026-10-09) Fire the SLO sentinel at the end of every completed
-# pass. E-1 finding: the 06:00 scheduled task runs THIS script via wscript
-# launch_hidden.vbs and never executes backup_daily_trigger.ps1's default
-# branch, so the sentinel otherwise lived only on the manual-trigger path.
-# Event-triggered (end of this run), NO new scheduled task; a sentinel failure
-# must not fail the backup -> degrade to a console warn.
+# (E-1 carrier, 2026-10-09; E1F tail hardening same day) Fire the SLO sentinel
+# at the end of every completed pass. E-1 finding: the 06:00 scheduled task runs
+# THIS script via wscript launch_hidden.vbs and never executes
+# backup_daily_trigger.ps1's default branch, so the sentinel otherwise lived
+# only on the manual-trigger path. Event-triggered (end of this run), NO new
+# scheduled task.
+# (E1F) DETACHED fire-and-forget: the original synchronous
+# `& powershell.exe ... | Out-Null` made the run tail hostage to one child
+# process (a hung/blocked sentinel stalls the tail while the run lock is
+# held), and its $LASTEXITCODE warn was dead code anyway - the trigger exits 0
+# unconditionally on -SloCheckOnly. Start-Process returns immediately, shares
+# no handles with THIS run, and can no longer delay or fail the report/state
+# legs or the lock release. Sentinel console output lands in
+# logs\alerts\slo_sentinel_last.{out,err}.log; the alert channel itself stays
+# the alert files (logs\alerts\backup_*_slo_<date>.json).
 try {
-    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$ProjectRoot\scripts\backup\backup_daily_trigger.ps1" -SloCheckOnly 2>&1 | Out-Null
-    if ($LASTEXITCODE -ne 0) { Write-Warn "SLO sentinel exited $LASTEXITCODE (alerts may exist under logs\alerts)" }
-} catch { Write-Warn ("SLO sentinel invocation failed: " + $_.Exception.Message) }
+    New-Item -ItemType Directory -Path "$ProjectRoot\logs\alerts" -Force | Out-Null
+    $null = Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$ProjectRoot\scripts\backup\backup_daily_trigger.ps1`" -SloCheckOnly" -WorkingDirectory $ProjectRoot -WindowStyle Hidden -RedirectStandardOutput "$ProjectRoot\logs\alerts\slo_sentinel_last.out.log" -RedirectStandardError "$ProjectRoot\logs\alerts\slo_sentinel_last.err.log"
+} catch { Write-Warn ("SLO sentinel launch failed (non-fatal): " + $_.Exception.Message) }
 
 # ==================== STAGE 4b: Rolling archive evaluation ====================
 # Backup-success event hook (contract v1.3.0 INV-RET-002 / ruling #380-#384).

@@ -63,7 +63,7 @@ powershell -ExecutionPolicy Bypass -File scripts\backup\backup_ch_vm.ps1 -Unregi
 
 ```powershell
 cd scripts\backup
-.\restore.ps1 inventory      # 查看 F: 盘备份清单
+.\restore.ps1 inventory      # 查看 G: 盘备份清单
 .\restore.ps1 verify         # 验证备份完整性（只读，安全）
 .\restore.ps1 all            # 完整恢复：vm -> ch -> pg -> sqlite -> code
 
@@ -85,13 +85,13 @@ cd scripts\backup
 | `config/.env.clickhouse` | CH 端点 | CLICKHOUSE_HOST, CLICKHOUSE_HTTP_PORT |
 | `config/.env.ch_backup` | VM SSH 凭据 | CH_VM_HOST, CH_VM_USER, CH_VM_PASSWORD |
 
-### 2. 确保 F: 盘在线
+### 2. 确保 G: 盘在线
 
-外置盘 F: 必须已挂载（`Get-Volume F` 确认）。
+备份总仓盘 G: 必须已挂载（`Get-Volume G` 确认）。
 
 ### 3. 确保 CH 备份 VHDX 已附加
 
-`F:\ch_backup_disk.vhdx`（1TB 动态 VHDX）需附加到 Hyper-V VM `zephyr-ch`，
+`G:\ch_backup_disk2.vhdx`（1TB 动态 VHDX）需附加到 Hyper-V VM `zephyr-ch`，
 VM 内挂载到 `/mnt/chbackup_local`，CH 配置命名磁盘 `backups`（`config.d/backup_disk.xml`）。
 
 ### 4. 注册计划任务
@@ -168,7 +168,7 @@ inc.zip 每天覆盖重写（非链式累积）。当 inc ≥ 50% base 时自动
 | `restore.ps1` | 恢复脚本（inventory/verify/code/pg/sqlite/ch/vm/all） |
 | `README.md` | 本文档 |
 
-外部依赖（不进 git）：`config/.env.ch_backup`、`config/.env.postgres`、`config/.env.clickhouse`、`F:\ch_backup_disk.vhdx`
+外部依赖（不进 git）：`config/.env.ch_backup`、`config/.env.postgres`、`config/.env.clickhouse`、`G:\ch_backup_disk2.vhdx`
 
 ## 历史变更（2026-07-28 v2.0）
 
