@@ -1,3 +1,4 @@
+<!-- GENERATED FILE — regenerate: python scripts/governance/registry_projection/registry_projection_generator.py --render --registry-id REG-CAND-001 --physical-path docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml && git diff --exit-code；手改必被覆盖（PG registry_ledger 账本=唯一真源，裁定#502） -->
 # [A_config] module_id=CFG-candidate-module-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
 module_id: REG-CAND-001
 ttl: permanent

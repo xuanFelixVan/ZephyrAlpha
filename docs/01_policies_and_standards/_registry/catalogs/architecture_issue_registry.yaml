@@ -1,3 +1,4 @@
+<!-- GENERATED FILE — regenerate: python scripts/governance/registry_projection/registry_projection_generator.py --render --registry-id REG-ARCH-ISSUE-001 --physical-path docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml && git diff --exit-code；手改必被覆盖（PG registry_ledger 账本=唯一真源，裁定#502） -->
 # [A_config] module_id=CFG-architecture-issue-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
 module_id: REG-ARCH-ISSUE-001
 ttl: permanent
@@ -4104,6 +4105,16 @@ entries:
   severity: P3低
   description: Owner 凌晨总包令授权板块分钟线收敛施工（tdx 09-10 服务端协议拒答断供后的替代源收敛）。 本议题为 .gitignore 双 runner 精确豁免（sector_synth_eod_runner.ps1 转 dry-run 留观 + sector_eqw_runner.ps1 新生产者 runner，收编入库增强追踪，sz_open_data 先例镜像）的 [ARCH-APPROVAL:#ARCH-380] gate 逃生标记+本登记双留痕载体（#ARCH-368/369/370 同款先例， 语境限本收敛车道防范围借道）。裁定依据=a7 sector_switch validation §六。
   last_updated: "2026-10-01"
+  related_rulings: []
+- issue_id: "#ARCH-381"
+  owner: Owner（2026-10-07 夜令原文"详细调查后你来执行……现在开始施工以上所有内容"，总包会话在案）
+  title: 进场检票钩子（MOD-GOV-115）随仓分发审批登记：.gitignore 白名单 !.zcode/ + .zcode/config.json 入库——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体
+  status: decided
+  created: "2026-10-07"
+  category: governance
+  severity: P3低
+  description: Owner 2026-10-07 夜令直接授权检票钩子 .zcode 入库（L0 全程卡+序页+检票锚点等全套说明书已建成入袋）。PROTECTED-PATHS gate 的 [ARCH-APPROVAL] 标记正则仅认 ARCH-* 议题号，本议题即本批正门标记的登记载体（#ARCH-360 同款先例）：本批 commit message 挂 [ARCH-APPROVAL:#ARCH-381]，审批真源=Owner 夜令原文（2026-10-07 总包会话在案），gate 逃生审计+本登记双留痕。 内容=.gitignore 根白名单 +!.zcode/（合法根目录计数 13→14）+ .zcode/config.json（ZCode workspace hooks：PreToolUse 进场检票接线，本机盘面已实证生效）。
+  last_updated: "2026-10-07"
   related_rulings: []
 - issue_id: "#ARCH-68"
   title: 模块核心算法纵览文档生成器——从代码docstring+blueprint派生模块算法，按depgraph architecture_layer分层，输出到08_algorithm_overview/（新建顶层目录，离库）
@@ -9878,6 +9889,17 @@ entries:
   adjudication: "问题：translation_coverage_gate（Layer 2 提交门禁）与 translation_coverage_reconciler\n（Layer 4 存量对账）的 _is_in_scope 范围不一致，导致非业务脚本误报漂移：\n  - gate 调用 is_test_exempt 豁免 tests/ 路径，但未豁免 demos/ 路径段、test_*.py/*_test.py\n    文件名、_archive/ 路径；\n  - reconciler 完全漏调 is_test_exempt（假设\"tests/ 不在 depgraph file_path 中\"），\n    且未豁免非 .py 文件，导致 scripts/tests/*、scripts/demos/*、scripts/backup/test_*\n    等已登记在 depgraph 的测试/演示脚本被误报为 missing_plain 漂移（7 条误报）。\n根因（第一性原理）：两处 _is_in_scope 是复制而非共享（避免 governance.audit →\ngov_enforcement 跨域依赖），但缺乏\"同范围铁律\"的同步保证——gate 收窄时 reconciler\n未同步，反方向不一致。100% AI 开发语境下，复制代码的同步靠人工/AI 记忆=必漂移。\n治本（已执行 2026-08-02，3 commits）：\n  1. 统一两处 _is_in_scope 范围：豁免 tests/ 路径段（is_test_exempt 单一真源，含\n     scripts/tests/）、demos/ 路径段、test_*.py/*_test.py 文件名（任意层级）、\n     __init__.py、_archive/ 路径、非 .py 文件。真能力脚本仍 in-scope。\n  2. reconciler 采用函数内懒加载+模块级缓存引入 is_test_exempt，解决循环导入。\n  3. 添加测试覆盖确保 gate 与 reconciler _is_in_scope 范围一致（同范围铁律）。\n验证：drift_report 三类漂移全清零；gate/reconciler 单测全绿。\n提交：415547ff1d + 56371b5b04 + 68d88e28fd。\n防复发：两处 _is_in_scope MUST 保持一致（同范围铁律，docstring 已标注），同步靠测试覆盖保证。\n"
   last_updated: "2026-08-02"
   related_adjudication: translation_coverage_gate.py _is_in_scope; translation_coverage_reconciler.py _is_in_scope; TRANSLATION-COVERAGE 四层防御 Layer 0/1/2/4
+- issue_id: "#ARCH-TRD-A10"
+  owner: Owner（真源=17号文工单族 TRD-A10 批文+观察窗清单，全文见 docs/02_enterprise_architecture 纵向图 TRD-A10 锚族；本条=st-fullflow2-20261008 按 REFERENCE-INTEGRITY [ARCH-REFERENCE] 门处方补登记，非新立议题）
+  title: TRD-A10 模拟盘观察窗与 qmt 桥客户端两缺陷（议题册缺条补登记——裁定#449 related_arch 悬空引用归位）
+  status: in_progress
+  created: "2026-10-08"
+  category: trade
+  severity: P2中
+  description: 议题实体在册外文档族长期存在而议题册缺条，致 REFERENCE-INTEGRITY 门对裁定册任意 diff 报 ARCH_ATOMICITY_VIOLATION（st-fullflow2 R8 勘误批实测触发）。已知锚面：①桥客户端两缺陷共用真源 bridge_instruction_kernel.py（该件已经裁定#449 终局销账=选 c 墓碑葬，B7 超集 78982c4c81 为事实终态）；②模拟盘观察窗台账（30 交易日幽灵单归零）+沙箱 v16→v17 换版 runbook+幽灵单日哨兵（full_project_tree_zh/en TRD-A10 锚族）；③复现用例 test_bridge_instruction_kernel_trd_a10.py（真源判据=17号文§四）。登记范围=既有事实归位，零行为变更；观察窗关闭判读仍归 Owner 工单窗。
+  last_updated: "2026-10-08"
+  related_rulings:
+  - 裁定#449
 - issue_id: "#ARCH-TSV-SOT-001"
   title: TSV 转义逻辑单一真源——wal_codec 委托 ch_writer.tsv_escape（消除双真源数据腐化）
   impact:
@@ -10254,35 +10276,3 @@ entries:
   adjudication: 补标为机械元数据标注：每文件治理锚定块纯插一行 domain_id/[DOMAIN] （+1 行，其余字节 sha256 核验零改动），非契约语义变更；architecture_model/ 保护本意=重大修改须审批，本条为裁定#335 授权范围的形式化登记， commit message 经 [ARCH-APPROVAL:ARCH-VOCABCONSOL-DOMAIN-BACKFILL-001] 逃生通道放行（先例格式=d8419af8e6）。
   last_updated: "2026-09-18"
   related_adjudication: "#335"
-- issue_id: "#ARCH-381"
-  owner: Owner（2026-10-07 夜令原文"详细调查后你来执行……现在开始施工以上所有内容"，总包会话在案）
-  title: 进场检票钩子（MOD-GOV-115）随仓分发审批登记：.gitignore 白名单 !.zcode/ + .zcode/config.json 入库——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体
-  status: decided
-  created: "2026-10-07"
-  category: governance
-  severity: P3低
-  description: Owner 2026-10-07 夜令直接授权检票钩子 .zcode 入库（L0 全程卡+序页+检票锚点等全套说明书已建成入袋）。PROTECTED-PATHS gate 的 [ARCH-APPROVAL] 标记正则仅认 ARCH-* 议题号，本议题即本批正门标记的登记载体（#ARCH-360 同款先例）：本批 commit message 挂 [ARCH-APPROVAL:#ARCH-381]，审批真源=Owner 夜令原文（2026-10-07 总包会话在案），gate 逃生审计+本登记双留痕。 内容=.gitignore 根白名单 +!.zcode/（合法根目录计数 13→14）+ .zcode/config.json（ZCode workspace hooks：PreToolUse 进场检票接线，本机盘面已实证生效）。
-  last_updated: "2026-10-07"
-  related_rulings: []
-- issue_id: "#ARCH-TRD-A10"
-  owner: Owner（真源=17号文工单族 TRD-A10 批文+观察窗清单，全文见 docs/02_enterprise_architecture 纵向图 TRD-A10 锚族；本条=st-fullflow2-20261008 按 REFERENCE-INTEGRITY [ARCH-REFERENCE] 门处方补登记，非新立议题）
-  title: TRD-A10 模拟盘观察窗与 qmt 桥客户端两缺陷（议题册缺条补登记——裁定#449 related_arch 悬空引用归位）
-  status: in_progress
-  created: "2026-10-08"
-  category: trade
-  severity: P2中
-  description: "议题实体在册外文档族长期存在而议题册缺条，致 REFERENCE-INTEGRITY 门对裁定册任意 diff 报 ARCH_ATOMICITY_VIOLATION（st-fullflow2 R8 勘误批实测触发）。已知锚面：①桥客户端两缺陷共用真源 bridge_instruction_kernel.py（该件已经裁定#449 终局销账=选 c 墓碑葬，B7 超集 78982c4c81 为事实终态）；②模拟盘观察窗台账（30 交易日幽灵单归零）+沙箱 v16→v17 换版 runbook+幽灵单日哨兵（full_project_tree_zh/en TRD-A10 锚族）；③复现用例 test_bridge_instruction_kernel_trd_a10.py（真源判据=17号文§四）。登记范围=既有事实归位，零行为变更；观察窗关闭判读仍归 Owner 工单窗。"
-  last_updated: "2026-10-08"
-  related_rulings:
-  - 裁定#449
-- issue_id: "#ARCH-382"
-  owner: Owner（2026-10-09 热册战争根治总令："把图书馆的唯一入口+钩子+说明书架构复制到热册"，与死信二期/二号/F 盘并行，专班会话在案）
-  title: 热册单口写战役 A 件（直写轨退役=裁定#502 入册+投影随批）ruling_registry.yaml 写入——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体
-  status: decided
-  created: "2026-10-09"
-  category: governance
-  severity: P3低
-  description: Owner 2026-10-09 令热册战争根治（热册写入唯一口=PG 意图 API、YAML=确定性机生只读投影、belt 物化=从 PG 现读），总包 st-regsolo-20261010 执行。PROTECTED-PATHS gate 的 [ARCH-APPROVAL] 标记正则仅认 ARCH-* 议题号，本议题即 A 袋正门标记的登记载体（#ARCH-360/361/381 同款先例；裁定#502 自身含 approved_paths 自举字段=#495-501 家法，但防伪回查读主区盘面册在入袋前不可见，故按 #ARCH-363 串行先例载体先落）：A 袋 commit message 挂 [ARCH-APPROVAL:#ARCH-382]，审批真源=Owner 热册战争根治总令原文（2026-10-09 会话在案），gate 逃生审计+本登记双留痕。 内容=ruling_registry.yaml 机生投影随批（+裁定#502/跨族重复副本 #486 以 #502 为 authority_ref 退役/#494-498 五条直写欠账已先经 reconcile_registry 法定回灌 PG）。
-  last_updated: "2026-10-09"
-  related_rulings:
-  - 裁定#502

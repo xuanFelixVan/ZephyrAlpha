@@ -7,7 +7,7 @@ doc_type: policy
 # 提交指路指南（机生版）
 
 > **本文件由生成器产出，禁手改**——改判据请改源头册后重跑生成器。
-> 生成器: `python scripts/governance/generators/generate_commit_guide.py` ｜ 生成时刻: 2026-10-09 13:35 UTC
+> 生成器: `python scripts/governance/generators/generate_commit_guide.py` ｜ 生成时刻: 2026-10-09 16:59 UTC
 > 源册: gate_digest_registry.yaml（判据蒸馏）/ file_type_checklists_registry.yaml（类型清单）/ death_cases_registry.yaml（死因案例）/ in_process_gate_registry.yaml（在册台目）
 
 > **8 台已停用 enabled:false**（卡片标'停用'，状态真源=gate_registry）: BLUEPRINT-FORMAT, BLUEPRINT-HEADER, DOC-REF-BROKEN, EXEMPT-ZONE-FM, FILE-PLACEMENT-TTL, MODULE-ID-CONSISTENCY, SCRIPTS-IMPORT-INTEGRITY, TTL-METADATA
@@ -110,7 +110,7 @@ doc_type: policy
 - 触发面: staged capability_canonical_file_registry.yaml / data_asset_registry.yaml
 - 判据: safe_load 过+顶层根键唯一（compose 节点树判重）+capability 档 di_seam_exemptions 末位键+creation_tokens 为 list（data_asset 档仅前两项）；W-M1 投影执法：staged 指纹≠投影状态文件即拦（私改投影册无效，须走意图 API+生成器重打）；fail-closed
 - 豁免: 无人工逃生；git/读失败 fail-open；投影检查在状态文件缺失时零行为
-- 处方: token 条目插 creation_tokens 列表尾（di_seam_exemptions 行之前，注意嵌套同名键勿错插）；插后本地 yaml.safe_load 预验再提交；热册改写走 token 先行袋两段式（token 袋=HEAD 基+纯增插入先行独立落地，内容袋随后），禁手改投影；蒸发战处置=A-12 守门 f6b92806c4+A-13 他伤豁免 2b91a6d7a3
+- 处方: 直写轨已退役（裁定#502）：手改=staged≠投影状态指纹必拦且必被 render 覆盖；唯一正道=api.register/update/retire→publish_snapshot→registry_projection_generator --render 三步（token 批量=batch_creation_tokens.py 薄壳内置）；合法退役=api.retire 后重打+message [allow-mass-deletion:<理由≥10字>] 过双门；蒸发战史=A-12 守门 f6b92806c4+A-13 他伤豁免 2b91a6d7a3
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/registry_yaml_parse_gate.py`
 
 - **J7 提交面选择**｜时机: 首次 commit 尝试前想清楚走哪条道｜处方: 入队前标准一步=gate_prerun.py --session <sid> --files <同值清单> --message-file <msg>（进程内门唯它能预跑，exit1 修到 0 再投）；单域干净=网关直连；跨域 --allow-multi-domain 留痕；.gitignore 等保护路径需 [ARCH-APPROVAL:<已登记issue>]（Owner 门位禁自签）；多会话并发窗/主区脏面一律队列拆域（enqueue 带 --worktree-root --base-head <dev真HEAD>；死袋禁 requeue——全新入队并写明理由；会话注册+心跳与提交同命令链防 SESSION-REQUIRED）
@@ -713,16 +713,17 @@ doc_type: policy
 
 判定口诀: 路径含 _registry/catalogs/ 且 .yaml
 
-1. 共享热册必走 safe_write_text CAS（禁裸 Edit/Write 后不复核）；写后进程外复核
-1. 纯插入；条目插既有根键列表尾（capability 册 token 插 creation_tokens 尾、di_seam_exemptions 行之前）
-1. 插后本地 yaml.safe_load 预验（REGISTRY-YAML-PARSE fail-closed 无逃生）
-1. 净删/条目减少/身份消失任一信号触发 REGISTRY-MASS-DELETION——合法重排须 message [allow-mass-deletion:<理由≥10字>]
-1. 批量补登走 scripts/governance/registry_batch_edit.py；token 批量走 batch_creation_tokens.py（守恒闸防吃他会话刚落地条目）
+1. 热册单口写（裁定#502）：七册 P0 真源=PG registry_ledger 账本，YAML=机生只读投影（册头 GENERATED 横幅在册）——禁手写禁裸 Edit/Write，手改必被下一次 render 覆盖（A-12 蒸发机制同源）
+1. 三步正道：api.register/update/retire（意图声明）→ baseline.publish_snapshot（账本快照）→ registry_projection_generator.py --render --registry-id <RID> --physical-path <路径>（投影重打）；token 批量=batch_creation_tokens.py（薄壳内置三步）
+1. 提交自检红蓝判据：手改 diff 必被 REGISTRY-YAML-PARSE tamper 判别拦（staged≠投影状态指纹）；生成器重打后的 diff 必过——两向都验才算武装到位
+1. 净删/条目减少/身份消失任一信号触发 REGISTRY-MASS-DELETION——合法退役=api.retire（authority_ref 强制）后重打投影，message [allow-mass-deletion:<理由≥10字>] 过双门
+1. 袋道只走代码/文档，注册表族文件字节由账本面代表（落地物化=PG 现读 render，袋内旧快照不进物化）；yaml.safe_load 预验仍必做（REGISTRY-YAML-PARSE fail-closed）
 1. tags 只选词不造词（TAG-VOCAB）；资产登记带 name_zh+plain_zh 血肉（BLOOD-FLESH）
 
 **本类常见死因**（案例册全量见文末速查）:
-- [REGISTRY-MASS-DELETION] 整文件快照压盘（陈旧基底覆写他会话刚落地条目） → 热文件 safe_write_text+expected_base_sha256；写前守恒闸拒写即停，勿强行重写
-- [REGISTRY-YAML-PARSE] 三向合并失败/快照撕裂死信 → 解析护栏（yaml.safe_load 预验）过了再入队；同族多条插入注意合并器同点插入语义
+- [REGISTRY-YAML-PARSE] 手改投影册被 REGISTRY-YAML-PARSE tamper 拦（staged≠状态指纹） → 手改无效是设计内行为：改数走意图 API 后重打投影再提交，勿找旗子绕门
+- [REGISTRY-MASS-DELETION] 整册错写（跨册内容上错路径，如 A 册路径写成 B 册内容） → 立刻 CAS 恢复 HEAD 真身（safe_write_text+expected_base=错写 sha）；错写内容已在队列 blob 持久化可归还失主；10-09 实弹=CAP 路径被写入 MODT 内容，落地合并器结构漂移闸拦下
+- [REGISTRY-YAML-PARSE] 三向合并失败/快照撕裂死信 → 解析护栏（yaml.safe_load 预验）过了再入队；账本册落地物化=PG 现读 render（袋内注册表字节不进物化），死信多为结构真漂移回人工分诊
 
 ### REGISTRY-MASS-DELETION
 
@@ -739,7 +740,7 @@ doc_type: policy
 - 触发面: staged capability_canonical_file_registry.yaml / data_asset_registry.yaml
 - 判据: safe_load 过+顶层根键唯一（compose 节点树判重）+capability 档 di_seam_exemptions 末位键+creation_tokens 为 list（data_asset 档仅前两项）；W-M1 投影执法：staged 指纹≠投影状态文件即拦（私改投影册无效，须走意图 API+生成器重打）；fail-closed
 - 豁免: 无人工逃生；git/读失败 fail-open；投影检查在状态文件缺失时零行为
-- 处方: token 条目插 creation_tokens 列表尾（di_seam_exemptions 行之前，注意嵌套同名键勿错插）；插后本地 yaml.safe_load 预验再提交；热册改写走 token 先行袋两段式（token 袋=HEAD 基+纯增插入先行独立落地，内容袋随后），禁手改投影；蒸发战处置=A-12 守门 f6b92806c4+A-13 他伤豁免 2b91a6d7a3
+- 处方: 直写轨已退役（裁定#502）：手改=staged≠投影状态指纹必拦且必被 render 覆盖；唯一正道=api.register/update/retire→publish_snapshot→registry_projection_generator --render 三步（token 批量=batch_creation_tokens.py 薄壳内置）；合法退役=api.retire 后重打+message [allow-mass-deletion:<理由≥10字>] 过双门；蒸发战史=A-12 守门 f6b92806c4+A-13 他伤豁免 2b91a6d7a3
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/registry_yaml_parse_gate.py`
 
 ### TAG-VOCAB
@@ -1148,7 +1149,7 @@ doc_type: policy
 - 触发面: staged capability_canonical_file_registry.yaml / data_asset_registry.yaml
 - 判据: safe_load 过+顶层根键唯一（compose 节点树判重）+capability 档 di_seam_exemptions 末位键+creation_tokens 为 list（data_asset 档仅前两项）；W-M1 投影执法：staged 指纹≠投影状态文件即拦（私改投影册无效，须走意图 API+生成器重打）；fail-closed
 - 豁免: 无人工逃生；git/读失败 fail-open；投影检查在状态文件缺失时零行为
-- 处方: token 条目插 creation_tokens 列表尾（di_seam_exemptions 行之前，注意嵌套同名键勿错插）；插后本地 yaml.safe_load 预验再提交；热册改写走 token 先行袋两段式（token 袋=HEAD 基+纯增插入先行独立落地，内容袋随后），禁手改投影；蒸发战处置=A-12 守门 f6b92806c4+A-13 他伤豁免 2b91a6d7a3
+- 处方: 直写轨已退役（裁定#502）：手改=staged≠投影状态指纹必拦且必被 render 覆盖；唯一正道=api.register/update/retire→publish_snapshot→registry_projection_generator --render 三步（token 批量=batch_creation_tokens.py 薄壳内置）；合法退役=api.retire 后重打+message [allow-mass-deletion:<理由≥10字>] 过双门；蒸发战史=A-12 守门 f6b92806c4+A-13 他伤豁免 2b91a6d7a3
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/registry_yaml_parse_gate.py`
 
 ### SNAPSHOT-DRIFT
@@ -1433,6 +1434,13 @@ doc_type: policy
 - 机制: argparse 重复旗覆盖（只留末值）+共享暂存区吸收效应
 - 处方: --files 逗号分隔清单一次传全（禁重复传旗）；袋落地后必 git log -1 --name-only 核真实归属
 
+### CASE-HOT-REG-CROSS-WRITE-20261009
+
+- 症状: 主区盘面 capability_canonical_file_registry.yaml 整册变成模块翻译册内容（3.58MB，REG-MODULE-TRANSLATION-001 头）；capability_lookup 等全量读手全被毒；携带该文件的袋落地被合并器结构漂移闸拦死信（theirs 存在 ours 缺失的顶层 list 族）
+- 关联门禁: REGISTRY-YAML-PARSE
+- 机制: 他会话工具写错目标路径（同一时刻其持有 module_translation claim）；错写内容=某时刻 MODT 快照，非现值——直写轨时代的'多写手+路径字符串拼装'残余风险形态
+- 处方: ①立即取证（sha+mtime+与现值 diff）后 CAS 恢复 HEAD 真身（safe_write_text+expected_base_sha256=错写 sha，防并发二次踩踏）；②错写内容经队列 blob 持久化（55ec268f…）可归还失主会话，零丢失；③治本=热册单口写（裁定#502）：写手收敛到意图 API+生成器，路径字符串拼装直写面退役
+
 ---
 
 ## APPENDIX-A — 全台速查表
@@ -1535,7 +1543,7 @@ doc_type: policy
 | FRONTEND-TRUTH-SOURCE | warn | dashboard/web/ .js（豁免 api.js/loader.js 等） | 接 services/api.js 真源通道 |
 | BUSINESS-REGISTRY | block | staged 命中业务资产库（口径真源=registry_alignment.REGISTRY_SPECS 元组，现 2 | 先 apply_depgraph 登记 blueprint 再入库 |
 | REGISTRY-MASS-DELETION | block | staged YAML 命中 _registry/catalogs/ 或 ROOR | 批量补登走 scripts/governance/registry_batch_edit.py 纯插入 |
-| REGISTRY-YAML-PARSE | block | staged capability_canonical_file_registry.yaml / data_asset_ | token 条目插 creation_tokens 列表尾（di_seam_exemptions 行之前，注意嵌套同名键勿错插） |
+| REGISTRY-YAML-PARSE | block | staged capability_canonical_file_registry.yaml / data_asset_ | 直写轨已退役（裁定#502）：手改=staged≠投影状态指纹必拦且必被 render 覆盖 |
 | SPLIT-COORDINATION | block | 活跃拆分声明在案且提交命中 old_paths | re-base 到新位置 |
 | SYNTAX-VALIDATION | block | 本 commit 清单全部 .py（含 tests/） | 修语法错误 |
 | RESOURCE-SCHEDULE | block | staged config/resource_profile_registry.yaml | 错峰/互斥声明/co_start_intent |

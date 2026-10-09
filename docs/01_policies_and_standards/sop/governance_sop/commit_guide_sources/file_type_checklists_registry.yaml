@@ -125,20 +125,23 @@ file_types:
     title: 注册表 YAML（docs/.../_registry/catalogs/）
     match_hint: 路径含 _registry/catalogs/ 且 .yaml
     steps:
-      - "共享热册必走 safe_write_text CAS（禁裸 Edit/Write 后不复核）；写后进程外复核"
-      - "纯插入；条目插既有根键列表尾（capability 册 token 插 creation_tokens 尾、di_seam_exemptions 行之前）"
-      - "插后本地 yaml.safe_load 预验（REGISTRY-YAML-PARSE fail-closed 无逃生）"
-      - "净删/条目减少/身份消失任一信号触发 REGISTRY-MASS-DELETION——合法重排须 message [allow-mass-deletion:<理由≥10字>]"
-      - "批量补登走 scripts/governance/registry_batch_edit.py；token 批量走 batch_creation_tokens.py（守恒闸防吃他会话刚落地条目）"
+      - "热册单口写（裁定#502）：七册 P0 真源=PG registry_ledger 账本，YAML=机生只读投影（册头 GENERATED 横幅在册）——禁手写禁裸 Edit/Write，手改必被下一次 render 覆盖（A-12 蒸发机制同源）"
+      - "三步正道：api.register/update/retire（意图声明）→ baseline.publish_snapshot（账本快照）→ registry_projection_generator.py --render --registry-id <RID> --physical-path <路径>（投影重打）；token 批量=batch_creation_tokens.py（薄壳内置三步）"
+      - "提交自检红蓝判据：手改 diff 必被 REGISTRY-YAML-PARSE tamper 判别拦（staged≠投影状态指纹）；生成器重打后的 diff 必过——两向都验才算武装到位"
+      - "净删/条目减少/身份消失任一信号触发 REGISTRY-MASS-DELETION——合法退役=api.retire（authority_ref 强制）后重打投影，message [allow-mass-deletion:<理由≥10字>] 过双门"
+      - "袋道只走代码/文档，注册表族文件字节由账本面代表（落地物化=PG 现读 render，袋内旧快照不进物化）；yaml.safe_load 预验仍必做（REGISTRY-YAML-PARSE fail-closed）"
       - "tags 只选词不造词（TAG-VOCAB）；资产登记带 name_zh+plain_zh 血肉（BLOOD-FLESH）"
     gate_refs: [REGISTRY-MASS-DELETION, REGISTRY-YAML-PARSE, TAG-VOCAB, BLOOD-FLESH, HOT-FILE-BASE-FRESHNESS, CREATE-GUARD]
     common_deaths:
-      - case: "整文件快照压盘（陈旧基底覆写他会话刚落地条目）"
+      - case: "手改投影册被 REGISTRY-YAML-PARSE tamper 拦（staged≠状态指纹）"
+        gate: REGISTRY-YAML-PARSE
+        prescription: "手改无效是设计内行为：改数走意图 API 后重打投影再提交，勿找旗子绕门"
+      - case: "整册错写（跨册内容上错路径，如 A 册路径写成 B 册内容）"
         gate: REGISTRY-MASS-DELETION
-        prescription: "热文件 safe_write_text+expected_base_sha256；写前守恒闸拒写即停，勿强行重写"
+        prescription: "立刻 CAS 恢复 HEAD 真身（safe_write_text+expected_base=错写 sha）；错写内容已在队列 blob 持久化可归还失主；10-09 实弹=CAP 路径被写入 MODT 内容，落地合并器结构漂移闸拦下"
       - case: "三向合并失败/快照撕裂死信"
         gate: REGISTRY-YAML-PARSE
-        prescription: "解析护栏（yaml.safe_load 预验）过了再入队；同族多条插入注意合并器同点插入语义"
+        prescription: "解析护栏（yaml.safe_load 预验）过了再入队；账本册落地物化=PG 现读 render（袋内注册表字节不进物化），死信多为结构真漂移回人工分诊"
   - type_id: config_yaml
     title: 非 rules 配置 YAML（config/ data/ schemas/ 及 docs/_working 的 .yaml/.yml）
     match_hint: .yaml 或 .yml 且新文件且非 _registry/catalogs 且非 rules/

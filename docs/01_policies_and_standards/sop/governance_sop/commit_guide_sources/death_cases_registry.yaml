@@ -226,3 +226,10 @@ cases:
     root_cause: "argparse 重复旗覆盖（只留末值）+共享暂存区吸收效应"
     prescription: "--files 逗号分隔清单一次传全（禁重复传旗）；袋落地后必 git log -1 --name-only 核真实归属"
     evidence: []
+  - case_id: HOT-REG-CROSS-WRITE-20261009
+    title: 热册整册错写（跨册内容上错路径）——CAP 路径被写入 MODT 内容
+    date: "2026-10-09"
+    symptom: "主区盘面 capability_canonical_file_registry.yaml 整册变成模块翻译册内容（3.58MB，REG-MODULE-TRANSLATION-001 头）；capability_lookup 等全量读手全被毒；携带该文件的袋落地被合并器结构漂移闸拦死信（theirs 存在 ours 缺失的顶层 list 族）"
+    root_cause: "他会话工具写错目标路径（同一时刻其持有 module_translation claim）；错写内容=某时刻 MODT 快照，非现值——直写轨时代的'多写手+路径字符串拼装'残余风险形态"
+    prescription: "①立即取证（sha+mtime+与现值 diff）后 CAS 恢复 HEAD 真身（safe_write_text+expected_base_sha256=错写 sha，防并发二次踩踏）；②错写内容经队列 blob 持久化（55ec268f…）可归还失主会话，零丢失；③治本=热册单口写（裁定#502）：写手收敛到意图 API+生成器，路径字符串拼装直写面退役"
+    gate: REGISTRY-YAML-PARSE

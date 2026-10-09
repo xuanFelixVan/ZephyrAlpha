@@ -366,7 +366,7 @@ gates:
     trigger: "staged capability_canonical_file_registry.yaml / data_asset_registry.yaml"
     enforce: "safe_load 过+顶层根键唯一（compose 节点树判重）+capability 档 di_seam_exemptions 末位键+creation_tokens 为 list（data_asset 档仅前两项）；W-M1 投影执法：staged 指纹≠投影状态文件即拦（私改投影册无效，须走意图 API+生成器重打）；fail-closed"
     exempt: "无人工逃生；git/读失败 fail-open；投影检查在状态文件缺失时零行为"
-    fix: "token 条目插 creation_tokens 列表尾（di_seam_exemptions 行之前，注意嵌套同名键勿错插）；插后本地 yaml.safe_load 预验再提交；热册改写走 token 先行袋两段式（token 袋=HEAD 基+纯增插入先行独立落地，内容袋随后），禁手改投影；蒸发战处置=A-12 守门 f6b92806c4+A-13 他伤豁免 2b91a6d7a3"
+    fix: "直写轨已退役（裁定#502）：手改=staged≠投影状态指纹必拦且必被 render 覆盖；唯一正道=api.register/update/retire→publish_snapshot→registry_projection_generator --render 三步（token 批量=batch_creation_tokens.py 薄壳内置）；合法退役=api.retire 后重打+message [allow-mass-deletion:<理由≥10字>] 过双门；蒸发战史=A-12 守门 f6b92806c4+A-13 他伤豁免 2b91a6d7a3"
   - gate_id: STATE-VOCAB-REGISTRY
     source_sha256: 9c87a76ab743c2b2a9bbbdb0d99f128a5924e9b9e332f64c523eaaafa255fc92
     source_file: src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py

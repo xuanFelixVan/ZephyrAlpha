@@ -91,10 +91,20 @@ __all__ = ["make_registry_yaml_parse_gate"]
 _AUDIT_REL = ".runtime/gate_audit/registry_yaml_parse.jsonl"
 
 # 热追加目标 watch 表 → 结构断言档案（紧范围不加宽；净删防护归 REGISTRY-MASS-DELETION，
-# 编码归 ENCODING-SAFETY）。capability=全量断言；data_asset=parse+根键唯一。
+# 编码归 ENCODING-SAFETY）。capability=全量断言；data_asset=parse+根键唯一；
+# hot_registry_basic=parse+根键唯一（结构面）+投影 tamper 判别（tamper 对全部 watch 面
+# 生效，不分支档案——staged≠状态文件指纹即拦，2026-10-09 C 件扩面裁定#502 战役）。
+# P0 七册扩面（st-regsolo-20261010）：六册在挂；module_translation_registry 暂缓——
+# 他会话（st-dexp）活跃持有直写面，watch 上线即砖其合法流，随翻译登记改道意图 API
+# 后同批上线（translate 轨退役=本战役 A2 车道）。
 _WATCH_FILES: dict[str, str] = {
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": "capability_registry",
     "docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml": "data_asset_registry",
+    "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml": "hot_registry_basic",
+    "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml": "hot_registry_basic",
+    "architecture_model/contracts/error_code_registry.yaml": "hot_registry_basic",
+    "docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml": "hot_registry_basic",
+    "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml": "hot_registry_basic",
 }
 
 # 向后兼容别名（capability 注册表=首 watch 目标）
