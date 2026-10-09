@@ -1,0 +1,66 @@
+# ALGO_FLOW 外部真源——indicator_reader（_domain_factor 域，真源 src/zephyr/factor/indicator_reader.py）
+# 2026-10-09 出仓（GATE-ALGO-FLOW §4.16）：docstring 只留 external 一行锚，机器块落本件；
+# extractor 经 parse_algo_flow 走同一管线。算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.indicator_reader
+source_of_truth: src/zephyr/factor/indicator_reader.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 读取请求参数
+    #   fields: columns（列名清单，缺省=注册表白名单全列）/ symbol（'*'=全市场）/ period / start / end / as_of
+    #   code: read_indicator() 形参（L82 起）
+    # - id: I2
+    #   name: 技术指标注册表白名单
+    #   fields: 合法输出列名集合（拼错列名即 ValueError，不静默返回空表）
+    #   code: _valid_columns() → TechnicalIndicatorRegistry
+    # - id: I3
+    #   name: 周期合法值集
+    #   fields: 1min/5min/15min/30min/60min/120min/daily/weekly/monthly
+    #   code: _VALID_PERIODS
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 参数与 PIT 校验
+    #   name_en: validate_and_gate
+    #   intro: 列名走白名单、period 走合法值、as_of 给定时 end 不得晚于 as_of 且 as_of 不得在未来
+    #   desc: 非法列→ValueError（附非法项清单）；非法 period→ValueError；end>as_of 或 as_of>today→ValueError
+    #   inputs: I1 I2 I3
+    #   outputs: (cols, end_d)
+    #   invariant: 校验失败必抛，禁降级为空 DataFrame（空表与故障不可分＝假绿源）
+    # - id: A2
+    #   name_zh: ② 行版本去重读式构造
+    #   name_en: build_dedup_sql
+    #   intro: 键列直取、非键列 argMax(col, 版本列)，按表排序键 GROUP BY 后再 ORDER BY
+    #   desc: _projection() 逐列投影（键列=_KEY_COLS 直取，其余 argMax(col, ingest_ts)）；
+    #     模板 SQL_READ_ROWS 填 select_cols/table/where_sql；不加 AS 同名别名
+    #     （CH 会把 WHERE 里的同名列解析成聚合别名 → Code 184 ILLEGAL_AGGREGATION，已配防回归测试）
+    #   inputs: I1 I2
+    #   outputs: SQL 文本
+    #   invariant: 不依赖 FINAL 是否被注入——两条路径（注入/未注入）结果同一，且确定性等于"最新入库版"；
+    #     分组键必须恒等于该表 ORDER BY 键，否则聚合语义漂移
+    # - id: A3
+    #   name_zh: ③ TSV 无表头按位映射成帧
+    #   name_en: hydrate_frame
+    #   intro: 读通道返回 FORMAT TSV 无表头，列序即 SELECT 序，逐位命名后转数值
+    #   desc: 空返回→空 DataFrame（带 frame_cols 列名，非裸空）；列名序 = trade_date/trade_time/symbol/period + cols
+    #   inputs: A2
+    #   outputs: pd.DataFrame
+    #   invariant: 列序与 SELECT 序一一对应，错位即整表读错（有括号感知测试钉住）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 指标宽表（PIT 安全）
+    #   name_en: indicator_frame
+    #   intro: 消费方（因子合成/回测/体检）唯一的指标读取出口
+    #   desc: index 为自然行序；预热期 NULL 不前向填充，由消费方决定 fill/丢头/截断
+    #   registry: factor_registry: 不直接登记（本件是消费端读层，非因子产出）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

@@ -22,12 +22,16 @@
 
 三约束：
   1. PIT：as_of 给定时 end>as_of 直接 ValueError（禁"用未来数据算现在的指标"）
-  2. 去重：经 ch_reader 自动注入 FINAL（ReplacingMergeTree 同键取最新）
+  2. 去重：按表排序键 GROUP BY + argMax(列, ingest_ts) 取最新入库版（2026-10-09 批复③"第三条路"）
+     ——不依赖 FINAL 是否被注入：该表引擎无版本列，未合并前同键可存多版且值可不同，
+     而 FINAL 又依赖引擎探针（瞬态失败曾致整进程静默不注入）；本读法两条路径结果同一
   3. 白名单：columns 必须在 TechnicalIndicatorRegistry 注册输出列内
      （拼错列名 → ValueError 而非静默空 DataFrame）
 
 预热语义：指标预热期在表中即 NULL，本层不前向填充——消费方自行决定
 （fill/丢头/截断），这是 16 号设计文档"PIT 铁律在指标层"的消费端延续。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/indicator_reader.yaml
 """
 
 from __future__ import annotations
@@ -43,6 +47,30 @@ from zephyr.data import ch_reader
 logger = logging.getLogger(__name__)
 
 _TABLE = "c1_market.technical_indicator"
+# GROUP BY 键＝表排序键（schemas/categories/market/market_technical_indicator.py 的
+# ORDER BY (symbol, period, trade_time)）；其余列一律按 ingest_ts 取最新入库版。
+_KEY_COLS = frozenset({"symbol", "period", "trade_time"})
+_VERSION_COL = "ingest_ts"
+
+#: 行版本去重读式（NO-BARE-SQL 正道：模板集中于此，调用点只填占位符）
+SQL_READ_ROWS = (
+    "SELECT {select_cols} FROM {table} WHERE {where_sql} GROUP BY symbol, period, trade_time ORDER BY trade_time"
+)
+
+
+def _projection(col: str) -> str:
+    """单列投影：键列直取，非键列按 ingest_ts 取最新版。
+
+    **不加 `AS <同名>`**：CH 会把 WHERE 里的同名列解析成该聚合别名
+    （实测 Code 184 ILLEGAL_AGGREGATION: argMax(trade_date, ingest_ts) AS trade_date
+    is found in WHERE）；而本通道走 FORMAT TSV 无表头、按 SELECT 顺序映射列名，
+    别名本就是多余的。
+    """
+    if col in _KEY_COLS:
+        return col
+    return f"argMax({col}, {_VERSION_COL})"
+
+
 _VALID_PERIODS = ("1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly")
 
 
@@ -103,9 +131,16 @@ def read_indicator(
     if end:
         where_parts.append(f"trade_date <= '{end_d}'")
     frame_cols = ["trade_date", "trade_time", "symbol", "period", *cols]
-    select_cols = ", ".join(frame_cols)
+    # 行版本去重＝按 ingest_ts 取最新入库版，**不依赖 FINAL 是否被注入**。
+    # 病根：technical_indicator 是 ReplacingMergeTree 且 ORDER BY 无版本列，合并前同键
+    # 多版并存（2026-10-09 实测 daily 段 38.4% 的键值互不相同，最多 6 版），
+    # 而非 FINAL 读"返回哪一版"由行序决定；FINAL 又依赖 ch_writer 引擎探针（瞬态失败曾致
+    # 该进程终身静默不注入）。改为 GROUP BY 表键 + argMax(col, ingest_ts) 后：
+    # 两条路径（注入 FINAL / 未注入）结果同一，且确定性等于"最新入库版"。
+    select_cols = ", ".join(_projection(c) for c in frame_cols)
+    where_sql = " AND ".join(where_parts)
     # ch_writer.query 对 SELECT 强制 FORMAT TSV（无表头）——列名按 SELECT 顺序自行构造
-    sql = f"SELECT {select_cols} FROM {_TABLE} WHERE {' AND '.join(where_parts)} ORDER BY trade_time"
+    sql = SQL_READ_ROWS.format(select_cols=select_cols, table=_TABLE, where_sql=where_sql)
 
     tsv = ch_reader.query(sql)
     if not tsv.strip():
