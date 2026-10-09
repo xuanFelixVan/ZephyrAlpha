@@ -66,6 +66,11 @@ DEFAULT_DEGRADATION_STEPS: Final[list[DegradationStep]] = [
     ),
 ]
 
+# R12 聚合不变式 tolerance（r_table_rulings R12 真GAP-吸收，2026-10-08）：
+# recover_from_snapshot 校验各桶 hourly(小时分窗和) ≤ daily(日窗聚合值)×(1+1%)，
+# 1% 为浮点舍入余量；违反=快照聚合漂移，fail-closed 拒绝恢复。
+R12_AGG_TOLERANCE: Final[float] = 0.01
+
 
 @runtime_checkable
 class BudgetEngineProtocol(Protocol):
@@ -295,6 +300,10 @@ class BudgetEngine:
 
         读取 shutdown() 持久化的 JSON 快照，恢复消费数据和降级级别。
         用于 session 重启后恢复预算状态。
+
+        R12 聚合不变式（r_table_rulings R12 真GAP-吸收，2026-10-08）：恢复完成后
+        校验各桶 0 <= hourly <= daily*(1+R12_AGG_TOLERANCE)，违反时 RuntimeError
+        fail-closed；快照载入失败仍按既有语义返回全新引擎（零消费，不变式平凡成立）。
         """
         import json
         import os
@@ -303,9 +312,11 @@ class BudgetEngine:
             snapshot_path = os.path.join("data", "budget", "shutdown_snapshot.json")
 
         engine = cls()
+        snapshot_hash: str | None = None  # 快照版本凭据（"hash" 字段）——随违规错误携带
         try:
             with open(snapshot_path, encoding="utf-8") as f:
                 snapshot = json.load(f)
+            snapshot_hash = snapshot.get("hash")
             consumption = snapshot.get("consumption", {})
             for policy_id, data in consumption.items():
                 cons = engine._consumption.get(policy_id)
@@ -318,6 +329,31 @@ class BudgetEngine:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "BudgetEngine.recover_from_snapshot: snapshot load failed (%s: %s)", type(e).__name__, e, exc_info=True
+            )
+        # ── R12 聚合不变式断言（r_table_rulings R12 真GAP-吸收，2026-10-08）──
+        # 快照结构 consumption={policy_id:{daily,hourly}} 中，daily=日窗聚合值、
+        # hourly=当前小时分窗和：所有记账点（record_consumption/commit_claim）对两桶
+        # 同步 += 同额，且 hourly 重置频率严格高于 daily（日翻转时两桶同批清零），
+        # 故合法状态必满足
+        #   INVARIANT-BUDGET-AGG-CONSISTENCY: 0 <= hourly <= daily*(1+R12_AGG_TOLERANCE)
+        # 违反=快照聚合漂移/损坏——fail-closed 抛错拒绝带病恢复，禁止静默修正。
+        violations: list[str] = []
+        for policy_id, data in engine.get_consumption_summary().items():
+            daily, hourly = data.get("daily", 0.0), data.get("hourly", 0.0)
+            if (
+                not isinstance(daily, (int, float))
+                or not isinstance(hourly, (int, float))
+                or daily < 0
+                or hourly < 0
+                or hourly > daily * (1.0 + R12_AGG_TOLERANCE)
+            ):
+                violations.append(f"{policy_id}: daily={daily!r}, hourly={hourly!r}")
+        if violations:
+            raise RuntimeError(
+                "BudgetEngine.recover_from_snapshot: aggregate invariant violated — "
+                f"INVARIANT-BUDGET-AGG-CONSISTENCY (0 <= hourly <= daily*(1+{R12_AGG_TOLERANCE}), "
+                "r_table_rulings R12); "
+                f"snapshot={snapshot_path!r}, snapshot_hash={snapshot_hash!r}, buckets={violations}"
             )
         return engine
 

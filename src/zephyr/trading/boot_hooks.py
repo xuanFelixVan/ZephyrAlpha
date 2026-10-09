@@ -5,13 +5,13 @@
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] register_boot_hooks is idempotent; hook_registry deduplicates by name
+# [INVARIANTS] register_boot_hooks is idempotent; hook_registry deduplicates by name; tech_stack self-check runs first in register_boot_hooks (BLOCK=raise/DD-1,2,12, WARN=degrade/DD-3,5,16, ruling #485)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns None; logs error on failure; writes hook_failure event on critical failure
-# [TESTS]
+# [TESTS] tests/trading/test_boot_hooks_selfcheck.py
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -639,10 +639,197 @@ def _init_kill_switch_orchestrator() -> None:
         )
 
 
+# ---------------------------------------------------------------------------
+# tech_stack 组件自检（裁定#485，2026-10-08 全流通战役）
+# 吸收自 capacity_assurance/tech_stack.py 的 6 项实质检查——原 TechStackValidator
+# 全仓零消费（validate_on_startup 无调用点），开机无系统性组件可用性检查；16 项中
+# 仅 6 项有实质检查语义（其余为 generic 回显恒 True），吸收/废弃/在档逐项裁定见
+# tech_stack_absorption_spec.md §3（阻断 3=DD-1/2/12，警告 3=DD-3/5/16）。
+# ---------------------------------------------------------------------------
+
+_tech_stack_check_done = False
+#: 幂等标志（对齐 _monitoring_modules_initialized 先例）
+
+_TECH_STACK_MANIFEST_PATH = REPO_ROOT / "config" / "tech_stack_manifest.yaml"
+#: manifest 真源（REG-CAP-001 v2.7.0）——直读 repo 根配置，不复刻 tech_stack.py 的
+#: 三层 dirname 死亡默认路径（src/zephyr/config/... 不存在，运行时恒走漂移内置副本）
+
+# manifest 缺失/损坏时的最小回退清单——仅含吸收 6 项元数据（不复制全 16 项漂移副本，
+#: 治理档缺席只降显示质量，检查集合与分级由裁定表唯一决定）
+_TECH_STACK_FALLBACK_DECISIONS: list[dict[str, str]] = [
+    {"dd_id": "DD-1", "component": "SLO 配置", "final_choice": "YAML + Pydantic v2"},
+    {"dd_id": "DD-2", "component": "审计存储", "final_choice": "SQLite + hash 链"},
+    {"dd_id": "DD-3", "component": "指标采样", "final_choice": "structlog + OpenTelemetry SDK"},
+    {"dd_id": "DD-5", "component": "治理闭环（共享依赖腿）", "final_choice": "psutil"},
+    {"dd_id": "DD-12", "component": "Kill Switch", "final_choice": "环境变量 + 文件信号"},
+    {"dd_id": "DD-16", "component": "语义缓存", "final_choice": "ChromaDB 向量相似度"},
+]
+
+
+def _load_tech_stack_metadata() -> dict[str, dict]:
+    """读 manifest 真源 → {dd_id: 决策项}；缺失/解析失败回退最小内置清单.
+
+    manifest 是治理档非运行时必需——回退只让组件显示名退化为 dd_id 短标签，
+    不改变检查集合与分级（裁定表是唯一分级真源，manifest 漂移不得改动语义）。
+    """
+    try:
+        import yaml
+
+        with open(_TECH_STACK_MANIFEST_PATH, encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+        decisions = data.get("decisions") or []
+        meta = {d["dd_id"]: d for d in decisions if isinstance(d, dict) and d.get("dd_id")}
+        if not meta:
+            raise ValueError("manifest 无 decisions 条目")
+        return meta
+    except Exception as e:  # noqa: BLE001 — 治理档缺席/损坏不得阻断启动
+        logger.warning(
+            "tech_stack manifest 真源不可用（%s）：%s — 回退最小内置清单（仅吸收 6 项元数据）",
+            _TECH_STACK_MANIFEST_PATH,
+            e,
+        )
+        return {d["dd_id"]: dict(d) for d in _TECH_STACK_FALLBACK_DECISIONS}
+
+
+def _tech_stack_warn(component: str, detail: str) -> None:
+    """WARN 级降级可观测：logger.warning + tech_stack.degraded 指标（复用 observe 先例，不新注册表）."""
+    logger.warning("tech_stack 自检降级：%s — %s（启动继续，相关功能降级运行）", component, detail)
+    try:
+        from zephyr.shared.observability.metrics import MetricsRegistry
+
+        MetricsRegistry().observe("tech_stack.degraded", 1.0, labels={"component": component})
+    except Exception as e:  # noqa: BLE001 — 指标链缺席不得放大为启动故障
+        logger.debug("tech_stack.degraded metric observe failed: %s", e, exc_info=True)
+
+
+def _run_tech_stack_self_check() -> None:
+    """技术栈组件可用性自检（裁定#485：吸收自 capacity_assurance/tech_stack.py）.
+
+    分级语义：
+      BLOCK — DD-1 Pydantic 版本门 / DD-2 SQLite 探活 / DD-12 Kill Switch 通道：raise
+              RuntimeError。这是 boot_hooks「失败仅告警」惯例的显式例外：基座错版/缺失时
+              后续一切初始化都在错误地基上跑，静默降级比崩溃更危险（fail-fast）。
+      WARN  — DD-3 OTel / DD-5 psutil / DD-16 ChromaDB：logger.warning + tech_stack.degraded
+              指标，不阻断启动（遥测链有 stub 降级设计、向量记忆 _start_vms 本就「失败仅警告」）。
+    逃生门：ZEPHYR_TECH_STACK_CHECK=0 全关；=warn 时 BLOCK 降为警告（调试用）。
+    pytest 隔离：PYTEST_CURRENT_TEST 在岗时跳过 DD-16（对齐 _subscribe_governance_regeneration
+    守卫先例；chromadb 探测慢且测试环境可能缺席）。
+    """
+    global _tech_stack_check_done
+    if _tech_stack_check_done:
+        logger.debug("Tech stack self-check already done, skipping (idempotent)")
+        return
+    _tech_stack_check_done = True
+
+    import os
+
+    mode = os.environ.get("ZEPHYR_TECH_STACK_CHECK", "1").strip().lower()
+    if mode in ("0", "false", "off", "no"):
+        logger.info("Tech stack self-check disabled via ZEPHYR_TECH_STACK_CHECK=%s", mode)
+        return
+    warn_only = mode in ("warn", "warn_only", "warn-only")
+
+    meta = _load_tech_stack_metadata()
+
+    def _label(dd_id: str) -> str:
+        entry = meta.get(dd_id) or {}
+        return f"{dd_id} {entry.get('component') or dd_id}"
+
+    block_failures: list[str] = []
+
+    # ---- BLOCK 级 ×3（裁定表：DD-1/2/12）----
+    # DD-1 版本门：v1/v2 API 不兼容（191 文件基座）——错版在随机位置崩不如一条明确 RuntimeError。
+    # import 失败实际到不了此处（启动链已隐式 import pydantic），到=环境诡异仍阻断。
+    try:
+        import pydantic
+
+        if pydantic.__version__.startswith("2."):
+            logger.info("tech_stack 自检通过：%s — pydantic==%s", _label("DD-1"), pydantic.__version__)
+        else:
+            block_failures.append(
+                f"{_label('DD-1')}：检测到 pydantic=={pydantic.__version__}，需要 v2.x"
+                " — 修复：pip install 'pydantic>=2.0'"
+            )
+    except Exception as e:  # noqa: BLE001 — 到此=环境级故障，阻断
+        block_failures.append(f"{_label('DD-1')}：pydantic 不可用（{e!r}）— 修复：pip install 'pydantic>=2.0'")
+
+    # DD-2 探活：内存库 SELECT 1——sqlite 编译进解释器属环境级基座；文件库连通已由
+    # boot_sequence 真实开库覆盖，不重复造。
+    try:
+        import sqlite3
+
+        conn = sqlite3.connect(":memory:")
+        try:
+            conn.execute("SELECT 1")
+        finally:
+            conn.close()
+        logger.info("tech_stack 自检通过：%s — sqlite3==%s", _label("DD-2"), sqlite3.sqlite_version)
+    except Exception as e:  # noqa: BLE001 — 标准库损坏属环境级故障
+        block_failures.append(
+            f"{_label('DD-2')}：SQLite 探活失败（{e!r}）— 修复：检查 Python sqlite3 模块是否编译进当前解释器"
+        )
+
+    # DD-12 Kill Switch 通道（裁定表新设计检查体，超出原 tech_stack.py generic 能力）：
+    # 唯一 hot plane 安全件（宪法 §7）——单例可达 + state 影子件（启用持久化时）可解析；
+    # 纯内存态（无 env 无显式路径）是合法默认。只做通道存在性早检，与后段
+    # _init_kill_switch_orchestrator 的五域注册不重复。影子件损坏时单例自身已 fail-closed
+    # 按 ENGAGED 处置，此处再解析一次是为了给出可诊断的阻断而非静默带 ENGAGED 启动。
+    try:
+        import json as _json
+
+        from zephyr.security.access_control.kill_switch import get_kill_switch
+
+        ks = get_kill_switch()
+        state_path = getattr(ks, "state_path", None)
+        if state_path is not None and state_path.is_file():
+            payload = _json.loads(state_path.read_text(encoding="utf-8"))
+            if not isinstance(payload.get("engaged"), bool):
+                raise ValueError("state payload malformed (engaged)")
+        logger.info(
+            "tech_stack 自检通过：%s — 单例可达 state_channel=%s",
+            _label("DD-12"),
+            state_path if state_path is not None else "in-memory",
+        )
+    except Exception as e:  # noqa: BLE001 — hot 安全件通道失位=阻断
+        block_failures.append(
+            f"{_label('DD-12')}：Kill Switch 通道失位（{e!r}）— 修复：核查 "
+            "zephyr.security.access_control.kill_switch 模块与 state 影子件"
+            "（env ZEPHYR_KILL_SWITCH_STATE_PATH；损坏文件删除或修复后重启）"
+        )
+
+    # ---- WARN 级 ×3（裁定表：DD-3/5/16 — 降级可跑）----
+    import importlib.util
+
+    # DD-3 OTel：遥测链有 stub 降级（tracing/span_stub 缺席可跑）；find_spec 探测不真 import
+    if importlib.util.find_spec("opentelemetry") is None:
+        _tech_stack_warn(_label("DD-3"), "opentelemetry 未安装 — 修复：pip install opentelemetry-api opentelemetry-sdk")
+
+    # DD-5 psutil（裁定表拆分项：检查对象=psutil 共享依赖、多域消费；EMA 算法本体
+    # 无可检依赖，保留在档不吸收）
+    if importlib.util.find_spec("psutil") is None:
+        _tech_stack_warn(_label("DD-5"), "psutil 未安装 — 修复：pip install psutil")
+
+    # DD-16 ChromaDB：向量记忆降级（_start_vms 本就「失败仅警告」）；pytest 下跳过
+    if not os.environ.get("PYTEST_CURRENT_TEST") and importlib.util.find_spec("chromadb") is None:
+        _tech_stack_warn(_label("DD-16"), "chromadb 未安装 — 修复：pip install chromadb")
+
+    if block_failures:
+        message = "；".join(block_failures)
+        if warn_only:
+            logger.warning("tech_stack 自检 BLOCK 项被降级为警告（ZEPHYR_TECH_STACK_CHECK=warn，调试用）：%s", message)
+            return
+        raise RuntimeError(f"tech_stack 自检阻断（裁定#485 BLOCK 级组件失位，启动中止）：{message}")
+    logger.info("tech_stack 自检完成：吸收 6 项（阻断 3/警告 3）全部通过或按级处置")
+
+
 def register_boot_hooks(
     task_repo: TaskRepositoryProtocol | None = None,
     budget_engine: BudgetEngineProtocol | None = None,
 ) -> None:
+    # 裁定#485：依赖面自检先行——先于全部订阅/重初始化逻辑，使后继初始化的成败可归因。
+    # BLOCK 级 raise 不包裹（register_task_system_hooks 与 boot() 对本函数均无 try，
+    # 直达 __main__ 非零退出——设计意图，见细案 §4.1）。
+    _run_tech_stack_self_check()
     try:
         from zephyr.governance.event_hook import (  # noqa: import-integrity  — sys.modules shim registered in governance/__init__.py
             hook_registry,  # noqa: import-integrity  sys.modules shim registered in governance/__init__.py

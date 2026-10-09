@@ -1,4 +1,3 @@
-# 幂等风险：手工图直改无再生保护 2026-10-08
 # 策略生产全景图（strategy_production_map，昵称"策略工厂"）v0.3 血肉挂载版
 # 图 9：生产级全景图第二张（图 7 交易决策全景图=消费端，本图=供给端）
 # 状态：增长轨已落图（2026-09-13 九图挂轴批）——四关验收件齐备：结构校验器+对抗测试
@@ -40,32 +39,6 @@ purpose_legend:
   - {tag: 病历有人翻, one_liner_zh: 每本台账病历册都挂在流程上：考了几次、死过几个、怎么修好的，查得到}
   - {tag: 图有人守, one_liner_zh: 这张图自己有校验器和对抗测试守着，谁改坏了结构当场拦下}
 
-# 机制级 casebooks 章系图例（2026-10-08 机制级挂载扩面批 st-fc-spm-20261008）：正典指针=册号#章，
-#   册族唯一反查册=docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml；
-#   挂载判据=vertical_map_mounting_policy §3 四机规+「该机制失败/漂移时确有翻账语义」，无语义留空不硬凑；
-#   既有 15 种自由名挂载（26 处）=原判保留（机制自持账本自由名族），正典化候选判读归 chief
-#   （docs/_working/map_census/casebooks_family/encoding_normalize_map.yaml）；其中 7 处在原判之上补正典指针；
-#   CASEBOOK-003 抢救台账/004 审查发现两卷在本图无翻账语义机制故不挂（003 完备性由图11 D 族主挂、
-#   004 由图11 C11/C13 主挂满足，SOP §3 规2 全图族口径；004 两卷内容域=战役治理审查发现，非策略域病历）；
-#   CASEBOOK-009 回测覆盖总册=册号授自 Owner H11 发车裁定（casebook_registry 物理入册待上户口批，
-#   登记面=docs/_working/fullcirc_closeout_chief/backtest_coverage_ledger.yaml，本批指针以授号为准）。
-casebooks_legend_zh:
-  CASEBOOK-001#outage: 数据对账案卷库·断供事故章——增量供数中断/断链案（E-8 约定 outage_ 前缀断供案正门；盘面 news/macro/kline/tick 等增量断供族为主体案卷）
-  CASEBOOK-001#alert: 数据对账案卷库·告警熔断章——熔断/连接故障/心跳/陈旧告警案（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族）
-  CASEBOOK-001#task_reconcile: 数据对账案卷库·对账巡检章——task_reconcile 对账差异与 integrity_check 完整性巡检案
-  CASEBOOK-002#域一: 堵点本·会话生命周期章——AI 施工队生存病（进程/会话生死、supervisor/守护、预算耗竭）
-  CASEBOOK-002#域二: 堵点本·提交链章——提交战病根（commit/暂存区/GW 正门）
-  CASEBOOK-002#域三: 堵点本·belt与队列章——belt 与队列拥堵/冲突/死锁病
-  CASEBOOK-002#域四: 堵点本·档案安全章——误删/误写/覆盖/归档安全病
-  CASEBOOK-009#N试次: 回测覆盖总册·N账本章——可审计试次计数与 FDR 预算面（源=trial_ledger_registry 的 screen_runs+batch_records）
-  CASEBOOK-009#红证: 回测覆盖总册·批末记账章——试验批末记账红证页（审计留痕；P0 试验链证据件族）
-  CASEBOOK-005#考试纪律: 记忆教训索引·考试纪律簇——holdout 锁窗/判读纪律/重考窗口/闭卷/阈值冻结教训（图9 专属簇，与图11 十簇/图13 九簇/图15 五簇不混用）
-  CASEBOOK-005#过拟合与前视: 记忆教训索引·过拟合与前视簇——反过拟合/前视 T+1/PIT 口径教训
-  CASEBOOK-005#断供与补数: 记忆教训索引·断供与补数簇——供给断链/补数教训
-  CASEBOOK-005#模拟盘实习: 记忆教训索引·模拟盘实习簇——sim 上岗/复活/转正过关条件教训
-  CASEBOOK-005#成本证伪: 记忆教训索引·成本证伪簇——成本门槛/证伪判读教训
-  CASEBOOK-005#实盘衰减与归因: 记忆教训索引·实盘衰减与归因簇——回测→实盘衰减/归因判读/迭代回灌教训
-
 # 全图三铁律（讨论稿 §三 定稿，全节点强制）
 laws:
   - 运动员不兼任裁判：生成车道永远无权给自己打分，考试权只在 E4 咽喉
@@ -76,6 +49,8 @@ laws:
 products: [strategy, factor, portfolio, evidence_chain, negative_archive]
 
 # 明确不做边界（防手痒）
+handoffs:
+  product_state_map_ref: strategy_card_lifecycle_map（工厂产物登记为卡→13 态管辖；判绿判红权在 E4，图15 D15-S5..S8；交接面处方C2；手工图直改留痕 2026-10-08）
 boundary:
   - 高频/做市（订单流微观结构、极速执行）——基础设施与速度要求超出日频工厂定位
   - 元学习跨体制适应——研究雷达观察，不施工
@@ -483,7 +458,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-151
     build_status: built
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共9（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "config/comparison_policy.yaml"
@@ -501,9 +476,9 @@ nodes:
     purpose_tag: 重活夜里干
     stage: E0
     node_type: mechanism
-    module_ref: MOD-BT-226
-    build_status: pending
-    casebooks: [CASEBOOK-002#域三]
+    module_ref: MOD-BT-233
+    build_status: built
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E0-M-003
@@ -512,8 +487,8 @@ nodes:
     purpose_tag: 重活夜里干
     stage: E0
     node_type: mechanism
-    module_ref: MOD-BT-233
-    build_status: pending
+    module_ref: MOD-RESOURCE_OPTIMIZATION_ENGINE
+    build_status: built
     casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
@@ -526,7 +501,7 @@ nodes:
     module_ref: MOD-RESOURCE_OPTIMIZATION_ENGINE
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域一]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E0-M-005
@@ -538,7 +513,7 @@ nodes:
     module_ref: MOD-INF-035
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E0-M-006
@@ -550,7 +525,7 @@ nodes:
     module_ref: MOD-RESCHED-GATE
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共12（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "scripts/governance/generators/generate_resource_morning_report.py"
@@ -574,7 +549,7 @@ nodes:
     module_ref: MOD-RESCHED-PROFILE
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共6（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "config/resource_profile_registry.yaml"
@@ -592,7 +567,7 @@ nodes:
     module_ref: MOD-RESCHED-SAMPLER
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共10（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "config/governance_operations_map.yaml"
@@ -614,7 +589,7 @@ nodes:
     module_ref: MOD-RESCHED-ALERT
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共8（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "config/governance_operations_map.yaml"
@@ -634,7 +609,7 @@ nodes:
     module_ref: "dir:_domain_infrastructure_runtime/resource_scheduler"
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E0-M-011
@@ -646,7 +621,7 @@ nodes:
     module_ref: MOD-INF-066
     build_status: built
     impact_note_zh: 效率
-    casebooks: [CASEBOOK-002#域一]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E0-M-012
@@ -658,7 +633,7 @@ nodes:
     module_ref: MOD-INF-001
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域一]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E0-M-013
@@ -670,7 +645,7 @@ nodes:
     module_ref: MOD-INF-069
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E0-M-014
@@ -682,7 +657,7 @@ nodes:
     module_ref: "dir:_domain_data_eng/gpu_resource_manager"
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E0-M-015
@@ -707,7 +682,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-154
     build_status: built
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts:
       observed: 2
       metric: "constructed_manifest 行数"
@@ -721,7 +696,7 @@ nodes:
     stage: E1
     node_type: mechanism
     module_ref: MOD-BT-231
-    build_status: pending
+    build_status: built
     impact_note_zh: 质量
     casebooks: [进货台账]
     trigger_facts: null  # pending-facts（F3 车道回填）
@@ -736,7 +711,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1-M-004
@@ -749,7 +724,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1-M-005
@@ -761,7 +736,7 @@ nodes:
     module_ref: "dir:_domain_machine_learning_train/research_data_manager"
     build_status: built
     impact_note_zh: 效率
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1-M-006
@@ -773,7 +748,7 @@ nodes:
     module_ref: "dir:_domain_machine_learning_train/research_data_sandbox"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1-M-007
@@ -797,7 +772,7 @@ nodes:
     module_ref: "dir:_domain_intelligence/llm_market_interpreter"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1-M-009
@@ -809,7 +784,7 @@ nodes:
     module_ref: "dir:_domain_alt_data/sentiment_engine"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1-M-010
@@ -821,7 +796,7 @@ nodes:
     module_ref: "dir:_domain_alt_data/alt_data_signal_extractor"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1-M-011
@@ -833,7 +808,7 @@ nodes:
     module_ref: "dir:_domain_alt_data/concept_factor_mapper"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1-M-012
@@ -846,7 +821,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
 # -- E1A 组（3 件）--
@@ -858,7 +833,7 @@ nodes:
     node_type: mechanism
     module_ref: scripts/backtest/strategy_intake_inventory.py
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts:
       observed: 598
       metric: "screen_c2.csv 实测行数"
@@ -873,7 +848,7 @@ nodes:
     module_ref: "dir:_domain_alt_data/social_sentiment_collector"
     build_status: built
     impact_note_zh: 效率
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1A-M-003
@@ -885,7 +860,7 @@ nodes:
     module_ref: "dir:_domain_alt_data/web_scraper_engine"
     build_status: built
     impact_note_zh: 效率
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
 # -- E1B 组（4 件）--
@@ -951,7 +926,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-155
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts:
       observed: 17
       metric: "lane_c 候选行数"
@@ -965,7 +940,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-202
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts:
       observed: 0
       metric: "零实测触发（import 零消费+无专属磁盘产物计数）"
@@ -979,7 +954,7 @@ nodes:
     node_type: mechanism
     module_ref: "dir:_domain_factor/auto_feature_discoverer"
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1C-M-004
@@ -990,7 +965,7 @@ nodes:
     node_type: mechanism
     module_ref: "dir:_domain_factor/gp_strategy_discovery"
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1C-M-005
@@ -1001,7 +976,7 @@ nodes:
     node_type: mechanism
     module_ref: "dir:_domain_factor/llm_evolutionary_search"
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1C-M-006
@@ -1012,7 +987,7 @@ nodes:
     node_type: mechanism
     module_ref: "dir:_domain_factor/factor_vote_mining"
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1C-M-007
@@ -1036,7 +1011,7 @@ nodes:
     module_ref: "cfg:search_space_prereg"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
 # -- E1D 组（10 件）--
@@ -1048,7 +1023,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-090
     build_status: built
-    casebooks: [CASEBOOK-001#task_reconcile]
+    casebooks: []
     trigger_facts:
       observed: 41
       metric: "三高候选行数"
@@ -1063,7 +1038,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-193
     build_status: built
-    casebooks: [CASEBOOK-002#域四]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共2（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "scripts/ch/irm_extract_batch.py"
@@ -1076,7 +1051,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-203
     build_status: built
-    casebooks: [CASEBOOK-002#域四]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共1（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "scripts/governance/meta_question/wo007/build_ckg_prior_tier.py"
@@ -1090,7 +1065,7 @@ nodes:
     build_status: built
     impact_note_zh: 效率
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1D-M-005
@@ -1103,7 +1078,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1D-M-006
@@ -1116,7 +1091,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#task_reconcile]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1D-M-007
@@ -1128,7 +1103,7 @@ nodes:
     module_ref: "dir:_domain_intelligence/llm_fundamental_analysis"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1D-M-008
@@ -1140,7 +1115,7 @@ nodes:
     module_ref: "dir:_domain_intelligence/event_chain_causal_graph"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1D-M-009
@@ -1152,7 +1127,7 @@ nodes:
     module_ref: "dir:_domain_alt_data/filing_nlp_engine"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1D-M-010
@@ -1164,7 +1139,7 @@ nodes:
     module_ref: "dir:_domain_alt_data/policy_theme_mapper"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
 # -- E1E 组（9 件）--
@@ -1176,7 +1151,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-084
     build_status: built
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts:
       observed: 0
       metric: "零实测触发（import 零消费+无专属磁盘产物计数）"
@@ -1190,7 +1165,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-195
     build_status: built
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts:
       observed: 0
       metric: "零实测触发（import 零消费+无专属磁盘产物计数）"
@@ -1204,7 +1179,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-204
     build_status: built
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts:
       observed: 0
       metric: "零实测触发（import 零消费+无专属磁盘产物计数）"
@@ -1219,7 +1194,7 @@ nodes:
     module_ref: "dir:_domain_machine_learning_train/ml_model_factory"
     build_status: built
     impact_note_zh: 效率
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1E-M-005
@@ -1231,7 +1206,7 @@ nodes:
     module_ref: "dir:_domain_machine_learning_train/kan_density_head"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1E-M-006
@@ -1243,7 +1218,7 @@ nodes:
     module_ref: "dir:_domain_machine_learning_train/patchtst_density_encoder"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1E-M-007
@@ -1255,7 +1230,7 @@ nodes:
     module_ref: "dir:_domain_machine_learning_train/qnn_two_stage"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1E-M-008
@@ -1267,7 +1242,7 @@ nodes:
     module_ref: "dir:_domain_machine_learning_train/model_version_registry"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [模型版本注册表]
+    casebooks: []  # 2026-10-08 判读（unknown_adjudication §2）：不配挂（版本出生登记=户籍册非病历；引用关系由 module_ref 承载）
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1E-M-009
@@ -1279,7 +1254,7 @@ nodes:
     module_ref: "dir:_domain_machine_learning_train/ts_augmentation"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
 # -- E1F 组（2 件）--
@@ -1291,7 +1266,7 @@ nodes:
     node_type: mechanism
     module_ref: "code:scripts/backtest/factory_grid_executor.py"
     build_status: built
-    casebooks: [CASEBOOK-009#N试次, CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1F-M-002
@@ -1314,7 +1289,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-AUTO-E1G-001
     build_status: built
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts:
       observed: 1
       metric: "lane_g 候选行数"
@@ -1331,7 +1306,7 @@ nodes:
     build_status: built
     impact_note_zh: 效率
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1G-M-003
@@ -1344,7 +1319,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1G-M-004
@@ -1357,7 +1332,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1G-M-005
@@ -1370,7 +1345,7 @@ nodes:
     build_status: built
     impact_note_zh: 效率
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1G-M-006
@@ -1394,7 +1369,7 @@ nodes:
     module_ref: "dir:_domain_alt_data/research_report_collector"
     build_status: built
     impact_note_zh: 效率
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1G-M-008
@@ -1406,7 +1381,7 @@ nodes:
     module_ref: "dir:_domain_alt_data/policy_expectation_analyzer"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1G-M-009
@@ -1418,7 +1393,7 @@ nodes:
     module_ref: "cfg:ai_search_veins"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E1G-M-010
@@ -1430,7 +1405,7 @@ nodes:
     module_ref: "cfg:ai_source_registry"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
 # -- E2 组（6 件）--
@@ -1456,7 +1431,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-187
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共3（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "src/zephyr/strategy_pipeline/intake.py"
@@ -2113,7 +2088,7 @@ nodes:
     purpose_tag: 外来经翻译成标准件
     stage: E3
     node_type: mechanism
-    module_ref: MOD-BT-092
+    module_ref: MOD-BT-235
     build_status: built
     casebooks: []
     trigger_facts:
@@ -2627,7 +2602,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-190
     build_status: built
-    casebooks: [翻译件台账, CASEBOOK-002#域四]
+    casebooks: []  # 2026-10-08 判读（unknown_adjudication §2）：不配挂（在制品流水台账，记「还有什么没跑」非「犯过什么病」；预注册对象=REG-BTB-001 承载）
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共28（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "scripts/backtest/c4_batch_screen.py"
@@ -2716,7 +2691,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-001
     build_status: built
-    casebooks: [CASEBOOK-005#成本证伪]
+    casebooks: []
     trigger_facts:
       observed: 191
       metric: "runs 批目录总数（引擎机械面族级证据）"
@@ -2743,10 +2718,10 @@ nodes:
     stage: E4
     node_type: mechanism
     module_ref: MOD-BT-006
-    build_status: pending
+    build_status: built
     impact_note_zh: 速度
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-004
@@ -2806,7 +2781,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-022
     build_status: built
-    casebooks: [回测run档案图书馆]
+    casebooks: []  # 2026-10-08 判读（unknown_adjudication §2）：不配挂（产物档案馆=资产库非病历册；档案路径属 store_refs/data_refs 语义，w5_1 与 CASEBOOK-008 不并）
     trigger_facts:
       observed: 191
       metric: "runs 批目录总数（引擎机械面族级证据）"
@@ -2839,7 +2814,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-027
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts:
       observed: 191
       metric: "runs 批目录总数（引擎机械面族级证据）"
@@ -2854,7 +2829,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-028
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts:
       observed: 191
       metric: "runs 批目录总数（引擎机械面族级证据）"
@@ -2871,7 +2846,7 @@ nodes:
     module_ref: MOD-BT-032
     build_status: built
     impact_note_zh: 质量
-    casebooks: [试验台账红证, CASEBOOK-009#红证]
+    casebooks: [CASEBOOK-009#红证]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共3（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "src/zephyr/plan_engine/daily_loop_master_switch.py"
@@ -2886,7 +2861,7 @@ nodes:
     module_ref: MOD-BT-033
     build_status: built
     impact_note_zh: 质量
-    casebooks: [试验台账红证, CASEBOOK-009#红证]
+    casebooks: [CASEBOOK-009#红证]
     trigger_facts:
       observed: 0
       metric: "零实测触发（import 零消费+无专属磁盘产物计数）"
@@ -2901,7 +2876,7 @@ nodes:
     module_ref: MOD-BT-034
     build_status: built
     impact_note_zh: 质量
-    casebooks: [试验台账红证, CASEBOOK-009#红证]
+    casebooks: [CASEBOOK-009#红证]
     trigger_facts:
       observed: 0
       metric: "零实测触发（import 零消费+无专属磁盘产物计数）"
@@ -2915,7 +2890,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-076
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts:
       observed: 89
       metric: "bt 运行 json 实测数"
@@ -2980,7 +2955,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-191
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共6（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "scripts/backtest/sim_promotion_memo.py"
@@ -2997,7 +2972,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-194
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts:
       observed: 0
       metric: "零实测触发（import 零消费+无专属磁盘产物计数）"
@@ -3024,7 +2999,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-198
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共11（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "scripts/backtest/auto_mount.py"
@@ -3047,7 +3022,7 @@ nodes:
     module_ref: MOD-BT-200
     build_status: built
     impact_note_zh: 质量
-    casebooks: [N试次账本, CASEBOOK-009#N试次]
+    casebooks: [CASEBOOK-009#N试次]
     trigger_facts:
       observed: 8
       metric: "试验台账 entries"
@@ -3075,7 +3050,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-211
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共5（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "config/exam_scale_cost_gate.yaml"
@@ -3090,7 +3065,7 @@ nodes:
     stage: E4
     node_type: mechanism
     module_ref: MOD-BT-218
-    build_status: pending
+    build_status: built
     impact_note_zh: 质量
     casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
@@ -3104,7 +3079,7 @@ nodes:
     module_ref: MOD-BT-228
     build_status: pending
     impact_note_zh: 质量
-    casebooks: [试验台账红证, CASEBOOK-009#红证]
+    casebooks: [CASEBOOK-009#红证]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-024
@@ -3129,7 +3104,7 @@ nodes:
     build_status: built
     impact_note_zh: 速度
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-026
@@ -3142,7 +3117,7 @@ nodes:
     build_status: built
     impact_note_zh: 速度
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#task_reconcile, CASEBOOK-005#断供与补数]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-027
@@ -3168,7 +3143,7 @@ nodes:
     build_status: built
     impact_note_zh: 速度
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#outage, CASEBOOK-005#断供与补数]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-029
@@ -3193,7 +3168,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-031
@@ -3218,7 +3193,7 @@ nodes:
     module_ref: "dir:_domain_data/data_compression_archiver"
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域四]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-033
@@ -3231,7 +3206,7 @@ nodes:
     build_status: built
     impact_note_zh: "速度|质量"
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-034
@@ -3257,7 +3232,7 @@ nodes:
     build_status: built
     impact_note_zh: "速度|质量"
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-036
@@ -3270,7 +3245,7 @@ nodes:
     build_status: built
     impact_note_zh: 速度
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-037
@@ -3283,7 +3258,7 @@ nodes:
     build_status: built
     impact_note_zh: 效率
     home_map: 图12 data_supply_chain_map
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-038
@@ -3308,7 +3283,7 @@ nodes:
     module_ref: "dir:_domain_infrastructure_runtime/database_layer"
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-040
@@ -3332,7 +3307,7 @@ nodes:
     module_ref: "dir:_domain_infrastructure_operations/wal_checkpoint_monitor"
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-042
@@ -3391,7 +3366,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-SIM-021
     build_status: built
-    casebooks: [CASEBOOK-005#过拟合与前视]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-047
@@ -3402,7 +3377,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-SIM-022
     build_status: built
-    casebooks: [CASEBOOK-005#过拟合与前视]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-048
@@ -3413,7 +3388,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-SIM-023
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-049
@@ -3424,7 +3399,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-SIM-024
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-050
@@ -3435,7 +3410,7 @@ nodes:
     node_type: mechanism
     module_ref: "dir:_domain_simulation/overfitting_protection_gate"
     build_status: built
-    casebooks: [过拟合裁定档案, CASEBOOK-005#过拟合与前视]
+    casebooks: [CASEBOOK-009#过拟合裁定]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-051
@@ -3448,7 +3423,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-052
@@ -3473,7 +3448,7 @@ nodes:
     module_ref: MOD-L02-027
     build_status: built
     impact_note_zh: 质量
-    casebooks: [因子研究案例库]
+    casebooks: [CASEBOOK-010#因子案例]  # 2026-10-08 判读（unknown_adjudication §2）：MM 册章位承载；宿主 factor_casebook.db 缺席待核（registry pending_casebooks）
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-054
@@ -3496,7 +3471,7 @@ nodes:
     module_ref: "dir:_domain_data_eng/cold_data_archive_manager"
     build_status: built
     impact_note_zh: 速度
-    casebooks: [CASEBOOK-002#域四]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-056
@@ -3508,7 +3483,7 @@ nodes:
     module_ref: "dir:_domain_data_eng/data_anomaly_alerter"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-057
@@ -3530,9 +3505,9 @@ nodes:
     stage: E4
     node_type: mechanism
     module_ref: "dir:_domain_data_eng/quality_sla_breach_predictor"
-    build_status: pending
+    build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-001#alert]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-059
@@ -3543,7 +3518,7 @@ nodes:
     node_type: mechanism
     module_ref: "code:scripts/backtest/sector_prereg_exam_runner.py"
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-060
@@ -3554,7 +3529,7 @@ nodes:
     node_type: mechanism
     module_ref: "code:scripts/backtest/reexam_cpcv_harness.py"
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-061
@@ -3566,7 +3541,7 @@ nodes:
     module_ref: "code:scripts/backtest/exam_cost_reexam.py"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-005#成本证伪]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-062
@@ -3578,7 +3553,7 @@ nodes:
     module_ref: "code:scripts/backtest/dsr_recalc_backfill.py"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-063
@@ -3590,7 +3565,7 @@ nodes:
     module_ref: "code:scripts/backtest/replay_drill.py"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [复现演练档案]
+    casebooks: [CASEBOOK-009#演练]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-064
@@ -3623,7 +3598,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:walk_forward"
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-067
@@ -3634,7 +3609,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:purged_kfold"
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-068
@@ -3645,7 +3620,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:cpcv"
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-069
@@ -3678,7 +3653,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:data_handler"
     build_status: built
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-072
@@ -3689,7 +3664,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:pit_manager"
     build_status: built
-    casebooks: [CASEBOOK-005#过拟合与前视]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-073
@@ -3700,7 +3675,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:decision_gate"
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-074
@@ -3711,7 +3686,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:exam_cost_gate"
     build_status: built
-    casebooks: [CASEBOOK-005#成本证伪]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-075
@@ -3722,7 +3697,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:cost_attribution"
     build_status: built
-    casebooks: [CASEBOOK-005#成本证伪]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-076
@@ -3744,7 +3719,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:overfitting_detector"
     build_status: built
-    casebooks: [CASEBOOK-005#过拟合与前视]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-078
@@ -3755,7 +3730,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:closed_book_gate"
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-079
@@ -3766,7 +3741,7 @@ nodes:
     node_type: mechanism
     module_ref: "af:strategy_validation_pipeline"
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E4-M-080
@@ -3799,7 +3774,7 @@ nodes:
     node_type: mechanism
     module_ref: src/zephyr/backtest/core/closed_book_gate.py
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # 共1（剔自引与地图指针后）；全列
     - "tests/backtest/test_closed_book_tick_gate.py"
@@ -3868,7 +3843,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-078
     build_status: built
-    casebooks: [考试成绩+判定书台账]
+    casebooks: [REG-STR-001]  # 2026-10-08 判读（unknown_adjudication §2）可对位：outside_registry 条目（module_id 身份，禁双重身份不入册）
     trigger_facts:
       observed: 161
       metric: "策略注册册条目"
@@ -3918,7 +3893,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-189
     build_status: built
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts:
       observed: 161
       metric: "策略注册册条目"
@@ -3942,7 +3917,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-192
     build_status: built
-    casebooks: [CASEBOOK-002#域四]
+    casebooks: []
     trigger_facts:
       observed: 161
       metric: "策略注册册条目"
@@ -3994,7 +3969,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-214
     build_status: built
-    casebooks: [CASEBOOK-002#域三]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共8（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "scripts/governance/check_trd_a20_a21_dual_gates.py"
@@ -4083,7 +4058,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-225
     build_status: built
-    casebooks: [CASEBOOK-005#模拟盘实习]
+    casebooks: []
     trigger_facts:
       observed: 20
       metric: "OUTPOST 批次数"
@@ -4115,7 +4090,7 @@ nodes:
     module_ref: MOD-BT-094
     build_status: built
     impact_note_zh: 质量
-    casebooks: [模拟盘病历族]
+    casebooks: [CASEBOOK-009#模拟盘]
     trigger_facts:
       observed: 53
       metric: "SIMGOV 批次数"
@@ -4130,7 +4105,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-BT-199
     build_status: built
-    casebooks: [CASEBOOK-005#模拟盘实习]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # top20/共13（fac9_03_facts.yaml#modules，语料=src/scripts/tests/config 除地图指针）
     - "scripts/backtest/sim_governance.py"
@@ -4168,7 +4143,7 @@ nodes:
     stage: E7
     node_type: mechanism
     module_ref: MOD-BT-222
-    build_status: pending
+    build_status: built
     casebooks: []
     trigger_facts:
       observed: 20
@@ -4182,9 +4157,9 @@ nodes:
     stage: E7
     node_type: mechanism
     module_ref: MOD-BT-223
-    build_status: pending
+    build_status: built
     impact_note_zh: 质量
-    casebooks: [模拟盘病历族]
+    casebooks: [CASEBOOK-009#模拟盘]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E7-M-008
@@ -4193,8 +4168,8 @@ nodes:
     purpose_tag: 新策略上岗先实习
     stage: E7
     node_type: mechanism
-    module_ref: MOD-BT-232
-    build_status: pending
+    module_ref: MOD-INF-072
+    build_status: built
     casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
@@ -4243,7 +4218,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-PF-008
     build_status: built
-    casebooks: [CASEBOOK-005#考试纪律]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E7-M-013
@@ -4278,7 +4253,7 @@ nodes:
     module_ref: "code:scripts/backtest/league_registry.py"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [联赛档案]
+    casebooks: [CASEBOOK-009#联赛]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E7-M-016
@@ -4290,7 +4265,7 @@ nodes:
     module_ref: "code:scripts/backtest/league_archive.py"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [联赛档案]
+    casebooks: [CASEBOOK-009#联赛]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E7-M-017
@@ -4302,7 +4277,7 @@ nodes:
     module_ref: "code:scripts/backtest/league_monthly_snapshot.py"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [联赛档案]
+    casebooks: [CASEBOOK-009#联赛]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E7-M-018
@@ -4314,7 +4289,7 @@ nodes:
     module_ref: "code:scripts/backtest/league_restore.py"
     build_status: built
     impact_note_zh: 效率
-    casebooks: [联赛档案]
+    casebooks: [CASEBOOK-009#联赛]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E7-M-019
@@ -4337,7 +4312,7 @@ nodes:
     module_ref: "code:scripts/backtest/sim_platform_journal.py"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [模拟盘病历族]
+    casebooks: [CASEBOOK-009#模拟盘]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E7-M-021
@@ -4348,7 +4323,7 @@ nodes:
     node_type: mechanism
     module_ref: "code:scripts/backtest/sim_promotion_memo.py"
     build_status: built
-    casebooks: [CASEBOOK-005#模拟盘实习]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E7-M-022
@@ -4360,7 +4335,7 @@ nodes:
     module_ref: "code:scripts/backtest/crisis_drill_monthly.py"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [复现演练档案]
+    casebooks: [CASEBOOK-009#演练]
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
 # -- E8 组（34 件）--
@@ -4427,7 +4402,7 @@ nodes:
     node_type: mechanism
     module_ref: MOD-PA-014
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-007
@@ -4484,7 +4459,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map（编制）+本图 E8 消费
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # 共19（剔自引与地图指针后）；全列
     - "config/framework_plans.yaml"
@@ -4558,7 +4533,7 @@ nodes:
     build_status: built
     impact_note_zh: 效率
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-016
@@ -4571,7 +4546,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-017
@@ -4584,7 +4559,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-018
@@ -4597,7 +4572,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-019
@@ -4610,7 +4585,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-020
@@ -4623,7 +4598,7 @@ nodes:
     build_status: built
     impact_note_zh: 效率
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-021
@@ -4636,7 +4611,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-001#outage]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-022
@@ -4681,7 +4656,7 @@ nodes:
     module_ref: "dir:_domain_portfolio_core/rebalance_cost_analyzer"
     build_status: built
     impact_note_zh: 效率
-    casebooks: [CASEBOOK-005#成本证伪]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-026
@@ -4704,7 +4679,7 @@ nodes:
     node_type: mechanism
     module_ref: "dir:_domain_portfolio_core/funnel_portfolio_adjudicator"
     build_status: built
-    casebooks: [CASEBOOK-009#N试次]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-028
@@ -4738,7 +4713,7 @@ nodes:
     node_type: mechanism
     module_ref: "code:scripts/backtest/weight_ssot.py"
     build_status: built
-    casebooks: [CASEBOOK-002#域四]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E8-M-031
@@ -4798,7 +4773,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图9+图7 双图引用（trading_decision_map 亦引）
-    casebooks: [CASEBOOK-005#实盘衰减与归因]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers:  # 共18（剔自引与地图指针后）；全列
     - "scripts/arch_guard/_tools/patch_p1_paths.py"
@@ -4829,7 +4804,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 风控域（无纵向图，_domain_risk 编制）
-    casebooks: [CASEBOOK-005#实盘衰减与归因]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E9-M-003
@@ -4839,8 +4814,8 @@ nodes:
     stage: E9
     node_type: mechanism
     module_ref: MOD-BT-215
-    build_status: pending
-    casebooks: [CASEBOOK-005#模拟盘实习]
+    build_status: built
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E9-M-004
@@ -4865,7 +4840,7 @@ nodes:
     build_status: built
     impact_note_zh: 质量
     home_map: 图7 trading_decision_map
-    casebooks: [CASEBOOK-005#实盘衰减与归因]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E9-M-006
@@ -4876,7 +4851,7 @@ nodes:
     node_type: mechanism
     module_ref: "dir:_domain_factor/strategy_iteration_upgrader"
     build_status: built
-    casebooks: [CASEBOOK-005#实盘衰减与归因]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E9-M-007
@@ -4887,7 +4862,7 @@ nodes:
     node_type: mechanism
     module_ref: "code:src/zephyr/pf_core/core/shadow_portfolio.py"
     build_status: built
-    casebooks: [CASEBOOK-005#实盘衰减与归因]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
   - node_id: FAC-E9-M-008
@@ -4899,7 +4874,7 @@ nodes:
     module_ref: "code:scripts/backtest/condition_attribution.py"
     build_status: built
     impact_note_zh: 质量
-    casebooks: [CASEBOOK-005#实盘衰减与归因]
+    casebooks: []
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
 # -- MAP 组（2 件）--

@@ -185,7 +185,8 @@ nodes:
       label: 提供器基类 / provider_base
     executors_missing: []
   purpose_tag: lineage
-  casebooks: []
+  casebooks:
+  - CASEBOOK-001#alert  # 源熔断/连接失败告警族（circuit_breaker 163 件+providerconnectifind 391 件，生成器 source_circuit_breaker.py 实锚）
   consumers:
   - pass-through:23源/271任务全分母
   - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§0
@@ -313,7 +314,9 @@ nodes:
       label: 提供器基类 / provider_base
     executors_missing: []
   purpose_tag: lineage
-  casebooks: []
+  casebooks:
+  - CASEBOOK-001#alert  # 盘后族任务失败告警（kline_daily 377/hk_daily 359/futures_term_structure 235 件实测）
+  - CASEBOOK-007  # 采集打卡账本=应跑对打卡分母（trigger_facts 961/480 对账证据面）
   consumers:
   - TDM:DS-150等16表/约64点
   - SPM:276/56
@@ -450,7 +453,9 @@ nodes:
       label: tick→分钟K线 CH 内自拼
     executors_missing: []
   purpose_tag: lineage
-  casebooks: []
+  casebooks:
+  - CASEBOOK-001#alert  # 盘中族告警（tickdatasnapshot 229/tickfreshness 189/realtimesnapshotincremental 114 件实测）
+  - CASEBOOK-007  # 采集打卡账本（task_runs 7 日窗 879 笔）
   consumers:
   - TDM:DS-170等6表/15点
   - code:owner_band_t/data_loader.py:21/79
@@ -595,7 +600,9 @@ nodes:
       label: 内部计算数据源 Provider
     executors_missing: []
   purpose_tag: lineage
-  casebooks: []
+  casebooks:
+  - CASEBOOK-001#alert  # news/宏观族高失败案卷（failures news 族约 3400 件在册）
+  - CASEBOOK-007  # 采集打卡账本（task_runs 7 日窗 20247 笔）
   consumers:
   - TDM:DS-104/DS-107×5
   - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
@@ -653,8 +660,8 @@ nodes:
     pointer: config/strategy_production_map.yaml:76（FAC-E1 进货）＋本车道直查复跑
     note_zh: Code 60 不存在；真身=c3_fundamental.news_data。存在性判据用直查抛错，不依赖 system.tables 枚举面（本役纪律）
   machine: {}
-  purpose_tag: null
-  casebooks: []
+  purpose_tag: lineage  # 幽灵引用=血缘指向真伪（2026-10-08 逐环挖矿补，dscm_data_supply/hops.yaml）
+  casebooks: []  # 无八册案卷：幽灵引用登记=图内 store_refs+SPM 改册件（11 卷 §1-D）
   consumers:
   - SPM:76(FAC-E1)
   trigger_facts:
@@ -716,7 +723,7 @@ nodes:
     pointer: data/failures/20260925_macro_data_incremental_145625.json（本车道实读）
     note_zh: 当日该任务仍失败（源侧 SSL EOF，非部件问题）——两码事，禁混判
   machine: {}
-  purpose_tag: null
+  purpose_tag: break_detect  # 0 字节部件事故=检测口径缺口登记（2026-10-08 逐环挖矿补）
   casebooks:
   - CASEBOOK-001#outage
   consumers:
@@ -805,7 +812,8 @@ nodes:
       label: 数据清洗规则引擎 / Cleaning Rule Engine
     executors_missing: []
   purpose_tag: no_double_write
-  casebooks: []
+  casebooks:
+  - CASEBOOK-001#alert  # 写链路故障告警族（wsl_unavailable_noautoshutdown 89 件=退役 WSL 写通道病史残响）
   consumers:
   - pass-through:40表全集经其写通道
   - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§0
@@ -882,7 +890,8 @@ nodes:
       label: '批量聚合写入器（MOD-L00-004 §18.3 裁定 #ARCH-CH-003 / buffered_writer'
     executors_missing: []
   purpose_tag: source_fallback
-  casebooks: []
+  casebooks:
+  - CASEBOOK-005  # 记忆教训：tick 兜底回灌停摆三层根因 2026-09-16（A4a 容量缓存/A4b 溢出旁路=本环节容量背压腿治本史；005 图12 章系未建=裸册号）
   consumers:
   - code:ch_tick_replay.py:20
   - code:cost_model_calibration.py:120/159
@@ -938,7 +947,8 @@ nodes:
       label: 本地replay / local_replay
     executors_missing: []
   purpose_tag: source_fallback
-  casebooks: []
+  casebooks:
+  - CASEBOOK-005  # 记忆教训：tick 兜底回灌停摆三层根因 2026-09-16（387b7ce5 replay 键治本=本汇聚节点核心病历；裸册号同上）
   consumers:
   - code:src/zephyr/data/scheduler.py:1128-1165
   trigger_facts:
@@ -994,7 +1004,7 @@ nodes:
     symptom: tool_broken
     measured_on: '2026-09-24'
     pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §3 内-5
-    note_zh: 见 DSC-GAP-DUPGUARD——聚合对照腿一跑必红且红被吞成 0（已闭合改判 2026-10-08：三处手术落地+复跑实弹三腿全通，见 DSC-GAP-DUPGUARD 改判注记）
+    note_zh: 见 DSC-GAP-DUPGUARD——聚合对照腿一跑必红且红被吞成 0
   machine:
     executors:
     - path: scripts/governance/data_quality/check_tick_duplication.py
@@ -1005,7 +1015,7 @@ nodes:
       label: ch读取器 / ch_reader
     executors_missing: []
   purpose_tag: no_double_write
-  casebooks: []
+  casebooks: []  # 无八册案卷：判重报告无落库台账（store_refs 自记审计缺口）；07-16 误删事故案卷先于八册建库无宿主（呈 chief）
   consumers:
   - pass-through:全部入库幂等声明
   trigger_facts:
@@ -1013,11 +1023,11 @@ nodes:
     evidence: 判重正门在册但聚合对照腿不可用(GAP-DUPGUARD/WB12-09:Code42一跑必红被吞0)；ad-hoc CLI无节拍
     zero_trigger_verdict: insufficient_window
 - node_id: DSC-GAP-DUPGUARD
-  name_zh: 缺口（已闭合）：判重器查询路径带伤——三处手术 10-05/07 落地+10-08 复跑实弹三腿全通（留档防再发）
+  name_zh: 缺口：判重器聚合对照腿不可用（准入闸半假绿）
   segment: S2_ingest
   node_type: gap
   decision_question: 被判重器放行的无重复结论，今天能不能信？
-  note_zh: 事发：RULE-DATA-OPS 指定的判重唯一正门自身坏着，不得以工具跑过了当作删数据的许可。改判（2026-10-08，st-fullflow2 复跑）：查询路径已闭合——三处手术（uniqExact tuple 单参包装消 Code 42/硬编码 src 改仓根推算消跨仓不同源/trade_date Date 型 WHERE 消 Code 43）+严格通道 ch_reader.query_rows fail-visible（失败点名腿 exit 2，禁吞 0 行假绿）均已在码；10-08 实弹复跑 --month 202610 三腿全通（total=12,911,474=uniq_full_field、dup_group=0、exit 0），守卫测试 11/11 绿。格留档防再发（禁删格），复用判据=改后脚本+tests/gov/governance/scripts_governance/test_check_tick_duplication.py；--help 绿≠查询绿的教训固化在 01_data_supply.md 入口面。
+  note_zh: RULE-DATA-OPS 指定的判重唯一正门自身坏着：不得以工具跑过了当作删数据的许可。
   build_status: pending
   wiring_status: wired_manual
   slot_source: manual
@@ -1055,15 +1065,15 @@ nodes:
     symptom: false_success
     measured_on: '2026-09-24'
     pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §3 内-5
-    note_zh: _SQL_TOTAL_ROW 平铺 14 列 × tick_data 4 个 Nullable 列 → Code 42 恒抛 → 空串 → 解析成 0 行 → 报告印总行数 0/去重 0/差 0，exit 码只由真重复腿决定＝半假绿（本条已闭合 2026-10-08，见 DSC-GAP-DUPGUARD 改判注记）
+    note_zh: _SQL_TOTAL_ROW 平铺 14 列 × tick_data 4 个 Nullable 列 → Code 42 恒抛 → 空串 → 解析成 0 行 → 报告印总行数 0/去重 0/差 0，exit 码只由真重复腿决定＝半假绿
   - anchor: file:scripts/governance/data_quality/check_tick_duplication.py:125
     symptom: hardcoded_main_repo
     measured_on: '2026-09-24'
     pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §4 溢-5(b)
-    note_zh: 脚本硬编码主区 src 并插 sys.path → 在 worktree 里跑会加载主区代码，判重结论与被审仓不同源（本条已闭合 2026-10-08，见 DSC-GAP-DUPGUARD 改判注记）
+    note_zh: 脚本硬编码主区 src 并插 sys.path → 在 worktree 里跑会加载主区代码，判重结论与被审仓不同源
   machine: {}
-  purpose_tag: null
-  casebooks: []
+  purpose_tag: no_double_write  # 判重准入闸自身缺陷（2026-10-08 逐环挖矿补）
+  casebooks: []  # 无八册案卷：缺陷登记=02 卷 §3 内-5+图内 gaps（Code 42 行号级因果链），非病历册形态
   consumers:
   - pass-through:全部入库幂等声明
   trigger_facts:
@@ -1426,7 +1436,7 @@ nodes:
     internal_task_ids: *id001
     process_in_product_tables: *id002
   purpose_tag: schedule_complete
-  casebooks: []
+  casebooks: []  # 无八册案卷：板块/形态缺陷在图 gaps+03 卷；板块采集侧告警族（kline_sector_min 168 件）归 DSC-02#alert
   consumers:
   - code:backtest/regime_validation/condition_package.py:52/53
   - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
@@ -1516,7 +1526,7 @@ nodes:
     internal_task_ids: *id001
     process_in_product_tables: *id002
   purpose_tag: schedule_complete
-  casebooks: []
+  casebooks: []  # 无八册案卷：六表两腿缺位实证=11 卷反查案卷；进程内产线不走 tasks/schedule=无打卡面无案卷（结构性）
   consumers:
   - code:regime_snapshot_history×6消费文件
   - code:backtest/core/n_trial_ledger.py:411
@@ -1575,7 +1585,7 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-B
     note_zh: max=09-14（停 10 日）；消费侧受损=因子族食旧（expectations.py/factor_registry 在册锚）
   machine: {}
-  purpose_tag: null
+  purpose_tag: break_detect  # 断链发现/复活留痕（2026-10-08 逐环挖矿补）
   casebooks:
   - CASEBOOK-001#outage
   consumers:
@@ -1634,8 +1644,8 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C（本车道复跑同值）
     note_zh: 本车道 fail-visible 复跑：max(trade_date)=1970-01-01、count=0＝哨兵值而非数据
   machine: {}
-  purpose_tag: null
-  casebooks: []
+  purpose_tag: schedule_complete  # 等未产表=该来的数据没来（2026-10-08 逐环挖矿补）
+  casebooks: []  # 无八册案卷：等未产表（0 行/1970 哨兵）无案卷史；消费方在等证据=11 卷 §1-C
   consumers:
   - SPM:357(FAC-E8)
   - SPM:380(FAC-E9)
@@ -1693,8 +1703,8 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C（本车道复跑）
     note_zh: count=1、max(toDate(ingest_ts))=2026-09-18＝sim 链路偶发、实盘链路零供给
   machine: {}
-  purpose_tag: null
-  casebooks: []
+  purpose_tag: schedule_complete  # 等未产表=实盘链未接（2026-10-08 逐环挖矿补）
+  casebooks: []  # 无八册案卷：仅 sim 桥偶发 1 行（09-18）无案卷史
   consumers:
   - SPM:334
   - SPM:380
@@ -1752,8 +1762,8 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
     note_zh: 工厂在线面整体悬空；子类=DDL 未 apply（与 factor_signal 同因不同件）
   machine: {}
-  purpose_tag: null
-  casebooks: []
+  purpose_tag: schedule_complete  # 等未产表=DDL 未 apply（2026-10-08 逐环挖矿补）
+  casebooks: []  # 无八册案卷：表不存在（Code 60）建表待 Owner 窗口，无案卷史
   consumers:
   - code:factor/feature_store_writer.py:125
   - code:factor/offline_store.py:25
@@ -1811,8 +1821,8 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
     note_zh: 未建表＋默认落点悬空
   machine: {}
-  purpose_tag: null
-  casebooks: []
+  purpose_tag: schedule_complete  # 等未产表=默认落点未建表（2026-10-08 逐环挖矿补）
+  casebooks: []  # 无八册案卷：表不存在（Code 60），与 FFVAL 同族独立挂账，无案卷史
   consumers:
   - code:factor/core/batch_output/buffer.py:25/78/87
   trigger_facts:
@@ -1826,7 +1836,9 @@ nodes:
   segment: S3_derive
   node_type: handoff
   decision_question: 数据供给链在哪个点上把资产交给消费端、交完之后还归本图管吗？
-  note_zh: 出图12 域边界点：原始/派生表就绪后交因子族、图9 工厂与图13 消费；本图不再管其品质判定，但保留交叉锚（DS-*/JOB-* 与 module_id）。消费端 174 点的分布即从此点外溢（11 卷分母）。
+  note_zh: 出图12 域边界点：原始/派生表就绪后交因子族、图9 工厂与图13 消费；本图不再管下游
+  handoff_out_targets: [trading_decision_map（TDM-E-L1-S1 传感器 data_refs 消费 DS-150 等派生资产）, strategy_production_map, trading_day_cycle_map]
+  handoff_out_basis: 码通图未记处方A-12（2026-10-08）——供料链代码证据链见 handoff_gap_prescriptions.md §1.1；consumers 注记 TDM:DS-* 四处为半记升格其品质判定，但保留交叉锚（DS-*/JOB-* 与 module_id）。消费端 174 点的分布即从此点外溢（11 卷分母）。
   build_status: partial
   wiring_status: wired_import
   slot_source: none
@@ -1871,7 +1883,7 @@ nodes:
   gaps: []
   machine: {}
   purpose_tag: lineage
-  casebooks: []
+  casebooks: []  # 无八册案卷：交接格 pass-through，消费证据=两侧环节（11 卷 §0 分母）
   consumers:
   - pass-through:派生表经ch_reader出图→TDM/工厂/图13
   trigger_facts:
@@ -1936,7 +1948,8 @@ nodes:
       label: 三阶段原子操作
     executors_missing: []
   purpose_tag: can_rollback
-  casebooks: []
+  casebooks:
+  - CASEBOOK-008  # 2026-10-08 挂载：registry 挂载建议面闭合（归档清单）；宿主 data/archive_manifest.jsonl 缺席（主区/W 均无）=挂载+注记，初始化状态待核
   consumers:
   - flow:冷库侧archive_manifest记账
   trigger_facts:
@@ -2036,7 +2049,8 @@ nodes:
       label: ''
     executors_missing: []
   purpose_tag: can_rollback
-  casebooks: []
+  casebooks:
+  - CASEBOOK-008  # 2026-10-08 挂载：registry 挂载建议面闭合（归档清单）；宿主 data/archive_manifest.jsonl 缺席（主区/W 均无）=挂载+注记，初始化状态待核
   consumers:
   - flow:审计面(terminal_provable实锚)
   trigger_facts:
@@ -2088,9 +2102,10 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §2.5
     note_zh: 本车道实跑 Get-ScheduledTaskInfo：LastRun 为空、LastTaskResult=267011（从未运行）
   machine: {}
-  purpose_tag: null
-  casebooks: []
-  consumers: []
+  purpose_tag: can_rollback  # 回滚能力验证缺口（2026-10-08 逐环挖矿补）
+  casebooks: []  # 无八册案卷：零抽检零演练=缺口本体；人工案卷 logs/dr_drill_*.json 非册
+  consumers:
+  - flow:恢复侧演练面(DSC-HC/restore_drill)
   trigger_facts:
     as_of: '2026-10-04'
     evidence: 冷档案零周期抽检+从未端到端restore验证——期望面未建,禁判死判未建
@@ -2190,7 +2205,8 @@ nodes:
       label: 备份配置 / Backup Config
     executors_missing: []
   purpose_tag: can_rollback
-  casebooks: []
+  casebooks:
+  - CASEBOOK-005  # 记忆教训：备份冷储总包 2026-09-24（vault 自愈+0600 实战 11/11+/MIR 瘦身）+mirror 两证删除 2026-09-24（裸册号，005 图12 章系未建）
   consumers:
   - flow:恢复侧restore.ps1/restore_drill.py
   trigger_facts:
@@ -2253,9 +2269,10 @@ nodes:
     pointer: backup_report_20261007_094445~113707 九连份实读（error_sample=活锁文件 tilib_nightly_run.log）
     note_zh: 10-07 上午瞬时失败窗（robocopy 扫描撞活锁文件，与 09-25 同类竞争非结构性）——13:40 起同日自愈 ok（134059/143807/154200 实读），留痕防再发
   machine: {}
-  purpose_tag: null
-  casebooks: []
-  consumers: []
+  purpose_tag: can_rollback  # 代码快照腿=回退窗口保全（2026-10-08 逐环挖矿补）
+  casebooks: []  # 无八册案卷：案卷=logs/backup_report_*.json 件级实读（三时点复核链在图内 evidence），件级日志非册
+  consumers:
+  - flow:灾备回退窗口(G:/backup working_vault 恢复侧)
   trigger_facts:
     as_of: '2026-10-07'
     evidence: 闭合判定：10-04~10-07 报告主流 ok/failures=0（10-05 060005 实读 ok/0/0）；10-07 上午瞬时 failed 窗 9 份已自愈（134059 起 ok）——09-25
@@ -2321,7 +2338,7 @@ nodes:
       label: ''
     executors_missing: []
   purpose_tag: can_rollback
-  casebooks: []
+  casebooks: []  # 无八册案卷：契约决策件无运行面（IN1-E1 裁决策 vs 执行）——结构性留空非欠账
   consumers:
   - flow:rolling_archive_reconciler读契约限量
   trigger_facts:
@@ -2370,7 +2387,7 @@ nodes:
   gaps: []
   machine: {}
   purpose_tag: can_rollback
-  casebooks: []
+  casebooks: []  # 无八册案卷：交接格 pass-through（分层线在契约、产出侧在 10A/10B/11）
   consumers:
   - flow:DSC-10B/11产出侧
   trigger_facts:
@@ -2424,7 +2441,7 @@ nodes:
     note_zh: 归档件从未被端到端 restore 验证覆盖；VM 导入演练因盘容量留档跳过
   machine: {}
   purpose_tag: can_rollback
-  casebooks: []
+  casebooks: []  # 无八册案卷：交接格；演练案卷 logs/dr_drill_*.json 人工班次留档非册
   consumers:
   - flow:灾时恢复+演练
   trigger_facts:
@@ -2486,7 +2503,7 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §2
     note_zh: 三任务同写一表、0 行＝从未产数
   machine: {}
-  purpose_tag: null
+  purpose_tag: break_detect  # 静默断供发现缺口（2026-10-08 逐环挖矿补）
   casebooks:
   - CASEBOOK-001#outage
   consumers:
@@ -2541,9 +2558,11 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §1 下
     note_zh: 登记侧滞后＋测量样本零落点＝排空与否无读据（残余 🌑-1 两点之一）
   machine: {}
-  purpose_tag: null
-  casebooks: []
-  consumers: []
+  purpose_tag: source_fallback  # 降级落盘回灌保全（2026-10-08 逐环挖矿补）
+  casebooks:
+  - CASEBOOK-005  # 记忆教训：tick 兜底回灌停摆三层根因 2026-09-16+local_replay 5510 件滞留实录（本缺口历史案型；裸册号）
+  consumers:
+  - flow:回灌排空读数需求方(DSC-04/05/FB 三边)
   trigger_facts:
     as_of: '2026-10-04'
     evidence: 回灌排空测量腿未接——期望未知计数缺席,禁判死(SOP v1.1.0补丁1本条 适用范例)
@@ -2593,9 +2612,11 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §2.3（99_pending_owner.md 已在报）
     note_zh: WB12-44 P0；本车道 09-25 报告实读 g_mirror.targets 只余 zephyr_cold 一项且 robocopy_exit=1/status=ok
   machine: {}
-  purpose_tag: null
-  casebooks: []
-  consumers: []
+  purpose_tag: can_rollback  # 唯一全量镜像保全缺口（2026-10-08 逐环挖矿补）
+  casebooks:
+  - CASEBOOK-005  # 记忆教训：mirror 两证删除收官 2026-09-24（撕裂尾法证独有=∅ 才敢删=G 盘镜像保全同族判定方法论；裸册号）
+  consumers:
+  - flow:G盘全量镜像恢复能力(唯一副本保全,Owner 门位)
   trigger_facts:
     as_of: '2026-10-04'
     evidence: g_mirror ch_vm_backup目标防护只在未提交工作树成立(P0)——验证腿未落地
@@ -2710,7 +2731,7 @@ nodes:
     executors_missing: []
   purpose_tag: break_detect
   casebooks:
-  - CASEBOOK-001
+  - CASEBOOK-001#alert  # 2026-10-08 判读补章（新章：巡检告警案卷主体族 YYYYMMDD_<check>_HHMMSS.json；主体族有章+特族 #outage 有章对偶完整；章码枚举真源缺位随批呈批登记）
   consumers:
   - flow:catchup_guard对账基准
   - flow:CLI status
@@ -2833,7 +2854,8 @@ nodes:
       label: 调度对账补跑器
     executors_missing: []
   purpose_tag: break_repair
-  casebooks: []
+  casebooks:
+  - CASEBOOK-006  # 2026-10-08 挂载：registry 挂载建议面闭合（known_data_gaps 台账，建议 vs 实挂差消解）
   consumers:
   - flow:补跑动作(经DSC-20留痕)
   trigger_facts:
@@ -2907,8 +2929,9 @@ nodes:
       label: 自动回填器
     executors_missing: []
   purpose_tag: break_repair
-  casebooks: []
-  consumers: []
+  casebooks: []  # 无八册案卷：退役批复=IN1-E7④（Owner 2026-10-04）+豁免登记 wiring_registry CAND-DAT-014，批复件非册
+  consumers:
+  - flow:事件回填语义已归 DSC-16 手动通道(退役留档)
   trigger_facts:
     as_of: '2026-10-07'
     evidence: 第四通道建好未接线（死因=未接线）→ 留档退役 2026-10-04 Owner批（IN1-E7④）：文件在盘摘挂载，节点转退役留档（laneC 2026-10-07 落）
@@ -2993,7 +3016,7 @@ nodes:
       label: 盘后全量对账器 / EOD Reconciler
     executors_missing: []
   purpose_tag: break_detect
-  casebooks: []
+  casebooks: []  # 无八册案卷：未接线零运行（差异台账 0 行）无案可翻；接线后账本=reconciliation_differences(governance.db) 非 001——registry#001「break_detect 族」建议行在本格暂无案不硬凑
   consumers:
   - registry:backtest_backlog.yaml:1222(按空表降级)
   trigger_facts:
@@ -3052,10 +3075,14 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §末A OBS-WF-8
     note_zh: 图级问题非环节级问题：挂槽≠在跑须进封矿判据，否则图13 的 15:40 槽会以同形态被误标
   machine: {}
-  purpose_tag: null
-  casebooks: []
-  consumers: []
-  trigger_facts: null
+  purpose_tag: schedule_complete  # 终点=达标面证明（2026-10-08 逐环挖矿补）
+  casebooks: []  # 无八册案卷：图级终点判据缺口（05 卷 OBS-WF-8）；实锚=DSC-10B/20 案卷他格在挂
+  consumers:
+  - flow:图级可证终点声明(boundary terminal 双实锚 DSC-10B/DSC-20)
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 终点判据缺口：对账PASS唯一实现DSC-15未接线(eod_reconciliation槽hollow+差异表0行)=达标面不可证；替代留痕终点=archive_manifest(DSC-10B)+task_reconcile案卷(DSC-20)双实锚(05卷OBS-WF-8)
+    zero_trigger_verdict: dead
 - node_id: DSC-GAP-RECDIFF
   name_zh: 等未产表：reconciliation_differences（消费方已按空表设计降级）
   segment: S5_recon
@@ -3103,8 +3130,8 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C/§4-N5
     note_zh: 本车道经 DatabaseService 治理库只读复跑 count=0；0 行不可读成全对，等价于从未跑过
   machine: {}
-  purpose_tag: null
-  casebooks: []
+  purpose_tag: ledger_readable  # 0 行账本被当可信输入=账本翻不了（2026-10-08 逐环挖矿补）
+  casebooks: []  # 无八册案卷：0 行表无案卷史；消费降级判据=backtest_backlog:1222（11 卷 N5）
   consumers:
   - registry:backtest_backlog.yaml:1222
   trigger_facts:
@@ -3179,7 +3206,8 @@ nodes:
       label: C4 历史修复核心 / c4_history_repair
     executors_missing: []
   purpose_tag: break_repair
-  casebooks: []
+  casebooks:
+  - CASEBOOK-006  # 2026-10-08 挂载：registry 挂载建议面闭合（known_data_gaps 台账，建议 vs 实挂差消解）
   consumers:
   - flow:修复需求方(手动)
   trigger_facts:
@@ -3265,8 +3293,11 @@ nodes:
       label: 一致预期管线双向验证器 / consensus_crosscheck
     executors_missing: []
   purpose_tag: break_detect
-  casebooks: []
-  consumers: []
+  casebooks:
+  - CASEBOOK-001#alert  # 互验告警案卷：data/failures consensus_crosscheck 族 14 件（20260914..20261001 在产）——registry#001「break_detect 族环节」建议行闭合
+  consumers:
+  - flow:互验台账cross_validation_log(一致预期质量旁证,DSC-08 交叉)
+  - flow:告警件data/failures(consensus_crosscheck 案卷)
   trigger_facts:
     as_of: '2026-10-04'
     evidence: 23:30 cron夜发：cross_validation_log max=2026-09-25、1,588行、末写与cron精确吻合(WB12-13两簿独立取证)
@@ -3343,7 +3374,8 @@ nodes:
       label: ''
     executors_missing: []
   purpose_tag: no_double_write
-  casebooks: []
+  casebooks:
+  - CASEBOOK-001#alert  # parts 健康告警族：chdatapartsexplosion 508 件（生成器 ch_parts_monitor.py 实锚=合并维护压力史）
   consumers:
   - flow:CH引擎合并维护(ReplacingMergeTree幂等前提)
   trigger_facts:
@@ -3414,7 +3446,7 @@ nodes:
     executors_missing: []
   purpose_tag: break_detect
   casebooks:
-  - CASEBOOK-001
+  - CASEBOOK-001#outage  # 2026-10-08 判读补章（破损 part 事故=供给断伤族，E-8 断供事故语义覆盖 part 级破损，归既有章不新造）
   consumers:
   - pass-through:全部CH读消费者(读路径可用性前提)
   trigger_facts:
@@ -3510,7 +3542,8 @@ nodes:
     executors_missing: []
   purpose_tag: schedule_complete
   casebooks:
-  - CASEBOOK-001
+  - CASEBOOK-001#task_reconcile  # 2026-10-08 判读补章（新章：task_reconcile 族案卷=本节点唯一生产者；章码枚举真源缺位随批呈批登记）
+  - CASEBOOK-007  # 2026-10-08 增挂：registry 挂载建议闭合（采集打卡账本=档期对账分母真源；宿主 data/integrator_progress.db 主区在位、W 内为运行时件未随树）
   consumers:
   - flow:catchup_guard基准+CLI+告警三族
   trigger_facts:

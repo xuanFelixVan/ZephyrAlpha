@@ -53,7 +53,7 @@ owner: st-fig16-20261005
 | D16-N4 | 同commit原子门74 | 新增 `裁定#NNN` 引用必须在册且册面同 commit；L1 编号空洞 warn；L2 原子性 hard block | `src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py:301`（priority=74，#20-A/#20-B/#20-G） | 门槛常量 `_MANUAL_STAGE=False` 实查 ✅ |
 | D16-N5 | publish 快照 | active 条目集发布为不可变快照；同 content_sha=noop 幂等；身份键置首防 jsonb 重排 | `src/zephyr/governance/registry_ledger/baseline.py:558` publish_snapshot | 现行 snapshot_version=9（本包 #486 发布）✅ |
 | D16-N6 | render 投影 | 册 yaml=PG 投影（PG-wins 回滚盘面私改）；render 通道单写者；cutover=7f0beccac4 | `docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml`（册头 unique_key/entry_schema） | yaml 303 条 vs PG active 302 行=投影在途窗口实测 ✅ |
-| D16-N7 | 消费方索引 | 谁在消费裁定：审批通道（_ruling_channel：active+expires_at+approved_paths）、reference 类 gates、取号分母、对齐清单挂轴 | `src/zephyr/gov_enforcement/commit_gates/approval_resolver.py:266`；`scripts/governance/next_ruling_id.py --next` | 裁定#461 授权通道消费实证（本包批①过闸）✅ |
+| D16-N7 | 消费方索引 | 谁在消费裁定：审批通道（_ruling_channel：active+expires_at+approved_paths）、reference 类 gates、取号分母、对齐清单挂轴。消费方运行宿主=GOMAP-001 域 git_commit_gateway 门链/图11 D11-C05 执行面；`cross_map_edge: {to: GOMAP-001, basis: 裁定#486①}` `feeds_map: GOMAP-001`（交接面处方B-16） | `src/zephyr/gov_enforcement/commit_gates/approval_resolver.py:266`；`scripts/governance/next_ruling_id.py --next` | 裁定#461 授权通道消费实证（本包批①过闸）✅ |
 | D16-N8 | 取代链 | superseded_by 单向指针 + related_rulings 双向关联，议题-裁定互溯 | `ruling_registry.yaml` 铁律#9/#10 注；`next_ruling_id.py` 语义（ruling_id 键锚定防 related_rulings 误报） | 实测 5 条取代链：#165→#ARCH-016/#199→#200/#201→#ARCH-045/#265→#266/#468→#474 ✅ |
 | D16-N9 | 复活禁令 | 编号不回收、跳号永不复用；复活=新号+related_rulings 指回（跨实例边）；撞号=void 墓碑 | `scripts/governance/next_ruling_id.py`（释放≠可复用）；BT-201 撞号事故制度化（裁定#485 ①） | 占号文件无 TTL 回收+CONFLICT_DUPLICATE 409 机械拒 ✅ |
 

@@ -9,7 +9,7 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
-generated_at: '2026-10-04T13:30:00+08:00'
+generated_at: '2026-10-09T07:48:19+08:00'
 ssot_note_zh: '骨架人工语义层（环节名/decision_question/laws/boundary/边/反馈环/L2 退出码处方列）契约真源=docs/_working/map_build/fig11_delivery/00_skeleton.md（§6
   封顶 28 环节）+ 八本作业簿（exec_evidence 口径真源=各簿 §末-3 实查命令）；machine_facts 层每次全量重扫可执行真相源（门禁册/reconciler 登记面/四脚本 AST 面/队列四态目录只读计数/退出码分发表与生产者构造/骨架三态列/depgraph
   在册 module_id 投影面），禁手工维护。节点只存稳定标识符与指针，禁复制条目正文（INV-1）。
@@ -204,20 +204,20 @@ exit_codes:
 gate_cluster:
   in_process:
     registry: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
-    total_gates_field: 105
-    entries_scanned: 105
+    total_gates_field: 106
+    entries_scanned: 106
     files_trigger_entries: 25
     note_zh: priority 真源在代码 GateSpec、own_scope 册面无此字段（作业簿 05 溢出 O-C12）
   shell:
     registry: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
-    total_gates_field: 187
-    entries_scanned: 187
+    total_gates_field: 190
+    entries_scanned: 190
     by_enforcement_channel: &id004
-      commit-gate: 97
+      commit-gate: 100
       commit-gateway: 2
       manual: 39
       pre-commit: 49
-    own_scope_true_entries: 60
+    own_scope_true_entries: 61
     generated_by: scripts/governance/generators/generate_gate_registry.py
     note_zh: 字段值与条目实数双口径并列（total_gates 落后于列表=册内漂移，由生成器 --check 管）
   two_channel_overlap_note_zh: in-process ∩ pre-commit 实测=1 台（GATE-VOCAB 双执行），生成器注释「交集 0」已过期（作业簿 05 溢出 O-C10）
@@ -1005,11 +1005,11 @@ nodes:
     gate_registry_facts: &id006
       registry: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
       exists: true
-      total_gates_field: 105
-      entries_scanned: 105
+      total_gates_field: 106
+      entries_scanned: 106
       generated_by: null
       cluster_by_channel:
-        unspecified: 105
+        unspecified: 106
       own_scope_true_entries: 0
       files_trigger_entries: 25
   purpose_tags:
@@ -1155,17 +1155,17 @@ nodes:
     gate_registry_facts: &id007
       registry: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
       exists: true
-      total_gates_field: 187
-      entries_scanned: 187
+      total_gates_field: 190
+      entries_scanned: 190
       generated_by: scripts/governance/generators/generate_gate_registry.py
       cluster_by_channel: *id004
-      own_scope_true_entries: 60
-      files_trigger_entries: 67
+      own_scope_true_entries: 61
+      files_trigger_entries: 68
   purpose_tags:
     「宁可留错不可删错」: 5
     「文件在谁手里」: 1
     「新文件上户口」: 7
-    「账本必须对得上」: 22
+    「账本必须对得上」: 25
     「代码的底线体面」: 11
     「别拿假地址骗我」: 2
     「别把钥匙留在门口」: 2
@@ -1177,14 +1177,14 @@ nodes:
   - MEM#3
   - RV1#缺口(F6)
   trigger_facts:
-    gates: 53
+    gates: 56
     total_triggers_30d: 2162
     zero_trigger_gates:
     - GATE-DETECT-GIT-DANGEROUS
     - GATE-DETECT-SHELL-DANGEROUS
     - GATE-DETECT-PERMANENT-DELETION
   consumers:
-    gates: 53
+    gates: 56
     gates_with_consumers: 48
     sample_consumers:
     - .pre-commit-config.yaml
@@ -1527,16 +1527,16 @@ nodes:
     queue_state_dirs: &id008
       pending:
         exists: true
-        item_count: 20
+        item_count: 7
       processing:
         exists: true
-        item_count: 1
+        item_count: 4
       done:
         exists: true
-        item_count: 483
+        item_count: 584
       dead:
         exists: true
-        item_count: 693
+        item_count: 1363
   purpose_tags: {}
   casebooks:
   - AP#域三
@@ -2038,8 +2038,8 @@ counts:
     wired: 22
   blood:
     purpose_labels: 12
-    gates_mounted: 190
-    addendum_gates: 8
+    gates_mounted: 193
+    addendum_gates: 11
     zero_trigger_candidate_gates: 10
     casebooks_books: 6
     nodes_with_casebooks: 28
@@ -2063,7 +2063,7 @@ counts:
         🔨: 2
     module_id_scan:
       source: docs/03_modules/path_ownership_map.yaml
-      claims_scanned: 8063
+      claims_scanned: 7813
       nodes_with_module_id: 28
       nodes_with_module_ref: 28
       nodes_null_module_id: 2

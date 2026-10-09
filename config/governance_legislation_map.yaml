@@ -229,11 +229,11 @@ forbidden_edges:
   source_anchors:
   - scripts/governance/next_ruling_id.py
 counts:
-  entries_total: 305
-  ledger_rows_active: 302
+  entries_total: 312
+  ledger_rows_active: 311
   ledger_rows_retired: 43
   by_status:
-    active: 282
+    active: 291
     decided: 13
     draft: 1
     superseded: 4

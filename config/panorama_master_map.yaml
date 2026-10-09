@@ -11,8 +11,8 @@ ssot_note_zh: >-
   nodes=alignment_checklist §3 全景图家族全集（13 正式+2 待转正），每节点 file 指向该图
   §3 在册真源或其对齐工具（PG 真源图 file=对齐工具脚本，YAML 真源图 file=图 yaml 本体）；
   节点 map_id 与 yaml 真源 frontmatter map_id 逐字一致（TDMAP-001/DSCMAP-012/GOMAP-001
-  为册面实名）。横纵轴判据=宪章 §8.1 两轴分类+battle_map 裁定#483。图16（治理立法）未立，
-  「治理立法→GOMAP10」条件边暂不入册，待该图裁定并入后随批增补。
+  为册面实名）。横纵轴判据=宪章 §8.1 两轴分类+battle_map 裁定#483。图16（治理立法）已立，
+  条件边「治理立法→GOMAP10」已随裁定#486 ①激活入册（2026-10-08 交接面处方B-pan更正）。
 nodes:
 - map_id: depgraph
   name_zh: 依赖全景图

@@ -73,7 +73,7 @@ owner: st-mapbuild-20260924
 
 | 环节编号 | 环节名 | 车道 | 状态 | 真源映射（文件:行 或 命令） | 子环节数估计 |
 |---|---|---|---|---|---|
-| D11-S01 | 会话冷启动与开班检查 | 会话 | ✅ | `phase_manager.py:248`；`.runtime/session_registry.json` 在盘（实查 2026-09-24）；AGENTS §0 冷启动序列 | ≈5 |
+| D11-S01 | 会话冷启动与开班检查 | 会话 | ✅ | `upstream_map_ref: construction_workflow_map`（Step10 交界：D14 五环节 handoff_to 本图 14 环节，交接面处方C4）； `phase_manager.py:248`；`.runtime/session_registry.json` 在盘（实查 2026-09-24）；AGENTS §0 冷启动序列 | ≈5 |
 | D11-S02 | worktree 分配与池化 | 会话 | ✅ | `session_worktree.py:2607 session_worktree_start`；`worktree_pool.py:277 lease`（P3.3 池化+prefetch）；本会话工作目录=`.aidrafts/st-mapbuild-20260924` 即活体 | ≈6 |
 | D11-S03 | 会话心跳与活性判定 | 会话 | ✅ | `heartbeat_daemon.py:39-40`（30s 刷新+jsonl 审计）；`session_concurrency.py:148`（90s 新鲜窗+1800s idle 自退） | ≈4 |
 | D11-S04 | 改前 claim（文件锁+基线快照） | 会话 | ✅ | `lock_files.py:549 cmd_acquire`；`git_commit_gateway.py:1257 claim_files`（基线=首次 claim 快照，tracker #92）；`git_commit.py:476 --claim-only 前移协议` | ≈6 |

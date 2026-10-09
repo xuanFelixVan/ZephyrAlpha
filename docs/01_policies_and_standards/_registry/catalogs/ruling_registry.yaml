@@ -4476,3 +4476,55 @@ entries:
   superseded_by: ''
   adjudicator: st-chiefc-20261009
   owner_sign: Owner 2026-10-09 回批「批」（A1 修宪+A2-A5 全批，见《Owner呈批菜单_重路由版》批复记录）
+
+- ruling_id: "裁定#496"
+  title: 死信清偿 G1+G3 交总队并袋统一三方合并单批落地（Owner 2026-10-09 批文「40 件全批 A」，授权链随首组落地袋同 commit 原子）
+  date: '2026-10-09'
+  category: 治理
+  status: active
+  summary: |-
+    st-chiefc-20261009（BU 车道）依 Owner 2026-10-09 批文「40 件全批 A：G1+G3 交总队并袋，
+    其余专车直投；G9/G10 也 A」（deadcure 专案 10_owner_menu_deadcure40.md 批文记录），将
+    G1 20 袋+G3 4 袋+B-1（b-606 分支 c5024b0e+21fcdcc2）统一三方合并单批落地（禁分批零散投）。
+    【①G1 SPM 手术面】config/strategy_production_map.yaml 三方合并（base=4e53c6698 ×
+    ours=工作树 G1 终版袋 c4f96ddcf1「图手术终版」× theirs=分支 G3 面 T7 归一+C2 handoffs）
+    merge-file 0 冲突，FAC-E1F 双保去重后 validate_strategy_production_map PASS nodes=341
+    edges=17；docs/03_modules/path_ownership_map.yaml 取 ownership 册再生成版（aaec9b25e9，
+    与 -0009 袋字节全等）。
+    【②G3 六图】data_supply_chain/governance_operations/panorama_master/fig11+fig16 skeleton
+    直落分支版（袋 blob 与分支字节全等收敛）；governance_legislation 生成器回灌（账本 active=291，
+    validator PASS）；dev_delivery 采生成器重放（机生权威，validator PASS nodes=30 edges=31）。
+    【③B-1 L1 成品】boot_hooks.py（T8a tech_stack 自检，HEAD 自 merge-base 未动=纯快进）+
+    budget_engine.py（R12 聚合不变式 +36/-0 纯超集）+tests 两件（17+3 用例），pytest 20 passed。
+    【④D6 无主变更】st-fc-spm 不在 session_registry（会话死），其工作树未暂存面（SPM 终版/
+    dev_delivery 12:00 终刷/ownership 册）按无主变更恢复优先全部并入零丢弃；其 index 中间态经
+    相似度判读为同族演进中间版（被终版超集覆盖，存档 merge_ws）。
+    【⑤对拍留证+残留】交割包=docs/_working/deadcure_campaign/11_handoff_G1G3.md（逐件
+    blob_ref+sha256），对拍表=.runtime/tmp/st-chiefc-20261009/bu_merge_triage.md+数据 JSON
+    （24 袋逐件三方哈希）。残留两项：DSC 语义注解层为袋面手改痕迹生成器重放会剥离（需回灌
+    fig12 skeleton 真源）；panorama B-pan 注记更正需回灌 generator master 输入。
+    净零声明：零新 gate/零新注册表/零新模块（测试两件为分支成品随批）；creation_token 登记 1 条。
+  evidence: 10_owner_menu_deadcure40.md 批文记录「40 件全批 A：G1+G3 交总队并袋，其余专车直投；G9/G10 也 A」+ 24 死信袋逐件 blob sha256 三方对拍（bu_merge_triage_data.json）+ validators（SPM nodes=341/DSC nodes=43/dev_delivery nodes=30/legislation 零 error）+ pytest 20 passed
+  affected_files:
+  - config/strategy_production_map.yaml
+  - config/data_supply_chain_map.yaml
+  - config/dev_delivery_map.yaml
+  - config/governance_legislation_map.yaml
+  - config/governance_operations_map.yaml
+  - config/panorama_master_map.yaml
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md
+  - docs/_working/map_build/fig16_legislation/00_skeleton.md
+  - src/zephyr/trading/boot_hooks.py
+  - src/zephyr/governance/ops_governance/budget_engine.py
+  - tests/trading/test_boot_hooks_selfcheck.py
+  - tests/governance/ops_governance/test_budget_recover_invariant.py
+  - docs/03_modules/path_ownership_map.yaml
+  - docs/_working/deadcure_campaign/11_handoff_G1G3.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: ['裁定#495']
+  superseded_by: ''
+  adjudicator: st-chiefc-20261009
+  owner_sign: Owner 2026-10-09 批文「40 件全批 A：G1+G3 交总队并袋，其余专车直投；G9/G10 也 A」（经死信清偿专案批文记录通道，本裁定=授权链原子登记）
