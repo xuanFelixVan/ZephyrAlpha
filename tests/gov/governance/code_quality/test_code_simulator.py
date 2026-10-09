@@ -1,0 +1,48 @@
+# [A_test] module_id: MOD-GOV_code_simulator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [MODULE] tests.test_code_simulator
+# [DOMAIN] D_GOVERNANCE
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [CONSUMERS]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=TEST-MOD-INF-017-TEST_CODE_SIMULATOR | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
+from zephyr.gov_code_quality.code_dedup.code_simulator import CodeSimulator
+
+
+class TestCodeSimulator:
+    def test_instantiation(self):
+        sim = CodeSimulator()
+        assert sim is not None
+
+    def test_load_sequence(self):
+        sim = CodeSimulator()
+        base = "x = 1"
+        steps = [("replace", "x = 2")]
+        sim.load_sequence(base, steps)
+        assert len(sim.steps) == 1
+
+    def test_run_returns_result(self):
+        sim = CodeSimulator()
+        base = "x = 1"
+        steps = [("replace", "x = 2")]
+        sim.load_sequence(base, steps)
+        result = sim.run()
+        assert isinstance(result, list)
+
+    def test_get_final_returns_str(self):
+        sim = CodeSimulator()
+        sim.load_sequence("x = 1", [("replace", "x = 2")])
+        sim.run()
+        result = sim.get_final()
+        assert isinstance(result, str)
+
+    def test_load_empty_sequence(self):
+        sim = CodeSimulator()
+        sim.load_sequence("x = 1", [])
+        result = sim.run()
+        assert isinstance(result, list)

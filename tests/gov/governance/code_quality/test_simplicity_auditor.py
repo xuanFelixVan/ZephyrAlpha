@@ -1,0 +1,33 @@
+# [A_test] module_id: MOD-GOV_simplicity_auditor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [MODULE] tests.test_simplicity_auditor
+# [DOMAIN] D_GOVERNANCE
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [CONSUMERS]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=TEST-MOD-INF-017-TEST_SIMPLICITY_AUDITOR | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
+from zephyr.gov_code_quality.code_dedup.simplicity_auditor import (
+    SimplicityAuditor,
+    SimplicityReport,
+)
+
+
+class TestSimplicityAuditor:
+    def test_instantiation(self):
+        auditor = SimplicityAuditor()
+        assert auditor is not None
+
+    def test_audit(self):
+        auditor = SimplicityAuditor()
+        result = auditor.audit(engine_line_count=1000, bugs_found=2, false_positives_last_30d=5)
+        assert isinstance(result, SimplicityReport)
+
+    def test_audit_empty(self):
+        auditor = SimplicityAuditor()
+        result = auditor.audit()
+        assert isinstance(result, SimplicityReport)
