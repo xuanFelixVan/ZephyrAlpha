@@ -1,0 +1,75 @@
+# [A_config] module_id=CFG-ASSERTION-CASES-001 | layer=config | stability=experimental | safety=L | ai_autonomy=ai_modifiable
+# 资产状态断言事故案卷库实体台账（CASEBOOK-010，裁定#500 开册）——case_id 从 0 起。
+# 收录：负/正存在断言失实案（规划/盘点/排产交付物中的状态断言事故），按 F4 挖矿 SOP §7.5 纪律面运转。
+schema_version: "1.0.0"
+doc_type: register
+ttl: task_bound
+title: "资产状态断言事故案卷库（asset assertion case ledger，CASEBOOK-010 实体台账）"
+status: active
+version: "1.0.0"
+date: "2026-10-09"
+owner: ZephyrAlpha-Owner
+governing_sop: docs/01_policies_and_standards/sop/library_sop/offzone_retrieval_boundary_sop.md
+cases:
+  - case_id: 0
+    case_no: "ASSERT-2026-0001"
+    title: GPU 摊销已落地被规划轮误报"未做"（负存在断言失实首案）
+    date: '2026-10-09'
+    status: closed_treatroot_landed
+    案由: >-
+      战役甲规划轮（2026-10-09）盘点算力现状时断言"GPU 摊销未做"，而实况=P1 接线基准
+      与 L1 等价去重均已落地 dev（c8da8a8056/cf16fa43fd，实测 1.78-2.39x），图书馆对
+      docs/_working/gpu_rewrite 全盲（场外区不入馆），规划轮凭馆查零命中+记忆作断言。
+    根因四层:
+      表层: 规划轮 AI 凭记忆作负存在断言，未做任何正查
+      流程层: 断言无证据义务；馆索引被当作存在性唯一裁判
+      制度层: 场外区按梵蒂冈条款不入馆（blueprint 场外区条款）但检索边界未登记——"馆查不到"被误读为"不存在"（2026-09-22 起系统性盲面 2816 件）
+      工具层: 图书馆前门无 git log 通道（F1 前为零），正查成本高到没人查
+    治本五件:
+      - F1: src/zephyr/library/lookup.py 新增 state 子命令（三源证据包一条命令；本战役 F1 件）
+      - F2: docs/01_policies_and_standards/sop/library_sop/offzone_retrieval_boundary_sop.md（场外区检索边界登记，裁决=b 案边界登记非重收录）
+      - F3: trae_065 v1.1.0 触发面增 asset_state_assertion（裁定#499）
+      - F4: mining_sop_policy v1.7.0 §7.5 资产状态断言纪律
+      - F5: 本案入册（CASEBOOK-010 case 0）+ search_space_prereg 回填字段指针化（与 W2 标定回填同批）
+    复测判据: |-
+      单命令复现"GPU 摊销做了吗"：python -m zephyr.library.lookup state "GPU 摊销"
+      必须四项命中=①commit c8da8a8056 ②commit cf16fa43fd
+      ③docs/_working/gpu_rewrite/p1_wiring_benchmark.md
+      ④config/search_space_prereg.yaml 的 L2 挂账便签（resonance_per_cell_seconds_measured）。
+      四项缺一即返工。复测纪律：每季审计抽查一条负存在断言验其证据指针（挖矿 SOP §7.5）。
+    evidence:
+      - docs/_working/examcard_campaign/01_w1_f06_root_cause.md
+      - "git log --all --oneline --grep 'GPU' （c8da8a8056/cf16fa43fd 命中）"
+      - docs/01_policies_and_standards/sop/library_sop/offzone_retrieval_boundary_sop.md
+  - case_id: 1
+    case_no: "ASSERT-2026-0002"
+    title: 热册「被抹 56 条」由双点快照误判（正存在断言失实第二录，复原未遂）
+    date: '2026-10-09'
+    status: closed_retracted_triage_first
+    归属: dexp 战役（st-dexp-20261009）本班自犯自报；Owner 令改 triage-first 后撤回
+    案由: >-
+      2026-10-09 收尾班核账时，我用两个单点快照（HEAD 条目数 vs 主区工作区条目数）断言
+      module_translation_registry「主区比 HEAD 少 56 条／净删 294 行，谁提交就删 56 条」，
+      并拟以 `git checkout HEAD` 复原热册。Owner 裁定改为 triage-first（禁盲复原，-47 可能含
+      活会话在途 token）→ 三向对账（HEAD／git index／盘面）实测 14,201／14,203／14,203，
+      缺失 0、多出 2 且两枚都属活跃会话的在途条目 ⇒ 我的 56/294 是两次单点快照正好撞在
+      他队写入窗口上的测量伪影；那条复原命令若执行会删掉 2 枚活 token（＝归属篡改级事故）。
+    根因四层:
+      表层: 用单点快照差作「件消失」的证据，且两次读数之间未冻结写入面
+      流程层: 「判损→复原」没有强制的 triage-first 闸，本次靠 Owner 拦下而非流程自拦
+      制度层: 主区工作树是多会话混合池且 agent 写文件即自动 git add（在册事实），
+        故任何「盘面 vs HEAD」差分天然是竞态读数，不具备断言力
+      工具层: 键集合差自证配方只接在「改册」路径上，「判册损」路径仍用行数差——同一把尺没覆盖两个入口
+    治本四件:
+      - "C1: 判册损一律三向对账（HEAD／index／盘面）＋键集合差，禁用 numstat 行数差"
+      - "C2: 报「件消失」前三事（qid 全状态目录＋影子根＋自改名 tmp 的 find；计数变动先对表最老存活件时间以排除 TTL/compaction 这类设计内收缩；判落地只认 git show HEAD）——2026-09-27 已立案，本案是其正向复证"
+      - "C3: 复原类命令（以 HEAD 版覆盖盘面）按破坏性操作对待，未做键集合差自证不得执行也不得呈批"
+      - "C4: 本案入册（CASEBOOK-010 case 1），与 case 0 同册成双"
+    复测判据: |-
+      三向对账一条命令可复算：对同一册分别取 HEAD／index／盘面三把键集合，
+      要求 缺失=HEAD−盘面=0 且 多出=盘面−HEAD 的每条都能指到活跃会话 claim；
+      任一天实测出现 缺失>0 且多出全属死会话，则本案判据不足以解释损册，须另立真损案。
+    evidence:
+      - docs/_working/dexp_campaign/99_delivery.md
+      - docs/_working/dexp_campaign/00_finding_and_gate.md
+      - "git log --oneline -- docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml"
