@@ -3395,6 +3395,13 @@ capabilities:
   - sync_database_nodes
   description: YAML 真源 → depgraph PostgreSQL readonly 表单向同步脚本。同步 9 张 readonly 表 （gates/field_vocabularies/registries/cross_registry_rules/hard_boundaries/ business_streams/infrastructure_components/model_capabilities/contracts）。 禁止反向（DB→YAML），禁止手写 DB 表（readonly trigger 硬阻断，需 disable_readonly_triggers 临时禁用）。ARCH-046 治本加固（2026-07-04）： sync_infrastructure_registry() 函数补 DELETE 逻辑——自动清理 YAML 中已删除 但 DB 残留的孤儿墓碑条目（防墓碑残留幻觉源）。解决发现性：新 AI 搜 "YAML 同步 DB/infrastructure_components 同步/墓碑清理" 可定位真源。 解决防重建：check_file_canonical() 反查阻止新 AI 重建同步脚本。 关联规则：ARCH-046（数据库节点全景图登记三铁律）。 ARCH-052 扩展（2026-07-06）：新增 sync_aggregate_nodes() 函数（P7 优先级）， 从 4 个 registry.yaml（rule_enforcement/scripts/test_suite/rule_registry_collection） UPSERT 聚合节点到 nodes 表，作为 depgraph 重建后的 YAML→DB 恢复通道。 sync_dataflow_registry() DELETE 加 WHERE design_maturity != 'design' 条件， 保护 apply_dataflowgraph --add-design-* 写入的设计态数据。解决发现性：新 AI 搜 "聚合节点同步/aggregate_nodes 恢复/dataflow 设计态保护" 可定位真源。 关联规则：ARCH-052（聚合节点模式治理配置对象过细）。 ARCH-053 扩展（2026-07-06）：新增 sync_interface_contracts() 函数（P8 优先级）， 从 interface_contract_registry.yaml UPSERT 接口契约到 interface_contracts 表 （对标 Backstage API kind，接口集级粒度）。新增 sync_database_nodes() 函数 （P8 优先级），从 infrastructure_registry.yaml 的 relational_db/vector_db 条目 UPSERT database 节点到 nodes 表（补齐 depgraph 缺失的数据库节点）。 解决发现性：新 AI 搜"接口契约同步/database 节点同步" 可定位真源。 关联规则：ARCH-053（API 契约层补齐 + database 节点 + AI 可发现性）。
   canonical_override: scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+chiefc-99-delivery-20261009:
+- note: 总施工战役 99_delivery 终报（chiefc_campaign 目录载体件）
+  path: docs/_working/chiefc_campaign/99_delivery.md
+  token: chiefc-99-delivery-20261009
+  format: .md
+  created_by: st-chiefc-20261009
+  merge_evaluation: "G1-1 跨域不同对象不并另立：本战役终报载体，chiefc_campaign 目录专属（G 车道台账同目录不同件），无既有资产可承接"
 creation_tokens:
 - file: .github/copilot-instructions.md
   token: circ-a4-copilot-instructions-20260930
@@ -5058,6 +5065,21 @@ creation_tokens:
   capability: t1-handover-verdict
   created_by: st-nightsweep-sw4-20260929
   merge_evaluation: "哨兵机读判决件（t1_t2_handover 原子产出），非新真源"
+- file: data/strategy_intake/grid_20260926-024947/t2_handover_claim.yaml
+  token: t2-subspace-t2-handover-claim-20261008
+  capability: t2_subspace
+  created_by: st-chiefc-20261009
+  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接"
+- file: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  token: t2-subspace-t2-subspace-20261008
+  capability: t2_subspace
+  created_by: st-chiefc-20261009
+  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接"
+- file: data/strategy_intake/grid_20260926-024947/t2_subspace_meta.yaml
+  token: t2-subspace-t2-subspace-meta-20261008
+  capability: t2_subspace
+  created_by: st-chiefc-20261009
+  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接"
 - file: data/strategy_intake/grid_20260929-040003/manifest.csv
   token: t1-repair-run-a-manifest-20260928
   capability: t1-repair-run-a
@@ -5751,6 +5773,11 @@ creation_tokens:
   token: index-navigation-01-policies-and-standards-sop-data-ops-sop-20260919
   capability: index_navigation
   created_by: st-final3-20260919
+- file: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
+  token: gov-adjudication-routing-adjudication-routing-policy-20261008
+  capability: gov-adjudication-routing
+  created_by: st-matrix-20261007
+  merge_evaluation: "裁定路由政策：三公理+八类路由+两轨制（L3 裁定引擎输入）"
 - file: docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md
   token: constitution-legacy-v1-20260912
   capability: gate_commit_gw
@@ -6238,6 +6265,11 @@ creation_tokens:
   capability: chainpile-metaq-index
   created_by: st-ffchief-20261001
   merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/MOD-SELL-020/blueprint.md
+  token: deadcure-campaign-blueprint-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
 - file: docs/03_modules/_cross_layer/cd_pipeline/blueprint.md
   note: MOD-CD-001 设计蓝图——Shadow Canary 灰度发布基建架构设计文档
   token: auto-cd-pipeline-bp-20260803
@@ -7401,6 +7433,1036 @@ creation_tokens:
   token: index-navigation-03-modules-domain-backtest-decay-monitor-20260919
   capability: index_navigation
   created_by: st-final3-20260919
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-01__comparison.yaml
+  token: exam-card-tdm-e-l0-01--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-02__comparison.yaml
+  token: exam-card-tdm-e-l0-02--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-03__comparison.yaml
+  token: exam-card-tdm-e-l0-03--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-04__comparison.yaml
+  token: exam-card-tdm-e-l0-04--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0__comparison.yaml
+  token: exam-card-tdm-e-l0--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-C-L1__comparison.yaml
+  token: exam-card-tdm-c-l1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__ablation.yaml
+  token: exam-card-tdm-e-l1-agg--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0-1__calibration.yaml
+  token: exam-card-tdm-e-l1-s0-1--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration.yaml
+  token: exam-card-tdm-e-l1-s0--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S1__calibration.yaml
+  token: exam-card-tdm-e-l1-s1--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration.yaml
+  token: exam-card-tdm-e-l1-s2--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration.yaml
+  token: exam-card-tdm-e-l1-s3--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration.yaml
+  token: exam-card-tdm-e-l1-s4--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration.yaml
+  token: exam-card-tdm-e-l1-s5--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison.yaml
+  token: exam-card-tdm-e-l1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-C-L2__comparison.yaml
+  token: exam-card-tdm-c-l2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-1__comparison.yaml
+  token: exam-card-tdm-e-l2-01-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-2__comparison.yaml
+  token: exam-card-tdm-e-l2-01-2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-3__comparison.yaml
+  token: exam-card-tdm-e-l2-01-3--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-4__comparison.yaml
+  token: exam-card-tdm-e-l2-01-4--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-5__ablation.yaml
+  token: exam-card-tdm-e-l2-01-5--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01__comparison.yaml
+  token: exam-card-tdm-e-l2-01--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__comparison.yaml
+  token: exam-card-tdm-e-l2-02-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-2__comparison.yaml
+  token: exam-card-tdm-e-l2-02-2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02__comparison.yaml
+  token: exam-card-tdm-e-l2-02--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-03-1__comparison.yaml
+  token: exam-card-tdm-e-l2-03-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-03__comparison.yaml
+  token: exam-card-tdm-e-l2-03--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04-1__comparison.yaml
+  token: exam-card-tdm-e-l2-04-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04-2__comparison.yaml
+  token: exam-card-tdm-e-l2-04-2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04__ablation.yaml
+  token: exam-card-tdm-e-l2-04--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-1__comparison.yaml
+  token: exam-card-tdm-e-l2-05-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__comparison.yaml
+  token: exam-card-tdm-e-l2-05-2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05__comparison.yaml
+  token: exam-card-tdm-e-l2-05--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-1__comparison.yaml
+  token: exam-card-tdm-e-l2-06-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-2__comparison.yaml
+  token: exam-card-tdm-e-l2-06-2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-3__comparison.yaml
+  token: exam-card-tdm-e-l2-06-3--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06__comparison.yaml
+  token: exam-card-tdm-e-l2-06--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07-1__comparison.yaml
+  token: exam-card-tdm-e-l2-07-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07__comparison.yaml
+  token: exam-card-tdm-e-l2-07--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-08__comparison.yaml
+  token: exam-card-tdm-e-l2-08--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-1__comparison.yaml
+  token: exam-card-tdm-e-l2-09-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-2__comparison.yaml
+  token: exam-card-tdm-e-l2-09-2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__comparison.yaml
+  token: exam-card-tdm-e-l2-09--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-10__comparison.yaml
+  token: exam-card-tdm-e-l2-10--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2__comparison.yaml
+  token: exam-card-tdm-e-l2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-C-L3__comparison.yaml
+  token: exam-card-tdm-c-l3--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-01__comparison.yaml
+  token: exam-card-tdm-e-l3-01--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-02__comparison.yaml
+  token: exam-card-tdm-e-l3-02--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-1__comparison.yaml
+  token: exam-card-tdm-e-l3-03-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-2__comparison.yaml
+  token: exam-card-tdm-e-l3-03-2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-3__ablation.yaml
+  token: exam-card-tdm-e-l3-03-3--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03__ablation.yaml
+  token: exam-card-tdm-e-l3-03--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-04__comparison.yaml
+  token: exam-card-tdm-e-l3-04--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-05__comparison.yaml
+  token: exam-card-tdm-e-l3-05--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-06__comparison.yaml
+  token: exam-card-tdm-e-l3-06--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-1__comparison.yaml
+  token: exam-card-tdm-e-l3-07-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-2__comparison.yaml
+  token: exam-card-tdm-e-l3-07-2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-3__comparison.yaml
+  token: exam-card-tdm-e-l3-07-3--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07__comparison.yaml
+  token: exam-card-tdm-e-l3-07--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-08__ablation.yaml
+  token: exam-card-tdm-e-l3-08--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-09__ablation.yaml
+  token: exam-card-tdm-e-l3-09--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-10__comparison.yaml
+  token: exam-card-tdm-e-l3-10--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-1__comparison.yaml
+  token: exam-card-tdm-e-l3-11-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-2__comparison.yaml
+  token: exam-card-tdm-e-l3-11-2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11__comparison.yaml
+  token: exam-card-tdm-e-l3-11--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-1__comparison.yaml
+  token: exam-card-tdm-e-l3-12-1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-2__comparison.yaml
+  token: exam-card-tdm-e-l3-12-2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__comparison.yaml
+  token: exam-card-tdm-e-l3-12-3--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-4__comparison.yaml
+  token: exam-card-tdm-e-l3-12-4--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12__comparison.yaml
+  token: exam-card-tdm-e-l3-12--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3__comparison.yaml
+  token: exam-card-tdm-e-l3--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-C-L4__comparison.yaml
+  token: exam-card-tdm-c-l4--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-01__comparison.yaml
+  token: exam-card-tdm-e-l4-01--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-02__comparison.yaml
+  token: exam-card-tdm-e-l4-02--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-03__comparison.yaml
+  token: exam-card-tdm-e-l4-03--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-04__comparison.yaml
+  token: exam-card-tdm-e-l4-04--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-05__comparison.yaml
+  token: exam-card-tdm-e-l4-05--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-06__comparison.yaml
+  token: exam-card-tdm-e-l4-06--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-07__ablation.yaml
+  token: exam-card-tdm-e-l4-07--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-08__comparison.yaml
+  token: exam-card-tdm-e-l4-08--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-09__shadow.yaml
+  token: exam-card-tdm-e-l4-09--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-10__comparison.yaml
+  token: exam-card-tdm-e-l4-10--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-11__comparison.yaml
+  token: exam-card-tdm-e-l4-11--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-12__comparison.yaml
+  token: exam-card-tdm-e-l4-12--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-13__shadow.yaml
+  token: exam-card-tdm-e-l4-13--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-14__comparison.yaml
+  token: exam-card-tdm-e-l4-14--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4__comparison.yaml
+  token: exam-card-tdm-e-l4--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration.yaml
+  token: exam-card-tdm-e-l9-a01--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration.yaml
+  token: exam-card-tdm-e-l9-a02--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A03__calibration.yaml
+  token: exam-card-tdm-e-l9-a03--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A04__calibration.yaml
+  token: exam-card-tdm-e-l9-a04--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A05__calibration.yaml
+  token: exam-card-tdm-e-l9-a05--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration.yaml
+  token: exam-card-tdm-e-l9-a06--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A07__calibration.yaml
+  token: exam-card-tdm-e-l9-a07--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A08__calibration.yaml
+  token: exam-card-tdm-e-l9-a08--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A09__calibration.yaml
+  token: exam-card-tdm-e-l9-a09--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A10__calibration.yaml
+  token: exam-card-tdm-e-l9-a10--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A11__calibration.yaml
+  token: exam-card-tdm-e-l9-a11--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A12__calibration.yaml
+  token: exam-card-tdm-e-l9-a12--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A13__calibration.yaml
+  token: exam-card-tdm-e-l9-a13--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A14__calibration.yaml
+  token: exam-card-tdm-e-l9-a14--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A15__calibration.yaml
+  token: exam-card-tdm-e-l9-a15--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A16__calibration.yaml
+  token: exam-card-tdm-e-l9-a16--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A17__calibration.yaml
+  token: exam-card-tdm-e-l9-a17--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-AGG__ablation.yaml
+  token: exam-card-tdm-e-l9-agg--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B01__calibration.yaml
+  token: exam-card-tdm-e-l9-b01--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B02__calibration.yaml
+  token: exam-card-tdm-e-l9-b02--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B03__calibration.yaml
+  token: exam-card-tdm-e-l9-b03--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B04__calibration.yaml
+  token: exam-card-tdm-e-l9-b04--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B05__calibration.yaml
+  token: exam-card-tdm-e-l9-b05--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B06__calibration.yaml
+  token: exam-card-tdm-e-l9-b06--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B07__calibration.yaml
+  token: exam-card-tdm-e-l9-b07--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B08__calibration.yaml
+  token: exam-card-tdm-e-l9-b08--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B09__calibration.yaml
+  token: exam-card-tdm-e-l9-b09--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B10__calibration.yaml
+  token: exam-card-tdm-e-l9-b10--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-C01__calibration.yaml
+  token: exam-card-tdm-e-l9-c01--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-C02__calibration.yaml
+  token: exam-card-tdm-e-l9-c02--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-C03__calibration.yaml
+  token: exam-card-tdm-e-l9-c03--calibration-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-D1__comparison.yaml
+  token: exam-card-tdm-e-l9-d1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-D2__comparison.yaml
+  token: exam-card-tdm-e-l9-d2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-E1__comparison.yaml
+  token: exam-card-tdm-e-l9-e1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-E2__comparison.yaml
+  token: exam-card-tdm-e-l9-e2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G1__comparison.yaml
+  token: exam-card-tdm-e-l9-g1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G2__comparison.yaml
+  token: exam-card-tdm-e-l9-g2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G3__comparison.yaml
+  token: exam-card-tdm-e-l9-g3--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G4__comparison.yaml
+  token: exam-card-tdm-e-l9-g4--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G5__comparison.yaml
+  token: exam-card-tdm-e-l9-g5--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V1__comparison.yaml
+  token: exam-card-tdm-e-l9-v1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V2__comparison.yaml
+  token: exam-card-tdm-e-l9-v2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V3__comparison.yaml
+  token: exam-card-tdm-e-l9-v3--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-Z1__shadow.yaml
+  token: exam-card-tdm-e-l9-z1--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-Z2__shadow.yaml
+  token: exam-card-tdm-e-l9-z2--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/LROOT/TDM-E-FLOW__ablation.yaml
+  token: exam-card-tdm-e-flow--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-01__comparison.yaml
+  token: exam-card-tdm-x-s1-01--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-02__comparison.yaml
+  token: exam-card-tdm-x-s1-02--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-03__comparison.yaml
+  token: exam-card-tdm-x-s1-03--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-04__comparison.yaml
+  token: exam-card-tdm-x-s1-04--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-05__ablation.yaml
+  token: exam-card-tdm-x-s1-05--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-06__comparison.yaml
+  token: exam-card-tdm-x-s1-06--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1__comparison.yaml
+  token: exam-card-tdm-x-s1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-01__comparison.yaml
+  token: exam-card-tdm-x-s2-01--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-02__comparison.yaml
+  token: exam-card-tdm-x-s2-02--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-03__comparison.yaml
+  token: exam-card-tdm-x-s2-03--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-04__comparison.yaml
+  token: exam-card-tdm-x-s2-04--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-05__comparison.yaml
+  token: exam-card-tdm-x-s2-05--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-06__comparison.yaml
+  token: exam-card-tdm-x-s2-06--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2__comparison.yaml
+  token: exam-card-tdm-x-s2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison.yaml
+  token: exam-card-tdm-x-r1-01--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-02__comparison.yaml
+  token: exam-card-tdm-x-r1-02--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-03__comparison.yaml
+  token: exam-card-tdm-x-r1-03--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1__shadow.yaml
+  token: exam-card-tdm-x-r1--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/XFLOW/TDM-X-FLOW__ablation.yaml
+  token: exam-card-tdm-x-flow--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1-01__shadow.yaml
+  token: exam-card-tdm-f-c1-01--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1-02__shadow.yaml
+  token: exam-card-tdm-f-c1-02--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1-03__shadow.yaml
+  token: exam-card-tdm-f-c1-03--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1__shadow.yaml
+  token: exam-card-tdm-f-c1--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-01__shadow.yaml
+  token: exam-card-tdm-f-c2-01--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-02__shadow.yaml
+  token: exam-card-tdm-f-c2-02--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-03__shadow.yaml
+  token: exam-card-tdm-f-c2-03--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-04__shadow.yaml
+  token: exam-card-tdm-f-c2-04--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2__shadow.yaml
+  token: exam-card-tdm-f-c2--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-01__shadow.yaml
+  token: exam-card-tdm-f-c3-01--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-02__shadow.yaml
+  token: exam-card-tdm-f-c3-02--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-03__shadow.yaml
+  token: exam-card-tdm-f-c3-03--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-04__shadow.yaml
+  token: exam-card-tdm-f-c3-04--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-05__shadow.yaml
+  token: exam-card-tdm-f-c3-05--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3__shadow.yaml
+  token: exam-card-tdm-f-c3--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/CFLOW/TDM-F-FLOW__shadow.yaml
+  token: exam-card-tdm-f-flow--shadow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-01__comparison.yaml
+  token: exam-card-tdm-p-p1-01--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-02__comparison.yaml
+  token: exam-card-tdm-p-p1-02--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-03__comparison.yaml
+  token: exam-card-tdm-p-p1-03--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-04__comparison.yaml
+  token: exam-card-tdm-p-p1-04--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-05__comparison.yaml
+  token: exam-card-tdm-p-p1-05--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-06__comparison.yaml
+  token: exam-card-tdm-p-p1-06--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1__comparison.yaml
+  token: exam-card-tdm-p-p1--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-01__comparison.yaml
+  token: exam-card-tdm-p-p2-01--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-02__comparison.yaml
+  token: exam-card-tdm-p-p2-02--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-03__comparison.yaml
+  token: exam-card-tdm-p-p2-03--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-04__comparison.yaml
+  token: exam-card-tdm-p-p2-04--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2__comparison.yaml
+  token: exam-card-tdm-p-p2--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-01__comparison.yaml
+  token: exam-card-tdm-p-p3-01--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-02__comparison.yaml
+  token: exam-card-tdm-p-p3-02--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-03__comparison.yaml
+  token: exam-card-tdm-p-p3-03--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-04__comparison.yaml
+  token: exam-card-tdm-p-p3-04--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3__comparison.yaml
+  token: exam-card-tdm-p-p3--comparison-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/PFLOW/TDM-P-FLOW__ablation.yaml
+  token: exam-card-tdm-p-flow--ablation-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0-1__calibration__02_新闻情绪时滞.yaml
+  token: exam-card-tdm-e-l1-s0-1--calibration--02--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__02_货币卡.yaml
+  token: exam-card-tdm-e-l1-s0--calibration--02--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__03_流动性卡.yaml
+  token: exam-card-tdm-e-l1-s0--calibration--03--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__04_海外卡.yaml
+  token: exam-card-tdm-e-l1-s0--calibration--04--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__05_政策事件卡.yaml
+  token: exam-card-tdm-e-l1-s0--calibration--05--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S1__calibration__02_指数趋势位置.yaml
+  token: exam-card-tdm-e-l1-s1--calibration--02--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S1__calibration__03_黄白线交叉.yaml
+  token: exam-card-tdm-e-l1-s1--calibration--03--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__02_涨停家数.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--02--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__03_跌停家数.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--03--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__04_炸板率.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--04--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__05_封板率.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--05--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__06_连板最高高度.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--06--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__07_连板家数分布.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--07--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__08_净广度.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--08--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__02_昨日涨停溢价.yaml
+  token: exam-card-tdm-e-l1-s3--calibration--02--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__03_晋级率.yaml
+  token: exam-card-tdm-e-l1-s3--calibration--03--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__04_情绪先锋四态.yaml
+  token: exam-card-tdm-e-l1-s3--calibration--04--20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration__02_期权IV主路径.yaml
+  token: exam-card-tdm-e-l1-s4--calibration--02-iv-20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration__03_合成VIX后备.yaml
+  token: exam-card-tdm-e-l1-s4--calibration--03-vix-20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__02_11信号环比.yaml
+  token: exam-card-tdm-e-l1-s5--calibration--02-11-20261009
+  created_by: st-examchief-20261009
+  capability: exam_card
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/index.md
   token: index-navigation-03-modules-domain-backtest-20260919
   capability: index_navigation
@@ -8843,6 +9905,10 @@ creation_tokens:
   token: btfix-p1p2-board-lot-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_execution_core/algo_flow/bridge_instruction_kernel.yaml
+  token: ex-core-algo-flow-bridge-instruction-kernel-20261009
+  capability: ex_core_algo_flow
+  created_by: st-chiefc-20261009-D
 - file: docs/03_modules/_domain_execution_core/algo_flow/broker_link_probe.yaml
   token: btfix-p1p2-broker-link-probe-20260915
   capability: btfix_p1p2
@@ -8980,6 +10046,10 @@ creation_tokens:
   token: btfix-p1p2-performance-monitor-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_execution_core/algo_flow/phase_discriminator.yaml
+  token: ex-core-algo-flow-phase-discriminator-20261009
+  capability: ex_core_algo_flow
+  created_by: st-chiefc-20261009-D
 - file: docs/03_modules/_domain_execution_core/algo_flow/position_reconciler.yaml
   token: btfix-p1p2-position-reconciler-20260915
   capability: btfix_p1p2
@@ -18388,6 +19458,10 @@ creation_tokens:
   token: btfix-p1p2-pf-alloc--init---20260916
   capability: btfix_p1p2
   created_by: st-btfix-p17-20260916
+- file: docs/03_modules/_domain_pf_alloc/algo_flow/portfolio_netting.yaml
+  token: pf-alloc-algo-flow-portfolio-netting-20261009
+  capability: pf_alloc_algo_flow
+  created_by: st-chiefc-20261009-D
 - file: docs/03_modules/_domain_pf_alloc/algo_flow/regime_bma_weighting.yaml
   token: btfix-p1p2-regime-bma-weighting-20260916
   capability: btfix_p1p2
@@ -23692,6 +24766,10 @@ creation_tokens:
   token: dloop-algo-flow-daily-gate-snapshot-20260922
   capability: dloop_algo_flow
   created_by: st-dloop-20260921
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/graduated_package_feed.yaml
+  token: strategy-pipeline-algo-flow-graduated-package-feed-20261009
+  capability: strategy_pipeline_algo_flow
+  created_by: st-chiefc-20261009-D
 - file: docs/03_modules/_domain_strategy_pipeline/algo_flow/index.md
   token: map9-rx1-index-20261004
   capability: map9_rx1_e7funnel
@@ -25066,6 +26144,21 @@ creation_tokens:
   capability: commit_chain_cure_report
   created_by: st-commitfix-20261001
   merge_evaluation: "事故终报文档：四死因定案+七笔治本哈希+两波抹除取证+移交清单，纯记录非第二真源（代码真源在 git commit 链），净零"
+- file: docs/_working/2026-10-08-handoff-fullscore-night.md
+  token: fullscore-night-handoff-2026-10-08-handoff-fullscore-night-20261008
+  capability: fullscore_night_handoff
+  created_by: st-fullscore-20260930
+  merge_evaluation: "七域满分通宵战役新对话交接件（一键复制指令+裁定表+后续清单），task_bound 交接媒介，替代无（09-30 交接件的后继棒），净增一发"
+- file: docs/_working/2026-10-09-tdm-exam-card-system-plan.md
+  token: governance-2026-10-09-tdm-exam-card-system-plan-20261009
+  capability: governance
+  created_by: st-tdm-examcard-20261009
+  merge_evaluation: "承接fexam散装成绩册模式并统一为环节级考试卡体系，无同真源既有资产可并（图书馆四关键词查重零命中）"
+- file: docs/_working/2026-10-09-workorder-value-proposal-card-template.md
+  token: value-proposal-workorder-template-2026-10-09-workorder-value-proposal-card-template-20261009
+  capability: value_proposal_workorder_template
+  created_by: st-libfront-20261009
+  merge_evaluation: "价值主张立项卡模板：并入既有工单格式，零新表；真源=裁定路由政策 Gate 0+任务卡工单制政策，模板为投影载体非第二真源"
 - file: docs/_working/ai_layer_vision/HANDOFF_wave2_closeout.md
   token: c314-wave2-closeout-handoff-handoff-wave2-closeout-20261007
   capability: c314-wave2-closeout-handoff
@@ -34112,6 +35205,11 @@ creation_tokens:
   capability: chief_fullchain_campaign
   created_by: st-workingchief-20261006
   merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/r5_exemption.md
+  token: deadcure-campaign-r5exempt-chief-fullchain-20261006-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-g1-chief
+  merge_evaluation: "R5 豁免标记件（复活随批）：目录名为 36 份已落地文档的引用锚点，改名即断链——单目录单标记件，无同真源可派生"
 - file: docs/_working/chief_fullchain_campaign/00_campaign_brief.md
   token: chief-fullchain-campaign-00_campaign_brief-20261008
   capability: chief_fullchain_campaign
@@ -34272,26 +35370,36 @@ creation_tokens:
   capability: chief_fullchain_campaign
   created_by: st-workingchief-20261006
   merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chiefc_campaign/99_delivery.md
+  token: chiefc-99-delivery-99-delivery-20261009
+  capability: chiefc_99_delivery
+  created_by: st-chiefc-20261009
+  merge_evaluation: "G1-1 跨域不同对象不并另立：战役终报载体件，chiefc_campaign 目录专属无既有承接"
+- file: docs/_working/chiefc_campaign/a13_breaker_arch_issue.md
+  token: chiefc-campaign-a13-breaker-arch-issue-20261009
+  capability: chiefc_campaign
+  created_by: st-chiefc-20261009
+  merge_evaluation: "跨域不同对象不并另立：chiefc 战役树台账（A13 熔断他伤豁免议题+复发监视），无既有资产可承接"
+- file: docs/_working/chiefc_campaign/a13_recurrence_watch.md
+  token: chiefc-campaign-a13-recurrence-watch-20261009
+  capability: chiefc_campaign
+  created_by: st-chiefc-20261009
+  merge_evaluation: "跨域不同对象不并另立：chiefc 战役树台账（A13 熔断他伤豁免议题+复发监视），无既有资产可承接"
 - file: docs/_working/chiefc_campaign/g_lane_r01_r16_ledger.md
   token: chiefc-g-lane-ledger-20261009
   capability: chiefc_campaign
   created_by: st-chiefc-20261009
   merge_evaluation: "G 车道 R01-R16 自裁台账（16 项处置+证据+adjudicator 署名单文件），替代零旧条目——净零新增 1 台账件（Owner B 清单批转登记载体；同名大写版 token 因 N-01/N-13 命名门 retire 换装）"
-- file: docs/_working/chiefc_campaign/a13_breaker_arch_issue.md
-  token: chiefc-campaign-a13-breaker-arch-issue-20261009
-  created_by: st-chiefc-20261009
-  capability: chiefc_campaign
-  merge_evaluation: "跨域不同对象不并另立：chiefc 战役树台账（A13 熔断他伤豁免议题+复发监视），无既有资产可承接"
-- file: docs/_working/chiefc_campaign/a13_recurrence_watch.md
-  token: chiefc-campaign-a13-recurrence-watch-20261009
-  created_by: st-chiefc-20261009
-  capability: chiefc_campaign
-  merge_evaluation: "跨域不同对象不并另立：chiefc 战役树台账（A13 熔断他伤豁免议题+复发监视），无既有资产可承接"
 - file: docs/_working/chiefc_campaign/index.md
   token: chiefc-campaign-index-20261009
-  created_by: st-chiefc-20261009
   capability: chiefc_campaign
+  created_by: st-chiefc-20261009
   merge_evaluation: "跨域不同对象不并另立：chiefc 战役树台账（A13 熔断他伤豁免议题+复发监视），无既有资产可承接"
+- file: docs/_working/chiefc_campaign/rb1_eval.md
+  token: rb1-eval-rb1-eval-20261009
+  capability: rb1_eval
+  created_by: st-chiefc-20261009-rb1
+  merge_evaluation: "独立评估台账（任务E结论+F工单登记真源），同域无重复册；task_bound 随战役归档"
 - file: docs/_working/circulation_chief/00_orchestration.md
   token: circulation-chief-doc-00-orchestration-20261001
   capability: circulation-chief-doc
@@ -35670,6 +36778,76 @@ creation_tokens:
   token: kimi-audit-retirement-audit-20260916
   capability: kimi_audit
   created_by: qoder-verify-20260916
+- file: docs/_working/deadcure_campaign/00_charter.md
+  token: deadcure-campaign-deadcure-campaign-00-charte-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
+- file: docs/_working/deadcure_campaign/01_ledger.md
+  token: deadcure-campaign-deadcure-campaign-01-ledge-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
+- file: docs/_working/deadcure_campaign/02_P0_tests_hole.md
+  token: deadcure-campaign-deadcure-campaign-02-P0-tests-hol-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
+- file: docs/_working/deadcure_campaign/03_ticket_register.md
+  token: deadcure-campaign-deadcure-campaign-03-ticket-register.-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
+- file: docs/_working/deadcure_campaign/04_pending_owner.md
+  token: deadcure-campaign-deadcure-campaign-04-pending-owne-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
+- file: docs/_working/deadcure_campaign/05_tests_restore_manifest.yaml
+  token: deadcure-campaign-05-tests-restore-manifest-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/06_f1_ruler_blob_sources.yaml
+  token: deadcure-campaign-06-f1-ruler-blob-sources-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/07_residual_bags_index.yaml
+  token: deadcure-campaign-07-residual-bags-index-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/08_hot_registry_eviction_evidence.md
+  token: deadcure-campaign-08-hot-registry-eviction-evidence-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/09_handoff_laneF1b.md
+  token: deadcure-campaign-09-handoff-laneF1b-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/10_owner_menu_deadcure40.md
+  token: deadcure-campaign-10-owner-menu-deadcure40-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/11_handoff_G1G3.md
+  token: deadcure-handoff-11-handoff-g1g3-20261009
+  capability: deadcure_handoff
+  created_by: st-chiefc-20261009
+  merge_evaluation: "死信清偿 G1G3 交割包=落地回执+对拍凭证（同真源可派生自 triage 数据但为交割法定载体不并；有触发有消费=G1G3 24 件落地凭证）；同域唯一交割册"
+- file: docs/_working/deadcure_campaign/99_delivery.md
+  token: deadcure-campaign-99-delivery-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign2/01_phase0_ledger.md
+  token: deadcure2-campaign-01-phase0-ledger-20261009
+  capability: deadcure2_campaign
+  created_by: st-deadcure2-20261009
+  merge_evaluation: "死信二期首册(Phase 0 执行面)：与一期 deadcure_campaign 裁定面/批文面不同轴，同真源不可派生(一期册只覆盖 1704 宇宙处置，本册覆盖 1428 宇宙二次裁定+家族内务+blobs 归档)"
 - file: docs/_working/deadletter_cure_20261003/r5_exemption.md
   token: deadletter-r5-exemption-r5-exemption-20261004
   capability: deadletter_r5_exemption
@@ -36625,6 +37803,41 @@ creation_tokens:
   capability: decision_map_campaign_20260924
   created_by: st-cmd-20260924
   merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/dexp_campaign/00_finding_and_gate.md
+  token: dexp-disk-triage-00-finding-and-gate-20261009
+  capability: dexp_disk_triage
+  created_by: st-dexp-20261009
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/01_ledger.md
+  token: dexp-disk-triage-01-ledger-20261009
+  capability: dexp_disk_triage
+  created_by: st-dexp-20261009
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/02_ti_duplicate_rows_found.md
+  token: dexp-disk-triage-02-ti-duplicate-rows-found-20261009
+  capability: dexp_disk_triage
+  created_by: st-dexp-20261009
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/03_evidence_summary.yaml
+  token: dexp-disk-triage-03-evidence-summary-20261009
+  capability: dexp_disk_triage
+  created_by: st-dexp-20261009
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/99_delivery.md
+  token: dexp-disk-triage-99-delivery-20261009
+  capability: dexp_disk_triage
+  created_by: st-dexp-20261009
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/index.md
+  token: dexp-disk-triage-index-20261009
+  capability: dexp_disk_triage
+  created_by: st-dexp-20261009
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
+- file: docs/_working/dexp_campaign/lanes/index.md
+  token: dexp-disk-triage-index-20261009
+  capability: dexp_disk_triage
+  created_by: st-dexp-20261009
+  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
 - file: docs/_working/disk_reorg_campaign/LEDGER_final.md
   token: eight-pack-commander-ledger-ledger-final-20260923
   capability: eight-pack-commander-ledger
@@ -36889,6 +38102,41 @@ creation_tokens:
   token: emotion-line-redblue-round-record-20260922
   capability: emotion_line
   created_by: st-emomine-20260922
+- file: docs/_working/examcard_campaign/01_w1_f06_root_cause.md
+  token: examcard-campaign-01-w1-f06-root-cause-20261009
+  capability: examcard_campaign
+  created_by: st-examchief-20261009
+  merge_evaluation: "战役作业簿（工棚 task_bound）：W1 根因册+证据件+后续车道作业簿；战役收官按交付纪律归档，禁并入正式注册表族。"
+- file: docs/_working/examcard_campaign/00_campaign_ledger.md
+  token: examcard-campaign-00-campaign-ledger-20261009
+  created_by: st-examchief-20261009
+  capability: examcard_campaign
+  merge_evaluation: "战役作业簿族"
+- file: docs/_working/examcard_campaign/asset_assertion_cases.yaml
+  token: examcard-campaign-asset-assertion-cases-20261009
+  created_by: st-examchief-20261009
+  capability: examcard_campaign
+  merge_evaluation: "战役作业簿族"
+- file: docs/_working/examcard_campaign/w1_evidence/blue_probeC_fixed_wrapper_green.md
+  token: examcard-campaign-blue-probec-fixed-wrapper-green-20261009
+  created_by: st-examchief-20261009
+  capability: examcard_campaign
+  merge_evaluation: "战役作业簿族"
+- file: docs/_working/examcard_campaign/w1_evidence/blue_probeD_eap_continue_green.md
+  token: examcard-campaign-blue-probed-eap-continue-green-20261009
+  created_by: st-examchief-20261009
+  capability: examcard_campaign
+  merge_evaluation: "战役作业簿族"
+- file: docs/_working/examcard_campaign/w1_evidence/red_probeB_taskctx_landmine.md
+  token: examcard-campaign-red-probeb-taskctx-landmine-20261009
+  created_by: st-examchief-20261009
+  capability: examcard_campaign
+  merge_evaluation: "战役作业簿族"
+- file: docs/_working/examcard_campaign/w1_evidence/red_trap_trace_python_killed_at_first_stderr.md
+  token: examcard-campaign-red-trap-trace-python-killed-at-first-stderr-20261009
+  created_by: st-examchief-20261009
+  capability: examcard_campaign
+  merge_evaluation: "战役作业簿族"
 - file: docs/_working/external_audit_20261007/00_audit_plan.md
   token: ext-audit-20261007-00-audit-plan-20261007
   capability: ext_audit_20261007
@@ -37304,6 +38552,11 @@ creation_tokens:
   capability: final_delivery_campaign
   created_by: st-finaldel-chief-20260930
   merge_evaluation: "CH实弹批VM离线阻塞移交账（同族并卷，裁定#431执行面）"
+- file: docs/_working/final_delivery_campaign/cleanup_manifest_20260930.md
+  token: deadcure-campaign-cleanup-manifest-20260930-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
 - file: docs/_working/final_delivery_campaign/final_loopcheck_redblue_20260930.md
   token: final-delivery-campaign-final-loopcheck-redblue-20260930-20260930
   capability: final_delivery_campaign
@@ -41186,6 +42439,11 @@ creation_tokens:
   token: f06-dsr-handoff-20260915
   capability: position_recipe_grid_compile
   created_by: st-f06combo-20260915
+- file: docs/_working/handoff_ownscope_expansion_m2.md
+  token: deadcure-campaign-handoff-ownscope-expansion-m2-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
 - file: docs/_working/index.md
   token: working-root-scattered-index-20260920
   capability: working_root_scattered
@@ -41538,11 +42796,66 @@ creation_tokens:
   capability: ibt_remediation
   created_by: st-ibt-remedy-a-20260923
   merge_evaluation: "批A 收编生成器 index 目录索引件（generate_missing_index_md 产物，静态清单生成器纪律非手工维护）"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_HOLDOUT/nav_IBT-A.csv
+  token: exam-cost-reexam-nav-ibt-a-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_HOLDOUT/run_summary.yaml
+  token: exam-cost-reexam-run-summary-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_HOLDOUT/trades_IBT-A.csv
+  token: exam-cost-reexam-trades-ibt-a-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_IS/nav_IBT-A.csv
+  token: exam-cost-reexam-nav-ibt-a-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_IS/run_summary.yaml
+  token: exam-cost-reexam-run-summary-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_IS/trades_IBT-A.csv
+  token: exam-cost-reexam-trades-ibt-a-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/nav_IBT-A.csv
+  token: exam-cost-reexam-nav-ibt-a-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/redblue_round1.yaml
+  token: exam-cost-reexam-redblue-round1-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/run_summary.yaml
+  token: exam-cost-reexam-run-summary-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
+- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/sensitivity.yaml
+  token: exam-cost-reexam-sensitivity-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
 - file: docs/_working/integrated_backtest/batch_b_pit_repair_comparison.yaml
   token: ibt-batch-b-pit-repair-batch-b-pit-repair-comparison-20260922
   capability: ibt_batch_b_pit_repair
   created_by: st-ibt-remedy-b-20260923
   merge_evaluation: "批B 预注册验收交付物（对照表冻结件），附 max_remediation_plan §2-批B 任务态 ttl=task_bound，批D 归档即退役，无第二真源"
+- file: docs/_working/integrated_backtest/cost_qualified_list.yaml
+  token: exam-cost-reexam-cost-qualified-list-20261009
+  capability: exam_cost_reexam
+  created_by: st-chiefc-20261009-D
+  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
 - file: docs/_working/integrated_backtest/ibt_attribution.yaml
   token: auto-ibt-20260922-009
   capability: integrated_backtest_first_run
@@ -42551,6 +43864,11 @@ creation_tokens:
   capability: 矩阵战役终报（四清单：已接线/已考试/在队/等Owner）
   created_by: st-matrix-20261006
   merge_evaluation: "战役终报；无替代对象"
+- file: docs/_working/matrix_campaign/HANDOFF_NEXT_SESSION.md
+  token: matrix-handoff-closeout-handoff-next-session-20261008
+  capability: matrix-handoff-closeout
+  created_by: st-matrix-20261007
+  merge_evaluation: "收尾交接册 v2 置换（战役 handoff 生命周期文件，v1 内容全部执行完毕归档于 git 史）"
 - file: docs/_working/matrix_campaign/construction_queue_v1.yaml
   token: matrix-campaign-constqueue-20261006
   capability: 施工车道派工队列v1（S/M/L三级，来源=M1/M2规格卡）
@@ -45053,6 +46371,11 @@ creation_tokens:
   capability: nightsweep2_fin_final_report
   created_by: st-nightsweep2-fin-20260930
   merge_evaluation: "跨域不同对象：夜总攻二终局报告（收尾验证车道交付物），与既有夜战资产零同真源重复"
+- file: docs/_working/night_sweep/99_nightsweep_final_report.md
+  token: deadcure-campaign-99-nightsweep-final-report-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
 - file: docs/_working/night_sweep/99_owner_gate_menu.md
   token: night-sweep-owner-gate-menu-99-owner-gate-menu-20261001
   capability: night_sweep_owner_gate_menu
@@ -45118,6 +46441,11 @@ creation_tokens:
   capability: night_sweep_c_exam
   created_by: st-nightsweep2-nc-20260930
   merge_evaluation: "C6 五条件现状报告：证据面核验件（跨域不同对象不并；W12 卡面批准线专属素材非第二点火册）"
+- file: docs/_working/night_sweep/cns_closeout_ledger.md
+  token: deadcure-campaign-cns-closeout-ledger-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-restore-chief
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
 - file: docs/_working/night_sweep/e6_vm_assessment.md
   token: night-sweep-e6-vm-assessment-20260930
   capability: night_sweep
@@ -46567,6 +47895,11 @@ creation_tokens:
   capability: metaq_question_mining
   created_by: st-pqmine-20260927
   merge_evaluation: "原问题挖矿战役产出：宪章+五路候选册+台账+过闸清单+入库日志，纯新增非替代"
+- file: docs/_working/question_mining_20260927/r5_exemption.md
+  token: deadcure-campaign-r5exempt-question-mining-20260927-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-g1-chief
+  merge_evaluation: "R5 豁免标记件（复活随批）：目录名为 4 份已落地文档引用锚点；单目录单标记件"
 - file: docs/_working/question_mining_campaign/00_charter.md
   token: pqmine-docs-01-00_charter--md-20260927
   capability: metaq_question_mining
@@ -46939,6 +48272,11 @@ creation_tokens:
   token: regfix-lane0b-overnight-decisions-20260923-20260922
   capability: regfix_lane0b
   created_by: st-regfix-lane0b-20260923
+- file: docs/_working/registry_incident_20260922/r5_exemption.md
+  token: deadcure-campaign-r5exempt-registry-incident-20260922-20261009
+  capability: deadcure-campaign
+  created_by: st-deadcure-g1-chief
+  merge_evaluation: "R5 豁免标记件（复活随批）：目录名为 14 份已落地文档引用锚点；单目录单标记件"
 - file: docs/_working/registry_migration/01_inventory.md
   token: registry-migration-inventory-01-inventory-20260922
   capability: registry_migration_inventory
@@ -48126,6 +49464,11 @@ creation_tokens:
   capability: tdm_mount
   created_by: st-fd-srcline-20261005
   merge_evaluation: "净零申报：37红源线实现优先级矩阵+Top5施工规格草案，为总筹源线施工排序供料，替代无机生通道的手工评估"
+- file: docs/_working/tdm_mount/fx_evidence_pack_v1.md
+  token: chiefc-tdm-mount-fx-evidence-pack-v1-20261009
+  capability: tdm_mount
+  created_by: st-chiefc-20261009
+  merge_evaluation: "TDM 挂载呈裁证据包 v1 落地补登（原 laneX-tdm-mount-20261007 staged 件从未落 HEAD 且零 token，G 车道 R11 冻结登记随件落地；非新真源，补票防悬空）"
 - file: docs/_working/tdm_mount/g_mount_obligation_manifest.md
   token: tdm-mountgate-manifest-artifact-md-20261005
   capability: tdm_mountgate
@@ -51626,6 +52969,11 @@ creation_tokens:
   token: generate-backtest-backlog-20260912
   capability: backtest_run_archive
   created_by: st-backtest-20260912
+- file: scripts/backtest/generate_exam_card_skeleton.py
+  token: exam-card-skeleton-generate-exam-card-skeleton-20261009
+  capability: exam_card_skeleton
+  created_by: st-examchief-20261009
+  merge_evaluation: "不并：exam_cards 册为新建资产族（186 节点机生卡四族 schema 新立），同域无既有卡册可承接，跨域对象不同；分数面仍由 fexam 分数册承载，分工=方案 §6 三层架构。"
 - file: scripts/backtest/generate_framework_plan_from_tdm.py
   token: auto-chain-c6-generate-framework-plan-from-tdm-2026-09-15
   capability: auto-chain-c6
@@ -52900,6 +54248,11 @@ creation_tokens:
   token: wipe-tick3days-promote-20260914
   capability: ch_connection_unify
   created_by: st-chinfra-20260914
+- file: scripts/data_ops/audit_ti_row_versions.py
+  token: ti-row-version-audit-audit-ti-row-versions-20261009
+  capability: ti_row_version_audit
+  created_by: st-dexp-20261009
+  merge_evaluation: "新对象=ReplacingMergeTree 无版本列的行版本重复尺（dup/值分叉/ingest_ts 可裁决三把尺）；同目录 l3_alt_health_* 判列健康度、scripts/data/audit_technical_indicator_coverage 判列非空覆盖率，均不同对象零重叠"
 - file: scripts/derive_task_dependencies.py
   token: brk050-task-dag-derive-derive-task-dependencies-20260918
   capability: brk050_task_dag_derive
@@ -58799,6 +60152,12 @@ creation_tokens:
   token: auto-performance-monitor-20260823
   capability: execution_performance_monitor
   created_by: AI-K3-GW-INFRA
+- file: src/zephyr/ex_core/phase_discriminator.py
+  token: phase-discriminator-phase-discriminator-20261009
+  capability: phase_discriminator
+  created_by: st-chiefc-20261009-D
+  no_mount_reason: C445 相位判别真源件（裁定#488 B 段，判不出=记红不拒单），无 TDMAP 挂锚；enforce 接线与启用走裁定通道（#488 A 段 C63/#490 Owner 门位）
+  merge_evaluation: "C445 相位判别真源件新立，无同真源可并"
 - file: src/zephyr/ex_core/pre_execution_checker.py
   token: auto-pre-execution-checker-20260823
   capability: pre_execution_check
@@ -60617,6 +61976,12 @@ creation_tokens:
   token: ultimate-library-relations-20260921
   capability: ultimate_library
   created_by: st-gov-closeout-20260922
+- file: src/zephyr/library/ruling_precedent.py
+  token: ruling-precedent-ruling-precedent-20261009
+  capability: ruling_precedent
+  created_by: st-libfront-20261009
+  no_mount_reason: 纯基建读侧检索投影（裁定册八类机检查询面），非业务流程节点；裁定域图 governance_legislation_map 为 machinery 结构不在 config 节点图索引家族，扩图例属 Owner 终审事项——同族先例=map_family 三 gate no_mount_reason 申报（74dafed105/3c19488dbd）
+  merge_evaluation: "裁定先例机检薄 CLI：内收判据实跑，零新 gate/零新注册表/零新字段"
 - file: src/zephyr/library/schema.py
   token: ulib-lib-schema-20260921
   capability: ultimate_library
@@ -62447,6 +63812,12 @@ creation_tokens:
   token: auto-chain-c6-fw-backtest-2026-09-15
   capability: auto-chain-c6
   created_by: st-fullauto-20260915
+- file: src/zephyr/strategy_pipeline/graduated_package_feed.py
+  token: graduated-package-feed-graduated-package-feed-20261009
+  capability: graduated_package_feed
+  created_by: st-chiefc-20261009-D
+  no_mount_reason: C5 毕业包只读拉取通道（裁定#305 第 2 点禁手填延续），无 TDMAP 挂锚；消费接线=select_packages 注入位，晋级落地件契约见本件 docstring
+  merge_evaluation: "C5 毕业包通道新立，替代对象=GRADUATED_PACKAGES 手填路径（禁手填裁定#305），零旧条可并"
 - file: src/zephyr/strategy_pipeline/intake.py
   token: strategy-pipeline-intake-20260914
   capability: strategy_pipeline
@@ -63827,6 +65198,10 @@ creation_tokens:
   token: auto-test-review-template-registry-20260824
   capability: review_template_registry
   created_by: AI-K3-T4-G1
+- file: tests/research/research/signal_ashare/sector/test_sector_strength_aggregator.py
+  token: n5-sector-agg-test-20260918
+  capability: sector_tests_recover
+  created_by: st-tdchain-20260917
 - file: tests/research/test_evidence_phase0.py
   token: auto-test-evidence-phase0-20260822
   capability: evidence_chain
@@ -64638,270 +66013,21 @@ creation_tokens:
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912
-- file: docs/_working/deadcure_campaign/00_charter.md
-  token: deadcure-campaign-deadcure-campaign-00-charte-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
-- file: docs/_working/deadcure_campaign/01_ledger.md
-  token: deadcure-campaign-deadcure-campaign-01-ledge-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
-- file: docs/_working/deadcure_campaign/02_P0_tests_hole.md
-  token: deadcure-campaign-deadcure-campaign-02-P0-tests-hol-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
-- file: docs/_working/deadcure_campaign/03_ticket_register.md
-  token: deadcure-campaign-deadcure-campaign-03-ticket-register.-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
-- file: docs/_working/deadcure_campaign/04_pending_owner.md
-  token: deadcure-campaign-deadcure-campaign-04-pending-owne-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
-- file: docs/03_modules/MOD-SELL-020/blueprint.md
-  token: deadcure-campaign-blueprint-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/deadcure_campaign/05_tests_restore_manifest.yaml
-  token: deadcure-campaign-05-tests-restore-manifest-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/deadcure_campaign/06_f1_ruler_blob_sources.yaml
-  token: deadcure-campaign-06-f1-ruler-blob-sources-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/deadcure_campaign/07_residual_bags_index.yaml
-  token: deadcure-campaign-07-residual-bags-index-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/deadcure_campaign/08_hot_registry_eviction_evidence.md
-  token: deadcure-campaign-08-hot-registry-eviction-evidence-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/deadcure_campaign/09_handoff_laneF1b.md
-  token: deadcure-campaign-09-handoff-laneF1b-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/deadcure_campaign/10_owner_menu_deadcure40.md
-  token: deadcure-campaign-10-owner-menu-deadcure40-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/deadcure_campaign/99_delivery.md
-  token: deadcure-campaign-99-delivery-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/final_delivery_campaign/cleanup_manifest_20260930.md
-  token: deadcure-campaign-cleanup-manifest-20260930-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/handoff_ownscope_expansion_m2.md
-  token: deadcure-campaign-handoff-ownscope-expansion-m2-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/night_sweep/99_nightsweep_final_report.md
-  token: deadcure-campaign-99-nightsweep-final-report-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: docs/_working/night_sweep/cns_closeout_ledger.md
-  token: deadcure-campaign-cns-closeout-ledger-20261009
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
-- file: data/strategy_intake/grid_20260926-024947/t2_handover_claim.yaml
-  token: t2-subspace-t2-handover-claim-20261008
-  created_by: st-chiefc-20261009
-  capability: t2_subspace
-  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接"
-- file: data/strategy_intake/grid_20260926-024947/t2_subspace.json
-  token: t2-subspace-t2-subspace-20261008
-  created_by: st-chiefc-20261009
-  capability: t2_subspace
-  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接"
-- file: data/strategy_intake/grid_20260926-024947/t2_subspace_meta.yaml
-  token: t2-subspace-t2-subspace-meta-20261008
-  created_by: st-chiefc-20261009
-  capability: t2_subspace
-  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接"
-- file: docs/_working/deadcure_campaign/11_handoff_G1G3.md
-  token: deadcure-handoff-11-handoff-g1g3-20261009
-  created_by: st-chiefc-20261009
-  capability: deadcure_handoff
-  merge_evaluation: "死信清偿 G1G3 交割包=落地回执+对拍凭证（同真源可派生自 triage 数据但为交割法定载体不并；有触发有消费=G1G3 24 件落地凭证）；同域唯一交割册"
-- file: src/zephyr/ex_core/phase_discriminator.py
-  token: phase-discriminator-phase-discriminator-20261009
-  created_by: st-chiefc-20261009-D
-  capability: phase_discriminator
-  merge_evaluation: "C445 相位判别真源件新立，无同真源可并"
-  no_mount_reason: "C445 相位判别真源件（裁定#488 B 段，判不出=记红不拒单），无 TDMAP 挂锚；enforce 接线与启用走裁定通道（#488 A 段 C63/#490 Owner 门位）"
-- file: src/zephyr/strategy_pipeline/graduated_package_feed.py
-  token: graduated-package-feed-graduated-package-feed-20261009
-  created_by: st-chiefc-20261009-D
-  capability: graduated_package_feed
-  no_mount_reason: "C5 毕业包只读拉取通道（裁定#305 第 2 点禁手填延续），无 TDMAP 挂锚；消费接线=select_packages 注入位，晋级落地件契约见本件 docstring"
-  merge_evaluation: "C5 毕业包通道新立，替代对象=GRADUATED_PACKAGES 手填路径（禁手填裁定#305），零旧条可并"
-- file: docs/_working/integrated_backtest/artifacts_v2/W_HOLDOUT/nav_IBT-A.csv
-  token: exam-cost-reexam-nav-ibt-a-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/_working/integrated_backtest/artifacts_v2/W_HOLDOUT/run_summary.yaml
-  token: exam-cost-reexam-run-summary-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/_working/integrated_backtest/artifacts_v2/W_HOLDOUT/trades_IBT-A.csv
-  token: exam-cost-reexam-trades-ibt-a-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/_working/integrated_backtest/artifacts_v2/W_IS/nav_IBT-A.csv
-  token: exam-cost-reexam-nav-ibt-a-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/_working/integrated_backtest/artifacts_v2/W_IS/run_summary.yaml
-  token: exam-cost-reexam-run-summary-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/_working/integrated_backtest/artifacts_v2/W_IS/trades_IBT-A.csv
-  token: exam-cost-reexam-trades-ibt-a-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/nav_IBT-A.csv
-  token: exam-cost-reexam-nav-ibt-a-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/redblue_round1.yaml
-  token: exam-cost-reexam-redblue-round1-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/run_summary.yaml
-  token: exam-cost-reexam-run-summary-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/_working/integrated_backtest/artifacts_v2/W_OOS/sensitivity.yaml
-  token: exam-cost-reexam-sensitivity-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/_working/integrated_backtest/cost_qualified_list.yaml
-  token: exam-cost-reexam-cost-qualified-list-20261009
-  created_by: st-chiefc-20261009-D
-  capability: exam_cost_reexam
-  merge_evaluation: "重考名单产物（裁定#325 逐条判档数字证据），名单真源唯一出自 exam_cost_reexam runner，无同真源可并旧条"
-- file: docs/03_modules/_domain_pf_alloc/algo_flow/portfolio_netting.yaml
-  token: pf-alloc-algo-flow-portfolio-netting-20261009
-  created_by: st-chiefc-20261009-D
-  capability: pf_alloc_algo_flow
-- file: docs/03_modules/_domain_execution_core/algo_flow/bridge_instruction_kernel.yaml
-  token: ex-core-algo-flow-bridge-instruction-kernel-20261009
-  created_by: st-chiefc-20261009-D
-  capability: ex_core_algo_flow
-- file: docs/03_modules/_domain_execution_core/algo_flow/phase_discriminator.yaml
-  token: ex-core-algo-flow-phase-discriminator-20261009
-  created_by: st-chiefc-20261009-D
-  capability: ex_core_algo_flow
-- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/graduated_package_feed.yaml
-  token: strategy-pipeline-algo-flow-graduated-package-feed-20261009
-  created_by: st-chiefc-20261009-D
-  capability: strategy_pipeline_algo_flow
-- file: docs/_working/chief_fullchain_20261006/r5_exemption.md
-  token: deadcure-campaign-r5exempt-chief-fullchain-20261006-20261009
-  created_by: st-deadcure-g1-chief
-  capability: deadcure-campaign
-  merge_evaluation: "R5 豁免标记件（复活随批）：目录名为 36 份已落地文档的引用锚点，改名即断链——单目录单标记件，无同真源可派生"
-- file: docs/_working/question_mining_20260927/r5_exemption.md
-  token: deadcure-campaign-r5exempt-question-mining-20260927-20261009
-  created_by: st-deadcure-g1-chief
-  capability: deadcure-campaign
-  merge_evaluation: "R5 豁免标记件（复活随批）：目录名为 4 份已落地文档引用锚点；单目录单标记件"
-- file: docs/_working/registry_incident_20260922/r5_exemption.md
-  token: deadcure-campaign-r5exempt-registry-incident-20260922-20261009
-  created_by: st-deadcure-g1-chief
-  capability: deadcure-campaign
-  merge_evaluation: "R5 豁免标记件（复活随批）：目录名为 14 份已落地文档引用锚点；单目录单标记件"
-- file: docs/_working/tdm_mount/fx_evidence_pack_v1.md
-  token: chiefc-tdm-mount-fx-evidence-pack-v1-20261009
-  capability: tdm_mount
-  created_by: st-chiefc-20261009
-  merge_evaluation: "TDM 挂载呈裁证据包 v1 落地补登（原 laneX-tdm-mount-20261007 staged 件从未落 HEAD 且零 token，G 车道 R11 冻结登记随件落地；非新真源，补票防悬空）"
-- file: tests/research/research/signal_ashare/sector/test_sector_strength_aggregator.py
-  token: n5-sector-agg-test-20260918
-  capability: sector_tests_recover
-  created_by: st-tdchain-20260917
-- file: src/zephyr/library/ruling_precedent.py
-  token: ruling-precedent-ruling-precedent-20261009
-  created_by: st-libfront-20261009
-  capability: ruling_precedent
-  map_mounts:
-  - governance_legislation_map:D16-N7
-  merge_evaluation: "裁定先例机检薄 CLI：内收判据实跑，零新 gate/零新注册表/零新字段"
-- file: docs/_working/2026-10-09-workorder-value-proposal-card-template.md
-  token: value-proposal-workorder-template-2026-10-09-workorder-value-proposal-card-template-20261009
-  created_by: st-libfront-20261009
-  capability: value_proposal_workorder_template
-  merge_evaluation: "价值主张立项卡模板：并入既有工单格式，零新表；真源=裁定路由政策 Gate 0+任务卡工单制政策，模板为投影载体非第二真源"
-- file: docs/_working/dexp_campaign/00_finding_and_gate.md
-  token: dexp-disk-triage-00-finding-and-gate-20261009
-  created_by: st-dexp-20261009
-  capability: dexp_disk_triage
-  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
-- file: docs/_working/dexp_campaign/01_ledger.md
-  token: dexp-disk-triage-01-ledger-20261009
-  created_by: st-dexp-20261009
-  capability: dexp_disk_triage
-  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
-- file: docs/_working/dexp_campaign/02_ti_duplicate_rows_found.md
-  token: dexp-disk-triage-02-ti-duplicate-rows-found-20261009
-  created_by: st-dexp-20261009
-  capability: dexp_disk_triage
-  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
-- file: docs/_working/dexp_campaign/03_evidence_summary.yaml
-  token: dexp-disk-triage-03-evidence-summary-20261009
-  created_by: st-dexp-20261009
-  capability: dexp_disk_triage
-  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
-- file: docs/_working/dexp_campaign/99_delivery.md
-  token: dexp-disk-triage-99-delivery-20261009
-  created_by: st-dexp-20261009
-  capability: dexp_disk_triage
-  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
-- file: docs/_working/dexp_campaign/index.md
-  token: dexp-disk-triage-index-20261009
-  created_by: st-dexp-20261009
-  capability: dexp_disk_triage
-  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
-- file: docs/_working/dexp_campaign/lanes/index.md
-  token: dexp-disk-triage-index-20261009
-  created_by: st-dexp-20261009
-  capability: dexp_disk_triage
-  merge_evaluation: "新对象：D盘四态分诊台账与门位呈报；与 disk_reorg_campaign(09-22收官,对象=存储分工/备份链立法)不同对象,零同域重复"
-- file: scripts/data_ops/audit_ti_row_versions.py
-  token: ti-row-version-audit-audit-ti-row-versions-20261009
-  created_by: st-dexp-20261009
-  capability: ti_row_version_audit
-  merge_evaluation: "新对象=ReplacingMergeTree 无版本列的行版本重复尺（dup/值分叉/ingest_ts 可裁决三把尺）；同目录 l3_alt_health_* 判列健康度、scripts/data/audit_technical_indicator_coverage 判列非空覆盖率，均不同对象零重叠"
+- file: scripts/backtest/writeback_exam_confidence.py
+  token: exam-confidence-writeback-writeback-exam-confidence-20261009
+  created_by: st-examchief-20261009
+  capability: exam_confidence_writeback
+  merge_evaluation: "G1-1③不并另立"
+- file: scripts/backtest/fexam/calibration_exam.py
+  token: exam-calibration-calibration-exam-20261009
+  created_by: st-examchief-20261009
+  capability: exam_calibration
+  merge_evaluation: "复用ic_exam统计核薄映射"
+- file: docs/01_policies_and_standards/sop/library_sop/offzone_retrieval_boundary_sop.md
+  token: library-sop-offzone-retrieval-boundary-sop-20261009
+  created_by: st-examchief-20261009
+  capability: library_sop
+  merge_evaluation: "library_sop族缺场外区边界册"
 file_token:
 - note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
   path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
