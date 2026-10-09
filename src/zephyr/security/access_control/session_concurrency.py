@@ -892,6 +892,7 @@ class SessionRegistry:
         """W-29：原地翻转逻辑会话标志（零触碰 held_files/last_activity/心跳——防判死又不丢 claim）。
 
         Returns: True=已更新；False=session 不在册（调用方自行决定是否 register）。
+        在册后的周期续期仍用本方法；**开班**请改用 open_session（单一 API，禁裸两步）。
         """
         with self._lock:
             entry = self._get_entry(session_id)
@@ -901,6 +902,34 @@ class SessionRegistry:
             self._write_own(session_id, entry)
             logger.info("SessionRegistry: mark_logical session=%s logical=%s", session_id, logical)
             return True
+
+    def open_session(
+        self,
+        session_id: str,
+        *,
+        held_files: list[str] | None = None,
+        task_files: list[str] | None = None,
+        depends_on_sessions: list[str] | None = None,
+        is_breaking_change: bool = False,
+    ) -> SessionInfo:
+        """开班单一 API（2026-10-10 总统筹增补令③②）：register(pid=0, logical=True) 一口完成。
+
+        逻辑长会话（总包/chief/守护形态）的开班禁裸两步（``register(pid=0)`` 之后再
+        ``mark_logical``）：两步窗口内守护可按非逻辑判死自退、且 mark_logical 对未注册
+        sid 静默 False（deadcure2 守护脚本两 bug 活案例=心跳写影子路径+缺根静默 None
+        却上报重起 37 次）。pid 恒 0（逻辑 session，跨 python -c 进程，活性=心跳 90s
+        判据非进程绑定）；logical=True=W-29 豁免（daemon 不因 idle 自退），调用方
+        自证形态——普通会话请走 session_worktree_start（默认非逻辑，僵尸自退治本不回退）。
+        """
+        return self.register(
+            session_id,
+            pid=0,
+            held_files=held_files if held_files is not None else [],
+            is_breaking_change=is_breaking_change,
+            task_files=task_files or [],
+            depends_on_sessions=depends_on_sessions or [],
+            logical=True,
+        )
 
     def register_dependency(
         self,

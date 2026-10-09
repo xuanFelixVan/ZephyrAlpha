@@ -906,6 +906,23 @@ def _print_bottleneck_banner(project_root: Path, context: str) -> None:
         logger.debug("bottleneck banner failed (non-blocking)", exc_info=True)
 
 
+def _main_root_anchor(project_root: object) -> Path:
+    """治理台账统一根解析真源（2026-10-10 总统筹增补令①，与 a13 破断器同批）。
+
+    病根族（"根解析错位"，与 gateway parents[3]/T0-1 同族）：串行池工的 gateway
+    project_root=池工 worktree（w0/w1），``_log_allow_overlap_usage``/``_check_hot_overlap_
+    escalation`` 读写的都是 ``<池工 worktree>/.runtime/gate_audit/allow_overlap_usage.jsonl``
+    ——清主区/改主区全无效（dexp 2026-10-10 报告实证 0033/0034）。治本=统一锚主仓根
+    （anchor_main_root：worktree→主仓根，git 元数据真源），其余路径原样。
+    """
+    try:
+        from zephyr.shared.io.paths import anchor_main_root  # noqa: PLC0415
+
+        return anchor_main_root(Path(str(project_root)))
+    except Exception:  # noqa: BLE001 — 锚设施异常退原根（fail-open，台账面不阻断 commit）
+        return Path(str(project_root))
+
+
 def _log_allow_overlap_usage(project_root: object, session_id: str, files: list[str]) -> None:
     """O2 裁定（#ARCH-264）：--allow-overlap 逃生通道使用计量落盘。
 
@@ -913,13 +930,17 @@ def _log_allow_overlap_usage(project_root: object, session_id: str, files: list[
     ``.runtime/gate_audit/allow_overlap_usage.jsonl``（session/文件数/热文件清单），
     供滚动窗计数升级阻断（热文件 24h≥5 次升 hard block）与每周治理报告消费。
     计量失败 fail-open 不阻断 commit。
+    2026-10-10 增补令①修复：根经 _main_root_anchor 锚主仓（池工 worktree 调用方
+    不再写影子台账）；hot_files 逐文件按主仓根判定填充（此前 worktree 根下
+    is_hot_file 判不出 → 记录清一色 hot_files=[] → TRAE-079 他伤豁免永不命中，
+    被他人吸收逼出的重投全记受害者账上）。
     """
     try:
         from datetime import datetime, timezone  # noqa: PLC0415
 
         from zephyr.shared.io.file_utils import is_hot_file  # noqa: PLC0415
 
-        root = Path(str(project_root))
+        root = _main_root_anchor(project_root)
         hot: list[str] = []
         for f in files:
             rel = str(f).replace("\\", "/")
@@ -1019,7 +1040,7 @@ def _check_hot_overlap_escalation(project_root: object, session_id: str) -> tupl
     try:
         from datetime import datetime, timedelta, timezone  # noqa: PLC0415
 
-        usage = Path(str(project_root)) / ".runtime" / "gate_audit" / "allow_overlap_usage.jsonl"
+        usage = _main_root_anchor(project_root) / ".runtime" / "gate_audit" / "allow_overlap_usage.jsonl"
         if not usage.is_file():
             return False, ""
         cutoff = datetime.now(timezone.utc) - timedelta(seconds=_HOT_OVERLAP_WINDOW_SECONDS)

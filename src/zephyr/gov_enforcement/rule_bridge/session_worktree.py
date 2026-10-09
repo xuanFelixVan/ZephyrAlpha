@@ -1469,6 +1469,19 @@ def _spawn_heartbeat_daemon(
 
     pid_file = _heartbeat_pid_file(root, session_id)
 
+    # exited 残留守卫（2026-10-10 总统筹增补令③①）：心跳审计末条 status="exited"
+    # =前代守护已自退的死亡证明（session 除名/失锚/idle 超时三种自退都落 exited），
+    # 此时任何 pid 文件/新鲜 mtime 都不得视为"已在运行"——无条件清 pid 文件走重
+    # spawn。ghost_session 死信族（415 次/40+ 会话，09-30 首死）根因之一=keeper
+    # 侧"<900s 视为新鲜"判据把 exited 残留当活证跳过重拉。
+    try:
+        from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import heartbeat_last_status  # noqa: PLC0415
+
+        if heartbeat_last_status(root, session_id) == "exited":
+            pid_file.unlink(missing_ok=True)
+    except Exception:  # noqa: BLE001 — 守卫失败退既有 pid-file 判据（不阻断 start）
+        pass
+
     # 幂等：daemon 已在运行则不重复 spawn
 
     try:

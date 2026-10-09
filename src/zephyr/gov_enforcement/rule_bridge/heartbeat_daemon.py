@@ -126,6 +126,32 @@ def heartbeat_file_path(project_root: str | Path, session_id: str) -> Path:
     return Path(project_root) / ".runtime" / "sessions" / session_id / "heartbeat.jsonl"
 
 
+def heartbeat_last_status(project_root: str | Path, session_id: str) -> str | None:
+    """读心跳审计最后一条的 status（2026-10-10 总统筹增补令③①）。
+
+    返回 None=无记录/不可读。消费方=keeper/spawn 判据：见 ``"exited"`` 必须
+    无条件重 spawn——``status:"exited"`` 残留是守护已自退（session 除名/失锚/
+    idle 超时）的死亡证明，任何"mtime <900s 视为新鲜"判据都不得把它当活证
+    （deadcure2 §十三 ghost_session 第一大死信族根因之一，415 次死信跨 40+ 会话）。
+    """
+    try:
+        path = heartbeat_file_path(project_root, session_id)
+        with path.open("r", encoding="utf-8") as fh:
+            last: str | None = None
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                last = line
+            if not last:
+                return None
+            data = json.loads(last)
+            status = data.get("status")
+            return str(status) if status else None
+    except (OSError, ValueError):
+        return None
+
+
 def _append_heartbeat_log(path: Path, status: str, extra: dict | None = None) -> None:
     """追加一条 heartbeat 审计记录到 JSONL 文件。
 
@@ -429,6 +455,12 @@ def run_daemon(
         0=正常退出，1=致命错误。
     """
     root = Path(project_root).resolve()
+    if not root.is_dir():
+        # 开班响亮失败（2026-10-10 总统筹增补令③②红证）：缺仓库根启动必须报错退出，
+        # 禁"心跳写影子路径却上报已起"的假成功（deadcure2 守护脚本两 bug 活案例——
+        # 影子路径心跳+缺根静默 None 却上报重起 37 次）。返回 1=致命错误（不写任何
+        # 心跳记录——影子路径一条都不落）。
+        return 1
     hb_path = heartbeat_file_path(root, session_id)
 
     # 写入全局变量供 signal handler 读取
