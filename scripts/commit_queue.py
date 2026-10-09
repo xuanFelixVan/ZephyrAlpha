@@ -3113,7 +3113,10 @@ def cleanup_done(
 
     年龄基准 landed_at（落盘时刻），缺失/解析失败回退文件 mtime。
     **dead/ 永不触碰**（66 号 §8 队列腐败口径：死信回退给人，永不自动清理——
-    不变量由 TestDoneTtlCleanup 专测钉死）；pending/processing 不触碰；
+    不变量由 TestDoneTtlCleanup 专测钉死）；**pending/processing 永不触碰**
+    （2026-10-10 总统筹增补令·队列完整性①铁律化：二号巨袋在途 processing 袋被
+    扫除四分区查无=第 4 件队列完整性病灶——本清理 glob 域硬限 done/，越域即
+    违规；移除必留审计行 cleanup_audit.jsonl）；
     blobs/ 内容寻址共享存储不在本清理范围（多队列项可共享同一 blob）。
     drain 排空收尾自动调用（lease 内单写者安全）；CLI cleanup 子命令可手动触发。
     """
@@ -3142,6 +3145,10 @@ def cleanup_done(
             try:
                 _retry_transient(lambda: os.remove(entry))
                 removed.append(entry.stem)
+                # 队列完整性审计（2026-10-10 总统筹增补令·队列完整性②）：凡 cleanup
+                # 移除任何袋必须留审计行（qid+原因+去向）——二号巨袋 q-0005 在途被扫
+                # 除四分区查无=第 4 件队列完整性病灶，本审计行=消失必留痕。
+                _audit_cleanup_removal(root, entry.stem, reason=f"done_ttl({ttl_days}天)", destination="deleted")
             except (FileNotFoundError, PermissionError):
                 pass  # 并发读取窗口瞬态占用——留待下轮清理
         else:
@@ -3149,6 +3156,22 @@ def cleanup_done(
     if removed:
         logger.info("[cleanup] done/ TTL(%s 天) 清理 %d 项: %s", ttl_days, len(removed), removed)
     return {"removed": removed, "kept": kept}
+
+
+def _audit_cleanup_removal(root: Path, qid: str, *, reason: str, destination: str) -> None:
+    """cleanup 移除审计（增补令·队列完整性②）：JSONL 追加，fail-open 不阻断清理。"""
+    try:
+        audit = root / "cleanup_audit.jsonl"
+        record = {
+            "ts": datetime.now().astimezone().isoformat(),
+            "qid": qid,
+            "reason": reason,
+            "destination": destination,
+        }
+        with audit.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + chr(10))
+    except OSError:
+        logger.debug("cleanup audit write failed (non-blocking)", exc_info=True)
 
 
 # ---------------------------------------------------------------------------
