@@ -277,3 +277,51 @@ class TestHypothesisAndId:
 
 if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])
+
+
+class TestCollapseTiLatest:
+    """③-b：TI 基座帧同键多版必须按 ingest_ts 取最新入库版（总统筹批复 2026-10-09）。"""
+
+    @staticmethod
+    def _fn():
+        """源件与本作分属两域只能分袋；源袋未落地时显式 skip（skip 可见，区别于"判据没跑却绿"）。"""
+        import scripts.backtest.lane_c_formula_miner as lane_c
+
+        fn = getattr(lane_c, "collapse_ti_latest", None)
+        if fn is None:
+            pytest.skip("lane_c 的 collapse_ti_latest 未落地（源袋先行），落地后本组用例自动生效")
+        return fn
+
+    @staticmethod
+    def _frame(with_version: bool) -> pd.DataFrame:
+        cols = {
+            "trade_date": ["2026-08-13", "2026-08-13", "2026-08-13"],
+            "symbol_canonical": ["002789", "002789", "002789"],
+            "period": ["daily", "daily", "daily"],
+            "ma_5": ["1.0", "9.0", "5.0"],
+            "boll_upper": ["11.0", "19.0", "15.0"],
+        }
+        if with_version:
+            # 行序末位＝最早入库版（CH 无 ORDER BY 时返回序可为任意序）
+            cols["ingest_ts"] = [
+                "2026-10-08 21:32:13.000",
+                "2026-10-09 04:42:55.000",
+                "2026-10-07 09:00:00.000",
+            ]
+        return pd.DataFrame(cols)
+
+    def test_latest_ingest_version_wins(self):
+        out = self._fn()(self._frame(True))
+        assert len(out) == 1
+        assert float(out["ma_5"].iloc[0]) == 9.0  # 旧写法 keep="first" 会取到 1.0
+        assert "ingest_ts" not in out.columns  # 裁决列不得混进基座指标列
+
+    def test_meta_and_key_columns_renamed(self):
+        out = self._fn()(self._frame(True))
+        assert list(out.columns) == ["date", "s", "ma_5", "boll_upper"]
+        assert out["ma_5"].dtype.kind == "f"
+
+    def test_frame_without_version_column_still_collapses(self):
+        out = self._fn()(self._frame(False))
+        assert len(out) == 1
+        assert "ingest_ts" not in out.columns
