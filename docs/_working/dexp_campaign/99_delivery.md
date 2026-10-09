@@ -56,7 +56,7 @@ ttl: task_bound
 |---|---|---|---|
 | R1 | **≥80G 只能来自 VHDX 压缩，且收益价签远小于初判** | 5.5～42 GiB（两次实测），停机 **4.3-4.8 小时**（预检单"60-120 分钟"被自家两份日志证伪） | 00 号文 §3/§6，Owner 点名门位（裁定#380④/#381）＋需 admin |
 | R2 | 2 件态① 棚被他会话 `worktree add` 中途死锁（`lock reason: initializing`） | 0.51 G | **未碰**。命令已在手：`git worktree remove --force --force <path>`（双 force 是 git 自己对 locked-worktree 的处方），**但那是别人的在途现场，须属主或 Owner 定** |
-| R3 | 态② 25 棚内容级复核 | 6.09 G | 按属主移交（01 号文 §4 分账） |
+| R3 | 态② 25 棚内容级复核 | 6.09 G | 按属主移交（01 号文 §4 分账；逐件单见 `03_evidence_summary.yaml` `state2_handoff`）。**终报现算细分**＝真增量 **19 棚/5.07G**；仅运行时副产物 **3 棚/0.79G**（`st-govfix-g2-20261007`／`verify_v1`／`st-mx07-L3`，可按态① 直处）；主仓回落假数 **3 棚**（`st-chiefzc-verify-20260928`／`st-cure-p03-20261006`／`st-menu-t1b6-20260930`＝空目录或失 `.git` 链接，其"脏件 1454"不是本棚的） |
 | R4 | **备份"双链"此刻实为单设备**：guest 内仅 `sdd` 挂载，`sdc` 未挂载，而 `backups`/`backups2` 报同一组空间数值（我本人 `lsblk`+`system.disks` 双测） | — | 与今晚 F 摘盘直接冲突，**最高优先呈 Owner**（00 号文 §4-3） |
 | R5 | `backup_ch_vm.ps1` 已被 Owner 于 10-04 封存 ⇒ "压缩前取新鲜 VM 镜像"的执行体是死码 | — | 00 号文 §4-2 |
 | R6 | 预检三处仪表缺陷（`days_since` 读错册永不生效／`skipped` 当红每天 2/3 时段／机读红线块缺 D 键） | — | 属改判据，须 Owner 点头（00 号文 §4 末） |

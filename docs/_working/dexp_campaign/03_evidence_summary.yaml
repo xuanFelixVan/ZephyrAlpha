@@ -1,7 +1,7 @@
 # 生成器=.runtime/tmp/dexp/gen_evidence_yaml.py（勿手改；重跑覆盖）
-generated_at: '2026-10-09 13:07:33'
+generated_at: '2026-10-09 14:16:23'
 session_id: st-dexp-20261009
-free_gb_now: 59.823
+free_gb_now: 59.822
 triage_denominator:
   dirs_scanned: 126
   STATE1_CLEAN_MERGED:
@@ -30,6 +30,265 @@ redblue:
   injection_artifacts: ['triage_red.jsonl', 'triage_red2.jsonl', 'triage_red3.jsonl']
   state4_sheds: ["st-chiefc-20261009", "st-chiefc-20261009-D", "st-deadcure-chief-20261009", "st-deadcure-g1-chief", "st-deadcure-g2-chief", "st-deadcure-promote-chief", "st-deadcure-restore-chief", "st-dexp-20261009", "st-fullflow2-20261008", "st-libfront-20261009"]
 state1_still_present_list: [".aidrafts/st-mx07-W2", ".aidrafts/st-tclose-fwire-20261004"]
+state2_refinement:  # 现算：态② 里哪些其实只是运行时副产物／哪些是主仓回落假数
+  artifact_only_count: 3
+  artifact_only_gb: 0.79
+  artifact_only_list: [".aidrafts/st-govfix-g2-20261007", ".aidrafts/verify_v1", ".aidrafts/st-mx07-L3"]
+  main_repo_fallback_artifact_count: 3
+  main_repo_fallback_list: [".worktrees/st-chiefzc-verify-20260928", ".worktrees/st-cure-p03-20261006", ".worktrees/st-menu-t1b6-20260930"]
+  genuine_increment_count: 19
+  genuine_gb: 5.07
+state2_handoff:  # 态② 逐件移交单（属主车道按此认领，勿重复施工）
+  - path: '.worktrees/st-bt-fast-w5-20261006'
+    still_on_disk: true
+    size_gb: 0.37
+    head: 'e607d6b1ddf4'
+    ahead_of_dev: 0
+    dirty_n: 20
+    untracked_n: 0
+    ignored_review_n: 310
+    ignored_review_gb: 0.044
+    sample: [".ailocks/registry.json", ".ailocks/src.zephyr.gov_enforcement.commit_gates._blob_cache.py.lock/owner.json", ".runtime/reconciler_health_warn_dedup.json", ".runtime/audit/feature_flags.jsonl", ".runtime/audit/gate_execution_stats.jsonl", ".runtime/audit/preflight_events.jsonl"]
+  - path: '.worktrees/st-gomap-b-20261006'
+    still_on_disk: true
+    size_gb: 0.28
+    head: '21fcdcc202d8'
+    ahead_of_dev: 2
+    dirty_n: 6
+    untracked_n: 10
+    ignored_review_n: 43
+    ignored_review_gb: 0.012
+    sample: ["docs/_working/fullcirculation_campaign/00_skeleton/README.md", "docs/_working/fullcirculation_campaign/00_skeleton/chain_inventory.yaml", "docs/_working/fullcirculation_campaign/00_skeleton/handoff_gap_prescriptions.md", "docs/_working/fullcirculation_campaign/00_skeleton/skeleton_findings.md", "docs/_working/fullcirculation_campaign/01_dtable_rulings/r_table_rulings.md", "docs/_working/fullcirculation_campaign/01_dtable_rulings/tech_stack_absorption_spec.md"]
+  - path: '.worktrees/st-docs-e13-20261009'
+    still_on_disk: true
+    size_gb: 0.27
+    head: 'fcd81fa102e7'
+    ahead_of_dev: 0
+    dirty_n: 1
+    untracked_n: 0
+    ignored_review_n: 1
+    ignored_review_gb: 0.0
+    sample: [".runtime/audit/preflight_events.jsonl"]
+  - path: '.worktrees/st-poscap-fix-20261008'
+    still_on_disk: true
+    size_gb: 0.27
+    head: 'ee30722678db'
+    ahead_of_dev: 0
+    dirty_n: 1
+    untracked_n: 0
+    ignored_review_n: 12
+    ignored_review_gb: 0.0
+    sample: [".runtime/pg_probe_state.json", ".runtime/reconciler_health_warn_dedup.json", ".runtime/audit/commit_block_events.jsonl", ".runtime/audit/feature_flags.jsonl", ".runtime/audit/lock_wait_events.jsonl", ".runtime/audit/precommit_channel_stats.jsonl"]
+  - path: '.worktrees/st-entrance-gate-20261007'
+    still_on_disk: true
+    size_gb: 0.27
+    head: '67a3d08a0ac3'
+    ahead_of_dev: 2
+    dirty_n: 5
+    untracked_n: 2
+    ignored_review_n: 21
+    ignored_review_gb: 0.0
+    sample: [".zcode/config.json", "docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/landing_journey_registry.yaml", ".runtime/pg_probe_state.json", ".runtime/reconciler_health_warn_dedup.json", ".runtime/reconcile_launch.lock", ".runtime/audit/commit_block_events.jsonl"]
+  - path: '.aidrafts/verify_v1'
+    still_on_disk: true
+    size_gb: 0.27
+    head: 'fcd81fa102e7'
+    ahead_of_dev: 0
+    dirty_n: 0
+    untracked_n: 0
+    ignored_review_n: 1
+    ignored_review_gb: 0.0
+    sample: [".runtime/audit/feature_flags.jsonl"]
+  - path: '.worktrees/st-fc-tdm-20261008'
+    still_on_disk: true
+    size_gb: 0.27
+    head: 'd3acf7189528'
+    ahead_of_dev: 0
+    dirty_n: 4
+    untracked_n: 0
+    ignored_review_n: 6
+    ignored_review_gb: 0.0
+    sample: [".runtime/audit/preflight_events.jsonl", "activate_env.ps1", "config/.env.clickhouse", "config/.env.postgres", "data/integrator_progress.db-shm", "data/integrator_progress.db-wal"]
+  - path: '.aidrafts/st-deadcure-20261009'
+    still_on_disk: true
+    size_gb: 0.27
+    head: '5c022a21b4a6'
+    ahead_of_dev: 0
+    dirty_n: 0
+    untracked_n: 18
+    ignored_review_n: 18
+    ignored_review_gb: 0.0
+    sample: ["docs/_working/question-mining-20260927/00_charter.md", "docs/_working/question-mining-20260927/01_sources/s1_ledger.md", "docs/_working/question-mining-20260927/02_factors/s2a_candidates.yaml", "docs/_working/question-mining-20260927/02_factors/s2a_ledger.md", "docs/_working/question-mining-20260927/02_factors/s2b_ledger.md", "docs/_working/question-mining-20260927/03_strategies/s3_candidates.yaml"]
+  - path: '.worktrees/st-chief7z-20261009'
+    still_on_disk: true
+    size_gb: 0.27
+    head: 'f3edb356140e'
+    ahead_of_dev: 0
+    dirty_n: 1
+    untracked_n: 1
+    ignored_review_n: 8
+    ignored_review_gb: 0.0
+    sample: ["docs/_working/fullconnect_campaign/98_owner_adjudication_rollup.md", ".runtime/reconciler_health_warn_dedup.json", ".runtime/audit/feature_flags.jsonl", ".runtime/audit/preflight_events.jsonl", ".runtime/audit/safe_write.jsonl", "activate_env.ps1"]
+  - path: '.aidrafts/st-govfix-g2-20261007'
+    still_on_disk: true
+    size_gb: 0.26
+    head: 'dd98757ab4a4'
+    ahead_of_dev: 0
+    dirty_n: 0
+    untracked_n: 0
+    ignored_review_n: 6
+    ignored_review_gb: 0.0
+    sample: [".runtime/reconciler_health_warn_dedup.json", ".runtime/audit/preflight_events.jsonl", ".runtime/audit/safe_write.jsonl", ".runtime/claim_snapshots/st-govfix-g2-20261007.json", ".runtime/claim_snapshots/st-govfix-g2-20261007_adopted.jsonl", ".runtime/gate_audit/post_claim_modifications.jsonl"]
+  - path: '.worktrees/st-gomap-b-20261004'
+    still_on_disk: true
+    size_gb: 0.26
+    head: 'a3d2c658040b'
+    ahead_of_dev: 0
+    dirty_n: 2
+    untracked_n: 2
+    ignored_review_n: 2
+    ignored_review_gb: 0.0
+    sample: ["docs/_working/fullcirculation_campaign_20261008/10_hop_mining/fig14_construction/hops.yaml", "docs/_working/fullcirculation_campaign_20261008/10_hop_mining/fig15_card_lifecycle/hops.yaml"]
+  - path: '.aidrafts/st-govfix-g6-20261007'
+    still_on_disk: true
+    size_gb: 0.26
+    head: '265fcda62a4e'
+    ahead_of_dev: 0
+    dirty_n: 0
+    untracked_n: 12
+    ignored_review_n: 13
+    ignored_review_gb: 0.004
+    sample: ["data/strategy_intake/grid_gpu_sectorcond_20260924-0834/README.md", "data/strategy_intake/grid_gpu_sectorcond_20260924-0834/is_holdout.npy", "data/strategy_intake/grid_gpu_sectorcond_20260924-0834/momentum_pct.npy", "data/strategy_intake/grid_gpu_sectorcond_20260924-0834/rrg_quadrant.npy", "data/strategy_intake/grid_gpu_sectorcond_20260924-0834/sector_index.json", "data/strategy_intake/grid_gpu_sectorcond_20260924-0834/watch_score.npy"]
+  - path: '.worktrees/st-fc-landing-20261008'
+    still_on_disk: true
+    size_gb: 0.26
+    head: '551960b57ec9'
+    ahead_of_dev: 0
+    dirty_n: 6
+    untracked_n: 10
+    ignored_review_n: 15
+    ignored_review_gb: 0.0
+    sample: ["docs/_working/fullcirculation_campaign/00_skeleton/README.md", "docs/_working/fullcirculation_campaign/00_skeleton/chain_inventory.yaml", "docs/_working/fullcirculation_campaign/00_skeleton/handoff_gap_prescriptions.md", "docs/_working/fullcirculation_campaign/00_skeleton/skeleton_findings.md", "docs/_working/fullcirculation_campaign/01_dtable_rulings/r_table_rulings.md", "docs/_working/fullcirculation_campaign/01_dtable_rulings/tech_stack_absorption_spec.md"]
+  - path: '.worktrees/st-fc-spm-20261008'
+    still_on_disk: true
+    size_gb: 0.26
+    head: '551960b57ec9'
+    ahead_of_dev: 0
+    dirty_n: 3
+    untracked_n: 0
+    ignored_review_n: 5
+    ignored_review_gb: 0.0
+    sample: [".runtime/audit/preflight_events.jsonl", ".runtime/gate_audit/registry_mass_deletion_foreign_staged.jsonl", "activate_env.ps1", "config/.env.clickhouse", "config/.env.postgres"]
+  - path: '.aidrafts/st-mx07-L3'
+    still_on_disk: true
+    size_gb: 0.26
+    head: '61543354d7f7'
+    ahead_of_dev: 0
+    dirty_n: 0
+    untracked_n: 0
+    ignored_review_n: 1
+    ignored_review_gb: 0.0
+    sample: [".runtime/audit/feature_flags.jsonl"]
+  - path: '.worktrees/st-bcure-wt'
+    still_on_disk: true
+    size_gb: 0.26
+    head: 'f072e86aa6e1'
+    ahead_of_dev: 0
+    dirty_n: 4
+    untracked_n: 1
+    ignored_review_n: 2
+    ignored_review_gb: 0.0
+    sample: ["tests/legacy_zephyr/data/test_ashare_trade_calendar_internal.py", ".runtime/audit/preflight_events.jsonl"]
+  - path: '.worktrees/st-fflow-c2-20261008'
+    still_on_disk: true
+    size_gb: 0.26
+    head: '1c9231519089'
+    ahead_of_dev: 0
+    dirty_n: 0
+    untracked_n: 0
+    ignored_review_n: 3
+    ignored_review_gb: 0.0
+    sample: ["activate_env.ps1", "config/.env.clickhouse", "config/.env.postgres"]
+  - path: '.worktrees/st-fflow-c3-20261008'
+    still_on_disk: true
+    size_gb: 0.26
+    head: '1c9231519089'
+    ahead_of_dev: 0
+    dirty_n: 0
+    untracked_n: 0
+    ignored_review_n: 3
+    ignored_review_gb: 0.0
+    sample: ["activate_env.ps1", "config/.env.clickhouse", "config/.env.postgres"]
+  - path: '.aidrafts/st-mastertc-mine'
+    still_on_disk: true
+    size_gb: 0.25
+    head: 'f73bf8714dd1'
+    ahead_of_dev: 1
+    dirty_n: 0
+    untracked_n: 0
+    ignored_review_n: 0
+    ignored_review_gb: 0.0
+    sample: []
+  - path: '.worktrees/st-tdm-chief-20261004'
+    still_on_disk: true
+    size_gb: 0.25
+    head: '8ceaf27dce7d'
+    ahead_of_dev: 0
+    dirty_n: 2
+    untracked_n: 0
+    ignored_review_n: 14
+    ignored_review_gb: 0.0
+    sample: [".runtime/pg_probe_state.json", ".runtime/audit/commit_block_events.jsonl", ".runtime/audit/lock_wait_events.jsonl", ".runtime/audit/precommit_channel_stats.jsonl", ".runtime/audit/preflight_events.jsonl", ".runtime/claim_snapshots/claim_retention.jsonl"]
+  - path: '.worktrees/st-vm12w-20261004'
+    still_on_disk: true
+    size_gb: 0.25
+    head: '7788fad9c6a6'
+    ahead_of_dev: 0
+    dirty_n: 0
+    untracked_n: 5
+    ignored_review_n: 8
+    ignored_review_gb: 0.0
+    sample: ["docs/_working/vmap12_intake/in1_four_way_draft.yaml", "docs/_working/vmap12_intake/in1z_escalations.md", "docs/_working/vmap12_intake/in3_repair_prescriptions.yaml", "docs/_working/vmap12_intake/in3z_commit_blockers.md", "docs/_working/vmap12_intake/nav_supply_candidates.yaml", "activate_env.ps1"]
+  - path: '.worktrees/st-cure-p0-20261006'
+    still_on_disk: true
+    size_gb: 0.23
+    head: '9734d944d28e'
+    ahead_of_dev: 0
+    dirty_n: 2
+    untracked_n: 4
+    ignored_review_n: 13
+    ignored_review_gb: 0.0
+    sample: ["docs/_working/commitmap_cure/f15_frombag_report.md", "docs/_working/commitmap_cure/final_closeout_report.md", "tests/gov/governance/test_commit_queue_landing_evolved_scope.py", "tests/gov/governance/test_queue_registry_rebase_not_retire.py", ".runtime/audit/feature_flags.jsonl", ".runtime/audit/preflight_events.jsonl"]
+  - path: '.worktrees/st-menu-t1b6-20260930'
+    still_on_disk: true
+    size_gb: 0.23
+    head: '04dcfc962028'
+    ahead_of_dev: 0
+    dirty_n: 1454
+    untracked_n: 454
+    ignored_review_n: 9
+    ignored_review_gb: 0.002
+    sample: [".runtime/pg_probe_state.json", ".runtime/reconciler_health_warn_dedup.json", ".runtime/reconcile_launch.lock", ".runtime/audit/feature_flags.jsonl", ".runtime/reconcile_reports/reconcile_status_c7628f1520cb6cd5f36f930963d03ed47aeac37e.json", "config/.env.clickhouse"]
+  - path: '.worktrees/st-chiefzc-verify-20260928'
+    still_on_disk: true
+    size_gb: 0.0
+    head: '04dcfc962028'
+    ahead_of_dev: 0
+    dirty_n: 1454
+    untracked_n: 454
+    ignored_review_n: 0
+    ignored_review_gb: 0.0
+    sample: []
+  - path: '.worktrees/st-cure-p03-20261006'
+    still_on_disk: true
+    size_gb: 0.0
+    head: '04dcfc962028'
+    ahead_of_dev: 0
+    dirty_n: 1454
+    untracked_n: 454
+    ignored_review_n: 0
+    ignored_review_gb: 0.0
+    sample: []
 per_item_disposition:  # 逐件账（.runtime/tmp 有 24h TTL，故提升为常驻证据）
   - path: '.aidrafts/AI-PROBE-001'
     branch: 'session/AI-PROBE-001'
