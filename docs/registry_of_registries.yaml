@@ -316,7 +316,7 @@ tiers:
         maintenance: frozen
         entry_count: 5
         status: archived
-        description: 5 个核心模块的 API 接口契约（接口集级粒度，对标 Backstage API kind）。2026-09-16 裁定#259 退役归档——函数级接口契约唯一真源=代码本体（签名+docstring+ALGO_FLOW 外部真源），本表无独立消费者
+        description: 5 个核心模块的 API 接口契约（接口集级粒度，对标 Backstage API kind）。2026-09-16 裁定#259 退役归档——函数级接口契约唯一真源=代码本体（签名+docstring+ALGO_FLOW 外部真源），本表无独立消费者。〔墓碑 2026-10-09｜G 车道 R01〕tombstone=retired（幽灵户口转墓碑制，禁物理删）——复活窗 30 天（至 2026-11-08），期内引用即复活评估；物理清账（撤 ROOR 行）并入季度打包；悬空消费者收尾（registry_adapter.py:714、sync_yaml_to_depgraph.py:1829 旧路径）登记为后续债非本批施工。authority=Owner 2026-10-09《Owner呈批菜单_重路由版》B 清单 R01（C24/C411 净删候选转 AI 自裁），adjudicator=st-chiefc-20261009
 
       - registry_id: REG-KB-001
         name: 知识文章注册表（已归档）
@@ -326,7 +326,7 @@ tiers:
         entry_count: 0
         counting_rule: knowledge_entries 数组条目数（模板就位内容待填充）
         status: archived
-        description: 知识库文章索引。2026-09-16 裁定#258 退役归档——entries=0 空表未启用，知识条目承载=设计备忘录+业务库 candidate 态（13号文 §3.6 既有口径）
+        description: 知识库文章索引。2026-09-16 裁定#258 退役归档——entries=0 空表未启用，知识条目承载=设计备忘录+业务库 candidate 态（13号文 §3.6 既有口径）。〔墓碑 2026-10-09｜G 车道 R01〕tombstone=retired（幽灵户口转墓碑制，禁物理删）——复活窗 30 天（至 2026-11-08），期内引用即复活评估；物理清账（撤 ROOR 行）并入季度打包；悬空消费者收尾（registry_adapter.py:714、sync_yaml_to_depgraph.py:1829 旧路径）登记为后续债非本批施工。authority=Owner 2026-10-09《Owner呈批菜单_重路由版》B 清单 R01（C24/C411 净删候选转 AI 自裁），adjudicator=st-chiefc-20261009
 
       - registry_id: REG-TASK-META-001
         name: Task Card 元注册表
