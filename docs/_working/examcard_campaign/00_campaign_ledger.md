@@ -42,3 +42,12 @@ family_id: EXAMCARD-CAMPAIGN
 
 - st-fig16-20261005（10-05 老会话，零活进程实证）的暂存件 panorama_alignment_gate.py（+25/-13，63 行 `__all__` 缺 Final 触发 MUTABLE-CONST-WITHOUT-FINAL 全局门）封死全仓直落通道。
 - 处置=git restore --staged 单文件退栈（**三态验证零丢失**：worktree==index，内容全留工作树，其回来 re-add 即可恢复）；未代改其代码（§3.4）；本条即登记。
+
+
+## 追记（2026-10-10）：W4 首分开考+W5 判据实弹
+
+- **前置②解除**：dexp 0060 落 HEAD（indicator_reader argMax ×4，总统筹验真同数）。
+- **首卡开考**：TDM-E-L1-S1/02_指数趋势位置（kline_index 000300 全窗 1880 行，与冻结窗 2019-2023 IS+2024-2025.09 OOS 完全匹配；信号=MA20/MA60 复合三态档位，序数桶型 runner 回退已补）。**verdict=fail**（ic_mean=-0.0013<0.02、OOS 反号 IS-0.0013/OOS+0.0445；桶序单调 1.0=三态平凡序）。**负结果如实入 exam_scores_v1.yaml**（预注册纪律：门柱冻在先跑分在后，fail 行不迁移 confidence=W5 判据机判实弹正确拒绝）。
+- **数据面断供新发现**：c1_market.limit_up_down 仅覆盖 2026-07-20 起（5397 行）——广度面 6+1 卡冻结窗（2019-2025）无数据，需源回补（接 HANDOVER 断供修复工单族）；波动面 IV/宏观事件表待接。20 卡可立即开考面=指数族；广度面候源回补后按各自冻结窗开考。
+- **N 账本 CAS 告警**：TrialLedger 记账撞注册表族保护 ×10（热册竞态），ledger_warning 已如实入分数行（不吞考试结果）——转维护班面。
+- **runner 顺手修**：序数分桶回退/窗口边界 Timestamp 化/行情段日期正则解析（含中文段注容许），测试 7 passed。

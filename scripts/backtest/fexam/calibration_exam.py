@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import date as _date
 from pathlib import Path
@@ -58,6 +59,17 @@ class _ToolError(RuntimeError):
         self.details = details or {}
 
 
+_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+
+def _span_dates(span: str) -> tuple[str, str]:
+    """行情段跨度解析：取串内前两个日期（容许尾注，如 '2019-01-04..2021-06-30（流动性牛）'）。"""
+    hits = _DATE_RE.findall(str(span))
+    if len(hits) < 2:
+        return span, span
+    return hits[0], hits[1]
+
+
 def _spearman(a: np.ndarray, b: np.ndarray) -> float:
     s = pd.Series(a).rank()
     t = pd.Series(b).rank()
@@ -67,11 +79,16 @@ def _spearman(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def _bucket_response(signal: pd.Series, target: pd.Series, n_buckets: int = 10) -> dict:
-    """日度序列分桶响应：按信号分位分桶 → 桶内目标中位 → 桶序-中位 Spearman。"""
+    """日度序列分桶响应：按信号分位分桶 → 桶内目标中位 → 桶序-中位 Spearman。
+
+    序数信号（唯一值 <= n_buckets，如三态档位卡）按信号值直接分桶（尊重冻结桶型）。"""
     df = pd.concat({"sig": signal, "tgt": target}, axis=1).dropna()
     if len(df) < n_buckets * 10:
         return {"n": len(df), "bucket_medians": [], "mono_spearman": float("nan")}
-    df["b"] = pd.qcut(df["sig"].rank(method="first"), n_buckets, labels=False)
+    if df["sig"].nunique() <= n_buckets:
+        df["b"] = df["sig"].rank(method="dense")
+    else:
+        df["b"] = pd.qcut(df["sig"].rank(method="first"), n_buckets, labels=False)
     med = df.groupby("b")["tgt"].median()
     rho = _spearman(med.index.to_numpy(float), med.to_numpy(float))
     return {"n": int(len(df)), "bucket_medians": [float(x) for x in med], "mono_spearman": rho}
@@ -86,13 +103,13 @@ def _series_metrics(signal: pd.Series, target: pd.Series, card: dict) -> dict:
     regimes = card.get("window", {}).get("regimes", {})
     seg: dict[str, float] = {}
     for name, span in regimes.items():
-        a, b = span.split("..")[0], span.split("..")[1]
-        m = aligned[(aligned.index >= a) & (aligned.index <= b)]
+        a, b = _span_dates(span)
+        m = aligned[(aligned.index >= pd.Timestamp(a)) & (aligned.index <= pd.Timestamp(b))]
         seg[name] = _spearman(m["s"].to_numpy(), m["t"].to_numpy()) if len(m) >= 60 else float("nan")
     oos = card.get("oos_window_ref") or []
     oos_ic = float("nan")
     if len(oos) == 2:
-        m = aligned[(aligned.index >= oos[0]) & (aligned.index <= oos[1])]
+        m = aligned[(aligned.index >= pd.Timestamp(oos[0])) & (aligned.index <= pd.Timestamp(oos[1]))]
         oos_ic = _spearman(m["s"].to_numpy(), m["t"].to_numpy()) if len(m) >= 60 else float("nan")
     return {
         "ic_mean": ic_ts,
@@ -112,13 +129,13 @@ def _panel_metrics(signal: pd.DataFrame, target: pd.DataFrame, card: dict) -> di
     regimes = card.get("window", {}).get("regimes", {})
     seg = {}
     for name, span in regimes.items():
-        a, b = span.split("..")[0], span.split("..")[1]
-        part = ic[(ic.index >= a) & (ic.index <= b)]
+        a, b = _span_dates(span)
+        part = ic[(ic.index >= pd.Timestamp(a)) & (ic.index <= pd.Timestamp(b))]
         seg[name] = float(part.mean()) if len(part) >= 30 else float("nan")
     oos = card.get("oos_window_ref") or []
     oos_ic = float("nan")
     if len(oos) == 2:
-        part = ic[(ic.index >= oos[0]) & (ic.index <= oos[1])]
+        part = ic[(ic.index >= pd.Timestamp(oos[0])) & (ic.index <= pd.Timestamp(oos[1]))]
         oos_ic = float(part.mean()) if len(part) >= 30 else float("nan")
     return {
         "ic_mean": float(st.get("ic_mean", float("nan"))),

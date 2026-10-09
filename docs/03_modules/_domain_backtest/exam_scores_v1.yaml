@@ -1,0 +1,26 @@
+schema_version: '1.0'
+title: 考试卡分数册（成绩汇总面，方案 §6 D4）
+rows:
+- card_id: TDM-E-L1-S1/calibration/02_指数趋势位置
+  node_id: TDM-E-L1-S1
+  run_id: examcard-S1-trend-20261010
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.0012788417060495502
+    mono_spearman: 1.0
+    n: 1702
+    regime_ic:
+      bull: -0.07220487707689348
+      bear: -0.04887387968236904
+    oos_ic: 0.04454308396896059
+    ic_ir: null
+  fails:
+  - ic_mean -0.0013 < 0.02
+  - oos_sign_flip oos=0.0445 is=-0.0013
