@@ -49,8 +49,19 @@ class _FakeSubprocess:
         return SimpleNamespace(returncode=self.returncode, stdout="", stderr="")
 
 
+def _shards_worked(fake: _FakeSubprocess) -> int:
+    """数"跑过几片"而不是"起了几个子进程"——P4 之后一片按年切窗，一片＝多个子进程。
+
+    判据仍然咬得住原意：同一片的所有窗共用同一个 --symbols-file，去重即片数。
+    """
+    return len({c[c.index("--symbols-file") + 1] for c in fake.calls if "--symbols-file" in c})
+
+
 def _run_main(monkeypatch, tmp_path: Path, fake: _FakeSubprocess, shards: int = 2) -> int:
     monkeypatch.setattr(runner, "subprocess", fake)
+    # P3 单实例锁必须替掉：本用例一晚连跑两次是设计语义，若让真锁活着，
+    # 第二次会走"让路退出"分支而把 calls==0 的断言喂成假绿（测的是锁，不是幂等）。
+    monkeypatch.setattr(runner, "acquire_instance_lock", lambda: object())
     monkeypatch.setattr(runner, "load_symbols", lambda period, start: [f"S{i}" for i in range(shards * 2)])
     monkeypatch.setattr(
         sys,
@@ -90,7 +101,7 @@ class TestNightlyRestartIdempotence:
     def test_second_pass_within_same_day_inserts_nothing(self, monkeypatch, tmp_path: Path):
         first = _FakeSubprocess()
         assert _run_main(monkeypatch, tmp_path, first) == 0
-        assert len(first.calls) == 2, "首趟应跑两片"
+        assert _shards_worked(first) == 2, "首趟应跑两片"
         assert len(_state_files(tmp_path)) == 2
 
         second = _FakeSubprocess()
@@ -108,16 +119,16 @@ class TestNightlyRestartIdempotence:
             sj.write_text(json.dumps(rec, ensure_ascii=False), encoding="utf-8")
         again = _FakeSubprocess()
         _run_main(monkeypatch, tmp_path, again)
-        assert len(again.calls) == 2, "隔日必须重算，跳过＝指标停摆"
+        assert _shards_worked(again) == 2, "隔日必须重算，跳过＝指标停摆"
 
     def test_failed_shard_recomputes_within_same_day(self, monkeypatch, tmp_path: Path):
         """红证③：当日 exit!=0 的片必须重算（旧行为会因 state 存在而... 不，旧行为是无条件跳过 exit=0）。"""
         bad = _FakeSubprocess(returncode=1)
         assert _run_main(monkeypatch, tmp_path, bad) == 1, "有失败片时汇总 rc 必须非零"
-        assert len(bad.calls) == 2
+        assert _shards_worked(bad) == 2
         retry = _FakeSubprocess(returncode=1)
         assert _run_main(monkeypatch, tmp_path, retry) == 1
-        assert len(retry.calls) == 2, "exit!=0 的片即便当日也必须重算"
+        assert _shards_worked(retry) == 2, "exit!=0 的片即便当日也必须重算"
 
 
 def test_entry_script_no_longer_wipes_state():
