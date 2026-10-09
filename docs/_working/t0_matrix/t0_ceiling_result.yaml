@@ -1,0 +1,204 @@
+card: docs/_working/t0_matrix/t0_ceiling_prereg_card.md (frozen)
+reading_rule: 单向：上界<成本 ⇒ 该组先买后卖族整族判死；上界≥成本 ⇒ 不证明任何方法可用（禁读成通过）
+cost_lines:
+  L1_cover_cost_bp: 31.2
+  L2_cost_plus_precondition_bp: 61.2
+  provenance: CST-T0-001（cost_trio_exam.RT_COST_BP / EDGE_PRECONDITION_BP，import 复用）
+window:
+  start: '2021-09-01'
+  end: '2026-09-23'
+  days: 1227
+closed_book_subset:
+  window:
+  - '2019-01-04'
+  - '2025-09-09'
+  days_in_window: 975
+  dual_allow_days_in_window: 107
+  cross_check_target: data/strategy_intake/grid_t0_conditional_v1/t0_condition_matrix_v1.meta.yaml:gpu_budget.closed_book.dual_gate_allow_days_in_window
+groups:
+  overall:
+    ALL:
+      days: 1227
+      ok_symbol_days: 3079431
+      ge_L1_symbol_days: 3079148
+      ge_L2_symbol_days: 3075763
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9988
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+  by_emotion_phase_T1:
+    accumulation:
+      days: 102
+      ok_symbol_days: 250654
+      ge_L1_symbol_days: 250646
+      ge_L2_symbol_days: 250407
+      share_ge_L1: 1.0
+      share_ge_L2: 0.999
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    unrouted:
+      days: 569
+      ok_symbol_days: 1402101
+      ge_L1_symbol_days: 1401952
+      ge_L2_symbol_days: 1399903
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9984
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    euphoria:
+      days: 26
+      ok_symbol_days: 67431
+      ge_L1_symbol_days: 67424
+      ge_L2_symbol_days: 67331
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9985
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    distribution:
+      days: 148
+      ok_symbol_days: 363723
+      ge_L1_symbol_days: 363686
+      ge_L2_symbol_days: 363485
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9993
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    expansion:
+      days: 244
+      ok_symbol_days: 605271
+      ge_L1_symbol_days: 605221
+      ge_L2_symbol_days: 604496
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9987
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    capitulation:
+      days: 137
+      ok_symbol_days: 388628
+      ge_L1_symbol_days: 388597
+      ge_L2_symbol_days: 388519
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9997
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    ignition:
+      days: 1
+      ok_symbol_days: 1623
+      ge_L1_symbol_days: 1622
+      ge_L2_symbol_days: 1622
+      share_ge_L1: 0.9994
+      share_ge_L2: 0.9994
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+  by_vol_bucket_T1:
+    M:
+      days: 422
+      ok_symbol_days: 1040325
+      ge_L1_symbol_days: 1040244
+      ge_L2_symbol_days: 1039183
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9989
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    L:
+      days: 440
+      ok_symbol_days: 1070094
+      ge_L1_symbol_days: 1069964
+      ge_L2_symbol_days: 1068051
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9981
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    na:
+      days: 10
+      ok_symbol_days: 22785
+      ge_L1_symbol_days: 22783
+      ge_L2_symbol_days: 22771
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9994
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    H:
+      days: 355
+      ok_symbol_days: 946227
+      ge_L1_symbol_days: 946157
+      ge_L2_symbol_days: 945758
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9995
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+  by_macro_state_T1:
+    r2:
+      days: 395
+      ok_symbol_days: 977456
+      ge_L1_symbol_days: 977367
+      ge_L2_symbol_days: 976117
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9986
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    r3:
+      days: 388
+      ok_symbol_days: 938008
+      ge_L1_symbol_days: 937905
+      ge_L2_symbol_days: 936271
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9981
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    r1:
+      days: 191
+      ok_symbol_days: 484742
+      ge_L1_symbol_days: 484704
+      ge_L2_symbol_days: 484398
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9993
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    r4:
+      days: 243
+      ok_symbol_days: 656440
+      ge_L1_symbol_days: 656389
+      ge_L2_symbol_days: 656206
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9996
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+  by_dual_gate_T1:
+    dual_deny:
+      days: 538
+      ok_symbol_days: 1379438
+      ge_L1_symbol_days: 1379328
+      ge_L2_symbol_days: 1378254
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9991
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    unevaluable:
+      days: 569
+      ok_symbol_days: 1402101
+      ge_L1_symbol_days: 1401952
+      ge_L2_symbol_days: 1399903
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.9984
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+    dual_allow:
+      days: 120
+      ok_symbol_days: 297892
+      ge_L1_symbol_days: 297868
+      ge_L2_symbol_days: 297606
+      share_ge_L1: 0.9999
+      share_ge_L2: 0.999
+      verdict_L1: CEILING_OK_NOT_A_PROOF
+      verdict_L2: CEILING_OK_NOT_A_PROOF
+caveats:
+  bar_count_uses_uniqExact: kline_1min 为 ReplacingMergeTree 且未 FINAL 时同分钟多版（普查实测约
+    1.74×），count() 会虚增 bar_n 把不可交易日误判为可交易 ⇒ 必用 uniqExact(trade_time)
+  no_limit_up_fix: 未修正涨跌停可成交性；该不修正使上界更大（更不易判死），与单向判读方向一致（卡 §4.2）
+  dominant_is_vol_band: regime_state_anchored.dominant 实为波动率风险四档非趋势标签（卡 §4.4），故 by_macro_state_T1
+    各组只能读成波动分层
+  zero_price_minute_bars_exist: 实测 kline_1min 存在 min(low)=0 的股票-日（零价分钟 bar），本件把除法收进
+    if() 兜住并在 daily.csv 带出 zero_lo_sd 计数；任何用该表算振幅的消费方都须先挡这一路（本包首跑即被 Code 153 拦下）
+  ceiling_not_strategy: 本件全部结论均为容量上界，不含任何策略可实现性主张
+  cb_etf_out_of_scope: 转债/跨境 ETF 无分钟 bar，未入本卡；真 T+0 战场另立待料（见 T0_SCHEME_MATRIX §四）
