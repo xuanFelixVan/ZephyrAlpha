@@ -1,3 +1,4 @@
+<!-- GENERATED FILE — regenerate: python scripts/governance/registry_projection/registry_projection_generator.py --render --registry-id REG-CAPCAN-001 --physical-path docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml && git diff --exit-code；手改必被覆盖（PG registry_ledger 账本=唯一真源，裁定#502） -->
 unique_key:
   capabilities:
   - capability_id
@@ -5876,6 +5877,11 @@ creation_tokens:
   capability: generated-index-md
   created_by: st-zc9-lane-r3-20260930
   merge_evaluation: "机生目录索引非手工清单，收编消幻影（守卫 test_untracked_phantom_docs_guard）"
+- file: docs/01_policies_and_standards/sop/library_sop/offzone_retrieval_boundary_sop.md
+  token: library-sop-offzone-retrieval-boundary-sop-20261009
+  capability: library_sop
+  created_by: st-examchief-20261009
+  merge_evaluation: "library_sop族缺场外区边界册"
 - file: docs/01_policies_and_standards/sop/mining_sop/factor_mining_sop_policy.md
   token: bizmine-alpha-mining-factor-mining-sop-policy-20260919
   capability: bizmine_alpha_mining
@@ -7473,36 +7479,136 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0-1__calibration__02_新闻情绪时滞.yaml
+  token: exam-card-tdm-e-l1-s0-1--calibration--02--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration.yaml
   token: exam-card-tdm-e-l1-s0--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__02_货币卡.yaml
+  token: exam-card-tdm-e-l1-s0--calibration--02--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__03_流动性卡.yaml
+  token: exam-card-tdm-e-l1-s0--calibration--03--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__04_海外卡.yaml
+  token: exam-card-tdm-e-l1-s0--calibration--04--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__05_政策事件卡.yaml
+  token: exam-card-tdm-e-l1-s0--calibration--05--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S1__calibration.yaml
   token: exam-card-tdm-e-l1-s1--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S1__calibration__02_指数趋势位置.yaml
+  token: exam-card-tdm-e-l1-s1--calibration--02--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S1__calibration__03_黄白线交叉.yaml
+  token: exam-card-tdm-e-l1-s1--calibration--03--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration.yaml
   token: exam-card-tdm-e-l1-s2--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__02_涨停家数.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--02--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__03_跌停家数.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--03--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__04_炸板率.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--04--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__05_封板率.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--05--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__06_连板最高高度.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--06--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__07_连板家数分布.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--07--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__08_净广度.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--08--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration.yaml
   token: exam-card-tdm-e-l1-s3--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__02_昨日涨停溢价.yaml
+  token: exam-card-tdm-e-l1-s3--calibration--02--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__03_晋级率.yaml
+  token: exam-card-tdm-e-l1-s3--calibration--03--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__04_情绪先锋四态.yaml
+  token: exam-card-tdm-e-l1-s3--calibration--04--20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration.yaml
   token: exam-card-tdm-e-l1-s4--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration__02_期权IV主路径.yaml
+  token: exam-card-tdm-e-l1-s4--calibration--02-iv-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration__03_合成VIX后备.yaml
+  token: exam-card-tdm-e-l1-s4--calibration--03-vix-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration.yaml
   token: exam-card-tdm-e-l1-s5--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__02_11信号环比.yaml
+  token: exam-card-tdm-e-l1-s5--calibration--02-11-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison.yaml
   token: exam-card-tdm-e-l1--comparison-20261009
   capability: exam_card
@@ -8363,106 +8469,6 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0-1__calibration__02_新闻情绪时滞.yaml
-  token: exam-card-tdm-e-l1-s0-1--calibration--02--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__02_货币卡.yaml
-  token: exam-card-tdm-e-l1-s0--calibration--02--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__03_流动性卡.yaml
-  token: exam-card-tdm-e-l1-s0--calibration--03--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__04_海外卡.yaml
-  token: exam-card-tdm-e-l1-s0--calibration--04--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__05_政策事件卡.yaml
-  token: exam-card-tdm-e-l1-s0--calibration--05--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S1__calibration__02_指数趋势位置.yaml
-  token: exam-card-tdm-e-l1-s1--calibration--02--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S1__calibration__03_黄白线交叉.yaml
-  token: exam-card-tdm-e-l1-s1--calibration--03--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__02_涨停家数.yaml
-  token: exam-card-tdm-e-l1-s2--calibration--02--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__03_跌停家数.yaml
-  token: exam-card-tdm-e-l1-s2--calibration--03--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__04_炸板率.yaml
-  token: exam-card-tdm-e-l1-s2--calibration--04--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__05_封板率.yaml
-  token: exam-card-tdm-e-l1-s2--calibration--05--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__06_连板最高高度.yaml
-  token: exam-card-tdm-e-l1-s2--calibration--06--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__07_连板家数分布.yaml
-  token: exam-card-tdm-e-l1-s2--calibration--07--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__08_净广度.yaml
-  token: exam-card-tdm-e-l1-s2--calibration--08--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__02_昨日涨停溢价.yaml
-  token: exam-card-tdm-e-l1-s3--calibration--02--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__03_晋级率.yaml
-  token: exam-card-tdm-e-l1-s3--calibration--03--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__04_情绪先锋四态.yaml
-  token: exam-card-tdm-e-l1-s3--calibration--04--20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration__02_期权IV主路径.yaml
-  token: exam-card-tdm-e-l1-s4--calibration--02-iv-20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration__03_合成VIX后备.yaml
-  token: exam-card-tdm-e-l1-s4--calibration--03-vix-20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
-- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__02_11信号环比.yaml
-  token: exam-card-tdm-e-l1-s5--calibration--02-11-20261009
-  created_by: st-examchief-20261009
-  capability: exam_card
-  merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/index.md
   token: index-navigation-03-modules-domain-backtest-20260919
   capability: index_navigation
@@ -10214,11 +10220,6 @@ creation_tokens:
   token: btfix-p1p2--extensions--init---20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
-- file: docs/03_modules/_domain_factor/algo_flow/indicator_reader.yaml
-  token: dexp-algo-flow-indicator-reader-20261009
-  capability: ti_pit_indicator_reader
-  created_by: st-dexp-20261009
-  merge_evaluation: "新对象=指标读层 ALGO_FLOW 机器块出仓件（§4.16 external 锚真源）；同目录他块对应各自模块算法面，零重叠；不引入新能力"
 - file: docs/03_modules/_domain_factor/algo_flow/abs001_gate.yaml
   token: btfix-p1p2-abs001-gate-20260915
   capability: btfix_p1p2
@@ -10450,6 +10451,11 @@ creation_tokens:
   token: btfix-p1p2-indicator-base-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_factor/algo_flow/indicator_reader.yaml
+  token: dexp-algo-flow-indicator-reader-20261009
+  capability: ti_pit_indicator_reader
+  created_by: st-dexp-20261009
+  merge_evaluation: "新对象=指标读层 ALGO_FLOW 机器块出仓件（§4.16 external 锚真源）；同目录他块对应各自模块算法面，零重叠；不引入新能力"
 - file: docs/03_modules/_domain_factor/algo_flow/infrastructure__init__.yaml
   token: btfix-p1p2-infrastructure--init---20260915
   capability: btfix_p1p2
@@ -35035,6 +35041,13 @@ creation_tokens:
   token: chain-piling-campaign-registry-latest-20260922
   capability: chain_piling_campaign
   created_by: st-chainpile-20260922
+- file: docs/_working/chief3_campaign/99_delivery.md
+  token: auto-chief3-99-delivery
+  name_zh: 三号总队战役终报
+  plain_zh: 三号总队战役终报：登记全景图毕业考与散件七件清偿的袋账、复核命令、呈批移交清单与工法事件档案，是本战役交付面的索引真源。
+  capability: chief3_campaign_delivery
+  created_by: st-chief3-20261009
+  merge_evaluation: "跨域不同对象→不并（战役索引件，随 chiefc 99_delivery 范式）"
 - file: docs/_working/chief8_night/91_progress.md
   token: chief8-night-ledger-91-progress-20260928
   capability: chief8_night_ledger
@@ -38107,40 +38120,40 @@ creation_tokens:
   token: emotion-line-redblue-round-record-20260922
   capability: emotion_line
   created_by: st-emomine-20260922
+- file: docs/_working/examcard_campaign/00_campaign_ledger.md
+  token: examcard-campaign-00-campaign-ledger-20261009
+  capability: examcard_campaign
+  created_by: st-examchief-20261009
+  merge_evaluation: "战役作业簿族"
 - file: docs/_working/examcard_campaign/01_w1_f06_root_cause.md
   token: examcard-campaign-01-w1-f06-root-cause-20261009
   capability: examcard_campaign
   created_by: st-examchief-20261009
   merge_evaluation: "战役作业簿（工棚 task_bound）：W1 根因册+证据件+后续车道作业簿；战役收官按交付纪律归档，禁并入正式注册表族。"
-- file: docs/_working/examcard_campaign/00_campaign_ledger.md
-  token: examcard-campaign-00-campaign-ledger-20261009
-  created_by: st-examchief-20261009
-  capability: examcard_campaign
-  merge_evaluation: "战役作业簿族"
 - file: docs/_working/examcard_campaign/asset_assertion_cases.yaml
   token: examcard-campaign-asset-assertion-cases-20261009
-  created_by: st-examchief-20261009
   capability: examcard_campaign
+  created_by: st-examchief-20261009
   merge_evaluation: "战役作业簿族"
 - file: docs/_working/examcard_campaign/w1_evidence/blue_probeC_fixed_wrapper_green.md
   token: examcard-campaign-blue-probec-fixed-wrapper-green-20261009
-  created_by: st-examchief-20261009
   capability: examcard_campaign
+  created_by: st-examchief-20261009
   merge_evaluation: "战役作业簿族"
 - file: docs/_working/examcard_campaign/w1_evidence/blue_probeD_eap_continue_green.md
   token: examcard-campaign-blue-probed-eap-continue-green-20261009
-  created_by: st-examchief-20261009
   capability: examcard_campaign
+  created_by: st-examchief-20261009
   merge_evaluation: "战役作业簿族"
 - file: docs/_working/examcard_campaign/w1_evidence/red_probeB_taskctx_landmine.md
   token: examcard-campaign-red-probeb-taskctx-landmine-20261009
-  created_by: st-examchief-20261009
   capability: examcard_campaign
+  created_by: st-examchief-20261009
   merge_evaluation: "战役作业簿族"
 - file: docs/_working/examcard_campaign/w1_evidence/red_trap_trace_python_killed_at_first_stderr.md
   token: examcard-campaign-red-trap-trace-python-killed-at-first-stderr-20261009
-  created_by: st-examchief-20261009
   capability: examcard_campaign
+  created_by: st-examchief-20261009
   merge_evaluation: "战役作业簿族"
 - file: docs/_working/external_audit_20261007/00_audit_plan.md
   token: ext-audit-20261007-00-audit-plan-20261007
@@ -43240,6 +43253,13 @@ creation_tokens:
   capability: panorama_map_census
   created_by: st-btfix-20261005
   merge_evaluation: "错盖修复取证+执行报告，40号§4建议的落地件"
+- file: docs/_working/map_build/71_final_acceptance_report.md
+  token: auto-chief3-71-final-acceptance
+  name_zh: 全景图毕业考终局验收报告
+  plain_zh: 全景图毕业考终局验收报告：登记 16 张全景图红蓝八攻击两轮对抗矩阵与全链对齐基线修复证据、清账四件与移交清单，是图之图家族毕业判定的可复核证据册。
+  capability: mapfinal_acceptance
+  created_by: st-chief3-20261009
+  merge_evaluation: "跨域不同对象→不并（毕业考终局证据册，与 60 号终审文书为验收链上下游件）"
 - file: docs/_working/map_build/99_pending_owner.md
   token: map-build-99-pending-owner-20260924
   capability: map_build
@@ -47785,21 +47805,6 @@ creation_tokens:
   capability: quant_methodology
   created_by: st-ddup-20260925
   merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
-- file: docs/_working/quant_methodology/07_placeholder_skeleton.md
-  token: quant-methodology-07-placeholder-skeleton-20261006
-  capability: quant_methodology
-  created_by: st-mastertc-l7
-  merge_evaluation: "C452 处方占位骨架（断号防御；内容全史零命中如实申报；主题命名/撤号=Owner）"
-- file: docs/_working/quant_methodology/08_placeholder_skeleton.md
-  token: quant-methodology-08-placeholder-skeleton-20261006
-  capability: quant_methodology
-  created_by: st-mastertc-l7
-  merge_evaluation: "C452 处方占位骨架（断号防御；内容全史零命中如实申报；主题命名/撤号=Owner）"
-- file: docs/_working/quant_methodology/12_placeholder_skeleton.md
-  token: quant-methodology-12-placeholder-skeleton-20261006
-  capability: quant_methodology
-  created_by: st-mastertc-l7
-  merge_evaluation: "C452 处方占位骨架（断号防御；内容全史零命中如实申报；主题命名/撤号=Owner）"
 - file: docs/_working/quant_methodology/README.md
   token: quant-methodology-readme-20260925
   capability: quant_methodology
@@ -48500,6 +48505,31 @@ creation_tokens:
   capability: stress_test
   created_by: st-stress-20260923
   merge_evaluation: "压测PhaseA并发件，战后统一退役"
+- file: docs/_working/regsolo_campaign/99_delivery.md
+  token: regsolo-99-delivery-20261009
+  capability: regsolo
+  created_by: st-regsolo-20261010
+  merge_evaluation: "本专班唯一终报册，替代无（战役工作文件，net-zero 口径内 docs/_working 既有惯例位）"
+- file: docs/_working/regsolo_campaign/lanes/t1_direct_write_callgraph.md
+  token: regsolo-t1-direct-write-callgraph-20261009
+  capability: regsolo
+  created_by: st-regsolo-20261010
+  merge_evaluation: "本专班战役工作文件族（lanes 四车道普查+终报），无既有资产可承接（G1-1 跨域不同对象不并）"
+- file: docs/_working/regsolo_campaign/lanes/t2_belt_materialization.md
+  token: regsolo-t2-belt-materialization-20261009
+  capability: regsolo
+  created_by: st-regsolo-20261010
+  merge_evaluation: "本专班战役工作文件族（lanes 四车道普查+终报），无既有资产可承接（G1-1 跨域不同对象不并）"
+- file: docs/_working/regsolo_campaign/lanes/t3_hot_registry_inventory.md
+  token: regsolo-t3-hot-registry-inventory-20261009
+  capability: regsolo
+  created_by: st-regsolo-20261010
+  merge_evaluation: "本专班战役工作文件族（lanes 四车道普查+终报），无既有资产可承接（G1-1 跨域不同对象不并）"
+- file: docs/_working/regsolo_campaign/lanes/t4_ledger_debt_incidents.md
+  token: regsolo-t4-ledger-debt-incidents-20261009
+  capability: regsolo
+  created_by: st-regsolo-20261010
+  merge_evaluation: "本专班战役工作文件族（lanes 四车道普查+终报），无既有资产可承接（G1-1 跨域不同对象不并）"
 - file: docs/_working/reports/2026-08-22-autonomy-gate-latency.md
   token: auto-autonomy-gate-latency-20260822
   capability: autonomy_boundary_gate
@@ -52861,6 +52891,11 @@ creation_tokens:
   capability: bootstrap统一族GPU核（三原函数索引注入对拍35/35）
   created_by: st-matrix-20261006
   merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/calibration_exam.py
+  token: exam-calibration-calibration-exam-20261009
+  capability: exam_calibration
+  created_by: st-examchief-20261009
+  merge_evaluation: "复用ic_exam统计核薄映射"
 - file: scripts/backtest/fexam/campaign_report.py
   token: fexam-suite-campaignreport-20261006
   capability: 批5考试总册+matrix_inventory机生+四缺口单+原问题匹配表
@@ -53676,6 +53711,11 @@ creation_tokens:
   capability: ailayer_wave2_realbody
   created_by: st-chief3b-20260926
   merge_evaluation: "波2 真身归位（该道 index 抢救），登记在册而本体蒸发＝账实归位非新增能力；跨域不同对象不并"
+- file: scripts/backtest/writeback_exam_confidence.py
+  token: exam-confidence-writeback-writeback-exam-confidence-20261009
+  capability: exam_confidence_writeback
+  created_by: st-examchief-20261009
+  merge_evaluation: "G1-1③不并另立"
 - file: scripts/backup/README.md
   token: auto-backup-readme-20260717
   capability: backup_documentation
@@ -66018,21 +66058,6 @@ creation_tokens:
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912
-- file: scripts/backtest/writeback_exam_confidence.py
-  token: exam-confidence-writeback-writeback-exam-confidence-20261009
-  created_by: st-examchief-20261009
-  capability: exam_confidence_writeback
-  merge_evaluation: "G1-1③不并另立"
-- file: scripts/backtest/fexam/calibration_exam.py
-  token: exam-calibration-calibration-exam-20261009
-  created_by: st-examchief-20261009
-  capability: exam_calibration
-  merge_evaluation: "复用ic_exam统计核薄映射"
-- file: docs/01_policies_and_standards/sop/library_sop/offzone_retrieval_boundary_sop.md
-  token: library-sop-offzone-retrieval-boundary-sop-20261009
-  created_by: st-examchief-20261009
-  capability: library_sop
-  merge_evaluation: "library_sop族缺场外区边界册"
 file_token:
 - note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
   path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
