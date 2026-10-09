@@ -172,3 +172,19 @@ python .runtime/tmp/st-deadcure-20261009/tools/deadcure.py restore --qid <QID>
 - 零新 gate、零新注册表、零新真源轴；§G 台账为 G 组**执行面**，与 01_ledger（裁定面）、10_owner_menu（批文面）不同轴。
 - 新增文件全部来自死信袋复原（复活≠新建）；唯一新增自造件=4 枚 `r5_exemption.md` 豁免标记（R5 门自带标记通道，目录名为 36/5/4/14 份已落地文档的引用锚点，改名即断链）与 01_ledger 本体。
 - 袋不删除只迁移：dead→dead_archive_20261009_deadcure（mv+manifest 双留痕，一键 restore）。
+
+## §G-续 办①执行与第六号转车道 A 要件
+
+### 办① 执行（Owner 2026-10-09「G4 办①」，双重授权链=裁定#496 批文＋本句口径，未新开裁定号）
+
+- 规则真源改动：`docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` `n16_config.exempt_names_docs_extra` +`AGENTS.md`，版本 1.7.6（changelog 同批新增条目记授权链与红证），catalog 版本针 `rule_catalog_registry.yaml` 同步为同值（命中行 1 处，四方对齐门 PASS）。
+- 写热文件纪律：改前 claim（本车道持锁）→ `safe_write_text(expected_base_sha256)` CAS → 写后**进程外**复核（`git show HEAD:` 重读＋yaml.safe_load 重解析＋豁免集合差分）。
+- 投递结果：`docs/03_modules/AGENTS.md` 在 HEAD=True（17 行，与原死信袋 blob 字节等值）；三件面（AGENTS.md+规则 YAML+catalog）与主区盘面逐字节一致=True。
+- 红证（豁免未扩面，门没被放宽过头）：改前重名 `AGENTS.md`+`gate_face_reconciliation.md` 两名全拦，改后仅 `AGENTS.md` 放行、另一重名仍硬拦——OK；复跑 `python .runtime/tmp/st-deadcure-20261009/tools/n16_evidence.py`。
+- 三枚 G4 原死信袋（-20261005-0054／-20261006-0005／-20260927-0003）死因即此 N-16，现内容已落，按 R-2 归档尝试袋留痕。
+
+### 第六号增补令三件 → 车道 A 的可复现要件（本专车只交证据不代施工）
+
+1. **热册「盘面≥HEAD」不变量进门**：③腿的断言可直接取用 `registry_guard.py` 的三条件（lost_from_HEAD=0 且 lost_from_disk=0 且 safe_load 通过，失败即 REFUSE 不写）；本专案实测：当日 5~7 起蒸发、每次约 245 行 HEAD 条目消失，受害面含总队与方法论各队 token；①②腿（写者全链路 CAS／落地侧键级 upsert）证据见 `08_hot_registry_eviction_evidence.md`。
+2. **keeper 修复**：判据缺陷已实测复现——daemon 以 `session not in registry` 秒退并写 `status:"exited"`，keeper 的 `<900s 视为新鲜` 判据据此**不再重 spawn** ⇒ 落地存活闸判 ghost（本专案 g3 车道一枚袋即死于此）。治法=见 exited 行无条件重 spawn；`register(pid=0)`+`mark_logical` 合成单一开班 API。
+3. **车道基线滞后预检**：实测两型——(a) 车道 HEAD 落后 dev 时 CREATE-GUARD 读旧册面误拒/误放（本专案 promote-chief 假死一例）；(b) C1 同会话合批把并集推过 40 件上限。治法=入队预检报「本车道落后 dev N commits 且本袋含新路径」即拒投；合批后重算件数并提示留痕通道。
