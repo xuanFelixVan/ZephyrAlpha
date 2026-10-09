@@ -252,9 +252,55 @@ deadcure2 已实测两次撞同一门（袋 -0006 死于 ghost_session、-0008 �
 
 ---
 
-## 五、战役甲 E：F 盘晨报核查
+## 五、战役甲 E：F 盘晨报核查 —— **读数未成立，且"06:05"这个读数锚点被实测证伪（早了约 2 小时）**
 
-（06:05 轮次读数待填——本班实测：所谓"闹钟"没有机器形态，见下）
+指令卡说"06:05 三绿终验 + E-1 判读结果若已落册则验收销账；未落则向 Owner 报（它的闹钟已响）"。
+本班把三件事分开核清了：
+
+### 1. "闹钟"到底是什么（三路都查过）
+- **Windows 计划任务**：NextRunTime 落在 06:00-06:10 的只有 `ZephyrAlpha-DailyBackup`
+  （`wscript.exe launch_hidden.vbs backup.ps1 -Mode all -Force`，WD=D:\ZephyrAlpha）。
+- **Qoder 定时**：`~/.qoder-cn/tasks` 只有会话后台任务目录（uuid+lease），无 cron 登记件；
+  仓内 `data/runtime`、`config` 亦无排班册登记 06:05。
+- **仓内排班**：`resource_optimization.yaml` / `resource_profile_registry.yaml` /
+  `evolution_schedule_seeds.yaml` / `schedule_gate_policy.yaml` grep "06:05" **零命中**。
+- ⇒ **"06:05"不是机器时点**，它是 `disk_reorg_campaign/LEDGER_final.md:779` 预写的**人工合并读卡时点**
+  （真定时器=06:00）。同时 `:774` 与 dexp `01_ledger.md:225` 写的是 **06:00**——同一件事三处时点不一致，
+  报告口径本身要统一（这是 chief3 移交单之外我自己撞到的一条账面断裂）。
+
+### 2. 06:00 轮次实测两读（本班亲读，非转述）
+| 时刻 | 读数 |
+|---|---|
+| 05:12 基线 | `LastRunTime=10/09 06:00:01`、`Next=10/10 06:00`、`Result=0`；10-10 零报告；`backup_state.last_backup_time=10-09T07:48`、`last_backup_status=failed`；`.runtime/backup.lock` 被 PID 31376（03:56 起，worktree 上下文那份 backup.ps1）持有 |
+| 06:02 | `LastRunTime=10/10 **06:00:01**` ✓ 准点起跑；`LastTaskResult=**267009**`（0x41301＝**任务正在运行**，不是失败）；lock 易主 PID 34184 `START:06:00:04` ⇒ **没有 lock-skip**；仍无 10-10 报告 |
+| 06:13 | 仍 `267009`（运行中）、lock 仍被 34184 持、10-10 报告零、`backup_state` 未回写、G 侧 `db_dumps/20261010` mtime 仍 05:50 |
+
+### 3. 为什么"现在读不出三绿"不是失败而是时点错
+**实跑时长有账**：`logs/backup_report_20261009_052740.json` 文件名时点 05:27、mtime **07:48**
+＝同一轮跑了 **≈2h21m**（另两枚 04:06→04:24、00:40→03:09 同量级）。
+⇒ 06:00 起跑的轮次**最早有效读数≈08:20-08:30**。在 06:05 去读"有没有报告"，
+**必然读到"无"**，而 LEDGER:779 那张两态判读表里没有"仍在跑"这第三态——
+照表判就会把"正常长跑"误读成"仍死 ⇒ 三处留痕定位"，即一次**结构性假红**。
+这条判读表缺陷归 F 盘车道（本班不代改它的判读表），本班只报机理。
+
+### 4. 本班已做与未做
+- 已做：三绿中**唯一当下可判的一绿**——③"F 不存在"实测成立
+  （`/f/ch_backup_disk.vhdx` No such file；F 根剩余 1,588,531,142,656B）。
+  ②G mtime 曾于 10-10 00:55 前进过，但那是**06:00 轮之前**，按判读表口径不能拿来充 ②（会假绿）。
+- 未做（不装做）：①"报告绿"与状态回写 = **待 08:2x 后读**；E-1 两态判读因此**本班不下结论**。
+- 已派后台盯终值（约 08:35 落盘证据：报告名/mtime、lock 是否释、LastTaskResult 终值、
+  G 侧今日目录、F 复验）。**若本袋先落，§五 的终值随第三袋补**——这不是拖，
+  是读数本身要到点才存在（G3-6 现在性检验：现在跑不出这个数）。
+- 顺带一条只读发现：`backup_state.json` 里 `last_backup_status=failed` 是 10-09T07:48 的陈值，
+  而 `last_lock_skip_time=10-09T21:47`（UTC）、`last_ch_backup_status=skipped` ——
+  与 dexp 00 号文 §4 记的"`_backup_fresh()` 把健康的 skipped 天天判红"是同一处仪表病，
+  本班未改判据（那是 F 盘/备份班的地盘）。
+- 属主收线三证：`st-fwin-exec-20261009` 队列 done 三袋（末袋 20:13 `landed_id=436bbd899cd`）、
+  零在途、`git log --all --grep` 三枚尾标全在 dev 且 20:13 后零、棚内 `git status`=0 行；
+  **但缺第四证（无该 sid 心跳/pid 件）** ⇒ 按 [[predecessor-session-alive-check]]
+  判"**账面已交完、无在途**"，不判"会话已死"。所以这条晨报**没有"其会话已报给 Owner"的替代来源**，
+  本班这即是它的落册位。
+
 
 ---
 
@@ -294,6 +340,41 @@ deadcure2 已实测两次撞同一门（袋 -0006 死于 ghost_session、-0008 �
 | 队列 | 本班入袋时 pending/processing 内仍有 `q-…-st-regsolo-20261010-0027`（4 件） | **regsolo 在飞＝门未开的硬证** |
 | `.aidrafts` | 18 棚（含本班） | 面积基线，非 106 棚旧数（dexp 那轮已处置 91 棚态①） |
 
+### 本班已做的只读预扫（05:40 实测，**零写零删**；门开后即是机械执行）
+
+`.aidrafts/` 现共 20 目录＝18 会话棚 + 2 非会话棚（`verify_v1`、`regsolo_wt_backup`，
+后者名指 regsolo 自带备份，归其属主认）。判据取 dexp 已验真那条（HEAD 是 dev 祖先 + 零脏件 +
+`--ignored=matching` 递归展开 + 属主活性），逐棚实测：
+
+| 棚 | HEAD 是 dev 祖先 | ahead | 脏件 | 最近写 | 预判 |
+|---|---|---|---|---|---|
+| st-chief3-20261009 | ✓ | 0 | 0 | 145m | **态①** |
+| st-chiefc-20261009 / -D / -rb1 | ✓ ✓ ✓ | 0 | 0 | 476/1113/680m | **态①×3** |
+| st-examchief-20261009 | ✓ | 0 | 0 | 375m | **态①**（但 43m 前有其 dev commit，判态①前须再复核一次活性） |
+| st-fullflow2-20261008 | ✓ | 0 | 0 | 1733m | **态①** |
+| st-fwin-exec-20261009 | ✓ | 0 | 0 | 463m | **态①**（账面已交完：done 三袋、零在途、20:13 后无 commit 尾标） |
+| st-libfront-20261009 | ✓ | 0 | 0 | 251m | **态①** |
+| st-mx07-W2 | ✓ | 0 | 0 | 2399m | **态①** |
+| st-tclose-fwire-20261004 | ✓ | 0 | 0 | 8760m | **态①** |
+| st-deadcure2-20261009 | **✗** | **2** | **126** | 83m | **态②**——有未并入 commit＋大片脏件＝**他役在途现场，门开后第一步也必须绕开它** |
+| st-dexp-20261009 | ✓ | 0 | 72 | 55m | **态④**（47m 前有新袋、心跳活） |
+| st-regsolo-20261010 | ✓ | 0 | 132 | **0m** | **态④**（预扫当下仍在写＝战役乙门未开的硬证） |
+| st-govfix-g2 / g6-20261007 | ✓ ✓ | 0 | 10 / 20 | 3165/3177m | **态②**（脏件 53h 未动，需属主认或走接管台账判"遗留在途"） |
+| st-mx07-L3 | ✓ | 0 | 52 | 3279m | **态②**（同上，54h 未动） |
+| st-mastertc-mine | **✗** | **1** | 0 | 4359m | **态②→接管正道**：有 1 枚未并入 commit、73h 无写；rescue tag 先行→resolve→archive，禁裸 remove |
+| st-final4-20261010 | ✓ | 0 | 71 | 2m | 本班自家棚（收尾按会话收尾序处置，不自清） |
+
+**门开硬判据（不拿心跳当命）**：预扫时 `st-regsolo-20261010` 最近写＝**0 分钟前**、
+`st-dexp-20261009` 47 分钟前还在出袋 ⇒ 至少这两路在飞，**战役乙门确证未开**。
+判"前任会话已死"须三证齐（该 sid 队列无新袋／棚内无新写／dev 无新 commit 尾标），
+本表三列并排就是让下一个班不必重做这套测量。
+
+### 本班一条自犯（写在这儿防后人）
+本文件在 05:43 的一次 §七 编辑**未提交即被 `git merge --ff-only dev` 覆盖丢弃**——
+那时该路径在车道里仍是 untracked，而 dev 刚由队列袋把它变成 tracked。
+教训：**车道里对"即将由队列落地"的新文件做任何编辑，先入袋再 ff**；
+untracked 同名件在 ff 时不是"会被拒绝"，而是可能被静默替换。本节即按该教训重贴一次。
+
 开门后四件事的**本班口径**（免后人重research）：
 
 1. 工棚终扫：判据直接复用 dexp 已验真的那条（HEAD 是 dev 祖先 + 零脏件 + `--ignored=matching`
@@ -312,7 +393,29 @@ deadcure2 已实测两次撞同一门（袋 -0006 死于 ghost_session、-0008 �
 
 ---
 
-## 八、复核命令（整段可复制）
+## 八、本班袋账与全项目收线快照（06:15 实测）
+
+| qid | 内容 | 态 | 落地 commit（`git show --stat` 核归属，非回执） |
+|---|---|---|---|
+| …-0001 | P1/P3/P4 三件（2 脚本+2 测试） | done | `76fec968f8` 恰 4 件零外来 |
+| …-0002 | SQUEEZE/WAD 修复（2 src+2 tests） | done | `1a9ab332f58` 恰 4 件零外来 |
+| …-0003 | token 先行袋（capreg） | done | 投影差集 +5 行 −0 行（键集合差自证） |
+| …-0004 | 终报册首投 | **dead** | 死因 REAL-KEY-REFERENCE-SCAN：本件正文写了那个实盘密钥字面量——**自己撞了自己正在描述的门**；按"内容修复后的死袋禁 requeue"处方，改拆写后另起新袋 |
+| …-0005 | 终报册（拆写修正版） | done | 337 行进 dev |
+| …-0006 | token 先行袋（F-1b 台账） | done | 投影差集 +5 行 −0 行 |
+| …-0007 | F-1b 逐件台账 yaml | done | 645 行进 dev |
+| …-0008 | 终报册 §五+§七 增补（本袋） | 本袋 | — |
+
+**全项目收线快照（06:15）**：dev HEAD=`efb5a72…` 一线；`docs/_working` 在册 4208 件、
+99_delivery 共 16 本；五役终报在位情况 chiefc ✓ / chief3 ✓ / dexp ✓ / map_build(71 号件) ✓ /
+final4 ✓，**deadcure_campaign2 仅 01_phase0_ledger.md 在册（其 99_delivery 未落）**，
+F 盘役终报落在 `disk_reorg_campaign/LEDGER_final.md`（不叫 99_delivery，属命名族差异非缺失）。
+队列 counts（03:3x→05:5x 全程本班观察）：pending/processing 由 8 → **0**（06:00 后仍零）；
+done 668→720+ 自然增；dead 1373（含本班 0004 一枚，已对症改投）。
+`.aidrafts` 20 目录（见 §七 预扫表）。claims：本班自投自放，未留 stale claim。
+reaper keep：本班仅追加 `st-final4-20261010` 一行，收尾按内容删（删除集=={该行}、总行数恰 −1）。
+
+## 九、复核命令（整段可复制）
 
 ```bash
 # 甲 A（数据车道三件）
@@ -334,4 +437,14 @@ PY
 # 归属核验（禁凭 message 自述）
 git show --stat 76fec968f8   # 恰 4 件
 git show --stat 1a9ab332f58  # 恰 4 件
+```
+
+```bash
+# 甲 E（F 盘晨报）读数复核——08:2x 后跑，06:05 跑必然假红
+powershell -NoProfile -Command "(Get-ScheduledTaskInfo -TaskName 'ZephyrAlpha-DailyBackup') | Select LastRunTime,LastTaskResult"  # 267009=仍在跑(0x41301)
+ls -la --time-style=+%m-%d_%H:%M logs/backup_report_20261010_*.json        # 报告绿=出现当日件且 mtime 稳定
+cat .runtime/backup.lock                                                    # 锁释=轮次收尾
+ls /g/backup/db_dumps/                                                      # ②G mtime 前进须晚于 06:00 才作数
+ls /f/ch_backup_disk.vhdx                                                   # ③F 不存在=已成立（06:13 复验）
+python -c "import json;d=json.load(open('data/databases/backup_state.json',encoding='utf-8'));print(d['last_backup_time'],d['last_backup_status'])"
 ```
