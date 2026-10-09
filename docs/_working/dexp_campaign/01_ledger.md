@@ -363,3 +363,22 @@ python scripts/lock_files.py release-all st-dexp-20261009           # 释放本�
 执行前应满足：①本节 15.1 六件全 SAME-or-stale；②15.2 四件已折入或判废；③`lock_files.py list
 --session st-dexp-20261009` 报 CLEAN（04:0x 实测已 CLEAN）；④keeper/heartbeat daemon 已停
 （49092/17968/40300/55744 实测 stopped；24264 因 cmdline 不含 sid 无法归属，未动）。
+
+### 15.4 本班自伤事故实录（04:3x–04:5x，账实修正，含对 15.1 时点的作废声明）
+
+- **起因＝范围失控**：为把车道脏面清零，我写了"遍历车道全树→与 dev 同值者 `unlink`、dev 无者搬走"的脚本。
+  车道工作树是全仓副本，遍历于是命中 2000+ 个跟踪件，并把 worktree 的 `.git` **指针文件**本身当作
+  "dev 无此件"搬走（`.git` 在 worktree 里是文件不是目录）；此后 `git status` 报 2146 条 `D`。
+- **处置（零数据损失）**：59 个被搬件按原路回迁（含 `.git` 指针，回迁后内容实测
+  `gitdir: D:/ZephyrAlpha/.git/worktrees/st-dexp-20261009`）；被 `unlink` 的跟踪件用
+  `git checkout -- .` 从车道自身 HEAD（`b20aefabe5`）复原。
+- **复核**：主区 `git status --porcelain` 的 **D 计数=0**（该池 1597 条 A/M 与 141 条 ?? 为他道既有在途态，
+  未经我手）；车道现为"跟踪件零修改零删除＋7 枚 untracked"，比事故前更干净。
+- **对 15.1 的时点修正**：那张表比的是**当时车道工作树字节 vs dev**。复原后车道跟踪件等于其旧 HEAD 版本，
+  故 15.1 的结论（dev ⊇ 车道，merge 为 no-op）仍成立——复原只把车道拉回它自己的旧基线，未引入任何新内容——
+  但表内 lane 哈希只描述 04:2x 那个瞬间，不得当作车道当前态引用。
+- **教训通式**：清理脏面的**枚举源必须是 `git status --porcelain`，禁文件系统整树遍历**；任何整树搬运
+  必先排除 `.git`。本册早前已记"全树 sweep 毁未提交件坑"，这次是我自己踩第二遍——记死。
+- 7 枚 untracked 的现状：`04/05` 两档与 `vhdx_precheck_20261009.md`（生成物）、`vhdx_growth_series.jsonl`
+  （运行态序列）＝15.2 已列残行清单；另三枚（旧版 algo_flow yaml、`scripts/data_ops/`、`examcard_campaign/`）
+  的权威字节均已在 dev，可随车道一并处置。
