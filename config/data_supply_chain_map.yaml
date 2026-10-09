@@ -2568,7 +2568,7 @@ nodes:
     evidence: 回灌排空测量腿未接——期望未知计数缺席,禁判死(SOP v1.1.0补丁1本条 适用范例)
     zero_trigger_verdict: insufficient_window
 - node_id: DSC-GAP-MIRROR
-  name_zh: P0：g_mirror 的 ch_vm_backup 目标防护只在未提交工作树里成立
+  name_zh: g_mirror ch_vm_backup 目标防护（原 P0 已治本顺清 2026-10-10：防护面已落地 HEAD backup.ps1 g_mirror 段，双证在案）
   segment: S4_coldstore
   node_type: gap
   decision_question: 下一次 /MIR 会不会删掉全机唯一一份全量镜像，而且报告零红字？
@@ -2619,7 +2619,7 @@ nodes:
   - flow:G盘全量镜像恢复能力(唯一副本保全,Owner 门位)
   trigger_facts:
     as_of: '2026-10-04'
-    evidence: g_mirror ch_vm_backup目标防护只在未提交工作树成立(P0)——验证腿未落地
+    evidence: g_mirror ch_vm_backup目标防护已落地 HEAD（backup.ps1 g_mirror 段 L1057-1164+失败不掩蔽 L1164；chiefc 备份五件批 44e4fc50/48bcbd2f/a96c303c）——原 P0 验证腿已落地，2026-10-10 顺清
     zero_trigger_verdict: insufficient_window
 - node_id: DSC-13
   name_zh: 完整性巡检 + 新鲜度哨兵（四检核器，只检测不回补）
@@ -3745,7 +3745,7 @@ edges:
 - from: DSC-GAP-MIRROR
   to: DSC-11
   kind: gap
-  note_zh: P0 防护失效挂在灾备环节
+  note_zh: 原 P0 防护失效已治本（防护面进 HEAD，2026-10-10 顺清）；灾备环节残留=F 侧摘除窗（裁定#445 排窗备案待 Owner 点名，非防护缺陷）
 - from: DSC-GAP-CODEBACKUP
   to: DSC-11
   kind: gap

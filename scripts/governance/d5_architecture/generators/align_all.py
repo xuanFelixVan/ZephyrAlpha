@@ -166,11 +166,28 @@ def _gomap_resolve_spec(spec: str) -> Path | None:
     return None
 
 
+_GOMAP_VOLATILE_KEYS = frozenset({"trigger_facts", "consumers_count"})
+# ↑ counts 族（§3 规格：忽略 counts）：trigger_facts=运行痕迹计数；consumers_count=import
+# 位点计数（冗余派生——身份面由 consumers 列表承载且照比；位点数随树活跃度漂，写盘快照必滞后）
+
+
 def _gomap_diff_families(existing_fams: dict, rebuild: dict, hard: list[str]) -> None:
-    """机生层：families 与 scan() 重建逐族逐模块比对（generated_at/counts 不在比对范围）。"""
+    """机生层：families 与 scan() 重建逐族逐模块比对（generated_at/counts 不在比对范围）。
+
+    2026-10-10（st-chief3）：比对前双侧剔除 counts 族易变键（trigger_facts）——
+    写盘态含生成时点快照计数，与重建时点必不等，原整 dict != 对全图恒红（429 假漂移实证）。
+    """
     for fam in sorted(set(rebuild) | set(existing_fams)):
-        reb = {m.get("path"): m for m in (rebuild.get(fam) or [])}
-        ext = {m.get("path"): m for m in (existing_fams.get(fam) or [])}
+        reb = {
+            m.get("path"): {k: v for k, v in m.items() if k not in _GOMAP_VOLATILE_KEYS}
+            for m in (rebuild.get(fam) or [])
+            if isinstance(m, dict)
+        }
+        ext = {
+            m.get("path"): {k: v for k, v in m.items() if k not in _GOMAP_VOLATILE_KEYS}
+            for m in (existing_fams.get(fam) or [])
+            if isinstance(m, dict)
+        }
         for p in sorted(set(reb) - set(ext)):
             hard.append(f"机生层漂移 {fam}: {p}（scan() 重建新增，yaml 未刷新——重跑 generate_governance_map.py）")
         for p in sorted(set(ext) - set(reb)):
@@ -725,11 +742,18 @@ def main() -> int:
     try:
         if _GOV_DIR not in sys.path:
             sys.path.insert(0, _GOV_DIR)
-        from generate_governance_map import scan as gomap_scan  # noqa: import-integrity  sys.path 动态加载
+        import generate_governance_map as _ggm  # noqa: import-integrity  sys.path 动态加载
 
         _gomap_path = _REPO_ROOT / "config" / "governance_operations_map.yaml"
         _gomap_data = yaml.safe_load(_gomap_path.read_text(encoding="utf-8"))
-        gom_hard, gom_soft = _check_gomap_alignment(_gomap_data, gomap_scan())
+        # 2026-10-10 治本（st-chief3 毕业考）：裸 scan() 无 purpose_tag/trigger_facts 两键，
+        # 逐 dict 比对对 429 条恒红（写盘含富化、比对无富化=结构性假漂移，工单"gomap 450+ 软项
+        # 属历史基线"的真相即此）。修法按 §3 设计规格"忽略 generated_at/counts"：purpose_tag
+        # 用 tag_rules 廉价机贴（零 IO），trigger_facts=运行痕迹计数归 counts 族=比对面前剔除
+        # （重语料 1.2GB 不进 align 路径，运行时成本零增量）。
+        _rebuild = _ggm.scan()
+        _ggm._apply_purpose_tags(_rebuild, _gomap_data.get("tag_rules") or _ggm._TAG_RULES_DEFAULT)
+        gom_hard, gom_soft = _check_gomap_alignment(_gomap_data, _rebuild)
         _gom_total = sum(len(v) for v in (_gomap_data.get("families") or {}).values())
         print(f"  OK: 机生层模块={_gom_total}（单一真源=generate_governance_map.scan() 重建比对）")
         print(f"  问题: 硬={gom_hard}, 软={gom_soft}（已删墓碑豁免 warn 待清理）")
