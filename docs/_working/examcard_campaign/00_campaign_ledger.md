@@ -51,3 +51,27 @@ family_id: EXAMCARD-CAMPAIGN
 - **数据面断供新发现**：c1_market.limit_up_down 仅覆盖 2026-07-20 起（5397 行）——广度面 6+1 卡冻结窗（2019-2025）无数据，需源回补（接 HANDOVER 断供修复工单族）；波动面 IV/宏观事件表待接。20 卡可立即开考面=指数族；广度面候源回补后按各自冻结窗开考。
 - **N 账本 CAS 告警**：TrialLedger 记账撞注册表族保护 ×10（热册竞态），ledger_warning 已如实入分数行（不吞考试结果）——转维护班面。
 - **runner 顺手修**：序数分桶回退/窗口边界 Timestamp 化/行情段日期正则解析（含中文段注容许），测试 7 passed。
+
+## 追记（2026-10-10 晨）：追加令执行账
+
+- **R3-B5 停呈**：X-R1-03 查证命中保留面①（护盘资产定向加仓白名单：熔断期窄门+总资金 5-10% 预算+position/core 实盘面）→立即停，呈 Owner。
+- **R3-B2 口径查证收口**：E 道（2025-10..2026-09 深回撤年/无止损 MaxDD -57.56%/止损必触发）vs T3b（2020-02/03 CRISIS/覆盖 0.35%/27 对）=情景区+覆盖率混杂，双测量各自内部有效；三坑过检。裁定#505 入 PG 账本（#503 撞号让位、#504 他班占用、#505 取号登记 v16）。
+- **R3-B1 冻卡**：双窗锚定卡两张（X-S1-03 止盈族/X_tp 维、X-S1-02 止损重考/X_stop 维新考卷——旧 T3b FAIL 存续 G4-5）门柱看数前冻结；X_sector 命名缺口（草案无此维疑 X_ladder）挂 Owner 确认；B3/B4 跑数三件套齐才动（fire_grid fail-closed 在守）。
+- **R8**：famex v2 维持暂缓；标定判据预注册=下一步（3 条非 state 先例派生，判据立不起=停呈）。
+- **T5 三态现测**：见下。
+- **T5 判定=继续避让并登记**：活进程零占用+fs 目标位空闲，但四本引用目录（trial_ledger/factor/technical_indicator/capability）现归 regsolo 单口写面活跃管理（capability/ruling/translation 三册本会话全程目击其单口写）——引用改写应提交该通道而非直改；搬家本体（git mv 31 件）候通道窗口。
+
+## 追记（2026-10-10 晨二）：X_sector 命名取证定谳+R10 治本+门柱三件
+
+- **X_sector 定谳（批复退回件，证据定谳非上报）**：index.md:85 原文"schema 增维（X_stop/X_tp/X_sector 等）须裁定"=三维并列各有实义；X_sector=**板块传导维**（sector_propagation_wiring_v1.md:40,67：sector_surface.py 新件+`X_sector=['off','strength_top15','conduction']`，沿 X_stop/X_breaker T3b 先例），与 X_ladder（X-S2-05 分批止盈 Exit Ladder）**异物非同名**。追加令三维授权指向成立；X_sector 开维施工（新件+schema 增维）=独立批次，不在本次两张冻卡范围（已冻 X_tp/X_stop 正确）。
+- **R10 治本+补记**：根因=TrialLedger CAS 的 yaml.safe_dump 往返丢他会话新增注释块（13 行非条目）触发注册表族 mass-edit 保护误拒。治本=条目级无损断言（_entry_fingerprints：旧 batch_records/screen_runs 键集 ⊆ 新集）+断言过则 allow_mass_edit 放行（保护意图=防条目蒸发，注释损失由断言兜底）。补记入账 ✓（examcard:TDM-E-L1-S1/02_指数趋势位置:2026-10-10），测试 15 passed。
+- **G1/G2 实施**：净费参数入 exam_scale_cost_gate.yaml 唯一参数面（net_fee 节，禁硬编码）；校准器出分附净费桶读数（net_bucket_medians）+换手计量（signal_turnover_daily，只计量不判罚）。
+- **G3**：缓行登记（触发器=总资金≥300 万或外部资金接入；缓行期禁预立阶梯门柱）。
+
+## 追记（2026-10-10 午）：二号收口令执行账（st-examclose-20261010）
+
+- **归属协调+W1 claim（先到登记）**：原二号 st-examchief-20260909 无会话目录=不在岗；备袋会话 st-examchief-20261009 心跳末条 2026-10-10T02:31:35Z exited（idle 超时）。无活口，本会话接手二号余件并 claim 今晚 23:00 W1 F06 窗验收。
+- **T1 清窗实测=翻动未止（停投分支）**：观测窗 11:16:05→11:33:28；capability 册 worktree 11:32:21 被旧形态渲染覆写（无 GENERATED 头/键序旧形，对 HEAD +832/-790 reflow 残留），11:32:52 index 被写回 HEAD 正典态（index mtime 08:46→11:32:52）；gate_audit（allow_overlap_usage/obj_s_env_denial/registry_mass_deletion_foreign_staged 35MB）11:25 仍在写。与 11:26:18 队列落地（q-20261010-st-fwin-exec-20261009-0004，GW overlap+multi-domain+tracked-drift 留痕）同窗同现；stash_notice 所记 09-30 侧 stash 含 capability/translation/architecture 三册旧形（本仓无 stash reflog，该通知=陈旧文档）；与 disk_reorg 台账「蒸发战争：stale-index 并发提交回退他人内容今晨三起」同源。写入 PID 未能逐个钉死（无 stash reflog、无 hook 写审计命中）——系统级根因=共享暂存区落地周期复活 stale 形，归维护班根治面。按令登记上报，不硬投。
+- **R3 袋实况=半数载荷已过时（第二停投理由）**：袋 231 件仅 11 件对 HEAD 有差，其中——①双窗卡 token 两条已在 HEAD 正典投影在册（merge_evaluation=「R3 离场族双窗冻卡（裁定#505）归 exam_card 族」×2），capability 册携带=纯渲染 reflow 零内容增量；②7 张 L1 卡 staged 形=examined→preregistered 回退+run_id/score_row 置 null，与 exam_scores_v1（17 行 fail 实录，nightmine 05:07-08:56 实跑在案）相抵，落地=数据倒退；③真剩余增量=calibration_exam.py（+30 未暂存，chief 末笔）+本台账段+2 件 ruff 修复（writeback SIM300/skeleton I001，修后 46 测试全绿）。建议：袋作废重 derive（剔三册与 7 卡，仅余真增量件），候翻动根治后走正门。
+- **T4 巡检收账**：W4 分数册 17 行全 fail（如实入册，预注册纪律）；W5 零 PASS（回写器候面不动）；W2 批A 16h+ 仍在算（19:17 到限先杀，全引擎 s/格 标定取数大概率落空=如实不动）。
+- **W1 验收安排**：19:17 彩排批（PID 32284 wrapper+50252 python，10-09 19:16:58 起）到限先杀不占窗位（F06Grid state=Running 在位会顶掉 23:00 自然触发）；23:00 自然窗按冻结门柱（manifest.csv 有产出且 rc=0）验收；红=五层证伪链取证上报，禁现场改判据。

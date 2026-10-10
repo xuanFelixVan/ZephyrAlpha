@@ -50,9 +50,14 @@ family_id: EXAMCARD-CAMPAIGN
 
 ## 五、遗留清单（列明+理由，2026-10-10 凌晨终态）
 
-1. **已落地（git log 可验）**：翻译先行袋 `03664fbde9`（MOD-BT-241/242/243 三条 plain_zh）＋casebook 修复批 `a3ebe5d498`（reserved_void 墓碑段修复 9456e749cf 蒸发+CASEBOOK-010 开册，[allow-mass-deletion:账实修正] 标在案）。
-2. **裁定三条已入 PG 账本（真源层落地）**：baseline.import_baseline 补登 4 条（#499/#500/#501/+1 邻条）→publish_snapshot **v14**→投影重拍含三条（grep 6 处）。物理投影文件（+216/-440 渲染紧化，[allow-mass-deletion] 标备好）落地被**他会话在途暂存件**（st-fig16 的 panorama_alignment_gate.py Final 缺标，全局扫描门执法）阻断——§3.4 不代修，对方落地后随手可落；**裁定#502 架构下 PG 账本=唯一真源，三条裁定的登记效力已生效**。
-3. **主内容袋（代码 6 件+测试 4 件+trae_065+prereg+卡册 206+证据+99_delivery）**：全部暂存保全（index+工作树双份），同一 foreign 拦阻源，clear 后按 mega_files.txt 清单直落（.runtime/tmp/mega_files.txt+mega_msg.txt 备好）；SSOT-REDEFINITION（canonical REPO_ROOT 导入）/MSG-EXPOSURE（details 字段）/M11（manual-legitimate 标）/BARE-SUBPROCESS（hidden pool）四门已全部按处方修净并复测 30+16 绿。
+1. **✅ 全链落地（2026-10-10 凌晨收口，git log 可验）**：
+   - `03664fbde9` 翻译先行袋（MOD-BT-241/242/243→245/246/247 三条 plain_zh）
+   - `a3ebe5d498` casebook 修复批（reserved_void 墓碑段修复 9456e749cf 蒸发+CASEBOOK-010 开册）
+   - `d00ab4a425` 主内容袋（W1 修复件/W3 生成器 MOD-BT-244/W4 执行器 MOD-BT-243/W5 回写器 MOD-BT-242/F1 lookup/F6 llm_gateway qwen/trae_065 v1.1.0/prereg 指针化/测试 6 件）
+   - `6e848a04dc` 卡册 206+战役作业簿（含本册）
+   - 裁定三条经意图 API 入 PG 账本（import_baseline+publish v14+投影重拍），物理投影随 regsolo 单口写面出。
+2. **落地战役修净的门（全按处方，修后 30+16 测试绿+186 卡零 diff+F 复验 3/3）**：SSOT-REDEFINITION（canonical REPO_ROOT）/MSG-EXPOSURE（details 字段）/M11（manual-legitimate 标）/BARE-SUBPROCESS（hidden pool）/TTL-METADATA（测试头）/TDM-MOUNT-COVERAGE（not-trading 研究面声明）/CREATE-GUARD 波13（create-guard-not-dup 标）/HOT-FILE-BASE-FRESHNESS+HELD_OVERLAP（热册辖域避让：capability/translation/ruling 三册让位单口写面）/MODULE-ID 撞号让位（241→244）/REGISTRY-MASS-DELETION（投影 reflow 账实标）/REGISTRY-YAML-PARSE（capability 册=PG 投影私改无效——本役 token 全由意图 API 薄壳入账）。
+3. **lookup.py 归属账**：内容随 st-libfront 袋 `1c5a56a85e` 落地（暂存区吸收），HEAD 版含 state 子命令+UTC 时戳+hidden pool 三修复，F 硬验收终验 3/3（05:5x 复验）。
 4. **W4 前置②=明晨 dexp 第四袋**（总统筹代转）：验真 `git show HEAD:src/zephyr/factor/indicator_reader.py | grep -c argMax` ≥1 → 首分开考+W5 演示开闸；dexp 交接卡=docs/_working/dexp_campaign/01_ledger.md。
 5. **W1 正式验收=10-11 周六窗**（manifest+rc=0）；彩排批A=calibration 载体（W2 取数源，停手条款已获总统筹认可）。
 6. **W7-①②③**：如上表。
@@ -64,3 +69,8 @@ family_id: EXAMCARD-CAMPAIGN
 - 生成器/回写器/执行器三件 MOD-BT-241/242/243（重跑入口见各 docstring 用法段）
 - 裁定 #499/#500/#501（ruling_registry 检索）
 - 复核一条龙：`python -m zephyr.library.lookup state "GPU 摊销"` ＋ `python scripts/backtest/generate_exam_card_skeleton.py --check` ＋ `python -m pytest tests/backtest/test_generate_exam_card_skeleton.py tests/backtest/test_writeback_exam_confidence.py tests/backtest/test_calibration_exam.py tests/ai/library/test_lookup_state.py`
+
+## 终态刷新（2026-10-10 午，st-examclose-20261010·二号收口令）
+
+- R3 卡册袋**停投**（非落地）：①capability 册 staged 翻动实测未止（11:32 实锤，详=00_campaign_ledger.md 本日午段）；②袋载荷半数过时——双窗卡 token 已在 HEAD 正典投影在册、7 张 L1 卡 staged 形=对夜挖分数实录的数据回退。真剩余增量=calibration_exam.py(+30)+台账段+ruff 修复 2 件（46 测试全绿），候维护班根治翻动后重 derive 走正门。
+- 宪法件已划归宪法班，本战役彻底撤出；W1 正式验收=今晚 23:00 自然窗（claim=st-examclose-20261010），冻结门柱=manifest.csv 有产出且 rc=0，不变。
