@@ -31,7 +31,12 @@ $log = Join-Path $logDir "f06_grid.log"
 # (pandas FutureWarning at first eval killed every window since 09-19); fix mirrors the
 # cmd.exe /c native-redirect pattern proven daily by run_factory_lane_c.ps1 / run_c4_exam.ps1.
 # Sequential: batch A census-extend (focus stratify) then batch B subspace enumerate.
-cmd.exe /c "python scripts\backtest\factory_grid_executor.py --n-samples 6000 --seed 20260916 --stratify-dims G_universe,A1_factor_normalize,B_top_n >> $log 2>&1"
+# v2 (2026-10-10, nightmine order rule-3): batch A voided after 16.7h zero-manifest run
+# (grid_20261009-191707 empty, 44.8s/cell vs 3.5s/cell stop threshold); n downgraded
+# 6000 -> 1000 and refrozen as f06_grid_v2 in config/search_space_prereg.yaml.
+# Window discipline: fire Sat 08:00, hard deadline 22:30 same day -- never cross the
+# 23:00 W1 GPU window (domain-2 precedence, OD-5 overlap lesson).
+cmd.exe /c "python scripts\backtest\factory_grid_executor.py --n-samples 1000 --seed 20260916 --stratify-dims G_universe,A1_factor_normalize,B_top_n >> $log 2>&1"
 "batch A exit=$LASTEXITCODE" | Out-File -FilePath $log -Append -Encoding utf8
 
 # batch B JSON: PS single-quoted literal keeps `\"` verbatim through cmd to python argv
