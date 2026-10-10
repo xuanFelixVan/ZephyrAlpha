@@ -1,0 +1,42 @@
+# [MANUAL preregistered card] 手工预注册卡（无 generated 标=生成器保护面）。
+# 冻结纪律：判据/窗口/分桶看数前冻结（裁定#505，B2 口径查证收口后双窗设计）；事后挪门柱=作废。
+schema_version: '1.0'
+card_id: TDM-X-S1-03/comparison/02_dualwindow
+node_id: TDM-X-S1-03
+family: comparison
+title_zh: 止盈族·双窗对照卡（X_tp 维）
+hypothesis: 移动止盈（Chandelier 2×ATR22 只升不降/峰值回撤 30% 兑现/目标位）在 CRISIS 压力窗改善 MaxDD ≥5pp 且近样年 OOS Sharpe 非劣（≥-0.2）——双窗同过方为真增益（B2：单窗结论被情景区混杂）。
+window:
+  stress: 2020-02-01..2020-03-31（CRISIS 压力窗，沿 T3b 考点）
+  recent_oos: 2025-10-09..2026-09-30（近样年，沿 E 道考点）
+  regimes:
+    crisis: 2020-02-01..2020-03-31
+    recent: 2025-10-09..2026-09-30
+  frozen_note: 双窗设计=B2 口径查证收口（裁定#505）：两先例考点不同构，须双窗同验；配对覆盖地板=压力窗内 stop 触发对数≥10，不足=数据不足 fail 非通过
+buckets:
+  type: dim_pair
+  'on': X_tp=[off, chandelier_trail, peak_giveback30, target_px, composite]（规格卡 §4 原文维）
+  pairing: exit_simulator 双臂同装置 on/off
+pillars:
+  crisis: 压力窗配对 MaxDD 改善（cost-adjusted）
+  recent: 近样年 OOS 配对 Sharpe 差与 MaxDD 改善
+pillars_numeric:
+  crisis_maxdd_improve_pp_min: 5.0
+  recent_oos_sharpe_diff_min: -0.2
+  recent_oos_maxdd_improve_pp_min: 5.0
+  pair_coverage_floor: 10
+  cost_adjusted: true
+target:
+  primary: 双臂同装置 on/off 配对（exit_simulator 口径）：压力窗 MaxDD 改善 + 近样年 OOS Sharpe 非劣/MaxDD 改善
+  secondary: null
+  note: 机制/数据列=spec_x_TDM-X-S1-03.md §1-2 转录（与 X-S1-02 共享行循环）；判据语义=E 道 verdict_gain+t3b exit_gain 双窗合并（裁定#505）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-03.confidence
+preregistered_by: st-examchief-20261009
+preregistered_at: '2026-10-10'
+ruling_ref: 裁定#505
+discipline: 门柱看数前冻结（裁定#505 双窗设计）；跑数前置=B3 GPU 预算/B4 T0 重标定三件套齐（fire_grid fail-closed）；X_stop 旧 T3b FAIL verdict 存续（G4-5 口径版本不重审）

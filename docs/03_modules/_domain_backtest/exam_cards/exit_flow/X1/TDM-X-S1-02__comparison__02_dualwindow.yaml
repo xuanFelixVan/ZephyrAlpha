@@ -1,0 +1,43 @@
+# [MANUAL preregistered card] 手工预注册卡（无 generated 标=生成器保护面）。
+# 冻结纪律：判据/窗口/分桶看数前冻结（裁定#505，B2 口径查证收口后双窗设计）；事后挪门柱=作废。
+schema_version: '1.0'
+card_id: TDM-X-S1-02/comparison/02_dualwindow
+node_id: TDM-X-S1-02
+family: comparison
+title_zh: 止损·双窗重考卡（X_stop 维，新考卷）
+hypothesis: X_stop=[off, atr3x, trail20]（已落地 _apply_exit_overlay）在双窗设计下重考：CRISIS 压力窗 MaxDD 改善 ≥5pp 且近样年 OOS Sharpe 非劣——E 道单窗
+  +16.5pp 与 T3b 单窗 0% 过线的矛盾由双窗同验消解。
+window:
+  stress: 2020-02-01..2020-03-31（CRISIS 压力窗，沿 T3b 考点）
+  recent_oos: 2025-10-09..2026-09-30（近样年，沿 E 道考点）
+  regimes:
+    crisis: 2020-02-01..2020-03-31
+    recent: 2025-10-09..2026-09-30
+  frozen_note: 双窗设计=B2 口径查证收口（裁定#505）：两先例考点不同构，须双窗同验；配对覆盖地板=压力窗内 stop 触发对数≥10，不足=数据不足 fail 非通过
+buckets:
+  type: dim_pair
+  'on': X_stop=[off, atr3x, trail20]（_apply_exit_overlay 序钉 J帽→stop→breaker）
+  pairing: exit_simulator 双臂同装置 on/off
+pillars:
+  crisis: 压力窗配对 MaxDD 改善（cost-adjusted，覆盖地板 10 对）
+  recent: 近样年 OOS 配对 Sharpe 差 ≥-0.2 且 MaxDD 改善 ≥5pp
+pillars_numeric:
+  crisis_maxdd_improve_pp_min: 5.0
+  recent_oos_sharpe_diff_min: -0.2
+  recent_oos_maxdd_improve_pp_min: 5.0
+  pair_coverage_floor: 10
+  cost_adjusted: true
+target:
+  primary: 双臂同装置 on/off 配对（exit_simulator 口径）：压力窗 MaxDD 改善 + 近样年 OOS Sharpe 非劣/MaxDD 改善
+  secondary: null
+  note: 旧 T3b FAIL（a46c937df1 终判）存续不重审（G4-5）；本卡=新判据新考卷（裁定#505 授权）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-02.confidence
+preregistered_by: st-examchief-20261009
+preregistered_at: '2026-10-10'
+ruling_ref: 裁定#505
+discipline: 门柱看数前冻结（裁定#505 双窗设计）；跑数前置=B3 GPU 预算/B4 T0 重标定三件套齐（fire_grid fail-closed）；X_stop 旧 T3b FAIL verdict 存续（G4-5 口径版本不重审）
