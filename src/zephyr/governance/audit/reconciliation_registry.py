@@ -4,7 +4,7 @@
 
 # [DOMAIN] D_GOV_AUDIT
 
-# [DEPENDENCIES] zephyr.shared.infra.process_pool (run_subprocess_hidden), zephyr.shared.utils.time_utils (now_utc), PyYAML (optional, lazy import in _load_test_residue_config for trae_071 §test_residue_reclaim SSoT 加载), psutil (optional, lazy import in _pid_exists for PID 存活检查)
+# [DEPENDENCIES] zephyr.shared.infra.process_pool (run_subprocess_hidden), zephyr.shared.utils.time_utils (now_utc), PyYAML (optional, lazy import in _load_test_residue_config for trae_071 §test_residue_reclaim SSoT 加载), psutil (optional, lazy import in _pid_exists for PID 存活检查), zephyr.security.access_control.session_concurrency (lazy import in govern_stash_drop for stash 属主活性裁决), zephyr.infrastructure.runtime.concurrency_guard (lazy import in govern_stash_drop for stash 触及文件 claim 冲突)
 
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 
@@ -166,6 +166,15 @@ __all__ = [
     "backfill_auto_ack_healed",  # #AUTO-ACK-HEALED-WARN 治本（自愈 ack 一次性回填）
     "cleanup_reconcile_log",  # #RECONCILE-LOG-RETENTION 治本（日志保留清理）
     "make_stash_lifecycle_reconciler",  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
+    # st-maint1 件②（2026-10-10）stash drop 治理面——reconciler 与 git_guard 共用单一真源
+    "StashDropVerdict",
+    "stash_owner_candidates",
+    "anchor_stash_ref",
+    "list_stash_refs",
+    "govern_stash_drop",
+    "drop_governed_stash",
+    "QUARANTINE_STASH_REF_PREFIX",
+    "STASH_DROP_AUDIT_RELPATH",
     "make_blueprint_id_legacy_reconciler",  # ARCH-DATAQUALITY-V1.8 Task I
     "make_capability_lookup_health_reconciler",  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6
     "log_gate_failure",  # Ruling:100PCT-AI-GOVERNANCE P1-5 — gate fail-open 持久化
@@ -9757,6 +9766,355 @@ def _strip_stash_branch_prefix(message: str) -> str:
     return message
 
 
+# ============================================================================
+# stash drop 治理面（st-maint1 件② 蒸发 cure，2026-10-10 判据口径变更）
+# ----------------------------------------------------------------------------
+# 病根（2026-10-10 全仓"蒸发战争"三脸中的两脸落在本通道）：原清扫对"任何非
+# user-manual- 前缀"的 stash 反推=AI 创建即 drop——不看属主 sid、不看会话活性、
+# 不看 claim、零存证（旧 L9826-L9851 反向匹配 + 旧 L9875 任何 commit 触发 +
+# 旧 L9957-L9964 主仓裸 drop）。实测 st-examclose（staged 翻动）与
+# st-finalclean2（整目录+index 条目同灭）的在飞面被 drop 即蒸发，台账全靠
+# refs/recover/inflight-20261010 + refs/quarantine/* 人工锚才存活。
+#
+# 治本：drop 任何一条 stash 前，三条机械前置全过才允许动手；任一不满足=不 drop
+# （fail-closed 只关在"动手"这一侧，扫描/记账/告警照旧）：
+#   ① 认人——sid 能从 message 机械抽出，且会话活性=仓内唯一裁决表
+#      ``zephyr.security.access_control.session_concurrency.liveness_verdict``
+#      （裁定#480 C-2，session_concurrency.py:1637）判为 ``dead``；未注册
+#      （ghost）/判活不明/degraded/alive 一律豁免；且该 stash 触及文件未被在场
+#      会话 claim（``concurrency_guard.check_rollback_conflict``，:150）。
+#      判据一律复用在册原语，禁自造。
+#   ② 存证——先把 stash commit 锚到 ``refs/quarantine/stash-<sid>-<ts>-<sha8>``
+#      （沿用在册双锚做法 refs/quarantine/<sid>，session_worktree.py:748/:756），
+#      update-ref 后 show-ref 复核成功才 drop；drop 之后仍可一命令取回字节
+#      （``git show refs/quarantine/<...>`` / ``git stash apply <sha>``）。
+#   ③ 留痕——每笔判定（含未动手的豁免）追加
+#      ``.runtime/gate_audit/stash_drop_governance.jsonl``（循既有 gate_audit
+#      约定，对标 git_guard.py:377 同目录；.jsonl 是 sweep 保护后缀，:7744）。
+#
+# 消费面（单一真源，禁双判据）：GATE-STASH-LIFECYCLE reconciler 与
+# ``scripts/git_guard.py`` 的 ``git stash drop|clear`` 通道共用本治理面。
+# ============================================================================
+
+_STASH_EXPLICIT_OWNER_RE: Final = re.compile(
+    r"(?:session_worktree_pre_merge|session_worktree_abort)\s*[:=]\s*([^\s,;]+)"
+)
+
+# sid token 形态（仓内实测 st-<...> / sess-<...>）。假阳性只会落到"未注册=ghost=
+# 豁免 drop"这一侧，永不造成误删——保守方向自洽。
+_STASH_SID_TOKEN_RE: Final = re.compile(r"(?<![A-Za-z0-9])(?:st|sess)-[A-Za-z0-9][A-Za-z0-9._-]*")
+
+QUARANTINE_STASH_REF_PREFIX: Final = "refs/quarantine/"
+
+STASH_DROP_AUDIT_RELPATH: Final = Path(".runtime") / "gate_audit" / "stash_drop_governance.jsonl"
+
+_LIVENESS_DEAD_STATE: Final = "dead"
+
+
+@dataclass
+class StashDropVerdict:
+    """单条 stash 的 drop 治理结论（三条前置的机械判定结果 + 是否真 drop）。"""
+
+    stash_ref: str = ""
+
+    stash_sha: str = ""
+
+    owner_sid: str = ""
+
+    liveness_state: str = ""
+
+    allowed: bool = False
+
+    dropped: bool = False
+
+    reason: str = ""
+
+    quarantine_ref: str = ""
+
+
+def stash_owner_candidates(message: str) -> list[str]:
+    """从 stash message 机械抽取候选属主 sid（不做任何"AI/人"反推）。
+
+    抽取序：① session_worktree 显式署名（``session_worktree_pre_merge: <sid>``
+    / ``session_worktree_abort: <sid>``）；② ``st-``/``sess-`` token 兜底。
+    返回去重后的候选列表——**多候选=归属不可判**，调用侧必须豁免（宁可不 drop）。
+    """
+
+    stripped = _strip_stash_branch_prefix(message)
+
+    explicit = [m.group(1) for m in _STASH_EXPLICIT_OWNER_RE.finditer(stripped)]
+
+    tokens = _STASH_SID_TOKEN_RE.findall(stripped)
+
+    out: list[str] = []
+
+    for sid in explicit + tokens:
+        if sid and sid not in out:
+            out.append(sid)
+
+    return out
+
+
+def _stash_touched_files(project_root: Path, stash_sha: str) -> list[str]:
+    """stash commit 触及的文件清单（claim 冲突判据的输入；失败=空清单不放行）。"""
+
+    r = _run_subprocess(
+        ["git", "stash", "show", "--name-only", stash_sha],
+        cwd=str(project_root),
+        timeout=15,
+    )
+
+    if r.returncode != 0:
+        return []
+
+    return [line.strip() for line in (r.stdout or "").splitlines() if line.strip()]
+
+
+def _append_stash_drop_audit(project_root: Path, record: dict) -> None:
+    """stash 清扫审计行落盘（jsonl append-only，fail-open——留痕是证据面不是裁决面）。"""
+
+    import json
+
+    audit_path = Path(project_root) / STASH_DROP_AUDIT_RELPATH
+
+    try:
+        audit_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(audit_path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+    except OSError as e:  # noqa: BLE001 — 审计写失败不阻断（判定已生效；动手侧已 fail-closed）
+        logger.warning("STASH-DROP-GOVERNANCE: 审计落盘失败（不阻断）: %s", e)
+
+
+def anchor_stash_ref(project_root: Path | str, stash_ref: str, *, owner_hint: str = "") -> tuple[str, str]:
+    """把一条 stash 存证到 ``refs/quarantine/stash-<sid>-<ts>-<sha8>``（前置②）。
+
+    对在册双锚做法的沿用（``refs/quarantine/<sid>``，session_worktree.py:748；
+    ``refs/recover/inflight-20261010`` 事故锚）——锚成后 drop 仍可一命令取回字节
+    （``git show <ref>`` / ``git stash apply <sha>``）。
+
+    Returns:
+        (sha, ref_name)；任一环节失败返回 ("", "")——调用侧必须据此不 drop。
+    """
+
+    root = Path(project_root)
+
+    rev = _run_subprocess(
+        ["git", "rev-parse", "--verify", "--quiet", f"{stash_ref}^{{commit}}"],
+        cwd=str(root),
+        timeout=15,
+    )
+
+    sha = (rev.stdout or "").strip()
+
+    if rev.returncode != 0 or not sha:
+        return "", ""
+
+    sid_tag = re.sub(r"[^A-Za-z0-9._-]", "_", owner_hint or "unknown")
+
+    ts_tag = now_utc().strftime("%Y%m%dT%H%M%SZ")
+
+    ref_name = f"{QUARANTINE_STASH_REF_PREFIX}stash-{sid_tag}-{ts_tag}-{sha[:8]}"
+
+    up = _run_subprocess(["git", "update-ref", ref_name, sha], cwd=str(root), timeout=15)
+
+    if up.returncode != 0:
+        return "", ""
+
+    # update-ref 返回 0 不等于 ref 可见——复核一次（锚没落地就 drop=零存证蒸发）
+    verify = _run_subprocess(["git", "show-ref", "--verify", ref_name], cwd=str(root), timeout=15)
+
+    if verify.returncode != 0:
+        return "", ""
+
+    return sha, ref_name
+
+
+def list_stash_refs(project_root: Path | str) -> list[str]:
+    """当前 stash ref 清单（``stash@{N}``，索引升序）。失败=空清单。"""
+
+    r = _run_subprocess(
+        ["git", "stash", "list", "--format=%gd"],
+        cwd=str(project_root),
+        timeout=30,
+    )
+
+    if r.returncode != 0:
+        return []
+
+    return [line.strip() for line in (r.stdout or "").splitlines() if line.strip()]
+
+
+def govern_stash_drop(project_root: Path | str, stash_ref: str) -> StashDropVerdict:
+    """drop 前三条机械前置（认人+存证）判定，任一不满足=allowed=False。
+
+    本函数**不 drop**——只判定并落锚（锚是"即便将来 drop 也能取回字节"的前置）。
+    真 drop 由 :func:`drop_governed_stash` 执行（含留痕）。
+    """
+
+    root = Path(project_root)
+
+    verdict = StashDropVerdict(stash_ref=stash_ref)
+
+    # ---- 前置 0：stash 必须可解析为 commit（判不到字节就没什么可存证的）----
+    rev = _run_subprocess(
+        ["git", "rev-parse", "--verify", "--quiet", f"{stash_ref}^{{commit}}"],
+        cwd=str(root),
+        timeout=15,
+    )
+
+    sha = (rev.stdout or "").strip()
+
+    if rev.returncode != 0 or not sha:
+        verdict.reason = f"stash {stash_ref} 不可解析为 commit（rc={rev.returncode}）——不 drop"
+
+        return verdict
+
+    verdict.stash_sha = sha
+
+    # ---- 前置 1a：认人（sid 唯一可判）----
+    subj = _run_subprocess(["git", "show", "-s", "--format=%s", sha], cwd=str(root), timeout=15)
+
+    message = (subj.stdout or "").strip()
+
+    candidates = stash_owner_candidates(message)
+
+    if not candidates:
+        verdict.reason = "message 无可判属主 sid（未注册/归属不可判）——豁免 drop"
+
+        return verdict
+
+    if len(candidates) > 1:
+        verdict.reason = f"属主歧义（{candidates}）——归属不可判，豁免 drop"
+
+        return verdict
+
+    owner_sid = candidates[0]
+
+    verdict.owner_sid = owner_sid
+
+    # ---- 前置 1b：会话活性=仓内唯一裁决表，判 dead 才算"已判死会话"----
+    try:
+        from zephyr.security.access_control.session_concurrency import liveness_verdict
+
+        live = liveness_verdict(owner_sid)
+
+    except Exception as e:  # noqa: BLE001 — 活性判据不可用=判活不明 → fail-closed 于动手侧
+        verdict.liveness_state = "unknown"
+
+        verdict.reason = f"活性判据不可用（判活不明）：{e}——豁免 drop"
+
+        return verdict
+
+    verdict.liveness_state = live.state
+
+    if live.state != _LIVENESS_DEAD_STATE:
+        verdict.reason = (
+            f"属主 {owner_sid} 活性={live.state}"
+            f"（signal={live.authoritative_signal}）非 dead——"
+            f"在场活会话/未注册/判活不明的 stash 一律豁免 drop"
+        )
+
+        return verdict
+
+    # 判死依据入结论（审计面的"判死依据"字段）
+    dead_basis = f"{live.authoritative_signal}:{(live.reasons or [''])[0]}"
+
+    # ---- 前置 1c：claim——stash 触及文件被在场会话持锁则不硬闯 ----
+    touched = _stash_touched_files(root, sha)
+
+    if touched:
+        try:
+            from zephyr.infrastructure.runtime.concurrency_guard import check_rollback_conflict
+
+            conflict = check_rollback_conflict(touched, owner_sid, root)
+
+        except Exception as e:  # noqa: BLE001 — 锁面不可用=冲突不明 → fail-closed 于动手侧
+            verdict.reason = f"claim 冲突判据不可用：{e}——豁免 drop"
+
+            return verdict
+
+        if conflict.has_conflict:
+            verdict.reason = f"stash 触及文件被其他在场会话 claim（{conflict.blocked_files[:5]}）——豁免 drop"
+
+            return verdict
+
+    # ---- 前置 2：存证锚（先锚后 drop，锚验成功才允许动手）----
+    anchored_sha, quarantine_ref = anchor_stash_ref(root, stash_ref, owner_hint=owner_sid)
+
+    if not anchored_sha or anchored_sha != sha:
+        verdict.reason = f"存证锚写入/复核失败（{QUARANTINE_STASH_REF_PREFIX}…-{owner_sid}…）——不 drop"
+
+        return verdict
+
+    verdict.quarantine_ref = quarantine_ref
+
+    verdict.allowed = True
+
+    verdict.reason = f"三前置全过（判死依据={dead_basis}，存证={quarantine_ref}）"
+
+    return verdict
+
+
+def drop_governed_stash(project_root: Path | str, stash_ref: str, *, actor: str = "") -> StashDropVerdict:
+    """按治理判据执行单条 stash drop，并落审计行（含"是否真 drop"）。
+
+    未通过前置=不 drop，只留痕告警；通过后 drop 前再复核一次索引未漂移
+    （``stash@{N}`` 在并发窗口会被 renumber，漂了就只能当"归属不明"处置）。
+    """
+
+    root = Path(project_root)
+
+    verdict = govern_stash_drop(root, stash_ref)
+
+    if verdict.allowed:
+        recheck = _run_subprocess(
+            ["git", "rev-parse", "--verify", "--quiet", f"{stash_ref}^{{commit}}"],
+            cwd=str(root),
+            timeout=15,
+        )
+
+        if (recheck.stdout or "").strip() != verdict.stash_sha:
+            verdict.allowed = False
+
+            verdict.reason = "drop 前索引漂移（stash_ref 已不指向已存证的 sha）——放弃 drop"
+
+        else:
+            drop_r = _run_subprocess(["git", "stash", "drop", stash_ref], cwd=str(root), timeout=15)
+
+            if drop_r.returncode == 0:
+                verdict.dropped = True
+
+                logger.info(
+                    "GATE-STASH-LIFECYCLE: dropped %s owner=%s anchored=%s",
+                    stash_ref,
+                    verdict.owner_sid,
+                    verdict.quarantine_ref,
+                )
+
+            else:
+                verdict.reason = f"drop 执行失败 rc={drop_r.returncode}: {drop_r.stderr.strip()[:200]}"
+
+    _append_stash_drop_audit(
+        root,
+        {
+            "ts": now_utc().isoformat(),
+            "actor": actor or "unknown",
+            "stash_ref": verdict.stash_ref,
+            "stash_sha": verdict.stash_sha,
+            "owner_sid": verdict.owner_sid,
+            "liveness_state": verdict.liveness_state,
+            "quarantine_ref": verdict.quarantine_ref,
+            "allowed": verdict.allowed,
+            "did_drop": verdict.dropped,
+            "reason": verdict.reason,
+        },
+    )
+
+    return verdict
+
+
 def make_stash_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
     """构造 GATE-STASH-LIFECYCLE post-commit stash 过期清理 reconciler.
 
@@ -9782,33 +10140,33 @@ def make_stash_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
 
     - reconcile: ``git stash list --format=%gd|%ct|%s`` 获取所有 stash 的
 
-      ref/timestamp/message，过滤非 user-manual- 前缀 + age > 4h 的 stash，
-
-      按索引降序 drop（避免 renumbering 问题）
+      ref/timestamp/message，过滤非 user-manual- 前缀 + age > 4h 的 stash 为
+      **候选**，按索引降序逐条过 :func:`drop_governed_stash` 三前置后才 drop
+      （避免 renumbering 问题；前置不过=只记账不动手）
 
     - 自维护/自关闭：每次 commit 后自动清理，无需 AI 干预
 
     保护规则（第一性原理：100% AI 场景下显式保护 user-manual- 前缀）：
 
-    - 反向匹配治本（#ARCH-STASH-LIFECYCLE-FIX-001，2026-07-22）：
+    - 反向匹配只用于**筛候选**（#ARCH-STASH-LIFECYCLE-FIX-001，2026-07-22）：
 
-      非 ``user-manual-`` 前缀的 stash 都是 AI 创建的。原方案用 8 个 AI 前缀
+      非 ``user-manual-`` 前缀只说明"可能是 AI stash"，**不构成可 drop 的证据**。
 
-      列表 startswith 匹配，但有两个病根：1) ``On <branch>: `` 前缀导致 startswith
+      2026-10-10 st-maint1 改判前把反向匹配当成了 drop 判据——凡非 user-manual-
 
-      永不匹配（reconciler 形同虚设）；2) AI 手动创建 stash 的 message 模式
+      一律反推"AI 创建"即 drop，不看 sid 归属/会话活性/claim/存证，直接把在场
 
-      不可穷举（实测有 pre-merge-cleanup / other-session-wip / pre-construction
+      活会话尚未落地的在飞面蒸发（当日 st-examclose / st-finalclean2 两脸）。
 
-      / auto-sync / unrelated / CONSUMERS-ACCURACY 等 7+ 种未知前缀）
+      现 drop 必经 :func:`drop_governed_stash` 三前置（认人+存证+留痕）。
 
     - 保留 < 4h 的 stash（AI session 典型生命周期 <4h，可能还需要 pop 恢复）
 
     - user-manual- 前缀永不被清理（显式保护，aggressive 模式也不清理）
 
-    - aggressive 模式（ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE=1）：清理所有非
+    - aggressive 模式（ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE=1）：忽略 age 把非
 
-      user-manual- 前缀 stash（无视 age，用于存量清理）
+      user-manual- 前缀 stash 全部纳入候选（存量清理用；仍须过三前置才 drop）
 
     向内收：扩展 ReconciliationRegistry 框架，不新建独立清理系统。
 
@@ -9834,15 +10192,13 @@ def make_stash_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
         return _strip_stash_branch_prefix(message).startswith(_PROTECTED_STASH_PREFIXES)
 
     def _is_ai_generated(message: str) -> bool:
-        """100% AI 开发场景：非 user-manual- 前缀的 stash 都是 AI 创建的。
+        """反向匹配**筛候选**：非 user-manual- 前缀的 stash 进入 drop 候选集。
 
-        反向匹配治本（#ARCH-STASH-LIFECYCLE-FIX-001，2026-07-22）。原方案用
-
-        AI 前缀列表 startswith 匹配，但有两个病根：1) ``On <branch>: `` 前缀
-
-        导致 startswith 永不匹配；2) AI 手动创建 stash 的 message 模式不可穷举。
-
-        反向匹配更治本——user-manual- 是显式保护，其余都是 AI stash。
+        反向匹配治本（#ARCH-STASH-LIFECYCLE-FIX-001，2026-07-22）针对的是"识别
+        不出未知前缀 AI stash 致堆积"——它只解决**筛得出候选**。2026-10-10
+        st-maint1 改判：本函数结果**不再等于可以 drop**（旧口径把"可能是 AI
+        创建"当成 drop 授权，蒸发过在场活会话的在飞面）。drop 许可由
+        :func:`drop_governed_stash` 三前置判定（认人/存证/留痕）。
 
         """
 
@@ -9851,6 +10207,7 @@ def make_stash_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
         return not stripped.startswith(_PROTECTED_STASH_PREFIXES)
 
     def _should_drop(message: str, age: float, aggressive: bool) -> bool:
+        """候选筛选（前缀 + TTL/aggressive）——**不是 drop 许可**，见上。"""
 
         if _is_protected(message):
             return False
@@ -9874,7 +10231,10 @@ def make_stash_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
 
-        return bool(committed_files)  # 任何有文件的 commit 都触发（扫描成本低）
+        # 任何有文件的 commit 都触发（扫描成本低）。触发面不是病灶——病在动手面：
+        # 2026-10-10 起 trigger 只代表"扫一遍 stash list + 记账"，真 drop 由
+        # drop_governed_stash 三前置 fail-closed（判不出属主/没锚=不动手）。
+        return bool(committed_files)
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
 
@@ -9904,7 +10264,7 @@ def make_stash_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
 
         aggressive = os.environ.get("ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE", "") == "1"
 
-        to_drop: list[tuple[str, float, str]] = []  # (stash_ref, age_hours, message)
+        candidates: list[tuple[str, float, str]] = []  # (stash_ref, age_hours, message)
 
         kept = 0
 
@@ -9936,9 +10296,9 @@ def make_stash_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
 
                 continue
 
-            to_drop.append((stash_ref, age / 3600, message))
+            candidates.append((stash_ref, age / 3600, message))
 
-        if not to_drop:
+        if not candidates:
             return ReconcileResult(
                 action="skip",
                 detail=(
@@ -9947,49 +10307,75 @@ def make_stash_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
                 ),
             )
 
-        # 按索引降序 drop——避免 renumbering 问题（drop stash@{3} 后 stash@{4} 变 stash@{3}）
+        # 按索引降序处理——避免 renumbering 问题（drop stash@{3} 后 stash@{4} 变 stash@{3}）
 
-        to_drop.sort(key=lambda x: _stash_index(x[0]), reverse=True)
+        candidates.sort(key=lambda x: _stash_index(x[0]), reverse=True)
 
         dropped = 0
 
         errors = 0
 
-        for stash_ref, age_h, _msg in to_drop:
-            drop_result = _run_subprocess(
-                ["git", "stash", "drop", stash_ref],
-                cwd=str(project_root),
-                timeout=15,
+        exempt = 0
+
+        exempt_reasons: list[str] = []
+
+        # st-maint1 治本（2026-10-10）：TTL/前缀只是"候选"条件，真 drop 一律过
+        # drop_governed_stash 的三条机械前置（认人/存证/留痕）——任一不满足则
+        # 不 drop（只记账告警）。fail-closed 关在"动手"侧，不在"扫描"侧。
+        for stash_ref, age_h, _msg in candidates:
+            verdict = drop_governed_stash(
+                project_root,
+                stash_ref,
+                actor=f"reconciler:{session_id}",
             )
 
-            if drop_result.returncode == 0:
+            if verdict.dropped:
                 dropped += 1
 
-                logger.info(
-                    "GATE-STASH-LIFECYCLE: dropped %s (age=%.1fh)",
-                    stash_ref,
-                    age_h,
-                )
+                continue
 
-            else:
+            if verdict.reason.startswith("drop 执行失败"):
                 errors += 1
 
-                logger.warning(
-                    "GATE-STASH-LIFECYCLE: drop %s failed: %s",
-                    stash_ref,
-                    drop_result.stderr.strip()[:200],
-                )
+            else:
+                exempt += 1
 
-        action = "clean" if errors == 0 else "warn"
+                if len(exempt_reasons) < 3:
+                    exempt_reasons.append(f"{stash_ref}<-{verdict.reason}")
 
-        return ReconcileResult(
-            action=action,
-            detail=(
-                f"stash lifecycle: dropped={dropped} "
-                f"(>{_STASH_TTL_SECONDS // 3600}h AI stash, aggressive={aggressive}), "
-                f"kept={kept}, protected={protected}, errors={errors}"
-            ),
+            logger.warning(
+                "GATE-STASH-LIFECYCLE: %s 未 drop（age=%.1fh, owner=%s, liveness=%s）: %s",
+                stash_ref,
+                age_h,
+                verdict.owner_sid or "unresolved",
+                verdict.liveness_state or "unknown",
+                verdict.reason,
+            )
+
+        if errors:
+            action = "warn"
+
+        elif exempt:
+            # 有候选被豁免=在飞面保护生效，告警供 Owner/会话自查（不静默放行也不静默蒸发）
+            action = "warn"
+
+        elif dropped:
+            action = "clean"
+
+        else:
+            action = "skip"
+
+        detail = (
+            f"stash lifecycle: dropped={dropped} "
+            f"(>{_STASH_TTL_SECONDS // 3600}h AI stash, aggressive={aggressive}), "
+            f"kept={kept}, protected={protected}, errors={errors}, "
+            f"exempt={exempt}"
         )
+
+        if exempt_reasons:
+            detail += f" (豁免样例: {'; '.join(exempt_reasons)})"
+
+        return ReconcileResult(action=action, detail=detail)
 
     return ReconcilerSpec(
         gate_id="GATE-STASH-LIFECYCLE",

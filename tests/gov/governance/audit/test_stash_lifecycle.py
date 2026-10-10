@@ -30,10 +30,16 @@
   - "On <branch>: " 前缀正确剥离
   - 含斜杠分支名正确处理
   - 无前缀 / 无 ": " 分隔 / 空字符串 边界情况
-- TestStashLifecycleReconcilerReverseMatch: 反向匹配治本端到端测试（#ARCH-STASH-LIFECYCLE-FIX-001）
-  - aggressive 模式清理所有非 user-manual- 前缀 stash（含修复前不可识别的未知前缀）
+- TestStashLifecycleReconcilerReverseMatch: 反向匹配**筛候选**端到端测试
+  - aggressive 模式下未知前缀进候选，但归属不可判=一条不 drop（2026-10-10 改判）
   - user-manual- 永不被清理
   - 非 aggressive 模式下，age < TTL 的 AI stash 保留
+
+判据口径变更（务必读）：2026-10-10 st-maint1-20261010 把"drop 掉 other-session-wip-*
+等未知前缀 stash"的原期望**改判**——那些 stash 的属主是在场活会话或根本判不出，
+drop 即蒸发他人未落地的在飞面（当日 st-examclose / st-finalclean2 两脸）。反向匹配
+从"drop 授权"降级为"筛候选"，drop 侧新增认人+存证+留痕三前置（更严，不是放松门禁）。
+台账=docs/_working/maint1_campaign/t2_lane_ledger.md §"判据口径变更"。
 """
 
 from __future__ import annotations
@@ -274,18 +280,25 @@ class TestStashLifecycleReconcilerReverseMatch:
     2. AI 手动创建 stash 的 message 模式不可穷举（pre-merge-cleanup / other-session-wip
        / pre-construction / auto-sync / unrelated / CONSUMERS-ACCURACY 等 7+ 种未知前缀）
 
-    修复后用反向匹配：非 ``user-manual-`` 前缀的 stash 都是 AI 创建的。
-    本测试组用 aggressive 模式（无视 age）验证反向匹配治本生效。
+    修复后用反向匹配筛候选：非 ``user-manual-`` 前缀的 stash 进入 drop **候选集**。
+    本测试组用 aggressive 模式（无视 age）验证识别力仍在（不再形同虚设），同时
+    验证 2026-10-10 改判后的动手口径：候选 ≠ 许可，拿不出"属主已判死 + 字节已存证"
+    就一条都不 drop（正向 drop 用例在 test_stash_drop_ownership_cure.py）。
     """
 
     def test_aggressive_drops_unknown_ai_prefixes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """aggressive 模式清理未知 AI 前缀 stash（修复前不可识别）。
+        """aggressive 模式把未知 AI 前缀纳入**候选**，但拿不出归属证据=不 drop。
 
-        场景：3 个 stash，2 个是修复前不可识别的未知 AI 前缀（pre-merge-cleanup /
-        other-session-wip），1 个是 user-manual-。aggressive 模式应 drop 前 2 个，
-        保留 user-manual-。
+        判据口径变更（2026-10-10 st-maint1-20261010 改判，同批改此断言）：
+        本用例原期望 "pre-merge-cleanup + other-session-wip 两条被 drop（dropped=2）"
+        ——那是把 bug 立法了：该两条 stash 的属主要么是在场活会话、要么根本无法
+        机械判定，drop 即蒸发他人尚未落地的在飞面（2026-10-10 实测 st-examclose /
+        st-finalclean2 两脸走的正是这条通道语义）。新期望=候选识别照旧、动手为零、
+        每笔判定留审计。不是放松门禁：反向匹配从"drop 授权"降级为"筛候选"，
+        drop 侧新增了认人+存证+留痕三前置（更严）。
         """
         _init_git_repo(tmp_path)
+        monkeypatch.chdir(tmp_path)  # 活性判据锚到 tmp 仓（不读生产会话注册表）
         _create_stash(tmp_path, "pre-merge-cleanup-sess-12348-v4", "file1.txt")
         _create_stash(tmp_path, "other-session-wip-module-id-naming-fix", "file2.txt")
         _create_stash(tmp_path, "user-manual-important-work", "file3.txt")
@@ -294,17 +307,27 @@ class TestStashLifecycleReconcilerReverseMatch:
         spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
         result = spec.reconcile(["some-file.py"], "test-session")
 
-        # 反向匹配治本：pre-merge-cleanup + other-session-wip 被 drop（共 2 个）
-        assert result.action == "clean", f"expected clean, got {result.action}: {result.detail}"
-        assert "dropped=2" in result.detail, f"detail: {result.detail}"
-        # user-manual- 保留
+        # 候选识别仍生效（2 条进候选），但归属证据不足 → 一条都不 drop
+        assert "dropped=0" in result.detail, f"detail: {result.detail}"
+        assert "exempt=2" in result.detail, f"detail: {result.detail}"
+        assert result.action == "warn", f"expected warn（告警不静默）, got {result.action}: {result.detail}"
+        # 三条 stash 全部在（user-manual- 受保护 + 两条候选被豁免）
         remaining = _get_stash_list(tmp_path)
-        assert len(remaining) == 1, f"remaining: {remaining}"
-        assert "user-manual-important-work" in remaining[0]
+        assert len(remaining) == 3, f"remaining: {remaining}"
+        assert any("user-manual-important-work" in m for m in remaining), f"remaining: {remaining}"
+        assert sum(1 for m in remaining if "user-manual-" in m) == 1, f"remaining: {remaining}"
 
     def test_protected_user_manual_always_kept(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """user-manual- 前缀 stash 在 aggressive 模式下也保留。"""
+        """user-manual- 前缀 stash 在 aggressive 模式下也保留。
+
+        判据口径变更（2026-10-10 st-maint1-20261010 改判）：原期望"4 条里 drop 掉
+        那条 session_worktree_pre_merge: sess-xxx（dropped=1）"——sess-xxx 在注册表
+        里查无此人，属主判活不明，按旧口径凭前缀就 drop 了；新口径下"查无此人"=
+        豁免（宁可不 drop）。本用例的 user-manual- 保护期望不变，只是 AI 前缀那条
+        从"被 drop"改判为"被豁免并留审计"。
+        """
         _init_git_repo(tmp_path)
+        monkeypatch.chdir(tmp_path)
         _create_stash(tmp_path, "user-manual-1", "file1.txt")
         _create_stash(tmp_path, "user-manual-2", "file2.txt")
         _create_stash(tmp_path, "user-manual-3", "file3.txt")
@@ -314,12 +337,13 @@ class TestStashLifecycleReconcilerReverseMatch:
         spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
         result = spec.reconcile(["some-file.py"], "test-session")
 
-        # 3 个 user-manual- 全部保留，1 个 AI stash drop
-        assert "dropped=1" in result.detail, f"detail: {result.detail}"
+        # 3 个 user-manual- 全部保留；第 4 条属主未注册 → 候选成立但不 drop
+        assert "dropped=0" in result.detail, f"detail: {result.detail}"
+        assert "exempt=1" in result.detail, f"detail: {result.detail}"
         remaining = _get_stash_list(tmp_path)
-        assert len(remaining) == 3, f"remaining: {remaining}"
-        for msg in remaining:
-            assert "user-manual-" in msg, f"unexpected stash kept: {msg}"
+        assert len(remaining) == 4, f"remaining: {remaining}"
+        assert sum(1 for m in remaining if "user-manual-" in m) == 3, f"remaining: {remaining}"
+        assert any("session_worktree_pre_merge" in m for m in remaining), f"remaining: {remaining}"
 
     def test_non_aggressive_keeps_fresh_ai_stash(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """非 aggressive 模式下，age < TTL 的 AI stash 保留（反向匹配不破坏 TTL 行为）。"""
@@ -338,13 +362,16 @@ class TestStashLifecycleReconcilerReverseMatch:
         assert len(remaining) == 2, f"remaining: {remaining}"
 
     def test_real_world_unknown_prefixes_recognized(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """真实场景未知前缀全部识别为 AI stash（修复前不可识别，导致 18+ stash 堆积）。
+        """真实场景未知前缀全部被识别为**候选**（识别力不缩），但零归属证据=零动手。
 
-        场景：实测 18 个 stash 堆积的真实 message（含 CONSUMERS-ACCURACY /
-        auto-sync temp / unrelated / pre-construction 等修复前不可识别前缀）。
-        aggressive 模式下全部 drop，证明反向匹配治本生效。
+        判据口径变更（2026-10-10 st-maint1-20261010 改判）：原期望"8 条全部 drop"
+        ——这 8 条 message 里没有一条能机械对应到已判死会话，按旧口径凭"非
+        user-manual- 前缀"反推 AI 创建就 drop，正是把在场活会话的在飞面蒸发的
+        那条通道。新期望：8 条全部进候选（识别力与原治本一致，不再形同虚设）、
+        全部被豁免、stash 一条不少。
         """
         _init_git_repo(tmp_path)
+        monkeypatch.chdir(tmp_path)
         real_world_messages = [
             "CONSUMERS-ACCURACY work-in-progress from previous session",
             "unrelated gov_audit/governance/trading work-in-progress",
@@ -362,20 +389,26 @@ class TestStashLifecycleReconcilerReverseMatch:
         spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
         result = spec.reconcile(["some-file.py"], "test-session")
 
-        # 全部 8 个未知前缀 stash 被 drop（修复前 reconciler 形同虚设，0 个 drop）
-        assert result.action == "clean", f"expected clean, got {result.action}: {result.detail}"
-        assert "dropped=8" in result.detail, f"detail: {result.detail}"
+        # 8 条都进候选（exempt=8），但一条都不 drop——识别≠许可
+        assert "dropped=0" in result.detail, f"detail: {result.detail}"
+        assert "exempt=8" in result.detail, f"detail: {result.detail}"
+        assert result.action == "warn", f"expected warn, got {result.action}: {result.detail}"
         remaining = _get_stash_list(tmp_path)
-        assert len(remaining) == 0, f"remaining: {remaining}"
+        assert len(remaining) == 8, f"remaining: {remaining}"
 
     def test_session_worktree_prefix_still_recognized(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """原 8 个 AI 前缀（session_worktree_pre_merge 等）反向匹配仍识别。
+        """原 8 个 AI 前缀仍被识别为候选，且 session_worktree 署名里的 sid 仍可被抽取。
 
-        回归测试：反向匹配治本不破坏原 AI 前缀识别（session_worktree_pre_merge /
-        abort / phase- / temp-stash-for- / pre-merge stash / pre-merge-stash /
-        merge-prep- / stash-for-merge）。
+        回归口径（2026-10-10 st-maint1-20261010 改判后）：反向匹配的**识别力**不许缩
+        （否则又回到"reconciler 形同虚设、stash 无限堆积"），但识别只产生候选——
+        这 8 条的属主在注册表里都查无此人（判活不明），所以一条都不 drop。
+        "属主判死后照样能 drop"的正向用例见同目录
+        test_stash_drop_ownership_cure.py::TestDeadOwnerDropWithAnchor。
         """
+        from zephyr.governance.audit.reconciliation_registry import stash_owner_candidates
+
         _init_git_repo(tmp_path)
+        monkeypatch.chdir(tmp_path)  # 活性判据锚到 tmp 仓，不读生产注册表
         original_ai_prefixes = [
             "session_worktree_pre_merge: sess-001",
             "session_worktree_abort: sess-002",
@@ -389,15 +422,20 @@ class TestStashLifecycleReconcilerReverseMatch:
         for i, msg in enumerate(original_ai_prefixes, 1):
             _create_stash(tmp_path, msg, f"file{i}.txt")
 
+        # 署名抽取仍是这些前缀（识别面没缩）
+        assert stash_owner_candidates(f"On master: {original_ai_prefixes[0]}") == ["sess-001"]
+        assert stash_owner_candidates(f"On master: {original_ai_prefixes[1]}") == ["sess-002"]
+        assert stash_owner_candidates(f"On master: {original_ai_prefixes[5]}") == ["sess-49896"]
+
         monkeypatch.setenv("ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE", "1")
         spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
         result = spec.reconcile(["some-file.py"], "test-session")
 
-        # 全部 8 个原 AI 前缀 stash 被 drop（反向匹配覆盖原 8 个前缀）
-        assert result.action == "clean", f"expected clean, got {result.action}: {result.detail}"
-        assert "dropped=8" in result.detail, f"detail: {result.detail}"
+        # 8 条全部进候选；属主未注册 → 全部豁免，一条不少
+        assert "dropped=0" in result.detail, f"detail: {result.detail}"
+        assert "exempt=8" in result.detail, f"detail: {result.detail}"
         remaining = _get_stash_list(tmp_path)
-        assert len(remaining) == 0, f"remaining: {remaining}"
+        assert len(remaining) == 8, f"remaining: {remaining}"
 
     def test_empty_stash_list_skips(self, tmp_path: Path) -> None:
         """空 stash list → action=skip。"""

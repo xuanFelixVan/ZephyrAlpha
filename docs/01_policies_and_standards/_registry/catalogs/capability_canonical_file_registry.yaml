@@ -44432,6 +44432,11 @@ creation_tokens:
   capability: maint1_campaign
   created_by: st-maint1-20261010
   merge_evaluation: "G1-1 跨域不同对象不并另立：本班施工台账，maint1_campaign 目录专属，无既有资产可承接"
+- file: docs/_working/maint1_campaign/t2_lane_ledger.md
+  token: maint1-campaign-t2-lane-ledger-20261010
+  capability: maint1_campaign
+  created_by: st-maint1-t2lane
+  merge_evaluation: "G1-1 跨域不同对象不并另立：T2 写码车道施工台账，maint1_campaign 目录内不同件各负其责"
 - file: docs/_working/map_build/00_campaign_brief.md
   token: map-build-00-campaign-brief-20260924
   capability: map_build

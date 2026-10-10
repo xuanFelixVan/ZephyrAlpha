@@ -6,7 +6,7 @@
 # [CONSUMERS] AI session 执行 git reset/checkout/stash/revert 前调用
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只读扫描 .ailocks/；不修改锁状态；BLOCKED 时 exit 1 不执行 git 命令
+# [INVARIANTS] 只读扫描 .ailocks/；不修改锁状态；BLOCKED 时 exit 1 不执行 git 命令；stash drop/clear 非只读——默认阻断，放行前必先在动手侧留字节锚（refs/quarantine/stash-*，经 reconciliation_registry 治理面）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
@@ -38,6 +38,8 @@ Git Guard — 拦截危险 git 命令，防止破坏其他 session 的文件锁�
     - git reset --hard          → 检查所有 tracked 文件
     - git checkout -- <file>    → 检查指定文件
     - git stash                 → 检查所有未提交文件
+    - git stash drop / clear    → 破坏性：认人（属主会话判死）+ 存证（refs/quarantine 锚）
+                                 + 审计后才放行；白名单逃生见 ZEPHYR_STASH_DROP_ESCAPE
     - git revert <commit>       → 检查 commit 涉及的文件
     - git restore <file>        → 检查指定文件
 
@@ -72,6 +74,9 @@ from zephyr.infrastructure.runtime.concurrency_guard import (
 __all__ = [
     "DANGEROUS_SUBCOMMANDS",
     "PLUMBING_BLOCKED_SUBCOMMANDS",
+    "STASH_READONLY",
+    "STASH_DESTRUCTIVE",
+    "STASH_DESTRUCTIVE_ESCAPE_ENV",
     "SERIALIZER_MODE_ENV",
     "MV_STRATEGY_ENV",
     "check_and_execute",
@@ -97,9 +102,30 @@ PLUMBING_BLOCKED_SUBCOMMANDS = {"read-tree", "update-index", "write-tree", "hash
 SERIALIZER_MODE_ENV = "ZEPHYR_SERIALIZER_MODE"
 
 # stash 只读子命令（不影响工作区文件）
-STASH_READONLY = {"list", "show", "drop"}
+# 2026-10-10 st-maint1 件②改判：`drop` 原列于此集（旧 L99-100），于是旧 L605-606 对
+# READONLY 的无条件 _passthrough 就是主仓 `git stash drop` 的实际闸门（实测
+# `git config --get-regexp alias` 七条 alias 全指 git_guard）。drop 删除 stash 条目
+# =让未落地在飞面失去取回面，不是只读——移出，改归 STASH_DESTRUCTIVE。
+STASH_READONLY = {"list", "show"}
 # stash 会覆盖工作区的子命令（pop/apply/branch 会写回文件）
 STASH_OVERWRITE = {"pop", "apply", "branch"}
+# stash 破坏性子命令（drop 删单条 / clear 删全部；默认阻断，见 _handle_stash_destructive）
+STASH_DESTRUCTIVE = {"drop", "clear"}
+
+# stash 破坏性操作的逃生标记：env 值=reason 字符串，MUST 命中白名单关键词。
+# 形态循仓内既有白名单惯例（capability_lookup_required_gate 的
+# [no-lookup:<白名单 reason>] + registry_mass_deletion_gate 的
+# [allow-mass-deletion:<reason>]），匹配语义复用真源
+# zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy.is_exempt_reason
+# ——禁自造匹配逻辑。逃生只豁免"归属判定"，不豁免"存证锚"（仍先锚后放，锚失败只记审计）。
+STASH_DESTRUCTIVE_ESCAPE_ENV = "ZEPHYR_STASH_DROP_ESCAPE"
+_STASH_DESTRUCTIVE_ESCAPE_KEYWORDS = frozenset(
+    {
+        "dead-session-cleanup",  # 属主已判死会话的存量清理
+        "verified-recovery-ref",  # 已核过等价恢复锚（refs/recover|quarantine）
+        "owner-explicit-order",  # Owner 明示指令（经裁定/正式通道，非对话口头）
+    }
+)
 
 # 强制 stash 的环境变量（self_healer 等合法场景）
 FORCE_STASH_ENV = "ZEPHYR_FORCE_STASH"
@@ -371,10 +397,14 @@ def _audit_self_harm(
     forced: bool,
     file_count: int,
     dirty_files: list[str],
+    extra: dict | None = None,
 ) -> None:
     """自伤检测审计写入（非阻断，jsonl 追加）。
 
     审计文件: .runtime/gate_audit/git_guard_self_harm.jsonl
+
+    Args:
+        extra: 追加字段（stash 破坏性通道的判定面/存证面用，缺省不改既有记录形状）。
     """
     import time  # 局部 import 避免修改顶部 import 区
 
@@ -392,6 +422,8 @@ def _audit_self_harm(
         "file_count": file_count,
         "files": dirty_files,
     }
+    if extra:
+        record.update(extra)
     audit_file = audit_dir / "git_guard_self_harm.jsonl"
     try:
         with open(audit_file, "a", encoding="utf-8") as f:
@@ -599,17 +631,179 @@ def _check_self_harm_clean(git_args: list[str]) -> int | None:
     return 1
 
 
+def _stash_destructive_governance():
+    """取 stash 破坏性治理面（判据真源唯一=reconciliation_registry，禁双判据）。
+
+    不可用返回 None——调用侧按 fail-closed 处理（判据不在岗就没人有权 drop）。
+    """
+    try:
+        from zephyr.governance.audit.reconciliation_registry import (
+            anchor_stash_ref,
+            govern_stash_drop,
+            list_stash_refs,
+        )
+
+        return anchor_stash_ref, govern_stash_drop, list_stash_refs
+    except Exception as e:  # noqa: BLE001 — 治理面不可用=归属判不了 → 动手侧 fail-closed
+        print(f"[GIT-GUARD] stash 治理面不可用（判据不在岗）: {e}", file=sys.stderr)
+        return None
+
+
+def _stash_escape_reason() -> str:
+    """读 stash 破坏性逃生标记（env 值 MUST 命中白名单关键词，否则视为无逃生）。"""
+    raw = os.environ.get(STASH_DESTRUCTIVE_ESCAPE_ENV, "").strip()
+    if not raw:
+        return ""
+    try:
+        from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import is_exempt_reason
+    except Exception as e:  # noqa: BLE001 — 匹配真源不可用=白名单不可判 → 无逃生（保守侧）
+        print(f"[GIT-GUARD] 逃生白名单匹配真源不可用，逃生不生效: {e}", file=sys.stderr)
+        return ""
+    if is_exempt_reason(raw, keywords=_STASH_DESTRUCTIVE_ESCAPE_KEYWORDS):
+        return raw
+    print(
+        f"[GIT-GUARD] {STASH_DESTRUCTIVE_ESCAPE_ENV}={raw!r} 不匹配白名单关键词"
+        f"（{sorted(_STASH_DESTRUCTIVE_ESCAPE_KEYWORDS)}）——逃生不生效",
+        file=sys.stderr,
+    )
+    return ""
+
+
+def _handle_stash_destructive(git_args: list[str], args: list[str]) -> int:
+    """git stash drop / clear：认人+存证+审计后才放行（2026-10-10 st-maint1 件②）。
+
+    旧口径（治本对象）：drop 被归进 STASH_READONLY → 无条件 passthrough；clear 仅
+    warn 后 passthrough。两条通道合起来就是"任何 stash 可被零成本抹掉且不留字节"，
+    与 2026-10-10 蒸发战争两脸（st-examclose / st-finalclean2）的 drop 语义一致。
+
+    新口径（默认阻断，放行需同时满足）：
+      ① 每条目标 stash 都过 ``govern_stash_drop`` 三前置（属主 sid 可判且
+         活性裁决=dead、未被在场会话 claim、已锚 refs/quarantine/stash-…）；
+      ② 或经白名单逃生标记（``ZEPHYR_STASH_DROP_ESCAPE=<白名单 reason>``）——逃生
+         只豁免"归属判定"，仍逐条尝试存证锚，且审计 forced=True；
+      ③ 判定与存证结果一律落 ``.runtime/gate_audit/git_guard_self_harm.jsonl``。
+    治理面不可用（import 败）=判据不在岗 → 无逃生即阻断（fail-closed 于动手侧）。
+    """
+    sub = args[0]
+    gov = _stash_destructive_governance()
+    escape = _stash_escape_reason()
+
+    if gov is None:
+        if not escape:
+            print(
+                f"[GIT-GUARD] git stash {sub} 被阻断——stash 治理面（判据真源）不可用，无法判定归属即无权删除",
+                file=sys.stderr,
+            )
+            print(
+                f"  逃生：{STASH_DESTRUCTIVE_ESCAPE_ENV}=<白名单 reason>（仍会尝试存证锚+审计）",
+                file=sys.stderr,
+            )
+            _audit_self_harm(
+                action=f"stash {sub}",
+                had_uncommitted=True,
+                forced=False,
+                file_count=0,
+                dirty_files=["governance-surface-unavailable"],
+            )
+            return 1
+        anchor_stash_ref, govern_stash_drop, list_stash_refs = (None, None, None)
+    else:
+        anchor_stash_ref, govern_stash_drop, list_stash_refs = gov
+
+    project_root = get_project_root()
+
+    if sub == "drop":
+        refs = [a for a in args[1:] if not a.startswith("-")] or ["stash@{0}"]
+    else:
+        # clear 是"一把梭"——治理面不可用时连对象都列不出，保守侧直接阻断
+        if list_stash_refs is None:
+            print("[GIT-GUARD] git stash clear 被阻断——无法枚举 stash 清单", file=sys.stderr)
+            return 1
+        refs = list_stash_refs(project_root)
+
+    if not refs:
+        return _passthrough(git_args)  # 无能被破坏的对象
+
+    blocked: list[str] = []
+    anchored: list[str] = []
+    decisions: list[str] = []
+
+    for ref in refs:
+        verdict = None
+        if govern_stash_drop is not None:
+            verdict = govern_stash_drop(project_root, ref)
+            decisions.append(f"{ref}: liveness={verdict.liveness_state or 'n/a'} {verdict.reason}")
+            if verdict.allowed:
+                anchored.append(f"{ref}->{verdict.quarantine_ref}")
+                continue
+        if escape:
+            # 逃生=人工授权面：豁免"归属判定"，不豁免"存证"——仍先锚再放
+            sha, ref_name = ("", "")
+            if anchor_stash_ref is not None:
+                sha, ref_name = anchor_stash_ref(project_root, ref, owner_hint="escape")
+            anchored.append(f"{ref}->{ref_name or 'ANCHOR_FAILED'}")
+            continue
+        reason = verdict.reason if verdict is not None else "治理面不可用"
+        blocked.append(f"{ref}: {reason}")
+
+    if blocked:
+        print("", file=sys.stderr)
+        print("=" * 70, file=sys.stderr)
+        print(f"[GIT-GUARD] git stash {sub} 被阻断——stash 删除是破坏性操作（非只读）", file=sys.stderr)
+        print(f"  命令: git {' '.join(git_args)}", file=sys.stderr)
+        print(f"  未通过归属/存证前置的条目 ({len(blocked)}):", file=sys.stderr)
+        for item in blocked[:10]:
+            print(f"    {item}", file=sys.stderr)
+        print("", file=sys.stderr)
+        print("  解决方案:", file=sys.stderr)
+        print("    1. 属主会话仍在场 = 它自己的 stash 由它自己 pop/apply 恢复，别代它 drop", file=sys.stderr)
+        print("    2. 确属已判死会话的存量清理（先取回字节再删）：", file=sys.stderr)
+        print(
+            f"       {STASH_DESTRUCTIVE_ESCAPE_ENV}='dead-session-cleanup:<一句话理由>' git stash {sub} …",
+            file=sys.stderr,
+        )
+        print(
+            "    3. 已有等价恢复锚时：ZEPHYR_STASH_DROP_ESCAPE='verified-recovery-ref:refs/recover/…'", file=sys.stderr
+        )
+        print("=" * 70, file=sys.stderr)
+        _audit_self_harm(
+            action=f"stash {sub}",
+            had_uncommitted=True,
+            forced=False,
+            file_count=len(blocked),
+            dirty_files=blocked[:10],
+            extra={"refs": refs, "anchored": anchored, "decisions": decisions[:10], "escape": ""},
+        )
+        return 1
+
+    _audit_self_harm(
+        action=f"stash {sub}",
+        had_uncommitted=True,
+        forced=bool(escape),
+        file_count=len(refs),
+        dirty_files=refs[:10],
+        extra={"refs": refs, "anchored": anchored, "decisions": decisions[:10], "escape": escape},
+    )
+    if escape:
+        print(
+            f"[GIT-GUARD] stash {sub} 经白名单逃生放行（reason={escape!r}），"
+            f"存证锚={anchored}（已记 git_guard_self_harm.jsonl）",
+            file=sys.stderr,
+        )
+    return _passthrough(git_args)
+
+
 def _handle_stash(git_args: list[str]) -> int:
-    """stash 特殊处理：push 移走修改，pop/apply 覆盖工作区，list/show 只读。"""
+    """stash 特殊处理：push 移走修改，pop/apply 覆盖工作区，list/show 只读，
+    drop/clear 破坏性（走 _handle_stash_destructive，2026-10-10 st-maint1 件②改判）。"""
     args = git_args[1:]  # 去掉 'stash'
     if args and args[0] in STASH_READONLY:
         return _passthrough(git_args)
+    if args and args[0] in STASH_DESTRUCTIVE:
+        return _handle_stash_destructive(git_args, args)
     if args and args[0] in STASH_OVERWRITE:
         files_in_scope = _extract_files_stash(args)
         return _check_conflict_or_passthrough(git_args, files_in_scope)
-    if args and args[0] == "clear":
-        print("[GIT-GUARD] 警告：git stash clear 会删除所有 stash（含未恢复的修改）", file=sys.stderr)
-        return _passthrough(git_args)
     # push（含无参数 git stash）：会移走未提交修改
     files_in_scope = _extract_files_stash(args)
     if not files_in_scope:
