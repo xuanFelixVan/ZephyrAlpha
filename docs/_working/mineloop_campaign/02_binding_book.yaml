@@ -1,0 +1,131 @@
+schema_version: mineloop-binding-book/v1
+title: 矿考循环班绑定册（卡面原文引句 → 算子实现，一卡一格；未列卡=不绑不出分）
+built_by: scripts/backtest/fexam/card_binding.py
+owner_sid: st-mineloop-20261010
+discipline: |
+  每格 prose_quote 必须是卡面 data_binding 原文子串（运行器机械校验，找不到即拒绑）；
+  算子只做卡面已冻结的算法，零自创口径；判据面（window/buckets/pillars_numeric）由
+  card_binding.run_one 出分前后做内容级断言，被改动即 BindingIntegrityError 整卡中止。
+entries:
+- card_id: TDM-E-L1-S0/calibration/06_m1m2_scihjorsc_longwindow
+  op: macro_scissors_monthly_lag_ffill
+  status: approved
+  args:
+    table: c1_market.macro_credit_money
+    lag_days: 45
+  prose_quote: "剪刀差 = m1_yoy - m2_yoy（按 report_date 月度）"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    实测（grain_probe3）：1,166 行/584 uniq report_date/1978-01-31..2026-08-31；
+    月度 m1_yoy/m2_yoy 2025-01..2026-08 连续无缺月；多版本行按 anyLast 取末版（禁把两版当两月）。
+    可见日=report_date+45 自然天；缺月即 NaN，禁 ffill 掩盖断供（卡面原文纪律）。
+- card_id: TDM-E-L1-S0/calibration/07_margin_flow_shortwindow
+  op: margin_balance_5d_change_rate
+  status: approved
+  args:
+    table: c1_market.margin_trading
+    date_col: trade_date
+    col: margin_balance
+    symbol_col: symbol
+    n: 5
+  prose_quote: "5 日环比 = balance_t/balance_{t-5} - 1"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    实测：2,100,709 行 / uniq(symbol,day)=2,098,709（约 2,000 重复版本行）/ 505 交易日 /
+    2024-09-02..2026-10-08；exchange 三档 SH 967,614·SZ 1,007,892·BJ 125,203。
+    两级聚合=先按 (日,exchange,symbol) anyLast 去版本，再按 (日,exchange) sum，最后跨 exchange 合并
+    （卡面「按 exchange 分别加总再合并，禁混算口径」）。融券面 short_balance 不参与主信号（卡面声明）。
+    IS 2024-09-02..2025-09-30 与 OOS 2025-10-09..2026-06-30 均落在数据窗内。
+- card_id: TDM-E-L3-06/calibration/02_地量档位开关
+  op: index_amount_sum_rolling_pctile
+  status: approved
+  args:
+    table: c1_market.kline_index
+    date_col: trade_date
+    col: amount
+    symbols: ["000001", "399001"]
+    window: 20
+  prose_quote: "两市成交额=SUM(kline_index.amount) WHERE symbol IN ('000001','399001') 同日相加"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    实测：000001 8,738 行(1990-12-19..2026-10-09)、399001 8,693 行(1991-04-03..2026-10-09)。
+    主信号=该和的 20 日滚动分位（当日含自身，min_periods=20 防暖机假读数）。
+    辅助档位 emotion_index.stage 六段映射**不实现**：实测 stage 仅 close_final(8,617 行至 2026-09-30)/
+    pre_open(27 行)/auction(17 行)，六段需由数值分位重建＝另一条轴，卡面已声明，本绑定只交主信号序列。
+    单位（元/亿元）对分位读数无影响（分位=同序列自比）。
+- card_id: TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow
+  op: downside_deviation_250_pctile
+  status: approved
+  args:
+    table: c1_market.kline_index
+    date_col: trade_date
+    col: close
+    symbol: "000300"
+    dev_window: 20
+    pctile_window: 250
+  prose_quote: "下行半偏差 = sqrt(244 × mean(min(r_t,0)^2 over 20 日窗))"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    实测：000300 close 5,284 行 2005-01-04..2026-10-09 ⇒ IS 2019-01-04 起有 250 日暖机。
+    严格按卡面公式：r=close/close.shift(1)-1；仅取负收益平方均值×244 开方；再取 250 日滚动分位。
+    禁改回全波动口径（卡面原文：改了就是另一张卡）。件内 synthetic_vix.py 走期权 IV 链，
+    与本卡面声明的"由指数收益重建"不同源⇒本绑定按卡面公式实现，不调该件（差异在此声明）。
+- card_id: TDM-E-L9-A09/calibration/02_快讯情感日均值
+  op: daily_agg_series
+  status: approved
+  args:
+    table: c3_fundamental.news_sentiment_score
+    time_col: publish_time
+    tz: Asia/Shanghai
+    col: polarity
+    agg: avg
+    dropna: true
+    dup_share_note: "7,947,739 行 / uniq(news_id)=7,926,598 ⇒ 重复 0.27%，caliber_version 单值 'rule-a0e3f2b6d3'"
+  prose_quote: "按 toDate(publish_time, 'Asia/Shanghai') 聚合 AVG(polarity)"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    实测 2026-10-10 22:0x：全表 7,947,739 行/2010-01-02..2026-10-04/6,021 日，caliber_version 单值
+    ⇒ 主信号=日均 polarity（卡面声明的 AVG 形，个股级 join 面卡内明写"另卡"故不取）。
+    诚实申报两点残余：①日行重复 0.27% 未去重（对日均值偏差可忽略，已量化在 args.dup_share_note）；
+    ②在册新闻断供族=2025 行数断崖（2024=733,384 vs 2025=17,011），但**逐日覆盖未断**
+    （OOS 2024-01-01..2025-09-09 共 601 个交易日有数；2025 各月 27-31 日齐全）
+    ⇒ 密度波动只增大日均读数的抽样噪声，不构成目标面缺口；本次出分有效但噪声须在台账声明。
+- card_id: TDM-E-L2-04-2/calibration/02_虹吸态成交集中度
+  op: sector_top_n_amount_share
+  status: approved
+  args:
+    table: c1_market.kline_sector_880
+    map_table: c1_market.sector_code_name_map
+    col: amount
+    period: "1d"
+    top_n: 3
+    families: ["industry_l1", "industry_ths"]
+  prose_quote: "集中度=rank(amount) 前 3 板块的 amount 之和 / 全族 amount 之和"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    实测 2026-10-10 22:2x：kline_sector_880 period='1d' 785,204 行/729 codes/2020-03-17..2026-10-08；
+    sector_code_name_map.code_family 分布 concept_or_style 852·industry_ths 128·industry_l2 71·region 64·
+    industry_l1 61·mkt_index 22 ⇒ 分母族=industry_l1∪industry_ths=189 codes（卡面禁自拟名单，此处取在册映射）。
+    族内先 (日,板块) anyLast 去版本再按日 row_number 取前 3；mkt_index 22 个市场统计指数已随族过滤天然剔除。
+    本次只绑主信号面（集中度日序列），卡面辅轴"头部/非头部 5 日超额"未考，已在算子 axis_note 声明。
+- card_id: TDM-E-L2-03/calibration/02_调整周期进度
+  op: sector_adjustment_progress_mean
+  status: approved
+  args:
+    table: c1_market.kline_sector_880
+    map_table: c1_market.sector_code_name_map
+    close_col: close
+    amount_col: amount
+    period: "1d"
+    families: ["industry_l1", "industry_ths"]
+    high_window: 60
+    t_div: 8
+    dd_div: 0.15
+    weights: [0.4, 0.3, 0.3]
+  prose_quote: "时间维=min(1, 距 60 日高点交易日数 / 8)"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    族面板底座=load_sector_family_panel（(日,板块) anyLast 去版本，族经 map 在册映射=189 codes）。
+    三维严格按卡面常数：60 日高点窗/8 交易日/0.15 回撤/量能=1−roll_mean(amount,5)/roll_max(amount,60)×3；
+    权重 0.4/0.3/0.3=卡面声明的三维重归一形（与在码"时间0.4+回撤0.3+扩散0.3"不同源，卡面已自行声明差异）。
+    series 面=当日跨板块进度均值；60 日高点窗暖机 ⇒ 有效起点≈2021-11（卡面 data_window_evidence 同判）。

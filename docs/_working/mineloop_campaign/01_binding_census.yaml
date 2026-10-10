@@ -1,0 +1,1863 @@
+schema_version: mineloop-binding-census/v1
+built_by: scripts/backtest/fexam/card_binding.py
+card_total_preregistered: 184
+tally:
+  A: 0
+  A?: 15
+  B: 17
+  C: 121
+  D: 0
+  U: 31
+rows:
+- card_id: TDM-E-FLOW/comparison/02_plan_to_execution_chain
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L0\TDM-E-FLOW__comparison__02_plan_to_execution_chain.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-E-L0-01/comparison/02_scenario_probability_stance_vs_fixed
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L0\TDM-E-L0-01__comparison__02_scenario_probability_stance_vs_fixed.yaml
+  cls: C
+  reason: needs_replay_engine(NAV/window_metrics/双臂 arm_protocol)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_index
+- card_id: TDM-E-L0-02/calibration/03_偏离幅度分位响应曲线
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L0\TDM-E-L0-02__calibration__03_偏离幅度分位响应曲线.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.kline_etf_1min
+  target_face_kind: engine_replay
+- card_id: TDM-E-L0-02/comparison/02_deviation_revision_authority
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L0\TDM-E-L0-02__comparison__02_deviation_revision_authority.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.kline_etf_1min
+  target_face_kind: engine_replay
+- card_id: TDM-E-L0-03/comparison/02_brier_calibration_on_off
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L0\TDM-E-L0-03__comparison__02_brier_calibration_on_off.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.emotion_index
+  - c1_market.kline_index
+  target_face_kind: engine_replay
+- card_id: TDM-E-L0-04/calibration/03_pre_open盘前先验与盘中档位差
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L0\TDM-E-L0-04__calibration__03_pre_open盘前先验与盘中档位差.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_etf_1min', 'c1_market.kline_index']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_etf_1min
+  - c1_market.kline_index
+- card_id: TDM-E-L0-04/comparison/02_intraday_rollback_downgrade
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L0\TDM-E-L0-04__comparison__02_intraday_rollback_downgrade.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_etf_1min
+  - c1_market.kline_index
+  target_face_kind: engine_replay
+- card_id: TDM-E-L0/comparison/02_plan_constraint_on_off
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L0\TDM-E-L0__comparison__02_plan_constraint_on_off.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-C-L1/comparison/02_btc_trend_altseason_gate
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-C-L1__comparison__02_btc_trend_altseason_gate.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.crypto_kline_daily
+  target_face_kind: engine_replay
+- card_id: TDM-E-L1-AGG/ablation/02_state_input_replacement
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-AGG__ablation__02_state_input_replacement.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.emotion_index
+  target_face_kind: engine_replay
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-AGG__calibration__02_四档风险轴前向收益单调.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_backtest.regime_state_anchored', 'c1_market.kline_index']
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.kline_index
+- card_id: TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-AGG__calibration__03_子信号族到状态轴传导保真度.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_backtest.regime_state_anchored', 'c1_market.emotion_index']
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.emotion_index
+- card_id: TDM-E-L1-S0-1/calibration/03_market_scope_sentiment_series
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S0-1__calibration__03_market_scope_sentiment_series.yaml
+  cls: U
+  reason: signal_column_not_a_single_identifier:sentiment_index（主）/ avg_polarity、positiv
+  recipe: null
+  op: anyLast_per_day
+  tables:
+  - c1_market.news_sentiment_window
+- card_id: TDM-E-L1-S0/calibration/02_货币卡
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S0__calibration__02_货币卡.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S0/calibration/03_流动性卡
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S0__calibration__03_流动性卡.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S0/calibration/04_海外卡
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S0__calibration__04_海外卡.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S0/calibration/05_政策事件卡
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S0__calibration__05_政策事件卡.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S1/calibration/03_黄白线交叉
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S1__calibration__03_黄白线交叉.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S2/calibration/07_连板家数分布
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__07_连板家数分布.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S3/calibration/02_昨日涨停溢价
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S3__calibration__02_昨日涨停溢价.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S3/calibration/03_晋级率
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S3__calibration__03_晋级率.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S3/calibration/04_情绪先锋四态
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S3__calibration__04_情绪先锋四态.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S3/calibration/05_limit_up_premium_derived
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S3__calibration__05_limit_up_premium_derived.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_daily_hfq', 'c1_market.stk_limit']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.stk_limit
+- card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S3__calibration__06_promotion_rate_derived.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_daily_hfq', 'c1_market.stk_limit']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.stk_limit
+- card_id: TDM-E-L1-S4/calibration/02_期权IV主路径
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S4__calibration__02_期权IV主路径.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S4/calibration/03_合成VIX后备
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S4__calibration__03_合成VIX后备.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S5/calibration/02_11信号环比
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S5__calibration__02_11信号环比.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_daily_hfq', 'c1_market.kline_index', 'c1_market.stk_limit']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_index
+  - c1_market.stk_limit
+- card_id: TDM-E-L1/comparison/02_anchored_cap_curve_on_off
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1__comparison__02_anchored_cap_curve_on_off.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.kline_index
+  target_face_kind: engine_replay
+- card_id: TDM-E-L2-01-2/calibration/02_板块成交额占比活跃度
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-01-2__calibration__02_板块成交额占比活跃度.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-01-3/calibration/02_多周期动量主导度
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-01-3__calibration__02_多周期动量主导度.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-01-5/ablation/02_市场级调节注入
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-01-5__ablation__02_市场级调节注入.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_sector_880']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-01/ablation/02_四路等权合成分边际
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-01__ablation__02_四路等权合成分边际.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_sector_880', 'c1_market.sector_constituent']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+  - c1_market.sector_constituent
+- card_id: TDM-E-L2-01/ablation/03_六指数分布选优通道与候选池分位
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-01__ablation__03_六指数分布选优通道与候选池分位.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_index', 'c1_market.kline_sector_880']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-01/comparison/02_等权与IC加权双臂
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-01__comparison__02_等权与IC加权双臂.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-01/comparison/03_缺路处置律重归一与剔除双臂
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-01__comparison__03_缺路处置律重归一与剔除双臂.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-02-1__ablation__03_象限迁移确认腿与稀有路径护栏.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_index', 'c1_market.kline_sector_880']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-02-1/calibration/02_RRG象限迁移
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-02-1__calibration__02_RRG象限迁移.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_index', 'c1_market.kline_sector_880']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-02-2/calibration/02_板块见顶预警三信号
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-02-2__calibration__02_板块见顶预警三信号.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-02/calibration/02_接棒撤离榜
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-02__calibration__02_接棒撤离榜.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-03/calibration/02_调整周期进度
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-03__calibration__02_调整周期进度.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-04-1/calibration/02_轮动五态调节分
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-04-1__calibration__02_轮动五态调节分.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-04-2/calibration/02_虹吸态成交集中度
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-04-2__calibration__02_虹吸态成交集中度.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-04/ablation/02_板块生态三态判定
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-04__ablation__02_板块生态三态判定.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_sector_880', 'c1_market.limit_up_pool']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+  - c1_market.limit_up_pool
+- card_id: TDM-E-L2-04/comparison/02_主线合取与单腿双臂
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-04__comparison__02_主线合取与单腿双臂.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_index', 'c1_market.kline_sector_880']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-05-1__calibration__02_水温档读数与月级封顶.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_index']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_index
+- card_id: TDM-E-L2-05-2/ablation/02_信号响应三件套
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-05-2__ablation__02_信号响应三件套.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_index', 'c1_market.kline_sector_880']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-05/ablation/02_水温总开关放行比例
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-05__ablation__02_水温总开关放行比例.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_sector_880']
+  recipe: null
+  op: null
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-06-1/ablation/02_三级放行门槛
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-06-1__ablation__02_三级放行门槛.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_sector_880
+  - c1_market.sector_constituent
+- card_id: TDM-E-L2-06-3/calibration/02_强度乘数阶梯
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-06-3__calibration__02_强度乘数阶梯.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_sector_880
+  - c1_market.sector_constituent
+- card_id: TDM-E-L2-06-3/calibration/03_传导时滞曲线
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-06-3__calibration__03_传导时滞曲线.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-06/ablation/02_层级隔离两字段传导
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-06__ablation__02_层级隔离两字段传导.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_sector_880
+  - c1_market.sector_constituent
+- card_id: TDM-E-L2-07-1/ablation/03_强度维单位口径错配
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-07-1__ablation__03_强度维单位口径错配.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-07-1/calibration/02_回踩四因子合成分
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-07-1__calibration__02_回踩四因子合成分.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-07-1/calibration/03_死常量两腿_结构破坏与超窗横盘
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-07-1__calibration__03_死常量两腿_结构破坏与超窗横盘.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-07/ablation/02_回踩ABC仓位门控
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-07__ablation__02_回踩ABC仓位门控.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-07/ablation/03_时间窗外不评级并入观望的边际
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-07__ablation__03_时间窗外不评级并入观望的边际.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L2-07/comparison/03_追高与低吸胜率对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-07__comparison__03_追高与低吸胜率对照.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  - c1_market.stk_limit
+- card_id: TDM-E-L2-08/calibration/02_板块生命周期动量持续性
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-08__calibration__02_板块生命周期动量持续性.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.daban_board_event
+  - c1_market.kline_sector_880
+  - c1_market.limit_up_pool
+- card_id: TDM-E-L2-09/calibration/03_评级上调聚集
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-09__calibration__03_评级上调聚集.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c3_fundamental.research_report
+  recipe: null
+  op: null
+  tables:
+  - c3_fundamental.research_report
+- card_id: TDM-E-L2-09/calibration/04_业绩预增催化剂腿
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-09__calibration__04_业绩预增催化剂腿.yaml
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c3_fundamental.earnings_forecast', 'c3_fundamental.express_report', 'c3_fundamental.research_report']
+  recipe: null
+  op: null
+  tables:
+  - c3_fundamental.earnings_forecast
+  - c3_fundamental.express_report
+  - c3_fundamental.research_report
+- card_id: TDM-E-L2-09/comparison/02_催化剂加权形式板块恒定与标的指数衰减
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2-09__comparison__02_催化剂加权形式板块恒定与标的指数衰减.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily
+  - c1_market.kline_index
+  - c3_fundamental.earnings_forecast
+  - c3_fundamental.research_report
+- card_id: TDM-E-L2/ablation/02_板块候选池整体边际
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L2\TDM-E-L2__ablation__02_板块候选池整体边际.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+- card_id: TDM-E-L3-01/calibration/02_成交额下限剔除
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-01__calibration__02_成交额下限剔除.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-01/comparison/04_宇宙口径完整性对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-01__comparison__04_宇宙口径完整性对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily
+  - c1_market.stock_basic
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-03-1/calibration/02_涨停基因
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-03-1__calibration__02_涨停基因.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily
+  - c1_market.stk_limit
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-03-2/calibration/02_均线多排
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-03-2__calibration__02_均线多排.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-03-2/calibration/03_温和放量
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-03-2__calibration__03_温和放量.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-03/ablation/02_双池代理合成
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-03__ablation__02_双池代理合成.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.stk_limit
+  - c1_market.technical_indicator
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-04/calibration/02_解禁否决
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-04__calibration__02_解禁否决.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c3_fundamental.share_unlock
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-05/calibration/02_连板顺位
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-05__calibration__02_连板顺位.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily
+  - c1_market.stk_limit
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-07-1/ablation/02_烂板剔除步
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-07-1__ablation__02_烂板剔除步.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily
+  - c1_market.stk_limit
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-07-2/ablation/02_IC加权对等权
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-07-2__ablation__02_IC加权对等权.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-07-3/calibration/02_二十日动量排名
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-07-3__calibration__02_二十日动量排名.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-10/calibration/02_一字板不可成交
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-10__calibration__02_一字板不可成交.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily
+  - c1_market.stk_limit
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-12-3/calibration/02_获利盘占比
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-12-3__calibration__02_获利盘占比.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: panel_stock
+- card_id: TDM-E-L3-12-3/calibration/03_股东户数集中度
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L3\TDM-E-L3-12-3__calibration__03_股东户数集中度.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c3_fundamental.shareholder_count
+  target_face_kind: panel_stock
+- card_id: TDM-C-L4/comparison/02_breakout_vs_pullback_atr_stop
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-C-L4__comparison__02_breakout_vs_pullback_atr_stop.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.crypto_kline_daily
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-01/comparison/02_batching_all_vs_split
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-01__comparison__02_batching_all_vs_split.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-02/comparison/02_order_timing_tape
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-02__comparison__02_order_timing_tape.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.auction_snapshot
+  - c1_market.kline_etf_5min
+  - c1_market.tick_data
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-03/comparison/02_limit_offset_fill_tradeoff
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-03__comparison__02_limit_offset_fill_tradeoff.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.stk_limit
+  - c1_market.tick_depth_5
+- card_id: TDM-E-L4-04/comparison/02_capital_ranking_order
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-04__comparison__02_capital_ranking_order.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-05/comparison/02_daban_mode_three_way
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-05__comparison__02_daban_mode_three_way.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.daban_board_event
+  - c1_market.limit_up_pool
+  - c1_market.tick_depth_5
+  target_face_kind: other
+- card_id: TDM-E-L4-06/comparison/02_quality_prior_on_off
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-06__comparison__02_quality_prior_on_off.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.sim_trade_log
+  - c1_market.tick_data
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-07/ablation/02_queue_bypass
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-07__ablation__02_queue_bypass.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.tick_data
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-08/comparison/02_breakout_failure_gate_on_off
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-08__comparison__02_breakout_failure_gate_on_off.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.stk_limit
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-09/comparison/02_hard_constraints_on_off
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-09__comparison__02_hard_constraints_on_off.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.stk_limit
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-10/comparison/02_state_timeout_policy
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-10__comparison__02_state_timeout_policy.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.sim_trade_log
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-11/comparison/02_partial_fill_cancel_vs_wait
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-11__comparison__02_partial_fill_cancel_vs_wait.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.tick_data
+  - c1_market.tick_depth_5
+- card_id: TDM-E-L4-12/comparison/02_precheck_five_checks_ablation
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-12__comparison__02_precheck_five_checks_ablation.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.stk_limit
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-13/comparison/02_three_way_recon_injection
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-13__comparison__02_three_way_recon_injection.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.sim_trade_log
+  target_face_kind: engine_replay
+- card_id: TDM-E-L4-14/comparison/02_predicted_vs_realized_slippage
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4-14__comparison__02_predicted_vs_realized_slippage.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.sim_trade_log
+  - c1_market.tick_data
+  target_face_kind: other
+- card_id: TDM-E-L4/comparison/02_exec_caliber_cost_ladder
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L4\TDM-E-L4__comparison__02_exec_caliber_cost_ladder.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables: []
+  target_face_kind: engine_replay
+- card_id: TDM-E-L9-A01/calibration/02_日线动量截面
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A01__calibration__02_日线动量截面.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+- card_id: TDM-E-L9-A01/calibration/03_分钟已实现波动
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_1min
+  target_face_kind: panel_stock
+- card_id: TDM-E-L9-A03/calibration/02_880板块相对强弱持续性
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A03__calibration__02_880板块相对强弱.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.v_kline_sector_880_named
+- card_id: TDM-E-L9-A05/calibration/02_盈余惊喜事件研究
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A05__calibration__02_盈余惊喜事件研究.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c3_fundamental.income_statement
+  target_face_kind: panel_stock
+- card_id: TDM-E-L9-A06/calibration/02_主力净流入截面
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.money_flow
+  target_face_kind: panel_stock
+- card_id: TDM-E-L9-A08/calibration/02_BDI领先航运链
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A08__calibration__02_BDI领先航运链.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.alt_shipping_index
+  target_face_kind: sector_series
+- card_id: TDM-E-L9-A09/calibration/02_快讯情感日均值
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A09__calibration__02_快讯情感日均值.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c3_fundamental.news_sentiment_score
+  recipe: null
+  op: null
+  tables:
+  - c3_fundamental.news_sentiment_score
+- card_id: TDM-E-L9-A10/calibration/02_全球风险因子隔夜传导
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A10__calibration__02_全球风险隔夜传导.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.macro_data
+  recipe: null
+  op: null
+  tables:
+  - c1_market.macro_data
+- card_id: TDM-E-L9-A11/calibration/02_EIA库存意外
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A11__calibration__02_EIA库存意外.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.macro_data
+  target_face_kind: sector_series
+- card_id: TDM-E-L9-A12/calibration/02_台风与极端高温对电力链
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A12__calibration__02_台风与极端高温对电力链.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.alt_typhoon_track
+  target_face_kind: panel_stock
+- card_id: TDM-E-L9-A13/calibration/02_股东户数环比事件研究
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A13__calibration__02_股东户数环比事件研究.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c3_fundamental.shareholder_count
+  target_face_kind: panel_stock
+- card_id: TDM-E-L9-A15/calibration/02_资金费率拥挤跨市场预警
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A15__calibration__02_资金费率拥挤跨市场预警.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.hl_funding_history
+  recipe: null
+  op: null
+  tables:
+  - c1_market.hl_funding_history
+- card_id: TDM-E-L9-A15/calibration/03_币圈镜像资金费率对BTC
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A15__calibration__03_币圈镜像资金费率对BTC.yaml
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.hl_funding_history
+  recipe: null
+  op: null
+  tables:
+  - c1_market.hl_funding_history
+- card_id: TDM-E-L9-A17/calibration/03_一致预期修正
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-A17__calibration__03_一致预期修正.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c3_fundamental.consensus_daily
+  target_face_kind: panel_stock
+- card_id: TDM-E-L9-D1/ablation/03_假设漏斗闭环率与考试链缺口
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-D1__ablation__03_假设漏斗闭环率与考试链缺口.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.hypothesis_precheck
+  - c1_backtest.node_verdict
+  - c1_backtest.strategy_screen
+  target_face_kind: other
+- card_id: TDM-E-L9-V1/ablation/02_大盘状态快照T-1纪律
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-V1__ablation__02_大盘状态快照T-1纪律.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_snapshot_history
+  target_face_kind: other
+- card_id: TDM-E-L9-V2/ablation/02_情绪相位六段快照就绪
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-V2__ablation__02_情绪相位六段快照就绪.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.emotion_index
+  target_face_kind: probability_hit
+- card_id: TDM-E-L9-V3/ablation/02_板块状态快照T-1纪律
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9\TDM-E-L9-V3__ablation__02_板块状态快照T-1纪律.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.sector_state
+  target_face_kind: sector_series
+- card_id: TDM-X-S1-01/comparison/02_六桶分类增益对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S1\TDM-X-S1-01__comparison__02_六桶分类增益对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-S1-02/comparison/02_时间止损档对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S1\TDM-X-S1-02__comparison__02_时间止损档对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-S1-03/comparison/02_止盈族三式对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S1\TDM-X-S1-03__comparison__02_止盈族三式对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S1\TDM-X-S1-04__calibration__02_突破失败连续次数前瞻收益.yaml
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+- card_id: TDM-X-S1-04/calibration/03_席位净卖出派发前瞻收益
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S1\TDM-X-S1-04__calibration__03_席位净卖出派发前瞻收益.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.dragon_tiger_seat
+  target_face_kind: other
+- card_id: TDM-X-S1-04/calibration/04_除权除息参考价分母误判清仓
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S1\TDM-X-S1-04__calibration__04_除权除息参考价分母误判清仓.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily
+  - c1_market.kline_daily_hfq
+  - c3_fundamental.ex_dividend_event
+  target_face_kind: other
+- card_id: TDM-X-S1-04/comparison/05_早盘破位假信号时段可靠性
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S1\TDM-X-S1-04__comparison__05_早盘破位假信号时段可靠性.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_1min
+  - c1_market.kline_daily
+  - c1_market.kline_daily_hfq
+  target_face_kind: other
+- card_id: TDM-X-S1-05/ablation/02_融合权重与去抖消融
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S1\TDM-X-S1-05__ablation__02_融合权重与去抖消融.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-S1-06/comparison/02_K3连续破位强清对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S1\TDM-X-S1-06__comparison__02_K3连续破位强清对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-S1/ablation/02_卖出信号段整体消融对照
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S1\TDM-X-S1__ablation__02_卖出信号段整体消融对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-S2-01/comparison/02_执行方式路由与流动性三查对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S2\TDM-X-S2-01__comparison__02_执行方式路由与流动性三查对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_5min
+  target_face_kind: engine_replay
+- card_id: TDM-X-S2-02/calibration/02_连续跌停开板概率与次日处置
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S2\TDM-X-S2-02__calibration__02_连续跌停开板概率与次日处置.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.stk_limit
+  target_face_kind: probability_hit
+- card_id: TDM-X-S2-02/calibration/03_新股首日分层卖出三臂
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S2\TDM-X-S2-02__calibration__03_新股首日分层卖出三臂.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily
+  - c1_market.kline_daily_hfq
+  - c1_market.stk_limit
+  - c1_market.stock_basic
+  - c3_fundamental.ipo_calendar
+  target_face_kind: other
+- card_id: TDM-X-S2-02/comparison/04_T1可卖额度做T回转延迟成本
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S2\TDM-X-S2-02__comparison__04_T1可卖额度做T回转延迟成本.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_index
+  - c1_market.stk_limit
+  target_face_kind: other
+- card_id: TDM-X-S2-03/comparison/02_执行口径净收益对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S2\TDM-X-S2-03__comparison__02_执行口径净收益对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-S2-04/comparison/02_本地条件单追单闭环对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S2\TDM-X-S2-04__comparison__02_本地条件单追单闭环对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_1min
+  target_face_kind: engine_replay
+- card_id: TDM-X-S2-05/comparison/02_分批止盈阶梯对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S2\TDM-X-S2-05__comparison__02_分批止盈阶梯对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-S2-06/ablation/02_卖出闭环三率反馈权重消融
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S2\TDM-X-S2-06__ablation__02_卖出闭环三率反馈权重消融.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-S2/ablation/02_执行约束层现实性税度量
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\S2\TDM-X-S2__ablation__02_执行约束层现实性税度量.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\X1\TDM-X-R1-01__ablation__03_市场体制条件下熔断减仓增量.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_snapshot_history
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\X1\TDM-X-R1-01__comparison__02_熔断五级梯度减仓对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\X1\TDM-X-R1-02__comparison__02_L3减仓顺序三臂对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-R1-03/calibration/02_宽基ETF天量与护盘滞后结构
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\X1\TDM-X-R1-03__calibration__02_宽基ETF天量与护盘滞后结构.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_etf_daily
+  target_face_kind: other
+- card_id: TDM-X-R1/shadow/02_拔电源影子运行对照
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\X1\TDM-X-R1__shadow__02_拔电源影子运行对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-X-S1-03/comparison/02_dualwindow
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\X1\TDM-X-S1-03__comparison__02_dualwindow.yaml
+  cls: U
+  reason: no_data_binding_section
+  recipe: null
+  op: null
+  tables: []
+- card_id: TDM-X-FLOW/ablation/02_离场信号整链消融总账
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\exit_flow\XFLOW\TDM-X-FLOW__ablation__02_离场信号整链消融总账.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C1-01/shadow/02_激活集路由影子
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C1\TDM-F-C1-01__shadow__02_激活集路由影子.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_backtest.regime_snapshot_history
+  - c1_market.kline_index
+  target_face_kind: other
+- card_id: TDM-F-C1-02/shadow/02_三层栈冠军挑战
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C1\TDM-F-C1-02__shadow__02_三层栈冠军挑战.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C1-02/shadow/03_置信度配比资金臂
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C1\TDM-F-C1-02__shadow__03_置信度配比资金臂.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C1-03/shadow/02_双向渐变vs硬切
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C1\TDM-F-C1-03__shadow__02_双向渐变vs硬切.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C1/comparison/03_预备金现金贡献
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C1\TDM-F-C1__comparison__03_预备金现金贡献.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C1/shadow/02_预算带灰度插值
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C1\TDM-F-C1__shadow__02_预算带灰度插值.yaml
+  cls: C
+  reason: needs_replay_engine(NAV/window_metrics/双臂 arm_protocol)
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_index
+- card_id: TDM-F-C2-01/comparison/02_净额轧平省成本
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C2\TDM-F-C2-01__comparison__02_净额轧平省成本.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: other
+- card_id: TDM-F-C2-02/shadow/02_约束栈有vs无
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C2\TDM-F-C2-02__shadow__02_约束栈有vs无.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C2-02/shadow/03_裁剪优先级非策略仓优先
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C2\TDM-F-C2-02__shadow__03_裁剪优先级非策略仓优先.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C2-02/shadow/04_资金额度约束先卖后买与只削买入
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C2\TDM-F-C2-02__shadow__04_资金额度约束先卖后买与只削买入.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_index
+  target_face_kind: engine_replay
+- card_id: TDM-F-C2-03/comparison/02_相关性cluster上限
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C2\TDM-F-C2-03__comparison__02_相关性cluster上限.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C2-04/shadow/02_三级响应vs即时强裁
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C2\TDM-F-C2-04__shadow__02_三级响应vs即时强裁.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C2/comparison/02_组合聚合vs各自为战
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C2\TDM-F-C2__comparison__02_组合聚合vs各自为战.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C3-01/comparison/02_隔夜漂移切账失真
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C3\TDM-F-C3-01__comparison__02_隔夜漂移切账失真.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: other
+- card_id: TDM-F-C3-01/comparison/03_IS三分解与交易持仓二分
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C3\TDM-F-C3-01__comparison__03_IS三分解与交易持仓二分.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C3-02/shadow/02_减半冻结线有效性
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C3\TDM-F-C3-02__shadow__02_减半冻结线有效性.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C3-03/comparison/02_月度调权vs静态基准
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C3\TDM-F-C3-03__comparison__02_月度调权vs静态基准.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-C3-04/shadow/02_四道gate过拟合防线
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C3\TDM-F-C3-04__shadow__02_四道gate过拟合防线.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: other
+- card_id: TDM-F-C3-05/shadow/02_判准率加权vs等权
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C3\TDM-F-C3-05__shadow__02_判准率加权vs等权.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_index
+  target_face_kind: engine_replay
+- card_id: TDM-F-C3/comparison/02_归因反馈闭环开vs关
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\C3\TDM-F-C3__comparison__02_归因反馈闭环开vs关.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-F-FLOW/comparison/02_终产目标组合vs基准
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\portfolio_flow\CFLOW\TDM-F-FLOW__comparison__02_终产目标组合vs基准.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: engine_replay
+- card_id: TDM-P-P1-02/calibration/02_ATR距止损带对后续下行预测
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P1\TDM-P-P1-02__calibration__02_ATR距止损带对后续下行预测.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: other
+- card_id: TDM-P-P1-02/calibration/04_盈亏百分比腿与ATR缺失降级
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P1\TDM-P-P1-02__calibration__04_盈亏百分比腿与ATR缺失降级.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: other
+- card_id: TDM-P-P1-03/calibration/02_因子秩回落对后续超额预测
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P1\TDM-P-P1-03__calibration__02_因子秩回落对后续超额预测.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: other
+- card_id: TDM-P-P1-04/calibration/04_持仓停滞天数对后续收益预测
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P1\TDM-P-P1-04__calibration__04_持仓停滞天数对后续收益预测.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: other
+- card_id: TDM-P-P1-04/calibration/05_板块退潮动量对持仓下行预测
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P1\TDM-P-P1-04__calibration__05_板块退潮动量对持仓下行预测.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_sector_880
+  target_face_kind: other
+- card_id: TDM-P-P1-04/comparison/02_否决线三型可选档对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P1\TDM-P-P1-04__comparison__02_否决线三型可选档对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: engine_replay
+- card_id: TDM-P-P1-05/comparison/02_单票上限三档对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P1\TDM-P-P1-05__comparison__02_单票上限三档对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: engine_replay
+- card_id: TDM-P-P1-05/comparison/03_漂移触发与周期触发对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P1\TDM-P-P1-05__comparison__03_漂移触发与周期触发对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: engine_replay
+- card_id: TDM-P-P1-05/shadow/05_组合体检帽影子对照
+  family: shadow
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P1\TDM-P-P1-05__shadow__05_组合体检帽影子对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: engine_replay
+- card_id: TDM-P-P1/comparison/02_否决腿与熔断腿双臂增量
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P1\TDM-P-P1__comparison__02_否决腿与熔断腿双臂增量.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: engine_replay
+- card_id: TDM-P-P2-01/comparison/02_三道门串并开闭与互斥诊断
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P2\TDM-P-P2-01__comparison__02_三道门串并开闭与互斥诊断.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.stk_limit
+  target_face_kind: other
+- card_id: TDM-P-P2-01/comparison/03_盘中单边失效腿对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P2\TDM-P-P2-01__comparison__03_盘中单边失效腿对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily
+  - c1_market.kline_daily_hfq
+  - c1_market.limit_up_pool
+  - c1_market.stk_limit
+  target_face_kind: other
+- card_id: TDM-P-P2-03/comparison/02_未闭环敞口过夜代价双臂
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P2\TDM-P-P2-03__comparison__02_未闭环敞口过夜代价双臂.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_1min
+  target_face_kind: other
+- card_id: TDM-P-P2-04/calibration/06_减仓参与率压力对次日价格路径
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P2\TDM-P-P2-04__calibration__06_减仓参与率压力对次日价格路径.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: panel_stock
+- card_id: TDM-P-P2-04/calibration/07_冲高反弹幅度对次日收益与减半阈值落点
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P2\TDM-P-P2-04__calibration__07_冲高反弹幅度对次日收益与减半阈值落点.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: panel_stock
+- card_id: TDM-P-P2-04/comparison/02_调仓频率与换手惩罚六臂对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P2\TDM-P-P2-04__comparison__02_调仓频率与换手惩罚六臂对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: engine_replay
+- card_id: TDM-P-P2/comparison/02_做T腿有无对照与底仓恒等性
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P2\TDM-P-P2__comparison__02_做T腿有无对照与底仓恒等性.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_1min
+  target_face_kind: other
+- card_id: TDM-P-P3-01/comparison/03_情绪段加仓权限分层对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P3\TDM-P-P3-01__comparison__03_情绪段加仓权限分层对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables: []
+  target_face_kind: other
+- card_id: TDM-P-P3-01/comparison/04_日亏熔断禁加期分层对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P3\TDM-P-P3-01__comparison__04_日亏熔断禁加期分层对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: other
+- card_id: TDM-P-P3-02/calibration/03_加仓触发涨幅对后续收益预测
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P3\TDM-P-P3-02__calibration__03_加仓触发涨幅对后续收益预测.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+  target_face_kind: other
+- card_id: TDM-P-P3-03/comparison/02_仓位定尺寸七档对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P3\TDM-P-P3-03__comparison__02_仓位定尺寸七档对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.daily_valuation
+  - c1_market.technical_indicator
+  target_face_kind: engine_replay
+- card_id: TDM-P-P3-04/calibration/02_尾盘强势对次日高开概率预测
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P3\TDM-P-P3-04__calibration__02_尾盘强势对次日高开概率预测.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_1min
+  - c1_market.kline_daily_hfq
+  target_face_kind: probability_hit
+- card_id: TDM-P-P3-04/calibration/04_缩量回踩支撑对次日正收益预测
+  family: calibration
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P3\TDM-P-P3-04__calibration__04_缩量回踩支撑对次日正收益预测.yaml
+  cls: C
+  reason: executor_horizon_mismatch:next_5d
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_daily_hfq
+- card_id: TDM-P-P3-04/comparison/03_尾盘加仓与即时加仓执行价差对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P3\TDM-P-P3-04__comparison__03_尾盘加仓与即时加仓执行价差对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.kline_1min
+  - c1_market.kline_daily_hfq
+  - c1_market.stk_limit
+  target_face_kind: other
+- card_id: TDM-P-P3/comparison/02_金字塔三档与一次性足额对照
+  family: comparison
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\P3\TDM-P-P3__comparison__02_金字塔三档与一次性足额对照.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: engine_replay
+- card_id: TDM-P-FLOW/ablation/02_持仓叠层整链消融
+  family: ablation
+  path: docs\03_modules\_domain_backtest\exam_cards\position_flow\PFLOW\TDM-P-FLOW__ablation__02_持仓叠层整链消融.yaml
+  cls: C
+  reason: target_face_not_index_next_day
+  recipe: null
+  op: null
+  tables:
+  - c1_market.technical_indicator
+  target_face_kind: engine_replay

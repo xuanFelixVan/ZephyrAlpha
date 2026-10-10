@@ -47923,6 +47923,11 @@ creation_tokens:
   capability: metaq-question-exam-campaign
   created_by: st-metaq-20260923
   merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/mineloop_campaign/00_rolling_report_r1.md
+  token: mineloop-campaign-00-rolling-report-r1-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "同真源可派生→必并不适用：4 份出分凭据为逐轮运行产物（每轮一份），与 02_binding_book 分工不同（后者=取数参数面，前者=运行证据面），跨轮次不并"
 - file: docs/_working/mineloop_campaign/01_binding_census.yaml
   token: mineloop-campaign-01-binding-census-20261010
   capability: mineloop_campaign
@@ -47933,11 +47938,36 @@ creation_tokens:
   capability: mineloop_campaign
   created_by: st-mineloop-20261010
   merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
+- file: docs/_working/mineloop_campaign/03_exam_run_r1.yaml
+  token: mineloop-campaign-03-exam-run-r1-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "同真源可派生→必并不适用：4 份出分凭据为逐轮运行产物（每轮一份），与 02_binding_book 分工不同（后者=取数参数面，前者=运行证据面），跨轮次不并"
 - file: docs/_working/mineloop_campaign/04_newcard_validation.yaml
   token: mineloop-campaign-04-newcard-validation-20261010
   capability: mineloop_campaign
   created_by: st-mineloop-20261010
   merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
+- file: docs/_working/mineloop_campaign/05_exam_run_r2.yaml
+  token: mineloop-campaign-05-exam-run-r2-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "同真源可派生→必并不适用：4 份出分凭据为逐轮运行产物（每轮一份），与 02_binding_book 分工不同（后者=取数参数面，前者=运行证据面），跨轮次不并"
+- file: docs/_working/mineloop_campaign/06_exam_run_r3.yaml
+  token: mineloop-campaign-06-exam-run-r3-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "同真源可派生→必并不适用：4 份出分凭据为逐轮运行产物（每轮一份），与 02_binding_book 分工不同（后者=取数参数面，前者=运行证据面），跨轮次不并"
+- file: docs/_working/mineloop_campaign/07_exam_run_r4.yaml
+  token: mineloop-campaign-07-exam-run-r4-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "同真源可派生→必并不适用：4 份出分凭据为逐轮运行产物（每轮一份），与 02_binding_book 分工不同（后者=取数参数面，前者=运行证据面），跨轮次不并"
+- file: docs/_working/mineloop_campaign/99_checkpoint.md
+  token: mineloop-campaign-99-checkpoint-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "同真源可派生→必并不适用：4 份出分凭据为逐轮运行产物（每轮一份），与 02_binding_book 分工不同（后者=取数参数面，前者=运行证据面），跨轮次不并"
 - file: docs/_working/mineloop_campaign/R1_L11_ledger.md
   token: mineloop-campaign-r1-l11-ledger-20261010
   capability: mineloop_campaign

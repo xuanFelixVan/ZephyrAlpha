@@ -1,0 +1,491 @@
+schema_version: mineloop-binding-run/v1
+ch_window_override: W1 v2 提前窗实测已于 21:29:02 收卷且三判全过=PASS（dev 落地 c69a4a6948/cdec731bf9 在案），任务态实测 Disabled，CH 轻探针延迟 0.06s 空载⇒让路理由消失；本批仍为单列聚合轻查询
+requested:
+- TDM-E-L1-S0/calibration/06_m1m2_scihjorsc_longwindow
+- TDM-E-L1-S0/calibration/07_margin_flow_shortwindow
+- TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow
+- TDM-E-L3-06/calibration/02_地量档位开关
+results:
+- card_id: TDM-E-FLOW/comparison/02_plan_to_execution_chain
+  skipped: not_in_approve_list
+- card_id: TDM-E-L0-01/comparison/02_scenario_probability_stance_vs_fixed
+  skipped: not_in_approve_list
+- card_id: TDM-E-L0-02/calibration/03_偏离幅度分位响应曲线
+  skipped: not_in_approve_list
+- card_id: TDM-E-L0-02/comparison/02_deviation_revision_authority
+  skipped: not_in_approve_list
+- card_id: TDM-E-L0-03/comparison/02_brier_calibration_on_off
+  skipped: not_in_approve_list
+- card_id: TDM-E-L0-04/calibration/03_pre_open盘前先验与盘中档位差
+  skipped: not_in_approve_list
+- card_id: TDM-E-L0-04/comparison/02_intraday_rollback_downgrade
+  skipped: not_in_approve_list
+- card_id: TDM-E-L0/comparison/02_plan_constraint_on_off
+  skipped: not_in_approve_list
+- card_id: TDM-C-L1/comparison/02_btc_trend_altseason_gate
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-AGG/ablation/02_state_input_replacement
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0-1/calibration/03_market_scope_sentiment_series
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0/calibration/02_货币卡
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0/calibration/03_流动性卡
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0/calibration/04_海外卡
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0/calibration/05_政策事件卡
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0/calibration/06_m1m2_scihjorsc_longwindow
+  verdict: fail
+  binding:
+    sql: SELECT report_date, m1_yoy, m2_yoy FROM c1_market.macro_credit_money WHERE m1_yoy IS NOT NULL AND m2_yoy IS NOT NULL ORDER BY report_date
+    rows: 7839
+    lag_days: 45
+    missing_months_in_span: 55
+    op: macro_scissors_monthly_lag_ffill
+    prose_quote: 剪刀差 = m1_yoy - m2_yoy（按 report_date 月度）
+    reviewed_by: st-mineloop-20261010
+    review_note: '实测（grain_probe3）：1,166 行/584 uniq report_date/1978-01-31..2026-08-31；
+
+      月度 m1_yoy/m2_yoy 2025-01..2026-08 连续无缺月；多版本行按 anyLast 取末版（禁把两版当两月）。
+
+      可见日=report_date+45 自然天；缺月即 NaN，禁 ffill 掩盖断供（卡面原文纪律）。
+
+      '
+  metrics:
+    ic_mean: 0.013862518326501146
+    mono_spearman: 0.6242424242424242
+    n: 5260
+    oos_ic: 0.10575557392908103
+    regime_ic:
+      bull: -0.01870182140243506
+      bear: 0.017044481956089208
+- card_id: TDM-E-L1-S0/calibration/07_margin_flow_shortwindow
+  verdict: fail
+  binding:
+    sql: SELECT d, exchange, sum(v) AS bal FROM (SELECT toDate(trade_date) AS d, exchange, symbol AS sym, anyLast(margin_balance) AS v FROM c1_market.margin_trading
+      WHERE exchange IS NOT NULL GROUP BY d, exchange, sym) GROUP BY d, exchange ORDER BY d
+    exchanges:
+    - BJ
+    - SH
+    - SZ
+    rows: 500
+    balance_days: 505
+    op: margin_balance_5d_change_rate
+    prose_quote: 5 日环比 = balance_t/balance_{t-5} - 1
+    reviewed_by: st-mineloop-20261010
+    review_note: '实测：2,100,709 行 / uniq(symbol,day)=2,098,709（约 2,000 重复版本行）/ 505 交易日 /
+
+      2024-09-02..2026-10-08；exchange 三档 SH 967,614·SZ 1,007,892·BJ 125,203。
+
+      两级聚合=先按 (日,exchange,symbol) anyLast 去版本，再按 (日,exchange) sum，最后跨 exchange 合并
+
+      （卡面「按 exchange 分别加总再合并，禁混算口径」）。融券面 short_balance 不参与主信号（卡面声明）。
+
+      IS 2024-09-02..2025-09-30 与 OOS 2025-10-09..2026-06-30 均落在数据窗内。
+
+      '
+  metrics:
+    ic_mean: -0.03541118164472658
+    mono_spearman: -0.1515151515151515
+    n: 500
+    oos_ic: -0.09432093330398417
+    regime_ic:
+      bull: -0.03731744350466728
+      bear: 0.012703412073490817
+- card_id: TDM-E-L1-S1/calibration/03_黄白线交叉
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S2/calibration/07_连板家数分布
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S3/calibration/02_昨日涨停溢价
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S3/calibration/03_晋级率
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S3/calibration/04_情绪先锋四态
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S3/calibration/05_limit_up_premium_derived
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S4/calibration/02_期权IV主路径
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S4/calibration/03_合成VIX后备
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow
+  verdict: fail
+  binding:
+    sql: SELECT toDate(trade_date) AS d, anyLast(close) AS v FROM c1_market.kline_index WHERE symbol='000300' GROUP BY d ORDER BY d
+    rows: 5015
+    span:
+    - '2005-01-04'
+    - '2026-10-09'
+    op: downside_deviation_250_pctile
+    prose_quote: 下行半偏差 = sqrt(244 × mean(min(r_t,0)^2 over 20 日窗))
+    reviewed_by: st-mineloop-20261010
+    review_note: '实测：000300 close 5,284 行 2005-01-04..2026-10-09 ⇒ IS 2019-01-04 起有 250 日暖机。
+
+      严格按卡面公式：r=close/close.shift(1)-1；仅取负收益平方均值×244 开方；再取 250 日滚动分位。
+
+      禁改回全波动口径（卡面原文：改了就是另一张卡）。件内 synthetic_vix.py 走期权 IV 链，
+
+      与本卡面声明的"由指数收益重建"不同源⇒本绑定按卡面公式实现，不调该件（差异在此声明）。
+
+      '
+  metrics:
+    ic_mean: -0.002307400965748454
+    mono_spearman: 0.09090909090909088
+    n: 5014
+    oos_ic: 0.06067424086011797
+    regime_ic:
+      bull: -0.011481216284259351
+      bear: 0.002250788117027267
+- card_id: TDM-E-L1-S5/calibration/02_11信号环比
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1/comparison/02_anchored_cap_curve_on_off
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-01-2/calibration/02_板块成交额占比活跃度
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-01-3/calibration/02_多周期动量主导度
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-01-5/ablation/02_市场级调节注入
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-01/ablation/02_四路等权合成分边际
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-01/ablation/03_六指数分布选优通道与候选池分位
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-01/comparison/02_等权与IC加权双臂
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-01/comparison/03_缺路处置律重归一与剔除双臂
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-02-1/calibration/02_RRG象限迁移
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-02-2/calibration/02_板块见顶预警三信号
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-02/calibration/02_接棒撤离榜
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-03/calibration/02_调整周期进度
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-04-1/calibration/02_轮动五态调节分
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-04-2/calibration/02_虹吸态成交集中度
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-04/ablation/02_板块生态三态判定
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-04/comparison/02_主线合取与单腿双臂
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-05-2/ablation/02_信号响应三件套
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-05/ablation/02_水温总开关放行比例
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-06-1/ablation/02_三级放行门槛
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-06-3/calibration/02_强度乘数阶梯
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-06-3/calibration/03_传导时滞曲线
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-06/ablation/02_层级隔离两字段传导
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-07-1/ablation/03_强度维单位口径错配
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-07-1/calibration/02_回踩四因子合成分
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-07-1/calibration/03_死常量两腿_结构破坏与超窗横盘
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-07/ablation/02_回踩ABC仓位门控
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-07/ablation/03_时间窗外不评级并入观望的边际
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-07/comparison/03_追高与低吸胜率对照
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-08/calibration/02_板块生命周期动量持续性
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-09/calibration/03_评级上调聚集
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-09/calibration/04_业绩预增催化剂腿
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2-09/comparison/02_催化剂加权形式板块恒定与标的指数衰减
+  skipped: not_in_approve_list
+- card_id: TDM-E-L2/ablation/02_板块候选池整体边际
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-01/calibration/02_成交额下限剔除
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-01/comparison/04_宇宙口径完整性对照
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-03-1/calibration/02_涨停基因
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-03-2/calibration/02_均线多排
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-03-2/calibration/03_温和放量
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-03/ablation/02_双池代理合成
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-04/calibration/02_解禁否决
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-05/calibration/02_连板顺位
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-06/calibration/02_地量档位开关
+  verdict: fail
+  binding:
+    sql: SELECT toDate(trade_date) AS d, sum(amount) AS v FROM c1_market.kline_index WHERE symbol IN ('000001','399001') GROUP BY d HAVING uniqExact(symbol)
+      = 2 ORDER BY d
+    days_with_both_symbols: 8648
+    rows: 8629
+    op: index_amount_sum_rolling_pctile
+    prose_quote: 两市成交额=SUM(kline_index.amount) WHERE symbol IN ('000001','399001') 同日相加
+    reviewed_by: st-mineloop-20261010
+    review_note: '实测：000001 8,738 行(1990-12-19..2026-10-09)、399001 8,693 行(1991-04-03..2026-10-09)。
+
+      主信号=该和的 20 日滚动分位（当日含自身，min_periods=20 防暖机假读数）。
+
+      辅助档位 emotion_index.stage 六段映射**不实现**：实测 stage 仅 close_final(8,617 行至 2026-09-30)/
+
+      pre_open(27 行)/auction(17 行)，六段需由数值分位重建＝另一条轴，卡面已声明，本绑定只交主信号序列。
+
+      单位（元/亿元）对分位读数无影响（分位=同序列自比）。
+
+      '
+  metrics:
+    ic_mean: 0.04654213105724993
+    mono_spearman: 0.4666666666666666
+    n: 5282
+    oos_ic: 0.11203043432903803
+    regime_ic:
+      bull: -0.004639250350761945
+      bear: 0.02178699322474302
+- card_id: TDM-E-L3-07-1/ablation/02_烂板剔除步
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-07-2/ablation/02_IC加权对等权
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-07-3/calibration/02_二十日动量排名
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-10/calibration/02_一字板不可成交
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-12-3/calibration/02_获利盘占比
+  skipped: not_in_approve_list
+- card_id: TDM-E-L3-12-3/calibration/03_股东户数集中度
+  skipped: not_in_approve_list
+- card_id: TDM-C-L4/comparison/02_breakout_vs_pullback_atr_stop
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-01/comparison/02_batching_all_vs_split
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-02/comparison/02_order_timing_tape
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-03/comparison/02_limit_offset_fill_tradeoff
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-04/comparison/02_capital_ranking_order
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-05/comparison/02_daban_mode_three_way
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-06/comparison/02_quality_prior_on_off
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-07/ablation/02_queue_bypass
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-08/comparison/02_breakout_failure_gate_on_off
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-09/comparison/02_hard_constraints_on_off
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-10/comparison/02_state_timeout_policy
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-11/comparison/02_partial_fill_cancel_vs_wait
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-12/comparison/02_precheck_five_checks_ablation
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-13/comparison/02_three_way_recon_injection
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4-14/comparison/02_predicted_vs_realized_slippage
+  skipped: not_in_approve_list
+- card_id: TDM-E-L4/comparison/02_exec_caliber_cost_ladder
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A01/calibration/02_日线动量截面
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A01/calibration/03_分钟已实现波动
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A03/calibration/02_880板块相对强弱持续性
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A05/calibration/02_盈余惊喜事件研究
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A06/calibration/02_主力净流入截面
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A08/calibration/02_BDI领先航运链
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A09/calibration/02_快讯情感日均值
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A10/calibration/02_全球风险因子隔夜传导
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A11/calibration/02_EIA库存意外
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A12/calibration/02_台风与极端高温对电力链
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A13/calibration/02_股东户数环比事件研究
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A15/calibration/02_资金费率拥挤跨市场预警
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A15/calibration/03_币圈镜像资金费率对BTC
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-A17/calibration/03_一致预期修正
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-D1/ablation/03_假设漏斗闭环率与考试链缺口
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-V1/ablation/02_大盘状态快照T-1纪律
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-V2/ablation/02_情绪相位六段快照就绪
+  skipped: not_in_approve_list
+- card_id: TDM-E-L9-V3/ablation/02_板块状态快照T-1纪律
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1-01/comparison/02_六桶分类增益对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1-02/comparison/02_时间止损档对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1-03/comparison/02_止盈族三式对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1-04/calibration/03_席位净卖出派发前瞻收益
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1-04/calibration/04_除权除息参考价分母误判清仓
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1-04/comparison/05_早盘破位假信号时段可靠性
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1-05/ablation/02_融合权重与去抖消融
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1-06/comparison/02_K3连续破位强清对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1/ablation/02_卖出信号段整体消融对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-S2-01/comparison/02_执行方式路由与流动性三查对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-S2-02/calibration/02_连续跌停开板概率与次日处置
+  skipped: not_in_approve_list
+- card_id: TDM-X-S2-02/calibration/03_新股首日分层卖出三臂
+  skipped: not_in_approve_list
+- card_id: TDM-X-S2-02/comparison/04_T1可卖额度做T回转延迟成本
+  skipped: not_in_approve_list
+- card_id: TDM-X-S2-03/comparison/02_执行口径净收益对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-S2-04/comparison/02_本地条件单追单闭环对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-S2-05/comparison/02_分批止盈阶梯对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-S2-06/ablation/02_卖出闭环三率反馈权重消融
+  skipped: not_in_approve_list
+- card_id: TDM-X-S2/ablation/02_执行约束层现实性税度量
+  skipped: not_in_approve_list
+- card_id: TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量
+  skipped: not_in_approve_list
+- card_id: TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-R1-03/calibration/02_宽基ETF天量与护盘滞后结构
+  skipped: not_in_approve_list
+- card_id: TDM-X-R1/shadow/02_拔电源影子运行对照
+  skipped: not_in_approve_list
+- card_id: TDM-X-S1-03/comparison/02_dualwindow
+  skipped: not_in_approve_list
+- card_id: TDM-X-FLOW/ablation/02_离场信号整链消融总账
+  skipped: not_in_approve_list
+- card_id: TDM-F-C1-01/shadow/02_激活集路由影子
+  skipped: not_in_approve_list
+- card_id: TDM-F-C1-02/shadow/02_三层栈冠军挑战
+  skipped: not_in_approve_list
+- card_id: TDM-F-C1-02/shadow/03_置信度配比资金臂
+  skipped: not_in_approve_list
+- card_id: TDM-F-C1-03/shadow/02_双向渐变vs硬切
+  skipped: not_in_approve_list
+- card_id: TDM-F-C1/comparison/03_预备金现金贡献
+  skipped: not_in_approve_list
+- card_id: TDM-F-C1/shadow/02_预算带灰度插值
+  skipped: not_in_approve_list
+- card_id: TDM-F-C2-01/comparison/02_净额轧平省成本
+  skipped: not_in_approve_list
+- card_id: TDM-F-C2-02/shadow/02_约束栈有vs无
+  skipped: not_in_approve_list
+- card_id: TDM-F-C2-02/shadow/03_裁剪优先级非策略仓优先
+  skipped: not_in_approve_list
+- card_id: TDM-F-C2-02/shadow/04_资金额度约束先卖后买与只削买入
+  skipped: not_in_approve_list
+- card_id: TDM-F-C2-03/comparison/02_相关性cluster上限
+  skipped: not_in_approve_list
+- card_id: TDM-F-C2-04/shadow/02_三级响应vs即时强裁
+  skipped: not_in_approve_list
+- card_id: TDM-F-C2/comparison/02_组合聚合vs各自为战
+  skipped: not_in_approve_list
+- card_id: TDM-F-C3-01/comparison/02_隔夜漂移切账失真
+  skipped: not_in_approve_list
+- card_id: TDM-F-C3-01/comparison/03_IS三分解与交易持仓二分
+  skipped: not_in_approve_list
+- card_id: TDM-F-C3-02/shadow/02_减半冻结线有效性
+  skipped: not_in_approve_list
+- card_id: TDM-F-C3-03/comparison/02_月度调权vs静态基准
+  skipped: not_in_approve_list
+- card_id: TDM-F-C3-04/shadow/02_四道gate过拟合防线
+  skipped: not_in_approve_list
+- card_id: TDM-F-C3-05/shadow/02_判准率加权vs等权
+  skipped: not_in_approve_list
+- card_id: TDM-F-C3/comparison/02_归因反馈闭环开vs关
+  skipped: not_in_approve_list
+- card_id: TDM-F-FLOW/comparison/02_终产目标组合vs基准
+  skipped: not_in_approve_list
+- card_id: TDM-P-P1-02/calibration/02_ATR距止损带对后续下行预测
+  skipped: not_in_approve_list
+- card_id: TDM-P-P1-02/calibration/04_盈亏百分比腿与ATR缺失降级
+  skipped: not_in_approve_list
+- card_id: TDM-P-P1-03/calibration/02_因子秩回落对后续超额预测
+  skipped: not_in_approve_list
+- card_id: TDM-P-P1-04/calibration/04_持仓停滞天数对后续收益预测
+  skipped: not_in_approve_list
+- card_id: TDM-P-P1-04/calibration/05_板块退潮动量对持仓下行预测
+  skipped: not_in_approve_list
+- card_id: TDM-P-P1-04/comparison/02_否决线三型可选档对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-P1-05/comparison/02_单票上限三档对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-P1-05/comparison/03_漂移触发与周期触发对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-P1-05/shadow/05_组合体检帽影子对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-P1/comparison/02_否决腿与熔断腿双臂增量
+  skipped: not_in_approve_list
+- card_id: TDM-P-P2-01/comparison/02_三道门串并开闭与互斥诊断
+  skipped: not_in_approve_list
+- card_id: TDM-P-P2-01/comparison/03_盘中单边失效腿对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-P2-03/comparison/02_未闭环敞口过夜代价双臂
+  skipped: not_in_approve_list
+- card_id: TDM-P-P2-04/calibration/06_减仓参与率压力对次日价格路径
+  skipped: not_in_approve_list
+- card_id: TDM-P-P2-04/calibration/07_冲高反弹幅度对次日收益与减半阈值落点
+  skipped: not_in_approve_list
+- card_id: TDM-P-P2-04/comparison/02_调仓频率与换手惩罚六臂对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-P2/comparison/02_做T腿有无对照与底仓恒等性
+  skipped: not_in_approve_list
+- card_id: TDM-P-P3-01/comparison/03_情绪段加仓权限分层对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-P3-01/comparison/04_日亏熔断禁加期分层对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-P3-02/calibration/03_加仓触发涨幅对后续收益预测
+  skipped: not_in_approve_list
+- card_id: TDM-P-P3-03/comparison/02_仓位定尺寸七档对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-P3-04/calibration/02_尾盘强势对次日高开概率预测
+  skipped: not_in_approve_list
+- card_id: TDM-P-P3-04/calibration/04_缩量回踩支撑对次日正收益预测
+  skipped: not_in_approve_list
+- card_id: TDM-P-P3-04/comparison/03_尾盘加仓与即时加仓执行价差对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-P3/comparison/02_金字塔三档与一次性足额对照
+  skipped: not_in_approve_list
+- card_id: TDM-P-FLOW/ablation/02_持仓叠层整链消融
+  skipped: not_in_approve_list
