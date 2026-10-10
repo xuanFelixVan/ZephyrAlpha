@@ -818,6 +818,82 @@ def _load_capability_registry(gateway) -> tuple[dict | None, str]:
     return data, ""
 
 
+def _pg_confirmed_token_files(candidate_paths: list[str], already: set[str]) -> set[str]:
+    """PG 账本第三读取源（T4 治本，st-maint1-20261010 批复①，2026-10-10 三度亲身误拦）。
+
+    病根：本 gate 的 token 读取面三级全是**投影盘面**（主区盘面 → project_root 盘面 →
+    REGISTRY_YAML，见 `_read_registry_*` 的 anchor_main_root 注释）。而热册自 2026-10-09
+    起是 PG `registry_ledger` 的生成物——意图 API register→publish 之后，PG 即时在册，
+    投影却要等一次 render 才追上。当晚主区投影整晚滞后（landing 收敛对脏文件
+    skipped_dirty），于是"已登记"被读成"未登记"：本班台账袋两次、gpufeed 留痕一次，
+    全是同一形态的假拦截（真源里明明有 token）。
+
+    方向性纪律（本函数的判据本体）：**只加正证，不松门禁**——
+      1) 仅对"投影面判为缺失"的候选路径去问账本（常见路径零额外开销，
+         候选集空时连连接都不开）；
+      2) 只有账本显式回一行 status='active' 的同 file 条目才算已登记；
+      3) 账本不可达 / 驱动异常 / 查询异常 / 任何意外 ⇒ 返回空集 ⇒ **退回投影口径照拦**
+         （绝不让"读不到账本"变成放行；与既有"YAML 不可达 fail-closed"同哲学）；
+      4) 永不抛异常给调用方。
+
+    registry_id 用显式常量而非 ROOR 反查：ROOR 里该物理路径同挂两个 registry_id
+    （REG-CAPCAN-001 在册 1.4 万条／REG-GEN-001 账本 0 条，2026-10-10 实测），
+    反查取到后者会把"账本无条目"误读成"未登记"——此处取正源常量更窄更准。
+    """
+    missing = [f for f in candidate_paths if f and f not in already]
+    if not missing:
+        return set()
+    confirmed: set[str] = set()
+    try:
+        from zephyr.governance.registry_ledger.registry_ledger_ddl import SCHEMA_NAME
+        from zephyr.infrastructure.database_service import DatabaseService
+
+        conn = DatabaseService().get_depgraph_conn(read_only=True)
+        try:
+            with conn.cursor() as cur:
+                for rel in missing:
+                    key = rel.replace("\\", "/")
+                    cur.execute(
+                        _SQL_PG_ACTIVE_TOKEN_BY_FILE.format(schema=SCHEMA_NAME),
+                        (_CREATION_TOKEN_REGISTRY_ID, "creation_tokens", f"file={key}|%"),
+                    )
+                    if cur.fetchone() is not None:
+                        confirmed.add(key)
+        finally:
+            try:
+                conn.close()
+            except Exception:  # noqa: BLE001 — 只读连接回收失败不影响判定（判定已取定）
+                logger.debug("PG token 源连接回收失败（忽略）", exc_info=True)
+    except Exception as exc:  # noqa: BLE001 — 账本不可达=退回投影口径照拦，禁止因此放行
+        logger.warning(
+            "CREATE-GUARD PG 第三源不可达（按投影口径继续，缺 token 照拦）: %s: %s",
+            type(exc).__name__,
+            str(exc)[:160],
+        )
+        return set()
+    if confirmed:
+        # 留痕走既有 logger（不新建日志文件，不引入未登记的审计出口）
+        logger.info(
+            "CREATE-GUARD token 经 PG 账本正证补全 %d 件（registry_id=%s，非豁免：账本确有条目）: %s",
+            len(confirmed),
+            _CREATION_TOKEN_REGISTRY_ID,
+            sorted(confirmed),
+        )
+    return confirmed
+
+
+_SQL_PG_ACTIVE_TOKEN_BY_FILE = (
+    "SELECT 1 FROM {schema}.registry_entry "
+    "WHERE registry_id=%s AND family_key=%s AND status='active' AND entry_key LIKE %s LIMIT 1"
+)
+# SQL 集中化（§5.160.2 NO-BARE-SQL）：唯一真源常量；{schema} 由调用点 format 注入，
+# 参数化 %s 承载 registry_id/family_key/LIKE 值（LIKE 的 % 在值内不在 SQL 文本内）。
+
+_CREATION_TOKEN_REGISTRY_ID = (
+    "REG-CAPCAN-001"  # 热册 token 正源账本（ROOR 同路径双挂号，见 _pg_confirmed_token_files 注）
+)
+
+
 def _collect_registered_files(data: dict) -> set[str]:
     """构建 creation_tokens 文件索引（相对路径集合，归一化为正斜杠）。"""
     tokens = data.get("creation_tokens", []) or []
@@ -1259,6 +1335,12 @@ def _check_creation_token(
             return False, detail
     data = registry_data
     registered_files = _collect_registered_files(data)
+
+    # T4 治本：投影三级面判缺者，再问一次 PG 账本（只加正证；账本不可达=照拦）
+    registered_files = registered_files | _pg_confirmed_token_files(
+        list(new_py_files) + list(new_yaml_files) + list(new_other_files),
+        registered_files,
+    )
 
     # 检测新增 .py 文件是否登记了 creation_token
     unregistered = [f for f in new_py_files if f not in registered_files]
