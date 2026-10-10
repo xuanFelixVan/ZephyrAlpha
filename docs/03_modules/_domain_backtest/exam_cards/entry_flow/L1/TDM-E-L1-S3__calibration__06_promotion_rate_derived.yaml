@@ -32,11 +32,11 @@ target:
   primary: next_day_index_return（CSI300 000300 次日收益）
   secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分，母卡情绪六段转移轴的机读替身）
   note: series 形（日度比率）
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: mineloop-lu-06_promotion_rate_de
+  score_row: exam_scores_v1.yaml#rows[30]
   confidence_writeback: TDM.nodes.TDM-E-L1-S3.confidence
 preregistered_by: st-nightmine-20261010-L3
 preregistered_at: '2026-10-10'
@@ -52,18 +52,12 @@ oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
   signal_column: promotion_rate_derived
-  signal_derivation: >-
-    is_lu_{i,t} = (close/lag(close)-1 >= stk_limit.limit_pct - 0.002)（卡 09 口径）；
-    promotion_rate_t = countIf(is_lu_{t} AND is_lu_{t-1}) / nullIf(countIf(is_lu_{t-1}),0)；
-    分板率档用卡 13/14 的 streak 串：ladder_k→k+1 = countIf(streak_t = k+1)/nullIf(countIf(streak_{t-1}=k),0)，k∈{1,2,>=3}；
+  signal_derivation: is_lu_{i,t} = (close/lag(close)-1 >= stk_limit.limit_pct - 0.002)（卡 09 口径）； promotion_rate_t = countIf(is_lu_{t}
+    AND is_lu_{t-1}) / nullIf(countIf(is_lu_{t-1}),0)； 分板率档用卡 13/14 的 streak 串：ladder_k→k+1 = countIf(streak_t = k+1)/nullIf(countIf(streak_{t-1}=k),0)，k∈{1,2,>=3}；
     分母 <20 置 NaN。串须 IS 前 60 交易日暖机。
-  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
-  data_window_evidence: >-
-    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM
-    c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831；
-    `... kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
-    母卡绑表 `c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行 / 54 天（冻结窗零行）；
-    分母规模实测锚：涨停家数年均 44-89 家（2019..2025，台账 §1.2 实测）；
-    辅轴 `c1_market.emotion_index`（stage='close_final'）实测 2019..2025 逐年 244/243/243/242/242/242/243 天完整；
-    已知限制（如实记）：日线导生的"再板"只判收盘封住，不含盘中触板未封的伪晋级，与事件表
+  target_source: kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1
+  data_window_evidence: 命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit` →
+    2015-01-05..2026-10-09 / 9,254,772 / 5,831； `... kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916； 母卡绑表
+    `c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行 / 54 天（冻结窗零行）； 分母规模实测锚：涨停家数年均 44-89 家（2019..2025，台账 §1.2
+    实测）； 辅轴 `c1_market.emotion_index`（stage='close_final'）实测 2019..2025 逐年 244/243/243/242/242/242/243 天完整； 已知限制（如实记）：日线导生的"再板"只判收盘封住，不含盘中触板未封的伪晋级，与事件表
     daban_board_event(open_board_count/close_sealed) 口径在细节上不等价，后者实测仅 2026-09-01..2026-10-09 / 1,767 行。

@@ -32,11 +32,11 @@ target:
   primary: next_day_index_return（CSI300 000300 次日收益）
   secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分）
   note: 溢价是截面均值（series 形），非逐符号面板，故 signal_kind=series
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: mineloop-lu-05_limit_up_premium_
+  score_row: exam_scores_v1.yaml#rows[29]
   confidence_writeback: TDM.nodes.TDM-E-L1-S3.confidence
 preregistered_by: st-nightmine-20261010-L3
 preregistered_at: '2026-10-10'
@@ -52,19 +52,12 @@ oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
   signal_column: limit_up_premium_close_derived
-  signal_derivation: >-
-    先按卡 09 口径标出 t-1 日的涨停集合 S_{t-1}（r_{t-1} >= lim_{t-1}-0.002，
-    r = close/lag(close)-1）；当日溢价 close 口径 = mean over i∈S_{t-1} of (close_{i,t}/close_{i,t-1}-1)，
-    开盘口径 = mean over i∈S_{t-1} of (open_{i,t}/close_{i,t-1}-1)；
-    全部比值在后复权空间内计算（同一 symbol 相邻两日复权因子一致，比值免污染）；
-    |S_{t-1}|<20 的日置 NaN。停牌股（t 日无行）不入截面均值并在 run 附注计缺失数。
-  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
-  data_window_evidence: >-
-    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM
-    c1_market.kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
-    `... FROM c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831；
-    join 完备性（2019-01-04..2025-09-09）实测 0 unmatched / 7,590,928 symbol-days；
-    母卡原绑表 `c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行（冻结窗零行）；
-    截面规模实测锚（同口径链）：涨停家数年均 44-89 家（2019..2025 = 65.4/81.9/87.9/77.0/44.1/89.2/77.0），
-    远大于 min_set_size=20 门槛 ⇒ 剔除日预计集中在极端冰点日（首跑须把剔除天数写进分数册附注，未测不预填）；
-    溢价序列数值本卡不预填（禁凭记忆），由考试车道首跑建档。
+  signal_derivation: 先按卡 09 口径标出 t-1 日的涨停集合 S_{t-1}（r_{t-1} >= lim_{t-1}-0.002， r = close/lag(close)-1）；当日溢价 close 口径 = mean
+    over i∈S_{t-1} of (close_{i,t}/close_{i,t-1}-1)， 开盘口径 = mean over i∈S_{t-1} of (open_{i,t}/close_{i,t-1}-1)； 全部比值在后复权空间内计算（同一
+    symbol 相邻两日复权因子一致，比值免污染）； |S_{t-1}|<20 的日置 NaN。停牌股（t 日无行）不入截面均值并在 run 附注计缺失数。
+  target_source: kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1
+  data_window_evidence: 命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq`
+    → 1990-12-19..2026-09-30 / 10,098,785 / 5,916； `... FROM c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831；
+    join 完备性（2019-01-04..2025-09-09）实测 0 unmatched / 7,590,928 symbol-days； 母卡原绑表 `c1_market.limit_up_down` → 2026-07-20..2026-10-09
+    / 5,397 行（冻结窗零行）； 截面规模实测锚（同口径链）：涨停家数年均 44-89 家（2019..2025 = 65.4/81.9/87.9/77.0/44.1/89.2/77.0）， 远大于 min_set_size=20 门槛
+    ⇒ 剔除日预计集中在极端冰点日（首跑须把剔除天数写进分数册附注，未测不预填）； 溢价序列数值本卡不预填（禁凭记忆），由考试车道首跑建档。

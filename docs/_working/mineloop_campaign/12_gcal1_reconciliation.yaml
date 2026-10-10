@@ -1,0 +1,95 @@
+---
+ttl: task_bound
+title: 矿考循环班·G-CAL-1 开考前对账（hfq vs 不复权涨停口径＋3882 荒谬值根因）
+created: '2026-10-11T02:15:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+purpose: >-
+  消解 11_prebind_review.yaml 的 pre_run_gates G-CAL-1（绑定前复核车道只出闸口不出结论：
+  卡 05/06 冻结式在**后复权比值空间**判涨停，而在册 R1_L11_ledger.md:77 明令"涨停判定 MUST 不复权
+  kline_daily + stk_limit（hfq 得 3882 荒谬值）"——两条在册陈述互斥，须实测裁定后方可开考）。
+executor_note: 统筹 01:35 批复③「hfq vs 不复权对账当第一件跑，05/06 消解前不出分」。
+
+window_object_check:
+  at: '2026-10-11 02:09 +0800（date 实测）'
+  tilib_indicator_backfill_nightly: Disabled
+  ZephyrAlpha-CH-OptimizeMerge-Weekly: Disabled
+  ZephyrAlpha_F06Grid: Disabled
+  clickhouse_process_count: 0
+  rule_recorded: 窗口须验对象（让路窗内若无对象则不构成禁令，但必须逐次实测留痕，禁引用上一轮读数）
+
+measurement:
+  sql_drivers:
+    - .runtime/tmp/st-mineloop-20261010/gcal1_reconcile.py（四口径逐日涨停家数）
+    - .runtime/tmp/st-mineloop-20261010/gcal1b_reconcile.py（3882 根因两候选式）
+  window: 2019-01-04..2025-09-09（1,622 交易日；取数起点 2018-12-01 供 lag 暖机）
+  dedup: 三表一律 FINAL（ReplacingMergeTree 多版本行）；(日,票) 粒度实测 kline_daily_hfq 零重复、
+    kline_daily A_share 771 重复行
+  sentinel_discipline: 缺前一交易日（新股首日/停牌）ret=-99.0；limit_pct 缺失 lp=9.9；limit_up 缺失 lu=1e18
+    ——三者皆"永不判涨停"方向；join_use_nulls=0 下 LEFT JOIN 缺失取 0，另以 has_hfq 列计缺失面
+  artifact_note: gcal1b 输出的 max_limit_up=1e18 与 max_hfq_close 是**本探针哨兵/绝对价量级列**，
+    1e18 为哨兵非数据（如实标：该列只用于证明窗内存在 limit_up=NULL 的行）
+
+calibers_yearly_mean:
+  note: 每格=该口径下逐日涨停家数的年度均值（A/B/C/D 与 11 卡面的关系见 caliber_defs）
+  caliber_defs:
+    A_hfq_ratio: "kline_daily_hfq close/lag(close)-1 >= stk_limit.limit_pct-0.002（＝卡 05/06 冻结式）"
+    B_raw_ratio: "kline_daily（不复权）close/lag(close)-1 >= limit_pct-0.002（同式换表）"
+    C_raw_abs: "kline_daily（不复权）close >= stk_limit.limit_up（R1_L11 在册明令口径）"
+    D_pctchange: "kline_daily.pct_change/100 >= limit_pct-0.002（在册列直取，单位换算后）"
+  by_year:
+    '2019': {A: 64.8, B: 64.7, C: 61.6, D: 64.7, joined_per_day: 3648, hfq_missing_per_day: 2.0}
+    '2020': {A: 80.9, B: 80.7, C: 77.2, D: 80.7, joined_per_day: 3989, hfq_missing_per_day: 1.1}
+    '2021': {A: 87.3, B: 87.2, C: 83.2, D: 87.2, joined_per_day: 4479, hfq_missing_per_day: 1.1}
+    '2022': {A: 76.8, B: 76.5, C: 73.1, D: 76.6, joined_per_day: 4883, hfq_missing_per_day: 1.2}
+    '2023': {A: 43.9, B: 43.9, C: 41.8, D: 44.0, joined_per_day: 5211, hfq_missing_per_day: 1.1}
+    '2024': {A: 89.1, B: 89.0, C: 83.7, D: 89.0, joined_per_day: 5359, hfq_missing_per_day: 1.2}
+    '2025': {A: 78.7, B: 78.6, C: 74.0, D: 78.6, joined_per_day: 5409, hfq_missing_per_day: 0.2}
+  card_evidence_anchor: "卡 05/06 data_window_evidence 原文＝年均 44-89 家（2019..2025 = 65.4/81.9/87.9/77.0/44.1/89.2/77.0）"
+
+verdict:
+  gcal_1_resolved: true
+  reasoning:
+    - "A（卡面比值式）逐年 64.8/80.9/87.3/76.8/43.9/89.1/78.7 与卡面锚 65.4/81.9/87.9/77.0/44.1/89.2/77.0
+      逐年吻合（最大差 0.7 家/日，方向=卡面 prereg 之后又有新交易日入库），G-CAL-1 的降级触发条件
+      （『hfq 口径与卡面锚不符而接近 3882 量级』）为假 ⇒ 不触发 reject。"
+    - "A 与 B 逐年差 ≤0.3 家/日 ⇒ 后复权/不复权表的选择对本卡涨停集合几乎无影响（卡面自述理由
+      『同一 symbol 相邻两日复权因子一致，比值免污染』在实测面上成立）。"
+    - "C（在册明令的绝对价口径）比 A/B 系统性低 3.5-5.4 家/日（61.6 vs 64.8 等）——绝对价 close>=limit_up
+      会漏掉以涨跌幅口径封板但收盘价位因四舍五入/盘中复权差而未及 limit_up 的情形；两口径都是『合法涨停』，
+      只是判据不同源。卡面冻结的是比值式（A），按 G4-5 判据冻结面零动，开考取 A，不以 C 替换。"
+  root_cause_of_registered_3882: >-
+    在册"hfq 得 3882 荒谬值"实测复现=把**后复权绝对价**与**不复权涨停绝对价**放在一起比
+    （F_mixspace: kline_daily_hfq.close >= stk_limit.limit_up），逐年均值
+    3147.4/3303.5/3456.4/3639.8/3893.5/4098.0/4207.3，2023 段正落在 3,882 量级——
+    后复权绝对价可达 4 万-9 万（实测 max_hfq_close 逐年 23,685..90,286，而不复权 max_raw_close 仅 1,234..2,601），
+    故该式几乎把全市场判成涨停。次高危候选=百分数与小数混单位
+    （E_unitbug: kline_daily.pct_change(百分数) >= limit_pct(小数)-0.002），逐年 1759-2600，量级不足。
+    ⇒ 结论：3882 不是"后复权比值口径"的错，是"混空间绝对价比"的错；卡面比值式无罪，R1_L11 的告诫
+      应重述为"禁把复权后绝对价与不复权涨停价直接比"，而非"禁在后复权空间算比值"。
+  disposition:
+    - "卡 05/06 由 bindable 放行为可开考（11_prebind_review.yaml 的 G-CAL-1 闸口在此消解，不改该件原文）。"
+    - "卡 05/06 开考结果=双双 fail（负 IC 形态），见 13_exam_run_limit_up.yaml 与分数册
+      run_id=mineloop-lu-*。"
+    - "卡 TDM-E-L1-S5/calibration/03_derived_signal_shock_panel 的 reject 不由本闸翻转——它死于
+      unfrozen（④⑥⑦ 家数比分母的宇宙未冻），归分段/宇宙口径卡面修订工单（新版本卡走 G4-5）。"
+    - "R1_L11_ledger.md:77 的重述不改写原文（在册件按追加更正制），本件即为更正追加面；
+      下一班引用该条时须连同本件读。"
+
+open_items:
+  - "join 完备性：卡面 evidence 称 2019-01-04..2025-09-09 实测 0 unmatched/7,590,928 symbol-days；
+    本次实测 hfq 侧日均缺失 0.2-2.0 行/日（LEFT JOIN 方向=不复权有行而 hfq 无行），与『0 unmatched』
+    在 1,622 日×约 4,700 票的规模上相容（累计约 1,800 行），卡面口径应理解为 INNER JOIN 无孤儿而非零差集"
+  - "涨停判定另一独立口径 limit_up_down / daban_board_event 表在冻结窗零行或仅 2026-09 起（卡面自记），
+    本对账未涉及，无翻案必要"
+
+compliance:
+  cards_modified: 0
+  registries_modified: 0
+  code_modified: 0
+  git_writes_in_this_file_only: 1
+  ch_queries_run: 2
+  invented_calibers: 0
+  judgment_face_changes: 0
