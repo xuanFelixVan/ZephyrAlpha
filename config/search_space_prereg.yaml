@@ -28,7 +28,11 @@ objective:
     negative_result_promise: T2 后主效应前 20% 层外的负结果如实入 negatives.csv 并计 N_eff，禁删改（预注册纪律）
 tracks:
   f06_grid:
-    enabled: true
+    # 批A 作废（夜矿续战令三连裁③ 2026-10-10，adjudicator=st-nightmine2-20261010）：
+    #   10-09 19:17 点火 16.7h 零 manifest（grid_20261009-191707/ 0 字节，44.8s/格超停手阈值 12.8 倍），
+    #   计试次 6000 已入 N 账本（batch:grid_20261009-191707，宁严勿宽），三进程已停。
+    #   判据继承见 f06_grid_v2（点数降格重冻结，禁对本段原位改点数=事后挪门柱）。
+    enabled: false
     entry: scripts/backtest/factory_grid_executor.py
     # FACT 族拉长持有期预注册轴（批E-①：换手主力=FACT 日频 top20 → 拉长持有期）
     fact_family_axes:
@@ -42,6 +46,26 @@ tracks:
       axes: [emotion_grey_band, market_state_F4]
       cells_eligible_measured: 9    # 2026-09-24 真库实测（4 灰度×F4 三态=12 胞，30 日地板达标 9）
       sector_layer: observational_only   # 板块腿 17 交易日禁入统计判据
+  f06_grid_v2:
+    # v2=批A 作废后的点数降格重冻结卡（同轴同种子，判据面零变动；仅 n_samples 6000→1000）
+    enabled: true
+    inherits: f06_grid
+    entry: scripts/backtest/factory_grid_executor.py
+    n_samples: 1000
+    seed: 20260916            # 与批A 同种子：首批 1000 格=原 6000 抽样前缀，批次谱系可对
+    stratify_dims: [G_universe, A1_factor_normalize, B_top_n]
+    frozen_at: '2026-10-10T12:10:00+08:00'
+    frozen_by: 夜矿续战令三连裁③（总统统筹 2026-10-10）
+    owner_signoff: 夜矿续战令 §三 T4（Owner 通道授权：批A 作废立 v2）
+    window_discipline:
+      fire_window: 'Sat 08:00（Task Scheduler 已由 14:00 改 08:00）'
+      hard_deadline: '每日 22:30 前收窗，禁跨 23:00 W1 窗（二号域 GPU 让位，OD-5 叠跑教训在案）'
+      duration_basis: '实测 44.8s/格（批A 进度代理）→ 1000 格≈12.4h，08:00 起跑 22:30 前收窗留 2h 余量；L2 批提速落地 3.5s/格后可经裁定通道升点'
+    acceptance:
+      manifest_present: true   # W1 式正式验收判据：manifest+rc
+      rc_zero: true
+      n_trials_ledger: '收窗 summary 经 MOD-BT-200 自动入账（对齐 38b453ca 配方）'
+
   e1c:
     enabled: true
     entry: scripts/backtest/c4_batch_screen.py

@@ -10,7 +10,7 @@ generated_by: scripts/governance/generators/generate_front_door.py
 
 > 使命：任何 AI/人从本页出发，最多 2 跳抵达任意资产真源。本页是派生视图，真源见各链接；先单口后 Grep，路径禁凭记忆书写（根宪法 §8）。
 
-## 查询五单口
+## 查询六单口
 
 | 你要找 | 唯一入口 | 备注 |
 |---|---|---|
@@ -25,9 +25,9 @@ generated_by: scripts/governance/generators/generate_front_door.py
 
 | 馆 | 页 | 在编数 |
 |---|---|---|
-| 代码馆 | docs/library/code.md | 35822 |
+| 代码馆 | docs/library/code.md | 36193 |
 | 数据馆 | docs/library/data.md | 357 |
-| 文档馆 | docs/library/doc.md | 5597 |
+| 文档馆 | docs/library/doc.md | 5824 |
 | 制度馆 | docs/library/rule.md | 91 |
 | 闸门馆 | docs/library/gate.md | 331 |
 | 管线馆 | docs/library/pipeline.md | 138 |

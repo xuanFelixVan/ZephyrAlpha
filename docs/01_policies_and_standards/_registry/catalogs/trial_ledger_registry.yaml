@@ -19,6 +19,130 @@ screen_runs:
   last_synced_at: '2026-09-15T05:43:43+00:00'
   last_synced_by: st-f06dsr-shift2-20260915
 batch_records:
+- batch_id: batch:grid_20261009-191707
+  n_trials: 6000
+  kind: factory_grid_batch_a_voided
+  note: F06 批A 作废入账（夜矿续战令三连裁③，adjudicator=st-nightmine2-20261010）：19:17 点火，2026-10-10
+    12:0x 停批，历时约 16.7h；manifest=0/rc 缺=未收窗；grid_20261009-191707/ 目录 0 字节零产出；进度代理≈1003-1073
+    格（44.8s/格，超停手阈值 3.5s/格 12.8 倍）；计次口径=按预注册 n_samples=6000 宁严勿宽保守计入（computed≈1003/persisted=0
+    并留痕于此）；三进程 50252/25712/32284 已停，现场释放避免与 10-10 23:00 W1 窗叠跑。
+  recorded_at: '2026-10-10T04:05:28+00:00'
+  recorded_by: st-nightmine2-20261010
+- batch_id: examcard:TDM-E-L1-S0-1/calibration/02_新闻情绪时滞:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-09T22:51:17+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S1/calibration/02_指数趋势位置:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail（R10 治本后补记）
+  recorded_at: '2026-10-09T22:42:12+00:00'
+  recorded_by: st-examchief-20261009
+- batch_id: examcard:TDM-E-L1-S2/calibration/02_涨停家数:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-09T23:31:34+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/03_跌停家数:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-09T23:31:34+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/04_炸板率:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-09T23:31:34+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/05_封板率:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-09T23:31:34+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/06_连板最高高度:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-09T23:31:35+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/08_净广度:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-09T23:31:35+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/09_limit_up_count_derived:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-10T00:37:31+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/10_limit_down_count_derived:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-10T00:37:31+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/11_broken_board_rate_derived:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-10T00:37:31+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/12_sealed_board_rate_derived:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-10T00:37:31+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/13_max_consec_limit_height_derived:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-10T00:37:31+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/14_consec_limit_count_ge2_derived:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-10T00:37:32+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S2/calibration/15_net_breadth_derived:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-10T00:37:32+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L2-09/calibration/02_板块催化剂密度:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-09T23:49:28+00:00'
+  recorded_by: st-nightmine-20261010
+- batch_id: examcard:TDM-E-L9-A04/calibration/02_估值ERP分位日增量:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-09T23:45:12+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-TEST/calibration/02:2026-10-10
+  n_trials: 1
+  kind: exam_card
+  note: verdict=pass
+  recorded_at: '2026-10-10T03:33:16+00:00'
+  recorded_by: calibration_exam
+- batch_id: fexam-strategies-20261006
+  n_trials: 0
+  kind: fexam_strategy_batch
+  note: fexam batch2 evidence=D:/ZephyrAlpha/docs/_working/fexam/strategy_exam_scores_v1.yaml;
+    windows=('2018-01-02', '2026-09-30')+('2025-10-09', '2026-09-30')
+  recorded_at: '2026-10-05T19:26:09+00:00'
+  recorded_by: st-matrix-20261006
 - batch_id: grid_20260915-051517
   n_trials: 6
   kind: factory_grid_batch_a
@@ -61,6 +185,12 @@ batch_records:
   note: 'auto: data/strategy_intake/grid_20260916-123552/summary.json'
   recorded_at: '2026-09-18T21:55:10+00:00'
   recorded_by: st-ledgerp4-20260919
+- batch_id: grid_20261006-052748
+  n_trials: 117
+  kind: factory_grid_batch_a
+  note: 'auto: data\strategy_intake\grid_20261006-052748\summary.json'
+  recorded_at: '2026-10-05T22:09:02+00:00'
+  recorded_by: factory_grid_executor
 - batch_id: sharpe2_prep_e4_reexam_20260917
   n_trials: 81
   kind: oos_reexam
@@ -68,16 +198,10 @@ batch_records:
     裁定补登:重考消费了累计N却未回写账本
   recorded_at: '2026-09-17T08:20:53+00:00'
   recorded_by: kimi-audit
-- batch_id: fexam-strategies-20261006
-  n_trials: 0
-  kind: fexam_strategy_batch
-  note: fexam batch2 evidence=D:/ZephyrAlpha/docs/_working/fexam/strategy_exam_scores_v1.yaml;
-    windows=('2018-01-02', '2026-09-30')+('2025-10-09', '2026-09-30')
-  recorded_at: '2026-10-05T19:26:09+00:00'
-  recorded_by: st-matrix-20261006
-- batch_id: grid_20261006-052748
-  n_trials: 117
-  kind: factory_grid_batch_a
-  note: 'auto: data\strategy_intake\grid_20261006-052748\summary.json'
-  recorded_at: '2026-10-05T22:09:02+00:00'
-  recorded_by: factory_grid_executor
+n_trials_effective:
+  value: 16
+  estimator: effective_rank
+  note: 'batch:20261007-112020 n=2459 meta={"n_trials": 2459, "common_T": 970, "boundary":
+    false}'
+  updated_at: '2026-10-07T10:59:22+00:00'
+  previous: null

@@ -87,3 +87,12 @@ session: st-govjudge-20261010
 - 形态=册内注记（净零，零新页）：adjudication_routing_policy.md 增「附表 B · 行业术语对表（自有词族）」——ADR↔裁定（REG-RULING-001，可推翻性承载对照）、RFC↔立项卡/预注册卡（G0-G3 产物）；lock:163 禁 ADR 条款原文引用不撤（禁 ADR 理由在案）。
 - 原指令卡注销记录=注记内历史注记段（前提不成立：四号实测 HEAD 零 ADR/RFC 双轨可对表+与 lock:163 冲突），authority=总统统筹令 R6。
 - R11 一致性测试复跑 4 passed（注记不触锚）。
+
+
+---
+
+## 【勘误·追加 2026-10-10 st-constland-20261010】R9④"宪法 §0 落地（完成，待提交）"更正（追加禁改写）
+- **更正：宪法 §0 第 6 步升位在本班（st-govjudge）任内未落 dev。** 本台账 R9④ 段及对应终报所述"落地（完成，待提交）"与 73b0133455 前的任何"已落 dev"口径均不成立：实测 `git show dev:AGENTS.md | grep -c FRONT_DOOR` 在 10c4f119e7 前恒=0；R9 再落地笔 1d5c0d36c4 与会师载体 66d39168fe 的袋内均无 AGENTS.md（`git diff dev...session/st-govjudge-20261010 -- AGENTS.md` 空）。
+- **根因（接本台账 R9 段原有记录）：误写主区后复原连带丢件**——本班在主区写入 AGENTS.md 后遇并发冲突复原，复原动作连带清掉了袋体；加上主区 GATE-INTEGRITY 交叉火力（当日 8 件 critical MANIFEST 在飞脏态阻断一切 AGENTS.md/scripts-governance 提交，56 次同签名熔断=全天各班共障）与 TAKEOVER-PENDING（regsolo 开放接管条目），五投四门皆为实证在案的系统性拦阻面。
+- **本班（st-constland-20261010）补投=宪法落地与治理收口令第五投：已落。** 袋件 73b0133455（恰含 AGENTS.md 一件，blob=063aa6a35043d136204d3b789c8d4d2e9bc758ff=正本 .aidrafts/st-regsolo-20261010/AGENTS.md 同 blob=裁定#504 死袋 q-20261010-st-regsolo-20261010-0028/0029 册页 blob_sha256 逐字节同）；合并载体 10c4f119e7 并入 dev。**树复验三连（2026-10-10 实测）：`git show dev:AGENTS.md | grep -c FRONT_DOOR`=1；袋件 `git log -1 --name-only` 恰含 AGENTS.md；`git rev-parse dev:AGENTS.md`=063aa6a35043d136204d3b789c8d4d2e9bc758ff。**
+- 全过程六投四门实录见 docs/_working/constland_campaign/00_ledger.md（本班台账 §4-§6：TAKEOVER 接管处置/GATE-INTEGRITY 快照基线通道/PROTECTED-PATHS marker/影子分支 FF 纠偏）。adjudicator: st-constland-20261010（宪法落地与治理收口令直派）
