@@ -120,6 +120,35 @@ _CENSUS_CLASSES = ("A", "A?", "B", "C", "D", "U")  # gate-vocab-context: governa
 SQL_DOWNSIDE_DEV = (
     "SELECT toDate({date_col}) AS d, anyLast({col}) AS v FROM {tbl} WHERE symbol='{sym}' GROUP BY d ORDER BY d"
 )
+#: 涨停面板日度聚合底座（卡 05/06 共用；卡面 signal_derivation 逐字冻结式，禁自创容差/门槛）：
+#:   ret_close = close/lag(close)-1、ret_open = open/lag(close)-1（全部比值在后复权空间，卡面原文）；
+#:   is_lu = ret_close >= limit_pct - {tol}；lag 缺失（新股首日/停牌无前一交易日）与 limit_pct 缺失
+#:   （无涨跌幅限制）一律取哨兵值⇒永不判涨停，禁 inf/NULL 冒充；(日,票) 先 FINAL 去版本行。
+SQL_LIMIT_UP_PANEL = (
+    "WITH k AS ("
+    "SELECT symbol AS sym, trade_date AS d, toFloat64(close) AS c, toFloat64(open) AS o "
+    "FROM {hfq_tbl} FINAL WHERE trade_date >= '{lo}' AND trade_date <= '{hi}' AND c > 0 AND o > 0), "
+    "l AS ("
+    "SELECT symbol AS sym, trade_date AS d, toFloat64(ifNull(limit_pct, 9.9)) AS lp "
+    "FROM {lim_tbl} FINAL WHERE trade_date >= '{lo}' AND trade_date <= '{hi}'), "
+    "j AS ("
+    "SELECT k.sym AS sym, k.d AS d, k.c AS c, k.o AS o, l.lp AS lp, "
+    "lagInFrame(k.c, 1, 0) OVER (PARTITION BY k.sym ORDER BY k.d "
+    "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS lag_c "
+    "FROM k INNER JOIN l ON k.sym = l.sym AND k.d = l.d), "
+    "r AS ("
+    "SELECT sym, d, lp, if(lag_c > 0, c / lag_c - 1, -99.0) AS ret_close, "
+    "if(lag_c > 0, o / lag_c - 1, -99.0) AS ret_open FROM j), "
+    "f AS (SELECT sym, d, ret_close, ret_open, if(ret_close >= lp - {tol}, 1, 0) AS lu FROM r), "
+    "p AS ("
+    "SELECT sym, d, ret_close, ret_open, lu, "
+    "lagInFrame(lu, 1, 0) OVER (PARTITION BY sym ORDER BY d "
+    "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS lu_prev FROM f) "
+    "SELECT d, countIf(lu = 1) AS n_lu, countIf(lu_prev = 1) AS n_lu_prev, "
+    "countIf(lu = 1 AND lu_prev = 1) AS n_promo, avgIf(ret_close, lu_prev = 1) AS prem_close, "
+    "avgIf(ret_open, lu_prev = 1) AS prem_open, count() AS n_rows "
+    "FROM p GROUP BY d ORDER BY d"
+)
 
 #: 判据面键集（出分前后必须逐键内容相等；只允许 status/lineage 变化）
 JUDGMENT_KEYS = (
@@ -588,8 +617,115 @@ def op_sector_relay_retreat_ratio(card: dict, args: dict) -> tuple[pd.Series, di
     }
 
 
+_PANEL_COLS = ["d", "n_lu", "n_lu_prev", "n_promo", "prem_close", "prem_open", "n_rows"]
+
+
+def load_limit_up_panel(args: dict) -> pd.DataFrame:
+    """涨停面板底座（卡 05/06 共用一次日度聚合）：逐日出涨停家数/昨板在架家数/晋级数/两式溢价均值。
+
+    分母口径纪律（卡 06 hardest_step 原文）：den=昨日涨停家数 n_lu_prev，不是当日在市家数；
+    num 与 den 在同一次 lag 结构上分别取，避免把"晋级率"算成"涨停占比"。"""
+    from fexam.ch_data import ch_query_df
+
+    sql = SQL_LIMIT_UP_PANEL.format(
+        hfq_tbl=args["hfq_table"],
+        lim_tbl=args["limit_table"],
+        lo=args["warmup_start"],
+        hi=args["end"],
+        tol=float(args["limit_tol"]),
+    )
+    df = ch_query_df(sql)
+    df.columns = _PANEL_COLS[: len(df.columns)]
+    df["d"] = pd.to_datetime(df["d"])
+    for c in _PANEL_COLS[1:]:
+        df[c] = pd.to_numeric(df[c], errors="coerce")
+    return df.sort_values("d").set_index("d")
+
+
+def _apply_set_floor(panel: pd.DataFrame, value_col: str, min_set: int) -> tuple[pd.Series, dict]:
+    """卡面 "|S_{t-1}|<20 的日置 NaN"／"分母 <20 置 NaN" 同形闸（分母=昨板在架家数）。
+
+    停牌缺失机械计数=在册昨日涨停家数 n_lu(t-1) 减今日在架 n_lu_prev(t) 的正部之和
+    （卡 05 原文「停牌股（t 日无行）不入截面均值并在 run 附注计缺失数」）。"""
+    ser = panel[value_col].where(panel["n_lu_prev"] >= min_set)
+    miss = (panel["n_lu"].shift(1) - panel["n_lu_prev"]).clip(lower=0)
+    ev = {
+        "min_set_size": int(min_set),
+        "rows_kept": int(len(ser.dropna())),
+        "days_below_set_floor": int((panel["n_lu_prev"] < min_set).sum()),
+        "suspended_missing_symbol_days": int(miss.sum()),
+        "days_with_missing": int((miss > 0).sum()),
+        "mean_daily_limit_up": float(panel["n_lu"].mean()),
+        "max_daily_limit_up": int(panel["n_lu"].max()),
+    }
+    return ser.dropna(), ev
+
+
+def op_limit_up_premium_close_mean(card: dict, args: dict) -> tuple[pd.Series, dict]:
+    """卡 05 主信号=昨日涨停集合当日收盘溢价的截面均值 mean_{i∈S_{t-1}}(close_{i,t}/close_{i,t-1}-1)。
+
+    开盘口径 open_{i,t}/close_{i,t-1}-1 按卡面 two_form_spread 另档建档：只把统计量写进附注，
+    不占 run_card 单信号入口（卡面自记该柱"不作一票否决门柱"，且"显著低于全样本"无冻结检验量）。"""
+    panel = load_limit_up_panel(args)
+    min_set = int(args["min_set_size"])
+    ser, ev = _apply_set_floor(panel, "prem_close", min_set)
+    open_ser, _ = _apply_set_floor(panel, "prem_open", min_set)
+    ev.update(
+        signal_col="limit_up_premium_close_derived",
+        panel_rows=int(len(panel)),
+        warmup_start=str(args["warmup_start"]),
+        limit_tol=float(args["limit_tol"]),
+        open_form_days=int(len(open_ser)),
+        open_form_median=float(open_ser.median()) if len(open_ser) else float("nan"),
+        unjudged_pillar_note="开盘口径仅建档未占机判入口",
+    )
+    return ser, ev
+
+
+def promotion_rate_from_panel(panel: pd.DataFrame, min_set: int) -> tuple[pd.Series, dict]:
+    """promotion_rate_t = countIf(is_lu_t AND is_lu_{t-1}) / nullIf(countIf(is_lu_{t-1}),0)，分母 <20 置 NaN。
+
+    分母必须=昨板在架家数 n_lu_prev（卡面 hardest_step 原文：错取当日在市家数＝把晋级率算成涨停占比）。"""
+    den = panel["n_lu_prev"].where(panel["n_lu_prev"] > 0)
+    rate = (panel["n_promo"] / den).where(den >= min_set).dropna()
+    ev = {
+        "min_set_size": int(min_set),
+        "rows_kept": int(len(rate)),
+        "days_below_set_floor": int((panel["n_lu_prev"] < min_set).sum()),
+        "suspended_missing_symbol_days": int((panel["n_lu"].shift(1) - panel["n_lu_prev"]).clip(lower=0).sum()),
+        "mean_daily_limit_up": float(panel["n_lu"].mean()),
+        "max_daily_limit_up": int(panel["n_lu"].max()),
+        "den_col": "n_lu_prev（=countIf(is_lu_{t-1})，非当日在市家数）",
+    }
+    return rate, ev
+
+
+def op_promotion_rate(card: dict, args: dict) -> tuple[pd.Series, dict]:
+    """卡 06 主信号=晋级率（卡面原文式，见 promotion_rate_from_panel）。分板率 ladder 档
+    （1→2/2→3/>=3→+1）需卡 13/14 streak 串＝另一建档面，本绑定只交主信号，
+    缺档如实写进附注（未判柱清单面）。"""
+    panel = load_limit_up_panel(args)
+    rate, ev = promotion_rate_from_panel(panel, int(args["min_set_size"]))
+    ev.update(
+        signal_col="promotion_rate_derived",
+        panel_rows=int(len(panel)),
+        warmup_start=str(args["warmup_start"]),
+        limit_tol=float(args["limit_tol"]),
+        unjudged_pillar_note="分板率 ladder 档需卡 13/14 streak 串，本绑定未实现",
+    )
+    return rate, ev
+
+
 #: 算子册（每格都逐字引用卡面 signal_derivation 原文，禁自创口径；新增算子须同步测试）
 OPS: dict[str, dict] = {
+    "limit_up_premium_close_mean": {
+        "fn": op_limit_up_premium_close_mean,
+        "quote_key": "全部比值在后复权空间内计算",
+    },
+    "promotion_rate_from_limit_panel": {
+        "fn": op_promotion_rate,
+        "quote_key": "分母 <20 置 NaN",
+    },
     "macro_scissors_monthly_lag_ffill": {
         "fn": op_macro_scissors,
         "quote_key": "剪刀差",
