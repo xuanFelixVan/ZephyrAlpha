@@ -1,0 +1,94 @@
+schema_version: '1.0'
+card_id: TDM-F-C3-01/comparison/03_IS三分解与交易持仓二分
+node_id: TDM-F-C3-01
+family: comparison
+title_zh: 多维归因·IS 三分解（延迟/冲击/机会成本）与"做T vs 持仓盈亏"二分结构卡
+hypothesis: >-
+  TDM-F-C3-01 节点 algo_note_zh 正文第三句原文="加做T vs 持仓盈亏二分、IS 三分解（延迟/冲击/机会成本）"，
+  与 ai_autonomy 注 D84 的 ②③④⑤ 一起构成该引擎的结构输出承诺。同节点 02 卡只考了 ①（T+1 隔夜漂移切账
+  vs 不切账）；grep 全战役卡库 "三分解" **零命中**。即：MOD-PF-007 被节点承诺输出的另外两块结构
+  ——把总盈亏二分为"做T 交易盈亏"与"持仓盈亏"、把策略收益与理想收益的缺口（IS）三分解为
+  延迟成本/冲击成本/机会成本——从未被任何卡检验其**可加分解是否成立、各块量级多大**。
+  本卡主判据=三分解之和与实际 IS 缺口的加和误差 <= 20%（分解若无闭合性，"钱从哪赚的亏到哪了"
+  这句话就是假的）；辅判据=三块中至少一块的占比 >= 30%（若三块皆碎，则三分解是把 100% 的亏损
+  摊成三个无意义小数，应改二分或单块口径）；并检验"做T/持仓"二分的收益归因能否解释总收益 >= 95%。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 看数前冻结（裁定#501）；三块定义逐字取节点原文（延迟/冲击/机会成本），
+    延迟成本=close(t)→open(t+1)（与 02 卡切账口径同源，禁两处不同算法）；
+    窗口=fexam prereg v1 冻结窗（与 02 卡同窗）
+buckets:
+  type: sleeve_x_cost_component
+  'on': 8 sleeve（=8 板块，与 02 卡同分桶宇宙）× IS 三块成本 + 做T/持仓二分
+  min_obs_per_bucket: 60（sleeve·月观测；月度归因口径按节点"月度跑一次"钉住）
+pillars:
+  additivity_closure: 三块成本之和相对 IS 总缺口（理想组合收益−实际策略收益）的加和误差 <= 20%；
+    误差 > 20% 即判三分解不闭合（本卡最硬的一条，直接否定"回答钱亏在哪"的能力）
+  component_dominance: 三块中至少一块占 IS 缺口 >= 30%（三块皆 <20% ⇒ 三分解无判别力，应并块）
+  binary_split_closure: 做T 盈亏 + 持仓盈亏 对总已实现盈亏的解释力 >= 95%
+    （vn.py 范式二分 D50 落位的机械检验；残差 > 5% 必须单列并报告其归属）
+  brinson_consistency: 几何 Brinson 三因子加和与 total_attribution 一致（引擎 is_consistent 为真）
+    ——与 02 卡同读数为互校项，两卡须给出同一个数
+  impact_proxy_guard: 冲击成本以 volume 参与率为代理（装置无成交回报）时，代理口径与延迟成本的相关性
+    必须报告；|rho| > 0.7 判两块共线、三分解退化，须改口径而非硬报
+  opportunity_cost_def_frozen: 机会成本=被裁/未成交信号在同窗内的理想收益，定义式必须落册冻结
+    （该块最易被事后调定义做平账，挪门柱=作废）
+  oos_same_sign: IS 与 OOS 的各块占比方向同号
+pillars_numeric:
+  additivity_error_max: 0.20
+  component_share_min: 0.30
+  binary_split_explain_min: 0.95
+  brinson_consistency: true
+  impact_vs_delay_corr_max: 0.7
+  oos_same_sign: true
+target:
+  primary: IS 三分解加和闭合误差 + 最大块占比
+  secondary: 做T/持仓二分的解释力与残差归属 + 逐 sleeve 三块占比矩阵
+  note: 本卡专考"分解结构是否成立"，不考切账失真（同节点 02 卡主判据）、不考升降级线（C3-02 域）；
+    复权口径句（D84 ③）不在此立卡——RX-B 判定该判据已由 position_flow P1-01 卡覆盖，禁双计
+same_family_precedent: 同节点 02 卡（隔夜漂移切账，MOD-PF-007 已落码 BrinsonResult/is_consistent）；
+  exit_flow/TDM-X-S2 现实性税卡（X 流从执行侧算税，本卡从归因侧拆账，同一笔钱的两个视角，须互校不得重复计入 confidence）
+data_binding:
+  engine_entry: src/zephyr/pf_core/core/performance_attribution_engine.py::PerformanceAttributionEngine
+    （BrinsonResult/total_attribution/is_consistent；RX-B 承接 L6 台账读码结论）
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: close（decision price、持仓盈亏起算）, open（fill price 近似、延迟成本 = open(t+1)/close(t)−1）,
+    high/low/volume（冲击成本参与率代理、机会成本的可行性判定）
+  signal_derivation: 做T 二分=同票在短周期内（持有 <= 5 交易日且双向皆有成交）的配对盈亏，其余为持仓盈亏；
+    延迟成本=逐笔 close(t)→open(t+1) 漂移；冲击成本=min(参与率帽, 1)×(close−vwap 近似，vwap 由
+    amount/volume 日线均值近似，代理性质必须在结论中声明)；机会成本=被资金/额度/流动性裁掉的信号
+    在同窗的理想收益（定义式随卡冻结）；三块以"理想组合（信号日收盘全额成交）vs 实际策略净值"的
+    总缺口为分母归一
+  target_source: 逐 sleeve 归因 alpha 序列与组合 NAV；理想组合=纯信号日收盘建仓无约束臂
+  data_window_evidence: |-
+    命令原文（RX-B 本车道独立复测）：
+      python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; \
+      print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} \
+      WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]（close/open/high/low/volume 齐，
+    延迟与冲击两块日线可算，无断供）
+  implementation_gap: 'blocked_on_impl 子项：机会成本块要求"被裁信号"有显式留痕，现装置（allocator_shadow
+    / exit_simulator）未见未成交意图日志面；缺什么=被裁信号的落台账（symbol/意图时间/裁因）。
+    本卡主判据（加和闭合）可先用两臂差值近似构造，近似性须在结论中声明，禁当精确分解上报'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C3-01.confidence
+preregistered_by: st-nightmine-20261010-RXB
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；
+  闭合误差与块占比必须成对上报（只报占比不报闭合=选择性自证）
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

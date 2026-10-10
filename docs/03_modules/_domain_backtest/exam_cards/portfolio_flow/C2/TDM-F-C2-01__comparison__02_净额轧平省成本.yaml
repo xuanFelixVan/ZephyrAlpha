@@ -1,0 +1,57 @@
+schema_version: '1.0'
+card_id: TDM-F-C2-01/comparison/02_净额轧平省成本
+node_id: TDM-F-C2-01
+family: comparison
+title_zh: 目标聚合与净额轧平·intent netting vs 逐笔下发成本对比
+hypothesis: >-
+  同标的多 sleeve 指令按符号代数求和净额化（买 1000+卖 600=净买 400，省 600 股手续费）
+  相对逐笔独立下发，换手双边成本显著下降、且组合净敞口一致（tracking 差<阈值）；
+  成交按贡献比例分摊回各 sleeve 账本后，逐笔归因不失真（净差 vs 分摊一致性检验）。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 净额轧平三步真源=TDM-F-C2-01 节点注释（收集→符号求和→净差单发）；窗口=fexam prereg v1 冻结窗
+buckets:
+  type: overlap_bucket
+  'on': 标的跨 sleeve 重叠度分位（净差节省最大/中/无重叠）
+  min_obs_per_bucket: 60
+pillars:
+  turnover_cost_gate: 净额臂双边成本 ≤ 逐笔臂成本（重叠越大节省越多，门柱=节省比例≥0）
+  tracking_diff_max: 净额臂与逐笔臂组合净敞口日差 |t|<2（净额不改净风险方向）
+  oos_same_sign: 两臂 OOS 收益同号
+  allocation_consistency: 成交按贡献比例分摊回 sleeve 账本后合计=净额成交（归因前提）
+pillars_numeric:
+  turnover_cost_gate: 0.0
+  tracking_diff_max: 2.0
+  oos_same_sign: true
+  allocation_consistency: true
+target:
+  primary: netted_vs_gross_turnover_cost（净额 vs 逐笔双边换手成本）
+  secondary: sleeve_allocation_residual（分摊回 sleeve 账本残差）
+  note: 净额轧平主卡（MOD-POS-021，发单前价格交叉闸门防自成交；纯指令型不触碰下单接口）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C2-01.confidence
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（各 sleeve 目标仓位/成交面板）
+  signal_column: close（成本估算=|Δ仓位|×价格×双边费率；佣金+印花税+滑点口径循 fexam device）
+  signal_derivation: 多 sleeve 同标的指令按符号求和→净差单 vs 逐笔独立下发，两臂分别按费率计成本；批量窗口 1 分钟一拍防抖动
+  target_source: 组合净敞口日序列 + 双边成本；逐笔臂=对照基线
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]；MOD-POS-021 firm_risk_aggregator.py 存在
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001

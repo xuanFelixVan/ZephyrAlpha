@@ -1,0 +1,63 @@
+schema_version: '1.0'
+card_id: TDM-F-C3-04/shadow/02_四道gate过拟合防线
+node_id: TDM-F-C3-04
+family: shadow
+title_zh: 参数校准闭环·CPCV+DSR+PBO+WFE 四道 gate vs 无门禁影子对拍
+hypothesis: >-
+  归因诊断转参数调整前须过四道 gate（CPCV 防数据挖掘 + DSR deflated Sharpe 防多试次虚高 + PBO<30% 过拟合概率 +
+  参数平台期敏感度平坦 + walk-forward 效率 WFE>60% 可用/<40% 禁上线），相对不设门禁直接采纳最优参数，
+  影子系统 OOS 表现与 IS 落差更小（WFE 更高、参数更稳）——门禁应过滤掉"IS 漂亮 OOS 崩"的过拟合参数组。
+  purge 窗=持仓半衰期，embargo≥5 日（A 股 T+1+隔夜跳空）。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 四道 gate 阈值 PBO<30%/WFE>60%/<40%/embargo≥5 真源=TDM-F-C3-04 节点；WFE=OOS/IS；窗口=fexam prereg v1 冻结窗
+buckets:
+  type: gate_verdict
+  'on': 参数候选组（过四门/被任一门拦）× IS-OOS 落差档
+  min_obs_per_bucket: 20
+pillars:
+  wfe_min: 过门组 WFE（OOS Sharpe/IS Sharpe）≥ 0.6；无门禁直接最优组 WFE < 过门组（过拟合被证）
+  pbo_max: 过门组 PBO<30%（无门禁候选池 PBO 更高）
+  oos_same_sign: 过门组 OOS 与 IS 收益同号（无门禁易翻负）
+  maxdd_delta: 过门组 OOS MaxDD ≤ 无门禁组
+pillars_numeric:
+  wfe_min: 0.6
+  pbo_max: 0.30
+  oos_same_sign: true
+  maxdd_delta_max: 0.0
+target:
+  primary: gated_parameter_wfe（过门参数组 walk-forward 效率）
+  secondary: pbo_distribution（过拟合概率分布，过门 vs 无门禁）
+  note: 参数校准闭环主卡（MOD-BT-001 WalkForwardAnalyzer split/whites_reality_check；DSR 只做门禁不做优化目标）
+status: preregistered
+blocked_on_impl: >-
+  红节点（F 流空白之二：G04 校准机制在——核对/建议工单已落码 tracker#48——但闭环未转起来）；
+  walk_forward.py 存在（ls 确认，split_anchored/expanding + whites_reality_check 可用），
+  但归因诊断→参数工单→重跑→verified 端到端闭环未接线；本卡需闭环编排才可跑
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C3-04.confidence
+data_binding:
+  engine_entry: src/zephyr/backtest/core/walk_forward.py::WalkForwardAnalyzer（split_*/whites_reality_check/_stationary_block_bootstrap）
+  signal_table: c1_market.kline_daily_hfq（sleeve/策略净值→walk-forward 重训窗切分）
+  signal_column: close（→参数组在各 IS 子窗 IS/OOS Sharpe→WFE）
+  signal_derivation: 对候选参数组跑 anchored/expanding walk-forward，算 WFE=OOS/IS + PBO(CPCV) + DSR；过四门 vs 直接最优两组对比；purge=持仓半衰期, embargo≥5 日
+  target_source: 各参数组 OOS/IS Sharpe 落差；无门禁=对照基线
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]（近 9 年窗支持多次 walk-forward 切分，embargo 后有足量样本）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；HMM 用 filtered 非 smoothed+滚动分位 trailing-only（PIT M-42/M-46）
+oos_window_ref: *id001

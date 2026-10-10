@@ -1,0 +1,64 @@
+schema_version: '1.0'
+card_id: TDM-F-C1-01/shadow/02_激活集路由影子
+node_id: TDM-F-C1-01
+family: shadow
+title_zh: 策略路由判定·体制格子激活集 vs 全策略可用影子对拍
+hypothesis: >-
+  按当前体制格子（state_matrix cell）+fitness 过滤出的当日激活策略集，其组合 OOS Sharpe ≥
+  全策略可用（不路由）基线，且 OOS MaxDD 不劣化：路由判定应剔除该体制下不可用策略，减少错配回撤。
+  X-R1 熔断触发时激活集清空=刹车接线，熔断日组合应即时降仓（不新增风险）。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 窗口=fexam prereg v1 冻结窗；state_matrix 格子为路由查表真源
+buckets:
+  type: regime_cell
+  'on': 体制格子（ranging_low_vol/ranging_mid_vol/trend_up/trend_down）× 激活/非激活
+  min_obs_per_bucket: 60
+pillars:
+  sharpe_vs_baseline: 路由臂 OOS Sharpe ≥ 全策略可用臂（=基准 v0）
+  maxdd_delta: 路由臂 OOS MaxDD ≤ 全策略臂 +2pp（剔除错配应减回撤）
+  oos_same_sign: 路由臂与全策略臂 OOS 收益同号
+  regime_specificity: 每格子里激活集对 OOS 贡献同号于该格子专属（条件稳定性）
+  tracking_diff_max: 影子臂与实盘臂日收益差 |t|<2
+pillars_numeric:
+  sharpe_vs_baseline_min: 1.0
+  maxdd_delta_max: 0.02
+  oos_same_sign: true
+  tracking_diff_max: 2.0
+target:
+  primary: routed_portfolio_oos_sharpe（当日激活集加权组合 OOS Sharpe）
+  secondary: killswitch_empty_set_response（X-R1 熔断清空日→降仓响应）
+  note: 策略路由判定主卡（D125）
+status: preregistered
+blocked_on_impl: >-
+  module_ref: null（red_reason=by_ref_design）——state_matrix 路由查表体与 fitness 融合无落码件，
+  本卡影子对拍需路由判定引擎出激活集才可跑；先出卡与判据，实现随装配排期
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C1-01.confidence
+data_binding:
+  signal_table: c1_backtest.regime_snapshot_history（体制态，路由输入）+ c1_market.kline_index（代理指数）
+  signal_column: p_r1..p_r4 argmax→四态标签（use_hmm=True 显式启用；未过考默认 SMA200）
+  signal_derivation: 体制格子→state_matrix cell 查可用策略集→激活集权重(由 C1-02 分配)→组合 NAV；对照臂=全 sleeve 可用不路由
+  target_source: kline_index 000300 close→next_day_return；全策略臂=基准 v0(fw-tdm-current, Sharpe 0.963)
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df; print(ch_query_df(\"SELECT min(trade_date),max(trade_date),count() FROM c1_backtest.regime_snapshot_history\").values.tolist())"
+    实测：[['2019-04-01','2026-10-09','3635']]（HMM 四态快照，IS 段 2019-04 前用 SMA200 fallback 补洞）
+    代理指数：c1_market.kline_index 000300 实测 [['2005-01-04','2026-10-09','5284']]
+    断言依据：library.lookup state "策略路由 state_matrix" 见台账摘录（路由体未落码=by_ref_design）；不阻卡（缺实现标 blocked_on_impl）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+owner_gate_required: false
+oos_window_ref: *id001

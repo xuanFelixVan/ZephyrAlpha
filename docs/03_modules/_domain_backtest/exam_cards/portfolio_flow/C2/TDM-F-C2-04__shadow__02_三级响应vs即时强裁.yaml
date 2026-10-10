@@ -1,0 +1,62 @@
+schema_version: '1.0'
+card_id: TDM-F-C2-04/shadow/02_三级响应vs即时强裁
+node_id: TDM-F-C2-04
+family: shadow
+title_zh: budget 变动三级升级·分层平稳过渡 vs 即时全额强裁影子对拍
+hypothesis: >-
+  预算变动按 Tier1（降<10% 封锁新仓自然收敛）/Tier2（降 10-25% 各 sleeve 差异化窗口自主收敛：打板 2 日/事件 3 日/多因子 4 日）/
+  Tier3（降>25% 按比例强裁）分层响应，相对即时全额强裁，实现换手成本更低、冲击成本更低、净值回撤相近或更优；
+  日内<5% 忽略、连降>10% 强触发的防抖应滤掉假信号（滤除后总调整次数显著减少而效果不减）。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: Tier 阈值 10%/25% 与差异化窗口真源=TDM-F-C2-04 节点；防抖双层（日内<5% 忽略/连降>10% 强触/上调豁免）
+buckets:
+  type: budget_change_tier
+  'on': Tier1/Tier2/Tier3 事件 × 臂（分层过渡 vs 即时强裁）
+  min_obs_per_bucket: 3
+pillars:
+  maxdd_delta: 分层臂 MaxDD ≤ 即时强裁臂 +1pp（防踩踏，不应更差）
+  turnover_cost_gate: 分层臂双边换手成本 < 即时强裁臂（自主收敛窗摊薄）
+  oos_same_sign: 两臂 OOS 收益同号
+  tracking_diff_max: 影子分层臂与实盘臂日收益差 |t|<2
+pillars_numeric:
+  maxdd_delta_max: 0.01
+  turnover_cost_gate: 1.0
+  oos_same_sign: true
+  tracking_diff_max: 2.0
+  sharpe_vs_baseline_min: 0.95
+target:
+  primary: tiered_adjustment_turnover_and_dd（分层响应 vs 强裁的换手成本+最大回撤）
+  secondary: debounce_filter_reduction（防抖滤除的调整次数占比）
+  note: budget 变动三级响应主卡（MOD-POS-022，纯指令型不触碰下单接口）
+status: preregistered
+blocked_on_impl: >-
+  已知缺口=BudgetChanged 事件链未接线（33 号复核注记，随装配排期，真源=TDM-F-C2-04 节点注释）——
+  无事件驱动源则三级响应臂无法在影子系统触发；本卡先冻结判据，接线后开考
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C2-04.confidence
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（净值→预算变动事件合成：模拟降档序列驱动 Tier 判定）
+  signal_column: close（组合净值回撤/预算重估→触发 Tier 档；差异化窗口按 sleeve 类型）
+  signal_derivation: 预算降档事件→按 Tier 分层生成减仓指令（分层臂）vs 一次性全额按比例强裁臂；各自跑 NAV；强裁基数=可卖口径（锁死/停牌剔除）
+  target_source: 组合 NAV 日收益；即时强裁臂=对照基线
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]；MOD-POS-022 budget_change_handler.py 存在但 BudgetChanged 事件链未接线（blocked_on_impl）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+owner_gate_required: false
+oos_window_ref: *id001

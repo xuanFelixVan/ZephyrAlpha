@@ -1,0 +1,65 @@
+schema_version: '1.0'
+card_id: TDM-F-C1-03/shadow/02_双向渐变vs硬切
+node_id: TDM-F-C1-03
+family: shadow
+title_zh: 灰度切换管理·双向 weight_band 爬坡 vs 硬切影子对拍
+hypothesis: >-
+  策略 A→B 切换按双向 weight_band 爬坡（步长上限 step_cap 0.2/日）渐变，切换期组合净值波动
+  ≤ 硬切（A 一步清零同时 B 一步满配）：渐变应削平切换日换手冲击与滑点，OOS MaxDD 不劣于硬切臂，
+  切换期双边成本显著低于硬切单点冲击成本。紧急态（X-R1/RK-41）例外允许硬切。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 窗口=fexam prereg v1 冻结窗；step_cap=0.2 与 PA-015 平滑过渡判例真源=TDM-F-C1-03 节点
+buckets:
+  type: switch_event
+  'on': 每次 A→B 切换事件（渐变臂 vs 硬切臂）
+  min_obs_per_bucket: 5
+pillars:
+  maxdd_delta: 渐变臂切换期 MaxDD ≤ 硬切臂 +1pp
+  turnover_cost_gate: 渐变臂切换双边成本 ≤ 硬切臂成本（爬坡摊薄冲击）
+  sharpe_vs_baseline: 渐变臂 OOS Sharpe ≥ 硬切臂
+  oos_same_sign: 渐变臂与硬切臂 OOS 收益同号
+  tracking_diff_max: 影子渐变臂与实盘臂日收益差 |t|<2
+pillars_numeric:
+  sharpe_vs_baseline_min: 1.0
+  maxdd_delta_max: 0.01
+  turnover_cost_gate: 1.0
+  oos_same_sign: true
+  tracking_diff_max: 2.0
+target:
+  primary: switch_period_nav_volatility（切换期净值波动/回撤）
+  secondary: switch_turnover_cost（切换期双边换手成本）
+  note: 灰度切换主卡（D125）
+status: preregistered
+blocked_on_impl: >-
+  module_ref: null（red_reason=by_ref_design）——双向 weight_band 爬坡器无落码件（SIG-131/MOD-PA-015 挂载但渐变切换编排未接线）；
+  本卡需切换事件生成器+爬坡权重序列才可跑
+owner_gate_required: true
+owner_gate_reason: 灰度切换=策略间 production 流转，触根宪法 §5 Owner 保留面（资金与实盘交易/交易核心域 production 流转）；本车道只出卡与判据，禁执行任何晋升或切换动作
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C1-03.confidence
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（A/B 两策略 sleeve NAV 输入面板）
+  signal_column: close（→两 sleeve 各自信号/净值，构建渐变权重 w(t)=clamp(step_cap) 爬坡序列）
+  signal_derivation: 切换事件日 d0 起 B 权重从 0 以步长≤0.2/日爬坡、A 对称退坡至稳态；对照臂=d0 硬切（A 清零/B 满配）；两臂喂 DefaultBacktestEngine 出 NAV
+  target_source: 组合 NAV 切换期日收益；硬切臂=对照基线
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]
+    负存在断言证据指针：python -m zephyr.library.lookup state "灰度切换 weight_band" → 零命中（馆查零命中≠不存在，场外区；降级手工阶梯=读 TDM-F-C1-03 节点 module_ref:null/red_reason:by_ref_design 直证切换器未落码）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001

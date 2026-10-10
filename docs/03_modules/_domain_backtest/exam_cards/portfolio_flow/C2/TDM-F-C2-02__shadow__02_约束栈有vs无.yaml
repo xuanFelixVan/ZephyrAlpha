@@ -1,0 +1,61 @@
+schema_version: '1.0'
+card_id: TDM-F-C2/shadow/02_约束栈有vs无
+node_id: TDM-F-C2-02
+family: shadow
+title_zh: 组合约束栈·六层顺序过栈 vs 无约束影子对拍
+hypothesis: >-
+  组合净头寸顺序过六层约束栈（总仓位上限→回撤限额分级压缩→波动率目标→集中度单票 20%→流动性 3 日可退出→相关性 cluster 5%）
+  相对不过栈裸聚合，OOS MaxDD 显著下降且 OOS Sharpe 不劣化；约束栈应主要削尾部（回撤限额最优先，硬约束容忍暂破期望目标）。
+  过哪层裁哪层，按非策略仓优先裁。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 约束栈顺序定稿 D76（真源=TDM-F-C2-02 节点注释）；窗口=fexam prereg v1 冻结窗
+buckets:
+  type: constraint_layer_hit
+  'on': 六层约束命中档（哪层裁/未过栈）× 牛/熊段
+  min_obs_per_bucket: 60
+pillars:
+  maxdd_delta: 过栈臂 OOS MaxDD ≤ 裸聚合臂 −2pp（约束削尾部，应改善）
+  sharpe_vs_baseline: 过栈臂 OOS Sharpe ≥ 裸聚合臂×0.95
+  turnover_cost_gate: 约束触发调仓双边成本 < 回撤改善收益的 50%
+  oos_same_sign: 过栈臂与裸聚合臂 OOS 收益同号
+  tracking_diff_max: 影子臂与实盘臂日收益差 |t|<2
+pillars_numeric:
+  sharpe_vs_baseline_min: 0.95
+  maxdd_delta_max: 0.02
+  turnover_cost_gate: 0.5
+  oos_same_sign: true
+  tracking_diff_max: 2.0
+target:
+  primary: constrained_portfolio_oos_maxdd（过栈组合 OOS 最大回撤）
+  secondary: per_layer_trim_contribution（各约束层裁剪贡献分解）
+  note: 组合约束栈主卡（MOD-POS-021，程序化查表不进信号层）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C2-02.confidence
+data_binding:
+  engine_entry: 复用 allocator_shadow 同窗组合 NAV 管线（DefaultBacktestEngine MOD-BT-001），叠约束栈裁剪 vs 不叠
+  signal_table: c1_market.kline_daily_hfq（持仓面板 close→仓位/波动/集中度输入）
+  signal_column: close, volume（流动性 3 日可退出用 volume；单票集中度用权重）
+  signal_derivation: 各 sleeve 净指令→六层约束顺序裁剪（post_kelly_clip 按比例削，非策略优先级截断）→净组合 NAV；对照臂=裸聚合不过栈；regime 走 sma200_default
+  target_source: 组合 NAV 日收益；裸聚合臂=对照基线；基准 v0=fw-tdm-current Sharpe 0.963
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]（close/volume 面板齐；MOD-POS-021 firm_risk_aggregator.py 存在）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+owner_gate_required: false
+oos_window_ref: *id001

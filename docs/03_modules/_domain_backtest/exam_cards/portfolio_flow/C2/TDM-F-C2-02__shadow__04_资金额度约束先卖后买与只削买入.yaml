@@ -1,0 +1,94 @@
+schema_version: '1.0'
+card_id: TDM-F-C2-02/shadow/04_资金额度约束先卖后买与只削买入
+node_id: TDM-F-C2-02
+family: shadow
+title_zh: 净指令下发前资金状态校验·先卖后买与"额度不足只削买入不削卖出"三判据影子对拍
+hypothesis: >-
+  TDM-F-C2-02 节点 ai_autonomy 注 D85 原文写死一组资金约束判据："净指令下发前资金状态校验——本地维护
+  可用/可取/冻结三态模拟账本与券商镜像；聚合产物**先卖后买**排序；买入额度=期初可用+当日计划卖回款−
+  在途买单冻结−预扣费；**额度不足只按比例削买入不削卖出**；与现金 sleeve 逆回购互斥"，
+  并由 D101 终裁钉住"卖出资金 T+0 回转可用；当日卖回款作买入额度以成交回报为准释放，计划不算数防透支"。
+  全战役卡库 grep "先卖后买" **零命中**、无任何卡考资金态——同节点 02 卡考的是持仓侧六层约束栈，
+  资金侧约束完全未立考。本卡三判据：①先卖后买 vs 无序执行的额度占用差（错失买入笔次与其未捕获收益）；
+  ②"只削买入不削卖出" vs "买卖等比同削"的净值与回撤差；③"卖回款以成交回报为准（计划不算数）"
+  vs "按计划额度放行"的透支率与透支成本。三判据任一为零差，对应那句节点原话应降级为运维习惯而非约束。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 看数前冻结（裁定#501）；额度公式与"计划不算数"口径逐字取自 D85/D101 原文；
+    时间口径按 D106 全交易日化（月=20 交易日滚动窗）；窗口=fexam prereg v1 冻结窗（与同节点 02/03 卡同窗）
+buckets:
+  type: cash_constraint_arm
+  'on': 三组对照各两臂（先卖后买 vs 无序；只削买入 vs 买卖同削；成交回报为准 vs 计划额度）
+    × 额度紧张日/宽裕日分层（紧张=当日买入需求/可用额度 > 1）
+  min_obs_per_bucket: 60（额度紧张日须单独成桶且不得与宽裕日合池——合池会把约束的效应摊薄到看不见）
+pillars:
+  ordering_gain: 先卖后买臂的"因额度不足被裁掉的买入笔次"相对无序臂下降 >= 30%，
+    且被释放笔次的未捕获收益（错失机会成本）中位 >= 0
+  buy_only_clip_cost: 判据"只削买入不削卖出"臂相对"买卖等比同削"臂的 OOS MaxDD 不劣化（<= +1pp）
+    且年化收益差 >= 0（考该规则是否为免费的正确姿势，还是要付代价的教条）
+  overdraft_guard: 以成交回报为准臂的透支率必须 = 0（结构性保证）；按计划额度臂的透支率与
+    透支成本（被迫回滚笔次的执行价差）必须报告；两臂收益差与透支成本的净值即为"计划不算数"这句的定价
+  tight_day_amplification: 额度紧张日分层下三项差的绝对值 >= 全窗平均的 1.5 倍
+    （资金约束只在紧的时候咬合——全窗合池报零差=假阴性，本卡最重要防自欺门柱）
+  repo_exclusion: 与现金 sleeve 逆回购互斥臂的现金闲置天数与收益机会成本须报告（互斥的代价量级）
+  turnover_cost_gate: 各臂换手双边成本计入净值后排序稳定
+  oos_same_sign: 每对照组两臂 OOS 收益同号
+pillars_numeric:
+  ordering_clip_reduction_min: 0.30
+  buy_only_clip_maxdd_worsen_max_pp: 1.0
+  buy_only_clip_return_delta_min: 0.0
+  overdraft_rate_plan_arm_report_required: true
+  tight_day_amplification_min: 1.5
+  oos_same_sign: true
+target:
+  primary: 三组对照的臂间差（被裁买入笔次差 / 净值与回撤差 / 透支成本）
+  secondary: 额度紧张日分层下的差值放大倍数 + 逆回购互斥的现金闲置成本
+  note: 本卡考资金侧约束的定价，与同节点 02 卡（持仓侧六层栈）、03 卡（裁谁优先）三卡分面不重复计
+same_family_precedent: 同节点 02 卡（约束栈有 vs 无）与本车道新增 03 卡（裁剪优先级）；
+  exit_flow/TDM-X-S2 的"执行约束层现实性税"总账卡（X 流考执行侧税，本卡考资金侧税，跨流不并卡）
+data_binding:
+  engine_entry: 复用 allocator_shadow 同窗组合 NAV 管线（DefaultBacktestEngine MOD-BT-001），
+    在净指令下发前挂资金账本层（三态：可用/可取/冻结 + 在途，D58/D101 口径）
+  signal_table: c1_market.kline_daily_hfq + c1_market.kline_index
+  signal_column: close（净值与权重）, volume（成交额上限→卖出可变现性）, open（执行价口径，次日开盘成交）
+  signal_derivation: 逐日按净指令生成买卖清单→资金账本：买入可用=期初可用+当日**已成交**卖回款−在途买单冻结−预扣费；
+    先卖后买臂在清单排序上强制卖出段在前；额度不足时按臂定义裁剪（只削买入 / 买卖等比）；
+    预扣费口径逐字复用 COMMISSION_RATE 双边（与持仓侧卡同成本，禁自调）；
+    现金 sleeve 逆回购臂：当日拟买入资金不得先做逆回购（互斥开关）
+  target_source: 组合 NAV 日收益（含资金层的现金利息 0 近似，GC001 面属 blocked_on_data，见 01_mining_brief
+    与 TDM-F-C1 预备金卡，本卡不代考）；基准 v0=fw-tdm-current Sharpe 0.963
+  implementation_gap: 'blocked_on_impl: 资金三态账本与券商镜像的模拟件在回测侧未见
+    （本车道未读码确认存在可注入的资金约束开关；MOD-POS-021 是持仓侧聚合件，其是否承担资金校验未经证实）。
+    缺什么=日频可注入的资金账本层（可用/可取/冻结/在途四态 + 先卖后买排序钩子）；
+    未落地前三判据不可执行但判据面已冻结，禁以"跑不了"改判本节点枯竭'
+  data_window_evidence: |-
+    命令原文（RX-B 本车道独立复测）：
+      python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; \
+      print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} \
+      WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+      ls scripts/backtest/fexam/allocator_shadow.py scripts/backtest/fexam/exit_sim/exit_simulator.py
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]（close/volume/open 面板齐）；两件装置文件均存在
+    真实成交流水面阻断（承本车道 X-S2-02/04 卡同项实测）：c1_backtest.sim_trade_log 仅
+    2026-07-17..2026-10-09 / rows=84 / uniq(run_id)=49 ⇒ 资金态不得用真实流水校验，改由装置账本内建模拟并披露
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C2-02.confidence
+preregistered_by: st-nightmine-20261010-RXB
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；
+  额度紧张日必须单列成桶（合池摊薄=本卡唯一被允许的假阴性来源）
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

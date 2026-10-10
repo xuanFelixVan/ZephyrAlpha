@@ -1,0 +1,65 @@
+schema_version: '1.0'
+card_id: TDM-F-C1-02/shadow/02_三层栈冠军挑战
+node_id: TDM-F-C1-02
+family: shadow
+title_zh: 权重分配·三层栈冠军 vs 四挑战者影子考（allocator_shadow 五套同窗对拍）
+hypothesis: >-
+  冠军三层栈（0.5*等权+0.3*逆波+0.2*动量倾斜，RK-08 地板≥0+SIG-131 ±50% 钳制）在同窗同合成信号下
+  不劣于任一单算法挑战者（等权/逆波 solo/体制倾斜/钳制 solo）：champion 的 OOS Sharpe≥挑战者集合中位数，
+  且配对日收益差年化不显著为负（MOD-PF-008 序贯证据量，只报证据不判终胜负）。
+  实盘照旧走冠军，影子系统同窗并行自算，日终对拍。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 窗口取 fexam prereg v1 冻结窗（WINDOW_IS/WINDOW_HOLDOUT），与批2/批4 同窗；事后挪门柱=作废（G4-5）
+buckets:
+  type: allocator_scheme
+  'on': 五套分配器（ALC-THREELAYER/EQUAL/RK08/PA015/SIG131）
+  min_obs_per_bucket: 250
+pillars:
+  sharpe_vs_baseline: champion OOS Sharpe ≥ 各 challenger 集合中位数且 ≥ 基准 v0(fw-tdm-current)×0.95
+  maxdd_delta: champion OOS MaxDD 不比最佳 challenger 劣 >3pp
+  turnover_cost_gate: 五套换手双边成本差异计入净值后仍保持排序稳定
+  oos_same_sign: champion 与基准 v0 的 OOS 收益同号
+  tracking_diff: 影子 champion 日收益与实盘 champion 日收益差 |t|<2（日终对拍）
+  evidence_note: 只报当前证据量（配对 t/年化差），不判终胜负（MOD-PF-008 序贯统计口径）
+pillars_numeric:
+  sharpe_vs_baseline_min: 0.95
+  maxdd_delta_max: 0.03
+  turnover_cost_gate: 0.0
+  oos_same_sign: true
+  tracking_diff_max: 2.0
+target:
+  primary: portfolio_daily_nav_return（组合日净值收益，engine.last_portfolio.nav_series）
+  secondary: oos_sharpe / oos_max_drawdown / ann_diff_vs_champion（allocator_shadow_report_v1.md 对比表）
+  note: 冠军-挑战者分配器治理主卡（D125 Owner 2026-10-05 裁定：在位=三层栈，影子=单算法/集成平均，PF-008 序贯晋升）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C1-02.confidence
+data_binding:
+  engine_entry: scripts/backtest/fexam/allocator_shadow.py::run_shadow(roster, out_path, factor_book_path, session_id)
+  engine_produce: out_path=allocator_shadow_report_v1.yaml(doc_type=fexam_allocator_shadow) + 同名 .md（五套 IS/OOS Sharpe/MaxDD/total_return 表 + _evidence_report 配对 t）
+  signal_table: c1_market.kline_daily_hfq（value_panel=各合成列均值面板；close 面板经 ch_data.load_close 读）
+  signal_column: 合成信号列经 roster.indicator bucket=ch_backed 选列，前 24 列（_pick_composite_columns，prereg 冻结 cap）
+  signal_derivation: 月频 top_n=20 等权底仓（monthly_topn_signals）→五套权重变换（three_layer_weights/pa015_weights/clamp/w_inverse_vol），DefaultBacktestEngine(MOD-BT-001) 逐日跑 NAV；regime 默认 SMA200 帘子（regime_series use_hmm=False→sma200_default）
+  target_source: 组合 NAV 日收益（nav.pct_change）；基准 v0=fw-tdm-current 静态权重 Sharpe 0.963（裁定 D8 版本化）
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]（后复权日线面板，IS+OOS 全覆盖，5822 标的）
+    注意：kline_daily_hfq 无 period 列（加 period='daily' 过滤报 404），load_panel 已按缺 period 处理
+    断言依据：allocator_shadow.py 已存在（git ls-files 命中），五套影子考基建真实；allocator_shadow_report_v1.yaml/.md 尚未产出（本卡为预注册，未开考）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；只出卡不执行任何晋升/切换（灰度/晋升触 Owner，见台账叫醒项）
+oos_window_ref: *id001

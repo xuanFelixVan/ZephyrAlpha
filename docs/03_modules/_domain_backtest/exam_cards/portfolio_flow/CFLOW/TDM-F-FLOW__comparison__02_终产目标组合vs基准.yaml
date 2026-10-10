@@ -1,0 +1,64 @@
+schema_version: '1.0'
+card_id: TDM-F-FLOW/comparison/02_终产目标组合vs基准
+node_id: TDM-F-FLOW
+family: comparison
+title_zh: 输出组合信号·F 流终产目标权重 vs 静态基准 v0 全链净效果
+hypothesis: >-
+  portfolio_flow 全流终端产出（预算切分 C1→约束聚合 C2→归因调权 C3 合成的最终目标组合权重）
+  相对静态基准 v0（fw-tdm-current 静态权重），OOS Sharpe 提升、MaxDD 不劣化、换手成本可接受——
+  这是整条 F 流的端到端净效果总考（各子环节卡是分解，本卡是全链）；
+  若全链不优于静态基准，则组合层当前增益为零或为负（诚实检验）。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 全流终端结构真源=TDM-F-FLOW 节点；窗口=fexam prereg v1 冻结窗，与批2/批4 同窗
+buckets:
+  type: end_to_end
+  'on': 全链 F 流输出臂 vs 静态基准 v0 臂
+  min_obs_per_bucket: 60
+pillars:
+  sharpe_vs_baseline: F 流臂 OOS Sharpe ≥ 静态基准 v0（0.963）
+  maxdd_delta: F 流臂 OOS MaxDD ≤ 静态基准 v0
+  turnover_cost_gate: F 流全链换手双边成本 < 净改善（否则负 alpha 于成本）
+  oos_same_sign: F 流臂与基准 v0 OOS 收益同号
+  tracking_diff_max: 影子 F 流臂与实盘臂日收益差 |t|<2（日终对拍）
+pillars_numeric:
+  sharpe_vs_baseline_min: 1.0
+  maxdd_delta_max: 0.0
+  turnover_cost_gate: 1.0
+  oos_same_sign: true
+  tracking_diff_max: 2.0
+target:
+  primary: full_flow_portfolio_oos_sharpe（全流终产组合 OOS Sharpe vs 基准 v0）
+  secondary: full_flow_maxdd_and_turnover（全流 MaxDD/换手成本）
+  note: portfolio_flow 终端聚合点全链净效果卡（挂载 STR-MULTIFACTOR-098/099 双窗及格但 BH-FDR 未过，candidate 留观——本卡不判其上线）
+status: preregistered
+blocked_on_impl: >-
+  module_ref: 空（red_reason=terminal）——全流终端聚合器为结构指向件（"只承载结构与指向，不写机制不存实时数据"），
+  端到端全链影子考需 C1/C2/C3 各环接线后方可串；当前可跑=allocator_shadow 五套分配器段（C1-02 卡），全链待装配
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-FLOW.confidence
+data_binding:
+  engine_entry: scripts/backtest/fexam/allocator_shadow.py::run_shadow（当前 C1 分配器段真实）+ C2/C3 编排件（待接，串成全链）
+  signal_table: c1_market.kline_daily_hfq（全链组合 NAV 底料，value_panel/close）
+  signal_column: close（→C1 预算带→C2 聚合约束→C3 归因调权→终产目标权重→NAV）
+  signal_derivation: 全链 F 流目标权重合成臂 vs 静态基准 v0 权重臂；两臂喂 DefaultBacktestEngine 同窗对拍；regime=sma200_default
+  target_source: 组合 NAV 日收益；基准 v0=fw-tdm-current 静态权重 Sharpe 0.963（裁定 D8 版本化）
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]；allocator_shadow 分配器段真实（读码确认），全链编排待装配（blocked_on_impl）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；只出卡不判挂载策略上线（BH-FDR 未过，candidate 留观）
+oos_window_ref: *id001

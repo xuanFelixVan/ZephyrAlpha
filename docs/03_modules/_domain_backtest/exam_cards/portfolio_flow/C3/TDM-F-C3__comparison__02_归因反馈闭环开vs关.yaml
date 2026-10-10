@@ -1,0 +1,61 @@
+schema_version: '1.0'
+card_id: TDM-F-C3/comparison/02_归因反馈闭环开vs关
+node_id: TDM-F-C3
+family: comparison
+title_zh: 绩效归因反馈·自我进化闭环开环 vs 归因不回流（不倾斜）对比
+hypothesis: >-
+  归因反馈闭环（多维归因→升降级评审→权重调权→参数校准→传感器可靠度反馈 L1，赚的加码亏的减码凭数据）
+  全开相对归因只出报告不回流权重（关环），OOS Sharpe 提升且长期 MaxDD 收敛——
+  系统自我进化发动机的净贡献应为正；关环臂即静态基准 v0。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 闭环五路分发真源=TDM-F-C3 节点 algo_note_zh；窗口=fexam prereg v1 冻结窗；子路分属 C3-01..05
+buckets:
+  type: feedback_path
+  'on': 归因分发四路（升降级/调权/校准/可靠度）开 vs 关
+  min_obs_per_bucket: 6
+pillars:
+  sharpe_vs_baseline: 开环臂 OOS Sharpe ≥ 关环臂（基准 v0）×1.0
+  maxdd_delta: 开环臂长期 OOS MaxDD ≤ 关环臂
+  turnover_cost_gate: 反馈调权换手成本 < 归因带来的改善（否则反馈失效退化）
+  oos_same_sign: 开环臂与关环臂 OOS 收益同号
+pillars_numeric:
+  sharpe_vs_baseline_min: 1.0
+  maxdd_delta_max: 0.0
+  turnover_cost_gate: 0.5
+  oos_same_sign: true
+target:
+  primary: closed_loop_oos_sharpe（归因反馈闭环组合 OOS Sharpe）
+  secondary: loop_turnover_net_gain（扣反馈调权成本后净增益）
+  note: 绩效归因反馈父卡（系统自我进化闭环总检验；子路见 C3-01/02/03/04/05 各卡）
+status: preregistered
+blocked_on_impl: >-
+  module_ref: 空（red_reason=structural）——归因反馈编排（升降级/调权/校准/可靠度四路分发调度）端到端未接线，
+  子件多为名义/纯库（详见 C3-03/C3-04/C3-05 blocked_on_impl）；本卡需闭环编排才可跑
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C3.confidence
+data_binding:
+  engine_entry: 组合归因引擎 src/zephyr/pf_core/core/performance_attribution_engine.py（MOD-PF-007 已落码，出归因）+ 调权/评审编排件（未接线）
+  signal_table: c1_market.kline_daily_hfq（sleeve NAV→归因→反馈权重→组合 NAV）
+  signal_column: close（→sleeve 收益→归因分档→反馈改权重）
+  signal_derivation: 开环臂=月度用归因结果调 sleeve 权重(加码赚/减码亏)+升降级；关环臂=归因出报告但权重恒 static；两臂对拍
+  target_source: 组合 NAV 日收益；关环臂=基准 v0(fw-tdm-current, Sharpe 0.963)
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]；MOD-PF-007 归因件存在（ls 确认），闭环编排件未落地（blocked_on_impl）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001

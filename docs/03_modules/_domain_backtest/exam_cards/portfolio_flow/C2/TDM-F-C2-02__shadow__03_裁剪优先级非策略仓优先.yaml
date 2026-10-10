@@ -1,0 +1,83 @@
+schema_version: '1.0'
+card_id: TDM-F-C2-02/shadow/03_裁剪优先级非策略仓优先
+node_id: TDM-F-C2-02
+family: shadow
+title_zh: 组合约束栈·"按非策略仓优先裁" vs "等比例齐裁"双臂对拍
+hypothesis: >-
+  TDM-F-C2-02 节点 algo_note_zh 第二句原文="过哪层裁哪层，按非策略仓优先裁"。同节点 02 卡把六层约束栈
+  作为**整体**考"有栈 vs 无栈"，其 buckets 写的是"哪层裁/未过栈"，"非策略仓优先"这一条**裁谁**的判据
+  只在 signal_derivation 里作为实现细节被提到（post_kelly_clip 非策略优先级截断），从未成为被检验的臂。
+  本卡把它提为独立双臂：同等裁剪量下，A 臂=优先裁非策略仓（策略 sleeve 尽量保留），
+  B 臂=按权重等比例齐裁；判据=A 臂的组合 OOS 收益与 Sharpe 相对 B 臂的差，以及策略 sleeve 的
+  归因 alpha 被约束层侵蚀的比例。A 臂无增益 ⇒"非策略仓优先"应退役为无差异默认，
+  且约束栈与归因层（C3-01 的 sleeve 考核）之间的保护性耦合不成立。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 看数前冻结（裁定#501）；六层顺序与阈值逐字复用节点 D76 定稿
+    （总仓位→回撤限额→波动率目标→集中度单票 20%→流动性 3 日可退出→相关性 cluster 5%）；
+    窗口=fexam prereg v1 冻结窗（与同节点 02 卡同窗）
+buckets:
+  type: trim_priority_arm
+  'on': A 臂=非策略仓优先裁 / B 臂=等比例齐裁；再按触发裁剪的约束层（六层）分层报各层的裁量归属
+  min_obs_per_bucket: 60（裁剪事件日）
+pillars:
+  equal_trim_quantity_guard: 两臂在每一触发日的**总裁剪量必须相等**（否则比的是裁多少而非裁谁，
+    本卡作废）；差值 > 0.5% 权重即判实验设计缺陷
+  strategy_alpha_protection: A 臂相对 B 臂，被裁掉的策略 sleeve 权重占比下降 >= 20%
+    （"优先裁非策略仓"的直接机械后果，必须可观测到，否则该规则形同虚设）
+  nav_gain: A 臂 OOS Sharpe >= B 臂且年化收益差 >= 0（碰钱面取严：只要不劣即算该规则无罪）
+  attribution_leakage: A 臂下 sleeve 归因 alpha 被约束层侵蚀量（约束改写前后同 sleeve 归因差）
+    中位 <= B 臂的 50%；该读数是"程序化查表不进信号层"这句自陈的真实检验
+  turnover_cost_gate: 两臂换手双边成本计入净值后排序稳定（裁剪优先级不得靠省成本取胜）
+  oos_same_sign: A/B 臂 OOS 收益同号
+pillars_numeric:
+  total_trim_abs_diff_max: 0.005
+  strategy_trim_reduction_min: 0.20
+  sharpe_delta_min: 0.0
+  attribution_leakage_ratio_max: 0.5
+  oos_same_sign: true
+target:
+  primary: A 臂 vs B 臂的 OOS Sharpe 差与被裁策略 sleeve 权重占比差
+  secondary: 各约束层裁量归属分解 + 归因侵蚀量
+  note: 本卡考"裁谁"，不考"过不过栈"（后者是同节点 02 卡主判据）；亦不考相关性层本身（C2-03 域）
+same_family_precedent: 同节点 02 卡（约束栈有 vs 无，MOD-POS-021 firm_risk_aggregator 存在，RX-B 已复核）；
+  position_flow/P3-04 卡亦出现"非策略"口径（不同对象，不并卡）
+data_binding:
+  engine_entry: 复用 allocator_shadow 同窗组合 NAV 管线（DefaultBacktestEngine MOD-BT-001），
+    在约束层挂两种裁剪优先级（须先证明 02 卡臂与本卡臂共用同一净指令流）
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: close（权重/波动/集中度输入）, volume（流动性 3 日可退出判定）
+  signal_derivation: 各 sleeve 净指令→命中约束时按优先级函数选裁剪对象（A=非策略 sleeve 排序在前，
+    B=按持仓权重比例）→净组合 NAV；总裁剪量由约束层阈值给出、两臂共用同一阈值（单点改动=优先级函数）
+  target_source: 组合 NAV 日收益；对照基线=同裁剪量的另一臂；基准 v0=fw-tdm-current Sharpe 0.963
+  implementation_gap: 'blocked_on_impl: firm_risk_aggregator 的裁剪优先级是否可切换未经读码确认
+    （本车道未跑该件、亦未见 post_kelly_clip 的优先级形参在 tests/ 中被双臂调用）。
+    缺什么=优先级选择函数的可注入开关；无开关时两臂不可分离，本卡判据仍有效但须随适配器落地后执行'
+  data_window_evidence: |-
+    命令原文（RX-B 本车道独立复测）：
+      python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; \
+      print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} \
+      WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]（close/volume 面板双段齐；与 L6 台账 02 卡数字逐位吻合）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C2-02.confidence
+preregistered_by: st-nightmine-20261010-RXB
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；
+  总裁剪量相等是本卡的命门，违反即整卡作废
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

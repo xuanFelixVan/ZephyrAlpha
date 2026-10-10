@@ -1,0 +1,59 @@
+schema_version: '1.0'
+card_id: TDM-F-C1/comparison/03_预备金现金贡献
+node_id: TDM-F-C1
+family: comparison
+title_zh: 预算切分·尾部预备金恒定预留 vs 全仓投入对比
+hypothesis: >-
+  恒定预留 10-15% 尾部预备金（永不投出）相对满仓 sleeve，在熊段（trend_down）显著降低 OOS MaxDD，
+  牛市段 OOS Sharpe 损失有限；预备金存放分层（当日可用逆回购 GC001 一层/T+1 短债一层）贡献正现金收益，
+  月报现金贡献行（均仓×现金收益率+涨/跌月分开标注）为正。跌月现金贡献相对占比应升。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 预留比 10-15% 与存放分层/D88 三件真源=TDM-F-C1 节点注释；窗口=fexam prereg v1 冻结窗
+buckets:
+  type: reserve_ratio
+  'on': 预留比 0%（满仓）vs 10% vs 15%
+  min_obs_per_bucket: 60
+pillars:
+  maxdd_delta: 10-15% 预留臂 OOS MaxDD 较满仓臂改善 ≥2pp（熊段更显著）
+  sharpe_vs_baseline: 预留臂 OOS Sharpe ≥ 满仓臂×0.9（牛市损失有限）
+  cash_contrib_positive: 跌月现金贡献行（均仓×GC001 收益率）>0 且相对占比升
+  oos_same_sign: 预留臂与满仓臂 OOS 收益同号
+pillars_numeric:
+  sharpe_vs_baseline_min: 0.90
+  maxdd_delta_max: 0.02
+  cash_contrib_gate: 0.0
+  oos_same_sign: true
+target:
+  primary: reserve_adjusted_oos_maxdd（不同预留档 OOS 最大回撤）
+  secondary: monthly_cash_contribution（月报现金贡献行，涨/跌月分开）
+  note: 预备金管理三件对比卡（D88 69 号 §2.32）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C1.confidence
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（sleeve NAV 面板）；现金收益率外部（GC001 逆回购利率，无 CH 表→见 data_window_evidence 缺口）
+  signal_column: close（构建满仓 vs 预留组合 NAV；预留部分按 GC001 收益率计现金贡献）
+  signal_derivation: sleeve 总仓位×(1-预留比)投出+预留比计现金；月报现金贡献=均仓×现金收益率，涨/跌月分开
+  target_source: 组合 NAV 日收益（分预留档）；对照=满仓 sleeve
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]
+    缺口：GC001 逆回购日利率无在册 CH 表（cash_contrib 门柱暂缺数据源→标 blocked_on_data: 缺逆回购利率表；组合 NAV/MaxDD 两臂可跑不受影响）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+blocked_on_data: 缺 GC001 逆回购日收益率 CH 表（c1_market 内未查到），cash_contrib_positive 门柱无法机判；其余门柱用 kline_daily_hfq 可算
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001

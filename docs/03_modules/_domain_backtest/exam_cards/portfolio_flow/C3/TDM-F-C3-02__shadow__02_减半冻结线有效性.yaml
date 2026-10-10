@@ -1,0 +1,61 @@
+schema_version: '1.0'
+card_id: TDM-F-C3-02/shadow/02_减半冻结线有效性
+node_id: TDM-F-C3-02
+family: shadow
+title_zh: 升降级管线·sleeve 5% 减半/7.5% 冻结自动线 vs 无自动线影子对拍
+hypothesis: >-
+  单 sleeve 收盘核算回撤达 5% 自动减半、7.5% 冻结（只减不加），相对无自动减档线（仅靠月度评审 verdict），
+  组合 OOS MaxDD 显著下降且 OOS Sharpe 不劣化——自动线在组合未到 KillSwitch 的中间地带抢先削险；
+  盘中触及 7.5% 即时禁新开仓（可逆保护不砍存量）应进一步削尾部。清退归零不自动执行（Owner 签字门，见 owner_gate）。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 5%/7.5% Millennium 事实标准与收盘核算触发真源=TDM-F-C3-02 节点（D115 M-22 收口/D84）；窗口=fexam prereg v1 冻结窗
+buckets:
+  type: drawdown_trigger
+  'on': sleeve 回撤档（<5% / 5-7.5% / >7.5%）× 自动线臂/无自动线臂
+  min_obs_per_bucket: 20
+pillars:
+  maxdd_delta: 自动线臂组合 OOS MaxDD ≤ 无自动线臂 −2pp
+  sharpe_vs_baseline: 自动线臂 OOS Sharpe ≥ 无自动线臂（削险不减期望）
+  oos_same_sign: 两臂 OOS 收益同号
+  recovery_hysteresis: 修复 50% 回撤后逐级加回（滞回带），无横跳反复调仓
+  tracking_diff_max: 影子自动线臂与实盘臂日收益差 |t|<2
+pillars_numeric:
+  sharpe_vs_baseline_min: 1.0
+  maxdd_delta_max: 0.02
+  oos_same_sign: true
+  tracking_diff_max: 2.0
+target:
+  primary: auto_line_portfolio_oos_maxdd（自动减档 vs 无自动线组合 OOS MaxDD）
+  secondary: thrash_reduction（滞回带滤除的反复调仓次数）
+  note: 升降级管线主卡（MOD-L02-013 lifecycle_state_machine；THD-RETIRE 三线+composite 60/120 日双窗）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C3-02.confidence
+data_binding:
+  engine_entry: src/zephyr/factor/governance/lifecycle_state_machine.py（sleeve 状态机：减半/冻结 verdict 生成）
+  signal_table: c1_market.kline_daily_hfq（各 sleeve NAV 面板→滚动回撤触发）
+  signal_column: close（→sleeve 日净值→滚动峰值回撤 5%/7.5% 触发线）
+  signal_derivation: 收盘核算 sleeve 回撤→5% 减半/7.5% 冻结(只减不加)改 sleeve 权重→组合 NAV；对照臂=仅月度评审不自动线；清退归零=提案交 Owner 不自动
+  target_source: 组合 NAV 日收益；无自动线臂=对照基线
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]；MOD-L02-013 文件存在（ls 确认）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+owner_gate_required: true
+owner_gate_reason: 本卡判据（减半/冻结）为可逆减动作 AI 可自主；但"清退归零"（sleeve 概念级退役+production 流转）触根宪法 §5 Owner 保留面，需 Owner 签字；本车道只出卡不代裁退役
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001

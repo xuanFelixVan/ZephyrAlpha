@@ -1,0 +1,57 @@
+schema_version: '1.0'
+card_id: TDM-F-C3-01/comparison/02_隔夜漂移切账失真
+node_id: TDM-F-C3-01
+family: comparison
+title_zh: 多维归因·T+1 隔夜漂移切账 vs 不切账对升降级失真
+hypothesis: >-
+  纸面组合从 decision price（信号日收盘）起算策略 alpha、隔夜漂移（信号日收盘→次日开盘）单列 delay cost
+  不进 PerfScore 不进执行考核（切账臂），相对 decision price=fill price 混算（不切账臂），
+  各 sleeve 的 alpha 估计与真实可捕获收益更一致——不切账会把隔夜漂移错算进策略能力，使升降级评审系统性失真。
+  判据=切账后 sleeve 归因排名与"纯信号日收盘建仓"真值排名的秩相关显著高于不切账臂。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 隔夜漂移切账/D84 正确性必改口径真源=TDM-F-C3-01 节点注释；收益基准双轨(TWR+Modified Dietz)同卡记；窗口=fexam prereg v1 冻结窗
+buckets:
+  type: sleeve_attribution
+  'on': 8 sleeve（8 板块几何 Brinson）× 切账/不切账两臂
+  min_obs_per_bucket: 60
+pillars:
+  tracking_diff_max: 切账臂 sleeve alpha 真值秩相关 ≥0.7；不切账臂秩相关差 ≥0.15（失真被证）
+  oos_same_sign: 两臂 sleeve OOS 归因合计同号
+  brinson_consistency: 几何 Brinson 三因子(配置+选股+交互)total_attribution 加和一致(is_consistent)
+pillars_numeric:
+  tracking_diff_max: 0.30
+  oos_same_sign: true
+  brinson_consistency: true
+target:
+  primary: sleeve_alpha_rank_agreement（切账后 sleeve alpha 排名与真值秩相关）
+  secondary: overnight_delay_cost_share（隔夜漂移占未切账归因比例）
+  note: 多维归因主卡（MOD-PF-007 PerformanceAttributionEngine 已落码，Brinson 三因子+降级/拥挤检测）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C3-01.confidence
+data_binding:
+  engine_entry: src/zephyr/pf_core/core/performance_attribution_engine.py::PerformanceAttributionEngine（BrinsonResult/total_attribution/is_consistent）
+  signal_table: c1_market.kline_daily_hfq（close=decision price 起算 alpha；open(t+1)=fill price→隔夜漂移=open(t+1)/close(t)-1 单列 delay cost）
+  signal_column: close, open（分账：策略 alpha 从 close 起、delay cost=close→次日 open）
+  signal_derivation: sleeve 逐笔 decision price→fill price 映射，切账臂剔除隔夜漂移、不切账臂混算；Brinson 三因子分解对照
+  target_source: sleeve 归因 alpha 序列；真值=纯信号日收盘建仓理想组合
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]（close+open 面板齐，隔夜漂移可切账）；MOD-PF-007 文件存在（ls 确认）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001

@@ -1,0 +1,61 @@
+schema_version: '1.0'
+card_id: TDM-F-C1/shadow/02_预算带灰度插值
+node_id: TDM-F-C1
+family: shadow
+title_zh: 预算切分·六段预算带灰度插值 vs 查表定值影子对拍
+hypothesis: >-
+  带内实际仓位=状态分布加权插值（灰度非查表）优于按当前态直取带中值的查表定值：
+  过渡带（最大隶属度<60%）降仓×0.5-0.7 时，插值组合的 OOS MaxDD 不劣于查表组合且 OOS Sharpe 不降，
+  切换日（distribution 立即强裁/Tier2 收敛）为净值最大敏感点——插值应削平切换日跳变。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 六段预算带数值真源=TDM-F-C1 节点注释（capitulation 0-10%/accumulation 20-30%/ignition 30-50%/expansion 50-70%(earned 上探 70-80%)/euphoria≤30%/distribution 0%），proposed；窗口=fexam prereg v1 冻结窗
+buckets:
+  type: state_band
+  'on': 六段情绪/状态档 × 隶属度（插值仓位 vs 查表带中值仓位两臂）
+  min_obs_per_bucket: 60
+pillars:
+  maxdd_delta: 插值臂 OOS MaxDD ≤ 查表臂 +1pp（带内插值削切换日跳变）
+  sharpe_vs_baseline: 插值臂 OOS Sharpe ≥ 查表臂 且 ≥ 基准 v0×0.9
+  turnover_cost_gate: 插值带内再平衡换手双边成本 < 目标改善的 50%（否则缓调）
+  oos_same_sign: 插值臂与查表臂 OOS 收益同号
+  tracking_diff_max: 影子插值臂与实盘查表臂日收益差 |t|<2（日终对拍）
+pillars_numeric:
+  sharpe_vs_baseline_min: 0.90
+  maxdd_delta_max: 0.01
+  turnover_cost_gate: 0.5
+  oos_same_sign: true
+  tracking_diff_max: 2.0
+target:
+  primary: portfolio_total_exposure_nav_return（总仓位档→组合日收益）
+  secondary: switch_day_nav_jump（切换日净值跳幅，最大敏感点建档）
+  note: 预算切分主卡（Millennium pod 单体版，L1 预算带→sleeve 切分）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C1.confidence
+data_binding:
+  signal_table: c1_market.kline_index（symbol='000300' 代理指数，状态/体制带内插值仓位输入）
+  signal_column: close（→SMA200 帘子与体制隶属度；regime_series use_hmm=False 默认 sma200_default）
+  signal_derivation: 六段状态档隶属度→带内加权插值得总仓位→乘 sleeve 基准权重(PP-001 打板 20%/多因子 20%/事件 15%…)→组合 NAV；对照臂=当前态直取带中值查表
+  target_source: kline_index 000300 close→次日指数收益（G0-4 主轴）；基准 v0=fw-tdm-current 静态权重 Sharpe 0.963
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df; print(ch_query_df(\"SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_index WHERE symbol='000300'\").values.tolist())"
+    实测：[['2005-01-04','2026-10-09','5284']]（沪深300 日线覆盖至 2026-10-09，OOS 窗全覆盖）
+    体制带真源：c1_backtest.regime_snapshot_history 实测 [['2019-04-01','2026-10-09','3635']]（HMM 路径未过考，默认走 SMA200 帘子）
+    预算带数值：proposed（TDM-F-C1 节点注释，Owner 裁定 v1.2.1 仓位非定值）——灰度插值实现待接（module_ref multi_strategy_capital_allocator.py/MOD-PA-003 存在，带内插值臂属影子口径）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001

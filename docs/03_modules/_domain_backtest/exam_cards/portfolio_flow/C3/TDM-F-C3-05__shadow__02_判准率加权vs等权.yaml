@@ -1,0 +1,62 @@
+schema_version: '1.0'
+card_id: TDM-F-C3-05/shadow/02_判准率加权vs等权
+node_id: TDM-F-C3-05
+family: shadow
+title_zh: 可靠度养成·传感器判准率加权 vs 等权起步影子对拍
+hypothesis: >-
+  传感器/大盘判定器可靠度从"起步等权"（实证：简单平均 50 年最稳）升级到"月度判准率加权"（下限 10% 防 winner 通吃），
+  加权臂的下游组合 OOS Sharpe ≥ 等权臂且滚动 IC 衰减>50% 报警能提前降权失效传感器；
+  若加权臂不优于等权臂，则维持等权起步（Fed 实证先验）——本卡正面检验"判准率加权是否消灭等权假设"。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 三档递进（等权→判准率加权下限 10%→粒子滤波远期）真源=TDM-F-C3-05 节点；月度更新禁日级追归因调权权重（D93 修订 D82）
+buckets:
+  type: sensor_reliability
+  'on': 传感器×滚动判准率档（高/中/低）× 加权臂/等权臂
+  min_obs_per_bucket: 60
+pillars:
+  sharpe_vs_baseline: 判准率加权臂 OOS Sharpe ≥ 等权臂（否则维持等权先验）
+  ic_decay_alarm: 滚动 IC 半衰期 hyperbolic 拟合，衰减>50% 报警命中率≥80%（提前降权失效传感器）
+  floor_10pct: 单传感器权重下限 10% 生效（禁 winner 通吃）
+  oos_same_sign: 加权臂与等权臂 OOS 收益同号
+pillars_numeric:
+  sharpe_vs_baseline_min: 1.0
+  ic_decay_alarm_min: 0.8
+  oos_same_sign: true
+target:
+  primary: reliability_weighted_portfolio_oos_sharpe（判准率加权组合 OOS Sharpe）
+  secondary: ic_halflife_fit_quality（IC 半衰期拟合与衰减报警精度）
+  note: 可靠度养成主卡（MOD-SIGQC-004 signal_degradation_monitor；反馈 E-L1-AGG 降权不可靠传感器，大盘判定器自己也要被考核）
+status: preregistered
+blocked_on_impl: >-
+  红节点（F 流空白之三：D7-D13 历史判准率加权 src 零实现，c3_throttle_attribution 仅 design 态）；
+  signal_degradation_monitor.py 存在（ls 确认，滚动 IC/半衰期报警面），但判准率加权聚合器无落码；
+  本卡需判准率加权引擎才可跑，等权臂可先跑作对照
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C3-05.confidence
+data_binding:
+  engine_entry: src/zephyr/signal_quality/signal_degradation_monitor.py::（滚动 IC/半衰期拟合）+ 判准率加权器（待落码，见 blocked）
+  signal_table: c1_market.kline_daily_hfq（传感器信号面板→IC）+ c1_market.kline_index（000300 close→next_day_return 作判准基准）
+  signal_column: 传感器信号列（ch_backed）；close/index close 算判准率（命中率/逆误差平方）
+  signal_derivation: 各传感器滚动 IC/判准率→加权(下限 10%)合成→喂 L1 判定→组合 NAV；对照臂=传感器等权平均；hyperbolic 半衰期拟合，alphalens-reloaded 建议做 IC
+  target_source: 组合 NAV 日收益 + 下游 OOS Sharpe；等权臂=对照基线
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df; print(ch_query_df(\"SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_index WHERE symbol='000300'\").values.tolist())"
+    实测（判准基准 000300）：[['2005-01-04','2026-10-09','5284']]；IC 面板 kline_daily_hfq 实测 [['2018-01-02','2026-09-30','9061473','5822']]
+    负存在断言证据指针：python -m zephyr.library.lookup state "传感器可靠度加权" → 零命中（馆查零命中≠不存在）；直证=TDM-F-C3-05 algo_note_zh "D7-D13 历史判准率加权 src 零实现"
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001

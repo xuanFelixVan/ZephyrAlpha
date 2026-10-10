@@ -1,0 +1,90 @@
+schema_version: '1.0'
+card_id: TDM-F-C1-02/shadow/03_置信度配比资金臂
+node_id: TDM-F-C1-02
+family: shadow
+title_zh: 权重分配·节点自陈"置信度配比 5:1:1:1:2"臂 vs 冠军三层栈影子对拍
+hypothesis: >-
+  TDM-F-C1-02 的 decision_question 原文是两句："激活集内按置信度配比当日资金（如 5:1:1:1:2），
+  分配器治理谁说了算"。同节点 02 卡（冠军-挑战者影子考）只答了第二句——它的五臂是
+  ALB-THREELAYER/EQUAL/RK08/PA015/SIG131，**没有任何一臂是"按置信度配比"的分配方案**；
+  grep 全卡库"5:1:1 / 置信度配比"仅命中 generated:true 的骨架件（status: empty=未冻结禁考，
+  不构成判据覆盖）。本卡把节点自己写下的第一句补成可判臂：在激活集内按各 sleeve 的 TDM confidence
+  档位映射权重（5:1:1:1:2 为该映射的示例刻度，本卡冻结为 rank→权重的显式映射表），
+  与冠军三层栈同窗影子对拍。判据=置信度配比臂不优于冠军即证"按置信度分钱"是治理口号而非有增益的分配器。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 窗口取 fexam prereg v1 冻结窗（WINDOW_IS/WINDOW_HOLDOUT），与同节点 02 卡逐字同窗
+    才能并排解读（02 卡即此口径，复用禁自创）；配比刻度 5:1:1:1:2 按节点原文冻结，事后挪=作废（G4-5）
+buckets:
+  type: allocator_scheme
+  'on': 两臂=置信度配比臂 vs 冠军三层栈臂（02 卡的其余四挑战者臂不重复跑，直接引 02 卡结论作对照）
+  min_obs_per_bucket: 250（日净值观测）
+pillars:
+  confidence_mapping_frozen: 激活集 sleeve 数与置信度档位→权重映射表必须在开考前落册冻结
+    （含 untested/proposed/validated 三档到 5/1/1/1/2 刻度的显式映射）；
+    映射表任何改动=新卡新试次，禁在旧卡上就地改
+  sharpe_vs_champion: 置信度配比臂 OOS Sharpe >= 冠军臂（否则节点第一句判为无增益治理口号）
+  maxdd_delta: 置信度配比臂 OOS MaxDD 不比冠军臂劣 > 3pp
+  concentration_check: 5:1:1:1:2 天然把 5/10 的资金压给单臂 ⇒ 单 sleeve 权重上限触发次数必须报告，
+    且必须与 TDM-F-C2-02 约束栈（单票 20%/cluster 5%）的裁剪量交叉披露（配比臂与约束栈的相互抵消量是本卡最有用的数）
+  turnover_cost_gate: 两臂换手双边成本计入净值后排序稳定
+  oos_same_sign: 置信度配比臂与冠军臂 OOS 收益同号
+  evidence_note: 只报当前证据量（配对 t/年化差），不判终胜负（MOD-PF-008 序贯统计口径，
+    晋升与否属 Owner 门位——本卡只出判据不执行任何切换/晋升）
+pillars_numeric:
+  sharpe_vs_champion_min: 1.0
+  maxdd_delta_max: 0.03
+  concentration_breach_report_required: true
+  turnover_cost_gate: 0.0
+  oos_same_sign: true
+target:
+  primary: 置信度配比臂 vs 冠军臂的 OOS Sharpe 比与 MaxDD 差
+  secondary: 约束栈对高集中度配比的裁剪量（被裁权重与裁剪后净值差） + 两臂换手成本差
+  note: 本卡专考"按置信度分钱"这一句，不重复考冠军-挑战者治理（那是 02 卡主判据）
+same_family_precedent: 同节点 02 卡（三层栈 vs 四挑战者，allocator_shadow.run_shadow 真实基建）；
+  TDM-F-C1-01 卡（激活集路由影子——本卡的 sleeve 集与置信度输入的出生面）
+data_binding:
+  engine_entry: scripts/backtest/fexam/allocator_shadow.py::run_shadow(roster, out_path, factor_book_path, session_id)
+    （RX-B 实测该件存在于 scripts/backtest/fexam/，与 L6 台账"run_shadow 真实存在（读码确认）"一致）
+  engine_produce: 追加一套分配器方案=在 roster 侧新增 scheme（confidence_ratio_weights），
+    与既有 five-scheme 同窗产出；out_path 另建（禁覆盖 02 卡的 allocator_shadow_report_v1.yaml）
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: 合成信号列经 roster.indicator bucket=ch_backed 选列（前 24 列，_pick_composite_columns，prereg 冻结 cap）；
+    sleeve 置信度输入=config/trading_decision_map.yaml 各节点 confidence 字段（proposed/untested/validated 档位）
+  signal_derivation: 月频 top_n=20 等权底仓（monthly_topn_signals）→按激活集置信度映射权重（5:1:1:1:2 刻度）
+    → DefaultBacktestEngine(MOD-BT-001) 逐日跑 NAV；对照臂=three_layer_weights（0.5*等权+0.3*逆波+0.2*动量倾斜）；
+    regime 默认 SMA200 帘子（regime_series use_hmm=False → sma200_default），与 02 卡同参
+  target_source: 组合 NAV 日收益（nav.pct_change）；基准 v0=fw-tdm-current 静态权重 Sharpe 0.963（裁定 D8 版本化）
+  data_window_evidence: |-
+    命令原文（RX-B 本车道独立复测，fexam 只读层，禁裸 duckdb）：
+      python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; \
+      print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} \
+      WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+      ls scripts/backtest/fexam/allocator_shadow.py
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]（与 L6 台账 02 卡数字逐位吻合 ⇒ 该道数据断言可信）；
+    allocator_shadow.py 文件存在
+    注意（承接 L6 卡内已记口径）：kline_daily_hfq 无 period 列，加 period='daily' 过滤报 404
+  owner_gate_note: 冠军-挑战者的**晋升**与任何 production 流转属 Owner 保留面（根宪法 §5）；
+    本卡仅冻结判据，不含任何切换/晋升执行动作
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C1-02.confidence
+preregistered_by: st-nightmine-20261010-RXB
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；
+  与 02 卡必须同窗同票池，否则两卡分数禁并排解读
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

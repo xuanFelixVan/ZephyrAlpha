@@ -1,0 +1,65 @@
+schema_version: '1.0'
+card_id: TDM-F-C3-03/comparison/02_月度调权vs静态基准
+node_id: TDM-F-C3-03
+family: comparison
+title_zh: sleeve 权重调权·normalize(Base×PerfScore×Shrinkage) vs 静态基准 v0
+hypothesis: >-
+  月度调权（新权重=normalize(Base×PerfScore×Shrinkage)，floor 5%/cap 40%，单次≤±10pp、调后 5 交易日锁定、
+  阈值未触发=不动，>10pp 分日线性过渡）相对静态基准权重 v0（不随归因结果调整），
+  OOS Sharpe 提升且 MaxDD 不劣化——调权应让赚的加码亏的减码跑赢固定配比；
+  成本闸：预估双边成本>预期改善 50% 时缓调（否则调权收益被换手吃掉，退化为静态）。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 调权公式 54 号已定（RegimeMetaAllocator），floor5%/cap40%，防过拟合三纪律真源=TDM-F-C3-03 节点；窗口=fexam prereg v1 冻结窗
+buckets:
+  type: rebalance_month
+  'on': 月度调权窗口（调权臂 vs 静态臂）× no-trade band（偏离>25% 才调）
+  min_obs_per_bucket: 6
+pillars:
+  sharpe_vs_baseline: 调权臂 OOS Sharpe ≥ 静态臂（基准 v0）×1.0
+  maxdd_delta: 调权臂 OOS MaxDD ≤ 静态臂 +1pp
+  turnover_cost_gate: 调权净改善 > 双边换手成本（成本闸触发月按缓调处理）
+  oos_same_sign: 调权臂与静态臂 OOS 收益同号
+  miscallocation_memo: 月报错配双列表（收益贡献%|风险贡献%|错配比值）与调权方向一致
+pillars_numeric:
+  sharpe_vs_baseline_min: 1.0
+  maxdd_delta_max: 0.01
+  turnover_cost_gate: 0.5
+  oos_same_sign: true
+target:
+  primary: rebalanced_portfolio_oos_sharpe（月度调权组合 OOS Sharpe）
+  secondary: post_cost_net_improvement（扣换手成本后净改善）
+  note: sleeve 权重调权主卡（PT-10；风险单向优先 TRM——减权方向立即执行、加仓方向等资格满足后下一调权窗）
+status: preregistered
+blocked_on_impl: >-
+  裁定#257② 在案：本节点编排未接线——MOD-PA-007 regime_meta_allocator 为无生产调用方的纯库（PFA-1 实证）；
+  三缺口=base_weights 无来源/月度调权无调度体/PerfScore 无生产者。文件存在（ls 确认）但端到端调度未落地，
+  接线随 G15→G14 编排件立项触发（挂起条件见 regime_meta_allocator blueprint §7.3.1）；本卡为名义配置下冻结判据，接线后开考
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C3-03.confidence
+data_binding:
+  engine_entry: src/zephyr/pf_alloc/core/regime_meta_allocator.py::RegimeMetaAllocator（allocation=normalize(Base×PerfScore×Shrinkage)）
+  signal_table: c1_market.kline_daily_hfq（sleeve NAV→PerfScore）+ 依赖 PerfScore 生产者（C3-01 归因输出，未接线见 blocked）
+  signal_column: close（→sleeve 净值→PerfScore→调权）
+  signal_derivation: 月度按 PerfScore×Shrinkage 重算 sleeve 权重（floor5%/cap40%/±10pp），no-trade band 只调偏离>25%；对照臂=静态基准 v0 权重不变；Component VaR 边际检查降权优先
+  target_source: 组合 NAV 日收益；静态臂=基准 v0(fw-tdm-current, Sharpe 0.963)
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]（净值面板齐；PerfScore 生产者=C3-01 归因，未接线→blocked_on_impl）
+    负存在断言证据指针：python -m zephyr.library.lookup state "regime_meta_allocator 调权接线" → 零命中（馆查零命中≠不存在）；直证=TDM-F-C3-03 节点 algo_note_zh 三缺口在案
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001

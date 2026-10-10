@@ -1,0 +1,56 @@
+schema_version: '1.0'
+card_id: TDM-F-C2-03/comparison/02_相关性cluster上限
+node_id: TDM-F-C2-03
+family: comparison
+title_zh: 相关性聚类·cluster 合并风控上限 vs 独立敞口对比
+hypothesis: >-
+  60 日滚动 PnL 相关矩阵→层次聚类，ρ>0.70 持仓合并计算敞口（视为同一风险）、ρ>0.85 禁新仓、
+  单 cluster 总权重≤5% 权益，相对不设相关性上限的组合，OOS MaxDD 下降（扎堆被拆），
+  危机期相关性趋于 1 时压测版（ρ→0.9）应进一步降敞口；牛段可能小幅牺牲收益（Sharpe 损失有限）。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 三档口径 ρ>0.70 减半/ρ>0.85 禁新仓/cluster heat≤5% 权益真源=TDM-F-C2-03（D77 tierzero 0.6→行业主流）；底座 MOD-POS-011 covariance_estimator(Ledoit-Wolf)
+buckets:
+  type: correlation_cluster
+  'on': cluster 内 ρ 档（<0.70 / 0.70-0.85 / >0.85）× 月度再聚类
+  min_obs_per_bucket: 30
+pillars:
+  maxdd_delta: cluster 上限臂 OOS MaxDD ≤ 无上限臂 −2pp（扎堆拆分应减回撤）
+  sharpe_vs_baseline: cluster 上限臂 OOS Sharpe ≥ 无上限臂×0.95
+  stress_rho: 危机压测（ρ→0.9）敞口较常规再降，熊段 MaxDD 进一步改善
+  oos_same_sign: 两臂 OOS 收益同号
+pillars_numeric:
+  sharpe_vs_baseline_min: 0.95
+  maxdd_delta_max: 0.02
+  oos_same_sign: true
+target:
+  primary: cluster_capped_oos_maxdd（设/不设 cluster 上限 OOS 最大回撤）
+  secondary: crisis_stress_exposure_delta（危机压测敞口下降幅度）
+  note: 相关性聚类主卡（MOD-POS-012 correlation_regime_monitor.py 三档相关性 regime）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C2-03.confidence
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（sleeve/持仓 PnL 面板→60 日滚动相关矩阵）
+  signal_column: close（→日收益→PnL 相关矩阵→层次聚类；Ledoit-Wolf 收缩协方差 MOD-POS-011）
+  signal_derivation: 60 日滚动 PnL 相关→层次聚类→同 cluster 合并敞口→上限裁剪(5% 权益)→组合 NAV；对照臂=不设 cluster 上限
+  target_source: 组合 NAV 日收益（分 cluster 上限两臂）；月度再聚类+危机压测 ρ→0.9 复算版
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]（60 日滚动窗内样本充足，日频截面相关可算）；MOD-POS-012 存在
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001

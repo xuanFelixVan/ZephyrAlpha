@@ -1,0 +1,61 @@
+schema_version: '1.0'
+card_id: TDM-F-C2/comparison/02_组合聚合vs各自为战
+node_id: TDM-F-C2
+family: comparison
+title_zh: 组合聚合·四步合流(净额→约束→相关性→净指令) vs 各 sleeve 独立不相干
+hypothesis: >-
+  各 sleeve 目标仓位经聚合四步（求和轧平对冲净额→组合约束栈全检→相关性聚类去扎堆→输出组合净指令流）
+  合成"一盘棋"组合，相对各 sleeve 各自满配独立运行（不相干、不轧平、不叠约束），
+  OOS MaxDD 显著下降（对冲净额+扎堆拆分的组合级收益）且 OOS Sharpe 不劣于任一独立 sleeve 的加权平均；
+  "每个策略各自的账"与"组合是一盘棋"在此合流——聚合的净效果是降风险不降期望。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（SMA200 trend_up 段）
+    bear: 2021-07-01..2024-01-31（SMA200 trend_down 段）
+  frozen_note: 聚合四步真源=TDM-F-C2 节点 algo_note_zh；窗口=fexam prereg v1 冻结窗
+buckets:
+  type: sleeve_overlap
+  'on': sleeve 间对冲/重叠度分位（聚合净效果最强/最弱）
+  min_obs_per_bucket: 60
+pillars:
+  maxdd_delta: 聚合臂 OOS MaxDD ≤ sleeve 独立臂组合 −2pp
+  sharpe_vs_baseline: 聚合臂 OOS Sharpe ≥ 独立 sleeve 加权平均×0.95 且 ≥ 基准 v0×0.9
+  turnover_cost_gate: 聚合轧平后换手成本 ≤ 独立臂（净额省费）
+  oos_same_sign: 聚合臂与独立臂 OOS 收益同号
+pillars_numeric:
+  sharpe_vs_baseline_min: 0.90
+  maxdd_delta_max: 0.02
+  turnover_cost_gate: 1.0
+  oos_same_sign: true
+target:
+  primary: aggregated_portfolio_oos_sharpe_vs_maxdd（聚合组合 OOS Sharpe/MaxDD）
+  secondary: hedging_net_contribution（净额对冲对组合风险贡献）
+  note: 组合聚合主卡（structural 聚合点，多 sleeve 合流）
+status: preregistered
+blocked_on_impl: >-
+  module_ref: 空（red_reason=structural）——组合聚合器无单一落码件（四步分属 MOD-POS-021/C2-02/C2-03 等），
+  聚合编排端到端件未落地；本卡需聚合管线组装后才可跑
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-F-C2.confidence
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（各 sleeve 目标仓位/净值面板）
+  signal_column: close（→各 sleeve NAV→轧平/约束/聚类→组合净指令 NAV）
+  signal_derivation: 各 sleeve 目标仓位求和轧平（对冲净额）→约束栈全检→相关性聚类去扎堆→组合净指令；对照臂=sleeve 独立满配不相干
+  target_source: 组合 NAV 日收益；独立臂=对照基线；基准 v0=fw-tdm-current Sharpe 0.963
+  data_window_evidence: |-
+    命令：python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df,T_KLINE_DAILY_HFQ; print(ch_query_df(f\"SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM {T_KLINE_DAILY_HFQ} WHERE trade_date>='2018-01-02' AND trade_date<='2026-09-30'\").values.tolist())"
+    实测：[['2018-01-02','2026-09-30','9061473','5822']]；子件 MOD-POS-021/012/022 存在，端到端聚合编排未落地（blocked_on_impl）
+preregistered_by: st-nightmine-20261010-L6
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
