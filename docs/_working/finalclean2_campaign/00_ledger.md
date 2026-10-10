@@ -36,7 +36,7 @@ gate_selfdoc: GIT-DANGEROUS
 
 ## 三、波一四态表（机生）
 
-<!-- BEGIN GENERATED table_fourstate (mk_ledger.py 机生 2026-10-11T02:40:58，禁手改) -->
+<!-- BEGIN GENERATED table_fourstate (mk_ledger.py 机生 2026-10-11T03:05:39，禁手改) -->
 
 扫描面共 **14** 件：态① 0｜态② 0｜态③ 0｜态④ 14
 
@@ -150,6 +150,9 @@ gate_selfdoc: GIT-DANGEROUS
 
 23. **⚑本班判据缺陷一条（已当班治本，方向＝收紧不放宽，请事后追认入工法）**：§二"三源"缺**执行工具同源**这一路。轮 3（02:11）`liveness_verdict` 分片读数把 6 面判成属主已死（态①2／态②4），而 `session_worktree.py archive` 的**内建活跃硬拒守卫**按 `SessionRegistry.list_active` 判同一批属主**仍活跃**并硬拒绝（该工具自述"无逃生 flag，要动活车道只能等它死"）。⇒ 后果两面：①**假报死**（若本班当时照态①②执行就会去 archive 活车道，靠工具守卫才没出事）；②**收口判据随时钟抖**（17 分钟内**同一 14 面集合**有 6 面翻转态别，纯因 90min 避让窗自然老化，非现实变化）——令卡 T8"四面全态④且连续两轮同一结论"用旧尺**可能永远开不上**，也可能在假报死那一刻**误开**（与 §五-13 的"恒真空集"同族，皆判据与执行面不同源）。治本已落 `tools/scan_dirs.py`＋`tools/mk_ledger.py`：新增第四源 `in_list_active`（走 `list_active_readonly()`／`mutating=False`，因 `list_active` 默认会把判死写进接管台账＝"看一眼就立案"的放大器，该方法自述），并把它列为**硬态④触发器**；修尺后 02:33 两把尺同拍＝**14 面全态④**，与 01:54 轮 2 结论一致（⇒ T8 此刻真实成立，且成立在收紧后的尺上）。请总统筹把这条**通则**转给所有做"活/死面判定"的车道：**凡删除动作的最终判据必须与所用工具的守卫同源，否则尺上的"死"不算死**。
 
+24. **令②立规矩入册（总统统筹 02:4x）＝『被清除面≠净收官』**：机械两 clause（终报进 dev ∧ 其车道零独有字节）判"净"**之前**必须先查**清除来源**（archive/remove 记录），清除来源≠属主自愿收口者一律单列**被迫收官**，禁与自然收官混计。本班已把这条做成可复算执行器 `tools/t9_forced_close_audit.py`（结果面＝§九E 机生表），实测＝全集 **54** 面：**净收官可计仅 9 面**（自愿收官 8＋属主自收非本班清除 1）／**不可计 42 面**（被迫收官 35＋待追因 3＋面级已落终报而字节级仍未归 4）／不适用（零字节面）3 面；另第三条尺（`scan/dirs_v*.json` 拍子序列，零新数据源）实测**清除后又复活 5 面**（examchief 后续 11 拍／libfront 后续 16 拍／fwin-exec／mastertc-mine／menu-t1b6）＝"被清后仍在干活"的物理证据。**首例＝`st-constland-20261010` 的两面读法**：面级自愿收官（99_delivery 与终报笔早于本班 01:32 归档），字节级被迫清面（其 12:34:13 自建 `T2-merge-transit` 袋 `c2de2face68` 被 `git stash clear` 抹掉，T0 全量对账实测至今 793 件字节只在袋内＝全仓唯一副本，双锚在册、本班零 drop）⇒ **该班不得计入净收官**。⚑ 对本班自身的不利结论照实写：本班账面"已清 29 面"是**清除量**不是**收官量**，§四/§七 一律不得再以"某班已收官"口径叙述，只报"已清除＋其收官性质见 §九E"。
+25. **令③升级入维护班候件（同 sid 双写手：`lock_files.py cleanup` 误摘活体 claim）**：现象＝同一 sid 有两个写手（本班主线程＋巡检轮/兄弟轮）时，任一方按宪法 §0.2 例行执行的 `lock_files.py cleanup` 会**按心跳分片判死并摘走另一方此刻仍活着的 claim**（心跳分片停更只证 daemon 死、不证会话死＝本班 10-10 已在册的同型教训：判前任会话死须零写入三证齐）。请求的处方＝**cleanup 摘锁前核活性三源**：①`SessionRegistry.list_active`（与 `session_worktree.py archive` 的硬拒守卫同源，见 §五-23）②该 sid 是否有**其它在写面**（同 sid 多面 fs 写≤90min）③claim 的最近持有心跳；三者皆死才摘，任一活则跳过并留痕。与"同 sid 双轮并发不互斥"（§四 00:4x 自报缺口、本班靠 CAS 守）同族，**属通道缺陷而非本班可修件**：`lock_files.py` 是全局工具，本班不自修他车道代码、不自设 gate，只登记候件＋给可复跑取证命令（见 §十）。本班受害实证在册：台账 10-10 一天内两次被整树抹（§五-14），其中第二次伴随 `git stash list` 由 4 枚变 0——claim 被摘后防护面失效是同类风险的上游。
+
 ## 六、波二触发器（六线全收官）监测
 
 | 线 | sid | 13:1x 现测（三源：注册表分片 mtime / 车道-工棚独有字节 / dev 尾标） | 收官判定 |
@@ -259,7 +262,7 @@ gate_selfdoc: GIT-DANGEROUS
 
 ## 九C、T7 墓碑打包清单（波二，呈 Owner C6 物理删批文）
 
-<!-- BEGIN GENERATED t7_manifest (mk_t7_block.py 机生 2026-10-11 02:10，数据源=t7_casefile 实测件，禁手改) -->
+<!-- BEGIN GENERATED t7_manifest (mk_t7_block.py 机生 2026-10-11 03:05，数据源=t7_casefile 实测件，禁手改) -->
 
 - 载体口径三件事：呈批载荷 **10 目录 / 60,808 件 / 3,615,797,957 B ≈3.367 GiB**；载体根实测 **3,626,789,828 B**；差 **10,991,871 B**＝E 侧 INDEX.jsonl＋README＋10 枚 MANIFEST.jsonl 自身（非缺件）。INDEX 共 **13 行**＝10 原件行＋3 条 second_pass 跟进行。
 - 副本自证（逐件 sha256 现场重算，全量零抽样）：**通过 60,808／不符 0**；复活窗 `expires_at` 1 个取值＝['2026-11-10']；`reference_count` 原件行合计 0；原点 `.runtime/tmp/<目录>` 现存 0/10。
@@ -289,15 +292,15 @@ gate_selfdoc: GIT-DANGEROUS
   - `ADJUDICATION_20260927.md` 7,801B sha256=5c603fd15c954399… → 锚 `quarantine/finalclean2-t7-ADJUDICATION_20260927-20261011`（blob f24a253ff7c021e7bc66a195e31d31d41861535c，E↔blob↔安全区副本三处字节全等＝True，锚可达性核实=True）
 
 - 次一级需画押：`st-tclose-cardfix-20261004` 的 `governance.db.bak` **227,168,256 B** sha256 `3258c948…` 与 `G:/backup/db_dumps/20261003`（`4f79a96c…`／223,731,712 B）、`20261004`（`4ed38db5…`／229,023,744 B）两套夜镜像**均不等**且体积介于两者之间＝独立时间点快照，不确定可否牺牲；同目录 4 枚 .py 为未入库施工脚手架。
-- 呈批：物理删＝Owner 门位 C6（AGENTS.md §5.2 墓碑制），本班只写不删、不自签批准；逐件 sha256 承载体＝E 侧 10 枚 `MANIFEST.jsonl`（60,808 行）＋逐目录 `rollback_cmd`；不建议任何"再打包一次"动作（徒增单点）。
+- 呈批：物理删＝Owner 门位 C6（宪法 人机门位 条第 2 款『Owner 保留面·墓碑制』），本班只写不删、不自签批准；逐件 sha256 承载体＝E 侧 10 枚 `MANIFEST.jsonl`（60,808 行）＋逐目录 `rollback_cmd`；不建议任何"再打包一次"动作（徒增单点）。
 - 案卷全量面（不在本册内抄大表，逐件级）：`t7_casefile/tmp_package.csv` 60,819 行（表头＋60,808 PASS＋10 SELF，双 sha256/扩展名/mtime/画像）、`t7_casefile/tomb_dir_summary.csv`（29 列目录级摘要）、`t7_casefile/{durability_tiers,git_recoverability,absent_items,scan_stats}.json`、`t7_casefile/tomb_package_summary.md`（§7 整段可复制复核命令）。
 <!-- END GENERATED t7_manifest -->
 
 ## 九D、T8 前置·逐件『同名存证三问』实证（§五-16 收紧口径落地）
 
-<!-- BEGIN GENERATED t8_evidence (t8_evidence.py 机生 2026-10-11 02:04，禁手改) -->
+<!-- BEGIN GENERATED t8_evidence (t8_evidence.py 机生 2026-10-11 03:05，禁手改) -->
 
-- 清点对象＝波一开局 41 面中已消失的 **30** 面（现存 11／新再生 3），dev 重建指针=`5d9c4d3018c41c55bfbfbedc54bce447925863fd`
+- 清点对象＝波一开局 41 面中已消失的 **30** 面（现存 11／新再生 3），dev 重建指针=`76d84f463c01d3126ee5199c06d047dcc521efcf`
 - 三问逐件结果：**态①·无同名存证亦可回滚（内容等价于 dev tree）＝6**／**态①＋同名存证齐（双保险）＝4**／**态②·字节承载体逐件对号＝15**／**态④·本班未以其为删除依据（属主自收或后轮改态，见 §四/§七）＝5**
 - ⚑ **内容级判定（≠『存在同名存证』级）**：态② 15 面登记独有件合计 **61 件，逐件在 retire patch 的 `diff --git` 头或本班 safety 副本里对得上号＝覆盖 61/61，无承载体 0 件**（§五-16 抽样只验『存证是否存在』，本表验『该面每一件独有字节的承载体在哪一行』）。
 - ⚑ 一条比 §五-16 更硬的结构性实测：`③rescue 面` 对 **8/12** 个存在的 rescue 目录是**空目录（0 件）**——OPS-GUARD 曾拦本班在进程内救援 docs/_working 件，本班因此改走工具自带的 `--skip-rescue` 腿，未跟踪件字节的唯一承载体是 **patch 内的 `new file mode` 段**而非 rescue 目录。⇒ 三问里真正承载字节的＝①同名标签 ∧ ②retire patch（∧ 本班 safety 副本），旧『三重存证』模板串自本表起作废。
@@ -335,6 +338,77 @@ gate_selfdoc: GIT-DANGEROUS
 | .aidrafts/st-mastertc-mine | 态② | st-mastertc-mine@f73bf8714d | 无 | 无此面 | 0/0 | 态②·字节承载体逐件对号 |
 | .aidrafts/verify_v1 | 态① | 无 | 无 | 无此面 | 0/0 | 态①·无同名存证亦可回滚（内容等价于 dev tree） |
 <!-- END GENERATED t8_evidence -->
+
+## 九E、清除来源核账（收尾令②『被清除面≠净收官』首例入册）
+
+<!-- BEGIN GENERATED t9_forced_close (t9_forced_close_audit.py 机生 2026-10-11 03:02，禁手改) -->
+
+- 全集 **54** 面（波一开局消失面 ∪ 本班清除窗口内有 retire patch 痕的面）；判型合计：**待追因＝3**／**自愿收官＝12**／**被迫收官＝35**／**零内容面＝3**／**非本班动手＝1**
+- 口径：判『净收官』的两条机械 clause（终报进 dev ∧ 车道零独有字节）**之前**必须先查清除来源；清除来源≠属主自愿收口者一律单列『被迫收官』，禁与自然收官混计（总统统筹 02:4x 收尾令②）。
+- ⚑第三条尺（被打断实证）：清除之后该面在后续扫描拍子里**又出现过**的＝ 5 面（属主被清后重开车道续做＝『被清除面≠净收官』的物理证据；拍子取自 `scan/dirs_v*.json` 全集，零新数据源）。
+- ⚑**净收官不可计＝42 面**（＝被迫收官 ∪ 后续自收 ∪ 面级已落终报但字节级仍有未归件 ∪ 待追因），可计＝12 面——按令②两者禁混计；本班账面'已清 29 面'是**清除量**，不是**收官量**，这一字之差就是本节的用处。
+### 首例（令②点名）实测两面读法
+
+- `st-constland-20261010` **面级＝自愿收官**（其 99_delivery/终报笔先于本班 01:32 归档动作落 dev），但 **字节级＝被迫清面**——它 12:34:13 自建的 `T2-merge-transit` 袋（commit `c2de2face68`）被 `git stash clear` 抹掉，经本班 T0 全量对账实测**至今仍有 793 件字节只在袋内**（甲类 0／乙类 793＝dev 无此路径＝全仓唯一副本，案卷 `10_t0_inflight_triage.md`），双锚 `refs/quarantine/st-govjudge-20261010-20261010`＋`refs/recover/inflight-20261010` 在册、本班零 drop。⇒ **该班不得计入净收官**，与机械两 clause 的『终报进 dev ∧ 车道零独有字节』读数直接冲突——这正是令②要立的那条规矩的实物形态。
+- 字节未归合计（本班在册救援面，逐件 sha 在册）＝`inflight_20261010` 793 件（袋主 constland，袋内属主按 owner 分流）＋wave2/wave2b 两批合计 9 件（明细见 §五-20/21 与 §十一 先救合计行），全部**候属主认领**，本班未代落一件。
+
+| 面 | 属主 | retire patch（本班窗口内） | 属主 dev 笔/其中收口类 | 字节未归件 | 清除后又现面？ | 判型 | 净收官可计？ | 依据 |
+|---|---|---|---|---|---|---|---|---|
+| .aidrafts/st-bcure-wt | st-bcure-wt | st-bcure-wt·20261010T044246；st-bcure-wt·20261010T044334 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-bt-fast-w5-20261006 | st-bt-fast-w5-20261006 | st-bt-fast-w5-20261006·20261010T044404 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-chief7z-20261009 | st-chief7z-20261009 | st-chief7z-20261009·20261010T044415；st-chief7z-20261009·20261010T044500 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-constland-20261010 | st-constland-20261010 | st-constland-20261010·20261010T173246 | 3/2 | 793 | 未复活 | 自愿收官 **←令文首例** | 否（面级虽落终报，字节级仍有 793 件未归，禁与自然收官混计） | 先行终报笔 c45b1fc6a0 @ 2026-10-10T12:44:25+08:00（早于清除 10-11 01:32） |
+| .aidrafts/st-cure-p0-20261006 | st-cure-p0-20261006 | st-cure-p0-20261006·20261010T044419；st-cure-p0-20261006·20261010T044520 | 1/1 | 0 | 未复活 | 自愿收官 | 是（自愿收官） | 先行终报笔 7e737d7af6 @ 2026-10-06T18:54:42+08:00（早于清除 10-10 12:45） |
+| .aidrafts/st-docs-e13-20261009 | st-docs-e13-20261009 | st-docs-e13-20261009·20261010T044002 | 1/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-entrance-gate-20261007 | st-entrance-gate-20261007 | st-entrance-gate-20261007·20261010T044535；st-entrance-gate-20261007·20261010T044913 | 10/1 | 0 | 未复活 | 自愿收官 | 是（自愿收官） | 先行终报笔 d68b7cbc87 @ 2026-10-08T18:42:04+08:00（早于清除 10-10 12:49） |
+| .aidrafts/st-examchief-20261009 | st-examchief-20261009 | 无 | 13/3 | 0 | 复活（后续拍子 11 次，末次 10-10 17:26） | 自愿收官 | 是（自愿收官） | 先行终报笔 d00ab4a425 @ 2026-10-10T04:30:35+08:00（早于清除 10-10 04:30）（清除后属主另落 3 笔：cdec731bf9 c69a4a6948 8e53398f77） |
+| .aidrafts/st-fc-landing-20261008 | st-fc-landing-20261008 | st-fc-landing-20261008·20261010T044428；st-fc-landing-20261008·20261010T044539 | 3/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-fc-spm-20261008 | st-fc-spm-20261008 | st-fc-spm-20261008·20261010T044550 | 1/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-fc-tdm-20261008 | st-fc-tdm-20261008 | st-fc-tdm-20261008·20261010T044558 | 1/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-fwin-exec-20261009 | st-fwin-exec-20261009 | 无 | 2/1 | 0 | 复活（后续拍子 2 次，末次 10-10 12:08） | 自愿收官 | 是（自愿收官） | 先行终报笔 ca446e999f @ 2026-10-10T11:55:43+08:00（早于清除 10-10 11:55） |
+| .aidrafts/st-gomap-b-20261004 | st-gomap-b-20261004 | st-gomap-b-20261004·20261010T044606；st-gomap-b-20261004·20261010T044922 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-gomap-b-20261006 | st-gomap-b-20261006 | st-gomap-b-20261006·20261010T044739；st-gomap-b-20261006·20261010T044935 | 1/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-govfix-g6-20261007 | st-govfix-g6-20261007 | st-govfix-g6-20261007·20261010T044810 | 2/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-govjudge-20261010 | st-govjudge-20261010 | st-govjudge-20261010·20261010T173323 | 9/2 | 2 | 未复活 | 自愿收官 | 否（面级虽落终报，字节级仍有 2 件未归，禁与自然收官混计） | 先行终报笔 c45b1fc6a0 @ 2026-10-10T12:44:25+08:00（早于清除 10-11 01:33） |
+| .aidrafts/st-libfront-20261010 | st-libfront-20261010 | 无 | 2/0 | 0 | 复活（后续拍子 16 次，末次 10-10 17:26） | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev（清除凭据＝'wave2_archive.log'）（清除后属主另落 2 笔：aa0666909f ebe4406030） |
+| .aidrafts/st-maint1-20261010 | st-maint1-20261010 | st-maint1-20261010·20261010T173321；st-maint1-20261010·20261010T173520 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-maint1-close | st-maint1-close | st-maint1-close·20261010T173332；st-maint1-close·20261010T173527 | 0/0 | 1 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-maint1-t2lane | st-maint1-t2lane | st-maint1-t2lane·20261010T173316；st-maint1-t2lane·20261010T173448 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-maint1-t3lane | st-maint1-t3lane | st-maint1-t3lane·20261010T173318；st-maint1-t3lane·20261010T173505 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-mastertc-mine | st-mastertc-mine | 无 | 1/0 | 0 | 复活（后续拍子 2 次，末次 10-10 12:08） | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev（清除凭据＝'batchB.log'／标签 st-mastertc-mine） |
+| .aidrafts/st-poscap-fix-20261008 | st-poscap-fix-20261008 | st-poscap-fix-20261008·20261010T044742 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/st-tdm-chief-20261004 | st-tdm-chief-20261004 | st-tdm-chief-20261004·20261010T044752 | 10/1 | 0 | 未复活 | 自愿收官 | 是（自愿收官） | 先行终报笔 7f754e3a97 @ 2026-10-07T15:53:46+08:00（早于清除 10-10 12:47） |
+| .aidrafts/st-vm12w-20261004 | st-vm12w-20261004 | st-vm12w-20261004·20261010T044807；st-vm12w-20261004·20261010T044857 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .aidrafts/verify_v1 | verify_v1 | 无 | 0/0 | 0 | 无清除时刻，不适用 | 待追因 | 否（待追因） | 本班窗口内查无 retire patch／归档日志／同名标签三重凭据 |
+| .worktrees/st-backfix-20261010 | st-backfix-20261010 | 无 | 22/2 | 0 | 无清除时刻，不适用 | 非本班动手 | 是（属主自收，非本班清除） | 属主 backfix 班 13:2x 自行收尾（终笔 6a2245e4d1 落 dev 后车道自灭） |
+| .worktrees/st-bcure-wt | st-bcure-wt | st-bcure-wt·20261010T044246；st-bcure-wt·20261010T044334 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-bt-fast-w5-20261006 | st-bt-fast-w5-20261006 | st-bt-fast-w5-20261006·20261010T044404 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-chief7z-20261009 | st-chief7z-20261009 | st-chief7z-20261009·20261010T044415；st-chief7z-20261009·20261010T044500 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-chiefzc-verify-20260928 | st-chiefzc-verify-20260928 | 无 | 0/0 | 0 | 无清除时刻，不适用 | 零内容面 | 不适用（零字节面，无收官可谈） | 空壳/断链 JUNCTION，无字节可谈收官 |
+| .worktrees/st-constland-20261010 | st-constland-20261010 | st-constland-20261010·20261010T173246 | 3/2 | 793 | 未复活 | 自愿收官 **←令文首例** | 否（面级虽落终报，字节级仍有 793 件未归，禁与自然收官混计） | 先行终报笔 c45b1fc6a0 @ 2026-10-10T12:44:25+08:00（早于清除 10-11 01:32） |
+| .worktrees/st-cure-p0-20261006 | st-cure-p0-20261006 | st-cure-p0-20261006·20261010T044419；st-cure-p0-20261006·20261010T044520 | 1/1 | 0 | 未复活 | 自愿收官 | 是（自愿收官） | 先行终报笔 7e737d7af6 @ 2026-10-06T18:54:42+08:00（早于清除 10-10 12:45） |
+| .worktrees/st-cure-p03-20261006 | st-cure-p03-20261006 | 无 | 4/0 | 0 | 无清除时刻，不适用 | 零内容面 | 不适用（零字节面，无收官可谈） | 空壳/断链 JUNCTION，无字节可谈收官 |
+| .worktrees/st-docs-e13-20261009 | st-docs-e13-20261009 | st-docs-e13-20261009·20261010T044002 | 1/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-entrance-gate-20261007 | st-entrance-gate-20261007 | st-entrance-gate-20261007·20261010T044535；st-entrance-gate-20261007·20261010T044913 | 10/1 | 0 | 未复活 | 自愿收官 | 是（自愿收官） | 先行终报笔 d68b7cbc87 @ 2026-10-08T18:42:04+08:00（早于清除 10-10 12:49） |
+| .worktrees/st-fc-landing-20261008 | st-fc-landing-20261008 | st-fc-landing-20261008·20261010T044428；st-fc-landing-20261008·20261010T044539 | 3/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-fc-spm-20261008 | st-fc-spm-20261008 | st-fc-spm-20261008·20261010T044550 | 1/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-fc-tdm-20261008 | st-fc-tdm-20261008 | st-fc-tdm-20261008·20261010T044558 | 1/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-fflow-c2-20261008 | st-fflow-c2-20261008 | 无 | 0/0 | 0 | 无清除时刻，不适用 | 待追因 | 否（待追因） | 本班窗口内查无 retire patch／归档日志／同名标签三重凭据 |
+| .worktrees/st-fflow-c3-20261008 | st-fflow-c3-20261008 | 无 | 0/0 | 0 | 无清除时刻，不适用 | 待追因 | 否（待追因） | 本班窗口内查无 retire patch／归档日志／同名标签三重凭据 |
+| .worktrees/st-gomap-b-20261004 | st-gomap-b-20261004 | st-gomap-b-20261004·20261010T044606；st-gomap-b-20261004·20261010T044922 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-gomap-b-20261006 | st-gomap-b-20261006 | st-gomap-b-20261006·20261010T044739；st-gomap-b-20261006·20261010T044935 | 1/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-govfix-g6-20261007 | st-govfix-g6-20261007 | st-govfix-g6-20261007·20261010T044810 | 2/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-govjudge-20261010 | st-govjudge-20261010 | st-govjudge-20261010·20261010T173323 | 9/2 | 2 | 未复活 | 自愿收官 | 否（面级虽落终报，字节级仍有 2 件未归，禁与自然收官混计） | 先行终报笔 c45b1fc6a0 @ 2026-10-10T12:44:25+08:00（早于清除 10-11 01:33） |
+| .worktrees/st-maint1-20261010 | st-maint1-20261010 | st-maint1-20261010·20261010T173321；st-maint1-20261010·20261010T173520 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-maint1-close | st-maint1-close | st-maint1-close·20261010T173332；st-maint1-close·20261010T173527 | 0/0 | 1 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-maint1-t2lane | st-maint1-t2lane | st-maint1-t2lane·20261010T173316；st-maint1-t2lane·20261010T173448 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-maint1-t3lane | st-maint1-t3lane | st-maint1-t3lane·20261010T173318；st-maint1-t3lane·20261010T173505 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-mastertc-l8 | st-mastertc-l8 | 无 | 0/0 | 0 | 无清除时刻，不适用 | 零内容面 | 不适用（零字节面，无收官可谈） | 空壳/断链 JUNCTION，无字节可谈收官 |
+| .worktrees/st-menu-t1b6-20260930 | st-menu-t1b6-20260930 | 无 | 0/0 | 0 | 复活（后续拍子 2 次，末次 10-10 12:08） | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev（清除凭据＝标签 ai__st-menu-t1b6-20260930__task-t1b6-indicator-disposal） |
+| .worktrees/st-poscap-fix-20261008 | st-poscap-fix-20261008 | st-poscap-fix-20261008·20261010T044742 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+| .worktrees/st-tdm-chief-20261004 | st-tdm-chief-20261004 | st-tdm-chief-20261004·20261010T044752 | 10/1 | 0 | 未复活 | 自愿收官 | 是（自愿收官） | 先行终报笔 7f754e3a97 @ 2026-10-07T15:53:46+08:00（早于清除 10-10 12:47） |
+| .worktrees/st-vm12w-20261004 | st-vm12w-20261004 | st-vm12w-20261004·20261010T044807；st-vm12w-20261004·20261010T044857 | 0/0 | 0 | 未复活 | 被迫收官 | 否（被迫收官） | 清除动作发生时属主名下查无先行终报/收口/99_delivery 落 dev |
+<!-- END GENERATED t9_forced_close -->
 
 ## 十、复核命令（整段可复制，只读；批复件同段）
 
@@ -397,6 +471,14 @@ ls -d /e/_tomb_quarantine && cat /e/_tomb_quarantine/README.md | head -6
 ```
 
 ```bash
+# 收尾令②③ 复核（只读）
+python .runtime/tmp/st-finalclean2-20261010/tools/t9_forced_close_audit.py | sed -n '3,9p'   # §九E 同源：54 面三档/复活实证
+git for-each-ref --format='%(refname:short)' 'refs/tags/quarantine/finalclean2-t7-*'          # 期望 3 枚治理案卷锚
+git show-ref refs/recover/inflight-20261010                                                   # 在飞袋锚（禁 drop/禁 gc）
+python .runtime/tmp/st-finalclean2-20261010/tools/fourth_source_selfcheck.py                  # 第四源自证（尺与工具守卫是否同源）
+```
+
+```bash
 # 波二 T7/T8/终报 复核（只读；本班对 E 面零删除，故任何 E 侧 mtime 变化都属异常）
 python .runtime/tmp/st-finalclean2-20261010/tools/t8_evidence.py | head -6      # §九D 同源：30 面三问＋61/61 承载体
 python .runtime/tmp/st-finalclean2-20261010/tools/mk_t7_block.py | sed -n '3,6p'  # §九C 同源：口径三件事/三层耐久/引用 10/10
@@ -429,10 +511,10 @@ wc -c .runtime/quarantine/finalclean2_safety/wave2b_rescue_manifest.jsonl       
 
 **收尾动作（按宪法 §2 会话收尾序，非本班自签"完成"）**：巡检 cron 自删（T8 两轮条件已成立）→ 本班重复车道 `.aidrafts/st-finalclean2-20261010` 与 `.worktrees/st-finalclean2-20261010` 走收尾序处置（活面不自清）→ release 本班全部 claim → 本班临时件（`.runtime/tmp/st-finalclean2-20261010/`）TTL 归属确认（成果已 promote 至 `docs/_working/finalclean2_campaign/` 三枚册面）→ 向 Owner 发固定收尾句。
 
-<!-- BEGIN GENERATED closeout (mk_closeout_block.py 机生 2026-10-11 02:40，禁手改) -->
+<!-- BEGIN GENERATED closeout (mk_closeout_block.py 机生 2026-10-11 03:05，禁手改) -->
 
 - 现存面 **14** 件（态①0／态②0／态④14），两把尺同拍=`dirs_v21.json` @ 2026-10-11T02:33:42 ／ dev_delta @ 2026-10-11T02:33:55（防错拍闸阈值 20min）
-- 磁盘可用实测：D **53,962,686,464 B**（开班基线 48,038,154,240 ⇒ **+5,924,532,224 B**；01:51 收线读数 54,386,671,616 ⇒ 本轮 -423,985,152 B＝他班同期写入）；E（墓碑载体所在）233,868,603,392 B
+- 磁盘可用实测：D **53,946,105,856 B**（开班基线 48,038,154,240 ⇒ **+5,907,951,616 B**；01:51 收线读数 54,386,671,616 ⇒ 本轮 -440,565,760 B＝他班同期写入）；E（墓碑载体所在）233,858,592,768 B
 - 先救副本合计：01:32 批 **3 件/4,171,458 B**（govjudge 2＋maint1-close 1）＋02:1x 批 **6 件/89,367 B**（deadcure2 1＋dexp 4＋nightmine 1）＝**9 件**，两批分文件存、无覆盖；T7 保护腿另 **3 件**（E↔blob↔安全区三处字节全等＋附注锚逐枚核实）
 - 墓碑载体：E 侧 INDEX 13 行＝10 原件＋3 条 second_pass 跟进；载荷 3,615,797,957 B；复活窗取值=['2026-11-10']；本班对 E 面**零删除**（只写不删=红线）
 
@@ -455,3 +537,54 @@ wc -c .runtime/quarantine/finalclean2_safety/wave2b_rescue_manifest.jsonl       
 
 - ⚑ 三问实证的收线含义：波一消失的 **30** 面中，态② 15 面的独有件 **69/69 件**逐件对到承载体（patch 的 `diff --git` 头或 safety 副本），**无承载体 0 件**；态① 10 面内容等价于 dev tree `5d9c4d3018c41c55bfbfbedc54bce447925863fd`（零独有字节⇒无需同名存证）。
 <!-- END GENERATED closeout -->
+
+## 十二、收尾序交接包（总统统筹 02:4x 收尾令④⑤，供明晨终验收官）
+
+> 本包＝本班最后一件动作。写口径＝**点名段落＋全路径＋实测态**，收件人不必再回头问本班任何问题即可验收；
+> 凡本班"没做"的事都写明**为什么没做**（红线／门位／车道归属），不留模糊。
+
+### A. 令①②③④⑤ 逐条回执
+
+| 令 | 本班动作 | 实测态（02:5x-03:0x） |
+|---|---|---|
+| ①开闸口径一致、不回滚 | 未回滚；波二全部动作沿用 01:25 令 | §四 01:2x→02:38 各行连续在册 |
+| ②立规矩『被清除面≠净收官』 | 规矩文本入册（§五-24）＋**做成可复算执行器**（§九E），首例入册 | 全集 54 面＝可计 **9**／不可计 **42**／不适用（零字节面）**3**；清除后又复活 **5** 面（examchief 后续 11 拍／libfront 16 拍／fwin-exec／mastertc-mine／menu-t1b6） |
+| ③cleanup 误摘活体 claim 升级候件 | 入册 §五-25，处方＝摘锁前核三源（与 §五-23 同一把"工具守卫同源"尺） | 本班未自修 `lock_files.py`（全局工具属他车道，不自设 gate） |
+| ④巡检停＋转收尾序 | cron `009d328a-ff16-489c-80a5-f28cb4c678e5` 已 `qoder_cron remove`；claim 全 release（`lock_files.py list`＝CLEAN 无任何文件锁）；`.runtime/sessions/st-finalclean2-20261010/` 实测**仅 heartbeat.jsonl、无 staging 目录**⇒无物可 promote，本班成果全部 promote 至 `docs/_working/finalclean2_campaign/`（00/10/11 三枚册面在 dev） | 三枚袋号 `44c88530b6`／`477475f679`／`b56aa5d130`，各 1 文件、零连坐 |
+| ④末件 T7 补出 | 本班取证车道已出卷，未重做；重打命令＝`python .runtime/tmp/st-finalclean2-20261010/tools/mk_t7_block.py` | 60,808 件全量重算不符 0；分批 0/1/2/3 |
+| ⑤待明晨终验收官 | 本班不再自发动作（cron 已删），进入待命 | 见本包 §D 三问三答 |
+
+### B. 待 Owner／总统筹 画押面（本班一律不代裁）
+
+1. **C6 物理删批文输入**（§九C）：建议只批第 1 批＝3 目录/43,584 件/2.76 GiB（占载荷 82.0%）；第 0 批 `zmaster2_coord`（44 件）内化前禁删；第 3 批 `st-tclose-cardfix-20261004` 的 `governance.db.bak` 227,168,256 B 与 G 盘两套夜镜像均不等＝独立时间点快照，请单独画押；第 2 批 5 目录/17,175 件逐件随批。复活窗统一 **2026-11-10**。
+2. **`zmaster2_coord` 三件治理案卷内化归口**（§五-20）：唯一耐久承载体＝E 墓碑＋`.runtime/quarantine/finalclean2_safety/t7_zmaster2_irreplaceable/`＋三枚附注锚 `refs/tags/quarantine/finalclean2-t7-{ADJUDICATION_storage,storage_decision_CASE,ADJUDICATION_20260927}-20261011`；dev 里至今零 commit。
+3. **9 件真增量认领**（§五-21）：清单 `.runtime/quarantine/finalclean2_safety/wave2_rescue_manifest.jsonl`（3 件：govjudge 2／maint1-close 1）＋`wave2b_rescue_manifest.jsonl`（6 件：deadcure2 1／dexp 4／nightmine 1），逐件 sha256 在册；其中 `docs/_working/dexp_campaign/05_worktree_handoff_zongdui.md` **是点名给总统筹的交接件**。
+4. **793 件在飞字节认领**（§九 T0 行＋`10_t0_inflight_triage.md`）：袋 `c2de2face68`，双锚在册，处置全程零 drop；属主按 `owner` 字段分流（domain:tests 274／campaign:decision_map_campaign_20260924 91／campaign:total_command_closeout 30…）。
+5. **`.runtime/tmp` C-2 面 49.89 GiB 定策**（§五-12 三选一）＋体积增长面（§五-5：`gate_audit` 1.22 GiB、5 枚破 50 MiB 轮转阈值却未轮转的 audit 件等）。
+6. **§五-23／§五-25 两条通则追认**：①删除判据必须与执行工具守卫同源；②`cleanup` 摘锁须核活性三源。追认后请转给所有做活死判定/锁治理的车道并入维护班清账。
+
+### C. 在册证据面全路径（验收官直接取数）
+
+- 账本：`docs/_working/finalclean2_campaign/00_ledger.md`（§三 四态表／§四 处置流水／§五 呈批 0-25／§六 六线监测／§七 自洽对账／§九 批复袋／§九B C 件回执／§九C T7／§九D T8 三问／§九E 清除来源核账／§十 复核命令／§十一 终报／本节交接包）
+- 案卷：`10_t0_inflight_triage.md`（T0 分流）、`11_tmp_dir_dossier.md`（C 件逐目录案卷）
+- 机生取证：`.runtime/tmp/st-finalclean2-20261010/{scan,tools,t0_casefile,t3_casefile,t3b_casefile,t4_casefile,t5_casefile,t7_casefile}/`（TTL，随班清除；T7 逐件级 `t7_casefile/tmp_package.csv` 60,819 行）
+- 救援与存证：`.runtime/quarantine/finalclean2_safety/{inflight_20261010/,wave2_st-govjudge-20261010/,wave2_st-maint1-close/,wave2b_st-deadcure2-20261009/,wave2b_st-dexp-20261009/,wave2b_st-nightmine-20261010/,t7_zmaster2_irreplaceable/,wave2_rescue_manifest.jsonl,wave2b_rescue_manifest.jsonl,00_ledger.*.md}`；`.runtime/quarantine/*-retire-*.patch`（本班窗口内 48 枚）
+- 墓碑：`E:\_tomb_quarantine\{README.md,INDEX.jsonl,st-finalclean2-20261010\<10 目录>\MANIFEST.jsonl}`；备份侧 `scripts/backup/backup_config.yaml`（`tomb_quarantine` 已落 dev，`parse_check.ps1` 实证 5 目标 exists=True）
+
+### D. 验收官三问三答（预防返工）
+
+- 问"有没有误删"：本班删除动作全部走 `session_worktree.py archive` 正道与 Owner 批文 C 件；**零**唯一版触碰（45 条 `D ` 全复位，盘无且 HEAD/dev 均无身位者一件未动）；回滚凭据逐件在 §九D/§九E。若某面 §九E 标"无同名存证"，它必为态①＝内容等价于 dev tree `5d9c4d3018c41c55bfbfbedc54bce447925863fd`，可直接重建。
+- 问"账面有没有夸大"：两处**已自纠**且留在册上——①"三重存证"模板串（§五-16→§九D 逐件补，态② 61/61 件承载体对号）②活性尺缺第四源致 6 面假报死（§五-23→修尺后 14 面全态④）。§九E 另把"已清 29 面"明确降级为**清除量≠收官量**。
+- 问"为什么还没收干净"：现存 14 面全部命中在册避让依据（`list_active` 属主活跃／波二白名单／fs 写≤90min／宪法正本载体禁删／非车道读数不适用），且 4 面真增量已救未清（§五-21）⇒ **本班此刻可执行删除动作＝0**，再多删一件都需要属主或 Owner 授权。
+
+### E. 本班遗留物（不自清的申报）
+
+- 同 sid 双幅面孔 `.worktrees/st-finalclean2-20261010`（分支 `ai/st-finalclean2-20261010/task-finalclean2-loop`，ahead=0，HEAD 是 dev 祖先）＋ `.aidrafts/st-finalclean2-20261010`（重复车道，§四 12:2x 自记成因＝本 session 重注册时副产物）：本班 session 此刻在 `list_active` 内，**工具会硬拒自清**；待会话终了由后续班或 Owner 按 §二 四态处置。其独有件仅 `docs/_working/finalclean2_campaign/00_ledger.md`（已落 dev＝零未归字节）。
+- 本班临时件＝task_bound：tools 21 支／scan 40+ 件／casefile 5 组，随班 TTL 清除；永久面只有三枚册面（00/10/11）。
+- 保持在册、**禁 drop／禁 gc**：三枚 `refs/tags/quarantine/finalclean2-t7-*` 锚＋`refs/recover/inflight-20261010`＋`refs/quarantine/st-govjudge-20261010-20261010`＋本班逐轮台账锚 `refs/tags/quarantine/finalclean2-ledger-*`。
+
+### F. 明晨验收入口（一条命令）
+
+```bash
+git show dev:docs/_working/finalclean2_campaign/00_ledger.md | sed -n '/## 十二/,$p'
+```
