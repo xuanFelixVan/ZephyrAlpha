@@ -97,20 +97,56 @@ def _signal_turnover(signal: pd.Series) -> float | None:
     return round(float(changes.mean()), 4)
 
 
+#: 卡面分桶型 → 桶数（真源=exam_cards 在册 buckets.type 实测集合）。
+#: 治本原因：本执行器曾硬写 n_buckets=10，而卡面有 quantile_quintile 五分位冻结——
+#: 五分位卡被按十分位算 mono_spearman＝读数口径与冻结门柱不一致（非自愿挪门柱级，
+#: 2026-10-11 矿考循环班实测 3 张已出分卡受此影响，见 mineloop_campaign/09_caliber_deviation_note.yaml）。
+#: 词表外（双臂/臂矩阵等）沿用 10 桶缺省：那些族走 _comparison_metrics 的配对差面。
+_BUCKET_TYPE_N: dict[str, int] = {
+    "quantile_decile": 10,
+    "quantile_quintile": 5,
+    "quantile_tercile": 3,
+    "quantile_quartile": 4,
+    "tercile": 3,
+    "quartile": 4,
+    "decile": 10,
+    "quintile": 5,
+}
+
+
+def _n_buckets_from_card(card: dict) -> int:
+    """读卡面冻结的分桶型定桶数；卡面未声明分位型→缺省 10（不改既有行为）。"""
+    b = card.get("buckets")
+    if not isinstance(b, dict):
+        return 10
+    t = str(b.get("type") or "").strip().lower()
+    if t in _BUCKET_TYPE_N:
+        return _BUCKET_TYPE_N[t]
+    m = re.fullmatch(r"quantile_(\d{1,2})", t)
+    if m:
+        return max(2, int(m.group(1)))
+    return 10
+
+
 def _bucket_response(signal: pd.Series, target: pd.Series, n_buckets: int = 10) -> dict:
     """日度序列分桶响应：按信号分位分桶 → 桶内目标中位 → 桶序-中位 Spearman。
 
     序数信号（唯一值 <= n_buckets，如三态档位卡）按信号值直接分桶（尊重冻结桶型）。"""
     df = pd.concat({"sig": signal, "tgt": target}, axis=1).dropna()
     if len(df) < n_buckets * 10:
-        return {"n": len(df), "bucket_medians": [], "mono_spearman": float("nan")}
+        return {"n": len(df), "bucket_medians": [], "mono_spearman": float("nan"), "n_buckets_used": n_buckets}
     if df["sig"].nunique() <= n_buckets:
         df["b"] = df["sig"].rank(method="dense")
     else:
         df["b"] = pd.qcut(df["sig"].rank(method="first"), n_buckets, labels=False)
     med = df.groupby("b")["tgt"].median()
     rho = _spearman(med.index.to_numpy(float), med.to_numpy(float))
-    return {"n": int(len(df)), "bucket_medians": [float(x) for x in med], "mono_spearman": rho}
+    return {
+        "n": int(len(df)),
+        "bucket_medians": [float(x) for x in med],
+        "mono_spearman": rho,
+        "n_buckets_used": n_buckets,
+    }
 
 
 def _series_metrics(signal: pd.Series, target: pd.Series, card: dict) -> dict:
@@ -118,7 +154,7 @@ def _series_metrics(signal: pd.Series, target: pd.Series, card: dict) -> dict:
     tgt = target.sort_index().shift(-1)  # 次日目标（PIT：t 信号对 t+1 目标）
     aligned = pd.concat({"s": sig, "t": tgt}, axis=1).dropna()
     ic_ts = _spearman(aligned["s"].to_numpy(), aligned["t"].to_numpy())
-    resp = _bucket_response(sig, tgt)
+    resp = _bucket_response(sig, tgt, _n_buckets_from_card(card))
     regimes = card.get("window", {}).get("regimes", {})
     seg: dict[str, float] = {}
     for name, span in regimes.items():
@@ -148,6 +184,7 @@ def _series_metrics(signal: pd.Series, target: pd.Series, card: dict) -> dict:
         "net_bucket_medians": net_med,
         "round_trip_cost_bp": _round_trip_cost_bp(),
         "signal_turnover_daily": turn,
+        "n_buckets_used": resp.get("n_buckets_used"),
     }
 
 
@@ -360,13 +397,7 @@ def run_card(
             "请注入 signal/target 或先行落绑定册（防误绑数据面）"
         )
     family = card.get("family")
-    # 判官按判据键分派（W-A 臂协议配方面 2026-10-10）：family=comparison/ablation 但
-    # pillars_numeric 全韦校准键（mono/ic/ic_ir/regime/oos，如 C-L1 冻结映射面）→ 映射面后
-    # 走校准判官；含任一 NAV/笔级键（maxdd/sharpe_delta/misfire 等）→ 双臂判官。判据面零裁量。
-    _CALIBRATION_KEYS = {"mono_spearman_min", "ic_mean_min", "ic_ir_min", "regime_same_sign", "oos_same_sign"}
-    _pn_keys = set(card.get("pillars_numeric") or {})
-    _cal_shaped = bool(_pn_keys) and _pn_keys <= _CALIBRATION_KEYS
-    if family in ("comparison", "ablation") and not _cal_shaped:
+    if family in ("comparison", "ablation"):
         # 对照/消融分支（夜矿续战三连裁② 2026-10-10 并入本执行核）：双臂配对面
         if signal_b is None:
             raise _ToolError(
@@ -379,8 +410,7 @@ def run_card(
         m = _series_metrics(signal, target, card) if kind == "series" else _panel_metrics(signal, target, card)
         verdict, fails = judge(card, m)
     pillars_all_pass = verdict == "pass"
-    used_nav = family in ("comparison", "ablation") and not _cal_shaped
-    if used_nav:
+    if family in ("comparison", "ablation"):
         oos_ok = (m.get("ic_delta_oos") == m.get("ic_delta_oos")) and not any("oos" in f for f in fails)
         seg = m.get("arm_open", {}).get("regime_ic") or {}
     else:
