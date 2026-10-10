@@ -74,3 +74,5 @@ family_id: EXAMCARD-CAMPAIGN
 
 - R3 卡册袋**停投**（非落地）：①capability 册 staged 翻动实测未止（11:32 实锤，详=00_campaign_ledger.md 本日午段）；②袋载荷半数过时——双窗卡 token 已在 HEAD 正典投影在册、7 张 L1 卡 staged 形=对夜挖分数实录的数据回退。真剩余增量=calibration_exam.py(+30)+台账段+ruff 修复 2 件（46 测试全绿），候维护班根治翻动后重 derive 走正门。
 - 宪法件已划归宪法班，本战役彻底撤出；W1 正式验收=今晚 23:00 自然窗（claim=st-examclose-20261010），冻结门柱=manifest.csv 有产出且 rc=0，不变。
+
+- **更正（15:1x）**：W1 验收窗位经 st-nightmine2-20261010「夜矿续战令三连裁③」（commit 723a6a10a9）裁定搬迁——F06 v2 窗纪=Sat 08:00 起/22:30 硬收窗禁跨 23:00，批A 作废（16.7h 零 manifest 入 N 账本）、判据面零变动（manifest+rc）。今晚 23:00 自然火依法取消，验收改指首个 v2 自然窗=2026-10-17 08:00（候 Owner 确认改指）；今晚 23:04 仍按纪律到窗取证窗位空置状态。详=00_campaign_ledger.md 本日 15:1x 段。

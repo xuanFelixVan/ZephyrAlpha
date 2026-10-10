@@ -75,3 +75,9 @@ family_id: EXAMCARD-CAMPAIGN
 - **R3 袋实况=半数载荷已过时（第二停投理由）**：袋 231 件仅 11 件对 HEAD 有差，其中——①双窗卡 token 两条已在 HEAD 正典投影在册（merge_evaluation=「R3 离场族双窗冻卡（裁定#505）归 exam_card 族」×2），capability 册携带=纯渲染 reflow 零内容增量；②7 张 L1 卡 staged 形=examined→preregistered 回退+run_id/score_row 置 null，与 exam_scores_v1（17 行 fail 实录，nightmine 05:07-08:56 实跑在案）相抵，落地=数据倒退；③真剩余增量=calibration_exam.py（+30 未暂存，chief 末笔）+本台账段+2 件 ruff 修复（writeback SIM300/skeleton I001，修后 46 测试全绿）。建议：袋作废重 derive（剔三册与 7 卡，仅余真增量件），候翻动根治后走正门。
 - **T4 巡检收账**：W4 分数册 17 行全 fail（如实入册，预注册纪律）；W5 零 PASS（回写器候面不动）；W2 批A 16h+ 仍在算（19:17 到限先杀，全引擎 s/格 标定取数大概率落空=如实不动）。
 - **W1 验收安排**：19:17 彩排批（PID 32284 wrapper+50252 python，10-09 19:16:58 起）到限先杀不占窗位（F06Grid state=Running 在位会顶掉 23:00 自然触发）；23:00 自然窗按冻结门柱（manifest.csv 有产出且 rc=0）验收；红=五层证伪链取证上报，禁现场改判据。
+
+## 追记（2026-10-10 15:1x）：守望面重大更正——批A 死亡与 trigger 搬迁全部有名主（st-examclose-20261010）
+
+- **14:58 守望实查批A 进程已消失**→深挖定谳：非杀手、非事故，系 st-nightmine2-20261010「夜矿续战令三连裁③」裁定手术（commit 723a6a10a9 12:11，adjudicator 署名+队列 GW 全留痕）：批A（grid_20261009-191707）16.7h 零 manifest、44.8s/格超停手阈值 12.8 倍→作废入 N 账本（6000 试次宁严勿宽入计），三进程 50252/25712/32284 由其亲停，「现场释放避开 10-10 23:00 W1 窗（OD-5 叠跑教训）」。backfix 班杀手案（案#5-#7：短命 spawner→stdin 喂码 python 杀 backup 族）与本面无关，仍由其追凶；reaper_kill.log 对 50252 零命中（reaper 再证无罪）。
+- **T3 窗位被裁定搬迁**：F06Grid 计划任务 trigger 23:00→Sat 08:00（任务 XML 12:07:34 改写、启动器与 register 脚本同 commit 12:11 落账）；f06_grid.enabled→false，f06_grid_v2 重冻结（n_samples 6000→1000 同 seed 前缀可比、判据面零变动=manifest+rc、window_discipline=Sat 08:00 起跑/22:30 硬收窗禁跨 23:00）。**冻结门柱（manifest+rc0）本身未动**，但「今晚 23:00 自然火」已被 v2 纪律合法取消（禁跨 23:00；首个 v2 自然窗=2026-10-17 08:00，今晨 08:00 已过）。
+- **T3 处置=按预注册纪律改旗不投**：本令原钉「今晚 23:00 自然验收」与三连裁③构成先后令冲突，后至且经裁定并有 commit 原子的 v2 安排为准——今晚 23:04 本会话仍到窗取证（预期=无 fired 行+任务 Ready/next 10-17 08:00，如实记录=窗位合法空置），**不手动点火自证**；验收改指首个 v2 自然窗（10-17 08:00 起/22:30 硬收窗），改指生效候 Owner/总令确认。19:17 自动化顺延为无害核账（批A 已死，仅验任务态+落账）。
