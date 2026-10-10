@@ -397,7 +397,13 @@ def run_card(
             "请注入 signal/target 或先行落绑定册（防误绑数据面）"
         )
     family = card.get("family")
-    if family in ("comparison", "ablation"):
+    # 判官按判据键分派（W-A 臂协议配方面 2026-10-10）：family=comparison/ablation 但
+    # pillars_numeric 全韦校准键（mono/ic/ic_ir/regime/oos，如 C-L1 冻结映射面）→ 映射面后
+    # 走校准判官；含任一 NAV/笔级键（maxdd/sharpe_delta/misfire 等）→ 双臂判官。判据面零裁量。
+    _CALIBRATION_KEYS = {"mono_spearman_min", "ic_mean_min", "ic_ir_min", "regime_same_sign", "oos_same_sign"}
+    _pn_keys = set(card.get("pillars_numeric") or {})
+    _cal_shaped = bool(_pn_keys) and _pn_keys <= _CALIBRATION_KEYS
+    if family in ("comparison", "ablation") and not _cal_shaped:
         # 对照/消融分支（夜矿续战三连裁② 2026-10-10 并入本执行核）：双臂配对面
         if signal_b is None:
             raise _ToolError(
@@ -410,7 +416,8 @@ def run_card(
         m = _series_metrics(signal, target, card) if kind == "series" else _panel_metrics(signal, target, card)
         verdict, fails = judge(card, m)
     pillars_all_pass = verdict == "pass"
-    if family in ("comparison", "ablation"):
+    used_nav = family in ("comparison", "ablation") and not _cal_shaped
+    if used_nav:
         oos_ok = (m.get("ic_delta_oos") == m.get("ic_delta_oos")) and not any("oos" in f for f in fails)
         seg = m.get("arm_open", {}).get("regime_ic") or {}
     else:
