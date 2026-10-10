@@ -22,7 +22,7 @@
    `capability_lookup.find(<kw>, session_id=<sid>)` 或 MCP `rule_discovery`（写审计）；施工/新模块另必读 `sop/construction_sop/construction_workflow_policy.md`（07 域 15 步闭环编排真源）。
 5. **RULE-DEPGRAPH**：施工前 `apply_depgraph.py --add-design-node` 登记；文件重命名后
    `generate_project_depgraph.py --force`。
-6. **RULE-REGISTRY**：查注册表先读 `docs/registry_of_registries.yaml`（ROOR，勿背数）。
+6. **RULE-REGISTRY**：进场先读 `docs/library/FRONT_DOOR.md`（52 行门牌，机生零漂移）一站达 ROOR（`docs/registry_of_registries.yaml`，勿背数）与 `lookup` 单口查询。
 7. **RULE-SSOT**：写数据前判真源方向——规则数据改 YAML 同步 DB；架构数据 apply_*.py 直写 DB。
 
 ## 1. 十二条硬规则（违反即硬阻断，无直觉例外）
