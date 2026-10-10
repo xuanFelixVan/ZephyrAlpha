@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+gate_selfdoc: GIT-DANGEROUS
 title: 备份链端到端修复总包台账（st-backfix-20261010）
 session: st-backfix-20261010
 completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶手定名或陷阱移交，即随批归档
@@ -153,3 +154,9 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 3. **死亡窗过程取证**：五案死亡窗 ±2min 内 session_worktree merge/abort 执行=零命中（守卫家族/账本/收尾流三面全清）。
 4. **新暴露面（存储性隐患，非本案直接凶手）**：`.runtime/locks/heartbeat_*.pid` 陈旧文件 **206 份**（Oct 2/Oct 9 系在册）——session 收尾流对其 taskkill 无 liveness/身份复核（session_worktree.py:540），pid 回收后=又一处定点误杀面（守卫家族同构）。处方②同款精神适用：taskkill 前须核活体 cmdline 含 heartbeat_daemon。
 5. **主使画像收敛**：resident（先于 11:16:38 存活至今）×有 TerminateProcess 能力×瞄准 .runtime-cwd 的队列点火 backup×不 spawn 新进程直接执杀×仓外或隐名。**杀径时序五连立全表与滞差浮动（1.7-22min）最兼容的解释=主使以自身事件周期（或响应 worker 死亡信号）在 G 镜像窗行凶**。下一班：307-resident 逐个 cmdline 审计（关键词法之外的全量人工面）+ event watch 续猎。
+
+### 案 #10 补记 + 蜜罐诱饵布设（巡检班 18:2x-18:5x 轮）
+
+- **案 #10（47200）终报**：死于 **18:22:05**（点火者 24156 被 reaper 处决 17:57:35 后 **+24.7min**——突破既往滞差上沿 22min），且死于静默段而非 G 镜像窗（G 写止于 18:03:44 后存活 18 分钟）——**"死于 G 镜像阶段"的相关性破功**。死亡秒窗仍是稠密 `python -` 环境噪声（多会话 heredoc 常态流），时序归因不可分。滞差全表：+14/+20.5/+21.5/+8.5/+1.7/+24.7min——非固定周期、非阶段锁定，**唯一稳定不变量=死在点火者被 reaper 处决后的 1.7-24.7 分钟内**。
+- **蜜罐诱饵布设（捕具升级，观测件零生产影响）**：`.runtime/tmp/backfix_decoy/backup.ps1`（死循环+60s 心跳 log，cmdline 含 backup.ps1=受害者同款签名）已脱离子弹起（decoy pid=17224，18:50:19），取证监视器已挂（backfix_monitor_17224.log）。**判据**：诱饵若在 ~45min 内被杀=主使按 cmdline 签名猎杀（与 reaper keep 行"backup.ps1"白名单并存的杀面=账本消费链之外还有黑名单面）；若 24h 无恙=主使只杀真备份实例（判别锁定 ignition/queue 批次染色）。诱饵死时监视器自动产出全分辨率案卷。
+- patrol 正常：46216 死亡结算件 184855（301 候选）+47200 armed 期间无死亡。
