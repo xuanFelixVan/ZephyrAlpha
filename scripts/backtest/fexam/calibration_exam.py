@@ -276,6 +276,20 @@ _CALIBRATION_JUDGED_KEYS = frozenset(
 )
 
 
+def pillars_route(card: dict) -> str:
+    """判官路由唯一真源（三连裁③v2 的"按判据键集分派"）：
+
+    'dual_arm'＝双臂 NAV 判官（_judge_comparison），'series'＝校准判官（judge，series/panel 两条面）。
+    family=comparison/ablation 且 pillars_numeric 全韦校准键（如 C-L1 冻结映射面）→ 映射面后走校准判官；
+    含任一 NAV/笔级键 → 双臂判官。非 comparison/ablation 族一律校准判官（现状即 shadow 族带 NAV 键也走
+    校准判官，其后果由 _CALIBRATION_JUDGED_KEYS 的未知键 fail-closed 兜住——路由扩面属判据路由面改动，
+    待门柱词表立法工单呈批，本件不自决）。run_card 与词表普查共用本函数，禁抄第二份。"""
+    fam = card.get("family")
+    pn = set(card.get("pillars_numeric") or {})
+    cal_shaped = bool(pn) and pn <= _CALIBRATION_JUDGED_KEYS
+    return "series" if (fam not in ("comparison", "ablation") or cal_shaped) else "dual_arm"
+
+
 def _unjudged_pillars(card: dict, m: dict, judged: frozenset) -> dict:
     """未判柱清单（纯观测面，零否决权）：分数册行 MUST 自带"这一分只代表哪些键"。
 
@@ -446,13 +460,10 @@ def run_card(
             "请注入 signal/target 或先行落绑定册（防误绑数据面）"
         )
     family = card.get("family")
-    # 判官按判据键分派（W-A 臂协议配方面 2026-10-10）：family=comparison/ablation 但
-    # pillars_numeric 全韦校准键（mono/ic/ic_ir/regime/oos，如 C-L1 冻结映射面）→ 映射面后
-    # 走校准判官；含任一 NAV/笔级键（maxdd/sharpe_delta/misfire 等）→ 双臂判官。判据面零裁量。
-    _CALIBRATION_KEYS = _CALIBRATION_JUDGED_KEYS  # 单一真源（未判柱观测面与分派判同一集合，禁两处抄）
-    _pn_keys = set(card.get("pillars_numeric") or {})
-    _cal_shaped = bool(_pn_keys) and _pn_keys <= _CALIBRATION_KEYS
-    if family in ("comparison", "ablation") and not _cal_shaped:
+    # 判官按判据键分派（W-A 臂协议配方面 2026-10-10 三连裁③v2）：路由判据本体见 pillars_route()——
+    # 该函数是 run_card 与门柱词表普查（card_binding --mode vocab-census）的唯一共用真源，禁两处各抄。
+    used_nav = pillars_route(card) == "dual_arm"
+    if used_nav:
         # 对照/消融分支（夜矿续战三连裁② 2026-10-10 并入本执行核）：双臂配对面
         if signal_b is None:
             raise _ToolError(
@@ -465,7 +476,6 @@ def run_card(
         m = _series_metrics(signal, target, card) if kind == "series" else _panel_metrics(signal, target, card)
         verdict, fails = judge(card, m)
     pillars_all_pass = verdict == "pass"
-    used_nav = family in ("comparison", "ablation") and not _cal_shaped
     if used_nav:
         oos_ok = (m.get("ic_delta_oos") == m.get("ic_delta_oos")) and not any("oos" in f for f in fails)
         seg = m.get("arm_open", {}).get("regime_ic") or {}

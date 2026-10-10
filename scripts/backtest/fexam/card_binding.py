@@ -870,9 +870,87 @@ def _in_ch_yield_window(now: datetime) -> str | None:
     return None
 
 
+def build_vocab_census(cards_dir: Path) -> dict:
+    """门柱词表普查（WO-V 词表立法的机生底座；宪法 §9.5=条目清单必须生成器产出，禁手抄）。
+
+    只普查三件事：①每张卡的判官路由（直调 calibration_exam.pillars_route，禁抄第二份分派式）；
+    ②卡面 pillars_numeric 的**键名**在该路由词表的哪一侧；③文字门柱 pillars 的键名与条数。
+    硬约束：零写阈值（键值属卡面冻结面，改值=新版本卡走 G4-5）、零改判据、零 CH、零分数册与卡件写。"""
+    from collections import Counter
+
+    from fexam.calibration_exam import _CALIBRATION_JUDGED_KEYS, _COMPARISON_KNOWN_KEYS, pillars_route
+
+    vocab = {"series": set(_CALIBRATION_JUDGED_KEYS), "dual_arm": set(_COMPARISON_KNOWN_KEYS)}
+    rows: list[dict] = []
+    unk_keys: Counter = Counter()
+    tally = {"route": Counter(), "family": Counter(), "status": Counter()}
+    n_card = n_empty = 0
+    for p in sorted(Path(cards_dir).rglob("*.yaml")):
+        try:
+            c = yaml.safe_load(p.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001 — 非卡件（frontmatter 册/不可解析）跳过
+            continue
+        if not isinstance(c, dict) or not c.get("card_id"):
+            continue
+        n_card += 1
+        pn = c.get("pillars_numeric") or {}
+        route = pillars_route(c)
+        tally["route"][route] += 1
+        tally["family"][str(c.get("family"))] += 1
+        tally["status"][str(c.get("status"))] += 1
+        if not pn:
+            n_empty += 1
+            continue
+        unknown = sorted(set(pn) - vocab[route])
+        if unknown:
+            unk_keys.update(unknown)
+            prose = c.get("pillars")
+            rows.append(
+                {
+                    "card_id": c["card_id"],
+                    "family": c.get("family"),
+                    "signal_kind": c.get("signal_kind"),
+                    "status": c.get("status"),
+                    "route": route,
+                    "keys_outside_route_vocab": unknown,
+                    "numeric_key_count": len(pn),
+                    "prose_pillar_keys": sorted(prose) if isinstance(prose, dict) else [],
+                }
+            )
+    rows.sort(key=lambda r: (-len(r["keys_outside_route_vocab"]), str(r["card_id"])))
+    return {
+        "schema_version": "mineloop-pillar-vocab/v1",
+        "generated_by": "python scripts/backtest/fexam/card_binding.py --mode vocab-census --cards-dir <exam_cards> --out <本件>",
+        "generated_at": datetime.now().isoformat(timespec="minutes"),
+        "vocab_sources": {
+            "series": sorted(vocab["series"]),
+            "dual_arm": sorted(vocab["dual_arm"]),
+            "note": "两侧词表直读执行核常量 _CALIBRATION_JUDGED_KEYS/_COMPARISON_KNOWN_KEYS，本件不复制定义",
+        },
+        "card_total": n_card,
+        "cards_without_numeric_face": n_empty,
+        "cards_with_keys_outside_route_vocab": len(rows),
+        "unique_keys_outside_vocab": len(unk_keys),
+        "tally_route": dict(tally["route"]),
+        "tally_family": dict(tally["family"]),
+        "tally_status": dict(tally["status"]),
+        "unknown_key_census": [
+            {"key": k, "cards": v} for k, v in sorted(unk_keys.items(), key=lambda kv: (-kv[1], kv[0]))
+        ],
+        "rows": rows,
+        "discipline": {
+            "threshold_values_written": 0,
+            "cards_modified": 0,
+            "ch_queries": 0,
+            "route_expression_copies": "1（pillars_route 单一真源，普查与判决同式）",
+            "purpose": "词表立法工单（WO-V）的输入面：哪些卡面冻结键名当前无任何机判面覆盖——立法=补面与命名对齐，禁改键值",
+        },
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--mode", choices=("classify", "run"), required=True)
+    ap.add_argument("--mode", choices=("classify", "run", "vocab-census"), required=True)
     ap.add_argument("--cards-dir", default=str(CARDS_DIR))
     ap.add_argument("--out", required=True, help="普查/凭据输出 yaml（禁 .json，docs/_working 纪律）")
     ap.add_argument("--approve-list", help="run 面：点名卡清单（每行一个 card_id）")
@@ -885,6 +963,14 @@ def main() -> int:
     args = ap.parse_args()
 
     cards_dir = Path(args.cards_dir)
+    if args.mode == "vocab-census":
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        out = build_vocab_census(cards_dir)
+        Path(args.out).write_text(
+            yaml.safe_dump(out, allow_unicode=True, sort_keys=False, width=140), encoding="utf-8", newline="\n"
+        )
+        print(json.dumps({"cards": out["card_total"], "out": args.out}, ensure_ascii=False))
+        return 0
     rows = []
     for p in sorted(cards_dir.rglob("*.yaml")):
         try:
