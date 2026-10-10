@@ -164,6 +164,25 @@ class TestRunBatchEndToEnd:
             ids.append(sorted(m["recipe_id"].tolist()))
         assert ids[0] == ids[1]
 
+    def test_prefix_sequential_execution_order(self, instrumented_env):
+        """T2-A（st-gpufeed-20261010）：迭代序按 prefix_key 非降序——同 prefix 格点连续
+        执行使 combine_cache LRU 命中（T1 实测 stratify 交错序命中率仅 1.5%）。manifest
+        行序=完成序=迭代序，故直接对 manifest.prefix_key 断言非降序。"""
+        tmp_path = instrumented_env
+        s = fge.run_batch(
+            n_samples=8,
+            seed=20260916,
+            start="2024-01-02",
+            end="2025-02-28",
+            smoke=True,
+            stratify_dims=("G_universe", "A1_factor_normalize", "B_top_n"),
+            engine="cpu",
+        )
+        m = pd.read_csv(Path(s["out_dir"]) / "manifest.csv")
+        keys = m["prefix_key"].tolist()
+        assert keys == sorted(keys), f"执行序未按 prefix 排序: {keys[:6]}"
+        # 命中率增益由 200 点影子对照实测验证（smoke 8 格可能全为互异 prefix，无命中可断言）
+
 
 class TestGridInstrumentsUnit:
     def test_stall_watchdog_dumps(self, tmp_path, monkeypatch):

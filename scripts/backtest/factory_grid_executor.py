@@ -1603,6 +1603,14 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     picked = stratified_sample(sub_view, 8 if smoke else n_samples, seed, stratify_dims=stratify_dims)
     full_sample_n = len(picked)
     picked = _shard_sample(picked, shard_idx, num_shards)
+    # T2-A prefix 顺序化执行（st-gpufeed-20261010 连夜冲刺令）：同 (G,A1,A2) prefix 格点
+    # 连续执行→combine_cache LRU 命中（原 stratify 序下 A2 轴交错=T1 实测 1.5% 命中率）。
+    # 排序须在 shard 之后：i::k 切片前排序会把连续 prefix 重新打散进各分片。
+    # 零漂移论证：样本集=seed 冻结面不变（仅迭代序变）；格点间相互独立（批级缓存只读
+    # 复用、死亡计数与序无关）；manifest 行序变化不影响下游消费者（_scan_grid_summaries
+    # 只读 summary.evaluated；N 台账记 count；DSR/归因按 recipe_id 读）。N_eff 输入列序
+    # 变化由影子对照对拍尺盯防（expected 数学序不变）。
+    picked.sort(key=lambda r: r.prefix_key)
     run_ts = time.strftime("%Y%m%d-%H%M%S")
     # 并发分片目录名带 shard 标识（20261006 撞车教训：6 分片同秒启动，秒级时间戳目录
     # 名相撞=两进程互写同一 out_dir，产物互覆污染）——分片跑必带 _s{i}of{k} 后缀。
