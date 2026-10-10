@@ -83,4 +83,7 @@ session: st-govjudge-20261010
 - 工作树入库面已全量回滚（.gitignore checkout+runner 拷贝删除），主区 runner 本体自始至终零字节触碰（AST 对比等 forensic 产物即证据：改动只发生在本班工作树副本上且已删）。
 - 三投影渲染同步工作树（ARCH/CAPCAN/MODULE），publish snapshot 10/165/15。
 
-## R6 ADR/RFC 对表（进行中）
+## R6 ADR/RFC 对表件改自有词族（完成）
+- 形态=册内注记（净零，零新页）：adjudication_routing_policy.md 增「附表 B · 行业术语对表（自有词族）」——ADR↔裁定（REG-RULING-001，可推翻性承载对照）、RFC↔立项卡/预注册卡（G0-G3 产物）；lock:163 禁 ADR 条款原文引用不撤（禁 ADR 理由在案）。
+- 原指令卡注销记录=注记内历史注记段（前提不成立：四号实测 HEAD 零 ADR/RFC 双轨可对表+与 lock:163 冲突），authority=总统统筹令 R6。
+- R11 一致性测试复跑 4 passed（注记不触锚）。
