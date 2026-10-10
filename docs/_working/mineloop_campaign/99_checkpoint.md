@@ -220,3 +220,36 @@ q-0018 的 `PG 连接配置文件不存在: FileNotFoundError` 属同族形态�
    情绪面 close_final 到 2026-10-09；开考前须先实测 2026-09 腿数断点（辅轴仍禁消费）；
 4. 板块族余卡：05/06 已出分后，sector 线仅剩 02-2（拒绑，走卡面修订新版本）与 09-03（未冻序数表，呈 Owner）；
 5. `arm_protocol_binding.py` 本体袋仍未落（MOD-BT-249 码件在车道/主区 index 里 staged，dev 无该件）＝残件清零项。
+
+## 12. 第二轮成绩与红面清点（滚动报告面，03:0x 从 dev 实测取数，非记忆）
+
+分数册与卡池面（`git show dev:` 逐件解析计数）：
+- exam_scores_v1.yaml 行数=31，verdict 分布 `fail:31 / pass:0`（本轮新增 5 行＝recast 3＋lu 2）；
+- 卡池 487 张状态分布：preregistered 177／empty 186／blocked_on_impl 34／blocked_on_data 62／examined 28；
+  本轮新转 examined=2 张（卡 05/06），另 3 张是已考卡的正门重跑（分数册 only-add 追加，旧行保留）；
+- 试次照计：`run_card` 的 n_trial_ledger 钩子未动，本轮 5 次开考各计 1 次（T5 纪律面无绕过）。
+
+本轮出分成绩（如实，全负）：涨停溢价 05 ic=-0.0515／mono=-0.212／oos=-0.0025（n=1619），
+晋级率 06 ic=-0.0636／mono=-0.479／oos=-0.0700（n=1619），五分位重跑三卡 ic/mono 见 §11 表。
+**方向性结论**：昨涨停溢价与晋级率越高，次日沪深300 越弱（样本内与 OOS 同号），
+与"打板赚钱→次日接力"的母卡先验反向——这是预注册制该产出的那种负结果，不是事故。
+
+红面清点（非本班域，不代修，交晨报）：`tests/backtest` 在本车道跑出 8 红
+（test_factory_wiring_night.py 7 支＋test_sim_daily_runner.py 1 支），290 绿。
+非因果证明＝这两支文件对 `calibration_exam`／`card_binding`／`fexam` **零 import**（grep 无命中）；
+症状面＝跨域符号缺失（`hypothesis_translator.TASK_ROUTE`、`f06_e4_wfa_exam_wiring.append_screen_ledger`）
+＋车道根连库解析（CH :8123 refused）。dev 现册该两文件与主区无差（`git status --porcelain` 空）。
+本班未从主区跑该两支（避免 F06 落库类测试触生产写面），故只报"车道面观察＋非因果"，不申报 dev 结论。
+
+情绪先锋线收口：emotion_lane_status.yaml 的 exam_now 5 张已全部处置＝05/06 本轮出分（已转 examined），
+余 3 张（TDM-E-L0-02/calibration/03、TDM-E-L1-S5/calibration/03、TDM-X-S1-04/calibration/02）被 22e481951e 绑定前复核判 reject（未冻合成式／宇宙分母／未来函数），
+按 G4-5 只能走新版本卡，不在本班自决面内。**情绪族首批 N=1 的名额已兑现**（06 卡），
+QMT 解锁面（close_final 到 2026-10-09）不再构成阻塞，但"六段/四态重建规则未冻结"仍是硬门。
+
+待 Owner／正式通道三件（本班不自决）：
+1. shadow 族与混形卡的**判官路由扩面**（实测爆面 19＋47 张）——15_ 的 `owner_decision_needed`；
+2. 09-03 评级序双口径证据链（本班已出对照面，未拍）；
+3. 分段/宇宙口径**新版本卡**五支的立项（card_id 逐支可 grep，禁简称）：TDM-E-L0-02/calibration/03_偏离幅度分位响应曲线、TDM-E-L1-S5/calibration/03_derived_signal_shock_panel、TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益、TDM-E-L2-02-2/calibration/02_板块见顶预警三信号（绑定册 status=rejected）、TDM-E-L2-09/calibration/03_评级上调聚集。
+
+下一轮入口与优先级：板块族余卡（sector_lane_spec.yaml 已排产）＞WO-A1 逐臂适配器只读探在飞归属＞
+T2 复挖第二轮（186 张 empty 卡是矿面）。本班 bag 面：本轮 14 袋（q-…-0024..0037）全 done、dead 0。
