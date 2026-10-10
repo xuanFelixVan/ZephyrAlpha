@@ -263,6 +263,48 @@ _COMPARISON_KNOWN_KEYS = frozenset(
     }
 )
 
+#: 校准判官（judge()）实际读取的 pillars_numeric 键集——judge() 的读取面唯一镜像。
+#: run_card 的判官分派（_cal_shaped）与未判柱观测（_unjudged_pillars）共用本常量，禁两处各抄一份。
+_CALIBRATION_JUDGED_KEYS = frozenset(
+    {
+        "mono_spearman_min",
+        "ic_mean_min",
+        "ic_ir_min",
+        "regime_same_sign",
+        "oos_same_sign",
+    }
+)
+
+
+def _unjudged_pillars(card: dict, m: dict, judged: frozenset) -> dict:
+    """未判柱清单（纯观测面，零否决权）：分数册行 MUST 自带"这一分只代表哪些键"。
+
+    三面各自如实：①numeric_keys_not_read=卡面冻结了但当前判官根本没读的键（历史 pass 不等于这些键过）；
+    ②numeric_keys_no_machine_face=读了该键但当前 metrics 面无从评估（如 series 路 ic_ir 恒 None、
+    panel 路 mono 恒 None、regime 有效段不足 2）；③pillars_prose_keys=卡面文字门柱原样列表——
+    prose↔numeric 的对应关系无在册真源，本件不代拍（该映射是"门柱词表立法"工单的对象，禁改键值）。"""
+    p = card.get("pillars_numeric") or {}
+    no_face: dict[str, str] = {}
+    if "mono_spearman_min" in p:
+        mono = m.get("mono_spearman")
+        if mono is None or mono != mono:
+            no_face["mono_spearman_min"] = "mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）"
+    if "ic_ir_min" in p and m.get("ic_ir") is None:
+        no_face["ic_ir_min"] = "series 路 ic_ir 恒 None（现器无 IC_IR 面）"
+    if "regime_same_sign" in p:
+        vals = [v for v in (m.get("regime_ic") or {}).values() if v == v]
+        if len(vals) < 2:
+            no_face["regime_same_sign"] = f"regime_ic 有效段 {len(vals)} <2（牛/熊同号不可判）"
+    if "oos_same_sign" in p and m.get("oos_ic") != m.get("oos_ic"):
+        no_face["oos_same_sign"] = "oos_ic NaN（judge 已同时记败，非静默跳过）"
+    prose = card.get("pillars")
+    return {
+        "numeric_keys_not_read": sorted(set(p) - set(judged)),
+        "numeric_keys_no_machine_face": no_face,
+        "pillars_prose_keys": sorted(prose) if isinstance(prose, dict) else ([] if prose is None else [str(prose)]),
+        "mapping_note": "prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）",
+    }
+
 
 def _comparison_metrics(sig_open: pd.Series, sig_base: pd.Series, target: pd.Series, card: dict) -> dict:
     """对照/消融配对面：双臂各自 IC 面（复用 _series_metrics）+ NAV 回放面 + 配对差。
@@ -400,7 +442,7 @@ def run_card(
     # 判官按判据键分派（W-A 臂协议配方面 2026-10-10）：family=comparison/ablation 但
     # pillars_numeric 全韦校准键（mono/ic/ic_ir/regime/oos，如 C-L1 冻结映射面）→ 映射面后
     # 走校准判官；含任一 NAV/笔级键（maxdd/sharpe_delta/misfire 等）→ 双臂判官。判据面零裁量。
-    _CALIBRATION_KEYS = {"mono_spearman_min", "ic_mean_min", "ic_ir_min", "regime_same_sign", "oos_same_sign"}
+    _CALIBRATION_KEYS = _CALIBRATION_JUDGED_KEYS  # 单一真源（未判柱观测面与分派判同一集合，禁两处抄）
     _pn_keys = set(card.get("pillars_numeric") or {})
     _cal_shaped = bool(_pn_keys) and _pn_keys <= _CALIBRATION_KEYS
     if family in ("comparison", "ablation") and not _cal_shaped:
@@ -424,6 +466,8 @@ def run_card(
         oos_ok = (m.get("oos_ic") == m.get("oos_ic")) and not any("oos" in f for f in fails)
         seg = m.get("regime_ic") or {}
     regimes = [k for k, v in seg.items() if v == v]
+    # 未判柱观测面（裁定②步骤①，纯观测零否决权）：每行分数自带"只代表哪些键"，禁把 4-5 键 pass 叙述成门柱全过
+    unjudged = _unjudged_pillars(card, m, _COMPARISON_KNOWN_KEYS if used_nav else _CALIBRATION_JUDGED_KEYS)
     row = {
         "card_id": card["card_id"],
         "node_id": card["node_id"],
@@ -435,6 +479,7 @@ def run_card(
         "regimes": regimes,
         "date": _date.today().isoformat(),
         "metrics": {k: v for k, v in m.items() if k != "bucket_medians"},
+        "unjudged": unjudged,
         "fails": fails,
     }
     # 分数册 only-add 追加
