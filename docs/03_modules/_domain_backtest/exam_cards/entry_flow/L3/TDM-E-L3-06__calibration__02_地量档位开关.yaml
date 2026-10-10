@@ -33,8 +33,8 @@ target:
 status: examined
 lineage:
   card: null
-  run_id: mineloop-r1-02_地量档位开关
-  score_row: exam_scores_v1.yaml#rows[21]
+  run_id: mineloop-route-audit-02_地量档位开关
+  score_row: exam_scores_v1.yaml#rows[39]
   confidence_writeback: TDM.nodes.TDM-E-L3-06.confidence
 preregistered_by: st-nightmine-20261010-L2
 preregistered_at: '2026-10-10'

@@ -36,8 +36,8 @@ target:
 status: examined
 lineage:
   card: null
-  run_id: mineloop-r1-04_synthetic_downsid
-  score_row: exam_scores_v1.yaml#rows[20]
+  run_id: mineloop-route-audit-04_synthetic_downsid
+  score_row: exam_scores_v1.yaml#rows[35]
   confidence_writeback: TDM.nodes.TDM-E-L1-S4.confidence
 preregistered_by: st-nightmine-20261010-L3
 preregistered_at: '2026-10-10'

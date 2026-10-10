@@ -36,8 +36,8 @@ target:
 status: examined
 lineage:
   card: null
-  run_id: mineloop-r1-06_m1m2_scihjorsc_lo
-  score_row: exam_scores_v1.yaml#rows[18]
+  run_id: mineloop-route-audit-06_m1m2_scihjorsc_lo
+  score_row: exam_scores_v1.yaml#rows[31]
   confidence_writeback: TDM.nodes.TDM-E-L1-S0.confidence
 preregistered_by: st-nightmine-20261010-L3
 preregistered_at: '2026-10-10'

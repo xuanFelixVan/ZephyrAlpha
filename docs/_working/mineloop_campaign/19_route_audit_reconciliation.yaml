@@ -1,0 +1,94 @@
+---
+ttl: task_bound
+title: 矿考循环班·裁定①路由扩面落地与 31 行红绿对账
+created: '2026-10-11T03:33:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+ruling: >-
+  统筹 2026-10-11 03:3x 裁定①：「判官选择改为按门柱键集并集（family 路由是实现层偶然，卡面才是权威）
+  ——31 行重跑对拍照做（红绿对账入册），66 张混形卡的另一侧门柱从此有判官接手。」
+
+implemented:
+  route: >-
+    pillars_route(card) 不再读 family：'dual_arm' 当且仅当键集⊄校准词表 且 至少命中一个配对侧专有键
+    （_NAV_ONLY_PILLAR_KEYS = _COMPARISON_KNOWN_KEYS − _CALIBRATION_JUDGED_KEYS）；
+    其余一律 'series'（含键集为空＝缺面错由 judge() 报准；含"两侧词表都不认"的纯越表卡）。
+  why_nav_only_condition: >-
+    裁定字面若直译成"⊄ 校准集即双臂"，会把一张只有 tail_ratio_min / car_t_stat_min 这类**任何判官都无面**
+    的卡送去双臂判官，那里它先撞上"需双臂接线"这条**假错**（它缺的是机判面，不是第二条臂）。
+    本实现按"确有一柱只有配对面能算"来分派，66 张（精算 51 张，见下）混形卡的归属与裁定意图一致，
+    改的只是无 NAV 柱的越表卡去向：留在校准判官由未知键 fail-closed 诚实点名。两套口径的差异如实摆出，
+    如 Owner 要字面版，改一行即可（本件已把条件与理由写死在册面，禁事后无痕）。
+  union_vocab: >-
+    _judge_comparison 的已知键由 _COMPARISON_KNOWN_KEYS 扩为 _UNION_PILLAR_KEYS（并集），
+    混形卡的校准侧五柱在**开臂 IC 面**（m["arm_open"]）上评——开臂＝被测装置那一臂；
+    卡面无从二选一，取臂选择随本裁定入册留痕，禁事后换臂。
+  exclusions_kept_semantics:
+    oos_same_sign: >-
+      不参与校准侧复评：它在对照卡上的冻结语义＝"配对 IC 差的 OOS 与 IS 同号"，
+      _judge_comparison 原有一条就是它的真身；再按单信号语义评一遍＝同一键两套判据（禁）。
+    sample_gate_false: >-
+      校准侧复评不附"oos_ic nan / 无有效主指标"两道样本闸——配对面已有自己的 ic_delta nan 闸，
+      再叠一层＝给卡面没冻的柱加门柱＝抬高门柱（禁）。
+  shared_face_extraction: >-
+    校准侧五柱的判据本体抽成 _judge_calibration_face(p, m, sample_gate=True)，judge() 与
+    _judge_comparison() 共用同一实现（禁抄第二份，防两条面漂移）。抽取时顺带修掉一处真实崩溃风险：
+    旧体是无条件取 p["mono_spearman_min"] / p["ic_mean_min"] / p["ic_ir_min"]，
+    卡面少冻一键就抛 KeyError 崩整批；现逐柱先问"卡面冻没冻这个键"，没冻不评（不放松已冻的柱）。
+
+route_audit_31_rows:
+  method: 逐行取 dev 现册 card_id → 读该卡在 dev 的 pillars_numeric → 旧路由（family 制）与新路由（键集制）比对
+  result: {rows_total: 31, route_unchanged: 31, route_flipped: 0}
+  reason_zero: 在册 31 行的卡面键集全韦校准词表（本班 14_ 已实测 rows_with_unknown_keys=0），两制同判 series
+  real_replay:
+    how: card_binding --mode run --force 对绑定册 10 张 approved 卡正门重跑（run_id=mineloop-route-audit-*，only-add）
+    ledger_rows: {dev: 31, after: 41, lost_rows: 0, new_rows: 10, shared_rows_field_differing: 0}
+    metric_equality: 10/10 支 (ic_mean, mono_spearman, oos_ic, n, regime_ic, ic_ir) 与旧行**逐字段相等**，
+      verdict 全部 fail→fail（零行翻绿、零行翻红）
+    note: 其中 5 支旧行无 n_buckets_used 字段（00:38 分桶口径修复前的行），重跑后补上=10，
+      属已申报口径面（09_caliber_deviation_note.yaml），与本次路由改动无关
+    not_replayable: 20/31 行无在册绑定接线（早期一次性驱动器所出），真跑须先补接线（属 WO 面）；
+      该 20 行由上面的逐卡路由两制比对覆盖（route_flipped=0）
+
+deck_wide_effect:
+  cards_scanned: 487
+  route_flips_total: 173
+  by_direction:
+    dual_arm_to_series: {comparison: 137, ablation: 33}
+    series_to_dual_arm: {shadow: 3}
+  dual_arm_to_series_substance: >-
+    这 170 张的键集里没有任何配对专有键（越表键名 top=maxdd_delta_max/sharpe_vs_baseline_min/
+    turnover_or_cost_gate/pairs_min_for_verdict/turnover_cost_gate/tracking_diff_max 等），
+    两制下都是 fail-closed 点名"未支持判据键"，实质判决不变、变的只是由哪条面报错与是否要求第二条臂。
+  mixed_cards_now_both_faces: 51
+  reconciliation_with_census_66: >-
+    16_ 旧版报"混形 19＋47=66"是按"键集越出所选判官自家词表"定义的（含纯越表卡）；
+    本次"两词表各有至少一柱"的严格交集口径＝51。两个数都留档，禁只引一个。
+  census_regenerated: >-
+    16_pillar_vocab_census.yaml 由生成器重打（并集词表＋新路由）：tally_route=
+    {series: 436, dual_arm: 51}，cards_with_keys_outside_route_vocab=119，unique_keys_outside_vocab=175。
+
+window_object_check:
+  at: '2026-10-11 03:25:30 +0800（date 实测）'
+  tilib_indicator_backfill_nightly: 'State=Ready（与 02:09 的 Disabled 不同）但 LastRun=10-10 02:30:01、NextRun=10-12 02:30:00'
+  conclusion: 今晚 10-11 的 02:30 无对象（已改到 10-12），故窗内无让路目标；读数两面都记（Disabled→Ready 的翻转本身也记）
+  ch_load_probe: 'system.processes: elapsed>10s 的查询 0 条；总查询 1 条（即本探针自身）'
+  override_flag: 重跑命令带 --override-ch-window-with-reason 原文含上述读数
+
+maintenance_candidate: >-
+  入维护班候件（统筹 03:3x 另条要求把根因入册）：队列对**非账本族共享件**按袋内整档字节落地＝
+  车道旧快照入袋会静默蒸发他人已落地面（本班 00:38 实测一次，毁他人判据分派 6 行＋30 行测试，
+  01:51/01:53 重放回补）。可机判的防线候选＝入队预检对"袋内件 vs dev 现字节"做**删除行归因**
+  （被删行不属于本会话历史改动即拒），或落地侧强制三方合并。本件只登记根因与判据候选，不自建闸门。
+
+compliance:
+  pillar_thresholds_changed: 0
+  pillar_key_values_changed: 0
+  historical_rows_rejudged: 0
+  historical_rows_modified: 0
+  verdict_flips_after_routing_change: 0
+  cards_modified: 10
+  cards_change_scope: 仅 lineage 两键（run_id/score_row），逐卡内容级差分 content-equal-except-status/lineage=True
+  files_created: 2
