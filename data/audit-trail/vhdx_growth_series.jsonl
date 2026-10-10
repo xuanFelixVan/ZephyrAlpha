@@ -1,0 +1,2 @@
+{"ts": "2026-10-09T07:54:47+00:00", "vhdx_gb": 586.5, "d_free_gb": 59.75, "delta_vs_prev_gb": null, "d_red_line_gb": 50.0, "d_below_red_line": false, "d_red_line_reason": "ok", "note": "首条真观测；此前两行为本会话手测污染已清除"}
+{"ts": "2026-10-09T07:55:44+00:00", "vhdx_gb": 586.5, "d_free_gb": 59.75, "delta_vs_prev_gb": 0.0, "d_red_line_gb": 50.0, "d_below_red_line": false, "d_red_line_reason": "ok"}
