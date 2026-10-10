@@ -36,43 +36,27 @@ gate_selfdoc: GIT-DANGEROUS
 
 ## 三、波一四态表（机生）
 
-<!-- BEGIN GENERATED table_fourstate (mk_ledger.py 机生 2026-10-11T01:28:15，禁手改) -->
+<!-- BEGIN GENERATED table_fourstate (mk_ledger.py 机生 2026-10-11T01:52:58，禁手改) -->
 
-扫描面共 **30** 件：态① 3｜态② 6｜态③ 0｜态④ 21
+扫描面共 **14** 件：态① 0｜态② 0｜态③ 0｜态④ 14
 
-两把尺新鲜度（同拍才可判，缺省自动取版本号最大的 dirs）：第一把尺=`dirs_v17.json` @2026-10-11T01:27:59｜第二把尺 dev_delta @2026-10-11T01:28:01
+两把尺新鲜度（同拍才可判，缺省自动取版本号最大的 dirs）：第一把尺=`dirs_v18.json` @2026-10-11T01:51:44｜第二把尺 dev_delta @2026-10-11T01:51:45
 
 | 面/件 | 态 | 证据（实测） | 动作 | 回滚 |
 |---|---|---|---|---|
-| .worktrees/st-constland-20261010 | 态④ | 非车道目录，读数不适用 | 零动作记表 | n/a |
-| .worktrees/st-datalane-20261010 | 态④ | 波二白名单（总统筹 10-11 01:25 裁定②）；fs 写在避让窗内（68.7min≤90min）｜独有件: docs/_working/datalane_campaign/bcure_state_archive_20261010/shard_done.txt, docs/_working/datalane_campaign/bcure_state_archive_20261010/ti_daily_full_driver.py.txt, docs/_working/datalane_campaign/bcure_state_archive_20261010/ti_monthly_shard_driver.py.txt, docs/_working/datalane_campaign/bcure_state_archive_20261010/ti_shard_selfheal_driver.py.txt｜未并入 commit 文件: docs/_working/datalane_campaign/00_ledger.md | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .worktrees/st-finalclean2-20261010 | 态④ | 终清自身（本班车道，收尾按会话收尾序处置，不自清）；活性实测=alive（REGISTRY-FRESH）；同 sid 他面 fs 写在避让窗内（8.5min≤90min） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .worktrees/st-govjudge-20261010 | 态② | 独有字节 2 件（neq_dev=2 不在dev=0 未并入commit=0）；属主三源现测非活（liveness=ghost/fs 写 883.9min>90/sid 不在六线白名单）｜独有件: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml, docs/_working/govjudge_campaign/00_ledger.md | 先救（archive 内建 patch 存证+未跟踪 rescue）后清 | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .worktrees/st-maint1-20261010 | 态② | 独有字节 6 件（neq_dev=4 不在dev=0 未并入commit=2）；属主三源现测非活（liveness=ghost/fs 写 276.0min>90/sid 不在六线白名单）｜独有件: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml, docs/_working/maint1_campaign/01_final_account.md, src/zephyr/security/access_control/session_concurrency.py, tests/gov/session/test_takeover_pid_false_positive.py｜未并入 commit 文件: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml, docs/_working/maint1_campaign/00_ledger.md | 先救（archive 内建 patch 存证+未跟踪 rescue）后清 | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .worktrees/st-maint1-close | 态② | 独有字节 1 件（neq_dev=1 不在dev=0 未并入commit=0）；属主三源现测非活（liveness=ghost/fs 写 206.2min>90/sid 不在六线白名单）｜独有件: docs/_working/maint1_campaign/01_final_account.md | 先救（archive 内建 patch 存证+未跟踪 rescue）后清 | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .worktrees/st-maint1-t2lane | 态② | 独有字节 1 件（neq_dev=1 不在dev=0 未并入commit=0）；属主三源现测非活（liveness=ghost/fs 写 357.5min>90/sid 不在六线白名单）｜独有件: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml | 先救（archive 内建 patch 存证+未跟踪 rescue）后清 | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .worktrees/st-maint1-t3lane | 态② | 独有字节 4 件（neq_dev=4 不在dev=0 未并入commit=0）；属主三源现测非活（liveness=ghost/fs 写 276.1min>90/sid 不在六线白名单）｜独有件: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml, docs/_working/maint1_campaign/01_final_account.md, src/zephyr/security/access_control/session_concurrency.py, tests/gov/session/test_takeover_pid_false_positive.py | 先救（archive 内建 patch 存证+未跟踪 rescue）后清 | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .worktrees/tmp-merge-appendix | 态④ | 非车道目录，读数不适用 | 零动作记表 | n/a |
-| .worktrees/tmp-merge-datalane | 态④ | 非车道目录，读数不适用 | 零动作记表 | n/a |
+| .worktrees/st-datalane-20261010 | 态④ | 波二白名单（总统筹 10-11 01:25 裁定②）｜独有件: docs/_working/datalane_campaign/bcure_state_archive_20261010/shard_done.txt, docs/_working/datalane_campaign/bcure_state_archive_20261010/ti_daily_full_driver.py.txt, docs/_working/datalane_campaign/bcure_state_archive_20261010/ti_monthly_shard_driver.py.txt, docs/_working/datalane_campaign/bcure_state_archive_20261010/ti_shard_selfheal_driver.py.txt｜未并入 commit 文件: docs/_working/datalane_campaign/00_ledger.md | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
+| .worktrees/st-finalclean2-20261010 | 态④ | 终清自身（本班车道，收尾按会话收尾序处置，不自清）；活性实测=alive（REGISTRY-FRESH）；同 sid 他面 fs 写在避让窗内（20.7min≤90min）｜独有件: docs/_working/finalclean2_campaign/00_ledger.md | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
 | .aidrafts/.carry_list.json | 态④ | src/scripts 全量 grep 零消费者，但无重启条件证明未完成 → 态④记表 | 零动作记表 | 内容由 archive 标签/retire patch 可重建 |
-| .aidrafts/st-constland-20261010 | 态② | 独有字节 4 件（neq_dev=4 不在dev=0 未并入commit=0）；属主三源现测非活（liveness=ghost/fs 写 774.1min>90/sid 不在六线白名单）｜独有件: AGENTS.md, config/search_space_prereg.yaml, docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml, scripts/tasks/run/run_f06_grid.ps1 | 先救（archive 内建 patch 存证+未跟踪 rescue）后清 | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
 | .aidrafts/st-deadcure2-20261009 | 态④ | 活性实测=alive（REGISTRY-FRESH）｜独有件: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml, docs/_working/deadcure_campaign2/01_phase0_ledger.md | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
 | .aidrafts/st-deadcure3-20261010 | 态④ | 波二白名单·死信三期（同裁定；名实已于本班 §六 硬证） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
 | .aidrafts/st-dexp-20261009 | 态④ | 活性实测=alive（REGISTRY-FRESH）｜独有件: data/audit-trail/vhdx_growth_series.jsonl, docs/_working/dexp_campaign/04_ti_dup_quantified.md, docs/_working/dexp_campaign/05_worktree_handoff_zongdui.md, docs/_working/disk_reorg_campaign/vhdx_precheck_20261009.md | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .aidrafts/st-examchief-20261009 | 态① | ahead=0∧HEAD是dev祖先∧逐件字节全等dev（eq_dev=0，eolnorm=0）∧零独有字节∧三源现测非活：liveness=dead（TAKEOVER-PENDING）/fs 写 491.9min>90/sid 不在六线白名单） | session_worktree.py archive 正道（活跃硬拒守卫在后） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
 | .aidrafts/st-final4-20261010 | 态④ | 活性实测=alive（REGISTRY-FRESH） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .aidrafts/st-finalclean2-20261010 | 态④ | 终清自身（本班车道，收尾按会话收尾序处置，不自清）；活性实测=alive（REGISTRY-FRESH）；fs 写在避让窗内（8.5min≤90min） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
+| .aidrafts/st-finalclean2-20261010 | 态④ | 终清自身（本班车道，收尾按会话收尾序处置，不自清）；活性实测=alive（REGISTRY-FRESH）；fs 写在避让窗内（20.7min≤90min）；同 sid 他面有独有字节 1 件⇒属主未净（§二同批处置，本面不单独判清） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
 | .aidrafts/st-fullflow2-20261008 | 态④ | 活性实测=alive（REGISTRY-FRESH） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .aidrafts/st-govjudge-20261010 | 态④ | 同 sid 他面有独有字节 2 件⇒属主未净（§二同批处置，本面不单独判清） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .aidrafts/st-gpufeed-20261010 | 态① | ahead=0∧HEAD是dev祖先∧逐件字节全等dev（eq_dev=0，eolnorm=0）∧零独有字节∧三源现测非活：liveness=ghost（GHOST-NO-SHARD）/fs 写 337.8min>90/sid 不在六线白名单） | session_worktree.py archive 正道（活跃硬拒守卫在后） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .aidrafts/st-libfront-20261010 | 态① | ahead=0∧HEAD是dev祖先∧逐件字节全等dev（eq_dev=0，eolnorm=0）∧零独有字节∧三源现测非活：liveness=ghost（GHOST-NO-SHARD）/fs 写 796.3min>90/sid 不在六线白名单） | session_worktree.py archive 正道（活跃硬拒守卫在后） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .aidrafts/st-maint1-20261010 | 态④ | 同 sid 他面有独有字节 6 件⇒属主未净（§二同批处置，本面不单独判清） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .aidrafts/st-maint1-close | 态④ | 同 sid 他面有独有字节 1 件⇒属主未净（§二同批处置，本面不单独判清） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .aidrafts/st-maint1-t2lane | 态④ | 同 sid 他面有独有字节 1 件⇒属主未净（§二同批处置，本面不单独判清） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .aidrafts/st-mineloop-20261010 | 态④ | 波二白名单·矿考循环班（同裁定）；活性实测=alive（REGISTRY-FRESH）；fs 写在避让窗内（0.7min≤90min）｜独有件: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml, docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml, docs/_working/mineloop_campaign/11_prebind_review.yaml, scripts/backtest/fexam/arm_protocol_binding.py｜未并入 commit 文件: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
+| .aidrafts/st-mineloop-20261010 | 态④ | 波二白名单·矿考循环班（同裁定）；活性实测=alive（REGISTRY-FRESH）；fs 写在避让窗内（3.3min≤90min）｜独有件: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml, docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml, docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml, docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02__calibration__02_接棒撤离榜.yaml, docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-03__calibration__02_调整周期进度.yaml, docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04-2__calibration__02_虹吸态成交集中度.yaml｜未并入 commit 文件: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
 | .aidrafts/st-nightmine-20261010 | 态④ | 活性实测=alive（REGISTRY-FRESH）｜独有件: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml, docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__06_m1m2_scissors_longwindow.yaml, docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__07_margin_flow_shortwindow.yaml, docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration__04_synthetic_downside_deviation_longwindow.yaml, docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02__calibration__02_接棒撤离榜.yaml, docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-03__calibration__02_调整周期进度.yaml | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
 | .aidrafts/st-nightmine-20261010b | 态④ | 活性实测=alive（REGISTRY-FRESH）｜独有件: docs/03_modules/_domain_backtest/exam_scores_v1.yaml, docs/_working/nightmine_campaign/99_checkpoint.md, docs/_working/nightmine_campaign/L8b_ledger.md | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
-| .aidrafts/st-nightmine2-20261010 | 态④ | 活性实测=degraded（RATE-GUARD-DOWNGRADED）；fs 写在避让窗内（8.6min≤90min） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
+| .aidrafts/st-nightmine2-20261010 | 态④ | fs 写在避让窗内（32.3min≤90min） | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
 | .aidrafts/st-regsolo-20261010 | 态④ | 指令卡 §二 红线：宪法正本载体，禁删｜独有件: docs/_working/regsolo_campaign/99_delivery.md, docs/_working/regsolo_campaign/lanes/t1_direct_write_callgraph.md, docs/_working/regsolo_campaign/lanes/t2_belt_materialization.md, docs/_working/regsolo_campaign/lanes/t3_hot_registry_inventory.md, docs/_working/regsolo_campaign/lanes/t4_ledger_debt_incidents.md | 零动作（波二复测） | archive/* 标签 + .runtime/quarantine/<sid>-retire-*.patch + .runtime/tmp/rescue/<sid>/（三重存证，30 天复活窗） |
 
 <!-- END GENERATED table_fourstate -->
@@ -116,6 +100,13 @@ gate_selfdoc: GIT-DANGEROUS
 | 00:37-00:5x | 波一·未入库件钉桩（自犯一处已纠） | 防护 | 三枚未入库件（本班册＋两枚案卷）先用 `git hash-object -w` 钉桩，**随即自查发现该校验代码两处错**：①默认走了清洗过滤器（差 304/277/64 字节＝CRLF 数，"逐字节等"当时为假）②比对脚本按前缀选标签把 11_ 的标签配给 10_／00_ 造成假失败。两处已改：全部重钉为 `--no-filters` 原始字节锚（复验 `raw==blob` **三件全 True**，本班钉桩标签现 18 枚）＋safety 目录副本现 26 份。**在册教训第四次应验：自己的尺也要按"存在性≠内容性"复核，报"已锚住"之前必须读到逐字节等那一步** | 0 |
 | 00:40-00:5x | **巡检轮 12：复扫四态＋六线＋C 件执行结果复核（含"授权面"如实分栏）＋同 sid 并发轮防护缺口**（波二**未**触发） | 只读复扫＋他轮成果复验＋磁盘回到正值 | **冷启动**：python 3.12.8（跨日至 10-11 00:40）／`--check` installed True／cleanup 清 **2** 枚死锁（`datalane_campaign/00_ledger.md`、`fexam/calibration_exam.py`）／reaper **source=live（亲读）**、scanned=26、**killed=0**／计划任务 **Ready**⇒写闸开。**⚑开工即发现同 sid 并发轮（新防护缺口）**：本班开工读得台账 **126,735 B／锚 12 枚**，而我轮 11 收线是 120,091 B／11 枚＝中间有**同 sid 两轮**已作业（`00:08-00:2x` C 件执行、`00:37-00:5x` 未入库件钉桩，回执 sid 字段均＝`st-finalclean2-20261010`）。我按在册"双写手"教训先做三查才动笔：`lock_files.py status`=**CLEAN**（对方已 release）、scan 目录**无 `dirs_v16`**（对方未跑巡检，只做了钉桩/C 件）、台账 mtime 00:3x 静止⇒判定无活体写手后方写。⚑**但仍须如实上报机制缺口**：`lock_files` 的 claim **按 sid 键控**，同 sid 两轮彼此不互斥（我 acquire 时对方 claim 也已归同一 sid），真正兜住的是轮 2 我给 `mk_ledger.py` 换的 `safe_write_text(expected_base_sha256=…)` CAS——CAS 会在"读后他轮改过"时拒写。⇒ **建议后续轮开工第一步先比对本班册字节数**（复跑＝`wc -c < docs/_working/finalclean2_campaign/00_ledger.md`），不符即先读对方新行再动笔，勿直接开写。**⚑C 件执行结果复验（本班只证到"执行自洽"）**：§四 `00:08-00:2x` 行＋§九B 回执称预筛面同分钟复测后 **10 目录／3.37 GiB 全清**，本班独立复核到：①四大宗目录实测**已无**（`.runtime/tmp/st-zc8-lane-rb-20260928`／`st-zc8-verify-20260928`／`st-zc8-lane-k2-20260928`／`st-zc9-lane-sec-20260928`）；②`df` 对拍 `c_second_pass.json`＝before 46,552,125,440 → after 49,701,085,184、**delta +3,148,959,744（+3.15 GB）@00:25:09**；③E 墓碑区 `INDEX.jsonl`=**13 行**（10 原件＋3 跟进行）✓、`c_receipt.json`=10 条，逐条带 `tomb_id／origin_path／manifest／rollback_cmd／expires_at／verified／reference_count／liveness／quiet_min`；④复活窗＝**2026-11-10**（30 天），回滚命令逐目录在册。⚑**授权面如实分栏（不替谁确认）**：账面与 E 区 `reason` 字段均写"Owner 2026-10-11 批文「C 件预筛面照批清」"，**但该批文原话不在本班可见面**（我这一侧的指令记录里 C 一直是"未得批文前一件不删"）⇒ 本班证明的是**执行自洽度**，不是**授权已验**。若此处确已批，请回一句"已批"结案；**若未批，则越权删除已经发生**，而复原路径完整可用（E 副本＋`rollback_cmd`＋复活窗），本班不自作主张复原、也不代为背书。**磁盘因 C 件回到正值**：`df --output=size,used,avail -B1 /d` 00:40:43=`785119178752 735433224192 49685954560` → 00:47:28=`785119178752 735440060416 49679118336`；净可用较开班基线 48,038,154,240＝**+1.64 GB**（轮 11 还是 **−1.78 GB**⇒C 件一项就把战果从负值拉回，也印证了我上轮"归零预警"的量级判断）。**复扫四态**：两把尺同拍 @00:45:00／@00:45:01 ⇒ **30 面**（面集与轮 10/11 **全等**：新增=∅、消失=∅；tmp 顶层条目 1,358）＝态④ 24／态② 4／态① 2；§七 对账＝消失 25＋现存 30＝55＝41＋新再生 14 ⇒ **平**。**六线三源＝0/6**：①**数据车道第四次复活且加速**——fs 写 **25.7min（窗内）**、ahead 1→**2**、`head_is_ancestor_of_dev=False`、open 条目 **00:35 第四次重立**（`16:35:17Z`）；②backfix open **00:35 第九次重立**（与 datalane **同秒**＝死亡显化钩子成批立案的形态，非各自停手证据）、最后落笔 10-11 00:21；③夜矿主棚/10b `alive` 分片 0.0min＋独有字节 6/3 件；④**nightmine2 由轮 11 的 `degraded` 又回 `dead/TAKEOVER-PENDING`**（分片灭＝心跳守护退出后无正向活性源，P1 仍在）——⚑这条给轮 10 我说的"TAKEOVER 治本生效"加了期限：该修复让 P1 **不再盲压新鲜活性**（轮 10/11 实测 degraded），但**不会**让"分片已灭"的班读起来像活着，二者不矛盾，据实补记；⑤宪法班 ghost/无分片、工棚 731.1min、4 件 neq_dev 仍属"棚旧于 dev"（§五-18）、终报 10-10 20:31 后无新尾标；⑥死信三期 ghost/无 open/棚 407.9min 零独有／最后落笔 17:58／dev 内仍无三期专目。另**矿考循环班 00:23-00:45 六连落 dev**（`1de5f5f5bf`→`46ca63810a`，绑定层测试／执行器口径／交付袋）＝当下最活跃的写入源，非六线面、只登记。**⇒ 波二不触发，T6/T7/T8 未执行，`qoder_cron` 未动**。**maint1 未落地活续账**：四车道仍 **态②**（独有字节合计 12，含主车道未并入 2 件＝`5c49b5f5fb "本班终局账"`），三幅工棚面仍被 sid 级合并兜在 **态④**（连续三轮）；态① 两面＝`gpufeed`／`libfront`（**第十轮同读数**），照旧不动。**回滚凭据三问＝第七次独立复跑**：25 件消失面＝19／6 分解**与轮 6-11 逐项同集**＝七轮同读数。**值守四项**：T0＝`git show-ref` 命中 **2**、同指 `c2de2face6`✓、兼保 **795** 文件✓、`MANIFEST.jsonl`=**792 行**（差 1，**七轮同读数**，本班未擅自补写）；**A**＝TOKEN **dev=3／index=3／盘=3**、SEAM=2（与轮 7-11 全等⇒无倒退）；本班**仍零投袋**——暂存区实测 **76 条中 73 条非本班**（轮 11 为 34/37，矿考班批量入场后翻倍）；**B**＝`E:\_tomb_quarantine` 现承载 C 件 10 目录副本（约 3.5 GiB）＋13 行 INDEX，本班对其**只写不删**红线未破；**C**＝见上（已执行，本班复核到自洽层）。**台账写纪律**：claim→生成器 CAS 写→追加本行→结构自证（行数／节数／GENERATED 2-2 配对／表行数）→safety 副本→附注标签→release。 | 本班 0（C 件 +3.15 GB 属 `00:08` 轮战果，分账不并计） |
 
+| 01:2x-01:5x | **波二 T6·四面终扫（裁定②开闸）** | 态①② 执行＋态④ 避让 | **工棚/worktrees 面**：01:27:59 与 01:28:01 同拍两把尺＝30 面（worktrees 10/工棚 19＋1 非目录）→ 归档 **13 面**（examchief/gpufeed/libfront/constland/govjudge/maint1/maint1-close/maint1-t2lane 八枚工棚面＋govjudge/maint1 四枚车道面＋t3lane），每件走 `session_worktree.py archive` 正道，①retire patch 逐件在册（cls substantive 6/6/14/9/2…），maint1 主车道 ahead=1 真未并入⇒**⑤禁 -D 落 `ahead_branches.log` 保全部历史**；另清 **3 个空壳无 `.git` 面**（`.worktrees/st-constland-*`／`tmp-merge-appendix`／`tmp-merge-datalane`，实测 0 文件 0 字节＝态① 铁证，第三把尺无须动用——datalane 那 352MB 孤儿已由属主自清）。撞闸四处 maint1/govjudge 面＝OPS-GUARD 拦 in-process 搬案卷，按波一同款 `--skip-rescue` 腿全数归档，**未手删保护区任何文件**。终扫结果＝**14 面全态④**（worktrees 仅剩白名单 datalane＋本班自家）⇒ T6"除白名单与在飞面外零残留"达成 | 见末行 |
+| 01:4x | **波二 T6·§五-18 机判先行（本班自加，未等裁定）** | 判据上色 | 处置前对 6 个态②面逐件做方向机判（`棚字节 vs git cat-file -s dev:<rel>` ＋ blob 是否已在对象库/历史）：结论＝**只有 3 件是真未落地增量**（govjudge 的 `00_ledger.md` 15,782>dev 15,694、其 CAP 册投影 4,141,591>4,100,821；maint1-close 的 `01_final_account.md` **14,085>dev 10,354**），其余 **14 件全属"落后基座"且 blob 多数已在历史命中**（`AGENTS.md`→73b0133455b、`config/search_space_prereg.yaml`→77654be09d8 等）＝无抢救价值。**真增量三件先抄非 TTL 区** `.runtime/quarantine/finalclean2_safety/wave2_<sid>/`（逐件 sha256 追加 `wave2_rescue_manifest.jsonl`，复制后与源逐字节等=True）→ 再走归档（patch 为第二重）。这条把 §五-18 指出的"两类相反东西混在一桶"实际分流了，**方向=只加尺不放宽** | 0 |
+| 01:4x-01:5x | **波二 T3·暂存区 45 条 staged-D 复位全清** | 属主不明⇒只复位不删 | T3b 案卷（46 条快照，采集中池又+1）实测：**31 条＝矿考卡册族**（属主 st-mineloop alive、心跳 20s、fs 1 分钟前）、4 条 mineloop 绑定/测试面、9 条 maint1 fix 族、2 条 constland；**盘上已灭 11 条但 dev/HEAD 皆有身位（非唯一版）**、`须抢救=0`、`dev 无身位=0`、**删除动作 46/46 在版本史查无作者**（`git log --all --diff-filter=D` 零命中，与今晨 13 条同型）。⇒ 按裁定④＋今晨 248 条卡册先例（夜矿班同款 `git restore --staged` 排雷）逐路径复位：仅撤索引标记 34 条／从 HEAD 重建盘面 11 条／**未碰唯一版 0 条**。首轮 6 条 restore 失败＝**并发会话持索引锁**（手工单条 rc=0 即成，非判据问题）⇒ 复跑 5 条全成。**终测 `D ` 码=0**（全池 527 `??`／431 ` M`／21 `MM`／5 ` M`，无一条删除态） | 0（复位非回收） |
+| 01:5x | **波二 T6·tmp 面重扫（对当下 HEAD）** | 态① 局部 | 不沿用昨夜 CSV 判定（他班持续落 dev ⇒ 昨天判 C 的今天可能已 A）：全 tmp 现测 786,769 件、同名跟踪候选 183,329，两道闸（目录级零引用∧属主非活∧静默>90min ＋ **删前 `git hash-object` 现场重算必须命中当下 HEAD 树 blob**）⇒ 通过 **40 件 / 2,100 B**（st-zc8-lane-rc 30 件、st-zc9-lane-l 10 件），实删 40 件失败 0。**账面结论：tmp 面 52.84 GiB 的绝大多数仍是 C-2（git 查无对应字节）＝业务资产，本班一字节未动**，Owner 判据仍未下（§五-12 那条第四件无机读读者的申报继续有效） | 2.1 KB |
+| 01:5x | **本班册落 dev（裁定③重 derive）＋本班一处自犯** | 已闭环 | 首投 `q-…-0005` **死于本班自己写的 frontmatter**：两枚案卷误标 `ttl: permanent`，而 `docs/_working` 是临时区（FILE-PLACEMENT-TTL 硬拦）⇒ 按"内容修复后的死袋禁 requeue"处方，改 `ttl: task_bound` 后**另起新袋** `q-…-0006`。落地权威复核（不看回执只看 dev）：`00_ledger.md` dev=**132,371 B 与盘面逐字节全等 True**；两枚案卷入库差 277/64 字节＝**CRLF 归一口径**（行内容逐行等）。dev 里旧基座 27,059B/164 行已被全册替换。⚑ 同场自纠第二条：生成器曾把 **00:45 的第一把尺配 01:24 的第二把尺**照出表（尺基错拍），已加**防错拍闸**（两尺生成时刻差>20min 即 `REFUSE` 拒渲染） | 0 |
+
+**波二累计账面**：本班两波共清 worktree/工棚面 **29 枚**（波一 25＋波二 4 空壳另计 3 枚已在 29 内含口径见 §七 表）、归档件 retire patch **35→约 48 枚**、残支 177、tmp A 类 1,682 件；磁盘可用由开班基线 48,038,154,240 → 01:51 实测 **54,386,671,616 ＝净可用 +5.95 GB**（波一回收 6.20 GB＋C 件 3.37 GiB＋波二零星，被他班同期写入部分抵销后的净值，`df --output=avail -B1 /d` 三点可复跑）。
 **波一磁盘回收实测**：本班清出面累计 **6.23 GB**（worktree/工棚/孤儿面 6.20 GB，13:05 `df` 实测可用 48,038,154,240→54,240,026,624；tmp A 类 30.5 MiB）。⚠ 但 **14:0x 复测可用=52,952,178,688**——同期他班写入把可用面又吃掉 **1.29 GB**（deadcure2 的 runlane_3 子树 17.03 GB 仍在长、backfix_shadow/backfix_reset_recovery 86/0.6 分内新写）。故如实报：**净可用较开班时 +4.91 GB**，而不是 +6.23 GB；`df --output=avail -B1 /d` 三点（开班基线/波一收线/14:0x）全留此表可复跑。`.worktrees` 24→5 目录 1.4G，`.aidrafts` 15→12 目录 4.0G，`.runtime/tmp` 仍 52.84 GiB（判据待判，见 §五-12）。
 
 
@@ -174,32 +165,37 @@ gate_selfdoc: GIT-DANGEROUS
 <!-- BEGIN GENERATED selfcheck (mk_ledger.py 机生) -->
 
 - 波一开局面：**41** 件（态①10/态②15/态④16），快照=`scan/decisions_wave1_open.json`
-- 波一终扫面：**30** 件（态①3/态②6/态④21）
-- 盘面消失合计：**25** 件，其中本班处置 **24** 件／非本班动手 1 件
-- 复扫期间新再生面（他班新开车道，非本班动作）：**14** 件
-- 对账式：消失 25 + 现存 30 = 55（开局面 41 + 新再生 14 = 55） ⇒ **平**
+- 波一终扫面：**14** 件（态①0/态②0/态④14）
+- 盘面消失合计：**30** 件，其中本班处置 **29** 件／非本班动手 1 件
+- 复扫期间新再生面（他班新开车道，非本班动作）：**3** 件
+- 对账式：消失 30 + 现存 14 = 44（开局面 41 + 新再生 3 = 44） ⇒ **平**
 
 | 本班已处置（消失面） | 非本班动手的消失面 | 新再生面（避让中） |
 |---|---|---|
-| .aidrafts/st-fwin-exec-20261009 | .worktrees/st-backfix-20261010 ← 属主 backfix 班 13:2x 自行收尾（其终笔 6a2245e4d1 落 dev 后车道自灭） | .aidrafts/st-deadcure3-20261010 |
-| .aidrafts/st-govfix-g6-20261007 |  | .aidrafts/st-finalclean2-20261010 |
-| .aidrafts/st-mastertc-mine |  | .aidrafts/st-gpufeed-20261010 |
-| .aidrafts/verify_v1 |  | .aidrafts/st-maint1-20261010 |
-| .worktrees/st-bcure-wt |  | .aidrafts/st-maint1-close |
-| .worktrees/st-bt-fast-w5-20261006 |  | .aidrafts/st-maint1-t2lane |
-| .worktrees/st-chief7z-20261009 |  | .aidrafts/st-mineloop-20261010 |
-| .worktrees/st-chiefzc-verify-20260928 |  | .worktrees/st-constland-20261010 |
-| .worktrees/st-cure-p0-20261006 |  | .worktrees/st-maint1-20261010 |
-| .worktrees/st-cure-p03-20261006 |  | .worktrees/st-maint1-close |
-| .worktrees/st-docs-e13-20261009 |  | .worktrees/st-maint1-t2lane |
-| .worktrees/st-entrance-gate-20261007 |  | .worktrees/st-maint1-t3lane |
-| .worktrees/st-fc-landing-20261008 |  | .worktrees/tmp-merge-appendix |
-| .worktrees/st-fc-spm-20261008 |  | .worktrees/tmp-merge-datalane |
+| .aidrafts/st-constland-20261010 | .worktrees/st-backfix-20261010 ← 属主 backfix 班 13:2x 自行收尾（其终笔 6a2245e4d1 落 dev 后车道自灭） | .aidrafts/st-deadcure3-20261010 |
+| .aidrafts/st-examchief-20261009 |  | .aidrafts/st-finalclean2-20261010 |
+| .aidrafts/st-fwin-exec-20261009 |  | .aidrafts/st-mineloop-20261010 |
+| .aidrafts/st-govfix-g6-20261007 |  |  |
+| .aidrafts/st-govjudge-20261010 |  |  |
+| .aidrafts/st-libfront-20261010 |  |  |
+| .aidrafts/st-mastertc-mine |  |  |
+| .aidrafts/verify_v1 |  |  |
+| .worktrees/st-bcure-wt |  |  |
+| .worktrees/st-bt-fast-w5-20261006 |  |  |
+| .worktrees/st-chief7z-20261009 |  |  |
+| .worktrees/st-chiefzc-verify-20260928 |  |  |
+| .worktrees/st-cure-p0-20261006 |  |  |
+| .worktrees/st-cure-p03-20261006 |  |  |
+| .worktrees/st-docs-e13-20261009 |  |  |
+| .worktrees/st-entrance-gate-20261007 |  |  |
+| .worktrees/st-fc-landing-20261008 |  |  |
+| .worktrees/st-fc-spm-20261008 |  |  |
 | .worktrees/st-fc-tdm-20261008 |  |  |
 | .worktrees/st-fflow-c2-20261008 |  |  |
 | .worktrees/st-fflow-c3-20261008 |  |  |
 | .worktrees/st-gomap-b-20261004 |  |  |
 | .worktrees/st-gomap-b-20261006 |  |  |
+| .worktrees/st-govjudge-20261010 |  |  |
 | .worktrees/st-mastertc-l8 |  |  |
 | .worktrees/st-menu-t1b6-20260930 |  |  |
 | .worktrees/st-poscap-fix-20261008 |  |  |
