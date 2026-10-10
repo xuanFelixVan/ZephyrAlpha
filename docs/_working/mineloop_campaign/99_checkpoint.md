@@ -75,8 +75,8 @@ P6 业务资产判死/花钱/实盘/出域＝零项
 |---|---|---|
 | ③ 31 卡袋＋T1 详录袋复投 | **两件均已在 dev**（本班 00:4x 复核实测） | `git ls-tree dev -- …/exam_cards`=487（456＋31）；`git ls-tree dev -- …/T1_quarantine_claim_20261010.md` 命中；维护一班 T4 的 PG 第三源在 dev 码上（`_pg_confirmed_token_files` 命中 3）——我 23:5x 那次复投能过，正是主区投影追齐＋该第三源双力合一 |
 | ② 板块族 9 张专道 | 底座＋**3 张已出分**（虹吸集中度／调整周期进度／接棒撤离榜），分数册 dev=26 行 | 专道 agent 正在逐张定案余下候选；两级分桶卡（如 L2-01-3 多周期动量主导度 buckets=categorical_then_quantile）执行器不支持＝已判拒考并入实现面缺口清单，禁硬喂市场均值 |
-| ① W-A 重放引擎工单 | 关键判据已定：**不必新造引擎** | 执行核 comparison 分支的 `signal/signal_b` 就是两臂**敞口序列**，`_arm_nav_metrics` 内部自行做 t 敞口×t+1 目标 的 NAV 与配对差 ⇒ 凡 arm_protocol 把两臂定义为同底座上的敞口变换（置常数/开关 cap/取子集/改 exec_caliber/权重形式）即可现考；真需要新建的只有逐标的持仓路径重放那一类。车道 agent 正按此对 17 张 arm_protocol 卡分箱＋出 5 张试点 |
-| ④ GPU 深挖＋情绪先锋 | GPU＝他班 4 分片，本班零触碰；情绪面**门槛已量化** | `emotion_index` 实测：close_final 8,617 行止于 2026-09-30、pre_open 仅 27 行、auction 17 行 ⇒ pre_open 腿撑不起 IS/OOS（那张卡本班已改判 blocked_on_data，判据四键零动）；车道 agent 正出首批开考清单与 Gate 0 需求 |
+| ① W-A 重放引擎工单 | **分箱已完成并入库**（`W-A_arm_pilot_spec.yaml` 已落 dev；测试 10 passed） | 实测 19 支双臂卡（键面 arm_protocol 17＋散文声明 2）：现器可考 **3**（进配对分支 2）／需"按臂参数化调用在册装置＋逐臂日收益"适配器 **16**（其中分钟族 5 支另需 5min 切片器）／unfrozen 0（数字缺口单列 pending_numeric_params：X-R1-01/03 体制门降幅 3 处，未替卡拍数）。⇒ **W-B 放量的前置是适配器工单，不是配方**；另 18 支门柱键在 `_COMPARISON_KNOWN_KEYS` 七键之外＝须立法（本班未自扩）。本体件 `arm_protocol_binding.py` 因大白话投影未兑现暂不入册（见 §7.3） |
+| ④ GPU 深挖＋情绪先锋 | GPU 零触碰（他班 4 分片）；情绪面**门槛被实测翻案** | `emotion_index` close_final 已续至 **2026-10-09（8,620 行）**＝本班 00:13 实测还是 8,617/止于 09-30 ⇒ 断供面正在回补（探针期间表仍在写）。情绪族 33 张逐张判定：现可考 **5**／等 close_final 1／须数值重建分段 8／他腿阻塞 11／已考 8。⚠ 最大假绿：历史 close_final 实为 **C3+C4 两腿代理**、live 段 3-5 腿 ⇒ 同序列跨 IS/OOS 换定义，`oos_same_sign` 可能考的是"腿数变化"；六段切点查无真源（卡面"在册六段口径"=悬空引用）。首批 N=1 不凑数：`TDM-E-L1-S3/calibration/06_promotion_rate_derived` |
 
 ### 本班这一轮新学的三条落地硬知识（接班直接引用）
 
@@ -101,3 +101,20 @@ P6 业务资产判死/花钱/实盘/出域＝零项
 5. W-A 试点 5 张：按 `W-A_arm_pilot_spec.yaml` 的分箱跑 comparison 双臂出分（敞口变换形＝现器可考）
 6. 情绪先锋：待数据车道 Gate 0 补 close_final（现 max=2026-09-30），复元判据与首批清单见
    `emotion_lane_status.yaml`
+7. **04:00 后必跑（CH 让路解除，`date` 实测后再动）**：
+   ① 五分位三卡 `--force` 正确口径重跑（虹吸集中度／调整周期进度／接棒撤离榜，旧行保留、试次照计，
+      对照说明见 `09_caliber_deviation_note.yaml`）；② 板块族可考 2 张（L2-01-2／L2-02-2，
+      args 与拒因见 `sector_lane_spec.yaml.bind_args`；09-03 因评级序两套互斥留 __TBD_BY_OWNER__ 不跑）；
+   ③ 情绪族首批 5 张中先跑不依赖 close_final 的单臂卡；W-A 试点 P1（X-R1-01/comparison/02）
+      需状态机 cap 适配器就绪才跑，未就绪就如实不跑
+8. **阻断件（唯一一条）**：`scripts/backtest/fexam/card_binding.py`（追加算子 sector_relay_retreat_net_ratio）
+   与 `scripts/backtest/fexam/arm_protocol_binding.py`（W-A 本体）均因 TRANSLATION-COVERAGE 读
+   **落地面文件投影**（无 PG 第三源，区别于 CREATE-GUARD 今日已获）被硬拦。本班已把两条 plain_zh
+   经意图 API 落 PG 真源（`REG-MODULE-TRANSLATION-001`/entries，status=active）并 publish_snapshot
+   （v16→v17，entry_count 8861）；**须册主车道 render 兑现投影**（纪律＝禁原属主代打共享热册），
+   兑现后两本体＋其配对测试（19 测版）一并投，测试袋已按配对关系退回 17 测版保持 dev 全绿
+9. 缺陷呈批（新增两条，均本班实测可复现）：
+   ① `add_module_translation.py` 无账本通道、只 safe_write 直写投影 ⇒ 任何一次 render 即抹掉登记，
+      而该门现已硬拦＝后来者会被假拦（本班级改用 api.register＋publish_snapshot）；
+   ② `commit_queue enqueue` 无 `--allow-multi-domain`（跨域须按域拆袋），且袋默认 base=工棚 HEAD，
+      基底落后即"双侧皆改真冲突"死信——热件投袋务必显式 `--base-head <dev sha>`
