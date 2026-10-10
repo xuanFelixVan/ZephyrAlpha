@@ -67,6 +67,17 @@ family_id: NIGHTMINE-CAMPAIGN
 | apply_depgraph dry-run 真写 | 知悉，已入维护班病根清单，本班不碰 |
 | 验收加分 | 7 张全 fail 如实+守窗双证+前提更正——登记致谢 |
 
+## 〇-6、工单批复+GPU 深挖车道执行终态（st-nightmine2-20261010，10-10 深夜）
+
+| 项 | 终态 | 凭据 |
+|---|---|---|
+| maint1 T4 复投 | ✅ T1 详录袋落地（三口径尺实测通） | q-0016=306817ca328f；31 卡袋归其属主车道复投 |
+| W-A 判官分派 | ✅ 落地：comparison 族判官按 pillars_numeric 键集分派（全韦校准键=校准判官；含 NAV/笔级键=双臂判官），影子纪律=判据冻结面零动试次照计 | q-0017=ba7c1891f7e5，红蓝 2 新增 13/13 绿 |
+| W-A 试点 5 张 | ⚠️ 机制通、真出分 0——试点卡机判映射全卡在两堵在册墙：①C-L1 冻结映射=5 日 IC 面（引擎 shift(-1) 硬编码=在册缺口，参数化=触碰判据面须裁定）；②anchored_cap/F-C2-03 等需生产权重帧/sleeve 面板回放（W-B+ 工程量）。逐卡墙位已抽取呈统筹，候 horizon 参数化裁定或换试点集 | 卡面原文+映射面注记逐卡在案（census+卡内 numeric_face_mapping_note） |
+| GPU 深挖车道 | ✅ 一阶段 t1 4 路=2464 格已入分册（N 账本零混入，batch_records 逐笔核验）；二阶段 6 路×25000 格 23:37 点火在跑（预期 01:50 收）；分册=.runtime/nightmine_exploration/scan_ledger_*.jsonl；看门狗=02:25 查夜跑活体才停分片（夜跑 tilib 23:36 仍在孵化新片）；GPU 采样器复活续录；引擎 --exploration-ledger 开关落地 | q-0018=5432de253458；产出 grid_20261010-232435（t1）/grid_20261010-233721（p2） |
+| 引擎账本开关 | ✅ --exploration-ledger（设值=批末不进 N 账本，批记录追分册；未设=原语义零漂移） | 同上 |
+| 地形图/top 池/新预注册卡 | ⏳ 待分片收官后出（分册+manifest 聚合→top 假设池→新卡判据看数前冻结——下一班次面） | 探索产物=grid_*_s*of6/manifest.csv+summary.json |
+
 ## 一、已完成（凭据面）
 
 | 项 | 状态 | 凭据 |
