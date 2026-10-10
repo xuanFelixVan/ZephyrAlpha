@@ -128,6 +128,22 @@ DEFAULT_CONTEXT = {"strategy_pool": ["primary"], "phase": 1, "capital_ramp_enabl
 #: 探索扫描分册开关（main 里由 --exploration-ledger 注入）：设值=批末不进 N 账本，
 #: 批记录改追本路径（矿考班 GPU 深挖车道令②：不占考试试次，与 N 账本分册）
 _EXPLORATION_LEDGER: str | None = None
+#: eval 面上卡开关（main 里由 --eval-backend 注入）。缺省 "cpu"=本文件原 pandas 路，
+#: 逐字节零漂移（判据面与数值面均不动）；"gpu"/"auto"=可移植面走 zephyr.backtest.gpu_core
+#: 设备核，不可移植面按该件 eval 节头的既定 CPU 交接点回原路并计数出声。
+#: 定靶凭据=docs/_working/gpufeed_campaign/01_gpux_t0_profile.md（今晚 38,956 格仪表：
+#: eval=82.2% CPU-秒，其内命中路径 60.4%，all_a_ex_st 宇宙独占 74.2%）。
+_EVAL_BACKEND: str = "cpu"
+#: 设备面分流计数（观测面，不进 manifest 判据列；summary.eval_gpu 仅在非 cpu 时出现）
+_EVAL_GPU_STATS: dict[str, int] = {
+    "prefix_gpu": 0,
+    "prefix_cpu_kept": 0,
+    "cell_gpu": 0,
+    "cell_host_continue": 0,
+    "cell_cpu_kept": 0,
+}
+#: 批级设备面板缓存（键含入参对象身份=批轮换自然失效；容量上限逐出防显驻膨胀）
+_DEV_PANEL_CACHE: dict = {}
 # NO-BARE-SQL + TABLE-NAME-REGISTRY 配方: SQL 常量化+表名走 TableRegistry 真源
 from zephyr.data.table_registry import get_registry as _get_table_registry
 
@@ -508,6 +524,25 @@ def _normalize(
     return _degraded_zscore()
 
 
+def _ic_weight_frame(ic_all: pd.DataFrame, mode: str, names: list[str], dates) -> pd.DataFrame:
+    """IC 族日权重矩阵——从 _combine 原样搬出（逐式同序同算子，纯位置挪移）。
+
+    提取动机=eval 面上卡时设备侧只承担 (T,S) 的秩与行归约，本矩阵对象是 (T,F)（F≤8），
+    上卡无收益且会造出第二实现面（漂移源）；故 CPU/GPU 两条前缀路共用本函数——
+    禁复制本段（RULE-CLONEGUARD，且复制=判据分叉）。
+    """
+    if mode == "ic_mean":
+        w = ic_all.rolling(60, min_periods=20).mean()
+    elif mode == "ic_ir":
+        w = ic_all.rolling(60, min_periods=20).mean() / (ic_all.rolling(60, min_periods=20).std() + 1e-12)
+    else:
+        span = 20 if mode == "halflife20" else 60
+        w = ic_all.ewm(halflife=span, min_periods=10, adjust=False).mean()
+    w = w.clip(lower=0.0).shift(1)  # ← 前视防御: d 日只用截至 d-1 的 IC
+    w = w.div(w.sum(axis=1).replace(0, np.nan), axis=0)
+    return w.reindex(dates).fillna(1.0 / len(names))
+
+
 def _combine(
     factors: dict[str, pd.DataFrame], normalized: list[pd.DataFrame], mode: str, closes: pd.DataFrame
 ) -> tuple[pd.DataFrame, bool]:
@@ -540,16 +575,7 @@ def _combine(
             sd = (x.std(axis=1) * y.std(axis=1)).replace(0, np.nan)
             ic_by_name.append((cov / sd).fillna(0.0))
         ic_all = pd.concat(ic_by_name, axis=1, keys=names)  # index=date, columns=names
-        if mode == "ic_mean":
-            w = ic_all.rolling(60, min_periods=20).mean()
-        elif mode == "ic_ir":
-            w = ic_all.rolling(60, min_periods=20).mean() / (ic_all.rolling(60, min_periods=20).std() + 1e-12)
-        else:
-            span = 20 if mode == "halflife20" else 60
-            w = ic_all.ewm(halflife=span, min_periods=10, adjust=False).mean()
-        w = w.clip(lower=0.0).shift(1)  # ← 前视防御: d 日只用截至 d-1 的 IC
-        w = w.div(w.sum(axis=1).replace(0, np.nan), axis=0)
-        w = w.reindex(dates).fillna(1.0 / len(names))
+        w = _ic_weight_frame(ic_all, mode, names, dates)
         arr = np.zeros((len(dates), normalized[0].shape[1]))
         for j, nf in enumerate(normalized):
             arr += w[names[j]].to_numpy()[:, None] * nf.reindex(dates).fillna(0.0).to_numpy()
@@ -689,17 +715,20 @@ def _norm_rows(w: pd.DataFrame, top_n: int) -> pd.DataFrame:
 def _apply_cap_and_lambda(w: pd.DataFrame, cap: str, lam: str) -> pd.DataFrame:
     """E 单票上限 + H 换手惩罚 λ（λ 收缩向旧权重）。"""
     cap_map = {"cap5": 0.05, "cap10": 0.10, "cap20": 0.20}
-    lam_map = {"lambda_0": 0.0, "lambda_5bp": 0.0005, "lambda_15bp": 0.0015}
     c = cap_map[cap]
     # cap=硬约束终态 clip，不再 renorm（renorm 会重新突破上限）：
     # 持仓数不足（等权 1/n > cap）时允许低仓位——约束优先于满仓，超额留现金
     w = w.clip(upper=c)
-    l = lam_map[lam] * 100.0  # λ 惩罚项放大为组合收缩系数（5bp/15bp→0.5/1.5 收缩比例）
+    l = _LAMBDA_PEN[lam] * 100.0  # λ 惩罚项放大为组合收缩系数（5bp/15bp→0.5/1.5 收缩比例）
     if l > 0:
         w = w.ewm(alpha=min(1.0, l), adjust=False).mean()
         rs = w.sum(axis=1).replace(0, np.nan)
         w = w.div(rs, axis=0).fillna(0.0)
     return w
+
+
+_FREQ_STEPS: dict[str, int] = {"daily": 1, "weekly": 5, "biweekly": 10, "monthly": 21}
+_LAMBDA_PEN: dict[str, float] = {"lambda_0": 0.0, "lambda_5bp": 0.0005, "lambda_15bp": 0.0015}
 
 
 def _apply_freq_trigger(w: pd.DataFrame, freq: str, trigger: str) -> pd.DataFrame:
@@ -712,7 +741,7 @@ def _apply_freq_trigger(w: pd.DataFrame, freq: str, trigger: str) -> pd.DataFram
       drift_band → 保持逐日循环但切 numpy 行数组（省 .loc 逐行标签查找）；
         np.nansum ≡ pandas row-sum skipna 语义，判阈 (|Δw|.sum()/2 > 0.10)。
     """
-    step = {"daily": 1, "weekly": 5, "biweekly": 10, "monthly": 21}[freq]
+    step = _FREQ_STEPS[freq]
     if trigger != "drift_band":
         if step == 1:
             return w.copy()
@@ -746,6 +775,257 @@ def _combine_cache_store(cache: dict, key, entry: tuple) -> None:
         cache.pop(old_key)
 
 
+# —— eval 面上卡：设备面板/前缀核（仅 _EVAL_BACKEND 非 cpu 时启用；cpu 路径原样）——
+# 分工铁律：设备只承担 (T,S) 全面板数学（秩/行归约/合成/定尺寸），算完照旧物化 pandas
+# 对象交给下游——bt/成本门/manifest/台账面一行不改（判据面与算力面分离，
+# docs/_working/gpu_rewrite/new_asset_gpu_cpu_checklist.md §二.4）。索引/列标签仍留 CPU
+# （同件 §二.5 与 gpu_core 文件头 INVARIANTS）。
+_DEV_CACHE_CAP: int = 12
+_A1_DEV_PORTABLE: tuple[str, ...] = ("raw", "zscore", "rank", "industry_neutral", "size_neutral", "industsize_neutral")
+_A2_DEV_PORTABLE: tuple[str, ...] = ("equal", "orth_equal", "ic_mean", "ic_ir", "halflife20", "halflife60")
+
+
+def _dev_xp():
+    """设备模块（cupy）或 None。后端解析一律经 gpu_core.resolve_backend（禁二套守卫）；
+    显式 gpu 而不可用=该件降级台账出声，本处返回 None=前缀走原 pandas 路（fail-closed 到 CPU）。"""
+    if _EVAL_BACKEND == "cpu":
+        return None
+    try:
+        from zephyr.backtest.gpu_core import resolve_backend
+
+        if resolve_backend(_EVAL_BACKEND) != "gpu":
+            return None
+        import cupy as cp
+
+        return cp
+    except Exception as exc:  # noqa: BLE001 — 算力面缺失不得影响出分
+        _instr_warn("eval_backend_resolve", exc)
+        return None
+
+
+def _dev_cache_put(key: tuple, val) -> None:
+    if len(_DEV_PANEL_CACHE) >= _DEV_CACHE_CAP:
+        _DEV_PANEL_CACHE.clear()  # 批轮换/宇宙切换=旧键失效，整清最省（面板数≤个位数）
+    _DEV_PANEL_CACHE[key] = val
+
+
+def _dev_panel(key: tuple, build, xp):
+    """(T,S) 设备侧 float64 面板，按（入参对象身份+列切+窗）缓存→逐格零 H2D。
+
+    build() 产主机侧 DataFrame（须已 reindex 到考窗行，与 _combine:526 的异基对齐同序——
+    A1 全是逐行算子，先行对齐后求值与先求值后对齐逐行同解，但反过来不行：因子面板可能
+    挂 warm 行或考窗行，不重index 就是拿错行号做截面）。
+    """
+    hit = _DEV_PANEL_CACHE.get(key)
+    if hit is None:
+        hit = xp.asarray(build().to_numpy(dtype=np.float64))
+        _dev_cache_put(key, hit)
+    return hit
+
+
+def _dev_col_codes(cols, industry_map: dict[str, str] | None):
+    """列→组整数编码（无锚列=-1）+ 组数。与 _demean_by_group 的列标签分组同解：
+    组号分配序不影响语义（只做同组聚合与回填）。"""
+    if not industry_map:
+        return None, 0
+    gidx: dict[str, int] = {}
+    codes = []
+    for c in cols:
+        g = industry_map.get(c)
+        if g is None:
+            codes.append(-1)
+        else:
+            if g not in gidx:
+                gidx[g] = len(gidx)
+            codes.append(gidx[g])
+    return np.asarray(codes, dtype=np.int64), len(gidx)
+
+
+def _dev_log_mv(mkt_cap_w, cols, dates, xp):
+    """log(市值) 控制板——与 _normalize:497 的 `np.log(mv.where(mv>0))` 同式，先主机后上卡。"""
+    return _dev_panel(
+        ("logmv", id(mkt_cap_w), len(cols), cols[0], cols[-1], len(dates)),
+        lambda: np.log(mkt_cap_w.where(mkt_cap_w > 0))[cols].reindex(dates),
+        xp,
+    )
+
+
+def _dev_fwd_ranked(closes, cols, xp):
+    """前向收益的截面秩（IC 族右端项）。收益本身仍由 pandas 原式 pct_change().shift(-1)
+    产生（含 pad 缺省填充语义），只把 0.7s/档的秩搬上卡——禁在算力面重造 pct_change。"""
+    import zephyr.backtest.gpu_core as gc
+
+    key = ("fwdrank", id(closes), len(cols), cols[0], cols[-1])
+    hit = _DEV_PANEL_CACHE.get(key)
+    if hit is None:
+        fwd = closes[cols].pct_change().shift(-1)
+        hit = gc._rank_rows(xp, xp.asarray(fwd.to_numpy(dtype=np.float64)), ascending=True)
+        _dev_cache_put(key, hit)
+    return hit
+
+
+def _dev_ctrl_demeaned(mkt_cap_w, cols, dates, industry_map, xp):
+    """log(市值) 先在全市场列集上做组内去均值、再切到宇宙列——factory `_normalize:505` 的口径。
+
+    顺序不可换：先切片再去均值会把组均值从"全市场该行业"改成"宇宙内该行业"，那是另一套数
+    （st-gpux-20261011 的 8 格真实对拍里，两支 industsize_neutral 格因此漂到 sharpe 4.9e-2，
+    超 `verification_framework.md §一·补` 的 0.005 冻结线）。size_neutral 无组步骤，切片安全。
+    """
+    full_cols = list(mkt_cap_w.columns)
+    key = ("logmvdm", id(mkt_cap_w), len(full_cols), len(dates), len(cols), cols[0], cols[-1])
+    hit = _DEV_PANEL_CACHE.get(key)
+    if hit is not None:
+        return hit
+    import zephyr.backtest.gpu_core as gc
+
+    codes_f, ng_f = _dev_col_codes(full_cols, industry_map)
+    if codes_f is None or ng_f <= 0:
+        raise ValueError("industsize 控制板需行业锚覆盖市值面板列集")
+    full = xp.asarray(np.log(mkt_cap_w.where(mkt_cap_w > 0)).reindex(dates).to_numpy(dtype=np.float64))
+    dm = gc.normalize_rows(xp, full, "industry_neutral", codes=xp.asarray(codes_f), n_groups=ng_f)
+    pos = xp.asarray([full_cols.index(c) for c in cols], dtype=np.int64)
+    hit = dm[:, pos]
+    _dev_cache_put(key, hit)
+    return hit
+
+
+def _a1_dev_mode(mode: str, has_industry: bool, has_mv: bool) -> tuple[str, bool]:
+    """A1 模式派发到降级 zscore——与 _normalize:497-508 的锚缺失判定逐支同构（禁分叉）。"""
+    if mode in ("raw", "rank", "zscore"):
+        return mode, False
+    if mode == "industry_neutral" and has_industry:
+        return mode, False
+    if mode == "size_neutral" and has_mv:
+        return mode, False
+    if mode == "industsize_neutral" and has_industry and has_mv:
+        return mode, False
+    return "zscore", True
+
+
+def _prefix_eval_gpu(v, factors, closes, cols, industry_map, mkt_cap_w, xp):
+    """A1+A2 前缀面的设备求值 → dict(combined, rank, a1_deg, a2_deg)（设备数组）。
+
+    不可移植（lasso/pc1 与未知模式）返回 None=调用方走原 pandas 路，禁本函数自造近似。
+    IC 族的 (T,F) 权重矩阵沿用 _ic_weight_frame（CPU 共用件，非复制）。
+    """
+    import zephyr.backtest.gpu_core as gc
+
+    a1_req = v["A1_factor_normalize"]
+    a2 = v["A2_combine_weight"]
+    if a1_req not in _A1_DEV_PORTABLE or a2 not in _A2_DEV_PORTABLE:
+        return None
+    dates = closes.index
+    codes, ng = _dev_col_codes(cols, industry_map)
+    mv_ok = mkt_cap_w is not None
+    # codes 是 ndarray：禁 bool(codes)（多元素数组求真值=ValueError，实测炸考格）；判"有无组锚"
+    # 用 codes is not None and ng>0 两条件齐（无锚列全 -1 时 ng=0 也算无锚=与 factory 同降级）
+    a1, a1_deg = _a1_dev_mode(a1_req, codes is not None and ng > 0, mv_ok)
+    codes_dev = xp.asarray(codes) if codes is not None else None
+    if a1 == "industsize_neutral":
+        ctrl_dm = _dev_ctrl_demeaned(mkt_cap_w, cols, dates, industry_map, xp)  # 全市场列去均值
+        ctrl = None
+    elif a1 == "size_neutral":
+        ctrl = _dev_log_mv(mkt_cap_w, cols, dates, xp)
+        ctrl_dm = None
+    else:
+        ctrl = ctrl_dm = None
+    names = list(factors.keys())
+    normed = []
+    for n in names:
+        # 先按考窗行 reindex 再求值：A1 全是逐行算子，"先对齐后求值"与 factory 的
+        # "先求值后 reindex(dates)"（_combine:526 异基对齐修复）逐行同解；反过来会拿
+        # 因子自带的 warm 行号做截面=错行。
+        arr = _dev_panel(
+            ("f", n, id(factors[n]), len(cols), cols[0], cols[-1], len(dates)),
+            lambda nn=n: factors[nn][cols].reindex(dates),
+            xp,
+        )
+        if a1 == "industsize_neutral":
+            normed.append(gc.industsize_rows(xp, arr, codes_dev, ng, ctrl_dm))
+        else:
+            normed.append(gc.normalize_rows(xp, arr, a1, codes=codes_dev, n_groups=ng, ctrl=ctrl))
+    if a2 == "equal":
+        combined = gc._equal_combine(xp, normed)
+    elif a2 == "orth_equal":
+        combined = gc.orth_equal_rows(xp, normed)
+    else:
+        fwd_ranked = _dev_fwd_ranked(closes, cols, xp)
+        with np.errstate(all="ignore"):
+            ic_cols = [gc.ic_pair_rows(xp, nf, fwd_ranked) for nf in normed]
+        ic_np = np.column_stack([gc._to_numpy(c) for c in ic_cols])
+        ic_all = pd.DataFrame(ic_np, index=dates, columns=names)
+        w = _ic_weight_frame(ic_all, a2, names, dates)
+        w_dev = _dev_panel(("w", id(w), a2, len(names)), lambda: w, xp)
+        combined = gc.weighted_combine(xp, normed, w_dev)
+    rank = gc._rank_desc_average(xp, combined)
+    return {"combined": combined, "rank": rank, "a1_deg": a1_deg, "a2_deg": False}
+
+
+def _cell_device_able(v) -> bool:
+    """单格可上卡判据：叠加族（X_sector/J_regime/X_stop/X_breaker）全 off/缺席。
+    这些族在权重之后还有各自的主机侧语义，本批不接管（如实留 CPU，不静默近似）。"""
+    return (
+        str(v.get("X_sector", "off")) == "off"
+        and str(v.get("J_regime_switch", "off")) != "on"
+        and str(v.get("X_stop", "off")) == "off"
+        and str(v.get("X_breaker", "off")) == "off"
+    )
+
+
+def _cell_eval_gpu(v, dev_pair, combined, effective_n, cap_val, cols, vol20, mkt_cap_w, rets60_mean, rets60_var, xp):
+    """单格定尺寸链上卡（T0 实测=eval 秒数的 60.4% 落在这一面）。失败/不可用返回 None。
+
+    串行步（drift_band / lambda>0）由核内 host_continue 出声，本函数用**原 pandas 函数**
+    续跑 trigger→cap 全序；periodic 行 gather 与 cap clip 均幂等（重跑逐位同），故续跑
+    统一走两步、不分叉——分叉就多一条第二实现面。
+    """
+    import zephyr.backtest.gpu_core as gc
+
+    idx = len(cols)
+    try:
+        vp = _dev_panel(("vol", id(vol20), idx, cols[0], cols[-1]), lambda: vol20[cols], xp)
+        mc = (
+            None
+            if mkt_cap_w is None
+            else _dev_panel(("mvw", id(mkt_cap_w), idx, cols[0], cols[-1]), lambda: mkt_cap_w[cols], xp)
+        )
+        rm = (
+            None
+            if rets60_mean is None
+            else _dev_panel(("r60m", id(rets60_mean), idx, cols[0], cols[-1]), lambda: rets60_mean[cols], xp)
+        )
+        rv = (
+            None
+            if rets60_var is None
+            else _dev_panel(("r60v", id(rets60_var), idx, cols[0], cols[-1]), lambda: rets60_var[cols], xp)
+        )
+        out = gc.eval_cell_gpu(
+            dev_pair[0],
+            dev_pair[1],
+            top_n=effective_n,
+            sizing_mode=v["C_sizing"],
+            freq_step=_FREQ_STEPS[v["D1_rebalance_freq"]],
+            trigger=v["D2_rebalance_trigger"],
+            cap=cap_val,
+            lam=_LAMBDA_PEN[v["H_turnover_lambda"]] * 100.0,
+            vol20=vp,
+            mkt_cap=mc,
+            r60_mean=rm,
+            r60_var=rv,
+            backend="gpu",
+        )
+    except Exception as exc:  # noqa: BLE001 — 算力面异常一律回原路，禁半成品出分
+        _instr_warn("cell_eval_gpu", exc)
+        return None
+    w = pd.DataFrame(np.asarray(out["weights"]), index=combined.index, columns=combined.columns)
+    _EVAL_GPU_STATS["cell_gpu"] += 1
+    if out["host_continue"]:
+        _EVAL_GPU_STATS["cell_host_continue"] += 1
+        w = _apply_freq_trigger(w, v["D1_rebalance_freq"], v["D2_rebalance_trigger"])
+        w = _apply_cap_and_lambda(w, v["E_single_cap"], v["H_turnover_lambda"])
+    return w
+
+
 def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门接线演进为10参，参数对象重构归批F账非本批）
     recipe,
     closes: pd.DataFrame,
@@ -776,35 +1056,73 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
     combined: pd.DataFrame | None = None
     rank: pd.DataFrame | None = None
     cache_key = None
+    dev_pair = None  # (combined, rank) 设备数组——仅 _EVAL_BACKEND 非 cpu 且核可用时存在
+    xp = _dev_xp()
     if combine_cache is not None:
         cache_key = (v["G_universe"], v["A1_factor_normalize"], v["A2_combine_weight"])
         hit = combine_cache.pop(cache_key, None)
         if hit is not None:
             combine_cache[cache_key] = hit  # LRU 续期
-            combined, rank, a1_deg, a2_deg = hit
+            combined, rank, a1_deg, a2_deg, *dev_rest = hit
+            dev_pair = dev_rest[0] if dev_rest else None
             if a1_deg:
                 degraded.append("A1_factor_normalize")
             if a2_deg:
                 degraded.append("A2_combine_weight")
     if combined is None:
-        cl = closes[cols]
-        normalized: list[pd.DataFrame] = []
-        names = list(factors.keys())
-        a1_deg = False
-        for n in names:
-            f = factors[n][cols]
-            nf, deg = _normalize(f, v["A1_factor_normalize"], industry_map=industry_map, mkt_cap_w=mkt_cap_w)
-            if deg:
-                a1_deg = True
-            normalized.append(nf)
-        if a1_deg:
-            degraded.append("A1_factor_normalize")
-        combined, deg2 = _combine(factors, normalized, v["A2_combine_weight"], cl)
-        if deg2:
-            degraded.append("A2_combine_weight")
-        if combine_cache is not None:
-            rank = combined.rank(axis=1, ascending=False)
-            _combine_cache_store(combine_cache, cache_key, (combined, rank, a1_deg, bool(deg2)))
+        pres = None
+        if xp is not None:
+            try:
+                pres = _prefix_eval_gpu(v, factors, closes, cols, industry_map, mkt_cap_w, xp)
+            except Exception as exc:  # noqa: BLE001 — 设备面异常必降级 CPU 并出声
+                # 禁让算力面的坑变成阴性格：假阴性=把可活策略判死，比慢一万倍严重（fail-closed 方向）
+                _instr_warn("prefix_eval_gpu", exc)
+                pres = None
+        if pres is not None:
+            # 设备面只产数组，pandas 对象照旧物化=下游 bt/成本门/manifest 零改动
+            import zephyr.backtest.gpu_core as gc
+
+            _EVAL_GPU_STATS["prefix_gpu"] += 1
+            combined = pd.DataFrame(np.asarray(gc._to_numpy(pres["combined"])), index=closes.index, columns=cols)
+            # rank 与 combined.rank(axis=1, ascending=False) 逐位同（层1 离散量，
+            # test_eval_rank_rows_bitwise_layer1 钉），故缓存路径可直接沿用上卡产物
+            rank = pd.DataFrame(np.asarray(gc._to_numpy(pres["rank"])), index=combined.index, columns=cols)
+            dev_pair = (pres["combined"], pres["rank"])
+            if pres["a1_deg"]:
+                degraded.append("A1_factor_normalize")
+            if pres["a2_deg"]:
+                degraded.append("A2_combine_weight")
+            if combine_cache is not None:
+                _combine_cache_store(
+                    combine_cache, cache_key, (combined, rank, pres["a1_deg"], pres["a2_deg"], dev_pair)
+                )
+        else:
+            if xp is not None:
+                _EVAL_GPU_STATS["prefix_cpu_kept"] += 1
+            cl = closes[cols]
+            normalized: list[pd.DataFrame] = []
+            names = list(factors.keys())
+            a1_deg = False
+            for n in names:
+                f = factors[n][cols]
+                nf, deg = _normalize(f, v["A1_factor_normalize"], industry_map=industry_map, mkt_cap_w=mkt_cap_w)
+                if deg:
+                    a1_deg = True
+                normalized.append(nf)
+            if a1_deg:
+                degraded.append("A1_factor_normalize")
+            combined, deg2 = _combine(factors, normalized, v["A2_combine_weight"], cl)
+            if deg2:
+                degraded.append("A2_combine_weight")
+            if combine_cache is not None:
+                rank = combined.rank(axis=1, ascending=False)
+                entry: tuple = (combined, rank, a1_deg, bool(deg2))
+                if xp is not None:
+                    # 不可移植前缀（lasso/pc1 等）也上传一次，命中格仍可走设备定尺寸链
+                    entry = entry + (
+                        (xp.asarray(combined.to_numpy(dtype=np.float64)), xp.asarray(rank.to_numpy(dtype=np.float64))),
+                    )
+                _combine_cache_store(combine_cache, cache_key, entry)
     # T3b X_sector 板块族叠加（矩阵战役 W5：L2-01 强度池+L2-06 传导后处理；phase>=3
     # 展开，折叠相恒 'off'=零漂移）。插入位=A1/A2 之后、B Top-N 之前（L2-06 卡 §4
     # 引擎接法=层级隔离：只调分不重排名，禁动 Top-N 语义）。
@@ -819,20 +1137,39 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
     # M=ceil(1/cap) 只——M>top_n 时有效持仓数扩展为 M（仍按分数序取）
     cap_val = {"cap5": 0.05, "cap10": 0.10, "cap20": 0.20}[v["E_single_cap"]]
     effective_n = max(top_n, -(-1 // cap_val) if (top_n * cap_val) < 1.0 else top_n)
-    weights, deg3 = _sizing(
-        combined,
-        effective_n,
-        v["C_sizing"],
-        vol20[cols],
-        mkt_cap_w=mkt_cap_w,
-        rets60_mean=rets60_mean,
-        rets60_var=rets60_var,
-        rank_pre=rank,
-    )
-    if deg3:
-        degraded.append("C_sizing")
-    weights = _apply_freq_trigger(weights, v["D1_rebalance_freq"], v["D2_rebalance_trigger"])
-    weights = _apply_cap_and_lambda(weights, v["E_single_cap"], v["H_turnover_lambda"])
+    weights = None
+    if (
+        dev_pair is not None
+        and rank is not None
+        and xp is not None
+        and _cell_device_able(v)
+        and vol20.index.equals(combined.index)
+        and (mkt_cap_w is None or mkt_cap_w.index.equals(combined.index))
+        and (rets60_mean is None or rets60_mean.index.equals(combined.index))
+        and (rets60_var is None or rets60_var.index.equals(combined.index))
+    ):
+        # 等形守卫：pandas 的 base*mkt_cap_w 会按索引/列并集扩张，索引不等形时设备逐格
+        # 乘算与它不同解——不等形即整格回原路（_c4_engine 等形资格守卫同族纪律）
+        weights = _cell_eval_gpu(
+            v, dev_pair, combined, effective_n, cap_val, cols, vol20, mkt_cap_w, rets60_mean, rets60_var, xp
+        )
+        if weights is None:
+            _EVAL_GPU_STATS["cell_cpu_kept"] += 1
+    if weights is None:
+        weights, deg3 = _sizing(
+            combined,
+            effective_n,
+            v["C_sizing"],
+            vol20[cols],
+            mkt_cap_w=mkt_cap_w,
+            rets60_mean=rets60_mean,
+            rets60_var=rets60_var,
+            rank_pre=rank,
+        )
+        if deg3:
+            degraded.append("C_sizing")
+        weights = _apply_freq_trigger(weights, v["D1_rebalance_freq"], v["D2_rebalance_trigger"])
+        weights = _apply_cap_and_lambda(weights, v["E_single_cap"], v["H_turnover_lambda"])
     if v.get("J_regime_switch") == "on":
         # T6 S1: 总闸帽最后生效（信号侧缓存不受影响；帽乘性缩放=额外换手的真实语义）。
         if j_schedule is None:
@@ -1305,8 +1642,14 @@ def _instr_rss_mb() -> float:
         return -1.0
 
 
-def _instr_gpu_sample() -> tuple[float | None, float | None]:
-    """nvidia-smi 采样 (utilization%, memory used MB)；缺席/失败=(None, None)。"""
+def _instr_gpu_sample() -> tuple[float | None, float | None, dict]:
+    """nvidia-smi 采样 (utilization%, memory used MB) + 本进程 NVML 归因读数。
+
+    设备级 util 含桌面图形噪声（本机实测零算力时 8-57% 摆动），单它当"GPU 是否被喂饱"
+    的验收尺必假绿；故并采 gpu_core.nvml_process_util 的逐进程 smUtil（计算上下文归因）。
+    任何一路失败=(None, None, {})，禁把"读不到"写成"没占用"。
+    """
+    attrib: dict = {}
     try:
         # CREATE_NO_WINDOW 铁律（trae_067）：后台心跳线程禁裸 subprocess，走隐藏窗统一入口
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
@@ -1318,9 +1661,16 @@ def _instr_gpu_sample() -> tuple[float | None, float | None]:
             timeout=8,
         )
         util_s, mem_s = out.stdout.strip().splitlines()[0].split(",")[:2]
-        return float(util_s), float(mem_s)
+        util, mem = float(util_s), float(mem_s)
     except Exception:  # noqa: BLE001
-        return None, None
+        util, mem = None, None
+    try:
+        from zephyr.backtest.gpu_core import nvml_process_util
+
+        attrib = nvml_process_util()
+    except Exception:  # noqa: BLE001 — 归因面缺失不得影响心跳本体
+        attrib = {}
+    return util, mem, attrib
 
 
 def _instr_atomic_csv(df: pd.DataFrame, path: Path) -> None:
@@ -1443,7 +1793,7 @@ class _GridInstruments:
                     phase, cells, neg = self._phase, self._cells_done, self._neg_done
                     hits, misses = self._combine_hits, self._combine_misses
                     stall = now - self._last_progress
-                gpu_util, gpu_mem = _instr_gpu_sample()
+                gpu_util, gpu_mem, attrib = _instr_gpu_sample()
                 rec = {
                     "ts": _instr_iso(now),
                     "kind": "hb",
@@ -1460,6 +1810,13 @@ class _GridInstruments:
                     "gpu_util": gpu_util,
                     "gpu_mem_mb": gpu_mem,
                 }
+                if attrib.get("available"):
+                    # 归因三键（观测面，缺 NVML 时整键不出=不冒充读数）
+                    rec["gpu_self_sm_pct"] = attrib.get("sm_util_pct")
+                    rec["gpu_self_in_compute"] = attrib.get("in_compute_table")
+                    rec["gpu_compute_pids_n"] = attrib.get("compute_pid_count")
+                if attrib.get("eval_backend"):
+                    rec["eval_backend"] = attrib["eval_backend"]
                 if stall > _GRID_STALL_THRESHOLD_S and cells < self.total_cells:
                     rec["stall"] = True
                     self._dump_stacks()
@@ -2066,6 +2423,9 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
         "n_eff_meta": n_eff_meta,
         "engine": engine,  # L2-C：三态引擎披露（cpu|gpu|auto）
     }
+    if _EVAL_BACKEND != "cpu":
+        # 观测面键（非判据面）：eval 上卡的分流计数；缺省 cpu 路不出此键=产物零漂移
+        summary["eval_gpu"] = dict(_EVAL_GPU_STATS)
     if engine_degrade:
         # L2-C：GPU 波败 fail-closed 整波重跑 CPU 的披露键（空=未发生降级）
         summary["engine_degrade"] = engine_degrade
@@ -2451,6 +2811,14 @@ def main() -> int:
         help="计算引擎三态（L2-C）：cpu=恒 pandas 原路；gpu=显式张量核（波败 fail-closed 整波重跑 CPU）；auto=env/尺寸守卫解析（缺省）",
     )
     ap.add_argument(
+        "--eval-backend",
+        default="cpu",
+        choices=list(_VALID_ENGINES),
+        help="eval 面（A1 标准化/A2 合成/B-C 定尺寸）算力后端（st-gpux-20261011）："
+        "cpu=原 pandas 路（缺省=逐字节零漂移）；gpu=可移植面上卡、串行步按 gpu_core "
+        "既定交接点回原路并计数出声；auto=cupy+CUDA 在位才上卡。判据面/产物 schema 零改",
+    )
+    ap.add_argument(
         "--verify-counts",
         action="store_true",
         help="只读对账尺：网格产物身份集计数 vs 台账逐批对照（禁任何写）；缺账批显式点名（P0-6）",
@@ -2483,8 +2851,9 @@ def main() -> int:
         help="显式 context 注入（非 stage 批次用，如 T3b-T0 标定 '{\"phase\": 3}'；缺省空=零漂移）",
     )
     args = ap.parse_args()
-    global _EXPLORATION_LEDGER
+    global _EXPLORATION_LEDGER, _EVAL_BACKEND
     _EXPLORATION_LEDGER = args.exploration_ledger or None
+    _EVAL_BACKEND = args.eval_backend
     if args.verify_counts:
         return _verify_counts(args.verify_grid_root or None)
     # 波12 点火类不可旁路——--skip-compute-gate 只关日历窗，不关触发条件与批准卡

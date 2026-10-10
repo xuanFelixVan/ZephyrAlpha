@@ -214,6 +214,16 @@ class TestGridInstrumentsUnit:
         assert sum(1 for ln in hb if json.loads(ln)["kind"] == "done") == 1
 
     def test_gpu_sample_never_raises(self):
-        util, mem = fge._instr_gpu_sample()
-        assert util is None or util >= 0.0
-        assert mem is None or mem >= 0.0
+        """心跳采样面禁抛：nvidia-smi/NVML 任一路缺失都只出声降级，不得把心跳线程打死。
+
+        三元组契约（st-gpux-20261011）：(设备 util, 设备 mem, 逐进程归因 dict)。
+        归因 dict 缺失时=空 dict 或 available=False，**禁伪造 0**（"读不到"≠"没占用"）。
+        """
+        util, mem, attrib = fge._instr_gpu_sample()
+        assert util is None or 0 <= float(util) <= 100
+        assert mem is None or float(mem) >= 0
+        assert isinstance(attrib, dict)
+        if attrib.get("available"):
+            assert attrib["sm_util_pct"] is None or 0 <= attrib["sm_util_pct"] <= 100
+        else:
+            assert attrib.get("sm_util_pct") is None, "不可用时禁给出数值（含 0）"

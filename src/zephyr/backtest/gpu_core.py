@@ -111,6 +111,13 @@ _DEGRADE_LOG: list[dict[str, Any]] = []
 
 _VALID_BACKENDS: Final = ("gpu", "cpu", "auto")
 
+# NVML 归因读数的一次性装载态（ctypes 懒加载；failed 后不再重试，避免每次心跳重探）
+_NVML_LIB: Any = None
+_NVML_HANDLE: Any = None
+_NVML_TS: int = 0
+_NVML_STATE: str = "init"
+_NVML_ERROR: str | None = None
+
 
 def _record_degrade(reason: str) -> None:
     """降级出声：记台账 + logger.warning（禁静默——rewrite_architecture_three_tiers.md §二）。"""
@@ -163,6 +170,89 @@ def device_info() -> dict[str, Any]:
         }
     except Exception as exc:  # noqa: BLE001 — 自描述面禁抛
         return {"has_gpu": True, "probe_error": f"{type(exc).__name__}: {exc}"}
+
+
+def nvml_process_util(pid: int | None = None) -> dict[str, Any]:
+    """本进程 GPU 归因读数（验收尺治本件，st-gpux-20261011）。
+
+    为何要它：nvidia-smi 的 utilization.gpu 是**设备级**指标，本机实测零算力负载时桌面图形
+    就能把它推到 8-57%（12 点采样），而夜间批跑时它只有 9.75%——单看设备曲线分不清
+    "引擎在喂卡"与"IDE 在画窗口"，拿来当 ≥70% 的验收尺必假绿。本函数走 NVML 逐进程
+    接口取 smUtil，并区分计算上下文（CPU-only 进程根本不出现在计算进程表里）。
+
+    依赖纪律：ctypes 直调驱动自带的 nvml.dll——**不新增依赖**（pynvml/nvidia-ml-py 全仓
+    零安装，见其 [DEPENDENCIES] 面）。NVML 不可用/结构不合=available=False 出声降级，
+    禁把"读不到"报成"没占用"（ch-query-fails-soft 同族坑）。
+
+    结构体口径按本机驱动 610.88 实测：(pid:uint32, pad, lastSeenTimeStamp:uint64,
+    f0,f1,f2,f3:uint32)，f0=本进程 SM 忙碌百分比（自测：CPU-only 进程不入表、GPU 忙时
+    f0 随负载升至 ~77，空闲回落）；四字段语义无公开头文件可核，故只消费 f0 且带
+    sane 范围守卫（0-100 之外一律判不可用），禁据此推断编码/解码利用率。
+    """
+    global _NVML_LIB, _NVML_HANDLE, _NVML_TS, _NVML_STATE, _NVML_ERROR
+    if _NVML_STATE == "off":
+        return {"available": False, "reason": "nvml_disabled"}
+    if _NVML_STATE == "failed":
+        return {"available": False, "reason": _NVML_ERROR or "nvml_unavailable"}
+    import ctypes
+
+    if _NVML_LIB is None:
+        try:
+            _NVML_LIB = ctypes.CDLL("nvml.dll")
+            if _NVML_LIB.nvmlInit_v2() != 0:
+                raise OSError("nvmlInit_v2 != 0")
+            h = ctypes.c_void_p()
+            if _NVML_LIB.nvmlDeviceGetHandleByIndex_v2(0, ctypes.byref(h)) != 0:
+                raise OSError("GetHandleByIndex != 0")
+            _NVML_HANDLE = h
+            _NVML_STATE = "ok"
+        except Exception as exc:  # noqa: BLE001 — 采集面缺失不得影响出分
+            _NVML_STATE = "failed"
+            _NVML_ERROR = f"{type(exc).__name__}: {exc}"
+            logger.warning("gpu_core.nvml 不可用，归因读数降级: %s", _NVML_ERROR)
+            return {"available": False, "error": _NVML_ERROR}
+
+    class _Sample(ctypes.Structure):
+        _fields_ = [
+            ("pid", ctypes.c_uint),
+            ("ts", ctypes.c_ulonglong),
+            ("f0", ctypes.c_uint),
+            ("f1", ctypes.c_uint),
+            ("f2", ctypes.c_uint),
+            ("f3", ctypes.c_uint),
+        ]
+
+    class _Util(ctypes.Structure):
+        _fields_ = [("gpu", ctypes.c_uint), ("mem", ctypes.c_uint)]
+
+    n = ctypes.c_uint(0)
+    ts = ctypes.c_ulonglong(_NVML_TS)
+    fn = _NVML_LIB.nvmlDeviceGetProcessUtilization
+    fn.restype = ctypes.c_int
+    fn(_NVML_HANDLE, None, ctypes.byref(n), ctypes.byref(ts))
+    arr = (_Sample * max(n.value, 1))()
+    if fn(_NVML_HANDLE, arr, ctypes.byref(n), ctypes.byref(ts)) != 0:
+        return {"available": False, "reason": "GetProcessUtilization rc!=0"}
+    target = pid if pid is not None else os.getpid()
+    self_sm = None
+    compute_pids = []
+    for s in arr[: n.value]:
+        compute_pids.append(int(s.pid))
+        if s.pid == target and 0 <= s.f0 <= 100:
+            self_sm = int(s.f0)
+        if s.ts > _NVML_TS:
+            _NVML_TS = int(s.ts)
+    dev = _Util()
+    _NVML_LIB.nvmlDeviceGetUtilizationRates(_NVML_HANDLE, ctypes.byref(dev))
+    return {
+        "available": True,
+        "pid": int(target),
+        "sm_util_pct": self_sm,  # None=本进程当前无计算上下文（≠0，必须区分）
+        "in_compute_table": int(target) in compute_pids,
+        "compute_pid_count": len(compute_pids),
+        "device_util_pct": int(dev.gpu),  # 设备级，含图形噪声，只作对照不作验收
+        "device_mem_util_pct": int(dev.mem),
+    }
 
 
 def _as_f64_2d(a: XPArray, xp: ModuleType) -> XPArray:
@@ -501,3 +591,369 @@ def eval_prefix_equal_gpu(
     combined = _equal_combine(xp, normed)
     rank = _rank_desc_average(xp, combined)
     return {"backend": be, "combined": _to_numpy(combined), "rank": _to_numpy(rank)}
+
+
+# ---------------------------------------------------------------------------
+# eval 面 GPU 核（st-gpux-20261011，T0 实测定靶）
+#
+# 靶位凭据（全部实测，非推演）：今晚 38,956 格仪表 = eval 82.2% CPU-秒；其中
+#   hit 路径（combine 命中，96.6% 格）60.4%、miss 路径 39.6%；宇宙面 all_a_ex_st
+#   独占 74.2%。hit 路径 cProfile 逐函数 = numpy.copy 0.086s/格（24%）＋
+#   pandas dtype 派发面（is_bool_dtype 20,873 次/格）——算术占比小、机械占比大，
+#   正是设备侧一次成型、pandas 逐算子重做的形态差。
+#   原语单价（T=975×S=5217，FP64 CuPy vs CPU pandas）：rank(pct) 0.690→0.011（66x）、
+#   equal 合成 0.385→0.003（145x）、_sizing 链 0.992→0.041（24x）。
+#
+# 镜像对象（逐式对照，行号=scripts/backtest/factory_grid_executor.py@dev）：
+#   _normalize:470 / _demean_by_group:442 / _regress_out:457 / _combine:511 /
+#   _sizing:622 / _norm_rows:683 / _apply_freq_trigger:705（periodic 支）/
+#   _apply_cap_and_lambda:689（lambda_0 支）
+#
+# CPU 交接点（本件覆盖面的边界，越界=调用方回原 pandas 路并出声，禁半成品混算）：
+#   1. drift_band 逐日 prev 串行依赖（:724-728）——实测逐日 python 循环搬上卡
+#      =0.214s vs CPU 0.016s（慢 14 倍），融合前禁上卡；
+#   2. lambda>0 的 ewm(alpha) 时间轴递推（:699）——同族 IIR，同上；
+#   3. sklearn Lasso（:595，selection=random 确定性系 CPU 实现属性）与 pc1 的
+#      eigh 特征序/符号约定（:605）；
+#   4. IC 权重的 rolling(60)/ewm 与归一（:544-552）——对象是 (T,F) 小矩阵（F≤8），
+#      非 (T,S) 全面板，上卡无收益且引入第二实现面，故本件只交回 ic_all (T,F)；
+#   5. 一切索引/列标签语义（本文件头 INVARIANTS 既有条款）。
+# ---------------------------------------------------------------------------
+
+
+def _rank_rows(xp: ModuleType, a: XPArray, *, ascending: bool = True, pct: bool = False) -> XPArray:
+    """逐行平均档 rank（pandas DataFrame.rank(axis=1, method='average') 同态；NaN→NaN）。
+
+    并列组计数与 _rank_desc_average 同机（scatter_add 一炮双计），只是 NaN 沉底方向随
+    ascending 翻转：升序填 +inf、降序填 -inf，使 NaN 恒排在有效值之后（pandas 不计位）。
+    rank 值=整数/半整数，float64 精确表示⇒与 pandas 逐位可比（无浮点容差面）。
+    """
+    t, s = a.shape
+    nan = xp.isnan(a)
+    fill = xp.where(nan, (xp.inf if ascending else -xp.inf), a)
+    key = fill if ascending else -fill
+    order = xp.argsort(key, axis=1, kind="stable")
+    sorted_vals = xp.take_along_axis(fill, order, axis=1)
+    is_start = xp.ones_like(sorted_vals, dtype=xp.bool_)
+    is_start[:, 1:] = sorted_vals[:, 1:] != sorted_vals[:, :-1]
+    gid = xp.cumsum(is_start, axis=1) - 1
+    n_groups = int(gid[:, -1].max()) + 1
+    rows = xp.arange(t)[:, None]
+    g_start = xp.zeros((t, n_groups), dtype=xp.float64)
+    g_size = xp.zeros((t, n_groups), dtype=xp.float64)
+    pos1 = xp.broadcast_to(xp.arange(1, s + 1, dtype=xp.float64), (t, s))
+    start_vals = xp.where(is_start, pos1, 0.0)
+    if xp is np:
+        np.add.at(g_start, (rows, gid), start_vals)
+        np.add.at(g_size, (rows, gid), 1.0)
+    else:
+        import cupyx
+
+        cupyx.scatter_add(g_start, (rows, gid), start_vals)
+        cupyx.scatter_add(g_size, (rows, gid), 1.0)
+    start_at = xp.take_along_axis(g_start, gid, axis=1)
+    size_at = xp.take_along_axis(g_size, gid, axis=1)
+    ranks_sorted = start_at + (size_at - 1.0) / 2.0
+    out = xp.empty_like(ranks_sorted)
+    xp.put_along_axis(out, order, ranks_sorted, axis=1)
+    out = xp.where(nan, xp.nan, out)
+    if pct:
+        cnt = (~nan).sum(axis=1, dtype=xp.float64)
+        out = out / xp.where(cnt > 0, cnt, xp.nan)[:, None]
+    return out
+
+
+def _row_mean(xp: ModuleType, a: XPArray) -> XPArray:
+    """行内 skipna 均值（pandas mean(axis=1) 同态；全 NaN 行→NaN）。"""
+    cnt = (~xp.isnan(a)).sum(axis=1, dtype=xp.float64)
+    mu = _neumaier_nansum_axis1(xp, a) / xp.where(cnt > 0, cnt, 1.0)
+    return xp.where(cnt > 0, mu, xp.nan)
+
+
+def _row_std(xp: ModuleType, a: XPArray) -> XPArray:
+    """行内 skipna 标准差 ddof=1（pandas std(axis=1) 同态；cnt≤1→NaN）。"""
+    cnt = (~xp.isnan(a)).sum(axis=1, dtype=xp.float64)
+    mu = _neumaier_nansum_axis1(xp, a) / xp.where(cnt > 0, cnt, 1.0)
+    mu = xp.where(cnt > 0, mu, xp.nan)
+    centered = xp.where(xp.isnan(a), 0.0, a - mu[:, None])
+    sq = _neumaier_nansum_axis1(xp, centered * centered)
+    denom = cnt - 1
+    return xp.where(denom > 0, xp.sqrt(sq / xp.where(denom > 0, denom, 1.0)), xp.nan)
+
+
+def _group_mean_rows(xp: ModuleType, a: XPArray, codes: XPArray, n_groups: int) -> tuple[XPArray, XPArray]:
+    """逐日按列分组 (T,G) 均值与计数（skipna）——镜像 _demean_by_group:452 的
+    `f.T.groupby(grp[valid]).mean().T`（组均值矩阵，列标签分组在本件外先编码成 codes）。"""
+    t, s = a.shape
+    codes = xp.asarray(codes)
+    if codes.dtype != xp.int64:
+        codes = codes.astype(xp.int64)
+    finite = ~xp.isnan(a)
+    safe = xp.where(finite, a, 0.0)
+    tot = xp.zeros((t, n_groups), dtype=xp.float64)
+    cnt = xp.zeros((t, n_groups), dtype=xp.float64)
+    rows = xp.arange(t)[:, None]
+    if xp is np:
+        np.add.at(tot, (rows, codes), safe)
+        np.add.at(cnt, (rows, codes), xp.where(finite, 1.0, 0.0))
+    else:
+        import cupyx
+
+        cupyx.scatter_add(tot, (rows, codes), safe)
+        cupyx.scatter_add(cnt, (rows, codes), xp.where(finite, 1.0, 0.0))
+    mu = xp.where(cnt > 0, tot / xp.where(cnt > 0, cnt, 1.0), xp.nan)
+    return mu, cnt
+
+
+def normalize_rows(
+    xp: ModuleType,
+    a: XPArray,
+    mode: str,
+    *,
+    codes: XPArray | None = None,
+    n_groups: int = 0,
+    ctrl: XPArray | None = None,
+) -> XPArray:
+    """A1 标准化的 xp 面（与 _normalize:470 逐式同构；degraded 判定属调用方模式派发，不在本件）。
+
+    codes = 每列的组编码（无标签列由调用方标 -1，本件置 NaN=与 :453-454 的
+    reindex(columns=原列) 后无组列→NaN 同态的 fail-closed）；ctrl = 控制变量面板（size 族）。
+    """
+    if mode == "raw":
+        return a
+    if mode == "rank":
+        return _rank_rows(xp, a, ascending=True, pct=True)
+    if mode == "zscore":
+        return _zscore_rows(xp, a)
+    if mode == "industry_neutral":
+        if codes is None or n_groups <= 0:
+            raise ValueError("industry_neutral 需 codes/n_groups（缺锚=调用方走降级支，禁本件猜）")
+        return _demean_rows(xp, a, codes, n_groups)
+    if mode == "size_neutral":
+        if ctrl is None:
+            raise ValueError("size_neutral 需 ctrl（log_mv）面板")
+        return _regress_out_rows(xp, a, ctrl)
+    if mode == "industsize_neutral":
+        raise ValueError(
+            "industsize_neutral 禁走本函数：factory _normalize:502-506 把**全市场列**的 log_mv "
+            "送去组内去均值，之后才由 _regress_out reindex 到宇宙列；在本件里按已切片的宇宙列 "
+            "做去均值会改组均值口径（st-gpux-20261011 的 8 格真实对拍实测出 sharpe 4.9e-2 漂移）。"
+            "改走 industsize_rows，ctrl 由调用方在全市场列集上去均值后切列传入"
+        )
+    raise ValueError(f"未知 A1 mode 上卡面: {mode!r}（调用方须先判模式再决定是否走本件）")
+
+
+def industsize_rows(xp: ModuleType, a: XPArray, codes: XPArray, n_groups: int, ctrl_dm: XPArray) -> XPArray:
+    """FWL 两支残差：行业组内 demean 的因子，对行业组内 demean 的控制变量取逐日截面 OLS 残差。
+
+    与 factory `_normalize("industsize_neutral")`（:502-506）逐式同构。ctrl_dm **必须**是调用方
+    在市值面板的全部列上完成去均值、再切到宇宙列的结果——factory 的去均值作用面是全市场列，
+    先切宇宙列再去均值=组均值口径变了（不是浮点差，是另一套数）。镜像核本身无从判断这件事，
+    故本件把它写成显式入参并在 normalize_rows 里拒收该模式。
+    """
+    if codes is None or ctrl_dm is None or n_groups <= 0:
+        raise ValueError("industsize_neutral 需 codes+n_groups+ctrl_dm（缺锚=调用方走降级支，禁本件猜）")
+    return _regress_out_rows(xp, _demean_rows(xp, a, codes, n_groups), ctrl_dm)
+
+
+def _demean_rows(xp: ModuleType, a: XPArray, codes: XPArray, n_groups: int) -> XPArray:
+    """列分组去均值；codes<0=无组标签列→整列置 NaN（factory :453-454 的
+    reindex(columns=原列) 后无组列失配同态，fail-closed 禁泄露行业效应）。
+
+    无组列必须在 scatter 之前剔除——负下标进 scatter_add 是未定义行为，
+    进 numpy 取模索引则静默取到最后一组（假对拍形态）。
+    """
+    valid = codes >= 0
+    pos = xp.nonzero(valid)[0]
+    out = xp.full(a.shape, xp.nan, dtype=xp.float64)
+    if int(pos.size) == 0:
+        return out
+    av = a[:, pos]
+    cv = xp.asarray(codes)[pos]
+    mu, _ = _group_mean_rows(xp, av, cv, n_groups)
+    out[:, pos] = av - mu[:, cv]
+    return out
+
+
+def _regress_out_rows(xp: ModuleType, f: XPArray, ctrl: XPArray) -> XPArray:
+    """逐日一元 OLS 残差——镜像 _regress_out:457（配对 NaN 掩码三步同序）。"""
+    m = (~xp.isnan(f)) & (~xp.isnan(ctrl))
+    fw = xp.where(m, f, xp.nan)
+    xw = xp.where(m, ctrl, xp.nan)
+    f0 = fw - _row_mean(xp, fw)[:, None]
+    x0 = xw - _row_mean(xp, xw)[:, None]
+    f0 = xp.where(m, f0, xp.nan)
+    x0 = xp.where(m, x0, xp.nan)
+    var = _row_mean(xp, x0 * x0)
+    var = xp.where(var == 0.0, xp.nan, var)
+    beta = _row_mean(xp, f0 * x0) / var
+    out = f0 - x0 * beta[:, None]
+    return xp.where(m, out, xp.nan)
+
+
+def ic_pair_rows(xp: ModuleType, nf: XPArray, fwd_ranked: XPArray) -> XPArray:
+    """单因子逐日 rank-IC（镜像 _combine:534-541 循环体；fwd_ranked 由调用方算一次）。
+
+    返回 (T,) 的 IC 序列——滚动/半衰/归一在 (T,F) 面上，由调用方在 CPU pandas 侧做
+    （见本节头 CPU 交接点 4）。
+    """
+    xr = _rank_rows(xp, nf, ascending=True)
+    m = (~xp.isnan(xr)) & (~xp.isnan(fwd_ranked))
+    x = xp.where(m, xr, xp.nan)
+    y = xp.where(m, fwd_ranked, xp.nan)
+    xm = x - _row_mean(xp, x)[:, None]
+    ym = y - _row_mean(xp, y)[:, None]
+    xm = xp.where(m, xm, xp.nan)
+    ym = xp.where(m, ym, xp.nan)
+    cov = _row_mean(xp, xm * ym)
+    sd = _row_std(xp, x) * _row_std(xp, y)
+    sd = xp.where(sd == 0.0, xp.nan, sd)
+    return xp.nan_to_num(cov / sd, nan=0.0)
+
+
+def weighted_combine(xp: ModuleType, normed: list[XPArray], wcols: XPArray) -> XPArray:
+    """按日权重合成 combined=Σ_j w[:,j]·nf_j（镜像 _combine:553-556 的逐因子累加，
+    含 fillna(0.0) 语义：nf 的 NaN 以 0 参与，与 to_numpy()+fillna 同态）。"""
+    acc = xp.zeros_like(normed[0])
+    for j, nf in enumerate(normed):
+        acc = acc + wcols[:, j][:, None] * xp.nan_to_num(nf, nan=0.0)
+    return acc
+
+
+def orth_equal_rows(xp: ModuleType, normed: list[XPArray]) -> XPArray:
+    """逐日截面 Gram-Schmidt 正交分量等权——镜像 _combine:558-568（顺序依赖=f 声明序）。"""
+    basis: list[XPArray] = []
+    for a in normed:
+        r = xp.nan_to_num(a, nan=0.0).copy()
+        for b in basis:
+            coef = (r * b).sum(axis=1, keepdims=True)
+            r = r - coef * b
+        nrm = xp.sqrt((r * r).sum(axis=1, keepdims=True))
+        basis.append(r / (nrm + 1e-12))
+    acc = xp.zeros_like(normed[0])
+    for b in basis:
+        acc = acc + b
+    return acc / float(len(basis))
+
+
+def norm_rows_div(xp: ModuleType, w: XPArray) -> XPArray:
+    """行和归一＋零和行→NaN→填 0——镜像 _norm_rows:683（skipna sum 用补偿和）。"""
+    rs = _neumaier_nansum_axis1(xp, w)
+    rs = xp.where(rs == 0.0, xp.nan, rs)
+    return xp.nan_to_num(w / rs[:, None], nan=0.0)
+
+
+def sizing_weights(
+    xp: ModuleType,
+    scores: XPArray,
+    rank_desc: XPArray,
+    top_n: int,
+    mode: str,
+    *,
+    vol20: XPArray | None = None,
+    mkt_cap: XPArray | None = None,
+    r60_mean: XPArray | None = None,
+    r60_var: XPArray | None = None,
+) -> XPArray:
+    """B 选股 + C 定尺寸——镜像 _sizing:622（rank_pre 已由调用方从缓存取，:646 的跳过支同态）。"""
+    mask = (rank_desc <= top_n) & (~xp.isnan(rank_desc))
+    if mode in ("kelly_025", "kelly_050"):
+        if r60_mean is None or r60_var is None:
+            raise ValueError("kelly sizing 需 rets60 两板（调用方批级装载）")
+        fraction = 0.25 if mode == "kelly_025" else 0.5
+        dv = xp.where(r60_var > 1e-12, r60_var, xp.nan)
+        kelly = fraction * (r60_mean / dv)
+        kelly = xp.clip(kelly, 0.0, None)
+        return mask.astype(xp.float64) * xp.nan_to_num(kelly, nan=0.0)
+    base = xp.where(mask, 1.0, xp.nan)
+    if mode == "equal_weight":
+        return norm_rows_div(xp, base)
+    if mode in ("inv_vol", "risk_parity"):
+        if vol20 is None:
+            raise ValueError("inv_vol/risk_parity 需 vol20 面板")
+        iv = 1.0 / xp.where(vol20 > 0, vol20, xp.nan)
+        return norm_rows_div(xp, base * iv)
+    if mode == "mkt_cap":
+        if mkt_cap is None:
+            raise ValueError("mkt_cap sizing 需市值宽表")
+        return norm_rows_div(xp, base * mkt_cap)
+    if mode == "signal_strength":
+        s = xp.where(mask, scores, xp.nan)
+        # 全 NaN 行：pandas min(axis=1)=NaN 且不出声；nanmin 会对同形切片发 RuntimeWarning，
+        # 本仓 pytest filterwarnings=error 会把它升级成失败。fmin.reduce 在 cupy 未实现
+        # （实测 NotImplementedError: `cupy_fmin.reduce` is not supported yet）→ 一律用
+        # +inf 占位再 min：无有效值行=+inf，随后换成 NaN，与 pandas skipna 同解且两端都支持。
+        row_min_big = xp.where(mask, scores, xp.inf).min(axis=1)  # 无有效值行=+inf（不是 NaN）
+        scalar = row_min_big.min()  # +inf 天然被有限值压过
+        scalar = xp.where(xp.isinf(scalar), xp.nan, scalar)  # 全表无有效值→NaN（pandas 同态）
+        return norm_rows_div(xp, base * xp.abs(s - scalar + 1e-9))
+    raise ValueError(f"未知 C_sizing 取值上卡面: {mode!r}")
+
+
+def periodic_hold_rows(xp: ModuleType, w: XPArray, step: int) -> XPArray:
+    """非调仓日沿用旧权重——镜像 _apply_freq_trigger:719 的 iloc[::step].reindex(ffill)。
+
+    索引单调且第 0 行必为调仓日（factory 既有前提），故行 gather 下标
+    (i//step)*step 与 pandas ffill 逐位同解；step=1 由调用方短路（原码同）。
+    """
+    t = w.shape[0]
+    idx = (xp.arange(t) // step) * step
+    return w[idx]
+
+
+def cap_clip(xp: ModuleType, w: XPArray, cap: float) -> XPArray:
+    """单票上限硬 clip——镜像 _apply_cap_and_lambda:696（renorm 反禁，超额留现金）。"""
+    return xp.clip(w, None, cap)
+
+
+def eval_cell_gpu(
+    combined: XPArray,
+    rank_desc: XPArray,
+    *,
+    top_n: int,
+    sizing_mode: str,
+    freq_step: int,
+    trigger: str,
+    cap: float,
+    lam: float,
+    vol20: XPArray | None = None,
+    mkt_cap: XPArray | None = None,
+    r60_mean: XPArray | None = None,
+    r60_var: XPArray | None = None,
+    backend: str | None = None,
+) -> dict[str, Any]:
+    """单格权重链 GPU/CPU 双后端核（T0 实测=hit 路径 60.4% 的 eval 秒数落在此面）。
+
+    入参须为已对齐的等形 (T,S) float64 数组：combined=合成截面、rank_desc=其降序平均档
+    （二者正是 combine_cache 现有缓存物，命中格零 H2D）。返回 dict：
+      backend / weights (T,S) numpy / host_continue (bool)。
+    host_continue=True 表示该格含卡上未覆盖的串行步（drift_band 或 lambda>0），
+    weights 只算到"可上卡的最后一步"，其余交回调用方原 pandas 函数——**交接出声，
+    禁本件自造近似**（本节头 CPU 交接点 1/2）。
+    """
+    be = resolve_backend(backend)
+    xp: Any = _cp if be == "gpu" else np
+    w = sizing_weights(
+        xp,
+        _as_f64_2d(combined, xp),
+        _as_f64_2d(rank_desc, xp),
+        top_n,
+        sizing_mode,
+        vol20=vol20,
+        mkt_cap=mkt_cap,
+        r60_mean=r60_mean,
+        r60_var=r60_var,
+    )
+    host_continue = False
+    if trigger == "drift_band":
+        # 串行依赖交接：本件到此为止，trigger→cap 全序交回 factory 原函数。
+        # 禁在此提前 cap——factory 次序是 _sizing→_apply_freq_trigger→_apply_cap_and_lambda，
+        # 先 cap 会让 drift_band 的行比较看到被削过的权重=换序即换数（次序敏感面）。
+        host_continue = True
+    else:
+        if freq_step > 1:
+            w = periodic_hold_rows(xp, w, freq_step)
+        w = cap_clip(xp, w, cap)
+        if lam > 0.0:
+            host_continue = True  # ewm 递推+归一交回 pandas（clip 幂等，重跑无害）
+    return {"backend": be, "weights": _to_numpy(w), "host_continue": host_continue}
