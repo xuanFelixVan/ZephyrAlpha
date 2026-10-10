@@ -50,9 +50,23 @@ session: st-govjudge-20261010
 - claim 卫生：主区 4 枚误落 claim 已全部 RELEASED；5 件袋文件 claim 重打在本班 worktree（status 计 5 实证）。
 - 教训入册：worktree 会话的一切文件操作与 pytest 必须同调用内显式 `cd` 锚定；相对路径在本环境不可信任。
 
-## R10 TrialLedger CAS ×10（进行中）
+### 事故二：本班自己踩中 R9 同款形状（复刻实证）
+- R9 袋拆两笔提交期间，本班心跳守护（PID 17052，锚主区 .runtime）idle>1800s 自退（23:17:42Z，末行 exited reason=idle timeout）→ TAKEOVER-PENDING 闸把 st-govjudge-20261010 判死挡提交——与宪法§0袋三死袋完全同款：守护自退残留→会话被终审。
+- 处置：SessionRegistry(worktree).register（W-29 chief-form 核验 fail-open 降级 logical=False，pid=0+90s 心跳轨）+`_spawn_heartbeat_daemon`（exited 残留守卫无条件重 spawn 正道）重锚 pid=46332 写 worktree .runtime。owner 会话在岗，非接管场景，无需 --resolve。
+- 注：守护当初锚主区系 session_worktree create 时 cwd 在主区所致；重锚后锚定 worktree 与提交闸同根。收尾时主区残留 exited 心跳+陈册条目随 TTL/清理通道自然退场（台账备记）。
 
-## R11 政策 v2.2.0（进行中）
+## R10 TrialLedger CAS ×10（完成·纯取证，零改码）
+- 真身定位：告警源=`n_trial_ledger.py::_cas_update`（retry 上限恰 10，无 sleep——永久模块禁时间触发）；告警落点=Python logger（未持久化），**非**分数册字段——统筹令"已如实入分数行"系 examchief campaign ledger 叙事转述，册面实证（HEAD 及 10c78ff933 提交时点）rows 内均无 ledger_warning 键，本台账勘误。
+- 判别（机制面证据链）：×10 恰等于重试上限=**确定性病灶签名**（瞬态 sha 冲突不会次次撞满）；真因=TrialLedger safe_dump 往返丢注释/空行 → safe_write_text 注册表族 mass-edit 保护**确定性误拒**（examchief campaign ledger 亦自述"撞注册表族保护"）——非双写竞态、非 R9 热册物化竞态同根（trial_ledger_registry 为直写 CAS 册非投影册，ROOR/册头双证）。
+- 修复在码：增补令 2026-10-10 条目级无损基线（`_entry_fingerprints` 旧⊆新零蒸发断言 + allow_mass_edit 放行）已在 HEAD；tests/backtest/test_n_trial_ledger_t0_family.py + tests/gov/governance/test_registry_write_guards.py 共 13 passed 实证。
+- 无丢写：无损断言兜底零条目蒸发；最终记账成功（分数行无告警残留）。
+- 双 PID 精确时窗：日志面无落盘+二号会话日志域禁碰，不可考；机制判别已闭环，不阻收敛结论。
+- 处置：零新改码（修复已在位）；本结论入台账+99_delivery。
+
+## R11 政策 v2.2.0（完成）
+- adjudication_routing_policy.md：frontmatter version 2.1.0→2.2.0；§2.4 后插 §2.5 Gate A（五判据 A1-A5+判定问句+任一假出通道+保留面边界+裁定#505 判例+机检化路线，全文按令逐字）；切换记录增 v2.2.0 行（含净零声明+测试声明）。
+- 测试：tests/gov/governance/test_adjudication_routing_gate_a.py 4 例（章节/五判据/边界/版本+切换记录存在性锁）全绿；tests/ 豁免 creation token。
+- 权源口径：Owner 直令凌驾月度合并窗，按 v2.1.0 先例直落（切换记录即权源载体，无新裁定号）。
 
 ## R4 CWM 回边判据（进行中）
 
