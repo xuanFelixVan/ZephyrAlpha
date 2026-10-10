@@ -1,0 +1,172 @@
+---
+ttl: task_bound
+title: 矿考循环班·探索改令回执的三条更正＋两道结构闸（价格/空间冻结/展开前冻结）
+created: '2026-10-11T06:04:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+purpose: >-
+  24_ 号回执落地后继续核价核闸。实测把结论从"补扫很贵所以要定夺"改成
+  "补扫很便宜但被两道结构闸挡住"。本件只更正与呈报：零发跑、零改他人件、零改冻结册。
+
+correction_1_cost_estimate_20x_off:
+  what_24_said: >-
+    定向补扫 648+216 格 ≈ 13-14.4 小时 CPU 单线程（引"实测 54-60s/格"）
+  measured_now:
+    - >-
+      data/strategy_intake/grid_20261010-233721_s0of6/heartbeat.jsonl 末支：
+      cells_done=4167 elapsed_s=2719.5 ⇒ 0.652 秒/格
+    - >-
+      data/strategy_intake/grid_20261010-233721_s1of6/heartbeat.jsonl 末支：
+      cells_done=4167 elapsed_s=2416.8 ⇒ 0.580 秒/格
+    - >-
+      data/strategy_intake/grid_20261010-232435_s0of6/heartbeat.jsonl 末支：
+      cells_done=617 elapsed_s=621.6 ⇒ 0.993 秒/格（含一次数据装载暖机）
+  caliber_honesty: >-
+    三值均为 6 分片并发下的同片墙钟速率，且 batch_meta 记 engine=auto
+    （心跳里 gpu_util=11-13%、gpu_mem 5.7GB ⇒ 确有部分面上卡）。
+    纯 CPU 路径（--engine cpu --eval-backend cpu）速率未测：
+    全仓 15 支 grid_ 批次的 batch_meta 无一支 engine=cpu，无历史读数可引。
+  consequence: >-
+    864 格在 auto 口径下 ≈ 9-10 分钟，不是 13-14.4 小时。我那句"按实测 54-60s/格"
+    把 GPU 化班账袋里的一次性口径当成了网格速率，属数字错，且错向"更贵"
+    （偏保守方向所以当时没拦下车——下次这类估算要先落在实测文件上）。
+    发跑前须先用 8 格 smoke 量 CPU 真速。
+
+blocker_1_space_is_frozen:
+  fact: >-
+    新 λ 档（1/2/3/4bp）与新池宽档（top150/top200）都是给搜索空间加值，
+    不是"跑一次新组合"——所以 24_ 里"本班可自决定向补扫"的判断作废。
+  source: >-
+    config/search_space_prereg.yaml 头部冻结语义原文="改空间=作废重开预注册（禁跑中改）"；
+    frozen_by=裁定#413，当前生效卡 f06_grid_v2 frozen_by=夜矿续战令三连裁③
+    （Owner 通道授权，frozen_at 2026-10-10T12:10:00+08:00）。
+  machine_truth_split: >-
+    该册自述分工：网格轴机器真源=config/position_recipe_grid_schema.yaml（GridCompiler 消费）；
+    本册=冻结/预算/防线真源（factory_grid_executor._apply_prereg_budget 消费，钳制+fail-closed）。
+  stance: >-
+    本班不自行改 schema，也不自行改预注册册（两道都是他人签批/Owner 门位面）；
+    呈 Owner 走"作废重开 v3"通道后再发跑。
+
+blocker_2_phase3_unexplored_family_is_structurally_closed:
+  my_earlier_read: 24_ 称风控族被 active_if 钉死，暗示"开旗即可跑"——错。
+  measured:
+    - >-
+      空间乘积按 schema 逐维值数实算：phase=1 且 capital_ramp_enabled=False ⇒ 362,880 格
+      （与 GridCompiler.compile 返回的 n_raw=362,880 逐位相符）
+    - >-
+      phase=3 且 capital_ramp_enabled=True ⇒ 52,254,720 格（144 倍：J2×X_stop3×X_breaker2×X_sector3×K4）
+    - >-
+      直调 GridCompiler.compile(phase=3, ramp=True) 实测 MemoryError，
+      栈在 src/zephyr/position/core/position_recipe_compiler.py:269 的 combos 全展开行
+    - >-
+      执行器侧 subspace 过滤发生在 expand 之后（factory_grid_executor.py:1951 compile →
+      1954 if subspace → 1956 才过滤 recipes_all）⇒ --context-json 与 --subspace-json
+      无法组合成窄扫：先炸再筛
+  consequence: >-
+    风控族"从未扫过"不是忘开旗，是执行器当前结构打不开——需一支"展开前冻结"工单（WO-A4）。
+
+correction_2_finding_1_three_parts_wrong:
+  original_claim: 16 维里 7 维从未变过 ⇒ 整个风险控制族被钉死在关闭位（暗示 7 维皆遗漏）。
+  corrections:
+    I_cost_tier: >-
+      属预注册设计恒折叠：schema 注释原文"不进乘法网格，恒折叠；执行器对幸存者单独重跑"；
+      预注册册 cost_gate.tiers_bp=[0,5,10,20,40] 五档梯由 exam_cost_gate.run_cost_tier_scan
+      在考试面消费，该册并明写"成本档禁作搜索轴"。故不算漏扫。
+    F_merge_policy: >-
+      其 active_if 要求 strategy_pool 长度大于 1；单池跑批下恒 single 是设计（多池合并才是另一条腿）。
+    truly_closed_5_dims: >-
+      J_regime_switch(phase>=2)、X_stop/X_breaker/X_sector(phase>=3)、K_capital_ramp(capital_ramp_enabled)
+      ——这 5 维才是真未开面。
+  extra_unjudged_fact: >-
+    另一半证据面同样未开：本班 10 批 27,423 格尚无幸存者进 cost_gate 五档梯
+    （data/strategy_intake/f06_survivors.csv 在册仅 1 支，birth_batch=grid_20260916-123551 属老批）。
+  net: >-
+    24_ 的 finding_1 大方向成立（这批读数不含风控信息、越不出被关掉的维），
+    但"7 维皆钉死"把设计折叠算成了遗漏，按 5 维更正。
+
+finding_3_prereg_duration_basis_is_stale:
+  prereg_text: >-
+    f06_grid_v2.duration_basis="实测 44.8s/格（批A 进度代理）→ 1000 格≈12.4h，
+    08:00 起跑 22:30 前收窗留 2h 余量；L2 批提速落地 3.5s/格后可经裁定通道升点"
+  measured: >-
+    10-10 夜批 auto 口径 0.58-0.99 秒/格（见 correction_1）——
+    已优于该册自设的升点前置 3.5 秒/格约 3.5-6 倍。
+  discipline: >-
+    升点（n_samples 1000→更高）按该册文字须经裁定通道，本班不自改；且升点判据要成立，
+    须先补一支 engine=cpu 的计时（auto 口径含 GPU 加速，不能拿来证明 CPU 也够快）。
+
+window_notice_0800_today:
+  fact: >-
+    预注册册 v2.1 窗纪注记写明 f06_grid_v2 首次起跑日一次性改指 2026-10-11（今日）08:00，
+    硬收窗 22:30、禁跨 23:00 W1 窗。
+  implication: >-
+    "08:00 考试窗归窗主"这条红线的对象现已确证＝该预注册轨的起跑窗
+    （此前我按钟面理解为泛指——窗口须验对象这条铁律又对了一次）。
+  my_stance: >-
+    本班 08:00 前后不发任何 grid 批、不碰 GPU；GPU 采样器只读曲线（零写入引擎面），
+    继续作 st-gpux 的"改前"基线。
+
+decisions_needed_owner:
+  menu:
+    - key: option_1_breadth_only
+      text: >-
+        最便宜且答真问题：作废重开搜索空间预注册 v3，只加池宽档 top150/top200。
+        改动面=config/position_recipe_grid_schema.yaml 的 B_top_n.values 两值；
+        执行器把 topN 字符串转整数处（factory_grid_executor.py:1135）已核实为通用解析
+        ⇒ 零代码改动；老批读数与判据零动。
+    - key: option_2_lambda
+      text: >-
+        次之：同一 v3 给 H_turnover_lambda 加 1/2/3/4bp——须同时在执行器 _LAMBDA_PEN
+        （dev 版 line 731）加档，属代码改动且该文件 st-gpux 在飞
+        （10-11 04:52 刚落 --eval-backend＝commit 5f4a85bc28，车道 ai/st-gpux-20261011/task-gpux-evalcore 仍开），
+        本班不抢先改。
+    - key: option_3_wo_a4
+      text: >-
+        工单 WO-A4：把 subspace 冻结移到 expand 之前（或新增 --freeze-dims-json），
+        使 phase>=2/3 的风控族可窄扫；价格＝核心区内 5 维全展开 144 倍，
+        按 12 个固定核点 ≈ 1,728 格，auto 口径 ≈ 19 分钟，CPU 口径待 smoke 测。
+  my_recommendation: >-
+    先 option_1（纯数据、当天可跑、直接回答"池宽收益见顶没有"这个端点悬崖），option_2/3 随后；
+    option_1 获批后本班在 08:00 起跑窗空隙发一支 subspace 限定到已核核心区的窄批
+    （--engine cpu --eval-backend cpu，试次走 --exploration-ledger 分册不占考试 N 账本）。
+  what_i_did_not_do: >-
+    未发任何新批（零 grid_ 新目录）｜未改 schema/预注册册/执行器｜未动 GPU｜未动他人卡与分数行。
+
+self_report_slip:
+  what: >-
+    核账时误在 shell 当前目录＝主区（非本车道）的状态下用相对路径 rm 掉了两个刚落地的自家件
+    （docs/_working/mineloop_campaign/23_/24_），主区 index 随即把删除自动暂存成 "D " 两条
+    ——若他袋此刻提交整池，会把这两件从 dev 上真删。
+  cure: >-
+    git checkout HEAD -- 两件复原；git status 对这两路已空；sha1 与落地时逐位相符
+    （23_=826851a04c80…、24_=0156b2ed3715…），车道内原件全程未动。
+  rule_adopted: >-
+    本会话后续一律用绝对车道路径读写/删；任何 rm 前先 pwd 与 -C 定域。
+    （在册教训同源：bash 工具 cwd 会在跨区命令后复位到主区，相对路径分域静默走错盘。）
+
+compliance:
+  batches_launched: 0
+  frozen_registries_modified: 0
+  others_files_modified: 0
+  score_rows_changed: 0
+  files_created: 1
+
+review_commands:
+  heartbeat_rate: >-
+    python -c "import json,glob,os;[print(os.path.basename(os.path.dirname(p)),[(json.loads(l)['cells_done'],json.loads(l)['elapsed_s']) for l in open(p,encoding='utf-8') if l.strip()][-1]) for p in sorted(glob.glob('data/strategy_intake/grid_20261010-23*_s*of6/heartbeat.jsonl'))]"
+  space_product: >-
+    python -c "import yaml;d=yaml.safe_load(open('config/position_recipe_grid_schema.yaml',encoding='utf-8'));print([(x['id'],len(x['values']),x.get('active_if')) for x in d['dimensions']])"
+  phase3_oom: >-
+    python -c "from zephyr.position.core.position_recipe_compiler import GridCompiler;c=GridCompiler.from_yaml('config/position_recipe_grid_schema.yaml');c.compile({'strategy_pool':['primary'],'phase':3,'capital_ramp_enabled':True})"
+  filter_after_expand: >-
+    git show HEAD:scripts/backtest/factory_grid_executor.py | sed -n '1951,1956p'
+  frozen_caliber: >-
+    head -12 config/search_space_prereg.yaml
+  top_n_generic_parse: >-
+    git show HEAD:scripts/backtest/factory_grid_executor.py | sed -n '1135p'
+  lambda_map: >-
+    git show HEAD:scripts/backtest/factory_grid_executor.py | sed -n '731p'
+  deleted_files_restored: >-
+    git status --porcelain -- docs/_working/mineloop_campaign/23_exploration_digest.yaml docs/_working/mineloop_campaign/24_exploration_recalc_order_receipt.yaml
