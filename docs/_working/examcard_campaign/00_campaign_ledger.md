@@ -123,3 +123,10 @@ family_id: EXAMCARD-CAMPAIGN
 ## 终判口径与周触发器处置（2026-10-10 21:4x·总统统筹 21:25 口径）
 - **批 A 实测（总统筹读数）**：manifest 1000 行+**85.4% 命中率**+**9 分钟收卷**；批 B（10080 格）ETA 21:28 实际 21:29 收卷——与三判定谳一致（PASS，c69a4a6948）。
 - **周触发器处置（PASS⇒删兜底防双跑）**：Set-ScheduledTask 空集被拒（参数校验）→等效达意=**Disable-ScheduledTask**（State=Disabled、NextRunTime 清空、LastTaskResult=0 PASS 保留；触发器定义原样留存，v2.1 窗系排新窗时 Enable-ScheduledTask 一键复启）。双跑风险解除。
+
+## 收口（2026-10-10 23:1x）：W1 定谳 PASS 复核与二号收口终态（st-examclose-20261010）
+
+- **23:04 窗点复核=三判独立重验全过**：①log fired 21:00:00 ②manifest 非空（批A=1000 行=v2 n_samples 精确吻合；批B=10081 行）③LastTaskResult=0；batch A/B 双 exit=0、21:29:02 收卷（29 分钟），195 条 FutureWarning 全程无害流过=PS 地雷治本直接实证；21:00 起/21:29 收在 v2 纪律带（08:00-22:30）内。chief-20261009 于 21:34（c69a4a6948）判定「W1 定谳 PASS·三判全过……4.8s/格 vs 旧 44.8s=11.7x，W1 销账」、21:38（cdec731bf9）终判口径+任务 Disabled 兜底解除（双跑风险解除、触发器原样可复启）。
+- **令面演进链（最终态）**：本令原钉 23:00 自然窗→nightmine2 三连裁③改 v2 窗纪（Sat 08:00/22:30 硬收）→总统筹令 W1 考试提前至今晚 21:00-22:30（F06Grid 触发器改 21:00 一次性载体；我方 14:58 读数「10-17 08:00」系 schtasks 陈旧显示，nightmine2 断点卡§令面 如实在案）→21:00 实弹→chief 21:34 PASS 定谳→nightmine2 重挂 10-17 08:00 周窗为后续批次载体（现行 Disabled 可复启）。我方 15:1x「验收改指 10-17 候 Owner 确认」旗被本演进链覆盖=考试已提前兑现且 PASS，撤旗。
+- **本会话收口清单**：T1 停投上报（ca446e99）｜R3 袋作废重 derive 建议在案（剔三册与 7 卡，真增量=calibration_exam.py +30+ruff 修复 2 件、46 测试绿）｜T2 99_delivery 终态刷新（与本批同件）｜T4 收账（W4 分数册 25 行全 fail 如实——21:52 矿考循环班续 7 行；W5 零 PASS 候面不动；W2=4.8s/格 实测已入 chief 终判，≤3.5 停手条款判定归架构册通道非本面）｜19:17 杀令落空核账（b421bc64）。
+- **遗留移交**：①R3 袋重 derive 投递候 capability 册翻动根治（维护班「蒸发战争」面）；②TAKEOVER 误封本会话双命中——f87bfa8bf7（21:26）已治本（PID 亡改判必要非充分），后续会话免灾；③无主外来 staged 残件（registry_yaml_parse_gate.py 等）已单文件退栈在 worktree，属主回来 re-add 即恢复，未代改代码。
