@@ -4487,6 +4487,69 @@ entries:
   approved_paths:
   - AGENTS.md
   - docs/registry_of_registries.yaml
+- ruling_id: 裁定#505
+  date: "2026-10-10"
+  title: R3 离场族 B1 开维冻卡+B2 口径查证收口+B5 停呈（D5/D4/D3；D_BACKTEST=medium；authority_ref=总统筹裁定包令 2026-10-10 晨）
+  status: active
+  summary: B2 口径查证收口：E 道（2025-10..2026-09 深回撤年，无止损 MaxDD -57.56%，止损必触发）与 T3b（2020-02/03 CRISIS 两月窗，配对覆盖 0.35%/27 对）考点不同构=情景区+覆盖率混杂，两测量各自内部有效；三坑过检（量纲 pp 分母异构已登记/时区无错位/hash 无涉）。B1 冻卡=双窗设计（CRISIS 2020-02/03 压力窗 MaxDD 改善≥5pp + 近样年 OOS Sharpe 非劣 ≥-0.2 + 配对覆盖地板），门柱看数前冻结；X_stop 重考=新考卷新判据（G4-5：T3b FAIL verdict 存续不重审）。B5=X-R1-03 查证命中保留面①（护盘定向加仓白名单，仓位=总资金 5-10% 预算，position/core 实盘面）→立即停，呈 Owner。X_sector 命名缺口（草案无此维，疑 X_ladder）挂 Owner 确认。B3/B4 跑数三件套齐才动。
+  category: 回测
+  evidence: docs/_working/fexam/exit_sim_report_v1.md; docs/_working/fullcirc_closeout_chief/99_delivery.md §七; docs/_working/matrix_campaign/mining/exit_family_12nodes_prereg_draft_v1.md
+  adjudicator: st-examchief-20261009
+  superseded_by: ""
+  affected_files:
+  - docs/03_modules/_domain_backtest/exam_cards/exit_flow/
+  approved_paths:
+  - docs/03_modules/_domain_backtest/exam_cards/exit_flow/
+  related_rulings:
+  - 裁定#502
+- ruling_id: 裁定#506
+  date: "2026-10-10"
+  title: 考试门柱三件：G1 净费门柱立+G2 换手读数立+G3 容量门柱缓行（D3；authority_ref=总统筹裁定包令 2026-10-10 晨+增补令）
+  status: active
+  summary: G1 净费门柱（立即立）：新考生出分按净费口径验收益；费率模型内收=复用引擎冻结土规（佣金 2.5bp 双边+印花 10bp 卖+滑点 5bp），仅补 A 股最低佣金 5 元修正项（引擎未含，参数入 exam_scale_cost_gate.yaml net_fee 节唯一参数面，禁硬编码，名义额 20 万阈值起咬合）；实施=calibration_exam 出分附 net_bucket_medians。G2 换手读数（立即立，只计量不判罚）：新考生卡面冻结时声明换手假设，出分附实测换手读数（signal_turnover_daily）进分数册 metrics；存量已冻结卡不追溯（G4-5）。G3 容量门柱（缓行 G3-6 四件套）：触发器=总资金≥300 万或外部资金接入/资金结构改变；触发后按参与率立门柱，可回溯用 G2 在册换手读数补验；缓行期禁预立阶梯门柱（当前规模永真=装饰件）。防纸面强扣费死。
+  category: 回测
+  evidence: config/exam_scale_cost_gate.yaml net_fee 节；scripts/backtest/fexam/calibration_exam.py net/turnover 读数；tests/backtest/test_calibration_exam.py 7 passed
+  adjudicator: st-examchief-20261009
+  superseded_by: ""
+  affected_files:
+  - config/exam_scale_cost_gate.yaml
+  - scripts/backtest/fexam/calibration_exam.py
+  approved_paths:
+  - config/exam_scale_cost_gate.yaml
+  - scripts/backtest/fexam/calibration_exam.py
+  related_rulings:
+  - 裁定#505
+  - 裁定#413
+- ruling_id: 裁定#507
+  date: "2026-10-10"
+  title: 幽灵存活闸判定面同源化：exited 残留=前代守护死亡证明非会话终审，注册表活性为终审（宪法§0袋三死袋解锁件）
+  status: active
+  summary: 裁定#459 幽灵存活闸实测病灶（R9，st-govjudge-20261010 治理判据班）：宪法 AGENTS.md §0 升位袋（裁定#504，owner_sign 在册）三次投递死于 env:ghost_session（死袋 q-20261010-st-regsolo-20261010-0028/0029/0030）——守护 idle 自退在 heartbeat.jsonl 留 exited 残留，闸第一分支即短路判死，注册表在册/90s 心跳新鲜度两真源从不参与；属主手工心跳刷新至 0s 新鲜仍被拒=判定面与会话分片真值脱节（exited 残留族外第四块拼图）。治本：判定面与 keeper 侧既有 exited 残留守卫（session_worktree._ensure_heartbeat_daemon/heartbeat_daemon.heartbeat_last_status，统筹增补令③①）同源——exited 残留降为前代守护死亡证明，会话终审归注册表活性（S4-D 分片读+session_concurrency._is_session_alive 90s 心跳/TTL/pid 单一口径，禁私设第四套活性）；册设施缺席时残留→死、无心跳信号→活（fail-open 宁漏不误原语义不变）。红证 4 例（TestGhostGatePickupAndBootstrap）：exited 残留+活性册放行（事故形态复刻）/活心跳+无册放行（unregister 后合法重投通道，防矫枉过正锁）/exited+陈册死/无心跳+陈册死；对未修码 2 红实 revert 实证。同 commit 原子：AGENTS.md §0 第 6 步升位落地（裁定#504 owner_sign 已在册，宪法面=Owner 已批文执行，非新裁）。authority_ref=总统统筹裁定包令 2026-10-10 晨+治理判据班令（R9）。
+  category: 治理
+  authority_ref: 总统统筹裁定包令 2026-10-10 晨+治理判据班令（R9）
+  approved_paths:
+  - scripts/commit_queue.py
+  - tests/gov/governance/test_commit_queue_integration.py
+  - AGENTS.md
+  related_rulings:
+  - 裁定#459
+  - 裁定#504
+  - 裁定#480
+- ruling_id: 裁定#508
+  date: "2026-10-10"
+  title: B5 批复落地：X-R1-03 列入实盘资金参数治理（Owner 2026-10-10「批」；总统统筹转达；D1 保留面①登记）
+  status: active
+  summary: Owner 批文（总统统筹转达）：X-R1-03 护盘资产定向加仓白名单列入实盘资金参数治理——此后任何 production 参数改动（白名单成员/仓位预算 5-10%/熔断窄门条件）须 Owner 批文先行；实验与研究面照常走预注册考试通道自动跑（详见今日算法域自动裁定通道）。B5 解锁：按上述边界推进，触碰实盘参数面时停呈。R3-B5 停呈件就此销账（停呈正确+批复落地闭环）。取号=next_ruling_id --next（#507 撞号让位 st-govjudge）。
+  category: 治理
+  evidence: docs/_working/examcard_campaign/00_campaign_ledger.md（R3-B5 停呈段）；config/trading_decision_map.yaml TDM-X-R1-03 节点（MOD-POS-026）
+  adjudicator: st-examchief-20261009
+  superseded_by: ""
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings:
+  - 裁定#505
 - ruling_id: 裁定#6
   date: "2026-06-20"
   title: 路径SSoT（路径真源铁律）

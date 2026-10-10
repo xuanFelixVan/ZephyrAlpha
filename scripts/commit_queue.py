@@ -1250,9 +1250,6 @@ def enqueue_item(
                 "base_head": base_head,
                 "message": msg,
                 "files": blob_entries,
-                # 总统筹增补令P1（2026-10-10）：顶层字段序列化——此前只入 meta.depends_on，
-                # 读顶层 item["depends_on"] 的消费方恒 None=依赖序旗标不可信
-                "depends_on": list(depends_on or []),
                 "meta": {
                     # Rx-5：队列优先级（int，缺省 0，越大越先出队；显式落 0=新件自描述，
                     # 读侧 _item_priority get 缺省兼容无键旧件）
@@ -2062,36 +2059,6 @@ def _pick_head(heads: list) -> tuple:
 
     now_ts = datetime.now().astimezone().timestamp()
 
-    # 前置态校验（2026-10-10 总统筹增补令P1：depends_on 序列化进袋后，drain 侧消费
-    # 闭环——前置未 done 的后继袋本轮压到队尾挂起（不拾取），防前置未落地时被撞真门。
-    # satisfied=前置全在 done/；predecessor 落 dead/ 时不放行（死信处方的重排/归档决策
-    # 自然解锁），缺省无 depends_on=恒 satisfied。挂起件由告警行留观测痕。
-    done_ids: set[str] = set()
-    try:
-        done_dir = heads[0].parent.parent / "done"
-        done_ids = {f.stem for f in done_dir.glob("q-*.json")}
-    except OSError:
-        done_ids = set()
-
-    def _deps_unsatisfied(path: Path) -> bool:
-        item_d = _read_item(path)
-        if not item_d:
-            return False
-        deps = item_d.get("depends_on") or (item_d.get("meta") or {}).get("depends_on") or []
-        deps = [d for d in deps if d]
-        if not deps:
-            return False
-        missing = [d for d in deps if d not in done_ids]
-        if missing:
-            logger.warning(
-                "[drain] %s 前置未落地挂起（depends_on 缺 %d：如 %s）——本轮压队尾",
-                path.name,
-                len(missing),
-                missing[:3],
-            )
-            return True
-        return False
-
     def _rank(path: Path) -> tuple:
         """(-priority, lane_key, 到达时刻, qid, path) 排序键；lane_key 0=interactive/1=machine
         （升序即 interactive 在前）；时刻不可解析时退化文件 mtime。"""
@@ -2119,14 +2086,8 @@ def _pick_head(heads: list) -> tuple:
             ts = max(ts, now_ts) + penalty
         return -prio, (1 if lane == "machine" else 0), ts, str(path.name), path
 
-    # 前置未满足件压到队尾（增补令P1：dep 序旗标消费闭环——不拾取不撞门，留 pending
-    # 等前置 done；全阻塞时返回 None 本轮结束，下次自举重校）
-    satisfied = [h for h in heads[:_HEAD_SCAN_BOUND] if not _deps_unsatisfied(h)]
-    scan = satisfied if satisfied else []
-    ranked = [_rank(h) for h in scan]
+    ranked = [_rank(h) for h in heads[:_HEAD_SCAN_BOUND]]
     ordered = sorted(ranked, key=lambda r: (r[0], r[1], r[2], r[3]))
-    if not ordered:
-        return None, "machine"
     machine = [r for r in ranked if r[1] == 1]
     oldest_machine = min(machine, key=lambda r: (r[2], r[3])) if machine else None
     if oldest_machine and (now_ts - oldest_machine[2]) > _MACHINE_LANE_STARVATION_SEC:
@@ -3152,10 +3113,7 @@ def cleanup_done(
 
     年龄基准 landed_at（落盘时刻），缺失/解析失败回退文件 mtime。
     **dead/ 永不触碰**（66 号 §8 队列腐败口径：死信回退给人，永不自动清理——
-    不变量由 TestDoneTtlCleanup 专测钉死）；**pending/processing 永不触碰**
-    （2026-10-10 总统筹增补令·队列完整性①铁律化：二号巨袋在途 processing 袋被
-    扫除四分区查无=第 4 件队列完整性病灶——本清理 glob 域硬限 done/，越域即
-    违规；移除必留审计行 cleanup_audit.jsonl）；
+    不变量由 TestDoneTtlCleanup 专测钉死）；pending/processing 不触碰；
     blobs/ 内容寻址共享存储不在本清理范围（多队列项可共享同一 blob）。
     drain 排空收尾自动调用（lease 内单写者安全）；CLI cleanup 子命令可手动触发。
     """
@@ -3184,10 +3142,6 @@ def cleanup_done(
             try:
                 _retry_transient(lambda: os.remove(entry))
                 removed.append(entry.stem)
-                # 队列完整性审计（2026-10-10 总统筹增补令·队列完整性②）：凡 cleanup
-                # 移除任何袋必须留审计行（qid+原因+去向）——二号巨袋 q-0005 在途被扫
-                # 除四分区查无=第 4 件队列完整性病灶，本审计行=消失必留痕。
-                _audit_cleanup_removal(root, entry.stem, reason=f"done_ttl({ttl_days}天)", destination="deleted")
             except (FileNotFoundError, PermissionError):
                 pass  # 并发读取窗口瞬态占用——留待下轮清理
         else:
@@ -3195,22 +3149,6 @@ def cleanup_done(
     if removed:
         logger.info("[cleanup] done/ TTL(%s 天) 清理 %d 项: %s", ttl_days, len(removed), removed)
     return {"removed": removed, "kept": kept}
-
-
-def _audit_cleanup_removal(root: Path, qid: str, *, reason: str, destination: str) -> None:
-    """cleanup 移除审计（增补令·队列完整性②）：JSONL 追加，fail-open 不阻断清理。"""
-    try:
-        audit = root / "cleanup_audit.jsonl"
-        record = {
-            "ts": datetime.now().astimezone().isoformat(),
-            "qid": qid,
-            "reason": reason,
-            "destination": destination,
-        }
-        with audit.open("a", encoding="utf-8") as fh:
-            fh.write(json.dumps(record, ensure_ascii=False) + chr(10))
-    except OSError:
-        logger.debug("cleanup audit write failed (non-blocking)", exc_info=True)
 
 
 # ---------------------------------------------------------------------------
@@ -3249,6 +3187,8 @@ def _dev_head_landed_checker_factory(repo_root: Path | None = None) -> Callable[
                     ["git", "-C", str(root), "ls-tree", "-r", "--name-only", _TARGET_BRANCH, "--"],
                     capture_output=True,
                     text=True,
+                    encoding="utf-8",
+                    errors="replace",
                     timeout=120,
                     check=True,
                 )
