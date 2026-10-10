@@ -1,0 +1,64 @@
+schema_version: '1.0'
+card_id: TDM-X-S1-01/comparison/02_六桶分类增益对照
+node_id: TDM-X-S1-01
+family: comparison
+title_zh: 六桶分类（risk/signal/target/trailing/time/volatility）·分类 vs 合并双臂对照卡
+hypothesis: 把 8 类信号源聚合去重后按六桶分类、并按桶决定确认模式（risk/time/volatility 立即执行、signal/target/trailing 收盘确认），相对"不分桶—所有触发同等立即执行"臂，能在同一成本口径下降低误清（卖出后 5 日反弹新高占比）且不恶化回撤；若判不出增益，则六桶词表只是记账开销。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23（T3b 在册 CRISIS 配对窗）
+  frozen_note: 看数前冻结（裁定#501）；窗逐字复用 exit_sim/prereg_frozen.yaml device.windows
+buckets:
+  type: arm_matrix
+  'on': 关臂=全桶合并 immediate（无确认分层）vs 开臂=六桶+分桶确认模式 vs 中间臂=六桶但全 immediate（隔离"词表"与"确认分层"两个增益来源）
+  min_obs_per_bucket: 244
+pillars:
+  paired_arm_protocol: 三臂共用同一信号触发集合（桶标签矩阵为纯布尔标注，零行循环差异），仅"是否按桶分流确认模式"异；同装置同成本
+  misfire_floor: 开臂误清率（触发卖出后 5 个交易日内个股再创持仓期新高的笔数占比）相对关臂下降 >= 20%（相对幅度），绝对值须随册披露
+  drawdown_floor: 开臂 OOS MaxDD 相对关臂改善 >= 0pp 且恶化不得 >2pp（分类是记账件，判据取"不伤害"而非"必增益"，禁为凑增益挪门柱）
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1
+  turnover_cost_gate: 年化换手增量 <= 8.0x（config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）；40bp 档重跑 Sharpe >= 0.0；确认分层导致的延期成交须按实际成交价计成本（禁按信号价近似）
+  oos_stability: IS/OOS 两窗 misfire 改善同号；CRISIS 段不劣化
+pillars_numeric:
+  misfire_reduction_min: 0.20
+  maxdd_improvement_min: 0.0
+  maxdd_deterioration_max_pp: 2.0
+  sharpe_delta_min: -0.1
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+target:
+  primary: 误清率（卖出后再创新高占比）与 OOS MaxDD/Sharpe 配对差
+  secondary: 桶·笔分布（各桶触发笔数占比与避损率，喂 X-S2-06 闭环）
+  note: 本卡把"分类学"从"止损参数"里剥离单独考，避免与 E 道 ATR 档结论混功
+same_family_precedent: E 道对照装置与三态 verdict（docs/_working/fexam/exit_sim_report_v1.md）；matrix-w4 草稿 §二 记本节点 t3b exit_gain 配对语义（桶开关 on/off），本草把该语义落成数值门柱
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: close / high / low（误清判定需卖后再创新高，用 high 对持仓期最高收盘比）
+  signal_derivation: 桶标签矩阵列=risk/target/trailing/time/volatility/signal 六布尔列，由 X-S1-02/03/04/06 各桶规则在同一行循环上打标（纯标注不改行循环）；确认模式=按桶查表（D69 定稿口径：risk/time/volatility=immediate，signal/target/trailing=close_confirm）
+  target_source: 双臂日净值（simulate() 返回）→ window_metrics；误清率=成交清单 join 卖后 5 日 kline_daily_hfq.high 计算
+  arm_protocol: 关臂=simulate(全部触发 immediate)；开臂=simulate(按桶分流)；中间臂=六桶标注但全 immediate——三臂同码单参数异
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py:171 simulate() 日循环 + 真源实现件 src/zephyr/sell_decision/core/sell_signal_collector.py（MOD-SELL-001，TDM module_ref 指向，生产侧已在网但回测臂未接）
+  implementation_gap: 'blocked_on_impl: 生产件 sell_signal_collector.py 与回测装置 exit_simulator 之间无适配器（实测 scripts/backtest/fexam/ 下无 collector 引用）；三臂需把六桶矩阵注入 simulate() 的确认层，该形参不存在'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785 nsym=5916'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-01.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；误清/回撤/成本换手三件成组
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

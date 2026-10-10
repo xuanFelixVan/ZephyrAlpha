@@ -1,0 +1,66 @@
+schema_version: '1.0'
+card_id: TDM-X-S2-04/comparison/02_本地条件单追单闭环对照
+node_id: TDM-X-S2-04
+family: comparison
+title_zh: 本地条件单（停止单不冻结仓位 + SellChase 追单）·分钟线双臂对照卡
+hypothesis: 触发式本地停止单（tick/分钟触发才发限价单、每根 K 线 cancel 重挂、未成交逐 tick 追单直到预算耗尽转最优五档即成剩撤）相对"触发即市价一次砸出"臂，能把实现差压到更低且未完成量占比可控；若追单预算耗尽后残余占比过高，则该机制只是把滑点换成机会成本。
+signal_kind: panel
+window:
+  in_sample:
+  - '2021-09-01'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2024-09-14..2025-09-30（段界=ch_data.regime_series SMA200 帘子 trend_up 段，裁定#489②，考时按实取）
+    bear: 2021-09-01..2024-01-31（同轴下行/震荡混合段）
+    crisis: 2024-01-02..2024-02-08（微盘流动性危机段）
+  frozen_note: 看数前冻结（裁定#501）；IS 起点=分钟线实测起点 2021-09-01（禁越界）；OOS=ch_data.py WINDOW_HOLDOUT 逐字复用
+buckets:
+  type: arm_matrix
+  'on': 关臂=触发即按该分钟 bar 全额吃单成交 vs 开臂=限价触发→未成交逐 bar 追 1 tick 重挂（预算 15-20 轮）→耗尽转"最优五档即成剩撤"兜底；按标的流动性分档（成交额十分位）双层披露
+  min_obs_per_bucket: 30
+pillars:
+  paired_arm_protocol: 同一份触发清单（同 symbol/触发时刻/股数），仅执行机制异；成交价一律取该分钟可成交量约束下的实际 bar 价，禁取触发价美化
+  shortfall_floor: 开臂平均实现差相对关臂改善 >= 5bp（=cost_gate.tiers_bp 最小非零档经济含义兑现）
+  completion_floor: 开臂当日完成成交比例（该笔最终成交量/应卖量）>= 关臂 -2pp（追单不得以显著未完成换低价；残余量按次日开盘强平并计入机会成本）
+  drawdown_floor: 开臂组合 OOS MaxDD 相对关臂不劣化（改善 >= 0pp）
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1
+  turnover_cost_gate: 佣金双边按 COMMISSION_RATE 逐笔成交计（追单产生的多笔不得免佣）；40bp 档重跑结论不变；年化换手增量 <= 8.0x（config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）
+  oos_stability: IS/OOS 实现差改善同号；CRISIS 段完成比例不塌方（相对 IS 下降 <= 5pp）
+pillars_numeric:
+  shortfall_improvement_bp_min: 5.0
+  completion_drop_max_pp: 2.0
+  maxdd_improvement_min: 0.0
+  sharpe_delta_min: -0.1
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+target:
+  primary: 平均实现差（bp）与当日完成率配对差
+  secondary: 组合 OOS MaxDD/Sharpe + 残余未成交量的次日成本
+  note: 本卡把"条件单机制"从"止损参数"里剥离——触发规则完全相同，只比执行机制，避免与 E 道/X-S1-02 结论混功
+same_family_precedent: E 道同装置配对纪律（docs/_working/fexam/exit_sim_report_v1.md）；关键翻案点=matrix-w4 草稿 §二 与 99_negative_results #3 记"本地条件单 tick 级语义不可考、维持只登记"——实测分钟线已到位（kline_1min 2021-09 起 14.9 亿行、kline_5min 2.96 亿行），本卡据实改判为"分钟粒度可考、五档深度仍断供"
+data_binding:
+  signal_table: c1_market.kline_1min
+  signal_column: open / high / low / close / volume / amount（逐分钟可成交量约束；5 分钟档用于对照复核）
+  signal_derivation: 停止单触发=当分钟 low ≤ 止损价（或 high ≥ 止盈价）；限价挂单按触发价±buffer 0.2-0.5%（TDM X-S1-05 去抖 buffer 同参）；未成交即下一分钟重挂（追 1 tick 语义在分钟粒度下=下一 bar 价格档），预算 15-20 轮=15-20 分钟；耗尽转兜底=该日剩余 bar 内按 amount 加权均价全额出清；每笔可成交量=min(剩余量, 该 bar volume×参与率上限 10%)
+  target_source: 逐笔成交→按分钟累计净值→日净值→strategy_exam.window_metrics；实现差基准=触发时刻前一根 1 分钟 close
+  arm_protocol: 两臂由同一触发清单 CSV 驱动；关臂一次性出清、开臂按上述状态机出清；共用 exit_simulator 的成本常量与净值口径
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（成本/净值口径真源）+ scripts/backtest/fexam/ch_data.py（分钟面板装载）+ 生产件 src/zephyr/ex_core/local_order_queue.py（MOD-L06-001，TDM module_ref 在册）
+  implementation_gap: 'blocked_on_impl: 无分钟级撮合/追单状态机（scripts/backtest/fexam 下无 chase/SellChase 件）；本卡判据面在盘口档（快照龄>1tick 刷新闸门、本方前 N 档量<对面 X% 的 Escape 检查）不可判，原因=五档深度断供（见 blocked_faces）'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_1min''))" → 实测 2021-09-01..2026-10-09 rows=1493285247 nsym=5858；kline_5min 实测 2021-09-01 09:35..2026-10-09 15:00 rows=296122159；tick_data 实测 2026-01-05..2026-10-08 rows=3943831530 nsym=11811；tick_depth_5 实测仅 2026-07-24..2026-09-30 rows=130146982；l2_tick 实测 count()=0（空表）'
+  blocked_faces: status=blocked_on_data（仅指五档深度子面）：缺 2015..2026-07 段 tick_depth_5 逐日深度序列，故"封单骤减/前 N 档量对比"类判据不可考；分钟面不受影响
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S2-04.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；实现差/完成率/成本三件成组
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

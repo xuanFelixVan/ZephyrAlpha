@@ -1,0 +1,64 @@
+schema_version: '1.0'
+card_id: TDM-X-S1-02/comparison/02_时间止损档对照
+node_id: TDM-X-S1-02
+family: comparison
+title_zh: 时间止损档（盈利仓 5 日不涨/亏损仓 3 日）·同装置双臂对照卡
+hypothesis: 在五路止损中单开时间止损档（不动价格止损），能释放"占坑不涨"的资本并改善组合层面的资金效率，代价（回撤/收益损失）不越过成本与换手双帽。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23（T3b 在册 CRISIS 配对窗）
+  frozen_note: 看数前冻结（裁定#501）；窗逐字复用 exit_sim/prereg_frozen.yaml device.windows
+buckets:
+  type: arm_matrix
+  'on': 时间止损全关 vs 仅亏损仓 3 日档 vs 仅盈利仓 5 日不涨档 vs 两档并开
+  min_obs_per_bucket: 244
+pillars:
+  paired_arm_protocol: 双臂同装置同票池同成本（stop_enabled=True 为共同基线，价格止损档一律不动），仅时间档异；判据只看配对对照
+  drawdown_floor: 开臂 OOS MaxDD 相对关臂改善 >= 5pp（judge_frozen.maxdd_improve_pp 同式；若恶化须 <= 2pp 且 Sharpe 不降）
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1（碰钱面取严）
+  turnover_cost_gate: 年化换手增量 <= 8.0x（config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）；40bp 档重跑 Sharpe >= 0.0；现金占用天数（离场资金 0 收益停放天数）须披露并计入
+  capital_efficiency: 开臂"零涨幅占用仓位"（持仓 ≥5 交易日且累计涨幅 <1% 的仓·日）占比下降 >= 20%，否则时间档无存在价值
+  oos_stability: IS/OOS 两窗同号；CRISIS 段不劣化
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  maxdd_deterioration_max_pp: 2.0
+  sharpe_delta_min: -0.1
+  zero_gain_slotday_reduction_min: 0.20
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+target:
+  primary: OOS 组合 MaxDD / 年化 Sharpe（strategy_exam.window_metrics）
+  secondary: 仓·日资金效率（有效持仓天数/总持仓天数）与换手成本
+  note: 本卡刻意只考时间档——价格/ATR 档已由 E 道（X_stop=off/atr3x/trail20）与 T3b 考毕入册，禁重复开同一考卷
+same_family_precedent: E 道 ATR 止损对照=本体系第一份满分卷（docs/_working/fexam/exit_sim_report_v1.md，OOS MaxDD 改善 +16.5pp）；T3b 终判 FAIL 在册（config/search_space_prereg_t3b.yaml + t3b_verdict_20261007.md），二者窗/装置不同→本卡采"两窗皆不劣化"取严口径
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: close（持仓龄与累计涨幅由入场行号与 close 序列衍生）
+  signal_derivation: 亏损仓档=当前收盘 < 入场成本 且 持仓 ≥3 交易日 且 期间最大收盘涨幅 <0.5%；盈利仓档=当前收盘 ≥ 入场成本 且 持仓 ≥5 交易日 且 近 5 日收盘涨幅 ≤0（5 日不涨）；触发→次日开盘离场（prereg stop_rules.exit_exec 同语义，禁当日来回）
+  target_source: simulate() 返回日净值 → window_metrics(sharpe/maxdd)；换手与停放天数从同一次运行的成交计数导出
+  arm_protocol: 关臂=simulate(stop_enabled=True)（现状调用）；开臂=同调用附加 time_stop 规则；两者共用 signals/reb_rows（build_signals 一次生成，禁重算）
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py:171 simulate()（日循环骨架，双臂同码仅一参数异）+ prereg_frozen.yaml stop_rules/cash_park/rebalance_reentry_reset 段
+  implementation_gap: 'blocked_on_impl: simulate() 无 time_stop_days/time_stop_mode 形参（:171-181）；持仓龄状态机需扩展进日循环。另注：五路止损中的"分时破位（盘中跌破分时均线 30 分钟）"档在本卡范围外——其口径需 1 分钟线，实测 c1_market.kline_1min 已覆盖 2021-09-01..2026-10-09（详见 TDM-X-S2-04 卡的数据证据），但 2018..2021-08 段无分钟数据，与本卡冻结窗不兼容，故分时档另卡另窗'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785 nsym=5916；分钟线实测 c1_market.kline_1min min(trade_date)=2021-09-01 max=2026-10-09 rows=1493285247 nsym=5858'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-02.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；回撤/成本换手/风险调整收益三件成组
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

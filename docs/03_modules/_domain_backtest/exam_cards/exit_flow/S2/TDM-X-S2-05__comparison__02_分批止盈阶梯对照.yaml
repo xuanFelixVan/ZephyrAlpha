@@ -1,0 +1,63 @@
+schema_version: '1.0'
+card_id: TDM-X-S2-05/comparison/02_分批止盈阶梯对照
+node_id: TDM-X-S2-05
+family: comparison
+title_zh: Exit Ladder 分批止盈·同装置双臂对照卡
+hypothesis: 阶梯式分批了结（+1R 减 50% 并移止损至保本、+2R 再减 25%、尾仓 25% 跟踪）相对一次性全清臂，在成本与换手成组约束下改善 OOS 回撤/波动，且不因过早兑现而显著损失风险调整收益。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛，同族卡窗轴一致）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23（T3b 在册 CRISIS 配对窗）
+  frozen_note: 看数前冻结（裁定#501）；窗逐字复用 exit_sim/prereg_frozen.yaml device.windows
+buckets:
+  type: arm_matrix
+  'on': all_at_once（关臂）vs ladder_1r（开臂，1R=entry×0.07 固定档，卡内钉定）vs ladder_atr（开臂变体，1R=入场时 ATR14×3）
+  min_obs_per_bucket: 244
+pillars:
+  paired_arm_protocol: 双臂同装置（同一日循环、同票池、同佣金 COMMISSION_RATE 双边）、同信号、仅切分规则异；官方引擎跑仅作 sanity
+  drawdown_floor: 开臂 OOS MaxDD 相对关臂改善 >= 5pp（judge_frozen.maxdd_improve_pp 同式）
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1（碰钱面取严）
+  turnover_cost_gate: 开臂年化换手增量 <= 8.0x（config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）；40bp 成本档重跑后 Sharpe >= survival_floor 0.0；分批档每笔佣金按实际成交笔数逐笔计（禁按整笔近似）
+  mfe_capture: 开臂 MFE 捕获率（实际捕获涨幅/持仓期最大可实现涨幅）不得低于关臂 -5pp——阶梯的本旨是拿住行情，捕获率反降即判负增益
+  oos_stability: IS 与 OOS 两窗 MaxDD 改善同号；CRISIS 段不劣化（改善 >= 0pp）
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  sharpe_delta_min: -0.1
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  mfe_capture_drop_max_pp: 5.0
+  oos_same_sign: true
+target:
+  primary: 组合日净值 OOS MaxDD / 年化 Sharpe（strategy_exam.window_metrics，244 年化，复用禁重造）
+  secondary: MFE 捕获率 + 单位换手净增益（成本后收益/年化换手轮数）
+  note: 考"阶梯切分本身有没有增益"，不考 1R/2R 档位数值搜索（属网格轨）
+same_family_precedent: E 道 ATR 止损对照（docs/_working/fexam/exit_sim_report_v1.md，OOS MaxDD 改善 +16.5pp=有增益）为同装置同判据式先例；matrix-w4 草稿 §二 给本节点 schema 维 X_ladder=[off,ladder_1r,all_at_once]
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: open / high / low / close（R 单位与阶梯触发需日内最高收盘与次日开盘）
+  signal_derivation: entry=调仓 T+1 开盘价（prereg device.stop_rules.entry_price）；1R=entry×0.07 固定档（42 号 spec 卡内钉定）；+1R 判定=收盘 ≥ entry+1R 当日起卖 50% 并将止损抬至 entry（保本）；+2R 判定=收盘 ≥ entry+2R 再卖 25%；尾仓 25% 走 chandelier 跟踪（与 X-S1-03 共用棘轮）
+  target_source: 双臂各自日净值（simulate() 返回 Series）→ window_metrics；逐笔成交另落 turn_log 供换手与成本核算
+  arm_protocol: 关臂=simulate(stop_enabled=True, ladder='all_at_once')；开臂=ladder='ladder_1r'；其余参数零改动
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（simulate 日循环:171 起）+ prereg_frozen.yaml（costs/stop_rules/judge_frozen 三段为口径真源）
+  implementation_gap: 'blocked_on_impl: simulate() 无形参 ladder/partial_exit（现仅全仓进出，:171-181 与 stop_rules.reentry 语义=名当日禁再买）；分批后现金回流与再买语义须按 prereg cash_park 段扩展，扩展点未经 Owner 批不得进生产网格（草稿 §五 B1/B2）'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785 nsym=5916（open/high/low/close 四列齐，日内路径可算）'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S2-05.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；回撤/成本换手/风险调整收益三件成组，禁单指标报功
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

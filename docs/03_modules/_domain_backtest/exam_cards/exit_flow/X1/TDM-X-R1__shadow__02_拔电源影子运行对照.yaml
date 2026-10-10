@@ -1,0 +1,64 @@
+schema_version: '1.0'
+card_id: TDM-X-R1/shadow/02_拔电源影子运行对照
+node_id: TDM-X-R1
+family: shadow
+title_zh: 应急保命 KillSwitch（组合回撤 25%/单日 -6% 无条件全清）·影子运行对照卡
+hypothesis: 在不动真仓的影子模式下记录"若执行"的触发点，把"全清+冻结开仓通道直至人工解除"这一最刚性规则假想回放，相对不执行臂应显著降低最深回撤，代价是错过解除前反弹的收益（须量化为"错失收益"并与避损并列判读）；若避损小于错失，则该刚性规则在长史上是净伤害，应改判为分级触发（走裁定）。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段）
+  frozen_note: 看数前冻结（裁定#501）；阈值=组合回撤 25% / 单日 -6%（TDM algo_note_zh 冻结口径，禁挪）
+buckets:
+  type: arm_matrix
+  'on': 影子臂=触发即全清并冻结新开仓直至"人工解除"（回测内以不可解除近似，fail-closed，须披露该近似）vs 对照臂=同基线不清仓；另设第三臂=解除规则改为"回撤修复 50% 自动解除"以测人工门的机会成本
+  min_obs_per_bucket: 60
+pillars:
+  shadow_first: 影子运行零真实下单（TDM 口径：信号仅供参考非执行指令）；判据只在假想净值的配对差上成立
+  loss_avoided_min: 影子臂相对对照臂 OOS MaxDD 改善 >= 8pp（"拔电源"是最重手段，判据取严高于分级减仓面，若只够 5pp 说明该用 R1-01 五级而非全清）
+  forgone_gain_max: 影子臂触发日至窗末的错失收益（对照臂同期累计收益-影子臂现金 0 收益）<= 8%（超过即判"保命代价不可接受"，须走裁定改分级）
+  false_trigger_rate: 触发后 60 交易日内对照臂净值创新高占比 <= 50%（假警报率主判据，>50% 即判规则过敏感）
+  sharpe_floor: 影子臂 OOS Sharpe 减对照臂 >= -0.1
+  turnover_cost_gate: 全清按次日开盘成交并计双边 COMMISSION_RATE；触发次数×平均单笔成本须披露；40bp 成本档（config/exam_scale_cost_gate.yaml cost_gate.tiers_bp 最高档）重跑后避损结论不变
+  fail_closed_disclosure: 任何数据缺日/净值不可算日一律按"维持当前状态不解除"处置（TDM fallback 原文：状态判定数据断流→维持当前级别不降级），禁静默放行
+pillars_numeric:
+  loss_avoided_min_pp: 8.0
+  forgone_gain_max_pp: 8.0
+  false_trigger_rate_max: 0.5
+  sharpe_delta_min: -0.1
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+target:
+  primary: 假想净值 OOS MaxDD 改善与错失收益（strategy_exam.window_metrics）
+  secondary: 触发次数/假警报率/冻结天数占比（在场时间损失）
+  note: 本卡是横切总闸的"该不该存在"之判，与 X-R1-01（分级表内部结构）分工正交，禁相互顶替
+same_family_precedent: E 道 ATR 止损对照=同族满分卷先例（docs/_working/fexam/exit_sim_report_v1.md）；影子制式真源=根宪法 §5（flag 下放=shadow 制 ≥7 天+自动回退判据），本卡把该制式用于风控规则而非 flag
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: 基线组合日净值（exit_simulator.simulate(stop_enabled=True) 输出 Series，日收益与回撤由它算）
+  signal_derivation: 触发=日收益 ≤ -6% 或 净值相对历史峰值回撤 ≥ 25%；触发日次日开盘全清、此后所有调仓信号一律忽略（冻结开仓通道）；生产判定件真源=src/zephyr/security/access_control/kill_switch.py（MOD-INF-018，实测 456 行在档，含 engaged 态影子件落盘纪律）
+  target_source: 影子臂与对照臂假想净值 → window_metrics(sharpe/maxdd)；错失收益=对照臂同期累计收益
+  arm_protocol: 两臂同一基线净值路径，仅"是否假想全清"异；影子臂的现金停放 0 收益（prereg cash_park 同语义）
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（净值生成与成交口径）+ src/zephyr/security/access_control/kill_switch.py（状态机真源）+ scripts/backtest/sim_daily_runner.py（实测 :149-157 已有"防御=空仓 flat"的在册姿态映射，可作影子臂语义对照）
+  implementation_gap: 'blocked_on_impl: kill_switch 生产件与回测装置无适配器（scripts/backtest 全域 grep 无 kill_switch 引用）；影子件落盘（state_path/ZEPHYR_KILL_SWITCH_STATE_PATH）在回测环境未接线，考时须以内存态近似并披露'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785；指数基准 c1_market.kline_index(000300) 实测 2005-01-04..2026-10-09 rows=5284；实盘账户净值 account_nav_daily 实测 5 行（2026-09-28..2026-10-09）→ 真实持仓面 status=blocked_on_data，本卡仅考假想组合'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-R1.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 影子制=零真实下单；避损与错失必须并列报出，禁只报一头；事后挪门柱=作废（G4-5）
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

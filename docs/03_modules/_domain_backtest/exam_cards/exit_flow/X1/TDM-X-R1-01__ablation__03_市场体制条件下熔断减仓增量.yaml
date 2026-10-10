@@ -1,0 +1,105 @@
+schema_version: '1.0'
+card_id: TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量
+node_id: TDM-X-R1-01
+family: ablation
+title_zh: 熔断五级判定轴·与市场主体制轴正交性（重复计价）消融卡
+hypothesis: >-
+  TDM-X-R1-01 节点原文写死"判定轴=组合日盈亏+组合回撤双轴，与六段情绪的市场轴正交"——这是本节点唯一
+  尚未被任何卡考的判据性陈述（同节点 02 卡考的是"五级表 vs 单一全清 vs 无迟滞"，从未考过"正交"二字）。
+  本卡把它转成可判形式：在**同窗控制市场体制（多头/下行 regime 条件）**之后，熔断层 L1-L4 的减仓仍须
+  带来额外的回撤改善，否则"正交"不成立、熔断层与市场体制层是在对同一笔风险**重复计价**（同一减仓量被
+  两层各记一次功劳）。三臂=只体制门（regime-only）/只熔断门（circuit-only）/双门叠加（both）；
+  主判据=both 相对 regime-only 的 MaxDD 净增量（不是 both 相对裸臂的总增益——后者会把体制层的钱算给熔断层）。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（在册危机段）
+  frozen_note: 看数前冻结（裁定#501）；阈值轴=L2 节点 threshold_refs（THD-DRAWDOWN-001/002/003）与
+    TDM algo_note_zh 五级阈值（日亏 2%/4%/6%、回撤 25%）冻结口径，禁挪门柱
+buckets:
+  type: arm_matrix
+  'on': 三臂 regime-only / circuit-only / both；逐日按市场体制分层（trend_up / trend_down）× 熔断级别（L0-L4）交叉
+  min_obs_per_bucket: 60
+pillars:
+  orthogonal_increment: both 臂相对 regime-only 臂的 OOS MaxDD 净改善 >= 2pp（"正交"的最低经验证据；
+    达不到即判熔断层与体制层重复计价，本节点的"正交"自陈应改写为"部分重叠"并如实入册）
+  no_double_count: 同一交易日的减仓量在两臂中的归属必须逐日可分解，禁把 both 的总增益整体记给熔断层
+    （重复计价的机械判据=增量可加分解，加和误差 <= 0.5pp）
+  level_regime_association: 熔断级别分布对市场体制的条件依赖须显式报告（卡方/互信息任一达标即记
+    "非独立"，正交性结论降级为"弱正交"）
+  crisis_non_absence: 两处在册危机段 circuit-only 臂真实触发不缺席（漏触发=0）；
+    both 臂危机段回撤不劣于任一单臂（取严）
+  sharpe_floor: both 臂 OOS Sharpe 相对 regime-only 损失 <= 0.1
+  turnover_cost_gate: both 臂相对 regime-only 的年化换手增量 <= 8.0x
+    （config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）；40bp 成本档重跑后增量结论不变
+  oos_stability: IS/OOS 净增量同号
+pillars_numeric:
+  orthogonal_maxdd_increment_min_pp: 2.0
+  decomposition_abs_error_max_pp: 0.5
+  missed_crisis_trigger_max: 0
+  sharpe_delta_min: -0.1
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  regime_same_sign: true
+  oos_same_sign: true
+target:
+  primary: both-vs-regime_only 的 OOS MaxDD 净增量（pp）与分解加和误差
+  secondary: 熔断级别×市场体制交叉分布的条件依赖读数 + 危机段逐段明细
+  note: 本卡只考"轴是否正交/是否重复计价"，不考五级表本身的价值（那是同节点 02 卡的主判据，禁混判）；
+    仓位带与预算面属 C1 流（跨流禁代裁）
+same_family_precedent: 同节点 02 卡（comparison，五级 vs 单一全清 vs 无迟滞）；L5 车道台账 §六
+  交叉复挖建议第 4 条原文点名"与 C 流预算带跨流交叉：同一减仓量在预算带内的重复计价风险"——本卡即该建议的落地
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（基线臂日净值）+ c1_backtest.regime_snapshot_history（市场体制轴）
+  signal_column: regime_snapshot_history.trade_date/体制标签列；hfq close（净值与回撤轴）
+  signal_derivation: 日盈亏=净值日收益、回撤=净值/历史峰值-1，级别判定与迟滞解除按
+    src/zephyr/risk/core/drawdown_state_machine.py（MOD-RK-049）既有实现回放，禁在考卷里重写判定逻辑；
+    体制臂=按 regime_snapshot_history 的 T-1 体制标签做趋势门（trend_down 即降风险预算），
+    禁同时代熔断层改动基线信号
+  target_source: 三臂日净值（exit_simulator.simulate 生成基线，风控/体制层按次日开盘价改写）→
+    strategy_exam.window_metrics（sharpe 年化 244 + MaxDD，复用禁重造）
+  arm_protocol: 三臂输入同一基线净值序列与同一成交口径；regime-only 臂必须物理上不接入状态机
+    （消融接缝=装置形参开关），否则增量不可归因
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py + scripts/backtest/fexam/exit_sim/prereg_frozen.yaml
+    + src/zephyr/risk/core/drawdown_state_machine.py
+  implementation_gap: 'blocked_on_impl: 状态机与回测装置无适配器（RX-B 复核与 L5 台账 §四一致：
+    scripts/backtest 下 drawdown_state_machine 零引用）。regime 轴侧今日可算（表实测长史），
+    故首考=体制臂 vs 裸臂的体制增益基线，熔断双臂随适配器落地补跑；两半臂的增量结论须在四臂齐后出'
+  blocked_faces: '节点原文命名的"六段情绪的市场轴"在 CH **无载体**，本卡因此改用 regime_snapshot_history
+    作体制轴并如实声明结论上界（考的是"与体制轴正交"，非"与六段情绪轴正交"）：
+    c1_market.emotion_index.stage 实测枚举=close_final 8617 / pre_open 27 / auction 17（快照阶段标记，非情绪六段）；
+    c1_backtest.decision_daily 实测 2026-09-16..2026-10-12、uniqExact(trade_date)=9、rows=138 且值域 expansion/unknown
+    ⇒ 六段态历史段（2018..2025）status=blocked_on_data（缺=六段情绪逐日历史表），该半面解锁前不得据本卡否定六段轴正交性'
+  data_window_evidence: |-
+    命令原文（fexam 只读层，禁裸 duckdb）：
+      python -c "import sys; sys.path.insert(0,'scripts/backtest'); from fexam.ch_data import ch_query_df as q; \
+      print(q('SELECT min(trade_date),max(trade_date),uniqExact(trade_date),count() FROM c1_backtest.regime_snapshot_history')); \
+      print(q('SELECT stage,count() FROM c1_market.emotion_index GROUP BY stage ORDER BY count() DESC')); \
+      print(q('SELECT min(trade_date),max(trade_date),uniqExact(trade_date),count() FROM c1_backtest.decision_daily')); \
+      print(q('SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq'))"
+    实测（RX-B 本车道独立复测，非引用他道数字）：
+      regime_snapshot_history 2019-04-01..2026-10-09 / 1824 个独立日期 / 3635 行（体制轴可用，起 2019-04-01 ⇒ IS 左端 2018 段须内缩并声明）
+      emotion_index.stage = close_final 8617 / pre_open 27 / auction 17（全表 8661 行、8622 独立日）
+      decision_daily 2026-09-16..2026-10-12 / 9 日 / 138 行
+      kline_daily_hfq 1990-12-19..2026-09-30 / rows=10098785 / 5916 标的
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-R1-01.confidence
+preregistered_by: st-nightmine-20261010-RXB
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；
+  重复计价判据以"可加分解"为准，禁以双门同开的总增益代替增量
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

@@ -1,0 +1,63 @@
+schema_version: '1.0'
+card_id: TDM-X-S2-03/comparison/02_执行口径净收益对照
+node_id: TDM-X-S2-03
+family: comparison
+title_zh: 执行时段/口径路由（close vs next_open vs vwap）·净收益配对对照卡
+hypothesis: 同一份卖出清单在不同执行口径（当日收盘 / T+1 开盘 / 当日 VWAP）下的净收益差异是可判定的：对离场类卖出，next_open 口径相对 close 口径在 OOS 上带来正的净值差且不恶化回撤；若差值符号在 IS/OOS 翻转，则口径本身不是稳定增益、S2-03 只该做合规分流不该做择优。
+signal_kind: panel
+window:
+  in_sample:
+  - '2021-09-01'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2024-09-14..2025-09-30（段界=ch_data.regime_series SMA200 帘子 trend_up，裁定#489②，考时按实取）
+    bear: 2021-09-01..2024-01-31（同轴 trend_down/混合段）
+    crisis: 2024-01-02..2024-02-08（微盘流动性危机段）
+  frozen_note: 看数前冻结（裁定#501）；OOS=ch_data.py WINDOW_HOLDOUT 逐字复用；三档口径同清单同成本
+buckets:
+  type: arm_matrix
+  'on': exec_caliber=close（基准臂）vs next_open vs vwap_5min（对照臂）；分市场板别（主板/双创/北交所）与尾盘时段（14:57 前后）双层披露
+  min_obs_per_bucket: 30
+pillars:
+  paired_arm_protocol: 同一份卖单清单（逐笔一致），仅成交价口径异；三档必须各自独立落成本（佣金双边 COMMISSION_RATE，滑点按口径成交价对基准价偏离自然体现，禁另加滑点常数）
+  sharpe_floor: 相对基准臂，最优对照臂 OOS 年化 Sharpe 差 >= +0.05（口径择优必须挣得过最小可判增量；未达即判"口径无稳定增益，仅做时段合规分流"）
+  drawdown_floor: 对照臂 OOS MaxDD 相对基准臂不劣化（改善 >= 0pp）
+  turnover_cost_gate: 三臂换手相同（同清单），故判据落在成本后净值：40bp 成本档（config/exam_scale_cost_gate.yaml cost_gate.tiers_bp 最高档）重跑后结论不变，且各臂 40bp 档 Sharpe >= survival_floor 0.0
+  sign_stability: IS 与 OOS 差值同号（oos_same_sign）；若反号=口径增益不可外推，判负并如实入册
+  segment_disclosure: 深市 14:57 后集合竞价不可撤单段与沪市可撤段的分板别差值必须单列（时段路由的制度性根据），合计判据不得掩盖分板别反号
+pillars_numeric:
+  sharpe_delta_min: 0.05
+  maxdd_improvement_min: 0.0
+  cost_tier_bp_required: 40.0
+  survival_floor_sharpe: 0.0
+  segment_sign_flip_max: 0
+  oos_same_sign: true
+target:
+  primary: 三臂 OOS 年化 Sharpe 与 MaxDD 配对差（strategy_exam.window_metrics，244 年化）
+  secondary: 单笔实现差（bp）分布中位/十分位 + 分板别（主板/双创/北交所）符号一致性
+  note: matrix-w4 草稿 §二 记本节点"A/B=next_open vs close 净 Sharpe 差"为剩余动作，本卡把它数值化
+same_family_precedent: E 道同装置双臂配对纪律（docs/_working/fexam/exit_sim_report_v1.md）；官方引擎 exec_caliber 三档已在册（_c4_engine.py:603-639，草稿 §二 记 T6 ②已接线）
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: close / open（口径 A/B 主用两列）；VWAP 口径取 c1_market.kline_5min 当日 amount/volume 加权利重
+  signal_derivation: close 臂=信号日收盘价成交；next_open 臂=次一交易日开盘价（T+1 语义，exit_simulator stop_rules.execution_lag_days=1 同口径）；vwap_5min 臂=Σ(amount)/Σ(volume) 当日全 bar；停牌/缺价顺移至下一可用 bar（prereg deferred_sell 同语义）
+  target_source: 各臂按日净值序列 → window_metrics(sharpe/maxdd)；实现差以"信号日收盘"为共同基准价
+  arm_protocol: 三臂由同一卖单清单驱动；日频两臂可在 exit_simulator 骨架上改执行价列，vwap 臂需分钟聚合器（另案实现）
+  device_ref: 三档口径真源=scripts/backtest/translated/_c4_engine.py（实测 _VALID_EXEC_CALIBERS=("close","next_open","vwap") 于 :86、_vwap_from_amount_volume 于 :100（带 vwap/close 量纲哨兵，越界即抛禁用作成交价）、形参 exec_caliber 默认 "close" 于 :610——官方引擎三档齐备）；净值/成本对照口径=scripts/backtest/fexam/exit_sim/exit_simulator.py；路由判定真源=src/zephyr/ex_sor/core/sell_session_router.py（MOD-XS-016，TDM module_ref 在册）
+  implementation_gap: '可跑度高于草稿预期：三档执行口径在官方引擎已实现（_c4_engine.py:86/100/610 实测在档），本卡首选=复用引擎 exec_caliber 逐档跑同一清单；exit_simulator（fexam 装置）侧仅 close/next_open 语义、无 vwap 宽表入口，故 vwap 臂在 fexam 装置属 blocked_on_impl（缺=vwap 成交价宽表注入）。新开考通道在 matrix-w4 草稿 §二 记为 Owner 批前置——本卡只冻结考卷不预支放行'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(toString(trade_time)),max(toString(trade_time)),count() FROM c1_market.kline_5min''))" → 实测 2021-09-01 09:35 .. 2026-10-09 15:00 rows=296122159；kline_daily_hfq 实测 1990-12-19..2026-09-30 rows=10098785；realtime_snapshot/auction_snapshot 实测 auction_snapshot 2026-06-01..2026-09-30 rows=288909、auction_book 2026-07-21..2026-09-30 rows=3690473（竞价段仅 2026 年窗可考，长窗判据禁用）'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S2-03.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；净收益/回撤/成本三件成组
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

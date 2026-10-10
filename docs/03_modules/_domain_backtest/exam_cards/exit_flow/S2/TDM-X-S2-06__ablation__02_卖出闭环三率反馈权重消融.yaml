@@ -1,0 +1,64 @@
+schema_version: '1.0'
+card_id: TDM-X-S2-06/ablation/02_卖出闭环三率反馈权重消融
+node_id: TDM-X-S2-06
+family: ablation
+title_zh: 卖出闭环三率（卖飞/避损/捕获）反馈校准·桶级消融卡
+hypothesis: 用卖出后 N 日跟踪的三率（卖飞率/避损率/MFE 捕获率）按桶回填校准 X-S1-05 融合权重（TDM 口径：任一桶 30 日避损率斜率降 30%→该桶紧迫度权重自动降档）相对"无反馈闭环（权重静态）"臂应改善 OOS 风险调整收益；反向验证=人为把某桶权重钉死不降（消融该桶反馈）应能看到可测退化，否则闭环只是记账面板。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（裁定#501）；窗逐字复用 exit_sim/prereg_frozen.yaml device.windows；反馈时滞=按 T-1 及更早的三率调整 T 日权重（禁未来函数）
+buckets:
+  type: ablation_set
+  'on': full（六桶各自按避损率斜率降档）vs no_feedback（静态权重）vs freeze_one_bucket_risk（钉死 risk 桶不降）vs freeze_one_bucket_target（钉死 target 桶不降）
+  min_obs_per_bucket: 60
+pillars:
+  ablation_protocol: 各臂同一份成交清单与同一三率计算口径（卖飞率=卖出后 20 日内该股再创持仓期新高的笔数占比；避损率=卖出后 20 日累计收益为负的笔数占比；捕获率=实际卖出价/持仓期最高可实现价），仅"是否按三率调权"异
+  degradation_floor: no_feedback 臂相对 full 臂 OOS Sharpe 下降 >= 0.05 或 OOS MaxDD 恶化 >= 2pp（判"闭环有贡献"；未达即判该件为记账面板，如实入册）
+  bucket_attribution: freeze_one_bucket_risk 与 freeze_one_bucket_target 两臂的退化方向必须不同（risk 桶钉死应在下行段退化更明显，target 桶钉死应在上行段退化更明显），否则桶级归因不成立
+  false_feedback_guard: 闭环自身的健康指标须披露：PANIC 类卖出占比（TDM 口径滚动 >10%=纪律失效告警）与参数漂移锁（卖飞后 2 交易日禁改参数）触发次数；若 full 臂因频繁调权导致权重漂移幅度 >30%（相对初始冻结表），判反馈不稳定
+  drawdown_floor: full 臂 OOS MaxDD 不劣于 no_feedback 臂
+  turnover_cost_gate: 反馈调权不得增加换手（同清单）；40bp 成本档重跑后各臂相对结论不变；年化换手 <= 8.0x（config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）
+  oos_stability: full-vs-no_feedback 差值在 IS/OOS 同号
+pillars_numeric:
+  degradation_sharpe_min: 0.05
+  degradation_maxdd_pp_min: 2.0
+  bucket_attribution_sign_diverge_required: true
+  weight_drift_max: 0.30
+  turnover_cap_annual: 8.0
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+target:
+  primary: full 臂与各消融臂的 OOS Sharpe / MaxDD 配对差
+  secondary: 三率本身的时间序列稳定性（30 日滚动斜率分布）+ 权重漂移幅度
+  note: 盘后统计件，不直接碰钱；但判据仍取三件成组（收益/回撤/成本），因其输出会改交易权重
+same_family_precedent: E 道三态 verdict 如实入册纪律（docs/_working/fexam/exit_sim_report_v1.md；负结果=记账面板同样入册）；生产件 src/zephyr/sell_decision/core/sell_execution_quality_tracker.py（MOD-SELL-012，773/210 行实测在档）
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: close / high（卖后 20 日跟踪需 close 序列与 high 序列判"再创新高"）
+  signal_derivation: 三率由成交清单（exit_simulator 逐笔平仓记录）join 卖后 kline_daily_hfq 计算；桶 ID 来自 X-S1-01 六桶矩阵；调权规则=桶 30 日避损率斜率相对基线降幅 ≥30% → 该桶权重×0.5（降档幅度属提案参数，冻结于此，禁事后改）
+  target_source: 各臂日净值（simulate() 返回）→ strategy_exam.window_metrics(sharpe/maxdd)
+  arm_protocol: full=按三率逐月调权；no_feedback=权重钉死在 TDM 冻结表（0.9/0.7/0.5/0.5+0.2）；单桶钉死臂=只关一个桶的反馈通道
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py + 生产件 src/zephyr/sell_decision/core/sell_execution_quality_tracker.py（MOD-SELL-012）/ sell_signal_accuracy_monitor（MOD-SELL-010）
+  implementation_gap: 'blocked_on_impl: 回测装置无三率反馈回路（实测 Grep scripts/backtest -i "urgency" 零命中，无紧迫度→权重反接；exit_simulator 权重恒为等权 top20）；需新增反馈层，且权重表数值改动须走裁定通道（TDM 冻结口径禁改）'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785（卖后 20 日跟踪窗充足）；成交清单侧实测 c1_backtest.sim_trade_log 表在册（列 run_id/trade_date/symbol/action/price/shares/cost_paid/signal_reason）可作真实成交面交叉'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S2-06.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；反馈类件的消融结论必须报"有无贡献"两态，禁以"面板有用"代替证据
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

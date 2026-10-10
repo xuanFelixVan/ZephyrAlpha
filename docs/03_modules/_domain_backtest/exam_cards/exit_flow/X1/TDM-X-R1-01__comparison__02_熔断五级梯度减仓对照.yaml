@@ -1,0 +1,65 @@
+schema_version: '1.0'
+card_id: TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+node_id: TDM-X-R1-01
+family: comparison
+title_zh: 熔断五级状态机（梯度减仓 vs 单一全清）·净值回放双臂对照卡
+hypothesis: 以组合日盈亏+组合回撤双轴驱动的五级状态机（L1 日亏≥2% 禁加仓 / L2≥4% 停新开仓 / L3≥6% 梯度减仓 / L4 回撤≥25% 清仓+人工接管，迟滞解除=当日无新低且修复当日跌幅 50% 才降一级）相对"触发即一次性全清、恢复即一次买回"臂，能在同窗内以更小的换手成本取得不劣于后者的回撤控制；若判不出来，五级表只是复杂度装饰。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段，T3b 窗+微盘流动性危机窗）
+  frozen_note: 看数前冻结（裁定#501）；阈值轴数值=L2 节点 threshold_refs（THD-DRAWDOWN-001/002/003）与 TDM algo_note_zh 冻结口径，禁挪门柱
+buckets:
+  type: arm_matrix
+  'on': 关臂=单一阈值全清/全买回（二值开关）vs 开臂=五级状态机（含迟滞解除）vs 中间臂=五级但无迟滞（解除即回满，检验"禁 V 型回满"这一条的价值）
+  min_obs_per_bucket: 60
+pillars:
+  paired_arm_protocol: 三臂共用同一底层组合净值路径（同一份基线臂净值，见 data_binding），仅风控层规则异；风控层的成交一律按次日开盘价（prereg stop_rules.exit_exec 同语义，禁当日往返）
+  drawdown_floor: 开臂相对关臂 OOS MaxDD 改善 >= 5pp（碰钱面 E 道同族门柱）；相对中间臂改善 >= 1pp（判迟滞带本身有增益）
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1
+  whipsaw_gate: 开臂 30 日内升降级往返次数（L1↔L2↔L3 抖动）<= 关臂触发次数；且危机段（2020-02/2024-01）真实触发不缺席（漏触发=0，fail-closed 优先于平滑）
+  turnover_cost_gate: 年化换手增量 <= 8.0x（config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）；40bp 成本档（tiers_bp 最高档）重跑后开臂结论不变，Sharpe >= survival_floor 0.0
+  oos_stability: IS/OOS 回撤改善同号；两处危机段均不得劣于关臂（取严：任一危机段恶化即 FAIL——直接回应 E 道"有增益"与 T3b"CRISIS 窗 0% 过线"的在册冲突）
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  maxdd_improvement_vs_no_hysteresis_min_pp: 1.0
+  sharpe_delta_min: -0.1
+  whipsaw_roundtrip_ratio_max: 1.0
+  missed_crisis_trigger_max: 0
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+target:
+  primary: OOS 组合 MaxDD / 年化 Sharpe（strategy_exam.window_metrics，244 年化）
+  secondary: 触发次数/在场天数/往返抖动次数 + 危机段逐段明细
+  note: 本节点判的是"等级表"而非仓位数值本身；仓位带属 C1 预算面（禁与本卡混判）
+same_family_precedent: E 道 ATR 止损双臂=同族第一份满分卷（docs/_working/fexam/exit_sim_report_v1.md，OOS MaxDD 改善 +16.5pp）；T3b 终判 FAIL 在册（docs/_working/fullcirc_closeout_chief/99_delivery.md §七，CRISIS 配对 0% 过 5pp 线）→ 本卡采"两窗皆不劣化"取严解法，不代裁冲突
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: 基线臂日净值（由 exit_simulator.simulate(stop_enabled=True) 生成的日收益序列，即被风控层监控的"组合"）
+  signal_derivation: 日盈亏=净值日收益；回撤=净值/历史峰值-1；级别判定与迟滞解除按 src/zephyr/risk/core/drawdown_state_machine.py（MOD-RK-049，实测 773 行在册）既有实现回放，禁在考卷里重写判定逻辑
+  target_source: 风控层改写后的净值路径（减仓=按级别比例×次日开盘成交，现金停放 0 收益，prereg cash_park 同语义）→ window_metrics
+  arm_protocol: 三臂输入同一基线净值序列与同一成交口径；级别→仓位映射（L1 100%/L2 100% 禁新开/L3 梯度 80/60/40%/L4 0%）冻结于本卡，梯度参考机构软去杠杆阶梯（TDM 节点注释在册 breakingalpha 口径）
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（净值与成交口径）+ src/zephyr/risk/core/drawdown_state_machine.py（判定真源）
+  implementation_gap: 'blocked_on_impl: 状态机件与回测装置无适配器（实测 grep scripts/backtest -E "urgency|vwap|sell_?chase|strategy_abnormal_exit_orchestrator" 零命中，drawdown_state_machine 在 scripts/backtest 下亦无引用）；L4 的"Owner 人工解除"在回测中须以不可解除近似（fail-closed），该近似本身须随册披露'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785（覆盖 2018 起基线净值构造窗与两处危机段）；真实账户净值表 c1_market.account_nav_daily 实测仅 5 行（2026-09-28..2026-10-09）→ 实盘净值面 status=blocked_on_data（缺=2018..2026 长序列），故本卡只能用仿真组合净值作被监控对象'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-R1-01.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；回撤/换手成本/漏触发三件成组
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

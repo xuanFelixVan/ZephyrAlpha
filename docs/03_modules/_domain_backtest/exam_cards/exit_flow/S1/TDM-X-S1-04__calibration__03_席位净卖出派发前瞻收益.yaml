@@ -1,0 +1,58 @@
+schema_version: '1.0'
+card_id: TDM-X-S1-04/calibration/03_席位净卖出派发前瞻收益
+node_id: TDM-X-S1-04
+family: calibration
+title_zh: 龙虎榜席位净卖出（高位派发）·事件分档校准卡
+hypothesis: 个股上榜且席位净卖出为负（机构/游资卖方榜）时，未来 5 日与 20 日个股超额收益显著低于未上榜基线；"三日榜净卖出"的负向强度大于单日榜——即 TDM 所谓"诱多出货"读数确有前瞻判别力。
+signal_kind: panel
+window:
+  in_sample:
+  - '2022-01-04'
+  - '2025-09-09'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2024-09-14..2025-09-09（段界=ch_data.regime_series SMA200 帘子 trend_up 段，裁定#489②，考时按实取）
+    bear: 2022-01-04..2024-02-05（含 2024-01 微盘流动性危机子段的下行段）
+  frozen_note: 看数前冻结（裁定#501）；IS 起点被数据实测起点钉死（席位表 2022-01-04 起），禁外推到 2019 段
+buckets:
+  type: ordinal_event_class
+  'on': 桶={0 未上榜, 1 单日榜净卖出>=0, 2 单日榜净卖出<0, 3 三日榜净卖出<0 且占当日成交额>5%}；每桶最小 60 个票·日观测
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 桶序（0→3）与未来 5 日超额收益中位的 Spearman 单调 rho>=0.6（负向单调，取反向标定后）
+  ic_floor: 日频截面 rank IC 均值 >= 0.02 且 IC_IR >= 0.3（战役模板统一地板；事件类达不到即判读数无独立判别力，如实入册）
+  gap_vs_baseline: 桶 3 的 20 日超额中位相对桶 0 差值 <= -1.0%（派发确认的经济门槛）
+  pit_discipline: 全部特征只用 T-1 及更早榜（TDM 节点 PIT 纪律原文：龙虎榜 T 日 18:00 后发布，continuous 消费只用 T-1），违者本卡作废
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  gap_bucket3_vs_0_20d_max: -0.01
+target:
+  primary: forward_5d_excess_vs_000300（未来 5 日相对 000300 超额，主轴）
+  secondary: forward_20d_excess_vs_000300 + 桶 3 的 T+1 开盘跳空分布
+  note: 本卡专考"派发读数"，不含情绪退潮路（断供）与突破失败路（另卡 02）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-04.confidence
+data_binding:
+  signal_table: c1_market.dragon_tiger_seat
+  signal_column: buy_amount / sell_amount / net_amount / seat_type / reason（票·日聚合出净卖出与占比）
+  signal_derivation: 按 symbol+trade_date 聚合 Σ(net_amount)；三日榜=reason 含三日区间口径的行（reason 列实测在表）；占比=|Σnet_amount|/该股当日成交额（成交额取 kline_daily_hfq.amount）；信号取反向标定（净卖出越强→信号值越高→未来收益越低）
+  target_source: kline_daily_hfq close 的 T+5/T+20 前向收益，基准 c1_market.kline_index symbol='000300' close
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.dragon_tiger_seat''))" → 实测 2022-01-04..2026-10-09 rows=622365 nsym=5998；反证旧断言：c1_market.dragon_tiger（主表）实测仅 2026-08-07..2026-10-09 rows=2534——"龙虎榜不可考"（matrix-w4 草稿 §二 负结果#4）对主表仍成立，对 seat 表已不成立（seat 表 2022 起 62 万行可考 4 年窗）'
+  data_ruling_note: 断言前已跑 python -m zephyr.library.lookup state "本地条件单"/"分时破位"（本车道留痕见 L5_ledger.md 四节），CH 侧可得性一律以实测行窗口径为准，禁引用旧负结果册代替实测
+status: preregistered
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；试次全入 n_trial_ledger；PIT 违规=整卡作废（G4-5 同源纪律）
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

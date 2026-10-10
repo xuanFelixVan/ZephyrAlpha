@@ -1,0 +1,64 @@
+schema_version: '1.0'
+card_id: TDM-X-S1-03/comparison/02_止盈族三式对照
+node_id: TDM-X-S1-03
+family: comparison
+title_zh: 止盈族三式·同装置双臂对照卡
+hypothesis: 止盈族（盈利区 Chandelier 2×ATR22 跟踪 / 峰值浮盈回撤 30% 兑现 / 目标位了结=次日不板走）任一档开启，在同一模拟器、同一信号票池、同一成本口径下相对全关臂改善 OOS 最大回撤，且不牺牲风险调整收益、换手增量不越成本帽。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛，模板同轴，真源=entry_flow/L1 校准卡 window.regimes）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，同上）
+    crisis: 2020-02-01..2020-03-23（T3b 在册 CRISIS 配对窗，99_delivery §七）
+  frozen_note: 看数前冻结（裁定#501 纪律）；窗=exit_sim/prereg_frozen.yaml device.windows（run/is/oos_holdout 逐字复用，禁挪）
+buckets:
+  type: arm_matrix
+  'on': 止盈档全关（仅止损臂）vs 单档开（chandelier_trail / peak_giveback30 / target_px）vs 复合开（composite）
+  min_obs_per_bucket: 244
+pillars:
+  paired_arm_protocol: 双臂必须同装置同票池同成本，仅止盈档异（E 道纪律：判据只看配对对照，官方引擎跑仅 sanity）；基线臂=stop_enabled=True 且 tp_rule='off'
+  drawdown_floor: 开臂 OOS MaxDD 相对关臂改善 >= 5pp（负数口径朝 0 靠拢，exit_sim/prereg_frozen.yaml judge_frozen.maxdd_improve_pp 同式）
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1（碰钱面取严，较 E 道 -0.2 收半格）
+  turnover_cost_gate: 开臂年化换手增量 <= 8.0x（帽真源=config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）；且 20bp/40bp 成本档（tiers_bp 在册五档）重跑后 40bp 档 Sharpe >= survival_floor 0.0
+  crisis_window: CRISIS 段（2020-02..2020-03）同判据重跑，MaxDD 改善 >= 0pp——E 道「有增益」vs T3b「FAIL」两窗冲突的取严解法=两窗皆须不劣化，禁只报单窗
+  oos_stability: OOS 与 IS 两窗 MaxDD 改善同号（>=0），任一反号即判负增益
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  sharpe_delta_min: -0.1
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  crisis_maxdd_improvement_min: 0.0
+  mfe_capture_drop_max_pp: 5.0
+  oos_same_sign: true
+target:
+  primary: 组合日净值序列的 OOS MaxDD 与年化 Sharpe（strategy_exam.window_metrics，sharpe 年化 244，复用禁重造）
+  secondary: 利润漏点面——MFE 捕获率与「赚过没拿住」占比（峰值浮盈回落未兑现笔数/总平仓笔数）
+  note: 本卡考"止盈族整体是否有增益"，不考单档参数最优（参数搜索属网格轨另案）
+same_family_precedent: E 道 ATR 止损对照=本体系第一个满分卷先例（docs/_working/fexam/exit_sim_report_v1.md，OOS MaxDD 改善 +16.5pp → verdict 有增益）；本卡沿用其装置与判据式，门柱取严
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: high / low / close（衍生 ATR22 与 peak_pnl 状态数组）
+  signal_derivation: ATR22=Wilder 平滑（exit_simulator.atr14_wilder 同函数，window=22，种子=前 22 个有效 TR 的 SMA）；峰值浮盈=持仓期最高收盘-入场成本；peak_giveback30 触发=当前收盘 < 峰值收盘×(1-30%)；chandelier_trail 触发=收盘 < 持仓期最高收盘-2×ATR22（只升不降棘轮）；target_px 档依赖 stk_limit 封板掩码（次日未封板即了结）
+  target_source: 双臂各自日净值序列（exit_simulator.simulate 返回值第 1 项）→ strategy_exam.window_metrics(sharpe/maxdd)；换手=成交笔数×2/年化交易日
+  arm_protocol: 关臂=simulate(stop_enabled=True, tp_rule='off')；开臂=同调用改 tp_rule；票池/信号/成本由 exit_simulator.load_pass_columns(cap=24)+build_signals 复用，禁另起炉灶
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（simulate/build_signals/atr14_wilder/month_start_rows）+ scripts/backtest/fexam/exit_sim/prereg_frozen.yaml（frozen_at_utc/device/judge_frozen/recalibration_duty 四段）
+  implementation_gap: 'blocked_on_impl: exit_simulator.simulate() 现有形参仅 stop_enabled/stop_mult/commission（:171-181），tp_rule/peak_giveback 档未实现；且本卡 tp 三式属 matrix-w4 草稿 schema 维 X_tp=[off,chandelier_trail,peak_giveback30,target_px,composite]，该维未经 Owner 裁定即不得进生产搜索面（草稿 §五 B1 在册）'
+  data_window_evidence: '命令原文: cd D:/ZephyrAlpha/.aidrafts/st-nightmine-20261010 && python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785 nsym=5916；stk_limit 实测 2015-01-05..2026-10-09 rows=9254772 nsym=5831（封板掩码可用）'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-03.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；判据三件成组（回撤/成本换手/风险调整收益）缺一不可，禁单指标报功
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

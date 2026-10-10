@@ -1,0 +1,64 @@
+schema_version: '1.0'
+card_id: TDM-X-S1-05/ablation/02_融合权重与去抖消融
+node_id: TDM-X-S1-05
+family: ablation
+title_zh: 信号融合紧迫度评分·权重表与去抖层消融卡
+hypothesis: TDM 冻结权重表（止损 0.9 / 破位 0.7 / 止盈 0.5 / 时间 0.5 + 多周期共振 +0.2）与三段确认（triggered→confirmed→released，去抖三参 confirm_bars∈{0,1}/buffer_pct 0.2-0.5%/量能≥20 日均量 1.5 倍）共同构成紧迫度分的判别力；逐一消融（等权替代权重表 / 去共振 / 散去抖确认 / 去紧迫度分档路由）后组合层面的 OOS 风险调整收益或回撤须出现可测退化，否则该件是装饰。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23（T3b 在册 CRISIS 配对窗）
+  frozen_note: 看数前冻结（裁定#501）；权重表数值=TDM 节点 algo_note_zh 冻结口径禁改（本卡只消融不改值）
+buckets:
+  type: ablation_set
+  'on': full（冻结全套）vs equal_weight（权重表→等权）vs no_resonance（去 +0.2 共振加成）vs no_confirm（散去抖确认层）vs no_urgency_routing（紧迫度三档→二值"有信号即卖"）
+  min_obs_per_bucket: 244
+pillars:
+  ablation_protocol: 每个消融臂只改声明的那一处，其余（票池、信号、成本、行循环）与 full 臂逐位一致；full 臂本身与 E 道装置同口径
+  degradation_floor: equal_weight 消融臂 OOS Sharpe 相对 full 臂下降 >= 0.10 或 OOS MaxDD 恶化 >= 2pp（判"权重表有贡献"）；未达即判装饰
+  resonance_floor: no_resonance 臂上述退化 >= 0.05 Sharpe（共振是加成项，判据取严但低于权重表面板，禁事后按结果挪）
+  confirm_floor: no_confirm 臂年化换手增量 >= +2.0x 或 误清率上升 >= 10%（去抖的价值主要兑现在成本/误清面，不在 Sharpe 面）
+  bypass_exempt: S1-06 强制清仓绕过通道在所有消融臂中保持不消融（救命单不等去抖，TDM 口径），且消融报告中显式披露该互斥未被违反
+  oos_stability: full 臂与消融臂的差值在 IS 与 OOS 同号；40bp 成本档重跑后各臂结论不变（成本三件成组）
+pillars_numeric:
+  weight_table_degradation_sharpe_min: 0.10
+  weight_table_degradation_maxdd_pp_min: 2.0
+  resonance_degradation_sharpe_min: 0.05
+  no_confirm_turnover_increase_min_x: 2.0
+  no_confirm_misfire_increase_min: 0.10
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+target:
+  primary: OOS 年化 Sharpe 与 MaxDD 的 full-vs-消融 差值
+  secondary: 年化换手轮数 + 误清率（卖出后 5 日再创新高占比）
+  note: 本节点是 X 族唯一可独立单测的决策件（matrix-w4 草稿 §二原文），故消融面做全
+same_family_precedent: E 道 verdict_gain 三态入册先例（docs/_working/fexam/exit_sim_report_v1.md）；骨架卡 TDM-X-S1-05__ablation.yaml（generated 件，本卡为其转正的判据面，未改骨架）
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: close（周线共振由 close 重采样 W-FRI 后 PIT shift 一bar，草稿 §二 已注记同法）+ 各桶布尔矩阵（见 TDM-X-S1-01 卡衍生）
+  signal_derivation: urgency=Σ(桶权重×桶触发布尔)+0.2×(日线与周线同向)；三档路由 >0.8 立即 / 0.5-0.8 分批 / <0.5 等确认；权重表值取 TDM.nodes.TDM-X-S1-05 冻结口径（0.9/0.7/0.5/0.5）
+  target_source: 各臂日净值序列（simulate() 返回）→ strategy_exam.window_metrics；换手=成交笔数×2/244；误清率=卖后 5 日 kline_daily_hfq.high 再创新高笔数占比
+  arm_protocol: full 臂=simulate(stop_enabled=True, 融合开启)；消融臂=同调用换权重字典/关共振/关确认/关分档；共用同一 signals/reb_rows
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py:171 + 生产件 src/zephyr/sell_decision/core/sell_signal_fusion_engine.py（MOD-SELL-007）/ sell_urgency_scorer（MOD-SELL-009，TDM module_mounts 在册）
+  implementation_gap: 'blocked_on_impl: 融合引擎与回测装置无适配器；且 urgency→S2-01 路由（分批 vs 一次性）依赖 partial-exit 能力，simulate() 现仅全仓进出（:171-181），no_urgency_routing 臂可在现有装置下先跑，其余三臂需扩展'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785 nsym=5916；周线实测 c1_market.kline_weekly_hfq 存在（system.tables 枚举命中）'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-05.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；消融结论无论正负如实入册（负结果=该件装饰，同样有价值）；试次全入 n_trial_ledger
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

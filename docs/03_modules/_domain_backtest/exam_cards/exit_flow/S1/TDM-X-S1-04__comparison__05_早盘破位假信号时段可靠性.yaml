@@ -1,0 +1,87 @@
+schema_version: '1.0'
+card_id: TDM-X-S1-04/comparison/05_早盘破位假信号时段可靠性
+node_id: TDM-X-S1-04
+family: comparison
+title_zh: 破位确认时段可靠性系数·早盘从严 vs 统一口径双臂对照卡
+hypothesis: >-
+  TDM-X-S1-04 节点原文写死"时段可靠性系数——早盘 9:30-10:00 假信号高发窗（开盘 5 分钟波动为全天 4 倍）
+  破位确认从严（量能+收盘双确认），尾盘从宽"。同节点现有三张卡（02 突破失败/03 席位/04 除权分母）
+  全部在日线收盘口径上考，无一考"时段"这一条判据；全战役卡库 grep "早盘|时段可靠|9:30" 零命中。
+  本卡两问：①机械核对节点自陈的量级断言"开盘 5 分钟波动≈全天 4 倍"（幅度比按分钟收益标准差计）；
+  ②破位首次穿越发生时点（早盘/中盘/尾盘）对"收盘是否收回"（假破位率）的判别力，
+  并双臂对照"按时段差异化确认（早盘从严、尾盘从宽）" vs "全时段统一收盘确认"的前向收益差。
+  若假破位率不随时段单调，则"时段可靠性系数"应退役为经验谈。
+signal_kind: panel
+window:
+  in_sample:
+  - '2021-09-01'
+  - '2023-12-29'
+  oos:
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，IS 内熊段）
+    recovery: 2024-02-01..2025-09-09（修复段，OOS 内对侧 regime）
+    bull_note: 本卡窗口被迫内缩——1 分钟线实测起 2021-09-01，2019-2021H1 统一牛段不可用
+      （沿用 L5 车道对 X-S1-02 分时档的"另卡另窗"成例，禁冒用战役统一牛熊串）
+  frozen_note: 看数前冻结（裁定#501）；时段边界写死=早盘 [09:30,10:00)、尾盘 [14:30,15:00]、其余中盘
+buckets:
+  type: session_bucket
+  'on': 破位首次穿越时点三档（早盘/中盘/尾盘）× 牛熊（本卡可用的 bear/recovery 两段）
+  min_obs_per_bucket: 60（票-日事件样本）
+pillars:
+  amplitude_ratio_check: 开盘 5 分钟已实现波动 / 全天分钟已实现波动中位数须报告并与节点自陈的 4 倍对照；
+    比值 >= 2.0 判"方向成立、量级待改"，比值 < 1.5 判该量级断言证伪（节点原话应改写，如实入册）
+  false_break_monotonicity: 假破位率（首次穿越后收盘收回）按 早盘>中盘>尾盘 的单调关系，
+    Spearman rho >= 0.6 且 早盘档与尾盘档差值 >= 5pp（"时段可靠性系数"的核心证据）
+  arm_gain: 早盘从严（收盘确认+量能>=20日均量 1.5 倍双确认）+尾盘从宽臂，相对全时段统一收盘确认臂，
+    误清率下降 >= 20% 且 T+5 超额不减（差异化规则必须同时改善两端才算数）
+  ic_floor: 首次穿越时段虚拟变量与 T+1 收益的日频截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  regime_stability: bear/recovery 两段假破位率时段方向一致（同号）
+  pit_discipline: 日内时点只用当日已走完的分钟序列，禁跨日前瞻；收盘确认臂必须用当日 close，违者整卡作废
+pillars_numeric:
+  amplitude_ratio_report_required: true
+  mono_spearman_min: 0.6
+  false_break_gap_min: 0.05
+  misjudge_reduction_min: 0.20
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+target:
+  primary: 假破位率的时段差（早盘档 − 尾盘档，pp）
+  secondary: 开盘 5 分钟/全天已实现波动中位比 + 双臂误清率与 T+5 超额
+  note: 本卡只考"时段"这一条节点判据，不考破位规则本身（02 卡）、不考执行通道分裂（X-S2-03 域，跨节点禁代考）
+data_binding:
+  signal_table: c1_market.kline_1min + c1_market.kline_daily_hfq + c1_market.kline_daily
+  signal_column: kline_1min.trade_date/trade_time/open/high/low/close/volume（日内首次穿越时点与分钟已实现波动）；
+    kline_daily_hfq.close（前向收益）；kline_daily.pre_close（除权日样本剔除比对，与 04 卡口径互校）
+  signal_derivation: 20 日新高与前收口径同 02 卡；首次穿越=当日首个 trade_time 使分钟 close < 破位阈值；
+    假破位=首次穿越成立但当日 close 仍 >= 阈值（收盘收回）；
+    已实现波动=sum of squared 1-min log returns（同日内），比值取当日早盘段/全日段；
+    量能萎缩与 1.5 倍确认阈值逐字复用节点 D69 定稿参数禁自调
+  target_source: kline_daily_hfq close 的 T+1 与 T+5 收益；基准 c1_market.kline_index symbol='000300' close
+  data_window_evidence: |-
+    命令原文（fexam 只读层，禁裸 duckdb）：
+      python -c "import sys; sys.path.insert(0,'scripts/backtest'); from fexam.ch_data import ch_query_df as q; \
+      print(q('SELECT min(toString(trade_date)),max(toString(trade_date)),count() FROM c1_market.kline_1min')); \
+      print(q('SELECT name FROM system.columns WHERE database=''c1_market'' AND table=''kline_1min'''))"
+    实测（RX-B 本车道独立复测）：
+      kline_1min 2021-09-01..2026-10-09 / rows=1493285247；列含 trade_time/open/high/low/close/volume/amount/
+      pct_change/amplitude（本卡所需的 trade_time 与分钟 OHLCV 齐备 ⇒ 时段档可算，非阻断）
+      对照 kline_daily_hfq 1990-12-19..2026-09-30 rows=10098785（右端比 1min 滞后 2026-09-30 边界已声明）
+    口径声明：本卡 IS 起点 2021-09-01 由 1min 数据起点钉死，与战役统一 IS(2018/2019 起) 不可比，
+      故不与同节点 02/03/04 卡的分数并排解读；牛段不可考已在 window.regimes.bull_note 写明
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-04.confidence
+preregistered_by: st-nightmine-20261010-RXB
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；试次全入 n_trial_ledger；量级断言（4 倍）与判别力断言（假破位率时段单调）须分别出结论，
+  禁以其一代替另一
+oos_window_ref:
+- '2024-01-02'
+- '2025-09-09'

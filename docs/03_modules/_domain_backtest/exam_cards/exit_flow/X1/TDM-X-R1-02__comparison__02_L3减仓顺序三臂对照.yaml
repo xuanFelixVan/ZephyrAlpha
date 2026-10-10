@@ -1,0 +1,65 @@
+schema_version: '1.0'
+card_id: TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+node_id: TDM-X-R1-02
+family: comparison
+title_zh: 熔断期减仓顺序（重亏仓→高波动仓→压舱石）·三臂配对对照卡
+hypothesis: L3 级"先砍谁"的顺序规则（重亏仓优先→高 ATR 仓其次→浮盈压舱石最后）相对随机顺序与"反向顺序"臂，在同等减仓量下取得更低后续损失与更小回撤；若顺序无差异，则该规则只是心理账户，应降级为等比例减仓以省复杂度与换手。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（在册危机段）
+  frozen_note: 看数前冻结（裁定#501）；减仓总量三臂锁定一致（只比顺序不比幅度），禁某臂偷偷少减
+buckets:
+  type: arm_matrix
+  'on': 关臂=随机顺序（固定 seed，确定性可复现）vs 开臂=TDM 顺序（浮亏深→ATR14 大→浮盈压舱石）vs 反臂=反向顺序（先砍压舱石）
+  min_obs_per_bucket: 60
+pillars:
+  paired_arm_protocol: 三臂同一持仓快照、同一减仓量、同一成交价口径（次日开盘，prereg exit_exec 语义），仅卖出次序异
+  loss_floor: 开臂相对关臂在被减仓位上的 20 日累计损失（卖出额×后续跌幅）减少 >= 10%（相对幅度，绝对额随册披露）
+  drawdown_floor: 开臂 OOS MaxDD 相对关臂改善 >= 1pp（顺序面的合理期待量级，禁借全清面 5pp 门柱冒充）
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1；反臂必须显著劣于开臂（差值 >= 0.1 Sharpe 或 MaxDD 恶化 >= 1pp），否则"顺序"无判别力
+  turnover_cost_gate: 三臂换手相同（同量同笔数），故成本判据落在：40bp 档重跑后开臂-vs-关臂结论不变（config/exam_scale_cost_gate.yaml cost_gate.tiers_bp / survival_floor=0.0）；停牌/跌停不可卖者按 prereg deferred_sell 顺延并计入残余
+  residual_disclosure: 减仓残余（未成交部分）与后续回撤贡献必须分列披露，禁以"减不掉"掩盖顺序错误
+  oos_stability: IS/OOS 同号；危机段不劣化（两处在册危机段逐一报）
+pillars_numeric:
+  loss_reduction_min: 0.10
+  maxdd_improvement_min: 1.0
+  sharpe_delta_min: -0.1
+  reverse_arm_sharpe_gap_min: 0.1
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+target:
+  primary: 被减仓位 20 日累计损失额配对差 + 组合 OOS MaxDD/Sharpe
+  secondary: 压舱石保留天数、减仓后 60 日反弹参与度（错失面）
+  note: 本节点 ai_autonomy=paper（TDM 在册）→ 考卷只出研究结论，不得被解读为实盘放行
+same_family_precedent: E 道 ATR 止损双臂（docs/_working/fexam/exit_sim_report_v1.md）确立"同装置仅一参数异"；T3b CRISIS 配对 FAIL 在册（99_delivery §七）提醒：减仓类增益在下行段更易显现，故本卡强制危机段逐段报
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: close（浮亏/浮盈与后续 20 日跌幅）+ high/low（ATR14 波动排序，用 exit_simulator.atr14_wilder 同函数）
+  signal_derivation: 减仓量=组合目标仓位下调比例折算成各仓应卖股数；顺序键=（浮亏幅度 DESC，ATR14/close DESC，压舱石属性 ASC）；压舱石定义取 TDM 节点注释口径=浮盈且大市值高分红低波（考卷内简化为"浮盈 + 20 日均额最高分位"代理，须在结果里披露该代理与其局限）
+  target_source: 各臂按日净值（exit_simulator 净值口径）→ strategy_exam.window_metrics；被减仓位后续损失=卖出价 vs 该票 T+20 收盘（不复买口径）
+  arm_protocol: 三臂共用同一持仓快照生成器与同一随机 seed 序列；顺序由键函数切换，不改其他参数
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（净值/ATR/成本口径复用）+ 生产件 src/zephyr/risk/core/drawdown_liquidation_guard.py（MOD-RK-050，实测 209 行在档）
+  implementation_gap: 'blocked_on_impl: 回测装置无"部分减仓"能力（simulate() 全仓进出，:171-181 实测无形参支持）；减仓顺序件与装置无适配器（scripts/backtest 全域 grep drawdown_state_machine/drawdown_liquidation_guard 零命中）'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785；持仓快照来源真源（实盘侧）=c1_market.account_nav_daily 实测仅 5 行（2026-09-28..2026-10-09）→ 实盘持仓面 status=blocked_on_data'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-R1-02.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；避损/回撤/成本三件成组
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

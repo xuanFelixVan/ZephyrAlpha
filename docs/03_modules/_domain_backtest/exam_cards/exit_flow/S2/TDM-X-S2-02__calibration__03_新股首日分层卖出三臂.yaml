@@ -1,0 +1,102 @@
+schema_version: '1.0'
+card_id: TDM-X-S2-02/calibration/03_新股首日分层卖出三臂
+node_id: TDM-X-S2-02
+family: calibration
+title_zh: 新股首日卖出状态机·"开盘 4 成/冲高 4 成/留 2 成"三臂对照卡（含阻塞翻案）
+hypothesis: >-
+  TDM-X-S2-02 节点原文 D71 写死新股首日卖出状态机，其中"社区分层：开盘出 4 成、冲高出 4 成、留 2 成"
+  是本节点唯一给出具体配比的行动判据，现有 02 卡（连续跌停开板概率）完全未触及，且 02 卡的 blocked_faces
+  把"新股首日分支"与"临停复牌/风险警示板"一并记为"日内时段数据受限"而挂起。**RX-B 复挖翻案：新股首日分支
+  不阻断**——三档卖点（开盘价/当日最高/当日收盘）在日线 OHLC 上即可定价，无需日内序列；新股宇宙可由
+  c1_market.stock_basic.list_date 全历史重建、发行价与板块参数由 c3_fundamental.ipo_calendar 承载。
+  本卡判定：分层臂（4/4/2）相对"首日开盘全出"臂与"首日一股不出、次日开盘全出"臂，在**同票池同窗**下取得
+  更高的首日实现收益且首日尾盘回撤暴露更低；若三臂无差，则 D71 的分层参数表应退役为心理安慰。
+signal_kind: panel
+window:
+  in_sample:
+  - '2015-01-05'
+  - '2023-12-29'
+  oos:
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    ipo_regime_note: 新股发行节奏受 IPO 闸门政策强非平稳（2022-2023 收紧段样本显著稀疏），
+      三臂结论必须按上市年度分层报告，禁按全窗合并摊薄
+  frozen_note: 看数前冻结（裁定#501）；配比 4/4/2 与"次日开盘全出"对照臂逐字取自节点原文，禁自调权重
+buckets:
+  type: arm_x_board
+  'on': 三臂（首日开盘全出 / 4-4-2 分层 / 次日开盘全出）× 板块（主板/创业板/科创板/北交所，
+    按 stk_limit.board 与 stock_basic.board 双源对齐）
+  min_obs_per_bucket: 60 只新股（按票计不按票-日计，避免单票多日样本虚增分母）
+pillars:
+  arm_ranking: 分层臂的首日实现收益中位 >= 开盘全出臂，且 >= 次日全出臂 −0.3%（分层必须至少不差于最懒臂）
+  drawdown_exposure: 分层臂相对开盘全出臂的首日 收盘价/最高价 − 1（冲高回落暴露）改善 >= 3pp
+  board_split: 分板块参数表生效性——各板块首日涨跌幅约束（主板首日竞价限发行价±20%、
+    创业板/科创板 20%、北交所 30%）必须按 board 分层各自达标，混池即判卡设计缺陷
+  no_fill_guard: 首日封死/无有效卖出的票必须单列为不可成交样本，禁按收盘价充数（闸3 A 股适配）
+  response_monotonicity: 发行溢价（issue_price 相对首日开盘）分档与最优臂的对应关系须报告
+  ic_floor: 分层比例作为连续读数，与首日全天收益（open→close）的截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  regime_stability: 牛/熊两段分层增益同号
+pillars_numeric:
+  arm_gain_median_min: 0.0
+  vs_lazy_arm_tolerance_max: -0.003
+  exposure_improvement_min_pp: 3.0
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+target:
+  primary: 三臂首日实现收益中位差（分层 − 开盘全出；分层 − 次日全出）
+  secondary: 冲高回落暴露（close/high−1）分板块分布 + 未成交（封死）单列比例
+  note: 本卡考"首日怎么分档卖"的读数与结构，不判任何实盘执行与资金面（碰钱面属 Owner 门位）
+same_family_precedent: 同节点 02 卡（连续跌停开板概率，其 blocked_faces 把新股首日一并挂起——本卡为该挂起的翻案）
+data_binding:
+  signal_table: c1_market.stock_basic（list_date 新股宇宙）+ c3_fundamental.ipo_calendar（issue_price/exchange）
+    + c1_market.kline_daily（首日原始价 open/high/close）+ c1_market.kline_daily_hfq（前向收益）+ c1_market.stk_limit（首日涨跌幅约束）
+  signal_column: stock_basic.symbol/list_date/board/valid_from/valid_to；
+    ipo_calendar.list_date/subscribe_date/issue_price/total_shares/raise_amount/pe_ratio/exchange；
+    kline_daily.open/high/close/pre_close；stk_limit.limit_up/limit_down/limit_pct/board/st_flag
+  signal_derivation: 首日=上市首个有日线交易记录日；开盘臂成交=首日 open；冲高臂成交=首日 high
+    （以"日内触及即成交"上界近似，须与 05 时段卡的分钟口径互校并披露该近似的乐观偏差）；
+    留仓臂成交=首日 close（留 2 成）与次日 open（次日全出臂）；
+    发行价约束判定=首日 open 相对 issue_price 的偏离是否落在 ±20%（主板）内；
+    stock_basic 为 valid_from/valid_to 版本表，取数须按 list_date 当日有效行去重（禁把版本行当票-日样本）
+  target_source: kline_daily_hfq close 的 T+1/T+5/T+20 前向收益（分层留仓的机会成本）；
+    基准 c1_market.kline_index symbol='000300' close
+  unblock_note: 'RX-B 翻案（附实测数字）：L5 车道 02 卡记"新股首日/临停复牌/风险警示板分支的日内时段数据同样受限"。
+    本车道复挖判定：新股首日分支的两条臂（开盘全出 vs 4-4-2 分层 vs 次日全出）在日线 OHLC 上即可定价，
+    不依赖日内序列 ⇒ 从 blocked 改判为 preregistered（本卡）。
+    临停复牌分支维持阻断：c1_market.suspend 实测 2026-09-04..2026-09-23、rows=36（仅 20 日窗，历史不可回填）；
+    风险警示板的时变切片面由 02 卡的 stk_limit 口径承接，不重复立卡；
+    排队位次/封单骤减面维持阻断（c1_market.l2_tick 实测 count()=0、tick_depth_5 实测 2026-07-24..2026-09-30/130146982 行）'
+  data_window_evidence: |-
+    命令原文（fexam 只读层，禁裸 duckdb）：
+      python -c "import sys; sys.path.insert(0,'scripts/backtest'); from fexam.ch_data import ch_query_df as q; \
+      print(q('SELECT min(list_date),max(list_date),count() FROM c1_market.stock_basic')); \
+      print(q('SELECT count() FROM c1_market.stock_basic WHERE list_date >= ''2015-01-01'' AND list_date <= ''2015-12-31''')); \
+      print(q('SELECT min(list_date),max(list_date),count() FROM c3_fundamental.ipo_calendar')); \
+      print(q('SELECT min(trade_date),max(trade_date),count() FROM c1_market.suspend')); \
+      print(q('SELECT min(trade_date),max(trade_date),count() FROM c1_market.stk_limit'))"
+    实测（RX-B 本车道独立复测）：
+      stock_basic list_date 1990-12-10..2026-09-30，版本行 count 巨量（该表带 valid_from/valid_to，
+      行级非票级；2015 年上市段 count=372254 亦为版本行，考前必须 uniqExact(symbol) 去重后方可引用票数）
+      ipo_calendar list_date 2023-08-21..2026-10-09 / rows=11176（发行价面仅此段可用 ⇒
+      issue_price 相关判据（±20% 竞价限、发行溢价分档）status=局部 blocked_on_data：缺 2015..2023-08 段，
+      该段只用 list_date+日线，不发行价判据，须在报告分列）
+      suspend 2026-09-04..2026-09-23 / rows=36（临停复牌分支真断供，维持 blocked）
+      stk_limit 2015-01-05..2026-10-09 / rows=9254772（与 02 卡同实测，一致）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S2-02.confidence
+preregistered_by: st-nightmine-20261010-RXB
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；试次全入 n_trial_ledger；"日内触及即成交"的上界近似必须与分钟口径互校后方可进 confidence 回写
+oos_window_ref:
+- '2024-01-02'
+- '2025-09-09'

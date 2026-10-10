@@ -1,0 +1,65 @@
+schema_version: '1.0'
+card_id: TDM-X-FLOW/ablation/02_离场信号整链消融总账
+node_id: TDM-X-FLOW
+family: ablation
+title_zh: 离场信号整链（X 流终端输出）·只买不卖对照总账卡
+hypothesis: 把 X 流最终输出（今日离场清单）整链消融为"只买不卖、持有至窗末"臂，得到的净值为 X 流的总账基准；完整臂相对该基准的 Sharpe 提升与 MaxDD 改善之和=离场体系为整套策略挣到的全部钱。此数是"离场族是否值得继续投入"的顶层判据，也是 E 道"有增益"与 T3b"FAIL"冲突的唯一可对齐口径（两案各自只考了单档，从未出过整链总账）。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（在册危机段）
+  frozen_note: 看数前冻结（裁定#501）；窗逐字复用 exit_sim/prereg_frozen.yaml device.windows（同装置同票池才能与 E 道单档结论并排）
+buckets:
+  type: ablation_set
+  'on': no_exit（整链消融=只买不卖）vs full（完整 X 流）vs exit_plus_risk（full 再叠 X-R1 熔断层）
+  min_obs_per_bucket: 60
+pillars:
+  ablation_protocol: 三臂共用同一买入信号（composite_signal/monthly_topn top20 冻结票池，prereg device 段）与同一成本（COMMISSION_RATE 双边）；只切卖出侧
+  total_gain_floor: full 臂相对 no_exit 臂 OOS Sharpe 提升 >= 0.15 或 MaxDD 改善 >= 5pp（X 流整链的最低存在价值；两者皆不达标即判"离场体系不挣钱"，这是本车道最硬的一句话，如实入册）
+  risk_layer_increment: exit_plus_risk 相对 full 的 MaxDD 改善 >= 1pp 且 Sharpe 损失 <= 0.1（判熔断层叠加在离场层之上的边际价值，回答 R1 与 X 流是否重复劳动）
+  turnover_cost_gate: full 臂年化换手 <= 8.0x（config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）；40bp 成本档（tiers_bp 最高档）重跑后三臂相对排序不变；no_exit 臂换手天然低，必须并列报毛/净两口径（防低换手假象冒充优越）
+  tail_guard: 两处在册危机段 full 臂段内回撤必须不劣于 no_exit 臂（若反劣，说明离场在危机里被成本或假信号吞噬，须回查 X-S1-06/X-R1 触发质量）
+  oos_stability: IS/OOS 差值同号
+pillars_numeric:
+  total_sharpe_gain_min: 0.15
+  total_maxdd_improvement_min: 5.0
+  risk_layer_increment_maxdd_pp_min: 1.0
+  risk_layer_sharpe_loss_max: 0.1
+  turnover_cap_annual: 8.0
+  cost_tier_bp_required: 40.0
+  crisis_maxdd_deterioration_max_pp: 0.0
+  oos_same_sign: true
+target:
+  primary: full-vs-no_exit 的 OOS 年化 Sharpe 差与 MaxDD 差（X 流总账）
+  secondary: 年化换手轮数 + 危机段段内回撤 + exit_plus_risk 增量
+  note: 本节点是聚合终点（TDM node_type=aggregation、red_reason=terminal，strategy_mounts 挂 STR-VREV-001 家族替身证据），无独立算法；卡的价值在于给整条 X 流一个可被一票否决的总账数
+same_family_precedent: E 道单档先例（docs/_working/fexam/exit_sim_report_v1.md，ATR 止损 OOS MaxDD 改善 +16.5pp=有增益）与 T3b 终判 FAIL（docs/_working/fullcirc_closeout_chief/99_delivery.md §七，CRISIS 配对 0% 过 5pp 线）——本卡不裁两案谁对，只补两案都缺的整链总账；骨架件 TDM-X-FLOW__ablation.yaml（generated 保护件，本卡为判据面另建，未改骨架）
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: open / high / low / close（净值与 ATR 全在此）；买入侧信号列=c1_market.technical_indicator（cap24 清单真源=prereg_frozen.yaml device.columns_cap24，经 indicator_exam_scores_v1.yaml verdict==pass 首列确定性抽取）
+  signal_derivation: no_exit 臂=signals 只在月频调仓日按买入规则变动、永不因卖出规则平仓（仅调仓集合变动导致的被动卖出，保持与引擎语义一致）；full 臂=同装置开 stop 档；exit_plus_risk 臂=full 上再挂 TDM-X-R1-01 状态机层
+  target_source: 三臂日净值（exit_simulator.simulate 返回）→ strategy_exam.window_metrics（sharpe 年化 244 + MaxDD，复用禁重造）；换手=成交笔数×2/244
+  arm_protocol: 三臂各跑一次 simulate()，signals/reb_rows 复用同一份（build_signals 一次生成禁重算）；no_exit 臂即 stop_enabled=False 加"关闭全部卖出规则"的等价调用
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（simulate:171/build_signals:158/run_all:328）+ scripts/backtest/fexam/exit_sim/prereg_frozen.yaml（device/judge_frozen/recalibration_duty 三段）
+  implementation_gap: 'blocked_on_impl: exit_plus_risk 臂依赖 X-R1-01 状态机接入回测（现无适配器，见该卡 implementation_gap）；no_exit 与 full 两臂今日可跑（stop_enabled 两态即是 E 道原形），故本卡首考=两臂总账，第三臂随 R1-01 落地补跑'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785 nsym=5916；票池 ATR 暖机与 RUN 窗真源=prereg_frozen.yaml device.windows.kline_load（2017-10-01..2026-09-30）'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-FLOW.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；本卡出分即 X 流总账，禁再用单档结论替代整链判断；试次全入 n_trial_ledger
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

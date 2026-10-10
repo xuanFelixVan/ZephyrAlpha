@@ -1,0 +1,63 @@
+schema_version: '1.0'
+card_id: TDM-X-S1/ablation/02_卖出信号段整体消融对照
+node_id: TDM-X-S1
+family: ablation
+title_zh: 卖出信号收集评分段·整段消融对照卡（多规则体系 vs 单一价格规则）
+hypothesis: 把 S1 整段（六桶收集+止损/止盈/破位并行判定+融合评分）消融为"只保留固定 -7% 生死线"的单一价格规则臂，组合层面应出现可测退化（回撤恶化或风险调整收益下降）；若退化不足门槛，则 S1 的复杂度没有换来收益，应据实降级为极简止损并省下整段维护成本。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（在册危机段）
+  frozen_note: 看数前冻结（裁定#501）；窗逐字复用 exit_sim/prereg_frozen.yaml device.windows；-7% 生死线数值=TDM X-S1-02 固定档口径（禁改）
+buckets:
+  type: ablation_set
+  'on': full（S1 全套）vs price_only_-7pct（整段消融为单一固定生死线）vs price_only_atr3x（消融为 ATR3× 单档，与 E 道同参）
+  min_obs_per_bucket: 60
+pillars:
+  ablation_protocol: 各臂同票池、同信号买入侧、同成本（COMMISSION_RATE 双边）、同执行口径（次日开盘）；仅离场判定体系异
+  degradation_floor: full 臂相对 price_only_-7pct 臂 OOS Sharpe 高 >= 0.10 或 OOS MaxDD 改善 >= 3pp（判"整段体系有增益"）；两指标均不达标即判 S1 复杂度无增益，如实入册并提降级建议
+  cross_check_bucket: full-vs-price_only_atr3x 差值符号必须与前者一致（两种单档基线给同一结论才算稳，防单档偶然性）
+  turnover_cost_gate: 年化换手须在 full 臂 <= 8.0x（config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）；40bp 成本档（tiers_bp 最高档）重跑后结论不变，且 full 臂 40bp 档 Sharpe >= survival_floor 0.0
+  tail_risk_guard: full 臂在两处在册危机段的段内最深回撤不得劣于任一消融臂（体系的立身之本是尾部，不达标即 FAIL 不论全窗多好看）
+  oos_stability: IS/OOS 差值同号
+pillars_numeric:
+  full_vs_price_only_sharpe_min: 0.10
+  full_vs_price_only_maxdd_pp_min: 3.0
+  turnover_cap_annual: 8.0
+  cost_tier_bp_required: 40.0
+  crisis_maxdd_deterioration_max_pp: 0.0
+  oos_same_sign: true
+target:
+  primary: OOS 年化 Sharpe / MaxDD 的 full-vs-消融差
+  secondary: 换手轮数、危机段段内回撤、离场后错失收益
+  note: 组节点自身无独立机制（TDM node_type=stage、module_mounts=MOD-SELL-006/016），本卡把"组"的增益定义为"子件集合相对最简单档的净贡献"，与子卡不重复计数
+same_family_precedent: E 道 ATR 止损对照=本体系第一份满分卷（docs/_working/fexam/exit_sim_report_v1.md，OOS MaxDD 改善 +16.5pp）——该先例证明"有止损 vs 无止损"有增益；本卡问的是更进一步的"多规则体系 vs 最好单一规则"，是 E 道未覆盖的增量问题
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: open / high / low / close + 六桶布尔矩阵（衍生口径见 TDM-X-S1-01 卡，禁两处不同算法）
+  signal_derivation: full 臂=六桶信号→X-S1-05 融合→urgency 路由；price_only_-7pct 臂=收盘 < 入场成本×0.93 触发；price_only_atr3x 臂=prereg stop_rules（initial/trailing 3×ATR14 max 棘轮）；ATR14 用 exit_simulator.atr14_wilder 同函数
+  target_source: 各臂日净值（simulate() 返回）→ strategy_exam.window_metrics(sharpe/maxdd)；危机段段内回撤用同函数在子窗上重算
+  arm_protocol: 三臂复用同一 signals/reb_rows（build_signals 一次生成禁重算）；消融只切离场判定函数
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（full 之外的两档现成可跑：stop_enabled=True 即 ATR 档）+ 生产件 src/zephyr/sell_decision/core/sell_signal_collector.py（MOD-SELL-001，实测 327 行在档）/ sell_signal_fusion_engine.py（MOD-SELL-007）
+  implementation_gap: 'blocked_on_impl: full 臂不可跑——回测装置内无六桶与融合层（Grep scripts/backtest -i "urgency" 零命中），需先把 sell_signal_collector/fusion 接入装置；两档消融臂今日即可跑（先跑消融臂出参考值域，full 臂待接）'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785 nsym=5916'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；退化不足门槛=复杂度该砍，如实入册（负结果入册），禁为体系辩护而挪门柱
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

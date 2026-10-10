@@ -1,0 +1,64 @@
+schema_version: '1.0'
+card_id: TDM-X-S2/ablation/02_执行约束层现实性税度量
+node_id: TDM-X-S2
+family: ablation
+title_zh: 离场执行段（T+1/涨跌停不可成交/参与率帽/时段约束）·理想执行 vs 现实执行消融卡
+hypothesis: 同一份离场清单，在"理想执行"（无约束、信号价即时全额成交）与"现实执行"（T+1 额度、跌停封死不可成交、单笔参与率 10% 硬顶、时段通道约束）两臂之间的净值差=执行约束层征收的"现实性税"；该税必须 (a) 可稳定测得、(b) 小于策略毛超额，否则 X 流的执行段不是保护而是把不可行的收益写进回测。
+signal_kind: panel
+window:
+  in_sample:
+  - '2021-09-01'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2024-09-14..2025-09-30（段界=ch_data.regime_series SMA200 帘子 trend_up 段，裁定#489②，考时按实取）
+    bear: 2021-09-01..2024-01-31（同轴下行/震荡混合段）
+    crisis: 2024-01-02..2024-02-08（微盘流动性危机段）
+  frozen_note: 看数前冻结（裁定#501）；IS 起点=分钟线实测起点 2021-09-01；两臂同一清单同一成本常量
+buckets:
+  type: ablation_set
+  'on': ideal（全约束消融：信号价即时全额）vs realistic（全约束）vs strip_t1（仅去 T+1）vs strip_limit_lock（仅去跌停不可成交）vs strip_participation（仅去 10% 参与率帽）
+  min_obs_per_bucket: 30
+pillars:
+  ablation_protocol: 单一约束逐项剥离（每臂只放开一条约束）是归因主面；ideal 臂只作总税额参照，禁把理想臂收益当策略收益报
+  tax_size_gate: 现实臂相对理想臂的年化税（OOS 毛 Sharpe 差与累计收益差）必须可测且 <= 策略毛超额的 50%（超过即判该票池的执行不可实现性过高，结论=缩小候选池而非放宽约束）
+  binding_constraint_rank: 三条单约束臂的税额排序必须稳定（IS 与 OOS 同序），并逐条给出税额 bp；参与率帽税额若为 0 即判候选池过小或仓位过轻（结构性提示而非通过）
+  drawdown_floor: 现实臂 OOS MaxDD 相对理想臂恶化 >= -5pp（若恶化超 5pp 须解释为约束成本而非缺陷，并回看 X-S2-01/02/04 是否路由失当）
+  sharpe_floor: 现实臂 40bp 成本档（config/exam_scale_cost_gate.yaml cost_gate.tiers_bp 最高档）Sharpe >= survival_floor 0.0；不达标即判整段无落地价值
+  turnover_cost_gate: 年化换手现实臂 <= 8.0x（turnover_gate.cap_annual_x）；未完成量按次日开盘强平并计机会成本（禁悬挂美化）
+  oos_stability: 税额在 IS/OOS 同号（税额反号=约束影响不稳定，须重估而非取均值）
+pillars_numeric:
+  tax_share_of_gross_max: 0.50
+  maxdd_deterioration_max_pp: 5.0
+  realistic_sharpe_at_40bp_min: 0.0
+  turnover_cap_annual: 8.0
+  constraint_tax_rank_stability_required: true
+  oos_same_sign: true
+target:
+  primary: 现实臂-vs-理想臂 OOS 年化税（累计收益差 bp + Sharpe 差）
+  secondary: 逐约束税额排序 + 未完成量占比 + 危机段税额
+  note: 组节点（TDM node_type=stage，"怎么卖"枢纽）本身无算法，本卡把"组"的价值定义为"约束层是否可承受"，与 S2-01/03/04 的"哪条约束更优"分面
+same_family_precedent: E 道配对纪律与三态 verdict（docs/_working/fexam/exit_sim_report_v1.md）；官方引擎约束面真源=scripts/backtest/translated/_c4_engine.py（实测 exec_caliber 三档 :86/:610 在册）与 matching_logic 佣金口径
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: open / close / volume / amount（可成交量与参与率约束）+ c1_market.stk_limit limit_down（跌停不可成交掩码）+ c1_market.kline_1min（时段/尾盘约束的分钟校验）
+  signal_derivation: ideal 臂=触发即按触发 bar 收盘全额成交；realistic 臂=T+1 开盘成交、当日买入不可卖（可卖额度语义真源=src/zephyr/position/core/t1_sellable.py，MOD-POS-028）、close==limit_down 当日不可成交并顺延、单笔成交量 ≤ 该 bar volume×10%、深市 14:57 后不得撤单改挂时段约束（时段面用分钟线判定）
+  target_source: 两臂日净值（exit_simulator 净值口径）→ strategy_exam.window_metrics；税额=同窗理想臂累计收益-现实臂累计收益（bp）
+  arm_protocol: 全部臂由同一份离场清单驱动；约束开关以单参数剥离，禁同时放开两条（除 ideal 全放开臂）
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（deferred_sell/cash_park 语义在册，实测 stop_rules 段已含停牌顺延）+ scripts/backtest/fexam/ch_data.py + 生产件 src/zephyr/sell_decision/core/sell_execution_planner.py（MOD-SELL-019）
+  implementation_gap: 'blocked_on_impl: 参与率帽与时段约束在现有装置中未实现（exit_simulator 全仓按 bar 收盘成交、无 volume 约束入参，实测 :171-181 形参无 participation/minute 口径）；T+1 与停牌顺延展已有语义可复用；跌停不可成交掩码需接 stk_limit（装置现未引用该表）'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit''))" → 实测 2015-01-05..2026-10-09 rows=9254772 nsym=5831（limit_down/limit_pct/board/st_flag 列实测在册）；kline_daily_hfq 实测 1990-12-19..2026-09-30 rows=10098785；kline_1min 实测 2021-09-01..2026-10-09 rows=1493285247'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S2.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；理想臂只作税额标尺禁当业绩；逐约束税额必须全披露，禁只报总税
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

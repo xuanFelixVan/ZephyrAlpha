@@ -1,0 +1,93 @@
+schema_version: '1.0'
+card_id: TDM-X-S1-04/calibration/04_除权除息参考价分母误判清仓
+node_id: TDM-X-S1-04
+family: calibration
+title_zh: 破位判定分母·除权除息参考价 vs 前收盘（误判核按钮清仓成本）校准卡
+hypothesis: >-
+  TDM-X-S1-04 节点原文 D68 写死"除权除息日卖出口径——溢价率/跳空判定分母改用除权除息参考价
+  （除息缺口是价格规则调整非下跌，否则除息日误判核按钮清仓）"。这是一个带明确失效机制的可证伪断言，
+  且同节点现有两卡（02 突破失败 K 计数、03 席位净卖出）均未触及分母口径。本卡判定：在除权除息日（ex 日），
+  以 pre_close 为分母的破位/跳空判定相对以除权参考价 dr 为分母，误判为"破位"的票-日比例显著更高，
+  且这批误判票随后的前向收益不劣于（甚至优于）未误判基线——即"误判清仓"是真金白银的成本而非口径洁癖。
+  双臂差值不显著 ⇒ D68 应降级为文档纪律而非硬判据（如实入册，不替节点护短）。
+signal_kind: panel
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos:
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（裁定#501）；破位判定阈值与 02 卡同口径（收盘跌回 20 日新高之下 + 量能萎缩比 0.8），
+    本卡唯一改动=分母取 pre_close 还是 dr（单点改动原则）
+buckets:
+  type: event_sample
+  'on': 除权除息日票-日样本（ex_dividend_event 在册）× 双臂分母（pre_close / dr）× 除息型 vs 除权送转型分层
+  min_obs_per_bucket: ex 日票-日 >= 200（分红密集的银行/电力票需单列，不得并池摊薄）
+pillars:
+  misjudge_rate_floor: pre_close 分母臂在 ex 日的"破位"误判率 >= dr 分母臂的 3 倍
+    （否则口径之争无谓，D68 判为文档纪律；3 倍线沿用同族复权口径卡 P1-01 的既有门柱量级，不自降）
+  misjudge_cost: 误判票-日的 T+5 超额收益中位 >= 未误判基线 + 0.3%（"不该清却被清"的经济证据；
+    若为负则误判反而救命，D68 的方向须重估并如实入册）
+  response_monotonicity: 每 100 股派息金额（divid_per_share×100）分档与误判率的 Spearman 单调 rho >= 0.6
+    （缺口越大误判越多——本卡最重要的响应曲线，直接把"除息缺口=规则调整非下跌"量化）
+  ic_floor: 分母口径修正量（(close/pre_close-1) − (close/dr-1)）作为日频截面读数，
+    与 T+5 超额收益的 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  gap_type_split: 现金分红（divid_per_share>0）与送转（gift/bonus_per_share>0）两支分开报，
+    禁合池（两者对参考价的作用机制不同，混池=假结论）
+  regime_stability: 牛/熊两段误判率方向一致（同号）
+  pit_discipline: 事件锚只用 trade_date<=判定日的 ex 记录，未来除息日进入样本即整卡作废
+pillars_numeric:
+  misjudge_rate_ratio_min: 3.0
+  misjudge_cost_gap_min: 0.003
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+target:
+  primary: ex 日破位误判率双臂比（pre_close 臂 / dr 臂）
+  secondary: 误判票-日的 T+5 与 T+20 超额收益分布 + 派息金额分档响应曲线
+  note: 本卡考"读数分母口径的经济后果"，不考破位规则本身（02 卡主判据），亦不考执行（S2 流）
+same_family_precedent: position_flow/P1 车道 TDM-P-P1-01/comparison/02 复权口径双臂卡（同"分母口径失真"族，
+  那张考持仓浮盈/生死线误触发，本卡考卖出破位判定分母，对象不同不并卡）；
+  同节点 02/03 卡（未含除权除息面，本卡补该缺口）
+data_binding:
+  signal_table: c3_fundamental.ex_dividend_event + c1_market.kline_daily + c1_market.kline_daily_hfq
+  signal_column: ex_dividend_event.trade_date/symbol/divid_per_share/bonus_per_share/gift_per_share/allot_ratio/allot_price/dr/quality_flag
+  signal_derivation: 跳空/破位跌幅 = close/分母 − 1，A 臂分母=kline_daily.pre_close（前收盘，现行业默认），
+    B 臂分母=ex_dividend_event.dr（除权除息参考价）；误判=当日收盘相对 pre_close 跌破 20 日新高之下而
+    相对 dr 未跌破；量能萎缩比与 02 卡同式（volume < 20 日均量×0.8）；
+    quality_flag 非空值须逐档报告，禁默认全表可信
+  target_source: kline_daily_hfq close 的 T+5/T+20 前向收益；基准 c1_market.kline_index symbol='000300' close
+  exclusions: 停牌日（c1_market.suspend）与一字板不可成交样本剔出前向收益（闸3 A 股适配）；
+    同日既有除息又有送转的事件按 dr 原值单列不拆算
+  data_window_evidence: |-
+    命令原文（fexam 只读层，禁裸 duckdb）：
+      python -c "import sys; sys.path.insert(0,'scripts/backtest'); from fexam.ch_data import ch_query_df as q; \
+      print(q('SELECT name FROM system.columns WHERE database=''c3_fundamental'' AND table=''ex_dividend_event''')); \
+      print(q('SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniqExact(symbol) FROM c3_fundamental.ex_dividend_event')); \
+      print(q('SELECT toString(toYear(trade_date)) y,count() c,countIf(dr IS NOT NULL AND dr>0) has_dr FROM c3_fundamental.ex_dividend_event GROUP BY y ORDER BY y'))"
+    实测（RX-B 本车道独立复测）：
+      ex_dividend_event 覆盖 1991-03-11..2026-09-24 / rows=57864 / uniqExact(symbol)=5438
+      逐年 dr 非空率=100%（1991..2010 抽样各年 countIf(dr>0)==count()，如 2005 918/918、2010 1067/1067）
+      ⇒ IS 2019-2023 与 OOS 2024-2025-09 两段除权除息事件充分，本卡可 preregistered（无断供）
+      对照：c1_market.kline_daily 实测 1990-12-19..2026-10-09 rows=10131522；
+      c1_market.kline_daily_hfq 实测 1990-12-19..2026-09-30 rows=10098785
+  library_lookup_note: 断言前已跑 python -m zephyr.library.lookup "除权除息" --limit 6 →
+    命中 TBL:ch:c3_fundamental.ex_dividend_event（active），非零命中推断
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-04.confidence
+preregistered_by: st-nightmine-20261010-RXB
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；试次全入 n_trial_ledger；双臂只差分母一个量，任何其它差异=卡设计缺陷须重做
+oos_window_ref:
+- '2024-01-02'
+- '2025-09-09'

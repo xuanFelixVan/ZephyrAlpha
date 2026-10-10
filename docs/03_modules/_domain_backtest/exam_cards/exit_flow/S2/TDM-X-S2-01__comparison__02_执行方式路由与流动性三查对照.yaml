@@ -1,0 +1,65 @@
+schema_version: '1.0'
+card_id: TDM-X-S2-01/comparison/02_执行方式路由与流动性三查对照
+node_id: TDM-X-S2-01
+family: comparison
+title_zh: 卖出执行方式路由（一次性 vs 分批 vs 参与率三查）·分钟线双臂对照卡
+hypothesis: 按紧迫度与流动性分流（一次性市价 / 3 批×1/3 间隔 5 分钟 / 流动性三查硬顶）相对"全部一次性市价"臂，能以可控换手成本换来更低的实际成交价劣化（implementation shortfall），且在冲击敏感子集（大市值占比高、盘口薄）上改善组合净值回撤。
+signal_kind: panel
+window:
+  in_sample:
+  - '2021-09-01'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2024-09-14..2025-09-30（段界真源=ch_data.regime_series SMA200 帘子 trend_up 段，裁定#489②，考时按实取）
+    bear: 2021-09-01..2024-01-31（同轴 trend_down/区间震荡混合段）
+    crisis: 2024-01-02..2024-02-08（微盘流动性危机段，在册叙事窗）
+  frozen_note: 看数前冻结（裁定#501）；OOS=ch_data.py WINDOW_HOLDOUT（2025-10-09..2026-09-30）逐字复用；分钟数据起点实测 2021-09-01 决定 IS 起点（禁越界外推）
+buckets:
+  type: arm_matrix
+  'on': 关臂=全部一次性市价（对手价吃单）vs 开臂A=3 批×1/3 间隔 5 分钟 vs 开臂B=流动性三查硬顶（单笔≤买一档量 / 日量×10% 参与率 / 持仓市值÷20 日均额>1% 禁市价改限价排队）
+  min_obs_per_bucket: 30
+pillars:
+  paired_arm_protocol: 三臂共用同一卖出清单（由 X-S1 族臂生成、逐笔一致），仅执行切片规则异；成交价取实际分钟 bar 可成交价（kline_5min open/close 与当日 amount 约束），禁取信号价
+  shortfall_floor: 开臂相对关臂的平均实现差（卖单：决策基准价=触发时点前一根 5 分钟收盘，实际加权成交价-基准价，bp）改善 >= 5bp（=tiers_bp 在册最小非零档 5bp 的经济含义兑现），未达即判路由无增益
+  drawdown_floor: 开臂组合 OOS MaxDD 相对关臂不劣化（改善 >= 0pp），冲击敏感子集（持仓市值/20 日均额 >1% 组）改善 >= 2pp
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1
+  turnover_cost_gate: 佣金双边按 COMMISSION_RATE 逐笔计（真源=matching_logic 单一口径，exit_simulator costs 段同源）；年化换手增量 <= 8.0x（config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）；分批未成交残余须顺延并在下一日开盘强平（禁留悬挂仓美化结果）
+  unfillable_disclosure: 跌停封死/停牌导致的不可成交量必须单列披露（对应 exam_scale_cost_gate.yaml 的 sharpe_annualization.unfillable_at_limit 即 separate_pool 纪律），禁静默按收盘成交
+  oos_stability: IS/OOS 两窗 shortfall 改善同号；CRISIS 段改善不得为负
+pillars_numeric:
+  shortfall_improvement_bp_min: 5.0
+  maxdd_improvement_min: 0.0
+  maxdd_improvement_stress_subset_min_pp: 2.0
+  sharpe_delta_min: -0.1
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+target:
+  primary: 平均实现差（bp）与组合层面 OOS MaxDD/Sharpe 配对差
+  secondary: 年化换手轮数 + 参与率分布（成交股数/该股当日成交量，硬顶 10%）
+  note: 本卡是"卖出的执行面"，成本三件（滑点/换手/回撤）必须成组出报告，禁单指标
+same_family_precedent: E 道 ATR 止损双臂对照（docs/_working/fexam/exit_sim_report_v1.md）确立"同装置仅一参数异"的配对纪律；matrix-w4 草稿 §二 记本节点 5 分钟间隔等"不可考=负结果#2"——本卡据实测分钟线（kline_5min 2021-09 起 2.96 亿行）推翻该旧结论并改判"可考但窗短"
+data_binding:
+  signal_table: c1_market.kline_5min
+  signal_column: open / high / low / close / volume / amount（symbol + trade_time 定位分钟 bar）
+  signal_derivation: 卖单切片=触发时点起每 5 分钟一笔×1/3；每笔可成交量=min(剩余股数, 该 bar volume×参与率上限 10%)；成交价取该 bar close（保守），若该 bar volume 不足以完成切片则顺延至下一 bar（逐 bar 重试）；流动性三查的 20 日均额由 kline_daily_hfq.amount 滚动 20 日均值
+  target_source: 双臂各自成交清单→按日落差组合净值→strategy_exam.window_metrics(sharpe/maxdd)；实现差=Σ(加权成交价-基准价)×股数/Σ(基准价×股数)
+  arm_protocol: 三臂同一份卖单 CSV（含 symbol/触发时刻/股数/紧迫度），仅执行器切片参数异；日频净值臂与 exit_simulator.simulate 共用成本常量（COMMISSION=float(COMMISSION_RATE)）
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（成本与净值口径真源）+ scripts/backtest/fexam/ch_data.py（load_panel/表名注册）；执行路由生产件 src/zephyr/sell_decision/core/sell_execution_planner.py（MOD-SELL-019，TDM module_ref 在册，回测臂未接）
+  implementation_gap: 'blocked_on_impl: 仓内无分钟粒度成交切片器（exit_simulator 是日频全仓进出；scripts/backtest/fexam 全域 grep 无 5min 执行器）；需新建分钟执行器并接受对拍，属考试车道施工面非本卡判据'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(toString(trade_time)),max(toString(trade_time)),count() FROM c1_market.kline_5min''))" → 实测 2021-09-01 09:35:00 .. 2026-10-09 15:00:00 rows=296122159；kline_1min 实测 2021-09-01..2026-10-09 rows=1493285247 nsym=5858；stk_limit 实测 2015-01-05..2026-10-09 rows=9254772（跌停不可成交掩码源）'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S2-01.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；滑点/换手/回撤三件成组
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

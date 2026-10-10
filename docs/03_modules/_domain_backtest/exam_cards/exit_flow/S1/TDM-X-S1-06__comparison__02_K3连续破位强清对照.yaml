@@ -1,0 +1,63 @@
+schema_version: '1.0'
+card_id: TDM-X-S1-06/comparison/02_K3连续破位强清对照
+node_id: TDM-X-S1-06
+family: comparison
+title_zh: 强制清仓绕过通道（K≥3 连续破位失败分支）·双臂对照卡
+hypothesis: 在评分体系之外无条件旁路——K≥3 连续突破失败即市价清仓（绕过融合与去抖）——相对"K≥3 仍走常规融合仲裁"臂，能降低该子集的后续损失与组合回撤；四触发中的黑天鹅/主力弃庄两分支因无可计算代理，本卡显式声明不含（覆盖折扣标注，TDM 节点外审 M-50 口径）。
+signal_kind: panel
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    crisis: 2020-02-01..2020-03-23（T3b 在册 CRISIS 配对窗）
+  frozen_note: 看数前冻结（裁定#501）；窗逐字复用 exit_sim/prereg_frozen.yaml device.windows
+buckets:
+  type: arm_matrix
+  'on': 关臂=K≥3 事件按 X-S1-05 融合分仲裁（可能延后或不去抖）vs 开臂=K≥3 事件当日收盘确认、次日开盘无条件市价清仓（紧迫度置 1.0，绕过确认层）
+  min_obs_per_bucket: 30
+pillars:
+  paired_arm_protocol: 两臂共用同一 K 计数与同一票池，仅旁路开关异；同装置同成本（COMMISSION_RATE 双边）
+  drawdown_floor: 开臂相对关臂 OOS MaxDD 改善 >= 2pp（旁路面判据低于止损主面但不得为零——若改善为负即判旁路伤害，如实入册）
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1
+  event_subset_loss: K≥3 事件子集上，开臂该子集 20 日累计收益相对关臂改善 >= 1.0%（旁路的价值必须在被旁路的那批票上兑现，不能只靠组合噪声）
+  turnover_cost_gate: 年化换手增量 <= 8.0x（config/exam_scale_cost_gate.yaml turnover_gate.cap_annual_x）；40bp 成本档重跑后开臂结论不变（旁路=急卖，最易被成本反噬）
+  oos_stability: IS/OOS 事件子集改善同号；CRISIS 段不劣化
+pillars_numeric:
+  maxdd_improvement_min: 2.0
+  sharpe_delta_min: -0.1
+  event_subset_gain_min_pp: 1.0
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+target:
+  primary: K≥3 事件子集 20 日收益配对差 + 组合 OOS MaxDD/Sharpe
+  secondary: 旁路触发笔数占比（过高=上游判定失职，须与 X-S2-06 六分类复盘交叉）
+  note: 四触发覆盖折扣在册——黑天鹅（立案/暴雷）、主力弃庄（机构清仓式卖出）两分支无可计算代理，本卡不判其增益；主力弃庄的部分代理见 TDM-X-S1-04__calibration__03 席位净卖出卡（窗口仅 2022 起，不足以支撑旁路增益判定）
+same_family_precedent: E 道 ATR 止损双臂对照（docs/_working/fexam/exit_sim_report_v1.md，OOS MaxDD 改善 +16.5pp=有增益）；本卡沿用其配对纪律但把判据下放到事件子集面
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: high / close / volume（K 计数衍生，口径与 TDM-X-S1-04__calibration__02 逐字一致，禁两处不同算法）
+  signal_derivation: K=同票滚动 20 日内连续"突破新高后跌回且量缩"失败次数；K≥3 当日生成强清指令，次日开盘价成交（exit_simulator stop_rules.exit_exec 同语义）；清仓后该股在下次月频调仓前不得再买（stop_rules.reentry 语义）
+  target_source: 双臂日净值（simulate() 返回）→ strategy_exam.window_metrics；事件子集收益=该股 K≥3 触发日起 T+1 开盘至 20 交易日累计收益
+  arm_protocol: 关臂=把 K≥3 事件按 urgency=0.5-0.8 走分批/确认（即不旁路）；开臂=urgency=1.0 立即；两臂同一份事件清单驱动
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（日循环+成本口径）+ 生产件 src/zephyr/trading/strategy_abnormal_exit_orchestrator.py（MOD-TRADING-008，TDM module_ref 在册）+ trade_level_circuit_breaker.py（连续亏损熔断已落码，42 号 §3.10）
+  implementation_gap: 'blocked_on_impl: exit_simulator 无 bypass/urgency 形参（仅 stop_enabled，:171-181），事件清单需外挂；生产编排件与回测装置无适配器（scripts/backtest/fexam 下 grep 无 strategy_abnormal_exit_orchestrator 引用）'
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785 nsym=5916（长窗支撑 K 计数与 20 日前向收益）；主力弃庄代理表 c1_market.dragon_tiger_seat 实测 2022-01-04 起（不足 IS 全长窗）'
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-06.confidence
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；子集改善/回撤/成本三件成组
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

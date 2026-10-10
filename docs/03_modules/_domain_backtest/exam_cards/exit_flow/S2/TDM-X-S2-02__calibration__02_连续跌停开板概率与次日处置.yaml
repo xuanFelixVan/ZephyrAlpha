@@ -1,0 +1,59 @@
+schema_version: '1.0'
+card_id: TDM-X-S2-02/calibration/02_连续跌停开板概率与次日处置
+node_id: TDM-X-S2-02
+family: calibration
+title_zh: 连续跌停开板概率·跌停天数分档校准卡
+hypothesis: 个股连续跌停天数 N（1/2/3/4+）对"次日是否开板（收盘价高于跌停价）"的条件概率单调上升，且开板后的短期反弹幅度足以区分"情绪错杀（放量开板分批走）"与"基本面暴雷（全力跑）"两种处置——这是 TDM "第 2 日盲目割肉非最优、约 43% 第 3 日开板"在册口径的可检验化（该 43% 数字本卡即待考对象，不作已知真值）。
+signal_kind: series
+window:
+  in_sample:
+  - '2015-01-05'
+  - '2023-12-31'
+  oos:
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛，战役模板同轴）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（裁定#501）；IS 起点=stk_limit 数据实测起点 2015-01-05（禁越数据边界外推）
+buckets:
+  type: ordinal_event_count
+  'on': 连续跌停天数 N∈{1,2,3,4+}（个股级；按 stk_limit 的 limit_down 与当日收盘相等判定封死）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: N 档序与"次日开板概率"分档中位的 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频（按事件日聚合的当日全体封死股开板率序列）与次日收益的时序 Spearman 均值 >= 0.02 且 IC_IR >= 0.3
+  probability_floor: N=3 档的次日开板概率点估计须有 95% 置信区间披露，且不高于 60%（高于则"第 3 日开板"应改写为默认等待，判据方向须重估——如实入册不挪门柱）
+  volume_split: 开板事件按开板日成交额/前 5 日均额分档（放量≥1.5x vs 缩量），两档 T+5 超额中位差 >= 1.0%（支撑"放量开板分批/缩量全力跑"的分支价值）
+  regime_stability: 牛/熊两段单调方向一致（同号）
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  n3_unopen_prob_max: 0.60
+  volume_split_gap_min: 0.01
+target:
+  primary: next_day_unopen_probability（次日开板条件概率，主轴）
+  secondary: forward_5d_excess_vs_000300（开板事件后的超额收益，处置分支依据）
+  note: 本卡考"读数与概率"，卖出排队策略本身（撤单重挂位次等）属盘口面，见卡内 blocked_faces
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S2-02.confidence
+data_binding:
+  signal_table: c1_market.stk_limit
+  signal_column: limit_down / limit_pct / pre_close / board / st_flag（封死=当日 close 等于 limit_down，close 取 kline_daily_hfq 同口径后复权换算为除权价比对，或直接以未复权 kline_daily 比对——考前行一致性对拍，禁混用）
+  signal_derivation: 连续跌停计数 N=个股从首个封死日起累加，开板（close < limit_down）即中断并清零；开板概率=该档事件数中次日 close < limit_down 的占比
+  target_source: c1_market.kline_daily_hfq close（T+1/T+5 收益）+ c1_market.kline_index symbol='000300' close（基准，实测 2005-01-04..2026-10-09 rows=5284）
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit''))" → 实测 2015-01-05..2026-10-09 rows=9254772 nsym=5831（列 board/limit_down/limit_pct/pre_close/st_flag 实测在册）；kline_daily_hfq 实测 1990-12-19..2026-09-30 rows=10098785'
+  blocked_faces: '盘口排队面断供不弃卡：撤单重挂位次、封单骤减>20% 触发需五档深度实时序列——c1_market.tick_depth_5 实测仅 2026-07-24..2026-09-30 rows=130146982 nsym=8720（约 2 个月），c1_market.l2_tick 实测 count()=0（空表）→ 该面 status=blocked_on_data（缺=2015..2025 段五档深度逐日序列）；新股首日/临停复牌/风险警示板分支的日内时段数据同样受限'
+status: preregistered
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；试次全入 n_trial_ledger；分档概率须带置信区间，禁点估计裸报
+oos_window_ref:
+- '2024-01-01'
+- '2025-09-09'

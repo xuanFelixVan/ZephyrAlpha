@@ -1,0 +1,60 @@
+schema_version: '1.0'
+card_id: TDM-X-R1-03/calibration/02_宽基ETF天量与护盘滞后结构
+node_id: TDM-X-R1-03
+family: calibration
+title_zh: 护盘窄门信号面（宽基 ETF 天量成交/国家队明牌）·前瞻收益与滞后结构校准卡
+hypothesis: 宽基 ETF（沪深300/中证500/1000/红利）单日成交额相对自身 20 日分布达到天量档（z>=2 或成交额分位>=99%）时，指数未来 20 日与 120 日收益高于基线，且"政策底→市场底"存在正滞后（信号日之后的低点距信号日的交易天数中位>0）——这正是 TDM 要求"分批+确认、严禁一次到位"的经验根据；若滞后为 0 甚至为负，则天量即底部，金字塔分批反而少赚。
+signal_kind: series
+window:
+  in_sample:
+  - '2021-03-08'
+  - '2025-09-09'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2024-09-14..2025-09-09（段界=ch_data.regime_series SMA200 帘子 trend_up 段，裁定#489②，考时按实取）
+    bear: 2021-03-08..2024-02-05（含 2024-01 微盘危机子段的下行段）
+  frozen_note: 看数前冻结（裁定#501）；IS 起点=ETF 日线实测起点 2021-03-08（数据边界，不外推）；"40 天~半年滞后"为待考假说非真值
+buckets:
+  type: quantile_decile
+  'on': 当日 ETF 成交额 z 分（相对滚动 20 日）分位十档；天量档=分位>=99%（另设 95% 弱档对照）
+  min_obs_per_bucket: 20
+pillars:
+  response_monotonicity: 分位档序与"未来 20 日指数收益"中位的 Spearman 单调 rho>=0.6（天量越大越该预期修复；反向单调即判该读数方向错）
+  ic_floor: 日频时序 IC 均值 >= 0.02 且 IC_IR >= 0.3（战役模板统一地板；事件稀疏致不达标即如实判"不足以单独开门"）
+  lag_profile: 信号日后至窗内最低点的交易日数中位数 >= 20 日（"政策底≠市场底"结构判据）；且 T+120 收益 >= T+20 收益（分批加仓的时间价值证据）
+  event_count_floor: 天量事件样本 >= 20 个（不足则整卡判 INSUFFICIENT-N，fail-closed 不折算结论）
+  regime_stability: 牛/熊两段信号方向同号（熊市段应更显著）
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  lag_median_days_min: 20
+  min_events: 20
+target:
+  primary: forward_20d_index_return（000300 未来 20 日收益，主轴）
+  secondary: forward_120d_index_return + 信号日至窗内低点的滞后交易日数
+  note: 本卡只考"窄门该不该开、何时开"的信号面；资金门位（买什么、买多少、动用尾部弹药预算）属 Owner 专属，本卡不判亦不预支
+same_family_precedent: 同族读数卡的机构三件套判据形（响应曲线/时滞/条件稳定性，模板真源=entry_flow/L1/TDM-E-L1-S2__calibration__02_涨停家数.yaml）；白名单实现件真源=src/zephyr/position/core/defensive_asset_whitelist.py（MOD-POS-026，实测 327 行在档）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-R1-03.confidence
+data_binding:
+  signal_table: c1_market.kline_etf_daily
+  signal_column: amount（成交额 z 分/分位）+ volume/close（量价一致性辅助披露，不作判据）
+  signal_derivation: 对每只宽基 ETF（代码集合由 TableRegistry 在册 symbol 前缀 51/56/58 且名称含 300/500/1000/红利 者，名单考前沿盘固化并随册披露）算 amount 的 20 日滚动 z 分与分位；天量=任一 ETF z>=2 且当日不涨停（涨停日剔除防情绪票污染）；信号日=市场级聚合（取当日命中只数）
+  target_source: c1_market.kline_index symbol='000300' close → T+20/T+120 收益（ch_data.forward_returns 复用，:195-199）；滞后=信号日至其后 120 交易日内最低收盘的间隔天数
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_etf_daily''))" → 实测 2021-03-08..2026-10-09 rows=110619；基准 c1_market.kline_index(000300) 实测 2005-01-04..2026-10-09 rows=5284；官方 ETF 参照面实测在档：scripts/backtest/sim_daily_runner.py:149-157 已用 510300 代理+trend_follow_no_chase 不追高姿态（NO_CHASE_MAX_RET_1D=0.015），与本卡"不一次到位"同向，可作口径对照'
+  blocked_faces: 'status=blocked_on_data（仅指"国家队明牌"的持仓侧证据）：证金/汇金/诚通/国新持股明细与 ETF 份额快照——c1_market.market_etf_share_snapshot 表实测在 system.tables 枚举中但未取到长史覆盖（本次探测未验证其窗口，禁凭记忆断言其有/无，考时先量）；TDM 节点注释里"2026 半年报证金前十股东 77→22 家"属叙事证据，不入判据'
+status: preregistered
+preregistered_by: st-nightmine-20261010-L5
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；Owner 资金门位（六类保留面之"资金与实盘交易"）不因本卡出分而自动放行；事后挪门柱=作废（G4-5）
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'

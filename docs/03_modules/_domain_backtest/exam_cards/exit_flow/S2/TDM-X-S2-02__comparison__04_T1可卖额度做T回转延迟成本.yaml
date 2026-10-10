@@ -1,0 +1,95 @@
+schema_version: '1.0'
+card_id: TDM-X-S2-02/comparison/04_T1可卖额度做T回转延迟成本
+node_id: TDM-X-S2-02
+family: comparison
+title_zh: T+1 可卖额度约束·当日买入不可卖的执行延迟成本双臂对照卡
+hypothesis: >-
+  TDM-X-S2-02 节点 algo_note_zh 正文写死两句："可卖额度=t1_sellable 核对（当日买入不可卖）"与
+  ai_autonomy 注里的"做T仓例外语义（42号§3.8）"。全战役卡库 grep "可卖额度|t1_sellable|T+1 可卖" **零命中**
+  （含 L5 本节点 02 卡在内），即 T+1 这一 A 股卖出流最基础的制度约束在整套考试体系里无人考过。
+  本卡把它转成可判双臂：A 臂=无额度约束（假设可当日回转），B 臂=T+1 强制（当日买入仓的卖出意图顺延至次日开盘）；
+  主判据=被顺延笔次的执行价差分布（信号日参考价位 vs 次日 open）与因此错失/规避的收益差。
+  若顺延成本中位≈0，则 T+1 是廉价约束、"做T 例外"不必存在；若显著为负，则做T 仓例外（用期初持仓出）
+  是必须核算的真实额度而非可选优化。
+signal_kind: panel
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos:
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（裁定#501）；顺延成交价一律取次日 open（prereg stop_rules.exit_exec 同语义），
+    禁当日往返、禁使用当日 high 作成交近似（那是本卡要测的成本不是可占的便宜）
+buckets:
+  type: constraint_binding
+  'on': 按"卖出意图日 == 建仓日"（T+0 撞额）与"卖出意图日 > 建仓日"（不撞额）两桶；撞额桶再按
+    顺延后 T+1 涨跌分层（顺延有利 vs 顺延有害）
+  min_obs_per_bucket: 60 笔（按票-笔计，同一票多日不重复计入分母虚增）
+pillars:
+  binding_rate: T+0 撞额笔数占全部卖出意图笔数的比例必须报告且 >= 1%（若结构性 <1%，
+    说明日频装置下 T+1 约束几乎不咬合，本节点该句判据应降级为"分钟口径专属"，如实入册）
+  deferral_cost: 撞额笔次的顺延执行价差（次日 open / 信号日 close − 1）中位 <= −0.3%
+    判"真金白银成本"；落在 (−0.3%, +0.3%) 判"廉价约束"；>= +0.3% 判"T+1 反而护主"（三态均为有效结论）
+  arm_gap: A 臂与 B 臂的 OOS Sharpe 差与 MaxDD 差须同时报告（只报收益不报风险=不合格）
+  no_fill_guard: 顺延次日遇一字跌停/停牌无法成交的笔次单列为"额度+流动性叠加"桶，
+    不得按收盘价充数（与 02 卡的封死判定口径互校）
+  ic_floor: 撞额指示变量（0/1）与 T+1 收益的日频截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  regime_stability: 牛/熊两段顺延成本方向一致（同号）
+pillars_numeric:
+  binding_rate_min: 0.01
+  deferral_cost_bad_median: -0.003
+  deferral_cost_cheap_band: 0.003
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+target:
+  primary: T+0 撞额笔次的顺延执行价差中位与分位数带
+  secondary: A/B 双臂 OOS Sharpe 与 MaxDD 差 + 撞额占比 + 流动性叠加桶占比
+  note: 本卡考制度约束的成本量级，不判任何"是否申请豁免/绕道"动作（T+1 为交易所制度，非可选项）
+same_family_precedent: 同节点 02 卡（连续跌停开板概率）与 TDM-X-S2 车道的"执行约束层现实性税"消融总账卡
+  （该卡考约束层的**总**税，本卡考 T+1 这一条约束的**分**税，父子不重复计）
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.kline_index + c1_market.stk_limit
+  signal_column: kline_daily_hfq.open/close/high/low/volume（信号日 close、次日 open）；
+    stk_limit.limit_down（顺延日不可成交判定）
+  signal_derivation: 由冻结装置的信号流构造"建仓日 + 卖出意图日"配对
+    （signals/reb_rows 复用 build_signals 一次生成禁重算）；撞额=卖出意图日 == 建仓日；
+    执行价差=次日 open/信号日 close − 1；做T 例外语义=同票存在期初持仓时卖出可用额度（用期初仓出，
+    不撞额），须单列一臂（C 臂）验证"例外"确实降低了成本；
+    顺延日封死=次日 close==limit_down（02 卡同口径），该笔进叠加桶
+  target_source: kline_daily_hfq close 的 T+1/T+5 前向收益；基准 c1_market.kline_index symbol='000300' close
+  implementation_gap: 'blocked_on_impl: 冻结装置 exit_simulator.simulate() 以日频收盘/次日开盘结算，
+    当日买当日卖在现口径下结构性不可能（既非违规也非成本，是被抽象掉了），故 T+0 撞额笔集必须由
+    分钟口径或持仓台账口径显式构造——缺"可卖额度"形参（RX-B 复测：scripts/backtest 下 grep
+    "t1_sellable|可卖额度" 零命中，与 L5 台账 §四 X-S1-05/S2-06 的 urgency 零命中同一类适配器缺口）。
+    卡不因此作废：判据面已写死，A/B/C 三臂随额度形参落地即可执行'
+  data_window_evidence: |-
+    命令原文（fexam 只读层，禁裸 duckdb）：
+      python -c "import sys; sys.path.insert(0,'scripts/backtest'); from fexam.ch_data import ch_query_df as q; \
+      print(q('SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq')); \
+      print(q('SELECT min(trade_date),max(trade_date),count(),uniqExact(run_id) FROM c1_backtest.sim_trade_log')); \
+      print(q('SELECT name FROM system.columns WHERE database=''c1_backtest'' AND table=''sim_trade_log'''))"
+    实测（RX-B 本车道独立复测）：
+      kline_daily_hfq 1990-12-19..2026-09-30 rows=10098785 nsym=5916（行情面双段齐全）
+      c1_backtest.sim_trade_log 2026-07-17..2026-10-09 rows=84 uniq(run_id)=49
+      ⇒ **真实成交台账路径阻断**：现网成交流水仅 84 笔/约 3 个月，不足任何分桶（60 笔/桶的门槛勉强
+      只够一个桶，且无 2019..2025 段）→ 本卡不得用 sim_trade_log 作主取数面，改由装置信号流构造，
+      sim_trade_log 仅作未来互校对照（缺=2019..2025 段逐笔成交台账）
+      列面在册：trade_date/strategy_id/symbol/action/shares/price/cost_paid/cash_after/signal_reason/mode/run_id/ingest_ts
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S2-02.confidence
+preregistered_by: st-nightmine-20261010-RXB
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；试次全入 n_trial_ledger；三态结论（成本/廉价/护主）皆合法，禁预设"制度约束必为负"
+oos_window_ref:
+- '2024-01-02'
+- '2025-09-09'
