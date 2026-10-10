@@ -36,7 +36,7 @@ gate_selfdoc: GIT-DANGEROUS
 
 ## 三、波一四态表（机生）
 
-<!-- BEGIN GENERATED table_fourstate (mk_ledger.py 机生 2026-10-11T02:34:31，禁手改) -->
+<!-- BEGIN GENERATED table_fourstate (mk_ledger.py 机生 2026-10-11T02:40:58，禁手改) -->
 
 扫描面共 **14** 件：态① 0｜态② 0｜态③ 0｜态④ 14
 
@@ -112,6 +112,8 @@ gate_selfdoc: GIT-DANGEROUS
 | 02:11-02:12 | **波二复扫轮 3（T8 第二轮同型）＋态②先救腿** | 复扫＋只救不清 | 两把尺同拍（dirs_v20 @02:11:26／dev_delta @02:11:44）复扫 **14 面＝态①2／态②4／态④8**（对 01:54 的 14 面：面集合零变，态别因他班落 dev 而重判）。⚑ 新浮出的 4 个态②面（deadcure2／dexp／nightmine／nightmine10b）经方向机判后**真增量仅 6 件**、其余 17 件＝落后基座（`棚<dev`，无抢救价值）；6 件真增量当班抄进非 TTL 安全区（`tools/wave2_rescue.py`→`finalclean2_safety/wave2b_<sid>/`＋逐件 sha256 验真），**清腿未执行**：理由＝这三家属主此刻**注册表仍在册**（"三源皆死"的第①源不成立）＋夜矿/死信在 §六 六线名册内仍判未收官＋deadcure2 的 blobs/dead 是他班领地（本班红线）。`df` 02:12 复测可用 **54,328,922,112 B**（对开班基线 **+6.29 GB**；对 01:51 −57.7 MB＝他班同期写入） | 0 |
 
 | 02:33-02:34 | **波二复扫轮 4＝⚑本班判据缺陷一条当场治本（收紧方向）** | 四源同拍复扫＋尺已修 | 轮 3 把 6 面判成态①/态②（`liveness_verdict` 分片读数=ghost ∧ fs 写跨过 90min 窗），本班按 §五-18 只救不删；随后试跑 `session_worktree.py archive` dry-run ⇒ **工具按 `SessionRegistry.list_active` 判这 6 面属主"仍活跃"并硬拒绝（无逃生 flag）**，与本班三源读数直接冲突。⇒ 根因＝**本班尺的"三源"里没有执行工具的守卫同源**，只读 `liveness_verdict` 分片会假报死（17 分钟内同一 14 面集合有 6 面翻转态别＝时钟伪影，非现实变化）。治本＝`scan_dirs.py` 加**第四源** `in_list_active`（用 `list_active_readonly()`／mutating=False，避免"看一眼就把人判死立案"这条自述放大器），`mk_ledger.py` 把它列为**硬态④触发器**。修尺后重跑两把尺（dirs_v21 @02:33:42／dev_delta @02:33:55）＝**14 面全态④**，与 01:54 轮 2 结论一致 ⇒ T8"连续两轮同一结论"此刻**真实成立**（且是在收紧后的尺上成立，不是在旧尺上侥幸成立）；§七 对账式仍平（30＋14＝44＝41＋3）。本轮零删除动作、零新入队 | 0 |
+
+| 02:38-02:4x | **波二收线动作（宪法 §2 会话收尾序）＝本班两波到此完成** | 收尾申报 | ①终报袋 `44c88530b6`（§九C/§九D/§十一）＋修尺袋 `477475f679` 均经**队列正门**落 dev，逐笔 `git log -1 --name-only` 核归属＝各 1 件（零连坐他人条目）；dev↔盘面 176,221/176,676 B 差＝**CRLF 行尾口径**（eol-norm 后逐字节等 True，第四把尺教训同型再证）。②巡检 cron 任务 `009d328a-…`（终清二期·循环巡检与波二触发器）已 `qoder_cron remove` 自删——收口条件成立在修尺后的两轮同结论（01:54／02:33）上，非成立在旧尺的侥幸上。③本班 claim 全release（`lock_files.py list`＝CLEAN 无任何文件锁）。④E 侧终验：零删除（只写不删红线），INDEX 13 行/10 原件、复活窗 2026-11-10、本班 C 件 10 目录副本 sha 全量重算不符 0。⑤本班重复车道 `.worktrees/＋.aidrafts/st-finalclean2-20261010` 仍属**活面**（本班 session 在 `list_active` 内），按 §2 收尾序不自清，候会话结束后由下一轮巡检班或 Owner 处置。⑥临时件 `.runtime/tmp/st-finalclean2-20261010/`（含 21 件 tools／11 件取证 json）＝task_bound，成果已 promote 至本目录三枚册面，随班 TTL 清除 | 0 |
 
 **波二累计账面**：本班两波共清 worktree/工棚面 **29 枚**（波一 25＋波二 4 空壳另计 3 枚已在 29 内含口径见 §七 表）、归档件 retire patch **35→约 48 枚**、残支 177、tmp A 类 1,682 件；磁盘可用由开班基线 48,038,154,240 → 01:51 实测 **54,386,671,616 ＝净可用 +5.95 GB**（波一回收 6.20 GB＋C 件 3.37 GiB＋波二零星，被他班同期写入部分抵销后的净值，`df --output=avail -B1 /d` 三点可复跑）。**02:1x 终扫轮追加账面**：T7 案卷全量化（60,808 件逐件重算零不符）＋B 层悬空治理三件保护腿（双抄＋附注锚）＋T8 三问实证 30 面（态② 61/61 件承载体对号）＋复扫轮 3 先救 6 件真增量（89,367 B）；`df` 02:12 复测 **54,328,922,112 B＝对开班基线 +6.29 GB**（对 01:51 −57.7 MB 系他班同期写入）。**波一磁盘回收实测**：本班清出面累计 **6.23 GB**（worktree/工棚/孤儿面 6.20 GB，13:05 `df` 实测可用 48,038,154,240→54,240,026,624；tmp A 类 30.5 MiB）。⚠ 但 **14:0x 复测可用=52,952,178,688**——同期他班写入把可用面又吃掉 **1.29 GB**（deadcure2 的 runlane_3 子树 17.03 GB 仍在长、backfix_shadow/backfix_reset_recovery 86/0.6 分内新写）。故如实报：**净可用较开班时 +4.91 GB**，而不是 +6.23 GB；`df --output=avail -B1 /d` 三点（开班基线/波一收线/14:0x）全留此表可复跑。`.worktrees` 24→5 目录 1.4G，`.aidrafts` 15→12 目录 4.0G，`.runtime/tmp` 仍 52.84 GiB（判据待判，见 §五-12）。
 
@@ -427,28 +429,28 @@ wc -c .runtime/quarantine/finalclean2_safety/wave2b_rescue_manifest.jsonl       
 
 **收尾动作（按宪法 §2 会话收尾序，非本班自签"完成"）**：巡检 cron 自删（T8 两轮条件已成立）→ 本班重复车道 `.aidrafts/st-finalclean2-20261010` 与 `.worktrees/st-finalclean2-20261010` 走收尾序处置（活面不自清）→ release 本班全部 claim → 本班临时件（`.runtime/tmp/st-finalclean2-20261010/`）TTL 归属确认（成果已 promote 至 `docs/_working/finalclean2_campaign/` 三枚册面）→ 向 Owner 发固定收尾句。
 
-<!-- BEGIN GENERATED closeout (mk_closeout_block.py 机生 2026-10-11 02:21，禁手改) -->
+<!-- BEGIN GENERATED closeout (mk_closeout_block.py 机生 2026-10-11 02:40，禁手改) -->
 
-- 现存面 **14** 件（态①2／态②4／态④8），两把尺同拍=`dirs_v20.json` @ 2026-10-11T02:11:26 ／ dev_delta @ 2026-10-11T02:11:44（防错拍闸阈值 20min）
-- 磁盘可用实测：D **54,324,293,632 B**（开班基线 48,038,154,240 ⇒ **+6,286,139,392 B**；01:51 收线读数 54,386,671,616 ⇒ 本轮 -62,377,984 B＝他班同期写入）；E（墓碑载体所在）233,869,856,768 B
+- 现存面 **14** 件（态①0／态②0／态④14），两把尺同拍=`dirs_v21.json` @ 2026-10-11T02:33:42 ／ dev_delta @ 2026-10-11T02:33:55（防错拍闸阈值 20min）
+- 磁盘可用实测：D **53,962,686,464 B**（开班基线 48,038,154,240 ⇒ **+5,924,532,224 B**；01:51 收线读数 54,386,671,616 ⇒ 本轮 -423,985,152 B＝他班同期写入）；E（墓碑载体所在）233,868,603,392 B
 - 先救副本合计：01:32 批 **3 件/4,171,458 B**（govjudge 2＋maint1-close 1）＋02:1x 批 **6 件/89,367 B**（deadcure2 1＋dexp 4＋nightmine 1）＝**9 件**，两批分文件存、无覆盖；T7 保护腿另 **3 件**（E↔blob↔安全区三处字节全等＋附注锚逐枚核实）
 - 墓碑载体：E 侧 INDEX 13 行＝10 原件＋3 条 second_pass 跟进；载荷 3,615,797,957 B；复活窗取值=['2026-11-10']；本班对 E 面**零删除**（只写不删=红线）
 
 | 现存面 | 态 | 本班动作 | 避让/待处置依据（实测摘录） |
 |---|---|---|---|
 | .worktrees/st-datalane-20261010 | 态④ | 零动作（波二复测） | 波二白名单（总统筹 10-11 01:25 裁定②） |
-| .worktrees/st-finalclean2-20261010 | 态④ | 零动作（波二复测） | 终清自身（本班车道，收尾按会话收尾序处置，不自清）；同 sid 他面 fs 写在避让窗内（19.9min≤90min） |
+| .worktrees/st-finalclean2-20261010 | 态④ | 零动作（波二复测） | 终清自身（本班车道，收尾按会话收尾序处置，不自清）；注册表 list_active 命中＝`session_worktree.py archive` 内建活跃硬拒守卫的同一判据面（此面 archive 会被无逃生 flag 硬拒绝）；活性实测=alive（REGISTRY-FRESH）；同 sid  |
 | .aidrafts/.carry_list.json | 态④ | 零动作记表 | src/scripts 全量 grep 零消费者，但无重启条件证明未完成 → 态④记表 |
-| .aidrafts/st-deadcure2-20261009 | 态② | 先救（archive 内建 patch 存证+未跟踪 rescue）后清 | 独有字节 2 件（neq_dev=2 不在dev=0 未并入commit=0）；属主三源现测非活（liveness=ghost/fs 写 1318.3min>90/sid 不在六线白名单） |
+| .aidrafts/st-deadcure2-20261009 | 态④ | 零动作（波二复测） | 注册表 list_active 命中＝`session_worktree.py archive` 内建活跃硬拒守卫的同一判据面（此面 archive 会被无逃生 flag 硬拒绝）；活性实测=alive（REGISTRY-FRESH） |
 | .aidrafts/st-deadcure3-20261010 | 态④ | 零动作（波二复测） | 波二白名单·死信三期（同裁定；名实已于本班 §六 硬证） |
-| .aidrafts/st-dexp-20261009 | 态② | 先救（archive 内建 patch 存证+未跟踪 rescue）后清 | 独有字节 4 件（neq_dev=0 不在dev=4 未并入commit=0）；属主三源现测非活（liveness=ghost/fs 写 1297.5min>90/sid 不在六线白名单） |
-| .aidrafts/st-final4-20261010 | 态① | session_worktree.py archive 正道（活跃硬拒守卫在后） | ahead=0∧HEAD是dev祖先∧逐件字节全等dev（eq_dev=1，eolnorm=1）∧零独有字节∧三源现测非活：liveness=ghost（GHOST-NO-SHARD）/fs 写 1055.9min>90/sid 不在六线白名单） |
-| .aidrafts/st-finalclean2-20261010 | 态④ | 零动作（波二复测） | 终清自身（本班车道，收尾按会话收尾序处置，不自清）；fs 写在避让窗内（19.9min≤90min）；同 sid 他面有独有字节 1 件⇒属主未净（§二同批处置，本面不单独判清） |
-| .aidrafts/st-fullflow2-20261008 | 态① | session_worktree.py archive 正道（活跃硬拒守卫在后） | ahead=0∧HEAD是dev祖先∧逐件字节全等dev（eq_dev=0，eolnorm=0）∧零独有字节∧三源现测非活：liveness=ghost（GHOST-NO-SHARD）/fs 写 2969.5min>90/sid 不在六线白名单） |
-| .aidrafts/st-mineloop-20261010 | 态④ | 零动作（波二复测） | 波二白名单·矿考循环班（同裁定）；fs 写在避让窗内（0.6min≤90min） |
-| .aidrafts/st-nightmine-20261010 | 态② | 先救（archive 内建 patch 存证+未跟踪 rescue）后清 | 独有字节 14 件（neq_dev=14 不在dev=0 未并入commit=0）；属主三源现测非活（liveness=ghost/fs 写 1044.2min>90/sid 不在六线白名单） |
-| .aidrafts/st-nightmine-20261010b | 态② | 先救（archive 内建 patch 存证+未跟踪 rescue）后清 | 独有字节 3 件（neq_dev=3 不在dev=0 未并入commit=0）；属主三源现测非活（liveness=ghost/fs 写 1030.0min>90/sid 不在六线白名单） |
-| .aidrafts/st-nightmine2-20261010 | 态④ | 零动作（波二复测） | fs 写在避让窗内（52.1min≤90min） |
+| .aidrafts/st-dexp-20261009 | 态④ | 零动作（波二复测） | 注册表 list_active 命中＝`session_worktree.py archive` 内建活跃硬拒守卫的同一判据面（此面 archive 会被无逃生 flag 硬拒绝）；活性实测=alive（REGISTRY-FRESH） |
+| .aidrafts/st-final4-20261010 | 态④ | 零动作（波二复测） | 注册表 list_active 命中＝`session_worktree.py archive` 内建活跃硬拒守卫的同一判据面（此面 archive 会被无逃生 flag 硬拒绝）；活性实测=alive（REGISTRY-FRESH） |
+| .aidrafts/st-finalclean2-20261010 | 态④ | 零动作（波二复测） | 终清自身（本班车道，收尾按会话收尾序处置，不自清）；注册表 list_active 命中＝`session_worktree.py archive` 内建活跃硬拒守卫的同一判据面（此面 archive 会被无逃生 flag 硬拒绝）；活性实测=alive（REGISTRY-FRESH）；fs 写在避 |
+| .aidrafts/st-fullflow2-20261008 | 态④ | 零动作（波二复测） | 注册表 list_active 命中＝`session_worktree.py archive` 内建活跃硬拒守卫的同一判据面（此面 archive 会被无逃生 flag 硬拒绝）；活性实测=alive（REGISTRY-FRESH） |
+| .aidrafts/st-mineloop-20261010 | 态④ | 零动作（波二复测） | 波二白名单·矿考循环班（同裁定）；注册表 list_active 命中＝`session_worktree.py archive` 内建活跃硬拒守卫的同一判据面（此面 archive 会被无逃生 flag 硬拒绝）；活性实测=alive（REGISTRY-FRESH）；fs 写在避让窗内（5.3mi |
+| .aidrafts/st-nightmine-20261010 | 态④ | 零动作（波二复测） | 注册表 list_active 命中＝`session_worktree.py archive` 内建活跃硬拒守卫的同一判据面（此面 archive 会被无逃生 flag 硬拒绝）；活性实测=alive（REGISTRY-FRESH） |
+| .aidrafts/st-nightmine-20261010b | 态④ | 零动作（波二复测） | 注册表 list_active 命中＝`session_worktree.py archive` 内建活跃硬拒守卫的同一判据面（此面 archive 会被无逃生 flag 硬拒绝）；活性实测=alive（REGISTRY-FRESH） |
+| .aidrafts/st-nightmine2-20261010 | 态④ | 零动作（波二复测） | fs 写在避让窗内（74.3min≤90min） |
 | .aidrafts/st-regsolo-20261010 | 态④ | 零动作（波二复测） | 指令卡 §二 红线：宪法正本载体，禁删 |
 
 - ⚑ 三问实证的收线含义：波一消失的 **30** 面中，态② 15 面的独有件 **69/69 件**逐件对到承载体（patch 的 `diff --git` 头或 safety 副本），**无承载体 0 件**；态① 10 面内容等价于 dev tree `5d9c4d3018c41c55bfbfbedc54bce447925863fd`（零独有字节⇒无需同名存证）。
