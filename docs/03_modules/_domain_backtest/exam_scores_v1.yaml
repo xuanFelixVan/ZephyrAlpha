@@ -724,3 +724,41 @@ rows:
   - mono_spearman -0.115 < 0.6
   - ic_mean 0.0193 < 0.02
   - oos_sign_flip oos=-0.0168 is=0.0193
+- card_id: TDM-E-L2-02/calibration/02_接棒撤离榜
+  node_id: TDM-E-L2-02
+  run_id: mineloop-r5-02_接棒撤离榜
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.015383616317335196
+    mono_spearman: -0.22424242424242422
+    n: 1254
+    regime_ic:
+      bear: -0.037227290479744685
+      rebound: 2.180310675767788e-05
+    oos_ic: 0.03608938581013652
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9761
+  fails:
+  - mono_spearman -0.224 < 0.6
+  - ic_mean -0.0154 < 0.02
+  - 'regime_sign_flip {''bear'': -0.037227290479744685, ''rebound'': 2.180310675767788e-05}'
+  - oos_sign_flip oos=0.0361 is=-0.0154

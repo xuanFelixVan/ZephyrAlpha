@@ -129,3 +129,22 @@ entries:
     三维严格按卡面常数：60 日高点窗/8 交易日/0.15 回撤/量能=1−roll_mean(amount,5)/roll_max(amount,60)×3；
     权重 0.4/0.3/0.3=卡面声明的三维重归一形（与在码"时间0.4+回撤0.3+扩散0.3"不同源，卡面已自行声明差异）。
     series 面=当日跨板块进度均值；60 日高点窗暖机 ⇒ 有效起点≈2021-11（卡面 data_window_evidence 同判）。
+- card_id: TDM-E-L2-02/calibration/02_接棒撤离榜
+  op: sector_relay_retreat_net_ratio
+  status: approved
+  args:
+    table: c1_market.kline_sector_880
+    map_table: c1_market.sector_code_name_map
+    close_col: close
+    amount_col: amount
+    period: "1d"
+    families: ["industry_l1", "industry_ths"]
+  prose_quote: "series 面=当日(接棒板块数−撤离板块数)/板块总数"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    族面板=189 codes（industry_l1 61 ∪ industry_ths 128，经 map 在册映射）／period='1d'。
+    接棒/撤离两条件逐字照卡面：连续 3 日 close.pct_change 同号（>0 / <0）且 amount 3 日均值 vs 前 5 日均值。
+    本班口径选择（写在此处不动判据）：「前 5 日均值」=amount.rolling(5).mean().shift(3)
+    （"前"取当前 3 日窗之前的 5 日）；若改读作同期 rolling(5) 属另一条序列=须另立卡重考，不得回改本卡判据。
+    资金面按卡面自我声明为 amount 环比代理（主力净流入不可得），本读数是榜单强度不是资金流结论。
+    分桶协议相容性开跑前已核：buckets.type=quantile_quintile（单级）＝执行器 _bucket_response 支持面。
