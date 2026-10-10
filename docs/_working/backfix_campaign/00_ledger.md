@@ -126,3 +126,14 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 - **旁支**：死亡窗 16:37:31 有 VSS 卷影快照活动（EVT svchost id=8231，patrol 补卷在案）——环境事件待定性；MareBackup 计划任务=微软 compattelrunner 遥测件（aemarebackup.dll）与本案无关——洗清。
 - **收敛面（下一步一击）**：①读 reconcile_runner/process_incubator 代码的 family-cleanup/kill 调用点（点火者被 reaper 处决后谁接手清理其 spawn 面）；②ensure_ai_wrapper_injection.ps1（每 60s 开火）通读；③event watch 已在线，下案给全链。案 #5-#9 五连案同指纹同阶段（G 镜像窗）。
 - 定名进度：行凶架构=点火者被处决引发的关联处决（第二杀径）+账本 pid 回收暴露（第一杀径，案 #8 实证）；主使进程名候代码审计定名。
+
+## 批复执行段（总统统筹 2026-10-10 批复：案 #8 验收通过+处方①+②同批落地）
+
+- **落地件**（commit 465f2779，4 文件）：
+  1. `src/zephyr/trading/process_reaper.py`：孵化台账收割分支重写——三要素身份复核 `identity_mismatch_reason`（born_after_registration/image_diverged/cmd_diverged，P-28/Z-23 契约实现落地，该回归网此前实现丢失=存量 7 例红本批翻绿）；销账 `_mark_incubation_exited`（pid 已消亡/身份不符/gone_at_recheck 三路即回写 exited_at，与 reaped 语义分离，P-28 契约"赦免项不得标 reaped"保持）；backup 活体白名单（cmdline 含 backup.ps1 必跳过，闸序=先身份后白名单，保案 #8 形态走留痕+销账）；`ReapReport.identity_mismatches` 审计面；INVARIANTS 契约段补记。
+  2. 新红蓝网 `tests/infra/infrastructure/test_process_reaper_pid_recycle_backfix.py`（批复要求"pid 回收复刻场景必拦"）：4 例=回收复刻必拦（陈旧条目+回收者=backup.ps1）+销账必写+rec_ct=0 旧格式第三道闸+真超寿 worker 反向回归仍可杀。
+  3. `test_process_reaper_identity_recheck.py`：夹具补销账 stub（断言零改动）。
+  4. `tests/legacy_zephyr/trading/test_process_reaper.py`：归因 fixture 按处方②换中性 worker 路径（归因测试本旨不变，注记在案）。
+- **红蓝读数**：新网 4/4+P-28 网 7/7（存量红翻绿）+legacy 72/72+incubator 19/19=**102/102**。
+- **审计附记（案 #9 第二杀径）**：全仓 kill 调用点清点（TerminateProcess/taskkill/psutil.kill/Stop-Process）=全部自家子进程守卫（services_registry=dashboard 手停/drift/checker_supervisor/process_pool/landing git 超时/session_worktree 自有 daemon/reaper=有复核+全落账/scheduler 守卫=自家 BizModule/belt_guard=自家 daemon），**仓内无 backup 杀手第二调用点**；reaper_kill.log 对案 #6-#9 全清；worktree 无隐藏 reaper 实例。第二杀径主使在仓外/未识别面——event watch+PPID 陷阱继续在线，下一例死亡出全链。
+- **巡检对照实验**：46216（16:50:35 起跑）账本零命中（对照组第二号）在跑；36456（案 #9，对照组第一号）死于同阶段=第二杀径坐实记录在案（402d90ef）。
