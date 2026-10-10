@@ -76,6 +76,11 @@ session: st-govjudge-20261010
 - 净零：零新 gate（CV-10R=CV-10 扩展；R2=既有规则升级），版本化机制=条目级字段非新册。
 - 施工注记：工作树跑测必须带 PYTHONPATH=worktree\src（usercustomize 锚主区 src，裸跑 zephyr 解析主区=校验器旧码假象）；R9/R11 测试面核验不受染（受测码=工作树 scripts；zephyr 面 session_concurrency 同字节 diff 实证）。
 
-## R5②③ 情绪快照器三册（进行中）
+## R5②③ 情绪快照器三册对齐 + runner 受控化（完成·改道裁决在案）
+- 路线 a（正道入 HEAD）实测与改道证据：runner 拷入后连续被源质量门系物理挡——CH-FINAL-GATE（2 处直读无 FINAL）→NO-BARE-SQL（裸 SQL 字面量）→PERMANENT-SYSTEM-TRIGGER（manual 触发判死）→TABLE-NAME-REGISTRY（硬编码表名，**无 noqa 通道**）共五门；存量 runner 按 lower standard 写就，合规入库只剩两条路=改 runner 逻辑（越数据车道 R5① 界，禁碰清单明令）或堆无通道豁免（违门意）。**前提被推翻，按令自身备选改道**（判例纪律：全过程零 production/任务/数据面触碰）。
+- 终态（②改口径路径）：runner 维持**非受控运行件**口径——任务指向不变✓文件不入 HEAD✓fms dead ref 保留（语义正确✓令原文）；capreg nightly 条目 update 口径修订注记（#ARCH-382，受控化前置=数据车道 R5① 修至源标准后走 #ARCH-380 同款收编）；sector 临时 token 退役；两 runner 翻译登记随退（retire，authority=#ARCH-382）。
+- #ARCH-382 议题（PG 账本 REG-ARCH-ISSUE-001，update v2）：title/终裁=「收编入库评估——维持非受控运行件口径」，留档五门物理证据链供数据车道班后续收编参考。
+- 工作树入库面已全量回滚（.gitignore checkout+runner 拷贝删除），主区 runner 本体自始至终零字节触碰（AST 对比等 forensic 产物即证据：改动只发生在本班工作树副本上且已删）。
+- 三投影渲染同步工作树（ARCH/CAPCAN/MODULE），publish snapshot 10/165/15。
 
 ## R6 ADR/RFC 对表（进行中）
