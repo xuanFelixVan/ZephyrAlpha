@@ -406,3 +406,64 @@ rows:
   - ic_mean -0.0107 < 0.02
   - 'regime_sign_flip {''bull'': -0.05006311539148888, ''bear'': 0.0063029888329039566}'
   - oos_sign_flip oos=0.0246 is=-0.0107
+- card_id: TDM-X-S1-02/comparison/02_dualwindow
+  node_id: TDM-X-S1-02
+  run_id: examcard-X-stop-dualwindow-20261010
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes: []
+  date: '2026-10-10'
+  metrics:
+    arm_open:
+      ic_mean: -0.06974954885672091
+      mono_spearman: -0.9999999999999999
+      n: 1877
+      regime_ic:
+        crisis: .nan
+        recent: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.0021
+      nav:
+        n: 1877
+        maxdd: 0.45602577259234334
+        sharpe: 0.23760560622334762
+        turnover_annual_x: 0.5373134328358209
+        ann_ret: 0.04507307993392986
+        cost_bp: .nan
+    arm_base:
+      ic_mean: .nan
+      mono_spearman: .nan
+      n: 1877
+      regime_ic:
+        crisis: .nan
+        recent: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.0
+      nav:
+        n: 1877
+        maxdd: 0.456025772592341
+        sharpe: 0.34585162197078473
+        turnover_annual_x: 0.0
+        ann_ret: 0.06590892473981431
+        cost_bp: .nan
+    maxdd_improvement_pp: -2.3314683517128287e-13
+    sharpe_delta: -0.10824601574743711
+    turnover_delta_annual_x: 0.5373134328358209
+    open_sharpe_at_tier_bp: .nan
+    ic_delta_is: .nan
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+  fails:
+  - maxdd_improvement -0.00pp < 5.0
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）

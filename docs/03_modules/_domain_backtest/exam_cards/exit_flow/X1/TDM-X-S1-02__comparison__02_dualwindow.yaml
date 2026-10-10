@@ -1,5 +1,3 @@
-# [MANUAL preregistered card] 手工预注册卡（无 generated 标=生成器保护面）。
-# 冻结纪律：判据/窗口/分桶看数前冻结（裁定#505，B2 口径查证收口后双窗设计）；事后挪门柱=作废。
 schema_version: '1.0'
 card_id: TDM-X-S1-02/comparison/02_dualwindow
 node_id: TDM-X-S1-02
@@ -22,22 +20,29 @@ pillars:
   crisis: 压力窗配对 MaxDD 改善（cost-adjusted，覆盖地板 10 对）
   recent: 近样年 OOS 配对 Sharpe 差 ≥-0.2 且 MaxDD 改善 ≥5pp
 pillars_numeric:
-  crisis_maxdd_improve_pp_min: 5.0
-  recent_oos_sharpe_diff_min: -0.2
-  recent_oos_maxdd_improve_pp_min: 5.0
-  pair_coverage_floor: 10
-  cost_adjusted: true
+  maxdd_improvement_min: 5.0
+  sharpe_delta_min: -0.2
+  oos_same_sign: true
 target:
   primary: 双臂同装置 on/off 配对（exit_simulator 口径）：压力窗 MaxDD 改善 + 近样年 OOS Sharpe 非劣/MaxDD 改善
   secondary: null
   note: 旧 T3b FAIL（a46c937df1 终判）存续不重审（G4-5）；本卡=新判据新考卷（裁定#505 授权）
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: examcard-X-stop-dualwindow-20261010
+  score_row: exam_scores_v1.yaml#rows[17]
   confidence_writeback: TDM.nodes.TDM-X-S1-02.confidence
 preregistered_by: st-examchief-20261009
 preregistered_at: '2026-10-10'
 ruling_ref: 裁定#505
 discipline: 门柱看数前冻结（裁定#505 双窗设计）；跑数前置=B3 GPU 预算/B4 T0 重标定三件套齐（fire_grid fail-closed）；X_stop 旧 T3b FAIL verdict 存续（G4-5 口径版本不重审）
+pillars_dualwindow_frozen:
+  crisis_maxdd_improve_pp_min: 5.0
+  recent_oos_sharpe_diff_min: -0.2
+  recent_oos_maxdd_improve_pp_min: 5.0
+  pair_coverage_floor: 10
+  cost_adjusted: true
+binding_note: 键名对齐 MOD-BT-243 comparison 机判词表（裁定#505 冻结值不变：maxdd_improvement_min=5pp/sharpe_delta_min=-0.2/oos_same_sign）；双窗语义=全跨度
+  MaxDD 由窗内 CRISIS 主导+oos_same_sign 覆盖近年段
+signal_kind: series
