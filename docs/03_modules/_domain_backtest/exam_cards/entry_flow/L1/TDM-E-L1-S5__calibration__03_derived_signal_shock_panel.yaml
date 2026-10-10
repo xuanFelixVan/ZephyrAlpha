@@ -1,0 +1,70 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+node_id: TDM-E-L1-S5
+family: calibration
+title_zh: 日级水温可导生子集（涨跌停比/成交额环比/振幅）·校准平行卡
+origin: tdm_algo_note_l1_s5
+parallel_of: TDM-E-L1-S5/calibration/02_11信号环比
+hypothesis: 11 信号环比中可由日线+涨跌停幅度导生的子集（涨停家数环比、跌停家数环比、涨停/跌停比、成交额环比、指数振幅、创新高家数比、跌破 MA20 家数比）合成 z 分数骤变（|z|>2）事件对次日沪深300收益与情绪段转移有预测力：骤变=状态切换领先；母卡 02 依赖盘中 9:35 首算的 11 信号全集（含炸板走向等盘中量），长窗不可考，本卡取其中 7 项日线可导生子集落地长窗版。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口继承母卡 02；子集 7 项清单与合成方式（等权 z 均值）先验冻结；|z|>2 阈值取母卡同值不放宽；事后挪门柱=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': 当日合成 z 分数（7 项等权）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  subset_coverage: 7/11 子集覆盖度须逐年在分数册披露（缺项当年不计入合成，禁补零冒充）
+  shock_event_count: "abs(z)>2 事件数年频计数与事件后 3 日收益分布须单列（母卡'骤变=切换领先'的直接可判面）"
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分）
+  note: 本卡只考"环比骤变"这一机制，不考 S0-S4 五档水温映射（映射口径依赖 L1-AGG，归消融卡）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S5.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit + c1_market.kline_index
+  signal_column: derived_shock_z（7 项环比 z 分数等权合成）
+  signal_derivation: >-
+    ①涨停家数环比、②跌停家数环比、③涨停/跌停比（L1-S2 卡 09/10 同导生口径，跨卡可比）；
+    ④全市场成交额环比 sum(amount)/sum(amount_{-1})-1；⑤指数振幅 (high-low)/close（000300）；
+    ⑥创新高家数比 countIf(close >= max(close,60 回看))；⑦跌破 MA20 家数比；
+    每项取 60 日滚动均值/标准差标准化为 z，合成 z = mean(z_i)（缺项不补零，直接少项取均值并记覆盖率）；
+    实现锚=src/zephyr/signal_ashare/core/daily_condition_sensor.py（TDM module_ref，实测存在）。
+  target_source: "kline_index symbol='000300' close → next_day_return；辅轴 emotion_index 次日差分"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq`
+    → 1990-12-19..2026-09-30 / 10,098,785 / 5,916（amount/volume/high/low/close 列实测在案，④⑤⑥⑦ 全可算）；
+    `... c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831（①②③ 的 limit_pct 轴，join 实测 0 unmatched）；
+    母卡盘中口径的实测约束：个股分钟线无长窗（kline_etf_1min 仅 ETF，2021-07-01 起；tick_data 2026-01-05 起）
+    ⇒ 母卡 02 的"9:35 首算盘中环比"在 2019-01-04..2025-09-09 冻结窗内不可复现（blocked_on_data，缺个股盘中历史），
+    本卡因此只考日频可导生子集并显式声明 7/11 覆盖；
+    导生实测锚（台账 §1.2）：2019..2025 年均涨停 65.4/81.9/87.9/77.0/44.1/89.2/77.0 家、
+    年均跌停 26.9/40.3/26.7/29.7/14.7/44.8/31.0 家、炸板率 0.36/0.34/0.33/0.36/0.36/0.38/0.34。

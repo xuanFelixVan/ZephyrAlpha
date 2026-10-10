@@ -1,0 +1,75 @@
+schema_version: '1.0'
+card_id: TDM-E-L0-03/comparison/02_brier_calibration_on_off
+node_id: TDM-E-L0-03
+family: comparison
+title_zh: Brier 校准回填开/关·对照卡（明日边界质量的概率学验收）
+origin: tdm_algo_note_l0_03
+hypothesis: 收盘复盘用 Brier 分数校准八态/情绪转移概率后再喂明日边界；打开校准相对关闭（用未校准先验）应降低概率的 Brier 分数与可靠性曲线偏差，并因边界更准而降低次日的暴露错配损失；若校准后 Brier 不降，则"连错的输入自动降权"机制无效，属实现级负结果必须上报。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口同批冻结；Brier 定义（多分类取各态平方误差均值，或 one-vs-rest 平均，二选一先验冻结）、
+    校准方法（Platt / 温度缩放 / 分箱频率，取实现件既有口径）与更新频率（每日盘后）三处禁卡内自造；事后挪=作废（G4-5）
+arms:
+  CAL_ON: 概率经 brier_calibration 回填校准后喂明日边界（现网口径）
+  CAL_OFF: 直接用未校准先验（八态转移 / 相似日原始概率）
+  SHRINK_HALF: 校准强度减半档（敏感性臂，判校准幅度过与不及）
+buckets:
+  type: arm_x_probability_bin
+  'on': 三臂 × 概率十分位箱（可靠性曲线逐箱出观测频率）
+  min_obs_per_bucket: 60
+pillars:
+  brier_reduction: CAL_ON 的 Brier 分数须低于 CAL_OFF（下降幅度逐段报告；不降即机制无效，主柱）
+  reliability_curve: 逐概率箱的观测频率对 45° 线的最大偏差 CAL_ON < CAL_OFF（可靠性面，禁只报均值）
+  boundary_consequence: 边界层坏=致命暂停操作的规则须可核：CAL_OFF 下"坏边界日"数量与其次日损失（相对 CAL_ON）必须同表出账
+  sharpness_disclosure: 校准往往牺牲锐度——逐臂报告概率分布的分散度（锐度）与 Brier 两列，禁只报有利一列
+  cost_gate: 由边界传导的臂对照统一走五档成本带与换手门
+target:
+  primary: brier_score（主判据，越小越好）
+  secondary: reliability_max_deviation / 成本后 NAV 差
+  note: 本卡是概率学验收卡，判据先于收益判据（边界质量决定下游一切约束）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L0-03.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(概率箱秩, 箱内观测频率秩) >=0.9 才配称"校准可靠"，本卡按冻结面取 0.6 为最低可判线并
+  在分数册同时披露实测值（禁为过柱改映射）；ic_mean/ic_ir 读"校准后概率"对"次日常规实现"的日频秩相关；
+  两段同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.emotion_index（stage='close_final'，转移真源）+ c1_backtest.regime_state_anchored（四档状态真值）+ c1_market.kline_index（损失后果面）
+  signal_column: prob_8state（先验/校准后两版）+ realized_state（次日实现态）
+  signal_derivation: >-
+    先验 = src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py（实测存在）在 <=t 数据上重放；
+    校准 = src/zephyr/plan_engine/brier_calibration.py（实测存在）按实现件既有口径；
+    真值实现态 = 次日 emotion_index 段态或 regime_state_anchored.dominant 次日值（两版并行出数，禁挑其一）；
+    边界传导 = tomorrow_boundary_planner（实测存在）→ 次日暴露上限，臂间唯一差别是概率是否经校准。
+  target_source: "Brier = mean((p - y)^2)（多分类口径冻结）；后果面 = daily_net_returns → NAV → window_metrics"
+  data_window_evidence: >-
+    命令原文 `SELECT toYear(trade_date),uniqExact(trade_date) FROM c1_market.emotion_index WHERE stage='close_final'
+    AND trade_date>='2019-01-01' GROUP BY y` → 2019..2025 = 244/243/243/242/242/242/243（全窗逐日真值齐）；
+    `... c1_backtest.regime_state_anchored` → 2017-07-11..2026-10-09 / 4,488 行（dominant 列可做第二套真值交叉）；
+    实测八态概率逐日落库面缺失（system.tables 无 forecast/probability 长表；judgment_next_day_forecast 仅 6 行）
+    ⇒ 本卡以重放口径落地并显式标注"重放非当日实录"，禁把重放概率当当年实录报校准增益；
+    件实测存在：brier_calibration.py / next_day_8state_forecast.py / tomorrow_boundary_planner.py / closing_session_decision.py。
+infra_gap: blocked_on_impl=comparison 族卡驱动执行器（共用）+ 当日概率实录账（缺则只能重放）；blocked_on_data=盘后计划/边界逐日流水（2019-01-04..2026-09-30 无表）

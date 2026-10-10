@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-E-L1/comparison/02_anchored_cap_curve_on_off
+node_id: TDM-E-L1
+family: comparison
+title_zh: 大盘总闸仓位上限曲线开/关×预算带三档·对照卡（长窗可回测）
+origin: tdm_algo_note_l1
+hypothesis: 总闸的真实贡献=波动率目标化上限曲线 `cap = 1 − 0.70×clamp((vol_pct−0.30)/0.70, 0, 1)`（Owner 2026-09-14 签字档）在满仓对照下能砍掉多少尾部回撤、让渡多少收益；六段预算带（吸筹 30-50%/点火 50-70%/扩张 60-80%/亢奋封顶 30%）叠加后应进一步压缩高波动段的暴露——判据是"回撤改善/收益让渡"这一对比值，而非单看 Sharpe。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口与 L1 母卡同批冻结；cap 公式与常数（0.70/0.30/封顶 30%）逐字取 TDM algo_note_zh 与 agg-switch-design §2（Owner 签字档），卡内禁改；fail-closed 地板值 0.30（R-055a）作缺供数臂；事后挪=作废（G4-5）
+arms:
+  FULL: cap 曲线 ∧ L1 预算带（取 min，只减不加，与 L1-AGG 接线口径一致）
+  CAP_ONLY: 只开 cap 曲线（隔离预算带的贡献）
+  BAND_ONLY: 只开六段预算带（隔离 cap 的贡献）
+  FULL_IN: 两装置全关（满仓对照）
+  FAIL_CLOSED: 人为抽掉 vol_pct 供数（缺供数须落 0.30 地板而非 1.0，验 R-055a 口径在生产语义下的代价）
+buckets:
+  type: arm_x_vol_pct_decile
+  'on': 五臂 × vol_pct 十分位（暴露压缩主要发生在上十分位）
+  min_obs_per_bucket: 60
+pillars:
+  tail_improvement: FULL 相对 FULL_IN 的 MaxDD 改善 >= 5pp（闸门合法性主柱）
+  giveback_limit: FULL 相对 FULL_IN 的年化收益让渡 <= 4pct（超过即"过度谨慎税"，负结果如实入册并给出解锁条件）
+  decomposition: CAP_ONLY 与 BAND_ONLY 的改善之和应 >= FULL 的改善（两装置近似可加；若 FULL 明显更小则存在重叠压缩，须在分数册标注冗余候选）
+  fail_closed_cost: FAIL_CLOSED 臂相对 FULL 的年化差=缺供数日的保守代价，必须为正数披露（禁把 fail-closed 读作免费）
+  cost_gate: 五臂统一走冻结五档 [0,5,10,20,40]bp，逐臂非增且 40bp >= survival_floor=0.0；年化换手 <= 8.0x
+target:
+  primary: cost_adjusted_sharpe
+  secondary: max_drawdown / annual_return_giveback
+  note: 本卡同时是 L1-AGG 消融卡（同目录 02 号）的"结果侧对照"，两卡共用权重帧与数据装载
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(vol_pct 十分位秩, 当日实际暴露秩) >=0.6（越恐慌越少仓位=闸的机械定义）；
+  ic_mean/ic_ir 读"当日 cap 值截面（跨环境段的时间序列上取滚动窗口与后续收益的秩相关）"对"次日指数收益"的 IC
+  ——闸若有效，低 cap 日之后不应系统大涨；两段同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.regime_state_anchored（vol_pct/dominant 实测在册）+ c1_market.kline_index（标的价）
+  signal_column: vol_pct（上限曲线自变量）、dominant（四档状态，用于预算带映射）
+  signal_derivation: >-
+    cap_t = 1 − 0.70×clamp((vol_pct_t − 0.30)/0.70, 0, 1)（agg-switch-design §2 公式，逐日算）；
+    六段预算带由 dominant/情绪段态映射到 [下界,上界]，最终暴露 = min(cap_t, band_upper_t)（只减不加）；
+    缺供数臂：vol_pct 置 NULL ⇒ 暴露=0.30 地板（R-055a fail-closed 口径，禁取 1.0）；
+    权重帧 = 基准清单权重 × 当日暴露（与 L4 族同一 evaluate_recipe 权重源，跨卡可比）。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → window_metrics(sharpe/max_drawdown/total_return)"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count() FROM c1_backtest.regime_state_anchored`
+    → 2017-07-11..2026-10-09 / 4,488 行（列实测：close/ma20/ma60/ma120/vol_pct/dominant/data_source/ingest_ts）
+    ⇒ 长窗充分（IS 起点 2019-01-04 早于表起点后 18 个月，暖机完整）；
+    `... c1_backtest.regime_snapshot_history` → 3,635 行（旧 HMM 链保留，回滚窗至 2026-10-23，TDM 记名实测在案）；
+    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_index`
+    → 1990-12-19..2026-10-09 / 3,104,162 / 1,097（000300/000905/000852/399006 实测各 1,843 行覆盖 2018-06-01..2025-12-31）；
+    成本档=config/exam_scale_cost_gate.yaml（tiers_bp/survival_floor/cap_annual_x=8.0 实测读自冻结件）；
+    件实测存在：src/zephyr/regime/core/regime_detector.py（TDM module_ref）+ pf_alloc 侧 ANCHORED_CAP 裁剪接线（TDM 记名）。
+infra_gap: blocked_on_impl=comparison 族卡驱动执行器（1 件，共用）；数据面全齐，本车道长窗最可跑的一张闸类卡

@@ -28,11 +28,11 @@ target:
   primary: emotion_six_state_transition（情绪六段态转移概率，辅轴）
   secondary: emotion_six_state_transition（情绪六段态转移概率，辅轴）
   note: 炸板率对情绪转移更贴（辅轴主考）
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: nightmine-04_炸板率
+  score_row: exam_scores_v1.yaml#rows[4]
   confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
 preregistered_by: st-examchief-20261009
 preregistered_at: '2026-10-09'

@@ -1,0 +1,83 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-AGG/ablation/02_state_input_replacement
+node_id: TDM-E-L1-AGG
+family: ablation
+title_zh: 市场状态判定环输入替换·消融卡（随机/固定/旁路三档看整链掉多少）
+origin: tdm_algo_note_l1_agg
+hypothesis: 把"锚定四档状态 × 情绪六段分布"双轨判定的输出分别替换为随机态、固定最谨慎态、旁路（直接把宏观 vol_pct 当状态用，取消双轨仲裁），下游全链（L1 预算带→L2 板块→L3 个股→L4 执行）的净表现掉多少=本环的真实贡献；若"固定最谨慎档"与真实判定差距极小，则该环当前只是在重复一个常数（净零候选实证）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口同批冻结；三档替换定义先验写死（随机=冻结种子的四档均匀抽样；固定=恒定最谨慎档；旁路=vol_pct 阈值直映射四档），事后禁改替换形态；回滚开关 data/runtime/anchored_cap.disabled（旁路臂的实现锚，实测机制在 TDM 记名）；事后挪=作废（G4-5）
+arms:
+  REAL: 双轨判定真输出（anchor 四档 × 情绪六段，冲突时熵高降档，缺供数 fail-closed 0.30）
+  RANDOM: 状态输入换随机档（冻结种子）
+  FIXED_CONSERVATIVE: 状态输入恒置最谨慎档
+  BYPASS_MACRO_ONLY: 取消双轨仲裁，只用宏观 vol_pct 直映射（旁路情绪轴）
+  BYPASS_EMOTION_ONLY: 只用情绪六段分布（旁路宏观轴，测两轴各自的边际贡献）
+buckets:
+  type: arm_x_state
+  'on': 五臂 × 四档状态（各档停留时长与下游暴露联合分布）
+  min_obs_per_bucket: 60
+pillars:
+  chain_drop: REAL − RANDOM 的成本后 Sharpe 差（本环携带的信息量，主柱）
+  constant_test: REAL − FIXED_CONSERVATIVE 的 MaxDD 与 Sharpe 双差（若两差均近 0 ⇒ 本环≈常数，进治理资产"零触发零消费→退役"候选账，如实上报不粉饰）
+  axis_marginal: BYPASS_MACRO_ONLY 与 BYPASS_EMOTION_ONLY 相对 REAL 的掉幅，两轴边际各自出数（判"双轨"是否名实相符）
+  conflict_arbitration: 冲突日（两轴指向分裂且熵超阈）子集的 REAL vs RANDOM 差值（仲裁机制只在分裂日有可判面，须单列 n 与置信）
+  fail_closed_trace: 缺供数臂必须能在产物里区分 risk_signal_source=neutral_fail_closed 与 params_supplied（R-055a 溯源面，违例即卡作废）
+target:
+  primary: cost_adjusted_sharpe（五臂各一条全链 NAV）
+  secondary: max_drawdown / state_dwell_time
+  note: 消融实验的合法性前置=只替换本环输出，上游数据与下游规则一字不动
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-AGG.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(谨慎度档序 [进攻=1 … 最谨慎=4], 当日实际暴露秩) >=0.6（就低不就高的机械式）；
+  ic_mean/ic_ir 读"当日判定状态序"对"次日全链收益"的日频秩相关（状态若含信息则该 IC 显著非零，
+  近 0 即支持"常数测试"负结果）；两段同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.regime_state_anchored（四档轴）+ c1_market.emotion_index（情绪六段轴，stage='close_final'）
+  signal_column: dominant / vol_pct（宏观轴）+ emotion_index（微观轴）
+  signal_derivation: >-
+    REAL：anchored_state_machine 输出四档 + 情绪段 → 双轴一致取结论、分裂按"就低不就高"、缺供数落 0.30；
+    RANDOM：np.random.default_rng(冻结种子) 在四档上均匀抽样，逐日一次；
+    FIXED_CONSERVATIVE：恒置最谨慎档（暴露=0.30 地板等价）；
+    BYPASS_MACRO_ONLY：dominant = 由 vol_pct 三分位直映射（阈值先验冻结，不拟合）；
+    BYPASS_EMOTION_ONLY：dominant = 由 emotion_index 十分位直映射；
+    替换后的暴露与权重按 L1/02 卡同一 cap 机制传播到全链权重帧。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → window_metrics"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count() FROM c1_backtest.regime_state_anchored`
+    → 2017-07-11..2026-10-09 / 4,488 行（列实测 close/ma20/ma60/ma120/vol_pct/dominant/data_source/ingest_ts）；
+    `SELECT toYear(trade_date),uniqExact(trade_date) FROM c1_market.emotion_index WHERE stage='close_final' AND trade_date>='2019-01-01' GROUP BY y`
+    → 2019..2025 = 244/243/243/242/242/242/243 天（情绪轴逐年完整；列实测 components/source/stage/version，
+    components 内含 C1_limitup_temp/C2_promotion 分量且 source 字段记 'daban_board_event'，实测样本行摘录于台账 §1.1）；
+    实现件实测存在：src/zephyr/regime/core/anchored_state_machine.py（TDM module_ref，MOD-REGIME-001）；
+    回滚开关机制实测在 TDM 记名（data/runtime/anchored_cap.disabled 空文件即整段旁路，回滚窗至 2026-10-23）；
+    成本档=config/exam_scale_cost_gate.yaml（实测冻结件）。
+infra_gap: >-
+  blocked_on_impl=（1）ablation/comparison 族卡驱动执行器（共用 1 件）
+  （2）全链权重帧的可替换注入点（现 cap 接线在 pf_alloc 侧，消融需要"状态输入注入器"才能换 RANDOM/FIXED 臂，
+  实测无该件——不虚构，缺什么写什么）。数据面全齐，长窗可跑。

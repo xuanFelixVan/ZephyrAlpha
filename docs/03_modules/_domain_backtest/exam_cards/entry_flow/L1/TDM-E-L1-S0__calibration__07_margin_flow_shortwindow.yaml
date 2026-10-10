@@ -1,0 +1,69 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S0/calibration/07_margin_flow_shortwindow
+node_id: TDM-E-L1-S0
+family: calibration
+title_zh: 两融余额环比（去杠杆压力，逐标的实测窗）·流动性校准平行卡
+origin: tdm_algo_note_l1_s0
+parallel_of: TDM-E-L1-S0/calibration/03_流动性卡
+hypothesis: 两融融资余额 5 日环比（全市场加总）连续下降=去杠杆压力，分桶对次日沪深300收益单调：环比越负收益越差，且在极负档存在非线性加速（强制平仓链条）。母卡 03 绑 DR007-OMO 偏离（实测银行间利率面无长窗：market_china_bond_yield 仅 2025-09-23 起），本卡换两融面落地其可用窗版本。
+window:
+  in_sample:
+  - '2024-09-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-06-30'
+  regimes:
+    bull: 2024-09-02..2025-03-31（标签按 000300 该段累计收益符号开考前机械复核，不预断言）
+    bear: 2025-04-01..2025-09-30（同规则）
+  frozen_note: 窗口由 c1_market.margin_trading 实测覆盖（2024-09-02..2026-10-08，505 个交易日）唯一决定；
+    5 日环比与"连续下降计数"口径先验冻结；事后挪门柱=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': 融资余额 5 日环比
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 两环境段 IC 同号且均过 ic_floor
+  acceleration_tail: 连续下降 >=3 日且环比落在最低十分位的日子，其次日收益中位数须显著低于全样本（去杠杆非线性面，n 小如实披露）
+  breadth_of_cause: 融资买入额（margin_buy）与偿还额（margin_repay）净额与余额变化须交叉核对（余额降但净额为正=数据口径事故，须出声）
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_index_return_volatility（次日波动，压力面）
+  note: 本卡是"实测窗短"的诚实样本——判据以方向与事件账为主，min_obs_per_bucket 已降到 40 并声明原因
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S0.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.margin_trading
+  signal_column: margin_balance（全市场 sum）→ margin_balance_5d_change_rate
+  signal_derivation: >-
+    日度加总 sum(margin_balance)（按 exchange 分别加总再合并，禁混算口径）；
+    5 日环比 = balance_t/balance_{t-5} - 1；连续下降计数 = streak(if(Δbalance<0))；
+    净额 = margin_buy - margin_repay（与余额日变化对账，误差 >1% 出声）；
+    short_balance 融券面单列不参与主信号（融券规模小且机制不同，混合会污染去杠杆读法）。
+  target_source: "kline_index symbol='000300' close → next_day_return"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.margin_trading`
+    → 2024-09-02..2026-10-08 / 2,100,709 行 / 4,933 标的；`SELECT count(DISTINCT trade_date) FROM c1_market.margin_trading`
+    → 505 个交易日（本卡 IS+OOS 总样本上限，据此把 min_obs_per_bucket 由 60 降到 40 并声明是样本结构限制而非调参）；
+    列实测：data_source/exchange/ingest_ts/margin_balance/margin_buy/margin_repay/short_balance/symbol/symbol_canonical/trade_date；
+    母卡原绑口径的实测缺失：`SELECT min(trade_date),max(trade_date),count() FROM c1_market.market_china_bond_yield`
+    → 2025-09-23..2026-10-09 / 10,416 行（国债收益率曲线，银行间资金面 DR007 无表可取）
+    ⇒ 母卡 03 在 2019-2025 冻结窗内 blocked_on_data 成立，本卡是流动性轴唯一可跑口径（窗短是客观事实）。

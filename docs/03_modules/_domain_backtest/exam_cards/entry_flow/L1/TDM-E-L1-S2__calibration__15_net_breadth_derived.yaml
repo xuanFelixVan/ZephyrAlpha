@@ -1,0 +1,67 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/15_net_breadth_derived
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: 净广度（涨停家数-跌停家数，日线导生口径）·广度校准平行卡
+origin: tdm_algo_note_l1_s2
+parallel_of: TDM-E-L1-S2/calibration/08_净广度
+hypothesis: 净广度（导生涨停家数减导生跌停家数）分桶对次日沪深300收益单调正相关，且与涨停家数单卡（卡 09）正交——对卡 09 序列回归取残差后残差 IC 仍 >= 0.02（跌停腿含独立下行信息）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口继承母卡 08，门柱同数值；正交残差判据看数前冻结（母卡 08 的"与涨停家数单卡正交（残差 IC 过地板）"同命题）
+buckets:
+  type: quantile_decile
+  'on': 当日净广度（导生）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  orthogonal_increment: 净广度对同日涨停家数（卡 09）OLS 残差的日频 IC 均值 >= 0.02
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分）
+  note: 净广度是比值型与差分型的混合口径，本卡固定为差分（涨停-跌停），不做比值变体（变体入长尾）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
+  signal_column: net_breadth_derived
+  signal_derivation: >-
+    net_breadth = countIf(r >= lim-0.002) - countIf(r <= -(lim-0.002))，
+    r = close/lagInFrame(close) OVER (PARTITION BY symbol ORDER BY trade_date
+    ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING) - 1，lim = c1_market.stk_limit.limit_pct
+    （FINAL join on symbol+trade_date，实测全窗 0 unmatched）。
+  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
+  data_window_evidence: >-
+    命令原文与实测（台账 §1.2 同一条 SQL）：2019..2025 年均涨停/年均跌停 =
+    65.4/26.9、81.9/40.3、87.9/26.7、77.0/29.7、44.1/14.7、89.2/44.8、77.0/31.0
+    ⇒ 导生净广度年均约 +38.5/+41.6/+61.2/+47.3/+29.4/+44.4/+46.0 家，中枢为正、年内极值随 2024-09-30 事件右偏；
+    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit`
+    → 2015-01-05..2026-10-09 / 9,254,772 / 5,831；`... kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
+    母卡绑表 `c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行 / 54 天（冻结窗零行）；
+    目标面 `kline_index symbol='000300'` → 2018-06-01..2025-12-31 / 1,843 行。

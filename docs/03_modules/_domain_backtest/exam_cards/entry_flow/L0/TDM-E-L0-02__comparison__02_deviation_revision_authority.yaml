@@ -1,0 +1,77 @@
+schema_version: '1.0'
+card_id: TDM-E-L0-02/comparison/02_deviation_revision_authority
+node_id: TDM-E-L0-02
+family: comparison
+title_zh: 盘中偏离修订权限开/关·对照卡（修订仅当日有效，跨日消费必须拒发）
+origin: tdm_algo_note_l0_02
+hypothesis: 实际走势偏离计划超阈时，boundary_revision_engine 重订当日边界；"有修订权"臂应减少越界持仓与事后追改，"无修订权"臂则全天守盘前计划。判据除收益/回撤外，必须包含两条纪律面：修订是否只当日生效（跨日过期消费必须拒发）与计划外操作是否被完整记为执行不一致——违例即实现级负结果。
+window:
+  in_sample:
+  - '2021-07-01'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-06-30'
+  regimes:
+    bull: 2021-07-01..2021-12-31（标签按沪深300 区间收益符号开考前机械复核）
+    bear: 2022-01-01..2022-12-31（同规则）
+  frozen_note: 窗口由盘中代理数据（kline_etf_1min 实测起点 2021-07-01）钉死；偏离阈值与修订权限边界先验冻结，
+    禁开考后调阈值（阈值敏感只做旁列，不改主判）；事后挪门柱=作废（G4-5）
+arms:
+  REV_ON: 偏离超阈触发重订当日边界（现网口径）
+  REV_OFF: 无修订权（全天守盘前边界）
+  REV_LEAK_TEST: 故意把前一日边界当日消费（构造违例臂，验证 premarket_constraint_loader 的过期拒发是否真拦得住）
+buckets:
+  type: arm_x_deviation_bin
+  'on': 三臂 × 偏离幅度十分位（修订主要在高偏离段起作用）
+  min_obs_per_bucket: 60
+pillars:
+  deviation_reduction: REV_ON 的日内"持仓越界幅度"（实际暴露超当日边界的部分）须低于 OFF（装置直接效果）
+  expiry_enforcement: REV_LEAK_TEST 臂必须 100% 被拒发；未被拦住即实现违例，本卡判废并转工单（诚实门柱，不看收益）
+  outcome_in_highdev_tail: 高偏离十分位段的次日损失，ON vs OFF 差值单列（装置的存在理由就在尾部，均值不判）
+  inconsistency_account: 计划外操作（实际成交 ∉ 当日计划）计数与归因必须逐臂出账（作战室归因面，缺账则本柱标 blocked）
+  cost_gate: 三臂统一五档与换手门（修订带来的额外换手必须计价）
+target:
+  primary: cost_adjusted_sharpe
+  secondary: over_boundary_exposure_ratio / out_of_plan_order_count
+  note: 本卡一半是纪律验收（expiry_enforcement），一半是收益对照，纪律柱不过则收益柱不采信
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L0-02.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(偏离幅度十分位秩, 当日实际暴露相对盘前计划的收缩量秩) >=0.6
+  （越偏越该修）；ic_mean/ic_ir 读"当日修订幅度"对"次日组合收益"的日频秩相关（修订若含信息则非零）；
+  两段同号、OOS 同号；n 不足判 nan=fail。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_etf_1min（盘中偏离观测）+ c1_backtest.regime_state_anchored（边界输入）
+  signal_column: 当日边界（仓位上限档）与实际暴露序列、偏离幅度 = |实际-边界|/边界
+  signal_derivation: >-
+    计划与边界由 L0/02 卡（TDM-E-L0 comparison 02）同口径重放得到（跨卡共用，禁另造一套计划）；
+    盘中偏离 = 截至时点的实际暴露/收益与计划之差；
+    修订引擎 = src/zephyr/plan_engine/boundary_revision_engine（TDM 记名 module_mounts MOD-PLAN-006 对应件，
+    本车道 find 实测件名为 plan_deviation_monitor.py + 修订引擎待逐件核，未核实前不写死路径——禁虚构）；
+    过期拒发 = src/zephyr/plan_engine/premarket_constraint_loader.py（实测存在）消费跨日边界必须抛错/拒发。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → window_metrics"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_etf_1min`
+    → 2021-07-01..2026-10-09 / 292,584,491 / 1,699；`... c1_market.tick_data` → 2026-01-05..2026-10-08 / 3,943,831,530 / 11,811；
+    `... c1_backtest.regime_state_anchored` → 2017-07-11..2026-10-09 / 4,488 行；
+    实测计划/边界流水面：system.tables 检索 name ILIKE '%plan%' → c1_market.judgment_daily_plan 12 行、
+    judgment_plan_verification 24 行 ⇒ 当日计划实录不构成长窗真源（本卡以重放臂落地并显式标注）；
+    件实测存在：plan_deviation_monitor.py、premarket_constraint_loader.py（台账 §1.4 + find 实测）。
+infra_gap: blocked_on_impl=comparison 族卡驱动执行器（共用）+ 当日计划/修订逐日流水账（缺则无法验"跨日过期拒发"的实录面）；
+  blocked_on_data=2021-07-01 前盘中面

@@ -1,0 +1,72 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/11_broken_board_rate_derived
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: 炸板率（最高价触板/收盘封板导生口径）·广度校准平行卡
+origin: tdm_algo_note_l1_s2
+parallel_of: TDM-E-L1-S2/calibration/04_炸板率
+hypothesis: 炸板率（=1-收盘封板家数/盘中触板家数）分桶对次日沪深300收益有单调预测力：高炸板=封板资金退坡的领先指标，次日收益走低；母卡 04 考情绪六段转移，现行执行器无机判辅轴面，本平行卡把机判面钉在指数次日收益。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口继承母卡 04；门柱继承四件套同数值；本卡与母卡 04 的差别只在 signal 取数口径与机判目标轴（母卡 target.primary=情绪六段转移，不可被现行执行器机判）——此为卡内新设，非改母卡；看数前冻结（裁定#501）
+buckets:
+  type: quantile_decile
+  'on': 当日导生炸板率
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  denominator_guard: 触板家数<20 的交易日样本不足，须从分桶样本剔除并在分数册留痕（防小分母把炸板率伪造成 0/1 极端档）
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分，母卡情绪转移轴的机读替身）
+  note: 剔除日不计入 n，剔除天数须写入 run 附注
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
+  signal_column: broken_board_rate_derived
+  signal_derivation: >-
+    prev_close = lagInFrame(close) OVER (PARTITION BY symbol ORDER BY trade_date
+    ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING)；r = close/prev_close - 1，rh = high/prev_close - 1，
+    lim = stk_limit.limit_pct（FINAL join）；touched = countIf(rh >= lim - 0.002)，
+    sealed = countIf(r >= lim - 0.002)；broken_board_rate = 1 - sealed/nullIf(touched,0)；
+    touched < 20 的日置 NaN（denominator_guard）。后复权空间内 high/close 比例尺度不变，触板判据成立。
+  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
+  data_window_evidence: >-
+    命令原文（导生验证 SQL 见本车道台账 §1.2，含完整 FROM/WINDOW 子句）实测逐年
+    均触板家数 = 102.2/124.4/131.2/119.5/69.4/144.0/116.6（2019..2025），
+    炸板率 = 0.3603/0.3420/0.3302/0.3555/0.3643/0.3807/0.3398 —— 六年落在 0.33-0.38 稳定带，
+    量级与 A 股常识一致，导生口径判"可用"；
+    `SELECT min(trade_date),max(trade_date),count() FROM c1_market.limit_up_down` →
+    2026-07-20..2026-10-09 / 5,397 行（母卡原绑表，冻结窗零行，平行卡成立）；
+    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit` →
+    2015-01-05..2026-10-09 / 9,254,772 / 5,831；`... kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
+    已知口径限制（如实记）：日线 high 只能判"曾触及涨停价"，不能区分触板后回落到盘中任意位置，
+    与事件表口径（first_touch_time/close_sealed，见 c1_market.daban_board_event，实测仅 2026-09-01..2026-10-09
+    1,767 行）在"多次开板"细节上不等价；母卡 04 的事件表口径长窗无数据，本平行卡是冻结窗内唯一可跑口径。

@@ -33,11 +33,11 @@ target:
   primary: emotion_six_state_transition（情绪六段态转移概率，辅轴）
   secondary: emotion_six_state_transition（情绪六段态转移概率，辅轴）
   note: 高度是情绪锐度指标
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: nightmine-06_连板最高高度
+  score_row: exam_scores_v1.yaml#rows[6]
   confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
 preregistered_by: st-examchief-20261009
 preregistered_at: '2026-10-09'

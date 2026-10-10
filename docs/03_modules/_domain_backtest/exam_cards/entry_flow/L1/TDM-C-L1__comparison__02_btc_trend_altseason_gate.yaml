@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-C-L1/comparison/02_btc_trend_altseason_gate
+node_id: TDM-C-L1
+family: comparison
+title_zh: 币圈大盘总闸对照卡（BTC 200 日线趋势 × 山寨季汇率，档位开/关）
+origin: tdm_algo_note_c_l1
+hypothesis: BTC 站稳 200 日线且斜率向上=趋势档开仓；ALT/BTC 汇率上行=山寨季开进攻档；BTC 破位则收紧只留核心仓。相对"无闸满仓币圈等权"臂，闸臂应显著砍掉 2026 年内的深回撤；闸若只是长期少配（无信息），则成本后 Sharpe 改善应可被"固定半仓"解释（对照臂专门设计来识别这一点）。
+window:
+  in_sample:
+  - '2026-03-02'
+  - '2026-08-31'
+  oos: &id001
+  - '2026-09-01'
+  - '2026-10-08'
+  regimes:
+    seg1: 2026-03-02..2026-06-30（标签按 BTCUSDT 该段累计收益符号开考前机械赋值，不预断言牛熊）
+    seg2: 2026-07-01..2026-08-31（同上规则）
+  frozen_note: 窗口由两个硬约束交集钉死——crypto_kline_daily 实测起点 2025-08-08 ⇒ MA200 斜率自 2026-03-02 起才有效（200 交易日暖机），
+    终点 2026-10-08；IS/OOS 切点先验冻结。本窗极短（IS 约 125 交易日、OOS 约 27 交易日），卡内先验声明"只出方向与逐笔账，不做显著性宣称"；事后挪=作废（G4-5）
+arms:
+  GATE_FULL: BTC 趋势档 × 山寨季档联合（趋势开、山寨季加进攻档、破位收核心仓）
+  NO_GATE: 无闸满仓等权（universe 内等权）
+  FIXED_HALF: 恒定 50% 仓（识别"闸是否只是少配"的对照臂，本卡自反设计核心）
+  BTC_ONLY: 只看 BTC 趋势（旁路山寨季维，测第二维边际）
+buckets:
+  type: arm_x_btc_state
+  'on': 四臂 × BTC 三态（站上/跌破/横斜率零）
+  min_obs_per_bucket: 30
+pillars:
+  tail_cut: GATE_FULL 相对 NO_GATE 的 MaxDD 改善 >= 8pp（本窗内 BTC 高波动，浅改善=闸无信息）
+  not_just_deleverage: GATE_FULL 相对 FIXED_HALF 的成本后 Sharpe 差 > 0 才算"闸携带择时信息"，否则判"闸≈少配"（净零候选实证，须如实上报）
+  altseason_edge: BTC_ONLY 与 GATE_FULL 差值=山寨季维的边际贡献（第二维若不添正贡献则该维挂"待优化"而非封矿，终局判据归自审闸）
+  state_dwell_audit: BTC 三态停留时长与切换次数逐臂出账（频繁翻转=闸成本高，须计入换手门）
+  cost_gate: 借用 A 股冻结五档 [0,5,10,20,40]bp 做敏感性（币圈无本仓实测费率真源，卡内先验标注借用，禁自造费率）
+target:
+  primary: cost_adjusted_sharpe
+  secondary: max_drawdown
+  note: 与 TDM-C-L4 同数据源同窗，两卡互为"闸—执行"链上配对，可交叉对账
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-C-L1.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(BTC 趋势态序 [跌破=1, 横=2, 站上=3], 当日暴露秩) >=0.6；
+  ic_mean/ic_ir 读"ALT/BTC 汇率 20 日动量"对"未来 5 日山寨等权收益"的日频秩相关（山寨季维的信息面）；
+  两环境段同号、OOS 同号；OOS 仅 27 日，n 不足判 nan=fail 且不得延窗（数据上限=客观事实）。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.crypto_kline_daily
+  signal_column: close（BTCUSDT 与全 universe）/ universe_rank / is_universe_eligible / quote_volume
+  signal_derivation: >-
+    BTC 趋势态 = close > MA200 且 MA200 斜率（20 日差分）> 0 → 站上；close < MA200 → 跌破；其余 → 横；
+    山寨季 = 中位数(ALT/BTC 比值) 的 20 日动量 > 阈值（阈值先验冻结，ALT = 排除 BTC 与稳定币后的 eligible 集合）；
+    稳定币识别：symbol 以 USDT/USDC/DAI 等计价后缀者剔除（须逐条列剔除表并披露，禁凭印象剔）；
+    组合 = BTC 核心仓 + 山寨等权，暴露由两态联合档位决定（档位映射冻结）。
+  target_source: "crypto_kline_daily close → 未来 1/5 日收益；NAV 用日收盘撮合（借用 A 股五档做成本敏感性）"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),groupUniqArray(8)(symbol) FROM
+    c1_market.crypto_kline_daily` → 2025-08-08..2026-10-08 / 19,801 行 / 141 标的（含 BTCUSDT、BCHUSDT、ASTERUSDT、ADAUSDT、
+    ARBUSDT、AVAXUSDT、BNBUSDT、AAVEUSDT 等）；列实测（table_columns）：base_asset/close/data_source/exchange/high/
+    ingest_ts/is_universe_eligible/low/open/quality_flag/quote_volume/symbol/symbol_canonical/trade_date/trades/universe_rank/volume；
+    另一币圈表实测：c1_market.crypto_shadow_gate 20 行（shadow 制产物，非价格面）；
+    名册实测：TDM-C-L1 节点 confidence=untested、module_ref=null、module_mounts=null ⇒ v1 空壳（TDM 原文"币圈预留框架节点（未施工）"），
+    本卡是准入材料而非实现验收，禁声称在考既有实现。
+infra_gap: blocked_on_impl=（1）币圈仓位闸实现（节点空壳，无件可绑）（2）comparison 族卡驱动执行器（共用）；
+  blocked_on_data=币圈历史深度（MA200 有效窗仅 2026-03 起，IS/OOS 均短）+ 币圈真实费率/滑点实测面

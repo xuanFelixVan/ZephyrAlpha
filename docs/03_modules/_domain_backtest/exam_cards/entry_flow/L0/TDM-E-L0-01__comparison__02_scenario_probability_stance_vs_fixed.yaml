@@ -1,0 +1,76 @@
+schema_version: '1.0'
+card_id: TDM-E-L0-01/comparison/02_scenario_probability_stance_vs_fixed
+node_id: TDM-E-L0-01
+family: comparison
+title_zh: 情景概率定当日立场档 vs 固定立场档·对照卡（九格概率输入的真实贡献）
+origin: tdm_algo_note_l0_01
+hypothesis: 计划生成消费 scenario_probability_model 的九格情景概率（涨/跌/震荡×幅度档，技术面因子×相似日统计）来定当日立场档；相对"固定中性立场"臂，概率定档臂应在暴跌格概率高的日子显著降暴露、在上涨格概率高的日子升暴露，从而改善成本后 Sharpe 与 MaxDD；若九格概率与次日常规收益无可测关系，则"概率→立场"这一环是装饰（净零候选实证，如实上报）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口同批冻结；九格定义（3 方向×3 幅度）与相似日抽样规则（历史相似日数量、无未来信息）在开考前冻结；
+    本卡的概率序列由重放产生（历史情景概率未逐日落库，见 evidence），重放规则冻结后禁改；事后挪门柱=作废（G4-5）
+arms:
+  PROB_STANCE: 九格概率 → 立场档（悲观格概率高→降档，乐观格高→升档；映射表冻结）
+  FIXED_STANCE: 立场档恒定中性（不消费概率）
+  REVERSE_STANCE: 反向臂（悲观格高时升仓）——证伪臂，若反向更好说明映射方向错
+buckets:
+  type: arm_x_scenario_cell
+  'on': 三臂 × 九格（按当日最可能格归类）
+  min_obs_per_bucket: 60
+pillars:
+  cell_separation: 九格各自的次日指数收益分布须可区分（Kruskal-Wallis 式秩检验或格间中位数极差 >= 阈值先验冻结）——概率若不含信息则此柱 fail（重要负结果）
+  stance_monotonicity: 立场档随"上涨格概率-下跌格概率"单调（mono_spearman 面）
+  tail_control: PROB_STANCE 在最悲观格的当日暴露须显著低于 FIXED_STANCE 且该格次日损失更小（装置真正起效面）
+  reverse_check: REVERSE_STANCE 若优于 PROB_STANCE，本卡判"方向性错误"并禁止回写 confidence（防把反向当发现）
+  cost_gate: 三臂统一五档 + 换手门 8.0x；单票 8% 硬顶与整手折算三臂同施（与 L0/02 卡一致，跨卡对账）
+target:
+  primary: cost_adjusted_sharpe
+  secondary: max_drawdown / cell_next_day_return_spread
+  note: 本卡判"概率输入值不值"，不判概率模型本身准不准（准不准归 L0-03 的 Brier 校准卡）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L0-01.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(净乐观概率秩, 立场档秩) >=0.6；
+  ic_mean/ic_ir 读"当日 (上涨格概率 - 下跌格概率)"对"次日指数收益"的日频秩相关 IC；
+  两段同号、OOS 同号；n 不足判 nan=fail。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_index（指数 OHLC，重放相似日的原料）+ c1_market.kline_daily_hfq（个股层整手折算）
+  signal_column: scenario_prob_9cell（重放输出：九格概率向量 → 净乐观概率标量）
+  signal_derivation: >-
+    重放 = src/zephyr/plan_engine/scenario_probability_model.py（实测存在）+
+    src/zephyr/signal_ashare/ml_forecast/similar_day_inference.py（实测存在）在 t 日只用 <=t 的历史算相似日分布，
+    产出九格概率；严格 PIT（暖机 >= 250 交易日，禁未来样本进入相似日池）；
+    立场档映射表先验冻结（净乐观概率五分位 → 5 档仓位系数，与 L0 闸 cap 取 min）。
+  target_source: "c1_market.kline_index '000300' 次日收益（格区分柱）；daily_net_returns → NAV → window_metrics（臂对照柱）"
+  data_window_evidence: >-
+    命令原文 `SELECT symbol,min(trade_date),max(trade_date),count() FROM c1_market.kline_index
+    WHERE symbol='000300' AND trade_date BETWEEN '2018-06-01' AND '2025-12-31' GROUP BY symbol`
+    → 2018-06-01..2025-12-31 / 1,843 行（IS 前暖机段自 2018-06 起齐，250 日暖机可满足）；
+    `... c1_market.kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
+    实测九格概率历史落库面：system.tables 检索 name ILIKE '%scenario%'/'%forecast%' → 无情景概率表
+    （c1_market.judgment_next_day_forecast 仅 6 行，不构成长窗真源）⇒ 本卡以重放口径落地并显式标注"重放非当日实录"；
+    件实测存在：scenario_probability_model.py / similar_day_inference.py（find 实测，MOD-PLAN-017 对应件名与 TDM algo_refs DAL-SCEN-PROB 一致）。
+infra_gap: blocked_on_impl=comparison 族卡驱动执行器（共用）+ 当日情景概率实录账（缺则只能重放，禁把重放冒充实录）

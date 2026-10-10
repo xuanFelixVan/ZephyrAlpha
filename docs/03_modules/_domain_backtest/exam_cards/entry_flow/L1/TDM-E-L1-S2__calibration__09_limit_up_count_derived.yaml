@@ -1,0 +1,79 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/09_limit_up_count_derived
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: 涨停家数（日线+涨跌停幅度导生口径）·广度校准平行卡
+origin: tdm_algo_note_l1_s2
+parallel_of: TDM-E-L1-S2/calibration/02_涨停家数
+hypothesis: 以日线收盘比前收盘导生的涨停家数（封住口径，含一字）分桶对次日沪深300收益有单调预测力；分位>90% 的过热档增益转负（与母卡 02 同一经济命题，仅换可运行取数口径）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口/分桶/门柱逐字继承母卡 02（同 IS/OOS/同牛熊段），平行卡只换 signal 取数口径不改判据——两卡结果可直接对拍判"导生口径是否等价于事件表口径"；本卡门柱与假设于看数前冻结（裁定#501 纪律），事后挪门柱=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': 当日导生涨停家数
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，方案 §7 三件套）
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日（时滞曲线建档）
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor（条件稳定性）
+  caliber_equivalence: 与母卡 02 同日口径差（导生家数 vs 事件表家数）日度相关 rho>=0.9 时判"导生可用"；rho<0.9 时本卡结论只适用于导生口径，禁回写为母卡结论（本条为建档面，不作门柱）
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益，G0-4 主轴，与母卡同）
+  secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分，辅轴观察项）
+  note: 母卡 02 机判面同为主轴指数次日收益，故本平行卡判据面完全对齐；辅轴只建档不作门柱（现行执行器 calibration_exam.run_card 只接一个 target 面）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit（导生宽表，无单表可直接 SELECT）
+  signal_column: limit_up_count_derived
+  signal_derivation: >-
+    逐 symbol 取 prev_close = lagInFrame(close) OVER (PARTITION BY symbol ORDER BY trade_date
+    ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING)（后复权空间，日内比值尺度不变）；
+    r = close/prev_close - 1；lim = stk_limit.limit_pct（FINAL join on symbol+trade_date）；
+    当日 limit_up_count = countIf(r >= lim - 0.002)；按 trade_date 聚合成日度单序列。
+    禁消费 kline_daily_hfq.pct_change（实测该列恒 0，见 data_window_evidence）。
+    一字板天然含在封住口径内（open 与 close 同价亦满足 r>=lim-eps）。
+  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM
+    c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 行 / 5,831 标的；
+    `... FROM c1_market.kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 行 / 5,916 标的；
+    `... FROM c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行 / 仅 54 个交易日（母卡原绑表在冻结窗零行，本平行卡成立的原因）；
+    join 完备性 `SELECT countIf(l.symbol IS NULL), count() FROM (SELECT symbol,trade_date FROM kline_daily_hfq
+    WHERE trade_date BETWEEN '2019-01-04' AND '2025-09-09') k LEFT JOIN c1_market.stk_limit AS l FINAL
+    ON k.symbol=l.symbol AND k.trade_date=l.trade_date` → 0 unmatched / 7,590,928 rows（limit_pct 全窗无缺，
+    故 derivation 的 ifNull 兜底实际永不触发）；
+    导生结果实测（2019..2025 年均涨停家数）= 65.4/81.9/87.9/77.0/44.1/89.2/77.0，年内最大=321/267/165/255/117/1034/177，
+    交易日数 244/243/243/242/242/242/243（全冻结窗逐年完整，2024 峰值 1034=2024-09-30 已知行情事件）；
+    目标面 `SELECT symbol,min(trade_date),max(trade_date),count() FROM c1_market.kline_index
+    WHERE symbol='000300' AND trade_date BETWEEN '2018-06-01' AND '2025-12-31' GROUP BY symbol`
+    → 2018-06-01..2025-12-31 / 1,843 行（IS+OOS 全覆盖，暖机段足够）；
+    辅轴 `SELECT toYear(trade_date),uniqExact(trade_date) FROM c1_market.emotion_index WHERE
+    stage='close_final' AND trade_date>='2019-01-01' GROUP BY y` → 2019..2025 = 244/243/243/242/242/242/243 天。
+    已知边界：kline_daily_hfq 数据止于 2026-09-30（早于 stk_limit 至 2026-10-09），lag 窗首
+    2018-12 起约 19 天为不完整段（导生日均 4.3 家），IS 起点 2019-01-04 已在完整段内，无需改窗。

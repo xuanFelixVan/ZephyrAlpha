@@ -1,0 +1,69 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+node_id: TDM-E-L1-S3
+family: calibration
+title_zh: 晋级率（昨涨停今再板比例，日线导生口径）·结果面校准平行卡
+origin: tdm_algo_note_l1_s3
+parallel_of: TDM-E-L1-S3/calibration/03_晋级率
+hypothesis: 晋级率（昨日涨停集合中今日再次封住涨停的占比）分桶对次日沪深300收益单调正相关；晋级率高而涨停家数不增的"窄晋级"日=主线集中，情绪延续但拥挤风险升（辅轴建档）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口继承母卡 03；门柱同数值；母卡"2 板率>50% 且 3 板率不塌"的绝对阈在本卡改为经验分位档+分板率分层建档（导生口径的板率分布逐年漂移，卡内先验设定）
+buckets:
+  type: quantile_decile
+  'on': 当日晋级率（导生）
+  min_obs_per_bucket: 60
+  min_set_size: 昨日涨停集合 >= 20 只
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  promotion_ladder: 分板率另档建档（1→2、2→3、>=3→+1 三档晋级率各成序列，n>=200 才判），母卡"3 板率不塌"的判据落在此档（不作一票否决门柱）
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分，母卡情绪六段转移轴的机读替身）
+  note: series 形（日度比率）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S3.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
+  signal_column: promotion_rate_derived
+  signal_derivation: >-
+    is_lu_{i,t} = (close/lag(close)-1 >= stk_limit.limit_pct - 0.002)（卡 09 口径）；
+    promotion_rate_t = countIf(is_lu_{t} AND is_lu_{t-1}) / nullIf(countIf(is_lu_{t-1}),0)；
+    分板率档用卡 13/14 的 streak 串：ladder_k→k+1 = countIf(streak_t = k+1)/nullIf(countIf(streak_{t-1}=k),0)，k∈{1,2,>=3}；
+    分母 <20 置 NaN。串须 IS 前 60 交易日暖机。
+  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM
+    c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831；
+    `... kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
+    母卡绑表 `c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行 / 54 天（冻结窗零行）；
+    分母规模实测锚：涨停家数年均 44-89 家（2019..2025，台账 §1.2 实测）；
+    辅轴 `c1_market.emotion_index`（stage='close_final'）实测 2019..2025 逐年 244/243/243/242/242/242/243 天完整；
+    已知限制（如实记）：日线导生的"再板"只判收盘封住，不含盘中触板未封的伪晋级，与事件表
+    daban_board_event(open_board_count/close_sealed) 口径在细节上不等价，后者实测仅 2026-09-01..2026-10-09 / 1,767 行。

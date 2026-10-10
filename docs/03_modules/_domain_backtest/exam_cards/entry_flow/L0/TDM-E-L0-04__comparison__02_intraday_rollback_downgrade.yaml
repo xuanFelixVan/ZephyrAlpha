@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L0-04/comparison/02_intraday_rollback_downgrade
+node_id: TDM-E-L0-04
+family: comparison
+title_zh: 盘中四时点滚动预测触发降档 vs 不降档·对照卡（拿不准明天就今天减）
+origin: tdm_algo_note_l0_04
+hypothesis: 盘中 10:00/11:00/13:30/14:30 四时点用最新盘面重算明日情绪概率，当融合结果比盘前先验悲观 >=1 档时发"明日降档预警"并据三处反哺（总闸环境降档/禁新开仓/破减仓线减仓）；相对"预警只记录不行动"臂，行动臂应在次日走弱日降低损失、在次日走强日付出踏空成本——两腿净额与条件分布都要出数，不能只报有利腿。
+window:
+  in_sample:
+  - '2021-07-01'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-06-30'
+  regimes:
+    bull: 2021-07-01..2021-12-31（暖机后首段，标签按沪深300 区间收益符号开考前机械复核）
+    bear: 2022-01-01..2022-12-31（同规则）
+  frozen_note: 窗口由 kline_etf_1min 实测起点（2021-07-01）与 ch_data.WINDOW_HOLDOUT（2025-10-09..2026-09-30）共同决定；
+    悲观档位序（8 态全序，蓝图 §2）与">=1 档即预警"阈值逐字取 algo_note_zh，卡内禁改；
+    盘中价用 510300/510050 ETF 分钟线作指数代理，代理误差在卡内先验声明（非事后找补）；事后挪=作废（G4-5）
+arms:
+  ACT: 预警生效——按三处反哺改当日暴露（10:00 首触发即执行，冻结时点表）
+  RECORD_ONLY: 预警只记录不行动（现网若本为建议档，则该臂即生产态，须标注）
+  ACT_DELAY_CLOSE: 只在尾盘 14:30 触发才行动（判"早触发是否值得"，即信息增量 vs 反应成本）
+buckets:
+  type: arm_x_trigger_time
+  'on': 三臂 × 四时点（10:00/11:00/13:30/14:30）
+  min_obs_per_bucket: 60
+pillars:
+  conditional_loss_cut: 预警日次日的组合损失，ACT 须低于 RECORD_ONLY（预警的真实价值面，主柱）
+  false_alarm_cost: 预警日次日实际上涨的比例（误报率）与踏空成本必须同表出账
+  time_information_gain: 四个触发时点的次日预测准确率单调（越晚越准为预期；非单调则盘中更新机制存疑，如实记）
+  pessimism_order_audit: 8 态悲观序的档位差计算须可逐笔复核（档位差=0 却行动，或差>=1 未行动，均判实现违例，整卡作废）
+  cost_gate: 三臂统一五档成本带与换手门 8.0x（行动臂换手上升必须计价，否则对照不公）
+target:
+  primary: cost_adjusted_sharpe（三臂各一条 NAV）
+  secondary: false_alarm_rate / 预警日次日损失均值
+  note: 本卡是 L0 段唯一"盘中可行动"的环节，判据必须含盘中时点维度
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L0-04.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(触发时点秩 [10:00=1 … 14:30=4], 该时点预测准确率秩) >=0.6（越晚越准）；
+  ic_mean/ic_ir 读"日内累计跌幅代理（ETF 分钟相对开盘）"对"次日情绪实现档"的日频秩相关；
+  两段同号、OOS 同号；n 不足判 nan=fail。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_etf_1min（盘中代理）+ c1_market.emotion_index（情绪真值）+ c1_market.kline_index（指数核对）
+  signal_column: 盘中四时点的明日悲观档（融合概率）与先验档的档位差
+  signal_derivation: >-
+    先验 = next_day_8state_forecast（实测存在）盘后落库；
+    盘中修正 = similar_day_inference（实测存在）以截至各时点的盘面相似日检索；
+    组合器 = src/zephyr/plan_engine/intraday_tomorrow_forecast.py（实测存在，纯函数核零 IO，三零件产出由调用方注入）；
+    Brier 降权 = brier_calibration（实测存在）；
+    预警判据 = 融合最可能态比先验最可能态悲观 >=1 档（8 态全序见蓝图 §2，档位差为序数差非概率差）；
+    代理口径：510300 分钟收盘价对当日开盘的比值作为"今天盘中走势"观测（与指数误差先验声明 <0.2%/日量级，实测须复核）。
+  target_source: "次日情绪实现档（emotion_index 段态）与次日组合净收益（daily_net_returns → window_metrics）"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_etf_1min`
+    → 2021-07-01..2026-10-09 / 292,584,491 / 1,699（盘中四时点唯一长于 tick 的面）；
+    `... c1_market.tick_data` → 2026-01-05..2026-10-08 / 3,943,831,530 / 11,811（短窗精确复核版可用）；
+    `SELECT toYear(trade_date),uniqExact(trade_date) FROM c1_market.emotion_index WHERE stage='close_final' AND trade_date>='2019-01-01' GROUP BY y`
+    → 2019..2025 = 244/243/243/242/242/242/243，另 2026 实测 186 天（本卡 OOS 段内真值齐）；
+    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_index` → 1990-12-19..2026-10-09 / 3,104,162 / 1,097；
+    TDM 实测：本节点 data_refs=['DS-150','DS-082','DS-107']、algo_refs=['DAL-8STATE-FCST']、module_mounts=['MOD-SIG-128']；
+    外部文献向（TDM 已记 Lou-Poli-Gao / Renault JBF 2017 / SSRN 5599654）本车道未逐条取回 URL+年份复核 ⇒ 记"受阻非查无"，入长尾。
+infra_gap: blocked_on_impl=comparison 族卡驱动执行器（共用）；blocked_on_data=2021-07-01 之前的个股/指数盘中面（ETF 分钟也不覆盖，故 IS 起点被数据钉死）

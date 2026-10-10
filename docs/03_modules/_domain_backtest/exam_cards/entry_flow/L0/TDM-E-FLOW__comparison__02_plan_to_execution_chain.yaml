@@ -1,0 +1,73 @@
+schema_version: '1.0'
+card_id: TDM-E-FLOW/comparison/02_plan_to_execution_chain
+node_id: TDM-E-FLOW
+family: comparison
+title_zh: 建仓信号整链对照卡（计划段/选股段/执行段三处各关掉一环看终端清单掉多少）
+origin: tdm_algo_note_flow
+hypothesis: 本流终端输出（今日建仓清单）的质量由三段共同决定：盘前计划（L0 定档）、选股（L2/L3 选票）、执行（L4 时点与成本）。逐段旁路对照——执行段用 close 理想成交冒充、选股段换成随机票、计划段换成恒定仓位——终端净表现的掉幅即各段边际贡献；若某段掉幅近 0，则该段在当前配置下未对终端负责（治理净零候选输入）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口同批冻结（本卡是全流总卡，窗必须与分段卡一致才能对账）；三处旁路的替换定义先验写死，事后挪=作废（G4-5）
+arms:
+  FULL: 三段全在（真链路）
+  NO_EXEC_CALIBER: 执行段旁路为 close 理想成交（无 next_open/vwap 代价）——量化"执行段值多少"
+  NO_STOCK_PICK: 选股段换随机票（同权重、同闸、冻结种子）——量化"选股段值多少"
+  NO_PLAN_CAP: 计划段恒定仓位（不随闸/预算带调档）——量化"计划段值多少"
+buckets:
+  type: arm_x_segment
+  'on': 四臂 × 三段归因（每臂只动一段）
+  min_obs_per_bucket: 60
+pillars:
+  marginal_drop: 每臂相对 FULL 的成本后 Sharpe 掉幅（三段边际，主柱；三列必须全出，禁只报最大段）
+  additivity_check: 三段掉幅之和与"三段同时旁路"的全旁路掉幅之比报告（>1 提示段间冗余，<1 提示段间互补，均为重要结构性结论）
+  cost_gate: 四臂统一走冻结五档，逐臂非增且 40bp >= survival_floor=0.0；换手 <= 8.0x
+  honesty_of_full: FULL 臂必须与 L1/02、L4/02 两卡的 FULL 臂逐位一致（跨卡对账柱，不一致=有一卡口径造假，先查自己）
+target:
+  primary: cost_adjusted_sharpe
+  secondary: max_drawdown
+  note: 本卡不新造信号，只替换三段输出——替换合法性同 L1-AGG 消融卡
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-FLOW.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(段保真度秩 [三旁路=1, 单段旁路=2/3/4, FULL=5], NAV 秩) >=0.6；
+  ic_mean/ic_ir 读"当日终端清单集中度（持仓票数倒数）"对"次日组合收益"的日频秩相关（清单质量面）；
+  两段同号、OOS 同号。本节点 module_ref=null（实测名册 has_data_refs=False），无代码件可绑，
+  故判据全部走"链路口径对照"而非单件验收。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（价量与权重帧装载）+ c1_backtest.regime_state_anchored（计划段闸输入）
+  signal_column: weights_terminal（终端建仓清单→权重帧）
+  signal_derivation: >-
+    FULL = evaluate_recipe 产出的权重帧 × L1/02 卡同一 cap 机制 × exec_caliber=next_open；
+    NO_EXEC_CALIBER 只改 exec_caliber="close"；NO_STOCK_PICK 只把清单换成冻结种子均匀抽样的等票数字段；
+    NO_PLAN_CAP 只把暴露置常数（=FULL 臂的日均暴露，保持规模可比，禁挑高值）；
+    module_mounts MOD-SIG-087（TDM 记名，本节点唯一挂载件，其存在性未在本车道 §1.4 逐件核范围内，标注待核）。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位, exec_caliber=臂) → NAV → window_metrics"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq`
+    → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；`... c1_backtest.regime_state_anchored` → 2017-07-11..2026-10-09 / 4,488；
+    名册实测：TDM-E-FLOW 节点 cards_total=1、cards_preregistered=0、has_data_refs=false、has_algo_refs=true、module_ref=null（本卡为该节点首张可运行面卡）；
+    成本档=config/exam_scale_cost_gate.yaml（实测冻结件）。
+infra_gap: blocked_on_impl=comparison/ablation 族卡驱动执行器（共用 1 件）；数据面齐

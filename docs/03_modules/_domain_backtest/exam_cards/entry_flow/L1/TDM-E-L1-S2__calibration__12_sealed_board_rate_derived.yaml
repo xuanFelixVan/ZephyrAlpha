@@ -1,0 +1,66 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/12_sealed_board_rate_derived
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: 封板率（收盘封板/盘中触板导生口径）·广度校准平行卡
+origin: tdm_algo_note_l1_s2
+parallel_of: TDM-E-L1-S2/calibration/05_封板率
+hypothesis: 封板率（=收盘封板家数/盘中触板家数）分桶对次日沪深300收益单调正相关，>80% 档存在正反馈增益（母卡 05 经济命题的可运行口径版本）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口继承母卡 05，门柱同数值；与卡 11（炸板率）为同一导生量的互补口径（1-x），两卡并列考是刻意设计——若两卡结论符号相反则暴露分桶/剔除规则 bug，属自校验面；看数前冻结（裁定#501）
+buckets:
+  type: quantile_decile
+  'on': 当日导生封板率
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  denominator_guard: 触板家数<20 的交易日置 NaN 并剔除（与卡 11 同一剔除规则，保证两卡样本集逐日相同）
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分）
+  note: 80% 绝对档只作叙事对照不作门柱（分桶为经验分位十分位，绝对档在导生口径下的分位位置随年漂移）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
+  signal_column: sealed_board_rate_derived
+  signal_derivation: >-
+    sealed_board_rate = countIf(r >= lim-0.002) / nullIf(countIf(rh >= lim-0.002),0)，
+    r = close/lag(close)-1，rh = high/lag(close)-1，lim = stk_limit.limit_pct（FINAL join on symbol+trade_date）；
+    touched<20 置 NaN。与卡 11 严格互斥完备（rate_12 = 1 - rate_11）。
+  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
+  data_window_evidence: >-
+    实测逐年封板率 = 1 - 炸板率 = 0.6397/0.6580/0.6698/0.6445/0.6357/0.6193/0.6602（2019..2025），
+    六年 0.62-0.67 稳定带，母卡 05 的 ">80%=正反馈" 档在导生口径下属历史高分位尾部（非中枢），
+    据此把 80% 绝对档降级为叙事对照（卡内 pillars.note 已写死，非事后调整）；
+    命令原文与表覆盖同卡 11（stk_limit 2015-01-05..2026-10-09/9,254,772/5,831；
+    kline_daily_hfq 1990-12-19..2026-09-30/10,098,785/5,916；limit_up_down 2026-07-20..2026-10-09/5,397/54 天）；
+    目标面 kline_index 000300 实测 2018-06-01..2025-12-31/1,843 行。
+blocked_on: null

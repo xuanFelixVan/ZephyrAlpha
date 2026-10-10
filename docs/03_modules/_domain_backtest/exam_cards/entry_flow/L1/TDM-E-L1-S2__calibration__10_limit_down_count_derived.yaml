@@ -1,0 +1,71 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/10_limit_down_count_derived
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: 跌停家数（日线+涨跌停幅度导生口径）·广度校准平行卡
+origin: tdm_algo_note_l1_s2
+parallel_of: TDM-E-L1-S2/calibration/03_跌停家数
+hypothesis: 跌停家数（封住口径）分桶与次日沪深300收益负相关，且尾部档（导生家数经验分位>90%）存在超越线性的额外负增量（恐慌外溢）；与母卡 03 同一命题，仅换可运行取数口径。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口/门柱逐字继承母卡 03，平行卡只换取数口径；看数前冻结（裁定#501），事后挪门柱=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': 当日导生跌停家数
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（方向为负亦算单调，判据取 |rho| 后按母卡同号方向核）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板；本卡预期 IC 为负——门柱按执行器口径"ic_mean>=min"硬判，负 IC 卡天然 fail 属预期负结果，如实入分数册不豁免，禁事后改符号口径）
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  tail_excess: 分位>90% 档的桶中位收益须低于 80-90% 档（尾部额外负增量建档）
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分）
+  note: 母卡 03 的"尾部>60 家"绝对阈值在导生口径下不可直接移植（口径不同尺度），本卡把尾部改为经验分位>90% 档，属卡内自设门柱非改母卡门柱
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
+  signal_column: limit_down_count_derived
+  signal_derivation: >-
+    同卡 09 的 prev_close/lim 装载口径；当日 limit_down_count =
+    countIf(r <= -(lim - 0.002))，r = close/prev_close - 1，lim = stk_limit.limit_pct
+    （FINAL join on symbol+trade_date）；按 trade_date 聚合为日度单序列。
+    ST 股 5% 档与科创板/创业板 20% 档由 limit_pct 逐行携带，禁统一按 10% 判（实测 limit_pct 取值含 0.05/0.10/0.20 族）。
+  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM
+    c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 行 / 5,831 标的；
+    `... FROM c1_market.kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 行 / 5,916 标的；
+    `... FROM c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行 / 54 天（母卡原绑表冻结窗零行）；
+    导生结果实测（2019..2025 年均跌停家数）= 26.9/40.3/26.7/29.7/14.7/44.8/31.0，
+    交易日 244/243/243/242/242/242/243（全窗完整）；
+    join 完备性实测 0 unmatched / 7,590,928 symbol-days（2019-01-04..2025-09-09）；
+    单位事故记录：`SELECT close,high,pct_change,change FROM c1_market.kline_daily_hfq WHERE symbol='600519'
+    AND trade_date IN ('2024-09-30','2024-10-08')` → pct_change=0、change=0 而 close 14018.96→13818.46
+    （列不可用，必须用 close/lag(close) 比值口径）；
+    目标面 `... FROM c1_market.kline_index WHERE symbol='000300' ...` → 2018-06-01..2025-12-31 / 1,843 行。

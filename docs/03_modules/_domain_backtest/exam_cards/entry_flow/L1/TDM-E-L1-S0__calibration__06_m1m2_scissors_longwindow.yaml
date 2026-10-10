@@ -1,0 +1,70 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S0/calibration/06_m1m2_scihjorsc_longwindow
+node_id: TDM-E-L1-S0
+family: calibration
+title_zh: 货币-信用剪刀差（M1-M2 同比差，月度→日频前向填充）·宏观校准平行卡
+origin: tdm_algo_note_l1_s0
+parallel_of: TDM-E-L1-S0/calibration/02_货币卡
+hypothesis: M1 同比减 M2 同比（活钱相对总钱的活跃度，即货币-信用剪刀差）分桶对次日沪深300收益有单调预测力：剪刀差走阔=资金活化、支撑风险偏好；收敛/转负=资金定期化、压制行情。母卡 02 绑 LPR/MLF 事件日（rate_decision_calendar），本卡补一条"连续型货币活跃度序列"的长窗口径，两者对象不同（事件 vs 状态）故为新增而非重复。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口继承同批冻结口径；月度数据→日频前向填充（PIT：以发布滞后 1 个月错后使用，禁用当月未发布值）为本卡先验冻结的关键纪律，事后挪=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': 当日可用的剪刀差（M1yoy - M2yoy，滞后 1 个自然月可见）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（注：月度序列日频 IC 存在大量重复值，IC 判定须以"月度变更日"去重后另算一列，两列都披露）
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  pit_lag_audit: 若把滞后去掉（用当月真值）则属未来函数，本卡须同时报告"滞后 1 月"与"滞后 0（违规参照）"两列差值以量化误用代价，禁只报好看的
+  monthly_duplication: 月内恒定值导致的样本自相关须用非重叠月抽样复核（闸 4 可回测性的样本独立性检验）
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: monthly_forward_index_return（非重叠月前瞻收益，月频复核面）
+  note: 低频宏观序列的主考面在月度非重叠前瞻，日频面作辅助披露
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S0.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.macro_credit_money（report_date/m1_yoy/m2_yoy/m0/m1/m2/new_rmb_loans/sf_increment）
+  signal_column: m1_yoy_minus_m2_yoy
+  signal_derivation: >-
+    剪刀差 = m1_yoy - m2_yoy（按 report_date 月度）；日频化 = 以 report_date + 45 自然天（发布滞后保守档，先验冻结）
+    为可见日起做前向填充；缺月不插值（缺失即 NaN，禁 ffill 掩盖断供）；
+    新人民币贷款同比（new_rmb_loans_cum）作信用轴辅列另出，不与货币轴混合成一个信号。
+  target_source: "kline_index symbol='000300' close → next_day_return 与非重叠月前瞻收益"
+  data_window_evidence: >-
+    命令原文 `SELECT min(report_date),max(report_date),count() FROM c1_market.macro_credit_money`
+    → 1978-01-31..2026-08-31 / 1,166 行（列实测：m0/m0_yoy/m1/m1_yoy/m2/m2_yoy/new_rmb_loans/new_rmb_loans_cum/
+    sf_increment/sf_rmb_loans/data_source/quality_flag/ingest_ts/report_date）
+    ⇒ 冻结窗 2019-01-04..2025-09-09 月度全覆盖（约 80 个自然月观测，非重叠月样本 ~70，min_obs_per_bucket=60 在月频面勉强可达，须首跑核 n）；
+    目标面 kline_index 000300 实测 2018-06-01..2025-12-31 / 1,843 行；
+    母卡原绑表实测：`SELECT min(decision_date),max(decision_date),count(),uniqExact(bank_code) FROM
+    c1_market.rate_decision_calendar` → 1970-01-01..2025-10-30 / 6,172 行 / 11 央行（含 pboc/fed/ecb/boj 等）
+    —— 实测出现 decision_date=1970-01-01 脏哨兵值（epoch 默认），故事件轴使用前必须清洗，本卡不消费该表（避开已知质量事故面）；
+    数据质量画像（闸 4"可得≠可用"）：monthly 频率 + 发布滞后 + 1978 起部分早期月份口径变更，
+    本卡因此把主判据放月在月频非重叠面。

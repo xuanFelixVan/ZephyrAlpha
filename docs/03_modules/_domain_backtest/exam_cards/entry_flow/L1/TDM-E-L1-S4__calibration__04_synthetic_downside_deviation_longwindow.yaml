@@ -1,0 +1,71 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow
+node_id: TDM-E-L1-S4
+family: calibration
+title_zh: 下行半偏差分位（合成 VIX 后备路径）·长窗校准平行卡
+origin: tdm_algo_note_l4_s4
+parallel_of: TDM-E-L1-S4/calibration/03_合成VIX后备
+hypothesis: 只依赖收盘价的下行半偏差年化波动取 250 日滚动分位（vix_pct∈[0,1]）对次日沪深300收益有单调预测力：分位两端（极恐慌与极平静）都不适合正常仓位，故关系应呈倒 U/两端负；母卡 03 的"合成 VIX 与主路径 IV 差值"绑期权面（实测仅 2026-07-30 起 8,877 行）在冻结窗内不可考，本卡取 TDM algo_note 声明的后备路径（"仅依赖 close"）落地长窗版。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口继承母卡 03 同批口径；250 日滚动分位窗、半偏差只计负收益两条算法口径逐字取 TDM algo_note_zh（MOD-REGIME-011/013 件口径），禁卡内调参；事后挪门柱=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': 当日 synthetic_vix_pct（250 日分位）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内；本卡预期呈两端高的非单调形态，单调柱大概率 fail，属如实负结果并在分数册披露 U 形）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  fallback_activation: 主路径（期权 IV）在 2026-07-30 前完全不可用（实测），故本卡的后备路径即当期唯一可算路径——分数册须标注"本卡不考主备两路径的切换逻辑，只考后备路径本身"
+  two_sided_note: 波动两端都不适合正常仓位 ⇒ 另出 |分位-0.5| 的对称变换列作第二序列，两序列各自过柱（不合并、不取最优）
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_index_volatility（次日已实现波动绝对值，波动预测面）
+  note: 母卡 03 的"与主路径差值"因主路径无长窗而不成立，本卡把判据面收敛为"后备路径自身有效性"，属新卡自设非改母卡
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S4.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_index（symbol='000300'，仅需 close 列）
+  signal_column: synthetic_vix_pct（下行半偏差 250 日滚动分位）
+  signal_derivation: >-
+    r_t = close_t/close_{t-1} - 1；下行半偏差 = sqrt(244 × mean(min(r_t,0)^2 over 20 日窗))（20 日窗与件内口径一致，
+    实现锚=src/zephyr/regime/features/synthetic_vix.py，MOD-REGIME-011/013，实测存在）；
+    synthetic_vix_pct = 该值在过去 250 个交易日中的分位（rank/(n+1)）；
+    危机特异性来自"只计负收益"，禁改回全波动口径（改了就是另一张卡，须另立文件）。
+  target_source: "kline_index symbol='000300' close → next_day_return；次日用 |return| 作波动代理（已实现波动，无需新表）"
+  data_window_evidence: >-
+    命令原文 `SELECT symbol,min(trade_date),max(trade_date),count() FROM c1_market.kline_index
+    WHERE symbol='000300' AND trade_date BETWEEN '2018-06-01' AND '2025-12-31' GROUP BY symbol`
+    → 2018-06-01..2025-12-31 / 1,843 行 ⇒ 250 日分位暖机（自 2018-06 起约 140 交易日）到 IS 起点 2019-01-04 略显不足，
+    故本卡信号自 2019-07-01 起取有效值（前 250 日作暖机不外售，卡内先验写死，IS 首年样本相应减少约 120 天）；
+    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_index`
+    → 1990-12-19..2026-10-09 / 3,104,162 / 1,097（如需更长暖机可回溯到 1990，本卡仍用 000300 保持与母卡同标的）；
+    期权主路径实测：`SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.option_kline`
+    → 2026-07-30..2026-10-09 / 8,877 / 302 ⇒ 母卡 02（IV 主路径）长窗 blocked_on_data 成立，本卡是长窗唯一可考路径；
+    SVX-1-P0 事故记录（TDM algo_note 原文）：进料口未声明 delta 列 ⇒ 全库 delta 恒 0 ⇒ ATM 筛子排除 9653/9653 行
+    ⇒ 主路径半年零产出且静默回退——本卡因此禁止以"主路径无输出"推断"波动环境平静"（断供≠无风险，fail-closed 同 R-055a 语义）。

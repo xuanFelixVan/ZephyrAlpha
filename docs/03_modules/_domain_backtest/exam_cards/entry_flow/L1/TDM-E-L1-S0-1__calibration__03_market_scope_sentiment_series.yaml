@@ -1,0 +1,73 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S0-1/calibration/03_market_scope_sentiment_series
+node_id: TDM-E-L1-S0-1
+family: calibration
+title_zh: 市场级新闻情绪指数（news_sentiment_window scope='market'）·校准平行卡
+origin: tdm_algo_note_l1_s0_1
+parallel_of: TDM-E-L1-S0-1/calibration/02_新闻情绪时滞
+hypothesis: 市场级新闻情绪指数（sentiment_index / avg_polarity，由正负条数计数归一）分桶对次日沪深300收益有预测力，且信息在 t+1..t+3 扩散（母卡 02 的时滞命题）；新增可判面=情绪"分歧度"（negative_count/total_count 与 positive_count/total_count 同时高=分裂）对次日波动的增量预测力，这是均值型情绪读数的正交补充。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口与母卡 02 同批（其 IS/OOS 实测可用，本卡沿用同窗以便同框对拍）；分歧度定义（min(pos_share,neg_share)/(pos_share+neg_share)）先验冻结；事后挪门柱=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': 当日市场级 sentiment_index（主）与分歧度（辅列，独立过柱不合并）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日（母卡 02 同命题，本卡独立跑）
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  dispersion_increment: 分歧度对"次日 |收益|"的增量 IC 须在主情绪已回归后被残差检验（正交补充面，不过则记"均值已足够"）
+  calendar_coverage_guard: 实测 scope='market' 为日历日粒度（2019-2024 每年约 358-366 行），
+    非交易日行必须在前向填充到交易日历时剔除，禁把周末值当当日新信息（PIT 纪律，违例即卡作废）
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_abs_return（分歧度面）
+  note: 与母卡 02 的差别=本卡考市场级连续读数及其分歧度，母卡 02 考时滞结构；两卡同窗不同判据面，非重复
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S0-1.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.news_sentiment_window（scope='market'）
+  signal_column: sentiment_index（主）/ avg_polarity、positive_count、negative_count、neutral_count、total_count（分歧度原料）
+  signal_derivation: >-
+    主信号 = 取 scope='market' 且 symbol 唯一（实测 uniqExact(symbol)=1）的 sentiment_index 日度序列；
+    pos_share = positive_count/total_count，neg_share = negative_count/total_count，
+    分歧度 = min(pos_share,neg_share)/(pos_share+neg_share)（0=单向，1=完全分裂）；
+    对齐到交易日历：非交易日行删除（禁 ffill 成"新信息"），若某交易日缺行则该日置 NaN 不外推；
+    本地模型链口径=src/zephyr/intelligence/news_sentiment_analyzer.py（TDM module_ref，实测存在）。
+  target_source: "kline_index symbol='000300' close → next_day_return 与 |next_day_return|"
+  data_window_evidence: >-
+    命令原文 `SELECT scope, uniqExact(symbol), count(), min(window_date), max(window_date) FROM
+    c1_market.news_sentiment_window GROUP BY scope` → scope='market' 1 标的 / 2,622 行 / 2019-01-04..2026-10-08；
+    scope='symbol' 4,857 标的 / 19,635 行 / 2026-02-24..2026-08-20（逐符号面窗短，本卡不考）；
+    年度覆盖实测 `SELECT toYear(window_date),count() FROM c1_market.news_sentiment_window WHERE scope='market' GROUP BY y`
+    → 2019..2026 = 362/366/365/365/362/358/243/201 行 ⇒ IS 窗（2019-2023）与 OOS 前段（2024）全年覆盖，
+    2025 起明显变稀（243 行/年≈仅交易日级），OOS 段须首跑核 n 是否达 min_obs_per_bucket=60/桶，不足则该段判 nan 不延窗；
+    上游明细实测：c3_fundamental.news_sentiment_score 7,947,739 行（列含 polarity/label/method/n_pos/n_neg/caliber_version，
+    为逐条新闻打分面，可做"分数口径变更"审计，本卡不直接消费以防跨口径混算）；
+    件实测存在：src/zephyr/intelligence/news_sentiment_analyzer.py（TDM module_ref，MOD 链）。
+infra_gap: null（数据与件均可绑；唯一风险是 2025 后覆盖变稀，已以 calendar_coverage_guard + nan 判据封堵）

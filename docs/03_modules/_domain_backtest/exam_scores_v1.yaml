@@ -24,3 +24,217 @@ rows:
   fails:
   - ic_mean -0.0013 < 0.02
   - oos_sign_flip oos=0.0445 is=-0.0013
+- card_id: TDM-E-L1-S0-1/calibration/02_新闻情绪时滞
+  node_id: TDM-E-L1-S0-1
+  run_id: nightmine-02_新闻情绪时滞
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.023109545890572448
+    mono_spearman: -0.22424242424242422
+    n: 1622
+    regime_ic:
+      bull: -0.0295052317563357
+      bear: -0.02783668583885238
+    oos_ic: 0.06776204714746234
+    ic_ir: null
+  fails:
+  - mono_spearman -0.224 < 0.6
+  - ic_mean -0.0231 < 0.02
+  - oos_sign_flip oos=0.0678 is=-0.0231
+- card_id: TDM-E-L1-S2/calibration/02_涨停家数
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-02_涨停家数
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.014636875822621773
+    mono_spearman: -0.2606060606060606
+    n: 1622
+    regime_ic:
+      bull: -0.08637621333469589
+      bear: 0.006065302104912393
+    oos_ic: 0.0641936089358011
+    ic_ir: null
+  fails:
+  - mono_spearman -0.261 < 0.6
+  - ic_mean -0.0146 < 0.02
+  - 'regime_sign_flip {''bull'': -0.08637621333469589, ''bear'': 0.006065302104912393}'
+  - oos_sign_flip oos=0.0642 is=-0.0146
+- card_id: TDM-E-L1-S2/calibration/03_跌停家数
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-03_跌停家数
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.052759730276699834
+    mono_spearman: 0.5393939393939393
+    n: 1622
+    regime_ic:
+      bull: 0.10259024944711034
+      bear: 0.026452730436896166
+    oos_ic: -0.012050829415383291
+    ic_ir: null
+  fails:
+  - mono_spearman 0.539 < 0.6
+  - oos_sign_flip oos=-0.0121 is=0.0528
+- card_id: TDM-E-L1-S2/calibration/04_炸板率
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-04_炸板率
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.07856819508616897
+    mono_spearman: 0.5757575757575757
+    n: 1622
+    regime_ic:
+      bull: 0.12641973808918008
+      bear: 0.06354633158348696
+    oos_ic: -0.010806251830648964
+    ic_ir: null
+  fails:
+  - mono_spearman 0.576 < 0.6
+  - oos_sign_flip oos=-0.0108 is=0.0786
+- card_id: TDM-E-L1-S2/calibration/05_封板率
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-05_封板率
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.07856819508616897
+    mono_spearman: -0.6363636363636362
+    n: 1622
+    regime_ic:
+      bull: -0.12641973808918008
+      bear: -0.06354633158348696
+    oos_ic: 0.010806251830648964
+    ic_ir: null
+  fails:
+  - mono_spearman -0.636 < 0.6
+  - ic_mean -0.0786 < 0.02
+  - oos_sign_flip oos=0.0108 is=-0.0786
+- card_id: TDM-E-L1-S2/calibration/06_连板最高高度
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-06_连板最高高度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.018375788057875635
+    mono_spearman: 0.07878787878787878
+    n: 1622
+    regime_ic:
+      bull: -0.06286929256233367
+      bear: 0.016098939836664154
+    oos_ic: -0.06238580668691902
+    ic_ir: null
+  fails:
+  - mono_spearman 0.079 < 0.6
+  - ic_mean -0.0184 < 0.02
+  - 'regime_sign_flip {''bull'': -0.06286929256233367, ''bear'': 0.016098939836664154}'
+- card_id: TDM-E-L1-S2/calibration/08_净广度
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-08_净广度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.01070485704926972
+    mono_spearman: -0.11515151515151514
+    n: 1622
+    regime_ic:
+      bull: -0.05006311539148888
+      bear: 0.0063029888329039566
+    oos_ic: 0.024566197281316142
+    ic_ir: null
+  fails:
+  - mono_spearman -0.115 < 0.6
+  - ic_mean -0.0107 < 0.02
+  - 'regime_sign_flip {''bull'': -0.05006311539148888, ''bear'': 0.0063029888329039566}'
+  - oos_sign_flip oos=0.0246 is=-0.0107
+- card_id: TDM-E-L9-A04/calibration/02_估值ERP分位日增量
+  node_id: TDM-E-L9-A04
+  run_id: nightmine-02_估值ERP分位日增量
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.046670542330728974
+    mono_spearman: 0.9030303030303028
+    n: 4063
+    regime_ic:
+      bull: 0.04572211095851165
+      bear: 0.09450918850460699
+    oos_ic: -0.004755062276188134
+    ic_ir: null
+  fails:
+  - oos_sign_flip oos=-0.0048 is=0.0467
+- card_id: TDM-E-L2-09/calibration/02_板块催化剂密度
+  node_id: TDM-E-L2-09
+  run_id: nightmine-L2-09-density
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.027908808204430206
+    mono_spearman: -0.7212121212121211
+    n: 2367
+    regime_ic:
+      bull: 0.0002848796318657199
+      bear: -0.028969879096233806
+    oos_ic: -0.03360817429586608
+    ic_ir: null
+  fails:
+  - mono_spearman -0.721 < 0.6
+  - ic_mean -0.0279 < 0.02
+  - 'regime_sign_flip {''bull'': 0.0002848796318657199, ''bear'': -0.028969879096233806}'

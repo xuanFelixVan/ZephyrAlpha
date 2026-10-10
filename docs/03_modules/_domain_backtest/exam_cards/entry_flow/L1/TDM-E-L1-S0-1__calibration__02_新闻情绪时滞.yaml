@@ -28,11 +28,11 @@ target:
   primary: next_day_index_return（CSI300 次日收益，G0-4 主轴）
   secondary: emotion_six_state_transition（情绪六段态转移概率，辅轴）
   note: 方案 §8：前置依赖 HANDOVER 2-11 断供修复；修复确认前禁开考
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: nightmine-02_新闻情绪时滞
+  score_row: exam_scores_v1.yaml#rows[1]
   confidence_writeback: TDM.nodes.TDM-E-L1-S0-1.confidence
 preregistered_by: st-examchief-20261009
 preregistered_at: '2026-10-09'

@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-E-L0/comparison/02_plan_constraint_on_off
+node_id: TDM-E-L0
+family: comparison
+title_zh: 盘前作战计划约束开/关·对照卡（计划是输入不是第二决策点，量化其代价与收益）
+origin: tdm_algo_note_l0
+hypothesis: 作战计划三件套（总仓位建议档、分批建仓预案、禁做清单 sit_out_list）作为硬约束接入后，相对"无计划臂"（只受 L1 闸与实时信号驱动）应降低执行不一致率与单日暴仓事件，代价是让渡部分收益；"计划不改变开闸权（开闸唯一归 L1）"这一 Owner 2026-09-09 定界必须在两臂都成立——若计划臂自己改写了开闸，则本卡判实现违例而非判收益。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口同批冻结；禁做清单三源合成（sit_out_list）、单票 8% 硬顶、10% 机动资金三条规则逐字取 TDM/L0-01/L0-04 algo_note，卡内禁调；事后挪=作废（G4-5）
+arms:
+  PLAN_ON: 计划三件套全接（仓位档上限 + 分批预案 + 禁做清单）
+  PLAN_OFF: 无计划（仅 L1 闸 cap + 实时信号，清单与禁做不生效）
+  PLAN_BAN_ONLY: 只接禁做清单（分离"排除效应"贡献）
+  PLAN_CAP_ONLY: 只接仓位档上限（分离"额度效应"贡献）
+buckets:
+  type: arm_x_regime
+  'on': 四臂 × 牛/熊 × IS/OOS
+  min_obs_per_bucket: 60
+pillars:
+  inconsistency_reduction: PLAN_ON 相对 PLAN_OFF 的执行不一致率（实际成交偏离当日计划的比例）须下降（计划的本职判据）
+  tail_control: PLAN_ON 的 MaxDD 与"单票超 8% 硬顶事件数"须 <= PLAN_OFF（硬顶可核性面，事件数必须为 0）
+  giveback_limit: PLAN_ON 相对 OFF 的年化收益让渡 <= 3pct，否则如实报"计划税过高"并列解锁条件
+  authority_check: 两臂的开闸决策必须逐日相同（计划不得改开闸）——不一致即实现违例，本卡作废重做（Owner 定界守门柱）
+  cost_gate: 四臂统一五档 [0,5,10,20,40]bp 与换手门 8.0x
+target:
+  primary: cost_adjusted_sharpe
+  secondary: plan_deviation_rate / max_drawdown
+  note: 本卡是 L0 段唯一"结果面可判"的总卡；子环节（生成/偏离/复盘/盘中滚动）各自另卡
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L0.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(计划约束强度秩 [OFF=1, BAN_ONLY=2, CAP_ONLY=3, ON=4], 组合日收益波动秩的负序) >=0.6
+  （计划越完整，暴露越被管住）；ic_mean/ic_ir 读"当日计划仓位档"对"次日组合收益"的日频秩相关
+  （计划档若含信息则 IC 非 0；近 0=计划档是仪式性输出，重要负结果）；两段同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.regime_state_anchored（闸与仓位档输入）+ c1_market.kline_daily_hfq（价格面/清单执行）
+  signal_column: 计划仓位档（由闸状态映射）+ sit_out_list 标记（ST/黑名单/边界坏日）
+  signal_derivation: >-
+    计划仓位档 = min(L1 cap, 当日预算带上界) 的档位量化（与 L1/02 卡同一 cap 式，跨卡对账）；
+    禁做清单三源合成中本卡可核的两源=ST 标记（stk_limit.st_flag 实测列）与跌停/熔断日（vol_pct 极端档），
+    第三源（人工录入政策/事件）实测无结构化历史表 ⇒ 标 blocked_on_data 不冒充；
+    单票 8% 硬顶与 A 股整手折算（lot_size=100，不足一手跳过并 notes 留痕）按 L0-01 algo_note 原式实现。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → window_metrics + 自算偏离率"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count() FROM c1_backtest.regime_state_anchored`
+    → 2017-07-11..2026-10-09 / 4,488 行；`... c1_market.kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
+    ST 面 `SELECT count() FROM c1_market.stk_limit WHERE st_flag=1 AND trade_date='2024-06-28'`（列实测存在 st_flag；
+    本车道未跑该计数 ⇒ 不预填数字，考试车道首跑建档）；
+    实测计划落库表面（`system.tables` 检索 name ILIKE '%plan%'/'%boundary%'）→
+    仅 c1_market.judgment_daily_plan 12 行、judgment_plan_verification 24 行、judgment_next_day_forecast 6 行
+    ⇒ LLM 判断类计划账本极小，不能作长窗计划真源（本卡因此以"规则重放臂"落地，如实标注）；
+    实现件实测存在：src/zephyr/plan_engine/daily_warroom_pipeline.py、daily_trade_plan.py、tomorrow_boundary_planner.py、
+    plan_deviation_monitor.py、intraday_tomorrow_forecast.py（台账 §1.4 18/18）。
+infra_gap: blocked_on_impl=comparison 族卡驱动执行器（共用）；blocked_on_data=盘前计划逐日流水历史（现仅 12/24/6 行判断类账）
