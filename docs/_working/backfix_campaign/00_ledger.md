@@ -244,3 +244,10 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 **主使与 21:44 spawn 的同一 resident 假说**：belt_watchdog 修复后每分钟 fire 变为无害判活（不再孵增殖）；其每分钟 fire 窗与死亡时刻的相关性=案 #5-#13 九案中曾观察（守卫族 5min 网格）但金丝雀未杀=签名猎杀已弱化——主使仍以"点火链成员"为唯一强判别。
 
 **③06:00 判定样本照守**：atime 差分单体（重生）+patrol+陷阱×3+reader-namer（等锁容错 pid 49392）全在线；06:00 DailyBackup 点火瞬间= namer RM 爆发首个实战窗。
+
+### handle.exe 授权执行件 + 首个幸存者里程碑（巡检班 00:5x-01:1x 轮）
+
+1. **handle.exe 授权落地**（Owner 批「批准」）：官方源 download.sysinternals.com → E:	ools\Handle\（Handle.zip sha256=279aaf8eccb6f79147f4dcc6ba091fb895c4cb8b199a0dd186a4c76bc519d2cd；handle64.exe sha256=24BAFCC570CC9BBB6B6E6652A57A519E0464E3996891AABA6F55299CCE20B04F；Authenticode=Valid/Microsoft Corporation）；免提权自测通过（同用户句柄枚举可用）。
+2. **只读轮询哨布防**：backfix_handle_poll.sh（20s 周期 `handle64 -nobanner backup.lock`，仅记录持有者、零写动作）后台在岗——backup.lock 的持句柄者出现即定名（主使的读句柄若跨秒级停留即落网）。
+3. **首个幸存者里程碑（01:0x）**：**24968 存活 69min——超越全部受害者最大死亡年龄（65min）**，G 镜像段已活着穿过（G_mtime≈00:50），现处收尾段（STAGE 4 待写）。其点火 worker 照历被 reaper 处决（00:25:57）→ 已越过最大滞差 +24.7min→**止血假说读数转强**（此前 8/8 在 +1.7-24.7min 内死亡；首例越线）。终判=其 STAGE 4 完整回写时刻（预计 ~02:0x）。
+4. 差异面备查：24968 生于 23:59:50——金丝雀拆除（23:1x）后的首例；舰队锁读静音（22:17）后第二例；处方①②+维护班修复均在位。
