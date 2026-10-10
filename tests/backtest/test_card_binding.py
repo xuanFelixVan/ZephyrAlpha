@@ -310,3 +310,54 @@ def test_vocab_census_vocab_sources_read_from_core_constants():
     out = cb.build_vocab_census(cb.CARDS_DIR)
     assert set(out["vocab_sources"]["series"]) == set(_CALIBRATION_JUDGED_KEYS)
     assert set(out["vocab_sources"]["dual_arm"]) == set(_UNION_PILLAR_KEYS)
+
+
+def _fake_csv(monkeypatch, vals, start="2020-01-01"):
+    idx = pd.bdate_range(start, periods=len(vals))
+    ser = pd.Series(vals, index=idx)
+    monkeypatch.setattr(cb, "_load_csv_series", lambda name: ser)
+    return ser
+
+
+def test_event_flag_excludes_warmup_and_is_binary(monkeypatch):
+    """滚动分位底座：暖机段（min_periods 未满）必须无读数，不得用前期值冒充事件日；输出只允许 {0,1}。"""
+    ser = _fake_csv(monkeypatch, list(range(400)))
+    card = {"data_binding": {"signal_column": "x_event_flag"}}
+    flag, ev = cb.op_event_flag_rolling_pctile(card, {"base_csv": "x.csv", "pctile_window": 60, "pct_threshold": 0.9})
+    assert ev["warmup_dropped_days"] == 59
+    assert set(flag.unique()) <= {0.0, 1.0}
+    assert ev["n_event_days"] == int((flag > 0).sum()) and ev["n_event_days"] > 0
+    assert ev["pit_statement"].startswith("事件判定只用 t 及以前")
+
+
+def test_event_flag_is_pit_invariant_to_future_values(monkeypatch):
+    """判别力正例（反未来函数）：改动 t 之后的基序列取值，t 及之前的事件标记必须一字不变。
+    若实现用了全样本分位（用未来定过去门槛），本支必红。"""
+    vals = [float(v % 37) for v in range(300)]
+    ser = _fake_csv(monkeypatch, vals)
+    card = {"data_binding": {"signal_column": "x_event_flag"}}
+    args = {"base_csv": "x.csv", "pctile_window": 50, "pct_threshold": 0.8}
+    f1, _ = cb.op_event_flag_rolling_pctile(card, args)
+    cut = ser.index[180]
+    bumped = ser.copy()
+    bumped.loc[bumped.index >= cut] = 999.0
+    monkeypatch.setattr(cb, "_load_csv_series", lambda name: bumped)
+    f2, _ = cb.op_event_flag_rolling_pctile(card, args)
+    common = f1.index.intersection(f2.index)
+    before = common[common <= cut]
+    assert (f1.loc[before] == f2.loc[before]).all(), "未来值改动了过去的事件标记＝全样本分位（事后挪门柱形态）"
+
+
+def test_event_flag_base_selection_fail_closed():
+    """底座二选一硬闸：base_op 与 base_csv 同时给或同时不给 ⇒ 直接拒（禁第三条取数路静默生效）；
+    base_op 不在算子册 ⇒ 点名拒（防绑到不存在的算子上冒充分数）。"""
+    card = {"data_binding": {"signal_column": "x"}}
+    for args in (
+        {"pctile_window": 50, "pct_threshold": 0.9},
+        {"base_csv": "a.csv", "base_op": "daily_agg_series", "pctile_window": 50, "pct_threshold": 0.9},
+    ):
+        with pytest.raises(ValueError):
+            cb.op_event_flag_rolling_pctile(card, args)
+    with pytest.raises(ValueError) as ei:
+        cb.op_event_flag_rolling_pctile(card, {"base_op": "no_such_op", "pctile_window": 50, "pct_threshold": 0.9})
+    assert "base_op_not_in_ops_book" in str(ei.value)

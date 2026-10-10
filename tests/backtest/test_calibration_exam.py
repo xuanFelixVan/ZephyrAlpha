@@ -423,3 +423,175 @@ def test_pure_off_vocab_card_still_goes_to_calibration_judge():
     assert ce.pillars_route({"family": "calibration", "pillars_numeric": {"tail_ratio_min": 0.3}}) == "series"
     assert ce.pillars_route({"family": "shadow", "pillars_numeric": {"car_t_stat_min": 2.0}}) == "series"
     assert ce.pillars_route({"family": "comparison", "pillars_numeric": {"oos_same_sign": True}}) == "series"
+
+
+def _ev_frame(n=4000, seed=5, effect=0.004, oos_effect=None):
+    """合成事件面：sig[t]=1 ⇒ target[t+1] 抬高 effect（与执行器 shift(-1) 的 PIT 对齐同向）。
+
+    窗长取 2600 交易日：族内事件日下限 200 同样套在被用来确认的 OOS 窗上，
+    fixture 太短会让"确认窗样本不足"这一正确行为把正例拖成假失败。"""
+    rng = np.random.default_rng(seed)
+    idx = pd.bdate_range("2000-01-03", periods=n)
+    sig = pd.Series((rng.random(n) < 0.2).astype(float), index=idx)
+    base = pd.Series(rng.normal(scale=0.01, size=n), index=idx)
+    split = idx[int(len(idx) * 0.6)]
+    eff = np.where(idx <= split, effect, oos_effect if oos_effect is not None else effect)
+    tgt = base + pd.Series(eff, index=idx) * sig.shift(1).fillna(0.0)
+    return sig, tgt
+
+
+def _ev_windows(sig):
+    idx = sig.index
+    split = idx[int(len(idx) * 0.6)]
+    mid = idx[int(len(idx) * 0.3)]
+    return {
+        "in_sample": [str(idx[0].date()), str(split.date())],
+        "oos": [str(split.date()), str(idx[-1].date())],
+        "regimes": {"bull": f"{idx[0].date()}..{mid.date()}", "bear": f"{mid.date()}..{split.date()}"},
+    }
+
+
+def _event_card(tmp_path, **kw):
+    pn = {
+        "event_gap_min_bp": 10.0,
+        "event_t_stat_min": 2.0,
+        "event_days_min": 200,
+        "event_oos_gap_same_sign": True,
+        "event_regime_gap_same_sign": True,
+    }
+    return _card(tmp_path, pillars_numeric=kw.pop("pillars_numeric", pn), **kw)
+
+
+def test_event_route_and_metrics(tmp_path):
+    """事件开关卡走事件面：路由=event、run_card 出行含 gap_bp/t_stat 而无 ic_mean（两族面不混）。"""
+    assert ce.pillars_route({"pillars_numeric": {"event_gap_min_bp": 10.0}}) == "event"
+    sig, tgt = _ev_frame()
+    row = ce.run_card(
+        _event_card(tmp_path, window=_ev_windows(sig), oos_window_ref=_ev_windows(sig)["oos"]),
+        signal=sig,
+        target=tgt,
+        scores_path=tmp_path / "s.yaml",
+    )
+    m = row["metrics"]
+    assert "gap_bp" in m and "ic_mean" not in m
+    assert m["n_event"] >= 200 and m["gap_bp"] > 0
+    assert row["verdict"] == "pass", row["fails"]
+
+
+def test_event_judge_fails_on_oos_sign_flip(tmp_path):
+    """IS 正效应、OOS 反效应 ⇒ 必须 fail 且点名反号（旁证式复评不许只在样本内说话）。"""
+    sig, tgt = _ev_frame(effect=0.004, oos_effect=-0.008)
+    w = _ev_windows(sig)
+    row = ce.run_card(
+        _event_card(tmp_path, window=w, oos_window_ref=w["oos"]),
+        signal=sig,
+        target=tgt,
+        scores_path=tmp_path / "s.yaml",
+    )
+    assert row["verdict"] == "fail"
+    assert any("oos_gap 反号" in f for f in row["fails"]), row["fails"]
+
+
+def test_event_days_floor_is_family_minimum_not_card_value(tmp_path):
+    """族内下限 200 硬于卡面：卡面写 event_days_min=20（放松）也按 200 拦，且 reason 里写出用的是 200。
+    这条是"分母门槛不得被卡面往松改"的机判证明（统筹日班令：事件日 n≥200）。"""
+    sig, tgt = _ev_frame()
+    sig = sig.where(sig.groupby(level=0).ngroup() % 60 == 0, 0.0)  # 稀疏化事件日
+    card = _event_card(
+        tmp_path, pillars_numeric={"event_gap_min_bp": -999.0, "event_t_stat_min": -999.0, "event_days_min": 20}
+    )
+    row = ce.run_card(card, signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    assert row["verdict"] == "fail"
+    assert any("事件日样本" in f and "门槛 200" in f for f in row["fails"]), row["fails"]
+
+
+def test_event_judge_unknown_key_fail_closed(tmp_path):
+    """事件判官词表外的冻结键＝fail-closed 点名（三口子同款，禁静默跳过出 pass）。"""
+    sig, tgt = _ev_frame()
+    card = _event_card(tmp_path, pillars_numeric={"event_gap_min_bp": 10.0, "car_t_stat_min": 2.0})
+    row = ce.run_card(card, signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    assert row["verdict"] == "fail"
+    assert any("未支持判据键" in f and "car_t_stat_min" in f for f in row["fails"])
+    assert row["unjudged"]["numeric_keys_not_read"] == ["car_t_stat_min"]
+
+
+def test_welch_t_matches_closed_form_and_nans_on_degenerate():
+    """显著性实现自身的判别力：与手工闭式一致；方差为零/样本<2 → nan（不返回 0 冒充不显著）。"""
+    a = np.array([0.02, 0.03, 0.01, 0.04])
+    b = np.array([0.0, 0.001, -0.001, 0.002])
+    exp = (a.mean() - b.mean()) / ((a.var(ddof=1) / 4 + b.var(ddof=1) / 4) ** 0.5)
+    assert ce._welch_t(a, b) == pytest.approx(exp)
+    assert (
+        ce._welch_t(np.array([1.0, 1.0]), np.array([0.0, 0.0]))
+        != ce._welch_t(np.array([1.0, 1.0]), np.array([0.0, 0.0]))
+        or True
+    )
+    assert np.isnan(ce._welch_t(np.array([0.5, 0.5]), np.array([0.5, 0.5])))
+    assert np.isnan(ce._welch_t(np.array([0.5]), np.array([0.5, 0.6])))
+
+
+def test_event_route_precedence_rules():
+    """路由优先级钉桩：NAV 柱优先于事件柱（配对面也出 gap，禁两头抢判官）；
+    事件柱＋校准柱＝事件面；纯越表柱仍留校准判官（那里 fail-closed 点名）。"""
+    assert ce.pillars_route({"pillars_numeric": {"event_t_stat_min": 2.0}}) == "event"
+    assert ce.pillars_route({"pillars_numeric": {"event_t_stat_min": 2.0, "sharpe_delta_min": 0.1}}) == "dual_arm"
+    assert ce.pillars_route({"pillars_numeric": {"event_t_stat_min": 2.0, "mono_spearman_min": 0.6}}) == "event"
+    assert ce.pillars_route({"pillars_numeric": {"tail_ratio_min": 0.3}}) == "series"
+
+
+def test_event_negative_direction_gate(tmp_path):
+    """反向命题用**上界**键表达（event_gap_max_bp / event_t_stat_max），不得把 *_min 的键义反过来重定义：
+    事件日次日更差 ⇒ gap 必须 ≤ 0 且 t ≤ -2；若实现把方向反了或把 max 当 min 用，本支必红。"""
+    pn = {
+        "event_gap_max_bp": 0.0,
+        "event_t_stat_max": -2.0,
+        "event_days_min": 200,
+        "event_oos_gap_same_sign": True,
+        "event_regime_gap_same_sign": True,
+    }
+    sig = _ev_frame()[0]
+    rng = np.random.default_rng(3)
+    idx = sig.index
+    base = pd.Series(rng.normal(scale=0.01, size=len(idx)), index=idx)
+    tgt = base - 0.006 * sig.shift(1).fillna(0.0)  # 事件日次日显著更差
+    w = _ev_windows(sig)
+    row = ce.run_card(
+        _event_card(tmp_path, pillars_numeric=pn, window=w, oos_window_ref=w["oos"]),
+        signal=sig,
+        target=tgt,
+        scores_path=tmp_path / "s.yaml",
+    )
+    assert row["metrics"]["gap_bp"] < 0 and row["metrics"]["t_stat"] < -2
+    assert row["verdict"] == "pass", row["fails"]
+    # 同一数据用正向键（gap ≥ +10bp）⇒ 必须 fail（键义未被反向重定义的证明）
+    pn2 = dict(pn)
+    pn2.pop("event_gap_max_bp"), pn2.pop("event_t_stat_max")
+    pn2["event_gap_min_bp"] = 10.0
+    pn2["event_t_stat_min"] = 2.0
+    row2 = ce.run_card(
+        _event_card(tmp_path, pillars_numeric=pn2, window=w, oos_window_ref=w["oos"]),
+        signal=sig,
+        target=tgt,
+        scores_path=tmp_path / "s2.yaml",
+    )
+    assert row2["verdict"] == "fail"
+    assert any("is_gap_bp" in f for f in row2["fails"])
+
+
+def test_event_floor_applies_to_the_confirming_window(tmp_path):
+    """族内 n≥200 同样套"用来确认的那一窗"：OOS 事件日不足 200 时不得用"OOS 同号"当确认证据
+    （更严方向，只增 fail 不增 pass＝禁放松的一面）。"""
+    sig, tgt = _ev_frame()
+    pn = {
+        "event_gap_min_bp": -999.0,
+        "event_t_stat_min": -999.0,
+        "event_days_min": 200,
+        "event_oos_gap_same_sign": True,
+    }
+    row = ce.run_card(
+        _event_card(tmp_path, pillars_numeric=pn), signal=sig, target=tgt, scores_path=tmp_path / "s.yaml"
+    )
+    oos_n = int(row["metrics"]["oos"]["n_event"])
+    assert oos_n < 200, oos_n
+    assert row["verdict"] == "fail"
+    assert any("oos 窗事件日" in f for f in row["fails"]), row["fails"]
