@@ -93,15 +93,19 @@ v1 求值实现边界（诚实披露，立项稿 §十二 两批次的批次 A�
   python scripts/backtest/factory_grid_executor.py --smoke                 # 烟测（管线联通，8 格点）
   python scripts/backtest/factory_grid_executor.py --n-samples 20000       # 批次 A 普查
 产出: data/strategy_intake/grid_<run_ts>/manifest.csv + negatives.csv + summary.json
+  + T1 遥测件（batch_meta.json/progress.jsonl/heartbeat.jsonl/*_partial.csv，见 _GridInstruments）
 """
 
 from __future__ import annotations
 
 import argparse
 import dataclasses
+import faulthandler
 import hashlib
 import json
+import os
 import sys
+import threading
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -1261,6 +1265,220 @@ def _shard_sample(picked: list, shard_idx: int | None, num_shards: int | None) -
     return list(picked[int(shard_idx) :: int(num_shards)])
 
 
+# ============================================================================
+# T1 网格批仪表（st-gpufeed-20261010，批A 遗产落地：grid_20261009-191707 16.7h
+# 零分段落盘，进程被外部树杀后 ~1105 格成果全沉没，且死时无任何"在干什么"证据）。
+# 遥测件（全部 fail-open，仪表故障绝不阻断回测批；判据面零动——不改抽样/求值/
+# 回测/最终 manifest schema，只向 out_dir 增件）：
+#   batch_meta.json                 批出生卡（pid/argv/参数——自报家门，验尸免拼图）
+#   progress.jsonl                  每格终态一行（分段计时 fetch/eval/bt/write+combine 命中面）
+#   heartbeat.jsonl                 批级心跳（GPU 采样+停滞看门狗：超阈全线程栈 dump 到 stderr）
+#   manifest/negatives_partial.csv  每 N 格原子重写（被杀=已落盘成果可回收可审计；
+#                                   遥测件非真源，验收仍以 manifest.csv/summary.json 为准）
+# 环境变量：ZEPHYR_GRID_INSTRUMENT=0 关闭；ZEPHYR_GRID_HB_INTERVAL（秒，默认 60）；
+#   ZEPHYR_GRID_STALL_S（停滞阈值秒，默认 1800）；ZEPHYR_GRID_PARTIAL_EVERY（默认 25）。
+# ============================================================================
+_GRID_INSTRUMENT = os.environ.get("ZEPHYR_GRID_INSTRUMENT", "1") != "0"
+_GRID_HB_INTERVAL_S = float(os.environ.get("ZEPHYR_GRID_HB_INTERVAL", "60"))
+_GRID_STALL_THRESHOLD_S = float(os.environ.get("ZEPHYR_GRID_STALL_S", "1800"))
+_GRID_PARTIAL_EVERY = int(os.environ.get("ZEPHYR_GRID_PARTIAL_EVERY", "25"))
+
+
+def _instr_warn(where: str, exc: Exception) -> None:
+    print(f"[grid-instrument] fail-open {where}: {type(exc).__name__}: {str(exc)[:120]}", file=sys.stderr, flush=True)
+
+
+def _instr_iso(ts: float) -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(ts)) + f".{int(ts * 1000) % 1000:03d}"
+
+
+def _instr_rss_mb() -> float:
+    try:
+        import psutil
+
+        return round(psutil.Process().memory_info().rss / 1048576, 1)
+    except Exception:  # noqa: BLE001
+        return -1.0
+
+
+def _instr_gpu_sample() -> tuple[float | None, float | None]:
+    """nvidia-smi 采样 (utilization%, memory used MB)；缺席/失败=(None, None)。"""
+    try:
+        # CREATE_NO_WINDOW 铁律（trae_067）：后台心跳线程禁裸 subprocess，走隐藏窗统一入口
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        out = run_subprocess_hidden(
+            ["nvidia-smi", "--query-gpu=utilization.gpu,memory.used", "--format=csv,noheader,nounits"],
+            capture_output=True,
+            text=True,
+            timeout=8,
+        )
+        util_s, mem_s = out.stdout.strip().splitlines()[0].split(",")[:2]
+        return float(util_s), float(mem_s)
+    except Exception:  # noqa: BLE001
+        return None, None
+
+
+def _instr_atomic_csv(df: pd.DataFrame, path: Path) -> None:
+    tmp = path.with_name(path.name + ".tmp")
+    df.to_csv(tmp, index=False)
+    os.replace(tmp, path)
+
+
+class _GridInstruments:
+    """网格批仪表集：主线程写 progress/partial；守护线程写 heartbeat+停滞看门狗。"""
+
+    def __init__(self, out_dir: Path, total_cells: int) -> None:
+        self.out_dir = out_dir
+        self.total_cells = int(total_cells)
+        self._lock = threading.Lock()
+        self._stop_evt = threading.Event()
+        self._phase = "data_load"
+        self._cells_done = 0
+        self._neg_done = 0
+        self._combine_hits = 0
+        self._combine_misses = 0
+        self._last_progress = time.time()
+        self._t0 = time.time()
+        self._stopped = False
+        self._hb_thread: threading.Thread | None = None
+        self._dump_count = 0
+
+    def write_batch_meta(self, meta: dict) -> None:
+        try:
+            meta = {"ts": _instr_iso(time.time()), "pid": os.getpid(), **meta}
+            (self.out_dir / "batch_meta.json").write_text(
+                json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+        except Exception as exc:  # noqa: BLE001
+            _instr_warn("write_batch_meta", exc)
+
+    # -- 主线程侧 ---------------------------------------------------------
+    def set_phase(self, phase: str) -> None:
+        with self._lock:
+            self._phase = phase
+
+    def record_cell(self, row: dict) -> None:
+        """每格终态一行 progress.jsonl（主线程独占写）。"""
+        try:
+            now = time.time()
+            with self._lock:
+                self._cells_done += 1
+                self._neg_done += 1 if row.get("out") == "neg" else 0
+                if row.get("combine") == "hit":
+                    self._combine_hits += 1
+                elif row.get("combine") == "miss":
+                    self._combine_misses += 1
+                self._last_progress = now
+            row = {"ts": _instr_iso(now), **row}
+            with open(self.out_dir / "progress.jsonl", "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+        except Exception as exc:  # noqa: BLE001
+            _instr_warn("record_cell", exc)
+
+    def maybe_flush(self, manifest_rows: list, negatives: list) -> float:
+        """每 _GRID_PARTIAL_EVERY 格原子重写 partial 两件；返回耗时秒（计入格写盘段）。"""
+        if (len(manifest_rows) + len(negatives)) % max(_GRID_PARTIAL_EVERY, 1):
+            return 0.0
+        return self.flush_partial(manifest_rows, negatives)
+
+    def flush_partial(self, manifest_rows: list, negatives: list) -> float:
+        started = time.perf_counter()
+        try:
+            m = (
+                pd.DataFrame([asdict(o) | {"values_json": json.dumps(o.values, sort_keys=True)} for o in manifest_rows])
+                if manifest_rows
+                else pd.DataFrame(columns=[f.name for f in dataclasses.fields(GridEvalOutcome)] + ["values_json"])
+            )
+            _instr_atomic_csv(m, self.out_dir / "manifest_partial.csv")
+            _instr_atomic_csv(pd.DataFrame([asdict(n) for n in negatives]), self.out_dir / "negatives_partial.csv")
+        except Exception as exc:  # noqa: BLE001
+            _instr_warn("flush_partial", exc)
+        return time.perf_counter() - started
+
+    def finalize(self, manifest_rows: list, negatives: list, note: str = "") -> None:
+        """终态收口：末次 partial + kind=done 心跳行 + 停心跳线程（幂等，可进异常路径）。"""
+        if self._stopped:
+            return
+        self._stopped = True
+        try:
+            self.flush_partial(manifest_rows, negatives)
+        except Exception as exc:  # noqa: BLE001
+            _instr_warn("finalize.flush", exc)
+        try:
+            with self._lock:
+                rec = {
+                    "ts": _instr_iso(time.time()),
+                    "kind": "done",
+                    "pid": os.getpid(),
+                    "phase": self._phase,
+                    "note": note,
+                    "cells_done": self._cells_done,
+                    "neg_done": self._neg_done,
+                    "total": self.total_cells,
+                    "elapsed_s": round(time.time() - self._t0, 3),
+                }
+            with open(self.out_dir / "heartbeat.jsonl", "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        except Exception as exc:  # noqa: BLE001
+            _instr_warn("finalize.done_line", exc)
+        self._stop_evt.set()
+
+    # -- 心跳/看门狗线程 ---------------------------------------------------
+    def start_heartbeat(self) -> None:
+        if self._hb_thread is not None:
+            return
+        self._hb_thread = threading.Thread(target=self._hb_loop, name="grid-heartbeat", daemon=True)
+        self._hb_thread.start()
+
+    def _hb_loop(self) -> None:
+        while not self._stop_evt.wait(_GRID_HB_INTERVAL_S):
+            try:
+                now = time.time()
+                with self._lock:
+                    phase, cells, neg = self._phase, self._cells_done, self._neg_done
+                    hits, misses = self._combine_hits, self._combine_misses
+                    stall = now - self._last_progress
+                gpu_util, gpu_mem = _instr_gpu_sample()
+                rec = {
+                    "ts": _instr_iso(now),
+                    "kind": "hb",
+                    "pid": os.getpid(),
+                    "phase": phase,
+                    "cells_done": cells,
+                    "neg_done": neg,
+                    "total": self.total_cells,
+                    "elapsed_s": round(now - self._t0, 3),
+                    "stall_s": round(stall, 1),
+                    "combine_hits": hits,
+                    "combine_misses": misses,
+                    "rss_mb": _instr_rss_mb(),
+                    "gpu_util": gpu_util,
+                    "gpu_mem_mb": gpu_mem,
+                }
+                if stall > _GRID_STALL_THRESHOLD_S and cells < self.total_cells:
+                    rec["stall"] = True
+                    self._dump_stacks()
+                with open(self.out_dir / "heartbeat.jsonl", "a", encoding="utf-8") as fh:
+                    fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            except Exception as exc:  # noqa: BLE001
+                _instr_warn("heartbeat", exc)
+
+    def _dump_stacks(self) -> None:
+        """停滞看门狗：全线程栈 dump 到 stderr（wrapper `>>log 2>&1` 必落 f06_grid.log）——
+        批A 静默窗缺的正是这份"死时在干什么"证据。"""
+        try:
+            self._dump_count += 1
+            print(
+                f"[grid-instrument] STALL>{_GRID_STALL_THRESHOLD_S:.0f}s dump#{self._dump_count} phase={self._phase}",
+                file=sys.stderr,
+                flush=True,
+            )
+            faulthandler.dump_traceback()
+        except Exception as exc:  # noqa: BLE001
+            _instr_warn("dump_stacks", exc)
+
+
 def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun 三参演进（存量批次主入口，参数对象重构归批F账非本批）
     n_samples: int,
     seed: int,
@@ -1392,6 +1610,31 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     out_dir = INTAKE_DIR / f"grid_{run_ts}{shard_tag}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # T1 仪表（st-gpufeed-20261010）：批出生卡+心跳看门狗起跳（fail-open，判据面零动）
+    instr: _GridInstruments | None = None
+    if _GRID_INSTRUMENT:
+        try:
+            instr = _GridInstruments(out_dir, total_cells=len(picked))
+            instr.write_batch_meta(
+                {
+                    "run_ts": run_ts,
+                    "argv": sys.argv,
+                    "n_samples": n_samples,
+                    "n_picked": len(picked),
+                    "seed": seed,
+                    "window": [start, end],
+                    "stratify_dims": list(stratify_dims),
+                    "engine": engine,
+                    "smoke": bool(smoke),
+                    "shard": [shard_idx, num_shards],
+                    "subspace": subspace,
+                }
+            )
+            instr.start_heartbeat()
+        except Exception as exc:  # noqa: BLE001
+            _instr_warn("init", exc)
+            instr = None
+
     # 数据一次拉取（窗口外多留 120 日算因子预热）
     import datetime as _dt
 
@@ -1473,7 +1716,29 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     j_schedule: pd.DataFrame | None = None
     j_load_fail = ""
     eval_dead = bt_dead = gate_dead = 0
-    for r in picked:
+
+    def _instr_neg(layer: str, reason: str) -> None:
+        # T1 仪表：阴性格点统一记账（fail-open，观测不干预；体面零漂移）
+        if instr is None:
+            return
+        instr.record_cell(
+            {
+                "i": _cell_i,
+                "id": r.recipe_id,
+                "out": "neg",
+                "layer": layer,
+                "reason": reason,
+                "tot_s": round(time.perf_counter() - _t_cell, 4),
+            }
+        )
+        instr.maybe_flush(manifest_rows, negatives)
+
+    if instr is not None:
+        instr.set_phase("grid_loop")
+    for _cell_i, r in enumerate(picked):
+        _t_cell = time.perf_counter()
+        _t_fetch = _t_eval = _t_bt = 0.0
+        _combine_state: str | None = None
         g = r.values["G_universe"]
         # T6 S1: J=on 格点先过调度表闸（装载失败=本格 eval 阴性，其余格点不受染）
         if r.values.get("J_regime_switch") == "on":
@@ -1481,6 +1746,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 negatives.append(
                     NegativeRecord(r.recipe_id, "eval", j_load_fail, r.values, "", "j_schedule 不可用（fail-closed）")
                 )
+                _instr_neg("eval", "j_load_fail")
                 eval_dead += 1
                 continue
             if j_schedule is None:
@@ -1490,6 +1756,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 except Exception as exc:  # noqa: BLE001
                     j_load_fail = f"j_schedule_load_fail:{type(exc).__name__}"
                     negatives.append(NegativeRecord(r.recipe_id, "eval", j_load_fail, r.values, "", str(exc)[:120]))
+                    _instr_neg("eval", j_load_fail)
                     eval_dead += 1
                     continue
         if factor_data_fail and factor_surface == "v1_value":
@@ -1497,8 +1764,10 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
             negatives.append(
                 NegativeRecord(r.recipe_id, "eval", factor_data_fail.split(":")[0], r.values, "", factor_data_fail)
             )
+            _instr_neg("eval", factor_data_fail.split(":")[0])
             eval_dead += 1
             continue
+        _t0 = time.perf_counter()
         if g not in universe_cache:
             try:
                 universe_cache[g] = _load_universe(g, start, end)
@@ -1508,6 +1777,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                         r.recipe_id, "eval", f"universe_load_fail:{type(exc).__name__}", r.values, "", str(exc)[:120]
                     )
                 )
+                _instr_neg("eval", f"universe_load_fail:{type(exc).__name__}")
                 eval_dead += 1
                 continue
         cols = [c for c in universe_cache[g] if c in closes_eval.columns]
@@ -1515,6 +1785,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
             negatives.append(
                 NegativeRecord(r.recipe_id, "eval", "universe_too_small", r.values, "", f"cols={len(cols)}")
             )
+            _instr_neg("eval", "universe_too_small")
             eval_dead += 1
             continue
         if g not in factors_cache:
@@ -1529,6 +1800,11 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
             slice_cache[g] = (closes_g, vol20[cols], prep_px_tensor(closes_g.index, closes_g))
         closes_g, vol20_g, pre_tensor = slice_cache[g]
         px_exec_g = None if px_exec_all is None else px_exec_all[cols]
+        _t_fetch = time.perf_counter() - _t0
+        _ck = (r.values["G_universe"], r.values["A1_factor_normalize"], r.values["A2_combine_weight"])
+        # 仪表 combine 命中面：键构造须与 evaluate_recipe 内 cache_key 保持同步（遥测用）
+        _combine_state = "hit" if _ck in combine_cache else "miss"
+        _t0 = time.perf_counter()
         try:
             weights, degraded = evaluate_recipe(
                 r,
@@ -1545,14 +1821,18 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 sector_ctx=sector_ctx,
             )
         except Exception as exc:  # noqa: BLE001
+            _t_eval = time.perf_counter() - _t0
             negatives.append(
                 NegativeRecord(r.recipe_id, "eval", f"eval_fail:{type(exc).__name__}", r.values, "", str(exc)[:120])
             )
+            _instr_neg("eval", f"eval_fail:{type(exc).__name__}")
             eval_dead += 1
             continue
+        _t_eval = time.perf_counter() - _t0
         if r.values.get("J_regime_switch") == "on" and j_schedule is not None:
             # T6 S1: 态分布审计位（调度表批级共享，格点级零冗余读取）
             j_state_rows[r.recipe_id] = {str(k): int(v) for k, v in j_schedule["state"].value_counts().items()}
+        _t0 = time.perf_counter()
         try:
             # st-ddup-20260925 去重改造②: run_backtest+daily_net_returns 两连调合并为
             # run_backtest_full 单趟（stats/net 与原两调逐位一致，掩码批级缓存自动复用）。
@@ -1589,10 +1869,14 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 raise
             if len(net.dropna()) < 60 or float(net.std()) == 0:
                 raise RuntimeError(f"insufficient_net:{len(net)}")
+            _t_bt = time.perf_counter() - _t0
             sharpe = stats["sharpe"]
             nets_for_neff[r.recipe_id] = [float(v) for v in net.values]
             nets_archive[r.recipe_id] = net  # 带日期索引归档（values-only 落盘=产物不自描述，归因读端实证缺陷）
         except _GPUWaveFailure:
+            if instr is not None:
+                instr.set_phase("gpu_wave_failed")
+                instr.finalize(manifest_rows, negatives, note="gpu_wave_failed")
             raise  # L2-C：GPU 波败信号直通批次级 fail-closed（整波重跑 CPU）
         except Exception as exc:  # noqa: BLE001
             negatives.append(
@@ -1605,6 +1889,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                     str(exc)[:120],
                 )
             )
+            _instr_neg("backtest", f"backtest_fail:{type(exc).__name__}")
             bt_dead += 1
             continue
         if cost_gate_tiers_bp is not None:
@@ -1636,6 +1921,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                         str(exc)[:120],
                     )
                 )
+                _instr_neg("gate", f"cost_scan_fail:{type(exc).__name__}")
                 gate_dead += 1
                 continue
         if cost_attribution:
@@ -1656,8 +1942,27 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 degrade=str(stats.get("guard_reason") or ""),  # L2-C：守卫原因码（空=未降级）
             )
         )
+        if instr is not None:
+            _t_write = instr.maybe_flush(manifest_rows, negatives)
+            instr.record_cell(
+                {
+                    "i": _cell_i,
+                    "id": r.recipe_id,
+                    "out": "pos",
+                    "fetch_s": round(_t_fetch, 4),
+                    "eval_s": round(_t_eval, 4),
+                    "bt_s": round(_t_bt, 4),
+                    "write_s": round(_t_write, 4),
+                    "tot_s": round(time.perf_counter() - _t_cell, 4),
+                    "combine": _combine_state,
+                    "cache_n": len(combine_cache),
+                    "backend": str(stats.get("backend", "")),
+                }
+            )
 
     # N_eff（预注册 effective_rank）——批次级双口径披露+账本披露位（非 smoke 才写账本）
+    if instr is not None:
+        instr.set_phase("finalize")
     n_eff: int | None = None
     n_eff_meta: dict = {}
     try:
@@ -1786,6 +2091,8 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
             import logging as _lg
 
             _lg.getLogger(__name__).warning("批末台账记账失败（trial ledger 未入账）: %s", exc)
+    if instr is not None:
+        instr.finalize(manifest_rows, negatives, note="done")
     return summary
 
 

@@ -1,0 +1,151 @@
+---
+ttl: task_bound
+title: GPU 喂饱班终报（st-gpufeed-20261010）
+created: "2026-10-10"
+sid: st-gpufeed-20261010
+family_id: GPUFEED-CAMPAIGN
+---
+
+# GPU 喂饱班终报（st-gpufeed-20261010）
+
+## 〇、TL;DR（60 秒版）
+
+1. **批A"静默 5.2h 后 17:10 无声消失"叙事被证伪**。进程真实死亡时刻=**2026-10-10 11:59:35±5s**（procstart 陷阱 EXIT 三连+GPU VRAM 回落+日志断流三源收敛），死时正在正常算格（最后警告=死前 30s）。死因=外部 `TerminateProcess(exit=1)` 整树处决；reaper 无罪（kill 日志零命中+keep 在册）、OOM/WER 崩溃/Defender/调度器超时全排除（§二）。高置信凶手=夜矿续战班 st-nightmine2 的定点停批（书面自认+pid 精确匹配+16.7h 时长逐位吻合）；备选=常驻隐名杀手（backfix 案 #5-#10 同族，+2m50s 滞差共振），由 backfix 常驻审计可证伪。**不存在"新失败形态"，v2 设计输入从"防静默挂起"修正为"防外杀+防慢死"——T1 仪表两者都防**。
+2. **44.8s/格 主嫌钉死：combine_cache 抖动**。`_COMBINE_CACHE_MAX_CELLS=24M`（factory_grid_executor.py:726）预算按小宇宙 3.5M/条估算，全市场宇宙实际 ~10.2M cells/条 → **只装 2 条**，168 个 (G,A1,A2) prefix 被分层抽样交错访问 → LRU 全程抖动。铁证=批A 日志 2202 次 combine-miss 警告≈格数（≈100% miss 率）。五嫌疑判定：每格 spawn 无罪、CH N+1 基本无罪、写盘无罪（但批末才落盘=16.7h 零产物根因）、串行编排有罪（放大器，GPU util 28.6%）、**缓存抖动主犯**（§三）。
+3. **T1 仪表已实装+三重验证+真弹冒烟通过**：批出生卡/每格分段计时/批级心跳+停滞看门狗（超阈全线程栈 dump）/分段 partial 落盘，全部 fail-open、判据面零动。单测 5/5 绿、既有契约测试无新增红（2 例预存红与本改动无关，HEAD 复现实锤）、真弹 8 格冒烟 38s rc=0 仪表全件出生（§四）。**v2 无论治本与否都带仪表上窗**（批A 遗产建议已落地）。
+4. **T2 治本方案**：主修=prefix 顺序化执行（一行排序，LRU 命中率 ~100%，数值零漂移）+缓存预算重估（辅）；预期把 1000 格从 ~16.7h 压回窗内。按 48h 冻结红线，影子对照完成前不上窗；赶不上=降级声明"带仪表上窗，达标声明移 10-24 窗"（§五/§六）。
+5. **T1 200 点标定**：前置门（bcure 收官+CH 空闲窗）今晚未到执行时点，运行册已备好（§八），明晨对表数据车道 T7/T8 后执行。
+
+## 一、T0a：批A 日志全量尸检
+
+- **唯一日志**=`.runtime/logs/f06_grid.log`（807,125 字节 4450 行，append 模式跨 5 窗）。批A=行 5-4450（19:17:00 `==== fired ====` 起）。**全文件零逐行时间戳**（stderr 直写无 formatter），每格耗时只能靠硬锚点反推。
+- **warnings 分布**：2222 条=2211 FutureWarning + 11 RuntimeWarning。99.6% 来自两个 `pct_change` 位点：`factory_grid_executor.py:523`（IC 族 combine miss）×1467 + `:567`（lasso/pc1 族 combine miss）×735 = **2202 次 combine 未命中≈格数 → miss 率≈100%**。这既是噪音也是进度代理（≈2 警告/格）。
+- **速率裁定**：19:17:07→11:59:05 = 16.7h，1105 格 → **真实均值 54-60s/格**。账面 canonical 44.8s/格（nightmine 00_final_report.md:263 口径=13.35h÷1073 IC 标记）与总时长算术不自洽（1105×44.8=13.75h≠16.7h）——量级不变（超 3.5s/格 阈值 13-17 倍），但 v2 `duration_basis` 引 44.8s 会**低估 20-35% 跑批时长**，10-17 窗排程按 54-60s/格 留余量（1000 格 ×54s=15h＞22:30 收窗线，见 §六 降级声明）。
+- **11:59 最后输出**：一条正常 combine-miss FutureWarning，整行完整收尾（hex 核验无截断）——死时在算格，非挂死。
+- **stdout 全程缺席的机制**：python stdout 块缓冲，被 kill 即整体湮灭——80 万字节日志无一行 stdout 属预期行为。
+
+## 二、T0a2：死因取证与排除清单
+
+**死亡时刻裁定：11:59:35±5s（四源收敛）**
+
+| 源 | 证据 |
+|---|---|
+| 进程在册（最硬） | `.runtime/tmp/procstart_trap_standing.log` 5s 快照：11:16:38 三 pid（50252 python/25712 cmd/32284 powershell）带完整 cmdline 在册 → 行 8205/8211/8223 **同一 tick（11:59:35）三 EXIT** |
+| GPU VRAM proxy | gpu_util_long.log：11:59 档 1995MB → 12:09 档 1343MB（回落窗与 11:59:35 相容；16:29 后回升=无关消费者 Qoder 上线） |
+| 日志断流 | f06_grid.log mtime=11:59:05（stderr 末次落盘），此后零写入 |
+| 算术 | 19:17:00→11:59:35=16.709h，与 t4 袋"16.7h"逐位吻合 |
+
+**死因签名**：Task `LastTaskResult=1`=第三方 `TerminateProcess(exit=1)`（taskkill/psutil 族）指纹；非调度器自停（那会记 0x41306）；整树同 tick 死=树杀。
+
+**排除清单（全部有证据）**：reaper 击杀（reaper_kill.log 1902 行零命中+keep 在册）、孵化账本杀径（非 spawn 面）、OOM/资源耗尽（Resource-Exhaustion 零事件+watermark 健康）、WER 崩溃（Event 1000 零条；1001 全为历史存档回放）、BSOD/断电/注销（System 日志零 41/6008/1074）、Defender（无 1116/1117/1006）、守卫家族锁杀（三守卫日志零开火+目标缺席）、调度器自停（LastTaskResult=1≠0x41306）、执行器自杀（无 deadline 分支+必留 exit 行）。
+
+**凶手裁定（置信分层）**：
+- **高置信**：st-nightmine2-20261010 定点停批。书面自认（trial_ledger_registry.yaml:25-28"12:0x 停批…三进程已停"+t4_f06_msg.txt 12:07+commit 723a6a10a9 12:11:35）；pid 三连精确匹配；16.7h=杀时刻 elapsed 逐位吻合；"无 spawn 记录"可由 <5s 短命 Stop-Process 逃逸 5s 快照 census 解释；examclose 14:58 独立复核已接受此定性。
+- **备选（不可全盘排除）**：常驻隐名杀手（backfix 案 #5-#10 同族：静默 TerminateProcess+整树同秒+零新进程），时序共振=reaper 11:56:45 处决 46640 后 +2m50s（五连案滞差 +1.7~22min 家族第六例）。**证伪钥匙=backfix 常驻清单审计（307-resident 逐个核 11:59:30-35 tick 响应径）或夜矿会话命令级留痕**。若坐实备选，本案升格 backfix 案 #11。
+- **"17:10 消失"证伪**：exam chief 心跳 10:31:35 已 exited、17:15:58 才 reincarnate——10:31~17:16 无遥测期不可能观测"17:10 瞬间"；16:18-16:23 pid 50252 被 bash 树回收（pid 回收伪影）+邻案真死污染（案 #9 36456 死于 16:44、案 #10 46216 死于 17:27）+首观察者谬误=该叙事的三个成分。**建议修正台账 2fb2976b0d 的"死因未知/新失败形态"定性**（adjudicator: st-gpufeed-20261010，证据=§二四源）。
+
+## 三、T0b：代码考古——150 倍差距的分层定位
+
+**L1 基准口径真相**：0.061-0.606s/格=纯引擎核单 pass（`bench_p1.py:61-72` 只包 run_backtest_full，显式排除 evaluate_recipe 与数据装载，seal masks 桩掉）——**与 44.8s/格 不可直接比**。全格口径=求值+门禁+引擎+编排。
+
+**五嫌疑判定**：
+
+| # | 嫌疑 | 判定 | 证据 |
+|---|------|------|------|
+| 1 | CH N+1 往返 | 无罪（残余隐患在案） | 数据面整批一次（:1401/:1411/:1453/:1459）；循环内全带批级缓存。残余：掩码 CH 异常 fail-open 不落缓存（_c4_engine.py:483-485），CH 抖动会退化——本案无证据触发 |
+| 2 | 每格 spawn | 无罪 | 每批 1 次 python（run_f06_grid.ps1:39）；循环同进程，零 subprocess/multiprocessing |
+| 3 | 单线程编排串行化 | 有罪（放大器） | `for r in picked:` 严格串行（:1476）；单核吃满（cpu 93.2%）；GPU 单流阻塞提交+每格 D2H 收口 → util 28.59% |
+| 4 | 同步写盘 | 计时无罪/可观测性有罪 | 四件套批末才写（:1685-1778）→16.7h 零 manifest 根因；循环内唯一写点=j_regime_schedule.csv |
+| 5 | 无预取/缓存失效 | **主犯** | 批级预取齐备，但 combine_cache 预算 24M cells（:726）按 3.5M/条估算，全市场实际 ~10.2M/条 → 装 2 条；~168 prefix 交错访问 → 抖动。铁证=2202 miss≈格数 |
+
+**瓶颈排序**：①combine miss 重算 50-70%（normalize+combine+rank，lasso 族含 ~16 次 sklearn 滚动重训最贵）②每格不可缓存面板变形 15-25%（sizing astype/ewm/drift_band T 行循环）③门+引擎核 3-5% ④GPU 传输/串行节拍（绝对量小但封死并行上限）⑤装载/写盘 ~0%（68s/批摊销）。
+
+**真弹冒烟交叉验证**（grid_20261010-183819，8 格 38s）：小批 prefix 少无抖动 → 均速 ~3.8s/格（含 68s 级数据装载摊销前），且 cache_n=7 时已现逐出（7→5）——预算瓶颈连小批都在踩线，大批必炸。
+
+## 四、T1：仪表实装+验证（已完成，随批常开）
+
+**改动面**：`scripts/backtest/factory_grid_executor.py`（+313/-6，单文件，无新模块）。四类遥测件（全部 fail-open，判据面零动——不改抽样/求值/回测/最终 manifest schema）：
+
+| 遥测件 | 内容 | 防 batch A 哪个死法 |
+|---|---|---|
+| batch_meta.json | 批出生卡：pid/argv/参数/窗口/引擎（自报家门） | 验尸拼图困难 |
+| progress.jsonl | 每格一行：fetch/eval/bt/write 分段计时+combine 命中面+cache_n+backend | 16.7h 零进度可见性 |
+| heartbeat.jsonl | 批级心跳（60s，nvidia-smi 采样+RSS）+**停滞看门狗**：超 1800s 无进展→全线程栈 dump 到 stderr（落 f06_grid.log） | 静默窗"死时在干什么"证据缺失 |
+| manifest/negatives_partial.csv | 每 25 格原子重写（tmp+os.replace） | 被杀=已落盘成果全沉没 |
+
+环境变量：`ZEPHYR_GRID_INSTRUMENT=0` 关闭；`ZEPHYR_GRID_HB_INTERVAL`/`ZEPHYR_GRID_STALL_S`/`ZEPHYR_GRID_PARTIAL_EVERY` 可调。`_GPUWaveFailure` 波败路径显式收口（防泄漏心跳线程）。
+
+**三重验证**：
+1. 单测 5/5 绿（tests/research/backtest/test_factory_grid_instruments.py：合成面板零 CH 端到端+看门狗 dump+partial 幂等+同 seed 零漂移证尺）。
+2. 既有契约回归：test_factory_grid_executor.py 36 过+2 红=**HEAD 预存红**（TestNetReturnsArchive mkt_cap_w None 桩爆 .reindex 链，st-mx07-W5 commit 已披露同族 7 例，stash 复测 HEAD 同红实锤，与本改动无关）；test_c4_batch_smoke.py 20/20 绿；test_f06_e2e_pipeline.py 过。
+3. 真弹冒烟 grid_20261010-183819：38s rc=0，8/8 正格，五遥测件全出生且形状合法。
+
+## 五、T2：治本方案与工作量清单
+
+**主修 T2-A：prefix 顺序化执行（预估消掉 50-70% 大头）**
+- 改法：`picked = sorted(picked, key=lambda r: r.prefix_key)`（循环前一处；同 prefix 格点连续执行 → LRU 2 条即近乎全命中：~168 次 combine 计算+832 次命中，替代 ~1000 次 miss+1000 次计算）。
+- 数值零漂移论证：格点间独立（无跨格状态），结果=逐格函数；manifest 行序变（prefix 序）不影响任何下游消费者（_scan_grid_summaries 只读 summary.evaluated；台账记 count；DSR/归因按 recipe_id 读）。**须跑影子对照实证**（见下）。
+- 工作量：代码 1 行+注释；影子对照 200 点×2 跑；评审 0.5 天。**风险最低，首选**。
+
+**辅修 T2-B：combine_cache 预算重估（防御性，与 A 叠加）**
+- rank 用 int32（rank 值恒正整数，逐位等价）省一半；预算 24M→按 all_a entry 10.2M 重估至 ≥3 entries（~64M）或改按字节预算。工作量 0.5 天+对拍。
+
+**候补 T2-C：每格面板变形微优化（sizing ewm/drift_band 向量化）**——T1 200 点数据出来后按占比决定，10-15 冻结线前只在影子对照完成时上窗。
+
+**候补 T2-D：多 worker 喂单 GPU 流/异步提交流水线**——工程量大（进程池+共享面板+GPU 流编排），影子对照+评审超 48h 冻结窗，**不赶 10-17 窗，立 v3 设计输入**。
+
+**影子对照协议（判据面零动证明尺）**：同 seed=20260916 同 stratify 同窗，n=200 有界：改前/改后各一跑 → ①manifest.csv 按 recipe_id join：metric 列逐位相等（semantics 不变的修复要求 bitwise）②negatives 集合相等 ③耗时对比（目标：均格 ≤3.5s 或至少 <12.4h 窗内可收）。任何一位不等=方案废。
+
+## 六、T4：上窗状态与降级声明
+
+- **达标声明（≤3.5s/格+GPU≥70%）10-17 首窗兑现不了**：T2-A 影子对照依赖 T1 200 点标定（明晨 CH 空闲窗）+改前基线跑，10-11~10-12 完成；若对拍全绿可赶 10-15 08:00 冻结线前上窗——**有window但无余量**。
+- **降级声明（本班主动立状）**：10-17 08:00 v2 首窗**至少带 T1 仪表上窗**（已实装默认常开，本项无前置依赖）；治本若未走完影子对照，窗前以 T2 原速起跑，达标声明移 10-24 窗兑现。
+- **排程风险预警**：`duration_basis: 44.8s/格 → 1000 格≈12.4h`（prereg:63）按尸检真实均值 54-60s/格 实为 **15.0-16.7h > 12h 单批墙钟帽（prereg:103）＞22:30 收窗线**。若 T2 治本未上窗，v2 首窗大概率撞 22:30 硬收窗——窗主需预备：①裁定通道把 n_samples 再降（1000→600 内保收窗）或 ②接受 partial 产物+rc≠0 记一次试次。**此为数据驱动的排程修正建议，非判据面改动，走裁定通道呈批**。
+- 导航风险移交窗主：`register_f06_grid_task.ps1:22` 的 action 指向 `D:\ZephyrAlpha\scripts\run_f06_grid.ps1` 仓内不存在（真身 scripts/tasks/run/）；live 任务已由裁定通道改指（NextRunTime=2026-10-17 08:00），重注册时勿踩。
+
+## 七、10-17 窗验收判据原文（config/search_space_prereg.yaml:49-67 照录）
+
+```yaml
+f06_grid_v2:
+  enabled: true
+  inherits: f06_grid
+  entry: scripts/backtest/factory_grid_executor.py
+  n_samples: 1000
+  seed: 20260916            # 与批A 同种子：首批 1000 格=原 6000 抽样前缀，批次谱系可对
+  stratify_dims: [G_universe, A1_factor_normalize, B_top_n]
+  frozen_at: '2026-10-10T12:10:00+08:00'
+  frozen_by: 夜矿续战令三连裁③（总统统筹 2026-10-10）
+  owner_signoff: 夜矿续战令 §三 T4（Owner 通道授权：批A 作废立 v2）
+  window_discipline:
+    fire_window: 'Sat 08:00（Task Scheduler 已由 14:00 改 08:00）'
+    hard_deadline: '每日 22:30 前收窗，禁跨 23:00 W1 窗（二号域 GPU 让位，OD-5 叠跑教训在案）'
+    duration_basis: '实测 44.8s/格（批A 进度代理）→ 1000 格≈12.4h，08:00 起跑 22:30 前收窗留 2h 余量；L2 批提速落地 3.5s/格后可经裁定通道升点'
+  acceptance:
+    manifest_present: true   # W1 式正式验收判据：manifest+rc
+    rc_zero: true
+    n_trials_ledger: '收窗 summary 经 MOD-BT-200 自动入账（对齐 38b453ca 配方）'
+```
+
+验收判据=**manifest 存在+rc=0+台账自动入账**；判据面本班零触碰。
+
+## 八、T1 200 点标定运行册（明晨 CH 空闲窗执行）
+
+前置门（三条全绿才发车）：①bcure 残链收官（`Get-CimInstance Win32_Process` 无 tilib_dwm_shard_runner/backfill_night 活体）②CH 空闲（数据车道 T7/T8 对表确认）③避开 02:30 夜跑±1h。
+
+```bash
+# 发车（仪表默认常开，无需 env）
+export PATH="$LOCALAPPDATA/Programs/Python/Python312:$LOCALAPPDATA/Programs/Python/Python312/Scripts:$PATH"
+python scripts/backtest/factory_grid_executor.py --n-samples 200 --seed 20260916 \
+  --stratify-dims G_universe,A1_factor_normalize,B_top_n
+```
+
+读数口径：`grid_<ts>/progress.jsonl` → 每格 fetch/eval/bt/write 分位分布+combine hit/miss 比例+cache_n 时间线；`heartbeat.jsonl` → GPU util/memory 对照序列+RSS 曲线。产出=预算帽三元组回填材料（prereg:81-88 要求 measured_at/run_id/commit）+T2-A 影子对照的改前基线（**同参数再跑一遍即 baseline，先留档后改码**）。
+
+## 九、移交与建议
+
+1. 台账修正建议：2fb2976b0d"死因未知/新失败形态"→"11:59:35 外部定点处决，高置信=夜矿续战班停批，证据链见本报告 §二"（裁定通道，adjudicator 署名随本 commit）。
+2. backfix 交接：11:59:30-35 tick 已列入备选案卷；若其常驻审计排除夜矿班嫌疑，升格案 #11。
+3. v3 设计输入：T2-D 多 worker 喂单 GPU 流；executor 增逐格时间戳日志（本班 stderr 无时间戳教训）。
+4. 遗留：批A 真实均速 54-60s/格 vs 账面 44.8 的口径差，建议随 T1 标定以完整三元组回填修正（裁定通道）。
+
+adjudicator: st-gpufeed-20261010（尸检裁定+仪表落地+方案呈批）
