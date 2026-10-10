@@ -137,3 +137,19 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 - **红蓝读数**：新网 4/4+P-28 网 7/7（存量红翻绿）+legacy 72/72+incubator 19/19=**102/102**。
 - **审计附记（案 #9 第二杀径）**：全仓 kill 调用点清点（TerminateProcess/taskkill/psutil.kill/Stop-Process）=全部自家子进程守卫（services_registry=dashboard 手停/drift/checker_supervisor/process_pool/landing git 超时/session_worktree 自有 daemon/reaper=有复核+全落账/scheduler 守卫=自家 BizModule/belt_guard=自家 daemon），**仓内无 backup 杀手第二调用点**；reaper_kill.log 对案 #6-#9 全清；worktree 无隐藏 reaper 实例。第二杀径主使在仓外/未识别面——event watch+PPID 陷阱继续在线，下一例死亡出全链。
 - **巡检对照实验**：46216（16:50:35 起跑）账本零命中（对照组第二号）在跑；36456（案 #9，对照组第一号）死于同阶段=第二杀径坐实记录在案（402d90ef）。
+
+### 案 #10（46216，16:50:35-17:27:18 死，存活 ~37min）——巡检班 17:3x 轮【五连立+对照组二连】
+
+- **对照组二连坐实**：46216 账本零命中（与案 #9 同为无陈旧身份实例）仍死于同指纹（rsync 子进程 17:26:39 起飞→17:27:18 父死）——第二杀径与账本无关再证。
+- **点火者处决→backup 相遂=五连立**：reaper_kill.log `17:25:38 KILLED PID=30496 runtime_dir_orphan:age=36min`（age 倒推出生≈16:49-50=46216 点火时刻）→backup 死 **+1.7min**。五连立全表：+14/+20.5/+21.5/+8.5/+1.7min。
+- **杀伤面收敛**：案 #8 批复落地（465f2779）后账本杀径已带三要素复核+销账+backup 白名单三闸；本案死于落地后=第二杀径独立存在。全部事件册出生链复核：死亡窗内无 kill 能力新进程（17:25-17:27 全为已知无胄常驻 ensemble）→**主使=先于全部陷阱（11:16:38 前即活的 resident）**，与 307-resident census 的全程存活交集一致。
+- **下一班一击**：①reconcile_runner 对"worker 死亡"事件的响应路径代码审计（runner poll 到 worker 死→bag 标 dead/requeue 的链路上有无 spawn 面清理）；②全 307-resident 清单逐个 cmdline 审计（interest 关键词法已清 10 个，余 297 个含大量 git/bash 噪声但可能有隐名工具）；③处方①落地后的账本面已三闸护体，第二杀径的牺牲面=queue 点火的 backup（worktree 点火形），主区计划任务直载形是否同伤待观察。
+- 46216 死后锁空闲；patrol+陷阱×3+event watch 全在线。
+
+### 第二杀径一击审计结论（巡检班 17:5x 轮，批复令"审计 kill 调用点"执行件）
+
+1. **全仓 kill 调用点清点（TerminateProcess/taskkill/psutil.kill/Stop-Process 全谱）**：services_registry（dashboard 手停按钮）、gov_drift×2/checker_supervisor/process_pool/auto_runtime_core（自家子进程）、commit_queue_landing（git 超时守卫）、session_worktree（自家 heartbeat daemon，按 pid 文件）、reaper（有复核+全落账）、scheduler 守卫/belt_guard（自家 BizModule/daemon）——**全部为"自家子进程"语义，无任何调用点按 cmdline/cwd/age 猎杀 backup**。仓内第二杀手=不存在。
+2. **runner 侧审计**：reconcile_runner 无 kill 面（sweep_stale_workers 只改 status file+DB）；worker 经 incubator.spawn 注册 `expected_lifetime_s=1800`——**landing worker 带 30min 死期登记是 reaper 处决的结构性原因**（大袋 30-60min 实跑 vs 1800s 死期=必然处决，这可能才是真正的设计缺陷面）。
+3. **死亡窗过程取证**：五案死亡窗 ±2min 内 session_worktree merge/abort 执行=零命中（守卫家族/账本/收尾流三面全清）。
+4. **新暴露面（存储性隐患，非本案直接凶手）**：`.runtime/locks/heartbeat_*.pid` 陈旧文件 **206 份**（Oct 2/Oct 9 系在册）——session 收尾流对其 taskkill 无 liveness/身份复核（session_worktree.py:540），pid 回收后=又一处定点误杀面（守卫家族同构）。处方②同款精神适用：taskkill 前须核活体 cmdline 含 heartbeat_daemon。
+5. **主使画像收敛**：resident（先于 11:16:38 存活至今）×有 TerminateProcess 能力×瞄准 .runtime-cwd 的队列点火 backup×不 spawn 新进程直接执杀×仓外或隐名。**杀径时序五连立全表与滞差浮动（1.7-22min）最兼容的解释=主使以自身事件周期（或响应 worker 死亡信号）在 G 镜像窗行凶**。下一班：307-resident 逐个 cmdline 审计（关键词法之外的全量人工面）+ event watch 续猎。
