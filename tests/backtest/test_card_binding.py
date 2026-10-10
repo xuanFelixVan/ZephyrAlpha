@@ -162,3 +162,36 @@ def test_run_one_skips_cards_not_in_approve_list(tmp_path):
     p.write_text(yaml.safe_dump(card, allow_unicode=True), encoding="utf-8")
     r = cb.run_one(p, {"other"}, tmp_path / "scores.yaml", "t", True)
     assert r["skipped"] == "not_in_approve_list"
+
+
+def _relay_panel():
+    """判别用例数据：末 3 日均值 50 > 前 5 日均值 40（本口径），但 < 同期 5 日均值 70。
+    若有人把"前 5 日均值"改读成同期 rolling(5)，本例比值会由 1.0 变 0.0 ⇒ 测试立刻红。"""
+    import pandas as pd
+
+    amt = [10, 10, 0, 0, 0, 100, 100, 50, 50, 50]
+    clo = [10, 10, 10, 10, 10, 10, 10, 11, 12, 13]
+    idx = pd.bdate_range("2024-01-01", periods=len(amt))
+    return pd.DataFrame({"d": idx, "code": ["A"] * len(amt), "close": clo, "amount": amt})
+
+
+def test_op_relay_retreat_uses_prior_not_concurrent_five_day_mean(monkeypatch):
+    panel = _relay_panel()
+    monkeypatch.setattr(cb, "load_sector_family_panel", lambda args: panel)
+    ser, ev = cb.op_sector_relay_retreat_ratio({}, {"families": ["industry_l1"]})
+    assert ev["caliber_choice"] == "prev5=rolling(5).mean().shift(3)"
+    assert float(ser.iloc[-1]) == 1.0  # 末三日接棒成立 ⇒ (1-0)/1
+    assert ser.between(-1.0, 1.0).all()
+
+
+def test_op_relay_retreat_retreat_side_is_symmetric(monkeypatch):
+    """撤离侧对称反向：末 3 日收盘连跌且 3 日均量 50 < 前 5 日均量 100 ⇒ 比值 −1.0。"""
+    import pandas as pd
+
+    idx = pd.bdate_range("2024-01-01", periods=10)
+    clo = [10, 10, 10, 10, 10, 10, 14, 13, 12, 11]
+    amt = [10, 10, 100, 100, 100, 100, 100, 50, 50, 50]
+    panel = pd.DataFrame({"d": idx, "code": ["A"] * 10, "close": clo, "amount": amt})
+    monkeypatch.setattr(cb, "load_sector_family_panel", lambda args: panel)
+    ser, _ev = cb.op_sector_relay_retreat_ratio({}, {"families": ["industry_l1"]})
+    assert float(ser.iloc[-1]) == -1.0
