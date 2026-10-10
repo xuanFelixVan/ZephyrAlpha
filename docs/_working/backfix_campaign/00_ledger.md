@@ -329,3 +329,13 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 - **为何先前只用 OS 进程**（排序失误如实记）：机械采样与挂死门用进程=零轮子成本、可复现、留痕确定性优于让模型轮去执行一次 kill；但**跨会话值守恰是自动化的独占地位**，我在发现自动化停摆的当轮只附了一句选项而未立即建，属排序失误，本轮补正。二者分工此后=进程管采样与门（05:30-06:30 加密窗照旧），自动化管判读与续岗。
 - **前班判语更正**：令卡"巡检自动化 automation-62fd8292 每 30 分钟常驻"不成立——本地自动化面查无此件＋巡检日志 02:56:28 后 03:17/03:47/04:17 三格零行＝停摆。本班 04:20:43 起以 `backfix_ticker_until.ps1` 补盲，**02:56-04:20 计 84 分钟无 patrol 盲区如实入账**（monitor 15s 采样在此期间未断，故非全盲）。
 - 复核命令：`git show HEAD:src/zephyr/trading/process_reaper.py | grep -c is_backup_form_cmdline`（应 6）；`git diff --cached --numstat HEAD -- src/zephyr/trading/process_reaper.py`（应空）；`python scripts/commit_queue.py status --session st-backfix-patrol-20261011`（done=1/dead=1）；`qoder_cron list` 见 9cbf6aef 且 enabled=true。
+
+### 提前点火令执行件（Owner 反拖延直令，接管巡检班 05:3x 轮）
+
+- **令①处置·时刻先对表**：令卡写作 05:0x／零推进 4h10m，本班 **05:33:03 实测**＝零推进 4h42m、存活 5h33m（5h 线原拟 05:50:46 越线，故本次比脚本门提前 17 分钟执行，两者判据同一件不另开口径）。五因子现值：alive=True／state mtime 仍 2026-10-10 22:58:40／last_backup_time 仍 2026-10-09T07:48:15／`logs/backup_report_20261010_2359*.json` ABSENT／G_mtime 冻结 00:50:46。
+- **挂死定性补一条硬对照**（不是仅凭"三件全缺"）：24968 cpu_total=364.8s、cpu_d 稳 0.3/15s ≈ 单核 2%＝**周期轮询而非做功**，且子进程面只有 conhost、零工作子；对照 05:34 新实例同尺度下 `kids` 里明确有 `pg_dump.exe -Fc -h localhost -U zephyr -d depgraph` 在跑——"健康实例带工作子、该实例四小时无工作子且近零 CPU"才是本次处置的实证核。动作序＝先证据链后动作：Stop-Process 24968 → 复验 alive=False（05:33:59）→ 删 `.runtime/backup.lock` → 复验 exists_after=False。凭据件=`.runtime/tmp/backfix_zombie_action_evidence.md`（点火前清场凭据）。
+- **令②点火·方式偏离如实记**：用 `Start-ScheduledTask -TaskName ZephyrAlpha-DailyBackup` 一次性触发，**未改任务定义/未新增触发器**（可逆且更不侵入，自然点火效果等同；原 06:00 触发器一字未动，届时按令卡预判 lock_held 让路=无害）。实测 05:34:14 state=Running、res=267009（=运行中非失败）；出生链=22976 `wscript.exe` → 24468 powershell（05:34:34），锁面 05:34:39 写入 `PID:24468 START:2026-10-11T05:34:39.8269427+08:00`。
+- **新显形（待扫面，非本班权限）**：DailyBackup 的任务动作经 **wscript 宿主**起 powershell，而非直起——与主使画像"仓外/隐名 resident（脚本宿主形态）"落在同一类观测面上。后续定名须把 `wscript → powershell` 这条宿主链一并纳入出生链排查，此前各案卷只查到 powershell 层。
+- **令③读数已就位**：新监听 pid=25120（`-WatchPid 24468 -SampleSeconds 15`），首周期即见 pg_dump 子进程＝做功正证；handle 哨(46444)／atime 差分(57008)／三陷阱(57376/43560/57184) 全在岗；完整轮预计 ~07:4x 出定谳（比原计划提前约 1h）。
+- **机器面假案显式标注（防下一班误计）**：patrol 于 05:35:03 把我方受令清场记成 `TARGET_DEATH pid=24968` 并写 `backfix_killer_case_20261011_053503.md`（candidates=545），05:34:13 另有同事件二件。**两件案卷皆=本班受令处置，非新增他杀，不得计入案 #15**；连环案清仓数仍=案 #3-#14 十例。旧监听 47956 已随目标消亡自然退出（实测 alive=False）。
+- 复核命令：`Get-Content .runtime/tmp/backfix_zombie_action_evidence.md`；`Get-Content .runtime/tmp/backfix_monitor_24468.log -Tail 3`（应见 kids 含 pg_dump）；`Get-Content .runtime/tmp/backfix_patrol.log -Tail 8`（TARGET_DEATH 24968 那条=手杀）；`git show HEAD:docs/_working/backfix_campaign/00_ledger.md` 后数 `^### `（本段落地后应 30）。
