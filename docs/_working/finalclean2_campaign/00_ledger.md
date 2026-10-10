@@ -144,8 +144,12 @@ gate_selfdoc: GIT-DANGEROUS
 18. **⚑请认可一条判据细分（"独有字节"要分"落后基座"与"未落地增量"两类，方向可由一行命令机判）**：波二 clause"其车道零独有字节"现在把**两类相反的东西合成一类**——第二把尺的 `neq_dev` 桶既装"车道比 dev 新（真增量，须救）"也装"车道比 dev 旧（基座滞后，无抢救价值）"。后果两面：①**误判方向偏保守**（旧稿残留被当态②"先救后清"，多做无用救援，安全但费时）；②**波二闸门可能永远开不上**——只要某班车道落后 dev 一个字节，clause2 就永不为真。20:4x 实测例：宪法班工棚 4 件 `neq_dev`，逐件比字节数得 **4/4 皆"棚 < dev"**（`AGENTS.md` 14,247<14,340、`search_space_prereg.yaml` 7,216<9,414、`trial_ledger_registry.yaml` 3,293<7,972、`run_f06_grid.ps1` 2,900<3,303）＝全属②类，而该班终报 20:31 已进 dev（`04b9a4d735`），照现判据它仍"未收官"。**请认可加的机判方向（不放宽任何既有闸）**：对每个 `neq_dev` 件补一步 `git cat-file -s dev:<rel>` 与盘面字节数比较，**棚<dev ⇒ 记 `stale_base` 不计入独有字节**；棚>dev 或等长异字节 ⇒ 仍计增量（保守不变）。⚠ 字节数只是**方向探针不是等价判据**（等长可异字节），故 `stale_base` 只在"棚<dev"时成立，等长/更大一律回增量口径；复核命令：`for f in $(...); do printf "%s 棚=%s dev=%s\n" $f $(wc -c < $D/$f) $(git cat-file -s dev:$f); done`。本班未据此改任何删除动作，纯呈批。
 
 19. **⚑T7 呈批面（请只批第 1 批；第 0/3 批禁进物理删）**：墓碑打包清单已机生成卷（§九C，逐件级承载体＝E 侧 10 枚 `MANIFEST.jsonl` 60,808 行＋本班 `t7_casefile/tmp_package.csv` 60,819 行）。分批合计（机生口径，规则写死在 `tools/mk_t7_block.py` 里，非人工点数）＝**第 1 批 3 目录/43,584 件/2.76 GiB（占载荷 82.0%）**｜第 2 批 5 目录/17,175 件/0.38 GiB（11.3%）｜第 3 批 1 目录/5 件/0.21 GiB（6.3%）｜第 0 批 1 目录/44 件/0.01 GiB（0.4%）。本班建议 Owner **只批第 1 批**（`st-zc8-lane-rb-20260928`／`st-zc8-verify-20260928`／`p4_verify`：全为 pytest 影子树/VCS 已 durable 实证，且"排除自指后引用＝0"∧"人写件与工棚无重＝0"）；**第 0 批 `zmaster2_coord` 内化前禁物理删**（下述三件治理案卷），**第 3 批 `st-tclose-cardfix-20261004` 的 `governance.db.bak` 227,168,256 B sha256 `3258c948…` 与 G 盘 `db_dumps/20261003`(`4f79a96c…`／223,731,712 B)、`20261004`(`4ed38db5…`／229,023,744 B) 两套夜镜像均不等且体积介于两者之间＝独立时间点快照**，请画押后再动；第 2 批逐件随批画押。
+    **【05:1x 已结案】** 总统统筹已裁**三档制**（01:4x 令）：立清 6.05 GiB（机械三件齐）＋10-16 自动档 26.4 GiB＋留守面季度再议，**无新尺**；本班旧“四件联言”建议不再单独执行，本条由总统筹裁、本班零动作、不自扩面。
+    **【05:1x 已答：不批现在删】** 复活窗 2026-11-10 未满⇒物理删等**季度打包窗一键批**；第 3 批 `governance.db.bak` 届时单独画押。本班 §九C 机生清单即为届时的执行输入，零重算成本。
 20. **⚑请指派内化车道（本班不自落他人案卷）**：`zmaster2_coord`（属主 st-zmaster2-20260926，注册表 ghost／fs 静默 2,990 分）内含三件**治理案卷**——`ADJUDICATION_storage.md`（7,800B，frontmatter `ttl: permanent`）、`three_piece_infra/storage_decision/CASE.md`（895 行／62,574B，存储四方案成本·保护面·外部对标·翻案证据表）、`ADJUDICATION_20260927.md`（7,801B）。五路独立实测＝dev 零 commit ∧ 不在 HEAD 树 ∧ 磁盘该目录不存在 ∧ 独有短语（"四件权威"/"唯一真正的搬迁候选"/"不搬 PostgreSQL"）仓内零命中 ∧ **三件 blob 在对象库但不在 518,357 枚可达对象内＝悬空，一次 `git gc --prune` 即蒸发**。本班当班已出**保护腿**（`tools/t7_anchor_btier.py`：E 副本↔blob↔安全区副本三处字节全等逐件核实＋各钉一枚附注标签锚 `quarantine/finalclean2-t7-*-20261011`，锚可达性 `cat-file -e <tag>^{blob}` 三枚全 True），故此刻**耐久承载体＝E 墓碑＋本班安全区双抄＋三枚锚**。⚠ 但"案卷在锚上"不等于"案卷在册"：这三件讲的是**存储四方案裁定面**（与 2026-09-27 Owner 存储终裁定同域："治理账本不搬 PG"那条，本册 §五-12 亦引其口径），落 dev 须由册主车道出袋——本班若自落＝把他人案卷装进本班 commit＝归属篡改（在册教训同向），故只报不动。
+    **【05:1x 已派＝维护二班 T10】** 接管正道代落（sha 对账＋归属注记）。本班移交面＝E 墓碑 `zmaster2_coord/…` ＋安全区 `.runtime/quarantine/finalclean2_safety/t7_zmaster2_irreplaceable/`（逐件 sha256 见 `scan/t7_casefile/t7_btier_anchor.json`）＋三枚锚 `refs/tags/quarantine/finalclean2-t7-*`；T10 落库前本班安全区副本**不清**、锚**不 drop**。
 21. **⚑复扫轮 3 新浮四处真增量＝本班"先救未清"（零删除申报）**：02:11-02:12 两把尺同拍复扫 14 面（态①2／态②4／态④8），4 个态②面经方向机判后**真增量仅 6 件/89,367 B**（其余 17 件＝`棚<dev` 落后基座，无抢救价值）。6 件当班抄进非 TTL 安全区并逐件 sha256 验真（清单＝`finalclean2_safety/wave2b_rescue_manifest.jsonl`，与 01:32 那批 `wave2_rescue_manifest.jsonl` 的 3 件是**不同集合、分文件存、无互相覆盖**）：deadcure2 二期台账 `01_phase0_ledger.md` 65,862B（棚>dev）、dexp 4 件（dev 无此路径，其中 `docs/_working/dexp_campaign/05_worktree_handoff_zongdui.md` **是点名给总统筹的交接件**）、nightmine `scripts/governance/meta_question/wo_a2legs/build_news_sentiment_window.py` 8,507B（棚>dev）。**清腿本班未执行**，三条在册理由：①三属主此刻**注册表仍在册**（四件联言判死的第①源"registry 查无"不成立）②夜矿/死信二期在 §六 六线名册内仍判未收官③deadcure2 名下 blobs/dead 是他班领地（本班红线）。⇒ 请属主认领或总统筹一句令"救毕可清"，本班即走 `session_worktree.py archive` 正道（其内建活跃硬拒守卫在后）。
+    **【05:1x 已授“救毕可清”】** 分工＝属主活着者移交（deadcure2／nightmine），属主死者由**维护二班 T11 代落**（dexp 四件；其中 `docs/_working/dexp_campaign/05_worktree_handoff_zongdui.md` 折入该班 `01_ledger` 后销文）。本班已收工：不代投、不自落他人件。执行输入＝`.runtime/quarantine/finalclean2_safety/wave2b_rescue_manifest.jsonl`（逐件 sha256/字节/dst）＋`wave2_rescue_manifest.jsonl`（govjudge 2／maint1-close 1）。
 22. **一条通道缺陷呈册主车道（本班不自修他车道写侧）**：T7 复核发现 E 侧 `MANIFEST.jsonl` schema 只有 `path/bytes/sha256` 三键、**无 `git_blob` 键**（10/10 目录皆然）⇒ "入区那一刻该件是否已在 VCS"当时没落账，本班只能在 T7 用 blob 层全量实测补齐（A/B/C 三层）。建议写侧（本班临时件 `tools/exec_c_tomb.py` 的后继永久化版本）增加 `git_blob`＋`blob_reachable` 两键，使"物理删是否等于确定损失"在**入区时刻**就有账面答案。本班临时件自改无意义（随班 TTL），故只登记缺陷。
 
 23. **⚑本班判据缺陷一条（已当班治本，方向＝收紧不放宽，请事后追认入工法）**：§二"三源"缺**执行工具同源**这一路。轮 3（02:11）`liveness_verdict` 分片读数把 6 面判成属主已死（态①2／态②4），而 `session_worktree.py archive` 的**内建活跃硬拒守卫**按 `SessionRegistry.list_active` 判同一批属主**仍活跃**并硬拒绝（该工具自述"无逃生 flag，要动活车道只能等它死"）。⇒ 后果两面：①**假报死**（若本班当时照态①②执行就会去 archive 活车道，靠工具守卫才没出事）；②**收口判据随时钟抖**（17 分钟内**同一 14 面集合**有 6 面翻转态别，纯因 90min 避让窗自然老化，非现实变化）——令卡 T8"四面全态④且连续两轮同一结论"用旧尺**可能永远开不上**，也可能在假报死那一刻**误开**（与 §五-13 的"恒真空集"同族，皆判据与执行面不同源）。治本已落 `tools/scan_dirs.py`＋`tools/mk_ledger.py`：新增第四源 `in_list_active`（走 `list_active_readonly()`／`mutating=False`，因 `list_active` 默认会把判死写进接管台账＝"看一眼就立案"的放大器，该方法自述），并把它列为**硬态④触发器**；修尺后 02:33 两把尺同拍＝**14 面全态④**，与 01:54 轮 2 结论一致（⇒ T8 此刻真实成立，且成立在收紧后的尺上）。请总统筹把这条**通则**转给所有做"活/死面判定"的车道：**凡删除动作的最终判据必须与所用工具的守卫同源，否则尺上的"死"不算死**。
@@ -587,4 +591,26 @@ wc -c .runtime/quarantine/finalclean2_safety/wave2b_rescue_manifest.jsonl       
 
 ```bash
 git show dev:docs/_working/finalclean2_campaign/00_ledger.md | sed -n '/## 十二/,$p'
+```
+
+## 十三、终验销账回执（总统统筹画押令，本班末笔）
+
+- **时刻如实分列**：令卡自署"05:1x"，本班 `date` 实测接收时刻＝**2026-10-11 04:14:54**（差 58 分＝统筹卡面时钟与本仓系统钟不同拍，非本班体感钟问题；在册 09:xx 旧账引用一律按本仓钟为准）。本班只按实测时刻记账，不照抄卡面时刻冒充同步。
+- **终验结果**：§十二 全读通过＋E 区 10 目录/3 枚锚实测在案（`ls E:/_tomb_quarantine/st-finalclean2-20261010 | wc -l`=10；`git for-each-ref refs/tags/quarantine/finalclean2-t7-*`=3）。
+- **五问逐答的落地处**：①两通则**追认**（§五-23／§五-25），转播由**维护二班 T8** 执行（已开班），本班不自转；②C6 第 1 批**不批现在删**（复活窗 2026-11-10 未满），季度打包窗一键批、`governance.db.bak` 届时单独画押，本班 §九C 机生清单＝届时执行输入；③`zmaster2_coord` 三件**派维护二班 T10**（接管正道代落，sha 对账＋归属注记）；④9 件真增量**已授"救毕可清"**（活的移交、死的由 **T11 代落**，dexp 05 交接件折入其 `01_ledger` 后销文），793 件认领线照走、**双锚红线至认领完**；⑤C-2 49.89 GiB **已裁三档制**（立清 6.05 GiB＋10-16 自动档 26.4 GiB＋留守面季度再议，无新尺）。
+- **本班终态**：终清二期两波＋收尾全链**验收销账**，停手待命态解除、**正式收工**。工棚工具件（`.runtime/tmp/st-finalclean2-20261010/`）留 TTL 自清；**三枚册面即终报**＝`docs/_working/finalclean2_campaign/{00_ledger.md, 10_t0_inflight_triage.md, 11_tmp_dir_dossier.md}`。
+- **给下一班（维护二班）的三条硬约束**（照旧有效，勿当已收工就松）：①`refs/recover/inflight-20261010`＋`refs/quarantine/st-govjudge-20261010-20261010`＋三枚 `finalclean2-t7-*` 锚＝**禁 drop／禁 gc**直至认领完；②E 墓碑区**只写不删**，物理删属 Owner 门位 C6；③`.runtime/tmp` 的清理一律按**三档制**执行，禁再自造第四条联言判据。
+- **本班留给"清理体系"的四件骨架**（统筹原话点名，此处只作索引，真源在各段）：四态判据（§二＋`tools/mk_ledger.py` 写死）／墓碑制与逐件 sha 承载体（§九B/§九C＋`E:\_tomb_quarantine`）／两面读法＝面级 vs 字节级（§九E＋§五-24）／三通则＝删据与守卫同源（§五-23）＋摘锁核三源（§五-25）＋被清除面≠净收官（§五-24）。
+
+**末笔复核命令（只读，交给 T8 验收用）**
+
+```bash
+git log --oneline dev --grep=终清二期 -6 --format='%h %ci %s'          # 五笔账册袋（含本末笔）
+git show dev:docs/_working/finalclean2_campaign/00_ledger.md | sed -n '/## 十三/,$p'
+python .runtime/tmp/st-finalclean2-20261010/tools/t9_forced_close_audit.py | sed -n '3,9p'
+python .runtime/tmp/st-finalclean2-20261010/tools/fourth_source_selfcheck.py | head -2
+ls E:/_tomb_quarantine/st-finalclean2-20261010 | wc -l                  # 期望 10（零删除）
+git for-each-ref --format='%(refname:short)' 'refs/tags/quarantine/finalclean2-t7-*'   # 期望 3
+wc -l .runtime/quarantine/finalclean2_safety/wave2_rescue_manifest.jsonl \
+      .runtime/quarantine/finalclean2_safety/wave2b_rescue_manifest.jsonl  # 期望 3＋6
 ```
