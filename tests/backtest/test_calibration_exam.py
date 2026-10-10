@@ -345,3 +345,15 @@ def test_calibration_known_keys_still_passes_after_failclosed(tmp_path):
     row = ce.run_card(_card(tmp_path), signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
     assert row["verdict"] == "pass"
     assert row["unjudged"]["numeric_keys_not_read"] == []
+
+
+def test_pillars_route_is_the_single_dispatch_source():
+    """路由真源抽函数的回归锁（普查件与本核共用，禁两处抄分派式）：
+    四形各钉一条——NAV 键 comparison=dual_arm／全韦校准键 comparison=series（三连裁③v2 原意）／
+    calibration=series／shadow 带 NAV 键仍=series（现状如实，扩面属判据路由面待呈批非本件自决）。"""
+    cal5 = {"mono_spearman_min": 0.6, "ic_mean_min": 0.02, "regime_same_sign": True}
+    assert ce.pillars_route({"family": "comparison", "pillars_numeric": {"sharpe_delta_min": 0.1}}) == "dual_arm"
+    assert ce.pillars_route({"family": "comparison", "pillars_numeric": cal5}) == "series"
+    assert ce.pillars_route({"family": "calibration", "pillars_numeric": cal5}) == "series"
+    assert ce.pillars_route({"family": "shadow", "pillars_numeric": {"maxdd_delta_max": 1.0}}) == "series"
+    assert ce.pillars_route({"family": "comparison", "pillars_numeric": {}}) == "dual_arm"

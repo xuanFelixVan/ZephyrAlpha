@@ -11,6 +11,7 @@ prose_quote 校验、缺 data_binding 拒绑三处都写了"应当拒"的正例�
 from __future__ import annotations
 
 import datetime as dt
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -230,3 +231,67 @@ def test_ops_default_quote_is_verbatim_on_the_real_card(op, card_file):
     card = yaml.safe_load(path.read_text(encoding="utf-8"))
     q = cb.OPS[op]["quote_key"]
     assert q.replace(" ", "") in cb._card_text(card).replace(" ", "")
+
+
+def _vocab_cards(tmp_path):
+    d = tmp_path / "cards"
+    d.mkdir()
+    (d / "a.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "card_id": "T-A",
+                "family": "calibration",
+                "status": "preregistered",
+                "signal_kind": "series",
+                "pillars_numeric": {"mono_spearman_min": 0.6, "car_t_stat_min": 2.0},
+                "pillars": {"lag_profile": "x"},
+            },
+            allow_unicode=True,
+        ),
+        encoding="utf-8",
+    )
+    (d / "b.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "card_id": "T-B",
+                "family": "comparison",
+                "status": "preregistered",
+                "signal_kind": "panel",
+                "pillars_numeric": {"sharpe_delta_min": 0.1, "mono_spearman_min": 0.6},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (d / "c.yaml").write_text(
+        yaml.safe_dump({"card_id": "T-C", "family": "calibration", "status": "empty"}), encoding="utf-8"
+    )
+    (d / "not_a_card.md").write_text("x", encoding="utf-8")
+    return d
+
+
+def test_vocab_census_is_machine_generated_and_zero_write(tmp_path):
+    """普查件三钉：①按 pillars_route 分侧取词表（a 卡走校准判官→car_t_stat_min 列外；
+    b 卡混形走双臂判官→mono_spearman_min 列外＝混形卡的未判侧显形）；②无机判面卡单独计数不编造；
+    ③discipline 三面零（阈值/卡件/CH 全 0，普查只列键名不改值）。"""
+    out = cb.build_vocab_census(_vocab_cards(tmp_path))
+    assert out["card_total"] == 3
+    assert out["cards_without_numeric_face"] == 1
+    by_id = {r["card_id"]: r for r in out["rows"]}
+    assert by_id["T-A"]["keys_outside_route_vocab"] == ["car_t_stat_min"]
+    assert by_id["T-A"]["route"] == "series"
+    assert by_id["T-A"]["prose_pillar_keys"] == ["lag_profile"]
+    assert by_id["T-B"]["keys_outside_route_vocab"] == ["mono_spearman_min"]
+    assert by_id["T-B"]["route"] == "dual_arm"
+    assert out["unique_keys_outside_vocab"] == 2
+    assert out["discipline"]["threshold_values_written"] == 0
+    assert out["discipline"]["cards_modified"] == 0
+    assert out["discipline"]["ch_queries"] == 0
+
+
+def test_vocab_census_vocab_sources_read_from_core_constants():
+    """词表两侧必须直读执行核常量（复制定义=普查与判决漂移，改一处即红）。"""
+    from fexam.calibration_exam import _CALIBRATION_JUDGED_KEYS, _COMPARISON_KNOWN_KEYS
+
+    out = cb.build_vocab_census(cb.CARDS_DIR)
+    assert set(out["vocab_sources"]["series"]) == set(_CALIBRATION_JUDGED_KEYS)
+    assert set(out["vocab_sources"]["dual_arm"]) == set(_COMPARISON_KNOWN_KEYS)
