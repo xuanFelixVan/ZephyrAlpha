@@ -37,6 +37,18 @@ family_id: NIGHTMINE-CAMPAIGN
 
 > 残留交接：①CAP 册（capability_canonical_file_registry）盘面=R9⑤ 同族回退残影+本班 1 条 token 已入 PG 账本待投影——归残影班修册后随净增袋落 T1/T5 新件；②T1 独立详录件与 L8b 续读段两个 untracked 新件随上述通道落地；③v2 首跑=下周六 08:00（或 L2 提速落地后经裁定升点）。
 
+## 〇-3、夜矿批复登记（总统统筹 2026-10-10 13:2x，st-nightmine2-20261010 执行）
+
+| 批复项 | 结论 | 本班动作 |
+|---|---|---|
+| 五件验收 | **全验收**（T1 排雷记大功） | 已登记 |
+| CAP 互锁两件 | 转终清二期 render 路线，落地后本班补投 | L8b_ledger.md 借一期预登记 token（HEAD 册已在）**同批复窗直投**；T1_quarantine_claim_20261010.md 俟 render 落地后补投（续办凭据=本行） |
+| 排窗对表 | 与 examclose 无冲突：23:00 空置合法；**v2 首窗=2026-10-17 08:00** | 已按此对表 |
+| T3 首批出分 | 待 W4 绑定层照计划 | 里程碑已交付（37931954） |
+| 99_delivery 路由 | 随 CAP render 解堵后一并落库 | 救援件现位=`.runtime/sessions/st-nightmine2-20261010/staging/_rescued_foreign/st-govjudge-20261010/docs/_working/govjudge_campaign/99_delivery.md`（终清二期取件即此路径；TTL 内安全，若过期由本班 staging 重新出件） |
+
+> **事故注记（14:0x）**：T1 详录与 L8b 两 untracked 新件曾于 12:2x-14:0x 间自主区盘面失踪（T1 全盘零命中、L8b 仅余工棚原件）＝st-examclose 上报的「共享暂存区落地周期复活 stale 形」同族新表现（**untracked 清扫面**，归维护班根治）。两件已自会话上下文全额复原重建（L8b sha=e2fcc1764ff7），保险副本入本班 staging `_insurance/`；本班 staging 救援物（99_delivery/claim manifest）复验完好。
+
 ## 一、已完成（凭据面）
 
 | 项 | 状态 | 凭据 |
