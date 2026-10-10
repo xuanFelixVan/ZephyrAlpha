@@ -276,20 +276,6 @@ _CALIBRATION_JUDGED_KEYS = frozenset(
 )
 
 
-def pillars_route(card: dict) -> str:
-    """判官路由唯一真源（三连裁③v2 的"按判据键集分派"）：
-
-    'dual_arm'＝双臂 NAV 判官（_judge_comparison），'series'＝校准判官（judge，series/panel 两条面）。
-    family=comparison/ablation 且 pillars_numeric 全韦校准键（如 C-L1 冻结映射面）→ 映射面后走校准判官；
-    含任一 NAV/笔级键 → 双臂判官。非 comparison/ablation 族一律校准判官（现状即 shadow 族带 NAV 键也走
-    校准判官，其后果由 _CALIBRATION_JUDGED_KEYS 的未知键 fail-closed 兜住——路由扩面属判据路由面改动，
-    待门柱词表立法工单呈批，本件不自决）。run_card 与词表普查共用本函数，禁抄第二份。"""
-    fam = card.get("family")
-    pn = set(card.get("pillars_numeric") or {})
-    cal_shaped = bool(pn) and pn <= _CALIBRATION_JUDGED_KEYS
-    return "series" if (fam not in ("comparison", "ablation") or cal_shaped) else "dual_arm"
-
-
 def _unjudged_pillars(card: dict, m: dict, judged: frozenset) -> dict:
     """未判柱清单（纯观测面，零否决权）：分数册行 MUST 自带"这一分只代表哪些键"。
 
@@ -349,11 +335,15 @@ def _comparison_metrics(sig_open: pd.Series, sig_base: pd.Series, target: pd.Ser
 
 
 def _judge_comparison(card: dict, m: dict) -> tuple[str, list[str]]:
-    """对照/消融判（pillars_numeric 冻结键，执行器零裁量；未知键=诚实 fail-closed）。"""
+    """对照/消融判（并集词表：配对侧键在配对面上评，校准侧五柱在**开臂** IC 面上评；两侧都不认＝fail-closed）。
+
+    统筹 03:3x 裁定①扩面：混形卡（卡面同时冻了 NAV 柱与 mono/ic/regime/oos 柱）的另一侧门柱
+    从此有判官接手，不再被"这族不该有这键"的偶然挡在词表外。取臂＝开臂（arm_open＝被测装置那一臂），
+    该选择入册留痕，禁事后换臂。"""
     p = card.get("pillars_numeric")
     if not p:
         raise _ToolError("卡缺 pillars_numeric（冻结判据机判面）", {"card_id": card.get("card_id")})
-    unknown = set(p) - _COMPARISON_KNOWN_KEYS
+    unknown = set(p) - _UNION_PILLAR_KEYS
     fails: list[str] = []
     if unknown:
         fails.append(f"未支持判据键（机判面待扩）: {sorted(unknown)}")
@@ -390,7 +380,83 @@ def _judge_comparison(card: dict, m: dict) -> tuple[str, list[str]]:
                 fails.append(f"oos_sign_flip ic_delta oos={d_oos:.4f} is={d_is:.4f}")
         else:
             fails.append("oos_sign_flip ic_delta nan（配对 IC 面样本不足）")
+    # 并集词表（裁定①）：混形卡的校准侧柱子在开臂 IC 面上评。oos_same_sign 除外——
+    # 它在对照卡上的冻结语义＝"配对 IC 差的 OOS 与 IS 同号"，上面那条规则就是它的真身，
+    # 再按单信号语义评一遍＝同一键两套判据，禁。
+    cal_face = {k: v for k, v in p.items() if k in _CALIBRATION_JUDGED_KEYS and k != "oos_same_sign"}
+    if cal_face:
+        fails.extend(_judge_calibration_face(cal_face, m.get("arm_open") or {}, sample_gate=False))
     return ("pass", []) if not fails else ("fail", fails)
+
+
+#: 并集词表（统筹 03:3x 裁定①）：双臂判官现在也认校准侧五柱（在开臂 IC 面上评），
+#: 混形卡的另一侧门柱从此有判官接手；两侧都不认的越表键仍由未知键 fail-closed 点名。
+_UNION_PILLAR_KEYS = frozenset(_COMPARISON_KNOWN_KEYS | _CALIBRATION_JUDGED_KEYS)
+#: 配对侧**专有**键（去掉两词表共有的 oos_same_sign）：路由只认这些键＝"这张卡确有只能配对算的柱子"。
+#: 不减共有键的话，一张纯校准卡会因带 oos_same_sign 被误送双臂（实测由 test_calibration_* 抓住）。
+_NAV_ONLY_PILLAR_KEYS = frozenset(_COMPARISON_KNOWN_KEYS - _CALIBRATION_JUDGED_KEYS)
+
+
+def pillars_route(card: dict) -> str:
+    """判官路由唯一真源：只看卡面冻结的门柱键集，**不看 family**（统筹 2026-10-11 03:3x 裁定①扩面）。
+
+    'dual_arm'＝双臂 NAV 判官（_judge_comparison）：键集⊄校准词表 **且** 至少命中一个配对侧**专有**键（_NAV_ONLY_PILLAR_KEYS）
+      ——即卡面确实有只有配对面能算的柱子；两词表共有的 oos_same_sign 不算；混形卡（校准键＋NAV 键）也进本支，
+      其校准侧柱子由 _judge_comparison 在**开臂** IC 面上评（开臂＝被测装置那一臂；卡面无从二选一，
+      取臂选择随裁定入册留痕，禁事后换臂）。
+    'series'＝校准判官（judge，series/panel 两条面）：键集全韦校准词表；键集为空（缺面错由 judge()
+      报准，不给它编一个"需双臂"的假错）；以及**纯越表卡**（一个配对侧键都没有，
+      如 CAR t 统计/独立观测数那一类）——送去双臂只会先报"需双臂接线"这条假错，
+      留在校准判官则由未知键 fail-closed 诚实点名"机判面待扩"。
+    扩面前 comparison/ablation 之外带 NAV 键的卡（实测＝shadow 14＋calibration 33 张）一律走校准判官
+    被未知键拦下，扩面后它们的 NAV 侧柱子改由双臂判官接手，要出分须给双臂接线（signal_b），
+    缺接线＝硬报错不冒判。run_card 与词表普查共用本函数，禁抄第二份。"""
+    pn = set(card.get("pillars_numeric") or {})
+    if not pn:
+        return "series"
+    if pn <= _CALIBRATION_JUDGED_KEYS:
+        return "series"
+    return "dual_arm" if pn & _NAV_ONLY_PILLAR_KEYS else "series"
+
+
+def _judge_calibration_face(p: dict, m: dict, *, sample_gate: bool = True) -> list[str]:
+    """校准侧五柱的机判面＝唯一实现（judge() 的单信号面与 _judge_comparison() 的并集词表共用，禁抄第二份）。
+
+    每柱先问"卡面冻没冻这个键"——没冻就不评（旧形态是无条件取 p[...]，卡面少给一键就抛 KeyError
+    崩整批）；冻了而当前面无从评估（None/NaN）不在此处放行，由分数行 unjudged 面显形。"""
+    fails: list[str] = []
+    mono = m.get("mono_spearman")
+    ic = m.get("ic_mean")
+    if "mono_spearman_min" in p and mono is not None and mono == mono:
+        if float(mono) < float(p["mono_spearman_min"]):
+            fails.append(f"mono_spearman {mono:.3f} < {p['mono_spearman_min']}")
+    if "ic_mean_min" in p and ic == ic:
+        if float(ic) < float(p["ic_mean_min"]):
+            fails.append(f"ic_mean {ic:.4f} < {p['ic_mean_min']}")
+    ir = m.get("ic_ir")
+    if "ic_ir_min" in p and ir is not None and ir == ir:
+        if float(ir) < float(p["ic_ir_min"]):
+            fails.append(f"ic_ir {ir:.3f} < {p['ic_ir_min']}")
+    if p.get("regime_same_sign"):
+        seg = m.get("regime_ic") or {}
+        vals = [v for v in seg.values() if v == v]
+        if len(vals) >= 2 and len({v > 0 for v in vals}) > 1:
+            fails.append(f"regime_sign_flip {seg}")
+    oos = m.get("oos_ic")
+    if p.get("oos_same_sign") and oos == oos:
+        base_ic = ic if (ic == ic) else 0.0
+        if base_ic != 0 and (oos > 0) != (base_ic > 0):
+            fails.append(f"oos_sign_flip oos={oos:.4f} is={base_ic:.4f}")
+    if sample_gate:
+        # 样本充分性闸（历史继承，只在单信号面用）：双臂面另有自己的配对 nan 闸
+        # （ic_delta nan），混形卡再叠一层＝给卡面没冻的柱加门柱＝抬高门柱，禁。
+        if oos != oos:
+            fails.append("oos_ic nan（OOS 窗样本不足）")
+        ic_valid = ic == ic
+        mono_valid = mono is not None and mono == mono
+        if not ic_valid and not mono_valid:
+            fails.append("无有效主指标（ic/mono 均 nan——样本不足或信号恒定）")
+    return fails
 
 
 def judge(card: dict, m: dict) -> tuple[str, list[str]]:
@@ -398,7 +464,6 @@ def judge(card: dict, m: dict) -> tuple[str, list[str]]:
     p = card.get("pillars_numeric")
     if not p:
         raise _ToolError("卡缺 pillars_numeric（冻结判据机判面）", {"card_id": card.get("card_id")})
-    fails: list[str] = []
     unknown = set(p) - set(_CALIBRATION_JUDGED_KEYS)
     if unknown:
         # 未知冻结键=本判官机判面不覆盖该柱 ⇒ fail-closed（comparison 族 _judge_comparison 同款，
@@ -406,33 +471,7 @@ def judge(card: dict, m: dict) -> tuple[str, list[str]]:
         # 立即定败且不再往下评估：旧形态一是该键静默跳过、pass 冒充"门柱全过"（在册假绿面），
         # 二是只有未知键的卡走到 p["mono_spearman_min"] 取数面抛 KeyError 崩整批（异常代替判决）。
         return "fail", [f"未支持判据键（机判面待扩，fail-closed）: {sorted(unknown)}"]
-    if m.get("mono_spearman") is not None and m["mono_spearman"] == m["mono_spearman"]:
-        if m["mono_spearman"] < p["mono_spearman_min"]:
-            fails.append(f"mono_spearman {m['mono_spearman']:.3f} < {p['mono_spearman_min']}")
-    ic = m.get("ic_mean")
-    if ic == ic:
-        if ic < p["ic_mean_min"]:
-            fails.append(f"ic_mean {ic:.4f} < {p['ic_mean_min']}")
-    ir = m.get("ic_ir")
-    if ir is not None and ir == ir and ir < p["ic_ir_min"]:
-        fails.append(f"ic_ir {ir:.3f} < {p['ic_ir_min']}")
-    seg = m.get("regime_ic") or {}
-    vals = [v for v in seg.values() if v == v]
-    if len(vals) >= 2 and p.get("regime_same_sign"):
-        if len({v > 0 for v in vals}) > 1:
-            fails.append(f"regime_sign_flip {seg}")
-    oos = m.get("oos_ic")
-    if oos == oos and p.get("oos_same_sign"):
-        base_ic = ic if (ic == ic) else 0.0
-        if base_ic != 0 and (oos > 0) != (base_ic > 0):
-            fails.append(f"oos_sign_flip oos={oos:.4f} is={base_ic:.4f}")
-    if oos != oos:
-        fails.append("oos_ic nan（OOS 窗样本不足）")
-    ic_ok = ic == ic
-    mono = m.get("mono_spearman")
-    mono_ok = mono is not None and mono == mono
-    if not ic_ok and not mono_ok:
-        fails.append("无有效主指标（ic/mono 均 nan——样本不足或信号恒定）")
+    fails = _judge_calibration_face(p, m)
     return ("pass", []) if not fails else ("fail", fails)
 
 
@@ -464,11 +503,13 @@ def run_card(
     # 该函数是 run_card 与门柱词表普查（card_binding --mode vocab-census）的唯一共用真源，禁两处各抄。
     used_nav = pillars_route(card) == "dual_arm"
     if used_nav:
-        # 对照/消融分支（夜矿续战三连裁② 2026-10-10 并入本执行核）：双臂配对面
+        # 双臂配对分支（夜矿续战三连裁② 2026-10-10 并入本执行核；03:3x 裁定①后按门柱键集进本支，
+        # 与 family 无关——calibration/shadow 族带 NAV/笔级柱的卡同样要在这里配双臂）
         if signal_b is None:
             raise _ToolError(
-                "对照/消融卡需双臂信号：signal=开臂（或全量臂），signal_b=基臂（或消融臂）",
-                {"card_id": card.get("card_id"), "family": family},
+                "判据键含 NAV/笔级面（双臂配对面）⇒ 需双臂信号：signal=开臂（或全量臂），"
+                "signal_b=基臂（或消融臂）；缺双臂接线＝不出分",
+                {"card_id": card.get("card_id"), "family": family, "route": "dual_arm"},
             )
         m = _comparison_metrics(signal, signal_b, target, card)
         verdict, fails = _judge_comparison(card, m)
@@ -484,7 +525,7 @@ def run_card(
         seg = m.get("regime_ic") or {}
     regimes = [k for k, v in seg.items() if v == v]
     # 未判柱观测面（裁定②步骤①，纯观测零否决权）：每行分数自带"只代表哪些键"，禁把 4-5 键 pass 叙述成门柱全过
-    unjudged = _unjudged_pillars(card, m, _COMPARISON_KNOWN_KEYS if used_nav else _CALIBRATION_JUDGED_KEYS)
+    unjudged = _unjudged_pillars(card, m, _UNION_PILLAR_KEYS if used_nav else _CALIBRATION_JUDGED_KEYS)
     row = {
         "card_id": card["card_id"],
         "node_id": card["node_id"],

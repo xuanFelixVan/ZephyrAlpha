@@ -878,9 +878,9 @@ def build_vocab_census(cards_dir: Path) -> dict:
     硬约束：零写阈值（键值属卡面冻结面，改值=新版本卡走 G4-5）、零改判据、零 CH、零分数册与卡件写。"""
     from collections import Counter
 
-    from fexam.calibration_exam import _CALIBRATION_JUDGED_KEYS, _COMPARISON_KNOWN_KEYS, pillars_route
+    from fexam.calibration_exam import _CALIBRATION_JUDGED_KEYS, _UNION_PILLAR_KEYS, pillars_route
 
-    vocab = {"series": set(_CALIBRATION_JUDGED_KEYS), "dual_arm": set(_COMPARISON_KNOWN_KEYS)}
+    vocab = {"series": set(_CALIBRATION_JUDGED_KEYS), "dual_arm": set(_UNION_PILLAR_KEYS)}
     rows: list[dict] = []
     unk_keys: Counter = Counter()
     tally = {"route": Counter(), "family": Counter(), "status": Counter()}
@@ -925,7 +925,7 @@ def build_vocab_census(cards_dir: Path) -> dict:
         "vocab_sources": {
             "series": sorted(vocab["series"]),
             "dual_arm": sorted(vocab["dual_arm"]),
-            "note": "两侧词表直读执行核常量 _CALIBRATION_JUDGED_KEYS/_COMPARISON_KNOWN_KEYS，本件不复制定义",
+            "note": "两侧词表直读执行核常量 _CALIBRATION_JUDGED_KEYS（校准判官）/_UNION_PILLAR_KEYS（双臂判官，03:3x 裁定①并为并集），本件不复制定义",
         },
         "card_total": n_card,
         "cards_without_numeric_face": n_empty,
