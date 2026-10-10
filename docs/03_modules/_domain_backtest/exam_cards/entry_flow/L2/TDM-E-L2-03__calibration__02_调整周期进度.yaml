@@ -3,11 +3,8 @@ card_id: TDM-E-L2-03/calibration/02_调整周期进度
 node_id: TDM-E-L2-03
 family: calibration
 title_zh: 板块调整周期进度·低吸时机校准卡
-hypothesis: >-
-  板块自高点的调整进度（时间维+回撤维合成的可算两维）对"低吸后 5 日板块超额"具单调性：
-  进度 60-80% 档优于 <40% 档（调整未尽接飞刀）与 >95% 档（尾声后仍有惯性下跌），
-  呈倒 U 结构；现码门控"进度>=80% 才放行 LATE"若落在倒 U 的右侧下降段，则该门控方向应被推翻。
-  节点文字另主张"缩量到高峰 1/3 以下=尾声"，量能维本卡一并可算（amount 可得上文实测）。
+hypothesis: 板块自高点的调整进度（时间维+回撤维合成的可算两维）对"低吸后 5 日板块超额"具单调性： 进度 60-80% 档优于 <40% 档（调整未尽接飞刀）与 >95% 档（尾声后仍有惯性下跌）， 呈倒 U 结构；现码门控"进度>=80%
+  才放行 LATE"若落在倒 U 的右侧下降段，则该门控方向应被推翻。 节点文字另主张"缩量到高峰 1/3 以下=尾声"，量能维本卡一并可算（amount 可得上文实测）。
 window:
   in_sample:
   - '2021-08-02'
@@ -24,8 +21,7 @@ buckets:
   'on': 调整进度百分比
   min_obs_per_bucket: 60
 pillars:
-  response_monotonicity: 主判据为"进度 vs 未来 5 日超额"的 Spearman rho>=0.6（若实测倒 U，
-    则单调面 fail 但 inverted_u 判据须过——两判据先验冲突已在假设里写明，以冻结数值面为准）
+  response_monotonicity: 主判据为"进度 vs 未来 5 日超额"的 Spearman rho>=0.6（若实测倒 U， 则单调面 fail 但 inverted_u 判据须过——两判据先验冲突已在假设里写明，以冻结数值面为准）
   ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
   lag_profile: 进度信号 t+1..t+5 |IC| 峰值与半衰期 >= 2 交易日（调整是慢过程）
   regime_stability: bear/rebound 两段 IC 同号
@@ -34,11 +30,11 @@ target:
   primary: next_day_index_return（CSI300 次日收益，series 面）
   secondary: sector_low_suck_win_rate（板块低吸后 5 日为正的比例，panel 辅轴）
   note: 与 L2-03-1（扩散指标）分卡——扩散维属成分面 blocked，两卡不得互相顶替口径
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: mineloop-r4-02_调整周期进度
+  score_row: exam_scores_v1.yaml#rows[24]
   confidence_writeback: TDM.nodes.TDM-E-L2-03.confidence
 preregistered_by: st-nightmine-20261010-L1
 preregistered_at: '2026-10-10'
@@ -54,20 +50,14 @@ oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_sector_880
   signal_column: close, amount
-  signal_derivation: >-
-    时间维=min(1, 距 60 日高点交易日数 / 8)；回撤维=min(1, (高点−close)/高点 / 0.15)；
-    量能维=min(1, max(0, 1 − roll_mean(amount,5)/roll_max(amount,60)×3))（缩到峰值 1/3 以下=满 1）；
-    进度=0.4/0.3/0.3 加权（原三维中扩散维 0.3 不可算 ⇒ 重归一为 0.4·时间+0.3·回撤+0.3·量能后再归一，
-    与在码"三维进度（时间0.4+回撤0.3+扩散0.3）"不同源，差异本行即声明）。
+  signal_derivation: 时间维=min(1, 距 60 日高点交易日数 / 8)；回撤维=min(1, (高点−close)/高点 / 0.15)； 量能维=min(1, max(0, 1 − roll_mean(amount,5)/roll_max(amount,60)×3))（缩到峰值
+    1/3 以下=满 1）； 进度=0.4/0.3/0.3 加权（原三维中扩散维 0.3 不可算 ⇒ 重归一为 0.4·时间+0.3·回撤+0.3·量能后再归一， 与在码"三维进度（时间0.4+回撤0.3+扩散0.3）"不同源，差异本行即声明）。
   target_source: kline_index 000300 close→next_day_return
-  data_window_evidence: >-
-    实测 2026-10-10（台账 §3-P4/P5）：kline_sector_880 industry_l1(61 codes)=2021-08-02..2026-10-08/78263 行、
-    industry_ths(128)=2021-08-02..2026-10-08/163038 行；60 日高点窗口需 60 日预热
-    ⇒ IS 有效起点 2021-11 后，窗内 ~515 交易日×61~189 板块，五分位×60 门槛满足；
-    节点 data_refs=DS-170（板块 K 线），DS-170 在册 CH 实况=2025-10-01 起（c1_market.kline_sector
-    实测 2025-07-18..2026-09-30/86033 行）⇒ 若照 DS-170 登记口径建窗则全窗不可考，
-    本卡改用 kline_sector_880（同族 880 板块指数）并把该口径矛盾登记给 TDM 侧（本车道不改 TDM）。
-  impl_ref: src/zephyr/signal_ashare/sector/sector_adjustment.py（module_ref）；
-    adjustment_cycle_tracker.py 同时被 L2-03/L2-03-1 引用（git grep 命中，见台账 §4-A3）
+  data_window_evidence: 实测 2026-10-10（台账 §3-P4/P5）：kline_sector_880 industry_l1(61 codes)=2021-08-02..2026-10-08/78263 行、
+    industry_ths(128)=2021-08-02..2026-10-08/163038 行；60 日高点窗口需 60 日预热 ⇒ IS 有效起点 2021-11 后，窗内 ~515 交易日×61~189 板块，五分位×60 门槛满足；
+    节点 data_refs=DS-170（板块 K 线），DS-170 在册 CH 实况=2025-10-01 起（c1_market.kline_sector 实测 2025-07-18..2026-09-30/86033 行）⇒ 若照
+    DS-170 登记口径建窗则全窗不可考， 本卡改用 kline_sector_880（同族 880 板块指数）并把该口径矛盾登记给 TDM 侧（本车道不改 TDM）。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_adjustment.py（module_ref）； adjustment_cycle_tracker.py 同时被 L2-03/L2-03-1
+    引用（git grep 命中，见台账 §4-A3）
 sources:
-  - 族级矿脉 S1/S5（调整与回撤节奏），URL+发布方+年份见台账 §2
+- 族级矿脉 S1/S5（调整与回撤节奏），URL+发布方+年份见台账 §2

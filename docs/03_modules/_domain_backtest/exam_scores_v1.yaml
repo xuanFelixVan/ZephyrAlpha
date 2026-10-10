@@ -467,3 +467,260 @@ rows:
   fails:
   - maxdd_improvement -0.00pp < 5.0
   - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-E-L1-S0/calibration/06_m1m2_scihjorsc_longwindow
+  node_id: TDM-E-L1-S0
+  run_id: mineloop-r1-06_m1m2_scihjorsc_lo
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.013862518326501146
+    mono_spearman: 0.6242424242424242
+    n: 5260
+    regime_ic:
+      bull: -0.01870182140243506
+      bear: 0.017044481956089208
+    oos_ic: 0.10575557392908103
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.0453
+  fails:
+  - ic_mean 0.0139 < 0.02
+  - 'regime_sign_flip {''bull'': -0.01870182140243506, ''bear'': 0.017044481956089208}'
+- card_id: TDM-E-L1-S0/calibration/07_margin_flow_shortwindow
+  node_id: TDM-E-L1-S0
+  run_id: mineloop-r1-07_margin_flow_short
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.03541118164472658
+    mono_spearman: -0.1515151515151515
+    n: 500
+    regime_ic:
+      bull: -0.03731744350466728
+      bear: 0.012703412073490817
+    oos_ic: -0.09432093330398417
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+  fails:
+  - mono_spearman -0.152 < 0.6
+  - ic_mean -0.0354 < 0.02
+  - 'regime_sign_flip {''bull'': -0.03731744350466728, ''bear'': 0.012703412073490817}'
+- card_id: TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow
+  node_id: TDM-E-L1-S4
+  run_id: mineloop-r1-04_synthetic_downsid
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.002307400965748454
+    mono_spearman: 0.09090909090909088
+    n: 5014
+    regime_ic:
+      bull: -0.011481216284259351
+      bear: 0.002250788117027267
+    oos_ic: 0.06067424086011797
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.7774
+  fails:
+  - mono_spearman 0.091 < 0.6
+  - ic_mean -0.0023 < 0.02
+  - 'regime_sign_flip {''bull'': -0.011481216284259351, ''bear'': 0.002250788117027267}'
+  - oos_sign_flip oos=0.0607 is=-0.0023
+- card_id: TDM-E-L3-06/calibration/02_地量档位开关
+  node_id: TDM-E-L3-06
+  run_id: mineloop-r1-02_地量档位开关
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.04654213105724993
+    mono_spearman: 0.4666666666666666
+    n: 5282
+    regime_ic:
+      bull: -0.004639250350761945
+      bear: 0.02178699322474302
+    oos_ic: 0.11203043432903803
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.8627
+  fails:
+  - mono_spearman 0.467 < 0.6
+  - 'regime_sign_flip {''bull'': -0.004639250350761945, ''bear'': 0.02178699322474302}'
+- card_id: TDM-E-L9-A09/calibration/02_快讯情感日均值
+  node_id: TDM-E-L9-A09
+  run_id: mineloop-r2-02_快讯情感日均值
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.0022244781920274246
+    mono_spearman: -0.05454545454545454
+    n: 4067
+    regime_ic:
+      bull: -0.0295052317563357
+      bear: -0.02783668583885238
+    oos_ic: 0.06776204714746234
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9988
+  fails:
+  - mono_spearman -0.055 < 0.6
+  - ic_mean 0.0022 < 0.02
+- card_id: TDM-E-L2-04-2/calibration/02_虹吸态成交集中度
+  node_id: TDM-E-L2-04-2
+  run_id: mineloop-r3-02_虹吸态成交集中度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.015430883860233554
+    mono_spearman: 0.0303030303030303
+    n: 1254
+    regime_ic:
+      bear: 0.06303139091598436
+      rebound: -0.09312860019640949
+    oos_ic: -0.03327942221690358
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.6209
+  fails:
+  - mono_spearman 0.030 < 0.6
+  - ic_mean -0.0154 < 0.02
+  - 'regime_sign_flip {''bear'': 0.06303139091598436, ''rebound'': -0.09312860019640949}'
+- card_id: TDM-E-L2-03/calibration/02_调整周期进度
+  node_id: TDM-E-L2-03
+  run_id: mineloop-r4-02_调整周期进度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.01933285604918282
+    mono_spearman: -0.11515151515151514
+    n: 1195
+    regime_ic:
+      bear: 0.008310185978990204
+      rebound: 0.07059769498793889
+    oos_ic: -0.01682588613939608
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+  fails:
+  - mono_spearman -0.115 < 0.6
+  - ic_mean 0.0193 < 0.02
+  - oos_sign_flip oos=-0.0168 is=0.0193
