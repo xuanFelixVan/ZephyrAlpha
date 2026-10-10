@@ -88,3 +88,28 @@ compliance:
   cards_modified: 0
   ch_queries_run: 0
   files_created: 1
+
+exposure_remeasured_after_restatement:
+  why: 统筹 02:0x 重申②点名"87 张 ic_ir 柱从未被评=今晚最大假绿面"。该 87 系本班前一轮口头估数（口径未落册），
+    现按 dev 现册逐件重测并**更正分母**：不是 87，是 103。估数不入册，在册只留实测。
+  measured:
+    cards_total: 487
+    cards_carrying_ic_ir_min: 215
+    of_which_series_path: 103
+    series_by_status: {preregistered: 60, examined: 27, blocked_on_data: 15, blocked_on_impl: 1}
+    panel_path_carrying_ic_ir_min: 112
+    panel_note: panel 路 _panel_metrics 真产 ic_ir ⇒ 这 112 张的 IC_IR 柱有面可判，不属未判面
+    score_rows_total: 31
+    score_rows_with_ic_ir_gate_but_none_face: 30
+    verdicts_among_those: {fail: 30}
+    rows_with_mono_none: 1
+  corrected_conclusion: >-
+    定性不变、量级上修：series 路 ic_ir 恒 None 使 103 张卡的 IC_IR 门柱从未被评估（不是 87）。
+    但已出分的 31 行里 30 行踩在该面上，且 30 行**全为 fail** ⇒ 该面今晚未产生任何假绿成绩行；
+    风险面在"未来考生"：一旦某卡 ic/mono/regime/oos 四键全过，就会以未判 IC_IR 的代价出 pass——
+    步骤②的未知键 fail-closed 管不到它（ic_ir_min 是已知键，只是无面），
+    故本面现由 unjudged.numeric_keys_no_machine_face 显形（分数册每行自带），后续任何 pass 必附此点名。
+  still_half_open_faces_flagged_not_fixed:
+    - "mono_spearman 为 None/NaN 时 judge() 仍跳过该柱（可出 pass）——把它改成否决＝把历史 pass 判成 fail，
+      属改门柱，须新版本卡或正式裁定，本班不自决"
+    - "ic_ir_min 在 series 路无面同理：显形已做，否决未做（否决=事后挪门柱）"
