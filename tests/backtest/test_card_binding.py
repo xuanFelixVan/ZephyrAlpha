@@ -162,3 +162,71 @@ def test_run_one_skips_cards_not_in_approve_list(tmp_path):
     p.write_text(yaml.safe_dump(card, allow_unicode=True), encoding="utf-8")
     r = cb.run_one(p, {"other"}, tmp_path / "scores.yaml", "t", True)
     assert r["skipped"] == "not_in_approve_list"
+
+
+def test_limit_up_panel_sql_carries_card_frozen_face():
+    """SQL 底座必须逐字承载卡 05/06 冻结式（自创口径=替卡面拍数，禁）：
+    比值分母=lag(close)、缺前一交易日取哨兵永不判、limit_pct 缺失（无涨跌幅限制）永不判、
+    is_lu_{t-1} 由 lag(lu) 给出、溢价截面=avgIf(ret_close, lu_prev=1)、容差走 {tol} 占位。"""
+    s = cb.SQL_LIMIT_UP_PANEL
+    assert "FINAL" in s
+    assert "ifNull(limit_pct, 9.9)" in s
+    assert "lagInFrame(k.c, 1, 0)" in s
+    assert "if(lag_c > 0" in s
+    assert "lagInFrame(lu, 1, 0)" in s
+    assert "avgIf(ret_close, lu_prev = 1)" in s
+    assert "{tol}" in s
+
+
+def _panel() -> pd.DataFrame:
+    idx = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"])
+    return pd.DataFrame(
+        {
+            "n_lu": [0, 40, 50, 30],
+            "n_lu_prev": [0, 0, 40, 25],
+            "n_promo": [0, 0, 12, 10],
+            "prem_close": [float("nan"), float("nan"), 0.02, 0.03],
+            "prem_open": [float("nan"), float("nan"), 0.01, 0.015],
+            "n_rows": [100, 200, 300, 400],
+        },
+        index=idx,
+    )
+
+
+def test_promotion_rate_den_is_prev_board_not_universe():
+    """判别力正例：分母=昨板家数 40 ⇒ 12/40=0.30；若误取当日在市家数 300 ⇒ 0.04（涨停占比形）。"""
+    rate, ev = cb.promotion_rate_from_panel(_panel(), 20)
+    assert rate.loc[pd.Timestamp("2024-01-04")] == pytest.approx(12 / 40)
+    assert rate.loc[pd.Timestamp("2024-01-04")] != pytest.approx(12 / 300)
+    assert ev["days_below_set_floor"] == 2
+
+
+def test_set_floor_drops_small_cross_section_and_counts_missing():
+    """卡面「|S_{t-1}|<20 的日置 NaN」＋「停牌股不入截面均值并计缺失数」两面都要出数：
+    2024-01-05 在架 25 < 在册昨板 50 ⇒ 缺失 25 票·日；分母 <20 的两日必须被剔掉。"""
+    ser, ev = cb._apply_set_floor(_panel(), "prem_close", 20)
+    assert [str(x.date()) for x in ser.index] == ["2024-01-04", "2024-01-05"]
+    assert ev["suspended_missing_symbol_days"] == 25
+    assert ev["days_below_set_floor"] == 2
+    assert ev["rows_kept"] == 2
+
+
+@pytest.mark.parametrize(
+    ("op", "card_file"),
+    [
+        (
+            "limit_up_premium_close_mean",
+            "entry_flow/L1/TDM-E-L1-S3__calibration__05_limit_up_premium_derived.yaml",
+        ),
+        (
+            "promotion_rate_from_limit_panel",
+            "entry_flow/L1/TDM-E-L1-S3__calibration__06_promotion_rate_derived.yaml",
+        ),
+    ],
+)
+def test_ops_default_quote_is_verbatim_on_the_real_card(op, card_file):
+    """反假绿：算子缺省引句必须是真卡 data_binding 原文子串（改引句/改卡面即红）。"""
+    path = cb.CARDS_DIR / card_file
+    card = yaml.safe_load(path.read_text(encoding="utf-8"))
+    q = cb.OPS[op]["quote_key"]
+    assert q.replace(" ", "") in cb._card_text(card).replace(" ", "")
