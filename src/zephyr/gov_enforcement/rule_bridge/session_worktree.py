@@ -6137,6 +6137,52 @@ def _run_pre_merge_topo_check(
     ]
 
 
+MERGE_STRUCT_GATE_ID = "REGISTRY-YAML-PARSE-MERGE-PREFLIGHT"
+
+
+def _pre_merge_registry_structure_check(root: Path, wt_path: Path) -> tuple[list[str], str]:
+    """merge 终态注册表结构补检（A-14，st-maint1-20261010 件③）→ (问题清单, 状态)。
+
+    为什么这道检**不受** `_PRE_MERGE_SKIP_ALL_COMMIT_GATES` 与 `force` 的跳过权支配：
+    #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001（2026-07-20）的原病根是 subprocess-based gate
+    在主工作区 sys.path 下 import 失败，因而把 pre-merge 的 commit gate **整体**跳过——
+    连带把与 sys.path 无关的结构性判据一起跳了，merge 就此成为门禁零覆盖通道。
+    2026-10-10 09:44 一枚 R5 投影同步袋经此通道把"顶层 di_seam_exemptions 键缺失"的
+    剥光 CAP 册烤进 dev（e0c72f63c4），此后全仓新建 .py/.md/.yaml 入库被
+    REGISTRY-YAML-PARSE 同签名熔断连堵 6 次（当日 dead 队列同签名 6 枚实测）。
+
+    本检零 subprocess gate、零 index 写、零 reset HEAD：只在对象库里用
+    `git merge-tree --write-tree` 算合并终态，再单口调用 REGISTRY-YAML-PARSE 自己的
+    `preflight_merge_terminal`（判据真源在门侧，本模块绝不复制结构判据）。
+    """
+
+    def _run_git(args: list[str]):  # noqa: ANN202 - 透传 subprocess.CompletedProcess
+        return run_subprocess_hidden(
+            ["git", *args],
+            cwd=str(root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+            timeout=120,
+        )
+
+    try:
+        from zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate import preflight_merge_terminal
+    except Exception as exc:  # noqa: BLE001 — 判据装载失败=补检不可执行（非放行）
+        return [f"REGISTRY-YAML-PARSE 判据不可装载（{type(exc).__name__}: {exc}）"], "unavailable"
+
+    tgt = _run_git(["rev-parse", "HEAD"])
+    lane = _run_git(["-C", str(wt_path), "rev-parse", "HEAD"])
+    if tgt.returncode != 0 or lane.returncode != 0:
+        return (
+            [f"补检不可执行：HEAD rev 取不到（root rc={tgt.returncode} / wt rc={lane.returncode}）"],
+            "unavailable",
+        )
+    return preflight_merge_terminal(_run_git, tgt.stdout.strip(), lane.stdout.strip())
+
+
 def _pre_merge_gate_check(
     root: Path,
     session_id: str,
@@ -7230,6 +7276,25 @@ def session_worktree_merge(
             gate_passed, gate_violations = _pre_merge_gate_check(
                 root, session_id, wt_path, allow_migration=allow_migration
             )
+
+        # A-14（st-maint1-20261010 件③）：merge 终态注册表结构补检——上面两条分支都可能
+        # 把 commit gate 整体跳过（#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 既成事实），
+        # 结构性红判必须在此兜住；force 只对"补检不可执行"态有越权力，对真违规无效。
+        struct_issues, struct_state = _pre_merge_registry_structure_check(root, wt_path)
+        if struct_issues:
+            if struct_state == "unavailable" and force:
+                logger.warning(
+                    "session_worktree_merge(force=True): 结构补检不可执行已越权放行（留痕）: %s",
+                    "; ".join(struct_issues),
+                )
+            else:
+                gate_passed = False
+                gate_violations = list(gate_violations) + [
+                    {
+                        "gate_id": MERGE_STRUCT_GATE_ID,
+                        "detail": f"state={struct_state}; " + "; ".join(struct_issues),
+                    }
+                ]
 
         if not gate_passed:
             _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in gate_violations)

@@ -90,6 +90,18 @@ _SQL_SNAPSHOT_LATEST_BUNDLE = (
     "SELECT snapshot_version, content_sha256, bundle FROM {table} "
     "WHERE registry_id=%s ORDER BY snapshot_version DESC LIMIT 1"
 )
+# [SQL] 渐进腐蚀自锚（st-maint1-20261010 件①，2026-10-10 CAP 册 v157→v177 十五版
+# 空上下文自我固化实录）：在本册自己的历史快照里找最近一份仍带 verbatim 上下文的
+# bundle（header_lines 或 trailing_scalars 非空即候选）。unique_key_fields 是对象不是
+# 数组，故只按前两件判候选。
+_SQL_SNAPSHOT_CONTEXT_ANCHOR = (
+    "SELECT snapshot_version, bundle->'header_lines', bundle->'trailing_scalars', "
+    "       bundle->'unique_key_fields' "
+    "FROM {table} WHERE registry_id=%s "
+    "  AND (jsonb_array_length(COALESCE(bundle->'header_lines', '[]'::jsonb)) > 0 "
+    "       OR jsonb_array_length(COALESCE(bundle->'trailing_scalars', '[]'::jsonb)) > 0) "
+    "ORDER BY snapshot_version DESC LIMIT 1"
+)
 _SQL_ENTRY_KEY_EXISTS = "SELECT 1 FROM {table} WHERE registry_id=%s AND family_key=%s AND entry_key=%s"
 _SQL_ENTRY_REKEY = (
     "UPDATE {table} SET entry_key=%s, updated_by=%s, updated_at=now() "
@@ -500,6 +512,98 @@ def _projection_context_from_disk(
     return header_lines, trailing, ledger_revision
 
 
+def _projection_context_from_snapshot_anchor(
+    registry_id: str,
+    schema: str,
+    c: object,
+) -> tuple[list[str], list, dict[object, tuple[str, ...]]] | None:
+    """账本自锚上下文（st-maint1-20261010 件①，渐进腐蚀自我固化治本）。
+
+    病灶（2026-10-10 实弹）：`_projection_context_from_disk` 的
+    header_lines/trailing_scalars/声明计划**唯一来源是盘面 YAML**，而盘面本身又是
+    同一快照的渲染产物——盘面一旦被剥光（实测 registry_snapshot v157→v177 连续 15 版
+    header_lines=[] / trailing_scalars=[] / unique_key_fields={}），下一次发布就把
+    "剥光"重新烤进新快照，形成 盘面→bundle→render→盘面 的闭环自我固化；账本↔投影
+    恒 zero-drift，故 render 永远自愈不了。落成的可见征状＝CAP 册顶层
+    `di_seam_exemptions` 尾部键消失 → REGISTRY-YAML-PARSE「顶层 di_seam_exemptions
+    键缺失」同签名熔断 6 次 → 全仓新建 .py/.md/.yaml 入库堵死。
+
+    处方（证据制，非发明制）：只在本册**自己的历史快照**里取最近一份带非空上下文的
+    bundle 作锚，由调用方逐件补缺（盘面已有的一律以盘面为准，锚不覆盖现值）。
+    查无锚＝不补，保持现状——绝不凭空造上下文，零幻觉面。
+    """
+    try:
+        with c.cursor() as cur:
+            cur.execute(
+                _SQL_SNAPSHOT_CONTEXT_ANCHOR.format(table=_t("registry_snapshot", schema)),
+                (registry_id,),
+            )
+            row = cur.fetchone()
+    except Exception:  # noqa: BLE001 — 锚不可读=不补（退现行为，发布主链不受阻）
+        return None
+    if row is None:
+        return None
+
+    def _as_list(raw: object) -> list:
+        if raw is None:
+            return []
+        if isinstance(raw, str):
+            try:
+                parsed = json.loads(raw)
+            except Exception:  # noqa: BLE001 — 不可解析=无锚价值
+                return []
+            return parsed if isinstance(parsed, list) else []
+        return raw if isinstance(raw, list) else []
+
+    _anchor_version, raw_header, raw_trailing, raw_decl = row
+    header = [str(x) for x in _as_list(raw_header)]
+    trailing = [list(p) for p in _as_list(raw_trailing) if isinstance(p, list) and p]
+    if isinstance(raw_decl, str):
+        try:
+            raw_decl = json.loads(raw_decl)
+        except Exception:  # noqa: BLE001
+            raw_decl = None
+    decl: dict[object, tuple[str, ...]] = {}
+    if isinstance(raw_decl, dict):
+        for fam, fields in raw_decl.items():
+            if isinstance(fields, list) and fields and all(isinstance(f, str) and f for f in fields):
+                decl[str(fam)] = tuple(fields)
+    if not header and not trailing and not decl:
+        return None
+    return header, trailing, decl
+
+
+def _heal_projection_context(
+    header_lines: list[str],
+    trailing_scalars: list,
+    declared: dict[object, tuple[str, ...]],
+    anchor: tuple[list[str], list, dict[object, tuple[str, ...]]] | None,
+) -> tuple[list[str], list, dict[object, tuple[str, ...]], dict[str, object]]:
+    """自锚补洞纯函数（可测面）：锚只补**空洞**，盘面已有的一律以盘面为准。
+
+    返回 (header_lines, trailing_scalars, declared, heal_manifest)；manifest 非空即
+    表示本次发布有件来自历史快照锚，调用方须据此落 publish_context_heal 事件行。
+
+    方向性纪律（判据本体）：这一手存在的唯一理由是阻止"空上下文"被当稳定态烤进新版
+    （2026-10-10 v157→v177 十五版自我固化实录）。锚绝不覆盖盘面现值＝盘面前进优先；
+    查无锚＝原样返回（零发明）。
+    """
+    if anchor is None:
+        return header_lines, trailing_scalars, declared, {}
+    a_header, a_trailing, a_decl = anchor
+    healed: dict[str, object] = {}
+    if not header_lines and a_header:
+        header_lines = a_header
+        healed["header_lines"] = len(a_header)
+    if not trailing_scalars and a_trailing:
+        trailing_scalars = a_trailing
+        healed["trailing_scalars"] = [str(p[0]) for p in a_trailing if p]
+    if not declared and a_decl:
+        declared = a_decl
+        healed["unique_key_fields"] = sorted(str(f) for f in a_decl)
+    return header_lines, trailing_scalars, declared, healed
+
+
 def _declared_plan_from_conn(registry_id: str, schema: str, c: object) -> dict[object, tuple[str, ...]]:
     """catalog 声明列 → 逐族计划（盘面声明缺位时的回退面；空/退化=空计划）。"""
     try:
@@ -601,6 +705,13 @@ def publish_snapshot(
     _projection_context_from_disk/_scan_declared_plan 的盘面来源缺失（fail-open 降级
     空头部/空尾部/空声明），实战事故=渲染丢 di_seam_exemptions 等根键且 noop 幂等
     把腐蚀永久固化（骨架比对把"空尾部"当稳定态）。故裸发布机械拒绝。
+
+    渐进腐蚀自锚（st-maint1-20261010 件①）：上一件只堵住了"repo_root 缺失"这一入口，
+    没堵住"repo_root 在而盘面已被剥光"——2026-10-10 实弹 registry_snapshot v157→v177
+    连续十五版 header_lines=[]/trailing_scalars=[]/unique_key_fields={}，闭源于
+    上下文唯一来源=盘面而盘面=上一次 render 的产物，账本↔投影恒 zero-drift 故永不
+    自愈。现三项上下文任一为空即回查本册历史快照锚补空洞（锚只补不覆盖，查无锚保持
+    现状），补洞事实以 action=publish_context_heal 事件行入册。
     """
     if repo_root is None:
         raise ValueError(
@@ -651,6 +762,22 @@ def publish_snapshot(
                     declared = {}
             if not declared:
                 declared = _declared_plan_from_conn(registry_id, schema, c)
+            header_lines, trailing_scalars, ledger_revision = _projection_context_from_disk(
+                registry_id, repo_root, schema, c
+            )
+            # 渐进腐蚀自锚（st-maint1-20261010 件①）：三项上下文任一为空即回查本册历史
+            # 快照锚，逐件补空洞（盘面已有=盘面赢，锚绝不覆盖现值）。必须在 sections
+            # 构建之前完成——declared 决定条目身份字段置首，补晚了 bundle 声明与键序自相矛盾。
+            # 缺这一手时"盘面剥光"会被下面的 noop 骨架比对当成稳定态永久固化
+            # （2026-10-10 v157→v177 连续十五版空上下文实录）。
+            context_heal: dict[str, object] = {}
+            if not header_lines or not trailing_scalars or not declared:
+                header_lines, trailing_scalars, declared, context_heal = _heal_projection_context(
+                    header_lines,
+                    trailing_scalars,
+                    declared,
+                    _projection_context_from_snapshot_anchor(registry_id, schema, c),
+                )
             # 结构化 bundle（读端 snapshot_from_bundle 契约，WM1_24h_evaluation §3.1 统一）：
             # 条目按 family_key 分节段，条目=有序 [key, value] 对数组（jsonb 保序）；
             # 手术2：声明身份字段置首（jsonb 键序重排不再抢占位置首字段→render 后重扫同键）
@@ -661,9 +788,6 @@ def publish_snapshot(
                 else:  # 非.dict payload 保底整值一条（import 面只收 dict，防御位）
                     pairs = [[str(ek), payload]]
                 sections.setdefault(str(fk), []).append(pairs)
-            header_lines, trailing_scalars, ledger_revision = _projection_context_from_disk(
-                registry_id, repo_root, schema, c
-            )
             bundle = {
                 "registry_id": registry_id,
                 "header_lines": header_lines,
@@ -724,6 +848,23 @@ def publish_snapshot(
                 "updated_at=now() WHERE registry_id=%s",
                 (out_version, registry_id),
             )
+            if context_heal:
+                # 自锚补洞必须留痕可审计：哪一版、补了哪几件、补了多少，事后能一命令查出
+                _record_event(
+                    cur,
+                    registry_id=registry_id,
+                    family_key="(registry)",
+                    entry_key="*",
+                    action="publish_context_heal",
+                    actor_session=session_id,
+                    actor_kind="system",
+                    base_version=parent,
+                    after_version=out_version,
+                    payload_after=context_heal,
+                    reason=PUBLISH_REASON,
+                    detail={"kind": "projection_context_self_anchor", "disk_context_missing": True},
+                    schema=schema,
+                )
         c.commit()
         return {
             "registry_id": registry_id,
@@ -731,6 +872,7 @@ def publish_snapshot(
             "snapshot_version": out_version,
             "entry_count": len(rows),
             "content_sha256": content_sha,
+            "context_heal": context_heal,
         }
     except psycopg2.Error:  # DB 错误回滚重抛；非 DB 异常由连接关闭路径回收事务
         c.rollback()

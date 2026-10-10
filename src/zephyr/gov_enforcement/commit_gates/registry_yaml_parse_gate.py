@@ -17,12 +17,14 @@
 #   staged==PG 投影，不证投影未落后 HEAD；直提 render-sync 整档覆盖抹他道 token 的
 #   病根封堵）；白名单=[allow-mass-deletion:reason≥10字]（与 REGISTRY-MASS-DELETION
 #   同标记）；HEAD 缺失/解析失败 fail-open
-# [MODIFY-GUARD] gate_id="REGISTRY-YAML-PARSE"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [MODIFY-GUARD] gate_id="REGISTRY-YAML-PARSE"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；
+#   2026-10-10 st-maint1-20261010 件③：新增公开判据函数 preflight_merge_terminal（merge 通道补检，
+#   git merge-tree 算合并终态字节+就地复用本门 _structural_issues，两条 merge 通道共用单一真源）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——git diff 失败/文件不可读 → fail-open 跳过（encoding 类 gate 覆盖）；staged 版本 YAML 解析失败/根键重复/capability 注册表结构破坏 → fail-closed 阻断（passed=False，报错附正确追加姿势教学）；审计写失败静默降级
-# [TESTS] tests/governance/commit_gates/test_registry_yaml_parse_gate.py
+# [ERROR_CONTRACT] check 永不抛异常——git diff 失败/文件不可读 → fail-open 跳过（encoding 类 gate 覆盖）；staged 版本 YAML 解析失败/根键重复/capability 注册表结构破坏 → fail-closed 阻断（passed=False，报错附正确追加姿势教学）；审计写失败静默降级。preflight_merge_terminal 永不抛异常——git/装载失败归 state="unavailable" 交调用方（调用方默认同样阻断，禁把"跑不动"读成"通过"）
+# [TESTS] tests/governance/commit_gates/test_registry_yaml_parse_gate.py; tests/gov/governance/rule_bridge/test_session_worktree_merge_preflight.py（merge 通道补检红蓝，含生产通道）
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L
 # [TTL] permanent
 """registry_yaml_parse_gate.py — 注册表结构硬化门禁（防尾追悬挂/防重复根键）
@@ -75,6 +77,7 @@ import logging
 import re
 import time
 from pathlib import Path
+from typing import Final
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _build_own_scope,
@@ -85,7 +88,7 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["make_registry_yaml_parse_gate"]
+__all__: Final = ["make_registry_yaml_parse_gate", "preflight_merge_terminal"]
 
 # 审计落点（.runtime/gate_audit/ 家族惯例）
 _AUDIT_REL = ".runtime/gate_audit/registry_yaml_parse.jsonl"
@@ -333,6 +336,57 @@ def _structural_issues(text: str, profile: str) -> list[str]:
     if len(_PARSE_CACHE) < _PARSE_CACHE_MAX * 2:
         _PARSE_CACHE[_key] = list(issues)
     return issues
+
+
+def preflight_merge_terminal(run_git: object, target_ref: str, other_ref: str) -> tuple[list[str], str]:
+    """merge 通道补检（A-14，st-maint1-20261010 件③）：对**合并终态字节**跑本门同一判据。
+
+    为什么需要它（不是重复造轮）：`git merge` 结构性不触发 pre-commit hooks，而
+    rule_bridge/session_worktree 又自 2026-07-20 #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001
+    起 `_PRE_MERGE_SKIP_ALL_COMMIT_GATES=True` 把 pre-merge 的 commit gate **整体跳过**——
+    两条叠加＝merge 是门禁零覆盖通道。2026-10-10 一枚 R5 投影同步袋正是经此通道把
+    "顶层 di_seam_exemptions 键缺失"的剥光 CAP 册烤进 dev（e0c72f63c4），随后全仓
+    新建件入库被同签名熔断连堵 6 次。
+
+    与原治本的兼容：#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 的病根是 subprocess-based gate
+    在主工作区 sys.path 下 import 失败。本检不启 subprocess gate、不碰 index、不 reset
+    HEAD——只用 `git merge-tree --write-tree` 在对象库算合并终态，再就地调用本模块自己的
+    `_structural_issues`（判据真源单口，禁调用方复制逻辑），sys.path 病根不适用。
+
+    参数：`run_git(args: list[str]) -> 带 returncode/stdout 的对象`（调用方提供 git 通道，
+    本函数与仓根/工作区解耦，车道与主区同一实现）。
+    返回 `(问题清单, 状态)`；状态 ∈ {checked, unavailable, conflict}：
+      - checked＝判据已跑到，清单非空即结构性违规（**永不可越权**）；
+      - unavailable＝补检跑不动（git 过旧/取不到树/判据装载失败），调用方默认同样阻断，
+        仅显式越权旗可放行并留痕；
+      - conflict＝合并本身有冲突（merge-tree rc=1），终态未定，交回 git 正常流程，
+        此处不抢判以免把"待人工解冲突"误报成结构违规。
+    """
+    issues: list[str] = []
+    mt = run_git(["merge-tree", "--write-tree", target_ref, other_ref])  # type: ignore[operator]
+    rc = int(getattr(mt, "returncode", 1))
+    raw = ((getattr(mt, "stdout", "") or "") + (getattr(mt, "stderr", "") or "")).strip()
+    if rc > 1 or not raw:
+        return [f"merge-tree 不可执行（rc={rc}）: {raw[:200] or '无输出'}"], "unavailable"
+    if rc == 1:
+        return [], "conflict"
+    tree = raw.splitlines()[0].strip()
+
+    diff = run_git(["diff", "--name-only", tree, target_ref])  # type: ignore[operator]
+    if int(getattr(diff, "returncode", 1)) != 0:
+        return [f"合并树差分不可执行（rc={getattr(diff, 'returncode', '?')}）"], "unavailable"
+    changed = {ln.strip() for ln in (getattr(diff, "stdout", "") or "").splitlines() if ln.strip()}
+
+    for rel, profile in _WATCH_FILES.items():
+        if rel not in changed:
+            continue  # 本次 merge 未触碰该册——既有病不连坐本次合并（own-diff 作用域，宪法 §3.1）
+        show = run_git(["show", f"{tree}:{rel}"])  # type: ignore[operator]
+        if int(getattr(show, "returncode", 1)) != 0:
+            issues.append(f"{rel}: 合并树内取不到该册字节（rc={getattr(show, 'returncode', '?')}）")
+            continue
+        for msg in _structural_issues(getattr(show, "stdout", "") or "", profile):
+            issues.append(f"{rel} 合并终态结构校验未过: {msg}（教学：{_TEACH}）")
+    return issues, "checked"
 
 
 def make_registry_yaml_parse_gate() -> GateSpec:

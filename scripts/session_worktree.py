@@ -7,13 +7,15 @@
 # [CONSUMERS] AI session 创建/切换/合并 worktree 前调用
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] worktree 在 .worktrees/ 下；分支前缀 ai/；merge 需用户确认
-# [MODIFY-GUARD]
+# [INVARIANTS] worktree 在 .worktrees/ 下；分支前缀 ai/；merge 需用户确认；merge 落地前必须过
+#   _merge_preflight_issues（A-14：merge 通道不触发 pre-commit hooks，补检是该通道唯一防线，
+#   结构性红判不可越权，仅『补检不可执行』态可 --allow-unchecked-merge 显式留痕放行）
+# [MODIFY-GUARD] 2026-10-10 st-maint1-20261010 件③：新增 merge 通道补检 + 审计行 + 越权旗
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=success; exit 1=error; exit 2=internal error
-# [TESTS] tests/governance/rule_bridge/test_session_worktree*.py; tests/scripts/test_session_worktree_env.py; tests/scripts/test_session_worktree_archive.py
+# [TESTS] tests/governance/rule_bridge/test_session_worktree*.py; tests/scripts/test_session_worktree_env.py; tests/scripts/test_session_worktree_archive.py; tests/governance/rule_bridge/test_session_worktree_merge_preflight.py
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: AI会话按需调用的CLI worktree协调工具，人工触发非常驻服务/非cron/非daemon
 """
@@ -292,6 +294,69 @@ def cmd_exec(args: argparse.Namespace) -> int:
         return 2
 
 
+# ============================================================================
+# A-14 merge 通道补检（st-maint1-20261010 件③，2026-10-10 CAP 册 R5 埋雷实录）
+# ----------------------------------------------------------------------------
+# 病灶：`git merge` 结构性不触发 pre-commit hooks（git 固有设计），而
+# `validate_commit_gateway.py` 又明记"合并提交放行"（.git/MERGE_HEAD 检测）——
+# 两条叠加＝merge 是门禁的零覆盖通道。2026-10-10 09:44 一枚 R5 投影同步袋正是经
+# 此通道把"顶层 di_seam_exemptions 键缺失"的剥光投影烤进 dev（e0c72f63c4），
+# 之后全仓新建 .py/.md/.yaml 入库被 REGISTRY-YAML-PARSE 同签名熔断连堵 6 次。
+# 本件把该通道从"零覆盖"变成"必检"：合并**终态字节**先过判据，红则拒合并。
+# 判据真源单口=REGISTRY-YAML-PARSE 自己的 _structural_issues/_WATCH_FILES，禁复制。
+# ============================================================================
+
+MERGE_PREFLIGHT_AUDIT_REL = ".runtime/gate_audit/merge_preflight.jsonl"
+
+
+def _merge_preflight_audit(
+    session_id: str,
+    target: str,
+    branch: str,
+    issues: list[str],
+    state: str,
+    *,
+    bypassed: bool,
+) -> None:
+    """补检结果入审计行（阻断与放行都留痕，事后一命令可查同形 merge）。"""
+    try:
+        from zephyr.shared.utils.time_utils import now_utc
+
+        audit_dir = REPO_ROOT / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        record = {
+            "ts": now_utc().isoformat(),
+            "session_id": session_id,
+            "target": target,
+            "branch": branch,
+            "state": state,
+            "issues": issues,
+            "bypassed": bypassed,
+            "actor": "session_worktree.merge_preflight",
+        }
+        with (audit_dir / "merge_preflight.jsonl").open("a", encoding="utf-8", newline="\n") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 审计写失败不改变判据结论（判据已在上游取定）
+        pass
+
+
+def _merge_preflight_issues(target: str, branch: str) -> tuple[list[str], str]:
+    """合并终态结构补检 → (问题清单, 状态)。空清单=放行。
+
+    判据真源单口=REGISTRY-YAML-PARSE 自己的 `preflight_merge_terminal`（本函数只负责
+    喂 git 通道，绝不在此复制结构判据——复制即两处漂移）。状态语义见该函数 docstring：
+    checked（判据跑到）/ unavailable（补检不可执行，默认同样阻断）/ conflict（交回 git）。
+
+    全程纯读：`git merge-tree --write-tree` 只在对象库里算合并树，零 index 写、
+    零工作树动——主区多会话在途面（实测 164 脏件）不会被本检查扫进任何暂存区。
+    """
+    try:
+        from zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate import preflight_merge_terminal
+    except Exception as exc:  # noqa: BLE001 — 判据装载失败=补检不可执行（不是放行）
+        return [f"REGISTRY-YAML-PARSE 判据不可装载（{type(exc).__name__}: {exc}）"], "unavailable"
+    return preflight_merge_terminal(lambda args: _run_git(args, check=False), target, branch)
+
+
 def cmd_merge(args: argparse.Namespace) -> int:
     """合并 worktree 分支回主分支（需用户确认）。"""
     session_id = args.session_id
@@ -319,6 +384,35 @@ def cmd_merge(args: argparse.Namespace) -> int:
 
     print(f"[WORKTREE] 合并 {branch} → {target}")
     try:
+        # A-14 merge 通道补检（st-maint1-20261010 件③）：merge 不触发 pre-commit hooks，
+        # 这里是合并终态唯一能拦住结构性违规的位置——红则不落地，主区零污染。
+        pf_issues, pf_state = _merge_preflight_issues(target, branch)
+        if pf_issues:
+            allow_unchecked = bool(getattr(args, "allow_unchecked_merge", False))
+            bypass = pf_state == "unavailable" and allow_unchecked
+            _merge_preflight_audit(session_id, target, branch, pf_issues, pf_state, bypassed=bypass)
+            print(
+                f"[WORKTREE] 合并被补检拦截（state={pf_state}；merge 通道不触发 pre-commit hooks，"
+                f"本补检是该通道唯一防线）:",
+                file=sys.stderr,
+            )
+            for issue in pf_issues:
+                print(f"  - {issue}", file=sys.stderr)
+            if pf_state == "unavailable":
+                print(
+                    "  补检不可执行≠合并合法。确需放行须显式带 --allow-unchecked-merge（留痕审计行）。",
+                    file=sys.stderr,
+                )
+            else:
+                print(
+                    "  修法：在车道内把该册经单口写通道重打（意图 API 登记 → publish_snapshot"
+                    "（带 repo_root）→ registry_projection_generator --render），"
+                    "禁手改投影册、禁带旧投影字节入袋。",
+                    file=sys.stderr,
+                )
+            if not bypass:
+                return 1
+            print("  [显式越权] --allow-unchecked-merge 已放行，责任入 merge_preflight 审计行。", file=sys.stderr)
         # 切换到主工作区合并
         merge_cmd = ["merge", "--no-ff"]
         if args.squash:
@@ -1130,6 +1224,12 @@ def main() -> int:
     )
     p_merge.add_argument("--squash", action="store_true", help="squash merge")
     p_merge.add_argument("--yes", action="store_true", help="跳过确认")
+    p_merge.add_argument(
+        "--allow-unchecked-merge",
+        action="store_true",
+        help="仅当补检处于『不可执行』状态时显式越权放行（结构性违规红判永不可越）；"
+        "放行会写 merge_preflight 审计行留痕（st-maint1-20261010 件③）",
+    )
     p_merge.set_defaults(func=cmd_merge)
 
     # abort
