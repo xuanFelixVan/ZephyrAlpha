@@ -106,6 +106,45 @@ completes_when: 六件收官+99_delivery 落地（本件随批滚动）
 
 - 主区直改 1 处：`src/zephyr/data/implementations/internal_compute_provider.py`（对平 T1，原因见 §一；GW 计数以实际标记为准）。
 
+## 十、T7 bcure 链收官（追加令执行记录，2026-10-10 16:1x）
+
+- **属主三态判定**：`st-bcure-20261008` 不在 SessionRegistry 活跃清单（会话目录在=已死）
+  ⇒ 按处方走"死则停进程+state 归档"。
+- **停点安全证据**：驱动 26768 当时处于内存闸等待（log 实录"[mem] 3.58GiB >= 2.5GiB，等
+  60s（已等 10min）"——CH 基线 3.6GiB 永过不了 2.5GiB 闸，链已结构性停摆）；子腿进程
+  零在飞（无月 INSERT 半程）⇒ 停止零数据风险（CH parts 原子）。
+- **执行**：state 全套归档至 `F:/zephyr_cold/50_archive/by_project/zephyralpha/
+  bcure_state_archive_20261010/`（8 件，SHA256SUMS.txt 在包内；docs/_working 目录契约
+  禁 .log/.py，册内只留证据单 `bcure_state_archive.md`）→ Stop-Process 26768 → 复核=0。
+- **使命归属结论**：夜跑新码（T1 停算+P1 闭环）结构性取代其 2019-2021 月粒度重算使命
+  （追加令裁定已下）；已完 5 个月保留生效，2021-08+ 月份由夜跑 nightly 全史腿逐日覆盖。
+- **禁双开红线状态**：随之解除；T3/T4 进执行窗（仍避夜跑 02:30 与 W1 窗）。
+- **T7 提交坑留痕**：归档件先撞格式门（.py）→ 改 .py.txt 撞目录契约（docs/_working 禁
+  .log/.py/.py.txt）→ 定版=F 盘原始包+册内 .md 证据单；token 先行同款（PG+主区册+袋内
+  册三面一致才过 CREATE-GUARD，注册表 ∈ 袋时预检改读主区盘面册=anchor_main_root）。
+
+## 十一、T4 执行窗战报（追加令后，2026-10-10 16:4x-17:5x）
+
+**Gate 0 前置发现（三层供应链劣化，共同根因候选=QMT 终端下线）**：
+1. `kline_daily` 10-08/09 **半量**（2,959/2,960 vs 基线 5,560-5,680）——任务态实证：
+   `kline_daily_incremental`（source=miniqmt）10-09 17:13 local 挂死被 auto-reap
+   （STALE>6h），rows_total=5,979 半程；水位 last_key=20261009 使增量永不回补
+   （17:27 正规重跑"成功"但 10-08 纹丝不动=水位语义实证）。缺行画像=00 主板 1,149+
+   30 创业 1,106+92 北证 348（拉数死在半程板块）。
+2. `adj_factor` 断在 **09-24**（任务水位 09-28、rows_total=0，source=miniqmt）——hfq
+   派生的另一原料腿同欠账。
+3. **QMT 终端进程本体现在不在**（xtquant 直调三连"无法连接"；17:27 调度重跑的
+   "login success"为残存会话、随即消亡）。akshare 无 raw 日线 capability（444-445 行
+   实测仅 hfq/BJ 变体）⇒ 混源补拉属新数据路径，非本班可自决。
+
+**处置**：Gate 0 定向重拉脚本就绪（`.runtime/tmp/st-datalane-20261010/
+t4_gate0_raw_daily_repull.py`，provider 直调多板块并集+BufferedWriter 正门，验收=两日
+count 回 5,560-5,680 带+repair_kline_degraded_pull 健康三条件）——**明晨 QMT 终端复元
+后执行**，随后 adj_factor 重跑→hfq 派生任务（tasks.yaml 实证=本地派生 raw×adj_factor
+INSERT-SELECT 直落，非独立拉数）→TI 小批→周月级联→情绪 builder，逐门放行。T3 同因
+顺延：当日 ~3,000 万行插入后 RSS 高位站不住任何秒级查询（argMax/LIMIT BY 年切片均
+500 实证×6），排明晨静默窗（与 T8 验收同批）。
+
 ## 九、收尾清单（滚动）
 
 - [ ] 53472 收官确认→T2 探针+冷档→T3/T4 放量
