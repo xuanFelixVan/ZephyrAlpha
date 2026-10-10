@@ -1147,3 +1147,46 @@ def test_eval_memory_pressure_degrades_to_cpu_not_cell_death():
             fac._EVAL_MEM_PRESSURE,
         ) = old
         fac._DEV_PANEL_CACHE.clear()
+
+
+def test_device_attempt_failure_is_never_silent_in_counters():
+    """零计数不得等于"未知态"（2026-10-11 06:32 假配对病案）。
+
+    那次 `--eval-backend gpu` 的子进程把 `zephyr` 解析到了**主区旧字节**（worktree 裸 python 导主区包），
+    `from ... import nvml_device_memory` 抛 ImportError → 被 `_dev_xp` 的宽 except 吞成"降级 CPU"，
+    而 summary.eval_gpu **十个计数全零**、只在 stderr 留一行 → 产物看起来像"跑了，只是没上卡"，
+    本班据此把一轮 CPU-vs-CPU 当成了 CPU-vs-GPU 等价性证据。两条静默出口现在都必须计数。
+    """
+    old = (fac._EVAL_BACKEND, fac._VRAM_BUDGET_MIB, fac._HOST_MEM_BUDGET_MIB, fac._EVAL_MEM_PRESSURE)
+    for k in fac._EVAL_GPU_STATS:
+        fac._EVAL_GPU_STATS[k] = 0
+    try:
+        fac._EVAL_BACKEND = "gpu"
+        fac._VRAM_BUDGET_MIB = 0
+        fac._HOST_MEM_BUDGET_MIB = 0
+        fac._EVAL_MEM_PRESSURE = False
+
+        import zephyr.backtest.gpu_core as gc
+
+        real = gc.resolve_backend
+        try:
+            gc.resolve_backend = lambda req=None: "cpu"
+            assert fac._dev_xp() is None
+            assert fac._EVAL_GPU_STATS["resolve_not_gpu"] == 1, "resolve 出口未计数（零计数=未知态）"
+
+            def _boom(req=None):
+                raise ImportError("cannot import name 'nvml_device_memory' from 'zephyr.backtest.gpu_core'")
+
+            gc.resolve_backend = _boom
+            assert fac._dev_xp() is None
+            assert fac._EVAL_GPU_STATS["dev_attempt_failed"] == 1, "宽 except 出口未计数"
+        finally:
+            gc.resolve_backend = real
+        assert fac._EVAL_GPU_STATS["prefix_gpu"] == 0 and fac._EVAL_GPU_STATS["cell_gpu"] == 0
+    finally:
+        (
+            fac._EVAL_BACKEND,
+            fac._VRAM_BUDGET_MIB,
+            fac._HOST_MEM_BUDGET_MIB,
+            fac._EVAL_MEM_PRESSURE,
+        ) = old

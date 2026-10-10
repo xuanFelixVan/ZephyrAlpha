@@ -146,6 +146,8 @@ _EVAL_GPU_STATS: dict[str, int] = {
     "host_mem_refused": 0,
     "host_mem_unmeasured": 0,
     "memory_pressure": 0,
+    "resolve_not_gpu": 0,
+    "dev_attempt_failed": 0,
 }
 #: 逐路显存预算缓存（None=未读；0=册无该键→不设闸并计数出声，见 _vram_per_path_budget_mib）
 _VRAM_BUDGET_MIB: int | None = None
@@ -926,6 +928,7 @@ def _dev_xp():
         from zephyr.backtest.gpu_core import resolve_backend
 
         if resolve_backend(_EVAL_BACKEND) != "gpu":
+            _EVAL_GPU_STATS["resolve_not_gpu"] += 1
             return None
         budget = _vram_per_path_budget_mib()
         if budget > 0:
@@ -959,6 +962,9 @@ def _dev_xp():
 
         return cp
     except Exception as exc:  # noqa: BLE001 — 算力面缺失不得影响出分
+        # 计数是这条路的**唯一**留证面：stderr 的 _instr_warn 在长跑里会被日志轮转吃掉，
+        # 而 summary.eval_gpu 全零曾被本班读成"跑了但没上卡"（2026-10-11 06:32 假配对病案，见 02 件 级 3）。
+        _EVAL_GPU_STATS["dev_attempt_failed"] += 1
         _instr_warn("eval_backend_resolve", exc)
         return None
 
