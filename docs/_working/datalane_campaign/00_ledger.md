@@ -166,6 +166,21 @@ INSERT-SELECT 直落，非独立拉数）→TI 小批→周月级联→情绪 bu
   谓词 DELETE（mutations_sync=2，pre/post 点数 188,395→0）→ v2 重写。v2 相对 v1 行数
   相同（方向修复零增量——该批实际等价，删除为口径洁净性操作）。
 
+## 十三、磁盘紧急态与 OPTIMIZE 依据补强（2026-10-10 18:5x 实测）
+
+- **TI 表=239.96 GiB / 1,313 active parts**（dexp 10-08 实测 43.1 GiB ⇒ 两天 5.5 倍）：
+  夜跑全史重灌（~8GB/晚）+ 本班 T2 双趟（~25GB，如实自报）+ bcure 半程月 + kline/limit
+  写入叠加。
+- **D 盘 94%（余 47.2GB）**：今晚夜跑 ~8GB 后约 39GB——撑得过本周末，但 OPTIMIZE 前任
+  一晚失效都会加速逼近零。**Owner 需知**：OPTIMIZE 收敛后宿主空间的归还需 vhdx 压缩
+  （dexp §11 在案），建议 OPTIMIZE 完成后安排。
+- **触发器(a) 结构性结论**：CH tracked=2.04GiB 但 RSS=6.84GiB——~4.8GiB 未追踪开销
+  （parts 膨胀 mmap/碎片），OvercommitTracker 按 RSS 判杀 ⇒ FINAL 宽读在 OPTIMIZE 前
+  结构性死亡（静默 CH 亦然，18:4x 复测 61.4s 后 241）。⇒ 明晨 T8 若不过线（P1 比对读
+  仍被杀=不跳过），OPTIMIZE 反而是打破死锁的唯一手段，呈报候裁。
+- **明晚 OPTIMIZE 排程依据**（追加令 T8 已批窗）：23:30 后（W1 明 08:00-22:30 不冲突、
+  避 02:30 夜跑）；按月分区推进 dexp 处方；预期回收以实收记账。
+
 ## 九、收尾清单（滚动）
 
 - [ ] 53472 收官确认→T2 探针+冷档→T3/T4 放量
