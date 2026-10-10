@@ -257,3 +257,50 @@ def test_comparison_nav_keyed_card_still_dual_arm(tmp_path):
     open_, base, tgt = _arms()
     row = ce.run_card(p, signal=open_, signal_b=base, target=tgt, scores_path=tmp_path / "s.yaml")
     assert "arm_open" in row["metrics"]
+
+
+def test_score_row_carries_unjudged_face(tmp_path):
+    """裁定②步骤①：每行分数必须自带"这一分只代表哪些键"（纯观测面，零否决权）。"""
+    sig, tgt = _synthetic(strength=1.0)
+    row = ce.run_card(_card(tmp_path), signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    u = row["unjudged"]
+    assert u["numeric_keys_not_read"] == []
+    assert "ic_ir_min" in u["numeric_keys_no_machine_face"]
+    assert "无在册真源" in u["mapping_note"]
+
+
+def test_unjudged_lists_keys_outside_judge_face(tmp_path):
+    """卡面冻结了判官根本不读的键 ⇒ 必须逐条显形（历史 pass 从不覆盖这些键）。"""
+    p = _card(
+        tmp_path,
+        pillars_numeric={
+            "mono_spearman_min": 0.6,
+            "ic_mean_min": 0.02,
+            "ic_ir_min": 0.3,
+            "regime_same_sign": True,
+            "oos_same_sign": True,
+            "tail_ratio_min": 0.3,
+        },
+    )
+    sig, tgt = _synthetic(strength=1.0)
+    row = ce.run_card(p, signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    assert row["unjudged"]["numeric_keys_not_read"] == ["tail_ratio_min"]
+
+
+def test_unjudged_faces_surfaced_without_fabrication():
+    """判别力正例：mono=None/regime 单段/oos=NaN 三处旧静默跳过面必须写出；
+    而卡面未冻结的键（ic_ir_min）不得凭空列入——观测面禁自创判据。"""
+    card = {
+        "pillars_numeric": {"mono_spearman_min": 0.6, "regime_same_sign": True, "oos_same_sign": True},
+        "pillars": {"ic_floor": "IC>=0.02 且 IC_IR>=0.3", "lag_profile": "t+1..t+3"},
+    }
+    m = {"mono_spearman": None, "ic_ir": None, "regime_ic": {"bull": float("nan")}, "oos_ic": float("nan")}
+    u = ce._unjudged_pillars(card, m, ce._CALIBRATION_JUDGED_KEYS)
+    assert set(u["numeric_keys_no_machine_face"]) == {"mono_spearman_min", "regime_same_sign", "oos_same_sign"}
+    assert u["numeric_keys_not_read"] == []
+    assert u["pillars_prose_keys"] == ["ic_floor", "lag_profile"]
+
+
+def test_unjudged_prose_keys_absent_is_empty_list():
+    u = ce._unjudged_pillars({"pillars_numeric": {}}, {}, ce._CALIBRATION_JUDGED_KEYS)
+    assert u["pillars_prose_keys"] == [] and u["numeric_keys_not_read"] == []
