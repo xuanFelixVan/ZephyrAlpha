@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A14/calibration/02_互动易官方回应题材催化
+node_id: TDM-E-L9-A14
+family: calibration
+title_zh: 源线·互动易问答·官方回应密度与题材催化校准卡（问答表仅 67 日）
+hypothesis: 个股在互动易获得官方回应的密度（问句数/日）与回应中含题材关键词的比例，
+  对次日个股收益与涨停概率有正向催化；已抽取的 involves_product/supply_chain_relation/
+  sentiment 三列本应构成"官方口径供应链证据"读数。信号定义可算，但问答明细表仅 67 个日期、
+  抽取表仅 74 行 ⇒ blocked_on_data 不弃。
+window:
+  in_sample:
+  - '2026-06-19'
+  - '2026-08-15'
+  oos: &id001
+  - '2026-08-16'
+  - '2026-09-16'
+  regimes:
+    unavailable: 覆盖不足 60 交易日且无牛熊两段 ⇒ regime_stability 解锁前视为未验证
+  frozen_note: 看数前冻结；此窗按现有覆盖切，属短窗预演非分布性结论
+buckets:
+  type: quantile_quintile
+  'on': 个股当日新增问句数（横截面）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 问句密度分位与次日收益 Spearman 单调 rho>=0.6
+  ic_floor: 横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3（横截面日数 <45，IC_IR 无意义须声明）
+  lag_profile: t+1..t+3 |IC| 峰值档与半衰期建档（官方回应类预期半衰期短）
+  catalyst_rate: 含题材关键词的回应占比最高的 20% 组，次日涨停概率应 >= 全体 1.5 倍（辅读数）
+  regime_stability: 暂不可判
+target:
+  primary: next_day_stock_return（个股次日 hfq 收益）
+  secondary: next_day_limit_up_flag（次日涨停标记，源 c1_market.limit_up_down，注意其亦仅 5397 行/2026-07-20 起）
+  note: A14 决策问题=「官方回应能否提前捕捉题材催化」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A14.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c3_fundamental.irm_interactive_qa
+  signal_column: question_text
+  signal_derivation: 按 question_date×stock_code 计新增问句数；answer_text 非空比例=回应率；
+    题材关键词命中走 involves_product/supply_chain_relation（抽取表
+    c3_fundamental.irm_interactive_extracted，仅 74 行）
+  target_source: kline_daily_hfq close→next_day_return
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      for t,c in [('c3_fundamental.irm_interactive_qa','question_date'),
+                  ('c3_fundamental.ir_activity_record','publish_date')]:
+        r=ch_query_df(f'SELECT min(toString({c})),max(toString({c})),count(),uniq({c}) FROM {t}');print(t,r.values)
+      print(ch_query_df(\"SELECT count() FROM c3_fundamental.irm_interactive_extracted\").values)"
+      python -m zephyr.library.lookup "互动易" --limit 6
+    实测：
+      c3_fundamental.irm_interactive_qa        question_date 2026-06-19..2026-09-16 rows=500 d=**67**
+      c3_fundamental.irm_interactive_extracted 无日期列 rows=**74**
+      c3_fundamental.ir_activity_record        publish_date 2026-09-17..2026-09-18 rows=30 d=**2**
+      馆查 `python -m zephyr.library.lookup "互动易" --limit 6` → `(no results for '互动易')`
+        （⇒ IRM 源线在馆面无资产条目，与表存在性并存=登记不施工面缺失）
+    缺哪张表哪一段：需 irm_interactive_qa 覆盖 2019-01-04..2025-09-09；现状缺该全段
+      （约 1600 交易日零行），且现段 500 行/67 日 ≈ 7.5 条/日，密度远不足以做个股横截面分桶
+      （min_obs_per_bucket=60 无法满足）。TDM pit_proof「问答时戳不可回填」⇒ 历史永不可得。
+    解锁条件：持续采集至 ≥250 交易日且日均 ≥300 条；届时重冻窗口开考。
+  readiness: BLOCKED——快照型不可回填 + 现密度不足分桶

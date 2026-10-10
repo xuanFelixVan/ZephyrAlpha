@@ -1,0 +1,75 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A06/calibration/03_北向资金流断供检验
+node_id: TDM-E-L9-A06
+family: calibration
+title_zh: 源线·资金流·北向/陆股通净买入校准卡（2024-08-16 断供）
+hypothesis: 陆股通北向净买入（及其占成交额比）分桶对次日指数/大盘蓝筹收益有正预测力，且情绪极端
+  （大幅净流出档）后一日有均值回复。信号定义冻结完好，但 CH 侧该表于 2024-08-16 停止更新 ⇒
+  blocked_on_data 不弃，且缺段写死。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2024-08-16'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+    oos_note: OOS 段被断供截断为 2024-01-01..2024-08-16（仅 158 个交易日）——解锁前 OOS 判据视为未成立
+  frozen_note: 看数前冻结；断供日之后禁以估算/插值补数（数据驻留公理+防伪造）
+buckets:
+  type: quantile_decile
+  'on': 当日北向净买入占两市成交额比
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向指数收益 Spearman 单调 rho>=0.6
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号
+  extreme_reversal: 最低两档（大幅净流出）次日收益均值应 >= 0（恐慌外溢的均值回复，辅读数）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: next_day_bluechip_spread（沪深300 对中证2000 次日收益差，北向偏蓝筹的结构检验）
+  note: A06 决策问题的"外资"支线；主线见 02 卡（money_flow）
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A06.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.hk_connect_flow
+  signal_column: net_buy_amount
+  signal_derivation: signal_t = net_buy_amount / (c1_market.kline_daily 全市场 amount) 当日比；
+    channel 维度（沪股通/深股通）分别构造后再加总，禁跨 channel 直接 mean
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      for t in ['c1_market.hk_connect_flow','c1_market.northbound_hold_snapshot']:
+        r=ch_query_df(f'SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM {t}');print(t,r.values)"
+    实测：
+      c1_market.hk_connect_flow          trade_date 2014-11-17..2024-08-16 rows=4052 days=2264
+      c1_market.northbound_hold_snapshot trade_date 2024-09-30..2026-06-30 rows=57458 days=8
+    缺哪张表哪一段：hk_connect_flow 缺 2024-08-19 至今（约 270+ 交易日零行）；
+      持股快照表虽有到 2026-06-30 的名称但**独立日期仅 8 个**（每季末快照级，无日频）⇒
+      无法构造日频信号。战役统一 IS 窗（2019-01-04..2023-12-31）在 hk_connect_flow 上其实是覆盖的，
+      因此本卡的阻断点是 **OOS 段断供**，即"IS 可算、现势不可得"——按作业簿 §3⑥ 标 blocked_on_data
+      而非弃卡，因为无 OOS 的卡不可运行判据（oos_same_sign 恒 nan→judge 判 fail 无意义）。
+    同型在册先例：c1_market.limit_up_down 仅 2026-07-20 起 5397 行（广度面冻结窗无数据）。
+    解锁条件：接入交易所披露口径变更后的替代高频北向代理（如 hk 侧成交回填），属数据源立项非本车道权限。
+  readiness: BLOCKED——OOS 段零覆盖，仅有 IS 段不可单跑

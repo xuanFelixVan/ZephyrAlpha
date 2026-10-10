@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A16/calibration/02_投入产出传导强度先验有效性
+node_id: TDM-E-L9-A16
+family: calibration
+title_zh: 源线·投入产出·部门间直接消耗系数传导路径机械判定校准卡（结构先验，无时间序列）
+hypothesis: 2020 版 153 部门直接消耗系数构成的上游→下游强度矩阵，若有效，则"上游部门景气冲击
+  × IO 系数"应能解释下游部门/成分股后续收益的横截面差异；且该解释力必须在**控制产业链图
+  （ig_chain/ig_edge）后仍显著**，否则 IO 表只是重复了图谱已知信息（本卡核心防伪结论）。
+  本节点是 static 源线（U3=static、lag=static），无时间维 ⇒ 不写日频 IC，改写横截面解释力增量。
+window:
+  in_sample:
+  - '2020-04-01'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2020-04-01..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；IO 口径年份锚定 2020 版（TDM pit_proof），禁在中途换 2017/2018 版
+buckets:
+  type: quantile_tercile
+  'on': 下游部门受上游冲击的加权强度（行内加权和）
+  min_obs_per_bucket: 30
+pillars:
+  incremental_explanatory: 在已含图谱链（chain_refs/ig_edge）的回归里加入 IO 强度，
+    横截面 R² 增量 >= 0.01 且 F 检验 p<0.05（"有增量结构信息"的最小可判门柱）
+  path_directionality: 上游冲击对下游的系数符号应与直接消耗系数方向一致，同号部门占比 >= 70%
+  lag_profile: 传导时滞曲线=冲击后 t+1/t+5/t+20 三档系数衰减，登记半衰期（IO 是慢结构，
+    预期半衰期 >10 日；若与日内动量同阶=疑似伪传导）
+  stale_calibration_risk: 2020 版系数在 2024-2025 OOS 段的衰减读数须单独登记
+    （口径滞后是源线固有缺陷，不是考试失败）
+target:
+  primary: cross_sectional_downside_sector_return（下游 880 部门板块 20 日前向收益横截面）
+  secondary: incremental_r2_vs_graph（加入 IO 后的增量解释力，结构卡专属目标）
+  note: A16 决策问题=「部门间上下游强度能否机械判定传导路径」
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A16.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  incremental_r2_min: 0.01
+oos_window_ref: *id001
+data_binding:
+  signal_table: PG:ig_io_edge（非 CH，depgraph 图谱域）
+  signal_column: coefficient（直接消耗系数）
+  signal_derivation: 153 部门直接消耗系数矩阵 → 映射到申万/同花顺行业 → 上游景气冲击×系数=下游强度
+  target_source: v_kline_sector_880_named（period='1d'）板块 20 日前向收益
+  data_window_evidence: |
+    命令原文（两路正查）：
+      python -m zephyr.library.lookup "投入产出" --limit 6
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%io_edge%' OR lower(table) LIKE '%input_output%'\").values)"
+    实测：
+      CH 侧筛 %io_edge%/%input_output% = **(none)** ⇒ IO 系数不在 ClickHouse（在 PG depgraph 图谱域，
+        与 A 档其余源线不同载体，本卡 target 与 signal 分属两套存储=接线前置工程）
+      TDM-E-L9-A16 algo_note_zh 在册事实：DS 锚=IO_TABLE（国家统计局），U3=static，
+        pit_proof=统计口径年份锚定（2020 版 153 部门）
+      TDM-E-L9-G5（同源图谱面）在册头号缺口：**"部门码与 ig_node 两套 id 体系，边 100% 挂零
+        （altdata_line WP-0.5）"** ⇒ 系数矩阵存在但无法挂到公司/板块节点
+    缺什么（写死，blocked_on_impl 的"缺"）：
+      缺部门码↔ig_node/880 板块的映射桥（一张对照表 + 消歧规则）；桥未建 ⇒ 强度信号无法落到
+      可交易横截面单元，考试取数接线不可完成。真源=scripts/industry_graph/apply_industry_graph_ddl.py
+      （G1 注在册）。
+    解锁条件：WP-0.5 部门 id 桥建成并有 ≥100 个部门成功挂接（挂接率读数入台账），随后改
+      status=preregistered 重冻窗口。
+  readiness: BLOCKED——结构先验无法挂到横截面单元（impl 缺，非数据缺）

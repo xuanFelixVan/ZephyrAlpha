@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A02/calibration/02_竞价失衡与尾盘冲击
+node_id: TDM-E-L9-A02
+family: calibration
+title_zh: 源线·Tick分笔·集合竞价失衡与尾盘订单流冲击校准卡（数据断供待补）
+hypothesis: 开盘集合竞价的不平衡度（委托价差×量）与尾盘 14:45-15:00 主动买入占比对当日方向与
+  次日开盘收益有预测力；冲击成本应随同笔规模单调上升——本卡答"日内微观结构能否预测次日方向与冲击成本"。
+  信号定义已冻结，但取数面在 CH 无 IS 段，故整卡 blocked_on_data 不弃。
+window:
+  in_sample:
+  - '2026-01-05'
+  - '2026-06-30'
+  oos: &id001
+  - '2026-07-01'
+  - '2026-09-30'
+  regimes:
+    unavailable: 牛/熊两段均无 tick 历史（数据起 2026-01-05），regime_stability 本卡无法执行——
+      解锁前该支柱视为未验证而非通过
+  frozen_note: 看数前冻结；窗口按现有 tick 覆盖切，属"短窗预演"不作分布性结论，正式考试须待历史补齐后重冻
+buckets:
+  type: quantile_decile
+  'on': 当日开盘竞价失衡度（横截面）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 失衡度分桶与次日开盘收益单调，Spearman rho>=0.6
+  ic_floor: 横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3（受窗限制，n≈115 交易日，IC_IR 置信度低须声明）
+  lag_profile: 冲击成本以 t+0 为主、半衰期 <=1 日；对次日方向的 |IC| 峰值应落 t+1
+  impact_curve: 按笔规模分档（小/中/大/特大）的价格冲击曲线单调上升，且大档单位冲击 >= 小档 2 倍
+  regime_stability: 暂不可判（无牛熊两段）——解锁条件见 blocked_on_data.detail
+target:
+  primary: next_day_open_return（次日开盘价对今日收盘价收益，面板=个股）
+  secondary: intraday_impact_bp（同笔规模分档冲击，单位 bp）
+  note: A02 决策问题两问（预测次日方向 / 冲击成本）各占一个 target，禁合并成单值
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A02.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: true
+  impact_curve_min_ratio: 2.0
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.auction_snapshot
+  signal_column: auction_price
+  signal_derivation: 竞价失衡 = sign(auction_price - prev_close) * auction_volume / 自由流通量；
+    尾盘订单流= c1_market.tick_data 内 14:45-15:00 direction='B' 成交额占比
+  target_source: kline_daily_hfq close/open→next_day_open_return
+  data_window_evidence: |
+    命令原文（逐表）：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      for t,c in [('c1_market.tick_data','trade_date'),('c1_market.l2_tick','trade_date'),
+                  ('c1_market.tick_depth_5','trade_date'),('c1_market.auction_snapshot','trade_date'),
+                  ('c1_market.auction_book','trade_date')]:
+          r=ch_query_df(f'SELECT min(toString({c})),max(toString({c})),count(),uniq({c}) FROM {t}');print(t,r.values)"
+    实测：
+      c1_market.tick_data         trade_date 2026-01-05..2026-10-08 rows=3943831530 days=182
+      c1_market.l2_tick           trade_date rows=0（建表未落数，空表）
+      c1_market.tick_depth_5      trade_date 2026-07-24..2026-09-30 rows=130146982 days=22
+      c1_market.auction_snapshot  trade_date 2026-06-01..2026-09-30 rows=288909 days=56
+      c1_market.auction_book      trade_date 2026-07-21..2026-09-30 rows=3690473 days=30
+    缺哪张表哪一段：战役统一 IS 窗 2019-01-04..2023-12-31 上 tick/l2/五档/竞价 **全部零行**
+      （最早数据 2026-01-05），断供史=TDM 节点自陈「TDX 分笔仅近交易日，历史依赖包断档不可补」
+      + 本次实测一致；l2_tick 是 schema 在、数据零的静默空表（闸4「可得≠可用」样本）。
+    解锁条件：补齐 ≥2019-01-04 起的分笔/竞价历史包（依赖外部采购，属 Owner 花钱门位），
+      或改用 kline_1min（2021-09-01 起，已可考）做"准微观结构"降级替代并另立新卡。
+  readiness: BLOCKED——现覆盖仅 2026 年 182 日以内，无 IS/OOS 双段、无 regime 分段

@@ -1,0 +1,84 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A15/calibration/02_资金费率拥挤跨市场预警
+node_id: TDM-E-L9-A15
+family: calibration
+title_zh: 源线·加密永续/费率·全球杠杆拥挤对 A 股风险偏好跨市场预警校准卡（market=cn_a）
+hypothesis: Hyperliquid 永续资金费率的横截面拥挤度（BTC/ETH 等主要币费率的分位数加权，
+  8 小时结算锚定）度量全球杠杆多头拥挤；极端拥挤后回落对**次日 A 股指数收益为负**
+  （风险偏好跨市场传导）。本卡口径=A 股消费面（节点 market=cn_a），币圈自身收益面另立镜像卡，
+  两卡 target 严格分离禁共用。
+window:
+  in_sample:
+  - '2023-05-15'
+  - '2024-12-31'
+  oos: &id001
+  - '2025-01-02'
+  - '2025-09-09'
+  regimes:
+    bear_tail: 2023-05-15..2024-02-05（贴现率熊末+微盘出清，IS 内熊段）
+    recovery: 2024-02-06..2024-12-31（修复段，IS 内对侧）
+    bull_note: 资金费率实测起 2023-05-12 ⇒ 战役统一牛段（2019-2021H1）不可考，已声明不冒充；
+      本卡 regime 用数据内可分的熊末/修复两段替代
+  frozen_note: 看数前冻结；8 小时锚定与"右闭聚合"（pit_proof：资金费率 8 小时周期锚定）写死
+buckets:
+  type: quantile_decile
+  'on': 当日拥挤度读数（费率横截面加权分位）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 拥挤度分桶与次日指数收益 Spearman 单调 rho>=0.6（预期高拥挤档负向）
+  ic_floor: 日频 IC 均值 |IC|>=0.02（series 面 ic_ir 执行器置 None，如实 n/a）
+  lag_profile: t+1..t+3 |IC| 峰值档与半衰期（跨市场风险传导预期 <=2 日，长于此=与美股共线须正交化）
+  regime_stability: bear_tail/recovery 两段同号
+  extreme_crowding_reversal: 拥挤度分位 >90% 的当日组，其后 1-3 日指数收益均值应 <= 0
+    （预警价值集中在极端档，这是本节点最有决策意义的读数）
+  us_decoupling: 对 FRED_VIX 与美股隔夜收益（c1_market.us_index）正交化后 IC 仍 >= 0.015
+    —— 否则判"只是美股影子，无独立信息"（跨市场卡的核心防伪结论门柱）
+target:
+  primary: next_day_index_return（CSI300 次日收益，**A 股口径，禁与镜像卡共用**）
+  secondary: next_3day_index_return（3 日累计，读传导持续性）
+  note: A15 决策问题=「全球杠杆拥挤能否跨市场预警A股情绪」
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A15.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  resid_ic_min: 0.015
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.hl_funding_history
+  signal_column: funding_rate
+  signal_derivation: 每 8h 结算一行；crowding_t = 主要币（BTC/ETH/SOL/XRP 等流动性前档）
+    funding_rate 的横截面 60 日分位加权均值，按 UTC 日聚合；funding_rate 为 Nullable(Decimal(28,14))
+    ⇒ NULL 必须显式剔除（否则加权均值静默偏）；premium 列为备援读数
+  target_source: kline_index 000300 close→next_day_return（A 股侧）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(funding_time)),max(toString(funding_time)),count(),uniq(funding_time) FROM c1_market.hl_funding_history\").values)
+      print(ch_query_df(\"SELECT DISTINCT coin FROM c1_market.hl_funding_history LIMIT 15\").values)
+      for t in ['c1_market.hl_perp_snapshot_daily','c1_market.hl_oi_snapshot_daily','c1_market.hl_liquidation_raw']:
+        r=ch_query_df(f'SELECT count() FROM {t}');print(t,int(r.iloc[0,0]))"
+    实测：
+      c1_market.hl_funding_history funding_time 2023-05-12..2026-10-09 rows=4785877 期数=29335
+        （8h 期数自 2023-05-12 起算 ⇒ 折算日频约 1240 天，样本充分）
+      coin 面为多币种（含 ADA/ALEX/ALGO/ALT 等长尾小币），构造拥挤度须先按流动性定档，
+        禁把长尾小币与 BTC 等权（本卡门柱之一）
+      c1_market.hl_perp_snapshot_daily rows=4212（snapshot_date 2026-09-18..2026-10-09，**仅 18 日**）
+      c1_market.hl_oi_snapshot_daily   rows=4212（同上 18 日）
+      c1_market.hl_liquidation_raw     rows=**17**（近乎空表）
+    ⇒ OI/清算两条读数路径均断供，本卡只能用 funding_rate 单腿；"费率+OI"双因子版登记为长尾，
+      解锁条件=perp/OI 快照持续采集 ≥250 日。
+  readiness: IS 约 390 交易日 + OOS 约 165 日，可算；牛段不可考已声明

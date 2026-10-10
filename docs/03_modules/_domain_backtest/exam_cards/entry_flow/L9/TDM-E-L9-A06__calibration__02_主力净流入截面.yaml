@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A06/calibration/02_主力净流入截面
+node_id: TDM-E-L9-A06
+family: calibration
+title_zh: 源线·资金流·主力/大单净流入占比横截面校准卡
+hypothesis: 个股主力净流入占比（main_net_inflow_pct）横截面分桶对次日收益正单调；但 A 股资金流
+  口径由单笔金额分档机械构造，天然与当日涨幅共线 ⇒ 本卡 MUST 用**剔除当日涨幅后的残差化净流入**
+  作信号，否则考的是动量而非资金流（这是本卡最重要的防假结论门柱）。
+window:
+  in_sample:
+  - '2021-01-04'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，IS 内熊段）
+    recovery: 2024-02-01..2025-09-09（修复段，OOS 内对侧 regime）
+    bull_note: 2019-2021H1 牛段 money_flow 无数据（起 2021-01-04）⇒ 本卡 regime 用熊/修复两段替代，
+      已如实声明不冒用统一牛熊串
+  frozen_note: 看数前冻结（裁定#501 纪律）；IS 起点因数据起点内缩至 2021-01-04
+buckets:
+  type: quantile_decile
+  'on': 当日残差化主力净流入占比（横截面）
+  min_obs_per_bucket: 60
+pillars:
+  orthogonalization: 信号必须先对当日 pct_change 与 20 日动量做横截面回归取残差；
+    主判据只在残差序列上算（否则与本车道 A01 动量卡重复计分）
+  response_monotonicity: 残差分桶中位前向收益 Spearman 单调 rho>=0.6
+  ic_floor: 日频横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 <= 2 交易日（资金流属高频情绪，长半衰期=共线嫌疑）
+  regime_stability: bear/recovery 两段 IC 同号
+  raw_vs_resid_gap: 原始信号 IC 与残差信号 IC 之差登记入台账（差值大=资金流口径污染动量，是数据质量结论）
+target:
+  primary: next_day_stock_return（个股次日 hfq 收益）
+  secondary: next_day_limit_up_probability（次日涨停概率，情绪极端面）
+  note: A06 决策问题=「主力/大单净流向能否预测短期方向」
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A06.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.money_flow
+  signal_column: main_net_inflow_pct
+  signal_derivation: resid = OLS(main_net_inflow_pct ~ pct_change + 20日动量) 的横截面残差，
+    按 trade_date 分组回归；备用列 super_large_net_inflow_pct / large_net_inflow_pct 各单跑一版
+  target_source: kline_daily_hfq close→next_day_return；涨停标记用 c1_market.limit_up_down
+    （注意其仅 2026-07-20 起 5397 行，secondary 在该表上只能短窗验证）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      for t in ['c1_market.money_flow','c1_market.market_fund_flow_daily','c1_market.dragon_tiger',
+                'c1_market.dragon_tiger_seat','c1_market.hk_connect_flow','c1_market.northbound_hold_snapshot',
+                'c1_market.margin_trading']:
+        r=ch_query_df(f'SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM {t}');print(t,r.values)"
+    实测：
+      c1_market.money_flow           2021-01-04..2026-10-09 rows=5993328 days=1225  ← 本卡主表
+      c1_market.market_fund_flow_daily 2026-03-27..2026-10-09 rows=148 days=130（日度总量，样本过少）
+      c1_market.dragon_tiger         2026-08-07..2026-10-09 rows=2534 days=40（龙虎榜短窗）
+      c1_market.dragon_tiger_seat    2022-01-04..2026-10-09 rows=622365 days=1152（席位长史，另卡）
+      c1_market.hk_connect_flow      2014-11-17..**2024-08-16 断供** rows=4052 days=2264
+      c1_market.northbound_hold_snapshot 2024-09-30..2026-06-30 rows=57458 days=**8**
+      c1_market.margin_trading       2024-09-02..2026-10-08 rows=2100709 days=505
+    ⇒ 本卡取 money_flow（双段齐全）；北向面见 03 卡（blocked_on_data）。
+  readiness: IS 2021-01..2023-12 约 730 交易日 × 全市场，样本充分

@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A15/calibration/03_币圈镜像资金费率对BTC
+node_id: TDM-E-L9-A15
+family: calibration
+title_zh: 币圈镜像·资金费率拥挤对 BTC 次日收益校准卡（market=crypto，链单列）
+hypothesis: 镜像 A15 同一算法面到币圈自身口径：BTC 永续资金费率的 30 日分位越高=多头杠杆越拥挤，
+  其后 1-3 日 BTC 收益越低（拥挤反转）；横截面极端档（费率>90% 分位）的反转幅度应大于时序分位读数。
+  与 02 卡的差别=**target 与交易制度完全不同**：本卡 target 是 BTCUSDT 自身收益，UTC 日界、7×24 无休市、
+  无 T+1、无涨跌停，故 02 卡的 T+1 起算与一字板剔除门柱在本卡一律不适用（禁照搬）。
+market: crypto
+mirror_of: TDM-E-L9-A15/calibration/02_资金费率拥挤跨市场预警
+window:
+  in_sample:
+  - '2025-08-11'
+  - '2026-02-27'
+  oos: &id001
+  - '2026-03-02'
+  - '2026-09-30'
+  regimes:
+    unavailable: 币圈行情实测仅 2025-08-08 起（431 日），无牛/熊两段可分 ⇒
+      regime_same_sign 本卡置 false 并声明"未验证"，禁以震荡市冒充两段
+  frozen_note: 看数前冻结；IS/OOS 按现有 431 日对半分（各约 145 日），属短窗预演，
+    正式分布性结论须待 ≥500 日且含明确趋势段后重冻
+buckets:
+  type: quantile_quintile
+  'on': BTC 资金费率 30 日分位（8h 期聚合到 UTC 日）
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 费率分位与 BTC 次日收益 Spearman 单调 rho>=0.6（预期负向，判绝对值）
+  ic_floor: 日频 IC 均值 |IC|>=0.02（series 面 ic_ir 执行器置 None，如实 n/a）
+  lag_profile: t+1..t+3 |IC| 峰值档与半衰期；7×24 市场无隔夜跳空缓冲，预期半衰期 <=2 日
+  extreme_reversal: 费率 >90% 分位日的后 1-3 日 BTC 收益均值应 <= 0（拥挤反转核心读数）
+  funding_period_alignment: 8 小时结算锚定（UTC 00/08/16），日聚合须右闭，禁把当日未结算费率当已落定
+  no_t1_gate: 本卡无 T+1/涨跌停门柱（币圈制度不同）；02 卡的两条 A 股适配门柱不得继承
+target:
+  primary: btc_next_day_return（crypto_kline_daily symbol='BTCUSDT' close→次日收益，UTC 日界）
+  secondary: btc_next_3day_return（3 日累计）
+  note: 与 02 卡（target=沪深300 次日收益）严格分离；两卡结论不得互相代填
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A15.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.hl_funding_history
+  signal_column: funding_rate
+  signal_derivation: coin='BTC'（实测 coin 键为裸 ticker 'BTC'/'SOL'/'DOGE'，非 'BTC-USDT'）；
+    每个 UTC 日取 3 期（00/08/16）均值；signal=该日均值的 30 日滚动分位
+  target_source: c1_market.crypto_kline_daily symbol='BTCUSDT'（实测键格式带 USDT 且**无连字符**）
+    close→next_day_return，trade_date 为 UTC 日界（沿用影子 MVP §7 固定口径）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count() FROM c1_market.crypto_kline_daily WHERE symbol='BTCUSDT'\").values)
+      print(ch_query_df(\"SELECT count() FROM c1_market.crypto_kline_daily WHERE symbol='BTC-USDT'\").values)
+      print(ch_query_df(\"SELECT coin,count() FROM c1_market.hl_funding_history WHERE coin='BTC' GROUP BY coin\").values)
+      print(ch_query_df(\"SELECT uniq(symbol),uniq(trade_date) FROM c1_market.crypto_kline_daily\").values)
+      print(ch_query_df(\"SELECT shadow_tier,count() FROM c1_market.crypto_shadow_gate GROUP BY shadow_tier\").values)"
+    实测：
+      crypto_kline_daily symbol='BTCUSDT' 2025-08-08..2026-10-08 rows=431
+      symbol='BTC-USDT'（影子 MVP 文档 §6 用的 OKX instId 写法）→ **rows=0**：
+        落库键格式已换为无连字符（Binance 风格），文档与库不一致 ⇒ 本卡以库为准并登记该漂移
+      hl_funding_history coin='BTC' 29392 期（与全表 uniq(funding_time)=29335 同量级，连续无大缺口）
+      crypto_kline_daily 全表 uniq(symbol)=141、uniq(trade_date)=427（is_universe_eligible=1 者 139）
+      crypto_shadow_gate shadow_tier 分组=**{'trend': 20}**（20 行全为同一档）
+    关键负面读数（如实登记，不掩饰）：影子判定器设计为 off/normal/tightened 三态
+      （MVP §7），但落库 20 日**只出现 'trend' 一档** ⇒ 三态判别力在现势数据上不可考
+      （无组间差异可比），该结论挂给 TDM-C-L1 考试车道，本车道不代判。
+    样本诚实声明：431 日、IS/OOS 各约 145 日、无牛熊两段 ⇒ 本卡结论级别=短窗预演，
+      不足以支撑 confidence 升至 validated（建议回传 kept_watch）。
+  readiness: PARTIAL——费率侧充分（2.9 万期），target 侧仅 431 日且无 regime 分段

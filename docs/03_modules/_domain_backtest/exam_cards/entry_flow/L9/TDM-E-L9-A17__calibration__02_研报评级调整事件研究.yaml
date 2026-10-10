@@ -1,0 +1,109 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A17/calibration/02_研报评级调整事件研究
+node_id: TDM-E-L9-A17
+family: calibration
+title_zh: 源线·卖方研报·评级调整与评级迁移事件研究校准卡
+hypothesis: 卖方研报的评级**变动**（rating_change：上调/下调，非评级水平）在发布次一交易日起
+  产生显著异常收益，且下调事件的信息含量强于上调（A 股卖方系统性乐观偏差）；
+  覆盖机构数（org_name 去重）少的小票上调反应更大（注意力稀缺交互）。事件研究口径。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  event_windows: 估计窗 [-210,-11]；事件窗 CAR [0,+1]/[0,+5]/[0,+20]（0=发布次一交易日，T+1 适配）
+  frozen_note: 看数前冻结；三档事件窗与上调/下调分组定义（rating_change 文本匹配）一次写死，
+    事后禁扩关键词表（挪门柱=作废）
+buckets:
+  type: event_binary_group
+  'on': rating_change ∈ {上调, 下调, 维持/缺失}
+  min_obs_per_bucket: 60
+pillars:
+  downgrade_abnormal_return: 下调组 CAR[0,+5] <= -40 bp 且 |t| >= 2.0
+  upgrade_abnormal_return: 上调组 CAR[0,+5] >= +20 bp（预期显著弱于下调组，非对称性是本卡主结论）
+  asymmetry_gap: 上调与下调的 CAR[0,+5] 之差 >= 60 bp（乐观偏差的可判读数）
+  ic_floor: 评级变动三档序数化后的日频横截面 RankIC 均值 >= 0.02
+  lag_profile: CAR 曲线在 [0,+1] 完成大部分反应（研报是快信息）；[0,+20] 相对 [0,+5] 增量
+    登记为"漂移是否存在"（与 A05 PEAD 对照，研报面预期无长漂移）
+  attention_interaction: 覆盖机构数下三分位的上调组 CAR[0,+5] 应 >= 上三分位（注意力稀缺放大）
+  regime_stability: bull/bear 两段下调组 CAR 同号为负
+target:
+  primary: car_0_to_5_stock（个股相对 000300 的 5 日累计异常收益，按评级变动分组）
+  secondary: car_0_to_20_stock（漂移面）
+  note: A17 决策问题=「评级调整与目标价变化里哪些信息领先股价」——本卡答"评级调整"，目标价面见 04 卡
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A17.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  car_down_min_bp: -40
+  car_up_min_bp: 20
+  asymmetry_min_bp: 60
+  car_t_stat_min: 2.0
+oos_window_ref: *id001
+data_binding:
+  signal_table: c3_fundamental.research_report
+  signal_column: rating_change
+  signal_derivation: 事件集=rating_change 非空且属 {上调,下调} 的报告行；同股同日多份取首份
+    （避免重复计数放大 t 值）；覆盖机构数=同股过去 90 日 org_name 去重计数
+  target_source: kline_daily_hfq close→个股日收益；市场模型 beta 对 kline_index 000300，估计窗 [-210,-11]
+  pit_gates: 1) publish_date 为唯一时间锚（禁 ingest_ts 锚定=前视）；2) 事件窗从次一交易日起算（T+1）；
+    3) 一字涨停不可买入/一字跌停不可卖出的样本在收益实现面剔除（闸3）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(publish_date)),max(toString(publish_date)),count(),uniq(publish_date) FROM c3_fundamental.research_report\").values)
+      print(ch_query_df(\"SELECT rating,count() FROM c3_fundamental.research_report GROUP BY rating ORDER BY 2 DESC LIMIT 8\").values)
+      print(ch_query_df(\"SELECT rating_change,count() FROM c3_fundamental.research_report GROUP BY rating_change ORDER BY 2 DESC LIMIT 8\").values)
+      python -m zephyr.library.lookup \"卖方研报\" --limit 6"
+    实测：
+      c3_fundamental.research_report publish_date 2017-01-02..2026-09-30 rows=146940 days=3129
+        （列面含 report_id/symbol/title/org_name/rating/rating_change/industry/researchers/
+         publish_date/fy0_year/eps_fy0/pe_fy0/fy1_*/fy2_* ⇒ 评级变动与目标价/预测双可读）
+      馆查 `"卖方研报"` → `(no results for '卖方研报')` ⇒ 源线在馆面无条目（与 A17 节点 2026-10-05
+        新增、doc_ref 未回填一致），但**表已在 CH 且有 9 年史** ⇒ 本节点的"缺口"是登记缺口非数据缺口
+      TDM A17 algo_note_zh 在册事实：「研报为唯一源线级设计缺口；alt_data 域 research_report_collector
+        已存在待补挂此」⇒ ④向后端采集器在产、缺挂接（不阻卡，卡可先取 CH 已落数据）
+    阻断证据（本车道实测，正是"可得≠可用"的教科书样本）：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT rating_change,count() FROM c3_fundamental.research_report GROUP BY rating_change ORDER BY 2 DESC\").values)
+      print(ch_query_df(\"SELECT rating,count() FROM c3_fundamental.research_report GROUP BY rating ORDER BY 2 DESC\").values)
+      print([x[0] for x in ch_query_df(\\\"SELECT name FROM system.columns WHERE database='c3_fundamental' AND table='research_report'\\\").values])"
+    实测结论（三条，逐条决定本卡命运）：
+      1) **rating_change 只有一个取值=空串，覆盖 146940/146940 行（100% 空）**
+         ⇒ 本卡事件集（上调/下调）在现库中**无任何一样本**，不可运行 ⇒ blocked_on_data。
+      2) rating 分布=买入 101225 / 增持 33144 / 空 11384 / 持有 610 / 中性 544 / **卖出 30 /
+         回避 2 / 减持 1** ⇒ 即便用评级"水平"替代"变动"，卖方方向几乎无方差（看空类合计 33 条，
+         占 0.02%），非对称性判据（上调 vs 下调 CAR 之差）在数据上不可辨识；
+         这同时是 A 股卖方乐观偏差的**量化证据**（登记进台账，不是考试失败）。
+      3) **表内无目标价列**（全列面实测=report_id/symbol/title/org_name/rating/rating_change/
+         industry/researchers/publish_date/fy0_year/eps_fy0/pe_fy0/fy1_*/fy2_*/source_url/
+         body_status/body_ref/data_source/ingest_ts/exchange/symbol_canonical）
+         ⇒ A17 决策问题的"目标价变化"半问**字段不存在**（闸4 判 GAP 挂起），非"有字段无数据"。
+    可算面（另有其卡，禁与本卡混判）：eps_fy0 非空 136209/146940=92.7% ⇒ 单份研报的 EPS 预测可用；
+      一致预期面在 c3_fundamental.consensus_daily（2017-2026 逐年 382797→1026920 行，
+      2017 年 1157 只→2025 年 2614 只）⇒ 本车道另立 03 卡（一致预期修正，preregistered）。
+    解锁条件：research_report_collector 补 rating_change 解析（或从 pdf_forecast_extracted
+      192365 行反推评级迁移），且回填后 rating_change 非空率 >=60%、看空类样本 >=300 条；
+      齐备后把 status 改回 preregistered 重冻开考。
+  readiness: BLOCKED——事件列 100% 空 + 目标价字段不存在（两套判据皆不可算）

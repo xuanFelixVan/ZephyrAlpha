@@ -1,0 +1,81 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A13/calibration/02_股东户数环比事件研究
+node_id: TDM-E-L9-A13
+family: calibration
+title_zh: 源线·股东户数·筹码集中度环比事件研究校准卡
+hypothesis: 股东户数**减少**（户数环比为负）=筹码集中，披露后对个股后续收益有正预测力；
+  且户数骤增（散户涌入）是过热顶信号、后续为负。披露是季频/不规则事件 ⇒ 事件研究口径，
+  以 announce_date 为 PIT 锚（TDM pit_proof=披露日锚定），事件窗从公告次一交易日起算（T+1）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  event_windows: 估计窗 [-210,-11]；事件窗 CAR [0,+5]/[0,+20]/[0,+60]（0=公告次一交易日）
+  frozen_note: 看数前冻结；三档事件窗一次写死
+buckets:
+  type: quantile_quintile
+  'on': 同一披露季的户数环比（横截面）
+  min_obs_per_bucket: 60
+pillars:
+  abnormal_return_floor: 户数减少最多组（Q1，环比最负）CAR[0,+20] >= 120 bp 且 t >= 2.0
+  long_short_gap: Q1（最减）-Q5（最增）的 CAR[0,+20] >= 200 bp
+  response_monotonicity: 户数环比分位与 CAR[0,+20] Spearman 单调 |rho| >= 0.6（预期负相关）
+  ic_floor: 披露日横截面 RankIC 均值 >= 0.02（日频 IC 不适配季频事件，只在披露日横截面上算）
+  lag_profile: CAR 增量曲线单调扩张且 [0,+5] 贡献 >= 25%（筹码类信息定价慢，漂移应可见）
+  regime_stability: bull/bear 两段 Q1-Q5 差同号
+  microcap_confounding: 户数环比与自由流通市值/前期涨幅强相关 ⇒ 必须残差化（对 ln(circ_mv)
+    与 20 日动量正交）后再判主读数，否则考的是微盘风格（本卡最重要防假结论门柱）
+target:
+  primary: car_0_to_20_stock（个股相对 000300 市场模型的 20 日累计异常收益）
+  secondary: car_0_to_60_stock（漂移延续面）
+  note: A13 决策问题=「筹码集中度变化能否领先个股行情」
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A13.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  car_t0_t20_min_bp: 120
+  car_q1_q5_gap_min_bp: 200
+  car_t_stat_min: 2.0
+oos_window_ref: *id001
+data_binding:
+  signal_table: c3_fundamental.shareholder_count
+  signal_column: holder_count
+  signal_derivation: 按 symbol 排序取相邻两期，mom = holder_count_t/holder_count_{t-1}-1；
+    仅用 end_date 更晚且 announce_date 已发生的前一期（禁用到未来披露日）；holder_count 为 Nullable(Int64)，
+    缺失或 <=0 剔除；quality_flag 非零行剔除
+  target_source: kline_daily_hfq close→个股日收益；市场模型 beta 对 kline_index 000300 估计窗 [-210,-11]
+  pit_gates: 1) 一律 announce_date 锚定（表同时有 end_date=统计截止日，用 end_date 锚=前视污染）；
+    2) 同日多期取最晚 announce_date；3) 事件窗从公告次一交易日起算（T+1 适配闸3）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(announce_date)),max(toString(announce_date)),count(),uniq(announce_date) FROM c3_fundamental.shareholder_count\").values)
+      print(ch_query_df(\"SELECT count(), uniq(symbol) FROM c3_fundamental.shareholder_count WHERE holder_count IS NULL OR holder_count<=0\").values)
+      print(ch_query_df(\"SELECT quality_flag, count() FROM c3_fundamental.shareholder_count GROUP BY quality_flag\").values)"
+    实测：announce_date 1993-01-12..2026-10-09 rows=514690 days=7001 ← 本车道第二富矿（仅次于研报）
+      列面=symbol/announce_date(Nullable Date)/end_date/holder_count(Nullable Int64)/
+      data_source/quality_flag/ingest_ts/exchange/symbol_canonical
+    质量画像：Nullable 户数列必须显式过滤（NULL 或 <=0 会把 mom 算成 inf/NaN 静默污染横截面）；
+      披露不规则（adhoc 频率，TDM U3 频率=adhoc）⇒ 事件样本非等间距，分桶按"同一披露季内"分组
+      而不是按自然日，已写进 buckets.on。
+  readiness: IS 5 年 × 数千次披露，五分位 min_obs 充分

@@ -1,0 +1,73 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A04/calibration/03_个股估值横截面
+node_id: TDM-E-L9-A04
+family: calibration
+title_zh: 源线·估值·个股 PE/PB 横截面价值因子校准卡（个股估值表断供）
+hypothesis: 个股 PE(TTM)/PB 的横截面倒数（价值分）分桶对次日（及 5 日）个股收益有正单调预测力，
+  且在高估值分位拥挤段反向。信号定义可算，但 CH 无承载个股估值的历史表 ⇒ 整卡 blocked_on_data 不弃。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；解锁前禁以"指数面 02 卡已过"替代本卡结论（不同口径不可代）
+buckets:
+  type: quantile_decile
+  'on': 当日个股 EP=1/PE(TTM) 横截面值
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: EP 分桶中位前向收益 Spearman 单调 rho>=0.6
+  ic_floor: 日频横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号（价值在成长牛里常失效——反号即 fail，属有效结论）
+target:
+  primary: next_day_stock_return（个股次日 hfq 收益）
+  secondary: next_5day_stock_return
+  note: A04 决策问题"横截面"半问的正式载体
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A04.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.stock_valuation
+  signal_column: pe_ttm
+  signal_derivation: EP = 1/pe_ttm（pe_ttm<=0 置 NaN 不入桶）；横截面 rank_pct；
+    备选列 pb_mrq→BP
+  target_source: kline_daily_hfq close→next_day_return
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      for t,c in [('c1_market.stock_valuation','trade_date'),('c1_market.daily_valuation','trade_date'),
+                  ('c1_market.stock_daily_basic','trade_date')]:
+          r=ch_query_df(f'SELECT min(toString({c})),max(toString({c})),count(),uniq({c}) FROM {t}');print(t,r.values)"
+    实测：
+      c1_market.stock_valuation  rows=0 —— **建表未落数（空表）**，本卡信号列无一日数据
+      c1_market.daily_valuation  trade_date 2026-08-03..2026-09-30 rows=234181 days=42 —— 仅 42 日
+      c1_market.stock_daily_basic trade_date 2021-01-04..2026-10-09 rows=7118522 days=1395
+                                 —— 列面仅市值/换手，无 PE/PB（不能替代）
+    缺哪张表哪一段：需 stock_valuation（或 daily_valuation）覆盖 2019-01-04..2025-09-09 的
+      个股 pe_ttm/pb_mrq 全段；现状=daily_valuation 缺 2019-01-04..2026-08-02 整段
+      （约 1570 交易日零行），stock_valuation 全段零行。
+    解锁条件：回补 daily_valuation/stock_valuation 至 IS 起点（AKSHARE 估值线，节点 DS 锚=DS-123/DS-141），
+      回补后按披露日对齐（TDM pit_proof：「估值按交易日落定，回补须按披露日对齐」）。
+  readiness: BLOCKED——个股估值历史零覆盖

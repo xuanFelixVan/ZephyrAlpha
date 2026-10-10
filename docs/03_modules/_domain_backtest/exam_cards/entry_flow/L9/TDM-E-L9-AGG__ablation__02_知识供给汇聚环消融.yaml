@@ -1,0 +1,106 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-AGG/ablation/02_知识供给汇聚环消融
+node_id: TDM-E-L9-AGG
+family: ablation
+title_zh: 知识供给汇聚·整环消融校准卡（本环输出换随机/固定/旁路，看整链掉多少）
+hypothesis: L9-AGG 是 29 源线+5 图谱+3 状态快照的"就绪度读数生产者"（纯读取聚合零采集），
+  其存在价值=让下游（L1-AGG 情绪/信号、MOD-FACTORY-001 数据工厂、MOD-TRADING-015）
+  在源线缺数/滞后时降级而非静默用陈旧数据。消融判据=把本环输出替换后，**整链的降级正确率**
+  掉多少；若掉幅≈0 则本环是纯装饰（终局里可并入下游自检），掉幅显著则保留为必需环。
+ablation:
+  baseline: 全链原样运行（本环读数照常喂下游）
+  arms:
+  - name: random
+    action: 把 l9_readiness_daily 的 status 字段替换为随机绿/黄/红（保持行数量级与日期不变）
+  - name: fixed_green
+    action: 全部置绿（乐观固定，模拟"本环永远说没问题"）
+  - name: bypass
+    action: 旁路本环（下游收不到就绪读数，退化为无检查）
+  metric:
+  - name: degradation_correctness
+    definition: 在源线真实缺数/滞后的日子上，下游做出正确降级（跳过或标降级）的比例
+    baseline_expected: 高
+    arm_expected: 'random/fixed_green/bypass 三臂均应显著下降；fixed_green 掉幅最大（假阴性）'
+  - name: stale_data_usage_rate
+    definition: 下游使用超过 freshness_lag_days 阈值数据的比例（本环存在应压住它）
+  - name: downstream_signal_sharpe
+    definition: 整链信号（L1-AGG 情绪六段态→次日指数方向）命中率/Sharpe 的掉幅
+  drop_threshold:
+    keep_ring_if_max_arm_drop_ge: 0.05   # 任一臂降级正确率掉幅 >=5pp ⇒ 本环必需
+    merge_ring_if_all_arm_drop_lt: 0.02  # 三臂掉幅均 <2pp ⇒ 本环并入下游自检（净零候选）
+  confound_control: fixed_green 与 bypass 的差别是"误导 vs 无信息"——若两者掉幅接近，
+    说明下游根本没在读这个字段（消费关系名义存在、实质零消费），该发现优先级高于掉幅本身
+window:
+  in_sample:
+  - '2026-09-15'
+  - '2026-09-28'
+  oos: &id001
+  - '2026-09-29'
+  - '2026-10-09'
+  regimes:
+    unavailable: 就绪读数实测仅 5 个独立日期 ⇒ 三臂重放无足够基线日，消融结论级别=可行性预演
+  frozen_note: 看数前冻结；三臂定义与掉幅阈值事前写死（事后调阈值=作废 G4-5）
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 日期
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 不适用于本族；以臂间掉幅单调性替代——random 与 fixed_green 的掉幅
+    应 >= bypass（有错误信息比无信息更糟，若相反=下游在读但读错方向，属严重缺陷发现）
+  ic_floor: 不适用（无连续信号）；改判 degradation_correctness 的臂间差异显著性（两比例 z 检验 p<0.05）
+  lag_profile: 本环时滞=T-1 08:00 出读数、喂次日（TDM latency_budget='T-1 08:00'）；
+    消融须检查"读数晚于 08:00"的日子占比（采集延迟即本环自身健康度，是第二层判据）
+  regime_stability: 不适用（无两段）
+  coverage_floor: 本环覆盖源线数应 =29+5+3=37；实测 l9_readiness_daily 的 source_line 去重数
+    考前必须先跑，若 <37 则"汇聚完整性"本身即未达标（与本卡主判同等重要）
+target:
+  primary: max_arm_drop_in_degradation_correctness（三臂中最大掉幅，百分点）
+  secondary: stale_data_usage_rate_delta（陈旧数据使用率增量）
+  note: AGG 类聚合环节按共用作业簿明令走 ablation；本卡是 L9 唯一 ablation 卡
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-AGG.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: false
+  keep_ring_if_max_arm_drop_ge: 0.05
+  merge_ring_if_all_arm_drop_lt: 0.02
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.l9_readiness_daily
+  signal_column: status
+  signal_derivation: 本环输出面=status/freshness_lag_days/rows_in_window 三列；
+    消融在重放前替换 status（三臂），下游消费件=src/zephyr/data/l9_readiness_aggregator.py
+    的生产者 + module_mounts（MOD-FACTORY-001、MOD-TRADING-015）消费侧
+  target_source: 整链指标（非单表）：downstream_signal_sharpe 取自 L1-AGG 情绪六段态对次日
+    指数方向的命中面（kline_index 000300 实测 1990-12-19..2026-10-09 可用）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.l9_readiness_daily\").values)
+      print(ch_query_df(\"SELECT uniq(source_line), status, count() FROM c1_market.l9_readiness_daily GROUP BY status\").values)"
+      python -m zephyr.library.lookup "就绪" --limit 4
+    实测：
+      c1_market.l9_readiness_daily trade_date 2026-09-15..2026-10-09 rows=195 days=**5**
+        —— 195 行 / 5 日 ⇒ 平均 39 行/日（与节点自陈"29 源线+5 图谱+3 状态快照=37"量级一致，
+        但**独立日期仅 5 个**，三臂重放没有足够基线日）
+      列面实测=trade_date/source_line/tier/status/freshness_lag_days/rows_in_window/detail/
+        pit_effective_from/produced_at/ingest_ts（三臂替换字段与判据列均已在表内，接线可行）
+    缺哪张表哪一段：**缺 2019-01-04..2026-09-14 全段**（本环 2026-09-28 才确认实件化，
+      TDM note_confirmed='2026-09-28' 且 module_ref 由 st-chief4x-know-20260927 回填）
+      ⇒ 就绪度历史不可回填的成因=生产者本身刚上线（非渠道断供），只能向前积累。
+    解锁条件：l9_readiness_daily 积累 >=60 个独立日期（含至少一次真实源线缺数事件作 ablation 的
+      "负例"），届时三臂重放才有意义；在此之前本卡保持 blocked_on_data。
+  readiness: BLOCKED——基线读数仅 5 日，不足以支撑臂间对比（生产者新上线，向前积累型）

@@ -1,0 +1,75 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A07/calibration/02_千股千评关注度与评级
+node_id: TDM-E-L9-A07
+family: calibration
+title_zh: 源线·千股千评·机构参与度/综合评分变化校准卡（快照仅 15 日）
+hypothesis: 千股千评的机构参与度（org_participation）与综合评分（composite_score）的日变化
+  对次日个股收益有正预测力，排名跃升（rank_change）档伴随情绪加速；attention_index 极端高值
+  反向（过热）。信号定义可算，但 CH 侧该表 2026-09-11 才起，仅 15 个独立日期 ⇒ blocked_on_data。
+window:
+  in_sample:
+  - '2026-09-11'
+  - '2026-09-25'
+  oos: &id001
+  - '2026-09-26'
+  - '2026-10-09'
+  regimes:
+    unavailable: 无牛/熊两段可分（覆盖仅 15 个交易日）——regime_stability 解锁前视为未验证
+  frozen_note: 看数前冻结；此窗口是按现有覆盖切的"短窗预演"，正式考试须待历史补齐后重冻，
+    禁以 15 日样本冒充分布性结论
+buckets:
+  type: quantile_decile
+  'on': composite_score 日变化（横截面）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6
+  ic_floor: 横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3（n≈10 个横截面日，IC_IR 无统计意义须声明）
+  lag_profile: t+1..t+3 |IC| 峰值档与半衰期建档（评级快照型信号预期半衰期长，>5 日须查与动量共线）
+  regime_stability: 暂不可判（无两段 regime）
+  attention_overheat: attention_index 分位>95% 组次日收益应不高于中位（过热反向，辅读数）
+target:
+  primary: next_day_stock_return（个股次日 hfq 收益）
+  secondary: next_5day_stock_return
+  note: A07 决策问题=「机构评级变化能否领先股价」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A07.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.alt_stock_comment
+  signal_column: composite_score
+  signal_derivation: signal_t = composite_score_t - composite_score_{t-1}；辅列
+    org_participation / rank_change / current_rank / attention_index / main_cost
+  target_source: kline_daily_hfq close→next_day_return
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      for t in ['c1_market.alt_stock_comment','c1_market.stock_hot_rank']:
+        r=ch_query_df(f'SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM {t}');print(t,r.values)"
+    实测：
+      c1_market.alt_stock_comment trade_date 2026-09-11..2026-10-09 rows=77972 days=**15**
+      c1_market.stock_hot_rank    trade_date 2026-08-04..2026-10-09 rows=7793  days=**38**
+    馆查（负存在断言三源之馆面，命令原文）：
+      python -m zephyr.library.lookup "千股千评" --limit 6
+      → TBL:ch:c1_market.alt_stock_comment  table  active  ch:c1_market.alt_stock_comment
+      （仅一张在册表，无历史回填件、无第二条源线表；⇒ "无更长历史"是实测+馆查双证，非凭记忆）
+    缺哪张表哪一段：需 alt_stock_comment 覆盖 2019-01-04..2025-09-09 全段；现状缺 2019-01-04..2026-09-10
+      整段（约 1600 交易日零行）。TDM pit_proof 亦自陈「评级快照日更，历史不修订」⇒ 快照型数据
+      天然不可回填，只能靠持续采集积累，属"未来可得、过去永不可得"型断供。
+    解锁条件：持续采集满 ≥250 交易日（含牛/熊两段至少各 60 日）后重冻窗口开考。
+  readiness: BLOCKED——快照型历史不可回填，现仅 15 日

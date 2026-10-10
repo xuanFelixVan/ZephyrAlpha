@@ -1,0 +1,93 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A11/calibration/02_EIA库存意外
+node_id: TDM-E-L9-A11
+family: calibration
+title_zh: 源线·能源库存·EIA 周度库存意外对石化链与油价的领先校准卡
+hypothesis: EIA 周度原油/汽油/馏分油/丙烷库存的**意外度**（相对过去 4 周变动均值的偏离，
+  即"超预期累库/去库"）对下一交易日石化板块与油价序列有预测力；汽油与馏分油（成品油）意外
+  对"石油加工 880312"应强于原油意外对"石油开采 880311"（链位分化）。周频事件 ⇒ 用
+  发布日锚定的事件研究+向前填充到日频双口径。
+window:
+  in_sample:
+  - '2022-01-04'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-07-01..2024-01-31（贴现率熊，IS 内熊段）
+    recovery: 2024-02-01..2025-09-09（修复段）
+    bull_note: 库存序列实测起 2021-08-20 ⇒ 2019-2021H1 牛段不可考（已声明，禁冒用作 regime 一段）
+  frozen_note: 看数前冻结；发布时点=EIA 周三（美东）⇒ 对 A 股可用作**次一交易日**（周四/周五），
+    禁把库存值挂到发布前的日期（时区+发布滞后是本节点最大前视风险，RULE-SCHEMA-TZ 同源纪律）
+buckets:
+  type: quantile_tercile
+  'on': 库存意外度（累库为正）
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 意外度三分位与下一周板块收益 Spearman 单调 |rho|>=0.6（预期累库→负）
+  ic_floor: 日频（前向填充后）IC 均值 |IC|>=0.02；**有效独立观测≈200 周**，故 IC 的 t 统计
+    必须按 Newey-West/周频重算，禁按 1000 个"日观测"充样本量（本条是防自欺门柱）
+  lag_profile: 事件窗 [发布次一交易日,+5] 的 CAR 应显著；若仅 t+1 有效则判"一次定价完毕、无延续"
+  regime_stability: bear/recovery 两段同号
+  chain_differentiation: 汽油/馏分油意外对石油加工（880312）的 |IC| 应 >= 对石油开采（880311）
+    （链位分化读数，辅判）
+target:
+  primary: next_5day_sector_return（880311.SH 石油开采 / 880312.SH 石油加工 5 日前向收益）
+  secondary: next_day_brent_return（EIA_BRENT_SPOT 次日变化，检验是否已被油价当场吃掉）
+  note: A11 决策问题=「库存意外变化能否领先油价与石化链」
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A11.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  effective_independent_obs_min: 150
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.macro_data
+  signal_column: indicator_value
+  signal_derivation: indicator_name IN ('EIA_CRUDE_INVENTORY','EIA_GASOLINE_INVENTORY',
+    'EIA_DISTILLATE_INVENTORY','EIA_PROPANE_INVENTORY')；surprise_t = Δstock_t − mean(Δstock_{t-1..t-4})；
+    价格辅列 EIA_BRENT_SPOT / EIA_WTI_SPOT；天然气列 EIA_NATGAS_INVENTORY 因仅 58 期（月频级、
+    且 2026-05-01 后无值）**不入本卡主信号**，只作辅读数
+  target_source: v_kline_sector_880_named（period='1d'）sector_code IN ('880311.SH','880312.SH')
+    close→前向收益；辅 target=同 macro_data 的 EIA_BRENT_SPOT 日变化
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT indicator_name,min(toString(report_date)),max(toString(report_date)),count(),uniq(report_date) FROM c1_market.macro_data WHERE indicator_name LIKE 'EIA%' GROUP BY indicator_name\").values)
+      print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%eia%' OR lower(table) LIKE '%oil%' OR lower(table) LIKE '%inventor%'\").values)
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.futures_warehouse_receipt\").values)"
+      python -m zephyr.library.lookup "EIA" --limit 6
+      ls data/failures/ | grep -ci eia
+    实测（正存在）：EIA_CRUDE/GASOLINE/DISTILLATE/PROPANE_INVENTORY 各 **267 个周度观测**，
+      report_date 2021-08-20..2026-10-02；EIA_BRENT_SPOT 1289（2021-08-16..2026-10-06）、
+      EIA_WTI_SPOT 1274 —— ⇒ 能源库存**已落 CH**，载体是通用长表 macro_data（indicator_name 轴），
+      不是专用 EIA 表。
+    实测（负存在，纠偏在册先例）：`system.tables` 里筛 %eia%/%oil%/%inventor% = **(none)**
+      —— 本车道首轮据此曾判"A11 无数据、blocked_on_data"，**该结论已被上述 macro_data 行转列实测推翻**；
+      教训登记进台账 §1.3.1：长表型载体（indicator_name 轴）用表名筛必然漏判，负存在断言
+      MUST 同时筛"表名"与"列值"两路。
+    实测（断供史，如实保留）：`data/failures/` 内 eia 失败件 8 个（2026-08-04/08-16/08-18/08-20/
+      08-27/09-14/09-28/**10-08**），最新原文 error="HTTPSConnectionPool(host='api.eia.gov',
+      port=443): Read timed out. (read timeout=30)"，task_id=eia_petroleum_incremental
+      ⇒ **现势增量更新在持续失败**（历史 2021-08..2026-10-02 在库，之后无新观测）：
+      EIA_PROPANE 等止于 2026-10-02，而战役 OOS 终点 2025-09-09 之前均有数 ⇒ 本卡仍可考；
+      但**2026-10-02 之后的滚动重考会断**，此断供事实已登记为 AGG/A11 的运维缺口（非本卡阻断）。
+    实测（替代面）：c1_market.futures_warehouse_receipt trade_date 2014-05-19..2026-10-09
+      rows=2925905 d=3013（国内商品仓单=另一支库存代理，本卡不用、另登长尾）。
+  readiness: IS 约 104 周、OOS 约 90 周 ⇒ 独立观测约 195，过 effective_independent_obs_min=150，
+    但分桶为三分位（min_obs 40）而非十档，已按低频事实降档

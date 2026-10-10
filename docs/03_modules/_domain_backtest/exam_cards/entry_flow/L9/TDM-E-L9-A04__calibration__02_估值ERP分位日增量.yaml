@@ -1,0 +1,61 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A04/calibration/02_估值ERP分位日增量
+node_id: TDM-E-L9-A04
+family: calibration
+title_zh: 源线·估值·指数 ERP/PE 分位日增量校准卡
+hypothesis: 估值"水平"对次日收益几乎无预测力（慢变量），但其**日增量**（ERP 分位/PE 分位的 5 日 变化）度量风险偏好边际变化，对次日指数收益有正预测力：分位快速抬升=偏好改善的确认而非顶部。 本卡刻意考增量而非水平——水平版登记为长尾（低频目标口径不同，须另配
+  20 日 target 才可判）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（裁定#501 纪律）；窗口与 L1 同族先例卡同口径
+buckets:
+  type: quantile_decile
+  'on': 当日 erp_pct 的 5 日变化量
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（series 面 ic_ir 由执行器置 None，故本卡 ic_ir 地板只在 panel 复用版生效，series 版如实标 n/a）
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号
+target:
+  primary: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  secondary: next_20day_index_return（慢变量真目标口径，登记为辅轴，series 执行器不自动判）
+  note: A04 决策问题=「估值横截面能否区分未来收益」，本卡答指数时序面；横截面面见 03 卡（断供）
+status: examined
+lineage:
+  card: null
+  run_id: nightmine-02_估值ERP分位日增量
+  score_row: exam_scores_v1.yaml#rows[8]
+  confidence_writeback: TDM.nodes.TDM-E-L9-A04.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.index_valuation_daily
+  signal_column: erp_pct
+  signal_derivation: signal_t = erp_pct_t - erp_pct_{t-5}（symbol='000300'，5 日变化量）； 同表备选列 pe_pct / pb_pct / cape_5y_pct（互为稳健性复算面，须逐一单跑不合成）
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: "命令原文：\n  python -c \"\n  import sys; sys.path.insert(0,'scripts/backtest')\n  from fexam.ch_data\
+    \ import ch_query_df\n  r=ch_query_df(\\\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date)\
+    \ FROM c1_market.index_valuation_daily\\\")\"\n实测：trade_date 2010-01-04..2026-10-08 rows=16228 days=4068（列含 pe_ttm/pb_mrq/\n\
+    \  dividend_yield/cape_5y/cape_5y_pct/pe_pct/pb_pct/erp/erp_pct/broken_net_ratio/buffett_ratio，\n  分位类列即本卡信号源）\n同节点个股面实测（⇒\
+    \ 个股横截面断供，见 03 卡）：\n  c1_market.stock_valuation  rows=0（空表）\n  c1_market.daily_valuation  trade_date 2026-08-03..2026-09-30\
+    \ rows=234181 days=42\n  c1_market.stock_daily_basic trade_date 2021-01-04..2026-10-09 rows=7118522 days=1395\n    （列仅\
+    \ turnover_rate/float_share/circ_mv/total_mv，**无 PE/PB**，不能替代估值横截面）\n"
+  readiness: IS 2019-2023 与 OOS 2024-2025-09 双段完整覆盖，样本充分

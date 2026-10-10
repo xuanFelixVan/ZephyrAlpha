@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A12/calibration/02_台风与极端高温对电力链
+node_id: TDM-E-L9-A12
+family: calibration
+title_zh: 源线·天气·台风活动与极端高温对电力/农业链的事件研究校准卡
+hypothesis: ①台风生成/登陆强度（热带气旋计数与近岸暴露）领先用电负荷跳升→电力板块短期正超额；
+  ②夏季连续极端高温日数（地面观测 ≥37℃ 累计）对电力板块有正预测力、对种植业/饲料有负向冲击；
+  ③天气是"可观测但预报分版本"的源线 ⇒ 只准用**已落定的观测/路径**，禁用当日预报回填历史
+  （pit_proof=观测时戳即落定，预报分版本）。低频冲击事件 ⇒ 事件研究口径。
+window:
+  in_sample:
+  - '2020-04-01'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2020-04-01..2021-06-30（流动性牛，受 880 起点约束）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；事件定义（台风/高温阈值）一次写死，事后禁调阈值重跑（挪门柱=作废）
+buckets:
+  type: event_binary_tercile
+  'on': 近 5 日台风暴露强度（按 880 板块所属沿海省域计数）与 ≥37℃ 累计日数三分位
+  min_obs_per_bucket: 40
+pillars:
+  abnormal_return_floor: 高暴露组 CAR[0,+5] 电力板块 >= 30 bp 且 t >= 2.0
+  response_monotonicity: 高温累计日数三分位与电力板块 5 日收益 Spearman 单调 rho>=0.6
+  ic_floor: 日频（事件日为主，非事件日 NaN 不进气泡）|IC| >= 0.02
+  lag_profile: 时滞判据=电力板块 CAR 应在 [0,+5] 内完成、[0,+20] 不再扩张（天气冲击定价快）；
+    半衰期登记为 CAR 增速转零的交易日
+  regime_stability: bull/bear 两段同号
+  geography_honesty: 地面观测表实测仅深圳（`alt_sz_ground_obs` 站点面）⇒ 全国口径的高温读数
+    **不成立**，本卡高温支线的空间外推判为"未验证"，只把深圳单站结论作机制探针，
+    不写进 confidence 回传（闸3 A 股全国适配闸）
+target:
+  primary: car_0_to_5_elec_sector（电力板块 880305.SH 相对 000300 的 5 日累计异常收益）
+  secondary: car_0_to_20_agri_sector（种植业 880361.SH 20 日 CAR，负向冲击面）
+  note: A12 决策问题=「极端天气能否预测用电负荷/农产品/航运扰动」，航运扰动面并入 A08 卡不重复挖
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A12.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  car_min_bp: 30
+  car_t_stat_min: 2.0
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.alt_typhoon_track
+  signal_column: tclevel
+  signal_derivation: 台风支线=按 issue_ts 取每日活跃气旋数与最强等级（tclevel 序），
+    计沿海 11 省暴露；高温支线= alt_sz_ground_obs.temp >= 37 的日累计（**单站探针**）；
+    两者分别构造，禁合成"天气指数"
+  target_source: v_kline_sector_880_named（period='1d'）sector_code='880305.SH'（电力）/
+    '880361.SH'（种植业）close→日收益，市场模型 beta 对 kline_index 000300 在估计窗 [-210,-11] 回归
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(issue_ts)),max(toString(issue_ts)),count(),uniq(issue_ts) FROM c1_market.alt_typhoon_track\").values)
+      print(ch_query_df(\"SELECT min(toString(ddate)),max(toString(ddate)),count(),uniq(ddate) FROM c1_market.alt_sz_ground_obs\").values)
+      print(ch_query_df(\"SELECT min(toString(record_date)),max(toString(record_date)),count(),uniq(record_date) FROM c1_market.weather_data\").values)
+      print(ch_query_df(\"SELECT count() FROM c1_market.alt_sz_weather_warning\").values)
+      print(ch_query_df(\"SELECT DISTINCT sector_code,sector_name FROM c1_market.v_kline_sector_880_named WHERE sector_name LIKE '%电力%' OR sector_name LIKE '%种植%'\").values)"
+    实测：
+      c1_market.alt_typhoon_track  issue_ts 2004-08-07..2026-10-09 rows=196939 d=25745 ← 台风长史可用
+      c1_market.alt_sz_ground_obs  ddate 2015-01-01..2026-10-09 rows=1143532 d=4270（**深圳单域**）
+      c1_market.weather_data       record_date 2026-08-04..2026-10-09 rows=11953 days=**40**
+        —— QWEATHER 预报型，历史不可回填（pit_proof 自陈"预报分版本"）⇒ 天气面只有台风/观测两线可用
+      c1_market.alt_sz_weather_warning rows=9661（预警事件流，无匹配到标准日期列，登记长尾）
+      电力→880305.SH/881459.SH/880308.SH 新型电力/880753.SH 绿色电力；种植业→880361.SH/881106.SH
+    解锁/长尾：全国高温面需多城地面观测（现仅深圳 alt_sz_* 族）——若要用气象官方全国站，
+      属 B02（美国 NOAA 类比）同类的"渠道未接"缺口，A12 因此只立本卡不外推。
+  readiness: 台风支线 IS/OOS 双段充分（2004 起）；高温支线为单站探针，结论不外推（已在 pillars 写死）

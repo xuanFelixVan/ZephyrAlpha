@@ -1,0 +1,93 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A15/calibration/04_币圈镜像山寨季广度
+node_id: TDM-E-L9-A15
+family: calibration
+title_zh: 币圈镜像·山寨季广度（跑赢 BTC 占比）对 ETH/BTC 与 BTC 前瞻校准卡（market=crypto）
+hypothesis: 镜像 A 股"广度/情绪线"（L1-S2 涨停家数、L1-AGG 情绪六段）到币圈口径：
+  用 is_universe_eligible=1 的 139 个币对，构造 90 日跑赢 BTC 的占比（山寨季广度），
+  该广度上升段应正向预示 BTC 自身后续收益（增量资金入场）与 ETH/BTC 汇率上升（风险偏好扩散）；
+  广度极端高位（>80%）应反向（拥挤）。A 股广度卡用涨跌停计数，币圈无涨跌停 ⇒
+  广度代理必须换成相对强弱占比，这是镜像链的核心改造点（不是照搬指标）。
+market: crypto
+mirror_of: TDM-E-L1-S2__calibration__02_涨停家数（广度面镜像，非同口径）
+window:
+  in_sample:
+  - '2025-11-06'
+  - '2026-05-05'
+  oos: &id001
+  - '2026-05-06'
+  - '2026-09-30'
+  regimes:
+    unavailable: 币圈行情仅 2025-08-08 起 431 日，无独立牛/熊两段可分 ⇒ regime_same_sign 置 false，
+      结论级别=短窗预演
+  frozen_note: 看数前冻结；90 日回看窗与"跑赢占比"阈值（>=0）一次写死；
+    IS 起点因 90 日回看需要延迟到 2025-11-06（避免暖启动段混入样本）
+buckets:
+  type: quantile_quintile
+  'on': 90 日跑赢 BTC 的合格币占比
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 广度分位与 BTC 次日收益 Spearman 单调 rho>=0.6（预期低-中档正、极端档负）
+  ic_floor: 日频 IC 均值 |IC|>=0.02（series 面 ic_ir 执行器置 None，如实 n/a）
+  lag_profile: 时滞判据=广度是慢变量，|IC| 峰值预期落 t+3 或更晚；若只落 t+1 且迅速归零=
+    判"广度已被价格吃掉、无领先力"（有效负结论，禁按样本不足草率归档）
+  extreme_overheat: 广度 >80% 分位组其后 5 日 BTC 收益均值应 <= 中位组（过热反向，辅读数）
+  eth_btc_channel: 同一广度对 **ETH/BTC 汇率**前向变化的 IC 应高于对 BTC 自身收益的 IC
+    （风险偏好扩散的机制读数；若相反则"山寨季"叙事在本数据上不成立）
+  universe_stability: 139 个 is_universe_eligible=1 币在样本期内的成分变动须 ≤10%/季，
+    否则广度是"清单变更"而非"市场行为"伪结论（本卡最重要防假阳门柱）
+target:
+  primary: btc_next_5day_return（BTCUSDT 5 日前向收益，UTC 日界）
+  secondary: eth_btc_ratio_next_5day_change（ETHUSDT/BTCUSDT 相对汇率 5 日变化）
+  note: 与 A 股广度卡（涨停家数）分列——两套 target、两套制度、禁共用结论
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A15.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: true
+  min_universe_turnover_check: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.crypto_kline_daily
+  signal_column: close
+  signal_derivation: 广度_t = count(symbol where close_t/close_{t-90}-1 > BTCUSDT 同期收益
+    且 is_universe_eligible=1) / count(is_universe_eligible=1)；7×24 自然日即交易日（无休市日历）
+  target_source: c1_market.crypto_kline_daily symbol='BTCUSDT' close→next_5day_return；
+    辅 target 用 symbol='ETHUSDT' 与 BTCUSDT 的比值变化
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT uniq(symbol),uniq(trade_date),min(toString(trade_date)),max(toString(trade_date)),count() FROM c1_market.crypto_kline_daily\").values)
+      print(ch_query_df(\"SELECT uniq(symbol) FROM c1_market.crypto_kline_daily WHERE is_universe_eligible=1\").values)
+      print(ch_query_df(\"SELECT trade_date,btc_close,ma200,altseason_ratio,shadow_tier,fng_value FROM c1_market.crypto_shadow_gate ORDER BY trade_date DESC LIMIT 3\").values)"
+    实测：
+      crypto_kline_daily uniq(symbol)=141 uniq(trade_date)=427 2025-08-08..2026-10-08 rows=19801
+      is_universe_eligible=1 的币数=139（足够做占比广度）
+      crypto_shadow_gate 已直接落 altseason_ratio（实测 2026-10-08=0.5714、10-07=0.647、10-04=0.6785）
+        ⇒ **既有 altseason_ratio 可作交叉校验面**，但其口径（MVP §7：90 日跑赢占比≥75% 且
+        有效样本≥40/50，Top-50 清单）与本卡的 139 币全宇宙口径**不同**，
+        两口径差异本身是本卡要登记的第二读数（清单口径 vs 全宇宙口径的广度分歧）
+    缺哪张表哪一段（阻断点，写死）：
+      1) **无 is_universe_eligible 的历史版本轴**——币的"合格宇宙"归属只有当前值，无法还原
+         2025-08 起每期真实成分；广度分母因此不可 PIT ⇒ universe_stability 门柱现不可判；
+      2) crypto_kline_daily 仅 427 日（2025-08-08 起），无 2019-2024 的牛熊段 ⇒ 无法建立
+         "条件稳定性"（牛/熊同号）判据，也无法做 ≥500 日的分布性结论；
+      3) 影子 MVP 文档 §5 记 OKX 端点环境级阻断，现库内数据来自替代通道（键格式 BTCUSDT 而非
+         BTC-USDT 亦印证换源），但**该换源未见 Owner 裁定登记**（MVP 明言"换源属 Owner 决策"）
+         ⇒ 数据溯源链有断点，考前须先补口径来源确认。
+    解锁条件：①落一版 universe 成分历史轴（或按季快照表）；②行情累计 ≥500 日且含一段明确趋势段；
+      ③换源溯源在 data_asset_registry/裁定层留痕。三者齐备后把 status 改回 preregistered 重冻。
+  readiness: BLOCKED——宇宙成分不可 PIT + target 史仅 427 日 + 换源溯源未留痕

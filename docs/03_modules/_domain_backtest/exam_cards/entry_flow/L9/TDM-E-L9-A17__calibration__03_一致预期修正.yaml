@@ -1,0 +1,92 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A17/calibration/03_一致预期修正
+node_id: TDM-E-L9-A17
+family: calibration
+title_zh: 源线·卖方研报·一致预期（EPS 共识）修正幅度横截面校准卡
+hypothesis: 个股未来年度 EPS 共识（eps_consensus）的 20 日相对修正幅度对后续收益有正预测力
+  （上修→正超额）；且修正的**离散度收窄**（eps_std/eps_consensus 下降）代表信息收敛、
+  应伴随更稳的正向漂移；覆盖机构数（n_orgs）增加本身是被覆盖效应而非预测效应，须控制。
+  本卡是 A17 在 rating_change 100% 空（见 02 卡）之后的**唯一可算面**——换考题不换数据源。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；修正幅度定义（20 日、最近财年 forecast_year 选择规则）一次写死
+buckets:
+  type: quantile_decile
+  'on': 当日 EPS 共识 20 日修正幅度（横截面）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 修正幅度分桶与 20 日前向收益 Spearman 单调 rho>=0.6
+  ic_floor: 日频横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 |IC| 峰值档与半衰期；预期半衰期 >5 日（一致预期是慢信息，
+    若 <=1 日即衰减完毕=已被价格充分反映，登记为有效负结论）
+  regime_stability: bull/bear 两段 IC 同号
+  dispersion_channel: eps_std/eps_consensus 的 20 日变化为负（收敛）且修正为正的组合，
+    其后续收益应 > 只修正不收敛组合（辅读数，机制检验）
+  coverage_confound: 主读数必须在控制 ln(n_orgs) 变化后仍 >= 0.02 IC；否则判"考的只是新被覆盖"
+    （本卡最重要防假阳门柱）
+target:
+  primary: next_20day_stock_return（个股 20 日前向收益，hfq 收盘）
+  secondary: next_day_stock_return（次日，读时滞起点）
+  note: 与 02 卡（评级调整，blocked）分列——02 卡解锁前本卡是 A17 唯一出分面
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A17.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c3_fundamental.consensus_daily
+  signal_column: eps_consensus
+  signal_derivation: 取"最近未完成财年"行（forecast_year = 当前自然年，缺失则次年）；
+    revision_t = eps_consensus_t / eps_consensus_{t-20} - 1；dispersion = eps_std/eps_consensus；
+    eps_consensus<=0 或缺失行剔除（分位/相对变化对 0 与负值不稳定）
+  target_source: kline_daily_hfq close→next_20day_return / next_day_return
+  pit_gates: 1) trade_date 为唯一锚（表另有 ingest_ts 与 last_report_date，禁按 last_report_date
+    回算=前视，因该列可指向未来已发生的报告）；2) 修正窗用 t-20 的**当时点**共识值，
+    禁以最新修订覆盖历史行（表为日度面板，天然 PIT，取历史行即可）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c3_fundamental.consensus_daily\").values)
+      print(ch_query_df('SELECT toYear(trade_date),count(),uniq(symbol) FROM c3_fundamental.consensus_daily GROUP BY 1 ORDER BY 1').values)
+      print([x[0] for x in ch_query_df(\"SELECT name FROM system.columns WHERE database='c3_fundamental' AND table='consensus_daily'\").values])"
+    实测：
+      c3_fundamental.consensus_daily trade_date 2017-01-03..2026-09-30 rows=6829376 days=2367
+      逐年（行/股）：2017 382797/1157、2018 451037/1126、2019 473638/1186、2020 513337/1304、
+        2021 562556/1420、2022 772345/1909、2023 979257/2356、2024 1007507/2464、
+        2025 1026920/2614、2026（至 09-30）659982/2326
+      全列面=trade_date/symbol/forecast_year/eps_consensus/eps_median/eps_std/eps_min/eps_max/
+        pe_consensus/n_reports/n_orgs/rating_score_mean/n_buy/n_add/n_neutral/n_negative/
+        n_unrated/last_report_date/window_days/data_source/ingest_ts/exchange/symbol_canonical
+    质量画像（决定本卡门柱）：
+      1) **覆盖漂移**：被覆盖个股数 2017 的 1157 只 → 2025 的 2614 只（+126%），
+         IS 与 OOS 段的横截面宇宙不同 ⇒ 覆盖率变化本身会制造"修正"假象，
+         故 coverage_confound 门柱与 min_obs_per_bucket 必须在同期宇宙内计算（卡内写死）；
+      2) n_negative（看空类计数）可用于绕开 02 卡的评级无方差问题，但实测该列在
+         research_report 侧看空仅 33 条，共识侧是否同样偏乐观**须考前先跑分布**（不作已验证）；
+      3) 同族备援表 c3_fundamental.pdf_forecast_extracted 192365 行、
+         c3_fundamental.analyst_forecast report_date 2026-07-22..2026-10-09 rows=123741 days=**52**
+         （后者无历史，不可承担 IS，已排除）；consensus_daily_repaired 为修复副本，
+         本卡固定用主表禁与 _repaired 混用（双真源风险）。
+  readiness: IS 5 年（2019-2023）× 约 1200-2350 只/年，样本充分

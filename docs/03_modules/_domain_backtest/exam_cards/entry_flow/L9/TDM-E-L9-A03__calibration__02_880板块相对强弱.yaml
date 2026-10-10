@@ -1,0 +1,82 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A03/calibration/02_880板块相对强弱持续性
+node_id: TDM-E-L9-A03
+family: calibration
+title_zh: 源线·板块/概念指数·880 板块相对强弱持续性校准卡
+hypothesis: 同花顺 880 板块指数的 20 日相对强弱（RS=板块 20 日收益减全板块中位）分桶对
+  板块次日收益有正单调持续性；但持续性在轮动加速期衰减——本卡答"板块轮动与强弱持续性能否领先个股"
+  的前半问（强弱自身是否延续），后半问另立 03 卡。
+window:
+  in_sample:
+  - '2020-04-01'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2020-04-01..2021-06-30（流动性牛，880 数据 2020-03-17 起，牛段可用起点受限已声明）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；IS 起点因数据起点（2020-03-17）内缩，禁把 2019 年冒充已覆盖
+buckets:
+  type: quantile_decile
+  'on': 当日板块 RS（板块横截面）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: RS 分桶中位板块前向收益 Spearman 单调 rho>=0.6
+  ic_floor: 日频板块横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日；RS 信号半衰期 > 10 日须查共线
+  regime_stability: bull/bear 两段 IC 同号（板块动量在熊市常反转——若反号即本卡 fail，属有效结论）
+target:
+  primary: next_day_sector_return（880 板块指数次日收益）
+  secondary: next_5day_sector_return（t+1..t+5 累计，读半衰期）
+  note: 面板=sector_code×trade_date
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A03.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.v_kline_sector_880_named
+  signal_column: close
+  signal_derivation: 硬过滤 period='1d'（实测 period 唯一取值='1d'，写成 'daily' 会静默返回零行）；
+    板块名必须走视图 v_kline_sector_880_named（基表 kline_sector_880 的 sector_name 实测
+    uniq=1 且值为空串，不可用作分组身份）；RS = 板块 close_t/close_{t-20}-1 减当日全板块中位
+  target_source: v_kline_sector_880_named close→next_day_sector_return（同视图，禁混用 kline_sector）
+  universe_note: 视图实测覆盖 729 个 sector_code×1590 交易日；名册真源=c1_market.sector_code_name_map
+    （1198 行：named 1178 / unresolved 20；code_family=concept_or_style 852、industry_ths 128、
+    industry_l1 61、industry_l2 71、region 64）——unresolved 20 个 880 码禁猜名（在册纪律）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT period,count(),min(toString(trade_date)),max(toString(trade_date)),uniq(sector_code) FROM c1_market.kline_sector_880 GROUP BY period\").values)
+      print(ch_query_df(\"SELECT count() FROM c1_market.kline_sector_880 WHERE period='daily'\").values)
+      print(ch_query_df(\"SELECT uniq(sector_code),uniq(sector_name) FROM c1_market.kline_sector_880\").values)
+      print(ch_query_df(\"SELECT count() FROM c1_market.v_kline_sector_880_named\").values)"
+    实测：period 唯一值='1d'，785204 行，2020-03-17..2026-10-08，729 个 sector_code；
+      period='daily' → **0 行**（静默零结果陷阱，已在本卡 derivation 里写死正确值）；
+      基表 uniq(sector_name)=1（值=空串）；视图 v_kline_sector_880_named=785204 行且带名
+    同节点其它表实测（覆盖不足以承担本卡，弃为辅助面）：
+      c1_market.kline_sector        2025-07-18..2026-09-30 rows=86033 days=198
+      c1_market.sector_snapshot     2026-08-14..2026-10-08 rows=122746 days=33
+      c1_market.board_index_tick    timestamp 2026-09-15..2026-10-08 rows=1831840 d=3047
+      c1_market.sector_fund_flow    2026-09-15..2026-10-09 rows=10536 days=25
+      c1_market.concept_board       无日期列（valid_from 轴）rows=750（静态名册）
+      c1_market.concept_sector      无日期列 rows=375
+      c1_market.concept_board_constituent valid_from 2026-08-10..2026-10-09 rows=37891 days=35
+    ⇒ 概念板块面（THS 概念成分）历史仅自 2026-08-10，无 IS 段；本卡因此用 880 全线（行业+概念混装
+      729 码，按 code_family 分层复算登记为长尾）。
+  readiness: IS 2020-04..2023-12 约 900 交易日 × 百余板块，样本充分

@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A10/calibration/02_全球风险因子隔夜传导
+node_id: TDM-E-L9-A10
+family: calibration
+title_zh: 源线·国际宏观·VIX/美债期限利差/人民币/A50 隔夜传导校准卡
+hypothesis: 隔夜全球风险读数（VIX 变化、美债 10Y-2Y 利差变化、USDCNY 贬值压力、A50 夜盘收益、
+  美元指数 DXY 变化）对次日 A 股指数收益有预测力；其中 A50 夜盘因直接映射开盘应最强（近端读数），
+  VIX/利差属慢变量（远端读数）⇒ 各因子分别单跑，禁先合成"全球风险指数"（合成会把不同半衰期糊平）。
+window:
+  in_sample:
+  - '2021-09-01'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，全落 IS）
+    recovery: 2024-02-01..2025-09-09（修复段，OOS 对侧）
+    bull_note: FRED_* 序列实测起 2021-08-16 ⇒ 统一 IS 起点 2019-01-04 无数据，本卡如实内缩；
+      2019-2021H1 牛段不可考（登记为长尾，非"已验证"）
+  frozen_note: 看数前冻结；五因子同一 IS/OOS 定义各自单跑，门柱不随结果调整
+buckets:
+  type: quantile_quintile
+  'on': 当日各因子变化率（分别）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 每因子分桶中位前向收益 Spearman 单调 |rho|>=0.6
+  ic_floor: 日频 IC 均值 |IC|>=0.02（series 面 ic_ir 执行器置 None，如实 n/a）
+  lag_profile: 时滞判据=A50 夜盘应在 t+1 达峰且半衰期 1-2 日；VIX/利差若也在 t+1 达峰=
+    与 A50 共线（开盘已 price-in），须做正交化复算（A50 残差化后再算 VIX IC）
+  regime_stability: bear/recovery 两段 IC 同号
+  pit_vintage: FRED 修订必须走 c1_market.macro_data_vintage（vintage + pub_ts 列），
+    用 macro_data 现值回算 2019-2021 段=前视污染（本条为 A10 最硬 PIT 门柱）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: next_day_a50_gap_realized（A50 隔夜隐含 vs 实际开盘缺口的实现差，检验"是否已被开盘价吃掉"）
+  note: A10 决策问题=「全球风险因子如何传导A股风险偏好」
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A10.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.macro_data
+  signal_column: indicator_value
+  signal_derivation: 按 indicator_name 取行转列：FRED_VIX / FRED_T10Y2Y_US / FRED_USDCNY / FRED_DXY /
+    FRED_T10YIE_US；signal = 日变化率或 z-score(60 日)；A50 面用 c1_market.a50_futures_daily
+    close 的隔夜收益（其 trade_date 与 A 股交易日右齐向前填充，禁未来填充）
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT indicator_name,min(toString(report_date)),max(toString(report_date)),count(),uniq(report_date) FROM c1_market.macro_data WHERE indicator_name LIKE 'FRED%' OR indicator_name LIKE 'EIA%' GROUP BY indicator_name ORDER BY 5 DESC LIMIT 20\").values)
+      print(ch_query_df(\"SELECT min(toString(report_date)),max(toString(report_date)),count(),uniq(report_date) FROM c1_market.macro_data\").values)
+      print(ch_query_df(\"SELECT min(toString(report_date)),max(toString(report_date)),count(),uniq(report_date) FROM c1_market.macro_data_vintage\").values)
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.a50_futures_daily\").values)
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.us_index\").values)"
+    实测：
+      macro_data 全表 report_date 1993-03-31..2026-10-09 rows=51623 d=4610
+      FRED_VIX 2021-08-16..2026-10-06 1318；FRED_T10Y2Y_US 2021-08-16..2026-10-09 1286；
+      FRED_DGS2/10/30_US 各 1278；FRED_T10YIE_US 1285；FRED_DXY/EURUSD/USDCNY 各 1273（..2026-09-25）；
+      FRED_WALCL_US 267；FRED_M2_US 257；FRED_PAYEMS/FEDFUNDS/CPI_US 各约 60（月频）
+      ⇒ FRED 族整体起 2021-08-16（**约 5 年，非 10 年**），日频约 1280 个观测
+      macro_data_vintage 2021-01-01..2026-09-23 rows=16091 d=1351（带 vintage/pub_ts/pub_ts_basis/
+        first_seen_ts ⇒ PIT 门柱有承载表）；macro_data_latest 同 16091 行
+      a50_futures_daily 2016-08-29..2026-10-08 rows=2623 d=2623（一日一行，史长 10 年）
+      us_index 1993-01-29..2026-10-08 rows=22645 d=8481（美股指数长史，可作 VIX 缺段替代=SPX 波动代理）
+      c1_market.edb_data rows=**0**（空表，备援不可用）
+    质量画像：FRED_* 起 2021-08-16 造成 IS 前段空窗；月频序列（CPI/FEDFUNDS/PAYEMS）仅 60 点，
+      不足以做分桶 ⇒ 本卡只用日频族，月频登记长尾。
+  readiness: IS 2021-09..2023-12 约 550 交易日 + OOS 约 415 日，日频族可算；牛段不可考已声明

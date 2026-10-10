@@ -1,0 +1,89 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A05/calibration/02_盈余惊喜事件研究
+node_id: TDM-E-L9-A05
+family: calibration
+title_zh: 源线·财务·标准化盈余惊喜（SUE）事件研究校准卡
+hypothesis: 以实际公告日锚定的标准化盈余惊喜（SUE）对事件窗异常收益有正预测力，且漂移延续到
+  事件窗后（PEAD 型）；散户注意力低的个股漂移更强。低频/季频 ⇒ 采用事件研究口径（估计窗/事件窗/
+  异常收益）而非日频连续 IC。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  event_windows: 估计窗 = 公告日前 [-210,-11]（200 交易日，剔事件窗前 10 日防污染）；
+    事件窗 CAR 口径 = [0,+5]、[0,+20]、[0,+60]（0=实际公告日次一交易日，T+1 适配闸3：
+    公告当日不可成交，禁把 0 日记为公告日当天）
+  frozen_note: 看数前冻结；三档事件窗一次写死，事后只准减不准加（挪门柱=作废）
+buckets:
+  type: quantile_quintile
+  'on': 同公告季内的 SUE 横截面
+  min_obs_per_bucket: 60
+pillars:
+  abnormal_return_floor: 高 SUE 组（Q5）CAR[0,+20] 均值 >= 150 bp 且 t 统计 >= 2.0
+  low_group_gap: Q5-Q1 的 CAR[0,+20] 差 >= 250 bp（多空对冲可读的最小经济量级）
+  response_monotonicity: SUE 五分位与 CAR[0,+20] 的 Spearman 单调 rho >= 0.6（事件横截面）
+  ic_floor: 公告季横截面 RankIC 均值 >= 0.02（日频 IC 在季频事件上不成立，故 IC 只按事件日横截面计）
+  lag_profile: CAR 增量曲线（[0,+5]/[0,+20]/[0,+60]）应单调扩张且 [0,+5] 至少贡献总 CAR 的 20%
+    ——漂移的时滞建档（半衰期判据：CAR 增速由正转零的交易日数）
+  regime_stability: bull/bear 两段 Q5-Q1 差同号
+  drift_persistence: CAR[0,+60] - CAR[0,+20] 与 SUE 分组仍同号（PEAD 延续性；同号=漂移未止）
+  attention_interaction: 低换手组（circ_mv×turnover 下半分）的 Q5-Q1 差 >= 高换手组（注意力放大漂移，
+    辅读数，不否决主判）
+target:
+  primary: car_t0_to_t20（个股相对 000300 市场模型的异常收益累计，事件窗 [公告次日,+20]）
+  secondary: car_t0_to_t60（漂移延续面）
+  note: A05 决策问题=「基本面改善能否被定价滞后捕捉」，primary 答"有没有反应"、secondary 答"滞后多久止"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A05.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  car_t0_t20_min_bp: 150
+  car_q5_q1_gap_min_bp: 250
+  car_t_stat_min: 2.0
+oos_window_ref: *id001
+data_binding:
+  signal_table: c3_fundamental.income_statement
+  signal_column: operating_profit
+  signal_derivation: SUE = (本季 actual_announce_date 对应的归母/经营利润同比增量 - 过去 8 季同增量均值)
+    / 其标准差；用 c3_fundamental.express_report（业绩快报，28708 行）作抢先披露面复算；
+    财报修订以 actual_announce_date 为唯一 PIT 锚
+  target_source: kline_daily_hfq close→个股日收益，市场模型 beta 在估计窗 [-210,-11] 对 000300 回归
+  pit_gates: 1) 一律用 actual_announce_date，announce_date（计划披露日）禁作 PIT 锚；
+    2) 过滤 announce_date/actual_announce_date <= DATE'1990-01-01' 的 epoch 哨兵脏值
+    （financial_indicator.announce_date 实测最小值=1970-01-01，此类行排序会前视污染）；
+    3) 同日多披露取最晚 actual_announce_date（修订不得回溯改写事件日）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      for t in ['c3_fundamental.income_statement','c3_fundamental.financial_indicator',
+                'c3_fundamental.balance_sheet','c3_fundamental.express_report']:
+        r=ch_query_df(f'SELECT min(toString(announce_date)),max(toString(announce_date)),count(),uniq(announce_date) FROM {t}');print(t,r.values)"
+    实测：
+      c3_fundamental.income_statement  announce_date 1995-01-05..2026-09-02 rows=346176 days=6701
+      c3_fundamental.financial_indicator announce_date 1970-01-01..2026-09-12 rows=386510 days=7157
+        —— 最小值 1970-01-01 = epoch 哨兵脏值（质量画像已转成 pit_gates 第 2 条硬过滤）
+      c3_fundamental.balance_sheet       rows=339738（announce_date 轴）
+      c3_fundamental.express_report      rows=28708（业绩快报）
+    ⇒ 财务面 IS/OOS 双段全覆盖，本卡不 blocked；income_statement 列面含
+      announce_date 与 actual_announce_date 双列（PIT 选择必须显式）。
+  readiness: 事件样本 ≈ 每年约 5000-8000 次公告 × 5 年 IS，五分位 min_obs 充分

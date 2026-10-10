@@ -1,0 +1,68 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A01/calibration/03_分钟已实现波动
+node_id: TDM-E-L9-A01
+family: calibration
+title_zh: 源线·日线/分钟行情·分钟已实现波动与日内偏度校准卡
+hypothesis: 由 1 分钟 K 线构造的当日已实现波动（RV）与日内收益偏度对次日个股收益有横截面预测力：
+  高 RV=不确定性抬升→次日折价（负 IC）；负偏度（跳水型日内）在散户主导盘里对次日额外为负。
+  IS 段只能取 2022 年起（kline_1min 自 2021-09-01），与本战役统一 IS 起点不同，故本卡自带窄窗并声明。
+window:
+  in_sample:
+  - '2022-01-04'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2022-01-04..2022-06-30→无（数据起 2021-09，牛段样本不足，本卡 regime 仅用熊/震荡两段）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，本卡 IS 全落此段）
+    recovery: 2024-02-01..2025-09-09（修复段，作 regime 对侧）
+  frozen_note: 看数前冻结；右端截 2026-09-30 前先确认 1min 覆盖（实测至 2026-10-09）
+buckets:
+  type: quantile_decile
+  'on': 当日 RV（按 symbol 横截面）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: RV 分桶中位前向收益 Spearman 单调 rho>=0.6（预期为负向单调，判绝对值）
+  ic_floor: 日频横截面 RankIC 均值绝对值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: bear 与 recovery 两段 IC 同号
+  half_life_note: 波动类信号半衰期应短（<=3 日）——超 5 日仍强读=疑似与市值/流动性共线，需正交化复挖
+target:
+  primary: next_day_stock_return（个股次日 hfq 收盘收益）
+  secondary: next_day_return_reversal_of_intraday（日内偏度分组下的次日反转幅度）
+  note: A01 决策问题的"分钟面"分支；与 02 卡（日线动量）互补不重复
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A01.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_1min
+  signal_column: close
+  signal_derivation: RV_t = sum_i r_{t,i}^2（日内 240 根 1min 对数收益平方和）；日内偏度
+    = skew(r_{t,i})；按 symbol×trade_date 聚合后横截面 rank_pct
+  fallback_table: c1_market.kline_60min（1min 资源不可承受时的 5 根小时线近似，须卡外声明降精）
+  target_source: kline_daily_hfq close→next_day_return（与 02 卡同 target，禁各自改口径）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      r=ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.kline_1min\")"
+    实测：trade_date 2021-09-01..2026-10-09 rows=1493285247 days=1233
+    对照：c1_market.kline_60min trade_date 2021-09-01..2026-10-09 rows=24750376 days=1233
+    ⇒ 1min 起 2021-09-01，早于此无任何日内数据（IS 起点必须内缩至 2022-01-04，已写进 window）。
+  readiness: IS 段约 480 交易日 × 全市场，样本充分；regime 牛段不可用（已如实声明并改两段）

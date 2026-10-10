@@ -1,0 +1,83 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A08/calibration/02_BDI领先航运链
+node_id: TDM-E-L9-A08
+family: calibration
+title_zh: 源线·航运运价·BDI 及船型分层运价领先航运板块校准卡
+hypothesis: BDI（及好望角型 BCI/超灵便 BSI 分层）的 20 日变化对航运港口板块后续收益有正预测力，
+  且因运价是实物景气的先行读数，其**领先阶应 >1 日**（半衰期长于日内信号）；原油运价 BDTI 对
+  石油加工/航运细分的传导应强于对大盘。低频实物量信号 ⇒ 主 target 用 5 日/20 日窗口，
+  次日档只作时滞曲线起点。
+window:
+  in_sample:
+  - '2020-04-01'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2020-04-01..2021-06-30（流动性牛，与运价 2021 超级周期重叠=本卡天然正例段）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，运价 2022-2023 崩落=反号风险段）
+  frozen_note: 看数前冻结；BDI 自身史长（1988 起）但板块 target 受 880 线 2020-03-17 起点约束，
+    故窗口按 target 侧切，禁拿 1988-2019 冒充已考
+buckets:
+  type: quantile_quintile
+  'on': BDI 20 日变化率（当日）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: BDI 变化分位与板块 20 日前向收益 Spearman 单调 rho>=0.6
+  ic_floor: 日频 IC 均值 >= 0.02（series 面 IC_IR 由执行器置 None，如实标 n/a）
+  lag_profile: 时滞曲线判据=|IC| 峰值应落 t+5 或更晚（运价是慢变量）；若峰值只落 t+1 且 t+5 归零
+    ⇒ 判为"已充分定价、无领先力"（这是本节点最有用的负结论，不许按 fail 草率归档）
+  regime_stability: bull/bear 两段 IC 同号
+  vessel_layering: BCI（好望角型，干散货铁矿石）对"航运港口 881449"的 IC 应 >= BDI 综合指数的 IC
+    （分层信息量检验，辅读数）
+target:
+  primary: next_20day_sector_return（板块 881449.SH 航运港口 20 日前向收益）
+  secondary: next_day_sector_return（同板块次日收益，作时滞曲线起点）
+  note: A08 决策问题=「全球贸易实物景气能否经运价领先映射出口链」
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A08.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  ic_peak_lag_min_days: 5
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.alt_shipping_index
+  signal_column: value
+  signal_derivation: 过滤 index_code='BDI'；signal_t = value_t/value_{t-20}-1（非交易日右齐向前填充，
+    禁未来填充）；分层复算列 index_code IN ('BCI','BSI','BDTI','BCTI')
+  target_source: v_kline_sector_880_named（period='1d' 硬过滤）sector_code='881449.SH' 航运港口
+    close→前向收益；辅 880728.SH 航运概念、880468.SH 港口
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT index_code,index_name,count(),min(toString(trade_date)),max(toString(trade_date)) FROM c1_market.alt_shipping_index GROUP BY index_code,index_name ORDER BY 3 DESC LIMIT 12\").values)
+      print(ch_query_df(\"SELECT DISTINCT sector_code,sector_name FROM c1_market.v_kline_sector_880_named WHERE sector_name LIKE '%航运%'\").values)
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.road_freight_index\").values)"
+    实测（运价面）：
+      BDI  波罗的海综合运价指数   14625 行  1988-10-19..2026-10-09  ← 本卡主信号（9579 个独立日全表）
+      BCI  好望角型             9937 行  2006-07-17..2026-10-08
+      BSI  超级大灵便           9777 行  2006-07-17..2026-10-08
+      BDTI 原油运价            7958 行  2006-07-17..2026-10-08
+      BCTI 成品油运价          7154 行  2006-07-17..2026-10-08
+      HRCI 集装箱租船          419 行   2006-07-19..**2011-08-23 断供**（15 年零行）
+      BHMI 灵便型综合           2 行    2009-01-28..2009-01-28（一次性残段）
+    实测（目标面）：航运→880728.SH 航运概念、881449.SH 航运港口；港口→880468.SH（880 线起 2020-03-17）
+    实测（辅线）：c1_market.road_freight_index 2025-09-19..2026-08-21 rows=86 days=**22** ⇒ 公路运价
+      无历史，本卡不采用（登记为长尾）
+    质量画像：HRCI 断供=该支线永久不可考（闸4"字段在≠数据可得"样本）；BDI 全段连续，无缺口告警。
+  readiness: target 侧 2020-04 起有段，IS/OOS 双段可算；运价侧覆盖远超需求
