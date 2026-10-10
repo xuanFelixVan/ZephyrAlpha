@@ -5,7 +5,7 @@
 # [CONSUMERS] construction_workflow_sop Step 3（六图对齐）；alignment_checklist §3（frontend_map 对齐工具）；未来 FRONTEND-MAP commit gate
 # [STARTUP] manual（python scripts/governance/d5_architecture/generators/check_frontend_map.py）
 # [MATURITY] production
-# [INVARIANTS] R0 id 重复=fail；R1 backend_ref 非类型化五前缀=fail；R2 module_id 不在 manifest=warn（auto_scanned 条目豁免）；R3 file 失联=warn（auto/pending 豁免）；YAML 解析失败按异常上抛（fail-closed）
+# [INVARIANTS] R0 id 重复=fail；R1 backend_ref 非类型化五前缀=fail；R2 module_id 不在 manifest=fail（R4 st-govjudge-20261010 升级，G4-5 版本化：criteria_version=v1 存量保持 warn 不重审，auto_scanned 豁免不变）；R3 file 失联=warn（auto/pending 豁免）；YAML 解析失败按异常上抛（fail-closed）
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] L
@@ -18,7 +18,9 @@
 
 校验三规则（对齐清单 §3 frontend_map 行）：
   R1 backend_ref 类型化——五前缀（module:/registry:/table:/api:/none:）强制，悬空=fail
-  R2 map↔manifest 双向一致——module_id 必须存在于 features/manifest.yaml；无 manifest 条目=warn
+  R2 map↔manifest 双向一致——module_id 必须存在于 features/manifest.yaml；无 manifest 条目=fail
+    （R4 st-govjudge-20261010 由 warn 升级；G4-5 判据版本化：`criteria_version: v1` 存量条目
+    保持 warn 不重审，升级路径=逐页复核转正后摘标；auto_scanned 豁免不变）
   R3 file 存在性——file 指向的 JS 文件必须真实存在（web/ 前缀），失联=warn（pending 状态豁免 R3）
 用法：python scripts/governance/d5_architecture/generators/check_frontend_map.py
   exit 0=全过 / exit 1=有 fail（供 align 流程或未来 gate 消费）
@@ -47,9 +49,12 @@ def _ref_list(f: dict) -> list[str]:
 
 
 def _check_feature(f: dict, mf_ids: set, warns: list, fails: list) -> None:
-    """单功能点校验（R1 类型化 fail——列表形态逐元素校验；R2/R3 warn，auto/pending 豁免）。"""
+    """单功能点校验（R1 类型化 fail；R3 warn pending 豁免；R2 升 fail——R4 st-govjudge-20261010，
+    按 G4-5 判据版本化：`criteria_version: v1` 存量条目保持 warn 不重审，无标=现行口径升 fail；
+    auto_scanned 豁免不变）。"""
     fid = f.get("id", "?")
     auto = bool(f.get("auto_scanned"))  # auto 补登条目：R2/R3 宽松（待逐页复核转正后严检）
+    legacy = str(f.get("criteria_version") or "") == "v1"  # G4-5 存量口径标注：不重审（升级=逐页复核后摘标）
     refs = _ref_list(f)
     if not refs or not refs[0].startswith(REF_PREFIXES):
         fails.append(f"R1 {fid}: backend_ref 悬空（非类型化五前缀）: {' '.join(refs)[:60]}")
@@ -59,7 +64,11 @@ def _check_feature(f: dict, mf_ids: set, warns: list, fails: list) -> None:
         fails.append(f"R1 {fid}: backend_ref 列表含非类型化元素: {' '.join(bad)[:60]}")
         return
     if f.get("module_id") and not auto and f["module_id"] not in mf_ids:
-        warns.append(f"R2 {fid}: module_id={f['module_id']} 不在 features/manifest.yaml")
+        msg = f"R2 {fid}: module_id={f['module_id']} 不在 features/manifest.yaml"
+        if legacy:
+            warns.append(f"{msg}（criteria_version=v1 存量口径，warn 不重审——G4-5）")
+        else:
+            fails.append(msg)
     fp = f.get("file", "")
     if fp and not auto and f.get("status") != "pending" and not (WEB / fp).exists():
         warns.append(f"R3 {fid}: file 失联 {fp}")
@@ -106,7 +115,7 @@ def _check_module_bus(feats: list, warns: list, fails: list) -> None:
     for f in feats:
         for r in _ref_list(f):
             if r.startswith("module:"):
-                mod = r[len("module:"):].strip()
+                mod = r[len("module:") :].strip()
                 if mod and mod not in depgraph_mods:
                     fails.append(f"R4 {f.get('id')}: module 引用不存在于 depgraph: {mod}")
 
@@ -119,11 +128,7 @@ def _check_module_bus(feats: list, warns: list, fails: list) -> None:
                 if feat is None:
                     fails.append(f"R4 {m['blueprint_id']}: frontend_ref 功能点不存在: {r}")
                 else:
-                    feat_mods = [
-                        x[len("module:"):].strip()
-                        for x in _ref_list(feat)
-                        if x.startswith("module:")
-                    ]
+                    feat_mods = [x[len("module:") :].strip() for x in _ref_list(feat) if x.startswith("module:")]
                     if m["blueprint_id"] not in feat_mods:
                         fails.append(
                             f"R4 {m['blueprint_id']}: 挂了功能点 {r} 但该功能点未回挂 module:{m['blueprint_id']}（双向不闭合）"
