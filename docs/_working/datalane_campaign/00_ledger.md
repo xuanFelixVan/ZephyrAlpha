@@ -24,7 +24,16 @@ completes_when: 六件收官+99_delivery 落地（本件随批滚动）
 - 过滤面：仅 REG-IND-001 `status==active` 进写链（retired 6 件 #489① + deprecated 5 件 #494②=停用同口径；candidate/experimental 未晋升不入产线宽表）；join 键=输出列（册 outputs↔代码 meta.output_columns）；册读不到 fail-open+warning（宁多算不少写）；缓存按 mtime。
 - 红证：A=摘消费点过滤调用⇒`test_fetch_path_wiring` 红（实测复现后原样还原）；B=HEAD 未修码⇒TestRegistryStatusFilter 4 例全红，修复后 21 passed 全绿（含 fail-open/划分完整性/kdj-macd 不受牵连阴性对照）。ruff check+format 净；PYTHONNOUSERSITE=1 且 `zephyr.__file__` 落车道内跑测（final4 假绿教训）。
 - **主区对平（降级直改主区，登记原因=T1 验收窗=今晚 02:30 夜跑读主区码，final4 先例）**：已把 bebba60c 两 hunk 外科叠加到主区工作副本（B2/B4-M2 在途 hunks 逐字保留，纯插入锚点替换，AST 核过）；主区实测 21 passed。主区该文件现有未提交面=B2 hunks+本班 hunks，归属吸收按 489777c60e 在案口径。
-- 行为变更声明：retired/deprecated 11 件（15 输出列）自下一夜跑起不再重算写库，新增行该 15 列=NULL（诚实缺位）；单趟写入量预期结构性下降，验收基=单趟 3.5-4M 行（state 存活+finished_at=当日 口径同 final4）。
+- 行为变更声明：retired/deprecated 11 件（13 输出列）自下一夜跑起不再重算写库，新增行该 13 列=NULL（诚实缺位）。
+- **T1 闭环面追加（commit 24fec802，同日第二笔）**：复盘发现 T1 单独落地存在交互缺陷——
+  新算行退役列=NULL vs 存量旧值 ⇒ P1 值级比对逐行必不等 ⇒ 跳过永不生效 ⇒ 夜跑全史重灌
+  不停（写入量验收尺落空）且 T2 写入会被下一夜 NULL 版本掩埋。治本=P1 比对面排除退役
+  列集（与计算腿同册同读径），复算与存量在 199 active 列上逐位相等 ⇒ 整行跳过。红证=
+  摘退出面⇒只差 wad 的行判"变"必写（红测在案）；30 passed 全绿。主区已对平（该两文件
+  主区无在途 WIP，整文件对平），夜跑/自愈腿下一进程起读新码。
+- 写入量验收修正声明：T1 停算本身不减 INSERT 量（行仍整行写入）；结构性下降由 T1 闭环面
+  （P1 跳过恢复生效）兑现——且依赖比对基读可得（final4 熔断在案：读不到基的窗口仍全量写，
+  宁多写不少写）。
 
 ## 二、T2 squeeze/wad 定点重算（为二号重考清口径）
 
@@ -45,6 +54,13 @@ completes_when: 六件收官+99_delivery 落地（本件随批滚动）
    任何夜跑重写 ⇒ 本班写入即终态**（T1→T2 顺序的设计意图，与 commit bebba60c 声明一致）。
    基约定申报：wad=cumsum 自源表该 symbol 首 bar（mathematical principled；管线旧约定=--start-daily
    2021 截断基，属申报变更，D7 包 §一.3 声明）；squeeze_mom 无基敏感（20bar 窗口）。
+5. **执行（15:0x-15:4x）**：冷档双证落 F 盘（2,643,381 键，sha256 双件入 manifest）→
+   --apply 24 月全 OK（月写入≈7.6万-12.7万行，重算键 2,643,220，覆盖表 Memory 即用即 DROP，
+   与冷档差 161 键=0.006% hfq 源缺键 LEFT JOIN 保原值）→ 4 键验收探针 2/4（600528/300750
+   单版本精确对；000001 两键被在飞夜跑旧码腿重写掩埋=预判机制实证）→ 21:3x 腿静默窗终态
+   刷新（脚本重试语义已修：插入与校验分离，防 241 触发同值重插）→ 明晨 02:30 起 T1 闭环
+   码守值。技术注记：严格读通道强注 FINAL=241 杀手，全链已改 fexam.ch_data.ch_query_df
+   （无 FINAL 正门只读，夜矿广度推导同款）+pandas 侧 max(ingest_ts) 去重。
 
 ## 三、T3 limit_up_down 断供回补——待回填收官
 
