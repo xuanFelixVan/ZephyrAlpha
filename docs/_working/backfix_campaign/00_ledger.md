@@ -183,3 +183,11 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 - **统一模型改为"批次清理"**：backup 与其点火 worker 是同一次家族清理的两个牺牲者（顺序不定：案 #5-#11 worker 先死，案 #13 backup 先死）。worker 恒死于 1800s 到期（reaper 合规收割，与主使无关）；backup 死亡时刻与"worker 寿命到期时刻"强相关（案 #13 恰在到期前 3.5min、案 #10 在被处决后 1.7min）⇒ **主使的行凶触发器与 worker 生命周期到期强同步**——即主使监控/响应的是孵化账本的寿命到期事件流（或与之同源的 reaper pass 事件），对批次内的 backup 施杀。
 - **旁支**：12404 死后 20:11 的 ignite_failed=暂态（47044 正常点火）；v1 诱饵 118min+ 无恙持续；v2（worktree cwd）读数下轮。
 - 下一班：①v2 差分；②主使"响应寿命到期事件"的假说检验=审计孵化账本事件消费者（除 reaper 外谁在读 ledger/谁在 reaper pass 后动作）；③12404 的 ignite_error 全文+装载器手测。
+
+### UtcTicks 交叉线索执行件（总统统筹 21:5x 指令，巡检班 21:5x-22:0x 轮）
+
+1. **bug 本尊定位**：`scripts/installers/belt_watchdog.ps1`（ZephyrAlpha_BeltDaemon PT1M 每分钟任务）——旧式 `[DateTimeOffset]::UtcNow.UtcTicks / 1e7`（自 0001 年 .NET 秒）对心跳 `wall_ts`（unix 秒）算年龄 ⇒ 恒 ~6.2e10s ⇒ Stage 1 恒判 daemon 死 ⇒ Stage 2 CIM 空返回时**每分钟孵重复 commit_belt_daemon**（pileup 病）。**维护班已修**：9d1b80ae6c（21:31:24 落 dev，FIX 注记含实测"real age 6s, computed 62135596806s"）。
+2. **杀径时序对表（决定性）**：buggy 窗=10-02 22:47（50ea976902）→ 10-10 21:31:24（9d1b80ae6c）。**案 #3-#13 全部九案死亡时刻均落在 buggy 窗内**；修复落地后（21:31:24+）零新死亡（新点火 16560@21:39:33 存活 12min+、诱饵 v1/v2 均活）。
+3. **直接杀面=无（修正）**：belt_watchdog 本体 spawn-only（全 47 行审计：无 kill/Stop-Process/Terminate）——它不是杀者，但其 bug 制造了**重复 daemon 环境**（多 daemon 并发处理落地队列）。最终一枪在哪只重复 daemon/哪条并发路径（worktree _sync/reset 与 backup 运行互踩、或 queue 状态竞态）=维护班修复后的架构面作业。
+4. **回推验证（案 #13）**：主使判定时刻=backup 死亡时刻 20:52:33±监控分辨率。该时刻 belt_watchdog 的 20:52:1x fire（buggy 版）正判 daemon 死→CIM 兜底→活→无动作——它自身不杀。20:52:33 的独立杀者仍在（reaper 该 pass 对 47044 零提及、白名单前置豁免）——**UtcTicks 单位错配=环境致病源（重复 daemon 竞态），非杀者本体**；杀者本体=重复 daemon 并发落地路径的某个未审计清理动作（维护班架构面+queue 代码深读遗留）。
+5. **现状**：修复后生态=单 daemon（41196，21:27:20 起=修复前最后一次 buggy 孵化）+零新死亡；诱饵 v1（96min+）/v2（46min+）均活；真实例 16560（21:39:33 点火，修复后首例）12min+ 存活中——**修复后批次零死亡的对照观察窗开启**（下一班继续读数，若 16560 完整走完=修复即止血的强证据）。
