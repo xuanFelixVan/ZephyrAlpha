@@ -167,3 +167,11 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 - **诱饵判定读数（关键）**：decoy pid 17224（cmdline 含 backup.ps1 同款签名）存活 **58→66min+ 无恙**——已超真实例死亡年龄上限（37-65min）。**"cmdline 签名猎杀"假说大幅弱化**。诱饵与受害者的已知差异面收窄至：①cwd（诱饵=主区 D:/ZephyrAlpha；受害者全部=.runtime/commit_queue/worktrees/wX，点火链 WorkingDirectory 透传）；②ignition 链成员资格（诱饵无点火者/无账本/无 worktree 身份）；③父进程谱系。
 - **诱饵 v2 升级（已布）**：同签名+**cwd 复刻为队列 worktree**（w0）的诱饵下次死亡窗观察——若 v2 死而 v1 活=cwd 指向实锤（主使按 .runtime-cwd 猎杀）；若 v2 亦活=指向 ignition 链成员资格（账本/worktree 身份），回到账本面深挖。
 - 55964 案卷 194851（562 候选）；新实例 12404（19:41:53 点火）监视器已挂。
+
+### 案 #12（12404，19:41:56-20:11:18 死，存活 ~29.5min——史上最短）+ 新阶段：点火失败——巡检班 20:2x 轮
+
+- **六连 Victim**：12404（主区 backup.ps1，ppid=32048 隐名装载器）死于 20:11:18——**恰与其点火 worker 的 1800s 寿命到期同刻**（worker ≈19:41 生，20:11 到期）。案卷 201118（178 候选）；OS 事件双零。
+- **backup 年龄-worker 寿命解耦确认**： victim 年龄 29.5-65min 浮动而 worker 恒死于 +30min——backup 死亡时刻恒在"worker 到期后的首个 reaper pass±分钟级"邻域，但 backup 死亡与 worker 死亡的因果方向仍未定（+1.7~24.7min 滞差方向=worker 先死）。
+- **新阶段**：12404 死后 20:11+ 的落地点火在装载器即失败（state.last_run_outcome=ignite_failed，last_ignite_error=subprocess Command 异常截断在案）——**系统从"跑中被杀"转入"点不着火"**。锁空闲、无新实例。两阶段并存意味着：主使行为面可能升级（从杀进程到阻点火），或装载器路径自身受损（需读 last_ignite_error 全文+手测装载器）。
+- **诱饵读数**：v1（主区 cwd）88min+ 无恙（签名/年龄假说双灭）；v2（w0 worktree cwd）24min+ 存活中。
+- 下一班：①读 ignite_error 全文+手测装载器单发（定位点火失败根因）；②双诱饵读数；③案 #12 案卷 201118 复核。
