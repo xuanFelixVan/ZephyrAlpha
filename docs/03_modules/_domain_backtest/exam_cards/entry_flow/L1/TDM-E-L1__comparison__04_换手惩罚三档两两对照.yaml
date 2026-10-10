@@ -1,0 +1,75 @@
+schema_version: '1.0'
+card_id: TDM-E-L1/comparison/04_turnover_penalty_three_arm
+node_id: TDM-E-L1
+family: comparison
+title_zh: 换手惩罚三档两两对照
+origin: exploration_digest_23_20261011
+hypothesis: >-
+  对信号强度加换手惩罚 λ 是**必需项**而非成本项：λ=0（无惩罚）在 27,423 格扫描里的 sharpe 均值最差（-0.577），
+  λ=5bp 最好（0.394）、λ=15bp 次之（0.184）。机制不是"少交易省钱"，而是惩罚项本身在抑制追涨式的高频
+  信号翻转（无惩罚时换手把噪声追进组合）。且最优档 5bp 落在已扫格点的**边界**上（它是非零最小档），
+  故真实最优点位于 (0, 5bp) 区间内——本卡考"惩罚是否存在"与"惩罚加重是否过头"两问，不考最优 λ 数值。
+arm_protocol:
+  pair_1: arm_open=lambda_5bp vs arm_base=lambda_0（惩罚项是否存在）
+  pair_2: arm_open=lambda_15bp vs arm_base=lambda_5bp（惩罚加重是否过头）
+  paired: 同一因子底座、同一交易日、同一成本档 frozen_l0，只换 λ 一档（零行循环差异）
+scan_provenance:
+  source_cells: 27423
+  top1pct_cut_sharpe: 2.3216
+  scanned_window: 2020-01-01..2023-12-31（10 个 shard 的 batch_meta.window 逐支实读一致，见
+    docs/_working/mineloop_campaign/23_exploration_digest.yaml 的 scope.batch_meta_windows）
+  selection_bias_declared: >-
+    本卡的对比臂与判据来自 grid 扫描 top 区域的提炼，属**搜索后预注册**：唯一防线是考试窗与扫描窗
+    不相交（IS/OOS 全在 2024 之后），再加一轮为限；禁考后回头换档位或换窗再考。
+one_round_limit: >-
+  一轮为限：本卡只允许一次开考与一次对账；未确认即族归档（族=exploration_digest_23），
+  禁换档位/换窗再考（多重比较防线）。
+window:
+  in_sample:
+  - '2024-01-02'
+  - '2025-09-09'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    oos_2025h2: 2025-10-09..2026-03-31
+    oos_2026h1: 2026-04-01..2026-09-30
+  frozen_note: 考试窗与扫描窗（2020-01-01..2023-12-31）不相交，逐字冻在看数前；本卡不落扫描窗。
+buckets:
+  type: arm_matrix
+  'on': 两臂逐日净值/敞口对照（非分位响应曲线）
+  min_obs_per_bucket: 60
+pillars:
+  nav_pair: 开臂相对基臂的 maxdd/sharpe/换手三项差（族内配对面，执行核已实）
+  oos_same_sign: OOS 窗 IC 差与 IS 窗 IC 差同号（单窗不算确认）
+  cost_sanity: 换手与成本档读数必须同列出数（禁只看毛收益）
+pillars_numeric:
+  maxdd_improvement_min: 0.0
+  sharpe_delta_min: 0.05
+  turnover_delta_annual_max: 12.0
+  oos_same_sign: true
+oos_window_ref: *id001
+target:
+  primary: 两臂各自日净值（同一底座、同一成本模型，仅声明的 λ 档不同）
+status: blocked_on_impl
+signal_kind: series
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+preregistered_by: st-mineloop-20261010
+preregistered_at: '2026-10-11'
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + 因子底座（同 grid 扫描口径）
+  signal_column: turnover_penalty_three_arm_arm_exposure
+  signal_derivation: >-
+    λ 档位取自扫描格点集 {lambda_0, lambda_5bp, lambda_15bp}（不新增档位＝不替扫描拍数）；
+    两两配对方向与判据在碰新窗数据前冻；maxdd/sharpe 下限取 0＝只要求"不更差"，
+    换手上限 12 倍/年的来源=23_exploration_digest.yaml 里 λ=0 与 λ=5bp 两档的 avg_turnover 边际差量级
+    （保守取上整，不放大效应）。
+  target_source: 两臂日净值由 scripts/backtest/factory_grid_executor.py 的回放产出
+  data_window_evidence: >-
+    在册：扫描产物 manifest.csv 合计 27,423 行（本件实测分解 t1 2,462 ＋ p2 24,961，与统筹令口径逐位吻合）；
+    负样本（backtest_fail）另册 negatives.csv 合计 45 格，已排除在聚合之外；
+    kline_daily_hfq 至 2026-09-30、kline_index 000300 至 2026-10-09（12_/19_ 在册实测）。
+  impl_gap: >-
+    需 factory_grid_executor 在 manifest 之外落盘**逐日敞口/日净值序列**：现只落聚合指标
+    （sharpe/ann_return/max_drawdown/avg_turnover/net_days），双臂判官 _comparison_metrics 的输入是两条
+    敞口序列，缺该面即无法开考。同一次落盘可一并解掉 W-A 试点 5 张与分诊册 20_ 里 20 行早期不可复跑行的接线。

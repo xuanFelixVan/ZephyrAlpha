@@ -1,0 +1,71 @@
+schema_version: '1.0'
+card_id: TDM-E-L1/comparison/05_pool_breadth_top100_vs_top50
+node_id: TDM-E-L1
+family: comparison
+title_zh: 沪深300池宽top100与top50对照
+origin: exploration_digest_23_20261011
+hypothesis: >-
+  在 hs300 宇宙内把持仓宽度从 top50 拉到 top100，扫描面均值 sharpe 由 0.2835 升到 0.3393，
+  且 top100 是已扫格点的**最大档（边界）**。机制两说，本卡就是把两者分开的判据：
+  若加宽后"不更差且换手不失控"，说明 hs300 内信号分数递减缓慢、分散收益盖过信号衰减（宽度是免费的）；
+  若加宽后显著变差，说明原 top50 的收益来自"信号集中"而非分散，则边界应往内收（top50→top30 方向）。
+arm_protocol:
+  arm_open: B_top_n=top100
+  arm_base: B_top_n=top50
+  paired: 同宇宙 hs300、同因子底座、同 λ 档（lambda_5bp）、同成本档 frozen_l0，只换池宽一档
+scan_provenance:
+  source_cells: 27423
+  evidence_face: 23_exploration_digest.yaml 的 joint_GxTopN_mean_sharpe（3×5 逐格均值，机生非手抄）
+  scanned_window: 2020-01-01..2023-12-31（10 个 shard 的 batch_meta.window 逐支实读一致）
+  selection_bias_declared: >-
+    本卡档位取自扫描 top 区域，属**搜索后预注册**：防线＝考试窗（2024 之后）与扫描窗不相交＋一轮为限；
+    禁考后回头改池宽档或改窗长。
+one_round_limit: >-
+  一轮为限：本卡只允许一次开考与一次对账；未确认即族归档（族=exploration_digest_23）。
+window:
+  in_sample:
+  - '2024-01-02'
+  - '2025-09-09'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    oos_2025h2: 2025-10-09..2026-03-31
+    oos_2026h1: 2026-04-01..2026-09-30
+  frozen_note: 考试窗与扫描窗不相交（逐字冻在看数前）；本卡不落扫描窗。
+buckets:
+  type: arm_matrix
+  'on': 两臂逐日净值/敞口对照
+  min_obs_per_bucket: 60
+pillars:
+  nav_pair: 开臂相对基臂的 maxdd/sharpe/换手三项差
+  oos_same_sign: OOS 窗 IC 差与 IS 窗 IC 差同号
+  cost_sanity: 加宽必然抬换手，故换手上限是主判据之一（禁只看 sharpe 说话）
+pillars_numeric:
+  maxdd_improvement_min: 0.0
+  sharpe_delta_min: 0.03
+  turnover_delta_annual_max: 8.0
+  oos_same_sign: true
+oos_window_ref: *id001
+target:
+  primary: 两臂各自日净值（同底座同成本模型，仅池宽档不同）
+status: blocked_on_impl
+signal_kind: series
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+preregistered_by: st-mineloop-20261010
+preregistered_at: '2026-10-11'
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + 因子底座（同 grid 扫描口径）
+  signal_column: pool_breadth_top100_vs_top50_arm_exposure
+  signal_derivation: >-
+    档位取自扫描格点集 {top10, top20, top30, top50, top100} 内的相邻两档（不新增档位）；
+    sharpe 差下限 0.03 的来源＝23_ 里 top100 与 top50 的边际差 0.0558 保守取半（不放大效应）；
+    换手上限 8 倍/年＝加宽 2 倍所致的结构上限估计，先冻后考。
+  target_source: 两臂日净值由 scripts/backtest/factory_grid_executor.py 的回放产出
+  data_window_evidence: >-
+    在册：hs300 侧扫描格点在 23_ 的 joint_GxTopN_mean_sharpe 逐档列出（top10 0.2471／top20 0.2566／
+    top30 0.2672／top50 0.2835／top100 0.3393）；kline_index 000300 至 2026-10-09、
+    kline_daily_hfq 至 2026-09-30（12_/19_ 在册实测）。
+  impl_gap: >-
+    同 04 卡：需逐日敞口/日净值序列落盘（现 manifest 只有聚合指标），本卡不开考直至该面到位；
+    该面与 04 卡、W-A 试点 5 张同属一次改造（禁做两次）。
