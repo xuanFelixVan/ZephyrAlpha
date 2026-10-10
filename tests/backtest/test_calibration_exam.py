@@ -304,3 +304,44 @@ def test_unjudged_faces_surfaced_without_fabrication():
 def test_unjudged_prose_keys_absent_is_empty_list():
     u = ce._unjudged_pillars({"pillars_numeric": {}}, {}, ce._CALIBRATION_JUDGED_KEYS)
     assert u["pillars_prose_keys"] == [] and u["numeric_keys_not_read"] == []
+
+
+def test_calibration_unknown_pillar_key_fail_closed(tmp_path):
+    """裁定②步骤②落地：五键齐+一未知冻结键（CAR t 统计）⇒ 必判 fail 且原因点名该键。
+    旧形态=该键静默跳过而出 pass（在册假绿面：分数只代表 4-5 个已知键，不代表门柱全过）。"""
+    p = _card(
+        tmp_path,
+        pillars_numeric={
+            "mono_spearman_min": 0.6,
+            "ic_mean_min": 0.02,
+            "ic_ir_min": 0.3,
+            "regime_same_sign": True,
+            "oos_same_sign": True,
+            "car_t_stat_min": 2.0,
+        },
+    )
+    sig, tgt = _synthetic(strength=1.0)
+    row = ce.run_card(p, signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    assert row["verdict"] == "fail"
+    assert any("未支持判据键" in f and "car_t_stat_min" in f for f in row["fails"])
+    assert row["unjudged"]["numeric_keys_not_read"] == ["car_t_stat_min"]
+
+
+def test_calibration_only_unknown_keys_fails_instead_of_crashing(tmp_path):
+    """只有未知键的卡：旧形态走到 p["mono_spearman_min"] 抛 KeyError 崩整批（异常代替判决）；
+    新形态=正常出行、verdict=fail、原因点名（观测面与判据面同向）。"""
+    p = _card(tmp_path, pillars_numeric={"tail_ratio_min": 0.3})
+    sig, tgt = _synthetic(strength=1.0)
+    row = ce.run_card(p, signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    assert row["verdict"] == "fail"
+    assert row["fails"][0].startswith("未支持判据键")
+    assert row["metrics"]["ic_mean"] == row["metrics"]["ic_mean"]  # 面照常出，判决与观测两不相掩
+
+
+def test_calibration_known_keys_still_passes_after_failclosed(tmp_path):
+    """G4-5 护栏（判别力反向）：未知键闸不得波及五键齐的已判面——强信号卡仍 pass，
+    证明本闸只拦"未覆盖的柱"，不是把门柱抬高。"""
+    sig, tgt = _synthetic(strength=1.0)
+    row = ce.run_card(_card(tmp_path), signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    assert row["verdict"] == "pass"
+    assert row["unjudged"]["numeric_keys_not_read"] == []
