@@ -191,3 +191,12 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 3. **直接杀面=无（修正）**：belt_watchdog 本体 spawn-only（全 47 行审计：无 kill/Stop-Process/Terminate）——它不是杀者，但其 bug 制造了**重复 daemon 环境**（多 daemon 并发处理落地队列）。最终一枪在哪只重复 daemon/哪条并发路径（worktree _sync/reset 与 backup 运行互踩、或 queue 状态竞态）=维护班修复后的架构面作业。
 4. **回推验证（案 #13）**：主使判定时刻=backup 死亡时刻 20:52:33±监控分辨率。该时刻 belt_watchdog 的 20:52:1x fire（buggy 版）正判 daemon 死→CIM 兜底→活→无动作——它自身不杀。20:52:33 的独立杀者仍在（reaper 该 pass 对 47044 零提及、白名单前置豁免）——**UtcTicks 单位错配=环境致病源（重复 daemon 竞态），非杀者本体**；杀者本体=重复 daemon 并发落地路径的某个未审计清理动作（维护班架构面+queue 代码深读遗留）。
 5. **现状**：修复后生态=单 daemon（41196，21:27:20 起=修复前最后一次 buggy 孵化）+零新死亡；诱饵 v1（96min+）/v2（46min+）均活；真实例 16560（21:39:33 点火，修复后首例）12min+ 存活中——**修复后批次零死亡的对照观察窗开启**（下一班继续读数，若 16560 完整走完=修复即止血的强证据）。
+
+### 点火链审计闭环 + 主使画像终版（巡检班 22:0x 轮）
+
+- **案 #13 补全**：46140 生 20:59:11（装载器 13656→主区 backup.ps1）、死 21:34:39（35.5min）；rsync 子进程 21:34:07 起飞后 32s 死=同款签名。reaper 对其点火者的处决时点核对：46140 点火 worker 生 ≈20:59→1800s 到期 21:29→reaper pass 杀于 21:2x-21:3x（与死亡时刻强邻）。
+- **诱饵终审读数**：v1 186min+、v2 122min+ 均远超全部受害者年龄（29.5-65min）且同签名同脚本——**"按 cmdline/cwd/签名猎杀"三假说全灭。凶手只杀点火链成员**。
+- **仓内点火链组件全审计闭环**：reconcile_worker（649 行零杀面）/reconcile_runner（无 kill）/incubator（无杀）/reaper（有复核全落账）/guards（自家子进程）——**仓内无任何组件杀 backup**。
+- **主使画像终版**：一个（仓外或隐名仓内）resident，其行为=**读取 backup.lock / reconcile status 面取 backup pid，在"其点火 worker 被 reaper 处决"后 1.7-24.7 分钟内的某时点 TerminateProcess 之**（对锁定/状态面做"陈旧清理"语义，无身份复核——与守卫家族同构的误杀逻辑，但瞄准的是 backup.lock 而非自家锁）。它不读 reaper 白名单（keep 行不保护）、不认 cmdline（诱饵全免）——只认"点火链成员"（=它的自有状态或 status 面里记录的 pid）。
+- **防线处方（终版建议，候裁定）**：①治标立竿=backup.lock 消费者审计与 backup 白名单（对 46140 案的下一步=列出 21:34:39 前后读过 .runtime/backup.lock 或 reconcile status 文件的全部句柄——需 Sysinternals handle/ETW，超出本班工具面）；②治本=如守卫家族修复先例，任何"陈旧锁清理"必须先核活体 cmdline 身份再杀。
+- 巡检在岗：16560（21:39:33 起，现 ~27min=进入危险窗）监视器/诱饵×2/陷阱×3 全在线。
