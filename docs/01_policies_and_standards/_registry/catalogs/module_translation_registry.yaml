@@ -68152,13 +68152,3 @@ entries:
   plain_zh: 数据域的板块快照收集器：定期采集板块行情快照并落盘，供复盘和分析使用。
   domain_id: D_DATA
   responsibility_layer: business
-- module_path: scripts/backup/backup_reconciler_shadow.py
-  domain_id: D_GOVERNANCE
-  name_zh: 备份链影子落地闸
-  name_en: backup chain shadow landing gate
-  desc_zh: backup_reconciler.py 的影子孪生（G4-6 影子制）：落地触发前双读 last_backup_time 与 checkpoint 面（backup_state_shadow.json stages）——被杀运行的新鲜 stage_ok 顶住重烧全量；锁自查持锁者 PID 存活，死则 LOCK_TAKEOVER 接管；点火 backup_shadow.ps1 脱离进程只写影子
-    state，生产 state/锁/目标零触碰；7 天影子窗后按裁定晋升并入原件
-  desc_en: 'Shadow twin of backup_reconciler.py (G4-6): landing gate dual-reads last_backup_time and checkpoint face so a killed run''s fresh stage_ok checkpoints suppress full re-burn; lock self-check
-    takes over dead holders (LOCK_TAKEOVER); ignites backup_shadow.ps1 detached with zero production writes; promotion merges into the original after the 7-day shadow window'
-  plain_zh: 备份触发器影子版：开工前先查影子账本——被杀掉的备份其实已经干完的活（checkpoint）算数，不再从头重烧一遍；锁的主人都死了就接管别傻等；只写影子账本不碰生产账本
-  responsibility_layer: governance
