@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-C01/calibration/02_门店客流实时景气
+node_id: TDM-E-L9-C01
+family: calibration
+title_zh: 源线·实时门店客流·线下客流强度领先消费景气校准卡（C 档无渠道）
+hypothesis: 连锁/样本门店的实时客流（进店人次、驻留时长）是线下消费景气的高频先行读数：
+  客流周同比动能应在官方社零与企业营收之前，对零售/餐饮板块后续收益给出方向；
+  判据形态与 B10 同构（领先 lag ∈[5,20]），差别仅在观测量是"客流"而非"金额"（可跨渠道比对）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；门店样本代表性（地域/业态分布）是 C01 独有失真源，须事前登记
+    门店面板构成并做敏感性（去掉单一地域后 IC 变化 <=30%）
+buckets:
+  type: quantile_quintile
+  'on': 客流周同比动能（面板加权）
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 客流动能五分位与板块 20 日收益 Spearman 单调 rho >= 0.6
+  ic_floor: 横截面 RankIC 均值 >= 0.02
+  lag_profile: 互相关峰值 lag ∈ [5,20] 交易日；lag<=1 判同步（有效负结论）
+  panel_representativeness: 面板门店数 >= 500 且覆盖 >=8 省，否则判"样本门店不足以外推"
+    （C 档特有门槛，缺它则整卡结论是某商场客流而非全国景气）
+  regime_stability: bull/bear 两段同号
+target:
+  primary: next_20day_retail_catering_sector_return（零售/餐饮板块 20 日前向收益）
+  secondary: retail_sales_nowcast_error（对官方社零 1617 序列的现在预测误差改善）
+  note: C01 决策问题=「线下消费景气的实时观测？」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-C01.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  peak_lag_min_days: 5
+  peak_lag_max_days: 20
+oos_window_ref: *id001
+data_binding:
+  signal_table: （不存在，C 档无渠道）拟名 c1_market.alt_store_footfall
+  signal_column: （无）footfall_count
+  signal_derivation: 门店日客流→周同比动能→按业态权重聚合
+  target_source: v_kline_sector_880_named（period='1d'）零售/餐饮板块；对照
+    c1_market.macro_data（'社零*' 1617 序列，实测在库）
+  data_window_evidence: |
+    负存在断言多路正查：
+      1) 馆面：python -m zephyr.library.lookup "客流" --limit 4 → (no results for '客流')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%footfall%' OR lower(table) LIKE '%traffic_store%' OR lower(table) LIKE '%visit%'\").values)"
+         输出原文：[]
+      3) 全库枚举复核：本车道已实扫 system.tables（database LIKE 'c%'）共 **246 张表**
+         （c1_market 主体 + c1_backtest + c3_fundamental + c0_meta），清单内无任何门店客流类表
+         —— 全清单见台账 §1（静态清单由探针产出，非手工维护）
+    缺哪张表哪一段：**整表不存在**，且 C 档定义即"想得到但无机械接入渠道"（无免费公开源、
+      无稳定商业 API、或需线下硬件） ⇒ 与 B 档"渠道存在未接"性质不同：C 档的解锁前提是
+      **渠道本身被创造**（采购硬件/谈数据合作），不属 AI 可自动推进范围。
+    在册真源：TDM-E-L9-C01 algo_note_zh=「C档无渠道：想得到无机械接入渠道」，red_reason=not_built，
+      pit_proof=「无渠道，挂起不入批」；出边 TDM:L6419 payload_zh=「实时门店客流供给」
+      （frequency=adhoc、lag=unknown）。
+    挖后自审（SOP §6 封矿单问）：终局全貌里 C01 **有位置**（客流确是能消灭人工盯盘的自动化读数），
+      故本卡按"挂起排期"处理而非封矿——解锁条件=数据合作/硬件采购达成，届时重冻开考。
+  readiness: BLOCKED——无接入渠道（C 档共性，见台账 §1.3.2）

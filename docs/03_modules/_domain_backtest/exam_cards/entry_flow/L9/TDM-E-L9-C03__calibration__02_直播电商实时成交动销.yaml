@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-C03/calibration/02_直播电商实时成交动销
+node_id: TDM-E-L9-C03
+family: calibration
+title_zh: 源线·直播电商实时成交·新消费品牌动销实时观测校准卡（C 档无正式渠道）
+hypothesis: 直播间实时成交额/GMV 与在线人数是品牌动销的最高频读数，应领先平台财报与券商预测：
+  单场 GMV 意外（相对该账号过去 20 场均值）对品牌方/代运营/供应链标的支持 1-10 日超额收益，
+  且效应集中在"新品首销"而非日常复购场。事件研究口径（每场直播=一个事件）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛，与直播电商爆发期重叠）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  event_windows: 估计窗 [-210,-11]；事件窗 [0,+1]/[0,+5]/[0,+20]（0=直播结束次一交易日）
+  frozen_note: 看数前冻结；账号→品牌→上市公司的归属链必须在事前冻结（多级分销/代运营是主要
+    归属噪声），并做归属敏感性（换一层归属规则重跑，CAR 变化 <=30% 才算稳）
+buckets:
+  type: event_ratio_quintile
+  'on': 单场 GMV 意外度（z-score，20 场回看）
+  min_obs_per_bucket: 40
+pillars:
+  abnormal_return_floor: GMV 意外 Q5 组 CAR[0,+5] >= 40 bp 且 |t| >= 2.0
+  response_monotonicity: 意外度五分位与 CAR[0,+5] Spearman 单调 rho >= 0.6
+  ic_floor: 事件日横截面 RankIC 均值 >= 0.02
+  lag_profile: 时滞=直播结束在晚间，效应应集中 t+1，且 [0,+20] 相对 [0,+5] 增量归零
+    （快信息，无漂移）；若 [0,+20] 继续扩张=存在慢定价，是本节点最有价值的发现
+  new_product_concentration: 「新品首销」子样本的 CAR 应 >= 日常复购子样本 2 倍
+    （决策问题指向"新品牌动销"，非全场平均）
+  regime_stability: bull/bear 两段同号
+target:
+  primary: car_0_to_5_brand_stock（品牌方/供应链标的 5 日 CAR）
+  secondary: next_quarter_revenue_surprise（下季营收超预期幅度，实体兑现检验）
+  note: C03 决策问题=「新消费品牌动销的实时观测？」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-C03.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  car_min_bp: 40
+  car_t_stat_min: 2.0
+oos_window_ref: *id001
+data_binding:
+  signal_table: （不存在，C 档无正式渠道）拟名 c1_market.alt_livestream_gmv
+  signal_column: （无）gmv_amount
+  signal_derivation: 单场 GMV/在线人数→账号 20 场回看 z-score；账号→品牌→上市公司归属桥
+  target_source: kline_daily_hfq close→日收益（品牌方/代运营标的）；
+    实体兑现面 c3_fundamental.income_statement（实测 announce_date 1995-01-05..2026-09-02/346176 行）
+  data_window_evidence: |
+    负存在断言多路正查：
+      1) 馆面：python -m zephyr.library.lookup "直播电商" --limit 4 → (no results for '直播电商')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%live%' OR lower(table) LIKE '%gmv%' OR lower(table) LIKE '%douyin%' OR lower(table) LIKE '%kuaishou%'\").values)"
+         输出原文：[]
+    缺哪张表哪一段：**整表不存在**；TDM algo_note_zh 明写「无正式渠道」（比 C01/C02 更硬：
+      平台侧 GMV 是商业机密级数据，公开仅有第三方估算，口径不可复核）⇒
+      本节点除渠道缺失外还有**口径不可信**这一层，即便拿到第三方数据也须先过数据质量画像。
+    在册真源：TDM-E-L9-C03 red_reason=not_built，pit_proof=「无正式渠道，挂起不入批」，
+      出边 TDM:L6421 payload_zh=「直播电商实时成交供给」（frequency=adhoc、lag=unknown）。
+    挖后自审（SOP §6 封矿单问）：终局全貌里"若有合规渠道则自动化动销监控有价值"→ 判
+      **挂起排期**（解锁条件=合规数据合作协议），非封矿；
+      但按 §5 人机门位，数据合作/采购与涉个人/商家数据的合规审查均属 Owner 保留面。
+  readiness: BLOCKED——无正式渠道 + 第三方口径不可复核（双层阻断）

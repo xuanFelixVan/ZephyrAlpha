@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-B03/calibration/02_招聘JD动能领先营收
+node_id: TDM-E-L9-B03
+family: calibration
+title_zh: 源线·招聘JD·扩缩招动能领先营收与行业景气的校准卡（渠道未接）
+hypothesis: 企业在招岗位数（去重后 JD 存量）的环比收缩/扩张领先其营收拐点 1-2 个季度：
+  招聘是先于报表的用工决策；判据形态=个股 JD 动能分位对其**后续 20-60 日**收益正单调，
+  且对同期已披露的营收增速无解释力（领先而非同步）。行业层聚合应比个股层更稳（JD 噪声大）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；JD 去重口径（公司主体归并规则）必须先于考试冻结——主体归并是
+    B03 最大噪声源（同名子公司/集团母公司混池会把动能算反）
+buckets:
+  type: quantile_quintile
+  'on': 主体归并后的 JD 存量环比（行业层与个股层分别分桶）
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: JD 动能五分位与 20-60 日前向收益 Spearman 单调 |rho| >= 0.6
+  ic_floor: 横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 时滞曲线要求 |IC| 峰值落在 t+20..t+60 档（用工决策→报表→定价的链条长度），
+    若峰值只落 t+1=该读数已被市场即时吸收，判"无领先力"为有效结论
+  leads_not_sync: JD 动能对**已披露**营收增速（A05 面）回归后残差仍应保留 >=0.015 IC
+    （领先性≠同步性，本卡核心防伪门柱）
+  regime_stability: bull/bear 两段同号（收缩期裁员信号可能反向，须分段看）
+  aggregation_test: 行业层聚合 IC 应 >= 个股层 IC（若相反=个股 JD 数据质量不可信，直接判数据 GAP）
+target:
+  primary: next_60day_stock_return（个股 60 日前向收益，与季度节奏对齐）
+  secondary: next_20day_sector_return（行业层 20 日，稳态读数）
+  note: B03 决策问题=「扩缩招动能能否领先营收与行业景气」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-B03.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  resid_ic_min: 0.015
+oos_window_ref: *id001
+data_binding:
+  signal_table: （未建）拟名 c1_market.alt_job_postings
+  signal_column: （待接）job_count
+  signal_derivation: 主体归并（统一社会信用代码→上市公司代码桥，复用 entity_graph 消歧面）后
+    计在招岗位存量；动能 = 存量环比 − 过去 8 期均值
+  target_source: kline_daily_hfq close→next_60day_return；行业层 v_kline_sector_880_named（period='1d'）
+  data_window_evidence: |
+    负存在断言双路正查：
+      1) 馆面：python -m zephyr.library.lookup "招聘" --limit 6
+         输出原文：(no results for '招聘')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%job%' OR lower(table) LIKE '%recruit%' OR lower(table) LIKE '%zhaopin%'\").values)"
+         输出原文：[]
+    缺哪张表哪一段：**整表缺失**（全时段零覆盖）。
+    在册真源：TDM-E-L9-B03 algo_note_zh=「B档外采：智联招聘抓取」，red_reason=not_built，
+      pit_proof=「渠道未接，PIT 未评估」；出边 TDM:L6411 payload_zh=「招聘JD供给」。
+    附加接线缺口（④向，比渠道更难的部分）：JD→上市公司主体归并依赖 entity_graph 消歧桥，
+      而该桥在册头号缺口=「ig_entity_code_map 消歧桥仅 2 行（假边风险）」（TDM-E-L9-G1
+      algo_note_zh 实测自陈）⇒ 即便接入 JD，主体归并也做不干净。本卡因此同时标
+      blocked_on_data 与登记 impl 依赖（双缺，解锁需两步）。
+    合规注：抓取型渠道（智联）涉对外发布/爬取合规，属 Owner 法律合规门位（宪法 §5 二类），
+      本车道只立判据不做接入决策。
+  readiness: BLOCKED——渠道未接 + 主体归并桥未建（双缺）

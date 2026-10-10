@@ -1,0 +1,105 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-E1/ablation/02_一问一考考试链增益
+node_id: TDM-E-L9-E1
+family: ablation
+title_zh: 验证·一问一考考试链（考尺/E4/WFA）整环消融卡
+hypothesis: E1 是全 L9 的"心脏"（以考试证伪为心脏）。本环若被旁路，下游会接受更多假阳性假设；
+  判据=三臂对比下"进入策略层的假设在后续样本外的存活率"。E1 的价值不由 IC 衡量，
+  而由**假阳抑制率**衡量（这是治理型卡与信号型卡的根本区别）。
+ablation:
+  baseline: 每条假设按预注册 exam_plan 过考尺/E4/WFA 后才可晋升
+  arms:
+  - name: bypass_exam
+    action: 旁路考试链，假设直接进策略层
+  - name: single_split_only
+    action: 只用单一 IS/OOS 切分（去掉 E4 与 WFA 多折），模拟"考得太轻"
+  - name: relaxed_threshold
+    action: 门柱阈值放宽 50%（模拟"为了出货放松标准"）
+  metric:
+  - name: false_positive_suppression
+    definition: 被 E1 拦下、且在后续独立样本上确认为无效的假设比例（本卡主判据）
+  - name: oos_survival_rate
+    definition: 晋升假设在下一滚动窗口仍达标的比例
+  - name: multiple_test_inflation
+    definition: 试次数 n_trial 与 deflated Sharpe 的落差（WFA 缺失时的隐性代价）
+  drop_threshold:
+    ring_justified_if_survival_drop_ge: 0.15
+    critical_if_false_positive_rate_gt: 0.30
+window:
+  in_sample:
+  - '2025-06-01'
+  - '2026-03-31'
+  oos: &id001
+  - '2026-04-01'
+  - '2026-10-09'
+  regimes:
+    not_applicable: 验证环节无牛熊 regime；窗口按考试流水时间切（治理卡口径，已在 D2 卡确立）
+  frozen_note: 看数前冻结；"假阳性"判定需一个**事后独立样本**作裁判，该独立样本窗一旦写死
+    禁随结果调整（否则本卡自身就犯了它要检测的错）
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 假设
+  min_obs_per_bucket: 30
+pillars:
+  response_monotonicity: 不适用；臂间有序：bypass_exam 的后续失效率应 > single_split_only > baseline，
+    若三者无差=考试链在做无用功（本卡唯一能推翻 E1 存在的判据，必须允许它出现）
+  ic_floor: 不适用；两比例 z 检验 p<0.05
+  lag_profile: 考试周期时滞（假设提交→出结论的天数分布）与"考试后结论是否仍新鲜"（
+    超 30 天的结论在快速轮动市里可能已失效）
+  regime_stability: 不适用；改判滚动窗口间 false_positive_suppression 的稳定性（CV <= 20%）
+  self_reference_gate: 本卡的执行器与判据本身来自 E1 体系 ⇒ MUST 由 E2 面独立复核
+    （防"考试链给自己打满分"的循环），该复核缺位时本卡结论上界=待验证
+target:
+  primary: false_positive_suppression（假阳抑制率）
+  secondary: oos_survival_rate（晋升假设的滚动存活率）
+  note: E1 决策问题=「每问是否按预注册exam_plan考出可证伪结论？」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-E1.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: false
+  ring_justified_if_survival_drop_ge: 0.15
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.node_verdict
+  signal_column: verdict
+  signal_derivation: 考试流水=verdict/validation_method/significance/hit_ratio + window_start/
+    window_end（该表自带考试窗，无需外部定义）；多重检验面=c1_backtest.strategy_screen.deflated_sharpe
+  target_source: 后续独立样本的假设存活（需 E2 回传的记录，或重跑 run_card 的分数册
+    exam_scores_v1.yaml rows——本车道禁写分数册，故只登记取数路径不执行）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df('SELECT count() FROM c1_backtest.node_verdict').values)
+      print(ch_query_df(\"SELECT validation_method,count() FROM c1_backtest.node_verdict GROUP BY validation_method\").values)
+      print(ch_query_df(\"SELECT verdict,count() FROM c1_backtest.node_verdict GROUP BY verdict\").values)"
+      python -m zephyr.library.lookup \"考试\" --limit 5
+    实测：
+      c1_backtest.node_verdict rows=**58**（列面=ingest_ts/run_id/snapshot_commit/window_start/
+        window_end/node_id/validation_method/triggers/hit_ratio/significance/verdict/
+        verdict_reason/verdict_at/notes ⇒ **schema 完全够用**，缺的只有量）
+      c1_backtest.strategy_screen rows=1406；c1_market.market_signal_history 2026-08-28..
+        2026-09-04 rows=329 days=**3**
+    缺哪张表哪一段：三臂消融需要 ≥3×30 条带同窗可比的考试判定（每臂 min_obs 30），
+      现状全库仅 58 条判定且 validation_method 分布未铺开 ⇒ 无法支撑臂间对比；
+      此外"假阳性裁判"所需的独立后验样本窗尚未产生（需时间自然推进，不可回填）。
+    在册真源：TDM-E-L9-E1 module_ref=src/zephyr/trading/validation/runner.py（MOD-TDMVAL-001）、
+      casebooks=[CASEBOOK-005#考试纪律, CASEBOOK-009#红证]，
+      algo_note_zh=「以考试证伪为心脏：考尺/E4/WFA已建成（骨架审计）；考题一律来自入表exam_plan；
+      GPU资源前置遵Owner定案」⇒ 件在、判据面缺量，属"实现先于样本"型阻断（与 D1 同因不同环）。
+    解锁条件：node_verdict 积累 >=300 条且跨三个 validation_method 各有 >=60 条；
+      且至少一个"考后晋升假设"走完一个独立后验窗（时间条件，非算力条件）。
+  readiness: BLOCKED——考试判定仅 58 条，不足三臂对比；后验窗需时间自然推进

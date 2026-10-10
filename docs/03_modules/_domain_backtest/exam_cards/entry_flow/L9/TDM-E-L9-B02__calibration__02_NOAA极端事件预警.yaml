@@ -1,0 +1,82 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-B02/calibration/02_NOAA极端事件预警能源中断
+node_id: TDM-E-L9-B02
+family: calibration
+title_zh: 源线·美国官方天气/海洋·极端事件预警对能源与航运链的校准卡（渠道未接）
+hypothesis: NWS/NOAA 官方极端事件（寒潮/飓风/冻结/港口关闭）预警相对市场有信息优势：
+  预警发布（非灾害实际发生）当日次一交易日起，能源与航运相关板块异常收益应显著为正（供给中断预期），
+  且灾害实际落地日不应再有增量（预警已定价）。与 A12（中国天气/台风）的区别=
+  本节点是**海外官方预警**，传导对象是全球大宗与航运，不是国内用电负荷。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；"预警"与"实际事件"两类锚点分列，禁混池（混池=因果方向不可辨）
+buckets:
+  type: event_binary_group
+  'on': 预警事件（严重警告及以上）× 影响区域港口/炼能暴露
+  min_obs_per_bucket: 30
+pillars:
+  abnormal_return_floor: 预警组 CAR[0,+5]（国内能源/航运板块）>= 20 bp 且 |t| >= 2.0
+  warning_vs_impact: 实际事件日 CAR[0,+5] 应不显著大于预警日 CAR（"预警已定价"的检验形态）
+  ic_floor: 暴露度横截面 RankIC 均值 >= 0.02
+  lag_profile: 时滞曲线=海外预警在北京时间次日开盘前后落地（时区跨度决定 t+1 档最强），
+    半衰期预期 <=3 日（事件型冲击定价快）；登记峰值档
+  regime_stability: bull/bear 两段同号
+  timezone_gate: 海外发布时间必须换算到 Asia/Shanghai 后再对齐 A 股交易日（RULE-SCHEMA-TZ 同纪律），
+    错一日即前视——本卡最硬的技术门柱
+target:
+  primary: car_0_to_5_energy_shipping_sector（880471 类能源/航运板块相对 000300 的 5 日 CAR）
+  secondary: car_0_to_5_brent_companion（EIA_BRENT_SPOT 次日变化，检验全球定价是否同步）
+  note: B02 决策问题=「极端事件能否预警能源中断与减产」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-B02.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  car_min_bp: 20
+  car_t_stat_min: 2.0
+oos_window_ref: *id001
+data_binding:
+  signal_table: （未建）拟名 c1_market.alt_nws_alert
+  signal_column: （待接）alert_level
+  signal_derivation: 预警事件流按 (issue_ts_上海时区, 影响区域) 落 A 股交易日；暴露度=
+    区域港口吞吐/炼能在板块成分中的权重
+  target_source: v_kline_sector_880_named（period='1d'）；辅 c1_market.macro_data
+    （indicator_name='EIA_BRENT_SPOT'，该表实测可用：1289 行 2021-08-16..2026-10-06）
+  data_window_evidence: |
+    负存在断言双路正查：
+      1) 馆面：python -m zephyr.library.lookup "NWS" --limit 6 与 "预警" --limit 6
+         输出原文：均为无命中（与 B 档共性一致）；国内预警面另有表可查（下）
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%nws%' OR lower(table) LIKE '%noaa%' OR lower(table) LIKE '%alert%'\").values)"
+         输出原文：[]
+    缺哪张表哪一段：**美国官方天气/海洋整源未接入**（零时段覆盖）。
+    易混点已核清（防把国内面误当本节点已接）：c1_market.alt_sz_weather_warning rows=9661
+      （深圳预警，无标准日期列）与 alt_sz_marine_forecast / alt_sz_env_meteor 等 alt_sz_* 族
+      属 **A12（QWEATHER/深圳渠道）**，不是 NWS/NOAA；TDM 节点分档明确：A12=A 档在产、
+      B02=B 档外采未接。⇒ 本卡不因国内预警表存在而解阻。
+    在册真源：TDM-E-L9-B02 algo_note_zh=「B档外采：NWS API免费」，red_reason=not_built，
+      pit_proof=「渠道未接，PIT 未评估」；出边 TDM:L6410 payload_zh=「美国官方天气/海洋供给」。
+    解锁条件：NWS API 免费（属终局 Owner 四件事之②API 申请，非花钱门位）⇒ 接入成本低的
+      B 档节点，本车道建议优先级排在 B 族最前；接入后先补时区/发布锚 PIT 评估再开考。
+  readiness: BLOCKED——渠道未接（但解锁成本最低，见上）

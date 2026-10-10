@@ -1,0 +1,99 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-Z2/ablation/02_净零与chain_refs双向对账
+node_id: TDM-E-L9-Z2
+family: ablation
+title_zh: 治理·净零与资产对账（chain_refs 双向探测器）消融卡
+hypothesis: Z2 的价值=让"图↔库"不一致被机械检出：chain_refs 双向对账探测器
+  （scripts/governance/reconcile_chain_refs.py）产出"无标记资产数=遗漏探测器读数"，只报不清。
+  消融判据=旁路探测器后，新产生的未挂接资产是否静默积累（积累越快，本环价值越高）；
+  若旁路后计数不涨，说明挂接已被上游流程自然保证（本环=冗余保险，属内收候选）。
+ablation:
+  baseline: 探测器每周运行（latency_budget=weekly，节点实测字段）
+  arms:
+  - name: bypass_probe
+    action: 停跑探测器（观察未挂接资产是否静默积累）
+  - name: one_way_only
+    action: 只做图→库单向（漏掉库→图方向），检验"双向"是否必要
+  - name: stale_probe
+    action: 用 4 周前的探测快照（检验读数时效对治理决策的影响）
+  metric:
+  - name: unlinked_asset_count
+    definition: 无标记资产数（探测器主读数，=遗漏候选）
+  - name: silent_accumulation_rate
+    definition: 旁路期间新增未挂接资产数/周（本卡核心：证明探测器是否真的在拦东西）
+  - name: detection_latency
+    definition: 资产产生→被探测器报出的时延分布（周频下限=最长 7 天）
+  drop_threshold:
+    ring_justified_if_silent_accumulation_ge: 5
+    shrink_if_unlinked_count_always_zero: true
+window:
+  in_sample:
+  - '2026-09-01'
+  - '2026-09-30'
+  oos: &id001
+  - '2026-10-01'
+  - '2026-10-09'
+  regimes:
+    not_applicable: 治理卡无行情 regime；窗口按探测器运行周期切（周频，D2/Z1 已确立口径）
+  frozen_note: 看数前冻结；"未挂接"判据 MUST 复用 w4_1 triage canonical（节点原话「禁重画」），
+    本卡因此不自定义判据，只引用其口径版本
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 探测批次（周）
+  min_obs_per_bucket: 8
+pillars:
+  response_monotonicity: 不适用；臂间有序：one_way_only 的漏检数应 > 0（若为 0 则"双向"
+    的一半是摆设，这是本环瘦身的第一手证据）
+  ic_floor: 不适用；计数比较（泊松比检验 p<0.05）
+  lag_profile: 时滞=资产产生到被报出（周频下限 7 天）；本卡 MUST 报 detection_latency 分布，
+    并判"周频是否够"（若高价值资产常在 7 天内被下游误用，则本环频率需提，属可执行结论）
+  regime_stability: 不适用；改判跨周读数的方差（探测器抖动大=误报多，同样削弱其价值）
+  net_zero_pairing: 本卡自身受全资产净零约束（根宪法 §4）⇒ 若结论为"可瘦身"，
+    MUST 同时给出合并去向（并入 Z1 的审计面或 D2 的入表校验），不许只报不办
+target:
+  primary: silent_accumulation_rate（旁路期每周静默积累的未挂接资产数）
+  secondary: one_way_miss_count（单向探测漏掉的数，判"双向"必要性）
+  note: Z2 决策问题=「新增条目是否声明替代物？图↔库双向对账读数是否在册？」
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-Z2.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: false
+  ring_justified_if_silent_accumulation_ge: 5
+oos_window_ref: *id001
+data_binding:
+  signal_table: PG:ig_chain.chain_refs ↔ 资产库（图↔库双向）
+  signal_column: chain_refs（引用轴）
+  signal_derivation: 未挂接=资产在库但无 chain_refs 标记，或链有 refs 但库中无对应资产；
+    判据复用 w4_1 triage canonical 口径（禁重画）
+  target_source: 无行情 target；产出为治理计数
+  data_window_evidence: |
+    本车道正查（命令原文+输出摘录）：
+      python -m zephyr.library.lookup "对账" --limit 5
+      python -m zephyr.library.lookup "reconcile_chain_refs" --limit 5
+      python -c "... ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%chain_ref%' OR lower(table) LIKE '%reconcil%'\").values"
+    实测：
+      CH 侧筛 %chain_ref%/%reconcil% = **[]**（对账读数不在 CH 落台面）；
+      存在 c1_market.reconciliation_differences 表（台账 §1 清单在册）但那是**行情对账**
+      （数据一致性），非 chain_refs 图↔库资产对账 ⇒ 不可混用（本车道已区分，防误接）；
+      探测器件 scripts/governance/reconcile_chain_refs.py 为 TDM-E-L9-Z2 module_ref 实测字段
+      （module_id=MOD-GOV-CHAINRECON，module_mounts_influence=「治理链对账守护手」）
+    缺什么（blocked_on_impl 具体所指）：①探测器**输出无落库表**（CH 无对账读数表，PG 侧
+      本车道无通道）⇒ 消融三臂需要"停跑/单向/陈旧"三种可控状态，现无可注入接缝；
+      ②历史探测批次序列不可得（无法算 silent_accumulation_rate 的分布）。
+    解锁条件：探测器输出一张只读落台面（CH 或馆内 CSV 快照）≥8 个周批次；
+      或改用其 --dry 输出做一次性对照（Z2 卡本身允许降级为一次性脚本探路，SOP §6 三态出口之二）。
+    本车道现值读数（可立即产出、不需消融）：探测器报告的 unlinked 计数现值——
+      登记为"接线车道的第一个数"，不在本车道执行（禁跑生成器/治理件，属硬约束）。
+  readiness: BLOCKED——探测输出无落台面 + 无消融接缝（允许降级为一次性脚本探路，已写明）

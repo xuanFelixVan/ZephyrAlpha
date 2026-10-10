@@ -1,0 +1,103 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-V1/ablation/02_大盘状态快照T-1纪律
+node_id: TDM-E-L9-V1
+family: ablation
+title_zh: 状态变量快照·大盘·T-1 就绪与时戳分层纪律的消融卡
+hypothesis: V1 的全部价值在"今日输出→明日输入"这条时间分层铁律上：下游若改用**当日**
+  RegimeSnapshot（同戳循环）而非 T-1 快照，回测会虚高、实盘会失效。判据=两臂对比
+  （T-1 纪律 vs 同日穿越），掉幅=本环对"防前视"的贡献，而非对预测力的贡献。
+ablation:
+  baseline: 下游（L1-AGG/L2）消费 T-1 大盘状态快照
+  arms:
+  - name: same_day_leak
+    action: 让下游看到当日 regime（模拟同戳循环/前视）
+  - name: stale_1d
+    action: 强制滞后 2 日（过度保守臂，看"太旧"代价多大）
+  - name: fixed_state
+    action: 状态恒定不变（旁路动态 regime）
+  metric:
+  - name: backtest_vs_live_gap
+    definition: 同日穿越臂相对基线的回测收益虚高幅度（本卡核心，量化"前视值多少钱"）
+  - name: hit_ratio_next_day
+    definition: 各臂对次日指数方向的命中率
+  drop_threshold:
+    ring_justified_if_same_day_inflation_ge: 0.02
+    too_conservative_if_stale_drop_ge: 0.03
+window:
+  in_sample:
+  - '2019-04-01'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-04-01..2021-06-30（流动性牛；regime_snapshot_history 实测起 2019-04-01，
+      与统一牛段起点吻合，本卡是唯一能完整用战役窗口的 V 族卡）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；三臂的"可见时点"定义（快照 produced_at vs 次日使用）事前写死
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 日
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 不适用；改判臂间有序性——same_day_leak 的回测收益应 > baseline > stale_1d
+    （若非单调=取数时点实现有 bug，本卡的首要产出就是这个 bug 检出）
+  ic_floor: baseline 臂的 regime→次日收益 IC >= 0.02（regime 本身有信息的前提检查）
+  lag_profile: 时滞=regime 变化对次日的影响，半衰期预期 >5 日（状态类慢变量）；
+    stale_1d 臂掉幅即"慢变量可容忍的滞后上限"
+  regime_stability: bull/bear 两段的臂间差不应反号
+  pit_proof_check: 出边 pit 证据（TDM:L6455 一带，V 族出边 lag=T-1）须与实现一致——
+    读数面=judgment 台账里 asof_ts 与 input_cutoff_ts 是否等值（等值=同戳循环违规，直接判红）
+target:
+  primary: same_day_leak_backtest_inflation（同日穿越造成的回测虚高，占比）
+  secondary: stale_1d_hit_drop（滞后 2 日的命中率掉幅）
+  note: V1 决策问题=「昨日大盘状态变量的T-1快照是否就绪且带时戳？」⇒ 考"纪律的价值"不是"信号强弱"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-V1.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  same_day_inflation_min: 0.02
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.regime_snapshot_history
+  signal_column: dominant
+  signal_derivation: 状态读数=dominant（argmax p_r1..p_r12）+ confidence/risk_signal；
+    七维概率分布=p_r1..p_r4 + 三 overlay（CRISIS/RECOVERY/BREAKOUT）
+  target_source: kline_index 000300 close→next_day_return（实测 1990-12-19..2026-10-09 可用）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_backtest.regime_snapshot_history\").values)
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_backtest.regime_state_anchored\").values)
+      for t in ['c1_market.judgment_daily_plan','c1_market.judgment_next_day_forecast','c1_market.judgment_intraday_market_state','c1_market.judgment_plan_verification']:
+        print(t, ch_query_df(f'SELECT count() FROM {t}').values)"
+    实测：
+      c1_backtest.regime_snapshot_history trade_date 2019-04-01..2026-10-09 rows=3635 days=1824
+      c1_backtest.regime_state_anchored   trade_date 2017-07-11..2026-10-09 rows=4488 days=2244
+      —— ⇒ 状态分布面**长史充分**（本卡因此可立 preregistered 而非 blocked）；
+         但 3635 行 / 1824 日 ⇒ 约 2 行/日（多 run_id 版本并存），取数须按 run_id+snapshot_commit
+         定唯一版本（表含 ingest_ts/run_id/snapshot_commit 三列），否则消融臂会混版本结果
+      judgment 台账四表实测行数=judgment_daily_plan **12**、judgment_next_day_forecast **6**、
+        judgment_intraday_market_state **40**、judgment_plan_verification **24**
+        ⇒ 节点自陈「快照落台=judgment 台账（CH c1_market）」在数据面上**近乎空**（12 行 vs 1824 日）；
+        本卡的"带时戳是否就绪"这半问因此只能在 regime_snapshot_history 面上考，
+        judgment 台账面记为**接线未完成**（④向 blocked_on_impl 子项，写进卡不掩饰）
+    模块与真源：module_ref=src/zephyr/plan_engine/judgment_ledger.py（MOD-PLAN-026）；
+      馆查 `python -m zephyr.library.lookup "judgment_ledger" --limit 5` 输出原文含
+      MOD:src/zephyr/plan_engine/judgment_ledger.py module active
+      + tests/plan_engine/test_judgment_ledger.py（**有自家测试件**，消融臂可用其夹具做单测级验证）
+  readiness: 主判据面充分（1824 日）；judgment 台账落台面近乎空（12 行）已登记为子项缺口

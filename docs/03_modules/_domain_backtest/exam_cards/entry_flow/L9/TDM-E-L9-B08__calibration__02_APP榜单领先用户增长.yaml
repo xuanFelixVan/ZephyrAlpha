@@ -1,0 +1,77 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-B08/calibration/02_APP榜单领先用户增长
+node_id: TDM-E-L9-B08
+family: calibration
+title_zh: 源线·APP榜单·下载排名领先 MAU 拐点校准卡（渠道未接）
+hypothesis: 应用在免费榜/畅销榜的排名变化领先其运营方（或供应链）的用户增长拐点：
+  排名快速上升后 1-3 个月的营收/活跃加速会被市场部分预期，故**排名动量对短期收益正、
+  对榜单已高企后的收益无解释力**（榜单是慢信息+拥挤信号）。低频读数 ⇒ 以横截面分组前瞻收益
+  +事件（新上榜/跌出榜）研究双口径。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  event_windows: 新上榜/跌出榜事件，估计窗 [-210,-11]，事件窗 [0,+10]/[0,+60]
+  frozen_note: 看数前冻结；APP→上市公司归属表必须事前冻结（同名应用/多主体开发者是主要噪声）
+buckets:
+  type: quantile_quintile
+  'on': 榜单排名动量（20 日排名分位变化）
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 排名动量五分位与 20 日前向收益 Spearman 单调 rho >= 0.6
+  ic_floor: 横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 时滞曲线=|IC| 峰值应落 t+5..t+60（榜单是慢信息），半衰期登记；
+    若峰值只落 t+1 判"榜单已被即时消化"
+  crowdedness_check: 已处榜首 20 分位的高排名组，其后续收益应 <= 中排名组（拥挤检验，主判之一）
+  ownership_confounding: 单公司多 APP / 一 APP 多主体的归属须做敏感性（改归属规则重跑，
+    IC 变化 <= 30% 才算稳），本卡最易出假结论处即在此
+  regime_stability: bull/bear 两段同号
+target:
+  primary: next_20day_stock_return（运营方/主概念标的 20 日前向收益）
+  secondary: car_0_to_60_new_entry（新上榜事件 60 日 CAR）
+  note: B08 决策问题=「APP下载排名能否领先用户增长与MAU拐点」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-B08.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: （未建）拟名 c1_market.alt_app_rank_daily
+  signal_column: （待接）rank_value
+  signal_derivation: 免费榜/畅销榜日排名→分位；动量 = 当前 20 日分位 − 前 20 日分位；
+    APP→上市公司经开发者主体归并（同 B03/B05 依赖 entity_graph 桥）
+  target_source: kline_daily_hfq close→next_20day_return；辅 v_kline_sector_880_named（游戏/传媒类板块）
+  data_window_evidence: |
+    负存在断言双路正查：
+      1) 馆面：python -m zephyr.library.lookup "APP榜单" --limit 6 → (no results for 'APP榜单')；
+         python -m zephyr.library.lookup "榜单" --limit 4 → (no results for '榜单')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE 'app_%' OR lower(table) LIKE '%download%' OR lower(table) LIKE '%sensor%'\").values)"
+         输出原文：[]（注意 system.tables 里 %app_% 无命中，与 c1_market 中已核实的 app 类表为空一致）
+    缺哪张表哪一段：**整表缺失**。同族近邻已核：c1_market.stock_hot_rank（38 日）是股票热榜
+      不是 APP 榜，不可代。
+    在册真源：TDM-E-L9-B08 algo_note_zh=「B档外采：七麦会员/SensorTower」，red_reason=not_built，
+      pit_proof=「渠道未接，PIT 未评估」；出边 TDM:L6416 payload_zh=「APP榜单供给」。
+    门位注：七麦会员/SensorTower 均为**付费订阅** ⇒ 宪法 §5「花钱」Owner 保留面；
+      本卡只冻结判据备用，接入与否不由 AI 决定。
+  readiness: BLOCKED——渠道未接且解锁需 Owner 花钱门位

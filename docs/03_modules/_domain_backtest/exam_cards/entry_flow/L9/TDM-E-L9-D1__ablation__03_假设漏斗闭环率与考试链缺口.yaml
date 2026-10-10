@@ -1,0 +1,143 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-D1/ablation/03_假设漏斗闭环率与考试链缺口
+node_id: TDM-E-L9-D1
+family: ablation
+title_zh: 因子组合挖掘环·假设出生→预检→上机→OOS→verdict 漏斗闭环率消融卡
+hypothesis: >-
+  TDM-E-L9-D1 节点原文写两句判据："E1C 三轨已建，缺积木/考试链加固/GPU 燃料"与
+  "只产出决策假设不自证对错，验证必交考试链"。第二句是一个可即时证伪的结构承诺：
+  凡产出的假设必须走完考试链拿到 verdict。同节点 02 卡（三轨消融+IS→OOS 衰减）标 blocked_on_data，
+  其理由含两处被本车道复挖推翻的子断言（见 data_window_evidence 的翻案数字），
+  但**其主数值面（各轨 IS/OOS 两段 Sharpe 衰减）确实不可执行**——不可执行的真实原因是
+  三轨身份在现台账**无列承载**（hypothesis_precheck.model 414 行全为 qwen3:8b，
+  birth_channel 实测 6 值 B/C/C2/D/F/I 是因子族轴不是搜索轨），不是"零数据"。
+  因此本卡不重复 02 卡的不可执行面，改考**今日可算且节点原话承诺过**的那半：漏斗闭环率——
+  出生通道分布（6 档）× 预检三态 × 上机七态 verdict × OOS 实测行数 × node_verdict 判定数，
+  量化"验证必交考试链"的断链位置与断链规模。
+signal_kind: series
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos:
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  window_reality_note: 本卡的行情窗是**名义窗，不可用于取数**。实测三表全部落在 2026 年：
+    hypothesis_precheck.prechecked_at 2026-09-14..2026-10-08（34 个 precheck_batch）；
+    strategy_screen.screened_at 全为 2026（1406 行）；node_verdict 窗口组合仅 3 种
+    （2026-09-10 单日 38 行 / 09-10..09-15 15 行 / 2019-04-01..2026-09-11 5 行）。
+    故本卡的真实窗=治理流程运行时窗（镜像同车道 D2 卡的"窗口=流程运行时窗，非行情窗"纪律），
+    名义行情窗保留仅为与战役卡面结构一致，**读数一律按流程时窗报，禁按 IS/OOS 报趋势**
+  frozen_note: 看数前冻结（裁定#501）；漏斗五段定义与表列逐字冻结，事后改段定义=作废（G4-5）
+buckets:
+  type: funnel_stage
+  'on': 五段漏斗——出生通道（birth_channel 6 值 B/C/C2/D/F/I）→ 预检（precheck_passed/deferred/rejected）
+    → 上机筛选（screened_in/deferred_c4/rejected/translated_c4/oos_tested/sim_deviation/failed_obsolete）
+    → OOS 实测 → node_verdict 判定；按 screen_batch 标签分层（含 C4-OOS-2024-2026 等自带行情窗名的批次）
+  min_obs_per_bucket: 60（段观测数；birth_channel 中 C2=10、I=30 两档不足 60，必须单列为"样本不足只报计数"，禁并池）
+pillars:
+  closure_rate: 进入 strategy_screen 的策略（uniqExact(strategy_id)=579）中最终拿到 node_verdict
+    （表 58 行）的比例必须报告；闭环率 <= 10% 即判"验证必交考试链"未兑现（本卡主判据，Owner 直接要的数字）
+  funnel_monotonicity: 漏斗各段留存率（414→114 passed / 1406→381 screened_in→169 oos_tested）
+    的段间传递关系须与"预检严则上机通过率低"的常识方向一致，Spearman rho >= 0.6（反向=预检在筛错东西）
+  multiple_testing_load: num_trials 实测 min=1/max=20646/avg=1442，deflated_sharpe 非空仅 376/1406 行
+    ⇒ 主判据含"DSR 覆盖率 >= 80%"（不足即判考试链加固缺口为真，正是节点自陈的"缺考试链加固"）；
+    未过 DSR 的 oos_tested 行必须逐条计数上报，禁以均值掩盖
+  quota_equalization_guard: 各出生通道进上机的**配额必须相等**才可比较过闸率（否则差是搜索预算差不是通道质量差）；
+    本卡必须报告各通道 num_trials 分布的离散度，离散度过高即判该对比不可执行（沿用 02 卡的防消融假结论门柱）
+  track_identity_gap: 三轨（gplearn/智能体/MCTS）身份列存在性为前置判据——馆查 "gplearn"→no results、
+    "三轨"→no results、"MCTS"→命中 scripts/backtest/mcts_expression_search.py 及 2 个测试件；
+    表列实测无 track/algorithm 家族列（model 单值）。零命中≠不存在（SOP §7.5），
+    故本条结论钉为"三轨身份**未证实可区分**"，任何按通道的读数不得被解读为按三轨
+  dead_end_share: sim_deviation(104)+failed_obsolete(4)+deferred_c4(321) 占总行的比例须报告，
+    该数是"缺积木/考试链加固"的量化现值
+pillars_numeric:
+  closure_rate_max_reportable: 0.10
+  mono_spearman_min: 0.6
+  dsr_coverage_min: 0.80
+  quota_dispersion_guard: true
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  oos_same_sign: true
+target:
+  primary: 上机策略→node_verdict 的漏斗闭环率（含断链最集中的段）
+  secondary: DSR 覆盖率 + 各段留存率 + 死档占比 + 各 birth_channel 配额离散度
+  note: 本卡考"验证必交考试链"是否兑现（治理面），不考任何因子的预测力（那是 02 卡与各因子卡的面）；
+    结论不得回写为因子质量判断
+same_family_precedent: 同车道 TDM-E-L9-D2 卡（"窗口=流程运行时窗，非行情窗"的治理卡口径先例，本卡沿用）；
+  TDM-E-L9-E1 卡（假阳抑制率，node_verdict 58 条不足三臂的同一实测）；同节点 02 卡（三轨消融，blocked）
+data_binding:
+  signal_table: c1_backtest.hypothesis_precheck + c1_backtest.strategy_screen + c1_backtest.node_verdict
+  signal_column: hypothesis_precheck(precheck_batch/candidate_id/birth_channel/hypothesis_zh/model/verdict/
+    confidence/prechecked_at)；strategy_screen(run_id/screen_batch/strategy_id/source_file/translated/
+    is_sharpe/deflated_sharpe/max_drawdown/turnover/oos_years_decay/cluster_id/verdict/screened_at/num_trials)；
+    node_verdict(run_id/snapshot_commit/window_start/window_end/node_id/validation_method/triggers/
+    hit_ratio/significance/verdict/verdict_at)
+  signal_derivation: 以 strategy_id / candidate_id 为主键做五段 left-join（禁以行数比当留存率——
+    同一策略多批次行须先去重，实测 uniqExact(strategy_id)=579 对 rows=1406）；
+    闭环率=拿到任一 node_verdict 的策略数 / 进入上机的去重策略数；
+    DSR 覆盖率=countIf(deflated_sharpe IS NOT NULL)/rows；
+    配额离散度=各 birth_channel 的 num_trials 变异系数
+  target_source: 无行情 target（治理卡）；判据全部为表内计数的比值与覆盖率，禁外推至收益预测
+  reblock_note: 'RX-B 翻案（附实测数字，命令见 data_window_evidence）：同节点 02 卡的 blocked_on_data 理由
+    "hypothesis_precheck 414 行、strategy_screen 1406 行、node_verdict 58 行**且均无日期跨度**⇒
+    IS(2019-23)/OOS(2024-25) 两段根本没数据"，其中两处子断言不成立：
+    ① node_verdict **有** window_start/window_end 列，实测 3 个窗口组合，其中 5 行为 2019-04-01..2026-09-11
+      （横跨名义 IS 与 OOS），"无日期跨度"对该表为假；
+    ② strategy_screen 的 verdict 分布含 **169 行 oos_tested**，且 screen_batch 自带行情窗名
+      （C4-OOS-2024-2026 47 行 / C4-OOS2-20260914 51 行 / C4-OOS2-20260913 35 行 / C4-OOS3-BACKLOG3-20260915 14 行），
+      "两段根本没数据"对 OOS 面为过断。
+    **但 02 卡的 blocked 结论仍维持**，理由须改写为：轨道身份无列承载 + 审计时戳非行情窗标注
+    ⇒ 各轨 IS→OOS 衰减不可归因，非"表里没有数据"。02 卡未被本车道改动（禁改他人卡字节），
+    改写义务记入 RX-B 台账 §五 移交 L7。'
+  data_window_evidence: |-
+    命令原文（fexam 只读层，禁裸 duckdb；RX-B 本车道独立复测，非引用他道数字）：
+      python -c "import sys;sys.path.insert(0,'scripts/backtest');from fexam.ch_data import ch_query_df as q;
+        q('SELECT name FROM system.columns WHERE database=''c1_backtest'' AND table=''hypothesis_precheck''')
+        q('SELECT count() FROM c1_backtest.hypothesis_precheck')
+        q('SELECT birth_channel,count() FROM c1_backtest.hypothesis_precheck GROUP BY birth_channel')
+        q('SELECT model,count() FROM c1_backtest.hypothesis_precheck GROUP BY model')
+        q('SELECT verdict,count() FROM c1_backtest.hypothesis_precheck GROUP BY verdict')
+        q('SELECT min(prechecked_at),max(prechecked_at),uniqExact(precheck_batch) FROM c1_backtest.hypothesis_precheck')
+        q('SELECT verdict,count() FROM c1_backtest.strategy_screen GROUP BY verdict')
+        q('SELECT toString(toYear(screened_at)) y,count(),uniqExact(strategy_id) FROM c1_backtest.strategy_screen GROUP BY y')
+        q('SELECT min(num_trials),max(num_trials),avg(num_trials),countIf(deflated_sharpe IS NOT NULL) FROM c1_backtest.strategy_screen')
+        q('SELECT screen_batch,count() FROM c1_backtest.strategy_screen GROUP BY screen_batch ORDER BY count() DESC')
+        q('SELECT window_start,window_end,count() FROM c1_backtest.node_verdict GROUP BY 1,2 ORDER BY 3 DESC')"
+      python -m zephyr.library.lookup "gplearn" --limit 4 ; python -m zephyr.library.lookup "三轨" --limit 4 ; \
+      python -m zephyr.library.lookup "MCTS" --limit 4
+    实测（逐条对应上面命令顺序）：
+      hypothesis_precheck 414 行；列含 birth_channel/model/verdict/prechecked_at（**无行情窗列**）
+      birth_channel = F 142 / B 83 / C 81 / D 68 / I 30 / C2 10（6 值）
+      model = qwen3:8b × 414（单值，无轨道区分）
+      precheck verdict = precheck_rejected 155 / deferred 145 / passed 114
+      prechecked_at 2026-09-14 05:24:57 .. 2026-10-08 20:11:08；uniqExact(precheck_batch)=34
+      strategy_screen verdict = screened_in 381 / deferred_c4 321 / rejected 216 / translated_c4 211 /
+        oos_tested 169 / sim_deviation 104 / failed_obsolete 4（合计 1406）
+      screened_at 年份 = 2026 单一档，rows=1406，uniqExact(strategy_id)=579
+      num_trials min=1 max=20646 avg=1442.4；countIf(deflated_sharpe IS NOT NULL)=376 ⇒ DSR 覆盖率=376/1406=26.7%（< 80% 门柱）
+      screen_batch 头部 = C2-intake-2026-09-12 597 / C4-translated-20260912 413 / C4-SCD2-REPAIR-20260918 83 /
+        SIM-DEV-2026-08 70 / C4-OOS2-20260914 51 / C4-OOS-2024-2026 47 / C4-OOS2-20260913 35 / SIM-DEV-2026-09 34 /
+        C4-BACKLOG3-20260915 14 / C4-OOS3-BACKLOG3-20260915 14
+      node_verdict 窗口组合 = (2026-09-10, 2026-09-10) 38 / (2026-09-10, 2026-09-15) 15 /
+        (2019-04-01, 2026-09-11) 5（合计 58）
+      馆查：gplearn→(no results)；三轨→(no results)；MCTS→3 个文件命中（mcts_expression_search.py + 2 测试件）
+      ⇒ 判据：414 出生 / 114 过预检 / 579 去重策略上机 / 169 有 OOS 实测 / 58 条节点 verdict，
+        DSR 覆盖 26.7%。闭环严重断裂于"上机→节点 verdict"段——这正是本卡要出的数。
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-D1.confidence
+preregistered_by: st-nightmine-20261010-RXB
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；
+  治理卡读数一律按流程运行时窗报，禁按名义行情 IS/OOS 报趋势；
+  任何按 birth_channel 的结论不得被表述为"按三轨"（轨道身份未证实可区分）
+oos_window_ref:
+- '2024-01-02'
+- '2025-09-09'

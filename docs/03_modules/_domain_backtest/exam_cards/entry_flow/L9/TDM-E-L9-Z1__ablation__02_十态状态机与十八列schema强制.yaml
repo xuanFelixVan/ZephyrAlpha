@@ -1,0 +1,96 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-Z1/ablation/02_十态状态机与十八列schema强制
+node_id: TDM-E-L9-Z1
+family: ablation
+title_zh: 治理·问题治理与状态机（18 列 schema + 十态转移）强制消融卡
+hypothesis: Z1 的价值=把"问题"当资产管：全表 18 列 schema 与十态状态机
+  （draft→registered→mining→in_exam→answered→复考/挂起/合并/退役）被**机械强制**而非靠自觉。
+  消融判据=关闭强制后，非法入表（缺列/非法态转移/墓碑 q_id 复用）的发生率上升幅度；
+  若上升≈0，说明现有约束本就无人违反（终局里可由更轻的校验替代=本环瘦身候选）。
+ablation:
+  baseline: schema + 状态机强制在位
+  arms:
+  - name: no_state_machine
+    action: 允许任意态间跳转（禁检转移合法性）
+  - name: nullable_schema
+    action: 18 列中 provenance/net_zero_note/version 等非强制（允许缺失）
+  - name: reuse_tombstone
+    action: 允许复用已退役 q_id（墓碑纪律旁路）
+  metric:
+  - name: illegal_write_rate
+    definition: 非法入表/非法转移被拒次数占总写入比
+  - name: dirty_asset_count
+    definition: 强制关闭后 N 天内积累的脏条目数
+  - name: rollback_cost
+    definition: 脏条目被发现后的清理人工时（终局北极星=消灭人工，本指标直接对齐）
+  drop_threshold:
+    ring_justified_if_dirty_count_ge: 10
+    shrink_if_illegal_write_rate_lt: 0.01
+window:
+  in_sample:
+  - '2025-06-01'
+  - '2026-03-31'
+  oos: &id001
+  - '2026-04-01'
+  - '2026-10-09'
+  regimes:
+    not_applicable: 治理卡无行情 regime；窗口按 meta_question 写入流水时间切（D2 已确立口径）
+  frozen_note: 看数前冻结；十态的合法转移集必须**照 statuses 词汇表逐条落地**（真源=
+    docs/01_policies_and_standards/_registry/vocabularies/meta_question_statuses_vocabulary.yaml，
+    本车道已馆查确认该文件在册），禁自造转移图
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 写入批次
+  min_obs_per_bucket: 30
+pillars:
+  response_monotonicity: 不适用；臂间有序 no_state_machine 的 dirty_asset_count 应最高，
+    reuse_tombstone 应产生"不可复原"型脏数据（权重更高，因墓碑复用破坏历史可追溯）
+  ic_floor: 不适用；改计数检验（脏条目数在两臂间的泊松比检验 p<0.05）
+  lag_profile: 时滞=非法写入发生→被检出→被修正的周期（治理环的真实成本在此，不在拒写率）
+  regime_stability: 不适用；改判脏数据率在前后两窗的稳定性（若后窗突增=流程变更引入回归）
+  optimistic_lock_check: 净零声明/provenance/乐观锁 version 三件套 MUST 逐件验；
+    version 冲突未报错即为**并发覆盖**（热文件写入纪律同源，根宪法 §1.13）
+target:
+  primary: dirty_asset_count（强制关闭后积累的脏条目数）
+  secondary: rollback_cost_hours（事后清理人工时，终局北极星对齐）
+  note: Z1 决策问题=「全表schema（18列）与十态状态机是否被强制执行？」
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-Z1.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: false
+  ring_justified_if_dirty_count_ge: 10
+oos_window_ref: *id001
+data_binding:
+  signal_table: PG:meta_question 三表 + 审计双轨
+  signal_column: status（十态）+ version（乐观锁）+ provenance + net_zero_note
+  signal_derivation: 非法转移=当前态不在合法前驱集；脏条目=18 列必填缺失或墓碑复用
+  target_source: 无行情 target；产出为治理读数（计数与时延）
+  data_window_evidence: |
+    本车道正查（命令原文+输出摘录）：
+      python -m zephyr.library.lookup "meta_question" --limit 5
+      输出原文=5 个词汇表文档（frequencies/layers/origins/outcomes/**statuses**）
+        ⇒ 十态枚举有真源文件（可作合法转移字典来源），但主表读数不在馆面也不在 CH
+      python -c "... ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%meta_question%' OR lower(table) LIKE '%question%'\").values"
+      输出原文：[]
+    在册真源：TDM-E-L9-Z1 node_type=cross_cutting、module_ref=null、red_reason=structural、
+      purpose_tag=PT-12、algo_note_zh=「draft→registered→mining→in_exam→answered→
+      复考/挂起/合并/退役；墓碑q_id不复用；净零声明/provenance/乐观锁version；
+      载体=meta_question三表+审计双轨」；casebooks=[DCS#结构, DCS#手续]
+      ⇒ 十态名称直接从节点字段取（非凭记忆），与 TRAE-087 编排引用节（一问一考/净零四要件）互证。
+    缺什么（blocked_on_impl 具体所指）：①主表在 PG，本车道无只读通道；②"强制开关"本身
+      不在代码里定位到可旁路的接缝（三臂消融要求能关单件强制，现状无法关）⇒ 消融不可执行，
+      只能先做**描述性审计**（脏条目现值），该审计版判据已在本卡 primary/secondary 留好口子。
+    解锁条件：PG 只读通道 + 治理件暴露可注入的校验开关（或改用单测级夹具替代生产旁路）。
+  readiness: BLOCKED——主表跨存储不可读 + 无强制开关可消融（改走描述性审计已留口）

@@ -1,0 +1,82 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-B07/calibration/02_雪球股吧散户情绪极端预警
+node_id: TDM-E-L9-B07
+family: calibration
+title_zh: 源线·雪球/股吧散户情绪·讨论热度极端预警校准卡（渠道未接）
+hypothesis: A 股散户讨论热度（个股帖子数/阅读数 z-score）与情绪极性对次日收益呈**非单调**：
+  中低热度段正向（关注度提升=信息扩散），极端热度档反向（过热=散户追高接近尾声）；
+  热度极端预警的价值高于线性 IC——本卡因此把"极端档反转"设为主判据之一而非辅读数。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；"极端档"定义（热度 z-score > 2.0 或横截面前 1%）事前写死，
+    禁按结果回挑分位线
+buckets:
+  type: quantile_decile_plus_extreme
+  'on': 个股讨论热度 z-score（60 日）
+  min_obs_per_bucket: 60
+pillars:
+  response_shape: 响应曲线应呈倒 U（中段正、极端档负），单调性判据改为"分段单调"：
+    1-7 档 Spearman rho >= 0.6 且 9-10 档中位前向收益 <= 0（两段各自成立才算通过）
+  extreme_reversal: 热度 z>2 组次日收益均值 <= 全体中位且 t <= -2.0（主判据，非辅读数）
+  ic_floor: 横截面 RankIC 均值 >= 0.02（预期偏低，因非单调关系会被线性 IC 低估——
+    卡内明写"IC 低但形状成立"是可接受结论，禁为过 IC 而改形状判据）
+  lag_profile: 时滞=t+1 达峰、半衰期 <= 2 日（散户情绪定价快）；登记峰值档
+  regime_stability: bull/bear 两段的**极端档反转**应同号（热度→负收益的机制在熊市更强）
+  breadth_link: 与 A 股既有情绪面（c1_market.emotion_index 实测 1991-06-10..2026-10-09/8661 行、
+    market_breadth_snapshot 26 日）做增量检验：加入热度后对次日情绪的预测 R² 增量 >= 0.01，
+    否则判"与既有情绪指数同义反复"（本卡防重复建设门柱）
+target:
+  primary: next_day_stock_return（个股次日 hfq 收益）
+  secondary: next_day_emotion_state_transition（次日情绪六段态转移，辅轴，接 emotion_index.stage）
+  note: B07 决策问题=「A股散户讨论热度能否量化情绪并预警极端」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-B07.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  extreme_t_stat_max: -2.0
+oos_window_ref: *id001
+data_binding:
+  signal_table: （未建）拟名 c1_market.alt_xueqiu_sentiment
+  signal_column: （待接）post_count
+  signal_derivation: 个股帖子数/阅读数按日聚合，60 日滚动 z-score；情绪极性另列（模型分）
+  target_source: kline_daily_hfq close→next_day_return；辅 c1_market.emotion_index（stage 六段）
+  data_window_evidence: |
+    负存在断言双路正查：
+      1) 馆面：python -m zephyr.library.lookup "雪球" --limit 6 → (no results for '雪球')；
+         python -m zephyr.library.lookup "榜单" --limit 4 → (no results for '榜单')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%xueqiu%' OR lower(table) LIKE '%guba%' OR lower(table) LIKE '%post%'\").values)"
+         输出原文：[]
+    缺哪张表哪一段：**整表缺失**。近亲面已核（同族不同源，不可互代）：
+      c1_market.stock_hot_rank trade_date 2026-08-04..2026-10-09 rows=7793 days=**38**
+        —— 东财热榜（**部分代理散户关注度**），但仅 38 日，不足以立可考卡（已登记台账 §1.2）；
+        若作为 B07 的最小可行代理，须待其积累 ≥250 日且明确口径后可另立降级卡（本车道记为长尾）
+      c1_market.sentiment_panel 2026-09-01../39 日、emotion_index 8622 日（长史，但为聚合指数
+        非个股级讨论）⇒ 个股级讨论面在 CH 完全空白，这是 B07 的真实缺口位置
+    在册真源：TDM-E-L9-B07 algo_note_zh=「B档外采：雪球强反爬」，red_reason=not_built，
+      pit_proof=「渠道未接，PIT 未评估」；出边 TDM:L6415 payload_zh=「雪球/股吧散户情绪供给」。
+    附加阻断：强反爬=技术阻断而非渠道缺失，属"想做但机械接入极不稳"的一类；
+      本车道判其优先级低于 B02（免费 API）与 B05（公开平台），已在台账交叉复挖名单标注。
+  readiness: BLOCKED——渠道未接（强反爬），个股级讨论面 CH 全空白

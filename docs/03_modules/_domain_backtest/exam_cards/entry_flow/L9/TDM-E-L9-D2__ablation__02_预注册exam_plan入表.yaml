@@ -1,0 +1,98 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-D2/ablation/02_预注册exam_plan入表
+node_id: TDM-E-L9-D2
+family: ablation
+title_zh: 决策假设·登记与考试方案（预注册）整环消融卡
+hypothesis: D2 的价值=让每条入表假设都带预注册 exam_plan（criterion/threshold/method），
+  从而把"事后改题"变成可检出的违规。消融判据不是预测力而是**可证伪性产量**：
+  旁路本环后，考试结论中"方法/阈值事后变更"的比例应上升、且过拟合检出率恶化。
+ablation:
+  baseline: 入表即挂 exam_plan（现状）
+  arms:
+  - name: no_prereg
+    action: 旁路 exam_plan 挂载（假设可入表但无预注册考试方案）
+  - name: posthoc_threshold
+    action: 允许考试后改 threshold（模拟挪门柱）
+  - name: bypass_registry
+    action: 假设不入 meta_question 表，直接进考试链（无台账）
+  metric:
+  - name: falsifiable_yield
+    definition: 单位时间产出的"可判 pass/fail"结论数（预注册的意义就是让结论可判）
+  - name: goalpost_move_rate
+    definition: exam_plan 中 threshold/method 在开考后被改写的比例（本卡核心负指标）
+  - name: overfit_detection_rate
+    definition: 通过 CASEBOOK-005 类过拟合与前视检测被拦下的比例（应随 no_prereg 上升而下降）
+  drop_threshold:
+    ring_justified_if_falsifiable_yield_drop_ge: 0.2
+    critical_if_goalpost_move_rate_gt: 0.05
+window:
+  in_sample:
+  - '2025-06-01'
+  - '2026-03-31'
+  oos: &id001
+  - '2026-04-01'
+  - '2026-10-09'
+  regimes:
+    not_applicable: 治理环节无牛熊 regime；本卡 window 用**流程运行时窗**而非行情窗，
+      两段划分按 meta_question 表的入表速率分段（防把"上线初期"当基线）
+  frozen_note: 看数前冻结；goalpost_move 的判定规则（哪些字段算 threshold/method）事前写死，
+    只允许"开考前修改"，开考时间戳以 exam_plan 首次被引用（run_id 绑定）为准
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 入表批次
+  min_obs_per_bucket: 30
+pillars:
+  response_monotonicity: 不适用（无信号-收益链）；改判臂间有序：
+    no_prereg 与 posthoc_threshold 的 goalpost_move_rate 应显著高于 baseline，
+    若 baseline 本身就高=**当前流程已在挪门柱**，这是比消融更重要的直接发现
+  ic_floor: 不适用；改用两比例 z 检验（p<0.05）
+  lag_profile: 时滞=假设入表→exam_plan 冻结→开考→结论回传的周期分布（登记瓶颈环节）
+  regime_stability: 不适用；改判"入表速率分段的稳定性"（前后段 goalpost_move_rate 差 <=20%）
+  net_zero_pairing: 一问一考纪律（TRAE-087：拆到不能再拆、并到不再重考）⇒ 本卡 MUST 同时报
+    "净零声明缺失率"（新问未附 net_zero_note 的比例），否则本环只是增加条目数
+target:
+  primary: falsifiable_yield（可证伪结论产量，条/周）
+  secondary: goalpost_move_rate（挪门柱率，负指标）
+  note: D2 决策问题=「决策假设是否带预注册exam_plan入表（禁临场改题）？」
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-D2.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；治理卡禁事后改判据（本条即本卡自反测试对象）
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: false
+  ring_justified_if_falsifiable_yield_drop_ge: 0.2
+oos_window_ref: *id001
+data_binding:
+  signal_table: PG:meta_question 三表（在产 283 问，节点自陈）+ exam_plan 载体列
+  signal_column: exam_plan（criterion/threshold/method）
+  signal_derivation: 读数面=入表条目的 exam_plan 完整性 + 开考后字段变更审计（需版本轴或审计日志）
+  target_source: 无行情 target；结论面=E1 的 pass/fail 判定数（c1_backtest.node_verdict.verdict）
+  data_window_evidence: |
+    本车道正查（命令原文+输出摘录）：
+      python -m zephyr.library.lookup "meta_question" --limit 5
+      输出原文（5 条全为词汇表文档）：
+        DOC:docs/01_policies_and_standards/_registry/vocabularies/meta_question_frequencies_vocabulary.yaml
+        DOC:...meta_question_layers_vocabulary.yaml / _origins_ / _outcomes_ / _statuses_vocabulary.yaml
+      —— ⇒ 馆面命中的是**枚举词汇表**（frequency/layer/origin/outcome/status 五套），
+        未见 meta_question 主表在册条目 ⇒ 主表读数通道在 PG（本车道无 PG 只读通道）；
+        状态机十态真源据节点自陈=statuses 词汇表（可作 Z1/D2 的判据字典）。
+      python -c "... ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%meta_question%' OR lower(table) LIKE '%exam_plan%'\").values"
+      输出原文：[]（CH 内无 meta_question/exam_plan 表）
+    在册真源：TDM-E-L9-D2 module_ref=null、red_reason=structural、module_mounts=[MOD-AU-008]、
+      casebooks=[CASEBOOK-005#考试纪律]，algo_note_zh=「入表即挂exam_plan（criterion/threshold/
+      method），一问一考拆到不能再拆；载体=meta_question三表（PG在产283问）；
+      **registry代码随B7v2尾批落地（worktree在飞，本班不代落）**」
+      ⇒ 本卡阻断点=①主表在 PG 无只读通道；②exam_plan 挂载的 registry 代码尚未落地（在他车道在飞）。
+    解锁条件：B7v2 尾批落地 + PG 只读通道打通；届时先跑 goalpost_move_rate 的**现状基线**
+      （不消融也报），因为"现在有没有人在挪门柱"本身就是 Owner 要知道的数。
+  readiness: BLOCKED——载体在 PG 无通道 + 挂载代码在他车道在飞（双缺，非本车道可解）

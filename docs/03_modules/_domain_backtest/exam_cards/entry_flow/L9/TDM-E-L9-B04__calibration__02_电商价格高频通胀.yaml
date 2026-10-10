@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-B04/calibration/02_在线价格高频通胀映射
+node_id: TDM-E-L9-B04
+family: calibration
+title_zh: 源线·电商价格·单品高频价格对通胀与消费品板块的校准卡（渠道未接）
+hypothesis: 电商单品价格的周度变化是 CPI 细分项的**高频前瞻**：单品价格动能应在官方 CPI
+  发布前就对相关消费品板块（家用日化/食品饮料）后续收益有正解释力；且单品层信号聚合到
+  类目层后才稳定（单品噪声=促销/优惠券污染，须剔除大促周）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；大促日历剔除窗（618/双11/双12 前后各 5 交易日）必须事前写死，
+    事后发现污染再剔=事后挪门柱
+buckets:
+  type: quantile_tercile
+  'on': 类目层价格动能（周度）
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 价格动能三分位与板块 20 日收益 Spearman 单调 |rho| >= 0.6
+  ic_floor: 板块横截面 RankIC 均值 >= 0.02
+  lag_profile: 时滞曲线=峰值应落 [t+5,t+20] 档（高频价格→官方 CPI→板块定价的两段传导），
+    半衰期登记；若与官方 CPI 发布日同日达峰则判"仅同步"
+  inflation_channel: 与 c1_market.macro_data 的 CPI 类指标（实测 indicator_name 含
+    '货币和准货币(M2)-数量(亿元)' 等，CPI 序列须考前确认 indicator_name 全集）的相关性
+    应 >= 0.4（证明本读数确实在测通胀而非促销）
+  promo_robustness: 剔除大促周前后，IC 变化 <= 30%（若大幅变化=数据被促销主导，判数据 GAP）
+  regime_stability: bull/bear 两段同号
+target:
+  primary: next_20day_sector_return（880355 日用化工/食品饮料类板块 20 日前向收益）
+  secondary: cpi_nowcast_error（与官方 CPI 的现在预测误差，检验高频前瞻价值）
+  note: B04 决策问题=「在线价格能否做高频通胀与单品景气映射」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-B04.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  corr_cpi_min: 0.4
+oos_window_ref: *id001
+data_binding:
+  signal_table: （未建）拟名 c1_market.alt_ecom_price
+  signal_column: （待接）sku_price
+  signal_derivation: SKU→类目映射后取类目中位数价格（抗促销离群）；周度动能 = 中位价环比
+  target_source: v_kline_sector_880_named（period='1d'）；辅 c1_market.macro_data（CPI 类序列）
+  data_window_evidence: |
+    负存在断言双路正查：
+      1) 馆面：python -m zephyr.library.lookup "电商价格" --limit 6
+         输出原文：(no results for '电商价格')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%ecom%' OR lower(table) LIKE '%keepa%' OR lower(table) LIKE '%price_sku%'\").values)"
+         输出原文：[]
+    缺哪张表哪一段：**整表缺失**。易混面已核清（防误判为已接）：
+      c1_market.commodity_spot_price trade_date 2026-09-01..2026-10-09 rows=1296 days=**23**
+      c1_market.commodity_futures_main 2026-09-01..2026-10-09 rows=207 days=23
+      —— 这两张是**大宗现货/期货价格**（A11/A10 邻域），不是电商零售价，且各自仅 23 日
+      ⇒ 既不能替代 B04，本身也短到不可考（已登记进台账 §1.2）。
+    在册真源：TDM-E-L9-B04 algo_note_zh=「B档外采：Keepa付费API」，red_reason=not_built，
+      pit_proof=「渠道未接，PIT 未评估」；出边 TDM:L6412 payload_zh=「电商价格供给」。
+    门位注：Keepa=**付费 API** ⇒ 属宪法 §5「花钱（采购/扩容/充值）」Owner 保留面，
+      AI 不可自决接入；本卡的价值=把"接了之后怎么考"提前冻结好，Owner 决策后可直接开考。
+  readiness: BLOCKED——渠道未接且解锁需 Owner 花钱门位

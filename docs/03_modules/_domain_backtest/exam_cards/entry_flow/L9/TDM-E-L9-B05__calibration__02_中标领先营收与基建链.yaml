@@ -1,0 +1,83 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-B05/calibration/02_中标领先营收与基建链
+node_id: TDM-E-L9-B05
+family: calibration
+title_zh: 源线·招投标·中标公告金额领先营收与基建链景气校准卡（渠道未接）
+hypothesis: 上市公司（含其子公司）中标金额是订单前置量，对后续 2-3 个季度营收与股价有正预测力；
+  判据形态=中标事件（金额/上一年营收比）的 CAR 曲线在事件窗内显著为正，且大额中标（占比>10%）
+  反应显著大于小额。事件研究口径（中标是离散事件，非连续序列）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  event_windows: 估计窗 [-210,-11]；事件窗 CAR [0,+1]/[0,+10]/[0,+60]（0=中标公告次一交易日）
+  frozen_note: 看数前冻结；"中标"识别规则（金额>0 且明确为中标结果，禁把招标公告/候选公示计入）
+    必须事前写死——公告 vs 中标 vs 合同生效三类混池是本领域最常见假结论来源
+buckets:
+  type: event_ratio_quintile
+  'on': 单笔中标金额 / 上一完整年度营收
+  min_obs_per_bucket: 40
+pillars:
+  abnormal_return_floor: 高占比组（Q5）CAR[0,+10] >= 60 bp 且 |t| >= 2.0
+  long_short_gap: Q5-Q1 的 CAR[0,+60] >= 120 bp
+  response_monotonicity: 金额占比五分位与 CAR[0,+60] Spearman 单调 rho >= 0.6
+  ic_floor: 事件日横截面 RankIC 均值 >= 0.02
+  lag_profile: 时滞曲线=[0,+1] 即时反应 + [0,+60] 漂移两段分别登记；若 [0,+60] 增量归零
+    = 市场已完全定价（判"仅即时信息"为有效结论，非失败）
+  revenue_leading: 中标占比对**未来两季**营收增速（A05 面 income_statement）回归系数应显著为正
+    —— 这是"领先营收"那一半假设的独立检验，缺它则本卡只考了股价反应
+  regime_stability: bull/bear 两段同号
+target:
+  primary: car_0_to_10_stock（中标公告后 10 交易日累计异常收益）
+  secondary: next_2quarter_revenue_growth（未来两季营收增速，领先实体面）
+  note: B05 决策问题=「中标能否领先企业营收与基建链景气」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-B05.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  car_min_bp: 60
+  ls_gap_min_bp: 120
+  car_t_stat_min: 2.0
+oos_window_ref: *id001
+data_binding:
+  signal_table: （未建）拟名 c1_market.alt_tender_award
+  signal_column: （待接）award_amount
+  signal_derivation: 中标结果按公告日落库；标的主体→上市公司代码经 entity_graph 归属桥（同 B03 缺口）；
+    金额归一分母取上一完整年度 operating_revenue（c3_fundamental.income_statement 实测可用）
+  target_source: kline_daily_hfq close→个股日收益（CAR 对市场模型）；辅 v_kline_sector_880_named
+    （基建链聚合面，如 880437 通用机械类，编码须经视图核实后填）
+  data_window_evidence: |
+    负存在断言双路正查：
+      1) 馆面：python -m zephyr.library.lookup "招投标" --limit 6
+         输出原文：(no results for '招投标')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%tender%' OR lower(table) LIKE '%bid%' OR lower(table) LIKE '%award%'\").values)"
+         输出原文：[]
+    缺哪张表哪一段：**整表缺失**（全时段零覆盖）。
+    在册真源：TDM-E-L9-B05 algo_note_zh=「B档外采：政采网/公共资源平台」，red_reason=not_built，
+      pit_proof=「渠道未接，PIT 未评估」；出边 TDM:L6413 payload_zh=「招投标供给」。
+    邻近已查（防重复挖）：c3_fundamental 侧无中标类表（该库 32 张表全清单已实测，见台账 §1 库面枚举），
+      概念最近的 ir_activity_record/irm_* 属 IR 沟通面（A14），不同源线。
+    解锁条件：政采网/公共资源交易平台为**免费公开渠道**（属 Owner 四件事之①账号/②API，非花钱门位），
+      接入成本中等；同时依赖主体归并桥（同 B03 双缺）。
+  readiness: BLOCKED——渠道未接 + 主体归并桥未建

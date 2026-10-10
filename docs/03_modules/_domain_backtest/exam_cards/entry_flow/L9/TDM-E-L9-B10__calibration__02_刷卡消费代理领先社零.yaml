@@ -1,0 +1,81 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-B10/calibration/02_刷卡消费代理领先社零
+node_id: TDM-E-L9-B10
+family: calibration
+title_zh: 源线·信用卡/支付消费·高频消费代理领先社零与消费板块校准卡（渠道未接）
+hypothesis: 刷卡/支付口径的周度消费金额（分品类）领先社会消费品零售月度统计 2-4 周：
+  高频支付流水是社零的"实时切片"；判据=消费金额同比动能对可选消费板块（商贸零售/餐饮/纺服）
+  后续收益的 IC，且**峰值 lag 应在 [5,20] 交易日**（领先），lag=0/1 即同步（负结论）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；品类→板块映射表事前冻结；春节错位用农历对齐（周度数据的最大季节陷阱）
+buckets:
+  type: quantile_quintile
+  'on': 品类消费金额同比动能（周度，农历对齐）
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 动能五分位与板块 20 日收益 Spearman 单调 rho >= 0.6
+  ic_floor: 板块横截面 RankIC 均值 >= 0.02
+  lag_profile: 互相关峰值 lag ∈ [5,20] 交易日（领先性主判据）；lag<=1 判"同步非领先"
+  seasonality_control: 春节周与前后各 2 周单独分层（不参与主分桶），另报分层内 IC
+  regime_stability: bull/bear 两段同号
+  existing_proxy_check: 与既有可用高频消费代理做增量检验（本车道实测 c1_market.macro_data 内
+    indicator_name 含 1617 个'社零*' 序列、26 个'餐饮收入*' 序列 —— 均为官方月度而非支付流水）
+    ⇒ 增量检验的正确对照对象=官方社零序列本身：加入支付流水后对社零的现在预测误差下降 >= 10%，
+    否则支付源线无增量（本卡防重复建设门柱）
+target:
+  primary: next_20day_consumer_sector_return（可选消费板块 20 日前向收益）
+  secondary: retail_sales_nowcast_error（对官方社零的现在预测误差改善幅度）
+  note: B10 决策问题=「消费高频代理能否领先社零与消费板块」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-B10.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  peak_lag_min_days: 5
+  peak_lag_max_days: 20
+oos_window_ref: *id001
+data_binding:
+  signal_table: （未建）拟名 c1_market.alt_card_payment_weekly
+  signal_column: （待接）spend_amount
+  signal_derivation: 分品类周度消费金额同比（农历对齐）；聚合到板块用固定映射表
+  target_source: v_kline_sector_880_named（period='1d'）可选消费板块；对照面
+    c1_market.macro_data（indicator_name LIKE '社零%'，实测 1617 个序列在库）
+  data_window_evidence: |
+    负存在断言多路正查（表名筛 + 列值筛，A11 纠偏后确立的规程）：
+      1) 馆面：python -m zephyr.library.lookup "信用卡" --limit 4 → (no results for '信用卡')
+                 python -m zephyr.library.lookup "支付消费" --limit 4 → (no results for '支付消费')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%card%' OR lower(table) LIKE '%payment%' OR lower(table) LIKE '%spend%'\").values)"
+         输出原文：[]
+      3) 列值面：python -c "... ch_query_df(\"SELECT count(DISTINCT indicator_name) FROM c1_market.macro_data WHERE indicator_name LIKE '%社零%' OR indicator_name LIKE '%消费%' OR indicator_name LIKE '%餐饮%'\")"
+         输出原文：[[1617, 26]]（'社零*' 1617 个序列、'餐饮收入*' 26 个 ⇒ **官方消费统计已在库**，
+         但都是月度官方口径，非支付流水高频代理）
+    缺哪张表哪一段：**支付/刷卡流水整源未接**（高频代理缺口）；官方社零侧不缺（实测 1617 序列）。
+    在册真源：TDM-E-L9-B10 algo_note_zh=「B档外采：SpendingPulse proxy」，red_reason=not_built，
+      pit_proof=「渠道未接，PIT 未评估」；出边 TDM:L6418 payload_zh=「信用卡/支付消费供给」。
+    门位注：SpendingPulse 类消费数据是**美国商业付费源**且面向海外消费面板，对 A 股社零的
+      适配性本身存疑（闸3 A 股适配闸）⇒ 本车道判其"接入价值优先级最低"于 B 族内，
+      并建议在 F51 式议题上先请 Owner 裁定该源是否值得花钱（宪法 §5 花钱门位+对外采购）。
+  readiness: BLOCKED——渠道未接；对照面（官方社零）反而充足，故本源线增量待证

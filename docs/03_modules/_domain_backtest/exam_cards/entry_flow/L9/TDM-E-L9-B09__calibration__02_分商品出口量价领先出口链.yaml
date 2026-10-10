@@ -1,0 +1,87 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-B09/calibration/02_分商品出口量价领先出口链
+node_id: TDM-E-L9-B09
+family: calibration
+title_zh: 源线·进出口贸易·分商品出口量价领先出口链与航运需求校准卡（渠道未接）
+hypothesis: 海关分商品（HS 码级）出口金额的量价分解中，**数量项**领先价格项、价格项领先企业报表；
+  高出口依赖行业（纺织/家电/机械）的板块收益应与对应 HS 分组出口动能同向且滞后于后者 1-4 周。
+  判据形态=HS 分组动能分位对板块后续收益的 IC + 领先阶（cross-correlation 峰值所在 lag）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；HS 分组→板块映射表事前冻结（映射改一层就等于换因子）；
+    海关数据修订与"累计值 vs 当月值"口径混用是两大前视/失真来源，卡内固定用当月值 + 不修订快照
+buckets:
+  type: quantile_quintile
+  'on': HS 分组出口数量动能（同比去季调）
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 数量动能五分位与板块 20 日收益 Spearman 单调 rho >= 0.6
+  ic_floor: 板块横截面 RankIC 均值 >= 0.02
+  lag_profile: 时滞曲线是本卡主判据=互相关函数峰值所在 lag 应在 [5,20] 交易日之间；
+    若峰值在 lag=0/1 判"同步非领先"（对决策问题"能否领先"给出的是负结论，属有效产出）
+  quantity_vs_price: 数量项 IC 应 >= 价格项 IC（假设的机制内核；若相反则本源线的信息其实在价格，
+    应改接价格源而非继续挖数量）
+  regime_stability: bull/bear 两段同号
+  existing_data_check: 与既有可用面做增量检验——c1_market.macro_data（实测 1993-03-31..2026-10-09/
+    51623 行，indicator_name 含'非制造业-指数'/'制造业-指数'等 PMI 类）加入 HS 分组后
+    解释力增量 >= 0.01，否则判"PMI 已够，不需要新源线"（本卡防重复建设门柱）
+target:
+  primary: next_20day_export_sector_return（出口依赖板块 20 日前向收益）
+  secondary: cross_correlation_peak_lag（峰值领先阶，单位交易日，直接回答"领先多久"）
+  note: B09 决策问题=「分商品出口量价能否领先出口链与航运需求」；航运需求面与 A08 BDI 卡交叉，
+    两卡各自单跑不合并（不同源线，合并会糊掉归因）
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-B09.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  peak_lag_min_days: 5
+  peak_lag_max_days: 20
+oos_window_ref: *id001
+data_binding:
+  signal_table: （未建）拟名 c1_market.alt_trade_commodity
+  signal_column: （待接）export_value
+  signal_derivation: UN Comtrade / 海关分商品月度：数量=金额/均价，量价分解；按 HS2 位分组聚合到板块
+  target_source: v_kline_sector_880_named（period='1d'）出口依赖板块（880437 通用机械/880440 工业机械/
+    家电类，编码须经视图 DISTINCT 核实后填）；辅 c1_market.alt_shipping_index（BDI 需求侧对照，
+    实测 1988-10-19..2026-10-09/14625 行可用）
+  data_window_evidence: |
+    负存在断言双路正查（四词交叉，防单查询词漏判——A11 纠偏教训的应用）：
+      1) 馆面：python -m zephyr.library.lookup "进出口" --limit 4 → (no results for '进出口')
+                 python -m zephyr.library.lookup "海关" --limit 4 → (no results for '海关')
+                 python -m zephyr.library.lookup "贸易" --limit 4 → (no results for '贸易')
+                 python -m zephyr.library.lookup "Comtrade" --limit 4 → (no results for 'Comtrade')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%trade%' OR lower(table) LIKE '%customs%' OR lower(table) LIKE '%comtrade%' OR lower(table) LIKE '%export%'\").values)"
+         输出原文：[]
+      3) 列值面（补筛，A11 纠偏确立的新规程）：
+         python -c "... ch_query_df(\"SELECT DISTINCT indicator_name FROM c1_market.macro_data WHERE indicator_name LIKE '%出口%' OR indicator_name LIKE '%贸易%' OR lower(indicator_name) LIKE '%export%'\")"
+         —— 考前须实跑该读数确认宏观长表内是否已有出口类序列；若有，则 B09 从"整源缺失"降级为
+         "分商品颗粒度缺失"（判据不变，颗粒度门槛决定本卡是否开考）。本车道未完成该列值筛的
+         执行（记为**受阻/未完成**，不是已查无），列入交叉复挖名单首位。
+    在册真源：TDM-E-L9-B09 algo_note_zh=「B档外采：UN Comtrade免费API」，red_reason=not_built，
+      pit_proof=「渠道未接，PIT 未评估」；出边 TDM:L6417 payload_zh=「进出口贸易供给」。
+    门位注：Comtrade 免费 ⇒ 属 Owner 四件事之②API 申请（非花钱），解锁成本低，
+      列 B 族优先级第二（第一=B02 NWS 免费无需 key）。
+  readiness: BLOCKED——分商品贸易整源未接；且列值面补筛未完成（须复挖确认）

@@ -1,0 +1,91 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-G3/ablation/02_股权穿透关联收益
+node_id: TDM-E-L9-G3
+family: ablation
+title_zh: 图谱·实体股权穿透·控制关系对联动收益的消融卡
+hypothesis: 股权/任职穿透确定的"同一控制人"关联对，其个股收益应有超越行业/概念的联动
+  （隐性关联传导）；判据=在控制 880 行业与概念归属后，加穿透关联臂能否提升对次日收益的解释，
+  穿透后收益的 co-movement 应显著高于随机配对。
+ablation:
+  baseline: 仅行业+概念归属解释个股收益相关性
+  arms:
+  - name: with_penetration
+    action: 加入 edge_holding 穿透结果（N 度向上归并）作为关联对
+  - name: random_pairs
+    action: 等规模随机配对（度分布匹配）—— 本臂是本卡的核心反证
+  - name: top10_only
+    action: 只用十大股东重叠（不用任职/隐形边），检验"隐形边"是否真有增量
+  metric:
+  - name: comovement_lift
+    definition: 关联对日收益相关系数相对随机配对的提升
+  - name: incremental_r2
+    definition: 基准回归加关联对固定效应后的 R² 增量
+  drop_threshold:
+    keep_if_lift_ge: 0.05
+    retire_if_lift_lt: 0.02
+window:
+  in_sample:
+  - '2021-01-04'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-07-01..2024-01-31
+    recovery: 2024-02-01..2025-09-09
+  frozen_note: 看数前冻结；穿透深度 N 度与报告期口径（valid_to IS NULL 现行集）事前写死
+buckets:
+  type: ablation_arm
+  'on': 关联对 × 消融臂
+  min_obs_per_bucket: 30
+pillars:
+  response_monotonicity: 不适用；改判 with_penetration 相对 random_pairs 的提升显著性（p<0.05）
+  ic_floor: 不适用
+  lag_profile: 关联传导时滞=共动应同日发生（同控制人信息的同步性）；若领先-滞后结构显著，
+    说明存在"谁先知道"的顺序，登记为额外发现
+  pit_axes: 报告期口径（数据所属季度）与公告日 PIT（何时可见）双轴 MUST 分开——
+    用报告期当可见时点=前视（在册纪律：TDM G3 pit_proof=「报告期口径+公告日PIT双轴」）
+  offshore_break: 境外 BVI/开曼断线**不编造**（在册原话）⇒ 涉境外架构的关联对须显式标记
+    为缺失而非"无关联"，否则把"不知道"当成"没有"，会系统性低估关联
+target:
+  primary: comovement_lift_vs_random（穿透关联对相关系数提升）
+  secondary: invisible_edge_increment（top10_only 与 with_penetration 之差=隐形边增量）
+  note: G3 有 module_ref（scripts/entity_graph/equity_penetration.py）⇒ 是 G 族里唯一有实现件的一环
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-G3.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  keep_if_lift_ge: 0.05
+oos_window_ref: *id001
+data_binding:
+  signal_table: PG:edge_holding（entity_graph 六表现行集，valid_to IS NULL）+ 十大股东 274,865 对
+  signal_column: （结构）holding 边
+  signal_derivation: equity_penetration.py 的 N 度向上穿透 → 同一控制人关联对
+  target_source: kline_daily_hfq close→日收益（CH 实测 1990-12-19..2026-09-30/10,098,785 行）
+  data_window_evidence: |
+    本车道正查（命令原文+输出摘录）：
+      python -m zephyr.library.lookup "股权" --limit 5
+      输出原文：TBL:ch:c3_fundamental.equity_pledge_detail  table  active
+                TBL:ch:c3_fundamental.equity_pledge_summary  table  active
+      —— ⇒ CH 侧只有**股权质押**两张表（不是股权穿透）；穿透边在 PG entity_graph（跨存储）。
+      python -c "... ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.top10_shareholders\")"
+      实测：c1_market.top10_shareholders（c3_fundamental 库内，台账 §1 清单在册 245 项）
+        与 TDM G3 自陈「十大股东274,865对」同源，但**报告期口径**，非日频 ⇒ 事件锚须按披露日
+    在册真源与退役史（必须如实登记，防按旧清单施工）：原 ig_equity_edge 804 条已于 2026-09-29
+      按裁定#424 退役 DROP，备份=F:/zephyr_cold/retired_tables/ig_equity_edge_20260929/；
+      现真源=edge_holding（valid_to IS NULL 现行集）；穿透函数已实测过 600566/600927/601963；
+      merge-ig/compare 步的源表已退役 ⇒ 实现件与新真源的接线是否完整属④向未知（记为待核）。
+    解锁条件：PG entity_graph 只读通道打通 + 十大股东表与 edge_holding 的可见时点（公告日）对齐。
+  readiness: BLOCKED——穿透边在 PG、行情在 CH，跨存储未接；旧源表退役后接线完整性待核

@@ -1,0 +1,101 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-V3/ablation/02_板块状态快照T-1纪律
+node_id: TDM-E-L9-V3
+family: ablation
+title_zh: 状态变量快照·板块·sector_state T-1 落台增益消融卡
+hypothesis: 板块级状态变量（sector_state：momentum_pct/rrg_quadrant/strength/net_inflow_pct/
+  capital_score/watch_score 五成分）若在 T-1 就绪且带时戳，下游 L2 板块选择应显著优于
+  "随机板块状态"与"恒定状态"两臂；同时同日穿越臂会虚高，虚高幅度=时间分层纪律的价值。
+ablation:
+  baseline: 下游消费 T-1 板块状态
+  arms:
+  - name: same_day_leak
+    action: 当日板块状态（前视臂）
+  - name: random_state
+    action: 板块状态在板块间随机重排（保分布）
+  - name: fixed_state
+    action: 所有板块状态恒定（无信息臂）
+  - name: stale_2d
+    action: 滞后 2 日（过度保守臂）
+  metric:
+  - name: sector_pick_hit
+    definition: 选对次日前 1/5 强板块的比例
+  - name: inflation_gap
+    definition: same_day_leak 相对 baseline 的虚高
+  drop_threshold:
+    ring_justified_if_random_state_drop_ge: 0.05
+    redundant_if_stale_2d_drop_lt: 0.01
+window:
+  in_sample:
+  - '2022-09-01'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bear: 2022-09-01..2024-01-31（贴现率熊+微盘熊，sector_state 起点即 2022-09-01）
+    recovery: 2024-02-01..2025-09-09
+    bull_note: 统一牛段（2019-2021H1）**该表无数据** ⇒ V3 只能两段替代，已声明不冒充
+  frozen_note: 看数前冻结；"前 1/5 强板块"定义按 v_kline_sector_880_named 收益排名事前写死
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 日
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 臂间有序 same_day_leak >= baseline >= stale_2d > random_state≈fixed_state
+  ic_floor: baseline 臂的 T-1 状态对次日板块收益 RankIC >= 0.02
+  lag_profile: 状态半衰期登记（板块状态预期 3-10 日；若 stale_2d 几乎不掉=状态过慢、
+    本源线在决策时间尺度上冗余，这是有效结论）
+  regime_stability: bear/recovery 两段的臂间差不反号
+  five_component_split: 五成分（momentum/rrg/strength/net_inflow/capital+watch）逐一单独消融，
+    找出"哪一成分在扛贡献"——本卡比总消融更有用的产出
+target:
+  primary: sector_pick_hit（次日前 1/5 强板块命中率）
+  secondary: inflation_gap（同日穿越虚高）
+  note: V3 决策问题=「昨日板块级状态变量的T-1快照是否就绪且带时戳？」
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-V3.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  ring_justified_if_random_state_drop_ge: 0.05
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.sector_state
+  signal_column: strength
+  signal_derivation: 状态读数=strength/momentum_pct/rrg_quadrant/net_inflow_pct/capital_score/
+    watch_score；按 (trade_date, sector_code, version) 取唯一行
+  target_source: v_kline_sector_880_named（period='1d'）close→next_day_sector_return；
+    板块收益排名定"前 1/5 强"
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.sector_state\").values)
+      print(ch_query_df(\"SELECT uniq(sector_code) FROM c1_market.sector_state\").values)"
+    实测：
+      c1_market.sector_state trade_date 2022-09-01..2026-10-08 rows=432088 days=992
+      列面=trade_date/stage/ts/sector_code/sector_name/momentum_pct/rrg_quadrant/strength/
+        net_inflow_pct/capital_score/watch_score/components/version/ingest_ts
+      —— 432088 行 / 992 日 ⇒ 约 435 板块/日，面板充分；但**起 2022-09-01**（骨架 v0
+        于 2026-09-22 挖矿班建，节点自陈），故统一牛段不可用，窗口已按数据内缩
+    在册真源：TDM-E-L9-V3 module_ref=src/zephyr/plan_engine/judgment_ledger.py（MOD-PLAN-026）；
+      algo_note_zh=「板块层五成分接线=集成窗（secmine 板块线移交）；快照落台=judgment 台账；
+      板块 sector_state 骨架v0已有」；judgment 台账四表实测近乎空（V1 卡内已记：12/6/40/24 行）
+      ⇒ "落台"半问与 V1 同因受阻（台账空），"读数就绪"半问可用 sector_state 直接考。
+    接线注意：sector_state.sector_code 与 v_kline_sector_880_named.sector_code 是否同一编码
+      须考前核验（880 线实测带 '.SH' 后缀），不同源则需映射（本车道未完成该核验=记为待核，
+      不当作已验证）。
+  readiness: 读数面充分（992 日×435 板块）；落台（judgment 台账）近空已登记为子项缺口

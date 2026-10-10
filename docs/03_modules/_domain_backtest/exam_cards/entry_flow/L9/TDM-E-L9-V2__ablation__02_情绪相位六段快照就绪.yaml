@@ -1,0 +1,103 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-V2/ablation/02_情绪相位六段快照就绪
+node_id: TDM-E-L9-V2
+family: ablation
+title_zh: 状态变量快照·情绪·六段相位 T-1 落台与增益消融卡
+hypothesis: V2 承载"情绪六段相位的 T-1 快照是否就绪且带时戳"。本环若有效，则下游用 T-1 相位
+  应接近用当日相位的预测力（相位是慢变量），且显著优于随机相位（旁路臂）。
+  与 V1 的差别=情绪源线的聚合器**独立对话未建**（纪要§8.3 定案不代建）⇒ 本卡还要回答
+  "这环到底存不存在得起来"。
+ablation:
+  baseline: 下游消费 T-1 六段相位（emotion_index.stage）
+  arms:
+  - name: same_day_leak
+    action: 用当日 stage（同戳循环前视臂）
+  - name: random_stage
+    action: stage 随机重排（保持各段频率）
+  - name: fixed_stage
+    action: 恒定为"震荡"段（无信息固定臂）
+  - name: stale_1d
+    action: 滞后 2 日（过度保守臂）
+  metric:
+  - name: next_day_direction_hit
+    definition: 相位对次日指数方向命中率
+  - name: inflation_gap
+    definition: same_day_leak 相对 baseline 的虚高（量化时间分层价值）
+  drop_threshold:
+    ring_justified_if_random_stage_drop_ge: 0.05
+    redundant_if_stale_1d_drop_lt: 0.01
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；六段命名以表内 stage 实际取值为准（考前先跑 DISTINCT stage），
+    禁按文档记忆假设段位名称
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 日
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 臂间有序性 same_day_leak >= baseline >= stale_1d > random_stage≈fixed_stage；
+    若 random 与 baseline 无差=相位读数本身无信息（本卡最有价值的发现）
+  ic_floor: baseline 臂 IC（stage 序数化后）>= 0.02
+  lag_profile: 相位转移的持续性/半衰期登记（预期相位存续 >=5 日，短于此=相位抖动，不可作状态变量）
+  regime_stability: bull/bear 两段的臂间差不反号
+  aggregator_absence_note: 节点自陈「情绪聚合器=独立对话未建→红节点如实」⇒ 本卡用
+    emotion_index.stage 作**代理读数面**（该表实测有 stage 列且 8622 日长史），
+    但结论只到"相位快照这环值多少钱"，不到"聚合器该由谁建"（越界即连坐他车道）
+target:
+  primary: next_day_direction_hit（各臂对次日指数方向命中率）
+  secondary: inflation_gap（同日穿越虚高，时间分层的定价）
+  note: V2 决策问题=「昨日情绪相位六段的T-1快照是否就绪且带时戳？」
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-V2.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  ring_justified_if_random_stage_drop_ge: 0.05
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.emotion_index
+  signal_column: stage
+  signal_derivation: 六段相位=stage（分类读数）；辅 emotion_index 连续值作时滞与强度读数
+  target_source: kline_index 000300 close→next_day_return（实测 1990-12-19..2026-10-09）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.emotion_index\").values)
+      print(ch_query_df(\"SELECT stage,count() FROM c1_market.emotion_index GROUP BY stage\").values)
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.sentiment_panel\").values)"
+    实测：
+      c1_market.emotion_index trade_date 1991-06-10..2026-10-09 rows=8661 days=8622
+        （列面=trade_date/stage/ts/emotion_index/components/version/ingest_ts/source；
+         stage 即六段相位读数，**长史充分** ⇒ 本卡可立 preregistered）
+        注意 8661 行 vs 8622 日 ⇒ 近似一日一行，但存在少量重复版本（version 列），
+        消融须按 (trade_date, version) 定唯一行，否则臂间混版本
+      c1_market.sentiment_panel 2026-09-01..2026-10-09 rows=52 days=**39** ⇒ 情绪面板类源
+        本身仍近空，但本卡不依赖它（依赖 emotion_index）
+    在册真源：TDM-E-L9-V2 red_reason=not_built、module_ref=null；
+      algo_note_zh=「情绪聚合器=独立对话未建（纪要§8.3定案不代建）→红节点如实；
+      既有六段相位判定（TDM-E-L1-AGG）产出带时戳后经本节点落台」；
+      出边 TDM 侧 V 族 lag=T-1（时间分层铁律显式生效）。
+    本车道判读：V2 的**环**未建（无 module_ref）但**读数面**在 CH 长史可用 ⇒
+      卡可先预注册并跑"代理版消融"（结论级别=该环增益评估），真件建成后重跑正式版。
+  readiness: 代理面充分（8622 日）；正式落台面未建（not_built，已声明结论上界）

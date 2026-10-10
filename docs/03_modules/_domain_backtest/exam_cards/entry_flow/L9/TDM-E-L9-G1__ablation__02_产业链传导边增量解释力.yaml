@@ -1,0 +1,100 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-G1/ablation/02_产业链传导边增量解释力
+node_id: TDM-E-L9-G1
+family: ablation
+title_zh: 图谱·Zephyr 产业链·链内传导边对板块收益的增量解释力消融卡
+hypothesis: 873 条链/5560 节点/1726 结构边若在终局里有用，必须表现为**加入链信息后下游判断
+  的增量解释力**；判据=消融臂（去掉 chain_refs 边 vs 保留）在 L2-06 板块-个股传导环节上的
+  命中率差。若差≈0，则图谱只是自证结构、无预测贡献（本卡要的就是这个"有没有用"的答案）。
+ablation:
+  baseline: 下游（TDM-E-L2-06）按现状消费链内传导证据
+  arms:
+  - name: drop_edges
+    action: 只保留 ig_chain 与成分映射（ig_node_company），剥离 ig_edge 传导边
+  - name: random_edges
+    action: 传导边随机重连（保持度分布），检验"结构位置"是否真带信息
+  - name: degree_only
+    action: 只喂节点度中心性（不喂方向），检验方向性是否必要
+  metric:
+  - name: sector_stock_transmission_hit
+    definition: 上游板块异动→下游成分股同向反应的预测命中率
+  - name: incremental_r2
+    definition: 在含动量/估值的基准回归上加链信息后的 R² 增量
+  drop_threshold:
+    keep_graph_if_max_arm_drop_ge: 0.05
+    downgrade_if_all_arm_drop_lt: 0.02
+window:
+  in_sample:
+  - '2020-04-01'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2020-04-01..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；三臂定义与阈值事前写死
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 链
+  min_obs_per_bucket: 30
+pillars:
+  response_monotonicity: 本族不适用；改判臂间掉幅有序性（random_edges 掉幅应 >= degree_only，
+    若随机重连不掉=边内容本就无信息，这是比主判更重要的发现）
+  ic_floor: 不适用；改用两比例 z 检验（p<0.05）判臂间差异
+  lag_profile: 传导时滞=上游收益领先下游 1-5 日，登记 cross-correlation 峰值 lag
+    （方向性验证的量化面）
+  regime_stability: 臂间差异在 bull/bear 两段应一致；若只在一段成立=链信息依赖市场状态，须降级
+  edge_coverage_floor: 实测 583/873 链有链内传导边（w4_1 triage canonical 口径），
+    余 290 链无边 ⇒ 消融样本须按"有边链"分层，混池会低估边价值
+  disambiguation_risk: 在册头号缺口=ig_entity_code_map 消歧桥仅 2 行（假边风险）⇒
+    本卡结论在桥建成前只能到"待验证"级，禁直接回传 confidence=validated（诚实上界）
+target:
+  primary: max_arm_drop_in_transmission_hit（三臂最大命中率掉幅，百分点）
+  secondary: peak_lag_days（上下游传导峰值领先天数）
+  note: G 族图谱供给侧的"有没有用"统一走 ablation（与 AGG 同法），因图谱无连续时间序列信号
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-G1.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  keep_graph_if_max_arm_drop_ge: 0.05
+oos_window_ref: *id001
+data_binding:
+  signal_table: PG:ig_chain / PG:ig_edge / PG:ig_node / PG:ig_node_company（depgraph 图谱域，非 CH）
+  signal_column: （结构）edge 方向 + chain_refs 轴
+  signal_derivation: 上游板块日收益 × 传导边 → 下游板块/个股预期同向幅度；三臂见 ablation.arms
+  target_source: v_kline_sector_880_named（period='1d'，CH 侧，实测 729 码/2020-03-17 起）
+    + kline_daily_hfq（个股侧）
+  data_window_evidence: |
+    正查（SOP §7.5 三源纪律，命令原文+输出摘录）：
+      python -m zephyr.library.lookup "ig_edge" --limit 5
+      输出原文：TBL:pg:ig_edge  table  active  pg:ig_edge
+                TBL:pg:ig_edge_bak_20260914  table  active  pg:ig_edge_bak_20260914
+      python -m zephyr.library.lookup "产业链" --limit 5
+      输出原文：(no results for '产业链')
+      —— ⇒ 图谱表**在 PG 侧在册**（馆面命中 pg:ig_edge），但馆面无"产业链"业务条目；
+         读 PG 须走 scripts/governance/extract_depgraph.py（docs/03_modules 局部宪法：禁裸连），
+         本车道未执行 PG 读数（属跨存储接线工程，非 CH 探针范围）⇒ 记为**受阻/未完成**而非查无。
+    在册真源与量级（TDM-E-L9-G1 algo_note_zh 自陈，已核对与节点字段一致）：
+      ig_* 14 表（PG depgraph 图谱域）；873 链/5560 节点/1726 结构边；583/873 链有链内传导边
+      （w4_1 triage canonical 口径）；缺口=ig_entity_code_map 消歧桥仅 2 行（假边风险）；
+      真源=scripts/industry_graph/apply_industry_graph_ddl.py；doc_ref=
+      docs/_working/chain_piling_campaign/03_graph_registry.md
+    CH 侧可考面（已实测，供接线）：板块收益面 v_kline_sector_880_named 785204 行/1590 日；
+      个股面 kline_daily_hfq 10,098,785 行（右端 2026-09-30）。⇒ target 侧充分，
+      阻断点纯粹在 signal 侧的 PG↔CH 接线与消歧桥。
+    解锁条件：①extract_depgraph 只读通道打通（PG→考试取数）；②ig_entity_code_map 消歧桥
+      建成（>=100 条映射）；两者齐备后改 status=preregistered。
+  readiness: BLOCKED——图谱在 PG、考试取数在 CH，跨存储接线与消歧桥未建（impl 缺，非无数据）

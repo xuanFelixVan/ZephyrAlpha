@@ -1,0 +1,79 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-B01/calibration/02_卫星物理量领先官方数据
+node_id: TDM-E-L9-B01
+family: calibration
+title_zh: 源线·卫星影像·物理量领先官方统计的校准卡（渠道未接）
+hypothesis: 卫星可测物理量（厂房/堆场热异常、露天矿与港口在库量、作物 NDVI）相对官方月度统计
+  有 2-6 周领先，故"物理量意外 → 相关板块后续收益"应先在物理量档显现；官方数据发布后信号消失
+  （被定价完毕）。判据=物理量读数对**发布前**收益有 IC、对发布后无 IC（领先性双档检验）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；本卡假设与门柱在渠道未接时即写死，接入后禁按已有结果改定义（G4-5）
+buckets:
+  type: quantile_tercile
+  'on': 物理量读数相对过去 8 期均值的意外度
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 意外度三分位与事件后 20 日板块收益 Spearman 单调 |rho| >= 0.6
+  ic_floor: 相关个股横截面 RankIC 均值 >= 0.02（发布前窗口）
+  lag_profile: 时滞曲线要求 |IC| 峰值落在官方发布前 [-30,-1] 交易日档，且发布后 [0,+10] 档
+    IC 归零（"领先并已定价"的双向证据，这是本卡唯一有意义的判据形态）
+  regime_stability: bull/bear 两段同号
+  event_study: 以官方月度统计发布日为事件锚，估计窗 [-210,-11]，事件窗 [-30,+10]，
+    报告事件前累计异常收益 CAR_pre 与事件后 CAR_post
+target:
+  primary: car_pre_official_release（官方数据发布前 30 交易日累计异常收益，板块层）
+  secondary: car_post_official_release（发布后 10 交易日，应归零=领先性确认）
+  note: B01 决策问题=「物理量能否领先官方数据」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-B01.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  pre_car_min_bp: 80
+oos_window_ref: *id001
+data_binding:
+  signal_table: （未建）拟名 c1_market.alt_satellite_physical
+  signal_column: （待接）physical_value
+  signal_derivation: 物理量意外度 = physical_t − mean(physical_{t-1..t-8})，按品种/区域标准化
+  target_source: v_kline_sector_880_named（period='1d'）相关板块 + kline_index 000300 作市场模型
+  data_window_evidence: |
+    负存在断言双路正查（作业簿 §4 + SOP §7.5.1 三源纪律）：
+      1) 馆面：python -m zephyr.library.lookup "卫星影像" --limit 6
+         输出原文：(no results for '卫星影像')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%satellite%' OR lower(table) LIKE '%ndvi%' OR lower(table) LIKE '%thermal%'\").values)"
+         输出原文：[]（c1_market/c1_backtest/c3_fundamental/c0_meta 四库全筛无命中）
+    缺哪张表哪一段：**整表缺失**（全时段零覆盖，非断供而是从未接入）。
+    在册先例与真源：TDM-E-L9-B01 algo_note_zh=「B档外采：Copernicus免费/Planet商业；接入=资金门位」，
+      red_reason=not_built，U3 频率=adhoc、时滞=unknown、pit_proof=「渠道未接，PIT 未评估」；
+      源线名册真源=docs/_working/chain_piling_campaign/02_source_line_registry.md
+      出边（TDM:L6409）payload_zh=「卫星影像供给」，pit_proof 同上 ⇒ 连 PIT 安全性都未评估，
+      即"能不能进回测"这一前置问题本身还没答案。
+    解锁条件（写死，供接线车道）：①Copernicus（免费，Sentinel-2/3）先做零成本通道探路，
+      Planet 商业属 Owner 花钱门位（宪法 §5 花钱类）；②接入后必须先过 data_source_onboarding
+      第〇问（健康体检）+ PIT 评估，再谈本卡开考；③至少积累 100 期物理量读数（跨牛熊各 40 期）。
+    本车道结论（③向已查无归因）：卫星影像→股票收益的机构实践在检索中未获可溯双源
+      （仅获聚合站），按闸1/闸2 判**待验证不入图**，故本卡门柱全部由内部可算量构造，不引外部阈值。
+  readiness: BLOCKED——渠道未接，整表缺失（B 档共性，见台账 §1.3.2）

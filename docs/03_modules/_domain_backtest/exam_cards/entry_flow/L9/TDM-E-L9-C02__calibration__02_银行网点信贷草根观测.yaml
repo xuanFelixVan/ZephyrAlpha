@@ -1,0 +1,83 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-C02/calibration/02_银行网点信贷投放草根观测
+node_id: TDM-E-L9-C02
+family: calibration
+title_zh: 源线·银行网点/信贷活跃·信贷投放动能草根实时观测校准卡（C 档无渠道）
+hypothesis: 银行网点的业务活跃（开户/贷款咨询排队、网银签约量、ATM/POS 资金活跃度）是信贷
+  投放的前置草根读数，应在官方金融统计（社融/新增贷款）发布前对银行板块收益给出方向；
+  判据形态=官方发布日锚定的事件研究（CAR_pre 与 CAR_post 对比，检验"领先官方数据"）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  event_windows: 官方金融统计发布日为事件锚；估计窗 [-210,-11]；事件窗 [-20,-1]（pre）与 [0,+10]（post）
+  frozen_note: 看数前冻结；发布日历（央行社融/金融统计公布时点）须用 c1_market.calendar_event
+    或 rate_decision_calendar 实测在册口径，禁凭记忆排事件日
+buckets:
+  type: event_binary_group
+  'on': 网点活跃度意外度（相对过去 8 周均值）
+  min_obs_per_bucket: 30
+pillars:
+  pre_event_return: 高活跃组 CAR[-20,-1]（银行板块 880471）应显著为正且 |t| >= 2.0
+    —— "领先官方数据"的直接判据
+  post_event_zero: 官方发布后 CAR[0,+10] 应不显著（预警已被定价；若仍显著=信息未被消化，
+    则本源线价值更高，登记为正向额外发现）
+  ic_floor: 活跃度横截面 RankIC 均值 >= 0.02
+  lag_profile: 时滞曲线以周为单位登记（草根数据滞后约 0-1 周，官方滞后约 4-6 周），
+    两者之差即本源线的领先量，是本卡唯一要报的核心数值
+  regime_stability: bull/bear 两段同号
+target:
+  primary: car_minus20_to_minus1_bank_sector（银行板块官方发布前 20 日 CAR）
+  secondary: leading_days_vs_official（相对官方统计的领先天数）
+  note: C02 决策问题=「信贷投放动能的草根实时观测？」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-C02.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  car_t_stat_min: 2.0
+oos_window_ref: *id001
+data_binding:
+  signal_table: （不存在，C 档无渠道）拟名 c1_market.alt_bank_branch_activity
+  signal_column: （无）activity_index
+  signal_derivation: 网点活跃度指数（排队时长/业务笔数/电子渠道签约）标准化后聚合
+  target_source: v_kline_sector_880_named（period='1d'）sector_code='880471.SH'（银行，实测在册）；
+    对照 c1_market.macro_data 内信贷类序列（实测含 '货币和准货币(M2)-数量(亿元)' 448 个观测等）
+  data_window_evidence: |
+    负存在断言多路正查：
+      1) 馆面：python -m zephyr.library.lookup "银行网点" --limit 4 → (no results for '银行网点')
+                 python -m zephyr.library.lookup "信贷" --limit 4 → (no results for '信贷')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%branch%' OR lower(table) LIKE '%loan%'\").values)"
+         输出原文：[]
+      3) 官方对照面**存在**（重要，决定本源线价值上限）：
+         c1_market.macro_data 含 M2/社融类序列（indicator_name 全集 2261 个，实测），
+         c1_market.macro_credit_money 表在册（台账 §1 表清单）⇒ "官方口径"不缺，
+         缺的只是草根高频侧
+    缺哪张表哪一段：**整表不存在**，且无机械接入渠道（网点行为数据不在任何公开/商业 API 面）⇒
+      与 B 档区别：B 档是"渠道存在、未接"，C 档是"渠道本身不存在"。
+    在册真源：TDM-E-L9-C02 algo_note_zh=「C档无渠道」，red_reason=not_built，
+      pit_proof=「无渠道，挂起不入批」；出边 TDM:L6420 payload_zh=「银行网点/信贷活跃供给」。
+    挖后自审（SOP §6）：终局全貌里"官方口径已足够 + 草根侧无渠道" ⇒ 本节点属**挂起排期**
+      （解锁条件=出现合规可接入的网点行为数据源），且因涉金融敏感数据，
+      即便有渠道也需过法律合规门位（宪法 §5 二类）。
+  readiness: BLOCKED——无接入渠道；官方侧对照面已存在

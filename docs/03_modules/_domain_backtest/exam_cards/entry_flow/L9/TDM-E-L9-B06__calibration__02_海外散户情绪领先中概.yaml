@@ -1,0 +1,83 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-B06/calibration/02_海外散户情绪领先中概
+node_id: TDM-E-L9-B06
+family: calibration
+title_zh: 源线·社媒舆情 X/Reddit·海外散户情绪领先中概与联动板块校准卡（渠道未接）
+hypothesis: Reddit/X 上对中概股与相关主题的讨论量与情绪极性，对**下一交易日美股中概 ADR 收益**
+  有正预测力（海外散户协调交易），并进一步隔日传导到 A 股对应联动板块；
+  判据形态=情绪/密度分位对 t+1 ADR 收益的 IC，以及对 t+2 A 股板块的溢出 IC。事件研究用于
+  异常讨论峰值（meme 事件）单独检验。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；A 股适配闸特别条款：社媒情绪在 A 股的作用面主要是**联动板块**而非
+    大盘，故大盘 IC 只作辅读数；meme 事件白名单（事前定）与常规噪声分开计
+buckets:
+  type: quantile_quintile
+  'on': 标的级讨论量 z-score（60 日）与情绪极性
+  min_obs_per_bucket: 40
+pillars:
+  response_monotonicity: 讨论量分位与 t+1 ADR 收益 Spearman 单调 rho >= 0.6
+  ic_floor: 横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 时滞曲线核心=t+1（当日海外情绪→当日 ADR）与 t+2（→A 股板块）两档分别登记，
+    溢出档 IC 应 < 本地档（衰减方向正确才算传导而非共因）
+  spillover_test: A 股板块面 IC 必须在**控制美股隔夜收益**后仍 >= 0.015，
+    否则判"只是美股影子"（本卡最重要防伪门柱，与 A15 卡 us_decoupling 同型）
+  event_extremes: 讨论量 >99 分位的峰值日（meme 事件）后 1-5 日收益应呈反转（拥挤后回落）
+  regime_stability: bull/bear 两段同号
+target:
+  primary: adr_next_day_return（中概 ADR 次日收益）
+  secondary: a_share_linkage_sector_next_2day_return（A 股联动板块 t+2 收益，溢出面）
+  note: B06 决策问题=「海外散户情绪能否领先中概与联动板块」
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-B06.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  spillover_resid_ic_min: 0.015
+oos_window_ref: *id001
+data_binding:
+  signal_table: （未建）拟名 c1_market.alt_social_sentiment_global
+  signal_column: （待接）post_sentiment
+  signal_derivation: 标的级讨论量与情绪极性（Reddit/X API），按 UTC 日聚合再对齐美股交易日；
+    溢出面按 A 股交易日右齐
+  target_source: c1_market.kline_us_daily（symbol=中概 ADR）close→next_day_return；
+    A 股侧 v_kline_sector_880_named（period='1d'）；控制变量 c1_market.us_index（实测 1993-01-29..2026-10-08
+    /22645 行，可用）与 macro_data 的 FRED_VIX（实测 2021-08-16 起，1318 行）
+  data_window_evidence: |
+    负存在断言双路正查：
+      1) 馆面：python -m zephyr.library.lookup "Reddit" --limit 6 → (no results for 'Reddit')；
+         python -m zephyr.library.lookup "舆情" --limit 4 → (no results for '舆情')
+      2) 库面：python -c "
+         import sys; sys.path.insert(0,'scripts/backtest')
+         from fexam.ch_data import ch_query_df
+         print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%reddit%' OR lower(table) LIKE '%twitter%' OR lower(table) LIKE '%social%'\").values)"
+         输出原文：[]
+    缺哪张表哪一段：**整表缺失**。国内情绪面另表可查（不替代本卡）：
+      c3_fundamental.news_data 8,219,134 行（2010-01-02..2026-10-10）与 news_sentiment_score
+      7,947,739 行属 **A09 国内快讯**，口径/语言/参与者完全不同 ⇒ 不可代 B06。
+    在册真源：TDM-E-L9-B06 algo_note_zh=「B档外采：Reddit/X API」，red_reason=not_built，
+      pit_proof=「渠道未接，PIT 未评估」；出边 TDM:L6414 payload_zh=「社媒舆情X/Reddit供给」。
+    附加阻断（④/合规向，如实登记）：Reddit/X API 现为**付费且限流**，且境外平台访问在本环境
+      存在网络级阻断先例（在册案=币圈影子 MVP §5：`www.okx.com` DNS 污染 + SNI 干扰，
+      换源无法绕过，需 Cloudflare 反代等 Owner 资源）⇒ 本节点解锁同时受"付费门位 + 网络通道"
+      两重外部条件约束，AI 不可自解。
+  readiness: BLOCKED——渠道未接 + 付费门位 + 境外网络通道未通（三重外部条件）

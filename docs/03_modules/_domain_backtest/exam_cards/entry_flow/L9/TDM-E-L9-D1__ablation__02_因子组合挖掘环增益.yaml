@@ -1,0 +1,114 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-D1/ablation/02_因子组合挖掘环增益
+node_id: TDM-E-L9-D1
+family: ablation
+title_zh: 决策假设·因子组合挖掘（E1C 三轨）整环消融卡
+hypothesis: D1 在 T-1 状态变量+传导链证据上挖组合假设（三轨=gplearn+智能体+MCTS）。
+  若本环有净价值，则"用其产出假设"相对三臂（随机假设/固定假设/旁路）在整链上应显著更好；
+  同时本环 MUST 表现为"只产出假设、不自证对错"——消融里包含一条**自证检测**：
+  若某臂的 IS 表现远好于 OOS（衰减 >50%）即证明该环在过拟合而非产出可考假设。
+ablation:
+  baseline: 下游（E1 考试链）消费 D1 产出的假设集
+  arms:
+  - name: random_hypotheses
+    action: 用同数量随机构造假设（保持因子池与表达式长度分布）
+  - name: fixed_hypotheses
+    action: 固定一组历史假设（不挖掘，检验"挖掘"vs"存量"）
+  - name: bypass
+    action: 旁路 D1（下游直接吃原始状态变量，无组合层）
+  - name: per_track
+    action: 三轨各自单独消融（gplearn / 智能体 / MCTS 分臂，找哪轨真带增量）
+  metric:
+  - name: hypothesis_exam_pass_rate
+    definition: 假设经 E1 预注册考试后的通过率
+  - name: is_oos_decay
+    definition: IS 到 OOS 的表现衰减（>50% 判过拟合，是本卡最重要的负结论）
+  - name: chain_level_sharpe_delta
+    definition: 整链（entry_flow 信号）Sharpe 相对旁路臂的增量
+  drop_threshold:
+    ring_justified_if_pass_rate_drop_ge: 0.05
+    overfit_flag_if_is_oos_decay_gt: 0.5
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；三轨消融的"同数量假设"配额必须与 baseline 严格相等，
+    否则臂间差是搜索预算差而非质量差（最常见的消融假结论）
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 假设批次
+  min_obs_per_bucket: 30
+pillars:
+  response_monotonicity: 不适用；臂间有序性 baseline >= fixed_hypotheses > random_hypotheses，
+    且 bypass 不应显著优于 baseline（若旁路更好=挖掘环在做负功，本卡最重要发现）
+  ic_floor: 不适用；通过率的两比例 z 检验 p<0.05
+  lag_profile: 假设从产出到被考试/生效的时滞（D1→D2→E1→E2 闭环周期），登记为天数分布；
+    周期 >30 天说明本环产能过剩而验证环是瓶颈（跨车道结论，登记不越界处置）
+  regime_stability: bull/bear 两段通过率不反号
+  overfit_gate: is_oos_decay > 0.5 直接判"该环当前产出不可信"，无论 pass rate 多高
+    —— 这一条优先于主判（防"挖得多=挖得好"的错觉）
+  n_trial_ledger: 消融试次 MUST 全入 n_trial_ledger（多重检验校正，deflated Sharpe 口径已在
+    c1_backtest.strategy_screen 落地，直接复用该表的 deflated_sharpe 列）
+target:
+  primary: hypothesis_exam_pass_rate_delta_vs_random（相对随机假设臂的通过率增量）
+  secondary: is_oos_decay（IS→OOS 衰减，过拟合检测）
+  note: D1 决策问题=「在T-1状态变量+传导链证据上挖组合假设？」——本卡答"挖了有没有用"
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-D1.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  ring_justified_if_pass_rate_drop_ge: 0.05
+  overfit_flag_if_is_oos_decay_gt: 0.5
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.hypothesis_precheck
+  signal_column: verdict
+  signal_derivation: 假设集=hypothesis_precheck 的 candidate_id（含 birth_channel 分轨）；
+    整链表现面=c1_backtest.strategy_screen（is_sharpe/deflated_sharpe/oos_years_decay）
+    + c1_backtest.node_verdict（hit_ratio/significance/verdict）
+  target_source: 整链信号命中率（kline_index 000300 close→next_day_return 为最终裁判）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      for t in ['c1_backtest.hypothesis_precheck','c1_backtest.strategy_screen','c1_backtest.node_verdict']:
+        print(t, int(ch_query_df(f'SELECT count() FROM {t}').iloc[0,0]))
+      print(ch_query_df(\"SELECT birth_channel,count() FROM c1_backtest.hypothesis_precheck GROUP BY birth_channel\").values)
+      print(ch_query_df(\"SELECT verdict,count() FROM c1_backtest.hypothesis_precheck GROUP BY verdict\").values)"
+    实测：
+      c1_backtest.hypothesis_precheck rows=**414**（列面含 birth_channel/precheck_batch/
+        model/verdict/confidence/latency_ms ⇒ 分轨消融**字段齐备**）
+      c1_backtest.strategy_screen rows=**1406**（含 is_sharpe/deflated_sharpe/
+        oos_years_decay/cluster_id ⇒ 过拟合检测列已落地）
+      c1_backtest.node_verdict rows=**58**（node_id/validation_method/hit_ratio/significance）
+      —— 三者量级都太小：414 假设 / 1406 筛选记录 / 58 判定，且**无日期跨度**（均为
+        ingest_ts 型时间戳表，非长史面板）⇒ 四臂消融（含 per_track）所需"同数量假设配额"
+        无法在 IS(2019-2023) 与 OOS(2024-2025) 两段各自成立，因为两段根本没有数据。
+    在册真源与④向：TDM-E-L9-D1 module_ref=scripts/backtest/mcts_expression_search.py
+      （MOD-BT-202），casebooks=[CASEBOOK-009#N试次, CASEBOOK-005#过拟合与前视]，
+      algo_note_zh=「E1C 三轨已建，**缺积木/考试链加固/GPU燃料**（GPU周五硬前置仅IBT三件，
+      不含本轮）；只产出决策假设不自证对错，验证必交考试链」
+      ⇒ 节点自陈的三缺口与本次实测的样本量不足完全一致（互证，非凭记忆）。
+    缺哪张表哪一段：需 hypothesis_precheck 与 strategy_screen 在 2019-2023（IS）与
+      2024-2025（OOS）两段各有一批可比假设产出；现状=两段皆零（表内数据集中在建表之后）。
+    解锁条件：三轨各自跑满一批（每轨 >=100 条假设）并覆盖 OOS 段；GPU 燃料属 Owner 资源门位。
+  readiness: BLOCKED——假设/筛选记录量级不足且 IS-OOS 两段无数据（缺算力，属外部资源条件）

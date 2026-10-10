@@ -1,0 +1,101 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-G4/ablation/02_概念标签题材热度维度
+node_id: TDM-E-L9-G4
+family: ablation
+title_zh: 图谱·概念/题材·标签面为热度维度提供的增量消融卡
+hypothesis: 概念标签（stock_concept，as_of=2026-09-14 THS 导出）与产业链结构正交；
+  L1-AGG 的"题材热度"维度若有效，必须在**控制行业与概念静态归属后**仍提供增量（热度=成分的
+  时变共振，而非静态标签本身）。判据=消融"概念归属"后题材热度对次日情绪的预测力掉幅。
+ablation:
+  baseline: L1-AGG 现状（含题材热度维度）
+  arms:
+  - name: drop_concept
+    action: 剥离概念归属（只留行业）→ 题材热度维度不可计算，观察整链掉幅
+  - name: static_labels
+    action: 概念归属保留但热度冻结为常数（去掉时变性）→ 检验"热度"而非"标签"的贡献
+  - name: random_concept
+    action: 概念归属随机重排（规模保持）→ 反证臂
+  metric:
+  - name: emotion_six_state_hit
+    definition: L1-AGG 六段态判定对次日指数方向的命中率
+  - name: breadth_explain_r2
+    definition: 题材热度对 market_breadth 变化的解释力
+  drop_threshold:
+    keep_dim_if_drop_ge: 0.05
+    downgrade_if_drop_lt: 0.02
+window:
+  in_sample:
+  - '2026-09-15'
+  - '2026-10-09'
+  oos: &id001
+  - '2026-10-10'
+  - '2026-10-10'
+  regimes:
+    unavailable: 概念成分历史仅自 2026-08-10、广度快照仅自 2026-08-24、涨跌停表仅自 2026-07-20
+      ⇒ 三臂重放无足够基线日，本卡结论级别=可行性预演
+  frozen_note: 看数前冻结；as_of=2026-09-14 是**单版快照**，无版本轴 ⇒ 无法做历史重放，
+    这是 G4 最根本的方法论限制（不是样本少，是"不可回溯"）
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 日
+  min_obs_per_bucket: 20
+pillars:
+  response_monotonicity: 不适用；臂间掉幅有序性（random_concept 掉幅应 >= static_labels）
+  ic_floor: 不适用；两比例 z 检验（受 n 限制，只报点估计并标注不可显著）
+  lag_profile: 热度→次日情绪的时滞登记（预期 t+1）
+  label_aging: 概念标签是静态快照而市场题材会漂移 ⇒ MUST 报告"标签 as_of 与考试日间隔"作为
+    混杂量；间隔 >90 天的结论只作定性
+  concept_vs_chain_boundary: 在册纪律「概念≠产业链硬边界（概念型链名禁入 ig_chain）」
+    ⇒ 本卡禁把概念当传导链使用（越界即污染 G1 结论）
+target:
+  primary: drop_concept_hit_drop（剥离概念后六段态命中率掉幅，百分点）
+  secondary: static_labels_drop（热度冻结为常数的掉幅，用来分离"标签 vs 热度"）
+  note: G4→L1-AGG 出边（TDM:L6424，payload=「题材热度维度」，pit_proof=「概念标签静态快照
+    as_of=2026-09-14」）⇒ 本卡考的是这条边的贡献
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-G4.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: false
+  keep_dim_if_drop_ge: 0.05
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.concept_board_constituent（+ PG:stock_concept 真源）
+  signal_column: 概念归属（board_code×symbol）
+  signal_derivation: 题材热度=同概念成分当日涨跌共振度（如上涨占比×成交额集中度）
+  target_source: c1_market.market_breadth_snapshot（advancing/declining/limit_up 等，实测
+    2026-08-24..2026-10-09/174 行/26 日）；情绪六段态取 c1_market.emotion_index.stage
+    （实测 1991-06-10..2026-10-09/8661 行/8622 日，长史可用）
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(valid_from)),max(toString(valid_from)),count(),uniq(valid_from) FROM c1_market.concept_board_constituent\").values)
+      print(ch_query_df(\"SELECT count(), uniq(board_code) FROM c1_market.concept_board\").values)
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.market_breadth_snapshot\").values)
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.emotion_index\").values)
+      python -m zephyr.library.lookup \"概念题材\" --limit 5"
+    实测：
+      concept_board_constituent valid_from 2026-08-10..2026-10-09 rows=37891 days=**35**
+      concept_board 无标准日期列 rows=750（静态名册，valid_from/valid_to 轴）
+      market_breadth_snapshot 2026-08-24..2026-10-09 rows=174 days=**26**
+      emotion_index 1991-06-10..2026-10-09 rows=8661 days=8622（唯一长史面）
+      馆查 "概念题材" → (no results for '概念题材')
+    缺哪张表哪一段：需概念成分的**版本历史**（每日或每版快照）覆盖 2019-2025；
+      现状=只有 as_of=2026-09-14 单版 + valid_from 自 2026-08-10 的 35 天 ⇒
+      历史题材归属不可回溯，三臂消融在 2019-2025 段无法执行（不是行数少，是**无版本轴**）。
+    TDM G4 自陈亦含此风险：「行情数据落库前W6须先补行数实测」⇒ 本车道已完成该实测（上述数字）。
+    解锁条件：概念成分按日落版（或至少按季快照）累计 >=8 个版本，且 breadth 积累 >=250 日。
+  readiness: BLOCKED——概念标签无版本历史轴（不可回溯型缺口）

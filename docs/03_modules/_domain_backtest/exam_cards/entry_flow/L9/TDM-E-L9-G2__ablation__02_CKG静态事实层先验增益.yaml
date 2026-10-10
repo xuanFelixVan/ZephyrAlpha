@@ -1,0 +1,92 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-G2/ablation/02_CKG静态事实层先验增益
+node_id: TDM-E-L9-G2
+family: ablation
+title_zh: 图谱·ChainKnowledgeGraph 事实层·静态结构先验的增益消融卡
+hypothesis: CKG（as_of=2021-10-26 静态快照，4654 上市公司/95559 产品，source=ckg_2021）只应作为
+  **结构先验**（增强 ig_edge 的成分/产品关联覆盖），不应作为现势事实。判据=在 G1 的基线上
+  叠加 CKG 增强后，传导预测命中率是否提升；若提升≈0，则 2021 年静态快照对 2024-2026 已失效
+  （口径老化），本节点终局价值=仅历史结构对照。
+ablation:
+  baseline: G1 基线（仅 Zephyr 自建链）
+  arms:
+  - name: with_ckg
+    action: 叠加 ig_fact(source=ckg_2021) 作为边存在性先验
+  - name: ckg_only
+    action: 只用 CKG 事实层（无自建链）
+  - name: stale_check
+    action: 用 CKG 先验但把 as_of 强制视为 2021-10-26（检验"新鲜度错觉"贡献）
+  metric:
+  - name: edge_recall_gain
+    definition: 相对自建链，CKG 补齐的边数占比与这些边的预测贡献
+  - name: transmission_hit
+    definition: 同 G1 命中率口径
+  drop_threshold:
+    keep_layer_if_gain_ge: 0.03
+    retire_if_gain_lt: 0.01
+window:
+  in_sample:
+  - '2020-04-01'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2020-04-01..2021-06-30
+    bear: 2021-07-01..2024-01-31
+    as_of_note: CKG as_of=2021-10-26 落在 IS 中段 ⇒ 本卡 MUST 分段报告（as_of 前 vs 后），
+      把"快照老化"做成可读结论而非隐藏混杂
+  frozen_note: 看数前冻结；as_of 双标记纪律（PIT 诚实）不可违背，禁把 2021 快照当 2024 现势
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 链
+  min_obs_per_bucket: 30
+pillars:
+  response_monotonicity: 不适用（结构层）；改判 with_ckg 相对 baseline 的增益符号与量级
+  ic_floor: 不适用；两比例 z 检验 p<0.05
+  lag_profile: 不适用；改为"老化曲线"=以 as_of 为原点，每 6 个月一段的增益衰减读数（本卡核心产出）
+  regime_stability: as_of 前后两段增益应同号且递减；若后段增益转负=静态快照在制造错边（重要发现）
+  pit_honesty: 任何把 CKG 边用于 as_of 之前日期的用法都必须标注"事后结构"（前视风险登记）
+target:
+  primary: edge_recall_gain（CKG 补齐边的预测贡献，百分点）
+  secondary: staleness_decay_slope（as_of 后每半年的增益衰减斜率）
+  note: G2 与 G1 同法不同对象——G1 问"边有没有用"，G2 问"旧事实层还补不补得上"
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-G2.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  keep_layer_if_gain_ge: 0.03
+oos_window_ref: *id001
+data_binding:
+  signal_table: PG:ig_fact（source=ckg_2021，as_of=2026 视角为 2021-10-26 静态快照）
+  signal_column: （结构）fact 边存在性
+  signal_derivation: CKG 产品-公司关联→补齐 ig_edge 缺失边；三臂见 ablation.arms
+  target_source: v_kline_sector_880_named（period='1d'）+ kline_daily_hfq（同 G1，CH 侧已实测可用）
+  data_window_evidence: |
+    在册真源（TDM-E-L9-G2 algo_note_zh，已核对节点字段）：已导入 ig_fact
+      （source=ckg_2021，as_of=2021-10-26，PIT 诚实）；4654 上市公司/95559 产品；
+      静态快照仅结构先验不作现势事实；导入件=scripts/industry_graph/import_ckg_dataset.py；
+      出边 TDM:L6422（G2→G1，payload=「开源事实层增强」，lag=static，
+      pit_proof=「as_of=2021-10-26静态快照仅结构先验」）
+    本车道正查记录（命令原文）：
+      python -m zephyr.library.lookup "ig_fact" --limit 5
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%fact%' OR lower(table) LIKE '%ckg%'\").values)"
+    实测：CH 侧筛 %fact%/%ckg% = **[]** ⇒ CKG 事实层不在 ClickHouse（在 PG ig_fact）；
+      本车道未取 PG 读数（同 G1，属跨存储接线工程）⇒ 记为受阻/未完成，非查无。
+    解锁条件：同 G1（extract_depgraph 只读通道 + 图谱↔行情 id 对齐）。
+  readiness: BLOCKED——PG 侧取数通道未接（与 G1 同因，可合并施工）

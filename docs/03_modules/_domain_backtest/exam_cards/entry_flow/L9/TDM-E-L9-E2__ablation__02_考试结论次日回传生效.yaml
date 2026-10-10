@@ -1,0 +1,106 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-E2/ablation/02_考试结论次日回传生效
+node_id: TDM-E-L9-E2
+family: ablation
+title_zh: 验证·结论回传与修正（次日生效）整环消融卡
+hypothesis: E2 是反馈数据边：今日考试结论**次日**才进下游修正（时间分层铁律），并向 L4 回传
+  证伪结论、向 L0 回传复考/退役建议。本环消融判据=回传是否真的改变下游决策且改变方向正确：
+  旁路后下游继续用已被证伪的假设，损失应可量化。
+ablation:
+  baseline: 考试结论次日生效（现状设计，未落地）
+  arms:
+  - name: bypass_writeback
+    action: 结论不回传（下游继续用被证伪假设）
+  - name: same_day_writeback
+    action: 结论当日生效（违反 T-1 铁律的前视臂，用于给"纪律"定价）
+  - name: delayed_5d
+    action: 结论滞后 5 日生效（过度保守臂）
+  metric:
+  - name: falsified_usage_loss
+    definition: 旁路臂因继续使用被证伪假设而产生的收益损失（bp/期）
+  - name: correction_hit
+    definition: 回传后下游确实改变仓位/停用的比例（回传是否被消费，防"发了没人看"）
+  - name: inflation_gap
+    definition: same_day_writeback 相对 baseline 的虚高
+  drop_threshold:
+    ring_justified_if_falsified_usage_loss_ge_bp: 20
+    dead_letter_if_correction_hit_lt: 0.20
+window:
+  in_sample:
+  - '2026-09-16'
+  - '2026-09-30'
+  oos: &id001
+  - '2026-10-01'
+  - '2026-10-09'
+  regimes:
+    not_applicable: 回传环节无牛熊；窗口按 decision_daily 实际有数的日子切（治理卡口径）
+  frozen_note: 看数前冻结；三臂的"生效日"定义以 decision_daily.asof_data_date 与 trade_date
+    的关系为准（该两列实测存在，是天然的时滞读数面）
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 决策日
+  min_obs_per_bucket: 20
+pillars:
+  response_monotonicity: 不适用；臂间有序：bypass_writeback 损失 > delayed_5d > baseline，
+    且 same_day_writeback 表面最优（虚高）⇒ 若 same_day 不掉反升=本体系存在前视通道，
+    属最高优先级缺陷发现（本卡比主判更有价值的产出）
+  ic_floor: 不适用
+  lag_profile: 核心时滞读数=trade_date − asof_data_date 的分布（现状是否真为 T-1）；
+    本卡 MUST 先报该分布，再谈消融
+  regime_stability: 不适用；改判"回传被消费率"在样本日期间的稳定性
+  dead_letter_gate: correction_hit < 0.20 判"回传是死信"（发了无人用），
+    按内收铁律（零消费→退役）应提本环退役建议而非继续施工——本卡明确允许给出退役结论
+target:
+  primary: falsified_usage_loss_bp（旁路回传的损失）
+  secondary: correction_hit（回传被消费率，判"死信"）
+  note: E2 决策问题=「考试结论是否次日生效回传（决策修正/复考退役建议）？」
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-E2.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；治理卡禁事后改判据
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: false
+  ring_justified_if_falsified_usage_loss_ge_bp: 20
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.decision_daily
+  signal_column: asof_data_date
+  signal_derivation: 时滞读数=trade_date − asof_data_date；消费读数=gate_snapshot_json/
+    no_trade/no_trade_reason 与 package_set_json 在结论变更后的变化
+  target_source: 模拟盘净值损失面=c1_backtest.sim_daily_report（实测 2026-09-15..2026-10-01/
+    263 行/11 日）+ kline_index 000300 作行情底
+  data_window_evidence: |
+    命令原文：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      print(ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_backtest.decision_daily\").values)
+      print(ch_query_df(\"SELECT count(), uniq(run_id) FROM c1_backtest.node_verdict\").values)
+      print(ch_query_df(\"SELECT min(toString(report_date)),max(toString(report_date)),count() FROM c1_backtest.sim_daily_report\").values)"
+    实测：
+      c1_backtest.decision_daily trade_date 2026-09-16..2026-10-12 rows=138 days=9
+        （含 asof_data_date/market_state/state_confidence/budget_band_*/position_cap/
+         gate_snapshot_json/no_trade/no_trade_reason/degraded ⇒ 时滞与消费两读数列面齐备）
+        注意右端到 **2026-10-12**（晚于今日 2026-10-10 的窗口，应为计划日/前瞻条目），
+        取数须按 asof_data_date<=trade_date 过滤，否则把未来决策日当已发生=前视
+      c1_backtest.node_verdict rows=58（回传源，量级不足以做三臂）
+      c1_backtest.sim_daily_report 2026-09-15..2026-10-01 rows=263 days=11（损失度量底，仅 11 日）
+    缺什么（blocked_on_impl 的具体所指）：E2 **module_ref=null、red_reason=pending_gate**
+      （TDM 节点实测字段）⇒ 回传件本身尚未落地（不是缺数据，是缺实现）；
+      三臂消融中 baseline 与 two 个违规臂都需要能改写生效时点的开关，该开关不存在。
+    在册真源：TDM-E-L9-E2 algo_note_zh=「反馈数据边：今日考试结论次日方可进入下游修正/复裁
+      （时间分层铁律）；向L4回传证伪结论，向L0回传复考/退役建议；last_exam/evidence_refs留痕」
+    解锁条件：①回传实现落地（含生效时点开关）；②node_verdict 与 decision_daily 各积累
+      >=60 个可配对日。在此之前本卡只有一条现在就能跑的读数=**trade_date − asof_data_date 分布**
+      （纯描述性，不依赖实现），已在 pillars.lag_profile 写明优先级。
+  readiness: BLOCKED——回传实现未落地（pending_gate）；现仅可跑描述性时滞读数

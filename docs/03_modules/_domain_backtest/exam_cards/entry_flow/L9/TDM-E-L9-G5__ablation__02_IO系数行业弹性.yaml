@@ -1,0 +1,91 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-G5/ablation/02_IO系数行业弹性
+node_id: TDM-E-L9-G5
+family: ablation
+title_zh: 图谱·投入产出传导·IO 直接消耗系数作行业弹性的消融卡
+hypothesis: ig_io_edge（16,859 条，2020 版 153 部门直接消耗系数）若可用，应表现为：
+  上游行业冲击（板块超额收益）按 IO 系数加权后能解释下游行业后续收益的横截面差异。
+  判据=消融臂（有/无 IO 权重、随机权重）在 L1-S0（大宗价格行业弹性消费方）上的掉幅。
+ablation:
+  baseline: L1-S0 按现状使用 IO 弹性
+  arms:
+  - name: drop_io
+    action: 去掉 IO 权重（上游冲击等权传导）
+  - name: random_io
+    action: IO 系数随机重排（保持行和=1）
+  - name: self_only
+    action: 只留对角（本部门自身消耗），检验跨部门传导是否真带信息
+  metric:
+  - name: downstream_explain_r2
+    definition: 上游冲击→下游行业 5 日收益的解释力
+  - name: topn_hit
+    definition: 预测下游受益行业前 N 名的命中率
+  drop_threshold:
+    keep_if_drop_ge: 0.03
+    retire_if_drop_lt: 0.01
+window:
+  in_sample:
+  - '2020-04-01'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2020-04-01..2021-06-30
+    bear: 2021-07-01..2024-01-31
+    vintage_note: 2020 版系数天然滞后 ⇒ OOS 段（2024-2025）用同一系数=口径老化，
+      MUST 与 IS 段分开报告（"系数过期"是结构事实，不是考试失败）
+  frozen_note: 看数前冻结；部门↔行业映射表事前冻结
+buckets:
+  type: ablation_arm
+  'on': 消融臂 × 下游行业
+  min_obs_per_bucket: 30
+pillars:
+  response_monotonicity: 不适用；臂间掉幅有序（random_io 与 self_only 的掉幅应 >= drop_io，
+    若 random 不掉=系数本身无信息）
+  ic_floor: 不适用
+  lag_profile: 传导时滞=IO 是季度级结构，预期峰值 lag ∈[5,20] 日；lag<=1 判"同步=无传导信息"
+  stale_calibration_risk: 与 A16 同源风险（2020 口径滞后已登记），两卡结论互不重复计入
+  mapping_gate: 在册头号缺口=**部门码与 ig_node 两套 id 体系，边 100% 挂零（altdata_line WP-0.5）**
+    ⇒ 本卡所有臂都建在"边已挂接"之上，挂接率为 0 ⇒ 整卡不可执行（不是结论为负，是无法开考的物理原因）
+target:
+  primary: drop_io_r2_drop（去掉 IO 权重后的解释力掉幅）
+  secondary: mapping_coverage（部门↔行业挂接率，本卡的前置读数，必须先 >=0.6 才开考）
+  note: G5 出边 TDM:L6425（→L1-S0，payload=「大宗价格行业弹性」）；与 A16 同真源不同消费端，
+    A16 问"能否机械判定路径"、本卡问"喂给下游有没有增益"
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-G5.confidence
+preregistered_by: st-nightmine-20261010-L7
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  keep_if_drop_ge: 0.03
+oos_window_ref: *id001
+data_binding:
+  signal_table: PG:ig_io_edge（16,859 条直接消耗系数，2020 版 153 部门）
+  signal_column: coefficient
+  signal_derivation: 上游行业冲击 × IO 系数（行归一）→ 下游行业预期收益
+  target_source: v_kline_sector_880_named（period='1d'，CH 实测 729 码可用）
+  data_window_evidence: |
+    本车道正查（命令原文+输出摘录）：
+      python -m zephyr.library.lookup "投入产出" --limit 6
+      输出原文：(no results for '投入产出')
+      python -c "... ch_query_df(\"SELECT database,table FROM system.tables WHERE lower(table) LIKE '%io_edge%' OR lower(table) LIKE '%input_output%'\").values"
+      输出原文：[]
+      —— ⇒ IO 边不在 CH（在 PG ig_io_edge）；馆面对"投入产出"零命中=无业务资产条目。
+    在册事实（TDM-E-L9-G5 algo_note_zh + 出边 pit_proof）：ig_io_edge 16,859 条（2020 版 153 部门）；
+      **头号缺口=部门码与 ig_node 两套 id 体系，边 100% 挂零（altdata_line WP-0.5）**；
+      挂载消费=传导链证据链建成后生效；red_reason=not_built；
+      TDM:L6425 pit_proof=「IO系数2020口径滞后已登记」。
+    解锁条件（写死）：WP-0.5 部门 id 桥建成、挂接率读数 >=60%，随后先跑 mapping_coverage 再开考三臂。
+  readiness: BLOCKED——挂接率为 0（结构可算、无法开考），与 A16 共享同一施工前置
