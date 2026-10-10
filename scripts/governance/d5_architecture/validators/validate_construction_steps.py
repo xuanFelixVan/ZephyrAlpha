@@ -35,7 +35,8 @@
 #   不得支撑 automated / CV-09 枚举合法（verifiability 动态取词表、build_status|confidence|
 #   verified_scope|node_type|role|anchor_kind|wiring_status|red_reason|segment 值集校验）/
 #   CV-10 边与回边（自环须带 max_rounds_ref、反向边必须显式声明、主序无环检测、重复边、
-#   引用不存在节点）/ CV-11 §2.3 矩阵与 Step 段闭合 / CV-12 INV-1 反复制（>120 字 ∧
+#   引用不存在节点；CV-10R 节点 rollback_to 方向=只许指向编号更小环节，自环例外须带
+#   max_rounds_ref——fig14 骨架 §168 应然语义，R4 st-govjudge-20261010）/ CV-11 §2.3 矩阵与 Step 段闭合 / CV-12 INV-1 反复制（>120 字 ∧
 #   40 字滑窗命中政策正文）/ CV-13 计数只进 counts（散文写死数字判红）/ CV-14 handoff
 #   边界（executable/gates 恒空 + handoff_to 命中图11 骨架 + internal 禁 handoff_to）/
 #   CV-15 laws|boundary 非空 + boundary 逐字回源 / CV-16 状态自洽（automated⇒有 exec_source、
@@ -939,6 +940,29 @@ def validate_structure(
         oa, ob = order.get(a), order.get(b)
         if isinstance(oa, int) and isinstance(ob, int) and oa < ob:
             _err(errors, f"CV-10——回边必须指向更小 order（禁顺指向造环）: {a}->{b}")
+    # CV-10R（R4，st-govjudge-20261010）——节点 rollback_to[] 方向判据（fig14 骨架 §168 应然
+    # 语义："回边一律声明在 rollback_to[] 且只许指向编号更小的环节；自环例外须带 max_rounds
+    # 引用常量"）。判据单一真源=本校验器（gate 经 CONSTRUCTION-WORKFLOW-MAP 触发面自动生效，
+    # 禁在 gate 侧复制）；现图合规零违例（6 正回边+D14-10 自环带轮次常量），本条=防未来漂移。
+    for n in nodes:
+        if not isinstance(n, dict):
+            continue
+        nid = n.get("node_id")
+        o_self = order.get(nid)
+        for tgt in n.get("rollback_to") or []:
+            if tgt not in valid_ids:
+                _err(errors, f"CV-10R——{nid} rollback_to 引用不存在的节点: {tgt}")
+                continue
+            if tgt == nid:
+                if not max_rounds.get(nid):
+                    _err(errors, f"CV-10R——{nid} rollback_to 自环未带 max_rounds_ref（轮次常量引用），不得成为无界循环")
+                continue
+            o_t = order.get(tgt)
+            if isinstance(o_self, int) and isinstance(o_t, int) and o_self < o_t:
+                _err(
+                    errors,
+                    f"CV-10R——rollback_to 必须指向编号更小环节（fig14 骨架 §168 应然语义，禁顺指）: {nid}->{tgt}",
+                )
     cyc = _first_cycle({(a, b) for a, bs in forward.items() for b in bs})
     if cyc:
         _err(errors, "CV-10——主序边成环（主序必须是 DAG，环只能由 feedback_loops 承载）: " + " -> ".join(cyc))

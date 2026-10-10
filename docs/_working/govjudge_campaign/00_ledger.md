@@ -68,7 +68,13 @@ session: st-govjudge-20261010
 - 测试：tests/gov/governance/test_adjudication_routing_gate_a.py 4 例（章节/五判据/边界/版本+切换记录存在性锁）全绿；tests/ 豁免 creation token。
 - 权源口径：Owner 直令凌驾月度合并窗，按 v2.1.0 先例直落（切换记录即权源载体，无新裁定号）。
 
-## R4 CWM 回边判据（进行中）
+## R4 CWM 回边判据（完成）
+- CV-10R（判据单一真源=validate_construction_steps.validate_structure，gate 经 CONSTRUCTION-WORKFLOW-MAP 触发面五真源件自动生效，禁复制）：节点 `rollback_to[]` 只许指向编号更小环节；自环例外须带 max_rounds_ref；悬空引用必拦——fig14 骨架 §168 应然语义铸入机检。现图合规零违例（6 正回边+D14-10 自环带轮次常量，实扫实证），本条=防未来漂移。
+- 红蓝对抗：test_construction_workflow_map_gate.py 增 3 红案（顺指/无轮次自环/悬空）+既有蓝案 37/37 全绿。判别力自证：直调校验器 CV-10R 对 mutants 命中（D14-03→D14-09 顺指实红）。
+- frontend R2 warn→fail（G4-5 版本化）：check_frontend_map 判据升 fail；存量 10 条（F-STOCKQ-*/F-PAT-*，module_id 缺 manifest）标 `criteria_version: v1` 保持 warn 不重审（升级路径=逐页复核摘标）；auto_scanned 豁免不变。真仓 fail=0 钉扎（新违例进真仓即红）。FRONTEND-MAP gate 恒跑自动承接（判据单一真源，gate 零改）。
+- 测试：新增 test_check_frontend_map_r2_versioning.py 4 例（新条目 fail/v1 存量 warn/auto 豁免/真仓 fail=0）+frontend gate 件+construction gate 件同批 45 passed。
+- 净零：零新 gate（CV-10R=CV-10 扩展；R2=既有规则升级），版本化机制=条目级字段非新册。
+- 施工注记：工作树跑测必须带 PYTHONPATH=worktree\src（usercustomize 锚主区 src，裸跑 zephyr 解析主区=校验器旧码假象）；R9/R11 测试面核验不受染（受测码=工作树 scripts；zephyr 面 session_concurrency 同字节 diff 实证）。
 
 ## R5②③ 情绪快照器三册（进行中）
 
