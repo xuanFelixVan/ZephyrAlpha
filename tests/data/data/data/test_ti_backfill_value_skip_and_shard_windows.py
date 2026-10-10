@@ -371,3 +371,64 @@ class TestTimeoutShardMustLeaveState:
         monkeypatch.setattr(runner, "subprocess", _Peek())
         runner.run_shard("daily", 0, ["S1"], "2021-01-01", "2021-12-31")
         assert states[0] == "running", "第一个窗开跑前 state 就该存在"
+
+
+class TestRetiredColumnsExitCompareFace:
+    """T1 闭环面（裁定#489①/#494②）：退役指标输出列退出值级比对。
+
+    病：T1 停算后新算行退役列为 NULL 而存量是旧值 ⇒ 整行指纹必不等 ⇒ P1 永不跳过
+    ⇒ 夜跑全史重灌不停 + T2 定点重算被下一夜 NULL 版本掩埋。
+    红证：摘掉退出面（excluded=空）⇒ 只差退役列的行回到"判变必写"=修复前行为。
+    """
+
+    COLS = ["symbol", "trade_time", "close", "wad", "squeeze_on"]
+
+    @staticmethod
+    def _result(rows):
+        from zephyr.data.provider_base import FetchResult
+
+        return FetchResult(
+            table="c1_market.technical_indicator",
+            columns=list(TestRetiredColumnsExitCompareFace.COLS),
+            rows=rows,
+            last_key="2026-10-10",
+            elapsed_sec=0.0,
+            error=None,
+        )
+
+    def test_resolve_compare_columns_excludes_retired_outputs(self, monkeypatch):
+        monkeypatch.setattr(
+            backfill, "_retired_compare_excluded", lambda: frozenset({"wad", "squeeze_on", "squeeze_mom"})
+        )
+        compare = backfill.resolve_compare_columns(self.COLS, frozenset({"close", "wad", "squeeze_on"}))
+        assert compare == ["close"]
+
+    @staticmethod
+    def _skip_via_batch(monkeypatch, excluded, new_wad, base_wad):
+        """走 value_skip_batch 全链（resolve_compare_columns→fetch 基→分堆），fetch 基 mock 掉。"""
+        monkeypatch.setattr(backfill, "_retired_compare_excluded", lambda: excluded)
+        monkeypatch.setattr(
+            backfill,
+            "fetch_base_for_batch",
+            lambda table, period, rows, columns, compare: {("000001", "2025-06-06"): [12.34, base_wad]},
+        )
+        result = TestRetiredColumnsExitCompareFace._result([("000001", "2025-06-06", 12.34, new_wad)])
+        out, stats = backfill.value_skip_batch(
+            result, "daily", frozenset({"close", "wad"}), "c1_market.technical_indicator"
+        )
+        return out, stats
+
+    def test_row_differing_only_on_retired_column_is_skipped(self, monkeypatch):
+        """只差退役列（wad 旧值 vs NULL）⇒ 指纹等 ⇒ 整批可跳（P1 真生效）。"""
+        out, stats = self._skip_via_batch(monkeypatch, frozenset({"wad"}), None, -2416.24)
+        assert out is None and stats["skipped"] == 1
+
+    def test_remove_exclusion_red_same_row_counts_as_changed(self, monkeypatch):
+        """红证锚：摘掉退出面 ⇒ 同一行判"变"必写（=NULL 灌回、重灌不停）。"""
+        out, stats = self._skip_via_batch(monkeypatch, frozenset(), None, -2416.24)
+        assert out is not None and len(out.rows) == 1 and stats["skipped"] == 0
+
+    def test_real_registry_retired_outputs_cover_wad_and_squeeze(self):
+        """真册 sanity：wad/squeeze_on/squeeze_mom 确在停算面（与计算腿同源）。"""
+        excluded = backfill._retired_compare_excluded()
+        assert {"wad", "squeeze_on", "squeeze_mom"} <= excluded
