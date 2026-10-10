@@ -67488,6 +67488,23 @@ creation_tokens:
   capability: us_futures_intraday
   created_by: AI-P2-W4A
 - file: tests/zephyr/regime/__init__.py
+- file: docs/_working/datalane_campaign/00_ledger.md
+  token: datalane-campaign-00-ledger-20261010
+  capability: datalane_campaign
+  created_by: st-datalane-20261010
+- file: docs/_working/datalane_campaign/02_t2_squeeze_wad_d7_application.md
+  token: datalane-campaign-02-t2-squeeze-wad-d7-application-20261010
+  capability: datalane_campaign
+  created_by: st-datalane-20261010
+- file: docs/_working/datalane_campaign/03_t4_cascade_gate_plan.md
+  token: datalane-campaign-03-t4-cascade-gate-plan-20261010
+  capability: datalane_campaign
+  created_by: st-datalane-20261010
+  merge_evaluation: "数据车道班战役三件（台账/D7申请包/T4验门方案），同批登记"
+- file: docs/_working/datalane_campaign/99_delivery.md
+  token: datalane-campaign-99-delivery-20261010
+  capability: datalane_campaign
+  created_by: st-datalane-20261010
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912

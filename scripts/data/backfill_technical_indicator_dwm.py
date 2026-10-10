@@ -266,8 +266,27 @@ def split_unchanged_rows(
 
 
 def resolve_compare_columns(columns: list[str], numeric_all: frozenset[str]) -> list[str]:
-    """本批可比值列 = 批内列 ∩ 表内 Nullable(Float64) 列 − 键列/元数据列。"""
-    return [c for c in columns if c in numeric_all and c not in _NON_COMPARED_COLUMNS]
+    """本批可比值列 = 批内列 ∩ 表内 Nullable(Float64) 列 − 键列/元数据列 − 退役指标列。
+
+    T1 闭环面（裁定#489①/#494②）：退役/停用指标输出列退出值级比对。不退出的后果=
+    新算行该 15 列为 NULL 而存量是旧值 ⇒ 每行指纹必不等 ⇒ P1 永不跳过 ⇒ 夜跑全史重灌
+    不停（dexp"只涨不缩"病）且 T2 定点重算会被下一夜的 NULL 版本掩埋。判据真源与
+    计算腿同一注册册读径（internal_compute_provider._load_retired_indicator_outputs）。
+    """
+    retired = _retired_compare_excluded()
+    return [c for c in columns if c in numeric_all and c not in _NON_COMPARED_COLUMNS and c not in retired]
+
+
+def _retired_compare_excluded() -> frozenset[str]:
+    """REG-IND-001 status!=active 条目的输出列（与计算腿停算面同源同缓存）。"""
+    try:
+        from zephyr.data.implementations.internal_compute_provider import (
+            _load_retired_indicator_outputs,
+        )
+
+        return _load_retired_indicator_outputs()
+    except Exception:  # noqa: BLE001 — 册读不到=比对面照旧（宁多写不少写，同 P1 取向）
+        return frozenset()
 
 
 def _neutral_stats(rows_in: int) -> dict:
