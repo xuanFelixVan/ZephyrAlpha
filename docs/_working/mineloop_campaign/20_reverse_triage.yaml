@@ -1,0 +1,155 @@
+---
+ttl: task_bound
+title: 矿考循环班·31 行分诊册（T1 反向复审车道头号件，only-append）
+created: '2026-10-11T04:15'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+schema_version: mineloop-reverse-triage/v1
+generated_by: 矿考循环班 T1 反向复审车道（分诊面由 dev 现册＋卡件机读生成，禁手抄指标；重跑同命令可复现）
+generated_at: 2026-10-11T04:15
+order_clause: 日班总令 T1 头号：31 行分诊册（A 类 4 张立案／B 类旁证挂靠／C 类负结果库，only-append）
+red_line_self_check:
+  rows_total_in_register: 41
+  distinct_scored_cards: 28
+  A_count: 4
+  share_of_distinct_cards: 0.143
+  historical_rows_rejudged: 0
+  bulk_reflip_forbidden: 禁全翻 31 张＝本案仅立 4 张（占已考卡 14.3%），其余挂靠或入库，零张原地重判
+classification_rule:
+  hard_gate_for_A: is_oos_same_sign（ic_mean 与 oos_ic 均有效且同号）——反向复审要复的是『稳定反向』，IS 正 OOS 负那一类不立案（改列 unstable 清单，立案即是在多重比较上再赌一次）
+  direction_filter: 候选池只取 ic_mean<0 的卡（本案审的是与母卡先验反向的负结果）
+  other_gates:
+    regime_same_sign: 两段同号
+    n_ge_1200: 样本≥1200 日（保证事件日按族内下限 200 有可行分母）
+    mono_face_present: 分桶响应面有读数
+  ranking: 通过闸数降序 → ic_mean 升序（越负越前）→ card_id 字典序（可复现）
+  same_proposition_dedup: 五元组指标全等（ic/oos/mono/n/regime）＝同一底座序列的母卡口径与导生口径，只立一张，另一张归 B
+  A_cap: 4
+  yield_note: 四闸全过的负向卡实测 2 张（05/06）；第 3、4 张取自三闸池，二者放松的都是 regime_same_sign 同一闸，反号事实逐张写进 failed_gates/known_weakness 不藏。若 Owner 要求严格四闸，A=2 张——两套口径都留档。
+  gate4_positive_direction_excluded:
+  - TDM-E-L9-A09/calibration/02_快讯情感日均值
+  unstable_IS_OOS_flip_not_escalated:
+  - TDM-E-L1-S0-1/calibration/02_新闻情绪时滞
+  - TDM-E-L1-S1/calibration/02_指数趋势位置
+  - TDM-E-L1-S2/calibration/02_涨停家数
+  - TDM-E-L1-S2/calibration/03_跌停家数
+  - TDM-E-L1-S2/calibration/04_炸板率
+  - TDM-E-L1-S2/calibration/05_封板率
+  - TDM-E-L1-S2/calibration/08_净广度
+  - TDM-E-L1-S2/calibration/09_limit_up_count_derived
+  - TDM-E-L1-S2/calibration/10_limit_down_count_derived
+  - TDM-E-L1-S2/calibration/11_broken_board_rate_derived
+  - TDM-E-L1-S2/calibration/12_sealed_board_rate_derived
+  - TDM-E-L1-S2/calibration/14_consec_limit_count_ge2_derived
+  - TDM-E-L1-S2/calibration/15_net_breadth_derived
+  - TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow
+  - TDM-E-L2-02/calibration/02_接棒撤离榜
+  - TDM-E-L2-03/calibration/02_调整周期进度
+  - TDM-E-L9-A04/calibration/02_估值ERP分位日增量
+A_class:
+- card_id: TDM-E-L1-S2/calibration/06_连板最高高度
+  ic_mean: -0.0184
+  oos_ic: -0.0624
+  mono_spearman: 0.079
+  n: 1622
+  regime_ic:
+    bull: -0.0629
+    bear: 0.0161
+  gates_passed: 3
+  failed_gates:
+  - regime_same_sign
+  known_weakness: 牛熊两段反号：新版本卡面必须分段出数，禁只报全样本
+  four_swaps_required:
+  - ①假设面写经济学机制＋与母卡关系声明（本卡是母卡先验的反向复述，来源=在册负结果，禁事后加冕）
+  - ②判据形态换事件开关卡（族内 judge_event：事件日 vs 非事件日次日收益差＋Welch t，IS/OOS 两窗＋牛熊分列）
+  - ③阈值碰数前冻（事件日定义取『过去 250 日滚动分位>90%』一类自标定式，禁绝对阈值拍数）
+  - ④卡面预写『一轮为限，再挂即族归档』
+- card_id: TDM-E-L1-S3/calibration/05_limit_up_premium_derived
+  ic_mean: -0.0515
+  oos_ic: -0.0025
+  mono_spearman: -0.212
+  n: 1619
+  regime_ic:
+    bull: -0.0846
+    bear: -0.0387
+  gates_passed: 4
+  failed_gates: []
+  known_weakness: 无
+  four_swaps_required:
+  - ①假设面写经济学机制＋与母卡关系声明（本卡是母卡先验的反向复述，来源=在册负结果，禁事后加冕）
+  - ②判据形态换事件开关卡（族内 judge_event：事件日 vs 非事件日次日收益差＋Welch t，IS/OOS 两窗＋牛熊分列）
+  - ③阈值碰数前冻（事件日定义取『过去 250 日滚动分位>90%』一类自标定式，禁绝对阈值拍数）
+  - ④卡面预写『一轮为限，再挂即族归档』
+- card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+  ic_mean: -0.0636
+  oos_ic: -0.07
+  mono_spearman: -0.479
+  n: 1619
+  regime_ic:
+    bull: -0.0973
+    bear: -0.0555
+  gates_passed: 4
+  failed_gates: []
+  known_weakness: 无
+  four_swaps_required:
+  - ①假设面写经济学机制＋与母卡关系声明（本卡是母卡先验的反向复述，来源=在册负结果，禁事后加冕）
+  - ②判据形态换事件开关卡（族内 judge_event：事件日 vs 非事件日次日收益差＋Welch t，IS/OOS 两窗＋牛熊分列）
+  - ③阈值碰数前冻（事件日定义取『过去 250 日滚动分位>90%』一类自标定式，禁绝对阈值拍数）
+  - ④卡面预写『一轮为限，再挂即族归档』
+- card_id: TDM-E-L2-09/calibration/02_板块催化剂密度
+  ic_mean: -0.0279
+  oos_ic: -0.0336
+  mono_spearman: -0.721
+  n: 2367
+  regime_ic:
+    bull: 0.0003
+    bear: -0.029
+  gates_passed: 3
+  failed_gates:
+  - regime_same_sign
+  known_weakness: 牛熊两段反号：新版本卡面必须分段出数，禁只报全样本
+  four_swaps_required:
+  - ①假设面写经济学机制＋与母卡关系声明（本卡是母卡先验的反向复述，来源=在册负结果，禁事后加冕）
+  - ②判据形态换事件开关卡（族内 judge_event：事件日 vs 非事件日次日收益差＋Welch t，IS/OOS 两窗＋牛熊分列）
+  - ③阈值碰数前冻（事件日定义取『过去 250 日滚动分位>90%』一类自标定式，禁绝对阈值拍数）
+  - ④卡面预写『一轮为限，再挂即族归档』
+B_class旁证挂靠:
+- TDM-E-L1-S2/calibration/02_涨停家数
+- TDM-E-L1-S2/calibration/03_跌停家数
+- TDM-E-L1-S2/calibration/04_炸板率
+- TDM-E-L1-S2/calibration/05_封板率
+- TDM-E-L1-S2/calibration/08_净广度
+- TDM-E-L1-S2/calibration/09_limit_up_count_derived
+- TDM-E-L1-S2/calibration/10_limit_down_count_derived
+- TDM-E-L1-S2/calibration/11_broken_board_rate_derived
+- TDM-E-L1-S2/calibration/12_sealed_board_rate_derived
+- TDM-E-L1-S2/calibration/13_max_consec_limit_height_derived
+- TDM-E-L1-S2/calibration/14_consec_limit_count_ge2_derived
+- TDM-E-L1-S2/calibration/15_net_breadth_derived
+C_class负结果库:
+- TDM-E-L1-S0-1/calibration/02_新闻情绪时滞
+- TDM-E-L1-S0/calibration/06_m1m2_scihjorsc_longwindow
+- TDM-E-L1-S0/calibration/07_margin_flow_shortwindow
+- TDM-E-L1-S1/calibration/02_指数趋势位置
+- TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow
+- TDM-E-L2-02/calibration/02_接棒撤离榜
+- TDM-E-L2-03/calibration/02_调整周期进度
+- TDM-E-L2-04-2/calibration/02_虹吸态成交集中度
+- TDM-E-L3-06/calibration/02_地量档位开关
+- TDM-E-L9-A04/calibration/02_估值ERP分位日增量
+- TDM-E-L9-A09/calibration/02_快讯情感日均值
+- TDM-X-S1-02/comparison/02_dualwindow
+walk_forward_clause_target:
+  card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+  clause: 每积 20 个新交易日自动复评 OOS；连续两窗与 IS 同向才算确认（单窗不算）——写进新版本卡面预注册，禁跑完再补
+  implemented_here: 判据面已落执行核族内（judge_event 的 event_oos_gap_same_sign 柱；event_days_min 族内下限 200，卡面往松不采）
+  not_implemented_here: 『每 20 新交易日』的触发面未落：核对器禁 cron/Timer，须事件触发（挂在数据落地事件上）＝T7 接线工单同批，本班不自建计划任务
+compliance:
+  cards_modified: 0
+  scores_modified: 0
+  ch_queries: 0
+  registries_modified: 0
+  files_created: 1
+  code_modified_by_this_file: 0

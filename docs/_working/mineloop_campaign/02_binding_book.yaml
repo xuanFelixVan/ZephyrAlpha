@@ -224,3 +224,56 @@ entries:
     分板率 ladder 档（1→2/2→3/>=3→+1）需卡 13/14 streak 串＝另一建档面，本绑定未实现，
     如实写进运行附注（未判柱清单）。
     未判柱清单：IC_IR 半边、lag_profile(t+1..t+3)、promotion_ladder。
+- card_id: TDM-E-L1-S3/calibration/07_promotion_rate_high_event_v2
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_op: promotion_rate_from_limit_panel
+    base_args:
+      hfq_table: c1_market.kline_daily_hfq
+      limit_table: c1_market.stk_limit
+      warmup_start: '2018-09-01'
+      end: '2025-09-09'
+      limit_tol: 0.002
+      min_set_size: 20
+    pctile_window: 250
+    pct_threshold: 0.8
+  prose_quote: "过去 250 日**滚动**分位 > 0.80"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    T1 反向复审车道 A 类头号卡（分诊册 20_reverse_triage.yaml）。基序列复用母卡 06 同一算子
+    （禁第二取数路），事件日=历史滚动分位>0.80，非事件日=其余；阈值 0.80 由"族内事件日下限 200
+    ÷ 可用日 1369 ⇒ 频率须 ≥14.6%"反推取 20% 留余量，未观察任何收益读数（碰数前冻）。
+    判据走族内新落的事件开关判官（judge_event：gap≤0 且 Welch t≤-2，OOS 同号，两段同号，n≥200）。
+- card_id: TDM-E-L1-S3/calibration/08_limit_up_premium_high_event_v2
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_op: limit_up_premium_close_mean
+    base_args:
+      hfq_table: c1_market.kline_daily_hfq
+      limit_table: c1_market.stk_limit
+      warmup_start: '2018-09-01'
+      end: '2025-09-09'
+      limit_tol: 0.002
+      min_set_size: 20
+    pctile_window: 250
+    pct_threshold: 0.8
+  prose_quote: "过去 250 日**滚动**分位 > 0.80"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    A 类第二张。基序列=母卡 05 同一算子（收盘口径截面均值）。已知弱点写在卡面：母卡 OOS 读数近零
+    （-0.0025），本卡若一轮未确认即族归档，禁改分位阈再考。
+- card_id: TDM-E-L1-S2/calibration/16_max_streak_high_event_v2
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: max_streak_height.csv
+    pctile_window: 250
+    pct_threshold: 0.8
+  prose_quote: "过去 250 日**滚动**分位 > 0.80"
+  reviewed_by: st-mineloop-20261010
+  review_note: |
+    A 类第三张（连板高度命题：06 母卡口径与 13 导生口径在册指标逐字段全等＝同一命题，分诊规则去重后
+    立 06 口径这一张）。底座走本仓已入库 CSV（零 CH）。已知弱点写在卡面：母卡两段牛熊反号
+    （bull -0.063 / bear +0.016），event_regime_gap_same_sign 为硬柱，分段反号即 fail。

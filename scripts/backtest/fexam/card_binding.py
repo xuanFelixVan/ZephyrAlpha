@@ -716,8 +716,61 @@ def op_promotion_rate(card: dict, args: dict) -> tuple[pd.Series, dict]:
     return rate, ev
 
 
+def _event_base_series(card: dict, args: dict) -> tuple[pd.Series, dict]:
+    """事件底座的基序列取数：base_op=已在册算子名，base_csv=本仓已入库派生序列文件名（二选一）。
+
+    禁在此重写第三条取数路（第二真源）；基算子自己的绑定凭据原样并入 ev（前缀 base_）。"""
+    op, csv = args.get("base_op"), args.get("base_csv")
+    if bool(op) == bool(csv):
+        raise ValueError("event_flag 底座需 base_op 与 base_csv 恰选其一")
+    if op:
+        spec = OPS.get(op)
+        if spec is None:
+            raise ValueError(f"base_op_not_in_ops_book:{op}")
+        ser, ev = spec["fn"](card, args.get("base_args") or {})
+        return ser, {
+            "base": f"op:{op}",
+            "base_prose_quote": spec["quote_key"],
+            "base_rows": int(len(ser)),
+            "base_op_evidence": {k: v for k, v in ev.items() if k in ("rows", "rows_kept", "codes", "panel_rows")},
+        }
+    ser = _load_csv_series(csv)
+    if ser is None or len(ser) == 0:
+        raise ValueError(f"base_csv_absent_or_empty:{csv}")
+    return ser, {"base": f"csv:{csv}", "base_rows": int(len(ser))}
+
+
+def op_event_flag_rolling_pctile(card: dict, args: dict) -> tuple[pd.Series, dict]:
+    """事件开关底座（日班总令 T1·四换②的机判底座）：基序列二值化为「过去 window 日滚动分位 > p」的 0/1 事件日。
+
+    分位一律用**历史滚动**（含当日，min_periods=window，暖机段无读数不冒充事件）：
+    全样本分位＝用未来数据定过去的门槛，翻成事后挪门柱，禁。
+    基序列/窗/分位阈三个量都由绑定册显式给出并在卡面有原文凭据（本算子零自创）。"""
+    ser, ev = _event_base_series(card, args)
+    ser = ser.sort_index().dropna()
+    win, thr = int(args["pctile_window"]), float(args["pct_threshold"])
+    pct = _rolling_pctile(ser, win)
+    flag = pd.Series(0.0, index=ser.index).where(pct.isna(), (pct > thr).astype(float))
+    flag = flag[pct.notna()]
+    ev.update(
+        signal_col=card.get("data_binding", {}).get("signal_column"),
+        pctile_window=win,
+        pct_threshold=thr,
+        rows=len(flag),
+        n_event_days=int((flag > 0).sum()),
+        event_share=float((flag > 0).mean()),
+        pit_statement="事件判定只用 t 及以前的基序列（rolling 窗含当日），次日收益由执行器 shift(-1) 吃",
+        warmup_dropped_days=int(len(ser) - len(flag)),
+    )
+    return flag, ev
+
+
 #: 算子册（每格都逐字引用卡面 signal_derivation 原文，禁自创口径；新增算子须同步测试）
 OPS: dict[str, dict] = {
+    "event_flag_rolling_pctile": {
+        "fn": op_event_flag_rolling_pctile,
+        "quote_key": "滚动分位",
+    },
     "limit_up_premium_close_mean": {
         "fn": op_limit_up_premium_close_mean,
         "quote_key": "全部比值在后复权空间内计算",
@@ -878,9 +931,13 @@ def build_vocab_census(cards_dir: Path) -> dict:
     硬约束：零写阈值（键值属卡面冻结面，改值=新版本卡走 G4-5）、零改判据、零 CH、零分数册与卡件写。"""
     from collections import Counter
 
-    from fexam.calibration_exam import _CALIBRATION_JUDGED_KEYS, _UNION_PILLAR_KEYS, pillars_route
+    from fexam.calibration_exam import _CALIBRATION_JUDGED_KEYS, _EVENT_KNOWN_KEYS, _UNION_PILLAR_KEYS, pillars_route
 
-    vocab = {"series": set(_CALIBRATION_JUDGED_KEYS), "dual_arm": set(_UNION_PILLAR_KEYS)}
+    vocab = {
+        "series": set(_CALIBRATION_JUDGED_KEYS),
+        "dual_arm": set(_UNION_PILLAR_KEYS),
+        "event": set(_EVENT_KNOWN_KEYS),
+    }
     rows: list[dict] = []
     unk_keys: Counter = Counter()
     tally = {"route": Counter(), "family": Counter(), "status": Counter()}
@@ -925,7 +982,7 @@ def build_vocab_census(cards_dir: Path) -> dict:
         "vocab_sources": {
             "series": sorted(vocab["series"]),
             "dual_arm": sorted(vocab["dual_arm"]),
-            "note": "两侧词表直读执行核常量 _CALIBRATION_JUDGED_KEYS（校准判官）/_UNION_PILLAR_KEYS（双臂判官，03:3x 裁定①并为并集），本件不复制定义",
+            "note": "三侧词表直读执行核常量 _CALIBRATION_JUDGED_KEYS（校准判官）/_UNION_PILLAR_KEYS（双臂判官，03:3x 裁定①并为并集），本件不复制定义",
         },
         "card_total": n_card,
         "cards_without_numeric_face": n_empty,

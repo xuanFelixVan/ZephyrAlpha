@@ -396,6 +396,19 @@ _UNION_PILLAR_KEYS = frozenset(_COMPARISON_KNOWN_KEYS | _CALIBRATION_JUDGED_KEYS
 #: 不减共有键的话，一张纯校准卡会因带 oos_same_sign 被误送双臂（实测由 test_calibration_* 抓住）。
 _NAV_ONLY_PILLAR_KEYS = frozenset(_COMPARISON_KNOWN_KEYS - _CALIBRATION_JUDGED_KEYS)
 
+#: 事件开关判官词表（矿考日班 T1·"判据形态换事件开关卡"；族内唯一真源，路由与普查件共用，禁第二份）
+_EVENT_KNOWN_KEYS = frozenset(
+    {
+        "event_gap_min_bp",
+        "event_t_stat_min",
+        "event_gap_max_bp",
+        "event_t_stat_max",
+        "event_days_min",
+        "event_oos_gap_same_sign",
+        "event_regime_gap_same_sign",
+    }
+)
+
 
 def pillars_route(card: dict) -> str:
     """判官路由唯一真源：只看卡面冻结的门柱键集，**不看 family**（统筹 2026-10-11 03:3x 裁定①扩面）。
@@ -404,6 +417,9 @@ def pillars_route(card: dict) -> str:
       ——即卡面确实有只有配对面能算的柱子；两词表共有的 oos_same_sign 不算；混形卡（校准键＋NAV 键）也进本支，
       其校准侧柱子由 _judge_comparison 在**开臂** IC 面上评（开臂＝被测装置那一臂；卡面无从二选一，
       取臂选择随裁定入册留痕，禁事后换臂）。
+    'event'＝事件开关判官（judge_event：事件日 vs 非事件日次日收益差＋Welch t，IS/OOS 两窗＋牛熊分列）：
+      键集含事件专有键（_EVENT_KNOWN_KEYS）且不含配对侧键——含 NAV 柱者优先双臂（配对面也出 gap 类读数，
+      禁两头抢判官）；
     'series'＝校准判官（judge，series/panel 两条面）：键集全韦校准词表；键集为空（缺面错由 judge()
       报准，不给它编一个"需双臂"的假错）；以及**纯越表卡**（一个配对侧键都没有，
       如 CAR t 统计/独立观测数那一类）——送去双臂只会先报"需双臂接线"这条假错，
@@ -416,7 +432,11 @@ def pillars_route(card: dict) -> str:
         return "series"
     if pn <= _CALIBRATION_JUDGED_KEYS:
         return "series"
-    return "dual_arm" if pn & _NAV_ONLY_PILLAR_KEYS else "series"
+    if pn & _NAV_ONLY_PILLAR_KEYS:
+        return "dual_arm"
+    if pn & _EVENT_KNOWN_KEYS:
+        return "event"
+    return "series"
 
 
 def _judge_calibration_face(p: dict, m: dict, *, sample_gate: bool = True) -> list[str]:
@@ -475,6 +495,140 @@ def judge(card: dict, m: dict) -> tuple[str, list[str]]:
     return ("pass", []) if not fails else ("fail", fails)
 
 
+def _welch_t(a: np.ndarray, b: np.ndarray) -> float:
+    """Welch 两样本 t（不等方差）＝事件面显著性唯一实现（禁第二真源）。
+
+    仓内另有三处一次性脚本各抄了一遍 Welch/`ttest_ind`（validate_p0_discmination 等），
+    本函数是考试族内的正源；一次性驱动器日后再收编（§4.2 同域重复簇→收敛唯一），本班不代改他人件。
+    scipy 不引入（族内零新依赖）：t = (mean_a − mean_b) / sqrt(va/na + vb/nb)，方差的自由度不校正
+    （大样本 n≥200 门槛下与 Welch 渐近同值，卡面不要求 p 值精确到小样本校正）。"""
+    na, nb = int(len(a)), int(len(b))
+    if na < 2 or nb < 2:
+        return float("nan")
+    va, vb = float(np.var(a, ddof=1)), float(np.var(b, ddof=1))
+    den = (va / na + vb / nb) ** 0.5
+    if den == 0.0:
+        return float("nan")
+    return float((float(np.mean(a)) - float(np.mean(b))) / den)
+
+
+def _event_face(sig: pd.Series, nxt: pd.Series, lo: str, hi: str) -> dict:
+    """(窗内) 事件日 vs 非事件日的次日收益差面：gap_bp/t/n（缺窗或样本为零→nan 不冒判）。"""
+    df = pd.concat({"e": sig, "r": nxt}, axis=1).dropna()
+    df = df[(df.index >= pd.Timestamp(lo)) & (df.index <= pd.Timestamp(hi))]
+    ev = df.loc[df["e"] > 0, "r"].to_numpy(dtype=float)
+    ne = df.loc[df["e"] <= 0, "r"].to_numpy(dtype=float)
+    if len(ev) == 0 or len(ne) == 0:
+        return {
+            "n_event": int(len(ev)),
+            "n_none": int(len(ne)),
+            "mean_event": float("nan"),
+            "mean_none": float("nan"),
+            "gap_bp": float("nan"),
+            "t_stat": float("nan"),
+        }
+    me, mn = float(np.mean(ev)), float(np.mean(ne))
+    return {
+        "n_event": int(len(ev)),
+        "n_none": int(len(ne)),
+        "mean_event": me,
+        "mean_none": mn,
+        "gap_bp": (me - mn) * 10000.0,
+        "t_stat": _welch_t(ev, ne),
+    }
+
+
+def _event_metrics(signal: pd.Series, target: pd.Series, card: dict) -> dict:
+    """事件开关面：t 日事件标记对 t+1 日目标收益（与 series 路 PIT 同口径，禁在此处换对齐）。"""
+    sig = signal.sort_index()
+    tgt = target.sort_index().shift(-1)
+    w = card.get("window") or {}
+    is_w = w.get("in_sample") or []
+    oos_w = card.get("oos_window_ref") or w.get("oos") or []
+    if len(is_w) != 2 or len(oos_w) != 2:
+        raise _ToolError(
+            "事件卡需 window.in_sample 与 oos_window_ref（或 window.oos）各两日期", {"card_id": card.get("card_id")}
+        )
+    full = _event_face(sig, tgt, str(sig.index.min().date()), str(sig.index.max().date()))
+    seg: dict[str, dict] = {}
+    for name, span in (w.get("regimes") or {}).items():
+        a, b = _span_dates(span)
+        seg[name] = _event_face(sig, tgt, a, b)
+    out = {
+        "gap_bp": full["gap_bp"],
+        "t_stat": full["t_stat"],
+        "n_event": full["n_event"],
+        "n_none": full["n_none"],
+        "mean_event": full["mean_event"],
+        "mean_none": full["mean_none"],
+        "is_gap_bp": _event_face(sig, tgt, str(is_w[0]), str(is_w[1]))["gap_bp"],
+        "oos": _event_face(sig, tgt, str(oos_w[0]), str(oos_w[1])),
+        "regime_gap": seg,
+        "windows": {"is": [str(is_w[0]), str(is_w[1])], "oos": [str(oos_w[0]), str(oos_w[1])]},
+    }
+    return out
+
+
+def judge_event(card: dict, m: dict) -> tuple[str, list[str]]:
+    """事件开关判（族内零裁量，一票否决；未知键 fail-closed 与两族同款）。
+
+    分母门槛（统筹日班令：事件日 n≥200）＝**族内下限**，卡面只能往严不能往松：
+    卡面写了更低的 event_days_min 也按 200 拦（写进 reason，禁静默放宽）。"""
+    p = card.get("pillars_numeric")
+    if not p:
+        raise _ToolError("卡缺 pillars_numeric（冻结判据机判面）", {"card_id": card.get("card_id")})
+    unknown = set(p) - set(_EVENT_KNOWN_KEYS)
+    if unknown:
+        return "fail", [f"未支持判据键（事件面待扩，fail-closed）: {sorted(unknown)}"]
+    fails: list[str] = []
+    floor = max(200, int(p.get("event_days_min", 200)))
+    n_ev = int(m.get("n_event") or 0)
+    if "event_days_min" in p and n_ev < floor:
+        fails.append(f"事件日样本 {n_ev} < 门槛 {floor}（族内下限 200，卡面往松不采）")
+    gap_is = m.get("is_gap_bp")
+    if "event_gap_min_bp" in p:
+        if gap_is != gap_is:
+            fails.append("is_gap_bp nan（IS 窗事件面不足）")
+        elif gap_is < float(p["event_gap_min_bp"]):
+            fails.append(f"is_gap_bp {gap_is:.2f}bp < {p['event_gap_min_bp']}")
+    gap_max = p.get("event_gap_max_bp")
+    if gap_max is not None:
+        # 反向命题（事件日次日更差）用**上界**表达：要求 gap ≤ 上界，禁把方向反过来重定义键义
+        if gap_is != gap_is:
+            fails.append("is_gap_bp nan（IS 窗事件面不足）")
+        elif gap_is > float(gap_max):
+            fails.append(f"is_gap_bp {gap_is:.2f}bp > {gap_max}（负向命题要求更负）")
+    ts = m.get("t_stat")
+    ts_max = p.get("event_t_stat_max")
+    if ts_max is not None:
+        if ts != ts:
+            fails.append("t_stat nan（两组方差为零或样本不足）")
+        elif ts > float(ts_max):
+            fails.append(f"t_stat {ts:.3f} > {ts_max}（负向命题要求更显著）")
+    if "event_t_stat_min" in p:
+        if ts != ts:
+            fails.append("t_stat nan（两组方差为零或样本不足）")
+        elif ts < float(p["event_t_stat_min"]):
+            fails.append(f"t_stat {ts:.3f} < {p['event_t_stat_min']}")
+    oos_n = int((m.get("oos") or {}).get("n_event") or 0)
+    if p.get("event_oos_gap_same_sign") and oos_n < floor:
+        # 族内下限同样套在**被用来确认的那一窗**上：OOS 只有 79-104 个事件日时，"OOS 同号"不构成确认
+        fails.append(f"oos 窗事件日 {oos_n} < 门槛 {floor}（确认窗同样受族内下限约束，禁小窗冒确认）")
+    oos = (m.get("oos") or {}).get("gap_bp")
+    if p.get("event_oos_gap_same_sign") and oos_n >= floor:
+        if oos != oos or gap_is != gap_is:
+            fails.append("oos_gap nan（OOS 窗事件面不足，同号无从判）")
+        elif gap_is != 0 and (oos > 0) != (gap_is > 0):
+            fails.append(f"oos_gap 反号 oos={oos:.2f}bp is={gap_is:.2f}bp")
+    if p.get("event_regime_gap_same_sign"):
+        vals = [v.get("gap_bp") for v in (m.get("regime_gap") or {}).values() if v.get("gap_bp") == v.get("gap_bp")]
+        if len(vals) < 2:
+            fails.append(f"regime 有效段 {len(vals)} <2（牛熊分列无从判）")
+        elif len({v > 0 for v in vals}) > 1:
+            fails.append(f"regime_gap 反号 {m.get('regime_gap')}")
+    return ("pass", []) if not fails else ("fail", fails)
+
+
 def run_card(
     card_path: str | Path,
     *,
@@ -513,6 +667,9 @@ def run_card(
             )
         m = _comparison_metrics(signal, signal_b, target, card)
         verdict, fails = _judge_comparison(card, m)
+    elif used_nav is False and pillars_route(card) == "event":
+        m = _event_metrics(signal, target, card)
+        verdict, fails = judge_event(card, m)
     else:
         m = _series_metrics(signal, target, card) if kind == "series" else _panel_metrics(signal, target, card)
         verdict, fails = judge(card, m)
@@ -520,12 +677,24 @@ def run_card(
     if used_nav:
         oos_ok = (m.get("ic_delta_oos") == m.get("ic_delta_oos")) and not any("oos" in f for f in fails)
         seg = m.get("arm_open", {}).get("regime_ic") or {}
+    elif pillars_route(card) == "event":
+        oos_ok = ((m.get("oos") or {}).get("gap_bp") == (m.get("oos") or {}).get("gap_bp")) and not any(
+            "oos" in f for f in fails
+        )
+        seg = {k: v.get("gap_bp") for k, v in (m.get("regime_gap") or {}).items()}
     else:
         oos_ok = (m.get("oos_ic") == m.get("oos_ic")) and not any("oos" in f for f in fails)
         seg = m.get("regime_ic") or {}
     regimes = [k for k, v in seg.items() if v == v]
     # 未判柱观测面（裁定②步骤①，纯观测零否决权）：每行分数自带"只代表哪些键"，禁把 4-5 键 pass 叙述成门柱全过
-    unjudged = _unjudged_pillars(card, m, _UNION_PILLAR_KEYS if used_nav else _CALIBRATION_JUDGED_KEYS)
+    _vocab = (
+        _UNION_PILLAR_KEYS
+        if used_nav
+        else _EVENT_KNOWN_KEYS
+        if pillars_route(card) == "event"
+        else _CALIBRATION_JUDGED_KEYS
+    )
+    unjudged = _unjudged_pillars(card, m, _vocab)
     row = {
         "card_id": card["card_id"],
         "node_id": card["node_id"],

@@ -1,0 +1,61 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S3/calibration/08_limit_up_premium_high_event_v2
+node_id: TDM-E-L1-S3
+family: calibration
+title_zh: 涨停溢价过热事件开关
+origin: reverse_triage_T1_20261011
+parallel_of: TDM-E-L1-S3/calibration/05_limit_up_premium_derived
+hypothesis: 昨日涨停集合今日截面平均溢价处于自身历史高分位的日子=打板资金当日浮盈最大日；此类日次日指数收益低于其余交易日，机制是浮盈集中兑现与接力盘位在高位被出货（母卡先验『赚钱→次日接力』的反向）。
+mother_card_relation: 本卡是母卡 TDM-E-L1-S3/calibration/05_limit_up_premium_derived 先验的**反向复述**，来源=在册分数册的负结果（如实复述，非事后加冕）；母卡先验认为该读数对次日指数收益正向，实测样本内与样本外同负，故本卡把『反向』写成可机判的事件开关命题。母卡原行保留在册，不改写不重判（G4-5）。
+one_round_limit: 一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，则本命题挂族归档（族=reverse_triage_T1_20261011），禁反复改阈值再考（多重比较防线）。
+known_weakness: 母卡 05 的 OOS 读数近零（-0.0025），反向幅度证据弱于晋级率卡；一轮未确认即族归档，禁改分位阈再考
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos:
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口逐字继承母卡（未改一日）；事件阈值见 data_binding.signal_derivation。
+buckets:
+  type: event_flag_two_state_contrast
+  'on': 事件日=基序列过去 250 日滚动分位 > 0.80 的交易日
+  min_obs_per_bucket: 200
+  note: 本卡机判面对象是两组对比（事件日 vs 非事件日）而非分位响应曲线，故不产 mono_spearman；样本门槛由 event_days_min 承担。
+pillars:
+  event_gap_direction: 事件日次日指数收益必须低于非事件日（is_gap_bp ≤ 0）
+  event_gap_significance: Welch t ≤ -2.0（双侧 5% 渐近临界，统计学惯例，非本数据调出）
+  event_days_floor: 事件日 n ≥ 200（族内下限 200，卡面往松不采）
+  oos_confirmation: OOS 窗 gap 与 IS 窗 gap 同号（单窗不算确认）
+  regime_split: 两段行情 regime 的 gap 同号；分段读数逐段入册，禁只报全样本
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益，执行器 shift(-1) 原生口径）
+status: examined
+signal_kind: series
+pillars_numeric:
+  event_gap_max_bp: 0.0
+  event_t_stat_max: -2.0
+  event_days_min: 200
+  event_oos_gap_same_sign: true
+  event_regime_gap_same_sign: true
+oos_window_ref:
+- '2024-01-01'
+- '2025-09-09'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+preregistered_by: st-mineloop-20261010
+preregistered_at: '2026-10-11'
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit（承母卡 05 的 signal_table 原文，未换表）
+  signal_column: limit_up_premium_high_event_v2_event_flag
+  signal_derivation: 基序列=limit_up_premium_close_derived=母卡 05 同一算子（limit_up_premium_close_mean，S_{t-1} 截面均值收盘口径）；事件日=基序列过去
+    250 日**滚动**分位 > 0.80 的交易日（分位一律用历史滚动窗，含当日，暖机段无读数不冒充事件；禁全样本分位＝用未来定过去门槛）；非事件日=同窗内其余交易日；次日收益由执行器 shift(-1) 对齐，禁在此处换对齐。母卡在册样本窗长（分数册实测
+    n）扣掉 250 日滚动暖机后可用日数≈D；族内事件日下限 200 ⇒ 事件频率须 ≥ 200/D；本卡取频率 20%（分位>0.80）留一倍余量，此推导只用窗长与门槛，未观察任何收益读数（碰数前冻）。
+  target_source: kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1
+  data_window_evidence: 在册实测（13_exam_run_limit_up.yaml）：母卡 05 基序列 1619 行、停牌缺失 255 票·日/195 日、逐日涨停家数均值 70.9；可用日≈1369，频率 20%
+    ⇒ 预期事件日≈274 > 200。
+lineage:
+  run_id: mineloop-evt-08_limit_up_premium_
+  score_row: exam_scores_v1.yaml#rows[43]
