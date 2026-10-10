@@ -124,6 +124,10 @@ INTAKE_DIR = _REPO / "data" / "strategy_intake"
 DEATH_LAYERS = ("eval", "backtest", "gate")
 
 DEFAULT_CONTEXT = {"strategy_pool": ["primary"], "phase": 1, "capital_ramp_enabled": False}
+
+#: 探索扫描分册开关（main 里由 --exploration-ledger 注入）：设值=批末不进 N 账本，
+#: 批记录改追本路径（矿考班 GPU 深挖车道令②：不占考试试次，与 N 账本分册）
+_EXPLORATION_LEDGER: str | None = None
 # NO-BARE-SQL + TABLE-NAME-REGISTRY 配方: SQL 常量化+表名走 TableRegistry 真源
 from zephyr.data.table_registry import get_registry as _get_table_registry
 
@@ -2089,7 +2093,31 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
             "context": compile_ctx,
         }
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
-    if not smoke:
+    if not smoke and _EXPLORATION_LEDGER:
+        # 深挖车道令②（2026-10-10）：exploration 纪律——不判 pass/fail、不进分数册、
+        # 不占考试试次；批记录追探索扫描分册（与 N 账本分册），写败不阻断产物。
+        try:
+            _lp = Path(_EXPLORATION_LEDGER)
+            _lp.parent.mkdir(parents=True, exist_ok=True)
+            with _lp.open("a", encoding="utf-8") as _fh:
+                _fh.write(
+                    json.dumps(
+                        {
+                            "kind": "exploration_scan",
+                            "batch_id": f"exploration:grid_{summary['run_ts']}",
+                            "n_cells": int(summary.get("evaluated") or 0),
+                            "out_dir": _rel_cwd(out_dir),
+                            "ts": time.time(),
+                        },
+                        ensure_ascii=False,
+                    )
+                    + "\n"
+                )
+        except Exception as exc:  # noqa: BLE001  与 N 账本钩子同款 fail-open
+            import logging as _lg
+
+            _lg.getLogger(__name__).warning("探索扫描分册写败: %s", exc)
+    elif not smoke:
         # P0-6 试验台账记账治本（2026-09-28）：批末入账——17.4% 漏记的根因是没人调
         # record/sync；本批 record_run（幂等、与 sync_screen_counts 同口径 evaluated），
         # 台账失败不阻断回测产物（fail-open，warning 留痕）。
@@ -2445,11 +2473,18 @@ def main() -> int:
         help="确定性分片总数（缺省=不分片零漂移）；分片须串行跑（vram.concurrency=1）",
     )
     ap.add_argument(
+        "--exploration-ledger",
+        default="",
+        help="探索扫描分册路径（与 N 账本分册：设值=批末不进 N 账本，批记录追本路径；深挖车道令 2026-10-10）",
+    )
+    ap.add_argument(
         "--context-json",
         default="",
         help="显式 context 注入（非 stage 批次用，如 T3b-T0 标定 '{\"phase\": 3}'；缺省空=零漂移）",
     )
     args = ap.parse_args()
+    global _EXPLORATION_LEDGER
+    _EXPLORATION_LEDGER = args.exploration_ledger or None
     if args.verify_counts:
         return _verify_counts(args.verify_grid_root or None)
     # 波12 点火类不可旁路——--skip-compute-gate 只关日历窗，不关触发条件与批准卡
