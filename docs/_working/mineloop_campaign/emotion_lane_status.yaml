@@ -1,0 +1,423 @@
+schema_version: mineloop-emotion-lane-status/v1
+ttl: task_bound
+family_id: MINELOOP-CAMPAIGN
+sid: st-mineloop-20261010
+created: "2026-10-11"
+title: 情绪先锋车道状态册（QMT/情绪面在岗探针 + 情绪族卡逐张判定 + 首批开考清单）
+lane: emotion_vanguard
+gpu_lane: none（本班不碰 GPU；GPU 深挖 4 分片由他班跑）
+card_face_untouched: true
+card_face_note: 本班零改卡——window/buckets/pillars/pillars_numeric/target/status 全未动；改判建议只落 recommendations 段，由总包执行
+probe_script: .runtime/tmp/st-mineloop-20261010/lane_emotion/probe.py
+probe_stdout: .runtime/tmp/st-mineloop-20261010/lane_emotion/probe_out.txt
+measured_at: "2026-10-11 00:13~00:27（date 实测；全部在 CH 时窗内，01:00-04:00 停 CH）"
+ch_access_form: >-
+  sys.path.insert(0,'<工棚>/scripts/backtest') → from fexam.ch_data import ch_query_df, table_columns；
+  一律 FORMAT TSV 位置协议（列名 c1..cN、NULL=空串、dtype=str）；抛错/EMPTY/有行三态分报
+
+one_command_replay: >-
+  date '+%H:%M:%S' && python .runtime/tmp/st-mineloop-20261010/lane_emotion/probe.py
+
+qmt_face_probe:
+  table: c1_market.emotion_index
+  columns_measured: [components, emotion_index, ingest_ts, source, stage, trade_date, ts, version]
+  columns_types_measured:
+    trade_date: Date
+    stage: "LowCardinality(String)"
+    source: "LowCardinality(String)"
+    version: "LowCardinality(String)"
+    components: String
+    emotion_index: Float64
+    ts: "DateTime64(3, 'Asia/Shanghai')"
+    ingest_ts: "DateTime64(3, 'UTC')"
+  total: {rows: 8664, min_trade_date: "1991-06-10", max_trade_date: "2026-10-09", uniq_trade_date: 8622, max_ingest_ts: "2026-10-10 16:15:07(UTC)"}
+  by_stage:
+    - {stage: close_final, rows: 8620, min_date: "1991-06-10", max_date: "2026-10-09", days: 8619, ei_min: 0.012, ei_max: 1.0, ei_avg: 0.534}
+    - {stage: pre_open, rows: 27, min_date: "2026-09-01", max_date: "2026-10-09", days: 26, ei_min: 0.277, ei_max: 0.660, ei_avg: 0.477}
+    - {stage: auction, rows: 17, min_date: "2026-09-01", max_date: "2026-09-23", days: 17, ei_min: 0.263, ei_max: 0.558, ei_avg: 0.422}
+  by_source:
+    - {source: live, rows: 65, min_date: "2026-09-01", max_date: "2026-10-09", note: "其中 close_final 24 日（至 2026-10-09）"}
+    - {source: replay, rows: 8596, min_date: "1991-06-10", max_date: "2026-08-31"}
+  version_unity: v0.1.0（全库唯一）
+  duplicate_keys_no_final: [{trade_date: "2026-09-30", stage: close_final, rows: 2, note: "uniqExact(trade_date)=8619 < count=8620；取数须 FINAL"}]
+  daily_coverage_2026_10:
+    calendar_trading_days: ["2026-10-08", "2026-10-09"]
+    calendar_evidence: "c1_market.kline_index symbol='000300' 实测 10 月只有 10-08/10-09 两根 bar（10-01..10-07 无=节假日）"
+    close_final_days: 2
+    pre_open_days: 5
+    pre_open_dirty_dates: ["2026-10-01", "2026-10-02", "2026-10-05"]
+    pre_open_dup_date: "2026-10-08（2 行）"
+  windows_vs_calendar:
+    - {window: "IS_A 2021-07-01..2025-09-30", cal_days: 1034, close_final_days: 1034, pre_open_days: 0, auction_days: 0, gap: 0}
+    - {window: "OOS_A 2025-10-09..2026-06-30", cal_days: 176, close_final_days: 176, pre_open_days: 0, auction_days: 0, gap: 0}
+    - {window: "IS_B 2019-01-04..2023-12-31", cal_days: 1212, close_final_days: 1212, pre_open_days: 0, auction_days: 0, gap: 0}
+    - {window: "OOS_B 2024-01-01..2025-09-09", cal_days: 410, close_final_days: 410, pre_open_days: 0, auction_days: 0, gap: 0}
+    - {window: "OOS_C 2025-10-09..2026-09-30", cal_days: 241, close_final_days: 241, pre_open_days: 21, auction_days: 17, gap: 0}
+    - {window: "IS_D 2026-09-15..2026-10-09", cal_days: 13, close_final_days: 13, pre_open_days: 16, auction_days: 7, gap: 0}
+  close_final_gate_conclusion: >-
+    已续上（这是解锁总闸）。实测 max(trade_date) WHERE stage='close_final' = 2026-10-09、
+    trade_date>'2026-09-30' 的 close_final 行数=2（10-08 0.2739 / 10-09 0.3192，均 source='live'）；
+    六个在册冻结窗逐日无缺（gap=0，行数与交易日历一一对应）。在册"close_final 10 月 0 行"
+    （L8b_ledger.md:202、99_checkpoint.md:32）已被本班实测翻案；T2 补数计划（L8b_ledger.md:210
+    「emotion close_final 腿：2026-10-08..2026-10-09（2 交易日）」）刚落地。
+  table_mutating_under_probe: >-
+    00:13:52 census=8617 行/max 2026-09-30；00:17:32 census=8620 行/max 2026-10-09
+    （+3 行=10-08、10-09 close_final 与 1 条 2026-09-30 重复行，ingest_ts 一律
+    2026-10-10 16:15:07 UTC＝上海 2026-10-11 00:15）⇒ 探针期间表仍在被写。
+  component_status_census:
+    - window: "IS_B 2019-01-04..2023-12-31（1212 日）"
+      C1_limitup_temp: "missing 1212"
+      C2_promotion: "missing 1212"
+      C3_breadth: "ok 1212（weight 合计 606=0.5/日）"
+      C4_volume: "ok 1212（weight 合计 606=0.5/日）"
+      C5_margin: "missing 1212"
+      C6_news: "missing 1212"
+    - window: "OOS_B 2024-01-01..2025-09-09（410 日）"
+      C1_limitup_temp: "missing 410"
+      C2_promotion: "missing 410"
+      C3_breadth: "ok 410"
+      C4_volume: "ok 410"
+      C5_margin: "ok 109 / insufficient 119 / missing 182"
+      C6_news: "missing 410"
+    - window: "LIVE 2026-09-01..2026-09-30（22 日）"
+      C1_limitup_temp: "insufficient 22"
+      C2_promotion: "insufficient 22"
+      C3_breadth: "ok 22"
+      C4_volume: "ok 22"
+      C5_margin: "ok 6 / insufficient 16"
+      C6_news: "ok 22"
+  component_ok_days_all_history:
+    C1_limitup_temp: "0/8620"
+    C2_promotion: "0/8620"
+    C3_breadth: "8501/8620"
+    C4_volume: "8620/8620"
+    C5_margin: "352/8620"
+    C6_news: "59/8620"
+  components_parse_pitfall: >-
+    components 是 JSON **array**（[{name,raw_value,percentile,weight,status,obs,asof,source,note}]），
+    须 arrayJoin(JSONExtractArrayRaw(components))；本班 00:21 先用 JSONExtractKeys 得 []
+    险些误判"C1/C2 键不存在"（实为键存在但 status=missing/raw_value=null），已纠正——
+    断言"列/键不存在"前必须换正确解析法复测。
+  numeric_face_for_rebuild:
+    window: "2019-01-04..2025-09-09，stage='close_final'"
+    n: 1622
+    nulls: 0
+    min: 0.2608
+    p10: 0.4209
+    p50: 0.6266
+    p90: 0.8490
+    max: 1.0
+    std: 0.1571
+
+cards_total: 33
+census_method: >-
+  Grep 'emotion_index' docs/03_modules/_domain_backtest/exam_cards/** 命中 32 张（含 data_binding）；
+  另 TDM-E-L1-S3/calibration/04_情绪先锋四态 文本无 "emotion_index" 字样但 target=情绪六段转移，
+  按族义补入 ⇒ 33 张。列名/腿名全部来自实测，未凭记忆。
+verdict_vocabulary: [exam_now, wait_close_final, need_numeric_rebuild, blocked_other_leg, already_examined]
+status_tally:
+  preregistered: 17
+  blocked_on_data: 6
+  blocked_on_impl: 2
+  examined: 8
+verdict_tally:
+  exam_now: 5
+  wait_close_final: 1
+  need_numeric_rebuild: 8
+  blocked_other_leg: 11
+  already_examined: 8
+dual_arm_cards_in_family: 11
+
+cards:
+  - card_id: TDM-E-L0-02/ablation/04_降档预警输入消融
+    status: blocked_on_impl
+    depends_on_leg: "pre_open（卡面 emotion_face_note 自注'本卡禁读 close_final'）+ 双臂 + L0-02 侧消费接线"
+    leg_sample_vs_window: "pre_open 窗内 0 日（全库 26 日、自 2026-09-01 起）；run_card 需 signal 与 signal_b"
+    verdict: blocked_other_leg
+    note: "卡面'§3 在册=close_final 0 行'的依据已被本班实测推翻，但其自身不用该腿，结论不受影响"
+  - card_id: TDM-E-L0-02/calibration/03_偏离幅度分位响应曲线
+    status: preregistered
+    depends_on_leg: "无情绪腿（卡面 emotion_face_orthogonal 明写全链不读 emotion_index）"
+    leg_sample_vs_window: "kline_etf_1min 2021-07-01..2026-10-09 覆盖 IS_A/OOS_A 满窗；单臂 calibration，min_obs 60 充分"
+    verdict: exam_now
+    note: 与 QMT 无关（不占情绪解锁名额）
+  - card_id: TDM-E-L0-03/comparison/02_brier_calibration_on_off
+    status: preregistered
+    depends_on_leg: "close_final（次日实现档）+ next_day_8state_forecast 落台面 + 双臂"
+    leg_sample_vs_window: "close_final 满窗（1212/410，gap=0）；8 态来自 forecast 器件而非分段 ⇒ 缺器件落台与双臂"
+    verdict: blocked_other_leg
+  - card_id: TDM-E-L0-04/calibration/03_pre_open盘前先验与盘中档位差
+    status: blocked_on_data
+    depends_on_leg: "pre_open（主腿）+ 盘中 14:30 融合档"
+    leg_sample_vs_window: "pre_open 全库 27 行/26 日且窗内 0 日（本班 2026-10-10 22:4x 改判凭据复测仍成立）"
+    verdict: blocked_other_leg
+    note: 维持 blocked_on_data
+  - card_id: TDM-E-L0-04/calibration/04_close_final预警兑现率
+    status: blocked_on_data
+    depends_on_leg: "close_final（目标腿）+ pre_open（先验腿）+ 盘中融合档"
+    leg_sample_vs_window: "close_final 现已满窗（IS_A 1034/1034、OOS_A 176/176，gap=0）；pre_open 窗内 0 日 ⇒ 仍不可考"
+    verdict: blocked_other_leg
+    note: 解锁总闸已开但残余阻塞换腿（见 recommendations[0]）
+  - card_id: TDM-E-L0-04/comparison/02_intraday_rollback_downgrade
+    status: preregistered
+    depends_on_leg: "close_final（next_day 实现档）+ 分钟/tick 盘中面 + 双臂"
+    leg_sample_vs_window: "close_final 满窗；缺双臂接线与盘中器件落台"
+    verdict: blocked_other_leg
+  - card_id: TDM-E-L1-AGG/ablation/02_state_input_replacement
+    status: preregistered
+    depends_on_leg: "情绪六段轴（卡面把 stage='close_final' 当六段用）+ 双臂"
+    leg_sample_vs_window: "实测 DISTINCT stage=3 值≠六段 ⇒ 数值重建；连续值满窗可用（1622 日）"
+    verdict: need_numeric_rebuild
+    rebuild_rule_frozen: false
+  - card_id: TDM-E-L1-AGG/ablation/03_跨层封顶与对齐加成双臂
+    status: blocked_on_impl
+    depends_on_leg: "close_final + 双臂 + 跨层合成接线"
+    leg_sample_vs_window: "close_final 满窗；双臂接线未至"
+    verdict: blocked_other_leg
+  - card_id: TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+    status: preregistered
+    depends_on_leg: "components.C1_limitup_temp + C2_promotion（三腿等权 z 合成）+ regime_state_anchored"
+    leg_sample_vs_window: "实测两键 status='ok' 天数=0/8620（IS_B/OOS_B 全 missing）⇒ 三腿塌一腿，判据不可信"
+    verdict: blocked_other_leg
+    note: 卡面自称"实测在册"被本班实测推翻（见 recommendations[2]）
+  - card_id: TDM-E-L1-S2/calibration/09_limit_up_count_derived
+    status: examined
+    depends_on_leg: "已出分（emotion_index 作辅证）"
+    leg_sample_vs_window: n/a
+    verdict: already_examined
+    note: 夜矿批已出分在册
+  - card_id: TDM-E-L1-S2/calibration/10_limit_down_count_derived
+    status: examined
+    depends_on_leg: 已出分
+    leg_sample_vs_window: n/a
+    verdict: already_examined
+    note: 夜矿批已出分在册
+  - card_id: TDM-E-L1-S2/calibration/11_broken_board_rate_derived
+    status: examined
+    depends_on_leg: 已出分
+    leg_sample_vs_window: n/a
+    verdict: already_examined
+    note: 夜矿批已出分在册
+  - card_id: TDM-E-L1-S2/calibration/12_sealed_board_rate_derived
+    status: examined
+    depends_on_leg: 已出分
+    leg_sample_vs_window: n/a
+    verdict: already_examined
+    note: 夜矿批已出分在册
+  - card_id: TDM-E-L1-S2/calibration/13_max_consec_limit_height_derived
+    status: examined
+    depends_on_leg: 已出分
+    leg_sample_vs_window: n/a
+    verdict: already_examined
+    note: 夜矿批已出分在册
+  - card_id: TDM-E-L1-S2/calibration/14_consec_limit_count_ge2_derived
+    status: examined
+    depends_on_leg: 已出分
+    leg_sample_vs_window: n/a
+    verdict: already_examined
+    note: 夜矿批已出分在册
+  - card_id: TDM-E-L1-S2/calibration/15_net_breadth_derived
+    status: examined
+    depends_on_leg: 已出分
+    leg_sample_vs_window: n/a
+    verdict: already_examined
+    note: 夜矿批已出分在册
+  - card_id: TDM-E-L1-S3/calibration/05_limit_up_premium_derived
+    status: preregistered
+    depends_on_leg: "无情绪腿（kline_daily_hfq + stk_limit 导生）"
+    leg_sample_vs_window: "stk_limit 实测列含 limit_pct/pre_close/board/st_flag，窗 2019-01-04..2025-09-09 有 7,589,103 行；hfq 满窗"
+    verdict: exam_now
+    note: 与 QMT 无关
+  - card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+    status: preregistered
+    depends_on_leg: "主臂自导生（hfq+stk_limit）；辅轴=close_final 次日差分"
+    leg_sample_vs_window: "close_final IS_B 1212/OOS_B 410，gap=0；主臂 min_obs 60 充分，单臂 calibration"
+    verdict: exam_now
+    note: ★首批唯一"QMT 在岗才完整出分"的卡
+  - card_id: TDM-E-L1-S3/calibration/04_情绪先锋四态
+    status: preregistered
+    depends_on_leg: "四态=事件分桶（封死涨停/高开未连板/下跌/跌停，卡面明写'非分位'）+ target=情绪六段转移"
+    leg_sample_vs_window: "事件面 daban_board_event/limit_up_pool 自 2026-07-20 起 ⇒ 2019-2025 冻结窗 0 行；且 data_binding=null 无接线真源；六段切点未冻结"
+    verdict: need_numeric_rebuild
+    rebuild_rule_frozen: false
+    note: Owner 念想卡——四态本身可由 stk_limit+hfq 导生（同 L1-S2 导生口径），但需先裁定"事件四态导生 + 六段数值重建"两条口径
+  - card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+    status: preregistered
+    depends_on_leg: "无情绪腿（hfq/kline_index/stk_limit 导生水温子集）"
+    leg_sample_vs_window: 满窗
+    verdict: exam_now
+    note: 与 QMT 无关
+  - card_id: TDM-E-L1/ablation/02_状态矩阵空档段路由代价
+    status: blocked_on_data
+    depends_on_leg: "逐日六段段态落台表（卡面记'缺段明列'）+ 双臂"
+    leg_sample_vs_window: "CH 无六段载体（X-S1-04/X-R1-01 卡内亦各自实测声明）⇒ 只能数值重建"
+    verdict: need_numeric_rebuild
+    rebuild_rule_frozen: false
+  - card_id: TDM-E-L1/comparison/03_六段预算带带内位置双臂
+    status: blocked_on_data
+    depends_on_leg: "逐日六段段态 + 双臂"
+    leg_sample_vs_window: "带值半冻结（吸筹 0.30-0.50/点火 0.50-0.70/扩张 0.60-0.80/亢奋 0.30 只卖不买）——仅 4/6 段、区间互叠、派发/退潮明记'无带可用'"
+    verdict: need_numeric_rebuild
+    rebuild_rule_frozen: partial
+  - card_id: TDM-E-L2-01-5/ablation/02_市场级调节注入
+    status: preregistered
+    depends_on_leg: "close_final + pre_open + auction（三腿全用）+ 双臂 + kline_sector_880"
+    leg_sample_vs_window: "pre_open/auction 窗内 0 日"
+    verdict: blocked_other_leg
+  - card_id: TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶
+    status: preregistered
+    depends_on_leg: "close_final 连续值 → '在册六段阈值'分档 S0..S5（月级封顶另用 kline_index 000300，2005-01-04..2026-10-09/5284 行）"
+    leg_sample_vs_window: "数值满窗（1622 日，p10 0.42/p90 0.85，null=0）⇒ 分位可切；但六段切点查无真源"
+    verdict: need_numeric_rebuild
+    rebuild_rule_frozen: false
+  - card_id: TDM-E-L2-05-2/ablation/02_信号响应三件套
+    status: preregistered
+    depends_on_leg: "水温档=emotion_index 六段（卡面写'与 L2-05-1 共用'）+ 双臂"
+    leg_sample_vs_window: "同 L2-05-1 悬空"
+    verdict: need_numeric_rebuild
+    rebuild_rule_frozen: false
+  - card_id: TDM-E-L2-05/ablation/02_水温总开关放行比例
+    status: preregistered
+    depends_on_leg: "六段 + pre_open/auction + 双臂 + sentiment_panel"
+    leg_sample_vs_window: "盘前腿窗内 0 日 + 六段悬空（sentiment_panel.fear_greed_index 仅 2026-09-01 起 40 行）"
+    verdict: need_numeric_rebuild
+    rebuild_rule_frozen: false
+  - card_id: TDM-E-L2-06-3/calibration/03_传导时滞曲线
+    status: preregistered
+    depends_on_leg: "emotion_index 作水温条件维（非主判据）"
+    leg_sample_vs_window: "卡面可考窗 2026-07-22..2026-09-24≈44 日 < min_obs 60/桶（受 sector_constituent 起 2026-07-22 限）⇒ 缺成分面，非情绪闸"
+    verdict: blocked_other_leg
+  - card_id: TDM-E-L3-06/calibration/02_地量档位开关
+    status: examined
+    depends_on_leg: 已出分
+    leg_sample_vs_window: n/a
+    verdict: already_examined
+  - card_id: TDM-E-L9-B07/calibration/02_雪球股吧散户情绪极端预警
+    status: blocked_on_data
+    depends_on_leg: "雪球/热榜外部源线（alt）+ emotion 辅"
+    leg_sample_vs_window: "源线未接，无历史面"
+    verdict: blocked_other_leg
+  - card_id: TDM-E-L9-G4/ablation/02_概念标签题材热度维度
+    status: blocked_on_data
+    depends_on_leg: "close_final（IS 2026-09-15..10-09 / OOS 2026-10-10 单日）+ 双臂 + concept_board 面"
+    leg_sample_vs_window: "close_final IS_D 13/13 满；OOS 日 2026-10-10 尚未落（实测闸后 max=10-09）；min_obs=20 且双臂未接 ⇒ 落腿后仍不足"
+    verdict: wait_close_final
+  - card_id: TDM-E-L9-V2/ablation/02_情绪相位六段快照就绪
+    status: preregistered
+    depends_on_leg: "卡面明写'六段命名以表内 stage 实际取值为准（考前先跑 DISTINCT stage）'"
+    leg_sample_vs_window: "实测 DISTINCT stage=close_final/pre_open/auction（3 值，快照阶段标记）⇒ 卡面取证依据被推翻"
+    verdict: need_numeric_rebuild
+    rebuild_rule_frozen: false
+  - card_id: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
+    status: preregistered
+    depends_on_leg: "主路 kline_daily_hfq（情绪退潮路另 blocked，卡内 blocked_faces 已自陈'stage 非六段'）"
+    leg_sample_vs_window: "hfq 1990-12-19..2026-09-30/10,098,785 行满窗；panel 形，min_obs 60 充分"
+    verdict: exam_now
+    note: 与 QMT 无关
+  - card_id: TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量
+    status: preregistered
+    depends_on_leg: "close_final（卡已自证六段无载体、体制轴改 regime_snapshot_history 并声明结论上界）+ 双臂"
+    leg_sample_vs_window: "close_final OOS_C 241/241 满窗 ⇒ 情绪腿已通，缺双臂接线"
+    verdict: blocked_other_leg
+
+first_batch:
+  n_emotion_unlocked: 1
+  rationale: >-
+    严格口径=QMT 在岗才解锁 + 单臂可出分 + 判据腿实测满窗 + 不依赖未冻结分段。
+    实测下来情绪族里没有第二张满足：单臂且真靠情绪面的卡要么被 pre_open/auction 腿（0 日）挡、
+    要么被 components C1/C2（0/8620 ok）挡、要么落在"六段/四态重建规则未冻结"上，
+    其余 11 张是 comparison/ablation 需双臂。为不凑数，N=1。
+  cards:
+    - card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+      wiring_one_liner: >-
+        表 c1_market.kline_daily_hfq + c1_market.stk_limit；过滤 trade_date∈IS_B(2019-01-04..2023-12-31)
+        与 OOS_B(2024-01-01..2025-09-09)、limit_pct 按 symbol×trade_date asof（FINAL 去重）；
+        列 close/lag(close) 与 limit_pct；聚合=日频 promotion_rate=countIf(今板∧昨板)/countIf(昨板)
+        （分母<20 置 NaN，IS 前 60 交易日暖机）；目标面=kline_index symbol='000300' close 的
+        next_day_return（执行器 _series_metrics 的 shift(-1) 原生口径）；辅轴=emotion_index
+        WHERE stage='close_final' 的 emotion_index 次日差分（实测窗内 gap=0）。
+  side_by_side_not_counted:
+    note: 与 QMT 无关但同批即可出分的单臂 preregistered 卡（供总包排产，不占情绪解锁名额）
+    cards:
+      - {card_id: TDM-E-L0-02/calibration/03_偏离幅度分位响应曲线, wiring: "kline_etf_1min 截至 14:30 实际暴露 vs regime_state_anchored.dominant 边界档 → 偏离幅度十分位；目标=NAV shift(-1)"}
+      - {card_id: TDM-E-L1-S3/calibration/05_limit_up_premium_derived, wiring: "hfq+stk_limit 导生昨涨停溢价截面均值 → 000300 next_day_return"}
+      - {card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel, wiring: "hfq/kline_index/stk_limit 导生水温子集 → next_day_return"}
+      - {card_id: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益, wiring: "panel：hfq high/close/volume 计 K∈{0,1,2,3+} → 个股 T+1 与 5 日超额 vs 000300"}
+  waiting_for_qmt:
+    - {card_id: TDM-E-L9-G4/ablation/02_概念标签题材热度维度, need: "2026-10-10 的 close_final 行落库（另需双臂与 min_obs≥20 的日数积累）"}
+
+rebuild_rules:
+  cards_needing_numeric_rebuild: 8
+  frozen_on_card_face: 0
+  partial_frozen: 1
+  partial_detail: "TDM-E-L1/comparison/03 六段预算带——4/6 段有值且区间互叠（0.50-0.70 与 0.60-0.80），派发/退潮段卡面自记'无带可用'"
+  why_not_frozen: >-
+    卡面只写"在册 emotion_index 六段口径/以 DISTINCT stage 为准"；实测 stage=3 值（阶段标记非相位段）；
+    CH 与代码均无 S0..S5 数值切点 ⇒ 悬空引用。代码侧另有两套互斥粗映射且输入是 0-100 七维温度
+    而非 emotion_index 的 0-1 值，不可直接借用：sentiment_cycle.py:201（<20/<40/<70/<90）与
+    market_sentiment_analyzer.py:429（<20/20-40/40-60/60-80/≥80）。
+  suggested_ruling_shape: >-
+    以 IS 窗内 emotion_index 历史分位切点为唯一机械口径（十分位/五分位钉死一次并带 asof+版本），
+    同批钉：FINAL 去重、非交易日剔除（kline_index 000300 为日历真源）、live/replay 分层与 2026-09
+    腿数断点登记。8 张卡待此裁定方可进第二/三批。
+
+executor_constraints_measured:
+  - "scripts/backtest/fexam/calibration_exam.py:118 → tgt=target.sort_index().shift(-1)：只支持次日目标；T 当日/T-1 落台类判据现器不可用"
+  - "同文件 :352-353：run_card 只考 status=='preregistered'，blocked_* 需 --force ⇒ 在册 blocked 卡一律不入首批"
+  - "同文件 :364-369：family∈(comparison,ablation) 必须同时注入 signal 与 signal_b，缺 signal_b 直接 _ToolError ⇒ 本族 11 张双臂卡全部待双臂接线"
+
+fake_green_risks:
+  - rank: 1
+    name: 构造断裂（历史指数只有两腿）
+    detail: >-
+      IS_B 全部 1212 日的 close_final 由 C3_breadth+C4_volume 各 0.5 权重合成，C1/C2/C5/C6 全 missing；
+      2026-09 起 live 段变 3-5 腿（C1/C2=insufficient、C5/C6 间歇 ok）。同一条序列在 IS↔OOS 换了定义
+      ⇒ 卡面 oos_same_sign / regime_same_sign 判据可能考的是"腿数变化"而非"情绪效应"。
+      受害最深：TDM-E-L1-AGG/calibration/03（其两主腿 ok 天数=0/8620）。
+  - rank: 2
+    name: 探针期间表仍在被写
+    detail: 00:13:52 与 00:17:32 两次 census 差 3 行；开考前必须钉 asof+version 并记探针时刻，否则同卷两读不同果。
+  - rank: 3
+    name: 未加 FINAL 的同键重复
+    detail: close_final 在 2026-09-30 有 2 行（uniq 8619 < count 8620）⇒ 重复行会被当两个观测喂进分桶。
+  - rank: 4
+    name: 脏交易日（盘前腿虚高）
+    detail: "pre_open 在 2026-10-01/02/05（节假日无 bar）各 1 行、10-08 两行 ⇒ 26 个'日'至少 4 个不可算样本；用它报覆盖度=假绿。"
+  - rank: 5
+    name: replay 行冒充"在岗"
+    detail: "min(trade_date)=1991-06-10 但全表 ingest_ts 最早 2026-09-22（三周内新灌）、version 全库 v0.1.0 ⇒ 'QMT 在岗'唯一凭据是 source='live' 的 24 个 close_final 日（至 10-09）。"
+
+max_fake_green_risk: rank1 构造断裂（历史 IS 指数=C3+C4 两腿代理，live 段 3-5 腿，同序列跨 IS/OOS 换定义）
+
+recommendations:
+  - card_id: TDM-E-L0-04/calibration/04_close_final预警兑现率
+    action: 改判据理由（status 仍 blocked_on_data）
+    evidence: "close_final 实测 max=2026-10-09、六窗 gap=0（IS_A 1034/1034、OOS_A 176/176）；残余阻塞=pre_open 窗内 0 日 + intraday_tomorrow_forecast 14:30 融合档台面"
+    by: 总包
+  - card_id: 在册账本 L8b_ledger.md:202 / 99_checkpoint.md:32 / L8b_ledger.md:92
+    action: 事实更新
+    evidence: "'close_final 10 月 0 行/断供成立'已被实测翻案（10-08、10-09 各 1 行，source=live，ingest 2026-10-10 16:15 UTC）；'8,617 行至 2026-09-30'现为 8,620 行至 2026-10-09"
+    by: 总包
+  - card_id: TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+    action: 建议改判 blocked_on_data（缺微观事件面）或显式声明两腿降级口径
+    evidence: "卡面'components 内含 C1_limitup_temp/C2_promotion，实测在册'被推翻：两键 status='ok' 天数=0/8620，IS_B/OOS_B 全 missing，raw_value=null、weight=0.0"
+    by: 总包
+  - card_id: TDM-E-L9-V2/ablation/02_情绪相位六段快照就绪
+    action: 卡面取证依据需修订（本班不改）
+    evidence: "'六段命名以 DISTINCT stage 为准'——实测 stage=close_final/pre_open/auction 三值"
+    by: 总包
+  - card_id: "8 张 need_numeric_rebuild 卡（L1-AGG/ablation02、L1/ablation02、L1/comparison03、L2-05/cal02 系三张、L9-V2、L1-S3/04 四态）"
+    action: 等"由 emotion_index 数值分位重建六段/四态"裁定后排队
+    evidence: 见 rebuild_rules 段
+    by: 总包/Owner
+  - card_id: "8 张 examined 卡"
+    action: 不动
+    evidence: 已出分在册
+scope_declaration:
+  created_files:
+    - docs/_working/mineloop_campaign/emotion_lane_status.yaml
+    - .runtime/tmp/st-mineloop-20261010/lane_emotion/probe.py
+    - .runtime/tmp/st-mineloop-20261010/lane_emotion/probe_out.txt
+  modified_files: []
+  git_writes: none
+  ch_writes: none（全链 ch_query_df 只读 SELECT/DESCRIBE，INVARIANTS 已在脚本头声明）

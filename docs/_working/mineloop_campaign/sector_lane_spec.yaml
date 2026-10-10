@@ -1,0 +1,439 @@
+---
+ttl: task_bound
+lane: sector_family
+sid: st-mineloop-20261010
+owner_lane: sector
+created: '2026-10-11'
+status: draft_complete
+---
+# sector_lane_spec — 板块族 9 张候选卡"可机械实现"定案（规格件，非分数件）
+# 判定枚举: implementable | unfrozen | needs_engine | two_level_bucket_reject
+# 底座引用（不重测）: scripts/backtest/fexam/card_binding.py:load_sector_family_panel
+#   族=c1_market.sector_code_name_map.code_family 在册映射 industry_l1(61) ∪ industry_ths(128)=189 codes
+#   period='1d'；(日,板块) 先 anyLast 去版本
+#   c1_market.kline_sector_880 period='1d' = 785,204 行／729 codes／2020-03-17..2026-10-08
+# 本件禁改卡件/分数册/card_binding.py；实现块见 .runtime/tmp/st-mineloop-20261010/lane_sector/sector_ops_draft.py
+
+cards:
+- card_id: TDM-E-L2-01-2/calibration/02_板块成交额占比活跃度
+  verdict: implementable
+  buckets_type: quantile_quintile
+  buckets_on: 当日板块成交额占比截面值
+  signal_column: amount
+  signal_column_is_single_identifier: true
+  quote_signal_derivation: |-
+    占比=sector amount / Σ(同 code_family 全体 sector amount)（分母口径=行业族 industry_l1∪industry_ths，
+    由 c1_market.sector_code_name_map.code_family 在册映射界定，禁自拟名单）；
+    环比=占比/占比.shift(5)−1；series 面取"占比前 10% 板块等权组合的次日超额"与全样本差。
+  quote_buckets: |-
+    buckets: {type: quantile_quintile, on: 当日板块成交额占比截面值, min_obs_per_bucket: 60}
+  quote_target: |-
+    primary: next_day_index_return（CSI300 次日收益）
+    secondary: sector_rotation_relay_hit（当日 Top10 活跃板块在 T+5 强度 Top10 的命中率）
+  quote_pillars_numeric: |-
+    mono_spearman_min: 0.6 / ic_mean_min: 0.02 / ic_ir_min: 0.3 / regime_same_sign: true / oos_same_sign: true
+  pandas_steps:
+    - "P = load_sector_family_panel(is_start-20d, oos_end+2d)  # 189 codes 已在册，禁自拟名单"
+    - "P[dt,sector,amount] = pd.to_numeric(errors='coerce')"
+    - "denom = P.groupby('dt')['amount'].transform('sum')      # 分母=当日行业族全体 amount"
+    - "P['share'] = P['amount'] / denom"
+    - "P['share_chg5'] = P.groupby('sector', sort=False)['share'].transform(lambda s: s / s.shift(5) - 1)"
+    - "signal = P['share']                                     # buckets.on=占比截面值（保符号，不取 abs，卡面 note 同口径）"
+    - "response = next_day_index_return 对齐（沿用车道已出分三张的 target 装配口）"
+    - "bucket = _bucket_response(signal, response, kind='quantile_quintile', min_obs=60)"
+    - "series 面: 每日 share.rank(pct=True)>=0.9 等权组合次日收益 − 全样本次日收益"
+  expected_sample_days: "IS 2021-08-02..2023-12-31 实测窗内 ≈575 交易日（卡 evidence 自证）；shift(5) 预热后有效起点 ≈2021-08-09"
+  panel_sample: "575 日 × 189 板块 ≈ 108,675 (日,板块) 观测；五分位日截面 ≈38 只/档，min_obs_per_bucket=60 按池化计数满足"
+  is_oos_coverage: "IS 2021-08-02..2023-12-31 与 OOS 2024-01-01..2025-09-09 均落在 880 period='1d' 实测窗 2020-03-17..2026-10-08 内，双窗可覆盖"
+  hardest_step: "分母口径——必须用装载器的行业族 189 codes 截面 sum 而非全表 729 codes，否则占比被 industry_l2/概念族稀释"
+  reject_reason: null
+  caveats:
+    - "pillars.condition_stability（低涨幅高占比 vs 低涨幅低占比 交互档）需要 close 涨幅维，不在 buckets.on 面上；算子只出单信号分桶，交互面须由总包另建双臂或判 unfrozen"
+    - "target.secondary 需'T+5 强度 Top10'口径——强度榜定义未在本卡数值化（见 needs_engine 说明，主面不受影响）"
+
+- card_id: TDM-E-L2-01-3/calibration/02_多周期动量主导度
+  verdict: two_level_bucket_reject
+  buckets_type: categorical_then_quantile
+  buckets_on: 主导周期三档 {q3,q5,q20}；档内再按该周期动量值分三桶
+  signal_column: close
+  signal_column_is_single_identifier: true
+  quote_buckets: |-
+    buckets:
+      type: categorical_then_quantile
+      'on': 主导周期三档 {q3,q5,q20}；档内再按该周期动量值分三桶
+      min_obs_per_bucket: 60
+  quote_signal_derivation: |-
+    三周期收益=q_i = close/close.shift(i) − 1（i∈{3,5,20}，按 sector_code 分组）；
+    各周期截面 rank-pct 归一 → 主导度=argmax_i(rank_i)；连续面=0.2·rank_q3+0.3·rank_q5+0.5·rank_q20
+    （照在码先验权重原样取，卡只判该权重对不对，不改权）。
+  pandas_steps: []
+  expected_sample_days: "卡自证 ≈550 交易日 × 61~189 板块（q20 预热，IS 有效起点 2021-10-29）"
+  is_oos_coverage: "窗覆盖本身可行，但分桶形制不可执行，不做样本核算"
+  hardest_step: null
+  reject_reason: |-
+    buckets.type=categorical_then_quantile 是两级（先按主导周期三档分类、档内再分位三桶=9 桶），
+    执行器 _bucket_response 只支持单级分位/序数分桶 ⇒ 机械不可实现；复核确认与上一轮同判据（非数据不可得，纯形制不匹配）。
+  unblock_path: "需执行器先支持两级分桶（engine 侧改 _bucket_response），或在卡面冻结前把两级降为单级——降桶=挪门柱（G4-5），本班不做"
+
+- card_id: TDM-E-L2-02-2/calibration/02_板块见顶预警三信号
+  verdict: implementable
+  buckets_type: categorical
+  buckets_on: 命中数 {0,1,2}（两信号命中计数）
+  signal_column: "close, amount, high, low"
+  signal_column_is_single_identifier: false
+  signal_column_decomposition:
+    rsi14_wilder: "close（卡 frozen_note：RSI=14 日 Wilder 口径）"
+    volume_stall: "amount（roll_max 20 日新高）+ close（5 日收益<=0）"
+    high_low: "卡 derivation 全文未使用 high/low ⇒ 列名冗余，不参与算子；已在下条声明"
+  quote_signal_derivation: |-
+    RSI14(Wilder) 按 sector_code 计算；放量滞涨=amount>=roll_max(amount,20) 且
+    close/close.shift(5)-1 <= 0；series=当日命中 >=1 信号的板块占比（市场级预警密度）；
+    panel 辅轴=板块×日命中数对未来 5 日超额的单调性。
+  quote_buckets: |-
+    buckets: {type: categorical, on: 命中数 {0,1,2}（两信号命中计数）, min_obs_per_bucket: 60}
+  quote_frozen_note: "RSI=14 日 Wilder 口径、\"滞涨\"=5 日板块收益 <= 0 而 amount 创 20 日新高"
+  pandas_steps:
+    - "P = load_sector_family_panel(...)"
+    - "delta = P.groupby('sector', sort=False)['close'].diff()"
+    - "gain = delta.clip(lower=0); loss = (-delta).clip(lower=0)   # Wilder: ewm(alpha=1/14, adjust=False) 非 SMA"
+    - "rsi = 100 - 100/(1 + gain.ewm(alpha=1/14, adjust=False).mean() / loss.ewm(alpha=1/14, adjust=False).mean())"
+    - "sig_rsi = rsi > 75"
+    - "amt_new_high_20 = P.groupby('sector', sort=False)['amount'].transform(lambda s: s >= s.rolling(20, min_periods=20).max().shift(0))"
+    - "sig_stall = amt_new_high_20 & (P.groupby('sector', sort=False)['close'].transform(lambda s: s/s.shift(5)-1) <= 0)"
+    - "hit = sig_rsi.astype('int8') + sig_stall.astype('int8')     # buckets.on = {0,1,2}"
+    - "response_panel = forward 5d 板块超额（板块 5 日收益 − 当日族内中位或 000300 5 日收益，二者取一须与总包对齐）"
+    - "bucket = _bucket_response(hit, response_panel, kind='categorical', min_obs=60)"
+    - "series 面: 每日 hit>=1 的板块占比 = 预警密度，对次日指数收益求 IC"
+  expected_sample_days: "IS ≈575 交易日；RSI14+20 日新高需 20 日预热 ⇒ 有效起点 ≈2021-09-01（卡 evidence 自证需 20 日预热）"
+  panel_sample: "575×189≈108k 观测，三档池化每档远超 60"
+  is_oos_coverage: "IS/OOS 均在 880 实测窗内；卡自带 blocked_scope 只封'盘中实时面'与'龙头破位维'，与日频收盘面无关，主面不受影响"
+  hardest_step: "Wilder RSI 口径唯一化——gain/loss 必须 ewm(alpha=1/14, adjust=False)（Wilder 平滑），用 SMA 版 RSI 会与在码 sector_analyzer 结果分叉，属挪门柱级误差"
+  reject_reason: null
+  caveats:
+    - "pillars.ic_floor 的'连续面（RSI 分位+放量滞涨 z 值合成）'未给合成权重与 z 定义 ⇒ 该 pillar 面 unfrozen，算子只提供 hit 计数与两子信号各自分位，禁替它拍权重"
+    - "pillars.precision_floor 依赖'T+5 跌出强度榜前 50%'——强度榜口径未数值化（同 01-2 secondary），标 needs_parity"
+    - "第三信号（龙头股率先破位）卡自判 blocked_on_data，本算子不实现"
+    - "pre-flight 必查：真实面板下命中数=2 档的观测数是否 >=min_obs_per_bucket=60（本班随机数桩里 2 档=0 例）；不足则该档门柱不可达，须如实记 DEVICE_INCONCLUSIVE 而非合并档位"
+
+- card_id: TDM-E-L2-01/comparison/02_等权与IC加权双臂
+  verdict: needs_engine
+  buckets_type: dim_pair
+  buckets_on: 权重律双臂 {arm_A_equal=(0.5,0.5)，arm_B_icweighted=IS 窗估计并冻结}
+  signal_column: kline_sector_880.close / kline_sector_880.amount
+  signal_column_is_single_identifier: false
+  signal_column_decomposition:
+    path_A: "amount→截面 rank-pct + 5 日环比（两子项等权合成后×100）"
+    path_B: "close→q3/q5/q20 收益 0.2/0.3/0.5 加权后 rank-pct×100"
+    unused: "无"
+  quote_buckets: |-
+    buckets:
+      type: dim_pair
+      'on': 权重律双臂 {arm_A_equal=(0.5,0.5)，arm_B_icweighted=IS 窗估计并冻结}
+      pairing: 同一子分底座、同一窗、同一 0.15 分位池规则，双臂逐日配对（仅权重向量不同）
+      min_obs_per_bucket: 60
+  quote_signal_derivation_key: |-
+    arm_A=(路A+路B)/2；arm_B=w_A×路A+w_B×路B，(w_A,w_B) 由 IS 窗日频截面 IC 均值
+    （对 CSI300 次日收益）取正后归一，估毕即冻结不再更新；
+    池=arm 合成分截面 Top-15%（ceil(N×0.15)，保底 1 个）；
+    组合收益=池内 880 行业族指数次日简单等权收益均值（无权重倾斜，无杠杆）。
+  not_unfrozen_note: "本卡不算 unfrozen：IC 权重估法是数值规则（max(IS 截面 IC 均值_i,0) 归一，双双<=0 退 (0.5,0.5)），池分位取件常量 0.15，卡自述'禁补任意小数冒充权重'——按数值规则可估，无需本班拍数"
+  pandas_steps:
+    - "① 子分底座=op_sector_strength_pool_spread 内的四路/两路合成分（本卡只取路A/路B 两路）"
+    - "② IS 窗内逐日算路A/路B 对 CSI300 次日收益的截面 Spearman → 日均值 → 取正归一 → (w_A,w_B) 冻结"
+    - "③ arm_A/arm_B 两条合成分宽帧 → 各自 ceil(N×0.15) 池掩码 → 两条池等权次日收益日序列"
+    - "④ 双臂喂 run_card 的 signal/signal_b → _comparison_metrics 出 sharpe_delta/maxdd_delta"
+    - "⑤ 诊断面：IS 内滚动 252 日重估权重序列 std<=0.15；双臂池成员逐日重合率>=0.95 ⇒ DEVICE_INCONCLUSIVE"
+  engine_gap:
+    - "绑定册单序列面：card_binding.py:628-639 run_binding_book 与 OPS 各 op 一律 return (pd.Series, dict) 单序列，无 signal_b 通道；run_one(card_path, approve, scores_path, run_tag, dry, book) 亦无双臂入参（实测 661-663 行签名）"
+    - "执行器双臂面存在但入口不同：calibration_exam.py:339 def run_card / :370 m=_comparison_metrics(signal, signal_b, target, card) —— 绕过绑定册直跑 run_card 才会走到双臂，绑定册侧需新增'双序列 op'协议"
+    - "口径冲突（阻断级，见 executor_risks §1）：_arm_nav_metrics 把 arm 当【敞口】，ret=e*r.shift(-1)（calibration_exam.py:199）；本卡 arm 定义是【池组合收益序列】本身。直接粘进 run_card 会把'池收益×指数次日收益'当 NAV，Sharpe/MaxDD 全是错的"
+  expected_sample_days: "IS 2021-08-02..2023-12-31 ≈575 日（权重估计窗），OOS 2024-01-01..2025-09-09 ≈415 日判 Sharpe/MaxDD 差"
+  is_oos_coverage: "两窗均在 880 实测窗内；卡另引 kline_index 000300=2005-01-04..2026-10-09/5284 行（在册）"
+  hardest_step: "双臂 NAV 口径——要么给执行器加'return 序列直接回放'支路，要么把池组合改写成'池是否持有的敞口×指数收益'（后者改变卡面定义=挪门柱，本班不选）"
+  reject_reason: null
+  depends_on:
+    - "TDM-E-L2-01/ablation/02（卡面 frozen_note：'两臂的子分派生系数逐字承 ablation/02 的 signal_derivation，禁在本卡重造或改系数'——跨卡口径依赖在册）"
+    - "TDM-E-L2-01/ablation/03（窗口统一口径承此卡）"
+
+- card_id: TDM-E-L2-01/comparison/03_缺路处置律重归一与剔除双臂
+  verdict: needs_engine
+  buckets_type: dim_pair
+  buckets_on: 处置律双臂 {arm_A_renormalize=可用路均值×100 并保留参与排名, arm_B_exclude=该板块当日退出排名分母且不入池}
+  signal_column: kline_sector_880.close / kline_sector_880.amount
+  signal_column_is_single_identifier: false
+  signal_column_decomposition:
+    path_A: "amount rank-pct + 5 日环比（承 comparison/02）"
+    path_B: "close 的 0.2q3+0.3q5+0.5q20 rank-pct（承 comparison/02）"
+  quote_buckets: |-
+    buckets:
+      type: dim_pair
+      'on': 处置律双臂 {arm_A_renormalize=可用路均值×100 并保留参与排名, arm_B_exclude=该板块当日退出排名分母且不入池}
+      min_obs_per_bucket: 60
+  quote_signal_derivation_key: |-
+    屏蔽集=固定种子 20261010 下对 (板块,交易日) 二维抽 20% 置路B 为缺失，双臂共用同一屏蔽集；
+    arm_A：composite=mean(可用路)×100（两路齐⇒(A+B)/2；仅余路A⇒路A×100），随后 clamp [0,100]；
+    arm_B：被屏蔽板块当日整体退出截面（不进 rank、不进分母、不入池，等价 MOD-SIG-144 现行为）；
+    两臂各自加市场级调节 ±10（承 ablation/02 的水温档查表口径）后取 Top-15% 池。
+  pandas_steps:
+    - "① 同 comparison/02 的两路子分宽帧"
+    - "② 掩码：default_rng(20261010) 对 (code×date) 布尔抽 20% 置 path_B=NaN（双臂同掩码，须存种子与形状以复现）"
+    - "③ arm_A=nanmean(可用路)×100 后 clip(0,100)；arm_B=掩码板块整行退出（rank 前先 drop 该 (日,板块)）"
+    - "④ 各自 +市场级调节 ±10（水温档查表口径不在本卡→见 unfrozen_secondary）"
+    - "⑤ 各自 ceil(N×0.15) 池→两条组合日收益→run_card 双臂；另须计数披露池规模差（pillar pool_denominator_effect）"
+  engine_gap:
+    - "同 comparison/02 的单序列绑定面 + NAV 敞口语义冲突"
+    - "剔除臂改变了截面分母 ⇒ 池规模逐日不同，'Top-15%'在两臂下不是同一件事（卡自己要求披露），需 arm driver 输出池规模序列，现执行器无该出口"
+  unfrozen_secondary:
+    - "两臂'各自加市场级调节 ±10（承 ablation/02 的水温档查表口径）'——本卡未给水温档数值与档位边界，须承 TDM-E-L2-01/ablation/02 或 TDM-E-L2-01-5/ablation/02 的调节面口径；该口径未在其卡外冻结，禁本班代拍"
+  expected_sample_days: "IS ≈575 日 / OOS ≈415 日；20% 屏蔽后单路可用样本仍充足（189 code×日）"
+  is_oos_coverage: "窗覆盖可行；卡自述缺失工况的现实性=结构路/资金流路 2026-07-22 前不可算，属全窗常态，与算子实现无碍"
+  hardest_step: "arm_B 的'整行退出截面'与 arm_A 的'留在分母'必须共享同一 rank 调用序，否则 rank-pct 基线漂移会伪装成处置律效应（分位漂移=卡明令要防的假信号）"
+  reject_reason: null
+  depends_on:
+    - "TDM-E-L2-01/comparison/02（子分口径同源，须同一次装配）"
+    - "TDM-E-L2-01/ablation/02 或 TDM-E-L2-01-5/ablation/02（市场级调节 ±10 水温档数值）"
+
+- card_id: TDM-E-L2-04-1/calibration/02_轮动五态调节分
+  verdict: unfrozen
+  buckets_type: categorical
+  buckets_on: 五态 {高潮,主线,分歧,派发,混沌}
+  signal_column: close, amount
+  signal_column_is_single_identifier: false
+  signal_column_decomposition:
+    截面方差: "close→跨板块强度分布 std（但'强度'本身未在本卡数值化，见 blocker_1）"
+    集中度: "amount→Top2 成交额占比"
+  quote_signal_derivation: |-
+    强度底座=同 L2-01 卡的两路合成分（动量活跃+多周期动量，0.5/0.5）；
+    截面方差=当日跨板块强度分布 std（分位化）；集中度=Top2 成交额占比（分位化）；
+    二维各三分位切五态（规则与在码 sector_rotation_state 一致但重算，禁直读输出）；
+    调节标量=高潮 −1 / 派发 −0.75 / 分歧 −0.25 / 混沌 0 / 主线 +0.5（与 +10%/−15% 线性同序）。
+  quote_frozen_note: "看数前冻结；五态边界=方差与集中度各按历史三分位切（口径唯一，与 L2-01-5 共用重算）"
+  blockers:
+    blocker_1_unfrozen_map: |-
+      二维各三分位=3×3=9 格，卡只给 5 个态名与调节标量，未给 9 格→5 态的映射表
+      （哪几格同归'分歧'、哪格判'高潮'）⇒ 映射即权重级的自由参数，禁本班替它拍数。
+    blocker_2_incode_claim_false: |-
+      卡称"规则与在码 sector_rotation_state 一致"——实读该件（src/zephyr/signal_ashare/sector/sector_rotation_state.py:40-49）
+      分类用的是 top_n_hhi(换手/成交额 HHI 集中度) 阈值 0.20/0.25/0.30 + UP_RATIO 普涨比 0.70/0.40 +
+      LEAD_STREAK_MAINLINE=3 连续领涨日，三维绝对阈值判据，既非'截面方差'也非'Top2 成交额占比三分位'。
+      故"承在码规则"这条退路也不存在，不能靠抄在码补 map。
+    blocker_3_percentile_window: "'分位化'未给窗口（历史三分位=全历史 expanding 还是 252 日滚动？两读法两条序列），且 frozen_note 说与 L2-01-5 共用重算=跨卡口径依赖"
+    blocker_4_strength_base: "'强度底座=同 L2-01 卡的两路合成分（0.5/0.5）'——两路子分在本卡未数值化（动量活跃路含 5 日环比还是水平值不明），属 needs_engine 面"
+  pandas_steps: []
+  expected_sample_days: "IS ≈575 日 × 五态；cell_balance 要求每态>=60 且占比<=60%——map 未定前无法预估各态样本量，这正是不可考的直接后果"
+  is_oos_coverage: "窗覆盖无障碍，卡在态定义不在数据"
+  hardest_step: null
+  reject_reason: |-
+    buckets.type 单级 categorical 本身与执行器相容，但卡面判据对象（五态标签）的生成规则未冻结：
+    9 格→5 态映射无数值、'分位化'窗未给、强度底座承他卡未在本卡数值化、且自述的在码一致性经实读不成立。
+    任一 map 由本班补出=事后挪门柱（G4-5），故整卡判 unfrozen，不出分不代拍。
+  depends_on:
+    - "TDM-E-L2-01/ablation/02 或 comparison/02（两路合成分口径）"
+    - "TDM-E-L2-01-5/ablation/02（frozen_note 明令与 L2-01-5 共用重算）"
+    - "Owner/总包补定 9→5 态映射表 + 分位窗"
+
+- card_id: TDM-E-L2/ablation/02_板块候选池整体边际
+  verdict: needs_engine
+  buckets_type: ablation_arm
+  buckets_on: arm 集合 {off, strength_top15, conduction, strength_top15+conduction}
+  signal_column: close, amount
+  signal_column_is_single_identifier: false
+  signal_column_decomposition:
+    板块日收益: "close.pct_change（按 sector_code×trade_date）"
+    强度合成分: "amount 截面占比 rank-pct + 1d/5d/20d 收益 rank-pct，各 ×0.25，×100 后 clamp[0,100]"
+    Top15pct池: "ceil(N×0.15) 掩码（N=当日在数 code 数）"
+  quote_signal_derivation: |-
+    板块强度合分＝(成交额占比 rank-pct ×0.25 + 1d 收益 rank-pct ×0.25 + 5d 动量 rank-pct ×0.25 +
+    20d 动量 rank-pct ×0.25)×100，clamp[0,100]，取 Top15% 作候选池掩码；
+    枢纽 arm 序列=当日池内板块强度均值 − 池外均值（供 series 面判单调）。
+  quote_pillars_level_isolation: |-
+    level_isolation: 结构性判据：传导只调分不重排名（层级隔离不变量，MOD-SIG-136/sector_surface 在码契约），
+    若排名被打乱=违规施工而非分数问题，卡直接判无效不计分
+  what_is_already_frozen: "四路合成分与 Top15% 池掩码在本卡数值化完全（0.25×4、clamp、ceil 保底 1）⇒ 面板子面可算，算子 op_sector_strength_pool_spread 已交付并桩测通过（池规模均值=ceil(N×0.15) 在 12 code 桩上=1.9 符合预期）"
+  why_still_needs_engine:
+    - "arm 集合里的 conduction 臂=在个股层 A1/A2 之后、Top-N 之前注入 X_sector 传导（卡面 arm_impl_ref→scripts/backtest/sector_surface.py MOD-BT-238 接线），需要个股×板块的组合重放链路，非板块面板可算"
+    - "判据 ablation_marginal 是'最强 arm 相对 off 的日频 IC/次日均值差>=+0.01'+组合层 mono，同样要 off/full 双臂的 NAV 与逐持仓重放"
+    - "level_isolation 结构性判据要检查注入前后个股排名是否被打乱 ⇒ 必须有个股层候选序列，属引擎侧不变量断言"
+    - "'off' 臂要求同一底座关掉板块注入⇒ 与在产 pipeline 的 A1/A2 顺序耦合，考卷侧无法自造重放（造了=回归复刻，卡面 frozen_note 禁）"
+  pandas_steps:
+    - "（面板子面，已交付）合成分四路 0.25 等权→×100→clip(0,100)→ceil(N×0.15) Top15% 掩码→池内均值−池外均值=日频序列"
+    - "（不可交付部分）conduction 臂与 off 臂：需 sector_surface.py 的组合重放 + 个股层排名不变量检查"
+  expected_sample_days: "IS ≈575 交易日（池掩码与合成分面）；组合层 arm 的样本=同窗逐日配对"
+  is_oos_coverage: "IS/OOS 全覆盖无数据障碍（880 至 2026-10-08、000300 至 2026-10-09 均在册）；瓶颈是重放引擎不是数据"
+  hardest_step: null
+  reject_reason: null
+  depends_on:
+    - "scripts/backtest/sector_surface.py（MOD-BT-238 X_sector 引擎接线，卡面 arm_impl_ref）"
+    - "个股层 A1/A2 因子序列（板块注入的宿主，本车道无权限也无口径）"
+
+- card_id: TDM-E-L2-09/calibration/03_评级上调聚集
+  verdict: implementable
+  buckets_type: quantile_quintile
+  buckets_on: 行业级 5 日评级上调占比（市场级取行业均值作 series）
+  signal_table_kind: "非 880 面板：c3_fundamental.research_report，需独立 SQL 模板（表名经 args/registry 注入）"
+  signal_column: "industry, rating, rating_change, publish_date, org_name, symbol"
+  signal_column_is_single_identifier: false
+  signal_column_decomposition:
+    industry: "行业分组键"
+    rating: "相邻变化方向的取值源（空串行剔除）"
+    rating_change: "实测全表非空=0 ⇒ 卡面'以其为准'分支不触发，走自算方向支"
+    publish_date: "时间排序键（本表无 trade_date，实测确认）"
+    org_name_symbol: "(org_name,symbol) 配对键=相邻变化序列的分组键"
+  quote_signal_derivation: |-
+    按 (org_name,symbol) 时间序列取相邻 rating 变化方向 → 行业-日聚合：
+    上调占比=上调数/(上调数+下调数)（分母 <3 记 NaN，防小样本假信号）；
+    series=行业加权均值，panel=行业×日。
+    rating 编码序（如 买入>增持>中性>减持）须在开考前以实测取值分布钉死并写入 evidence，禁凭记忆排序。
+  quote_buckets: |-
+    buckets: {type: quantile_quintile, on: 行业级 5 日评级上调占比（市场级取行业均值作 series）, min_obs_per_bucket: 60}
+  pandas_steps:
+    - "S = ch_query_df(SQL_RATING_ADJACENT_ROWS.format(...))；df.columns=['d','org','sym','ind','rt']（位置协议）"
+    - "df['sc'] = pd.to_numeric(df['rt'].map(rating_score_map), errors='coerce')；剔 NaN（空评级/未知词）"
+    - "sort_values(['org','sym','d','sc']) + drop_duplicates(['org','sym','d'], keep='last')  # 同机构同标的同日多行去版本，防同日自环造出假上调"
+    - "prev = groupby(['org','sym'])['sc'].shift(1)；up=(sc>prev)&(d>prev_d)；dn=(sc<prev)&(d>prev_d)"
+    - "ind_day = groupby(['ind','d']) 聚合 up/dn 计数；ratio=up/(up+dn) where (up+dn)>=3 else NaN（卡面分母<3 记 NaN）"
+    - "5 日面：buckets.on 写'行业级 5 日评级上调占比'⇒ ratio 按行业滚动 5 交易日求和后再取比值（sum(up)/sum(den)，非比值均值，防小分母抖动）"
+    - "series = 每日跨行业等权均值（见 caliber_conflict）"
+    - "bucket = _bucket_response(series, next_day_index_return, n_buckets=5)  # quintile 必须显式传，见 executor_risks §2"
+  preflight_required:
+    - "评级序映射：卡明令'实测钉死、禁凭记忆'。实测取值集合={买入,增持,持有,中性,减持,卖出,回避}+空串（见 measured_evidence §RATING_DIST），但计数不给出序；在册可引真源有两套且互相冲突（consensus_daily_compute.py:70-78 的 RATING_SCORE_MAP 与 nlp/research_rating.py:38-48 的 RATING_SCORE）。⇒ 本班不选，须由总包/Owner 指定其一并在 evidence 写死；若取前者，注意其 中性=持有=3、减持=回避=2 会造出'转移不计数'的并列对（持有↔中性、减持↔回避 全表占比 0.8%/0.0007%，量级极小但须登记）"
+  caliber_conflict: |-
+    同卡两处口径不一致：buckets.on=「市场级取行业均值作 series」（等权），derivation=「series=行业加权均值」（带权，权重未给）。
+    本班按判据面（buckets.on）取等权，带权版未实现——权重未冻结，禁替它拍数。
+  expected_sample_days: "实测窗 2017-01-02..2026-09-30；IS 2019-01-04..2023-12-31 ≈1220 交易日、OOS 2024-01-01..2025-09-09 ≈415 交易日（研报表不受 880 首交易日 2021-08-02 约束，比板块族卡多 2.5 年 IS）"
+  is_oos_coverage: "IS 完整可得；实测 IS 窗内逐年行数与 207 行业名单在册，五等分×60 门槛（1220/5=244 日/档）满足；辅轴（行业 5 日超额）因成分表 2026-07-22 起才可用而窗受限，主轴不受影响"
+  hardest_step: "评级序映射的选取——卡把'钉死序'交给实测，而实测只能定取值集合不能定序，两个在册映射还互斥；这是本车道唯一必须由总包/Owner 补一刀的地方（其余步骤全机械）"
+  reject_reason: null
+  head_to_head_note: "pillars.head_to_head 要求与 02 卡（研报条数密度）同场对比并给'去掉密度后的净 IC'⇒ 需 TDM-E-L2-09/calibration/02_板块催化剂密度 同批出分（跨卡对比面，本班只交本卡算子，对比项标 needs_parity）"
+
+# ============================================================================
+# 实测证据面（本班 2026-10-11 00:16 CH，全部走 fexam.ch_data.ch_query_df / table_columns）
+# ============================================================================
+measured_evidence:
+  environment: "Python 3.12.8；CH 时窗合规：00:16 执行，01:00 前收工；此后只做纸面"
+  commands_and_results:
+    - id: RR_COLUMNS
+      cmd: "python -c \"from fexam.ch_data import table_columns; sorted(table_columns('c3_fundamental.research_report'))\""
+      result: |-
+        ['body_ref','body_status','data_source','eps_fy0','eps_fy1','eps_fy2','exchange','fy0_year',
+         'fy1_year','fy2_year','industry','ingest_ts','org_name','pe_fy0','pe_fy1','pe_fy2',
+         'publish_date','rating','rating_change','report_id','researchers','source_url','symbol','symbol_canonical','title']
+        ⇒ 卡面断言"该表无 trade_date 列"复证成立；日期列=publish_date；derivation 所需 6 列（industry/rating/rating_change/publish_date/org_name/symbol）全部在位
+    - id: RATING_DIST
+      cmd: "SELECT rating, count() FROM c3_fundamental.research_report GROUP BY rating ORDER BY count() DESC LIMIT 30"
+      result: "买入 101225｜增持 33144｜空串 11384｜持有 610｜中性 544｜卖出 30｜回避 2｜减持 1（合计 146940）"
+      is_window: "买入 59049｜增持 15790｜空串 4105｜持有 380｜中性 166｜卖出 5｜回避 2｜减持 1（IS 窗 2019-01-04..2023-12-31）"
+    - id: RATING_CHANGE_FILL
+      cmd: "SELECT count(), countIf(rating_change IS NOT NULL AND toString(rating_change)<>'') FROM c3_fundamental.research_report"
+      result: "146940 / 0 ⇒ rating_change 全表空，卡的'以其为准'支不触发，必走 (org,symbol) 相邻自算方向支"
+    - id: RR_WINDOW
+      cmd: "SELECT min(publish_date), max(publish_date), count(), uniqExact(industry), uniqExact(org_name) FROM c3_fundamental.research_report"
+      result: "2017-01-02｜2026-09-30｜146940｜207 industry｜116 org_name（与卡 evidence 逐字一致）"
+    - id: FAMILY_CENSUS
+      cmd: "SELECT code_family, uniqExact(sector_code), min(sector_code), max(sector_code) FROM c1_market.sector_code_name_map GROUP BY code_family"
+      result: |-
+        concept_or_style 426（880501.SH..880979.SH）｜industry_ths 128（88002.SH..881479.SH）｜
+        industry_l2 71（880400.SH..880497.SH）｜industry_l1 61（880301.SH..880399.SH）｜
+        region 32（880201.SH..880232.SH）｜mkt_index 11（880001.SH..880082.SH）
+        ⇒ 底座"族=industry_l1(61)∪industry_ths(128)=189 codes"复证成立；sector_code 带 .SH 后缀
+    - id: MKTSTAT_NOT_IN_INDUSTRY_FAMILY
+      cmd: "SELECT code_family, groupUniqArray(30)(sector_code) FROM c1_market.sector_code_name_map WHERE sector_code IN ('880001',...,'880011') GROUP BY code_family"
+      result: "Empty DataFrame ⇒ 不带 .SH 后缀的字面量在 map 里查不到；再用后缀版普查见 FAMILY_CENSUS：880001.SH-880082.SH 归 mkt_index(11)，不属于 industry_l1/industry_ths"
+  executor_face:
+    - "scripts/backtest/fexam/calibration_exam.py:100 def _bucket_response(signal, target, n_buckets=10)：单级；nunique<=n_buckets 时 dense-rank 序数分桶，否则 qcut 分位分桶。全文零处 categorical_then_quantile/dim_pair/ablation_arm ⇒ 两级/臂集分桶确无机判面"
+    - "scripts/backtest/fexam/calibration_exam.py:116-121 _series_metrics 内 resp=_bucket_response(sig, tgt) 未传 n_buckets ⇒ 一律十分位"
+    - "scripts/backtest/fexam/calibration_exam.py:199 ret = df['e'].shift(0) * df['r'].shift(-1)：_arm_nav_metrics 把 arm 序列当【敞口】"
+    - "scripts/backtest/fexam/calibration_exam.py:339 def run_card / :370 _comparison_metrics(signal, signal_b, target, card)：双臂机判面存在，但在 run_card 直跑路径上"
+    - "scripts/backtest/fexam/card_binding.py:628-639 run_binding_book 与 :661-663 run_one(...) 全链单 Series ⇒ 绑定册无双臂通道"
+    - "grep 全 fexam 目录：dim_pair / ablation_arm / categorical_then_quantile 零命中（仅 card_binding.py:565 的 quantile_quintile 注释）"
+
+executor_risks:
+  - id: NAV_ARM_SEMANTICS
+    severity: 最高（会出假分不是出错）
+    statement: |-
+      comparison/02、comparison/03 与 L2/ablation/02 的 arm 面若直接把"池内 880 次日等权收益"序列当 signal/signal_b
+      喂给 run_card，_arm_nav_metrics 会再乘一次指数次日收益（e*r.shift(-1)），得到"收益×收益"的二阶量，
+      Sharpe/MaxDD 差与 +0.10/+1.0pp/+1.5pp 门柱全部失去可比性——而它不会报错，只会给出看似合理的分。
+      正解：arm 序列须是"敞口"语义（如池成员占比/0-1 敞口），或给执行器加一条 return 序列回放支路。
+  - id: QUINTILE_VS_TEN_BUCKETS
+    severity: 高（挪门柱级，非自愿）
+    statement: |-
+      _series_metrics 不读 card.buckets.type，恒 n_buckets=10。本车道三张'可考'卡里 01-2 与 09-03 都是
+      quantile_quintile，且 01-2 卡面写死"IS 575 交易日，五分位×60 满足；十分位×60=600>575 ⇒ 本卡分桶定为 quintile"。
+      按现执行器跑=十分位（575/10≈57.5 日/档 < min_obs_per_bucket=60），既违反冻结桶型又直接跌破自身门槛。
+      整合时必须把 n_buckets 从 buckets.type 派生（quintile→5、decile→10）或在绑定册显式传 5。
+  - id: ORDINAL_FALLTHROUGH
+    severity: 中
+    statement: |-
+      02-2 的 series（预警密度，连续值）走 qcut 正常；但若总包改绑面板的 hit∈{0,1,2} 三档，
+      执行器会因 nunique(3)<=n_buckets(10) 自动 dense-rank 分桶——表面通过，实为把卡面 categorical
+      静默转成序数且与 10 桶默认值混用，档位语义（0/1/2 命中数）不再显式，须在绑定册显式声明桶型。
+  - id: FAMILY_LIST_MUST_NOT_BE_REMADE
+    severity: 中（本车道已给 args 面，防手滑）
+    statement: |-
+      880001.SH-880082.SH 实测归 code_family='mkt_index'，族过滤（industry_l1,industry_ths）已把它们排除；
+      comparison/03 与 comparison/02 卡面另写"剔除 880001-880011"。若再按【不带 .SH 后缀】的字面量前缀二次剔除，
+      该 IN 列表在带后缀的 sector_code 面上命中 0 行=空操作（安全）；但若有人改用 LIKE '8800%' 前缀二次剔除，
+      会把 880301.SH 等 industry_l1 板块一起杀掉（880 前缀同源），直接掏空分母。二次剔除一律禁。
+
+summary:
+  total_cards: 8
+  verdicts:
+    implementable: 3        # 01-2/calibration/02、02-2/calibration/02、09/calibration/03
+    unfrozen: 1             # 04-1/calibration/02（9→5 态映射未数值化）
+    needs_engine: 3         # 01/comparison/02、01/comparison/03、L2/ablation/02
+    two_level_bucket_reject: 1   # 01-3/calibration/02（categorical_then_quantile）
+  not_examined_here:
+    - "cards 全文未改一字；card_binding.py / 分数册 / 卡件 零写入（禁改面遵守）"
+  ops_draft: ".runtime/tmp/st-mineloop-20261010/lane_sector/sector_ops_draft.py（4 算子 + 3 内部件 + OPS_ADDITION_SNIPPET；py_compile 通过，12×200 日合成面板桩测三张 880 算子与研报表算子逻辑，零表名/列名字面量于函数体）"
+  paste_order_hint:
+    - "先补 executor_risks §2（n_buckets 派生），再绑三张可考卡"
+    - "09/03 需先由 Owner/总包指定评级序映射，否则宁可不考"
+    - "04-1 在任何 map 补定之前不得进 approve 名单"
+
+# ============================================================================
+# 绑定册 args 面（表名/列名真源值只写这里，算子文件内零字面量；均为本班实测/底座在册值）
+# ============================================================================
+bind_args:
+  sector_panel_base: &sp
+    table: "c1_market.kline_sector_880"
+    map_table: "c1_market.sector_code_name_map"
+    families: [industry_l1, industry_ths]      # 实测 61 ∪ 128 = 189 codes
+    period: "1d"
+    close_col: "close"
+    amount_col: "amount"
+  TDM-E-L2-01-2/calibration/02:
+    op: sector_amount_share_top_decile_spread
+    prose_quote: "series 面取\"占比前 10% 板块等权组合的次日超额\"与全样本差"
+    args:
+      <<: *sp
+      pool_pct: 0.10        # 占比前 10%（rank-pct>=0.90）
+      chg_lag: 5            # 环比=占比/占比.shift(5)−1
+      n_buckets: 5          # quintile 必须显式（执行器默认 10，见 executor_risks §2）
+  TDM-E-L2-02-2/calibration/02:
+    op: sector_top_warning_density
+    prose_quote: "series=当日命中 >=1 信号的板块占比（市场级预警密度）"
+    args:
+      <<: *sp
+      rsi_window: 14
+      rsi_threshold: 75.0
+      newhigh_window: 20
+      stall_lag: 5
+      bucket_protocol: "categorical 命中数 {0,1,2} 只在面板辅轴成立；series 面是连续密度⇒qcut；见 executor_risks §3"
+      n_buckets: 10
+  TDM-E-L2-09/calibration/03:
+    op: rating_upgrade_cluster_share
+    prose_quote: "上调占比=上调数/(上调数+下调数)（分母 <3 记 NaN，防小样本假信号）"
+    args:
+      table: "c3_fundamental.research_report"
+      date_col: "publish_date"      # 实测无 trade_date
+      org_col: "org_name"
+      sym_col: "symbol"
+      ind_col: "industry"
+      rating_col: "rating"
+      start: "2018-12-01"            # IS 起点前留暖机，供 (org,symbol) 相邻对形成
+      end: "2025-09-09"
+      min_denominator: 3
+      ratio_window: 5               # buckets.on「行业级 5 日评级上调占比」
+      rating_score_map: "__TBD_BY_OWNER__"   # 禁本班拍序；两个在册候选见 preflight_required
+      n_buckets: 5

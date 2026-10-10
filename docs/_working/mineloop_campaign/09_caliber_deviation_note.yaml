@@ -1,0 +1,53 @@
+---
+ttl: task_bound
+title: 09_口径偏差申报——执行器硬写十分位导致的 3 行 mono_spearman 读数偏差
+created: "2026-10-11"
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+# 口径偏差申报（先认账，再修，再重跑；不覆盖历史行）
+
+## 一、事实链（全部可复算）
+
+1. 专道车道提出判据：`calibration_exam._bucket_response` 的 `n_buckets` **硬写缺省 10**，
+   且 `_series_metrics` 不读 `card.buckets.type`。
+2. 总包逐张复核本班已出分 8 张卡的卡面冻结分桶型（凭据=`exam_cards/**` 现值）：
+
+| card_id | 卡面 buckets.type | 卡面 min_obs_per_bucket | 实际计算用桶数 | 受影响读数 |
+|---|---|---|---|---|
+| TDM-E-L2-04-2/calibration/02_虹吸态成交集中度 | quantile_quintile | 60 | **10（偏差）** | mono_spearman／bucket_medians |
+| TDM-E-L2-03/calibration/02_调整周期进度 | quantile_quintile | 60 | **10（偏差）** | 同上 |
+| TDM-E-L2-02/calibration/02_接棒撤离榜 | quantile_quintile | 60 | **10（偏差）** | 同上 |
+| 其余 5 张（剪刀差／两融／地量／下行半偏差／快讯情感） | quantile_decile | 60／40 | 10（＝卡面一致） | 无偏差 |
+
+3. 影响边界（说清楚，不夸大也不缩小）：
+   - `ic_mean`／`oos_ic`／`regime_ic` 是时序/分段 Spearman，**与分桶数无关** ⇒ 这三项读数不受影响；
+   - `mono_spearman`（响应曲线单调柱）与 `bucket_medians` **按十分位算**，而卡面冻结五分位 ⇒ 该项口径与门柱不一致；
+   - 三张卡 verdict 均为 **fail**，且失败并非仅由 mono 一项决定（ic_mean 也远低于 0.02 地板：
+     虹吸 −0.0105／调整进度 0.0084／接棒撤离 −0.0154）⇒ **改判概率低**，但按纪律仍须以正确口径重跑定论。
+
+## 二、治本动作（已完成，代码面）
+
+`scripts/backtest/fexam/calibration_exam.py`：新增 `_BUCKET_TYPE_N` 词表（真源=exam_cards 在册
+buckets.type 实测集合）＋`_n_buckets_from_card(card)`，`_series_metrics` 改按卡面分桶型取桶数，
+并把 **`n_buckets_used` 回写进分数行 metrics**（自证读数用的几桶，防以后再出现同类静默偏差）。
+词表外类型（arm_matrix 等双臂面）保持缺省 10＝既有行为零改动。
+
+测试：`tests/backtest/test_calibration_exam.py` 14 passed，其中新加 3 条含判别力用例
+`test_quintile_and_decile_give_different_mono_on_same_data`（同数据五分位与十分位的
+mono_spearman 必须可区分——若修复被回退，该条立即红）。
+
+## 三、重跑计划（不覆盖历史，only-add）
+
+- 三张受影响卡以 `--force` 在**修复后执行器**上重跑，新分数行 only-add 追加，
+  run_id 前缀 `mineloop-recast-*`；旧 3 行**保留不删不改**（分数册纪律），本文件即两者的对照说明。
+- 试次：旧 3 次已入账（作废也计次纪律），重跑再计 3 次 ⇒ 该三卡各 2 次试次在册。
+- 重跑时点：**04:00 之后**（01:00–04:00 CH 让路窗内不跑）。
+
+## 四、同类暴露面（给下一轮的分母）
+
+在册 prereg 卡 buckets.type 实测分布里 `quantile_quintile` 共 **11 张**、`quantile_decile` 38 张
+（真源=`01_binding_census.yaml` 与卡面现值）。⇒ 本修复对那 11 张五分位卡是**出分正确性的前置条件**，
+此前任何用十分位算出的五分位卡读数都应按同样方式复核（本班已知受影响面＝上表 3 张，
+其余 8 张五分位卡尚未出分，将在正确口径下首考）。
