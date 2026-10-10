@@ -247,7 +247,76 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 
 ### handle.exe 授权执行件 + 首个幸存者里程碑（巡检班 00:5x-01:1x 轮）
 
-1. **handle.exe 授权落地**（Owner 批「批准」）：官方源 download.sysinternals.com → E:	ools\Handle\（Handle.zip sha256=279aaf8eccb6f79147f4dcc6ba091fb895c4cb8b199a0dd186a4c76bc519d2cd；handle64.exe sha256=24BAFCC570CC9BBB6B6E6652A57A519E0464E3996891AABA6F55299CCE20B04F；Authenticode=Valid/Microsoft Corporation）；免提权自测通过（同用户句柄枚举可用）。
+1. **handle.exe 授权落地**（Owner 批「批准」）：官方源 download.sysinternals.com → E:\tools\Handle\（Handle.zip sha256=279aaf8eccb6f79147f4dcc6ba091fb895c4cb8b199a0dd186a4c76bc519d2cd；handle64.exe sha256=24BAFCC570CC9BBB6B6E6652A57A519E0464E3996891AABA6F55299CCE20B04F；Authenticode=Valid/Microsoft Corporation）；免提权自测通过（同用户句柄枚举可用）。
 2. **只读轮询哨布防**：backfix_handle_poll.sh（20s 周期 `handle64 -nobanner backup.lock`，仅记录持有者、零写动作）后台在岗——backup.lock 的持句柄者出现即定名（主使的读句柄若跨秒级停留即落网）。
 3. **首个幸存者里程碑（01:0x）**：**24968 存活 69min——超越全部受害者最大死亡年龄（65min）**，G 镜像段已活着穿过（G_mtime≈00:50），现处收尾段（STAGE 4 待写）。其点火 worker 照历被 reaper 处决（00:25:57）→ 已越过最大滞差 +24.7min→**止血假说读数转强**（此前 8/8 在 +1.7-24.7min 内死亡；首例越线）。终判=其 STAGE 4 完整回写时刻（预计 ~02:0x）。
 4. 差异面备查：24968 生于 23:59:50——金丝雀拆除（23:1x）后的首例；舰队锁读静音（22:17）后第二例；处方①②+维护班修复均在位。
+
+### 交接快照（巡检班 02:4x 轮，本班收线→新巡检对话接管）
+
+- **活体**：24968 存活 171min（超最大受害者年龄 65min 达 106min；STAGE 4 回写临近，历史完整轮 2h20m+）。
+- **轮询哨**：已转脱离进程（pid 26100，会话无关存活；本班 bash 版已按计划终止）——log=backfix_handle_poll.log（poll#120 clean 心跳在案）。
+- **陷阱×3**：standing(57376)/PPID(43560)/event-watch(57184) 全 ALIVE；atime 差分(57412，keep 保护) ALIVE；诱饵 v1(17224)/v2(23588) ALIVE。
+- **新巡检对话判读要务**：①24968 的 STAGE 4 回写读数（state mtime 变化+last_backup_time 推进=止血定谳）；②06:00 DailyBackup 判定样本（namer RM 爆发+handle 轮询双候窗）；③若有新死亡=RM 路线已退役（SIGSEGV），候选签名走 handle 轮询+event watch+PPID 三证。
+
+### 接管巡检轮（新巡检班 03:0x-03:1x）——仪器体检+三处账面校正
+
+- **巡检读数（02:56:28 单发）**：holder=24968 alive=True（23:59:50 点火，接管时存活 ~185min）；16560/57192/46112 之后零 TARGET_DEATH。G 镜像段止于 00:50:46（其后 512 cycle 零推进），state mtime 仍 22:58:40，`logs\backup_report_20261010_2359*.json` 不存在=**STAGE 4 未回写，止血定谳未达**（三件齐=state mtime 变+last_backup_time 推进+report json 落，缺一不判）。活体非静默：cpu_total 176.6s，cpu_d 稳 0.2-0.5/15s；子进程仅 conhost。
+- **校正①（判据叙述面）**：接管令卡写"修复后（21:31 后）至 02:4x 零新死亡"，与本台账自记冲突——46140（21:34:39 死）、16560（22:37:06 死）、案 #14 46112（23:38:25 死）三例全在 belt_watchdog 修复之后。准确表述=**零新死亡自 23:38:25 起算**（本班 03:1x 实测 ~3h20m），观察窗起点＝案 #14 之后，非修复之后。修复因果假说不因此翻，但"修复后立即静音"这一支撑读数不成立。
+- **校正②（仪器活死面）**：交接快照记 atime 差分=57412（keep 保护）ALIVE——`data/runtime/reaper_kill.log` 记 00:35:42 KILLED PID=57412 reason=runtime_dir_orphan，现役为 00:47 重生的 57008（keep 命中实测=`keep_file:backfix_lockreaders_sampler`）。handle 哨 26100 已 GONE：日志止于 poll#120（02:42:03），击杀册 02:00-03:09 零行=非 reaper 所杀，随前班 shell 树一起没。本班已重启在岗。
+- **校正③（本班自犯，如实入册）**：我先据"keep 身份段只认 .py/.exe/.ps1/.cmd/.bat，不含 .sh"推断 .sh 形态将被 30min 孤儿闸处决，并据此改 .ps1 换形；随后读 `_scan_project_python_processes`——**psutil 扫面只收 name 含 "python" 的进程**，powershell/bash 从来不在判定矩阵输入集内，故 .sh 原本无该风险（换形仍保留：更贴令卡点名件名+keep 已实测免死，现役单实例 pid=46444，自造 .sh 实例 36784/13880 树按自有仪器拆除）。
+- **衍生结论（呈批面，本班不自自动防线）**：处方② 的"cmdline 含 backup.ps1 即跳过"白名单对备份本体是**装饰件**——备份本体 name=powershell.exe，从不出现在 python 扫面里；真在闸口内的只有 python 命名进程。这把"reaper/守卫生效路径误杀 backup"分支进一步排除，主使须具备**按 pid 直杀**能力（`psutil.Process(pid).kill()` 一类，不受扫面 name 过滤约束），与"读 backup.lock 取 pid 后处决"的画像一致。
+- **06:00 判定样本前置（实测）**：`ZephyrAlpha-DailyBackup` state=Ready next=2026-10-11 06:00:00 last=2026-10-10 06:00:01 result=0；现役仪器=standing(57376)/PPID(43560)/event-watch(57184)/atime 差分(57008)/monitor(47956 -WatchPid 24968)/handle 哨(46444)。handle64 现值 `No matching handles found`（backup.lock 无持句柄者=锁为内容面非句柄面，读取取证仍靠 atime 差分）。
+- **下一轮入口**：①24968 STAGE 4 三件齐即报定谳；②06:00 点火即挂 `-WatchPid <pid>`；③新死亡按 handle 轮询+event watch+PPID 三证定名（RM 路线已退役勿复活）。
+
+### 四选批复执行段（总统统筹 03:3x 批复①②③④，接管巡检班 03:4x 轮）
+
+- **批复①（照守+加密）落地**：`.runtime\tmp\backfix_dense_window.ps1`（纯 ASCII，AST 解析 0 错）脱离进程在岗 pid=43596——05:30 起每 5 分钟单发巡检，06:30 自终止（零遗留自动化待删）；醒来前不空转（SLEEP_TO_WINSTART 对齐，首班巡检落在 05:30 而非 05:34）。30 分钟母网照旧并行。
+- **批复③（05:45 挂死处置权）落成形非落口头**：同一脚本内置 zombie gate，判据五件全 AND=alive + state mtime 仍=2026-10-10 22:58:40 + last_backup_time 仍=2026-10-09T07:48:15 + `logs\backup_report_20261010_2359*.json` 不存在 + G 面零推进≥5h（零推进起点取 monitor 日志同源读数 G_mtime=00:50:46，不自造第二把尺）。**时序如实标价**：5h 线在 05:50:46 才越，故动作窗落在 05:45/05:50/05:55 三次尝试；05:58 后**拒动**（宁 withheld 也不在 06:00 Guaranteed 点火本身上清锁，防与新品撞锁）。每次尝试的全部因子+判据逐项值写 `.runtime\tmp\backfix_zombie_gate_evidence.md`，动作行同件留痕（先证据链后动作）。`-Mode evaluate` 只读自评已实测：`zero_progress_s=8968 SATISFIED=False`，五件读数皆有值非崩溃。
+- **批复②（补真接，最小面）实现+红绿双证**：真缺口不在我上段的"装饰件"表述里，而在 **`_kill_pid_tree` 级联腿**——`children(recursive=True)` 取回的整棵子树过去**零 cmdline 复核**，点火链形态（python worker → 其 backup.ps1 后代）下处决 worker 必顺带处决备份。落地三件：①新判据单口 `is_backup_form_cmdline()`（name 无关，禁他处再写字面量 `"backup.ps1"`，原 1264 行字面量已改走单口）；②级联腿按该判据过滤后代＋根判拒发（True=无需动作，非 [FAILED]）；③`_proc_cmdline` 守本件"永不抛"契约（2026-09-26 治本条），句柄类错误+鸭子替身缺方法一律降级空串=判不出即按原语义继续，绝不因观测面失能改写收割。头 `[INVARIANTS]` 同步补记。**未扩扫面**（powershell 不入判定矩阵=批复明令）。
+  - 红证（改码前实测）：`test_kill_pid_tree_must_spare_backup_form_descendant` / `..._refuses_backup_form_root` 两支 **FAILED**（`backup.terminate_calls==1`＝缺陷复刻）；改码后同两支 **6 passed**（含原有四支：pid 回收必拦/活体 backup 必跳/死条目必销账/真超寿 worker 仍可杀＝反向回归未破）。
+  - 回归面实测：`test_process_reaper_identity_recheck.py`＋`tests/legacy_zephyr/trading/test_process_reaper.py`＋`test_v7_pid_reuse.py`＋本文件＝**85 passed / 1 failed**；我一度把 legacy 两支 `TestKillPidTreeNeverRaises` 改红（`_FakeProc` 无 `cmdline`→AttributeError 上抛），已按"永不抛"契约自修并复绿。**残余 1 红非本批**：`test_v7_pid_reuse.py::test_pid_reused_by_innocent_process_is_not_reaped` 断言 `report.reported[0].reason=="incubation_expired_pid_reuse_skip"`，而 465f2779（10-10 17:31，批复①②本体）把该路径改判为 `identity_mismatches`+销账（现场值=`born_after_registration:reg_born=1000.0 live_born=now`）——**防误杀断言 `report.killed==[]` 仍通过**，红的只是回报通道；该测试件最近由 280a3870885（死信恢复 F1b 族 gov-23）恢复，恢复时未跟上 465f2779 语义。**本班不改它**（改他班红蓝网的断言＝改判据面，候处置）。
+- **本班仪器面补记**：keep 册 `backfix_handle_poll` 一行经实测才成立——reaper 的 psutil 扫面按 `name` 含 "python" 过滤，故 powershell/bash 仪器**从不入面**（两陷阱 13h 孤儿+.runtime+超龄未死即此因）；keep 行只对 python 命名件有语义（atime 差分 57412 于 00:35:42 被 `runtime_dir_orphan` 处决＝python 命名且当时无 keep 行）。上段"校正③"已把本班一次误判如实入册。
+- **复核命令**：`PYTHONPATH=src python -m pytest tests/infra/infrastructure/test_process_reaper_pid_recycle_backfix.py`（应 6 passed）；`powershell -NoProfile -ExecutionPolicy Bypass -File D:\ZephyrAlpha\.runtime\tmp\backfix_dense_window.ps1 -Mode evaluate`（只读自评，应 SATISFIED=False 且五因子有值）；`grep -c '^### ' docs/_working/backfix_campaign/00_ledger.md`（本段后应 23）；`git show 465f2779 --stat`（v7 存量红的成因件）。
+
+### 转义损伤修复留痕（接管巡检班 03:3x 轮，字节级零判断改动）
+
+- **现象**：台账内 5 行含裸控制字符——U+0009（制表符）4 处 + U+0008（退格）5 处，全部是路径里的 \t/\b 在写入链里被当转义吞掉所致（\tmp→TAB+'mp'、\backup→BS+'ackup'、\tools→TAB+'ools'）。grep 这些路径必零命中＝引用即假。
+- **成因归属**：其中 1 行属前班 00:5x-01:1x 轮（handle.exe 授权执行件里的 E:\tools\Handle），4 行属本班上一段与本段——同一条工具链陷阱（heredoc 里写 \\ 仍会先被吞成单层再被 Python 吃掉），非两班各自笔误。前班那 1 行一并修＝字节级还原其原意，零语义改动，如实在此留痕而非静默改他人文本。
+- **修法与自证**：chr(9)/chr(8) → chr(92)+'t' / chr(92)+'b'，CAS 写；写后 TAB=0 BS=0、行数 280→280、改动行数=5（恰为受损 5 行）、删除内容行=0（除被修复行自身旧形态）。今后本战役写路径一律走 chr(92) 拼或 raw 串，禁在传输层写双反斜杠。
+
+### 批复②复投与死信留痕（接管巡检班 04:0x 轮）
+
+- **q-20261011-st-backfix-patrol-20261011-0001 判 dead**（dead_at=03:40:26，family=item:GATE-PRECOMMIT-RUN，recurrence_count=31）：死因命中本班自写代码——`check_any_abuse` ANY-1「函数参数裸 Any」= `_proc_cmdline(proc: Any)`；pre-commit 只在落地 staged 面（own-scope 临时索引）报，入队预检不吃这一下＝"ENQUEUED 绿灯≠落地绿灯"。修法：注解改 `object`（本函数的真实契约=任意带 cmdline() 的对象，缺方法已在 except 面降级空串），复跑 `check_any_abuse`+`ruff check`+`ruff format --check` 三支件全清后才复投。
+- **不复用旧袋（不 requeue）**：袋内 files[] 存的是入队时的 blob 快照与 base_blob，requeue 会把**已判死的旧字节**再落一次（我改的 Any 注解与 v7 对齐都不在里面）。正解=以当前字节另起新袋；同 sid 同件的后袋会静默 supersede 前袋条目（在册行为，如实记，不当事故报）。
+- 新袋含四件：`src/zephyr/trading/process_reaper.py`、`tests/infra/infrastructure/test_process_reaper_pid_recycle_backfix.py`、`tests/gov/governance/redblue_wave73/test_v7_pid_reuse.py`、本台账。
+
+### 批复②加件：v7 红蓝网通道对齐 + 姊妹件同族红呈报（接管巡检班 04:0x 轮）
+
+- **v7 已修**（Owner 批"按 465f2779 语义对齐断言+留痕"）：`tests/gov/governance/redblue_wave73/test_v7_pid_reuse.py` 的留痕断言由旧通道 `report.reported[0].reason=="incubation_expired_pid_reuse_skip"` 改为新通道三钉=`len(report.identity_mismatches)==1` + `reason` 含 `born_after_registration`（pid 复用的机读标记）+ `report.reported==[]`（反向钉旧通道不得复活/双通道重复记账）。**`assert report.killed == []` 原文原样保留未弱化**（Owner 明令），件首 docstring 同步记通道改判依据=465f2779。实测 `1 passed`。
+- **同族红未动，候同一批准**：`tests/trade/trading/runtime/test_process_reaper_identity.py` 3 支红，机理与 v7 同源且更值得看——其中两支（`test_matching_identity_still_reaped`/`test_legacy_record_without_snapshot_still_reaped`）期望 `killed==1` 实得 0，真因不是 dry_run 而是**该件自带的 `_live()` 替身把活体写成 name="innocent"/cmdline="innocent.exe --serve"，与登记记录的 cmd/name 天然不符**⇒465f2779 的 `cmd_diverged` 赦免分支先命中⇒根本走不到收割。这是"替身与登记不同源"的测试自污染，改法有两种（替身 cmd 与登记一致=真验收割；或显式断言赦免=验证据），语义取向不同，**不属本班点名范围，不自决**。
+- 判据面纪律：本班只动 Owner 批准的那一支文件的断言通道，未碰任何阈值/判据口径；`_DANGEROUS_*`、寿命阈值、身份复核三要素定义零改动。
+
+### 批复③案卷：落地内存闸与落地 worker 工作集的撞车面（只出案卷，判据零改动）
+
+**尺的更正（本班上一轮混用过两只尺，先纠正）**：dangerous 闸读的是 **RSS**（`_collect_metrics` 取 `proc.memory_info().rss`），而 `commit_pct`（02:58=72.75→03:40=81.78）是**提交电荷**另一把尺，本机 RAM 63.85GB。把二者并列为"在爬的风险"是我上轮的口径混用，如实更正。附带观测：同一闸值在两调用点比较符不一致（判定矩阵 `>` / derived_orphan `>=`）——零影响本案卷结论，记此备查。
+
+**实测数（真源=`data/runtime/reaper_kill.log` 全史，class 由 cmdline 判，±15min 对账 `.runtime/commit_queue/dead/*.json`）**
+
+| 面 | 样本 | 读数 |
+|---|---|---|
+| dangerous 行全史（09-28→10-11） | 27 | 其中真杀 26、本班只读 dry-run 1 |
+| **落地侧**（cmdline 含 commit_queue+worktree） | 11 | RSS **11128-14813MB**，中位 11618MB；真杀 10 次跨 9 天≈**1.1 次/日** |
+| 非落地侧（llama/聚合大户等） | 16 | min 312 / med 11036 / max 32488MB（闸的本意对象） |
+| 撞车→死袋可证性 | ±15min 内 6 只 | 6 只各带自成因（GATE-VOCAB×2／GATE-PRECOMMIT-RUN／注册表三向合并失败／ghost_session×1），**记"worker 中途消失"者=0** |
+| 分母 | done 731 / dead 1419 | 死袋占比 66.0%（多因合计，非本闸专属） |
+
+**结论（案卷级，非裁定）**：闸值 10GB **落在落地 worker 的常态工作集之下**——被 reaper pass 看见的落地 worker 11/11 全部超闸，所以这不是偶发越界而是结构性压线；是否真被杀取决于 pass 是否撞进落地窗（pass 节奏约 10min）。但"杀了会不会坏袋"在**现有账面不可证伪**：真杀 10 次，邻近死袋各有独立成因，无一只记 worker 中途消失——要么杀在非关键阶段、要么队列静默重试而未记账。
+**三条候选（走正道呈报，本班一律不动手）**：A 闸值按机分档（如 max(10GB, 25%·RAM)）或按进程身份分级；B 落地 worker 显式豁免＋配"超时必收"上限；C **先补观测面**＝落地侧记 worker 退出码/中途消失账，把真实撞车率测出来再定 A/B。本班荐 **C 先行**：无观测面的判据改动＝第二次盲改（本台账已有"覆盖尺提到即算必假绿""恒绿无配对测试判疑似判据失效"两条在册教训）。
+
+### 批复④：双机制假说段（级联已修／读锁居民在追／06:00 为分水岭）——接管巡检班 04:0x 轮
+
+- **机制A＝级联腿顺带伤亡（本班已修，且如实降级为"非主杀径"）**：`_kill_pid_tree` 递归子树零 cmdline 复核，点火链形态（python worker→其 backup.ps1 后代）下处决 worker 会带倒备份。**但它解释不了观测时序**：级联是"先子后父、同一次动作"，而案 #5-#14 十三例是 worker 被处决后 **+1.7~24.7min** 才死。⇒ 机制A 修的是附带伤亡面（防线价值成立），主杀径另在他处。
+- **机制B＝读 backup.lock 取 pid 的仓外/隐名 resident（在追，仍是主假说）**：本轮把能力面钉实了一格——本器扫面按 name 含 "python" 过滤，任何"reaper 合规收割 powershell 备份本体"的分支都**结构性不可能**；反之 `psutil.Process(pid).kill()` 一类按 pid 直杀**不受 name 过滤约束**，与"读锁取 pid→分钟级处决→杀后删锁"的画像一致。三证已就位候下一例：handle 轮询哨（46444，实测免死）＋atime 差分（57008）＋event watch/PPID（57184/43560）。
+- **06:00＝分水岭判读**：这次点火是"belt_watchdog 修复＋机制A 修码已入运行面（磁盘现字节）＋金丝雀已拆"三者叠加后的首个 Guaranteed 点火。三件齐（state mtime 变＋last_backup_time 推进＋report json 落）⇒ 杀面收敛到"与 reaper 家族周期同源"的残余，止血定谳；仍落在 +1.7~24.7min 滞差带内 ⇒ 机制B 的 resident 确在，且此时挂着的 monitor/三证将首次给出跨 name 的按 pid 直杀捕点。
+- **本班读数（04:0x）**：24968 存活 242min（超全部受害者年龄），G 面零推进 3h12m，STAGE 4 三件全缺；挂死门按批复①保持 5h 线不动（05:50:46 越线，动作落 05:50/05:55 两次尝试，05:58 拒动）。

@@ -5,7 +5,7 @@
 # [CONSUMERS] scripts/register_process_reaper_task.ps1; Windows Task Scheduler(ZephyrAlpha_ProcessReaper)
 # [STARTUP] scheduled_task
 # [MATURITY] production
-# [INVARIANTS] 白名单命中永不杀; Trae后代进程永不杀; kill操作必须日志记录; dry-run零副作用; one-shot执行完即退出无常驻; kill日志行 PID/reason 在前、name+cmd 片段(≤120字符,仅argv不含环境变量)追加行尾（P-12 归因，改判据前须核既有 grep 口径）；backfix 批复①+②（2026-10-10，备份链连环案 #5-#9）：孵化台账三要素身份复核（born_after_registration/image_diverged/cmd_diverged，identity_mismatch_reason）任一不符=赦免+销账；销账=子死/身份不符/复查消失即回写 exited_at（_mark_incubation_exited，与 reaped 语义分离）；活体 cmdline 含 backup.ps1 的 pid 一律跳过（处方②备份白名单，与 keep 行双保险）；红蓝网 tests/infra/infrastructure/test_process_reaper_pid_recycle_backfix.py（pid 回收复刻必拦）
+# [INVARIANTS] 白名单命中永不杀; Trae后代进程永不杀; kill操作必须日志记录; dry-run零副作用; one-shot执行完即退出无常驻; kill日志行 PID/reason 在前、name+cmd 片段(≤120字符,仅argv不含环境变量)追加行尾（P-12 归因，改判据前须核既有 grep 口径）；backfix 批复①+②（2026-10-10，备份链连环案 #5-#9）：孵化台账三要素身份复核（born_after_registration/image_diverged/cmd_diverged，identity_mismatch_reason）任一不符=赦免+销账；销账=子死/身份不符/复查消失即回写 exited_at（_mark_incubation_exited，与 reaped 语义分离）；活体 cmdline 含 backup.ps1 的 pid 一律跳过（处方②备份白名单，与 keep 行双保险）；处方②补真接（2026-10-11 批复）＝backup 形态判据升为 name 无关单口 `is_backup_form_cmdline`，**级联腿（_kill_pid_tree 递归子树）与根判共用同一判据**，backup 形态后代/根一律豁免（python 扫面按 name 过滤， powershell 本体从不入面＝只在入面生效的白名单对备份是装饰件；扩扫面属扩杀面，禁）；红蓝网 tests/infra/infrastructure/test_process_reaper_pid_recycle_backfix.py（pid 回收复刻必拦＋级联腿 backup 后代必拦）
 # [MODIFY-GUARD] MOD-RESOURCE_OPTIMIZATION_ENGINE §new-IDE
 # [STABILITY] evolving
 # [SAFETY] M
@@ -680,6 +680,36 @@ def _log_kill(pid: int, reason: str, dry_run: bool, name: str = "", cmdline: str
         logger.warning("kill 日志写入失败: %s", e)
 
 
+_BACKUP_FORM_MARKER = "backup.ps1"
+
+
+def is_backup_form_cmdline(cmdline: object) -> bool:
+    """backup 形态判定单口（处方②补真接，2026-10-11 总统统筹批复）。
+
+    判据与进程 name **无关**：本器 python 扫面按 name 过滤（`_scan_project_python_
+    processes` 只收 name 含 python 者），powershell 形态的备份本体从不入面——只在入面
+    进程上生效的白名单对备份本体是装饰件。真实暴露面是**级联腿**：`_kill_pid_tree`
+    递归取子树过去零 cmdline 复核，点火链形态（python worker → 其 backup.ps1 后代）
+    下处决 worker 会顺带处决备份。本函数＝级联腿与根判共用的唯一判据，禁在他处再写
+    字面量 `"backup.ps1"`。扩扫面（把 powershell 纳入判定矩阵）＝扩杀面，方向反了，禁。
+    """
+    return _BACKUP_FORM_MARKER in str(cmdline or "")
+
+
+def _proc_cmdline(proc: object) -> str:
+    """读活体 cmdline（psutil.Process 返回 argv 列表；测试替身可返回字符串或缺方法）。
+
+    永不抛＝本件 kill 腿的既有契约（2026-09-26 治本：一个读不到句柄的受保护进程不得
+    带走整轮收割）：句柄类错误 + 鸭子类型替身缺方法（AttributeError/TypeError）一律降级
+    空串＝判不出 backup 形态，按原语义继续，绝不因观测面失能而改写收割结果。
+    """
+    try:
+        raw = proc.cmdline()
+    except (psutil.NoSuchProcess, psutil.AccessDenied, AttributeError, TypeError, OSError):
+        return ""
+    return " ".join(raw) if isinstance(raw, (list, tuple)) else str(raw or "")
+
+
 def _kill_pid_tree(pid: int) -> bool:
     """terminate → 等 3s → kill 升级；级联杀子进程树（先子后父）。
 
@@ -696,12 +726,25 @@ def _kill_pid_tree(pid: int) -> bool:
     except psutil.AccessDenied:
         logger.warning("PID=%d 句柄不可打开（AccessDenied）：本项记失败，收割继续", pid)
         return False
+    if is_backup_form_cmdline(_proc_cmdline(proc)):
+        # 调用方漏检时的最后一道：根即 backup 形态⇒整棵树下发动作全拒（True=无需动作）
+        logger.warning("PID=%d cmdline 呈 backup 形态：拒发收割动作（处方②补真接·根判腿）", pid)
+        return True
     targets: list[Any] = []
     if _KILL_CHILD_RECURSIVE:
         try:
-            targets.extend(proc.children(recursive=True))
+            kids = proc.children(recursive=True)
         except (psutil.NoSuchProcess, psutil.AccessDenied):
-            pass
+            kids = []
+        spared = 0
+        for kid in kids:
+            if is_backup_form_cmdline(_proc_cmdline(kid)):
+                spared += 1
+                continue
+            targets.append(kid)
+        if spared:
+            # 点火链形态（python worker → 其 backup.ps1 后代）：处决 worker 不得顺带处决备份
+            logger.warning("PID=%d 级联腿豁免 %d 个 backup 形态后代（处方②补真接）", pid, spared)
     targets.append(proc)
     for t in targets:
         try:
@@ -1260,9 +1303,9 @@ def _reap_incubated_expired(
                 mismatch,
             )
             continue
-        # ── 处方②：活体 cmdline 含 backup.ps1 的 pid 一律跳过（备份白名单）──
+        # ── 处方②：活体 cmdline 呈 backup 形态的 pid 一律跳过（判据单口=本文件 is_backup_form_cmdline）──
         live_cmd = str(all_procs.get(pid, {}).get("cmdline", "") or "")
-        if "backup.ps1" in live_cmd:
+        if is_backup_form_cmdline(live_cmd):
             report.reported.append(
                 {"pid": pid, "reason": "incubation_expired_backup_whitelisted", "cmdline": live_cmd[:120]}
             )

@@ -155,3 +155,90 @@ def test_normal_expired_worker_still_killed(monkeypatch, h):
     assert h.kill_calls == [7777], "真超寿 worker 被赦免=反向回归（改到永不杀）"
     assert h.marks == ["real-0001"]
     assert h.exited_marks == [], "正常收割不得重复销账"
+
+
+class _NoSuchProcess(Exception):
+    pass
+
+
+class _AccessDenied(Exception):
+    pass
+
+
+class _TimeoutExpired(Exception):
+    pass
+
+
+class _FakeProc:
+    """psutil.Process 替身：只暴露 _kill_pid_tree 用到的方法面。"""
+
+    def __init__(self, pid: int, cmdline: str, kids: list[_FakeProc] | None = None) -> None:
+        self.pid = pid
+        self._cmdline = cmdline
+        self._kids = kids or []
+        self.terminate_calls = 0
+        self.kill_calls = 0
+
+    def cmdline(self) -> str:
+        return self._cmdline
+
+    def children(self, recursive: bool = False) -> list[_FakeProc]:
+        return list(self._kids) if recursive else []
+
+    def terminate(self) -> None:
+        self.terminate_calls += 1
+
+    def kill(self) -> None:
+        self.kill_calls += 1
+
+    def wait(self, timeout: float | None = None) -> int:
+        return 0
+
+
+def _fake_psutil(procs: dict[int, _FakeProc], monkeypatch) -> None:
+    def _process(pid: int) -> _FakeProc:
+        if pid not in procs:
+            raise _NoSuchProcess(pid)
+        return procs[pid]
+
+    def _wait_procs(targets, timeout=3):
+        return list(targets), []
+
+    class _Ns:
+        NoSuchProcess = _NoSuchProcess
+        AccessDenied = _AccessDenied
+        TimeoutExpired = _TimeoutExpired
+        Process = staticmethod(_process)
+        wait_procs = staticmethod(_wait_procs)
+
+    monkeypatch.setattr(pr, "psutil", _Ns)
+    monkeypatch.setattr(pr, "_KILL_CHILD_RECURSIVE", True)
+
+
+_BACKUP_CMD = (
+    r'"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile '
+    r"-ExecutionPolicy Bypass -File D:\ZephyrAlpha\scripts\backup\backup.ps1"
+)
+_WORKER_CMD = "python -m zephyr.governance.audit.reconcile_worker --payload real.json"
+
+
+def test_kill_pid_tree_must_spare_backup_form_descendant(monkeypatch):
+    """批复②补真接（2026-10-11）红证：级联腿过去零 cmdline 复核——点火链形态
+    （python worker → 其子 backup.ps1 活体）时，处决 worker 必顺带处决备份。
+    必拦：backup 形态后代 terminate/kill 双零；同树无关兄弟仍可杀（防改成永不杀）。"""
+    backup = _FakeProc(201, _BACKUP_CMD)
+    sibling = _FakeProc(202, "python -c 1")
+    root = _FakeProc(200, _WORKER_CMD, kids=[backup, sibling])
+    _fake_psutil({p.pid: p for p in (root, backup, sibling)}, monkeypatch)
+    assert pr._kill_pid_tree(200) is True
+    assert backup.terminate_calls == 0 and backup.kill_calls == 0, "backup 形态后代被级联杀=真缺陷复刻"
+    assert sibling.terminate_calls >= 1, "同级非 backup 进程也豁免=改到永不杀（反向回归）"
+    assert root.terminate_calls >= 1
+
+
+def test_kill_pid_tree_refuses_backup_form_root(monkeypatch):
+    """调用方漏检时的最后一道：根自身即 backup 形态⇒拒发动作，返回 True（=无需动作）。"""
+    backup = _FakeProc(301, _BACKUP_CMD)
+    _fake_psutil({backup.pid: backup}, monkeypatch)
+    assert pr._kill_pid_tree(301) is True
+    assert backup.terminate_calls == 0 and backup.kill_calls == 0
