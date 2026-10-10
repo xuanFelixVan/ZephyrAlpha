@@ -7447,6 +7447,16 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L3b
   merge_evaluation: "过夜总令 L3b 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-02__ablation__04_降档预警输入消融.yaml
+  token: exam-card-tdm-e-l0-02--ablation--04--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-02__calibration__03_偏离幅度分位响应曲线.yaml
+  token: exam-card-tdm-e-l0-02--calibration--03--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-02__comparison.yaml
   token: exam-card-tdm-e-l0-02--comparison-20261009
   capability: exam_card
@@ -7467,6 +7477,16 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L3b
   merge_evaluation: "过夜总令 L3b 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-04__calibration__03_pre_open盘前先验与盘中档位差.yaml
+  token: exam-card-tdm-e-l0-04--calibration--03-pre-open-20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-04__calibration__04_close_final预警兑现率.yaml
+  token: exam-card-tdm-e-l0-04--calibration--04-close-final-20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-04__comparison.yaml
   token: exam-card-tdm-e-l0-04--comparison-20261009
   capability: exam_card
@@ -7507,6 +7527,31 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L3c
   merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__ablation__03_跨层封顶与对齐加成双臂.yaml
+  token: exam-card-tdm-e-l1-agg--ablation--03--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__calibration__02_四档风险轴前向收益单调.yaml
+  token: exam-card-tdm-e-l1-agg--calibration--02--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__calibration__03_子信号族到状态轴传导保真度.yaml
+  token: exam-card-tdm-e-l1-agg--calibration--03--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__calibration__04_存量博弈量能分位门.yaml
+  token: exam-card-tdm-e-l1-agg--calibration--04--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__comparison__02_锚定四档vs旧hmm概率链双臂.yaml
+  token: exam-card-tdm-e-l1-agg--comparison--02-vshmm-20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0-1__calibration.yaml
   token: exam-card-tdm-e-l1-s0-1--calibration-20261009
   capability: exam_card
@@ -7712,6 +7757,16 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L3c
   merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__ablation__02_状态矩阵空档段路由代价.yaml
+  token: exam-card-tdm-e-l1--ablation--02--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__calibration__02_谨慎度分裂度熵轴保真度.yaml
+  token: exam-card-tdm-e-l1--calibration--02--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison.yaml
   token: exam-card-tdm-e-l1--comparison-20261009
   capability: exam_card
@@ -7722,6 +7777,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L3c
   merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison__03_六段预算带带内位置双臂.yaml
+  token: exam-card-tdm-e-l1--comparison--03--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-C-L2__calibration__02_币圈赛道资金流轮动.yaml
   token: exam-card-tdm-c-l2--calibration--02--20261009
   capability: exam_card
@@ -7797,6 +7857,16 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01__comparison__02_等权与IC加权双臂.yaml
+  token: exam-card-tdm-e-l2-01--comparison--02-ic-20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01__comparison__03_缺路处置律重归一与剔除双臂.yaml
+  token: exam-card-tdm-e-l2-01--comparison--03--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__ablation__03_象限迁移确认腿与稀有路径护栏.yaml
   token: exam-card-tdm-e-l2-02-1--ablation--03--20261009
   capability: exam_card
@@ -7882,6 +7952,16 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L1
   merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04__calibration__02_在码高潮分四档阶跃响应.yaml
+  token: exam-card-tdm-e-l2-04--calibration--02--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04__comparison__02_主线合取与单腿双臂.yaml
+  token: exam-card-tdm-e-l2-04--comparison--02--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-1__calibration__02_水温档读数与月级封顶.yaml
   token: exam-card-tdm-e-l2-05-1--calibration--02--20261009
   capability: exam_card
@@ -7957,11 +8037,21 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07-1__ablation__03_强度维单位口径错配.yaml
+  token: exam-card-tdm-e-l2-07-1--ablation--03--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07-1__calibration__02_回踩四因子合成分.yaml
   token: exam-card-tdm-e-l2-07-1--calibration--02--20261009
   capability: exam_card
   created_by: st-nightmine-20261010-L1
   merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07-1__calibration__03_死常量两腿_结构破坏与超窗横盘.yaml
+  token: exam-card-tdm-e-l2-07-1--calibration--03---20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07-1__comparison.yaml
   token: exam-card-tdm-e-l2-07-1--comparison-20261009
   capability: exam_card
@@ -7972,11 +8062,21 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L1
   merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07__ablation__03_时间窗外不评级并入观望的边际.yaml
+  token: exam-card-tdm-e-l2-07--ablation--03--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07__comparison.yaml
   token: exam-card-tdm-e-l2-07--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07__comparison__03_追高与低吸胜率对照.yaml
+  token: exam-card-tdm-e-l2-07--comparison--03--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-08__calibration__02_板块生命周期动量持续性.yaml
   token: exam-card-tdm-e-l2-08--calibration--02--20261009
   capability: exam_card
@@ -8002,6 +8102,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L1
   merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-2__ablation__03_图谱PIT有效行过滤臂.yaml
+  token: exam-card-tdm-e-l2-09-2--ablation--03-pit-20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-2__comparison.yaml
   token: exam-card-tdm-e-l2-09-2--comparison-20261009
   capability: exam_card
@@ -8022,11 +8127,21 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-RX
   merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__calibration__05_板块级盘前新闻情绪催化剂腿.yaml
+  token: exam-card-tdm-e-l2-09--calibration--05--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__comparison.yaml
   token: exam-card-tdm-e-l2-09--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__comparison__02_催化剂加权形式板块恒定与标的指数衰减.yaml
+  token: exam-card-tdm-e-l2-09--comparison--02--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-10__calibration__02_同源补涨滞后.yaml
   token: exam-card-tdm-e-l2-10--calibration--02--20261009
   capability: exam_card
@@ -9437,6 +9552,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-01__calibration__04_状态机态序与滞留天数对次日收益预测.yaml
+  token: exam-card-tdm-p-p1-01--calibration--04--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-01__comparison.yaml
   token: exam-card-tdm-p-p1-01--comparison-20261009
   capability: exam_card
@@ -9447,6 +9567,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L4
   merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-01__comparison__03_回执与本地台账入账口径双臂失真.yaml
+  token: exam-card-tdm-p-p1-01--comparison--03--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-02__calibration__02_ATR距止损带对后续下行预测.yaml
   token: exam-card-tdm-p-p1-02--calibration--02-atr-20261009
   capability: exam_card
@@ -9602,6 +9727,21 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L4
   merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-04__ablation__04_梯度减仓顺序与无排序双臂消融.yaml
+  token: exam-card-tdm-p-p2-04--ablation--04--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-04__calibration__06_减仓参与率压力对次日价格路径.yaml
+  token: exam-card-tdm-p-p2-04--calibration--06--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-04__calibration__07_冲高反弹幅度对次日收益与减半阈值落点.yaml
+  token: exam-card-tdm-p-p2-04--calibration--07--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-04__comparison.yaml
   token: exam-card-tdm-p-p2-04--comparison-20261009
   capability: exam_card
@@ -9612,6 +9752,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L4
   merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-04__comparison__05_熔断后回撤修复阶梯加回与即时回满对照.yaml
+  token: exam-card-tdm-p-p2-04--comparison--05--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2__comparison.yaml
   token: exam-card-tdm-p-p2--comparison-20261009
   capability: exam_card
@@ -9712,6 +9857,16 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L4
   merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/PFLOW/TDM-P-FLOW__ablation__04_三段子环并入完备性消融.yaml
+  token: exam-card-tdm-p-flow--ablation--04--20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/PFLOW/TDM-P-FLOW__comparison__03_挂载策略腿OOS强度分层对照.yaml
+  token: exam-card-tdm-p-flow--comparison--03-oos-20261010
+  capability: exam_card
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：31 张=本班 L11-L15 五车道新立考试卡（一节点一假设一可判数值面），非既有卡重复；近亲卡差异见各车道台账六向表"
 - file: docs/03_modules/_domain_backtest/exam_scores_v1.yaml
   token: exam-score-registry-exam-scores-v1-20261009
   capability: exam_score_registry
@@ -47768,6 +47923,46 @@ creation_tokens:
   capability: metaq-question-exam-campaign
   created_by: st-metaq-20260923
   merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/mineloop_campaign/01_binding_census.yaml
+  token: mineloop-campaign-01-binding-census-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
+- file: docs/_working/mineloop_campaign/02_binding_book.yaml
+  token: mineloop-campaign-02-binding-book-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
+- file: docs/_working/mineloop_campaign/04_newcard_validation.yaml
+  token: mineloop-campaign-04-newcard-validation-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
+- file: docs/_working/mineloop_campaign/R1_L11_ledger.md
+  token: mineloop-campaign-r1-l11-ledger-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
+- file: docs/_working/mineloop_campaign/R1_L12_ledger.md
+  token: mineloop-campaign-r1-l12-ledger-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
+- file: docs/_working/mineloop_campaign/R1_L13_ledger.md
+  token: mineloop-campaign-r1-l13-ledger-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
+- file: docs/_working/mineloop_campaign/R1_L14_ledger.md
+  token: mineloop-campaign-r1-l14-ledger-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
+- file: docs/_working/mineloop_campaign/R1_L15_ledger.md
+  token: mineloop-campaign-r1-l15-ledger-20261010
+  capability: mineloop_campaign
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
 - file: docs/_working/n5_closure/n5_disposition_ledger.md
 - file: docs/_working/n5_closure/n5_disposition_ledger.md
   token: n5-closure-n5-disposition-ledger-20260918
@@ -54449,6 +54644,11 @@ creation_tokens:
   capability: 批5考试总册+matrix_inventory机生+四缺口单+原问题匹配表
   created_by: st-matrix-20261006
   merge_evaluation: "新增战役汇总器；对接H11 backtest_coverage_ledger只读引用"
+- file: scripts/backtest/fexam/card_binding.py
+  token: fexam-binding-card-binding-20261010
+  capability: fexam_binding
+  created_by: st-mineloop-20261010
+  merge_evaluation: "跨域不同对象不并：本班绑定层与战役作业面新建件（内收前役 .runtime/tmp 一次性驱动器 run_exam_batch.py/run_card_l209.py，临时件随 TTL 自然退役）"
 - file: scripts/backtest/fexam/ch_data.py
   token: fexam-suite-chdata-20261006
   capability: CH只读数据装载（前向收益面板/因子指标列面板/regime态）
