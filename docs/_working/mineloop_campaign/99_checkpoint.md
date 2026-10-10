@@ -118,3 +118,31 @@ P6 业务资产判死/花钱/实盘/出域＝零项
       而该门现已硬拦＝后来者会被假拦（本班级改用 api.register＋publish_snapshot）；
    ② `commit_queue enqueue` 无 `--allow-multi-domain`（跨域须按域拆袋），且袋默认 base=工棚 HEAD，
       基底落后即"双侧皆改真冲突"死信——热件投袋务必显式 `--base-head <dev sha>`
+
+## 8. 04:00 跑批单（现成命令，机器钟到点即跑；跑前一律先 `date`）
+
+```
+cd D:/ZephyrAlpha/.aidrafts/st-mineloop-20261010
+# ① 五分位三卡正确口径重跑（旧行保留，only-add 追加，试次照计；对照 09 号偏差申报）
+python scripts/backtest/fexam/card_binding.py --mode run \
+  --binding-book docs/_working/mineloop_campaign/02_binding_book.yaml \
+  --approve-list D:/ZephyrAlpha/.runtime/tmp/st-mineloop-20261010/approve_recast.txt \
+  --scores docs/03_modules/_domain_backtest/exam_scores_v1.yaml \
+  --out docs/_working/mineloop_campaign/10_exam_recast_quintile.yaml --tag recast --force \
+  --override-ch-window-with-reason "04:00 让路窗已解除（夜跑主体 tilib 01:16 实测 Disabled）"
+```
+- ② 情绪/板块余卡：**候 `11_prebind_review.yaml` 车道判定**（逐字复核闸已前置，
+  含"卡面是否给了阈值/分桶协议现器能否判/信号面有无未来收益"三筛）后才写 args 跑；
+  已判拒的一张（02-2）在绑定册里 status=rejected，禁改回 approved
+- ③ 重跑后必做：分数册袋（only-add 行＋被翻卡面的卡件）随 `--base-head <dev sha>` 投，
+  绑定册/复核册同批；dev 与工棚差异若只到行尾（CRLF/LF）则**不需重投**（本班已用归一化 diff 验过）
+
+## 9. 定时看门狗（统筹令③，非本体会话执行）
+
+qoder_cron 一次性本地任务 `a4e738c8-c802-48a0-bc22-cc6536c797b1`，
+名"矿考班·02:25 夜跑看门狗照查"，2026-10-11 02:25+08:00 触发、跑完自删（deleteAfterRun）、
+模型继承=qfmodel、权限档=auto。零 CH、零 git 写，产物双份：
+`.runtime/tmp/st-mineloop-20261010/watchdog_0225.txt` ＋ 本卡追加一节（结构自证：追加后 `^## ` 应为 8）。
+本机 01:16 预查已得：**`tilib_indicator_backfill_nightly` state=Disabled（next 仍写 02:30 但不点火）、
+`ZephyrAlpha-CH-OptimizeMerge-Weekly` Disabled**；另 `ZephyrAlpha_QMTWatchdog` last rc=4294770688（非 0，
+情绪面解锁哨兵本身可疑）——晨报请一并核对这三条。
