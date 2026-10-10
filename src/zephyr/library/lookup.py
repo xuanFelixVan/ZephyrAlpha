@@ -33,8 +33,10 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-from pathlib import Path
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
+
+if TYPE_CHECKING:  # Path 仅供注解（惰性字符串）；运行时零导入成本，守 import 面预算
+    from pathlib import Path
 
 from zephyr.library import ledger_cache
 from zephyr.library.ledger_cache import LedgerFilters
