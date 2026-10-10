@@ -44432,6 +44432,11 @@ creation_tokens:
   capability: maint1_campaign
   created_by: st-maint1-20261010
   merge_evaluation: "G1-1 跨域不同对象不并另立：本班施工台账，maint1_campaign 目录专属，无既有资产可承接"
+- file: docs/_working/maint1_campaign/01_final_account.md
+  token: maint1-campaign-01-final-account-20261010
+  capability: maint1_campaign
+  created_by: st-maint1-20261010
+  merge_evaluation: "G1-1 跨域不同对象不并另立：终局账与 00_ledger 分工不同（后者已落 dev），本件专载 T3 收口与批复后终态"
 - file: docs/_working/maint1_campaign/t2_lane_ledger.md
   token: maint1-campaign-t2-lane-ledger-20261010
   capability: maint1_campaign
@@ -67611,27 +67616,6 @@ creation_tokens:
   capability: us_futures_intraday
   created_by: AI-P2-W4A
 - file: tests/zephyr/regime/__init__.py
-- file: docs/_working/datalane_campaign/00_ledger.md
-  token: datalane-campaign-00-ledger-20261010
-  capability: datalane_campaign
-  created_by: st-datalane-20261010
-- file: docs/_working/datalane_campaign/02_t2_squeeze_wad_d7_application.md
-  token: datalane-campaign-02-t2-squeeze-wad-d7-application-20261010
-  capability: datalane_campaign
-  created_by: st-datalane-20261010
-- file: docs/_working/datalane_campaign/03_t4_cascade_gate_plan.md
-  token: datalane-campaign-03-t4-cascade-gate-plan-20261010
-  capability: datalane_campaign
-  created_by: st-datalane-20261010
-  merge_evaluation: "数据车道班战役三件（台账/D7申请包/T4验门方案），同批登记"
-- file: docs/_working/datalane_campaign/99_delivery.md
-- file: docs/_working/datalane_campaign/bcure_state_archive.md
-  token: datalane-campaign-bcure-state-archive-20261010
-  capability: datalane_campaign
-  created_by: st-datalane-20261010
-  token: datalane-campaign-99-delivery-20261010
-  capability: datalane_campaign
-  created_by: st-datalane-20261010
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912
