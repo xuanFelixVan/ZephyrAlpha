@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-01/ablation/02_四路等权合成分边际
+node_id: TDM-E-L2-01
+family: ablation
+title_zh: 板块强度四路等权合成·消融卡（两路可算面）
+hypothesis: >-
+  四路子分（结构强度/动量活跃/多周期动量/资金流）等权 0.25 合成不是先验巧合：
+  逐一剔除任一路后，剩余子分合成的板块强度对次日指数收益的 IC 与单调性下降，
+  且市场级调节 ±10 的加入相对不加调节同样下降。本卡声明 scope=历史可算的两路
+  （动量活跃+多周期动量）；结构强度路与资金流路在 2026-07 前无成分口径（见 data_binding），
+  四路全量消融另立 blocked 面，不冒充可考。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；等权先验（0.25×4）在码注释明示"待 IC 重校"，本卡即该校的考题
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {full2, drop_mom_active, drop_multi_period, full2+market_adj}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: 加入被消融路后的合成强度 IC 相对剔除臂提升 >= 0.01 且 mono_spearman>=0.6
+  ic_floor: 合成强度截面 IC 均值 >= 0.02 且 IC_IR >= 0.3（方案 §7 三件套地板）
+  lag_profile: 强度分 t+1..t+3 IC 半衰期 >= 1 交易日（建档）
+  regime_stability: bear/rebound 两段 IC 同号且过 ic_floor
+  degraded_flag_honesty: 资金流路缺席时必须标 degraded（三路重归一），禁静默补零（在码契约
+    sector_surface.py 逐值断言留档 100.0/33.33）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_strength_cross_section_rank_next5d（强度榜 5 日秩持续性，辅轴）
+  note: 等权→IC 加权的改权提案须等本卡出分，不得先改码
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880（两路可算面）；c1_market.sector_constituent（结构路，受限）
+  signal_column: close, amount（两路）；strength（sector_state，仅 2026 起）
+  signal_derivation: >-
+    路A 动量活跃=amount/Σamount 的截面 rank-pct + 其 5 日环比；
+    路B 多周期动量=0.2×q3+0.3×q5+0.5×q20 收益的 rank-pct；
+    arm full2=(A+B)/2×100；drop_* 只余单路；market_adj 叠加 L1 水温档 ±10 分（查表）。
+    结构路（涨停比/梯队）与资金路（主力净流入）在 2026-07-22 前不可算——
+    成分快照仅 2026-07-22 起（见 evidence），禁以"板块指数涨幅"冒充"板块内涨停占比"（裸扩口径）。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P3/P4/P5/P6）：
+    c1_market.sector_constituent SELECT min(update_date),max,count,uniq(sector_code),uniq(stock_code),
+    countDistinct(update_date) → 2026-07-22 / 2026-10-01 / 323175 行 / 727 codes / 6229 stocks / 6 个日期；
+    c1_market.sector_constituent_snapshot → 2026-09-14 / 2026-10-09 / 1922366 行 / 仅 19 个交易日；
+    c1_market.sector_state strength 列分年非空计数：2022=0、2023=0、2024=0、2025=0、2026=25317/89029，
+    net_inflow_pct 2026=24927，capital_score 全史=0，
+    momentum_pct/rrg_quadrant/watch_score/components 自 2022-09-01 起满配；
+    c1_market.kline_sector_880 industry_l1/industry_ths 首末日=2021-08-02/2026-10-08。
+    ⇒ 四路全量消融 blocked；两路面 preregistered。
+  blocked_scope: 结构强度路+资金流路四路全量消融=blocked_on_data，缺段=2015-01-05..2026-07-21 的
+    板块成分口径（sector_constituent 仅 6 个刷新日、快照表仅 19 个交易日）
+  impl_ref: src/zephyr/signal_ashare/core/sector_strength_aggregator.py（MOD-SIG-142）
+    + core/sector_strength_wiring.py（MOD-SIG-144）+ scripts/backtest/sector_surface.py（MOD-BT-238）
+sources:
+  - 族级矿脉 S1/S3，见台账 §2

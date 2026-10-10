@@ -1,0 +1,79 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-06-1/ablation/02_三级放行门槛
+node_id: TDM-E-L2-06-1
+family: ablation
+title_zh: 三级放行门槛（板块/个股/流动性）·消融卡
+hypothesis: >-
+  "先 gate 后 weight" 的三级门槛（板块强度>6 ∧ 个股自身强度>5 ∧ 日成交>2 亿）逐关有正边际：
+  单关剔除后打分池的次日风险调整判别力下降；若某关剔除不降甚至升，则该关=过度收紧候选
+  （特别是流动性 2 亿硬阈值在微盘熊段可能纯损失）。三关的顺序（gate 先于 weight）亦为消融对象。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；三关阈值 6/5/2e8 取在码值（sector_surface 单测已逐值断言边界语义：
+    恰 5.0 拦、1e8<2e8 拦），卡不改阈值
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {all_three, drop_sector_gate, drop_stock_gate, drop_liquidity_gate, weight_before_gate}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: 每单关剔除臂相对 all_three 的判别面下降 >= 0.01；不达者标 over_tightening_candidate
+  ic_floor: all_three 池内个股 score 对次日个股收益截面 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 门槛效应半衰期 >= 1 交易日
+  regime_stability: bear/rebound 两段同号；流动性关单独看微盘熊段（2021-08-02..2022-10-31）
+  gate_precedence: weight_before_gate 臂与 all_three 的池重合率与判别面差同时出数
+    （重合率高=顺序无信息，低=顺序有信息，先验支持"先 gate 后 weight"）
+target:
+  primary: next_day_index_return（CSI300 次日收益，组合层对齐）
+  secondary: stock_next_day_return（池内个股次日收益 panel 主对象）
+  note: 与 L2-06-3 分卡——本卡考"能不能进池"，06-3 考"进池后加几分"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-06-1.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_daily_hfq + c1_market.sector_constituent
+  signal_column: kline_sector_880.close/amount（板块强度关）；
+    kline_daily_hfq.close/amount（个股强度关=截面 rank 分、流动性关=amount>2e8）
+  signal_derivation: >-
+    关1=板块强度 10 分制>6（两路合成分/10，与 L2-01 共用重算）；
+    关2=个股自身强度（10 分制，个股 20 日收益截面 rank-pct×10）>5；
+    关3=当日成交金额>2e8（kline_daily_hfq.amount，单位元口径须在开考前实测确认，
+    若为万元/手需换算——该换算写进 evidence，禁看数后改）；
+    三关合取后才计入池，池内再按 arm 决定是否 weight。
+  target_source: kline_daily_hfq close→next_day_return（个股 panel）；
+    kline_index 000300 close→next_day_return（组合层）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5/P7/P12）：kline_sector_880=2021-08-02..2026-10-08
+    （industry_l1 61 codes/78263 行，industry_ths 128 codes/163038 行）；
+    kline_daily_hfq=1990-12-19..2026-09-30/10098785 行/5916 symbols（个股 amount 面满配，
+    关2/关3 全窗可算）；关1 依赖个股↔板块归属，唯一读取源 sector_constituent=2026-07-22..2026-10-01
+    （6 个 update_date）、snapshot=2026-09-14..2026-10-09（19 日）
+    ⇒ 关1 长窗 blocked，本卡以"三关全开在可考窗（2026-07-22..2026-09-30）出分 +
+    单关/双关消融在长窗（关2、关3 可算）出分"两态登记；
+    引擎侧 gate 三关逐关单测已在册（弱板块强票→NaN 不放行；恰 5.0 拦；1e8<2e8 拦，
+    见 sector_propagation_wiring_v1.md §4.1）。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_gate.py + MOD-SIG-104
+    + scripts/backtest/sector_surface.py（gate 先行实现）
+sources:
+  - 族级矿脉 S5（门槛/筛选条件边际），URL+发布方+年份见台账 §2-S5

@@ -1,0 +1,70 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-04-1/calibration/02_轮动五态调节分
+node_id: TDM-E-L2-04-1
+family: calibration
+title_zh: 轮动状态五分类·调节分校准卡
+hypothesis: >-
+  按"板块强度截面方差 + 涨停集中度"五分的市场轮动态（高潮/主线/分歧/派发/混沌），
+  其给全板块强度的统一调节分（主线 +10%/派发 −15%）与次日指数收益之间存在单调映射：
+  五态 dummy 对未来 1 日指数收益的分组均值应满足 主线>混沌>分歧>派发>高潮（高潮=透支反向），
+  且态间差异在牛/熊两段同号；态划分本身（方差+集中度二维）须比随机五分更准（结构有效性）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；五态边界=方差与集中度各按历史三分位切（口径唯一，与 L2-01-5 共用重算）
+buckets:
+  type: categorical
+  'on': 五态 {高潮,主线,分歧,派发,混沌}
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 五态按次日均值的先验排序秩相关 rho>=0.6
+  ic_floor: 连续面（态强度分映射为 −1..+1 的调节标量）IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 态信号 t+1..t+3 半衰期 >= 2 交易日（市场态慢变）
+  regime_stability: bear/rebound 两段调节标量 IC 同号
+  cell_balance: 每态样本数 >= 60 且占比 <= 60%（防"永远混沌"的退化分类蒙过门柱）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_strength_dispersion_next5d（强度截面方差未来变化，辅轴）
+  note: 本卡考"态分得对不对+调节映射对不对"；L2-01-5 考"要不要注入"，两卡问题不重叠
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-04-1.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: close, amount
+  signal_derivation: >-
+    强度底座=同 L2-01 卡的两路合成分（动量活跃+多周期动量，0.5/0.5）；
+    截面方差=当日跨板块强度分布 std（分位化）；集中度=Top2 成交额占比（分位化）；
+    二维各三分位切五态（规则与在码 sector_rotation_state 一致但重算，禁直读输出）；
+    调节标量=高潮 −1 / 派发 −0.75 / 分歧 −0.25 / 混沌 0 / 主线 +0.5（与 +10%/−15% 线性同序）。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5）：kline_sector_880 industry_l1(61 codes)=2021-08-02..2026-10-08/78263 行、
+    industry_ths(128)=2021-08-02..2026-10-08/163038 行、industry_l2(71)=2021-08-02..2026-10-08/91093 行；
+    IS 575 交易日，五态×60=300 门槛在"态均衡"前提下可满足（cell_balance 判据即防退化）；
+    集中度所需 amount 列满配；涨停集中度真口径需 limit_up_pool（仅 2026-09-01 起 1426 行）
+    ⇒ 本卡用成交额集中度替代并已声明差异，出分不得当作涨停集中度的结论。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_rotation_state.py（module_ref）
+sources:
+  - 族级矿脉 S4（市场轮动状态分类），URL+发布方+年份见台账 §2-S4

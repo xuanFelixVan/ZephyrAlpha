@@ -1,0 +1,105 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-01/ablation/03_六指数分布选优通道与候选池分位
+node_id: TDM-E-L2-01
+family: ablation
+title_zh: 六指数分布比较选优通道×候选池分位阈值·消融卡（RX-A 交叉复挖漏矿）
+hypothesis: >-
+  TDM 本节点 2026-09-20 UP-4 段是整条未考的判据陈述："六指数（000001/000016/000300/000905/000852/399006）
+  独立分位数回归（PIT，q05/q50/q95），按预测收益-风险比排序出板块优先序列表（DAL-SECTOR-DIST，MOD-PA-023），
+  作本节点强度分的「排序叠加通道」，不改树枝结构"；同节点 algo_note 另写死"总分「前 15%」 进候选池"。
+  同车道已立卡（ablation/02）考的是四路子分等权合成的边际，两条均未考。本卡两问同对象（候选池择优规则），故并臂不并判据：
+  ①叠加通道有无边际——在 880 强度分排序之上叠分布通道的收益-风险比排序后，候选池对次日/5 日收益的判别面是否提升；
+  若 base_top15 与 base_top15+dist 无差，则 MOD-PA-023（stability=experimental）是纯算力开销，应进净零合并评估；
+  ②前 15% 这个数是不是对的档——Top-{10,15,20}% 的剂量-响应若不单调或峰值不在 15%，则节点写死的 15% 失据，须提请改口径。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  long_window_secondary: 2013-01-04..2021-07-30（仅分布通道单腿；六指数交集 2010-06-01 起 + 件内 train_window=500 热身）
+  frozen_note: >-
+    看数前冻结（裁定#501 纪律）。主窗承同车道统一口径（IS 起点被 880 行业族首交易日 2021-08-02 钉死，见 evidence），
+    以保持与 ablation/02 的同窗可比；分布通道单腿另跑长窗副面，两面的结论分开报，禁互相外推。
+    复合规则开考前钉死一种并写入 evidence（本卡取"秩平均"=强度分截面秩与分布收益-风险比秩的算术平均，
+    权重 0.5/0.5 固定不扫）；事后换复合规则=作废（G4-5）。
+buckets:
+  type: ablation_arm
+  'on': 择优规则臂 {base_top15, base_top10, base_top20, base_top15_plus_dist, dist_only_top15, base_top15_no_pit_control}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: base_top15_plus_dist 相对 base_top15 的判别面（成本前次日均值差与 5 日超额差）提升 >= 0.01 且
+    mono_spearman>=0.6 ⇒ 叠加通道必要；< 0 ⇒ 通道是噪声叠加，登记为退役候选（不撤码，只入册）
+  dose_response: Top-{10,15,20}% 三档的池等权次日超额与 5 日超额须随阈值呈可辨形态（单调或倒 U 均可），
+    且峰值档落在 15% 的邻档内（10-20% 之间）；若峰值显著偏离 15%（>1pp 且 OOS 再现），则节点写死的 15% 判失据，产出纠口径材料
+  ic_floor: 池成员 dummy（进池=1）对次日个股/板块收益的截面 IC 均值 >= 0.02 且 IC_IR >= 0.3（方案 §7 三件套地板）
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日（分布通道的预测窗是 T+1，须验证其衰减形状）
+  regime_stability: bear/rebound 两段同号且均过 ic_floor（分位数回归在贴现率熊段的尾部预测若反号，则通道只在修复段有效，须如实限定）
+  pit_contract_guard: 件 INVARIANTS 契约"特征 ≤T-1，预测 T+1"必须被独立复核——以 no_pit_control 臂
+    （故意把特征窗右移 1 日引入前视）作对照：若两臂结果无差异，说明本 driver 未真正前视但也未真正用足信息，判
+    DEVICE_INCONCLUSIVE；若 no_pit 臂显著更好，则主臂存在前视污染，本卡作废重跑（防"静默前视"这一在册事故族）
+  warmup_disclosure: 件 train_window=500/warmup=30 使 399006（2010-06-01 起）与 000905（2007-01-15 起）在主窗内均有可用预测，
+    但 000016/000852 等若热身不足须按件内 `len(data) < train_window+10 → 返回空` 的 fail-closed 语义处理并计数披露，禁补零冒充
+target:
+  primary: next_day_index_return（CSI300 次日收益，series 主轴=池等权组合的次日超额）
+  secondary: pool_next5d_excess（候选池 5 日超额）与 arm_rank_agreement（两通道排序的秩相关，纯诊断：若 rho 恒 ~1 则通道冗余）
+  note: 与同车道 ablation/02（四路等权合成边际）分工=02 考"子分怎么合"，本卡考"合完之后怎么择优、要不要再加一条排序通道"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01.confidence
+preregistered_by: st-nightmine-20261010-RXA
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_index（分布通道六指数腿）+ c1_market.kline_sector_880（强度分腿底座）
+  signal_column: kline_index.close where symbol IN ('000001','000016','000300','000905','000852','399006')；
+    kline_sector_880.close/amount where period='1d'
+  signal_derivation: >-
+    分布腿=直接调用在册件 src/zephyr/pf_alloc/core/sector_distribution_comparator.py 的
+    _predict_quantiles(close, train_window=500, warmup=30) 逐指数独立拟合（特征=ret + lag_{1,5,10,20} + vol_20，
+    QUANTILES=(0.05,0.50,0.95)，FEATURE_LAGS=(1,5,10,20)，均为件内实读常量，禁改）；
+    排序键=收益-风险比 = q50 / (q95 − q05)（件 docstring 原文"比较预测分布的收益-风险比（中位数/区间宽度）"）；
+    强度分腿=承同车道 ablation/02 的两路可算合成分口径（路A amount 占比+环比、路B 多周期动量 0.2q3+0.3q5+0.5q20 的 rank-pct），
+    不重造、不改系数；叠加臂=两秩算术平均（0.5/0.5，frozen_note 已钉死）；
+    候选池臂=截面 Top-{10,15,20}%（15% 为节点原文值）；
+    no_pit_control 臂=把特征窗整体右移 1 日（仅用于前视对照，不作结论臂）。
+  target_source: kline_index 000300 close→next_day_return（主）；kline_sector_880 close→5 日超额（辅）
+  data_window_evidence: >-
+    实测 2026-10-10（本车道台账 §2-P7，命令原文
+    `SELECT symbol, min(trade_date), max(trade_date), count() FROM c1_market.kline_index WHERE symbol IN ('000001','000016','000300','000905','000852','399006') GROUP BY symbol`）：
+    000001=1990-12-19..2026-10-09/8738；000016=2004-01-02../5527；000300=2005-01-04../5284；
+    000852=2005-01-04../5284；000905=2007-01-15../4790；399006=2010-06-01../3970
+    ⇒ 六指数交集自 2010-06-01 齐，叠件内 500 日热身 ⇒ 分布腿自 ~2012-07 可算，
+    故本卡分布单腿设有 2013-01-04 起的长窗副面（「这是 L1 车道"板块层可考面上限=2021-08-02"硬结论的例外边界」，
+    该上限只约束以 880 为底座的腿）。
+    强度腿底座实测（本车道台账 §2-P6）：`countDistinct(sector_code) WHERE period='1d'` →
+    2021-08-02=266 / 2023-12-29=677 / 2026-10-08=728 ⇒ IS 内宇宙 +155%，
+    分位阈值类读数（前 15%）的分母族必须按日截面算（当日在数 code 的 15%），禁用固定 code 数冒充。
+    件在册性正查（本车道台账 §3-A1）：`git grep -ln "MOD-PA-023|DAL-SECTOR-DIST"` 命中本件，
+    头注 [STABILITY]=experimental、[SAFETY]=L、[TESTS]=tests/pf_alloc/test_sector_distribution_comparator.py
+    ⇒ 通道已在码（非 blocked_on_impl），本卡考其效果而非存在性。
+  impl_ref: src/zephyr/pf_alloc/core/sector_distribution_comparator.py（MOD-PA-023，TDM 本节点 algo_refs 直指件）
+    + src/zephyr/signal_ashare/core/sector_strength_aggregator.py（MOD-SIG-142，强度分底座）
+    + scripts/backtest/fexam/calibration_exam.py:run_card（series 面机判正门）
+executor: >-
+  需 exam 侧新写 ≤80 行 arm driver（直接 import MOD-PA-023 件函数 + 两秩复合 + 分位取池，无缺失语义、不改件）；
+  机判面走 scripts/backtest/fexam/calibration_exam.py:run_card（每臂一行 series 记录）。
+  标注为"接线工单"而非 blocked_on_impl：被测件与取数件均在岗，缺的只是考卷侧组装。
+origin: cross_probe_RXA（漏矿来源=TDM 节点原文 UP-4 段与"前 15%"阈值，非"觉得还能加一张"）
+sources:
+  - 族级矿脉 S1/S5（板块相对强度与消融防过拟合），URL+发布方+年份见 L1 台账 §2-S1/S5（本卡复用其族级外部结论，未重复挖外部矿）

@@ -1,0 +1,79 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-08/calibration/02_板块生命周期动量持续性
+node_id: TDM-E-L2-08
+family: calibration
+title_zh: 板块生命周期（启动/发酵/高潮/熄火）·动量持续性校准卡
+hypothesis: >-
+  板块自板块层动量持续性（强度分自相关 + 板块 20 日收益延续度）可辨认四段生命周期，
+  且各段前向收益排序为 启动≈发酵 > 高潮 > 熄火（"只做启动和发酵段、高潮只持有不开新、熄火清仓"
+  的主张直接可判）；本卡先考可算的价格面（持续性），
+  涨停潮/炸板率>40% 的确认面因历史缺失另挂 blocked 声明。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；持续性=强度分 5 日自相关（A(5)）+ 板块 20 日收益/其波动（t 统计量），
+    四段划分=两指标各二分后交叉（口径写死）
+buckets:
+  type: categorical
+  'on': 四段 {启动,发酵,高潮,熄火}（价格面定义版）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 四段按未来 5 日超额排序 启动/发酵>高潮>熄火 的先验秩相关 rho>=0.6
+  ic_floor: 连续面（持续性 z 分）截面 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 段标签的 |IC| 半衰期 >= 2 交易日（生命周期是慢变量）
+  regime_stability: bear/rebound 两段同号（重点=rebound 段"高潮只持有"是否仍成立）
+  lifecycle_persistence: 段标签的 5 日/10 日自转移概率登记（防标签抖动=噪声分段）
+target:
+  primary: next_day_index_return（CSI300 次日收益，series 面）
+  secondary: sector_next5d_excess_by_stage（各段板块 5 日超额，panel 主对象）
+  note: 与 L2-01-3 分卡——那里考周期主导度（短/中期谁领先），本卡考"走到哪一段"（持续性状态机）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-08.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880（可算面）+ c1_market.daban_board_event /
+    c1_market.limit_up_pool（确认面，受限）
+  signal_column: kline_sector_880.close（20 日收益/波动、持续性）；
+    limit_up_pool.consec_limit/open_board_count（涨停潮/炸板率，仅 2026-09 起）
+  signal_derivation: >-
+    持续性面：强度分（两路合成分，共用 L2-01 重算）的 5 日自相关 A(5)，
+    与板块 20 日收益 / 20 日波动 的 t 值，两指标各自二分交叉成四段；
+    确认面（blocked）：高潮=板块内涨停家数占比（需成分）；熄火=龙头断板 ∧ 炸板率>40%
+    （需 limit_up_pool.open_board_count/首触数据）。
+  target_source: kline_index 000300 close→next_day_return（series）；
+    kline_sector_880 close→5 日超额（panel）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5/P7/P8）：kline_sector_880 industry_l1(61)/industry_ths(128)
+    =2021-08-02..2026-10-08（78263/163038 行）⇒ 持续性面可算；
+    c1_market.daban_board_event=2026-09-01..2026-10-09/1767 行/975 symbols/28 交易日；
+    c1_market.limit_up_pool=2026-09-01..2026-10-09/1426 行/789 symbols/28 交易日；
+    c1_market.daban_engine_load（含 sector_limit_up_count 列）=2026-09-01..2026-09-28/1701 行/19 个交易日；
+    sector_constituent=2026-07-22 起/6 刷新日 ⇒ 板块内涨停占比不可回溯。
+    ⇒ 确认面 blocked_on_data，缺段=2021-08-02..2026-08-31（涨停池/打板事件史）与
+    ..2026-07-21（成分口径）；本卡只以价格面出分，不得据本卡断言"涨停潮/炸板率"有效或无效。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_momentum_persistence.py（module_ref）
+    + 策略挂载 STR-MOMTREND-003（proposed，无 evidence 字段）；
+    FCT-MOM-005/FCT-MOM-022 为节点 factor_refs（因子面在册）
+sources:
+  - 族级矿脉 S2（生命周期/题材扩散），URL+发布方+年份见台账 §2-S2

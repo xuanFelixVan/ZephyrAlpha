@@ -1,0 +1,73 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-05-2/ablation/02_信号响应三件套
+node_id: TDM-E-L2-05-2
+family: ablation
+title_zh: 水温→信号三件套（权重/门槛/象限过滤）·消融卡
+hypothesis: >-
+  随水温档查表切换的三件套（信号权重 ×0.5~1.2、打分门槛升降、象限过滤"水冰只放主线象限"）
+  各自有正边际且非冗余：逐件剔除（权重固定 1.0 / 门槛不升降 / 不做象限过滤）后
+  板块池次日风险调整指标下降；若某件剔除后不降，则该件=可退役参数（净零候选）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；IS 起点受板块强度对象侧 880 上限 2021-08-02 约束（水温面本身 1991 起可用）
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {all_three, drop_weight_scale, drop_gate_shift, drop_quadrant_filter, weight_only}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: 每件剔除臂相对 all_three 的判别面下降 >= 0.01（三件各自必要）；
+    不达则该件标 retirement_candidate
+  ic_floor: all_three arm 的池加权次日收益 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 三件套效应半衰期 >= 1 交易日
+  regime_stability: bear/rebound 两段同号（重点检验 rebound 段收紧是否纯踏空）
+  param_drift: 查表参数逐档敏感性（权重 0.5/0.8/1.0/1.2 四点的次阶梯）登记不出分
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_gate_pass_rate_stability（放行率跨档稳定性，辅轴）
+  note: 象限过滤依赖 RRG 象限（L2-02-1 同口径重算，一次重算两卡共用）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-05-2.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.emotion_index + c1_market.kline_index
+  signal_column: kline_sector_880.close/amount；emotion_index.emotion_index；kline_index.close(000300 基准)
+  signal_derivation: >-
+    板块强度=两路合成分（与 L2-01 共用重算）；水温档=emotion_index 六段（与 L2-05-1 共用）；
+    象限=RS/RRI 四分（与 L2-02-1 共用口径）；
+    arm 变量：权重缩放=按档乘 0.5/0.8/1.0/1.2；门槛升降=池规模分位上下移一档；
+    象限过滤=水冰档只保留 leading/improving 象限板块。
+    三件全用=查表切换；单件剔除=该件退回中性值（权重 1.0/门槛不升/不过滤）。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5/P11）：kline_sector_880 industry_l1(61)/industry_ths(128)
+    板块指数=2021-08-02..2026-10-08（78263/163038 行，amount/close 满配）；
+    emotion_index close_final=1991-06-10..2026-09-30/8617 行；kline_index 000300=2005-01-04..2026-10-09/5284 行。
+    本节点 TDM data_refs 为空（[]）⇒ 全部输入来自上游件（L2-05-1 水温档、L2-02-1 象限、L2-01 强度），
+    取数面靠上述三表重算，登记为"无自有数据面"而非"可得"；
+    象限过滤真口径依赖 RRG，其象限在本仓有 sector_state.rrg_quadrant（2022-09-01 起满配）
+    但属被测件产物，仅交叉核对不直读。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_gate.py + MOD-SIG-059/094/107/131
+sources:
+  - 族级矿脉 S4（状态→参数映射/门控），URL+发布方+年份见台账 §2-S4

@@ -1,0 +1,75 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-09/calibration/03_评级上调聚集
+node_id: TDM-E-L2-09
+family: calibration
+title_zh: 板块催化剂·评级上调聚集专卡
+hypothesis: >-
+  催化剂不是"有没有研报"而是"评级方向是否一致地上调"：
+  同行业 5 日内的评级上调占比（上调/(上调+下调)）分桶对次日指数收益与该行业板块未来 5 日超额
+  单调正相关，且比"研报条数密度"（02 卡）更具预测力——两指标同场对比，
+  若密度不劣于上调占比，则"有故事就敢接力"应理解为关注度而非方向共识（节点文字裁定材料）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；上调/下调=同一 (org_name,symbol) 按 publish_date 排序后 rating 的相邻变化方向；
+    rating_change 列若有值则以其为准并与自算口径对账（差异 >5% 先查口径再开考）
+buckets:
+  type: quantile_quintile
+  'on': 行业级 5 日评级上调占比（市场级取行业均值作 series）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+5 |IC| 峰值与半衰期 >= 2 交易日（评级反应不足的直接读数）
+  regime_stability: 牛/熊两段 IC 同号
+  head_to_head: 与 02 卡（密度）同场对比——两指标各自 IC 与两者之差均出数，
+    并给出去掉密度后的净 IC（共线性检验）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: industry_excess_next5d（同行业 5 日超额；需成分映射，窗受限，见 evidence）
+  note: 与 02 卡分工=02 考关注度密度、本卡考方向共识；两卡共用 research_report 一次读取（不重复挖）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-09.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c3_fundamental.research_report
+  signal_column: industry, rating, rating_change, publish_date, org_name, symbol
+  signal_derivation: >-
+    按 (org_name,symbol) 时间序列取相邻 rating 变化方向 → 行业-日聚合：
+    上调占比=上调数/(上调数+下调数)（分母 <3 记 NaN，防小样本假信号）；
+    series=行业加权均值，panel=行业×日。
+    rating 编码序（如 买入>增持>中性>减持）须在开考前以实测取值分布钉死并写入 evidence，禁凭记忆排序。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P13）：c3_fundamental.research_report
+    min(publish_date)=2017-01-02、max=2026-09-30、146940 行、207 个 industry、116 家 org_name；
+    逐年 2017=10933、2018=12010、2019=11967、2020=12700、2021=12867、2022=19988、2023=22019、
+    2024=19900、2025=16237、2026=8319；行业数逐年 128~181 波动 ⇒ 行业宇宙漂移，
+    上调占比须在同一 industry 名单内算并登记名单版本；
+    辅轴（行业 5 日超额）需个股↔行业映射：industry_class=2026-08-03 起、
+    sector_constituent=2026-07-22 起（6 刷新日）⇒ 辅轴窗受限，主轴 series（市场级）不受影响；
+    另 research_report **无 trade_date 列**（首探测 404，实际日期列=publish_date，已如实登记）。
+  impl_ref: src/zephyr/signal_ashare/screening/event_driven_screener.py + MOD-SIG-106
+sources:
+  - 族级矿脉 S7（分析师评级变动/反应不足），URL+发布方+年份见台账 §2-S7

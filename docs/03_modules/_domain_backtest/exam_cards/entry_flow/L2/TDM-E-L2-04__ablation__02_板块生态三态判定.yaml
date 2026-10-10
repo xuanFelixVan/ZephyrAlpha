@@ -1,0 +1,75 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-04/ablation/02_板块生态三态判定
+node_id: TDM-E-L2-04
+family: ablation
+title_zh: 板块级市场状态三态判定·消融卡
+hypothesis: >-
+  高潮分>=90→次日分歧警示、梯队连击>=2 且 Top2 集中度>=30%→主线清晰、其余→混沌降仓，
+  这套三态封闭判定相对"不做判定（全体中性）"提升次日风险调整收益的判别力；
+  逐一剔除三态中的任一态（把它并入混沌）后判别力下降，证明三态都必要。
+  优先级 高潮>主线清晰>混沌 的顺序亦为消融对象（顺序调换后 IC 是否变化）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；三态阈值（90 / 连击 2 / Top2 30%）全取在码既有口径不改
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {no_state, full_three, drop_climax, drop_mainline, priority_swapped}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: full_three 相对 no_state 的判别面提升 >= 0.01 且 mono_spearman>=0.6
+  ic_floor: 三态 dummy（高潮=−1/主线=+1/混沌=0）对次日指数收益 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 高潮态的负向效应应集中在 t+1..t+2（"次日分歧警示"的字面可判面），半衰期 >= 1 交易日
+  regime_stability: bear/rebound 两段同号（尤其检验高潮警示在熊段是否仍为负）
+  priority_test: priority_swapped 相对 full_three 的 IC 差 >= 0 则顺序无信息，登记为简化提案
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: emotion_six_state_transition（情绪六段态转移概率，辅轴，与 L1 同锚）
+  note: 本卡=aggregation 型枢纽判定，按车道立法走 ablation；五态细分类另见 L2-04-1 calibration
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-04.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880（高潮分/集中度底座）+ c1_market.limit_up_pool（梯队连击，受限）
+  signal_column: close, amount；limit_up_pool.consec_limit/industry（仅 2026-09 起）
+  signal_derivation: >-
+    高潮分=当日板块强度榜 Top5 的 1 日收益截面 z 合成分位（0-100，重算自 880，不读模块输出）；
+    Top2 集中度=前 2 板块成交额 / 全板块成交额（880 amount，可算，历史 2021-08-02 起）；
+    梯队连击=行业内连续涨停（consec_limit）>=2 的家数>=2 ⇒ 仅 2026-09-01 起可得，
+    本卡以"板块 1 日收益>= 行业族内 95 分位 + 该板块 3 日连涨"作梯队代理，
+    代理差异在此明列，出分后不得当作梯队连击本身的结论。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5/P7/P8）：kline_sector_880 industry_l1/industry_ths
+    =2021-08-02..2026-10-08（78263/163038 行）；
+    c1_market.limit_up_pool=2026-09-01..2026-10-09/1426 行/789 symbols（含 industry、consec_limit）；
+    c1_market.daban_engine_load=2026-09-01..2026-09-28/1701 行/19 个交易日
+    （含 sector_limit_up_count/market_limit_up_count/market_breadth_ratio 三列，
+    但是"引擎装载面"非采集面，历史同仅 19 日）；
+    c1_market.limit_up_down=2026-07-20..2026-10-09/5397 行/1841 symbols。
+    ⇒ 梯队连击真口径 blocked_on_data，本卡以价格面代理并声明；三态判定的另两维（高潮分、集中度）可算。
+  impl_ref: src/zephyr/signal_ashare/core/sector_ecology_judge.py（MOD-SIG-143，纯函数零 IO）
+    + core/sector_strength_wiring.py（git grep 命中 L2-04 消费，见台账 §4-A3）
+sources:
+  - 族级矿脉 S4（市场状态/生态阶段），URL+发布方+年份见台账 §2-S4

@@ -1,0 +1,73 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-01-2/calibration/02_板块成交额占比活跃度
+node_id: TDM-E-L2-01-2
+family: calibration
+title_zh: 板块成交额占比·活跃度校准卡
+hypothesis: >-
+  板块成交额占全市场比（水平）及其环比（变化）分桶对次日指数收益单调正相关，
+  前 10% 活跃档=资金扎堆区具最高次日均值；过热档（占比>95 分位且环比>90 分位）反向
+  （情绪见顶透支）。节点断言"没量的板块再强形态也是假象"⇒ 本卡须证明量能维是
+  价格动量维的必要条件（交互项），而非仅自身有 IC。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；IS 起点被 8803/881x 板块指数首交易日 2021-08-02 钉死（实测，见 evidence）
+buckets:
+  type: quantile_quintile
+  'on': 当日板块成交额占比截面值
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: bear/rebound 两段 IC 同号且均过 ic_floor
+  condition_stability: 与价格动量交互——低涨幅高占比档次日均值 > 低涨幅低占比档（"假象"命题的可判面）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_rotation_relay_hit（当日 Top10 活跃板块在 T+5 强度 Top10 的命中率）
+  note: 相对强度因子在码已"去 abs 保符号"（2026-09-18 深度审查 rpt_p12），本卡同口径：占比与环比均保符号
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01-2.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: amount
+  signal_derivation: >-
+    占比=sector amount / Σ(同 code_family 全体 sector amount)（分母口径=行业族 industry_l1∪industry_ths，
+    由 c1_market.sector_code_name_map.code_family 在册映射界定，禁自拟名单）；
+    环比=占比/占比.shift(5)−1；series 面取"占比前 10% 板块等权组合的次日超额"与全样本差。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5）：c1_market.kline_sector_880 全表 2020-03-17..2026-10-08/785204 行/
+    period='1d'/729 codes；industry_l1(8803xx,61 codes)=2021-08-02..2026-10-08/78263 行；
+    industry_ths(881xxx,128 codes)=2021-08-02..2026-10-08/163038 行；
+    industry_l2(71)=2021-08-02..2026-10-08/91093 行。
+    IS 窗 2021-08-02..2023-12-31 ≈ 575 个交易日 × 61 板块 ⇒ 五分位×60 样本门槛满足；
+    十分位×60=600>575 ⇒ 本卡分桶定为 quintile（防不可达门柱）。
+    对照不可用面：c1_market.kline_sector 仅 2025-07-18..2026-09-30/86033 行（DS-170 口径），
+    c1_market.sector_snapshot 仅 2026-08-14 起 ⇒ 均不用于本卡。
+  impl_ref: src/zephyr/data/sector_ranking_engine.py（TDM module_ref，无 MOD 挂载登记）
+    + scripts/backtest/sector_surface.py（回测侧 amount 聚合先例）
+sources:
+  - 族级矿脉 S1（板块相对强度/轮动/量能），URL+发布方+年份见台账 §2-S1

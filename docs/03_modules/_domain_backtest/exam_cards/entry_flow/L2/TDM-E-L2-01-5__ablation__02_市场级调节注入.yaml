@@ -1,0 +1,71 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-01-5/ablation/02_市场级调节注入
+node_id: TDM-E-L2-01-5
+family: ablation
+title_zh: 市场级轮动调节注入·消融卡
+hypothesis: >-
+  把市场级五态统一加减分（主线态头部板块 +10%、派发态全体 −15%）注入板块强度后，
+  强度分对次日指数收益的截面 IC 与 Top15% 池命中率相对"不注入"提升；
+  若剔除该注入项指标不降反升，则"防板块层只看自己不看大盘"这一立法动机不成立，
+  调节项应退役（节点本身是 aggregation 型，天然是消融对象而非校准对象）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；±百分比幅度与"头部/全体"作用面均为在码既有值，卡不改参数
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {no_adj, mainline_plus10_head, distribution_minus15_all, five_state_full}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: full arm 相对 no_adj 的截面 IC 提升 >= 0.01，且 mono_spearman>=0.6
+  ic_floor: full arm IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 调节项作用半衰期 >= 1 交易日（市场态本身慢变，若调节只在 t+0 有效=过拟合嫌疑）
+  regime_stability: bear/rebound 两段同号——特别检验熊段调节是否为正贡献（防"牛市政府"结论）
+  fail_closed: 外部预测分布 NaN/Inf 必须拒收（在码 2026-09-18 rpt_d04 契约），违例=卡无效非 fail
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_dispersion_next5d（板块强度截面方差未来 5 日变化，辅轴=调节是否抑制无谓分散）
+  note: 与 L2-04-1（五态分类本身）分卡：那里考"态分得对不对"，这里考"注入值不值"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01-5.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.emotion_index
+  signal_column: kline_sector_880.close/amount（板块强度底座）、emotion_index.emotion_index（市场态底座）
+  signal_derivation: >-
+    五态重算=按日 (板块强度截面方差分位, 涨停/涨幅集中度分位) 查表分 高潮/主线/分歧/派发/混沌
+    （口径同 L2-04-1 卡，两卡共用一次重算、各自判不同问题，禁各算各的导致口径分叉）；
+    arm 变量=是否按态给强度分 ±10%/−15%。市场态底座不得直读 market_forecast_fusion 输出
+    （被测件自证循环），只从 880/emotion_index 重算。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5/P11）：kline_sector_880 industry_l1/industry_ths
+    =2021-08-02..2026-10-08（78263/163038 行）；c1_market.emotion_index close_final 段
+    =1991-06-10..2026-09-30，8617 行，version 单值 v0.1.0，pre_open/auction 段仅 2026-09 起
+    （27+17 行，盘前场景不可用于历史窗）；目标 000300=2005-01-04..2026-10-09/5284 行。
+    本卡为盘后 arm 对比，不依赖盘前端 ⇒ 可用。
+  impl_ref: src/zephyr/regime/market_forecast_fusion.py（module_ref）
+    + MOD-SIG-063/MOD-SIG-147；NaN/Inf fail-closed 修正=2026-09-18 rpt_d04
+sources:
+  - 族级矿脉 S4（市场态/水温调节），URL+发布方+年份见台账 §2-S4

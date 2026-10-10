@@ -1,0 +1,71 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-02/calibration/02_接棒撤离榜
+node_id: TDM-E-L2-02
+family: calibration
+title_zh: 轮动接棒/撤离榜·校准卡
+hypothesis: >-
+  "连涨+资金连进"的接棒榜与"连跌+资金连出"的撤离榜构成有预测力的方向对：
+  接棒榜前 10% 板块的次日相对超额 > 0 > 撤离榜前 10% 板块，且该利差对次日指数收益
+  单调（分歧扩散日利差扩大）；榜单的净方向（接棒数−撤离数）作市场级 series 具 IC。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；"连涨/连进"的 streak 长度固定 3 日（在码口径同值），事后不可调
+buckets:
+  type: quantile_quintile
+  'on': 净接棒强度（接棒分−撤离分）的日度截面均值
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 接棒信号 t+1..t+3 |IC| 峰值与半衰期 >= 1 交易日；撤离信号另建档（两腿时滞可不同）
+  regime_stability: bear/rebound 两段 IC 同号且过 ic_floor
+  spread_test: 接棒腿 Top10% 与撤离腿 Bottom10% 的 5 日多空差 > 0 且 t 检验显著
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_relay_rank_stability（接棒榜 5 日秩持续性，辅轴=轮动是否只是噪声）
+  note: 榜单本身是多信号合成，但本节点输出=方向读数，按车道立法走 calibration；
+    合成权重消融另挂 L2-04 族，不重复挖
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-02.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: close, amount
+  signal_derivation: >-
+    接棒=连续 3 日 close.pct_change>0 且 amount 3 日滑动均值>前 5 日均值；
+    撤离=对称反向；资金"连进"用 amount 环比代理（主力净流入不可得，见 L2-01-4 卡的 blocked 证据），
+    差异已在本行声明，不得当作资金流结论使用；
+    series 面=当日(接棒板块数−撤离板块数)/板块总数。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5）：kline_sector_880 industry_l1(61 codes)=2021-08-02..2026-10-08/78263 行、
+    industry_ths(128)=2021-08-02..2026-10-08/163038 行；
+    3 日 streak+5 日均值需 8 日预热，IS 有效起点 2021-09 后，样本门槛满足；
+    另 sector_state 的 momentum_pct 自 2022-09-01 满配（分年 29927/96298/105176/111658/89029 行）
+    仅作交叉核对，不直读（防循环）。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_divergence.py（module_ref）；
+    公共原语已 DEDUP 至 core/analysis_utils（2026-09-13 批，行为等价）
+sources:
+  - 族级矿脉 S1（板块轮动/接棒），URL+发布方+年份见台账 §2-S1

@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-01-1/calibration/02_板块内涨停结构强度
+node_id: TDM-E-L2-01-1
+family: calibration
+title_zh: 板块内涨停占比·结构强度校准卡
+hypothesis: >-
+  板块内涨停股占比（阈值 >8%=强）对次日指数收益与板块强度 5 日滞留具单调预测力，
+  且"有 2 板有 3 板"的梯队完整度提供独立增量（接力健康度）。过热档（占比>90 分位）
+  反向。前提=板块成分口径成立；本卡因成分快照历史缺失置 blocked_on_data。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；窗口按方案 §8 主张窗，解锁条件=成分口径补史后不改窗口
+buckets:
+  type: quantile_decile
+  'on': 当日板块内涨停占比
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_strength_persistence_next5d（同板块 5 日强度榜滞留概率）
+  note: 结构维（涨停比×梯队）；与 L2-01-2 量能维、L2-01-3 周期维分卡不混装
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01-1.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；断供不弃卡（作业簿 §三⑥）
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit + c1_market.sector_constituent
+  signal_column: close（个股收盘，hfq）、limit_up（涨停价）、sector_code/stock_code（成分）
+  signal_derivation: >-
+    个股涨停=close>=limit_up（stk_limit 在册涨停价，禁自定 9.9% 阈值）；
+    板块内涨停占比=count(涨停股∈成分)/count(成分)；梯队完整度=同板块内 max(consec_limit)>=3
+    且存在 consec_limit>=2 的家数>=2。取板块截面均值→日度 series。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P2/P6/P7）：
+    c1_market.stk_limit → 2015-01-05..2026-10-09，9254772 行，5831 symbols（涨停价面够用）；
+    c1_market.kline_daily_hfq → 1990-12-19..2026-09-30，10098785 行，5916 symbols（个股收盘面够用，
+      注意 2026-09-30 之后有 9 日缺口，OOS 终点 2025-09-09 不受影响）；
+    c1_market.sector_constituent → 仅 2026-07-22..2026-10-01，6 个 update_date，727 codes/6229 stocks；
+    c1_market.sector_constituent_snapshot → 仅 2026-09-14..2026-10-09，19 个交易日；
+    c1_market.industry_class → 2026-08-03 起（SCD2 valid_from/valid_to，46228 行/10472 symbols）；
+    c1_market.sector_list → 2026-09-03 起；c1_market.stock_profile_ths → 仅 1 个交易日（2026-09-09）。
+    ⇒ 缺段明列：2019-01-04..2026-07-21 无任何板块成分口径 ⇒ 冻结窗内涨停占比不可算。
+  blocked_reason: >-
+    sector_constituent 是三处采集宇宙的唯一读取源（在册结论，见台账 §4-A2 反查摘录），
+    其历史只有 6 个刷新日；成分口径不可回溯 ⇒ 本卡假设无法在冻结窗证伪。
+    解锁条件=补成分历史快照（≥2019-01-04 起、日频或月频 SCD2）后转 preregistered，窗口不动。
+  alt_source_note: >-
+    c1_market.limit_up_pool 自带 industry 列（2026-09-01..2026-10-09，1426 行/789 symbols），
+    可绕开成分表直接算"行业内涨停家数"，但样本仅 ~28 个交易日 < 60×分桶 ⇒ 仍不可考，
+    登记为补史起点候选，非本卡解锁面。
+sources:
+  - 族级矿脉 S2（涨停/梯队/广度结构），见台账 §2

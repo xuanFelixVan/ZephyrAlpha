@@ -1,0 +1,84 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-01-4/calibration/02_板块主力净流入
+node_id: TDM-E-L2-01-4
+family: calibration
+title_zh: 板块主力净流入·资金流聚合校准卡
+hypothesis: >-
+  板块主力净流入 3 日累计占比分桶对次日指数收益单调，连续 3 日净流入板块的次日均值
+  高于单日流入板块；当日大单净流出 > 流入 2 倍的"出货嫌疑"档反向。
+  资金流权重占板块总分 25% 的合理性由本卡出分裁定。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；窗口按本车道板块口径统一上限 2021-08-02，资金路面另需成分口径（见 evidence）
+buckets:
+  type: quantile_quintile
+  'on': 板块主力净流入 3 日累计/板块成交额
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 资金流 |IC| 峰值应迟于价格动量（t+2/t+3 更优），半衰期 >= 1 交易日（时滞建档）
+  regime_stability: bear/rebound 两段 IC 同号且均过 ic_floor
+  condition_stability: 连续 3 日净流入桶 − 单日流入桶次日均值差 > 0（"建仓"命题单独可判）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_fund_flow_state_transition（净流入→净流出状态翻转概率，辅轴）
+  note: 与 L2-01-2 量能维正交（额=规模，净流入=方向）
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01-4.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；断供不弃卡（作业簿 §三⑥）
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.money_flow + c1_market.sector_constituent（聚合路）；
+    c1_market.sector_fund_flow（直读路，历史更短）
+  signal_column: main_net_inflow, large_net_inflow, super_large_net_inflow（个股级）；
+    net_amount, inflow_amount, outflow_amount（板块级直读）
+  signal_derivation: >-
+    聚合路=Σ(成分个股 main_net_inflow) / 板块成交额（3 日累计版同理）；
+    直读路=sector_fund_flow.net_amount / (inflow_amount+outflow_amount)。
+    大单口径=large_net_inflow（禁把 super_large+large 混称"大单"，口径写死）。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P6/P7/P9）：
+    c1_market.money_flow → 2021-01-04..2026-10-09，5993328 行，5782 symbols，
+    分年行数 2021=1058846/2022=1146266/2023=1209660/2024=1233202/2025=861547/2026=483807
+    （个股资金流历史充分）；
+    c1_market.sector_fund_flow → 2026-09-15..2026-10-09，仅 10536 行、17 个交易日；
+    c1_market.sector_constituent → 2026-07-22..2026-10-01，仅 6 个 update_date；
+    c1_market.sector_constituent_snapshot → 2026-09-14..2026-10-09，仅 19 个交易日；
+    c1_market.market_fund_flow_daily → 2026-03-27..2026-10-09，148 行（市场级，非板块级）；
+    c1_market.sector_state.net_inflow_pct → 2022..2025 全 0 非空计数，仅 2026 有 24927 行；
+    capital_score 列全史 0 行非空（在册字段实为未落地，勿当可得）。
+    ⇒ 板块级资金流可得窗聚合路≤2026-07-22 起（约 55 交易日）、直读路≤2026-09-15 起（17 交易日），
+    均 < 五分位×60=300 样本地板 ⇒ 冻结窗不可考。
+  blocked_reason: >-
+    缺段=2021-08-02..2026-07-21 的板块成分口径（sector_constituent 仅 6 个刷新日、
+    snapshot 仅 19 个交易日），个股资金流无法聚合到板块；
+    板块级直读表 sector_fund_flow 仅 17 交易日。
+    解锁条件=补成分历史（2021-08-02 起）或 sector_fund_flow 补史至 ≥300 交易日，
+    窗口与门柱不动转 preregistered。
+  degraded_note: 在码 sector_surface 的 flow 缺席→三路重归一标 degraded 已实测（单测逐值 A=100/B=33.33），
+    本卡的板块总分 25% 权重主张与之同口径
+sources:
+  - 族级矿脉 S3（资金流读数），URL+发布方+年份见台账 §2-S3

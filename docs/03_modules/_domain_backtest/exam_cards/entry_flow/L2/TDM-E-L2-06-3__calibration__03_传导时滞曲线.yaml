@@ -1,0 +1,75 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-06-3/calibration/03_传导时滞曲线
+node_id: TDM-E-L2-06-3
+family: calibration
+title_zh: 板块强度传导·时滞曲线专卡
+hypothesis: >-
+  板块强度对个股次日收益的影响不是单点而是曲线：|IC| 应在 t+1 达峰、t+2 保留 >=60% 峰值、
+  t+3 之后衰减到峰值一半以下；且"传导衰减速度"本身随水温档变化（水烫段衰减更快=情绪扩散快、
+  水冰段衰减更慢=信息传导迟滞）。若衰减曲线在 t+1 即为峰值且半衰期 <1 日，
+  则现查表乘数（当日生效、隔日不重算）在时间轴上是失配的。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；前向窗口固定 {t+1,t+2,t+3,t+5} 四点，峰值定义=四点最大 |IC|，
+    半衰期=|IC| 首次跌破峰值 50% 的前向天数（口径写死，禁事后增删前向点）
+buckets:
+  type: fixed_grid
+  'on': 前向窗口 {t+1,t+2,t+3,t+5} × 水温档 {冰(S0-S1),温(S2-S3),烫(S4-S5)}
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 衰减曲线单调不升（|IC|_{t+1} >= |IC|_{t+2} >= |IC|_{t+3}），
+    Spearman rho>=0.6 取绝对值判
+  ic_floor: t+1 点 IC 均值 >= 0.02 且 IC_IR >= 0.3（与 02 卡同地板，不放松）
+  lag_profile: 半衰期 >= 1 交易日；若半衰期 < 1 日则登记"乘数应每日重算"的改码提案
+  regime_stability: bear/rebound 两段 t+1 点同号
+  water_conditioning: 冰/温/烫三档的半衰期差异 >= 1 天则"传导速度随水温变化"成立，
+    并给出档位→半衰期映射表（描述性，不作 pass/fail 门柱）
+target:
+  primary: next_day_index_return（CSI300 收益，前向多窗版）
+  secondary: stock_next_day_return（个股截面，panel 主对象）
+  note: 本卡与 02 卡分工=02 考"乘数阶梯对不对"（横截面形状），本卡考"传导快不快、多久失效"（时间轴）；
+    两卡共用同一次强度/成分重算（§3 同一矿脉不重复挖）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-06-3.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_daily_hfq + c1_market.emotion_index
+  signal_column: kline_sector_880.close/amount（强度）；kline_daily_hfq.close（个股前向多窗收益）；
+    emotion_index.emotion_index（水温条件维）
+  signal_derivation: >-
+    强度同 02 卡（两路合成分/10）；对每个前向窗 k∈{1,2,3,5} 算
+    corr_rank(强度_t, 个股收益_{t→t+k}) 的日频截面 IC 序列；半衰期按上表定义。
+    个股↔板块归属仍受成分口径限制（同 02 卡），可考窗=2026-07-22..2026-09-30，
+    长窗面 blocked_on_data 的结论与 02 卡同源，不重复登记。
+  target_source: kline_daily_hfq close→{1,2,3,5} 日前向收益；基准 kline_index 000300
+  data_window_evidence: >-
+    同 02 卡实测（台账 §3-P4/P5/P7/P10/P12）：kline_sector_880 行业族=2021-08-02..2026-10-08；
+    kline_daily_hfq=1990-12-19..2026-09-30/10098785 行 ⇒ 前向 5 日窗在 2026-09-25 之后不足，
+    实际可用末端=2026-09-24（已在卡内可考窗扣减）；emotion_index=1991-06-10..2026-09-30/8617 行；
+    成分口径唯一读取源 sector_constituent=2026-07-22 起/6 刷新日（缺段同 02 卡）。
+  impl_ref: src/zephyr/signal_ashare/core/sector_conduction.py（MOD-SIG-136）
+    + scripts/backtest/sector_surface.py（查表传导，未做时间衰减=本卡要判的现状）
+sources:
+  - 族级矿脉 S5（时滞/半衰期与过拟合防线），URL+发布方+年份见台账 §2-S5

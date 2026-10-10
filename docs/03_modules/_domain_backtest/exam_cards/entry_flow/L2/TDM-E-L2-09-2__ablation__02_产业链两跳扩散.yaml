@@ -1,0 +1,77 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-09-2/ablation/02_产业链两跳扩散
+node_id: TDM-E-L2-09-2
+family: ablation
+title_zh: 图谱冲击沿产业链扩散（跳数/衰减）·消融卡
+hypothesis: >-
+  受击节点沿 ig_edge 无向 BFS 扩散有真实边际：1 跳（直接上下游）优于 0 跳（只报受击节点本身），
+  2 跳优于 1 跳但增益递减；每跳置信 0.6 衰减的设定相对"不衰减"与"更强衰减（0.3）"
+  在标的清单的次日/5 日准确率上并非最优，则衰减参数应改。
+  方向口径（polarity ±0.15 死区外映射利好/利空、全链同向）单独消融：全链同向 vs 成本反号两臂。
+window:
+  in_sample:
+  - '2026-03-02'
+  - '2026-06-30'
+  oos: &id001
+  - '2026-07-01'
+  - '2026-09-30'
+  regimes:
+    up: 2026-03-02..2026-05-15（图谱建成后的第一段）
+    down: 2026-05-16..2026-06-30（第二段）
+  frozen_note: >-
+    看数前冻结；本卡窗口是唯一不存在前视泄漏的候选窗（图谱构建记录始于 2026-08-28，
+    严格讲连该窗也需版本化才可回测——故本卡 status=blocked_on_data，
+    窗口冻结的意义=解锁后不许挪窗）
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {hop0, hop1, hop2, hop3, decay_0.3, decay_0.6, decay_1.0, polarity_reversed}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: hop2 相对 hop1 的清单准确率（次日方向命中率）提升 >= 0.02；无提升则 2 跳退役
+  ic_floor: 冲击分（Σ 置信×方向）对次日个股收益截面 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 扩散效应的 t+1/t+3/t+5 曲线（2 跳应比 1 跳滞后更多，若同步=图结构无信息）
+  regime_stability: 两段同号
+  hop_diminishing: hop1→hop2→hop3 增益必须递减（否则疑为噪声放大）
+target:
+  primary: next_day_index_return（CSI300 次日收益，组合层）
+  secondary: impact_list_hit_rate（冲击清单个股次日方向命中率，panel 主对象）
+  note: 利空子集喂 L3-04 负面否决、冲击流喂 L0-02 盘中偏离监控——下游消费方在册（TDM 节点文字）
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-09-2.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；断供不弃卡（作业簿 §三⑥）
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: PG ig_edge + ig_node_company + c3_fundamental.news_data
+  signal_column: ig_edge（src/dst 邻接）、ig_node_company（节点→标的）、news_data.related_symbol/publish_time
+  signal_derivation: >-
+    无向 BFS N 跳扩散，置信×0.6^hop（arm 变量），落标的=ig_node_company；
+    方向=情绪 polarity ±0.15 死区外映射利好/利空，全链同向（arm=polarity_reversed 时
+    对成本类边反号）；冲击分=Σ(置信×方向) 跨新闻聚合到 symbol 唯一。
+  target_source: kline_daily_hfq close→next_day_return（个股 panel）；
+    kline_index 000300 close→next_day_return（组合层）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P16，DatabaseService.get_depgraph_conn() 只读）：
+    ig_chain=873、ig_node=5560、ig_edge=1726、ig_node_company=25559；
+    ig_node_company created_at=2026-08-28 04:08:55+08:00 .. 2026-09-24 15:47:33+08:00；
+    news_data=2010-01-02..2026-10-10/8219185 行但 2025 年断供（31425 行）；
+    kline_daily_hfq=1990-12-19..2026-09-30/10098785 行（个股目标面 2026-09-30 后缺 9 日）。
+    ⇒ 图谱无版本化历史 + 构建记录仅 ~1 个月 ⇒ 八臂消融的样本与 PIT 两个条件都不满足。
+    解锁条件=①ig_* 版本化（valid_from/valid_to）②积累 ≥300 交易日的可回放冲击事件（约至 2027 年中）
+    ③news_data 2025 段补齐（若沿用 2025 作窗）。
+  impl_ref: src/zephyr/intelligence/chain_impact_resolver.py（MOD-INT_CHAIN_IMPACT，testing，23 单测在册）
+  upstream: L2-09-1（同一事件链的上游卡，两卡 blocked 根因同源，登记一次不重复挖）
+sources:
+  - 族级矿脉 S8（供应链/经济链条传染），URL+发布方+年份见台账 §2-S8

@@ -1,0 +1,98 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏
+node_id: TDM-E-L2-02-1
+family: ablation
+title_zh: RRG 象限迁移确认腿与稀有路径护栏·消融卡（RX-A 交叉复挖漏矿）
+hypothesis: >-
+  TDM 本节点 `invalidation` 原文="象限转移须连续 「2-3 日确认」，单日跳变不采信；transition 概率「<10% 异常路径加 1 日确认」"，
+  `fallback` 原文="板块日K 不足 「62 日」（DualEma 最小数据量）→该板块不参与序列排名"。
+  这两条是节点对实现下的「硬约束」，而同车道 calibration/02 把迁移面显式降为
+  "transition_matrix：象限迁移矩阵 5 日平稳性登记（纯描述性，不做门柱）"⇒"这道确认滤波本身值不值"从未被考。
+  本卡四臂：raw（单日跨界即采信，=现行考卷口径）/ confirm2（连续 2 日同象限才采信）/ confirm3 /
+  rare_guard（对上日转移概率 <10% 的稀有跨界再额外 +1 日确认）。
+  假设：确认腿降低信号翻转次数（滤波有效）且不削弱增益（信息未被滤掉）；
+  若 raw 与 confirm2/3 的增益无差，则"单日跳变不采信"是凭经验的过度滤波，应简化实现（净零：零触发零消费→退役）；
+  若 confirm2 显著更好，则现行考卷与在码 sector_rrg 的采信规则须对齐。62 日门槛作为宇宙护栏单列（实测影响面仅 8/729 codes，
+  预期判 no_binding，如实报而非宣称验证）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: >-
+    看数前冻结。RS/RRI 口径逐字承同车道 calibration/02 的冻结（RS=100·exp(4 日累计 ln(板块收盘/000300 收盘)) 平移口径、
+    RRI=RS 的 4 日 EMA、象限以 100 中枢±带宽 5 四分）——「故意不另起口径」，否则与 02 卡不可比、覆盖尺虚增；
+    "连续 2-3 日确认"取 2 与 3 两档（节点给的是区间，两档都跑不挑一个）；
+    "转移概率<10%"的估计窗=过去 250 交易日的经验转移频率（开考前钉死，禁事后扫窗）。
+buckets:
+  type: ablation_arm
+  'on': 采信规则臂 {raw, confirm2, confirm3, rare_guard_confirm2}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: confirm2 相对 raw 的判别面（"新进领先占比−新进落后占比"对次日指数收益的 IC）提升 >= 0.01 且
+    mono_spearman>=0.6 ⇒ 确认腿必要；若 < 0 ⇒ 判"过度滤波"，登记为简化提案（不撤码，只入册）
+  flip_reduction: 信号翻转次数（日频象限标签变更次数）confirm2/confirm3 相对 raw 下降 >= 30%，
+    且增益不劣 ⇒ 滤波的净效果为正；翻转降而增益也降=信息被滤掉，如实入册
+  rare_path_honesty: 稀有路径（上日转移经验概率 <10%）子集单独出数并披露样本数；子集 obs < 60 判 nan 禁并入主判
+    （节点这条是给异常路径的，不许用全样本平均把它抹平）
+  ic_floor: 各臂连续面（leading 占比−lagging 占比）日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  regime_stability: bear/rebound 两段同号且均过 ic_floor
+  universe_guard: 62 日门槛面=按"当日 code 的历史长度"分层报增益（<62 / 62-180 / >=180 三层，实测 IS 内 8/22/… 个 code，见 evidence）：
+    若 <62 层的预测误差显著更大 ⇒ 节点门槛有据，保留并在考卷侧守；若无差异 ⇒ 门槛是历史长度歧视，
+    登记为"可放宽"提案；「该柱禁与确认腿混判」（不同对象，内收判据铁律：跨域不同对象→不并）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: quadrant_signal_flip_count（翻转次数，本卡专属判据面）与 sector_next5d_excess
+  note: 与同车道 calibration/02 分工=02 考"象限位置/迁移方向有没有预测力"，本卡考"节点规定的采信规则要不要、值多少"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-02-1.confidence
+preregistered_by: st-nightmine-20261010-RXA
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_index
+  signal_column: kline_sector_880.close where period='1d'（键列=sector_code）；kline_index.close where symbol='000300'
+  signal_derivation: >-
+    与同车道 calibration/02 逐字同口径重算（禁直读 c1_market.sector_state.rrg_quadrant，那是被测件同族产物=自证循环；
+    该列仅作口径一致交叉核对，差异 >10% 先查口径再开考）；
+    新增面=按日构造"code×昨日象限→今日象限"标签序列，再按采信规则把标签转成信号：
+    raw=当日跨界即置 1；confirm_k=须连续 k 日处同一目标象限才置 1（否则视作仍在旧象限）；
+    rare_guard=在 confirm2 之上，若该转移的经验概率（过去 250 交易日频率）<10% 则再延后 1 日；
+    历史长度层=每 code 自其首个 trade_date 起累计 in-window 交易日数（用于 universe_guard 分层）。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（本车道台账 §2-P6）。列集：
+    `SELECT groupArray(name) FROM system.columns WHERE database='c1_market' AND table='kline_sector_880'`
+    → ['period','trade_date','timestamp','sector_code','sector_name','open','high','low','close','volume','amount','forward_factor','data_source','fetched_at','ingest_ts']
+    ⇒ 键列是 「sector_code」（本车道首跑误用 symbol/code 连报 5 次 HTTP 404，依作业簿 §四"空结果/404 先判静默失败"排查后改对，
+    留痕=404 不等于无数据）；日期列 trade_date 在册（与 L1 台账 §3-P17 的 typeof 探测失败不同源，本处为列名错非查询失败）。
+    宇宙漂移：`countDistinct(sector_code) WHERE period='1d'` → 2021-08-02=「266」、2023-12-29=「677」、2026-10-08=「728」
+    ⇒ IS 内 +155%，占比类读数（leading/lagging 占比）必须按日截面分母（当日在数 code 数），禁固定 code 数。
+    62 日门槛影响面实测：
+    `SELECT count() FROM (SELECT sector_code, countDistinct(trade_date) AS uniq FROM c1_market.kline_sector_880 WHERE period='1d' AND trade_date<='2023-12-31' GROUP BY sector_code HAVING uniq<62)` → 「8」；
+    同形查询 HAVING uniq>=62 AND uniq<180 → 「22」；全 code（不限日期）→ 「729」
+    ⇒ 节点 fallback 门槛的实践影响面=8/729≈1.1% codes（故本卡该柱预期 no_binding，如实报）。
+    全表规模复证：`SELECT count() FROM c1_market.kline_sector_880` → 785204 行（与 L1 台账 §3-P3 同数，口径一致）。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_rrg.py（MOD-SIG-026，TDM module_ref；确认腿的在码现状须开考前实读该件是否已实现 2-3 日确认——
+    若码内已有而考卷用 raw，则本卡同时是"考卷与被测件口径不一致"的治理产出）
+executor: scripts/backtest/fexam/calibration_exam.py:run_card（series 面机判）+ exam 侧 ≤60 行臂组装（纯标签重放，无引擎语义改动）
+origin: cross_probe_RXA（漏矿来源=TDM 节点 invalidation/fallback 两字段原文）
+sources:
+  - 族级矿脉 S1（RRG 四象限口径），URL+发布方+年份见 L1 台账 §2-S1；本卡复用不重复挖外部矿

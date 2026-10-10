@@ -1,0 +1,86 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-06-3/calibration/02_强度乘数阶梯
+node_id: TDM-E-L2-06-3
+family: calibration
+title_zh: 板块强度→个股 score 乘数阶梯·校准卡（本车道旗舰）
+hypothesis: >-
+  在码乘数阶梯（板块强度 10 分制：10 分板块→个股 score+15%、6 分→+5%、<6 分→−10%）
+  与实际"板块强度分位 → 个股次日超额"的响应曲线形状一致：
+  真实超额对板块强度的关系应单调递增且在中低档出现 −10% 惩罚的负区，
+  且阶梯拐点（6 分、10 分）应落在真实响应曲线的实际拐点上（±1 分内）；
+  若拐点错位，则查表系数应改而非改判据。附带检验节点文字的两条主张：
+  "强板块的弱票也加分"（强度交互项符号）与"弱板块的强票打折"（个股强度×板块强度交叉）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；强度分位桶与拐点容差 ±1 分写死；系数本身不参与拟合（只对照，不改表后重考）
+buckets:
+  type: fixed_grid
+  'on': 板块强度 10 分制分档 {0-2,2-4,4-6,6-8,8-9,9-10}
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 六档个股次日超额中位数单调递增，Spearman rho>=0.6（响应曲线主判面）
+  ic_floor: 连续面（个股 score × 板块强度分位）截面 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 超额峰值与半衰期 >= 1 交易日；<6 档的负超额应在 t+1 即显现（时滞建档）
+  regime_stability: bear/rebound 两段单调性同号
+  knee_alignment: 真实响应拐点（一阶差分符号翻转处）与在码拐点 6 分/10 分偏差 <= 1 分
+    （超差=查表系数失配的量化证据，进 TDM 置信回填不改码）
+  cross_terms: 强板块弱票 vs 弱板块强票两组超额差分别出数（节点两条主张的可判面）
+target:
+  primary: next_day_index_return（CSI300 次日收益，组合层对齐）
+  secondary: stock_next_day_return（个股次日收益 panel 主对象；辅轴=池加权超额）
+  note: 本卡是"板块强度值多少分"的最直接答案，L2-06 考要不要传导、本卡考传导系数对不对
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-06-3.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_daily_hfq + c1_market.sector_constituent
+  signal_column: kline_sector_880.close/amount（板块强度 10 分制底座）；
+    kline_daily_hfq.close（个股收益/个股强度）；sector_constituent.sector_code/stock_code（归属）
+  signal_derivation: >-
+    板块强度 10 分制=两路合成分（0-100）/10，档位按上表六档；
+    个股 score=池内截面 rank 合成（考卷口径），调节后=score×乘数（1.15/1.05/0.90 三档在码值）；
+    响应曲线对象=同档内个股"次日实际超额"（个股次日收益 − 000300 次日收益）按档中位数。
+    成分口径缺失段（见 evidence）用 880 行业指数按 sector_code_name_map 的 code_family 前缀归属，
+    并以 industry_class（2026-08-03 起）做映射一致性核对，两法不一致日剔除并计数披露。
+  target_source: kline_daily_hfq close→next_day_return（个股 panel）；
+    kline_index 000300 close→next_day_return（超额基准）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5/P7/P12）：kline_sector_880 industry_l1(61 codes)/industry_ths(128)
+    =2021-08-02..2026-10-08（78263/163038 行）；kline_daily_hfq=1990-12-19..2026-09-30/10098785 行/
+    5916 symbols（个股次日收益全窗可算，注意 2026-09-30 后 9 日缺口不影响 OOS 终点 2025-09-09）；
+    kline_index 000300=2005-01-04..2026-10-09/5284 行；
+    个股↔板块映射：sector_constituent=2026-07-22..2026-10-01/6 个 update_date、
+    sector_constituent_snapshot=2026-09-14..2026-10-09/19 日、industry_class=2026-08-03 起、
+    sector_list=2026-09-03 起、stock_profile_ths=仅 2026-09-09 单日、
+    concept_board_constituent=2026-08-10..2026-10-09/37891 行。
+    ⇒ 本卡 panel 面的可考窗同样受成分口径限制；六档×60 样本的门槛在 2026-07-22 之后
+    （约 55 交易日 × 数千票）可满足档内票数，但**日数不足**⇒
+    preregistered 面板只在可考窗内出分，长窗响应曲线面 blocked_on_data（缺 2021-08-02..2026-07-21 成分）。
+  impl_ref: src/zephyr/signal_ashare/core/sector_conduction.py（MOD-SIG-136，
+    10→+15%/6→+5%/<6→−10% 封闭口径；另有活体线性插值变体，两者不同源已在先例册披露）
+    + scripts/backtest/sector_surface.py（查表实现）
+  second_card_note: 同族可再挖"传导时滞曲线"（t+1..t+5 衰减）另立 03 卡，本卡不重复
+sources:
+  - 族级矿脉 S5（因子叠加/条件收益响应曲线），URL+发布方+年份见台账 §2-S5

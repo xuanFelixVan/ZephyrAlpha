@@ -1,0 +1,81 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-06/ablation/02_层级隔离两字段传导
+node_id: TDM-E-L2-06
+family: ablation
+title_zh: 板块→个股传导（两字段边界规则）·消融卡
+hypothesis: >-
+  板块结论只以"强度调节分+龙头定位"两字段喂个股层、且只调分不重排名，
+  相对两种越界形态有正边际：①完全不传导（off）；②直接按板块结论重排个股
+  （rank_override，越权形态）。若 off 与两字段传导无差，则该传导是纯开销；
+  若 rank_override 更好，则"层级隔离"这条立法应被推翻（须提 Owner 门，本卡只出证据）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；三 arm 的实现锚=引擎侧 X_sector（off/strength_top15/conduction），
+    查表系数 9→1.15/6→1.05/<6→0.90 为在码既有值
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {off, two_field_only, rank_override}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: two_field_only 相对 off 的个股层组合次日判别面提升 >= 0.01
+  ic_floor: 传导后个股 score 对次日个股收益的截面 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 传导效应半衰期 >= 1 交易日
+  regime_stability: bear/rebound 两段同号
+  isolation_invariant: two_field_only 臂的个股排名必须与 off 臂"同分同序"仅分值变
+    （若排名被打乱=实现违反层级隔离契约，判卡无效而非 fail）
+target:
+  primary: next_day_index_return（CSI300 次日收益，组合层对齐主轴）
+  secondary: stock_pool_sector_hit_share（打分池内个股所属板块的次日板块收益中位，辅轴）
+  note: 龙头定位字段历史不可得（见 evidence）⇒ 本卡两字段面降为单字段（强度调节分），差异已声明
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-06.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_daily_hfq + c1_market.sector_constituent
+  signal_column: kline_sector_880.close/amount（板块强度）；kline_daily_hfq.close（个股 score 底座）；
+    sector_constituent.sector_code/stock_code（个股↔板块映射）
+  signal_derivation: >-
+    板块强度=两路合成分（0-100，映射到 10 分制）→ 调节乘数（>=9→1.15、6..9→1.05、<6→0.90，
+    只乘个股 score 不重排名）；个股 score=池内个股既有截面 rank 合成（考卷侧口径）；
+    rank_override 臂=按板块强度对池内个股做跨行业重排（越界对照臂，实现层已存在该语义：
+    "传导改分后 rank 预算作废置 None"）。
+  target_source: kline_index 000300 close→next_day_return（组合层）+
+    kline_daily_hfq close→next_day_return（个股截面 panel 面）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5/P7/P12）：kline_sector_880 板块指数=2021-08-02..2026-10-08；
+    kline_daily_hfq 个股=1990-12-19..2026-09-30/10098785 行/5916 symbols；
+    个股↔板块映射唯一在册读取源 sector_constituent=2026-07-22..2026-10-01（6 个 update_date）、
+    sector_constituent_snapshot=2026-09-14..2026-10-09（19 个交易日）
+    ⇒ 板块归属历史缺失，本卡可考窗实际只有 2026-07-22 之后（约 55 交易日）；
+    为保留方案冻结窗的完整证伪面，另用 880 行业指数的 code_family 前缀（8803→industry_l1、881→industry_ths）
+    作板块侧、以申万/同花顺行业名对齐个股的 industry_class（2026-08-03 起）——两法都不满足 IS 2021-08-02 起，
+    故本卡 preregistered 的判据面=**arm 对比在可考窗（2026-07-22..2026-09-30）内做，
+    IS/OOS 长窗面 blocked_on_data**，两态并存如实登记（不冒充全窗可考）。
+    引擎侧真数窗 smoke 实测：2026-08-01..09-30 得 42 日×31 行业、分值域 [12.1,94.4]（留档
+    D:/ZephyrAlpha/docs/_working/matrix_campaign/mining/sector_propagation_wiring_v1.md §4.2）。
+  impl_ref: src/zephyr/signal_ashare/core/sector_conduction.py（MOD-SIG-136）
+    + scripts/backtest/sector_surface.py（MOD-BT-238）+ factory_grid_executor.py（X_sector 段）
+sources:
+  - 族级矿脉 S5（层级隔离/因子叠加边际），URL+发布方+年份见台账 §2-S5

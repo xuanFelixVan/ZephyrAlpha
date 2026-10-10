@@ -1,0 +1,76 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-03-1/calibration/02_扩散指标20日线占比
+node_id: TDM-E-L2-03-1
+family: calibration
+title_zh: 板块内 20 日线扩散指标·校准卡
+hypothesis: >-
+  板块内站上 20 日线个股占比（扩散度）对次日指数收益与该板块未来 5 日强度具单调性：
+  从 <30% 回升穿 50% 的调整结束信号为正超额，从 >80% 掉头向下的见顶信号为负超额；
+  即"扩散度水平"与"扩散度一阶差分"两个面都要单独出分（水平=位置，差分=拐点）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；"站上 20 日线"=close>SMA20(close)（严格大于，禁 MA10/MA60 顶替）
+buckets:
+  type: quantile_decile
+  'on': 板块内站上 20 日线个股占比
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 差分（拐点）面 |IC| 峰值应早于水平面（先验），半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  crossover_test: 上穿 50% 事件与下穿 80% 事件各自的 5 日超额事件研究（节点文字的两个动作可直接判）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_adjustment_progress_advance（L2-03 调整进度推进速率，辅轴=扩散喂给调整进度的边际）
+  note: 本卡是 L2-03 的三维之一（扩散维）的独立考题，两卡不可互相顶替
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-03-1.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；断供不弃卡（作业簿 §三⑥）
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.sector_constituent
+  signal_column: close（个股 hfq）、sector_code/stock_code（成分）
+  signal_derivation: >-
+    个股站上 20 日线=close > close.rolling(20).mean()；
+    扩散度=板块成分内满足该条件个股数 / 板块成分总数（剔除停牌与 20 日线不足者）；
+    series=全市场板块扩散度均值，panel=板块×日扩散度（辅轴与 L2-03 共用同一份重算，禁各算各的）。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P6/P7/P12）：个股价格面充分——c1_market.kline_daily_hfq
+    =1990-12-19..2026-09-30，10098785 行，5916 symbols（SMA20 可算）；
+    成分面不足——c1_market.sector_constituent=2026-07-22..2026-10-01/6 个 update_date/727 codes/6229 stocks；
+    c1_market.sector_constituent_snapshot=2026-09-14..2026-10-09/19 个交易日/1922366 行；
+    c1_market.sector_list=2026-09-03 起/10443 行；c1_market.industry_class=2026-08-03 起/46228 行；
+    c1_market.stock_profile_ths=仅 2026-09-09 单日/5217 行；
+    c1_market.concept_board_constituent=2026-08-10..2026-10-09/37891 行/4927 symbols。
+    ⇒ 缺段明列：2019-01-04..2026-07-21 无板块成分 ⇒ 板块内扩散度不可算；
+    市场级（全 A 站上 20 日线占比）虽可算但属不同对象（L1 广度域，另车道），
+    以市场级顶替板块级=裸扩口径/造回归，本车道明禁，故不另立替代卡。
+  blocked_reason: 成分历史缺失（同 L2-01-1 根因，单一真源=sector_constituent，在册结论已实测复证）。
+    解锁条件=补 2019 起板块成分日频/月频快照，窗口与门柱不动转 preregistered。
+  impl_ref: src/zephyr/signal_ashare/adjustment_cycle_tracker.py（module_ref；
+    该件同时被 L2-03/L2-03-1 引用，见台账 §4-A3 git grep 摘录）
+sources:
+  - 族级矿脉 S2（扩散/广度指标 McClellan 族），URL+发布方+年份见台账 §2-S2

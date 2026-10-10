@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-07-1/calibration/02_回踩四因子合成分
+node_id: TDM-E-L2-07-1
+family: calibration
+title_zh: 回踩四因子合成（Fib×量能×强度×时间）·校准卡
+hypothesis: >-
+  四因子各 0-1 加权合成的连续回踩分对板块未来 5 日超额具单调响应曲线，
+  且各因子的边际贡献不等：节点主张"38.2% 附近是 A 级必要条件"意味着 Fib 因子在四因子中
+  应有最高单因子 IC 且与合成分相关性最强；"回调 3-8 天"意味着时间因子存在倒 U（过短=未到位、
+  过长=趋势已坏），需用分桶而非线性检验。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；四因子权重各 0.25（先验等权，本卡出分后才谈改权）；
+    Fib 档位划分 {<23.6%,23.6-38.2%,38.2-50%,50-61.8%,>61.8%} 写死
+buckets:
+  type: quantile_quintile
+  'on': 四因子合成连续分
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位 5 日前向超额 Spearman 单调 rho>=0.6（合成分主判面）
+  ic_floor: 合成分日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+5 |IC| 峰值与半衰期 >= 2 交易日（回踩是买点，效应应持续数日）
+  regime_stability: bear/rebound 两段 IC 同号
+  single_factor_rank: 四因子单因子 IC 排序出数（Fib 最高则支持"必要条件"主张；否则登记反证）
+  inverted_u_time: 时间因子分桶（1-2/3-5/6-8/9-15/>15 日）的超额倒 U 检验（二次项符号）
+target:
+  primary: next_day_index_return（CSI300 次日收益，series 面）
+  secondary: sector_next5d_excess（板块 5 日超额，panel 主对象）
+  note: 本卡考合成分质量；L2-07 考离散化与门控。两卡共用同一次四因子重算（禁各算各的）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-07-1.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: close, high, low, amount
+  signal_derivation: >-
+    Fib 分=以 60 日低→高区间计回撤比例，38.2% 附近（±0.1 带宽）=1、偏离线性衰减；
+    量能分=max(0, 1 − roll_mean(amount,5)/max(amount,60)×3)（缩得越狠越高分，与 L2-03 量能维同源）；
+    强度分=两路合成分/100（共用 L2-01 重算，>7 为节点门槛，卡内连续化）；
+    时间分=按回调天数 3-8 日区间为 1、区间外线性衰减；
+    合成分=0.25×四项。
+  target_source: kline_sector_880 close→5 日超额（panel，基准 kline_index 000300 同期）；
+    next_day_index_return（series 面）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5）：kline_sector_880 industry_l1(61 codes)/industry_ths(128 codes)
+    =2021-08-02..2026-10-08（78263/163038 行，OHLC+amount 满配，1d 周期 729 codes 全表 785204 行）；
+    60 日区间需 60 日预热 ⇒ IS 有效起点约 2021-11；
+    板块宇宙在扩（concept_or_style 族 426 codes）⇒ 面板行数随时间增，
+    截面板块数不恒定会污染分位类判据 ⇒ 冻结面板=industry_l1∪industry_ths（189 codes），
+    该选择与理由一并写死；基准 000300=2005-01-04..2026-10-09/5284 行。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_pullback.py（module_ref，grade_pullback）
+    ；TDM 挂载 MOD-SIG-116（父节点 L2-07）
+  conflict_note: 在码 grade_pullback 是"Fib×量能×强度"三维取最弱档，节点文字主张四维（含时间窗）
+    ⇒ 实现与地图口径不一致，登记给 TDM/施工侧（本车道不改码不改图）
+sources:
+  - 族级矿脉 S6（Fibonacci/回撤买点学术与实务检验），URL+发布方+年份见台账 §2-S6

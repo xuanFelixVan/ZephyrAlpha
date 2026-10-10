@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-C-L2/calibration/02_币圈赛道资金流轮动
+node_id: TDM-C-L2
+family: calibration
+title_zh: 币圈赛道资金流排名·校准卡（预留框架节点）
+hypothesis: >-
+  山寨季指标与赛道资金流排名前 3 对次日 BTC/整体加密市场收益具单调预测力，
+  且"赛道"这一层在币圈是否值得存在（A 股板块层的弱化版）可由该排名相对
+  "单币动量排名前 3"的增益裁定——若无增益，则币圈不必建赛道层（终局全貌判据）。
+window:
+  in_sample:
+  - '2025-08-08'
+  - '2026-01-31'
+  oos: &id001
+  - '2026-02-01'
+  - '2026-09-30'
+  regimes:
+    seg1: 2025-08-08..2025-11-30（数据起点后第一段）
+    seg2: 2025-12-01..2026-01-31（第二段）
+  frozen_note: >-
+    看数前冻结；窗口完全由数据起点决定（非方案 §8 主张窗），
+    如实登记"该节点是预留框架，历史与方案窗无交集"
+buckets:
+  type: quantile_tercile
+  'on': 当日赛道层资金流排名集中度
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+3 |IC| 峰值与半衰期 >= 1 交易日
+  regime_stability: 两段 IC 同号
+  layer_value_test: 赛道排名 vs 单币动量排名的增益差出数（决定"赛道层该不该存在"）
+target:
+  primary: next_day_index_return（本域替代基准=BTC 次日收益；方案主轴 000300 与币圈无对应关系，
+    如实声明为"跨域主轴不适用"）
+  secondary: altcoin_season_ratio（山寨季指数变化，辅轴）
+  note: 与 A 股 entry_flow 同层同名但不同市场，禁共用任何口径与阈值
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-C-L2.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；断供不弃卡；预留框架节点不造空壳（作业簿"诚实优先"）
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.crypto_kline_daily（赛道映射表=查无，见 evidence）
+  signal_column: quote_volume, close, is_universe_eligible, universe_rank
+  signal_derivation: >-
+    资金流代理=quote_volume 环比与相对 BTC 的量能份额；赛道=按赛道标签聚合（**标签表不存在**），
+    故本卡当前唯一可算面是"单币动量/量能排名前 3"的对照组，赛道腿不可算；
+    山寨季指标=非 BTC 币市值/量能占比（需市值面，在册仅 K 线，无市值）。
+  target_source: crypto_kline_daily close（BTCUSDT）→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P17）：c1_market.crypto_kline_daily
+    SELECT min(trade_date),max,count,uniqExact(symbol) → 2025-08-08 / 2026-10-08 / 19801 行 / 141 symbols；
+    每币行数=431（≈431 个交易日全对齐，无断供）；列集含
+    is_universe_eligible/universe_rank（宇宙资格与排名在册，但**无 sector/track/category 列**）。
+    TableRegistry 全表枚举中 crypto 相关仅 2 张：crypto_kline_daily、crypto_shadow_gate（20 行）
+    ⇒ 查无赛道/板块映射表（命令原文与枚举输出摘录见台账 §4-A4）。
+    141 币 × ~431 日的赛道腿样本=0，主判据面不可算 ⇒ blocked_on_data。
+  blocked_reason: >-
+    缺段=①币圈赛道分类表（从未采集，非断供）②历史仅 431 交易日（不足十分位/五分位样本地板，
+    即便建了赛道表也需 ≥300 赛道-日/桶）③无市值面（山寨季指标定义不可算）。
+    节点自身 red_reason=not_built、data_refs=[]、module_ref=null ⇒ 同时 blocked_on_impl。
+    解锁条件=Owner/施工侧先建赛道映射与采集，本卡届时改窗口为数据起点后 24 个月（起点后移，门柱不动）。
+  impl_ref: 无（TDM module_ref=null，activation=continuous，purpose_tag=PT-02）
+sources:
+  - 族级矿脉 S9（加密赛道轮动/山寨季），URL+发布方+年份见台账 §2-S9

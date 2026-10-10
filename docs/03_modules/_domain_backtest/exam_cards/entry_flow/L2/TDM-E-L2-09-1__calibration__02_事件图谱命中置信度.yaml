@@ -1,0 +1,83 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-09-1/calibration/02_事件图谱命中置信度
+node_id: TDM-E-L2-09-1
+family: calibration
+title_zh: 新闻→产业链图谱命中与置信度·校准卡
+hypothesis: >-
+  新闻实体/事件词命中产业链图谱节点的可信度（命中节点数 × 匹配强度）对未来 5 日
+  相关板块/标的超额具单调正效应：一条新闻命中的图谱节点越"活"且匹配置信越高，
+  其指向板块的次日相对收益越正；泛化词/墓碑节点命中无预测力（对照组应过不了 ic_floor）。
+window:
+  in_sample:
+  - '2024-01-02'
+  - '2024-12-31'
+  oos: &id001
+  - '2025-01-02'
+  - '2025-09-09'
+  regimes:
+    bear: 2024-01-02..2024-09-18（弱修复失败段）
+    refl: 2024-09-19..2024-12-31（政策脉冲反弹段）
+  frozen_note: 看数前冻结；本卡窗口刻意避开 2019-2023（图谱不存在）与 2025（news_data 断供，见 evidence），
+    但即便窗内也无图谱 PIT 面 ⇒ 结论仍是 blocked_on_data
+buckets:
+  type: quantile_quintile
+  'on': 日度"高置信命中事件数/总事件数"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 事件冲击 |IC| 峰值应在 t+1（半衰期 <= 2 交易日，事件类短促）
+  regime_stability: 两段同号
+  control_reject: 墓碑节点/泛化词对照组 IC 均值 <= 0.005（阳性对照必须无信号，否则整卡作废）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: chain_node_linked_sector_excess（命中节点所指板块 5 日超额，辅轴）
+  note: 上游=S0-1 新闻情绪（DS-225 派生视图），下游=09-2 冲击标的生成
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-09-1.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；断供不弃卡（作业簿 §三⑥）
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c3_fundamental.news_data（PG 侧 ig_node/ig_edge/ig_node_company/ig_chain）
+  signal_column: news_data.title/content/related_symbol/related_tags/keyword/publish_time/sentiment_score；
+    ig_node.name/活标、ig_edge（邻接）
+  signal_derivation: >-
+    命中=新闻关键词/实体经词表匹配到 ig_node 活节点（剔墓碑与泛化词），
+    置信=匹配强度×节点活性；series=当日高置信命中数 / 当日新闻总数。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P14/P15/P16）：
+    CH c3_fundamental.news_data SELECT min(publish_time),max,count → 2010-01-02 / 2026-10-10 / 8219185 行；
+    逐年行数 2010..2024=21.2 万~106.2 万（2023=1062308 峰值、2024=759512），
+    2025=31425、2026=259401 ⇒ **2025 年断供（不足上年 4.1%）**，
+    以 2025 作 OOS 的任一设计都不成立（闸 4 质量画像命中）。
+    PG 图谱面经 DatabaseService.get_depgraph_conn() 只读实测：ig_chain=873、ig_node=5560、
+    ig_edge=1726、ig_node_company=25559；ig_node_company created_at
+    min=2026-08-28 04:08:55+08:00 / max=2026-09-24 15:47:33+08:00
+    ⇒ 图谱只有 2026-08-28 之后的构建记录，**无点时（PIT）历史版本**：
+    用它回放到 2024 窗=用未来图谱考过去新闻（前视泄漏），禁。
+    与在册快照（DS-224 注 830/3328/1378/16900，2026-09-11 时点）计数已漂移，
+    该条登记自注"计数以实时查询为准，禁引用快照数"，本次以实测为准。
+    辅助面 c1_market.news_sentiment_window=2019-01-04..2026-10-08/22257 行
+    （scope=symbol&night 19635 / market&night 201 / market&1d 2421）。
+  blocked_reason: >-
+    缺段=ig_* 图谱的 2026-08-28 之前历史（含 PIT 版本），以及 news_data 的 2025 全年。
+    解锁条件=①图谱建版本化（节点/边带 valid_from，可回放）②news_data 补 2025 段。
+    两项齐备后本卡转 preregistered，窗口与门柱不动。
+  impl_ref: src/zephyr/intelligence/news_chain_node_linker.py（MOD-INT-NEWS-CHAIN，testing）
+    + MOD-SIG-110/112/117/123/125/154；端到端 dry-run 留档=2026-09-11 规格卡 1（24h 窗 800 新闻→命中 10）
+sources:
+  - 族级矿脉 S7（新闻/事件→资产可预测性），URL+发布方+年份见台账 §2-S7

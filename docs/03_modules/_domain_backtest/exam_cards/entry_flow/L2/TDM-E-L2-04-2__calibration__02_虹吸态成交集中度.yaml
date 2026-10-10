@@ -1,0 +1,72 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-04-2/calibration/02_虹吸态成交集中度
+node_id: TDM-E-L2-04-2
+family: calibration
+title_zh: 虹吸态（前 3 板块成交占比>40%）·校准卡
+hypothesis: >-
+  板块成交额集中度（前 3 板块占全板块成交额比）分桶对次日指数收益单调负向（越高越透支），
+  且过阈值 >40% 的"虹吸态"内非头部板块未来 5 日超额显著为负（"接飞刀"命题），
+  头部板块未来 5 日超额不显著为负（"只做头部"命题）——两腿分别出分，缺一即判定据不完备。
+  本卡同时给出 40% 阈值的历史分位位置（若 40% 落在历史 95 分位外，阈值本身需重议，登记不改码）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；占比口径分母=industry_l1∪industry_ths 全集（880，sector_code_name_map 在册族）
+buckets:
+  type: quantile_quintile
+  'on': 当日前 3 板块成交额占比
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调（符号与虹吸透支先验一致）rho>=0.6（取绝对值判）
+  ic_floor: 日频 IC 均值 >= 0.02（虹吸为负向信号，符号按 −|IC| 记录，ic_ir 同向）且 IC_IR >= 0.3
+  lag_profile: 虹吸态对非头部板块的伤害在 t+1..t+5 累积，半衰期 >= 2 交易日（时滞建档）
+  regime_stability: bear/rebound 两段 IC 同号
+  two_leg_test: 虹吸日（>40%）内 头部板块 5 日超额 − 非头部板块 5 日超额 >= +1pp
+    且非头部自身 5 日超额 <= 0
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_head_nonhead_spread（头部 vs 非头部板块 5 日利差，辅轴=池清空动作的依据）
+  note: 本卡是"极端分化只做头部"这条风控主张的第一次出分
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-04-2.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: amount, close
+  signal_derivation: >-
+    集中度=rank(amount) 前 3 板块的 amount 之和 / 全族 amount 之和；
+    头部/非头部=按当日 amount 前三 / 其余；5 日超额=板块 5 日收益 − 000300 同期 5 日收益。
+  target_source: kline_index 000300 close→next_day_return（primary）；
+    同表 close（辅轴板块 5 日超额）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5）：kline_sector_880 industry_l1(61 codes)/industry_ths(128)
+    首末日=2021-08-02/2026-10-08（78263/163038 行），amount 列满配 ⇒ 集中度序列 575 个交易日可算；
+    注意前 3 占比对板块宇宙数敏感（61 板块 vs 189 板块口径不同）⇒ 分母族冻结为
+    industry_l1∪industry_ths，历史窗内宇宙漂移已在 evidence 中登记，
+    跨口径对比禁用；c1_market.sector_snapshot（2026-08-14 起）与 sector_fund_flow（2026-09-15 起）
+    的成交口径不作本卡源（历史不足）。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_siphon.py + MOD-SIG-113
+sources:
+  - 族级矿脉 S3/S4（资金集中度/虹吸），URL+发布方+年份见台账 §2-S3
+  - 同族共用 amount 面（L2-01-2/L2-04-1 复用，一次重算三卡共用，§3 同一矿脉不重复挖）

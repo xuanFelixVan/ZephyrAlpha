@@ -1,0 +1,72 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-02-2/calibration/02_板块见顶预警三信号
+node_id: TDM-E-L2-02-2
+family: calibration
+title_zh: 单板块见顶预警·校准卡（两信号可算面）
+hypothesis: >-
+  板块日线 RSI>75、板块成交额创 20 日新高而指数滞涨（放量滞涨）两信号各自对
+  "该板块未来 5 日相对收益转负"具单调预测力，且命中两信号者降级判据的准确率
+  显著高于单信号；第三信号（龙头股率先破位）依赖板块成分与个股破位定义，
+  历史口径缺失，本卡只考两信号面并声明 scope。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；RSI=14 日 Wilder 口径、"滞涨"=5 日板块收益 <= 0 而 amount 创 20 日新高
+buckets:
+  type: categorical
+  'on': 命中数 {0,1,2}（两信号命中计数）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 命中数 0/1/2 三档的未来 5 日超额单调递减，与先验秩相关 rho>=0.6
+  ic_floor: 连续面（RSI 分位+放量滞涨 z 值合成）对次日指数收益 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 见顶预警信号半衰期 >= 2 交易日（预警应领先而非同步）
+  regime_stability: bear/rebound 两段利差同号
+  precision_floor: 命中 2 信号的板块在 T+5 跌出强度榜前 50% 的比例 >= 60%（"降级"动作的可判阈值）
+target:
+  primary: next_day_index_return（CSI300 次日收益，series 面）
+  secondary: sector_top_downgrade_precision（候选池降级准确率，panel 辅轴）
+  note: 盘中激活节点，但本卡用日频收盘口径冻结（盘中面 blocked，见 evidence）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-02-2.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: close, amount, high, low
+  signal_derivation: >-
+    RSI14(Wilder) 按 sector_code 计算；放量滞涨=amount>=roll_max(amount,20) 且
+    close/close.shift(5)-1 <= 0；series=当日命中 >=1 信号的板块占比（市场级预警密度）；
+    panel 辅轴=板块×日命中数对未来 5 日超额的单调性。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5/P7）：kline_sector_880 industry_l1(61)=2021-08-02..2026-10-08/78263 行、
+    industry_ths(128)=2021-08-02..2026-10-08/163038 行（RSI14/20 日新高需 20 日预热）；
+    盘中口径不可得：c1_market.kline_sector_intraday = 2026-07-20..2026-10-09（11628577 行）
+    但仅 ~55 个交易日，且 c1_market.sector_snapshot 自 2026-08-14 起（122746 行）
+    ⇒ 本节点 activation=intraday 的盘中面 blocked_on_data，本卡以日频冻结面代偿并如实声明；
+    第三信号（龙头率先破位）需成分+个股破位口径，同 L2-01-1/L2-06-2 的 blocked 证据链。
+  blocked_scope: 盘中实时预警面 + 龙头破位维=blocked_on_data（缺 2026-07-20 前的盘中板块数据、
+    缺 2026-07-22 前的成分口径）
+  impl_ref: src/zephyr/signal_ashare/sector/sector_analyzer.py + MOD-SIG-119/MOD-SIG-121
+sources:
+  - 族级矿脉 S1（见顶/过热反转），URL+发布方+年份见台账 §2-S1

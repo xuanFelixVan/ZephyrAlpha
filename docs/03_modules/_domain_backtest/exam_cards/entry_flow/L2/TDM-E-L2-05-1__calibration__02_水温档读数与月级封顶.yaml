@@ -1,0 +1,72 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶
+node_id: TDM-E-L2-05-1
+family: calibration
+title_zh: 水温档推导（日级主判×月级封顶）·校准卡
+hypothesis: >-
+  日级水温档（S0..S5）对次日指数收益具单调响应曲线（越烫短期收益越高、极烫档反向），
+  且"月级一票否决"（日级水烫但月级熊市反弹→降为'温'）真实增益：
+  加入月级封顶后的档位序列比纯日级档位的 IC/单调性更高（防反弹期当牛市做）。
+  本卡同时建水温档→前向 1/2/3/5 日收益的响应曲线与半衰期档案。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；日级分段阈值=在册 emotion_index 六段口径；
+    月级 7 态=月收盘相对月 MA 位置 + 月涨跌态（重算口径写死于 data_binding，禁事后改）
+buckets:
+  type: quantile_decile
+  'on': 当日水温档（映射为 0..5 再按历史分位切十桶以保与方案 §8 同判据形）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: t+1..t+5 至少一档 |IC| 达峰值且半衰期 >= 1 交易日（水温响应曲线建档）
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  veto_gain: 加月级封顶的档位序列相对纯日级档位的 IC 提升 >= 0.005（"封顶"命题的直接可判面）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: emotion_six_state_transition（情绪六段态转移概率，辅轴，与 L1 同锚）
+  note: 本卡是水温档在板块层的第一性考题；L2-05 考开关、L2-05-2 考参数三件套，三卡不重叠
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-05-1.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.emotion_index + c1_market.kline_index
+  signal_column: emotion_index.emotion_index；kline_index.close（symbol='000300'）
+  signal_derivation: >-
+    日级档=emotion_index 按在册六段阈值分档（S0..S5）；
+    月级态=以自然月聚合 000300 月收盘，7 态=（月收盘 vs 月 MA3 上下）×（月涨跌 >+5/0..+5/<0 三档）
+    +（连续两月同向）修正，月级"熊市反弹"判定=月收盘<月 MA3 且当月涨幅>0；
+    最终档=min(日级档, 月级允许上限)。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P11/P13）：c1_market.emotion_index=1991-06-10..2026-09-30（close_final 8617 行，
+    version v0.1.0，逐年 237~257 行，值域 0.012~1.0，无断年）⇒ 水温历史充分；
+    c1_market.kline_index symbol='000300'=2005-01-04..2026-10-09/5284 行 ⇒ 月级聚合可算 2005 起；
+    不可用替代面登记：c1_market.sentiment_panel（fear_greed_index 仅 2026-09-01 起 40 行）、
+    c1_market.emotion_index 的 pre_open/auction 段仅 2026-09 起（27/17 行）
+    ⇒ 盘前水温（本节点 activation=premarket）历史不可得，本卡以 close_final 段考，如实声明。
+  impl_ref: src/zephyr/signal_ashare/sentiment/sentiment_cycle.py（module_ref，DS-150/DS-082/DS-059 上游）
+sources:
+  - 族级矿脉 S4（水温/情绪档位响应曲线），URL+发布方+年份见台账 §2-S4

@@ -1,0 +1,113 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-09/calibration/04_业绩预增催化剂腿
+node_id: TDM-E-L2-09
+family: calibration
+title_zh: 业绩超预期催化剂腿·校准卡（RX-A 交叉复挖漏矿，含对"业绩腿不可考"的翻案）
+hypothesis: >-
+  TDM 本节点原文把催化剂分「三类」："政策（部委文件/产业规划）、「业绩（行业龙头超预期）」、事件（涨价/突破/签约）"，
+  并写死"有当下催化剂的板块加权 20%——有故事的资金才敢接力"。同车道已立两卡（calibration/02 研报密度、
+  calibration/03 评级上调聚集）「都建在 research_report 上」，即两类都还只是"卖方关注度/方向共识"这一族代理，
+  其 blocked 名单只登记了"政策/事件文本腿"⇒ 业绩腿既未入卡也未进 blocked=「漏登记」（本车道实测该腿有长史：
+  c3_fundamental.earnings_forecast 125,582 行/1999-01-08..2026-07-03/5,707 symbols/forecast_type 十类，见 evidence）。
+  本卡假设：以首次披露日归集的"预增+扭亏 家数 − 预减+首亏 家数"净占比（及其强度面 profit_change 中位）分桶，
+  对次日指数收益与该行业未来 5 日超额具单调正效应（超预期=真故事，比研报关注度更接近"资金敢接力"的因果位）；
+  同时允许反向结论——A 股预告密度在顶部也高（预增泛滥=情绪透支），若净占比高档反向，
+  则节点的"催化剂=加分"叙事在业绩腿上不成立，须如实入册（不许因叙事而只报正号档）。
+  并与 02 卡同场对比（信息类型正交性）：若业绩面的净 IC 在控制研报密度后归零，则"业绩催化剂"是关注度的影子，
+  三类催化剂的加权应合并计算而非各自 20%。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: >-
+    看数前冻结。数据物理上限虽到 1999，但 IS 起点保守取 2019-01-04=「与同车道 02/03 卡同窗保持可比（覆盖尺不虚增）」，
+    且 2019 前预告披露规则（2014/2019 修订的强制预告范围）漂移未做画像；此取舍在 evidence 里明列，
+    开考前若补做"披露规则断点画像"可前推窗，但须另立扩档卡而非改本卡窗口。
+    净占比方向、预增/扭亏 vs 预减/首亏 的归类、龙头定义（industry 内 ≤T 研报覆盖条数前 3）全部写死于此，事后禁重挑。
+buckets:
+  type: quantile_quintile
+  'on': 当日市场级业绩催化剂净占比（series）；行业×日净占比（panel 辅轴）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 五分位中位前向收益 Spearman 单调 rho>=0.6（IS 窗内；符号按实测，先验为正但不豁免反向结论）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（方案 §7 三件套地板）
+  lag_profile: t+1..t+5 至少一档 |IC| 达峰值且半衰期 >= 2 交易日（业绩预告是慢扩散信息，峰值若落在 t=0 说明已被当日价格吸收）
+  regime_stability: bull/bear 两段 IC 同号（熊段减弱可接受、变号即"业绩腿在熊市失效"须写进 confidence）
+  oos_same_sign: 上述方向在 OOS 再现，不再现即判主张不稳健
+  leader_vs_breadth_split: 节点特指"行业龙头超预期"⇒ 龙头子集（industry 内 ≤T 研报覆盖前 3 只）与非龙头子集「分别出数」；
+    若只有非龙头子集有效，则节点的"龙头超预期"口径失据（禁以全样本冒充龙头口径，这是本卡最主要的口径诚实面）
+  orthogonality_to_02: 与 calibration/02（研报密度）共线性检验=控制密度后的业绩净 IC 仍 >= 0.01 才算"催化剂类别独立"；
+    归零则提请把三类催化剂的 20% 加权合并为一层（净零：同真源可派生→必并）
+  express_confirmation: 辅轴=以 express_report（2005 起 28,708 行）复核预告是否兑现；
+    "预告预增但未兑现"子集的后续收益须单独报（这是"故事"与"事实"分离的唯一在册路径）
+target:
+  primary: next_day_index_return（CSI300 次日收益，series 主轴）
+  secondary: industry_excess_next5d（行业 5 日超额，panel 辅轴，须用派生映射并披露宇宙偏差）与 express_miss_return（未兑现子集后续收益）
+  note: 本卡=业绩腿在本仓的第一次量化冻结；出分不得外推到"政策/事件催化剂有效"（那两腿仍 blocked）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-09.confidence
+preregistered_by: st-nightmine-20261010-RXA
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c3_fundamental.earnings_forecast（主）+ c3_fundamental.express_report（兑现复核辅轴）
+    + c3_fundamental.research_report（symbol→industry 派生映射与龙头识别，宇宙偏差见 evidence）
+  signal_column: earnings_forecast.forecast_type / profit_change_min / profit_change_max / last_year_profit
+    / announce_date / first_announce_date / report_period / symbol
+  signal_derivation: >-
+    市场级 series=按 `first_announce_date` 归集当日预告：净占比 =（预增+扭亏 家数 − 预减+首亏 家数）/ 当日预告总家数；
+    强度面 = profit_change 中位（取 (min+max)/2，1%–99% 截尾，总家数 <30 的日判 nan 禁补零）；
+    PIT 纪律=「只用 first_announce_date ≤ T 的行，同一 (symbol, report_period) 只取首次披露」（修订稿不得回溯覆盖，
+    防"以公告日 vs 首次公告日"混用造成的前视——该表两列并存正是本卡选 first_announce_date 的理由）；
+    行业级 panel 辅轴=symbol→industry 以 「≤T 最近一次 research_report 的 industry」 取值（派生映射），
+    龙头子集=同 industry 内 ≤T 研报覆盖条数排名前 3 的 symbol；
+    未兑现复核=同一 (symbol, report_period) 的 express_report.net_profit 落入预告区间 [net_profit_min, net_profit_max] 之外者计 miss。
+  target_source: kline_index 000300 close→next_day_return（主）；行业辅轴基准=kline_sector_880（行业族 close，5 日超额 vs 000300）
+  data_window_evidence: >-
+    实测 2026-10-10（本车道台账 §2-P8，命令原文
+    `SELECT min(announce_date),max(announce_date),count(),uniqExact(symbol) FROM c3_fundamental.earnings_forecast`）
+    → `1999-01-08 / 2026-07-03 / 125582 / 5707`；
+    分年（`WHERE announce_date>='2019-01-01' GROUP BY toYear(announce_date)`）→
+    2019=7703 / 2020=7957 / 2021=7257 / 2022=5791 / 2023=5406 / 2024=5121 / 2025=4991 / 2026=3351
+    ⇒ IS 窗（2019-01-04..2023-12-31）约 34,114 行、年均 ~6,800 ⇒ 五分位×60 日样本门槛满足（1214 交易日/5≈243 日每桶）；
+    forecast_type 分布（`GROUP BY forecast_type`）→ 预增 34846/略增 19145/首亏 14945/续亏 14647/预减 14343/扭亏 11441/
+    略减 9027/续盈 5563/不确定 1569/其他 56 ⇒ 十分类在册且"其他"仅 56 行（分类无失控）；
+    样本行抽查 4 条（2024 年）确认 profit_change_min/max、last_year_profit、reason 全文变动原因、
+    announce_date 与 first_announce_date 分列均非空。
+    `SELECT min(announce_date),max(announce_date),count(),uniqExact(symbol) FROM c3_fundamental.express_report`
+    → `2005-01-08 / 2026-07-02 / 28708 / 4395`（兑现复核辅轴可用）。
+    映射宇宙上限：`SELECT uniqExact(symbol), uniqExact(industry), min(publish_date), max(publish_date) FROM c3_fundamental.research_report`
+    → `4709 / 207 / 2017-01-02 / 2026-09-30` ⇒ 派生映射仅覆盖 4,709 只（偏机构覆盖票，全市场 ~5,591 只，见同台账 §2-P4 的 stk_limit 计数）
+    ⇒ 「行业辅轴须明列宇宙偏差，禁当板块真口径」（同车道 §0 红线"裸扩口径=造回归"；本卡主轴=市场级 series，不需任何映射）。
+    板块级严格口径仍缺的成分历史（本车道独立复核）：sector_constituent 的 min(valid_from)=2026-07-23、uniqExact(valid_from)=6，
+    as-of '2022-06-30' 查询=0 行 ⇒ industry_class 的 valid_from 全部 2026-08-03、as-of 2021-06-30=0 行
+    ⇒ 两个归属源都无历史 PIT，故本卡的行业腿只能走"研报派生映射+偏差声明"这条辅轴，真口径腿维持 blocked（不改判）。
+  impl_ref: src/zephyr/signal_ashare/screening/event_driven_screener.py（MOD-SIG-049/106，TDM module_ref，催化剂扫描件）
+    + c3_fundamental.earnings_forecast 的生产方采集件（开考前的口径核对项：该表是否已做 ST/退市中继过滤）
+executor: scripts/backtest/fexam/calibration_exam.py:run_card（series 面机判 _panel_metrics+judge；辅轴 panel 面同件）
+origin: cross_probe_RXA（漏矿来源=TDM 节点 algo_note_zh 三类催化剂中的"业绩（行业龙头超预期）"原文一句）
+翻案声明: >-
+  本卡不推翻同车道任何 blocked 判据（政策/事件文本腿经本车道 §2-P2 独立复证仍成立）。
+  翻案对象=同车道 §1/§7 名单隐含的"催化剂只剩研报代理可考"这一覆盖判断：
+  业绩腿有 1999 起、2019 后年均 ~6,800 行的 PIT 安全自有数据面，属"未查表"而非"无数据"。
+sources:
+  - 族级矿脉 S7（研报评级/PEAD 反应不足），URL+发布方+年份见 L1 台账 §2-S7；本卡复用其"信息扩散慢"结论支撑 lag_profile 先验，
+    不外借参数（业绩漂移族与预告族的口径差异已在 leader_vs_breadth_split 柱中自设判据）

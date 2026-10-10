@@ -1,0 +1,74 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-02-1/calibration/02_RRG象限迁移
+node_id: TDM-E-L2-02-1
+family: calibration
+title_zh: RRG 相对旋转象限·校准卡
+hypothesis: >-
+  板块处"刚进领先象限（改善→leading 跨界）"的未来 5 日超额高于持续领先象限，
+  处"走弱象限"的低于持续走弱；象限迁移方向（leading↑/lagging↓）对次日指数收益
+  具单调预测力（领先象限板块占比越高=市场越健康，过热占比反向）。
+  目标=刚进领先象限的板块——本卡即验证"刚进"是否优于"已在"。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；RS=ln(板块 4 日累计相对收益)+0.5、RRI=RS 4 日平滑、象限以 100 中枢±带宽划分
+    （带宽=5，取自 RRG 通行口径并在此钉死，事后不可调）
+buckets:
+  type: categorical
+  'on': 象限×迁移 {新进领先,持续领先,新进走弱,持续走弱,新进落后,持续落后,新进改善,持续改善}
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 八格按次日均值排序与"新进>持续、领先>改善>走弱>落后"先验秩相关 rho>=0.6
+  ic_floor: 连续面（leading 占比−lagging 占比）日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 新进象限信号的 |IC| 半衰期应 >= 2 交易日（象限是慢变量，短半衰期=噪声）
+  regime_stability: bear/rebound 两段 leading−lagging 利差同号
+  transition_matrix: 象限迁移矩阵 5 日平稳性登记（纯描述性，不做门柱）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_rrg_quadrant_transition（象限转移概率矩阵，辅轴）
+  note: 与 L2-02（接棒榜）互补——L2-02 看资金移动方向，本卡看相对强度-动量二维位置
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-02-1.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_index
+  signal_column: kline_sector_880.close（板块）、kline_index.close where symbol='000300'（基准）
+  signal_derivation: >-
+    RS=100·exp(4 日累计 ln(板块收盘/基准收盘)) 平移口径，RRI=RS 的 4 日 EMA；
+    象限按 (RRI,RS) 相对 100 中枢四分为 leading/improving/weakening/lagging；
+    series=当日 leading 占比 − lagging 占比；categorical 迁移标签=昨日象限→今日象限。
+    禁直读 c1_market.sector_state.rrg_quadrant 作信号（那是被测件同族产物，自证循环）；
+    该列仅用作口径一致性的交叉核对（差异 >10% 时先查口径再开考）。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5/P11）：kline_sector_880 industry_l1/industry_ths
+    首交易日 2021-08-02、末 2026-10-08（78263/163038 行，1d 周期）；
+    kline_index symbol='000300' = 2005-01-04..2026-10-09/5284 行（基准充分）；
+    4+4 日平滑需 8 日预热 ⇒ IS 有效起点约 2021-08 下旬，575 交易日 × 189 板块满足 8 格×60 门槛。
+    交叉核对面：sector_state.rrg_quadrant 非空计数 2022=29927(2022 为半年)、2023=96298、2024=105176、
+    2025=111658、2026=89029，板块数 376/418/451/465/729 ⇒ 板块宇宙在扩，
+    占比类指标须在固定 code_family 口径内算（防"宇宙扩张"冒充"信号改善"，闸 4 质量画像）。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_rrg.py（module_ref）
+sources:
+  - 族级矿脉 S1（RRG/相对强度轮动），URL+发布方+年份见台账 §2-S1

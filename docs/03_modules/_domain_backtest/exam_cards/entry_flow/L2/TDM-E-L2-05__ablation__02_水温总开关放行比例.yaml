@@ -1,0 +1,76 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-05/ablation/02_水温总开关放行比例
+node_id: TDM-E-L2-05
+family: ablation
+title_zh: 水温档→板块放行比例总开关·消融卡
+hypothesis: >-
+  把 L1 水温档翻译成板块信号放行比例（水烫=全放行+门槛降一档；水冰=只放行前 5%+门槛升一档）
+  作为板块层总开关有正边际：相对"不随水温开关"（固定门槛），
+  水温门控 arm 的次日指数收益风险调整指标与板块池命中率同时不降；
+  若剔除该开关指标不降，则"水温是板块层总开关"的立法应降级为 L1 独占（板块层不重复开关）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；档位映射（S4→全放行/门槛−1、S0-S1→前 5%/门槛+1）取在码查表值，卡不改表
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {fixed_gate, water_gate_full, water_gate_ice_only, water_gate_hot_only}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: water_gate_full 相对 fixed_gate 的判别面提升 >= 0.01 且 mono_spearman>=0.6
+  ic_floor: 水温档标量（S0..S5 映射为 0..5）对次日指数收益 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 开关效应半衰期 >= 1 交易日；冰档收紧效应应集中在 t+1（即时保护）
+  regime_stability: 牛/熊两段提升量同号（重点：牛段收紧是否只带来踏空成本）
+  asymmetry_test: ice_only 与 hot_only 两臂分别出分，判开关的信息主要来自哪一端
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: emotion_six_state_transition（情绪六段态转移概率，辅轴，与 L1 同锚复用）
+  note: 本节点无 module_ref（组骨架），卡考"开关该不该存在"而非实现细节
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-05.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.emotion_index + c1_market.kline_sector_880
+  signal_column: emotion_index.emotion_index（水温底稿）、kline_sector_880.close/amount（板块强度与放行对象）
+  signal_derivation: >-
+    水温档=emotion_index 的六段态（S0..S5，按在册分段规则映射；分段阈值与 L1 同源，
+    本卡不重定义分段，只考"板块层是否该按它开关"）；
+    arm 变量=板块强度榜的放行比例与门槛位移（按档查表）；
+    被门控对象=当日两路合成分强度榜（与 L2-01 共用重算，禁各算各的）。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P11/P4/P5）：c1_market.emotion_index close_final 段
+    =1991-06-10..2026-09-30，8617 行，version 单值 v0.1.0，逐年 237~257 行连续无断年
+    （1991 年 145 行为半年），值域 [0.012, 1.0] ⇒ 盘后水温档历史充分，
+    IS 2019-01-04 起可用（不必受 880 的 2021-08-02 上限约束，但被门控对象侧仍受该上限，
+    本卡 arm 面以 880 为门控对象 ⇒ 门控有效性窗实际起点 2021-08-02，
+    为保持方案 §8 主张窗完整，IS 仍写 2019-01-04，执行器侧 NaN 日自动不计入，
+    此为诚实声明非门柱松动）；盘前/集合竞价段（pre_open 27 行、auction 17 行）仅 2026-09 起
+    ⇒ 本节点 activation=premarket 的盘前面 blocked_on_data，卡以盘后面考；
+    c1_market.sentiment_panel 仅 fear_greed_index 40 行（2026-09-01 起）+cb_conversion_premium_median
+    12 行 ⇒ 不可作水温源，登记为不可得。
+  impl_ref: 无 module_ref（TDM 组骨架，red_reason=pending_gate）；
+    档位实现见 L2-05-1 sentiment_cycle；三件套见 L2-05-2 sector_gate
+sources:
+  - 族级矿脉 S4（水温/情绪门控），URL+发布方+年份见台账 §2-S4

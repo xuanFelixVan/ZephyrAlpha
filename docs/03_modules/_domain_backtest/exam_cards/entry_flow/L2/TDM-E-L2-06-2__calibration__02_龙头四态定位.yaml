@@ -1,0 +1,81 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-06-2/calibration/02_龙头四态定位
+node_id: TDM-E-L2-06-2
+family: calibration
+title_zh: 龙头/中军/跟风/中位四态定位·校准卡
+hypothesis: >-
+  四态定位对前向收益与回撤风险的排序稳定：龙头（板块强度榜第一且最先涨停）未来 5 日
+  超额 >= 中军 > 中位 > 跟风（跟风只在情绪扩散段有正超额），
+  且"止损宽度按定位分级"（龙头宽/跟风窄）的主张可用各态最大不利偏移（MAE）分位差验证。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；四态判据写死=板块内 (first_seal_time 最早 ∧ consec_limit 最高)→龙头；
+    流通市值 Top  quartile 且涨幅跟涨→中军；涨幅<板块中位且市值底 quartile→跟风；其余→中位
+buckets:
+  type: categorical
+  'on': 四态 {龙头,中军,跟风,中位}
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 四态按未来 5 日超额排序的先验秩相关 rho>=0.6
+  ic_floor: 连续面（定位分=龙头 3/中军 2/中位 1/跟风 0）截面 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 龙头态 |IC| 半衰期 >= 3 交易日、跟风态 <= 1 交易日（"跟风短命"命题的时滞可判面）
+  regime_stability: 牛/熊两段排序同号（跟风态允许熊段为负，需单独披露）
+  mae_separation: 龙头态 MAE 中位 − 跟风态 MAE 中位 <= −2pp（风险分级主张的可判面，方向为龙头更深回调
+    但收益补偿足够；实测反向则"龙头宽止损"主张受质疑）
+target:
+  primary: next_day_index_return（CSI300 次日收益，series 面）
+  secondary: stock_next_day_return / 5 日超额与 MAE（panel 主对象）
+  note: 本节点是 L2-06"两字段"中龙头定位字段的供给方，字段有效性由本卡出分
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-06-2.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；断供不弃卡（作业簿 §三⑥）
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.limit_up_pool + c1_market.kline_daily_hfq + c1_market.sector_constituent
+  signal_column: limit_up_pool.first_seal_time/consec_limit/industry/float_market_cap；
+    kline_daily_hfq.close/amount/high/low（MAE 与超额）
+  signal_derivation: >-
+    板块维度用 limit_up_pool.industry（自带行业列，绕开成分表）；
+    龙头=同 industry 内 first_seal_time 最早且 consec_limit 取最大；
+    MAE=（未来 5 日最低价 / 当日收盘 − 1）。
+  target_source: kline_daily_hfq close→next_day_return（个股）；
+    kline_index 000300 close→next_day_return（超额基准）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P7/P8/P12）：
+    c1_market.limit_up_pool=2026-09-01..2026-10-09，1426 行，789 symbols
+    （含 first_seal_time/last_seal_time/consec_limit/open_board_count/seal_amount/industry）
+    ⇒ 仅约 28 个交易日、日均 50 条涨停记录，四态×60 样本地板不可达；
+    c1_market.daban_board_event=2026-09-01..2026-10-09，1767 行，975 symbols
+    （含 first_touch_time/open_board_count/seal_bid_volume/is_one_word）同样仅 ~28 日；
+    c1_market.limit_up_down=2026-07-20..2026-10-09，5397 行/1841 symbols（无涨停时序字段）；
+    c1_market.sector_constituent=2026-07-22 起/6 个刷新日；sector_constituent_snapshot=2026-09-14 起/19 日；
+    kline_daily_hfq=1990-12-19..2026-09-30/10098785 行（个股收益面充分）。
+    ⇒ 缺段明列：2019-01-04..2026-08-31 无涨停池/打板时序记录 ⇒ "最先涨停"不可判，本卡假设无法证伪。
+    解锁条件=补 limit_up_pool（或 daban_board_event）至 2019-01-04 起，或补板块成分史以改用
+    个股 close vs stk_limit 涨停价路径（stk_limit=2015-01-05..2026-10-09/9254772 行，价格面本身够用，
+    缺的是"几点封板"的时序，非价格判定）。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_leader.py（module_ref；公共原语已 DEDUP 至
+    core/analysis_utils，2026-09-13 批）
+sources:
+  - 族级矿脉 S2（龙头/跟风结构，A 股特有），URL+发布方+年份见台账 §2-S2

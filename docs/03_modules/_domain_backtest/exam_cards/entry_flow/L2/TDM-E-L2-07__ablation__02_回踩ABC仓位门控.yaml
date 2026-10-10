@@ -1,0 +1,73 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-07/ablation/02_回踩ABC仓位门控
+node_id: TDM-E-L2-07
+family: ablation
+title_zh: 回踩 A/B/C 分级仓位门控·消融卡
+hypothesis: >-
+  把连续回踩分切成 A/B/C 三级并映射仓位（A=满额、B=半仓、C=观望），
+  相对两种对照有正边际：①不分级（连续分线性映射仓位）；②不门控（全部等权建仓）。
+  若"取最弱档定级"（三维取 min）造成系统性低估，则 C 级观望会显著伤害收益（应退役门控）；
+  若分级优于线性映射，则该离散化是有信息压缩而非噪声。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；A/B/C 阈值与 pullback_action 映射取在码既有值不改
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {abc_gated, continuous_mapping, no_gate, min_vs_mean_grade}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: abc_gated 相对 no_gate 的池加权次日判别面提升 >= 0.01 且 mono_spearman>=0.6
+  ic_floor: 分级标量（A=1/B=0.5/C=0）与个股/板块次日收益的截面 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 回踩买点效应 t+1..t+3 峰值与半衰期 >= 1 交易日
+  regime_stability: bear/rebound 两段同号（回踩门控理应在熊段更有保护价值，反向即立法失效）
+  grade_rule_test: min_vs_mean_grade 臂专测"三维取最弱档"是否过严——mean 定级若更优则登记放宽提案
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_next5d_excess_by_grade（各等级板块 5 日超额，辅轴=仓位映射单调性）
+  note: 与 L2-07-1 分卡——那里考四因子合成分本身的响应曲线，这里考离散化与门控
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-07.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_index
+  signal_column: kline_sector_880.close/high/low/amount（板块回踩几何）、kline_index.close(000300 基准)
+  signal_derivation: >-
+    回踩对象=板块（本节点是板块层，非个股）：Fib 位置=自 60 日低点反弹幅度对应回撤比例；
+    量能衰减=roll_mean(amount,5)/max(amount,60)；板块强度=两路合成分（共用重算）；
+    时间窗=自高点回调交易日数；
+    定级=四维各 0-1 后取 min（在码口径）→ A>=0.8/B>=0.5/C<0.5；
+    arm=仓位映射方式（门控/连续/等权/mean 定级）。
+  target_source: kline_index 000300 close→next_day_return；
+    板块侧=kline_sector_880 close→5 日超额（辅轴）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5）：kline_sector_880 industry_l1(61 codes)=2021-08-02..2026-10-08/78263 行、
+    industry_ths(128)=2021-08-02..2026-10-08/163038 行；close/high/low/amount 满配；
+    60 日高低点需 60 日预热 ⇒ IS 有效起点约 2021-11，515 交易日×61~189 板块满足门槛；
+    kline_index 000300=2005-01-04..2026-10-09/5284 行。
+    个股级回踩（若把对象换成票）另需成分映射（2026-07-22 起）⇒ 本卡严格锁板块对象，不越界到 L3。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_pullback.py + MOD-SIG-116
+    （grade_pullback Fib×量能×强度三维取最弱档；pullback_action 映射在码）
+sources:
+  - 族级矿脉 S6（回撤/Fib 买点有效性），URL+发布方+年份见台账 §2-S6

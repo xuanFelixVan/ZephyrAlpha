@@ -1,0 +1,66 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-09/calibration/02_板块催化剂密度
+node_id: TDM-E-L2-09
+family: calibration
+title_zh: 板块催化剂（研报评级聚集）·校准卡
+hypothesis: 板块级催化剂密度（同一行业短期内的卖方研报发布量与评级上调聚集）分桶对次日指数收益 与该板块未来 5 日超额具单调正效应，"有故事的资金才敢接力"成立； 但密度过高档（>95 分位）反向（预期透支）。节点主张"有催化剂加权
+  20%"的合理幅度由本卡响应曲线给出。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；催化剂密度=过去 5 个交易日内该 industry 的研报条数 z 分， 评级上调=rating 相对前一次同一 org 对同一 symbol 的上调计数（口径写死，见 derivation）
+buckets:
+  type: quantile_decile
+  'on': 当日全市场催化剂密度均值（series）/ 板块×日密度（panel）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: 催化剂效应 t+1..t+5 峰值与半衰期 >= 2 交易日（事件冲击应领先价格扩散）
+  regime_stability: 牛/熊两段 IC 同号（熊段减弱可接受、变号即主张失效）
+  overheating_reversal: 密度 >95 分位档的 5 日超额 <= 0（透支腿单独出数）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_next5d_excess（板块 5 日超额，辅轴=催化剂是否只在板块内起作用）
+  note: 政策/事件类催化剂文本面 blocked（见 evidence），本卡只考可算的研报面， 出分不得外推到"政策催化剂有效"
+status: examined
+lineage:
+  card: null
+  run_id: nightmine-L2-09-density
+  score_row: exam_scores_v1.yaml#rows[9]
+  confidence_writeback: TDM.nodes.TDM-E-L2-09.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c3_fundamental.research_report
+  signal_column: industry, rating, rating_change, publish_date, org_name, symbol
+  signal_derivation: 板块维=industry（同花顺行业名，实测 207 个取值，Top 例：半导体/汽车零部件/电池/软件开发/白酒Ⅱ）； 密度=过去 5 交易日该 industry 研报条数，截面 z 分； 上调聚集=同
+    (org_name,symbol) 内 rating 序列的上调次数 / 报告数； series=全市场密度均值（按日），panel=industry×日。 注意 industry 名不随时间改名的漂移：以 (industry 名, 首次出现日)
+    登记口径， 跨年改名须在开考前核对（质量画像面）。
+  target_source: kline_index 000300 close→next_day_return（series）； 板块侧辅轴需成分映射（2026-07-22 起）⇒ 辅轴窗受限，主轴不受影响
+  data_window_evidence: 实测 2026-10-10（台账 §3-P13/P14）：c3_fundamental.research_report SELECT min(publish_date),max(publish_date),count(),uniqExact(industry),uniqExact(org_name)
+    → 2017-01-02 / 2026-09-30 / 146940 行 / 207 industry / 116 org； 逐年行数 2017=10933、2018=12010、2019=11967、2020=12700、2021=12867、2022=19988、
+    2023=22019、2024=19900、2025=16237、2026=8319（行业数 128~181 波动） ⇒ 本车道唯一有长历史的板块级催化剂源，IS 2019 起充分； 新闻面不可直接用：c3_fundamental.news_data=2010-01-02..2026-10-10/8219185
+    行， 但逐年 2024=759512、2025=31425、2026=259401 ⇒ **2025 年断崖（不足上年 5%）=断供史**， 政策/事件文本类催化剂在 2025 窗不可考（闸 4 质量画像命中，成例登记）； c1_market.news_sentiment_window=window_date
+    2019-01-04..2026-10-08/22257 行 （scope=symbol&night 19635、market&night 仅 201、market&1d 2421）⇒ 市场级夜窗仅 201 条， 作 L1-S0-1 面而非本卡面。
+  impl_ref: src/zephyr/signal_ashare/screening/event_driven_screener.py（module_ref）+ MOD-SIG-106
+  blocked_scope: 政策文件/产业规划/签约涨价类文本催化剂识别=blocked_on_data （news_data 2025 断供 + 无板块级事件标注表），解锁条件=news_data 补史 2025 段 + 建 industry/event_type
+    标注面
+sources:
+- 族级矿脉 S7（卖方研报/事件催化剂可预测性），URL+发布方+年份见台账 §2-S7

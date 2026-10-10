@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-10/calibration/02_同源补涨滞后
+node_id: TDM-E-L2-10
+family: calibration
+title_zh: 同源补涨比价（滞后 3-5 天）·校准卡
+hypothesis: >-
+  龙头板块内未涨股（涨幅<20% 分位）在龙头启动后 3-5 交易日出现可测的补涨超额，
+  且滞后结构稳定：补涨超额对"距龙头启动的交易日数"呈 3-5 日峰值的驼峰形（节点主张的原样可判面）；
+  同产业链上下游（图谱路）的补涨滞后应长于同题材（板块内路）——两路分别出分。
+  位置安全但胜率低于龙头：补涨组的胜率 < 龙头组、但最大不利偏移更小。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；"龙头启动"=板块强度榜进入 Top10 首日；"未涨"=同板块内自板块 60 日
+    低点涨幅 < 板块中位涨幅×0.4（<20% 的截面化定义，写死）
+buckets:
+  type: fixed_grid
+  'on': 距龙头启动天数 {0-2,3-5,6-8,9-15,>15}
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 主判=驼峰形（3-5 日桶为峰值），以"3-5 日桶超额 > 0-2 日桶 且 > 6-8 日桶"
+    两条件合取代替单调 rho（本卡假设是驼峰非单调，判据形随之写死，不许事后改形）
+  ic_floor: 连续面（补涨缺口 = 板块中位涨幅 − 个股涨幅）截面 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 峰值位置 3-5 日、半衰期 >= 2 交易日
+  regime_stability: bear/rebound 两段峰位同号
+  winrate_vs_mae: 补涨组胜率 < 龙头组胜率 且 补涨组 MAE 绝对值 < 龙头组 MAE
+    （"位置安全/胜率低"主张的双条件可判面）
+target:
+  primary: next_day_index_return（CSI300 次日收益，series 面）
+  secondary: stock_next5d_excess（补涨候选 5 日超额，panel 主对象）
+  note: 本卡是"补涨"这条 A 股特色命题在本仓的第一次量化冻结
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-10.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；断供不弃卡（作业簿 §三⑥）
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.sector_constituent + c1_market.kline_sector_880
+    （PG ig_edge/ig_node_company 用于产业链路）
+  signal_column: kline_daily_hfq.close/amount（个股涨幅与 MAE）；
+    sector_constituent.sector_code/stock_code（同板块路）；
+    kline_sector_880.close（龙头板块识别）
+  signal_derivation: >-
+    龙头板块=每日 kline_sector_880 强度榜 Top10；板块内个股=sector_constituent 映射；
+    补涨缺口=板块自启动涨幅 − 个股自启动涨幅；按"距启动天数"分桶算超额驼峰；
+    产业链路=同一龙头板块的图谱上下游节点标的（ig_node_company 落点）。
+  target_source: kline_daily_hfq close→next_day_return / 5 日超额（基准 kline_index 000300）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5/P7/P12/P16）：
+    板块面 kline_sector_880 industry_l1(61)/industry_ths(128)=2021-08-02..2026-10-08（78263/163038 行）
+    ⇒ 龙头板块识别可全窗做；个股面 kline_daily_hfq=1990-12-19..2026-09-30/10098785 行/5916 symbols；
+    但个股↔板块映射唯一在册读取源 sector_constituent=2026-07-22..2026-10-01（6 个刷新日/323175 行/
+    727 codes/6229 stocks）、sector_constituent_snapshot=2026-09-14..2026-10-09（19 个交易日/1922366 行）
+    ⇒ "同板块内未涨股"在 2026-07-22 之前不可识别；
+    产业链路 PG 面 ig_node/ig_edge/ig_node_company=5560/1726/25559 行，
+    ig_node_company created_at=2026-08-28..2026-09-24 ⇒ 图谱无历史版本，同链路亦不可回放。
+    ⇒ 缺段明列：2021-08-02..2026-07-21 板块成分（同题材路）、..2026-08-27 产业链图谱（同链路）。
+    解锁条件=补成分史 ≥2021-08-02 起（或补龙头板块事件库+当日成分快照），窗口与门柱不动转 preregistered。
+  impl_ref: src/zephyr/signal_ashare/supply_chain_momentum.py（module_ref，DS-186/DS-170 上游）
+sources:
+  - 族级矿脉 S8（领先-滞后/补涨与链条传染），URL+发布方+年份见台账 §2-S8

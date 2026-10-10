@@ -1,0 +1,73 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-01-3/calibration/02_多周期动量主导度
+node_id: TDM-E-L2-01-3
+family: calibration
+title_zh: 多周期动量主导度·真启动/一日游校准卡
+hypothesis: >-
+  q3/q5/q20 三周期动量的"主导度"（最大周期得分的归属）对次日指数收益与前向 5 日
+  板块持续性具单调预测力：q3 主导（刚点火）> q5 主导（进行中）> q20 主导（涨很久、
+  追高危险），且 q20 主导档的 5 日秩持续性显著低于 q3 主导档（区分真启动与一日游）。
+  现码先验权重 q3/q5/q20=0.2/0.3/0.5 与节点文字（q3 主导最优）方向相反——本卡即裁决该矛盾。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；主导度定义、窗口、分桶、门柱事后不可挪（G4-5）
+buckets:
+  type: categorical_then_quantile
+  'on': 主导周期三档 {q3,q5,q20}；档内再按该周期动量值分三桶
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 三档均值排序 q3>q5>q20（档间差 >0 的秩相关 rho>=0.6，档内动量单调另判）
+  ic_floor: 连续面（0.2/0.3/0.5 加权合成分）日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  lag_profile: q3 主导档的 |IC| 半衰期 <= 2 交易日、q20 主导档 >= 3 交易日（时滞曲线建档=
+    "一日游"命题的直接可判面）
+  regime_stability: bear/rebound 两段 q3−q20 档间差同号
+  persistence_contrast: q3 主导档 T+5 板块强度榜滞留率 − q20 主导档 >= 5pp
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_mom_persistence_next5d（同板块 5 日强度分自相关/榜位滞留）
+  note: 与 L2-01-2（量能维）分卡；两维都过才谈合成分权重改写
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01-3.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: close
+  signal_derivation: >-
+    三周期收益=q_i = close/close.shift(i) − 1（i∈{3,5,20}，按 sector_code 分组）；
+    各周期截面 rank-pct 归一 → 主导度=argmax_i(rank_i)；连续面=0.2·rank_q3+0.3·rank_q5+0.5·rank_q20
+    （照在码先验权重原样取，卡只判该权重对不对，不改权）。
+  target_source: kline_index 000300 close→next_day_return；
+    辅助=sector 强度分 5 日滞留（同源 kline_sector_880）
+  data_window_evidence: >-
+    实测 2026-10-10（台账 §3-P4/P5）：industry_l1(61 codes) 与 industry_ths(128 codes) 板块指数
+    首交易日=2021-08-02、末=2026-10-08；q20 需 20 日预热 ⇒ IS 有效起点 2021-10-29，
+    窗内 ≈ 550 交易日 × 61~189 板块，三档×三桶=9 桶×60 样本门槛满足。
+    缺口的另一面：c1_market.sector_state.momentum_pct 自 2022-09-01 满配（111658/105176/96298/29927
+    分年行数），rrg_quadrant 同期满配 ⇒ 仅作交叉核对源，不直读（直读=用被测模块输出考被测模块，循环）。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_momentum.py（TDM module_ref）
+  conflict_note: 节点文字（q3 主导=好）与在码权重（q20 占 0.5）方向矛盾，登记为 TDM 侧待修，
+    本车道不改 TDM（禁区），只出分
+sources:
+  - 族级矿脉 S1（板块相对强度/轮动/多周期动量），URL+发布方+年份见台账 §2-S1

@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-E-L2/ablation/02_板块候选池整体边际
+node_id: TDM-E-L2
+family: ablation
+title_zh: 板块候选池枢纽·消融卡
+hypothesis: >-
+  板块层总枢纽对个股层的边际贡献为正且不可被个股层自身因子替代：
+  在 A1/A2 之后、Top-N 之前注入板块候选池（X_sector=strength_top15）与传导调节
+  （X_sector=conduction）后，组合次日风险调整收益相对 off 不降；
+  若整层剔除（off）后指标不劣化，则本枢纽=冗余层，应退役或下沉到 L3。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: >-
+    IS 起点非方案 §8 的 2019-01-04，被板块口径硬上限钉死：8803/881x 行业板块指数
+    实测最早 trade_date=2021-08-02（见 data_binding.data_window_evidence）。
+    裸扩到 2019 需自造板块指数=造回归，禁。看数前冻结（裁定#501 纪律）。
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {off, strength_top15, conduction, strength_top15+conduction}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: >-
+    最强 arm 相对 off 的日频 IC/次日均值差 >= +0.01，且 arm 内 mono_spearman>=0.6
+    （消融的机判面=调节分残差序列对次日指数收益的单调性）
+  ic_floor: 注入 arm 的截面 IC 均值 >= 0.02 且 IC_IR >= 0.3（与 calibration 族同地板，方案 §7 三件套）
+  lag_profile: 板块分注入效应 t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: bear/rebound 两段同号且均过 ic_floor
+  level_isolation: >-
+    结构性判据：传导只调分不重排名（层级隔离不变量，MOD-SIG-136/sector_surface 在码契约），
+    若排名被打乱=违规施工而非分数问题，卡直接判无效不计分
+target:
+  primary: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  secondary: sector_candidate_pool_hit_rate（候选池 3-5 板块在未来 5 日 Top10 强度榜的滞留率，辅轴）
+  note: 枢纽层"该不该存在"由消融定，不由单点 IC 定
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2.confidence
+preregistered_by: st-nightmine-20261010-L1
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: close, amount
+  signal_derivation: >-
+    板块日收益=close.pct_change（按 sector_code×trade_date）；板块强度合分＝
+    (成交额占比 rank-pct ×0.25 + 1d 收益 rank-pct ×0.25 + 5d 动量 rank-pct ×0.25 +
+    20d 动量 rank-pct ×0.25)×100，clamp[0,100]，取 Top15% 作候选池掩码；
+    枢纽 arm 序列=当日池内板块强度均值 − 池外均值（供 series 面判单调）。
+    行业锚 sector_code 前缀 8803=industry_l1/881=industry_ths（口径经
+    c1_market.sector_code_name_map 在册映射核对，禁自拟名单）。
+  target_source: kline_index 000300 close→next_day_return（primary）；
+    sector 强度榜 Top10 滞留率（secondary，同源 kline_sector_880）
+  data_window_evidence: >-
+    实测 2026-10-10（ch_query_df，scripts/backtest/fexam/ch_data.py，命令原文见台账 §3-P4/P5）：
+    SELECT min(trade_date),max(trade_date),count() FROM c1_market.kline_sector_880 →
+    2020-03-17 / 2026-10-08 / 785204 行（period='1d'，729 codes）。
+    按 sector_code_name_map.code_family 分组首末日：industry_l1(61 codes)=2021-08-02..2026-10-08/78263 行；
+    industry_ths(128)=2021-08-02..2026-10-08/163038 行；industry_l2(71)=2021-08-02..2026-10-08/91093 行；
+    concept_or_style(426)=2020-03-17..2026-10-08/818080 行；region(32)=2022-08-01..；mkt_index(11)=2022-07-29..。
+    目标面：SELECT min,max,count FROM c1_market.kline_index WHERE symbol='000300' →
+    2005-01-04 / 2026-10-09 / 5284 行。
+    ⇒ 板块指数价格面 IS 窗上限=2021-08-02（在册结论经本次实测复证）；资金流/成分面另见同族卡。
+  arm_impl_ref: scripts/backtest/sector_surface.py（MOD-BT-238 X_sector 引擎接线，
+    先例留档=D:/ZephyrAlpha/docs/_working/matrix_campaign/mining/sector_propagation_wiring_v1.md §2-§4）
+sources:
+  - 族级矿脉 S1（板块相对强度/轮动），引文与 URL 见台账 §2 族日志 S1（跨节点复用，不重复挖）
