@@ -145,6 +145,27 @@ INSERT-SELECT 直落，非独立拉数）→TI 小批→周月级联→情绪 bu
 顺延：当日 ~3,000 万行插入后 RSS 高位站不住任何秒级查询（argMax/LIMIT BY 年切片均
 500 实证×6），排明晨静默窗（与 T8 验收同批）。
 
+## 十二、T3 交付（2026-10-10 18:3x）
+
+- **执行**：limit_up_down 2019-01-04..2026-07-19 推导回补 **188,395 行**落地
+  （data_source='derived_stk_limit'，与表内既有先例同源码口径；BufferedWriter 正门）。
+- **过程坑三条（全实证）**：①LIMIT 1 BY 改写引入 Code 207 JOIN 歧义（argMax 版 500=真
+  内存压、LIMIT BY 版 500=SQL bug，被 HTTP 500 掩码误导）；②升序 LIMIT BY 留最旧版的
+  方向性 bug（对拍后排除为主因）；③**INNER JOIN+NULL 比对吞行 vs 尺的 LEFT JOIN+
+  coalesce**（修复后行数零增量=亦非主因）。
+- **验收对拍（与 02_breadth_derivation_report 已发布序列）**：limit_up_count 293/1622 日
+  不齐（行差 607/119,167=**99.49% 对齐**）；limit_down_count 3/1622（**99.994% 对齐**）；
+  **决定性证据=尺自身推导器（derive_breadth_series.py，盘上原件）单日复算 2019-07-24=55
+  与本表逐符号集合一致（差=0）**——残差属于已发布 CSV 的未文档化规则兜底层（报告自述
+  limit_up_count"含规则兜底补齐 142 个"同族），非本表缺陷。net_breadth/连板/炸板等 5 条
+  序列源自 kline 面板直接推导（从不依赖 limit_up_down 表），T3 断供不涉及其供给。
+- **断供修复结论**：表自 2019-01-04 起连续（本班 188,395 行+既有 derived 07-20..31+
+  akshare 08-03 起），广度卡母源断供解除；二号重考读径=表行（对拍说明见本段）。
+- **删除留痕**：v1 批（升序 bug 版 188,395 行）按 RULE-DATA-OPS 三步走：快照
+  F:/zephyr_cold/.../limit_up_down_derived_batch_v1_snapshot.tsv（sha256=215f2a88…）→
+  谓词 DELETE（mutations_sync=2，pre/post 点数 188,395→0）→ v2 重写。v2 相对 v1 行数
+  相同（方向修复零增量——该批实际等价，删除为口径洁净性操作）。
+
 ## 九、收尾清单（滚动）
 
 - [ ] 53472 收官确认→T2 探针+冷档→T3/T4 放量
