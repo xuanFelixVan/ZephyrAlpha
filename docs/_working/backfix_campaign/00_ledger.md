@@ -118,3 +118,11 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 - **处方（候裁定）**：①账本销账治本——子死即写 exited_at（现 never），超期条目必须 create_time 复核后才可杀（reaper 同款复核推广全消费者）②backup 白名单——账本消费者跳过 cmdline 含 backup.ps1 的 pid（治标）③防杀包装（最重不推荐）。建议①+②同批。
 - 本段首写曾被并发写者以 dev 基线覆写蒸发（stale-index 复发，本班重写同命令即提交压竞窗）——验尸命令=本段在 dev HEAD。
 - 设施全在岗（陷阱×3）；验一击=审计 reconcile_runner/孵化维护代码路径的 kill 调用点（下一步班次作业）。
+
+### 案 #9（36456，15:59:51-16:44:04 死，存活 ~45min）——巡检班 16:48-16:5x 轮【判定性观测：第二杀径坐实】
+
+- **对照实验结果=决定性**：36456 开跑前已验孵化账本 `child_pid: 36456` 命中 0 条（无陈旧身份，上轮在案）——**仍被杀**（同指纹：静默→16:43:49 复燃 9.7→16:44:04 GONE）。案 #8 的"账本 pid 回收暴露"机制非唯一杀径。
+- **点火者处决→backup 相遂=第四连立**：reaper_kill.log `16:35:37 KILLED PID=55668 reason=incubation_expired+runtime_dir_orphan age=36min`——age 倒推出生 ≈15:59=**36456 点火时刻**；backup 死于 **+8.5min**。四连立全表：#5(11:56:45→12:10:19,+14m)｜#7(14:25:39→14:46:05,+20.5m)｜#8(15:25:44→15:47:13,+21.5m)｜#9(16:35:37→16:44:04,+8.5m)。滞差 8.5-22min 浮动=非固定周期，指向"点火者死→某清理路径在下一次自身事件时处决其_spawned_backup"。
+- **旁支**：死亡窗 16:37:31 有 VSS 卷影快照活动（EVT svchost id=8231，patrol 补卷在案）——环境事件待定性；MareBackup 计划任务=微软 compattelrunner 遥测件（aemarebackup.dll）与本案无关——洗清。
+- **收敛面（下一步一击）**：①读 reconcile_runner/process_incubator 代码的 family-cleanup/kill 调用点（点火者被 reaper 处决后谁接手清理其 spawn 面）；②ensure_ai_wrapper_injection.ps1（每 60s 开火）通读；③event watch 已在线，下案给全链。案 #5-#9 五连案同指纹同阶段（G 镜像窗）。
+- 定名进度：行凶架构=点火者被处决引发的关联处决（第二杀径）+账本 pid 回收暴露（第一杀径，案 #8 实证）；主使进程名候代码审计定名。
