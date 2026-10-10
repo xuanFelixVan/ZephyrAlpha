@@ -7439,41 +7439,81 @@ creation_tokens:
   token: index-navigation-03-modules-domain-backtest-decay-monitor-20260919
   capability: index_navigation
   created_by: st-final3-20260919
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-FLOW__comparison__02_plan_to_execution_chain.yaml
+  token: exam-card-tdm-e-flow--comparison--02-plan-to-execution-chain-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3b
+  merge_evaluation: "过夜总令 L3b 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-01__comparison.yaml
   token: exam-card-tdm-e-l0-01--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-01__comparison__02_scenario_probability_stance_vs_fixed.yaml
+  token: exam-card-tdm-e-l0-01--comparison--02-scenario-probability-stance-vs-fixed-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3b
+  merge_evaluation: "过夜总令 L3b 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-02__comparison.yaml
   token: exam-card-tdm-e-l0-02--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-02__comparison__02_deviation_revision_authority.yaml
+  token: exam-card-tdm-e-l0-02--comparison--02-deviation-revision-authority-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3b
+  merge_evaluation: "过夜总令 L3b 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-03__comparison.yaml
   token: exam-card-tdm-e-l0-03--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-03__comparison__02_brier_calibration_on_off.yaml
+  token: exam-card-tdm-e-l0-03--comparison--02-brier-calibration-on-off-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3b
+  merge_evaluation: "过夜总令 L3b 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-04__comparison.yaml
   token: exam-card-tdm-e-l0-04--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-04__comparison__02_intraday_rollback_downgrade.yaml
+  token: exam-card-tdm-e-l0-04--comparison--02-intraday-rollback-downgrade-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3b
+  merge_evaluation: "过夜总令 L3b 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0__comparison.yaml
   token: exam-card-tdm-e-l0--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0__comparison__02_plan_constraint_on_off.yaml
+  token: exam-card-tdm-e-l0--comparison--02-plan-constraint-on-off-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3b
+  merge_evaluation: "过夜总令 L3b 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-C-L1__comparison.yaml
   token: exam-card-tdm-c-l1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-C-L1__comparison__02_btc_trend_altseason_gate.yaml
+  token: exam-card-tdm-c-l1--comparison--02-btc-trend-altseason-gate-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__ablation.yaml
   token: exam-card-tdm-e-l1-agg--ablation-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__ablation__02_state_input_replacement.yaml
+  token: exam-card-tdm-e-l1-agg--ablation--02-state-input-replacement-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0-1__calibration.yaml
   token: exam-card-tdm-e-l1-s0-1--calibration-20261009
   capability: exam_card
@@ -7484,6 +7524,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0-1__calibration__03_market_scope_sentiment_series.yaml
+  token: exam-card-tdm-e-l1-s0-1--calibration--03-market-scope-sentiment-series-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration.yaml
   token: exam-card-tdm-e-l1-s0--calibration-20261009
   capability: exam_card
@@ -7509,6 +7554,16 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__06_m1m2_scissors_longwindow.yaml
+  token: exam-card-tdm-e-l1-s0--calibration--06-m1m2-scissors-longwindow-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__07_margin_flow_shortwindow.yaml
+  token: exam-card-tdm-e-l1-s0--calibration--07-margin-flow-shortwindow-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S1__calibration.yaml
   token: exam-card-tdm-e-l1-s1--calibration-20261009
   capability: exam_card
@@ -7564,6 +7619,41 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__09_limit_up_count_derived.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--09-limit-up-count-derived-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__10_limit_down_count_derived.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--10-limit-down-count-derived-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__11_broken_board_rate_derived.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--11-broken-board-rate-derived-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__12_sealed_board_rate_derived.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--12-sealed-board-rate-derived-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__13_max_consec_limit_height_derived.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--13-max-consec-limit-height-derived-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__14_consec_limit_count_ge2_derived.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--14-consec-limit-count-ge2-derived-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__15_net_breadth_derived.yaml
+  token: exam-card-tdm-e-l1-s2--calibration--15-net-breadth-derived-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration.yaml
   token: exam-card-tdm-e-l1-s3--calibration-20261009
   capability: exam_card
@@ -7584,6 +7674,16 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__05_limit_up_premium_derived.yaml
+  token: exam-card-tdm-e-l1-s3--calibration--05-limit-up-premium-derived-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__06_promotion_rate_derived.yaml
+  token: exam-card-tdm-e-l1-s3--calibration--06-promotion-rate-derived-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration.yaml
   token: exam-card-tdm-e-l1-s4--calibration-20261009
   capability: exam_card
@@ -7599,6 +7699,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration__04_synthetic_downside_deviation_longwindow.yaml
+  token: exam-card-tdm-e-l1-s4--calibration--04-synthetic-downside-deviation-longwindow-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration.yaml
   token: exam-card-tdm-e-l1-s5--calibration-20261009
   capability: exam_card
@@ -7609,31 +7714,66 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "W3 骨架186张+W4预注册20张（MOD-BT-241机生+看数前冻结）；归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+  token: exam-card-tdm-e-l1-s5--calibration--03-derived-signal-shock-panel-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison.yaml
   token: exam-card-tdm-e-l1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison__02_anchored_cap_curve_on_off.yaml
+  token: exam-card-tdm-e-l1--comparison--02-anchored-cap-curve-on-off-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3c
+  merge_evaluation: "过夜总令 L3c 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-C-L2__calibration__02_币圈赛道资金流轮动.yaml
+  token: exam-card-tdm-c-l2--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-C-L2__comparison.yaml
   token: exam-card-tdm-c-l2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-1__calibration__02_板块内涨停结构强度.yaml
+  token: exam-card-tdm-e-l2-01-1--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-1__comparison.yaml
   token: exam-card-tdm-e-l2-01-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-2__calibration__02_板块成交额占比活跃度.yaml
+  token: exam-card-tdm-e-l2-01-2--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-2__comparison.yaml
   token: exam-card-tdm-e-l2-01-2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-3__calibration__02_多周期动量主导度.yaml
+  token: exam-card-tdm-e-l2-01-3--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-3__comparison.yaml
   token: exam-card-tdm-e-l2-01-3--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-4__calibration__02_板块主力净流入.yaml
+  token: exam-card-tdm-e-l2-01-4--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-4__comparison.yaml
   token: exam-card-tdm-e-l2-01-4--comparison-20261009
   capability: exam_card
@@ -7644,41 +7784,96 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-5__ablation__02_市场级调节注入.yaml
+  token: exam-card-tdm-e-l2-01-5--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01__ablation__02_四路等权合成分边际.yaml
+  token: exam-card-tdm-e-l2-01--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01__ablation__03_六指数分布选优通道与候选池分位.yaml
+  token: exam-card-tdm-e-l2-01--ablation--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01__comparison.yaml
   token: exam-card-tdm-e-l2-01--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__ablation__03_象限迁移确认腿与稀有路径护栏.yaml
+  token: exam-card-tdm-e-l2-02-1--ablation--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__calibration__02_RRG象限迁移.yaml
+  token: exam-card-tdm-e-l2-02-1--calibration--02-rrg-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__comparison.yaml
   token: exam-card-tdm-e-l2-02-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-2__calibration__02_板块见顶预警三信号.yaml
+  token: exam-card-tdm-e-l2-02-2--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-2__comparison.yaml
   token: exam-card-tdm-e-l2-02-2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02__calibration__02_接棒撤离榜.yaml
+  token: exam-card-tdm-e-l2-02--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02__comparison.yaml
   token: exam-card-tdm-e-l2-02--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-03-1__calibration__02_扩散指标20日线占比.yaml
+  token: exam-card-tdm-e-l2-03-1--calibration--02-20-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-03-1__comparison.yaml
   token: exam-card-tdm-e-l2-03-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-03__calibration__02_调整周期进度.yaml
+  token: exam-card-tdm-e-l2-03--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-03__comparison.yaml
   token: exam-card-tdm-e-l2-03--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04-1__calibration__02_轮动五态调节分.yaml
+  token: exam-card-tdm-e-l2-04-1--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04-1__comparison.yaml
   token: exam-card-tdm-e-l2-04-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04-2__calibration__02_虹吸态成交集中度.yaml
+  token: exam-card-tdm-e-l2-04-2--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04-2__comparison.yaml
   token: exam-card-tdm-e-l2-04-2--comparison-20261009
   capability: exam_card
@@ -7689,101 +7884,246 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04__ablation__02_板块生态三态判定.yaml
+  token: exam-card-tdm-e-l2-04--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-1__calibration__02_水温档读数与月级封顶.yaml
+  token: exam-card-tdm-e-l2-05-1--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-1__comparison.yaml
   token: exam-card-tdm-e-l2-05-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__ablation__02_信号响应三件套.yaml
+  token: exam-card-tdm-e-l2-05-2--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__comparison.yaml
   token: exam-card-tdm-e-l2-05-2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05__ablation__02_水温总开关放行比例.yaml
+  token: exam-card-tdm-e-l2-05--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05__comparison.yaml
   token: exam-card-tdm-e-l2-05--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-1__ablation__02_三级放行门槛.yaml
+  token: exam-card-tdm-e-l2-06-1--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-1__comparison.yaml
   token: exam-card-tdm-e-l2-06-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-2__calibration__02_龙头四态定位.yaml
+  token: exam-card-tdm-e-l2-06-2--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-2__comparison.yaml
   token: exam-card-tdm-e-l2-06-2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-3__calibration__02_强度乘数阶梯.yaml
+  token: exam-card-tdm-e-l2-06-3--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-3__calibration__03_传导时滞曲线.yaml
+  token: exam-card-tdm-e-l2-06-3--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-3__comparison.yaml
   token: exam-card-tdm-e-l2-06-3--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06__ablation__02_层级隔离两字段传导.yaml
+  token: exam-card-tdm-e-l2-06--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06__comparison.yaml
   token: exam-card-tdm-e-l2-06--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07-1__calibration__02_回踩四因子合成分.yaml
+  token: exam-card-tdm-e-l2-07-1--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07-1__comparison.yaml
   token: exam-card-tdm-e-l2-07-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07__ablation__02_回踩ABC仓位门控.yaml
+  token: exam-card-tdm-e-l2-07--ablation--02-abc-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07__comparison.yaml
   token: exam-card-tdm-e-l2-07--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-08__calibration__02_板块生命周期动量持续性.yaml
+  token: exam-card-tdm-e-l2-08--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-08__comparison.yaml
   token: exam-card-tdm-e-l2-08--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-1__calibration__02_事件图谱命中置信度.yaml
+  token: exam-card-tdm-e-l2-09-1--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-1__comparison.yaml
   token: exam-card-tdm-e-l2-09-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-2__ablation__02_产业链两跳扩散.yaml
+  token: exam-card-tdm-e-l2-09-2--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-2__comparison.yaml
   token: exam-card-tdm-e-l2-09-2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__calibration__02_板块催化剂密度.yaml
+  token: exam-card-tdm-e-l2-09--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__calibration__03_评级上调聚集.yaml
+  token: exam-card-tdm-e-l2-09--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__calibration__04_业绩预增催化剂腿.yaml
+  token: exam-card-tdm-e-l2-09--calibration--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__comparison.yaml
   token: exam-card-tdm-e-l2-09--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-10__calibration__02_同源补涨滞后.yaml
+  token: exam-card-tdm-e-l2-10--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-10__comparison.yaml
   token: exam-card-tdm-e-l2-10--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2__ablation__02_板块候选池整体边际.yaml
+  token: exam-card-tdm-e-l2--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L1
+  merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2__comparison.yaml
   token: exam-card-tdm-e-l2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-C-L3__calibration__02_加密动量流动性.yaml
+  token: exam-card-tdm-c-l3--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-C-L3__comparison.yaml
   token: exam-card-tdm-c-l3--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-01__calibration__02_成交额下限剔除.yaml
+  token: exam-card-tdm-e-l3-01--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-01__calibration__03_市值下限剔除.yaml
+  token: exam-card-tdm-e-l3-01--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-01__comparison.yaml
   token: exam-card-tdm-e-l3-01--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-01__comparison__04_宇宙口径完整性对照.yaml
+  token: exam-card-tdm-e-l3-01--comparison--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-02__ablation__02_九阶段逐级压缩贡献.yaml
+  token: exam-card-tdm-e-l3-02--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-02__comparison.yaml
   token: exam-card-tdm-e-l3-02--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-1__calibration__02_涨停基因.yaml
+  token: exam-card-tdm-e-l3-03-1--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-1__calibration__03_题材纯正度.yaml
+  token: exam-card-tdm-e-l3-03-1--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-1__comparison.yaml
   token: exam-card-tdm-e-l3-03-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-2__calibration__02_均线多排.yaml
+  token: exam-card-tdm-e-l3-03-2--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-2__calibration__03_温和放量.yaml
+  token: exam-card-tdm-e-l3-03-2--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-2__calibration__04_行业相对强度.yaml
+  token: exam-card-tdm-e-l3-03-2--calibration--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-2__comparison.yaml
   token: exam-card-tdm-e-l3-03-2--comparison-20261009
   capability: exam_card
@@ -7794,41 +8134,106 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-3__ablation__02_三维共振体检.yaml
+  token: exam-card-tdm-e-l3-03-3--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03__ablation.yaml
   token: exam-card-tdm-e-l3-03--ablation-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03__ablation__02_双池代理合成.yaml
+  token: exam-card-tdm-e-l3-03--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-04__ablation__04_否决器整体增益.yaml
+  token: exam-card-tdm-e-l3-04--ablation--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-04__calibration__02_解禁否决.yaml
+  token: exam-card-tdm-e-l3-04--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-04__calibration__03_高应计否决.yaml
+  token: exam-card-tdm-e-l3-04--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-04__comparison.yaml
   token: exam-card-tdm-e-l3-04--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-05__calibration__02_连板顺位.yaml
+  token: exam-card-tdm-e-l3-05--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-05__comparison.yaml
   token: exam-card-tdm-e-l3-05--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-06__calibration__02_地量档位开关.yaml
+  token: exam-card-tdm-e-l3-06--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-06__comparison.yaml
   token: exam-card-tdm-e-l3-06--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-1__ablation__02_烂板剔除步.yaml
+  token: exam-card-tdm-e-l3-07-1--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-1__ablation__03_封单质量步.yaml
+  token: exam-card-tdm-e-l3-07-1--ablation--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-1__comparison.yaml
   token: exam-card-tdm-e-l3-07-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-2__ablation__02_IC加权对等权.yaml
+  token: exam-card-tdm-e-l3-07-2--ablation--02-ic-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-2__ablation__03_行业中性约束.yaml
+  token: exam-card-tdm-e-l3-07-2--ablation--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-2__comparison.yaml
   token: exam-card-tdm-e-l3-07-2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-3__calibration__02_二十日动量排名.yaml
+  token: exam-card-tdm-e-l3-07-3--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-3__comparison.yaml
   token: exam-card-tdm-e-l3-07-3--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07__ablation__02_三链并集合流.yaml
+  token: exam-card-tdm-e-l3-07--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07__comparison.yaml
   token: exam-card-tdm-e-l3-07--comparison-20261009
   capability: exam_card
@@ -7839,56 +8244,136 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-08__ablation__02_候选池合成容量.yaml
+  token: exam-card-tdm-e-l3-08--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-09__ablation.yaml
   token: exam-card-tdm-e-l3-09--ablation-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-09__calibration__02_Tier状态机持续性.yaml
+  token: exam-card-tdm-e-l3-09--calibration--02-tier-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-10__calibration__02_一字板不可成交.yaml
+  token: exam-card-tdm-e-l3-10--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-10__calibration__03_停牌否决.yaml
+  token: exam-card-tdm-e-l3-10--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-10__comparison.yaml
   token: exam-card-tdm-e-l3-10--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-1__calibration__02_竞价量比.yaml
+  token: exam-card-tdm-e-l3-11-1--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-1__comparison.yaml
   token: exam-card-tdm-e-l3-11-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-2__calibration__02_涨速异动.yaml
+  token: exam-card-tdm-e-l3-11-2--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-2__comparison.yaml
   token: exam-card-tdm-e-l3-11-2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11__ablation__02_日内双通道增量.yaml
+  token: exam-card-tdm-e-l3-11--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11__comparison.yaml
   token: exam-card-tdm-e-l3-11--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-1__calibration__02_主力净额占比.yaml
+  token: exam-card-tdm-e-l3-12-1--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-1__comparison.yaml
   token: exam-card-tdm-e-l3-12-1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-2__calibration__02_席位类型净买.yaml
+  token: exam-card-tdm-e-l3-12-2--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-2__comparison.yaml
   token: exam-card-tdm-e-l3-12-2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__calibration__02_获利盘占比.yaml
+  token: exam-card-tdm-e-l3-12-3--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__calibration__03_股东户数集中度.yaml
+  token: exam-card-tdm-e-l3-12-3--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__calibration__04_单峰密集度.yaml
+  token: exam-card-tdm-e-l3-12-3--calibration--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__comparison.yaml
   token: exam-card-tdm-e-l3-12-3--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-4__calibration__02_K线形态事件.yaml
+  token: exam-card-tdm-e-l3-12-4--calibration--02-k-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-4__calibration__03_缠论结构.yaml
+  token: exam-card-tdm-e-l3-12-4--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-4__comparison.yaml
   token: exam-card-tdm-e-l3-12-4--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12__ablation__02_四维验证共振.yaml
+  token: exam-card-tdm-e-l3-12--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12__comparison.yaml
   token: exam-card-tdm-e-l3-12--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3__ablation__02_漏斗压缩信息保留.yaml
+  token: exam-card-tdm-e-l3--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L2
+  merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3__comparison.yaml
   token: exam-card-tdm-e-l3--comparison-20261009
   capability: exam_card
@@ -7899,46 +8384,96 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-C-L4__comparison__02_breakout_vs_pullback_atr_stop.yaml
+  token: exam-card-tdm-c-l4--comparison--02-breakout-vs-pullback-atr-stop-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-01__comparison.yaml
   token: exam-card-tdm-e-l4-01--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-01__comparison__02_batching_all_vs_split.yaml
+  token: exam-card-tdm-e-l4-01--comparison--02-batching-all-vs-split-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-02__comparison.yaml
   token: exam-card-tdm-e-l4-02--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-02__comparison__02_order_timing_tape.yaml
+  token: exam-card-tdm-e-l4-02--comparison--02-order-timing-tape-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-03__comparison.yaml
   token: exam-card-tdm-e-l4-03--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-03__comparison__02_limit_offset_fill_tradeoff.yaml
+  token: exam-card-tdm-e-l4-03--comparison--02-limit-offset-fill-tradeoff-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-04__comparison.yaml
   token: exam-card-tdm-e-l4-04--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-04__comparison__02_capital_ranking_order.yaml
+  token: exam-card-tdm-e-l4-04--comparison--02-capital-ranking-order-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-05__comparison.yaml
   token: exam-card-tdm-e-l4-05--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-05__comparison__02_daban_mode_three_way.yaml
+  token: exam-card-tdm-e-l4-05--comparison--02-daban-mode-three-way-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-06__comparison.yaml
   token: exam-card-tdm-e-l4-06--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-06__comparison__02_quality_prior_on_off.yaml
+  token: exam-card-tdm-e-l4-06--comparison--02-quality-prior-on-off-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-07__ablation.yaml
   token: exam-card-tdm-e-l4-07--ablation-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-07__ablation__02_queue_bypass.yaml
+  token: exam-card-tdm-e-l4-07--ablation--02-queue-bypass-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-08__comparison.yaml
   token: exam-card-tdm-e-l4-08--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-08__comparison__02_breakout_failure_gate_on_off.yaml
+  token: exam-card-tdm-e-l4-08--comparison--02-breakout-failure-gate-on-off-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-09__comparison__02_hard_constraints_on_off.yaml
+  token: exam-card-tdm-e-l4-09--comparison--02-hard-constraints-on-off-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-09__shadow.yaml
   token: exam-card-tdm-e-l4-09--shadow-20261009
   capability: exam_card
@@ -7949,16 +8484,36 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-10__comparison__02_state_timeout_policy.yaml
+  token: exam-card-tdm-e-l4-10--comparison--02-state-timeout-policy-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-11__comparison.yaml
   token: exam-card-tdm-e-l4-11--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-11__comparison__02_partial_fill_cancel_vs_wait.yaml
+  token: exam-card-tdm-e-l4-11--comparison--02-partial-fill-cancel-vs-wait-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-12__comparison.yaml
   token: exam-card-tdm-e-l4-12--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-12__comparison__02_precheck_five_checks_ablation.yaml
+  token: exam-card-tdm-e-l4-12--comparison--02-precheck-five-checks-ablation-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-13__comparison__02_three_way_recon_injection.yaml
+  token: exam-card-tdm-e-l4-13--comparison--02-three-way-recon-injection-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-13__shadow.yaml
   token: exam-card-tdm-e-l4-13--shadow-20261009
   capability: exam_card
@@ -7969,231 +8524,501 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-14__comparison__02_predicted_vs_realized_slippage.yaml
+  token: exam-card-tdm-e-l4-14--comparison--02-predicted-vs-realized-slippage-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4__comparison.yaml
   token: exam-card-tdm-e-l4--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4__comparison__02_exec_caliber_cost_ladder.yaml
+  token: exam-card-tdm-e-l4--comparison--02-exec-caliber-cost-ladder-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3a
+  merge_evaluation: "过夜总令 L3a 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration.yaml
   token: exam-card-tdm-e-l9-a01--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__02_日线动量截面.yaml
+  token: exam-card-tdm-e-l9-a01--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml
+  token: exam-card-tdm-e-l9-a01--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration.yaml
   token: exam-card-tdm-e-l9-a02--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+  token: exam-card-tdm-e-l9-a02--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A03__calibration.yaml
   token: exam-card-tdm-e-l9-a03--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A03__calibration__02_880板块相对强弱.yaml
+  token: exam-card-tdm-e-l9-a03--calibration--02-880-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A04__calibration.yaml
   token: exam-card-tdm-e-l9-a04--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A04__calibration__02_估值ERP分位日增量.yaml
+  token: exam-card-tdm-e-l9-a04--calibration--02-erp-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A04__calibration__03_个股估值横截面.yaml
+  token: exam-card-tdm-e-l9-a04--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A05__calibration.yaml
   token: exam-card-tdm-e-l9-a05--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A05__calibration__02_盈余惊喜事件研究.yaml
+  token: exam-card-tdm-e-l9-a05--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration.yaml
   token: exam-card-tdm-e-l9-a06--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+  token: exam-card-tdm-e-l9-a06--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__03_北向资金流断供.yaml
+  token: exam-card-tdm-e-l9-a06--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A07__calibration.yaml
   token: exam-card-tdm-e-l9-a07--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A07__calibration__02_千股千评评分变化.yaml
+  token: exam-card-tdm-e-l9-a07--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A08__calibration.yaml
   token: exam-card-tdm-e-l9-a08--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A08__calibration__02_BDI领先航运链.yaml
+  token: exam-card-tdm-e-l9-a08--calibration--02-bdi-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A09__calibration.yaml
   token: exam-card-tdm-e-l9-a09--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A09__calibration__02_快讯情感日均值.yaml
+  token: exam-card-tdm-e-l9-a09--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A10__calibration.yaml
   token: exam-card-tdm-e-l9-a10--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A10__calibration__02_全球风险隔夜传导.yaml
+  token: exam-card-tdm-e-l9-a10--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A11__calibration.yaml
   token: exam-card-tdm-e-l9-a11--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A11__calibration__02_EIA库存意外.yaml
+  token: exam-card-tdm-e-l9-a11--calibration--02-eia-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A12__calibration.yaml
   token: exam-card-tdm-e-l9-a12--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A12__calibration__02_台风与极端高温对电力链.yaml
+  token: exam-card-tdm-e-l9-a12--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A13__calibration.yaml
   token: exam-card-tdm-e-l9-a13--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A13__calibration__02_股东户数环比事件研究.yaml
+  token: exam-card-tdm-e-l9-a13--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A14__calibration.yaml
   token: exam-card-tdm-e-l9-a14--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A14__calibration__02_互动易回应密度.yaml
+  token: exam-card-tdm-e-l9-a14--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A15__calibration.yaml
   token: exam-card-tdm-e-l9-a15--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A15__calibration__02_资金费率拥挤跨市场预警.yaml
+  token: exam-card-tdm-e-l9-a15--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A15__calibration__03_币圈镜像资金费率对BTC.yaml
+  token: exam-card-tdm-e-l9-a15--calibration--03-btc-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A15__calibration__04_币圈镜像山寨季广度.yaml
+  token: exam-card-tdm-e-l9-a15--calibration--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A16__calibration.yaml
   token: exam-card-tdm-e-l9-a16--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A16__calibration__02_投入产出传导强度先验.yaml
+  token: exam-card-tdm-e-l9-a16--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A17__calibration.yaml
   token: exam-card-tdm-e-l9-a17--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A17__calibration__02_研报评级调整事件研究.yaml
+  token: exam-card-tdm-e-l9-a17--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A17__calibration__03_一致预期修正.yaml
+  token: exam-card-tdm-e-l9-a17--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-AGG__ablation.yaml
   token: exam-card-tdm-e-l9-agg--ablation-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-AGG__ablation__02_知识供给汇聚环消融.yaml
+  token: exam-card-tdm-e-l9-agg--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B01__calibration.yaml
   token: exam-card-tdm-e-l9-b01--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B01__calibration__02_卫星物理量领先官方数据.yaml
+  token: exam-card-tdm-e-l9-b01--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B02__calibration.yaml
   token: exam-card-tdm-e-l9-b02--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B02__calibration__02_NOAA极端事件预警.yaml
+  token: exam-card-tdm-e-l9-b02--calibration--02-noaa-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B03__calibration.yaml
   token: exam-card-tdm-e-l9-b03--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B03__calibration__02_招聘JD动能领先营收.yaml
+  token: exam-card-tdm-e-l9-b03--calibration--02-jd-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B04__calibration.yaml
   token: exam-card-tdm-e-l9-b04--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B04__calibration__02_电商价格高频通胀.yaml
+  token: exam-card-tdm-e-l9-b04--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B05__calibration.yaml
   token: exam-card-tdm-e-l9-b05--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B05__calibration__02_中标领先营收与基建链.yaml
+  token: exam-card-tdm-e-l9-b05--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B06__calibration.yaml
   token: exam-card-tdm-e-l9-b06--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B06__calibration__02_海外散户情绪领先中概.yaml
+  token: exam-card-tdm-e-l9-b06--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B07__calibration.yaml
   token: exam-card-tdm-e-l9-b07--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B07__calibration__02_雪球股吧散户情绪极端预警.yaml
+  token: exam-card-tdm-e-l9-b07--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B08__calibration.yaml
   token: exam-card-tdm-e-l9-b08--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B08__calibration__02_APP榜单领先用户增长.yaml
+  token: exam-card-tdm-e-l9-b08--calibration--02-app-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B09__calibration.yaml
   token: exam-card-tdm-e-l9-b09--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B09__calibration__02_分商品出口量价领先出口链.yaml
+  token: exam-card-tdm-e-l9-b09--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B10__calibration.yaml
   token: exam-card-tdm-e-l9-b10--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-B10__calibration__02_刷卡消费代理领先社零.yaml
+  token: exam-card-tdm-e-l9-b10--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-C01__calibration.yaml
   token: exam-card-tdm-e-l9-c01--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-C01__calibration__02_门店客流实时景气.yaml
+  token: exam-card-tdm-e-l9-c01--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-C02__calibration.yaml
   token: exam-card-tdm-e-l9-c02--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-C02__calibration__02_银行网点信贷草根观测.yaml
+  token: exam-card-tdm-e-l9-c02--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-C03__calibration.yaml
   token: exam-card-tdm-e-l9-c03--calibration-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-C03__calibration__02_直播电商实时成交动销.yaml
+  token: exam-card-tdm-e-l9-c03--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-D1__ablation__02_因子组合挖掘环增益.yaml
+  token: exam-card-tdm-e-l9-d1--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-D1__ablation__03_假设漏斗闭环率与考试链缺口.yaml
+  token: exam-card-tdm-e-l9-d1--ablation--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-D1__comparison.yaml
   token: exam-card-tdm-e-l9-d1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-D2__ablation__02_预注册exam_plan入表.yaml
+  token: exam-card-tdm-e-l9-d2--ablation--02-exam-plan-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-D2__comparison.yaml
   token: exam-card-tdm-e-l9-d2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-E1__ablation__02_一问一考考试链增益.yaml
+  token: exam-card-tdm-e-l9-e1--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-E1__comparison.yaml
   token: exam-card-tdm-e-l9-e1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-E2__ablation__02_考试结论次日回传生效.yaml
+  token: exam-card-tdm-e-l9-e2--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-E2__comparison.yaml
   token: exam-card-tdm-e-l9-e2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G1__ablation__02_产业链传导边增量解释力.yaml
+  token: exam-card-tdm-e-l9-g1--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G1__comparison.yaml
   token: exam-card-tdm-e-l9-g1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G2__ablation__02_CKG静态事实层先验增益.yaml
+  token: exam-card-tdm-e-l9-g2--ablation--02-ckg-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G2__comparison.yaml
   token: exam-card-tdm-e-l9-g2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G3__ablation__02_股权穿透关联收益.yaml
+  token: exam-card-tdm-e-l9-g3--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G3__comparison.yaml
   token: exam-card-tdm-e-l9-g3--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G4__ablation__02_概念标签题材热度维度.yaml
+  token: exam-card-tdm-e-l9-g4--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G4__comparison.yaml
   token: exam-card-tdm-e-l9-g4--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G5__ablation__02_IO系数行业弹性.yaml
+  token: exam-card-tdm-e-l9-g5--ablation--02-io-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G5__comparison.yaml
   token: exam-card-tdm-e-l9-g5--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V1__ablation__02_大盘状态快照T-1纪律.yaml
+  token: exam-card-tdm-e-l9-v1--ablation--02-t-1-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V1__comparison.yaml
   token: exam-card-tdm-e-l9-v1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V2__ablation__02_情绪相位六段快照就绪.yaml
+  token: exam-card-tdm-e-l9-v2--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V2__comparison.yaml
   token: exam-card-tdm-e-l9-v2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V3__ablation__02_板块状态快照T-1纪律.yaml
+  token: exam-card-tdm-e-l9-v3--ablation--02-t-1-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V3__comparison.yaml
   token: exam-card-tdm-e-l9-v3--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-Z1__ablation__02_十态状态机与十八列schema强制.yaml
+  token: exam-card-tdm-e-l9-z1--ablation--02-schema-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-Z1__shadow.yaml
   token: exam-card-tdm-e-l9-z1--shadow-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-Z2__ablation__02_净零与chain_refs双向对账.yaml
+  token: exam-card-tdm-e-l9-z2--ablation--02-chain-refs-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L7
+  merge_evaluation: "过夜总令 L7 车道新卡（六向挖干产物）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-Z2__shadow.yaml
   token: exam-card-tdm-e-l9-z2--shadow-20261009
   capability: exam_card
@@ -8209,31 +9034,81 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-01__comparison__02_六桶分类增益对照.yaml
+  token: exam-card-tdm-x-s1-01--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-02__comparison.yaml
   token: exam-card-tdm-x-s1-02--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-02__comparison__02_时间止损档对照.yaml
+  token: exam-card-tdm-x-s1-02--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-03__comparison.yaml
   token: exam-card-tdm-x-s1-03--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-03__comparison__02_止盈族三式对照.yaml
+  token: exam-card-tdm-x-s1-03--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-04__calibration__02_突破失败连续次数前瞻收益.yaml
+  token: exam-card-tdm-x-s1-04--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-04__calibration__03_席位净卖出派发前瞻收益.yaml
+  token: exam-card-tdm-x-s1-04--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-04__calibration__04_除权除息参考价分母误判清仓.yaml
+  token: exam-card-tdm-x-s1-04--calibration--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-04__comparison.yaml
   token: exam-card-tdm-x-s1-04--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-04__comparison__05_早盘破位假信号时段可靠性.yaml
+  token: exam-card-tdm-x-s1-04--comparison--05--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-05__ablation.yaml
   token: exam-card-tdm-x-s1-05--ablation-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-05__ablation__02_融合权重与去抖消融.yaml
+  token: exam-card-tdm-x-s1-05--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-06__comparison.yaml
   token: exam-card-tdm-x-s1-06--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-06__comparison__02_K3连续破位强清对照.yaml
+  token: exam-card-tdm-x-s1-06--comparison--02-k3-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1__ablation__02_卖出信号段整体消融对照.yaml
+  token: exam-card-tdm-x-s1--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1__comparison.yaml
   token: exam-card-tdm-x-s1--comparison-20261009
   capability: exam_card
@@ -8244,46 +9119,111 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-01__comparison__02_执行方式路由与流动性三查对照.yaml
+  token: exam-card-tdm-x-s2-01--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-02__calibration__02_连续跌停开板概率与次日处置.yaml
+  token: exam-card-tdm-x-s2-02--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-02__calibration__03_新股首日分层卖出三臂.yaml
+  token: exam-card-tdm-x-s2-02--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-02__comparison.yaml
   token: exam-card-tdm-x-s2-02--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-02__comparison__04_T1可卖额度做T回转延迟成本.yaml
+  token: exam-card-tdm-x-s2-02--comparison--04-t1t-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-03__comparison.yaml
   token: exam-card-tdm-x-s2-03--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-03__comparison__02_执行口径净收益对照.yaml
+  token: exam-card-tdm-x-s2-03--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-04__comparison.yaml
   token: exam-card-tdm-x-s2-04--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-04__comparison__02_本地条件单追单闭环对照.yaml
+  token: exam-card-tdm-x-s2-04--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-05__comparison.yaml
   token: exam-card-tdm-x-s2-05--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-05__comparison__02_分批止盈阶梯对照.yaml
+  token: exam-card-tdm-x-s2-05--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-06__ablation__02_卖出闭环三率反馈权重消融.yaml
+  token: exam-card-tdm-x-s2-06--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2-06__comparison.yaml
   token: exam-card-tdm-x-s2-06--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2__ablation__02_执行约束层现实性税度量.yaml
+  token: exam-card-tdm-x-s2--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S2/TDM-X-S2__comparison.yaml
   token: exam-card-tdm-x-s2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__ablation__03_市场体制条件下熔断减仓增量.yaml
+  token: exam-card-tdm-x-r1-01--ablation--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison.yaml
   token: exam-card-tdm-x-r1-01--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__02_熔断五级梯度减仓对照.yaml
+  token: exam-card-tdm-x-r1-01--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-02__comparison.yaml
   token: exam-card-tdm-x-r1-02--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-02__comparison__02_L3减仓顺序三臂对照.yaml
+  token: exam-card-tdm-x-r1-02--comparison--02-l3-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-03__calibration__02_宽基ETF天量与护盘滞后结构.yaml
+  token: exam-card-tdm-x-r1-03--calibration--02-etf-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-03__comparison.yaml
   token: exam-card-tdm-x-r1-03--comparison-20261009
   capability: exam_card
@@ -8294,31 +9234,86 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1__shadow__02_拔电源影子运行对照.yaml
+  token: exam-card-tdm-x-r1--shadow--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-S1-02__comparison__02_dualwindow.yaml
+  token: exam-card-tdm-x-s1-02--comparison--02-dualwindow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "R3 离场族双窗冻卡（裁定#505）归 exam_card 族"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-S1-03__comparison__02_dualwindow.yaml
+  token: exam-card-tdm-x-s1-03--comparison--02-dualwindow-20261009
+  capability: exam_card
+  created_by: st-examchief-20261009
+  merge_evaluation: "R3 离场族双窗冻卡（裁定#505）归 exam_card 族"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/XFLOW/TDM-X-FLOW__ablation.yaml
   token: exam-card-tdm-x-flow--ablation-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/XFLOW/TDM-X-FLOW__ablation__02_离场信号整链消融总账.yaml
+  token: exam-card-tdm-x-flow--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L5
+  merge_evaluation: "过夜总令 L5 车道新卡（exit_flow 全流 19 节点·四族）：归 exam_card 族只增不删，与骨架件异对象（骨架=empty 待填，本批=preregistered 冻卡）"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1-01__shadow.yaml
   token: exam-card-tdm-f-c1-01--shadow-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1-01__shadow__02_激活集路由影子.yaml
+  token: exam-card-tdm-f-c1-01--shadow--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1-02__shadow.yaml
   token: exam-card-tdm-f-c1-02--shadow-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1-02__shadow__02_三层栈冠军挑战.yaml
+  token: exam-card-tdm-f-c1-02--shadow--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1-02__shadow__03_置信度配比资金臂.yaml
+  token: exam-card-tdm-f-c1-02--shadow--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1-03__shadow.yaml
   token: exam-card-tdm-f-c1-03--shadow-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1-03__shadow__02_双向渐变vs硬切.yaml
+  token: exam-card-tdm-f-c1-03--shadow--02-vs-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1__comparison__03_预备金现金贡献.yaml
+  token: exam-card-tdm-f-c1--comparison--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1__shadow.yaml
   token: exam-card-tdm-f-c1--shadow-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C1/TDM-F-C1__shadow__02_预算带灰度插值.yaml
+  token: exam-card-tdm-f-c1--shadow--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-01__comparison__02_净额轧平省成本.yaml
+  token: exam-card-tdm-f-c2-01--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-01__shadow.yaml
   token: exam-card-tdm-f-c2-01--shadow-20261009
   capability: exam_card
@@ -8329,6 +9324,26 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-02__shadow__02_约束栈有vs无.yaml
+  token: exam-card-tdm-f-c2-02--shadow--02-vs-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-02__shadow__03_裁剪优先级非策略仓优先.yaml
+  token: exam-card-tdm-f-c2-02--shadow--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-02__shadow__04_资金额度约束先卖后买与只削买入.yaml
+  token: exam-card-tdm-f-c2-02--shadow--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-03__comparison__02_相关性cluster上限.yaml
+  token: exam-card-tdm-f-c2-03--comparison--02-cluster-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-03__shadow.yaml
   token: exam-card-tdm-f-c2-03--shadow-20261009
   capability: exam_card
@@ -8339,11 +9354,31 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2-04__shadow__02_三级响应vs即时强裁.yaml
+  token: exam-card-tdm-f-c2-04--shadow--02-vs-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2__comparison__02_组合聚合vs各自为战.yaml
+  token: exam-card-tdm-f-c2--comparison--02-vs-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C2/TDM-F-C2__shadow.yaml
   token: exam-card-tdm-f-c2--shadow-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-01__comparison__02_隔夜漂移切账失真.yaml
+  token: exam-card-tdm-f-c3-01--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-01__comparison__03_IS三分解与交易持仓二分.yaml
+  token: exam-card-tdm-f-c3-01--comparison--03-is-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-01__shadow.yaml
   token: exam-card-tdm-f-c3-01--shadow-20261009
   capability: exam_card
@@ -8354,6 +9389,16 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-02__shadow__02_减半冻结线有效性.yaml
+  token: exam-card-tdm-f-c3-02--shadow--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-03__comparison__02_月度调权vs静态基准.yaml
+  token: exam-card-tdm-f-c3-03--comparison--02-vs-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-03__shadow.yaml
   token: exam-card-tdm-f-c3-03--shadow-20261009
   capability: exam_card
@@ -8364,16 +9409,36 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-04__shadow__02_四道gate过拟合防线.yaml
+  token: exam-card-tdm-f-c3-04--shadow--02-gate-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-05__shadow.yaml
   token: exam-card-tdm-f-c3-05--shadow-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3-05__shadow__02_判准率加权vs等权.yaml
+  token: exam-card-tdm-f-c3-05--shadow--02-vs-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3__comparison__02_归因反馈闭环开vs关.yaml
+  token: exam-card-tdm-f-c3--comparison--02-vs-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/C3/TDM-F-C3__shadow.yaml
   token: exam-card-tdm-f-c3--shadow-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/CFLOW/TDM-F-FLOW__comparison__02_终产目标组合vs基准.yaml
+  token: exam-card-tdm-f-flow--comparison--02-vs-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L6
+  merge_evaluation: "过夜总令 L6 车道新卡（portfolio_flow 全流 16 节点·shadow/comparison）：归 exam_card 族只增不删，与骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/portfolio_flow/CFLOW/TDM-F-FLOW__shadow.yaml
   token: exam-card-tdm-f-flow--shadow-20261009
   capability: exam_card
@@ -8384,91 +9449,276 @@ creation_tokens:
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-01__comparison__02_复权口径对成本与生死线触发对照.yaml
+  token: exam-card-tdm-p-p1-01--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-02__calibration__02_ATR距止损带对后续下行预测.yaml
+  token: exam-card-tdm-p-p1-02--calibration--02-atr-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-02__calibration__04_盈亏百分比腿与ATR缺失降级.yaml
+  token: exam-card-tdm-p-p1-02--calibration--04-atr-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-02__comparison.yaml
   token: exam-card-tdm-p-p1-02--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-02__comparison__03_abs对称与带符号分级漏判对照.yaml
+  token: exam-card-tdm-p-p1-02--comparison--03-abs-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-03__calibration__02_因子秩回落对后续超额预测.yaml
+  token: exam-card-tdm-p-p1-03--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-03__comparison.yaml
   token: exam-card-tdm-p-p1-03--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-03__comparison__03_逻辑存活否决腿开闭对照.yaml
+  token: exam-card-tdm-p-p1-03--comparison--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-04__calibration__04_持仓停滞天数对后续收益预测.yaml
+  token: exam-card-tdm-p-p1-04--calibration--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-04__calibration__05_板块退潮动量对持仓下行预测.yaml
+  token: exam-card-tdm-p-p1-04--calibration--05--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-04__calibration__06_事件禁区前收益与波动预测.yaml
+  token: exam-card-tdm-p-p1-04--calibration--06--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-04__comparison.yaml
   token: exam-card-tdm-p-p1-04--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-04__comparison__02_否决线三型可选档对照.yaml
+  token: exam-card-tdm-p-p1-04--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-04__comparison__03_固定生死线七档臂缺位对照.yaml
+  token: exam-card-tdm-p-p1-04--comparison--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-05__ablation__04_同题材扎堆帽消融.yaml
+  token: exam-card-tdm-p-p1-05--ablation--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-05__comparison.yaml
   token: exam-card-tdm-p-p1-05--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-05__comparison__02_单票上限三档对照.yaml
+  token: exam-card-tdm-p-p1-05--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-05__comparison__03_漂移触发与周期触发对照.yaml
+  token: exam-card-tdm-p-p1-05--comparison--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-05__shadow__05_组合体检帽影子对照.yaml
+  token: exam-card-tdm-p-p1-05--shadow--05--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-06__comparison.yaml
   token: exam-card-tdm-p-p1-06--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1-06__comparison__02_三腿全因子与仲裁序对照.yaml
+  token: exam-card-tdm-p-p1-06--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1__comparison.yaml
   token: exam-card-tdm-p-p1--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P1/TDM-P-P1__comparison__02_否决腿与熔断腿双臂增量.yaml
+  token: exam-card-tdm-p-p1--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-01__comparison.yaml
   token: exam-card-tdm-p-p2-01--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-01__comparison__02_三道门串并开闭与互斥诊断.yaml
+  token: exam-card-tdm-p-p2-01--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-01__comparison__03_盘中单边失效腿对照.yaml
+  token: exam-card-tdm-p-p2-01--comparison--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-02__ablation__02_单次做T量三成上限消融.yaml
+  token: exam-card-tdm-p-p2-02--ablation--02-t-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-02__comparison.yaml
   token: exam-card-tdm-p-p2-02--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-02__comparison__03_三策略并发与单策略分腿及仲裁对照.yaml
+  token: exam-card-tdm-p-p2-02--comparison--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-03__comparison.yaml
   token: exam-card-tdm-p-p2-03--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-03__comparison__02_未闭环敞口过夜代价双臂.yaml
+  token: exam-card-tdm-p-p2-03--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-04__ablation__03_置换两倍成本门与风控优先腿消融.yaml
+  token: exam-card-tdm-p-p2-04--ablation--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-04__comparison.yaml
   token: exam-card-tdm-p-p2-04--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-04__comparison__02_调仓频率与换手惩罚六臂对照.yaml
+  token: exam-card-tdm-p-p2-04--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2__comparison.yaml
   token: exam-card-tdm-p-p2--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2__comparison__02_做T腿有无对照与底仓恒等性.yaml
+  token: exam-card-tdm-p-p2--comparison--02-t-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-01__comparison.yaml
   token: exam-card-tdm-p-p3-01--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-01__comparison__02_浮盈加仓与摊平亏损仓双臂对照.yaml
+  token: exam-card-tdm-p-p3-01--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-01__comparison__03_情绪段加仓权限分层对照.yaml
+  token: exam-card-tdm-p-p3-01--comparison--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-01__comparison__04_日亏熔断禁加期分层对照.yaml
+  token: exam-card-tdm-p-p3-01--comparison--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-RX
+  merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-02__calibration__03_加仓触发涨幅对后续收益预测.yaml
+  token: exam-card-tdm-p-p3-02--calibration--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-02__comparison.yaml
   token: exam-card-tdm-p-p3-02--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-02__comparison__02_递减档序与等额档序对照.yaml
+  token: exam-card-tdm-p-p3-02--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-03__ablation__03_风险恒定与止损上移保本腿消融.yaml
+  token: exam-card-tdm-p-p3-03--ablation--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-03__comparison.yaml
   token: exam-card-tdm-p-p3-03--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-03__comparison__02_仓位定尺寸七档对照.yaml
+  token: exam-card-tdm-p-p3-03--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-04__calibration__02_尾盘强势对次日高开概率预测.yaml
+  token: exam-card-tdm-p-p3-04--calibration--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-04__calibration__04_缩量回踩支撑对次日正收益预测.yaml
+  token: exam-card-tdm-p-p3-04--calibration--04--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-04__comparison.yaml
   token: exam-card-tdm-p-p3-04--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3-04__comparison__03_尾盘加仓与即时加仓执行价差对照.yaml
+  token: exam-card-tdm-p-p3-04--comparison--03--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3__comparison.yaml
   token: exam-card-tdm-p-p3--comparison-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/P3/TDM-P-P3__comparison__02_金字塔三档与一次性足额对照.yaml
+  token: exam-card-tdm-p-p3--comparison--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_cards/position_flow/PFLOW/TDM-P-FLOW__ablation.yaml
   token: exam-card-tdm-p-flow--ablation-20261009
   capability: exam_card
   created_by: st-examchief-20261009
   merge_evaluation: "186 节点机生卡骨架（MOD-BT-241 生成器产物，only-add 册）；卡定义面新建资产族无既有可承接；分数面归 fexam 分数册、海量数值面将来 CH 表（方案 §6 三层），禁并。"
+- file: docs/03_modules/_domain_backtest/exam_cards/position_flow/PFLOW/TDM-P-FLOW__ablation__02_持仓叠层整链消融.yaml
+  token: exam-card-tdm-p-flow--ablation--02--20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L4
+  merge_evaluation: "过夜总令 L4 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
 - file: docs/03_modules/_domain_backtest/exam_scores_v1.yaml
   token: exam-score-registry-exam-scores-v1-20261009
   capability: exam_score_registry
@@ -42396,6 +43646,11 @@ creation_tokens:
   capability: gateaudit_handover
   created_by: st-gateaudit-20260922
   merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/govjudge_campaign/00_ledger.md
+  token: govjudge-ledger-00-ledger-2026-10-10
+  capability: govjudge_ledger
+  created_by: st-govjudge-20261010
+  merge_evaluation: "\"治理判据班台账：承接总统统筹裁定包 R9/R10/R11/R4/R5②③/R6 六件的随做随记+终报载体，属战役工作区非新规则面，净零合规\""
 - file: docs/_working/gpu_rewrite/compute_inventory.md
   token: gpu-rewrite-mining-20260925-compute-inventory-20260925
   capability: gpu_rewrite_mining_20260925
@@ -47511,6 +48766,126 @@ creation_tokens:
   capability: night_totalflow_chief
   created_by: st-storageswap-20260930
   merge_evaluation: "夜战全流通六线作业簿族task_bound零生产真源（目录名去数字后缀合规R5）"
+- file: docs/_working/nightmine_campaign/00_final_report.md
+  token: nightmine-campaign-00-final-report-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面追加（总报告机生件＋各车道台账＋广度序列产物）：与首班 9 条同族，只增不删"
+- file: docs/_working/nightmine_campaign/00_lane_roster.yaml
+  token: nightmine-campaign-00-lane-roster-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面：车道名册（机生 186 节点×车道×卡态）+共用挖矿作业簿；exam_card 族与上役 examcard_campaign 终报册异对象，不并不替，只增不删"
+- file: docs/_working/nightmine_campaign/01_mining_brief.md
+  token: nightmine-campaign-01-mining-brief-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面：车道名册（机生 186 节点×车道×卡态）+共用挖矿作业簿；exam_card 族与上役 examcard_campaign 终报册异对象，不并不替，只增不删"
+- file: docs/_working/nightmine_campaign/02_breadth_derivation_report.yaml
+  token: nightmine-campaign-02-breadth-derivation-report-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "战役作业面追加（Owner 决策册/断点卡/复挖台账/普查册/广度序列）：同族只增不删"
+- file: docs/_working/nightmine_campaign/04_exam_feasibility_census.yaml
+  token: exam-card-04-exam-feasibility-census-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3x
+  merge_evaluation: "过夜总令补卡与复挖面追加：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/_working/nightmine_campaign/05_owner_decisions.yaml
+  token: nightmine-campaign-05-owner-decisions-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "战役作业面追加（Owner 决策册/断点卡/复挖台账/普查册/广度序列）：同族只增不删"
+- file: docs/_working/nightmine_campaign/99_checkpoint.md
+  token: nightmine-campaign-99-checkpoint-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "战役运行中交接卡（滚动断点面）：与作业簿异面，供接班者单点接手，只增不删"
+- file: docs/_working/nightmine_campaign/L0d_ledger.md
+  token: nightmine-campaign-l0d-ledger-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面：车道名册（机生 186 节点×车道×卡态）+共用挖矿作业簿；exam_card 族与上役 examcard_campaign 终报册异对象，不并不替，只增不删"
+- file: docs/_working/nightmine_campaign/L1_ledger.md
+  token: nightmine-campaign-l1-ledger-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面：车道名册（机生 186 节点×车道×卡态）+共用挖矿作业簿；exam_card 族与上役 examcard_campaign 终报册异对象，不并不替，只增不删"
+- file: docs/_working/nightmine_campaign/L2_ledger.md
+  token: nightmine-campaign-l2-ledger-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "战役作业面追加（Owner 决策册/断点卡/复挖台账/普查册/广度序列）：同族只增不删"
+- file: docs/_working/nightmine_campaign/L3_ledger.md
+  token: nightmine-campaign-l3-ledger-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面：车道名册（机生 186 节点×车道×卡态）+共用挖矿作业簿；exam_card 族与上役 examcard_campaign 终报册异对象，不并不替，只增不删"
+- file: docs/_working/nightmine_campaign/L4_ledger.md
+  token: nightmine-campaign-l4-ledger-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面：车道名册（机生 186 节点×车道×卡态）+共用挖矿作业簿；exam_card 族与上役 examcard_campaign 终报册异对象，不并不替，只增不删"
+- file: docs/_working/nightmine_campaign/L5_ledger.md
+  token: nightmine-campaign-l5-ledger-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面：车道名册（机生 186 节点×车道×卡态）+共用挖矿作业簿；exam_card 族与上役 examcard_campaign 终报册异对象，不并不替，只增不删"
+- file: docs/_working/nightmine_campaign/L6_ledger.md
+  token: nightmine-campaign-l6-ledger-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面：车道名册（机生 186 节点×车道×卡态）+共用挖矿作业簿；exam_card 族与上役 examcard_campaign 终报册异对象，不并不替，只增不删"
+- file: docs/_working/nightmine_campaign/L7_ledger.md
+  token: nightmine-campaign-l7-ledger-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面：车道名册（机生 186 节点×车道×卡态）+共用挖矿作业簿；exam_card 族与上役 examcard_campaign 终报册异对象，不并不替，只增不删"
+- file: docs/_working/nightmine_campaign/RX_A_ledger.md
+  token: exam-card-rx-a-ledger-20261009
+  capability: exam_card
+  created_by: st-nightmine-20261010-L3x
+  merge_evaluation: "过夜总令补卡与复挖面追加：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/_working/nightmine_campaign/RX_B_ledger.md
+  token: nightmine-campaign-rx-b-ledger-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "战役作业面追加（Owner 决策册/断点卡/复挖台账/普查册/广度序列）：同族只增不删"
+- file: docs/_working/nightmine_campaign/series/blast_ratio.csv
+  token: nightmine-campaign-blast-ratio-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面追加（总报告机生件＋各车道台账＋广度序列产物）：与首班 9 条同族，只增不删"
+- file: docs/_working/nightmine_campaign/series/limit_down_count.csv
+  token: nightmine-campaign-limit-down-count-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面追加（总报告机生件＋各车道台账＋广度序列产物）：与首班 9 条同族，只增不删"
+- file: docs/_working/nightmine_campaign/series/limit_up_count.csv
+  token: nightmine-campaign-limit-up-count-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面追加（总报告机生件＋各车道台账＋广度序列产物）：与首班 9 条同族，只增不删"
+- file: docs/_working/nightmine_campaign/series/max_streak_height.csv
+  token: nightmine-campaign-max-streak-height-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面追加（总报告机生件＋各车道台账＋广度序列产物）：与首班 9 条同族，只增不删"
+- file: docs/_working/nightmine_campaign/series/net_breadth.csv
+  token: nightmine-campaign-net-breadth-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面追加（总报告机生件＋各车道台账＋广度序列产物）：与首班 9 条同族，只增不删"
+- file: docs/_working/nightmine_campaign/series/seal_ratio.csv
+  token: nightmine-campaign-seal-ratio-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面追加（总报告机生件＋各车道台账＋广度序列产物）：与首班 9 条同族，只增不删"
+- file: docs/_working/nightmine_campaign/series/streak_distribution.csv
+  token: nightmine-campaign-streak-distribution-20261009
+  capability: nightmine_campaign
+  created_by: st-nightmine-20261010
+  merge_evaluation: "过夜总令战役作业面追加（总报告机生件＋各车道台账＋广度序列产物）：与首班 9 条同族，只增不删"
 - file: docs/_working/oddjobs_20260923/index.md
   token: oddjobs-night-ledger-index-20260922
   capability: oddjobs-night-ledger
