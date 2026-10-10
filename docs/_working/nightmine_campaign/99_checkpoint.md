@@ -78,6 +78,34 @@ family_id: NIGHTMINE-CAMPAIGN
 | 引擎账本开关 | ✅ --exploration-ledger（设值=批末不进 N 账本，批记录追分册；未设=原语义零漂移） | 同上 |
 | 地形图/top 池/新预注册卡 | ⏳ 待分片收官后出（分册+manifest 聚合→top 假设池→新卡判据看数前冻结——下一班次面） | 探索产物=grid_*_s*of6/manifest.csv+summary.json |
 
+## 〇-7、收口封存（总统统筹 01:25 收口令 · st-nightmine2-20261010 终态）
+
+**本班全部任务验收完毕（统筹 01:25 令原文），台账自本段起封存，后续变更归接管车道。**
+
+### 移交矿考循环班（收口令移交清单）
+1. W-A 适配器工单（臂协议配方生成器→5 试点：判官分派已落地 q-0017，卡面映射适配待做；两堵墙=5 日 horizon 参数化裁定面/生产权重帧回放）；
+2. 板块族排产（底座=card_binding 绑定册通道）；
+3. MODT render 补投（CAP 册投影随终清二期 render）；
+4. 五分位三卡重跑。
+另：W-B（放量）候试点绿自动展开、W-C（笔级面）排 W-B 后（工单批复 22:50 原文）；GPU 探索产出收割（地形图→top 假设池→新预注册卡，判据看数前冻结）归矿考班下一班次。
+
+### 探索车道终态（收割入口）
+- 总格数 **27,423**（t1 2,464 + p2 24,961，六分片全绿收官）；分册=`.runtime/nightmine_exploration/scan_ledger_*.jsonl`（10 文件）；产物=`data/strategy_intake/grid_20261010-232435_s*of6`（t1）+`grid_20261010-233721_s*of6`（p2，各含 manifest.csv/summary.json/negatives.csv）；
+- **N 账本零混入**（batch_records 终验无 exploration:* 条目；试次分册纪律全程成立）；引擎开关=--exploration-ledger（q-0018 落地）；
+- 02:30 让路看门狗已随分片收官停役（夜跑未停但分片先行完成，未触发强停）。
+
+### reaper keep 终态
+- 本班退订：factory_grid_executor / yield_watchdog（进程均已退）；**保留移交**：backfill_night.ps1 / tilib_dwm_shard_runner 两行=数据车道夜跑活体保护（01:25 实测 5 进程在跑），归数据车道收尾时自退，本班不代退防误杀夜跑。
+
+### 工棚/staging 四态处置（终清二期波二取件）
+- **keep**：`staging/_claim_manifest.json`（T1 对账凭据）+ `_insurance/`（replay_engine_assessment 评估全文 + L8b/T1 重建副本）+ `_rescued_foreign/st-govjudge-20261010/99_delivery.md`（终清二期 render 随批落库件，批复路由在案）；
+- **landed**（棚内无独有正典物）：全部交付已经九袋+收口袋落 dev；
+- **discard 候裁**：staging `_landing_file_list.txt`/`t1_quarantine_hash_index.json`（T1 已落地，凭据可随 TTL 退役）；t1_quarantine_hash_index 的镜像已在 claim manifest 内；
+- **transfer**：无（移交面全部为工单非物件）。
+
+### 本班队列终态
+done=q-0001/2/3/5/6/7/8/9(经0015落地)/10/15/16/17/18/19；dead=q-0004/0011/0012/0013/0014（死信留档审计，内容均经后继袋落地，每封带修因凭据）。锁全部释放，心跳守护随收口退役。
+
 ## 一、已完成（凭据面）
 
 | 项 | 状态 | 凭据 |
