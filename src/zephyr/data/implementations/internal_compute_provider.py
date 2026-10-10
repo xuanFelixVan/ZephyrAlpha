@@ -99,6 +99,69 @@ ALL_PERIODS: list[str] = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# T1 退役指标停算（裁定#489① 退役 6 件 + #494② deprecated=停用·待优化 同口径）
+# ---------------------------------------------------------------------------
+# 病：计算入口取 TechnicalIndicatorRegistry.list_all() 不按注册表 status 过滤，
+# 退役/停用指标仍夜跑全量重算写库（final4 99_delivery §二·5："退役≠停算"，
+# dexp 224.5GiB 只涨不缩的结构性成因之一）。
+# status 真源=REG-IND-001 YAML 册（代码 meta 无 status 字段）；join 键=输出列
+# （册 schema 注记：outputs 对齐代码 meta.output_columns + DDL 列）。
+# 语义：仅 status==active 进写链（candidate/experimental 未晋升不入产线宽表；
+# retired/deprecated 停算）——册条目缺失或列不匹配的代码指标不受影响（按列排除，fail-open）。
+# 册整文件读不到=放行全量+warning（写链宁多算不少写，同 P1 熔断"宁少省绝不少写"取向）；
+# 缓存按 mtime，改册即生效。回滚=revert _fetch_single_period 内过滤调用点一处。
+_TI_REGISTRY_YAML: Final = (
+    Path(__file__).resolve().parents[4]
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
+    / "technical_indicator_registry.yaml"
+)
+_TI_STATUS_CACHE: dict = {"mtime": None, "retired_outputs": frozenset()}
+
+
+def _load_retired_indicator_outputs() -> frozenset[str]:
+    """REG-IND-001 册 status!=active 条目的输出列并集（停算面）。"""
+    try:
+        mtime = _TI_REGISTRY_YAML.stat().st_mtime
+    except OSError:
+        log.warning("[registry-status-filter] 指标注册表不可读（%s），本轮放行全量", _TI_REGISTRY_YAML)
+        return frozenset()
+    if _TI_STATUS_CACHE["mtime"] != mtime:
+        try:
+            import yaml
+
+            with open(_TI_REGISTRY_YAML, encoding="utf-8") as f:
+                entries = (yaml.safe_load(f) or {}).get("indicators") or []
+            outputs: set[str] = set()
+            for e in entries:
+                if not isinstance(e, dict) or e.get("status") == "active":
+                    continue
+                outputs.update(e.get("outputs") or [])
+            _TI_STATUS_CACHE["mtime"] = mtime
+            _TI_STATUS_CACHE["retired_outputs"] = frozenset(outputs)
+        except Exception as e:  # noqa: BLE001
+            log.warning("[registry-status-filter] 指标注册表解析失败（%s），本轮放行全量: %s", _TI_REGISTRY_YAML, e)
+            return frozenset()
+    return _TI_STATUS_CACHE["retired_outputs"]
+
+
+def _filter_registered_by_registry_status(registered):
+    """按 REG-IND-001 status 过滤写链指标清单，返回 (kept, excluded)。"""
+    retired_outputs = _load_retired_indicator_outputs()
+    if not retired_outputs:
+        return list(registered), []
+    kept, excluded = [], []
+    for meta in registered:
+        if retired_outputs.intersection(meta.output_columns):
+            excluded.append(meta)
+        else:
+            kept.append(meta)
+    return kept, excluded
+
+
 def sanitize_indicator_matrix(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
     """写链 isfinite 闸（E10 数据健康修复 2026-10-01）。
 
@@ -1084,6 +1147,17 @@ class InternalComputeProvider(IngestProviderBase):
             # 仅空表才 discover 会漏注册（2026-09-14 批 6 后 daily 回填 cycle 族缺算实证）
             autodiscover_technical_indicators()
             registered = TechnicalIndicatorRegistry.list_all()
+
+            # T1 退役指标停算（裁定#489①/#494②）：REG-IND-001 status!=active
+            # 不再进夜跑/回填写链重算写库（治"退役≠停算"，final4 99_delivery §二·5）。
+            # 回滚=revert 本调用点（过滤面见 _load_retired_indicator_outputs 处注记）。
+            registered, _status_excluded = _filter_registered_by_registry_status(registered)
+            if _status_excluded:
+                self._log.info(
+                    "[registry-status-filter] %d 个非在产指标停算（REG-IND-001 status!=active）: %s",
+                    len(_status_excluded),
+                    ", ".join(m.indicator_id for m in _status_excluded),
+                )
 
             # 1. 确定标的列表
             if payload.symbols:

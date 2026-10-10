@@ -260,3 +260,76 @@ class TestHkTradeCalendarFirstDay:
             rows.extend(r.rows or [])
         assert rows[0] == ("2021-09-16", 1, "2021-09-16")  # 首日取自身（原 bug=空串）
         assert rows[1] == ("2021-09-17", 1, "2021-09-16")
+
+
+class TestRegistryStatusFilter:
+    """T1 退役指标停算（裁定#489① 退役 6 件 + #494② deprecated=停用 同口径）。
+
+    病=写链取 list_all() 不按 REG-IND-001 status 过滤，退役指标仍夜跑重算写库
+    （final4 99_delivery §二·5"退役≠停算"）。红证=摘掉过滤（清空停算面）⇒
+    squeeze/wad 回到在算清单必红。
+    """
+
+    @staticmethod
+    def _registered():
+        from zephyr.factor.technical_indicators import (
+            TechnicalIndicatorRegistry,
+            autodiscover_technical_indicators,
+        )
+
+        autodiscover_technical_indicators()
+        return TechnicalIndicatorRegistry.list_all()
+
+    def test_retired_and_deprecated_excluded_from_write_chain(self):
+        """裁定#489①/#494② 在案条目（ac/squeeze/wad/ht_*/chop/highpass/macd_divergence）停算。"""
+        from zephyr.data.implementations.internal_compute_provider import (
+            _filter_registered_by_registry_status,
+            _load_retired_indicator_outputs,
+        )
+
+        registered = self._registered()
+        kept, excluded = _filter_registered_by_registry_status(registered)
+        excluded_ids = {m.indicator_id for m in excluded}
+
+        # 退役 6 件中代码在产 3 件（AC→ac / SQUEEZE→squeeze / WAD→wad）
+        assert {"ac", "squeeze", "wad"} <= excluded_ids
+        # deprecated CYC 族（ht_*）+ REV-001 candle_pattern 同停
+        assert "ht_dcperiod" in excluded_ids
+        # 全部 kept 的输出列与停算面零交集
+        retired_outputs = _load_retired_indicator_outputs()
+        assert retired_outputs, "REG-IND-001 应含非 active 条目（6 retired + 5 deprecated）"
+        assert not any(retired_outputs.intersection(m.output_columns) for m in kept)
+        # 过滤是划分不是丢弃
+        assert len(kept) + len(excluded) == len(registered)
+        # 在产主力仍在（抽查：kdj/macd 类 active 指标不受牵连）
+        assert {"kdj", "macd"} <= {m.indicator_id for m in kept}
+
+    def test_remove_filter_red_squeeze_wad_back(self, monkeypatch):
+        """红证锚：摘掉过滤（停算面清空）⇒ squeeze/wad 回到在算清单=修复前行为。"""
+        from zephyr.data.implementations import internal_compute_provider as icp
+
+        monkeypatch.setattr(icp, "_load_retired_indicator_outputs", lambda: frozenset())
+        kept, excluded = icp._filter_registered_by_registry_status(self._registered())
+        assert {"squeeze", "wad"} <= {m.indicator_id for m in kept}
+        assert excluded == []
+
+    def test_unreadable_registry_fail_open_with_all_kept(self, monkeypatch, tmp_path):
+        """册读不到=放行全量（_load 返回空停算面），写链宁多算不少写，不炸夜跑。"""
+        from pathlib import Path as _Path
+
+        from zephyr.data.implementations import internal_compute_provider as icp
+
+        monkeypatch.setattr(icp, "_TI_REGISTRY_YAML", _Path("Z:/nonexistent/registry.yaml"))
+        monkeypatch.setattr(icp, "_TI_STATUS_CACHE", {"mtime": None, "retired_outputs": frozenset()})
+        assert icp._load_retired_indicator_outputs() == frozenset()
+        kept, excluded = icp._filter_registered_by_registry_status(self._registered())
+        assert excluded == [] and len(kept) == len(self._registered())
+
+    def test_fetch_path_wiring(self):
+        """写链消费点确实挂了过滤（摘调用点=本测红）。"""
+        import inspect
+
+        from zephyr.data.implementations.internal_compute_provider import InternalComputeProvider
+
+        src = inspect.getsource(InternalComputeProvider._fetch_single_period)
+        assert "_filter_registered_by_registry_status" in src
