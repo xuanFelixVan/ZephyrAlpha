@@ -1,0 +1,409 @@
+ttl: task_bound
+title: W-A 臂协议试点方案（arm_protocol 卡逐张分箱 + 首批 5 张试点接线）
+created: "2026-10-11"
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+schema_version: mineloop-arm-pilot-spec/v1
+built_by: scripts/backtest/fexam/arm_protocol_binding.py（MOD-BT-249）
+tests: tests/backtest/test_arm_protocol_binding.py
+owner_lane: W-A（重放引擎工单·臂协议配方生成器）
+
+discipline: |
+  判据面零动：本车道对卡件/绑定册/分数册/注册表只读不写，window/buckets/pillars/pillars_numeric/target/
+  signal_kind 未改一字节；card_binding.py 未触碰。本件只出方案与码，不出分——出分由总包跑（见 todo_for_package_owner）。
+  引句面：本文件所有 quote_* 字段为卡面原文逐字片段，可经 arm_protocol_binding.verify_arm_quote(card, quote, op)
+  机械复核（空格归一后不在卡面即拒绑）；收口前已对本文件全部引句跑过机械复核。
+  数据面：CH 只走 sys.path.insert(0,'<工棚>/scripts/backtest') 后的 fexam.ch_data.ch_query_df，
+  返回位置协议（列名 c1..cN、NULL=空串、dtype=str）⇒ 按列位取数 + pd.to_numeric(errors="coerce")。
+  时窗：每次时间动作前实测 date；本件 CH 面完成于 00:27–00:31，早于 01:00–04:00 停查窗（夜跑让路）。
+
+population_reconciliation:
+  order_wording: 总统令所称「17 张带 arm_protocol 的 comparison/ablation 卡」
+  measured:
+    with_arm_protocol_key: 17
+    of_which_comparison: 8
+    of_which_ablation: 8
+    of_which_shadow: 1
+    in_exam_branch_comparison_or_ablation: 16
+    prose_only_paired_arm_protocol_no_key: 2
+    prose_only_card_ids:
+      - TDM-E-L2-07/comparison/03_追高与低吸胜率对照
+      - TDM-E-L2-09/comparison/02_催化剂加权形式板块恒定与标的指数衰减
+    covered_by_this_spec: 19
+  note: |
+    令所称 17 = 含 arm_protocol 键的卡数（内 16 支走配对分支 + 1 支 family=shadow 不走）。
+    另 2 支 comparison 卡无该键、只在 window.frozen_note 散文里声明 paired_arm_protocol，
+    同属"有臂协议面"故一并分箱，本表因此 19 行。实测命令：
+    grep -rn "arm_protocol" docs/03_modules/_domain_backtest/exam_cards
+
+binning_rules:
+  executor_facts: |
+    calibration_exam.run_card 的 comparison/ablation 分支（实测 L363-371）对两臂恒走 _series_metrics +
+    _arm_nav_metrics(exposure, target)：t 敞口 × t+1 目标、换手扣费、配对差 maxdd_improvement_pp /
+    sharpe_delta / turnover_delta_annual_x 全在核内，且两臂共用同一 target 序列。
+    ⇒ signal/signal_b 就是两臂敞口序列：臂只要写成"同一底座上的敞口变换 f(base)"就能出分，不需新引擎；
+    只有臂本身要重新撮合/逐标的持仓路径的才真缺件。
+  precedence:
+    rule1_panel: signal_kind=panel → needs_matching_engine（DataFrame 进核内 cumprod/mean 的轴从跨日变跨列＝语义走偏；卡面另带逐标的可成交性约束）
+    rule2_trade_path: 臂定义面命中持仓路径片段（simulate(/成交价/执行价/分钟/切片/卖单/成交清单/逐笔/分批/出清/追单/条件单/参与率/顺序/离场判定函数/权重字典/调权/确认模式/路由/涨停/触发集合）→ needs_matching_engine
+    rule3_unfrozen: 臂定义面命中同一底座标量变换凭据，但臂幅度词相邻 16 字内无数字 → unfrozen_arm_definition（禁替卡拍数）
+    rule4_feasible: 前三条全不触发 → feasible_now
+  judgement_domain: 判据域=臂定义面（arm_protocol / paired_arm_protocol / frozen_note / buckets.on）；device_ref、signal_derivation、implementation_gap 属"底座 provenance"，不参与臂型判定（simulate 生成底座≠臂要重新撮合）
+  independent_flags:
+    out_of_vocab_pillars: 门柱键在 calibration_exam._COMPARISON_KNOWN_KEYS 词表外＝立法面（本件只读词表不复制；读不到即标 _vocab_unread_from_execution_core，禁谎报全在内）
+    pending_numeric_params: 臂幅度词提了但没给数值的面
+    family_not_routed: family 非 comparison/ablation 时执行核不配对
+  state_counts:
+    total: 19
+    feasible_now: 3
+    feasible_now_in_branch: 2
+    needs_matching_engine: 16
+    unfrozen_arm_definition: 0
+    missing_device_clusters:
+      panel_or_path_replay: 10
+      minute_or_tick_slicer: 5
+      partial_reduction_capability: 1
+    unfrozen_note: |
+      三态里 unfrozen_arm_definition 实测 0 支——没有一张卡是"形状可表达而卡面完全无数字"；
+      数字缺口集中在"某个臂参数没赋值"（体制门降幅），以 pending_numeric_params 单列，
+      并由 build_arms 的 ArmParamUnfrozen 在装配时硬拒（禁本车道替卡拍数）。
+
+triage_table:
+  - card_id: TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+    family: comparison
+    signal_kind: series
+    arm_count: 3
+    state: feasible_now
+    credential: 臂=同一底座上的标量敞口变换（臂定义命中 基线净值/同一成交口径）且臂参数已给数值（80/60/40%、0%、2%/4%/6%/25%）
+    out_of_vocab_pillars: [maxdd_improvement_vs_no_hysteresis_min_pp, missed_crisis_trigger_max, whipsaw_roundtrip_ratio_max]
+    pending_numeric_params: []
+    missing_device: null
+  - card_id: TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量
+    family: ablation
+    signal_kind: series
+    arm_count: 3
+    state: feasible_now
+    credential: 形状可表达（命中 基线净值），但体制门幅度卡面未赋数 ⇒ build_arms 抛 ArmParamUnfrozen，不装配即不出分
+    out_of_vocab_pillars: [decomposition_abs_error_max_pp, missed_crisis_trigger_max, orthogonal_maxdd_increment_min_pp, regime_same_sign]
+    pending_numeric_params: [趋势门@无相邻数值, 降风险@无相邻数值, 预算@无相邻数值]
+    missing_device: null
+  - card_id: TDM-X-R1/shadow/02_拔电源影子运行对照
+    family: shadow
+    signal_kind: series
+    arm_count: 3
+    state: feasible_now
+    credential: 臂=敞口置常数（命中 现金停放/假想全清），但 family_not_routed:shadow（执行核只对 comparison/ablation 配对）
+    out_of_vocab_pillars: [false_trigger_rate_max, forgone_gain_max_pp, loss_avoided_min_pp]
+    pending_numeric_params: []
+    missing_device: null
+  - card_id: TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+    family: comparison
+    signal_kind: panel
+    arm_count: 3
+    state: needs_matching_engine
+    credential: 臂定义命中 持仓快照/顺序/成交价口径；三臂日频总敞口相同，差在横截面构成
+    out_of_vocab_pillars: [loss_reduction_min, reverse_arm_sharpe_gap_min]
+    pending_numeric_params: []
+    missing_device: 在册装置部分减仓能力（卡面自证 simulate 仅全仓进出）＋按臂参数化调用适配器＋逐臂日净值配对面
+  - card_id: TDM-X-S1-01/comparison/02_六桶分类增益对照
+    family: comparison
+    signal_kind: panel
+    arm_count: 3
+    state: needs_matching_engine
+    credential: 臂定义命中 simulate(/分流确认；桶标签是 symbol×日布尔矩阵
+    out_of_vocab_pillars: []
+    pending_numeric_params: []
+    missing_device: 横截面桶标注回放＋逐臂日净值配对面（另：misfire_reduction_min 核内无机判面=必记败）
+  - card_id: TDM-X-S1-02/comparison/02_时间止损档对照
+    family: comparison
+    signal_kind: panel
+    arm_count: 2
+    state: needs_matching_engine
+    credential: 臂定义命中 simulate(/time_stop（持有期改变持仓路径）
+    out_of_vocab_pillars: [zero_gain_slotday_reduction_min]
+    pending_numeric_params: []
+    missing_device: 横截面/逐仓持有期回放＋逐臂日净值配对面
+  - card_id: TDM-X-S1-03/comparison/02_止盈族三式对照
+    family: comparison
+    signal_kind: panel
+    arm_count: 2
+    state: needs_matching_engine
+    credential: 臂定义命中 simulate(/tp_rule
+    out_of_vocab_pillars: [crisis_maxdd_improvement_min, mfe_capture_drop_max_pp]
+    pending_numeric_params: []
+    missing_device: 横截面止盈规则回放＋逐臂日净值配对面（三臂→两两配对 3 跑）
+  - card_id: TDM-X-S1-06/comparison/02_K3连续破位强清对照
+    family: comparison
+    signal_kind: panel
+    arm_count: 2
+    state: needs_matching_engine
+    credential: 臂定义命中 urgency/分批（同一事件清单，差在出清时点与拆法）
+    out_of_vocab_pillars: [event_subset_gain_min_pp]
+    pending_numeric_params: []
+    missing_device: 分钟/逐笔执行切片器＋按臂参数化调用装置的适配器
+  - card_id: TDM-X-S1/ablation/02_卖出信号段整体消融对照
+    family: ablation
+    signal_kind: panel
+    arm_count: 3
+    state: needs_matching_engine
+    credential: 臂定义命中 离场判定函数（切判定即改持仓路径）
+    out_of_vocab_pillars: [crisis_maxdd_deterioration_max_pp, full_vs_price_only_maxdd_pp_min, full_vs_price_only_sharpe_min, turnover_cap_annual]
+    pending_numeric_params: []
+    missing_device: 横截面离场判定回放＋逐臂日净值配对面
+  - card_id: TDM-X-S1-05/ablation/02_融合权重与去抖消融
+    family: ablation
+    signal_kind: panel
+    arm_count: null
+    state: needs_matching_engine
+    credential: 臂定义命中 simulate(/权重字典（融合权重产出 urgency 再改逐笔路由）
+    out_of_vocab_pillars: [no_confirm_misfire_increase_min, no_confirm_turnover_increase_min_x, resonance_degradation_sharpe_min, weight_table_degradation_maxdd_pp_min, weight_table_degradation_sharpe_min]
+    pending_numeric_params: []
+    missing_device: 融合引擎→装置适配器＋部分退出能力＋逐臂日净值配对面（权重表 0.9/0.7/0.5/0.5 卡面已冻结）
+  - card_id: TDM-X-S2-01/comparison/02_执行方式路由与流动性三查对照
+    family: comparison
+    signal_kind: panel
+    arm_count: 3
+    state: needs_matching_engine
+    credential: 臂定义命中 卖单/切片/参与率
+    out_of_vocab_pillars: [maxdd_improvement_stress_subset_min_pp, shortfall_improvement_bp_min]
+    pending_numeric_params: []
+    missing_device: 分钟/逐笔执行切片器（卡面自证仓内无 5min 执行器）；三查数值卡面已给（10% 参与率、1% 阈值、3 批×1/3）
+  - card_id: TDM-X-S2-03/comparison/02_执行口径净收益对照
+    family: comparison
+    signal_kind: panel
+    arm_count: 3
+    state: needs_matching_engine
+    credential: 臂定义命中 卖单/执行价（口径差=日内两段收益，日频标量面不可分）
+    out_of_vocab_pillars: [segment_sign_flip_max, survival_floor_sharpe]
+    pending_numeric_params: []
+    missing_device: 分钟聚合器（vwap 臂）＋按臂执行价列改写
+  - card_id: TDM-X-S2-04/comparison/02_本地条件单追单闭环对照
+    family: comparison
+    signal_kind: panel
+    arm_count: 2
+    state: needs_matching_engine
+    credential: 臂定义命中 触发清单/出清/条件单
+    out_of_vocab_pillars: [completion_drop_max_pp, shortfall_improvement_bp_min]
+    pending_numeric_params: [追单状态机步进参数（卡面只给机制名）]
+    missing_device: 分钟/逐笔切片器＋条件单状态机回放
+  - card_id: TDM-X-S2-05/comparison/02_分批止盈阶梯对照
+    family: comparison
+    signal_kind: panel
+    arm_count: 2
+    state: needs_matching_engine
+    credential: 臂定义命中 simulate(/ladder
+    out_of_vocab_pillars: [mfe_capture_drop_max_pp]
+    pending_numeric_params: []
+    missing_device: ladder 分批退出能力（装置全仓进出）
+  - card_id: TDM-X-S2-06/ablation/02_卖出闭环三率反馈权重消融
+    family: ablation
+    signal_kind: panel
+    arm_count: null
+    state: needs_matching_engine
+    credential: 臂定义命中 调权（逐月反馈调融合权重＝改逐笔触发集合）
+    out_of_vocab_pillars: [bucket_attribution_sign_diverge_required, degradation_maxdd_pp_min, degradation_sharpe_min, turnover_cap_annual, weight_drift_max]
+    pending_numeric_params: []
+    missing_device: 逐月调权回放（反馈通道在码件）＋逐臂日净值配对面（钉死表 0.9/0.7/0.5/0.5+0.2 卡面已冻结）
+  - card_id: TDM-X-S2/ablation/02_执行约束层现实性税度量
+    family: ablation
+    signal_kind: panel
+    arm_count: 2
+    state: needs_matching_engine
+    credential: 臂定义命中 约束开关＝逐笔参与率/顺延剥离
+    out_of_vocab_pillars: [constraint_tax_rank_stability_required, realistic_sharpe_at_40bp_min, tax_share_of_gross_max, turnover_cap_annual]
+    pending_numeric_params: []
+    missing_device: 逐笔约束开关（参与率硬顶/顺延）＋逐臂日净值配对面
+  - card_id: TDM-X-FLOW/ablation/02_离场信号整链消融总账
+    family: ablation
+    signal_kind: panel
+    arm_count: 3
+    state: needs_matching_engine
+    credential: 臂定义命中 simulate(/关闭全部卖出规则（整链按臂重跑）
+    out_of_vocab_pillars: [crisis_maxdd_deterioration_max_pp, risk_layer_increment_maxdd_pp_min, risk_layer_sharpe_loss_max, total_maxdd_improvement_min, total_sharpe_gain_min, turnover_cap_annual]
+    pending_numeric_params: []
+    missing_device: 整链按臂 simulate 调用＋逐臂日净值配对面
+  - card_id: TDM-E-L2-07/comparison/03_追高与低吸胜率对照
+    family: comparison
+    signal_kind: panel
+    arm_count: 2
+    state: needs_matching_engine
+    credential: 臂=同一行集上的入组条件子集（形状同 arm_subset_mask），但落在 symbol×日且主判据是笔级胜率
+    out_of_vocab_pillars: []
+    pending_numeric_params: []
+    missing_device: 横截面权重帧日频组合回放（含逐标的可成交性约束）＋逐臂日净值配对面
+  - card_id: TDM-E-L2-09/comparison/02_催化剂加权形式板块恒定与标的指数衰减
+    family: comparison
+    signal_kind: panel
+    arm_count: 2
+    state: needs_matching_engine
+    credential: 臂=同一行集上的权重形式替换（数值全冻结 1.2/1.0 与衰减式），但权重帧在 symbol×日
+    out_of_vocab_pillars: []
+    pending_numeric_params: []
+    missing_device: 横截面权重帧→日组合收益轻量回放（含 T+1 与涨停不可买）＋逐臂日净值配对面
+
+pilot_batch:
+  selection_note: |
+    首批 5 张=本车道给出完整接线的袋：tier1 即刻可出分 1 张、tier2 待门位 2 张、tier3 待具名缺件 2 张。
+    诚实申报：按 binning_rules 判据，"敞口可表达 + 臂参数已冻结"的卡实测只有 1 张（P1），凑不出 5 张即刻出分。
+    若总统要 5 张即刻出分，须先三选一：补 P2 的门幅度数值／给 P3 定路由／落横截面回放件（可解锁 10 支）。
+    "走 card_binding 通道"的实测边界：18 支配对分支内的臂卡底座全是"同一基线净值/同一卖单清单/symbol×日行集"，
+    只有 P5 的 target 面真走 card_binding.index_next_day_return；本模块对底座通道无关（只做敞口变换），
+    双校验形制（算子存在性 + 引句在卡面）与表名经 TableRegistry 的约束均沿用 card_binding。
+  cards:
+    - card_id: TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+      tier: tier1_score_now
+      base_face:
+        source: scripts/backtest/fexam/exit_sim/exit_simulator.py 的 simulate(stop_enabled=True) → pd.Series(nav)（实测 L171 返 (nav, st)，run_all L328 已按臂装配）
+        transform: base_ret = nav/nav.shift(1) - 1（target 面＝被风控层监控的组合日收益）
+        quote_from_signal_column: |
+          由 exit_simulator.simulate(stop_enabled=True) 生成的日收益序列
+        exposure_base: 同一交易日历上的 1.0 常数序列（满仓基线），作为 build_arms 的 base 传入
+      arm_open:
+        op: arm_level_cap_multiply
+        params:
+          level_map: {L1: 1.0, L2: 1.0, L3: 0.8, L4: 0.0}
+          levels: 由 src/zephyr/risk/core/drawdown_state_machine.py（MOD-RK-049，实测有 position_cap/recovery_factor 与逐日 evaluate）回放产出
+        quote_from_arm_protocol: |
+          级别→仓位映射（L1 100%/L2 100% 禁新开/L3 梯度 80/60/40%/L4 0%）冻结于本卡
+        quote_no_rewrite: |
+          级别判定与迟滞解除按
+        declared_gap: L3 三档 80→60→40 的推进键卡面未指派 ⇒ 只能由在册件给 level 序列，本件不代推；L2 档「禁新开」是路径约束，标量面按 1.0 处理并须在台账披露
+      arm_base:
+        op: arm_gate_multiply
+        params:
+          gate: 基线回撤/日亏触阈（阈取卡面 frozen_note 在册值 日亏 2%/4%/6%、回撤 25%，禁自拟）
+          on_values: [triggered]
+          factor: 0.0
+        quote_from_buckets_on: |
+          关臂=单一阈值全清/全买回（二值开关）
+      pairing: 核只吃两臂 ⇒ 三臂须 2 次 run_card（开vs关、开vs中间臂五级无迟滞），run_id 分别带 -vs-flat 与 -vs-nohyst，分数行 only-add
+      expected_sample_days:
+        oos_2025_10_09_to_2026_09_30: 241（实测，见 measured_evidence）
+        is_2018_01_02_to_2025_09_30: 依卡面在册（个股 hfq 10098785 行至 2026-09-30）；净值面行数须总包实跑 simulate 后复核
+        executor_thresholds: _arm_nav_metrics 要求 n>=30、_series_metrics 段内 n>=60 —— 241 日两者均过
+      blockers: 词表外门柱 3 支 ⇒ 首跑必为带"未支持判据键（机判面待扩）"诚实凭据的 fail 行，pass 须先扩词表立法
+      run_recipe: |
+        arm, base, ev = build_arms(card, entry, base=ones_series)
+        run_card(card_path, signal=arm, signal_b=base, target=base_ret,
+                 run_id="mineloop-armP1-vs-flat", recorded_by="st-mineloop-20261010")
+    - card_id: TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量
+      tier: tier2_needs_one_frozen_number
+      base_face:
+        source: 同 P1（同一基线净值序列，同一成交口径）
+        quote_from_arm_protocol: |
+          三臂输入同一基线净值序列与同一成交口径
+      arm_open:
+        op: arm_level_cap_multiply 后接 arm_gate_multiply（both 臂＝先级别乘子再体制门）
+        params: level_map 同 P1 + 体制门 gate
+      arm_base:
+        op: arm_gate_multiply（regime-only 臂＝level 恒 L1，物理上不接入状态机）
+        params:
+          gate: c1_backtest.regime_snapshot_history 的 T-1 体制标签（实测列 dominant / risk_signal，取值面 trend_up / trend_down）
+          on_values: [trend_down]
+          factor: 卡面未给 ⇒ 拒出（ArmParamUnfrozen，禁替卡拍数）
+        quote_ablation_seam: |
+          regime-only 臂必须物理上不接入状态机
+        quote_gate_face: |
+          体制臂=按 regime_snapshot_history 的 T-1 体制标签做趋势门
+        unfrozen_credential: 同节点 02 卡明文「仓位带属 C1 预算面（禁与本卡混判）」⇒ 门幅度须由 C1 预算面带 as_of 入数据册
+      expected_sample_days:
+        regime_face: 1824 个 distinct trade_date / 3635 行（≈2 版本/日，必按日 anyLast 去版本）/ 2019-04-01..2026-10-09
+        oos: 241 日（T-1 位移后有效 240）
+      blockers: 门幅度未冻结（先决）＋词表外门柱 4 支
+    - card_id: TDM-X-R1/shadow/02_拔电源影子运行对照
+      tier: tier2_needs_routing_ruling
+      base_face:
+        source: 同 P1
+        quote_from_arm_protocol: |
+          两臂同一基线净值路径
+      arm_open:
+        op: arm_constant（触发日敞口=0；触发前用 arm_identity）
+        params: {value: 0.0}
+        quote_cash_park: |
+          影子臂的现金停放 0 收益
+      arm_base:
+        op: arm_identity
+      expected_sample_days:
+        oos: 241（同 P1 底座面）
+      blockers: family=shadow 不进配对分支；改 family=挪门柱，本件不动，须总统裁定另立 shadow 出分通道或正式改族留痕
+    - card_id: TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+      tier: tier3_needs_named_device
+      base_face:
+        source: exit_simulator 净值口径 + 同一持仓快照生成器（卡面声明同一随机 seed 序列）
+        quote_from_arm_protocol: |
+          三臂共用同一持仓快照生成器与同一随机 seed 序列；顺序由键函数切换，不改其他参数
+      arm_open:
+        op: 非本册标量算子（横截面选择，须逐标的回放）
+        formula: 顺序键=浮亏幅度 DESC 后 ATR14/close DESC 再压舱石 ASC；压舱石取卡面自声明代理=浮盈 + 20 日均额最高分位（局限须在结果披露）
+        quote_order_key: |
+          顺序键=（浮亏幅度 DESC，ATR14/close DESC，压舱石属性 ASC）
+      arm_base:
+        formula: 随机顺序（固定 seed，确定性可复现）
+        quote_from_buckets_on: |
+          关臂=随机顺序（固定 seed，确定性可复现）
+      shared_exposure_proof: |
+        卡面：三臂同一持仓快照、同一减仓量、同一成交价口径（次日开盘，prereg exit_exec 语义），仅卖出次序异
+        ⇒ 两臂日频总敞口相同，配对差只来自横截面构成；标量敞口面恒等于零差＝不可考，必须逐标的回放
+      expected_sample_days:
+        oos: 241（实测）；被减仓位 20 日后续损失面须逐标的价格路径
+      blockers: 装置部分减仓能力（卡面 implementation_gap 自证 simulate() 全仓进出，:171-181 实测无形参支持）＋逐臂日净值配对面＋词表外门柱 2 支
+    - card_id: TDM-E-L2-09/comparison/02_催化剂加权形式板块恒定与标的指数衰减
+      tier: tier3_needs_light_panel_replay
+      base_face:
+        source: card_binding.index_next_day_return()（target 面；本袋唯一真走 card_binding 通道的一面）
+        quote_target_primary: |
+          next_day_index_return（CSI300 次日收益，双臂共用同一目标序列，执行器 shift(-1) 现器可考）
+      arm_open:
+        op: 非本册标量算子（symbol×日 权重帧）
+        formula: 臂 B weight = 1 + direction×strength×2^(−age_days/4.0)，age_days>20 记 nan；PIT 只用 first_announce_date≤T，同一 (symbol, report_period) 取首次披露
+        quote_arm_b: |
+          weight=1+direction×strength×2^(−age_days/4.0)
+      arm_base:
+        formula: 臂 A 恒定 +20%（industry 催化剂态=过去 5 个交易日研报条数截面 z>0 → 该 industry 内 symbol×日 weight=1.2，其余 1.0）
+        quote_arm_a: |
+          该 industry 内全部 symbol×日 weight=1.2，其余 weight=1.0
+        pairing_rowset: |
+          两臂权重矩阵行对齐（同一 symbol×日同时有两值才入配对，缺一侧则该日剔两臂）
+      expected_sample_days:
+        is_2019_01_04_to_2023_12_31: 1212 交易日（实测 index 面）
+        oos_2024_01_01_to_2025_09_09: 410 交易日（实测 index 面）
+      blockers: 需横截面权重帧→日组合收益轻量回放（含卡面 T+1 与涨停不可买 逐标的约束）；辅轴 symbol_next5d_excess_weighted 需成分/行业映射本袋不接；政策/事件五类催化剂腿卡面自标 blocked_on_data，本袋只用 EARNINGS 腿
+      note: 门柱 3 键全在词表内 ⇒ 回放件一旦落地，本张是 5 张里唯一"出分即可判 pass/fail 无立法依赖"的
+
+rejected_and_refusal_reasons:
+  needs_matching_engine_common_gap: |
+    16 支共同缺件（可执行一句版）：按臂参数化调用在册装置（exit_simulator / sell_signal_fusion_engine /
+    sell_execution_planner）的适配器 + 逐臂日收益配对面（现核 comparison 分支两臂共用同一 target，
+    结构上吃不下两条各自实现的净值路径）。这两件落地一次解锁横截面/路径族 10 支；分钟族 5 支另需 5min bar 切片器。
+  minute_or_tick_family: [TDM-X-S1-06, TDM-X-S2-01, TDM-X-S2-03, TDM-X-S2-04, TDM-X-S2]
+  cross_sectional_or_path_family: [TDM-X-S1-01, TDM-X-S1-02, TDM-X-S1-03, TDM-X-S1-05, TDM-X-S1, TDM-X-S2-05, TDM-X-S2-06, TDM-X-FLOW, TDM-X-R1-02, TDM-E-L2-07, TDM-E-L2-09]
+  not_scoreable_pillars_note: |
+    拒因全是"接线缺件"，不是"判据不合格"：本车道未对任何一张卡下结论性 verdict，判据面零动。
+    X-S1-01 另有一条核内已知 fail-closed（misfire_reduction_min 需笔级价格面，核内无机判面）。
+
+measured_evidence:
+  clock: 每次 CH/时间动作前实测 date；CH 面完成于 2026-10-11 00:27–00:31（01:00 停查窗前）
+  command: |
+    python -c "import sys; sys.path.insert(0,'scripts/backtest'); sys.path.insert(0,'src');
+    from fexam.ch_data import ch_query_df;
+    print(ch_query_df(\"SELECT countDistinct(toDate(trade_date)), min(trade_date), max(trade_date),
+    countDistinct(if(toDate(trade_date)>=DATE'2025-10-09' AND toDate(trade_date)<=DATE'2026-09-30',toDate(trade_date),NULL))
+    FROM c1_market.kline_index WHERE symbol='000300'\"))"
+  results:
+    - kline_index symbol=000300 → 位置协议 c1..c4 = 5284 / 2005-01-04 / 2026-10-09 / 241（未取列名）
+    - kline_index 000300 IS 2019-01-04..2023-12-31 → 1212 交易日
+    - kline_index 000300 OOS 2024-01-01..2025-09-09 → 410 交易日
+    - regime 面（按 system.tables 定位后查）→ 3635 行 / 1824 distinct trade_date / 2019-04-01..2026-10-09 / OOS 窗 241 日
+    - regime 面列清单 → trade_date,dominant,risk_signal,confidence,confidence_signal,p_r1..p_r12,probs_json,run_id,shrinkage,snapshot_commit,ingest_ts
+    - 反向实测 → c1_market.regime_snapshot_history = HTTP 404（真身在 c1_backtest 库；卡面 signal_table 只写裸表名未写库前缀，接线须由数据册带品类 id 经 TableRegistry 解析，本件代码零表名字面量）
+  not_measured: |
+    X-S2 族所需 kline_5min 可成交面、L2-09 所需 research_report/earnings_forecast 逐表面本车道未查
+    （引用卡面在册实测，不冒称自查）；未对任何试点卡跑过 run_card（零出分）；simulate 净值面的实际行数
+    未跑（须总包在装置上执行）。
+
+todo_for_package_owner:
+  - 新资产登记（本车道禁跑生成器）：add_module_translation.py 登 MOD-BT-249 大白话简介、apply_depgraph.py --add-design-node、CREATE-GUARD creation_token；注意在册病根「--dry-run 仍写 PG」，登记前按 path 反查
+  - 状态机适配器（P1/P2/P3 共用，零重写判定）：逐日喂基线净值 → 读 position_cap/state 标签 → 落 .runtime/sessions/st-mineloop-20261010/staging/（24h TTL），禁写 data/ 业务目录
+  - 窗前或 04:00 后跑 P1 两对出分（run_card only-add），随后按 pilot_batch 补 P2（待门幅度冻结）与 P5（待横截面回放）
+  - P3 路由裁定与门柱词表扩表（判据面，须立法）——两项均非本车道权限
+  - 出分前后跑 card_binding 的内容级断言，复核三张试点卡 window/buckets/pillars_numeric 与考前逐键相等
