@@ -1,5 +1,5 @@
 schema_version: '1.0'
-card_id: TDM-F-C2/shadow/02_约束栈有vs无
+card_id: TDM-F-C2-02/shadow/02_约束栈有vs无
 node_id: TDM-F-C2-02
 family: shadow
 title_zh: 组合约束栈·六层顺序过栈 vs 无约束影子对拍
