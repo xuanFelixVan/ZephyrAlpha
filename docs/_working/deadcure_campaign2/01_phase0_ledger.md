@@ -431,3 +431,69 @@ python .runtime/tmp/st-deadcure2-20261009/tools/p2_execute.py --execute --classe
 python .runtime/tmp/st-deadcure2-20261009/tools/revival_queue.py
 python .runtime/tmp/st-deadcure2-20261009/tools/cycle_check2.py
 ```
+
+## 十七、三期开局对账（sid=`st-deadcure3-20261010`，现测 HEAD=`1623ff45fe`，非沿用二期读数）
+
+**三条复核命令实测结果**：
+
+| 命令 | 实测输出 | 判读 |
+|---|---|---|
+| `shard_clusters.py` | `clusters parsed 685 ｜ bags total 0` | **判据工具自身缺陷**：第 37 行过滤器 `if x.strip().startswith("q-")` 作用在仍带引号的 `'q-…'` 上 ⇒ 每簇 bags 恒空 ⇒ 连锁 `qid_repr=None`／`consumers=0`／`unique_files=[]`／`pytest_targets=[]`／`rank` 退化为 `unique_lines×1`（消费者权重 ×10 全丢）。这是二期"发牌规格错配"的机械根因之一。 |
+| `cycle_check2.py` | `CLEAN=false`；`C7_head_missing_from_pg=2`（未解释）；`C1_uncovered_bags_n=1238`；`dispositions_logged=207` | C1 按其自述是"未完成工作量计数"非异常；C7 两枚未解释＝二期遗留，本期未自裁 |
+| `deadcure2.py verify --qid` | 对未归档袋返回 `bag_absent_from_campaign_dir` | 设计如此：verify 只读归档目录，不是活 `dead/` 面的探针 |
+
+**⚠ 本班自犯，如实记账（不掩饰）**：17:11 运行 `shard_clusters.py` 覆写了二期 `common/shards/shard_0..7.json`。该目录在 `.gitignore:265 /*` 内 ⇒ **无 git 恢复面**。原件 schema=`{shard,families,bags:int,work}`，与该工具输出 schema 不同（＝06:32 另有生成器产出）；`shard_8/9` 因该工具默认 8 片而未被覆写、仍在。可恢复性：ledger `rows` 带 `shard` 字段（0/2/3＝150/128/106＝384 不完整簇）⇒ 重发面可从 ledger 重建。处置＝不再依赖该目录，改以 primary sources 自建底册（§十八）。
+
+**二期账本口径更正四处（现读）**：①`clusters=923`（非令卡的 945）、`bags_covered=1167`；`shard_rows_on_disk` 合计 945 而 `shards_submitted` 合计 923，差 22＝shard3 截断 106→84。②**"可信 561"不可作可执行依据**：其中 324 行（shard 1/7/8/9）`terminal=None` 且 `qid_repr`/`members` 全空＝结构空壳；真正带裁定的可信面＝shard 4/5/6＝**237 行**。③`cautions.shard_5` 记"未交卷"，但 `shards_submitted[5]=88` 且盘上 88 行带裁定 ⇒ 自相矛盾，本期按"有行但需复核"处理。④①吸收候选 125 中 **114 落在 UNTRUSTED shard 0**（二期自述其 consumers 字段只可作线索）⇒ 可信①候选仅 11。
+
+## 十八、三期四终态裁定（全量 1410 枚逐枚带 why，覆核面=`common/adjudication3.json`）
+
+**现测重编目**（二期 index 锚在 10-09 22:06 已陈旧，本期对**现行 HEAD** 重测）：`dead_catalog.py --full --out .runtime/tmp/st-deadcure3-20261010` ⇒ 1410 袋／`bag_verdict`: needs_review 1381・archivable **27**・delete_still_effectful 2；`revive_class`: regression_risk **1248**・safe_forward 84・manual 38・nothing_to_replay 27・additive_only 13。index 与盘面 `dead/q-*.json` **集合差 0**。
+
+**排除面（红线，先排后判）**：95 袋＝X1 活属主 56（`lane_liveness3.py` 三态实测 **9 族在任**：deadcure2/dexp/examchief/final4/finalclean2/fullflow2/nightmine×3）＋X2 一期结转 49（重叠 10）。
+
+**可处置面 1315 → 四终态**：
+
+| 终态 | 袋数 | 依据 |
+|---|---:|---|
+| `archived_superseded` ① | **15** | 全部 file state ∈ `ARCHIVABLE_STATES` vs 现行 HEAD；dry-run 16/16 过闸 → `--execute` moved=16 → verify 15 `ARCHIVE_JUSTIFIED`／1 `ARCHIVE_WRONG` |
+| `scrapped_recorded` ③ | **0** | 四元联言（零触发∧零消费者∧无价值主张∧无重启条件）**全量零命中**：二期已收割 75 枚（60 归档），残余无一满足 ⇒ 无合法③量 |
+| `pending_owner` 呈批 | **1209** | 1201 only-copy（`lines_only_in_bag>0` vs 现行 HEAD）＋6 guard 拒收＋2 有效删除请求 |
+| `revive_landed` ② | **0**（本班） | Face A 91 袋已发牌待车道 pytest 绿＝非终态，记 `revive_queued` |
+
+**判据咬人实证（本班自拦一枚，未硬过）**：`q-20261009-st-chiefc-20261009-0021` 编目判 archivable（state=`landed_then_evolved` ∈ ARCHIVABLE_STATES），但 verify 查出 `scripts/backup/backup.ps1` `REGRESSION_RISK lines_only_in_bag=9` ⇒ 已 `restore` 回 `dead/`、改判 `revive_queued`，manifest **追加更正行不改写原行**。终态：dead 1410→**1395**；归档目录 `dead_archive_20261010_deadcure3/` 15 物理件 vs manifest 17 行（16 intent＋1 correction），**按 qid 集合对账 sym_diff=0**，全部署名 `st-deadcure3-20261010`。
+
+**红测试（判据能红才信绿）**：对 2 枚 needs_review 袋跑 archive ⇒ `verdict_guard:needs_review` 双双拒收。**独立交叉验证**：本班另写的 fresh-first 路由器（不依赖二期证据）独立算出 `ABSORB_guard_pass=15`，与实际归档 15 枚**完全一致**。
+
+**工具缺陷升旗（交门位车道，本班不自裁）**：`deadcure2/3.archive_bag` 在 `entry["result"]="moved"` 赋值**之前**就写 manifest ⇒ 落盘行无 `result` 字段（实测 17 行仅 1 行带 result，且该行是本班更正行）。任何按 `result` 统计"已归档"的下游审计会**静默读成 0**＝假阴性。本期改按 qid 集合对账规避。
+
+## 十九、Phase 3 残余与呈批面（.1＝Owner 门位件，本班不自裁）
+
+### 19.1 呈批面
+
+**`dead<200` 本期不可达——实测算术，不是态度问题**：现盘 1395 → <200 需处置 ≥1196 枚。合法可处置上限＝① 15（已执行，池已空）＋③ **0**＋② Face A 91＝**106 枚 ⇒ 地板 ≈1289**。差额 **1089 枚全部是 only-copy 内容**（bytes 不在现行 HEAD 任何位置）：归档＝物理不可逆销毁唯一副本；判死＝业务资产轨 B＝Owner 门位（AGENTS.md §5）。以 `--override-verdict` 批量强推可以"达成数字"，但违反铁律#1/#2（禁为进度降判据、禁按建议批量执行），本班不做。
+
+**Owner docket 已按族聚合**（137 族／1202 袋／**1,711,469 行**；`common/owner_docket.json`）；**top20 族＝867 袋（72%）⇒ 决策面是 20 个族级判断，不是 1202 个袋级判断**：
+
+| 族 | 袋 | max_lines_only_in_bag 合计 |
+|---|---:|---:|
+| st-tests-chief-20261004 | 126 | 13,801（tests 树被删未补族，`orphan_test_target_gone` 2116 件） |
+| st-cure-p01-20261006 | 121 | 225,663 |
+| st-closeout-basereq-20261006 | 91 | 168,861 |
+| st-f15-frombag-20261005 | 72 | 127,884 |
+| st-cure-p08b-20261006 | 55 | 1,265 |
+| st-sP-bottleneck-20261005 | 46 | 95,673 |
+
+**需 Owner 裁的三件**：①tests 树族（126 袋）按"P0 恢复"复活还是判废；②巨型施工面族（`st-cure-p01/p05/p12*`＋`st-sP-bottleneck`，约 47 万行）复活成本是否值得开专项；③1089 枚 only-copy 的轨 B 判死授权边界。其余呈批件：有效删除请求 2 枚（`delete_still_effectful`）＋二期在册业务资产 5 枚／含删除请求 45(+2 门拒)（本期落在活属主面内，**未代处置**）。
+
+**Face A 已发牌待执行**（下一班可直接开工）：61 内容簇／90 袋／26 族／0 巨型簇／**family 纯度校验通过**（无族跨片⇒无同文件 claim 撞线）／2 片各 39・22 簇（≤40 上限）＝`common/shards3/shard3_{0,1}.json`，每片自带复活配方（属主三态现测→unique_lines 复核→车道内写件→`PYTHONNOUSERSITE=1` pytest 绿且断言 `zephyr.__file__` 落本道→`git_commit.py --enqueue --base-head <现行 dev tip>`→`git log -1 --name-only` 核账）。
+
+**复核命令（三期，全部可在本班目录重跑）**：
+```
+python .runtime/tmp/st-deadcure3-20261010/tools/roster_build.py       # 排除面+可处置面
+python .runtime/tmp/st-deadcure3-20261010/tools/mass_composition.py   # fresh-first 路由
+python .runtime/tmp/st-deadcure3-20261010/tools/dispatch3.py          # 发牌+Owner docket
+python .runtime/tmp/st-deadcure3-20261010/tools/adjudicate3.py        # 四终态全量裁定
+python .runtime/tmp/st-deadcure3-20261010/tools/deadcure3.py verify --qid <q>   # 归档后反查
+python .runtime/tmp/st-deadcure3-20261010/tools/deadcure3.py restore --qid <q>  # 回滚
+```
