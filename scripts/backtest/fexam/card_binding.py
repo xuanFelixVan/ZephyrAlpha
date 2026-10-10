@@ -555,6 +555,39 @@ def op_downside_dev_pctile(card: dict, args: dict) -> tuple[pd.Series, dict]:
     }
 
 
+def op_sector_relay_retreat_ratio(card: dict, args: dict) -> tuple[pd.Series, dict]:
+    """卡面原文「接棒=连续 3 日 close.pct_change>0 且 amount 3 日滑动均值>前 5 日均值；撤离=对称反向；
+    series 面=当日(接棒板块数−撤离板块数)/板块总数」。
+
+    口径选择登记在绑定册 review_note（不动判据面）：「前 5 日均值」＝amount.rolling(5).mean().shift(3)
+    （"前"=当前 3 日窗之前的 5 日）；改读作同期 rolling(5) 是另一条序列，须另立卡重考。
+    资金面按卡面自我声明用 amount 环比代理（主力净流入不可得），本读数是榜单强度非资金流结论。
+    分桶协议相容性已核：该卡 buckets.type=quantile_quintile（单级）＝执行器 _bucket_response 支持面。"""
+    panel = load_sector_family_panel(args)
+    relay: dict = {}
+    retreat: dict = {}
+    for code, g in panel.groupby("code"):
+        g = g.sort_values("d").set_index("d")
+        pc = g["close"].pct_change()
+        up3 = (pc > 0).rolling(3, min_periods=3).sum() == 3
+        dn3 = (pc < 0).rolling(3, min_periods=3).sum() == 3
+        a3 = g["amount"].rolling(3, min_periods=3).mean()
+        prev5 = g["amount"].rolling(5, min_periods=5).mean().shift(3)
+        relay[code] = up3 & (a3 > prev5)
+        retreat[code] = dn3 & (a3 < prev5)
+    r = pd.DataFrame(relay)
+    t = pd.DataFrame(retreat)
+    denom = r.notna().sum(axis=1)
+    ser = ((r.sum(axis=1) - t.sum(axis=1)) / denom.where(denom > 0)).dropna()
+    return ser, {
+        "panel_rows": int(len(panel)),
+        "codes": int(panel["code"].nunique()),
+        "rows": int(len(ser)),
+        "caliber_choice": "prev5=rolling(5).mean().shift(3)",
+        "family": list(args["families"]),
+    }
+
+
 #: 算子册（每格都逐字引用卡面 signal_derivation 原文，禁自创口径；新增算子须同步测试）
 OPS: dict[str, dict] = {
     "macro_scissors_monthly_lag_ffill": {
@@ -584,6 +617,10 @@ OPS: dict[str, dict] = {
     "sector_adjustment_progress_mean": {
         "fn": op_sector_adjustment_progress,
         "quote_key": "时间维=min(1, 距 60 日高点交易日数 / 8)",
+    },
+    "sector_relay_retreat_net_ratio": {
+        "fn": op_sector_relay_retreat_ratio,
+        "quote_key": "series 面=当日(接棒板块数−撤离板块数)/板块总数",
     },
 }
 
@@ -622,12 +659,22 @@ def _judgment_snapshot(card: dict) -> dict:
 
 
 def run_one(
-    card_path: Path, approve: set[str], scores_path: Path, run_tag: str, dry: bool, book: dict[str, dict] | None = None
+    card_path: Path,
+    approve: set[str],
+    scores_path: Path,
+    run_tag: str,
+    dry: bool,
+    book: dict[str, dict] | None = None,
+    force: bool = False,
 ) -> dict:
     card = yaml.safe_load(card_path.read_text(encoding="utf-8"))
     cid = str(card.get("card_id"))
     if cid not in approve:
         return {"card_id": cid, "skipped": "not_in_approve_list"}
+    if card.get("status") == "examined" and not force:
+        # 在册坑（夜矿交接卡 §三.3：冒烟未隔离会翻卡状态而分数册无行＝账面不一致）⇒
+        # 已考卡必须显式 --force 才允许重跑；分数册 only-add 旧行保留、新行追加、试次照计
+        return {"card_id": cid, "skipped": "already_examined_needs_force"}
     entry = (book or {}).get(cid)
     if entry is not None:
         cls = {
@@ -666,6 +713,7 @@ def run_one(
         run_id=f"mineloop-{run_tag}-{cid.split('/')[-1][:20]}",
         recorded_by="st-mineloop-20261010",
         scores_path=scores_path,
+        force=force,
     )
     after = _judgment_snapshot(yaml.safe_load(card_path.read_text(encoding="utf-8")))
     if json.dumps(before, sort_keys=True, default=str) != json.dumps(after, sort_keys=True, default=str):
@@ -697,6 +745,7 @@ def main() -> int:
     ap.add_argument("--tag", default=datetime.now().strftime("%H%M"))
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--override-ch-window-with-reason", default="")
+    ap.add_argument("--force", action="store_true", help="已考卡重跑：分数册 only-add 追加新行，禁改旧行")
     args = ap.parse_args()
 
     cards_dir = Path(args.cards_dir)
@@ -706,7 +755,8 @@ def main() -> int:
             c = yaml.safe_load(p.read_text(encoding="utf-8"))
         except Exception:  # noqa: BLE001
             continue
-        if not isinstance(c, dict) or c.get("status") != "preregistered":
+        allowed = ("preregistered", "examined") if args.force else ("preregistered",)
+        if not isinstance(c, dict) or c.get("status") not in allowed:
             continue
         cls = classify_card(c)
         rows.append(
@@ -743,7 +793,7 @@ def main() -> int:
     for cid in sorted(approve - seen):
         results.append({"card_id": cid, "skipped": "not_enumerated_not_preregistered_or_absent"})
     for r in rows:
-        res = run_one(Path(RUN_ROOT) / r["path"], approve, Path(args.scores), args.tag, args.dry_run, book)
+        res = run_one(Path(RUN_ROOT) / r["path"], approve, Path(args.scores), args.tag, args.dry_run, book, args.force)
         results.append(res)
         print(json.dumps(res, ensure_ascii=False, default=str)[:400], flush=True)
     out = {
