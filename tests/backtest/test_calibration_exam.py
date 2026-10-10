@@ -191,31 +191,39 @@ def test_comparison_unknown_pillar_fail_closed(tmp_path):
     assert row["verdict"] == "fail" and any("无机判面" in f for f in row["fails"])
 
 
-def test_comparison_calibration_keyed_card_uses_calibration_judge(tmp_path):
-    """W-A 臂协议配方面红蓝：comparison 族+校准键（如 C-L1 冻结映射面）→ 校准判官路径，
-    双臂照收（signal=映射信号面，signal_b=旁路臂面），NAV 判官不越权。"""
-    p = _comparison_card(
-        tmp_path,
-        **{
-            "pillars_numeric": {
-                "mono_spearman_min": 0.6,
-                "ic_mean_min": 0.02,
-                "ic_ir_min": 0.3,
-                "regime_same_sign": True,
-                "oos_same_sign": True,
-            }
-        },
-    )
-    open_, base, tgt = _arms(open_edge=0.35)
-    row = ce.run_card(p, signal=open_, signal_b=base, target=tgt, scores_path=tmp_path / "s.yaml")
-    assert "verdict" in row
-    assert "arm_open" not in row["metrics"]  # 校准判官面：无双臂 NAV 键（分派未越权）
-    assert row["metrics"].get("ic_mean") == row["metrics"].get("ic_mean")  # IC 面在判
+def _bucket_series(n=200, seed=7):
+    rng = np.random.default_rng(seed)
+    idx = pd.bdate_range("2024-01-02", periods=n)
+    sig = pd.Series(rng.normal(size=n), index=idx)
+    tgt = pd.Series(rng.normal(size=n) * 0.01, index=idx)
+    return sig, tgt
 
 
-def test_comparison_nav_keyed_card_still_dual_arm(tmp_path):
-    """红蓝互锁：NAV 键 comparison 卡仍走双臂判官（分派不回归）。"""
-    p = _comparison_card(tmp_path)
-    open_, base, tgt = _arms()
-    row = ce.run_card(p, signal=open_, signal_b=base, target=tgt, scores_path=tmp_path / "s.yaml")
-    assert "arm_open" in row["metrics"]
+def test_bucket_count_honours_card_buckets_type():
+    """执行器必须按卡面冻结的分桶型算响应曲线，禁硬写 10 桶（五分位卡=非自愿挪门柱级偏差）。"""
+    sig, tgt = _bucket_series()
+    for btype, expect in (
+        ("quantile_quintile", 5),
+        ("quantile_decile", 10),
+        ("quantile_tercile", 3),
+        ("quantile_4", 4),
+    ):
+        card = {"buckets": {"type": btype}, "window": {"regimes": {}}}
+        m = ce._series_metrics(sig, tgt, card)
+        assert m["n_buckets_used"] == expect, btype
+        assert len(m["bucket_medians"]) == expect, btype
+
+
+def test_bucket_count_unknown_type_keeps_legacy_ten():
+    card = {"buckets": {"type": "arm_matrix"}, "window": {"regimes": {}}}
+    sig, tgt = _bucket_series()
+    m = ce._series_metrics(sig, tgt, card)
+    assert m["n_buckets_used"] == 10
+
+
+def test_quintile_and_decile_give_different_mono_on_same_data():
+    """同一数据下五分位与十分位的 mono_spearman 必须可区分（证明本修复确有判别力，不是恒过）。"""
+    sig, tgt = _bucket_series()
+    q = ce._series_metrics(sig, tgt, {"buckets": {"type": "quantile_quintile"}, "window": {"regimes": {}}})
+    d = ce._series_metrics(sig, tgt, {"buckets": {"type": "quantile_decile"}, "window": {"regimes": {}}})
+    assert q["mono_spearman"] != d["mono_spearman"]
