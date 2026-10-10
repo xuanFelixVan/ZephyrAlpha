@@ -1,0 +1,90 @@
+---
+ttl: task_bound
+title: 矿考循环班·calibration 族未知门柱键 fail-closed 两步落地与在册成绩重述（裁定②）
+created: '2026-10-11T02:45:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+ruling: >-
+  统筹 2026-10-11 01:35 批复②：「裁 fail-closed 批：两步走——你当班先落①未判柱清单（纯观测）；
+  ②calibration 族补未知键 fail-closed（comparison 族同款），历史 pass 重述入册不重判
+  （G4-5：新判据适用新考生，旧行保留）。这是还卡面冻结判据以真意，不是改门柱。」
+
+defect_being_closed: >-
+  实测缺陷（22e481951e 绑定前复核册原文）：judge() 只读 5 个键
+  （mono_spearman_min/ic_mean_min/ic_ir_min/regime_same_sign/oos_same_sign），
+  对 calibration 族**无未知键 fail-closed**（只有 comparison 族的 _judge_comparison 有）——
+  卡面 pillars_numeric 里多出的冻结柱一律静默跳过，且 mono=None / ic_ir=None 也静默跳过，
+  所以出分的 "pass" 只代表那 4-5 个已知键，不代表卡面门柱全过。
+  次生形态：pillars_numeric **只含**未知键的卡走到 p["mono_spearman_min"] 取数面抛 KeyError，
+  崩的是整批而不是单卡（异常代替判决）。
+
+step_1_observability:
+  landed_qids: [q-20261011-st-mineloop-20261010-0030, q-20261011-st-mineloop-20261010-0031]
+  face: 每行分数新增 unjudged 键（纯观测零否决权）
+  subfaces:
+    numeric_keys_not_read: 卡面冻结但判官根本没读的键
+    numeric_keys_no_machine_face: 读了该键但当前 metrics 面无从评估
+      （series 路 ic_ir 恒 None／panel 路 mono 恒 None／regime 有效段 <2／oos_ic NaN）
+    pillars_prose_keys: 卡面文字门柱原样列表
+  deliberate_absence: prose↔numeric 的映射无在册真源，本面不代拍（归门柱词表立法工单，禁改键值）
+
+step_2_fail_closed:
+  change: >-
+    judge() 起始处 unknown = set(pillars_numeric) - _CALIBRATION_JUDGED_KEYS，非空即
+    return ("fail", ["未支持判据键（机判面待扩，fail-closed）: 点名键列表"])
+  single_source: run_card 的分派集合与观测面同一（局部字面量改引模块常量 _CALIBRATION_JUDGED_KEYS）
+  guard_against: 已判面不受波及——五键齐的强信号卡仍 pass（专测一支钉住，防把门柱抬高）
+
+restatement_of_in_register_scores:
+  measured_over: docs/03_modules/_domain_backtest/exam_scores_v1.yaml（dev 现册）
+  rows_total: 31
+  verdict_pass: 0
+  verdict_fail: 31
+  rows_with_unknown_keys: 0
+  rows_carrying_unjudged_field: 0
+  conclusion: >-
+    在册 31 行全为 fail，零 pass ⇒ 无一行需要"重述为未判面 pass"（历史 pass 重述入册这一支在本册为空集，
+    如实记空集而非省略）；未知键与无面柱此前从未产生过假绿成绩行。unjudged 字段自步骤①落地后的新行起自带，
+    旧行不回填（only-add 禁改旧行）。
+  note: 在册 fail 的成因全是已判面不达标（mono/ic 双双不达标），与未判柱无关——本结论由逐行读册得出，非推断。
+
+prospective_blast_radius: >-
+  闸只对"新考生"生效（G4-5），故须量化谁会被拦住。逐卡实测（487 张卡件，按夜矿续战三连裁③v2 的
+  "判官按 pillars_numeric 键集分派"规则复算）：
+  路由=双臂判官 90 张（本已有未知键 fail-closed）／路由=校准判官 211 张／无机判面（status=empty）186 张。
+  其中路由校准判官且含未知键的 = 47 张（calibration 族 33 ＋ shadow 族 14），
+  按状态=preregistered 30／blocked_on_data 16／blocked_on_impl 1。
+  这 47 张此前若被接线开考，会在未判柱上静默出 pass；步骤②后一律 fail-closed 并点名键。
+
+pillar_key_census_for_vocab_workorder:
+  unique_unknown_keys_on_that_route: 62
+  top_keys:
+    maxdd_delta_max: 9
+    car_t_stat_min: 8
+    sharpe_vs_baseline_min: 8
+    tracking_diff_max: 7
+    turnover_cost_gate: 6
+    car_min_bp: 4
+    peak_lag_max_days: 3
+    peak_lag_min_days: 3
+    sharpe_delta_min: 3
+    resid_ic_min: 2
+    car_t0_t20_min_bp: 2
+  families_of_unknown_keys: CAR/事件研究面（car_*、car_t_stat_min）、NAV 对照面（maxdd_delta_max、
+    sharpe_vs_baseline_min、tracking_diff_max）、峰值滞后面（peak_lag_*、ic_peak_lag_min_days）、
+    独立观测数面（effective_independent_obs_min）、共线性/增量面（incremental_r2_min、resid_ic_min）
+  flagged_question_for_owner_or_workorder: >-
+    shadow 族 14 张卡携带 NAV 形键（maxdd_delta_max/sharpe_vs_baseline_min/tracking_diff_max）却按
+    family 路由到**校准判官**——三连裁③v2 的键集分派只覆盖 comparison/ablation 两族。
+    是否把分派规则扩到 shadow 族（含 NAV 键即走双臂判官）＝判据路由面改动，本班不自决，
+    随门柱词表立法工单一并呈批（禁改键值，只定路由与词表）。
+
+compliance:
+  historical_rows_rejudged: 0
+  pillar_thresholds_changed: 0
+  pillar_key_values_changed: 0
+  cards_modified: 0
+  ch_queries_run: 0
+  files_created: 1
