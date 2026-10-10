@@ -1,0 +1,102 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-09/calibration/05_板块级盘前新闻情绪催化剂腿
+node_id: TDM-E-L2-09
+family: calibration
+title_zh: 板块级盘前（夜窗）新闻情绪催化剂·校准卡（本节点声明源 DS-107 首次入卡）
+hypothesis: >-
+  TDM 本节点 data_refs=[DS-107]、point=盘前、activation=premarket、fallback 写死"DS-107 缺失→催化剂维度降权
+  （纯量价判定）"——即节点自认的唯一声明催化剂数据源是新闻情绪窗（DS-107 实体=c1_market.news_sentiment_window，
+  夜窗定义=前一交易日 18:00（含）→交易日 08:00（不含）左闭右开，见 MOD-INT-NEWS-NIGHT 蓝图 §0）。
+  前役 L1 车道在本节点立的三张卡（02 研报密度/03 评级上调占比/04 业绩净占比）全部建在卖方研报与业绩预告上，
+  无一消费声明源 DS-107；其 blocked 理由写的是"c3_fundamental.news_data 2025 断供"（另一张表）。
+  本卡假设：板块级盘前新闻情绪（symbol 夜窗情绪按行业聚合）分桶对次日指数收益单调正、
+  且行业 5 日超额同向；情绪分歧度（positive_count 与 negative_count 同时高）对次日波动有增量。
+  本卡 status=blocked_on_data：按在册实测，逐符号面（scope='symbol'）的覆盖窗根本不含冻结 IS/OOS，
+  板块聚合无从算起——卡不撤，缺哪表哪一段写死在 blocked_scope。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；信号只取 scope='symbol' 且 window_type='night' 的行（盘前左闭右开口径即 PIT 护栏，
+    禁用 scope='market' 顶替——市场级与板块级是不同对象，依前役 L1 台账 §1 L2-03-1 行同纪律"市场级替代=明禁顶替"）；
+    symbol→industry 映射沿用同节点 04 卡已冻结的派生口径（≤T 最近一次 research_report 的 industry）；
+    情绪列以 sentiment_index 为主、avg_polarity 为交叉核对，两列不得混算平均
+buckets:
+  type: quantile_quintile
+  'on': 行业×日的盘前新闻情绪指数（panel 主对象）；市场级行业加权均值（series 面）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位次日收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频截面 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  preopen_pit_proof: 信号时间戳须严格早于当日 09:30（夜窗右开 08:00 为硬证），
+    凡窗口跨入盘后的行业×日样本剔出（本判据=本卡存在的理由，前役正因未核这一点而错置 blocked 根因）
+  disagreement_increment: 分歧度（positive_count/total_count 与 negative_count/total_count 同时 >0.3）子集的
+    次日已实现波动高于一致子集（增量面，均值型情绪读数的正交补）
+  lag_profile: 盘前情绪的效应峰值应在 t+0/t+1、半衰期 >= 1 交易日（盘前信息理应更快入价，
+    若峰值迟于 t+2 则与"盘前催化剂"主张矛盾）
+  regime_stability: bull/bear 两段同号
+  fallback_test: 节点 fallback"DS-107 缺失→降权纯量价"的对照面——把本卡信号替换为 02 卡密度读数后
+    判别面差异须单独出数（证明 fallback 降的是同一维度的权）
+target:
+  primary: next_day_index_return（CSI300 次日收益，series 主轴，执行器 shift(-1) 现器可考）
+  secondary: industry_excess_next5d（行业 5 日超额，panel 辅轴，需派生映射与宇宙偏差披露）
+  note: 出分只裁定"盘前新闻情绪催化剂腿"，不得外推到研报密度腿（02 卡）与业绩腿（04 卡）
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-09.confidence
+preregistered_by: st-mineloop-20261010-L12
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.news_sentiment_window（scope, window_type, window_date, symbol, sentiment_index,
+    avg_polarity, positive_count, negative_count, neutral_count, total_count）
+  signal_column: scope, window_type, window_date, symbol, sentiment_index, positive_count, negative_count,
+    total_count
+  signal_derivation: 取 scope='symbol' 且 window_type='night' 的行（窗口=前一交易日 18:00 含→当日 08:00 不含，
+    由 MOD-INT-NEWS-NIGHT 生产，蓝图 §0 在册）；
+    symbol→industry 用 ≤T 最近一次 research_report 的 industry（派生映射，取不到剔行不补零）；
+    行业×日情绪=该 industry 当夜各 symbol sentiment_index 的按 total_count 加权均值（total_count<3 的行业×日记 nan）；
+    series 面=行业情绪按研报覆盖度加权的市场上均值；
+    分歧度=行业×日内 positive_count/total_count 与 negative_count/total_count 的较小者（两者同时高才叫分裂）；
+    跨日不做平滑（平滑会污染 t+0 盘前语义）。
+  target_source: kline_index(symbol='000300').close → next_day_return（主轴）；
+    辅轴=行业侧需成分映射（sector_constituent 仅 2026-07-22 起 6 个刷新日，前役 §3-P6）⇒ 辅轴窗受限，主轴不受影响
+  data_window_evidence: 全部引用在册实测（本车道 21:00-22:30 禁 CH 重查询，未自取新数）：
+    ①c1_market.news_sentiment_window 首末日与总量=window_date 2019-01-04..2026-10-08/22257 行；
+    scope×window_type 分布 symbol/night=19635、market/night=201、market/1d=2421（前役 L1 台账 §3-P12）；
+    ②更关键的分 scope 覆盖窗实测（同战役 L3 车道在册，见 TDM-E-L1-S0-1__calibration__03 卡
+    data_window_evidence）：scope='market' 1 标的/2622 行/2019-01-04..2026-10-08，
+    分年 2019..2026=362/366/365/365/362/358/243/201 行；
+    scope='symbol' 4857 标的/19635 行/**2026-02-24..2026-08-20**；
+    ③上游逐条打分面 c3_fundamental.news_sentiment_score=7947739 行（列含 polarity/label/method/n_pos/n_neg/
+    caliber_version，同上在册），跨口径混算风险已在该卡登记；
+    ④c3_fundamental.news_data=2010-01-02..2026-10-10/8219185 行，逐年 2024=759512、2025=31425、2026=259401
+    （前役 §3-P14）——该表与本卡声明源 DS-107 不是同一张表，前役把断供表当作催化剂文本面唯一依据；
+    ⑤生产件在册=src/zephyr/intelligence/nightly_sentiment_window.py（MOD-INT-NEWS-NIGHT），
+    persist=True 写 c1_market.news_sentiment_window（蓝图 §0 原文）。
+    判读：本卡所需的 symbol 面在冻结 IS（2019-01-04..2023-12-31）与 OOS（2024-01-01..2025-09-09）内**零行**，
+    行业聚合无从构造 ⇒ blocked_on_data，非假设不成立。
+  impl_ref: src/zephyr/signal_ashare/screening/event_driven_screener.py（module_ref=MOD-SIG-049/MOD-SIG-106）
+    + src/zephyr/intelligence/nightly_sentiment_window.py（生产方）+ news_sentiment_analyzer.py
+  blocked_scope: 缺 c1_market.news_sentiment_window 的 scope='symbol' 面 2019-01-04..2025-09-09 段
+    （现况该面仅 2026-02-24..2026-08-20/19635 行/4857 标的，在册实测②），每桶 min_obs_per_bucket=60
+    的最低要求在此窗内不可达；解锁条件=按 MOD-INT-NEWS-NIGHT 左闭右开夜窗口径回补 symbol 面
+    2019-01-04..2025-09-09（≥1600 交易日）并保留 window_type='night' 与 caliber_version 标签；
+    市场级（scope='market'）满窗但不构成板块级催化剂读数，禁止顶替（frozen_note 已写死）

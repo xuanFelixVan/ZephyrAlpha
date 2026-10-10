@@ -1,0 +1,84 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-AGG/ablation/03_跨层封顶与对齐加成双臂
+node_id: TDM-E-L1-AGG
+family: ablation
+title_zh: 四层架构跨层合成两规则（封顶/对齐加成）·消融双臂卡
+origin: tdm_algo_note_l1_agg_d20
+hypothesis: >-
+  D20 在册跨层合成两规则（config/trading_decision_map.yaml:687-689："封顶：周级退潮→日级最高
+  RISK_OFF；月级危机→日级最高 RISK_OFF，封顶不覆盖"与"对齐加成：三层同向→预算带取上限；
+  冲突→取下限+高层赢"）相对"各层独立报告、不封顶不加成"的真臂应改善下游全链 MaxDD>=5pp；
+  若两臂无差甚至更差，则跨层合成规则=负贡献装置，册上"业界三级共振"的说法无经验支撑。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（G4-5）；两臂定义逐字取 TDM 注释行 687-689，禁改写为其它合成式；触发集定义先验钉死（月级危机=dominant='r4'；周级退潮=情绪段态转入退潮段当日）；封顶"不覆盖"=日级读数如实存档仅暴露被压，本卡两臂只在暴露侧差分，禁动日级读数落台；事后挪=作废
+arms:
+  SYNTH: 三层合成开（封顶 ∧ 对齐加成 ∧ 冲突取下限+高层赢）——A 臂=signal
+  FLAT: 三层合成关（各层独立报告，暴露只吃月级 cap 曲线）——B 臂=signal_b
+buckets:
+  type: arm_x_trigger
+  'on': 两臂 × 触发集（月级危机日 / 周级退潮日 / 三层同向日 / 冲突日 四类子集，各 n>=60）
+  min_obs_per_bucket: 60
+pillars:
+  cap_benefit: SYNTH 相对 FLAT 的 MaxDD 改善 >=5pp（封顶规则的合法性主柱，cost-adjusted）
+  resonance_benefit: 三层同向日子集内 SYNTH 的年化收益高于 FLAT（对齐加成=取上限的收益面，单列 n）
+  conflict_rule_cost: 冲突日子集内 SYNTH 相对 FLAT 的 Sharpe 差（"取下限+高层赢"的代价必须显式披露，禁与主柱混判）
+  dwell_distortion: 触发集占比与档位在两臂下的停留时长分布差（合成规则是否制造长期锁档）
+  oos_noninferiority: OOS 段两柱同号，且 MaxDD 改善 >=0（不允许样本内靠运气过关）
+target:
+  primary: cost_adjusted_sharpe（双臂各一条全链 NAV）
+  secondary: max_drawdown / state_dwell_time
+  note: 消融合法性前置=只关跨层合成这一环，上游读数与下游规则一字不动（同 AGG/02 卡纪律）
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-AGG.confidence
+preregistered_by: st-mineloop-20261010-L14
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  sharpe_delta_min: -0.2
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.regime_state_anchored（月级轴 dominant/vol_pct 实测在册）+ c1_market.emotion_index（周级六段腿 stage='close_final' 实测在册）+ c1_market.kline_index（日级价与全链权重帧基准）
+  signal_column: signal=SYNTH 臂逐日暴露序列；signal_b=FLAT 臂逐日暴露序列（双臂注入按 run_card 缺口②口径）
+  signal_derivation: >-
+    月级档 = classify_state(vol_pct) 四档（阈值 0.30/0.60/0.80，源码实测）；
+    月级 cap 曲线 = 1 − 0.70×clamp((vol_pct−0.30)/0.70, 0, 1)（Owner 2026-09-14 签字档，抄 L1/02 卡在册公式）；
+    SYNTH 臂暴露 = 周级转入退潮 ⇒ 暴露压至 RISK_OFF 档值 0.30；月级=r4 ⇒ 同样压至 0.30；
+    三层同向（月级 r3 ∧ 周级进攻段 ∧ 日级水温偏暖）⇒ 暴露取该段预算带上限；
+    冲突 ⇒ 取下限（就低不就高）；
+    FLAT 臂暴露 = 只取月级 cap 曲线值，不做任何跨层约束；
+    日级水温腿 = TDM-E-L1-S5 的 11 信号合成读数（真源件 src/zephyr/signal_ashare/core/daily_condition_sensor.py，MOD-SIG-135）。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=冻结五档 [0,5,10,20,40]) → NAV → window_metrics(sharpe/max_drawdown/annual_return)"
+  data_window_evidence: >-
+    在册引用：regime_state_anchored 2017-07-11..2026-10-09 / 4,488 行（列含 vol_pct/dominant）
+    ——出处 TDM-E-L1__comparison__02_anchored_cap_curve_on_off.yaml:69-77；
+    emotion_index stage='close_final' 2019..2025 逐年 244/243/243/242/242/242/243 天
+    ——出处 TDM-E-L1-AGG__ablation__02_state_input_replacement.yaml:74-76；
+    kline_index 1990-12-19..2026-10-09 / 3,104,162 行 / 1,097 symbols，000300 覆盖 2018-06-01..2025-12-31（同上）；
+    成本档=config/exam_scale_cost_gate.yaml（tiers_bp/survival_floor/cap_annual_x=8.0，实测冻结件，出处 L1/02 卡:76）；
+    data_window_evidence 待补面：S5 日级水温逐日读数是否落台未在册实测 ⇒ 待总包 22:30 后实测（缺段见下 blocked_reason）。
+  blocked_reason: >-
+    blocked_on_impl 三件（缺什么写什么，禁虚构）：
+    （1）跨层合成件不存在——src/zephyr/regime/core/anchored_state_machine.py 全文只有 vol_pct→四档单轴判定
+    （build_states/classify_state，源码实测行 98-153），无月/周/日三层合成、无封顶、无对齐加成、无冲突仲裁实现；
+    （2）"状态输入注入器"缺件（同 AGG/02 卡 infra_gap 在册结论），双臂无法在 pf_alloc 侧换暴露；
+    （3）周级六段段态与日级 S5 水温的逐日历史落台表未在册（TDM:5939 记名"情绪聚合器=独立对话未建（纪要§8.3定案不代建）→红节点如实"），
+    解锁条件=（1)(2) 补件 +（3）补史后转 preregistered，窗口与门柱不动。
+sources:
+  - config/trading_decision_map.yaml:687-689（D20 跨层合成两规则原文）
+  - src/zephyr/regime/core/anchored_state_machine.py:98-153（单轴实现实测，无三层合成）

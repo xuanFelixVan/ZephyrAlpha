@@ -1,0 +1,86 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-AGG/calibration/04_存量博弈量能分位门
+node_id: TDM-E-L1-AGG
+family: calibration
+title_zh: 量×轮动二维状态机之量能轴（250 日分位 <25%/>60%）·校准卡
+origin: tdm_algo_note_l1_agg_d90
+hypothesis: >-
+  D90 终裁在册判据"成交额 250 日滚动分位<25%=存量博弈（小盘题材加权/主线降权/持仓<=2-3 天），
+  >60%=主线放行"（config/trading_decision_map.yaml:690 原文）对次日小盘−大盘相对收益具单调预测力：
+  分位越低小盘（000852）相对大盘（000300）越强，符号先验为负、|rho|>=0.6 且过 IC 地板——若不成立，
+  则二维状态机的量能轴=仓位口径装饰，"存量博弈"标签无经验内容。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（G4-5）；分位窗 250 日、两阈值 0.25/0.60 逐字取 TDM:690，禁改禁重拟合；成交额口径先验钉死=沪深两市指数成交额之和（000001+399001 两条 kline_index amount 相加，缺 399001 行则该日置 NaN 不插值）；相对收益口径=000852 与 000300 的 T+1 简单收益之差；事后挪=作废
+buckets:
+  type: quantile_tertile_gate
+  'on': 成交额 250 日滚动分位（按册上两阈值切三档：<0.25 存量博弈 / 0.25-0.60 中间态 / >0.60 主线放行）
+  min_obs_per_bucket: 60
+pillars:
+  gate_monotonicity: 三档序与"次日小盘−大盘相对收益"秩相关 |rho|>=0.6 且符号为负（存量博弈=小盘占优的方向先验）
+  ic_floor: 日频 IC（分位值 vs 次日相对收益）均值 <= -0.02 且 |IC_IR| >= 0.3
+  two_tier_gap: 存量博弈档相对收益中位 − 主线放行档中位 >= +0.20pct（两端可分才谈得上二维门）
+  dwell_and_hysteresis: 存量博弈档连续停留天数分布建档（在册 D90 另有条款"进段连续 2 日隶属度>60%、退出<40%"的滞回无实现，本柱只建档不判过线）
+  regime_stability: 牛/熊两段同号且均过 ic_floor
+target:
+  primary: next_day_size_spread（000852 − 000300 的 T+1 收益差，执行器 shift(-1) 现器口径可用）
+  secondary: null
+  note: 多日（fwd5/fwd20）面不作机判门柱（在册执行器缺口①）；持仓 <=2-3 天的条款属下游时长规则，另卡另判
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-AGG.confidence
+preregistered_by: st-mineloop-20261010-L14
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(量能档序 [存量博弈=1,中间=2,主线=3], 次日小盘−大盘相对收益秩)，
+  取绝对值判 >=0.6 且符号须为负；ic_mean_min 按执行器地板 0.02 登记、预期符号为负；两段同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_index（symbol in ('000001','399001') 的成交额列 + symbol in ('000852','000300') 的 close 列）
+  signal_column: 成交额（amount 口径，列名与单位待实测）→ 250 日滚动分位；000852/000300 close → 次日相对收益
+  signal_derivation: >-
+    turnover_t = amount(000001,t) + amount(399001,t)（两腿缺一腿置 NaN，禁单边估）；
+    vol_pct 式分位 = turnover 在滚动 250 日内的 rank(pct=True)（PIT 仅用 t 及以前，同 anchored_state_machine.py:125 口径）；
+    目标 = close(000852,t+1)/close(000852,t) − 1 − [close(000300,t+1)/close(000300,t) − 1]；
+    250 日暖机须在 IS 起点前完成 ⇒ 取数起点 2018-01-01（IS 首日 2019-01-04 前约 250 交易日）。
+  target_source: "next_day_return(px_close['000852']) - next_day_return(px_close['000300']) → 逐日 IC 序列 → _series_metrics(shift(-1))"
+  data_window_evidence: >-
+    在册引用：kline_index 实测 1990-12-19..2026-10-09 / 3,104,162 行 / 1,097 symbols，
+    其中 000300/000905/000852/399006 各 1,843 行覆盖 2018-06-01..2025-12-31
+    ——出处 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison__02_anchored_cap_curve_on_off.yaml:74-75
+    ⇒ 大小盘腿（000852/000300）覆盖窗可用，但 IS 起点前暖机段（2018-01-01..2019-01-03）在 2018-06-01 之前无行，
+    实际可用起点须按实测首行重算（不挪窗口，挪取数起点，缺段见 blocked_reason）；
+    data_window_evidence 缺面：kline_index 是否含成交额列（amount/turnover 口径与单位）未在册实测
+    ⇒ 待总包 22:30 后实测（命令原文建议：`DESCRIBE TABLE c1_market.kline_index` 与
+    `SELECT symbol, min(trade_date), max(trade_date), count() FROM c1_market.kline_index WHERE symbol IN ('000001','399001','000852','000300') GROUP BY symbol`）。
+  blocked_reason: >-
+    （1）成交额列口径未实测（列名/单位/是否含 399001 深成指数行）⇒ 量能分位不可算；
+    （2）000852/000300 在册覆盖自 2018-06-01 起，250 日暖机后的首个工作日约 2019-07 月，
+    IS 窗前约半年将无有效分位（不挪窗，如实登记覆盖缺口，n 不足则该段不计）；
+    （3）D90 的轮动强度轴（"轮动强度>80% 分位=电风扇市"）另有一处口径漂移在册：
+    代码阈值 VELOCITY_PERCENTILE_THRESHOLD=0.75（src/zephyr/plan_engine/boundary_revision_engine.py:117）
+    对册上 80% 分位不一致，且轮动强度序列无历史落台件（grep 命中仅 plan_engine 实时注入面），
+    故轮动轴另立卡、本卡只判量能轴——本卡不代裁两处阈值孰是。
+    解锁条件=（1）列口径实测通过、（2）覆盖重算完成后转 preregistered，窗口与阈值门柱不动。
+sources:
+  - config/trading_decision_map.yaml:690（D90 量×轮动二维状态机原文）
+  - src/zephyr/plan_engine/boundary_revision_engine.py:117（电风扇阈值 0.75 与册上 0.80 不一致点）

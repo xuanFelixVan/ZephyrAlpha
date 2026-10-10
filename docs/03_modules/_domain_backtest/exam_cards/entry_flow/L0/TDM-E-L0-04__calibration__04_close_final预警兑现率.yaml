@@ -1,0 +1,111 @@
+schema_version: '1.0'
+card_id: TDM-E-L0-04/calibration/04_close_final预警兑现率
+node_id: TDM-E-L0-04
+family: calibration
+title_zh: 明日降档预警→次日情绪实现档·预警真实价值校准卡（依赖 close_final，QMT 复元即解锁可考）
+origin: tdm_algo_note_l0_04
+hypothesis: >-
+  当 14:30 时点档位差 >=1（悲观档差触发"明日降档预警"），
+  次日 emotion_index@stage='close_final' 的实现档序应显著更低（悲观）——
+  即预警的"真实兑现率"（预警日次日实际悲观档 = 或差于 预警时的融合档 的比例）；
+  响应曲线按档位差 ∈ {0, 1, 2, >=3} 四档单调；
+  若单调破坏或近 0 ⇒ 组合器输出无信息量（等价常数），本节点应进治理"零触发零消费→退役"候选账（如实上报不粉饰）。
+window:
+  in_sample:
+  - '2021-07-01'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-06-30'
+  regimes:
+    bull: 2021-07-01..2021-12-31（标签按沪深300 区间收益符号开考前机械复核）
+    bear: 2022-01-01..2022-12-31（同规则）
+  frozen_note: >-
+    窗口与 calibration__03 同钉；档位分桶 {0,1,2,>=3} 与 8 态悲观全序（蓝图 §2）取自 algo_note_zh，卡内禁改；
+    解锁后窗口与判据**不动**（G4-5）——本卡以 blocked_on_data 冻结，
+    QMT 复元后直接以 close_final 段实测真值开考，禁挪窗；
+    事后挪门柱=作废（G4-5）
+buckets:
+  type: ordinal_bin
+  'on': 14:30 档位差 ∈ {0, 1, 2, ">=3"}（序数差非概率差）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 四档桶上（0=最乐观/无预警 ... >=3=深预警）中位次日 close_final 实现档序单调下降（rho <=-0.6）
+  ic_floor: 日频 IC（当日档位差 vs 次日 close_final 档序）均值 <=-0.02 且 IC_IR >=0.3
+  alarm_realization_rate: 档位差 >=1 的预警日中，次日 close_final 实现档 ≤ 融合档（悲观兑现）比例 >= 60%（分档出账）
+  false_alarm_trace: 档位差 >=1 但次日实际乐观（close_final 实现档 ≥ 先验档）的比例（误报率）必须同表出账，禁只报有利腿
+  regime_stability: 牛/熊两段同号且过 ic_floor
+target:
+  primary: next_day_emotion_close_final_state（次日 emotion_index@close_final 8 态档序，shift(-1)）
+  secondary: 预警兑现率 / 误报率
+  note: 本卡唯一以 close_final 为真值的校准面；不代替夜矿 comparison__02 的三臂反事实
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L0-04.confidence
+preregistered_by: st-mineloop-20261010-L15
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；断供不弃卡（作业簿 §三⑥）
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: -0.6
+  ic_mean_min: -0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(档位差四档秩 [0=1, 1=2, 2=3, >=3=4],
+  该桶中位次日 close_final 实现档序) <=-0.6；
+  ic_mean/ic_ir 读"当日 14:30 档位差"对"次日 close_final 实现档序"的日频 Spearman；
+  两段同号（都 <=0）、OOS 同号；n 不足判 nan=fail。
+oos_window_ref: *id001
+data_binding:
+  signal_table: >-
+    c1_market.emotion_index（双 stage：WHERE stage='pre_open' 供先验档；WHERE stage='close_final' 供次日实现档） +
+    c1_market.kline_etf_1min（510300 盘中分钟代理，档位差信号侧）
+  signal_column: >-
+    信号侧：与 calibration__03 同口径（emotion_index@pre_open 先验档序 + intraday_tomorrow_forecast 融合档序，档位差 = 融合 − 先验）；
+    目标侧：emotion_index@close_final 次日行的 emotion_index 分量映射至 8 态档序（shift(-1)）。
+  signal_derivation: >-
+    信号侧完全等同 calibration__03（同一份 intraday_tomorrow_forecast 输出，禁分叉实现）；
+    目标侧 = shift(-1) 后 T+1 日 emotion_index WHERE stage='close_final' 的 emotion_index 分量映射至
+    8 态悲观档序（蓝图 §2 全序）；
+    **本卡必须读 close_final 段**（目标唯一真源），无替代口径；
+    组合器件路径与 calibration__03 同（intraday_tomorrow_forecast.py, MOD-PLAN-025，实测存在）。
+  target_source: "emotion_index@close_final (T+1) → 8 态档序 → shift(-1) 目标（现执行器 calibration _series_metrics shift(-1) 兼容）"
+  data_window_evidence: >-
+    §3 在册事实直引（禁自创数字）：
+    `c1_market.emotion_index` 10 月**仅 pre_open 腿**、`stage='close_final'` 行数=0（候 QMT 终端复元）；
+    ⇒ 目标侧 close_final 段 **2026-10-01 起 = 0 行**，本卡无法在 OOS 尾段（2025-10-09..2026-06-30 之后延伸段
+    与生产期）取到真值；
+    IS 窗（2021-07-01..2025-09-30）的 close_final 覆盖情况**未由本车道实测**（21:00–22:30 窗禁 CH 重查询）；
+    夜矿 L3 comparison__02 卡曾记 close_final "2019..2025=244/243/243/242/242/242/243+2026=186 天"——
+    与本任务书 §3 现况"10 月 close_final=0" **数字冲突**，本车道不复用夜矿数字，
+    改以 §3 现况 + 待总包 22:30 后实测 为准；冲突详情记本车道台账 §4 确认点 1。
+  blocked_reason: >-
+    缺表缺段明列 = c1_market.emotion_index WHERE stage='close_final' AND trade_date >= '2026-10-01'（当前 0 行）。
+    本卡 target 直接绑 close_final 段实现档（唯一真源，无替代），断供期无法算 IC/响应曲线；
+    IS 段 2021-07-01..2025-09-30 是否覆盖亦未实测（禁 CH 重查询窗）⇒ 一律以 §3 现况封 blocked_on_data。
+  unlock_criteria: >-
+    解锁判据 SQL（QMT 复元后由总包实测执行）：
+    `SELECT min(trade_date), max(trade_date), count() FROM c1_market.emotion_index
+     WHERE stage='close_final' AND trade_date >= '2026-10-01'`
+    要求 max(trade_date) >= '2026-11-30' 且 count() >= 20（约一个月交易日面）；
+    同时补测 IS 段：
+    `SELECT toYear(trade_date), uniqExact(trade_date) FROM c1_market.emotion_index
+     WHERE stage='close_final' AND trade_date >= '2021-07-01' GROUP BY toYear(trade_date) ORDER BY y`
+    要求逐年 uniqExact(trade_date) >= 200；
+    两测齐 ⇒ status 由 blocked_on_data 转 preregistered（总包单口写，本车道不改此件），**窗口/分桶/门柱不动**。
+  pre_open_pivot_note: >-
+    若 QMT 长期不能复元，可考虑将 target 改绑 pre_open（次日盘前档）作为代理——
+    但这**是换题不是解锁**（pre_open 是当日开盘前的读数、close_final 是收盘定案，
+    语义不同）；本卡不做此 pivot，另轨处置。
+infra_gap: >-
+  blocked_on_data=c1_market.emotion_index WHERE stage='close_final' AND trade_date>='2026-10-01'（0 行，候 QMT 终端复元）；
+  执行器无缺口（calibration 族单臂 shift(-1) 兼容）。
+sources:
+  - 本车道台账 R1_L15_ledger.md §1（六向⑥数据）§7（T4 触发清单首位）
+  - MINING_BRIEF_R1.md §3 情绪面在册断供事实
+  - 姊妹卡 calibration__03（绑 pre_open 腿的 preregistered 版本，同窗口同组合器件路径）

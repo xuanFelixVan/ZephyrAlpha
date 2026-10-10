@@ -1,0 +1,82 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+node_id: TDM-E-L1-AGG
+family: calibration
+title_zh: 锚定四档状态轴·前向收益单调校准卡
+origin: tdm_algo_note_l1_agg
+hypothesis: >-
+  AGG 的宏观状态输入轴（锚定四档 r3/r2/r1/r4，由 vol_pct 固定结构阈值 0.30/0.60/0.80
+  定义，零拟合）按风险序对次日指数收益单调非增，且牛/熊两段与 OOS 同号——实现件头注释的在册
+  自述"四特征×双段探针唯一双段稳定轴=波动率风险轴（vol_pct 高→fwd20 收益更差）"若不可复核，
+  则本环的状态轴=噪声，双轨判定的宏观腿作废。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（G4-5）；四档阈值 0.30/0.60/0.80 逐字取 src/zephyr/regime/core/anchored_state_machine.py:36-39 与 classify_state()（结构阈值零拟合，非本卡拟合产物），卡内禁改；窗口与本战役 L1 族母卡同批（IS 2019-01-04..2023-12-31 / OOS 2024-01-01..2025-09-09）；风险序 r3<r2<r1<r4 先验钉死，事后禁按实测重排
+buckets:
+  type: ordinal_bucket
+  'on': dominant 四档（序 r3→r2→r1→r4）
+  min_obs_per_bucket: 60
+pillars:
+  tier_monotonicity: 四档桶中位次日收益 Spearman 单调 rho>=0.6（IS 窗内，风险序方向固定）
+  ic_floor: 日频 IC（档序 vs 次日收益）均值 <= -0.02 且 |IC_IR| >= 0.3（高警戒档应预示更差次日）
+  extreme_tier_gap: r4 档次日收益中位 − r3 档次日收益中位 <= -0.30pct（两端可分才谈得上分档）
+  regime_stability: 牛/熊两段档序与次日均值关系同号且均过 ic_floor
+  oos_hold: OOS 段同号不过拟合（在册自述的"双段稳定"由此卡独立复核，非沿用其结论）
+target:
+  primary: next_day_index_return（000300 T+1 收益，执行器 _series_metrics 现器 shift(-1) 口径可用）
+  secondary: null
+  note: fwd5/fwd20 多日前向收益面本卡不作机判门柱（在册执行器缺口①：_series_metrics 硬编码 shift(-1)），仅在产物中披露不参与过线
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-AGG.confidence
+preregistered_by: st-mineloop-20261010-L14
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(档序 r3=1,r2=2,r1=3,r4=4, 次日指数收益秩) 取绝对值判 >=0.6，
+  符号须为负（风险序越高收益越低）；ic_mean/ic_ir 读同一配对的日频秩相关（ic_mean_min 按执行器
+  地板 0.02 口径登记，本卡预期符号为负，负结果如实入册即支持"状态轴作废"分支）；两段同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.regime_state_anchored（dominant/vol_pct 列实测在册）+ c1_market.kline_index（symbol='000300' 的 close 列，标的价）
+  signal_column: dominant（四档态名）、vol_pct（分位自变量，审计用）；000300 close → 次日收益
+  signal_derivation: >-
+    逐日取 regime_state_anchored.dominant（该列由 classify_state(vol_pct) 按 <=0.30→r3 / <=0.60→r2 /
+    <=0.80→r1 / >0.80→r4 生成，源码实测 anchored_state_machine.py:98-110，本卡不重算阈值）；
+    档序映射 r3→1、r2→2、r1→3、r4→4（先验冻结）；
+    目标 = 000300 close 的 T+1 简单收益（shift(-1) 口径）；
+    PIT：状态取 t 日、收益取 t+1 日，禁未来信息（源码头注释 INVARIANTS 已声明 vol_pct 为 t 及以前 rolling 分位）。
+  target_source: "next_day_return(px_close['000300']) → 逐日 IC 序列 → _series_metrics(shift(-1))"
+  data_window_evidence: >-
+    在册引用（非本车道新查，21:00-22:30 禁 CH 重查询）：
+    `SELECT min(trade_date),max(trade_date),count() FROM c1_backtest.regime_state_anchored`
+    → 2017-07-11..2026-10-09 / 4,488 行，列实测 close/ma20/ma60/ma120/vol_pct/dominant/data_source/ingest_ts
+    ——原文抄自 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison__02_anchored_cap_curve_on_off.yaml:69-77；
+    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_index`
+    → 1990-12-19..2026-10-09 / 3,104,162 行 / 1,097 symbols，000300 实测 1,843 行覆盖 2018-06-01..2025-12-31
+    ——同上出处 ⇒ IS 起点 2019-01-04 在覆盖内，OOS 终点 2025-09-09 在覆盖内；
+    实现件实测存在：src/zephyr/regime/core/anchored_state_machine.py（TDM module_ref，MOD-REGIME-001，
+    classify_state/compute_features/build_states 三口已读）；
+    假设所指的"唯一双段稳定轴"自述实测在 anchored_state_machine.py:29-31（头注释，抄录见本卡 hypothesis）。
+infra_gap: null
+sources:
+  - config/trading_decision_map.yaml:675-712（TDM-E-L1-AGG 节点定义全文）
+  - src/zephyr/regime/core/anchored_state_machine.py:9,29-39,98-110（阈值与在册自述）

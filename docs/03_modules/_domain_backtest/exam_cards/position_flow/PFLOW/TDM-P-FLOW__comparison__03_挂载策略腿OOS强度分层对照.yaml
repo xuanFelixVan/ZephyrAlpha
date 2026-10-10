@@ -1,0 +1,89 @@
+schema_version: '1.0'
+card_id: TDM-P-FLOW/comparison/03_挂载策略腿OOS强度分层对照
+node_id: TDM-P-FLOW
+family: comparison
+title_zh: 输出持仓信号·对照卡：流根两支挂载策略腿的 OOS 衰减分层与剔除增益
+hypothesis: >-
+  本节点在 TDM 原文挂了两支策略腿（strategy_mounts，非空），且各自带在册 OOS 证据：
+  STR-MULTIFACTOR-098 IS SR=0.518 / OOS SR=0.156（衰减约 70%），
+  STR-MULTIFACTOR-099 IS SR=0.397 / OOS SR=0.404（几乎不衰减）。
+  前役 L4 的①上游只记"本节点无 data_refs/factor_refs、仅结构指向"，未取 strategy_mounts 面，
+  故本卡是该节点第一条**判据性上游陈述**：流根输出的持仓动作清单的增益主要由 OOS 稳定腿贡献。
+  双臂对照=全挂载腿（098+099）vs 剔除衰减腿（仅 099）。假设：剔除臂的 OOS 成本后 Sharpe 不劣于
+  全挂载臂且 MaxDD 不劣 ≥0pp（若剔除更好，则 098 腿应退役——净零；若不成立，如实入册保腿）。
+arm_definition:
+  A_full_mounts: 098+099 两腿信号按 TDM 挂载并存（现行语义）
+  B_drop_decayed: 仅 099 腿（剔除 IS→OOS 衰减 ≥50% 的腿）
+  C_single_decayed: 仅 098 腿（对照第三臂=衰减腿单独能撑多少，防"099 独大"误判为 098 无用）
+  held_fixed: 持仓叠层三维逐字承 TDM-P-FLOW/ablation/02（K=pyramid、X_stop=atr3x、X_breaker=dd20）、
+    票池 hs300、top20、inv_vol、cap20、成本档 frozen_l0——三臂只差"腿集合"（单点改动纪律）
+executor: 缺件——config/position_recipe_grid_schema.yaml 在册维集合（C_sizing/D1/D2/E/H/X_stop/X_breaker/
+  K/J_regime_switch）无 strategy_ref 腿开关维；factory_grid_executor.py 无"按 strategy_mounts 开闭信号腿"的
+  overlay ⇒ status=blocked_on_impl（既有 TDM-P-FLOW/ablation/02 走的是 overlay 维，非策略腿维，两者不同对象）
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；两腿 SR 取 TDM strategy_mounts.evidence 原文在册值（禁重算后挪门柱）；
+    剔除判据阈值"IS→OOS 衰减 ≥50%"写死，事后不得改为 60%/40%（G4-5）
+buckets:
+  type: arm_comparison
+  'on': 三臂（A/B/C）× {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 200（不足判 nan 不入判据）
+pillars:
+  drop_gate: B 臂（剔除衰减腿）相对 A 臂 OOS 成本后 Sharpe 差 >= -0.2 且 MaxDD 改善 >= 0pp
+  single_leg_gate: C 臂（只留衰减腿）OOS Sharpe 须 < A 臂（若 ≥，则"098 无用"叙事被证伪，保腿）
+  decay_gate: 两腿 IS→OOS Sharpe 衰减比须与 TDM evidence 原文同向（098 衰减 > 099 衰减），
+    重算值方向不符=本卡前置失效，如实报 DEVICE_OR_EVIDENCE_MISMATCH 而非判策略 fail
+  turnover_or_cost_gate: 三臂统一 frozen_l0 扣费 + stress_l2 复算；换手/成本/收益/回撤四框同报，
+    成本档升档后符号翻转=fail
+  oos_and_regime_gate: 剔除结论须在 OOS 与熊段同号
+  negative_honesty: 若"带衰减腿更好"成立，如实入册并撤销本卡的退役提请；碰钱面不许留无效腿也不许删有效腿
+target:
+  primary: oos_sharpe_after_cost_delta_B_minus_A
+  secondary: oos_maxdd_improvement_pp（B 相对 A）、C 臂 OOS Sharpe 绝对值
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.0
+  sharpe_delta_min: -0.2
+  oos_same_sign: true
+blocked_on_impl:
+  missing: 按 strategy_ref（TDM strategy_mounts）开闭信号腿的 grid 维 + 腿级 IS/OOS SR 重算器
+  needed_interface: 输入=腿集合（{098,099} 的子集）+ 同一 recipe，输出=臂的日 NAV 与腿级 SR 表；
+    SR 口径必须复用 strategy_exam.window_metrics（年化 244+MaxDD，禁另造分母）
+  unlock_condition: 腿开关维落地后改 status=preregistered（假设/三臂/门柱已冻结不动）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-FLOW.confidence
+preregistered_by: st-mineloop-20261010-L13
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.technical_indicator（24 列 cap 合成秩，与 TDM-P-FLOW/ablation/02 同一列清单）
+    + TDM strategy_mounts.evidence 原文所称 strategy_screen 面（全名与行数未经本车道 CH 实测核实）
+  signal_column: 腿集合标记（098/099/两者）下的日度合成秩与权重面；腿级 SR 取 evidence 原文值
+  signal_derivation: composite_signal（逐列截面秩 pct→逐日等权均值）→ monthly_topn_signals(top_n=20)
+    → 三臂各自按腿集合合成权重面 → 叠同一组 overlay
+  target_source: 三臂日 NAV → strategy_exam.window_metrics（sharpe/MaxDD），基准=kline_index 000300 close
+  data_window_evidence: |
+    在册原文引用（禁自创数字）：config/trading_decision_map.yaml 节点 TDM-P-FLOW 块
+    strategy_mounts 两条 evidence 逐字——"IS SR=0.518/OOS SR=0.156 run=C4-OOS-2024-2026；
+    CH strategy_screen 5行 oos_tested(CAND-5301c5d9d7c8)"（STR-MULTIFACTOR-098）与
+    "IS SR=0.397/OOS SR=0.404 run=C4-OOS-2024-2026；CH strategy_screen 5行 oos_tested(CAND-8664521af1a0)"
+    （STR-MULTIFACTOR-099）；本节点 battle_map_refs=['BM-BUY-03']、node_type=aggregation、
+    red_reason=terminal、data_refs/factor_refs/algo_refs 均空（前役即据此判"无机制面"）。
+    价格面承前役在册实测：c1_market.kline_daily_hfq 1990-12-19..2026-09-30，10,098,785 行
+    （docs/_working/nightmine_campaign/L4_ledger.md §一 CH 实测覆盖表）。
+    strategy_screen 的表全名/覆盖窗/行数=待总包 22:30 后实测（21:00–22:30 禁 CH 重查询，本车道未跑）。
+  ds_ref: 本节点无 data_refs；DS-009/DS-067 为本地账务件非 CH（前役 L4 已披露，本卡沿用仿真权重面）
+non_duplication_note: 净新增考法，不替代任何既有卡。与前役 TDM-P-FLOW/ablation/02 的区别=
+  02 考 overlay 维（止损/熔断/爬坡）整链有无，本卡考 strategy_mounts 腿集合有无（对象不同，跨域不并）

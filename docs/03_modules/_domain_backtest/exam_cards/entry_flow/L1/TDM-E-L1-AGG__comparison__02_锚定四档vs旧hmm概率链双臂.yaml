@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-AGG/comparison/02_锚定四档vs旧hmm概率链双臂
+node_id: TDM-E-L1-AGG
+family: comparison
+title_zh: 状态输入源切换（锚定四档 ↔ 旧 HMM 概率链）·双臂对照卡
+origin: tdm_algo_note_l1_agg_flip
+hypothesis: >-
+  AGG 的状态输入源已于 2026-09-23 由旧 HMM 概率链（c1_backtest.regime_snapshot_history）切换为
+  锚定风险四档（c1_backtest.regime_state_anchored，vol_pct 结构阈值 0.30/0.60/0.80 零拟合），
+  且旧链全量保留、回滚窗至 2026-10-23（config/trading_decision_map.yaml:700 原文）——本卡判"切换
+  有据"：同一 cap 机制下新链相对旧链的成本后 Sharpe 差 >= -0.2（不劣）且 MaxDD 改善 >= 5pp，
+  同时新链的档位翻转频率须低于旧链（零拟合阈值的稳定性收益）；三柱若全不成立，则切换属未验证改动。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（G4-5）；两链状态一律用各表在册 dominant 列，禁本卡重算 HMM（重训=新装置，另立卡）；配对基准=两链 trade_date 交集（交集不足 IS+OOS 全窗则本卡维持 blocked_on_data，禁单边取链）；阈值 0.30/0.60/0.80 取自源码 anchored_state_machine.py:36-39；事后挪=作废
+arms:
+  ANCHORED: 暴露吃锚定四档 → cap 曲线（A 臂=signal）
+  HMM_LEGACY: 暴露吃旧 HMM 概率链 dominant（同 cap 机制）（B 臂=signal_b）
+buckets:
+  type: arm_x_tier_pair
+  'on': 两臂 × 四档（各档停留日与两臂不一致日子集，各 n>=60）
+  min_obs_per_bucket: 60
+pillars:
+  sharpe_noninferiority: ANCHORED − HMM_LEGACY 的成本后 Sharpe 差 >= -0.2（切换不劣化的主柱）
+  tail_improvement: ANCHORED 相对 HMM_LEGACY 的 MaxDD 改善 >= 5pp
+  flip_frequency: ANCHORED 的相邻日档位翻转率 <= HMM_LEGACY 翻转率（零拟合结构阈值的稳定性主张，须单列出两臂翻转率数值）
+  disagreement_set: 两臂不一致日子集（约占比建档）上各自次日收益中位差（不一致=切换真正改变行为的地方，全集平均会稀释）
+  cost_gate: 两臂统一走冻结五档 [0,5,10,20,40]bp，逐臂非增且 40bp>=survival_floor=0.0，年化换手<=8.0x
+  oos_hold: OOS 段两主柱同号
+target:
+  primary: cost_adjusted_sharpe（两臂各一条全链 NAV）
+  secondary: max_drawdown / tier_flip_rate
+  note: 本卡只判输入源切换的结果侧代价，不复判 AGG/calibration/02 的状态轴单调性
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-AGG.confidence
+preregistered_by: st-mineloop-20261010-L14
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  sharpe_delta_min: -0.2
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.regime_state_anchored（dominant/vol_pct，实测在册）+ c1_backtest.regime_snapshot_history（dominant/shrinkage，行数在册、覆盖窗未实测）+ c1_market.kline_index（symbol='000300' close，标的价）
+  signal_column: signal=ANCHORED 臂逐日暴露；signal_b=HMM_LEGACY 臂逐日暴露
+  signal_derivation: >-
+    两臂共用 cap 机制 cap_t = 1 − 0.70×clamp((x_t − 0.30)/0.70, 0, 1)，其中 ANCHORED 臂 x_t=regime_state_anchored.vol_pct；
+    HMM_LEGACY 臂 x_t = 1 − shrinkage_t（shrinkage=旧链在册谨慎度输出，取补得"越谨慎越小"的同序），
+    两臂映射规则一字不动，只换输入源；
+    逐日按 trade_date 交集配对，非交集日两臂同时剔除（禁单边填充）；
+    旧链 run_id 择一规则=取 trade_date 覆盖最长的单一 run_id（与本车道熵卡同口径，禁跨 run 混算）。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → window_metrics(sharpe/max_drawdown)"
+  data_window_evidence: >-
+    在册引用（本车道未新查 CH）：regime_state_anchored 2017-07-11..2026-10-09 / 4,488 行
+    ——出处 TDM-E-L1__comparison__02_anchored_cap_curve_on_off.yaml:69-77；
+    regime_snapshot_history 3,635 行（同上文件 :73 记 `...count()` 实测，未含 min/max 与 run_id 分布）；
+    kline_index 1990-12-19..2026-10-09 / 3,104,162 行 / 1,097 symbols，000300 覆盖 2018-06-01..2025-12-31（同上）；
+    切换事实与回滚窗原文=config/trading_decision_map.yaml:700（"【AGG 消费切换终批 2026-09-23，Owner
+    production 翻转确认】…旧 HMM 链 regime_detector/regime_snapshot_history 全量保留"）；
+    data_window_evidence 缺面：regime_snapshot_history 的 min/max(trade_date) 与按 run_id 分组的行数/覆盖窗
+    ⇒ 待总包 22:30 后实测（命令原文建议：`SELECT run_id, min(trade_date), max(trade_date), count() FROM
+    c1_backtest.regime_snapshot_history GROUP BY run_id`）。
+  blocked_reason: >-
+    （1）旧链覆盖窗未实测，与锚定链的 trade_date 交集规模未知，无法确认能铺满 IS 2019-01-04..2023-12-31
+    + OOS 2024-01-01..2025-09-09（约 1,640 交易日），配对前提不成立则本卡不可考；
+    （2）旧链表写方口径在册自相矛盾（pipeline_events.py:1033 记唯一自动产出者=maybe_refresh_regime_snapshot，
+    fw_backtest.py:71 记唯一写方=manual CLI print_regime_history.py），须总包核实后择一入册（本卡不代裁）；
+    （3）解锁条件=（1）实测通过且（2）定口径后转 preregistered，窗口与门柱不动。
+sources:
+  - config/trading_decision_map.yaml:700（切换终批与旧链保留原文）
+  - src/zephyr/regime/core/anchored_state_machine.py:36-39（结构阈值）

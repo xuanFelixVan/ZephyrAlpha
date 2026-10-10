@@ -1,0 +1,89 @@
+schema_version: '1.0'
+card_id: TDM-E-L1/calibration/02_谨慎度分裂度熵轴保真度
+node_id: TDM-E-L1
+family: calibration
+title_zh: 谨慎度分裂度（概率熵）轴·校准卡（"越分裂越谨慎"机械式真伪）
+origin: tdm_algo_note_l1
+hypothesis: >-
+  总闸的谨慎度系数按册上口径="消费 RegimeSnapshot 的 7 态概率分布，概率越分裂越谨慎"
+  （config/trading_decision_map.yaml:398-400 原文）——该口径成立的机械判据=七维概率归一化熵
+  与在册谨慎度输出 shrinkage 单调正相关（rho>=0.6），且高熵日的次日指数收益不差于低熵日之反
+  （IC<=-0.02）；若熵与 shrinkage 无单调关系，则总闸实为单腿（危机腿）判定，"分布=谨慎度"的
+  叙事作废。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（G4-5）；熵式 H=−Σ p_i·ln p_i / ln(7)（七维=r1,r2,r3,r4,r10,r11,r12，列名实测源码 print_regime_history.py:60-64 _STATE_KEYS）；方向先验钉死=熵越高 shrinkage 越保守、次日收益越低，禁事后改符号；run_id 择一规则先验冻结=取 trade_date 覆盖最长之单一 run_id，禁跨 run 混算
+buckets:
+  type: quantile_decile
+  'on': 当日归一化概率熵（滚动窗内无标准化需要，直接用原始值分位）
+  min_obs_per_bucket: 60
+pillars:
+  entropy_shrinkage_mono: 熵十分位 × shrinkage 档序 Spearman 单调 rho>=0.6（口径成立的主柱）
+  entropy_return_ic: 熵对次日 000300 收益的日频 IC 均值 <= -0.02 且 |IC_IR| >= 0.3（分裂度须带预测内容，仅内部一致不算过线）
+  dominant_leg_audit: 高熵桶内 dominant 分布建档（若高熵日几乎全落 r10/r4 单腿，则"分裂度"只是危机腿的别名，如实记为冗余候选）
+  regime_stability: 牛/熊两段熵-收益关系同号且均过 ic 地板
+  oos_hold: OOS 段同号（r4/r10/r1 无稳定方向信息的在册警示见 TDM:405-406，本卡只测熵轴不测方向）
+target:
+  primary: next_day_index_return（000300 T+1，执行器 shift(-1) 现器口径可用）
+  secondary: shrinkage（在册谨慎度输出列，本卡传导终点之一，机判对象）
+  note: 分位/绝对值不作第二目标，防与本战役 L1/02 卡（cap 曲线开关）混判
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1.confidence
+preregistered_by: st-mineloop-20261010-L14
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman 取 (熵十分位秩, shrinkage 秩) >=0.6；
+  ic_mean_min 按执行器地板 0.02 登记，本卡预期符号为负（高熵→更差次日收益），
+  负结果=假设成立的证据，正符号=假设作废；两段同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.regime_snapshot_history（列实测清单抄自写入件源码 print_regime_history.py:60-63）+ c1_market.kline_index（symbol='000300' close）
+  signal_column: p_r1,p_r2,p_r3,p_r4,p_r10,p_r11,p_r12（七维概率）→ 归一化熵；shrinkage（在册谨慎度输出）；dominant（审计腿）
+  signal_derivation: >-
+    逐日 H_t = −Σ_i p_i,t·ln p_i,t / ln(7)，i∈{r1,r2,r3,r4,r10,r11,r12}，p 取自本表概率列；
+    概率列存在 NULL（写入件 _tsv_cell 把 None 落 \N，源码实测行 70-74）⇒ NULL 日不计入分桶（禁填 0 造数）；
+    传导终点 = 同表 shrinkage 列（PIT：t 日熵对 t 日 shrinkage 与 t+1 收益）；
+    单一 run_id 择一后取连续 trade_date 串，缺日不得插值。
+  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
+  data_window_evidence: >-
+    在册引用（本车道未新查 CH，21:00-22:30 禁重查询）：
+    `SELECT count() FROM c1_backtest.regime_snapshot_history` → 3,635 行
+    ——出处 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison__02_anchored_cap_curve_on_off.yaml:73；
+    写入件源码实测：scripts/backtest/print_regime_history.py:59-67（表名、_INSERT_COLUMNS 全列清单、
+    _STATE_KEYS 七态、DEFAULT_START='2019-01-01'、DEFAULT_LOAD_START='2014-01-01'）；
+    data_window_evidence 缺面（明列）：该表 min/max(trade_date) 与 **按 run_id 分组的行数/覆盖窗** 未在册实测
+    ⇒ 待总包 22:30 后实测（命令原文建议：`SELECT run_id, min(trade_date), max(trade_date), count() FROM
+    c1_backtest.regime_snapshot_history GROUP BY run_id ORDER BY count() DESC`）。
+  blocked_reason: >-
+    blocked_on_data 且另有一处在册文档矛盾（登记不代修）：
+    （1）覆盖窗未知——3,635 行跨 run_id 分布未实测，无法确认单一 run_id 能铺满 IS 2019-01-04..2023-12-31
+    +OOS 2024-01-01..2025-09-09（约 1,640 交易日）；
+    （2）本表写方口径自相矛盾：src/zephyr/strategy_pipeline/pipeline_events.py:1033 记
+    "regime_snapshot_history 的唯一自动产出者=maybe_refresh_regime_snapshot"，
+    而 src/zephyr/strategy_pipeline/fw_backtest.py:71 记"现状: c1_backtest.regime_snapshot_history
+    唯一写方=print_regime_history.py（manual CLI）"——两行同表冲突，须由总包核实后择一入册（本卡不代裁）；
+    （3）解锁条件=上述两项实测完成后转 preregistered，窗口与门柱不动。
+sources:
+  - config/trading_decision_map.yaml:398-413（谨慎度消费口径与 fail-closed 原文）
+  - scripts/backtest/print_regime_history.py:59-74（列清单与七态键名）
+  - src/zephyr/strategy_pipeline/pipeline_events.py:1033 与 src/zephyr/strategy_pipeline/fw_backtest.py:71（写方口径矛盾两处）

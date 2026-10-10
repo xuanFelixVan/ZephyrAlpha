@@ -1,0 +1,101 @@
+schema_version: '1.0'
+card_id: TDM-P-FLOW/ablation/04_三段子环并入完备性消融
+node_id: TDM-P-FLOW
+family: ablation
+title_zh: 输出持仓信号·消融卡：流根三段子环（P1 体检/P2 做T/P3 加仓）逐腿并回的增量与边表完备性
+hypothesis: >-
+  本节点 algo_note_zh 原文声明"组成=对账体检（P1）→做T（P2）→加仓（P3）"，但 TDM edges 面
+  指向 TDM-P-FLOW 的入边只有一条（from_node: TDM-P-P3, feed, continuous）。
+  即"叙述三腿、边表一腿"。本卡把该缺口转成可判消融：三段子环的**图外代理腿**逐腿并回
+  （P1 腿代理=X_stop=atr3x+X_breaker=dd20 的体检否决面，P3 腿代理=K=pyramid，P2 腿=做T 增量），
+  假设：全腿并入 >= 任一子集（正交互），且 P1 腿单独即可贡献整链增益的大半（体检=持仓流的主要价值）。
+  若 P2 腿并入后无增量甚至为负，则"三件事"叙事里的做T 腿在回测平面不可考（料已证：日频做T=伪造），
+  本卡须把该腿判为 DEVICE_INCOMPATIBLE 而非"无信号"。
+arm_definition:
+  S0: 全 off 基线（lump / X_stop=off / X_breaker=off）
+  S1: 仅 P1 腿（X_stop=atr3x + X_breaker=dd20）
+  S3: 仅 P3 腿（K=pyramid）
+  S13: P1+P3
+  S123: P1+P3+做T 腿（需新装置，见 executor）
+  held_fixed: 信号源=批1 pass 列 cap24 文档序、hs300、top20、D1=monthly、C_sizing=inv_vol、
+    E_single_cap=cap20、成本档 frozen_l0——臂间只差被并入的子环腿（单点改动）
+executor: 缺件——P1/P3 两腿在 D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py 已有调用点
+  （_apply_exit_overlay 调用点 L838、_apply_dd_breaker_overlay 调用点 L841、
+  _apply_capital_ramp_overlay 定义 L1058 且 K 维受 context capital_ramp_enabled 折叠，DEFAULT_CONTEXT=False）；
+  **P2 做T 腿无任何回测维**（在册=独立考试件 scripts/audit/t0_conditional_e4_v3_exam.py，
+  与 grid recipe 不同平面；且 H9 §4.2 判"日频做T=伪造"）⇒ S123 臂不可执行，
+  status=blocked_on_impl（S0/S1/S3/S13 四臂可在开闸后跑，但全腿结论缺腿即不完整，不降级为四臂卡）
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  warm_start: '2017-10-01（ATR14 暖机 3 个月，不进信号窗，承 TDM-P-FLOW/ablation/02 口径）'
+  frozen_note: 看数前冻结；五臂集合与"正交互"判据写死；开闸（capital_ramp_enabled=True）=配置位非代码位，
+    不构成事后挪门柱
+buckets:
+  type: arm_comparison
+  'on': 五臂 × {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 200
+  sub_buckets: P2 腿子集=做T 资格命中日（在册实测：V3 主考 0 对、全材料仅 26 对 < 30 土规线）
+pillars:
+  monotone_gate: S13 >= max(S1, S3)（整链增益≥单腿最大值，否则=腿间互相抵消，转单腿归因卡）
+  p1_share_gate: S1 的 OOS MaxDD 改善 >= S13 的 60%（"持仓流主要价值在体检"的量化断言；不足即证伪）
+  p2_leg_gate: S123 相对 S13 的 OOS 成本后 Sharpe 差 >= 0（不足则做T 腿在回测平面判无增量并如实入册）
+  device_gate: 做T 子集样本 < 30 ⇒ 该面只许报 DEVICE_INCOMPATIBLE/INSUFFICIENT_SAMPLE 三态，
+    禁把"无料"判成"无信号"（承前役 L4 三态出口纪律）
+  turnover_or_cost_gate: 五臂统一 frozen_l0 扣费 + stress_l2 复算；换手/成本/收益/回撤四框同报，
+    升档符号翻转=fail
+  oos_and_regime_gate: 单调性结论在 OOS 与熊段同号
+  negative_honesty: 若"三腿叙事"被证伪（一腿足矣），本节点的边表与 algo_note_zh 须提请改写（治理产出）
+target:
+  primary: oos_maxdd_improvement_pp_by_arm（各臂相对 S0，pp）
+  secondary: sharpe_after_cost_delta 与 P1 腿增益占比（S1/S13）
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.05
+  sharpe_delta_min: -0.2
+  oos_same_sign: true
+  arm_monotone_ok: true
+  p1_share_min: 0.60
+blocked_on_impl:
+  missing: 做T 腿并入 grid 的重放开关（或等价：把 t0_conditional_e4_v3 配对结果作为日度腿增量注入 NAV 的接口）
+  needed_interface: 输入=既有 S13 臂日 NAV + 做T 命中日集合（日期、票、净 bp），输出=S123 臂调整后 NAV；
+    成本口径必须复用 matching_logic.COMMISSION_RATE（万0.854）与 t0 件内 31.2bp，禁新数
+  unlock_condition: 注入件落地后改 status=preregistered；若做T 腿被判定永不进 grid 平面，
+    则本卡转"边表完备性治理卡"并提请 TDM 补两条入边（P1→FLOW、P2→FLOW）或删 algo_note_zh 的三腿叙事
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-FLOW.confidence
+preregistered_by: st-mineloop-20261010-L13
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.technical_indicator（经 TableRegistry/ch_data.T_TECHNICAL_INDICATOR）
+    + c1_market.kline_daily_hfq（ATR14 自算）
+  signal_column: 批1分数册 verdict==pass 的 ch_backings 首列，文档序去重 cap 24（承 prereg_frozen.yaml
+    device.columns_cap24 同一清单，禁挑列）
+  signal_derivation: composite_signal → monthly_topn_signals(top_n=20) → 各臂叠 overlay；
+    做T 腿=S123 待施工注入项
+  target_source: 各臂日 NAV → strategy_exam.window_metrics；基准=kline_index 000300 close
+  data_window_evidence: |
+    边表事实（本车道 Grep 实读，config/trading_decision_map.yaml 原文行）：
+    L6378 `- {from_node: TDM-P-P3, to_node: TDM-P-FLOW, edge_type: feed, payload_type: signal,
+    frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}`——全仓 grep TDM-P-FLOW 仅此一条入边、
+    零条出边（与前役"下游无（终点）"一致，但**P1/P2 未接入流根**是前役六向未记的事实）。
+    做T 料面在册实测（前役 L4_ledger.md §二 P2-01/P2 行 + docs/_working/t0_matrix/
+    t0_conditional_e4_v3_verdict.md）：V3 主考 0 对、禁做侧 26 对净均 -36.26bp、前置命中率 0.2308、
+    宏观放行 20 对被情绪门 100% 否决。
+    价格面：c1_market.kline_daily_hfq 1990-12-19..2026-09-30 / 10,098,785 行（L4_ledger.md §一实测表）。
+    K 维折叠事实：factory_grid_executor.py DEFAULT_CONTEXT capital_ramp_enabled=False（前役实读 L122）。
+non_duplication_note: 净新增考法，不替代任何既有卡。与 TDM-P-FLOW/ablation/02 的区别=
+  02 考"整链有无+三条叠层单腿定位"（维度=overlay 开关），本卡考"三段子环的图上证成与 P1 腿占比"
+  （对象=子环腿并入完备性 + 边表缺口治理产出），判据面与结论出口均不同，属跨对象不并。

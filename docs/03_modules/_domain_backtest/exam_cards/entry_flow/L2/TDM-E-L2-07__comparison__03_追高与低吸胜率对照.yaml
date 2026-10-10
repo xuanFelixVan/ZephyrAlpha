@@ -1,0 +1,87 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-07/comparison/03_追高与低吸胜率对照
+node_id: TDM-E-L2-07
+family: comparison
+title_zh: 回踩低吸 vs 追高突破·胜率对照卡
+hypothesis: >-
+  TDM 本节点 algo_note_zh 原文写死"回踩是买点质量的核心判据——追高和低吸的胜负率差一倍"，
+  这是一句可判数值主张（胜率比≈2.0），前役 L1 车道在本节点只立了一张消融卡（考离散化与门控），
+  该"差一倍"主张从未被任何卡冻结过。本卡假设：在同一板块×日样本上，低吸臂
+  （板块处于 fib_ratio∈[0.382,0.618] 回踩带且缩量）相对追高臂（板块 close 创 60 日新高）
+  的次日判别面满足 日胜率比 >= 2.0；若实测胜率比 < 1.5，则节点措辞"差一倍"应改写（地图文字裁定材料）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；两臂共用同一行集（paired_arm_protocol：仅入组条件异，零行循环差异）；
+    fib_ratio 与新高判定全部用本卡 signal_derivation 自算口径，禁直读 sector_state 列（该列 2022..2025
+    实测 strength 全 0，在册前役台账 §3-P9）；臂 A 的带宽 [0.382,0.618] 与臂 B 的 60 日新高窗一经冻结不得回改
+buckets:
+  type: dim_pair
+  'on': 'arm 对 {arm_A_pullback_buy=低吸, arm_B_breakout_chase=追高}（板块×日二值成员，同一目标行集）'
+  min_obs_per_bucket: 60
+pillars:
+  win_rate_ratio: 低吸臂日胜率 / 追高臂日胜率 >= 2.0（IS 窗内，"差一倍"的字面判据）
+  paired_edge: OOS 段配对 Sharpe 差 >= 0.2 且 MaxDD 改善 >= 5pp（低吸臂为开臂）
+  regime_stability: bear/rebound 两段同号（回踩买点理应在熊段更占优，反向即主张失效）
+  tradability_guard: 追高臂在 close 触涨停（c1_market.stk_limit 不复权口径）的样本按不可成交剔除，
+    两臂套同一剔除规则后再计胜率（防把买不到的板算成赢）
+  null_leg_disclosure: 时间窗外（pullback_days 不属于闭区间 [2,15]）的样本两臂同步剔除，不得只喂一臂
+target:
+  primary: next_day_index_return（CSI300 次日收益，双臂共用同一目标序列，执行器 shift(-1) 口径）
+  secondary: sector_next5d_win_rate_by_arm（板块 5 日超额>0 的占比，两臂各算；胜率比在此读出）
+  note: 本卡考"追高/低吸"两买点类型的相对质量，与 L2-07/ablation/02（离散化与门控边际）、
+    L2-07-1/calibration/02（四因子合成分响应曲线）三卡对象互不重叠；出分不得外推到个股层（对象=板块）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-07.confidence
+preregistered_by: st-mineloop-20261010-L12
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  sharpe_delta_min: 0.2
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880（close/high/low/amount） + c1_market.kline_index（symbol='000300' 的 close）
+    + c1_market.stk_limit（涨停剔除面，不复权 kline_daily 配套口径）
+  signal_column: kline_sector_880.close, kline_sector_880.high, kline_sector_880.low, kline_sector_880.amount,
+    kline_sector_880.code, kline_sector_880.trade_date, kline_index.close, stk_limit.up_limit
+  signal_derivation: 板块宇宙=industry_l1(61 codes) ∪ industry_ths(128 codes) 冻结族（=189 codes，防板块宇宙
+    376→729 扩张冒充信号，凭据=前役台账 §3-P4/P9）；swing_high=滚动 60 交易日 high 最大值、
+    swing_low=滚动 60 交易日 low 最小值（各含 60 日预热，预热段两臂同步丢弃）；
+    fib_ratio=(swing_high-close)/(swing_high-swing_low)（swing_high<=swing_low 的样本记 nan 不补零）；
+    pullback_days=close 距上一次创 60 日新高的交易日计数；
+    vol_ratio5=roll_mean(amount,5)/max(amount,60)；
+    臂 A（低吸）成员=fib_ratio∈[0.382,0.618] 且 vol_ratio5<=0.50 且 pullback_days∈[2,15]；
+    臂 B（追高）成员=close>=swing_high（即 fib_ratio=0.0，创 60 日新高）且 pullback_days 无约束；
+    两臂权重矩阵=成员日取 1、非成员日取 nan（不做全市场归一，保证同一行集配对）；
+    涨停剔除=当日板块内 close>=stk_limit.up_limit 的 symbol-day 不计入胜率分子分母（板块层用触及家数占比>50%
+    判整板块不可成交并剔除该板块×日）。
+  target_source: kline_index(symbol='000300').close → next_day_return（主轴，双臂共用）；
+    辅轴=kline_sector_880.close 的 5 日 forward return 减同期 000300 5 日收益 → 按臂取 win_rate
+  data_window_evidence: 全部引用在册实测（21:00-22:30 禁 CH 重查询，本车道未自取新数）：
+    ①kline_sector_880 行业族 industry_l1=2021-08-02..2026-10-08/78263 行、industry_ths=同窗/163038 行，
+    close/high/low/amount 满配（前役 L1 台账 §3-P4）；②kline_index 000300=2005-01-04..2026-10-09/5284 行
+    （§3-P10）；③涨停判定 MUST 用不复权 c1_market.kline_daily 配 c1_market.stk_limit，
+    stk_limit=2015-01-05..2026-10-09/9254772 行（§3-P7），用 kline_daily_hfq 会得 3882 家涨停荒谬值
+    （任务书 §3"涨停判定口径"行）；④sector_state.strength 2022..2025 全 0 ⇒ 本卡不直读该列（§3-P9/A6）；
+    ⑤60 日预热使 IS 有效起点约 2021-11，约 515 交易日×189 板块（§3-P4 同批推算）。
+    本卡未新增实测项；若总包 22:30 后实测发现 amount/high/low 分年缺口，按 blocked 处理不改判据面。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_pullback.py（module_ref=MOD-SIG-026，module_mounts=MOD-SIG-116）；
+    fib_retrace_ratio 与 PULLBACK_MIN_DAYS=2/PULLBACK_STALE_DAYS=15 为在码既有常量，本卡臂 A 的入组条件与之对齐
+  blocked_scope: 无（板块指数面自 2021-08-02 可考；个股层追高/低吸对照属 L3 对象，本卡不越界）
+sources:
+- 族级矿脉 S6 回踩/Fibonacci 买点（学术证据薄=待验证），URL+发布方+年份见前役 L1 台账 §2-S6；
+  本卡按该族判据"图表形态类规则的可测性靠对照而非直接显著性"设计为双臂 paired comparison

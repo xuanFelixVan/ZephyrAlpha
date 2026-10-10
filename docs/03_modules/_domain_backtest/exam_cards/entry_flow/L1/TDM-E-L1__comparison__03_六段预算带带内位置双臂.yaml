@@ -1,0 +1,86 @@
+schema_version: '1.0'
+card_id: TDM-E-L1/comparison/03_六段预算带带内位置双臂
+node_id: TDM-E-L1
+family: comparison
+title_zh: 六段情绪预算带·带内位置上/下沿双臂对照卡
+origin: tdm_algo_note_l1
+hypothesis: >-
+  册上六段预算带（吸筹 30-50%／点火 50-70%／扩张 60-80%／亢奋封顶 30% 只卖不买，
+  config/trading_decision_map.yaml:400 原文）若真有信息，则"同段内取带上沿"与"取带下沿"两臂的
+  表现差须在段间呈结构差（进攻段取上沿更优、亢奋/派发段取下沿更优）；若六段上两臂差的符号全一致
+  （等于一个常数偏置），则预算带=对暴露的重复缩放，"月级定大档、日级水温微调"无经验支撑。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（G4-5）；六段带数值逐字取 TDM:400（吸筹 0.30-0.50/点火 0.50-0.70/扩张 0.60-0.80/亢奋上沿 0.30 且只卖不买），卡内禁改禁重拟合；点火/扩张之外的段名以册上四段为准，派发/退潮段带的缺失如实登记为"无带可用"臂（不臆造数值）
+arms:
+  UPPER: 逐日暴露=当日段态预算带上沿（A 臂=signal）
+  LOWER: 逐日暴露=当日段态预算带下沿（B 臂=signal_b）
+  EUPHORIA_TIE: 亢奋段两臂均取 0.30 且只做减仓（册上"只卖不买"，两臂在此段同值⇒该段 n 单列不入差判）
+buckets:
+  type: arm_x_emotion_stage
+  'on': 两臂 × 六段段态（每段两臂配对，段内 n>=60 才判该段）
+  min_obs_per_bucket: 60
+pillars:
+  stage_structure: 六段（含无带段单列）中至少 3 段的两臂 Sharpe 差符号随"进攻性"排序单调（结构存在的定义；全同号=常数偏置判负）
+  risk_side: 取上沿臂的 MaxDD 不劣于取下沿臂超过 5pp 之上（亢奋/派发段应体现带顶压制价值）
+  giveback: 上沿臂相对下沿臂的年化收益差 >=0（带内位置若既不加收益又加回撤⇒带位置=纯噪声）
+  cost_gate: 两臂统一走冻结五档 [0,5,10,20,40]bp，逐臂非增且 40bp>=survival_floor=0.0，年化换手<=8.0x
+  oos_hold: OOS 段两柱同号
+target:
+  primary: cost_adjusted_sharpe（两臂各一条 NAV）
+  secondary: max_drawdown / annual_return
+  note: 与 L1/02 卡（cap 曲线开/关）不混判——本卡固定 cap 曲线只动带内位置，隔离"带内位置"这一维
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1.confidence
+preregistered_by: st-mineloop-20261010-L14
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  sharpe_delta_min: -0.2
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: 逐日六段段态落台表（未在册，缺段明列见 blocked_reason）+ c1_backtest.regime_state_anchored（cap 曲线自变量 vol_pct，实测在册）+ c1_market.kline_index（权重帧基准价）
+  signal_column: signal=上沿臂逐日暴露；signal_b=下沿臂逐日暴露（run_card 双臂注入，缺口②口径）
+  signal_derivation: >-
+    暴露_t = min(cap_t, band_t)，cap_t = 1 − 0.70×clamp((vol_pct_t − 0.30)/0.70, 0, 1)（Owner 2026-09-14
+    签字档，公式抄 L1/02 卡在册口径，两臂共用）；
+    band_t 上沿臂=当日段态带的上界、下沿臂=同带的下界（四段带值见 frozen_note）；
+    段态_t 取当日六段相位判定输出（相位真源=TDM-E-L1-AGG 的六段产出，带时戳落台）；
+    两臂除 band_t 取值点外，一字不动（同装置对照）。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → window_metrics"
+  data_window_evidence: >-
+    在册引用：regime_state_anchored 2017-07-11..2026-10-09 / 4,488 行（vol_pct 列实测）
+    ——出处 TDM-E-L1__comparison__02_anchored_cap_curve_on_off.yaml:69-77；
+    情绪腿 c1_market.emotion_index stage='close_final' 2019..2025 逐年 244/243/243/242/242/242/243 天
+    ——出处 TDM-E-L1-AGG__ablation__02_state_input_replacement.yaml:74-76；
+    成本档=config/exam_scale_cost_gate.yaml（tiers_bp/survival_floor/cap_annual_x=8.0 实测冻结件，同上出处）；
+    data_window_evidence 缺面：逐日"六段段态"列名与覆盖窗未在册实测 ⇒ 待总包 22:30 后实测
+    （emotion_index 的 components/source/stage/version 之外是否有相位列，须实测后回填本行）。
+  blocked_reason: >-
+    三处缺段写死：
+    （1）六段相位逐日落台未在册——config/trading_decision_map.yaml:5939 原文记
+    "情绪聚合器=独立对话未建（纪要§8.3定案不代建）→红节点如实；既有六段相位判定（TDM-E-L1-AGG）
+    产出带时戳后经本节点落台"，即相位产出的历史落台面未证实；
+    （2）在册六段中册上只给四段带值（吸筹/点火/扩张/亢奋），派发与退潮段无带数值⇒本卡两臂在这两段
+    无可判对象（禁臆造带值，登记为覆盖缺口）；
+    （3）emotion_index 10 月 close_final=0（在册断供事实，任务书 §3）⇒2025-09-09 之后的近样年不可延展，
+    OOS 终点保持 2025-09-09 不动。
+    解锁条件=（1）(2) 补齐后转 preregistered，窗口与带值门柱不动。
+sources:
+  - config/trading_decision_map.yaml:400（六段预算带数值原文）
+  - config/trading_decision_map.yaml:5939（情绪聚合器未建/相位落台在册记名）

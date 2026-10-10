@@ -1,0 +1,102 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-01/comparison/02_等权与IC加权双臂
+node_id: TDM-E-L2-01
+family: comparison
+title_zh: 板块强度合成分·等权 0.25×4 vs IC 加权双臂对照卡（两路可算面，复挖漏矿）
+hypothesis: >-
+  本节点的权重律本身是一张未考的题：在码 MOD-SIG-142 的 DEFAULT_WEIGHTS=(0.25,0.25,0.25,0.25) 且 weights
+  形参可注入（件内注释原文"等权 0.25×4 为最大熵先验…IC 数据积累后按标准 IC 加权重校"），
+  前役 L1 台账 §1 本节点行把这一条写为"等权→IC 加权改权须先出分"却未出任何考卷（其 ablation/02 的臂集
+  {full2, drop_mom_active, drop_multi_period, full2+market_adj} 只考"子分剔除后的边际"，
+  其 target.note 反而把改权提案挂在"须等本卡出分"之后——两臂等权对照卡从未存在）。
+  本卡判据一句话：在只用 IS 窗估计 IC 权重（严格 PIT，禁看 OOS）的前提下，
+  IC 加权合成分构成的候选池组合，其 OOS Sharpe 相对等权臂的差 >= 0.10 且 MaxDD 改善 >= 1.0pp，
+  则"等权先验次优、应改 IC 加权"成立；|差| < 0.10 则等权先验不失据，改权提案维持不批。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: >-
+    看数前冻结（G4-5，事后挪门柱=作废）。窗口承同车道 ablation/02 与 ablation/03 的统一口径
+    （IS 起点被 880 行业族首交易日 2021-08-02 钉死，见 data_window_evidence），以保持三卡同窗可比。
+    两臂的子分派生系数逐字承 ablation/02 的 signal_derivation（路A=amount 截面 rank-pct + 5 日环比；
+    路B=0.2×q3+0.3×q5+0.5×q20 收益 rank-pct），禁在本卡重造或改系数。
+    IC 权重估计只在 IS 内：w_i = max(IS 日频截面 IC 均值_i, 0) 归一化；若两路 IS IC 均 <=0 ⇒
+    权重退化为 (0.5,0.5) 并在 evidence 计数披露（禁补任意小数冒充权重）。
+    候选池分位取节点原值 0.15（件常量 CANDIDATE_POOL_RATIO），本卡不扫分位——剂量-响应已由
+    ablation/03 独立持有，重复扫=摊薄。
+buckets:
+  type: dim_pair
+  'on': 权重律双臂 {arm_A_equal=(0.5,0.5)，arm_B_icweighted=IS 窗估计并冻结}
+  pairing: 同一子分底座、同一窗、同一 0.15 分位池规则，双臂逐日配对（仅权重向量不同）
+  min_obs_per_bucket: 60
+pillars:
+  sharpe_delta: arm_B 相对 arm_A 的 OOS 年化 Sharpe 差 >= 0.10（IS 内同向亦须成立，否则判 IS 侥幸）
+  maxdd_delta: arm_B 的 OOS MaxDD 相对 arm_A 改善 >= 1.0pp；若 Sharpe 达标而 MaxDD 未达标 ⇒ 判 partial 并如实入册，禁按单项通过
+  weight_stability: IS 内滚动 252 交易日重估的 IC 权重序列，其 arm_B 权重标准差 <= 0.15（权重自身不稳⇒改权提案无据）
+  pool_membership_drift: 双臂候选池的逐日成员重合率若 >= 0.95 ⇒ 判 DEVICE_INCONCLUSIVE（两臂近乎同物，不得报"无差"为结论）
+  regime_split: bear/rebound 两段 arm_B−arm_A 利差同号；反号⇒限定"改权仅在特定生态成立"，禁全窗结论
+  four_path_scope: 结论只约束两路可算面（自由度仅 1 维 w_A=1−w_B）；四路全量 IC 加权 blocked_on_data，
+    禁把本卡结果外推为"四路权重向量已定"（该 blocked 面与 ablation/02 的 blocked_scope 同段）
+target:
+  primary: 双臂池等权组合的 OOS 年化 Sharpe 差与 MaxDD 改善（组合底座=c1_market.kline_sector_880 行业族指数，次日收益）
+  secondary: 双臂池成员 5 日秩持续性之差（arm_rank_persistence_next5d，辅轴，不作通过判据）
+  note: 本卡出分即是 MOD-SIG-142 权重裁定的考题；出分前禁改码（承 ablation/02 target.note 同一纪律）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01.confidence
+preregistered_by: st-mineloop-20261010-L11
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  maxdd_improvement_min: 1.0
+  sharpe_delta_min: 0.10
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880（两臂共用底座，period='1d'）
+  signal_column: kline_sector_880.close（日收益与 q3/q5/q20 动量）、kline_sector_880.amount（活跃度路）
+  signal_derivation: >-
+    截面族冻结=industry_l1 ∪ industry_ths（承同车道 ablation/02 与 L2-07-1 卡的既有分母族口径，
+    剔除 880001-880011 市场统计指数，承 MOD-SIG-061 件内实证口径），按日在数 code 计算分位（禁固定 code 数）；
+    路A 动量活跃=当日 amount/Σamount 的截面 rank-pct 与其 5 日环比（两子项等权合成后×100）；
+    路B 多周期动量=0.2×q3+0.3×q5+0.5×q20 收益的 rank-pct×100；
+    arm_A=(路A+路B)/2；arm_B=w_A×路A+w_B×路B，(w_A,w_B) 由 IS 窗日频截面 IC 均值
+    （对 CSI300 次日收益）取正后归一，估毕即冻结不再更新；
+    双臂各自 clamp [0,100]（件内语义 max(0,min(100,raw))，不加市场级调节——调节臂已由 ablation/02 持有）；
+    池=arm 合成分截面 Top-15%（ceil(N×0.15)，保底 1 个，件内 select_candidate_pool 语义）；
+    组合收益=池内 880 行业族指数次日简单等权收益均值（无权重倾斜，无杠杆）。
+  target_source: kline_index 000300 close→次日收益（IC 估计与 Sharpe 基准）；池组合收益=880 close 次日收益截面均值
+  data_window_evidence: >-
+    引用在册实测，本车道 21:00–22:30 未跑 CH 重查询：
+    ①c1_market.kline_sector_880 行业族首末日=2021-08-02..2026-10-08，industry_l1 78263 行/61 codes、
+    industry_ths 163038 行/128 codes（L1 台账 §3-P3/P4 实测，本战役任务书 §3 亦在册）；
+    ②板块宇宙随年在扩（sector_state codes 376→729，L1 台账 §3-P9）⇒ 分位/占比类读数必须按日截面算分母；
+    ③目标面 kline_index symbol='000300'=2005-01-04..2026-10-09/5284 行（L1 台账 §3-P10）；
+    ④执行器：comparison 双臂已并入 scripts/backtest/fexam/calibration_exam.py:run_card（须注 signal+signal_b），
+    本卡两臂即 signal/signal_b 两列日度序列（任务书 §3 执行器缺口②在册结论）。
+  blocked_scope: 四路全量（含结构强度路、资金流路）的 IC 加权对照=blocked_on_data，
+    缺段=2019-01-04..2026-07-21 板块成分口径（sector_constituent 仅 6 个刷新日、
+    sector_constituent_snapshot 仅 19 个交易日，L1 台账 §3-P6/P7）；解锁后本卡须重跑为四维权重对照，窗口不动。
+  impl_ref: src/zephyr/signal_ashare/core/sector_strength_aggregator.py（MOD-SIG-142，DEFAULT_WEIGHTS 第 39 行、
+    weights 形参第 92 行、clamp 第 125-127 行、Top-ratio 池第 141-171 行）
+    + core/sector_strength_wiring.py（MOD-SIG-144，四维子分字段源）
+    + scripts/backtest/fexam/calibration_exam.py:run_card（双臂机判正门）
+executor: >-
+  考卷侧需 ≤60 行 arm driver（读 880 行业族→两路子分→IS IC 权重估计冻结→双臂池→组合日收益两列），
+  不改被测件、不新增口径；机判走 run_card 双臂分支。缺的是组装而非实现，故标 preregistered 非 blocked_on_impl。
+origin: remine_L11（漏矿来源=TDM 节点 algo_note"等权 0.25 合成"+件 INVARIANTS"weights 可注入重加权"，
+  与前役台账 §1 本节点行"须先出分"的自述缺口逐字对照，非"觉得还能加一张"）
+sources:
+  - 族级矿脉 S1/S3/S5（板块相对强度·多周期动量·因子权重与防过拟合），URL+发布方+年份见 L1 台账 §2-S1/S3/S5
+    （本卡复用其族级外部结论，未重复挖外部矿；外部只作"是否值得考"的依据，禁作参数来源）

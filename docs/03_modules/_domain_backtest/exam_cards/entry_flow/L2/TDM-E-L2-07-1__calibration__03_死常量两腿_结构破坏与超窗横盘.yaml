@@ -1,0 +1,99 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-07-1/calibration/03_死常量两腿_结构破坏与超窗横盘
+node_id: TDM-E-L2-07-1
+family: calibration
+title_zh: 回踩结构破坏腿（0.786）与超窗横盘腿（11-15 日）·校准卡
+hypothesis: >-
+  在码 sector_pullback.py 定义了两个从未接入 grade_pullback 的判据常量——
+  FIB_STRUCTURE_BREAK=0.786（">78.6% 趋势结构破坏，回踩转反转"）与
+  PULLBACK_HEALTHY_MAX_DAYS=10（"3-10 交易日健康窗"）——而本节点 invalidation 字段原文写死
+  "回踩>15 交易日转横盘失效；<2 日属盘中洗盘不入级；>78.6% 趋势结构破坏"。
+  前役 L1 台账只登记了"三维 vs 四维"的口径矛盾，既未发现这两个常量是死的，也没有为 invalidation
+  三条边界立过任何可判卡。本卡假设：这两腿确有信息——板块×日的"结构完整度分"（Fib 五档×回踩天数四档
+  合成，刻意不含量能与强度两维）对次日收益单调（rho>=0.6），且 fib_ratio>0.786 桶与 11-15 日桶的
+  板块 5 日超额均 <= 0（若两桶不劣化，则地图 invalidation 文字与死常量应删除而非留档）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；Fib 五档边界 0.382/0.500/0.618/0.786 取自在码常量
+    （FIB_SHALLOW_MAX=0.50、FIB_DEEP_MAX=0.618、FIB_STRUCTURE_BREAK=0.786）与地图 38.2% 主张的并集，
+    时间四档边界 2/3/10/15 取自在码常量（PULLBACK_MIN_DAYS=2、PULLBACK_HEALTHY_MAX_DAYS=10、
+    PULLBACK_STALE_DAYS=15）；两维权重固定 0.5/0.5（不估权重，估权是另一张卡的事）；
+    与 L2-07-1/calibration/02 的分工=02 考四因子合成分（含量能/强度）的响应曲线，本卡只考地图 invalidation
+    对应的两腿，两卡对象不同不得互替
+buckets:
+  type: quantile_quintile
+  'on': 板块×日的结构完整度分 S（0-1， Fib 五档分×0.5 + 时间四档分×0.5）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位次日收益 Spearman 单调 rho>=0.6（IS 窗内，S 越高分越高越好）
+  ic_floor: 日频截面 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  deep_break_bucket: fib_ratio>0.786 档子集（S 的低分腿单独出数）的板块 5 日超额 <= 0，
+    且必须劣于 0.618-0.786 档（两档并列报数，缺一即判据不成立）
+  stale_days_bucket: pullback_days∈(10,15] 子集的板块 5 日超额 <= 0，且劣于 3-10 日档
+    （PULLBACK_HEALTHY_MAX_DAYS=10 的直接检验）
+  washed_out_bucket: pullback_days<2 子集单独出数（地图主张"属盘中洗盘不入级"，若不劣化则该句应改）
+  lag_profile: S 的效应峰值落在 t+1..t+3、半衰期 >= 1 交易日（结构破坏是慢变量，若峰值在 t+5 之后
+    则说明读到的是别的东西）
+  regime_stability: bear/rebound 两段同号（结构破坏腿在熊段更该显形）
+target:
+  primary: next_day_index_return（CSI300 次日收益，series 面，执行器 shift(-1) 现器可考）
+  secondary: sector_next5d_excess（板块 5 日超额，panel 主对象，三桶并列判据在此读出；辅轴不作为过考门柱）
+  note: 出分只裁定"两腿是否有信息"，不裁定四因子权重（那是 02 卡的题）；
+    若两腿均不显著，建议动作=删地图 invalidation 里的 78.6% 句并在码删除死常量（施工侧提案，本卡不代改）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-07-1.confidence
+preregistered_by: st-mineloop-20261010-L12
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880（close/high/low） + c1_market.kline_index（symbol='000300' close）
+  signal_column: kline_sector_880.close, kline_sector_880.high, kline_sector_880.low, kline_sector_880.code,
+    kline_sector_880.trade_date, kline_index.close
+  signal_derivation: 板块宇宙=industry_l1(61) ∪ industry_ths(128)=189 codes 冻结族（防宇宙 376→729 扩张冒充信号）；
+    swing_high/swing_low=滚动 60 交易日 high/low 极值（60 日预热段剔除）；
+    fib_ratio=(swing_high-close)/(swing_high-swing_low)，swing_high<=swing_low 记 nan 不补零；
+    Fib 分档 fib_score：fib_ratio<=0.382→1.00；(0.382,0.500]→0.85；(0.500,0.618]→0.65；
+    (0.618,0.786]→0.35；>0.786→0.00；
+    时间分档 day_score（pullback_days=close 距上一次创 60 日新高的交易日数）：3<=d<=10→1.00；
+    2<=d<3→0.60；10<d<=15→0.40；d 不属于闭区间 [2,15]→nan（不入级，另按 washed_out_bucket 单独出数时用原始成员）；
+    S=0.5×fib_score+0.5×day_score（两腿任一为 nan 则该板块×日 S 记 nan，不做单腿顶替）。
+  target_source: kline_index(symbol='000300').close → next_day_return（主轴）；
+    辅轴=kline_sector_880.close 的 5 日 forward return 减同期 000300 5 日收益，按三桶分组
+  data_window_evidence: 全部引用在册实测（本车道 21:00-22:30 未自取新数）：
+    ①kline_sector_880 industry_l1=2021-08-02..2026-10-08/78263 行、industry_ths=同窗/163038 行，
+    OHLC 满配（前役 L1 台账 §3-P4）；②kline_index 000300=2005-01-04..2026-10-09/5284 行（§3-P10）；
+    ③60 日预热使 IS 有效起点约 2021-11，约 515 交易日×189 板块（§3-P4 同批推算）；
+    ④节点 activation=intraday（config/trading_decision_map.yaml 第 1494 行）而本卡取日线收盘口径——
+    差异如实登记：板块级日内面 kline_sector_intraday 仅 2026-07-20 起约 55 交易日（§3-P7），
+    不足以冻结 IS 2021-08-02..2023-12-31 的日内窗，故本卡以日线近似并在 frozen_note 声明口径差异，
+    日内专卡另属 blocked（见台账 §4 长尾）。
+    死常量凭据（本车道直读源码所获，非 CH 取数）：sector_pullback.py 第 39 行 FIB_STRUCTURE_BREAK=0.786、
+    第 45 行 PULLBACK_HEALTHY_MAX_DAYS=10，两者在 grade_pullback（第 111-149 行）内零引用；
+    地图侧凭据=config/trading_decision_map.yaml 第 1495 行 invalidation 原文。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_pullback.py（MOD-SIG-026/MOD-SIG-116）；
+    消费方反查（本车道 Grep 实测）=src+scripts+config 内零生产消费方，仅 tests/research/signal_ashare/sector/
+    test_sector_pullback.py ⇒ 本卡是对"设计态判据"的考核，不依赖接线
+  blocked_scope: 日内（intraday）口径面 blocked_on_data：c1_market.kline_sector_intraday 仅
+    2026-07-20..2026-10-09、约 55 交易日（前役台账 §3-P7），与 60 日预热+min_obs_per_bucket=60 的
+    板块×日样本要求不兼容，无法覆盖 IS 2021-08-02..2023-12-31；解锁条件=板块级 1 分钟/L2 日内历史补至
+    2021-08-02 起 ≥250 交易日

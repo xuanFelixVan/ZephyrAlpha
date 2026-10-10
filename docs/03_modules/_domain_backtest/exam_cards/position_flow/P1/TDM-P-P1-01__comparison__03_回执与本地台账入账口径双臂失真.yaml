@@ -1,0 +1,101 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-01/comparison/03_回执与本地台账入账口径双臂失真
+node_id: TDM-P-P1-01
+family: comparison
+title_zh: 持仓对账与台账快照·对照卡：交易所回执入账 vs 本地委托终态入账对股数/成本的失真
+hypothesis: >-
+  前役 L4 判本节点"上游=QMT 桥 Stock.csv × 本地 strategy_book 逐笔核对"，**漏记一条在册入边**：
+  TDM edges L6263 `- {from_node: TDM-E-L4-10, to_node: TDM-P-P1-01, edge_type: feed, payload_type: signal,
+  frequency: daily}`。TDM-E-L4-10=订单生命周期状态机（九态），其 invalidation 原文写死
+  "PendingCancel 窗口内原单仍可成交=竞态，必须以交易所回执为准"。
+  ⇒ 本节点台账存在两个真实在册入账口径：①以交易所回执为准（撤单竞态日按回执修正股数/成本），
+  ②以本地委托终态为准（PendingCancel 即视为未成交）。
+  假设：在撤单/部分成交密集日，②口径的股数与成本失真显著>①口径，并级联抬高 P1-04 生死线误触发率
+  与 P1-02 分级混淆率。若两臂无差异，则"以回执为准"这条 invalidation 是多余的保守约束（净零提请）。
+arm_definition:
+  A_receipt: 按交易所回执重算股数/成本（含撤单窗口内迟到成交）
+  B_local_final: 按本地委托终态重算（PendingCancel=未成交）
+  C_stale_t1: 第三臂=本节点 fallback 原文口径"QMT 桥持仓文件缺失→沿用 T-1 快照"（考陈旧入账的独立失真）
+  events: 失真事件集=①撤单率超阈值日（在册红线：drawdown_liquidation_guard DEFAULT_WARN_CANCEL_RATE=0.12
+    / DEFAULT_HARD_CANCEL_RATE=0.15，L59/L61 实读）②持仓文件缺失日
+  held_fixed: 同一票池与同一批订单流（仿真委托序列），两臂只差入账口径（单点改动）
+executor: 缺件——双臂失真统计件（前役 L4 在册清单点名的"缺双臂失真件"即此位）：
+  需"仿真委托流 → 回执口径 vs 本地口径两套台账 → 与真值台账三方比对"的成组装置。
+  既有件全锁单一口径：exit_simulator.load_kline 与 prereg_frozen.yaml atr.price_basis 均 kline_daily_hfq，
+  position_checkup_orchestrator.py:298 只编排不下单、上游对账取数面未接线前 inputs 缺席=skipped
+  （TDM TDM-P-P1 块 algo_note_zh 原文）⇒ status=blocked_on_impl
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；1.5 倍失真判据与 T-1 陈旧窗（1 个交易日）写死；
+    除权/竞态两类事件集定义取 TDM 原文与在册撤单率红线，事后不得换阈值（G4-5）
+buckets:
+  type: event_sample
+  'on': 三类事件分层（撤单率>0.12 日 / 部分成交日 / 持仓文件缺失日）× 三臂
+  min_obs_per_bucket: 每类事件票-日 >= 200；不足只报计数并判 INCOMPLETE_EVENT_SAMPLE（不判无失真）
+pillars:
+  distortion_gate: B 臂（本地口径）在竞态事件上的股数/成本失真倍数 >= 1.5×A 臂，否则该 invalidation 无实证支撑
+  cascade_gate: B 臂相对 A 臂的 P1-04 生死线（-7%）误触发率差 >= 1pp 且 P1-02 分级混淆率差 >= 5%
+    （地基失真必须级联可见，否则失真面判不成立）
+  staleness_gate: C 臂（T-1 沿用）在除权事件票-日的浮盈符号错误率 >= 10%（fallback 的代价必须可量化）
+  tripartite_gate: 三臂同时报"相对真值台账"的偏差（禁止只报两臂互比而都不对真值——防共同漂移假绿）
+  turnover_or_cost_gate: 失真→动作→成本三方同框：每臂报误动作次数与该误动作的模拟扣费（frozen_l0 万0.854）
+  no_single_metric: 判据成组（失真倍数/级联/陈旧/三方比对/成本），禁单一数字定论
+  honesty: 本卡考台账口径失真而非收益增益，禁写成策略增益卡；负结果（无差异）同样有价值
+target:
+  primary: distortion_ratio_B_over_A（竞态事件上的成本/股数失真倍数）
+  secondary: 生死线误触发率差、分级混淆率差、C 臂浮盈符号错误率、误动作模拟扣费
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  distortion_ratio_min: 1.5
+  false_trigger_rate_diff_min_pp: 1.0
+  classification_confusion_min: 0.05
+  staleness_sign_error_min: 0.10
+  oos_same_sign: true
+blocked_on_impl:
+  missing: 回执口径 vs 本地口径可切换的双臂台账失真统计件（含第三臂 T-1 快照沿用注入开关）
+  needed_interface: 输入=仿真委托流（含 PendingCancel/PartialFill 事件）+ 回执序列表 + 持仓文件可得性掩码，
+    输出=三套 (symbol,date,shares,cost) 台账与相对真值的偏差矩阵、-7% 触发日集、1.5×ATR 分级日集；
+    ATR 复用 exit_simulator.atr14_wilder（禁重造），价格面 kline_daily_hfq 与 kline_daily 双取
+  unlock_condition: 失真件落地后改 status=preregistered（假设/三臂/事件集/门柱已冻结不动）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-01.confidence
+preregistered_by: st-mineloop-20261010-L13
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.kline_daily + c1_market.kline_daily_hfq + c1_market.adj_factor
+    （价格面）；台账本体面=DS-009 position.snapshot / DS-067 execution.position_tracker（本地契约/目录件，非 CH）
+  signal_column: 两套 (shares, cost) 台账序列与真值台账、除权标记、撤单率日标记、持仓文件可得性标记
+  signal_derivation: 仿真委托流按回执口径与本地口径各重放一遍得到两套装账，
+    与真值（仿真已知成交集）三方比对；T-1 臂=把 available_at 推迟一个交易日再重放
+  target_source: 不涉及收益增益——目标=失真倍数/级联触发差/陈旧符号错误率（同票-日配对比对）
+  data_window_evidence: |
+    在册原文引用：TDM edges L6263（E-L4-10→TDM-P-P1-01，feed/signal/daily，pit_proof=legacy-unaudited）；
+    节点 TDM-E-L4-10 invalidation 原文"PendingCancel 窗口内原单仍可成交=竞态，必须以交易所回执为准"、
+    algo_note_zh"每态有明确的超时与重试策略（如 PendingNew>3 秒重发确认）"、module_ref=
+    src/zephyr/ex_core/order_manager.py（MOD-L06-001）；
+    节点 TDM-P-P1-01 原文 data_refs=['DS-009','DS-067']、module_ref=
+    src/zephyr/position/core/position_state_machine.py、module_id=MOD-POS-002、
+    fallback"QMT 桥持仓文件缺失→沿用 T-1 快照+数据四态灯黄+人工核对"、
+    doc_ref=docs/_working/archive/2026-09/design_memos/93_qmt_file_bridge_playbook.md；
+    撤单率红线实读 src/zephyr/risk/core/drawdown_liquidation_guard.py:59
+    DEFAULT_HARD_CANCEL_RATE=0.15 / :61 DEFAULT_WARN_CANCEL_RATE=0.12 / :63 LIQUIDATION_TIMEOUT_SECONDS=30.0；
+    DS 非 CH 事实=data_asset_registry.yaml L1081（DS-009 position.snapshot）/L3144
+    （DS-067 execution.position_tracker）（前役 L4 实读，本车道沿用并复核行号）。
+    真值台账与委托回执在 CH 无对应表 ⇒ 本卡平面=仿真委托流，非宣称考了实盘对账；
+    回执表覆盖窗/行数=待总包 22:30 后实测（21:00–22:30 禁 CH 重查询，本车道未跑）。
+non_duplication_note: 净新增考法，不替代任何既有卡。与前役 TDM-P-P1-01/comparison/02（复权口径失真）
+  的区别=02 考"价格序列口径"，本卡考"成交入账口径（回执 vs 本地终态）+ fallback 陈旧"，
+  事件集与门柱均不同对象，故不并。

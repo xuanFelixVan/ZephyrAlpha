@@ -1,0 +1,92 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-07-1/ablation/03_强度维单位口径错配
+node_id: TDM-E-L2-07-1
+family: ablation
+title_zh: 回踩强度维单位口径（地图 >7 vs 在码 70/40）·消融卡
+hypothesis: >-
+  同一节点里"板块强度"存在三套单位：TDM-E-L2-07-1 文字写"板块强度（>7）"（10 分制语感）、
+  在码 sector_pullback.py 用 STRENGTH_STRONG=70.0/STRENGTH_MEDIUM=40.0 且 docstring 注明"板块强度分 0-100"、
+  接线模块 sector_strength_wiring 注明"结构强度=strength_score（0-100 直用）"、
+  同战役 L2-06-3 两张卡则按"板块强度 10 分制"取数。三套单位不可能同时为真。
+  本卡假设：强度维的实际信息量取决于单位口径——在码 0-100 口径（70/40）下强度维有区分度；
+  若按地图字面 ">7" 接到 10 分制读数上则恒为 A，强度维退化为常数（零信息），
+  此时"摘掉强度维（恒 A）"臂与"保留强度维"臂的判别面差异≈0。
+  两臂差异若落在噪声内，则本节点的强度维从未真正参与定级（构成地图口径修订与维退役的裁定材料）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；两臂唯一差异=强度维取值（arm_open 用 0-100 截面分位分接 70/40 阈值，
+    arm_base 令强度维恒为 A 档）；Fib/量能两维与三维取 min 的规则两臂完全相同；
+    本卡不复用 L2-07-1/calibration/02 的"强度分=两路合成分/100、>7 为节点门槛"口径（那是一张响应曲线卡，
+    本卡考单位错配的后果），三卡不得互相顶替
+buckets:
+  type: ablation_arm
+  'on': 'arm 集合 {arm_open_strength_live=强度维按 0-100 阈值 70/40 生效, arm_base_strength_always_A=强度维恒 A(地图 ">7" 遇 10 分制的必然退化态)}'
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: 保留强度维臂相对恒 A 臂 MaxDD 改善 >= 3pp 且 Sharpe 差 >= 0.1（有边际=强度维在 0-100 口径下确实带信息）
+  grade_distribution_collapse: 恒 A 臂下三维取 min 的定级分布须单独出数——若 A+B 档合计占比与在码臂相差 <5pp，
+    则判定强度维对本节点定级近乎无影响（单位错配=死维的机判证据）
+  ic_floor: 强度维单维标量（0-100 归一）与次日收益的截面 IC 均值 >= 0.02、IC_IR >= 0.3（单维下限，低于合成分判据）
+  regime_stability: bear/rebound 两段同号（熊段强度维更该有保护价值）
+  caliber_audit_disclosure: 开考前须实测定格 sector_report_builder（MOD-L00-009）日频报告 JSON 的
+    strength_score 取值域（0-10 还是 0-100）并把结论写进 run 记录；本卡两臂不因此实测改判据面（G4-5）
+target:
+  primary: next_day_index_return（CSI300 次日收益，双臂共用同一目标序列，执行器 shift(-1) 口径）
+  secondary: sector_next5d_excess_by_grade（各等级板块 5 日超额，辅轴=两臂定级分布的收益分层是否错位）
+  note: 与 L2-07/ablation/02（离散化 vs 连续 vs 不门控）、L2-07/ablation/03（不评级样本归属）、
+    L2-07-1/calibration/02（四因子合成分响应曲线）四卡对象互不重叠；本卡只摘强度维一臂
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-07-1.confidence
+preregistered_by: st-mineloop-20261010-L12
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 3.0
+  sharpe_delta_min: 0.1
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880（close/high/low/amount） + c1_market.kline_index（symbol='000300' close）
+  signal_column: kline_sector_880.close, kline_sector_880.high, kline_sector_880.low, kline_sector_880.amount,
+    kline_sector_880.code, kline_sector_880.trade_date, kline_index.close
+  signal_derivation: 板块宇宙=industry_l1(61) ∪ industry_ths(128)=189 codes 冻结族；
+    Fib 维=fib_ratio=(swing_high-close)/(swing_high-swing_low)（滚动 60 日极值，60 日预热段两臂同步丢弃），
+    按在码阈值定档（<=0.50=A、<=0.618=B、else=C）；
+    量能维=vol_ratio 序列按 classify_volume_pattern 复算定档（SHRINKING=A、EXPANDING=C、MIXED=B）；
+    强度维（arm_open）=sector_strength_100=该板块 20 日收益在 189 codes 冻结宇宙内的截面百分位×100，
+    定档 >=70=A、<40=C、其余=B；
+    强度维（arm_base）=恒 A（等价于把 ">7" 解释为 10 分制读数时的必然结果，也等价于摘除该维）；
+    定级=三维取最弱档（max of _GRADE_ORDER），两臂同一函数；
+    时间门（pullback_days 不属于闭区间 [2,15] → 不评级）两臂同规则且不评级样本两臂权重均置 0
+    （归属问题由 L2-07/ablation/03 专卡考，本卡不涉及）。
+  target_source: kline_index(symbol='000300').close → next_day_return（主轴，双臂共用）；
+    辅轴=kline_sector_880.close 5 日 forward return 减同期 000300 5 日收益，按等级分组
+  data_window_evidence: 全部引用在册实测（本车道 21:00-22:30 未自取新数）：
+    ①kline_sector_880 industry_l1=2021-08-02..2026-10-08/78263 行、industry_ths=同窗/163038 行（前役 L1 台账 §3-P4）；
+    ②kline_index 000300=2005-01-04..2026-10-09/5284 行（§3-P10）；
+    ③sector_state.strength 2022..2025 全 0、2026 才 25317/89029 ⇒ 强度读数必须重算、禁直读（§3-P9/A6）；
+    ④板块 codes 宇宙 376→729 在扩 ⇒ 截面分位分母族冻结为 189 codes（§3-P9）。
+    口径矛盾凭据（本车道直读源码所获，非 CH 取数）：
+    sector_pullback.py 第 48-49 行 STRENGTH_STRONG=70.0/STRENGTH_MEDIUM=40.0、第 141-146 行按该两值定档、
+    sector_pullback.py 第 141-146 行按该两值定档、docstring 注明"sector_strength=§3.1① 板块强度分 0-100"；
+    src/zephyr/signal_ashare/core/sector_strength_wiring.py 第 27 行"结构强度=strength_score（0-100 直用）"；
+    config/trading_decision_map.yaml 第 1484 行节点文字"板块强度（>7）"。三处单位不一致=本卡考点。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_pullback.py（MOD-SIG-026）+ MOD-SIG-116；
+    前役 L1 台账 §1 L2-07-1 行记"在码三维 vs 地图四维（缺时间窗）口径不一致已登记"——本车道复挖实测该表述不准确：
+    时间窗在码是硬门（第 126-127 行 return None）而非缺失，真正未落地的是 PULLBACK_HEALTHY_MAX_DAYS=10
+    与 FIB_STRUCTURE_BREAK=0.786 两个死常量（详见 L2-07-1/calibration/03 卡）；单位错配亦未登记 ⇒ 本卡为补矿
+  blocked_scope: 无（板块指数面可考）；strength_score 真实取值域的实测须在开考阶段做，
+    本卡两臂判据不因此变更

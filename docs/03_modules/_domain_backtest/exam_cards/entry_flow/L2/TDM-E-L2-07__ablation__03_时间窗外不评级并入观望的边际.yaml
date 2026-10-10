@@ -1,0 +1,90 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-07/ablation/03_时间窗外不评级并入观望的边际
+node_id: TDM-E-L2-07
+family: ablation
+title_zh: 回踩不评级样本（时间窗外）并入 C 观望·消融卡
+hypothesis: >-
+  在码 pullback_action(grade=None) 返回 PULLBACK_ACTIONS["C"]="WATCH_OR_DOWNGRADE"，
+  即时间窗外（pullback_days 不属于闭区间 [2,15]）的不评级样本被静默并入"观望=零仓"，
+  而 TDM 本节点 decision_question 是"这次回踩值不值得买、给多少仓"、algo_note_zh 只写了 A/B/C 三档，
+  从未声明不评级样本的仓位归属（前役 L1 台账与两张 07/07-1 卡也都没考这一面）。
+  本卡假设：把不评级样本并入观望（现状）相对把它们按 B 档半仓处理，
+  在次日判别面与回撤控制上有正边际；若消融臂不劣于现状臂，则"不评级=零仓"是过度保守，
+  应改为显式第四档而非隐式并入 C。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；仓位映射常量取在码既有值（A=FULL_POSITION_PRIORITY、B=HALF_POSITION_STAGED、
+    C=WATCH_OR_DOWNGRADE，见 sector_pullback.py PULLBACK_ACTIONS），定级阈值亦取在码值
+    （FIB_SHALLOW_MAX=0.50/FIB_DEEP_MAX=0.618、STRENGTH_STRONG=70.0/STRENGTH_MEDIUM=40.0、
+    VOLUME_SHRINK_MAX=0.50、PULLBACK_MIN_DAYS=2/PULLBACK_STALE_DAYS=15），
+    与地图文字（强度>7、时间窗 3-8 天）的口径分歧由 L2-07-1/ablation/03 专卡处理，本卡两臂都用在码值
+buckets:
+  type: ablation_arm
+  'on': 'arm 集合 {arm_open_gated_none_zero=现状(不评级→观望/0 仓), arm_base_none_as_half=消融(不评级→半仓)}'
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: 现状臂相对消融臂的 MaxDD 改善 >= 5pp 且 Sharpe 差 >= 0.1（IS+OOS 合并判别面）
+  ic_floor: 分级标量（A=1/B=0.5/C=0/不评级=0）与次日收益的截面 IC 均值 >= 0.02、IC_IR >= 0.3
+  null_share_disclosure: 不评级样本占比须单独出数（按 pullback_days 分 <2 与 >15 两子集各自占比与后续收益），
+    两子集贡献不得合并成一个数（判据=哪个子集在亏钱要说得出来）
+  regime_stability: bear/rebound 两段同号（保护性应主要体现在熊段）
+  oos_direction: OOS 段现状臂不劣于消融臂（若 OOS 反号则登记"门控仅在熊段有价值"的条件化结论）
+target:
+  primary: next_day_index_return（CSI300 次日收益，双臂共用同一目标序列，执行器 shift(-1) 口径）
+  secondary: sector_next5d_excess_by_nullsubset（不评级两子集各自的 5 日超额，辅轴=亏钱子集定位）
+  note: 与 L2-07/ablation/02 分工=02 考"A/B/C 离散化 vs 连续映射 vs 不门控"，本卡考"第四类（不评级）
+    的仓位归属"，两卡 arm 集合无交集；出分不得外推到个股层
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-07.confidence
+preregistered_by: st-mineloop-20261010-L12
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  sharpe_delta_min: 0.1
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880（close/high/low/amount） + c1_market.kline_index（symbol='000300' close）
+  signal_column: kline_sector_880.close, kline_sector_880.high, kline_sector_880.low, kline_sector_880.amount,
+    kline_sector_880.code, kline_sector_880.trade_date, kline_index.close
+  signal_derivation: 回踩对象=板块（本节点是板块层）；swing_high/swing_low=滚动 60 交易日 high/low 极值（60 日预热段两臂同步丢弃）；
+    fib_ratio=(swing_high-close)/(swing_high-swing_low)，swing_high<=swing_low 记 nan；
+    vol_ratio5=roll_mean(amount,5)/max(amount,60)；volume_pattern 按在码 classify_volume_pattern 规则复算
+    （按在码分支判定次序：最新值>1.00 判 EXPANDING，其上次日递增判 EXPANDING，再次逐日递减且最新<=0.50 判 SHRINKING，其余判 MIXED）；
+    sector_strength=本卡自算的板块强度百分制分（0-100 口径，与在码 STRENGTH_STRONG=70/STRENGTH_MEDIUM=40 同单位；
+    算法=industry_l1∪industry_ths 189 codes 冻结宇宙内板块 20 日收益的截面百分位×100）；
+    pullback_days=close 距上一次创 60 日新高的交易日计数；
+    定级=在码 grade_pullback 规则（pullback_days 不属于闭区间 [2,15] → None；三维各定 A/B/C 后取最弱档）；
+    臂权重映射：A=1.0、B=0.5、C=0.0，
+    arm_open 的 None=0.0（现状：pullback_action(None)→WATCH）、
+    arm_base 的 None=0.5（消融：把不评级按半仓处理）。
+  target_source: kline_index(symbol='000300').close → next_day_return（主轴，双臂共用）；
+    辅轴=kline_sector_880.close 的 5 日 forward return 减同期 000300 5 日收益，按 nullsubset（<2 日 / >15 日）分组
+  data_window_evidence: 全部引用在册实测（本车道 21:00-22:30 未自取新数）：
+    ①kline_sector_880 industry_l1=2021-08-02..2026-10-08/78263 行、industry_ths=同窗/163038 行，
+    OHLC+amount 满配（前役 L1 台账 §3-P4）；②kline_index 000300=2005-01-04..2026-10-09/5284 行（§3-P10）；
+    ③板块宇宙在扩（codes 376→729）⇒ 本卡冻结 189 codes 分母族（§3-P9）；
+    ④sector_state.strength 2022..2025 全 0、capital_score 全史 0 ⇒ 禁直读，必须重算（§3-P9/A6）；
+    ⑤60 日预热后 IS 有效起点约 2021-11（§3-P4 同批推算）。
+    代码侧凭据（本车道 2026-10-10 直读源码所获，非 CH 取数）：sector_pullback.py 第 152-156 行
+    pullback_action(grade=None) 返回 PULLBACK_ACTIONS["C"]；第 126-127 行时间窗外 return None。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_pullback.py（MOD-SIG-026/MOD-SIG-116）；
+    消费方反查（本车道 Grep 实测，替代前役 git grep）：sector_pullback/grade_pullback/pullback_action/PULLBACK_ACTIONS
+    在 src+scripts+config 内仅命中该模块自身与 sector/__init__.py（包导出），tests 内仅
+    tests/research/signal_ashare/sector/test_sector_pullback.py ⇒ 无生产消费方（G05/BM-BUY-04 未接线）
+  blocked_scope: 无（板块指数面可考）；附带登记=下游未接线，本卡出分只能作为地图 confidence 写回依据，
+    不构成仓位链路可施工的证明

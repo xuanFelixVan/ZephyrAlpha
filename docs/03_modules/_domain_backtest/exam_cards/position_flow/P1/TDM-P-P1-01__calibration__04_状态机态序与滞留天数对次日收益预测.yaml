@@ -1,0 +1,96 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-01/calibration/04_状态机态序与滞留天数对次日收益预测
+node_id: TDM-P-P1-01
+family: calibration
+title_zh: 持仓对账与台账快照·校准卡：台账态序（实读七态）与滞留天数对次日个股收益的单调预测力
+hypothesis: >-
+  本节点输出的"富台账"含状态机态（TDM 原文写"六态"，码内实读 PositionState 为**七态**：
+  NONE/BUILDING/ACTIVE/OBSERVING/REDUCING/EXITING/CLOSED）。假设台账态不是仪式性字段而是有信息的：
+  把态按"越靠后越弱"钉成固定序数后，该序数对次日个股收益具单调负预测力
+  （ACTIVE 最强、OBSERVING/REDUCING/EXITING 依次转弱），且灰度未满（BUILDING，权重 5%/20%/50%）
+  与冷却期滞留（cooldown_trading_days=5、graduation_stage_days=5）天数越多次日越弱。
+  若态序 IC 不显著，则七态状态机对本流是复杂度而非信息（净零提请），并须同时提请纠正
+  "TDM 六态 vs 码内七态"的口径冲突（本卡的治理副产品，无论方向都要出）。
+ordinal_map_frozen: 态序数（写死，事后不得换映射）：ACTIVE=0；BUILDING=1（灰度未满，
+  按 _GRADUATION_WEIGHTS 0.05/0.20/0.50 细分 1.0/1.5/2.0）；CLOSED=2（冷却期内）；
+  REDUCING=3；OBSERVING=4（reason 三值 SOFT_STOP/ABNORMAL_OPEN/PLUNGE 同层不细分）；EXITING=5
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；态序映射与"次日"目标口径（close-to-close，shift(-1)）取现器能力面写死；
+    多日前向收益（5 日滞留面）不在本卡判据内（执行器缺口：calibration `_series_metrics` 硬编码
+    shift(-1) 仅次日目标），须另立双臂卡，禁在本卡偷加
+buckets:
+  type: ordinal_bucket
+  'on': 态序数（六档，映射见 ordinal_map_frozen）；滞留天数作第二分桶（0/1-5/6-15/>15 交易日）
+  min_obs_per_bucket: 每档票-日 >= 500 且覆盖 >= 30 只票（OBSERVING/EXITING 天然稀有，不足只报计数）
+pillars:
+  response_monotonicity: 态序数与次日收益的截面秩相关单调（rho 绝对值 >= 0.6，符号=序数越高收益越低）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（方向与单调性同向）
+  dwell_gate: 滞留天数分桶与次日收益单调（信息不只来自态本身，还来自"卡在该态多久"）
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  conflict_output: 六态（TDM 原文）vs 七态（码内枚举）口径冲突无论考判结果如何都必须产出纠偏材料
+  negative_honesty: IC 不显著=如实判"态无信息"，并提请简化状态机（碰钱面不许留无信息的闸门）
+target:
+  primary: next_day_stock_return（t+1 close-to-close，现器 shift(-1) 可算）
+  secondary: null
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（正门，硬读
+  status==preregistered/signal_kind/pillars_numeric）——但**输入面板需新件**，见 blocked_on_impl
+blocked_on_impl:
+  missing: 日线平面台账态重放件（按 state_machine 规则在回测票池上逐日产出 (symbol,date,state_ordinal,dwell_days) 面板）
+  needed_interface: 输入=kline_daily_hfq 的 (symbol,date,open,high,low,close) + 建仓/减仓规则参数
+    （observing_confirm_minutes=15、cooldown_trading_days=5、graduation_stage_days=5、
+    _GRADUATION_WEIGHTS 四档），输出=态序列面板；规则必须复用 PositionStateMachine._transition 语义
+    （禁在重放件里另写一套转移表，防"考的不是码内那台机器"）
+  unlock_condition: 重放件落地后改 status=preregistered（态序映射/分桶/门柱已冻结不动）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-01.confidence
+preregistered_by: st-mineloop-20261010-L13
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（价量面，态重放输入）+ 本地账务件（DS-009 position.snapshot，
+    真实态史不可得，本卡用重放态替代并如实披露）
+  signal_column: state_ordinal（0..5）与 dwell_days（重放态面板的两列）
+  signal_derivation: 以 monthly_topn_signals 权重面为建仓触发，按 PositionState 转移规则重放：
+    首次入池=BUILDING（灰度 5%→20%→50%→100%，每档最短 5 交易日）→ACTIVE；
+    浮亏达 -7% 固定线时置 OBSERVING（触发口径单一取 SOFT_STOP；ABNORMAL_OPEN 与 PLUNGE 两因
+    在日线平面不可判，本重放面显式降级为单一触发并如实披露，不留二选一）；
+    权重被下调时置 REDUCING；跌出票池时置 EXITING；EXITING 完成后 5 个冷却交易日内置 CLOSED；
+    从未入池=NONE（不入样本）
+  target_source: kline_daily_hfq close → next_day_return（shift(-1)）
+  data_window_evidence: |
+    码内实读（本车道）：src/zephyr/position/core/position_state_machine.py
+    L91-100 class PositionState 七成员（NONE/BUILDING/ACTIVE/OBSERVING/REDUCING/EXITING/CLOSED）、
+    L103-108 ObservingReason 三值（SOFT_STOP/ABNORMAL_OPEN/PLUNGE）、
+    L111-118 GraduationStage 四档、L122-127 _GRADUATION_WEIGHTS{0.05,0.20,0.50,1.00}、
+    L178-185 PositionStateMachineConfig(observing_confirm_minutes=15, cooldown_trading_days=5,
+    graduation_stage_days=5)。
+    节点原文（config/trading_decision_map.yaml TDM-P-P1-01 块）：decision_question"…状态机在哪一态"、
+    algo_note_zh"输出富台账：代码/股数/成本/归属策略/开仓日/状态机态（六态）"、
+    module_ref=src/zephyr/position/core/position_state_machine.py、module_id=MOD-POS-002、
+    module_mounts=[MOD-POS-006, MOD-POS-009, MOD-POS-020, MOD-TRADING-002]、
+    fallback"QMT 桥持仓文件缺失→沿用 T-1 快照+数据四态灯黄+人工核对"。
+    ⇒ 六态（文档）vs 七态（码）为在册冲突，两说并存，本卡以码内实读为准并如实附两条。
+    价格面：c1_market.kline_daily_hfq 1990-12-19..2026-09-30 / 10,098,785 行（L4_ledger.md §一实测表）。
+    真实态史（本地账务件）覆盖=待总包 22:30 后实测；本卡不依赖其覆盖，依赖的是重放件落地。
+non_duplication_note: 净新增考法，不替代任何既有卡。与 TDM-P-P1-02（ATR 距止损带分级）的区别=
+  02 考"三档分级阈值"，本卡考"生命周期态序与滞留时长"（不同状态空间、不同真源件），故不并。

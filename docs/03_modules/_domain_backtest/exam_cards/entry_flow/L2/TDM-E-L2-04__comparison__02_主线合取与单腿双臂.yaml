@@ -1,0 +1,113 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-04/comparison/02_主线合取与单腿双臂
+node_id: TDM-E-L2-04
+family: comparison
+title_zh: 主线清晰判定的合取形式·连击腿+集中度双腿 vs 仅集中度单腿双臂对照卡
+hypothesis: >-
+  节点写死"梯队连击≥2 **且** Top2 集中度≥30%=主线清晰"（trading_decision_map.yaml:1125-1127），
+  而被测核 MOD-SIG-143 的两个输入常量分别来自两处不同真源（LEAD_STREAK_MIN=2 的注释指向
+  mainline_probability "lead_streak<2=无主线混沌"的反向，TURNOVER_CONCENTRATION_MIN=0.30 指向节点原文），
+  前役 L1 的 ablation/02 只考"三态整体是否比不判定强"与"优先级能否调换"，
+  **从未考过这两腿的合取形式本身**（其臂集 {no_state, full_three, drop_climax, drop_mainline, priority_swapped}
+  里 drop_mainline 是"把主线态并入混沌"，不是"把合取式降格为单腿式"——两个不同对象）。
+  本卡一句话：连击腿按在码口径（=当日收益最高板块的连续领涨天数，MOD-SIG-061 mainline_candidates
+  件内定义，可自 2021-08-02 起在 880 行业族上重算）取值时，
+  合取式（streak≥2 且 conc≥30%）相对单腿式（仅 conc≥30%）在风险调整上不劣
+  （OOS Sharpe 差 >= -0.10）且 MaxDD 改善 >= 2.0pp ⇒ 连击腿有独立信息、合取形式成立；
+  若 Sharpe 显著下降而 MaxDD 无改善 ⇒ 连击腿是纯减分器，节点的双条件应改单条件（产出纠口径材料，不代裁）。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: >-
+    看数前冻结（G4-5）。两腿常量取在码原值不扫（2 与 0.30，sector_ecology_judge.py:39、41）；
+    仓位映射钉死=MAINLINE_CLEAR 日暴露 1.0、其余日暴露 0.5（唯一差别=哪些日被判主线）；
+    CLIMAX 优先臂**不在本卡范围**——其高潮分腿在产为阶跃映射且分母待实测，另立
+    TDM-E-L2-04/calibration/02（blocked_on_data）单独考，两卡结论互不外推；
+    换手扣减口径写死=每次暴露变动按单边 10bp 计（本卡自设的数量级检查值，双臂同一费率）。
+buckets:
+  type: dim_pair
+  'on': 判定形式双臂 {arm_A_conjunction=streak>=2 且 conc>=0.30, arm_B_single_leg=conc>=0.30（连击腿视为恒真）}
+  pairing: 同一 880 底座、同一窗、同一暴露映射与同一费率，双臂逐日配对（仅主线集不同）
+  min_obs_per_bucket: 60
+pillars:
+  sharpe_noninferior: arm_A 相对 arm_B 的 OOS 年化 Sharpe 差 >= -0.10（合取式不得系统性劣于单腿式）
+  maxdd_improvement: arm_A 的 OOS MaxDD 相对 arm_B 改善 >= 2.0pp（"主线清晰=聚焦做"的风险面兑现）
+  leg_trigger_rate: 连击腿（streak>=2）的日频触发率必须实测披露；若 >= 0.90 ⇒ 该腿近恒真，
+    合取式与单腿式在构造上近乎同物，判 DEVICE_INCONCLUSIVE，禁把"无差"报成"腿不必要"
+  state_share: 双臂的 MAINLINE_CLEAR 日占比与三态封闭性检查（arm_A 判出的主线日必为 arm_B 的子集，
+    若非子集说明实现走偏，本卡作废重跑）
+  lag_profile: 主线态的暴露优势应集中在 t+1（次日），t+2/t+3 衰减须披露（承同车道时滞建档纪律）
+  regime_split: bear/rebound 两段 arm_A−arm_B 利差同号；熊段反号则"聚焦做"仅在修复段成立，须限定
+target:
+  primary: 双臂暴露组合（底座=kline_index 000300 次日收益）的 OOS Sharpe 差与 MaxDD 改善
+  secondary: 主线态次日收益均值差（state_nextday_return_spread，辅轴，不作通过判据）
+  note: 出分前禁改判定式结构（不代裁）；结论若指向"改单条件"，产出的是纠口径材料而非代码改动
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-04.confidence
+preregistered_by: st-mineloop-20261010-L11
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  maxdd_improvement_min: 2.0
+  sharpe_delta_min: -0.10
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880（两腿底座，period='1d'）+ c1_market.kline_index（目标面，symbol='000300'）
+  signal_column: kline_sector_880.close（日收益→领涨板块与连续领涨天数）、kline_sector_880.amount（Top2 集中度）
+  signal_derivation: >-
+    截面族冻结=industry_l1 ∪ industry_ths，剔除 880001-880011 市场统计指数
+    （承 MOD-SIG-061 件内实证口径"880001 作 RRG 基准/市场收益代理，剔除出板块全集"）；
+    连击腿=逐日取该族内当日 1 日收益最高者为领涨板块，按 analysis_utils.lead_streaks 语义累计
+    "同一板块连续领涨天数"，换领涨板块即归零（件内定义原文：mainline_candidates.py:24
+    "lead_streak 连续领涨天数——逐日领涨板块（当日收益最高者）连续领涨日数"）；
+    集中度腿=当日该族内 amount 前 2 名之和 / 该族当日 amount 总和（**取成交额口径**，
+    即节点原文与件常量名 TURNOVER_CONCENTRATION_MIN 的语义；在产接线 MOD-SIG-144 注入的是
+    "Top2 主力净流入/全池主力净流入"，与本卡不同口径，该错配另在本卡 note 登记，不在本卡考）；
+    arm_A 主线集={streak>=2 且 conc>=0.30}；arm_B 主线集={conc>=0.30}；
+    暴露=主线日 1.0、其余 0.5；组合收益=暴露(t)×000300 次日收益，暴露变动日扣单边 10bp。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    引用在册实测，本车道未跑 CH 重查询（21:00–22:30 禁令）：
+    ①c1_market.kline_sector_880 行业族=2021-08-02..2026-10-08，industry_l1 78263 行/61 codes、
+    industry_ths 163038 行/128 codes（L1 台账 §3-P3/P4）⇒ 连击腿与集中度腿两腿同底座同窗，
+    IS 494 交易日、OOS 2024-01-01..2025-09-09 约 415 交易日，均 >= 60 地板；
+    ②目标面 kline_index 000300=2005-01-04..2026-10-09/5284 行（L1 台账 §3-P10）；
+    ③板块宇宙在扩（sector_state codes 376→729，L1 台账 §3-P9）⇒ 两腿均按日在数 code 算，禁固定分母；
+    ④**推翻前役 blocked 的凭据**：L1 台账 §1 本节点行与 §7 blocked 表把梯队腿判为
+    "真口径仅 2026-09-01 起（limit_up_pool 1426 行/28 日、daban_engine_load 19 日）⇒ blocked"，
+    但消费链实际喂给 MOD-SIG-143 的 lead_streak 是 880 板块收益排名导出的连续领涨天数
+    （sector_ecology_judge.py:4 DEPENDENCIES 原文"lead_streak=mainline_candidates（MOD-SIG-061 已锚定件）产出"、
+    mainline_candidates.py:163/209、core/analysis_utils.py:57 lead_streaks(leaders, sorted_dates)），
+    该面自 2021-08-02 可算⇒ 三态判定的主线腿并非不可考，前役 blocked 系未做④后端反查所致；
+    附带在册长史面（供复挖轮）：docs/_working/nightmine_campaign/series/streak_distribution.csv
+    （trade_date,bucket,value，本车道实读表头与行数=6488 数据行，2019-01-04 起，bucket 含 first_board/second_board）
+    与 max_streak_height.csv（同 1622 交易日）提供**市场级**连板梯队形态，仅"板块内条件化"那一层仍受成分口径阻塞。
+  blocked_scope: 在产净流入口径的集中度腿=blocked_on_data，缺段=2021-08-02..2026-07-21 板块级主力净流入
+    （sector_fund_flow 仅 2026-09-15 起 17 交易日、money_flow 聚合需成分，L1 台账 §3-P6/P7）；
+    解锁后本卡须补跑第三臂 conc=Top2 净流入占比，与本卡成交额臂对照，窗口不动。
+  impl_ref: src/zephyr/signal_ashare/core/sector_ecology_judge.py（MOD-SIG-143，常量 39/41/43 行、合取式 122 行）
+    + src/zephyr/signal_ashare/mainline_candidates.py（MOD-SIG-061，lead_streak 真源）
+    + src/zephyr/signal_ashare/core/analysis_utils.py（lead_streaks 实现）
+    + src/zephyr/signal_ashare/core/sector_strength_wiring.py（MOD-SIG-144，净流入错配登记源）
+    + scripts/backtest/fexam/calibration_exam.py:run_card（双臂机判正门）
+executor: >-
+  考卷侧需 ≤50 行 arm driver（880 行业族→领涨序列与连击数→Top2 集中度→两条暴露序列→配对 Sharpe/MaxDD），
+  件均在岗，缺组装不缺实现 ⇒ 标 preregistered 非 blocked_on_impl。
+origin: remine_L11（漏矿来源=节点合取式原文 + 件常量两处真源不同 + 前役 blocked 声明与在码 lead_streak 口径冲突，
+  逐行对码所得，非"觉得还能加一张"）
+sources:
+  - 族级矿脉 S4（市场状态/水温/情绪门控），URL+发布方+年份见 L1 台账 §2-S4；
+    族级矿脉 S2（涨停/梯队/广度结构）见同台账 §2-S2（复用，未重复挖外部矿；外部只作"是否值得考"依据，禁作参数来源）

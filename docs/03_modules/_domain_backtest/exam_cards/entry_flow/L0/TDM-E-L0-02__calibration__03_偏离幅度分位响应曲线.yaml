@@ -1,0 +1,106 @@
+schema_version: '1.0'
+card_id: TDM-E-L0-02/calibration/03_偏离幅度分位响应曲线
+node_id: TDM-E-L0-02
+family: calibration
+title_zh: 盘中偏离幅度十分位→次日组合收益·响应曲线校准卡（不依赖 close_final）
+origin: tdm_algo_note_l0_02
+hypothesis: >-
+  当日实际暴露相对盘前计划的偏离幅度（|实际−边界|/边界，重放臂）按十分位分桶，
+  修订引擎生效时（REV_ON，boundary_revision_engine 已实测存在）
+  "偏离越大幅 → 当日收缩越大幅 → 次日组合收益越高"应在响应曲线上单调；
+  本卡只校"偏离幅度→次日收益"的响应曲线，不构造三臂反事实（对照面已由夜矿 L3
+  TDM-E-L0-02__comparison__02 覆盖，本卡避让其假设）。
+  本卡信号不依赖 emotion_index 段（§3 情绪断供面正交），preregistered 成立。
+window:
+  in_sample:
+  - '2021-07-01'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-06-30'
+  regimes:
+    bull: 2021-07-01..2021-12-31（标签按沪深300 区间收益符号开考前机械复核）
+    bear: 2022-01-01..2022-12-31（同规则）
+  frozen_note: >-
+    窗口由 kline_etf_1min 实测起点 2021-07-01 与 WINDOW_HOLDOUT 2025-10-09..2026-09-30 共钉（与夜矿 L3 同批）；
+    偏离幅度定义 = |当日截至时点的实际暴露 − 盘前计划边界| / 盘前计划边界（严格非负，
+    十分位分桶由该比值产出）；
+    盘前计划=以 L0/01 同口径重放（judgment_daily_plan 实测仅 12 行、judgment_plan_verification 24 行
+    不构成长窗真源，此点在夜矿 L0-02__02 卡 data_window_evidence 已实测记，本卡沿用同结论）；
+    事后挪门柱=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': 当日截至 14:30 时点的偏离幅度（|实际暴露−边界|/边界）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 十分位分桶上（D1=最贴合计划 ... D10=最偏离）中位次日组合收益单调（rho >=0.6 或 <=-0.6，方向按修订含信息量假设先验取正）
+  ic_floor: 日频 IC（当日偏离幅度 vs 次日组合收益）均值 >=0.02 且 IC_IR >=0.3
+  tail_focus: 高偏离尾部（D9+D10）子集的次日收益差值单列（装置存在理由在尾部，均值不判；此柱须与响应柱同表出账）
+  regime_stability: 牛/熊两段同号且过 ic_floor
+  plan_replay_purity: 全链计划=以 L0-01 同口径重放，禁另造一套计划（禁分叉实现）；
+    实际暴露源=生产 NAV 帧或重放 NAV 帧（择一写死，本卡择重放帧以避 production 依赖）
+target:
+  primary: next_day_portfolio_return（shift(-1)，现执行器 _series_metrics 兼容）
+  secondary: 高偏离尾部（D9+D10）子集次日收益均值
+  note: 与夜矿 comparison__02 不同轴——本卡校响应曲线，不判三臂反事实差
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L0-02.confidence
+preregistered_by: st-mineloop-20261010-L15
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(偏离幅度十分位秩 [1=最贴合 ... 10=最偏离],
+  该桶中位次日组合收益秩) 绝对值 >=0.6；
+  ic_mean/ic_ir 读"当日截至 14:30 偏离幅度"对"次日组合收益（daily_net_returns→NAV→shift(-1)）"
+  的日频 Spearman；两段同号、OOS 同号；n 不足判 nan=fail。
+oos_window_ref: *id001
+data_binding:
+  signal_table: >-
+    c1_market.kline_etf_1min（盘中实际暴露代理：以 ETF 分钟 NAV 折算持仓暴露 vs 盘前边界） +
+    c1_backtest.regime_state_anchored（边界输入：dominant 四档映射当日仓位上限档）
+  signal_column: >-
+    偏离幅度 = |kline_etf_1min 截至 14:30 的实际暴露 − regime_state_anchored.dominant 映射的边界档| / 边界档；
+    组合收益 = daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → shift(-1)。
+  signal_derivation: >-
+    盘前计划边界 = 以 TDM-E-L0 comparison 02（夜矿 L3 计划对照卡）同口径重放的当日边界档（跨卡共用，禁另造一套）；
+    当日实际暴露 = 以 kline_etf_1min 分钟 NAV 帧折算（截至 14:30 时点）；
+    修订引擎 = src/zephyr/plan_engine/boundary_revision_engine.py（**实测存在**，本车道 ls 核实；
+    夜矿 L0-02__02 卡曾记"待逐件核"，本卡补写死路径——见本车道台账 §4 推翻点 1）；
+    过期拒发 = src/zephyr/plan_engine/premarket_constraint_loader.py（实测存在，本卡不测此柱，
+    纪律面已由夜矿 comparison__02 的 REV_LEAK_TEST 臂覆盖）；
+    监控件 = src/zephyr/plan_engine/plan_deviation_monitor.py（MOD-PLAN-022，实测存在，TDM module_ref 真身）；
+    **本卡全链不读 emotion_index 任何 stage**（§3 情绪断供与本卡正交）。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → shift(-1) next_day_return"
+  data_window_evidence: >-
+    §3 在册事实直引 + 本车实测（禁 CH 重查询窗 21:00–22:30）：
+    `c1_market.kline_etf_1min` → 2021-07-01..2026-10-09 / 292,584,491 行 / 1,699 symbols
+    （在册，与夜矿 L0-02/L0-04 同引用，本卡盘中代理唯一长窗面）；
+    `c1_backtest.regime_state_anchored` → 2017-07-11..2026-10-09 / 4,488 行
+    （在册，夜矿 L0-02__02 与本车道 L1-AGG 对照卡同引用；列实测 close/ma20/ma60/ma120/vol_pct/dominant/data_source/ingest_ts）；
+    `system.tables` ILIKE '%plan%' → c1_market.judgment_daily_plan 12 行 / judgment_plan_verification 24 行
+    （在册实测，当日计划实录不构成长窗真源 ⇒ 本卡以重放臂落地并显式标注）；
+    实现件本车实测存在：src/zephyr/plan_engine/plan_deviation_monitor.py、
+    src/zephyr/plan_engine/boundary_revision_engine.py（补写死，见 signal_derivation）、
+    src/zephyr/plan_engine/premarket_constraint_loader.py；
+    成本档 = config/exam_scale_cost_gate.yaml（在册冻结件）。
+  emotion_face_orthogonal: >-
+    §3 情绪断供面（emotion_index close_final=0）与本卡**正交**——本卡信号=偏离幅度，
+    target=次日组合收益，全链不读 emotion_index；
+    唯一间接受影响的是"L0-04 降档预警→L0-02 边界修订"这条反哺（本车另立 ablation__04，
+    且该反哺本身在 [CONSUMERS] 记"待接线"，非 QMT 阻塞是接线阻塞）。
+infra_gap: 无（calibration 族单臂 shift(-1) 兼容；无 emotion_index 依赖；无跨日拒发面测）
+sources:
+  - 本车道台账 R1_L15_ledger.md §1（六向④后端补写死）§4（复挖点 1）
+  - 夜矿 L3 TDM-E-L0-02__comparison__02_deviation_revision_authority.yaml（对照族前役，本卡避让其假设）
+  - MINING_BRIEF_R1.md §3 执行器缺口与在册实测

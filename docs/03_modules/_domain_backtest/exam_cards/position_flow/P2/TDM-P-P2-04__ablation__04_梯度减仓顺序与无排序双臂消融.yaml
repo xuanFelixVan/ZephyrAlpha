@@ -1,0 +1,106 @@
+schema_version: '1.0'
+card_id: TDM-P-P2-04/ablation/04_梯度减仓顺序与无排序双臂消融
+node_id: TDM-P-P2-04
+family: ablation
+title_zh: 减仓与再平衡·消融卡：L3 梯度减仓序（重亏→高波动→压舱石最后）的去留与剂量
+hypothesis: >-
+  前役 L4 只取了本节点三条判据（漂移越带减回/置换 1.5×/改善>2×成本/风控优先于做T），
+  **漏记一条在册入边**：TDM edges L6352 `- {from_node: TDM-X-R1-02, to_node: TDM-P-P2-04,
+  edge_type: feed, payload_type: signal, frequency: intraday}`，X-R1-02 原文
+  "L3 减仓顺序（梯度非一刀切）：重亏仓（浮亏最深优先砍）→高波动仓（ATR 大）→压舱石保留
+  （浮盈护盘属性资产最后动）。减仓指令路由 P2-04 执行"。
+  ⇒ 本节点作为**执行端**还承载一条排序纪律。消融双臂=去排序（等比例无差别削减）vs 有排序，
+  另加剂量三档（在册梯度=机构软去杠杆阶梯 80%/60%/40%）。
+  假设：去排序臂的 OOS MaxDD 与后续下行显著恶化（排序=尾部保护）；若去排序不劣，
+  则梯度序在回测平面无增益，应退役（净零提请）。
+arm_definition:
+  R0_no_order: 同一减仓总额在各持仓间等比例削减（去排序，本卡主消融臂）
+  R1_loss_first: 浮亏最深优先砍（在册第一键）
+  R2_vol_first: ATR14 相对值（ATR%/close）最大优先砍（在册第二键）
+  R3_ballast_last: 浮盈护盘属性（is_defensive_ballast 语义）最后动（在册第三键）
+  dose_ladder: 削减强度三档 80%/60%/40%（D113 原文在册阶梯，禁改档）
+  held_fixed: 减仓总额=使组合回到目标权重所需的同一总量；D1=monthly、D2=drift_band、
+    cap10、inv_vol、X_stop/X_breaker=off、K=lump、成本 frozen_l0——臂间只差"削减顺序"（单点改动）
+executor: 缺件——D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py 无"按排序键裁剪/分配动作集"的
+  overlay（在册维只有频率/触发/单票帽/换手 λ/止损/熔断/爬坡六类）；
+  该排序的实现实际住在 X 流件 src/zephyr/sell_decision/services/exit_execution_orchestrator.py
+  （L8 与 L32 头注"R1-02 梯度减仓序=重亏→高波动→压舱石最后(D113)"、L797 is_defensive_ballast 字段、
+  L803 排序函数），而本节点 module_ref=src/zephyr/position/core/rebalance_engine.py 只有
+  expected_improvement/transaction_cost/improvement_ratio 三字段（L126-128），无排序键；
+  算法册 decision_algo_registry.yaml L103-109 DAL-GRADIENT-TRIM 自记 status=design、code_ref=null
+  ⇒ status=blocked_on_impl（对照/消融族机判走 grid+strategy_exam.window_metrics，不走 calibration_exam.run_card）
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；排序键取 TDM 原文三键序（重亏→高波动→压舱石最后），阶梯 80/60/40 取
+    裁定#227/D113 在册原文值；"重亏"用浮亏 pct（hfq 同口径）而非绝对额，写死不换
+buckets:
+  type: arm_comparison
+  'on': 五臂（R0/R1/R2/R3 + 剂量三档子集）× {IS, OOS, 牛段, 熊段} + 熔断触发日子集（L3 级）
+  min_obs_per_bucket: 每臂每段交易日 >= 120；熔断日子集 >= 20 日（不足则排序面判不可分辨，不判无差异）
+pillars:
+  ablation_gate: R0（去排序）相对 R1 的 OOS MaxDD 劣化 >= 0.5pp 且后续 5 日下行均值差 >= 0.3pp
+  dose_gate: 削减强度与后续下行呈单调（80% 档在下行保护上优于 40% 档，但成本后 Sharpe 降幅 <= 0.2）
+  ballast_gate: R3 与 R1 的分歧集（浮盈且高波动的票）上，两臂 5 日下行差须同框报出
+    （"压舱石最后动"是否等于"少砍浮盈票"须被数据钉死，不许停留在叙事）
+  turnover_or_cost_gate: 五臂统一 frozen_l0 扣费（真源 matching_logic.COMMISSION_RATE 万0.854）
+    + stress_l2 复算；换手/成本/收益/回撤四框同报，升档符号翻转=fail
+  oos_and_regime_gate: 排序增益结论在 OOS 与熊段同号
+  negative_honesty: 若 R0 不劣，如实入册并提请撤销梯度序纪律（碰钱面不许留无效规则）
+target:
+  primary: oos_maxdd_delta_R1_minus_R0（pp）与 5 日下行差（pp）
+  secondary: 剂量三档的 成本后 Sharpe-回撤 折中曲线、R3-vs-R1 分歧集下行差
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.005
+  sharpe_delta_min: -0.2
+  downside_5d_min: 0.003
+  oos_same_sign: true
+blocked_on_impl:
+  missing: 按排序键分配减仓动作集的 grid overlay（rebalance-order dim）+ 5 日前向窗口指标
+    （现器 calibration `_series_metrics` 硬编码 shift(-1) 只支持次日目标，故多日面须走双臂 NAV 件）
+  needed_interface: 输入=目标权重面与实际权重面 + 每票 (unrealized_pnl_pct, atr_pct, ballast_flag)，
+    输出=同日多票削减额分配矩阵；排序函数须复用 exit_execution_orchestrator.py L803 同一实现
+    （禁在回测侧另写一套排序，防"考的不是码内那台机器"）
+  unlock_condition: overlay 落地后改 status=preregistered（五臂/阶梯/门柱已冻结不动）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P2-04.confidence
+preregistered_by: st-mineloop-20261010-L13
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（open/high/low/close 自算 ATR14，与浮盈序列）
+    + c1_market.technical_indicator（目标权重面的合成秩来源，读取须 argMax/FINAL 去重）
+  signal_column: atr_pct（ATR14/close）、unrealized_pnl_pct（相对 entry 的 hfq 浮盈）、ballast_flag、削减额分配
+  signal_derivation: monthly_topn_signals(top_n=20) 出目标权重面 → drift_band 触发减仓总额 →
+    按排序键把总额分配到票（R0=等比例，R1=浮亏升序优先，R2=ATR% 降序优先，R3=压舱石末位）
+  target_source: 各臂日 NAV → strategy_exam.window_metrics（sharpe 年化 244+MaxDD）；
+    5 日下行为票级面板均值聚合（复用同件，禁另造分母）
+  data_window_evidence: |
+    在册原文引用：config/trading_decision_map.yaml L3777-3778（X-R1-02 algo_note_zh 三键序+路由 P2-04 执行）、
+    L3791-3792（D113 注释："减仓顺序=重亏仓→高波动仓→压舱石…梯度减仓参考机构软去杠杆阶梯；
+    恢复=修复 50% 回撤逐级加回（机构标准 recover-50% 规则）"）、
+    L6352（入边 X-R1-02→TDM-P-P2-04）；
+    裁定#227（ruling_registry.yaml L1026-1030，status=active）原文摘录"…D113 熔断期减仓
+    （梯度=重亏仓→高波动仓→压舱石，恢复=修复 50% 逐级加回）…"；
+    docs/_working/2026-09-04-trading-decision-map-discussion.md L807（D113 条目，
+    "梯度=机构软去杠杆阶梯（80%/60%/40%）…指令路由 P2-04（D44 优先级不变）"）；
+    decision_algo_registry.yaml L103-109（DAL-GRADIENT-TRIM，status=design，code_ref=null）。
+    价格面在册实测：c1_market.kline_daily_hfq 1990-12-19..2026-09-30 / 10,098,785 行
+    （docs/_working/nightmine_campaign/L4_ledger.md §一 CH 实测覆盖表）；
+    technical_indicator 原始行多版本，panel 读取须 argMax/FINAL 去重（不去重=IC 放大 30 倍，
+    任务书 §3 在册事实）。
+non_duplication_note: 净新增考法，不替代任何既有卡。与前役 TDM-P-P2-04/ablation/03
+  （置换 2×成本门与风控优先权去留）的区别=03 考"要不要动/谁先动（做T vs 减仓的跨节点优先级）"，
+  本卡考"减的时候先砍谁（减仓总额在票间的分配序）"，判据对象不同，故不并。

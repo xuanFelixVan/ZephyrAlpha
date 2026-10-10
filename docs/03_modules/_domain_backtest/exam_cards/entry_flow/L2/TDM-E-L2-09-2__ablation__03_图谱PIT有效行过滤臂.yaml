@@ -1,0 +1,102 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-09-2/ablation/03_图谱PIT有效行过滤臂
+node_id: TDM-E-L2-09-2
+family: ablation
+title_zh: 冲击标的清单的图谱有效行过滤（valid_to IS NULL）·消融卡
+hypothesis: >-
+  前役 L1 车道把本节点判为 blocked_on_data，理由原文="图谱 ig_* 无版本化/PIT⇒回放即前视"
+  （台账 §1 L2-09-2 行与 §7 blocked 表）。本车道复挖实测该理由**不成立**：
+  ig_node 与 ig_node_company 都有 valid_to 列，生产件与仪表盘一律以 valid_to IS NULL 取 PIT 有效行
+  （chain_impact_resolver.py 第 8 行 INVARIANTS 原文"公司映射只取 ig_node_company.valid_to IS NULL（PIT 有效行）"、
+  第 377 行 SQL 常量、api_server.py 第 3935/3941/3949/3964/4109/4111 行、chainmap_equity_graph.py 第 139/148 行）。
+  版本化机制在册，真实缺口只剩"构建史短"（ig_node_company created_at 仅 2026-08-28..2026-09-24，前役 §3-P15）。
+  本卡假设：把 valid_to 过滤当成可消融的臂有直接可判价值——
+  不过滤臂（含已失效映射与墓碑节点）相对过滤臂（在码口径）会系统性高估冲击清单的次日命中率；
+  高估幅度即"前视污染"的量化尺，量出来才知道图谱回放到底能不能用作回测（前役是以断言代替了测量）。
+window:
+  in_sample:
+  - '2026-08-28'
+  - '2026-09-24'
+  oos: &id001
+  - '2026-09-25'
+  - '2026-10-08'
+  regimes:
+    bull: 2026-08-28..2026-09-15（图谱构建前段，市场态另册）
+    bear: 2026-09-16..2026-09-24（图谱构建后段）
+  frozen_note: 看数前冻结；窗不是设计选择而是实测边界——ig_node_company created_at 首末=2026-08-28 04:08:55+08:00
+    / 2026-09-24 15:47:33+08:00（前役 §3-P15 在册）；两臂差异只在过滤谓词 valid_to IS NULL，
+    扩散参数（2 跳、hop_decay=0.6、polarity ±0.15 死区）两臂完全同值（在码 INVARIANTS 原文口径）；
+    本卡与同节点 ablation/02（跳数/衰减/方向口径消融）对象不同，不得合并出分
+buckets:
+  type: ablation_arm
+  'on': 'arm 集合 {arm_open_pit_filtered=valid_to IS NULL（在码口径）, arm_base_pit_unfiltered=不过滤（含失效映射与墓碑节点）}'
+  min_obs_per_bucket: 60
+pillars:
+  lookahead_gap: 不过滤臂的次日命中率减过滤臂命中率的差值须单独出数并给方向；
+    差值 <= 0 即"图谱历史行不引入前视"，前役 blocked 理由应改判为纯样本量问题
+  ablation_marginal: 过滤臂相对不过滤臂 Sharpe 差 >= 0.1 且 MaxDD 改善 >= 3pp（若过滤是保护，两臂必有此差）
+  hit_list_stability: 两臂冲击标的清单的 Jaccard 重合度须逐日出数，低于 0.5 的天占比 >20% 即清单不可复现
+  dead_node_share: 不过滤臂引入的墓碑/失效行占比单独报（ig_node 墓碑口径=名称含"（已并入）"，api_server 在册 SQL）
+  regime_stability: 图谱构建前后两段同号
+  sample_floor: 每臂每桶 >= 60 观测为硬地板，不足则该桶记 nan 不外推（本卡判 blocked 的机检面）
+target:
+  primary: next_day_index_return（CSI300 次日收益，双臂共用同一目标序列，执行器 shift(-1) 现器可考）
+  secondary: impacted_symbol_next5d_excess（冲击清单标的 5 日超额，panel 主对象；需 kline_daily_hfq 个股面）
+  note: 出分只裁定"valid_to 过滤这一臂的信息量与前视幅度"，不裁定 2 跳扩散是否优于 1 跳（那是 02 卡的题）；
+    本卡结论不得被引用为"事件催化剂有效"的证据
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-09-2.confidence
+preregistered_by: st-mineloop-20261010-L12
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 3.0
+  sharpe_delta_min: 0.1
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: PostgreSQL depgraph 库 ig_node（node_id, chain_id, name, valid_to） + ig_edge（无向邻接） +
+    ig_node_company（node_id, symbol, role, confidence, valid_to, created_at） +
+    c1_market.news_sentiment_window（scope='symbol'，polarity/sentiment_index 作冲击方向输入） +
+    c1_market.kline_daily_hfq（个股 5 日前向收益）
+  signal_column: ig_node.node_id, ig_node.valid_to, ig_edge.node_id, ig_edge.peer_node_id,
+    ig_node_company.symbol, ig_node_company.confidence, ig_node_company.valid_to,
+    news_sentiment_window.sentiment_index, kline_daily_hfq.close
+  signal_derivation: 种子=当日 scope='symbol' 且 |sentiment_index|>0.15 的 symbol 经 ig_node_company 反查命中节点
+    （死区 ±0.15 取在码 INVARIANTS 原值）；扩散=ig_edge 无向 BFS 2 跳、置信=种子 confidence×0.6^hop×公司映射
+    confidence（0.6/2 跳均为在码值，非本卡新拟）；落标的=hop>0 的 ig_node_company.symbol；
+    臂 open=在扩散图与公司映射两侧同时加 valid_to IS NULL 谓词（在码口径）；
+    臂 base=去掉该谓词（全量历史行，含已失效映射与墓碑节点）；
+    冲击分=Σ(置信×sign(sentiment_index)) 按 symbol 去重取（hop 升序、置信降序）最优并记 sources 数；
+    命中率=清单 symbol 的次日个股收益>0 占比（按日截面取中位）。
+  target_source: kline_index(symbol='000300').close → next_day_return（主轴）；
+    辅轴=kline_daily_hfq.close 的 5 日 forward return 减同期 000300 5 日收益（个股面 1990-12-19..2026-09-30 充分，
+    前役 §3-P10；2026-09-30 后 9 日缺口对本卡 OOS 终点 2026-10-08 有影响，须在开考时以实际可得行截断并登记，
+    截断不改判据面）
+  data_window_evidence: 全部引用在册实测（本车道 21:00-22:30 未自取新数）：
+    ①PG 图谱规模与构建窗实测=ig_chain 873、ig_node 5560、ig_edge 1726、ig_node_company 25559，
+    min/max(created_at) FROM ig_node_company=2026-08-28 04:08:55+08:00 / 2026-09-24 15:47:33+08:00，
+    ig_* 不在治理库、在 depgraph 库（前役 L1 台账 §3-P15，两次尝试均留痕）；
+    ②valid_to 列在产的证据=本车道 2026-10-10 直读源码所得（chain_impact_resolver.py 第 8/25/371/377 行、
+    api_server.py 第 3935/3941/3949/3964/4109/4111 行、chainmap_equity_graph.py 第 139/148 行，
+    均以 valid_to IS NULL 为在册读取口径）⇒ 前役"无版本化/PIT"表述与代码事实矛盾；
+    ③输入面 news_sentiment_window scope='symbol' 仅 2026-02-24..2026-08-20/19635 行/4857 标的
+    （同战役 L3 车道在册，见 TDM-E-L1-S0-1__calibration__03 卡 evidence）与图谱构建窗 2026-08-28 起**不相交**
+    ⇒ 种子侧在冻结窗内零行，这是本卡 blocked 的第二条根因（前役未查这一条）；
+    ④节点下游在册边=config/trading_decision_map.yaml 第 6384-6386 行
+    （09-1→09-2 sequence、09-2→L3-04 feed daily、09-2→L0-02 feed intraday），
+    本车道 Grep 反查消费方=src/zephyr/intelligence/chain_impact_resolver.py、chain_impact_stream.py、
+    news_chain_node_linker.py（三件在产，MOD-INT-CHAIN-IMPACT 状态 testing）⇒ ②向非零命中，前役未列 grep 凭据。
+  impl_ref: src/zephyr/intelligence/chain_impact_resolver.py（MOD-INT-CHAIN-IMPACT，testing，23 单测在册）+
+    src/zephyr/intelligence/chain_impact_stream.py
+  blocked_scope: 写死两条缺口：(1) ig_node_company.valid_to 的非空行数与历史界从未实测（前役只测 created_at），
+    须补 `SELECT countIf(valid_to IS NOT NULL), min/max(valid_to)` 一类的分表实测——本车道 21:00-22:30 禁 CH/PG
+    重查询，未取；(2) 种子输入面 news_sentiment_window scope='symbol' 覆盖 2026-02-24..2026-08-20，
+    与图谱构建窗 2026-08-28 起无交集 ⇒ 冻结 IS/OOS 内种子为零。
+    解锁条件=两窗重叠 ≥250 交易日（symbol 面回补 2026-08-28 之后）+ valid_to 历史分布实测入册 +
+    每臂每桶 min_obs_per_bucket=60 可达；解锁前本卡不开考、不出分

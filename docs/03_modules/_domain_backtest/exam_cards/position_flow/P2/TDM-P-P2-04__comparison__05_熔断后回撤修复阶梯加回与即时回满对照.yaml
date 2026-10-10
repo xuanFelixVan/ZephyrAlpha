@@ -1,0 +1,94 @@
+schema_version: '1.0'
+card_id: TDM-P-P2-04/comparison/05_熔断后回撤修复阶梯加回与即时回满对照
+node_id: TDM-P-P2-04
+family: comparison
+title_zh: 减仓与再平衡·对照卡：减完之后怎么加回（修复 50% 阶梯 vs 即时 V 型回满 vs 时间爬坡）
+hypothesis: >-
+  本节点只写了"减"，但在册入边 X-R1-02 的原文同时规定了"加回"——
+  "恢复规则=组合回撤修复 50% 后逐级加回风险预算，禁 V 型回满"（TDM L3778），
+  且同规则在别处再登记一次（L4702："恢复=修复 50% 回撤后逐级加回（对齐 X-R1-02 恢复规则）"）。
+  ⇒ 减仓执行端必须能区分三种加回节奏：即时回满（V 型）、回撤修复比例触发阶梯、时间触发爬坡。
+  假设：阶梯加回臂相对即时回满臂在 OOS MaxDD 上改善 >= 5pp（防二次探底连环砍），
+  成本后 Sharpe 降幅 <= 0.2；若即时回满不劣，则"禁 V 型回满"这条纪律无实证支撑（净零提请）。
+arm_definition:
+  V_full_revert: 熔断解除日一次性把风险预算/权重恢复到减前水平（=被禁的 V 型回满，本卡对照臂）
+  R_recover50_ladder: 组合回撤自低点修复 50% 后才加回一档，逐级恢复（在册规则的正身，需新档）
+  T_time_ramp_20d: 不看回撤、按 20 个交易日线性爬坡恢复（引擎在册档 linear_20d，可跑）
+  T_time_ramp_60d: 同上 60 日档（引擎在册档 linear_60d，可跑）
+  held_fixed: 同一 X_breaker=dd20 触发路径、同一信号面（cap24/top20/inv_vol/cap10/D1=monthly）、
+    同一成本档 frozen_l0——臂间只差恢复节奏（单点改动）
+executor: 部分可跑——时间爬坡两档走 D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py
+  （_apply_capital_ramp_overlay L1058，ramp_mode 合法值实读 L1076-1077=off/lump/linear_20d/linear_60d/pyramid），
+  V 型回满臂=lump 语义；**回撤修复比例触发的阶梯档在册四档中不存在**，且 K 维受
+  DEFAULT_CONTEXT capital_ramp_enabled=False 折叠（开闸=配置位非代码位，前役实读 L122）；
+  X_breaker 侧只有 off/dd20 帽带、无"修复后逐级降帽"的恢复腿
+  ⇒ status=blocked_on_impl
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；修复比例 50% 与"逐级"=三等分档写死（取在册原文"修复 50%"与引擎既有
+    三档 tranche 结构，禁事后改 40%/60% 或改档数）
+buckets:
+  type: arm_comparison
+  'on': 四臂 × {IS, OOS, 牛段, 熊段} + 熔断后 20 交易日子窗
+  min_obs_per_bucket: 每臂每段交易日 >= 120；熔断事件 >= 5 次（不足则恢复节奏面判不可分辨，不判无差异）
+pillars:
+  maxdd_gate: 阶梯臂相对即时回满臂 OOS MaxDD 改善 >= 5pp（与 exit_sim judge_frozen.maxdd_improve_pp 同口径）
+  sharpe_gate: 阶梯臂成本后 Sharpe 相对即时回满臂降幅 <= 0.2
+  whipsaw_gate: 二次探底计数——即时回满臂在恢复后 20 日内再次触发熔断的次数须 >= 阶梯臂
+    （"禁 V 型回满"的机制叙事就是防连环砍，须被数据钉死）
+  time_vs_state_gate: 时间爬坡两档（linear_20d/60d）须与状态触发档同框比较——
+    若时间爬坡全面不劣于阶梯，则"看回撤修复"这一状态触发是多余复杂度（这是本卡最硬的可证伪点）
+  turnover_or_cost_gate: 四臂统一 frozen_l0 扣费 + stress_l2 复算；换手/成本/收益/回撤四框同报，
+    升档符号翻转=fail
+  oos_and_regime_gate: 结论在 OOS 与熊段同号
+target:
+  primary: oos_maxdd_improvement_pp（阶梯臂减即时回满臂）
+  secondary: 成本后 Sharpe 差、恢复后 20 日内二次熔断次数、换手差
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.05
+  sharpe_delta_min: -0.2
+  oos_same_sign: true
+blocked_on_impl:
+  missing: 按回撤修复比例触发的阶梯加回档（recover-50% ladder）+ X_breaker 的"帽带逐级解除"腿
+  needed_interface: 输入=组合 NAV 序列与熔断状态，输出=每日风险预算上限（阶梯值）；
+    回撤低点与修复比例计算须复用 window_metrics 的 MaxDD 口径（禁另造高点低点定义）；
+    开闸 capital_ramp_enabled=True 属配置位，须与落地同批
+  unlock_condition: 两档落地后改 status=preregistered（四臂/50% 比例/三等分档/门柱已冻结不动）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P2-04.confidence
+preregistered_by: st-mineloop-20261010-L13
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（NAV/回撤自算）+ c1_market.technical_indicator
+    （目标权重面合成秩，读取须 argMax/FINAL 去重）
+  signal_column: 组合日 NAV、回撤低点、修复比例进度、风险预算上限（阶梯态）
+  signal_derivation: X_breaker=dd20 触发后记录低点 NAV→修复比例=(当前NAV-低点)/(前高-低点)→
+    达 50% 加回一档（三等分）；对照臂分别=lump 即时回满 / linear_20d / linear_60d
+  target_source: 四臂日 NAV → strategy_exam.window_metrics（sharpe/MaxDD）；二次熔断计数取引擎事件日志字段
+  data_window_evidence: |
+    在册原文引用：config/trading_decision_map.yaml L3778（"减仓指令路由 P2-04 执行；恢复规则=组合回撤
+    修复 50% 后逐级加回风险预算，禁 V 型回满"）、L3792（"恢复=修复 50% 回撤逐级加回
+    （机构标准 recover-50% 规则）"）、L4702（"恢复=修复 50% 回撤后逐级加回（对齐 X-R1-02 恢复规则）"）、
+    L6352（入边 X-R1-02→TDM-P-P2-04）；
+    裁定#227（ruling_registry.yaml L1030 原文"D113 熔断期减仓（…恢复=修复 50% 逐级加回）"）；
+    引擎在册档实读 scripts/backtest/factory_grid_executor.py:1076-1077
+    （ramp_mode 合法值 off/linear_20d/linear_60d/lump/pyramid，无回撤条件触发档）；
+    价格面 c1_market.kline_daily_hfq 1990-12-19..2026-09-30 / 10,098,785 行（L4_ledger.md §一实测表）。
+non_duplication_note: 净新增考法，不替代任何既有卡。与 TDM-P-P3/comparison/02
+  （金字塔三档 vs 一次性足额）的区别=02 考**建仓期**的价格触发爬坡有无，
+  本卡考**熔断减仓之后**的恢复节奏（状态触发 vs 时间触发 vs 即时回满），
+  触发源、窗口语义与结论出口均不同，跨对象不并。

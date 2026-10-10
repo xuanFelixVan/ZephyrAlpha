@@ -1,0 +1,118 @@
+schema_version: '1.0'
+card_id: TDM-E-L0-04/calibration/03_pre_open盘前先验与盘中档位差
+node_id: TDM-E-L0-04
+family: calibration
+title_zh: 盘前先验档 vs 盘中 8 态融合档·档位差响应曲线校准卡（仅绑 pre_open 腿，QMT 断供期不依赖 close_final）
+origin: tdm_algo_note_l0_04
+hypothesis: >-
+  以 c1_market.emotion_index@stage='pre_open'（任务书 §3 在册 10 月唯一可得腿）为盘前先验档，
+  与 intraday_tomorrow_forecast 组合器在 10:00/11:00/13:30/14:30 四时点用最新盘面（ETF 510300
+  分钟代理 + L1-S5 盘中水温读数）修正后的 8 态融合最可能档做序数差；
+  "融合档比先验档悲观 >=1 档"的档位差越大，次日（shift(-1)）CSI300 指数收益越低——
+  十分位分桶上响应曲线单调，且高悲观差桶的次日收益均值显著为负。
+  本卡只绑 pre_open 段与盘中盘面，**不依赖 close_final**（§3 在册 close_final=0，本卡与 QMT 断供正交）。
+window:
+  in_sample:
+  - '2021-07-01'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-06-30'
+  regimes:
+    bull: 2021-07-01..2021-12-31（暖机后首段，标签按沪深300 区间收益符号开考前机械复核）
+    bear: 2022-01-01..2022-12-31（同规则）
+  frozen_note: >-
+    窗口与夜矿 L3 车道 comparison__02 同钉（kline_etf_1min 实测起点 2021-07-01 与
+    ch_data.WINDOW_HOLDOUT 2025-10-09..2026-09-30），本卡 OOS 终点 2026-06-30；
+    8 态悲观档位序（蓝图 §2）与">=1 档即预警"阈值逐字取 algo_note_zh，卡内禁改；
+    盘中价代理=510300 ETF 分钟收盘对当日开盘的比值（代理误差先验声明 <0.2%/日量级，开考前实测复核）；
+    事后挪门柱=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': 每日 14:30 时点档位差（融合最可能悲观档序 − 先验档序；序数差非概率差）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 十分位分桶上（1=最乐观差 ... 10=最悲观差）中位次日收益 Spearman 单调 rho<=-0.6（悲观差越大次日越弱，方向已定）
+  ic_floor: 日频 IC（档位差 vs 次日收益）均值 <=-0.02 且 IC_IR >=0.3（绝对值口径，同号判同）
+  lag_profile: t+1（次日）为峰值；t+2/t+3 半衰期 >=1 交易日（Lou-Poli-Gao 隔夜延续先验的仓内复核）
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor（响应曲线不因 regime 反号）
+  pre_open_only_purity: 全链 signal 只读 emotion_index WHERE stage='pre_open'，
+    禁触 stage='close_final'（§3 在册 close_final=0；违例=整卡作废）
+target:
+  primary: next_day_csi300_return（shift(-1) 兼容现执行器 _series_metrics 硬编码）
+  secondary: 四时点档位差的响应曲线单调差（10:00 vs 14:30 的 IC 差=盘中信息增量）
+  note: 与夜矿 L3 comparison 族不同轴——本卡只校"先验差→次日收益"的响应曲线，不构造反事实三臂
+status: blocked_on_data
+status_correction_note: |
+  2026-10-10 22:0x 总包实测（命令原文：SELECT stage, count(), min(toDate(trade_date)), max(toDate(trade_date))
+  FROM c1_market.emotion_index GROUP BY stage）：pre_open=27 行（2026-09-01..2026-10-09）、
+  auction=17 行、close_final=8,617 行但止于 2026-09-30。
+  ⇒ 本卡立卡前提"pre_open 为 10 月唯一可得腿"字面成立但**样本量 27 日撑不起 IS/OOS 与每桶 ≥60 观测**，
+  按红线"断供面禁硬考"改判 blocked_on_data。判据四键（window/buckets/pillars/pillars_numeric/target）
+  零改动，本行仅改 status 并留取证（挪门柱=作废纪律不受触碰）。
+  解锁判据：pre_open 段累计 ≥ 500 个交易日且 IS 窗覆盖完整（QMT 复元后由数据解锁监听车道复测）。
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L0-04.confidence
+preregistered_by: st-mineloop-20261010-L15
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: -0.6
+  ic_mean_min: -0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(档位差十分位秩 [1=最乐观 ... 10=最悲观],
+  该桶中位次日收益秩) <=-0.6；
+  ic_mean/ic_ir 读"当日 14:30 档位差"对"次日 CSI300 close-to-close 收益"的日频 Spearman；
+  两段同号（都 <=0）、OOS 同号；n 不足判 nan=fail。
+oos_window_ref: *id001
+data_binding:
+  signal_table: >-
+    c1_market.emotion_index（stage='pre_open' 严格过滤，§3 在册 10 月唯一可得腿） +
+    c1_market.kline_etf_1min（510300 分钟代理盘面） +
+    c1_market.kline_index（000300 目标 + 指数核对）
+  signal_column: >-
+    emotion_index.emotion_index（pre_open 段档，映射 8 态悲观序的先验档）；
+    kline_etf_1min.close @ 10:00/11:00/13:30/14:30（对当日 open 的比值 = 盘中观测）；
+    kline_index.close（000300，T+1 目标）。
+  signal_derivation: >-
+    先验档 = 每日盘前 emotion_index@stage='pre_open' 的 emotion_index 分量映射至 8 态悲观全序（蓝图 §2 序数）；
+    盘中修正 = intraday_tomorrow_forecast.py 组合器（src/zephyr/plan_engine/intraday_tomorrow_forecast.py,
+    MOD-PLAN-025，实测存在，纯函数核零 IO）
+    以 510300 分钟盘面截至 t 时点为输入 + 相似日检索（src/zephyr/signal_ashare/ml_forecast/similar_day_inference.py,
+    MOD-SIG-063，实测存在） + Brier 降权（src/zephyr/plan_engine/brier_calibration.py, 实测存在），
+    融合出 t 时点的 8 态最可能档；
+    档位差 = 14:30 融合档序 − 先验档序（>=1 即预警候选，本卡不用二值而用连续差值做十分位响应曲线）；
+    **本卡全链禁读 emotion_index WHERE stage='close_final'**（§3 在册 0 行）。
+  target_source: "kline_index 000300 close→shift(-1) next_day_return（现执行器 _series_metrics 硬编码 shift(-1) 兼容）"
+  data_window_evidence: >-
+    §3 在册事实直引（禁自创数字，本 21:00–22:30 窗禁 CH 重查询）：
+    `c1_market.emotion_index` 10 月**仅 pre_open 腿**、`stage='close_final'` 行数=0（候 QMT 终端复元）；
+    pre_open 具体覆盖窗/总行数/逐年分布 = **待总包 22:30 后实测**
+    （建议复核 SQL 原文：
+    `SELECT min(trade_date), max(trade_date), count() FROM c1_market.emotion_index WHERE stage='pre_open'`；
+    `SELECT toYear(trade_date), uniqExact(trade_date) FROM c1_market.emotion_index WHERE stage='pre_open' GROUP BY toYear(trade_date) ORDER BY y`）；
+    盘中代理面与夜矿 L3 卡同引用 kline_etf_1min=2021-07-01..2026-10-09 / 292,584,491 行 / 1,699 symbols
+    （在册实测，见 TDM-E-L0-04__comparison__02 data_window_evidence 与本车道台账 §1）；
+    kline_index=1990-12-19..2026-10-09 / 3,104,162 行 / 1,097 symbols（在册）；
+    实现件实测存在（本车 ls 核实）：src/zephyr/plan_engine/intraday_tomorrow_forecast.py、
+    src/zephyr/plan_engine/brier_calibration.py、
+    src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py（TDM algo_note_zh 记名 next_day_8state_forecast 真实路径，非 plan_engine）、
+    src/zephyr/signal_ashare/ml_forecast/similar_day_inference.py（同上）；
+    emotion_index stage 常量 STAGE_PRE_OPEN/STAGE_CLOSE_FINAL 实测于 src/zephyr/alt_data/emotion_index_builder.py:69 __all__ 行。
+  pre_open_leg_binding: >-
+    本卡 preregistered 的合法性前提=pre_open 段覆盖 IS/OOS 全窗；若 22:30 后实测显示
+    pre_open 也仅在 2026-10 起有段（历史段=close_final 或另有 stage 命名），
+    本卡须由总包另建 blocked_on_data 姊妹卡（不改本件，因禁改已存在文件），
+    窗口与判据不动。此风险本车道如实登记，交 T4 监听车道与总包处置。
+infra_gap: 无（现执行器 calibration 族单臂可跑；signal/target 均 shift(-1) 兼容）
+sources:
+  - 本车道台账 R1_L15_ledger.md §1（六向）§3（对账）§4（复挖）
+  - MINING_BRIEF_R1.md §3 情绪面在册断供
+  - 夜矿 L3 TDM-E-L0-04__comparison__02（同节点对照族前役，本卡避让其假设）

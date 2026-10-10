@@ -1,0 +1,114 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-04/calibration/02_在码高潮分四档阶跃响应
+node_id: TDM-E-L2-04
+family: calibration
+title_zh: 在产高潮分=涨停比四档阶跃映射·对次日指数收益的档间响应校准卡
+hypothesis: >-
+  三态判定的高潮腿在产口径是一张四档阶跃查表而非连续分：
+  sector_strength_wiring.py:56-62 的 BREADTH_CLIMAX_MAP={'极强':95.0,'强':70.0,'中':40.0,'弱':15.0}，
+  档界取 sector_breadth.py:35-38 的涨停比阈值（>0.10 极强 / >0.05 强 / <0.02 弱 / 其余中），
+  而 MOD-SIG-143 的高潮门柱是 climax_score>=90（sector_ecology_judge.py:43、113）
+  ⇒ 门柱在产语义下严格等价于"全市场涨停比>10% 这一档"，其余三档永不触发高潮态。
+  本卡一句话：把该阶跃序列取负后（-climax_score，使高潮越重取值越低，与执行器正 IC 地板同向），
+  其对次日 CSI300 收益的四档利差须呈单调（档序=极强1/强2/中3/弱4，分桶中位前向收益 Spearman rho>=0.6）
+  且"极强"档次日均值显著为负（"第二天大概率分歧"的字面可判面）；
+  若"强"档（70 分，不触发高潮）的次日均值与极强档无别 ⇒ 90 这根门柱定错位置，
+  它漏掉实际同样危险的一档，须提请改档或连续化（不代裁，出分只产出纠口径材料）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2021-12-31'
+  oos: &id001
+  - '2022-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛，承同层 L2-01-1 卡在册段，不另造）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，同前）
+  frozen_note: >-
+    看数前冻结（G4-5）。档界与分值一律取在码常量原值不扫（0.10/0.05/0.02 与 95/70/40/15，
+    门柱 90 亦不扫——门柱位置检验靠档间利差比较完成，不靠挪门柱）；
+    涨停判定 MUST 用不复权 c1_market.kline_daily 配 c1_market.stk_limit（任务书 §3 在册口径：
+    用 kline_daily_hfq 得 3,882 家涨停荒谬值），禁自定 9.9% 阈值；
+    宇宙=当日在市股票数（分母按日截面算，禁固定家数）；
+    已知风险如实声明=涨停比>10% 的"极强"档在历史上是极端稀疏事件（2019-01 与 2024-09 两轮涨停潮为主），
+    其样本可能集中于 OOS 段且可能不足 60 日——届时该档判"数据不足非通过"（承双臂卡的覆盖地板语义），
+    禁把稀疏档报成通过，也禁因稀疏而删档。
+buckets:
+  type: discrete_bucket
+  'on': 全市场涨停比四档映射（极强/强/中/弱，档序 1..4 按高潮分降序）
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 四档的次日均值按档序（极强→弱）单调上升，Spearman rho >= 0.6（在取负序列上判，与执行器同号）
+  ic_floor: 取负序列的日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（等价于原序列 IC 均值 <= -0.02，符号已由取负钉死，禁事后翻号）
+  climax_negative: 极强档（取负序列取值最低的一档）的次日均值必须 < 0，且其绝对值 >= 其余三档均值绝对值最大者
+    （高潮=次日分歧的方向性硬判）
+  threshold_placement: 极强档与强档的次日均值差 >= 0.30×|强档与中档均值差| 时判"门柱位置大致对"；
+    若强档与极强档无差而中档以下才变号 ⇒ 90 门柱失据，产出改档/连续化材料
+  lag_profile: t+1..t+3 衰减形状建档（现器 calibration `_series_metrics` 硬编码 shift(-1)，t+2/t+3 只作人工判读不入机判地板）
+  regime_stability: bull/bear 两段取负序列 IC 同号（若仅牛段同号，则"高潮警示"实为牛市顶部效应，须限定适用范围）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: 极强档后 5 日累计收益（state_next5d_cumulative，辅轴，声明=现器不支持多日前向地板，仅人工判读，不作通过条件）
+  note: 本卡不考三态合取形式（另卡 TDM-E-L2-04/comparison/02），也不考五态细分类（L2-04-1 calibration/02）
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-04.confidence
+preregistered_by: st-mineloop-20261010-L11
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；断供不弃卡（任务书 §2 ⑥向）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily（不复权，close/前收→当日全市场在市股票数与涨停家数的分子分母底座）
+    + c1_market.stk_limit（在册涨停价列 limit_up，涨停判定唯一口径）
+  signal_column: kline_daily.close、kline_daily.pre_close、kline_daily.trade_date、stk_limit.limit_up
+  signal_derivation: >-
+    个股涨停=kline_daily(不复权).close >= stk_limit.limit_up（禁自定 9.9%，禁 hfq——任务书 §3 在册：
+    hfq 会得 3,882 家涨停荒谬值）；全市场涨停比=当日涨停家数 / 当日在 kline_daily 有行的在市股票数；
+    按 sector_breadth.classify_limit_up_breadth 的档界映射为 极强/强/中/弱
+    （ratio>0.10→极强、0.05<ratio<=0.10→强、0.02<=ratio<=0.05→中、ratio<0.02→弱，件内 if-else 顺序原样照抄）；
+    再按 BREADTH_CLIMAX_MAP 取分值（95/70/40/15）并整体取负得到日度单序列（signal_kind=series）；
+    与已在册的 docs/_working/nightmine_campaign/series/limit_up_count.csv 逐日交叉核对（分子一致性，
+    差异 > 1% 的日期须计数披露，禁静默取舍）。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    在册与实读两面：①c1_market.stk_limit=2015-01-05..2026-10-09/9254772 行/5831 symbols（L1 台账 §3-P7）；
+    ②kline_daily 表面 2015/1990 起，但 2019 前仅约 237 只票且 100% rule_computed
+    ⇒ 涨停回放诚实上限=2019-01-03 起（任务书 §3 断供面在册结论），故本卡 IS 起点取 2019-01-04；
+    ③分子面已在册：series/limit_up_count.csv 2019-01-04..2025-09-09、1622 交易日零缺日
+    （任务书 §3 广度 7 序列在册；本车道实读表头与首末数据行核得 1623 行=1 表头+1622 日，
+    首行 2019-01-04=84、末行 2025-09-09=66）；
+    ④缺面明列=**逐日分母（当日在市股票数）与由此得到的涨停比序列从未实测**，
+    需一次 CH 聚合：
+    `SELECT d.trade_date, countDistinct(d.symbol) AS universe, countIf(d.close >= l.limit_up) AS limit_up_cnt
+     FROM c1_market.kline_daily d JOIN c1_market.stk_limit l USING (symbol, trade_date)
+     WHERE d.trade_date BETWEEN '2019-01-04' AND '2025-09-09' GROUP BY d.trade_date`
+    （21:00–22:30 CH 重查询禁令=任务书 §1 与本战役在册让路通知，本车道未跑）。
+    data_window_evidence 补口=待总包 22:30 后按上列命令实测并回填行数与首末日；回填前本卡 status 保持 blocked_on_data。
+  blocked_reason: >-
+    缺"全市场涨停比"的日度分母实测（当日在市股票数），而非缺表——分子面已在 HEAD 且零缺日，
+    解锁成本=一条 GROUP BY trade_date 聚合查询（不涉成分口径、不涉 880 深史 2021-08-02 上限）。
+    本卡因此与前役登记的"梯队/高潮面 blocked 于 limit_up_pool 仅 28 日"是**不同根因**：
+    前役把阻塞挂在采集面上，而在产阶跃口径的数据面其实在 2019 起已具备（唯分母待一次实测）。
+  impl_ref: src/zephyr/signal_ashare/core/sector_strength_wiring.py（MOD-SIG-144，BREADTH_CLIMAX_MAP 56-62 行）
+    + src/zephyr/signal_ashare/sector/sector_breadth.py（MOD-SIG-088，档界常量 35-38 行、
+    classify_limit_up_breadth 83-91 行、ratio=limit_up_count/constituent_count 语义 78-80 行——
+    件内该比率的板块级定义需成分，本卡按接线层的"全市场涨停比"用法取市场级分母，该口径差如实登记）
+    + src/zephyr/signal_ashare/core/sector_ecology_judge.py（MOD-SIG-143，门柱 43/113 行）
+    + scripts/backtest/fexam/calibration_exam.py:run_card（series 面机判正门）
+origin: remine_L11（漏矿来源=④后端实读接线件发现的阶跃映射与门柱等价关系，
+  前役六向表把本节点高潮分写作"880 Top5 截面 z 合成分位"重算口径，未登记在产另一套阶跃口径；
+  非"觉得还能加一张"）
+sources:
+  - 族级矿脉 S4（市场状态/水温/情绪门控），URL+发布方+年份见 L1 台账 §2-S4
+    （三源交叉=极端情绪/广度档对中期收益有预测力，本卡据此把判据定为档间利差与条件稳定性，不主张强 IC；
+    禁引外部参数挪门柱，A 股档界全部取在码常量）

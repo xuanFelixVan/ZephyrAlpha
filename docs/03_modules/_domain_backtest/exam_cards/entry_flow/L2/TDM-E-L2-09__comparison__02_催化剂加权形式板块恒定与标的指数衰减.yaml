@@ -1,0 +1,106 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-09/comparison/02_催化剂加权形式板块恒定与标的指数衰减
+node_id: TDM-E-L2-09
+family: comparison
+title_zh: 催化剂加权形式（地图板块恒定 +20% vs 在码标的指数衰减）·对照卡
+hypothesis: >-
+  本节点存在两种互不相容的催化剂加权形式，且都从未出过分：
+  ①地图 algo_note_zh 写死"有当下催化剂的板块加权 20%"（板块级、恒定、无时效）；
+  ②在码 event_driven_screener.py 第 27/124-129 行实现的是标的级指数衰减
+  weight = 1 + direction×strength×2^(−age/半衰期)，其中 EARNINGS 半衰期=4.0 交易日（第 66 行 _EVENT_HALFLIFE），
+  代码里根本没有"20%"这个常数（config 侧 EventScreenConfig 四个字段=None min_confidence 0.7、
+  extreme_reaction_pct 3.0、conduction_risk_max 0.7、capacity_target 30）。
+  前役三卡（02 密度/03 上调占比/04 业绩净占比）考的都是"催化剂读数本身有没有预测力"，
+  没有一张考"该按哪种形式将催化剂注入排序"。本卡假设：在 symbol×日同一行集上，
+  在码指数衰减形式的次日判别面优于地图恒定 +20% 形式（Sharpe 差 >= 0.1、MaxDD 改善 >= 3pp）；
+  若不优于，则地图"加权 20%"应改写成衰减口径（文字裁定材料）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；两臂共用同一 symbol×日行集与同一目标序列（paired_arm_protocol：仅权重形式异）；
+    衰减形式与半衰期常数取在码既有值（2^(−age/4.0)，EARNINGS 腿），恒定加权形式取地图字面值（×1.2）；
+    symbol→industry 映射沿用同节点 04 卡已冻结的派生口径（≤T 最近一次 research_report 的 industry），
+    本卡不改该口径；两臂的催化剂成员判定阈值（密度 z>0）一经写死不得回改
+buckets:
+  type: dim_pair
+  'on': 'arm 对 {arm_A_map_flat_20pct=板块级恒定 +20%（地图文字版）, arm_B_code_exponential_decay=标的级 1+direction×strength×2^(−age/4.0)（在码版）}'
+  min_obs_per_bucket: 60
+pillars:
+  paired_edge: 在码衰减臂相对恒定 20% 臂 Sharpe 差 >= 0.1 且 MaxDD 改善 >= 3pp（OOS 段）
+  ic_floor: 两臂权重标量各自与次日收益的截面 IC 均值 >= 0.02、IC_IR >= 0.3（一臂不过即形式失效）
+  half_life_check: 在码臂的 age=0..8 逐日 IC 衰减须接近 2^(−age/4) 形状（实测半衰期落在 [2,8] 交易日带外即
+    _EVENT_HALFLIFE 应改，这是"初拟待校准"四字的直接结账）
+  flat_leg_breadth: 恒定 20% 臂须单独出"命中板块数占比"——催化剂覆盖面 >60% 时 +20% 退化为无效常数平移，
+    该退化态要写明不得藏进 IC
+  regime_stability: bull/bear 两段同号（牛段靠故事接力、熊段故事失灵是节点文字的隐含前提）
+  tradability_guard: T+1 与涨停不可买（臂内 close 触涨停的 symbol-day 不计成交），两臂同规则
+target:
+  primary: next_day_index_return（CSI300 次日收益，双臂共用同一目标序列，执行器 shift(-1) 现器可考）
+  secondary: symbol_next5d_excess_weighted（按臂权重加权的 5 日超额，辅轴=形式对排序质量的边际；
+    需成分/行业映射，窗受限见 evidence）
+  note: 出分只裁定"加权形式"，不裁定催化剂读数本身的预测力（那是 02/03/04 三卡的题）；
+    政策/事件类催化剂腿（POLICY/SUDDEN/MERGER/IPO/GEO 五类半衰期）在码有常量无落库标注面，
+    本卡只用 EARNINGS 腿，不得外推到政策催化剂有效
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-09.confidence
+preregistered_by: st-mineloop-20261010-L12
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 3.0
+  sharpe_delta_min: 0.1
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c3_fundamental.research_report（industry, rating, publish_date, org_name, symbol） +
+    c3_fundamental.earnings_forecast（symbol, first_announce_date, forecast_type, profit_change） +
+    c1_market.kline_daily（不复权，涨停可买性判定） + c1_market.kline_index（symbol='000300' close）
+  signal_column: research_report.industry, research_report.publish_date, research_report.symbol,
+    earnings_forecast.symbol, earnings_forecast.first_announce_date, earnings_forecast.forecast_type,
+    earnings_forecast.profit_change, kline_daily.close, stk_limit.up_limit, kline_index.close
+  signal_derivation: 行集=symbol×交易日（宇宙=symbol→industry 可解析的票，映射口径=同一 symbol 在 ≤T 最近一次
+    research_report 里出现的 industry，取不到则该票该日记 nan 不补零）；
+    臂 A（恒定 +20%）：industry 催化剂态=该 industry 过去 5 个交易日研报条数的截面 z 分，z>0 记"有当下催化剂"，
+    该 industry 内全部 symbol×日 weight=1.2，其余 weight=1.0；
+    臂 B（指数衰减）：事件源=earnings_forecast 按 first_announce_date 归集（PIT 纪律=只用 first_announce_date≤T
+    的行，同一 (symbol, report_period) 只取首次披露，修订稿不回溯覆盖）；
+    direction=forecast_type∈{预增,扭亏}→+1、∈{预减,首亏}→−1、其余类型→0（十类取值以开考前实测枚举核对，
+    本卡只声明映射规则）；strength=|profit_change 的 (min+max)/2| 经 1%–99% 截尾后除以 100 并 clip 到 [0,1]；
+    age_days=自 first_announce_date 起算的交易日数；weight=1+direction×strength×2^(−age_days/4.0)，
+    age_days>20 的 weight 记 nan（衰减尾部不入组）；
+    两臂权重矩阵行对齐（同一 symbol×日同时有两值才入配对，缺一侧则该日剔两臂）。
+  target_source: kline_index(symbol='000300').close → next_day_return（主轴，双臂共用）；
+    辅轴=kline_daily（不复权）close 的 5 日 forward return 减同期 000300 5 日收益，按臂权重加权
+  data_window_evidence: 全部引用在册实测（本车道 21:00-22:30 未自取新数）：
+    ①c3_fundamental.research_report=2017-01-02..2026-09-30/146940 行/207 industry/116 org，
+    逐年 2019=11967、2020=12700、2021=12867、2022=19988、2023=22019、2024=19900、2025=16237（前役 L1 台账 §3-P13）；
+    ②c3_fundamental.earnings_forecast=125582 行/1999-01-08..2026-07-03/5707 symbols/forecast_type 十类
+    （同节点 04 卡 data_window_evidence 在册实测，preregistered_by=st-nightmine-20261010-RXA；
+    该表终点 2026-07-03 早于 OOS 终点 2025-09-09 之后，本卡 OOS 无需其后数据）；
+    ③涨停判定 MUST 用不复权 kline_daily 配 stk_limit（任务书 §3"涨停判定口径"行，用 hfq 会得 3882 家荒谬值）；
+    ④个股目标面 kline_daily_hfq=1990-12-19..2026-09-30/10098785 行、2026-09-30 后有 9 日缺口（§3-P10，不影响本卡 OOS 终点）；
+    ⑤symbol→industry 派生映射的宇宙偏差已在 04 卡登记，本卡沿用并复述该偏差（research_report 覆盖的行业名
+    与 880 industry_l1/ths 不同源，行业数 128~181 波动，§3-P13）。
+    代码侧凭据（本车道直读源码所获）：event_driven_screener.py 第 27 行权重式、第 124-129 行 _event_weight、
+    第 65-67 行 _EVENT_HALFLIFE（EARNINGS=4.0、MERGER=2.0）、第 91-94 行 EventScreenConfig 四字段（无 20% 常数）。
+  impl_ref: src/zephyr/signal_ashare/screening/event_driven_screener.py（module_ref=MOD-SIG-049，
+    module_mounts=MOD-SIG-106）；消费方反查（本车道 Grep 实测）=config/trading_decision_map.yaml 第 6197 行
+    在册边 TDM-E-L2-09→TDM-E-L2-01（feed/signal/daily/lag 0d），而 src+scripts+config 内以节点号反查仅命中
+    intelligence 三件（chain_impact_resolver/chain_impact_stream/news_chain_node_linker）与
+    signal_ashare/__init__.py 及 generate_trading_day_cycle_map.py（文档性引用），
+    未见任何"催化剂→L2-01 加权 20%"的实现件 ⇒ ②下游=地图在册、代码未接线
+  blocked_scope: 政策/事件五类催化剂腿 blocked_on_data：EventCategory 六类（EARNINGS/MERGER/POLICY/SUDDEN/IPO/GEO）
+    与各自半衰期在码为"初拟待校准"常量，但事件类别标签无历史落库表（本车道 21:00-22:30 未取新数，
+    待总包 22:30 后实测 event 标注面是否存在）；解锁条件=类别标签落库 ≥300 交易日 + 半衰期参数带 as_of 版本

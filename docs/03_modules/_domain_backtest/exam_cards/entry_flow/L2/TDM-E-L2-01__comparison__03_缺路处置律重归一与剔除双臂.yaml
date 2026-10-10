@@ -1,0 +1,102 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-01/comparison/03_缺路处置律重归一与剔除双臂
+node_id: TDM-E-L2-01
+family: comparison
+title_zh: 子分缺失处置律·重归一（地图）vs 整条剔除（在产接线）双臂对照卡
+hypothesis: >-
+  本节点的缺失维度处置律存在三套并存口径且从未被考：地图 TDM-E-L2-01 的 fallback 字段原文
+  "任一维度缺失时按剩余维度归一化输出并标注置信衰减"（config/trading_decision_map.yaml:772）；
+  被测核 MOD-SIG-142 对缺失/负值/非有限子分是 fail-closed 抛 SectorStrengthInputError
+  （sector_strength_aggregator.py:46-48、76-82、111-121，且 SectorStrength 字段面无任何置信衰减字段，
+  件内注释第 8 行明写"输入越界/缺失维度/NaN → fail-closed"）；
+  在产接线 MOD-SIG-144 则执行第三条路——"缺任一维度的板块剔除并记 note（保守不入池）"
+  （sector_strength_wiring.py:8 INVARIANTS）。前役 L1 只在 ablation/02 写了一条
+  pillar "degraded_flag_honesty：缺席必须标 degraded、禁静默补零"，从未把"重归一 vs 剔除"作为可判对象。
+  本卡一句话：在四路中两路长期缺席的现实工况下，处置律取"重归一（可用路均值×100，保留在截面竞争中）"
+  相对"整条剔除（当日退出排名分母）"，其候选池组合的 OOS Sharpe 差 >= 0.10 或 MaxDD 改善 >= 1.5pp，
+  则地图口径占优、接线层须改；两臂均不达标则剔除口径（在产）不失据，地图 fallback 应改写为剔除语义。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: >-
+    看数前冻结（G4-5）。窗与子分口径逐字承同车道 ablation/02 与本车道 comparison/02（两路可算面：
+    路A amount rank-pct+5 日环比、路B 0.2q3+0.3q5+0.5q20 rank-pct），不重造不改系数。
+    缺失工况的构造方式在开考前钉死一种=**逐板块随机屏蔽路B 的 20% 板块-日**（固定伪随机种子 20261010，
+    同种子双臂同屏蔽集，双臂唯一差别=被屏蔽板块的处置方式）；
+    事后换屏蔽率或换屏蔽规则=作废。市场级调节 ±10 在两臂同样施加（承 ablation/02 的 full2+market_adj 语义），
+    本卡不重考调节臂。
+buckets:
+  type: dim_pair
+  'on': 处置律双臂 {arm_A_renormalize=可用路均值×100 并保留参与排名, arm_B_exclude=该板块当日退出排名分母且不入池}
+  pairing: 同一子分底座、同一屏蔽集、同一 Top-15% 池规则，双臂逐日配对（仅缺失处置方式不同）
+  min_obs_per_bucket: 60
+pillars:
+  sharpe_delta: arm_A 相对 arm_B 的 OOS 年化 Sharpe 差 >= 0.10（IS 同向须成立）
+  maxdd_delta: arm_A 的 OOS MaxDD 相对 arm_B 改善 >= 1.5pp；单项达标判 partial 并如实入册
+  pool_denominator_effect: 双臂逐日池规模 N 与 ceil(N×0.15) 之差须计数披露——剔除臂的分母系统性缩小，
+    若池规模差 >= 1 个 code 则"前 15%"在两臂下不是同一件事，本条必须写进出分材料（防分位漂移冒充信号）
+  adjustment_leverage: 重归一臂的合成分基数不变，剔除臂等价于把缺席路的信息清零退出；
+    须报告两臂的 ±10 市场调节相对影响面（池成员在调节翻转日的占比差），若 arm_A 的调节翻转率显著高于 arm_B，
+    则重归一放大了调节杠杆（本卡登记的机制性副产品，独立于通过判据）
+  confidence_decay_field: 地图要求"标注置信衰减"，被测件无该字段 ⇒ 本卡出分不依赖该标注；
+    但该缺项登记为待施工裁决材料（不改码、不改地图，只入台账）
+  regime_split: bear/rebound 两段 arm_A−arm_B 利差同号；反号⇒限定结论适用范围
+target:
+  primary: 双臂池等权组合的 OOS 年化 Sharpe 差与 MaxDD 改善（底座=c1_market.kline_sector_880 行业族指数次日收益）
+  secondary: 双臂池成员逐日重合率（arm_pool_overlap_ratio，纯诊断，>= 0.95 判 DEVICE_INCONCLUSIVE）
+  note: 本卡考"缺路怎么处置"，不考"哪一路重要"（后者=ablation/02）与"权重怎么定"（后者=本车道 comparison/02）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01.confidence
+preregistered_by: st-mineloop-20261010-L11
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  maxdd_improvement_min: 1.5
+  sharpe_delta_min: 0.10
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_sector_880（两臂共用底座，period='1d'）
+  signal_column: kline_sector_880.close、kline_sector_880.amount
+  signal_derivation: >-
+    截面族冻结=industry_l1 ∪ industry_ths（承同车道统一分母族，剔除 880001-880011 市场统计指数），
+    分位/占比按日在数 code 计算；
+    路A/路B 子分逐字承 comparison/02 的 signal_derivation；
+    屏蔽集=固定种子 20261010 下对 (板块,交易日) 二维抽 20% 置路B 为缺失，双臂共用同一屏蔽集；
+    arm_A：composite=mean(可用路)×100（两路齐⇒(A+B)/2；仅余路A⇒路A×100），随后 clamp [0,100]；
+    arm_B：被屏蔽板块当日整体退出截面（不进 rank、不进分母、不入池，等价 MOD-SIG-144 现行为）；
+    两臂各自加市场级调节 ±10（承 ablation/02 的水温档查表口径）后取 Top-15% 池；
+    组合收益=池内 880 行业族指数次日等权收益均值。
+  target_source: kline_index 000300 close→次日收益（Sharpe/MaxDD 基准与市场级超额）
+  data_window_evidence: >-
+    引用在册实测，本车道未跑 CH 重查询（21:00–22:30 禁令）：
+    ①c1_market.kline_sector_880 行业族=2021-08-02..2026-10-08（industry_l1 78263 行/61 codes、
+    industry_ths 163038 行/128 codes，L1 台账 §3-P3/P4）；
+    ②缺失工况的现实性=结构路（板块内涨停占比）与资金流路（板块主力净流入）在 2026-07-22 前不可算
+    （sector_constituent 仅 6 个刷新日、快照表仅 19 个交易日，L1 台账 §3-P6/P7），
+    故"缺路处置"不是假想工况而是全窗常态；
+    ③在码三套口径的正查凭据=trading_decision_map.yaml:772（fallback 重归一+置信衰减）、
+    sector_strength_aggregator.py:46-48/76-82/111-121（fail-closed raise，无置信衰减字段）、
+    sector_strength_wiring.py:8（缺维板块剔除不入池）；本车道实读三件原文行号如左，未凭记忆。
+  impl_ref: src/zephyr/signal_ashare/core/sector_strength_aggregator.py（MOD-SIG-142）
+    + src/zephyr/signal_ashare/core/sector_strength_wiring.py（MOD-SIG-144，在产缺失语义）
+    + scripts/backtest/fexam/calibration_exam.py:run_card（双臂机判正门）
+executor: >-
+  考卷侧需 ≤60 行 arm driver（两路子分→固定种子屏蔽→两种处置→各自 Top-15% 池→两条组合日收益序列），
+  被测件与取数件均在岗，缺的是组装而非实现 ⇒ 标 preregistered 非 blocked_on_impl。
+origin: remine_L11（漏矿来源=地图 fallback 字段与件/接线的三套并存缺失语义逐行对码，
+  前役仅以一条 pillar 提及"必须标 degraded"而未成题）
+sources:
+  - 族级矿脉 S5（因子叠加/门槛/消融与防过拟合），URL+发布方+年份见 L1 台账 §2-S5（复用族级结论，未重复挖外部矿）

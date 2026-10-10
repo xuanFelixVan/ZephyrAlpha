@@ -1,0 +1,122 @@
+schema_version: '1.0'
+card_id: TDM-E-L0-02/ablation/04_降档预警输入消融
+node_id: TDM-E-L0-02
+family: ablation
+title_zh: L0-04 明日降档预警→L0-02 边界修订输入·消融卡（WITH vs WITHOUT，接线未至标 blocked_on_impl）
+origin: tdm_edges_l0_04_to_l0_02
+hypothesis: >-
+  把 TDM-E-L0-04 组合器 intraday_tomorrow_forecast 在 14:30 输出的"明日降档预警"
+  （档位差 >=1 触发，D123 反哺 L0-02 边界修订）作为 boundary_revision_engine 的**额外触发输入**：
+  WITH_WARNING 臂相对 WITHOUT_WARNING 臂应在次日走弱日降低当日持仓越界幅度与最大回撤，
+  在次日走强日付出踏空成本——两腿净额与条件分布都要出账；
+  若两臂差近 0 ⇒ 反哺"名实不符"（TDM 图有边、代码未接线的现状在实测上的表现），
+  须上报至治理"零触发零消费→退役"候选账（如实上报不粉饰）。
+window:
+  in_sample:
+  - '2021-07-01'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-06-30'
+  regimes:
+    bull: 2021-07-01..2021-12-31（标签按沪深300 区间收益符号开考前机械复核）
+    bear: 2022-01-01..2022-12-31（同规则）
+  frozen_note: >-
+    窗口与夜矿 L0-02/L0-04 comparison 族同钉（kline_etf_1min 起点 + WINDOW_HOLDOUT）；
+    预警阈值=档位差 >=1（8 态悲观全序，蓝图 §2，取自 algo_note_zh）；
+    触发时刻=14:30 单时点（本卡不测 10:00/11:00/13:30 多时点差，那属 L0-04 comparison__02 三臂的 ACT_DELAY_CLOSE 面）；
+    两臂定义先验写死，事后禁改；接线未至时本卡保持 blocked_on_impl，接线落地后**窗与判据不动**；
+    事后挪门柱=作废（G4-5）
+arms:
+  WITH_WARNING: boundary_revision_engine 在常规"偏离超阈触发"之外，额外消费 L0-04 14:30 档位差 >=1 预警（D123 反哺 L0-02 边）
+  WITHOUT_WARNING: 关闭 L0-04→L0-02 反哺，仅常规偏离触发（对照臂；**注意此即当前生产实际态**，见 [CONSUMERS] "待接线"）
+buckets:
+  type: arm_x_nextday_regime
+  'on': 两臂 × 次日实际走势二档（走弱/走强，按次日 CSI300 收益符号，开考前机械复核）
+  min_obs_per_bucket: 60
+pillars:
+  downside_cut: WITH_WARNING 在"次日走弱"桶的当日收盘前持仓越界幅度与次日 NAV 相对回撤须显著低于 WITHOUT_WARNING（预警真实价值面，主柱）
+  upside_miss_cost: WITH_WARNING 在"次日走强"桶的踏空成本必须同表出账，禁只报有利腿
+  zero_delta_test: 两臂差近 0 ⇒ 反哺≈常数或≈未接线的实证面；本柱如实上报不粉饰
+  wiring_audit: WITH_WARNING 臂必须能在产物里区分"边界修订由预警触发" vs "由常规偏离触发"，逐笔可复核；
+    违例即整卡作废（实现级纪律柱）
+  cost_gate: 两臂统一五档与换手门（反哺带来的额外换手必须计价，否则对照不公，config/exam_scale_cost_gate.yaml 冻结件）
+target:
+  primary: cost_adjusted_sharpe（两臂各一条 NAV）
+  secondary: over_boundary_exposure_ratio / 次日走弱桶相对回撤
+  note: 反哺"是否名副其实"的唯一实证面；生产现状 [CONSUMERS] 记"待接线"，本卡待接线落地后方可开考
+status: blocked_on_impl
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L0-02.confidence
+preregistered_by: st-mineloop-20261010-L15
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  maxdd_improvement_min: 0.02
+  sharpe_delta_min: 0.05
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结（照 comparison/ablation 族键名口径，抄 TDM-X-S1-02__comparison__02_dualwindow.yaml）：
+  maxdd_improvement = (WITHOUT_WARNING 全窗 MaxDD) − (WITH_WARNING 全窗 MaxDD)（正值=预警臂改进），IS/OOS 均须 >=0.02；
+  sharpe_delta = cost_adjusted_sharpe(WITH) − cost_adjusted_sharpe(WITHOUT)，IS/OOS 均须 >=0.05；
+  oos_same_sign：两柱 OOS 差值与 IS 差值同号；n 不足或差为 nan=fail。
+  **双臂 comparison/ablation 已由夜矿 L2 并入 scripts/backtest/fexam/calibration_exam.py:run_card
+  （须注 signal+signal_b）** ⇒ 本卡按此约束写双列绑定，见 data_binding.signal_b。
+oos_window_ref: *id001
+data_binding:
+  signal_table: >-
+    c1_market.kline_etf_1min（盘中盘面：预警信号侧 + 实际暴露观测） +
+    c1_market.emotion_index（stage='pre_open' 严格过滤，先验档侧；本卡禁读 close_final，见 emotion_face_note） +
+    c1_backtest.regime_state_anchored（边界档侧）
+  signal_column: >-
+    signal（WITH_WARNING 臂）= boundary_revision_engine 输出，
+    触发条件 = 常规偏离超阈 OR (emotion_index@pre_open 先验档 vs intraday_tomorrow_forecast 14:30 融合档 差 >=1)；
+    signal_b（WITHOUT_WARNING 臂）= 仅常规偏离超阈触发（**等价当前生产实际态**，因 L0-02 侧 downgrade_warning 消费待接线）。
+  signal_b: boundary_revision_engine 输出（常规偏离超阈触发，不含预警输入）
+  signal_derivation: >-
+    预警 = 每日 14:30 时点档位差 >=1（同 calibration__03 定义，禁分叉实现；
+    组合器件 src/zephyr/plan_engine/intraday_tomorrow_forecast.py, MOD-PLAN-025，实测存在）；
+    边界修订引擎 = src/zephyr/plan_engine/boundary_revision_engine.py（**实测存在**，本车道 ls 核实；
+    夜矿 L0-02__02 卡曾记"待逐件核"，本卡补写死路径）；
+    监控件 = src/zephyr/plan_engine/plan_deviation_monitor.py（MOD-PLAN-022，TDM module_ref 真身）；
+    两臂差异**仅在** boundary_revision_engine 是否接受 L0-04 预警作触发输入这一处（其他一字不动）；
+    预警输入的消费侧接线 = 缺实现（详见 blocked_reason）。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → window_metrics"
+  data_window_evidence: >-
+    本卡信号侧与 calibration__03 完全同面（emotion_index@pre_open + kline_etf_1min + intraday_tomorrow_forecast），
+    在册数字沿用（§3 直引）：kline_etf_1min=2021-07-01..2026-10-09/292,584,491 行/1,699 symbols；
+    regime_state_anchored=2017-07-11..2026-10-09/4,488 行；
+    emotion_index pre_open 具体覆盖窗 = 待总包 22:30 后实测（21:00–22:30 禁 CH 重查询）。
+  blocked_reason: >-
+    缺实现明列 = L0-02 侧消费 downgrade_warning 的接线代码。凭据 =
+    `src/zephyr/plan_engine/intraday_tomorrow_forecast.py:5` [CONSUMERS] 明文：
+    "TDM-E-L0-04（明日情绪盘中滚动预测）；**L0-02 偏离监控（downgrade_warning 消费，待接线）**；
+    L3-06 环境开关（情绪档输入，待接线）"；
+    即 intraday_tomorrow_forecast 组合器**能**产出预警，但 boundary_revision_engine 侧
+    尚无接受该预警作触发输入的代码路径；TDM edges 里的 L0-04→L0-02 feed 边（`payload_zh: 明日降档预警触发边界修订`）
+    是**设计边**、非实现边；
+    另 TDM 图内 D123 三处反哺中 L0-04→L1-AGG/L2-06-1/P-P2 三边 pit_proof=unaudited-20261005，
+    亦属"卡片描述可考、代码接线未至"半完成态（本卡不测此三处，另轨处置）。
+  unlock_criteria: >-
+    解锁判据 = L0-02 侧接受 downgrade_warning 作 boundary_revision_engine 触发输入的接线代码落地并留有回归样本
+    （建议由总包在接线时同步 `python scripts/governance/apply_depgraph.py --add-design-node` 登记并附单测）；
+    **解锁与本卡窗口/两臂定义/门柱解耦**（G4-5 硬红线）——
+    接线完成后 status 由 blocked_on_impl 转 preregistered，不改其它字段。
+  emotion_face_note: >-
+    本卡信号侧只读 emotion_index@pre_open（§3 在册 10 月唯一可得腿），
+    不读 close_final（§3 在册=0 行）；
+    情绪断供面若延伸至 pre_open 历史段，本卡 preregistered 前提受损，须由总包 22:30 后实测复核
+    （同 calibration__03 的 pre_open_leg_binding 风险登记）。
+infra_gap: >-
+  blocked_on_impl=L0-02 侧消费 downgrade_warning 的接线代码（intraday_tomorrow_forecast.py [CONSUMERS] 明文"待接线"）；
+  执行器无缺口（ablation 双臂 comparison/ablation 已并入 run_card，须注 signal+signal_b，本卡已按此写）；
+  与夜矿 comparison 族共用驱动件（infra_gap: comparison 族卡驱动执行器（共用）已由夜矿 L3 记，本卡沿用同结论）。
+sources:
+  - 本车道台账 R1_L15_ledger.md §1（六向②下游+④后端）§4（推翻点 3 消费侧接线）§7（非 QMT 触发条）
+  - src/zephyr/plan_engine/intraday_tomorrow_forecast.py:5 [CONSUMERS] 明文
+  - config/trading_decision_map.yaml edges L0-04→L0-02（"明日降档预警触发边界修订"，设计边）
+  - 姊妹卡 TDM-E-L0-02__calibration__03（同口径组合器信号定义，禁分叉）

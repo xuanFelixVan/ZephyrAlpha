@@ -1,0 +1,86 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+node_id: TDM-E-L1-AGG
+family: calibration
+title_zh: 子信号族→总闸状态轴传导保真度·校准卡（在册 feed 边真伪）
+origin: tdm_edge_registry
+hypothesis: >-
+  决策图在册 6 条 feed 边（TDM-E-L1-S1/S2/S3/S4/S0/S5 → TDM-E-L1-AGG，
+  config/trading_decision_map.yaml:6164-6167,6183,6187）宣称总闸状态轴消费六路传感器；本卡把
+  "去波动腿"的三路子信号（趋势/涨停温度/晋级）按冻结等权合成一个合成分，判该分与当日 AGG
+  状态档序的秩相关是否 >=0.6——若 |rho|<0.2，则六路消费在状态轴上零传导（除波动腿外的传感器族
+  对总闸档位=装饰件，进治理"零触发零消费→退役"候选账）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（G4-5）；三腿方向先验钉死（趋势↑=偏进攻、涨停温度↑=偏进攻、晋级↑=偏进攻），等权 1/3 合成零拟合，禁事后按实测符号重排；"去波动腿"是本卡的核心设计约束（波动腿与 dominant 同源自 vol_pct，纳入即同义反复，源码实测 anchored_state_machine.py:151），禁以补腿翻案
+buckets:
+  type: quantile_decile
+  'on': 三腿等权合成 z 分（滚动 250 日标准化）
+  min_obs_per_bucket: 60
+pillars:
+  transmission_fidelity: 合成分十分位 × AGG 状态档序（r3=1…r4=4）Spearman 单调 rho>=0.6 —— 传导成立的定义
+  zero_transmission_alarm: 若 IS 窗 |rho|<0.2 ⇒ 触发"在册 feed 边名不副实"结论，如实入册并逐腿单列 rho（禁以合成分掩盖单腿方向抵消）
+  leg_disaggregation: 三腿各自与档序的 rho 全部建档（n>=60/腿），冗余与抵消面披露
+  downstream_increment: 合成分对次日指数收益的日频 IC 均值 >=0.02 且 IC_IR >=0.3（传导若成立须带增量信息，否则即便相关成立也只是共线）
+  regime_stability: 牛/熊两段与 OOS 同号
+target:
+  primary: next_day_index_return（000300 T+1，执行器 shift(-1) 现器口径可用）
+  secondary: agg_tier_ordinal（AGG 状态档序，本卡传导终点，机判对象之一）
+  note: 传导面卡，终点=状态档序；收益面只作增量旁证，不替代主柱
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-AGG.confidence
+preregistered_by: st-mineloop-20261010-L14
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(三腿合成分秩, AGG 状态档序秩) >=0.6；
+  ic_mean/ic_ir 读"合成分 t 日"对"000300 t+1 收益"的日频秩相关；两段同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.regime_state_anchored（趋势腿列 ma20/ma60/close 实测在册）+ c1_market.emotion_index（stage='close_final'，components 内含 C1_limitup_temp/C2_promotion，实测在册）
+  signal_column: 趋势腿=close/ma60−1 与 ma20/ma60−1；涨停温度腿=components.C1_limitup_temp；晋级腿=components.C2_promotion
+  signal_derivation: >-
+    三腿各取 250 日滚动窗标准化 z 分（窗内均值/标准差，PIT 仅用 t 及以前）；
+    合成分 = (z_trend + z_limitup_temp + z_promotion)/3（等权 1/3，禁加权拟合）；
+    传导终点 = regime_state_anchored.dominant 的档序（r3=1/r2=2/r1=3/r4=4，阈值 0.30/0.60/0.80 取自源码，本卡不重算）；
+    components 的键解析由总包按实测列型固化为单一取数表达式（禁双口径混算，本卡只认 C1_limitup_temp/C2_promotion 两键名，实测出处见 data_window_evidence）。
+  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1（口径抄自 TDM-E-L1-S3__calibration__06_promotion_rate_derived.yaml:60）"
+  data_window_evidence: >-
+    在册引用（本车道未新查 CH，21:00-22:30 禁重查询）：
+    （1）`SELECT min(trade_date),max(trade_date),count() FROM c1_backtest.regime_state_anchored`
+    → 2017-07-11..2026-10-09 / 4,488 行，列实测 close/ma20/ma60/ma120/vol_pct/dominant/data_source/ingest_ts
+    ——出处 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison__02_anchored_cap_curve_on_off.yaml:69-77；
+    （2）`SELECT toYear(trade_date),uniqExact(trade_date) FROM c1_market.emotion_index WHERE stage='close_final' AND trade_date>='2019-01-01' GROUP BY y`
+    → 2019..2025 = 244/243/243/242/242/242/243 天逐年完整，列实测 components/source/stage/version，
+    components 内含 C1_limitup_temp/C2_promotion 分量且 source 记 'daban_board_event'
+    ——出处 TDM-E-L1-AGG__ablation__02_state_input_replacement.yaml:74-76 与 TDM-E-L1-S3__calibration__06_promotion_rate_derived.yaml:67；
+    （3）000300 价：kline_index 实测 1990-12-19..2026-10-09 / 3,104,162 行 / 1,097 symbols，000300 各 1,843 行覆盖 2018-06-01..2025-12-31（同上（1）出处）；
+    （4）传导边的在册出处=config/trading_decision_map.yaml:6164-6167（S1/S2/S3/S4→AGG feed daily lag 0d）、
+    6183（S5→AGG）、6187（S0→AGG），pit_proof 全标 'legacy-unaudited' ⇒ 本卡正是对该未审计边的机检。
+infra_gap: >-
+  部分 blocked_on_impl（不阻卡面冻结，阻"终点侧"完整复核）：AGG 侧无逐日"合成分/权重消费日志"落台件——
+  src/zephyr/regime/core/anchored_state_machine.py 的 build_states() 只吃 vol_pct（源码实测行 136-153），
+  未见任何 S1/S2/S3/S5 读数入参；故本卡实测的是"传感器读数与状态档序的统计共动"，
+  而非"代码消费了谁"；后者需总包补一件 AGG 输入消费日志（缺什么写什么，禁虚构）。
+sources:
+  - config/trading_decision_map.yaml:6164-6167,6183,6187（feed 边登记）
+  - src/zephyr/regime/core/anchored_state_machine.py:136-153（状态生成只吃 vol_pct）

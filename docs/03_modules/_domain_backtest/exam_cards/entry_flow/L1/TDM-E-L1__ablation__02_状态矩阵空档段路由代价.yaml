@@ -1,0 +1,90 @@
+schema_version: '1.0'
+card_id: TDM-E-L1/ablation/02_状态矩阵空档段路由代价
+node_id: TDM-E-L1
+family: ablation
+title_zh: 状态挂载矩阵空档段（点火/亢奋/派发）路由代价·消融双臂卡
+origin: tdm_state_mount_matrix
+hypothesis: >-
+  总闸的"状态→挂载策略"矩阵在册有三段空档（config/trading_decision_map.yaml:6474,6479,6484
+  ignition/euphoria/distribution 三段 mounted=[] 且 confidence=proposed），叠加六段 activation
+  折算的另一处空档（src/zephyr/pf_core/strategy_engine/framework_composer.py:151 记
+  "r1 低波震荡/r2 中波震荡无六段对应（auto_mount 同口径'不路由'）"，strict 口径下 α 强制 0）——
+  本卡判这些"门开着但没车"的日子关档（全段放行）相对开档（矩阵路由）多赚多少、多回撤多少：
+  若关档臂在空档段既不更赚也不更险，则空档=安全冗余；若显著更赚，则矩阵空档是总闸的真实漏损面。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（G4-5）；空档段集合先验钉死={ignition, euphoria, distribution}（逐字取矩阵行 6474/6479/6484），禁按实测增删段名；activation 折算口径固定 strict（framework_composer.py:161 原文"激活集未含当前六段态即 α=0"）；r1/r2 无对应日并入空档子集单列；事后挪=作废
+arms:
+  MATRIX_ROUTED: 矩阵路由开——段态不在挂载集内的 sleeve α=0（A 臂=signal）
+  ALL_PHASE_OPEN: 矩阵路由关——所有 sleeve 全段放行，暴露只吃 L1 预算带与 cap 曲线（B 臂=signal_b）
+buckets:
+  type: arm_x_state_matrix_cell
+  'on': 两臂 × 六个段态格（吸筹/点火/扩张/亢奋/派发/退潮；空档三段为主判集，其余三段作对照）
+  min_obs_per_bucket: 60
+pillars:
+  opportunity_cost: 空档三段子集内 ALL_PHASE_OPEN 相对 MATRIX_ROUTED 的年化收益差（机会成本主柱，须出正数才证明"漏损"）
+  safety_value: 同子集内 MATRIX_ROUTED 相对 ALL_PHASE_OPEN 的 MaxDD 改善 >=5pp（空档的保护价值，与上一柱双负即"既漏又不保护"）
+  unmapped_day_share: r1/r2 无六段对应日的占比与两臂在该集上的收益差（在册"不路由"口径的实际覆盖面，建档不判过线）
+  no_new_asset: 两臂 sleeve 集与权重帧一字不动，只动 activation 折算——违例即消融不合法
+  cost_gate: 两臂统一走冻结五档 [0,5,10,20,40]bp，逐臂非增且 40bp>=survival_floor=0.0，年化换手<=8.0x
+  oos_hold: OOS 段两主柱同号
+target:
+  primary: cost_adjusted_sharpe（两臂各一条 NAV）
+  secondary: max_drawdown / annual_return / alpha_zero_day_share
+  note: 本卡不复判 cap 曲线（L1/02 卡面）与状态输入替换（AGG/02 卡面），只隔离 activation 折算这一环
+status: blocked_on_data
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1.confidence
+preregistered_by: st-mineloop-20261010-L14
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  sharpe_delta_min: -0.2
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.regime_snapshot_history（旧链 dominant/shrinkage，行数在册）+ 逐日六段段态落台表（未在册，缺段见 blocked_reason）+ c1_market.kline_index（symbol='000300' close 权重帧基准）+ CH strategy_screen（sleeve 表现面，出处为 TDM 节点 strategy_mounts evidence 字符串）
+  signal_column: signal=MATRIX_ROUTED 臂逐日合成权重帧；signal_b=ALL_PHASE_OPEN 臂逐日合成权重帧
+  signal_derivation: >-
+    逐日取段态 s_t（六段）与档态 r_t；
+    MATRIX_ROUTED 臂 sleeve 权重 w_i,t = base_w_i × 1[s_t ∈ activation_set_i]（strict 口径 α=0，
+    映射位点=framework_composer.py:147-161 REGIME_STATE_TO_ACTIVATION_PHASE，r1/r2 返回 None 即不路由）；
+    ALL_PHASE_OPEN 臂 w_i,t = base_w_i（指示函数恒 1）；
+    base_w_i 取冻结基准清单权重（与 L4 族同一 evaluate_recipe 权重源，跨卡可比，口径抄 L1/02 卡）；
+    两臂最终暴露均再吃 min(cap_t, band_upper_t)（同装置，禁在 B 臂偷偷放宽仓位）。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → window_metrics(sharpe/max_drawdown/annual_return)"
+  data_window_evidence: >-
+    在册引用：矩阵行实测=config/trading_decision_map.yaml:6470-6484（capitulation 挂
+    [STR-VREV-025, STR-VREV-027]、accumulation 挂 [STR-VREV-026, …]、expansion 挂
+    [STR-MOMTREND-033]、ignition/euphoria/distribution 三段 mounted=[] 且 confidence=proposed）；
+    activation 折算件实测=src/zephyr/pf_core/strategy_engine/framework_composer.py:72-74,143-161,218,300-305
+    （六段词表加载与 r 态→六段态唯一映射位点）；
+    另一处消费在册=src/zephyr/strategy_pipeline/daily_decision_orchestrator.py:44（"六段映射=法定真源引用，r1/r2 不路由"）；
+    regime_snapshot_history 3,635 行（TDM-E-L1__comparison__02 卡:73 在册）；kline_index 覆盖与 000300 行实测（同卡:74-75）；
+    data_window_evidence 缺面：逐日六段段态历史表与列名未在册实测 ⇒ 待总包 22:30 后实测
+    （命令原文建议：`SELECT table_name FROM system.tables WHERE database='c1_market' AND table_name LIKE '%phase%'`
+    加 `SELECT min(trade_date),max(trade_date),count() FROM c1_market.emotion_index GROUP BY stage`）。
+  blocked_reason: >-
+    （1）六段段态逐日历史落台未证实（TDM:5939 记名"情绪聚合器=独立对话未建（纪要§8.3定案不代建）→红节点如实"），
+    段态不可得则 activation 指示函数无从评估；
+    （2）CH strategy_screen 只在册到"7 行 oos_tested(CAND-*)"级别的摘要（TDM strategy_mounts evidence 字符串），
+    逐 sleeve 日频权重帧历史未在册 ⇒ 双臂权重帧不可重建；
+    （3）另需一件消融侧的 activation 注入器（现折算只在 framework_composer/daily_decision_orchestrator 实盘链内，
+    回测考卷侧无该钩子）——缺什么写什么，不虚构；
+    解锁条件=（1)(2) 实测补齐且（3）补件后转 preregistered，窗口与段名集合不动。
+sources:
+  - config/trading_decision_map.yaml:6470-6484（状态挂载矩阵与三段空档原文）
+  - src/zephyr/pf_core/strategy_engine/framework_composer.py:143-161（r 态→六段态映射与 r1/r2 不路由原文）
