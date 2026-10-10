@@ -153,7 +153,7 @@ generated_by: scripts/governance/generators/generate_front_door.py
 
 > 使命：任何 AI/人从本页出发，最多 2 跳抵达任意资产真源。本页是派生视图，真源见各链接；先单口后 Grep，路径禁凭记忆书写（根宪法 §8）。
 
-## 查询五单口
+## 查询六单口
 
 | 你要找 | 唯一入口 | 备注 |
 |---|---|---|

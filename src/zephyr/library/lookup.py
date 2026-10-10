@@ -33,6 +33,7 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
+from pathlib import Path
 from typing import Any, Final
 
 from zephyr.library import ledger_cache
@@ -430,7 +431,7 @@ def _state_truncate(line: str, width: int) -> str:
     return text if len(text) <= width else text[:width] + "…"
 
 
-def _run_git(args: list[str], repo_root: Any) -> str:
+def _run_git(args: list[str], repo_root: str | Path) -> str:
     """只读 git 调用：stdout 按 UTF-8 解码（win32 下 git 输出恒 UTF-8，errors=replace 防炸）。
 
     经 run_subprocess_hidden 统一入口（TRAE-067 铁律2 CREATE_NO_WINDOW，BARE-SUBPROCESS 处方）。
@@ -453,7 +454,7 @@ def _run_git(args: list[str], repo_root: Any) -> str:
     return proc.stdout if proc.returncode == 0 else ""
 
 
-def _git_log_lines(args: list[str], repo_root: Any, cap: int) -> list[str]:
+def _git_log_lines(args: list[str], repo_root: str | Path, cap: int) -> list[str]:
     """git log --all --oneline 包装：非空行取前 cap 条（空仓/无命中返回空表）。"""
     out = _run_git(["log", "--all", "--oneline", *args], repo_root)
     return [line for line in out.splitlines() if line.strip()][:cap]
@@ -493,7 +494,7 @@ def _state_source_index(query: str) -> tuple[list[str], bool]:
 
 
 def _state_source_gitlog(
-    query: str, dir_hit_paths: list[str], other_hit_paths: list[str], repo_root: Any
+    query: str, dir_hit_paths: list[str], other_hit_paths: list[str], repo_root: str | Path
 ) -> tuple[list[str], bool]:
     """源② git log 三通道（--all --oneline，近 90 天，总 ≤15 行，每行带通道标注）：
 
@@ -584,7 +585,7 @@ def _state_source_gitlog(
     return lines, bool(lines)
 
 
-def _scan_file_words(path: Any, lowered_words: list[str]) -> tuple[set[int], list[tuple[int, str, int]], int]:
+def _scan_file_words(path: Path, lowered_words: list[str]) -> tuple[set[int], list[tuple[int, str, int]], int]:
     """单文件内容扫描（大小写不敏感子串）。
 
     返回 (命中词索引集, [(行号, 行文本, 命中词数)], 全词同现行数)——全词同现
@@ -618,7 +619,7 @@ def _scan_file_words(path: Any, lowered_words: list[str]) -> tuple[set[int], lis
 
 
 def _state_source_workshop(
-    query: str, workshop_root: Any, config_root: Any
+    query: str, workshop_root: str | Path, config_root: str | Path
 ) -> tuple[list[str], list[str], list[str], bool]:
     """源③ 工棚面+挂账面：docs/_working 目录名+文件名+内容子串扫描 + config/*.yaml 内容扫描。
 
@@ -654,7 +655,7 @@ def _state_source_workshop(
         excerpts = sorted(hits, key=lambda h: (-h[2], h[0]))[:_STATE_EXCERPTS_PER_FILE]
         records.append((display, word_union, cooc, len(dir_idx), len(name_idx), len(hits), excerpts, is_dir_hit))
 
-    def _display_for(path: Any, base: Any, fallback: Any) -> str:
+    def _display_for(path: Path, base: Path, fallback: Path) -> str:
         try:
             return path.relative_to(base).as_posix()
         except ValueError:
@@ -736,9 +737,9 @@ def _state_source_workshop(
 def lookup_state(
     query: str,
     *,
-    repo_root: Any = None,
-    workshop_root: Any = None,
-    config_root: Any = None,
+    repo_root: str | Path | None = None,
+    workshop_root: str | Path | None = None,
+    config_root: str | Path | None = None,
 ) -> int:
     """state 面：资产状态三源证据包（只读零副作用；馆查询走现有只读路径）。
 
@@ -808,7 +809,10 @@ def main(argv: list[str] | None = None) -> int:
     """
     parser = argparse.ArgumentParser(prog="zephyr.library.lookup", description="图书馆总口查询（T5 两轴过滤器）")
     parser.add_argument(
-        "query", nargs="?", default="", help="查询串（ID/home/标题模糊匹配；ruling: 前缀=裁定先例机检面）"
+        "query",
+        nargs="?",
+        default="",
+        help="查询串（ID/home/标题模糊匹配；ruling: 前缀=裁定先例机检面；state <词> 前缀=资产状态三源断言）",
     )
     parser.add_argument("limit_pos", nargs="?", type=int, default=None, help="上限（位置式旧用法）")
     parser.add_argument("--limit", type=int, default=20, help="上限（默认 20，最大 10000）")
