@@ -103,7 +103,22 @@ budget_caps:
   vram:
     physical_gb: 24
     train_quota_gb: 18
-    concurrency: 1                  # 单卡禁共存（与本地 LLM 21.6GB 硬顶互斥：exclusive_group=gpu_default）
+    # 2026-10-11 NVML 逐进程实测（st-gpux-20261011）：六路并发 eval-on-GPU 跑批时设备
+    # memory.used=12,171MiB ÷ 6 路 ≈ 2,029MiB/路（含 cupy 上下文与缓存池）；CPU 路面今晨
+    # p2 六路峰值设备合计 6,091MiB ≈ 1,015MiB/路。预算取 2,100MiB/路（实测上取整留 71MiB）。
+    per_path_budget_mib: 2100           # 消费方=factory_grid_executor._dev_xp 显存准入闸（free 不足即整路降级 CPU 并计 vram_refused）
+    concurrency: 6                      # 入册=已实测跑过且可复核的工作点；算术余量 18,432/2,100=8.8 未实测不上册
+    # 裁定据：总统统筹 2026-10-11 05:3x 裁定③——禁"册上写 1、实际跑 6"的漂移态继续；
+    # 并发不再靠自觉：显存预算由代码自限（超预算的路自己回 CPU），与本地 LLM 的互斥
+    # 由 resource_profile_registry manual_factory_grid_executor.exclusive_group=[gpu_default] 承担。
+    concurrency_basis: "GPU 化班 N-3 六路×25,000 格双后端配对实测（seed 20261010 与今晨 p2 逐字同参）"
+  # 主机侧 RAM 逐路预算（2026-10-11 N-3 补腿；与上面 vram 腿同一准入闸 _dev_xp，两条腿
+  # 缺一不可——只量显存时六路把 64GB 主机 RAM 打到零，s0/s4 两路 GPU 波 MemoryError 整波重跑）
+  host_mem:
+    physical_gb: 64               # GlobalMemoryStatusEx 实测 ullTotalPhys=63.9GB
+    per_path_peak_mib: 4600       # 六路仪表 heartbeat.rss_mb 峰值实测 4,316–4,424MiB/路（起步载表面）
+    admission_basis: "消费方=factory_grid_executor._dev_xp 主机水位闸（可用 RAM < 本值即该路不走设备面并计 host_mem_refused）；水位口=host_resource_governor.probe_system_watermark，禁另造探测"
+    concurrency: 6                # 与 vram.concurrency 同值：6×4.6GB=27.6GB ≤ 空载可用；夜跑/LLM 在飞时由准入闸自限，非靠自觉
   single_job_wall_clock_cap_hours: 12   # schedule_gate_policy timebox gpu 键同值（超时=调度层中止）
 e7_defense:
   # 多重检验校正：DSR 门槛随 N_trial 浮动（裁定#306 预注册族 N_eff 口径）

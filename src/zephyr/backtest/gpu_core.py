@@ -255,6 +255,37 @@ def nvml_process_util(pid: int | None = None) -> dict[str, Any]:
     }
 
 
+def nvml_device_memory() -> dict[str, Any]:
+    """设备显存三值（MiB）。复用 nvml_process_util 的装载态；不可用=available=False 出声降级。
+
+    给"逐路显存预算"当消费方（config/search_space_prereg.yaml vram.per_path_budget_mib 的
+    enforcement 点在 factory_grid_executor._dev_xp 准入闸）——册上加键而无人读＝空转面。
+    """
+    global _NVML_LIB, _NVML_HANDLE, _NVML_STATE, _NVML_ERROR
+    if _NVML_STATE == "failed" or _NVML_STATE == "off":
+        return {"available": False, "reason": _NVML_ERROR or "nvml_unavailable"}
+    import ctypes
+
+    if _NVML_LIB is None:
+        nvml_process_util()  # 走同一条懒装载路径（失败会置 failed）
+        if _NVML_LIB is None:
+            return {"available": False, "reason": _NVML_ERROR or "nvml_unavailable"}
+
+    class _Mem(ctypes.Structure):
+        _fields_ = [("total", ctypes.c_ulonglong), ("free", ctypes.c_ulonglong), ("used", ctypes.c_ulonglong)]
+
+    m = _Mem()
+    if _NVML_LIB.nvmlDeviceGetMemoryInfo(_NVML_HANDLE, ctypes.byref(m)) != 0:
+        return {"available": False, "reason": "GetMemoryInfo rc!=0"}
+    _NVML_STATE = "ok"
+    return {
+        "available": True,
+        "total_mib": m.total // (1 << 20),
+        "free_mib": m.free // (1 << 20),
+        "used_mib": m.used // (1 << 20),
+    }
+
+
 def _as_f64_2d(a: XPArray, xp: ModuleType) -> XPArray:
     """任意 2D 数组类入参（ndarray/DataFrame）→ xp float64 矩阵（FP64 红线收口点）。"""
     if hasattr(a, "to_numpy"):  # pandas DataFrame/Series——引擎侧调用形态

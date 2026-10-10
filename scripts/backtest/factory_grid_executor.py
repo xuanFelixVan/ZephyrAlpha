@@ -141,7 +141,23 @@ _EVAL_GPU_STATS: dict[str, int] = {
     "cell_gpu": 0,
     "cell_host_continue": 0,
     "cell_cpu_kept": 0,
+    "vram_refused": 0,
+    "vram_unmeasured": 0,
+    "host_mem_refused": 0,
+    "host_mem_unmeasured": 0,
+    "memory_pressure": 0,
 }
+#: 逐路显存预算缓存（None=未读；0=册无该键→不设闸并计数出声，见 _vram_per_path_budget_mib）
+_VRAM_BUDGET_MIB: int | None = None
+#: 逐路主机内存峰值预算缓存（同语义，见 _host_mem_per_path_peak_mib）
+_HOST_MEM_BUDGET_MIB: int | None = None
+#: 内存压力停卡旗（本格 MemoryError 后置位，本批不再上卡；见 _on_eval_memory_pressure）
+_EVAL_MEM_PRESSURE: bool = False
+#: 水位探针短时缓存 (采样时刻, 可用 MiB)——_dev_xp 逐格被调，禁每格一次系统调用
+_HOST_MEM_PROBE: tuple[float, int] | None = None
+_HOST_MEM_PROBE_TTL_S: float = 5.0
+#: 册上 budget_caps 子块缓存（section→dict；读败/缺册={}，两路预算共用同一加载口）
+_PREREG_BUDGET_SECTIONS: dict[str, dict] = {}
 #: 批级设备面板缓存（键含入参对象身份=批轮换自然失效；容量上限逐出防显驻膨胀）
 _DEV_PANEL_CACHE: dict = {}
 # NO-BARE-SQL + TABLE-NAME-REGISTRY 配方: SQL 常量化+表名走 TableRegistry 真源
@@ -785,16 +801,160 @@ _A1_DEV_PORTABLE: tuple[str, ...] = ("raw", "zscore", "rank", "industry_neutral"
 _A2_DEV_PORTABLE: tuple[str, ...] = ("equal", "orth_equal", "ic_mean", "ic_ir", "halflife20", "halflife60")
 
 
+def _prereg_budget_section(name: str) -> dict:
+    """册上 `budget_caps.<name>` 子块（一次读盘+缓存；缺册/缺键/读败={}）。
+
+    两路预算（显存/主机内存）共用本口，禁各写一份 yaml 加载（同段代码第二份=漂移面）。
+    """
+    if name not in _PREREG_BUDGET_SECTIONS:
+        val: dict = {}
+        try:
+            import yaml
+
+            cfg = yaml.safe_load(PREREG_PATH.read_text(encoding="utf-8")) or {}
+            sec = (cfg.get("budget_caps") or {}).get(name)
+            if isinstance(sec, dict):
+                val = sec
+        except Exception as exc:  # noqa: BLE001 — 预算读不到不得影响出分
+            _instr_warn("prereg_budget_section", exc)
+        _PREREG_BUDGET_SECTIONS[name] = val
+    return _PREREG_BUDGET_SECTIONS[name]
+
+
+def _vram_per_path_budget_mib() -> int:
+    """册上逐路显存预算（`budget_caps.vram.per_path_budget_mib`）——本件是该键的**消费方**。
+
+    为何要在代码里读：总统统筹 2026-10-11 05:3x 裁定③要求"并发数按 NVML 实测显存入册、
+    禁册上写 1 实际跑 6 的漂移态"。只改 yaml 不接消费方＝又一个空转面（在册同类教训），
+    故这里把预算变成准入闸：显存不足的那一路自己退回 CPU，实际并发被显存自限而非靠自觉。
+    缺册/缺键/读败=返回 0（不设闸）并计入 vram_unmeasured，禁把"读不到"当成"不许跑"。
+    """
+    global _VRAM_BUDGET_MIB
+    if _VRAM_BUDGET_MIB is None:
+        try:
+            val = int(_prereg_budget_section("vram").get("per_path_budget_mib") or 0)
+        except (TypeError, ValueError):
+            val = 0
+        _VRAM_BUDGET_MIB = val
+    return _VRAM_BUDGET_MIB
+
+
+def _host_mem_per_path_peak_mib() -> int:
+    """册上逐路主机内存峰值预算（`budget_caps.host_mem.per_path_peak_mib`）。
+
+    第二道腿的来源=2026-10-11 N-3 实测事故：六路 × 逐路峰值 RSS 4.4GB 把主机 RAM 打到零，
+    s0/s4 两路 GPU 波在 numpy 分配 (970,5058) int64（37.4MiB）时 MemoryError →
+    按既定 fail-closed 整波重跑 CPU。显存够 ≠ 跑得动，册上只写显存腿就是新的"册实漂移"。
+    """
+    global _HOST_MEM_BUDGET_MIB
+    if _HOST_MEM_BUDGET_MIB is None:
+        try:
+            val = int(_prereg_budget_section("host_mem").get("per_path_peak_mib") or 0)
+        except (TypeError, ValueError):
+            val = 0
+        _HOST_MEM_BUDGET_MIB = val
+    return _HOST_MEM_BUDGET_MIB
+
+
+def _host_avail_mem_mib() -> int:
+    """主机可用 RAM（MiB），经在册唯一水位口 host_resource_governor.probe_system_watermark。
+
+    自造 ctypes/psutil 第二份探测＝克隆且与告警口径分家（RULE-SSOT）；本件只做 5s 短时缓存。
+    返回 -1=不可测（探针失手），调用方据此计数不拦路。
+    """
+    global _HOST_MEM_PROBE
+    now = time.perf_counter()
+    if _HOST_MEM_PROBE is not None and now - _HOST_MEM_PROBE[0] < _HOST_MEM_PROBE_TTL_S:
+        return _HOST_MEM_PROBE[1]
+    val = -1
+    try:
+        from zephyr.infrastructure.capacity_assurance.host_resource_governor import (
+            probe_system_watermark,
+        )
+
+        avail_gb = float(probe_system_watermark().ram_avail_gb or 0.0)
+        if avail_gb > 0:
+            val = int(avail_gb * 1024)
+    except Exception as exc:  # noqa: BLE001 — 水位读不到不得影响出分
+        _instr_warn("host_mem_probe", exc)
+    _HOST_MEM_PROBE = (now, val)
+    return val
+
+
+def _on_eval_memory_pressure(exc: BaseException) -> None:
+    """内存压力=资源态不是判据态：卸设备面板缓存 + 本批停上卡 + 计数出声。
+
+    病案（2026-10-11 N-3 GPU 波 053559）：六路上卡后主机侧多出暂存与 cupy 上下文，RAM 打到零，
+    22 格在**纯 CPU 段**（本文件既有 eval 记账口）报 MemoryError→被记成 eval 阴性。
+    同参纯 CPU 基线 p2（grid_20261010-233721）25,000 格 eval 阴性 0 支——差额全是我这侧的
+    资源足迹，不是这 22 格的真值，故禁把分配失败当判决（判据面零动红线）。
+    """
+    global _EVAL_MEM_PRESSURE
+    _EVAL_GPU_STATS["memory_pressure"] += 1
+    _DEV_PANEL_CACHE.clear()
+    if not _EVAL_MEM_PRESSURE:
+        _EVAL_MEM_PRESSURE = True
+        _instr_warn("eval_mem_pressure", exc)
+
+
+def _eval_cell_mem_retry(fn):
+    """跑一格的 eval 调用；MemoryError 先卸资源再重试一次，二次仍败照原样上抛给既有记账口。
+
+    只重试一次：真·耗尽（重试仍失败）必须照旧出声，禁把资源态静默成"这格没问题"。
+    """
+    try:
+        return fn()
+    except MemoryError as exc:
+        _on_eval_memory_pressure(exc)
+        return fn()
+
+
 def _dev_xp():
     """设备模块（cupy）或 None。后端解析一律经 gpu_core.resolve_backend（禁二套守卫）；
-    显式 gpu 而不可用=该件降级台账出声，本处返回 None=前缀走原 pandas 路（fail-closed 到 CPU）。"""
+    显式 gpu 而不可用=该件降级台账出声，本处返回 None=前缀走原 pandas 路（fail-closed 到 CPU）。
+
+    第二道闸=显存准入（册上预算的消费方）：free < per_path_budget_mib 即本路整体走 CPU 并计数，
+    宁可慢也不把卡挤爆（本地 LLM/别的分片同卡时尤其要紧）。NVML 读不到时**不拦**，只计数。
+    第三道闸=主机 RAM 准入（同册 budget_caps.host_mem）：可用 < 逐路峰值预算即本路不走设备面——
+    设备面另加主机侧暂存（上传源面板/codes 面板），显存够而 RAM 不够时崩的是整波（N-3 实测）。
+    """
     if _EVAL_BACKEND == "cpu":
         return None
+    if _EVAL_MEM_PRESSURE:
+        return None  # 本批已有一次 MemoryError：卸完资源也不再上卡，全程 CPU
     try:
         from zephyr.backtest.gpu_core import resolve_backend
 
         if resolve_backend(_EVAL_BACKEND) != "gpu":
             return None
+        budget = _vram_per_path_budget_mib()
+        if budget > 0:
+            from zephyr.backtest.gpu_core import nvml_device_memory
+
+            m = nvml_device_memory()
+            if not m.get("available"):
+                _EVAL_GPU_STATS["vram_unmeasured"] += 1
+            elif int(m.get("free_mib") or 0) < budget:
+                _EVAL_GPU_STATS["vram_refused"] += 1
+                _instr_warn(
+                    "vram_admission",
+                    RuntimeError(f"free_mib={m.get('free_mib')} < per_path_budget_mib={budget}，本路降级 CPU"),
+                )
+                return None
+        host_budget = _host_mem_per_path_peak_mib()
+        if host_budget > 0:
+            avail = _host_avail_mem_mib()
+            if avail < 0:
+                _EVAL_GPU_STATS["host_mem_unmeasured"] += 1
+            elif avail < host_budget:
+                _EVAL_GPU_STATS["host_mem_refused"] += 1
+                _instr_warn(
+                    "host_mem_admission",
+                    RuntimeError(
+                        f"avail_mib={avail} < per_path_peak_mib={host_budget}，本路降级 CPU（N-3 六路撞零实测）"
+                    ),
+                )
+                return None
         import cupy as cp
 
         return cp
@@ -2175,19 +2335,21 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
         _combine_state = "hit" if _ck in combine_cache else "miss"
         _t0 = time.perf_counter()
         try:
-            weights, degraded = evaluate_recipe(
-                r,
-                closes_g,
-                factors_cache[g],
-                vol20_g,
-                cols,
-                mkt_cap_w=mkt_cap_w,
-                rets60_mean=rets60_mean,
-                rets60_var=rets60_var,
-                industry_map=industry_map,
-                combine_cache=combine_cache,
-                j_schedule=j_schedule,
-                sector_ctx=sector_ctx,
+            weights, degraded = _eval_cell_mem_retry(
+                lambda: evaluate_recipe(
+                    r,
+                    closes_g,
+                    factors_cache[g],
+                    vol20_g,
+                    cols,
+                    mkt_cap_w=mkt_cap_w,
+                    rets60_mean=rets60_mean,
+                    rets60_var=rets60_var,
+                    industry_map=industry_map,
+                    combine_cache=combine_cache,
+                    j_schedule=j_schedule,
+                    sector_ctx=sector_ctx,
+                )
             )
         except Exception as exc:  # noqa: BLE001
             _t_eval = time.perf_counter() - _t0
@@ -2591,6 +2753,7 @@ def _verify_counts(grid_root_override: str | None = None) -> int:
 
 #: T6: t3 家族 stage（T3a 开闸考；context phase=2+prereg t3a 卡；挖矿 §3.2）
 T3_STAGES: tuple[str, ...] = ("t3", "t3-t1", "t3-t2")
+PREREG_PATH = _REPO / "config" / "search_space_prereg.yaml"
 PREREG_T3A_PATH = _REPO / "config" / "search_space_prereg_t3a.yaml"
 #: T3b: t3b 家族 stage（T3b 加离场考；context phase=3+prereg t3b 卡；挖矿 §3.1 批次表）
 T3B_STAGES: tuple[str, ...] = ("t3b", "t3b-t1", "t3b-t2")
@@ -2612,7 +2775,7 @@ def _load_prereg_caps(stage: str = "") -> dict:
             raise SystemExit(f"[prereg] {path.name} 缺失——预注册冻结卡缺失，禁开跑（fail-closed）")
         cfg = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         return cfg.get("budget_caps") or {}
-    prereg = Path(__file__).resolve().parents[2] / "config" / "search_space_prereg.yaml"
+    prereg = PREREG_PATH
     if not prereg.exists():
         raise SystemExit("[prereg] config/search_space_prereg.yaml 缺失——预注册冻结缺失，禁开跑（fail-closed）")
     cfg = yaml.safe_load(prereg.read_text(encoding="utf-8")) or {}

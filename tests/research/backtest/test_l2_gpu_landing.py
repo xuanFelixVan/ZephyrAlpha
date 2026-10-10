@@ -803,6 +803,39 @@ def test_evaluate_recipe_device_failure_degrades_to_cpu_not_cell_death(monkeypat
     assert w.shape == px.shape, "设备面失败必须仍出权重（降级 CPU），禁零格"
 
 
+def test_vram_admission_gate_refuses_and_agrees_with_registry():
+    """准入闸判别力钉（总统统筹 2026-10-11 05:3x 裁定③）：册上预算必须真被代码消费。
+
+    三面缺一不可：①读到的预算与 `search_space_prereg.yaml` 的键值同源相等（防"册写一个数、
+    代码用另一个数"）；②预算设成不可能的天文值时必须**拒绝**上卡并计 vram_refused（尺能红）；
+    ③预算=0（缺键语义）时不得拦路（禁把"读不到"变成"不许跑"）。
+    """
+    import yaml
+
+    budget_key = yaml.safe_load(Path(fac.PREREG_PATH).read_text(encoding="utf-8"))["budget_caps"]["vram"][
+        "per_path_budget_mib"
+    ]
+    fac._VRAM_BUDGET_MIB = None
+    assert fac._vram_per_path_budget_mib() == int(budget_key) > 0, "册值与代码读数不同源"
+
+    old_backend, old_budget = fac._EVAL_BACKEND, fac._VRAM_BUDGET_MIB
+    for k in fac._EVAL_GPU_STATS:
+        fac._EVAL_GPU_STATS[k] = 0
+    try:
+        fac._EVAL_BACKEND = "gpu"
+        fac._VRAM_BUDGET_MIB = 10**9  # 天文预算：任何机器都该拒
+        assert fac._dev_xp() is None, "显存准入闸零判别力（永不拒绝）"
+        refused_after_first = fac._EVAL_GPU_STATS["vram_refused"]
+        assert refused_after_first >= 1, "拒绝未计数"
+        fac._VRAM_BUDGET_MIB = 0  # 缺键语义=不设闸，不得拦路
+        xp = fac._dev_xp()
+        # 判据用增量而非总计：上面那次拒绝合法在册，拿总计==0 断言是测试自己的记账错
+        assert xp is not None, "预算为 0 时仍拦路=把读不到当成不许跑"
+        assert fac._EVAL_GPU_STATS["vram_refused"] == refused_after_first, "缺键语义下不得新增拒绝计数"
+    finally:
+        fac._EVAL_BACKEND, fac._VRAM_BUDGET_MIB = old_backend, old_budget
+
+
 def test_dev_col_codes_no_bool_on_array():
     """回归钉：codes 是 ndarray，任何对其求真值的写法都会炸考格——本支盯返回面本身。"""
     px = _synth_px()
@@ -1018,3 +1051,99 @@ def test_eval_cell_gpu_backend_matches_cpu():
     rel = float((np.abs(gpu["weights"] - cpu["weights"]) / (np.abs(cpu["weights"]) + 1e-300)).max())
     assert rel <= 1e-12
     assert gpu["backend"] == "gpu" and cpu["backend"] == "cpu"
+
+
+def test_host_mem_admission_gate_refuses_and_agrees_with_registry():
+    """主机 RAM 准入闸判别力钉（2026-10-11 N-3 实测补腿）：册上 host_mem 预算必须真被消费。
+
+    病案：六路并发 × 逐路峰值 RSS 4.4GB 把 64GB 主机打到零，两路 GPU 波在 numpy 分配
+    37.4MiB 时 MemoryError→整波重跑 CPU。显存腿单独立册拦不住这件事，故第二腿同闸同计数。
+    四面缺一不可：①代码读数与 `search_space_prereg.yaml` 键值同源相等；②天文预算必拒并计
+    host_mem_refused（尺能红）；③水位不可测（-1）只计数不拦路；④预算=0（缺键语义）不拦路。
+    """
+    import yaml
+
+    key = yaml.safe_load(Path(fac.PREREG_PATH).read_text(encoding="utf-8"))["budget_caps"]["host_mem"][
+        "per_path_peak_mib"
+    ]
+    fac._PREREG_BUDGET_SECTIONS.clear()
+    fac._HOST_MEM_BUDGET_MIB = None
+    assert fac._host_mem_per_path_peak_mib() == int(key) > 0, "册值与代码读数不同源"
+
+    old = (fac._EVAL_BACKEND, fac._VRAM_BUDGET_MIB, fac._HOST_MEM_BUDGET_MIB, fac._HOST_MEM_PROBE)
+    for k in fac._EVAL_GPU_STATS:
+        fac._EVAL_GPU_STATS[k] = 0
+    try:
+        fac._EVAL_BACKEND = "gpu"
+        fac._VRAM_BUDGET_MIB = 0  # 关掉显存腿，本支只测主机腿（否则两闸混在一起读不出归因）
+        fac._HOST_MEM_BUDGET_MIB = 10**9  # 天文预算：任何机器都该拒
+        fac._HOST_MEM_PROBE = (fac.time.perf_counter(), 1000)  # 假水位=可用 1000MiB（TTL 内不被真探针覆写）
+        assert fac._dev_xp() is None, "主机内存准入闸零判别力（永不拒绝）"
+        refused = fac._EVAL_GPU_STATS["host_mem_refused"]
+        assert refused >= 1, "拒绝未计数"
+
+        fac._HOST_MEM_PROBE = (fac.time.perf_counter(), -1)  # 不可测面：不得当成"不许跑"
+        unmeasured_before = fac._EVAL_GPU_STATS["host_mem_unmeasured"]
+        xp = fac._dev_xp()
+        assert xp is not None, "水位读不到时拦路=把不可测当成不许跑"
+        assert fac._EVAL_GPU_STATS["host_mem_unmeasured"] == unmeasured_before + 1, "不可测未计数"
+        assert fac._EVAL_GPU_STATS["host_mem_refused"] == refused, "不可测不得冒充拒绝"
+
+        fac._HOST_MEM_BUDGET_MIB = 0  # 缺键语义=不设闸
+        fac._HOST_MEM_PROBE = (fac.time.perf_counter(), 1)
+        assert fac._dev_xp() is not None, "预算为 0 时仍拦路"
+        assert fac._EVAL_GPU_STATS["host_mem_refused"] == refused, "缺键语义下不得新增拒绝计数"
+    finally:
+        fac._EVAL_BACKEND, fac._VRAM_BUDGET_MIB, fac._HOST_MEM_BUDGET_MIB, fac._HOST_MEM_PROBE = old
+        fac._PREREG_BUDGET_SECTIONS.clear()
+        fac._HOST_MEM_BUDGET_MIB = None
+
+
+def test_eval_memory_pressure_degrades_to_cpu_not_cell_death():
+    """MemoryError 是资源态不是判据态（2026-10-11 N-3 实测：22 格因此被记成 eval 阴性）。
+
+    三面同钉：①首次 MemoryError 后卸缓存+停卡+计数，重试成功=本格正常出分（不记阴性）；
+    ②本批此后 `_dev_xp()` 必返回 None（禁刚卸完资源又立刻上卡把 RAM 再顶到零）；
+    ③二次仍 MemoryError 必须上抛给既有记账口（禁静默——真耗尽要照旧出声）。
+    """
+    old = (fac._EVAL_BACKEND, fac._VRAM_BUDGET_MIB, fac._HOST_MEM_BUDGET_MIB, fac._EVAL_MEM_PRESSURE)
+    base = {k: fac._EVAL_GPU_STATS[k] for k in fac._EVAL_GPU_STATS}
+    fac._DEV_PANEL_CACHE["sentinel"] = object()
+    calls = {"n": 0}
+
+    def _boom_once():
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise MemoryError("Unable to allocate 37.4 MiB for an array with shape (970, 5058)")
+        return ("weights", ("degraded",))
+
+    try:
+        fac._EVAL_BACKEND = "gpu"
+        fac._VRAM_BUDGET_MIB = 0
+        fac._HOST_MEM_BUDGET_MIB = 0
+        w, d = fac._eval_cell_mem_retry(_boom_once)
+        assert (w, d) == ("weights", ("degraded",)), "重试成功后本格应正常出分"
+        assert calls["n"] == 2, "未真正重试一次"
+        assert fac._EVAL_GPU_STATS["memory_pressure"] == base["memory_pressure"] + 1, "内存压力未计数"
+        assert not fac._DEV_PANEL_CACHE, "设备面板缓存未卸（下格还会顶上去）"
+        fac._HOST_MEM_PROBE = (fac.time.perf_counter(), 10**9)  # 水位充足，唯一可能的拦路=停卡旗
+        assert fac._dev_xp() is None, "MemoryError 后本批仍上卡=没停卡"
+
+        def _boom_always():
+            raise MemoryError("still exhausted")
+
+        raised = False
+        try:
+            fac._eval_cell_mem_retry(_boom_always)
+        except MemoryError:
+            raised = True
+        assert raised, "二次失败必须上抛给既有 eval 记账口（禁静默成正常格）"
+        assert fac._EVAL_GPU_STATS["memory_pressure"] == base["memory_pressure"] + 2
+    finally:
+        (
+            fac._EVAL_BACKEND,
+            fac._VRAM_BUDGET_MIB,
+            fac._HOST_MEM_BUDGET_MIB,
+            fac._EVAL_MEM_PRESSURE,
+        ) = old
+        fac._DEV_PANEL_CACHE.clear()
