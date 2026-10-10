@@ -53,10 +53,13 @@ def h(monkeypatch, tmp_path: Path):
     h = Harness()
     h.kill_calls = []
     h.marks = []
+    h.exited_marks = []
     h.report = pr.ReapReport(timestamp="unit", dry_run=False)
     monkeypatch.setattr(pr, "_KILL_LOG", tmp_path / "reaper_kill.log")
     monkeypatch.setattr(pr, "_kill_pid_tree", lambda pid: (h.kill_calls.append(pid), True)[1])
     monkeypatch.setattr(pr, "_mark_incubation_reaped", lambda ids: (h.marks.append(",".join(ids)), len(ids))[1])
+    # backfix 批复①销账通道（2026-10-10）：赦免/已亡条目回写 exited_at（非 reaped 语义）
+    monkeypatch.setattr(pr, "_mark_incubation_exited", lambda ids: (h.exited_marks.append(",".join(ids)), len(ids))[1])
     return h
 
 

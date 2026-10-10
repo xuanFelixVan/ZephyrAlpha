@@ -5,7 +5,7 @@
 # [CONSUMERS] scripts/register_process_reaper_task.ps1; Windows Task Scheduler(ZephyrAlpha_ProcessReaper)
 # [STARTUP] scheduled_task
 # [MATURITY] production
-# [INVARIANTS] 白名单命中永不杀; Trae后代进程永不杀; kill操作必须日志记录; dry-run零副作用; one-shot执行完即退出无常驻; kill日志行 PID/reason 在前、name+cmd 片段(≤120字符,仅argv不含环境变量)追加行尾（P-12 归因，改判据前须核既有 grep 口径）
+# [INVARIANTS] 白名单命中永不杀; Trae后代进程永不杀; kill操作必须日志记录; dry-run零副作用; one-shot执行完即退出无常驻; kill日志行 PID/reason 在前、name+cmd 片段(≤120字符,仅argv不含环境变量)追加行尾（P-12 归因，改判据前须核既有 grep 口径）；backfix 批复①+②（2026-10-10，备份链连环案 #5-#9）：孵化台账三要素身份复核（born_after_registration/image_diverged/cmd_diverged，identity_mismatch_reason）任一不符=赦免+销账；销账=子死/身份不符/复查消失即回写 exited_at（_mark_incubation_exited，与 reaped 语义分离）；活体 cmdline 含 backup.ps1 的 pid 一律跳过（处方②备份白名单，与 keep 行双保险）；红蓝网 tests/infra/infrastructure/test_process_reaper_pid_recycle_backfix.py（pid 回收复刻必拦）
 # [MODIFY-GUARD] MOD-RESOURCE_OPTIMIZATION_ENGINE §new-IDE
 # [STABILITY] evolving
 # [SAFETY] M
@@ -247,6 +247,9 @@ class ReapReport:
     trae_descendant_hits: int = 0
     killed: list[dict[str, Any]] = field(default_factory=list)
     reported: list[dict[str, Any]] = field(default_factory=list)
+    # P-28（Z-23）三要素身份复核的赦免记录（born_after_registration/image_diverged/
+    # cmd_diverged/gone_at_recheck）——每条含 pid+reason，供日检与红蓝审计回放。
+    identity_mismatches: list[dict[str, Any]] = field(default_factory=list)
     ghosts: dict[str, int] = field(default_factory=lambda: {"scanned": 0, "killed": 0})
     drift: dict[str, Any] = field(default_factory=dict)
     errors: list[str] = field(default_factory=list)
@@ -1124,6 +1127,19 @@ def _load_incubation_ledger() -> list[dict[str, Any]]:
 
 def _mark_incubation_reaped(record_ids: list[str]) -> int:
     """回写已收割标记（纯文本重写；OSError 降级不抛——收割本体已生效）。"""
+    return _mark_incubation_records(record_ids, reaped=True)
+
+
+def _mark_incubation_exited(record_ids: list[str]) -> int:
+    """销账（backfix 批复①，2026-10-10）：子进程已消亡（pid 消失/身份复核不符/gone at
+    recheck）时回写 exited_at——条目从此退出 active 面，不再每轮被重复评估、也不再让
+    pid 回收后的无辜继任者顶着"超期未 reaped"的陈旧身份被反复瞄准。语义与 reaped 刻意
+    分离：reaped=收割端处决（P-28 契约：赦免项不得标 reaped），exited=孩子确已不在。"""
+    return _mark_incubation_records(record_ids, reaped=False, also_exit=True)
+
+
+def _mark_incubation_records(record_ids: list[str], *, reaped: bool, also_exit: bool = False) -> int:
+    """孵化台账标记的统一回写（纯文本重写；OSError 降级不抛）。"""
     if not record_ids:
         return 0
     path = REPO_ROOT / _INCUBATOR_LEDGER_REL
@@ -1134,6 +1150,7 @@ def _mark_incubation_reaped(record_ids: list[str]) -> int:
         lines = path.read_text(encoding="utf-8").splitlines()
         out: list[str] = []
         wanted = set(record_ids)
+        now = time.time()
         for line in lines:
             if not line.strip():
                 continue
@@ -1143,8 +1160,11 @@ def _mark_incubation_reaped(record_ids: list[str]) -> int:
                 out.append(line)
                 continue
             if isinstance(obj, dict) and obj.get("record_id") in wanted and not obj.get("reaped"):
-                obj["reaped"] = True
-                obj["reaped_at"] = time.time()
+                if reaped:
+                    obj["reaped"] = True
+                    obj["reaped_at"] = now
+                if also_exit and not obj.get("exited_at"):
+                    obj["exited_at"] = now
                 marked += 1
             out.append(json.dumps(obj, ensure_ascii=False))
         tmp = path.with_suffix(".jsonl.tmp")
@@ -1155,17 +1175,44 @@ def _mark_incubation_reaped(record_ids: list[str]) -> int:
     return marked
 
 
+def identity_mismatch_reason(rec_name: str, rec_cmd: str, rec_born_at: float, live: dict) -> str | None:
+    """三要素身份复核（P-28/Z-23）：登记身份 vs 活体不符时返回原因串（不含前缀），
+    全符或要素缺失（弃权方向，由 whitelist 兜底）返回 None。
+
+    - born_after_registration：活体出生晚于登记时刻超过容差 = 原 pid 已死、编号被
+      回收给无关进程（PID 复用判据，wave7.3 缺陷②）。
+    - image_diverged：活体进程名与登记名不同源。
+    - cmd_diverged：活体 cmdline 与登记 cmd 前缀互斥（登记侧 300 字符截断 ⇒ 前缀
+      互含视为同一身份，宁宽勿窄）。
+    """
+    live_ct = float(live.get("create_time", 0) or 0)
+    live_name = str(live.get("name", "") or "")
+    live_cmd = str(live.get("cmdline", "") or "")
+    if live_ct > 0 and rec_born_at > 0 and live_ct > rec_born_at + _PID_REUSE_TOLERANCE_S:
+        return f"born_after_registration:reg_born={rec_born_at:.3f} live_born={live_ct:.3f} (pid reuse suspected)"
+    if rec_name and live_name and rec_name != live_name:
+        return f"image_diverged:rec={rec_name} live={live_name}"
+    if rec_cmd and live_cmd and not live_cmd.startswith(rec_cmd) and not rec_cmd.startswith(live_cmd):
+        return f"cmd_diverged:rec={rec_cmd[:120]} live={live_cmd[:120]}"
+    return None
+
+
 def _reap_incubated_expired(
     all_procs: dict[int, dict],
     dry_run: bool,
     report: ReapReport,
     whitelist_res: list[re.Pattern] | None = None,
     keep_subs: list[str] | None = None,
+    recheck: dict[int, dict] | None = None,
 ) -> None:
     """收割孵化登记表中超预期寿命且仍存活的进程（M3：登记替代 cmdline 猜测）。
 
     判定：登记未退出未收割 + pid 仍活 + now > spawned_at + expected_lifetime_s
-    + 身份复核（child_create_time 快照与活体一致——PID 复用疑似则跳过不杀）。
+    + 三要素身份复核（P-28/Z-23：born_after_registration / image_diverged /
+    cmd_diverged 任一不符即赦免——PID 回收复刻场景必拦）。
+    销账（backfix 批复①，2026-10-10）：身份不符或复查时已消失的条目回写 exited_at
+    ——永滞条目会让 pid 回收后的无辜继任者反复被瞄准（2026-10-10 备份链连环案实证）。
+    处方②：活体 cmdline 含 backup.ps1 的 pid 一律跳过（备份白名单，与 keep 行双保险）。
     兜底防线：whitelist/keep 命中永不杀（与孤儿矩阵同源 fail-safe）。
     """
     records = _load_incubation_ledger()
@@ -1174,43 +1221,61 @@ def _reap_incubated_expired(
     live_pids = set(all_procs.keys())
     now = time.time()
     reaped_ids: list[str] = []
+    exited_ids: list[str] = []
+    recheck_table = recheck if recheck is not None else all_procs
     for rec in records:
         if rec.get("reaped") or rec.get("exited_at"):
             continue
         pid = int(rec.get("child_pid", 0) or 0)
-        if pid <= 0 or pid not in live_pids:
+        if pid <= 0:
+            continue
+        # ── 销账①a：pid 已不在进程表 = 孩子确已消亡，条目立即销账（exited_at）──
+        if pid not in live_pids:
+            exited_ids.append(str(rec.get("record_id")))
             continue
         lifetime = float(rec.get("expected_lifetime_s", 0) or 0)
         spawned = float(rec.get("spawned_at", 0) or 0)
         if now <= spawned + lifetime:
             continue
-        # ── PID 复用身份复核（wave7.3 缺陷②，st-zc8-lane-rb2）────────────────
-        # 登记时快照的 child_create_time 与活体不符 = 原 pid 已退出、系统把同一
-        # 编号发给了无关进程——收割即误杀无辜第三进程。跳过 + reported 留痕。
-        rec_ct = float(rec.get("child_create_time", 0) or 0)
-        live_ct = float(all_procs.get(pid, {}).get("create_time", 0) or 0)
-        if rec_ct > 0 and live_ct > 0 and abs(rec_ct - live_ct) > _PID_REUSE_TOLERANCE_S:
-            live_cmd = str(all_procs.get(pid, {}).get("cmdline", "") or "")
-            report.reported.append(
-                {"pid": pid, "reason": "incubation_expired_pid_reuse_skip", "cmdline": live_cmd[:120]}
-            )
+        # ── 销账①a：复查表（动杀前重取）中已消失 = 孩子自行退出，销账不杀 ──
+        if recheck is not None and pid not in recheck_table:
+            report.identity_mismatches.append({"pid": pid, "reason": "identity_mismatch:gone_at_recheck:pid_absent"})
+            exited_ids.append(str(rec.get("record_id")))
+            logger.warning("incubation skip: PID=%d 复查时已消失——销账不杀", pid)
+            continue
+        # ── 三要素身份复核（P-28/Z-23）：任一不符即赦免 + 销账①b ──
+        # 先于处方② backup 闸：案 #8 形态（回收者=backup.ps1）必须走身份复核留痕+销账，
+        # 不能被活体白名单短路成无痕跳过。
+        rec_name = str(rec.get("name", "") or "")
+        rec_cmd = str(rec.get("cmd", "") or "")
+        mismatch = identity_mismatch_reason(
+            rec_name, rec_cmd, float(rec.get("child_create_time", 0) or spawned), all_procs.get(pid, {})
+        )
+        if mismatch:
+            report.identity_mismatches.append({"pid": pid, "reason": f"identity_mismatch:{mismatch}"})
+            exited_ids.append(str(rec.get("record_id")))
             logger.warning(
-                "incubation skip: PID=%d 身份复核不符（登记 create_time=%.3f != 活体 %.3f）——PID 复用疑似，不收割",
+                "incubation skip: PID=%d 身份复核不符（%s）——赦免并销账",
                 pid,
-                rec_ct,
-                live_ct,
+                mismatch,
             )
             continue
-        cmdline = str(rec.get("cmd", ""))
-        if whitelist_res is not None and keep_subs is not None and _is_whitelisted(cmdline, whitelist_res, keep_subs):
-            report.reported.append({"pid": pid, "reason": "incubation_expired_whitelisted", "cmdline": cmdline[:120]})
+        # ── 处方②：活体 cmdline 含 backup.ps1 的 pid 一律跳过（备份白名单）──
+        live_cmd = str(all_procs.get(pid, {}).get("cmdline", "") or "")
+        if "backup.ps1" in live_cmd:
+            report.reported.append(
+                {"pid": pid, "reason": "incubation_expired_backup_whitelisted", "cmdline": live_cmd[:120]}
+            )
+            continue
+        if whitelist_res is not None and keep_subs is not None and _is_whitelisted(rec_cmd, whitelist_res, keep_subs):
+            report.reported.append({"pid": pid, "reason": "incubation_expired_whitelisted", "cmdline": rec_cmd[:120]})
             continue
         reason = f"incubation_expired:lifetime={lifetime:.0f}s owner={rec.get('owner', '-')}"
         # P-12 归因字段：优先活体 name（进程表），退化用孵化登记时的 name；两处皆缺则 '-'
-        live_name = str(all_procs.get(pid, {}).get("name", "") or "") or str(rec.get("name", "") or "")
+        live_name = str(all_procs.get(pid, {}).get("name", "") or "") or rec_name
         killed = False
         if dry_run:
-            _log_kill(pid, reason, dry_run=True, name=live_name, cmdline=cmdline)
+            _log_kill(pid, reason, dry_run=True, name=live_name, cmdline=rec_cmd)
         else:
             killed = _kill_pid_tree(pid)
             _log_kill(
@@ -1218,14 +1283,14 @@ def _reap_incubated_expired(
                 reason + ("" if killed else " [FAILED]"),
                 dry_run=False,
                 name=live_name,
-                cmdline=cmdline,
+                cmdline=rec_cmd,
             )
             reaped_ids.append(str(rec.get("record_id")))
         report.killed.append(
             {
                 "pid": pid,
                 "reason": reason,
-                "cmdline": cmdline[:120],
+                "cmdline": rec_cmd[:120],
                 "age_h": round((now - spawned) / 3600, 2),
                 "killed": killed,
             }
@@ -1233,6 +1298,8 @@ def _reap_incubated_expired(
         logger.warning("%s PID=%d reason=%s", "[dry-run] would kill" if dry_run else "killed", pid, reason)
     if reaped_ids and not dry_run:
         _mark_incubation_reaped(reaped_ids)
+    if exited_ids and not dry_run:
+        _mark_incubation_exited(exited_ids)
 
 
 def reap(dry_run: bool = False) -> ReapReport:

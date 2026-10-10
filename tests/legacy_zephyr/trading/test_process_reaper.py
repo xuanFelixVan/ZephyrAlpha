@@ -620,7 +620,9 @@ class TestKillLogAttributionOtherLanes:
             "record_id": "r1",
             "child_pid": 18208,
             "name": "powershell.exe",
-            "cmd": r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File scripts\backup\backup.ps1",
+            # backfix 批复②（2026-10-10）：账本消费者跳过 cmdline 含 backup.ps1 的活体 pid
+            # ——原 fixture 用 backup.ps1 路径，现按新政策换中性 worker 路径（归因测试本旨不变）。
+            "cmd": r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File scripts\ops\worker.ps1",
             "spawned_at": time.time() - 3600,
             "expected_lifetime_s": 60.0,
             "owner": "reconcile_runner",
@@ -630,7 +632,7 @@ class TestKillLogAttributionOtherLanes:
         pr._reap_incubated_expired({18208: {"name": "powershell.exe", "cmdline": rec["cmd"]}}, False, report)
         line = _read_kill_lines()[-1]
         assert _LEGACY_LINE_RE.match(line), line
-        assert "name=powershell.exe" in line and "backup.ps1" in line, line
+        assert "name=powershell.exe" in line and "worker.ps1" in line, line
         assert "owner=reconcile_runner" in line, line  # reason 段格式未动
 
     def test_incubation_kill_log_survives_nameless_records(self, monkeypatch, tmp_path):
