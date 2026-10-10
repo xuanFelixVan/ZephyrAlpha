@@ -1,4 +1,3 @@
-<!-- GENERATED FILE — regenerate: python scripts/governance/registry_projection/registry_projection_generator.py --render --registry-id REG-ARCH-ISSUE-001 --physical-path docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml && git diff --exit-code；手改必被覆盖（PG registry_ledger 账本=唯一真源，裁定#502） -->
 # [A_config] module_id=CFG-architecture-issue-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
 module_id: REG-ARCH-ISSUE-001
 ttl: permanent
@@ -4115,6 +4114,16 @@ entries:
   severity: P3低
   description: Owner 2026-10-07 夜令直接授权检票钩子 .zcode 入库（L0 全程卡+序页+检票锚点等全套说明书已建成入袋）。PROTECTED-PATHS gate 的 [ARCH-APPROVAL] 标记正则仅认 ARCH-* 议题号，本议题即本批正门标记的登记载体（#ARCH-360 同款先例）：本批 commit message 挂 [ARCH-APPROVAL:#ARCH-381]，审批真源=Owner 夜令原文（2026-10-07 总包会话在案），gate 逃生审计+本登记双留痕。 内容=.gitignore 根白名单 +!.zcode/（合法根目录计数 13→14）+ .zcode/config.json（ZCode workspace hooks：PreToolUse 进场检票接线，本机盘面已实证生效）。
   last_updated: "2026-10-07"
+  related_rulings: []
+- issue_id: "#ARCH-382"
+  owner: Owner（authority=总统统筹裁定包令 2026-10-10 晨，Owner 已授权；治理判据班 R5③执行）
+  title: .gitignore 情绪双 runner 收编入库评估——终裁=维持非受控运行件口径（收编被门物理挡，改道②）
+  status: decided
+  created: "2026-10-10"
+  category: governance
+  severity: P3低
+  description: "决策记录：R5③ 路线 a（正道入 HEAD）实测被源质量门系物理挡——CH-FINAL/NO-BARE-SQL/PERMANENT-TRIGGER/TABLE-NAME-REGISTRY 等五门，存量 runner 按 lower standard 写就，TABLE-NAME 门无 noqa 通道，合规入库=改 runner 逻辑（越数据车道 R5① 界）或堆无通道豁免（违门意）。按令预授权备选改道：runner 维持非受控运行件口径（任务指向不变、文件不入 HEAD），三册对齐=capreg 两 runner 条目改口径注记+fms dead ref 保留（语义正确）+HEAD 不收。runner 本体/任务定义/数据面零触碰（R5① 归数据车道班）。后续正道=数据车道班 R5① 修 runner 至源标准后再走 #ARCH-380 同款收编（本议题留档为门物理证据）。"
+  last_updated: "2026-10-10"
   related_rulings: []
 - issue_id: "#ARCH-68"
   title: 模块核心算法纵览文档生成器——从代码docstring+blueprint派生模块算法，按depgraph architecture_layer分层，输出到08_algorithm_overview/（新建顶层目录，离库）

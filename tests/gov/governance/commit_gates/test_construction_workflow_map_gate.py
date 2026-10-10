@@ -136,6 +136,38 @@ class TestBlue:
 
 
 class TestRedMap:
+    def test_forward_rollback_to_blocks(self, monkeypatch, tmp_path):
+        """CV-10R（R4，fig14 骨架 §168 应然语义）：rollback_to 顺指向编号更大环节 ⇒ 必拦。
+
+        判据真源=validate_construction_steps（gate 经触发面自动生效，禁在 gate 复制）；
+        现图合规（6 正回边+D14-10 自环带轮次常量），本红案=防未来漂移的判别力证明。
+        """
+        d = copy.deepcopy(_GOOD)
+        node = next(n for n in d["nodes"] if n["node_id"] == "D14-03")
+        node["rollback_to"] = ["D14-09"]  # 03 顺指 09 = 前向回边
+        monkeypatch.setattr(gate_mod, "_MAP_PATH", _write(tmp_path, d))
+        passed, detail = _check(gateway=None, files=[_MAP_REL])
+        assert not passed and "rollback_to 必须指向编号更小环节" in detail
+
+    def test_rollback_to_self_loop_without_max_rounds_blocks(self, monkeypatch, tmp_path):
+        """CV-10R：rollback_to 自环但节点无 max_rounds_ref（无界循环）⇒ 必拦。"""
+        d = copy.deepcopy(_GOOD)
+        node = next(n for n in d["nodes"] if n["node_id"] == "D14-03")
+        node["rollback_to"] = ["D14-03"]
+        node.pop("max_rounds_ref", None)
+        monkeypatch.setattr(gate_mod, "_MAP_PATH", _write(tmp_path, d))
+        passed, detail = _check(gateway=None, files=[_MAP_REL])
+        assert not passed and "自环未带 max_rounds_ref" in detail
+
+    def test_dangling_rollback_to_blocks(self, monkeypatch, tmp_path):
+        """CV-10R：rollback_to 引用不存在的节点 ⇒ 必拦（端点封闭）。"""
+        d = copy.deepcopy(_GOOD)
+        node = next(n for n in d["nodes"] if n["node_id"] == "D14-03")
+        node["rollback_to"] = ["D14-NOPE"]
+        monkeypatch.setattr(gate_mod, "_MAP_PATH", _write(tmp_path, d))
+        passed, detail = _check(gateway=None, files=[_MAP_REL])
+        assert not passed and "rollback_to 引用不存在的节点" in detail
+
     def test_dangling_edge_blocks(self, monkeypatch, tmp_path):
         d = copy.deepcopy(_GOOD)
         d["edges"].append(["D14-06", "D14-NOPE"])
