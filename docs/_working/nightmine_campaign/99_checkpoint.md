@@ -13,6 +13,18 @@ family_id: NIGHTMINE-CAMPAIGN
 总报告机生件=`docs/_working/nightmine_campaign/00_final_report.md`（重跑
 `python D:/ZephyrAlpha/.runtime/tmp/st-nightmine-20261010/build_final_report.py` 即刷新，勿手改数字）。
 
+## 〇、续战班 T1 速报（st-nightmine2-20261010，2026-10-10 11:5x 更新）
+
+| 项 | 状态 | 凭据 |
+|----|------|------|
+| quarantine 119 件认领 | ✅ 全数搬离（TTL 前逐件 sha256 对账） | manifest=`.runtime/sessions/st-nightmine2-20261010/staging/_claim_manifest.json`；原棚留收据 `_CLAIMED_BY_st-nightmine2-20261010.md` |
+| 验属翻案 | ✅ 118 卡与 HEAD 九袋版逐字节一致（非欠落地=冗余孪生）；99_delivery.md=govjudge 遗物不冒领 | `git ls-tree -r HEAD --name-only -- docs/03_modules/_domain_backtest/exam_cards/ \| wc -l`=454；对账脚本在案 |
+| index 排雷 | ✅ exam_cards 248 条 rm--cached 型 staged 删除全清（git restore --staged，零盘面触碰） | 清后子树无 D 行；8 条既有 ` M` 显性保留；2 A dualwindow+7 MM 他在飞未碰 |
+| 实体修复 | ✅ TDM-F-C2-02 shadow02 卡内 card_id 笔误（node_id+姊妹卡双证孤例） | commit `0544db35bd3`（q-0001 已落地，`git show HEAD:<卡> \| grep ^card_id`=TDM-F-C2-02/） |
+| 详录 | 📄 独立件已写待落地 | `docs/_working/nightmine_campaign/T1_quarantine_claim_20261010.md`（untracked；git 落地被 CREATE-GUARD 入队面 HEAD 仿真 × CAP 册盘面 R9⑤ 同族回退残影互锁拦——**本班未碰 CAP 册**（带册落地=重打投影袋禁令+毁他会话 staged 残影），待残影班修册后随净增袋落地，或由册主车道代带） |
+
+> 续战令后续：T2 断供补监测中；T3 对照卡执行器立项；T4 F06 批A 处置；T5 L8b 更正袋——见各 T 交付记录。
+
 ## 一、已完成（凭据面）
 
 | 项 | 状态 | 凭据 |
