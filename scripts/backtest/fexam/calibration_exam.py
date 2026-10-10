@@ -385,6 +385,13 @@ def judge(card: dict, m: dict) -> tuple[str, list[str]]:
     if not p:
         raise _ToolError("卡缺 pillars_numeric（冻结判据机判面）", {"card_id": card.get("card_id")})
     fails: list[str] = []
+    unknown = set(p) - set(_CALIBRATION_JUDGED_KEYS)
+    if unknown:
+        # 未知冻结键=本判官机判面不覆盖该柱 ⇒ fail-closed（comparison 族 _judge_comparison 同款，
+        # 统筹 01:35 批复②步骤②："还卡面冻结判据以真意，不是改门柱"）。
+        # 立即定败且不再往下评估：旧形态一是该键静默跳过、pass 冒充"门柱全过"（在册假绿面），
+        # 二是只有未知键的卡走到 p["mono_spearman_min"] 取数面抛 KeyError 崩整批（异常代替判决）。
+        return "fail", [f"未支持判据键（机判面待扩，fail-closed）: {sorted(unknown)}"]
     if m.get("mono_spearman") is not None and m["mono_spearman"] == m["mono_spearman"]:
         if m["mono_spearman"] < p["mono_spearman_min"]:
             fails.append(f"mono_spearman {m['mono_spearman']:.3f} < {p['mono_spearman_min']}")
