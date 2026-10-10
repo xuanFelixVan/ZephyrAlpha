@@ -148,3 +148,34 @@ entries:
     （"前"取当前 3 日窗之前的 5 日）；若改读作同期 rolling(5) 属另一条序列=须另立卡重考，不得回改本卡判据。
     资金面按卡面自我声明为 amount 环比代理（主力净流入不可得），本读数是榜单强度不是资金流结论。
     分桶协议相容性开跑前已核：buckets.type=quantile_quintile（单级）＝执行器 _bucket_response 支持面。
+- card_id: TDM-E-L2-02-2/calibration/02_板块见顶预警三信号
+  op: sector_top_signal_density
+  status: rejected
+  args:
+    table: c1_market.kline_sector_880
+    map_table: c1_market.sector_code_name_map
+    close_col: close
+    amount_col: amount
+    period: "1d"
+    families: ["industry_l1", "industry_ths"]
+    rsi_period: 14
+    rsi_threshold: 70
+    stale_ret: 0.0
+  prose_quote: "series=当日命中 >=1 信号的板块占比"
+  reviewed_by: st-mineloop-20261010
+  reject_reason: |
+    跑批前逐字复核卡面全文后拒绑（本班自纠：曾按口语"三信号"实现了一支卡面没有的信号）：
+    ① unfrozen——卡面只写"RSI14(Wilder)"，**未给见顶档位阈值**，任何阈值都是替卡面拍数（禁）；
+    ② 分桶协议不可执行——buckets.on=「命中数 {0,1,2}（两信号命中计数）」是 panel 档计数，
+       而现器 series 路径按信号值分位分桶；若改绑命中数面板，执行器会走 dense-rank 序数回退，
+       把卡面 categorical 静默转成序数（在册 ORDINAL_FALLTHROUGH 风险）；
+    ③ 主判据面含未来函数——pillars.response_monotonicity 要求"命中数三档的**未来 5 日超额**单调"，
+       与执行器 shift(-1) 次日目标对齐不同源（precision_floor 的 T+5 跌出榜前 50% 同形）。
+    ⇒ 归"卡面修订工单"：阈值与三档/未来窗定义须按 G4-5 走**新版本卡**（禁原地改），
+       本卡的 ic_floor 支（连续面 RSI 分位＋放量滞涨 z 值合成 对次日指数收益 IC）亦须先冻结合成式才可考。
+  review_note: |
+    ⚠ 待 04:00 后实测定档项（两项未在纸面拍板）：①rsi_threshold=70 与 stale_ret 阈值取自卡面文字
+    "见顶预警三信号"的口语档，若卡面 pillars/buckets 另写死数值，以**卡面为准**并在跑批前改本 args
+    （改绑定册 args 不动卡面判据）；②第三支信号（近 3 日收益 <= stale_ret）是否真属卡面三信号之一，
+    须以卡面 signal_derivation 全文复核——若卡面只列两支，本绑定即多算一支＝误绑，跑批前必查。
+    主面为连续值预警密度（占比），走执行器 qcut 正常；卡面 panel 辅轴含"未来 5 日"收益＝未来函数，本次不考。
