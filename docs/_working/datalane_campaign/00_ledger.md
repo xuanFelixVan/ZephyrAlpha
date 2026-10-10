@@ -61,6 +61,11 @@ completes_when: 六件收官+99_delivery 落地（本件随批滚动）
    刷新（脚本重试语义已修：插入与校验分离，防 241 触发同值重插）→ 明晨 02:30 起 T1 闭环
    码守值。技术注记：严格读通道强注 FINAL=241 杀手，全链已改 fexam.ch_data.ch_query_df
    （无 FINAL 正门只读，夜矿广度推导同款）+pandas 侧 max(ingest_ts) 去重。
+6. **终态刷新+终验（15:45-16:15）**：夜跑 runner 52 片全退后 --apply 重放 24 月全 OK
+   （月写入与首写一致=同键集合同行数自证）→ **终验探针 5/5 全对**（000001 两键/600528/
+   300750/002415，最新版=本地 HEAD 修复码重算值逐位≤1e-6）→ T2 交付完成。
+   T3 dry-run 两次 500（bcure 链压 CH，argMax 推导 JOIN 需安静窗）；T6 触发器(a)探针
+   结果见 §六。
 
 ## 三、T3 limit_up_down 断供回补——待回填收官
 
@@ -82,11 +87,26 @@ completes_when: 六件收官+99_delivery 落地（本件随批滚动）
 
 三触发器：(a) CH 空闲窗窄窗读复测通过（215 列剪枝窄窗探针，排 53472 收官后安静窗跑）；(b) T1 停算落地（✅ 本班已落地，今晚 02:30 起结构性降写入）；(c) 比对基低内存通道（架构面，非本班可自决）。任一成立⇒按 Owner 已批窗排 CH OPTIMIZE（23:30 后、避夜跑；前后 df 对拍，预期回收 5.5~42 GiB，实收记账）。**P5 顺序铁律**：T2 冷档先行；今晚若 53472 拖过 23:00 则 OPTIMIZE 顺延（23:00 W1 窗 GPU/IO 让位二号）。
 
-## 七、降级直改登记
+## 七、本班事故与治本留痕（防后人）
+
+- **误判死接管（14:34，st-fwin-exec 同款第三次复刻）**：心跳守护 ~12:30 idle 自退
+  （last_activity 未刷新），接管扫描以「exited 残留+死子进程 PID」判死本班并登记 open
+  接管条目（held 3 件+worktree dirty4），TAKEOVER-PENDING 闸挡提交。自救=alive-owner
+  自证：SessionRegistry 重登记+heartbeat 刷新+守护重拉（PID 33624，_spawn_heartbeat_daemon
+  的 exited 残留守卫已按 1d5c0d36c4 增补令走无条件重 spawn）+接管条目 --resolve 自关。
+  教训：①长睡眠窗会话必须周期性 register/heartbeat（本班已起 15min keepalive 循环）；
+  ②「心跳审计末条 exited」= 前代守护自退证明，重拉前须清 pid 文件（增补令③①已治本）。
+- **CREATE-GUARD 冤拦与 token 先行袋**：入队预检=落地仿真态读 **HEAD 版注册册**
+  （M2.1 st-qcure-20260925），磁盘/PG 已登记未入 HEAD 的 token 一律判无 → 内容件必被拦
+  （99_delivery 三连拦实证）。处方=final4 先例 efb5a72214「token 先行袋」：HEAD 册+仅本班
+  4 块（+17 行零删除；worktree 渲染盘面曾带他会话待落地 token 11 块已外科剔除）→ f3cb27d8
+  先行 → 内容件 d0010388 随即过检。
+
+## 八、降级直改登记
 
 - 主区直改 1 处：`src/zephyr/data/implementations/internal_compute_provider.py`（对平 T1，原因见 §一；GW 计数以实际标记为准）。
 
-## 八、收尾清单（滚动）
+## 九、收尾清单（滚动）
 
 - [ ] 53472 收官确认→T2 探针+冷档→T3/T4 放量
 - [ ] T1 今晚 02:30 夜跑写入量对比（明晨读 state+当日入库行数）
