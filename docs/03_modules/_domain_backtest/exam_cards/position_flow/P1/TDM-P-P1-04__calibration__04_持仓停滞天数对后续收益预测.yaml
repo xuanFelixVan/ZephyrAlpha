@@ -1,0 +1,73 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-04/calibration/04_持仓停滞天数对后续收益预测
+node_id: TDM-P-P1-04
+family: calibration
+title_zh: 风险否决体检·校准卡：时间止损（盈利仓 5 日不涨/亏损仓 3 日不回）的机会成本实证
+hypothesis: >-
+  时间止损的经济学=资金占用有机会成本。TDM 本节点原文“盈利仓 5 日不涨/亏损仓 3 日不回”触发即转离场。
+  假设持仓停滞天数（盈利腿：距上次创新高的交易日数；亏损腿：距收复成本的交易日数）与未来 10 日
+  相对截面超额收益负相关且单调；5 日/3 日两把尺处应有可分辨拐点。
+  若停滞对未来无预测力（IC 不过地板），则时间止损只是心理纪律、其换手成本应判为净损（碰钱面反例结论）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；两腿天数（5/3）与分档边界先于数据写死
+buckets:
+  type: ordinal_days
+  'on': 停滞天数分档 [0-2, 3-5, 6-10, 11-20, >20]（盈利腿与亏损腿各自分档，两腿禁混池——口径不同）
+  min_obs_per_bucket: 60（每腿每档持仓-日样本）
+pillars:
+  response_monotonicity: 档位序 × 未来10日超额收益中位 Spearman rho <= -0.5（两腿各自判，方向为负）
+  ic_floor: 日频截面 IC 均值 <= -0.015 且 |IC_IR| >= 0.25（时间类信号弱于价格类，地板按此定；
+    低于 ic_mean_min 通用地板 0.02 的理由须写死在卡里=事前声明，非事后挪柱）
+  knee_test: 盈利腿 5 日档与 6-10 日档的中位超额差 >= 0.3pp/10日；亏损腿 3 日档同判
+    （两把尺的可分辨性=本节点阈值存在性的直接证据）
+  lag_profile: t+5/t+10/t+20 三窗 IC 峰值与半衰期建档
+  regime_stability: 牛/熊两段同号（熊段停滞=占用更贵，预期更强；牛段可能钝化，如实报）
+  opportunity_cost_note: 判“离场后置换”收益须用同日截面中位作基准（已在 target 定义内），
+    禁拿个股绝对收益冒充机会成本
+target:
+  primary: excess_return_next_10d（未来10日相对同日截面中位超额）
+  secondary: return_next_20d 与 后续20日内是否创新高概率
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: -0.5
+  ic_mean_min: -0.015
+  ic_ir_min: -0.25
+  regime_same_sign: true
+  oos_same_sign: true
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（panel 面，
+  _panel_metrics+judge 机判 pillars_numeric；signal/target 运行期注入=本卡 data_binding）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-04.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: 派生停滞天数——盈利腿=count(距段内收盘运行峰值的交易日数)，
+    亏损腿=count(距 current>entry 上次成立的交易日数)
+  signal_derivation: >-
+    持仓段与峰值口径逐字复用 factory_grid_executor._apply_exit_overlay trail20 分支
+    （段号=entry_day.cumsum()；段内 cummax 运行峰值 L918-933，复用禁重造）；
+    entry=调仓 T+1 开盘价（prereg_frozen.yaml stop_rules.entry_price）
+  target_source: kline_daily_hfq close → 未来10/20日收益，减同日截面中位=超额
+  data_window_evidence: |
+    判据文本真源=config/trading_decision_map.yaml 本节点 algo_note_zh（“时间止损（盈利仓 5 日不涨/
+    亏损仓 3 日不回）”）；live 侧同源件 src/zephyr/risk/core/ashare_stop_loss_engine.py
+    （StopLossTriggerType 六类 L86-96，件内含 SUPPORT_BREAK/SECTOR_EBB 等，时间止损在回测侧无档=
+    本卡先做“预测力”面，双臂落地面另卡）
+    覆盖实测：kline_daily_hfq 1990-12-19..2026-09-30，10,098,785 行
+  ds_ref: 本节点 TDM data_refs 空（结构性节点）；台账面 DS-009 非 CH 表（见 P1-01 六向），
+    本卡用“仿真持仓段”替代真实台账，失真披露位=段定义依赖权重面而非券商记录

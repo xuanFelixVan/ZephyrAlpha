@@ -1,0 +1,79 @@
+schema_version: '1.0'
+card_id: TDM-P-P2-04/ablation/03_置换两倍成本门与风控优先腿消融
+node_id: TDM-P-P2-04
+family: ablation
+title_zh: 减仓与再平衡·消融卡：置换门槛（预期改善>2×成本 / 新标的>1.5 倍）与风控优先权的去留
+hypothesis: >-
+  本节点两条硬门槛=①减仓改善 > 2× 交易成本才动；②置换机会（新标的预期收益 > 现持仓 1.5 倍）。
+  外加优先级纪律“风控减仓优先级高于做T（冲突时丢做T保减仓）”。消融三臂：全门槛、去门槛（改善为正即动）、
+  去优先权（做T 与减仓冲突时按预期收益择优）。假设去门槛后换手抬升而净收益不升（门槛在防噪声换手），
+  去优先权后尾部恶化（风控腿被收益腿挤掉）。若去门槛不损甚至增益，门槛应退役（净零）。
+arm_definition:
+  T_full: 门槛 2×成本 + 1.5× 预期收益置换 + 风控优先
+  T_no_threshold: 只要预期改善>0 即减/换（去 2×/1.5× 两门槛）
+  T_no_priority: 冲突日按预期收益择优（去“丢做T保减仓”序）
+  预期改善口径: 新标的与现持仓的合成秩差映射的收益差（须与 live 件字段语义对齐，见 data_binding）
+  held_fixed: 24 列 cap、hs300、top20、inv_vol、cap10、D1=monthly、D2=drift_band（漂移触发是本节点正身）
+executor: 缺件——live 侧字段实读 D:/ZephyrAlpha/src/zephyr/position/core/rebalance_engine.py:126-128
+  （expected_improvement / transaction_cost / improvement_ratio 三字段），但回测侧无“按改善比裁剪动作”的
+  overlay；grid 只有频率/触发/帽/λ 四类件。⇒ status=blocked_on_impl
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；2×/1.5× 两倍数取 TDM 原文，禁事后调
+buckets:
+  type: arm_comparison
+  'on': 三臂 × {IS, OOS, 牛段, 熊段} + 冲突日子集（做T 与减仓同日命中）
+  min_obs_per_bucket: 每臂每段交易日 >= 120；冲突日子集 >= 20 日（不足则优先权面判不可分辨）
+pillars:
+  turnover_gate: 去门槛臂换手抬升 >= 20% 且成本后 Sharpe 不升（门槛有效性主判据）
+  ablation_gate: 去门槛臂 OOS MaxDD 劣化 >= 0.5pp 或成本后收益下降（去掉约束整链掉多少）
+  priority_gate: 去优先权臂在冲突日的后续 5 日下行 >= 保留优先权臂 + 0.3pp（优先权=尾部保护）
+  turnover_or_cost_gate: 三臂统一 frozen_l0 扣费 + stress_l2 复算；换手/成本/收益/回撤同框，禁单指标
+  oos_and_regime_gate: 结论在 OOS 与熊段同号
+  negative_honesty: 若门槛被证伪（去门槛更好），如实入册并提请撤门槛（碰钱面宁可改规则不许留无效规则）
+target:
+  primary: sharpe_after_cost_delta 与 annualized_oneside_turnover_delta（去门槛 vs 全门槛）
+  secondary: 冲突日 5 日下行差（优先权面）、OOS MaxDD 差
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  turnover_increase_min: 0.20
+  sharpe_delta_max: 0.0
+  conflict_day_downside_min: 0.003
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+blocked_on_impl:
+  missing: 按 improvement_ratio 裁剪动作的再平衡 overlay + 做T/减仓冲突优先级开关
+  needed_interface: 输入目标权重面与实际权重面 + 成本估计，输出动作集合（含门槛/优先权开关）；
+    成本估计复用 matching_logic.COMMISSION_RATE 与 cost_model.py（禁新数）
+  unlock_condition: 落地后改 status=preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P2-04.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 合成秩（预期收益代理）+ 目标/实际权重差（漂移度）
+  signal_derivation: composite_signal → monthly_topn_signals → drift_band（L697-722）→ 门槛裁剪（待施工）
+  price_table: c1_market.kline_daily_hfq
+  target_source: 三臂日 NAV → strategy_exam.window_metrics；冲突日集合=P2 做T 命中 × 减仓命中
+  data_window_evidence: |
+    live 字段实读 src/zephyr/position/core/rebalance_engine.py:126-128
+    （`expected_improvement: float = 0.0  # 预期收益改善`、`transaction_cost: float = 0.0  # 交易成本`、
+    `improvement_ratio: float = 0.0  # 改善比(改善/成本)`）；
+    TDM 原文=config/trading_decision_map.yaml 本节点 algo_note_zh（“新标的预期收益>现持仓 1.5 倍时换仓…
+    划不划算=减仓改善>2×交易成本才动。风控减仓优先级高于做T（冲突时丢做T保减仓）”），
+    battle_map_refs=['BM-POS-09']，module_ref=src/zephyr/position/core/rebalance_engine.py
+    成本真源=zephyr.backtest.core.matching_logic.COMMISSION_RATE（万0.854，与引擎同源）

@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-05/comparison/02_单票上限三档对照
+node_id: TDM-P-P1-05
+family: comparison
+title_zh: 组合级体检·对照卡：单票上限 cap5/cap10/cap20 三档（“>20% 超集中”这条线的代价实证）
+hypothesis: >-
+  TDM 本节点原文“单票>20% 总仓位=超集中”。在册考维真值 E_single_cap=[cap5, cap10, cap20]
+  （基线 cap10），引擎实装 cap_map={cap5:0.05, cap10:0.10, cap20:0.20}（factory_grid_executor.py:683/812）。
+  假设收紧上限（cap10 vs cap20）以小幅牺牲收益换取回撤与尾部改善；cap5 过度分散开始侵蚀收益而无额外
+  回撤收益。若三档间无可分辨差异，则集中度帽这条体检线是纸面规则，P1-05→P2-04 的减仓指令无数据依据。
+arm_definition:
+  A_cap5: {E_single_cap: cap5}
+  B_cap10: {E_single_cap: cap10, note: schema 基线档}
+  C_cap20: {E_single_cap: cap20, note: TDM 体检线的临界档（>20% 才算超集中）}
+  D_uncapped: E_single_cap 无档可表（schema 值域只三档）——若需真“无帽”基线须扩档=施工位，
+    本卡以 cap20 作最松臂，并在卷面声明该口径限制（禁假称测了无约束）
+  held_fixed: 24 列 cap 信号、hs300、top20 月频、C_sizing=inv_vol、D2=periodic、H=lambda_5bp、
+    X_stop=off、X_breaker=off、K=lump（单维改动纪律：只换 E）
+executor: D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py（_apply_cap_and_lambda L827 调用，
+  cap 上限 L683 定义）+ strategy_exam.window_metrics + calibrate_cost_tier_redblue.run_cost_tier_scan
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；三档取 schema 在册值域，禁自造档名（config/position_recipe_grid_schema.yaml L40-43）
+buckets:
+  type: arm_comparison
+  'on': 三臂 × {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 120
+  extra_report: 三臂各自的实际最大单票权重分布（P50/P95/max）与触及帽被削的次数——
+    不报此面则“上限”是否 binding 无从判断（约束类必报 binding 率）
+pillars:
+  maxdd_gate: B(cap10) 相对 C(cap20) 的 OOS MaxDD 改善 >= 1.5pp（集中度帽的减损地板，低于止损族量级属预期）
+  tail_gate: B 相对 C 熊段 MaxDD 改善 >= 2pp 且单日最大损失分位不劣化（尾部才是集中度的战场）
+  sharpe_gate: B 相对 C 成本后 Sharpe 降幅 <= 0.15（收紧上限允许付这点收益）
+  overdispersion_gate: D(cap5) 相对 B 成本后 Sharpe 降幅 <= 0 且 MaxDD 无进一步改善 >= 1pp ⇒ 判 cap5 过度分散；
+    若 cap5 反优于 cap10，则 TDM 的 20% 线与基线 10% 线双双失据，须提请改口径（如实入册）
+  binding_gate: 若三臂实际权重从未触帽（binding 次数=0），本卡判“不可分辨/装置未压到约束”，
+    如实记 no_binding 而非 pass/fail（禁把无差异当无增益的结论）
+  turnover_or_cost_gate: 三臂均 frozen_l0 扣双边佣金判，stress_l2 复算符号翻转=fail
+  oos_and_regime_gate: 判据在 OOS 与熊段同号
+target:
+  primary: oos_maxdd_delta_cap10_minus_cap20
+  secondary: sharpe_after_cost_delta、单票权重 P95、帽 binding 次数
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.015
+  sharpe_delta_min: -0.15
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-05.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；碰钱面判据成组禁单指标
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩（承 prereg_frozen.yaml device.columns_cap24，跨卡同票池）
+  signal_derivation: strategy_exam.composite_signal → monthly_topn_signals(top_n=20) → _apply_cap_and_lambda
+  price_table: c1_market.kline_daily_hfq
+  target_source: 三臂日 NAV → strategy_exam.window_metrics（sharpe 年化 244 + MaxDD）
+  data_window_evidence: |
+    维与实装实读：config/position_recipe_grid_schema.yaml:40-43
+    `- id: E_single_cap / values: [cap5, cap10, cap20] / baseline: cap10`；
+    factory_grid_executor.py:683 `cap_map = {"cap5": 0.05, "cap10": 0.10, "cap20": 0.20}`、
+    :812 `cap_val = {"cap5": 0.05, "cap10": 0.10, "cap20": 0.20}[v["E_single_cap"]]`
+    TDM 线值出处=config/trading_decision_map.yaml 本节点 algo_note_zh“单票>20% 总仓位（超集中）”
+    CH 覆盖：kline_daily_hfq 1990-12-19..2026-09-30 共 10,098,785 行
+  ds_ref: DS-009=position.snapshot（data_asset_registry.yaml L1081，契约件非 CH 表）——
+    本卡的“实际权重”来自仿真权重面而非真实台账，失真披露位随卷

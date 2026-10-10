@@ -1,0 +1,87 @@
+schema_version: '1.0'
+card_id: TDM-P-P3-03/comparison/02_仓位定尺寸七档对照
+node_id: TDM-P-P3-03
+family: comparison
+title_zh: 加仓量级与风险核算·对照卡：C_sizing 七档（风险预算/波动目标/置信/现金四轨的回测等价物）
+hypothesis: >-
+  live 侧量级=四轨融合（风险预算/波动率目标/策略置信/现金约束），在册常数含
+  vol_sigma_multiplier=2.0（超 μ+2σ 减半）、var_threshold=0.025、cvar_threshold=0.04、
+  max_participation_rate=0.15、exit_days_hard=3、capacity_warn_ratio=0.80
+  （position_sizing_engine.py:168-182 实读），另有 sizing basis 枚举 10 种（含 kelly_budget/
+  single_name_cap/liquidity_cap/volatility_check/degraded_equal_weight）。
+  回测等价物=在册 C_sizing 七档 [equal_weight, mkt_cap, inv_vol, risk_parity, kelly_025, kelly_050,
+  signal_strength]（基线 inv_vol）。假设：逆波/风险平价/Kelly 系相对等权在成本后 Sharpe 有增益，
+  且 Kelly 档随系数（0.25 vs 0.50）呈剂量-响应；若等权不被任何风险档击败，
+  则整个 sizing 引擎在层位上属过度工程（如实报，这是本节点最硬的证伪）。
+arm_definition:
+  七臂: C_sizing ∈ {equal_weight, mkt_cap, inv_vol(基线), risk_parity, kelly_025, kelly_050, signal_strength}
+  可用性前置: mkt_cap 需市值宽表、kelly 需 60 日收益均值/方差宽表——
+    件内显式抛错（factory_grid_executor.py:650/667“mkt_cap sizing 需要市值宽表（run_batch 未加载）”），
+    故这两臂 MUST 先确认 run_batch 已加载对应面板；未加载则该臂判 DATA_NOT_LOADED 而非 FAIL（禁静默跳过）
+  held_fixed: 24 列 cap、hs300、top20、D1=monthly、cap10、X_stop/X_breaker=off、K=lump
+executor: D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py（C 维 sizing 重算，run 路径按 recipe 取值）
+  + strategy_exam.window_metrics + calibrate_cost_tier_redblue.run_cost_tier_scan
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；七档取 schema 在册值域（禁自造档名），基线 inv_vol 取 schema baseline 字段
+buckets:
+  type: arm_comparison
+  'on': 七臂 × {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 120
+  extra_report: 各臂的实际权重集中度（HHI、最大单票权重 P95）与参与率分布
+    （对照 live max_participation_rate=0.15 这条硬约束在样本内是否 binding）
+pillars:
+  dominance_gate: 至少一个风险类档（inv_vol/risk_parity/kelly_*）相对 equal_weight 的成本后 Sharpe
+    提升 >= 0.10；若全部不敌等权，sizing 引擎判过度工程（本卡允许并预期该结论）
+  dose_gate: kelly_050 相对 kelly_025 的收益更高且回撤更大（Kelly 系数剂量-响应方向必须如此，
+    反号=Kelly 实现或数据面异常，先修口径）
+  maxdd_gate: 熊段最优档的 MaxDD 相对等权改善 >= 1pp（风险档的存在意义在熊市尾部）
+  turnover_or_cost_gate: 七臂统一 frozen_l0 扣费 + stress_l2 复算；逆波/Kelly 抬换手须同框报数；
+    判据成组禁单指标
+  oos_and_regime_gate: 胜负方向在 OOS 与熊段同号
+  live_parity_note: 本卡考的是回测等价物，不宣称考了 position_sizing_engine 本体
+    （四轨融合/现金约束/VaR-CVaR 链不在向量化域）——差距作 honesty 披露位
+target:
+  primary: sharpe_after_cost_delta_vs_equal_weight（七臂）
+  secondary: 熊段 MaxDD、HHI 集中度、参与率 binding 次数
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  sharpe_delta_min: 0.10
+  maxdd_improvement_min: 0.01
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3-03.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator + c1_market.daily_valuation（市值档需 ch_data.T_DAILY_VALUATION）
+    + kline_daily_hfq 60 日收益矩（Kelly 档需 mean/var 宽表）
+  signal_column: 24 列 cap 合成秩（signal_strength 档直接消费该秩）
+  signal_derivation: composite_signal → C_sizing 变体出权重 → top20 归一 → cap10
+  price_table: c1_market.kline_daily_hfq
+  target_source: 七臂日 NAV → strategy_exam.window_metrics
+  data_window_evidence: |
+    维与实装实读：config/position_recipe_grid_schema.yaml:28-31
+    （`- id: C_sizing / values: [equal_weight, mkt_cap, inv_vol, risk_parity, kelly_025, kelly_050,
+    signal_strength] / baseline: inv_vol`）；
+    缺料抛错实读 factory_grid_executor.py:650 `raise RuntimeError("mkt_cap sizing 需要市值宽表（run_batch 未加载）")`、
+    :667 `raise RuntimeError("kelly sizing 需要 60 日收益均值/方差宽表（run_batch 未加载）")`；
+    live 常数实读 src/zephyr/position/core/position_sizing_engine.py:104-182
+    （MARKET_REGIME_CAPS、SIZING_BASIS_* 十种枚举、vol_sigma_multiplier=2.0、var_threshold=0.025、
+    cvar_threshold=0.04、max_participation_rate=0.15、exit_days_hard=3、exit_days_soft=1、
+    capacity_warn_ratio=0.80）；
+    ch_data 在册表别名 T_DAILY_VALUATION=market_daily_valuation（L49 实读）

@@ -1,0 +1,88 @@
+schema_version: '1.0'
+card_id: TDM-P-P3-01/comparison/02_浮盈加仓与摊平亏损仓双臂对照
+node_id: TDM-P-P3-01
+family: comparison
+title_zh: 加仓资格门·对照卡：只加浮盈仓（红线）vs 允许摊平亏损仓——本红线的第一手成本测量
+hypothesis: >-
+  TDM 本节点原文红线=“只加浮盈仓（现价>成本，禁补亏损仓=红线），补亏损仓=扩大错误”。
+  双臂：A=只在浮盈达标时加仓（引擎 pyramid 隐含此条件：armed 需 close>=entry×1.03）；
+  B=允许向下摊平（close<=entry×(1−d) 时加一档，d=3%）。假设 B 相对 A 成本后 Sharpe 显著更低、
+  MaxDD 显著更差、且加仓笔的平均后续收益为负——这是把“红线”从纪律口号变成可量测损失的唯一路径。
+  若 B 不劣于 A（在均值回复市里摊平可能赢），则红线本身须重议（如实报，纪律不豁免于数据）。
+arm_definition:
+  A_profit_only: ramp_mode=pyramid（现装 armed 条件即浮盈确认）
+  B_avg_down: 需新增档：entry_px 下方 3% 触发加一档（等额三档镜像向下），并保留“已加档不降档”路径依赖
+  C_both_neutral: 只加浮盈但不设上限次数（max_tranches 放开）——分离“方向门”与“次数门”两个约束
+  held_fixed: 24 列 cap、hs300、top20、inv_vol、cap10、monthly、X_stop=off（X_stop 会干扰摊平后果的归因，
+    故先关；另设 X_stop=atr3x 的稳健性副跑，两跑同号才算数）
+executor: 半缺件——A/C 臂可用 _apply_capital_ramp_overlay（L1058-1116）现装；
+  B 臂（向下摊平）引擎无该 mode（L1076-1077 实读合法值仅 lump|linear_20d|linear_60d|pyramid）⇒需施工
+  （约 15 行，镜像 armed3/armed6 的向下条件）。⇒ status=blocked_on_impl（主结果依赖 B 臂）
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31（摊平在熊段的杀伤段）
+  frozen_note: 看数前冻结；d=3% 镜像金字塔阶梯下限（live ladder_min_pct=0.025 就近取 3% 与引擎 1.03 对齐），
+    该对齐选择事前写死禁事后挪
+buckets:
+  type: arm_comparison
+  'on': 三臂 × {IS, OOS, 牛段, 熊段}；另按“加仓笔”逐笔统计平均后续 10 日收益
+  min_obs_per_bucket: 每臂每段交易日 >= 120；B 臂加仓笔数 >= 100（不足判不可分辨）
+pillars:
+  redline_gate: B 臂成本后 Sharpe 相对 A 臂下降 >= 0.15 且 OOS MaxDD 恶化 >= 2pp（红线量化价值主判据）
+  per_trade_gate: B 臂“向下加仓笔”的平均后续 10 日收益 < A 臂“向上加仓笔”（逐笔口径，防组合层掩盖机制）
+  dose_gate: C 臂（放开次数）相对 A 臂的改善/恶化方向须与 B 臂结论不冲突（两约束同向=机制自洽）
+  robustness_gate: 副跑（X_stop=atr3x）方向须与主跑同号；不同号=结果依赖止损配置，须降级为待定
+  turnover_or_cost_gate: 三臂统一 frozen_l0 扣费 + stress_l2 复算；摊平抬升暴露与换手须同框报数
+  oos_and_regime_gate: 判据在 OOS 与熊段同号
+target:
+  primary: sharpe_after_cost_delta_B_minus_A 与 oos_maxdd_regression_B
+  secondary: 逐笔加仓后续10日收益（向上市 vs 向下降）、B 臂平均暴露度
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  sharpe_delta_min: -0.15
+  maxdd_regression_max: -0.02
+  per_trade_return_gap_max: 0.0
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+blocked_on_impl:
+  missing: _apply_capital_ramp_overlay 的向下摊平 mode（或独立双臂脚本）
+  evidence: |-
+    factory_grid_executor.py:1076-1077
+    `if ramp_mode not in ("linear_20d", "linear_60d", "pyramid"): raise ValueError(...合法=lump|linear_20d|linear_60d|pyramid)`
+  unlock_condition: 加 mode 后改 status=preregistered；假设/三臂/门柱已冻结
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3-01.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；碰钱红线面判据成组
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩
+  signal_derivation: composite_signal → top20 → ramp overlay（A/B/C 三档 mode）
+  price_table: c1_market.kline_daily_hfq
+  target_source: 三臂日 NAV → strategy_exam.window_metrics；逐笔加仓收益=加仓日收盘后 10 日收益
+  data_window_evidence: |
+    红线原文=config/trading_decision_map.yaml 本节点 algo_note_zh“①只加浮盈仓（现价>成本，
+    禁补亏损仓=红线）；②情绪段权限（点火/扩张段才开加仓，退潮/亢奋关）；③策略亲和度>0；
+    ④非熔断禁加期（日亏 4% 熔断触发时全禁）”；
+    live 侧门实现实读 src/zephyr/position/core/pyramiding_rules.py:76-81
+    （_PHASES_ALLOW={IGNITION,EXPANSION}、_CIRCUIT_BAN_LEVELS={L2,L3,L4}）；
+    引擎侧确认无段门/无熔断门/无亲和度门（_apply_capital_ramp_overlay 全文只读价格档）⇒
+    本卡的 B 臂与另三腿均为施工位，逐腿卡已分列（②见 P3-01/comparison/03）
+    正查义务：`python -m zephyr.library.lookup state "金字塔加仓"` 输出摘录见台账 §三 探针账
+    （命中 docs/_working/2026-09-04-trading-decision-map-discussion.md L633“三处真正空白=…
+    P3 金字塔加仓规则（全网+全项目核查均无承载）”与 2026-09-09-tdm-growth-blueprint.md L203
+    “| 7 | 金字塔加仓（资格门+递减）| C9+C10 | 4105b58e / MOD-POS-027 | 禁补亏损仓 在码”）
+  ds_ref: factor_refs=['FCT-MOM-022']；④熔断禁加腿的日亏 4% 与 X_breaker 帽带（WARN0.75/DANGER0.50/
+    CRISIS0.25/KILL0）不同层，本卡不混判

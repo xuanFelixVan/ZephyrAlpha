@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-04/comparison/02_否决线三型可选档对照
+node_id: TDM-P-P1-04
+family: comparison
+title_zh: 风险否决体检·对照卡：ATR 硬止损 vs 移动止盈 vs 目标止盈 vs 无关（四臂成组判据）
+hypothesis: >-
+  四类否决线中可在日频回测平面表达的是"破位/回撤类"。假设 X_stop 三档（atr3x 入场价−3×ATR14 硬止损、
+  trail20 峰值×0.8 移动止盈、tp20 入场价×1.2 目标止盈）相对 off 基线各有可分辨的增益结构：
+  atr3x 主改善回撤、trail20 主改善熊段尾部、tp20 以牺牲趋势收益换胜率。
+  若三档相对 off 均无统计可分辨改善（或仅 IS 单窗改善），则"否决线"在回测平面上无可证价值，
+  live 止损引擎（MOD-POS-008/017）的档位配置应由人工纪律而非数据支撑——此结论必须能说出口。
+arm_definition:
+  A_off: {X_stop: 'off'}
+  B_atr3x: {X_stop: atr3x}
+  C_trail20: {X_stop: trail20}
+  D_tp20: {X_stop: tp20}
+  note_schema_gap: schema X_stop values 只列 [off, atr3x, trail20]，而引擎 L910 合法值含 tp20
+    （注释"tp20 已实现未入考卷（T3b 卡 v2 可扩档）"）——本卡把 tp20 作为对照臂要求，
+    落地前须在 schema 扩档（禁手改机生件，走生成器/日光档施工位；本车道禁跑生成器故只登记）
+  held_fixed: 24 列 cap 合成信号、hs300、top20 月频、inv_vol、cap20、K=lump、X_breaker=off（单维改动纪律）
+executor: D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py（_apply_exit_overlay L892-934，
+  调用点 L838 已接线；atr 口径 _close_atr(closes,14)）+ strategy_exam.window_metrics
+  + calibrate_cost_tier_redblue.run_cost_tier_scan（成本档重跑）
+  同族先例件：D:/ZephyrAlpha/scripts/backtest/fexam/exit_sim/exit_simulator.py（stop_enabled 双臂，
+  实测"无止损→有止损 MaxDD +16.5pp"满分卷）——本卡增量=把二臂扩为四臂并加入移动止盈/目标止盈对比
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  warm_start: '2017-10-01（ATR14 暖机）'
+  frozen_note: 看数前冻结；3×ATR/0.8 峰值/×1.2 目标三组参数取引擎现值零扫描（先验证现口径，扫档另立卡）
+buckets:
+  type: arm_comparison
+  'on': 四臂 × {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 120；触发次数 <30 的臂判样本不足
+  sub_buckets: 另按"触发类型"分层（atr3x 破位次数、trail20 回撤次数、tp20 达标次数）作观察项随卷报出
+pillars:
+  maxdd_gate: 每档相对 off 的 OOS MaxDD 改善 >= 5pp（承 exit_sim judge_frozen.verdict_gain 地板）
+  sharpe_gate: 成本后 Sharpe 降幅 <= 0.2（同样承先例容差）
+  turnover_or_cost_gate: frozen_l0（万0.854 双边）扣成本后判；stress_l2 复算符号翻转=fail；
+    止损族抬换手须同框报数
+  oos_and_regime_gate: 改善须在 OOS 与熊段同号（仅 IS 或仅牛段=判 fail）
+  discrimination_gate: 三档之间须有可分辨差异（最优臂与次优臂 OOS MaxDD 改善差 >= 2pp），
+    否则三档=同一件事，档位配置无信息量
+  honesty: 收盘判定触发的滞后失真（§4.4 已知失真，引擎 docstring 自述）必须随卷披露；
+    负结果如实入册（先例=情绪指数/HMM 大量 FAIL 在册）
+target:
+  primary: oos_maxdd_improvement_pp（各臂 vs off）
+  secondary: sharpe_after_cost_delta、turnover_delta、bear_segment_improvement_pp
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.05
+  sharpe_delta_min: -0.2
+  arm_discrimination_min_pp: 0.02
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-04.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap（承 prereg_frozen.yaml device.columns_cap24 同一清单，跨卡同票池才可比）
+  signal_derivation: strategy_exam.composite_signal → monthly_topn_signals(top_n=20) → _apply_exit_overlay
+  price_table: c1_market.kline_daily_hfq（close 口径；ATR14 由 high/low/close 自算）
+  target_source: 四臂日 NAV → strategy_exam.window_metrics（sharpe 年化 244 + MaxDD）
+  data_window_evidence: |
+    引擎合法档实读 D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py:910
+    `if stop_mode not in ("atr3x", "trail20", "tp20"): raise ValueError(...（合法=off|atr3x|trail20|tp20）)`；
+    接线点 :838；schema 现值 config/position_recipe_grid_schema.yaml:71-78（values [off,atr3x,trail20]，
+    active_if "phase >= 3"）⇒ 开考 context={phase: 3}
+    CH 覆盖实测：kline_daily_hfq 1990-12-19..2026-09-30，10,098,785 行（命令原文见本车道 PFLOW 卡）
+  ds_ref: TDM 本节点 data_refs/factor_refs 皆空（结构性节点）；live 后端锚
+    src/zephyr/risk/core/ashare_stop_loss_engine.py（MOD-POS-008/017，六类触发+亏损限额）

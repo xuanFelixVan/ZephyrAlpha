@@ -1,0 +1,90 @@
+schema_version: '1.0'
+card_id: TDM-P-P3-01/comparison/03_情绪段加仓权限分层对照
+node_id: TDM-P-P3-01
+family: comparison
+title_zh: 加仓资格门·对照卡：段权限（点火/扩张才开加仓）的分层增益与段样本现实
+hypothesis: >-
+  本节点第②腿=情绪段权限（点火/扩张段才开加仓，退潮/亢奋关），live 实装
+  pyramiding_rules._PHASES_ALLOW={PyramidingPhase.IGNITION, PyramidingPhase.EXPANSION}（L76-78 实读）。
+  假设金字塔加仓臂（K=pyramid）的增益集中在 ignition/expansion 段，在 distribution/euphoria 段为零或负
+  ——若段间无差异，则段权限门是多余的约束（应与 K 维合并，净零：同真源可派生→必并）。
+  ★样本现实必须前置声明：六段史实测分布 {'': 762, ignition: 2, distribution: 221, capitulation: 202,
+  accumulation: 201, expansion: 393, euphoria: 40}（docs/_working/t0_matrix/six_phase_history_v1.csv，
+  1,822 行，2019-04-01..2026-09-29）——**ignition 仅 2 天**，故“点火段”腿原理上不可单独出结论，
+  本卡把可判子集定为 expansion-vs-{distribution,euphoria}，ignition 只计数不判定。
+arm_definition:
+  arm_pyramid: {K_capital_ramp: pyramid, note: context capital_ramp_enabled=true}
+  arm_lump: {K_capital_ramp: lump, note: 同信号同窗基线}
+  分层: 两臂逐日净收益按六段标签切片归因（非重跑，只读归因）——增益=Δ(pyramid−lump) 在段间的分布
+  held_fixed: 24 列 cap、hs300、top20、inv_vol、cap10、monthly、X_stop/X_breaker=off
+executor: D:/ZephyrAlpha/scripts/backtest/condition_attribution.py:attribute_run（run 产物 net_returns × 条件包
+  → 胞级分层 sharpe/年化/占比；件自述“胞级数字仅作分层观察（禁挑优入判据），判据仍=全窗五档成本门”，
+  本卡遵此：段间差异作机制判据，胜负判据仍走全窗成本门）
+  + 条件包构造真源=docs/_working/t0_matrix/six_phase_history_v1.csv（cell 定义另可参照
+  data/strategy_intake/grid_t0_conditional_v1/t0_condition_cells_v1.csv 列结构：six_phase×amp_bucket3×
+  usable_as_dimension）；load_pack=zephyr.backtest.regime_validation.condition_package
+window:
+  in_sample:
+  - '2019-04-01'
+  - '2024-12-31'
+  oos: &id001
+  - '2025-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: expansion/ignition 侧
+    bear: capitulation/distribution 侧
+  frozen_note: 看数前冻结；段标签版本=sixphase-v1（CSV 列 phase_version），禁自造分段
+buckets:
+  type: state_cell_attribution
+  'on': 六段 × 两臂（Δ 增益）
+  min_obs_per_bucket: 每段 >= 60 个交易日方可出该段分层结论（据实：ignition=2 天必被判不足，
+    euphoria=40 天亦不足，仅 accumulation/expansion/distribution/capitulation 可判）
+  residual: 未达标日期进 residual 行单独披露（件 INVARIANTS 禁当独立样本计 n）
+pillars:
+  cost_gate: 全窗判据仍=五档成本门（frozen_l0 + stress_l2 复算，符号翻转=fail）——分层不得取代全窗胜负
+  segment_gate: expansion 段 Δ(pyramid−lump) 的年化差 > distribution 段与 capitulation 段（段权限门的机制证据），
+    且 expansion 段 Δ > 0
+  insufficiency_gate: ignition/euphoria 段只报计数与描述统计，禁出 PASS/FAIL（样本先证）
+  concentration_gate: 加仓增益的段集中度（expansion 段贡献占比）>= 60%；若均匀分布=段门无信息，判该腿退役
+  oos_gate: 段间方向差异在 OOS 子窗再现
+  turnover_or_cost_gate: 两臂换手/成本同框（加仓臂必然抬换手与成本，扣费后才谈段增益）
+target:
+  primary: ann_ret_delta_pyramid_minus_lump_by_six_phase（分层）
+  secondary: expansion 段贡献占比、各段 n_days、sharpe_after_cost 全窗差
+status: preregistered
+signal_kind: series
+pillars_numeric:
+  segment_gap_min: 0.01
+  concentration_share_min: 0.60
+  cost_after_sharpe_gate: full_window_cost_gate_first
+  oos_same_sign: true
+  min_days_per_cell: 60
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3-01.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；胞级禁挑优（承件 INVARIANTS）
+data_binding:
+  signal_table: grid run 产物（net_returns 宽表，index=trade_date）+ 条件包（date/cell_id/cell_eligible）
+  signal_column: K_capital_ramp 两臂的逐日净收益
+  signal_derivation: factory_grid_executor 双臂跑批（context capital_ramp_enabled=true）出 run_dir；
+    段标签读 six_phase_history_v1.csv（列 trade_date/dominant/six_phase/routed/leg_*/phase_version）
+  price_table: c1_market.kline_daily_hfq
+  target_source: 分层年化/sharpe（condition_attribution）+ 全窗成本后判据
+  data_window_evidence: |
+    段分布与覆盖实测原文：
+    cd D:/ZephyrAlpha && python -c "
+    import csv,collections
+    rows=list(csv.DictReader(open('docs/_working/t0_matrix/six_phase_history_v1.csv',encoding='utf-8')))
+    print(collections.Counter(r['six_phase'] for r in rows)); print(rows[0]['trade_date'],rows[-1]['trade_date'])"
+    → {'': 762, 'ignition': 2, 'distribution': 221, 'capitulation': 202, 'accumulation': 201,
+       'expansion': 393, 'euphoria': 40}，2019-04-01..2026-09-29（1,822 行）
+    件语义实读 scripts/backtest/condition_attribution.py:20-56（attribute_run 取 summary.json
+    的 net_returns_file，join pack.frame 的 cell_id/cell_eligible，输出
+    [recipe, cell_id, days, sharpe_cell, ann_ret_cell, weight_pct]）；
+    TDM 原文=config/trading_decision_map.yaml L3434 邻段本节点 algo_note_zh ②情绪段权限
+    前置缺件提示=本卡需先有 K 维双臂 run 产物（K 维在册但从未展开：capital_ramp_enabled=false），
+    跑批属计算位非代码位，卡仍可先冻结

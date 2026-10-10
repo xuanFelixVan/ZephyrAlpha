@@ -1,0 +1,76 @@
+schema_version: '1.0'
+card_id: TDM-P-P2-02/ablation/02_单次做T量三成上限消融
+node_id: TDM-P-P2-02
+family: ablation
+title_zh: 做T策略调度·消融卡：单次做T量≤底仓 30% 这条帽去掉后掉多少
+hypothesis: >-
+  TDM 本节点原文“单次做T量≤底仓 30%”。该帽的功能=防做T 演变成变相加仓/减仓（保持底仓恒等）。
+  消融双臂：帽在（≤30%）vs 帽去（信号给多少做多少，不设比例）。假设去帽后①净均 bp 因规模不经济
+  （冲击成本升）而下降，②底仓股数恒等违反率上升（做T 与加减仓层位混淆）。若去帽不减损甚至增损为负，
+  则该帽应并入统一的 sizing 约束（净零：同真源可派生→必并）。
+arm_definition:
+  A_capped30: 单次做T 名义 <= 底仓市值×30%（TDM 原文帽）
+  B_uncapped: 无比例帽，仅受成本门与资格门约束
+  C_capped50: 放宽档作剂量-响应（应落在 A 与 B 之间）
+  held_fixed: 同一批材料、同一三策略信号集、同一 31.2bp 成本口径与 M-1..M-4 资格判据
+executor: 缺件——需在做T 重放件里把单次量作为开关；现有
+  D:/ZephyrAlpha/scripts/audit/t0_conditional_e4_v3_exam.py 只做门与配对判据不改成交量；
+  D:/ZephyrAlpha/src/zephyr/sell_decision/core/t_trade_coordinator.py（MOD-AU-011）与
+  D:/ZephyrAlpha/src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py 是 live 编排件（零下单观察态），
+  无回测重放入口 ⇒ status=blocked_on_impl
+window:
+  in_sample:
+  - '2026-06-01'
+  - '2026-08-31'
+  oos: &id001
+  - '2026-09-01'
+  - '2026-10-09'
+  regimes:
+    bull: 六段 routed=1 侧
+    bear: capitulation/distribution 侧
+  frozen_note: 看数前冻结；30%/50% 两档先写死；材料窗承第三方 frozen 卡 EXAM_START=2026-06-01
+buckets:
+  type: arm_comparison
+  'on': 三臂 × 六段分层；每臂 n_pairs >= 30 才出方向结论（承土规）
+  min_obs_per_bucket: 30 对
+pillars:
+  net_bp_gate: A 相对 B 的净均 bp 差 >= 0（帽不损收益），且 B 相对 A 的冲击成本估计上升（四要素件算）
+  invariant_gate: B 相对 A 的底仓股数恒等违反率上升 >= 2pp（帽的真实功能证明；无上升=帽冗余）
+  dose_response: C 臂指标落在 A 与 B 之间，否则判口径异常
+  turnover_or_cost_gate: 三臂同一 31.2bp 双边口径 + 冲击成本分项披露（做T 放大量的代价主要在冲击腿）
+  sample_gate: 若入样对数 <30（在册先例：全材料仅 26 对），判 INSUFFICIENT_SAMPLE 并转“等料”工单，
+    禁出方向结论（裁定#325 禁全绿）
+target:
+  primary: net_bp_per_pair_A_minus_B
+  secondary: 底仓恒等违反率差、冲击成本分项、单笔均名义
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  net_bp_delta_min: 0.0
+  invariant_violation_delta_min: 0.02
+  pairs_min_for_verdict: 30
+  turnover_or_cost_gate: fixed_cost_tier_31_2bp
+blocked_on_impl:
+  missing: 做T 成交重放件的“单次量帽开关”（现无任何臂可变体量的回测入口）
+  needed_interface: 输入 bt-*.json 的原始信号对 + 底仓股数，输出按体量帽裁剪后的配对集合
+  unlock_condition: 施工后改 status=preregistered（假设/门柱已冻结）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P2-02.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: data/backtest_artifacts/bt-*.json + c1_market.kline_1min（日内价复核）
+  signal_column: 三策略信号（intraday-surge-fall / orderbook-imbalance / vwap-reversion）与其成交量
+  signal_derivation: 底仓市值×30% 上限裁剪成交名义；净价差经 t0_cost_model 四要素扣费
+  target_source: 每对净价差 bp 与每票-日底仓股数恒等检查
+  data_window_evidence: |
+    原文与常数：config/trading_decision_map.yaml 本节点 algo_note_zh“单次做T量≤底仓 30%”；
+    材料目录实测 data/backtest_artifacts=66 条目（含 bt-*.json 65 个）；
+    kline_1min 覆盖 2021-09-01..2026-10-09，1,493,285,247 行，8,706 符号（台账 §一 探针命令）；
+    tick_depth_5 覆盖仅 2026-07-24..2026-09-30，130,146,982 行 ⇒ 盘口失衡腿的策略级对照另卡且受料限
+  ds_ref: TDM 本节点 factor_refs=['FCT-INTRADAY-029','FCT-INTRADAY-030','FCT-INTRADAY-017','FCT-INTRADAY-021']、
+    algo_refs=['EXA-VWAP-001','EXA-TWAP-001']、module_mounts=['MOD-AU-011']

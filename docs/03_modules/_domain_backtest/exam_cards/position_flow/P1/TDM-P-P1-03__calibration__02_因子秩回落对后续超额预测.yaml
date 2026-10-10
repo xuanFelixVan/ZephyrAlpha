@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-03/calibration/02_因子秩回落对后续超额预测
+node_id: TDM-P-P1-03
+family: calibration
+title_zh: 买入逻辑存活·校准卡：入场因子截面秩回落对后续超额收益的预测力（0.30/0.60 定档实证）
+hypothesis: >-
+  多因子仓的"买入理由=选股因子本身"，其存活度量=当前截面秩相对入场日截面秩的回落幅度。
+  真源 thesis_survival.py 定档 factor_drift_weak=0.30→弱化、factor_drift_dead=0.60→失效。
+  假设秩回落越深，未来 10 日相对截面的超额收益越差且单调；0.30/0.60 两把尺在数据上确实对应
+  可分辨的收益断层（分位间差异显著）。若单调性弱或 0.30 与 0.60 两档无差异，则该阈值是拍脑袋数字，
+  P1-03 的"成立/弱化/失效"三态输出不可信、不得驱动转离场。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；回落阈值 0.30/0.60 取现码常数不作扫描（先验证现口径，扫描属 T3b 扩档另卡）
+buckets:
+  type: ordinal_band
+  'on': 秩回落幅度 pct 分五档 [0,0.10,0.30,0.45,0.60,1.0]——0.30/0.60 是判据边界所在档（专门检验两把尺）
+  min_obs_per_bucket: 60（持仓-日样本/档）；0.60+ 档样本天然稀，不足则判 nan 不并入邻近档
+pillars:
+  response_monotonicity: 分档中位未来10日超额收益 Spearman rho <= -0.6（回落越深收益越差，符号为负）
+  ic_floor: 日频截面 IC 均值 <= -0.02（取绝对值过地板，方向固定为负）且 |IC_IR| >= 0.3
+  band_separation: 0.30 档与 0.60 档的中位超额差 >= 0.5pp/10日 且非重叠（两把尺必须切出不同世界，否则阈值无信息）
+  lag_profile: t+1/t+5/t+10 三窗前向 IC 峰值位置与半衰期建档（机构三件套之"时滞"）
+  regime_stability: 牛/熊两段 IC 同号且均过 |ic_floor|
+  pit_note: 入场日秩=持仓段首日截面秩（段基准 ffill，不因清仓重置），与 _apply_thesis_survival_overlay
+    段基准语义一致（防两卡口径漂移）
+target:
+  primary: excess_return_next_10d（未来10日相对同日截面中位的超额收益）
+  secondary: stop_trigger_or_dropout_10d（后续10日内跌出 top20 持池的概率）
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: -0.6
+  ic_mean_min: -0.02
+  ic_ir_min: -0.3
+  band_separation_min_pp: 0.005
+  regime_same_sign: true
+  oos_same_sign: true
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（panel 面机判 pillars_numeric；
+  signal/target 运行期注入=本卡 data_binding）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-03.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.technical_indicator（ch_data.T_TECHNICAL_INDICATOR）
+  signal_column: 派生 = rank_now(pct) − rank_entry(pct)，逐票持仓段基准
+  signal_derivation: >-
+    截面合成=prereg_frozen.yaml device.columns_cap24 的同一 24 列（文档序 cap，确定性禁挑列），
+    composite_signal=逐列截面秩 pct 等权均值（复用 strategy_exam.composite_signal）；
+    持仓段与 entry_day 判定语义逐字复用
+    D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py:_apply_thesis_survival_overlay(L1034-1055)
+    （held=weights>0；entry_day=held & ~held.shift(1)；rank_entry=rank_now.where(entry_day).ffill()）——
+    只取其状态量做考卷，不改其否决动作
+  target_source: c1_market.kline_daily_hfq close → 未来10日收益，减同日截面中位=超额
+  data_window_evidence: |
+    常数与阈值实读：D:/ZephyrAlpha/src/zephyr/plan_engine/thesis_survival.py:67-70
+    factor_drift_weak: float = 0.30 / factor_drift_dead: float = 0.60 /
+    event_decay_alive: 0.50 / event_decay_dead: 0.80
+    引擎侧同源默认：factory_grid_executor.py:1038 `thesis_decay: float = 0.30`（两侧一致是本卡的前置事实，
+    不一致则先修口径再开考）
+    覆盖实测（同车道命令原文）：c1_market.kline_daily_hfq 1990-12-19..2026-09-30，10,098,785 行
+  ds_ref: DS-082=market_data.stk_limit（registry L3695，打板仓梯队面）、DS-107=event.news_sentiment_window
+    （L4661，事件仓兑现面）、FCT-MOM-022=动量因子族（TDM 本节点 factor_refs）
+  scope_note: 本卡只考"多因子仓"腿的存活度量；打板仓（情绪梯队）与事件仓（利好兑现）腿各属其它节点/另立卡，
+    禁在本卡里混判（一考一问）

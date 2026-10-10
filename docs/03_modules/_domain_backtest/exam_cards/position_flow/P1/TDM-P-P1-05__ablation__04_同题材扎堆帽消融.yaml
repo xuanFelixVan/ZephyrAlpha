@@ -1,0 +1,84 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-05/ablation/04_同题材扎堆帽消融
+node_id: TDM-P-P1-05
+family: ablation
+title_zh: 组合级体检·消融卡：同题材持仓>3 只扎堆帽去掉后整链掉多少
+hypothesis: >-
+  组合层第三查=“同题材持仓>3 只（扎堆）”。假设该帽的真实价值=削掉相关性尾部：
+  去掉帽后 OOS MaxDD 恶化 >=2pp、熊段单日最大损失分位恶化；若去掉无恶化，则该查是装饰性规则，
+  应退役（同真源可派生→并/零消费→退役，净零判据）。扎堆帽与单票上限（E_single_cap）是不同对象：
+  管的是共因风险而非单名权重，故不可由 cap 卡派生，须独立考。
+arm_definition:
+  A_uncapped: 同题材只数无上限（基线）
+  B_top3: 同一 L1 行业（或概念板）持仓只数 <=3，超出的按合成秩顺位淘汰（低位先弃）
+  C_top5: 放宽档，用于剂量-响应（B 优于 A 且 C 介于两者之间=单调；C 反优于 B=3 只过紧，须报出）
+  held_fixed: 24 列 cap、hs300、top20、inv_vol、cap10、periodic、X_stop/X_breaker=off、K=lump；
+    行业锚=申万 L1（sws2021_l1），锚点与已知数据缺陷逐字承 schema industry_anchor
+executor: 缺件——引擎无此 overlay。既有近亲件可复用：
+  D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py:_apply_industry_topk_overlay(L1119-1144，
+  行业动量 Top-K 掩码，结构可照抄：ind_mom→rank→keep 掩码→where) 与 _apply_sector_overlay（strength_top15 掩码）；
+  本卡需要的是“只数帽”变体（groupby 行业 count<=K 的顺位淘汰），语义不同不可张冠李戴。
+  ⇒ status=blocked_on_impl（施工位≈60 行，输入=combined/weights + industry_map，industry_map 取数件已在
+  _apply_industry_topk_overlay 的 industry_map 形参口径）
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2024-12-31'
+  oos: &id001
+  - '2025-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31（扎堆杀伤最集中的段）
+  frozen_note: 看数前冻结；只数上限 3/5 为 TDM 原文与放宽档，禁事后加档
+buckets:
+  type: arm_comparison
+  'on': 三臂 × {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 120
+  extra_report: 各臂的实际行业只数分布（P95/max）与帽 binding 次数；同行业权重合计的 P95（扎堆度）
+pillars:
+  maxdd_gate: A（去帽）相对 B 的 OOS MaxDD 恶化 >= 2pp（消融类判据：去掉约束整链掉多少）
+  tail_gate: A 相对 B 在熊段单日最大损失 5% 分位恶化 >= 0.2pp，且相关性扎堆度（同行业合计权重 P95）显著更高
+  dose_response: C(top5) 的指标须落在 A 与 B 之间（非单调=判装置或口径有问题，先修再判）
+  turnover_or_cost_gate: 三臂均 frozen_l0 扣双边佣金；帽会强制换票→换手抬升须同框报数，
+    成本后仍改善才算数（碰钱面判据成组）
+  oos_and_regime_gate: 改善在 OOS 与熊段同号
+  binding_gate: 若帽在样本内 binding 次数 <10，判 no_binding（不可分辨），禁写成“已验证无增益”
+target:
+  primary: oos_maxdd_regression_A_minus_B_pp（去帽恶化量）
+  secondary: 同合计权重 P95、单日损失 5% 分位、sharpe_after_cost_delta、换手增幅
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  ablation_maxdd_regression_min: 0.02
+  tail_regression_min: 0.002
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+blocked_on_impl:
+  missing: 同题材只数帽 overlay（引擎只有行业动量 Top-K 与板块强度掩码，无“每行业只数上限”件）
+  evidence: grep -n "topk\|_apply_industry" factory_grid_executor.py → 命中 _apply_industry_topk_overlay
+    （L1119，语义=行业动量取 Top-K 行业，非只数帽）；grep 只数上限类件零命中
+  unlock_condition: 落该 overlay（可复用 industry_map 与 where 掩码写法）后即改 status=preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-05.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩
+  signal_derivation: composite_signal → monthly_topn_signals → 行业只数帽（待施工）
+  membership_table: c1_market.industry_class（列 industry_sw，industry_level='L1'，PIT valid_from/valid_to）
+  price_table: c1_market.kline_daily_hfq
+  target_source: 三臂日 NAV → strategy_exam.window_metrics；同日截面收益矩阵算相关性扎堆度
+  data_window_evidence: |
+    锚点与数据健康原文=config/position_recipe_grid_schema.yaml:110-121 industry_anchor
+    （vocabulary=sws2021_l1；membership_table=c1_market.industry_class；membership_column=industry_sw；
+    known_issue=“L1 现行快照 10472 行中 5534 行裸 6 位符号 / 4938 行带 .SH/.SZ 后缀，6 位化后 5545 只、
+    重叠 4927 行；坏行恰 1 行 688806 industry_sw='nan'；真冲突仅 1 例 688002；hs300/zz500 成分覆盖 100%”；
+    fallback_anchor_rejected=stock_basic.industry 98.9% 空值不可用）
+    ⇒ 本卡的分行业只数统计必须先做符号 6 位化 + 最新者胜（与 Executor 同口径），否则扎堆度被符号格式污染
+  ds_ref: 本节点 data_refs=['DS-009']（持仓台账契约件，非 CH，仿真替代已披露）

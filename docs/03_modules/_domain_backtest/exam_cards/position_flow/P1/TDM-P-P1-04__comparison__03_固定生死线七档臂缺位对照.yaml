@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-04/comparison/03_固定生死线七档臂缺位对照
+node_id: TDM-P-P1-04
+family: comparison
+title_zh: 风险否决体检·对照卡：-7% 固定生死线 vs 3×ATR 自适应止损（生死线是活的唯一硬证据）
+hypothesis: >-
+  TDM 本节点 algo_note_zh 首条否决线=生死线（-7% 破位），现码真源
+  ashare_stop_loss_engine.AshareStopLossConfig.fixed_pct_threshold=0.07（L89 FIXED_PCT 枚举 +
+  docstring "固定比例止损阈值, 默认 0.07 (-7%)"）。假设固定 -7% 相对 3×ATR14 自适应带
+  在低波票上过松（迟到离场）、在高波票上过紧（被噪声打掉），即 ATR 档相对固定档应改善
+  OOS MaxDD >=3pp 且不恶化成本后 Sharpe。若两档无差异，则"固定生死线"与"ATR 自适应"二选一
+  的争论无数据支撑，应择一简口径（净零原则）。
+arm_definition:
+  A_fixed7: stop_line = entry_price × (1 − 0.07)（固定比例，与波动无关）
+  B_atr3x: stop_line = entry_price − 3×ATR14(信号日收盘)（引擎现档）
+  C_off: 无止损基线（提供两档改善的共同分母）
+  held_fixed: 同 24 列 cap 信号、同票池、同 top20 月频、同 inv_vol、同成本档；入场价口径统一=调仓 T+1 开盘价
+    （与 prereg_frozen.yaml stop_rules.entry_price 同口径，防两臂入场价不同带来的伪差）
+  分层判据: 按信号日 ATR14%(=ATR14/close) 三分位分层各报一次改善——本卡的主问题就是"自适应是否比固定更贴波动"，
+    不分层的总数对比不足以证伪（高波/低波两尾才是差异所在）
+executor: 半缺件——B_atr3x/C_off 两臂现成（_apply_exit_overlay L892-916 已接线），
+  A_fixed7 档引擎无（合法值=off|atr3x|trail20|tp20，L910 实读）。需施工位（<10 行）：
+  在 _apply_exit_overlay 增 `fix<pct>` 档或另写双臂脚本直接按 entry_px*(1−0.07) 触发。
+  ⇒ status=blocked_on_impl
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  warm_start: '2017-10-01（ATR14 暖机 3 个月）'
+  frozen_note: 看数前冻结；-7% 与 3×ATR 两常数均取现码/现档零扫描
+buckets:
+  type: arm_comparison_with_vol_strata
+  'on': 三臂 × {全样本, ATR% 低/中/高三分位} × {IS, OOS, 牛熊两段}
+  min_obs_per_bucket: 每层每臂交易日 >= 120 且触发次数 >= 30；不足层判 nan 禁并入
+pillars:
+  maxdd_gate: B 臂相对 A 臂 OOS MaxDD 改善 >= 3pp（自适应存在性门槛）
+  strata_gate: 高波层 B 优于 A 的改善 > 低波层（符号方向必须如此，反号=自适应叙事证伪，如实入册）
+  sharpe_gate: B 相对 A 成本后 Sharpe 差 >= −0.1
+  turnover_or_cost_gate: 三臂均 frozen_l0 扣双边佣金；stress_l2 复算；换手增幅与增益须同框报数；
+    判据成组禁单指标（碰钱面）
+  oos_and_regime_gate: 改善在 OOS 与熊段同号
+target:
+  primary: b_vs_a_oos_maxdd_improvement_pp
+  secondary: 分层改善差（高波层减低波层）、sharpe_after_cost_delta、turnover_delta
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.03
+  strata_direction_min: 0.0
+  sharpe_delta_min: -0.1
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+blocked_on_impl:
+  missing: _apply_exit_overlay 的固定比例档（或等价的独立双臂脚本）
+  evidence: 'factory_grid_executor.py:910 实读合法值=off|atr3x|trail20|tp20；
+    grep -n "fixed_pct\|fix7" scripts/backtest/factory_grid_executor.py → 引擎侧零命中（live 侧命中见
+    src/zephyr/risk/core/ashare_stop_loss_engine.py:89/122-146）'
+  unlock_condition: 加档（或写脚本）后改 status=preregistered；假设/窗口/分位分层/门柱已冻结不需重写
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-04.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩（承 prereg_frozen.yaml device.columns_cap24）
+  signal_derivation: composite_signal → monthly_topn_signals(top_n=20)；ATR14=exit_simulator.atr14_wilder
+  price_table: c1_market.kline_daily_hfq（open=入场价口径、close=触发判定、high/low=ATR）
+  target_source: 三臂日 NAV → strategy_exam.window_metrics
+  data_window_evidence: |
+    常数实读 D:/ZephyrAlpha/src/zephyr/risk/core/ashare_stop_loss_engine.py:89
+    `FIXED_PCT = "fixed_pct"  # 1. 固定比例-7%`、:122-146
+    `fixed_pct_threshold: float = 0.07`（同件另有 daily_loss_limit 0.02 / weekly 0.05 / monthly 0.10 /
+    daily_halt_days 1 / weekly 2 / monthly 3 / auction_discount_threshold 0.02 /
+    intraday_vwap_break_threshold 0.01 / sector_momentum_threshold -0.02，本卡不消费但同族考位可引）
+    CH 覆盖实测：kline_daily_hfq 1990-12-19..2026-09-30 共 10,098,785 行

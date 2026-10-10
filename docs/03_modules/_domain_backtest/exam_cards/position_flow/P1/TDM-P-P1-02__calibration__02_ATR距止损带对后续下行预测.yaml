@@ -1,0 +1,79 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-02/calibration/02_ATR距止损带对后续下行预测
+node_id: TDM-P-P1-02
+family: calibration
+title_zh: 持仓分级·校准卡：ATR 距止损带宽对后续多日下行的单调预测力
+hypothesis: >-
+  分级三档的物理量=距止损的 ATR 带宽（真源 position_triage._triage_atr：distance_abs<1.5×ATR→WATCH，
+  深度盈利>3×ATR→HOLD，中间 MONITOR，ATR 缺失降级 MONITOR）。假设该带宽是后续下行风险的单调预测量：
+  带宽越窄（WATCH 档）未来 5 日最差收益越差、止损触发率越高，且档位排序 HOLD>MONITOR>WATCH 严格单调；
+  若单调性不成立，则"分级=1.5/3.0×ATR 两把尺"的定档口径无信息量，盯盘频率分配应改用其它状态量。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；IS/OOS 分界与窗口口径承模板真源 TDM-E-L1-S2__calibration__02_涨停家数.yaml，
+    OOS 上界=kline_daily_hfq 实测 max(trade_date)
+buckets:
+  type: ordinal_three_level
+  'on': 当日 (current−stop_loss)/ATR14 带宽映射三档（<1.5=WATCH，>=3.0=HOLD，其间=MONITOR）
+  min_obs_per_bucket: 60（三档各 >=60 持仓-日样本；WATCH 档天然稀，不足则该档判 nan 禁并入）
+  extra_bucket: 带宽连续值另做十分位分桶，用于单调性 rho 计算
+pillars:
+  response_monotonicity: 十分位带宽 × 未来5日最差收益 的中位响应 Spearman rho >= 0.6（带宽越大越安全，符号为正）
+  ic_floor: 日频截面 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板）
+  lag_profile: t+1/t+3/t+5 三档前向窗至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor（熊市尤其关键——WATCH 档的终局价值在熊段）
+  level_ordering: 三档中位未来5日最差收益必须满足 HOLD > MONITOR > WATCH（一档反序=判 fail）
+  atr_missing_arm: ATR 缺失（停牌）样本单独计数披露，禁混入三档（现码降级 MONITOR 会污染该档）
+target:
+  primary: worst_return_next_5d（未来5个交易日的最差收盘收益，下行侧口径）
+  secondary: stop_trigger_rate_5d（未来5日内收盘跌破 stop_loss 的概率）
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（panel 面：_panel_metrics + judge
+  机判 pillars_numeric；signal/target 需运行期注入，本卡 data_binding 即接线面）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-02.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（ch_data.T_KLINE_DAILY_HFQ）
+  signal_column: 派生带宽 = (close − stop_loss_price) / ATR14，非在册单列
+  signal_derivation: >-
+    ATR14=TR=max(H−L,|H−C_prev|,|L−C_prev|)，Wilder 平滑（种子=前14有效TR的SMA，
+    ATR_t=(13×ATR_{t−1}+TR_t)/14）——件复用 D:/ZephyrAlpha/scripts/backtest/fexam/exit_sim/exit_simulator.py
+    :atr14_wilder(L135)/wilder_atr_one(L119)，禁重造；
+    stop_loss_price=entry_price − 3×ATR14(调仓信号日收盘)（口径承 prereg_frozen.yaml stop_rules，
+    entry=月频调仓 T+1 开盘价）；三档映射常数 1.5/3.0 真源
+    D:/ZephyrAlpha/src/zephyr/sell_decision/core/position_triage.py:_WATCH_ATR_MULTIPLIER(L62)/
+    _HOLD_ATR_MULTIPLIER(L63)，threshold_delta 反馈钳制 |≤0.10|(L64) 本考置 0（隔离反馈面）。
+  target_source: kline_daily_hfq close 派生 worst_return_next_5d 与 stop_trigger_rate_5d（同表同复权口径，
+    与信号端一致防前视）
+  data_window_evidence: |
+    cd D:/ZephyrAlpha && python -c "
+    import sys; sys.path.insert(0,'scripts/backtest')
+    from fexam.ch_data import ch_query
+    print(ch_query('SELECT min(trade_date), max(trade_date), count() FROM c1_market.kline_daily_hfq FORMAT TabSeparated'))
+    print(ch_query(\"SELECT groupArray(name) FROM system.columns WHERE database='c1_market' AND table='kline_daily_hfq' FORMAT TabSeparated\"))"
+    输出：1990-12-19	2026-09-30	10098785
+    ['trade_date','symbol','open','close','high','low','volume','amount','amplitude','pct_change','change','turnover',...]
+    ⇒ high/low/close 齐备，ATR14 可全程后复权自算（无缺字段）
+  ds_ref: TDM 本节点 data_refs=['DS-150']=c1_market.kline_daily（data_asset_registry.yaml L6459），
+    algo_refs=['IND-VOL-001']=ATR 族指标；DS-150 与考用 hfq 表的口径差（原始 vs 后复权）在卷面披露位标注

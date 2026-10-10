@@ -1,0 +1,72 @@
+schema_version: '1.0'
+card_id: TDM-P-P3-02/calibration/03_加仓触发涨幅对后续收益预测
+node_id: TDM-P-P3-02
+family: calibration
+title_zh: 金字塔加仓规则·校准卡：加仓触发时的价格确认幅度对后续收益的单调预测力
+hypothesis: >-
+  阶梯规则的隐含假设=“涨幅够大才加”能确认趋势延续而非追顶。以引擎在册触发口径为自变量
+  （距入场价涨幅 r = close/entry_px − 1，档界 3%/6%），假设 r 与未来 10 日个股超额收益呈倒 U：
+  低段（0~3%）随 r 增而升（趋势确认），高段（>10~15%）转负（追顶）。
+  若单调为正（越高越好），阶梯应改为不设上限；若单调为负（一涨就是顶），则整个金字塔加仓在 A 股
+  均值回复结构下应反向——两种结论都必须能被这卡说出口。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；档界 3%/6%（引擎实装）与 2.5%（live 下限）两套边界各切一次，主判据用引擎口径
+buckets:
+  type: quantile_decile
+  'on': 当日距入场涨幅 r（持仓样本内），另按引擎档界 [0,3%,6%,10%,15%,>15%] 六档并报
+  min_obs_per_bucket: 60（持仓-日样本/档）
+pillars:
+  response_shape: 十分位中位未来10日超额呈倒 U（二次项系数 <0 且 t 显著，或六档中最高档低于中间档 >=0.5pp）
+  ic_floor: 日频截面 IC（r vs 未来10日超额）均值绝对值 >= 0.02 且 |IC_IR| >= 0.25
+    （若符号为正且强，则“越高越加”成立，阶梯无上限方向）
+  threshold_test: 3% 与 6% 两档界处的前后档位差是否显著（阶梯阈值的可分辨性）
+  lag_profile: t+5/t+10/t+20 三窗响应形状稳定性（追顶效应在长窗更明显）
+  regime_stability: 牛/熊两段响应形状同号段（预期牛市右尾更钝、熊市更早转负）
+  momentum_alternative: 对照解释=动量效应本身；若 r 的分层完全由 20 日动量解释（加入动量后 r 无增量），
+    则阶梯规则只是动量的笨拙代理，须如实写进结论（防把已知效应当新规）
+target:
+  primary: excess_return_next_10d（未来10日相对截面中位超额）
+  secondary: 未来20日超额、追顶后的 5 日内最大回撤
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.0
+  ic_mean_min: 0.02
+  ic_ir_min: 0.25
+  regime_same_sign: true
+  oos_same_sign: true
+  curvature_direction: inverted_u
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（panel 机判面；
+  形状类判据（倒 U/曲率）由运行期注入的 signal=涨幅 r 与 target=未来10日超额计算，
+  pillars_numeric.curvature_direction 为附加声明位——注意 calibration_exam.judge 只机械核
+  mono/ic/ir/regime/oos 五面，曲率判据需随卷人工复核，此局限如实标注）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3-02.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: 派生 r = close / entry_px − 1，entry_px=持仓段首日收盘（引擎同口径）
+  signal_derivation: entry 锚逻辑逐字复用 factory_grid_executor._apply_capital_ramp_overlay L1096-1099
+    （held=weights>0；entry_day=held & ~held.shift(1)；entry_px=closes.where(entry_day).ffill()）；
+    持仓面=monthly_topn_signals(top_n=20) 权重
+  target_source: kline_daily_hfq close → 未来10/20日收益减同日截面中位=超额
+  data_window_evidence: |
+    覆盖实测：kline_daily_hfq 1990-12-19..2026-09-30 共 10,098,785 行
+    档界两处真源实读：引擎 armed3/armed6=×1.03/×1.06（factory_grid_executor.py:1112-1113）；
+    live ladder_min_pct=0.025（pyramiding_rules.py:91，注释“阶梯下限 2.5%（区间 2.5-3% 取下限）”）
+    TDM 原文=config/trading_decision_map.yaml 本节点 algo_note_zh“阶梯（较上次买价涨幅≥2.5-3% 才加下一笔，
+    禁止平加）…加仓=新交易，需重新确认入场条件仍成立”

@@ -1,0 +1,117 @@
+schema_version: '1.0'
+card_id: TDM-P-P2-01/comparison/03_盘中单边失效腿对照
+node_id: TDM-P-P2-01
+family: comparison
+title_zh: 盘中转单边失效腿（跌停潮/板块崩塌）·双臂对照卡（RX-A 交叉复挖漏矿）
+hypothesis: >-
+  TDM 本节点 `invalidation` 原文="「盘中转单边（跌停潮/板块崩塌）→当日做T资格全部作废」"。
+  同车道 comparison/02 考的是资格「三道门」（状态门/振幅门/成本门）的逐腿开闭与互斥诊断，
+  而"当日资格作废"这条「失效腿从未出现在任何臂里」——它是与准入门不同类的判据（准入=事前门，失效=事中撤权），
+  节点把它写在 invalidation 字段而非 algo_note，最易被挖矿①向漏读（本车道即为此而设）。
+  双臂+阈值档：A=不做失效判定（=现行考卷口径，作为对照基线），
+  B1/B2/B3=市场级跌停潮触发即当日全禁，阈值分别取当日跌停家数 >=100 / >=300 / >=500，
+  C=跌停/涨停 家数比 >=2（结构性单边而非绝对家数）。
+  判据方向=「被禁日里做T配对的成本后净均 bp 是否显著更差」：若被禁日净均 bp 明显为负，则该腿是在削负期望（规则有价值）；
+  若被禁日反而更好，则"跌停潮禁做T"是纯机会损失（碰钱面的直觉纪律被数据否），须如实入册并可提退役。
+  板块崩塌子腿本车道独立实测后维持不可算（个股↔板块归属两源均无历史 PIT，见 evidence），标 blocked 并写死缺段。
+arm_definition: >-
+  A(no_invalidation)=现行口径；B1/B2/B3=当日全市场跌停家数 >=100/300/500 则该日全部持仓禁做T；
+  C=当日 跌停家数/涨停家数 >= 2.0 则该日禁做T（结构单边档）。
+  各臂互斥关系须披露：B1⊃B2⊃B3（阈值嵌套），C 与 B1 的交集日单独计数；
+  所有臂共用同一配对集合与同一成本口径（31.2bp 双边，承同车道与 V3 件常数），只换"是否撤权"这一个开关。
+executor: >-
+  D:/ZephyrAlpha/scripts/audit/t0_conditional_e4_v3_exam.py（配对与五态判定正门，口径禁重写、常数禁改）
+  + import 复用 t0_conditional_e4_exam.py 宏观门与 _v2_exam.py 情绪门（同车道 comparison/02 同一 import 链）
+  + 市场级跌停/涨停家数序列由 c1_market.kline_daily × c1_market.stk_limit 自算（本车道已实测验证该重建，见 evidence）
+  ⇒ 装置均在岗，本卡是"臂集合扩一腿"而非新件。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: >-
+    看数前冻结。跌停家数阈值档 {100,300,500} 与比值档 {2.0} 取自本车道实测的 IS 分位而非拍脑袋：
+    IS 窗 1214 交易日中 跌停家数>=100 有 38 日、>=300 有 7 日、>=500 有 3 日（见 evidence）
+    ⇒ 三档的设计意图是让 B1 可判（38 日）、B2/B3 预期判 INSUFFICIENT_SAMPLE（如实报，不藏）；
+    事后不得为使某档可判而挪阈值（G4-5）。日频重建口径的容差 ±0.011 元与 join 键（symbol+trade_date）在此钉死。
+buckets:
+  type: arm_comparison
+  'on': 六臂（A/B1/B2/B3/C + 现行三道门全开基线）× 被禁日/未被禁日两层
+  min_obs_per_bucket: '被禁日内的做T配对 n>=30 方可出方向结论（承 V3 卡 §5 土规与裁定#325）；不足判 INSUFFICIENT_SAMPLE 禁出方向'
+pillars:
+  veto_value_gate: 被禁日的成本后净均 bp − 未被禁日的净均 bp <= −10bp ⇒ 失效腿确有削损价值；
+    差值 >= 0 ⇒ 该腿是纯机会损失（节点这条 invalidation 判为过度保守），如实入册并提请退役评估
+  threshold_monotonicity: B1/B2/B3 的削损量须随阈值收紧呈单调（越严的阈值圈住的交易日越少、单日负期望越深）；
+    非单调=装置或口径有问题，先修再判（不得挑最好看的档）
+  all_or_none_semantics: 节点写的是"当日做T资格「全部」作废"（整日撤权），故本卡的臂必须是日级全禁；
+    若实跑出现"部分对被禁"的臂实现，判 DEVICE_SEMANTIC_MISMATCH 而非 fail（实现与立法不符不许折算成规则失败）
+  pair_gate_and_device_honesty: 在册材料现实必须前置声明——V3 主考 0 对、全材料 26 对 < 30 土规线（同车道 §四 结论②），
+    故本卡主结果极可能判 DEVICE_INCOMPATIBLE；此时「允许」用日频价差代理配对（振幅面）出方向性证据，
+    但须单列"代理面"并声明与 tick/1min 口径差，禁当同口径结论（H9 §4.2 日频做T 伪造禁令逐卡继承）
+  turnover_or_cost_gate: 全臂同一 31.2bp 双边成本口径；碰钱面判据成组（净均 bp + 前置命中率 >=0.30 + 配对数三框同报）
+  oos_gate: 方向结论须 IS/OOS 同号；短窗不足即 nan，禁充数
+  sector_collapse_leg_blocked: 板块崩塌子腿单列（不并入主判）——写死缺什么=个股↔板块归属的历史 PIT 快照
+    （缺段 2019-01-04..2026-07-22，实测见 evidence ⑤）；该腿判 blocked_on_data，不许用市场级跌停潮顶替（不同对象）
+target:
+  primary: net_bp_per_pair_by_arm（各臂"被禁日 vs 未被禁日"的成本后净均 bp 及其差）
+  secondary: vetoed_day_count（各档触发日数）、precondition_hit_rate（>=0.30）、与三道门各臂的交集日计数
+  note: 与同车道 comparison/02 的分工=02 考准入门（状态/振幅/成本三腿），本卡考事中撤权腿（节点 invalidation 那条）；
+    两卡合起来才覆盖节点原文的"资格门+失效"完整语义，故本卡不是扩档而是补面
+status: preregistered
+signal_kind: panel
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P2-01.confidence
+preregistered_by: st-nightmine-20261010-RXA
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+pillars_numeric:
+  net_bp_delta_max: -10.0
+  pairs_min_for_verdict: 30
+  precondition_hit_rate_min: 0.3
+  vetoed_days_min_for_verdict: 20
+  oos_same_sign: true
+data_binding:
+  signal_table: c1_market.kline_daily × c1_market.stk_limit（跌停/涨停家数重建）+
+    data/backtest_artifacts/bt-*.json（做T 配对材料）+ c1_market.kline_daily_hfq.amplitude（振幅门底座，承同车道）
+    + c1_market.limit_up_pool（仅作重建口径的交叉校验，2026-09 起）
+  signal_column: kline_daily.close × stk_limit.limit_down / limit_up（按 symbol+trade_date join）；
+    stk_limit 列集实含 board/st_flag/limit_pct/pre_close/valid_from/valid_to
+  signal_derivation: >-
+    当日跌停家数 = COUNT(close <= limit_down + 0.011)、涨停家数 = COUNT(close >= limit_up − 0.011)
+    （容差 0.011 元覆盖四舍五入到分的价格步长，join 用 symbol+trade_date 双键，两表 symbol 格式实测均为裸 6 位，无需符号规范化）；
+    臂触发=日级布尔，被禁日内该日全部持仓撤做T资格；
+    比值臂 C 用同日 跌停/涨停家数（涨停为 0 的日单独披露，禁除零静默）。
+    配对集合与净 bp 口径承 t0_conditional_e4_v3_exam（成本 31.2bp、前置率 0.30、土规 30 对）。
+  target_source: 配对成本后净均 bp（bt-*.json 材料经 V3 件算得）；代理面=当日 high/low 振幅派生存价差（须单列标注为代理）
+  data_window_evidence: >-
+    本车道独立实测（台账 §2-P4，全部经 scripts/backtest/fexam/ch_data.py，禁裸 duckdb；执行 2026-10-10）：
+    ① `SELECT toYear(trade_date) y, count(), uniqExact(symbol) FROM c1_market.stk_limit GROUP BY y ORDER BY y` →
+    2015:56331/239、2016:56646/234、2017:57183/240、2018:57156/237、2019:886711/3770、2020:969361/4358、
+    2021:1088470/4840、2022:1181713/5179、2023:1260985/5380、2024:1296931/5436、2025:1317121/5498、2026:1026164/5591
+    ⇒ 「全市场广度面自 2019-01-04 起可用」（2015-2018 每年仅 ~240 symbols，禁用于家数阈值类读数）。
+    ② 重建口径校验（关键证据，命令原文=
+    `SELECT a.trade_date, countIf(a.close >= b.limit_up - 0.011), countIf(a.close <= b.limit_down + 0.011) FROM (SELECT symbol,trade_date,close FROM c1_market.kline_daily WHERE trade_date>='2026-09-01' AND trade_date<='2026-09-04') a INNER JOIN (SELECT symbol,trade_date,limit_up,limit_down FROM c1_market.stk_limit WHERE ...) b ON a.symbol=b.symbol AND a.trade_date=b.trade_date GROUP BY a.trade_date`）
+    → 自算涨停 「86/55/46/42」；同期 `SELECT trade_date, count() FROM c1_market.limit_up_pool GROUP BY trade_date`
+    → 池 「83/52/44/39」 ⇒ 最大差 3 家/日、相对偏差 <=3.6% ⇒ 价格面重建 validated（差值方向为自算略多，符合池有 ST/新股过滤的先验）。
+    ③ 历史极值抽查 → 2024-02-05 涨停 20 / 「跌停 1526」；2024-10-08 涨停 「893」 / 跌停 12；2020-09-30 涨停 31 / 跌停 12
+    （与公开行情史实相符，作定性旁证）。
+    ④ 阈值档样本量实测（IS 窗 2019-01-01..2023-12-31）→ 交易日 「1214」，跌停家数 >=100 的日 「38」、>=300 的日 「7」、>=500 的日 「3」
+    ⇒ B1 可判、B2/B3 预期不足（已按此写死 buckets 的样本门，不藏不凑）。
+    ⑤ 板块崩塌子腿缺段实测（本车道台账 §2-P3/P3b）→
+    `SELECT min(valid_from),max(valid_from),uniqExact(valid_from) FROM c1_market.sector_constituent` = 2026-07-23 / 2026-10-01 / 6；
+    as-of 2022-06-30 条件查询 = 0 行 0 symbols；`industry_class` 的 valid_from 全部 2026-08-03、as-of 2021-06-30 = 0 行 0 symbols
+    ⇒ 两个归属源都无历史 PIT ⇒ 板块崩塌腿 「blocked_on_data」，缺段写死=2019-01-04..2026-07-22 个股↔板块归属日频快照。
+    ⑥ 材料现实（承同车道）：data/backtest_artifacts 实测 66 条目、V3 全材料 26 对 <30 土规线 ⇒ DEVICE_INCOMPATIBLE 出口预置。
+  impl_ref: src/zephyr/position/core/t1_sellable.py（TDM module_ref=MOD-POS-028，做T 可售判定）
+    + src/zephyr/ex_sor/services/t0_cost_model.py（T0_MIN_EDGE_RATE=0.003 成本门，承同车道常数）
+origin: cross_probe_RXA（漏矿来源=TDM 本节点 invalidation 字段原文一句，同车道六向①只读 algo_note 未读 invalidation）
+sources:
+  - 同车道在册装置与在册负结果（L4 台账 §一 t0_conditional_e4_v3、§四 结论②），本卡继承其口径与三态出口，未重复挖外部矿

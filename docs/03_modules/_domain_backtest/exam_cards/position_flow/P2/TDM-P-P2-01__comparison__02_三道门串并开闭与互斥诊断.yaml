@@ -1,0 +1,87 @@
+schema_version: '1.0'
+card_id: TDM-P-P2-01/comparison/02_三道门串并开闭与互斥诊断
+node_id: TDM-P-P2-01
+family: comparison
+title_zh: 做T资格与成本前置·对照卡：状态门/振幅门/成本门三腿的开闭增量与门间互斥率
+hypothesis: >-
+  三道门（状态门=大盘吸筹/扩张段才做；振幅门=20 日平均振幅≥3%；成本门=预期价差≥0.3%）
+  逐腿开闭应各自削掉负期望成交。假设：①任一腿单独开相对全开提升净均 bp；②三门全开的净均 bp>0
+  且入样对数不塌到 0。在册反例必须先解：V3 实测双门同放行=0 对（宏观放行 20 对中 20 对被情绪门判禁做），
+  即“门规则在可得材料上系统性互斥”⇒ 若互斥率仍近 100%，本卡判 DEVICE_INCOMPATIBLE 而非“门无效”。
+arm_definition:
+  G0_none: 三门全关（全材料无条件，V3 实测 n=26 净均 −36.26bp 即此臂）
+  G1_state: 仅开状态门（宏观门：MACRO_TREND_STATES={'r3','r12'} + vol_pct 桶，真源 v1_exam.py:40-46）
+  G2_amplitude: 仅开振幅门（个股 20 日平均振幅≥3%）
+  G3_cost: 仅开成本门（预期价差≥0.3%=T0_MIN_EDGE_RATE，CST-T0-001）
+  G_all: 三门全开（生产口径）
+  互斥诊断: 逐对报告被哪一腿剔除（剔除原因计数必入 material_audit，禁静默丢料——V3 INVARIANTS 同规）
+  held_fixed: 同一批 bt-*.json 材料、同一 M-1..M-4 资格判据、同一 31.2bp 成本口径
+executor: D:/ZephyrAlpha/scripts/audit/t0_conditional_e4_v3_exam.py（+ import 复用 t0_conditional_e4_exam.py
+  宏观门 load_regime_states/t1_state、_v2_exam.py 情绪门 emotion_state_for，口径禁重写禁改常数）
+  + c1_market.kline_daily_hfq.amplitude 算 20 日振幅门 + t0_cost_model.py 成本门
+window:
+  in_sample:
+  - '2026-06-01'
+  - '2026-08-31'
+  oos: &id001
+  - '2026-09-01'
+  - '2026-10-09'
+  regimes:
+    bull: 六段 expansion/ignition 侧（routed=1）
+    bear: 六段 capitulation/distribution 侧
+  frozen_note: >-
+    看数前冻结；常数全部取自在册判据件（3%、0.3%、31.2bp、0.30 前置率、30 对土规），
+    禁本卡新定；六段真源=docs/_working/t0_matrix/six_phase_history_v1.csv（实测 1,822 行，
+    2019-04-01..2026-09-29；six_phase 取值分布=空 762 / ignition 2 / distribution 221 /
+    capitulation 202 / accumulation 201 / expansion 393 / euphoria 40）
+buckets:
+  type: arm_comparison
+  'on': 六臂（含全开）× 逐腿剔除原因集；每集 n_pairs>=30 方可出方向结论
+  min_obs_per_bucket: 30 对（承 V3 卡 §5 土规）
+pillars:
+  net_bp_gate: 任一开腿臂相对 G0_none 的净均 bp 改善 >= +10bp（资格门的地板：至少覆盖一次往返的额外损耗）
+  all_gate: G_all 净均 bp > 0 且 n_pairs >= 30（若 n_pairs=0 判 DEVICE_INCOMPATIBLE，禁记“门无效”）
+  exclusivity_gate: 逐腿剔除原因计数全披露；若两门互斥率 >=90%，本卡结论=材料窗与门规则不相容，
+    须转向“等料/扩材”工单而非判交易层失败（诚实归类）
+  turnover_or_cost_gate: 全部臂同一 31.2bp 双边成本口径；成本门（0.3%）与振幅门（3%）的
+    相互作用须同框报数（振幅不够的票被成本门二次剔除的比例）
+  oos_gate: 方向结论须 IS/OOS 同号（短窗下不足即 nan，禁充数）
+target:
+  primary: net_bp_per_pair_by_arm（六臂净均 bp 对比）
+  secondary: 各腿剔除率、双门同放行率、前置命中率（>=0.30）
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  net_bp_delta_min: 10.0
+  net_bp_per_pair_min: 0.0
+  precondition_hit_rate_min: 0.3
+  pairs_min_for_verdict: 30
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P2-01.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；禁全绿（裁定#325）；materiality=critical（碰钱面判据成组）
+data_binding:
+  signal_table: data/backtest_artifacts/bt-*.json（日内成交）+ c1_market.kline_daily_hfq（amplitude 列）
+    + backtest_regime_state_anchored（TableRegistry 在册，列 trade_date/dominant/vol_pct）
+    + c1_market.stk_limit（M-4 涨跌停可行性硬门口径）
+  signal_column: 20 日平均振幅 = kline_daily_hfq.amplitude 的 20 日滚动均值（个股层面）
+  signal_derivation: 六段/宏观态经 load_regime_states+emotion_gate_availability 读取，
+    t1_state 做 PIT=T-1 读数（ASOF_TOLERANCE_DAYS=7，容差外弃日并披露）；
+    成本门经 t0_cost_model.T0_MIN_EDGE_RATE=0.003 判定
+  target_source: 做T 往返对的净价差 bp（cost_trio_exam.build_pairs 逐 run 配对）
+  data_window_evidence: |
+    覆盖实测原文（本车道台账 §一）：kline_daily_hfq 1990-12-19..2026-09-30 共 10,098,785 行，
+    列含 amplitude/turnover；stk_limit 在册列 limit_up/limit_down/limit_pct/st_flag/board + PIT valid_from/valid_to；
+    材料目录 data/backtest_artifacts 实测 66 条目
+    常数实读：scripts/audit/t0_conditional_e4_exam.py:40-46（MACRO_VOL_H=0.700、
+    MACRO_TREND_STATES={'r3','r12'}、ASOF_TOLERANCE_DAYS=7、PRECONDITION_HIT_RATE_MIN=0.30、PAIR_GATE=30）；
+    src/zephyr/ex_sor/services/t0_cost_model.py:52-53（“做T开仓硬前置：预期价差 ≥0.3% 才有正期望（90 号 §5 裁定）”，
+    T0_MIN_EDGE_RATE: Decimal = Decimal("0.003")）；
+    TDM 原文=config/trading_decision_map.yaml L3434（“振幅≥3%…双边成本 0.15%…成本门（预期价差≥0.3%，
+    CST-T0-001 正期望线）”，本节点 materiality=critical）
+  ds_ref: DS-150=c1_market.kline_daily（振幅门数据面，registry L6459）、FCT-INTRADAY-028

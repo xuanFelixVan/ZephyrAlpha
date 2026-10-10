@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-02/comparison/03_abs对称与带符号分级漏判对照
+node_id: TDM-P-P1-02
+family: comparison
+title_zh: 持仓分级·对照卡：abs 对称判据 vs 破线即 WATCH 的漏判率与提前期
+hypothesis: >-
+  2026-09-18 深度审查修正（rpt_e05）把"收盘已跌破止损线"的持仓强制判 WATCH，取代旧 abs 对称化判据
+  （旧码把破线当普通距离，可能误判 MONITOR）。假设修正臂在"破线持仓-日"样本上的 WATCH 召回率=100%，
+  而旧臂存在可观漏判；且修正臂使 WATCH 起始日相对破线日的提前期不为负。若两臂漏判率无差异，
+  则该修正只是叙事性改动、P1-02 分级层的告警价值应重估。
+arm_definition:
+  arm_old_abs_symmetric: 判据=distance_abs=|current − stop_loss| 与 1.5×ATR 比大小（无 current<=stop_loss 前置支）
+  arm_new_signed_fix: 判据=若 current <= stop_loss 直接 WATCH，否则同 abs 距离比较（=现码 L151-163）
+  held_fixed: 同一持仓-日样本面板、同一 ATR14、同一止损线口径（entry−3×ATR14）、同一 threshold_delta=0；
+    两臂仅差该前置支（对照纪律：单点改动）
+  metrics: 三数成组——破线样本 WATCH 召回率、漏判率（1−召回）、WATCH 首现日相对破线日的天数差分布（提前期）；
+    另报两臂三档占比矩阵（修正把多少 MONITOR/HOLD 迁到 WATCH=告警量代价，禁只报收益不报告警膨胀）
+executor: 缺件——需新写双臂分级对照统计件（预计 <120 行：ch_data 取 close/high/low → exit_simulator.atr14_wilder
+  → 两版判据函数 → 逐日混淆统计）。既有 calibration_exam.run_card 只做 IC/单调面，不产出漏判率/提前期；
+  factory_grid_executor 无对应 overlay。⇒ status=blocked_on_impl
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；判据常数（1.5/3.0×ATR、破线前置支）取自 position_triage.py 现码，事后挪=作废
+buckets:
+  type: event_sample
+  'on': 收盘跌破止损线的持仓-日（破线事件集）为分母；另按牛/熊两段与 ATR 分位分层
+  min_obs_per_bucket: 破线样本 >= 200 持仓-日（不足则只报计数不出判据，禁以小样本定论）
+pillars:
+  recall_gate: 修正臂破线 WATCH 召回率 = 1.00（构造上必然，但须在真实面板上核实无旁路分支吃掉该判定）
+  miss_gate: 旧臂漏判率 >= 0.10 才记"该修正有实测价值"；<0.10=修正收益微弱（如实入册，不撤修正但降级其叙事）
+  lead_gate: 修正臂 WATCH 首现日不晚于破线日（提前期 >= 0 交易日），且 25 分位提前期 >= 1
+  alert_cost_gate: 告警膨胀上限——WATCH 档占比增量 <= 15pp（碰钱环节的盯盘频率分配是稀缺资源，判据成组禁单指标）
+  oos_gate: 上述判据在 OOS 窗同向成立
+target:
+  primary: watch_recall_on_breached_days（双臂差）
+  secondary: watch_lead_days 与 watch_share_delta（告警量代价）
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  recall_delta_min: 0.10
+  lead_days_min: 0
+  alert_share_delta_max: 0.15
+  oos_same_sign: true
+blocked_on_impl:
+  missing: 双臂分级对照统计件（无既有 runner 产出召回率/漏判率/提前期）
+  needed_interface: 输入 (symbol, date, close, atr14, stop_line) 面板 + 两个 level 函数，输出混淆矩阵与分布统计；
+    可复用件=ch_data.ch_query_df、exit_simulator.atr14_wilder、position_triage._triage_atr（旧臂需本地重写判据，
+    禁改生产件语义）
+  unlock_condition: 该件落地即置 status=preregistered（假设/窗口/门柱已冻结，无需重写）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-02.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: 派生 level 双臂（WATCH/MONITOR/HOLD），同一 (close, ATR14, stop_line) 输入两版判据
+  signal_derivation: ATR14 承 prereg_frozen.yaml atr 定义（Wilder，14）；stop_line=entry−3×ATR14（entry=月频
+    调仓 T+1 开盘价，同 prereg_frozen.yaml stop_rules.entry_price）
+  target_source: kline_daily_hfq close → 破线事件（收盘<stop_line）与未来5日最差收益（告警有效性复核）
+  data_window_evidence: |
+    同车道 P1-02/calibration/02 卡实测：kline_daily_hfq 覆盖 1990-12-19..2026-09-30，10,098,785 行，
+    含 high/low/close（ATR 可算）。判据常数与破线前置支实读出处：
+    D:/ZephyrAlpha/src/zephyr/sell_decision/core/position_triage.py:62-64（1.5/3.0/0.10）、:151-153
+    （注释"rpt_e05 P1：价格已跌破止损线=最大险情，旧码 abs 对称化把它当普通距离判 MONITOR"+ 前置支
+    `if current <= stop_loss_price: return TriageLevel.WATCH`）
+  ds_ref: DS-150=c1_market.kline_daily（registry L6459）；IND-VOL-001=ATR 族

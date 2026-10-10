@@ -1,0 +1,81 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-05/shadow/05_组合体检帽影子对照
+node_id: TDM-P-P1-05
+family: shadow
+title_zh: 组合级体检·影子卡：champion 三层叠加分配器 vs 逆波 solo（体检帽的影子并行证据量）
+hypothesis: >-
+  组合层候选（帽子类改动）不宜直接改生产配方，先走影子并行累积证据量。在册 champion=
+  three_layer_stack（0.5 等权+0.3 逆波+0.2 动量倾斜，SIG-131 钳制 ±50% 均值，RK-08 地板 ≥0），
+  挑战者含 rk08_solo（纯逆波动率风险预算）。假设含“体检帽语义”的 champion（带地板+钳制）
+  相对 solo 逆波在证据量上不落下风：若 mSPRT 证据显著偏向 solo，则三层叠加里的帽层是过度工程，
+  应提净零合并（同真源可派生→必并）。
+arm_definition:
+  champion: three_layer_stack（0.5 equal + 0.3 inv_vol + 0.2 momentum tilt，SIG-131 clamp ±50%，RK-08 floor ≥0）
+  challenger_1: equal_weight
+  challenger_2: rk08_solo（逆波动率风险预算，简化实现）
+  challenger_3: pa015_solo（体制倾斜：trend_up 放大动量 / trend_down 放大逆波，简化实现）
+  challenger_4: sig131_solo（等权×±50% 钳制，简化实现）
+  note: 五套同一合成信号+同一窗口（批2同窗），影子并行；件自述“简化实现（非 pf_alloc 逐行复用——
+    weight 变换向量化和）”，该简化位须随卷披露，禁把它当成 pf_alloc 本体的考试
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/allocator_shadow.py（五套影子考正门；
+  mSPRT 内核复用 zephyr.pf_core.core.msprt_champion_challenger，不可用则降级配对 t 并留痕；
+  口径=MOD-PF-008“只报当前证据量不判终胜负”）
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；影子期与判据先写死（宪法 §5 flag 下放=shadow 制 ≥7 天+自动回退判据，
+    本卡是其考试面表达）
+buckets:
+  type: champion_challenger
+  'on': champion 与 4 挑战者逐日配对收益差
+  min_obs_per_bucket: 配对观测日 >= 244（一年）方可出 mSPRT 证据量；不足只报描述统计
+pillars:
+  evidence_gate: 每个挑战者报告 mSPRT 对数似然比（或降级配对 t 的 t 值与 p 值），
+    不判终胜负（MOD-PF-008 口径，件 docstring 明写）
+  risk_gate: champion 相对 rk08_solo 的 OOS MaxDD 不劣化 >1pp 且成本后 Sharpe 不劣 >0.1，
+    否则帽层=过度工程候选（进净零合并评估队列）
+  turnover_or_cost_gate: 各套换手与成本后指标同框报数；钳制/地板必然抬换手，未扣成本的改善不算数
+  oos_and_regime_gate: 证据方向须在 OOS 与熊段不反向
+  rollback_gate: 影子期判据未达标 ⇒ 维持现 champion 且本卡结论=“帽层保留但证据不足”，
+    禁据此直接上生产（转生产属 Owner 门位，宪法 §5 资金与实盘交易）
+target:
+  primary: msprt_log_lr_champion_vs_each_challenger（降级时 paired_t 统计量）
+  secondary: oos_maxdd_delta、sharpe_after_cost_delta、turnover_delta
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  maxdd_regression_max: 0.01
+  sharpe_delta_min: -0.1
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+  evidence_min_days: 244
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-05.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；影子=只累积证据不判终胜负
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 批1分数册 pass 因子列（无 pass 时回退全部 ch_backed 列并如实标注降级——件 docstring 明写）
+  signal_derivation: allocator_shadow 内部合成（roster.ALLOCATORS 与件内五套定义同源，禁改五套定义）
+  price_table: c1_market.kline_daily_hfq
+  target_source: 五套影子 NAV 配对日收益差 → mSPRT / 配对 t
+  data_window_evidence: |
+    件实读 D:/ZephyrAlpha/scripts/backtest/fexam/allocator_shadow.py 头部与 docstring：
+    “批4：5 套分配器影子考（champion-challenger 证据量报告）”、五套定义逐条、
+    INVARIANTS=“五套同一合成信号+同一窗口（与批2同窗）影子并行；简化实现如实标注…
+    只报当前证据量不判终胜负（MOD-PF-008 序贯统计口径）；mSPRT 不可用降级配对 t 并留痕”；
+    MODIFY-GUARD=docs/_working/matrix_campaign/90_execution_log.md（五套定义禁改）
+    CH 覆盖：kline_daily_hfq 1990-12-19..2026-09-30 共 10,098,785 行
+  ds_ref: 帽层语义真源=MOD-PF-008/RK-08 地板与 SIG-131 钳制（分配器侧），与本节点体检三查同源不同层，
+    本卡不宣称考的是 pf_alloc 本体

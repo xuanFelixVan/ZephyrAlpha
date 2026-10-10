@@ -1,0 +1,121 @@
+schema_version: '1.0'
+card_id: TDM-P-P3-01/comparison/04_日亏熔断禁加期分层对照
+node_id: TDM-P-P3-01
+family: comparison
+title_zh: 日亏熔断禁加期（2% vs 4% 口径对撞）·分层对照卡（RX-A 漏矿 + 施工判据翻案）
+hypothesis: >-
+  TDM 本节点四重门的第④腿="非熔断禁加期（「日亏 4% 熔断触发时全禁」）"，同节点 `invalidation` 又写"熔断或回撤协议触发→全部加仓资格即时作废"。
+  同车道已把①红线腿（comparison/02）与②段权限腿（comparison/03）立卡，③亲和度与④熔断两腿列为未立卡长尾，
+  并注"熔断级 L2-L3-L4 与 X_breaker 帽带的层位映射未考"（隐含"要施工才能考"）。本车道复核后「两点翻案 + 一处新冲突」：
+  ①翻案=装置已在：日亏序列可由既有 grid run 的 net_returns 直接派生（引擎同口径写法实读
+  factory_grid_executor.py:1226-1229 `port=(weights.shift(1)*rets).sum(axis=1)`→nav→日收益），
+  而分层归因正门 condition_attribution.py:attribute_run 接受任意条件包（date/cell_id/cell_eligible），
+  「同车道在同一节点的 comparison/03 已经用过这道正门」做情绪段分层 ⇒ ④腿不需新件，可立即立卡（本卡即是）；
+  ②翻案不成立的部分=X_breaker 不能当替身：dd20 帽带的状态量是「组合权益回撤」（NORMAL 1.0/WARN dd<=5% 0.75/DANGER<=10% 0.5/CRISIS<=15% 0.25/KILL<=0.20 0，
+  :1204-1234 实读），与"日亏"是不同状态量，同车道"层位映射未考"的判断正确，本卡不推翻它、只推翻"需施工"这一条；
+  ③新冲突（本卡最主要的漏矿）=「禁加仓阈值在四处实现里 2% 与 4% 并存」（详见 evidence 的 A3 正查）：
+  CircuitLevel 真源枚举写 「L1=日亏>=2% 禁加仓」、L2=>=4% 禁开仓；加仓码 `_CIRCUIT_BAN_LEVELS={L2,L3,L4}` 实际是 「>=4% 才禁加仓」；
+  TDM 文本写 4%；而止损引擎 `daily_loss_limit=0.02`（-2%）。⇒ "2%-4% 区间的加仓笔该不该禁"从未被任何卡面考过，
+  而它正是这条红线的剂量-响应面。本卡双臂档：ban@2%（承枚举真源）vs ban@4%（承在码+TDM），
+  判据=被禁期内的金字塔加仓信号后续收益是否显著劣于非禁期（红线有没有削损价值），
+  并出"2% 档多禁掉的那批笔"的机会成本与削损（两口径谁对，由这个差决定）。
+arm_definition: >-
+  禁加集 B2={组合日收益 <= −0.02 的交易日}（承 CircuitLevel L1 文字）；B4={<= −0.04}（承在码 _CIRCUIT_BAN_LEVELS 与 TDM 文本）；
+  B0=不禁（对照基线，仅作分层比较不作臂）。三框同报：
+  ①B2∩加仓笔、②(B2\B4)∩加仓笔（=两口径之争的实际战场）、③非禁期加仓笔。
+  加仓笔定义=K=pyramid 臂相对 lump 臂的增量权重笔（档成交 1/3 + 1/3×armed(close>=entry×1.03) + 1/3×armed(>=entry×1.06)，
+  :1058 实读），后续窗=10 交易日（与同节点 comparison/02 的 per_trade_gate 同口径，便于对卡）。
+executor: >-
+  D:/ZephyrAlpha/scripts/backtest/condition_attribution.py:attribute_run（run 产物 net_returns × 条件包 → 胞级分层 sharpe/年化/占比；
+  件自述"胞级数字仅作分层观察（禁挑优入判据），判据仍=全窗五档成本门"，本卡遵此：档间差作机制与口径判据，胜负仍走全窗成本门）
+  + 条件包由既有 grid run 产物的 net_returns 派生（≤30 行纯读，无引擎语义改动，不改件）
+  + 双档 B2/B4 的条件包构造真源=D:/ZephyrAlpha/.runtime/tmp/st-nightmine-20261010/（exam 侧临时件，禁落项目根）
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: >-
+    看数前冻结。两档阈值 2%/4% 「全部取自在册文字」（枚举注释与 TDM/码内常量），不是扫出来的：
+    本卡禁做阈值扫描（扩档另卡）；后续窗 10 日、成本档 frozen_l0+stress_l2、"禁加日"的判定用日收益而非日内（承件语义）。
+    开考前须把 run 产物窗与本卡 window 对齐：若既有 run 窗不同，从 run 窗并如实披露，禁为凑判据改窗重跑。
+buckets:
+  type: state_cell_attribution
+  'on': '禁加档（B2/B4）× 加仓笔/非加仓笔 × IS/OOS'
+  min_obs_per_bucket: '每格 >= 30 个交易日内有配对加仓笔方可出该格方向结论（不足判 INSUFFICIENT_SAMPLE，裁定#325 禁全绿）；
+    B4 档预期极稀（日亏 <=−4% 的组合日是尾部事件），须单独披露计数，不得并入 B2 冒充样本'
+  residual: 未达标日期进 residual 行单独披露（件 INVARIANTS 禁当独立样本计 n）
+pillars:
+  ban_value_gate: 禁加期（B2）内加仓笔的后续 10 日成本后均值 <= 非禁期 − 0.2pp ⇒ "熔断禁加"确有削损价值；
+    差值 >= 0 ⇒ 该腿是纯机会损失，须如实入册并提请退役（红线不豁免于数据，与同车道 comparison/02 的同一诚实纪律）
+  threshold_conflict_gate: 「本卡主判据」——战场格 (B2\B4) 内加仓笔的后续均值显著为负（<= −0.2pp）⇒ 2% 才是对的档
+    （在码与 TDM 的 4% 系统性放行了坏加仓笔，须提请纠口径）；显著为正 ⇒ 4% 对（2% 档禁掉过多好笔，枚举注释那条应改）；
+    不显著 ⇒ 判"两口径在回测平面等价（no_binding）"，如实报，禁宣称验证了任何一方
+  dose_monotonicity: B4 格（更极端日）的后续均值须不比 B2 格好（越深的熔断日加仓越危险）；反号=装置或口径有问题，先修再判
+  oos_and_regime_gate: 上述方向在 OOS 与熊段同号
+  turnover_or_cost_gate: 全臂 frozen_l0 扣双边佣金后判 + stress_l2 复算，符号翻转=fail（碰钱面判据成组）
+  layer_separation_disclosure: 分层数字不得取代全窗胜负（承件自述与同节点 comparison/03 先例），
+    本卡产出的"档间差"是口径证据不是策略排名
+  immediate_invalidation_leg: 节点 `invalidation` 的"「即时」作废"另设计数=若加仓指令在禁加日 T 收盘后才生成（信号滞后 1 日），
+    该滞后导致的违规加仓笔须单独统计并披露（考"即时"二字的实现代价，非扩档）
+target:
+  primary: ann_ret_delta_banned_vs_unbanned_add_trades_after_cost（加仓笔成本后年化差，按 B2/B4 两档）
+  secondary: battlefield_cell_delta（B2\B4 格的后续 10 日均值，=口径之争的直接读数）与 lag_violation_count
+  note: 本卡与同节点 comparison/02（浮盈 vs 摊平红线）不重叠=02 考"只加浮盈"这条腿，本卡考"熔断禁加"这条腿且带三处口径对撞
+status: preregistered
+signal_kind: series
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3-01.confidence
+preregistered_by: st-nightmine-20261010-RXA
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+pillars_numeric:
+  ban_value_gap_max: -0.002
+  battlefield_gap_threshold_abs: 0.002
+  min_days_per_cell: 30
+  cost_after_sharpe_gate: full_window_cost_gate_first
+  oos_same_sign: true
+data_binding:
+  signal_table: grid run 产物（net_returns 宽表，index=trade_date）+ 条件包（由该表派生的日亏档）
+    + c1_market.kline_daily_hfq（close 面，复核 nav 与个股后续 10 日收益）
+  signal_column: net_returns（组合日收益）→ cell_eligible={date, cell_id(B2/B4), 是否加仓笔}
+  signal_derivation: >-
+    组合日收益 port_t = nav_t/nav_{t−1} − 1（与引擎 _apply_dd_breaker_overlay 同口径 weights.shift(1)×rets，:1226-1229 实读，禁另造）；
+    禁加日 B2 = {port_t <= −0.02}、B4 = {port_t <= −0.04}；
+    加仓笔 = 同 recipe 下 K=pyramid 臂相对 lump 臂的正权重增量日（档成交语义见 arm_definition）；
+    后续收益 = 该增量权重在未来 10 交易日的贡献（成本后，承 run 产物已扣 frozen_l0 的净收益序列）；
+    战场格 = B2 ∩ ¬B4（两口径唯一分歧处，本卡最重要的一格）。
+  target_source: run 产物 net_returns 的分层年化/成本后 sharpe（condition_attribution 件产出）
+  data_window_evidence: >-
+    口径对撞的三处实码原文（本车道台账 §3-A3，命令均在本工棚实跑 2026-10-10）：
+    ①`src/zephyr/position/core/defensive_asset_whitelist.py:54-61` `class CircuitLevel`：
+    `L0 正常` / `L1 警戒（日亏≥2% 禁加仓）` / `L2 禁开仓（日亏≥4%：白名单窄门开启）` / `L3 减仓（日亏≥6%）` / `L4 保命（清仓+Owner 接管）`
+    （头注声明"真源=X-R1-01 drawdown_state_machine，本模块只消费不判定"）；
+    ②`src/zephyr/position/core/pyramiding_rules.py:79-81` `_CIRCUIT_BAN_LEVELS = frozenset({L2,L3,L4})`＋`:22` 注释"日亏 4% 熔断=L2 触发时全禁"
+    ⇒ 加仓码实际在 「>=4%」 才禁加仓（与①的"2% 禁加仓"冲突）；
+    ③`src/zephyr/risk/core/ashare_stop_loss_engine.py:141` `daily_loss_limit: float = 0.02`（文档串"日亏损限额, 默认 0.02 (-2%)"）
+    ⇒ 日亏限额本身按 2% 计，而"禁加仓"按 4% 触发 ⇒ 同一"日亏"状态量在两件里承担不同动作。
+    装置在岗性实测（本车道台账 §3-A4/§2）：`factory_grid_executor.py:839-841` 实读
+    `breaker_mode = v.get("X_breaker","off")` → `if breaker_mode != "off": weights, _ = _apply_dd_breaker_overlay(weights, closes, breaker_mode)`
+    ⇒ 熔断维已接线（与同车道台账 §一 一致）；`_apply_dd_breaker_overlay`(:1204-1234) 帽带常量 NORMAL 1.0/WARN 0.75/DANGER 0.50/CRISIS 0.25/KILL 0.0
+    且 `kill_dd=0.20`、状态量=nav 回撤 ⇒ 判「不可」作为"日亏熔断"替身（本卡据此不采 X_breaker 作臂，只采其 nav 派生写法）。
+    分层归因正门在册性：`scripts/backtest/condition_attribution.py:20-56`（件自述胞级仅作观察、判据仍=全窗成本门）
+    + 同节点 comparison/03 已用该件与 `load_pack=zephyr.backtest.regime_validation.condition_package`（对方 evidence 原文）
+    ⇒ 结论：④腿「无缺件」，同车道"需施工"的隐含判断经复核不成立=本车道翻案之一。
+    材料现实前置：金字塔 K 维在 DEFAULT_CONTEXT 中 `capital_ramp_enabled=False`（引擎 L122 实读，承同车道台账），
+    故本卡须以 `capital_ramp_enabled=true` 的 run 为准；若既有 run 未开闸则该格判 DEVICE_NOT_ARMED（禁把"无料"判成"无信号"，承同车道 §四 结论②纪律）。
+  impl_ref: src/zephyr/position/core/pyramiding_rules.py（TDM module_ref=MOD-POS-027，④腿载体）
+    + src/zephyr/position/core/defensive_asset_whitelist.py（CircuitLevel 枚举真源消费方）
+    + scripts/backtest/condition_attribution.py（分层归因正门）
+executor_note: 本卡不需新执行件（见 data_window_evidence 的装置在岗性实测），仅缺 ≤30 行条件包派生脚本（exam 侧临时件）
+origin: cross_probe_RXA（漏矿来源=TDM 本节点④腿原文"日亏 4% 熔断触发时全禁"与三处实现常数的对撞；翻案来源=装置在岗性实读）
+sources:
+  - 同车道在册装置账（L4 台账 §一 factory_grid_executor/condition_attribution 逐件实读）与 X-R1-01 枚举真源，未重复挖外部矿

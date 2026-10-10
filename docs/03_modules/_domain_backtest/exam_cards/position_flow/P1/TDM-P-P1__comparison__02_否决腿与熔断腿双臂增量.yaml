@@ -1,0 +1,82 @@
+schema_version: '1.0'
+card_id: TDM-P-P1/comparison/02_否决腿与熔断腿双臂增量
+node_id: TDM-P-P1
+family: comparison
+title_zh: 持仓体检（六路汇总）·对照卡：风险否决腿/回撤熔断腿/两腿并开 四臂增量
+hypothesis: >-
+  持仓体检的盘前汇总价值集中在"否决类"两腿——P1-04 风险否决（ATR/固定止损→X_stop=atr3x）与
+  P1-05 组合级体检（回撤熔断帽→X_breaker=dd20）。四臂同装置对照：双臂 off、单开否决腿、
+  单开熔断腿、两腿并开；若两腿并开相对任一单腿无增量（甚至倒退），则"体检汇总层"是冗余编排层，
+  P1-06 结论中心与该枢纽应降级为纯运维件。
+arm_definition:
+  A_off_off: {X_stop: 'off', X_breaker: 'off'}
+  B_stop_only: {X_stop: atr3x, X_breaker: 'off'}
+  C_breaker_only: {X_stop: 'off', X_breaker: dd20}
+  D_both: {X_stop: atr3x, X_breaker: dd20}
+  held_fixed: 信号源 24 列 cap、G_universe=hs300、B_top_n=top20、D1=monthly、C_sizing=inv_vol、
+    E_single_cap=cap20、K=lump（不掺加仓，防两腿增益被加仓混淆）；四臂仅换 X_stop/X_breaker 两维
+executor: D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py（_apply_exit_overlay:L892、
+  _apply_dd_breaker_overlay:L1204，两处均已在 run 路径接线=L838/L841 调用点实读）
+  + strategy_exam.window_metrics；单腿迟滞与帽带口径见 prereg_frozen.yaml（X_breaker 五帽带
+  WARN 0.75/DANGER 0.50/CRISIS 0.25/KILL 0，dd20=kill_dd 0.20）
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；窗口口径承 exit_sim/prereg_frozen.yaml device.windows（同装置同窗才可比）
+buckets:
+  type: arm_comparison
+  'on': 四臂（off/stop/breaker/both）× {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 120；熊段样本不足则该段判 nan 禁补
+  sub_buckets: 熊段（2021-07-01..2024-01-31）为主判段——否决腿的终局价值在熊段
+pillars:
+  maxdd_gate: D 臂相对 A 臂 OOS MaxDD 改善 >= 5pp（同 prereg_frozen judge_frozen.maxdd_improve_pp 地板）
+  complement_gate: D 臂相对 max(B,C) 单腿有增量：D_oos_maxdd 优于两单腿且改善 >1pp
+    （无增量=两腿互斥或重复覆盖，转 P1-04/P1-05 单腿卡，枢纽层判 fail）
+  sharpe_gate: 成本后 Sharpe 降幅 <= 0.2（换回撤的容许价）
+  turnover_or_cost_gate: 四臂均按 frozen_l0 扣双边佣金后判；另在 stress_l2 复算，符号翻转=fail；
+    否决腿抬换手属预期，须与"减损"同框报数禁分表挑好看的
+  oos_and_regime_gate: D 臂改善在 OOS 与牛/熊两段同号；仅 IS 或仅牛段成立=判 fail
+  negative_honesty: 负结果入册（碰钱环节宁可得负结论也不许挪门柱）
+target:
+  primary: d_vs_a_oos_maxdd_improvement_pp
+  secondary: d_vs_best_single_leg_increment_pp（枢纽层增量判据，本卡核心新面）
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.05
+  single_leg_increment_min: 0.01
+  sharpe_delta_min: -0.2
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+data_binding:
+  signal_table: c1_market.technical_indicator（ch_data.T_TECHNICAL_INDICATOR）
+  signal_column: 同 P-FLOW/ablation/02 的 24 列 cap 清单（确定性文档序，禁重挑列——跨卡同票池才可比）
+  signal_derivation: strategy_exam.composite_signal → monthly_topn_signals(top_n=20)
+  price_table: c1_market.kline_daily_hfq（后复权 close 自算 ATR14：TR=max(H-L,|H-C_prev|,|L-C_prev|)，
+    Wilder 平滑，见 exit_simulator.wilder_atr_one:L119/atr14_wilder:L135）
+  target_source: 四臂日 NAV → strategy_exam.window_metrics（sharpe 年化 244 + MaxDD）
+  data_window_evidence: |
+    已接线核对原文：D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py:838
+    `weights, _ = _apply_exit_overlay(weights, closes, stop_mode)`、:841
+    `weights, _ = _apply_dd_breaker_overlay(weights, closes, breaker_mode)`；
+    schema 取值：config/position_recipe_grid_schema.yaml L71-87（active_if "phase >= 3"）
+    ⇒ 开考 context 必须 {phase: 3}，phase<3 时两维折叠=两臂静默同码（增益恒 0 的失真陷阱，
+    schema L66-67 已就 J 维同类布尔坑留案：禁裸写 on/off，必须字符串 'off'/'atr3x'）
+    CH 覆盖：kline_daily_hfq 1990-12-19..2026-09-30 共 10,098,785 行（实测命令见 PFLOW 卡同段）
+  ds_reality: 体检编排件 position_checkup_orchestrator 是 live 只编排零下单观察态件
+    （TDM P1 algo_note_zh 原文），本卡取其"否决语义"的回测等价物（overlay），不声称跑 live 件

@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-P-P3-04/calibration/02_尾盘强势对次日高开概率预测
+node_id: TDM-P-P3-04
+family: calibration
+title_zh: 加仓时点与执行·校准卡：“尾盘确认后明日高开概率>70%”这句承诺的直接检验
+hypothesis: >-
+  TDM 本节点原文“尾盘窗口（14:45 后确认当日强势，BM-PLAN-02：明日高开概率>70% 触发）尾盘加”。
+  这是对次日开盘跳空的条件概率承诺，可直接用 1min 面板证伪：以“尾盘强势”多档定义（14:45-15:00 涨幅、
+  当日全天涨幅、收盘价位于当日高位比例）分档，测次日高开（open>前收）的实现概率。
+  假设概率随强势度单调上升但**极可能达不到 70%**（A 股 T+1+集合竞价结构下次日高开基础概率本就偏低）；
+  本卡的价值在于把口头阈值换成实测数，若最高档也 <50%，则 BM-PLAN-02 的 70% 承诺失实，
+  须提请改写该作战地图口径（治理产出，而非策略判负）。
+window:
+  in_sample:
+  - '2021-09-01'
+  - '2024-12-31'
+  oos: &id001
+  - '2025-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2021-09-01..2021-12-31（材料起点即 1min 表首日落在此段，牛市尾段）
+    bear: 2022-01-01..2024-02-05
+  frozen_note: 看数前冻结；高开定义 open_t+1 > close_t（严格大于，等值计为否）；强势档边界先写死
+buckets:
+  type: ordinal_band
+  'on': 三套强势定义各分五档（尾盘涨幅/全日涨幅/收盘位于当日区间位置 close=(H+L)/2 以上记 1）
+  min_obs_per_bucket: 60（票-日样本/档）；样本池限定=多因子 top20 持仓池（与加仓场景一致，
+    禁全市场 8,706 票稀释成与决策无关的概率）
+pillars:
+  probability_gate: 最高档次日高开概率 >= 0.55（低于此=BM-PLAN-02 的 70% 承诺失实，须提请改口径；
+    该判据允许“承诺不成立”这一结果并把它当产出）
+  response_monotonicity: 分档概率 Spearman rho >= 0.6（强势度确有排序力）
+  ic_floor: 日频截面 IC（尾盘强势 vs 次日 gap）均值 >= 0.02 且 IC_IR >= 0.25
+  base_rate_disclosure: 必须同报无条件基础高开率（不设此披露=用条件概率骗自己，本卡硬门）
+  regime_stability: 牛/熊两段同号且分段基础率分别披露（跳空分布状态依赖极强）
+  limit_up_exclusion: 涨停封板票的次日高开机制不同（一字/涨停开板），须单独剔除并报计数
+    （口径真源=c1_market.stk_limit / limit_up_down，M-4 可行性门同源）
+target:
+  primary: next_day_gap_up_probability（分档）
+  secondary: 次日 gap 的均值与中位、跳空后日内回补率（1min 首小时）
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  probability_top_bucket_min: 0.55
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.25
+  regime_same_sign: true
+  oos_same_sign: true
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（panel 面机判）
+  + 取数件 D:/ZephyrAlpha/scripts/backtest/fexam/ch_data.py:ch_query_df（1min 双点：14:45-15:00 与次日首根）
+  + 涨停剔除 c1_market.stk_limit（PIT valid_from/valid_to）
+  算力前置：1min 全表 14.9 亿行，本卡限定 top20 池 × 窗（约 1,250 交易日 × 20 票）后取数可行；
+  全市场扫描禁（成本与结论无关）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3-04.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；负结果与“承诺失实”都是合格产出
+data_binding:
+  signal_table: c1_market.kline_1min（列 trade_time/symbol/open/high/low/close/volume/amount/exchange）
+    + c1_market.kline_daily_hfq（当日 open/high/low/close 供区间位置与次日开盘）
+  signal_column: 尾盘强势度（14:45 后收益、全日收益、收盘在当日 H-L 区间内的相对位置）
+  signal_derivation: 取 symbol×date 的 1min bar 序列，尾盘段=trade_time ∈ [14:45, 15:00]，
+    gap_up=次日 09:30 首根 open（或 kline_daily_hfq.open）> 当日 close
+  target_source: kline_1min 次日首根 open 与 kline_daily_hfq.open 双口径并报（防分钟表与日线表口径漂移）
+  data_window_evidence: |
+    覆盖实测（本车道探针命令原文见台账 §一）：
+    kline_1min → 2021-09-01..2026-10-09，1,493,285,247 行，8,706 符号；
+    kline_5min → 2021-09-01 09:35:00..2026-10-09 15:00:00，296,122,159 行（时间列名=trade_time，
+    用 trade_date 首探报 HTTP 404=列名错误，非无数据——已按“空结果先判静默失败”规则复核）；
+    kline_daily_hfq → 1990-12-19..2026-09-30，10,098,785 行
+    原文承诺=config/trading_decision_map.yaml 本节点 algo_note_zh + battle 口径 BM-PLAN-02（“明日高开概率>70% 触发”）
+  ds_ref: algo_refs=['EXA-TWAP-001','EXA-IS-001']（执行算法族）；本节点 module_ref=
+    src/zephyr/position/core/position_limit_enforcer.py（下单前硬约束预检，live 件）

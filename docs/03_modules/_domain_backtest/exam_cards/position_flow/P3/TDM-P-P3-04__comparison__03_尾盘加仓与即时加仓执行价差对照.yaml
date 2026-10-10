@@ -1,0 +1,75 @@
+schema_version: '1.0'
+card_id: TDM-P-P3-04/comparison/03_尾盘加仓与即时加仓执行价差对照
+node_id: TDM-P-P3-04
+family: comparison
+title_zh: 加仓时点与执行·对照卡：同一加仓指令“即时下单”vs“尾盘 14:45 下单”的执行价差与成交率
+hypothesis: >-
+  本节点时点二选一（缩量回调守支撑=即时加；尾盘窗口确认强势=尾盘加）在执行层的净差=成交价与成交率。
+  双臂：A=触发当日即时（触发 bar 的下一根可成交价）；B=延后至 14:45 后首根成交。
+  假设 B 相对 A 的平均执行价差与日内漂移同向（强势日尾盘更高=付更多），但 B 的“伪信号率”更低
+  （尾盘确认过滤了盘中假突破）。净结论须扣成本后给出。若 B 在价差与信息双重上都不占优，
+  则尾盘窗口只是心理确认，加仓应一律即时（碰钱面不留无增益延迟）。
+arm_definition:
+  A_immediate: 触发时刻 t 的 1min 收盘作为成交价（与现装 pyramid armed 判定=收盘确认同口径）
+  B_tail_1445: 同一触发日延后至 14:45 后首根 1min 成交
+  C_next_open: 次日开盘成交（第三臂=“延迟一整日”的机会成本上界，用于分离“尾盘”与“次日”的差别）
+  fill_proxy: 成交可行性=该 bar amount>0 且非涨停封板（stk_limit 口径；涨停未开板=不可买，判未成交）
+  held_fixed: 同一触发集合（pyramid armed 条件 close>=entry×1.03 逐票-日）与同一名义量、同一成本口径
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/ch_data.py:ch_query_df 取 kline_1min 三点价
+  （触发根 / 14:45 根 / 次日开盘根）+ 同车道复用件 cost_trio_exam.py 的配对与扣费口径
+  （31.2bp 双边与涨跌停可行性硬门同 V3 家规）；成交算法对照位=algo_refs EXA-TWAP-001/EXA-IS-001
+  （本卡不做 TWAP 切片，只比时点，差距如实标注）
+window:
+  in_sample:
+  - '2021-09-01'
+  - '2024-12-31'
+  oos: &id001
+  - '2025-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2021-09-01..2021-12-31
+    bear: 2022-01-01..2024-02-05
+  frozen_note: 看数前冻结；14:45 时点取 TDM 原文常数；触发条件取引擎在册 1.03 档（禁另造触发定义）
+buckets:
+  type: event_sample
+  'on': 同一触发事件在三臂下的成交价对（配对差，非独立样本）
+  min_obs_per_bucket: 配对样本 >= 300 触发事件；不足只报描述统计
+  sub_buckets: 按当日涨幅分档（强势日/弱势日）分别报 B−A 价差（尾盘的价值应集中在强势日确认上）
+pillars:
+  cost_gate: 三臂均扣双边 31.2bp；B 相对 A 的成本后单位名义收益差 >= 0 才算“尾盘窗口有净价值”
+  spread_gate: B−A 平均执行价差须报出且分强势/弱势日；若 B 系统性贵于 A 且无更低伪信号率=判 A 优
+  fill_gate: 三臂成交率（未封板可成交占比）差 <= 3pp；成交率差过大则价差结论不可用（须先修可行性口径）
+  oos_and_regime_gate: 方向结论在 OOS 与牛熊两侧同号（跳空/尾盘结构状态依赖强）
+  no_single_metric: 价差/伪信号率/成交率/扣费后净差四框同报，禁以单一价差数字定论
+target:
+  primary: cost_adjacent_execution_pnl_delta_B_minus_A
+  secondary: 价差分布（均值/中位/5-95 分位）、三臂成交率、伪信号率（触发后 20 日内跌破 entry 的占比）
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  cost_adjacent_delta_min: 0.0
+  fill_rate_gap_max: 0.03
+  pairs_min: 300
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3-04.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.kline_1min（触发根与 14:45 根）+ c1_market.kline_daily_hfq（entry 锚与次日开盘）
+    + c1_market.stk_limit（涨跌停可行性，PIT valid_from/valid_to）
+  signal_column: 同一加仓触发事件在三臂下的成交价
+  signal_derivation: 触发=引擎 pyramid armed 条件（closes>=entry_px×1.03，entry=持仓段首日收盘）；
+    14:45 根=trade_time ∈ [14:45,14:46) 首根 close；次日开盘=kline_1min 09:30 首根（与日表 open 双口径复核）
+  target_source: 三臂成交价的配对差与扣费后单位名义收益
+  data_window_evidence: |
+    覆盖实测（命令原文见台账 §一）：kline_1min 2021-09-01..2026-10-09，1,493,285,247 行，8,706 符号；
+    kline_daily_hfq 1990-12-19..2026-09-30 共 10,098,785 行；stk_limit 在册列
+    limit_up/limit_down/limit_pct/st_flag/board；
+    原文=config/trading_decision_map.yaml 本节点 algo_note_zh“时点二选一：缩量回调守住支撑…即时加；
+    尾盘窗口（14:45 后确认当日强势…）尾盘加。下单复用建仓执行件（分批+限价+硬约束预检）；
+    未成交不追价，次日重走资格门”；module_ref=src/zephyr/position/core/position_limit_enforcer.py

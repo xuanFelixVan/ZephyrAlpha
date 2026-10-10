@@ -1,0 +1,78 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-03/comparison/03_逻辑存活否决腿开闭对照
+node_id: TDM-P-P1-03
+family: comparison
+title_zh: 买入逻辑存活·对照卡：thesis 否决腿开 vs 关（0.30 档整链增量）
+hypothesis: >-
+  把 P1-03 的存活判定接成回测否决腿（秩回落>0.30 当日清仓）应改善组合的风险面：
+  相对关腿基线，OOS MaxDD 改善 >=3pp、熊段改善同号、成本后 Sharpe 降幅 <=0.2。
+  若不改善，则"逻辑存活"层在回测平面上不提供否决价值（其 live 价值须另由人工确认链路证明）。
+arm_definition:
+  arm_off: 不加 thesis 否决（基线权重面直送成本后 NAV）
+  arm_thesis030: _apply_thesis_survival_overlay(weights, combined, closes, thesis_decay=0.30)
+  arm_thesis060: 同一函数 thesis_decay=0.60（第二对照臂=现码"失效"档，检验两把尺的落地差异）
+  held_fixed: 信号 24 列 cap、top20 月频、inv_vol、E_single_cap=cap20、X_stop=off、X_breaker=off、K=lump
+    ——三臂仅差 thesis 腿及其 decay 参数（单点改动纪律）
+executor: 半缺件——判据函数现成（D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py
+  :_apply_thesis_survival_overlay L1034-1055），但该函数**无调用点**（实读：文件内 grep 仅 L1034 定义行命中），
+  且 config/position_recipe_grid_schema.yaml 无对应维（grep thesis 零命中）。
+  ⇒ 需施工=注册 M5 维（values off/0.30/0.60）并接 run 路径，或直接写调用该函数的双臂脚本。status=blocked_on_impl
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；窗承 exit_sim/prereg_frozen.yaml（与止损族同窗才可比）
+buckets:
+  type: arm_comparison
+  'on': 三臂（off/0.30/0.60）× {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 120；否决腿触发次数 <30 的臂判样本不足（禁出判据）
+pillars:
+  maxdd_gate: thesis030 臂相对 off 臂 OOS MaxDD 改善 >= 3pp（否决腿是"减损型"，门槛低于止损族但不得为负）
+  sharpe_gate: 成本后 Sharpe 降幅 <= 0.2
+  turnover_or_cost_gate: 否决腿必然抬换手——两臂均按 frozen_l0（万0.854 双边）扣成本，另在 stress_l2 复算；
+    换手增幅 >50% 且增益 <1pp=判 fail（用高频翻烧换微弱改善不划算，碰钱面成组判据）
+  oos_and_regime_gate: 改善在 OOS 与熊段同号
+  dose_response: 0.30 臂与 0.60 臂的改善差方向须与 P1-03/calibration/02 的档位分离结论一致
+    （两卡互为机制/落地闭环；不一致=口径漂移，先修口径再判胜负）
+target:
+  primary: oos_maxdd_improvement_pp（thesis030 减 off）
+  secondary: turnover_delta 与 sharpe_after_cost_delta
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.03
+  sharpe_delta_min: -0.2
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+blocked_on_impl:
+  missing: M5 维注册 + run 路径接线（函数已存在但零调用点）
+  evidence: 'grep -rn "_apply_thesis_survival_overlay|thesis_survival" scripts/backtest/*.py
+    → 仅 factory_grid_executor.py:1034 定义命中，无调用；grep thesis config/position_recipe_grid_schema.yaml → 零命中'
+  unlock_condition: 施工位=照 X_stop/X_breaker 先例加维（active_if phase>=3，禁裸写 on/off 布尔，
+    承 schema L66-67 静默失真案教训）；落地即改 status=preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-03.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩（同 calibration/02 口径）
+  signal_derivation: strategy_exam.composite_signal → monthly_topn_signals(top_n=20) → thesis overlay
+  price_table: c1_market.kline_daily_hfq
+  target_source: 三臂日 NAV → strategy_exam.window_metrics
+  data_window_evidence: |
+    函数语义实读 factory_grid_executor.py:1040-1055（"M5 买入逻辑存活判定（P1-03 thesis_survival 回测化，
+    T3b 考维引擎语义；T3a 不接线）"；rank_now=combined.rank(axis=1,pct=True)；
+    thesis_exit=held & (rank_now < rank_entry − thesis_decay)；weights.where(~thesis_exit, 0.0)）
+    已知失真披露位：收盘判定触发（§4.4 同族诚实位），须随卷面报出
+  ds_ref: TDM 本节点 data_refs=['DS-082','DS-107']、factor_refs=['FCT-SENT-012','FCT-MOM-022']

@@ -1,0 +1,96 @@
+schema_version: '1.0'
+card_id: TDM-P-FLOW/ablation/02_持仓叠层整链消融
+node_id: TDM-P-FLOW
+family: ablation
+title_zh: 持仓管理整链叠层·消融卡（建仓信号固定，持仓半边整链去掉后掉多少）
+hypothesis: >-
+  建仓信号与票池固定时，持仓管理整链叠层（X_stop=atr3x 硬止损 + X_breaker=dd20 回撤熔断帽 +
+  K_capital_ramp=pyramid 三档加仓）相对全 off 基线（lump 一次性足额、无止损、无熔断）应显著改善
+  回撤（OOS MaxDD 改善 ≥5pp）且成本后 Sharpe 降幅 ≤0.2；若整链消融后关键指标不退化，
+  则"持仓半边"（P1/P2/P3 全流）对本组合的增益证伪——本节点是本流存在性的第一道考试。
+arm_definition:
+  arm_baseline_off:
+    recipe: "capital_ramp=lump | X_stop=off | X_breaker=off（=现行考卷语义）"
+    dim_values: {K_capital_ramp: lump, X_stop: 'off', X_breaker: 'off'}
+  arm_full_overlay:
+    recipe: "capital_ramp=pyramid | X_stop=atr3x | X_breaker=dd20"
+    dim_values: {K_capital_ramp: pyramid, X_stop: atr3x, X_breaker: dd20}
+  held_fixed: 信号源（批1分数册 pass 列 cap24 文档序）、票池 G_universe=hs300、B_top_n=top20、
+    D1_rebalance_freq=monthly、C_sizing=inv_vol、E_single_cap=cap20、成本档 frozen_l0
+    ——两臂除上述三维外逐字节相同（对照纪律：只换被测约束，禁同批改两处）
+  ablation_ladder: 为定位增益来源，追加三单腿臂（同装置同成本，仅一次一维）：
+    L1=X_stop=atr3x only；L2=X_breaker=dd20 only；L3=K=pyramid only。整链增益须≥各单腿最大值
+    （否则=叠层互相抵消，整链卡判 fail 并转单腿归因）
+executor: D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py（同 recipe 双臂/四臂跑批，overlay 件
+  _apply_exit_overlay:L892 / _apply_dd_breaker_overlay:L1204 / _apply_capital_ramp_overlay:L1058）
+  + D:/ZephyrAlpha/scripts/backtest/fexam/strategy_exam.py:window_metrics（sharpe 年化 244+MaxDD，复用禁重造）
+  + D:/ZephyrAlpha/scripts/backtest/calibrate_cost_tier_redblue.py:run_cost_tier_scan（成本档重跑）
+  注：本卡为对照/消融族，机判走上述双臂跑批件，不走 calibration_exam.run_card 的 IC 判据面（如实标注，禁假称）
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  warm_start: '2017-10-01（ATR14 暖机 3 个月，不进信号窗）'
+  frozen_note: 看数前冻结（裁定#501 纪律）；IS/OOS 两窗与牛熊两段口径逐字承
+    D:/ZephyrAlpha/scripts/backtest/fexam/exit_sim/prereg_frozen.yaml device.windows
+buckets:
+  type: arm_comparison
+  'on': 同一信号面在同一装置下的双臂/四臂（off / 全叠层 / 三条单腿）
+  min_obs_per_bucket: 每臂 OOS 交易日 >= 200（不足即判 nan 不入判据）
+  sub_buckets: 牛/熊两段各算一次，两段同号才计增益
+pillars:
+  maxdd_gate: 全叠层臂相对 off 臂 OOS MaxDD 改善 >= 5pp（负数口径朝 0 靠拢，与 exit_sim
+    judge_frozen.maxdd_improve_pp 同口径）
+  sharpe_gate: 全叠层臂成本后 Sharpe 相对 off 臂降幅 <= 0.2（回撤换收益的容许价，同
+    prereg_frozen.yaml judge_frozen.verdict_gain 的 -0.2 容差）
+  turnover_or_cost_gate: 叠层必然抬换手——两臂均按 frozen_l0（万 0.854 双边，真源=matching_logic.COMMISSION_RATE）
+    扣成本后判增益，另跑 stress_l2 档复算；成本档升档后增益符号翻转=判 fail
+  oos_and_regime_gate: 增益须在 OOS 窗与牛/熊两段同号（至少熊段为正改善）；IS 单窗好看不算数
+  attribution_gate: 三条单腿臂的增益上界 <= 全叠层臂增益（否则整链叙事不成立，转单腿卡）
+  negative_honesty: 负结果如实入册（先例=ATR 止损对照 无止损 -0.19→有止损 +0.43 满分卷；
+    情绪指数/HMM 大量 FAIL 同样在册），禁事后挪门柱（G4-5）
+target:
+  primary: oos_maxdd_improvement_pp（全叠层臂减 off 臂的 OOS MaxDD 差，pp）
+  secondary: sharpe_after_cost_delta（成本后 Sharpe 差）与 turnover_delta（换手差，观察项）
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.05
+  sharpe_delta_min: -0.2
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+  single_leg_upper_bound_ok: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-FLOW.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；碰钱面判据成组禁单指标
+data_binding:
+  signal_table: c1_market.technical_indicator（经 TableRegistry，ch_data.T_TECHNICAL_INDICATOR）
+  signal_column: 批1分数册 verdict==pass 的 ch_backings 首列，文档序去重 cap 24（确定性禁挑列，承
+    prereg_frozen.yaml device.columns_cap24 同一 24 列清单）
+  signal_derivation: strategy_exam.composite_signal（逐列截面秩 pct，direction 空=long，逐日等权均值）
+    → monthly_topn_signals(top_n=20) 出权重面 → 两臂各自叠 overlay
+  price_table: c1_market.kline_daily_hfq（open/high/low/close 自算 ATR14，全程后复权同口径）
+  target_source: 两臂日频 NAV 序列（strategy_exam.window_metrics 出 sharpe/MaxDD），基准=kline_index 000300 close
+  data_window_evidence: |
+    cd D:/ZephyrAlpha && python -c "
+    import sys; sys.path.insert(0,'scripts/backtest')
+    from fexam.ch_data import ch_query
+    print(ch_query('SELECT min(trade_date), max(trade_date), count() FROM c1_market.kline_daily_hfq FORMAT TabSeparated'))"
+    输出：1990-12-19	2026-09-30	10098785
+    维取值合法性核对原文：config/position_recipe_grid_schema.yaml L71-103（X_stop off/atr3x/trail20、
+    X_breaker off/dd20、K_capital_ramp lump/linear_20d/linear_60d/pyramid，active_if capital_ramp_enabled）
+  ledger_note: 本卡与既有 exit_sim 双臂（stop on/off）不同层——exit_sim 只测止损一腿，本卡测整链+单腿定位；
+    同族资产已在册（st_p_daytrade_mining.md §2 "A3：P-FLOW/P1-05/P2-04 已在考卷行使"），本卡增量=持仓叠层整链面
+  ds_reality: DS-009=position.snapshot、DS-067=execution.position_tracker 为本地账务件非 CH 表
+    （data_asset_registry.yaml L1081/L3144），故本卡持仓面=仿真权重非真实台账，如实随册

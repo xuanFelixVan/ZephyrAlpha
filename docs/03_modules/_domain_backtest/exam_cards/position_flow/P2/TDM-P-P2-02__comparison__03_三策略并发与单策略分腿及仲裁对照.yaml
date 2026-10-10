@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-P-P2-02/comparison/03_三策略并发与单策略分腿及仲裁对照
+node_id: TDM-P-P2-02
+family: comparison
+title_zh: 做T策略调度·对照卡：三策略并发+适配度仲裁 vs 单策略分腿（盘口腿受料限如实挂账）
+hypothesis: >-
+  本节点原文三策略并发扫描持仓（冲高回落 intraday-surge-fall / 盘口失衡 orderbook-imbalance /
+  VWAP 回归 vwap-reversion），同标的多信号按策略适配度仲裁。假设：①并发+仲裁相对任一单策略提升净均 bp；
+  ②三策略的适配段不同（surge-fall 在亢奋/退潮段、vwap-reversion 在震荡段、orderbook 在高波动段），
+  即“适配度仲裁”有可测的信息含量。若仲裁不比最优单策略好，调度层=转发层。
+arm_definition:
+  A_arbitrated: 三策略信号并发 + 适配度仲裁（生产口径）
+  B_solo_surge: 仅 intraday-surge-fall
+  C_solo_vwap: 仅 vwap-reversion（VWAP 可由 1min 累计 amount/volume 重建，真源 algo_refs EXA-VWAP-001）
+  D_solo_orderbook: 仅 orderbook-imbalance（**盘口腿受料限，见 blocked_on_data**）
+  E_first_come: 三策略并发但先到先得（无仲裁对照——本卡主判据：A vs E，而非 A vs 单策略）
+  held_fixed: 同一底仓票池、同一材料窗、同一 31.2bp 双边成本与 M-1..M-4 资格判据
+executor: D:/ZephyrAlpha/scripts/audit/t0_conditional_e4_v3_exam.py（配对+成本+资格，import 复用禁重写）
+  + D:/ZephyrAlpha/src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py（做T 买卖点识别，逐策略来源标注）
+  + D:/ZephyrAlpha/src/zephyr/sell_decision/core/t_trade_coordinator.py（MOD-AU-011 仲裁件，live 侧）
+  ⇒ 分策略归属需 bt-*.json 的 source_file/strategy 标注可辨（V3 的 build_pairs 逐 run 处理已具备该维度）
+window:
+  in_sample:
+  - '2026-06-01'
+  - '2026-08-31'
+  oos: &id001
+  - '2026-09-01'
+  - '2026-10-09'
+  regimes:
+    bull: 六段 routed=1（expansion）
+    bear: capitulation/distribution
+  frozen_note: 看数前冻结；主判据=仲裁开闭（A vs E），单策略腿为观察腿；短窗承第三方 frozen EXAM_START
+buckets:
+  type: pair_sample_by_strategy
+  'on': 逐策略分腿的配对集（每集 n_pairs >= 30 方可出方向结论，在册先例全材料仅 26 对=大概率不可判）
+  min_obs_per_bucket: 30 对
+pillars:
+  arbitration_gate: A 相对 E 的净均 bp 提升 >= 5bp 且冲突日（同标的多策略同时给信号）占比 >= 10%
+    （无冲突则仲裁无从体现，判 no_binding 而非 pass）
+  solo_gate: 报告三单策略腿各自的净均 bp 与达标对占比（>=30bp 档），且 A 不劣于最优单腿
+  cost_gate: 全部臂同一 31.2bp 双边扣费；判据成组（净均/达标占比/冲突日数/成交可行性剔除数）
+  sample_gate: 任一分腿 n_pairs<30 ⇒ 该腿判 INSUFFICIENT_SAMPLE，禁出 PASS/FAIL（裁定#325 禁全绿）
+  oos_and_regime_gate: 方向结论在 IS/OOS 与牛熊两侧同号
+target:
+  primary: net_bp_per_pair_A_minus_E（仲裁信息量）
+  secondary: 三单策略腿净均 bp、冲突日占比、适配段分布
+status: blocked_on_data
+signal_kind: panel
+pillars_numeric:
+  net_bp_delta_min: 5.0
+  conflict_share_min: 0.10
+  pairs_min_for_verdict: 30
+  turnover_or_cost_gate: fixed_cost_tier_31_2bp
+  oos_same_sign: true
+blocked_on_data:
+  missing: ①盘口失衡腿的逐笔/五档数据仅 2026-07-24..2026-09-30（tick_depth_5 实测 130,146,982 行，约 2 个月），
+    与考窗（2026-06-01 起）不重叠部分不可评；②做T 材料总量在册先例=全材料仅 26 对（<30 土规线），
+    分策略再切分后单腿几乎必不足；③bt-*.json 的策略归属标签是否完备需实扫（未实扫前不宣称可分腿）
+  needed: 延长 tick_depth_5 至考窗全长 + 补做T 材料至每腿 >=30 对 + 材料内策略标签核对
+  keep_card_alive: 假设/五臂/门柱已冻结，补料即跑（断供不弃卡，作业簿 §三⑥）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P2-02.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: data/backtest_artifacts/bt-*.json（做T 成交材料）+ c1_market.tick_depth_5（盘口失衡腿）
+    + c1_market.kline_1min（VWAP 重建与 surge 判定）
+  signal_column: 三策略信号与其配对成交
+  signal_derivation: VWAP=当日累计 amount / 累计 volume（1min 重建）；surge-fall=分时急拉 3%+ 遇阻回落；
+    orderbook-imbalance=买盘挂单远大于卖盘（五档量比）
+  target_source: 每对净价差 bp（cost_trio_exam.build_pairs 逐 run 配对，禁跨 run 合并）
+  data_window_evidence: |
+    覆盖实测（命令原文见台账 §一）：tick_depth_5 2026-07-24..2026-09-30，130,146,982 行；
+    kline_1min 2021-09-01..2026-10-09，1,493,285,247 行；材料目录 data/backtest_artifacts 实测 66 条目；
+    在册先例（docs/_working/t0_matrix/t0_conditional_e4_v3_verdict.md §2）：全材料无条件 n_pairs=26、
+    主考双门同放行 n_pairs=0、前置命中率 0.2308 ⇒ 本卡的分腿样本门大概率触发 INSUFFICIENT_SAMPLE，
+    该风险已前置写入 pillars.sample_gate（不是事后找台阶）
+    TDM 原文=config/trading_decision_map.yaml 本节点 algo_note_zh（三策略名+“同标的多信号按策略适配度仲裁；
+    单次做T量≤底仓 30%”）
+  ds_ref: factor_refs=['FCT-INTRADAY-029','FCT-INTRADAY-030','FCT-INTRADAY-017','FCT-INTRADAY-021']、
+    algo_refs=['EXA-VWAP-001','EXA-TWAP-001']；日频伪造禁令承 st_p_daytrade_mining.md §2（H9 §4.2）

@@ -1,0 +1,87 @@
+schema_version: '1.0'
+card_id: TDM-P-P2/comparison/02_做T腿有无对照与底仓恒等性
+node_id: TDM-P-P2
+family: comparison
+title_zh: 做T与加减仓（枢纽）·对照卡：同一底仓开做T腿 vs 禁做T腿，且核“底仓股数不变”不变量
+hypothesis: >-
+  TDM 本节点原文纪律=“做T=在底仓上高抛低吸赚差价降成本，与加减仓是三件事（做T 不改变底仓股数）”。
+  两问合一考：①做T 腿相对禁做腿是否降低单位成本/提升净收益（扣双边成本后）；
+  ②做T 成交集合是否真的维持底仓股数恒等（净买=净卖），若出现净敞口则“做T≠加减仓”的层位隔离被违反，
+  P2 与 P3 的边界失效（结构缺陷，比收益结论更硬）。
+  已知在册负先例必须正面继承：条件化做T E4 V3 判 STATE_GATE_NEVER_TRIGGERED，全材料无条件仅 26 对
+  （净均 −36.26bp，前置命中率 0.2308），n=26<30 ⇒ 依裁定#325 禁出方向性结论、禁“全绿”。
+arm_definition:
+  arm_t0_on: 底仓（多因子 top20 持仓）+ 日内做T 成交集合（bt-*.json trade_log 配对）
+  arm_t0_off: 同一底仓无做T（禁做侧对照，即 V3 的“对照（禁做侧）”集口径）
+  invariant_check: 每票逐日 Σ做T买入股数 == Σ做T卖出股数（容差 0 股）；违反即该票-日计入违规集并单独报数
+  held_fixed: 同一底仓票池与同一材料窗、同一成本口径（31.2bp 承 V3 冻结常数）
+executor: D:/ZephyrAlpha/scripts/audit/t0_conditional_e4_v3_exam.py（材料资格四判据 M-1 日内粒度/
+  M-2 往返同体逐 run 配对禁跨 run 合并/M-3 trade_log 哈希去重/M-4 涨跌停可行性硬门，真源
+  c1_market.stk_limit）；配对判据 import 复用 D:/ZephyrAlpha/scripts/audit/cost_trio_exam.py:build_pairs；
+  成本模型锚 D:/ZephyrAlpha/src/zephyr/ex_sor/services/t0_cost_model.py（CST-T0-001，T0_MIN_EDGE_RATE=0.003）
+  与 D:/ZephyrAlpha/src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py（MOD-SIG-132）
+  材料目录：D:/ZephyrAlpha/data/backtest_artifacts（实测 66 个 bt-*.json）
+window:
+  in_sample:
+  - '2026-06-01'
+  - '2026-08-31'
+  oos: &id001
+  - '2026-09-01'
+  - '2026-10-09'
+  regimes:
+    bull: 材料窗内六段=expansion/ignition 侧（r3 路由段）
+    bear: 材料窗内六段=capitulation/distribution 侧（实测宏观放行日分布=capitulation 18 / distribution 2）
+  frozen_note: >-
+    看数前冻结。考窗起点 2026-06-01 承第三方 frozen 卡（v2_exam.py:43 EXAM_START 注释明写“非本卡新定”）；
+    本窗天然短（V3 实测仅 15 个配对日）——如实标为“材料受限窗”，禁为过土规新增/延长材料
+    （V3 卡 §8.3 自禁线，随册继承）
+buckets:
+  type: pair_sample
+  'on': 做T 往返对（M-2 同体配对），按六段状态与振幅分层
+  min_obs_per_bucket: 每集 n_pairs >= 30 才许出方向性结论（卡 §5 土规，V3 实测沿用）；
+    不足只出计数与描述统计，判 verdict=INSUFFICIENT_SAMPLE（禁 PASS/FAIL）
+pillars:
+  cost_gate: 做T 腿净均收益 >= 0bp（扣双边 31.2bp 后），且 >=30bp 达标对占比 > 0.30
+    （PRECONDITION_HIT_RATE_MIN=0.30 真源 v1_exam.py:46）——成本门不可绕
+  invariance_gate: 底仓股数恒等违反率 <= 1%（本卡硬门：违反=层位隔离失效，收益结论作废重查）
+  gate_feasibility_gate: 双门同放行对数 >= 30（V3 实测主考=0，本卡须复现该结构性零交集诊断：
+    门规则与材料窗不相容属“装置不可分辨”，不得记作“做T 无增益”）
+  oos_and_regime_gate: 方向性结论若可出，须在 IS/OOS 与牛熊两侧同号；短窗下该项记 nan 不充数
+  negative_honesty: 负结果与零样本如实入册（V3 是本族最好的诚实先例——净均 −36.26bp 照登）
+target:
+  primary: net_bp_per_pair_t0on_minus_t0off（扣成本净价差）
+  secondary: 底仓恒等违反率、≥30bp 达标对占比、前置命中率
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  net_bp_per_pair_min: 0.0
+  precondition_hit_rate_min: 0.3
+  invariant_violation_rate_max: 0.01
+  pairs_min_for_verdict: 30
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P2.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；禁全绿（裁定#325）；判据成组禁单指标
+data_binding:
+  signal_table: data/backtest_artifacts/bt-*.json（做T 日内成交材料，M-1 粒度硬门）+
+    c1_market.kline_1min（日内价复核：2021-09-01..2026-10-09，1,493,285,247 行）
+  signal_column: 做T 配对（buy/sell 时刻与股数价）→ 净价差 bp
+  signal_derivation: cost_trio_exam.build_pairs 逐 run 配对（禁跨 run 合并）→ t0_cost_model 四要素扣费
+    （价差−双边佣金−印花税−冲击）；底仓=月频 top20 权重面
+  target_source: 每票-日 成本变化（总成本/股数）与净收益；kline_daily_hfq 提供日线口径复核
+  data_window_evidence: |
+    cd D:/ZephyrAlpha && ls data/backtest_artifacts | wc -l → 66（含 65 个 bt-*.json + 1 备份目录，实测）
+    V3 在册实测原文摘录（docs/_working/t0_matrix/t0_conditional_e4_v3_verdict.md §2-§3）：
+    主考（双门均允许）n_pairs=0；对照（禁做侧）n_pairs=26，净正 6，≥30bp 6，毛均 −5.06bp，
+    净均 −36.26bp，前置命中率 0.2308；考窗配对日 15 个；材料窗 T-1 dominant 取值域 ['r1','r2','r4']（无 r3/r12）
+    1min 表覆盖探针命令原文见本车道台账 §一 表（kline_1min 2021-09-01..2026-10-09）
+    tick_depth_5 仅 2026-07-24..2026-09-30（130,146,982 行）——盘口类子腿受限，见 P2-02 卡
+  ds_ref: TDM 本节点 factor_refs=['FCT-INTRADAY-025','FCT-INTRADAY-015']、
+    battle_map_refs=['BM-SELL-08']；日频伪造禁令=先例真源 st_p_daytrade_mining.md §2
+    （“P2-02/03 做T=原理上不可日频表达，只有 tick/模拟盘能考（H9 §4.2：日频‘做T’必伪造，禁做）”）
+    ——本卡一律绑日内材料，绝不用日线构造做T 成交

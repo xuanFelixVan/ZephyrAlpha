@@ -1,0 +1,76 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-04/calibration/05_板块退潮动量对持仓下行预测
+node_id: TDM-P-P1-04
+family: calibration
+title_zh: 风险否决体检·校准卡：板块退潮（-2% 动量阈值）对个股持仓后续收益的否决力
+hypothesis: >-
+  第四类否决线=“板块进熄火段”。live 阈值真源 sector_momentum_threshold=-0.02（-2%，
+  ashare_stop_loss_engine.py 配置字段实读）。假设个股所属板块指数的多日动量对个股未来 5 日
+  超额收益有负向预测力（板块熄火=个股逆势持有机会成本高），且 -2% 阈值处有可分辨断层。
+  若板块动量对成员股无预测力，则“板块退潮即否决”是把板块噪声当信号，应降级为观察项。
+window:
+  in_sample:
+  - '2021-03-01'
+  - '2024-12-31'
+  oos: &id001
+  - '2025-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2021-03-01..2021-12-31（板块轮动向）
+    bear: 2022-01-01..2024-02-05（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结；窗口上界由 kline_sector_880 实测 max(trade_date)=2026-10-08 决定，
+    IS 起点 2021-03-01 留 20 日动量暖机（表起点 2020-03-17）
+buckets:
+  type: quantile_decile
+  'on': 当日板块 20 日动量（板块指数 close 口径）分十位
+  min_obs_per_bucket: 60（板块-日样本）；个股层判定按成员归属展开，另按 ATR% 分层做稳健性
+pillars:
+  response_monotonicity: 板块动量分位 × 成员股未来5日超额收益中位 Spearman rho >= 0.5（动量越强越好，正号）
+  ic_floor: 日频截面 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  threshold_test: 动量 < -2% 档（现码阈值）与 -2%..0% 档的未来5日超额差 >= 0.5pp/5日
+    ——阈值存在性判据（无断层=阈值无信息）
+  lag_profile: t+1/t+3/t+5 三窗 IC 峰值与半衰期
+  regime_stability: 牛/熊两段同号（预期熊段更强，熊段不成立则否决腿价值折半）
+  ebb_state_alt: 另用熄火段标签（若六段史 CSV 可映射板块层）做稳健性——CSV 真源
+    docs/_working/t0_matrix/six_phase_history_v1.csv 为大盘层六段（非板块层），映射缺件则该项记
+    “受阻（缺板块级六段件）”不算查无
+target:
+  primary: excess_return_next_5d（成员股未来5日相对截面中位超额）
+  secondary: 板块动量 < -2% 后 5 日内个股跌破自身止损线的概率
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.5
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  threshold_gap_min_pp: 0.005
+  regime_same_sign: true
+  oos_same_sign: true
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（panel 面机判；
+  板块指数→成员映射件=ch_data 只读取数 + sector_constituent / industry_class 在册表）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-04.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.kline_sector_880（板块指数日线，列 trade_date/code/open/high/low/close/volume/amount）
+  signal_column: 派生 20 日动量 = close/close.shift(20) - 1
+  signal_derivation: 板块级动量 → 成员层广播；成员归属两锚并用并披露差异：
+    c1_market.sector_constituent（列实读 sector_code/sector_name/stock_code/update_date/valid_from/valid_to）
+    与 schema 冻结锚 c1_market.industry_class.industry_sw(L1, sws2021_l1)
+    （真源 config/position_recipe_grid_schema.yaml industry_anchor L114-121，含已知问题：符号格式混用/坏行1/冲突1）
+  target_source: c1_market.kline_daily_hfq close → 未来5日收益减同日截面中位=超额
+  data_window_evidence: |
+    cd D:/ZephyrAlpha && python -c "
+    import sys; sys.path.insert(0,'scripts/backtest')
+    from fexam.ch_data import ch_query
+    print(ch_query('SELECT min(trade_date), max(trade_date), count() FROM c1_market.kline_sector_880 FORMAT TabSeparated'))
+    print(ch_query('SELECT min(trade_date), max(trade_date), count() FROM c1_market.kline_sector FORMAT TabSeparated'))"
+    输出：kline_sector_880  2020-03-17	2026-10-08	785204（可用）
+          kline_sector      2025-07-18	2026-09-30	86033（仅 ~14 个月，禁作 IS/OOS 主轴→本卡不用它）
+    阈值真源实读：ashare_stop_loss_engine.py 配置字段 sector_momentum_threshold: float = -0.02
+  ds_ref: 本节点 TDM data_refs 空；板块面属新挖数据接线（登记=DS-150 之外的 sector 族）

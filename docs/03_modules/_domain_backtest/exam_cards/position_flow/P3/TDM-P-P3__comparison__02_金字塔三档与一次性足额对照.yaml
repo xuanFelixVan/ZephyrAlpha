@@ -1,0 +1,83 @@
+schema_version: '1.0'
+card_id: TDM-P-P3/comparison/02_金字塔三档与一次性足额对照
+node_id: TDM-P-P3
+family: comparison
+title_zh: 加仓决策（枢纽）·对照卡：三档分批爬坡 vs 一次性足额（加仓半边最近的一条可考路径）
+hypothesis: >-
+  加仓的经济学=浮盈确认后才放规模。假设同一信号面下三档爬坡（K=pyramid：入场 1/3 档，收盘≥入场×1.03
+  加至 2/3，≥×1.06 加至满）相对一次性足额（K=lump）降低 OOS MaxDD >=1pp、降低单票回撤暴露，
+  代价是牛市段收益略降。若爬坡无益甚至有害（例如趋势市里满仓更早），则整个 P3 族（资格门/阶梯/量级/时点）
+  的存在必要性被削弱——本卡是 P3 族的第一道总闸。
+  ★口径冲突先入册：引擎 pyramid 用**等额三档**（1/3+1/3+1/3，_apply_capital_ramp_overlay L1114），
+  而 live 侧 PyramidingConfig 是**递减**（首加=剩余预算×1/2 逐次减半，halving_ratio_numer/denom=1/2，L89-91）——
+  两口径不同，本卡先考“有无爬坡”，档序差异另立 P3-02 卡考。
+arm_definition:
+  A_lump: {K_capital_ramp: lump, note: 现行考卷语义=schema baseline}
+  B_pyramid: {K_capital_ramp: pyramid, note: 三档 1/3，阶梯 3%/6%，armed 段内 cummax 持久化不降档}
+  C_linear20: {K_capital_ramp: linear_20d, note: 时间爬坡对照，与金字塔分离“分批”的两动因=空间确认 vs 时间摊平}
+  D_linear60: {K_capital_ramp: linear_60d}
+  held_fixed: 24 列 cap、hs300、top20、inv_vol、cap10、periodic、X_stop/X_breaker=off
+    （B 与 C/D 的对照是“价格触发分批 vs 时间分批”，A 是“不分批”）
+  context_gate: >-
+    必须置 capital_ramp_enabled=true（DEFAULT_CONTEXT L122 为 False=K 折叠；
+    search_space_prereg_t3b.yaml:20 亦 false）——不显式开闸则四臂静默同码，增益恒 0（J 维同类布尔坑先例）
+executor: D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py:_apply_capital_ramp_overlay（L1058-1116）
+  + strategy_exam.window_metrics + calibrate_cost_tier_redblue.run_cost_tier_scan
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛——爬坡的代价段）
+    bear: 2021-07-01..2024-01-31（贴现率熊——爬坡的收益段）
+  frozen_note: 看数前冻结；三档/阶梯 3%·6%/线性 20·60 日均取引擎在册常数零扫描
+buckets:
+  type: arm_comparison
+  'on': 四臂 × {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 120
+  extra_report: 各臂平均满仓时点滞后（建仓到满仓天数）与加仓触发的平均浮盈幅度（机制观察）
+pillars:
+  maxdd_gate: B 相对 A 的 OOS MaxDD 改善 >= 1pp 且熊段改善同号（分批的存在理由=减损）
+  cost_gate: B 相对 A 成本后 Sharpe 降幅 <= 0.15（分批必付的踏空成本容许价）
+  mechanism_gate: B 相对 C/D（时间爬坡）在牛段收益降幅更小——若时间爬坡全面优于价格爬坡，
+    则“浮盈才加”的确认逻辑无价值，P3 族须重设计（这是本卡最硬的可证伪点）
+  turnover_or_cost_gate: 四臂统一 frozen_l0 扣费 + stress_l2 复算，符号翻转=fail；判据成组禁单指标
+  oos_and_regime_gate: 结论在 OOS 与熊段同号
+target:
+  primary: oos_maxdd_improvement_B_minus_A
+  secondary: sharpe_after_cost_delta、满仓时点滞后天数、B vs C/D 的牛段差
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.01
+  sharpe_delta_min: -0.15
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩
+  signal_derivation: composite_signal → monthly_topn_signals(top_n=20) → _apply_capital_ramp_overlay(weights, closes, ramp_mode)
+  price_table: c1_market.kline_daily_hfq（close；入场价=持仓 0→1 翻转日收盘，entry_px=closes.where(entry_day).ffill()）
+  target_source: 四臂日 NAV → strategy_exam.window_metrics
+  data_window_evidence: |
+    引擎实读 factory_grid_executor.py:1058-1116（含“pyramid：三档金字塔（P3 翻译）：入场 1/3 档，
+    收盘≥入场价×1.03 加至 2/3 档，≥×1.06 加至 1.0 档；已加仓档不因回落降档（路径依赖=金字塔语义）”
+    与 L1114 `tranche = (1.0/3.0) + (1.0/3.0)*armed3 + (1.0/3.0)*armed6`）；
+    schema=config/position_recipe_grid_schema.yaml:99-103（K 维 values 与 active_if capital_ramp_enabled）；
+    开闸前置实读 DEFAULT_CONTEXT factory_grid_executor.py:122 与
+    config/search_space_prereg_t3b.yaml:20（context_overrides 现值 capital_ramp_enabled: false）
+    live 侧对照真源=src/zephyr/position/core/pyramiding_rules.py:85-91（max_tranches=3、
+    halving_ratio 1/2 递减、ladder_min_pct=0.025）——与引擎等额三档/3%·6% 的口径差已在本卡头部入册
+    先例接线级=st_p_daytrade_mining.md §1-2（P3 判 B 类“K 维 pyramid 占位；B4 族 K_capital_ramp 开闸即考，
+    金字塔族是 M 级最近路径”）

@@ -1,0 +1,72 @@
+schema_version: '1.0'
+card_id: TDM-P-P2-03/comparison/02_未闭环敞口过夜代价双臂
+node_id: TDM-P-P2-03
+family: comparison
+title_zh: 做T闭环与成功判定·对照卡：14:50 无条件平仓 vs 留敞口过夜的跳空代价
+hypothesis: >-
+  本节点纪律=“14:50 还没闭环的不管盈亏无条件平掉敞口（不留隔夜 T）”。该纪律的经济学=割掉隔夜跳空尾部。
+  双臂：A=14:50 强平（隔夜代价=0，代价改为强平时的价差损失）；B=留敞口过夜（代价=次日开盘跳空）。
+  假设 B 的尾部损失（5% 分位）显著劣于 A 且年化累计更差；若 B 反而更优，则 14:50 强平是在系统性地
+  卖飞收益，应改为条件平仓（按隔夜风险状态）——如实报，不为纪律护短。
+arm_definition:
+  A_force_close_1450: 未闭环敞口在当日 14:50 的 1min 收盘价平仓，次日以次日开盘价重建（若仍需）
+  B_hold_overnight: 同一敞口保留过夜，次日开盘结算
+  cost_of_A: 强平价差成本 = (14:50 价 − 若次日开盘价) 的机会损失（同式反号，两臂共用同一跳空变量）
+  gap_variable: gap = 次日开盘价 / 当日 14:50 收盘价 − 1（日内价用 kline_1min 14:50 bar，
+    次日开盘用 kline_1min 09:30 首根或 kline_daily_hfq open，两口径并报防静默偏差）
+  held_fixed: 同一未闭环敞口集合（由当日做T 配对未平部分定义）、同一双边成本 31.2bp
+executor: D:/ZephyrAlpha/scripts/audit/t0_conditional_e4_v3_exam.py（识别未闭环对与材料资格 M-1..M-4）
+  + D:/ZephyrAlpha/scripts/backtest/fexam/ch_data.py 取 kline_1min 14:50/次日开盘
+  （注：两臂的 gap 分布统计需 <50 行汇总件；配对与成本口径 import 复用禁重写）
+window:
+  in_sample:
+  - '2026-06-01'
+  - '2026-08-31'
+  oos: &id001
+  - '2026-09-01'
+  - '2026-10-09'
+  regimes:
+    bull: 六段 routed=1 侧（expansion/ignition）
+    bear: capitulation/distribution 侧
+  frozen_note: 看数前冻结；14:50 时点取 TDM 原文常数不扫描
+buckets:
+  type: pair_sample
+  'on': 未闭环敞口对（按 gap 方向与六段分层）
+  min_obs_per_bucket: 每集 >= 30 对（承在册土规；不足判 INSUFFICIENT_SAMPLE，禁出方向结论）
+pillars:
+  tail_gate: B 臂 gap 的 5% 分位 <= −0.5%（隔夜尾部真实存在），且 A 臂累计代价 < B 臂累计代价
+  mean_gate: B 臂均值 gap 若为正，须同时通过成本门（扣 31.2bp 双边后仍优）才算“强平在卖飞”
+  turnover_or_cost_gate: 两臂同一 31.2bp 双边口径；A 臂多付的一次往返成本须计入，禁只算跳空
+  oos_and_regime_gate: 结论在 IS/OOS 与牛熊两侧同号（跳空分布高度状态依赖，熊侧应更陡）
+  success_def_gate: 附核“成功”定义=股数不变+总成本降（TDM 原文）——统计两臂下该定义的成功率差，
+    若 B 臂成功率更高但尾部更差，须把两指标同框报给 Owner（碰钱面不得单指标择优）
+target:
+  primary: overnight_gap_5pct_bps_B_minus_A
+  secondary: 成本后累计差、做T 成功率（股数不变+成本降定义）两臂差
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  tail_gap_min_bps: 50.0
+  cost_adjacent_total_gate: both_arm_net_after_31_2bp
+  pairs_min_for_verdict: 30
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P2-03.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；materiality=critical
+data_binding:
+  signal_table: c1_market.kline_1min（14:50 与次日 09:30 首根 bar）+ data/backtest_artifacts/bt-*.json
+  signal_column: 未闭环敞口标记（当日做T 买卖未配平部分）与 gap = 次日开盘/当日 14:50 close − 1
+  signal_derivation: cost_trio_exam.build_pairs 配对后取残量敞口；gap 用同票同日 1min 双点计算
+  target_source: 两臂结算差（bp），kline_daily_hfq.open 作次日开盘的第二口径复核
+  data_window_evidence: |
+    覆盖实测（台账 §一 探针命令原文）：kline_1min 2021-09-01..2026-10-09，1,493,285,247 行，8,706 符号；
+    kline_5min 时间列=trade_time（首探用 trade_date 报 404=列名错，非无数据：
+    2021-09-01 09:35:00..2026-10-09 15:00:00，296,122,159 行）；
+    TDM 原文=config/trading_decision_map.yaml 本节点 algo_note_zh（“14:50 还没闭环的不管盈亏无条件平掉敞口”
+    “收盘判定：股数不变+总成本降=成功”“做T是降成本工具不是独立盈利来源”），algo_refs=['DAL-T0-CLOSE']
+  ds_ref: 本节点 TDM data_refs 空；日内材料=bt-*.json（66 条目实测）；日频伪造禁令继承 H9 §4.2

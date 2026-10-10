@@ -1,0 +1,104 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-02/calibration/04_盈亏百分比腿与ATR缺失降级
+node_id: TDM-P-P1-02
+family: calibration
+title_zh: 持仓盈亏百分比尺与 ATR 缺失降级·校准卡（RX-A 交叉复挖漏矿）
+hypothesis: >-
+  TDM 本节点 algo_note 的分级判据是「两把尺的合取」："WATCH（「浮亏>3%」 或临近止损）秒级盯；
+  MONITOR（「浮盈浮亏 3% 内」）5 分钟盯；HOLD（深度浮盈安全区）事件驱动"，且 `fallback` 原文=
+  "「ATR 数据缺失→按盈亏百分比粗分级」"。同车道两卡（calibration/02 与 comparison/03）的 buckets 都是
+  「纯 ATR 带宽」（(close−stop)/ATR14 的 1.5/3.0 两把尺），盈亏百分比尺从未入任何判据面；
+  本车道正查实码（台账 §3-A2）确认 `position_triage.py` 只有 `_WATCH_ATR_MULTIPLIER=1.5`/`_HOLD_ATR_MULTIPLIER=3.0`
+  与 delta 扣阈，「grep 无 pnl/3% 相关常数 ⇒ 地图写了、码内没有」。
+  本卡三问：①盈亏% 尺对后续下行有没有独立信息（IC/单调）；②在 ATR 尺之上叠加它有没有边际
+  （合取臂 vs 纯 ATR 臂，边际<=0 则节点"或"字的一半是装饰）；③ATR 缺失子样本里它单独用够不够
+  （=直接考节点那条 fallback：若判别力塌陷，则 fallback 应改写为"缺 ATR 直接进最高档 WATCH"而非"按盈亏粗分级"）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: >-
+    看数前冻结。IS/OOS 与 ATR 口径逐字承同车道 calibration/02（ATR14 Wilder、stop=entry−3×ATR14、
+    entry=月频调仓 T+1 开盘价、threshold_delta 反馈钳制本考置 0 以隔离反馈面），
+    目的是「与 02 卡同窗同底座可比」，不另起口径虚增覆盖尺。
+    节点原文只给"3%"一处数字，"深度浮盈安全区"无数值 ⇒ 本卡钉死 HOLD-pnl=浮盈>+3%（与 MONITOR 带对称，
+    这是补齐地图空白的最小冻结而非调参），并在此声明：若日后 TDM 给出别的数，须另立扩档卡，本卡不追溯。
+buckets:
+  type: ordinal_three_level
+  'on': 当日盈亏百分比 pnl% = close/entry − 1 映射三档（<−3%=WATCH-pnl；−3%..+3%=MONITOR-pnl；>+3%=HOLD-pnl）
+  min_obs_per_bucket: 60（三档各 >=60 持仓-日；WATCH-pnl 档若不足判 nan 禁并入）
+  extra_bucket: pnl% 连续值另做十分位分桶用于单调性 rho；另设 ATR 缺失子样本层（见 atr_missing_arm）
+pillars:
+  response_monotonicity: 十分位 pnl% × 未来5日最差收益 的中位响应 Spearman rho >= 0.6（pnl 越负越危险，符号为负）
+  ic_floor: 日频截面 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与同车道 02 卡同门槛；
+    符号先验为「正」——pnl% 越高则未来 5 日最差收益越高，机判面 pillars_numeric 即按此有符号口径判，
+    若实测为负号则同车道 02 卡的 ATR 带宽尺符号亦应反号，两卡同场对卡后才可判谁错）
+  level_ordering: 三档中位未来5日最差收益必须满足 HOLD-pnl > MONITOR-pnl > WATCH-pnl（一档反序=判 fail）
+  increment_over_atr_band: 合取臂（WATCH = pnl<−3% 「或」 ATR 带宽<1.5，承节点"或"字）相对纯 ATR 臂的
+    IC 提升 >= 0.005 且 mono 不劣 ⇒ 盈亏尺必要；提升 < 0 ⇒ 节点双尺之一是装饰，登记为简化提案
+  atr_missing_arm: 「本卡对 fallback 的直接检验」——ATR 不可得（停牌/新股热身不足）的持仓-日单独成层，
+    在该层内 pnl% 尺的 |IC| 与单调 rho 须 >= 全样本同指标的 60% 才判"按盈亏百分比粗分级可接受"；
+    低于 60% ⇒ 该 fallback 应改写（缺信息时的降级分类不可靠，宁可进最高档），这是节点文字的可证伪面
+  lag_profile: t+1/t+3/t+5 至少一档 |IC| 达峰值且半衰期 >= 1 交易日
+  regime_stability: bull/bear 两段同号且均过 ic_floor（pnl 尺在熊段应更强，若不更强则该尺的告警价值被高估）
+  alert_cost_pairing: 合取臂的 WATCH 档占比增量须同框报数（<= +15pp，承同车道 comparison/03 的告警膨胀地板）——
+    碰钱环节的盯盘频率是稀缺资源，判据成组禁单指标
+target:
+  primary: worst_return_next_5d（未来 5 个交易日的最差收盘收益，下行侧口径，与同车道 02 卡同 target 以便直接对卡）
+  secondary: stop_trigger_rate_5d（未来 5 日收盘跌破 stop_line 概率）与 watch_share_delta（告警量代价）
+  note: 本卡与同车道 02 卡的关系=02 考 ATR 尺，本卡考 pnl 尺与两尺合取；两卡合起来才覆盖节点原文的完整判据句
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-02.confidence
+preregistered_by: st-nightmine-20261010-RXA
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（close 与 ATR14 底座）+ 合成持仓台账（entry 价，回测平面唯一来源）
+  signal_column: 派生 pnl% = kline_daily_hfq.close / entry_price − 1（非在册单列）；
+    对照面 ATR 带宽 = (close − stop_line)/ATR14（承同车道 02 卡定义）
+  signal_derivation: >-
+    持仓集合与 entry 价承同车道 02 卡口径：composite_signal → monthly_topn_signals(top_n=20) → 调仓 T+1 开盘价为 entry；
+    stop_line = entry − 3×ATR14(调仓信号日收盘)（prereg_frozen.yaml stop_rules）；
+    ATR14 用 Wilder 平滑，件复用 scripts/backtest/fexam/exit_sim/exit_simulator.py 的 atr14_wilder(L135)/wilder_atr_one(L119)，禁重造；
+    「ATR 缺失判定=该 (symbol, trade_date) 在 hfq 表无行，或自上市起有效交易日 <14（热身不足）」，
+    该子集即 fallback 腿的检验对象，须单独计数披露，禁混入三档（承同车道 02 卡 atr_missing_arm 的同一纪律）；
+    合取臂=WATCH if (pnl% < −0.03) OR (band < 1.5)（节点"或"字的直译），纯 ATR 臂=WATCH if (band < 1.5)。
+  target_source: kline_daily_hfq close → worst_return_next_5d（未来 5 交易日 min(close_{t+i}/close_t − 1））；
+    stop_trigger_rate_5d 用同表 close vs stop_line
+  data_window_evidence: >-
+    覆盖实测（本车道台账 §2-P4 与 L4 台账 §一，同表同口径）：c1_market.kline_daily_hfq=
+    1990-12-19..2026-09-30 / 10,098,785 行，列含 open/high/low/close/volume/amount/amplitude/pct_change/turnover
+    ⇒ close 足算 pnl% 与未来 5 日最差收益，high/low 足算 ATR14；OOS 上界 2026-09-30=实测 max(trade_date)（其后 9 日缺口已在 L4 台账 §3-P10 登记）。
+    码内现状正查（本车道台账 §3-A2，命令原文
+    `grep -n "PCT|0.03|pnl|浮亏" src/zephyr/sell_decision/core/position_triage.py`）→ 仅
+    `_WATCH_ATR_MULTIPLIER: Final[float] = 1.5`(L62)、`_HOLD_ATR_MULTIPLIER: Final[float] = 3.0`(L63)、
+    `watch_abs = _WATCH_ATR_MULTIPLIER * atr_value - delta_abs`(L148)、`hold_abs = ...`(L149)
+    ⇒ 「盈亏百分比尺与 ATR 缺失降级路径在码内无载体」，而 TDM 原文两条都写了
+    ⇒ 本卡是考法也是治理产出（"地图有、码内无"如实登记，不改 TDM、不改码，属本车道禁区）。
+    节点原文指针=config/trading_decision_map.yaml 本节点 algo_note_zh 与 fallback 字段（本车道节点快照
+    D:/ZephyrAlpha/.runtime/tmp/st-nightmine-20261010/rxa_dump.txt L223-256）。
+  impl_ref: src/zephyr/sell_decision/core/position_triage.py（TDM module_ref=MOD-SELL-000，实读 L62-63/L148-149/L151-153）
+    + scripts/backtest/fexam/exit_sim/exit_simulator.py（ATR/成本/调仓口径复用件）
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（panel 面 _panel_metrics+judge 机判 pillars_numeric；
+  三臂各自的 pnl%/band 列由 data_binding 派生后运行期注入，本卡 data_binding 即接线面）
+origin: cross_probe_RXA（漏矿来源=TDM 节点 algo_note_zh 的"浮亏>3%/浮盈浮亏 3% 内"与 fallback"ATR 缺失→按盈亏百分比粗分级"两句原文）
+sources:
+  - 同车道在册装置与口径（L4 台账 §一 exit_sim/prereg_frozen/calibration_exam 逐件实读），本卡不另起口径、不重复挖外部矿

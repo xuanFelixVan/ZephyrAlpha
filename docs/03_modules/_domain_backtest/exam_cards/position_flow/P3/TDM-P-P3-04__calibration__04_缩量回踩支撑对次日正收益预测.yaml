@@ -1,0 +1,70 @@
+schema_version: '1.0'
+card_id: TDM-P-P3-04/calibration/04_缩量回踩支撑对次日正收益预测
+node_id: TDM-P-P3-04
+family: calibration
+title_zh: 加仓时点与执行·校准卡：缩量回踩守住支撑（不破前低+量缩）的次日正收益检验
+hypothesis: >-
+  本节点另一时点分支=“缩量回调守住支撑（回踩不破前低+量缩）即时加”。两个条件均可日频构造：
+  量缩=20 日均量/当日量之比（turnover/volume 在册列），守支撑=当日 low > 前 20 日 low（不含当日）。
+  假设该形态对次日正收益与未来 5 日超额有正预测力（“健康回调”信号）；若无预测力，
+  则该分支与“尾盘确认”等价冗余，应删一支（净零：同真源可派生→必并）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；“量缩”定义=成交量 < 20 日均量的 0.7 倍；“支撑”=前 20 日最低价（不含当日）
+buckets:
+  type: state_combination
+  'on': 2×2 形态格（量缩 是/否 × 守支撑 是/否）+ 连续强度分位（量的比值、距前低的幅度）十分位
+  min_obs_per_bucket: 60（持仓-日样本/格）
+pillars:
+  cell_gate: “量缩∧守支撑”格的次日正收益占比与未来5日超额中位须高于其余三格（形态的联合价值，
+    不是单腿价值）
+  response_monotonicity: 连续强度（距支撑缓冲 ÷ 缩量程度）十分位 vs 未来5日超额 Spearman rho >= 0.5
+  ic_floor: 日频截面 IC 均值 >= 0.02 且 IC_IR >= 0.25
+  single_leg_control: 分别报“只缩量不守支撑”“只守支撑不缩量”两格——若单腿即足，联合形态是伪精细，
+    须如实写（本卡最重要的可证伪点）
+  regime_stability: 牛/熊两段同号（缩量回踩在熊段可能=无人接盘而非健康回调，符号可能翻转，
+    翻转本身即结论）
+  trend_context: 另按 20 日趋势方向分层（加仓前提是浮盈趋势中，与 P3-01 浮盈红线一致）
+target:
+  primary: excess_return_next_5d（未来5日相对截面中位超额）
+  secondary: 次日正收益占比、未来10日最大不利偏移（MFE/MAE 的 MAE 侧）
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.5
+  ic_mean_min: 0.02
+  ic_ir_min: 0.25
+  regime_same_sign: true
+  oos_same_sign: true
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（panel 机判五面；
+  2×2 格与单腿对照面由运行期注入 signal 后按 pillars 复核，judge 只机械核 mono/ic/ir/regime/oos，
+  此局限如实标注）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3-04.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（volume/turnover/low/close 在册列实测）
+  signal_column: 派生两列——vol_ratio_20 = volume / MA20(volume)、support_buffer = low − MIN(low, 前20日)
+    ；形态格由 (vol_ratio_20 < 0.7) ∧ (support_buffer > 0) 定义
+  signal_derivation: 支撑与均线均只用 t 日及以前数据（PIT 安全，禁混入当日之后的值）；
+    持仓池=多因子 top20 权重面（与加仓场景一致）
+  target_source: kline_daily_hfq close → 次日收益与未来5日超额（同日截面中位为基准）
+  data_window_evidence: |
+    覆盖与列实测（台账 §一 命令原文）：kline_daily_hfq 1990-12-19..2026-09-30，10,098,785 行，
+    列=['trade_date','symbol','open','close','high','low','volume','amount','amplitude','pct_change',
+    'change','turnover',...] ⇒ volume/low/turnover 齐备，形态可日频构造
+    原文=config/trading_decision_map.yaml 本节点 algo_note_zh“缩量回调守住支撑（回踩不破前低+量缩）即时加”
+  ds_ref: DS-150=c1_market.kline_daily（registry L6459）；本卡用 hfq 表，口径差已在 P1-01 卡入册

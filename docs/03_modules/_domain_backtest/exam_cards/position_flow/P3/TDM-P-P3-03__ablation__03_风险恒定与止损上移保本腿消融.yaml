@@ -1,0 +1,84 @@
+schema_version: '1.0'
+card_id: TDM-P-P3-03/ablation/03_风险恒定与止损上移保本腿消融
+node_id: TDM-P-P3-03
+family: ablation
+title_zh: 加仓量级与风险核算·消融卡：加仓后“总风险不超首仓预算+全部止损上移保本”这条腿去掉掉多少
+hypothesis: >-
+  本节点纪律=风险恒定校验（加仓后总风险额不超首仓风险预算，靠止损等比上移实现）+
+  “加仓完成后全部止损上移保本”。该腿的功能是把分批建仓的暴露增长锁成风险中性增长。
+  消融双臂：A=加仓且止损随档上移（保本），B=只加仓、止损仍锚首仓入场价−预算（不保本）。
+  假设 B 相对 A 的尾部显著恶化：OOS MaxDD 恶化 >=2pp、单笔最大损失分位恶化、
+  “加仓后转亏”的持仓-日占比升高。若 B 不劣于 A，则该腿只是账面安全感，真实成本（保本止损
+  会把正在回踩的仓位提前打掉）反而可能更高——该反向结论必须允许被这卡说出。
+arm_definition:
+  A_risk_neutral: pyramid 加仓 + stop_line 随每档加权重算（等比上移至保本）
+  B_static_stop: pyramid 加仓 + stop_line 固定为首仓 entry−3×ATR14(首仓信号日)
+  C_no_add: lump 且首仓止损（三态基线，用于分离“加仓本身”与“保本腿”两件事）
+  held_fixed: 24 列 cap、hs300、top20、inv_vol、cap10、monthly、X_breaker=off；
+    context="capital_ramp_enabled true, phase 3"
+executor: 缺件——需把 exit 腿的止损线改为“随加仓档重算”的路径依赖版；现装
+  _apply_exit_overlay 的 entry_px=持仓段首日收盘（L913-915 实读），加仓不重置 entry，
+  即**引擎里根本没有“加仓后止损上移”这条腿**；exit_simulator 的 trailing_stop 是峰值−3×ATR
+  （Chandelier，prereg_frozen.yaml stop_rules），语义相近但不是“保本上移”⇒两者不可混用
+  ⇒ status=blocked_on_impl
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；保本线定义=加权平均成本（严格保本）与首档成本（保守）两版各跑一次，主判据用加权成本
+buckets:
+  type: arm_comparison
+  'on': 三臂 × {IS, OOS, 牛段, 熊段}；另按“加仓笔数”分层（1/2/3 次）
+  min_obs_per_bucket: 每臂每段 >= 120 交易日；2 次以上加仓的票-段 >= 50（保本腿只在多档时才咬合）
+pillars:
+  ablation_gate: B 相对 A 的 OOS MaxDD 恶化 >= 2pp 且单日最大损失 5% 分位恶化 >= 0.2pp（去腿整链掉多少）
+  whipsaw_gate: A 相对 B 的“止损被打掉后又创新高”占比须同框报出（保本腿的真实代价=震出）；
+    若 A 的 whipsaw 成本超过其减损，则判该腿净负贡献（允许并预期的反向结论）
+  risk_neutral_check: A 臂逐日总风险额（Σ|仓位|×ATR）应不超首仓预算（约束 binding 检查，
+    构造性核实而非假设成立）
+  turnover_or_cost_gate: 三臂统一 frozen_l0 扣费 + stress_l2 复算；判据成组（回撤/尾部/震出/换手）
+  oos_and_regime_gate: 结论在 OOS 与熊段同号
+target:
+  primary: oos_maxdd_regression_B_minus_A
+  secondary: 单日损失 5% 分位差、whipsaw 占比、总风险额 binding 次数
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  ablation_maxdd_regression_min: 0.02
+  tail_regression_min: 0.002
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+blocked_on_impl:
+  missing: 随加仓档重算止损线的路径依赖 exit 腿（保本口径两版）
+  needed_interface: ramp overlay 需回传各档成交量与价（当前只回传权重乘数，L1116），
+    exit overlay 需接受动态 stop_line 序列（当前内部自算 entry_px，L913-915）
+  unlock_condition: 两 overlay 联施工（约 40 行）后改 status=preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3-03.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩
+  signal_derivation: composite_signal → top20 → ramp overlay（pyramid）→ 动态止损腿（待施工）
+  price_table: c1_market.kline_daily_hfq（open/high/low/close → ATR14）
+  target_source: 三臂日 NAV → strategy_exam.window_metrics；尾部=单日收益 5% 分位
+  data_window_evidence: |
+    引擎现状实读：factory_grid_executor.py:913-915（entry_px=closes.where(entry_day).ffill()、
+    atr3x 档 level=entry_px−3.0×_close_atr(closes,14)）、:1112-1116（ramp 档乘数，无档成交明细回传）；
+    exit_simulator 的 Chandelier 口径=持仓期最高收盘−3×ATR14（prereg_frozen.yaml stop_rules.trailing_stop）
+    ——语义相邻但不同，本卡明确不借用；
+    live 侧纪律原文=config/trading_decision_map.yaml 本节点 algo_note_zh“风险恒定校验=加仓后总风险额不超
+    首仓风险预算（止损等比上移实现）。加仓完成后全部止损上移保本”；
+    在册常数参考 position_sizing_engine.py:168-182（vol_sigma_multiplier/var/cvar/participation/exit_days）
+  ds_ref: module_ref=src/zephyr/position/core/position_sizing_engine.py（live 件，本卡考其纪律的回测等价物）

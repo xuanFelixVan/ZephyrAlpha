@@ -1,0 +1,74 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-06/comparison/02_三腿全因子与仲裁序对照
+node_id: TDM-P-P1-06
+family: comparison
+title_zh: 体检结论与动作清单·对照卡：三否决腿全因子（2^3）+ 冲突仲裁序开闭
+hypothesis: >-
+  P1-06 的实质=多路体检结论的汇总与仲裁。三腿（风险否决 X_stop / 组合熔断 X_breaker / 逻辑存活 thesis）
+  在全因子 2^3 臂下的组合效应须满足：①全开臂不劣于任一单腿臂（仲裁有效）；②否决优先级
+  （风控>组合>逻辑）相对“先到先得/无序”不更差。若全开劣于某单腿臂，或加序不加值，
+  则裁决中心（position_adjudication_center）只是转发器，其“异常置人工确认默认态”才是唯一真实价值
+  （该面属 live 运维面，本卡不考，登记于六向⑤）。
+arm_definition:
+  factorial_8: X_stop ∈ {off, atr3x} × X_breaker ∈ {off, dd20} × thesis ∈ {off, 0.30}（全 8 臂）
+  order_on: 冲突日按“风控否决 > 组合熔断 > 逻辑存活”次序取动作（先命中者定终态，后腿不再改）
+  order_off: 冲突日按后腿覆盖前腿（现无显式序的朴素实现，作为对照）
+  held_fixed: 24 列 cap、hs300、top20、inv_vol、cap10、periodic、K=lump
+executor: 缺件——X_stop/X_breaker 已接线（L838/841），thesis 腿函数在（L1034）但零调用点且 schema 无维；
+  全因子臂与“仲裁序”无 runner（grid 按单维组合展开但无腿序概念）。需施工≈80 行（组合三腿 + 序开关）。
+  ⇒ status=blocked_on_impl
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；8 臂定义与序规则先写死，事后禁增臂挪柱
+buckets:
+  type: full_factorial
+  'on': 8 臂 × {IS, OOS, 牛段, 熊段}；冲突日单独成集（同日被≥2 腿命中）
+  min_obs_per_bucket: 每臂每段交易日 >= 120；冲突日样本 >= 20（否则“仲裁序”面判不可分辨）
+pillars:
+  dominance_gate: 全开臂（111）相对最优单腿臂的 OOS MaxDD 不劣化 >1pp 且成本后 Sharpe 不劣 >0.1
+  interaction_gate: 三腿两两交互项和 >= 0（负交互=腿互相抵消，汇总层判 fail，须退回单腿配置）
+  order_gate: 序开相对序关的成本后 Sharpe 差 >= 0 且熊段 MaxDD 不劣化；无差异=仲裁序无价值（如实入册）
+  conflict_share_gate: 冲突日占比与这些天的平均后续下行须同框报数（无冲突则本卡无考题，判 no_binding）
+  turnover_or_cost_gate: 8 臂统一 frozen_l0 扣费 + stress_l2 复算，符号翻转=fail；判据成组禁单指标
+  oos_and_regime_gate: 判据在 OOS 与熊段同号
+target:
+  primary: full_overlay_vs_best_single_leg_delta（dominance 差）
+  secondary: 交互项和、序开减序关的 sharpe/maxdd 差、冲突日占比
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  maxdd_regression_max: 0.01
+  sharpe_delta_min: -0.1
+  interaction_sum_min: 0.0
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+blocked_on_impl:
+  missing: 三腿全因子 runner + 腿间仲裁序开关（thesis 腿需先接维，见 P1-03/comparison/03 同一施工位）
+  unlock_condition: 前置=P1-03 的 M5 维接线；落地后本卡 8 臂与序开关即可跑，改 status=preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-06.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩
+  signal_derivation: composite_signal → monthly_topn_signals → 三腿 overlay（序开关待施工）
+  price_table: c1_market.kline_daily_hfq
+  target_source: 8 臂日 NAV → strategy_exam.window_metrics；冲突日集合=各腿 trigger 矩阵按行相加 >=2
+  data_window_evidence: |
+    接线/未接线实读证据：factory_grid_executor.py:836-841（stop_mode/breaker_mode 取自 v 并调用 overlay）、
+    :1034 定义 _apply_thesis_survival_overlay 且文件内 grep 无调用点；
+    config/position_recipe_grid_schema.yaml:71-87（X_stop/X_breaker active_if "phase >= 3"），无 thesis/M5 维
+    TDM 本节点原文=“汇总五路体检…任一子项异常=该持仓置‘人工确认’默认态”（人工确认面属 live 运维，不在回测平面）

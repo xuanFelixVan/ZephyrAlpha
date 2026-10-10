@@ -1,0 +1,84 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-05/comparison/03_漂移触发与周期触发对照
+node_id: TDM-P-P1-05
+family: comparison
+title_zh: 组合级体检·对照卡：漂移越带重平衡 vs 周期重平衡（“偏离>25% 才动”这条线的口径冲突与代价）
+hypothesis: >-
+  漂移带体检是 P1-05→P2-04 减仓指令的机制面。在册实装 D2_rebalance_trigger=[periodic, drift_band]，
+  引擎判阈=|Δw|.sum()/2 > 0.10（即平均偏离 10% 触发，factory_grid_executor.py:697-708/717 实读）。
+  **口径冲突先入册**：TDM 本节点原文写“实际权重偏离目标>25%（漂移越带）”，引擎实装是 10%——
+  两数差 2.5 倍，任一方对都得先纠正另一方（本卡附带产出口径核对项）。
+  假设 drift_band 相对 periodic 在同等检查频率下降低换手与成本、回撤不劣化；若不省成本或反而恶化回撤，
+  则漂移体检腿应退役（净零原则，零消费机制不留）。
+arm_definition:
+  A_periodic: {D1_rebalance_freq: monthly, D2_rebalance_trigger: periodic}
+  B_drift10: {D1_rebalance_freq: monthly, D2_rebalance_trigger: drift_band, note: 引擎现装 10% 语义}
+  C_periodic_weekly: {D1_rebalance_freq: weekly, D2_rebalance_trigger: periodic}
+  C_note: >-
+    把“周期更密”作为对照基准——漂移触发的真实竞品是更密的定期调仓，非稀疏定期调仓；
+    不设此臂则对照失真
+  pending_arms: drift25（TDM 原文 25% 档）——引擎阈值硬编码 0.10（thr = 0.10*2.0，L717），
+    未参数化 ⇒ 25% 臂属施工位（把 band 提为 dim 值或入参），本卡先跑 A/B/C 三臂，drift25 待接
+  held_fixed: 24 列 cap、hs300、top20、inv_vol、cap10、H=lambda_5bp、X_stop/X_breaker=off、K=lump
+executor: D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py（_apply_freq_trigger L697-722）
+  + strategy_exam.window_metrics + calibrate_cost_tier_redblue.run_cost_tier_scan（换手→成本闭环）
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；换手口径=单边（承 c4 口径 avg_turnover_1side，禁与双边混用）
+buckets:
+  type: arm_comparison
+  'on': 三臂 × {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 120
+  extra_report: B 臂相对 A 臂的越带次数与触发日分布（集中在熊段=漂移体检的真实工作场景）
+pillars:
+  cost_gate: B 臂年化单边换手相对 A 臂下降 >= 15%，且成本后收益不劣（省成本是漂移腿的存在理由）
+  maxdd_gate: B 臂 OOS MaxDD 相对 A 臂劣化 <= 1pp（越带滞后带来的风险代价上限）
+  vs_dense_gate: B 臂须不劣于 C 臂（更密定期调仓）的成本后 Sharpe，否则漂移腿被“简单调勤”支配=判 fail
+  turnover_or_cost_gate: frozen_l0 扣双边佣金后判 + stress_l2 复算，符号翻转=fail；
+    判据成组（换手/回撤/收益三框同报）
+  oos_and_regime_gate: 判据在 OOS 与熊段同号
+  alignment_gate: 附带产出=引擎 10% 与 TDM 25% 口径核对结论（数值差异是否 binding：
+    若实际偏离从未越过 10%，两口径在回测平面等价，须如实报 no_binding 而非宣称验证了 25%）
+target:
+  primary: annualized_oneside_turnover_delta_B_minus_A
+  secondary: oos_maxdd_delta、sharpe_after_cost_delta、越带触发次数
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  turnover_reduction_min: 0.15
+  maxdd_regression_max: 0.01
+  sharpe_delta_min: -0.05
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-05.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩
+  signal_derivation: composite_signal → monthly_topn_signals → _apply_freq_trigger(freq, trigger)
+  price_table: c1_market.kline_daily_hfq
+  target_source: 三臂日 NAV + 持仓权重面差分（换手）→ strategy_exam.window_metrics
+  data_window_evidence: |
+    实装与阈值实读 D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py:697-708
+    （docstring “drift_band=偏离>10% 才重平衡”；判阈 `np.nansum(np.abs(row - last)) > thr`、
+    :717 `thr = 0.10 * 2.0  # 原语义: |Δw|.sum()/2 > 0.10（×2 免逐行循环开销）`）；
+    schema 维值 config/position_recipe_grid_schema.yaml:36-39
+    （`- id: D2_rebalance_trigger / values: [periodic, drift_band] / baseline: periodic`）；
+    TDM 冲突文本=config/trading_decision_map.yaml 本节点 algo_note_zh“实际权重偏离目标>25%（漂移越带）”
+    换手口径先例=scripts/backtest/c4_batch_screen.py:75 `avg_turnover_1side`
+  ds_ref: DS-009（权重/台账契约件，非 CH）；MOD 挂载含 MOD-RK-011/043/045/05/15/26/33/34 与
+    MOD-POS-025（position_drift_monitor，live 侧漂移监控件——本卡是其回测等价物，非该件直考）

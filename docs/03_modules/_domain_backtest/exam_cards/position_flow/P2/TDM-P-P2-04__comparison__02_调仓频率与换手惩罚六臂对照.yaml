@@ -1,0 +1,75 @@
+schema_version: '1.0'
+card_id: TDM-P-P2-04/comparison/02_调仓频率与换手惩罚六臂对照
+node_id: TDM-P-P2-04
+family: comparison
+title_zh: 减仓与再平衡·对照卡：频率四档×换手惩罚三档（“减多少划不划算”的成本面）
+hypothesis: >-
+  本节点“减多少=回到目标权重；划不划算=减仓改善>2×交易成本才动”的可回测面=再平衡节奏与换手成本的经济权衡。
+  在册维值 D1_rebalance_freq=[daily,weekly,biweekly,monthly]（基线 weekly）、
+  H_turnover_lambda=[lambda_0, lambda_5bp, lambda_15bp]（基线 5bp）。假设：①频率越高跟踪误差越小但
+  成本后收益越差（存在最优中频）；②λ 抬升等价于稀疏化减仓，其净效应须与降频臂可分辨。
+  若 daily+λ0（最勤最不 penalize）不劣于所有稀疏臂，则“>2×成本才动”的门槛是多余的。
+arm_definition:
+  六臂: >-
+    {D1: daily|weekly|biweekly|monthly} × {H: lambda_0|lambda_15bp} 的关键对角 6 臂
+    （daily/λ0、weekly/λ0、monthly/λ0、daily/λ15bp、weekly/λ5bp 基线、monthly/λ15bp）
+  held_fixed: 24 列 cap、hs300、top20、inv_vol、cap10、D2=periodic、X_stop/X_breaker=off、K=lump
+  口径: 换手=单边（承 c4 口径 avg_turnover_1side）；成本=frozen_l0 万0.854 双边 + stress_l2 复算
+executor: D:/ZephyrAlpha/scripts/backtest/factory_grid_executor.py（_apply_freq_trigger L697-722；
+  λ 与 cap 同件 _apply_cap_and_lambda L827）+ strategy_exam.window_metrics
+  + calibrate_cost_tier_redblue.run_cost_tier_scan（成本档扫描，轻档/全档同源派生）
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；维值取 schema 在册档，禁自造频率档
+buckets:
+  type: arm_comparison
+  'on': 六臂 × {IS, OOS, 牛段, 熊段}
+  min_obs_per_bucket: 每臂每段交易日 >= 120
+  extra_report: 每臂年化单边换手、跟踪误差（权重与目标权重差均值）、成本后/前收益差（扣费额显式报出）
+pillars:
+  cost_gate: 最勤臂（daily/λ0）相对基线（weekly/λ5bp）的成本后 Sharpe 不得更高（若更高，
+    本节点“>2×成本才动”判据 fail，须提请删除该门槛——如实写）
+  lambda_gate: λ15bp 臂相对 λ0 臂的换手下降 >= 20% 且成本后 Sharpe 不劣 >0.1（惩罚有效性）
+  maxdd_gate: 各臂 OOS MaxDD 差异 <= 2pp（再平衡节奏主要动成本不动风险；若差异大须归因说明）
+  turnover_or_cost_gate: 判据成组——换手/成本/收益/回撤四框同报；stress_l2 符号翻转=fail
+  oos_and_regime_gate: 方向结论在 OOS 与熊段同号
+target:
+  primary: sharpe_after_cost_delta_by_arm（六臂相对基线）
+  secondary: 年化单边换手、跟踪误差、扣费额占收益比
+status: preregistered
+signal_kind: panel
+pillars_numeric:
+  sharpe_delta_min: -0.1
+  turnover_reduction_min: 0.20
+  maxdd_spread_max: 0.02
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P2-04.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩
+  signal_derivation: composite_signal → top20 权重 → _apply_freq_trigger + _apply_cap_and_lambda(λ)
+  price_table: c1_market.kline_daily_hfq
+  target_source: 六臂日 NAV 与权重差分换手 → strategy_exam.window_metrics
+  data_window_evidence: |
+    维值实读 config/position_recipe_grid_schema.yaml:32-43（D1/H/E 三维系名与基线）；
+    换手口径先例=scripts/backtest/c4_batch_screen.py:75 `avg_turnover_1side`；
+    TDM 原文=config/trading_decision_map.yaml 本节点 algo_note_zh（“减多少=回到目标权重；
+    划不划算=减仓改善>2×交易成本才动。风控减仓优先级高于做T”），data_refs=['DS-009']
+    先例接线级=st_p_daytrade_mining.md §1（P2-04 判 A 类“D1 调仓频率 4 值+D2 触发+H 换手惩罚 λ，
+    executor:546-577,530-545”）——本卡是其考卷化，非新装置

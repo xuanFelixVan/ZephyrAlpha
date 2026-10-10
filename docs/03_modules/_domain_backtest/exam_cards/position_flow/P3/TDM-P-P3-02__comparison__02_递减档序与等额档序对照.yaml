@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-P-P3-02/comparison/02_递减档序与等额档序对照
+node_id: TDM-P-P3-02
+family: comparison
+title_zh: 金字塔加仓规则·对照卡：递减档序（live 1/2 减半）vs 等额档序（引擎 1/3）vs 递增档序
+hypothesis: >-
+  本节点三规则=递减（首加=剩余预算 50%，逐次减半）/阶梯（涨幅≥2.5-3% 才加）/限次（最多 3 次）。
+  **在册口径冲突**：live 侧 PyramidingConfig 为递减（halving_ratio_numer/denom=1/2，max_tranches=3，
+  ladder_min_pct=0.025，pyramiding_rules.py:88-91），回测引擎 pyramid 为**等额三档**
+  （tranche=1/3+1/3·armed3+1/3·armed6，factory_grid_executor.py:1114）。
+  假设“越加越少”确有减损价值：递减臂相对等额臂 OOS MaxDD 改善 >=0.5pp，且递增臂（反金字塔，
+  越加越多）显著更差（这是“防重仓在顶部”原话的直接证伪路径）。若三者无差，档序之争应止于最简口径。
+arm_definition:
+  A_decreasing: tranche 序列 (1/2, 1/4, 1/8) 归一（live 递减口径）
+  B_equal: 引擎现装 (1/3, 1/3, 1/3)（arm 条件 close>=entry×1.03 / ×1.06 复用不改）
+  C_increasing: 反金字塔 (1/8, 1/4, 1/2) 归一（对照组，专门检验“顶部重仓”代价）
+  D_lump: 不分批（共同基线）
+  ladder_arms: 阶梯阈值另设两档（2.5% vs 3% vs 5%）——引擎硬编码 1.03/1.06、live 取下限 0.025，
+    阈值扫描需参数化=施工位；本卡先考档序，阶梯扫描列 pending_arms
+  held_fixed: 24 列 cap、hs300、top20、inv_vol、cap10、monthly、X_stop/X_breaker=off、
+    context="capital_ramp_enabled true, phase 3"
+executor: 半缺件——B/D 现装（_apply_capital_ramp_overlay L1058-1116）；A/C 需把 tranche 权重向量化
+  （改 L1114 一行系数即可派生三臂，但禁改生产件语义 ⇒ 以独立双臂脚本或新 mode 落地）。
+  ⇒ status=blocked_on_impl（主判据依赖 A/C 臂）
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos: &id001
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（趋势段——档序差异最放大处）
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；三组档序权重与 armed 条件先写死；阶梯 2.5/3/5% 扫描为 pending 不并入本判据
+buckets:
+  type: arm_comparison
+  'on': 四臂 × {IS, OOS, 牛段, 熊段}；另按“加仓触发次数分布”分层（0/1/2/3 次）
+  min_obs_per_bucket: 每臂每段 >= 120 交易日；触发 2 次以上的票-段样本 >= 50（档序差异需要多档样本才显形）
+pillars:
+  maxdd_gate: A 相对 B 的 OOS MaxDD 改善 >= 0.5pp（递减的存在性，量级小于“有无分批”属预期）
+  falsify_gate: C（递增）相对 B 恶化 >= 1pp MaxDD 或成本后 Sharpe 降 >= 0.1
+    ——“越加越多=顶部重仓”若不被证伪，本节点规则文本须改写（如实入册）
+  dose_response: 触发次数分层内单调（2 次以上样本的 A/B/C 排序与总体一致，否则判混杂）
+  turnover_or_cost_gate: 四臂统一 frozen_l0 + stress_l2；档序不改换手总额但改暴露时序，
+    须同报暴露度（加权平均仓位）与成本
+  oos_and_regime_gate: 判据在 OOS 与牛段同号（牛段是档序的战场）
+target:
+  primary: oos_maxdd_improvement_A_minus_B
+  secondary: C_minus_B（证伪量）、加权平均暴露度、触发次数分布
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  maxdd_improvement_min: 0.005
+  falsify_regression_min: 0.01
+  sharpe_delta_min: -0.10
+  turnover_or_cost_gate: cost_tier_stress_sign_flip_ban
+  oos_same_sign: true
+blocked_on_impl:
+  missing: tranche 权重参数化（decreasing/increasing 两档）+ 阶梯阈值入参
+  needed_interface: 在 ramp overlay 增 tranche 权重序列入参，或另写调用 _armed_in_segment 逻辑的独立脚本
+  unlock_condition: 落地后改 status=preregistered；同时提请纠正 live/engine 档序口径不一致（治理项）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P3-02.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 24 列 cap 合成秩
+  signal_derivation: composite_signal → top20 → ramp overlay（三档序变体）
+  price_table: c1_market.kline_daily_hfq（close 与 entry_px 锚）
+  target_source: 四臂日 NAV → strategy_exam.window_metrics；暴露度=Σ权重逐日均值
+  data_window_evidence: |
+    两侧口径实读：src/zephyr/position/core/pyramiding_rules.py:85-91
+    （docstring “P3-02：递减 50% 减半 / 阶梯 2.5-3% 取下限 / 限次 3”；max_tranches=3、
+    halving_ratio_numer=1/halving_ratio_denom=2、ladder_min_pct=0.025）
+    vs scripts/backtest/factory_grid_executor.py:1112-1116（armed3=closes>=entry_px*1.03、
+    armed6=closes>=entry_px*1.06、tranche=1/3+1/3·armed3+1/3·armed6）
+    TDM 原文=config/trading_decision_map.yaml 本节点 algo_note_zh“递减…阶梯（较上次买价涨幅≥2.5-3%）…
+    限次（最多 3 次）…跌破上次加仓价=停止后续计划”
+    ——“跌破上次加仓价停止计划”在引擎由 cummax 持久化实现（不降档但不新增），口径近似须随卷披露

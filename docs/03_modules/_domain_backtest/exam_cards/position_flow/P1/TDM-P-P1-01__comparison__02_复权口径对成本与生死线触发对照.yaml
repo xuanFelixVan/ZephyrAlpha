@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-P-P1-01/comparison/02_复权口径对成本与生死线触发对照
+node_id: TDM-P-P1-01
+family: comparison
+title_zh: 持仓对账与台账快照·对照卡：后复权 vs 原始价成本口径对浮盈/生死线触发与分级判定的失真
+hypothesis: >-
+  P1-01 输出的“成本/浮盈/状态机态”是全条持仓链（P1-02 分级、P1-04 生死线、P3-01 浮盈资格）的地基。
+  回测/仿真侧的成本口径有两种真实在册来源：c1_market.kline_daily（原始价，DS-150）与
+  c1_market.kline_daily_hfq（后复权，本车道各卡主轴），另有 adj_factor 在册可派生前复权。
+  假设在含分红送转的票上，用原始价算浮盈会把除权误判为亏损：双臂对照下，原始价臂的
+  “-7% 生死线”误触发率显著更高、且把部分 MONITOR 误判为 WATCH。若两臂无差异，
+  则本节点的回测平面失真为零（可放心用任一表），差异存在则必须钉死“持仓链一律 hfq/复权因子换算”的口径。
+arm_definition:
+  A_hfq: 成本与现价均取 kline_daily_hfq（本车道其它卡口径）
+  B_raw: 成本与现价均取 kline_daily（原始价，未复权）
+  C_adj_corrected: 原始价 × adj_factor 比值还原后比较（第三臂=“正确换算”的可达性证明）
+  events: 分红送转除权事件集=adj_factor 跳变日（|factor_t/factor_{t-1} − 1| > 0 的票-日）
+  held_fixed: 同一批票池（top20 权重面持仓）、同一入场日与入场价定义、同一 -7% 阈值、
+    同一 1.5×ATR 分级阈值；两臂只差价格序列来源（单点改动）
+executor: 缺件——双臂触发/漏触发统计件需新写（<80 行：ch_data 取两表 + exit_simulator.atr14_wilder +
+  两口径浮盈序列 → 混淆统计）。既有件均只跑单一 hfq 口径（实读 exit_simulator.load_kline(field) 与
+  prereg_frozen.yaml atr.price_basis 均锁定 kline_daily_hfq），无口径切换开关
+  ⇒ status=blocked_on_impl
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+  frozen_note: 看数前冻结；-7% 阈值与 1.5×ATR 分级阈值取现码常数（0.07 / _WATCH_ATR_MULTIPLIER=1.5）
+buckets:
+  type: event_sample
+  'on': 除权事件集（adj_factor 跳变票-日）与非事件集分层；两臂各报触发/漏触发
+  min_obs_per_bucket: 除权事件票-日 >= 200；不足只报计数（分红密集的银行/电力票需单列）
+pillars:
+  false_trigger_gate: B 臂（原始价）在除权事件上的 -7% 误触发率 >= 3 倍于 A 臂（否则口径之争无谓）
+  classification_gate: B 臂把 A 臂的 WATCH 误判为 MONITOR/HOLD 的比例 >= 10%（分级失真面，接 P1-02）
+  correction_gate: C 臂（正确换算）与 A 臂差异 <= 1pp（证明“用原始价+因子换算”可达等价，给出工程出路）
+  downstream_gate: 两臂在 P3-01“只加浮盈”判定下的资格通过率差须同框报出（地基失真会级联到加仓面）
+  no_single_metric: 判据成组（误触发率/分级失真/等价性/级联四面），禁以单一数字定论
+  honesty: 本卡考的是口径失真而非收益增益——不得写成“策略增益卡”；负结果（无差异）同样有价值
+target:
+  primary: false_trigger_rate_B_over_A（除权事件上的生死线误触发倍数）
+  secondary: 分级混淆率、C 臂与 A 臂等价性残差、加仓资格通过率差
+status: blocked_on_impl
+signal_kind: panel
+pillars_numeric:
+  false_trigger_ratio_min: 3.0
+  classification_confusion_min: 0.10
+  equivalence_residual_max: 0.01
+  oos_same_sign: true
+blocked_on_impl:
+  missing: 复权口径可切换的双臂持仓失真统计件
+  needed_interface: 输入 (symbol, date) 面板的两套价格序列 + adj_factor，
+    输出浮盈序列、-7% 触发日集、三档分级日集与混淆矩阵
+  unlock_condition: 落地后改 status=preregistered（假设/事件集/门柱已冻结）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-P-P1-01.confidence
+preregistered_by: st-nightmine-20261010-L4
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+data_binding:
+  signal_table: c1_market.kline_daily（原始价，DS-150）与 c1_market.kline_daily_hfq（后复权，本车道主轴）
+    + c1_market.adj_factor（复权因子）
+  signal_column: 两套 close 序列与各自 entry 成本、浮盈 pct、-7% 触发标记、1.5×ATR 分级标记
+  signal_derivation: ATR14 分别在两套价格序列上自算（exit_simulator.atr14_wilder 复用），
+    除权事件=adj_factor 逐票日收益率跳变（阈值 |Δfactor/factor| > 0）
+  target_source: 两臂触发集与分级集的同票-日比对（不涉及收益增益）
+  data_window_evidence: |
+    在册三表实存（c1_market 表清单探针，全文见 D:/ZephyrAlpha/.runtime/tmp/st-nightmine-20261010/tables.txt，
+    195 条）：kline_daily_hfq 覆盖 1990-12-19..2026-09-30 共 10,098,785 行（列含 open/high/low/close/
+    amplitude/pct_change/turnover）；kline_daily 与 adj_factor 均在 c1_market 清单内。
+    DS 真源=data_asset_registry.yaml L6459（DS-150 entity_name: c1_market.kline_daily，
+    physical_type: clickhouse_table）；DS-009（L1081 position.snapshot）/DS-067（L3144
+    execution.position_tracker）经实读均为本地契约/目录件，非 CH 表——
+    ⇒ 本节点“与券商记录逐笔核对”的真对账面在回测平面不可达（st_p_daytrade_mining.md §1 判 D 类
+    “账务运维，天然不进回测”），本卡取其唯一可回测化的口径失真面，非宣称考了台账本体
+  ds_ref: data_refs=['DS-009','DS-067']（两者皆非 CH，失真面已披露）
