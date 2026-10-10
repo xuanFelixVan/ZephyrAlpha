@@ -121,6 +121,8 @@ offrepo_backup:
       source: "D:\\ZephyrAlpha-stash-archive"
     - id: cold_archive
       source: "F:\\zephyr_cold\\50_archive\\by_project\\zephyralpha"   # 2026-09-20 迁 F（分包4）
+    - id: tomb_quarantine
+      source: "E:\\_tomb_quarantine"   # 2026-10-10 终清二期批复 B：物理删 30 天复活窗载体入备份覆盖面（E=纯软件盘口径）
   # 2026-09-14 Owner 裁定：data_download（E:\数据下载）不备份，已从目标移除——
   # 源数据当日 52.66→118.38GB 持续膨胀，/MIR 镜像同量吃掉 F 盘空间（当日 +66GB，
   # 是 F 盘告急头号推手）；F:\offrepo_backup\data_download 旧副本已删（源在 E 盘可随时重镜像）
