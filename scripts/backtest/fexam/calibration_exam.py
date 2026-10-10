@@ -78,6 +78,25 @@ def _spearman(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.corrcoef(s, t)[0, 1])
 
 
+def _round_trip_cost_bp(config_path=None) -> float:
+    """G1 净费参数（exam_scale_cost_gate.yaml net_fee 节，禁硬编码；读败=nan 不伪造）。"""
+    cp = Path(config_path) if config_path else REPO_ROOT / "config" / "exam_scale_cost_gate.yaml"
+    try:
+        data = yaml.safe_load(cp.read_text(encoding="utf-8"))
+        return float(data["net_fee"]["round_trip_cost_bp"])
+    except Exception:  # noqa: BLE001  读败=nan 不伪造（费率参数面缺 net_fee 节属合法态）
+        return float("nan")
+
+
+def _signal_turnover(signal: pd.Series) -> float | None:
+    """G2 换手计量：相邻交易日信号值变化占比（档位翻转率，只计量不判罚）。"""
+    v = signal.dropna()
+    if len(v) < 2:
+        return None
+    changes = (v.diff().fillna(0) != 0).iloc[1:]
+    return round(float(changes.mean()), 4)
+
+
 def _bucket_response(signal: pd.Series, target: pd.Series, n_buckets: int = 10) -> dict:
     """日度序列分桶响应：按信号分位分桶 → 桶内目标中位 → 桶序-中位 Spearman。
 
@@ -111,6 +130,13 @@ def _series_metrics(signal: pd.Series, target: pd.Series, card: dict) -> dict:
     if len(oos) == 2:
         m = aligned[(aligned.index >= pd.Timestamp(oos[0])) & (aligned.index <= pd.Timestamp(oos[1]))]
         oos_ic = _spearman(m["s"].to_numpy(), m["t"].to_numpy()) if len(m) >= 60 else float("nan")
+    # G1 净费读数（增补令 2026-10-10）：桶中位收益减往返成本（费率参数面 net_fee 节，禁硬编码）
+    net_med = None
+    if resp.get("bucket_medians"):
+        rt = _round_trip_cost_bp()
+        net_med = [round(x - rt / 10000.0, 6) for x in resp["bucket_medians"]]
+    # G2 换手读数（只计量不判罚）：相邻交易日信号档位翻转率
+    turn = _signal_turnover(signal)
     return {
         "ic_mean": ic_ts,
         "mono_spearman": resp.get("mono_spearman"),
@@ -119,6 +145,9 @@ def _series_metrics(signal: pd.Series, target: pd.Series, card: dict) -> dict:
         "oos_ic": oos_ic,
         "ic_ir": None,
         "bucket_medians": resp.get("bucket_medians"),
+        "net_bucket_medians": net_med,
+        "round_trip_cost_bp": _round_trip_cost_bp(),
+        "signal_turnover_daily": turn,
     }
 
 
@@ -146,6 +175,129 @@ def _panel_metrics(signal: pd.DataFrame, target: pd.DataFrame, card: dict) -> di
         "n": int(ic.notna().sum()),
         "bucket_medians": None,
     }
+
+
+def _arm_nav_metrics(exposure: pd.Series, target: pd.Series, cost_bp: float | None = None) -> dict:
+    """对照/消融单臂日频回放（PIT：t 收盘敞口 → t+1 目标收益；同轴同撮合同成本）。
+
+    maxdd=正深度（0..1）；sharpe 年化（sqrt252）已扣换手成本；turnover_annual_x=年化敞口
+    翻转倍数（|Δ敞口|均值×252，无量纲 x——对齐 exam_scale_cost_gate turnover_gate.cap_annual_x 口径）。
+    成本默认读 net_fee.round_trip_cost_bp（读败=0 成本并在返回面标 cost_bp=nan，禁伪造）。
+    """
+    if cost_bp is None:
+        cost_bp = _round_trip_cost_bp()
+    df = pd.concat({"e": exposure.sort_index(), "r": target.sort_index()}, axis=1).dropna()
+    if len(df) < 30:
+        return {
+            "n": len(df),
+            "maxdd": float("nan"),
+            "sharpe": float("nan"),
+            "turnover_annual_x": float("nan"),
+            "ann_ret": float("nan"),
+            "cost_bp": cost_bp,
+        }
+    ret = df["e"].shift(0) * df["r"].shift(-1)  # t 敞口吃 t+1 收益
+    turn = df["e"].diff().abs().iloc[1:]
+    cbp = cost_bp if cost_bp == cost_bp else 0.0
+    ret_net = ret - turn.reindex(ret.index).fillna(0.0) * cbp / 10000.0
+    nav = (1.0 + ret_net.fillna(0.0)).cumprod()
+    dd = nav / nav.cummax() - 1.0
+    mu, sd = ret_net.mean(), ret_net.std()
+    sharpe = float(mu / sd * np.sqrt(252)) if sd and sd == sd and sd > 0 else float("nan")
+    return {
+        "n": int(len(df)),
+        "maxdd": float(-dd.min()) if len(dd) else float("nan"),
+        "sharpe": sharpe,
+        "turnover_annual_x": float(turn.mean() * 252) if len(turn) else float("nan"),
+        "ann_ret": float(ret_net.mean() * 252),
+        "cost_bp": cost_bp,
+    }
+
+
+_COMPARISON_KNOWN_KEYS = frozenset(
+    {
+        "misfire_reduction_min",
+        "maxdd_improvement_min",
+        "maxdd_deterioration_max_pp",
+        "sharpe_delta_min",
+        "turnover_delta_annual_max",
+        "cost_tier_bp_required",
+        "oos_same_sign",
+    }
+)
+
+
+def _comparison_metrics(sig_open: pd.Series, sig_base: pd.Series, target: pd.Series, card: dict) -> dict:
+    """对照/消融配对面：双臂各自 IC 面（复用 _series_metrics）+ NAV 回放面 + 配对差。
+
+    开臂/基臂共用同一目标与窗（paired_arm_protocol：仅信号处理异，零行循环差异）。"""
+    mo_open = _series_metrics(sig_open, target, card)
+    mo_base = _series_metrics(sig_base, target, card)
+    nav_open = _arm_nav_metrics(sig_open, target)
+    nav_base = _arm_nav_metrics(sig_base, target)
+    rt = _round_trip_cost_bp()
+    tier = card.get("pillars_numeric", {}).get("cost_tier_bp_required")
+    nav_open_tier = _arm_nav_metrics(sig_open, target, cost_bp=float(tier)) if tier else None
+    icd = mo_open.get("ic_mean") - mo_base.get("ic_mean")
+    icd = icd if icd == icd else float("nan")
+    icd_oos = mo_open.get("oos_ic") - mo_base.get("oos_ic")
+    icd_oos = icd_oos if icd_oos == icd_oos else float("nan")
+    return {
+        "arm_open": {k: v for k, v in mo_open.items() if k != "bucket_medians"} | {"nav": nav_open},
+        "arm_base": {k: v for k, v in mo_base.items() if k != "bucket_medians"} | {"nav": nav_base},
+        "maxdd_improvement_pp": (nav_base["maxdd"] - nav_open["maxdd"]) * 100.0,
+        "sharpe_delta": nav_open["sharpe"] - nav_base["sharpe"],
+        "turnover_delta_annual_x": nav_open["turnover_annual_x"] - nav_base["turnover_annual_x"],
+        "open_sharpe_at_tier_bp": nav_open_tier["sharpe"] if nav_open_tier else float("nan"),
+        "ic_delta_is": icd,
+        "ic_delta_oos": icd_oos,
+        "round_trip_cost_bp": rt,
+    }
+
+
+def _judge_comparison(card: dict, m: dict) -> tuple[str, list[str]]:
+    """对照/消融判（pillars_numeric 冻结键，执行器零裁量；未知键=诚实 fail-closed）。"""
+    p = card.get("pillars_numeric")
+    if not p:
+        raise _ToolError("卡缺 pillars_numeric（冻结判据机判面）", {"card_id": card.get("card_id")})
+    unknown = set(p) - _COMPARISON_KNOWN_KEYS
+    fails: list[str] = []
+    if unknown:
+        fails.append(f"未支持判据键（机判面待扩）: {sorted(unknown)}")
+    if "misfire_reduction_min" in p:
+        # 误清率面需"卖出后再创新高"笔级价格面（W4 绑定层），本核 NAV/IC 面不可判——如实记败不冒判
+        fails.append(f"misfire_reduction_min 无机判面（缺笔级价格面，W4 绑定层后重考）: {p['misfire_reduction_min']}")
+    imp = m.get("maxdd_improvement_pp")
+    if imp == imp:
+        if imp < float(p.get("maxdd_improvement_min", float("-inf"))):
+            fails.append(f"maxdd_improvement {imp:.2f}pp < {p.get('maxdd_improvement_min')}")
+        det = -imp
+        if det > float(p.get("maxdd_deterioration_max_pp", float("inf"))):
+            fails.append(f"maxdd_deterioration {det:.2f}pp > {p.get('maxdd_deterioration_max_pp')}pp")
+    elif "maxdd_improvement_min" in p:
+        fails.append("maxdd_improvement nan（NAV 面样本不足）")
+    sd = m.get("sharpe_delta")
+    if sd == sd:
+        if sd < float(p.get("sharpe_delta_min", float("-inf"))):
+            fails.append(f"sharpe_delta {sd:.3f} < {p.get('sharpe_delta_min')}")
+    elif "sharpe_delta_min" in p:
+        fails.append("sharpe_delta nan（NAV 面样本不足）")
+    td = m.get("turnover_delta_annual_x")
+    if td == td:
+        if td > float(p.get("turnover_delta_annual_max", float("inf"))):
+            fails.append(f"turnover_delta {td:.2f}x > {p.get('turnover_delta_annual_max')}x")
+    tier_s = m.get("open_sharpe_at_tier_bp")
+    if tier_s == tier_s and p.get("cost_tier_bp_required"):
+        if tier_s < 0.0:
+            fails.append(f"open_sharpe@{p['cost_tier_bp_required']}bp {tier_s:.3f} < 0.0")
+    if p.get("oos_same_sign"):
+        d_is, d_oos = m.get("ic_delta_is"), m.get("ic_delta_oos")
+        if d_is == d_is and d_oos == d_oos and d_is != 0:
+            if (d_oos > 0) != (d_is > 0):
+                fails.append(f"oos_sign_flip ic_delta oos={d_oos:.4f} is={d_is:.4f}")
+        else:
+            fails.append("oos_sign_flip ic_delta nan（配对 IC 面样本不足）")
+    return ("pass", []) if not fails else ("fail", fails)
 
 
 def judge(card: dict, m: dict) -> tuple[str, list[str]]:
@@ -188,6 +340,7 @@ def run_card(
     card_path: str | Path,
     *,
     signal=None,
+    signal_b=None,
     target=None,
     force: bool = False,
     run_id: str | None = None,
@@ -206,11 +359,26 @@ def run_card(
             "缺省 CH 取数面未接（signal_spec/target_spec 绑定属 W4 运行期配置）——"
             "请注入 signal/target 或先行落绑定册（防误绑数据面）"
         )
-    m = _series_metrics(signal, target, card) if kind == "series" else _panel_metrics(signal, target, card)
-    verdict, fails = judge(card, m)
+    family = card.get("family")
+    if family in ("comparison", "ablation"):
+        # 对照/消融分支（夜矿续战三连裁② 2026-10-10 并入本执行核）：双臂配对面
+        if signal_b is None:
+            raise _ToolError(
+                "对照/消融卡需双臂信号：signal=开臂（或全量臂），signal_b=基臂（或消融臂）",
+                {"card_id": card.get("card_id"), "family": family},
+            )
+        m = _comparison_metrics(signal, signal_b, target, card)
+        verdict, fails = _judge_comparison(card, m)
+    else:
+        m = _series_metrics(signal, target, card) if kind == "series" else _panel_metrics(signal, target, card)
+        verdict, fails = judge(card, m)
     pillars_all_pass = verdict == "pass"
-    oos_ok = (m.get("oos_ic") == m.get("oos_ic")) and not any("oos" in f for f in fails)
-    seg = m.get("regime_ic") or {}
+    if family in ("comparison", "ablation"):
+        oos_ok = (m.get("ic_delta_oos") == m.get("ic_delta_oos")) and not any("oos" in f for f in fails)
+        seg = m.get("arm_open", {}).get("regime_ic") or {}
+    else:
+        oos_ok = (m.get("oos_ic") == m.get("oos_ic")) and not any("oos" in f for f in fails)
+        seg = m.get("regime_ic") or {}
     regimes = [k for k, v in seg.items() if v == v]
     row = {
         "card_id": card["card_id"],
@@ -265,20 +433,25 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--card", required=True)
     ap.add_argument("--signal-csv", help="信号 csv（index=date；series 用 value 列，panel 用宽表）")
+    ap.add_argument("--signal-b-csv", help="对照/消融基臂（或消融臂）信号 csv（comparison/ablation 卡必带）")
     ap.add_argument("--target-csv", help="目标 csv（index=date，value 列）")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
-    sig = tgt = None
+    sig = tgt = sig_b = None
     if args.signal_csv:
         s = pd.read_csv(args.signal_csv, index_col=0, parse_dates=True)
         sig = s.iloc[:, 0] if isinstance(s, pd.Series) is False and s.shape[1] == 1 else s
+    if args.signal_b_csv:
+        sb = pd.read_csv(args.signal_b_csv, index_col=0, parse_dates=True)
+        sig_b = sb.iloc[:, 0] if sb.shape[1] == 1 else sb
     if args.target_csv:
         t = pd.read_csv(args.target_csv, index_col=0, parse_dates=True)
         tgt = t.iloc[:, 0]
-    row = run_card(args.card, signal=sig, target=tgt, force=args.force)
+    row = run_card(args.card, signal=sig, signal_b=sig_b, target=tgt, force=args.force)
     print(json.dumps(row, ensure_ascii=False, indent=2, default=str))
     return 0 if row["verdict"] == "pass" else 1
 
 
-if __name__ == "__main__":  # noqa: m11-perm-manual-legitimate  人工CLI设计如此（同域MOD-BT-197先例）：按TDM变更/分数册更新/逐卡开考人工触发，非永久自动系统面
+# 人工CLI设计如此（同域MOD-BT-197先例）：按TDM变更/分数册更新/逐卡开考人工触发，非永久自动系统面
+if __name__ == "__main__":  # noqa: m11-perm-manual-legitimate  人工CLI（同域MOD-BT-197先例），非永久自动系统
     sys.exit(main())
