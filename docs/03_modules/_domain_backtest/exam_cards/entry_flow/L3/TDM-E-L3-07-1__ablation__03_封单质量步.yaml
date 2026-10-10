@@ -1,0 +1,63 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-07-1/ablation/03_封单质量步
+node_id: TDM-E-L3-07-1
+family: ablation
+title_zh: "打板选股链·封单质量（封单/流通盘>2%）消融卡"
+hypothesis: "封单额占流通市值比例>2% 的涨停股次日溢价高于低封单组，封单质量分位对次日收益单调正向，该步在漏斗中不可去。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "封单/流通市值比 分档（<1%/1-2%/2-5%/>5%）+ 十分位双轨"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "十桶中位前向收益单调（rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1 峰值、半衰期>=1 交易日"
+  regime_stability: "牛/熊两段同号且均过 ic_floor"
+ablation_variants:
+- "V0 五步漏斗全开（含封单质量步）"
+- "V1 去封单质量步（第4步）"
+- "V2 封单/流通盘阈值 1%"
+- "V3 阈值 2%（在册线）"
+- "V4 阈值 5%"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "次日一字/开盘溢价与封板持续性（次日是否仍涨停）"
+  note: "漏斗第 4 步，判据依赖盘口封单额"
+status: blocked_on_data
+blocked_reason: "封单额面从未回填历史（只有近 30 日快照），且盘口级封单量不在 tick 归档范围内"
+missing_segment: "2019-01-04..2025-09-09 全段无 seal_amount/封单质量任何口径；2026-09 起才有数据（在冻结窗之外）"
+unlock_condition: "历史封单额采集补齐（或从 tick/五档归档重建，需数据侧工程）后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-07-1.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.limit_up_pool × c1_market.stock_daily_basic"
+  signal_column: "seal_amount / float_market_cap"
+  signal_derivation: "封单比=seal_amount/float_market_cap（原表已带 float_market_cap 列，避免跨表口径漂移）；signal=封单比截面分位；>2% 线做二值对照"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@lup：limit_up_pool 实测 2026-09-01..2026-10-09/1,426 行/789 符号/23 日（seal_amount/seal_ratio/sealed_seconds 列存在）；limit_up_down 仅 2026-07-20 起/5,397 行/54 日；@del：daban_engine_load 的 seal_amount 仅 2026-09-01..2026-09-28/19 日。封单额在冻结窗（2019-01-04..2025-09-09）内 0 行。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.txt）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.limit_up_pool → 2026-09-01 / 2026-10-09 / 1,426 行 / 789 符号 / 23 日；limit_up_down → 2026-07-20 / 2026-10-09 / 5,397 行 / 1,841 符号 / 54 日；列含 seal_amount/seal_ratio/sealed_seconds/first_seal_time/last_seal_time/open_board_count/consec_limit/limit_stat → 封单质量与连板统计的历史全缺，须由 kline_daily×stk_limit 重建可重建部分（封板/炸板/一字可重建，封单额/首封时刻不可重建）。 ‖ 实测（l2_ch_cov.txt / l2_ch_cov4.py）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.daban_engine_load → 2026-09-01 / 2026-09-28 / 1,701 行 / 922 符号 / 19 日；daban_board_event → 2026-09-01 / 2026-10-09 / 1,767 行 / 975 符号 / 21 日 → 冻结窗内 0 行（引擎 PIT 负载表按 internal 批只滚动近期）。"

@@ -1,0 +1,56 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-01/comparison/04_宇宙口径完整性对照
+node_id: TDM-E-L3-01
+family: comparison
+title_zh: "Universe 口径对照卡（在册源 vs 行情重建源）"
+hypothesis: "在册唯一宇宙源 stock_basic 的 PIT 快照与按 kline_daily 行情前缀重建的宇宙在冻结窗内成员差超过 20%（创业板整段缺失），且两种宇宙口径下的选股链前向收益统计显著不同——即口径不写死就会造出不可比的回归结果。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "两口径成员标识（stock_basic_only / rebuild_only / both）分组"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "分组对照不要求单调，但三组的前向收益差需显著（rebuild_only 组即创业板，收益分布应与 both 组可分）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "n/a（口径卡无时滞面，记 n/a 并保留同结构）"
+  regime_stability: "牛/熊两段成员差比例一致（差比例漂移>10 个百分点=采集面在动，判 fail）"
+  membership_gap: "窗内逐日 |rebuild − stock_basic| / |rebuild| 的中位数须报出并 >=20%（实测预期：创业板 1,409 符号窗内零行）"
+  northbound_exclusion: "北交所（8/4 前缀）在两口径下均须显式排除并留痕，禁默认吞掉"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "宇宙规模日序列（两口径）与其相关系数"
+  note: "本域头号口径雷的回归防线：把宇宙口径变成可判数值面而非散文约定"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-01.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.stock_basic（trade_date 快照）对照 c1_market.kline_daily（exchange+symbol 前缀重建）"
+  signal_column: "board / symbol 前缀"
+  signal_derivation: "口径 A=stock_basic 逐 trade_date PIT 快照符号集（含 name ST 判定、list_date 上市年限）；口径 B=kline_daily 窗内 (symbol,trade_date) 按前缀重建 {60,00 主板 / 30 创业板 / 68 科创}；主判据=逐日 A△B 规模与成员比例，ST 判定统一取 stk_limit.st_flag 以免口径 A 独断"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@sb：board 分组实测 沪主板1,803(2015-01-05起)/深主板1,604/科创板621(2019-07-22起)/创业板1,409(仅2026-08-14起)/北交所348(仅2026-09-15起)；2024-12-31 快照仅 3,756 符号且无 300/301 前缀；@kd_raw：单日截面 5,200-5,438 符号（远大于 stock_basic 同期 3,756）——两口径规模差为实测事实。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov6.py L1/L2/L3）：SELECT board,uniqExact(symbol),min(trade_date),max(trade_date) FROM c1_market.stock_basic GROUP BY board → 沪主板 1,803（2015-01-05 起）/深主板 1,604（2015-01-05 起）/科创板 621（2019-07-22 起）/创业板 1,409（仅 2026-08-14 起）/北交所 348（仅 2026-09-15 起）；2024-12-31 快照仅 3,756 符号且前缀分布无 300/301；同日 name 含 ST=169、含 退=22。 ‖ 实测（l2_ch_cov6.py K1b）：c1_market.kline_daily（不复权）单日截面规模 2019-06-05=3,622 符号 / 2023-06-05=5,200 / 2024-10-08=5,355 / 2025-06-05=5,438；列含 open/high/low/close/volume/amount/pct_change/market_type/exchange/quality_flag/adj_factor。"

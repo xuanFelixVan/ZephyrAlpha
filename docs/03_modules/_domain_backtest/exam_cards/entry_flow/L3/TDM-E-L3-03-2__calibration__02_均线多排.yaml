@@ -1,0 +1,56 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-03-2/calibration/02_均线多排
+node_id: TDM-E-L3-03-2
+family: calibration
+title_zh: "波段池·趋势（均线多头排列）校准卡"
+hypothesis: "均线多头排列程度（ma_5>ma_10>ma_20>ma_60 的成序数与价格上偏）越高，5 日与 10 日前向收益越高，趋势强度截面分位单调正向。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "多排计数（0-3 四档）与趋势分位十分位双轨"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "十桶中位前向收益单调（rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "IC 峰值预期在 t+3/t+5（波段属性），半衰期>=3 交易日；t+1 IC 若显著更高则该判据实为短线噪声"
+  regime_stability: "牛/熊两段同号且均过 ic_floor（熊市趋势分应衰减但不翻号）"
+  horizon_match: "判据必须同时报 1/3/5/10 日四期 IC 曲线，否则无法证明趋势是波段而非短线因子"
+  ma_source: "technical_indicator 的 ma_5/ma_10/ma_20/ma_60 为已算列，禁在考试车道重算（重算=第二真源）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "10 日前向收益（与 5 日对照，判波段久期）"
+  note: "波段池 5 分制第一分（趋势 1 分）"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-03-2.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.technical_indicator"
+  signal_column: "ma_5,ma_10,ma_20,ma_60"
+  signal_derivation: "多排计数 = [ma_5>ma_10] + [ma_10>ma_20] + [ma_20>ma_60]（同 symbol-day argMax(ingest_ts) 去重）；趋势分位=计数与 (close/ma_20−1) 的截面复合分位；读取须按宇宙重建源过滤（该表含 14,357 个非个股符号）"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@ti：technical_indicator 2019-01-02..2026-09-30、窗内 134,772,727 原始行但去重 symbol-day 2019=647,746…2024=910,208；列名实测含 ma_5/ma_10/ma_20/ma_60/atr_14/rsi_6/12/24/macd_*/obv/mfi_14/sar/kdj_*（无 rps/rank/strength 类现成列→相对强度必须截面自建）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.py / l2_ch_cov5.py B1）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.technical_indicator → 2019-01-02 / 2026-09-30 / 404,675,630 行 / 14,357 符号 / 1,880 日；去重后 symbol-day 2019=647,746、2020=749,678、2021=823,409、2022=868,408、2023=901,509、2024=910,208、2025(至09-09)=632,574；chips_winner>0 的 symbol-day 与 symbol-day 几乎相等（2019=627,292/2023=901,502/2024=910,203）——原始行含多版本（2024 raw 29,787,404 行），不去重会把 IC 样本放大 30 倍，读数必须 argMax(ingest_ts) 或 FINAL。"

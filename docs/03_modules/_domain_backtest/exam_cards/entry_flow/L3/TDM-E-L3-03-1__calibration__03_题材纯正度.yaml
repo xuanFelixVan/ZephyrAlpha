@@ -1,0 +1,57 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-03-1/calibration/03_题材纯正度
+node_id: TDM-E-L3-03-1
+family: calibration
+title_zh: "短线池·题材纯正度校准卡"
+hypothesis: "个股在其所属最热题材板块内的纯正度（该题材收入/业务占比或板块内龙头度）越高，次日溢价越高，题材纯正度截面分位单调正向。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "题材纯正度截面十分位"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "十桶中位前向收益单调（rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1 峰值与 t+2/t+3 半衰期>=1 交易日"
+  regime_stability: "牛/熊两段同号且均过 ic_floor"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "题材内排名分位（龙头度代理）"
+  note: "短线池 5 分制第二分；判据依赖板块归属的 PIT 历史"
+status: blocked_on_data
+blocked_reason: "题材/板块成员归属的 PIT 历史不在册（采集面只留近期快照），纯正度判据在冻结窗内不可算"
+missing_segment: "2019-01-04..2026-07-21 全段无 sector_constituent 快照；概念板块成员 2019-01-04..2026-08-09 全段无"
+unlock_condition: "补齐板块成员历史快照（或 sw_history 全批次抓取）后转 preregistered；替代路径=以 kline_sector_880 的 880 板块成分静态映射近似（需 Owner 裁是否接受近似口径）"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-03-1.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.sector_constituent / c1_market.concept_board_constituent"
+  signal_column: "sector_code × stock_code（归属）+ 板块内涨幅排名"
+  signal_derivation: "纯正度代理=个股当日涨幅在其题材板块当日成员涨幅中的截面分位（需 PIT 成员表）；板块热度=板块成交额/涨幅分位；冻结窗内成员表不可得即本判据不可算"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@sec：sector_constituent 的 update_date 实测仅 2026-07-22..2026-10-01（6 个更新日、323,175 行，窗内 0 行）；concept_board_constituent valid_from 仅 2026-08-10..2026-10-09（37,891 行）；sector_constituent_sw_history 的 fetched_at 全表=2026-09-24 单批（虽有 in_date/out_date 历史字段，抓取批次单一）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov2 / cov3 / cov6）：SELECT min(update_date),max(update_date),count() FROM c1_market.sector_constituent → 2026-07-22 / 2026-10-01 / 323,175 行（仅 6 个更新日快照，窗内 0）；concept_board_constituent valid_from → 2026-08-10 / 2026-10-09 / 37,891 行；sector_constituent_sw_history fetched_at → 2026-09-24（46,133 行，虽含 in_date/out_date 历史字段但抓取于 2026-09-24 单批）；kline_sector_880 → 2020-03-17 / 2026-10-08 / 785,204 行 / 729 板块，窗内 IS=289,365 / OOS=288,254 → 板块行情 2019 全年缺，板块归属历史不可 PIT 重建。"

@@ -1,0 +1,57 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-10/calibration/03_停牌否决
+node_id: TDM-E-L3-10
+family: calibration
+title_zh: "可交易性预检·停牌标记校准卡"
+hypothesis: "停牌标记（预检第一查）个股在复牌前后收益分布与正常票显著不同，剔除停牌样本后池的可实现收益估计更准（即停牌否决的有效性可判）。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "停牌状态（停牌中/复牌日/正常）三分组"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "分组不判单调，判停牌组与正常组收益差显著性"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "复牌后 t+1/t+3 收益曲线（复牌溢价/折价须建档）"
+  regime_stability: "牛/熊两段分组差符号一致"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "停牌持续天数分布"
+  note: "预检第一查；本卡价值在于把停牌口径从散文变成可判数值面"
+status: blocked_on_data
+blocked_reason: "停牌旗标从未回填历史（只有近 20 日快照），代理口径无法区分停牌/断供/退市"
+missing_segment: "2019-01-04..2026-09-03 无 suspend 行（全窗缺）"
+unlock_condition: "补齐 suspend 历史（akshare/tushare 停牌指标回填）后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-10.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.suspend（在册）/ c1_market.kline_daily 日历缺口（代理）"
+  signal_column: "suspend_date,resume_date,reason"
+  signal_derivation: "在册口径=suspend 表按 symbol 的 suspend_date/resume_date 区间标记；代理口径=交易日历有该日而该符号无 kline_daily 行（代理会把退市/数据断供误标为停牌，须用 valid_to/序列终止剔除）"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@sus：SELECT min(suspend_date),max(suspend_date),count(),uniqExact(symbol) FROM c1_market.suspend → 2026-09-04/2026-09-23/36 行/11 符号（冻结窗内 0 行）。资产状态另行查核：python -m zephyr.library.lookup state 停牌 输出见台账 §5。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov6.py P1）：SELECT min(suspend_date),max(suspend_date),count(),uniqExact(symbol) FROM c1_market.suspend → 2026-09-04 / 2026-09-23 / 36 行 / 11 符号 → 冻结窗内 0 行，停牌旗标全窗不可得（只能走 universe_rule 里的日历缺口代理）。"

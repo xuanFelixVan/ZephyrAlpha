@@ -1,0 +1,59 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-09/calibration/02_Tier状态机持续性
+node_id: TDM-E-L3-09
+family: calibration
+title_zh: "股票池分层维护·Tier 升降级状态机校准卡"
+hypothesis: "连续 2 日达标升 Tier、5 日不达标降级、10 日陈旧剔除的三层状态机，其 Tier1 组前向收益高于 Tier2 高于 Tier3（层级即信息），且状态机相对每日重扫的换手成本降低>=30% 而不牺牲收益。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "Tier 档（1/2/3）与连击天数分档"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "Tier1>Tier2>Tier3 收益均值须单调（rho>=0.6 以 Tier 编码计）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "各 Tier 的 t+1/t+3/t+5 收益曲线（Tier3 应更慢更弱）"
+  regime_stability: "牛/熊两段 Tier 序一致（熊市区分度消失=陈旧剔除过慢）"
+  turnover_cost: "状态机池 vs 每日重扫池的日换手率差须报出并 >=30%（该环的存在理由=防每天从零重扫）"
+  stale_rule_hit: "10 日陈旧剔除的日均命中数须报出（长期为 0=规则未生效）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "Tier 迁移矩阵（升/降/剔比例）"
+  note: "有状态日频维护环，考试卷面无状态=结构性缺口（矩阵册在册判定）"
+status: blocked_on_impl
+blocked_reason: "池与 Tier 状态无历史（写腿件在、注入源未注册、在册 empty_table 缺账 open），有状态环无可复核历史"
+missing_segment: "2019-01-04..2025-09-09 全段无 Tier 状态历史（非缺数据表，是缺状态持久化实现）"
+unlock_condition: "MOD-SIG-139 补 Tier 状态落库（新 DS 登记）+ 重放回填后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-09.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "（需池状态历史）c1_market.stock_candidate_pool.tier_slot × c1_market.kline_daily_hfq"
+  signal_column: "tier_slot"
+  signal_derivation: "状态机重放=按 L3-03 双池代理分逐日达标判定，连 2 日升/5 日降/10 日剔，产出逐日 Tier；需持久化 Tier 历史方可核对重放一致性"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@pool：stock_candidate_pool（唯一带 tier_slot 列的表）实测 count()=0；@impl：pool_tier_maintenance.py 件存在（MOD-SIG-139）但 system.tables 里 LIKE %tier% 零命中；TDM 节点原文在册外审欠账=池成员持久化归治理状态表/新 DS（M-41 待登记）。资产状态另行查核：python -m zephyr.library.lookup state 股票池分层 输出见台账 §5。 另：在册数据缺账 id=stock_candidate_pool_empty_table_no_leg（src/zephyr/data/config/known_data_gaps.yaml:1526，gap_type=empty_table，status=open，root_cause=schema 在册而 CH 实测 0 行=采集腿未建/暂缓的预留表，非管道故障；证据指针=docs/_working/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1、scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 点名）；写腿件 src/zephyr/signal_ashare/core/candidate_pool_snapshot.py 已实现（16 列 POOL_INSERT_COLUMNS 与 DDL 同序、ch_writer 正门、INVARIANTS 明写 无注册源=空池如实缺省）→ PoolBundleSource 零注册=表零行的成因，非零实现。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.txt）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.stock_candidate_pool → 1970-01-01 / 1970-01-01 / 0 / 0 / 0；同查询结构在其它表正常返回数字，故为空表而非静默败；列面实测含 pool_rank/rank_score/sleeve/sleeves/vetoed/veto_reasons/tier_slot/stage/source_rank/score_components（判据面齐备，零行）。 ‖ 实测（l2_backend.py 存在性枚举）：本层 21 个 module_ref 指向件全部存在（selection_funnel/fine_scoring_engine/quant_short_term_strength_engine/negative_veto/signal_conflict_resolver/pool_tier_maintenance/candidate_pool_aggregator/tradability_preflight/auction_microstructure_analyzer/intraday_volume_orderflow/capital_flow_pattern_analyzer/seat_pattern_analyzer/chip_distribution_engine/chanlun_structure/environment_switch/instrument_master/multifactor_synthesis/chips/selection_confidence/daban_sleeve_strategy/event_driven_sleeve_strategy）；但 system.tables 里 LIKE '%funnel%'/'%tier%'/'%score%'/'%veto%'/'%preflight%'/'%chip%'/'%chanlun%'/'%sleeve%' 命中=空（唯一 score 命中=news_sentiment_window 无关）→ 引擎在、逐环节产物不落库，环节级消融需由考试车道按 raw 数据重放。"

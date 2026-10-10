@@ -1,0 +1,59 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-12-4/calibration/03_缠论结构
+node_id: TDM-E-L3-12-4
+family: calibration
+title_zh: "形态结构识别·缠论二买/三买位置校准卡"
+hypothesis: "缠论二买/三买位置（笔-段-中枢结构确认点）标记的个股后续 5-20 日收益高于非结构点，结构成熟度分位对前向收益单调正向——即形态给买点定位这一在册论断在数据面成立。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "缠论买点类型档（一买/二买/三买/非买点）+ 结构成熟度分位"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "买点档收益序须为 二买>=三买>=一买>=非买点（分位单调 rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+5/t+10/t+20（结构级信号，半衰应长）"
+  regime_stability: "牛/熊两段档序一致"
+  no_persistence: "chanlun_structure.py 件存在（MOD-SIG-072/091/115/145/146/148/149 挂载）但无任何逐日买点产物落库，本卡不可判"
+  pattern_ref_gap: "节点 pattern_refs 六个 PAT-CLL-*/PAT-CHART-* 在 CH 无对应枚举面（market_pattern_event 的 pattern_id 实测全为 CDL*/X-* 通达信式形态，无缠论 id）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "20 日前向收益"
+  note: "与 02 卡分立：两族判据（K线形态 vs 缠论结构）真源不同、不可合（跨域不同对象→不并）"
+status: blocked_on_impl
+blocked_reason: "实现缺：缠论结构买点无逐日产物落库，无可对齐的样本面"
+missing_segment: "2019-01-04..2025-09-09 全段无缠论产物（表不存在，非缺段）"
+unlock_condition: "chanlun_structure 增产物落库（或考试车道建重放产物表）后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-12-4.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "（需缠论产物表，实测不存在）候选源=c1_market.kline_daily_hfq 重放 chanlun_structure"
+  signal_column: "（待定义：buy_point_type/zhongshu_status）"
+  signal_derivation: "重放=以日线（或 30 分钟面）跑 chanlun 笔/段/中枢识别，产出二买/三买标记；需先落产物表方可判"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@impl：SELECT database,name FROM system.tables WHERE lower(name) LIKE '%chan%' → 仅命中 c1_backtest.alloc_budget_change_log 与 c3_fundamental.share_change（无缠论表）；'%pattern%' 命中三表（market_pattern_certification/event/win_rate）均为 K线形态族；chanlun_structure.py 件存在但零持久产物。资产状态另行查核：python -m zephyr.library.lookup state 缠论 输出摘录见台账 §5。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_backend.py 存在性枚举）：本层 21 个 module_ref 指向件全部存在（selection_funnel/fine_scoring_engine/quant_short_term_strength_engine/negative_veto/signal_conflict_resolver/pool_tier_maintenance/candidate_pool_aggregator/tradability_preflight/auction_microstructure_analyzer/intraday_volume_orderflow/capital_flow_pattern_analyzer/seat_pattern_analyzer/chip_distribution_engine/chanlun_structure/environment_switch/instrument_master/multifactor_synthesis/chips/selection_confidence/daban_sleeve_strategy/event_driven_sleeve_strategy）；但 system.tables 里 LIKE '%funnel%'/'%tier%'/'%score%'/'%veto%'/'%preflight%'/'%chip%'/'%chanlun%'/'%sleeve%' 命中=空（唯一 score 命中=news_sentiment_window 无关）→ 引擎在、逐环节产物不落库，环节级消融需由考试车道按 raw 数据重放。"

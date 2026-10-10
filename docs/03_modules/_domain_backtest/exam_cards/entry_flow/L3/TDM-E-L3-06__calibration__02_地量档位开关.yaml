@@ -1,0 +1,56 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-06/calibration/02_地量档位开关
+node_id: TDM-E-L3-06
+family: calibration
+title_zh: "环境开关·两市成交档位（地量停首板链）校准卡"
+hypothesis: "两市成交额（000001+399001 金额之和）处于低分位档（地量）时，首板/涨停样本次日溢价显著为负且全市场次日收益走低，成交额 20 日分位对次日指数收益单调正向——即 TDM 的首板筛选器实证（成交<8000 亿暂停首板链）方向成立。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "两市成交额 20 日滚动分位十分位（另以 8000 亿元绝对线做二值对照档）"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "十桶中位次日指数收益单调（rho>=0.6），最低两桶应为负"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1..t+3 IC 峰值与半衰期>=1 交易日（地量效应应短促）"
+  regime_stability: "牛/熊两段同号且均过 ic_floor"
+  absolute_line_check: "8000 亿绝对线在两 regime 下的分位位置差须报出（牛市该线可能是低分位、熊市可能是高分位），绝对线漂移即判该开关表需改分位口径"
+  switch_table: "environment_switch 六段×四开关封闭查表：本卡只判首板开关轴，其余三轴另卡（净零）"
+target:
+  primary: "next_day_index_return（CSI300 次日收益）"
+  secondary: "首板样本次日溢价（panel 条件面，用 L3-05 自建连板=1 样本）"
+  note: "series 卡（日度单序列，广度/环境面），与 L1 环境族同构"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-06.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.kline_index"
+  signal_column: "amount（symbol='000001' 与 '399001' 相加）"
+  signal_derivation: "两市成交额=SUM(kline_index.amount) WHERE symbol IN ('000001','399001') 同日相加（单位=元，须在卡内声明是否换算为亿元）；signal=该和的 20 日滚动分位（当日不含未来）；辅助档位=emotion_index.stage 的六段映射（实测窗内 stage 恒为 close_final，六段需由 emotion_index 数值分位重建）"
+  target_source: "kline_index symbol='000300' close→next_day_return（次一交易日简单收益）"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@idx：000001 实测 1990-12-19..2026-10-09/8,738 行、399001 1991-04-03..2026-10-09/8,693 行；窗内 2019..2024 各 242/243 交易日、2025 至 09-09=168 日（两市全窗无断供）；899050（北证50）仅 2022-04-29 起故不计入两市口径。@emo：emotion_index 窗内 1,622 行=交易日数，无缺日；stage 枚举实测仅 close_final。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov6.py O2 + l2_ch_cov3）：SELECT symbol,min(trade_date),max(trade_date),count() FROM c1_market.kline_index WHERE symbol IN ('000001','399001','000300','000905','899050') GROUP BY symbol → 000001：1990-12-19..2026-10-09/8,738 行；399001：1991-04-03..2026-10-09/8,693 行；000300：2005-01-04..2026-10-09/5,284 行；000905：2007-01-15 起/4,790 行；899050：2022-04-29 起/1,011 行；两市成交额=000001+399001 amount 相加，窗内 2019..2024 各 242/243 日、2025 至 09-09=168 日。 ‖ 实测（l2_ch_cov.txt / l2_ch_cov6.py O1）：SELECT min(trade_date),max(trade_date),count(),uniqExact(trade_date) FROM c1_market.emotion_index → 1991-06-10 / 2026-10-09 / 8,661 行；窗内 count()=1,622（=窗内交易日数，无缺日）；SELECT stage,count() … GROUP BY stage → [('close_final',1622)] 单版本；列含 emotion_index/stage/components/version。"

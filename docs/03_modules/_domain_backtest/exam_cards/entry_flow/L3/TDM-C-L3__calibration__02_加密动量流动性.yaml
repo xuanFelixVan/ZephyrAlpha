@@ -1,0 +1,59 @@
+schema_version: '1.0'
+card_id: TDM-C-L3/calibration/02_加密动量流动性
+node_id: TDM-C-L3
+family: calibration
+title_zh: "币对选择·市值/流动性/7 日动量排名校准卡（crypto L3）"
+hypothesis: "赛道内按 7 日动量排名选币对、并对流动性（日成交额）设剔除线后，入选币对次日与 5 日收益高于未入选，动量分位单调正向且流动性剔除不损收益（节点原文：流动性差的排序再靠前也剔除，深度不足吃不掉滑点）。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "7 日动量截面十分位 × 成交额分位高低二轴"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "动量分位单调（rho>=0.6），低流动性档内该单调应消失（滑点吞噬）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1/t+5 双期（币圈动量衰减极快）"
+  regime_stability: "牛/熊两段同号且均过 ic_floor（币圈 regime 用 BTC 200 日线代理，须声明）"
+  no_market_cap_source: "节点原文含市值排名，但 crypto 面实测无市值/流通量列（表列仅行情面）→ 市值轴本卡不判，声明缺数据"
+  not_built: "节点 red_reason=not_built（币圈预留框架未施工）——本卡是考该环判据的可考性，不代表有实现可跑"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "5 日收益与成交额加权可实现收益（滑点代理）"
+  note: "本车道唯一 crypto 节点（名册 lane=L2 在册）"
+status: blocked_on_data
+blocked_reason: "币圈日线起点 2025-08-08，IS 段零行、OOS 段仅 1 个月，样本量远不足 min_obs_per_bucket；且无市值面（节点三轴之一永不可判）"
+missing_segment: "2019-01-04..2025-08-07 无 crypto_kline_daily（IS 全段+OOS 大部缺）；市值/流通量列全时段缺"
+unlock_condition: "补齐币圈日线历史至 2019-01-04 并新增市值面后转 preregistered（另需该环施工，red_reason=not_built）"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-C-L3.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.crypto_kline_daily"
+  signal_column: "close,volume,amount"
+  signal_derivation: "动量=close_t/close_{t-7}−1 截面分位；流动性=日 amount 截面分位；宇宙=窗内该表出现的 symbol 全集（实测规模远小于 A 股，且仅 2025-08 起）；regime 代理=BTC 的 200 日均线位置（需先确认 BTC 在 symbol 枚举内）"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@cry：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.crypto_kline_daily → 2025-08-08/2026-10-08/19,801 行；与冻结窗仅重叠 2025-08-08..2025-09-09（约 17 交易日），IS 段 0 行；表 17 列（实测 table_columns 无市值/流通量列）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov3.py）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.crypto_kline_daily → 2025-08-08 / 2026-10-08 / 19,801 行；与冻结窗仅 2025-08-08..2025-09-09 重叠（≈17 交易日），IS 段 0 行。"

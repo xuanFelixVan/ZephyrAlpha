@@ -1,0 +1,65 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-11/ablation/02_日内双通道增量
+node_id: TDM-E-L3-11
+family: ablation
+title_zh: "日内动态选股·竞价+涨速双通道增量消融卡"
+hypothesis: "盘中双通道（竞价选股+涨速异动扫描）在盘前计划池之外新增的候选，其当日/次日实现收益显著为正（增量价值），去掉双通道后组合收益不降则本层退役。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "候选来源档（仅盘前/仅日内/两者皆有）"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "日内新增组收益须 >= 盘前组（否则盘中追高=负贡献）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "日内信号半衰期极短：t+0（当日收盘）与 t+1 为主，须报 t+0 收益"
+  regime_stability: "牛/熊两段增量符号一致"
+  overlap: "日内新增与盘前池重叠率须报出（重叠>50%=双通道无独立价值）"
+ablation_variants:
+- "V0 仅盘前计划池"
+- "V1 仅竞价通道"
+- "V2 仅涨速通道"
+- "V3 盘前∪竞价"
+- "V4 盘前∪涨速"
+- "V5 盘前∪竞价∪涨速（在册双通道全开）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "日内新增候选的日内浮盈与隔夜溢价"
+  note: "组骨架层；两子环节各有一张读数卡（11-1/11-2）"
+status: blocked_on_data
+blocked_reason: "两条日内通道的数据起点全部晚于冻结窗（竞价全窗缺、5 分钟缺 IS 前 2/3），组合级增量无法在同一窗内对齐"
+missing_segment: "竞价面 2019-01-04..2026-05-31 全缺；5 分钟面 2019-01-04..2021-08-31 全缺"
+unlock_condition: "补齐竞价历史与 5 分钟历史至 2019-01-04 后转 preregistered（或另立近期窗专项卡，需 Owner 批窗口例外）"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-11.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.auction_snapshot + c1_market.kline_5min + c1_market.kline_daily_hfq"
+  signal_column: "auction_volume,auction_price,5min close/volume"
+  signal_derivation: "竞价通道=9:25 竞价量比与竞价涨幅规则（11-1 卡口径）；涨速通道=5 分钟涨幅>2% 且 5 分钟量比>3（11-2 卡口径）；与盘前池取差集得日内新增"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@auc：auction_snapshot 实测 2026-06-01..2026-09-30（288,909 行/56 日）、auction_book 2026-07-21..2026-09-30（3,690,473 行/30 日）→ 冻结窗内 0 行；@m5：kline_5min 实测 2021-09-01 09:35 起（296,122,159 行）→ IS 前段缺。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.txt）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.auction_snapshot → 2026-06-01 / 2026-09-30 / 288,909 行 / 6,590 符号 / 56 日；auction_book → 2026-07-21 / 2026-09-30 / 3,690,473 行 / 6,071 符号 / 30 日 → 冻结窗（IS+OOS）内 0 行。 ‖ 实测（l2_ch_cov4.py）：c1_market.kline_5min 列=[open/high/low/close/volume/amount/trade_time/exchange/symbol/symbol_canonical/data_source/ingest_ts]；SELECT min(trade_time),max(trade_time),count() → 2021-09-01 09:35:00 / 2026-10-09 15:00:00 / 296,122,159 行 → 缺段=2019-01-04..2021-08-31（IS 前 2/3）。"

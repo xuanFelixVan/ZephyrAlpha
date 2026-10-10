@@ -1,0 +1,57 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-01/calibration/03_市值下限剔除
+node_id: TDM-E-L3-01
+family: calibration
+title_zh: "Universe 剔除·市值 30 亿线校准卡"
+hypothesis: "流通市值越低（越接近被剔除的 30 亿线）个股的次日截面收益越差且操纵风险越高，市值截面分位对次日收益单调正向——即市值下限剔除有信息含量而非只是规模效应。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "log(流通市值) 截面十分位"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "十桶中位前向收益单调（rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1..t+3 IC 峰值与半衰期"
+  regime_stability: "牛/熊两段同号且均过 ic_floor（微盘熊段必须单独判读）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "5 日同口径前向收益（规模效应慢变量）"
+  note: "与 L1 市值卡正交：本卡只判剔除线，不判规模因子选股"
+status: blocked_on_data
+blocked_reason: "市值面采集起点晚于冻结窗（在册断供，非窗口问题）"
+missing_segment: "2019-01-04..2020-12-31 全段无 circ_mv/total_mv/float_share/turnover_rate（IS 前两年=0 行）"
+unlock_condition: "补齐 stock_daily_basic 2019-01-04..2020-12-31 历史回填后转 preregistered（禁改用 2021 起短窗，禁改冻结窗）"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-01.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.stock_daily_basic"
+  signal_column: "circ_mv"
+  signal_derivation: "signal=log(circ_mv) 当日截面分位；流通市值口径=stock_daily_basic.circ_mv（原值不换算）；仅对窗内该日有该列的符号取值，缺日不插值"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@sdb：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stock_daily_basic → 2021-01-04/2026-10-09/7,118,522/5,785；IS 段 countIf=3,492,273、OOS 段=2,200,180。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.txt）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.stock_daily_basic → 2021-01-04 / 2026-10-09 / 7,118,522 行 / 5,785 符号 / 1,395 日；分窗 countIf：IS 段（<=2023-12-31）=3,492,273、OOS 段=2,200,180 → 缺段=2019-01-04..2020-12-31（整整两年 IS 无市值/流通股本/换手率）。"

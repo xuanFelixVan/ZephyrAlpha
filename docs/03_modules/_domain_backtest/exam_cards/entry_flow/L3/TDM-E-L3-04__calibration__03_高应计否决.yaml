@@ -1,0 +1,57 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-04/calibration/03_高应计否决
+node_id: TDM-E-L3-04
+family: calibration
+title_zh: "负面否决器·高应计（盈余质量）校准卡"
+hypothesis: "应计比例（净利−经营现金流，按规模归一）越高的个股后续 20 日收益越差（Sloan 盈余质量效应在 A 股成立），取负构造后分位对前向收益单调正向。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "−应计分位 截面十分位"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "十桶中位前向收益单调（rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "应计是慢变量，主判 t+20 半衰期>=10 交易日；t+1 IC 记 n/a 不判"
+  regime_stability: "牛/熊两段同号且均过 ic_floor"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "20 日前向收益与财报公告日前后分组差"
+  note: "2026-09-14 裁定#231 增补的第七检（high_accrual）在个股层的判据面"
+status: blocked_on_data
+blocked_reason: "分母口径缺历史 + 无资产负债表：精确 Sloan（ΔWC/total_assets）不可算，代理口径的规模分母在 IS 前段不可得"
+missing_segment: "2019-01-04..2020-12-31 无 circ_mv；全窗无资产负债表（total_assets/ΔWC 永不可得，需另批采集）"
+unlock_condition: "回填 stock_daily_basic 至 2019-01-04（或改用 total_mv 同源同段的既有替代并留痕）后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-04.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c3_fundamental.income_statement × c3_fundamental.cashflow_statement × c1_market.stock_daily_basic"
+  signal_column: "net_profit_incl_minority − ocf_net，/circ_mv"
+  signal_derivation: "accrual=(net_profit_incl_minority − ocf_net)/circ_mv，按 report_period 最近已公告值 PIT（announce_date<=T 才可用，actual_announce_date 优先）；scale 分母用 circ_mv（无资产负债表故 total_assets 不可得）；signal=−accrual 截面分位"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@fin：income_statement 列实测含 net_profit_incl_minority/report_period/announce_date/actual_announce_date/quality_flag，cashflow_statement 含 ocf_net/report_period；system.tables 里 LIKE statement 仅命中此二表（无 balance_sheet）。@sdb：缩放分母 circ_mv 实测 2021-01-04 起（IS 前两年 0 行）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_backend.py）：table_columns('c3_fundamental.income_statement') 含 net_profit_incl_minority/net_profit_excl_minority/operating_revenue/operating_cost/report_period/announce_date/actual_announce_date/quality_flag；cashflow_statement 含 ocf_net/icf_net/fcf_net/report_period；system.tables 里 LIKE '%statement%' 仅命中此二表（无资产负债表）→ Sloan 应计只能取（净利−经营现金流）代理，且缩放分母需用 circ_mv（2021-01-04 起）。 ‖ 实测（l2_ch_cov.txt）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.stock_daily_basic → 2021-01-04 / 2026-10-09 / 7,118,522 行 / 5,785 符号 / 1,395 日；分窗 countIf：IS 段（<=2023-12-31）=3,492,273、OOS 段=2,200,180 → 缺段=2019-01-04..2020-12-31（整整两年 IS 无市值/流通股本/换手率）。"

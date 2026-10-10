@@ -1,0 +1,66 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-07/ablation/02_三链并集合流
+node_id: TDM-E-L3-07
+family: ablation
+title_zh: "策略专属链·打板/多因子/其余链并集消融卡"
+hypothesis: "三条专属链（打板/多因子/其余 sleeve）并集相对任一单链在冻结窗内前向收益更高且去一链的边际增益>=0，链间候选重叠率<30%（否则 TDM 的互不共享中间结果假设成立但重复计算成本存在）。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "链归属（daban/multifactor/event-other/并集）分组"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "并集组收益须不低于最优单链组（否则并集=稀释）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "各链 t+1/t+3/t+5 衰减曲线（打板链应最短、多因子链应最长）"
+  regime_stability: "牛/熊两段各链排序稳定性（Spearman>=0.6）"
+  overlap_rate: "链两两候选重叠率日度中位数须报出并判 <30%"
+  zero_gain_retire: "去一链后组合前向收益不降的链标挂起候选（§4 内收判据：零触发零消费→退役）"
+ablation_variants:
+- "V0 仅打板链"
+- "V1 仅多因子链"
+- "V2 仅其余 sleeve 链"
+- "V3 打板∪多因子"
+- "V4 打板∪其余"
+- "V5 三链并集（在册口径）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "并集 vs 单链的 5 日前向收益差"
+  note: "组骨架（策略专属链）层的合成判据"
+status: blocked_on_impl
+blocked_reason: "三链候选无持久产物（唯一带 sleeve 标签的在册表为预留空表，缺账在册 status=open），并集与去一链对照无从对齐"
+missing_segment: "链产物：2019-01-04..2025-09-09 全段无（打板引擎负载表仅 2026-09）"
+unlock_condition: "candidate_pool_aggregator 或 sleeve 链补产物落库+历史回填后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-07.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "（无单表）需三链逐日候选产物：c1_market.daban_engine_load + multifactor 合成重放 + sleeve 链重放"
+  signal_column: "sleeve 标签（在册列面存在于 stock_candidate_pool.sleeve，但表零行）"
+  signal_derivation: "重放：打板链=L3-07-1 口径、多因子链=L3-07-2 口径、其余链=L3-07-3 的 20 日动量 Top-N；链标签逐日打标后求并集与去一链对照"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@del：daban_engine_load 实测 2026-09-01..2026-09-28/1,701 行/19 日（引擎 PIT 负载表只滚近期）；@pool：stock_candidate_pool（唯一带 sleeve 标签的在册表）实测 count()=0；@impl：sleeve 类持久产物表枚举零命中（system.tables LIKE %sleeve% 空）。 另：在册数据缺账 id=stock_candidate_pool_empty_table_no_leg（src/zephyr/data/config/known_data_gaps.yaml:1526，gap_type=empty_table，status=open，root_cause=schema 在册而 CH 实测 0 行=采集腿未建/暂缓的预留表，非管道故障；证据指针=docs/_working/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1、scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 点名）；写腿件 src/zephyr/signal_ashare/core/candidate_pool_snapshot.py 已实现（16 列 POOL_INSERT_COLUMNS 与 DDL 同序、ch_writer 正门、INVARIANTS 明写 无注册源=空池如实缺省）→ PoolBundleSource 零注册=表零行的成因，非零实现。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.txt / l2_ch_cov4.py）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.daban_engine_load → 2026-09-01 / 2026-09-28 / 1,701 行 / 922 符号 / 19 日；daban_board_event → 2026-09-01 / 2026-10-09 / 1,767 行 / 975 符号 / 21 日 → 冻结窗内 0 行（引擎 PIT 负载表按 internal 批只滚动近期）。 ‖ 实测（l2_ch_cov.txt）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.stock_candidate_pool → 1970-01-01 / 1970-01-01 / 0 / 0 / 0；同查询结构在其它表正常返回数字，故为空表而非静默败；列面实测含 pool_rank/rank_score/sleeve/sleeves/vetoed/veto_reasons/tier_slot/stage/source_rank/score_components（判据面齐备，零行）。 ‖ 实测（l2_backend.py 存在性枚举）：本层 21 个 module_ref 指向件全部存在（selection_funnel/fine_scoring_engine/quant_short_term_strength_engine/negative_veto/signal_conflict_resolver/pool_tier_maintenance/candidate_pool_aggregator/tradability_preflight/auction_microstructure_analyzer/intraday_volume_orderflow/capital_flow_pattern_analyzer/seat_pattern_analyzer/chip_distribution_engine/chanlun_structure/environment_switch/instrument_master/multifactor_synthesis/chips/selection_confidence/daban_sleeve_strategy/event_driven_sleeve_strategy）；但 system.tables 里 LIKE '%funnel%'/'%tier%'/'%score%'/'%veto%'/'%preflight%'/'%chip%'/'%chanlun%'/'%sleeve%' 命中=空（唯一 score 命中=news_sentiment_window 无关）→ 引擎在、逐环节产物不落库，环节级消融需由考试车道按 raw 数据重放。"

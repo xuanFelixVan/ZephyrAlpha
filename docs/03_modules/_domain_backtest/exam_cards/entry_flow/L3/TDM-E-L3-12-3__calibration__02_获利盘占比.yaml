@@ -1,0 +1,58 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-12-3/calibration/02_获利盘占比
+node_id: TDM-E-L3-12-3
+family: calibration
+title_zh: "筹码分布·获利盘占比（chips_winner）校准卡"
+hypothesis: "获利盘占比（chips_winner）与集中度联合分档下：获利盘高且集中=拉升期无抛压（收益正）、获利盘高且不集中=派发嫌疑（收益负），单看获利盘分位对次日与 5 日收益呈倒 U 而非单调。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "获利盘档（<30%/30-60%/60-90%/>90%）×conc_90 分位高低 二轴八档"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "主单调面用 获利盘×集中度联合分（高集中低获利=吸筹→拉升=正），十分位单调 rho>=0.6；纯获利盘分位仅作倒 U 留痕，不判单调"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1 与 t+5 双期 IC（筹码是慢变量，t+5 应更强）"
+  regime_stability: "牛/熊两段联合分同号且均过 ic_floor"
+  joint_axis_required: "节点原文判据（获利盘>90% 且集中=拉升期 / 获利盘<30% 高位换手=派发）本质是二维，单轴判必失真——本卡主判据锁二维联合"
+  winner_source: "获利盘由 CYQ 迭代衰减口径供给（2026-10-04 SW14 处方① 落地，chips_winner 列）；TDM #257④ 纪律=trial 期该维不进决策，故本卡只出读数不回写 confidence 之外的结论"
+  dedup_critical: "technical_indicator 原始行多版本，chips_winner 必须 argMax 去重（实测 2024 raw 29,787,404 行 vs 去重 910,208 symbol-day）"
+  known_defect_FA1: "已知缺陷在册（正查命中）：docs/_working/archive/2026-09/deep_review_full/p1_decision_chain/rpt_d06.md L29 F-A1=一字板/停牌单日退化注入全网格均匀分布（A 股口径缺陷，已实测）——high<=low 时 compute_daily_distribution 返回跨整个 250 日价格区间的均匀分布而非该价位点质量；故一字板常态日（连板/跌停锁死）的 chips_winner 被摊薄失真。首跑必须按 一字板日 vs 非一字日 分组对照 IC，若差异显著则该信号只能带条件使用（禁直接回写 confidence）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "5 日与 10 日前向收益"
+  note: "筹码维（四维验证子 3），2026-10-04 接线后可考"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-12-3.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.technical_indicator"
+  signal_column: "chips_winner,conc_70,conc_90"
+  signal_derivation: "获利盘=chips_winner（原列，取值域 0-1 或 0-100 需在首跑时以分布实证并写死换算）；集中度=conc_90（90% 筹码成本带宽/均价，越小越集中）；联合分=获利盘档分位 × (1 − conc_90 分位)；全部同 symbol-day argMax(ingest_ts) 去重"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@ti：chips_winner/conc_70/conc_90/continuation_40 列实测存在（table_columns 命中）；去重后 symbol-day 与 chips_winner>0 的 symbol-day 逐年几乎相等（2019=647,746 vs 627,292；2023=901,509 vs 901,502；2024=910,208 vs 910,203）→ 全窗可用（早前按原始行测得的 86% 空值率系多版本重复造成的伪画像，已按去重口径修正并留痕）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.py / l2_ch_cov5.py B1）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.technical_indicator → 2019-01-02 / 2026-09-30 / 404,675,630 行 / 14,357 符号 / 1,880 日；去重后 symbol-day 2019=647,746、2020=749,678、2021=823,409、2022=868,408、2023=901,509、2024=910,208、2025(至09-09)=632,574；chips_winner>0 的 symbol-day 与 symbol-day 几乎相等（2019=627,292/2023=901,502/2024=910,203）——原始行含多版本（2024 raw 29,787,404 行），不去重会把 IC 样本放大 30 倍，读数必须 argMax(ingest_ts) 或 FINAL。"

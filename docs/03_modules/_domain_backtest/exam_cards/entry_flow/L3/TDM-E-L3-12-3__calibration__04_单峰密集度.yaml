@@ -1,0 +1,59 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-12-3/calibration/04_单峰密集度
+node_id: TDM-E-L3-12-3
+family: calibration
+title_zh: "筹码分布·单峰密集度（全语义）校准卡"
+hypothesis: "筹码成本分布在单峰密集（低带宽+主峰占比高）状态下前向收益最高、多峰状态最低——即节点原文的最干净形态判据，需要真正的分布形态统计量而非 conc 带宽近似。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "主峰占比档 + 峰数（单峰/双峰/多峰）双轴"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "单峰组收益 > 双峰 > 多峰（档序单调，rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+5/t+20（形态级慢变量）"
+  regime_stability: "牛/熊两段档序一致"
+  why_not_conc_proxy: "conc_70/conc_90 只给成本带宽，不含峰数与主峰占比，判不了单峰密集全语义——用带宽冒充即造伪判据"
+  registered_ruling: "TDM 节点原文在册：2026-09-16 裁定#257④ 与本节点相关结论=获利盘语义已接（2026-10-04 SW14）、单峰密集度全语义仍挂起待 D21 流通股本工程（nb1_b6 处方③）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "20 日前向收益"
+  note: "本卡的价值=把挂起项变成带解锁条件的可考资产，不是宣布该环已考"
+status: blocked_on_impl
+blocked_reason: "实现缺：筹码分布直方图未落库，主峰占比/峰数无供给面；conc_* 带宽不足以判该假说"
+missing_segment: "非数据缺段而是缺分布面产物（chip_distribution_engine 需增直方图输出，配合 D21 流通股本工程）"
+unlock_condition: "chip_distribution_engine/CYQ 落筹码直方图产物（或新增 DS 登记）后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-12-3.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "（需筹码成本分布直方图面）c1_market.technical_indicator 仅有 conc_*/chips_* 汇总列，无分布列"
+  signal_column: "（待定义：主峰占比/峰数）"
+  signal_derivation: "需由 CYQ 迭代筹码分布原始直方图重建（每价格档比例），计算主峰占比与峰数；引擎现仅输出 4 指标汇总（long_term_bottom_ratio/upper_trap_peak/bottom_accumulation/distribution_migration，2026-09-16 在册），无直方图落库"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@ti：technical_indicator 筹码相关列实测=chips_avg_cost/chips_cost_5/15/85/95/chips_winner/conc_70/conc_90（无分布直方图列）；@sdb：流通股本 float_share 实测 2021-01-04 起（IS 前两年缺）。资产状态另行查核：python -m zephyr.library.lookup state 单峰密集 / 获利盘 输出摘录见台账 §5（含命中的 strategy_intake 件与 chips 族 commit 7963211f1ad）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.py / l2_ch_cov5.py B1）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.technical_indicator → 2019-01-02 / 2026-09-30 / 404,675,630 行 / 14,357 符号 / 1,880 日；去重后 symbol-day 2019=647,746、2020=749,678、2021=823,409、2022=868,408、2023=901,509、2024=910,208、2025(至09-09)=632,574；chips_winner>0 的 symbol-day 与 symbol-day 几乎相等（2019=627,292/2023=901,502/2024=910,203）——原始行含多版本（2024 raw 29,787,404 行），不去重会把 IC 样本放大 30 倍，读数必须 argMax(ingest_ts) 或 FINAL。 ‖ 实测（l2_ch_cov.txt）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.stock_daily_basic → 2021-01-04 / 2026-10-09 / 7,118,522 行 / 5,785 符号 / 1,395 日；分窗 countIf：IS 段（<=2023-12-31）=3,492,273、OOS 段=2,200,180 → 缺段=2019-01-04..2020-12-31（整整两年 IS 无市值/流通股本/换手率）。"

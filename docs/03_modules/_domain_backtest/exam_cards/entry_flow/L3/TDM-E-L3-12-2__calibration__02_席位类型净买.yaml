@@ -1,0 +1,59 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-12-2/calibration/02_席位类型净买
+node_id: TDM-E-L3-12-2
+family: calibration
+title_zh: "龙虎榜席位·席位风格与次日溢价校准卡"
+hypothesis: "上榜标的按席位风格分组：知名游资（一线席位）净买=次日接力溢价高、机构专用席位净买=中线收益好、拉萨系（散户大本营席位）净买=次日溢价差，席位类型净买分位对次日收益单调正向。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "席位组（一线游资/机构专用/拉萨系/其他）×净买额分位双轴"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "组内净买分位单调（rho>=0.6）；组间排序须为 一线游资>机构>其他>拉萨（次日口径）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "次日（接力）与 5 日（中线）两期分别建 IC，两期峰值席位应不同"
+  regime_stability: "牛/熊两段同号且均过 ic_floor"
+  seat_name_rule: "一线游资与拉萨系无枚举列，需 seat_name 文本白名单（如 东方财富证券拉萨 系列）——白名单须在卡内写死并可复核，禁运行时自由裁量"
+  reason_field: "reason 列（上榜原因）须分组，涨停上榜与非涨停上榜不可混样"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "5 日前向收益（机构组主判）"
+  note: "席位维（四维验证子 2）；seat_refs 在册六个 SEAT-INST/YOUZI 机构"
+status: blocked_on_data
+blocked_reason: "龙虎榜席位面起点 2022-01-04，IS 缺前三年；且游资定性依赖未登记的 seat_name 白名单工程"
+missing_segment: "2019-01-04..2021-12-31 无 dragon_tiger_seat 行（0 行）"
+unlock_condition: "席位历史回填至 2019-01-04 + seat_name 白名单落册（SEAT-* 六个在册机构需与文本清单对齐）后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-12-2.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.dragon_tiger_seat"
+  signal_column: "net_amount,seat_type,seat_name,reason"
+  signal_derivation: "席位组=seat_type='institution' 直接判机构；游资/拉萨由 seat_name 文本匹配白名单（写死清单）；signal=该组净买额（同 symbol-day 同组求和）截面分位；样本=窗内上榜 symbol-day（实测 2022=14,589/2023=12,908/2024=18,111 symbol-day）"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@dts：dragon_tiger_seat 实测 2022-01-04..2026-10-09/622,365 行/5,998 符号/1,152 日；seat_type 枚举实测=broker 562,116/institution 39,250/connect 20,999（无游资专用枚举→必须走 seat_name 文本）。资产状态另行查核：python -m zephyr.library.lookup state 龙虎榜席位 输出已在既有台账/§5 摘录。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.txt / l2_ch_cov5.py H1/H2）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.dragon_tiger_seat → 2022-01-04 / 2026-10-09 / 622,365 行 / 5,998 符号 / 1,152 日；按年上榜 symbol-day：2022=14,589、2023=12,908、2024=18,111、2025=16,352；seat_type 枚举实测=broker 562,116 / institution 39,250 / connect 20,999（游资一线与拉萨系需由 seat_name 文本判定）→ 缺段=2019-01-04..2021-12-31。"

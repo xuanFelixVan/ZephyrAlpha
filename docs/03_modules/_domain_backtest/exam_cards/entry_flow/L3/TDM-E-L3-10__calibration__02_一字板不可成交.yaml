@@ -1,0 +1,56 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-10/calibration/02_一字板不可成交
+node_id: TDM-E-L3-10
+family: calibration
+title_zh: "可交易性预检·一字板（买不进）校准卡"
+hypothesis: "一字涨停（开=高=低=收=涨停价）标记的个股在纸面收益上排名最高但 T+1 开盘实际不可成交，把可成交性取负构造后信号分位对可实现前向收益单调正向——即预检把不可成交票留在池内会系统性虚高回测收益。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "可成交性档（一字/非一字涨停/普通）与截面十分位双轨"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "可实现收益（剔除一字样本后）单调（rho>=0.6）；纸面收益与可实现收益差须显著为正"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1 可成交率与 t+2 溢价曲线（一字票次日仍一字的比例须报出）"
+  regime_stability: "牛/熊两段同号且均过 ic_floor"
+  paper_vs_real: "主判据=同池在 纸面口径（含一字，按 close-to-close）与 可实现口径（T+1 开盘可成交）下的收益差 >=1 个百分点/日，否则预检无价值"
+  one_word_def: "一字判定=不复权 open=high=low=close 且 close>=limit_up−0.011（实测 2024-10-08 命中 41/5,355）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "一字票次日开盘买入（若可成交）至 t+2 收盘的条件收益"
+  note: "预检五查中的资金一手/权限/笼子三项本卡不判（权限与资金属账户态，笼子需盘口，另见 03 卡）"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-10.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.kline_daily × c1_market.stk_limit"
+  signal_column: "open,high,low,close,limit_up"
+  signal_derivation: "一字标记=不复权 OHLC 四价相等 AND close>=limit_up−0.011（两表同日 argMax 去重）；signal=−1×一字标记截面分位（反向构造使门柱正向）；可实现收益=非一字样本 T+1 open→T+2 close（后复权），一字样本记 NaN 不计入均值（禁假设以涨停价成交）"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@sl：一字/封板/炸板三口径判据实证（2024-10-08 一字=41、封板=893、炸板=2,268；2023-06-05 封板=74、炸板=23）；stk_limit 全窗可用（2015-01-05..2026-10-09）；@kd_raw：单日截面 3,622-5,438 符号，不复权面 kline_daily 全窗可用。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov5.py C1-C3 / l2_backend.py）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.stk_limit → 2015-01-05 / 2026-10-09 / 9,254,772 行 / 5,831 符号 / 2,857 日；2023-06-05 单日 5,199 行=5,199 唯一符号（PIT 无重复）；判据实证：封板家数 close>=limit_up-0.011 → 2023-06-05=74、2024-10-08=893；炸板家数 high>=limit_up-0.011 且 close<limit_up-0.011 → 2023-06-05=23、2024-10-08=2,268；一字板 open=high=low=close 且 close>=limit_up-0.011 → 2024-10-08=41/5,355。量纲陷阱：limit_up 为不复权价，必须配 c1_market.kline_daily（不复权），若配 kline_daily_hfq 则同日误判 3,882 家涨停。 ‖ 实测（l2_ch_cov6.py K1b）：c1_market.kline_daily（不复权）单日截面规模 2019-06-05=3,622 符号 / 2023-06-05=5,200 / 2024-10-08=5,355 / 2025-06-05=5,438；列含 open/high/low/close/volume/amount/pct_change/market_type/exchange/quality_flag/adj_factor。"

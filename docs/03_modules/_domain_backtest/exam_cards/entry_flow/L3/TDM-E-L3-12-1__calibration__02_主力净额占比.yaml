@@ -1,0 +1,59 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-12-1/calibration/02_主力净额占比
+node_id: TDM-E-L3-12-1
+family: calibration
+title_zh: "个股资金面·主力净额占比（大单战线）校准卡"
+hypothesis: "主力净额占日成交额比例越高（在册战线>=20%）个股次日与 5 日收益越高，且单日大进大出（|占比|>50%）反向（对倒嫌疑），主力净额分位对前向收益单调正向但对倒档需剔除。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "main_net_inflow_pct 截面十分位（|占比|>50% 单独成档）"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "十桶中位前向收益单调（rho>=0.6，剔除对倒档后计）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1 峰值、t+3/t+5 半衰期>=1 交易日；连续 3 日净流入的条件面单独建档"
+  regime_stability: "牛/熊两段同号且均过 ic_floor"
+  duidao_exclusion: "|main_net_inflow_pct|>50% 记对倒嫌疑档，主单调不计该档（节点原文=单日大进大出警惕对倒）"
+  buildup_signal: "连续 3 日净流入（节点原文=建仓期）作为二值条件面，判其条件收益是否高于单日净流入"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "5 日前向收益"
+  note: "资金面维（四维验证子 1）"
+status: blocked_on_data
+blocked_reason: "资金流采集起点 2021-01-04，IS 缺前两年（不足即 blocked，禁改窗、禁以 OOS 单段代考）"
+missing_segment: "2019-01-04..2020-12-31 无 money_flow 行（0 行）"
+unlock_condition: "money_flow 历史回填至 2019-01-04 后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-12-1.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.money_flow"
+  signal_column: "main_net_inflow_pct,super_large_net_inflow_pct,large_net_inflow"
+  signal_derivation: "signal=main_net_inflow_pct 截面分位（同 symbol-day argMax 去重）；对倒档=|main_net_inflow_pct|>0.5；建仓标记=main_net_inflow>0 连续 3 交易日"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@mf：money_flow 实测 2021-01-04..2026-10-09/5,993,328 行/5,782 符号；按年 symbol-day 2021=1,058,846/2022=1,146,266/2023=1,209,660/2024=1,233,202/2025(至09)=861,547；列含 small/medium/large/super_large/main 五档净额与占比。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.txt / l2_ch_cov5.py G1）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.money_flow → 2021-01-04 / 2026-10-09 / 5,993,328 行 / 5,782 符号；按年 symbol-day：2021=1,058,846、2022=1,146,266、2023=1,209,660、2024=1,233,202、2025(至09)=861,547 → 缺段=2019-01-04..2020-12-31。"

@@ -1,0 +1,63 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-02/ablation/02_九阶段逐级压缩贡献
+node_id: TDM-E-L3-02
+family: ablation
+title_zh: "九阶段选票主链·逐段消融卡"
+hypothesis: "九阶段每一段（动量初筛/流动性/波动率带/趋势确认/相对强度/量价配合/形态过滤/负面剔除/最终精选）的淘汰动作都使被留池的前向收益均值上升，且不存在零贡献段（去掉后 IC 不降的段应退役）。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "逐段留池 vs 被淘汰组的二分组"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "按阶段序号排列的每段增益（留池组均值−淘汰组均值）须全部>=0 且至少 6 段显著为正"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "各段增益的 t+1/t+2/t+5 半衰期建档（形态段与负面段应偏短）"
+  regime_stability: "牛/熊两段增益排序稳定性（Spearman>=0.6 才可宣称骨架稳定）"
+  zero_contribution_retire: "任一阶段在两 regime 与 OOS 三处均零显著→按 §4 净零铁律标退役候选，不新增阶段"
+  compression_curve: "逐段池规模压缩比须报出（业界 3000→10 口径核对，50-70% 每段假设）"
+ablation_variants:
+- "V0 无阶段（宇宙全留）"
+- "V1..V9 逐段累加（动量初筛→流动性→波动率带→趋势→相对强度→量价→形态→负面→精选）"
+- "VD1..VD9 去某一段的九变体（边际增益表）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "逐段池规模压缩比序列"
+  note: "主链骨架卡：一句一阶段，合并为一张消融卡而非九张（净零）"
+status: blocked_on_impl
+blocked_reason: "实现缺（无逐段产物落库）+ 数据缺（形态段 IS 前段无事件表）双重阻断"
+missing_segment: "逐段产物：2019-01-04..2025-09-09 全段无；形态段数据：2019-01-04..2021-08-31 无 market_pattern_event"
+unlock_condition: "MOD-SIG-086 落逐段产物表并历史回填；形态段回填至 2019-01-04 或该段改判据并留痕"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-02.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "重放面：c1_market.kline_daily_hfq + c1_market.technical_indicator + c1_market.stk_limit（+ 形态段需 c1_market.market_pattern_event，IS 缺段）"
+  signal_column: "stage_flag（重放口径）"
+  signal_derivation: "按 selection_funnel 九段口径重放：动量=20 日涨幅分位、流动性=amount 分位、波动率带=atr_14/close 带、趋势=ma_20 上方、相对强度=截面涨幅分位、量价=volume/MA20(volume) 与涨幅同号、形态=market_pattern_event 命中（该表实测 2021-09-01 起）、负面=share_unlock/st_flag 代理、精选=分位 Top"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@impl：selection_funnel.py 件存在（MOD-SIG-086）但 system.tables 无 funnel 类产物表（枚举实测零命中）→ 逐段无留痕，重放需考试车道自建；@pat：形态段依赖表起点 2021-09-01，缺 2019-01-04..2021-08-31。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_backend.py 存在性枚举）：本层 21 个 module_ref 指向件全部存在（selection_funnel/fine_scoring_engine/quant_short_term_strength_engine/negative_veto/signal_conflict_resolver/pool_tier_maintenance/candidate_pool_aggregator/tradability_preflight/auction_microstructure_analyzer/intraday_volume_orderflow/capital_flow_pattern_analyzer/seat_pattern_analyzer/chip_distribution_engine/chanlun_structure/environment_switch/instrument_master/multifactor_synthesis/chips/selection_confidence/daban_sleeve_strategy/event_driven_sleeve_strategy）；但 system.tables 里 LIKE '%funnel%'/'%tier%'/'%score%'/'%veto%'/'%preflight%'/'%chip%'/'%chanlun%'/'%sleeve%' 命中=空（唯一 score 命中=news_sentiment_window 无关）→ 引擎在、逐环节产物不落库，环节级消融需由考试车道按 raw 数据重放。 ‖ 实测（l2_ch_cov4.py E1 / l2_backend.py）：SELECT min(anchor_trade_date),max(anchor_trade_date),count(),uniqExact(symbol),countIf(isNull(confirmed_at)) FROM c1_market.market_pattern_event → 2021-09-01 / 2026-09-30 / 28,587,647 行 / 5,715 符号 / 0；pattern_id 实测头名：X-短线 2,335,308、X-关键反转日 1,628,168、CDLSPINNINGTOP 1,516,729、CDLLONGLINE 1,424,171、CDLENGULFING 831,253、X-镊子底 818,451 → 缺段=2019-01-04..2021-08-31；且枚举内无缠论笔/买点类 pattern_id。"

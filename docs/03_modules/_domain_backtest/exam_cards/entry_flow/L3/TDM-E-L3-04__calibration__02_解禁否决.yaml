@@ -1,0 +1,54 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-04/calibration/02_解禁否决
+node_id: TDM-E-L3-04
+family: calibration
+title_zh: "负面否决器·解禁>5% 流通盘校准卡"
+hypothesis: "未来 20 个交易日内有限售解禁且解禁比例（占流通市值/股本）越高的个股，次日与前向收益越差（负 alpha 可判），把解禁比例取负构造后信号分位对前向收益单调正向——即解禁一票否决线有实证收益支撑。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "−解禁比例分位 截面十分位（另按 5% 线做二值对照）"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "十桶中位前向收益单调（rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "解禁前 5 日（预期效应）与解禁日后 5 日分别建 IC 曲线，半衰期>=1 交易日"
+  regime_stability: "牛/熊两段同号且均过 ic_floor（牛市解禁惩罚应更弱但仍同号）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "解禁日后 10 日前向收益"
+  note: "负向假说按本车道立法§2.1 反向构造（执行器带符号地板无 abs 语义）"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-04.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c3_fundamental.share_unlock"
+  signal_column: "ratio,shares,amount"
+  signal_derivation: "signal=−1×（未来 20 个交易日内最近一次解禁的 ratio 截面分位；无解禁=0 档）；解禁比例口径=ratio（原表列，若 ratio 与 shares/流通股本冲突以 ratio 为准并留痕）；事件窗用 unlock_date 与前向收益日历严格对齐，禁把未解禁样本插 0 以外的值"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@shu：SELECT min(unlock_date),max(unlock_date),count(),uniqExact(symbol) FROM c3_fundamental.share_unlock → 2010-01-04/2027-09-29/30,264 行；窗内解禁事件 15,668 条、5,531 符号（全窗可用，含未来排期故 OOS 完整）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov4.py I1）：SELECT min(unlock_date),max(unlock_date),count(),uniqExact(symbol) FROM c3_fundamental.share_unlock → 2010-01-04 / 2027-09-29 / 30,264 行；countIf(unlock_date BETWEEN 2019-01-04 AND 2025-09-09)=15,668 条，涉及 5,531 符号；列含 amount/shares/ratio。"

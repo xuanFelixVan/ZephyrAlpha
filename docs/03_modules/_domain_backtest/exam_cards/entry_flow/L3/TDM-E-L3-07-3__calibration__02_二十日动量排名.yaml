@@ -1,0 +1,56 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-07-3/calibration/02_二十日动量排名
+node_id: TDM-E-L3-07-3
+family: calibration
+title_zh: "其余 sleeve 选股链·topn 20 日动量排名校准卡"
+hypothesis: "20 日涨幅截面排名进入前 N（N=10/20/30）的个股，其后续 5 日截面收益高于宇宙等权且随排名单调衰减，topn 动量链的选股面在个股层独立成立。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "20 日涨幅截面十分位（另按 Top10/20/30 三档）"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "十桶中位 5 日前向收益单调（rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "IC 峰值预期 t+3/t+5，半衰期>=3 交易日（动量族特征）；t+1 若最强则与短线族混同，须留痕"
+  regime_stability: "牛/熊两段同号且均过 ic_floor（熊市动量应衰减但不翻号，翻号即判该链需环境开关约束）"
+  verified_node_discipline: "本节点 confidence=verified（STR-TSMALL-001 与 STR-VAL-001 双窗及格在册）——本卡只新增个股层动量读数面，禁改写既有 evidence 与结论，写回面另建字段"
+  cost_sanity: "20 日动量换手隐含成本须报出（月度以下重排可能吞掉收益）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "10 日前向收益与 Top-N 重叠率"
+  note: "verified 节点补族卡（作业簿明令：已 verified 不免考）"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-07-3.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.kline_daily_hfq"
+  signal_column: "close（20 日涨幅）"
+  signal_derivation: "ret_20 = close_t/close_{t-20} − 1（后复权 close，同符号 argMax 去重；不足 20 日不取值）；signal=ret_20 截面分位；Top-N 用宇宙内降序"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@kd：kline_daily_hfq 窗内 5,583,635 唯一(symbol,trade_date)、1,622 交易日、3,944 符号，覆盖 IS+OOS 全窗；@TDM：本节点 strategy_mounts 实测 confidence=verified（STR-TSMALL-001 IS 1.066/DSR 0.888/OOS 0.694；STR-VAL-001 IS 0.563/OOS 1.173，run=SCR-C4-20260914-*）——本卡不改该面。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（本轮命令，l2_ch_cov5.py A1/A2）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.kline_daily_hfq → 1990-12-19 / 2026-09-30 / 10,098,785 行 / 5,916 符号 / 8,736 日；冻结窗内（symbol∈stock_basic 窗内符号集）5,583,635 行=5,583,635 个唯一(symbol,trade_date)（零重复）、1,622 交易日、3,944 符号；data_source 分解：tushare 1,622 行（每日一行，指数面）+ recalc_raw_x_adjfactor 7,589,306 行。"

@@ -1,0 +1,65 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-07-2/ablation/03_行业中性约束
+node_id: TDM-E-L3-07-2
+family: ablation
+title_zh: "多因子打分链·行业中性化（单行业<=4 只）消融卡"
+hypothesis: "多因子 Top20 加行业中性约束（单行业<=4 只）后，组合前向收益的 regime 稳定性提升且集中度风险下降，去掉该约束的对照组牛熊段 IC 差异更大。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "约束组 vs 无约束组二分组（另按行业 HHI 分位双轨）"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "不判单调，判两组的 regime 间 IC 差（约束组差值须更小）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1/t+5/t+20 三档收益（中性化增益应体现在慢变量）"
+  regime_stability: "牛/熊两组各自同号，且约束组两段 IC 之比的绝对值更接近 1"
+  cap_check: "单行业<=4 只的实际命中日占比须报出（约束从未生效=伪约束）"
+  industry_source: "行业归属真源=stock_basic.industry（窗内覆盖不全，见下）"
+ablation_variants:
+- "V0 无行业约束 Top20"
+- "V1 单行业<=4 只（在册约束）"
+- "V2 单行业<=2 只"
+- "V3 行业等权（每行业配额相同）"
+- "V4 行业中性化（组内 zscore 后再合成）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "行业 HHI 与最大行业权重"
+  note: "合成约束面的可考性判定（不是单指标读数）"
+status: blocked_on_data
+blocked_reason: "行业归属 PIT 覆盖不足窗内全宇宙（创业板整段缺失），中性化约束在缺失样本上不可判"
+missing_segment: "2019-01-04..2026-08-13 创业板无 industry/成员归属；北交所全窗无归属；板块成员表（sector_constituent）窗内 0 行"
+unlock_condition: "补齐 stock_basic 创业板/北交所历史 PIT 或提供板块成员历史后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-07-2.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.stock_basic（industry 列）× c1_market.technical_indicator"
+  signal_column: "industry"
+  signal_derivation: "行业归属=stock_basic 按 trade_date 的 PIT 快照 industry；组合层按行业聚合权重与计数；归属缺失符号不得默认并入单一桶（须剔除并报缺失率）"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@sb：stock_basic 的 board/industry 窗内实测仅沪主板（1,803，2015-01-05 起）/深主板（1,604）/科创板（621，2019-07-22 起）；创业板 1,409 符号仅自 2026-08-14、北交所 348 仅自 2026-09-15 → 冻结窗内创业板全段无行业归属（约占全部 A 股 1/4）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov6.py L1/L2/L3）：SELECT board,uniqExact(symbol),min(trade_date),max(trade_date) FROM c1_market.stock_basic GROUP BY board → 沪主板 1,803（2015-01-05 起）/深主板 1,604（2015-01-05 起）/科创板 621（2019-07-22 起）/创业板 1,409（仅 2026-08-14 起）/北交所 348（仅 2026-09-15 起）；2024-12-31 快照仅 3,756 符号且前缀分布无 300/301；同日 name 含 ST=169、含 退=22。"

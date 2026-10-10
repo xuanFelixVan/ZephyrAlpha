@@ -1,0 +1,62 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-07-1/ablation/02_烂板剔除步
+node_id: TDM-E-L3-07-1
+family: ablation
+title_zh: "打板选股链·烂板剔除消融卡"
+hypothesis: "打板漏斗中剔除烂板（封板不牢/尾盘板，本卡以炸板口径代理：盘中触及涨停但收盘未守住）后，留组次日与前向收益高于被剔组，即烂板剔除步有正边际增益。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "涨停日质量档（守住板/炸板两组，另按首封时间不可得声明）"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "组间收益差须为正（守住组>炸板组）；十分位单调以涨停强度代理计（rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1 峰值、t+2/t+3 半衰期>=1 交易日"
+  regime_stability: "牛/熊两段同号且均过 ic_floor"
+  proxied_criterion: "TDM 原文烂板口径=封板<1 小时/尾盘板，需 first_seal_time/sealed_seconds（实测仅 2026-09 起有）；本卡以收盘未守住=炸板为可判代理，代理与原口径的差须留痕"
+  one_word_exclusion: "一字板次日不可成交样本剔除（与 03-1/05 卡同规则）"
+ablation_variants:
+- "V0 五步漏斗全开"
+- "V1 去烂板剔除步（第3步）"
+- "V2 去板块强度前3（第1步）"
+- "V3 去龙头定位（第5步）"
+- "V4 仅涨停资格（第2步 alone）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "炸板组次日开盘买入至 t+2 收盘收益（判接力是否亏钱）"
+  note: "漏斗第 3 步单独消融（第 4 步封单质量另卡，数据永不可得）"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-07-1.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.kline_daily × c1_market.stk_limit"
+  signal_column: "high,close,limit_up"
+  signal_derivation: "炸板=high>=limit_up−0.011 AND close<limit_up−0.011；守住板=close>=limit_up−0.011（两表同日同符号 argMax(ingest_ts) 去重，不复权价同量纲）；signal=守住板标记（1=留组，0=炸板剔组），收益口径 T+1 开盘→T+2 收盘"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@sl：实测炸板/封板家数可重建——2023-06-05 炸板=23/封板=74，2024-10-08 炸板=2,268/封板=893（命令见 l2_backend.py 段落）；@lup：原口径 first_seal_time/sealed_seconds/open_board_count 实测仅 limit_up_pool 2026-09-01 起有（1,426 行/23 日）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov5.py C1-C3 / l2_backend.py）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.stk_limit → 2015-01-05 / 2026-10-09 / 9,254,772 行 / 5,831 符号 / 2,857 日；2023-06-05 单日 5,199 行=5,199 唯一符号（PIT 无重复）；判据实证：封板家数 close>=limit_up-0.011 → 2023-06-05=74、2024-10-08=893；炸板家数 high>=limit_up-0.011 且 close<limit_up-0.011 → 2023-06-05=23、2024-10-08=2,268；一字板 open=high=low=close 且 close>=limit_up-0.011 → 2024-10-08=41/5,355。量纲陷阱：limit_up 为不复权价，必须配 c1_market.kline_daily（不复权），若配 kline_daily_hfq 则同日误判 3,882 家涨停。 ‖ 实测（l2_ch_cov.txt）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.limit_up_pool → 2026-09-01 / 2026-10-09 / 1,426 行 / 789 符号 / 23 日；limit_up_down → 2026-07-20 / 2026-10-09 / 5,397 行 / 1,841 符号 / 54 日；列含 seal_amount/seal_ratio/sealed_seconds/first_seal_time/last_seal_time/open_board_count/consec_limit/limit_stat → 封单质量与连板统计的历史全缺，须由 kline_daily×stk_limit 重建可重建部分（封板/炸板/一字可重建，封单额/首封时刻不可重建）。"

@@ -1,0 +1,66 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-03-3/ablation/02_三维共振体检
+node_id: TDM-E-L3-03-3
+family: ablation
+title_zh: "双策略合流体检·三维共振消融卡"
+hypothesis: "合流后要求趋势/资金/形态三维至少两维达标的体检，使留池前向收益高于三维单通过池，且三维全通过不优于两维通过（防单因子幻觉的假设需被数值面证实）。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "通过维数（0/1/2/3 四档）"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "通过维数档位的前向收益均值须单调不降，且 2 维档 >= 1 维档显著"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1/t+3/t+5 三档期收益差（体检增益应体现在久期而非隔日）"
+  regime_stability: "牛/熊两段单调结构一致（档序翻转=体检表不可信）"
+  at_least_two: "主判据：2 维通过组收益 >= 3 维通过组（若 3 维显著更高则 TDM 的至少两维门槛过松，需收紧并留痕）"
+  single_factor_hallucination: "单维通过组与全不通过组差须为正，否则该维无信息量→按 §4 净零标退役候选"
+ablation_variants:
+- "V0 不做体检（双池合流全留）"
+- "V1 仅趋势维通过"
+- "V2 仅资金维通过"
+- "V3 仅形态维通过"
+- "V4 至少两维通过（TDM 在册门槛）"
+- "V5 三维全通过"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "5 日前向收益"
+  note: "合成环节（合流体检）按作业簿走消融"
+status: blocked_on_data
+blocked_reason: "三维中资金维与形态维的采集起点均晚于冻结窗（IS 前段缺一半以上），三维共振在 IS 窗内不可判"
+missing_segment: "资金维 2019-01-04..2020-12-31 无 money_flow；形态维 2019-01-04..2021-08-31 无 market_pattern_event"
+unlock_condition: "补齐 money_flow 与 market_pattern_event 至 2019-01-04 后转 preregistered（窗口禁改）"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-03-3.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.technical_indicator（趋势维）× c1_market.money_flow（资金维）× c1_market.market_pattern_event（形态维）"
+  signal_column: "ma_* / main_net_inflow_pct / pattern_id"
+  signal_derivation: "趋势维=ma_20 上方且多排计数>=2；资金维=main_net_inflow_pct>0 连续 3 日（在册战线=大单净额/日成交额>=20%，本卡取 20% 分位版）；形态维=market_pattern_event 当日命中看多类 pattern_id 集合；通过维数=三维二值求和"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@mf：money_flow 实测 2021-01-04 起（窗内按年 symbol-day 2021=1,058,846/2022=1,146,266/2023=1,209,660）→ 缺 2019-01-04..2020-12-31；@pat：market_pattern_event 实测 2021-09-01 起（28,587,647 行/5,715 符号）→ 缺 2019-01-04..2021-08-31；@ti 三维中的趋势维全窗可用。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov.txt / l2_ch_cov5.py G1）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.money_flow → 2021-01-04 / 2026-10-09 / 5,993,328 行 / 5,782 符号；按年 symbol-day：2021=1,058,846、2022=1,146,266、2023=1,209,660、2024=1,233,202、2025(至09)=861,547 → 缺段=2019-01-04..2020-12-31。 ‖ 实测（l2_ch_cov4.py E1 / l2_backend.py）：SELECT min(anchor_trade_date),max(anchor_trade_date),count(),uniqExact(symbol),countIf(isNull(confirmed_at)) FROM c1_market.market_pattern_event → 2021-09-01 / 2026-09-30 / 28,587,647 行 / 5,715 符号 / 0；pattern_id 实测头名：X-短线 2,335,308、X-关键反转日 1,628,168、CDLSPINNINGTOP 1,516,729、CDLLONGLINE 1,424,171、CDLENGULFING 831,253、X-镊子底 818,451 → 缺段=2019-01-04..2021-08-31；且枚举内无缠论笔/买点类 pattern_id。 ‖ 实测（l2_ch_cov.py / l2_ch_cov5.py B1）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.technical_indicator → 2019-01-02 / 2026-09-30 / 404,675,630 行 / 14,357 符号 / 1,880 日；去重后 symbol-day 2019=647,746、2020=749,678、2021=823,409、2022=868,408、2023=901,509、2024=910,208、2025(至09-09)=632,574；chips_winner>0 的 symbol-day 与 symbol-day 几乎相等（2019=627,292/2023=901,502/2024=910,203）——原始行含多版本（2024 raw 29,787,404 行），不去重会把 IC 样本放大 30 倍，读数必须 argMax(ingest_ts) 或 FINAL。"

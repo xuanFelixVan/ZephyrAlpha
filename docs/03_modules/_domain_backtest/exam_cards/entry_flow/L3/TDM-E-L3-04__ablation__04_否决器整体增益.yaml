@@ -1,0 +1,66 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-04/ablation/04_否决器整体增益
+node_id: TDM-E-L3-04
+family: ablation
+title_zh: "负面否决器·七检整体消融卡"
+hypothesis: "负面否决器（业绩暴雷/立案调查/减持/解禁/商誉减值/配股/高应计七检）整体使留池前向收益高于未否决池，且每一检的边际增益>=0（零增益检退役）。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "命检数（0/1/2+ 三档）与逐检边际增益"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "命检数越多前向收益越低（取负构造后单调正向，rho>=0.6）"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "逐检各自的 t+1/t+5/t+20 衰减曲线建档（解禁/减持偏事件前后，暴雷偏财报窗口）"
+  regime_stability: "牛/熊两段同号且均过 ic_floor"
+  per_check_ablation: "七检逐一去一检重跑，报边际增益表；三处（IS/OOS/两段 regime）均零增益的检标退役候选（§4 净零）"
+  veto_not_remove: "TDM 在册裁决=否决只标记不剔除（candidate_pool_aggregator 语义），故本卡判标记组的收益差而非剔除后的组合收益"
+ablation_variants:
+- "V0 无否决器"
+- "V1 去解禁检"
+- "V2 去业绩暴雷检"
+- "V3 去高应计检"
+- "V4 可判四检全开（减持/商誉/立案三检缺数据永不进对照）"
+- "V5 七检全开（仅当三检数据补齐后可跑）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "留池 5/20 日前向收益"
+  note: "一票否决优先级高于加分项——本卡判该优先级是否真有收益支撑"
+status: blocked_on_data
+blocked_reason: "七检中三检数据永不可得（减持/商誉/立案无表），整体消融会系统性低估否决器价值"
+missing_segment: "减持公告/商誉减值/立案调查三项：全窗无对应采集表（非缺段，是缺表）"
+unlock_condition: "新增三项采集表后转 preregistered；或把卡面判据改为可判四检并在卡内留残缺声明（需 Owner 裁是否降格）"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-04.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c3_fundamental.share_unlock（解禁）+ 三检无表（减持/商誉/立案）+ c3_fundamental.income_statement（业绩暴雷代理）"
+  signal_column: "命检并集标记"
+  signal_derivation: "可判检=解禁（share_unlock）、业绩暴雷（income_statement 净利同比转负或预告亏损代理）、高应计（见 03 卡）；不可判检=大股东减持公告、商誉减值、立案调查、配股——CH 全库枚举无对应表（实测 %reduc%/%goodwill%/%announce%/%disclosure% 仅 disclosure_plan 不含减持与商誉）"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@fin：无 balance_sheet；@shu：解禁面全窗可用（15,668 事件）；库内枚举命令原文 SELECT database,name FROM system.tables WHERE lower(name) LIKE '%reduc%' / '%goodwill%' / '%announce%' → 命中 0 行（l2_ch_cov3.py），'%disclosure%' 仅命中 c3_fundamental.disclosure_plan。资产状态断言另行查核：python -m zephyr.library.lookup state 减持 / 商誉 / 立案调查 输出见台账 §5。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_backend.py）：table_columns('c3_fundamental.income_statement') 含 net_profit_incl_minority/net_profit_excl_minority/operating_revenue/operating_cost/report_period/announce_date/actual_announce_date/quality_flag；cashflow_statement 含 ocf_net/icf_net/fcf_net/report_period；system.tables 里 LIKE '%statement%' 仅命中此二表（无资产负债表）→ Sloan 应计只能取（净利−经营现金流）代理，且缩放分母需用 circ_mv（2021-01-04 起）。 ‖ 实测（l2_ch_cov4.py I1）：SELECT min(unlock_date),max(unlock_date),count(),uniqExact(symbol) FROM c3_fundamental.share_unlock → 2010-01-04 / 2027-09-29 / 30,264 行；countIf(unlock_date BETWEEN 2019-01-04 AND 2025-09-09)=15,668 条，涉及 5,531 符号；列含 amount/shares/ratio。"

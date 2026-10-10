@@ -1,0 +1,66 @@
+schema_version: '1.0'
+card_id: TDM-E-L3/ablation/02_漏斗压缩信息保留
+node_id: TDM-E-L3
+family: ablation
+title_zh: "个股选择枢纽·消融卡（压缩率与信息保留）"
+hypothesis: "从全市场宇宙压缩到 10-20 只精选的这条漏斗，在冻结窗内保留的次日截面收益信息显著高于同规模随机池与仅按分数不压缩的对照——即压缩本身有正 alpha，而非只是丢票。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "个股当日合成得分截面分位（十桶）"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "十桶中位前向收益随桶序单调（rho>=0.6），且最高桶（Top10-20 精选）中位收益显著高于宇宙等权"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1 开盘可成交至 t+2/t+3/t+5 的 IC 半衰期建档（压缩池的 alpha 应在 1-3 日内兑现，超半衰=压缩在选慢票）"
+  regime_stability: "牛/熊两段同号且均过 ic_floor（熊市压缩增益更应显著，否则压缩=砍掉反弹弹性）"
+  compression_rate: "每日池规模实测：宇宙/入选比≈300-500:10（TDM 假设的业界 3000→10 漏斗需实测核对），池规模日波动<=30% 方判稳定"
+  random_pool_control: "同规模（10-20 只）随机池 100 次抽样的前向收益分布，精选池需优于其 95 分位"
+ablation_variants:
+- "V0 全宇宙等权（不压缩）"
+- "V1 仅按合成得分 Top30"
+- "V2 Top20"
+- "V3 Top10（TDM 精选假设位）"
+- "V4 同规模随机池 100 次抽样分布"
+- "V5 去压缩=全量留池但保留否决标记"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "同规模随机池与宇宙等权的 t+1→t+2 截面收益差"
+  note: "组骨架枢纽卡：判该环压缩是否值得存在（净零原则），非单指标读数"
+status: blocked_on_impl
+blocked_reason: "环节级逐段产物零落库（漏斗无中间表）+ 候选池预留空表（在册缺账 open），消融需考试车道自建重放"
+missing_segment: "非数据缺，而是实现缺：candidate_pool_aggregator/pool_tier_maintenance 无历史逐日产物落库（2019-01-04..2025-09-09 全段无池快照）"
+unlock_condition: "考试车道按 sig_deriv 落一张重放产物表（或 MOD-SIG-139/142 补产物落库+历史回填）后转 preregistered"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "（无单表）候选池合成面：c1_market.kline_daily × c1_market.stk_limit × c1_market.technical_indicator 重放"
+  signal_column: "rank_score（重放口径）"
+  signal_derivation: "重放=按 L3-01 宇宙剔除 → L3-03-1 涨停基因分 + L3-03-2 趋势/量能分 + L3-05 连板顺位 合成分，取 Top-N（N=10/15/20 三档）；逐段产物不落库故由考试车道重放"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@impl：本层 21 个 module_ref 件全部存在，但 system.tables 里 funnel/tier/score/veto/preflight/chip/chanlun/sleeve 八类持久产物枚举全空；@pool：c1_market.stock_candidate_pool 实测 count()=0（列面 pool_rank/rank_score/sleeve/vetoed 齐备但零行）。 另：在册数据缺账 id=stock_candidate_pool_empty_table_no_leg（src/zephyr/data/config/known_data_gaps.yaml:1526，gap_type=empty_table，status=open，root_cause=schema 在册而 CH 实测 0 行=采集腿未建/暂缓的预留表，非管道故障；证据指针=docs/_working/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1、scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 点名）；写腿件 src/zephyr/signal_ashare/core/candidate_pool_snapshot.py 已实现（16 列 POOL_INSERT_COLUMNS 与 DDL 同序、ch_writer 正门、INVARIANTS 明写 无注册源=空池如实缺省）→ PoolBundleSource 零注册=表零行的成因，非零实现。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_backend.py 存在性枚举）：本层 21 个 module_ref 指向件全部存在（selection_funnel/fine_scoring_engine/quant_short_term_strength_engine/negative_veto/signal_conflict_resolver/pool_tier_maintenance/candidate_pool_aggregator/tradability_preflight/auction_microstructure_analyzer/intraday_volume_orderflow/capital_flow_pattern_analyzer/seat_pattern_analyzer/chip_distribution_engine/chanlun_structure/environment_switch/instrument_master/multifactor_synthesis/chips/selection_confidence/daban_sleeve_strategy/event_driven_sleeve_strategy）；但 system.tables 里 LIKE '%funnel%'/'%tier%'/'%score%'/'%veto%'/'%preflight%'/'%chip%'/'%chanlun%'/'%sleeve%' 命中=空（唯一 score 命中=news_sentiment_window 无关）→ 引擎在、逐环节产物不落库，环节级消融需由考试车道按 raw 数据重放。 ‖ 实测（l2_ch_cov.txt）：SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),uniqExact(trade_date) FROM c1_market.stock_candidate_pool → 1970-01-01 / 1970-01-01 / 0 / 0 / 0；同查询结构在其它表正常返回数字，故为空表而非静默败；列面实测含 pool_rank/rank_score/sleeve/sleeves/vetoed/veto_reasons/tier_slot/stage/source_rank/score_components（判据面齐备，零行）。"

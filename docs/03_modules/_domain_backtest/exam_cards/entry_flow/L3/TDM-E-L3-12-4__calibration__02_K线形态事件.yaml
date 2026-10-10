@@ -1,0 +1,59 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-12-4/calibration/02_K线形态事件
+node_id: TDM-E-L3-12-4
+family: calibration
+title_zh: "形态结构识别·K线与反转形态事件校准卡"
+hypothesis: "看多形态事件（吞没/关键反转日/镊子底等）标记的个股次日与 5 日收益高于无形态日，形态强度分位对前向收益单调正向；且形态只给买点定位、不单独构成买入理由（对照组须显示形态单独使用收益不显著优于随机时点）。"
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+buckets:
+  type: "quantile_decile"
+  'on': "形态命中类别档 + 形态置信度分位"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "形态分位单调（rho>=0.6）；形态组 vs 随机时点组收益差须显著"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
+  lag_profile: "t+1/t+3/t+5 曲线（形态类应短促）"
+  regime_stability: "牛/熊两段同号且均过 ic_floor（反转类在熊市应更强，须分 regime 报）"
+  direction_control: "direction 列（实测存在）须分组，看多/看空不可混样"
+  regime_tag_use: "表含 regime_tag 与 confidence 列，主判据用 confidence 分位而非二值命中"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "5 日前向收益"
+  note: "形态维（四维验证子 4）"
+status: blocked_on_data
+blocked_reason: "形态事件面起点 2021-09-01，IS 缺前 2 年 8 个月（不足即 blocked，禁改窗）"
+missing_segment: "2019-01-04..2021-08-31 无 market_pattern_event 行（0 行）"
+unlock_condition: "形态事件历史回填至 2019-01-04 后转 preregistered（tilib 形态族可由日线重放，属回填工程）"
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-12-4.confidence
+preregistered_by: st-nightmine-20261010-L2
+preregistered_at: '2026-10-10'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.market_pattern_event"
+  signal_column: "pattern_id,direction,confidence,regime_tag,anchor_trade_date"
+  signal_derivation: "signal=看多形态（direction 判定）的 confidence 截面分位；样本按 anchor_trade_date 对齐，confirmed_at 非空方算确认（实测 countIf(isNull(confirmed_at))=0）；同 symbol-day 多形态取 confidence 最大值"
+  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
+  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
+  data_window_evidence: "@pat：market_pattern_event 实测 anchor_trade_date 2021-09-01..2026-09-30/28,587,647 行/5,715 符号；pattern_id 枚举实测头名 X-短线=2,335,308、X-关键反转日=1,628,168、CDLSPINNINGTOP=1,516,729、CDLENGULFING=831,253、X-镊子底=818,451（无 W 底/头肩底颈线类 id 命中，需以 key_points/name 检索确认）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov4.py E1 / l2_backend.py）：SELECT min(anchor_trade_date),max(anchor_trade_date),count(),uniqExact(symbol),countIf(isNull(confirmed_at)) FROM c1_market.market_pattern_event → 2021-09-01 / 2026-09-30 / 28,587,647 行 / 5,715 符号 / 0；pattern_id 实测头名：X-短线 2,335,308、X-关键反转日 1,628,168、CDLSPINNINGTOP 1,516,729、CDLLONGLINE 1,424,171、CDLENGULFING 831,253、X-镊子底 818,451 → 缺段=2019-01-04..2021-08-31；且枚举内无缠论笔/买点类 pattern_id。"
