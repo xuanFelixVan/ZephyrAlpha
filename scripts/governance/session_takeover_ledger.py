@@ -9,6 +9,7 @@
 # [MATURITY] production
 # [INVARIANTS] 接管台账（Takeover Ledger）L1/L2 显化真源——死亡判据=last_activity 距今>7200s 且非 logical；条目幂等（同 sid 已 open 只 refresh 资源数不重复生成，原子 tmp+os.replace）+ refresh 节流窗 600s（判死钩子在 list_active 热路径，窗内原样返回防 git status/staging 重 IO 风暴）；resolve 迁移 .runtime/takeover/resolved/ 改 status；只读写 .runtime 运行态面（禁碰 git 元数据/生产数据）；PID/心跳为辅助证据（取不到=null 不阻断）；worktree dirty 经 git status --porcelain（非 git 目录=-1 记 git_status_unavailable）；文件清单截断上限 200（DIRTY/STAGING 各自）防台账膨胀
 # [MODIFY-GUARD] 死亡判据阈值/资源收集面变更须与 takeover_pending_gate.py 及 docs/_working/branch_zero_takeover_20261002/t1_takeover_infra.md 同批
+# [MODIFY-GUARD] 2026-10-10 sid=st-maint1-t3lane 三证立法（PID 亡＝必要非充分）配套面：write_takeover_entry 新增 extra_death_evidence 入参（判死钩子把三证读数原文并入 death_evidence.alive_side_evidence），改名/删该字段须与 session_concurrency._salvage_takeover_ledger 及 tests/gov/session/test_takeover_pid_false_positive.py 同批；本件自身判据（DEATH_IDLE_SECONDS=7200 idle 轨）零改动
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -992,10 +993,18 @@ def write_takeover_entry(
     death_evidence: dict | None = None,
     registry_entry: dict | None = None,
     now: float | None = None,
+    extra_death_evidence: dict | None = None,
 ) -> dict:
     """生成/更新一条 open 接管条目（幂等：同 sid 已 open 只 refresh 资源数）。
 
     registry_entry 未传时从 registry 现读（钩子路径传增量省 IO）。
+
+    extra_death_evidence（2026-10-10 sid=st-maint1-t3lane 三证立法配套）：判死钩子在
+    立案侧已算好的旁证读数（``{"alive_side_evidence": {...}}``），浅并入 death_evidence
+    ——**开账的条目必须自带"当时三证都是空的"原文**，接管人才能复核立案是否成立，
+    而不是只看一句 reason。钩子用它（已算一次，禁重算两套口径），CLI --scan 路径
+    不传（其判据=idle>7200s，非 PID 轨，行为零变更）。
+
     返回写入后的条目。
     """
     root = Path(root)
@@ -1011,6 +1020,8 @@ def write_takeover_entry(
         death_evidence = (
             _death_evidence(entry, now) if entry else {"reason": "unknown", "threshold_seconds": DEATH_IDLE_SECONDS}
         )
+    if extra_death_evidence:
+        death_evidence = {**death_evidence, **extra_death_evidence}
 
     ledger = root / _LEDGER_REL
     rows = _read_lines(ledger)

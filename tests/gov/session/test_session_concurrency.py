@@ -907,14 +907,34 @@ class TestSessionRegistryRegisterRateGuard:
         assert lines[0]["min_interval_seconds"] == _REREGISTER_MIN_INTERVAL_SECONDS
 
     def test_logical_request_exempt(self, tmp_path):
-        """logical 豁免态①：请求参 logical=True（总包/chief keepalive）不被限流。"""
+        """logical 豁免态①：请求参 logical=True（总包/chief keepalive）不被限流。
+
+        夹具更正（2026-10-10 st-maint1-20261010 归因实测）：本例意图是"chief/总包
+        keepalive 不受限流"，但原夹具用 sid=`sess-guard-4`——非 chief 形态，会先被
+        W-29 防伪造闸（`_verify_chief_form` 失败 ⇒ logical=True→False，
+        session_concurrency.py:709）降级，与限速豁免无关，导致断言 second.logical
+        is True 在 dev 基线上恒红（对照基座复跑实锤：同一测试在主区未含 T3 改动时
+        一样红，且 T3 diff 零行触碰 logical）。改用含 `_CHIEF_FORM_TOKENS` 的
+        chief 形态 sid，使本例只测它想测的那一件事。
+        """
         reg = SessionRegistry(project_root=tmp_path)
-        first = reg.register("sess-guard-4", pid=0, logical=True)
-        second = reg.register("sess-guard-4", pid=0, logical=True)
+        first = reg.register("sess-chief-guard-4", pid=0, logical=True)
+        second = reg.register("sess-chief-guard-4", pid=0, logical=True)
+        assert first.logical is True, "chief 形态请求 logical=True 不应被 W-29 降级"
         assert second.last_register_ts >= first.last_register_ts
         assert second.last_activity >= first.last_activity
         assert second.logical is True
         assert not (tmp_path.joinpath(*self._AUDIT_REL)).exists()
+
+    def test_non_chief_logical_request_downgraded(self, tmp_path):
+        """反向钉桩（防我把上一例修成放松门禁）：非 chief 形态请求 logical=True
+        必须被 W-29 降级为 False——防 keeper 环路伪造总包身份保活。
+        """
+        reg = SessionRegistry(project_root=tmp_path)
+        info = reg.register("sess-guard-4", pid=0, logical=True)
+        assert info.logical is False, "非 chief 形态的 logical 请求被放行＝W-29 防伪造闸失效"
+        again = reg.register("sess-guard-4", pid=0, logical=True)
+        assert again.logical is False
 
     def test_existing_logical_entry_exempt(self, tmp_path):
         """logical 豁免态②：既有条目经 mark_logical 翻转后，register 续注册放行。"""

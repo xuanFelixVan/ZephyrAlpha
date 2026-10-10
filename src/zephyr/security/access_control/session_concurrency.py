@@ -7,8 +7,10 @@
 # [MATURITY] production
 # [INVARIANTS] SessionRegistry S4-D 分片存储（2026-09-30）：主真源=.runtime/session_registry/<sid>.json 每会话一片（per-pid tmp+os.replace+WinError5 退避原语义），写只碰本会话片（整表重写竞态拆面治本——AI-NORTH-001 心跳互踩/WinError5 连锁/#ARCH-324 的结构性病根）；读侧聚合（损坏/缺失片跳过+审计，损失半径=单片），旧单表迁移窗双写为只读兼容副本（直读消费者 watchdog/write_audit_daemon/commit_queue/check_commit_message 不受扰），片目录缺席回退旧表；回退手柄 env ZEPHYR_SESSION_REGISTRY_SHARDS=0；公共 save()=merge-upsert 永不删（删除只能走 unregister/list_active 收割显式意图）；session 存活判定双轨：pid>0=PID liveness+TTL(3600s)双判据（S3-A 治本），pid=0=心跳新鲜度(90s)判据（#ARCH-HEARTBEAT-001 P0 治本，daemon 每 30s 刷新 last_heartbeat，stale session 90s 自动释放 held_files 消除 allow_overlap 62× 超阈）；last_activity 独立活性锚点（#ARCH-HEARTBEAT-002 治本 2026-07-23：仅 register/claim_file/register_dependency 刷新，heartbeat 不刷新，daemon 检测 idle 超 _ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s 自动退出，消除僵尸 daemon 永久保活死 session 的活性反转）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）；register 频率护栏（wave4-D V5 治本 2026-10-01）：同 session 活条目 _REREGISTER_MIN_INTERVAL_SECONDS（=idle 上限+2×30s）窗内重注册=降级执行（状态按实参重建+四时间锚 start_time/last_heartbeat/last_activity/last_register_ts 冻结+审计，防 keeper 循环伪造 last_activity 且窗不被刷延长），logical（请求参或既有条目）豁免 FULL 刷新、死条目放行=合法重启、既有条目 logical=True 重建时继承（防 mark_logical 随整体重建静默丢标）；频率锚=last_register_ts 独立字段（旧条目缺省 0.0=无锚放行）
 # [INVARIANTS] 裁定#480 C-2 活性合流（2026-10-03）：liveness_verdict=单一活性裁决表（纯只读折算，8 套活性机制零改动继续在岗作数据源——内收式合流非重写）；优先级 P1 接管待决 TAKEOVER-PENDING(dead) > P2 回魂违规 REINCARNATION-VIOLATION(ghost，重注册窗内非 logical 反复投胎) > P3 幽灵无主 GHOST-NO-SHARD(ghost，注册表无片+无心跳>90s) > P4 判死 PID-DEAD/TTL-EXPIRED/HEARTBEAT-STALE(dead，③15m 墓碑宽限折入 reason) > P5 降级 RATE-GUARD-DOWNGRADED/DAEMON-IDLE-OVERDUE(degraded，④1860s 降级窗/④b1800s 守护自退) > P6 存活 REGISTRY-FRESH(alive)；阈值全部复用既有常量（90/900/1800/1860/3600）且同向边界（> 判违规，恰等于阈值=未越界）；唯一结论=state+authoritative_signal，低级命中仅作 reasons 旁证不改变结论
+# [INVARIANTS] 三证旁证立法（PID 亡＝必要非充分，2026-10-10 sid=st-maint1-t3lane）：pid>0 注册条目判死/立案前必须过 collect_alive_side_evidence 三证——①心跳文件新鲜（heartbeat.jsonl mtime<=_HEARTBEAT_TIMEOUT_SECONDS(90s) **且末行 status!=exited**，在册铁律：exited 只证守护进程死不证会话死）②该 sid 在 pending/processing 有 mtime 在 _REAP_GRACE_SECONDS(900s) 窗内的袋 ③sid 命中分支（refname 路径段=精确匹配，禁前缀匹配防子串误放）最近提交时刻在 900s 窗内（**只读 refs，禁拿 index mtime 当活证**——git status 会回写 linked worktree 的 index，观测即污染观测对象）；任一为真→判活，不得静默翻转（logger.warning + evidence_sink 结构化出参 + 立案侧 JSONL 记账）；三处判死轨同批受闸：_is_session_alive（pid>0 亡支）／_salvage_takeover_ledger（_pid_dead 单独不得 write_takeover_entry）／liveness_verdict（P1 TAKEOVER-PENDING 与 P4 PID-DEAD 判死前必须消费心跳文件旁证）；阈值零新增（90/900 复用）；证据读不到/IO 异常=无正证（不新增判活通道，亦不把读失败当活证）；三证读数 90s 分桶进程内缓存（热路径 IO 防复发）；旁证否决只作用于 _pid_dead，不作用于台账既有 _age_ok(idle>7200s) 硬证据路径（行为零变更）；回退手柄 env ``ZEPHYR_ALIVE_SIDE_EVIDENCE=0`` 整轴停用=逐字回到修码前判死行为（与 ZEPHYR_SESSION_REGISTRY_SHARDS 同族）；写侧零变更：list_active 新增 mutating=False 只读通道与 list_active_readonly()，缺省 mutating=True 副作用面一字不改（72 处调用方依赖）
 # [MODIFY-GUARD]
 # [MODIFY-GUARD] 2026-10-03 sid=st-sB-surgery-20261003 裁定#480 C-2 活性合流施工：新增 liveness_verdict 单一裁决表（纯只读折算，8 机制内部逻辑零改动、继续在岗作数据源）；裁决优先级/信号面/四态语义变更须与 tests/governance/test_liveness_verdict_20261003.py 同批，禁止反向改动既有函数签名/行为
+# [MODIFY-GUARD] 2026-10-10 sid=st-maint1-t3lane 接管误判死治疗：三证旁证判据（collect_alive_side_evidence）变更须与 tests/gov/session/test_takeover_pid_false_positive.py + scripts/governance/session_takeover_ledger.py 的 death_evidence.alive_side_evidence 字段面同批；判据分叉一律取更保守一侧（宁可少判死，但三证全空的真死会话必须仍判死开账）；state/authoritative_signal 字面量（PID-DEAD/TAKEOVER-PENDING/TTL-EXPIRED/HEARTBEAT-STALE/GHOST-NO-SHARD/REINCARNATION-VIOLATION/RATE-GUARD-DOWNGRADED/DAEMON-IDLE-OVERDUE/REGISTRY-FRESH）机读禁改名禁新增替换旧名
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -51,6 +53,7 @@ __all__ = [
     "SessionInfo",
     "SessionRegistry",
     "ZephyrLock",
+    "collect_alive_side_evidence",
     "detect_mtime_conflict",
     "liveness_verdict",
 ]
@@ -318,6 +321,352 @@ class SessionInfo:
 _LEDGER_SOFT_EXPIRE_AUDITED: set[str] = set()
 
 
+# ---------------------------------------------------------------------------
+# 三证旁证（2026-10-10 sid=st-maint1-t3lane）：PID 亡＝必要非充分
+# ---------------------------------------------------------------------------
+# 病灶（今日三案实证 st-govjudge/st-backfix/st-datalane-20261010，台账先 open 后
+# resolve，resolve 原文承认"判死依据=注册 pid 为瞬时 git_commit 进程已退，非班次死亡"）：
+# claim_file 懒注册以 ``pid=os.getpid()`` 重建条目（正门 session_worktree 用 pid=0），
+# 瞬时 CLI 就此坐上 PID 位；进程一退，三处判死轨（_is_session_alive /
+# _salvage_takeover_ledger / liveness_verdict）**只看 PID 不看心跳文件**，零宽限判死
+# → 接管台账 open → TAKEOVER-PENDING 咬住活会话自己的提交。
+# 立法：pid>0 条目要判死/立案，必须"PID 亡 **且** 无任何存活旁证"。旁证复用在册
+# "判会话已死须零写入三证齐"口径，三证任一为真即判活；读不到=无正证（保守侧不新增
+# 判活通道，也绝不把 IO 失败当活证）。阈值零新增——①复用 _HEARTBEAT_TIMEOUT_SECONDS
+# (90s)，②③复用 _REAP_GRACE_SECONDS(900s，在册"近期活跃宽限窗"，与 reconcile_worker
+# 证3/PAYLOAD_TTL 同语义）。
+_ALIVE_WITNESS_HEARTBEAT: str = "HEARTBEAT-FILE-FRESH"
+_ALIVE_WITNESS_BAG: str = "QUEUE-BAG-INFLIGHT"
+_ALIVE_WITNESS_TRACE: str = "BRANCH-WRITE-TRACE"
+# 队列根（与 session_takeover_ledger._collect_bags 同真源路径）；env 覆盖位与
+# commit_queue.QUEUE_ENV_VAR 同名（测试/多仓隔离），未设即回落仓根 .runtime/commit_queue。
+_COMMIT_QUEUE_DIRNAME: str = ".runtime/commit_queue"
+_COMMIT_QUEUE_DIR_ENV: str = "ZEPHYR_COMMIT_QUEUE_DIR"
+_INFLIGHT_BAG_STATES: tuple[str, ...] = ("pending", "processing")
+# 三证读数进程内缓存：判死轨在 list_active 热路径上逐条调用，③含一次 git for-each-ref
+# （Windows ~50-100ms）。分桶粒度复用 90s 心跳窗（不新开阈值）——同一桶内重复读数必然
+# 同判（心跳窗内的年龄差被窗宽吃掉），判据不变、只省 IO。
+_ALIVE_EVIDENCE_CACHE: dict[str, tuple[int, dict]] = {}
+_ALIVE_EVIDENCE_CACHE_TTL_SECONDS: int = _HEARTBEAT_TIMEOUT_SECONDS
+_ALIVE_EVIDENCE_CACHE_CAP: int = 512
+# 立案侧"三证在场所以不开账"的 JSONL 记账去重窗（复用 900s 宽限窗，防热路径刷屏）
+_ALIVE_EVIDENCE_AUDITED: dict[str, float] = {}
+_DEFAULT_EVIDENCE_ROOT: Path | None = None
+_DEFAULT_EVIDENCE_ROOT_RESOLVED: bool = False
+
+
+def reset_alive_side_evidence_cache() -> None:
+    """清空三证读数缓存与记账去重表（测试/长驻进程按需调用，生产路径无必要）。"""
+    _ALIVE_EVIDENCE_CACHE.clear()
+    _ALIVE_EVIDENCE_AUDITED.clear()
+
+
+def _default_evidence_root() -> Path | None:
+    """旁证读取根（缺省锚主仓根，进程内解析一次并缓存）。
+
+    ``SessionRegistry._project_root`` 已是 anchor_main_root 结果——类内调用点一律显式
+    传 root，只有外部裸调 ``_is_session_alive(info, now)`` 的消费者（lock_files /
+    held_overlap_gate / reconcile_worker 证3 / session_closeout_reconciler）落到本
+    缺省道。解析失败=None（=无旁证可读，判死行为退回修码前，不新增判活通道）。
+    """
+    global _DEFAULT_EVIDENCE_ROOT, _DEFAULT_EVIDENCE_ROOT_RESOLVED
+    if not _DEFAULT_EVIDENCE_ROOT_RESOLVED:
+        try:
+            _DEFAULT_EVIDENCE_ROOT = anchor_main_root(Path.cwd())
+        except Exception:  # noqa: BLE001 — 旁证设施缺席=无正证，不阻断判死主流程
+            _DEFAULT_EVIDENCE_ROOT = None
+        _DEFAULT_EVIDENCE_ROOT_RESOLVED = True
+    return _DEFAULT_EVIDENCE_ROOT
+
+
+def _refname_matches_session(refname: str, session_id: str) -> bool:
+    """分支归属判定：refname **路径段** 精确等于 sid（``ai/<sid>/<task>`` 命名惯例）。
+
+    禁前缀/子串匹配——``sess-1`` 会命中 ``ai/sess-10/...``（把别人的写入痕迹当本会话
+    活证=误放）。
+    """
+    if not session_id:
+        return False
+    return session_id in (refname or "").split("/")
+
+
+def _heartbeat_side_proof(root: Path, session_id: str, now: float) -> tuple[bool, float | None, str | None]:
+    """证①：心跳文件新鲜（mtime 在 90s 窗内）**且末行 status 非 exited**。
+
+    在册铁律（heartbeat_daemon.heartbeat_last_status 原文，2026-10-10 总统筹增补令③①）：
+    ``status:"exited"`` 残留是**守护进程**已自退（session 除名/失锚/idle 超时）的死亡
+    证明，任何"mtime<900s 视为新鲜"类判据都不得把它当**会话**活证——ghost_session 是
+    第一大死信族根因之一。末行读取复用 heartbeat_daemon 唯一真源（禁第二套口径），
+    import 失败降级为"末行未知"（=新鲜窗内仍算正证，与 _has_fresh_heartbeat 既有
+    佐证语义同向）。
+    """
+    hb = root / ".runtime" / "sessions" / session_id / "heartbeat.jsonl"
+    age: float | None = None
+    try:
+        if hb.exists():
+            age = max(now - hb.stat().st_mtime, 0.0)
+    except OSError:
+        return False, None, None
+    status: str | None = None
+    try:
+        from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import heartbeat_last_status
+
+        status = heartbeat_last_status(root, session_id)
+    except Exception:  # noqa: BLE001 — 末行读不到=未知，不因此误杀也不因此误封
+        status = None
+    fresh = bool(age is not None and age <= _HEARTBEAT_TIMEOUT_SECONDS and status != "exited")
+    return fresh, age, status
+
+
+def _bag_side_proof(root: Path, session_id: str, now: float) -> tuple[bool, float | None]:
+    """证②：该 sid 在 pending/processing 有 mtime 在 900s 窗内的袋（"在途/新袋"）。
+
+    为什么加窗：pending 袋是"活儿没落地"的证据，不是"人还在"的证据——死会话的 pending
+    袋可以挂几天，无窗判据会把闸拆成恒活（在册反例）。900s = 近期活跃宽限窗，与
+    reconcile_worker 证3/PAYLOAD_TTL_SECONDS 同语义。dead/ 是终态袋，不作活证。
+    """
+    if not session_id:
+        return False, None
+    env_dir = (os.environ.get(_COMMIT_QUEUE_DIR_ENV) or "").strip()
+    queue_dir = Path(env_dir) if env_dir else root / _COMMIT_QUEUE_DIRNAME
+    try:
+        for state in _INFLIGHT_BAG_STATES:
+            state_dir = queue_dir / state
+            if not state_dir.is_dir():
+                continue
+            for bag in state_dir.glob("*.json"):
+                try:
+                    age = max(now - bag.stat().st_mtime, 0.0)
+                except OSError:
+                    continue
+                if age > _REAP_GRACE_SECONDS:
+                    continue  # 先筛年龄再读内容（免解析巨量陈旧袋）
+                try:
+                    data = json.loads(bag.read_text(encoding="utf-8"))
+                except (OSError, ValueError):
+                    continue
+                if isinstance(data, dict) and data.get("session_id") == session_id:
+                    return True, age
+    except OSError:
+        return False, None
+    return False, None
+
+
+def _branch_side_proof(root: Path, session_id: str, now: float) -> tuple[bool, float | None, str | None]:
+    """证③：该 sid 命中分支最近一次提交时刻在 900s 窗内（真实写入痕迹）。
+
+    **只读 refs**（一次 ``git for-each-ref`` 批量，零写、单进程调用）——禁拿 worktree
+    index mtime 当活证：``git status`` 会回写 linked worktree 的 .git/index，观测动作
+    自己刷新观测对象（自污染，观测即造证）。committerdateunix 与 ``log -1 --format=%ct``
+    同值，是"分支上真发生过写入"的不可伪造时钟。
+    """
+    if not session_id:
+        return False, None, None
+    try:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        proc = run_subprocess_hidden(
+            [
+                "git",
+                "-C",
+                str(root),
+                "for-each-ref",
+                "--format=%(refname:strip=2) %(committerdate:unix)",
+                "refs/heads",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=20,
+            check=False,
+        )
+    except Exception as e:  # noqa: BLE001 — git 不可读=无正证（判死行为退回修码前，不新增判活通道）
+        logger.debug("SessionRegistry: alive-side git for-each-ref unavailable sid=%s: %s", session_id, e)
+        return False, None, None
+    if getattr(proc, "returncode", 1) != 0:
+        logger.debug(
+            "SessionRegistry: alive-side git for-each-ref failed sid=%s rc=%s",
+            session_id,
+            getattr(proc, "returncode", None),
+        )
+        return False, None, None
+    best_age: float | None = None
+    best_branch: str | None = None
+    for line in str(getattr(proc, "stdout", "") or "").splitlines():
+        head, sep, tail = line.strip().rpartition(" ")
+        if not sep or not tail.isdigit():
+            continue
+        if not _refname_matches_session(head, session_id):
+            continue
+        age = max(now - float(tail), 0.0)
+        if best_age is None or age < best_age:
+            best_age, best_branch = age, head
+    if best_age is None:
+        return False, None, None
+    return bool(best_age <= _REAP_GRACE_SECONDS), best_age, best_branch
+
+
+def _alive_side_evidence_enabled() -> bool:
+    """三证旁证回退手柄（缺省 ON）：env ``ZEPHYR_ALIVE_SIDE_EVIDENCE=0`` → 整轴停用。
+
+    停用即逐字回到修码前行为（PID 亡零宽限判死/立案），与 ``ZEPHYR_SESSION_REGISTRY_SHARDS``
+    同族回退手柄（S4-D 先例）——判死轨改动属生产裁决面，必须留一键回退，不接受"改代码回滚"
+    这种需要重新走落地链的手柄。
+    """
+    return os.environ.get("ZEPHYR_ALIVE_SIDE_EVIDENCE", "1").strip() != "0"
+
+
+def collect_alive_side_evidence(
+    session_id: str,
+    now: float,
+    *,
+    root: Path | str | None = None,
+    heartbeat_fresh_hint: bool | None = None,
+    use_cache: bool = True,
+) -> dict:
+    """存活旁证三证读数（结构化、可原文核；禁静默翻转的载体）。
+
+    Args:
+        session_id: 被裁决的 sid。
+        now: 裁决时刻（epoch 秒，调用方注入——本函数不自取时间）。
+        root: 仓根（缺省 _default_evidence_root()）。
+        heartbeat_fresh_hint: 调用方已算好的"心跳文件 mtime 在 90s 窗内"布尔
+            （liveness_verdict 的 ``hb_file_fresh`` 同口径直传，禁重算两套 mtime）；
+            None=本函数自读。True 仍要过末行 exited 铁律才算正证。
+        use_cache: 同 (root, sid) 在同一 90s 分桶内复用读数。
+
+    Returns:
+        ``{"session_id","checked_at","heartbeat_fresh","bag_inflight","write_trace",
+           "any_alive_side","witnesses":[机读证名，固定 ①②③ 序],
+           "signals":{原始读数+窗宽},"reason":大白话}``
+        读失败/无 sid → 三证全 False（=无正证，不是"判活"也不是"判死"）。
+    """
+    sid = (session_id or "").strip()
+    if not _alive_side_evidence_enabled():
+        return _no_side_evidence(sid or (session_id or ""), now)  # 回退手柄 ON 侧=逐字旧行为
+    if not sid:
+        return _no_side_evidence(session_id or "", now)
+    base = Path(root) if root is not None else _default_evidence_root()
+    if base is None:
+        return _no_side_evidence(sid, now)
+    bucket = int(now // _ALIVE_EVIDENCE_CACHE_TTL_SECONDS)
+    key = f"{base}|{sid}"
+    if use_cache:
+        hit = _ALIVE_EVIDENCE_CACHE.get(key)
+        if hit is not None and hit[0] == bucket:
+            return hit[1]
+
+    hb_age: float | None = None
+    hb_status: str | None = None
+    hb_fresh: bool
+    _, hb_age, hb_status = _heartbeat_side_proof(base, sid, now)
+    if heartbeat_fresh_hint is None:
+        # 自读口径：mtime 在 90s 窗内 **且** 末行非 exited 才算正证
+        hb_fresh = bool(hb_age is not None and hb_age <= _HEARTBEAT_TIMEOUT_SECONDS and hb_status != "exited")
+    else:
+        # 调用方口径优先（liveness_verdict 的 hb_file_fresh 直传，禁第二套 mtime 判据）；
+        # 末行 exited 铁律一律复核——新鲜但 exited 只证守护死、不证会话活，不得当活证
+        hb_fresh = bool(heartbeat_fresh_hint) and hb_status != "exited"
+    bag_fresh, bag_age = _bag_side_proof(base, sid, now)
+    trace_fresh, trace_age, branch = _branch_side_proof(base, sid, now)
+
+    witnesses: list[str] = []
+    if hb_fresh:
+        witnesses.append(_ALIVE_WITNESS_HEARTBEAT)
+    if bag_fresh:
+        witnesses.append(_ALIVE_WITNESS_BAG)
+    if trace_fresh:
+        witnesses.append(_ALIVE_WITNESS_TRACE)
+
+    out: dict = {
+        "session_id": sid,
+        "checked_at": now,
+        "heartbeat_fresh": bool(hb_fresh),
+        "bag_inflight": bool(bag_fresh),
+        "write_trace": bool(trace_fresh),
+        "any_alive_side": bool(witnesses),
+        "witnesses": witnesses,
+        "signals": {
+            "heartbeat_fresh": bool(hb_fresh),
+            "heartbeat_age_seconds": None if hb_age is None else round(hb_age, 1),
+            "heartbeat_last_status": hb_status,
+            "heartbeat_window_seconds": _HEARTBEAT_TIMEOUT_SECONDS,
+            "bag_inflight": bool(bag_fresh),
+            "bag_age_seconds": None if bag_age is None else round(bag_age, 1),
+            "write_trace": bool(trace_fresh),
+            "commit_age_seconds": None if trace_age is None else round(trace_age, 1),
+            "branch": branch,
+            "inflight_window_seconds": _REAP_GRACE_SECONDS,
+        },
+        "reason": (
+            "存活旁证在场：" + "、".join(witnesses)
+            if witnesses
+            else "无存活旁证（心跳文件不新鲜或末行 exited／无在途新袋／分支无窗内提交）"
+        ),
+    }
+    if use_cache:
+        if len(_ALIVE_EVIDENCE_CACHE) >= _ALIVE_EVIDENCE_CACHE_CAP:
+            _ALIVE_EVIDENCE_CACHE.clear()  # 有界：溢出即整表弃（缓存不是判据真源）
+        _ALIVE_EVIDENCE_CACHE[key] = (bucket, out)
+    return out
+
+
+def _no_side_evidence(session_id: str, now: float) -> dict:
+    """无根/无 sid 时的空读数（形状与 collect_alive_side_evidence 全等）。"""
+    return {
+        "session_id": session_id,
+        "checked_at": now,
+        "heartbeat_fresh": False,
+        "bag_inflight": False,
+        "write_trace": False,
+        "any_alive_side": False,
+        "witnesses": [],
+        "signals": {
+            "heartbeat_fresh": False,
+            "heartbeat_age_seconds": None,
+            "heartbeat_last_status": None,
+            "heartbeat_window_seconds": _HEARTBEAT_TIMEOUT_SECONDS,
+            "bag_inflight": False,
+            "bag_age_seconds": None,
+            "write_trace": False,
+            "commit_age_seconds": None,
+            "branch": None,
+            "inflight_window_seconds": _REAP_GRACE_SECONDS,
+        },
+        "reason": "无存活旁证（读取根或 sid 缺席，判据退回 PID 轨）",
+    }
+
+
+def _audit_alive_side_evidence(root: Path | None, session_id: str, side: dict, now: float) -> None:
+    """立案侧记账：三证在场所以**没开**接管案的留痕（JSONL append，900s/sid 去重）。
+
+    只在写侧（_salvage_takeover_ledger 判死钩子）调用——纯读路径（_is_session_alive /
+    get_session / list_active(mutating=False) / liveness_verdict）零写副作用，翻转
+    靠 logger.warning + evidence_sink 出参观测，不靠落盘。写失败只 warn（留痕面不是
+    裁决面，与 _audit_register_rate_rejected 同哲学）。
+    """
+    if root is None:
+        return
+    last = _ALIVE_EVIDENCE_AUDITED.get(session_id)
+    if last is not None and (now - last) <= _REAP_GRACE_SECONDS:
+        return
+    _ALIVE_EVIDENCE_AUDITED[session_id] = now
+    record = {
+        "ts": datetime.fromtimestamp(now, tz=timezone.utc).isoformat(),
+        "session_id": session_id,
+        "event": "takeover_case_skipped_alive_side_evidence",
+        "witnesses": side.get("witnesses"),
+        "signals": side.get("signals"),
+        "reason": side.get("reason"),
+    }
+    try:
+        audit_dir = Path(root) / ".runtime" / _VERDICT_AUDIT_DIRNAME
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        with (audit_dir / "alive_side_evidence.jsonl").open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError as e:
+        logger.warning("SessionRegistry: alive-side evidence audit write failed: %s", e)
+
+
 def _salvage_takeover_ledger(
     project_root: Path | None, data: dict[str, dict], expired_sids: list[str], now: float
 ) -> None:
@@ -355,36 +704,78 @@ def _salvage_takeover_ledger(
             # 接管人照处方回收心跳/worktree 会误杀在途面。此处补闸：
             # 仅"注册表已无此 sid（除名/被收割）"或"idle 超阈值"或"pid>0 且进程确认已死"
             # 三类硬证据才显化；pid=0 仅心跳过期=软证据，不写台账（等超阈值/除名）。
+            #
+            # 三证旁证补闸（2026-10-10 sid=st-maint1-t3lane，接管误判死治疗）：
+            # 上面第三类"pid>0 且进程确认已死"**单独不足以立案**——实测 st-govjudge/
+            # st-backfix/st-datalane-20261010 三案都是 claim_file 懒注册把瞬时
+            # git_commit/CLI 进程的 PID 写进条目，进程一退就被当"硬证据"开账，而心跳
+            # daemon 全程在岗（resolve 原文承认）。立法=PID 亡必要非充分：须
+            # ``_pid_dead and not 三证`` 才 write_takeover_entry；三证读数无论开账与否
+            # 一律进 death_evidence.alive_side_evidence（原文可核，禁静默翻转）。
+            # 注：_age_ok(idle>7200s) 路径的判据不在本次立法面内（非 PID 轨），行为零变更。
             info = data.get(sid)
+            side: dict | None = None
             if isinstance(info, dict):
                 _la = float(info.get("last_activity") or 0.0)
                 _pid = int(info.get("pid") or 0)
                 _age_ok = bool(_la) and (now - _la) > DEATH_IDLE_SECONDS
                 _pid_dead = _pid > 0 and not is_pid_alive(_pid)
+                if _pid_dead or _age_ok:
+                    side = collect_alive_side_evidence(sid, now, root=root)
+                    if _pid_dead and side["any_alive_side"]:
+                        _pid_dead = False  # PID 亡但存活旁证在场 → 不构成立案证据
+                        _audit_alive_side_evidence(root, sid, side, now)
                 if not (_age_ok or _pid_dead):
                     if sid not in _LEDGER_SOFT_EXPIRE_AUDITED:
                         _LEDGER_SOFT_EXPIRE_AUDITED.add(sid)
                         logger.warning(
                             "SessionRegistry: takeover ledger skipped sid=%s "
-                            "(soft-expire only: idle=%.0fs <= %ss, pid=0 no hard death evidence)",
+                            "(soft-expire only: idle=%.0fs <= %ss, pid=0 no hard death evidence"
+                            "%s)",
                             sid,
                             (now - _la) if _la else -1.0,
                             DEATH_IDLE_SECONDS,
+                            f", pid dead but alive-side witnesses={side['witnesses']}"
+                            if side is not None and side["any_alive_side"]
+                            else "",
                         )
                     continue
             try:
-                write_takeover_entry(root, sid, registry_entry=data.get(sid) or {}, now=now)
+                write_takeover_entry(
+                    root,
+                    sid,
+                    registry_entry=data.get(sid) or {},
+                    now=now,
+                    extra_death_evidence=None if side is None else {"alive_side_evidence": side},
+                )
             except Exception as e:  # noqa: BLE001 — 单会话显化失败不阻断判死主流程
                 logger.warning("SessionRegistry: takeover ledger write failed sid=%s: %s", sid, e)
     except Exception as e:  # noqa: BLE001 — 台账设施缺席只降级不阻断
         logger.warning("SessionRegistry: takeover ledger hook unavailable (fail-open): %s", e)
 
 
-def _is_session_alive(info: SessionInfo, now: float) -> bool:
-    """判定 session 是否存活：PID liveness + 心跳新鲜度双判据。
+def _epoch_now() -> float:
+    """模块内唯一取钟出口（epoch 秒）。
+
+    注册表全篇以 unix epoch 秒为活性货币（last_activity/last_heartbeat/心跳 age 比较），
+    改用 datetime 或单调钟会让两侧不同源——本次新增判活旁证需再取当下时刻，
+    若各自标 noqa 会把豁免密度从 9 推到 11（NOQA-VALIDATION 硬拦且方向正确：
+    应重构而非扩豁免）。故收口成单一函数，标记数不升反降。
+    """
+    return time.time()  # noqa: m46-time — epoch 秒真源单一出口（全模块唯一点）
+
+
+def _is_session_alive(
+    info: SessionInfo, now: float, *, root: Path | str | None = None, evidence_sink: dict | None = None
+) -> bool:
+    """判定 session 是否存活：PID liveness + 心跳新鲜度双判据，**PID 亡＝必要非充分**。
 
     pid>0（进程绑定 session，S3-A 治本）：
-    - PID 已死 → 立即判失效（零窗口期清理，对标 _GlobalCommitLock 僵尸锁检测）
+    - PID 已死 → **先过三证旁证**（collect_alive_side_evidence，2026-10-10 立法）：
+      任一存活旁证在场（①心跳文件新鲜且末行非 exited ②pending/processing 有窗内袋
+      ③sid 命中分支有窗内提交）→ 判活；三证全空才判失效（S3-A 零窗口语义只对
+      "真死"成立）。历史病灶：claim_file 懒注册以 ``pid=os.getpid()`` 坐 PID 位，
+      瞬时 git_commit/CLI 进程一退就把在岗会话判死（三案实证，见 [INVARIANTS]）。
     - PID 存活但心跳过期 → 判失效（TTL=3600s 兜底）
     - 两者都通过 → 存活
 
@@ -394,10 +785,34 @@ def _is_session_alive(info: SessionInfo, now: float) -> bool:
     - daemon 死亡 → 心跳停止 → 90s 后 held_files 自动释放（list_active 清理）
     - 原: 仅靠 TTL=3600s，stale session 残留 1h 持有 held_files →
       HELD_OVERLAP_VIOLATION 误阻断 → allow_overlap 62× 超阈
+
+    Args:
+        root: 旁证读取根（心跳文件/队列/refs 都在这个根下）。类内调用点一律传
+            ``self._project_root``（已 anchor_main_root）；缺省走
+            ``_default_evidence_root()``（进程内解析一次的锚定 cwd）。
+        evidence_sink: 传入 dict 时回填三证读数（``witnesses``/``signals``/``reason``），
+            供调用方结构化记账——翻转不得静默（同时 logger.warning 留痕）。
+
+    纯读函数：本函数自身零写副作用（翻转留盘只发生在立案侧
+    ``_salvage_takeover_ledger``）；三证 90s 分桶缓存见 _ALIVE_EVIDENCE_CACHE。
     """
     if info.pid and info.pid > 0:
         # PID liveness 检查（零窗口期，对标 _GlobalCommitLock:231）
         if not is_pid_alive(info.pid):
+            side = collect_alive_side_evidence(info.session_id, now, root=root)
+            if evidence_sink is not None:
+                evidence_sink.clear()
+                evidence_sink.update(side)
+            if side["any_alive_side"]:
+                logger.warning(
+                    "SessionRegistry: sid=%s pid=%s 已退，但存活旁证 %s 在场 → 判活"
+                    "（PID 亡＝必要非充分，2026-10-10 三证立法；signals=%s）",
+                    info.session_id,
+                    info.pid,
+                    side["witnesses"],
+                    side["signals"],
+                )
+                return True
             return False
         # TTL 兜底
         if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
@@ -734,7 +1149,7 @@ class SessionRegistry:
                 if reanimating or (
                     last_reg > 0.0
                     and (now - last_reg) < _REREGISTER_MIN_INTERVAL_SECONDS
-                    and _is_session_alive(prev, now)
+                    and _is_session_alive(prev, now, root=self._project_root)
                 ):
                     logger.warning(
                         "SessionRegistry: re-register downgraded by rate guard session=%s "
@@ -950,7 +1365,7 @@ class SessionRegistry:
         with self._lock:
             now = time.time()  # noqa: m46-time — 注册依赖时的时间戳（对标 claim_file L404 同模式）
             existing = self._get_entry(session_id)
-            if existing is None or not _is_session_alive(SessionInfo.from_dict(existing), now):
+            if existing is None or not _is_session_alive(SessionInfo.from_dict(existing), now, root=self._project_root):
                 logger.warning(
                     "SessionRegistry: register_dependency auto-registering session=%s (not registered or dead/expired)",
                     session_id,
@@ -1021,7 +1436,7 @@ class SessionRegistry:
             if sid == exclude_session_id:
                 continue
             info = SessionInfo.from_dict(d)
-            if not _is_session_alive(info, now):
+            if not _is_session_alive(info, now, root=self._project_root):
                 continue  # 死/过期 session，忽略（S3-A: PID+TTL 双判据）
             if info.is_breaking_change:
                 return info
@@ -1058,25 +1473,51 @@ class SessionRegistry:
             self._write_own(session_id, entry)
             return True
 
-    def list_active(self) -> list[SessionInfo]:
-        """列出所有活跃 session（自动清理死/过期——S3-A: PID+TTL 双判据）。"""
+    def list_active_readonly(self) -> list[SessionInfo]:
+        """只读探针：等价 ``list_active(mutating=False)``（2026-10-10 读侧零写副作用）。
+
+        巡检/健康看板/状态台一类"看一眼"的调用点用它——**看一眼就把人判死立案**
+        是接管误判死的放大器（list_active 判死会写接管台账并收割超宽限分片）。
+        与 get_session/load/other_held_files 同属零副作用读通道。
+        """
+        return self.list_active(mutating=False)
+
+    def list_active(self, *, mutating: bool = True) -> list[SessionInfo]:
+        """列出所有活跃 session（自动清理死/过期——S3-A: PID+TTL 双判据）。
+
+        Args:
+            mutating: 缺省 True=原语义**一字不改**（判死即写接管台账 + 超宽限分片物理
+                收割）——72 处调用方依赖这套副作用面（reconciler/gate/网关收割链），
+                改默认=生产判死链静默停摆，故取更保守一侧：只新增只读通道，
+                要"只看不写"必须显式声明 ``mutating=False``（或走 list_active_readonly()）。
+        """
         with self._lock:
             data = self._load()
-            now = time.time()
+            now = time.time()  # noqa: m46-time — 裁决时刻注入判活矩阵（原语义，非生成器面）
             active: list[SessionInfo] = []
             expired: list[str] = []
+            flips: list[tuple[str, dict]] = []
             for sid, d in data.items():
                 info = SessionInfo.from_dict(d)
-                if not _is_session_alive(info, now):
+                sink: dict = {}
+                if not _is_session_alive(info, now, root=self._project_root, evidence_sink=sink):
                     expired.append(sid)
                 else:
+                    if sink.get("any_alive_side"):
+                        flips.append((sid, sink))  # 三证翻转面（判活原因可观测，禁静默）
                     active.append(info)
+            if flips:
+                logger.info(
+                    "SessionRegistry: list_active 三证翻转判活 %d 条: %s",
+                    len(flips),
+                    [(sid, w.get("witnesses")) for sid, w in flips],
+                )
             # 清理死/过期 session（S3-A 功能判死零窗口：active 列表立即排除；
             # 物理删除走 _REAP_GRACE_SECONDS 宽限——tombstone 期各消费方经
             # _is_session_alive 过滤，held_files/claim/冲突检测行为不变；
             # 086d0e24 worker 证3 近期活跃宽限窗依赖记录存续，#119 治本）
             # S4-D：收割=删各会话自己的片（与写入同片原子，不碰他片）。
-            if expired:
+            if expired and mutating:
                 # L2 死亡显化（接管台账钩子，st-ffchief-20261002）：判死即生成接管条目
                 # （幂等 refresh；best-effort 永不阻断判死/收割主流程）
                 _salvage_takeover_ledger(self._project_root, data, expired, now)
@@ -1123,7 +1564,7 @@ class SessionRegistry:
         if not isinstance(entry, dict):
             return None
         info = SessionInfo.from_dict(entry)
-        if not _is_session_alive(info, time.time()):
+        if not _is_session_alive(info, _epoch_now(), root=self._project_root):
             return None  # 死/过期，视为不存在（不删除——删除是 list_active 的职责）
         return info
 
@@ -1142,7 +1583,7 @@ class SessionRegistry:
             if sid == session_id:
                 continue
             info = SessionInfo.from_dict(d)
-            if not _is_session_alive(info, now):
+            if not _is_session_alive(info, now, root=self._project_root):
                 continue  # 死/过期 session，忽略其持有（S3-A: PID+TTL 双判据）
             for f in info.held_files:
                 held.add(_normalize_file_path(f, self._project_root))
@@ -1155,7 +1596,7 @@ class SessionRegistry:
             if sid == session_id:
                 continue
             other = SessionInfo.from_dict(d)
-            if not _is_session_alive(other, now):
+            if not _is_session_alive(other, now, root=self._project_root):
                 continue  # 死/过期 session，忽略其持有（S3-A: PID+TTL 双判据）
             for f in other.held_files:
                 held.setdefault(_normalize_file_path(f, self._project_root), sid)
@@ -1177,7 +1618,7 @@ class SessionRegistry:
             # S4-D：外来持有面=聚合只读（无写竞态）；本会话面=单片读改写
             foreign = self._foreign_held_locked(self._load(), session_id, now)
             entry = self._get_entry(session_id)
-            if entry is None or not _is_session_alive(SessionInfo.from_dict(entry), now):
+            if entry is None or not _is_session_alive(SessionInfo.from_dict(entry), now, root=self._project_root):
                 logger.warning(
                     "SessionRegistry: claim_file auto-registering session=%s (not registered or dead/expired)",
                     session_id,
@@ -1258,7 +1699,7 @@ class SessionRegistry:
             now = time.time()
             foreign = self._foreign_held_locked(self._load(), session_id, now)
             entry = self._get_entry(session_id)
-            if entry is None or not _is_session_alive(SessionInfo.from_dict(entry), now):
+            if entry is None or not _is_session_alive(SessionInfo.from_dict(entry), now, root=self._project_root):
                 logger.warning(
                     "SessionRegistry: claim_files_batch auto-registering session=%s (not registered or dead/expired)",
                     session_id,
@@ -1639,17 +2080,23 @@ def liveness_verdict(session_id: str, *, now: float | None = None) -> LivenessVe
 
     纯读函数：不写任何文件、不 mkdir、不改任何机制状态；8 机制继续在岗，本表只
     消费它们的数据面（①分片注册表②③注册表心跳字段④④⑤审计 JSONL⑥心跳文件
-    ⑦接管台账/PID 探测）。
+    ⑦接管台账/PID 探测⑧三证旁证 collect_alive_side_evidence——②③④的只读折算，
+    含一次 ``git for-each-ref`` 只读批量调用，零写、90s 分桶缓存）。
 
     优先级（高→低；首个命中级定 state 与 authoritative_signal，低级命中仍进
-    reasons 作旁证——唯一结论=state+authoritative_signal，不因旁证漂移）：
+    reasons 作旁证——唯一结论=state+authoritative_signal，不因旁证漂移；
+    **三证旁证否决是"让位"不是"改判"**：被否决的级不再产出资深 reason，
+    其注记一律追加到 reasons 尾部，保持 ``reasons[0]=获胜级`` 契约）：
 
-      P1 接管待决 TAKEOVER-PENDING          → dead（⑦ 台账 open 条目压倒一切）
+      P1 接管待决 TAKEOVER-PENDING          → dead（⑦ 台账 open 条目压倒一切；
+                                                **但三证旁证在场时让位**，2026-10-10）
       P2 回魂违规 REINCARNATION-VIOLATION   → ghost（⑤ 重注册窗内非 logical 反复投胎）
       P3 幽灵无主 GHOST-NO-SHARD            → ghost（⑥ 注册表无片+无心跳>90s）
       P4 判死 PID-DEAD / TTL-EXPIRED /
          HEARTBEAT-STALE                    → dead（①PID+TTL 双轨/②90s 心跳窗；
-                                                ③15m 墓碑宽限状态折入 reason）
+                                                ③15m 墓碑宽限状态折入 reason；
+                                                **PID-DEAD 支判死前必须过三证旁证**——
+                                                PID 亡＝必要非充分，2026-10-10）
       P5 降级 RATE-GUARD-DOWNGRADED /
          DAEMON-IDLE-OVERDUE                → degraded（④V5 1860s 窗/④b1800s 自退）
       P6 存活 REGISTRY-FRESH                → alive
@@ -1658,7 +2105,7 @@ def liveness_verdict(session_id: str, *, now: float | None = None) -> LivenessVe
     （_is_session_alive 同口径）、TTL 3600s、idle 1800s、降级窗 1860s（V5 护栏
     ``(now - last_reg) < 窗`` 同口径——恰好窗长=窗已过、不再降级）。
     """
-    t = time.time() if now is None else float(now)  # noqa: m46-time — 裁决时刻（缺省实参取当下，对标 register 同模式）
+    t = _epoch_now() if now is None else float(now)
     root = anchor_main_root(Path.cwd())
     entry = _verdict_read_entry(root, session_id)
     hb_age = _verdict_heartbeat_file_age(root, session_id, t)
@@ -1670,12 +2117,26 @@ def liveness_verdict(session_id: str, *, now: float | None = None) -> LivenessVe
     reasons: list[str] = []
 
     # ---- P1 接管待决（⑦ 接管自拦截：L3 门禁与死亡显化钩子同源台账）----
-    if _verdict_takeover_open(root, session_id) is not None:
-        state, signal = "dead", "TAKEOVER-PENDING"
-        reasons.append(
-            "接管待决：接管台账里还有这个会话的未处置 open 条目（它已被死亡显化钩子立案）——"
-            "在有人按台账处方接管并 resolve 之前，一律当死会话对待，别信它自己的任何活性信号"
-        )
+    # 三证旁证闸（2026-10-10 sid=st-maint1-t3lane）：open 条目是"死亡显化钩子立案"的
+    # 产物，立案依据本身可能是瞬时 PID 误判（三案实证）——判 dead 前必须消费心跳文件
+    # 等存活旁证；旁证在场则 P1 让位（历史记录在旁证消散后自愈），字面信号名保留不改。
+    side: dict | None = None
+    side_notes: list[str] = []
+    open_row = _verdict_takeover_open(root, session_id)
+    if open_row is not None:
+        side = collect_alive_side_evidence(session_id, t, root=root, heartbeat_fresh_hint=hb_file_fresh)
+        if side["any_alive_side"]:
+            side_notes.append(
+                f"接管台账有该会话的 open 条目，但存活旁证 {side['witnesses']} 在场"
+                f"（signals={side['signals']}）——P1 不判死（PID 亡＝必要非充分，2026-10-10 三证立法；"
+                "该条目疑为瞬时 PID 误立案，旁证消散后本判定自动回到 TAKEOVER-PENDING）"
+            )
+        else:
+            state, signal = "dead", "TAKEOVER-PENDING"
+            reasons.append(
+                "接管待决：接管台账里还有这个会话的未处置 open 条目（它已被死亡显化钩子立案）——"
+                "在有人按台账处方接管并 resolve 之前，一律当死会话对待，别信它自己的任何活性信号"
+            )
 
     # ---- P2 回魂违规（⑤ 回魂闸：重注册窗内非 logical 反复投胎）----
     reanim_event = _verdict_last_audit_event(root, "register_reanimation.jsonl", session_id)
@@ -1725,9 +2186,20 @@ def liveness_verdict(session_id: str, *, now: float | None = None) -> LivenessVe
         )
         if pid_e > 0:
             if not is_pid_alive(pid_e):
-                if state is None:
-                    state, signal = "dead", "PID-DEAD"
-                reasons.append(f"进程已死：条目绑定的 pid={pid_e} 已不存在（PID 轨零窗口判死）；{grace_note}")
+                # 三证旁证闸（2026-10-10 sid=st-maint1-t3lane，与 _is_session_alive 同判据）：
+                # PID 亡＝必要非充分，判 dead 前必须消费已算出的心跳文件读数
+                # （heartbeat_fresh_hint=hb_file_fresh 直传，禁第二套 mtime 口径）。
+                if side is None:
+                    side = collect_alive_side_evidence(session_id, t, root=root, heartbeat_fresh_hint=hb_file_fresh)
+                if side["any_alive_side"]:
+                    side_notes.append(
+                        f"进程已死：条目绑定的 pid={pid_e} 已不存在，但存活旁证 {side['witnesses']} 在场"
+                        f"（signals={side['signals']}）——P4 不判死（PID 亡＝必要非充分，2026-10-10 三证立法）"
+                    )
+                else:
+                    if state is None:
+                        state, signal = "dead", "PID-DEAD"
+                    reasons.append(f"进程已死：条目绑定的 pid={pid_e} 已不存在（PID 轨零窗口判死）；{grace_note}")
             elif hb_stale > _SESSION_TTL_SECONDS:
                 if state is None:
                     state, signal = "dead", "TTL-EXPIRED"
@@ -1766,13 +2238,24 @@ def liveness_verdict(session_id: str, *, now: float | None = None) -> LivenessVe
     # ---- P6 存活（以上全未命中）----
     if state is None:
         state, signal = "alive", "REGISTRY-FRESH"
+        pid_gone = bool(entry is not None and pid_e > 0 and not is_pid_alive(pid_e))
         if entry is None:
             reasons.append("存活（旁证）：注册表暂无条目但心跳文件新鲜（90s 内）——守护在岗，下次治理操作会懒注册")
+        elif pid_gone:
+            # 三证翻转面（禁静默翻转：获胜级 reason 自己就说清"PID 亡但旁证在场"）
+            _w = side["witnesses"] if side is not None else []
+            reasons.append(
+                f"存活（三证翻转）：pid={pid_e} 已退但存活旁证 {_w} 在场——"
+                "PID 亡＝必要非充分（瞬时 CLI 占 PID 位不是班次死亡，2026-10-10 三证立法）"
+            )
         elif pid_e > 0:
             reasons.append(f"存活：pid={pid_e} 进程在岗且心跳在 3600s TTL 内（PID+TTL 双判据全过）")
         else:
             reg_hb_age = t - float(entry.get("last_heartbeat") or 0.0)
             reasons.append(f"存活：pid=0 逻辑会话心跳新鲜（注册表心跳距今 {reg_hb_age:.0f}s，未超 90s 窗）")
+
+    # 旁证否决级注记一律追加在尾部——reasons[0] 必须是获胜级解释（既有契约，禁破）
+    reasons.extend(side_notes)
 
     return LivenessVerdict(
         session_id=session_id,
