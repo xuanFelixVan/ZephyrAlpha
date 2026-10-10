@@ -146,3 +146,77 @@ qoder_cron 一次性本地任务 `a4e738c8-c802-48a0-bc22-cc6536c797b1`，
 本机 01:16 预查已得：**`tilib_indicator_backfill_nightly` state=Disabled（next 仍写 02:30 但不点火）、
 `ZephyrAlpha-CH-OptimizeMerge-Weekly` Disabled**；另 `ZephyrAlpha_QMTWatchdog` last rc=4294770688（非 0，
 情绪面解锁哨兵本身可疑）——晨报请一并核对这三条。
+
+## 10. 02:25 看门狗照查（一次性自动化轮，非总包本体会话）
+
+- 实测 date=2026-10-11 02:25:08 +0800（本轮所有读数取于该分钟）
+- 夜跑主体 tilib=**Disabled**，原文行
+  `tilib_indicator_backfill_nightly | state=Disabled | next=2026-10-11 2:30:00 | last=2026-10-10 2:30:01 | rc=0`
+  ⇒ next 字段仍印 02:30 但 Disabled 态不点火；最后一次真跑是 10-10 02:30:01（rc=0）
+- CH 周优化合并=**Disabled**，原文行
+  `ZephyrAlpha-CH-OptimizeMerge-Weekly | state=Disabled | next=2026-10-11 3:30:00 | last=2026-10-4 3:30:00 | rc=0`
+- QMTWatchdog rc=**0**（原文行 `ZephyrAlpha_QMTWatchdog | state=Ready | next=2026-10-11 8:45:00 |
+  last=2026-10-11 1:33:31 | rc=0`）⇒ §9 记的 01:16 非 0 读数已被 01:33:31 那次更晚运行覆盖，
+  该项在晨报可判"已消解"，两次读数都留档不删
+- 夜跑日志面（只读 `ls -t .runtime/logs | head -15`，未全树遍历）：最新 mtime=2026-10-10 23:05:04
+  （reconcile_worker_247a…log），02:2x 前后零更新 ⇒ **未见**夜跑主体起跑痕迹（故无 tail 对象）
+- 队列=counts `{"pending":0,"processing":0,"done":716,"dead":1418}` total=2134，
+  lease present=false，daemon online=true。本班 done 27 袋（0001-0005、0008-0017、0019、0021-0031），
+  §9/任务书点名的 0017/0021 相符；**0020 实测 dead**（非 done），dead_reason 原文前 160 字：
+  `cascade_stale: 基底重校验不适用 ['scripts/backtest/fexam/card_binding.py']（stale_by=q-20261011-st-mineloop-20261010-0019）`
+  ——即被同班 0019 落地后判基底陈旧，属超越非回退。另本班 dead 三条在档：0006/0007
+  （exam_scores_v1.yaml 非注册表族件双侧皆改真冲突，死信回退人工）、0018
+  （rule_catalog_registry.yaml 入账本册但 PG 现读不可用：FileNotFoundError: PG 连接配置文件不存在；
+  其处方文字写"退 pending 重试"而此刻 counts.pending=0 ⇒ 实测停在 dead 未回 pending，晨报核对项）。
+  本轮未 requeue、未重投、未碰 blobs/dead。
+- 结论：02:30 让路面是否仍成立=**成立**（tilib＋CH 周优化合并两枚 02:25 均实测 Disabled，
+  日志面 10-11 凌晨零更新佐证确未起跑）。本轮零生产路径写盘、零 git 写、零 CH 查询，未破 01:00–04:00 窗。
+  同内容纯文本副本=`.runtime/tmp/st-mineloop-20261010/watchdog_0225.txt`。
+  结构自证：追加前 `grep -c '^## '`=9，追加后=10，本节号=10（§9 末句"应为 8"是当时 8 节基线的旧话，已过时）。
+
+## 11. 第二轮收账（总统统筹 01:35 四件合并批复①②③④全部闭合，本班 02:5x 记）
+
+工法一条（统筹令①要求入档）：**窗口须验对象**。让路窗（01:00–04:00／21:00–22:30）成立与否不取决于钟面，
+而取决于窗内是否真有让路对象。本班三次实测留痕：01:33／01:38／02:09 均得
+`tilib_indicator_backfill_nightly=Disabled`＋`ZephyrAlpha-CH-OptimizeMerge-Weekly=Disabled`＋
+`ZephyrAlpha_F06Grid=Disabled`＋`clickhouse-server 进程数=0` ⇒ 04:00 等待取消（今晚第三次溶解），
+跑批一律带 `--override-ch-window-with-reason` 把"无对象"读数写进命令面，禁引用上一轮读数当本轮证据。
+
+四件闭合（全部走正门入 dev，逐袋 `--base-head <dev sha>`＋对 dev 现字节为基）：
+
+| 批复 | 落地袋 | dev 面实测 |
+|---|---|---|
+| ①§8 五分位三卡重跑 | q-…-0026（1122bdc810） | 分数册 26→29 行，三卡全 fail，`n_buckets_used: 5` 命中 3 |
+| ③G-CAL-1 消解＋05/06 开考 | q-…-0027/0028/0029（83a7ce0c3a） | 册 29→31 行；绑定册 9→11 格；12_/13_ 两件入册 |
+| ②步骤①未判柱清单（纯观测） | q-…-0030/0031（bd1453ff0b） | `run_card` 每行新增 `unjudged` 三面；试件 20 passed |
+| ②步骤②calibration 未知键 fail-closed | q-…-0032/0033/0034（ac7565169f） | `judge()` 起始处早退判 fail 并点名键；在册 31 行全 fail、零 pass 需重述（如实记空集） |
+| ④三工单立项＋WO-V 开工件 | 本袋（§11 同批） | 15_ 立项书／16_ 词表普查（`--mode vocab-census` 机生） |
+
+⚑ **本班自犯蒸发一条（如实报，不遮掩）**：本班 00:38 袋 39363f2627（执行器分桶口径修复）以**车道旧快照整档**
+覆盖了 st-nightmine2-20261010 已落 dev 的 ba7c1891f7「判官按 pillars_numeric 键集分派」修复
+（6 行码＋30 行两支红蓝测试），`git log -S"_cal_shaped"` 双向定位＝ba7c1891f7 加(0→1)、39363f2627 删(1→0)。
+01:51/01:53 两袋（903c0de7fb＋31c3cc24a7）以 `git apply -3` 把原 diff 重放回 dev 现字节，两支测试并存回收
+（16→23 支全绿）。**工法改正（后续每袋执行）**：共享件动手前先 `git checkout dev -- <件>` 取现字节为基，
+袋前跑 `git diff dev --stat` 自证净增形态（本夜各袋均为 +N/-0 或点名 -1），禁拿车道旧快照整档投袋。
+
+普查新显形（此前无人报过，两条）：
+1. **混形卡**＝19 张卡路由=双臂判官却仍带校准侧键（mono/ic/regime）＋47 张路由=校准判官却带 NAV/事件研究侧键；
+   两侧判官各看自家词表，混形卡的另一侧柱＝结构性未判面。词表面普查件=16_（487 张卡、
+   无机制判面 186 张、含越表键 119 张、去重越表键名 181 个）。
+2. **shadow 族路由现状**＝35 张 shadow 卡按 family 一律走校准判官（三连裁③v2 的键集分派只覆盖
+   comparison/ablation），带 NAV 键者现被未知键 fail-closed 拦下不出假绿。**扩面与否＝判据路由面改动，本班不自决**，
+   已随 15_ 的 `owner_decision_needed` 呈批（含爆面实测数）。
+
+车道根配置面诊断（解释在册死信 q-20261011-…-0018 与 §10 留疑问）：从 worktree 根跑治理件时
+配置按 `__file__` 派生根解析 ⇒ 实测报 `CH 配置文件不存在: <车道根>/config/.env.clickhouse`（02:41 亲见），
+q-0018 的 `PG 连接配置文件不存在: FileNotFoundError` 属同族形态。**不是数据面坏了，是根解析错了**。
+处方：治理/连库类命令一律从主区根发起（或显式带主区 `--queue-root`/`--worktree-root`），
+在车道根跑出的"连不上"读数不得当作生产面事实入册。
+
+下一轮入口（按解锁价值排序）：
+1. WO-A1 逐臂适配器：先读在册 simulate 族的参数注入面（属重放引擎工单本尊，跨会话在飞域，须先探在飞归属再动）；
+2. WO-A2 5 分钟切片器：先落 TableRegistry 个股分钟面存在性核查（ETF 5/15/30min 已在册，个股面未证）＝数据解锁申请面；
+3. 情绪先锋四态卡：QMTWatchdog 01:33:31 rc=0（§10 实测，01:16 非 0 读数已被更晚一次覆盖），
+   情绪面 close_final 到 2026-10-09；开考前须先实测 2026-09 腿数断点（辅轴仍禁消费）；
+4. 板块族余卡：05/06 已出分后，sector 线仅剩 02-2（拒绑，走卡面修订新版本）与 09-03（未冻序数表，呈 Owner）；
+5. `arm_protocol_binding.py` 本体袋仍未落（MOD-BT-249 码件在车道/主区 index 里 staged，dev 无该件）＝残件清零项。

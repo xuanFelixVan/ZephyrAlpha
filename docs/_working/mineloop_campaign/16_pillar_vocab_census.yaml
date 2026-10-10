@@ -1,0 +1,2386 @@
+schema_version: mineloop-pillar-vocab/v1
+generated_by: python scripts/backtest/fexam/card_binding.py --mode vocab-census --cards-dir <exam_cards> --out <本件>
+generated_at: 2026-10-11T02:41
+vocab_sources:
+  series:
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - oos_same_sign
+  - regime_same_sign
+  dual_arm:
+  - cost_tier_bp_required
+  - maxdd_deterioration_max_pp
+  - maxdd_improvement_min
+  - misfire_reduction_min
+  - oos_same_sign
+  - sharpe_delta_min
+  - turnover_delta_annual_max
+  note: 两侧词表直读执行核常量 _CALIBRATION_JUDGED_KEYS/_COMPARISON_KNOWN_KEYS，本件不复制定义
+card_total: 487
+cards_without_numeric_face: 186
+cards_with_keys_outside_route_vocab: 119
+unique_keys_outside_vocab: 181
+tally_route:
+  series: 269
+  dual_arm: 218
+tally_family:
+  comparison: 194
+  ablation: 75
+  calibration: 183
+  shadow: 35
+tally_status:
+  preregistered: 177
+  empty: 186
+  blocked_on_impl: 34
+  blocked_on_data: 62
+  examined: 28
+unknown_key_census:
+- key: turnover_or_cost_gate
+  cards: 19
+- key: ic_ir_min
+  cards: 18
+- key: ic_mean_min
+  cards: 18
+- key: regime_same_sign
+  cards: 18
+- key: mono_spearman_min
+  cards: 17
+- key: maxdd_delta_max
+  cards: 15
+- key: sharpe_vs_baseline_min
+  cards: 14
+- key: turnover_cost_gate
+  cards: 11
+- key: tracking_diff_max
+  cards: 10
+- key: car_t_stat_min
+  cards: 8
+- key: pairs_min_for_verdict
+  cards: 6
+- key: car_min_bp
+  cards: 4
+- key: maxdd_regression_max
+  cards: 4
+- key: turnover_cap_annual
+  cards: 4
+- key: net_bp_delta_min
+  cards: 3
+- key: peak_lag_max_days
+  cards: 3
+- key: peak_lag_min_days
+  cards: 3
+- key: precondition_hit_rate_min
+  cards: 3
+- key: sharpe_delta_min
+  cards: 3
+- key: ablation_maxdd_regression_min
+  cards: 2
+- key: brinson_consistency
+  cards: 2
+- key: car_t0_t20_min_bp
+  cards: 2
+- key: classification_confusion_min
+  cards: 2
+- key: cost_after_sharpe_gate
+  cards: 2
+- key: crisis_maxdd_deterioration_max_pp
+  cards: 2
+- key: mfe_capture_drop_max_pp
+  cards: 2
+- key: min_days_per_cell
+  cards: 2
+- key: missed_crisis_trigger_max
+  cards: 2
+- key: net_bp_per_pair_min
+  cards: 2
+- key: resid_ic_min
+  cards: 2
+- key: shortfall_improvement_bp_min
+  cards: 2
+- key: tail_regression_min
+  cards: 2
+- key: turnover_reduction_min
+  cards: 2
+- key: additivity_error_max
+  cards: 1
+- key: alert_share_delta_max
+  cards: 1
+- key: allocation_consistency
+  cards: 1
+- key: amplitude_ratio_report_required
+  cards: 1
+- key: arm_discrimination_min_pp
+  cards: 1
+- key: arm_gain_median_min
+  cards: 1
+- key: arm_monotone_ok
+  cards: 1
+- key: asymmetry_min_bp
+  cards: 1
+- key: attribution_leakage_ratio_max
+  cards: 1
+- key: ban_value_gap_max
+  cards: 1
+- key: band_separation_min_pp
+  cards: 1
+- key: battlefield_gap_threshold_abs
+  cards: 1
+- key: binary_split_explain_min
+  cards: 1
+- key: binding_rate_min
+  cards: 1
+- key: bucket_attribution_sign_diverge_required
+  cards: 1
+- key: buy_only_clip_maxdd_worsen_max_pp
+  cards: 1
+- key: buy_only_clip_return_delta_min
+  cards: 1
+- key: car_down_min_bp
+  cards: 1
+- key: car_q1_q5_gap_min_bp
+  cards: 1
+- key: car_q5_q1_gap_min_bp
+  cards: 1
+- key: car_up_min_bp
+  cards: 1
+- key: cash_contrib_gate
+  cards: 1
+- key: closure_rate_max_reportable
+  cards: 1
+- key: completion_drop_max_pp
+  cards: 1
+- key: component_share_min
+  cards: 1
+- key: concentration_breach_report_required
+  cards: 1
+- key: concentration_share_min
+  cards: 1
+- key: conflict_day_downside_min
+  cards: 1
+- key: conflict_share_min
+  cards: 1
+- key: constraint_tax_rank_stability_required
+  cards: 1
+- key: corr_cpi_min
+  cards: 1
+- key: cost_adjacent_delta_min
+  cards: 1
+- key: cost_adjacent_total_gate
+  cards: 1
+- key: cost_tier_bp_required
+  cards: 1
+- key: crisis_maxdd_improvement_min
+  cards: 1
+- key: curvature_direction
+  cards: 1
+- key: decomposition_abs_error_max_pp
+  cards: 1
+- key: deferral_cost_bad_median
+  cards: 1
+- key: deferral_cost_cheap_band
+  cards: 1
+- key: degradation_maxdd_pp_min
+  cards: 1
+- key: degradation_sharpe_min
+  cards: 1
+- key: distortion_ratio_min
+  cards: 1
+- key: downside_5d_min
+  cards: 1
+- key: dsr_coverage_min
+  cards: 1
+- key: effective_independent_obs_min
+  cards: 1
+- key: equivalence_residual_max
+  cards: 1
+- key: event_effect_min_pp
+  cards: 1
+- key: event_subset_gain_min_pp
+  cards: 1
+- key: evidence_min_days
+  cards: 1
+- key: exposure_improvement_min_pp
+  cards: 1
+- key: extreme_t_stat_max
+  cards: 1
+- key: false_break_gap_min
+  cards: 1
+- key: false_trigger_rate_diff_min_pp
+  cards: 1
+- key: false_trigger_rate_max
+  cards: 1
+- key: false_trigger_ratio_min
+  cards: 1
+- key: falsify_regression_min
+  cards: 1
+- key: fill_rate_gap_max
+  cards: 1
+- key: forgone_gain_max_pp
+  cards: 1
+- key: full_vs_price_only_maxdd_pp_min
+  cards: 1
+- key: full_vs_price_only_sharpe_min
+  cards: 1
+- key: gap_bucket3_vs_0_20d_max
+  cards: 1
+- key: gap_k3_vs_k0_5d_max
+  cards: 1
+- key: ic_decay_alarm_min
+  cards: 1
+- key: ic_peak_lag_min_days
+  cards: 1
+- key: impact_curve_min_ratio
+  cards: 1
+- key: impact_vs_delay_corr_max
+  cards: 1
+- key: incremental_r2_min
+  cards: 1
+- key: interaction_sum_min
+  cards: 1
+- key: invariant_violation_delta_min
+  cards: 1
+- key: invariant_violation_rate_max
+  cards: 1
+- key: keep_dim_if_drop_ge
+  cards: 1
+- key: keep_graph_if_max_arm_drop_ge
+  cards: 1
+- key: keep_if_drop_ge
+  cards: 1
+- key: keep_if_lift_ge
+  cards: 1
+- key: keep_layer_if_gain_ge
+  cards: 1
+- key: keep_ring_if_max_arm_drop_ge
+  cards: 1
+- key: lag_median_days_min
+  cards: 1
+- key: lead_days_min
+  cards: 1
+- key: loss_avoided_min_pp
+  cards: 1
+- key: loss_reduction_min
+  cards: 1
+- key: ls_gap_min_bp
+  cards: 1
+- key: maxdd_improvement_stress_subset_min_pp
+  cards: 1
+- key: maxdd_improvement_vs_no_hysteresis_min_pp
+  cards: 1
+- key: maxdd_spread_max
+  cards: 1
+- key: merge_ring_if_all_arm_drop_lt
+  cards: 1
+- key: min_events
+  cards: 1
+- key: min_universe_turnover_check
+  cards: 1
+- key: misjudge_cost_gap_min
+  cards: 1
+- key: misjudge_rate_ratio_min
+  cards: 1
+- key: misjudge_reduction_min
+  cards: 1
+- key: n3_unopen_prob_max
+  cards: 1
+- key: net_bp_delta_max
+  cards: 1
+- key: no_confirm_misfire_increase_min
+  cards: 1
+- key: no_confirm_turnover_increase_min_x
+  cards: 1
+- key: ordering_clip_reduction_min
+  cards: 1
+- key: orthogonal_maxdd_increment_min_pp
+  cards: 1
+- key: overdraft_rate_plan_arm_report_required
+  cards: 1
+- key: overfit_flag_if_is_oos_decay_gt
+  cards: 1
+- key: p1_share_min
+  cards: 1
+- key: pairs_min
+  cards: 1
+- key: pbo_max
+  cards: 1
+- key: per_trade_return_gap_max
+  cards: 1
+- key: pre_car_min_bp
+  cards: 1
+- key: probability_top_bucket_min
+  cards: 1
+- key: quota_dispersion_guard
+  cards: 1
+- key: realistic_sharpe_at_40bp_min
+  cards: 1
+- key: recall_delta_min
+  cards: 1
+- key: resonance_degradation_sharpe_min
+  cards: 1
+- key: reverse_arm_sharpe_gap_min
+  cards: 1
+- key: ring_justified_if_dirty_count_ge
+  cards: 1
+- key: ring_justified_if_falsifiable_yield_drop_ge
+  cards: 1
+- key: ring_justified_if_falsified_usage_loss_ge_bp
+  cards: 1
+- key: ring_justified_if_pass_rate_drop_ge
+  cards: 1
+- key: ring_justified_if_random_stage_drop_ge
+  cards: 1
+- key: ring_justified_if_random_state_drop_ge
+  cards: 1
+- key: ring_justified_if_silent_accumulation_ge
+  cards: 1
+- key: ring_justified_if_survival_drop_ge
+  cards: 1
+- key: risk_layer_increment_maxdd_pp_min
+  cards: 1
+- key: risk_layer_sharpe_loss_max
+  cards: 1
+- key: same_day_inflation_min
+  cards: 1
+- key: segment_gap_min
+  cards: 1
+- key: segment_sign_flip_max
+  cards: 1
+- key: sharpe_delta_max
+  cards: 1
+- key: sharpe_vs_champion_min
+  cards: 1
+- key: single_leg_increment_min
+  cards: 1
+- key: single_leg_upper_bound_ok
+  cards: 1
+- key: spillover_resid_ic_min
+  cards: 1
+- key: staleness_sign_error_min
+  cards: 1
+- key: strata_direction_min
+  cards: 1
+- key: strategy_trim_reduction_min
+  cards: 1
+- key: survival_floor_sharpe
+  cards: 1
+- key: tail_gap_min_bps
+  cards: 1
+- key: tax_share_of_gross_max
+  cards: 1
+- key: threshold_gap_min_pp
+  cards: 1
+- key: tight_day_amplification_min
+  cards: 1
+- key: total_maxdd_improvement_min
+  cards: 1
+- key: total_sharpe_gain_min
+  cards: 1
+- key: total_trim_abs_diff_max
+  cards: 1
+- key: turnover_increase_min
+  cards: 1
+- key: vetoed_days_min_for_verdict
+  cards: 1
+- key: volume_split_gap_min
+  cards: 1
+- key: vs_lazy_arm_tolerance_max
+  cards: 1
+- key: weight_drift_max
+  cards: 1
+- key: weight_table_degradation_maxdd_pp_min
+  cards: 1
+- key: weight_table_degradation_sharpe_min
+  cards: 1
+- key: wfe_min
+  cards: 1
+- key: whipsaw_roundtrip_ratio_max
+  cards: 1
+- key: zero_gain_slotday_reduction_min
+  cards: 1
+rows:
+- card_id: TDM-X-S1-04/comparison/05_早盘破位假信号时段可靠性
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - amplitude_ratio_report_required
+  - false_break_gap_min
+  - ic_ir_min
+  - ic_mean_min
+  - misjudge_reduction_min
+  - mono_spearman_min
+  - regime_same_sign
+  numeric_key_count: 8
+  prose_pillar_keys:
+  - amplitude_ratio_check
+  - arm_gain
+  - false_break_monotonicity
+  - ic_floor
+  - pit_discipline
+  - regime_stability
+- card_id: TDM-E-L9-AGG/ablation/02_知识供给汇聚环消融
+  family: ablation
+  signal_kind: series
+  status: blocked_on_data
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - keep_ring_if_max_arm_drop_ge
+  - merge_ring_if_all_arm_drop_lt
+  - mono_spearman_min
+  - regime_same_sign
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - coverage_floor
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-D1/ablation/02_因子组合挖掘环增益
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_data
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - overfit_flag_if_is_oos_decay_gt
+  - regime_same_sign
+  - ring_justified_if_pass_rate_drop_ge
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - n_trial_ledger
+  - overfit_gate
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-D1/ablation/03_假设漏斗闭环率与考试链缺口
+  family: ablation
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - closure_rate_max_reportable
+  - dsr_coverage_min
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - quota_dispersion_guard
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - closure_rate
+  - dead_end_share
+  - funnel_monotonicity
+  - multiple_testing_load
+  - quota_equalization_guard
+  - track_identity_gap
+- card_id: TDM-X-FLOW/ablation/02_离场信号整链消融总账
+  family: ablation
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - crisis_maxdd_deterioration_max_pp
+  - risk_layer_increment_maxdd_pp_min
+  - risk_layer_sharpe_loss_max
+  - total_maxdd_improvement_min
+  - total_sharpe_gain_min
+  - turnover_cap_annual
+  numeric_key_count: 8
+  prose_pillar_keys:
+  - ablation_protocol
+  - oos_stability
+  - risk_layer_increment
+  - tail_guard
+  - total_gain_floor
+  - turnover_cost_gate
+- card_id: TDM-X-S2-02/comparison/04_T1可卖额度做T回转延迟成本
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - binding_rate_min
+  - deferral_cost_bad_median
+  - deferral_cost_cheap_band
+  - ic_ir_min
+  - ic_mean_min
+  - regime_same_sign
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - arm_gap
+  - binding_rate
+  - deferral_cost
+  - ic_floor
+  - no_fill_guard
+  - regime_stability
+- card_id: TDM-E-L9-D2/ablation/02_预注册exam_plan入表
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - regime_same_sign
+  - ring_justified_if_falsifiable_yield_drop_ge
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - net_zero_pairing
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-E1/ablation/02_一问一考考试链增益
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_data
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - regime_same_sign
+  - ring_justified_if_survival_drop_ge
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+  - self_reference_gate
+- card_id: TDM-E-L9-E2/ablation/02_考试结论次日回传生效
+  family: ablation
+  signal_kind: series
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - regime_same_sign
+  - ring_justified_if_falsified_usage_loss_ge_bp
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - dead_letter_gate
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-G1/ablation/02_产业链传导边增量解释力
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - keep_graph_if_max_arm_drop_ge
+  - mono_spearman_min
+  - regime_same_sign
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - disambiguation_risk
+  - edge_coverage_floor
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-G2/ablation/02_CKG静态事实层先验增益
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - keep_layer_if_gain_ge
+  - mono_spearman_min
+  - regime_same_sign
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - pit_honesty
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-G3/ablation/02_股权穿透关联收益
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - keep_if_lift_ge
+  - mono_spearman_min
+  - regime_same_sign
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - offshore_break
+  - pit_axes
+  - response_monotonicity
+- card_id: TDM-E-L9-G4/ablation/02_概念标签题材热度维度
+  family: ablation
+  signal_kind: series
+  status: blocked_on_data
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - keep_dim_if_drop_ge
+  - mono_spearman_min
+  - regime_same_sign
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - concept_vs_chain_boundary
+  - ic_floor
+  - label_aging
+  - lag_profile
+  - response_monotonicity
+- card_id: TDM-E-L9-G5/ablation/02_IO系数行业弹性
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - keep_if_drop_ge
+  - mono_spearman_min
+  - regime_same_sign
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - mapping_gate
+  - response_monotonicity
+  - stale_calibration_risk
+- card_id: TDM-E-L9-V1/ablation/02_大盘状态快照T-1纪律
+  family: ablation
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - regime_same_sign
+  - same_day_inflation_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - pit_proof_check
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-V2/ablation/02_情绪相位六段快照就绪
+  family: ablation
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - regime_same_sign
+  - ring_justified_if_random_stage_drop_ge
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - aggregator_absence_note
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-V3/ablation/02_板块状态快照T-1纪律
+  family: ablation
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - regime_same_sign
+  - ring_justified_if_random_state_drop_ge
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - five_component_split
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-Z1/ablation/02_十态状态机与十八列schema强制
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - regime_same_sign
+  - ring_justified_if_dirty_count_ge
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - optimistic_lock_check
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-Z2/ablation/02_净零与chain_refs双向对账
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ic_ir_min
+  - ic_mean_min
+  - mono_spearman_min
+  - regime_same_sign
+  - ring_justified_if_silent_accumulation_ge
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - net_zero_pairing
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-F-C2-02/shadow/04_资金额度约束先卖后买与只削买入
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - buy_only_clip_maxdd_worsen_max_pp
+  - buy_only_clip_return_delta_min
+  - ordering_clip_reduction_min
+  - overdraft_rate_plan_arm_report_required
+  - tight_day_amplification_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - buy_only_clip_cost
+  - oos_same_sign
+  - ordering_gain
+  - overdraft_guard
+  - repo_exclusion
+  - tight_day_amplification
+  - turnover_cost_gate
+- card_id: TDM-F-C3-01/comparison/03_IS三分解与交易持仓二分
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - additivity_error_max
+  - binary_split_explain_min
+  - brinson_consistency
+  - component_share_min
+  - impact_vs_delay_corr_max
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - additivity_closure
+  - binary_split_closure
+  - brinson_consistency
+  - component_dominance
+  - impact_proxy_guard
+  - oos_same_sign
+  - opportunity_cost_def_frozen
+- card_id: TDM-X-R1/shadow/02_拔电源影子运行对照
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - cost_tier_bp_required
+  - false_trigger_rate_max
+  - forgone_gain_max_pp
+  - loss_avoided_min_pp
+  - sharpe_delta_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - fail_closed_disclosure
+  - false_trigger_rate
+  - forgone_gain_max
+  - loss_avoided_min
+  - shadow_first
+  - sharpe_floor
+  - turnover_cost_gate
+- card_id: TDM-X-S1-05/ablation/02_融合权重与去抖消融
+  family: ablation
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - no_confirm_misfire_increase_min
+  - no_confirm_turnover_increase_min_x
+  - resonance_degradation_sharpe_min
+  - weight_table_degradation_maxdd_pp_min
+  - weight_table_degradation_sharpe_min
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - ablation_protocol
+  - bypass_exempt
+  - confirm_floor
+  - degradation_floor
+  - oos_stability
+  - resonance_floor
+- card_id: TDM-X-S2-06/ablation/02_卖出闭环三率反馈权重消融
+  family: ablation
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - bucket_attribution_sign_diverge_required
+  - degradation_maxdd_pp_min
+  - degradation_sharpe_min
+  - turnover_cap_annual
+  - weight_drift_max
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - ablation_protocol
+  - bucket_attribution
+  - degradation_floor
+  - drawdown_floor
+  - false_feedback_guard
+  - oos_stability
+  - turnover_cost_gate
+- card_id: TDM-E-L9-A17/calibration/02_研报评级调整事件研究
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - asymmetry_min_bp
+  - car_down_min_bp
+  - car_t_stat_min
+  - car_up_min_bp
+  numeric_key_count: 9
+  prose_pillar_keys:
+  - asymmetry_gap
+  - attention_interaction
+  - downgrade_abnormal_return
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - upgrade_abnormal_return
+- card_id: TDM-F-C1-02/shadow/02_三层栈冠军挑战
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - tracking_diff_max
+  - turnover_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - evidence_note
+  - maxdd_delta
+  - oos_same_sign
+  - sharpe_vs_baseline
+  - tracking_diff
+  - turnover_cost_gate
+- card_id: TDM-F-C1-02/shadow/03_置信度配比资金臂
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - concentration_breach_report_required
+  - maxdd_delta_max
+  - sharpe_vs_champion_min
+  - turnover_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - concentration_check
+  - confidence_mapping_frozen
+  - evidence_note
+  - maxdd_delta
+  - oos_same_sign
+  - sharpe_vs_champion
+  - turnover_cost_gate
+- card_id: TDM-F-C1-03/shadow/02_双向渐变vs硬切
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - tracking_diff_max
+  - turnover_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - sharpe_vs_baseline
+  - tracking_diff_max
+  - turnover_cost_gate
+- card_id: TDM-F-C1/shadow/02_预算带灰度插值
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - tracking_diff_max
+  - turnover_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - sharpe_vs_baseline
+  - tracking_diff_max
+  - turnover_cost_gate
+- card_id: TDM-F-C2-02/shadow/02_约束栈有vs无
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - tracking_diff_max
+  - turnover_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - sharpe_vs_baseline
+  - tracking_diff_max
+  - turnover_cost_gate
+- card_id: TDM-F-C2-02/shadow/03_裁剪优先级非策略仓优先
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - attribution_leakage_ratio_max
+  - sharpe_delta_min
+  - strategy_trim_reduction_min
+  - total_trim_abs_diff_max
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - attribution_leakage
+  - equal_trim_quantity_guard
+  - nav_gain
+  - oos_same_sign
+  - strategy_alpha_protection
+  - turnover_cost_gate
+- card_id: TDM-F-C2-04/shadow/02_三级响应vs即时强裁
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - tracking_diff_max
+  - turnover_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - tracking_diff_max
+  - turnover_cost_gate
+- card_id: TDM-F-FLOW/comparison/02_终产目标组合vs基准
+  family: comparison
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - tracking_diff_max
+  - turnover_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - sharpe_vs_baseline
+  - tracking_diff_max
+  - turnover_cost_gate
+- card_id: TDM-P-P1-01/comparison/03_回执与本地台账入账口径双臂失真
+  family: comparison
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - classification_confusion_min
+  - distortion_ratio_min
+  - false_trigger_rate_diff_min_pp
+  - staleness_sign_error_min
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - cascade_gate
+  - distortion_gate
+  - honesty
+  - no_single_metric
+  - staleness_gate
+  - tripartite_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P1-05/shadow/05_组合体检帽影子对照
+  family: shadow
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - evidence_min_days
+  - maxdd_regression_max
+  - sharpe_delta_min
+  - turnover_or_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - evidence_gate
+  - oos_and_regime_gate
+  - risk_gate
+  - rollback_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P2-01/comparison/02_三道门串并开闭与互斥诊断
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - net_bp_delta_min
+  - net_bp_per_pair_min
+  - pairs_min_for_verdict
+  - precondition_hit_rate_min
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - all_gate
+  - exclusivity_gate
+  - net_bp_gate
+  - oos_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P2-01/comparison/03_盘中单边失效腿对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - net_bp_delta_max
+  - pairs_min_for_verdict
+  - precondition_hit_rate_min
+  - vetoed_days_min_for_verdict
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - all_or_none_semantics
+  - oos_gate
+  - pair_gate_and_device_honesty
+  - sector_collapse_leg_blocked
+  - threshold_monotonicity
+  - turnover_or_cost_gate
+  - veto_value_gate
+- card_id: TDM-P-P2-02/ablation/02_单次做T量三成上限消融
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - invariant_violation_delta_min
+  - net_bp_delta_min
+  - pairs_min_for_verdict
+  - turnover_or_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - dose_response
+  - invariant_gate
+  - net_bp_gate
+  - sample_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P2-02/comparison/03_三策略并发与单策略分腿及仲裁对照
+  family: comparison
+  signal_kind: panel
+  status: blocked_on_data
+  route: dual_arm
+  keys_outside_route_vocab:
+  - conflict_share_min
+  - net_bp_delta_min
+  - pairs_min_for_verdict
+  - turnover_or_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - arbitration_gate
+  - cost_gate
+  - oos_and_regime_gate
+  - sample_gate
+  - solo_gate
+- card_id: TDM-P-P2-04/ablation/03_置换两倍成本门与风控优先腿消融
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - conflict_day_downside_min
+  - sharpe_delta_max
+  - turnover_increase_min
+  - turnover_or_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - ablation_gate
+  - negative_honesty
+  - oos_and_regime_gate
+  - priority_gate
+  - turnover_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P2/comparison/02_做T腿有无对照与底仓恒等性
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - invariant_violation_rate_max
+  - net_bp_per_pair_min
+  - pairs_min_for_verdict
+  - precondition_hit_rate_min
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - cost_gate
+  - gate_feasibility_gate
+  - invariance_gate
+  - negative_honesty
+  - oos_and_regime_gate
+- card_id: TDM-P-P3-01/comparison/03_情绪段加仓权限分层对照
+  family: comparison
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - concentration_share_min
+  - cost_after_sharpe_gate
+  - min_days_per_cell
+  - segment_gap_min
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - concentration_gate
+  - cost_gate
+  - insufficiency_gate
+  - oos_gate
+  - segment_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P3-01/comparison/04_日亏熔断禁加期分层对照
+  family: comparison
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ban_value_gap_max
+  - battlefield_gap_threshold_abs
+  - cost_after_sharpe_gate
+  - min_days_per_cell
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - ban_value_gate
+  - dose_monotonicity
+  - immediate_invalidation_leg
+  - layer_separation_disclosure
+  - oos_and_regime_gate
+  - threshold_conflict_gate
+  - turnover_or_cost_gate
+- card_id: TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量
+  family: ablation
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - decomposition_abs_error_max_pp
+  - missed_crisis_trigger_max
+  - orthogonal_maxdd_increment_min_pp
+  - regime_same_sign
+  numeric_key_count: 8
+  prose_pillar_keys:
+  - crisis_non_absence
+  - level_regime_association
+  - no_double_count
+  - oos_stability
+  - orthogonal_increment
+  - sharpe_floor
+  - turnover_cost_gate
+- card_id: TDM-X-S1/ablation/02_卖出信号段整体消融对照
+  family: ablation
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - crisis_maxdd_deterioration_max_pp
+  - full_vs_price_only_maxdd_pp_min
+  - full_vs_price_only_sharpe_min
+  - turnover_cap_annual
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ablation_protocol
+  - cross_check_bucket
+  - degradation_floor
+  - oos_stability
+  - tail_risk_guard
+  - turnover_cost_gate
+- card_id: TDM-X-S2/ablation/02_执行约束层现实性税度量
+  family: ablation
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - constraint_tax_rank_stability_required
+  - realistic_sharpe_at_40bp_min
+  - tax_share_of_gross_max
+  - turnover_cap_annual
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ablation_protocol
+  - binding_constraint_rank
+  - drawdown_floor
+  - oos_stability
+  - sharpe_floor
+  - tax_size_gate
+  - turnover_cost_gate
+- card_id: TDM-E-L9-A05/calibration/02_盈余惊喜事件研究
+  family: calibration
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - car_q5_q1_gap_min_bp
+  - car_t0_t20_min_bp
+  - car_t_stat_min
+  numeric_key_count: 8
+  prose_pillar_keys:
+  - abnormal_return_floor
+  - attention_interaction
+  - drift_persistence
+  - ic_floor
+  - lag_profile
+  - low_group_gap
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-A13/calibration/02_股东户数环比事件研究
+  family: calibration
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - car_q1_q5_gap_min_bp
+  - car_t0_t20_min_bp
+  - car_t_stat_min
+  numeric_key_count: 8
+  prose_pillar_keys:
+  - abnormal_return_floor
+  - ic_floor
+  - lag_profile
+  - long_short_gap
+  - microcap_confounding
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-B05/calibration/02_中标领先营收与基建链
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - car_min_bp
+  - car_t_stat_min
+  - ls_gap_min_bp
+  numeric_key_count: 8
+  prose_pillar_keys:
+  - abnormal_return_floor
+  - ic_floor
+  - lag_profile
+  - long_short_gap
+  - regime_stability
+  - response_monotonicity
+  - revenue_leading
+- card_id: TDM-F-C1-01/shadow/02_激活集路由影子
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - tracking_diff_max
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - regime_specificity
+  - sharpe_vs_baseline
+  - tracking_diff_max
+- card_id: TDM-F-C1/comparison/03_预备金现金贡献
+  family: comparison
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - cash_contrib_gate
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - cash_contrib_positive
+  - maxdd_delta
+  - oos_same_sign
+  - sharpe_vs_baseline
+- card_id: TDM-F-C2-01/comparison/02_净额轧平省成本
+  family: comparison
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - allocation_consistency
+  - tracking_diff_max
+  - turnover_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - allocation_consistency
+  - oos_same_sign
+  - tracking_diff_max
+  - turnover_cost_gate
+- card_id: TDM-F-C2/comparison/02_组合聚合vs各自为战
+  family: comparison
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - turnover_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - sharpe_vs_baseline
+  - turnover_cost_gate
+- card_id: TDM-F-C3-02/shadow/02_减半冻结线有效性
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - tracking_diff_max
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - recovery_hysteresis
+  - sharpe_vs_baseline
+  - tracking_diff_max
+- card_id: TDM-F-C3-03/comparison/02_月度调权vs静态基准
+  family: comparison
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - turnover_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - maxdd_delta
+  - miscallocation_memo
+  - oos_same_sign
+  - sharpe_vs_baseline
+  - turnover_cost_gate
+- card_id: TDM-F-C3-04/shadow/02_四道gate过拟合防线
+  family: shadow
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - pbo_max
+  - wfe_min
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - pbo_max
+  - wfe_min
+- card_id: TDM-F-C3/comparison/02_归因反馈闭环开vs关
+  family: comparison
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  - turnover_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - sharpe_vs_baseline
+  - turnover_cost_gate
+- card_id: TDM-P-P1-01/comparison/02_复权口径对成本与生死线触发对照
+  family: comparison
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - classification_confusion_min
+  - equivalence_residual_max
+  - false_trigger_ratio_min
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - classification_gate
+  - correction_gate
+  - downstream_gate
+  - false_trigger_gate
+  - honesty
+  - no_single_metric
+- card_id: TDM-P-P1-02/comparison/03_abs对称与带符号分级漏判对照
+  family: comparison
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - alert_share_delta_max
+  - lead_days_min
+  - recall_delta_min
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - alert_cost_gate
+  - lead_gate
+  - miss_gate
+  - oos_gate
+  - recall_gate
+- card_id: TDM-P-P1-05/ablation/04_同题材扎堆帽消融
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ablation_maxdd_regression_min
+  - tail_regression_min
+  - turnover_or_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - binding_gate
+  - dose_response
+  - maxdd_gate
+  - oos_and_regime_gate
+  - tail_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P1-05/comparison/03_漂移触发与周期触发对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - maxdd_regression_max
+  - turnover_or_cost_gate
+  - turnover_reduction_min
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - alignment_gate
+  - cost_gate
+  - maxdd_gate
+  - oos_and_regime_gate
+  - turnover_or_cost_gate
+  - vs_dense_gate
+- card_id: TDM-P-P1-06/comparison/02_三腿全因子与仲裁序对照
+  family: comparison
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - interaction_sum_min
+  - maxdd_regression_max
+  - turnover_or_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - conflict_share_gate
+  - dominance_gate
+  - interaction_gate
+  - oos_and_regime_gate
+  - order_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P2-03/comparison/02_未闭环敞口过夜代价双臂
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - cost_adjacent_total_gate
+  - pairs_min_for_verdict
+  - tail_gap_min_bps
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - mean_gate
+  - oos_and_regime_gate
+  - success_def_gate
+  - tail_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P2-04/comparison/02_调仓频率与换手惩罚六臂对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - maxdd_spread_max
+  - turnover_or_cost_gate
+  - turnover_reduction_min
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - cost_gate
+  - lambda_gate
+  - maxdd_gate
+  - oos_and_regime_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P3-01/comparison/02_浮盈加仓与摊平亏损仓双臂对照
+  family: comparison
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - maxdd_regression_max
+  - per_trade_return_gap_max
+  - turnover_or_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - dose_gate
+  - oos_and_regime_gate
+  - per_trade_gate
+  - redline_gate
+  - robustness_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P3-03/ablation/03_风险恒定与止损上移保本腿消融
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - ablation_maxdd_regression_min
+  - tail_regression_min
+  - turnover_or_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - ablation_gate
+  - oos_and_regime_gate
+  - risk_neutral_check
+  - turnover_or_cost_gate
+  - whipsaw_gate
+- card_id: TDM-P-P3-04/comparison/03_尾盘加仓与即时加仓执行价差对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - cost_adjacent_delta_min
+  - fill_rate_gap_max
+  - pairs_min
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - cost_gate
+  - fill_gate
+  - no_single_metric
+  - oos_and_regime_gate
+  - spread_gate
+- card_id: TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+  family: comparison
+  signal_kind: series
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - maxdd_improvement_vs_no_hysteresis_min_pp
+  - missed_crisis_trigger_max
+  - whipsaw_roundtrip_ratio_max
+  numeric_key_count: 8
+  prose_pillar_keys:
+  - drawdown_floor
+  - oos_stability
+  - paired_arm_protocol
+  - sharpe_floor
+  - turnover_cost_gate
+  - whipsaw_gate
+- card_id: TDM-X-S2-02/calibration/03_新股首日分层卖出三臂
+  family: calibration
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - arm_gain_median_min
+  - exposure_improvement_min_pp
+  - vs_lazy_arm_tolerance_max
+  numeric_key_count: 8
+  prose_pillar_keys:
+  - arm_ranking
+  - board_split
+  - drawdown_exposure
+  - ic_floor
+  - no_fill_guard
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-A12/calibration/02_台风与极端高温对电力链
+  family: calibration
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - car_min_bp
+  - car_t_stat_min
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - abnormal_return_floor
+  - geography_honesty
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-B02/calibration/02_NOAA极端事件预警能源中断
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - car_min_bp
+  - car_t_stat_min
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - abnormal_return_floor
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - timezone_gate
+  - warning_vs_impact
+- card_id: TDM-E-L9-B09/calibration/02_分商品出口量价领先出口链
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - peak_lag_max_days
+  - peak_lag_min_days
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - existing_data_check
+  - ic_floor
+  - lag_profile
+  - quantity_vs_price
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-B10/calibration/02_刷卡消费代理领先社零
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - peak_lag_max_days
+  - peak_lag_min_days
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - existing_proxy_check
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+  - seasonality_control
+- card_id: TDM-E-L9-C01/calibration/02_门店客流实时景气
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - peak_lag_max_days
+  - peak_lag_min_days
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - panel_representativeness
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-C03/calibration/02_直播电商实时成交动销
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - car_min_bp
+  - car_t_stat_min
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - abnormal_return_floor
+  - ic_floor
+  - lag_profile
+  - new_product_concentration
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-F-C2-03/comparison/02_相关性cluster上限
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - maxdd_delta_max
+  - sharpe_vs_baseline_min
+  numeric_key_count: 3
+  prose_pillar_keys:
+  - maxdd_delta
+  - oos_same_sign
+  - sharpe_vs_baseline
+  - stress_rho
+- card_id: TDM-F-C3-01/comparison/02_隔夜漂移切账失真
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - brinson_consistency
+  - tracking_diff_max
+  numeric_key_count: 3
+  prose_pillar_keys:
+  - brinson_consistency
+  - oos_same_sign
+  - tracking_diff_max
+- card_id: TDM-F-C3-05/shadow/02_判准率加权vs等权
+  family: shadow
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - ic_decay_alarm_min
+  - sharpe_vs_baseline_min
+  numeric_key_count: 3
+  prose_pillar_keys:
+  - floor_10pct
+  - ic_decay_alarm
+  - oos_same_sign
+  - sharpe_vs_baseline
+- card_id: TDM-P-FLOW/ablation/02_持仓叠层整链消融
+  family: ablation
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - single_leg_upper_bound_ok
+  - turnover_or_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - attribution_gate
+  - maxdd_gate
+  - negative_honesty
+  - oos_and_regime_gate
+  - sharpe_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-FLOW/ablation/04_三段子环并入完备性消融
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - arm_monotone_ok
+  - p1_share_min
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - device_gate
+  - monotone_gate
+  - negative_honesty
+  - oos_and_regime_gate
+  - p1_share_gate
+  - p2_leg_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P1-04/comparison/02_否决线三型可选档对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - arm_discrimination_min_pp
+  - turnover_or_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - discrimination_gate
+  - honesty
+  - maxdd_gate
+  - oos_and_regime_gate
+  - sharpe_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P1-04/comparison/03_固定生死线七档臂缺位对照
+  family: comparison
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - strata_direction_min
+  - turnover_or_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - maxdd_gate
+  - oos_and_regime_gate
+  - sharpe_gate
+  - strata_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P1/comparison/02_否决腿与熔断腿双臂增量
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - single_leg_increment_min
+  - turnover_or_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - complement_gate
+  - maxdd_gate
+  - negative_honesty
+  - oos_and_regime_gate
+  - sharpe_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P3-02/comparison/02_递减档序与等额档序对照
+  family: comparison
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - falsify_regression_min
+  - turnover_or_cost_gate
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - dose_response
+  - falsify_gate
+  - maxdd_gate
+  - oos_and_regime_gate
+  - turnover_or_cost_gate
+- card_id: TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - loss_reduction_min
+  - reverse_arm_sharpe_gap_min
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - drawdown_floor
+  - loss_floor
+  - oos_stability
+  - paired_arm_protocol
+  - residual_disclosure
+  - sharpe_floor
+  - turnover_cost_gate
+- card_id: TDM-X-R1-03/calibration/02_宽基ETF天量与护盘滞后结构
+  family: calibration
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - lag_median_days_min
+  - min_events
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - event_count_floor
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-X-S1-03/comparison/02_止盈族三式对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - crisis_maxdd_improvement_min
+  - mfe_capture_drop_max_pp
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - crisis_window
+  - drawdown_floor
+  - oos_stability
+  - paired_arm_protocol
+  - sharpe_floor
+  - turnover_cost_gate
+- card_id: TDM-X-S1-04/calibration/04_除权除息参考价分母误判清仓
+  family: calibration
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - misjudge_cost_gap_min
+  - misjudge_rate_ratio_min
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - gap_type_split
+  - ic_floor
+  - misjudge_cost
+  - misjudge_rate_floor
+  - pit_discipline
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-X-S2-01/comparison/02_执行方式路由与流动性三查对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - maxdd_improvement_stress_subset_min_pp
+  - shortfall_improvement_bp_min
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - drawdown_floor
+  - oos_stability
+  - paired_arm_protocol
+  - sharpe_floor
+  - shortfall_floor
+  - turnover_cost_gate
+  - unfillable_disclosure
+- card_id: TDM-X-S2-02/calibration/02_连续跌停开板概率与次日处置
+  family: calibration
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - n3_unopen_prob_max
+  - volume_split_gap_min
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - ic_floor
+  - probability_floor
+  - regime_stability
+  - response_monotonicity
+  - volume_split
+- card_id: TDM-X-S2-03/comparison/02_执行口径净收益对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - segment_sign_flip_max
+  - survival_floor_sharpe
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - drawdown_floor
+  - paired_arm_protocol
+  - segment_disclosure
+  - sharpe_floor
+  - sign_stability
+  - turnover_cost_gate
+- card_id: TDM-X-S2-04/comparison/02_本地条件单追单闭环对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - completion_drop_max_pp
+  - shortfall_improvement_bp_min
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - completion_floor
+  - drawdown_floor
+  - oos_stability
+  - paired_arm_protocol
+  - sharpe_floor
+  - shortfall_floor
+  - turnover_cost_gate
+- card_id: TDM-E-L9-A02/calibration/02_竞价失衡与尾盘冲击
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - impact_curve_min_ratio
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - impact_curve
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-A08/calibration/02_BDI领先航运链
+  family: calibration
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - ic_peak_lag_min_days
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+  - vessel_layering
+- card_id: TDM-E-L9-A11/calibration/02_EIA库存意外
+  family: calibration
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - effective_independent_obs_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - chain_differentiation
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-A15/calibration/02_资金费率拥挤跨市场预警
+  family: calibration
+  signal_kind: series
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - resid_ic_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - extreme_crowding_reversal
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+  - us_decoupling
+- card_id: TDM-E-L9-A15/calibration/04_币圈镜像山寨季广度
+  family: calibration
+  signal_kind: series
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - min_universe_turnover_check
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - eth_btc_channel
+  - extreme_overheat
+  - ic_floor
+  - lag_profile
+  - response_monotonicity
+  - universe_stability
+- card_id: TDM-E-L9-A16/calibration/02_投入产出传导强度先验有效性
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_impl
+  route: series
+  keys_outside_route_vocab:
+  - incremental_r2_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - incremental_explanatory
+  - lag_profile
+  - path_directionality
+  - stale_calibration_risk
+- card_id: TDM-E-L9-B01/calibration/02_卫星物理量领先官方数据
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - pre_car_min_bp
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - event_study
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-B03/calibration/02_招聘JD动能领先营收
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - resid_ic_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - aggregation_test
+  - ic_floor
+  - lag_profile
+  - leads_not_sync
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-B04/calibration/02_在线价格高频通胀映射
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - corr_cpi_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - inflation_channel
+  - lag_profile
+  - promo_robustness
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-E-L9-B06/calibration/02_海外散户情绪领先中概
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - spillover_resid_ic_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - event_extremes
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+  - spillover_test
+- card_id: TDM-E-L9-B07/calibration/02_雪球股吧散户情绪极端预警
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - extreme_t_stat_max
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - breadth_link
+  - extreme_reversal
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_shape
+- card_id: TDM-E-L9-C02/calibration/02_银行网点信贷投放草根观测
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - car_t_stat_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - post_event_zero
+  - pre_event_return
+  - regime_stability
+- card_id: TDM-P-P1-03/calibration/02_因子秩回落对后续超额预测
+  family: calibration
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - band_separation_min_pp
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - band_separation
+  - ic_floor
+  - lag_profile
+  - pit_note
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-P-P1-03/comparison/03_逻辑存活否决腿开闭对照
+  family: comparison
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - turnover_or_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - dose_response
+  - maxdd_gate
+  - oos_and_regime_gate
+  - sharpe_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P1-04/calibration/05_板块退潮动量对持仓下行预测
+  family: calibration
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - threshold_gap_min_pp
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ebb_state_alt
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+  - threshold_test
+- card_id: TDM-P-P1-04/calibration/06_事件禁区前收益与波动预测
+  family: calibration
+  signal_kind: panel
+  status: blocked_on_data
+  route: series
+  keys_outside_route_vocab:
+  - event_effect_min_pp
+  numeric_key_count: 5
+  prose_pillar_keys:
+  - event_effect
+  - ic_floor
+  - opportunity_cost
+  - regime_stability
+  - vol_gate
+- card_id: TDM-P-P1-05/comparison/02_单票上限三档对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - turnover_or_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - binding_gate
+  - maxdd_gate
+  - oos_and_regime_gate
+  - overdispersion_gate
+  - sharpe_gate
+  - tail_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P2-04/ablation/04_梯度减仓顺序与无排序双臂消融
+  family: ablation
+  signal_kind: panel
+  status: blocked_on_impl
+  route: dual_arm
+  keys_outside_route_vocab:
+  - downside_5d_min
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - ablation_gate
+  - ballast_gate
+  - dose_gate
+  - negative_honesty
+  - oos_and_regime_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P3-02/calibration/03_加仓触发涨幅对后续收益预测
+  family: calibration
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - curvature_direction
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - ic_floor
+  - lag_profile
+  - momentum_alternative
+  - regime_stability
+  - response_shape
+  - threshold_test
+- card_id: TDM-P-P3-03/comparison/02_仓位定尺寸七档对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - turnover_or_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - dominance_gate
+  - dose_gate
+  - live_parity_note
+  - maxdd_gate
+  - oos_and_regime_gate
+  - turnover_or_cost_gate
+- card_id: TDM-P-P3-04/calibration/02_尾盘强势对次日高开概率预测
+  family: calibration
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - probability_top_bucket_min
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - base_rate_disclosure
+  - ic_floor
+  - limit_up_exclusion
+  - probability_gate
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-P-P3/comparison/02_金字塔三档与一次性足额对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - turnover_or_cost_gate
+  numeric_key_count: 4
+  prose_pillar_keys:
+  - cost_gate
+  - maxdd_gate
+  - mechanism_gate
+  - oos_and_regime_gate
+  - turnover_or_cost_gate
+- card_id: TDM-X-S1-02/comparison/02_时间止损档对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - zero_gain_slotday_reduction_min
+  numeric_key_count: 7
+  prose_pillar_keys:
+  - capital_efficiency
+  - drawdown_floor
+  - oos_stability
+  - paired_arm_protocol
+  - sharpe_floor
+  - turnover_cost_gate
+- card_id: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
+  family: calibration
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - gap_k3_vs_k0_5d_max
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - gap_vs_baseline
+  - ic_floor
+  - lag_profile
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-X-S1-04/calibration/03_席位净卖出派发前瞻收益
+  family: calibration
+  signal_kind: panel
+  status: preregistered
+  route: series
+  keys_outside_route_vocab:
+  - gap_bucket3_vs_0_20d_max
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - gap_vs_baseline
+  - ic_floor
+  - pit_discipline
+  - regime_stability
+  - response_monotonicity
+- card_id: TDM-X-S1-06/comparison/02_K3连续破位强清对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - event_subset_gain_min_pp
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - drawdown_floor
+  - event_subset_loss
+  - oos_stability
+  - paired_arm_protocol
+  - sharpe_floor
+  - turnover_cost_gate
+- card_id: TDM-X-S2-05/comparison/02_分批止盈阶梯对照
+  family: comparison
+  signal_kind: panel
+  status: preregistered
+  route: dual_arm
+  keys_outside_route_vocab:
+  - mfe_capture_drop_max_pp
+  numeric_key_count: 6
+  prose_pillar_keys:
+  - drawdown_floor
+  - mfe_capture
+  - oos_stability
+  - paired_arm_protocol
+  - sharpe_floor
+  - turnover_cost_gate
+discipline:
+  threshold_values_written: 0
+  cards_modified: 0
+  ch_queries: 0
+  route_expression_copies: 1（pillars_route 单一真源，普查与判决同式）
+  purpose: 词表立法工单（WO-V）的输入面：哪些卡面冻结键名当前无任何机判面覆盖——立法=补面与命名对齐，禁改键值
