@@ -59,6 +59,10 @@ tracks:
     owner_signoff: 夜矿续战令 §三 T4（Owner 通道授权：批A 作废立 v2）
     window_discipline:
       fire_window: 'Sat 08:00（Task Scheduler 已由 14:00 改 08:00）'
+      # v2.1 窗纪注记（GPU喂饱班连夜冲刺令 2026-10-10 19:30，Owner 加速令背书，adjudicator=st-gpufeed-20261010）：
+      #   本卡首次起跑日一次性改指 2026-10-11（周日）08:00（原 NextRunTime 2026-10-17 Sat；T2-A 治本影子对照
+      #   PASS 为提前依据）。仅改起跑日：判据面（acceptance/n_samples/seed/stratify_dims）零动；22:30 硬收窗与
+      #   禁跨 23:00 纪律原样；后续周六窗纪不变（回指由 Owner/后续班裁定通道办理）。
       hard_deadline: '每日 22:30 前收窗，禁跨 23:00 W1 窗（二号域 GPU 让位，OD-5 叠跑教训在案）'
       duration_basis: '实测 44.8s/格（批A 进度代理）→ 1000 格≈12.4h，08:00 起跑 22:30 前收窗留 2h 余量；L2 批提速落地 3.5s/格后可经裁定通道升点'
     acceptance:
