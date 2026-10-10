@@ -22,7 +22,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
+from zephyr.shared.io.audit_jsonl_writer import (
+    DEFAULT_BACKUP_COUNT,
+    DEFAULT_MAX_BYTES,
+    append_audit_jsonl,
+    rotate_if_oversized,
+)
 
 
 def _read(path: Path) -> list[dict]:
@@ -98,3 +103,64 @@ class TestFailureContract:
         blocker = tmp_path / "blocked"
         blocker.write_text("x", encoding="utf-8")
         assert append_audit_jsonl(blocker / "sub", "x.jsonl", {"a": 1}) is False
+
+
+class TestRotateIfOversizedEntryGate:
+    """T14（2026-10-11）入口闸：`rotate_if_oversized`＝把体积判据从"走 writer 才有"
+    升级为"打开前先问一把"，供自带 append 的裸写侧（worktree_drift_watchdog /
+    bottleneck_ledger 族）复用同一把尺（DEFAULT_MAX_BYTES/DEFAULT_BACKUP_COUNT）。
+
+    红证两面缺一不可：超限必轮转（治膨胀）、未超限**不得**轮转（防把闸做成
+    "每次打开都搬文件"——那是把审计件的 mtime/路径语义搅乱）。
+    """
+
+    def test_oversized_segment_is_rotated(self, tmp_path: Path) -> None:
+        """当前段 ≥ max_bytes → 移位为 .1（保留非删除），返回 True。"""
+        p = tmp_path / "ledger.jsonl"
+        p.write_text("o" * 100, encoding="utf-8")
+        assert rotate_if_oversized(p, max_bytes=50, backup_count=3) is True
+        seg1 = tmp_path / "ledger.jsonl.1"
+        assert seg1.exists() and seg1.read_text(encoding="utf-8") == "o" * 100
+        assert not p.exists(), "轮转后当前段应让位（调用方随后新建追加）"
+
+    def test_under_threshold_is_left_untouched(self, tmp_path: Path) -> None:
+        """未超限 → False 且零副作用（不搬文件、不建目录、不改内容）。"""
+        p = tmp_path / "ledger.jsonl"
+        p.write_text("short", encoding="utf-8")
+        before = p.read_bytes()
+        assert rotate_if_oversized(p, max_bytes=50) is False
+        assert p.read_bytes() == before
+        assert not (tmp_path / "ledger.jsonl.1").exists()
+
+    def test_absent_file_returns_false_without_creating(self, tmp_path: Path) -> None:
+        """文件不存在（首写）→ False，且绝不创建任何东西（写侧自己负责建目录）。"""
+        p = tmp_path / "sub" / "new.jsonl"
+        assert rotate_if_oversized(p) is False
+        assert not (tmp_path / "sub").exists()
+
+    def test_rotation_failure_returns_false_and_keeps_segment(self, tmp_path: Path) -> None:
+        """轮转本体失败（最老段被目录占位，unlink 必抛 OSError）→ False 不抛，原段零丢失。
+
+        ⚠ 不能用 backup_count=3 + `.1` 目录占位来构造失败：`_rotate` 先把 `.1` 移位成
+        `.2`，随后文件→`.1` 的目标已空，rename 根本不会失败（既有
+        `test_rotation_failure_does_not_block_append` 的前提即为此弱案，其断言只落在
+        "追加仍完成"上才没翻车）。backup_count=1 时最老段=`.1` 自身，unlink 目录=真抛。
+        """
+        p = tmp_path / "ledger.jsonl"
+        p.write_text("keepme" * 40, encoding="utf-8")
+        (tmp_path / "ledger.jsonl.1").mkdir()
+        assert rotate_if_oversized(p, max_bytes=50, backup_count=1) is False
+        assert p.exists() and p.read_text(encoding="utf-8").startswith("keepme")
+
+    def test_default_threshold_is_the_50mb_ruler(self) -> None:
+        """判据单一口径：入口闸与 append_audit_jsonl 共用 DEFAULT_MAX_BYTES（50MB）。
+
+        在册病根＝"audit_jsonl_writer.py:59 的 50MiB 轮转未被这些写侧套用"——本例
+        钉住两处同源同值，防后来者给入口闸另配一把尺（新配置册=违 §4 净零）。
+        """
+        import inspect
+
+        sig = inspect.signature(rotate_if_oversized)
+        assert sig.parameters["max_bytes"].default is DEFAULT_MAX_BYTES
+        assert sig.parameters["backup_count"].default is DEFAULT_BACKUP_COUNT
+        assert DEFAULT_MAX_BYTES == 50 * 1024 * 1024

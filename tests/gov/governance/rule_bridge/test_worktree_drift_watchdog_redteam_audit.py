@@ -439,3 +439,55 @@ def test_r55e_scan_once_alerted_type_confusion(git_repo: Path) -> None:
     _write_state(git_repo, {"files": {}, "alerted": "not_a_dict"})
     summary = wd.scan_once(git_repo, grace_seconds=0)  # 期望不抛出
     assert isinstance(summary, dict)
+
+
+# ── T14（2026-10-11）：裸 append 写侧必须过 audit_jsonl_writer 的体积闸 ──────────────
+# 实测病根：本件 _audit 走裸 open("a")，绕开了 writer 的 50MB 轮转判据——盘上
+# .runtime/audit/worktree_drift_watchdog.jsonl 实测 58,412,191 B（阈值 52,428,800）
+# 且零轮转段（.1/.2/.3 不存在）。修法不是整体换 append_audit_jsonl（那会丢 R5.2
+# 的 _STATE_IO_LOCK 串行化语义，见 test_r52_*），而是打开前过同一道闸。
+def test_t14_audit_consults_size_gate_before_append(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """红证（修前必红：_audit 里没有闸，calls 恒空、超限段照写）。"""
+    import functools
+
+    import zephyr.shared.io.audit_jsonl_writer as w
+
+    seen: list[Path] = []
+    real = w.rotate_if_oversized
+
+    def _spy(path: Path, **kw: object) -> bool:
+        seen.append(Path(path))
+        return real(path, max_bytes=1024)  # 阈值下调到 1KB 以便小体量真轮转
+
+    monkeypatch.setattr(w, "rotate_if_oversized", functools.wraps(real)(_spy))
+    p = tmp_path / ".runtime" / "audit"
+    p.mkdir(parents=True)
+    f = p / "worktree_drift_watchdog.jsonl"
+    f.write_text("x" * 2048 + "\n", encoding="utf-8")  # 已超 1KB 探针阈值
+
+    wd._audit(tmp_path, {"verdict": "t14_probe"})
+
+    assert seen == [f], f"_audit 未过体积闸（T14 未修）：{seen}"
+    assert (p / "worktree_drift_watchdog.jsonl.1").exists(), "超限段未移位轮转"
+    # 正向腿不许坏：新行仍在当前段，且旧段没被删（移位保留＝非删除）
+    assert _read_audit(tmp_path) == [{"verdict": "t14_probe"}]
+    assert "x" * 64 in (p / "worktree_drift_watchdog.jsonl.1").read_text(encoding="utf-8")
+
+
+def test_t14_audit_under_threshold_leaves_segment_alone(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """反向腿：未超限不得轮转（防把闸做成"每次打开都搬文件"）。"""
+    import functools
+
+    import zephyr.shared.io.audit_jsonl_writer as w
+
+    monkeypatch.setattr(w, "rotate_if_oversized", functools.partial(w.rotate_if_oversized, max_bytes=1024))
+
+    p = tmp_path / ".runtime" / "audit"
+    p.mkdir(parents=True)
+    f = p / "worktree_drift_watchdog.jsonl"
+    f.write_text('{"verdict":"old"}\n', encoding="utf-8")
+
+    wd._audit(tmp_path, {"verdict": "new"})
+
+    assert not (p / "worktree_drift_watchdog.jsonl.1").exists()
+    assert [r["verdict"] for r in _read_audit(tmp_path)] == ["old", "new"]

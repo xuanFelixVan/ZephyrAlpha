@@ -27,10 +27,13 @@ translation_coverage_gate.py — 新建 .py 文件大白话简介覆盖率门禁
 100% AI 开发下，事后治理永远滞后于缺口制造。本 gate 把"新模块必有大白话简介"从君子协定
 升级为提交时技术强制（对标 NEW-FILE-DEPGRAPH-ENFORCEMENT 把 L1 铁律升级为技术强制）。
 
-真源边界（SSoT 分类铁律 TRAE-062）
-----------------------------------
-模块翻译属**规则数据** → 真源是 YAML 文件。本 gate 只读 YAML 校验，不写。配套写入工具
-``scripts/governance/d3_metadata/add_module_translation.py`` 是 YAML 合规写入入口。
+真源边界（SSoT 分类铁律 TRAE-062 / 裁定#502 通道口径）
+--------------------------------------------------------
+模块翻译条目真源=PG `registry_ledger` 账本（REG-MODULE-TRANSLATION-001，2026-10-04 cutover），
+``module_translation_registry.yaml`` 是机生只读投影——本 gate 读的就是这份投影（判据本体，
+未随通道改造放松），写入一律走意图 API 薄壳
+``scripts/governance/d3_metadata/add_module_translation.py``（register→publish→render）。
+直写投影的条目会被下一次 render 当"非账本内容"修剪掉，故修复指引只指该单口。
 与 depgraph（架构数据，DB 真源）正交，互不写入。
 
 治本方案（四层防御 Layer 2）
@@ -274,7 +277,9 @@ def make_translation_coverage_gate() -> GateSpec:
         if not new_py_files:
             return True, ""
         # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
-        new_py_files = _split_own_foreign(gateway, new_py_files, files, kwargs.get("session_id"), gate_name="TRANSLATION-COVERAGE")[0]
+        new_py_files = _split_own_foreign(
+            gateway, new_py_files, files, kwargs.get("session_id"), gate_name="TRANSLATION-COVERAGE"
+        )[0]
         if not new_py_files:
             return True, ""
 
@@ -314,8 +319,10 @@ def make_translation_coverage_gate() -> GateSpec:
         msg = (
             f"TRANSLATION-COVERAGE: {total} 个新建 .py 文件在翻译真源"
             f"（module_translation_registry.yaml）缺合格 plain_zh 大白话简介。"
-            f"修复：python scripts/governance/d3_metadata/add_module_translation.py "
-            f"--path <file_path> --domain <D_*> --name-zh <中文名> --plain-zh <大白话简介>。"
+            f"修复（账本单口=意图 API register→publish→render，真源=PG registry_ledger）："
+            f"python scripts/governance/d3_metadata/add_module_translation.py "
+            f"--path <file_path> --domain <D_*> --name-zh <中文名> --plain-zh <大白话简介> "
+            f"--session <会话名>。"
             f"详情: {detail}"
         )
         if _OBSERVATION_PERIOD:

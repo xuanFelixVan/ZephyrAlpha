@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.io.audit_jsonl_writer
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] 无（纯 stdlib）
-# [CONSUMERS] scripts.ops_guard; zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.gov_enforcement.commit_gates.foreign_change_gate; zephyr.shared.io.file_utils
+# [CONSUMERS] scripts.ops_guard; zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.gov_enforcement.commit_gates.foreign_change_gate; zephyr.shared.io.file_utils; rotate_if_oversized 入口闸消费面（T14，2026-10-11）= zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog / commit_belt_daemon、zephyr.ai_layer.scheduling.order_daemon、scripts.governance.reconcile_generators
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 审计写入永不抛异常（失败返回 False 由调用方计数）；轮转保留 backup_count 份历史段不物理删除（B-016 合规：旧段改名保留而非清理）
@@ -78,6 +78,34 @@ def _rotate(path: Path, backup_count: int) -> None:
     path.rename(path.with_name(f"{path.name}.1"))
 
 
+def rotate_if_oversized(
+    path: Path,
+    *,
+    max_bytes: int = DEFAULT_MAX_BYTES,
+    backup_count: int = DEFAULT_BACKUP_COUNT,
+) -> bool:
+    """打开即检查的入口闸（T14，2026-10-11）：当前段 ≥ 阈值先轮转再交给调用方追加。
+
+    治本动机：`append_audit_jsonl` 的体积判据只在"走本 writer"时生效，而
+    `.runtime/audit/` 里有裸 `open(..., "a")` 的写侧（bottleneck_ledger.jsonl /
+    worktree_drift_watchdog.jsonl 实测破 50MB 阈值且零轮转段）。本函数把那把尺
+    单独暴露出来，让**自带 append 的写侧**（因持有进程内锁或自带序列化不能整体换
+    函数的）也能在打开前过同一道闸——判据单一口径（复用 DEFAULT_MAX_BYTES/
+    DEFAULT_BACKUP_COUNT，零新配置册，全资产净零）。
+    方向＝只收缩体积，不新增删除：轮转=移位保留（见 [INVARIANTS]）。
+
+    Returns:
+        True=已执行轮转；False=未超限或轮转失败（失败不抛，与 append 同口径）。
+    """
+    try:
+        if path.exists() and path.stat().st_size >= max_bytes:
+            _rotate(path, backup_count)
+            return True
+    except OSError:
+        pass  # 轮转失败不阻断写入（保追加优先）
+    return False
+
+
 def append_audit_jsonl(
     audit_dir: Path,
     filename: str,
@@ -102,11 +130,7 @@ def append_audit_jsonl(
     try:
         audit_dir.mkdir(parents=True, exist_ok=True)
         path = audit_dir / filename
-        try:
-            if path.exists() and path.stat().st_size >= max_bytes:
-                _rotate(path, backup_count)
-        except OSError:
-            pass  # 轮转失败不阻断写入（保追加优先）
+        rotate_if_oversized(path, max_bytes=max_bytes, backup_count=backup_count)
         with open(path, "a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
         return True

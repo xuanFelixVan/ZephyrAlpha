@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV_GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.rule_bridge.commit_belt_daemon
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] scripts.governance.commit_queue_landing (bootstrap_drain_with_landing); zephyr.shared.infra.process_pool (is_pid_alive)
+# [DEPENDENCIES] scripts.governance.commit_queue_landing (bootstrap_drain_with_landing); zephyr.shared.infra.process_pool (is_pid_alive); zephyr.shared.io.audit_jsonl_writer (rotate_if_oversized——T14 堵点本五处裸 append 体积闸)
 # [CONSUMERS] CLI python -m zephyr.gov_enforcement.rule_bridge.commit_belt_daemon [--once|--status|stop]
 # [STARTUP] manual/daemon（watchdog 事件触发，无常驻轮询——M10 合规）
 # [MATURITY] production
@@ -179,6 +179,9 @@ def _ledger_dead_letters(project_root: Path, seen: set[str]) -> int:
             except Exception:  # noqa: BLE001
                 continue
             _LEDGER.parent.mkdir(parents=True, exist_ok=True)
+            from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
+
+            rotate_if_oversized(_LEDGER)  # T14（2026-10-11）：裸 append 过 writer 同一道体积闸
             with _LEDGER.open("a", encoding="utf-8") as fh:
                 fh.write(
                     json.dumps(
@@ -209,12 +212,20 @@ def _ledger_dead_letters(project_root: Path, seen: set[str]) -> int:
 
 
 def _ledger_record(record: dict) -> None:
-    """堵点本统一追加器（JSONL，fail-open）。"""
+    """堵点本统一追加器（JSONL，fail-open）。
+
+    T14（2026-10-11）：动笔前过 audit_jsonl_writer 的同一道体积闸（超限先移位轮转），
+    本函数与 `_ledger_dead_letters`/离线缺口告警三处裸 append 是 bottleneck_ledger.jsonl
+    破 50MB 阈值的写侧归因（另有 scripts/commit_queue.py 两处裸 append 未纳入＝总包在改，
+    移交清单见 docs/_working/maint2_campaign/14_audit_growth_dossier.yaml）。
+    """
+    from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
     from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
 
     try:
         payload = {"ts": now_utc().isoformat(), **record}
         _LEDGER.parent.mkdir(parents=True, exist_ok=True)
+        rotate_if_oversized(_LEDGER)
         with _LEDGER.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(payload, ensure_ascii=False) + "\n")
     except OSError:
@@ -358,10 +369,12 @@ def _check_daemon_offline_gap(qroot: Path) -> float | None:
     offline_s = now_utc().timestamp() - wall_ts
     if offline_s <= threshold:
         return None
+    from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
     from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
 
     try:
         _LEDGER.parent.mkdir(parents=True, exist_ok=True)
+        rotate_if_oversized(_LEDGER)  # T14：动笔前过 writer 同一道体积闸
         with _LEDGER.open("a", encoding="utf-8") as fh:
             fh.write(
                 json.dumps(
@@ -615,8 +628,10 @@ def _check_ledger_backlog() -> None:
             return
         if level == prev_level and (now - prev_ts) < _LEDGER_ALERT_COOLDOWN_S:
             return  # 同档位冷却窗内：不重复落盘
+        from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
         from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
 
+        rotate_if_oversized(_LEDGER)  # T14：动笔前过 writer 同一道体积闸
         with _LEDGER.open("a", encoding="utf-8") as fh:
             fh.write(
                 _json.dumps(
@@ -696,6 +711,9 @@ def _escalate_env_aborts(counter: dict) -> None:
         _LEDGER.parent.mkdir(parents=True, exist_ok=True)
         import json as _json
 
+        from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
+
+        rotate_if_oversized(_LEDGER)  # T14：动笔前过 writer 同一道体积闸
         with _LEDGER.open("a", encoding="utf-8") as fh:
             fh.write(
                 _json.dumps(

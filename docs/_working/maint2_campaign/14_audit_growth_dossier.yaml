@@ -1,0 +1,142 @@
+generation_script: "\nimport datetime as _dt\nimport pathlib as _p\nimport sys as _s\nimport yaml as _y\n\
+  \nSELF = _p.Path(_s.argv[1] if len(_s.argv) > 1 else \"docs/_working/maint2_campaign/14_audit_growth_dossier.yaml\"\
+  )\nMAX_BYTES = 50 * 1024 * 1024  # audit_jsonl_writer.DEFAULT_MAX_BYTES 同尺（不另配一把）\nWINDOW_DAYS = 7.0\n\
+  \n\ndef _host_root():\n    \"\"\"审计面真身所在根：车道 .runtime 近乎空壳，实测须落主仓 .runtime。\"\"\"\n    cwd = _p.Path.cwd()\n\
+  \    if (cwd / \".runtime\" / \"gate_audit\").is_dir():\n        return cwd\n    parts = cwd.parts\n\
+  \    if \".worktrees\" in parts:\n        main = _p.Path(*parts[: parts.index(\".worktrees\")])\n  \
+  \      if (main / \".runtime\").is_dir():\n            return main\n    return cwd\n\n\ndef _measure(root,\
+  \ rel, count_lines):\n    d = root / rel\n    files = [f for f in d.rglob(\"*\") if f.is_file()]\n \
+  \   now = _dt.datetime.now().timestamp()\n    total = sum(f.stat().st_size for f in files)\n    rows\
+  \ = []\n    for f in files:\n        st = f.stat()\n        age_days = max((now - st.st_ctime) / 86400.0,\
+  \ 1e-9)  # Windows ctime=_creation time\n        rows.append(\n            {\n                \"name\"\
+  : f.relative_to(d).as_posix(),\n                \"bytes\": st.st_size,\n                \"mtime\": _dt.datetime.fromtimestamp(st.st_mtime).strftime(\"\
+  %Y-%m-%d %H:%M:%S\"),\n                \"birth_date\": _dt.datetime.fromtimestamp(st.st_ctime).strftime(\"\
+  %Y-%m-%d\"),\n                \"age_days\": round(age_days, 2),\n                \"bytes_per_day_lifetime\"\
+  : round(st.st_size / age_days / 1e6, 3),\n            }\n        )\n    rows.sort(key=lambda r: -r[\"\
+  bytes\"])\n    win = [r for r in rows if (now - (d / r[\"name\"]).stat().st_mtime) <= WINDOW_DAYS *\
+  \ 86400]\n    win_bytes = sum(r[\"bytes\"] for r in win)\n    win_oldest = min((d / r[\"name\"]).stat().st_mtime\
+  \ for r in win) if win else now\n    span_days = max((now - win_oldest) / 86400.0, 1e-9)\n    # 口径②＝终身均速：每件\
+  \ bytes ÷ 自身存在天数（NTFS ctime=出生时刻），再求和。\n    #   不含\"文件出生前的历史\"，也不含\"停写件的死重\"，是 §五-5 七日法在无成对快照时的\n  \
+  \  #   最近似替代。口径①（mtime 窗）会把长寿命件的**全部历史**记进 7 天窗＝上界。\n    lifetime_bytes_per_day = sum(r[\"bytes\"] /\
+  \ r[\"age_days\"] for r in rows)\n    win_lines = 0\n    lifetime_lines_per_day = None\n    if count_lines:\n\
+  \        for r in win:\n            with (d / r[\"name\"]).open(\"rb\") as fh:\n                n =\
+  \ 0\n                while True:\n                    chunk = fh.read(1 << 23)\n                   \
+  \ if not chunk:\n                        break\n                    n += chunk.count(b\"\\n\")\n   \
+  \             r[\"lines\"] = n\n                win_lines += n\n        for r in rows:\n           \
+  \ if \"lines\" not in r:\n                with (d / r[\"name\"]).open(\"rb\") as fh:\n             \
+  \       n = 0\n                    while True:\n                        chunk = fh.read(1 << 23)\n \
+  \                       if not chunk:\n                            break\n                        n\
+  \ += chunk.count(b\"\\n\")\n                    r[\"lines\"] = n\n            r[\"lines_per_day_lifetime\"\
+  ] = round(r[\"lines\"] / r[\"age_days\"])\n        lifetime_lines_per_day = sum(r[\"lines_per_day_lifetime\"\
+  ] for r in rows)\n    return {\n        \"path\": rel,\n        \"file_count\": len(rows),\n       \
+  \ \"total_bytes\": total,\n        \"total_mb_decimal\": round(total / 1e6, 1),\n        \"top12_by_bytes\"\
+  : rows[:12],\n        \"window_days\": WINDOW_DAYS,\n        \"window_file_count\": len(win),\n    \
+  \    \"window_bytes\": win_bytes,\n        \"window_lines\": win_lines if count_lines else None,\n \
+  \       \"window_observed_span_days\": round(span_days, 3),\n        \"growth_mb_per_day_upper_mtime_window\"\
+  : round(win_bytes / 1e6 / span_days, 2),\n        \"growth_lines_per_day_upper_mtime_window\": (round(win_lines\
+  \ / span_days) if count_lines else None),\n        \"growth_mb_per_day_lifetime_avg\": round(lifetime_bytes_per_day\
+  \ / 1e6, 2),\n        \"growth_lines_per_day_lifetime_avg\": lifetime_lines_per_day,\n        \"projected_30d_added_mb_lifetime_avg\"\
+  : round(lifetime_bytes_per_day / 1e6 * 30.0, 1),\n        \"projected_30d_added_mb_upper_mtime_window\"\
+  : round(win_bytes / 1e6 / span_days * 30.0, 1),\n        \"caliber_warning\": (\n            \"两口径并列不外推单值：mtime\
+  \ 窗＝上界（长寿命件的全部历史被记进窗口），\"\n            \"终身均速＝下界近似（停写件贡献为零、含轮转段自重）。在册 §五-5 的\"\n            \" 325,417\
+  \ 条/880.7 MB 是**成对快照差分**口径，本件无该快照对，故不抄。\"\n        ),\n    }\n\n\ndef _over_threshold(root, rel):\n\
+  \    d = root / rel\n    out = []\n    for f in sorted(d.rglob(\"*\")):\n        if not f.is_file():\n\
+  \            continue\n        st = f.stat()\n        if st.st_size < MAX_BYTES:\n            continue\n\
+  \        base = f.name\n        n = 1\n        segs = []\n        while (d / f\"{base}.{n}\").exists():\n\
+  \            segs.append(f\"{base}.{n}\")\n            n += 1\n        # 轮转段判据＝文件名形如 <base>.jsonl.<N>（N\
+  \ 为纯数字，writer 的移位命名约定）\n        tail = base.rsplit(\".\", 1)[-1]\n        is_segment = base.count(\"\
+  .\") >= 2 and tail.isdigit()\n        out.append(\n            {\n                \"name\": f.relative_to(d).as_posix(),\n\
+  \                \"bytes\": st.st_size,\n                \"ratio_vs_threshold\": round(st.st_size /\
+  \ MAX_BYTES, 2),\n                \"kind\": \"rotation_segment（设计内上限读数，非病灶）\" if is_segment else \"\
+  live_segment_no_rotation（裸写侧病灶）\",\n                \"sibling_rotation_segments\": segs,\n         \
+  \   }\n        )\n    out.sort(key=lambda r: -r[\"bytes\"])\n    return out\n\n\ndef _verify_attribution(entries):\n\
+  \    \"\"\"写侧归因自证：逐条回读源码行，确认该行仍含声称的写法（防清单手工漂移）。\"\"\"\n    root = _p.Path(\".\")\n    checked = []\n\
+  \    for e in entries:\n        f = root / e[\"file\"]\n        ok = False\n        snippet = \"\"\n\
+  \        if f.is_file():\n            lines = f.read_text(encoding=\"utf-8\", errors=\"replace\").splitlines()\n\
+  \            if 0 < e[\"line\"] <= len(lines):\n                snippet = lines[e[\"line\"] - 1].strip()\n\
+  \                ok = e[\"expect\"] in snippet\n        checked.append({**e, \"verified_on_disk\": ok,\
+  \ \"line_content\": snippet[:160]})\n    return checked\n\n\nHOST = _host_root()\ngate = _measure(HOST,\
+  \ \".runtime/gate_audit\", count_lines=True)\naud = _measure(HOST, \".runtime/audit\", count_lines=True)\n\
+  gate_over = _over_threshold(HOST, \".runtime/gate_audit\")\naud_over = _over_threshold(HOST, \".runtime/audit\"\
+  )\n\nATTRIB = _verify_attribution(\n    [\n        {\n            \"file\": \"src/zephyr/shared/io/audit_jsonl_writer.py\"\
+  ,\n            \"line\": 59,\n            \"expect\": \"DEFAULT_MAX_BYTES\",\n            \"role\":\
+  \ \"阈值尺本体（50MiB）——轮转判据现另暴露为 rotate_if_oversized 入口闸\",\n            \"status\": \"尺在，修前未被下列写侧套用\",\n\
+  \        },\n        {\n            \"file\": \"src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py\"\
+  ,\n            \"line\": 650,\n            \"expect\": '(audit_dir / fname).open(\"a\"',\n         \
+  \   \"role\": \"gate_audit/*_foreign_staged.jsonl 唯一收口 `_audit_foreign_staged`（全部门控共用；该族占 gate_audit\
+  \ top-12 的 9 席）\",\n            \"status\": \"T14 已套闸（649 行 rotate_if_oversized）\",\n        },\n  \
+  \      {\n            \"file\": \"src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py\"\
+  ,\n            \"line\": 426,\n            \"expect\": 'open(d / \"worktree_drift_watchdog.jsonl\",\
+  \ \"a\"',\n            \"role\": \"worktree_drift_watchdog.jsonl 写侧（_audit，裸 open+自持 _STATE_IO_LOCK）\"\
+  ,\n            \"status\": \"T14 已套闸\",\n        },\n        {\n            \"file\": \"src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py\"\
+  ,\n            \"line\": 185,\n            \"expect\": '_LEDGER.open(\"a\"',\n            \"role\":\
+  \ \"bottleneck_ledger.jsonl 写侧之一（_ledger_dead_letters 循环内）\",\n            \"status\": \"T14 已套闸\",\n\
+  \        },\n        {\n            \"file\": \"src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py\"\
+  ,\n            \"line\": 229,\n            \"expect\": '_LEDGER.open(\"a\"',\n            \"role\":\
+  \ \"bottleneck_ledger.jsonl 写侧之二（_ledger_record 统一追加器）\",\n            \"status\": \"T14 已套闸\",\n  \
+  \      },\n        {\n            \"file\": \"src/zephyr/ai_layer/scheduling/order_daemon.py\",\n  \
+  \          \"line\": 277,\n            \"expect\": 'ledger_path.open(\"a\"',\n            \"role\":\
+  \ \"bottleneck_ledger.jsonl 写侧（append_bottleneck 共用收口）\",\n            \"status\": \"T14 已套闸\",\n  \
+  \      },\n        {\n            \"file\": \"scripts/governance/reconcile_generators.py\",\n      \
+  \      \"line\": 323,\n            \"expect\": '_BOTTLENECK_LEDGER.open(\"a\"',\n            \"role\"\
+  : \"bottleneck_ledger.jsonl 写侧（_bottleneck_append）\",\n            \"status\": \"T14 已套闸\",\n      \
+  \  },\n        {\n            \"file\": \"scripts/commit_queue.py\",\n            \"line\": 3390,\n\
+  \            \"expect\": 'ledger = root.parent / \"audit\" / \"bottleneck_ledger.jsonl\"',\n       \
+  \     \"role\": \"bottleneck_ledger.jsonl 裸写侧（残留）\",\n            \"status\": \"RESIDUE 未套闸（scripts/commit_queue.py\
+  \ 在本班次禁碰清单，移交总包）\",\n        },\n        {\n            \"file\": \"scripts/commit_queue.py\",\n   \
+  \         \"line\": 3896,\n            \"expect\": 'ledger = root.parent / \"audit\" / \"bottleneck_ledger.jsonl\"\
+  ',\n            \"role\": \"bottleneck_ledger.jsonl 裸写侧（残留）\",\n            \"status\": \"RESIDUE 未套闸（同上）\"\
+  ,\n        },\n    ]\n)\n\n_prev = None\nif SELF.is_file():\n    try:\n        _prev = _y.safe_load(SELF.read_text(encoding=\"\
+  utf-8\"))\n    except Exception:\n        _prev = None\n# 重生成时优先用环境变量注入的最新源码（builder 侧），自我重跑时无注入=沿用件内自带源码。\n\
+  _script_text = _s.environ.get(\"T14_BOOTSTRAP_SCRIPT\") or (_prev.get(\"generation_script\") if isinstance(_prev,\
+  \ dict) else \"\")\nif not _script_text:\n    print(\"WARN: generation_script 既无注入也无旧值——本件将成为不可再生件\"\
+  , file=_s.stderr)\n\nDOC = {\n    \"ttl\": \"task_bound\",\n    \"title\": \"T14 审计面膨胀实测与呈批清单（gate_audit\
+  \ / audit）\",\n    \"campaign\": \"maint2_campaign\",\n    \"session\": \"st-maint2-20261011/task-maint2-rootcure\"\
+  ,\n    \"generated_at\": _dt.datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\"),\n    \"measurement_root\"\
+  : str(HOST),\n    \"measurement_note\": (\n        \"车道 .runtime 是近空壳，审计真身在主仓 .runtime；本件一律实测，不抄在册数。\"\
+  \n        \"在册口径（终清二期 §五-5，2026-10-11 抄录）= gate_audit 387 件 1.22 GiB /\"\n        \" audit 26 件 448\
+  \ MiB 含 5 枚破阈值合计 351 MB——与本节实测的差见 caliber_delta_vs_dossier。\"\n    ),\n    \"threshold_bytes\": MAX_BYTES,\n\
+  \    \"threshold_source\": \"audit_jsonl_writer.DEFAULT_MAX_BYTES（同一把尺，零新配置册）\",\n    \"measurements\"\
+  : {\"gate_audit\": gate, \"audit\": aud},\n    \"over_threshold_files\": {\"gate_audit\": gate_over,\
+  \ \"audit\": aud_over},\n    \"over_threshold_read\": (\n        \"破阈值 ≠ 病灶：`.jsonl.<N>` 是轮转段（每段≤阈值+一条记录，属设计内上限读数）。\"\
+  \n        \"真病灶＝当前段无轮转段可查的裸写件。\"\n    ),\n    \"writer_attribution\": ATTRIB,\n    \"remedy_applied\"\
+  : {\n        \"shape\": \"入口闸（打开即检查体积、超限先轮转）\",\n        \"api\": \"zephyr.shared.io.audit_jsonl_writer.rotate_if_oversized\"\
+  ,\n        \"why_not_swap_writer\": (\n            \"worktree_drift_watchdog._audit 整体换 append_audit_jsonl\
+  \ 会丢 R5.2 红队的\"\n            \" _STATE_IO_LOCK 进程内串行化语义（见 test_r52_concurrent_audit_appends_no_tearing）；\"\
+  \n            \"故只把判据单独暴露，写侧自持 append + 过同一道闸。\"\n        ),\n        \"zero_new_config\": \"复用 DEFAULT_MAX_BYTES/DEFAULT_BACKUP_COUNT，未新增配置册或轮转参数册（§4\
+  \ 净零）\",\n        \"files_changed\": [\n            \"src/zephyr/shared/io/audit_jsonl_writer.py（新增\
+  \ rotate_if_oversized 入口闸）\",\n            \"src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py（gate_audit/*_foreign_staged\
+  \ 收口）\",\n            \"src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py\",\n     \
+  \       \"src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py\",\n            \"src/zephyr/ai_layer/scheduling/order_daemon.py\"\
+  ,\n            \"scripts/governance/reconcile_generators.py\",\n        ],\n    },\n    \"owner_approval_required\"\
+  : {\n        \"why\": \"历史审计面＝证据；物理不可逆删除属 Owner 门位（根宪法 §5 保留面·六类）。本班次零删除。\",\n        \"candidates\"\
+  : [\n            {\n                \"layer\": \"破阈值且无轮转段的当前段（裸写侧病灶件本体）\",\n                \"items\"\
+  : [\n                    r[\"name\"]\n                    for r in (aud_over + gate_over)\n        \
+  \            if r[\"kind\"].startswith(\"live_segment\")\n                ],\n                \"action_if_approved\"\
+  : \"归档出域或压缩，不得原地删；删除后仍须保留 manifest 凭据链\",\n            },\n            {\n                \"layer\"\
+  : \"gate_audit 全库（件数见 measurements.gate_audit.file_count，体积见 total_mb_decimal）\",\n                \"\
+  items\": \"见 measurements.gate_audit.top12_by_bytes（含逐件 bytes_per_day_lifetime）\",\n               \
+  \ \"action_if_approved\": \"按 30 日外推增长量决定是否上采样/降 verbosity——判据改动属另行裁定，非本件授权范围\",\n            },\n \
+  \           {\n                \"layer\": \"audit 全库（件数见 measurements.audit.file_count）\",\n       \
+  \         \"items\": \"见 measurements.audit.top12_by_bytes\",\n                \"action_if_approved\"\
+  : \"同上；轮转段 .1/.2/.3 属 writer 设计内保留份数（DEFAULT_BACKUP_COUNT），清理需另行批准\",\n            },\n        ],\n\
+  \        \"ai_autonomy_note\": \"AI 只做两件事：停止继续膨胀（已落地）＋本呈批清单。不自删任何既有审计件。\",\n    },\n    \"residue\"\
+  : {\n        \"ungated_writers\": [e[\"file\"] + \":\" + str(e[\"line\"]) for e in ATTRIB if \"RESIDUE\"\
+  \ in e[\"status\"]],\n        \"reason\": \"scripts/commit_queue.py 在本班次禁碰清单（总包在改）——移交总包同批套用同一闸\",\n\
+  \        \"keep_file_doc_residue\": (\n            \"data/runtime/process_reaper_keep.txt 属 gitignore\
+  \ 运行期文件（.gitignore:344），\"\n            \"车道内不存在、主区禁改，故该文件的头部注释本轮无法落（T6 文档化残留）。\"\n        ),\n    },\n\
+  \    \"caliber_delta_vs_dossier\": {\n        \"dossier_gate_audit\": \"387 件 / 1.22 GiB\",\n      \
+  \  \"measured_gate_audit\": f\"{gate['file_count']} 件 / {gate['total_mb_decimal']} MB(decimal)\",\n\
+  \        \"dossier_audit\": \"26 件 / 448 MiB，5 枚破阈值合计 351 MB\",\n        \"measured_audit\": f\"{aud['file_count']}\
+  \ 件 / {aud['total_mb_decimal']} MB(decimal)，破阈值 {len(aud_over)} 枚（其中轮转段 {len([r for r in aud_over if\
+  \ r['kind'].startswith('rotation')])} 枚）\",\n        \"note\": \"运行面是活体，读数随时间漂移；本件以当轮实测为准。\",\n    },\n\
+  \    \"generation_command\": (\n        \"cd <repo> && PYTHONNOUSERSITE=1 python -c \\\"import sys,yaml,pathlib;\"\
+  \n        \"p=pathlib.Path('docs/_working/maint2_campaign/14_audit_growth_dossier.yaml');\"\n      \
+  \  \"exec(yaml.safe_load(p.read_text(encoding='utf-8'))['generation_script'])\\\" \"\n        \"docs/_working/maint2_campaign/14_audit_growth_dossier.yaml\"\
+  \n    ),\n    \"generation_script\": _script_text,\n    \"generation_note\": (\n        \"本件全部数值由 generation_script\
+  \ 现算（件内自带生成器，无外部临时脚本依赖）。\"\n        \"重跑方式＝generation_command；生成器从本件自身读回 generation_script 后重写本件。\"\n\
+  \    ),\n}\n\nout = SELF\nout.parent.mkdir(parents=True, exist_ok=True)\nout.write_text(\n    _y.safe_dump(DOC,\
+  \ sort_keys=False, allow_unicode=True, width=100),\n    encoding=\"utf-8\",\n)\nprint(\"WROTE\", out,\
+  \ \"root=\", HOST)\n"
+ttl: task_bound
+title: seed

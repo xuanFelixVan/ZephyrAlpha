@@ -58,9 +58,17 @@ GIT 备份门禁（P2 迁移后治本 2026-06-27）：
   事务失败时 conn.rollback() 自动回滚（已实现）。
 
 PG depgraph 备份（ARCH-041 §5.33.1 治本，2026-07-03）：
-  写入命令（非 --dry-run）执行后自动调用 backup_pg_architecture()（事件触发），
+  写入命令（真跑，非 --dry-run）执行后自动调用 backup_pg_architecture()（事件触发），
   导出全景 19 张 DB 真源表为 JSON 到 tmp/pg_backups/，自动清理旧备份（保留 10 个）。
   备份失败不阻断主流程（main 已成功）。定义：backup_runtime_state.py。
+
+dry-run 语义（st-maint2 治本 2026-10-11）：
+  --dry-run（含缩写 --dry）= 零 PG 写 + 零工作树写 + 零后台再生。所有 --add-design-node/
+  --add-design-edge/--add-edge/--add-file-node/--transition-*/--remove-design-node/
+  --deprecate-node/--mark-invalid/--update-edge-type/--delete-*/--update-module-metadata 等
+  写库函数在 commit 前经 _dry_run_gate 显式 rollback，仅打 DRY-RUN 预览行；写后副作用（备份/
+  dirty flag/后台再生）由 _post_write_finalize 依 argparse 解析布尔判定，dry-run 下一律不触发。
+  审计留痕（.runtime/gate_audit/*.jsonl）不被 dry-run 关闭，但记录内带 dry_run 字段可反查。
 """
 
 from __future__ import annotations
@@ -564,6 +572,46 @@ def _optional_db_lock(own_conn: bool, task: str = "depgraph write", db_path: Pat
         yield
 
 
+# ── dry-run 单一判据出口（st-maint2 治本 2026-10-11）──
+# 病根：12 个写子命令的 --dry-run 语义违约——带 --dry-run 仍真写 PostgreSQL，因为
+# 处理器不收 dry_run 形参、调度点不传，函数体内 conn.commit() 无条件执行。
+# 判据口径：dry-run == 零 PG 写 + 零工作树写 + 零后台再生；审计留痕除外（见 _audit_*）。
+# 撤销路线：PG 中未 commit 的写随连接关闭会隐式回滚，但那是"退出侥幸"而非代码事实；
+# 本门在 dry_run 分支显式 conn.rollback() 撤销同事务内已执行的全部语句（含 INSERT ...
+# RETURNING 得到的临时 id 一并作废），并让调用方在门返回 True 后立即 return——绝不把
+# 被撤销的 id 传给后续任何写。这样"预览"与"真跑"走同一批语句，只差最后 commit/rollback。
+_DRY_RUN_PLAN: list[dict] = []
+
+# 规范化后的 dry-run 布尔（st-maint2 治本 2026-10-11）：main() 里 argparse 解析成功后写入。
+# __main__ 尾部的"写后副作用（备份/dirty flag/后台再生）"判据必须读它，禁再用 argv 逐字
+# 匹配 "--dry-run"——argparse 缩写形如 --dry 会被字符串匹配绕过（后台重生成误触发的真病灶）。
+# None=argparse 从未成功解析（早退场景），此时回退到 argv 字面匹配兜底。
+_NORMALIZED_DRY_RUN: bool | None = None
+
+
+def _dry_run_gate(conn, *, op: str, target: str, sql: str, dry_run: bool) -> bool:
+    """Single dry-run exit for PG write functions (see header comment above).
+
+    Returns True when this is a dry-run: rolls back the pending uncommitted statement,
+    emits a human-readable ``DRY-RUN:`` line, records the planned op for the run summary.
+    The caller MUST then return its would-be success value WITHOUT calling
+    ``conn.commit()`` and WITHOUT feeding any ``RETURNING`` id into further writes.
+    Returns False for a real run so the caller proceeds to commit as before.
+    """
+    if not dry_run:
+        return False
+    try:
+        conn.rollback()
+    except Exception:  # noqa: BLE001 — rollback 失败不掩盖预览结论
+        logger.debug("dry_run rollback failed (non-blocking)", exc_info=True)
+    summary = (sql or "").strip().replace("\n", " ")
+    if len(summary) > 120:
+        summary = summary[:117] + "..."
+    print(f"DRY-RUN: {op} {target} 将执行: {summary}", file=sys.stderr)
+    _DRY_RUN_PLAN.append({"op": op, "target": target, "sql": summary})
+    return True
+
+
 def _load_depgraph_from_db(db_path: Path | None = None) -> dict:
     """从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
 
@@ -1042,6 +1090,7 @@ def add_design_node(
     granularity: str = "directory",
     node_type: str | None = None,
     db_path: str = None,
+    dry_run: bool = False,
 ) -> int:
     """
     新增设计态节点（支持 file/directory/module 粒度，2026-07-13 治本）。
@@ -1128,6 +1177,10 @@ def add_design_node(
                         existing["node_id"],
                     ),
                 )
+                if _dry_run_gate(
+                    conn, op="add_design_node.update", target=path, sql=SQL_UPDATE_DESIGN_NODE_BY_ID, dry_run=dry_run
+                ):
+                    return existing["node_id"]
                 conn.commit()
                 _warn_translation_coverage(path)
                 return existing["node_id"]
@@ -1148,6 +1201,10 @@ def add_design_node(
                 ),
             )
             node_id = cur.fetchone()["node_id"]
+            if _dry_run_gate(
+                conn, op="add_design_node.insert", target=path, sql=SQL_INSERT_DESIGN_NODE, dry_run=dry_run
+            ):
+                return node_id
             conn.commit()
             print(f"[OK] 新增设计态节点 node_id={node_id} path={path} granularity={granularity}", file=sys.stderr)
             _warn_translation_coverage(path)
@@ -1193,6 +1250,7 @@ def add_file_node(
     domain_id: str,
     db_path: str = None,
     force: bool = False,
+    dry_run: bool = False,
 ) -> int:
     """
     新增文件级 production 节点（补注册孤儿文件）。
@@ -1259,6 +1317,16 @@ def add_file_node(
                 ("module", path, domain_id, blueprint_id, blueprint_path, domain_id),
             )
             node_id = cur.fetchone()["node_id"]
+            if _dry_run_gate(
+                conn,
+                op="add_file_node.insert",
+                target=path,
+                # 计划文本不复制第二份 SQL 字面量（§5.160.2 集中化：真语句只在上方法
+                # conn.execute 一处）——这里只描述将写入的表与关键列值。
+                sql="nodes 表新增一行（granularity=file，design_maturity=production，RETURNING node_id）",
+                dry_run=dry_run,
+            ):
+                return node_id
             conn.commit()
             print(
                 f"[OK] 新增文件级production节点 node_id={node_id} path={path}",
@@ -1502,6 +1570,7 @@ def add_design_edge(
     relationship_type: str = "",
     resource_impact: str = "low",
     db_path: str = None,
+    dry_run: bool = False,
 ) -> int:
     """
     新增设计态边（规划依赖）。
@@ -1564,6 +1633,14 @@ def add_design_edge(
                 ),
             )
             edge_id = cur.fetchone()["edge_id"]
+            if _dry_run_gate(
+                conn,
+                op="add_design_edge.insert",
+                target=f"{from_node_id}->{to_node_id}",
+                sql=SQL_INSERT_DESIGN_EDGE,
+                dry_run=dry_run,
+            ):
+                return edge_id
             conn.commit()
             print(f"[OK] 新增设计态边 edge_id={edge_id} {from_node_id}->{to_node_id}", file=sys.stderr)
             return edge_id
@@ -1615,6 +1692,7 @@ def add_edge(
     relationship_type: str = "",
     resource_impact: str = "low",
     db_path: str = None,
+    dry_run: bool = False,
 ) -> int:
     """
     新增边（通用，不限 design_maturity，支持 production 节点）。
@@ -1702,6 +1780,14 @@ def add_edge(
                 ),
             )
             edge_id = cur.fetchone()["edge_id"]
+            if _dry_run_gate(
+                conn,
+                op="add_edge.insert",
+                target=f"{from_node_id}->{to_node_id}",
+                sql=SQL_INSERT_PRODUCTION_EDGE,
+                dry_run=dry_run,
+            ):
+                return edge_id
             conn.commit()
             print(
                 f"[OK] 新增边 edge_id={edge_id} {from_node_id}->{to_node_id} "
@@ -1717,7 +1803,7 @@ def add_edge(
             conn.close()
 
 
-def transition_build_status(node_id: int, to: str, db_path: str = None) -> bool:
+def transition_build_status(node_id: int, to: str, db_path: str = None, dry_run: bool = False) -> bool:
     """
     转换 build_status 状态（6态单调推进）。
     返回：True=成功，False=失败
@@ -1751,6 +1837,14 @@ def transition_build_status(node_id: int, to: str, db_path: str = None) -> bool:
                 print(f"ERROR: 非法状态转换: {current} -> {to}（合法转换: {valid_transitions}）", file=sys.stderr)
                 return False
             conn.execute(SQL_UPDATE_BUILD_STATUS, (to, node_id))
+            if _dry_run_gate(
+                conn,
+                op="transition_build_status",
+                target=f"node:{node_id}",
+                sql=SQL_UPDATE_BUILD_STATUS,
+                dry_run=dry_run,
+            ):
+                return True
             conn.commit()
             print(f"[OK] node_id={node_id}: build_status {current} -> {to}", file=sys.stderr)
             return True
@@ -1787,7 +1881,9 @@ def _read_maturity_header(file_path: Path) -> str | None:
     return None
 
 
-def transition_design_maturity(node_id: int, to: str, db_path: str = None, force: bool = False) -> bool:
+def transition_design_maturity(
+    node_id: int, to: str, db_path: str = None, force: bool = False, dry_run: bool = False
+) -> bool:
     """
     转换 design_maturity 状态（ARCH-MM-002 两档化：design → production）。
     返回：True=成功，False=失败
@@ -1850,6 +1946,14 @@ def transition_design_maturity(node_id: int, to: str, db_path: str = None, force
                     )
 
             conn.execute(SQL_UPDATE_DESIGN_MATURITY, (to, node_id))
+            if _dry_run_gate(
+                conn,
+                op="transition_design_maturity",
+                target=f"node:{node_id}",
+                sql=SQL_UPDATE_DESIGN_MATURITY,
+                dry_run=dry_run,
+            ):
+                return True
             conn.commit()
             print(f"[OK] node_id={node_id}: design_maturity {current} -> {to}", file=sys.stderr)
             return True
@@ -1901,12 +2005,16 @@ def _audit_design_node_delete(
     blueprint_id: str = "",
     evidence: str = "",
     force: bool = False,
+    dry_run: bool = False,
 ) -> None:
     """记录 design 节点删除/逃生操作到审计日志（非阻断）。
 
     治本 RSK/RPT 误删（2026-07-31）：所有 design 节点的删除/强制逃生操作
     MUST 落审计日志，便于事后追溯"谁在什么时候凭什么证据删了哪个 design 节点"。
     日志路径：.runtime/gate_audit/design_node_delete.jsonl
+
+    dry-run 语义（st-maint2 治本 2026-10-11）：审计留痕不被 dry-run 关掉——"预览也算一次
+    动作"必须可反查，故记录内带 dry_run 字段区分真删预览与真实删除。
     """
     try:
         _DESIGN_NODE_DELETE_AUDIT_DIR.mkdir(parents=True, exist_ok=True)
@@ -1921,6 +2029,7 @@ def _audit_design_node_delete(
             "path": path,
             "evidence": evidence,
             "force": force,
+            "dry_run": dry_run,
         }
         with (_DESIGN_NODE_DELETE_AUDIT_DIR / _DESIGN_NODE_DELETE_AUDIT_FILE).open("a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -1928,7 +2037,7 @@ def _audit_design_node_delete(
         logger.debug("design_node_delete audit write failed (non-blocking)", exc_info=True)
 
 
-def _cascade_anchor_hint(conn, node_ids: list[int], *, op: str) -> None:
+def _cascade_anchor_hint(conn, node_ids: list[int], *, op: str, dry_run: bool = False) -> None:
     """S5 锚点级联提示（2026-08-14 幽灵锚点治本，AI-GIT-001）。
 
     删除/弃用节点时级联检查 battle_map_anchors 是否引用目标节点。
@@ -1978,6 +2087,7 @@ def _cascade_anchor_hint(conn, node_ids: list[int], *, op: str) -> None:
                 "op": op,
                 "node_ids": list(node_ids),
                 "anchors": [dict(a) for a in anchors],
+                "dry_run": dry_run,
             }
             with (_DESIGN_NODE_DELETE_AUDIT_DIR / "depgraph_anchor_cascade.jsonl").open("a", encoding="utf-8") as f:
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -1987,7 +2097,7 @@ def _cascade_anchor_hint(conn, node_ids: list[int], *, op: str) -> None:
         logger.debug("cascade anchor hint failed (non-blocking)", exc_info=True)
 
 
-def remove_design_node(node_id: int, db_path: str = None, design_evidence: str = None) -> bool:
+def remove_design_node(node_id: int, db_path: str = None, design_evidence: str = None, dry_run: bool = False) -> bool:
     """
     删除设计态节点（软删除）。
     返回：True=成功，False=失败
@@ -2047,13 +2157,22 @@ def remove_design_node(node_id: int, db_path: str = None, design_evidence: str =
                 blueprint_id=row.get("blueprint_id") or "",
                 evidence=design_evidence.strip(),
                 force=False,
+                dry_run=dry_run,
             )
 
             # S5 锚点级联提示（非阻断）
-            _cascade_anchor_hint(conn, [node_id], op="remove_design_node")
+            _cascade_anchor_hint(conn, [node_id], op="remove_design_node", dry_run=dry_run)
 
             # 软删除（build_status='deprecated'）
             conn.execute(SQL_DEPRECATE_NODE, (node_id,))
+            if _dry_run_gate(
+                conn,
+                op="remove_design_node.soft_delete",
+                target=f"node:{node_id}",
+                sql=SQL_DEPRECATE_NODE,
+                dry_run=dry_run,
+            ):
+                return True
             conn.commit()
             print(
                 f"[OK] node_id={node_id} blueprint_id={row.get('blueprint_id') or ''}: "
@@ -2069,7 +2188,7 @@ def remove_design_node(node_id: int, db_path: str = None, design_evidence: str =
             conn.close()
 
 
-def deprecate_node(node_id: int, db_path: str = None, force: bool = False) -> bool:
+def deprecate_node(node_id: int, db_path: str = None, force: bool = False, dry_run: bool = False) -> bool:
     """
     软废弃任意节点（含 production）——专用于孤儿节点清理。
 
@@ -2161,12 +2280,17 @@ def deprecate_node(node_id: int, db_path: str = None, force: bool = False) -> bo
                     path=row.get("path") or "",
                     blueprint_id=row.get("blueprint_id") or "",
                     force=True,
+                    dry_run=dry_run,
                 )
 
             # S5 锚点级联提示（非阻断）
-            _cascade_anchor_hint(conn, [node_id], op="deprecate_node")
+            _cascade_anchor_hint(conn, [node_id], op="deprecate_node", dry_run=dry_run)
 
             conn.execute(SQL_DEPRECATE_NODE, (node_id,))
+            if _dry_run_gate(
+                conn, op="deprecate_node.soft_delete", target=f"node:{node_id}", sql=SQL_DEPRECATE_NODE, dry_run=dry_run
+            ):
+                return True
             conn.commit()
             print(
                 f"[OK] node_id={node_id} file_path={row['file_path']} design_maturity={row['design_maturity']}: "
@@ -2182,7 +2306,7 @@ def deprecate_node(node_id: int, db_path: str = None, force: bool = False) -> bo
             conn.close()
 
 
-def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = None) -> bool:
+def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = None, dry_run: bool = False) -> bool:
     """
     裁定#208 B5: 将指定 blueprint_id 标记为 invalid（软标记，不删除节点，保留可追溯链）。
 
@@ -2202,9 +2326,17 @@ def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = None) 
                 return False
             for node_id, _path in rows:
                 conn.execute(
-                    "UPDATE nodes SET blueprint_id_invalid=1, gate_reason=%s WHERE node_id=%s",
+                    SQL_UPDATE_BLUEPRINT_INVALID,
                     (reason, node_id),
                 )
+            if _dry_run_gate(
+                conn,
+                op="mark_blueprint_invalid",
+                target=f"blueprint:{blueprint_id}({len(rows)} nodes)",
+                sql=SQL_UPDATE_BLUEPRINT_INVALID,
+                dry_run=dry_run,
+            ):
+                return True
             conn.commit()
             print(
                 f"[OK] blueprint_id={blueprint_id}: 标记 {len(rows)} 节点 invalid（reason={reason}）",
@@ -2311,7 +2443,7 @@ def cmd_clear_blueprint_id(path: str, dry_run: bool = False, db_path: str = None
             conn.close()
 
 
-def delete_design_edge(edge_id: int, db_path: str = None) -> bool:
+def delete_design_edge(edge_id: int, db_path: str = None, dry_run: bool = False) -> bool:
     """
     删除设计态边（硬删除，因边无软删除语义）。
     返回：True=成功，False=失败
@@ -2335,6 +2467,14 @@ def delete_design_edge(edge_id: int, db_path: str = None) -> bool:
                 )
                 return False
             conn.execute(SQL_DELETE_EDGE_BY_ID, (edge_id,))
+            if _dry_run_gate(
+                conn,
+                op="delete_design_edge",
+                target=f"edge:{edge_id}",
+                sql=SQL_DELETE_EDGE_BY_ID,
+                dry_run=dry_run,
+            ):
+                return True
             conn.commit()
             print(
                 f"[OK] 删除设计态边 edge_id={edge_id} ({row['from_node_id']}->{row['to_node_id']})",
@@ -2349,7 +2489,7 @@ def delete_design_edge(edge_id: int, db_path: str = None) -> bool:
             conn.close()
 
 
-def delete_edge(edge_id: int, db_path: str = None) -> bool:
+def delete_edge(edge_id: int, db_path: str = None, dry_run: bool = False) -> bool:
     """
     删除边（通用，不限 dep_maturity，支持删除任意边）。
     返回：True=成功，False=失败
@@ -2367,6 +2507,14 @@ def delete_edge(edge_id: int, db_path: str = None) -> bool:
                 print(f"ERROR: edge_id={edge_id} 不存在", file=sys.stderr)
                 return False
             conn.execute(SQL_DELETE_EDGE_BY_ID, (edge_id,))
+            if _dry_run_gate(
+                conn,
+                op="delete_edge",
+                target=f"edge:{edge_id}",
+                sql=SQL_DELETE_EDGE_BY_ID,
+                dry_run=dry_run,
+            ):
+                return True
             conn.commit()
             print(
                 f"[OK] 删除边 edge_id={edge_id} ({row['from_node_id']}->{row['to_node_id']} dep_type={row['dep_type']} dep_maturity={row['dep_maturity']})",
@@ -2381,7 +2529,7 @@ def delete_edge(edge_id: int, db_path: str = None) -> bool:
             conn.close()
 
 
-def delete_blueprint_link(blueprint_id: str, db_path: str = None) -> bool:
+def delete_blueprint_link(blueprint_id: str, db_path: str = None, dry_run: bool = False) -> bool:
     """
     删除 blueprint_links 表中的记录（用于清理悬空引用）。
     返回：True=成功，False=失败
@@ -2398,6 +2546,14 @@ def delete_blueprint_link(blueprint_id: str, db_path: str = None) -> bool:
                 print(f"ERROR: blueprint_id={blueprint_id} 在 blueprint_links 中不存在", file=sys.stderr)
                 return False
             conn.execute(SQL_DELETE_BLUEPRINT_LINK, (blueprint_id,))
+            if _dry_run_gate(
+                conn,
+                op="delete_blueprint_link",
+                target=f"blueprint_link:{blueprint_id}",
+                sql=SQL_DELETE_BLUEPRINT_LINK,
+                dry_run=dry_run,
+            ):
+                return True
             conn.commit()
             print(f"[OK] 删除 blueprint_link blueprint_id={blueprint_id}", file=sys.stderr)
             return True
@@ -2409,7 +2565,7 @@ def delete_blueprint_link(blueprint_id: str, db_path: str = None) -> bool:
             conn.close()
 
 
-def delete_constraint(constraint_id: str, db_path: str = None) -> bool:
+def delete_constraint(constraint_id: str, db_path: str = None, dry_run: bool = False) -> bool:
     """
     删除 arch_constraints 表中的约束记录（用于清理孤儿约束/历史脏数据）。
     返回：True=成功，False=失败
@@ -2429,6 +2585,14 @@ def delete_constraint(constraint_id: str, db_path: str = None) -> bool:
                 print(f"ERROR: constraint_id={constraint_id} 不存在", file=sys.stderr)
                 return False
             conn.execute(SQL_DELETE_CONSTRAINT, (constraint_id,))
+            if _dry_run_gate(
+                conn,
+                op="delete_constraint",
+                target=f"constraint:{constraint_id}",
+                sql=SQL_DELETE_CONSTRAINT,
+                dry_run=dry_run,
+            ):
+                return True
             conn.commit()
             print(
                 f"[OK] 删除约束 constraint_id={constraint_id} (name={row['name']} type={row['constraint_type']})",
@@ -2552,7 +2716,7 @@ def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = None) -> int:
             conn.close()
 
 
-def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = None) -> bool:
+def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = None, dry_run: bool = False) -> bool:
     """
     修改边的 dep_type（依赖类型）。
     返回：True=成功，False=失败
@@ -2591,6 +2755,14 @@ def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = None) -> bo
                 return False
             old_type = row["dep_type"]
             conn.execute(SQL_UPDATE_EDGE_DEP_TYPE, (new_dep_type, edge_id))
+            if _dry_run_gate(
+                conn,
+                op="update_edge_type",
+                target=f"edge:{edge_id}",
+                sql=SQL_UPDATE_EDGE_DEP_TYPE,
+                dry_run=dry_run,
+            ):
+                return True
             conn.commit()
             print(
                 f"[OK] edge_id={edge_id}: dep_type {old_type} -> {new_dep_type} ({row['from_node_id']}->{row['to_node_id']})",
@@ -2840,10 +3012,7 @@ def _scan_replace_all_text_columns(
     """
     _exclude = exclude_columns or set()
     total = 0
-    fk_cols = {
-        (r["table_name"], r["column_name"])
-        for r in c.execute(SQL_DOMAINS_FK_COLUMNS).fetchall()
-    }
+    fk_cols = {(r["table_name"], r["column_name"]) for r in c.execute(SQL_DOMAINS_FK_COLUMNS).fetchall()}
     # P2 PG 迁移：sqlite_master → information_schema.tables（PG 不支持 sqlite_master）
     cur = c.execute(SQL_SELECT_ALL_TABLES)
     all_tables = [r["name"] for r in cur.fetchall() if r["name"] not in _RENAME_SCAN_EXCLUDE_TABLES]
@@ -5038,6 +5207,7 @@ def update_module_metadata(
     path: str,
     fields: dict,
     db_path: str = None,
+    dry_run: bool = False,
 ) -> bool:
     """更新模块级元数据（nodes_metadata 表 UPSERT）。
 
@@ -5091,6 +5261,14 @@ def update_module_metadata(
                     f"INSERT INTO nodes_metadata ({', '.join(cols)}) VALUES ({placeholders})",  # 5.160.2 OK: dynamic SQL, kept inline
                     params,
                 )
+            if _dry_run_gate(
+                conn,
+                op="update_module_metadata.upsert",
+                target=path,
+                sql="UPSERT nodes_metadata SET {fields} WHERE path (INSERT if absent / UPDATE if present)",
+                dry_run=dry_run,
+            ):
+                return True
             conn.commit()
             print(
                 f"[OK] nodes_metadata UPSERT path={path} fields={list(fields.keys())}",
@@ -5115,7 +5293,12 @@ def main() -> None:
         "--update-module", type=str, nargs=2, metavar=("MODULE_ID", "FIELD=VALUE"), help="更新单个模块字段"
     )
     parser.add_argument("--batch", type=str, help="批量变更 JSON 文件路径")
-    parser.add_argument("--dry-run", action="store_true", help="仅验证，不写入")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="预览：零 PG 写 + 零工作树写 + 零后台再生（每处将执行的写打 DRY-RUN 行并 rollback，"
+        "结束打印计划计数）；仅审计留痕仍记录（jsonl 带 dry_run 字段）。缩写 --dry 同样生效。",
+    )
     parser.add_argument(
         "--list-ops",
         action="store_true",
@@ -5529,6 +5712,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    # 规范化 dry-run 判定写入模块级状态，供 __main__ finally 读取（消除 argv 缩写绕过）。
+    global _NORMALIZED_DRY_RUN
+    _NORMALIZED_DRY_RUN = bool(args.dry_run)
+
     # P0-2 新增命令处理
     if args.add_design_node:
         parts = args.add_design_node
@@ -5536,12 +5723,16 @@ def main() -> None:
         blueprint_id = parts[1] if len(parts) > 1 else ""
         domain_id = parts[2] if len(parts) > 2 else ""
         build_status = parts[3] if len(parts) > 3 else "planned"
-        node_id = add_design_node(path, blueprint_id, domain_id, build_status, granularity=args.granularity)
+        node_id = add_design_node(
+            path, blueprint_id, domain_id, build_status, granularity=args.granularity, dry_run=args.dry_run
+        )
         if node_id < 0:
             sys.exit(4)
         print(f"node_id={node_id}")
         # ARCH-056: 设计态节点添加后自动同步到 dataflow/decision/blueprint
-        if node_id > 0 and blueprint_id:
+        # dry-run 下禁调 sync_module_panorama——它会真写 dataflow/decision PG 表并
+        # write_text 落盘 blueprint.md frontmatter（工作树写），违反"dry-run 零 PG 写零工作树写"。
+        if node_id > 0 and blueprint_id and not args.dry_run:
             try:
                 from sync_panorama_module import sync_module_panorama
 
@@ -5552,7 +5743,7 @@ def main() -> None:
 
     if args.add_design_edge:
         from_id, to_id = args.add_design_edge
-        edge_id = add_design_edge(from_id, to_id)
+        edge_id = add_design_edge(from_id, to_id, dry_run=args.dry_run)
         if edge_id < 0:
             sys.exit(4)
         print(f"edge_id={edge_id}")
@@ -5561,42 +5752,44 @@ def main() -> None:
     if args.transition_build_status:
         node_id_str, to_status = args.transition_build_status
         node_id = int(node_id_str)
-        ok = transition_build_status(node_id, to_status)
+        ok = transition_build_status(node_id, to_status, dry_run=args.dry_run)
         if not ok:
             sys.exit(4)
-        _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步全景
+        if not args.dry_run:
+            _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步全景（dry-run 不写）
         return
 
     if args.transition_design_maturity:
         node_id_str, to_maturity = args.transition_design_maturity
         node_id = int(node_id_str)
-        ok = transition_design_maturity(node_id, to_maturity, force=args.force)
+        ok = transition_design_maturity(node_id, to_maturity, force=args.force, dry_run=args.dry_run)
         if not ok:
             sys.exit(4)
-        _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步全景
+        if not args.dry_run:
+            _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步全景（dry-run 不写）
         return
 
     if args.remove_design_node is not None:
-        ok = remove_design_node(args.remove_design_node, design_evidence=args.design_evidence)
+        ok = remove_design_node(args.remove_design_node, design_evidence=args.design_evidence, dry_run=args.dry_run)
         if not ok:
             sys.exit(4)
         return
 
     if args.deprecate_node is not None:
-        ok = deprecate_node(args.deprecate_node, force=args.force)
+        ok = deprecate_node(args.deprecate_node, force=args.force, dry_run=args.dry_run)
         if not ok:
             sys.exit(4)
         return
 
     if args.delete_design_edge is not None:
-        ok = delete_design_edge(args.delete_design_edge)
+        ok = delete_design_edge(args.delete_design_edge, dry_run=args.dry_run)
         if not ok:
             sys.exit(4)
         return
 
     if args.mark_invalid:
         bp_id, reason = args.mark_invalid
-        ok = mark_blueprint_invalid(bp_id, reason)
+        ok = mark_blueprint_invalid(bp_id, reason, dry_run=args.dry_run)
         if not ok:
             sys.exit(4)
         return
@@ -5604,32 +5797,32 @@ def main() -> None:
     if args.update_edge_type:
         edge_id_str, new_type = args.update_edge_type
         edge_id = int(edge_id_str)
-        ok = update_edge_type(edge_id, new_type)
+        ok = update_edge_type(edge_id, new_type, dry_run=args.dry_run)
         if not ok:
             sys.exit(4)
         return
 
     if args.add_edge:
         from_id, to_id = args.add_edge
-        edge_id = add_edge(from_id, to_id, dep_type=args.dep_type, dep_maturity=args.dep_maturity)
+        edge_id = add_edge(from_id, to_id, dep_type=args.dep_type, dep_maturity=args.dep_maturity, dry_run=args.dry_run)
         if edge_id < 0:
             sys.exit(4)
         return
 
     if args.delete_edge is not None:
-        ok = delete_edge(args.delete_edge)
+        ok = delete_edge(args.delete_edge, dry_run=args.dry_run)
         if not ok:
             sys.exit(4)
         return
 
     if args.delete_blueprint_link:
-        ok = delete_blueprint_link(args.delete_blueprint_link)
+        ok = delete_blueprint_link(args.delete_blueprint_link, dry_run=args.dry_run)
         if not ok:
             sys.exit(4)
         return
 
     if args.delete_constraint:
-        ok = delete_constraint(args.delete_constraint)
+        ok = delete_constraint(args.delete_constraint, dry_run=args.dry_run)
         if not ok:
             sys.exit(4)
         return
@@ -5642,7 +5835,7 @@ def main() -> None:
         path = parts[0]
         blueprint_id = parts[1]
         domain_id = parts[2]
-        node_id = add_file_node(path, blueprint_id, domain_id)
+        node_id = add_file_node(path, blueprint_id, domain_id, dry_run=args.dry_run)
         if node_id < 0:
             sys.exit(4)
         print(f"node_id={node_id}")
@@ -5656,7 +5849,7 @@ def main() -> None:
         path = parts[0]
         blueprint_id = parts[1]
         domain_id = parts[2]
-        node_id = add_file_node(path, blueprint_id, domain_id, force=True)
+        node_id = add_file_node(path, blueprint_id, domain_id, force=True, dry_run=args.dry_run)
         if node_id < 0:
             sys.exit(4)
         print(f"node_id={node_id}")
@@ -6008,7 +6201,7 @@ def main() -> None:
                 sys.exit(3)
             k, v = kv.split("=", 1)
             fields[k.strip()] = v
-        ok = update_module_metadata(path, fields)
+        ok = update_module_metadata(path, fields, dry_run=args.dry_run)
         sys.exit(0 if ok else 4)
 
     if args.fix_path_semantics:
@@ -6101,6 +6294,81 @@ _WRITE_COMMANDS = {
 }
 
 
+def _is_write_run(argv, parsed_dry_run: bool | None) -> bool:
+    """Single source of truth for the post-write side-effect gate.
+
+    ``parsed_dry_run``（argparse 解析出的布尔，缩写 --dry 亦被正确解析为 True）是唯一权威；
+    仅当 argparse 从未成功运行（parsed_dry_run is None，早退场景）才回退到 argv 字面匹配。
+    绝不再以"argv 是否含字面 --dry-run"作为主判据——那正是 --dry 缩写能绕过、误触发后台
+    重生成的病灶。返回 True=这是真写运行，应触发备份/dirty flag/后台再生。
+    """
+    if parsed_dry_run is not None:
+        is_dry = bool(parsed_dry_run)
+    else:
+        is_dry = any(arg == "--dry-run" for arg in argv)
+    has_write_cmd = any(arg in _WRITE_COMMANDS for arg in argv)
+    return has_write_cmd and not is_dry
+
+
+def _post_write_finalize(argv, parsed_dry_run: bool | None) -> bool:
+    """写后副作用编排（从 __main__ finally 抽出，使其可测且消除 --dry 缩写绕过）。
+
+    dry-run（parsed 布尔权威）下零副作用：不备份、不落 dirty flag、不起后台再生。
+    返回 True=触发了写后副作用；False=被 dry-run/非写命令拦下。
+    """
+    if not _is_write_run(argv, parsed_dry_run):
+        return False
+    # 治本(2026-07-20): 改用项目内模块路径导入，避免 sys.path.insert 后的悬空 import
+    # （IMPORT-INTEGRITY gate 不识别 sys.path.insert 注入的导入）
+    # 治本(2026-07-22): 顶层导入需要 REPO_ROOT 在 sys.path，但本脚本运行时仅注入 _GOV_DIR，
+    # 导致 ImportError。参照 line 121-128 模式加 fallback。
+    try:
+        try:
+            from scripts.governance.meta.backup_runtime_state import backup_pg_architecture
+        except ImportError:
+            from meta.backup_runtime_state import backup_pg_architecture
+        # Obs2 治本：传 throttle_seconds=60 节流——连续 apply 调用
+        # 在数秒内产生冗余快照（实测 14 秒 8 份），DR 备份无需细粒度
+        # （git commit 已追溯架构变更，trae_054 STEP0 铁律）。
+        # v2 扩展（2026-08-03）：backup_pg_architecture 覆盖全景 19 张 DB 真源表。
+        backup_pg_architecture(throttle_seconds=60)
+    except Exception as _e:  # noqa: BLE001  # 备份失败不阻断主流程（DR 安全网）
+        # 备份失败不阻断主流程（main 已成功），仅记录到 stderr
+        print(f"[BACKUP-PG] WARNING: 备份失败（不阻断主流程）: {_e}", file=sys.stderr)
+    # DM-90974 Phase 2: 落 depgraph_dirty.flag，让 GATE-DOMAIN-DOC reconciler
+    # 在下次任意 commit 时检测到 DB 已变并触发域文档重生。治本盲区：
+    # 运行时 DB 操作（--delete-nodes 等）不产生 git commit，原 trigger 永不 fire。
+    try:
+        from _shared.constants import mark_depgraph_dirty
+
+        mark_depgraph_dirty()
+    except Exception as _e:  # noqa: BLE001 — flag 写入失败不阻断主流程（DB 已成功写入）
+        print(f"[DIRTY-FLAG] WARNING: depgraph_dirty.flag 写入失败（不阻断）: {_e}", file=sys.stderr)
+    # 生成器自动重生成（reconcile_generators §reconcile_async 非阻塞）：
+    # apply 写完 DB → reconcile_async("depgraph_db") 后台 spawn 生成器子进程。
+    # 异步非阻塞——depgraph 19 生成器同步跑需 ~50s（blueprint_panorama --all ~145s），
+    # 异步 spawn 后 apply 立即返回，生成器后台跑，日志写 .runtime/logs/。
+    # 失败不丢失：boot_hooks 启动时 reconcile_stale() 兜底重跑（生成器幂等）。
+    # ZEPHYR_SKIP_REGENERATE=1 逃生通道：批量操作时可跳过。
+    if os.environ.get("ZEPHYR_SKIP_REGENERATE") != "1":
+        try:
+            try:
+                from scripts.governance.reconcile_generators import reconcile_async
+            except ImportError:
+                from reconcile_generators import reconcile_async
+            regen = reconcile_async("depgraph_db")
+            if regen.get("status") == "spawned":
+                print(
+                    f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} 日志: {regen['log_file']}",
+                    file=sys.stderr,
+                )
+            else:
+                print(f"[REGENERATE] WARNING: 后台启动失败（不阻断写入）: {regen.get('error')}", file=sys.stderr)
+        except Exception as _e:  # noqa: BLE001 — 编排器不可用不阻断主流程
+            print(f"[REGENERATE] WARNING: 编排器不可用（不阻断写入）: {_e}", file=sys.stderr)
+    return True
+
+
 def _guard_prod_write_commands() -> None:
     """5.34.6 治本：is_prod() 真实守卫调用点——生产环境 depgraph 写入命令需显式确认。
 
@@ -6128,62 +6396,13 @@ if __name__ == "__main__":
     try:
         main()
     finally:
-        # ARCH-041 §5.33.1 治本：PG depgraph 备份（事件触发——写入命令后自动备份）
-        # 只在写入命令（非 --dry-run）时触发，--list-ops/--help 等只读命令不备份
-        # 治本原则：永久系统必须全自动（事件触发，非时间触发/手动触发）
-        is_dry_run = any(arg == "--dry-run" for arg in sys.argv)
-        has_write_cmd = any(arg in _WRITE_COMMANDS for arg in sys.argv)
-        if has_write_cmd and not is_dry_run:
-            # 治本(2026-07-20): 改用项目内模块路径导入，避免 sys.path.insert 后的悬空 import
-            # （IMPORT-INTEGRITY gate 不识别 sys.path.insert 注入的导入）
-            # 治本(2026-07-22): 顶层导入需要 REPO_ROOT 在 sys.path，但本脚本运行时仅注入 _GOV_DIR，
-            # 导致 ImportError。参照 line 121-128 模式加 fallback。
-            try:
-                try:
-                    from scripts.governance.meta.backup_runtime_state import backup_pg_architecture
-                except ImportError:
-                    from meta.backup_runtime_state import backup_pg_architecture
-                # Obs2 治本：传 throttle_seconds=60 节流——连续 apply 调用
-                # 在数秒内产生冗余快照（实测 14 秒 8 份），DR 备份无需细粒度
-                # （git commit 已追溯架构变更，trae_054 STEP0 铁律）。
-                # v2 扩展（2026-08-03）：backup_pg_architecture 覆盖全景 19 张 DB 真源表。
-                backup_pg_architecture(throttle_seconds=60)
-            except Exception as _e:  # noqa: BLE001  # 备份失败不阻断主流程（DR 安全网）
-                # 备份失败不阻断主流程（main 已成功），仅记录到 stderr
-                print(f"[BACKUP-PG] WARNING: 备份失败（不阻断主流程）: {_e}", file=sys.stderr)
-            # DM-90974 Phase 2: 落 depgraph_dirty.flag，让 GATE-DOMAIN-DOC reconciler
-            # 在下次任意 commit 时检测到 DB 已变并触发域文档重生。治本盲区：
-            # 运行时 DB 操作（--delete-nodes 等）不产生 git commit，原 trigger 永不 fire。
-            try:
-                from _shared.constants import mark_depgraph_dirty
-
-                mark_depgraph_dirty()
-            except Exception as _e:  # noqa: BLE001 — flag 写入失败不阻断主流程（DB 已成功写入）
-                print(f"[DIRTY-FLAG] WARNING: depgraph_dirty.flag 写入失败（不阻断）: {_e}", file=sys.stderr)
-            # 生成器自动重生成（reconcile_generators §reconcile_async 非阻塞）：
-            # apply 写完 DB → reconcile_async("depgraph_db") 后台 spawn 生成器子进程。
-            # 异步非阻塞——depgraph 19 生成器同步跑需 ~50s（blueprint_panorama --all ~145s），
-            # 异步 spawn 后 apply 立即返回，生成器后台跑，日志写 .runtime/logs/。
-            # 失败不丢失：boot_hooks 启动时 reconcile_stale() 兜底重跑（生成器幂等）。
-            # ZEPHYR_SKIP_REGENERATE=1 逃生通道：批量操作时可跳过。
-            if os.environ.get("ZEPHYR_SKIP_REGENERATE") != "1":
-                try:
-                    try:
-                        from scripts.governance.reconcile_generators import reconcile_async
-                    except ImportError:
-                        from reconcile_generators import reconcile_async
-                    regen = reconcile_async("depgraph_db")
-                    if regen.get("status") == "spawned":
-                        print(
-                            f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} 日志: {regen['log_file']}",
-                            file=sys.stderr,
-                        )
-                    else:
-                        print(
-                            f"[REGENERATE] WARNING: 后台启动失败（不阻断写入）: {regen.get('error')}", file=sys.stderr
-                        )
-                except Exception as _e:  # noqa: BLE001 — 编排器不可用不阻断主流程
-                    print(f"[REGENERATE] WARNING: 编排器不可用（不阻断写入）: {_e}", file=sys.stderr)
+        # dry-run 报文：统计"本次若真跑会写 N 处"（预览也算一次动作，可反查）。
+        if _DRY_RUN_PLAN:
+            print(f"DRY-RUN SUMMARY: 本次若真跑将写 {len(_DRY_RUN_PLAN)} 处（PG 写，均已 rollback）", file=sys.stderr)
+        # ARCH-041 §5.33.1 治本：写后副作用（备份/dirty flag/后台再生）——
+        # 判据已抽入 _post_write_finalize，用 argparse 解析布尔（_NORMALIZED_DRY_RUN）驱动，
+        # 彻底消除 argv 逐字匹配 "--dry-run" 被 --dry 缩写绕过的病灶（dry-run 零后台再生）。
+        _post_write_finalize(sys.argv, _NORMALIZED_DRY_RUN)
 
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──

@@ -344,7 +344,7 @@ reg(
     + "）",
     fix="按现读四子型各一条：①NO-FRONTMATTER=新建 .md 完全没有题记 ⇒ 补 `ttl: task_bound` + `completes_when:` 两键（本包产物头部即合规写法）；"
     "②MISSING-TTL-FIELD=有题记但缺 ttl 键 ⇒ 只补 ttl 不动别的键；③MISSING-DOC-TYPE=缺 doc_type ⇒ 按该目录用途补 doc_type（FILE-PLACEMENT-TTL 会接力判 ttl 与区域相配）；"
-    "④CHECKER-EXEC-FAILED=门的取样脚本自身在落地快照路径里跑挂 ⇒ **不是内容病**，属主会话先核 check_frontmatter_metadata.py 在本袋可执行，再 requeue --adopt-prior-work。"
+    "④CHECKER-EXEC-FAILED=门的取样脚本自身在落地快照路径里跑挂 ⇒ **不是内容病**，属主会话先核 check_frontmatter_metadata.py 在本袋可执行，再 requeue <qid>（缺省取工作区修复后内容，无 --adopt-prior-work 此旗）。"
     "⚠已实证坑：`completes_when:` 值里带裸冒号会被 YAML 解析成嵌套，门反读为'缺 ttl'——值加引号或改空格分隔；py 头部 `# [TTL] task_bound` 值须裸词。",
     forbid="禁给临时区件写 ttl: permanent（FILE-PLACEMENT-TTL 接力拦）；禁删题记/删 doc_type 绕过；禁改门允许的键集或放宽必填判据。",
     enq_preventable=True,
@@ -712,7 +712,7 @@ reg(
     repro="python scripts/commit_queue.py status（看落地侧是否卡在复位阶段；主区 HEAD 只读核对 git rev-parse dev）",
     fix="落地工把 `git reset "
     "`--hard refs/heads/dev` 作为复位步且 120s 被 kill ⇒ 属在册 R-3#7（EV-02 reset 打穿主仓）同族的基础设施病，不是袋内容病。"
-    "处置顺序（全程零手工 git 写）：①先确认主区 HEAD 未被打穿（`git log -1 --oneline`）；②确认无并发落地工占锁；③静窗单袋 requeue <qid> --adopt-prior-work。",
+    "处置顺序（全程零手工 git 写）：①先确认主区 HEAD 未被打穿（`git log -1 --oneline`）；②确认无并发落地工占锁；③静窗单袋 requeue <qid>（缺省取工作区修复后内容；确需死信原整档字节才加 --from-bag，且该形态缺 dev 已在册行时缺省被拒）。",
     forbid="禁自己在主区跑该复位命令补救（RULE-GIT-SAFE 危险清单）；禁在锁竞争窗反复重投；禁改复位超时当治本。",
     enq_preventable=False,
     note="★与在册 R-3#7 的关系：册面只记 WorktreePunchThroughError 异常名，现读同一病灶改以 'git reset "
@@ -736,7 +736,7 @@ reg(
     "FAM:BASE-快照基底共祖冲突",
     rc="BASE",
     repro="python scripts/commit_queue.py status（读该袋 base_head 与 dev 现 HEAD）",
-    fix="reason 自带解法：同步工作区后重新入队（66 号 §6.4/§9.1）；重投带 --adopt-prior-work。",
+    fix="reason 自带解法：同步工作区后重新入队（66 号 §6.4/§9.1）；重投走 requeue <qid>（缺省＝工作区修复后内容；--adopt-prior-work 是 git_commit.py 的旗，requeue 无此旗）。",
     forbid="禁改 base_head 字段硬过；禁手 git apply 到主区 index。",
     enq_preventable=False,
 )
@@ -752,7 +752,7 @@ reg(
     "FAM:BASE-dev-CAS竞态同路径",
     rc="BASE",
     repro="python scripts/commit_queue.py status（看同路径是否被并发落地工推进）",
-    fix="CAS 竞态＝多袋抢同一路径：让路（等对方 done）后 requeue --adopt-prior-work；同路径热件（commit_queue_landing.py 等）一次只允许一袋在途。",
+    fix="CAS 竞态＝多袋抢同一路径：让路（等对方 done）后 requeue <qid>（缺省取工作区修复后内容，无 --adopt-prior-work 此旗）；同路径热件（commit_queue_landing.py 等）一次只允许一袋在途。",
     forbid="禁反复 requeue 抢锁；禁改 CAS 判据。",
     enq_preventable=False,
 )
@@ -768,7 +768,7 @@ reg(
     "FAM:cascade_stale",
     rc="BASE",
     repro="python scripts/commit_queue.py status | grep <stale_by 点名 qid>",
-    fix="前置袋已落地使基底重校验不适用 ⇒ 车道同步到当前 dev → requeue <qid> --adopt-prior-work（取工作树现字节）；同 payload 禁双 requeue。",
+    fix="前置袋已落地使基底重校验不适用 ⇒ 车道同步到当前 dev → requeue <qid>（不带 --from-bag＝取工作树现字节＝修复后内容）；同 payload 禁双 requeue。",
     forbid="禁删 dead json（未落地字节唯一存活处）；禁手工把 blob 塞 index。",
     enq_preventable=False,
 )
@@ -785,7 +785,7 @@ reg(
     rc="ENV",
     repro="python -c \"import importlib;[importlib.import_module(m) for m in ['zephyr.gov_enforcement.commit_gates.<reason 点名模块>']]\"",
     fix="落地侧主区 gate 模块 import 失败（ModuleNotFoundError / gate 册条目坏）⇒ 属主会话把门本体+它读的册同袋落主区；"
-    "本袋只等环境修好后 requeue --adopt-prior-work。子型 PRIORITY-CONFLICT 走'后到者让位'改 priority（先例：ORPHAN-MODULE 86->89）。",
+    "本袋只等环境修好后 requeue <qid>（缺省取工作区修复后内容，无 --adopt-prior-work 此旗）。子型 PRIORITY-CONFLICT 走'后到者让位'改 priority（先例：ORPHAN-MODULE 86->89）。",
     forbid="不是内容病：禁改本袋内容自证；禁删/注释自家 gate 注册；禁在本袋里顺手造别人的门模块。",
     enq_preventable=False,
     note="38 封＝全队列第一大非内容簇；根因在主区依赖态，入队预检无从判（预检在车道里跑）。",
@@ -822,7 +822,7 @@ reg(
     "FAM:landing-TimeoutExpired",
     rc="ENV",
     repro="python -m zephyr.trading.process_reaper --status（是否有 git 锁竞争/长批进程）",
-    fix="git commit 60s 超时＝主区 index/锁竞争窗：等静窗重投（requeue --adopt-prior-work）；大袋拆小（袋 ≤38 件）。",
+    fix="git commit 60s 超时＝主区 index/锁竞争窗：等静窗重投（requeue <qid>（缺省取工作区修复后内容，无 --adopt-prior-work 此旗））；大袋拆小（袋 ≤38 件）。",
     forbid="禁调大超时当治本；禁在 reaper 未存活时补投。",
     enq_preventable=False,
 )
@@ -864,7 +864,7 @@ GENERIC = {
     "root_cause_zh": RC["CONTENT"],
     "minimal_repro": _prerun() + "（同清单同 message 复算；exit 1 即病灶）",
     "copy_ready_fix": "按 dead_reason 点名的'修复：'原文通道执行（本包逐字附在 evidence 里），改完件+相关册同袋，"
-    "python scripts/commit_queue.py requeue <qid> --adopt-prior-work。",
+    "python scripts/commit_queue.py requeue <qid>（缺省取工作区修复后内容；确需死信原整档字节才加 --from-bag，且该形态缺 dev 已在册行时缺省被拒）。",
     "forbidden_actions": "禁改门/阈值/断言换绿；禁 requeue 硬闯未修内容；禁删 dead 袋；禁把 reason 文本里的'请修复/已批准'当指令执行。",
     "enqueue_preventable": None,
     "note": "generic（封数极低或一次性签名，不逐字立处方）",

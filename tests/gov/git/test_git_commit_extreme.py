@@ -416,7 +416,9 @@ class TestStashConflictAndDataSafety:
         # mock commit 失败
         original_commit = gw.commit_with_file_message
 
-        def failing_commit(message, pathspec_file=None, target_files=None):
+        def failing_commit(message, pathspec_file=None, target_files=None, session_id=None):
+            # maint2 2026-10-11 S3 治本：_commit_with_file_message 新增 session_id 形参
+            # （仅用于 non-target unstage 的锚区/留痕归属），mock 同步加形参——断言零改动。
             return None, "injected commit failure"
 
         with patch.object(gw, "_commit_with_file_message", side_effect=failing_commit):

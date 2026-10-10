@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.ai_layer.scheduling.scheduling_events (SchedulingJournal/SchedulingEvent);
 #                zephyr.ai_layer.scheduling.confirm_gate (ConfirmGate.reconcile——order_confirmed_due
 #                消费=事件触发型确认半写自愈对账，确认≠派工零派工动作);
-#                zephyr.shared.io.paths (REPO_ROOT); zephyr.shared.utils.time_utils (now_utc);
+#                zephyr.shared.io.paths (REPO_ROOT); zephyr.shared.utils.time_utils (now_utc); zephyr.shared.io.audit_jsonl_writer (rotate_if_oversized——T14 堵点本裸 append 体积闸);
 #                zephyr.shared.infra.process_pool (is_pid_alive——belt 同款僵尸检测)
 # [CONSUMERS] 排产值守入口（journal 唯一真源消费者，非施工会话所有——对标 belt 常驻消费者设计）;
 #             zephyr.ai_layer.scheduling.dispatcher（dispatched 段消费 order_dispatch_due）
@@ -262,9 +262,18 @@ def check_criteria_hash(criteria_ref: str, frozen_hash: str) -> tuple[bool, str]
 
 
 def append_bottleneck(ledger_path: Path, record: Mapping[str, Any]) -> None:
-    """堵点本 append（{ts, kind, order_id, reason, protocol:'专人专事'} 实档 schema 同款）。"""
+    """堵点本 append（{ts, kind, order_id, reason, protocol:'专人专事'} 实档 schema 同款）。
+
+    T14（2026-10-11）：bottleneck_ledger.jsonl 实测 113.3MB＝阈值 2.3 倍且零轮转段
+    （多个裸 append 写侧绕开了 writer 判据）。本函数是该族的共用收口，加"打开前
+    过 writer 同一道体积闸"＝超限先移位轮转（.1/.2/.3 保留，非删除）。
+    ⚠ 只读全史的消费方须改为 glob `bottleneck_ledger.jsonl*`。
+    """
+    from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
+
     ledger_path.parent.mkdir(parents=True, exist_ok=True)
     line = json.dumps(dict(record), ensure_ascii=False)
+    rotate_if_oversized(ledger_path)
     with ledger_path.open("a", encoding="utf-8") as handle:
         handle.write(line + "\n")
 

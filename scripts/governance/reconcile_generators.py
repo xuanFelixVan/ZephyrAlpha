@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV_SCRIPTS | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/generator_auto_trigger_pilot.md
 # [MODULE] scripts.governance.reconcile_generators
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] docs/01_policies_and_standards/_registry/catalogs/generator_registry.yaml (只读真源); scripts.governance.d5_architecture.generators.generate_battle_map_diagram (regenerate); 全部 generate_*.py (subprocess 回退)
+# [DEPENDENCIES] docs/01_policies_and_standards/_registry/catalogs/generator_registry.yaml (只读真源); scripts.governance.d5_architecture.generators.generate_battle_map_diagram (regenerate); 全部 generate_*.py (subprocess 回退); zephyr.shared.io.audit_jsonl_writer (rotate_if_oversized，_bottleneck_append 内延迟 import——T14 体积闸)
 # [CONSUMERS] apply_battle_map.py / apply_depgraph.py / apply_dataflowgraph.py / apply_decisiongraph.py (reconcile); src/zephyr/trading/boot_hooks.py (reconcile_stale)
 # [STARTUP] imported
 # [MATURITY] production
@@ -307,11 +307,18 @@ def _dirty_ledger_append(record: dict) -> None:
 
 
 def _bottleneck_append(kind: str, gen: str, detail: str) -> None:
-    """卡死信号写 bottleneck_ledger（B0_3 §3 卡死表：账龄/连败两档）。"""
+    """卡死信号写 bottleneck_ledger（B0_3 §3 卡死表：账龄/连败两档）。
+
+    T14（2026-10-11）：动笔前过 audit_jsonl_writer 的同一道体积闸（超限先移位轮转，
+    .1/.2/.3 保留非删除）——本文件是该 113MB 无轮转件的裸写侧之一。
+    """
     import json
 
     try:
+        from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
+
         _BOTTLENECK_LEDGER.parent.mkdir(parents=True, exist_ok=True)
+        rotate_if_oversized(_BOTTLENECK_LEDGER)
         ts = time.strftime("%Y-%m-%dT%H:%M:%S")
         with _BOTTLENECK_LEDGER.open("a", encoding="utf-8") as f:
             f.write(json.dumps({"ts": ts, "kind": kind, "generator": gen, "detail": detail}, ensure_ascii=False) + "\n")

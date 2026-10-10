@@ -640,6 +640,13 @@ def _audit_foreign_staged(
             record["states"] = states
             if states["ownerless"]:
                 record["ownerless_prescription"] = _OWNERLESS_PRESCRIPTION
+        from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
+
+        # T14（2026-10-11）：本函数是 .runtime/gate_audit/*_foreign_staged.jsonl 的
+        # 唯一收口（全部门控共用），实测该族占 gate_audit top-12 的 9 席（仅前两枚
+        # 即 126.2MB+68.4MB）。裸 open("a") 绕开 audit_jsonl_writer 的 50MiB 尺 ⇒
+        # 无界膨胀。此处在打开前过同一道入口闸（超限先移位轮转，非删除）。
+        rotate_if_oversized(audit_dir / fname)
         with (audit_dir / fname).open("a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + chr(10))
     except Exception:  # noqa: BLE001 — 审计失败不阻断（check ERROR_CONTRACT）

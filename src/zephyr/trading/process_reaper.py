@@ -5,7 +5,7 @@
 # [CONSUMERS] scripts/register_process_reaper_task.ps1; Windows Task Scheduler(ZephyrAlpha_ProcessReaper)
 # [STARTUP] scheduled_task
 # [MATURITY] production
-# [INVARIANTS] 白名单命中永不杀; Trae后代进程永不杀; kill操作必须日志记录; dry-run零副作用; one-shot执行完即退出无常驻; kill日志行 PID/reason 在前、name+cmd 片段(≤120字符,仅argv不含环境变量)追加行尾（P-12 归因，改判据前须核既有 grep 口径）；backfix 批复①+②（2026-10-10，备份链连环案 #5-#9）：孵化台账三要素身份复核（born_after_registration/image_diverged/cmd_diverged，identity_mismatch_reason）任一不符=赦免+销账；销账=子死/身份不符/复查消失即回写 exited_at（_mark_incubation_exited，与 reaped 语义分离）；活体 cmdline 含 backup.ps1 的 pid 一律跳过（处方②备份白名单，与 keep 行双保险）；处方②补真接（2026-10-11 批复）＝backup 形态判据升为 name 无关单口 `is_backup_form_cmdline`，**级联腿（_kill_pid_tree 递归子树）与根判共用同一判据**，backup 形态后代/根一律豁免（python 扫面按 name 过滤， powershell 本体从不入面＝只在入面生效的白名单对备份是装饰件；扩扫面属扩杀面，禁）；红蓝网 tests/infra/infrastructure/test_process_reaper_pid_recycle_backfix.py（pid 回收复刻必拦＋级联腿 backup 后代必拦）
+# [INVARIANTS] 白名单命中永不杀; Trae后代进程永不杀; kill操作必须日志记录; dry-run零副作用; one-shot执行完即退出无常驻; kill日志行 PID/reason 在前、name+cmd 片段(≤120字符,仅argv不含环境变量)追加行尾（P-12 归因，改判据前须核既有 grep 口径）；backfix 批复①+②（2026-10-10，备份链连环案 #5-#9）：孵化台账三要素身份复核（born_after_registration/image_diverged/cmd_diverged，identity_mismatch_reason）任一不符=赦免+销账；销账=子死/身份不符/复查消失即回写 exited_at（_mark_incubation_exited，与 reaped 语义分离）；活体 cmdline 含 backup.ps1 的 pid 一律跳过（处方②备份白名单，与 keep 行双保险）；处方②补真接（2026-10-11 批复）＝backup 形态判据升为 name 无关单口 `is_backup_form_cmdline`，**级联腿（_kill_pid_tree 递归子树）与根判共用同一判据**，backup 形态后代/根一律豁免（python 扫面按 name 过滤， powershell 本体从不入面＝只在入面生效的白名单对备份是装饰件；扩扫面属扩杀面，禁）；红蓝网 tests/infra/infrastructure/test_process_reaper_pid_recycle_backfix.py（pid 回收复刻必拦＋级联腿 backup 后代必拦）；T6（2026-10-11）四条动杀路径（矩阵主循环/衍生孤儿/孵化超寿/幽灵斩杀线）一律先查 keep+白名单，命中即豁免并留痕——衍生孤儿与幽灵路径修前不查 keep（非 python 形态盲区），现补 fail-closed 只少杀不多杀
 # [MODIFY-GUARD] MOD-RESOURCE_OPTIMIZATION_ENGINE §new-IDE
 # [STABILITY] evolving
 # [SAFETY] M
@@ -47,6 +47,31 @@ process_reaper.py — 项目残留进程清理器（无状态 one-shot，Task Sc
 9. 其余                            -> skip
 10. 项目衍生孤儿（ollama/llama-server 族，cmdline 命中 marker 且父死）
     -> mem>=10GB 即杀 / age>2h 杀 / 30min<age<=2h report（同孤儿矩阵）
+
+keep 行的适用形态集合（T6 病根登记，2026-10-11 实测核定）：
+- keep 文件每行一个 cmdline **身份段**子串（非正则），匹配面=`_cmdline_identity_segments`
+  （程序基名 / `python -m` 模块名 / .py .exe .ps1 .cmd .bat 可执行件基名）。
+- 四条收割路径的候选集谓词**不同**，keep 生效范围因此原本不一致（这正是 #T6 病根）：
+  1) 矩阵主循环 `_scan_project_python_processes`：候选=进程 name 含 "python"（L582
+     `"python" not in name → continue`）。powershell/bash/conhost/node/cmd.exe **根本不
+     进候选集**——它们在路径①是"结构性免疫"（无从被杀），不是"写了 keep 也没用"。
+     ⚠ 反向推论：给 powershell 形态仪器写 keep 行，在路径①上保护的是它**派生的 python
+     子进程**（子进程 cmdline 里的 .ps1/.py 身份段），不是它自己。
+  2) 衍生孤儿 `_reap_derived_orphans`：候选=**全进程表**（无 name 谓词）∧ cmdline/name
+     命中 `_DERIVED_ORPHAN_MARKERS`（llama-server.exe / ollama.exe serve）∧ 父死。
+     修前**完全不查 keep**＝真盲区（非 python 常驻仪器写了 keep 照样被砍）。现补
+     fail-closed 豁免（命中即跳过+留痕 `derived_orphan_whitelisted:*`）。
+  3) 孵化超寿 `_reap_incubated_expired`：候选=台账登记的任意形态 pid。keep **自始生效**
+     （`whitelist_res`/`keep_subs` 传入，命中记 `incubation_expired_whitelisted`）。
+  4) 幽灵斩杀线 `kill_ghost_windows`：候选=全进程表中 name 前缀 "trae cn" ∧ 含 Electron
+     子进程标记 ∧ 父死（`classify_trae_process`）。修前不查 keep；现同 2) 补 fail-closed
+     豁免。实测暴露面≈0（用户仪器不可能叫 Trae CN），补它是为了守住不变量
+     **「任何动杀点都先查 keep」**，防下一条路径再长出一个盲区。
+- 不在适用集合内的常驻仪器怎么办（例如 `powershell -File watchdog.ps1` 常驻位）：
+  a) 首选登记进**默认白名单** `_DEFAULT_WHITELIST`（永久服务正则，命中永不杀，四路径共用）；
+  b) 走 **process_incubator 孵化登记**（路径③天然吃 keep，且有三要素身份复核兜底）；
+  c) keep 行照写（保护其派生的 python 子进程面），但**不得把 keep 行当作该 pid 自身的
+     免死金牌**——它本来就不在路径①②④的杀除面内（②④修后连命中 keep 也豁免）。
 
 同时兼任（从 ide_health_daemon 迁移的治理能力）：
 - Trae 幽灵进程清理（2026-08-28 三次误杀事故后终审重构，见下方「幽灵判据治本」）
@@ -923,9 +948,18 @@ def _advance_ghost_state(
     return {"version": 1, "suspects": new_suspects}, kill_ready
 
 
-def kill_ghost_windows(ghosts: list[dict[str, Any]] | None = None) -> list[int]:
+def kill_ghost_windows(
+    ghosts: list[dict[str, Any]] | None = None,
+    whitelist_res: list[re.Pattern] | None = None,
+    keep_subs: list[str] | None = None,
+) -> list[int]:
     """Force kill 幽灵嫌疑进程，kill 前复查赦免：重新枚举进程表重跑判据，
-    父复活/进程已死/标记不符一律赦免不杀。返回实际被 kill 的 PID 列表。"""
+    父复活/进程已死/标记不符一律赦免不杀。返回实际被 kill 的 PID 列表。
+
+    T6 补防（2026-10-11）：幽灵候选同样取自全进程表（无 python 名谓词），原先
+    kill 前复查只看拓扑、**从不查 keep/白名单**。现补同一 fail-closed 豁免
+    （命中即赦免并留痕），方向同 `_reap_derived_orphans`＝只少杀、不多杀。
+    """
     import signal as _signal
 
     if ghosts is None:
@@ -941,6 +975,11 @@ def kill_ghost_windows(ghosts: list[dict[str, Any]] | None = None) -> list[int]:
         if info is None:
             logger.info("ghost PID %d 复查时已自行退出，赦免", pid)
             continue
+        if whitelist_res is not None and keep_subs is not None:
+            hit = _is_whitelisted(info["cmdline"], whitelist_res, keep_subs)
+            if hit:
+                logger.info("ghost PID %d keep/白名单豁免（T6 fail-closed）reason=%s", pid, hit)
+                continue
         reason = classify_trae_process(
             pid=pid,
             name=info["name"],
@@ -966,10 +1005,16 @@ def kill_ghost_windows(ghosts: list[dict[str, Any]] | None = None) -> list[int]:
     return killed
 
 
-def _reap_ghost_windows(dry_run: bool) -> dict[str, int]:
+def _reap_ghost_windows(
+    dry_run: bool,
+    whitelist_res: list[re.Pattern] | None = None,
+    keep_subs: list[str] | None = None,
+) -> dict[str, int]:
     """幽灵清理主流程：扫描 -> 状态机演进 -> 斩杀线复查 kill -> 状态落盘。
 
     dry-run：状态机照常演进落盘（验证可观测 strikes 递增），但只 log 不杀。
+    whitelist_res/keep_subs（T6，2026-10-11）：透传给 `kill_ghost_windows` 做
+    fail-closed keep 豁免；缺省 None=不豁免（保持旧行为，生产主链恒传实参）。
     """
     result = {"scanned": 0, "killed": 0, "tracking": 0}
     try:
@@ -992,7 +1037,7 @@ def _reap_ghost_windows(dry_run: bool) -> dict[str, int]:
                     _log_kill(pid, s["reason"], dry_run=True, name=s.get("name", ""), cmdline=s.get("cmdline", ""))
             else:
                 kill_list = [{**state["suspects"][str(pid)], "pid": pid} for pid in kill_ready]
-                killed = kill_ghost_windows(kill_list)
+                killed = kill_ghost_windows(kill_list, whitelist_res, keep_subs)
                 result["killed"] = len(killed)
                 for pid in killed:
                     s = state["suspects"][str(pid)]
@@ -1057,12 +1102,25 @@ def _write_status(report: ReapReport) -> None:
 # ============== 项目衍生孤儿（ollama/llama-server 族） ==============
 
 
-def _reap_derived_orphans(all_procs: dict[int, dict], dry_run: bool, report: ReapReport) -> None:
+def _reap_derived_orphans(
+    all_procs: dict[int, dict],
+    dry_run: bool,
+    report: ReapReport,
+    whitelist_res: list[re.Pattern] | None = None,
+    keep_subs: list[str] | None = None,
+) -> None:
     """收割项目衍生孤儿（2026-09-15 提交内存耗尽事故补丁，判定矩阵第 10 条）。
 
     判定：cmdline/name 命中 _DERIVED_ORPHAN_MARKERS 且父进程已死（孤儿）。
     阈值沿用孤儿矩阵：mem>=10GB 即杀 / age>2h 杀 / 30min<age<=2h report。
     父活 = 受管（boot 的 _ollama_proc 持有）或在用，永不判（fail-safe 偏向不杀）。
+    T6 补防（2026-10-11）：本族候选取自 **all_procs（全进程表，无 python 名谓词）**，
+    而 keep/白名单豁免原先只长在矩阵主循环里——即本路径曾**完全不查 keep**。
+    后果：llama-server.exe 这类**非 python 形态的常驻仪器**写了 keep 行也照样被砍，
+    操作员以为安全（在册病根 #T6）。现补 fail-closed 豁免：命中即跳过并留痕。
+    方向铁律：只收紧（少杀），不新增任何判杀条件。
+    whitelist_res/keep_subs 缺省 None=保持旧行为（向后兼容既有调用与用例）；
+    生产主链 `_reap_cycle` 恒传实参，缺件时=不豁免（不放宽判据）。
     """
     live_pids = set(all_procs.keys())
     candidates: dict[int, dict] = {}
@@ -1073,6 +1131,16 @@ def _reap_derived_orphans(all_procs: dict[int, dict], dry_run: bool, report: Rea
             continue
         if info.get("ppid") in live_pids:
             continue
+        # T6 fail-closed：非 python 形态 ∧ 命中 keep/白名单 ⇒ 跳过并留痕
+        if whitelist_res is not None and keep_subs is not None:
+            hit = _is_whitelisted(cmdline, whitelist_res, keep_subs)
+            if hit:
+                report.whitelist_hits += 1
+                report.reported.append(
+                    {"pid": pid, "reason": f"derived_orphan_whitelisted:{hit}", "cmdline": cmdline[:120]}
+                )
+                logger.info("keep/白名单豁免 PID=%d（非 python 形态衍生孤儿）reason=%s", pid, hit)
+                continue
         candidates[pid] = dict(info)
     if not candidates:
         return
@@ -1368,13 +1436,17 @@ def _reap_cycle(dry_run: bool, report: ReapReport) -> ReapReport:
     """本轮清理主体（判定与收割语义全在这里；失能兜底见 reap）。"""
     project_root = str(REPO_ROOT)
 
+    # T6（2026-10-11）：白名单/keep 清单上提到分支外——四条收割路径（矩阵主循环、
+    # 衍生孤儿、孵化超寿、幽灵斩杀线）共用同一份豁免面，不再有"某条路径不查 keep"
+    # 的形态盲区。psutil 缺席时幽灵路径仍需要它，故不能留在 else 分支里。
+    whitelist_res = [re.compile(p, re.IGNORECASE) for p in _DEFAULT_WHITELIST]
+    keep_subs = _load_keep_patterns()
+
     # 1) python 进程清理（psutil 不可用时降级关闭，fail-safe 方向=不清理）
     if psutil is None:
         report.errors.append("psutil unavailable: python process scan disabled")
         logger.error("psutil 不可用，python 进程扫描降级关闭（仅执行幽灵窗口扫描）")
     else:
-        whitelist_res = [re.compile(p, re.IGNORECASE) for p in _DEFAULT_WHITELIST]
-        keep_subs = _load_keep_patterns()
         project_py, all_procs = _scan_project_python_processes(project_root)
         _collect_metrics(project_py)
         trae_descendants = _build_trae_descendant_set(all_procs)
@@ -1454,7 +1526,7 @@ def _reap_cycle(dry_run: bool, report: ReapReport) -> ReapReport:
                 logger.info("watch PID=%d reason=%s", pid, verdict.reason)
 
         # 1.5) 项目衍生孤儿（ollama/llama-server 族，2026-09-15 事故补丁）
-        _reap_derived_orphans(all_procs, dry_run, report)
+        _reap_derived_orphans(all_procs, dry_run, report, whitelist_res, keep_subs)
 
         # 1.6) 孵化登记表超寿收割（M3 闭环，2026-09-16）——登记替代 cmdline 猜测
         _reap_incubated_expired(all_procs, dry_run, report, whitelist_res, keep_subs)
@@ -1466,7 +1538,7 @@ def _reap_cycle(dry_run: bool, report: ReapReport) -> ReapReport:
     #    report.errors 并大声告警，绝不阻断收割主链（收割本身也是保命动作），
     #    且三步各自独立：任一步爆炸不连坐其余两步（快照由 reap 外层落盘）。
     try:
-        report.ghosts = _reap_ghost_windows(dry_run)
+        report.ghosts = _reap_ghost_windows(dry_run, whitelist_res, keep_subs)
     except Exception as exc:  # noqa: BLE001
         report.errors.append(f"ghost_stage_failed: {exc!r}")
         logger.error("幽灵窗口扫描失能（继续跑 drift/保命链）: %s", exc, exc_info=True)

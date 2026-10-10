@@ -66,7 +66,33 @@ class ForwardFixRunner:
             return True
         return False
 
-    def generate_fix(self, commit_sha: str, error_message: str) -> FixResult:
+    def _own_target_paths(self, target_files: list[str] | None, patch_path: Path) -> list[str]:
+        """本次 forward-fix 唯一有权提交的文件集（仓库相对 POSIX 路径）。
+
+        来源必须可追溯到 runner 自家产物：① 调用方显式传入的清单（= 它要提交的修复面）；
+        ② 缺省回落到它刚刚自己写出的 fix patch 文件本身。绝不返回"全部脏文件"。
+        """
+        own: list[str] = []
+        for f in target_files or []:
+            rel = Path(str(f)).as_posix()
+            if str(f):
+                try:
+                    if Path(str(f)).is_absolute():
+                        rel = Path(str(f)).relative_to(self._project_root).as_posix()
+                except (ValueError, OSError):
+                    continue  # 仓外路径无提交权可言
+            if rel and rel not in own:
+                own.append(rel)
+        if own:
+            return own
+        # 自家产物兜底：runner 自己写出的 patch 文件（在仓内才谈得上提交）
+        try:
+            rel = patch_path.resolve().relative_to(self._project_root.resolve()).as_posix()
+            return [rel]
+        except (ValueError, OSError):
+            return []
+
+    def generate_fix(self, commit_sha: str, error_message: str, target_files: list[str] | None = None) -> FixResult:
         patch_path = (REPO_ROOT / ".zephyr" / "fix_patches") / f"fix_{commit_sha}.patch"
         patch_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -80,8 +106,21 @@ class ForwardFixRunner:
             )
             patch_path.write_text(result.stdout, encoding="utf-8")
 
-            self.run_git(["add", "-A"])
-            self.run_git(["commit", "-m", f"Forward-Fix: {error_message[:72]} [target:{commit_sha}]"])
+            # 脸三 pathspec 收紧（maint2 2026-10-11 任务书 C 项）：禁 `git add -A`——
+            # 共享暂存池是多会话混合池，`add -A`＝把他人条目装进我的 commit＝归属篡改；
+            # 只 add/commit 自家目标集（调用方清单，缺省＝自己刚写出的 patch）。
+            # 自家集为空时 fail-closed：宁可什么都不提交，也不做无 pathspec 全量 commit。
+            own = self._own_target_paths(target_files, patch_path)
+            if not own:
+                return FixResult(
+                    success=False,
+                    commit_sha=commit_sha,
+                    fix_type="forward_fix",
+                    patch_file=str(patch_path),
+                    details=["no_own_target_files: fail-closed，跳过 commit（禁吸他人条目）"],
+                )
+            self.run_git(["add", "--"] + own)
+            self.run_git(["commit", "-m", f"Forward-Fix: {error_message[:72]} [target:{commit_sha}]"] + ["--"] + own)
 
             return FixResult(
                 success=True,

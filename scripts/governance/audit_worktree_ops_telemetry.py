@@ -39,6 +39,10 @@
    - ``git stash push``（tracked 文件内容擦除）
    - ``git restore``（文件内容还原到 HEAD/source）
    - ``git checkout --``（legacy 擦除，应已替换为 stash）
+   - ``git stash drop`` / ``git stash clear``（S12 补齐：stash ref 物理消失）
+   - ``git reset HEAD``（S12 补齐：index 条目退回 HEAD 正典态，他人 staged 面被改写）
+   - ``git checkout <tree-ish> --`` / 整树 checkout（S12 补齐：工作面被覆盖）
+   - ``git clean -f`` / ``-fd``（S12 补齐：未跟踪文件物理删除=unstage 后第二腿）
    - ``Path.unlink()`` / ``os.unlink()`` / ``os.remove()``
    - ``shutil.rmtree()``
    - ``_quarantine_file``（内部已遥测，但审计应确认调用存在）
@@ -104,6 +108,46 @@ ERASURE_PATTERNS: list[tuple[str, str, str]] = [
     (r"shutil\.rmtree\s*\(", "shutil_rmtree", "warning"),
     # _quarantine_file — 内部已遥测，但审计应确认调用存在（info 级别）
     (r"_quarantine_file\s*\(", "quarantine_file", "info"),
+    # ── S12 观测面补齐（maint2 2026-10-11 任务书 B 项）──
+    # 病：这四族真实抹面动作（stash drop / reset HEAD / 整树 checkout / clean -f）
+    # 不在模式集内 ⇒ 事故发生时遥测看不见 ⇒ "谁把谁的 index 条目改了形"零留痕
+    # （同案卷自陈"两次均未证到具体命令"）。
+    # 每条模式同时覆盖两种真实形态：① argv 列表字面量（``["git","stash","drop",ref]``、
+    # ``["reset","HEAD","--",…]`` 这类无 "git" 首元素的 helper 变体也要命中）；
+    # ② 裸 cmdline 字符串（``git stash drop``／``git clean -fd``）。
+    # severity=warning（非 error）：判据阈值与上报口径一字不动，只补可见性——
+    # 这四族在 gov_enforcement 的既有真实位点（worktree_drift_watchdog / session_worktree
+    # 等他人正在改的文件）尚无遥测，直接标 error 会把 P2-6 e2e"0 error violations"
+    # 判据打成由我引入的新红。error 晋升归各属主补齐遥测后的下一批。
+    # git stash drop / stash clear — stash ref 物理消失（不可恢复的擦除）
+    (
+        r'["\']stash["\']\s*,\s*["\'](?:drop|clear)["\']|git\s+stash\s+(?:drop|clear)\b',
+        "git_stash_drop_clear",
+        "warning",
+    ),
+    # git reset HEAD —— index 条目退回 HEAD 正典态（他人 staged 面被静默改写）
+    (
+        r'["\']reset["\']\s*,\s*["\'](?:--(?:hard|mixed|soft|merge|keep)["\']\s*,\s*["\'])?'
+        r'(?:HEAD|[0-9a-fA-F]{7,40}|origin/[\w./-]+)["\']'
+        r"|git\s+reset\s+(?:--(?:hard|mixed|soft|merge|keep)\s+)?(?:HEAD|[0-9a-fA-F]{7,40}|origin/[\w./-]+)",
+        "git_reset_head",
+        "warning",
+    ),
+    # git checkout <tree-ish> -- / 整树 checkout（工作面被 tree-ish 覆盖）
+    (
+        r'["\']checkout["\']\s*,\s*["\'][^"\']+["\']\s*,\s*["\']--["\']'
+        r"|git\s+checkout\s+\S+\s+--(?:\s|$)"
+        r"|git\s+checkout\s+--\s+(?:\.|\*|:\S+)",
+        "git_checkout_treeish",
+        "warning",
+    ),
+    # git clean -f / -fd —— 未跟踪文件物理删除（与 unstage→quarantine 连坐的第二腿）
+    (
+        r'["\']clean["\']\s*,\s*["\']-{1,2}[a-zA-Z]*f[a-zA-Z]*["\']'
+        r"|git\s+clean\s+(?:-[a-zA-Z]*f[a-zA-Z]*|--force)",
+        "git_clean_force",
+        "warning",
+    ),
 ]
 
 # 满足遥测要求的函数名（同函数内出现即视为已遥测）

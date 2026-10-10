@@ -1,81 +1,96 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/add_module_translation.py | §
 # [MODULE] scripts.governance.d3_metadata.add_module_translation
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] scripts.governance._shared.module_translation_loader (is_generic_plain_zh, is_generic_plain_suffix, get_module_translation); scripts.governance._shared.yaml_utils (load_responsibility_layer_map); docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml (翻译真源); docs/01_policies_and_standards/_registry/catalogs/domain_responsibility_layer_mapping.yaml (responsibility_layer 唯一真源)
-# [CONSUMERS] AI 新建/更新模块时调用以合规写入大白话简介；TRANSLATION-COVERAGE gate 修复指引引用
+# [DEPENDENCIES] scripts.governance._shared.module_translation_loader (is_generic_plain_zh, is_generic_plain_suffix, get_module_translation); scripts.governance._shared.yaml_utils (load_responsibility_layer_map); docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml (机生只读投影，账本 REG-MODULE-TRANSLATION-001 的 render 产物); docs/01_policies_and_standards/_registry/catalogs/domain_responsibility_layer_mapping.yaml (responsibility_layer 唯一真源); zephyr.governance.registry_ledger.api (register/update/fetch，lazy); zephyr.governance.registry_ledger.baseline (publish_snapshot，lazy); zephyr.governance.registry_projection.projection_generator (run/render, _entry_index，lazy); zephyr.governance.registry_projection.pg_source (load_latest_snapshot，lazy); zephyr.infrastructure.database_service (账本只读面，lazy); zephyr.shared.utils.time_utils (now_utc，审计留痕)
+# [CONSUMERS] AI 新建/更新模块时调用以合规登记大白话简介（意图 API 薄壳单口）；TRANSLATION-COVERAGE gate 修复指引引用本 CLI；scripts/governance/dead_letter_doctor.py:702（add_translation 函数级复用，签名兼容）；进程内测试=tests/gov/governance/d3_metadata/test_module_translation_ledger_channel.py
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 按 module_path 唯一键 upsert；写入前 MUST 通过 is_generic_plain_zh/is_generic_plain_suffix 校验（拒模板化简介，治本）；强制双引号转义；写后 YAML 解析校验；写入后失效 module_translation_loader 缓存；module_path 正斜杠归一化；responsibility_layer 只准从 domain_responsibility_layer_mapping.yaml 按 domain_id 推导（裁定#335 结论⑥，禁从 layer_id/目录名直推），映射缺域=WARNING 留空不阻断，派生字段永不从旧块/重复块继承；重登记同一 module_path 时规范字段的在册非空值**永不因调用方缺省而被清空**（只填缺省不覆盖实值，清空唯一途径＝调用方另给非空替代值；治本 2026-09-27 字段级蒸发）
-# [MODIFY-GUARD] scripts/governance/d3_metadata/add_module_translation.py
+# [INVARIANTS] 按 module_path 唯一键登记；写入前 MUST 通过 is_generic_plain_zh/is_generic_plain_suffix 校验（拒模板化简介，治本）；**登记唯一通道=意图 API 三步**（api.register/update 写 PG 账本 → baseline.publish_snapshot(带 repo_root) → registry_projection render），直写投影轨已退役（裁定#502 同款薄壳，本工具与 batch_creation_tokens 同病同治）；PG 不可达=登记失败（exit 2），绝不静默降级直写；**键集合差分幂等**：本次未声明的键（含空值参数）永不改动在册值，已存 module_path 永不整条覆盖（2026-09-27 字段级蒸发教训），删除集只能由 --clear-field 逐条点名或 responsibility_layer 重算派生，越界删除=拒写；responsibility_layer 唯一推导通道=域→职责层映射真源（裁定#335 结论⑥，禁从 layer_id/目录名直推），**映射真源故障时不派生也不删除**（在册值原样，防瞬时故障改写真源）；账本写后 MUST publish+render 并三方核验落地（PG 有该行 ∧ 盘上投影面 grep 命中该 module_path）；--legacy-disk-write 为显式逃生旗（缺省不走），直写条目会被下次 render 当非账本内容修剪=红色警告+JSONL 审计留痕；--dedupe/--sync-layer 是投影面手术（账本不认，render 后失效）已在帮助文本如实标注
+# [MODIFY-GUARD] scripts/governance/d3_metadata/add_module_translation.py — 2026-10-11 st-maint2-20261011 直写轨退役（裁定#502 先例，无账本通道病根治）：add_translation 语义从"直写投影 YAML"改"意图 API 三步+三方核验"，签名兼容（entry, dry_run）不变，旧直写腿改名 _add_translation_via_disk_projection 仅服务 --legacy-disk-write/--dedupe/--sync-layer
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=SUCCESS, exit 1=VALIDATION_ERROR(简介不合规/字段缺失), exit 2=IO/YAML_ERROR
-# [TESTS] tests/governance/d3_metadata/test_add_module_translation.py
+# [ERROR_CONTRACT] exit 0=SUCCESS（登记/预演/审计零命中）, exit 1=VALIDATION_ERROR(简介不合规/字段缺失/子命令参数互斥/账本同键多 active 行/审计命中=投影面有而快照无), exit 2=IO/YAML_ERROR/LEDGER_UNREACHABLE（账本不可达=登记失败，不降级直写；投影册读写失败；快照不可取）
+# [TESTS] tests/gov/governance/d3_metadata/test_module_translation_ledger_channel.py
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""add_module_translation.py — 模块翻译条目合规写入工具（TRANSLATION-COVERAGE 配套）。
+"""add_module_translation.py — 模块翻译条目合规登记工具（意图 API 薄壳，TRANSLATION-COVERAGE 配套）。
 
-把"在哪里更新 / 怎么更新"落地为一条命令：AI 新建或更新模块时，调用本脚本向
-翻译真源 ``module_translation_registry.yaml`` upsert 一条 entry（含大白话 plain_zh）。
+把"在哪里更新 / 怎么更新"落地为一条命令：AI 新建或更新模块时，调用本脚本向翻译账本
+``REG-MODULE-TRANSLATION-001`` 登记一条 entry（含大白话 plain_zh），随后发布快照+重打投影。
 
-真源边界（SSoT 分类铁律 TRAE-062）
-----------------------------------
-模块翻译属**规则数据** → 真源是 YAML 文件。本脚本是 YAML 的合规写入入口，
-禁止在生成器代码/DB 里硬编码模块翻译。与 ``apply_depgraph.py``（写 DB 架构数据）
-是正交真源，互不写入，只能校验对方。
+真源边界（SSoT 分类铁律 TRAE-062 → 2026-10-04 cutover 后口径）
+--------------------------------------------------------------
+模块翻译条目的**真源是 PG registry_ledger 账本**，
+``module_translation_registry.yaml`` 是机生只读投影（唯一合法写者=投影生成器）。
+本工具因此不再是 YAML 写者：登记一律走意图 API 三步——
 
-治本（防蔓延闭环）
-------------------
-病根：此前大白话简介靠事后治理（审计→批量修→提交），新模块仍会持续制造缺口。
-本工具 + TRANSLATION-COVERAGE gate + reconciler 构成"写入入口→提交阻断→存量对账"
-三层闭环：AI 创新模块后跑本命令合规写入，gate 在提交时校验，reconciler 持续对账。
+    1. api.register / api.update（写账本；幂等=键集合差分，未声明的键不动在册值）
+    2. baseline.publish_snapshot(REGISTRY_ID, repo_root=...)（发布不可变快照，禁裸发布）
+    3. registry_projection run(mode="render")（PG-wins 重打投影册）
+
+死路三步（2026-10-11 定案，本工具曾经的病，与 batch_creation_tokens 同一条根）：
+直写投影 YAML → 条目没入账本 → 下一次 render 按账本把它整块修剪掉（实测 v17→v18 期间
+``scripts/backup/backup_reconciler_shadow.py`` 一条被 00:52/00:53 两次 render 剪掉）→
+TRANSLATION-COVERAGE gate 读投影判缺失又指示跑本工具 = 死循环。现通道改道，循环断开。
+
+账本不可达 = 登记失败（exit 2），**绝不静默降级直写投影**（降级=把死路重新接通）。
+``--legacy-disk-write`` 是显式逃生旗：缺省不走，走则打红色警告（"直写条目会被下次 render
+修剪"）并落一行 JSONL 审计留痕。
 
 写入前校验（治本，非事后）
 --------------------------
 1. plain_zh 非空且 CJK≥8（与本次治理基线一致）
 2. 复用 module_translation_loader.is_generic_plain_zh 拒全串通用模板
 3. 复用 is_generic_plain_suffix 拒剥离 name 前缀后的通用后缀
-任一不过 → exit 1，拒绝写入（防 AI 填"提供包入口和模块加载功能"糊弄）。
+任一不过 → exit 1，拒绝登记（防 AI 填"提供包入口和模块加载功能"糊弄）。
 
 用法 / Usage::
 
+    # 登记/更新一条大白话简介（缺省=账本通道：register→publish→render→三方核验）
     python scripts/governance/d3_metadata/add_module_translation.py \\
         --path src/zephyr/xxx/yyy.py \\
         --domain D_GOV_RULE \\
         --name-zh "中文名" --name-en "English Name" \\
         --desc-zh "技术简介" --desc-en "English desc" \\
-        --plain-zh "大白话：做什么/解决什么/怎么做"
+        --plain-zh "大白话：做什么/解决什么/怎么做" \\
+        --session my-session
 
-    # 整表去重（裁定#335 结论7，复发型病灶的常驻自愈通道）：扫描 entries 段全部
-    # 同 module_path 重复条目→保留信息最全条目并合并扩展字段→CAS 写回；幂等，
-    # 可配 --dry-run 先看账不写盘
-    python scripts/governance/d3_metadata/add_module_translation.py --dedupe [--dry-run]
+    # 只看账不写（校验+派生+账本差分预演，零 PG 写/零发布/零 render）
+    python ... --path ... --domain ... --name-zh ... --plain-zh ... --dry-run
 
-    # 整表重算 responsibility_layer（裁定#335 结论⑥，W4b）：逐条目按 domain_id 从
-    # domain_responsibility_layer_mapping.yaml 覆盖该字段（幂等收敛；映射删域→移除字段）
-    # 默认放量由主会话执行，日常先 --dry-run 看账
-    python scripts/governance/d3_metadata/add_module_translation.py --sync-layer [--dry-run]
+    # 点名删除某字段（删除集必须逐条点名，未点名的键永不从在册 payload 消失）
+    python ... --path ... --clear-field desc_en
+
+    # 回填扫描（只读，零写）：报"投影面有而最新快照无"的条目（shadow 事故的机判形态）
+    python scripts/governance/d3_metadata/add_module_translation.py --audit-projection-vs-ledger
+
+    # 整表手术（投影面通道，账本不认——render 一到即被覆写，仅作过渡期对账预览用）
+    python ... --dedupe [--dry-run]
+    python ... --sync-layer [--dry-run]
 
 responsibility_layer 派生铁律（裁定#335 结论⑥）
 --------------------------------------------------
-新条目 upsert 时按 ``--domain`` 自动填 ``responsibility_layer``，唯一推导通道是
+新条目登记时按 ``--domain`` 自动派生 ``responsibility_layer``，唯一推导通道是
 域→职责层映射真源（经 ``yaml_utils.load_responsibility_layer_map``）；**禁从
 layer_id/目录名直推**（争点 C1/C17）。映射查不到该域 → stderr WARNING + 该字段留空
-（不阻断翻译写入，翻译与层是两件事）；映射可用而调用方塞了别的值 → 以真源为准覆盖。
-派生字段永不从旧块/重复块继承（否则映射删域后旧值会被 upsert 复活）。
+（不阻断翻译登记）；映射可用而调用方塞了别的值 → 以真源为准覆盖。
+派生字段永不从旧行继承（否则映射删域后旧值复活）；**映射真源本身不可用 → 该字段
+不派生也不删除**（在册值原样——瞬时故障不该改写真源）。
 
 Exit codes:
-    0 = SUCCESS（upsert / 去重 / 层同步成功，或 dry-run 校验通过）
-    1 = VALIDATION_ERROR（简介不合规 / 必填字段缺失 / --dedupe、--sync-layer 与 upsert 参数互斥）
-    2 = IO/YAML_ERROR（文件读写/CAS 拒写/解析失败/层映射真源不可用）
+    0 = SUCCESS（账本登记+发布+重打+核验通过，或 dry-run 预演通过，或审计零命中）
+    1 = VALIDATION_ERROR（简介不合规 / 必填字段缺失 / 子命令参数互斥 / 账本同键多
+        active 行 / 审计命中"投影面有而快照无"）
+    2 = IO / YAML_ERROR / LEDGER_UNREACHABLE（账本不可达=登记失败、投影册读写失败、
+        快照不可取、CAS 拒写、解析失败）
 """
 
 from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: add_module_translation.py — 模块翻译条目合规写入工具（TRANSLATION-COVERAGE 配套）。
+description: add_module_translation.py — 模块翻译条目合规登记工具（意图 API 薄壳，TRANSLATION-COVERAGE 配套）。
 dimensions:
 - D3
 priority: P2
@@ -85,6 +100,7 @@ warn_only: false
 
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -108,10 +124,36 @@ from _shared.yaml_utils import (  # noqa: E402 — re-export of SSoT src/zephyr/
     load_responsibility_layer_map,
 )
 
-# 翻译真源路径（SSoT：规则数据真源是 YAML 文件）
-REGISTRY_YAML = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "module_translation_registry.yaml"
+# 投影册路径（2026-10-04 cutover 后：机生只读投影，真源=PG 账本 REG-MODULE-TRANSLATION-001）
+REGISTRY_ID = "REG-MODULE-TRANSLATION-001"
+FAMILY_KEY = "entries"
+REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml"
+REGISTRY_YAML = REPO_ROOT / REGISTRY_REL
+
+# 发布/重打所用仓库根（=本工作树根）。测试与施工沙盘用注入点：改这一个名字 +
+# REGISTRY_YAML 即可把整条通道（publish/render/落地核验）切到 tmp 仓，不写真仓。
+PROJECTION_ROOT = REPO_ROOT
+
+# 账本条目只读点查（§5.160.2 SQL 集中化：模块级 SQL_ 常量，参数化查询）
+SQL_TRANSLATION_ROW_BY_MODULE_PATH = (
+    "SELECT entry_key, payload, version, status FROM registry_ledger.registry_entry "
+    "WHERE registry_id=%s AND family_key=%s AND payload->>'module_path'=%s ORDER BY version DESC"
 )
+
+# 登记缺省归因会话名（CLI --session 可覆盖；账本 created_by/updated_by 落此值）
+DEFAULT_SESSION = "add_module_translation"
+
+# 意图 API 返回码字面量（与 zephyr.governance.registry_ledger.api.OK/OK_NOOP/
+# CONFLICT_DUPLICATE/CONFLICT_VERSION 同值）。此处刻意不 import api：前置校验与
+# --dry-run 必须在缺 psycopg2/PG 的环境也能跑（api 模块级 import psycopg2）；
+# 等值由 tests/gov/governance/d3_metadata/test_module_translation_ledger_channel.py 机械断言。
+_CODE_OK = "OK"
+_CODE_NOOP = "OK_NOOP"
+_CODE_CONFLICT_DUPLICATE = "CONFLICT_DUPLICATE"
+_CODE_CONFLICT_VERSION = "CONFLICT_VERSION"
+
+# 逃生旗审计留痕（只追加；根宪法 §9.4 禁向 .runtime 根直写 → 走 gate_audit 子目录）
+LEGACY_DISK_WRITE_AUDIT_PATH = REPO_ROOT / ".runtime" / "gate_audit" / "add_module_translation_legacy_disk_write.jsonl"
 
 # 域→responsibility_layer 映射真源路径（路径公式单一来源在 yaml_utils；
 # 本模块常量同时是测试注入点——monkeypatch 此名即可换成 tmp 假映射，不读真仓）
@@ -484,41 +526,49 @@ def _write_registry(new_text: str, base_text: str) -> None:
     )
 
 
-def add_translation(entry: dict, *, dry_run: bool = False) -> tuple[int, str]:
-    """主入口：校验 + 派生 responsibility_layer + upsert（含重复自愈）+ CAS 写盘 + 解析校验。
-
-    Args:
-        entry: 含 module_path/domain_id/name_zh/name_en/desc_zh/desc_en/plain_zh 的 dict；
-            ``responsibility_layer`` 无需调用方提供——按 domain_id 从映射真源自动派生
-            （映射缺域则留空，见裁定#335 结论⑥）。
-        dry_run: True 只校验不写盘。
+def _validate_and_derive(entry: dict) -> tuple[int | None, str, dict, dict | None]:
+    """必填字段 + 大白话合规校验 + responsibility_layer 派生（账本/逃生旗两条通道共用前置）。
 
     Returns:
-        (exit_code, message)。
+        ``(err_code, message, entry_with_layer, layer_map)``——``err_code`` 非 None 时调用方
+        MUST 直接返回该码；``layer_map is None`` 表示映射真源本身不可用（已 stderr WARNING），
+        账本通道据此**不派生也不删除** ``_LAYER_KEY``（在册值原样——瞬时故障不该改写真源）。
     """
-    # 1. 必填字段校验
     required = ["module_path", "domain_id", "name_zh", "plain_zh"]
     missing = [f for f in required if not (entry.get(f) or "").strip()]
     if missing:
-        return EXIT_VALIDATION, f"必填字段缺失: {missing}"
+        return EXIT_VALIDATION, f"必填字段缺失: {missing}", entry, None
 
-    # 2. plain_zh 合规校验（写入前治本）
     ok, reason = _validate_plain(entry["plain_zh"], entry["name_zh"])
     if not ok:
-        return EXIT_VALIDATION, f"plain_zh 校验失败: {reason}"
+        return EXIT_VALIDATION, f"plain_zh 校验失败: {reason}", entry, None
 
-    # 2.5 responsibility_layer 派生（裁定#335 结论⑥）：唯一通道=域→层映射真源。
-    # 真源自身不可用只降级"不填"（翻译写入与层是两件事，不连坐），映射缺该域由
-    # _fill_responsibility_layer 逐条 WARNING。
+    # 层派生（裁定#335 结论⑥）：唯一通道=域→层映射真源；真源不可用只降级"不填"。
     try:
         layer_map: dict[str, str] | None = _read_layer_map()
-    except Exception as e:  # noqa: BLE001 — 层真源故障不阻断翻译写入
+    except Exception as e:  # noqa: BLE001 — 层真源故障不阻断翻译登记
         print(
-            f"[add_module_translation] WARNING: {_LAYER_KEY} 映射真源不可用（{type(e).__name__}: {e}），本次不填该字段",
+            f"[add_module_translation] WARNING: {_LAYER_KEY} 映射真源不可用（{type(e).__name__}: {e}），本次不派生该字段",
             file=sys.stderr,
         )
         layer_map = None
-    entry = _fill_responsibility_layer(entry, layer_map)
+    return None, "", _fill_responsibility_layer(entry, layer_map), layer_map
+
+
+def _add_translation_via_disk_projection(entry: dict, *, dry_run: bool = False) -> tuple[int, str]:
+    """旧直写腿（写盘上投影 YAML）——仅供 --legacy-disk-write 逃生旗与整表手术复用。
+
+    病（2026-10-11 定案）：投影册已被投影器接管，直写条目没入账本 → 下一次 render 按
+    PG-wins 把它整块修剪掉（实录：scripts/backup/backup_reconciler_shadow.py 在 v17 快照
+    缺该行，00:52/00:53 两次 render 剪除）。**登记正路是 ``register_via_ledger``**，
+    本函数只在显式逃生旗或 --dedupe/--sync-layer 整表手术下被调用。
+
+    流程不变（合规校验 + 派生 + 段落感知 upsert（含重复自愈）+ CAS 写盘 + 解析校验）。
+    """
+    # 1-2. 必填/合规校验 + 层派生
+    err_code, msg, entry, _layer_map = _validate_and_derive(entry)
+    if err_code is not None:
+        return err_code, msg
 
     # 3. 读取真源（base_text 兼作 CAS 基线）
     try:
@@ -559,7 +609,431 @@ def add_translation(entry: dict, *, dry_run: bool = False) -> tuple[int, str]:
     _invalidate_loader_cache()
 
     action = "新增" if is_new else "更新"
-    return EXIT_SUCCESS, f"{action} 翻译条目: {entry['module_path']}（entries 共 {len(entries)} 条）"
+    return (
+        EXIT_SUCCESS,
+        f"{action} 翻译条目（投影面直写，账本未记）: {entry['module_path']}（entries 共 {len(entries)} 条）",
+    )
+
+
+# ============================================================================
+# 意图 API 薄壳通道（裁定#502 同款）：register/update → publish_snapshot → render
+# ----------------------------------------------------------------------------
+# 三条腿各有一个模块级包装，既让生产代码零散 SQL/零全局状态，也给测试留注入点。
+# ============================================================================
+
+
+def _declared_fields(entry: dict) -> dict[str, object]:
+    """本次调用**真正声明**的键值（module_path 恒置首=身份键；空值=未声明）。
+
+    治本（2026-09-27 字段级蒸发 + 已裁教训"整条覆盖他人字段"）：调用方没给值的键
+    （空串/None）不进声明集，于是既不会被写空、也不会从在册 payload 消失。
+    """
+    declared: dict[str, object] = {"module_path": _normalize_path(str(entry.get("module_path") or ""))}
+    for k, v in entry.items():
+        if k == "module_path" or _is_empty_value(v):
+            continue
+        declared[k] = v
+    return declared
+
+
+def _merge_payload(existing: dict | None, declared: dict, named_removals: set[str]) -> dict:
+    """键集合差分合成新 payload：在册键原样保留，本次声明的键覆盖，仅点名删除的键移除。
+
+    身份键 ``module_path`` 恒置首且**永不可删**（PG jsonb 按（键长,字节序）重排，
+    api.update 会用 ``entry_composite_key`` 复核身份，首字段不稳=身份漂移被拒）。
+    点名删除在最后执行：显式 ``--clear-field`` 的意图高于同键的声明值。
+    """
+    merged: dict[str, object] = {"module_path": declared["module_path"]}
+    for k, v in (existing or {}).items():
+        if k == "module_path":
+            continue
+        merged[k] = v
+    for k, v in declared.items():
+        if k != "module_path":
+            merged[k] = v
+    for k in named_removals:
+        if k != "module_path":
+            merged.pop(k, None)
+    return merged
+
+
+def _unauthorized_removals(existing: dict | None, merged: dict, named_removals: set[str]) -> set[str]:
+    """删除集守卫：从在册 payload 消失的键必须逐条点名（越界删除=拒写，fail-closed）。"""
+    removed = {k for k in (existing or {}) if k not in merged}
+    removed.discard("module_path")
+    return removed - named_removals
+
+
+def _payload_delta_keys(existing: dict | None, merged: dict) -> tuple[list[str], list[str]]:
+    """(变化键, 删除键)——dry-run 与幂等判定共用（无变化即账本已到位）。"""
+    changed = sorted(k for k in merged if (existing or {}).get(k) != merged[k])
+    removed = sorted(k for k in (existing or {}) if k not in merged)
+    return changed, removed
+
+
+def _ledger_rows(module_path: str) -> list[dict]:
+    """账本只读点查该 module_path 的全部条目行（entry_key/payload/version/status）。
+
+    按 ``payload->>'module_path'`` 查而非按拼装的 entry_key 查——存量有 613 行身份键
+    漂到 ``desc_en=...``（jsonb 键序历史病），只认拼出来的键会漏判"已存在"进而插重复行，
+    render 自校验随即以"声明族身份坍缩"拒写（把病推给下一个受害者）。
+    """
+    from zephyr.infrastructure.database_service import DatabaseService  # noqa: PLC0415
+
+    conn = DatabaseService().get_depgraph_conn(read_only=True)
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                SQL_TRANSLATION_ROW_BY_MODULE_PATH,
+                (REGISTRY_ID, FAMILY_KEY, _normalize_path(module_path)),
+            )
+            rows = cur.fetchall()
+    finally:
+        conn.close()
+    out: list[dict] = []
+    for row in rows:
+        item = dict(row)
+        payload = item.get("payload")
+        if isinstance(payload, str):
+            payload = json.loads(payload)
+        item["payload"] = payload or {}
+        out.append(item)
+    return out
+
+
+def _ledger_register(payload: dict, *, reason: str, session_id: str) -> object:
+    """意图 API 登记新行（同键同指纹=OK_NOOP，同键异指纹=CONFLICT_DUPLICATE）。"""
+    from zephyr.governance.registry_ledger import api  # noqa: PLC0415
+
+    return api.register(REGISTRY_ID, FAMILY_KEY, payload, reason=reason, session_id=session_id, actor_kind="agent")
+
+
+def _ledger_update(entry_key: str, expected_version: int, payload: dict, *, reason: str, session_id: str) -> object:
+    """意图 API CAS 更新在册行（expected_version 不匹配=CONFLICT_VERSION，由调用方重读重试）。"""
+    from zephyr.governance.registry_ledger import api  # noqa: PLC0415
+
+    return api.update(
+        REGISTRY_ID, FAMILY_KEY, entry_key, expected_version, payload, reason=reason, session_id=session_id
+    )
+
+
+def _publish_and_render(session_id: str) -> tuple[int | None, str]:
+    """发布快照（禁裸发布：MUST 带 repo_root）+ 重打本册投影（唯一合法写者=生成器）。"""
+    from zephyr.governance.registry_ledger.baseline import publish_snapshot  # noqa: PLC0415
+    from zephyr.governance.registry_projection.projection_generator import run as projection_run  # noqa: PLC0415
+
+    try:
+        published = publish_snapshot(REGISTRY_ID, repo_root=PROJECTION_ROOT, session_id=session_id)
+    except Exception as e:  # noqa: BLE001 — 发布失败=落地未证实，绝不降级直写
+        return EXIT_IO, f"快照发布失败: {type(e).__name__}: {e}"
+    report = projection_run(
+        PROJECTION_ROOT,
+        mode="render",
+        registry_id=REGISTRY_ID,
+        physical_path=REGISTRY_REL,
+        actor_session=session_id,
+    )
+    if not report.ok and report.quadrant not in ("clean", "armed_initial"):
+        return EXIT_IO, (f"投影重打未过（quadrant={report.quadrant}）: {report.detail}；证据={report.evidence_path}")
+    return None, (
+        f"publish v{published.get('snapshot_version')}(noop={published.get('noop')}) "
+        f"render quadrant={report.quadrant} wrote={report.wrote}"
+    )
+
+
+def _projection_entry(module_path: str) -> dict | None:
+    """只读：从盘上投影册取该 module_path 的 entries 条目（未命中=None）。
+
+    段落感知区间扫描（不整册 safe_load，68k 行册子秒级返回），字节级复用旧直写腿的
+    解析器——读侧用途，无任何写盘动作。
+    """
+    norm_path = _normalize_path(module_path)
+    try:
+        text = REGISTRY_YAML.read_text(encoding="utf-8")
+    except Exception:  # noqa: BLE001 — 投影面不可读由调用方核验分支报红
+        return None
+    _preamble, entries_body, _tail = _split_entries_section(text)
+    for s, e in _entries_body_regions(entries_body):
+        if _block_module_path(entries_body[s:e]) == norm_path:
+            parsed = _parse_block_entry(entries_body[s:e])
+            if parsed is not None:
+                return parsed
+    return None
+
+
+def _verify_landing(module_path: str, declared: dict) -> tuple[bool, str]:
+    """三方核验落地：PG 有该行且值已到位 ∧ 盘上投影面 grep 命中同一 module_path。
+
+    第三面（``git show dev:``）不在此要求——入账本与落地是两件事（落地归提交队列/总包）。
+    """
+    try:
+        rows = [r for r in _ledger_rows(module_path) if r.get("status") == "active"]
+    except Exception as e:  # noqa: BLE001
+        return False, f"账本复核不可达（{type(e).__name__}: {e}）——登记结果未证实"
+    if not rows:
+        return False, "PG 账本无该 module_path 的 active 行"
+    payload = rows[0]["payload"]
+    mismatched = sorted(k for k in declared if str(payload.get(k, "")) != str(declared[k]))
+    proj = _projection_entry(module_path)
+    if proj is None:
+        return False, f"盘上投影册未出现该条目（PG 有、投影面无）：{payload.get('module_path')}"
+    proj_mismatched = sorted(k for k in declared if str(proj.get(k, "")) != str(declared[k]))
+    if mismatched or proj_mismatched:
+        return False, (f"落地值与登记值不一致 PG={mismatched} 投影={proj_mismatched}")
+    return True, f"PG active 行 version={rows[0].get('version')} + 投影面命中（共 {len(rows)} 行）"
+
+
+def register_via_ledger(
+    entry: dict,
+    *,
+    session_id: str = "",
+    dry_run: bool = False,
+    clear_fields: tuple[str, ...] = (),
+) -> tuple[int, str]:
+    """登记正路：校验 → 账本 register/update（键集合差分幂等）→ publish → render → 三方核验。
+
+    幂等与"不清他人字段"的机械保证：
+      - 声明集=本次真正给了值的键（空值不入声明集）→ 未声明键从在册 payload 原样带过；
+      - 删除集=``--clear-field`` 点名 + ``responsibility_layer`` 重算（映射真源不可用时
+        连点名删除都不做）；未点名的键若从 payload 消失 → 拒写（fail-closed）。
+    PG 不可达=登记失败 exit 2，**绝不降级直写投影**（直写=重新接通死路）。
+    """
+    err_code, msg, entry, layer_map = _validate_and_derive(entry)
+    if err_code is not None:
+        return err_code, msg
+
+    sid = (session_id or DEFAULT_SESSION).strip() or DEFAULT_SESSION
+    norm_path = _normalize_path(entry["module_path"])
+    declared = _declared_fields(entry)
+    named_removals = {f.strip() for f in clear_fields if f and f.strip()}
+    if _LAYER_KEY not in declared and layer_map is not None:
+        # 映射可用而该域查不到 → 在册派生值随真源收敛（裁定#335 结论⑥"永不继承"）；
+        # 映射真源不可用（layer_map=None）→ 不派生也不删除，在册值原样。
+        named_removals.add(_LAYER_KEY)
+
+    try:
+        rows = _ledger_rows(norm_path)
+    except Exception as e:  # noqa: BLE001 — 账本不可达 fail-closed，不降级直写
+        return EXIT_IO, (
+            f"账本不可达，登记失败（绝不降级直写投影）: {type(e).__name__}: {e}；"
+            f"应急直写需显式 --legacy-disk-write（后果：下次 render 修剪）"
+        )
+    actives = [r for r in rows if r.get("status") == "active"]
+    if len(actives) > 1:
+        return EXIT_VALIDATION, (
+            f"账本该 module_path 有 {len(actives)} 条 active 行（身份漂移，回灌/清理班处置）："
+            f"{[r.get('entry_key') for r in actives][:3]}——本次不登记，防再插一条同键副本"
+        )
+    existing = actives[0]["payload"] if actives else None
+    merged = _merge_payload(existing, declared, named_removals)
+    illegal = _unauthorized_removals(existing, merged, named_removals)
+    if illegal:
+        return EXIT_VALIDATION, f"删除集越界（未点名即不得删除）: {sorted(illegal)}——拒写"
+    changed, removed = _payload_delta_keys(existing, merged)
+    reason = f"模块大白话简介经意图 API 登记 {REGISTRY_ID}/{FAMILY_KEY}（薄壳通道=裁定#502 同款）"
+
+    if dry_run:
+        action = (
+            "register（新增行）"
+            if not actives
+            else ("update（改动键）" if (changed or removed) else "noop（账本已到位）")
+        )
+        return EXIT_SUCCESS, (
+            f"[dry-run] {norm_path} → {action}；声明键 {sorted(declared)} / 变化键 {changed} / "
+            f"点名删除 {removed} / 在册其余键原样 {sorted(set(existing or {}) - set(changed) - set(removed))}"
+        )
+
+    if not actives:
+        res = _ledger_register(merged, reason=reason, session_id=sid)
+        if res.code == _CODE_CONFLICT_DUPLICATE:  # 同键异指纹（并发他人已登记）→ 重读走 update 差分
+            try:
+                rows = _ledger_rows(norm_path)
+            except Exception as e:  # noqa: BLE001
+                return EXIT_IO, f"冲突后账本复核不可达（{type(e).__name__}: {e}）——登记结果未证实"
+            actives = [r for r in rows if r.get("status") == "active"]
+            if not actives:
+                return EXIT_VALIDATION, f"账本冲突且无可更新行: {res.code} {res.detail}"
+            existing = actives[0]["payload"]
+            merged = _merge_payload(existing, declared, named_removals)
+            res = _ledger_update(
+                actives[0]["entry_key"], int(actives[0]["version"]), merged, reason=reason, session_id=sid
+            )
+    elif not changed and not removed:
+        res = None  # 幂等：账本已到位，仍继续 publish+render（投影面落后于账本时由此自愈）
+    else:
+        res = None
+        for _attempt in range(3):
+            target = actives[0]
+            res = _ledger_update(target["entry_key"], int(target["version"]), merged, reason=reason, session_id=sid)
+            if res.code == _CODE_CONFLICT_VERSION:  # 他人已推进 CAS 版本 → 重读再差分
+                try:
+                    rows = _ledger_rows(norm_path)
+                except Exception as e:  # noqa: BLE001
+                    return EXIT_IO, f"CAS 冲突后账本复核不可达（{type(e).__name__}: {e}）——登记结果未证实"
+                actives = [r for r in rows if r.get("status") == "active"]
+                if not actives:
+                    return EXIT_VALIDATION, f"账本行消失，无法更新: {res.detail}"
+                existing = actives[0]["payload"]
+                merged = _merge_payload(existing, declared, named_removals)
+                illegal = _unauthorized_removals(existing, merged, named_removals)
+                if illegal:
+                    return EXIT_VALIDATION, f"重试后删除集越界（未点名即不得删除）: {sorted(illegal)}——拒写"
+                changed, removed = _payload_delta_keys(existing, merged)
+                if not changed and not removed:
+                    res = None  # 已收敛到目标态
+                    break
+                continue
+            break
+    if res is not None and res.code not in (_CODE_OK, _CODE_NOOP):
+        return EXIT_VALIDATION, f"账本写入失败: {res.code} {res.detail}"
+
+    pub_code, pub_msg = _publish_and_render(sid)
+    if pub_code is not None:
+        return pub_code, pub_msg
+
+    ok, detail = _verify_landing(norm_path, {k: v for k, v in declared.items() if k not in named_removals})
+    wrote = "noop（账本已到位）" if res is None else f"{res.code}"
+    if not ok:
+        return EXIT_IO, f"三方核验未过 {norm_path}: {detail}；通道腿={pub_msg}"
+    return EXIT_SUCCESS, (
+        f"账本登记 {wrote}: {norm_path}（会话={sid}，声明键 {sorted(declared)}，改动键 {changed or '无'}，"
+        f"点名删除 {removed or '无'}）；{pub_msg}；落地核验={detail}"
+    )
+
+
+def add_translation(
+    entry: dict,
+    *,
+    dry_run: bool = False,
+    session_id: str = "",
+    legacy_disk_write: bool = False,
+    clear_fields: tuple[str, ...] = (),
+) -> tuple[int, str]:
+    """主入口（兼容面）：缺省=意图 API 账本通道；显式 ``legacy_disk_write`` 才走旧直写腿。
+
+    签名向后兼容 ``scripts/governance/dead_letter_doctor.py:702``（位置 entry + dry_run）。
+    直写腿会打红色警告并落一行 JSONL 审计留痕（条目不进账本 ⇒ 下次 render 修剪）。
+    """
+    if legacy_disk_write:
+        _warn_legacy_disk_write(entry.get("module_path", ""))
+        _record_legacy_disk_write(entry.get("module_path", ""), session_id or DEFAULT_SESSION, dry_run=dry_run)
+        return _add_translation_via_disk_projection(entry, dry_run=dry_run)
+    return register_via_ledger(entry, session_id=session_id, dry_run=dry_run, clear_fields=clear_fields)
+
+
+def _warn_legacy_disk_write(module_path: str) -> None:
+    """逃生旗红色警告（stderr，ANSI 31）：直写条目不进账本，会被下次 render 修剪。"""
+    print(
+        "\033[31m[add_module_translation][LEGACY-DISK-WRITE 红色警告] "
+        f"{module_path} 正在直写投影册 module_translation_registry.yaml——该条目不会进入 "
+        f"PG 账本（{REGISTRY_ID}），下一次 render（PG-wins）会把它当非账本内容修剪掉，"
+        "TRANSLATION-COVERAGE 随即复现缺失。正路=去掉 --legacy-disk-write 走账本通道"
+        "（register→publish→render）。已落审计留痕。\033[0m",
+        file=sys.stderr,
+    )
+
+
+def _record_legacy_disk_write(module_path: str, session_id: str, *, dry_run: bool) -> None:
+    """逃生旗审计留痕（fail-open：留痕失败不阻断，但醒目报出）。"""
+    try:
+        from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+        path = LEGACY_DISK_WRITE_AUDIT_PATH
+        path.parent.mkdir(parents=True, exist_ok=True)
+        line = json.dumps(
+            {
+                "ts": now_utc().isoformat(),
+                "actor_session": session_id,
+                "module_path": _normalize_path(module_path),
+                "dry_run": bool(dry_run),
+                "channel": "legacy_disk_write",
+                "note": "直写投影不进账本，下次 render 修剪（裁定#502 同款退役轨）",
+            },
+            ensure_ascii=False,
+        )
+        with path.open("a", encoding="utf-8", newline="\n") as fh:
+            fh.write(line + "\n")
+    except Exception as e:  # noqa: BLE001 — 留痕故障醒目但不断链
+        print(f"[add_module_translation] WARNING: 逃生旗审计留痕失败（{type(e).__name__}: {e}）", file=sys.stderr)
+
+
+# ============================================================================
+# 回填扫描（D 项，只读零写）：投影面有而最新快照无 = shadow 事故的机判形态
+# ============================================================================
+
+
+def _latest_snapshot(registry_id: str, physical_path: str, snapshot_file: str | None):
+    """最新已发布快照（PG registry_snapshot 最新版；``snapshot_file`` 走 JSON 影子通道）。"""
+    if snapshot_file:
+        from zephyr.governance.registry_projection.pg_source import snapshot_from_json_file  # noqa: PLC0415
+
+        return snapshot_from_json_file(snapshot_file)
+    from zephyr.governance.registry_projection.pg_source import load_latest_snapshot  # noqa: PLC0415
+
+    return load_latest_snapshot(registry_id, physical_path)
+
+
+def audit_projection_vs_ledger(
+    *,
+    registry_id: str = REGISTRY_ID,
+    physical_path: str = REGISTRY_REL,
+    repo_root: Path | None = None,
+    snapshot_file: str | None = None,
+) -> tuple[int, str]:
+    """只读回填扫描：报"投影面有而最新快照无"的条目（会被下次 render 修剪的存量）。
+
+    族集合与身份键口径与生成器完全同源（``projection_generator._entry_index``：册声明
+    身份字段优先，无声明退 (file,token) legacy/首标量）——本函数不另发明一套身份判据。
+    零写：不碰盘、不碰账本、不发快照（PG 侧只 ``load_latest_snapshot`` 读面）。
+
+    Returns:
+        ``(exit_code, message)``——命中 > 0 → exit 1（"投影面有而快照无"就是校验失败本体），
+        命中 = 0 → exit 0；快照/投影不可取 → exit 2。
+    """
+    from zephyr.governance.registry_projection.model import snapshot_from_yaml  # noqa: PLC0415
+    from zephyr.governance.registry_projection.projection_generator import _entry_index  # noqa: PLC0415
+
+    root = Path(repo_root or PROJECTION_ROOT)
+    target = root / physical_path
+    try:
+        disk_text = target.read_text(encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        return EXIT_IO, f"读取投影册失败: {type(e).__name__}: {e}"
+    try:
+        disk_snap = snapshot_from_yaml(disk_text, registry_id=registry_id, physical_path=physical_path)
+    except Exception as e:  # noqa: BLE001
+        return EXIT_IO, f"投影册解析失败: {type(e).__name__}: {e}"
+    try:
+        ledger_snap = _latest_snapshot(registry_id, physical_path, snapshot_file)
+    except Exception as e:  # noqa: BLE001
+        return EXIT_IO, f"最新快照不可取（PG 只读面/JSON 源均失败）: {type(e).__name__}: {e}"
+
+    hits: dict[str, list[str]] = {}
+    ghosts: dict[str, list[str]] = {}
+    for root_key in sorted(
+        {sec.root_key for sec in disk_snap.sections} | {sec.root_key for sec in ledger_snap.sections}
+    ):
+        disk_ids = set(_entry_index(disk_snap, root_key))
+        ledger_ids = set(_entry_index(ledger_snap, root_key))
+        missing = sorted("|".join(x) for x in (disk_ids - ledger_ids))
+        extra = sorted("|".join(x) for x in (ledger_ids - disk_ids))
+        if missing:
+            hits[root_key] = missing
+        if extra:
+            ghosts[root_key] = extra
+    total = sum(len(v) for v in hits.values())
+    sample = [(k, v) for k, vs in hits.items() for v in vs[:20]]
+    lines = [
+        f"回填扫描 {registry_id}（投影面={physical_path}，快照 version={getattr(ledger_snap, 'snapshot_version', '?')}，"
+        f"零写只读）：投影面有而快照无 = {total} 条"
+    ]
+    for fam, vals in sorted(hits.items()):
+        lines.append(f"  族 {fam}: {len(vals)} 条，样例 {vals[:5]}")
+    if not hits:
+        lines.append("  无命中（投影面内容与账本快照一致）")
+    backfill = {k: len(v) for k, v in sorted(ghosts.items())}
+    lines.append(f"  反向（快照有而投影面无，render 会补上）={backfill or '无'}；逐条清单样例={sample[:5]}")
+    return (EXIT_VALIDATION if total else EXIT_SUCCESS), "\n".join(lines)
 
 
 def _duplicate_regions_by_path(entries_body: str, regions: list[tuple[int, int]]) -> dict[str, list[tuple[int, int]]]:
@@ -881,7 +1355,13 @@ def _build_argparser() -> argparse.ArgumentParser:
     """_build_argparser implementation."""
     p = argparse.ArgumentParser(
         prog="add_module_translation.py",
-        description="模块翻译条目合规写入工具（TRANSLATION-COVERAGE 配套）。按 module_path upsert 一条含大白话 plain_zh 的翻译条目（responsibility_layer 由域→层映射真源自动派生）；--dedupe 整表去重；--sync-layer 整表重算 responsibility_layer。",
+        description=(
+            "模块翻译条目合规登记工具（TRANSLATION-COVERAGE 配套=意图 API 薄壳）。按 module_path 向 "
+            f"PG 账本 {REGISTRY_ID}/{FAMILY_KEY} 登记一条含大白话 plain_zh 的翻译条目，"
+            "随后 publish_snapshot + 投影 render + 三方核验落地（responsibility_layer 由域→层映射真源自动派生）；"
+            "--audit-projection-vs-ledger 只读回填扫描；--dedupe/--sync-layer 是投影面整表手术（账本不认）；"
+            "--legacy-disk-write 是退役直写逃生旗（缺省不走）。"
+        ),
     )
     p.add_argument("--path", default="", help="模块相对路径（如 src/zephyr/.../m.py）")
     p.add_argument("--domain", default="", help="域 ID（如 D_GOV_RULE）")
@@ -890,37 +1370,96 @@ def _build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--desc-zh", default="", help="技术简介中文（可选）")
     p.add_argument("--desc-en", default="", help="技术简介英文（可选）")
     p.add_argument("--plain-zh", default="", help="大白话简介（做什么/解决什么/怎么做，CJK≥8，禁模板化）")
-    p.add_argument("--dry-run", action="store_true", help="只校验不写盘")
+    p.add_argument(
+        "--session", default="", help=f"登记归因会话名（账本 created_by/updated_by；缺省 {DEFAULT_SESSION}）"
+    )
+    p.add_argument(
+        "--clear-field",
+        action="append",
+        default=None,
+        metavar="FIELD",
+        help="点名删除在册某字段（可重复）。删除集只能逐条点名——未点名的键永不从在册 payload 消失",
+    )
+    p.add_argument("--dry-run", action="store_true", help="只校验+差分预演（零账本写/零发布/零 render/零直写）")
+    p.add_argument(
+        "--audit-projection-vs-ledger",
+        action="store_true",
+        help=(
+            "只读回填扫描：报「投影面有而最新快照无」的条目（就是 2026-10-11 backup_reconciler_shadow "
+            "被 render 修剪的机判形态）。零写；命中>0 → exit 1。可配 --registry-id/--physical-path/"
+            "--snapshot-file 扫别的册或走 JSON 影子快照通道"
+        ),
+    )
+    p.add_argument("--registry-id", default=REGISTRY_ID, help=f"审计扫描目标册账本号（缺省 {REGISTRY_ID}）")
+    p.add_argument("--physical-path", default=REGISTRY_REL, help="审计扫描目标册投影路径（相对仓根，缺省本翻译册）")
+    p.add_argument(
+        "--snapshot-file",
+        default=None,
+        help="审计用快照 JSON 文件源（缺省=PG registry_snapshot 最新版；影子期/红蓝通道同 CLI 正门）",
+    )
+    p.add_argument(
+        "--legacy-disk-write",
+        action="store_true",
+        help=(
+            "退役直写逃生旗：跳过账本，直接 CAS 写投影 YAML。缺省不走；"
+            "后果=该条目不进账本，下一次 render（PG-wins）会把它修剪掉（本工具会打红色警告+落审计留痕）"
+        ),
+    )
     p.add_argument(
         "--dedupe",
         action="store_true",
-        help="整表去重：扫描 entries 段全部同 module_path 重复条目，保留信息最全条目并合并扩展字段后 CAS 写回（幂等；可配 --dry-run 预演）",
+        help=(
+            "整表去重（**投影面手术**：账本不认，下一次 render 即被覆写，仅作过渡期对账预览用；可配 --dry-run 预演）"
+        ),
     )
     p.add_argument(
         "--sync-layer",
         action="store_true",
-        help="整表重算 responsibility_layer：逐条目按 domain_id 从 domain_responsibility_layer_mapping.yaml 覆盖该字段（唯一推导通道，禁从 layer_id/目录名直推；幂等；可配 --dry-run 只看账）",
+        help=(
+            "整表重算 responsibility_layer（**投影面手术**：账本不认，render 后失效；日常登记走 "
+            "domain_id 派生即可；幂等；可配 --dry-run 只看账）"
+        ),
     )
     return p
+
+
+_TABLE_OPS = ("dedupe", "sync_layer", "audit_projection_vs_ledger")
+
+
+def _has_upsert_args(args: argparse.Namespace) -> bool:
+    """是否带了单条目登记参数（整表操作与它互斥）。"""
+    return any(
+        (
+            (args.path or "").strip(),
+            (args.domain or "").strip(),
+            (args.name_zh or "").strip(),
+            (args.plain_zh or "").strip(),
+        )
+    )
 
 
 def main(argv: list[str] | None = None) -> int:
     """Entry point: parse args, run logic, return exit code."""
     args = _build_argparser().parse_args(argv)
 
-    if args.dedupe and args.sync_layer:
-        print("--dedupe 与 --sync-layer 互斥（都是整表操作，一次只做一种）")
+    if sum(1 for op in _TABLE_OPS if getattr(args, op)) > 1:
+        print("--dedupe / --sync-layer / --audit-projection-vs-ledger 互斥（整表操作一次只做一种）")
         return EXIT_VALIDATION
 
+    if args.audit_projection_vs_ledger:
+        if _has_upsert_args(args):
+            print("--audit-projection-vs-ledger 与单条目登记参数互斥（审计是只读整册操作）")
+            return EXIT_VALIDATION
+        code, msg = audit_projection_vs_ledger(
+            registry_id=args.registry_id,
+            physical_path=args.physical_path,
+            snapshot_file=args.snapshot_file,
+        )
+        print(msg)
+        return code
+
     if args.dedupe:
-        if any(
-            (
-                (args.path or "").strip(),
-                (args.domain or "").strip(),
-                (args.name_zh or "").strip(),
-                (args.plain_zh or "").strip(),
-            )
-        ):
+        if _has_upsert_args(args):
             print("--dedupe 与 upsert 参数互斥（去重是整表操作，不接受单条目字段）")
             return EXIT_VALIDATION
         code, msg = dedupe_registry(dry_run=args.dry_run)
@@ -928,14 +1467,7 @@ def main(argv: list[str] | None = None) -> int:
         return code
 
     if args.sync_layer:
-        if any(
-            (
-                (args.path or "").strip(),
-                (args.domain or "").strip(),
-                (args.name_zh or "").strip(),
-                (args.plain_zh or "").strip(),
-            )
-        ):
+        if _has_upsert_args(args):
             print("--sync-layer 与 upsert 参数互斥（层同步是整表操作，不接受单条目字段）")
             return EXIT_VALIDATION
         code, msg = sync_layer_registry(dry_run=args.dry_run)
@@ -953,7 +1485,10 @@ def main(argv: list[str] | None = None) -> int:
         if not (val or "").strip()
     ]
     if missing:
-        print(f"必填参数缺失: {missing}（或改用 --dedupe 做整表去重 / --sync-layer 做整表层同步）")
+        print(
+            f"必填参数缺失: {missing}（或改用 --audit-projection-vs-ledger 做只读回填扫描 / "
+            "--dedupe 整表去重 / --sync-layer 整表层同步）"
+        )
         return EXIT_VALIDATION
 
     entry = {
@@ -965,7 +1500,13 @@ def main(argv: list[str] | None = None) -> int:
         "desc_en": args.desc_en,
         "plain_zh": args.plain_zh,
     }
-    code, msg = add_translation(entry, dry_run=args.dry_run)
+    code, msg = add_translation(
+        entry,
+        dry_run=args.dry_run,
+        session_id=args.session,
+        legacy_disk_write=args.legacy_disk_write,
+        clear_fields=tuple(args.clear_field or ()),
+    )
     print(msg)
     return code
 

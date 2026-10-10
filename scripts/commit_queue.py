@@ -89,7 +89,7 @@ CLI
   python scripts/commit_queue.py drain [--queue-root DIR] [--max-items N]
   python scripts/commit_queue.py requeue <qid> [--worktree-root DIR] [--no-bootstrap]
   python scripts/commit_queue.py cleanup [--done-ttl-days N]
-  python scripts/commit_queue.py dead-archive [--days N] [--no-verify-landed] [--execute] [--json]
+  python scripts/commit_queue.py dead-archive [--days N] [--no-verify-landed] [--execute] [--session SID] [--json]
   python scripts/commit_queue.py backfill-base-head [--repo-root DIR] [--execute] [--json]
   python scripts/commit_queue.py health [--no-alert]
 
@@ -2818,6 +2818,71 @@ def _retry_meta_prev(meta: dict, key: str) -> int:
         return 0
 
 
+def _snapshot_head_regressions(
+    wt: Path,
+    payload: list[tuple[str, bytes]],
+    *,
+    base_ref: str = "dev",
+    item_base_head: str | None = None,
+) -> list[dict[str, object]]:
+    """重放快照抹掉"袋基底之后才落到 dev 的行"——在册判据 lines_only_in_head 的落地。
+
+    该判据 10-10 由 st-finalclean2-20261010 记在案卷里（"盲重投会回退 HEAD"），但代码侧
+    零实现（实测 grep 只在 docs 命中），所以 requeue 一直拿不到"这份重放字节会把已入 dev
+    的行打回去"这个事实。
+
+    ⚑ 口径是**三方**不是两方（本班 06:5x 自证抓到的假阳性）：
+        regress = (dev_lines − bag_base_lines) − snapshot_lines
+    即只算"袋基底之后别人新落进 dev、而这份重放不含"的行。若写成两方
+    `dev_lines − snapshot_lines`，则本袋自己正当删改的行（改写注释、重构函数体）也全数
+    计成回归——实测 26 件里误报 17 件，闸就废了（真信号被噪声淹掉＝同门连环死的另一形态）。
+    `item_base_head` 取不到时保守取全量并打 `base_compared=False`（方向＝只收紧不放宽，
+    宁可疑也不放行一份连基底都对不上的整档重放）。
+
+    两条口径铁律（皆在册教训）：①行尾先归一（CRLF→LF）再比——行尾是第四把口径，不归一
+    会造"丢失 N 行"假案；②全程字节级比较、禁 decode 成 str 再比，避免编码抖动引入假差集。
+    dev 面查无该路径＝新增件，无"回退已落行"风险，不计入。
+    """
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+    def _lines(spec: str) -> set[bytes] | None:
+        # text=False MUST 显式传：run_subprocess_hidden 缺省 text=True（其自身注释即点名
+        # "git show 字节比较场景"），缺省会返回 str 破坏行集合差口径（且行尾归一失效）。
+        proc = run_subprocess_hidden(
+            ["git", "-C", str(wt), "show", spec],
+            capture_output=True,
+            text=False,
+            check=False,
+        )
+        if proc.returncode != 0:
+            return None
+        return set(proc.stdout.replace(b"\r\n", b"\n").split(b"\n"))
+
+    regressions: list[dict[str, object]] = []
+    for path, content in payload:
+        head_lines = _lines(f"{base_ref}:{path}")
+        if head_lines is None:
+            continue  # dev 面无此路径＝新增件
+        snap_lines = set(content.replace(b"\r\n", b"\n").split(b"\n"))
+        base_lines = _lines(f"{item_base_head}:{path}") if item_base_head else None
+        base_compared = base_lines is not None
+        missing = (head_lines - snap_lines) - {b""}
+        if base_compared:
+            landed_after_base = (head_lines - base_lines) - {b""}
+            missing = missing & landed_after_base
+        if not missing:
+            continue
+        regressions.append(
+            {
+                "path": path,
+                "head_only_lines": len(missing),
+                "base_compared": base_compared,
+                "sample": [x.decode("utf-8", "replace")[:120] for x in sorted(missing)[:3]],
+            }
+        )
+    return regressions
+
+
 def requeue_dead_item(
     qid: str,
     *,
@@ -2829,6 +2894,7 @@ def requeue_dead_item(
     base_blobs: dict | None = None,
     from_bag: bool = False,
     force: bool = False,
+    allow_snapshot_replay: bool = False,
 ) -> dict:
     """死信取回重入队（66 号 §6.4 死信闭环 + 08 号文 §4.3 P1）。
 
@@ -2968,6 +3034,36 @@ def requeue_dead_item(
     if not payload and not deletes:
         raise RequeueError(f"死信项无文件条目可取回: {qid}")
 
+    # T2（st-maint2-20261011）：重放前逐件量"dev 已在册行不在这份重放里"。
+    # 两分支分治口径（禁把两件事混成一条闸）：
+    #  · from_bag＝显式要求重放死信旧整档字节 ⇒ **默认拒绝**（fail-closed），确需越过后
+    #    带 --allow-snapshot-replay，且 meta 留痕；这类袋的正确出路是"取修复后内容"
+    #    （去掉 --from-bag 走工作区现字节）或重新 enqueue 新袋。
+    #  · 工作区重建分支＝在册 D7 修-重试工作流的语义（取现字节），**不拦**（硬拦＝破坏
+    #    在册工作流，与 F4 同口径），但同一把尺照样量出来并随报文+meta 标注：车道基底
+    #    落后 dev 时"现字节"仍是旧稿，这一步让它从"事后撞门"变成"投袋前可见"。
+    regressions = _snapshot_head_regressions(wt, payload, item_base_head=str(old_item.get("base_head") or "") or None)
+    if regressions:
+        logger.warning(
+            "[requeue] 重放回归：%d/%d 件缺 dev 已在册行（lines_only_in_head>0）——"
+            "这份重放会把已落 dev 的行打回去；正路=去掉 --from-bag 取修复后内容，"
+            "或先 `git checkout dev -- <件>` 重基本袋再投。清单随报文 snapshot_regressions 披露。",
+            len(regressions),
+            len(payload),
+        )
+        if from_bag and not allow_snapshot_replay:
+            raise RequeueError(
+                "快照重放禁用于已修复袋：--from-bag 的重放字节缺 dev 已在册行"
+                f"（{len(regressions)} 件，首件={regressions[0]['path']}，"
+                f"缺 {regressions[0]['head_only_lines']} 行）——"
+                "去掉 --from-bag 取工作区修复后内容，或确需原快照时带 --allow-snapshot-replay（留痕）",
+                details={
+                    "qid": qid,
+                    "regressed_files": len(regressions),
+                    "first": str(regressions[0]["path"]),
+                },
+            )
+
     # 红队 P1-2（QCure M2.2 闭环）：requeue 车道直读字节不经 _read_files_from_worktree
     # ⇒ 冲突标记快照会经 requeue 原样重入袋。此处与入队口同源补扫（复用同一检测器，
     # 禁第二判据）；from-bag 与 worktree 两分支的 payload 都过这道闸。
@@ -3085,6 +3181,11 @@ def requeue_dead_item(
                 ),
                 # M1.3-③ --force 越权留痕
                 **({"requeue_forced": True} if force else {}),
+                # T2：重放回归计数只落袋体一个标量（清单走报文面，对齐 F4 口径：
+                # cascade_diff 钉死袋字段集，明细进袋＝破坏差分尺基线）。
+                **({"snapshot_regressions_count": len(regressions)} if regressions else {}),
+                # T2：确需越过"快照重放禁用于已修复袋"的显式越权留痕
+                **({"snapshot_replay_allowed": True} if (from_bag and allow_snapshot_replay and regressions) else {}),
             },
         ),
     )
@@ -3095,7 +3196,14 @@ def requeue_dead_item(
     _notify_task_board_requeued(old_item, new_item["qid"])
     logger.info("[requeue] %s -> %s（基于当前工作区重建快照，新 qid 排 FIFO 队尾）", qid, new_item["qid"])
     # F4：漂移清单只进返回值（CLI 报文面），零袋体新字段（cascade_diff 基线保护）
-    return {"old_qid": qid, "new_qid": new_item["qid"], "item": new_item, "snapshot_drift": snapshot_drift}
+    # T2：重放回归清单同款——明细只进报文，袋体只带计数（见上面 meta_extra 注记）。
+    return {
+        "old_qid": qid,
+        "new_qid": new_item["qid"],
+        "item": new_item,
+        "snapshot_drift": snapshot_drift,
+        "snapshot_regressions": regressions,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -3233,6 +3341,21 @@ def _spot_check_dev_blob(path: str, blob_sha256: str | None) -> str:
         return "unknown"
 
 
+def _assert_session_filter_closed(sessions: set[str], item_sid: str, qid: str) -> None:
+    """T13 fail-closed 判据（纯函数，可单测）：过滤集外的件绝不允许进 mv。
+
+    上面的属主过滤已经让这条路走不到这里；本函数是"判据被后来改动打穿"时的第二道闸——
+    mv 之前再问一次，任一非请求 sid ⇒ 整体拒绝、零 mv。方向＝只收紧不放宽：宁可
+    什么都不归档，也不误碰他人死信（在册红线：代投/驱逐他人面＝归属篡改）。
+    """
+    if item_sid in sessions:
+        return
+    raise DeadArchiveError(
+        f"拒绝归档：过滤集混入非请求 sid 的死信（qid={qid}，"
+        f"item_sid={item_sid or '<空>'}，请求集={sorted(sessions)}）——零 mv，整体退出"
+    )
+
+
 def dead_archive_letters(
     queue_root: str | os.PathLike | None = None,
     *,
@@ -3241,6 +3364,7 @@ def dead_archive_letters(
     execute: bool = False,
     now: datetime | None = None,
     landed_checker: Callable[[str, str], bool] | None = None,
+    sessions: set[str] | None = None,
 ) -> dict:
     """dead/ 官方归档（RB2）：全落+超龄死信整体 mv 进根级 dead_archive_<日>/ 袋+manifest。
 
@@ -3262,10 +3386,15 @@ def dead_archive_letters(
     D 类引用集均按根级 dead_archive* 前缀识别；且 state board 的 dead/ 计数用 rglob，
     袋放 dead/ 之下会污染死信积压读数。与今晨先例 dead_archive_final/ 同约定）。
 
-    返回 {"archived": [qid...], "kept": {young, revival_in_flight, unlanded},
+    返回 {"archived": [qid...], "kept": {young, revival_in_flight, unlanded, other_session},
     "skipped_corrupt": n, "prescriptions": [...], "bag": str, "dry_run": bool,
     "verify": "on"|"off", "spot_check": {...}|None}（spot_check=默认判据下的落地
     增信抽验聚合，仅前 10 封过闸袋的首件参与）。
+
+    T13（st-maint2-20261011）属主过滤：`sessions=<sid 集合>` 时只动这些 sid 名下的死信，
+    其余计 `other_session` 留原位；`sessions=None`＝旧的全量行为（向后兼容，CLI 在该
+    形态打 WARN）。配套 fail-closed 闸见 execute 分支——过滤集里混入非请求 sid ⇒ 整体
+    拒绝零 mv，宁可不动也不误碰他人袋。
     """
     root = resolve_queue_root(queue_root)
     # 不 _ensure_dirs：dry-run 必须零盘面变化（含不凭空创建四态目录）；execute 只建归档袋。
@@ -3280,7 +3409,7 @@ def dead_archive_letters(
     verify = "on" if verify_landed else "off"
     bag = root / f"dead_archive_{ref:%Y%m%d}"
     archived: list[str] = []
-    kept: dict[str, int] = {"young": 0, "revival_in_flight": 0, "unlanded": 0}
+    kept: dict[str, int] = {"young": 0, "revival_in_flight": 0, "unlanded": 0, "other_session": 0}
     skipped_corrupt = 0
     prescriptions: list[dict] = []
     spot_check: dict[str, int] | None = (
@@ -3294,6 +3423,14 @@ def dead_archive_letters(
                 raise ValueError("envelope 非字典")
         except (OSError, ValueError):
             skipped_corrupt += 1  # 坏 JSON 计数不中断（人工先例口径）
+            continue
+        # T13（st-maint2-20261011）：属主过滤——此前 dead-archive 只能全量操作，操作员
+        # 无法"只归档某一个 sid 的死信"，于是要么误碰他人死信（在册红线：--dedupe 曾
+        # 驱逐他人袋；袋=整档快照＝归属篡改），要么根本不敢用。sessions=None 保持旧行为
+        # （全量），CLI 在该形态打一行警告。
+        item_sid = str(item.get("session_id") or "")
+        if sessions is not None and item_sid not in sessions:
+            kept["other_session"] += 1
             continue
         # ① 年龄门槛：dead_at 基准，缺失/解析失败回退 mtime
         ts: float | None = None
@@ -3340,6 +3477,12 @@ def dead_archive_letters(
                     spot_check["checked"] += 1
                     spot_check[verdict] += 1
         if execute:
+            # T13 fail-closed 闸：请求了 --session 却在此处解析出非请求 sid 的件 ⇒
+            # 整体拒绝、零 mv（防过滤条件写反变成"顺手归档他人死信"——本项目在册红线：
+            # 代投/驱逐他人面＝归属篡改）。上面的 continue 已让这条路走不到这里，
+            # 本闸是"判据被后来改动打穿"时的第二道，宁可拒绝也不动他人件。
+            if sessions is not None and item_sid not in sessions:
+                _assert_session_filter_closed(sessions, item_sid, entry.stem)
             bag.mkdir(parents=True, exist_ok=True)
             _retry_transient(lambda: os.replace(entry, bag / entry.name))  # 同卷原子 mv，可逆
             manifest = {
@@ -3389,6 +3532,12 @@ def _ledger_slow_item(root: Path, qid: str, session_id: str | None, seconds: flo
     try:
         ledger = root.parent / "audit" / "bottleneck_ledger.jsonl"
         ledger.parent.mkdir(parents=True, exist_ok=True)
+        # T14（st-maint2-20261011）：动笔前过 audit_jsonl_writer 的同一道体积闸——本文件
+        # 是本仓实测最大无轮转件（113MB）的裸 append 写侧之二，超限先移位轮转（.1/.2/.3
+        # 保留，非删除），判据复用 DEFAULT_MAX_BYTES/BACKUP_COUNT，零新配置册。
+        from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
+
+        rotate_if_oversized(ledger)
         line = json.dumps(
             {"ts": time.time(), "kind": "slow_item", "qid": qid, "session_id": session_id, "seconds": seconds},
             ensure_ascii=False,
@@ -3895,6 +4044,11 @@ def _dead_burst_write_ledger(
     """堵点本 alert 行（daemon 离线时本路径是唯一记账人；写失败仅记日志）。"""
     ledger = root.parent / "audit" / "bottleneck_ledger.jsonl"
     ledger.parent.mkdir(parents=True, exist_ok=True)
+    # T14（st-maint2-20261011）：同款入口闸——本函数与 slow_item 同写 bottleneck_ledger，
+    # daemon 离线时这里是唯一记账人，正是无轮转膨胀的主写侧。移位轮转非删除。
+    from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
+
+    rotate_if_oversized(ledger)
     with open(ledger, "a", encoding="utf-8") as fh:
         fh.write(
             json.dumps(
@@ -4429,6 +4583,7 @@ def _cmd_requeue(args: argparse.Namespace) -> int:
             base_head=base_head,
             from_bag=args.from_bag,
             force=args.force,
+            allow_snapshot_replay=args.allow_snapshot_replay,
         )
     except RequeueError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -4451,6 +4606,22 @@ def _cmd_requeue(args: argparse.Namespace) -> int:
         )
     if result.get("snapshot_drift"):
         print(f"SNAPSHOT-DRIFT 汇总: {len(result['snapshot_drift'])} 件工作区内容≠死信快照")
+    # T2（st-maint2-20261011）：重放回归披露——"修好的代码不在这份重放里"的机判读数。
+    # from_bag 分支缺省已在 requeue_dead_item 内 fail-closed 拒绝，走到这里要么是无回归，
+    # 要么是 --allow-snapshot-replay 显式越过（meta.snapshot_replay_allowed 留痕），
+    # 要么是非阻断的工作区重建分支——三种情形都必须把清单打在报文上，禁静默。
+    for r in result.get("snapshot_regressions") or []:
+        print(
+            f"SNAPSHOT-REGRESSION: {r['path']} 缺 dev 已在册 {r['head_only_lines']} 行\n"
+            f"  sample={r['sample']}\n"
+            f"  -> 这份重放会把上述行打回去；正路=去掉 --from-bag 取修复后内容，"
+            f"或 `git checkout dev -- {r['path']}` 重基后再投"
+        )
+    if result.get("snapshot_regressions"):
+        print(
+            f"SNAPSHOT-REGRESSION 汇总: {len(result['snapshot_regressions'])} 件重放字节缺 dev 已在册行"
+            f"（快照来源={src}）"
+        )
     if not args.no_bootstrap:
         drain_result = try_bootstrap_drain(args.queue_root)  # 重入队自举排空（66 号 §8）
         if not drain_result.get("skipped"):
@@ -4469,12 +4640,22 @@ def _cmd_cleanup(args: argparse.Namespace) -> int:
 
 
 def _cmd_dead_archive(args: argparse.Namespace) -> int:
+    # T13：--session 可重复给也可逗号分隔；解析后是精确 sid 集合（空集＝未给＝全量旧行为）
+    raw_sessions = [s for chunk in (args.session or []) for s in chunk.split(",")]
+    sessions = {s.strip() for s in raw_sessions if s.strip()}
+    if not sessions:
+        print(
+            "WARN: 全量模式（未给 --session）会跨会话扫描全部 dead/ 死信——"
+            "只清自己名下的袋请给 --session <sid>，防误碰他人死信（在册红线：代投/驱逐他人面＝归属篡改）",
+            file=sys.stderr,
+        )
     try:
         result = dead_archive_letters(
             args.queue_root,
             days=args.days,
             verify_landed=not args.no_verify_landed,
             execute=args.execute,
+            sessions=sessions or None,
         )
     except DeadArchiveError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -4484,8 +4665,9 @@ def _cmd_dead_archive(args: argparse.Namespace) -> int:
         f"DEAD-ARCHIVE: archived={len(result['archived'])} "
         f"kept={sum(kept.values()) + result['skipped_corrupt']} "
         f"(young={kept['young']}/unlanded={kept['unlanded']}/revival_in_flight={kept['revival_in_flight']}"
-        f"/skipped_corrupt={result['skipped_corrupt']}) days={args.days:g} verify={result['verify']} "
-        f"execute={args.execute} bag={result['bag']}"
+        f"/other_session={kept['other_session']}/skipped_corrupt={result['skipped_corrupt']}) days={args.days:g} "
+        f"verify={result['verify']} execute={args.execute} bag={result['bag']}"
+        f"{' sessions=' + ','.join(sorted(sessions)) if sessions else ''}"
     )
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
@@ -4586,6 +4768,13 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="越过重投熔断（requeue_count≥3 连败拒绝）显式越权——meta.requeue_forced=true 留痕",
     )
+    p_rq.add_argument(
+        "--allow-snapshot-replay",
+        action="store_true",
+        help="越过 T2 闸：确需重放死信原整档字节（--from-bag）而该字节缺 dev 已在册行时"
+        "显式放行——meta.snapshot_replay_allowed=true 留痕。缺省拒绝（fail-closed），"
+        "正路是去掉 --from-bag 取工作区修复后内容。",
+    )
     p_rq.add_argument("--no-bootstrap", action="store_true", help="重入队后不尝试自举排空")
     p_rq.set_defaults(func=_cmd_requeue)
 
@@ -4604,6 +4793,13 @@ def main(argv: list[str] | None = None) -> int:
         help="显式关闭落地校验（已取代型批量归档先例复用；输出留 verify=off 痕）",
     )
     p_da.add_argument("--execute", action="store_true", help="动盘归档（缺省=dry-run 只打印计划零盘面变化）")
+    p_da.add_argument(
+        "--session",
+        action="append",
+        default=None,
+        metavar="SID",
+        help="只归档该 sid 名下的死信（可重复给或逗号分隔；不给=全量旧行为，全量模式会跨会话、需人工确认避让他人袋）",
+    )
     p_da.add_argument("--json", action="store_true", help="机器可读输出（archived 清单/kept 分布/未落处方）")
     p_da.set_defaults(func=_cmd_dead_archive)
 

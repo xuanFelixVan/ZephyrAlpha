@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV_DRIFT_WATCHDOG | docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml | §#ARCH-WORKTREE-WRITE-INTEGRITY-001
 # [MODULE] zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.shared.infra.process_pool (spawn_python_hidden/is_pid_alive); zephyr.shared.io.paths (anchor_main_root); zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.governance.audit.reconciliation_registry (_log_reconcile_results)
+# [DEPENDENCIES] zephyr.shared.infra.process_pool (spawn_python_hidden/is_pid_alive); zephyr.shared.io.paths (anchor_main_root); zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.governance.audit.reconciliation_registry (_log_reconcile_results); zephyr.shared.io.audit_jsonl_writer (rotate_if_oversized——T14 _audit 裸 append 体积闸)
 # [CONSUMERS] git_commit_gateway (_register_default_reconcilers: make_worktree_drift_watchdog_reconciler); CLI python -m ... [--once|--daemon|--status]
 # [STARTUP] manual / post-commit reconciler ensure-daemon
 # [MATURITY] production
@@ -409,13 +409,22 @@ def _heartbeat(root: Path, state: dict) -> None:
 
 def _audit(root: Path, record: dict) -> None:
     """归因审计（P0-2）：.runtime/audit/worktree_drift_watchdog.jsonl，永不回 tracked 区。
-    R5.2 红队治本：并发 append 行丢失——进程内锁串行化（跨进程追加由 OS 保证）。"""
+    R5.2 红队治本：并发 append 行丢失——进程内锁串行化（跨进程追加由 OS 保证）。
+    T14（2026-10-11）：本件实测 55.7MB 破 50MB 轮转阈值且零轮转段——病根＝裸 append
+    绕开了 audit_jsonl_writer 的体积判据。不能整体换成 append_audit_jsonl（那会丢
+    _STATE_IO_LOCK 的 R5.2 串行化语义），故取"打开前过同一道闸"的最小补防：
+    rotate_if_oversized 复用 writer 的 DEFAULT_MAX_BYTES/BACKUP_COUNT，零新配置。
+    """
     try:
         d = root / _AUDIT_DIR
         d.mkdir(parents=True, exist_ok=True)
         line = json.dumps(record, ensure_ascii=False) + "\n"
-        with _STATE_IO_LOCK, open(d / "worktree_drift_watchdog.jsonl", "a", encoding="utf-8") as fh:
-            fh.write(line)
+        from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
+
+        with _STATE_IO_LOCK:
+            rotate_if_oversized(d / "worktree_drift_watchdog.jsonl")
+            with open(d / "worktree_drift_watchdog.jsonl", "a", encoding="utf-8") as fh:
+                fh.write(line)
     except OSError as e:
         logger.warning("drift watchdog audit append failed: %s", e)
 

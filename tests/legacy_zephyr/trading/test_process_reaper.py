@@ -668,7 +668,9 @@ class TestReapCycleNeverBlindsStatus:
         monkeypatch.setattr(pr, "_STATUS_DIR", tmp_path)
         monkeypatch.setattr(pr, "_STATUS_FILE", tmp_path / "last_run.json")
 
-        def boom(_dry_run: bool) -> dict[str, int]:
+        def boom(*_a: object, **_kw: object) -> dict[str, int]:
+            # T6（2026-10-11）后 _reap_ghost_windows 多收 whitelist_res/keep_subs 两参；
+            # 本用例钉的是"三步各自隔离、快照照落盘"，与豁免参数无关，故签名放宽为透传。
             raise RuntimeError("ghost stage exploded")
 
         monkeypatch.setattr(pr, "_reap_ghost_windows", boom)
@@ -864,3 +866,114 @@ class TestH08KeepLineSessionTag:
         counts = pr.cleanup_dead_session_keep_lines(active_session_ids=None)
         assert counts["parsed"] == -1
         assert "dead.py" in f.read_text(encoding="utf-8")
+
+
+# ============== T6（2026-10-11）：keep 语义的形态覆盖盲区补防 ==============
+# 实测病根（读码定行号，非抄在册）：
+#   路径①矩阵主循环候选集谓词 = process_reaper.py:582 `"python" not in name → continue`
+#     → powershell/bash/conhost/node/cmd.exe 不进候选集（结构性免疫，非"写了没用"）
+#   路径②_reap_derived_orphans 候选取自全进程表（无 name 谓词），修前该函数体
+#     **一次都没调用 _is_whitelisted**（原 process_reaper.py:1017-1090）→ keep 真盲区
+#   路径④kill_ghost_windows 同上，kill 前复查只看拓扑（原 process_reaper.py:883-923）
+# 本组用例只钉"少杀"方向：命中 keep 必不被杀；未命中照旧可杀（禁把补防变成永不杀）。
+
+
+class TestKeepCoversNonPythonForms:
+    """非 python 形态（llama-server.exe / Trae 子进程）命中 keep 行必须免死。"""
+
+    @staticmethod
+    def _procs():
+        return {
+            11: {
+                "name": "llama-server.exe",
+                "ppid": 10,  # 父不在进程表 = 孤儿
+                "cmdline": r"C:\Programs\Ollama\llama-server.exe --model keep_me_instrument",
+                "create_time": time.time() - 3.0 * 3600,  # 超龄 2h ⇒ 判杀线
+            }
+        }
+
+    @staticmethod
+    def _wl():
+        return [re.compile(p, re.IGNORECASE) for p in pr._DEFAULT_WHITELIST]
+
+    def _run(self, procs, monkeypatch, whitelist_res, keep_subs):
+        monkeypatch.setattr(pr, "_collect_metrics", lambda d: None)
+        killed: list[int] = []
+        monkeypatch.setattr(pr, "_kill_pid_tree", lambda pid: killed.append(pid) or True)
+        report = pr.ReapReport()
+        pr._reap_derived_orphans(procs, False, report, whitelist_res, keep_subs)
+        return report, killed
+
+    def test_non_python_form_hitting_keep_is_not_killed(self, monkeypatch):
+        """红证主例（修前必红）：非 python 形态衍生孤儿命中 keep 行 ⇒ 不杀 + 留痕。"""
+        report, killed = self._run(self._procs(), monkeypatch, self._wl(), ["llama-server.exe"])
+        assert killed == [], f"命中 keep 仍被收割（T6 盲区未修）：{killed}"
+        assert report.killed == []
+        assert any(r["reason"].startswith("derived_orphan_whitelisted:") for r in report.reported), report.reported
+        assert any("keep_file:llama-server.exe" in r["reason"] for r in report.reported)
+
+    def test_python_form_keep_exemption_still_intact(self, monkeypatch):
+        """正向腿不许坏（路径①语义）：python 形态命中 keep ⇒ whitelist_hit ⇒ classify skip。"""
+        cmdline = r"pythonw D:\ZephyrAlpha\long_batch.py --days 30"
+        hit = pr._is_whitelisted(cmdline, self._wl(), ["long_batch.py"])
+        assert hit is not None and hit.startswith("keep_file:")
+        v = pr.classify_process(
+            pid=1,
+            cmdline=cmdline,
+            age_s=8 * 3600,
+            mem_mb=100.0,
+            cpu_pct=0.0,
+            children=0,
+            orphan=False,
+            is_self_ancestor=False,
+            is_trae_descendant=False,
+            whitelist_hit=hit,
+        )
+        assert v.action == "skip" and v.reason.startswith("keep_file:")
+
+    def test_derived_orphan_without_keep_hit_still_killed(self, monkeypatch):
+        """反向护栏：keep 只保护命中项——未命中的超龄孤儿照旧判杀（禁"永不杀"）。"""
+        report, killed = self._run(self._procs(), monkeypatch, self._wl(), ["some_other_daemon"])
+        assert killed == [11]
+        assert report.killed[0]["reason"].startswith("derived_orphan_aged")
+
+    def test_ghost_kill_honours_keep_for_non_python_form(self, monkeypatch):
+        """路径④：幽灵斩杀线动杀前查 keep——命中即赦免（os.kill 不得被调用）。
+
+        顺带钉住 keep 的匹配粒度：`_cmdline_identity_segments` 只取身份段
+        （程序基名/-m 模块名/.py .exe .ps1 .cmd .bat 基名），旗标文本不算身份。
+        """
+        ghosts = [{"pid": 500, "reason": "trae_orphan:ppid=9_gone", "cmdline": "x", "name": "Trae CN.exe"}]
+        live = {
+            500: {
+                "name": "Trae CN.exe",
+                "ppid": 9,
+                "create_time": time.time() - 3600,
+                "cmdline": r"D:\TraeCN\Trae CN.exe --type=utility",
+            }
+        }
+        monkeypatch.setattr(pr, "_snapshot_all_processes", lambda: live)
+        # 身份段实测=按空白切词的程序基名片段（`Trae CN.exe` 被切成 'trae'+'cn.exe'）；
+        # 旗标文本不是身份段——keep 行必须写中某个身份段才生效（在册坑位，写错=静默无效）
+        assert pr._cmdline_identity_segments(live[500]["cmdline"]) == ["trae", "cn.exe"]
+        calls: list[int] = []
+        monkeypatch.setattr(pr.os, "kill", lambda pid, sig: calls.append(pid))
+        killed = pr.kill_ghost_windows(ghosts, self._wl(), ["cn.exe"])
+        assert killed == [] and calls == [], "命中 keep 的幽灵候选仍被 kill（T6 盲区未修）"
+        # 正向对照：同一入参不给 keep ⇒ 拓扑判据成立则应杀（证明上一条是 keep 在起作用）
+        killed_no_keep = pr.kill_ghost_windows(ghosts, self._wl(), [])
+        assert killed_no_keep == [500]
+        # 反向对照：非身份段的旗标文本不构成豁免（防把 keep 写成万能免死金牌）
+        calls.clear()
+        killed_flag = pr.kill_ghost_windows(ghosts, self._wl(), ["--type=utility"])
+        assert killed_flag == [500] and calls == [500]
+
+    def test_legacy_three_arg_call_keeps_old_behaviour(self, monkeypatch):
+        """向后兼容：不传豁免参数（旧调用面）= 行为不变，缺件不反噬收割本体。"""
+        procs = self._procs()
+        monkeypatch.setattr(pr, "_collect_metrics", lambda d: None)
+        killed: list[int] = []
+        monkeypatch.setattr(pr, "_kill_pid_tree", lambda pid: killed.append(pid) or True)
+        report = pr.ReapReport()
+        pr._reap_derived_orphans(procs, False, report)
+        assert killed == [11]

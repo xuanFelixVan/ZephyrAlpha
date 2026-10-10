@@ -633,3 +633,64 @@ class TestPoolDrainSurvivalGate:
         cql._pool_process_item(live, queue_root, queue_root / "processing" / f"{item['qid']}.json", stats, lock, shared)
         assert live.touched is True, "活会话袋必须照常进 landing"
         assert stats["dead"] == 0
+
+
+class TestT14LedgerSizeGate:
+    """T14（2026-10-11）：堵点本裸 append 写侧必须过 audit_jsonl_writer 的体积闸。
+
+    实测病根：.runtime/audit/bottleneck_ledger.jsonl = 118,806,146 B（阈值 52,428,800
+    的 2.27 倍），盘上零轮转段＝写侧从来没问过那把 50MB 尺。
+    """
+
+    def test_ledger_record_rotates_oversized_segment(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """红证（修前必红：_ledger_record 内无闸）：超限先移位轮转再追加。"""
+        import functools
+
+        import zephyr.shared.io.audit_jsonl_writer as w
+
+        ledger = tmp_path / "bottleneck_ledger.jsonl"
+        monkeypatch.setattr(cbd, "_LEDGER", ledger)
+        monkeypatch.setattr(w, "rotate_if_oversized", functools.partial(w.rotate_if_oversized, max_bytes=1024))
+        ledger.write_text("x" * 2048 + "\n", encoding="utf-8")
+
+        cbd._ledger_record({"kind": "probe", "qid": "q-t14"})
+
+        assert (tmp_path / "bottleneck_ledger.jsonl.1").exists(), "超限堵点本未移位轮转"
+        rows = [json.loads(ln) for ln in ledger.read_text(encoding="utf-8").splitlines() if ln.strip()]
+        assert len(rows) == 1 and rows[0]["kind"] == "probe" and rows[0]["qid"] == "q-t14", "轮转后新行应落当前段"
+        assert rows[0]["ts"], "_ledger_record 的 ts 前缀语义不许坏"
+        assert "x" * 64 in (tmp_path / "bottleneck_ledger.jsonl.1").read_text(encoding="utf-8"), "历史段不得被删"
+
+    def test_ledger_record_under_threshold_not_rotated(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """反向腿：未超限照旧纯追加（防"每次打开都搬文件"）。"""
+        import functools
+
+        import zephyr.shared.io.audit_jsonl_writer as w
+
+        ledger = tmp_path / "bottleneck_ledger.jsonl"
+        monkeypatch.setattr(cbd, "_LEDGER", ledger)
+        monkeypatch.setattr(w, "rotate_if_oversized", functools.partial(w.rotate_if_oversized, max_bytes=1024))
+        ledger.write_text('{"kind":"old"}\n', encoding="utf-8")
+
+        cbd._ledger_record({"kind": "new"})
+
+        assert not (tmp_path / "bottleneck_ledger.jsonl.1").exists()
+        assert [r["kind"] for r in (json.loads(x) for x in ledger.read_text(encoding="utf-8").splitlines())] == [
+            "old",
+            "new",
+        ]
+
+    def test_every_bare_ledger_append_is_gated(self) -> None:
+        """结构锁：本模块每一处 `_LEDGER.open("a"` 前必须紧邻一次 rotate_if_oversized。
+
+        防的是"以后又添一处裸 append"——行为用例只覆盖被走到的分支，本例逐处扫。
+        """
+        import re
+        from pathlib import Path as _P
+
+        src = (_P(cbd.__file__)).read_text(encoding="utf-8").splitlines()
+        opens = [i for i, ln in enumerate(src) if '_LEDGER.open("a"' in ln]
+        assert opens, "本例前提（存在堵点本 append）已失效——写侧被整体重写，请同步复核"
+        for i in opens:
+            window = "\n".join(src[max(0, i - 5) : i + 1])
+            assert re.search(r"rotate_if_oversized\(", window), f"第 {i + 1} 行 append 前无体积闸：{window[-160:]}"

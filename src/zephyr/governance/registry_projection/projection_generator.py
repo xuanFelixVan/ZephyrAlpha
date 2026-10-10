@@ -23,7 +23,8 @@
 处置 playbook（丙号文 §3.3，全自动无人工常态参与）：
 - 私改：diff 留档 .runtime/gate_audit/registry_drift_<ts>.diff → safe_write CAS 覆写
   （PG wins）→ 状态文件更新 → registry_drift 记账；
-- 陈旧：静默再生成+记账（±条目数喂 registry_drift kind 身份增减量字段）；
+- 陈旧：静默再生成+记账（身份增减量喂 registry_drift kind；族集合按该册快照声明的
+  节段根键逐族算后求和，禁硬编码单族名——st-maint2-20261011 T7 治"无据修剪"账面）；
 - 冲突：证据先行留档 → 再生成 → 复检仍不等 → 死信观察行（唯一出人工的通道）；
 - PG 宕机：D vs S 降级判别，私改照样处置（本地锚），PG 前进类漂移记降级观察行。
 
@@ -132,6 +133,32 @@ def _identity_deltas(old: ProjectionSnapshot, new: ProjectionSnapshot, root_key:
     old_keys = set(_entry_index(old, root_key))
     new_keys = set(_entry_index(new, root_key))
     return len(new_keys - old_keys), len(old_keys - new_keys)
+
+
+def _drift_family_keys(old: ProjectionSnapshot, new: ProjectionSnapshot) -> list[str]:
+    """本册参与 drift 记账的族集合＝两侧快照的节段根键并集（账本派生，非新造常量表）。
+
+    根键来源：新快照侧节段由 `publish_snapshot` 按 `registry_entry.family_key` 分组产出
+    （账本真源），盘快照侧节段由 `snapshot_from_yaml` 按顶层根键产出——两者并集即该册
+    声明的全部族。治本（st-maint2-20261011 T7）：此前 `_drift_write_phase` 把族名硬编码
+    成 "creation_tokens"，对任何别的册（含 module_translation 册四族）恒记 0/0——条目被
+    PG-wins 修剪了、账面却看不出（"无据修剪"的账面来源）。
+    """
+    return sorted({sec.root_key for sec in old.sections} | {sec.root_key for sec in new.sections})
+
+
+def _identity_deltas_by_family(
+    old: ProjectionSnapshot, new: ProjectionSnapshot
+) -> tuple[int, int, dict[str, tuple[int, int]]]:
+    """逐族身份增减量 → (总 added, 总 removed, {族键: (added, removed)})。
+
+    单族算法仍是 `_identity_deltas`（creation_tokens 册的数字与硬编码时代逐字相同——
+    该册只有 capabilities/creation_tokens 两族，capabilities 无增删时总和不变）。
+    """
+    per_family = {rk: _identity_deltas(old, new, rk) for rk in _drift_family_keys(old, new)}
+    added = sum(a for a, _r in per_family.values())
+    removed = sum(r for _a, r in per_family.values())
+    return added, removed, per_family
 
 
 def _save_evidence(project_root: Path, physical_path: str, disk_text: str, rendered: str) -> str:
@@ -272,12 +299,11 @@ def _drift_write_phase(
     actor_session: str,
 ) -> ProjectionReport:
     """陈旧/私改/冲突象限的再生成写盘+漂移记账（render 模式专属）。"""
-    added, removed = _identity_deltas(
+    added, removed, per_family = _identity_deltas_by_family(
         snapshot_from_yaml(disk_text, registry_id=snapshot.registry_id, physical_path=snapshot.physical_path)
         if disk_text
         else snapshot,
         snapshot,
-        "creation_tokens",
     )
     try:
         _write_rendered(root, snapshot.physical_path, rendered)
@@ -289,7 +315,10 @@ def _drift_write_phase(
         snapshot.physical_path,
         added=added,
         removed=removed,
-        detail=f"projection_regen quadrant={quadrant} revision={snapshot.ledger_revision} actor={actor_session or 'daemon'}",
+        detail=(
+            f"projection_regen quadrant={quadrant} revision={snapshot.ledger_revision} "
+            f"actor={actor_session or 'daemon'} families={per_family}"
+        ),
     )
     return ProjectionReport(
         ok=True,
@@ -300,6 +329,7 @@ def _drift_write_phase(
             "ledger_revision": snapshot.ledger_revision,
             "added": added,
             "removed": removed,
+            "families": per_family,
             "entry_counts": snapshot.entry_counts(),
         },
     )

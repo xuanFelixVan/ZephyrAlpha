@@ -1318,9 +1318,9 @@ class GitCommitGateway:
         self._claim_snapshots_dir: Path = self.project_root / _CLAIM_SNAPSHOTS_DIR
         self.load_claim_snapshots_from_disk()
 
-    def commit_with_file_message(self, message, pathspec_file, target_files) -> tuple[str | None, str]:
-        """公共接口：commit_with_file_message（Stage 4 公共化）。"""
-        return self._commit_with_file_message(message, pathspec_file, target_files)
+    def commit_with_file_message(self, message, pathspec_file, target_files, session_id=None) -> tuple[str | None, str]:
+        """公共接口：commit_with_file_message（Stage 4 公共化）。session_id 仅用于 unstage 留痕归属。"""
+        return self._commit_with_file_message(message, pathspec_file, target_files, session_id)
 
     # ── Stage 4 公共化（2026-07-29）：public wrapper ──
     def run_post_commit_reconcile_async(
@@ -4441,7 +4441,7 @@ class GitCommitGateway:
             return blocked
         # 6. commit（rename 检测内置到 _commit_with_file_message）
         pathspec_for_commit = None if has_gitignored else pathspec_file
-        commit_hash, commit_err = self._commit_with_file_message(full_message, pathspec_for_commit, files)
+        commit_hash, commit_err = self._commit_with_file_message(full_message, pathspec_for_commit, files, session_id)
         if commit_hash is None:
             return CommitResult(
                 status=CommitStatus.COMMIT_FAILED,
@@ -4598,16 +4598,290 @@ class GitCommitGateway:
             return False, f"staged 区有 {len(non_target)} 个非目标文件: {sample}", non_target
         return True, "", []
 
-    def _unstage_non_target_files(self, non_target_files: list[str]) -> tuple[bool, str]:
+    # ─────────────────────────────────────────────────────────────────────────
+    # S3 治本（maint2 2026-10-11 任务书 A 项）：unstage 前"锚住"他人面 + 逐路径归属留痕
+    #
+    # 病：``_unstage_non_target_files`` 的 ``git reset HEAD -- <files>`` 会把他人尚未
+    # 交付的 staged 条目退回 HEAD 正典态；其中"新增族"（index 有、HEAD 无，状态 A/C/R）
+    # 退成未跟踪 ?? 后，会被另一条腿（session_worktree._collect_untracked_cleanups →
+    # _quarantine_file）物理移出盘面 ⇒ 两步连起来就是字节损失。而旧实现只 logger.info，
+    # 对"谁在什么时候把谁的 index 条目改了形"零留痕（同案卷自陈"两次均未证到具体命令"）。
+    # 改法方向=只加锚与只加留痕：unstage 行为一字不改（不 unstage 会把他人条目吸进
+    # 本次 commit＝更糟），reset 之前先把字节锚进自有 quarantine 子树并逐路径落审计。
+    # ─────────────────────────────────────────────────────────────────────────
+    #: "index 里有、HEAD 里没有"的 name-status 状态字母（reset 后退成未跟踪 ?? 的损失腿）
+    _NON_TARGET_NEW_FAMILY: Final[frozenset[str]] = frozenset({"A", "C", "R"})
+    #: 锚区根（相对 project_root）——只写自己的 quarantine 子树，禁碰他人目录、禁删任何东西
+    _NON_TARGET_ANCHOR_ROOT_REL: Final[str] = ".runtime/quarantine/non_target_unstage"
+    #: 归属留痕审计文件名（必须经 append_audit_jsonl 写——体积闸由该单口统一管）
+    _NON_TARGET_AUDIT_FILE: Final[str] = "non_target_unstage.jsonl"
+
+    @staticmethod
+    def _rel_posix(path: str | Path) -> str:
+        """仓库相对路径统一成 POSIX 斜杠形态（normcase 在 Windows 会把 / 换成 \\）。"""
+        return str(path).replace("\\", "/")
+
+    def _staged_state_map(self) -> dict[str, str]:
+        """staged 路径（POSIX rel，normcase 键）→ name-status 状态字母。
+
+        单条 ``git diff --cached --name-status -M`` 取全量，避免逐路径 n 次 git。
+        R/C 行形如 ``R100\\told\\tnew``——他人面按**新路径**（index 侧）记账。
+        """
+        out: dict[str, str] = {}
+        r = self.run_git(["git", "diff", "--cached", "--name-status", "-M"])
+        if r.returncode != 0:
+            return out
+        for line in (r.stdout or "").splitlines():
+            parts = line.split("\t")
+            if len(parts) < 2 or not parts[0]:
+                continue
+            state = parts[0].rstrip("0123456789") or parts[0]
+            tail = parts[2:] if state in ("R", "C") else parts[1:]
+            for p in tail:
+                if p.strip():
+                    out[os.path.normcase(self._rel_posix(p.strip()))] = state
+        return out
+
+    def _index_blob_sha(self, rel_posix: str) -> str | None:
+        """index 侧 blob sha（``git ls-files --stage -- <path>``，取 stage 条目第一段）。"""
+        r = self.run_git(["git", "ls-files", "--stage", "--", rel_posix])
+        if r.returncode != 0:
+            return None
+        for line in (r.stdout or "").splitlines():
+            parts = line.split()
+            if len(parts) >= 2:
+                return parts[1]
+        return None
+
+    def _non_target_owner_map(self, session_id: str | None) -> dict[str, str]:
+        """normcase(rel path) → 活属主 session_id（归属判定复用既有单口，禁自造名册）。
+
+        真源=``SessionRegistry.list_active_readonly()``（零写副作用探针，与
+        ``other_held_files`` 同一 S3-A PID+TTL 判活矩阵——死/过期 session 的持有不计，
+        与 claim 册口径一致）。查不到即**不猜**：调用方按 ownerless 记账。
+        """
+        out: dict[str, str] = {}
+        try:
+            infos = self._registry.list_active_readonly()
+        except Exception:  # noqa: BLE001 — 名册不可读时归属记 null，不阻断 unstage
+            logger.debug("non_target owner map: registry unreadable", exc_info=True)
+            return out
+        for info in infos:
+            if session_id is not None and info.session_id == session_id:
+                continue  # 本会话自己的 claim 不是"他人面"
+            for f in info.held_files:
+                try:
+                    absf = Path(f)
+                    if not absf.is_absolute():
+                        absf = self.project_root / absf
+                    rel = os.path.relpath(str(absf), str(self.project_root))
+                except (ValueError, OSError):
+                    continue  # 跨盘符/不可解析路径无归属可言
+                out.setdefault(os.path.normcase(self._rel_posix(rel)), info.session_id)
+        return out
+
+    def _anchor_non_target_paths(
+        self,
+        non_target_files: list[str],
+        *,
+        actor_session: str,
+        anchor: bool = True,
+    ) -> dict[str, dict]:
+        """reset **之前**把"新增族"他人面的当前字节锚进锚区（纯加保护，零破坏动作）。
+
+        逐路径记：``staged_state``（name-status 字母）／``index_blob_sha``／``bytes``／
+        ``anchored_to``（锚区相对路径或 null）／``anchored_from``（worktree|index）／
+        ``anchor_failed``。锚区只新增不删除；任何异常都只置 anchor_failed 标记，
+        绝不吞掉后续留痕（fail-closed 于留痕，不 fail-open）。
+
+        Args:
+            anchor: False=只取事实（状态字母/blob sha/字节数）不复制——merge finalize
+                全量收编腿用（内容进 HEAD 而非被 erase，无需锚 bytes）。
+
+        Returns:
+            normcase(rel) → facts dict（供 ``_audit_non_target_unstage`` 落 jsonl）。
+        """
+        import hashlib
+        import shutil
+        from datetime import datetime, timezone
+
+        facts: dict[str, dict] = {}
+        if not non_target_files:
+            return facts
+        state_map = self._staged_state_map()
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        for raw in non_target_files:
+            rel = self._rel_posix(raw)
+            key = os.path.normcase(rel)
+            state = state_map.get(key, "?")
+            blob = self._index_blob_sha(rel)
+            info: dict = {
+                "rel_path": rel,
+                "staged_state": state,
+                "index_blob_sha": blob,
+                "bytes": None,
+                "anchored_to": None,
+                "anchored_from": None,
+                "anchor_failed": False,
+            }
+            if state in self._NON_TARGET_NEW_FAMILY and anchor:
+                disk = self.project_root / rel
+                anchor_rel = f"{self._NON_TARGET_ANCHOR_ROOT_REL}/{actor_session}/{stamp}/{rel}"
+                anchor_abs = self.project_root / anchor_rel
+                payload: bytes | None = None
+                origin: str | None = None
+                try:
+                    if disk.is_file():
+                        anchor_abs.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy2(str(disk), str(anchor_abs))
+                        payload = anchor_abs.read_bytes()
+                        origin = "worktree"
+                    else:
+                        # 盘面已无字节：退而取 index blob（cat-file 只读，不改 index）。
+                        # run_git 恒把 stdout 解码成 str——二进制/坏码位可能失真，故锚前
+                        # 用 git blob sha（sha1("blob <n>\0"+content)）做完整性核对：
+                        # 对不上就判 anchor_failed（宁缺毋伪，禁静默存脏字节）。
+                        got = self.run_git(["git", "cat-file", "blob", f":{rel}"])
+                        payload_txt = got.stdout or ""
+                        cand = payload_txt.encode("utf-8", errors="surrogatepass")
+                        blob_sha = hashlib.sha1(b"blob %d\0" % len(cand) + cand).hexdigest()
+                        if got.returncode == 0 and (blob is None or blob_sha == blob):
+                            anchor_abs.parent.mkdir(parents=True, exist_ok=True)
+                            anchor_abs.write_bytes(cand)
+                            payload = anchor_abs.read_bytes()
+                            origin = "index"
+                        else:
+                            info["anchor_failed"] = True
+                            info["anchor_integrity_mismatch"] = got.returncode == 0
+                except Exception:  # noqa: BLE001 — 锚失败不阻断 unstage，但必须留痕
+                    logger.debug("non_target anchor failed: %s", rel, exc_info=True)
+                    info["anchor_failed"] = True
+                if payload is not None:
+                    info["bytes"] = len(payload)
+                    info["anchored_to"] = anchor_rel
+                    info["anchored_from"] = origin
+            else:
+                # 不锚 bytes 的两类：① 非新增族（M/D/T…）——reset 不动工作区字节，
+                # git add 即可回位；② anchor=False（merge 收编腿，内容进 HEAD 非 erase）。
+                try:
+                    disk = self.project_root / rel
+                    if disk.is_file():
+                        info["bytes"] = disk.stat().st_size
+                except OSError:
+                    info["bytes"] = None
+            facts[key] = info
+        return facts
+
+    def _audit_non_target_unstage(
+        self,
+        non_target_files: list[str],
+        actor_session: str,
+        *,
+        facts: dict[str, dict],
+        did_unstage: dict[str, bool],
+        absorbed: bool = False,
+    ) -> None:
+        """逐路径落一行归属留痕到 ``.runtime/gate_audit/non_target_unstage.jsonl``。
+
+        写单口=``zephyr.shared.io.audit_jsonl_writer.append_audit_jsonl``（禁裸 open）。
+        留痕失败不阻断 commit 主链路（与 gateway 既有审计语义一致），但会 warning 可见。
+        """
+        from datetime import datetime, timezone
+
+        if not non_target_files:
+            return
+        try:
+            owner_map = self._non_target_owner_map(actor_session if actor_session != "unknown" else None)
+        except Exception:  # noqa: BLE001 — 归属不可读时全记 null，禁猜
+            owner_map = {}
+        audit_dir = self.project_root / ".runtime" / "gate_audit"
+        ts = datetime.now(timezone.utc).isoformat()
+        from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
+
+        wrote = 0
+        for raw in non_target_files:
+            rel = self._rel_posix(raw)
+            key = os.path.normcase(rel)
+            info = facts.get(key, {})
+            owner = owner_map.get(key)
+            anchored_to = info.get("anchored_to")
+            root_posix = self.project_root.as_posix()
+            if anchored_to:
+                # 复位管线（一行可复跑）：锚区字节 → 工作区 → 重新入 index。
+                # 无条件以锚为先——工作区面此刻还在，但下一段腿（未跟踪清扫）随时把它
+                # 物理移出盘面；只写 `git add` 的处方届时＝无米之炊。cp 同字节覆盖幂等。
+                prescription = (
+                    f'cp "{(self.project_root / anchored_to).as_posix()}" '
+                    f'"{(self.project_root / rel).as_posix()}" && git -C "{root_posix}" add -- "{rel}"'
+                )
+            else:
+                prescription = f'git -C "{root_posix}" add -- "{rel}"'
+            record = {
+                "ts": ts,
+                "actor_session": actor_session,
+                "path": rel,
+                "staged_state": info.get("staged_state", "?"),
+                "index_blob_sha": info.get("index_blob_sha"),
+                "bytes": info.get("bytes"),
+                "anchored_to": anchored_to,
+                "anchored_from": info.get("anchored_from"),
+                "anchor_failed": bool(info.get("anchor_failed", False)),
+                "owner_sid": owner,
+                "ownerless": owner is None,
+                "did_unstage": bool(did_unstage.get(key, False)),
+                "absorbed": absorbed,
+                "prescription": prescription,
+                "worktree_root": root_posix,
+            }
+            if append_audit_jsonl(audit_dir, self._NON_TARGET_AUDIT_FILE, record):
+                wrote += 1
+            else:
+                logger.warning(
+                    "GitCommitGateway: non_target unstage 留痕写入失败 path=%s（审计不阻断）",
+                    rel,
+                )
+        logger.info(
+            "GitCommitGateway: non_target unstage 留痕 %d/%d 条已落 %s",
+            wrote,
+            len(non_target_files),
+            self._NON_TARGET_AUDIT_FILE,
+        )
+
+    def _unstage_non_target_files(
+        self,
+        non_target_files: list[str],
+        session_id: str | None = None,
+    ) -> tuple[bool, str]:
         """自动 unstage 非目标文件（治本：多 session 共享 git index 时清理并发污染）。
 
         git index 是工作区级单例，并发 session 可能 staged 了不属于本次 commit 的文件。
         无 pathspec 模式会提交整个 staging 区，所以 commit 前必须清理非目标文件。
         此前由调用方手动 git reset HEAD 清理（反复出现 commit 卡死），现改为 GitCommitGateway 自动处理。
+
+        S3 治本（maint2 2026-10-11）：unstage 行为一字不改（照旧 reset——不 unstage 会把
+        他人条目吸进本次 commit＝更糟），只在 reset 前锚住新增族字节、reset 后逐路径落
+        归属留痕（``did_unstage`` 按 reset 后真实 staged 态判定，不凭返回值猜）。
         """
         if not non_target_files:
             return True, ""
+        actor = session_id or "unknown"
+        # 1) 锚住（只加保护，零破坏）——异常已在内部吞并置 anchor_failed 标记
+        facts = self._anchor_non_target_paths(non_target_files, actor_session=actor)
+        # 2) 现行 unstage（原语句、原语义）
         result = self.run_git(["git", "reset", "HEAD", "--"] + non_target_files)
+        # 3) 逐路径真实 did_unstage：reset 后再读一次 staged 态（不凭 returncode 推断）
+        post_staged = self._staged_state_map()
+        did_unstage = {
+            os.path.normcase(self._rel_posix(p)): os.path.normcase(self._rel_posix(p)) not in post_staged
+            for p in non_target_files
+        }
+        # 4) 留痕（无论 reset 成败都必须落，fail-closed 于留痕）
+        self._audit_non_target_unstage(
+            non_target_files,
+            actor,
+            facts=facts,
+            did_unstage=did_unstage,
+        )
         if result.returncode != 0:
             return False, result.stderr.strip() or result.stdout.strip()
         logger.info(
@@ -4621,8 +4895,13 @@ class GitCommitGateway:
         message: str,
         pathspec_file: str | None = None,
         target_files: list[str] | None = None,
+        session_id: str | None = None,
     ) -> tuple[str | None, str]:
-        """统一 commit 入口。pathspec_file=None 时强制无 pathspec 模式；检测到 staged rename 自动切换无 pathspec。返回 (commit_hash, error)，hash 为 None 表示失败。"""
+        """统一 commit 入口。pathspec_file=None 时强制无 pathspec 模式；检测到 staged rename 自动切换无 pathspec。返回 (commit_hash, error)，hash 为 None 表示失败。
+
+        session_id（maint2 2026-10-11 S3 治本）：仅用于 non-target unstage 的锚区目录名与
+        归属留痕 ``actor_session`` 字段——缺省 "unknown"（旧调用方零变化）。
+        """
         use_pathspec = pathspec_file is not None
         # 2026-08-14 修复（#ARCH-MERGE-PATH-GAP-001②）：merge finalize 场景。
         # git 禁止 merge 期间 partial commit（fatal: cannot do a partial commit during
@@ -4655,12 +4934,26 @@ class GitCommitGateway:
                         len(foreign_staged),
                         foreign_staged,
                     )
+                    # maint2 2026-10-11 任务书 A.3：收编腿**加留痕不改行为**——逐条落 jsonl
+                    # （did_unstage=false / absorbed=true）。收编不 erase 字节（内容进 HEAD），
+                    # 故只记账不锚（零破坏）；归属仍照 claim 册单口判，查无记 ownerless。
+                    self._audit_non_target_unstage(
+                        foreign_staged,
+                        session_id or "unknown",
+                        facts=self._anchor_non_target_paths(
+                            foreign_staged,
+                            actor_session=session_id or "unknown",
+                            anchor=False,
+                        ),
+                        did_unstage={},
+                        absorbed=True,
+                    )
             else:
                 clean, err, non_target = self._verify_staged_is_clean(target_files)
                 if not clean:
                     # 治本：自动 unstage 非目标文件后重新验证，避免并发 session
                     # 污染 staging 区导致 commit 卡死（此前需调用方手动 git reset HEAD）
-                    unstage_ok, unstage_err = self._unstage_non_target_files(non_target)
+                    unstage_ok, unstage_err = self._unstage_non_target_files(non_target, session_id)
                     if not unstage_ok:
                         return None, (f"staged 区不干净且自动清理失败: {err} | unstage error: {unstage_err}")
                     clean, err, _ = self._verify_staged_is_clean(target_files)
@@ -4927,7 +5220,9 @@ class GitCommitGateway:
                             status=CommitStatus.NOTHING_TO_COMMIT,
                             message="no staged changes in auto-commit files",
                         )
-                    commit_hash, commit_err = self._commit_with_file_message(full_message, pathspec_file, existing)
+                    commit_hash, commit_err = self._commit_with_file_message(
+                        full_message, pathspec_file, existing, session_id
+                    )
                     if commit_hash is None:
                         return CommitResult(
                             status=CommitStatus.COMMIT_FAILED,
@@ -4986,7 +5281,9 @@ class GitCommitGateway:
                         status=CommitStatus.NOTHING_TO_COMMIT,
                         message="no staged changes in auto-commit files",
                     )
-                commit_hash, commit_err = self._commit_with_file_message(full_message, pathspec_file, existing)
+                commit_hash, commit_err = self._commit_with_file_message(
+                    full_message, pathspec_file, existing, session_id
+                )
                 if commit_hash is None:
                     return CommitResult(
                         status=CommitStatus.COMMIT_FAILED,
