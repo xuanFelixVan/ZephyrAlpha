@@ -196,6 +196,19 @@ INSERT-SELECT 直落，非独立拉数）→TI 小批→周月级联→情绪 bu
 - **脚本坑两条留痕**：PARTITION ID 取 partition_id（哈希串）非元组串；CH 双引号=标识符
   （json.dumps 串会被当列名，Code 47）——partition 过滤一律走 partition_id 单引号形。
 
+## 十五、排水令夜段续（2026-10-10 23:4x-10-11 00:1x）
+
+- **系统周任务防双跑**：`ZephyrAlpha-CH-OptimizeMerge-Weekly` Ready→Disabled（原定
+  10-11 03:30，本班人工全扫已完成防双跑；择机恢复）。
+- **Gate 5 情绪指数=修复**：`emotion_index_close_final` 手动跑成功，10-08/09 close_final
+  落库（此前断在 09-30）——上游 limit_up_down（T3）就位后 internal 源即通。
+- **QMT 精确诊断（Owner 动作项）**：终端进程在岗（XtItClient PID 17788，监听
+  58600/18901）；xtquant 显式 connect(58600) 可连，但**数据服务未就绪**（服务信息
+  None；get_market_data_ex ErrorID 200005；download_history_data 挂起）——请 Owner 在
+  终端开启投研/极简数据服务（或确认 miniQMT 模式登录）。另：终端重启后数据口动态迁移
+  （58610→58600），xtquant 自动发现失效=调度器连不上的根因，调度路径需同款显式
+  connect 或终端复归默认口。Gate 0 脚本已带 port=58600 直连（数据服务就绪即跑）。
+
 ## 九、收尾清单（滚动）
 
 - [ ] 53472 收官确认→T2 探针+冷档→T3/T4 放量
