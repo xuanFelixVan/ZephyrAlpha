@@ -100,7 +100,7 @@ family_id: GPUFEED-CAMPAIGN
 
 - **达标声明（≤3.5s/格+GPU≥70%）10-17 首窗兑现不了**：T2-A 影子对照依赖 T1 200 点标定（明晨 CH 空闲窗）+改前基线跑，10-11~10-12 完成；若对拍全绿可赶 10-15 08:00 冻结线前上窗——**有window但无余量**。
 - **降级声明（本班主动立状）**：10-17 08:00 v2 首窗**至少带 T1 仪表上窗**（已实装默认常开，本项无前置依赖）；治本若未走完影子对照，窗前以 T2 原速起跑，达标声明移 10-24 窗兑现。
-- **排程风险预警**：`duration_basis: 44.8s/格 → 1000 格≈12.4h`（prereg:63）按尸检真实均值 54-60s/格 实为 **15.0-16.7h > 12h 单批墙钟帽（prereg:103）＞22:30 收窗线**。若 T2 治本未上窗，v2 首窗大概率撞 22:30 硬收窗——窗主需预备：①裁定通道把 n_samples 再降（1000→600 内保收窗）或 ②接受 partial 产物+rc≠0 记一次试次。**此为数据驱动的排程修正建议，非判据面改动，走裁定通道呈批**。
+- **排程风险预警（§八标定后已重估）**：账面 `duration_basis: 44.8s/格 → 1000 格≈12.4h`（prereg:63）与尸检真实均值 54-60s/格（批A 夜间共租口径）均超 12h 墙钟帽；但 **T1 标定实测 idle 空机同代码 2.87s/格（p95 9.1s）→ 1000 格≈0.8-2.5h**，窗内充裕。残余风险=周六 08:00 窗共租状态（CH 日更/LLM GPU）重演批A 夜间放大（27-60s/格 → 7.5-16.7h 超窗）。**处置：仪表在岗实时可见（heartbeat stall_s+progress 均格速率），窗主按读数早停手；若走 T2-A 影子对照（预期 ~5x eval 提速）则风险基本消除。**此为数据驱动的排程观察，非判据面改动。
 - 导航风险移交窗主：`register_f06_grid_task.ps1:22` 的 action 指向 `D:\ZephyrAlpha\scripts\run_f06_grid.ps1` 仓内不存在（真身 scripts/tasks/run/）；live 任务已由裁定通道改指（NextRunTime=2026-10-17 08:00），重注册时勿踩。
 
 ## 七、10-17 窗验收判据原文（config/search_space_prereg.yaml:49-67 照录）
@@ -128,18 +128,26 @@ f06_grid_v2:
 
 验收判据=**manifest 存在+rc=0+台账自动入账**；判据面本班零触碰。
 
-## 八、T1 200 点标定运行册（明晨 CH 空闲窗执行）
+## 八、T1 200 点标定（已执行，19:16-19:26 总统加急令直接发车）
 
-前置门（三条全绿才发车）：①bcure 残链收官（`Get-CimInstance Win32_Process` 无 tilib_dwm_shard_runner/backfill_night 活体）②CH 空闲（数据车道 T7/T8 对表确认）③避开 02:30 夜跑±1h。
+**执行档案**：run_ts=`grid_20261010-191646`（pid 2584，19:16:46 点火，19:26:35 收工，**589 秒**，200/200 正格零阴性，rc=0，N 台账已自动入账，N_eff=12/200 名义）。前置门四检：bcure 零进程/CH 无重活/reaper live/keep 双条目在册。同 seed=20260916 同 stratify 同窗=**T2 影子对照改前基线**（manifest 按 recipe_id 逐位存档于产物目录；对拍尺=`.runtime/tmp/st-gpufeed-20261010/shadow_compare.py`，判据=join 后 metric 列 bitwise 相等+negatives 集合相等+耗时对比）。
 
-```bash
-# 发车（仪表默认常开，无需 env）
-export PATH="$LOCALAPPDATA/Programs/Python/Python312:$LOCALAPPDATA/Programs/Python/Python312/Scripts:$PATH"
-python scripts/backtest/factory_grid_executor.py --n-samples 200 --seed 20260916 \
-  --stratify-dims G_universe,A1_factor_normalize,B_top_n
-```
+**分段读数（progress.jsonl 全量 200 行）**：
 
-读数口径：`grid_<ts>/progress.jsonl` → 每格 fetch/eval/bt/write 分位分布+combine hit/miss 比例+cache_n 时间线；`heartbeat.jsonl` → GPU util/memory 对照序列+RSS 曲线。产出=预算帽三元组回填材料（prereg:81-88 要求 measured_at/run_id/commit）+T2-A 影子对照的改前基线（**同参数再跑一遍即 baseline，先留档后改码**）。
+| 指标 | 读数 |
+|---|---|
+| 均格 tot_s | **2.87s**（p50=1.20 / p95=9.14 / max=14.84）——idle 空机口径 |
+| 分段占比 | eval 2.74s（95%）‖ fetch 0.013s ‖ bt 0.117s ‖ write≈0（写盘/取数/回测核全部无罪实锤） |
+| combine 命中面 | **3 hit / 197 miss = 1.5% 命中率**（109 distinct prefix 摊 200 格）——抖动两批同在 |
+| 按 universe 单价 | all_a_ex_st 3.6-8.7s（max 14.8）‖ zz500 ~1.0s ‖ hs300 ~0.7s |
+| backend | gpu 141 / cpu 59（auto 守卫分流正常）；RSS 峰值 3.3GB；GPU 无瓶颈迹象 |
+
+**三Conclusion（修正 §五/§六 相应结论）**：
+1. **抖动证实但单价重估**：miss 率 98.5% 与批A 同形；但每 miss 单价由宇宙大小决定（0.6-15s），批A 的 54-60s/格=**夜间共租负载放大**（CH 日更/LLM GPU/多会话并租），非纯代码固有——同代码 idle 空机 2.87s/格（20x 差）。
+2. **T2-A 价值随 n 放大**：冗余 combine 占比=1−prefix数/格数（200 格 44%→n=1000 约 83%→批A n=6000 约 97%）。prefix 排序在 v2 规模（1000 格/168 prefix≈6 访问）可砍 ~5x eval 时间；在 200 点规模仅 1.8x。**v2 窗仍建议上（影子对照后）**。
+3. **窗口风险重估**：idle 口径 1000 格×p95 9.1s≈2.5h，08:00-22:30 窗内充裕；残余风险=周六 08:00 窗的 CH/共租状态重演批A 夜间负载（若 27-60s/格 复现则 1000 格 7.5-16.7h 仍可能超窗）。**仪表在岗实时可见**：窗主盯 heartbeat.jsonl 的 stall_s 与均格速率即可早停手。
+
+**治本对拍流程（明日起）**：T2-A 落地 → 同参数重跑 200 点 → `shadow_compare.py grid_20261010-191646 <new_dir>` → PASS（metric bitwise 相等）才可上窗。
 
 ## 九、移交与建议
 
