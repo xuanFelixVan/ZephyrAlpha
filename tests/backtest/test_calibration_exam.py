@@ -347,13 +347,79 @@ def test_calibration_known_keys_still_passes_after_failclosed(tmp_path):
     assert row["unjudged"]["numeric_keys_not_read"] == []
 
 
-def test_pillars_route_is_the_single_dispatch_source():
-    """路由真源抽函数的回归锁（普查件与本核共用，禁两处抄分派式）：
-    四形各钉一条——NAV 键 comparison=dual_arm／全韦校准键 comparison=series（三连裁③v2 原意）／
-    calibration=series／shadow 带 NAV 键仍=series（现状如实，扩面属判据路由面待呈批非本件自决）。"""
+def test_pillars_route_keys_only_no_family():
+    """路由真源（统筹 03:3x 裁定①扩面后）：分派只看门柱键集，family 不得参与——
+    五形各钉一条，含两形是扩面翻转过来的（shadow/calibration 带 NAV 键改归双臂判官）。"""
     cal5 = {"mono_spearman_min": 0.6, "ic_mean_min": 0.02, "regime_same_sign": True}
-    assert ce.pillars_route({"family": "comparison", "pillars_numeric": {"sharpe_delta_min": 0.1}}) == "dual_arm"
-    assert ce.pillars_route({"family": "comparison", "pillars_numeric": cal5}) == "series"
-    assert ce.pillars_route({"family": "calibration", "pillars_numeric": cal5}) == "series"
-    assert ce.pillars_route({"family": "shadow", "pillars_numeric": {"maxdd_delta_max": 1.0}}) == "series"
-    assert ce.pillars_route({"family": "comparison", "pillars_numeric": {}}) == "dual_arm"
+    for fam in ("comparison", "ablation", "calibration", "shadow", "anything_else"):
+        assert ce.pillars_route({"family": fam, "pillars_numeric": {"sharpe_delta_min": 0.1}}) == "dual_arm", fam
+        assert ce.pillars_route({"family": fam, "pillars_numeric": cal5}) == "series", fam
+        assert ce.pillars_route({"family": fam, "pillars_numeric": {}}) == "series", fam
+    # 混形卡（校准键＋笔级键）⇒ 键集不韦于校准集 ⇒ 双臂判官接手，另一侧柱由 unjudged 显形
+    assert (
+        ce.pillars_route({"family": "comparison", "pillars_numeric": {**cal5, "misfire_reduction_min": 0.2}})
+        == "dual_arm"
+    )
+
+
+def test_dual_arm_missing_signal_b_raises_family_agnostic(tmp_path):
+    """扩面的必然副作用：calibration 族带 NAV 键的卡也要配双臂了——缺 signal_b 时报错文案
+    必须说"判据键含 NAV/笔级面"，不得再谎称"对照/消融卡"（family 不是进本支的理由）。"""
+    p = _card(tmp_path, family="calibration", pillars_numeric={"maxdd_improvement_min": 5.0})
+    sig, tgt = _synthetic(strength=1.0)
+    with pytest.raises(Exception) as ei:
+        ce.run_card(p, signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    msg = str(ei.value)
+    assert "判据键含 NAV/笔级面" in msg and "双臂" in msg
+    assert "对照/消融卡需双臂信号" not in msg
+
+
+def _mix_metrics(arm_open: dict) -> dict:
+    return {
+        "maxdd_improvement_pp": 9.0,
+        "sharpe_delta": 0.5,
+        "turnover_delta_annual_x": 0.1,
+        "ic_delta_is": 0.02,
+        "ic_delta_oos": 0.01,
+        "arm_open": arm_open,
+    }
+
+
+def test_mixed_card_calibration_side_is_actually_judged_now():
+    """裁定①的判别力正例：混形卡（NAV 柱＋校准柱）走双臂判官后，校准柱必须真的参与判决。
+    构造开臂 IC 面很差而配对面很好——旧形态只报配对面（校准柱被"这族不该有这键"静默跳过＝
+    在册假绿面），新形态必须额外点名 mono/ic 的数值不达标。"""
+    card = {"pillars_numeric": {"maxdd_improvement_min": 5.0, "mono_spearman_min": 0.6, "ic_mean_min": 0.02}}
+    m = _mix_metrics({"mono_spearman": 0.1, "ic_mean": -0.05, "ic_ir": None, "regime_ic": {}, "oos_ic": -0.05})
+    verdict, fails = ce._judge_comparison(card, m)
+    assert verdict == "fail"
+    assert any("mono_spearman 0.100 < 0.6" in f for f in fails), fails
+    assert any("ic_mean -0.0500 < 0.02" in f for f in fails), fails
+    assert not any("未支持判据键" in f for f in fails), "校准侧键已入并集词表，不该再报越表"
+
+
+def test_mixed_card_calibration_side_passes_when_face_good():
+    """反向护栏（同一判据不得两头评）：开臂面达标时混形卡可 pass；
+    且 oos_same_sign 只按配对语义评一次——单信号那条 oos 同号规则不叠加（同键两套判据＝禁）。"""
+    card = {
+        "pillars_numeric": {
+            "sharpe_delta_min": 0.1,
+            "mono_spearman_min": 0.6,
+            "ic_mean_min": 0.02,
+            "oos_same_sign": True,
+        }
+    }
+    m = _mix_metrics(
+        {"mono_spearman": 0.9, "ic_mean": 0.05, "ic_ir": None, "regime_ic": {"bull": 0.1}, "oos_ic": -0.09}
+    )
+    verdict, fails = ce._judge_comparison(card, m)
+    assert verdict == "pass", fails
+    assert "ic_ir_min" not in card["pillars_numeric"]  # 本卡未冻 IC_IR，不得凭空加闸
+
+
+def test_pure_off_vocab_card_still_goes_to_calibration_judge():
+    """纯越表卡（一个配对专有键都没有）不得被送去双臂报"需双臂接线"这条假错——
+    它缺的是机判面，不是第二条臂。路由=series，判决=未知键 fail-closed 点名。"""
+    assert ce.pillars_route({"family": "calibration", "pillars_numeric": {"tail_ratio_min": 0.3}}) == "series"
+    assert ce.pillars_route({"family": "shadow", "pillars_numeric": {"car_t_stat_min": 2.0}}) == "series"
+    assert ce.pillars_route({"family": "comparison", "pillars_numeric": {"oos_same_sign": True}}) == "series"

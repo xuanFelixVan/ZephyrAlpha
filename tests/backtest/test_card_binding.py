@@ -265,23 +265,38 @@ def _vocab_cards(tmp_path):
     (d / "c.yaml").write_text(
         yaml.safe_dump({"card_id": "T-C", "family": "calibration", "status": "empty"}), encoding="utf-8"
     )
+    (d / "e.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "card_id": "T-E",
+                "family": "comparison",
+                "status": "preregistered",
+                "signal_kind": "panel",
+                "pillars_numeric": {"sharpe_delta_min": 0.1, "tail_ratio_min": 0.3},
+            }
+        ),
+        encoding="utf-8",
+    )
     (d / "not_a_card.md").write_text("x", encoding="utf-8")
     return d
 
 
 def test_vocab_census_is_machine_generated_and_zero_write(tmp_path):
-    """普查件三钉：①按 pillars_route 分侧取词表（a 卡走校准判官→car_t_stat_min 列外；
-    b 卡混形走双臂判官→mono_spearman_min 列外＝混形卡的未判侧显形）；②无机判面卡单独计数不编造；
-    ③discipline 三面零（阈值/卡件/CH 全 0，普查只列键名不改值）。"""
+    """普查件四钉：①按 pillars_route 分侧取词表（a 卡走校准判官→car_t_stat_min 列外）；
+    ②裁定①并集词表后，混形卡（b 卡：NAV 柱＋校准柱）走双臂判官且校准柱已在词表内＝不再列越表
+    ——这条断言就是"另一侧门柱从此有判官接手"的可执行证明；
+    ③两侧都不认的越表柱（e 卡 tail_ratio_min）在双臂判官下仍须点名，证明并集没把闸放宽；
+    ④无机判面卡单独计数不编造＋discipline 三面零（阈值/卡件/CH 全 0，普查只列键名不改值）。"""
     out = cb.build_vocab_census(_vocab_cards(tmp_path))
-    assert out["card_total"] == 3
+    assert out["card_total"] == 4
     assert out["cards_without_numeric_face"] == 1
     by_id = {r["card_id"]: r for r in out["rows"]}
     assert by_id["T-A"]["keys_outside_route_vocab"] == ["car_t_stat_min"]
     assert by_id["T-A"]["route"] == "series"
     assert by_id["T-A"]["prose_pillar_keys"] == ["lag_profile"]
-    assert by_id["T-B"]["keys_outside_route_vocab"] == ["mono_spearman_min"]
-    assert by_id["T-B"]["route"] == "dual_arm"
+    assert "T-B" not in by_id
+    assert by_id["T-E"]["route"] == "dual_arm"
+    assert by_id["T-E"]["keys_outside_route_vocab"] == ["tail_ratio_min"]
     assert out["unique_keys_outside_vocab"] == 2
     assert out["discipline"]["threshold_values_written"] == 0
     assert out["discipline"]["cards_modified"] == 0
@@ -290,8 +305,8 @@ def test_vocab_census_is_machine_generated_and_zero_write(tmp_path):
 
 def test_vocab_census_vocab_sources_read_from_core_constants():
     """词表两侧必须直读执行核常量（复制定义=普查与判决漂移，改一处即红）。"""
-    from fexam.calibration_exam import _CALIBRATION_JUDGED_KEYS, _COMPARISON_KNOWN_KEYS
+    from fexam.calibration_exam import _CALIBRATION_JUDGED_KEYS, _UNION_PILLAR_KEYS
 
     out = cb.build_vocab_census(cb.CARDS_DIR)
     assert set(out["vocab_sources"]["series"]) == set(_CALIBRATION_JUDGED_KEYS)
-    assert set(out["vocab_sources"]["dual_arm"]) == set(_COMPARISON_KNOWN_KEYS)
+    assert set(out["vocab_sources"]["dual_arm"]) == set(_UNION_PILLAR_KEYS)
