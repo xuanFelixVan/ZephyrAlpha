@@ -223,3 +223,24 @@ completes_when: T1-T6 全绿+99_delivery 逐件哈希+影子 7 天窗在册+凶�
 - **动作**：kill 自有金丝雀 holder 57192（本班测试件，非红线"杀进程"语义——仪器拆除）+删 backup.lock/backup_canary_test.lock 假锁+停金丝雀监视器。**当前锁面干净**（下一落地正常点火不受阻）。
 - **namer v2 修补**：补"等锁出现"容错（backup.lock 不在时挂起等待而非崩溃），已重启（pid 49392）——下一次点火的杀前读取即被 RM 爆发捕获。
 - 46140 案（21:34:39 死）已按案 #13 同型补记（点火 worker 1800s 到期 21:29→reaper pass 处决→backup 死于滞差带内）。
+
+### 案 #14（46112，23:05:37-23:38:25 死，存活 ~33min）+ RM 路线自我否证——巡检班 23:48-00:0x 轮
+
+- **七连立**：点火者 58352 被 reaper 23:35:40 处决（age=31min=46112 点火时刻生）→ backup 死 **+2.8min**。滞差全表：+14/+20.5/+21.5/+8.5/+1.7/+24.7/+3.5/+2.8min。守卫家族零开火再证。
+- **RM ctypes 路线自我否证**：reader-namer（Restart Manager P/Invoke）在 RmGetList 缓冲区封送处 **SIGSEGV**（结构性 native 崩溃，pinning 修复无效）——已停用撤换为安全 atime 差分单体（无 native 调用）。**结论：μs 级句柄捕获在本班工具面内不可达，handle.exe/ETW 需 Owner 授权一句话**（批复已预留此门）。
+- **安全仪器续猎**：atime 差分单体（无 native 调用，22:5x 重启）+patrol+陷阱×3+诱饵 v1/v2。捕获语义=backup.lock atime 推进时刻（主使的杀前读取）与死亡时刻的精确对表（已有 22:35:53→22:37:06 单例净证）。
+- **主使画像（续）**：仓外/隐名 resident；读 backup.lock 取 pid；点火 worker 被 reaper 处决后 1.7-24.7min 内处决 backup（八连立）；杀后删锁文件；只认点火链成员（诱饵/canary/金丝雀全免）；本机无 UtcTicks 算术错误代码（grep 全谱，belt_watchdog 已被维护班修复）。
+
+### 交叉线索执行件（总统统筹 22:5x 三件令，巡检班 00:1x-00:2x 轮）
+
+**①时钟单位审计（三候选消费面+全谱）**：
+- reconcile_runner.py：stale/elapsed 判据=`int(time.time()) - started_at/heartbeat_at`（:305/:255-262）——**unix-vs-unix 一致**；started_at/heartbeat_at 写侧同为 time.time()（:210）✓。无 epoch-0001 类可能（Python 无 .NET ticks）。
+- services_registry.py（dashboard）：staleness=`time.time() - latest`（file mtime，:737）✓ 一致；heartbeat 解析走 ISO/datetime 同源 ✓。
+- global_state_aggregator.py：无 lifetime/expire 算术（仅状态聚合）✓。
+- process_incubator/process_reaper：is_expired/寿命判=time.time() unix ✓；child_create_time=psutil（unix）✓。
+- **全谱 grep：UtcTicks/.Ticks/ToFileTime 在 .py=零命中**；.ps1 唯一实例=belt_watchdog（维护班已修）。**结论：仓内 Python 消费面无时钟单位错配；bug 类真实存在但仅现于 .NET/PS 面（已修者=唯一样本）。主使若在仓外带同类 bug，须待 handle/ETW 定名后验证。**
+
+**②BeltDaemon Triggers 拉取**：双触发器（MSFT_TaskLogonTrigger + MSFT_TaskTimeTrigger 2026-09-22T21:54:18，均 PT1M 每分钟+Enabled）执行 belt_watchdog.ps1——即 UtcTicks buggy 期（10-02 22:47→10-10 21:31）的每分钟误判源。21:44-45 出生者=5min 守卫族（drift_watchdog/pythonw -m rule_bridge，非 daemon 增殖）。现存 daemon=单只（23016@23:49:11；41196@21:27 已亡由 watch/守卫重生）——**pileup 残余=零**。
+**主使与 21:44 spawn 的同一 resident 假说**：belt_watchdog 修复后每分钟 fire 变为无害判活（不再孵增殖）；其每分钟 fire 窗与死亡时刻的相关性=案 #5-#13 九案中曾观察（守卫族 5min 网格）但金丝雀未杀=签名猎杀已弱化——主使仍以"点火链成员"为唯一强判别。
+
+**③06:00 判定样本照守**：atime 差分单体（重生）+patrol+陷阱×3+reader-namer（等锁容错 pid 49392）全在线；06:00 DailyBackup 点火瞬间= namer RM 爆发首个实战窗。
