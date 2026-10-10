@@ -1,0 +1,241 @@
+---
+ttl: task_bound
+title: 矿考循环班·绑定前逐字复核（6 张 preregistered 卡三闸筛查）
+created: '2026-10-11T01:25:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+review_method: >-
+  # 绑定前复核车道产物。先逐字读六张卡全文 + 现执行器
+  scripts/backtest/fexam/calibration_exam.py（494 行，_series_metrics 在 :152-188、
+  _panel_metrics :191-214、_bucket_response :131-149、_n_buckets_from_card :117-128、judge :340-373），
+  再逐柱判可判性，最后过三闸。硬约束遵从：本车道零 CH 查询（01:00-04:00 禁窗内）、零卡件改动、
+  零绑定册/分数册/代码/注册表改动、零 git 写；在册数据窗一律标 cited_not_measured。
+summary:
+  total_reviewed: 6
+  bindable: 2
+  reject: 4
+  reject_by_dominant_gate:
+    future_function: 1        # X-S1-04/02
+    unfrozen: 2               # L0-02/03、L2-09/03
+    caliber_or_scope: 1       # L1-S5/03
+executor_machine_face: >-
+  实测事实（读码，非记忆）：series 路 `_series_metrics` 只出 ic_mean（时序 Spearman）、mono_spearman
+  （分桶中位-桶序 Spearman，桶数按卡面 buckets.type 词表取数）、regime_ic（牛/熊段同号）、oos_ic、
+  bucket_medians/net_bucket_medians/turnover；`"ic_ir": None`（:184）⇒ 卡面 ic_floor 的 IC_IR>=0.3
+  在 series 路永不判；目标硬编码 `tgt = target.sort_index().shift(-1)`（:153）⇒ 任何 t+2..t+5 柱无面。
+  panel 路 `_panel_metrics` 返回 `"mono_spearman": None`（:209）⇒ 分桶响应柱在 panel 卡永不判。
+  ⚠ 假绿通道：`judge()`（:340-373）对 calibration 族无"未知 pillars_numeric 键"fail-closed
+  （只有 comparison 族的 `_judge_comparison` :300-303 有），mono_spearman=None / 未知键一律静默跳过，
+  出分的 "pass" 只代表那 4-5 个已知键，不代表卡面门柱全过。凡 bindable 卡的分数册附注 MUST 逐柱写"未判柱清单"。
+
+cards:
+
+- card_id: TDM-E-L1-S3/calibration/05_limit_up_premium_derived
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__05_limit_up_premium_derived.yaml
+  status_seen: preregistered
+  q1_card_face:
+    signal_kind: "series（卡面原文 `signal_kind: series`；note 自述'溢价是截面均值（series 形），非逐符号面板'）"
+    buckets_type: "quantile_decile → 现器词表取 n_buckets=10（一致）"
+    buckets_on: "'on': 当日昨日涨停收盘溢价（截面均值）"
+    min_obs_per_bucket: 60
+    min_set_size: "昨日涨停集合 >= 20 只（不足则该日置 NaN 并剔除，防小截面伪溢价）"
+  q2_pillar_by_pillar:
+    response_monotonicity: "可判：mono_spearman vs pillars_numeric.mono_spearman_min=0.6"
+    ic_floor__ic_mean: "可判：时序 Spearman vs ic_mean_min=0.02（注意＝时序非截面 IC，卡面'日频 IC'与现器口径须在分数册写明）"
+    ic_floor__ic_ir: "不可判：series 路 ic_ir=None，ic_ir_min=0.3 静默跳过"
+    lag_profile: "不可判：'t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日'——现器硬编码 shift(-1)，无 t+2/t+3 面"
+    regime_stability: "部分可判：牛/熊段同号可判（window.regimes 两串可被 _span_dates 解析）；'均过 ic_floor'不可判（同 ic_ir）"
+    two_form_spread: "不可判：需开盘/收盘两序列分开建档 + 条件子集中位数差检验；现器 run_card 单 signal 入口，且卡面未给'显著'的检验量；卡面自记'不作一票否决门柱'"
+  q3_three_gates:
+    future_function: "通过。卡面 signal_derivation 信号面只用 t 与 t-1：'当日溢价 close 口径 = mean over i∈S_{t-1} of (close_{i,t}/close_{i,t-1}-1)，开盘口径 = mean over i∈S_{t-1} of (open_{i,t}/close_{i,t-1}-1)'；次日量只出现在 target/secondary。辅轴 next_day_emotion_index_delta 本次不考（见 faces_cited_not_measured ③）"
+    unfrozen: "通过（机判面）：pillars_numeric 五键齐；阈值在卡面有原文（rho>=0.6 / IC>=0.02 / IC_IR>=0.3 / >=20 只 / lim-0.002 / 经验分位>80%）。残余=two_form_spread 的'显著低于全样本'无冻结检验量，但该柱非门柱，不进机判面"
+    caliber_supply: "⚠ 命中风险须在开考前消解（不作 reject 的唯一理由=母卡 09 与在册配方链同绑 hfq 且已 examined）：卡面绑 `c1_market.kline_daily_hfq + c1_market.stk_limit` 并自述'全部比值在后复权空间内计算（同一 symbol 相邻两日复权因子一致，比值免污染）'；在册另有相反实测口径 R1_L11_ledger.md:77 '涨停判定 MUST 不复权 kline_daily + stk_limit（任务书 §3，hfq 得 3882 荒谬值）'。母卡 09 卡面 :52 亦写 'signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit（导生宽表，无单表可直接 SELECT）' ⇒ 两条在册陈述互斥，本车道禁 CH 不能裁"
+  verdict: bindable
+  binding_spec:
+    op: limit_up_premium_close_series
+    args:
+      universe_table: c1_market.kline_daily_hfq（卡面 signal_table 原文）
+      limit_rule_table: c1_market.stk_limit
+      limit_up_flag: "r_{i,t-1} = close/lag(close)-1 >= limit_pct - 0.002（卡面'先按卡 09 口径标出 t-1 日的涨停集合 S_{t-1}（r_{t-1} >= lim_{t-1}-0.002，r = close/lag(close)-1）'）"
+      signal_col: "limit_up_premium_close_derived = mean_{i∈S_{t-1}}(close_{i,t}/close_{i,t-1}-1)（卡面 signal_column + derivation 原文）"
+      set_floor: "nullIf(|S_{t-1}|,) <20 → NaN（卡面 min_set_size 原文）"
+      suspension_rule: "停牌股（t 日无行）不入截面均值并在 run 附注计缺失数（卡面原文，须真计缺失数）"
+      window: "IS 2019-01-04..2023-12-31 / OOS 2024-01-01..2025-09-09（卡面 window）"
+      target: "kline_index symbol='000300' close → next_day_return = close(t+1)/close(t)-1（卡面 target_source 原文，与现器 shift(-1) 同口径）"
+      buckets: "quantile_decile→10，min_obs_per_bucket=60（卡面；现器不校 60 只校 len>=n_buckets*10，窗内约 1622 日→每桶约 162，满足，须在附注写实）"
+    pandas_steps:
+      - "df = ch(kline_daily_hfq, cols=[symbol,trade_date,close,open], trade_date∈[2018-10-01..2025-09-09])  # IS 前留暖机与 t-1 集合"
+      - "lim = ch(stk_limit, cols=[symbol,trade_date,limit_pct]) 按 symbol×trade_date asof 前向填充、FINAL/argMax 去重（去重口径沿用 emotion_lane_status.yaml:334 在册配方，本车道未实测）"
+      - "df['r'] = df.groupby('symbol')['close'].pct_change(); df['is_lu'] = df['r'] >= df['limit_pct'] - 0.002"
+      - "df['prev_is_lu'] = df.groupby('symbol')['is_lu'].shift(1); df['prev_close'] = df.groupby('symbol')['close'].shift(1)"
+      - "df = df[df['prev_is_lu']]  # 截面=S_{t-1}"
+      - "g = df.groupby('trade_date'); n = g.size(); prem_close = (g['close']/g['prev_close']-1).mean()"
+      - "prem_close[(n < 20) | prem_close.isna()] = NaN  # 卡面 min_set_size"
+      - "idx = ch(kline_index, symbol='000300')['close']; tgt = idx.shift(-1)/idx-1"
+      - "calibration_exam.run_card(card, signal=prem_close, target=tgt)  # 开盘口径另建 prem_open 序列仅入附注，不占 run_card 入口"
+    hardest_step: "昨涨停集合 S_{t-1} 的标记＝pct_change×stk_limit.limit_pct 的 asof 对齐＋去重；此步直接踩在 caliber_supply 闸的 hfq/不复权 互斥上，绑定前必须先做一次两口径日频涨停数对账（开考前置门，见 pre_run_gates）"
+  score_run_annotation_required: "未判柱清单＝ic_floor 的 IC_IR 半边、lag_profile(t+1..t+3)、two_form_spread；'pass' 仅代表 mono/ic_mean/regime同号/oos同号 四键"
+
+- card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__06_promotion_rate_derived.yaml
+  status_seen: preregistered
+  q1_card_face:
+    signal_kind: "series（卡面 note 原文 'series 形（日度比率）'）"
+    buckets_type: "quantile_decile → n_buckets=10（一致）"
+    buckets_on: "'on': 当日晋级率（导生）"
+    min_obs_per_bucket: 60
+    min_set_size: "昨日涨停集合 >= 20 只"
+  q2_pillar_by_pillar:
+    response_monotonicity: "可判（mono_spearman>=0.6）"
+    ic_floor__ic_mean: "可判（>=0.02）"
+    ic_floor__ic_ir: "不可判（series 路 ic_ir=None）"
+    lag_profile: "不可判（t+1..t+3，现器 shift(-1) 硬编码）"
+    regime_stability: "部分可判（同号可判，'均过 ic_floor'不可判）"
+    promotion_ladder: "不可判：'分板率另档建档（1→2、2→3、>=3→+1 三档晋级率各成序列，n>=200 才判）'需三条独立序列＋逐序列 n 门，现器单信号入口无面；卡面自记'不作一票否决门柱'"
+  q3_three_gates:
+    future_function: "通过。'is_lu_{i,t} = (close/lag(close)-1 >= stk_limit.limit_pct - 0.002)'、'promotion_rate_t = countIf(is_lu_{t} AND is_lu_{t-1}) / nullIf(countIf(is_lu_{t-1}),0)' 全用 t/t-1；辅轴 next_day_emotion_index_delta 本次不考"
+    unfrozen: "通过（机判面）：五键齐，分母<20→NaN、60 日暖机、-0.002 容差皆卡面原文；promotion_ladder 的 n>=200 是建档门槛非门柱"
+    caliber_supply: "同 05 卡的 hfq/不复权 互斥风险；另卡面自记一条如实限制：'日线导生的\"再板\"只判收盘封住，不含盘中触板未封的伪晋级，与事件表 daban_board_event(open_board_count/close_sealed) 口径在细节上不等价，后者实测仅 2026-09-01..2026-10-09 / 1,767 行'⇒ 与事件表面不等价已冻结披露，不违闸"
+  verdict: bindable
+  binding_spec:
+    op: promotion_rate_series
+    args:
+      tables: c1_market.kline_daily_hfq + c1_market.stk_limit（卡面 signal_table）
+      flag_rule: "is_lu_{i,t} = close/lag(close)-1 >= stk_limit.limit_pct - 0.002（卡面原文，标'卡 09 口径'）"
+      signal_col: "promotion_rate_derived = countIf(is_lu_t AND is_lu_{t-1})/nullIf(countIf(is_lu_{t-1}),0)"
+      nan_rule: "分母 <20 置 NaN（卡面原文）"
+      warmup: "串须 IS 前 60 交易日暖机（卡面原文）⇒ 取数起点不得晚于 2018-09"
+      window: "IS 2019-01-04..2023-12-31 / OOS 2024-01-01..2025-09-09 / regimes bull 2019-01-04..2021-06-30、bear 2021-07-01..2024-01-31"
+      target: "kline_index 000300 close → next_day_return（与现器 shift(-1) 同口径）"
+      in_register_recipe: emotion_lane_status.yaml:333-335 已给同卡接线一句话（asof FINAL 去重＋IS_B/OOS_B 过滤），本车道引用未实测
+    pandas_steps:
+      - "df = ch(kline_daily_hfq, [symbol,trade_date,close], 2018-09-01..2025-09-09)"
+      - "lim = stk_limit asof symbol×trade_date + dedup"
+      - "df['is_lu'] = df.groupby('symbol').close.pct_change() >= df.limit_pct - 0.002"
+      - "df['lu_prev'] = df.groupby('symbol').is_lu.shift(1)"
+      - "d = df[df.lu_prev].groupby('trade_date').agg(num=('is_lu','sum'), den=('lu_prev','sum'))"
+      - "sig = (d.num/d.den).where(d.den >= 20)"
+      - "run_card(card, signal=sig, target=idx_next_day_return)"
+    hardest_step: "den 必须是'昨板家数'而非当日在市家数——同一 groupby 上对 is_lu 与 shift(1) 后的 is_lu 分别求和，错一步就把晋级率算成涨停占比"
+  score_run_annotation_required: "未判柱＝IC_IR 半边、lag_profile、promotion_ladder；首批 N=1 的在册定位（emotion_lane_status.yaml first_batch）与本判定不冲突"
+
+- card_id: TDM-E-L0-02/calibration/03_偏离幅度分位响应曲线
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-02__calibration__03_偏离幅度分位响应曲线.yaml
+  status_seen: preregistered
+  q1_card_face:
+    signal_kind: "series"
+    buckets_type: "quantile_decile → 10（一致）"
+    buckets_on: "'on': 当日截至 14:30 时点的偏离幅度（|实际暴露−边界|/边界）"
+    min_obs_per_bucket: 60
+  q2_pillar_by_pillar:
+    response_monotonicity: "形式可判（10 桶＋shift(-1)），但信号本身无冻结可算式"
+    ic_floor: "ic_mean 面同 05；IC_IR 不可判"
+    tail_focus: "不可判：'高偏离尾部（D9+D10）子集的次日收益差值单列（装置存在理由在尾部，均值不判）'——现器无桶子集差值面"
+    regime_stability: "部分（同号可判，'过 ic_floor'不可判）"
+    plan_replay_purity: "不可判（实现纪律柱，需 L0-01 同口径重放链在场）"
+    target: "卡面 target.primary 虽自标'（shift(-1)，现器 _series_metrics 兼容）'，但真身是 'daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → shift(-1)'＝组合收益引擎重放面，不是指数次日收益"
+  q3_three_gates:
+    future_function: "通过（信号面为当日 14:30 时点前量，无次日量）"
+    unfrozen: "命中（三个冻结量缺）：①组合构成——`weights` 在卡面全文无定义（无标的宇宙、无权重规则、无再平衡日）；②边界档数值——'regime_state_anchored.dominant 映射当日仓位上限档'与 'slippage_bp=档位' 均未给 四档→仓位上限%→成本bp 的映射表，且所指前役卡 TDM-E-L0-02/comparison/02 卡面 grep 亦只有 '当日边界（仓位上限档）与实际暴露序列' 无数值；③实际暴露折算式——'以 ETF 分钟 NAV 折算持仓暴露 vs 盘前边界'无公式、无 ETF 代码/持仓对应关系。'十分位分桶由该比值产出'不解决上述三缺"
+    caliber_supply: "通过（在册窗自证充分：kline_etf_1min 2021-07-01..2026-10-09 / 292,584,491 行、regime_state_anchored 2017-07-11..2026-10-09 / 4,488 行，均引在册）"
+  verdict: reject
+  g4_5_gap: "须立新版本卡冻结三量：组合 weights 的标的宇宙与权重规则、dominant 四档→仓位上限%→slippage_bp 映射数值表、kline_etf_1min→实际暴露的折算式与 ETF 清单；在册分类已同判（01_binding_census.yaml:36-43 cls=C reason=target_face_not_index_next_day / target_face_kind=engine_replay）"
+
+- card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+  status_seen: preregistered
+  q1_card_face:
+    signal_kind: "series（卡面 `signal_kind: series`，与标题 'shock_panel' 字样无关——标题是母卡血统名，不是分桶形状，本车道不按标题加信号）"
+    buckets_type: "quantile_decile → 10（一致）"
+    buckets_on: "'on': 当日合成 z 分数（7 项等权）"
+    min_obs_per_bucket: 60
+  q2_pillar_by_pillar:
+    response_monotonicity: "可判（0.6）"
+    ic_floor__ic_mean: "可判（0.02）"
+    ic_floor__ic_ir: "不可判（None）"
+    lag_profile: "不可判（t+1..t+3）"
+    regime_stability: "部分（同号可判）"
+    subset_coverage: "不可判（披露柱：'7/11 子集覆盖度须逐年在分数册披露（缺项当年不计入合成，禁补零冒充）'——出册义务，非机判柱）"
+    shock_event_count: "不可判：'abs(z)>2 事件数年频计数与事件后 3 日收益分布须单列'——事件条件后 3 日收益分布需 t+1..t+3 前向面，现器只有 shift(-1)"
+  q3_three_gates:
+    future_function: "通过（7 项皆当日或历史量：环比、振幅、创新高家数比、跌破 MA20 家数比）"
+    unfrozen: "命中：⑥⑦ 两项家数比缺分母宇宙冻结——卡面 '⑥创新高家数比 countIf(close >= max(close,60 回看))；⑦跌破 MA20 家数比' 全文未定义'家'的集合（新股/上市不足 60 日、ST、停牌、北交所/创业板是否入计），也未给该名单的版本源；'④全市场成交额环比 sum(amount)/sum(amount_{-1})-1' 同缺宇宙过滤"
+    caliber_supply: "命中：在册明载 stock_basic 窗内 2026-08-14 起才有创业板、09-15 起才有北交所（任务书在册事实，本车道未实测），而卡面冻结窗是 2019-01-04..2025-09-09 ⇒ 用当前 stock_basic 快照给 2019..2025 定宇宙必换定义；①②③ 又跨卡继承 09/10 的 hfq 涨停口径（同 05 卡互斥风险）；母卡盘中面卡面自证不可复现（'本卡因此只考日频可导生子集并显式声明 7/11 覆盖'），此条不违闸"
+  verdict: reject
+  g4_5_gap: "须立新版本卡冻结一项：④⑥⑦ 的个股宇宙过滤器（名单表＋版本日期＋剔除规则：上市不足 60 日/停牌/ST/板块归属），否则家数比分母随快照漂移，z 序列跨 IS/OOS 换定义"
+
+- card_id: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
+  path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-04__calibration__02_突破失败连续次数前瞻收益.yaml
+  status_seen: preregistered
+  q1_card_face:
+    signal_kind: "panel（卡面 `signal_kind: panel`）"
+    buckets_type: "ordinal_event_count → 词表外 ⇒ 现器缺省 n_buckets=10（与卡面四档 K∈{0,1,2,3+} 不一致；`_bucket_response` 的 'df['sig'].nunique() <= n_buckets → dense rank' 只在 panel 路以外生效，而 panel 路根本不产 bucket）"
+    buckets_on: "'on': K∈{0,1,2,3+}（同一票 20 日内连续\"新高跌回+量缩\"失败计数，成功突破或满 20 日清零）"
+    min_obs_per_bucket: 60
+  q2_pillar_by_pillar:
+    response_monotonicity: "不可判：`_panel_metrics` 返回 'mono_spearman': None（:209），现器 panel 路无分桶响应面"
+    ic_floor: "可判（panel 路有 ic_mean/ic_ir，与卡面'日频截面 rank IC'同构）"
+    gap_vs_baseline: "不可判：'K>=3 档 5 日中位收益相对 K=0 档差值 <= -0.5%'，pillars_numeric.gap_k3_vs_k0_5d_max=-0.005 不在 `judge()` 读取的已知键内⇒ 静默跳过（本卡头条门槛柱）"
+    lag_profile: "不可判：'t+1..t+5'，panel 路硬编码 `ret = target.shift(-1)`（:192）"
+    regime_stability: "可判（牛/熊段 ic 均值同号；'均过 ic_floor'的 IC_IR 半边 panel 路有 ic_ir，可判）"
+  q3_three_gates:
+    future_function: "命中（决定性）：卡面 '失败=此后 5 个交易日内收盘跌回突破日前高之下 且 当日 volume < 20 日均 volume×0.8'——失败计数 K 的定义本身要用 t 之后 5 个交易日的收盘价，而 target_source 写 'kline_daily_hfq close 的 T+1 简单收益'，即信号尚未落定就要对 T+1 出 IC；卡面未冻结信号生效日（是突破日还是确认日）"
+    unfrozen: "次命中：'信号取反向标定值 sig=-K 使正相关假设成立'给了反向，但 K 的清零事件'成功站稳（收盘连续 2 日高于突破前高）或超 20 日清零'未定 K 的落库时点/面板索引（panel 上日期对齐规则缺失）"
+    caliber_supply: "通过（卡面证据齐：kline_daily_hfq 1990-12-19..2026-09-30 / 10,098,785 / 5,916、kline_index 000300 2005-01-04..2026-10-09 5,284 行；blocked_faces 已如实登记情绪退潮路 status=blocked_on_data）"
+  verdict: reject
+  g4_5_gap: "须立新版本卡冻结两量：①信号生效日（K 在确认日落库、T 日信号只能用 T 日及以前的收盘/量能——否则未来函数）；②panel 分档协议（K 档→桶数 ordinal 与现器 panel 路无 mono 面的接线要求，或改判据为纯截面 IC＋5 日档差）；在册分类同判（01_binding_census.yaml:1151-1152 cls=B reason='panel_deferred(去重/撮合口径须逐表面核)'）"
+
+- card_id: TDM-E-L2-09/calibration/03_评级上调聚集
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__calibration__03_评级上调聚集.yaml
+  status_seen: preregistered
+  q1_card_face:
+    signal_kind: "series"
+    buckets_type: "quantile_quintile → n_buckets=5（一致；正是 09_caliber_deviation_note.yaml 所治的口径面）"
+    buckets_on: "'on': 行业级 5 日评级上调占比（市场级取行业均值作 series）"
+    min_obs_per_bucket: 60
+  q2_pillar_by_pillar:
+    response_monotonicity: "可判（0.6，5 桶）"
+    ic_floor__ic_mean: "可判（0.02，时序口径）"
+    ic_floor__ic_ir: "不可判（series 路 None）"
+    lag_profile: "不可判：'t+1..t+5 |IC| 峰值与半衰期 >= 2 交易日'"
+    regime_stability: "可判（'牛/熊两段 IC 同号'，本卡未写'均过 ic_floor'，同号面即卡面全文）"
+    oos_same_sign: "可判"
+    head_to_head: "不可判：'与 02 卡（密度）同场对比——两指标各自 IC 与两者之差均出数，并给出去掉密度后的净 IC（共线性检验）'——需两序列联立回归，现器无面"
+  q3_three_gates:
+    future_function: "通过（信号面只用 publish_date≤t 的相邻 rating 变化与 5 日窗回溯；辅轴 industry_excess_next5d 是未来量，但它是 secondary 辅轴，本次不考且必须这样标注）"
+    unfrozen: "命中（决定性，且是卡面自认未冻结）：'rating 编码序（如 买入>增持>中性>减持）须在开考前以实测取值分布钉死并写入 evidence，禁凭记忆排序'——上调/下调的方向定义（信号的全部）在卡面是待钉事项而非已钉量；另 'rating_change 列若有值则以其为准并与自算口径对账（差异 >5% 先查口径再开考）' 是条件分支未收敛"
+    caliber_supply: "次命中：'行业数逐年 128~181 波动 ⇒ 行业宇宙漂移，上调占比须在同一 industry 名单内算并登记名单版本'——名单版本源未给；辅轴需成分映射，卡面自记 'industry_class=2026-08-03 起、sector_constituent=2026-07-22 起（6 刷新日）⇒ 辅轴窗受限'；在册分类同判（01_binding_census.yaml:589-590 cls=A? reason='table_not_in_recipe_book:c3_fundamental.research_report'）"
+  verdict: reject
+  g4_5_gap: "须立新版本卡冻结一项即可解：rating 取值→序数的映射表（实测枚举＋版本日期，或 rating_change 列的单向口径唯一化）；并同时登记 industry 名单版本源。冻结前不得由实现者拍序（'禁凭记忆排序'是卡面原文，非本车道增设）"
+
+pre_run_gates:
+  - id: G-CAL-1
+    applies_to: [TDM-E-L1-S3/calibration/05_limit_up_premium_derived, TDM-E-L1-S3/calibration/06_promotion_rate_derived, TDM-E-L1-S5/calibration/03_derived_signal_shock_panel]
+    text: >-
+      开考前一次性聚合对账：同日"涨停家数"在 c1_market.kline_daily（不复权）与 c1_market.kline_daily_hfq
+      两口径下的逐日序列并列出数（窗 2019-01-04..2025-09-09）。若 hfq 口径与卡面 evidence 锚
+      （年均 44-89 家）不符而接近 R1_L11_ledger.md:77 所记 3,882 量级，则两张 bindable 卡一律降级为
+      reject 并走 G4-5 改绑不复权表。本车道 01:00-04:00 禁 CH，未执行此闸，仅出闸口不出结论。
+  - id: G-ANNOT-1
+    applies_to: [all bindable]
+    text: 分数册附注 MUST 逐柱写"未判柱清单"（见各卡 score_run_annotation_required），禁把 4 键 pass 叙述成卡面门柱全过。
+
+faces_cited_not_measured:
+  - "emotion_index close_final 覆盖与腿数结构：卡 05/06 secondary 轴依赖 stage='close_final'，其历史 close_final 实为 C3+C4 两腿代理、live 段 3-5 腿（在册 99_checkpoint.md:79 原文），⇒ 辅轴本次不考，主轴亦禁消费 emotion_index；04:00 后须实测 close_final 行数/窗与 2026-09 腿数断点"
+  - "stk_limit/kline_daily 2019 前仅约 237 只票：在册任务书事实，本次未实测；两张 bindable 卡的 IS 起点 2019-01-04 恰在其后，但 60 日暖机段（2018-09..2018-12）落在该稀疏区，须在首跑附注写实际分母规模"
+  - "kline_daily_hfq / stk_limit / kline_index / kline_etf_1min / regime_state_anchored / research_report / decision_daily / sector_snapshot / market_breadth_snapshot / daban_board_event / limit_up_down / judgment_daily_plan / judgment_plan_verification / stock_basic / industry_class / sector_constituent 的行数与窗：一律逐条抄自卡面 data_window_evidence 与在册台账（01_binding_census.yaml、emotion_lane_status.yaml、R1_L11_ledger.md、00_rolling_report_r1.md），本车道零 CH 实测"
+  - "technical_indicator 原始行多版本、panel 不去重＝IC 放大 30 倍（在册事实）：六张卡均未绑该表，本次不构成闸；若后续复挖绑它须先钉去重"
+  - "stk_limit.limit_pct 的 asof＋去重口径：引 emotion_lane_status.yaml:334 在册配方原文，本车道未实测"
+
+compliance:
+  ch_queries_run_by_this_lane: 0
+  cards_modified: 0
+  binding_book_modified: 0
+  scores_modified: 0
+  code_modified: 0
+  registries_modified: 0
+  git_writes: 0
+  invented_signals_beyond_card_face: 0
+  files_created: 1
