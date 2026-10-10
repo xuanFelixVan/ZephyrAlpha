@@ -3,7 +3,7 @@ module_id: MOD-REGIME-006
 title: "时间周期分析蓝图 — A股日历效应统计+周年日效应两件套（变盘时间窗口辅助参考信号）"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.7"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -196,7 +196,7 @@ tests/regime/test_regime_cycle_analyzer.py（24 用例）：
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/regime/test_regime_cycle_analyzer.py` | ✅ 已实现 | |
+| `tests/research/regime/test_regime_cycle_analyzer.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

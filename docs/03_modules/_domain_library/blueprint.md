@@ -4,7 +4,7 @@ asset_id: "DOC:docs/03_modules/_domain_library/blueprint.md"
 ttl: permanent
 doc_type: blueprint
 status: Active
-version: "1.0.1"
+version: "1.0.2"
 title: "终极图书馆总账域蓝图 — 资产户籍+馆员+采集器+总口"
 responsibility_domain: 
 ---
@@ -82,9 +82,9 @@ docs/_working/ 与一切临时区（.runtime/tmp、根 tmp）= **场外区**：�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/library/test_library_regen_reconciler.py` | ✅ 已实现 | |
-| `tests/library/test_library_smoke.py` | ✅ 已实现 | |
-| `tests/library/test_potential_consumers_guard.py` | ✅ 已实现 | |
+| `tests/ai/library/test_library_regen_reconciler.py` | ✅ 已实现 | |
+| `tests/ai/library/test_library_smoke.py` | ✅ 已实现 | |
+| `tests/ai/library/test_potential_consumers_guard.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
@@ -99,3 +99,5 @@ docs/_working/ 与一切临时区（.runtime/tmp、根 tmp）= **场外区**：�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

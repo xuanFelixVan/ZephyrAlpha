@@ -5,14 +5,15 @@ module_name: t0_trading_pipeline
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint
 ttl: permanent
-design_maturity: testing
+design_maturity: design
 stability: evolving
 safety_level: H
 ai_autonomy: ai_modifiable
-version: "0.1.0"
+version: "0.1.1"
 created: 2026-08-25
 last_updated: 2026-08-25
 owner: ZephyrAlpha-Owner
+responsibility_domain: 
 ---
 
 # MOD-SIG-090 t0_trading_pipeline 蓝图
@@ -63,3 +64,38 @@ class T0TradingPipeline:
 - 配置校验 fail-closed：单腿股数≤底仓、手数对齐、轮次≥1、价差阈值>0、预算>0。
 - frozen dataclass、to_dict JSON 可序列化；本模块为决策编排非券商直连，
   成交成本口径归执行层/宪章§3约束一。
+
+---
+
+## 3. 已实现代码完整路径索引
+
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 3.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py` | ✅ 已实现 | |
+
+### 3.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/research/research/signal_ashare/intraday_t0/test_t0_trading_pipeline.py` | ✅ 已实现 | |
+
+### 3.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §3（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下

@@ -5,14 +5,15 @@ module_name: intraday_volume_orderflow
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint
 ttl: permanent
-design_maturity: testing
+design_maturity: design
 stability: evolving
 safety_level: M
 ai_autonomy: ai_modifiable
-version: "0.1.0"
+version: "0.1.1"
 created: 2026-08-25
 last_updated: 2026-08-25
 owner: ZephyrAlpha-Owner
+responsibility_domain: 
 ---
 
 # MOD-SIG-093 intraday_volume_orderflow 蓝图
@@ -69,3 +70,38 @@ class IntradayVolumeOrderflowAnalyzer:
 - import：numpy、pandas（无 zephyr 内部 import 边）。
 - 上游注入：D_DATA 分钟K（tick_subscriber/tick_redis_cache 聚合，集成批接线）。
 - 下游候选：MOD-SIG-094 CVD 确认腿、MOD-SIG-095 CVD 背离腿、精筛装配层。
+
+---
+
+## 4. 已实现代码完整路径索引
+
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 4.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py` | ✅ 已实现 | |
+
+### 4.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/research/research/signal_ashare/intraday_t0/test_intraday_volume_orderflow.py` | ✅ 已实现 | |
+
+### 4.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §4（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下

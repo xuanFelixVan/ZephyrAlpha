@@ -3,7 +3,7 @@ module_id: MOD-BT-021
 title: "参数优化结果分析器蓝图 — 显著性+过拟合检测"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.7"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -126,7 +126,7 @@ best_run = max(runs, key=lambda r: r.objective)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/backtest/test_param_analyzer.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_param_analyzer.py` | ✅ 已实现 | |
 
 ### 7.5 路径索引使用指南
 

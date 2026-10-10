@@ -3,7 +3,7 @@ module_id: MOD-RPT-038
 title: "复盘链事件触发入口蓝图 — 缺失的调用方 + CLI 一次性事件面（F115 R1 触发链薄刀）"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L07_reporting
 layer_name: reporting
@@ -99,13 +99,6 @@ run_weekly/run_monthly 由调用方在日终/周末/月末事件触发"——**�
 |---------|:---:|------|
 | `src/zephyr/reporting/attribution_meta_iteration.py` | ✅ 已实现 | |
 
-### 7.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/reporting/test_attribution_meta_iteration.py` | ✅ 已实现 | |
-| `tests/reporting/test_review_trigger.py` | ✅ 已实现 | |
-
 ### 7.5 路径索引使用指南
 
 **新 AI session 读取顺序**：
@@ -119,6 +112,7 @@ run_weekly/run_monthly 由调用方在日终/周末/月末事件触发"——**�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ### §0.6 五图对齐视图
 

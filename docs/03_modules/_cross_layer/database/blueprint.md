@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/persistence
 title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.3.13"
+version: "4.3.14"
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -398,12 +398,6 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | `src/zephyr/governance/persistence/dataflowgraph_schema.py` | ✅ 已实现 | |
 | `src/zephyr/shared/database/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/database/database_crud_mixin.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/governance/test_pg_dsn_utf8_guard.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/signal_fundamental/ + src/zephyr/signal_ashare/ + src
 title: "Signal Generation Core 蓝图+施工图 — 信号工厂·策略生命周期管理"
 doc_type: blueprint
 status: Active
-version: "3.0.11"
+version: "3.0.12"
 layer: L2_domain
 layer_name: signal_generation
 functional_domain: research
@@ -1039,8 +1039,7 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/signal/test_default_signal_aggregator.py` | ✅ 已实现 | |
-| `tests/trading/pipeline/test_l03_signal_generation.py` | ✅ 已实现 | |
+| `tests/research/research/signal/test_default_signal_aggregator.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

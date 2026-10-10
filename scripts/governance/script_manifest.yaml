@@ -1,17 +1,17 @@
-# 自动生成于 2026-10-04T17:23:57Z
+# 自动生成于 2026-10-10T00:50:47Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-10-04T17:23:57Z'
+generated_at: '2026-10-10T00:50:47Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 569
-with_manifest: 424
-missing_manifest: 145
+total_scripts: 563
+with_manifest: 408
+missing_manifest: 155
 categories:
-  governance:_sync: 4
+  governance:_sync: 3
   governance:_tasks: 4
-  governance: 80
+  governance: 83
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -19,32 +19,32 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 33
   governance:d4_paths: 4
-  governance:d5_architecture: 137
+  governance:d5_architecture: 138
   governance:d6_security: 15
-  governance:d7_code: 37
-  governance:d8_doc_sync: 15
+  governance:d7_code: 36
+  governance:d8_doc_sync: 14
   governance:d9_knowledge: 2
   governance:data_quality: 2
-  governance:data_supply: 7
+  governance:data_supply: 8
   governance:fullflow: 1
-  governance:generators: 23
+  governance:generators: 24
   governance:git_hooks: 1
-  governance:meta: 48
-  governance:meta_question: 56
+  governance:meta: 45
+  governance:meta_question: 55
   governance:migrate_sqlite_to_pg: 2
   governance:migrations: 2
   governance:observability: 1
   governance:oneoff: 7
   governance:registry_migration: 1
   governance:registry_projection: 1
-  governance:repair: 7
+  governance:repair: 2
   governance:shared: 1
   governance:standards: 1
   governance:standards_governance: 1
-  governance:vms: 9
+  governance:vms: 7
   governance:wave10: 1
   governance:wave11: 1
-  governance:wave1a: 3
+  governance:wave1a: 5
   governance:wave1b: 3
   governance:wave2: 1
   governance:wave3: 1
@@ -80,16 +80,6 @@ scripts:
 
     '
   tags: []
-- name: _sync/fix_orphan_deps.py
-  owner: governance:_sync
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags:
-  - Disruptive
 - name: _tasks/list_phase0_tasks.py
   owner: governance:_tasks
   dimensions:
@@ -322,6 +312,16 @@ scripts:
     PG 为真源）。
   tags:
   - Quick
+- name: check_meta_question_batch.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: check_meta_question_status_band.py
   owner: governance
   dimensions:
@@ -415,6 +415,16 @@ scripts:
   - Critical
   - Quick
 - name: collect_write_audit_4663.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: commit_claim_check.py
   owner: governance
   dimensions: []
   priority: P2
@@ -1984,18 +1994,6 @@ scripts:
   description: GATE-NODE-LABEL-QUALITY - 审计域文档 Mermaid 节点标签简介质量（五类坏简介防复发）
   tags:
   - Critical
-- name: d5_architecture/checkers/check_orphan_outputs.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P2
-  timeout_seconds: 60
-  args:
-  - --warn-only
-  warn_only: false
-  description: 蓝图产出物孤儿检测——检测蓝图中零消费者的产出物
-  tags:
-  - Critical
 - name: d5_architecture/checkers/check_precommit_id_uniqueness.py
   owner: governance:d5_architecture
   dimensions:
@@ -2537,6 +2535,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: d5_architecture/generators/generate_governance_legislation_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_integration_topology.py
   owner: governance:d5_architecture
   dimensions:
@@ -2583,6 +2591,16 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d5_architecture/generators/generate_panorama_master_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_panorama_registry.py
   owner: governance:d5_architecture
   dimensions:
@@ -2719,6 +2737,7 @@ scripts:
   - --owner-ruling
   - --execute
   - --cascade-contracts
+  - --cascade-deprecate
   - --registry
   - --ruling-registry
   - --consumer-registry
@@ -2921,17 +2940,6 @@ scripts:
   - --quiet
   warn_only: false
   description: 词表×FDR×翻译注册表在用域差集收敛校验（裁定#335 常驻观测件）
-  tags:
-  - Critical
-- name: d5_architecture/validators/lifecycle/validate_lifecycle_refs.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 生命周期引用约束合规检查（LRC-001~005：active→draft depends_on 违规 + draft被3+active引用检测）
   tags:
   - Critical
 - name: d5_architecture/validators/lifecycle/validate_module_lifecycle.py
@@ -3177,6 +3185,16 @@ scripts:
   description: 门禁 YAML 配置漂移检测——YAML 与 gate_engine.py 代码交叉校验
   tags:
   - Critical
+- name: d5_architecture/validators/validate_governance_legislation_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/validators/validate_handoff_package.py
   owner: governance:d5_architecture
   dimensions:
@@ -3843,18 +3861,6 @@ scripts:
   description: 静默降级检测（COND-45 — 降级路径必须有日志）
   tags:
   - Critical
-- name: d7_code/fix_orphan_exports.py
-  owner: governance:d7_code
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: fix_orphan_exports.py — 批量修复孤儿模块导出（RULE-TWO 防线 2 修复器）
-  tags:
-  - Disruptive
-  - Quick
 - name: d7_code/generate_fail_open_register.py
   owner: governance:d7_code
   dimensions: []
@@ -4210,17 +4216,6 @@ scripts:
   description: update_progress.py — 从 domain_progress.json 批量更新施工进度.
   tags:
   - Quick
-- name: d8_doc_sync/validate_document_lifecycle.py
-  owner: governance:d8_doc_sync
-  dimensions:
-  - D8
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 文档生命周期校验（GOV-DOC-006 §二/§四/§五/§六 — superseded_by+双向链接+AI产物）
-  tags:
-  - Quick
 - name: d8_doc_sync/validate_document_ttl.py
   owner: governance:d8_doc_sync
   dimensions:
@@ -4317,6 +4312,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: data_supply/gen_registration_needs.py
+  owner: governance:data_supply
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: data_supply/no_cache_endorsement.py
   owner: governance:data_supply
   dimensions: []
@@ -4377,6 +4382,7 @@ scripts:
   - --lag-days
   - --ref-date
   - --alert-log
+  - --force
   warn_only: false
   description: 决策链哨兵——期望交易日（日历 >=今日首个开市日）无 decision_daily 行即告警（TRD-A01/L09-C04, exit
     0/4/8）。
@@ -4404,6 +4410,16 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: enqueue_preflight.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: entrance_gate_hook.py
   owner: governance
   dimensions: []
   priority: P2
@@ -4532,13 +4548,13 @@ scripts:
   args:
   - flag: --check
     type: bool
-    description: 只判红名单不出表（rc 1=红非空）
+    description: 只判红名单不出表（rc 1=红非空；表②亦不出）
   - flag: --output-dir
     type: str
     description: 输出目录（默认 docs/01_policies_and_standards/_registry/reports）
   - flag: --json
     type: bool
-    description: stdout 附机器可读 JSON 摘要
+    description: stdout 附机器可读 JSON 摘要（表①）
   warn_only: false
   description: ''
   tags:
@@ -4580,6 +4596,16 @@ scripts:
   tags:
   - Disruptive
   - Quick
+- name: generators/backfill_created_from_filename.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generators/check_gate_inventory_drift.py
   owner: governance:generators
   dimensions:
@@ -5154,6 +5180,16 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
+- name: meta/enforcement_surface_reconcile.py
+  owner: governance:meta
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: meta/env_check.py
   owner: governance:meta
   dimensions:
@@ -5268,21 +5304,6 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
-- name: meta/manage_kill_switch.py
-  owner: governance:meta
-  dimensions:
-  - D1
-  - D5
-  priority: P0
-  timeout_seconds: 15
-  args: []
-  warn_only: false
-  description: 'Kill Switch 管理工具——提供 CLI 命令禁用/启用脚本、查看状态、设置全局冻结。
-
-    '
-  tags:
-  - Critical
-  - Quick
 - name: meta/manage_script_ab_test.py
   owner: governance:meta
   dimensions: []
@@ -5393,21 +5414,6 @@ scripts:
   description: Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状态报告.
   tags:
   - Quick
-- name: meta/trace_finding_lifecycle.py
-  owner: governance:meta
-  dimensions:
-  - D1
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 'Finding C1→C5 全链路追踪引擎——追踪每个 Finding 从 C1 扫描到 C5 知识沉淀的完整生命周期， 包括链路健康总览和瓶颈检测。
-
-    '
-  tags:
-  - Critical
-  - Quick
 - name: meta/track_script_costs.py
   owner: governance:meta
   dimensions: []
@@ -5484,20 +5490,6 @@ scripts:
     '
   tags:
   - Critical
-  - Quick
-- name: meta/validate_environment_health.py
-  owner: governance:meta
-  dimensions:
-  - D1
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: '脚本运行环境健康检查——检查 Python 版本、关键包版本、各维度 requirements、磁盘空间、内存， 在 run_all.py
-    启动时和 CI 中运行。
-
-    '
-  tags:
   - Quick
 - name: meta/validate_false_negatives.py
   owner: governance:meta
@@ -5599,25 +5591,6 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
-- name: meta/validate_script_system_health.py
-  owner: governance:meta
-  dimensions:
-  - D1
-  - D5
-  priority: P0
-  timeout_seconds: 60
-  args:
-  - --warn-only
-  - --json
-  - --jsonl
-  warn_only: false
-  description: '脚本系统健康自检——检查六大自检项：run_all 可执行性、全脚本可运行性、manifest 一致性、 输出格式合规、依赖完整性、磁盘空间。在
-    run_all.py 启动时自动运行。
-
-    '
-  tags:
-  - Critical
-  - Quick
 - name: meta/validate_threshold_changes.py
   owner: governance:meta
   dimensions:
@@ -6042,16 +6015,6 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: meta_question/wo_a2legs/probe_backfill_sources.py
-  owner: governance:meta_question
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: meta_question/wo_a2legs/probe_sector_name_sources.py
   owner: governance:meta_question
   dimensions: []
   priority: P2
@@ -6519,40 +6482,6 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: repair/apply_verification_results.py
-  owner: governance:repair
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: apply_verification_results.py — 第32轮验证结果批量应用到架构债务注册表
-  tags:
-  - Quick
-- name: repair/audit_design_completeness.py
-  owner: governance:repair
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'MIG-4: 完整性审计（v2.0 全面提取版）'
-  tags:
-  - Periodic
-  - Quick
-- name: repair/concurrent_commit_test.py
-  owner: governance:repair
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: concurrent_commit_test.py — 幽灵提交红蓝对抗脚本（OPS-2026062514）
-  tags:
-  - Quick
 - name: repair/concurrent_write_test.py
   owner: governance:repair
   dimensions:
@@ -6575,28 +6504,6 @@ scripts:
   args: []
   warn_only: false
   description: P2-T6 PostgreSQL 40并发写入红蓝测试。
-  tags:
-  - Quick
-- name: repair/red_blue_test.py
-  owner: governance:repair
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: §4 红蓝对抗测试（20项）
-  tags:
-  - Quick
-- name: repair/rollback_depgraph.py
-  owner: governance:repair
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: P1-2 从备份回滚depgraph
   tags:
   - Quick
 - name: replay_gate_verdicts.py
@@ -6851,17 +6758,6 @@ scripts:
   description: VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217
   tags:
   - Quick
-- name: vms/vms_cron_monitor.py
-  owner: governance:vms
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224
-  tags:
-  - Quick
 - name: vms/vms_cross_file_check.py
   owner: governance:vms
   dimensions:
@@ -6871,17 +6767,6 @@ scripts:
   args: []
   warn_only: false
   description: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
-  tags:
-  - Quick
-- name: vms/vms_health_check.py
-  owner: governance:vms
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化
   tags:
   - Quick
 - name: vms/vms_migrate.py
@@ -6948,7 +6833,27 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: wave1a/build_delivery_cards.py
+  owner: governance:wave1a
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: wave1a/ch_read_shape_ruler.py
+  owner: governance:wave1a
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: wave1a/cross_session_view.py
   owner: governance:wave1a
   dimensions: []
   priority: P2

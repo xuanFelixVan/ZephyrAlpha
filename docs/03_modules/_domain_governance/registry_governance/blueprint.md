@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/registry_governance.py
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.15"
+version: "0.2.16"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -1198,65 +1198,7 @@ class OverlapResult:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/ai_layer/cleaning/test_auditor.py` | ✅ 已实现 | |
-| `tests/ai_layer/cleaning/test_local_prefill.py` | ✅ 已实现 | |
-| `tests/ai_layer/cleaning/test_policy.py` | ✅ 已实现 | |
-| `tests/ai_layer/cleaning/test_spec_store.py` | ✅ 已实现 | |
-| `tests/ai_layer/cleaning/test_washer.py` | ✅ 已实现 | |
-| `tests/ai_layer/heritage/test_heritage_closure_check.py` | ✅ 已实现 | |
-| `tests/ai_layer/heritage/test_heritage_ddl.py` | ✅ 已实现 | |
-| `tests/ai_layer/heritage/test_heritage_digest.py` | ✅ 已实现 | |
-| `tests/ai_layer/heritage/test_heritage_events.py` | ✅ 已实现 | |
-| `tests/ai_layer/heritage/test_heritage_forget.py` | ✅ 已实现 | |
-| `tests/ai_layer/heritage/test_heritage_policies.py` | ✅ 已实现 | |
-| `tests/ai_layer/heritage/test_heritage_priors.py` | ✅ 已实现 | |
-| `tests/ai_layer/heritage/test_heritage_snapshot.py` | ✅ 已实现 | |
-| `tests/ai_layer/heritage/test_heritage_store.py` | ✅ 已实现 | |
-| `tests/ai_layer/intake/test_card_store.py` | ✅ 已实现 | |
-| `tests/ai_layer/intake/test_dedup.py` | ✅ 已实现 | |
-| `tests/ai_layer/intake/test_events.py` | ✅ 已实现 | |
-| `tests/ai_layer/intake/test_gate.py` | ✅ 已实现 | |
-| `tests/ai_layer/intake/test_kpi.py` | ✅ 已实现 | |
-| `tests/ai_layer/intake/test_snapshot_regen.py` | ✅ 已实现 | |
-| `tests/ai_layer/perceive/conftest.py` | ✅ 已实现 | |
-| `tests/ai_layer/perceive/test_monthly_checkup.py` | ✅ 已实现 | |
-| `tests/ai_layer/perceive/test_quota_sync.py` | ✅ 已实现 | |
-| `tests/ai_layer/perceive/test_search_orders.py` | ✅ 已实现 | |
-| `tests/ai_layer/perceive/test_source_registry.py` | ✅ 已实现 | |
-| `tests/ai_layer/perceive/test_translator.py` | ✅ 已实现 | |
-| `tests/ai_layer/perceive/test_veins.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/conftest.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_ai_secret_exposure.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_ai_secret_exposure_c108.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_annual_review.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_dashboard_pipeline.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_drop_gate.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_freedom_weekly_report.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_negative_list.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_negative_list_gates.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_no_delete_manifest.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_session_env_guard.py` | ✅ 已实现 | |
-| `tests/ai_layer/redline/test_sev_router.py` | ✅ 已实现 | |
-| `tests/ai_layer/scheduling/conftest.py` | ✅ 已实现 | |
-| `tests/ai_layer/scheduling/test_confirm_gate.py` | ✅ 已实现 | |
-| `tests/ai_layer/scheduling/test_dispatcher.py` | ✅ 已实现 | |
-| `tests/ai_layer/scheduling/test_maturity.py` | ✅ 已实现 | |
-| `tests/ai_layer/scheduling/test_order_daemon.py` | ✅ 已实现 | |
-| `tests/ai_layer/scheduling/test_router.py` | ✅ 已实现 | |
-| `tests/ai_layer/scheduling/test_schedule_gate_policy.py` | ✅ 已实现 | |
-| `tests/ai_layer/scheduling/test_scheduling_ddl.py` | ✅ 已实现 | |
-| `tests/ai_layer/scheduling/test_scheduling_events.py` | ✅ 已实现 | |
-| `tests/ai_layer/scheduling/test_seed_writer.py` | ✅ 已实现 | |
-| `tests/ai_layer/test_evolution_chain_e2e.py` | ✅ 已实现 | |
-| `tests/ai_layer/test_model_library_ddl.py` | ✅ 已实现 | |
-| `tests/ai_layer/test_model_scoring_policy.py` | ✅ 已实现 | |
-| `tests/ai_layer/tools/test_tool_sandbox_profile.py` | ✅ 已实现 | |
-| `tests/governance/test_next_ruling_id.py` | ✅ 已实现 | |
-| `tests/governance/test_rule_replay.py` | ✅ 已实现 | |
-| `tests/governance/test_standard_checkup.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_registry_governance_infrastructure.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_registry_governance_root.py` | ✅ 已实现 | |
-| `tests/intelligence/test_budget_analyzer.py` | ✅ 已实现 | |
+| `tests/ai/ai_layer/test_c6_ai_layer_routes.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

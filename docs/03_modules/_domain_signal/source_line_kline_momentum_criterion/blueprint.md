@@ -3,7 +3,7 @@ module_id: MOD-SIG-155
 title: "A01 日线/分钟行情源线判据转化器蓝图 — 动量五档×量价确认×方向判据"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 ttl: permanent
 layer: L05_signal
@@ -93,14 +93,7 @@ CapabilityLookup「源线 判据/动量判据」等六向零命中；clone_guard
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/signal_ashare/source_line/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/signal_ashare/source_line/kline_momentum_criterion.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/signal_ashare/source_line/test_kline_momentum_criterion.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 
@@ -115,3 +108,5 @@ CapabilityLookup「源线 判据/动量判据」等六向零命中；clone_guard
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

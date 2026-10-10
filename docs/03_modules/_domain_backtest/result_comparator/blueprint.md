@@ -3,7 +3,7 @@ module_id: MOD-BT-024
 title: "回测结果比较器蓝图 — 多次回测差异分析+显著性检验"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.7"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -135,7 +135,7 @@ responsibility_domain:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/backtest/test_result_comparator.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_result_comparator.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 

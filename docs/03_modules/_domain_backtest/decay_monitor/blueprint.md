@@ -3,7 +3,7 @@ module_id: MOD-BT-018
 title: "策略衰减监控告警器蓝图 — 短期/长期均值对比+趋势检测"
 doc_type: blueprint
 status: Active
-version: "0.1.8"
+version: "0.1.9"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -122,8 +122,7 @@ responsibility_domain:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/backtest/test_decay_monitor.py` | ✅ 已实现 | |
-| `tests/backtest/test_n_trial_ledger.py` | ✅ 已实现 | |
+| `tests/research/backtest/test_decay_monitor.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 

@@ -5,7 +5,7 @@ title: "CD Pipeline 蓝图 — Shadow Canary 灰度发布基建（簇C，满足 
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.1.7"
+version: "0.1.8"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -174,8 +174,7 @@ CD 流水线 (.github/workflows/deploy.yml)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/backtest/test_cash_ledger_cli_wiring.py` | ✅ 已实现 | |
-| `tests/ops/test_shadow_canary_deploy.py` | ✅ 已实现 | |
+| `tests/research/backtest/test_cash_ledger_cli_wiring.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

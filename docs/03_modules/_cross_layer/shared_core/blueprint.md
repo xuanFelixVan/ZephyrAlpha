@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.34"
+version: "0.19.35"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -490,70 +490,9 @@ build_status: generated
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/db/conftest.py` | ✅ 已实现 | |
-| `tests/db/test_db_integration.py` | ✅ 已实现 | |
-| `tests/db/test_db_red_blue.py` | ✅ 已实现 | |
-| `tests/f_lifecycle/test_f21_auto_run.py` | ✅ 已实现 | |
-| `tests/f_lifecycle/test_f21_auto_shutdown.py` | ✅ 已实现 | |
-| `tests/f_lifecycle/test_f21_auto_startup.py` | ✅ 已实现 | |
-| `tests/f_lifecycle/test_f21_event_driven.py` | ✅ 已实现 | |
-| `tests/f_lifecycle/test_lifecycle_hooks.py` | ✅ 已实现 | |
-| `tests/gate/test_circuit_breaker_types.py` | ✅ 已实现 | |
-| `tests/gate/test_resilience_circuit_breaker.py` | ✅ 已实现 | |
-| `tests/governance/integration/test_schema_schema_registry.py` | ✅ 已实现 | |
-| `tests/governance/integration/test_schema_schemas.py` | ✅ 已实现 | |
-| `tests/governance/rule_enforcement/invariants/test_en_process_lifecycle_gateway.py` | ✅ 已实现 | |
-| `tests/governance/test_registry_write_guards.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_infra_cache.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_infra_idempotency.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_infra_limiter.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_infra_lock.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_infra_observer.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_infra_outbox.py` | ✅ 已实现 | |
-| `tests/io/test_io_content_fingerprint.py` | ✅ 已实现 | |
-| `tests/io/test_io_file_utils.py` | ✅ 已实现 | |
-| `tests/io/test_io_frontmatter_utils.py` | ✅ 已实现 | |
-| `tests/io/test_io_paths.py` | ✅ 已实现 | |
-| `tests/io/test_io_serialization.py` | ✅ 已实现 | |
-| `tests/llm_security/test_security_capability.py` | ✅ 已实现 | |
-| `tests/llm_security/test_security_secrets.py` | ✅ 已实现 | |
-| `tests/llm_security/test_security_ssot_guard.py` | ✅ 已实现 | |
-| `tests/observability/test_observability_health.py` | ✅ 已实现 | |
-| `tests/observability/test_observability_logging.py` | ✅ 已实现 | |
-| `tests/observability/test_observability_metrics.py` | ✅ 已实现 | |
-| `tests/observability/test_observability_tracing.py` | ✅ 已实现 | |
-| `tests/pf_core/test_selection_result_contract.py` | ✅ 已实现 | |
-| `tests/shared/alerts/test_alert_escalation.py` | ✅ 已实现 | |
-| `tests/shared/alerts/test_alert_manager.py` | ✅ 已实现 | |
-| `tests/shared/alerts/test_alert_precision_tracker.py` | ✅ 已实现 | |
-| `tests/shared/alerts/test_alert_senders.py` | ✅ 已实现 | |
-| `tests/shared/alerts/test_dual_channel_alert.py` | ✅ 已实现 | |
-| `tests/shared/io/test_file_utils_atomic_retry.py` | ✅ 已实现 | |
-| `tests/shared/test_audit_jsonl_writer.py` | ✅ 已实现 | |
-| `tests/shared/test_converters.py` | ✅ 已实现 | |
-| `tests/shared/test_order_enums_nine_state_bridge.py` | ✅ 已实现 | |
-| `tests/shared/test_process_incubator.py` | ✅ 已实现 | |
-| `tests/shared/test_safe_write.py` | ✅ 已实现 | |
-| `tests/shared/test_state_store.py` | ✅ 已实现 | |
-| `tests/shared/test_state_store_redis.py` | ✅ 已实现 | |
-| `tests/trading/integration/test_trading_contracts.py` | ✅ 已实现 | |
-| `tests/trading/test_feature_flag.py` | ✅ 已实现 | |
-| `tests/trading/test_kill_switch_rejection_drill.py` | ✅ 已实现 | |
-| `tests/trading/test_kill_switch_state_store.py` | ✅ 已实现 | |
-| `tests/utils/test_foundation_deprecation.py` | ✅ 已实现 | |
-| `tests/utils/test_foundation_env.py` | ✅ 已实现 | |
-| `tests/utils/test_foundation_errors.py` | ✅ 已实现 | |
-| `tests/utils/test_foundation_flags.py` | ✅ 已实现 | |
-| `tests/utils/test_resilience_fallback.py` | ✅ 已实现 | |
-| `tests/utils/test_resilience_retry.py` | ✅ 已实现 | |
-| `tests/utils/test_utils_context.py` | ✅ 已实现 | |
-| `tests/utils/test_utils_diff_utils.py` | ✅ 已实现 | |
-| `tests/utils/test_utils_migration.py` | ✅ 已实现 | |
-| `tests/utils/test_utils_pagination.py` | ✅ 已实现 | |
-| `tests/utils/test_utils_testing.py` | ✅ 已实现 | |
-| `tests/utils/test_utils_time_utils.py` | ✅ 已实现 | |
-| `tests/utils/test_version.py` | ✅ 已实现 | |
-| `tests/zephyr/shared/observability/test_stage_timer.py` | ✅ 已实现 | |
+| `tests/gov/governance/integration/test_schema_schema_registry.py` | ✅ 已实现 | |
+| `tests/gov/governance/integration/test_schema_schemas.py` | ✅ 已实现 | |
+| `tests/research/pf_core/test_selection_result_contract.py` | ✅ 已实现 | |
 
 ### 5.5 路径索引使用指南
 

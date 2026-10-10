@@ -3,7 +3,7 @@ module_id: MOD-PA-013
 title: "MaxDdLimit Allocation Strategist 蓝图 — 按策略回撤预算分配资金+超限降档/暂停"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 ttl: permanent
 layer: L2_domain
 layer_name: portfolio_alloc
@@ -117,7 +117,7 @@ MOD-PA-003 组合级 MaxDD>15% 全线减 50% 一刀切），**按各策略 MaxDD
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/pf_alloc/test_maxdd_limit_allocator.py` | ✅ 已实现 | |
+| `tests/research/research/pf_alloc/test_maxdd_limit_allocator.py` | ✅ 已实现 | |
 
 ### 7.5 路径索引使用指南
 

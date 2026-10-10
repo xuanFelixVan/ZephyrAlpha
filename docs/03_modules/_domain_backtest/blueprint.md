@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.36
+version: 1.3.37
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -1008,6 +1008,22 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | `tests/research/backtest/test_lane_k_market_caliber_locks.py` | ✅ 已实现 | |
 | `tests/research/backtest/test_matching_engine.py` | ✅ 已实现 | |
 | `tests/research/backtest/test_matching_logic.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_metrics_dsr.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_overfitting_adjudicator.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_overfitting_detector.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_pit_leakage_future_date.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_pit_manager.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_portfolio.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_preflight_checker.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_purged_kfold.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_run_archive.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_shrinkage_engine.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_shrinkage_provider.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_stk_limit_matching.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_strategy_validation_pipeline.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_tick_replay_data_handler.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_toy_reconciliation_night001.py` | ✅ 已实现 | |
+| `tests/research/research/backtest/test_walk_forward.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

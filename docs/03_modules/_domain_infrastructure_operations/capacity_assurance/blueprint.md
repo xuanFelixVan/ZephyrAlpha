@@ -5,7 +5,7 @@ title: "Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Tok
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: 3.1.10
+version: 3.1.11
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: capacity
@@ -61,7 +61,7 @@ tags:
 summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Switch熔断+降级链+DR+容量预测
 responsibility_domain: 
 build_status: generated
-design_maturity: production
+design_maturity: design
 ---
 
 # Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Token Budget限流+Kill Switch熔断
@@ -1656,32 +1656,20 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/infrastructure/capacity_assurance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/_archive/budget_forecaster.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/_archive/risk_mitigation.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/_archive/schema.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/_archive/sli_instrumentation.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/batch1_infra.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/batch2_governance.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/batch3_integration.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/contract_bus.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/cross_module_integration.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/capacity_assurance/schema.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/capacity_assurance/sli_instrumentation.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/tech_stack.py` | ✅ 已实现 | |
 | `src/zephyr/integration/budget_enforcer/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/budget_enforcer/degradation_spiral_detector.py` | ✅ 已实现 | |
 | `src/zephyr/shared/capacity_governance/__init__.py` | ✅ 已实现 | |
-
-### 20.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/autonomy/test_system_watermark_gate.py` | ✅ 已实现 | |
-| `tests/capacity/test_batch1_infra.py` | ✅ 已实现 | |
-| `tests/capacity/test_batch2_governance.py` | ✅ 已实现 | |
-| `tests/capacity/test_batch3_integration.py` | ✅ 已实现 | |
-| `tests/capacity/test_capacity_assurance.py` | ✅ 已实现 | |
-| `tests/capacity/test_tech_stack.py` | ✅ 已实现 | |
-| `tests/contracts/test_contract_bus.py` | ✅ 已实现 | |
-| `tests/risk/test_risk_mitigation_root.py` | ✅ 已实现 | |
 
 ### 20.5 路径索引使用指南
 

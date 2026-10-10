@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.51"
+version: "0.8.52"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1495,7 +1495,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/map_family/construction_workflow_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/noqa_validation_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/pure_shim_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/read_side/__init__.py` | ✅ 已实现 | |
@@ -1520,6 +1519,8 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/gov/governance/audit/test_tdm_mount_coverage_reconciler.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/map_family/test_dev_delivery_map_gate.py` | ✅ 已实现 | |
 | `tests/gov/governance/commit_gates/test_construction_workflow_map_gate.py` | ✅ 已实现 | |
 | `tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py` | ✅ 已实现 | |
 

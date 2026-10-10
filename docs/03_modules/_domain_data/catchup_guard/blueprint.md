@@ -5,7 +5,7 @@ doc_type: blueprint
 status: active
 layer: L2_domain
 date: "2026-09-03"
-version: "0.1.4"
+version: "0.1.5"
 last_updated: "2026-09-03"
 language: zh
 ttl: permanent
@@ -127,12 +127,6 @@ tests/zephyr/data/test_catchup_guard.py：档期判定 5 桶、空表兜底、tr
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/data/catchup_guard.py` | ✅ 已实现 | |
-
-### 7.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/zephyr/data/test_catchup_guard.py` | ✅ 已实现 | |
 
 ### 7.5 路径索引使用指南
 

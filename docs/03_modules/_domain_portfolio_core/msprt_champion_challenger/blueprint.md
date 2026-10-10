@@ -3,7 +3,7 @@ module_id: MOD-PF-008
 title: "mSPRT Champion-Challenger 序贯晋升组件蓝图 — 高斯 mixture 闭式解 + Ville 边界"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -145,11 +145,11 @@ anytime-valid：可任意频次查看无"偷看惩罚"（Type I ≤ α 在所有
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 7.1 源码文件
+### 7.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/research/pf_core/test_msprt_champion_challenger.py` | ✅ 已实现 | |
 
 ### 7.5 路径索引使用指南
 

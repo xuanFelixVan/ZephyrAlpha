@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.23"
+version: "0.13.24"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -91,7 +91,7 @@ ssot_claims:
     note: "D-GAP-01~12设计真源在MOD-GOV-CAP-001（2026-05归档，docs/_archive/03_modules/_gov_cap_001/blueprint.md），本蓝图仅保留索引+引用"
   - claim: "治理域Phase施工路线图与进度"
     scope: layer
-design_maturity: design
+design_maturity: production
 build_status: generated
 ---
 
@@ -2196,28 +2196,20 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/gov/governance/d5_architecture/test_fig14_fig15_map_bodies_adversarial.py` | ✅ 已实现 | |
+| `tests/gov/governance/generators/test_map_coverage_attribution.py` | ✅ 已实现 | |
+| `tests/gov/governance/lifecycle/test_ai_behavior_baseline.py` | ✅ 已实现 | |
+| `tests/gov/governance/lifecycle/test_detect_retirement_candidates.py` | ✅ 已实现 | |
+| `tests/gov/governance/lifecycle/test_drift_observatory_orchestrator.py` | ✅ 已实现 | |
+| `tests/gov/governance/lifecycle/test_factor_promotion_wiring.py` | ✅ 已实现 | |
+| `tests/gov/governance/lifecycle/test_msprt_promotion_channel.py` | ✅ 已实现 | |
+| `tests/gov/governance/lifecycle/test_retirement_workflow.py` | ✅ 已实现 | |
+| `tests/gov/governance/lifecycle/test_strategy_archive.py` | ✅ 已实现 | |
+| `tests/gov/governance/lifecycle/test_strategy_retirement_evaluator.py` | ✅ 已实现 | |
 | `tests/governance/d5_architecture/test_construction_workflow_map_adversarial.py` | ✅ 已实现 | |
-| `tests/governance/d5_architecture/test_dev_delivery_map_adversarial.py` | ✅ 已实现 | |
-| `tests/governance/d5_architecture/test_fig14_fig15_map_bodies_adversarial.py` | ✅ 已实现 | |
-| `tests/governance/d5_architecture/test_strategy_card_lifecycle_map_adversarial.py` | ✅ 已实现 | |
-| `tests/governance/d5_architecture/test_trading_day_cycle_map_adversarial.py` | ✅ 已实现 | |
-| `tests/governance/generators/test_map_coverage_attribution.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_ai_behavior_baseline.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_detect_retirement_candidates.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_drift_observatory_orchestrator.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_factor_promotion_wiring.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_msprt_promotion_channel.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_retire_module.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_retirement_workflow.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_strategy_archive.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_strategy_retirement_evaluator.py` | ✅ 已实现 | |
-| `tests/governance/test_alert_threshold_consistency.py` | ✅ 已实现 | |
-| `tests/governance/test_capability_library_dedup.py` | ✅ 已实现 | |
+| `tests/governance/d5_architecture/test_generator_casebooks_preserved_keys.py` | ✅ 已实现 | |
+| `tests/governance/d5_architecture/test_governance_legislation_map_adversarial.py` | ✅ 已实现 | |
 | `tests/governance/test_error_code_consistency.py` | ✅ 已实现 | |
-| `tests/governance/test_intelligence_governance_facade.py` | ✅ 已实现 | |
-| `tests/governance/test_llm_registry_reconciliation.py` | ✅ 已实现 | |
-| `tests/governance/test_session_closeout_reconciler.py` | ✅ 已实现 | |
-| `tests/governance/test_task_board.py` | ✅ 已实现 | |
 
 ### 12.5 路径索引使用指南
 

@@ -5,7 +5,7 @@
 generated_at: '2026-09-27T18:49:39Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 61
+total_registries: 62
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 815
+  entry_count: 817
   status: active
 - registry_id: REG-BTB-001
   name: Backtest Object Backlog
@@ -253,7 +253,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 184
+  entry_count: 190
   status: active
 - registry_id: CFG-governance-convergence-map
   name: governance_convergence_map
@@ -277,7 +277,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 105
+  entry_count: 106
   status: active
 - registry_id: CFG-infrastructure-registry
   name: 运行时基础设施登记表
@@ -317,7 +317,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 7999
+  entry_count: 8096
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -405,7 +405,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 303
+  entry_count: 308
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表
@@ -413,7 +413,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 301
+  entry_count: 324
   status: active
 - registry_id: REG-SEAT-001
   name: Seat Registry
@@ -495,3 +495,11 @@ registries:
   maintenance: manual
   entry_count: 0
   status: unknown
+- registry_id: CFG-casebook_registry
+  name: 永久病历本登记册（casebook registry，纵向地图家族 casebooks 字段唯一反查册）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active

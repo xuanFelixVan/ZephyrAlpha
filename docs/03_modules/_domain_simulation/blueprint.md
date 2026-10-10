@@ -4,7 +4,7 @@ submodule_path: src/zephyr/simulation
 title: "Experimentation Core 蓝图+施工图 — 实验管理平台"
 doc_type: blueprint
 status: Active
-version: "2.1.9"
+version: "2.1.10"
 layer: L2_domain
 functional_domain: research
 owner: ZephyrAlpha-Owner
@@ -50,7 +50,7 @@ design_maturity: production
 
 > ✅ **业务层已开放·可施工** — 本蓝图所属 实验 实验管线层已解除 C 轨 T2-deferred 状态。Owner 已解除占位禁令，基础设施已就绪，AI 可自主实施本层业务代码。
 
-> module_id: MOD-L13-001 | version: 2.1.9 | status: active | domain: simulation
+> module_id: MOD-L13-001 | version: 2.1.10 | status: active | domain: simulation
 > actual_disk_path: src/zephyr/simulation/ | generation: 2 | construction_progress: partially_implemented
 
 # Experimentation Core 蓝图+施工图 — 实验管理平台
@@ -938,7 +938,7 @@ class ExperimentMetric:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/ml_experiment/test_l13_experimentation.py` | ✅ 已实现 | |
+| `tests/research/research/ml_experiment/test_l13_experimentation.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

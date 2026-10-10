@@ -3,7 +3,7 @@ module_id: MOD-BT-020
 title: "回测缓存管理器蓝图 — 结果缓存与复用"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.7"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -198,7 +198,7 @@ class BacktestCacheManager:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/backtest/test_cache_manager.py` | ✅ 已实现 | |
+| `tests/research/backtest/test_cache_manager.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

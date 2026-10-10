@@ -3,7 +3,7 @@ module_id: MOD-SIG-158
 title: "A05 财务源线判据转化器蓝图 — 改善五档×定价滞后（PEAD）判据"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 ttl: permanent
 layer: L05_signal
@@ -91,13 +91,7 @@ CapabilityLookup「财务 PIT 判据」零命中；clone_guard 写前预查 0 fi
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/signal_ashare/source_line/fundamental_pricing_lag_criterion.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/signal_ashare/source_line/test_fundamental_pricing_lag_criterion.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 
@@ -112,3 +106,5 @@ CapabilityLookup「财务 PIT 判据」零命中；clone_guard 写前预查 0 fi
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

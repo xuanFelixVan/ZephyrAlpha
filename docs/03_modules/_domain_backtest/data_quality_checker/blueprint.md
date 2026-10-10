@@ -3,7 +3,7 @@ module_id: MOD-BT-022
 title: "回测数据质量检查器蓝图 — 缺失检测+异常检测+一致性检查"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.7"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -136,7 +136,7 @@ responsibility_domain:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/backtest/test_data_quality_checker.py` | ✅ 已实现 | |
+| `tests/research/backtest/test_data_quality_checker.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 

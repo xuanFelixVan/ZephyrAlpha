@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Profiler 蓝图 — 模型画像器·LLM能力基线测量"
 doc_type: blueprint
 status: Active
-version: "2.2.12"
+version: "2.2.13"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1027,20 +1027,17 @@ MAX_OLLAMA_MODELS, SKIP_MODEL_PATTERNS
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/capability/test_capability_passport.py` | ✅ 已实现 | |
-| `tests/model/test_benchmark_suite.py` | ✅ 已实现 | |
-| `tests/model/test_calibrate_model_diff.py` | ✅ 已实现 | |
-| `tests/model/test_cli.py` | ✅ 已实现 | |
-| `tests/model/test_deepseek_v4_chat.py` | ✅ 已实现 | |
-| `tests/model/test_exam_orchestrator.py` | ✅ 已实现 | |
-| `tests/model/test_exam_test_cases.py` | ✅ 已实现 | |
-| `tests/model/test_job_matcher.py` | ✅ 已实现 | |
-| `tests/model/test_model_discovery.py` | ✅ 已实现 | |
-| `tests/model/test_profiler.py` | ✅ 已实现 | |
-| `tests/model/test_provider_data.py` | ✅ 已实现 | |
-| `tests/model/test_results_writer.py` | ✅ 已实现 | |
-| `tests/pipeline/test_pipeline_orchestrator_auto.py` | ✅ 已实现 | |
-| `tests/task/test_task_model_learner.py` | ✅ 已实现 | |
+| `tests/ai/model/test_benchmark_suite.py` | ✅ 已实现 | |
+| `tests/ai/model/test_calibrate_model_diff.py` | ✅ 已实现 | |
+| `tests/ai/model/test_cli.py` | ✅ 已实现 | |
+| `tests/ai/model/test_deepseek_v4_chat.py` | ✅ 已实现 | |
+| `tests/ai/model/test_exam_orchestrator.py` | ✅ 已实现 | |
+| `tests/ai/model/test_exam_test_cases.py` | ✅ 已实现 | |
+| `tests/ai/model/test_job_matcher.py` | ✅ 已实现 | |
+| `tests/ai/model/test_model_discovery.py` | ✅ 已实现 | |
+| `tests/ai/model/test_profiler.py` | ✅ 已实现 | |
+| `tests/ai/model/test_provider_data.py` | ✅ 已实现 | |
+| `tests/ai/model/test_results_writer.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

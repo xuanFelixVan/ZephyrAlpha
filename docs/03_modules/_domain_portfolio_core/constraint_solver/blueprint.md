@@ -3,7 +3,7 @@ module_id: MOD-PF-006
 title: "约束求解器蓝图 — 7 约束链迭代投影 + 拥挤检测"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.7"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -134,7 +134,7 @@ build_status: production
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/pf_core/test_constraint_solver.py` | ✅ 已实现 | |
+| `tests/research/pf_core/test_constraint_solver.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 

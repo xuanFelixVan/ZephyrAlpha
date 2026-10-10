@@ -9,7 +9,7 @@ design_maturity: production
 stability: evolving
 safety_level: M
 ai_autonomy: human_gated
-version: "0.1.0"
+version: "0.1.1"
 created: 2026-08-29
 last_updated: 2026-08-31
 owner: ZephyrAlpha-Owner
@@ -18,6 +18,7 @@ blueprint_level: module
 domain_id: D_AUTONOMY_CORE
 path: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
 granularity: file
+responsibility_domain: 
 ---
 
 # MOD-FACTORY-001 knowledge_classifier 蓝图（知识分类器）
@@ -96,3 +97,32 @@ class KnowledgeClassifier(llm=None, quality_gate=..., known_tags=None,
 - 验收：50 条样本人评一致率 ≥85%（13号文 §4.2 P1-S2，人评环节非本模块职责）。
 - 不做：fine-tune 专用分类模型（C1 单 GPU）；多级层次分类树（62号文已用
   条目级多维标注替代）；自动写库（入库走 62号文 candidate 追加 + 人审）。
+
+---
+
+## 6. 已实现代码完整路径索引
+
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 6.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/autonomy_core/module_factory/knowledge_classifier.py` | ✅ 已实现 | |
+
+### 6.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §6（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下

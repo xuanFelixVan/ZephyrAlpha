@@ -3,7 +3,7 @@ module_id: MOD-PF-003
 title: "再平衡调度器蓝图 — 四触发源 + 成本收益判定"
 doc_type: blueprint
 status: Active
-version: "0.1.8"
+version: "0.1.9"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -146,7 +146,7 @@ else:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/pf_core/test_rebalance_scheduler.py` | ✅ 已实现 | |
+| `tests/research/pf_core/test_rebalance_scheduler.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 

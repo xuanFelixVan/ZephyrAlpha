@@ -3,7 +3,7 @@ module_id: MOD-SELL-016
 title: "S1 信号扫描编排器蓝图 — 事件触发单次扫描串S1族至S2-01路由口"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 design_maturity: production
 layer: L03_sell_decision
@@ -85,12 +85,6 @@ tests/sell_decision/test_s1_scan_orchestrator.py（18 用例）：档位硬锁/�
 |---------|:---:|------|
 | `src/zephyr/sell_decision/core/s1_scan_orchestrator.py` | ✅ 已实现 | |
 
-### 7.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/sell_decision/test_s1_scan_orchestrator.py` | ✅ 已实现 | |
-
 ### 7.5 路径索引使用指南
 
 **新 AI session 读取顺序**：
@@ -104,6 +98,7 @@ tests/sell_decision/test_s1_scan_orchestrator.py（18 用例）：档位硬锁/�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ### §0.6 五图对齐视图
 

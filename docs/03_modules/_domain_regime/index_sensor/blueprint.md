@@ -3,7 +3,7 @@ module_id: MOD-REGIME-016
 title: "大盘指数传感器蓝图 — 均线排列+位置打分"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 design_maturity: production
 ttl: permanent
 layer: L02_regime
@@ -102,7 +102,7 @@ index_regime_panel（MOD-REGIME-008）=HMM 七态概率面板（概率分布视�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/regime/test_index_sensor.py` | ✅ 已实现 | |
+| `tests/research/regime/test_index_sensor.py` | ✅ 已实现 | |
 
 ### 5.5 路径索引使用指南
 

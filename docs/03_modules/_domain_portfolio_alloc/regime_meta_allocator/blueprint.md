@@ -3,7 +3,7 @@ module_id: MOD-PA-007
 title: "Regime元分配器蓝图 — Shrinkage风险节流+PerformanceScore后验分配（A模型·meta层）"
 doc_type: blueprint
 status: Active
-version: "0.1.11"
+version: "0.1.12"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -418,10 +418,10 @@ memo 33 留痕在案）。
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/pf_alloc/test_correlation_persistence.py` | ✅ 已实现 | |
-| `tests/pf_alloc/test_multi_strategy_capital_allocator.py` | ✅ 已实现 | |
-| `tests/pf_alloc/test_regime_meta_allocator.py` | ✅ 已实现 | |
-| `tests/pf_alloc/test_strategy_correlation_gate.py` | ✅ 已实现 | |
+| `tests/research/pf_alloc/test_regime_meta_allocator.py` | ✅ 已实现 | |
+| `tests/research/pf_alloc/test_strategy_correlation_gate.py` | ✅ 已实现 | |
+| `tests/research/research/pf_alloc/test_correlation_persistence.py` | ✅ 已实现 | |
+| `tests/research/research/pf_alloc/test_multi_strategy_capital_allocator.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

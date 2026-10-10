@@ -48,12 +48,6 @@ responsibility_domain:
 |---------|:---:|------|
 | `src/zephyr/position/core/position_checkup_orchestrator.py` | ✅ 已实现 | |
 
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/position/test_position_checkup_orchestrator.py` | ✅ 已实现 | |
-
 ### 1.5 路径索引使用指南
 
 **新 AI session 读取顺序**：
@@ -67,6 +61,7 @@ responsibility_domain:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ### §0.6 五图对齐视图
 

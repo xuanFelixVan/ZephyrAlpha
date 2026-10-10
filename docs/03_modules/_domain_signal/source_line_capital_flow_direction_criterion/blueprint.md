@@ -3,8 +3,8 @@ module_id: MOD-SIG-159
 title: "A06 资金流源线判据转化器蓝图 — 流向持续×信念度×跟随判据"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
-design_maturity: design
+version: "0.1.2"
+design_maturity: production
 ttl: permanent
 layer: L05_signal
 layer_name: signal
@@ -92,11 +92,11 @@ CapabilityLookup「check_tick_duplication/data_supply_chain_map/tick 判重/判�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 源码文件
+### 6.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/signal_ashare/source_line/test_capital_flow_direction_criterion.py` | ✅ 已实现 | |
 
 ### 6.5 路径索引使用指南
 
@@ -111,3 +111,5 @@ CapabilityLookup「check_tick_duplication/data_supply_chain_map/tick 判重/判�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/llm_defense/llm_security
 title: "LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则"
 doc_type: blueprint
 status: Active
-version: "2.0.12"
+version: "2.0.13"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -5854,37 +5854,25 @@ Encoding Defense Layers — LSG + LLM 协作
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/llm_security/test_adversarial_mutator.py` | ✅ 已实现 | |
-| `tests/llm_security/test_behavior_audit_logger.py` | ✅ 已实现 | |
-| `tests/llm_security/test_code_integrity.py` | ✅ 已实现 | |
-| `tests/llm_security/test_cross_module_integration_llm_security.py` | ✅ 已实现 | |
-| `tests/llm_security/test_fail_closed.py` | ✅ 已实现 | |
-| `tests/llm_security/test_gateway_e2e.py` | ✅ 已实现 | |
-| `tests/llm_security/test_injection_patterns.py` | ✅ 已实现 | |
-| `tests/llm_security/test_input_sanitizer_llm_security.py` | ✅ 已实现 | |
-| `tests/llm_security/test_isolation.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l0_supply_chain.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l1_input_defense.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l2_prompt_protection.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l2a_process_sandbox.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l3_output_security.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l4_agent_security.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l5_resource_protection.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l6_observability.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l7_red_team.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l7_validation.py` | ✅ 已实现 | |
-| `tests/llm_security/test_l8_multi_agent.py` | ✅ 已实现 | |
-| `tests/llm_security/test_llm_security.py` | ✅ 已实现 | |
-| `tests/llm_security/test_phase_gate_lsg_hookup.py` | ✅ 已实现 | |
-| `tests/llm_security/test_process_sandbox_llm_security.py` | ✅ 已实现 | |
-| `tests/llm_security/test_runtime_interceptor.py` | ✅ 已实现 | |
-| `tests/llm_security/test_secrets.py` | ✅ 已实现 | |
-| `tests/safety/test_async_monitor.py` | ✅ 已实现 | |
-| `tests/safety/test_circuit_breaker.py` | ✅ 已实现 | |
-| `tests/safety/test_defense_runner.py` | ✅ 已实现 | |
-| `tests/safety/test_event_integration.py` | ✅ 已实现 | |
-| `tests/safety/test_game_day_scheduler.py` | ✅ 已实现 | |
-| `tests/safety/test_injection_engine.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_adversarial_mutator.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_behavior_audit_logger.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_code_integrity.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_cross_module_integration_llm_security.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_fail_closed.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_gateway_e2e.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_injection_patterns.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_input_sanitizer_llm_security.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_isolation.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_l0_supply_chain.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_l1_input_defense.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_l2_prompt_protection.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_l2a_process_sandbox.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_l3_output_security.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_l4_agent_security.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_l5_performance_guard.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_l5_resource_protection.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_l6_feishu_alert.py` | ✅ 已实现 | |
+| `tests/ai/llm_security/test_l6_observability.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

@@ -3,8 +3,8 @@ module_id: MOD-SIG-160
 title: "A09 财经快讯情绪源线判据转化器蓝图 — 半衰加权情绪指数×密度突增×四档判据"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
-design_maturity: design
+version: "0.1.2"
+design_maturity: production
 ttl: permanent
 layer: L05_signal
 layer_name: signal
@@ -90,11 +90,11 @@ CapabilityLookup 系列留审计（`.runtime/lookup_audit/`）；clone_guard 同
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 源码文件
+### 6.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/signal_ashare/source_line/test_news_sentiment_criterion.py` | ✅ 已实现 | |
 
 ### 6.5 路径索引使用指南
 
@@ -109,3 +109,5 @@ CapabilityLookup 系列留审计（`.runtime/lookup_audit/`）；clone_guard 同
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+
