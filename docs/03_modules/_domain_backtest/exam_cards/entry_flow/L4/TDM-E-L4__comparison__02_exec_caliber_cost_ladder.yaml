@@ -1,0 +1,91 @@
+schema_version: '1.0'
+card_id: TDM-E-L4/comparison/02_exec_caliber_cost_ladder
+node_id: TDM-E-L4
+family: comparison
+title_zh: 成交价口径三档×滑点五档成本谱·执行层总对照卡
+origin: tdm_algo_note_l4
+hypothesis: 同一份建仓权重在三种成交价口径（close 决策即成交 / next_open 次日开盘 / vwap 量加权均价）下的成本后 Sharpe 排序逐年稳定，且沿冻结五档滑点 [0,5,10,20,40]bp 单调非增；40bp 档 Sharpe 仍 >= 生存地板者才有资格进生产——执行层"怎么买"的第一可判项就是口径差值本身。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口与 L1 母卡同批冻结（2026-10-10 看数前），五档 bp/生存地板/单调容差/最小样本天数逐字取 config/exam_scale_cost_gate.yaml（冻结件，禁本卡改档），事后挪门柱=作废（G4-5）
+arms:
+  A_close: 引擎 exec_caliber="close"（决策价即成交价，无执行滞后，=现网冻结口径逐位零漂移基准）
+  B_next_open: 引擎 exec_caliber="next_open"（收盘决策、次日开盘成交，区间收益=open_{d+1}/open_d-1，"rets 换源"）
+  C_vwap: 引擎 exec_caliber="vwap" + px_exec=_vwap_from_amount_volume(amount, volume, close_ref)（含量纲哨兵，越界即 RuntimeError 不静默回落）
+  cost_ladder: slippage_bp ∈ [0, 5, 10, 20, 40]（tiers_bp 冻结档，档位扫描引擎口径唯一=daily_net_returns slippage_bp kwarg，禁二次回测）
+buckets:
+  type: arm_x_cost_tier
+  'on': 三臂×五档=15 格，逐格取成本后 Sharpe
+  min_obs_per_bucket: 60
+pillars:
+  cost_monotonicity: 每臂沿五档的 Sharpe 序列非增（容差 monotonic_tol=1e-9，逐档回落或持平）
+  survival_floor: 最高档（40bp）Sharpe >= cost_gate.survival_floor（=0.0，冻结值禁改）
+  caliber_rank_stability: 三臂在 5bp 与 20bp 两档下的 Sharpe 排序在 IS 与 OOS 两段一致（排序翻转=执行口径不稳定，判 fail）
+  caliber_gap_materiality: "abs(Sharpe(close)-Sharpe(next_open)) >= 0.10 且 abs(Sharpe(close)-Sharpe(vwap)) >= 0.05 才算'执行口径有实质代价'；低于此带宽=执行层对本信号不敏感（负结果同样入册，禁为过门柱挑档）"
+  turnover_gate: 年化换手 <= turnover_gate.cap_annual_x（=8.0x，days_basis=244），超门=执行成本失控一票否决
+target:
+  primary: cost_adjusted_sharpe（search_objective.primary 同口径，冻结件声明）
+  secondary: gross_sharpe（仅作观察项披露，search_objective.observed 同口径）
+  note: 净收益序列 = _net_line(gross, turnover, slippage_bp)，佣金 2.5bp/印花 10bp 不动仅滑点覆盖
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  执行器 calibration_exam.judge 只认四件套数值面，本卡的机判映射关系在此先验冻结：
+  mono_spearman = (档位秩 1..5, 该臂 Sharpe 秩) 的 Spearman 取负号后的值（非增=>=0.6）；
+  ic_mean / ic_ir 面在本卡不作门柱用途，按"成本谱跨档符号稳定性"读：
+  取三臂差值序列（close-next_open 日度净收益差）的日频 IC 均值与 IR 作执行滞后代价的稳定性度量，
+  符号在牛/熊段与 OOS 须一致（regime_same_sign/oos_same_sign 语义即此）；
+  ic_mean_min=0.02 在差值序列上的含义是"执行口径差至少有 2% 的日度秩相关强度"，
+  若实测差值 IC 落在 [0, 0.02) 则该柱判 fail 并按"执行层不敏感"负结果入册（禁改判据）。
+oos_window_ref: *id001
+data_binding:
+  signal_table: data/strategy_intake/grid_*/manifest.csv（参考跑批格点→权重帧，经 factory_grid_executor.evaluate_recipe 求值）
+  signal_column: weights（T×S 宽表，evaluate_recipe 返回的 (weights, degraded) 首元）
+  signal_derivation: >-
+    load_reference_run(run_dir) 取 manifest + 闭卷窗（真源=summary.json window，缺则 RuntimeError 禁猜窗）；
+    逐格 evaluate_recipe(recipe, closes, factors, vol20, universe_cols, ...) → weights 宽表；
+    三臂只差 exec_caliber/px_exec，权重帧逐位相同（对拍合法性前置）。
+    或走 fexam 现成装置：strategy_exam.composite_signal(columns, directions) →
+    monthly_topn_signals(composite, trading_dates, top_n=20) → weights。
+  target_source: >-
+    c1_market.kline_daily_hfq close 宽表（px_close）；执行价宽表 px_exec：next_open=open 列、
+    vwap=amount/volume 经 _vwap_from_amount_volume 量纲哨兵（median(vwap/close) 越界即禁用作成交价）；
+    评价指标 = 成本后日净收益 NAV 的 Sharpe（年化 244，与 window_metrics 同口径）。
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM
+    c1_market.kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 行 / 5,916 标的（close/open/amount/volume 列实测在案）；
+    参考跑批实测：`ls -d data/strategy_intake/grid_*` → 含 grid_20260926-024947 / grid_20260929-040003 /
+    grid_20260929-040141 / grid_gpu_sectorcond_20260924-0834 / grid_t0_conditional_v1（本车道实测目录存在，
+    具体 manifest.csv 行数与窗由考试车道 load_reference_run 读，未测不预填）；
+    成本档真源实测：config/exam_scale_cost_gate.yaml → cost_gate.tiers_bp=[0,5,10,20,40]、
+    survival_floor=0.0、monotonic_tol=1e-09、min_days=60、turnover_gate.cap_annual_x=8.0、days_basis=244、
+    scale_gate.participation_ref=0.05/exponent=0.5/multiplier_cap=2.0、search_objective.primary=cost_adjusted_sharpe；
+    引擎常量实测：scripts/backtest/translated/_c4_engine.py L59-61 COMMISSION_BP=2.5 / STAMP_BP=10.0 / SLIPPAGE_BP=5.0，
+    L86 _VALID_EXEC_CALIBERS=("close","next_open","vwap")，L701-702 cost = turnover*(COMMISSION_BP*2+STAMP_BP+slip*2)/1e4。
+infra_gap: >-
+  comparison 族的"卡驱动执行器"缺位——现仅有硬编码双臂先例
+  scripts/backtest/fexam/exit_sim/exit_simulator.py（同目录 prereg_frozen.yaml，Sharpe+MaxDD 两臂对拍）；
+  本卡三臂×五档需一个 comparison_exam.py（读 arms 段调 daily_net_returns 逐臂逐档，出分数行）。
+  判 blocked_on_impl=comparison 执行器（缺 1 件），数据与引擎侧零缺口。

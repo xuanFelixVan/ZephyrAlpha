@@ -1,0 +1,84 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-03/comparison/02_limit_offset_fill_tradeoff
+node_id: TDM-E-L4-03
+family: comparison
+title_zh: 限价锚偏移三档（卖一+1tick / 突破价上方0.5% / 市价）成交概率-成本权衡对照卡
+origin: tdm_algo_note_l4_03
+hypothesis: 限价挂单相对对手一档的偏移量决定"成交概率×成交均价"的权衡曲线：+1 tick 档成交率高、追价成本低；0.5% 突破挂单档在突破日成交率低但错过涨幅的机会成本高；市价档成交率≈1 但冲击+价差成本最高——三档在 5 档实测盘口上可判，且权衡曲线应随流动性分层单调移动（cost_model_calibration.liquidity_tier 口径）。
+window:
+  in_sample:
+  - '2026-07-24'
+  - '2026-09-15'
+  oos: &id001
+  - '2026-09-16'
+  - '2026-09-30'
+  regimes:
+    seg1: 2026-07-24..2026-08-20（前段，牛熊标签=开考前以 000300 该段累计收益符号机械赋值，本卡不预断言方向）
+    seg2: 2026-08-21..2026-09-15（后段，同上规则）
+  frozen_note: 本卡窗口由 tick_depth_5 实测覆盖窗（2026-07-24..2026-09-30）唯一决定，非挑数——数据只活到这里；IS/OOS 切点与牛熊分段边界在开考前冻结，事后挪=作废（G4-5）。诚实标注：窗长 35+11 交易日，统计功效弱，判据以"排序稳定"而非"绝对值显著"为主
+arms:
+  A_ask1_plus_1tick: 买入限价 = 卖一价 + 1 个最小变动价位（0.01 元，主板 / 0.01 双创同）
+  B_breakout_plus_50bp: 限价 = 突破参考价 × 1.005（algo_note 口径"突破价上方 0.5% 挂单等着成交"）
+  C_market: 市价（按 tick_depth_5 一档可成交量逐档吃单，不足即部分成交）
+buckets:
+  type: arm_x_liquidity_tier
+  'on': 三臂 × cost_model_calibration.liquidity_tier（按日成交额分层，n_tiers() 由分层边界唯一决定，禁手写魔数）
+  min_obs_per_bucket: 60
+pillars:
+  fill_rate_ordering: 成交率排序须为 C >= A >= B（市价最全、+1tick 次之、突破挂单最挑），排序翻转=撮合口径实现有 bug
+  cost_ordering: 平均带符号滑点（bps，正=不利，口径=execution_report._signed_slippage_bps）排序须为 B >= A >= C 或 C >= B >= A 之一并在分数册说明权衡曲线形态，禁事后选形态
+  missed_trade_opportunity: 未成交腿按"若未成交则该票当日收盘价-决策价"记机会成本，成交概率×期望收益两腿必须同时出数（本卡主判据=净期望，非单看成交率）
+  liquidity_monotonicity: 沿流动性层（不流动→流动）三臂的成交率差与成本差须单调收敛（低流动性档 A/B 臂代价更高=预期机理）
+target:
+  primary: net_expected_gain_bps（成交率×成交收益 - 冲击/价差成本 - 未成交机会成本）
+  secondary: fill_rate
+  note: 无 NAV 概念（单笔执行考题），主目标用 bps 期望而非 Sharpe
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-03.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(流动性层秩, 该层 A 臂净期望 - C 臂净期望) 的 Spearman
+  （限价相对市价的优势应随流动性变好而缩小 => 取负序后 >=0.6）；
+  ic_mean/ic_ir 读"当日 A 臂成交率截面"对"该股次日收益截面"的日频 Rank IC（挂不到单的多为强势票 ⇒ 期望为正）；
+  牛/熊同号 + OOS 同号。窗长受数据上限（35+11 天），n 不足判 nan 即 fail，不得延窗。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.tick_depth_5（5 档盘口）+ c1_market.stk_limit（价格笼子/涨跌停可成交性）
+  signal_column: ask_price1 / ask_volume1..5 与 bid_price1 / bid_volume1..5
+  signal_derivation: >-
+    决策时点 t 取 tick_depth_5 快照 → 组装 MatchingLogic.TickSnapshot（列名一一对应：
+    ask_price1..5→ask_price 元组，ask_volume1..5→ask_vol）；
+    A 臂：limit_price = ask_price1 + 0.01，若后续 tick 的 ask 触及限价即成交，成交价=限价；
+    B 臂：突破参考价 = max(high up to t)（当日新高），limit = ref*1.005；
+    C 臂：按 ask 1..5 档逐档吃单（matching_logic 撮合核，不足量判部分成交 filled_quantity），
+    均价 = Σ(price_i×vol_i)/Σvol_i；三臂同用 lot_size=100 整手折算与 min_commission=5 元下限。
+  target_source: >-
+    c1_market.kline_daily_hfq close/close（次日收益，机会成本腿基准）+ 当日收盘价（未成交腿机会成本）；
+    佣金/印花/过户费常量 = matching_logic MatchingConfig(commission_rate=万0.854, stamp_tax_rate=万5 卖出单边,
+    transfer_fee_rate=万0.1 双向, min_commission=5, lot_size=100, price_limit_pct=0.10)
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.tick_depth_5`
+    → 2026-07-24..2026-09-30 / 130,146,982 行 / 8,720 标的（本卡窗口的唯一决定者）；
+    `... c1_market.tick_data` → 2026-01-05..2026-10-08 / 3,943,831,530 / 11,811（逐笔口径可作 A/B 臂触价判定的替代源，窗更长）；
+    `SELECT * FROM c1_market.tick_depth_5 LIMIT 1` 实测列集含 quality_flag/data_source/exchange（PIT 与质量画像面）；
+    价格笼子与涨跌停约束基准 `... c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831
+    （limit_up/limit_down/pre_close 实测在列，2026 窗内完全覆盖）；
+    撮合核实测在案：src/zephyr/backtest/core/matching_logic.py（MatchingConfig/MatchOrderInput/
+    OrderBookSnapshot/TickSnapshot/MatchingFill 五件，L80-243 逐类核对）。
+infra_gap: >-
+  缺"逐笔事件流撮合驱动器"1 件（把 tick_depth_5 按 timestamp 灌进 MatchingLogic 并落 A/B/C 三臂成交账的跑批器）；
+  现仓实测：scripts/backtest/ 内命中 slippage/fill/matching 的均为组合层或成本标定律，无 tick 级三臂对拍器
+  ⇒ 本卡 status=preregistered + blocked_on_impl=（1）tick 级三臂撮合驱动器（2）comparison 族卡驱动执行器。

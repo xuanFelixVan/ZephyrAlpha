@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-06/comparison/02_quality_prior_on_off
+node_id: TDM-E-L4-06
+family: comparison
+title_zh: 执行算法选型质量先验开/关·对照卡（反馈环有效性）
+origin: tdm_algo_note_l4_06
+hypothesis: 选型总分调制 `total*(1+0.20*(2q-1))`（q=该算法历史实测质量评分均值）打开时，相对 q=0.5 恒等中性档（关闭反馈）应降低实测不利滑点（bps）并减少算法误选率；若先验只是把选择集中到近期运气好的算法，则表现为"滑点改善但换手/规模冲击恶化"——两腿必须同判。
+window:
+  in_sample:
+  - '2026-01-05'
+  - '2026-08-31'
+  oos: &id001
+  - '2026-09-01'
+  - '2026-10-08'
+  regimes:
+    seg1: 2026-01-05..2026-05-31（前段，标签按 000300 区间累计收益符号开考前机械赋值，不预断言）
+    seg2: 2026-06-01..2026-08-31（后段，同上规则）
+  frozen_note: 窗口由 tick_data 实测覆盖（2026-01-05..2026-10-08，唯一含逐笔执行细节的面）与 sim_trade_log 实测窗（2026-07-17..2026-10-09，84 行）共同决定；调制系数 0.20 与"缺样返 None 走中性"规则逐字取 TDM algo_note_zh 与实现件，禁卡内改系数；事后挪=作废（G4-5）
+arms:
+  PRIOR_ON: q 由盘后实测评分历史 join 得到（ScorerBackedQualityPrior 经 order_id→算法归因回调），选型总分被调制
+  PRIOR_OFF: q=0.5 恒等（中性档，=未接反馈环的旧行为）
+  PRIOR_SHUFFLED: q 在算法间随机重排（安慰剂臂，判"改善是否真来自评分信息而非任何扰动都有效应"）
+buckets:
+  type: arm_x_order_size
+  'on': 三臂 × 单票委托规模分层（cost_model_calibration.liquidity_tier 同分层口径，>500 万单必拆子档单列）
+  min_obs_per_bucket: 60
+pillars:
+  slippage_reduction: PRIOR_ON 的不利滑点（execution_report._signed_slippage_bps 口径，正=不利）中位数须低于 OFF 且高于 SHUFFLED 的改善幅度可复核（三臂对照防安慰剂）
+  misselection_rate: 算法误选率（事后被证为该规模下更优算法未选中的比例）PRIOR_ON < PRIOR_OFF
+  participation_discipline: 参与率 <= 市场量 10-20%（algo_note 纪律）逐臂出分布，越界率须报告
+  no_fabricated_prior: 样本不足时 q 必须为 None 走中性（本柱判"实现是否在缺样时造假先验"，违例即整卡作废）——G4 级诚实门柱
+  turnover_gate: 逐臂年化换手与成本谱（五档）非增，40bp >= survival_floor=0.0
+target:
+  primary: realized_adverse_slippage_bps
+  secondary: misselection_rate
+  note: 判据=差值过门柱＋成本门；三臂含安慰剂是本卡对"反馈环有效性"的自反设计
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-06.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(委托规模层秩, PRIOR_ON 相对 OFF 的滑点改善量秩) >=0.6
+  （先验在大单上更该有效）；ic_mean/ic_ir 读"当日各算法 q 先验截面"对"该股/该单实测不利滑点截面"的
+  日频 Rank IC（好先验应predict更低不利滑点，符号为负属预期，按 judge 原样判，禁改符号口径）；
+  牛/熊（两环境段）同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.tick_data（执行路径/参与率）+ c1_backtest.sim_trade_log（实测成交与 cost_paid）
+  signal_column: 算法标识（TWAP/VWAP/ICEBERG/IS/POV/ALT 六件，EXA-* algo_refs）+ 逐单成交均价与委托基准价
+  signal_derivation: >-
+    实测不利滑点 = _signed_slippage_bps(side, intended_price, avg_fill_price)（ex_core/execution_report.py 实测函数）；
+    intended_price 取决策基准（SlippageBenchmark.DECISION）与到达价（ARRIVAL）两式并出，禁只挑有利口径；
+    q 先验 = execution_quality_scorer 的四维加权评分（QualityWeights 和须=1.0，违反抛 InvalidWeightsError）沿 order_id→算法归因 join；
+    参与率 = 委托量 / 同期市场量（tick_data 逐笔聚合 volume）；
+    规模分层 = cost_model_calibration.liquidity_tier(daily_notional_yuan)，n_tiers() 由分层边界决定（禁手写魔数）。
+  target_source: "realized_adverse_slippage_bps（execution_report 口径）+ 组合成本后 NAV（daily_net_returns slippage_bp 档）"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.tick_data`
+    → 2026-01-05..2026-10-08 / 3,943,831,530 / 11,811（含 bid/ask/price/volume/quality_flag/market_type 九类）；
+    `SELECT min(trade_date),max(trade_date),count() FROM c1_backtest.sim_trade_log` → 2026-07-17..2026-10-09 / 84 行
+    （列实测 action/cash_after/cost_paid/price/run_id/shares/signal_reason/strategy_id/symbol/trade_date/mode）
+    ⇒ 实测成交样本仅 84 条，本卡主判据在 sim_trade_log 面上先天功效不足，须以 tick_data 撮合重放补足（不得用 84 行宣称显著）；
+    件实测存在：src/zephyr/ex_sor/core/algo_execution_selector.py、src/zephyr/ex_sor/services/execution_quality_scorer.py、
+    src/zephyr/ex_core/execution_report.py（grep 命中 _signed_slippage_bps L54）、slippage_analyzer.py（Benchmark 五档枚举 L119-131）。
+infra_gap: >-
+  blocked_on_impl=（1）把 tick_data 重放成"逐算法成交账"的仿真撮合驱动器（1 件，实测不存在）
+  （2）comparison 族卡驱动执行器（共用）。数据面：实测成交回报历史仅 84 行 ⇒ 同时标 blocked_on_data=
+  券商/仿真成交明细历史回填（2026-07-17 之前缺）。

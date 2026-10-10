@@ -1,0 +1,85 @@
+schema_version: '1.0'
+title: 过夜总令叫醒 Owner 决策清单（只列需要人拍的，其余本班自理）
+built_by: st-nightmine-20261010
+date: '2026-10-10'
+denominator_note: >
+  实测分母来自本役盘面对象现读：新卡 213 张（calibration 104／comparison 61／ablation 37／shadow 11），
+  状态＝preregistered 151／examined 8／blocked_on_data 34／blocked_on_impl 20；
+  分数册 8 行全 fail；TDM 186 节点全覆盖有卡。重算命令见 00_final_report.md 首行生成器指针。
+
+items:
+- id: OD-1
+  项: 对照卡/消融卡执行器缺位——是否立项建件
+  实测分母: comparison 61 + ablation 37 = 98 张卡（其中 20 张已自标 blocked_on_impl）今晚零可考面
+  为何要点头: 现只有 calibration 执行器 MOD-BT-243；建对照/消融执行器＝新增 MOD-BT 族件，按净零纪律须由
+    Owner 认定它替代/合并什么（AI 自裁易把"能建"当"该建"）
+  不点的后果: 98 张卡（占新卡 46%）压在抽屉里不可考，防守段（止损/离场/仓位）判据面继续零分
+  凭据: docs/_working/nightmine_campaign/L3_ledger.md（library.lookup state 0/3 源命中留痕）
+- id: OD-2
+  项: 封板率与炸板率恒等互补——两卡合并还是改定义
+  实测分母: 2 张卡（TDM-E-L1-S2/05 与 /04），实测 ic_mean 恰为相反数（+0.0786 / -0.0786）
+  为何要点头: 合并或改定义=动已冻结判据（G4-5 事后挪门柱=作废），须裁定开新卡还是并卡
+  不点的后果: 分数册长期存在两条互衍信息，DSR 分母虚增、覆盖尺假宽
+  凭据: docs/_working/nightmine_campaign/02_breadth_derivation_report.yaml 残余风险段
+- id: OD-3
+  项: 灰度切换/清退类卡是否进入晋升评估（C1-03 灰度切换、C3-02 清退）
+  实测分母: 2 张卡标 owner_gate_required: true
+  为何要点头: 宪法 §5 Owner 保留面①（资金与实盘交易/交易核心域 production 流转）
+  不点的后果: 卡保持 preregistered 不执行，无任何自动动作（本班已只出卡零执行）
+  凭据: docs/_working/nightmine_campaign/L6_ledger.md
+- id: OD-4
+  项: 两条数据断供是否派 P1 断供工单（新闻 2025 段、涨跌停池历史段）
+  实测分母: news_data 2025=31,427 行 vs 2024=759,512 行（-95.9%）；
+    c1_market.limit_up_down 仅 2026-07-20 起 5,397 行 vs 冻结窗需 2019-01-04 起 1,622 日
+  为何要点头: 补史要动采集排程与外部数据源额度（花钱/API 面），且广度历史现由推导腿顶替
+  不点的后果: 新闻类卡 OOS 尾段与广度类卡母源长期靠推导口径，口径分叉风险在册
+  凭据: 00_final_report.md §一/§五；L0d_ledger.md 自校验门（12 干净基准日 MAE 0.33 只）
+- id: OD-5
+  项: F06 批预算与每周窗撞车处置
+  实测分母: 本批 6,000 格自 19:17 已跑 12.23h，进度代理=1,003 格 ⇒ 43.9 s/格 ⇒ 整跑约 73h，
+    将跨越 10-10 23:00 下一窗；grid 目录至今 manifest=0 件
+  为何要点头: 降 n_samples 或改钳制=动 search_space_prereg.yaml（裁定#413 冻结面）
+  不点的后果: 下一窗与在跑批叠跑（算力互抢），W1 正式验收（manifest+rc）继续拿不到
+  凭据: 00_final_report.md "F06 窗现场"（生成器现读）
+- id: OD-6
+  项: net_fee 缺键致净费读数静默 nan——补键还是补告警
+  实测分母: exam_scale_cost_gate.yaml 无 net_fee 节；影响面=每卡 net_bucket_medians 字段（不进 judge()）
+  为何要点头: 补键=动成本参数面（判据相邻面），本班不改
+  不点的后果: G1 净费读数继续静默缺位，"过成本门"叙事无实测支撑
+  凭据: docs/_working/nightmine_campaign/L5_ledger.md 附带发现
+- id: OD-7
+  项: 热册册主车道净增袋（3 条他人未投影登记）
+  实测分母: capability 册盘面含 examchief 2 条＋final4 1 条在账本未投影（15 行）；本班 token 先行袋
+    依裁定只带本车道 121 条，未代其落地
+  为何要点头: Owner 已裁"本车道禁出重打投影袋"，落地须由册主车道跑净增袋
+  不点的后果: 那 3 条登记继续悬空，任何后续 render 会把它们带进他人袋
+  凭据: 队列袋 q-20261010-st-nightmine-20261010-0002/0003 message 面
+- id: OD-8
+  项: W5 confidence 机生实写是否补跑
+  实测分母: 8 行分数全 fail ⇒ dry-run 判 changed=0（只标候选关系不动 confidence）；升级需
+    verdict=pass ∧ oos_ok ∧ regimes⊇{bull,bear}，今晚零满足
+  为何要点头: 实写要 --apply 改 config/trading_decision_map.yaml，而主区该册盘面正挂他会话在途面
+    （写=连坐风险），本班只出 dry-run 取证
+  不点的后果: "首卡结论机生回写 TDM"仍是判据实弹（拒绝迁移）而非正向演示
+  凭据: writeback_exam_confidence dry-run 输出（transitions 8 行 changed=false）
+- id: OD-9
+  项: 【新发现 P0 断供】个股后复权与因子/情绪面断在 2026-09-30，是否当班补
+  实测分母: kline_daily_hfq trade_date>='2026-10-01' = 0 行；technical_indicator max=2026-09-30；
+    emotion_index close_final = 0 行；同期 kline_daily / kline_index / stk_limit / money_flow
+    均到 2026-10-08/09，交易日历实测该窗有 2 个交易日（普查 478 次在册探针/135 表逐表 min-max 行数）
+  为何要点头: 补 hfq/指标族是**表族级联**动作（daily/weekly/monthly 须族内对拍，在册先例 WO-004：
+    日线改后周线仍跟旧基座 72% 矛盾），且本机已有 dwm 回填进程在跑（backfill_technical_indicator_dwm
+    与 ti_shard_selfheal_driver 活着）——再开一条腿＝与在途写入撞同表，属跨车道协调而非本班独断
+  不点的后果: 凡 OOS 伸到 10 月且绑 hfq/技术指标的卡被判死（普查据此把 scorable_now 从初判 15 收紧到 5），
+    考试面长期被数据窗压住；且下游读 hfq 的策略/因子在"看起来有数据"的旧窗上继续算
+  凭据: docs/_working/nightmine_campaign/04_exam_feasibility_census.yaml 与 L8b_ledger.md 探针清单
+- id: OD-10
+  项: 挖矿枯竭自报可信度处置（是否立法要求交叉复挖升为封矿前置硬门）
+  实测分母: 两条复挖车道独立抽样——L6 名单内 mined_out 3 抽 2 被推翻（漏矿 7 节点出 10 卡）；
+    L1 抽 6 个 mined_out 掉 3（漏矿 6 节点出 6 卡）；失误模式已归因＝六向①只读 algo_note＋data_refs，
+    invalidation/fallback/algo_refs 成批漏读，把"整链有/无对照"当成"全部判据已考"，
+    系统性漏掉次序句/优先级句/分母口径句/额度约束句四类判据陈述
+  为何要点头: 修法＝mining_sop §3 封矿判据加一条硬门（自报 mined_out 须经邻车道抽样复挖过才算封），
+    属规则面新增（净零须声明合并/替代哪条），AI 不宜自裁加门
+  不点的后果: 覆盖尺继续虚高（今晚 186 节点"全有卡"但判据句覆盖率实际更低），DSR/覆盖统计失真
+  凭据: docs/_working/nightmine_campaign/RX_A_ledger.md、RX_B_ledger.md

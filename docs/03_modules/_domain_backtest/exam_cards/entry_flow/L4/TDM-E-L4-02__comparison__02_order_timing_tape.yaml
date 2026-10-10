@@ -1,0 +1,81 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-02/comparison/02_order_timing_tape
+node_id: TDM-E-L4-02
+family: comparison
+title_zh: 下单时点四窗对照（开盘半小时/午盘/尾盘 14:50-14:57/收盘竞价）
+origin: tdm_algo_note_l4_02
+hypothesis: 同一份当日建仓清单在四个下单时点档（开盘 30 分钟内、午盘收盘前、14:50-14:57 尾盘主窗、14:57-15:00 收盘竞价）的成交价分布与当日剩余风险暴露不同：尾盘档"全天信息确认后隔夜风险最小"应表现为组合当日残余波动最低且成交均价离差最小；开盘档应表现为收益方差最大（信息未确认）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口同批冻结；四窗时间边界逐字取 algo_note_zh 时序窗口表（14:45-15:00 决策/14:50-14:57 挂单主窗/14:57-15:00 竞价兜底；9:15-9:20 与 9:20-9:25 竞价铁律不参与本卡，另立卡）；事后挪窗=作废（G4-5）
+arms:
+  A_open30: 开盘 30 分钟内成交（执行价=当日 9:30-10:00 区间 VWAP）
+  B_midday: 11:00-11:30 区间成交（区间 VWAP）
+  C_tail1450: 14:50-14:57 区间成交（区间 VWAP，尾盘主窗=现网规则档）
+  D_closing_auction: 14:57-15:00 收盘竞价成交（竞价实测价 auction_snapshot.auction_price）
+buckets:
+  type: arm_x_symbol_day
+  'on': 四臂 × 建仓清单逐日逐票
+  min_obs_per_bucket: 60
+pillars:
+  arrival_price_gap: 每臂成交价对当日 VWAP 的带符号偏离（bps，正=不利）中位数；C 臂（现网档）须不劣于 A 臂，否则"尾盘集中"规则被否
+  residual_risk: 每臂的"成交时点→收盘"残余收益标准差（A 臂最大为预期）；C/D 臂应显著更小（尾盘档的机理判据，主门柱）
+  cost_ladder_survival: 四臂沿冻结五档 [0,5,10,20,40]bp 的成本后 Sharpe 非增且 40bp 档 >= survival_floor=0.0
+  fillability_guard: 竞价臂若出现"申报价越价格笼子/竞价未成交"票，须按未成交处理并计入机会成本，禁按理想成交价记账（fail-closed 口径）
+target:
+  primary: cost_adjusted_sharpe（四臂各出一条 NAV）
+  secondary: arrival_price_gap_bps_median（执行价质量，execution_report._signed_slippage_bps 同口径"正=不利"）
+  note: 本卡是执行层最纯粹的"时点=信息量"考题，判据不含选股差异（四臂同一清单）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-02.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(时点信息量秩 [开盘=1, 午盘=2, 尾盘=3, 竞价=4] 与
+  该臂残余收益标准差秩的负序) 的 Spearman（越晚信息越足、残余风险越小 => >=0.6）；
+  ic_mean/ic_ir 读"当日开盘档相对收盘档的价差方向"对"次日指数收益"的日频 IC（尾盘效应经典命题），
+  牛/熊同号 + OOS 同号 = 时点溢价跨环境不翻号。负结果如实入册。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_etf_5min + c1_market.auction_snapshot + c1_market.tick_data（个股区间价唯一来源）
+  signal_column: 建仓清单（同权重帧），执行价按臂取区间 VWAP
+  signal_derivation: >-
+    区间 VWAP = sum(amount)/sum(volume) 落在 [窗口起, 窗口止] 内按时段切片聚合；
+    长窗（2019-2025）个股分钟口径不存在 ⇒ 本卡的个股臂执行价用 kline_etf_5min 的对应行业/指数 ETF 代理
+    或用 tick_data（实测 2026-01-05 起）跑短窗复核版，两版分别标注窗长与代理误差，禁混算；
+    竞价臂成交价 = auction_snapshot.auction_price（auction_time 字段区分开盘/收盘竞价），
+    可得性上限 2026-06-01..2026-09-30（实测），故竞价臂只进短窗复核版，长窗四臂版降为三臂（如实降级）。
+  target_source: >-
+    c1_market.kline_daily_hfq close（NAV 计算基准）+ c1_market.kline_index '000300'（次日指数目标）；
+    残余风险 = 成交时点到收盘的分段收益标准差（长窗用 open/close 近似，误差入附注）
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_etf_5min`
+    → 2005-02-23..2026-10-09 / 72,838,407 / 1,699；`... kline_etf_1min` → 2021-07-01..2026-10-09 / 292,584,491 / 1,699；
+    `... tick_data` → 2026-01-05..2026-10-08 / 3,943,831,530 / 11,811（含 bid/ask/volume/market_type 九类，实测 DISTINCT market_type）；
+    `... auction_snapshot` → 2026-06-01..2026-09-30 / 288,909 / 6,590；
+    `... auction_book` → 2026-07-21..2026-09-30 / 3,690,473 / 6,071（含 upper_limit/lower_limit/last_price，竞价铁律卡用）；
+    个股分钟线缺失=实测结论（c1_market 内 kline_*_1min 仅 ETF 族，无个股 1min 表）⇒ 长窗臂为代理口径，本卡不假装精确。
+infra_gap: >-
+  个股盘中执行价长窗基建缺位（缺"个股分钟线入库"这一数据件，非代码件）；
+  comparison 卡驱动执行器同缺（与 L4/02 共用 1 件）。故本卡 status=preregistered 但
+  长窗版标 blocked_on_data（缺 c1_market 个股 1min/5min 全历史），短窗复核版（2026-01-05 起 tick 口径）可即跑。

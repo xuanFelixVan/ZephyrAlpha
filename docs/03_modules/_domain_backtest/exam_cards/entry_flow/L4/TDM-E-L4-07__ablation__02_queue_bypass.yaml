@@ -1,0 +1,76 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-07/ablation/02_queue_bypass
+node_id: TDM-E-L4-07
+family: ablation
+title_zh: 条件触发队列旁路·消融卡（横切基建掉多少）
+origin: tdm_algo_note_l4_07
+hypothesis: 把"所有触发器统一注册、tick 驱动按优先级（风控>卖出>买入）触发"这一环旁路（各决策器各自直接发单），整链表现的变化量=该基建的真实贡献；预期掉在两处：优先级抢占失效（风控信号被买入单挤后）与重复触发（同条件多策略各发一单造成超买）。
+window:
+  in_sample:
+  - '2026-01-05'
+  - '2026-08-31'
+  oos: &id001
+  - '2026-09-01'
+  - '2026-10-08'
+  regimes:
+    seg1: 2026-01-05..2026-05-31（标签按 000300 区间累计收益符号开考前机械赋值，不预断言）
+    seg2: 2026-06-01..2026-08-31（同上规则）
+  frozen_note: 窗口由 tick_data 实测覆盖（2026-01-05..2026-10-08）唯一决定（优先级抢占只在盘中逐笔面上可观测）；消融三档定义先验冻结，事后挪=作废（G4-5）
+arms:
+  FULL: 队列在场（现网口径，local_order_queue 统一注册+优先级触发）
+  BYPASS_RANDOM: 本环输出换随机触发次序（破坏优先级而保留触发集合）——单独判"优先级"这一维的贡献
+  BYPASS_FIXED: 输出固定为注册先后序（FIFO，无优先级仲裁）
+  BYPASS_NONE: 完全旁路（各决策器直发，允许重复触发）
+buckets:
+  type: arm_x_trigger_class
+  'on': 四档 × 触发类别（风控/卖出/买入三类，algo_note 优先级序）
+  min_obs_per_bucket: 60
+pillars:
+  chain_drop: FULL 相对 BYPASS_NONE 的成本后 Sharpe 差与 MaxDD 差（整链掉多少，主判据）
+  priority_preemption: 风控类触发在 BYPASS_FIXED/NONE 下相对 FULL 的"平均延迟 tick 数"与"被买入单挤后"的比例须上升（机理面，非仅结果面）
+  duplicate_fire_rate: 同一触发条件在窗口内重复发单率（旁路档应上升），上升即坐实"防各策略各写各的触发器打架"的价值
+  fail_closed: 队列不可用（异常/积压）时系统必须 fail-closed 不发单，违例（带病发单）即本卡作废——诚实门柱
+target:
+  primary: cost_adjusted_sharpe
+  secondary: preemption_latency_ticks / duplicate_fire_rate
+  note: 消融卡的合格线=掉多少有数，不因"看起来差不多"而判基建无价值（终局全貌里基建位置另裁）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-07.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(优先级保真度秩 [NONE=1, FIXED=2, RANDOM=3, FULL=4], 该档成本后 Sharpe 秩) >=0.6；
+  ic_mean/ic_ir 读"当日各类触发事件密度截面"对"次日组合收益截面"的日频 Rank IC（基建有效性可判面）；
+  两段同号、OOS 同号。缺样判 nan=fail 不扩窗。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.tick_data（tick 驱动源）+ 触发事件流水（实测无在册表，见 infra_gap）
+  signal_column: trigger_event（类别 ∈ {risk, sell, buy}，优先级序固定）
+  signal_derivation: >-
+    触发判据由决策器给出（价格/时间/指标/风控四类，algo_note 口径）；队列按优先级在同一 tick 内排序出单；
+    消融只在"排序器"上做手脚（RANDOM 用冻结种子置换、FIXED 用注册序、NONE 直发不去重），
+    决策判据与信号本身一律不动——这是消融实验的合法性前置（改判据=换考法，禁）。
+  target_source: "由发单序列经 daily_net_returns(slippage_bp=档位) 出 NAV；延迟/重复面用事件计数自算"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.tick_data`
+    → 2026-01-05..2026-10-08 / 3,943,831,530 / 11,811（timestamp/bid/ask/price/volume/market_type 实测在列，tick 驱动可重放）；
+    实测 system.tables 检索（`SELECT database,name FROM system.tables WHERE database IN
+    ('c1_market','c1_backtest','c1_alt','c1_signal') AND (name ILIKE '%limit%' OR '%minute%' OR '%auction%' OR '%tick%' OR '%book%' OR '%order%')`）
+    → 无任何触发器/订单事件流水表（c1_backtest 侧仅 sim_trade_log 84 行，2026-07-17..2026-10-09）；
+    实现件实测存在：src/zephyr/ex_core/local_order_queue.py（台账 §1.4 18/18）。
+infra_gap: >-
+  blocked_on_impl=（1）触发事件流水入库件（现无表，消融四档的事件计数面无法落库）
+  （2）tick 重放驱动器（同 L4-03/06 共用件）（3）comparison/ablation 族卡驱动执行器（共用）。
+  本卡数据腿（tick_data）齐、判据腿（决策器）在，缺的是事件账本——缺什么写什么，不虚构。

@@ -1,0 +1,82 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-05/comparison/02_daban_mode_three_way
+node_id: TDM-E-L4-05
+family: comparison
+title_zh: 打板三式（排板/扫板/打回封）+换手板vs缩量板·执行对照卡
+origin: tdm_algo_note_l4_05
+hypothesis: 三种打板进场方式在"次日溢价分布"上有可判差异——扫板（封板瞬间进）拿到最低均价但承担开板风险，打回封（炸板后回封确认再进）成交率高但溢价被压缩，排板（涨停前排队）成交依赖排队概率且仅在高封单比条件下成立；同时"换手板优于缩量板"（algo_note 断言）作为子对照在换手率分层上应单调。
+window:
+  in_sample:
+  - '2026-09-01'
+  - '2026-09-25'
+  oos: &id001
+  - '2026-09-28'
+  - '2026-10-09'
+  regimes:
+    seg1: 2026-09-01..2026-09-15（前段，牛熊标签=开考前按 000300 区间累计收益符号机械赋值，不预断言）
+    seg2: 2026-09-16..2026-09-25（后段，同上规则）
+  frozen_note: 窗口由 daban_board_event / limit_up_pool 实测覆盖（2026-09-01..2026-10-09）唯一决定；事件总数仅 1,767 条（975 标的）——统计功效先天弱，卡内先验把主判据定为"排序方向 + 符号在 IS/OOS 一致"，禁把绝对收益差当显著（本窗内 t 检验大概率不过，属预期）
+arms:
+  A_pai_ban: 排板（涨停前挂单排队）——可成交性由 seal_bid_volume/流通市值 比值与排队时长近似，判据=封单比>2%（algo_note 口径）才入选
+  B_sao_ban: 扫板（封板瞬间市价扫入，只扫首次封板：open_board_count=0 且 first_touch_time 记录在案）
+  C_dai_hui_feng: 打回封（炸板后回封确认再进：open_board_count>=1 且 close_sealed=1）
+  sub_turnover: 换手板 vs 缩量板二分（limit_up_pool.turnover_rate 截面中位数分档，四臂共用同一分档）
+buckets:
+  type: arm_x_seal_quality
+  'on': 三臂 × 封单质量（seal_ratio 三分位）
+  min_obs_per_bucket: 30
+pillars:
+  premium_ordering: 次日溢价（close_{t+1}/close_t-1，开盘溢价 open_{t+1}/close_t-1 同出）中位数排序须稳定，且 IS 与 OOS 同号（主判据）
+  fill_probability_parity: 排板臂必须显式计入"未成交概率"（seal_bid_volume 不足则判不成交），三臂比较只能在"期望=概率×溢价"口径上进行，禁只比成交样本的溢价（幸存者偏差=本卡最大陷阱，先验写死）
+  seal_quality_monotonicity: 封单比>2% 子档的次日溢价须高于 <=2% 子档（algo_note"封单要实且递增"的统计化），方向翻转=该断言被否（负结果入册）
+  turnover_board_edge: 换手板组 - 缩量板组的次日溢价差 >= 0（algo_note"换手板>缩量板"直接可判面）
+  cost_gate: 打板腿滑点按裁定分档取上沿（外部锚见 evidence：打板/事件票 0.15-0.3%），成本后仍为正才算真优势
+target:
+  primary: next_day_premium（次日收盘溢价，截面期望）
+  secondary: fill_adjusted_expectation（成交概率折减后的期望收益）
+  note: 单笔执行考题，无 NAV/Sharpe 面
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-05.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(封单比三分位秩, 该档次日溢价中位秩) >=0.6；
+  ic_mean/ic_ir 读"当日封单比截面（seal_ratio）"对"该股次日溢价截面"的日频 Rank IC；
+  regime_same_sign=两个环境段 IC 同号；oos_same_sign=OOS 段与 IS 同号。
+  n 不足（<min_obs_per_bucket）判 nan=fail，不得扩窗（数据上限是客观事实，扩窗即造假）。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.daban_board_event + c1_market.limit_up_pool + c1_market.tick_depth_5（排队/触价细节）
+  signal_column: 臂归属标记（open_board_count/close_sealed/first_touch_time/is_one_word/seal_bid_volume）+ seal_ratio/turnover_rate
+  signal_derivation: >-
+    A 排板：first_touch_time 为空或晚于观测点且 seal_bid_volume/free_float>2%（流通市值取自 limit_up_pool.float_market_cap）；
+    B 扫板：first_touch_time 非空 AND open_board_count=0 AND close_sealed=1；
+    C 打回封：open_board_count>=1 AND close_sealed=1（当日曾炸后回封）；
+    次日溢价与开盘溢价由 c1_market.kline_daily_hfq close/open 对 pre_close 比值在后复权空间计算（同 symbol 相邻日比值免污染）；
+    is_one_word（一字板）单列披露：一字板对 A/C 臂不可成交（无排队机会），必须从可成交样本剔除但保留在总体分布中报告。
+  target_source: "kline_daily_hfq close(t+1)/close(t)-1（次日溢价）；open(t+1)/close(t)-1（开盘溢价辅项）"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.daban_board_event`
+    → 2026-09-01..2026-10-09 / 1,767 / 975；`... c1_market.limit_up_pool` → 2026-09-01..2026-10-09 / 1,426 / 789
+    （列实测含 first_seal_time/last_seal_time/seal_amount/seal_ratio/open_board_count/consec_limit/turnover_rate/float_market_cap）；
+    `... c1_market.tick_depth_5` → 2026-07-24..2026-09-30 / 130,146,982 / 8,720；
+    `... c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 / 54 天；
+    长窗替代（A/B 臂可用、C 臂不可用）：涨停/触板导生口径实测 2019..2025 逐年 242-244 交易日完整（台账 §1.2），
+    但日线无法给出 first_touch_time/open_board_count ⇒ 打回封臂与排队概率只有事件表面，
+    本卡因此整体受限于 2026-09 单月窗（blocked_on_data 段=2015-01-05..2026-08-31 的打板事件明细缺失，缺 daban_board_event 与 limit_up_pool 的历史回填）；
+    成本锚（外部引用，发布方+年份+载体齐备）：本仓设计备忘 docs/_working/archive/2026-09/design_memos/90_methodology_open_questions.md L259
+    记载裁定"滑点按策略分档：高流动票 0.05-0.1%，打板/事件票 0.15-0.3% 并乘成交概率折减"（内部真源锚，非模型记忆；
+    同段并记"Almgren-Chriss 不采纳进 MVP，留 cost_model_registry impact_model 接口字段"，与本卡影响模型口径一致）。
+infra_gap: blocked_on_data（打板事件明细历史段缺）+ blocked_on_impl（comparison 族卡驱动执行器缺 1 件，与 L4/02 共用）

@@ -1,0 +1,82 @@
+schema_version: '1.0'
+card_id: TDM-C-L4/comparison/02_breakout_vs_pullback_atr_stop
+node_id: TDM-C-L4
+family: comparison
+title_zh: 币圈买卖点对照卡（突破 vs 回踩进场 × ATR2 移动止损开/关，7x24 无 T+1）
+origin: tdm_algo_note_c_l4
+hypothesis: 7x24 无 T+1 无涨跌停的市场里，突破进场与回踩进场的相对优势由"能否用移动止损把尾部截掉"决定：ATR 倍数（2×）移动式止损打开后，突破档的收益分布左尾应显著收窄而右尾基本保留；若两档在无止损臂下差异不显著，则"时点类型"本身不携带信息（负结果如实记）。
+window:
+  in_sample:
+  - '2025-08-08'
+  - '2026-06-30'
+  oos: &id001
+  - '2026-07-01'
+  - '2026-10-08'
+  regimes:
+    seg1: 2025-08-08..2026-02-28（标签按 BTCUSDT 该段累计收益符号开考前机械赋值，不预断言牛熊）
+    seg2: 2026-03-01..2026-06-30（同上规则）
+  frozen_note: 窗口由 crypto_kline_daily 实测覆盖（2025-08-08..2026-10-08）唯一决定，IS/OOS 切点先验冻结；
+    ATR 参数（N=14，倍数 2.0）取 algo_note_zh 口径；样本仅 14 个月且为单一市场族，卡内先验声明
+    "只出排序与方向，不做跨市场外推"，事后挪门柱=作废（G4-5）
+arms:
+  BREAKOUT_NOSTOP: 突破进场（收盘创 N 日新高），不设止损
+  BREAKOUT_ATR2: 同进场 + 2×ATR(14) 移动式止损
+  PULLBACK_NOSTOP: 回踩进场（收盘上穿 MA10 且距 20 日高点 >5%），不设止损
+  PULLBACK_ATR2: 同进场 + 2×ATR(14) 移动式止损
+buckets:
+  type: arm_x_universe_rank
+  'on': 四臂 × 市值排名分层（universe_rank / is_universe_eligible 实测列）
+  min_obs_per_bucket: 60
+pillars:
+  tail_truncation: ATR2 臂相对 NOSTOP 臂的 MaxDD 改善 >= 5pp 且左尾 5% 分位收益改善为正（装置合法性）
+  right_tail_preservation: ATR2 臂的右尾 95% 分位收益相对 NOSTOP 的让渡 <= 20%（止损不能把趋势行情一起砍掉，否则判"保护代价过高"）
+  entry_type_edge: BREAKOUT - PULLBACK 的成本后 Sharpe 差在两止损档下符号一致（时点信息面；不一致=时点类型不携带稳定信息）
+  no_t1_effect: 7x24 无 T+1 ⇒ 持仓周期分布应显著短于 A 股同策略（作为跨流口径对照的建档项，不作门柱）
+  cost_gate: 币圈手续费/滑点档无本仓冻结真源（实测缺）⇒ 本卡统一用 A 股五档 tiers_bp 作敏感性带并在卡内标注"借用口径，非币圈实测"，禁自造币圈费率
+target:
+  primary: cost_adjusted_sharpe
+  secondary: max_drawdown / 尾部分位收益（5% 与 95%）
+  note: 与 A 股 L4-08（突破失败降级）互为跨流对照，判据同构可比
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-C-L4.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(止损严格度秩 [NOSTOP=1, ATR2=2], 该档 -MaxDD 秩) >=0.6；
+  ic_mean/ic_ir 读"进场信号强度截面（突破幅度/回踩深度标准化）"对"未来 5 日收益截面"的日频 Rank IC；
+  两段同号、OOS 同号。窗仅 14 个月，n 不足判 nan=fail 不得延窗（数据上限=客观事实）。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.crypto_kline_daily
+  signal_column: close / high / low / open / volume / quote_volume / trades / universe_rank / is_universe_eligible
+  signal_derivation: >-
+    ATR(14) = Wilder 平滑 TR（TR=max(high-low, |high-prev_close|, |low-prev_close|)），
+    与 scripts/backtest/fexam/exit_sim/exit_simulator.py 的 wilder_atr_one 同实现（复用禁重造，种子=前 14 个有效 TR 的 SMA）；
+    突破=close 创 20 日新高；回踩=close 上穿 MA10 且 (20 日高/close - 1) >= 5%；
+    移动止损=止损价取 max(历史止损, close - 2×ATR)，7x24 逐日收盘更新（分钟面缺，见 evidence）；
+    可交易集合 = is_universe_eligible=1 且 universe_rank 前档，BTCUSDT 必含。
+  target_source: "crypto_kline_daily close → 未来 1/5/20 日收益；NAV 用日收盘撮合（借用 A 股五档成本带做敏感性）"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol),groupUniqArray(8)(symbol) FROM
+    c1_market.crypto_kline_daily` → 2025-08-08..2026-10-08 / 19,801 行 / 141 标的（含 BTCUSDT、ETH 族、ADAUSDT 等）；
+    列实测（table_columns）：base_asset/close/data_source/exchange/high/ingest_ts/is_universe_eligible/low/open/
+    quality_flag/quote_volume/symbol/symbol_canonical/trade_date/trades/universe_rank/volume；
+    币圈分钟/逐笔面实测缺（system.tables 检索 crypto/coin/binance 仅 crypto_kline_daily 与 crypto_shadow_gate 20 行）
+    ⇒ 本卡只在日频可考，盘中移动止损的真实触发时点不可观测，卡内先验用"收盘检查"近似并标注；
+    TDM 状态实测：节点 confidence=untested、module_ref=null、module_mounts=null（名册 §L3 行同记），
+    即本节点未施工——本卡是"先有可考口径再施工"的准入材料，不是对既有实现的验收。
+infra_gap: >-
+  blocked_on_impl=（1）币圈执行/回测装载件（TDM 节点空壳，无 module_ref 可绑，禁虚构）
+  （2）comparison 族卡驱动执行器（共用）；blocked_on_data=币圈分钟线与真实费率/滑点实测面。

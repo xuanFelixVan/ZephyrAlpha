@@ -1,0 +1,85 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-01/comparison/02_batching_all_vs_split
+node_id: TDM-E-L4-01
+family: comparison
+title_zh: 分批建仓（首批 70/50/30 三档 vs 一次全进）·对照卡
+origin: tdm_algo_note_l4_01
+hypothesis: 把同一目标仓位拆成"首批比例 70%/50%/30% + 确认信号后补足"三档，与一次全进对照：分批档在成本后 Sharpe 上不低于全进档、且 MaxDD 显著更浅；若分批只降 MaxDD 不守 Sharpe，则"置信度定首批比例"的规则实质是风险装置而非收益装置（本卡要判的就是这个分别）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口与 L1 母卡同批冻结；确认信号定义（涨 2% 或站稳分时均线）在卡内先验写死为日频近似，事后禁改阈值（G4-5）
+arms:
+  A_all_in: 目标仓位一次建满（换手 1 次）
+  B_first70: 首批 70% → 确认信号触发补足 30%（高置信档，algo_note 口径）
+  C_first50: 首批 50% → 补足 50%（中置信档）
+  D_first30: 首批 30% 试探 → 补足 70%（低置信档）
+buckets:
+  type: arm_x_regime
+  'on': 四臂 × 牛/熊两段 × IS/OOS
+  min_obs_per_bucket: 60
+pillars:
+  cost_monotonicity: 每臂沿冻结五档滑点 [0,5,10,20,40]bp 的成本后 Sharpe 非增（monotonic_tol=1e-9）
+  risk_improvement: B/C/D 相对 A 的 MaxDD 改善 >= 3pp 且成本后 Sharpe 不降（分批合法性判据，主门柱）
+  confirm_rate_materiality: 确认信号触发率（补足腿实际执行占比）分桶报告；触发率 <20% 时"补足腿"近似不存在，B/C/D 退化为降杠杆而非分批——须如实标注退化，禁把降杠杆收益记成分批收益
+  caliber_gap: 每笔补足腿的成交价用 exec_caliber=next_open 计（分批必然引入二次执行时点，close 口径会低估代价）
+  turnover_gate: 年化换手 <= 8.0x（cap_annual_x，days_basis=244）；分批臂若超门=以换手换风险，按成本门否掉
+target:
+  primary: cost_adjusted_sharpe
+  secondary: max_drawdown（exit_simulator 双臂先例同用 Sharpe+MaxDD 两指标面）
+  note: 分批的净效应=（少承担的尾部）-（多付的一次换手与二次择时风险），本卡两腿都要出数
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-01.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  本卡机判面映射（先验冻结）：mono_spearman=(首批比例秩 [全进=1,70%=2,50%=3,30%=4] 与
+  该档 MaxDD 绝对值秩) 的 Spearman（分批越深回撤越浅 => 期望 >=0.6）；
+  ic_mean/ic_ir 面读"首批比例 vs 成本后 Sharpe"的跨日 IC（信号=当日截面首批比例档，
+  目标=次日组合净收益），牛/熊同号与 OOS 同号=分批收益的方向不因环境翻号；
+  任一柱 fail 记负结果，禁换映射凑过。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（weights 由参考格点 recipe 经 evaluate_recipe 产出）
+  signal_column: 首批比例档 ∈ {1.0, 0.7, 0.5, 0.3}（同一目标 weight 帧的缩放序列）
+  signal_derivation: >-
+    目标权重 W_target（evaluate_recipe 产出）→ 首批 W1 = f*W_target 于建仓日 t0；
+    确认腿触发判据（日频近似，卡内冻结）：close_t/close_{t-1}-1 >= 0.02（"涨 2%"腿）；
+    "站稳分时均线"腿在日线口径下降级为 close_t >= mean(open_t, high_t, low_t, close_t)（4 点近似），
+    两腿任一触发即于 t+1 以 exec_caliber=next_open 补足至 W_target；
+    未触发则维持 W1 直至 L4-08 突破失败判据触发暂停（与本卡同链，臂间一致处理）。
+    实现件先验=src/zephyr/ex_core/order_splitter.py（实测存在，见台账 §1.4）。
+  target_source: >-
+    净收益序列 = _c4_engine.daily_net_returns(weights, px_close, gate_limits=True,
+    slippage_bp=档位, exec_caliber=臂指定, px_exec=...)；评价=window_metrics(nav, start, end)
+    的 sharpe/max_drawdown/total_return（年化 244 口径）
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM
+    c1_market.kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
+    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_etf_5min`
+    → 2005-02-23..2026-10-09 / 72,838,407 / 1,699（"站稳分时均线"若升级为真分钟口径，长窗唯一可用面=ETF 5 分钟，个股无分钟线）；
+    `SELECT min(trade_date),max(trade_date),count() FROM c1_market.tick_data` → 2026-01-05..2026-10-08 / 3,943,831,530 行
+    （个股盘中确认腿的精确口径只在 2026 年起可得，长窗用日线近似是卡内明示的口径妥协，非事后找补）；
+    成本档真源=config/exam_scale_cost_gate.yaml tiers_bp=[0,5,10,20,40]/cap_annual_x=8.0（实测读自冻结件）；
+    引擎入参实测=daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=None, *,
+    backend=None, pre_tensor=None, exec_caliber="close", px_exec=None)（scripts/backtest/translated/_c4_engine.py L770-780）。
+infra_gap: blocked_on_impl=comparison 卡驱动执行器（同卡 L4/02 缺件，1 件共用；数据/引擎侧零缺口）

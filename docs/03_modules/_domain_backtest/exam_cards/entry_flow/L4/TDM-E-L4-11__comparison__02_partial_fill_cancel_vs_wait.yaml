@@ -1,0 +1,73 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-11/comparison/02_partial_fill_cancel_vs_wait
+node_id: TDM-E-L4-11
+family: comparison
+title_zh: 部分成交"撤 vs 等"两档对照卡（含竞态可判性声明）
+origin: tdm_algo_note_l4_11
+hypothesis: 部分成交后按三规则（成交<50% 且价格远离=撤单重挂；>50%=保留等剩余；竞态以券商回报为准+本地加锁）执行，与"一律保留等待"对照：撤重挂档在价格继续不利移动时应更低均价成本，但在回摆行情中应更高漏成交率——两腿代价必须同出，禁只报有利腿。
+window:
+  in_sample:
+  - '2026-07-24'
+  - '2026-09-15'
+  oos: &id001
+  - '2026-09-16'
+  - '2026-09-30'
+  regimes:
+    seg1: 2026-07-24..2026-08-20（标签按 000300 区间收益符号开考前机械赋值，不预断言）
+    seg2: 2026-08-21..2026-09-15（同上规则）
+  frozen_note: 窗口由 tick_depth_5 实测覆盖（2026-07-24..2026-09-30）唯一决定；"价格远离"阈值先验冻结为对首次成交价的 5bp（algo_note 未给数值，卡内先验定值并声明为自设，禁开考后改）；事后挪=作废（G4-5）
+arms:
+  A_rule3: 三规则档（<50% 且远离→撤重挂；>50%→保留）
+  B_always_wait: 一律保留等待剩余量（不撤）
+  C_always_cancel: 一律撤单重挂（不区分成交比例，下界对照）
+buckets:
+  type: arm_x_fill_ratio
+  'on': 三臂 × 首次成交比三分位（<33% / 33-66% / >66%）
+  min_obs_per_bucket: 30
+pillars:
+  adverse_cost: A 在"价格继续不利移动"子集（后 30 分钟累计不利位移>10bp）的加权成交均价成本须低于 B（撤重挂的机理收益面）
+  missed_fill: A 在同子集的漏成交率须高于 B（撤重挂的代价面）——两柱必须同时有数，缺一柱则本卡不完整
+  net_expectation: 净期望（成交部分成本改善 - 漏成交机会成本）A vs B 的符号在 IS/OOS 一致
+  race_undecidable: 撤改竞态柱（algo_note 第三规则）在本窗内不可判（需券商回报交错时序），卡内先验标 blocked 不硬判，禁以本地时序冒充券商时序
+target:
+  primary: net_expected_cost_bps（成交均价成本+漏成交机会成本，口径=_signed_slippage_bps 正=不利）
+  secondary: missed_fill_rate
+  note: 判据=差值过门柱；无 NAV/Sharpe 面（单笔执行考题）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-11.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(首次成交比三分位秩, A-B 净成本优势秩) >=0.6
+  （成交比越高越该保留，A 的优势应在低成交比端最大）；ic_mean/ic_ir 读"当日各单剩余量占比截面"
+  对"后续 30 分钟价格位移截面"的日频 Rank IC；两段同号、OOS 同号；n 不足判 nan=fail 不扩窗。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.tick_depth_5（剩余量可成交性）+ c1_market.tick_data（位移与逐笔成交）
+  signal_column: 首次成交比 filled_quantity/quantity（MatchingFill 口径）与后续档口可成交量 ask_volume1..5
+  signal_derivation: >-
+    以 matching_logic 撮合核重放：TickSnapshot 逐 tick 灌入 → MatchingFill(filled, filled_quantity)；
+    "价格远离"= 当前一档价相对首次成交均价位移 >= 5bp（卡内自设，已声明）；
+    撤重挂臂的重挂价 = 当前一档 + 1 tick（与 L4-03 A 臂同口径，跨卡可比）；
+    漏成交机会成本 = 未成交部分在当日收盘价上的收益差（与 L4-03 同式）。
+  target_source: "net_expected_cost_bps（自 tick 重放账算）；次日收益面用 kline_daily_hfq close 比值（机会成本参照）"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.tick_depth_5`
+    → 2026-07-24..2026-09-30 / 130,146,982 / 8,720；`... tick_data` → 2026-01-05..2026-10-08 / 3,943,831,530 / 11,811；
+    `... kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916（机会成本基准，长窗齐）；
+    件实测存在：src/zephyr/ex_core/fill_handler.py（台账 §1.4 18/18）；撮合核 MatchingFill 字段实测（L233-243）。
+infra_gap: >-
+  blocked_on_impl=（1）tick 级重放驱动器（与 L4-03/06/07 共用件）（2）comparison 族卡驱动执行器；
+  blocked_on_data=券商委托/撤改回报时序（竞态柱不可判的根因，实测 system.tables 无 order/回报表）。

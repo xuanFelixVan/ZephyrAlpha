@@ -1,0 +1,74 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-13/comparison/02_three_way_recon_injection
+node_id: TDM-E-L4-13
+family: comparison
+title_zh: 三方对账（本地簿/委托回报/实际成交）差异检出·对照卡（故障注入档）
+origin: tdm_algo_note_l4_13
+hypothesis: 对"本地订单簿 vs 券商委托回报 vs 实际成交"三方一致性做故障注入（人为造孤儿单/漏回报/状态错位三类），开启对账档应在 T+0 或次日竞价前检出全部注入差异且无误报为"平"；关闭对账档则差异滞留成资金/持仓错账。判据=检出率与误平率，而非收益。
+window:
+  in_sample:
+  - '2026-07-17'
+  - '2026-09-15'
+  oos: &id001
+  - '2026-09-16'
+  - '2026-10-09'
+  regimes:
+    seg1: 2026-07-17..2026-08-15（标签按 000300 区间收益符号开考前机械赋值，不预断言）
+    seg2: 2026-08-16..2026-09-15（同上规则）
+  frozen_note: 窗口由 sim_trade_log 实测覆盖（2026-07-17..2026-10-09）决定；三类注入的比例与形态在开考前冻结；事后挪=作废（G4-5）
+arms:
+  RECON_ON: 三方对账开启（断线重连后先全量对账再恢复交易，孤儿单立即同步并评估，日终不平挂起次日竞价处理）
+  RECON_OFF: 只对本地账（现网若无该档则为构造档，须注明是构造对照非生产态）
+  RECON_DELAYED: 对账延迟一个日切（判"日终不平"这条纪律本身值多少）
+buckets:
+  type: arm_x_injection_type
+  'on': 三臂 × 三类注入（孤儿单/漏回报/状态错位）
+  min_obs_per_bucket: 30
+pillars:
+  detection_rate: RECON_ON 对三类注入的检出率均须 = 100%（低于即装置失效，工程正确性硬门柱）
+  false_reconciled: 误判"平"（差异未检出但被自动冲抵）次数必须为 0，出现即整卡作废（诚实门柱，与收益无关）
+  quarantine_correctness: 不平单进入"挂起次日竞价处理"的路径须可逐笔复核，禁静默改账
+  rto_claim: RTO<5min 声明须以实测重放耗时验证（不可得则该柱标 blocked，禁沿用文档数字）
+target:
+  primary: detection_rate / false_reconciled_count
+  secondary: mean_time_to_detect
+  note: 本卡为容灾装置体检，无收益面；负结果（检出率不足）直接指向施工缺陷而非市场结论
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-13.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  本卡天然不适配四件套收益面，机判映射先验冻结为最小适配：mono_spearman=(注入严重度秩, 检出时延秩) 取负序 >=0.6
+  （越严重越该越早检出）；ic_mean/ic_ir 读"当日不平标记截面"对"次日账本修正幅度截面"的 Rank IC（不平应predict可测修正，
+  近 0 说明对账与修正链路断裂）；regime/oos 同号=检出能力跨期稳。n 不足判 nan=fail，如实记 blocked。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.sim_trade_log（本地成交侧，实测唯一可用账）+ 委托回报侧（实测无表）+ 成交确认侧（实测无表）
+  signal_column: run_id + symbol + trade_date + action + shares + cost_paid（本地侧键）
+  signal_derivation: >-
+    三方对账需要三份账，实测只有本地成交终态 84 行；委托回报与实际成交确认两份账本表缺失 ⇒
+    本卡只能以"故障注入仿真"形态落地：以 sim_trade_log 为真值基座，按冻结比例扰动生成
+    伪造的委托侧与成交侧账，再验对账件检出能力；实现件=src/zephyr/trading/three_way_reconciliation.py（实测存在）。
+    禁把伪造账当真实券商账报检出率（须在分数册标注 injection=simulated）。
+  target_source: "检出率/误平率（自仿真注入账算，无 NAV）"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count() FROM c1_backtest.sim_trade_log`
+    → 2026-07-17..2026-10-09 / 84 行（列实测 12 项，无 broker 侧字段）；
+    `SELECT database,name,total_rows FROM system.tables WHERE database IN ('c1_market','c1_backtest') AND (name ILIKE '%order%' OR name ILIKE '%report%' OR name ILIKE '%recon%' OR name ILIKE '%broker%')`
+    → 实测零命中（无委托回报/对账结果表）⇒ 真实三方对账不可观测是数据事实，非未查。
+infra_gap: >-
+  blocked_on_data=（1）券商委托回报流水（2）实际成交确认流水（两份账实测无表）；
+  blocked_on_impl=（3）三方账故障注入驱动器（1 件）（4）comparison/ablation 族卡驱动执行器（共用）。
+  本卡因此为"设计冻结+待件即跑"状态，缺什么逐条写死不笼统。

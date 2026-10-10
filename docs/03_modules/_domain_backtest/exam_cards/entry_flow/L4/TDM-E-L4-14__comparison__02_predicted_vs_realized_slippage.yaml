@@ -1,0 +1,82 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-14/comparison/02_predicted_vs_realized_slippage
+node_id: TDM-E-L4-14
+family: comparison
+title_zh: 发单前预估成本 vs 盘后实测滑点偏差·对照卡（含选型回写方向正确率）
+origin: tdm_algo_note_l4_14
+hypothesis: 盘后实测滑点（按买/卖方向拆冲击/时机/价差三分量）相对发单前预估（一口价 5bp 档 vs 流动性分层标定档）系统性偏低或偏高，且偏差方向随委托规模单调；把实测质量先验回写给算法选择器后，选型改变的方向应与实测偏差一致（该降权的真降权）——"回写方向正确率"是反馈环是否自证有效的唯一可判面。
+window:
+  in_sample:
+  - '2026-07-17'
+  - '2026-09-15'
+  oos: &id001
+  - '2026-09-16'
+  - '2026-10-09'
+  regimes:
+    seg1: 2026-07-17..2026-08-15（标签按 000300 区间收益符号开考前机械赋值，不预断言）
+    seg2: 2026-08-16..2026-09-15（同上规则）
+  frozen_note: 窗口由 sim_trade_log 实测覆盖（2026-07-17..2026-10-09）决定；三分量口径取 slippage_analyzer.SlippageAttribution（三因子+残差），预估两档（一口价 vs 分层标定）由实现件常量唯一决定，卡内不自造 bp；事后挪=作废（G4-5）
+arms:
+  EST_FLAT: 预估=冻结土规一口价 SLIPPAGE_BP=5.0（_c4_engine L61 实测常量）
+  EST_TIERED: 预估=cost_model_calibration.slippage_bps_for_notional(daily_notional_yuan)（流动性分层，n_tiers 由分层边界决定）
+  REALIZED: 实测=_signed_slippage_bps(side, intended_price, avg_fill_price)（execution_report.py L54 实测）+ 三分量拆解
+buckets:
+  type: arm_x_notional_tier
+  'on': 三档 × 委托规模流动性层
+  min_obs_per_bucket: 30
+pillars:
+  bias_sign_stability: (REALIZED - EST) 的偏差符号在两估计档下各自须在 IS/OOS 一致（方向不稳=成本模型不可用，负结果入册）
+  magnitude_by_size: 偏差幅度随委托规模单调（大单低估冲击为预期方向；排序翻转=模型形态错）
+  component_split: 三分量（冲击/时机/价差）+ 残差占比须逐档报出，残差 >50% 时判"当前面不可归因"，禁强行叙事
+  writeback_direction_accuracy: 回写后算法选型改变方向与实测偏差方向的一致率 >= 0.7（反馈环自证有效面，主判据）；样本不足时 q 必须 None 走中性，造假先验=整卡作废
+  small_n_honesty: 实测成交仅 84 笔（见 evidence），本卡一律不做显著性宣称，只出逐笔账与方向计数
+target:
+  primary: writeback_direction_accuracy
+  secondary: bias_bps（REALIZED - EST 分布）
+  note: 判据=差值过门柱＋成本门（成本门=EST 两档对组合层 NAV 的影响须与偏差方向同序）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-14.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(规模层秩, REALIZED-EST_TIERED 偏差秩) >=0.6（越大越低估）；
+  ic_mean/ic_ir 读"当日预估档截面"对"实测不利滑点截面"的日频 Rank IC（预估应predict实测，
+  符号为正；若实测 IC≈0 则成本模型无信息量，属重要负结果）；两段同号、OOS 同号；n 不足判 nan=fail。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.sim_trade_log（实测成交与 cost_paid）+ c1_market.tick_data（到达价/决策价基准与三分量拆解）
+  signal_column: 预估滑点（两档）与实测带符号滑点 bps
+  signal_derivation: >-
+    实测腿：avg_fill_price 由 sim_trade_log price×shares 聚合，intended_price 取下单时刻 tick_data price（ARRIVAL）
+    与信号生成时刻参考（DECISION）两基准并出，禁挑有利基准；
+    三分量拆解=slippage_analyzer.SlippageAttribution（冲击由 ImpactModel.predict(coefficient) 给）；
+    预估腿：slippage_bps_universal()（无流动性信息）与 slippage_bps_for_notional(daily_notional_yuan)（分层），
+    开关=calibration_enabled()（读 SLIPPAGE_TIERING_ENABLED 调用期值，须与实测同档）；
+    回写腿：ScorerBackedQualityPrior → algo_execution_selector 的 total*(1+0.20*(2q-1)) 调制，
+    比对"回写前后选型是否改变 + 改变方向是否与实测偏差同向"。
+  target_source: "bias_bps（逐笔）与 writeback_direction_accuracy（选型改变集合上的方向一致率）"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count() FROM c1_backtest.sim_trade_log`
+    → 2026-07-17..2026-10-09 / 84 行（列实测：action/cash_after/cost_paid/ingest_ts/mode/price/run_id/shares/signal_reason/strategy_id/symbol/trade_date）；
+    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.tick_data`
+    → 2026-01-05..2026-10-08 / 3,943,831,530 / 11,811（到达价基准全窗覆盖 84 笔成交所在段）；
+    件实测存在：src/zephyr/ex_sor/services/slippage_analyzer.py（Benchmark 五枚举+Attribution）、
+    src/zephyr/ex_core/execution_report.py（_signed_slippage_bps）、
+    src/zephyr/backtest/core/cost_model_calibration.py（resolve_slippage_bps/liquidity_tier/n_tiers/calibration_enabled）、
+    src/zephyr/ex_sor/services/execution_quality_scorer.py（QualityWeights 四维和=1.0）；
+    引擎常量实测：COMMISSION_BP=2.5/STAMP_BP=10.0/SLIPPAGE_BP=5.0（_c4_engine L59-61）。
+infra_gap: >-
+  blocked_on_data=实测成交样本（84 笔，2026-07-17 前无）⇒ 统计功效先天不足，卡内已先验禁显著性宣称；
+  blocked_on_impl=（1）order_id→算法归因的可观测账（现仅有 strategy_id 无算法标识）（2）comparison 族卡驱动执行器（共用）。

@@ -1,0 +1,77 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-12/comparison/02_precheck_five_checks_ablation
+node_id: TDM-E-L4-12
+family: comparison
+title_zh: 订单级预检五查逐条消融·对照卡
+origin: tdm_algo_note_l4_12
+hypothesis: 发单前最后五查（资金可用≥委托额、持仓不超该股限额、不触风控熔断、非禁止清单（ST/黑名单）、价格在笼子内）逐条关掉后，每关一条应出现该条对应的违规成交与其损失（关掉资金查=超额成交、关掉 ST 查=ST 票成交、关掉笼子查=越价废单）；若某条关掉后违规率为 0，则该条是纯冗余门（净零判据的实证输入），如实挂账而非默认其有价值。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口同批冻结（长窗可跑：ST 标记与涨跌停价全史齐）；五查定义与拒单留痕要求逐字取 algo_note_zh；事后挪=作废（G4-5）
+arms:
+  ALL_ON: 五查全开（现网口径，任一不过=拒单并记录原因）
+  OFF_CASH: 关资金可用查
+  OFF_LIMIT: 关持仓限额查
+  OFF_RISK: 关风控熔断查
+  OFF_BAN: 关禁止清单（ST/黑名单）查
+  OFF_CAGE: 关价格笼子查
+buckets:
+  type: arm_x_check_violation
+  'on': 六臂 × 违规类型（超额/超限/熔断期/ST/越笼）
+  min_obs_per_bucket: 60
+pillars:
+  violation_emergence: 每关一条，对应违规成交率须 > 0 且可复核（等于 0 则该条判"冗余门"并写入净零候选账——本卡是治理资产净删的实证输入，非只为判收益）
+  loss_attribution: 各违规类型的后续 5 日收益与废单成本单独出账（ST 票成交后的下跌、越笼废单的冲击成本等）
+  net_gate_value: ALL_ON 相对各 OFF 臂的成本后 Sharpe 差，逐臂报（六臂五列差值全出，禁只挑最大的一列叙事）
+  redundancy_flag: 若某柱 violation_emergence=0，须给出"该违规在当前清单结构下天然不可能发生"的机理说明（否则判为上游掩盖，而非该查无价值）
+  fail_closed: 预检件异常（读不到 ST 标记/笼子价）时必须拒单，违例（带病发单）即本卡作废——诚实门柱
+target:
+  primary: cost_adjusted_sharpe（六臂各一条 NAV）
+  secondary: violation_rate_by_check（逐条违规率，治理判据）
+  note: 本卡同时产出"门冗余"证据，服务裁定政策里的治理资产净删判据（内收铁律 w5_1 零触发零消费→退役）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-12.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(关闭的约束条数秩 [0..5], 违规损失累计秩) >=0.6（关得越多损失越大）；
+  ic_mean/ic_ir 读"当日违规标记截面（该票是否属 ST/越笼/超限）"对"次日个股收益截面"的日频 Rank IC
+  （违规票应predict更差收益，符号为负属预期，按 judge 原样判不改口径）；两段同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.stk_limit（st_flag 列=禁止清单判据；limit_up/limit_down 与 pre_close=价格笼子判据）+ c1_market.kline_daily_hfq（成交与后续收益面）
+  signal_column: precheck_pass（五查合取）与各单查标志
+  signal_derivation: >-
+    ST 查 = stk_limit.st_flag（实测列在，1/0）；价格笼子查 = 申报价 ∈ [pre_close×(1±2%), limit_down..limit_up]
+    （±2% 为 algo_note 口径"申报价±2% 限制"，件=src/zephyr/ex_core/price_cage.py 实测存在）；
+    资金可用/持仓限额/风控熔断三条为组合内生状态（由各自臂的成交过程演化，禁外部注入未来信息）；
+    违规票后续 5 日收益 = close_{t+5}/close_t - 1（后复权比值）。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → window_metrics"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit`
+    → 2015-01-05..2026-10-09 / 9,254,772 / 5,831（列实测含 st_flag/board/exchange/limit_up/limit_down/pre_close）；
+    `... kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
+    join 完备性 0 unmatched / 7,590,928 symbol-days（2019-01-04..2025-09-09 实测）；
+    成本档=config/exam_scale_cost_gate.yaml（tiers_bp/survival_floor/cap_annual_x=8.0，实测读自冻结件）；
+    件实测存在：src/zephyr/ex_core/pre_execution_checker.py（§1.4 18/18）。
+infra_gap: blocked_on_impl=comparison 族卡驱动执行器（1 件，共用）；数据面全齐（长窗可即跑）

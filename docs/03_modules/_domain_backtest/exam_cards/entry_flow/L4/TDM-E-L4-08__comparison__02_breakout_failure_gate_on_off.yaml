@@ -1,0 +1,79 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-08/comparison/02_breakout_failure_gate_on_off
+node_id: TDM-E-L4-08
+family: comparison
+title_zh: 突破失败降级装置开/关·对照卡（长窗可回测）
+origin: tdm_algo_note_l4_08
+hypothesis: 同一突破建仓策略，打开"失败即降级"（收盘连续 2 根跌破首仓入场价→暂停确认仓+止损评估；收盘跌破 10 日回看前低→暂停全部后续批次并止损卖出；K>=3 次失败→强制清仓）与关闭该装置（失败仍按原计划加仓）两档对拍：ON 档以更低的尾部损失（MaxDD、CVaR）和更少单票最大亏损为代价换取可能的收益让渡；净效应方向由成本后 Sharpe 判，不由回撤单判。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口与 L1 母卡同批冻结；三档触发参数（2 根 K 线 / 10 日回看 / K>=3）逐字取 TDM algo_note_zh 与实现件常量，卡内不改阈值，事后挪=作废（G4-5）
+arms:
+  ON: 降级装置全开（暂停确认仓→暂停后续批次→强制清仓三级）
+  OFF: 装置全关（突破失败后仍按 L4-01 分批计划补足仓位）
+  HALT_FIRST_ONLY: 只开第一级（暂停加仓不触发卖出）——分离"少亏"与"早卖"两种机制贡献，防把降杠杆效应整体记给止损
+buckets:
+  type: arm_x_regime
+  'on': 三臂 × 牛/熊 × IS/OOS
+  min_obs_per_bucket: 60
+pillars:
+  tail_loss_reduction: ON 的 MaxDD 与 CVaR(5%) 均须劣后于 OFF（改善幅度 >= 3pp MaxDD 为门柱；单看均值不判）
+  cost_adjusted_sharpe_delta: ON - OFF 的成本后 Sharpe 差 >= -0.05 视为"装置不伤收益"；若显著为负则记"该装置的尾部保护不值其换手成本"，负结果如实入册（禁以回撤改善抵消负 Sharpe 来强行放行）
+  turnover_gate: 三臂年化换手 <= 8.0x（超门按成本门否掉，装置导致的额外换手必须计价）
+  forced_exit_frequency: K>=3 强制清仓触发次数分档报告（次数≈0 时该级形同虚设，须标"三级装置退化为一级"，禁宣称三级有效）
+  failure_case_audit: 每臂抽 20 例失败票做逐例账（触发日、后续 20 日路径），装置"是否正确拦下真下跌"与"是否误杀反弹"两错率必须同时出数
+target:
+  primary: cost_adjusted_sharpe
+  secondary: max_drawdown / cvar_5pct
+  note: 判据=差值过门柱＋成本门（本卡是 L4 族最标准的开/关对拍）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-08.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(装置强度秩 [OFF=1, HALT_FIRST_ONLY=2, ON=3] 与 -CVaR 秩) 的 Spearman >=0.6
+  （装置越强尾部损失越小）；ic_mean/ic_ir 读"当日失败标记截面（该股是否处于失败态）"对"该股次日收益截面"的
+  日频 Rank IC（失败态应predict负收益，IC 为负属预期；符号在牛/熊与 OOS 一致方判稳）；
+  负号 IC 与 ic_mean_min>=0.02 的冲突按 calibration_exam.judge 原样判 fail 入册，禁改符号口径造过门（G4-5）。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（入场价/收盘/10 日低）+ c1_market.stk_limit（失败当日若跌停则卖不可成交）
+  signal_column: breakout_failure_flag（三档触发状态机输出）
+  signal_derivation: >-
+    首仓入场价 P0 = 突破确认日执行价（exec_caliber=next_open 口径，与 L4/02 卡一致）；
+    判据一：close_t 与 close_{t-1} 连续 2 根 < P0 → 暂停确认仓 + 止损评估；
+    判据二：close_t < rolling_min(close, 10 回看，不含当日) → 暂停全部后续批次 + 止损卖出；
+    判据三：同一票失败计数 K>=3 → 强制清仓（breakout_failure_detector 口径）；
+    卖出可成交性受 stk_limit 跌停约束（跌停当日不可成交，未成交顺延，禁按理想价记账）。
+    实现件：src/zephyr/sell_decision/core/breakout_failure_detector.py（实测存在，台账 §1.4）。
+  target_source: >-
+    NAV = daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位, exec_caliber="next_open", px_exec=open 宽表)；
+    评价 = window_metrics(nav, IS/OOS) 的 sharpe/max_drawdown + CVaR(5%) 自 NAV 日收益左尾算
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq`
+    → 1990-12-19..2026-09-30 / 10,098,785 / 5,916（close/high/low/open/volume/amount 列实测在案，
+    注意 pct_change/change 两列实测恒 0 不可消费，见台账 §1.1）；
+    `... c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831（limit_down/pre_close 列，跌停不可成交判据全窗可用）；
+    join 完备性 0 unmatched / 7,590,928 symbol-days（2019-01-04..2025-09-09 实测）；
+    成本档=config/exam_scale_cost_gate.yaml tiers_bp=[0,5,10,20,40]/survival_floor=0.0/cap_annual_x=8.0（实测读自冻结件）。
+infra_gap: blocked_on_impl=comparison 族卡驱动执行器（1 件，与 L4/02 共用）；数据面与引擎面零缺口（长窗可即跑）

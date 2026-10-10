@@ -1,0 +1,80 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-09/comparison/02_hard_constraints_on_off
+node_id: TDM-E-L4-09
+family: comparison
+title_zh: 五道执行硬约束开/关·对照卡（涨跌停可成交闸+成本收益门）
+origin: tdm_algo_note_l4_09
+hypothesis: 回测若关掉"涨跌停可成交闸"（gate_limits=False）会系统性高估收益（涨停买不进/跌停卖不出被按理想价成交），高估幅度随滑点档与信号强度分层单调变化；同理"成本模型实时估算门"（预期冲击+佣金是否吃掉预期收益 1/3）关掉后换手与成本同步上升——两闸的代价必须被量化成可复算的 pp 差，否则成本纪律无从审查。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口同批冻结；闸开关只切引擎既有形参（gate_limits）与冻结成本档，不新增参数；事后挪门柱=作废（G4-5）
+arms:
+  GATE_ON_COST_LADDER: gate_limits=True（现网默认口径，涨跌停不可成交）× 五档 [0,5,10,20,40]bp
+  GATE_OFF_COST_LADDER: gate_limits=False（放开可成交性，量化"高估幅度"）× 同五档
+  COST_GATE_ON: 在 GATE_ON 基础上叠加"预期冲击+佣金 >= 预期收益 1/3 则不发单"的下单前成本门（algo_note 五查之一）
+  COST_GATE_OFF: 不施成本门（观察换手与成本漂移）
+buckets:
+  type: arm_x_cost_tier
+  'on': 四臂 × 五档滑点
+  min_obs_per_bucket: 60
+pillars:
+  gate_uplift_magnitude: GATE_OFF - GATE_ON 的 Sharpe 差（"高估幅度"）必须为正且 >= 0.10 才有治理意义；若接近 0，说明信号极少触及停板，须如实标"该闸对本信号族近似无感"（负结果入册，禁调档凑出显著）
+  gate_uplift_monotonic: 高估幅度沿冻结五档单调（成本越高、越依赖不可成交票的策略吃亏越大）；用档位秩与差值秩的 Spearman 判
+  cost_gate_turnover_effect: COST_GATE_ON 相对 OFF 的年化换手须下降且成本后 Sharpe 不降（成本门的合法性判据）
+  survival_floor: 每臂 40bp 档 Sharpe >= cost_gate.survival_floor=0.0（冻结地板，禁改）
+  rejected_order_audit: 成本门拒单集合（拒单率、被拒票的后续 5 日收益）必须出账——被拒票若平均上涨，成本门是在砍 alpha 而非砍成本，这是本卡最强反例面
+target:
+  primary: cost_adjusted_sharpe
+  secondary: annual_turnover_x（口径=days_basis 244）
+  note: 本卡同时是"回测口径诚实性"的体检卡，产出的高估幅度可供其他 L4 卡做折扣参考
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-09.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(滑点档秩, 高估幅度秩) 的 Spearman >=0.6（单调性面）；
+  ic_mean/ic_ir 读"当日触板标记截面（涨停/跌停不可成交票=1）"对"次日收益截面"的日频 Rank IC
+  （触板票的次日 continuation 强度=闸的代价来源），牛/熊同号与 OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit（可成交性判据）
+  signal_column: weights（参考格点 evaluate_recipe 产出）+ touch_limit_flag
+  signal_derivation: >-
+    可成交闸口径 = 引擎 gate_limits 形参（实测 daily_net_returns(weights, px_close, gate_limits=True, ...)）；
+    独立复核判据（用于报告"哪些票被闸挡下"）：r_t = close/lag(close)-1 >= stk_limit.limit_pct-0.002 → 涨停不可买；
+    r_t <= -(limit_pct-0.002) → 跌停不可卖（与 L1-S2 导生卡同一口径，跨卡可比）；
+    成本门判据：预期冲击 = cost_model_calibration.slippage_bps_for_notional(daily_notional_yuan)（流动性分层，
+    n_tiers() 由分层边界唯一决定）+ 佣金 2.5bp×2 + 印花 10bp（卖出单边）与该股预期收益比较，
+    成本 >= 预期收益×1/3 → 不发单（algo_note 五查之一的量化式）。
+  target_source: "daily_net_returns → NAV → window_metrics(sharpe/max_drawdown/total_return, 年化 244)"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq`
+    → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；`... c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831；
+    触板规模实测锚（同导生口径）：2019..2025 年均涨停 65.4/81.9/87.9/77.0/44.1/89.2/77.0 家、
+    年均跌停 26.9/40.3/26.7/29.7/14.7/44.8/31.0 家 ⇒ 闸挡下的票每日数十只量级，非边缘情形（台账 §1.2）；
+    冻结件实测：config/exam_scale_cost_gate.yaml（tiers_bp/survival_floor/monotonic_tol=1e-9/min_days=60/
+    turnover_gate.cap_annual_x=8.0/days_basis=244/scale_gate.participation_ref=0.05/exponent=0.5/multiplier_cap=2.0）；
+    引擎常量实测：_c4_engine.py COMMISSION_BP=2.5 / STAMP_BP=10.0 / SLIPPAGE_BP=5.0（L59-61）；
+    约束件实测存在：src/zephyr/ex_core/price_cage.py（台账 §1.4，18/18 OK）。
+infra_gap: blocked_on_impl=comparison 族卡驱动执行器（1 件，共用）+ 下单前成本门在回测侧的"逐票预期收益"入参件
+  （实测 scripts/backtest 侧成本档扫描只做档内汇总，无逐票预期收益比较器 ⇒ 拒单集合需新 1 件；不虚构）

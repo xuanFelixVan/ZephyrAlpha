@@ -1,0 +1,76 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-04/comparison/02_capital_ranking_order
+node_id: TDM-E-L4-04
+family: comparison
+title_zh: 多标的资金分配排序（置信度×顺位 vs 等权 vs 随机）·对照卡
+origin: tdm_algo_note_l4_04
+hypothesis: 在"当日清单总额 > 可用资金"的约束日内，按 置信度×顺位 加权排序分配资金，相对等权分配与随机分配应带来更高的组合次日/5 日收益（因为被砍掉的是低置信腿）；且预留 10% 机动资金档相对满仓分配应降低尾部回撤（盘中机会与追加需求由机动金承接）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口同批冻结；约束日定义（清单总额>可用现金）、置信度来源（L3 个股层评分，缺评分日不入样本）、机动资金比例 10%（algo_note 口径）三处在卡内先验写死，事后挪=作废（G4-5）
+arms:
+  A_rank_conf_x_order: 置信度×顺位加权排序，高分位先占资金，尾部票被砍单
+  B_equal_weight: 清单内等权分配，同样受资金上限截断（按符号字典序截断，作中性基准）
+  C_random: 随机排序分配（1000 次重抽取分布，种子冻结）——判"置信度排序是否优于瞎猜"的最硬对照
+  D_reserve10: 在 A 基础上预留 10% 机动资金不分配
+buckets:
+  type: arm_x_binding_day
+  'on': 四臂 × 约束日（资金不足日）子集
+  min_obs_per_bucket: 60
+pillars:
+  ranking_alpha: A - C 分布的均值差 > 0 且 A 优于 C 的经验概率 >= 0.7（排序信息量的直接判据；不过=置信度排序在资金约束下无增益，负结果入册）
+  equal_weight_parity: A - B 差值须同号于 IS 与 OOS（顺位规则不改方向）
+  reserve_tail_effect: D 相对 A 的 MaxDD 改善 >= 1pp 且成本后 Sharpe 不降（机动资金合法性）
+  cost_gate: 四臂统一走冻结五档 [0,5,10,20,40]bp，逐臂 Sharpe 非增、40bp 档 >= survival_floor=0.0
+  cut_order_opportunity_cost: 被砍单的票必须单独出"若买入的假设收益"账（被砍腿的真实代价），禁只看成交腿表现（幸存者偏差先验封堵）
+target:
+  primary: cost_adjusted_sharpe
+  secondary: mean_return_spread_vs_random（排序增益）
+  note: 本卡不含选股差异（四臂同清单），差异纯来自分配次序
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-04.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(置信度分位秩, 该档获得资金后的次日收益中位秩) >=0.6
+  （资金流向与收益同序=分配有效）；ic_mean/ic_ir 读"约束日内各票分配比例截面"对"次日个股收益截面"的
+  日频 Rank IC；牛/熊同号、OOS 同号。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（价格面）+ 清单与置信度入参（data/strategy_intake/grid_*/manifest.csv 经 evaluate_recipe 的权重帧作清单代理）
+  signal_column: 目标权重帧 W_target + 当日可用现金 C_t
+  signal_derivation: >-
+    约束日 = sum(W_target) × NAV > C_t 的交易日（现金过程用同一初始资金与四臂各自的成交序列内生演化）；
+    置信度 = 清单票的评分分位（L3 层输出；本车道无独立置信度在册表 ⇒ 考试车道以 composite_signal 截面秩作代理，
+    代理合法性须在分数册标注"排序信息=截面秩，非生产置信度"）；
+    整手折算=lot_size 100 股（matching_logic 常量），不足一手跳过并留 notes（与 L0-01 algo_note 同规则，跨节点一致）。
+  target_source: "daily_net_returns(weights, px_close, gate_limits=True, slippage_bp=档位) → NAV → window_metrics"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq`
+    → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
+    清单代理实测：`ls -d data/strategy_intake/grid_*` → grid_20260926-024947 / grid_20260929-040003 / grid_20260929-040141 /
+    grid_gpu_sectorcond_20260924-0834 / grid_t0_conditional_v1 目录在册（manifest.csv 由 load_reference_run 读，未测不预填行数）；
+    成本档与整手/佣金常量=config/exam_scale_cost_gate.yaml + matching_logic MatchingConfig（实测读自件内 L110-116）。
+infra_gap: >-
+  生产"置信度"在册表缺位（本卡以截面秩代理并明示，禁冒充生产置信度）；
+  comparison 族卡驱动执行器缺 1 件（共用）⇒ blocked_on_impl=（1）置信度入参面（2）comparison 执行器。

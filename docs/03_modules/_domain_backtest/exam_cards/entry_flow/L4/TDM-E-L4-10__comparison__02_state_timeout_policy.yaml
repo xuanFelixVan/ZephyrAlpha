@@ -1,0 +1,77 @@
+schema_version: '1.0'
+card_id: TDM-E-L4-10/comparison/02_state_timeout_policy
+node_id: TDM-E-L4-10
+family: comparison
+title_zh: 订单九态超时与重试策略开/关·对照卡
+origin: tdm_algo_note_l4_10
+hypothesis: 对"PendingNew>3 秒重发确认"等逐态超时策略做开/关对照：打开档应降低"卡在中间态"的订单占比与由此带来的漏成交/重复成交；但若超时设置过激，会制造撤改竞态与额外废单——净效应须用漏成交率与废单率两腿同判，不看单边。
+window:
+  in_sample:
+  - '2026-07-17'
+  - '2026-09-15'
+  oos: &id001
+  - '2026-09-16'
+  - '2026-10-09'
+  regimes:
+    seg1: 2026-07-17..2026-08-15（标签按 000300 区间收益符号开考前机械赋值，不预断言）
+    seg2: 2026-08-16..2026-09-15（同上规则）
+  frozen_note: 窗口由 c1_backtest.sim_trade_log 实测覆盖（2026-07-17..2026-10-09，仅 84 行）决定——这是本车道最短的一档窗口，且样本量先天不足以支撑显著性检验，卡内先验把主判据定为"状态分布可复核差异 + 逐笔账全出"，禁宣称统计显著
+arms:
+  ON: 按九态超时表执行（PendingNew>3s 重发确认等，阈值取实现件常量，卡内不改）
+  OFF: 无超时（状态迁移只依赖回报事件）
+  ON_STRESS: 超时阈值减半档（敏感性档，判"过激"代价，属卡内先验设定的第三臂非事后加臂）
+buckets:
+  type: arm_x_state
+  'on': 三臂 × 九态（New/PendingNew/Accepted/Partial/Filled/PendingCancel/Cancelled/Rejected/Expired）
+  min_obs_per_bucket: 30
+pillars:
+  stuck_state_share: ON 的"中间态停留 > 超时阈值"订单占比须低于 OFF（装置直接效果面）
+  double_fill_absence: OFF 档漏报→重发导致的重复成交计数必须为 0 或如实报出（出现重复成交而账本无标记=状态机诚实性违例，整卡作废）
+  cancel_race_rate: 撤改竞态发生率（撤单与回报交错）三臂对照，以券商回报为准的口径不可得时该柱标 blocked 不硬判
+  five_gate_compliance: 2026-09-28 F62 P0-10 模拟侧执法接线五闸（含程序化报备闸 registration_guard、信息空窗回避闸 avoidance_detector）在 SIMULATION 模式的天然豁免须逐臂披露，禁把豁免读成通过
+target:
+  primary: stuck_state_share 与 missed_fill_rate（两腿）
+  secondary: duplicate_fill_count（诚实性计数，非收益目标）
+  note: 本卡是 L4 族最接近"工程正确性"而非"alpha"的考题，判据不含收益最大化
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-10.confidence
+preregistered_by: st-nightmine-20261010-L3
+preregistered_at: '2026-10-10'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+numeric_face_mapping_note: >-
+  机判映射先验冻结：mono_spearman=(超时强度秩 [OFF=1, ON_STRESS=3 为过激对照，ON=2], 中间态停留时长秩)
+  取负序 >=0.6（超时越 aggressive 停留越短但废单升，故本柱只对 ON/OFF 两档判，STRESS 档另出报告不入门柱——此限制先验写死非事后缩臂）；
+  ic_mean/ic_ir 面在本卡语义为"状态停留时长"对"该单最终是否漏成交"的日频 Rank IC；
+  两段同号、OOS 同号；n 不足判 nan=fail，如实记 blocked_on_data。
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_backtest.sim_trade_log（实测唯一成交/动作流水面）+ 订单状态事件表（实测缺，见 infra_gap）
+  signal_column: action（订单动作）+ mode（SIMULATION/…）+ run_id + strategy_id
+  signal_derivation: >-
+    状态机事件必须由"提交→回报→迁移"三段流水重建；sim_trade_log 实测列（action/cash_after/cost_paid/price/run_id/
+    signal_reason/strategy_id/symbol/trade_date/mode/shares/ingest_ts）只有成交终态粒度，
+    无 PendingNew/Accepted/Partial 中间态与时间戳序列 ⇒ 本卡 derivation 在当前面上不可完成，
+    必须等"订单事件流水入库"件（缺什么写死什么，禁编造列名）；
+    撮合层可先跑仿真：matching_logic.MatchOrderInput(order_type ∈ market|tick|limit) + MatchingFill(filled/filled_quantity)
+    可制造中间态与超时重放的仿真事件，作为仿真档（不含真实券商回报）。
+  target_source: "仿真档：self-consistent 状态账（无 NAV 面）；真值档：券商委托回报流水（实测无表 ⇒ blocked）"
+  data_window_evidence: >-
+    命令原文 `SELECT min(trade_date),max(trade_date),count() FROM c1_backtest.sim_trade_log`
+    → 2026-07-17..2026-10-09 / 84 行；列实测 = table_columns() 输出 12 列（无状态机中间态列）；
+    `SELECT database,name,total_rows FROM system.tables WHERE database IN ('c1_market','c1_backtest') AND name ILIKE '%order%'`
+    → 实测零命中（无订单事件/委托回报表）；
+    实现件实测存在：src/zephyr/ex_core/order_manager.py（台账 §1.4 18/18），其 _check_compliance_gates 五闸链见 TDM algo_note（2026-09-28 F62 P0-10）。
+infra_gap: >-
+  blocked_on_impl=（1）订单九态事件流水入库件（2）comparison 族卡驱动执行器；
+  blocked_on_data=券商委托回报与中间态时间戳历史（2026-07-17 前完全缺，现窗仅 84 笔成交终态）。
