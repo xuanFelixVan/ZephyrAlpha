@@ -29,7 +29,7 @@ evidence_grade: A（阶梯数字来自真实面板双跑产物逐位对拍；试
 
 ## 一、T4 施工面（三处，全部缺省关）
 
-1. `src/zephyr/backtest/gpu_core.py`（MOD-BT-233 原位扩面，**+426/−0 纯新增**）
+1. `src/zephyr/backtest/gpu_core.py`（MOD-BT-233 原位扩面，**+456/−0 纯新增**）
    * 新 eval 节：`normalize_rows`（raw/zscore/rank/industry_neutral/size_neutral）、`industsize_rows`、
      `_rank_rows`（升/降/pct 三形，平均档并列组走既有 scatter_add 机）、`_row_mean/_row_std`（ddof=1 skipna，
      复用既有 `_neumaier_nansum_axis1` 补偿和）、`_group_mean_rows`/`_demean_rows`、`_regress_out_rows`、
@@ -37,13 +37,13 @@ evidence_grade: A（阶梯数字来自真实面板双跑产物逐位对拍；试
      `periodic_hold_rows`、`cap_clip`、`eval_cell_gpu`。
    * 单码路径纪律：每个函数只写一份，`xp=numpy|cupy` 由后端决定（文件头 INVARIANTS 既有要求）。
    * 新 `nvml_process_util()`：逐进程 SM 归因（ctypes 直调 `nvml.dll`，零新依赖）——见 01 件 §四。
-2. `scripts/backtest/factory_grid_executor.py`（+385/−52，删除面全部逐行对上账，见 §三）
+2. `scripts/backtest/factory_grid_executor.py`（+421/−52，删除面全部逐行对上账，见 §三）
    * 新 `--eval-backend cpu|gpu|auto`，**缺省 cpu=原路逐字节零漂移**；
    * 新 `_prefix_eval_gpu`（前缀面）与 `_cell_eval_gpu`（单格定尺寸链）＋ `_cell_device_able`（叠加族判否）；
    * 抽 `_ic_weight_frame`（从 `_combine` 原样搬出，CPU/GPU 两条前缀路共用——禁复制第二实现面）；
    * 抽 `_FREQ_STEPS`/`_LAMBDA_PEN` 为模块常量（原两处内联字典上提，内容逐字同）；
    * 心跳并记归因三键（NVML 不可用时整键不出）；`summary.json` 的 `eval_gpu` 键仅在后端非 cpu 时出现。
-3. `tests/research/backtest/test_l2_gpu_landing.py`（+555/−0，就地追加 20 支试件函数
+3. `tests/research/backtest/test_l2_gpu_landing.py`（+644/−0，就地追加 20 支试件函数
    （dev 12 支→本道 32 支；参数化展开后采集面 51 支用例，其中新增 37 支），不新建试件册）
 
 ## 二、T3 影子阶梯实录（真实面板，双后端同 seed 同格集）
@@ -134,12 +134,12 @@ monthly × **drift_band** × cap10 × lambda_15bp × **top10**）用**全精度 
 
 ## 三、删除面逐行账（投袋前自证，合"共享件动手前先取 dev 现字节为基"纪律）
 
-`git diff --numstat dev` 终态（2026-10-11 03:5x 实测）：
+`git diff --numstat dev` 终态（2026-10-11 04:5x 实测，**已含 ruff format 折行**——RUFF-PRECLEAN 预检要求先格式化；格式化后重跑删除行自证：删除面仍 52 行、无同形对应仍是我那 12 行，即格式化未顺手重排任何 dev 既有行。提交消息 5f4a85bc28 内所写行数系格式化前读数，以本表为准）：
 
 ```
-385    52    scripts/backtest/factory_grid_executor.py
-426     0    src/zephyr/backtest/gpu_core.py
-555     0    tests/research/backtest/test_l2_gpu_landing.py
+421    52    scripts/backtest/factory_grid_executor.py
+456     0    src/zephyr/backtest/gpu_core.py
+644     0    tests/research/backtest/test_l2_gpu_landing.py
  13     3    tests/research/backtest/test_factory_grid_instruments.py
 ```
 

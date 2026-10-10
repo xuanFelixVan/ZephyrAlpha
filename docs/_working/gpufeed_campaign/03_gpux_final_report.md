@@ -48,9 +48,9 @@ N 账本零混入 ✓；CPU 回退路径保留 ✓；与 CH/夜跑互让：起�
 
 | # | 件 | 内容 | 证据 |
 |---|---|---|---|
-| 1 | `src/zephyr/backtest/gpu_core.py` +426/−0 | eval 面设备核全套（单 xp 码路径、FP64）+ `nvml_process_util()` 归因尺 | 试件新增 37 支用例全绿；`test_gpu_core_parity.py` 无新增红 |
-| 2 | `scripts/backtest/factory_grid_executor.py` +385/−52 | `--eval-backend` 开关（缺省 cpu）＋前缀/单格两级分流＋串行交接点＋心跳归因三键；`_ic_weight_frame`/`_FREQ_STEPS`/`_LAMBDA_PEN` 上提共用 | 删除面 52 行逐条对上账（02 件 §三，含可复现自证命令） |
-| 3 | `tests/research/backtest/test_l2_gpu_landing.py` +555/−0 | 20 支新试件函数（采集面 39 支用例）：层1 逐位、层2 ≤1e-12、七形态定尺寸、IC 切分面、口径双向钉、降级不杀格 | 69 passed（4 支试件文件合跑），红集合=dev 同 6 支预存红 |
+| 1 | `src/zephyr/backtest/gpu_core.py` +456/−0 | eval 面设备核全套（单 xp 码路径、FP64）+ `nvml_process_util()` 归因尺 | 试件新增 37 支用例全绿；`test_gpu_core_parity.py` 无新增红 |
+| 2 | `scripts/backtest/factory_grid_executor.py` +421/−52 | `--eval-backend` 开关（缺省 cpu）＋前缀/单格两级分流＋串行交接点＋心跳归因三键；`_ic_weight_frame`/`_FREQ_STEPS`/`_LAMBDA_PEN` 上提共用 | 删除面 52 行逐条对上账（02 件 §三，含可复现自证命令） |
+| 3 | `tests/research/backtest/test_l2_gpu_landing.py` +644/−0 | 20 支新试件函数（采集面 39 支用例）：层1 逐位、层2 ≤1e-12、七形态定尺寸、IC 切分面、口径双向钉、降级不杀格 | 69 passed（4 支试件文件合跑），红集合=dev 同 6 支预存红 |
 | 4 | `tests/research/backtest/test_factory_grid_instruments.py` +13/−3 | 心跳采样三元组契约（归因不可用时**禁伪造 0**） | 6 passed |
 | 5 | 01/02/03 三件账袋 | T0/T1 实测、T2 采用、T3 阶梯与越线定位、验收判定 | 本家族目录 |
 | 6 | 缺陷当班修 | `bool(ndarray)` 杀 6/8 考格、`cupy.fmin.reduce` 未实现致 44 格白回退、drift_band 换序、industsize 组均值口径、无锚列负索引 | 02 件 §四 D-1..D-7，各配试件 |
