@@ -31,11 +31,11 @@ target:
   primary: next_day_index_return（CSI300 000300 次日收益）
   secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分）
   note: 80% 绝对档只作叙事对照不作门柱（分桶为经验分位十分位，绝对档在导生口径下的分位位置随年漂移）
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: nightmine-12_sealed_board_rate_der
+  score_row: exam_scores_v1.yaml#rows[13]
   confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
 preregistered_by: st-nightmine-20261010-L3
 preregistered_at: '2026-10-10'
@@ -51,16 +51,12 @@ oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
   signal_column: sealed_board_rate_derived
-  signal_derivation: >-
-    sealed_board_rate = countIf(r >= lim-0.002) / nullIf(countIf(rh >= lim-0.002),0)，
-    r = close/lag(close)-1，rh = high/lag(close)-1，lim = stk_limit.limit_pct（FINAL join on symbol+trade_date）；
-    touched<20 置 NaN。与卡 11 严格互斥完备（rate_12 = 1 - rate_11）。
-  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
-  data_window_evidence: >-
-    实测逐年封板率 = 1 - 炸板率 = 0.6397/0.6580/0.6698/0.6445/0.6357/0.6193/0.6602（2019..2025），
-    六年 0.62-0.67 稳定带，母卡 05 的 ">80%=正反馈" 档在导生口径下属历史高分位尾部（非中枢），
-    据此把 80% 绝对档降级为叙事对照（卡内 pillars.note 已写死，非事后调整）；
-    命令原文与表覆盖同卡 11（stk_limit 2015-01-05..2026-10-09/9,254,772/5,831；
-    kline_daily_hfq 1990-12-19..2026-09-30/10,098,785/5,916；limit_up_down 2026-07-20..2026-10-09/5,397/54 天）；
-    目标面 kline_index 000300 实测 2018-06-01..2025-12-31/1,843 行。
+  signal_derivation: sealed_board_rate = countIf(r >= lim-0.002) / nullIf(countIf(rh >= lim-0.002),0)， r = close/lag(close)-1，rh
+    = high/lag(close)-1，lim = stk_limit.limit_pct（FINAL join on symbol+trade_date）； touched<20 置 NaN。与卡 11 严格互斥完备（rate_12
+    = 1 - rate_11）。
+  target_source: kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1
+  data_window_evidence: 实测逐年封板率 = 1 - 炸板率 = 0.6397/0.6580/0.6698/0.6445/0.6357/0.6193/0.6602（2019..2025）， 六年 0.62-0.67 稳定带，母卡
+    05 的 ">80%=正反馈" 档在导生口径下属历史高分位尾部（非中枢）， 据此把 80% 绝对档降级为叙事对照（卡内 pillars.note 已写死，非事后调整）； 命令原文与表覆盖同卡 11（stk_limit 2015-01-05..2026-10-09/9,254,772/5,831；
+    kline_daily_hfq 1990-12-19..2026-09-30/10,098,785/5,916；limit_up_down 2026-07-20..2026-10-09/5,397/54 天）； 目标面 kline_index
+    000300 实测 2018-06-01..2025-12-31/1,843 行。
 blocked_on: null

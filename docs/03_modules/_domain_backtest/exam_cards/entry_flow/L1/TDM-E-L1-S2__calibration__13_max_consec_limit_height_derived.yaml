@@ -31,11 +31,11 @@ target:
   primary: next_day_index_return（CSI300 000300 次日收益）
   secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分）
   note: 倒 U 与单调门柱冲突是本卡的设计性张力（母卡假设本身含"过热反向"），门柱按执行器冻结面硬判，负结果即负结果
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: nightmine-13_max_consec_limit_heig
+  score_row: exam_scores_v1.yaml#rows[14]
   confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
 preregistered_by: st-nightmine-20261010-L3
 preregistered_at: '2026-10-10'
@@ -51,20 +51,13 @@ oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
   signal_column: max_consec_limit_height_derived
-  signal_derivation: >-
-    先按卡 09 口径得逐 symbol-day 的 is_limit_up 布尔串（r >= lim-0.002）；
-    连板串长度 streak_t = if(is_limit_up_t, streak_{t-1}+1, 0)，按 symbol 时间序 arrayFold/groupArray-then-scan 实现，
-    streak 链须从 IS 起点前 60 个交易日暖机（串长<=5 板的历史足以覆盖实测高度）；
-    当日信号 = max(streak_t) over symbols。一字板计入串（日线口径无法区分一字/T 字板，限制见 evidence）。
-  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
-  data_window_evidence: >-
-    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM
-    c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831（导生链自 2015 起可用，
-    IS 暖机段 2018-10..2018-12 充分）；
-    `... FROM c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行（母卡绑表冻结窗零行）；
-    事件表替身实测：`SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM
-    c1_market.daban_board_event` → 2026-09-01..2026-10-09 / 1,767 / 975（含 consec_limit 列，可作导生串长的短窗交叉验证集，
-    但完全落在冻结窗之外）；`... FROM c1_market.limit_up_pool` → 2026-09-01..2026-10-09 / 1,426 / 789（consec_limit 同）；
-    已知口径限制（如实记）：日线导生无法区分"盘中打开后回封"（该情形仍计为连续板），
-    事件表 close_sealed/is_one_word 口径可区分但无长窗数据；
-    目标面 kline_index 000300 → 2018-06-01..2025-12-31 / 1,843 行。
+  signal_derivation: 先按卡 09 口径得逐 symbol-day 的 is_limit_up 布尔串（r >= lim-0.002）； 连板串长度 streak_t = if(is_limit_up_t, streak_{t-1}+1,
+    0)，按 symbol 时间序 arrayFold/groupArray-then-scan 实现， streak 链须从 IS 起点前 60 个交易日暖机（串长<=5 板的历史足以覆盖实测高度）； 当日信号 = max(streak_t)
+    over symbols。一字板计入串（日线口径无法区分一字/T 字板，限制见 evidence）。
+  target_source: kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1
+  data_window_evidence: 命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit` →
+    2015-01-05..2026-10-09 / 9,254,772 / 5,831（导生链自 2015 起可用， IS 暖机段 2018-10..2018-12 充分）； `... FROM c1_market.limit_up_down`
+    → 2026-07-20..2026-10-09 / 5,397 行（母卡绑表冻结窗零行）； 事件表替身实测：`SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol)
+    FROM c1_market.daban_board_event` → 2026-09-01..2026-10-09 / 1,767 / 975（含 consec_limit 列，可作导生串长的短窗交叉验证集， 但完全落在冻结窗之外）；`...
+    FROM c1_market.limit_up_pool` → 2026-09-01..2026-10-09 / 1,426 / 789（consec_limit 同）； 已知口径限制（如实记）：日线导生无法区分"盘中打开后回封"（该情形仍计为连续板），
+    事件表 close_sealed/is_one_word 口径可区分但无长窗数据； 目标面 kline_index 000300 → 2018-06-01..2025-12-31 / 1,843 行。

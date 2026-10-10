@@ -31,11 +31,11 @@ target:
   primary: next_day_index_return（CSI300 000300 次日收益）
   secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分，母卡情绪转移轴的机读替身）
   note: 剔除日不计入 n，剔除天数须写入 run 附注
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: nightmine-11_broken_board_rate_der
+  score_row: exam_scores_v1.yaml#rows[12]
   confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
 preregistered_by: st-nightmine-20261010-L3
 preregistered_at: '2026-10-10'
@@ -51,22 +51,14 @@ oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
   signal_column: broken_board_rate_derived
-  signal_derivation: >-
-    prev_close = lagInFrame(close) OVER (PARTITION BY symbol ORDER BY trade_date
-    ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING)；r = close/prev_close - 1，rh = high/prev_close - 1，
-    lim = stk_limit.limit_pct（FINAL join）；touched = countIf(rh >= lim - 0.002)，
-    sealed = countIf(r >= lim - 0.002)；broken_board_rate = 1 - sealed/nullIf(touched,0)；
-    touched < 20 的日置 NaN（denominator_guard）。后复权空间内 high/close 比例尺度不变，触板判据成立。
-  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
-  data_window_evidence: >-
-    命令原文（导生验证 SQL 见本车道台账 §1.2，含完整 FROM/WINDOW 子句）实测逐年
-    均触板家数 = 102.2/124.4/131.2/119.5/69.4/144.0/116.6（2019..2025），
-    炸板率 = 0.3603/0.3420/0.3302/0.3555/0.3643/0.3807/0.3398 —— 六年落在 0.33-0.38 稳定带，
-    量级与 A 股常识一致，导生口径判"可用"；
-    `SELECT min(trade_date),max(trade_date),count() FROM c1_market.limit_up_down` →
-    2026-07-20..2026-10-09 / 5,397 行（母卡原绑表，冻结窗零行，平行卡成立）；
-    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit` →
-    2015-01-05..2026-10-09 / 9,254,772 / 5,831；`... kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
-    已知口径限制（如实记）：日线 high 只能判"曾触及涨停价"，不能区分触板后回落到盘中任意位置，
-    与事件表口径（first_touch_time/close_sealed，见 c1_market.daban_board_event，实测仅 2026-09-01..2026-10-09
-    1,767 行）在"多次开板"细节上不等价；母卡 04 的事件表口径长窗无数据，本平行卡是冻结窗内唯一可跑口径。
+  signal_derivation: prev_close = lagInFrame(close) OVER (PARTITION BY symbol ORDER BY trade_date ROWS BETWEEN 1 PRECEDING
+    AND 1 PRECEDING)；r = close/prev_close - 1，rh = high/prev_close - 1， lim = stk_limit.limit_pct（FINAL join）；touched = countIf(rh
+    >= lim - 0.002)， sealed = countIf(r >= lim - 0.002)；broken_board_rate = 1 - sealed/nullIf(touched,0)； touched < 20 的日置
+    NaN（denominator_guard）。后复权空间内 high/close 比例尺度不变，触板判据成立。
+  target_source: kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1
+  data_window_evidence: 命令原文（导生验证 SQL 见本车道台账 §1.2，含完整 FROM/WINDOW 子句）实测逐年 均触板家数 = 102.2/124.4/131.2/119.5/69.4/144.0/116.6（2019..2025），
+    炸板率 = 0.3603/0.3420/0.3302/0.3555/0.3643/0.3807/0.3398 —— 六年落在 0.33-0.38 稳定带， 量级与 A 股常识一致，导生口径判"可用"； `SELECT min(trade_date),max(trade_date),count()
+    FROM c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行（母卡原绑表，冻结窗零行，平行卡成立）； `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol)
+    FROM c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831；`... kline_daily_hfq` → 1990-12-19..2026-09-30
+    / 10,098,785 / 5,916； 已知口径限制（如实记）：日线 high 只能判"曾触及涨停价"，不能区分触板后回落到盘中任意位置， 与事件表口径（first_touch_time/close_sealed，见 c1_market.daban_board_event，实测仅
+    2026-09-01..2026-10-09 1,767 行）在"多次开板"细节上不等价；母卡 04 的事件表口径长窗无数据，本平行卡是冻结窗内唯一可跑口径。

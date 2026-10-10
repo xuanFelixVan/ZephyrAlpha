@@ -31,11 +31,11 @@ target:
   primary: next_day_index_return（CSI300 000300 次日收益）
   secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分）
   note: 净广度是比值型与差分型的混合口径，本卡固定为差分（涨停-跌停），不做比值变体（变体入长尾）
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: nightmine-15_net_breadth_derived
+  score_row: exam_scores_v1.yaml#rows[16]
   confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
 preregistered_by: st-nightmine-20261010-L3
 preregistered_at: '2026-10-10'
@@ -51,17 +51,12 @@ oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
   signal_column: net_breadth_derived
-  signal_derivation: >-
-    net_breadth = countIf(r >= lim-0.002) - countIf(r <= -(lim-0.002))，
-    r = close/lagInFrame(close) OVER (PARTITION BY symbol ORDER BY trade_date
-    ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING) - 1，lim = c1_market.stk_limit.limit_pct
+  signal_derivation: net_breadth = countIf(r >= lim-0.002) - countIf(r <= -(lim-0.002))， r = close/lagInFrame(close) OVER
+    (PARTITION BY symbol ORDER BY trade_date ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING) - 1，lim = c1_market.stk_limit.limit_pct
     （FINAL join on symbol+trade_date，实测全窗 0 unmatched）。
-  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
-  data_window_evidence: >-
-    命令原文与实测（台账 §1.2 同一条 SQL）：2019..2025 年均涨停/年均跌停 =
-    65.4/26.9、81.9/40.3、87.9/26.7、77.0/29.7、44.1/14.7、89.2/44.8、77.0/31.0
-    ⇒ 导生净广度年均约 +38.5/+41.6/+61.2/+47.3/+29.4/+44.4/+46.0 家，中枢为正、年内极值随 2024-09-30 事件右偏；
-    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit`
-    → 2015-01-05..2026-10-09 / 9,254,772 / 5,831；`... kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 / 5,916；
-    母卡绑表 `c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行 / 54 天（冻结窗零行）；
-    目标面 `kline_index symbol='000300'` → 2018-06-01..2025-12-31 / 1,843 行。
+  target_source: kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1
+  data_window_evidence: 命令原文与实测（台账 §1.2 同一条 SQL）：2019..2025 年均涨停/年均跌停 = 65.4/26.9、81.9/40.3、87.9/26.7、77.0/29.7、44.1/14.7、89.2/44.8、77.0/31.0
+    ⇒ 导生净广度年均约 +38.5/+41.6/+61.2/+47.3/+29.4/+44.4/+46.0 家，中枢为正、年内极值随 2024-09-30 事件右偏； `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol)
+    FROM c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831；`... kline_daily_hfq` → 1990-12-19..2026-09-30
+    / 10,098,785 / 5,916； 母卡绑表 `c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行 / 54 天（冻结窗零行）； 目标面 `kline_index
+    symbol='000300'` → 2018-06-01..2025-12-31 / 1,843 行。

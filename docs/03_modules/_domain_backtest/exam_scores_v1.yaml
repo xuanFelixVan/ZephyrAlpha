@@ -238,3 +238,171 @@ rows:
   - mono_spearman -0.721 < 0.6
   - ic_mean -0.0279 < 0.02
   - 'regime_sign_flip {''bull'': 0.0002848796318657199, ''bear'': -0.028969879096233806}'
+- card_id: TDM-E-L1-S2/calibration/09_limit_up_count_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-09_limit_up_count_derive
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.014636875822621773
+    mono_spearman: -0.2606060606060606
+    n: 1622
+    regime_ic:
+      bull: -0.08637621333469589
+      bear: 0.006065302104912393
+    oos_ic: 0.0641936089358011
+    ic_ir: null
+  fails:
+  - mono_spearman -0.261 < 0.6
+  - ic_mean -0.0146 < 0.02
+  - 'regime_sign_flip {''bull'': -0.08637621333469589, ''bear'': 0.006065302104912393}'
+  - oos_sign_flip oos=0.0642 is=-0.0146
+- card_id: TDM-E-L1-S2/calibration/10_limit_down_count_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-10_limit_down_count_deri
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.052759730276699834
+    mono_spearman: 0.5393939393939393
+    n: 1622
+    regime_ic:
+      bull: 0.10259024944711034
+      bear: 0.026452730436896166
+    oos_ic: -0.012050829415383291
+    ic_ir: null
+  fails:
+  - mono_spearman 0.539 < 0.6
+  - oos_sign_flip oos=-0.0121 is=0.0528
+- card_id: TDM-E-L1-S2/calibration/11_broken_board_rate_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-11_broken_board_rate_der
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.07856819508616897
+    mono_spearman: 0.5757575757575757
+    n: 1622
+    regime_ic:
+      bull: 0.12641973808918008
+      bear: 0.06354633158348696
+    oos_ic: -0.010806251830648964
+    ic_ir: null
+  fails:
+  - mono_spearman 0.576 < 0.6
+  - oos_sign_flip oos=-0.0108 is=0.0786
+- card_id: TDM-E-L1-S2/calibration/12_sealed_board_rate_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-12_sealed_board_rate_der
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.07856819508616897
+    mono_spearman: -0.6363636363636362
+    n: 1622
+    regime_ic:
+      bull: -0.12641973808918008
+      bear: -0.06354633158348696
+    oos_ic: 0.010806251830648964
+    ic_ir: null
+  fails:
+  - mono_spearman -0.636 < 0.6
+  - ic_mean -0.0786 < 0.02
+  - oos_sign_flip oos=0.0108 is=-0.0786
+- card_id: TDM-E-L1-S2/calibration/13_max_consec_limit_height_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-13_max_consec_limit_heig
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.018375788057875635
+    mono_spearman: 0.07878787878787878
+    n: 1622
+    regime_ic:
+      bull: -0.06286929256233367
+      bear: 0.016098939836664154
+    oos_ic: -0.06238580668691902
+    ic_ir: null
+  fails:
+  - mono_spearman 0.079 < 0.6
+  - ic_mean -0.0184 < 0.02
+  - 'regime_sign_flip {''bull'': -0.06286929256233367, ''bear'': 0.016098939836664154}'
+- card_id: TDM-E-L1-S2/calibration/14_consec_limit_count_ge2_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-14_consec_limit_count_ge
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.017359123445562945
+    mono_spearman: 0.0303030303030303
+    n: 1622
+    regime_ic:
+      bull: -0.09894568669349751
+      bear: -0.010844931715580259
+    oos_ic: 0.023982423812634237
+    ic_ir: null
+  fails:
+  - mono_spearman 0.030 < 0.6
+  - ic_mean -0.0174 < 0.02
+  - oos_sign_flip oos=0.0240 is=-0.0174
+- card_id: TDM-E-L1-S2/calibration/15_net_breadth_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-15_net_breadth_derived
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.01070485704926972
+    mono_spearman: -0.11515151515151514
+    n: 1622
+    regime_ic:
+      bull: -0.05006311539148888
+      bear: 0.0063029888329039566
+    oos_ic: 0.024566197281316142
+    ic_ir: null
+  fails:
+  - mono_spearman -0.115 < 0.6
+  - ic_mean -0.0107 < 0.02
+  - 'regime_sign_flip {''bull'': -0.05006311539148888, ''bear'': 0.0063029888329039566}'
+  - oos_sign_flip oos=0.0246 is=-0.0107

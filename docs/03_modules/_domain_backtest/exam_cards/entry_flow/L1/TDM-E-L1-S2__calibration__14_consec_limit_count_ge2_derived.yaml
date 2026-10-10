@@ -31,11 +31,11 @@ target:
   primary: next_day_index_return（CSI300 000300 次日收益）
   secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分）
   note: 母卡 07 考"连板家数分布"（梯队形状），本卡取其一阶摘要 streak>=2 家数（分布形状在导生口径下的分档另卡不立，长尾入未挖清单）
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: nightmine-14_consec_limit_count_ge
+  score_row: exam_scores_v1.yaml#rows[15]
   confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
 preregistered_by: st-nightmine-20261010-L3
 preregistered_at: '2026-10-10'
@@ -51,20 +51,13 @@ oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit
   signal_column: consec_limit_count_ge2_derived
-  signal_derivation: >-
-    同卡 13 的 streak 链（is_limit_up 由 r = close/lag(close)-1 >= stk_limit.limit_pct-0.002 判）；
-    当日信号 = countIf(streak_t >= 2)。streak 链从 IS 前 60 交易日暖机；
-    停牌日不参与串（kline_daily_hfq 无行=自然跳过，若用 lag 跨停牌会误接续，须在串前按 trade_calendar 对齐补 NaN）。
-  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
-  data_window_evidence: >-
-    命令原文 `SELECT countIf(l.symbol IS NULL), count() FROM (SELECT symbol,trade_date FROM
-    c1_market.kline_daily_hfq WHERE trade_date BETWEEN '2019-01-04' AND '2025-09-09') k
-    LEFT JOIN c1_market.stk_limit AS l FINAL ON k.symbol=l.symbol AND k.trade_date=l.trade_date`
-    → 0 unmatched / 7,590,928 symbol-days（limit_pct 全窗无缺）；
-    `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit`
-    → 2015-01-05..2026-10-09 / 9,254,772 / 5,831；
-    交易日历 `SELECT min(trade_date),max(trade_date),count() FROM c1_market.trade_calendar` → 实测在册（13,809 行，串对齐用）；
-    母卡绑表 `c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行（冻结窗零行）；
-    短窗交叉验证替身 `c1_market.daban_board_event`（consec_limit 列）→ 2026-09-01..2026-10-09 / 1,767 行；
-    导生实测锚（同口径链）：2019..2025 年均涨停家数 65.4/81.9/87.9/77.0/44.1/89.2/77.0（卡 09 evidence 同源 SQL），
-    连板家数序列本身待考试车道首跑建档（本卡不预填未测数值，禁凭记忆）。
+  signal_derivation: 同卡 13 的 streak 链（is_limit_up 由 r = close/lag(close)-1 >= stk_limit.limit_pct-0.002 判）； 当日信号 = countIf(streak_t
+    >= 2)。streak 链从 IS 前 60 交易日暖机； 停牌日不参与串（kline_daily_hfq 无行=自然跳过，若用 lag 跨停牌会误接续，须在串前按 trade_calendar 对齐补 NaN）。
+  target_source: kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1
+  data_window_evidence: 命令原文 `SELECT countIf(l.symbol IS NULL), count() FROM (SELECT symbol,trade_date FROM c1_market.kline_daily_hfq
+    WHERE trade_date BETWEEN '2019-01-04' AND '2025-09-09') k LEFT JOIN c1_market.stk_limit AS l FINAL ON k.symbol=l.symbol
+    AND k.trade_date=l.trade_date` → 0 unmatched / 7,590,928 symbol-days（limit_pct 全窗无缺）； `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol)
+    FROM c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 / 5,831； 交易日历 `SELECT min(trade_date),max(trade_date),count()
+    FROM c1_market.trade_calendar` → 实测在册（13,809 行，串对齐用）； 母卡绑表 `c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397
+    行（冻结窗零行）； 短窗交叉验证替身 `c1_market.daban_board_event`（consec_limit 列）→ 2026-09-01..2026-10-09 / 1,767 行； 导生实测锚（同口径链）：2019..2025
+    年均涨停家数 65.4/81.9/87.9/77.0/44.1/89.2/77.0（卡 09 evidence 同源 SQL）， 连板家数序列本身待考试车道首跑建档（本卡不预填未测数值，禁凭记忆）。

@@ -31,11 +31,11 @@ target:
   primary: next_day_index_return（CSI300 000300 次日收益，G0-4 主轴，与母卡同）
   secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分，辅轴观察项）
   note: 母卡 02 机判面同为主轴指数次日收益，故本平行卡判据面完全对齐；辅轴只建档不作门柱（现行执行器 calibration_exam.run_card 只接一个 target 面）
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: nightmine-09_limit_up_count_derive
+  score_row: exam_scores_v1.yaml#rows[10]
   confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
 preregistered_by: st-nightmine-20261010-L3
 preregistered_at: '2026-10-10'
@@ -51,29 +51,19 @@ oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit（导生宽表，无单表可直接 SELECT）
   signal_column: limit_up_count_derived
-  signal_derivation: >-
-    逐 symbol 取 prev_close = lagInFrame(close) OVER (PARTITION BY symbol ORDER BY trade_date
-    ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING)（后复权空间，日内比值尺度不变）；
-    r = close/prev_close - 1；lim = stk_limit.limit_pct（FINAL join on symbol+trade_date）；
-    当日 limit_up_count = countIf(r >= lim - 0.002)；按 trade_date 聚合成日度单序列。
-    禁消费 kline_daily_hfq.pct_change（实测该列恒 0，见 data_window_evidence）。
+  signal_derivation: 逐 symbol 取 prev_close = lagInFrame(close) OVER (PARTITION BY symbol ORDER BY trade_date ROWS BETWEEN
+    1 PRECEDING AND 1 PRECEDING)（后复权空间，日内比值尺度不变）； r = close/prev_close - 1；lim = stk_limit.limit_pct（FINAL join on symbol+trade_date）；
+    当日 limit_up_count = countIf(r >= lim - 0.002)；按 trade_date 聚合成日度单序列。 禁消费 kline_daily_hfq.pct_change（实测该列恒 0，见 data_window_evidence）。
     一字板天然含在封住口径内（open 与 close 同价亦满足 r>=lim-eps）。
-  target_source: "kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1"
-  data_window_evidence: >-
-    命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM
-    c1_market.stk_limit` → 2015-01-05..2026-10-09 / 9,254,772 行 / 5,831 标的；
-    `... FROM c1_market.kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785 行 / 5,916 标的；
-    `... FROM c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行 / 仅 54 个交易日（母卡原绑表在冻结窗零行，本平行卡成立的原因）；
-    join 完备性 `SELECT countIf(l.symbol IS NULL), count() FROM (SELECT symbol,trade_date FROM kline_daily_hfq
-    WHERE trade_date BETWEEN '2019-01-04' AND '2025-09-09') k LEFT JOIN c1_market.stk_limit AS l FINAL
-    ON k.symbol=l.symbol AND k.trade_date=l.trade_date` → 0 unmatched / 7,590,928 rows（limit_pct 全窗无缺，
-    故 derivation 的 ifNull 兜底实际永不触发）；
-    导生结果实测（2019..2025 年均涨停家数）= 65.4/81.9/87.9/77.0/44.1/89.2/77.0，年内最大=321/267/165/255/117/1034/177，
-    交易日数 244/243/243/242/242/242/243（全冻结窗逐年完整，2024 峰值 1034=2024-09-30 已知行情事件）；
-    目标面 `SELECT symbol,min(trade_date),max(trade_date),count() FROM c1_market.kline_index
-    WHERE symbol='000300' AND trade_date BETWEEN '2018-06-01' AND '2025-12-31' GROUP BY symbol`
-    → 2018-06-01..2025-12-31 / 1,843 行（IS+OOS 全覆盖，暖机段足够）；
-    辅轴 `SELECT toYear(trade_date),uniqExact(trade_date) FROM c1_market.emotion_index WHERE
-    stage='close_final' AND trade_date>='2019-01-01' GROUP BY y` → 2019..2025 = 244/243/243/242/242/242/243 天。
-    已知边界：kline_daily_hfq 数据止于 2026-09-30（早于 stk_limit 至 2026-10-09），lag 窗首
-    2018-12 起约 19 天为不完整段（导生日均 4.3 家），IS 起点 2019-01-04 已在完整段内，无需改窗。
+  target_source: kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1
+  data_window_evidence: 命令原文 `SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.stk_limit` →
+    2015-01-05..2026-10-09 / 9,254,772 行 / 5,831 标的； `... FROM c1_market.kline_daily_hfq` → 1990-12-19..2026-09-30 / 10,098,785
+    行 / 5,916 标的； `... FROM c1_market.limit_up_down` → 2026-07-20..2026-10-09 / 5,397 行 / 仅 54 个交易日（母卡原绑表在冻结窗零行，本平行卡成立的原因）；
+    join 完备性 `SELECT countIf(l.symbol IS NULL), count() FROM (SELECT symbol,trade_date FROM kline_daily_hfq WHERE trade_date
+    BETWEEN '2019-01-04' AND '2025-09-09') k LEFT JOIN c1_market.stk_limit AS l FINAL ON k.symbol=l.symbol AND k.trade_date=l.trade_date`
+    → 0 unmatched / 7,590,928 rows（limit_pct 全窗无缺， 故 derivation 的 ifNull 兜底实际永不触发）； 导生结果实测（2019..2025 年均涨停家数）= 65.4/81.9/87.9/77.0/44.1/89.2/77.0，年内最大=321/267/165/255/117/1034/177，
+    交易日数 244/243/243/242/242/242/243（全冻结窗逐年完整，2024 峰值 1034=2024-09-30 已知行情事件）； 目标面 `SELECT symbol,min(trade_date),max(trade_date),count()
+    FROM c1_market.kline_index WHERE symbol='000300' AND trade_date BETWEEN '2018-06-01' AND '2025-12-31' GROUP BY symbol`
+    → 2018-06-01..2025-12-31 / 1,843 行（IS+OOS 全覆盖，暖机段足够）； 辅轴 `SELECT toYear(trade_date),uniqExact(trade_date) FROM c1_market.emotion_index
+    WHERE stage='close_final' AND trade_date>='2019-01-01' GROUP BY y` → 2019..2025 = 244/243/243/242/242/242/243 天。 已知边界：kline_daily_hfq
+    数据止于 2026-09-30（早于 stk_limit 至 2026-10-09），lag 窗首 2018-12 起约 19 天为不完整段（导生日均 4.3 家），IS 起点 2019-01-04 已在完整段内，无需改窗。
