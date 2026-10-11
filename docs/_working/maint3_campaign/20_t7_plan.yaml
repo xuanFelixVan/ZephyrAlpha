@@ -1,0 +1,37 @@
+# T7 最小错峰方案（维护三班 st-maint3-20261011；令 3 项 2）
+# owner: st-maint3-20261011 | ttl: task_bound | 建: 2026-10-11 23:1x
+# 用法（单口=apply_resource_plan，表是 [GENERATED] 禁手改，裁定 R-A）：
+#   python scripts/governance/apply_resource_plan.py --plan docs/_working/maint3_campaign/20_t7_plan.yaml            # dry-run
+#   python scripts/governance/apply_resource_plan.py --plan docs/_working/maint3_campaign/20_t7_plan.yaml --apply --session st-maint3-20261011
+
+meta:
+  plan_id: maint3-t7-20261011
+  session: st-maint3-20261011
+  title: 09:35/09:40 两腿错峰 10 分钟——09:30-10:00 带内同刻内存和回到 10.0GB 上限之内
+  notes_zh: >-
+    依据＝总统统筹裁定 T7（medium 域 AI 代裁，adjudicator 署名入册），内容＝维护二班
+    （st-maint2-20261011）验证过的最小错峰方案，写回通道＝apply_resource_plan.py 单口
+    （裁定 R-A：改排班只能改时间真源，注册表由再生跟上）。
+    判据出处（维护二班在册实测，本班已用同一把尺复跑）：
+    tests/infra/infrastructure/test_resource_schedule_mem_ceiling_invariant.py 读数
+    09:35 同刻和=10.5GB、09:40 同刻和=11.0GB，均 > mem_ceiling_gb=10.0；
+    带内除去这两档的盘前基线已=10.0GB（零余量），故任何**正值**申报都红——
+    "调"在机器层面只能=改时间窗，不能靠下调申报值（那是改口径不是改排班，且 P5 校准器会回写）。
+    位移量=实算扫出的最小值（09:30-09:45 带基线恒 10.0，09:45 起降到 8.0）。
+    禁动面：mem_ceiling_gb: 10.0（表头第 16 行/生成器常量/reaper _DANGEROUS_MEM_GB 三面钉死）。
+
+items:
+  sch_sim_bridge_execute:
+    new_times: ["09:45", "13:05"]
+    rationale_zh: >-
+      09:35 腿→09:45（13:05 腿不动）。真源=scripts/tasks/register/register_sim_bridge_execute_task.ps1
+      :47-48 两枚 -Daily 触发器（现值 window_expr="35 9 * * *|5 13 * * *"）；本字段是多触发点清单的
+      全量重写（new_window_cron 带 "|" 会被判段数非法，且隐式规则不允许）。
+      错峰后 09:35 刻不再叠加本档申报 0.5GB，带内和回到 10.0GB。
+  sch_decision_chain_sentinel:
+    new_window_cron: "50 9 * * *"
+    rationale_zh: >-
+      09:40 腿→09:50。真源=scripts/tasks/register/register_decision_chain_sentinel_task.ps1:69
+      单枚 -Daily 触发器（现值 window_expr="40 9 * * *"）。哨兵申报 0.5GB 在 09:40 刻把带内和顶到
+      11.0GB；09:50 落进"09:45 起降到 8.0"的低位带。与 sim_bridge 新时刻错开 5 分钟，
+      避免两腿自己撞成新的同刻峰。

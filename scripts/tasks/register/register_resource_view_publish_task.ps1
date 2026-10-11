@@ -71,7 +71,7 @@ $Settings = New-ScheduledTaskSettingsSet `
     -ExecutionTimeLimit (New-TimeSpan -Minutes 15) `
     -StartWhenAvailable
 
-$Trigger = New-ScheduledTaskTrigger -Daily -At "05:50"
+$Trigger = New-ScheduledTaskTrigger -Daily -At "06:10"
 
 if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
     Set-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger `

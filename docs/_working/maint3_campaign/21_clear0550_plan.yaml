@@ -1,0 +1,31 @@
+# 05:50 带最小错峰方案（维护三班；Owner 2026-10-12 问答通道批准追加，超出令 3 原文范围的那一句已点头）
+# owner: st-maint3-20261011 | ttl: task_bound | 建: 2026-10-12 00:0x
+# 通道同 20_t7_plan.yaml：apply_resource_plan.py 单口，表由再生跟上（裁定 R-A）
+
+meta:
+  plan_id: maint3-clear0550-20261012
+  session: st-maint3-20261011
+  title: 05:50 带内存天花板清零——只挪周历发布一档（10.5GB → 9.5GB）
+  notes_zh: >-
+    来历＝令 3 项 2 T7 落地后本班袋被 RESOURCE-SCHEDULE 全量拦下，拦点是 HEAD 既存的
+    10-13 05:50 冲突（本班实测 HEAD 面 mem_ceiling block=3：09:35/09:40/05:50；落后面=1：仅剩 05:50）。
+    门本体硬线＝预算类判据全量、内存预算永不豁免（resource_schedule_gate.py:795/:501/:24 实测），
+    无豁免旗可用 ⇒ 不清这条带，任何碰这张册的袋都进不了 dev。Owner 经问答通道批准追加本最小错峰。
+    带构成实测（六档叠加=10.5GB）：weekend_calibration 4.0（03:00 起 180min）+news_slow 2.0（常驻带）
+    +pf_alloc_rebalance_check 2.0（05:45+30）+catchup_guard 1.0（05:30+30）+sampler_writeback 0.5
+    （05:40+15）+view_publish 1.0（05:50+15）。
+    取"只挪最轻的一档、位移最小"：view_publish 1.0GB 05:50→06:10，06:10 刻和=
+    news_slow 2.0+pf_alloc 2.0+view_publish 1.0=5.0，仍远低于上限；05:50 刻回到 9.5。
+    零写验算：apply_resource_plan dry-run verdict=pass、新增 block=0（report_sha256=d6fe93cdae0acc50）。
+    禁动面：mem_ceiling_gb 10.0；六档申报值 peak_mem_gb 一个都不改（改申报=改口径不是改排班）。
+
+items:
+  sch_resource_view_publish:
+    new_window_cron: "10 6 * * *"
+    rationale_zh: >-
+      真源=scripts/tasks/register/register_resource_view_publish_task.ps1:74（现值 -Daily -At "05:50"）。
+      本档是周历视图发布（[GENERATED] 视图的唯一发布者，15min 轻档），挪 20 分钟不吞任何计算班次、
+      不越备份禁排窗（06:00-10:00 上包络的避让判据由生成器 avoid_backup_window 侧管，本档非 drill）。
+      落地后果：注册表 view_publish window_expr 跟生为 "10 6 * * *"，晨审/日视图发布延后 20 分钟，
+      24h 自愈链（sched_view_stale 由日视图任务重渲）不受影响。
+      撤销=再跑一次本工具给 new_window_cron "50 5 * * *"，或 apply_resource_plan.py --rollback 存档目录。

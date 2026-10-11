@@ -238,6 +238,8 @@ _RE_CRON_LINE = re.compile(r"^(?P<indent> {4})cron:\s*(?P<value>.*?)(?P<tail>\s+
 _RE_PS_WEEKLY = re.compile(r"-Weekly(?:\s+-DaysOfWeek\s+([\w,]+))?\s+-At\s+[\"']?(\d{1,2}:\d{2})[\"']?")
 _RE_PS_DAILY = re.compile(r"-Daily\s+-At\s+[\"']?(\d{1,2}:\d{2})[\"']?")
 _RE_PS_TIMES = re.compile(r"-Times\s+@\(([^)]*)\)")
+# 触发器行里的时刻字面量（带引号风格捕获）——多腿逐腿改写只动这一段，其余字节零改
+_RE_PS_AT_TIME = re.compile(r"-At\s+(?P<q>[\"']?)(?P<t>\d{1,2}:\d{2})(?P=q)")
 _RE_PS_ANYNAME = re.compile(r"ZephyrAlpha[-_][A-Za-z0-9_]+")
 # 闸 finding 文本尾部的代表瞬间（Finding.render 以全角括号附注）——幂等指纹里须抹平
 _RE_AT_TAIL = re.compile(r"[（(]\s*at=[^)）]*[)）]")
@@ -874,10 +876,54 @@ def patch_ps1_trigger(text: str, task_name: str, spec: TimeSpec) -> tuple[str, i
         )
     times_lines = [i for i in mine if _RE_PS_TIMES.search(code_lines[i])]
     if len(mine) > 1 and not times_lines:
-        raise PlanError(
-            f"{task_name}: 命中 {len(mine)} 条触发器构造行且无法唯一判定目标"
-            "（多任务共文件或一次多段触发，须人工拆方案）"
-        )
+        # 多腿 -Daily/-Weekly 同任务触发器（实测样本：register_sim_bridge_execute_task.ps1:47-48
+        # = 09:35 + 13:05 两枚，生成器抽成 "35 9 * * *|5 13 * * *"）。旧行为一律拒"须人工拆方案"，
+        # 后果=单口**读得出多腿窗却写不回去**，凡"只挪其中一腿"的最小错峰都无路落地（2026-10-11
+        # 令 3 T7 当场撞上）。此处按"加前置不拆闸"放开：仅 new_times 全量清单、且腿数与清单
+        # 等长（多一腿=静默砍班、少一腿=静默加班，一律拒）、且逐腿只换 `-At` 后的时刻字面量；
+        # 配对按**现时刻升序**对齐**新时刻升序**（不按文件行序，防文件里腿序不同步就挪错腿）；
+        # 改后仍由调用方用生成器 `_extract_trigger_exprs` 重抽复验，不符即整单拒绝。
+        if spec.mode != "times":
+            raise PlanError(
+                f"{task_name}: 命中 {len(mine)} 条触发器构造行且无法唯一判定目标"
+                "（多任务共文件或一次多段触发，须人工拆方案；要挪其中一腿请给 new_times 完整清单）"
+            )
+        if len(mine) != len(spec.times):
+            raise PlanError(
+                f"{task_name}: 多腿触发器 {len(mine)} 条 vs 方案清单 {len(spec.times)} 点不等长——"
+                "丢腿=静默砍班、加腿=静默加班，本工具两种都不接受"
+            )
+        legs = []
+        for ci in mine:
+            m_at = _RE_PS_AT_TIME.search(code_lines[ci])
+            if m_at is None:
+                raise PlanError(f"{task_name}: 第 {ci + 1} 条触发器行里取不到 -At 时刻，无法逐腿改写")
+            cur = hhmm(m_at.group("t"))
+            if cur is None:
+                raise PlanError(f"{task_name}: 第 {ci + 1} 条触发器行的时刻非法（{m_at.group('t')!r}）")
+            legs.append((cur, ci, m_at))
+        if len({h for h, _c, _m in legs}) != len(legs):
+            raise PlanError(f"{task_name}: 多条触发器同刻（无法判定哪条腿对应方案哪一点）")
+        legs.sort(key=lambda x: x[0])
+        new_lines_map: dict[int, str] = {}
+        for (_cur, ci, m_at), new_t in zip(legs, spec.times, strict=True):
+            line = code_lines[ci]
+            # 只换 `-At` 后的时刻字面量本身：引号由原文带着（group t 在引号内侧），
+            # 若在此再拼一次 q 就会写出 ""09:45"" 这种双引号毒行——生成器重抽直接归零，
+            # 由调用方的重抽复验当场拒（本班首版踩过，红在此暴露）。
+            old_lit = m_at.group("t")
+            pad_hour = len(old_lit.split(":")[0]) == 2
+            h, mi = hhmm(new_t) or (0, 0)
+            new_lines_map[ci] = (
+                line[: m_at.start("t")] + fmt_hh(int(h), int(mi), pad_hour=pad_hour) + line[m_at.end("t") :]
+            )
+        changed = sorted(new_lines_map)
+        new_text_lines = list(lines)
+        for ci in changed:
+            new_text_lines[code_idx[ci]] = new_lines_map[ci]
+        old_repr = " | ".join(code_lines[ci].strip() for ci in changed)
+        new_repr = " | ".join(new_lines_map[ci].strip() for ci in changed)
+        return "\n".join(new_text_lines), code_idx[changed[0]] + 1, old_repr, new_repr
     idx = times_lines[0] if (spec.mode == "times" and times_lines) else mine[0]
     line = code_lines[idx]
 
@@ -1229,11 +1275,16 @@ def build_sandbox(
         shutil.copy2(view_src, vdst)
     scripts = sandbox / "scripts"
     scripts.mkdir(parents=True, exist_ok=True)
-    found = sorted((root / "scripts").glob("register_*.ps1"))
+    # 采集面复用生成器 ps1_paths_for(root)（单一口径，按传入根解析以兼容 tmp 副本自检）：
+    # 本工具曾自持一份 `(root/"scripts").glob("register_*.ps1")` 克隆面，拆簇搬家后两处一起瞎
+    # （生成器看不见搬家 ps1→33 枚伪孤儿；这里看不见→沙箱再生把真源读成缺席，闸验对着空表跑）。
+    found = load_sibling(GENERATOR_REL, "p2b_gen", root).ps1_paths_for(root)
     if not found:
-        raise EnvError(f"{root / 'scripts'} 下无 register_*.ps1（生成器 I1 真源源缺席）")
+        raise EnvError(f"{root} 下无 register_*.ps1（生成器 I1 真源源缺席）")
     for ps1 in found:
-        shutil.copy2(ps1, scripts / ps1.name)
+        dst = sandbox / ps1.relative_to(root)
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(ps1, dst)
     for rel, text in patched.items():
         dst = sandbox / rel
         dst.parent.mkdir(parents=True, exist_ok=True)

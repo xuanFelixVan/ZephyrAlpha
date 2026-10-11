@@ -163,8 +163,12 @@ def test_regen_tasks_materialize_as_active_entities():
     by = {e["task_id"]: e for e in ents}
     assert not warns, warns
     for tid, ps1 in (
-        ("sch_resource_regen_check", "scripts/register_resource_regen_check_task.ps1"),
-        ("sch_resource_view_publish", "scripts/register_resource_view_publish_task.ps1"),
+        # 2026-10-11 维护三班追认：路径拆到 scripts/tasks/register/（a4b503a1630，2026-10-02
+        # "register_*×32 搬家"），本测当时未被同步→自 10-02 起即红（HEAD 基线实测同红，
+        # 报"计划任务真源缺失 scripts/register_resource_regen_check_task.ps1"）。
+        # 路径不是抄现值：两枚 ps1 实测存在于新位、且生成器扫描面（PS1_REL_DIRS）含该目录。
+        ("sch_resource_regen_check", "scripts/tasks/register/register_resource_regen_check_task.ps1"),
+        ("sch_resource_view_publish", "scripts/tasks/register/register_resource_view_publish_task.ps1"),
     ):
         assert (REPO_ROOT / ps1).exists(), f"计划任务真源缺失 {ps1}"
         ent = by[tid]
@@ -178,7 +182,12 @@ def test_regen_tasks_materialize_as_active_entities():
     # 日视图任务有可抽 cron（时间值来自真源，非手填）；小时任务=PS5.1 后置补
     # Repetition，静态文本无 cron → event（与 ResourceSamplerScan 同型先例）
     assert by["sch_resource_view_publish"]["window_type"] == "cron"
-    assert by["sch_resource_view_publish"]["window_expr"] == "50 5 * * *"
+    assert by["sch_resource_view_publish"]["window_expr"] == "10 6 * * *"  # 2026-10-12 追认：
+    # 本班 05:50 带错峰（Owner 问答通道批准，plan 件=docs/_working/maint3_campaign/
+    # 21_clear0550_plan.yaml，真源 register_resource_view_publish_task.ps1:74 05:50→06:10）
+    # ——判据本意是"时间值来自真源且被物化"，非钉死某个历史时刻，故随真源追认。
+    # 原值 "50 5 * * *" 的旧代真源字节在 .runtime/sessions/st-maint3-20261011/archive/
+    # plan_20261011T162521Z/orig/ 内可逐字节复原。
     assert by["sch_resource_regen_check"]["window_type"] == "event"
     assert by["sch_resource_regen_check"]["window_expr"] is None
 
@@ -679,13 +688,22 @@ def test_reconcile_reports_real_machine_diffs():
     # 残余，现役真源=schedule.yaml）——删任务=Owner 门位，豁免留痕在册（豁免表是留痕
     # 机制，不是静默开关）。PatternMining/WeeklyRest 已销项：前者真挂上系统（每日
     # 09:01），后者收编为 ops_weekly_rest 实体+machine_blackout 组标。
-    assert {
+    # 2026-10-11 维护三班追认：判据从"硬点 5 枚名"改为"点名集合 ∩ OS 实测仍在"——
+    # 实测 `ZephyrAlpha_C4Exam_OneShot0915`／`ZephyrAlpha_FactoryLaneC_OneShot0915` 两条
+    # 已不在本机任务表（`query_schtasks` 实测 False，删除方非本班、未追），对账臂只该对
+    # **仍在**的差集交代；豁免表里那两条成为无主留痕，退役归表主/Owner 门位，本班不删表条目。
+    known_diffs = {
         "ZephyrAlpha_C4Exam_Full0916",
         "ZephyrAlpha_C4Exam_OneShot0915",
         "ZephyrAlpha_FactoryLaneC_Full0916",
         "ZephyrAlpha_FactoryLaneC_OneShot0915",
         "ZephyrAlpha_NightlySentiment",
-    } <= {e["task_name"] for e in exempted}, exempted
+    }
+    still_live = {n for n in known_diffs if n in live}
+    assert still_live <= {e["task_name"] for e in exempted}, exempted
+    assert {"ZephyrAlpha_C4Exam_Full0916", "ZephyrAlpha_FactoryLaneC_Full0916", "ZephyrAlpha_NightlySentiment"} <= (
+        still_live
+    ), f"实测三枚在册遗留竟判不在 OS 表：{sorted(still_live)}"
     resolved = {"ZephyrAlpha_PatternMining", "ZephyrAlpha_WeeklyRest"}
     assert not (resolved & {e["task_name"] for e in exempted}), "销项项不得回潮豁免表"
     assert not (resolved & {f["task_ids"][0] for f in findings}), "销项项不得报差集"

@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import ast
 import importlib.util
 import re
 import sys
@@ -51,8 +52,14 @@ def test_parse_ps1_entities_covers_all_task_names():
     assert "sch_resource_morning_report" in tids
     assert "sch_measure_calibration" in tids
     assert "sch_gate_full_tree_audit" in tids
-    assert len(ents) == 26  # 2026-09-21 追认：gate_fulltree_audit ps1 排班落地（aca8c71fad，
-    # 裁定#354 九台全树审计）→ 25→26（环境敏感计数随真源走）
+    assert len(ents) == 36  # 2026-10-12 零时追认：GPU 工单施工班 a2c46fddca 落
+    # `register_sft_train_window_task.ps1` → 35→36（本班 00:25 再生已正确含它，画像
+    # active/default/0.5GB/300min/`0 10 * * 0`）。
+    # 2026-10-11 维护三班追认：ps1 采集面补回 scripts/tasks/register/
+    # （拆簇 a4b503a1630 搬家后单目录 glob 一直看不见→26→35，逐条来自 29 个在册 ps1，
+    #  实测 `gen.ps1_paths_for(REPO_ROOT)`=34 文件/35 任务名；本测此前是**红的**，
+    #  报 `'sch_factory_lane_c' in {'sch_commit_perf_report', 'sch_process_reaper'}`）。
+    # 历史追认链：2026-09-21 gate_fulltree_audit（aca8c71fad，裁定#354）25→26
     # 杂音捕获杜绝：无变量名误捕实体
     assert not any("task_name" in t or t.endswith("_name") or t == "sch_svc" for t in tids)
 
@@ -60,8 +67,11 @@ def test_parse_ps1_entities_covers_all_task_names():
 def test_parse_ps1_triggers_extracted_from_truth():
     ents, _ = gen.parse_ps1_entities()
     by = {e["task_id"]: e for e in ents}
-    # FactoryLaneC：周六 10:00（ps1 真源 Weekly DaysOfWeek Saturday At 10:00）
-    assert by["sch_factory_lane_c"]["window_expr"] == "0 10 * * 6"
+    # FactoryLaneC：2026-10-01 追认——真源 ac52365d3be（车道C病链夜战"挖矿窗工作日 20:00"）把
+    # 周六 10:00 改成工作日 20:00，实测 `register_factory_lane_c_task.ps1:41`
+    # =`-Weekly -DaysOfWeek Monday..Friday -At "20:00"` → `0 20 * * 1,2,3,4,5`（旧钉值 26→35
+    #  同批失效，此前因采集面瞎而从未暴露）。
+    assert by["sch_factory_lane_c"]["window_expr"] == "0 20 * * 1,2,3,4,5"
     assert by["sch_factory_lane_c"]["exclusive_group"] == ["mine_vs_exam"]
     # IntradayFundFlow：5 个每日触发点（'|'-连接）
     expr = by["sch_intraday_fund_flow"]["window_expr"]
@@ -77,11 +87,13 @@ def test_parse_ps1_triggers_extracted_from_truth():
 
 def test_parse_schedule_slots_21_slots_cron_verbatim():
     ents, warns = gen.parse_schedule_slots()
-    assert (
-        len(ents) == 26
-    )  # 2026-09-22 追认：calendar_coverage_check（st-data-fix 批）+dloop_post（丁线 Owner 批A be05d1b01f）第 25/26 槽；前值 24=2026-09-18 追认 daily_alt_fx 第 22 槽（4058b7b1e0）
-    # 2026-09-21 追认：data_supply_sentinel 第 23 槽（85ef0962d0 供数哨兵）+
-    # eod_reconciliation 第 24 槽（R-015 日终对账，全流通战役排班批）→ 22→24
+    assert len(ents) == 32  # 2026-10-11 维护三班追认：24→32。判据不是"跟着现值漂"——实测
+    # `yaml.safe_load(schedule.yaml)['schedules']` 键数=32、parse 出 32 枚、且与 HEAD 那代册内
+    # `data_slot_*` 条目**集合差=0**（`comm -3` 实测 0 行，零幻影零丢失），
+    # 即 HEAD 表早已含 32 槽、本钉值自 2026-09-22 起就一直落后于真源。
+    # 历史追认链：2026-09-22 calendar_coverage_check+dloop_post（be05d1b01f）第 25/26 槽；
+    # 2026-09-21 data_supply_sentinel（85ef0962d0）+eod_reconciliation（R-015）第 23/24 槽；
+    # 2026-09-18 daily_alt_fx（4058b7b1e0）第 22 槽
     by = {e["task_id"]: e for e in ents}
     assert by["data_slot_daily_kline"]["window_expr"] == "30 16 * * 1-5"  # APScheduler dow 归一为标准 cron
     assert by["data_slot_daily_kline"]["pool"] == "heavy"
@@ -146,6 +158,76 @@ def test_merge_preserve_marks_orphaned_source(tmp_path):
     ghost = next(e for e in merged if e["task_id"] == "ghost")
     assert ghost["status"] == "orphaned_source"
     assert any("ghost" in w for w in warns)
+
+
+# ---------------------------------------------------------------------------
+# 2026-10-11 维护三班·令 3 项 1：33 枚伪孤儿（"待 Owner 裁定删除"）三缺陷守卫
+# 病灶：拆簇 a4b503a1630 把 register_*×32 搬进 scripts/tasks/register/ 后，生成器与写回器
+# 各自自持一份 `(scripts).glob("register_*.ps1")` 单目录克隆面→10-10 08:21 那次再生把
+# 33 枚活班次标成 orphaned_source（案卷=docs/_working/maint3_campaign/00_ledger.md §一）。
+# ---------------------------------------------------------------------------
+def test_ps1_scan_face_covers_moved_register_dir():
+    """D1：搬家目录必须在扫描面内——盘上有 register_*.ps1 而面里没有＝伪孤儿族复发前提。"""
+    assert "scripts/tasks/register" in gen.PS1_REL_DIRS, "拆簇后的真源目录不在采集面"
+    paths = gen.ps1_paths_for(gen.REPO_ROOT)
+    rel = [p.relative_to(gen.REPO_ROOT).as_posix() for p in paths]
+    assert any(r.startswith("scripts/tasks/register/") for r in rel), "搬家件全部缺席扫描面"
+    # 逐文件对账：两个登记目录里真实存在的 ps1，一枚都不许掉出面外（不靠计数靠集合）
+    on_disk = set()
+    for d in gen.PS1_REL_DIRS:
+        dd = gen.REPO_ROOT / d
+        if dd.is_dir():
+            on_disk |= {p.relative_to(gen.REPO_ROOT).as_posix() for p in dd.glob(gen.PS1_GLOB)}
+    assert on_disk and on_disk <= set(rel), f"盘上在册 ps1 掉出扫描面：{sorted(on_disk - set(rel))[:5]}"
+    # 禁调用方自持 glob：写回器的沙箱面必须来自本模块（曾各写一份、搬家时一起瞎）。
+    # 判据走 AST 只认**代码里的 glob 调用**——散文/注释里提到 "register_*.ps1" 不算违规
+    # （本班首版用字符串包含判，被自家说明文撞红，正是"提及≠消费"的老形态）。
+    apply_path = gen.REPO_ROOT / "scripts/governance/apply_resource_plan.py"
+    tree = ast.parse(apply_path.read_text(encoding="utf-8"))
+    clones = [
+        node.lineno
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "glob"
+        and any(isinstance(a, ast.Constant) and "register_" in str(a.value) for a in node.args)
+    ]
+    assert not clones, f"apply_resource_plan 自持 ps1 扫描面克隆：line {clones}"
+    assert "ps1_paths_for" in apply_path.read_text(encoding="utf-8"), "写回器沙箱面未走生成器单口"
+
+
+def test_merge_preserve_restores_status_when_truth_source_returns():
+    """D2：孤儿标必须可逆。`status` 虽在人可复核字段里，但 orphaned_source 是生成器自己盖的章，
+    只有盖章者能销章——否则一次坏再生永久毒化整册，且真源回来也不再有自愈路径。"""
+    fresh = [{"task_id": "back", "status": "active", "window_expr": "0 3 * * *"}]
+    existing = [
+        {
+            "task_id": "back",
+            "status": "orphaned_source",
+            "notes_zh": f"AIL1Scan；{gen.ORPHAN_NOTE_MARK}",
+            "peak_mem_gb": 3.3,
+        }
+    ]
+    merged, warns = gen.merge_preserve(fresh, existing)
+    m = next(e for e in merged if e["task_id"] == "back")
+    assert m["status"] == "active", "真源已回却仍挂孤儿标＝表被永久毒化"
+    assert m["notes_zh"] == "AIL1Scan", "撤章时把人写正文一起抹了（哨兵剥离必须只吃自家标记）"
+    assert m["peak_mem_gb"] == 3.3, "撤章连带丢了其他保全字段"
+    assert any("orphan_source_back" in w for w in warns), "销账无痕＝下次没人知道发生过什么"
+
+
+def test_orphan_note_is_idempotent_across_repeated_regen():
+    """D3：同一实体反复失源不得叠挂多条"待 Owner 裁定删除"（HEAD 实测 ops_bdpan_tick_watch 5 条）。"""
+    existing = [{"task_id": "gone", "status": "active", "notes_zh": "看门狗使命完成"}]
+    still = [{"task_id": "still", "status": "active"}]
+    for _round in range(3):
+        merged, _w = gen.merge_preserve(still, existing)
+        existing = merged
+    note = next(e["notes_zh"] for e in existing if e["task_id"] == "gone")
+    assert note.count(gen.ORPHAN_NOTE_MARK) == 1, f"孤儿标叠挂 {note.count(gen.ORPHAN_NOTE_MARK)} 条"
+    assert "看门狗使命完成" in note, "幂等剥离误伤人写正文"
+    assert note.count(gen.ORPHAN_NOTE_MARK) == 1, f"孤儿标叠挂 {note.count(gen.ORPHAN_NOTE_MARK)} 条"
+    assert "看门狗使命完成" in note, "幂等剥离误伤人写正文"
 
 
 def test_merge_preserve_keeps_co_start_intent(tmp_path):

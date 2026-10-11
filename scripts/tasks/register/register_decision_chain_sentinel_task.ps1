@@ -9,11 +9,11 @@
 # Purpose (TRD-A01 / L09-C04, docs/_working/decision_map_campaign_20260924/
 #   links/L09_review/SKEL.md): alert when the decision chain starves - N or more
 #   consecutive trading days without a new c1_backtest.decision_daily row.
-#   Runs 09:40 on trading days BEFORE the market opens, so a broken overnight
+#   Runs 09:50 on trading days BEFORE the market opens, so a broken overnight
 #   dloop leg is surfaced while the human is still pre-market.
 #
 #   Task "ZephyrAlpha_DecisionChainSentinel"
-#     Daily 09:40 -> pythonw scripts\governance\decision_chain_sentinel.py
+#     Daily 09:50 -> pythonw scripts\governance\decision_chain_sentinel.py
 #     Read-only CH probe (DatabaseService reader); on starvation appends one
 #     alert line to .runtime\logs\decision_chain_alert.jsonl and exits 4;
 #     healthy = exit 0; DB failure = fail-soft error record + exit 8.
@@ -26,7 +26,7 @@
 #     instance cannot stack.
 #   - ExecutionTimeLimit=15min: the probe is two count/max queries; anything
 #     longer means CH is wedged and the OS should reap the instance.
-#   - No RestartOnFailure: one-shot semantics, next day 09:40 is the retry.
+#   - No RestartOnFailure: one-shot semantics, next day 09:50 is the retry.
 #   - Idempotent non-destructive: Set-ScheduledTask updates IN PLACE (NEVER
 #     Unregister+Register - Unregister kills a running instance).
 #   - ONE TASK PER FILE (repo convention).
@@ -64,9 +64,9 @@ $Settings = New-ScheduledTaskSettingsSet `
     -StartWhenAvailable
 
 $principal = New-ScheduledTaskPrincipal -UserId $CurrentUser -LogonType Interactive -RunLevel Limited
-# Daily 09:40 pre-market slot (TRD-A01): decision row for today was due at
-# 16:45 yesterday; 09:40 leaves margin before the 09:25/09:35 trading tasks.
-$dailyTrigger = New-ScheduledTaskTrigger -Daily -At "09:40"
+# Daily 09:50 pre-market slot (TRD-A01): decision row for today was due at
+# 16:45 yesterday; 09:50 (T7 offset 2026-10-11, was 09:40) trails the 09:45 sim-bridge leg.
+$dailyTrigger = New-ScheduledTaskTrigger -Daily -At "09:50"
 
 if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
     Set-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $dailyTrigger `
@@ -75,7 +75,7 @@ if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
 } else {
     Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $dailyTrigger `
         -Settings $Settings -Principal $principal `
-        -Description "Decision chain sentinel (TRD-A01/L09-C04): daily 09:40 read-only probe of c1_backtest.decision_daily; alert jsonl + exit 4 on N-day starvation, exit 8 fail-soft on DB error" -Force | Out-Null
+        -Description "Decision chain sentinel (TRD-A01/L09-C04): daily 09:50 read-only probe of c1_backtest.decision_daily; alert jsonl + exit 4 on N-day starvation, exit 8 fail-soft on DB error" -Force | Out-Null
     Write-Host "Registered decision chain sentinel task: $TaskName -> pythonw scripts\governance\decision_chain_sentinel.py"
 }
 

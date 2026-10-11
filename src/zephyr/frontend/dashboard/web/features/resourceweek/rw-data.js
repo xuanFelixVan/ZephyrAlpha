@@ -2,34 +2,24 @@
  * 刷新=重跑生成器；渲染契约见 features/resourceweek/rw-engine.js。
  */
 window.RW_VIEW_DATA = {
- "generated_at": "2026-09-30T21:50:05+00:00",
+ "generated_at": "2026-10-11T16:25:23+00:00",
  "generator": "scripts/governance/generators/generate_resource_week_view.py",
  "registry": "config\\resource_profile_registry.yaml",
- "registry_sha256": "b51d741cc710",
- "week_start": "2026-09-28",
+ "registry_sha256": "202b5abe3e31",
+ "week_start": "2026-10-12",
  "days": [
-  "09-28 周一",
-  "09-29 周二",
-  "09-30 周三",
-  "10-01 周四",
-  "10-02 周五",
-  "10-03 周六",
-  "10-04 周日"
+  "10-12 周一",
+  "10-13 周二",
+  "10-14 周三",
+  "10-15 周四",
+  "10-16 周五",
+  "10-17 周六",
+  "10-18 周日"
  ],
- "total_entities": 80,
- "scheduled": 34,
+ "total_entities": 102,
+ "scheduled": 54,
  "block_conflicts": 0,
- "conflicts": [
-  {
-   "reason_code": "sched_truth_drift",
-   "severity": "warn",
-   "task_ids": [
-    "data_slot_weekend_calibration"
-   ],
-   "detail": "真源漂移 window_expr: 注册表='00 3 * * 1' 真源重抽='00 3 * * 2'",
-   "at": null
-  }
- ],
+ "conflicts": [],
  "lanes": [
   {
    "task_id": "data_slot_auction_highfreq",
@@ -87,6 +77,86 @@ window.RW_VIEW_DATA = {
       [
        555,
        575
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "data_slot_calendar_coverage_check",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "10 7 * * *",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       430,
+       460
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       430,
+       460
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       430,
+       460
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       430,
+       460
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       430,
+       460
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       430,
+       460
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       430,
+       460
       ]
      ]
     }
@@ -184,14 +254,138 @@ window.RW_VIEW_DATA = {
    "measured_p90_duration_min": null,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "30 23 * * 1-5",
+   "window_expr": "30 0 * * 2-6",
    "est_duration_min": 60,
+   "slots": [
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       30,
+       90
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       30,
+       90
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       30,
+       90
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       30,
+       90
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       30,
+       90
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "data_slot_cross_validation",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "15 0 * * 2-6",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       15,
+       45
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       15,
+       45
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       15,
+       45
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       15,
+       45
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       15,
+       45
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "data_slot_daily_alt_fx",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "35 23 * * 1-5",
+   "est_duration_min": 30,
    "slots": [
     {
      "dow": 0,
      "ranges": [
       [
-       1410,
+       1415,
        1440
       ]
      ]
@@ -201,10 +395,10 @@ window.RW_VIEW_DATA = {
      "ranges": [
       [
        0,
-       30
+       5
       ],
       [
-       1410,
+       1415,
        1440
       ]
      ]
@@ -214,10 +408,10 @@ window.RW_VIEW_DATA = {
      "ranges": [
       [
        0,
-       30
+       5
       ],
       [
-       1410,
+       1415,
        1440
       ]
      ]
@@ -227,10 +421,10 @@ window.RW_VIEW_DATA = {
      "ranges": [
       [
        0,
-       30
+       5
       ],
       [
-       1410,
+       1415,
        1440
       ]
      ]
@@ -240,10 +434,10 @@ window.RW_VIEW_DATA = {
      "ranges": [
       [
        0,
-       30
+       5
       ],
       [
-       1410,
+       1415,
        1440
       ]
      ]
@@ -253,7 +447,7 @@ window.RW_VIEW_DATA = {
      "ranges": [
       [
        0,
-       30
+       5
       ]
      ]
     }
@@ -584,6 +778,210 @@ window.RW_VIEW_DATA = {
       [
        990,
        1080
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "data_slot_data_supply_sentinel",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "50 6 * * *",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       410,
+       440
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       410,
+       440
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       410,
+       440
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       410,
+       440
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       410,
+       440
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       410,
+       440
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       410,
+       440
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "data_slot_dloop_post",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "45 16 * * 1-5",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       1005,
+       1035
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       1005,
+       1035
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       1005,
+       1035
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       1005,
+       1035
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       1005,
+       1035
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "data_slot_eod_reconciliation",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "40 15 * * 1-5",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       940,
+       970
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       940,
+       970
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       940,
+       970
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       940,
+       970
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       940,
+       970
       ]
      ]
     }
@@ -1513,6 +1911,86 @@ window.RW_VIEW_DATA = {
    "unscheduled": false
   },
   {
+   "task_id": "data_slot_lane_g_intake_sweep",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "30 22 * * *",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       1350,
+       1380
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       1350,
+       1380
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       1350,
+       1380
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       1350,
+       1380
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       1350,
+       1380
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       1350,
+       1380
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       1350,
+       1380
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
    "task_id": "data_slot_monthly_static",
    "resource_class": "network_download",
    "pool": "default",
@@ -1525,18 +2003,8 @@ window.RW_VIEW_DATA = {
    "window_type": "cron",
    "window_expr": "16 9 1 * *",
    "est_duration_min": 60,
-   "slots": [
-    {
-     "dow": 3,
-     "ranges": [
-      [
-       556,
-       616
-      ]
-     ]
-    }
-   ],
-   "unscheduled": false
+   "slots": [],
+   "unscheduled": true
   },
   {
    "task_id": "data_slot_news_slow",
@@ -1716,6 +2184,130 @@ window.RW_VIEW_DATA = {
    "unscheduled": false
   },
   {
+   "task_id": "data_slot_pf_alloc_rebalance_check",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "45 5 * * 1-5",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       345,
+       375
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       345,
+       375
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       345,
+       375
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       345,
+       375
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       345,
+       375
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "data_slot_post_auction",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "30 9 * * 1-5",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       570,
+       600
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       570,
+       600
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       570,
+       600
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       570,
+       600
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       570,
+       600
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
    "task_id": "data_slot_pre_market",
    "resource_class": "network_download",
    "pool": "default",
@@ -1788,15 +2380,15 @@ window.RW_VIEW_DATA = {
    "measured_p90_duration_min": null,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "30 20 * * 1-5",
+   "window_expr": "00 20 * * 1-5",
    "est_duration_min": 120,
    "slots": [
     {
      "dow": 0,
      "ranges": [
       [
-       1230,
-       1350
+       1200,
+       1320
       ]
      ]
     },
@@ -1804,8 +2396,8 @@ window.RW_VIEW_DATA = {
      "dow": 1,
      "ranges": [
       [
-       1230,
-       1350
+       1200,
+       1320
       ]
      ]
     },
@@ -1813,8 +2405,8 @@ window.RW_VIEW_DATA = {
      "dow": 2,
      "ranges": [
       [
-       1230,
-       1350
+       1200,
+       1320
       ]
      ]
     },
@@ -1822,8 +2414,8 @@ window.RW_VIEW_DATA = {
      "dow": 3,
      "ranges": [
       [
-       1230,
-       1350
+       1200,
+       1320
       ]
      ]
     },
@@ -1831,8 +2423,132 @@ window.RW_VIEW_DATA = {
      "dow": 4,
      "ranges": [
       [
-       1230,
-       1350
+       1200,
+       1320
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "data_slot_sector_close_final",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "10 15 * * 1-5",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       910,
+       940
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       910,
+       940
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       910,
+       940
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       910,
+       940
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       910,
+       940
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "data_slot_sector_pre_open",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "15 9 * * 1-5",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       555,
+       585
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       555,
+       585
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       555,
+       585
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       555,
+       585
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       555,
+       585
       ]
      ]
     }
@@ -1880,11 +2596,11 @@ window.RW_VIEW_DATA = {
    "measured_p90_duration_min": null,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "00 3 * * 1",
+   "window_expr": "00 3 * * 2",
    "est_duration_min": 180,
    "slots": [
     {
-     "dow": 0,
+     "dow": 1,
      "ranges": [
       [
        180,
@@ -1908,8 +2624,18 @@ window.RW_VIEW_DATA = {
    "window_type": "cron",
    "window_expr": "0 4 15 1,4,7,10 *",
    "est_duration_min": 20,
-   "slots": [],
-   "unscheduled": true
+   "slots": [
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       240,
+       260
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
   },
   {
    "task_id": "drill_recovery",
@@ -1940,18 +2666,8 @@ window.RW_VIEW_DATA = {
    "window_type": "cron",
    "window_expr": "0 4 1 * *",
    "est_duration_min": 30,
-   "slots": [
-    {
-     "dow": 3,
-     "ranges": [
-      [
-       240,
-       270
-      ]
-     ]
-    }
-   ],
-   "unscheduled": false
+   "slots": [],
+   "unscheduled": true
   },
   {
    "task_id": "dynamic_local_replay",
@@ -2068,8 +2784,8 @@ window.RW_VIEW_DATA = {
    ],
    "trading_sensitive": true,
    "peak_mem_gb": 6.0,
-   "measured_peak_mem_gb": 0.0405,
-   "measured_p90_duration_min": 2,
+   "measured_peak_mem_gb": 0.2016,
+   "measured_p90_duration_min": 8,
    "status": "planned",
    "window_type": "manual",
    "window_expr": null,
@@ -2100,8 +2816,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": true,
    "peak_mem_gb": 2.7,
-   "measured_peak_mem_gb": 8.109,
-   "measured_p90_duration_min": 1502,
+   "measured_peak_mem_gb": 9.0032,
+   "measured_p90_duration_min": 968,
    "status": "planned",
    "window_type": "manual",
    "window_expr": null,
@@ -2343,24 +3059,6 @@ window.RW_VIEW_DATA = {
    "unscheduled": true
   },
   {
-   "task_id": "ops_bdpan_tick_watch",
-   "resource_class": "network_download",
-   "pool": "default",
-   "exclusive_group": [
-    "tick_drain"
-   ],
-   "trading_sensitive": false,
-   "peak_mem_gb": 1.0,
-   "measured_peak_mem_gb": null,
-   "measured_p90_duration_min": null,
-   "status": "planned",
-   "window_type": "manual",
-   "window_expr": null,
-   "est_duration_min": 30,
-   "slots": [],
-   "unscheduled": true
-  },
-  {
    "task_id": "ops_board_index_realtime",
    "resource_class": "network_download",
    "pool": "default",
@@ -2525,6 +3223,102 @@ window.RW_VIEW_DATA = {
    "unscheduled": true
   },
   {
+   "task_id": "sch_ail1_scan",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": 0.5035,
+   "measured_p90_duration_min": 9,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": null,
+   "est_duration_min": 60,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "sch_budget_report",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "30 7 * * *",
+   "est_duration_min": 60,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       450,
+       510
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       450,
+       510
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       450,
+       510
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       450,
+       510
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       450,
+       510
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       450,
+       510
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       450,
+       510
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
    "task_id": "sch_c4_exam",
    "resource_class": "cpu_heavy",
    "pool": "heavy",
@@ -2533,8 +3327,8 @@ window.RW_VIEW_DATA = {
    ],
    "trading_sensitive": true,
    "peak_mem_gb": 2.0,
-   "measured_peak_mem_gb": 0.0817,
-   "measured_p90_duration_min": 3,
+   "measured_peak_mem_gb": 0.3475,
+   "measured_p90_duration_min": 6,
    "status": "active",
    "window_type": "cron",
    "window_expr": "0 14 * * 6",
@@ -2569,6 +3363,166 @@ window.RW_VIEW_DATA = {
    "unscheduled": true
   },
   {
+   "task_id": "sch_commit_perf_report",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": 0.2637,
+   "measured_p90_duration_min": 19,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "0 7 * * *",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       420,
+       450
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       420,
+       450
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       420,
+       450
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       420,
+       450
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       420,
+       450
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       420,
+       450
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       420,
+       450
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "sch_config_check",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "5 8 * * *",
+   "est_duration_min": 10,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       485,
+       495
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       485,
+       495
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       485,
+       495
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       485,
+       495
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       485,
+       495
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       485,
+       495
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       485,
+       495
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
    "task_id": "sch_data_scheduler",
    "resource_class": "light",
    "pool": "default",
@@ -2601,14 +3555,94 @@ window.RW_VIEW_DATA = {
    "unscheduled": true
   },
   {
+   "task_id": "sch_decision_chain_sentinel",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": 0.1172,
+   "measured_p90_duration_min": 0,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "50 9 * * *",
+   "est_duration_min": 15,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       590,
+       605
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       590,
+       605
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       590,
+       605
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       590,
+       605
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       590,
+       605
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       590,
+       605
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       590,
+       605
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
    "task_id": "sch_f06_grid",
    "resource_class": "cpu_heavy",
    "pool": "heavy",
    "exclusive_group": [],
    "trading_sensitive": true,
    "peak_mem_gb": 0.5,
-   "measured_peak_mem_gb": null,
-   "measured_p90_duration_min": null,
+   "measured_peak_mem_gb": 0.4291,
+   "measured_p90_duration_min": 874,
    "status": "active",
    "window_type": "cron",
    "window_expr": "0 23 * * 6",
@@ -2645,23 +3679,155 @@ window.RW_VIEW_DATA = {
    "trading_sensitive": true,
    "peak_mem_gb": 2.0,
    "measured_peak_mem_gb": 0.394,
-   "measured_p90_duration_min": 123,
+   "measured_p90_duration_min": 194,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "0 10 * * 6",
+   "window_expr": "0 20 * * 1,2,3,4,5",
    "est_duration_min": 240,
    "slots": [
     {
-     "dow": 5,
+     "dow": 0,
      "ranges": [
       [
-       600,
-       840
+       1200,
+       1440
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       1200,
+       1440
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       1200,
+       1440
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       1200,
+       1440
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       1200,
+       1440
       ]
      ]
     }
    ],
    "unscheduled": false
+  },
+  {
+   "task_id": "sch_gate_full_tree_audit",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": 0.3108,
+   "measured_p90_duration_min": 5,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "30 3 * * *",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       210,
+       240
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       210,
+       240
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       210,
+       240
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       210,
+       240
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       210,
+       240
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       210,
+       240
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       210,
+       240
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "sch_health_monitor_probe",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": null,
+   "est_duration_min": 10,
+   "slots": [],
+   "unscheduled": true
   },
   {
    "task_id": "sch_index_minute_eod",
@@ -2962,6 +4128,138 @@ window.RW_VIEW_DATA = {
    "unscheduled": false
   },
   {
+   "task_id": "sch_metaq_audit_reconcile",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": 0.3081,
+   "measured_p90_duration_min": 1,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "50 3 * * *",
+   "est_duration_min": 15,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       230,
+       245
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       230,
+       245
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       230,
+       245
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       230,
+       245
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       230,
+       245
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       230,
+       245
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       230,
+       245
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "sch_model_exam",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "0 18 * * 6",
+   "est_duration_min": 240,
+   "slots": [
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       1080,
+       1320
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "sch_model_intel_scan",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "0 8 * * 6",
+   "est_duration_min": 120,
+   "slots": [
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       480,
+       600
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
    "task_id": "sch_ollama_serve",
    "resource_class": "llm_api_local",
    "pool": "heavy",
@@ -2971,7 +4269,7 @@ window.RW_VIEW_DATA = {
    "trading_sensitive": true,
    "peak_mem_gb": 8.0,
    "measured_peak_mem_gb": 11.5975,
-   "measured_p90_duration_min": 522,
+   "measured_p90_duration_min": 5764,
    "status": "active",
    "window_type": "event",
    "window_expr": null,
@@ -3146,8 +4444,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 0.5,
-   "measured_peak_mem_gb": 0.3357,
-   "measured_p90_duration_min": 4,
+   "measured_peak_mem_gb": 0.5083,
+   "measured_p90_duration_min": 3,
    "status": "active",
    "window_type": "cron",
    "window_expr": "30 15 * * 1,2,3,4,5",
@@ -3208,8 +4506,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 0.5,
-   "measured_peak_mem_gb": 0.2818,
-   "measured_p90_duration_min": 1,
+   "measured_peak_mem_gb": 0.304,
+   "measured_p90_duration_min": 2,
    "status": "active",
    "window_type": "event",
    "window_expr": null,
@@ -3420,15 +4718,15 @@ window.RW_VIEW_DATA = {
    "measured_p90_duration_min": null,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "50 5 * * *",
+   "window_expr": "10 6 * * *",
    "est_duration_min": 15,
    "slots": [
     {
      "dow": 0,
      "ranges": [
       [
-       350,
-       365
+       370,
+       385
       ]
      ]
     },
@@ -3436,8 +4734,8 @@ window.RW_VIEW_DATA = {
      "dow": 1,
      "ranges": [
       [
-       350,
-       365
+       370,
+       385
       ]
      ]
     },
@@ -3445,8 +4743,8 @@ window.RW_VIEW_DATA = {
      "dow": 2,
      "ranges": [
       [
-       350,
-       365
+       370,
+       385
       ]
      ]
     },
@@ -3454,8 +4752,8 @@ window.RW_VIEW_DATA = {
      "dow": 3,
      "ranges": [
       [
-       350,
-       365
+       370,
+       385
       ]
      ]
     },
@@ -3463,8 +4761,8 @@ window.RW_VIEW_DATA = {
      "dow": 4,
      "ranges": [
       [
-       350,
-       365
+       370,
+       385
       ]
      ]
     },
@@ -3472,8 +4770,8 @@ window.RW_VIEW_DATA = {
      "dow": 5,
      "ranges": [
       [
-       350,
-       365
+       370,
+       385
       ]
      ]
     },
@@ -3481,8 +4779,8 @@ window.RW_VIEW_DATA = {
      "dow": 6,
      "ranges": [
       [
-       350,
-       365
+       370,
+       385
       ]
      ]
     }
@@ -3504,6 +4802,140 @@ window.RW_VIEW_DATA = {
    "est_duration_min": 0,
    "slots": [],
    "unscheduled": true
+  },
+  {
+   "task_id": "sch_sft_train_window",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "0 10 * * 0",
+   "est_duration_min": 300,
+   "slots": [
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       600,
+       900
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "sch_sim_bridge_execute",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "45 9 * * *|5 13 * * *",
+   "est_duration_min": 30,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       585,
+       615
+      ],
+      [
+       785,
+       815
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       585,
+       615
+      ],
+      [
+       785,
+       815
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       585,
+       615
+      ],
+      [
+       785,
+       815
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       585,
+       615
+      ],
+      [
+       785,
+       815
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       585,
+       615
+      ],
+      [
+       785,
+       815
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       585,
+       615
+      ],
+      [
+       785,
+       815
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       585,
+       615
+      ],
+      [
+       785,
+       815
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
   },
   {
    "task_id": "sch_tick_subscriber",
@@ -3544,8 +4976,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 0.5,
-   "measured_peak_mem_gb": 7.2681,
-   "measured_p90_duration_min": 5183,
+   "measured_peak_mem_gb": 15.7555,
+   "measured_p90_duration_min": 4311,
    "status": "active",
    "window_type": "event",
    "window_expr": null,

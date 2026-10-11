@@ -153,13 +153,23 @@ def test_inequality_is_red_on_untouched_old_values():
     assert min(sums.values()) < CEILING_GB, "带内处处超线＝尺的视野坏了（应只在两刻红）"
 
 
-def test_production_registry_currently_carries_the_old_values():
-    """现场读数留证：盘上现字节仍是旧窗档（本班未代落任何调档）。"""
+def test_production_registry_now_carries_the_staggered_values():
+    """现场读数留证（2026-10-11 维护三班落地后重写；原名
+    ``test_production_registry_currently_carries_the_old_values``＝维护二班"本班未代落调档"
+    的自证桩，其本体写明"本测试须随属主落地同步改写"）。
+
+    现字节＝总统统筹裁定 T7 经 `apply_resource_plan.py` 单口写回后的值：
+    09:35 腿→09:45、09:40 腿→09:50，13:05 腿不动；带内 block 归零。
+    """
     ents = _entities()
     live = {str(e["task_id"]): e.get("window_expr") for e in ents}
-    assert live[SIM_BRIDGE] == OLD_SIM_BRIDGE_EXPR
-    assert live[SENTINEL] == OLD_SENTINEL_EXPR
-    assert len(_band_blocks(ents)) == 2, "盘上现值若已不是两红，本测试须随属主落地同步改写"
+    assert live[SIM_BRIDGE] == NEW_SIM_BRIDGE_EXPR, f"表内 sim_bridge 窗档非落后面：{live[SIM_BRIDGE]!r}"
+    assert live[SENTINEL] == NEW_SENTINEL_EXPR, f"表内 sentinel 窗档非落后面：{live[SENTINEL]!r}"
+    assert _band_blocks(ents) == [], "错峰后 09:30-10:00 带内仍报 block"
+    # 尺不假绿：同一把尺把两腿拍回旧值必须立刻重新报出那两条红
+    assert (
+        len(_band_blocks(_patch_windows(ents, {SIM_BRIDGE: OLD_SIM_BRIDGE_EXPR, SENTINEL: OLD_SENTINEL_EXPR}))) == 2
+    ), "旧值臂不再红＝尺没牙，本桩的绿不可信"
 
 
 # ---------------------------------------------------------------------------
@@ -330,7 +340,12 @@ def test_same_pool_caliber_is_already_green_in_the_band():
             worst[pool] = max(worst.get(pool, 0.0), s)
     assert worst, "带内无池读数"
     assert max(worst.values()) <= CEILING_GB, f"同池口径本应绿，实得 {worst}"
-    assert worst["default"] == pytest.approx(7.0) and worst["realtime"] == pytest.approx(4.0)
+    # 2026-10-11 维护三班 T7 落地后重钉：default 7.0→6.0。来历＝错峰本身——
+    # 旧 09:40 刻 default 池=sector_pre_open 2.0+post_auction 2.0+news_slow 2.0+sim 0.5+sentinel 0.5=7.0；
+    # 两腿挪到 09:45/09:50 时 pre_open（09:15+30min）已结束，default 峰落在 09:35/09:40 的 6.0（纯基线）。
+    # realtime 4.0 未动（三枚 intraday 槽与两腿不同池）。读数实测见
+    # docs/_working/maint3_campaign/00_ledger.md §二·读数表。
+    assert worst["default"] == pytest.approx(6.0) and worst["realtime"] == pytest.approx(4.0)
 
 
 # ---------------------------------------------------------------------------
@@ -366,26 +381,27 @@ def test_resident_gpu_holder_is_excluded_from_the_sum_while_over_ceiling():
     assert mine and all(wins == [] for wins in mine), "常驻体开始占窗档账＝口径已变，须重读现场"
 
 
-def test_registry_yaml_bytes_untouched_by_this_shift():
-    """本班零改动的机器守卫：表头与两枚档的行内容按基线 sha 面钉住。
+def test_t7_landed_bytes_pinned_in_table_and_truth_sources():
+    """T7 落地面钉桩。原名 `test_registry_yaml_bytes_untouched_by_this_shift`＝维护二班
+    "本班零改动"守卫；总统统筹裁定 T7 授权写回后该前提被**有意**取代，故改写为"落后面钉桩"，
+    禁动的上限常数继续钉（谁放宽 10.0 谁吃红）。
 
-    复跑：git show {sha}:config/resource_profile_registry.yaml 与本文件逐字节等。
+    三面同钉：表头上限行 / 表内两枚窗档 / 真源两枚 ps1 触发行，外加"同任务另一枚触发器
+    （13:05 腿）未被牵连"——多腿写回最怕顺手挪走别人的班。
     """
     text = REGISTRY.read_text(encoding="utf-8")
     lines = text.splitlines()
     assert lines[15] == "mem_ceiling_gb: 10.0", "表头第 16 行＝上限常数，禁动"
     block = "\n".join(lines)
-    for tid, expr in ((SIM_BRIDGE, OLD_SIM_BRIDGE_EXPR), (SENTINEL, OLD_SENTINEL_EXPR)):
-        assert f"- task_id: {tid}" in block
-    assert "window_expr: " + OLD_SIM_BRIDGE_EXPR in block
-    assert "window_expr: " + OLD_SENTINEL_EXPR in block
-    # 真源两枚 ps1 的触发行也未被动（改窗只能走 apply_resource_plan.py 单口）
-    assert '-Daily -At "09:35"' in (
-        REPO_ROOT / "scripts/tasks/register/register_sim_bridge_execute_task.ps1"
-    ).read_text(encoding="utf-8")
-    assert '-Daily -At "09:40"' in (
-        REPO_ROOT / "scripts/tasks/register/register_decision_chain_sentinel_task.ps1"
-    ).read_text(encoding="utf-8")
+    assert "window_expr: " + NEW_SIM_BRIDGE_EXPR in block
+    assert "window_expr: " + NEW_SENTINEL_EXPR in block
+    assert "window_expr: " + OLD_SIM_BRIDGE_EXPR not in block, "表内旧窗档残留=双值第二真源"
+    sim = (REPO_ROOT / "scripts/tasks/register/register_sim_bridge_execute_task.ps1").read_text(encoding="utf-8")
+    sen = (REPO_ROOT / "scripts/tasks/register/register_decision_chain_sentinel_task.ps1").read_text(encoding="utf-8")
+    assert '-Daily -At "09:45"' in sim and '-Daily -At "09:35"' not in sim
+    assert '-Daily -At "13:05"' in sim, "同任务另一枚触发器被牵连＝多腿写回越界"
+    assert '-Daily -At "09:50"' in sen and '-Daily -At "09:40"' not in sen
+    assert sim.isascii() and sen.isascii(), "ps1 含非 ASCII=PS 5.1 GBK 假语法错误（根宪法 §9.7）"
 
 
 def test_notice_artifact_exists_and_is_greppable():

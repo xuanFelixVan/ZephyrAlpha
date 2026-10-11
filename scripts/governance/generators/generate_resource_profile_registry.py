@@ -41,7 +41,8 @@
 单一真源：config/resource_profile_registry.yaml（ROOR tier0 REG-RESCHED-001）。
 
 四输入：
-1. scripts/register_*.ps1 —— Windows 计划任务（任务名/触发器/时限/DISABLED 解析）；
+1. register_*.ps1（`PS1_REL_DIRS` 双目录：`scripts/` + 拆簇后的 `scripts/tasks/register/`）
+   —— Windows 计划任务（任务名/触发器/时限/DISABLED 解析）；
 2. src/zephyr/data/config/schedule.yaml —— DataScheduler 21 槽位（cron 原样抽取）；
 3. MANUAL_ENTITY_SEED —— 方案 §3.C 手动/事件盲区实体清单（生成器内种子，时间真源
    指向方案文档直至有更正式真源；L-8 收编的触发型实体用可选键 `src` 把真源指针钉在
@@ -110,7 +111,7 @@ gap。**finding 码 `sched_gate_declaration_gap` 只打 stdout + 再生 notes_zh
 # 层: 输入
 # - id: I1
 #   name: Windows 计划任务真源
-#   fields: scripts/register_*.ps1（任务名/触发器/时限/DISABLED）
+#   fields: register_*.ps1 双目录 PS1_REL_DIRS=scripts/ + scripts/tasks/register/（任务名/触发器/时限/DISABLED）
 #   code: parse_ps1_entities
 # - id: I2
 #   name: 数据槽位真源
@@ -263,7 +264,12 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_OUTPUT = REPO_ROOT / "config" / "resource_profile_registry.yaml"
 SCHEDULE_YAML = REPO_ROOT / "src" / "zephyr" / "data" / "config" / "schedule.yaml"
-PS1_GLOB = "register_*.ps1"  # 用法：(REPO_ROOT/"scripts").glob(PS1_GLOB)
+PS1_GLOB = "register_*.ps1"
+# 拆簇 a4b503a1630（2026-10-02）把 register_*×32 搬进 scripts/tasks/register/，本扫描面当时
+# 只被文本级改对了册内路径字符串、采集面从未跟上——单目录非递归 glob 看不见搬家件，10-10 那次
+# 再生据此把 33 枚活班次标成 orphaned_source"待 Owner 裁定删除"（伪告警，案卷见
+# docs/_working/maint3_campaign/00_ledger.md §一）。缺目录=跳过并告警，不静默降面。
+PS1_REL_DIRS = ("scripts", "scripts/tasks/register")
 PLAN_DOC_REL = "docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md"
 
 # ── 排产链自检探针（2026-09-17 P0：C-5 闸缺席 / C-10 视图新鲜度）───────────────
@@ -1070,6 +1076,27 @@ PS1_TASK_OVERRIDES: dict[str, dict] = {
 }
 
 
+def ps1_paths_for(root: Path) -> list[Path]:
+    """给定仓库根 → register_*.ps1 扫描面（PS1_REL_DIRS 唯一口径；供本模块与写回器共用）。
+
+    写回器 `apply_resource_plan` 的自检跑在 tmp 副本根上，故本函数按传入 root 解析——
+    扫描面目录表仍单源，不另立第二份 glob 字面量（两处各写一遍正是本次伪孤儿的成因族）。
+    """
+    out: list[Path] = []
+    for rel in PS1_REL_DIRS:
+        d = Path(root) / rel
+        if not d.is_dir():
+            logger.warning("ps1 扫描目录缺席（跳过，不静默当空集）: %s", d)
+            continue
+        out.extend(d.glob(PS1_GLOB))
+    return sorted(out)
+
+
+def default_ps1_paths() -> list[Path]:
+    """本仓 register_*.ps1 扫描面（I1 实体臂与 C-15 对账臂共用）。"""
+    return ps1_paths_for(REPO_ROOT)
+
+
 def _iter_ps1_code(ps1_paths: list[Path] | None = None) -> list[tuple[Path, str | None, str]]:
     """register_*.ps1 → [(路径, 去注释正文, 读失败原因)]（I1 实体臂与 C-15 对账臂共用口径）。
 
@@ -1077,7 +1104,7 @@ def _iter_ps1_code(ps1_paths: list[Path] | None = None) -> list[tuple[Path, str 
     各的会口径分裂，注释里的示例任务名会被其中一臂当成真实声明。
     """
     out: list[tuple[Path, str | None, str]] = []
-    for ps1 in sorted(ps1_paths or (REPO_ROOT / "scripts").glob(PS1_GLOB)):
+    for ps1 in sorted(ps1_paths if ps1_paths is not None else default_ps1_paths()):
         try:
             text = ps1.read_text(encoding="utf-8", errors="replace")
         except OSError as exc:
@@ -1897,6 +1924,16 @@ _HUMAN_FIELDS = (
 )
 _SAMPLER_FIELDS = ("measured", "samples_uri")
 
+# 孤儿标哨兵（与 C-11 的 GAP_NOTE_MARK 同族写法：先剥后贴＝幂等，人写的正文永不被动）。
+# 每次再生无脑追加会让同一实体挂 5-6 条重复"待 Owner 裁定删除"（HEAD 实测 ops_bdpan_tick_watch 5 条）。
+ORPHAN_NOTE_MARK = "[生成器] 真源消失，待 Owner 裁定删除"
+_RE_ORPHAN_NOTE = re.compile(r"\s*；\s*" + re.escape(ORPHAN_NOTE_MARK) + r"|\s*" + re.escape(ORPHAN_NOTE_MARK))
+
+
+def strip_orphan_note(notes: str) -> str:
+    """剥掉本生成器自己贴过的孤儿标（全部出现次数），返回人写正文。"""
+    return _RE_ORPHAN_NOTE.sub("", str(notes or ""))
+
 
 def merge_preserve(fresh: list[dict], existing: list[dict] | None) -> tuple[list[dict], list[str]]:
     """按 task_id 合并：人填/采样字段保全，生成器字段刷新。返回 (合并实体, 警告)。"""
@@ -1910,6 +1947,13 @@ def merge_preserve(fresh: list[dict], existing: list[dict] | None) -> tuple[list
         seen.add(tid)
         old = old_by_id.get(tid)
         if old:
+            # 孤儿标可逆（st-maint3-20261011 D2）：`status` 在人可复核字段里，但
+            # "orphaned_source" 是本生成器自己盖的章——只有盖章者能销章。真源回来了若不撤，
+            # 一次坏再生（如采集面盲区把 33 枚活班次标成孤儿）就永久毒化整册、且无自愈路径。
+            # 撤法=磁盘 status 视为无值（回落本批派生值），notes_zh 只剥自家哨兵、人写正文逐字不动。
+            if str(old.get("status") or "") == "orphaned_source":
+                old = {**old, "status": None, "notes_zh": strip_orphan_note(str(old.get("notes_zh") or ""))}
+                warnings.append(f"orphan_source_back: {tid} 真源已回，孤儿标撤销（status 回落本批派生值）")
             derived_pool = ent.get("pool")  # 本批派生值（合并前抓——下面会被磁盘值覆盖）
             for f in _HUMAN_FIELDS + _SAMPLER_FIELDS:
                 if f in old and old[f] is not None:
@@ -1935,7 +1979,8 @@ def merge_preserve(fresh: list[dict], existing: list[dict] | None) -> tuple[list
     for tid, old in old_by_id.items():
         if tid not in seen:
             old["status"] = "orphaned_source"
-            old["notes_zh"] = str(old.get("notes_zh") or "") + "；[生成器] 真源消失，待 Owner 裁定删除"
+            human_text = strip_orphan_note(str(old.get("notes_zh") or ""))
+            old["notes_zh"] = f"{human_text}；{ORPHAN_NOTE_MARK}" if human_text else ORPHAN_NOTE_MARK
             warnings.append(f"orphaned_source: {tid}")
             merged.append(old)
     return merged, warnings

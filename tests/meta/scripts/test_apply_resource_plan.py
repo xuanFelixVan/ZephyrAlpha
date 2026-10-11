@@ -70,6 +70,12 @@ PS1_TIMES_SAMPLE = """$Name = "ZephyrAlpha_IntradayFundFlow"
 $trigger = New-ScheduledTaskTrigger -Times @('05:05', '05:35')
 """
 
+# 多腿同任务（真源实测形态：register_sim_bridge_execute_task.ps1:26/47/48）
+PS1_MULTI_LEG_SAMPLE = """$TaskName = "ZephyrAlpha_SimBridgeExecute"
+$trigger1 = New-ScheduledTaskTrigger -Daily -At "09:35"
+$trigger2 = New-ScheduledTaskTrigger -Daily -At "13:05"
+"""
+
 REGISTRY_SAMPLE = """schema_version: 1.0.0
 total_entities: 2
 entities:
@@ -151,6 +157,64 @@ def test_patch_ps1_trigger_times_list():
     assert line.strip() == "-Times @('05:10', '11:40')" or line.strip().startswith(
         "$trigger = New-ScheduledTaskTrigger -Times @('05:10', '11:40')"
     )
+
+
+# ---------------------------------------------------------------------------
+# 多腿 -Daily 触发器（2026-10-11 令 3 T7 撞出来的能力缺口）
+# 真源形态=同任务两枚 `New-ScheduledTaskTrigger -Daily -At`（实测
+# scripts/tasks/register/register_sim_bridge_execute_task.ps1:47-48 = 09:35 + 13:05，
+# 生成器抽成 "35 9 * * *|5 13 * * *"）。旧行为：多腿一律拒"须人工拆方案"⇒ 单口读得出
+# 多腿窗却写不回去，"只挪其中一腿"的最小错峰无路落地。
+# ---------------------------------------------------------------------------
+def test_multi_leg_daily_triggers_move_only_the_matched_leg():
+    spec = arp.resolve_time_spec({"new_times": ["09:45", "13:05"]}, "35 9 * * *|5 13 * * *")
+    assert spec is not None and spec.mode == "times"
+    new_text, _line_no, _old, _new = arp.patch_ps1_trigger(PS1_MULTI_LEG_SAMPLE, "ZephyrAlpha_SimBridgeExecute", spec)
+    lines = new_text.split("\n")
+    assert '$trigger1 = New-ScheduledTaskTrigger -Daily -At "09:45"' in lines  # 被挪的腿
+    assert '$trigger2 = New-ScheduledTaskTrigger -Daily -At "13:05"' in lines  # 不动的腿逐字节原样
+    assert '$TaskName = "ZephyrAlpha_SimBridgeExecute"' in lines  # 未命中字节零改动
+    # 配对按现时刻升序对齐新时刻升序（不是按行序）：腿序在文件里颠倒也不许挪错腿
+    flipped = "\n".join(
+        [
+            '$TaskName = "ZephyrAlpha_SimBridgeExecute"',
+            '$trigger2 = New-ScheduledTaskTrigger -Daily -At "13:05"',
+            '$trigger1 = New-ScheduledTaskTrigger -Daily -At "09:35"',
+        ]
+    )
+    ft, _l2, _o2, _n2 = arp.patch_ps1_trigger(flipped, "ZephyrAlpha_SimBridgeExecute", spec)
+    assert '-At "09:45"' in ft and '-At "13:05"' in ft
+    # 引号内侧改写：绝不再拼一层引号（首版在此写出 ""09:45"" 毒行，生成器重抽归零）
+    assert '""' not in ft and '""' not in new_text
+
+
+def test_multi_leg_rejects_unequal_leg_count_and_same_clock_legs():
+    spec2 = arp.resolve_time_spec({"new_times": ["09:45", "13:05"]}, "35 9 * * *|5 13 * * *")
+    # 清单比腿少=静默砍班，比腿多=静默加班，两种都硬拒
+    one = arp.resolve_time_spec({"new_times": ["09:45"]}, "35 9 * * *|5 13 * * *")
+    with pytest.raises(arp.PlanError, match="不等长"):
+        arp.patch_ps1_trigger(PS1_MULTI_LEG_SAMPLE, "ZephyrAlpha_SimBridgeExecute", one)
+    three = arp.resolve_time_spec({"new_times": ["09:45", "13:05", "17:00"]}, "35 9 * * *|5 13 * * *")
+    with pytest.raises(arp.PlanError, match="不等长"):
+        arp.patch_ps1_trigger(PS1_MULTI_LEG_SAMPLE, "ZephyrAlpha_SimBridgeExecute", three)
+    assert spec2 is not None and one is not None and three is not None
+    twin = "\n".join(
+        [
+            '$TaskName = "ZephyrAlpha_Twin"',
+            '$trigger1 = New-ScheduledTaskTrigger -Daily -At "09:35"',
+            '$trigger2 = New-ScheduledTaskTrigger -Daily -At "09:35"',
+        ]
+    )
+    with pytest.raises(arp.PlanError, match="同刻"):
+        arp.patch_ps1_trigger(twin, "ZephyrAlpha_Twin", spec2)
+
+
+def test_multi_leg_still_refuses_single_point_rewrite():
+    """放开只针对 new_times 全量清单；单点改写（new_window_cron/hmd）仍须拒——
+    否则"改哪一腿"重新变成隐式规则，正是本次要防的静默挪错腿。"""
+    spec = arp.resolve_time_spec({"new_window_cron": "45 9 * * *"}, "35 9 * * *")
+    with pytest.raises(arp.PlanError, match="须人工拆方案"):
+        arp.patch_ps1_trigger(PS1_MULTI_LEG_SAMPLE, "ZephyrAlpha_SimBridgeExecute", spec)
 
 
 def test_patch_registry_group_preserves_surrounding_bytes():
@@ -330,7 +394,14 @@ def test_dry_run_pass_is_idempotent_and_reports_triangle(repo):
     assert {p["kind"] for p in rep1["patches"]} == {"ps1_trigger", "registry_group"}
     assert all(st["added_lines"] == st["removed_lines"] == 1 for st in rep1["diff_stats"].values())
     assert rep1["gate"]["new_blocks"] == [] and rep1["gate"]["c8_available"] is True
-    assert rep1["files_touched"] == ["config/resource_profile_registry.yaml", "scripts/register_f06_grid_task.ps1"]
+    assert rep1["files_touched"] == [
+        "config/resource_profile_registry.yaml",
+        "scripts/tasks/register/register_f06_grid_task.ps1",
+    ]  # 2026-10-11 维护三班追认：旧钉值 scripts/register_f06_grid_task.ps1 自拆簇
+    # a4b503a1630（2026-10-02，register_*×32 搬进 scripts/tasks/register/）起就是**红**的——
+    # 实测复现：把沙箱拷回 HEAD 那份"只收顶层两枚 ps1"的面，run_plan 直接
+    # `未知 task_id 'sch_f06_grid'` rc=2（连 files_touched 都没有）。本班补回采集面后
+    # 本测才可跑，路径按真源现位追认（非"跟着现值漂"：真源文件实测就在该位）。
     # 三角对账：表↔真源重抽↔schtasks（tmp 仓无 OS 任务角→探针降级健康码，不静默）
     tri = rep1["triangle"]
     assert tri["summary"]["changed_or_queried_tasks"] == 2
@@ -388,7 +459,10 @@ def test_apply_then_rollback_is_byte_identical(repo):
     assert rep["verdict"] == "pass" and rep["mode"] == "apply"
     assert rep["post_apply"]["new_blocks"] == [] and rep["post_apply"]["materialization_problems"] == []
     changed = {k for k, v in snapshot(repo).items() if before.get(k) != v}
-    assert {"scripts/register_f06_grid_task.ps1", "config/resource_profile_registry.yaml"} <= changed
+    assert {
+        "scripts/tasks/register/register_f06_grid_task.ps1",
+        "config/resource_profile_registry.yaml",
+    } <= changed  # 路径同 test_dry_run_pass… 追认（拆簇 a4b503a1630 后真源在 tasks/register/）
     assert not any(k.endswith("schedule.yaml") for k in changed), changed  # 本方案未改槽位
     reg = yaml.safe_load((repo / arp.REGISTRY_REL).read_text(encoding="utf-8"))
     by = {str(e["task_id"]): e for e in reg["entities"]}
