@@ -1,0 +1,31 @@
+# [A_test] module_id: MOD-GOV_path_index_validator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [MODULE] tests.test_path_index_validator
+# [DOMAIN] D_SHARED
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [CONSUMERS]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [TTL] task_bound
+from zephyr.gov_code_quality.code_dedup.path_index_validator import (
+    PathIndexValidator,
+)
+
+
+class TestPathIndexValidator:
+    def test_instantiation(self):
+        validator = PathIndexValidator()
+        assert validator is not None
+
+    def test_validate_returns_list(self):
+        validator = PathIndexValidator()
+        result = validator.validate({"func_a": ["src/a.py", "src/b.py"]})
+        assert isinstance(result, (list, dict))
+
+    def test_validate_empty(self):
+        validator = PathIndexValidator()
+        result = validator.validate({})
+        assert isinstance(result, (list, dict))
