@@ -5,7 +5,7 @@
 # [CONSUMERS] GitCommitGateway._reconciliation_registry.register
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:双条件触发(重要文件+8h间隔) | INV-10:状态持久化backup_state.json | INV-11:ok状态写入前须过system.backup_log当窗BACKUP_CREATED交叉核验,假绿降级ch_log_missing并连带摘除last_ch_backup_status的ok,cadence-skip单独记账;P-7改点火-托管分离后此核验延后由"下一次事件触发"的settle_previous_ignition(读上一轮脱离日志锚定State saved:主仓state)或日检执行,点火轮本身绝不断言ok | INV-12:gate裁决写入锚定主仓state真源(脱离日志State saved:通道),lock-skip短退出不推进计时不降级真实状态,skipped分因(cadence合法/其余degraded);P-7新增点火前主动锁自查(读.runtime/backup.lock PID:+_is_pid_alive),活则直接记lock_skipped不起子进程 | INV-13(P-7非托管免疫):post-commit通道只点火不托管,backup.ps1经瞬时powershell(Start-Process -WindowStyle Hidden+落盘重定向)脱离启动,使备份进程在收割器扫描时不是worker的活的后代(psutil.children(recursive)沿活PPID链)从而免疫级联收割,不再同步subprocess.run托管长跑;裁定①单一检出点(2026-10-11 总统统筹):reconcile() 在 settle 之后、锁自查之前先过 is_shadow_checkout——影子根(有正证者：.git 为 FILE 的 linked worktree，或路径含 .worktrees/.aidrafts/commit_queue 标记)一律拒绝点火，记 last_run_outcome=shadow_ignite_refused(+reason/root/time)，不碰锁不动 cadence；判不出形态的根按主区放行(误拦=备份静默停摆，是本院在治的病，不得拿新病换旧病)。病根实测=backup.ps1 硬编码 $ProjectRoot 而 reconciler 按自身根解析脚本路径，同机多版本副本共抢一把锁;裁定②备份↔停机压缩互斥(同日统筹):真正点火前查 Hyper-V 里 ch_backup.vm_name(配置册唯一真源) 的状态，VM 非 Running ⇒ 记 last_run_outcome=vm_off_yield(+yield_time/reason/probe) 且不点火；探针不可得/未配置一律 fail-open 放行并把 last_vm_gate_probe 写进 state 册备追(备份可用性优先于门禁完备性);T8早退显化(2026-10-11 总统统筹追加令):settle_previous_ignition 的"无 STAGE 4"支按 ps1 自身锁语义分"在跑/已夭折"——锁消失或锁在而持有者PID已死⇒记 ignite_outcome=early_exit(+_time/_evidence/_ignite_log 四键,同一 ignite_log 幂等一次防热册写风暴),持有者仍活⇒原样 pending;返回值/pending 指针/点火与重试路径零改动,存活与锁解析复用本件既有单口 _is_pid_alive+read_backup_lock_holder_pid,零新增阈值
+# [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:双条件触发(重要文件+8h间隔) | INV-10:状态持久化backup_state.json | INV-11:ok状态写入前须过system.backup_log当窗BACKUP_CREATED交叉核验,假绿降级ch_log_missing并连带摘除last_ch_backup_status的ok,cadence-skip单独记账;P-7改点火-托管分离后此核验延后由"下一次事件触发"的settle_previous_ignition(读上一轮脱离日志锚定State saved:主仓state)或日检执行,点火轮本身绝不断言ok | INV-12:gate裁决写入锚定主仓state真源(脱离日志State saved:通道),lock-skip短退出不推进计时不降级真实状态,skipped分因(cadence合法/其余degraded);P-7新增点火前主动锁自查(读.runtime/backup.lock PID:+_is_pid_alive),活则直接记lock_skipped不起子进程 | INV-13(P-7非托管免疫):post-commit通道只点火不托管,backup.ps1经瞬时powershell(Start-Process -WindowStyle Hidden+落盘重定向)脱离启动,使备份进程在收割器扫描时不是worker的活的后代(psutil.children(recursive)沿活PPID链)从而免疫级联收割,不再同步subprocess.run托管长跑;裁定①单一检出点(2026-10-11 总统统筹):reconcile() 在 settle 之后、锁自查之前先过 is_shadow_checkout——影子根(有正证者：.git 为 FILE 的 linked worktree，或路径含 .worktrees/.aidrafts/commit_queue 标记)一律拒绝点火，记 last_run_outcome=shadow_ignite_refused(+reason/root/time)，不碰锁不动 cadence；判不出形态的根按主区放行(误拦=备份静默停摆，是本院在治的病，不得拿新病换旧病)。病根实测=backup.ps1 硬编码 $ProjectRoot 而 reconciler 按自身根解析脚本路径，同机多版本副本共抢一把锁;裁定②备份↔停机压缩互斥(同日统筹):真正点火前查 Hyper-V 里 ch_backup.vm_name(配置册唯一真源) 的状态，VM 非 Running ⇒ 记 last_run_outcome=vm_off_yield(+yield_time/reason/probe) 且不点火；探针不可得/未配置一律 fail-open 放行并把 last_vm_gate_probe 写进 state 册备追(备份可用性优先于门禁完备性);T8早退显化(2026-10-11 总统统筹追加令):settle_previous_ignition 的"无 STAGE 4"支按 ps1 自身锁语义分"在跑/已夭折"——锁消失或锁在而持有者PID已死⇒记 ignite_outcome=early_exit(+_time/_evidence/_ignite_log 四键,同一 ignite_log 幂等一次防热册写风暴),持有者仍活⇒原样 pending;返回值/pending 指针/点火与重试路径零改动,存活与锁解析复用本件既有单口 _is_pid_alive+read_backup_lock_holder_pid,零新增阈值;统筹批复二(2026-10-11 令5 续令):点火执行体指向改由 primary_checkout_root() 经 git common-dir 解析为主检出点(真源脚本),①的入参随之＝点火目标根(闸字面不动、无白名单、无新豁免),解析不成退回自身根且退回后若为影子根照旧拒(fail-closed,宁可事件腿停摆不让多版本副本共抢一把锁);⑫(同日批复三)属 backup.ps1 轮转腿的可观测性面,本件零关
 # [MODIFY-GUARD] gate_id="BACKUP-RECONCILER"
 # [STABILITY] evolving
 # [SAFETY] L
@@ -655,6 +655,48 @@ def _fake_green_verdict(
 
 SHADOW_CHECKOUT_MARKERS = (".worktrees", ".aidrafts", "commit_queue")
 VM_PROBE_TIMEOUT_S = 45
+# 探针取数上限（资源界，非判据阈值）：解析主检出点的一次 git 调用。
+PRIMARY_ROOT_PROBE_TIMEOUT_S = 20
+
+
+def primary_checkout_root(start: Path | None = None) -> tuple[Path, str]:
+    """统筹批复·二（2026-10-11）：点火执行体必须指向主检出点的真源脚本。
+
+    实测病形：reconcile() 用 ``PROJECT_ROOT / scripts/backup/backup.ps1`` 解析执行体，而
+    PROJECT_ROOT 按**自身所在根**取值——post-commit 通道跑在序列器车道里时，点的就是车道
+    那份副本（10-11 实测 7 次真发射 100% 来自影子根、主区零发，同机并存过两个 sha 的
+    backup.ps1）。裁定①把这类点火拒掉是正确履职，但事件腿就此全灭；批复给的正解是
+    **改执行体指向**（判据面零改、不新增豁免、不加白名单）：经 git 的 common-dir 把执行体
+    解析回主检出点，再以该根过①、以该根为工作目录点火。
+
+    解析不成（无 git／仓外／超时／主区无该脚本）⇒ 退回自身根；退回后若那是影子根，①照旧
+    拒——fail-closed：宁可事件腿停摆，也不让多版本副本共抢同一把生产锁（那正是本役病根）。
+    """
+    base = Path(start if start is not None else PROJECT_ROOT).resolve()
+    try:
+        # trae_067 铁律2：子进程必经 process_pool 统一无窗口入口（BARE-SUBPROCESS）
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+    except ImportError:
+        return base, "NO_PROCESS_POOL"
+    try:
+        r = run_subprocess_hidden(
+            ["git", "-C", str(base), "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=PRIMARY_ROOT_PROBE_TIMEOUT_S,
+        )
+    except (subprocess.TimeoutExpired, OSError, ValueError):
+        return base, "GIT_PROBE_FAIL"
+    out = (r.stdout or "").strip()
+    if r.returncode != 0 or not out:
+        return base, "GIT_NO_COMMON_DIR"
+    common = Path(out)
+    root = common.parent if common.name.lower() == ".git" else base
+    if not (root / "scripts" / "backup" / "backup.ps1").is_file():
+        return base, "PRIMARY_SCRIPT_MISSING"
+    return root.resolve(), "git_common_dir"
 
 
 def is_shadow_checkout(root: Path | None = None) -> tuple[bool, str]:
@@ -896,7 +938,8 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
         # 测试环境无 zephyr 模块时，返回简单 dict
         ReconcileResult = dict  # type: ignore
 
-    backup_script = PROJECT_ROOT / "scripts" / "backup" / "backup.ps1"
+    target_root, target_reason = primary_checkout_root()
+    backup_script = target_root / "scripts" / "backup" / "backup.ps1"
     if not backup_script.exists():
         return ReconcileResult(
             action="warn",
@@ -910,7 +953,8 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
         logger.warning("settle_previous_ignition failed", exc_info=True)
 
     # (1a) 单一检出点闸（裁定①）：影子根（linked worktree/提交队列车道）绝不允许点火。
-    shadow, shadow_why = is_shadow_checkout()
+    # 闸字面不动，入参＝**点火目标根**（统筹批复二：执行体指向主区真源后，主区实测放行）。
+    shadow, shadow_why = is_shadow_checkout(target_root)
     if shadow:
         now_iso = datetime.now(timezone.utc).isoformat()
         try:
@@ -918,7 +962,9 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
                 last_run_outcome="shadow_ignite_refused",
                 last_shadow_refuse_time=now_iso,
                 last_shadow_refuse_reason=shadow_why,
-                last_shadow_refuse_root=str(PROJECT_ROOT),
+                last_shadow_refuse_root=str(target_root),
+                last_ignite_target_root=str(target_root),
+                last_ignite_target_reason=target_reason,
             )
         except (OSError, TypeError, ValueError):
             logger.debug("shadow_ignite_refused state write failed", exc_info=True)
@@ -926,7 +972,7 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
             action="warn",
             detail=(
                 "shadow-root ignition refused (%s) at %s; single checkout point is the "
-                "main worktree; lock untouched, cadence untouched" % (shadow_why, PROJECT_ROOT)
+                "main worktree; lock untouched, cadence untouched" % (shadow_why, target_root)
             ),
         )
 
@@ -966,7 +1012,7 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     ignite_log = get_ignite_log_dir() / f"{IGNITE_LOG_PREFIX}{ts}.log"
     try:
-        launch_detached_backup(backup_script, ignite_log)
+        launch_detached_backup(backup_script, ignite_log, root=target_root)
     except (subprocess.SubprocessError, OSError) as exc:
         # 装载器本身失败（罕见）：诚实记 ignite_failed，不冒领任何备份状态。
         update_state(last_run_outcome="ignite_failed", last_ignite_error=str(exc)[:200])
@@ -981,6 +1027,8 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
         last_backup_launch_time=now_iso,
         last_ignite_log=str(ignite_log),
         last_vm_gate_probe=vm_probe,
+        last_ignite_target_root=str(target_root),
+        last_ignite_target_reason=target_reason,
         last_run_outcome="ignited_pending_verification",
         last_ignite_session_id=session_id,
     )

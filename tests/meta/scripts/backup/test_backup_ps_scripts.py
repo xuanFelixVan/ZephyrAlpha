@@ -95,3 +95,19 @@ def test_backup_ps1_mode_validateset() -> None:
     out = proc.stdout
     for expected in ("all", "code", "ch"):
         assert expected in out, f"backup.ps1 -Mode ValidateSet 缺少 '{expected}': {out}\n{proc.stderr}"
+
+
+def test_dumps_rotation_leg_logs_the_state_value_it_read() -> None:
+    """⑫（2026-10-11 统筹批复三）：轮转腿必须把"读到的状态位值"写进日志。
+
+    病形：轮转判据读的是 state 文件里**上一轮**写的 last_ch_backup_status（本轮的值要到
+    Stage 4 才落盘），而旧实现只打一句 "CH backup not ok"——事后无法区分"旧值非 ok"与
+    "读失败被 catch 兜成 false"。本测钉三件事：①读值有默认占位（catch 支也留得下痕）；
+    ②两条出口消息都内插该值；③判据本身一字未动（仍 -eq "ok"）。
+    """
+    text = (BACKUP_DIR / "backup.ps1").read_text(encoding="utf-8")
+    assert '$dumpsStateRead = "<unreadable>"' in text, "缺读值占位：catch 支会无痕"
+    assert "$dumpsStateRead = [string]$sJson.last_ch_backup_status" in text, "没把读到的状态位取出来"
+    assert '$dumpsStateOk = ($dumpsStateRead -eq "ok")' in text, '判据被改动（应仍比较 "ok"）'
+    assert "state last_ch_backup_status={0}" in text or "state last_ch_backup_status={1}" in text, "两条出口未内插读值"
+    assert 'Write-Warn "DB dumps rotation skipped (CH backup not ok' not in text, "仍留着不可归因的旧 WARN"

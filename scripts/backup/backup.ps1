@@ -928,9 +928,15 @@ if ($Mode -eq "ch") {
         }
         $rotatedDumps = @()
         $dumpsStateOk = $false
+        # Observability (ruling 12, 2026-10-11): this gate reads the state file written by
+        # Stage 4 of a PREVIOUS run, so a bare "not ok" WARN cannot be attributed afterwards
+        # between "stale value" and "read failed". Log the exact value we read; judgement,
+        # thresholds and the rotation itself are unchanged.
+        $dumpsStateRead = "<unreadable>"
         try {
             $sJson = Get-Content $StateFile -Raw -Encoding UTF8 | ConvertFrom-Json
-            $dumpsStateOk = ([string]$sJson.last_ch_backup_status -eq "ok")
+            $dumpsStateRead = [string]$sJson.last_ch_backup_status
+            $dumpsStateOk = ($dumpsStateRead -eq "ok")
         } catch { $dumpsStateOk = $false }
         if ($dumpsStateOk) {
             # (B5, 2026-09-24): retention is configurable (ruling #380-7/#381) --
@@ -942,9 +948,9 @@ if ($Mode -eq "ch") {
                 Remove-Item -LiteralPath $d.FullName -Recurse -Force -ErrorAction SilentlyContinue
                 if (-not (Test-Path -LiteralPath $d.FullName)) { $rotatedDumps += $d.Name }
             }
-            if ($rotatedDumps.Count -gt 0) { Write-OK ("DB dumps rotation: removed {0} old snapshot(s)" -f $rotatedDumps.Count) }
+            if ($rotatedDumps.Count -gt 0) { Write-OK ("DB dumps rotation: removed {0} old snapshot(s) [state last_ch_backup_status={1}]" -f $rotatedDumps.Count, $dumpsStateRead) }
         } else {
-            Write-Warn "DB dumps rotation skipped (CH backup not ok -- oldest snapshot kept as insurance)"
+            Write-Warn ("DB dumps rotation skipped (state last_ch_backup_status={0} -- oldest snapshot kept as insurance)" -f $dumpsStateRead)
         }
     }
     $vaultOk = ($rcCode -lt 8) -and ($linkFail -eq 0)

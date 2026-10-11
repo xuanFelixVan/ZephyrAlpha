@@ -179,6 +179,9 @@ class TestLockPrecheckSkipsWithoutSubprocess:
             patch.object(reconciler_module, "PROJECT_ROOT", tmp_path),
             patch.object(reconciler_module, "get_state_file", return_value=state_file),
             patch.object(reconciler_module, "_is_pid_alive", lambda pid: True),
+            # 批复二新增接缝：点火执行体指向。本例考"持锁者存活→零子进程"，把指向钉成自身根，
+            # 使 subprocess.run 的调用计数只反映点火支路（不弱化任何断言）。
+            patch.object(reconciler_module, "primary_checkout_root", lambda *a, **k: (tmp_path, "test_pinned")),
             patch.object(reconciler_module.subprocess, "run", _fake_run),
         ):
             result = reconciler_module.reconcile([str(tmp_path / "src" / "x.py")], "sess-a")
@@ -210,6 +213,8 @@ class TestLockPrecheckSkipsWithoutSubprocess:
             patch.object(reconciler_module, "_is_pid_alive", lambda pid: False),
             # 裁定②新增前置：VM 在跑才允许点火；本例考的是"锁主已死→走点火"，故把 VM 面钉成放行
             patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: ("OK", True)),
+            # 批复二新增接缝：点火执行体指向，钉成自身根使调用计数只反映点火支路
+            patch.object(reconciler_module, "primary_checkout_root", lambda *a, **k: (tmp_path, "test_pinned")),
             patch.object(reconciler_module.subprocess, "run", _fake_run),
         ):
             reconciler_module.reconcile([str(tmp_path / "src" / "x.py")], "sess-b")
@@ -226,6 +231,7 @@ class TestLockPrecheckSkipsWithoutSubprocess:
             patch.object(reconciler_module, "PROJECT_ROOT", tmp_path),
             patch.object(reconciler_module, "get_state_file", return_value=state_file),
             patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: ("OK", True)),
+            patch.object(reconciler_module, "primary_checkout_root", lambda *a, **k: (tmp_path, "test_pinned")),
             patch.object(
                 reconciler_module.subprocess,
                 "run",
@@ -265,6 +271,7 @@ class TestDetachedIgnition:
             patch.object(reconciler_module, "get_state_file", return_value=state_file),
             patch.object(reconciler_module, "_is_pid_alive", lambda pid: False),
             patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: ("OK", True)),
+            patch.object(reconciler_module, "primary_checkout_root", lambda *a, **k: (tmp_path, "test_pinned")),
             patch.object(
                 reconciler_module.subprocess,
                 "run",
@@ -700,6 +707,7 @@ class TestSingleCheckoutPoint:
             patch.object(reconciler_module, "get_state_file", return_value=sf),
             patch.object(reconciler_module, "_is_pid_alive", lambda pid: alive),
             patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: vm),
+            patch.object(reconciler_module, "primary_checkout_root", lambda *a, **k: (root, "test_pinned")),
             patch.object(
                 reconciler_module.subprocess,
                 "run",
@@ -757,6 +765,7 @@ class TestVmOffYield:
             patch.object(reconciler_module, "get_state_file", return_value=sf),
             patch.object(reconciler_module, "_is_pid_alive", lambda pid: False),
             patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: vm),
+            patch.object(reconciler_module, "primary_checkout_root", lambda *a, **k: (main, "test_pinned")),
             patch.object(
                 reconciler_module.subprocess,
                 "run",
@@ -821,3 +830,116 @@ class TestVmOffYield:
             assert (
                 reconciler_module.ch_guest_vm_running(config={"ch_backup": {"vm_name": "zephyr-ch"}})[0] == "NO_OUTPUT"
             )
+
+
+# ── 统筹批复二（2026-10-11 令5 续令）：点火执行体必须指向主检出点 ──────────────
+class TestPrimaryIgnitionTarget:
+    """裁定①的闸字面不动，改的是"执行体指向"。
+
+    病形实测：reconcile() 用 PROJECT_ROOT 解析 backup.ps1，而 post-commit 通道跑在序列化
+    车道里 ⇒ 10-11 全天 7 次真发射 100% 来自影子根、主区零发。批复给的正解＝经 git
+    common-dir 把执行体解析回主检出点；解析不成退回自身根，退回后若为影子根照旧拒
+    （fail-closed）。这四支钉的是"指向"与"闸的入参"两件事，不新增豁免、不加白名单。
+    """
+
+    def _mk_root(self, base: Path, name: str, *, linked: bool = False) -> Path:
+        root = base / name
+        (root / "scripts" / "backup").mkdir(parents=True)
+        (root / "scripts" / "backup" / "backup.ps1").write_text("# fake", encoding="utf-8")
+        if linked:
+            (root / ".git").write_text("gitdir: /x/.git/worktrees/x\n", encoding="utf-8")
+        else:
+            (root / ".git").mkdir()
+        return root
+
+    def test_common_dir_resolves_to_main_root(self, reconciler_module, tmp_path):
+        main = self._mk_root(tmp_path, "repo")
+        lane = self._mk_root(tmp_path / "repo", "lane", linked=True)
+        calls: list = []
+
+        def fake_run(*a, **k):
+            calls.append((a, k))
+            return SimpleNamespace(returncode=0, stdout=str(main / ".git") + "\n", stderr="")
+
+        with patch.object(reconciler_module.subprocess, "run", fake_run):
+            root, why = reconciler_module.primary_checkout_root(lane)
+        assert (root, why) == (main.resolve(), "git_common_dir")
+        joined = " ".join(str(x) for x in calls[0][0][0])
+        assert "git-common-dir" in joined and str(lane) in joined
+
+    def test_probe_timeout_falls_back_to_self_root(self, reconciler_module, tmp_path):
+        lane = self._mk_root(tmp_path, "lane2", linked=True)
+        with patch.object(
+            reconciler_module.subprocess,
+            "run",
+            lambda *a, **k: (_ for _ in ()).throw(reconciler_module.subprocess.TimeoutExpired("git", 20)),
+        ):
+            root, why = reconciler_module.primary_checkout_root(lane)
+        assert (root, why) == (lane.resolve(), "GIT_PROBE_FAIL")
+
+    def test_unverified_primary_script_falls_back(self, reconciler_module, tmp_path):
+        """common-dir 指回一个没有 backup.ps1 的根 ⇒ 不认作主检出点，退回自身根。"""
+        here = self._mk_root(tmp_path, "here")
+        empty = tmp_path / "other"
+        (empty / ".git").mkdir(parents=True)
+        with patch.object(
+            reconciler_module.subprocess,
+            "run",
+            lambda *a, **k: SimpleNamespace(returncode=0, stdout=str(empty / ".git") + "\n", stderr=""),
+        ):
+            root, why = reconciler_module.primary_checkout_root(here)
+        assert (root, why) == (here.resolve(), "PRIMARY_SCRIPT_MISSING")
+
+    def test_reconcile_ignites_main_script_while_running_in_lane(self, reconciler_module, tmp_path):
+        """端到端：进程在车道里跑，执行体却必须点主区那份脚本，且①因目标＝主区而放行。"""
+        main = self._mk_root(tmp_path, "mainroot")
+        lane = self._mk_root(tmp_path / "mainroot", "lane", linked=True)
+        sf = tmp_path / "state.json"
+        captured: list = []
+        with (
+            patch.object(reconciler_module, "PROJECT_ROOT", lane),
+            patch.object(reconciler_module, "get_state_file", return_value=sf),
+            patch.object(reconciler_module, "_is_pid_alive", lambda pid: False),
+            patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: ("OK", True)),
+            patch.object(reconciler_module, "primary_checkout_root", lambda *a, **k: (main, "git_common_dir")),
+            patch.object(
+                reconciler_module.subprocess,
+                "run",
+                lambda *a, **k: captured.append((a, k)) or SimpleNamespace(returncode=0, stdout="", stderr=""),
+            ),
+        ):
+            result = reconciler_module.reconcile([str(lane / "src" / "x.py")], "sess-target")
+        assert len(captured) == 1, "目标指向主区 ⇒ 事件腿必须活得下来"
+        joined, kwargs = _launch_args(captured[0])
+        assert str(main / "scripts" / "backup" / "backup.ps1") in joined
+        assert str(lane / "scripts" / "backup" / "backup.ps1") not in joined
+        assert kwargs.get("cwd") == str(main)
+        written = json.loads(sf.read_text(encoding="utf-8"))
+        assert written["last_run_outcome"] == "ignited_pending_verification"
+        assert written["last_ignite_target_root"] == str(main)
+        assert written["last_ignite_target_reason"] == "git_common_dir"
+
+    def test_refuses_when_resolved_target_is_itself_a_shadow_root(self, reconciler_module, tmp_path):
+        """fail-closed：解析结果本身是影子根 ⇒ ①照旧拒，且留痕记的是**目标根**而非进程根。"""
+        main = self._mk_root(tmp_path, "mainroot2")
+        bad = self._mk_root(tmp_path, "badlane", linked=True)
+        sf = tmp_path / "state.json"
+        captured: list = []
+        with (
+            patch.object(reconciler_module, "PROJECT_ROOT", main),
+            patch.object(reconciler_module, "get_state_file", return_value=sf),
+            patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: ("OK", True)),
+            patch.object(reconciler_module, "primary_checkout_root", lambda *a, **k: (bad, "test_pinned")),
+            patch.object(
+                reconciler_module.subprocess,
+                "run",
+                lambda *a, **k: captured.append((a, k)) or SimpleNamespace(returncode=0, stdout="", stderr=""),
+            ),
+        ):
+            result = reconciler_module.reconcile([str(main / "src" / "x.py")], "sess-refuse")
+        assert captured == [], "目标是影子根时严禁点火"
+        assert _field(result, "action") == "warn"
+        written = json.loads(sf.read_text(encoding="utf-8"))
+        assert written["last_run_outcome"] == "shadow_ignite_refused"
+        assert written["last_shadow_refuse_root"] == str(bad)
+        assert "linked_worktree_dotgit_file" in written["last_shadow_refuse_reason"]
