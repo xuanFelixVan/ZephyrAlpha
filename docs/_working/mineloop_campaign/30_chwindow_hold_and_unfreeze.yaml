@@ -1,0 +1,104 @@
+---
+ttl: task_bound
+title: 矿考循环班·等窗期账（复联三态扣发证据／WO-A1 只读探针／L2-09 立场分定义面解冻）
+created: '2026-10-11T16:05:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+ch_relink_three_state_hold:
+  ruling_ref: Owner 合并批令①（复联判据＝压缩 journal 出 Start-VM＋probe=1 行，叠加本班三件定窗）②③
+  measured:
+    vm: Get-VM 实测 zephyr-ch State=Off Uptime=00:00:00（虚机不开＝CH 物理不可达，非慢查询）
+    probe: 本班两次最小探针仅 SELECT 1（15:51 与 15:52）均 WinError 10060 连接超时；未跑任何取数查询
+    journal: >-
+      logs/backup_runlog_20261011_150246 / _151109 / _155211 三支全为同一形态：
+      WARN Another backup is running (holder PID 27300 alive, lock age 1.2h→1.4h→2.1h). Exiting. + LOCK_HELD skip_record；
+      即排程连跑三次都被同一持锁者挡在门外，且 **journal 里至今没有 Start-VM 行**（Start-VM 是压缩执行器自己的复电出口，
+      在 scripts/backup/backup_ch_vm.ps1:640/700/709/742）
+    lock_face: .runtime/backup.lock 内容 PID:27300 START:2026-10-11T13:48:27，mtime 停在 13:48（两小时未刷新）
+    holder_activity: >-
+      PID 27300（powershell，执行 .runtime/commit_queue/worktree/scripts/backup/backup.ps1）CPU 累计 8.83 秒／墙钟 2.1 小时、
+      WorkingSet 135.6MB、Responding=True、子进程只有 conhost 一个，无 robocopy/vboxmanage/clickhouse 等在跑
+  verdict: >-
+    三批复扣发不发——硬发的后果我算过：每格死在 _c4_engine.load_px 的 RuntimeError「kline_daily_hfq 数据缺失」，
+    864 格里 0 格出读数，但 negatives.csv 与探索分册会被伪阴性灌满＝污染矿面（在册红线"断供面禁硬考"）。
+    按 Owner 裁②：27300 我不碰、不清锁不开机——Optimize 正在全速读写 G 盘时，"I/O 被饿"与"挂死"不可分；
+    Start-VM 后给 30 分钟 I/O 缓释窗，仍三面冻结才按五因子闸处置（归追凶三班执行）
+  shadow_root_note: >-
+    持锁脚本在 serializer worktree 影子根，但**与主区那份 sha1 逐字节相同（e1cecf852b1c）**⇒ 不是"旧码在跑"；
+    真正没证据的是它此刻在做什么：它 13:48 起跑，早于今天 T1 的 journal/transcript 落地（14:54 aafb398927），
+    所以这班一行 journal 都没有＝"早退/挂死班无法审计"的在册原景，只是这次落在 T1 之前起跑的那一班身上
+
+wo_a1_readonly_probe:
+  question: 13 支双臂/消融卡的缺口到底在判官侧还是绑定侧（决定适配器写在哪、要碰谁的文件）
+  anchors_verified_on_dev: >-
+    判官侧（scripts/backtest/fexam/calibration_exam.py，现值行号逐条 grep 命中）：run_card:632 形参已含 signal=None/signal_b=None/target=None；
+    _comparison_metrics:309 两臂配对面齐；_arm_nav_metrics:217 且 :236 原文 `ret = df["e"].shift(0) * df["r"].shift(-1)  # t 敞口吃 t+1 收益`。
+    绑定侧（scripts/backtest/fexam/card_binding.py）：run_binding_book:591 返回 tuple[pd.Series, dict]、run_one:624，
+    **全文件 grep signal_b＝零命中**
+  conclusion: >-
+    缺口 100% 在绑定层：判官早已能吃双臂（signal_b 通道在位、缺臂即 fail-closed 报"缺双臂接线＝不出分"），
+    而绑定层整链只产一条 Series ⇒ WO-A1 的适配器落点＝card_binding 加逐臂参数注入＋signal_b 通道，
+    不动判官、不动卡面阈值；同时须按 15_ 册 WO-A1.scope_must 第 34 行原文"任何阈值/门柱/窗一律从卡内读（prose_quote 双校验同形复用）"
+  semantics_hazard_registered: >-
+    _arm_nav_metrics 把臂序列当**敞口**（:236 的 e×r.shift(-1)），而部分双臂卡面写的是"池组合收益回放"——
+    若适配器直接把组合收益喂进 e 位，会得到"收益×次日收益"的量纲错，**且不会报错只会出假分**；
+    适配器实现须显式选择：要么传敞口序列，要么给净值面另开口（15_ 册已记 feasible_now 3 支＝同底座敞口变换那类）
+  file_ownership_face: >-
+    主区 git status 对 scripts/backtest/fexam/{calibration_exam.py,card_binding.py} 呈 MM＝池内旧快照形态又现（与 §14/§15 已登同型）；
+    近 6 小时无任何车道写动这两件 ⇒ 可编辑，但动手前仍须 git checkout dev -- <件> 取正基线＋袋前数删除行；
+    本班本轮**只探不改**（Owner 批的是只读归属探针），改动待点名
+  what_the_adapter_needs_after_window: 逐臂 simulate 调用面 N 次产日频敞口/净值序列＝CH 面；单元测可用合成面零 CH 先建
+
+l2_09_stance_score_unfreeze:
+  ruling: Owner 合并裁定令⑥裁 B＝立场分（弃 A 序数口径）
+  landed_face: docs/_working/mineloop_campaign/sector_lane_spec.yaml 的 op=rating_upgrade_cluster_share 的 args 内
+    rating_score_map 由 "__TBD_BY_OWNER__" 改为 "import:zephyr.nlp.research_rating.RATING_SCORE"，并新增 rating_caliber_ruling 节
+  anti_second_source: >-
+    口径以**符号引用**入规格，不在本册或卡面复制数字：B 案真源＝src/zephyr/nlp/research_rating.py:38-48
+    （注释自称"唯一真源；未知评级不在表内 → score=None 不猜值"）；A 案真源＝
+    src/zephyr/data/implementations/consensus_daily_compute.py:70-78（华泰二口径 买入7/增持5/中性3/减持2/卖出1，随弃案注销）
+  coverage_measured_recheck: >-
+    对照本班 00:16 已入册实测取值集合 {买入,增持,持有,中性,减持,卖出,回避}＋空串（§RATING_DIST 合计 146,940 行）：
+    B 案七词**全覆盖**（1.0/0.6/0.2/0.0/-0.6/-1.0/-1.0），空串与未知词不在表内＝None 剔除，
+    与该 op 既有步骤"剔 NaN（空评级/未知词）"同一条规则，无需另设
+  residual_tie: >-
+    A 案并列对（中性=持有=3、减持=回避=2，全表 0.8%/0.0007%）随弃案注销；
+    B 案自身还剩一对＝**卖出=回避=-1.0**（同分则该类转移不计数）。按在册实测量级更小：全窗 卖出 30 行／回避 2 行，
+    IS 窗 卖出 5 行／回避 2 行 ⇒ 如实登记为已知边界，不上调为缺陷、也不偷偷并词
+  still_blocked: 定义面已解；op 代码实现与开考出分仍是 CH 面（本窗不发），复联后列第一梯队
+  note_on_dual_caliber_book: 09_caliber_deviation_note.yaml 此后仅作历史证据，不再作判据面输入（Owner 裁定原文）
+
+reverse_audit_lane_next_entries: >-
+  20_/21_/22_ 三本的续写待办（全属 CH 面或需读数，记此不预判）：①晋级率头号卡的 walk-forward 条款触发面＝
+  "每 20 个新交易日重评 OOS、连续两窗同号才算确认"，须数据落地事件驱动（禁 cron）；
+  ②T7 接线令的 20 行早期不可复跑行（在册判定＝只接线不出分）；
+  ③C 类负结果库的登记面（12 支）——这三项都要等 CH 复联，纸面我已把口径与判据位置钉死在 20_/22_，不再复述
+
+scan_batches_ready_state:
+  probe_book_landed: config/position_recipe_grid_schema_v3_breadth_probe.yaml（commit 497955b139；n_raw=508,032 只在探针册里）
+  freeze_faces_generated: >-
+    .runtime/tmp/st-mineloop-20261010/freeze_breadth_control36.json（36 格，共享册旧两档，零改件即可发＝裁定②）
+    与 freeze_breadth_probe72.json（72 格，探针册四档＝裁定①）；两份均为"其余维全钉"的单因子广度面，
+    与 29_ 里 P4/P5b 实测格数逐位相符
+  commands: 见 29_ scan_readiness_post_window 三行原命令（step0 8 格 smoke → batch_2 36 格 → batch_1 72 格），
+    全程 --engine cpu --eval-backend cpu＋--exploration-ledger 分册，E0 闸自然放行不硬绕
+
+compliance:
+  ch_queries_this_round: 2
+  ch_query_scope: 仅 SELECT 1 存活探针两次（判据需要，均超时未触库）；零业务取数、零表扫描
+  batches_launched: 0
+  engine_files_modified: 0
+  cards_modified: 0
+  spec_files_modified: 1
+  files_created: 1
+
+review_commands:
+  vm_state: powershell -NoProfile -Command "Get-VM | Select-Object Name,State,Uptime"
+  journal_shape: tail -4 logs/backup_runlog_20261011_155211.log
+  lock_face: cat .runtime/backup.lock
+  binding_layer_no_signal_b: git grep -c "signal_b" -- scripts/backtest/fexam/card_binding.py（应为空/0）
+  judge_has_signal_b: git show HEAD:scripts/backtest/fexam/calibration_exam.py | sed -n '632,642p'
+  stance_ruling_face: git grep -n "rating_caliber_ruling" -- docs/_working/mineloop_campaign/sector_lane_spec.yaml
+  b_source: git show HEAD:src/zephyr/nlp/research_rating.py | sed -n '36,48p'

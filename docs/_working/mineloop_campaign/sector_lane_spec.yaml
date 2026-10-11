@@ -435,5 +435,24 @@ bind_args:
       end: "2025-09-09"
       min_denominator: 3
       ratio_window: 5               # buckets.on「行业级 5 日评级上调占比」
-      rating_score_map: "__TBD_BY_OWNER__"   # 禁本班拍序；两个在册候选见 preflight_required
+      rating_score_map: "import:zephyr.nlp.research_rating.RATING_SCORE"   # Owner 合并裁定令⑥（2026-10-11）裁 B＝立场分
+      rating_caliber_ruling:
+        ruling: >-
+          两口径择一已拍：取 B 案 RATING_SCORE（src/zephyr/nlp/research_rating.py:38-48，注释自称"唯一真源；
+          未知评级不在表内 → score=None 不猜值"），弃 A 案 RATING_SCORE_MAP
+          （src/zephyr/data/implementations/consensus_daily_compute.py:68-76，华泰二口径 买入7/增持5/中性3/减持2/卖出1）。
+        no_second_source: >-
+          绑定 op 必须 import 该符号取数，禁在本册或卡面复制一份数字（复制＝造第二真源；
+          两处 map 一旦漂移，本卡与共识日线就会各按各的序出分）
+        coverage_check_measured: >-
+          对照本班 00:16 实测取值集合 {买入,增持,持有,中性,减持,卖出,回避}＋空串（§RATING_DIST，合计 146,940 行）：
+          B 案七词全覆盖（买入 1.0／增持 0.6／持有 0.2／中性 0.0／减持 -0.6／卖出 -1.0／回避 -1.0），空串与未知词不在表内＝None 剔除，
+          与本 op 步骤"剔 NaN（空评级/未知词）"同一条规则，无需另设
+        residual_tie_registered: >-
+          A 案的并列对（中性=持有=3、减持=回避=2，全表占比 0.8%/0.0007%）随弃案一并注销；
+          B 案自身还剩一对＝卖出=回避=-1.0（同分→该转移不计数）。按实测面量级更小
+          （全窗 卖出 30 行／回避 2 行；IS 窗 卖出 5 行／回避 2 行），如实登记不上调为缺陷
+        still_open_ch_face: >-
+          本条只解"序"的一刀（Owner 门位已补）；op 实现与出分仍是 CH 面——压缩窗未收口前不发，
+          复联判据＝压缩 journal 出 Start-VM＋probe=1 行，再叠加本班三件定窗（VM/任务现值＋进程表＋产物 mtime）
       n_buckets: 5
