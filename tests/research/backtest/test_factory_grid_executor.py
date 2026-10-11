@@ -730,3 +730,70 @@ def test_gpu_wave_wrapper_forwards_every_parameter():
     sig = {a.arg for a in fn.args.args} | {a.arg for a in fn.args.kwonlyargs}
     uncovered = sig - fwd_keys - {"engine", "engine_degrade", "_gpu_rerun"}
     assert not uncovered, f"这些参数没进 _fwd，将来必然重演静默丢参：{sorted(uncovered)}"
+
+
+class TestNeffLedgerGate:
+    """WO-A5（2026-10-11 20:5x）：探索分册跑批不得覆盖考试侧 N 账本披露位。
+
+    病根两处（都靠实测才看见，纸面读码两次都读成"没问题"）：
+    ①`--exploration-ledger` 的既有纪律只挡 summary 收尾那行探索记录（executor 的
+       `if not smoke and _EXPLORATION_LEDGER:` 在 run_batch 收尾段），挡不住
+       finalize 里的 `TrialLedger().set_effective_trials(...)`——它只看了 smoke。
+       于是 36/72 窄批（N_eff=2）会去覆盖考试侧的最新批次 N_eff 披露位。
+    ②它今天没造成事故，是因为 N 账本的 CAS 写被 registry_mass_edit_guard 拒了
+       （safe_write.jsonl 实测：本批三次跑各 10 条 event=refused reason=registry_mass_edit_guard，
+       deleted_lines=4 > threshold=2）——即"分账守住"是撞上的，不是设计出来的。
+    本类把判据抽成 _should_write_neff_slot 并把调用点单点化，四张断言分别钉住
+    smoke/探索/正常批三态与"调用点必须走闸"。
+    """
+
+    @staticmethod
+    def _stub_ledger(monkeypatch, calls):
+        import zephyr.backtest.core.n_trial_ledger as ntl
+
+        class _Stub:
+            def set_effective_trials(self, n_eff, note=""):
+                calls.append((n_eff, note))
+                return {"n_eff": n_eff}
+
+        monkeypatch.setattr(ntl, "TrialLedger", _Stub)
+
+    def test_decision_table(self):
+        assert mod._should_write_neff_slot(smoke=False, exploration_ledger=None) is True
+        assert mod._should_write_neff_slot(smoke=True, exploration_ledger=None) is False
+        assert mod._should_write_neff_slot(smoke=False, exploration_ledger="x.jsonl") is False
+        assert mod._should_write_neff_slot(smoke=True, exploration_ledger="x.jsonl") is False
+
+    def test_exam_batch_writes_slot(self, monkeypatch):
+        calls = []
+        self._stub_ledger(monkeypatch, calls)
+        monkeypatch.setattr(mod, "_EXPLORATION_LEDGER", None)
+        assert mod._write_neff_slot(16, "batch:TEST", smoke=False) is True
+        assert calls == [(16, "batch:TEST")]
+
+    def test_smoke_batch_skips_slot(self, monkeypatch):
+        calls = []
+        self._stub_ledger(monkeypatch, calls)
+        monkeypatch.setattr(mod, "_EXPLORATION_LEDGER", None)
+        assert mod._write_neff_slot(16, "batch:TEST", smoke=True) is False
+        assert calls == []
+
+    def test_exploration_ledger_batch_skips_slot(self, monkeypatch):
+        calls = []
+        self._stub_ledger(monkeypatch, calls)
+        monkeypatch.setattr(mod, "_EXPLORATION_LEDGER", ".runtime/nightmine_exploration/x.jsonl")
+        assert mod._write_neff_slot(2, "batch:TEST", smoke=False) is False
+        assert calls == [], "探索分册批覆盖了考试侧 N_eff 披露位＝分账失效"
+
+    def test_finalize_calls_only_the_gated_helper(self):
+        """结构守卫：run_batch 内不得再出现裸 set_effective_trials（必须走 _write_neff_slot）。"""
+        import ast
+        import pathlib
+
+        src = pathlib.Path(mod.__file__).read_text(encoding="utf-8")
+        tree = ast.parse(src)
+        fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name == "run_batch")
+        bare = [n for n in ast.walk(fn) if isinstance(n, ast.Attribute) and n.attr == "set_effective_trials"]
+        assert bare == [], "调用点绕过闸门直写 N 账本"
+        gated = [n for n in ast.walk(fn) if isinstance(n, ast.Call) and getattr(n.func, "id", "") == "_write_neff_slot"]
+        assert len(gated) == 1, f"finalize 段应恰好一处走闸调用，实得 {len(gated)}"
