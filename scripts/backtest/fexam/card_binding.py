@@ -834,7 +834,10 @@ def _arm_pair_builder():
     """取真源件的装配函数：两条导入路径都试（包内/仓根），皆败即 raise——禁静默降级成单臂。"""
     import importlib
 
-    for mod in ("fexam.arm_protocol_binding", "scripts.backtest.fexam.arm_protocol_binding"):
+    # 次序有讲究：先仓根包名（测试与仓内调用方走这条），失败再退 fexam.* （跑批侧 sys.path 只挂
+    # scripts/backtest 时走这条）。反序会让同一模块被两个名字各导一次，抛出的 ArmFaceMismatch
+    # 与调用方 pytest.raises 里的类不是同一个对象＝真拦住了、测试却认不出（17:4x 在落地面实测到）
+    for mod in ("scripts.backtest.fexam.arm_protocol_binding", "fexam.arm_protocol_binding"):
         try:
             return importlib.import_module(mod).build_arm_pair
         except ImportError:
