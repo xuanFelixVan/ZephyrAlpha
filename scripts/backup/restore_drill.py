@@ -10,7 +10,7 @@
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 恢复/核数失败写 failed 报告后退出 1；临时库确保清理（finally 双通道 DROP + 存在性复核）；判据不满足写 pass=False + status + failed_criteria 后退出 1
+# [ERROR_CONTRACT] 恢复/核数失败写 failed 报告后退出 1；临时库确保清理（finally 双通道 DROP + 存在性复核）；判据不满足写 pass=False + status + failed_criteria 后退出 1；T1b（2026-10-11 总统统筹追加件）失败支骨架即带 pass=False+criteria={}——两键原仅 judge_drill 在四条件全评后产出，消费侧按 report['pass'] 直读在失败路径 KeyError（死信三期试点实测）；空 criteria＝一条判据都没评估成，绝不冒领 ok，退出码与状态语义零改动
 # [TESTS] tests/backup/test_restore_drill.py
 # [A_module] module_id=MOD-INF-043 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -623,6 +623,16 @@ def run_drill(
         "dump": str(dump) if dump else None,
         "live_db": live_db,
         "status": "failed",
+        # 报告契约（T1b，2026-10-11 总统统筹追加件；与 T1 静默早退同族同批）：
+        # pass/criteria 两键只由 judge_drill() 在四条件全评后产出，于是所有失败支
+        # （dump 缺位→提前 return、try 内异常→finally 后 return）交出的报告是
+        # "status=failed 但契约缺项"，消费侧按 report['pass'] 直读必 KeyError（死信
+        # 三期试点当场测出）。缺键不是"未判"而是"判不了=不通过"，故骨架起手就带
+        # pass=False 与 criteria={}：空字典＝一条判据都没评估成，绝不冒领 ok。
+        # 本改动只补键，不改任何判据、阈值、状态语义与退出码（main 的
+        # `0 if report.get("pass") else 1` 由 None→False，同 falsy 同 exit 1）。
+        "pass": False,
+        "criteria": {},
     }
     if dump is None:
         report["error"] = "未找到 depgraph.dump（检查 G:/backup/db_dumps 或 --dump）"

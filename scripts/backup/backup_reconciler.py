@@ -5,7 +5,7 @@
 # [CONSUMERS] GitCommitGateway._reconciliation_registry.register
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:双条件触发(重要文件+8h间隔) | INV-10:状态持久化backup_state.json | INV-11:ok状态写入前须过system.backup_log当窗BACKUP_CREATED交叉核验,假绿降级ch_log_missing并连带摘除last_ch_backup_status的ok,cadence-skip单独记账;P-7改点火-托管分离后此核验延后由"下一次事件触发"的settle_previous_ignition(读上一轮脱离日志锚定State saved:主仓state)或日检执行,点火轮本身绝不断言ok | INV-12:gate裁决写入锚定主仓state真源(脱离日志State saved:通道),lock-skip短退出不推进计时不降级真实状态,skipped分因(cadence合法/其余degraded);P-7新增点火前主动锁自查(读.runtime/backup.lock PID:+_is_pid_alive),活则直接记lock_skipped不起子进程 | INV-13(P-7非托管免疫):post-commit通道只点火不托管,backup.ps1经瞬时powershell(Start-Process -WindowStyle Hidden+落盘重定向)脱离启动,使备份进程在收割器扫描时不是worker的活的后代(psutil.children(recursive)沿活PPID链)从而免疫级联收割,不再同步subprocess.run托管长跑
+# [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:双条件触发(重要文件+8h间隔) | INV-10:状态持久化backup_state.json | INV-11:ok状态写入前须过system.backup_log当窗BACKUP_CREATED交叉核验,假绿降级ch_log_missing并连带摘除last_ch_backup_status的ok,cadence-skip单独记账;P-7改点火-托管分离后此核验延后由"下一次事件触发"的settle_previous_ignition(读上一轮脱离日志锚定State saved:主仓state)或日检执行,点火轮本身绝不断言ok | INV-12:gate裁决写入锚定主仓state真源(脱离日志State saved:通道),lock-skip短退出不推进计时不降级真实状态,skipped分因(cadence合法/其余degraded);P-7新增点火前主动锁自查(读.runtime/backup.lock PID:+_is_pid_alive),活则直接记lock_skipped不起子进程 | INV-13(P-7非托管免疫):post-commit通道只点火不托管,backup.ps1经瞬时powershell(Start-Process -WindowStyle Hidden+落盘重定向)脱离启动,使备份进程在收割器扫描时不是worker的活的后代(psutil.children(recursive)沿活PPID链)从而免疫级联收割,不再同步subprocess.run托管长跑;T8早退显化(2026-10-11 总统统筹追加令):settle_previous_ignition 的"无 STAGE 4"支按 ps1 自身锁语义分"在跑/已夭折"——锁消失或锁在而持有者PID已死⇒记 ignite_outcome=early_exit(+_time/_evidence/_ignite_log 四键,同一 ignite_log 幂等一次防热册写风暴),持有者仍活⇒原样 pending;返回值/pending 指针/点火与重试路径零改动,存活与锁解析复用本件既有单口 _is_pid_alive+read_backup_lock_holder_pid,零新增阈值
 # [MODIFY-GUARD] gate_id="BACKUP-RECONCILER"
 # [STABILITY] evolving
 # [SAFETY] L
@@ -662,7 +662,9 @@ def settle_previous_ignition(session_id: str) -> Any:
         saved 锚 → 落本地 state 仅作观测）。
       - 含 "State saved:"（到 STAGE 4）→ 走 _adjudicate_completed_run 交叉核验落权威
         裁决（锚定主仓 state）；worktree 情形额外清本地 pending 指针防重复结算。
-      - 无 STAGE 4 痕迹（崩溃/被杀/仍在跑）→ fail-closed：不记 ok，保留 pending 等下轮。
+      - 无 STAGE 4 痕迹 → 分两读（T8，2026-10-11）：锁消失或锁在而持有者 PID 已死
+        ⇒ 该轮不可能再到 STAGE 4，显化 ignite_outcome=early_exit（同一 ignite_log
+        幂等一次）；持有者仍活 ⇒ 原样保持 pending。两种形态都不记 ok。
     以 last_ignite_log 指针是否存在判"有无待结算轮"（点火写、结算后清）。
     """
     try:
@@ -702,8 +704,34 @@ def settle_previous_ignition(session_id: str) -> Any:
         )
 
     if not m:
-        # 未到 STAGE 4：可能在跑或已夭折——fail-closed 不记 ok，保留 pending。
-        logger.debug("settle_previous_ignition: 脱离日志未见 State saved:，保持 pending")
+        # 未到 STAGE 4：可能在跑，也可能已经夭折——以前两者读起来一模一样，只保留
+        # pending，所以"点火了但再也没回来"这种轮次在 state 册里与"还在跑"同形（T8，
+        # 2026-10-11 总统统筹追加令）。ps1 在 finally 里 Release-Lock，因此"锁消失"
+        # 或"锁在而持有者 PID 已死"这两种形态都不可能再走到 STAGE 4：前者已收尾，
+        # 后者是被硬杀留锁。据此把事实显化成 ignite_outcome=early_exit。
+        # 边界：只加记账读。返回值、pending 指针、点火与重试路径零改动；存活判据与
+        # 锁解析复用本件既有单口（_is_pid_alive / read_backup_lock_holder_pid），
+        # 零新增阈值；同一 ignite_log 只显化一次，防每轮事件改写热册。
+        holder = read_backup_lock_holder_pid()
+        if holder is None or not _is_pid_alive(holder):
+            evidence = "lock_absent" if holder is None else f"holder_dead:{holder}"
+            if not (
+                state.get("ignite_outcome") == "early_exit" and state.get("ignite_outcome_ignite_log") == str(log_str)
+            ):
+                update_state_at(
+                    None,
+                    ignite_outcome="early_exit",
+                    ignite_outcome_time=datetime.now(timezone.utc).isoformat(),
+                    ignite_outcome_evidence=evidence,
+                    ignite_outcome_ignite_log=str(log_str),
+                )
+                logger.info(
+                    "settle_previous_ignition: 早退已显化 evidence=%s log=%s",
+                    evidence,
+                    Path(log_str).name,
+                )
+        else:
+            logger.debug("settle_previous_ignition: 脱离日志未见 State saved:，保持 pending")
         return None
 
     result = _adjudicate_completed_run(run_start, session_id, resolved_state, log_text, ReconcileResult)

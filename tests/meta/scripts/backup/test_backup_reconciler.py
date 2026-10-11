@@ -592,3 +592,87 @@ class TestDeferredVerification:
             patch.object(reconciler_module, "get_state_file", return_value=sf),
         ):
             assert reconciler_module.settle_previous_ignition("sess") is None
+
+    # ── T8（2026-10-11 总统统筹追加令）：早退显化——把"仍在跑"与"已夭折"分开记账 ──
+    # 只加记账读：ps1 在 finally 里 Release-Lock，所以"锁没了/锁在而持有者已死"这两
+    # 种形态都不可能再到 STAGE 4；仍在跑则原样 pending。返回值、pending 指针、点火与
+    # 重试路径零改动，复用既有单口 read_backup_lock_holder_pid + _is_pid_alive。
+
+    def _settle_bare(self, reconciler_module, tmp_path, sf):
+        with (
+            patch.object(reconciler_module, "PROJECT_ROOT", tmp_path),
+            patch.object(reconciler_module, "get_state_file", return_value=sf),
+        ):
+            return reconciler_module.settle_previous_ignition("sess-early")
+
+    def _make_lock(self, tmp_path, pid):
+        lock = tmp_path / ".runtime" / "backup.lock"
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.write_text(f"PID:{pid} START:2026-10-11T13:48:27.1671700+08:00", encoding="utf-8")
+        return lock
+
+    def test_early_exit_recorded_when_lock_vanished(self, reconciler_module, tmp_path):
+        """无 STAGE 4 痕迹且锁不存在 ⇒ 该轮已终结：记 ignite_outcome=early_exit。"""
+        sf = self._setup_pending(
+            reconciler_module,
+            tmp_path,
+            log_body="[BACKUP] Stage 3: Code backup\n[BACKUP] Diff source vs snapshot",
+            state={"last_backup_status": "ok"},
+        )
+        result = self._settle_bare(reconciler_module, tmp_path, sf)
+        st = json.loads(sf.read_text(encoding="utf-8"))
+        assert result is None, "只加记账读，不得改返回值"
+        assert st["ignite_outcome"] == "early_exit"
+        assert st["ignite_outcome_evidence"] == "lock_absent"
+        assert st["ignite_outcome_ignite_log"] == str(tmp_path / "ignite.log")
+        assert st["last_ignite_log"] == str(tmp_path / "ignite.log"), "pending 指针须保留"
+        assert st["last_backup_status"] == "ok", "不得推进/降级真实状态"
+
+    def test_early_exit_recorded_when_holder_dead(self, reconciler_module, tmp_path):
+        """锁在但持有者 PID 已死（硬杀留锁）⇒ 同样显化，并把死 pid 写进证据串。"""
+        sf = self._setup_pending(
+            reconciler_module,
+            tmp_path,
+            log_body="[BACKUP] Stage 1: Pre-check",
+            state={"last_backup_status": "ok"},
+        )
+        self._make_lock(tmp_path, 4242)
+        with patch.object(reconciler_module, "_is_pid_alive", return_value=False):
+            result = self._settle_bare(reconciler_module, tmp_path, sf)
+        st = json.loads(sf.read_text(encoding="utf-8"))
+        assert result is None
+        assert st["ignite_outcome"] == "early_exit"
+        assert st["ignite_outcome_evidence"] == "holder_dead:4242"
+
+    def test_alive_holder_keeps_pending_without_early_exit(self, reconciler_module, tmp_path):
+        """反向钉桩：锁的持有者还活着＝这一轮可能在跑，绝不许写 early_exit。
+
+        没有这一支，上面两支恒绿（无论实现把"在跑"判成什么都会记），判别力为伪。
+        """
+        sf = self._setup_pending(
+            reconciler_module,
+            tmp_path,
+            log_body="[BACKUP] Stage 3: Code backup",
+            state={"last_backup_status": "ok"},
+        )
+        self._make_lock(tmp_path, 27300)
+        with patch.object(reconciler_module, "_is_pid_alive", return_value=True):
+            result = self._settle_bare(reconciler_module, tmp_path, sf)
+        st = json.loads(sf.read_text(encoding="utf-8"))
+        assert result is None
+        assert "ignite_outcome" not in st, "活体在跑时不得显化为早退"
+        assert st["last_ignite_log"] == str(tmp_path / "ignite.log")
+
+    def test_early_exit_recorded_once_not_every_event(self, reconciler_module, tmp_path):
+        """幂等：同一 ignite_log 只显化一次，不每次事件改写热册时间戳。"""
+        sf = self._setup_pending(
+            reconciler_module,
+            tmp_path,
+            log_body="[BACKUP] Stage 2: Database dump",
+            state={"last_backup_status": "ok"},
+        )
+        self._settle_bare(reconciler_module, tmp_path, sf)
+        first = json.loads(sf.read_text(encoding="utf-8"))["ignite_outcome_time"]
+        self._settle_bare(reconciler_module, tmp_path, sf)
+        second = json.loads(sf.read_text(encoding="utf-8"))["ignite_outcome_time"]
+        assert first == second, "重复结算不得刷新观测时间（写风暴防线）"
