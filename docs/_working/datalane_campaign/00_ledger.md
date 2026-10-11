@@ -234,6 +234,28 @@ INSERT-SELECT 直落，非独立拉数）→TI 小批→周月级联→情绪 bu
   缺失（同 QMT 断供窗家族，120min 壳为其投影）入日供普查；③vhdx 压缩窗（Owner
   点名制）随 OPTIMIZE 实收呈排。
 
+## 十七、WO-004 修复令执行（2026-10-11 13:4x-17:5x）
+
+- **根因定谳（比夜段结论再深一层）**：hfq 派生路由**从未实现**——internal provider
+  fetch 兜底误入 `_fetch_technical_indicator`（技术指标行串台写入 hfq 表），tasks.yaml
+  注记的 `_fetch_kline_daily_hfq → recalc_hfq 真源管线` 为设计意图未落地（daban_engine_load
+  同款先例：其注释就写着"落到下方默认分支=静默串台"）。夜段"bdpan 锚点截断"结论修正：
+  锚点/外推语义无病，病=根本没走到派生逻辑。
+- **修复落地**：`_fetch_kline_daily_hfq` 显式路由+窗口化派生（recalc_hfq 口径逐条对齐：
+  raw 去重健康五条件、bdpan 主链+miniqmt dr 事件外推双腿、fill 防自叠 anti-join、
+  lineage_version=100、volume=intDiv(v,100)、衍生三列 DEFAULT 0、零行产出防双写）。
+- **红证**：①路由测试（hfq handler 命中且 TI 兜底零命中；摘路由=源码断言红）；②零行
+  防双写+SQL 契约（bdpan/miniqmt 双腿/lineage 100/血统标记/intDiv）；③真火=修复前
+  全零价（已围堵）vs 修复后 5,562/5,564 行 **100% 非零**。24+4 测试全绿。
+- **定点重算 10-08/09**：直落 5,562/5,564 行，lineage=100 全一，样例 000001
+  open=1643.7475/close=1673.5821（raw 11.78×bdpan 因子 ✓）——**T4 缺口正式闭合**。
+- **压缩窗实收补记**：窗毕宿主 D 盘 47→**78GB**（+31GB，94%→90%）；VM default
+  214.1GB。
+- **周任务恢复**：`ZephyrAlpha-CH-OptimizeMerge-Weekly` Disabled→**Ready**（NextRun
+  2026-10-18 03:30；表已收敛，后续运行=廉价增量合并）。
+- **补跑班 2 号**：17:47 发车（fresh state-dir，58 片），预计 ~22:50 收官——收官即做
+  T8 满验收（TI_VALUE_SKIP+写入量+4 键探针）。
+
 ## 九、收尾清单（滚动）
 
 - [ ] 53472 收官确认→T2 探针+冷档→T3/T4 放量
