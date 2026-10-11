@@ -188,11 +188,33 @@ Owner 只需在下面几格里回话；本班一律不自裁：
    （降序 argsort，预演实测 59.2ms/前缀，与 A 形每变体 12.6ms×K 相比即省在此处），
    存进 5 元组缓存的第 5 位 `dev_rest`（现仅装 (combined_dev, rank_dev)，扩为命名 tuple，**禁再开第二个缓存字典**）。
 3. **变体级紧凑算**：新核 `sizing_batch_gpu(xp, order, sorted_vals, aux_panels, variants)`：
-   对每变体只切 `[:, :top_n]`，把 C_sizing 的 vol/mv 查找改为
-   `take_along_axis(aux, order[:, :top_n])`（**同一批列索引**，禁为每变体重扫全面板）；
+   对每变体只切前 `k` 列（**不是 top_n 列，见下方 3′ 更正**），把 C_sizing 的 vol/mv 查找改为
+   `take_along_axis(aux, order[:, :kmax])`（**同一批列索引**，禁为每变体重扫全面板）；
    输出 **紧凑对 `(idx(T,top_n) int32, w(T,top_n) float64)`**（预演：K=50 合计 25.5MiB vs 稠密 1,930MiB）。
    不可移植形态照现行规则置 `host_continue=True` 交回主机（次序 `_sizing→trigger→cap` 一字不变，
    换序即换数——04:0x 那支已修的次序缺陷不得复发）。
+
+   3′. **施工单更正（N-1/N-2 施工班 st-gpux2-20261011 开工前实测，2026-10-11 17:2x）**：
+   上面"只切 `[:, :top_n]`"**照字面写会做出系统性不等价的核**，必须先按本条改。
+   - 病形：factory/CPU 的入选判据是 `rank(ascending=False, method='average') <= top_n`，
+     **并列组横跨第 top_n 名时整组被剔除**（平均档落在组外）；而"降序 argsort 取前 top_n 列"
+     会按 stable 序把该组头几名捞进来 ⇒ **每格系统性多选**，且 NaN 也可能被捞进。
+   - 实测证据（6×9 造并列面板，`.runtime/tmp/st-gpux2-20261011/tie_boundary_semantics_probe.py`）：
+     参照入选数/行 `[3 1 2 3 3 3]` vs 字面写法 `[3 3 3 3 3 3]`，6 行里 **2 行偏离**
+     （行1 值 `[5,4,4,4,4,...]` 参照只选 1 票、字面选 3 票；行2 把 value=1 的并列票也选进）。
+   - 放大方向：偏差随并列密度增长，而 `A1=rank × A2=equal` 恰是并列最密的家族
+     （前班实测该族 tie 放大命中 10/126）⇒ 照字面施工会在级 4 容差上**系统性爆**，
+     且爆形与前班那 13 格"1-ULP 离散放大"**不可分辨**＝把实现缺陷误判成组合等价（正是 §二·补 第 5 条
+     边界自识要防的事）。
+   - **正确写法（已验证与 pandas 逐行全等）**：不要重新推导并列组，直接用**已缓存的降序平均档**
+     （`combine_cache` 第 2 位 `rank_desc`）：
+     `k = ((rank_desc <= top_n) & ~isnan(rank_desc)).sum(axis=1)`，`kmax = k.max()`，
+     取 `order[:, :kmax]` 后以 `arange(kmax)[None,:] < k[:,None]` 掩蔽。
+     因 `k` 由**与 pandas 同一判据**导出，结构上不可能偏离（探针里"修正"列 = `[3 1 2 3 3 3]` 与参照全等）。
+   - 连带要求（写进试件）：级 4 层1 判据必须含一支**造跨边界并列**的双向钉——
+     ①同一判据导出的 k 路线与 `_sizing` 逐位等；②朴素 `[:, :top_n]` 路线**必须偏离**
+     （否则该试件本身失去判别力，同 §一·补 的"子集口径本应偏离"两面钉法）。
+
 4. **N-2 接线**：紧凑对直喂 `gpu_core.tensor_core`，**不再** `weights→DataFrame→prep_px_tensor`；
    bt 的 `backend` 披露列语义保持"bt 实际后端"（勿混进 eval 后端，本班 §七 差点在此读错自己的配对）。
 5. **等价验收（用已重定的 §二·丙 协议，不得用旧绝对线）**：
