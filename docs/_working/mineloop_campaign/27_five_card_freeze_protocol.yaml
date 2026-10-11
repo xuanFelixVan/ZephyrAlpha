@@ -1,0 +1,89 @@
+---
+ttl: task_bound
+title: 矿考循环班·五支新版本卡冻结工序单（窗内能冻什么/窗毕必做什么）
+created: '2026-10-11T11:22:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+scope: >-
+  承接裁定②（五支新版本卡获批，母卡原行在册保留＝G4-5 只走新版本禁原地改）与 11_prebind_review.yaml 的逐卡 reject 结论。
+  本件＝工序单：把"缺哪个冻结量、窗内能不能冻、不能则窗毕用什么命令冻"逐支写清。零 CH、零新建卡、零改引擎。
+
+five_cards:
+  - card_id: TDM-E-L0-02/calibration/03_偏离幅度分位响应曲线
+    mother_path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L0/TDM-E-L0-02__calibration__03_偏离幅度分位响应曲线.yaml
+    reject_source: 11_prebind_review.yaml q3_three_gates.unfrozen（本班自册，可 grep）
+    missing_freeze: >-
+      三量：①组合 weights 的标的宇宙＋权重规则＋再平衡日（母卡全文无定义）；②dominant 四档→当日仓位上限%→slippage_bp 映射数值表；
+      ③kline_etf_1min→实际暴露的折算式＋ETF 清单
+    can_freeze_in_window: >-
+      部分可——②有在册真源可直接引用：config/trading_decision_map.yaml:400 已写"六段情绪预算带（吸筹 30-50%/点火 50-70%/扩张 60-80%/亢奋封顶 30% 只卖不买），
+      月级定大档、日级水温微调，输出当日总仓位上限"，同文件 :4538 另写约束栈六层顺序（总仓位上限→回撤限额→波动率目标→集中度单票 20%→流动性 3 日可退出→相关性 cluster 5%）。
+      ⇒ 新卡不再自造映射，改为**引用该真源并把四档→%→bp 的取值逐档写死**（引用式冻结，禁第二真源）
+    needs_ch_after_window: >-
+      ①的 ETF 清单与 ③的折算式须现读：kline_etf_1min 在场清单＋品种前缀归户（15_ 的 WO-A2 前置探针同题），
+      窗毕一条 SQL 出清单后写进卡面"数据字典"节（带版本日期）
+    pillar_shape_for_v2: series（母卡 signal_kind=series，buckets=quantile_decile→10 一致，min_obs_per_bucket=60 保留）
+  - card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+    mother_path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+    missing_freeze: ④⑥⑦ 三项家数比的"家"集合未定义（新股/上市不足 60 日、ST、停牌、北交所/创业板是否入计）＋名单表与版本日期
+    can_freeze_in_window: >-
+      剔除**规则**可窗内写成定义（四条：上市不足 60 日剔、ST 剔、停牌日不计、板块归属按在册 sector_constituent）；
+      但"名单表＋版本日期"是数据字典项，须窗毕取数定版——规则先冻、名单后定，卡面明标"名单版本=<日期>"空待回填则整卡标 blocked_on_data
+    needs_ch_after_window: 是（成分/名单快照日期与家数分母实测定版）
+    pillar_shape_for_v2: series（11_ 判明：卡面 signal_kind=series，标题 shock_panel 是母卡血统名不是分桶形状，禁按标题加信号）
+  - card_id: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
+    mother_path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-04__calibration__02_突破失败连续次数前瞻收益.yaml
+    missing_freeze: >-
+      决定性＝未来函数：卡面"失败＝此后 5 个交易日内收盘跌回突破日前高之下且当日 volume<20 日均量×0.8"，
+      K 的定义本身要用 t 之后 5 日收盘，而 target_source 写 T+1 简单收益＝信号未落定就要对 T+1 出 IC；
+      另 panel 分档协议缺（卡面 ordinal_event_count 四档 K∈{0,1,2,3+} 属词表外，现器缺省 10 桶与卡面不一致）
+    can_freeze_in_window: >-
+      全部可——两条都是定义不是读数：①信号生效日＝K 在确认日（第 5 个观察日）收盘落定，前瞻收益自确认日次一交易日起算，
+      即"信号窗与前瞻窗不得重叠"写成卡面硬条款；②分档协议＝声明 buckets=4 并走已落地的 _n_buckets_from_card
+      （本班 10-10 已把卡面桶数接进 _bucket_response，故四档不再被缺省 10 吞）
+    needs_ch_after_window: 否（阈值走族内既有先验，与母卡同量级保守取，不碰 2024+ 任何读数）
+    status_after_this_ledger: 可即刻立 v2 卡（本班窗内未做，因需与 Owner 确认阈值先验取法＝见 open_items 第 1 条）
+  - card_id: TDM-E-L2-02-2/calibration/02_板块见顶预警三信号
+    mother_path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-2__calibration__02_板块见顶预警三信号.yaml
+    reject_source: docs/_working/mineloop_campaign/01_binding_census.yaml:375-383（cls=A?，reason=table_not_in_recipe_book:c1_market.kline_sector_880）
+    missing_freeze: 不是卡面缺量，是**绑定层缺该表的取数配平**（recipe book 无 880 条目）
+    can_freeze_in_window: >-
+      可做码侧但不应做：加 880 取数须落 SQL＋registry 类目（card_binding.py 是我家件且现与 dev 逐字节同基），
+      而验证须读 CH——窗内写完就是"未验而落"，违在册"判通过的脚本须先证明能红"与"断供面禁硬考"；故本窗零动
+    needs_ch_after_window: 是（880/881 深史实测上限＝2021-08-02 在已有册，卡面窗须按该上限定 IS/OOS 切点，禁按 2015 起算）
+    blocking_class: 属绑定层工单（非卡面冻结问题）⇒ 与 17_ 板块族收口同域，排在其后
+  - card_id: TDM-E-L2-09/calibration/03_评级上调聚集
+    mother_path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__calibration__03_评级上调聚集.yaml
+    missing_freeze: >-
+      rating 取值→序数映射表（卡面自认"须在开考前以实测取值分布钉死"）或 rating_change 列单向口径唯一化；
+      另须登记 industry 名单版本源。辅轴 industry_excess_next5d 是未来量，v2 必须明标"本次不考"
+    can_freeze_in_window: 否——枚举取值分布即取数，窗内一条 CH 都不能发
+    needs_ch_after_window: >-
+      是，且与在册"09-03 评级序双口径证据链（本班已出对照面，未拍）"同题：
+      实测枚举前先定口径（评级序 vs rating_change 单向），两口径不得混用；该项属 Owner 门位候选
+    pillar_shape_for_v2: series＋quintile（n_buckets=5 与母卡一致，正是 09_caliber_deviation_note.yaml 所治口径面）
+
+open_items_owner_or_later:
+  - 阈值先验取法（X-S1-04 v2 一支）：族内既有卡的 mono_spearman_min/ic_mean_min 量级保守取半，还是沿用母卡数值原样？
+    两者都不碰 2024+ 读数，但"沿用母卡"＝母卡阈值此前从未被有效判过（14_ 的无判官闸面），保守取半＝更严。本班不自拍，待一句令。
+  - 评级序双口径（第五支）与 880 深史上限（第四支）：均为口径/取数面，须窗毕实测后再定，定版前对应卡保持 blocked。
+  - 第一支（L0-02）与第二支（L1-S5）：定义可窗内冻、数据字典须窗毕回填 ⇒ 两支 v2 的"半冻"状态须在卡面显式标 blocked_on_data，禁装 preregistered。
+
+discipline: >-
+  五支全部走新版本卡（G4-5），母卡原行保留在册不改；一支一窗一轮为限，再挂即族归档；
+  引用式冻结优先（能指真源就不抄数值，防第二真源）；本件零新建、零引擎改动、零 CH。
+
+compliance:
+  ch_queries: 0
+  cards_created: 0
+  engine_files_modified: 0
+  files_created: 1
+
+review_commands:
+  reject_reasons: >-
+    python -c "import yaml,pathlib;d=list(yaml.safe_load_all(pathlib.Path('docs/_working/mineloop_campaign/11_prebind_review.yaml').read_text(encoding='utf-8')))[-1];[print(c['card_id'],'|',str(c.get('g4_5_gap'))[:70]) for c in d['cards'] if c.get('verdict')=='reject']"
+  sector_880_reject: sed -n '375,383p' docs/_working/mineloop_campaign/01_binding_census.yaml
+  cap_map_source: sed -n '400p;4538p' config/trading_decision_map.yaml
+  bucket_fix_landed: git show dev:scripts/backtest/fexam/calibration_exam.py | grep -n "def _n_buckets_from_card"
