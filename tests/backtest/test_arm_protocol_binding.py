@@ -202,3 +202,106 @@ def test_non_ascii_path_not_harmed(tmp_path: Path) -> None:
     all_rows = apb.triage_dir(CARDS)
     assert len(all_rows) >= 19
     assert all("state" in r and r["card_id"] for r in all_rows)
+
+
+# ── 量纲错必红（Owner 批令①：假分雷先解后写，禁靠注释自觉）────────────────
+def _return_like_base() -> pd.Series:
+    """合成"池组合收益回放"面：有正有负的小量纲序列（＝判官 e 位最忌讳的喂法）。"""
+    idx = pd.date_range("2024-01-02", periods=10, freq="D")
+    vals = [0.012, -0.008, 0.003, -0.021, 0.017, -0.004, 0.009, -0.013, 0.002, -0.006]
+    return pd.Series(vals, index=idx, name="portfolio_return")
+
+
+def _nav_level_target() -> pd.Series:
+    """合成净值/累计面（单调升、min>0、max>1）：把它当 r 位日收益就是量纲错。"""
+    idx = pd.date_range("2024-01-02", periods=40, freq="D")
+    return pd.Series([1.0 + 0.01 * i for i in range(40)], index=idx, name="nav")
+
+
+def _arm_entry() -> dict:
+    return {
+        "op_open": "arm_level_cap_multiply",
+        "op_base": "arm_identity",
+        "quote_open": "级别→仓位映射（A 100%/B 60%/C 0%）冻结于本卡",
+        "params_open": {
+            "level_map": {"A": 1.0, "B": 0.6, "C": 0.0},
+            "levels": pd.Series(["A", "B", "C"] * 3 + ["A"], index=_base_series().index),
+        },
+    }
+
+
+def test_return_face_in_exposure_slot_is_rejected() -> None:
+    """红证 1：把"池组合收益回放"序列当底座喂进 e 位 ⇒ 必红（它不会自己报错，只会出假分）。"""
+    with pytest.raises(apb.ArmFaceMismatch, match="not_exposure_face"):
+        apb.build_arms(_card(), _arm_entry(), base=_return_like_base())
+
+
+def test_face_contract_requires_both_quotes() -> None:
+    """红证 2：不声明 e/r 两位语义就装配 ⇒ 拒（禁默认值兜底、禁靠注释自觉）。"""
+    card = _card()
+    with pytest.raises(apb.ArmFaceMismatch, match="face_contract_undeclared"):
+        apb.build_arm_pair(card, _arm_entry(), base=_base_series(), target=_daily_return_target())
+
+
+def test_face_contract_quotes_must_land_on_the_right_card_face() -> None:
+    """红证 3：e 引句须落在臂定义面、r 引句须落在底座/目标面——两域不可互换。"""
+    entry = _arm_entry()
+    entry.update(
+        {
+            "e_face_quote": "级别→仓位映射（A 100%/B 60%/C 0%）冻结于本卡",
+            # 故意把 r 引句写成臂面的话（真日收益面在 target_source/provenance 域）
+            "r_face_quote": "三臂输入同一基线净值序列与同一成交口径",
+        }
+    )
+    with pytest.raises(apb.ArmQuoteNotFound, match="r_face_quote_not_on_base_face"):
+        apb.build_arm_pair(_card(), entry, base=_base_series(), target=_daily_return_target())
+
+
+def test_nav_level_in_return_slot_is_rejected() -> None:
+    """红证 4：净值/累计面喂 r 位 ⇒ 必红（e×level 会得到"敞口×净值"这种没有意义的乘积）。"""
+    entry = _arm_entry()
+    entry.update(
+        {
+            "e_face_quote": "级别→仓位映射（A 100%/B 60%/C 0%）冻结于本卡",
+            "r_face_quote": "风控层改写后的净值路径，减仓=按级别比例，现金停放 0 收益",
+        }
+    )
+    with pytest.raises(apb.ArmFaceMismatch, match="not_daily_return_face"):
+        apb.build_arm_pair(_card(), entry, base=_base_series(), target=_nav_level_target())
+
+
+def test_exposure_face_in_return_slot_is_rejected() -> None:
+    """红证 5：把敞口面（全非负）喂 r 位同样必红——e/r 互换也是一种量纲错。"""
+    entry = _arm_entry()
+    entry.update(
+        {
+            "e_face_quote": "级别→仓位映射（A 100%/B 60%/C 0%）冻结于本卡",
+            "r_face_quote": "风控层改写后的净值路径，减仓=按级别比例，现金停放 0 收益",
+        }
+    )
+    idx = pd.date_range("2024-01-02", periods=40, freq="D")
+    small_exposure = pd.Series([0.2 + 0.005 * (i % 5) for i in range(40)], index=idx, name="exposure")
+    with pytest.raises(apb.ArmFaceMismatch, match="长样本全非负"):
+        apb.build_arm_pair(_card(), entry, base=_base_series(), target=small_exposure)
+
+
+def _daily_return_target(n: int = 60) -> pd.Series:
+    idx = pd.date_range("2024-01-02", periods=n, freq="D")
+    vals = [(-1) ** i * (0.001 + 0.0005 * (i % 7)) for i in range(n)]
+    return pd.Series(vals, index=idx, name="index_return")
+
+
+def test_green_pair_produces_three_aligned_faces_with_credentials() -> None:
+    """绿正证：合法敞口底座＋合法日收益 target ⇒ 三面齐备且凭据记下面语义。"""
+    entry = _arm_entry()
+    entry.update(
+        {
+            "e_face_quote": "级别→仓位映射（A 100%/B 60%/C 0%）冻结于本卡",
+            "r_face_quote": "风控层改写后的净值路径，减仓=按级别比例，现金停放 0 收益",
+        }
+    )
+    open_arm, base_arm, tgt, ev = apb.build_arm_pair(_card(), entry, base=_base_series(), target=_daily_return_target())
+    assert float(open_arm.max()) <= 1.0 and float(base_arm.min()) >= 0.0
+    assert ev["face_contract"]["r_face_quote"].startswith("风控层改写后的净值路径")
+    assert ev["op"] == {"open": "arm_level_cap_multiply", "base": "arm_identity"}
+    assert len(tgt) == 60

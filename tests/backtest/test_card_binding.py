@@ -361,3 +361,120 @@ def test_event_flag_base_selection_fail_closed():
     with pytest.raises(ValueError) as ei:
         cb.op_event_flag_rolling_pctile(card, {"base_op": "no_such_op", "pctile_window": 50, "pct_threshold": 0.9})
     assert "base_op_not_in_ops_book" in str(ei.value)
+
+
+# ── WO-A1 双臂通道（绑定侧；量纲错必红由真源件 arm_protocol_binding 把关）────
+def _arm_card() -> dict:
+    return {
+        "card_id": "TDM-E-TEST/comparison/09_x",
+        "family": "comparison",
+        "status": "preregistered",
+        "signal_kind": "series",
+        "buckets": {"type": "arm_matrix", "on": "关臂=满仓 vs 开臂=三级仓位映射（A 100%/B 60%/C 0%）"},
+        "pillars_numeric": {"maxdd_improvement_min": 5.0, "sharpe_delta_min": -0.1, "oos_same_sign": True},
+        "data_binding": {
+            "signal_derivation": "基线臂日净值序列",
+            "target_source": "风控层改写后的净值路径，减仓=按级别比例，现金停放 0 收益",
+            "arm_protocol": "三臂输入同一基线净值序列与同一成交口径；级别→仓位映射（A 100%/B 60%/C 0%）冻结于本卡",
+        },
+    }
+
+
+def _arm_entry() -> dict:
+    idx = pd.date_range("2024-01-02", periods=8, freq="D")
+    return {
+        "card_id": "TDM-E-TEST/comparison/09_x",
+        "op": "arms",
+        "arm_base_source": "wired_for_test",
+        "arms": {
+            "op_open": "arm_level_cap_multiply",
+            "op_base": "arm_identity",
+            "quote_open": "级别→仓位映射（A 100%/B 60%/C 0%）冻结于本卡",
+            "e_face_quote": "级别→仓位映射（A 100%/B 60%/C 0%）冻结于本卡",
+            "r_face_quote": "风控层改写后的净值路径，减仓=按级别比例，现金停放 0 收益",
+            "params_open": {
+                "level_map": {"A": 1.0, "B": 0.6, "C": 0.0},
+                "levels": pd.Series(["A", "B", "C", "A", "B", "C", "A", "B"], index=idx),
+            },
+        },
+    }
+
+
+def _test_base_exposure():
+    idx = pd.date_range("2024-01-02", periods=8, freq="D")
+    return pd.Series(1.0, index=idx, name="exposure")
+
+
+def _test_target_returns():
+    idx = pd.date_range("2024-01-02", periods=8, freq="D")
+    return pd.Series([0.01, -0.02, 0.005, -0.001, 0.02, -0.015, 0.004, -0.006], index=idx, name="r")
+
+
+def test_arms_from_binding_book_returns_three_faces_and_merges_provenance(monkeypatch):
+    """绿正证：册格 arms 面 → 开臂/基臂/日收益三面齐备，凭据并上绑定册字段（零 CH）。"""
+    import scripts.backtest.fexam.arm_protocol_binding as apb
+
+    monkeypatch.setattr(apb, "ARM_OPS", dict(apb.ARM_OPS))
+    open_arm, base_arm, tgt, ev = cb.arms_from_binding_book(
+        _arm_card(), _arm_entry(), base=_test_base_exposure(), target=_test_target_returns()
+    )
+    assert [round(float(x), 2) for x in open_arm[:3]] == [1.0, 0.6, 0.0]
+    assert float(base_arm.iloc[0]) == 1.0
+    assert len(tgt) == 8 and float(tgt.min()) < 0  # r 位确实是含负日的收益面
+    assert ev["arm_op_open"] == "arm_level_cap_multiply" and ev["arm_op_base"] == "arm_identity"
+    assert ev["face_contract"]["r_face_quote"].startswith("风控层改写后的净值路径")
+
+
+def test_arms_from_binding_book_refuses_return_like_base():
+    """红证（假分雷在绑定层仍必红）：把"池组合收益回放"当底座喂进来 ⇒ 拒装配不出分。"""
+    import pytest as _pytest
+
+    import scripts.backtest.fexam.arm_protocol_binding as apb
+
+    with _pytest.raises(apb.ArmFaceMismatch, match="not_exposure_face"):
+        cb.arms_from_binding_book(_arm_card(), _arm_entry(), base=_test_target_returns(), target=_test_target_returns())
+
+
+def test_arms_from_binding_book_requires_arms_face():
+    """红证：册格没写 arms 面却走双臂入口 ⇒ 直拒（禁按单臂路径冒充双臂出分）。"""
+    import pytest as _pytest
+
+    with _pytest.raises(ValueError, match="arms_face_missing"):
+        cb.arms_from_binding_book(
+            _arm_card(), {"card_id": "x", "op": "arms"}, base=_test_base_exposure(), target=_test_target_returns()
+        )
+
+
+def test_run_one_dual_arm_without_wired_source_errors_instead_of_scoring(tmp_path, monkeypatch):
+    """红证：底座来源未接线 ⇒ run_one 如实报错且**不碰 CH**（零取数也不出假分）。"""
+    calls = {"n": 0}
+
+    def _boom(*a, **k):
+        calls["n"] += 1
+        raise AssertionError("底座来源未接线时不得触 CH 取数")
+
+    monkeypatch.setattr(cb, "index_next_day_return", _boom)
+    card = _arm_card()
+    p = tmp_path / "c.yaml"
+    p.write_text(yaml.safe_dump(card, allow_unicode=True), encoding="utf-8")
+    r = cb.run_one(
+        p,
+        {card["card_id"]},
+        tmp_path / "scores.yaml",
+        "t",
+        False,
+        book={card["card_id"]: _arm_entry()},
+    )
+    assert calls["n"] == 0, "未接线就取数＝拿别处底座冒充分母"
+    assert str(r.get("error", "")).startswith("arm_base_source_unwired"), r
+    assert not (tmp_path / "scores.yaml").exists(), "拒绑路径不得留下分数行"
+
+
+def test_arm_base_sources_book_starts_empty_by_design():
+    """在册纪律正证：底座来源册**空**是有意的——禁在绑定层现编近似序列冒充分母。
+
+    若哪天有人往这里塞"临时用日收益近似"之类的兜底，本用例先红。"""
+    assert cb.ARM_BASE_SOURCES == {}, (
+        "ARM_BASE_SOURCES 只收在册重放装置产出的按臂敞口序列；"
+        "新增须同批改 test_run_one_dual_arm_... 与册格 arm_base_source 字段"
+    )
