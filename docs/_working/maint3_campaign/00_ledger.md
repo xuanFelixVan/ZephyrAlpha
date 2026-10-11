@@ -224,3 +224,33 @@ GPU 工单施工班 `a2c46fddca`（00:1x）落了 `scripts/tasks/register/regist
 | R11 | **`weekend_calibration` 名实不符**：`schedule.yaml:144` cron `"00 3 * * 1"`＋同槽注释/description 都自称"周一03:00"，但 APScheduler 口径 `1`=**周二**（`0`=周一），生成器如实归一成 `00 3 * * 2`⇒ 2026-09-23 `st-emomine-20260923` 那笔"周日改周一"的 S1 根因修复实际落在了周二，比意图晚一天 | 直读 `schedule.yaml:143-150` 与册内 `window_expr` |
 | R12 | **单口的 `pre_existing` 账有一次报 0**：05:50 候选件 23:5x dry-run 报"基线既存 block=0 消解=0"，而同一 registry 我用闸本体函数在三个 `now` 下都测到该 block；00:2x 再跑同一件报"既存=1 消解=1"。⇒ 该计数**随评估瞬间变**（`pin_eval_now` 按 UTC 日取整＋`weekend_calibration` 的 dow 在 UTC/本地跨日错位，见 R11），"新增=0"结论不可只凭工具自报，须像本班这样独立复测。工具设计意图（确定性三条）本身在册且未改 | 两次 dry-run 报文对照＋§五独立复测 |
 
+## 六、结工单（本班交付终态）
+
+**落地**：`dbc86560e3`（16 件；`git show --name-only` 与本班清单**集合差=0**，零他人面被扫入）。
+验收判据逐条在 **HEAD 面**复跑（非盘面自证）：
+
+| 判据 | 实测 |
+|---|---|
+| HEAD 册内见错峰后 window_expr | `45 9 * * *\|5 13 * * *`=1、`50 9 * * *`=1、`10 6 * * *`=1 |
+| HEAD 册内见落账后 generated_at | `2026-10-11T16:25…`（UTC）=1；`total_entities: 104`=1 |
+| 伪孤儿族已销 | `orphaned_source: sch_`=**0**；真孤儿 `ops_bdpan_tick_watch`=1（保留，删除属 Owner 门位） |
+| 上限未动 | `mem_ceiling_gb: 10.0`=1（表头/生成器常量/reaper 三面同钉） |
+| HEAD 面真源时刻 | 两枚 ps1：`-At "09:45"`＋`-At "13:05"`（未被牵连腿）＋`-At "09:50"` |
+| `test_resource_schedule_mem_ceiling_invariant.py` | **11 passed**（进场 5 failed） |
+| 根因报告入册 | `30_pool_rollback_rootcause_casefile.md` 在 `dbc86560e3` 内，含 gate 提案 |
+
+**三次拦点三次对症（无一靠拆旗）**：① RESOURCE-SCHEDULE 全量拦既存 05:50 → Owner 批准追加清带（§五）；
+② TAKEOVER-PENDING 把**本班自己**判成死会话（`pid=37924 dead`＋idle 仅 122s，未达 7200s 阈值——
+起因是注册由首个短命工具进程带上了自己的实 pid，并非真死）→ 按在册处方处置：`list_active`（与守卫**同源**判据）
+确证活体 → `pid=0` 复注册 → `session_worktree._spawn_heartbeat_daemon` 起守护（心跳末态 `started`；
+本班先前手拼 `python -m` 那条**根本没起来**＝目录里连 heartbeat.jsonl 都没有，属"降级态看起来像没触发"）→
+`register_heartbeat_keepalive` 3600s → `session_takeover_ledger.py --resolve` 属主自解（open 余量 0）→
+复投带 `--adopt-prior-work` 通过。**防再犯配方**：长班起袋前先把 sid 注册成 `pid=0`，别让首个工具进程留实 pid。
+③ 其余"外来 staged 未检查"皆 warn+审计不阻断（点名 104-106 枚无主外来件，含 `module_translation_registry.yaml`
+与 `register_sft_train_window_task.ps1` 的 staged 删除＝§四 R10 在册）。
+
+**项 5 交付**：知会件 `40_notice_gpu_requeue_2026-10-11.md` 已随 `dbc86560e3` 入库；本班**未代投** GPU 袋。
+
+**待 Owner/统筹回话三件（本班不擅动）**：R1（OS 计划任务重注册＝改活任务；09:45/09:50/06:10 三处**运行态尚未生效**，
+可回退命令在 §二/§五）、R10（外来 staged 删除的归属处置）、R11（`weekend_calibration` 名实差一天）。
+
