@@ -582,3 +582,49 @@ git show HEAD:src/zephyr/infrastructure/rollback/drift_fix.py | grep -n "class D
 git log --all --oneline --name-status --diff-filter=ADRM -- src/zephyr/governance/drift_fix.py
 git show 9d9386da996 --stat -- src/zephyr/infrastructure/capacity_assurance/ | head
 ```
+
+## 廿二、A 类复活出货执行账（三期下一段·sid=st-deadcure3b-chief-20261011，生成器=`.runtime/tmp/st-deadcure3b-chief-20261011/tools/ledger22.py`，机生禁手改）
+
+现测 HEAD=`4ac4a602e2`。
+
+**口径改一条（本班最大发现，不改表只改生成器）**：旧表取字节用 `sorted(qids)` 首枚＝**最早袋版**。
+实测族内 234/257 件存在多修订版，最新修订版才是 tests 治理战役收口后的形态
+（差异主头是 `# [BLUEPRINT]` 行被剥，231/234 命中；另有 23 件差异 >5 行，最大 +129/−60——按"只差一行注释"预期校验会误判，只能按 sha）。
+三轴变体自证：V0 旧口径复现＝350 truly/257 resolvable（与旧表逐数相等）｜V1 只换 HEAD＝349/257｜V2 出货口径＝352/257。
+**成员零漂移**：批面 (batch,prefix,n_files) 三元组与旧表逐批全等，键集差 removed=0／added=0；变的只有字节。
+
+**出货面（截至本次读数）**：投绿 22 批＝[2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 19, 20, 21, 23, 24, 25, 26, 27, 28, 30, 33]；扣押 6 批＝[1, 9, 14, 15, 17, 22]；
+257 件清单中已在 HEAD 的件数＝**15**（逐批见下）；袋态计数={"pending": 18, "processing": 1, "done": 5, "dead": 1}。
+落地判据只认 `git ls-tree -r HEAD`，不信队列自报 done（在册教训：假 done 新形态）。
+
+**逐批（已投批：件进 HEAD 数/批面件数）**：2:5/5, 3:0/9, 4:0/5, 5:2/2, 6:0/1, 7:1/1, 8:0/5, 10:0/23, 11:7/7, 12:0/7, 13:0/20, 19:0/1, 20:0/8, 21:0/1, 23:0/1, 24:0/4, 25:0/1, 26:0/6, 27:0/2, 28:0/5, 30:0/1, 33:0/1
+
+**扣押原因逐批点名（红就不投，禁改判据凑绿）**：
+
+- 批 1：HEAD 门牌错位——夹具 `governance_db_path` 真源在 `tests/data/data/db/conftest.py`（双路径），铺在正确地址的件看不见它
+- 批 9：`test_relate_adapter.py` 模块期 `import datasketch → cupy`，本机 `CUDA_PATH=None` 的 UserWarning 被 filterwarnings 升 error，整目录收集中断
+- 批 14：`test_f18_redblue.py` 运行时写生产热册，撞 #ARCH-084 tracked 写入守护（违 §9.6 测试隔离）
+- 批 15：4 败 1 错＝判据演进面（10-10 三证立法把『PID 亡即 dead』改判；facade 扩面；双向闭合是活态断言）
+- 批 17：REGISTRY-YAML-PARSE 已升『投影指纹感知』，旧件手搭合法 YAML 必红
+- 批 22：见工棚 run_batch_22.txt（7 failed / 1 error）
+
+**假绿体检**（跳过占比；跳过>20 件的批全列）：[('03', '109', '36')]。
+合计断言面：已跑批 passed 求和见工棚 `run_batch_*.txt`（本轮实测 4150 passed / 55 skipped ≈1.3%，非"整批 skip 冒充绿"）。
+
+**88 枚未定项换尺重判**（AST＋`sys.stdlib_module_names`＋scripts/tools/schemas 包目录名）：
+{"F_非代码件（fixture": 1, "C_动态导入型（import": 5, "B_纯自包含/只读数据（只导": 39, "A_测 scripts 脚本": 43} ⇒ **真缺=0**；案卷=`.runtime/tmp/st-deadcure3b-chief-20261011/common/PENDING_undetermined88_docket.md`（呈统筹三选一，本班未动一件）。
+
+**两条本班升旗（非本班施工面，只登记）**：
+1. `tests/data/data/…` 双路径错位 **83 件**（37 件三重 `tests/data/data/data/…`），夹具归属被门牌错开——
+   收集面 1534 collected/0 error，红在夹具解析；整改＝git mv＋RENAME-DEPGRAPH-SYNC，属跨班资产位移。
+2. 令牌登记面（`REG-CAPCAN-001`）有 **1 枚本班误登条目**：`tests/gov/compliance/test_f62_compliance_gate_wiring.py`
+   （目录前缀把 HEAD 老件扫入；tokens 步已改为"预览数≠本批件数即退逐件"）。
+   `retire` 需 `authority_ref`（裁定/批件号），本班无该件授权链⇒ **不自签撤销**，残账与待执行命令在
+   `.runtime/tmp/st-deadcure3b-chief-20261011/common/RESIDUAL_over_registered_token.json`。
+
+**热册纪律留痕**：`capability_canonical_file_registry.yaml` 现盘含他班 355 行未落地条目，本班令牌只进 PG 真源，
+投影册**不随袋**（袋=整档快照，随袋即吸收他人条目=归属篡改）；`module_translation_registry.yaml` 因本班
+`add_module_translation` 渲染恰好＝HEAD+本班 5 行（键集差自证零外来），故随第 0 项袋落地。
+
+**队列现实**：单袋过全门链实测 10-40 分钟，本班不轮询空等；收班时未落地袋继续由传送带消化，
+下一段以 `python .runtime/tmp/st-deadcure3b-chief-20261011/tools/closeout.py` 重算逐批进 HEAD 件数即可接手。
