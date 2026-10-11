@@ -158,3 +158,17 @@ depgraph 节点登记须总包收官跑 `generate_project_depgraph.py --force`�
 > （`git checkout dev --` 两件，零改写他人面）：两种前缀并存＝同一映射的第二真源，
 > 正是 RULE-SSOT 与 27_ 工序单"引用式冻结优先"要防的形态。本班对①的净贡献因此＝
 > 独立复核并拦下这次重复钉法，而非钉值本身。
+
+
+## 工单结单段（转派件：会话死亡显化形参缺陷 · 追凶三班 st-backfix3-20261011 → 本班）
+
+- 统筹裁定④转派＋附录 A 一句话裁定：**授权复位那 11 行，且复位已由总统筹在池面执行完毕**
+  （动作＝按 HEAD 复位 `scripts/governance/session_takeover_ledger.py` 的 index＋盘面；
+  双面旧字节先归档于 `.runtime/tmp/pool_rollbackbomb_20261011/code_drift/`＝可逆存证）。
+- 本班随后只读复核：主区盘 `grep -c extra_death_evidence` 由 **0 → 5**（复位生效，salvage 腿恢复）。
+- 本班**未再碰任何 git 面**（未 restore/checkout/reset/stash 主区；仅推进私有车道分支 ref 以追平基底）。
+- 该台账五件（含 `00_ledger.md`）今晚也曾入回退弹被 staged-D、由总统筹按 HEAD 复位回盘 ⇒
+  本班 §八 直接在现字节上续写（append-only，结构自证：H2 节数 7→8、原前缀逐字节未变）。
+- 追凶班边界声明与本班边界声明互认：两班均未改 `session_concurrency.py`/`session_takeover_ledger.py`
+  由本班落的那两处（error 级显化＋合同闸试件）之外的字节，均未新增判据/阈值，均未杀停进程。
+- 工单状态：**结**（根因结论采纳入册；防再犯两件已落 `01513460c2`；复位由统筹完成）。

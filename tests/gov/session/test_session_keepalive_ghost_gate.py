@@ -74,6 +74,9 @@ _CQ_REL = "scripts/commit_queue.py"
 # **dev 可达 commit sha** 而非件名：件名随后续袋漂移，sha 是内容真源。可达≠已落判据面
 # （R9 的 commit_queue 面实测未落，见 test_pristine_commit_queue_* 的行为对照）。
 _DEV_BASELINES = ("1d5c0d36c4", "f87bfa8bf7")
+# pristine 参照系 MUST 钉死开工基线：dev 是活动分支，本班自己的袋子一落地，
+# "dev 上该缺陷应存在"这类断言就会翻红（实测踩过：3 条 pristine 探针因本班袋 c869c0a3b5 落地而失效）。
+_PRISTINE_REF = "cfbebbf8dd49f8b8ae935d186f4fbe7f8cfc6c66"
 
 
 # ---------------------------------------------------------------------------
@@ -644,7 +647,7 @@ def _func(text: str, name: str) -> str:
 
 def test_pristine_heartbeat_daemon_has_no_keepalive_door() -> None:
     """pristine（dev tip 字节）：idle 支只有 logical/C355 两条既有豁免，无保活正门。"""
-    text = _show("dev", _HB_REL).decode("utf-8")
+    text = _show(_PRISTINE_REF, _HB_REL).decode("utf-8")
     for absent in ("register_heartbeat_keepalive", "read_active_keepalive", "registered_keeper"):
         assert absent not in text, f"dev 不该已有 {absent}（若有=本班在重复施工）"
     idle = _func(text, "_session_idle_seconds")
@@ -664,7 +667,7 @@ def test_pristine_commit_queue_ghost_gate_shortcircuits_on_exited(tmp_path: Path
     在册裁定#507 明写该支要降为"前代守护死亡证明"、终审归注册表活性单一口径；
     dev 字节实测=裁定未落地（本用例即其红证，本班按在册裁定复位）。
     """
-    text = _show("dev", _CQ_REL).decode("utf-8")
+    text = _show(_PRISTINE_REF, _CQ_REL).decode("utf-8")
     ghost = _func(text, "_session_ghost_dead")
     assert 'return isinstance(last, dict) and last.get("status") == "exited"' in ghost
     for absent in ("get_session", "_is_session_alive", "excused", "collect_alive_side_evidence"):
@@ -691,7 +694,7 @@ def test_pristine_commit_queue_ghost_gate_shortcircuits_on_exited(tmp_path: Path
 
 def test_pristine_dev_line_anchor_of_the_short_circuit() -> None:
     """现场行号可复核（报告锚点）：dev 的 exited 短路支确在 _session_ghost_dead 体内。"""
-    raw = _show("dev", _CQ_REL).decode("utf-8").splitlines()
+    raw = _show(_PRISTINE_REF, _CQ_REL).decode("utf-8").splitlines()
     hits = [(i + 1, ln.strip()) for i, ln in enumerate(raw) if 'last.get("status") == "exited"' in ln]
     assert len(hits) == 1, f"dev 上 exited 短路应恰一处，实测 {hits}"
     lineno, _line = hits[0]
