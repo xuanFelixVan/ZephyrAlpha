@@ -81,6 +81,7 @@ completes_when: 六件收官+99_delivery 落地（本件随批滚动）
 - **day1 连跑=2026-10-10 12:10 已执行**：`emotion_index_20261010T041044Z.jsonl.gz`，8,660 行，sha256=8fbad68d…，max_trade_date=2026-10-09（manifest 追加行留痕）。
 - keep 已登（process_reaper_keep.txt 追加 emotion_index_snapshot）。
 - day2/day3 连跑+满 3 天钉任务=已建值守自动化（每日 12:35；判据=manifest ≥3 条连续日批后钉 `ZephyrAlpha_EmotionIndexSnapshot` 计划任务+回执写本台账）。钉任务规格：`schtasks /create /tn ZephyrAlpha_EmotionIndexSnapshot /sc daily /st 12:35 /tr "python D:\ZephyrAlpha\scripts\data\emotion_index_snapshot.py"`（工作目录 D:\ZephyrAlpha；跑前 PATH=Python312）。
+- **钉任务回执（2026-10-11 16:39，Owner 加速授权）**：`ZephyrAlpha_EmotionIndexSnapshot` 已钉（每日 12:35，cmd cd 工作目录+全量 python 路径），schtasks /run 实弹验证通过——manifest 新增 20261011T163918Z（8,662 行，sha256 前 8=9d3bd453，close_final 8619 含 WO-004 链修复的 10-08/09 行）。"连跑 2-3 天"观察期经 Owner 对话加速授权豁免（脚本 4 轮实弹零失败+两份历史产物在案为据）。值守 ZCode 自动化同批退役（Windows 任务接管）。
 - 对象勘误留痕（final4 §二·6）：`ZephyrAlpha_NightlySentiment`/`ZephyrAlpha_SectorSnapshot` 是新闻情绪/板块快照，与本件无关，勿混认。三册对齐（fms/capreg）归治理域，本班未碰。
 
 ## 六、T6 P5 触发器监测与执行（条件件）
