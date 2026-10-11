@@ -362,3 +362,33 @@ phase=3+ramp=True 乘积 52,254,720 格（144 倍＝J2×X_stop3×X_breaker2×X_s
 
 三、本班窗内明确不发：v3 池宽窄批（既属改空间＝待 Owner 批重开预注册，又要 CH）继续等窗毕；
 采样器截至 10:54:44 共 133 档（他班 97 档基线一字未动），归因册同步在写。
+
+## 16. WO-A4 与 route B 落地账＋新工法两条入册＋一处他车道存量红（15:0x 记）
+
+裁定①（选 route B）＋③（WO-A4 排产）同批施工完，袋 497955b139 四件同笼（本体＋它读的册＋它的测试＋账册，在册"门禁代码+它读的册+本体同袋"处方）：
+执行器对 dev 现字节 +80/−1（唯一删除行＝被我替换掉的 `compiler = GridCompiler.from_yaml(SCHEMA_PATH)` 原句，袋前逐行核过），
+测试件 +93/−0（5 支新增），探针册与 29_ 各新建纯加。基线取法＝先 `git checkout dev -- <件>`（我车道旧副本 2550 行落后 dev 3122 行）。
+
+改的四下：①`_resolve_grid_schema(schema_path, freeze_dims)`＝把钉值移到 compile **之前**，钉不在册的值即 SystemExit（冻结只准收窄，禁静默扩空间），缺省双空逐字节走原路；
+②run_batch 两 keyword-only 参＋main 两旗 `--schema-path`/`--freeze-dims-json`；③batch_meta 与 summary 同记生效面 {schema_path, schema_sha256, freeze_dims}
+（否则日后分不清"同空间不同抽样"与"不同空间同抽样"）；④TYPE_CHECKING 守卫（运行面零新导入，ruff F821/UP037 双清）。共享册与 t3a/t3b 两册一字未动。
+
+验收六段实测（零 CH，`woa4_acceptance_probe.py`）：P1 缺省 362,880 逐位不变（sha16 b5faa1299cddf3d3）｜P1b 钉 B_top_n=[top50]⇒72,576（/5，证钉值在展开前生效）｜
+P2 phase=3+ramp=True 只钉已探九维⇒144 格且可编译（旧结构此处 MemoryError；144＝J2×X_stop3×X_breaker2×X_sector3×K4）｜
+P3 共享册钉 top150 被拦"冻结只能收窄"｜P4 探针册窄批＝72 格与 26_ 逐位相符、全钉单核点＝1 格｜P5b 共享册旧两档同钉法＝36 格（＝裁定②内部对照批，零改即可发）。
+测试面：新增 5 支全绿；整文件 40 passed/2 failed，那 2 支在未改动 main 基座同码复跑同败（9.54 秒）⇒ 存量非本班引入。
+
+新工法一（Owner 裁定④入册）：**任何 grid 发跑前"三件定窗"**＝任务现值（Get-ScheduledTask 的 State/NextRunTime/LastTaskResult，非预注册册纸面注记）
+＋进程表（Name=python* 且 cmdline 含执行器，且**先减掉自家观测命令的关键词自匹配**——我今天第一次探测就报了 4 个自己的 PID）
+＋产物目录 mtime。三条齐了才算窗况，单条不作判据。
+新工法二（我自爆后入册）：**引在飞件须"符号名＋行号"双写**。25_/26_/28_ 引的 1951/1954/1956、1135、731 写下时对当时 dev 现值逐条 grep 命中，
+但 st-gpux 06:39 e869fd1e0d、07:01 dda797cca9 两袋使文件增长，现值＝compile 2117／subspace 2120→2122／topN 解析 1301／_LAMBDA_PEN 749。单写行号＝定时炸弹。
+
+他车道存量红一处（不代修，呈报）：`tests/trade/position/test_position_recipe_compiler.py::test_charter_v2_schema_nominal_counts` 现红——
+它断言 phase=1 折叠集为 {F,I,J,K,X_stop,X_breaker}，而 X_sector 于 10-08 14:16 由 278f283636c（st-mx07-W5）加进 schema 后该测试未随更（该测试文件末改 10-07 09:57 5cdda376364）
+⇒ 实测报 "Extra items in the left set: 'X_sector'"，红龄约 3 日，与本班袋无关（本班未碰共享册/编译器/该测试）。一行可修（把 X_sector 补进期望折叠集），等点名再动。
+
+窗毕待发三批（三件定窗＋E0 闸自然放行，全程 cpu 双旗、--exploration-ledger 分册不占考试 N 账本）：
+step0 8 格 smoke 量**纯 CPU 首速**并按在册 F5 三元组（measured_at/run_id/commit）回填；
+batch_2＝36 格内部对照（裁定②，共享册零改件即可发，钉值面 `.runtime/tmp/st-mineloop-20261010/freeze_breadth_control36.json`）；
+batch_1＝72 格探针册续曲（裁定①，`freeze_breadth_probe72.json` ＋ `--schema-path config/position_recipe_grid_schema_v3_breadth_probe.yaml`）。
