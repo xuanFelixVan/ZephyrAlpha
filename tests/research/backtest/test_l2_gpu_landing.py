@@ -850,70 +850,6 @@ def test_dev_col_codes_no_bool_on_array():
     assert empty_codes is None and empty_n == 0
 
 
-def test_industsize_ctrl_demeaned_on_full_market_columns_not_universe_subset():
-    """口径钉（本班 8 格真实对拍实钓）：factory 的 industsize 把**全市场列**的 log_mv 送去
-    组内去均值，之后才由 _regress_out reindex 到宇宙列；"先切宇宙列再去均值"会改组均值口径。
-
-    实测形态：zz500/hs300 两支 industsize_neutral 格在 cpu/gpu 双跑间 sharpe 差 4.9e-2、
-    ann_return 差 1.5e-2（冻结线 0.005），而 avg_turnover/net_days 逐位等——集合面没动、
-    权重幅度面被组均值口径改了。本支双向断言：全市场口径必须对上 factory，
-    宇宙子集口径必须**对不上**（否则本支是装饰性守卫）。
-    """
-    px = _synth_px()
-    f = _synth_factors(px, k=1)[0]
-    uni_cols = list(px.columns)
-    rng = np.random.default_rng(SEED + 91)
-    extra_cols = [f"x{i}" for i in range(24)]
-    all_cols = uni_cols + extra_cols
-    mv_full = pd.DataFrame(
-        np.exp(rng.normal(3, 1.2, size=(px.shape[0], len(all_cols)))), index=px.index, columns=all_cols
-    )
-    # 行业锚覆盖全市场列（真实 sws2021_l1 就是全票表，不是宇宙表）
-    imap_full = {c: f"g{i % 7}" for i, c in enumerate(all_cols)}
-    ref = fac._normalize(f, "industsize_neutral", industry_map=imap_full, mkt_cap_w=mv_full)[0]
-
-    codes_u, ng_u = fac._dev_col_codes(uni_cols, imap_full)[:2] if False else (None, 0)
-    imap_u = {c: imap_full[c] for c in uni_cols}
-    codes_u, ng_u = _codes_for(uni_cols, imap_u)
-    ctrl_full_dm = gpu_core.normalize_rows(
-        np,
-        np.log(mv_full).to_numpy(np.float64),
-        "industry_neutral",
-        codes=np.array(
-            [list(all_cols).index(c) if imap_full.get(c) is not None else -1 for c in all_cols], dtype=np.int64
-        ),
-        n_groups=len({g for g in imap_full.values()}),
-    )[:, [all_cols.index(c) for c in uni_cols]]
-    got = pd.DataFrame(
-        gpu_core.industsize_rows(np, f.to_numpy(np.float64), codes_u, ng_u, ctrl_full_dm),
-        index=px.index,
-        columns=uni_cols,
-    )
-    m = ref.notna() & got.notna()
-    rel = float((abs(got[m] - ref[m]) / (abs(ref[m]) + 1e-300)).max().max())
-    assert rel <= 1e-12, f"全市场口径应复现 factory，实测相对差 {rel:.3e}"
-
-    # 反向护栏：先切宇宙列再去均值（本班曾犯的口径）必须对不上 factory
-    codes_same, ng_same = codes_u, ng_u
-    ctrl_wrong = gpu_core.normalize_rows(
-        np, np.log(mv_full[uni_cols]).to_numpy(np.float64), "industry_neutral", codes=codes_same, n_groups=ng_same
-    )
-    got_wrong = pd.DataFrame(
-        gpu_core._regress_out_rows(
-            np, gpu_core._demean_rows(np, f.to_numpy(np.float64), codes_same, ng_same), ctrl_wrong
-        ),
-        index=px.index,
-        columns=uni_cols,
-    )
-    rel_wrong = float((abs(got_wrong[m] - ref[m]) / (abs(ref[m]) + 1e-300)).max().max())
-    assert rel_wrong > 1e-6, f"子集口径本应偏离 factory 却几乎相同（{rel_wrong:.3e}）——本支失去判别力"
-
-
-def _codes_for(cols, imap):
-    codes, ng = fac._dev_col_codes(cols, imap)
-    return codes, ng
-
-
 def test_industsize_mode_rejected_in_normalize_rows_contract():
     """合同钉：normalize_rows 不接受 industsize_neutral——该模式需调用方先在全市场列集做
     组内去均值，禁在核内静默按子集口径算（越界=抛，不是猜）。"""
@@ -1190,3 +1126,37 @@ def test_device_attempt_failure_is_never_silent_in_counters():
             fac._HOST_MEM_BUDGET_MIB,
             fac._EVAL_MEM_PRESSURE,
         ) = old
+
+
+def test_no_shadowed_test_names_in_gpu_suite():
+    """尺的尺：同文件内 `test_` 名重复定义＝后名静默遮蔽前名，遮蔽那份**永不执行**。
+
+    病案（2026-10-11 上一班留档，本袋 A 清偿）：`test_industsize_ctrl_demeaned_...` 在同文件被定义
+    两次（:853 与 :927），Python 只把最后一份绑进命名空间 ⇒ 第一份 57 行从未跑过，而采集计数看着
+    正常。属"采集计数骗后来人"族（同族：collected 含虚数、收 0 项而退出码 0）。
+    判据按**单文件**算（跨文件同名合法＝不同命名空间），故不能只数全目录名集合。
+    """
+    import ast
+    import collections
+
+    here = Path(__file__).resolve().parent
+    scanned = []
+    for nm in (
+        Path(__file__).resolve().name,
+        "test_gpu_core_parity.py",
+        "test_factory_grid_instruments.py",
+        "test_c4_engine_gpu_wiring.py",
+    ):
+        fp = here / nm
+        if not fp.exists():
+            continue  # 缺件不算通过：由下面 scanned 数量兜住（禁把"没扫到"读成"扫过且干净"）
+        scanned.append(fp.name)
+        tree = ast.parse(fp.read_text(encoding="utf-8"))
+        names = [
+            n.name
+            for n in tree.body
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name.startswith("test_")
+        ]
+        dup = sorted(k for k, v in collections.Counter(names).items() if v > 1)
+        assert not dup, f"{fp} 内同名重复定义（后名遮蔽前名，前者永不执行）: {dup}"
+    assert len(scanned) >= 2, f"本尺实际只扫到 {scanned}——覆盖面不足即失去判别力"
