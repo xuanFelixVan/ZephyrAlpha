@@ -1,0 +1,96 @@
+---
+ttl: task_bound
+title: 矿考循环班·v3 池宽窄批开工包（窗毕即可发，本件零发跑零改冻结册）
+created: '2026-10-11T11:20:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+why_now: >-
+  Owner 10:5x 令 CH 压缩窗约 4.5 小时禁一切取数，v3 池宽扫描顺延窗毕；
+  本班窗内把"批什么、花多少、怎么发、谁批准"四件事全部算清并落成件，窗毕一条命令即可发。
+  本件零发跑、零改 schema、零改预注册册、零 CH。
+
+third_self_correction_partial_pin: >-
+  24_/25_ 里我报的"648 格＋216 格"两个邻域数，属**部分钉维**的乘积（我当时只钉了 A1/A2/B/C 四维，
+  余下 D1×D2×E×H 等自由维仍在乘），不是单因子邻域。本件用 GridCompiler 真编译逐格计数改正：
+  真·其余维全钉的单因子广度邻域＝72 格（其中新档 36 格）。方向＝我又把自己吓住了一次（648→72）。
+
+prereg_amendment_proposal:
+  needs_owner_signoff: >-
+    config/search_space_prereg.yaml 头部原文＝改空间=作废重开预注册（禁跑中改），frozen_by=裁定#413；
+    现生效卡 f06_grid_v2 frozen_by=夜矿续战令三连裁③（Owner 通道）。⇒ 本班不自改，此处只出草案。
+  machine_source_change: >-
+    config/position_recipe_grid_schema.yaml 第 25 行 B_top_n.values
+    由 [top10, top20, top30, top50, top100] 增至 末尾加 top150, top200（两值，纯追加）。
+  code_change_needed: 零（执行器把 topN 字符串转整数处＝factory_grid_executor.py:1135，通用解析，已逐行读到）
+  blast_radius_measured: >-
+    空间真编译实测：现行册 n_raw=362,880；加两档后 n_raw=508,032＝1.4 倍。
+    含义如实报＝此后随机抽样密度被稀释（同一 1,000 格批次覆盖率由 0.28% 降至 0.20%），
+    若 Owner 在意批A/v2 的抽样可比性，宜把 v3 卡写成"只对广度邻域生效"而非整体重开。
+  old_batches_untouched: >-
+    10-10 那 27,423 格读数与 negatives 全不动（本件零写扫描产物）；判据面/阈值面零动。
+
+narrow_batch_design:
+  question: 池宽收益在 top100 处见顶了没有（23_ 实测 hs300 内 top10→top100 均值单调升到端点，cliff=false 但 best_is_endpoint=true）
+  subspace_json: |
+    {"G_universe": ["hs300"], "D1_rebalance_freq": ["weekly"], "D2_rebalance_trigger": ["periodic"],
+     "E_single_cap": ["cap10"], "H_turnover_lambda": ["lambda_5bp"],
+     "A1_factor_normalize": ["rank", "zscore", "industry_neutral"],
+     "A2_combine_weight": ["halflife60", "ic_ir", "ic_mean"],
+     "C_sizing": ["equal_weight", "signal_strength"],
+     "B_top_n": ["top50", "top100", "top150", "top200"]}
+  cells_measured: >-
+    72＝3 A1 × 3 A2 × 2 C × 4 广度（真编译逐格计数，非手算）；维数账＝16 维中 4 维作变动、
+    5 维显式钉 baseline（G_universe/D1/D2/E_single_cap/H）、余 7 维（F/I/J/K/X_stop/X_breaker/X_sector）
+    在 phase=1 本就单值⇒自动钉住；新档 top150/top200 占 36 格
+  internal_control: >-
+    top50/top100 两档在同批里重跑作内部对照（不复用 23_ 的读数——23_ 是全空间抽样下的边际均值，
+    与本批"其余维全钉"的条件均值不同口径，混用＝拿两把尺当一把）
+  window_for_scan: 2020-01-01..2023-12-31（与已扫面同窗，才谈得上续扫；卡的考试窗 2024+ 属另一件事）
+  seed_and_shards: seed=20261011 单分片即可（72 格无须切片）
+
+cost_restatement:
+  rate_basis: 实测 0.580-0.652 秒/格（engine=auto，10-10 夜批六分片同片墙钟；纯 CPU 未测）
+  wall_clock_auto: 72 格 ≈ 42-47 秒
+  wall_clock_if_cpu_3_5s: 若 CPU 慢到预注册册自设的升点前置 3.5 秒/格 ⇒ 252 秒 ≈ 4.2 分钟
+  probe_before_fire: >-
+    发跑前先 8 格 smoke（--engine cpu --eval-backend cpu）量 CPU 真速并把数字写进本册追加节，
+    这样"CPU 口径"第一次有实测，不再借 auto 口径
+
+launch_plan_window_after_close:
+  precondition_1: Owner 批 prereg v3（改空间须作废重开，本班不代签）
+  precondition_2: CH 压缩窗关闭（本批要读 kline_daily_hfq 等＝纯 CH 消费者）
+  precondition_3: >-
+    E0 日历窗问闸（--skip-compute-gate 仅 --smoke 允许，正式跑批禁用）须自然放行；
+    若闸在位拦跑，本班不硬绕，报窗主
+  gpu_stance: 恒 --engine cpu --eval-backend cpu（GPU 归 st-gpux 基线对拍，本班零上卡）
+  trial_ledger_stance: >-
+    --exploration-ledger 走探索分册（在册处方：不占考试 N 账本），批末不并进 N 账本
+  command_draft: |
+    python scripts/backtest/factory_grid_executor.py \
+      --subspace-json .runtime/tmp/st-mineloop-20261010/subspace_v3_breadth.json \
+      --n-samples 200 --seed 20261011 --start 2020-01-01 --end 2023-12-31 \
+      --engine cpu --eval-backend cpu \
+      --exploration-ledger .runtime/nightmine_exploration/scan_ledger_v3breadth_s0.jsonl
+  artifact_reading: >-
+    产 manifest 后按 23_ 同口径出广度边际（每档均值＋top1% 富集＋端点判定），
+    并据结果决定卡片 05_沪深300池宽top100与top50对照 是否需要 v2（若 top150/200 仍升，
+    则对照卡的两档选择要重冻——属新版本卡，禁原地改）
+
+compliance:
+  batches_launched: 0
+  ch_queries_this_session_since_window_open: 0
+  schema_modified: 0
+  prereg_modified: 0
+  gpu_used: 0
+  files_created: 1
+
+review_commands:
+  space_product_v3: >-
+    python -c "import yaml,pathlib;from zephyr.position.core.position_recipe_compiler import GridCompiler;d=yaml.safe_load(open('config/position_recipe_grid_schema.yaml',encoding='utf-8'));[x for x in d['dimensions'] if x['id']=='B_top_n'][0]['values']+=['top150','top200'];p=pathlib.Path('.runtime/tmp/st-mineloop-20261010/schema_v3_probe.yaml');p.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False),encoding='utf-8');c=GridCompiler.from_yaml(p);e=c.compile({'strategy_pool':['primary'],'phase':1,'capital_ramp_enabled':False});print('n_raw v3=',e.n_raw)"
+  neighborhood_cells: >-
+    python -c "import json,pathlib;from zephyr.position.core.position_recipe_compiler import GridCompiler;e=GridCompiler.from_yaml('.runtime/tmp/st-mineloop-20261010/schema_v3_probe.yaml').compile({'strategy_pool':['primary'],'phase':1,'capital_ramp_enabled':False});sp=json.load(open('.runtime/tmp/st-mineloop-20261010/subspace_v3_breadth.json',encoding='utf-8'));print(len([r for r in e.recipes if all(r.values.get(k) in vs for k,vs in sp.items())]))"
+    # 应得 72
+  top_n_generic_parse: >-
+    git show dev:scripts/backtest/factory_grid_executor.py | sed -n '1135p'
