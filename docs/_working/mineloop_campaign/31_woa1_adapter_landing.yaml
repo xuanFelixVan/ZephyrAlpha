@@ -1,0 +1,95 @@
+---
+ttl: task_bound
+title: 矿考循环班·WO-A1 适配器落地账（e/r 位面先解后写＋双臂通道＋来源册空册即纪律）
+created: '2026-10-11T17:05:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+owner_order: >-
+  合并批令"做"三条加严：①假分雷必须先解后写（实现里 e/r 两位语义映射逐卡面声明＋一颗"量纲错必红"的红证测试，禁靠注释自觉）
+  ②护栏照本班自提（dev 基线＋袋前数删除行＋不动判官不动卡面阈值＋合成面测试零 CH）③CH 复联后 13 支双臂卡直接出分。
+
+question_1_answered_first_what_goes_into_e_slot:
+  e_slot: >-
+    当日**敞口系数**，值域 [0,1]（含 1e-9 容差）。依据＝判官侧不可动的事实：
+    calibration_exam.py:217 `_arm_nav_metrics(exposure, target)` 在 :236 原文
+    `ret = df["e"].shift(0) * df["r"].shift(-1)  # t 敞口吃 t+1 收益`——e 位天然只能吃敞口。
+  r_slot: >-
+    同一底座的**日收益**序列：量级帽 |r|<=0.5，且长样本（>=20 日）不得全非负
+    （全非负＝敞口/仓位面特征，日收益必含负日）；单调非负且 max>1 即净值/累计面，直接拒。
+  why_this_is_a_landmine_not_a_style_note: >-
+    16 支 blocked 卡里有"臂＝池组合收益回放"这一类语义。若把那条收益序列喂进 e 位，
+    判官算出来是"收益×次日收益"——它**不抛异常**，只安静产出一个像模像样的假分并写进分数册。
+    所以判据必须是数值的、结构的，不能是注释或约定。
+  gates_added_mechanical:
+    - require_exposure_face(series, name, card_id) → ArmFaceMismatch("not_exposure_face ... 会算成收益×收益")
+    - require_daily_return_face(series, name, card_id) → ArmFaceMismatch("not_daily_return_face"｜"长样本全非负")
+    - verify_face_pair_quotes(card, entry) → 册格必须同时写 e_face_quote 与 r_face_quote，
+      且 e 引句只能落在**臂定义面**、r 引句只能落在**底座/目标出处面**（两域不可互换；
+      缺任一＝ArmFaceMismatch("face_contract_undeclared")，命中不到＝ArmQuoteNotFound）
+    - build_arms 每个算子产出（含 arm_identity 直喂底座那条路）一律过敞口位校验 ⇒ 底座是收益面时装配当场红
+  new_high_level_entry: >-
+    build_arm_pair(card, entry, *, base, target) → (开臂, 基臂, 日收益, 凭据)。
+    build_arms 旧签名与旧行为保留（dev 上已落地的 10 支测试零改动仍绿），
+    但"能出双臂"与"三面语义已声明"分开：只有 build_arm_pair 会替调用方把 r 位也校完。
+
+question_2_guardrails_executed:
+  baseline: git checkout dev -- scripts/backtest/fexam/{card_binding.py,tests/backtest/test_card_binding.py,...} 先取正基线再改（四件全如此）
+  deletion_lines_ahead_of_bag: >-
+    对 dev 现字节净差逐件数过：arm_protocol_binding.py +672/−0（**dev 上从来没有本体件**）、
+    card_binding.py +59/−1（唯一删除行＝run_one 里被我改结构的那一句 `if entry is not None:`）、
+    test_arm_protocol_binding.py +103/−0、test_card_binding.py +119/−0（两支测试删除行实测=0）
+  judge_untouched: scripts/backtest/fexam/calibration_exam.py 零改动（判据核与词表都不动）
+  cards_untouched: 卡面 pillars_numeric/window/buckets 零改动（本袋不含任何卡件）
+  zero_ch: >-
+    本袋全部测试走合成序列与 tmp_path，一次 CH 都不发；
+    run_one 的双臂分支在底座来源未接线时**先返回错误**、其后才可能取数，
+    该纪律由一颗 monkeypatch 把 index_next_day_return 换成"一调用即 AssertionError"的红证测试钉住
+
+what_landed:
+  arm_protocol_binding_body: >-
+    scripts/backtest/fexam/arm_protocol_binding.py 首次入 dev——它 10-11 00:45 就随袋交了测试
+    （commit 46ca63810a 袋名自述"本体件待投"），本体一直只活在我车道；
+    结果 dev 上 `tests/backtest/test_arm_protocol_binding.py` 从那一刻起是 **collection 红**
+    （ModuleNotFoundError: fexam.arm_protocol_binding）。本袋关闭这支红：16 passed（原 10 支零改动仍绿＋新增 6 支）。
+  card_binding_channel: >-
+    arms_from_binding_book(card, entry, *, base, target)＋run_one 的 arms 分支（signal_b 通道）
+    ＋_arm_pair_builder()（两条导入路径皆败即 raise，禁静默降级单臂）＋ARM_BASE_SOURCES 来源册。
+  tests_new: >-
+    test_arm_protocol_binding.py 新增 6 支：五支红证（收益面喂 e 位／净值面喂 r 位／敞口面喂 r 位／
+    两面引句未声明／r 引句误落臂定义域）＋一支绿正证（三面齐备且凭据记下面语义）；
+    test_card_binding.py 新增 5 支：绑定层三面装配正证、收益面底座在绑定层仍必红、
+    册格缺 arms 面直拒、来源未接线时 run_one 报错且**不触 CH 不落分数行**、ARM_BASE_SOURCES 必须为空册。
+
+question_3_remaining_seam_honest: >-
+  出分还差最后一格：ARM_BASE_SOURCES 现在是**空册，且这是有意的**（在册纪律＝禁在绑定层现编近似序列冒充分母，
+  与 ArmBaseMissing 同一哲学；并有专门用例守住"谁往里塞兜底谁先红"）。
+  要填进去的是"按臂参数调用在册重放装置（simulate 族）产日频敞口序列"这一步——即 15_ 册 WO-A1.scope_must 第 1 条，
+  它的验收必须看真产物（每臂日频敞口的覆盖率/持仓路径合理性），属 CH 面，故留到复联后与本袋三批同窗做。
+  在册 triage 已把 16 支分好：3 支 feasible_now（同底座敞口变换，接完来源即可出分）、
+  其余 needs_matching_engine（横截面构成/次序/分批/分钟切片类，需装置先具备按臂回放能力）、
+  另有 unfrozen_arm_definition（卡面只给机制名不给档值，如 S2-04 的追单状态机步进参数——按禁拍数纪律保持 blocked）。
+  ⇒ 对 Owner③"13 支直接出分"的诚实预期＝接完来源册后**先出 3 支**，其余随装置能力逐支配对；不是复联即 13 支齐出。
+
+preexisting_red_face_change: >-
+  tests/backtest 全目录在**未改动 dev** 与在本车道同一批跑，结果同为 11 failed（test_factory_wiring_night.py
+  的月窗广播族＋test_sim_daily_runner.py 回放面）；比本班今晨记录的 9 红多 2 支（sim_daily_runner 新增两支），
+  这两支所在的两个文件对 card_binding/arm_protocol_binding 的 import 命中数均为 0（grep 实测）⇒ 非本班引入，
+  登记不代修，请转当日修复班点名。
+
+compliance:
+  ch_queries: 0
+  judge_files_modified: 0
+  cards_modified: 0
+  score_rows_changed: 0
+  registries_modified: 0
+  files_created_in_dev: 1
+  files_modified: 4
+
+review_commands:
+  body_now_on_dev: git show dev:scripts/backtest/fexam/arm_protocol_binding.py | wc -l（应 >0；本袋前 dev 无此件）
+  red_proofs: python -m pytest tests/backtest/test_arm_protocol_binding.py -q -k "return_face_in_exposure or nav_level_in_return or exposure_face_in_return or face_contract" 应见 4 passed
+  suites: python -m pytest tests/backtest/test_arm_protocol_binding.py tests/backtest/test_card_binding.py tests/backtest/test_calibration_exam.py -q 应见 84 passed
+  empty_source_book_discipline: python -m pytest tests/backtest/test_card_binding.py -q -k arm_base_sources_book_starts_empty
+  deletion_check: git diff dev --numstat -- scripts/backtest/fexam/card_binding.py（+59/-1，-1 为 run_one 那句改结构）
