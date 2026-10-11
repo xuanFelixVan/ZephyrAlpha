@@ -191,3 +191,25 @@ woa1_first_card_blocker_20261011:
     card_binding.py:212-218 读到 return 行），而本卡 r 位按卡面应是**基线组合日收益**；
     现闸只校卡面引句与量纲帽，校不出"注入的序列不是引句讲的那条"。
     修法＝底座来源自报身份标签＋build_arm_pair 做同一性断言＋"喂错底座必红"红证（已列任务 #13，与接线同批）
+
+card_06_draft_20261011:
+  draft_path: docs/_working/mineloop_campaign/draft_TDM-X-R1-01__comparison__06_基线出生件与r位声明版.yaml
+  placement_note: 草稿落 docs/_working（非 exam_cards）＝刻意——批复二要求"写完发我批卡面，批完先考"，
+    未批件放进考卷树会被 runner 当在册卡拾取；批准后再进 docs/03_modules/…/exit_flow/X1/ 并登记 token 转正
+  four_birth_pieces: piece_1 信号面＝prereg_frozen.yaml device.signal_source+columns_cap24（24 列已逐列点名，本卡符号引用不抄名单）
+    ｜piece_2 宇宙＝同册 weights(top_n=20 月频等权)+candidate_filter(信号日 ATR14 非 NaN；不足 20 只=该月空仓)
+    ｜piece_3 调仓行＝exit_simulator.month_start_rows（月首交易日行号，装置注释原文点名"非权重变化行"）
+    ｜piece_4 r 位＝基线组合自身日收益（与 e 位同一次装置调用产出），并点名现缺陷 card_binding.py:212-218 的 CSI300 硬编须同批改
+  judgment_frozen_face: pillars_numeric 八键逐字沿用 02（本班零新增零放宽），卡面差异可逐键对拍；status=blocked_on_impl 未自称可考
+  proposal_jia_evidence_for_owner_signature: >-
+    批复二"甲只准一种形态"的条件这次**被实测满足**：02 的 device_ref 点名 exit_simulator，
+    而该装置自己的输入由在册冻结卡 scripts/backtest/fexam/exit_sim/prereg_frozen.yaml
+    （frozen_at 2026-10-06 10:10:50+00:00，lane=E道首件）逐件钉死——signal_source 规则原文
+    "indicator_exam_scores_v1.yaml verdict==pass 的 ch_backings 首列，文档序去重，cap 24 列（确定性，不挑不调）"
+    且 columns_cap24 已把 24 列逐列点名；weights=candidate 的 top_n=20 与 ATR14 非 NaN 过滤、
+    调仓=month_start_rows 月首行、stop_mult/commission 为模块常量（exit_simulator.py:59-63）。
+    ⇒ 指认链=卡面 device_ref → 装置 → 装置自有冻结预注册卡，**本班未挑任何一件自由参数**；
+      请 Owner 签认该链即为"在册基线"，签认后本卡方可进 exam_cards 冻结并与接线同批开考。
+  next_bag_shape: 接线袋（三件同笼，按在册"门禁代码+它读的册+本体同袋"处方）＝
+    ARM_BASE_SOURCES 一个来源（一次装置调用同时产 e 位敞口与 r 位日收益并自报身份标签）
+    + card_binding r 位改读声明源 + 绑定册格 arm_base_source 字段 + 同批测试（含"喂错底座必红"红证）
