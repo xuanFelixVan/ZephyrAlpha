@@ -15233,6 +15233,14 @@ entries:
   plain_zh: 治理·生成器的修复模块 layout名册：修复模块 layout都录进去，治理·生成器想查随时翻，避免信息散落在各处。
   domain_id: D_GOV_SCRIPTS
   responsibility_layer: governance
+- module_path: scripts/governance/generators/generate_collection_shard_manifest.py
+  desc_en: Shards pytest collection by first-level tests dir; emits manifest plus night-shift window entry
+  desc_zh: 按 tests/ 一级目录切分 pytest 采集面并生成机生册与错峰窗口入口
+  name_en: Collection Shard Manifest Generator
+  name_zh: 采集分片机生册生成器
+  plain_zh: 把一次要二十分钟的 pytest 全库采集按目录切成一片一片，每片单独计时，并标出每条收集错误是真断链还是环境缺席，只诊断不跳过任何错误
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: scripts/governance/generators/generate_commit_guide.py
   desc_en: ""
   desc_zh: ""

@@ -1,0 +1,40 @@
+# 环境债台账（维护二班 ⑧ 落点；净零申报）
+# owner: st-maint2-20261011 | ttl: task_bound | 建: 2026-10-11
+
+meta:
+  ruling_basis: "总统统筹 2026-10-11 晨裁定⑦⑧包之⑧：环境债台账落点由本班定，净零申报，torch +cu126 漂移首条入账"
+  caliber: "一条环境债 = 一对『在册申报值 vs 本机实测值』的可复跑差对；条目数值由 generation_command 现算，禁手工清单（根宪法 §9.5）"
+  net_zero_declaration: >-
+    本件不新增第二真源：只登记差对与指针，版本常数真源仍是 requirements.txt 与在册裁定
+    #ARCH-TORCH-CPU-ONLY（其 registry 锚在 architecture_issue_registry.yaml）。
+    某条债被修好或改判时，处置=在本件该条 disposition 写结论并指回真源，禁把版本常数搬进本件。
+  measurement_discipline: "所有 measured 值均带 date 实测时刻（体感钟快约一倍，在册教训），且判据取构建后缀而非版本号"
+
+generation_command: |
+  PYTHONNOUSERSITE=1 python -c "import importlib.metadata as md, torch as T; print(md.version('torch'), T.version.cuda, T.cuda.is_available())"
+
+entries:
+  - debt_id: ENV-001
+    title: torch 构建漂移——在册裁定要求 CPU 版，本机实装 CUDA 构建
+    declared:
+      source: "requirements.txt:5-10"
+      ruling: "#ARCH-TORCH-CPU-ONLY（2026-07-21）"
+      registry_anchor: "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml:9858-9864"
+      value: "torch 已替换为 CPU 版（2.5.1+cu121 4.27GB → 2.13.0+cpu 0.48GB）；项目代码 0 个 import torch，由 sentence-transformers 间接依赖"
+    measured:
+      at: "2026-10-11 13:5x +0800（date 实测）"
+      distribution: "2.13.0+cu126"
+      cuda_build: "12.6"
+      cuda_available: true
+    drift: >-
+      实装 = +cu126（CUDA 构建），在册裁定要求 = +cpu。版本号同为 2.13.0 极易被误读成"已达标"
+      ——版本号相同而构建后缀相反，故判据必须取后缀（这条是"存在性判据≠内容判据"的环境版）。
+    cost_claimed_by_ruling: "4.27GB → 0.48GB（裁文原值，非本班实测）"
+    disposition: open
+    why_not_fixed_now: |
+      换回 CPU 版会改变 sentence-transformers 的运行面，且本班正被 GPU 化班（st-gpux-20261011）
+      同机使用 CUDA 的窗口期覆盖——降级属环境/花钱类动作且可能打断他班，按统筹权限四条第 3 款
+      登记呈批而非自裁。反方向（把 #ARCH-TORCH-CPU-ONLY 改判为"CUDA 构建在册允许"）同样是
+      Owner/统筹门位（涉磁盘占用与依赖口径）。
+    owner_of_record: "环境/依赖治理车道（非本班）"
+    revival_condition: "任一 pip 重装事件，或 GPU 化班收口后的一次复测"

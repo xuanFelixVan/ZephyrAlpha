@@ -272,3 +272,89 @@ grep -n "RATING_SCORE" src/zephyr/nlp/research_rating.py
    但绕过不是修复，登记在此）。
 6. T9 的"32 面属时序判定病"归因基于 §九E 表内清除凭据分类，未逐面重跑第三条尺；
    若要作为 Owner 门位决策依据，需终清班或后续班次用 `t9_forced_close_audit.py` 重放确认。
+
+## 六、T15 落钉＋板块卡正门重跑（2026-10-11 13:4x 追加，纯追加零删除）
+
+裁定来源（逐字）＝**总统统筹 2026-10-11 晨裁定①（Owner 直裁 B）**，裁文原文＝「裁定＝取 B（Owner 直裁，不是
+建议）」；本班未新立裁定号、未碰 `ruling_registry.yaml`（令面禁新立号），Owner 门位经本台账＋
+`sector_lane_spec.yaml.measured_evidence.ruling_and_pin` 落账。
+
+一、机械图（全部实读，零凭记忆）：
+- 占位符消费点＝**零代码消费**。`rating_score_map` 全仓命中四处，全是纸面/测试同名词：
+  `sector_lane_spec.yaml:291`（pandas 步原文 `df['rt'].map(rating_score_map)`）、`:438`（bind_args 值位）、
+  `17_sector_line_closeout.yaml:45`（历史状态句）、`tests/meta/scripts/test_build_consensus_daily.py:116`
+  （测的是 A 案那张表，与本卡无关）。**意图消费方＝算子 `rating_upgrade_cluster_share`，它全仓不存在**
+  （`card_binding.py:769-814` OPS 册无该键；本班 HEAD 与 dev 该文件逐字节同值＝dev 也没有；矿考班
+  `.runtime/tmp/st-mineloop-20261010/lane_sector/sector_ops_draft.py` 已随 TTL 灭，find 全仓零命中）。
+- 卡件＝`docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__calibration__03_评级上调聚集.yaml`
+  （card_id `TDM-E-L2-09/calibration/03_评级上调聚集`，status=preregistered，非 `09-03` 他名）。
+- 正门命令原文（真源 `99_checkpoint.md §8:127-132`，入口 `scripts/backtest/fexam/card_binding.py --mode run`）＝
+  `python scripts/backtest/fexam/card_binding.py --mode run --binding-book <册> --approve-list <清单> --scores <分数册> --out <件> --tag <标> [--force] [--override-ch-window-with-reason <因>]`；
+  分数册必须显式 `--scores`（禁默认主区面），CH 让路窗 21:00–22:30／01:00–04:00 由 `_in_ch_yield_window` 硬拦。
+
+二、G4-5 冻结状态结论：该母卡**受冻结约束**。凭据＝①卡面 `frozen_note: 看数前冻结`＋`discipline: 冻结后开考；
+事后挪门柱=作废（G4-5）`；②`git log --oneline -5 -- <卡>` 仅一笔 `27e85ba1e9`（分袋搬移，无判据改动）；
+③dev 在册 `27_five_card_freeze_protocol.yaml:57-66` 把它列为五支之一，纪律行「五支全部走新版本卡（G4-5），
+母卡原行保留在册不改」。**注意基线差**：`27_` 只活在 dev，本班 HEAD 尚无该文件（`git cat-file -e HEAD:…` 报
+does not exist，`merge-base --is-ancestor HEAD dev`＝True 即 dev 超前），本班按令未做任何 git 写，读它走
+`git show dev:` 只读通道。本班因此走的路＝**零改母卡**，只把裁定钉在 spec/证据面（task_bound 件），v2 卡建卡面
+留总包/属主（建卡须 creation_token，且 27_ 第五支要求 v2 明标辅轴 `industry_excess_next5d` 本次不考）。
+
+三、正门重跑（只跑零 CH 面，13:4x 处于 Owner 10:5x 令的 CH 压缩窗约 4.5h＝禁一切取数，窗毕也不由本班硬考）：
+- RED_1 无绑定册：`{card_id: TDM-E-L2-09/calibration/03_评级上调聚集, skipped: class_A?, reason: table_not_in_recipe_book:c3_fundamental.research_report}`，`scored=0`
+- RED_2 临时册点名算子（`.runtime/tmp/st-maint2-20261011/rating_pin/redpair_book.yaml`，未进真源册）：
+  `{card_id: …, error: "bind:ValueError:op_not_in_ops_book:rating_upgrade_cluster_share"}`，`scored=0`，
+  `scores_probe.yaml` 未生成＝失败发生在取数之前，零 CH 自证。
+- 两出口独立计数、形制不同（skipped=无入口／error=有入口缺算子），**都不是 verdict**，本班不报"通过"。
+- 钉后自证尺（零 CH，实测 True True）：spec 字面抄本==真源 dict、ref 串 importlib 解析==真源 dict。
+- CH 读数两面（本班零查询，故无读数；以下为**代码面**实读，供窗毕后来者不踩同形坑）：
+  正门读口 `scripts/backtest/fexam/ch_data.py`＝fail-closed 且两面可分——`ch_query` 非 2xx/异常一律
+  `CHAccessError`（`:98-103`），`ch_query_df` 空文本→空 DataFrame（`:109-110`＝真·无数据），
+  网关以 200 携带 `Code:` 错误体→仍抛 `CHAccessError`（`:111-112`）。反之写侧口
+  `src/zephyr/data/ch_writer.py:427 query()` 把"无行"（`:446`）与"TCP+HTTP 全失败"（`:483-484`）**都返 `""`**＝在册
+  同形假绿坑，该文件 `:1222` 自证并另开 `query_strict(:1258)` 作可分口。若后来者改用后者取数，须走
+  `query_strict`/`DatabaseService` 只读面，禁把 `""` 读成"无数据"。
+
+四、如实登记 B 的残留并列（禁宣称零并列）：B 在实测词表内仍有一处 `卖出=回避=-1.0`（词频 32/146940=0.0218%，
+剔空串口径 32/135556=0.0236%）；`买入=强烈推荐=1.0` 一对但 `强烈推荐` 未见于实测取值集合＝零暴露。A 的
+两处并列（持有↔中性 1154 行=0.785%、减持↔回避 3 行=0.002%）才是弃 A 的实证理由。
+
+五、未做与残留风险（不含糊）：
+1. **本卡今日仍不出分，状态 blocked**，缺口三件未闭：①OPS 册缺算子 `rating_upgrade_cluster_share`（引擎活，
+   卡面口径已在 spec 数值化，但补齐须 CH 粒度实测＋`_REGISTERED_TABLES` 登记＋配对测试，非纸面可代）；
+   ②`c3_fundamental.research_report` 未入配方册（配方册纪律原文"未登记者拒绑而非猜粒度""禁按猜测拼 SQL 出分"）；
+   ③v2 卡不存在（G4-5 禁原地改母卡）。本班禁为凑数硬考，未自己补算子出分——那会在未实测粒度上造第二判据面。
+2. CH 压缩窗（约至 ~15:2x）内任何取数都违令，本班未发一条查询；卡面其余未冻项（industry 名单版本源、
+   辅轴未来量、`ic_floor__ic_ir`／`lag_profile`／`head_to_head` 现器无面，见 `11_prebind_review.yaml:190-210`）
+   **未随本裁关闭**，钉住评级序 ≠ 卡已可考。
+3. `sector_lane_spec.yaml`／`17_sector_line_closeout.yaml` 属主是 st-mineloop-20261010（task_bound），本班代落钉
+   仅依总统统筹令①，落地仍走总包队列正门；`17_:45` 的历史句按只增不改保留，追加了 `post_closeout_addendum_20261011` 指向现值，防文档矛盾。
+4. 本班未碰 `card_binding.py`／分数册／卡件零字节；临时件全在 `.runtime/tmp/st-maint2-20261011/rating_pin/`（TTL 区，非交付面）。
+
+六、复核命令（进程外可验）：
+```bash
+git -C .worktrees/st-maint2-20261011 diff --stat            # 应只见两本册：sector_lane_spec.yaml / 17_sector_line_closeout.yaml
+PYTHONNOUSERSITE=1 PYTHONPATH=src python -c "import importlib,yaml;from zephyr.nlp.research_rating import RATING_SCORE;d=list(yaml.safe_load_all(open(r'docs/_working/mineloop_campaign/sector_lane_spec.yaml',encoding='utf-8')))[-1];a=d['bind_args']['TDM-E-L2-09/calibration/03']['args'];s=a['rating_score_map_literal_snapshot_20261011'];m,at=a['rating_score_map'][4:].rsplit('.',1);print(s==RATING_SCORE, getattr(importlib.import_module(m),at)==s)"   # 应 True True
+PYTHONNOUSERSITE=1 PYTHONPATH=src python scripts/backtest/fexam/card_binding.py --mode run --approve-list .runtime/tmp/st-maint2-20261011/rating_pin/approve_09_03.txt --scores .runtime/tmp/st-maint2-20261011/rating_pin/scores_probe.yaml --out .runtime/tmp/st-maint2-20261011/rating_pin/redpair_dryrun.yaml --tag redpair-pre --dry-run | grep 评级上调聚集   # 应见 skipped: class_A?
+git show dev:docs/_working/mineloop_campaign/27_five_card_freeze_protocol.yaml | sed -n '57,66p'   # 应见第五支 G4-5 走新版本卡
+```
+
+
+
+## 七、更正：① 的钉法撤回（2026-10-11 17:0x，写在本段而非删 §六）
+
+§六（本班车道追加）记的是"把 rating_score_map 钉成引用式 `ref:zephyr.nlp.research_rating.RATING_SCORE`"。
+装袋前最后一次基底核查发现 **dev 上该件已由属主道（矿考循环班）按同一条 Owner 裁定先落**，
+拼法是 `rating_score_map: "import:zephyr.nlp.research_rating.RATING_SCORE"`，
+且其 evidence 比本班版更全（含 B 案自身残余并列 `卖出=回避=-1.0` 的如实登记与 CH 面未收口声明）。
+
+⇒ 处置＝**撤回本班那份 `ref:` 版本**（`git checkout dev -- sector_lane_spec.yaml`，零改写他人面），
+理由：两种前缀并存＝同一个映射的**第二真源**，正是 RULE-SSOT 与 `27_five_card_freeze_protocol.yaml`
+"引用式冻结优先，能指真源就不抄数值"要防的形态；而"谁先落"不改变"只能有一种拼法"。
+
+本班对 ① 的净贡献因此改为两项（都不是钉值本身）：
+1. **独立复核**：以三方 `git merge-file` 实跑出那个冲突块，证明 dev 面已含裁定 B 且更完整——
+   若没有这一步，本班会把重复拼法推进 dev（一次第二真源事故，账面还会写成"本班钉的"）。
+2. **`17_sector_line_closeout.yaml` 的同批追加一并撤回**（该件 dev 现值未漂，但内容同属重复叙述）。
+
+⚑ 账面纪律：§六 原文**保留不删**，本段为其更正——删掉就等于把"我差点造了第二真源"抹成"我钉的"。
