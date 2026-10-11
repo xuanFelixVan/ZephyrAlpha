@@ -109,6 +109,7 @@ import threading
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -118,6 +119,9 @@ sys.path.insert(0, str(_REPO / "scripts" / "backtest" / "translated"))
 sys.path.insert(0, str(_REPO / "scripts" / "backtest"))
 
 SCHEMA_PATH = _REPO / "config" / "position_recipe_grid_schema.yaml"
+if TYPE_CHECKING:  # 仅注解用（GridCompiler 的实际导入仍在函数内，运行面零改动）
+    from zephyr.position.core.position_recipe_compiler import GridCompiler
+
 INTAKE_DIR = _REPO / "data" / "strategy_intake"
 
 # 死亡层枚举（立项稿 §十三: 阴性必须带死亡层+死因，否则不计）
@@ -2006,6 +2010,55 @@ class _GridInstruments:
             _instr_warn("dump_stacks", exc)
 
 
+def _resolve_grid_schema(schema_path: str = "", freeze_dims: dict | None = None) -> tuple[GridCompiler, dict]:
+    """WO-A4 展开前冻结＋探针册覆盖口（缺省双空＝原路逐字节零漂移）。
+
+    病根：GridCompiler._expand 先把 combos 整表铺在内存，执行器却在 compile **之后**才按
+    subspace 过滤——phase>=2 或 capital_ramp_enabled=True 时空间从 362,880 跳到
+    725,760／52,254,720，先炸后筛，故风控族（J/X_stop/X_breaker/X_sector/K）无法窄扫。
+    本函数把"钉值"移到展开之前：只**收窄**在册维的值集（禁静默扩空间——新档须走
+    --schema-path 探针册，共享册数字零动，免得把 t3a/t3b 的冻结名义空间挤歪）。
+
+    返回 (compiler, 生效面元信息)。元信息必入 batch_meta：否则日后分不清
+    "同一空间的不同抽样"与"不同空间的同抽样"，可比性判据就没了。
+    """
+    import hashlib
+
+    import yaml
+
+    from zephyr.position.core.position_recipe_compiler import GridCompiler
+
+    base = Path(schema_path) if schema_path else SCHEMA_PATH
+    if not base.exists():
+        raise SystemExit(f"[grid] 生效 schema 不存在: {base}")
+    meta = {
+        "schema_path": str(base),
+        "schema_sha256": hashlib.sha256(base.read_bytes()).hexdigest()[:16],
+        "freeze_dims": None,
+    }
+    if not schema_path and not freeze_dims:
+        return GridCompiler.from_yaml(SCHEMA_PATH), meta
+    doc = yaml.safe_load(base.read_text(encoding="utf-8"))
+    dims = (doc or {}).get("dimensions") or []
+    known = {d.get("id") for d in dims}
+    unknown = sorted(set(freeze_dims or {}) - known)
+    if unknown:
+        raise SystemExit(f"[grid] --freeze-dims 点名了不在册的维（禁静默扩空间）: {unknown}")
+    for d in dims:
+        req = (freeze_dims or {}).get(d.get("id"))
+        if not req:
+            continue
+        have = [str(v) for v in (d.get("values") or [])]
+        missing = [str(v) for v in req if str(v) not in have]
+        if missing:
+            raise SystemExit(f"[grid] 维 {d.get('id')} 钉值不在该维在册值集内（冻结只能收窄）: {missing}")
+        d["values"] = [str(v) for v in req]
+        if str(d.get("baseline")) not in d["values"]:
+            d["baseline"] = d["values"][0]
+    meta["freeze_dims"] = {k: [str(v) for v in vs] for k, vs in (freeze_dims or {}).items()} or None
+    return GridCompiler.from_dimensions(dims), meta
+
+
 def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun 三参演进（存量批次主入口，参数对象重构归批F账非本批）
     n_samples: int,
     seed: int,
@@ -2025,6 +2078,8 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     cost_attribution: bool = False,
     shard_idx: int | None = None,
     num_shards: int | None = None,
+    schema_path: str = "",
+    freeze_dims: dict | None = None,
 ) -> dict:
     """批次 A 主入口。返回 summary dict；manifest/negatives 落 data/strategy_intake/grid_<ts>/。
 
@@ -2040,6 +2095,13 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     缺省=现行语义逐位零漂移；t3 家族由 main() 按 prereg t3a 卡解析注入——
     context_overrides={"phase":2} 展开 J 维；factor_surface="v1_value" 接估值财务因子；
     exec_caliber 非 close 需执行价宽表；cost_attribution=True 增归因五列。
+    schema_path/freeze_dims（WO-A4，st-mineloop-20261010 2026-10-11）: 双缺省=原路逐字节零漂移。
+    freeze_dims 在 compile **之前**把在册维的值集收窄（只准收窄，点不在册的值=SystemExit），
+    使 phase>=2/3 的窄扫不必先铺 725,760／52,254,720 格整表再过滤（旧次序必 MemoryError）；
+    schema_path 是探针册覆盖口——新档位只准进探针册，共享册 config/position_recipe_grid_schema.yaml
+    的数字零动（t3a/t3b 两册的 n_raw_expected 是另两轨的冻结名义数，被挤歪＝变相挪门柱）。
+    生效面（路径＋sha256＋freeze）必入 batch_meta 与 summary，否则日后分不清
+    "同一空间的不同抽样"与"不同空间的同抽样"。
     """
     if engine not in _VALID_ENGINES:
         raise ValueError(f"engine 须为 {'|'.join(_VALID_ENGINES)}，得到 {engine!r}")
@@ -2112,7 +2174,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     except ImportError:
         _gpu_resolve = None
     gpu_wave = _gpu_resolve is not None and _gpu_resolve(_wave_backend) == "gpu"
-    compiler = GridCompiler.from_yaml(SCHEMA_PATH)
+    compiler, schema_meta = _resolve_grid_schema(schema_path, freeze_dims)
     compile_ctx = {**DEFAULT_CONTEXT, **(context_overrides or {})}
     expansion = compiler.compile(compile_ctx)
     recipes_all = list(expansion.recipes)
@@ -2163,6 +2225,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                     "smoke": bool(smoke),
                     "shard": [shard_idx, num_shards],
                     "subspace": subspace,
+                    "schema": schema_meta,
                 }
             )
             instr.start_heartbeat()
@@ -2576,6 +2639,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
         "run_ts": run_ts,
         "mode": "smoke" if smoke else ("batch_b_subspace" if subspace else "batch_a_census"),
         "subspace": subspace or None,
+        "schema": schema_meta,
         "stratify_dims": list(stratify_dims) or None,
         "n_raw": expansion.n_raw,
         "n_sampled": len(picked),
@@ -3019,6 +3083,18 @@ def main() -> int:
         default="",
         help="显式 context 注入（非 stage 批次用，如 T3b-T0 标定 '{\"phase\": 3}'；缺省空=零漂移）",
     )
+    ap.add_argument(
+        "--schema-path",
+        default="",
+        help="网格维度册覆盖口（WO-A4 配套，缺省空=SCHEMA_PATH 逐字节零漂移）；"
+        "新档位只准进探针册（config/…_probe.yaml），禁把共享册挤歪——t3a/t3b 的 n_raw_expected 是别的轨的冻结名义数",
+    )
+    ap.add_argument(
+        "--freeze-dims-json",
+        default="",
+        help="展开前维级钉值（WO-A4 本体：{维度id: [取值]} 在 compile 之前把值集收窄，"
+        "只准收窄禁扩否则 fail-closed；phase>=2/3 用它把 52,254,720 格的整表铺开压回可跑规模）",
+    )
     args = ap.parse_args()
     global _EXPLORATION_LEDGER, _EVAL_BACKEND
     _EXPLORATION_LEDGER = args.exploration_ledger or None
@@ -3090,6 +3166,7 @@ def main() -> int:
     import json as _json
 
     subspace = _json.loads(args.subspace_json) if args.subspace_json else None
+    freeze_dims = _json.loads(args.freeze_dims_json) if args.freeze_dims_json else None
     stratify = tuple(d for d in args.stratify_dims.split(",") if d)
     if ctx_overrides is None and args.context_json:
         # 显式 context 注入（20261007 袋B）：非 stage 批次的 T3b-T0 标定通道（phase=3
@@ -3111,6 +3188,8 @@ def main() -> int:
         cost_attribution=cost_attribution,
         shard_idx=args.shard_idx,
         num_shards=args.num_shards,
+        schema_path=args.schema_path,
+        freeze_dims=freeze_dims,
     )
     print(json.dumps(s, ensure_ascii=False, indent=2))
     return 0

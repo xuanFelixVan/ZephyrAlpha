@@ -606,3 +606,96 @@ class TestNetReturnsArchive:
         f = Path(summary["out_dir"]) / summary["net_returns_file"]
         assert f.exists()
         assert len(pd.read_csv(f)) == t_expected
+
+
+# ── WO-A4 展开前维级冻结＋探针册覆盖口（st-mineloop-20261010，Owner 合并裁定令①③ 2026-10-11）──
+
+_WOA4_CTX1 = {"strategy_pool": ["primary"], "phase": 1, "capital_ramp_enabled": False}
+_WOA4_CTX3 = {"strategy_pool": ["primary"], "phase": 3, "capital_ramp_enabled": True}
+_WOA4_CORE = {
+    "A1_factor_normalize": ["rank"],
+    "A2_combine_weight": ["halflife60"],
+    "B_top_n": ["top100"],
+    "C_sizing": ["equal_weight"],
+    "D1_rebalance_freq": ["weekly"],
+    "D2_rebalance_trigger": ["periodic"],
+    "E_single_cap": ["cap10"],
+    "G_universe": ["hs300"],
+    "H_turnover_lambda": ["lambda_5bp"],
+}
+
+
+def test_woa4_default_schema_is_byte_identical_zero_drift():
+    """缺省双空＝原路：在册空间逐位不变，且生效面元信息指向共享册（不是探针册）。"""
+    compiler, meta = mod._resolve_grid_schema()
+    assert compiler.count_n_raw(_WOA4_CTX1) == 362880
+    assert meta["freeze_dims"] is None
+    assert meta["schema_path"].replace("\\", "/").endswith("config/position_recipe_grid_schema.yaml")
+    assert len(meta["schema_sha256"]) == 16
+
+
+def test_woa4_freeze_narrows_before_expand():
+    """钉值须在 compile 之前生效（旧次序是先铺整表后过滤，钉不动规模）。"""
+    compiler, meta = mod._resolve_grid_schema(freeze_dims={"B_top_n": ["top50"]})
+    assert compiler.count_n_raw(_WOA4_CTX1) == 362880 // 5
+    assert meta["freeze_dims"] == {"B_top_n": ["top50"]}
+
+
+def test_woa4_phase3_core_point_compiles_without_memoryerror():
+    """验收 (a)：phase=3+ramp=True 只钉已探九维 ⇒ 剩风控族 144 格，可编译（旧直调实测 MemoryError）。"""
+    compiler, _ = mod._resolve_grid_schema(freeze_dims=_WOA4_CORE)
+    n = compiler.count_n_raw(_WOA4_CTX3)
+    assert n == 144, "144＝J2×X_stop3×X_breaker2×X_sector3×K4（风控族窄批面）"
+    exp = compiler.compile(_WOA4_CTX3)
+    assert len(exp.recipes) == 144
+    assert {r.values["X_stop"] for r in exp.recipes} == {"off", "atr3x", "trail20"}
+    assert {r.values["K_capital_ramp"] for r in exp.recipes} == {"lump", "linear_20d", "linear_60d", "pyramid"}
+
+
+def test_woa4_freeze_can_only_narrow_never_add():
+    """禁静默扩空间：钉一个不在该维在册值集里的值必须 fail-closed（新档只能来自探针册）。"""
+    with pytest.raises(SystemExit, match="冻结只能收窄"):
+        mod._resolve_grid_schema(freeze_dims={"B_top_n": ["top150"]})
+    with pytest.raises(SystemExit, match="不在册"):
+        mod._resolve_grid_schema(freeze_dims={"Z_not_a_dim": ["x"]})
+
+
+def test_woa4_probe_schema_breadth_neighborhood_is_72_cells():
+    """探针册＝共享册＋top150/top200；窄批格数须与 26_ 册实测 72 逐位相符（口径漂移即红）。
+
+    共享册的在册规模（362,880）与 t3a/t3b 两册的 n_raw_expected 一并断言零动——
+    route B 的立论就是"稀释与挤歪都不许发生"。
+    """
+    import yaml
+
+    probe = _REPO / "config" / "position_recipe_grid_schema_v3_breadth_probe.yaml"
+    assert probe.exists(), "v3 广度探针册缺失＝72 格窄批无处发（探针册是本判据的唯一消费者）"
+    full, _ = mod._resolve_grid_schema(schema_path=str(probe), freeze_dims=_WOA4_CORE)
+    assert full.count_n_raw(_WOA4_CTX1) == 1
+    narrow = dict(_WOA4_CORE)
+    narrow.update(
+        {
+            "B_top_n": ["top50", "top100", "top150", "top200"],
+            "A1_factor_normalize": ["rank", "zscore", "industry_neutral"],
+            "A2_combine_weight": ["halflife60", "ic_ir", "ic_mean"],
+            "C_sizing": ["equal_weight", "signal_strength"],
+            "J_regime_switch": ["off"],
+            "X_stop": ["off"],
+            "X_breaker": ["off"],
+            "X_sector": ["off"],
+            "K_capital_ramp": ["lump"],
+            "F_merge_policy": ["single"],
+            "I_cost_tier": ["frozen_l0"],
+        }
+    )
+    c5, m5 = mod._resolve_grid_schema(schema_path=str(probe), freeze_dims=narrow)
+    assert c5.count_n_raw(_WOA4_CTX1) == 72
+    assert m5["schema_path"].endswith("position_recipe_grid_schema_v3_breadth_probe.yaml")
+
+    shared = yaml.safe_load((_REPO / "config" / "position_recipe_grid_schema.yaml").read_text(encoding="utf-8"))
+    b = [d for d in shared["dimensions"] if d["id"] == "B_top_n"][0]
+    assert b["values"] == ["top10", "top20", "top30", "top50", "top100"], "共享册被挤歪＝A 路的永久稀释回来了"
+    # 真路径＝exam_definition.n_raw_expected（实测读得，禁凭记忆设键位）
+    for fname, want in (("search_space_prereg_t3a.yaml", 725760), ("search_space_prereg_t3b.yaml", 4354560)):
+        book = yaml.safe_load((_REPO / "config" / fname).read_text(encoding="utf-8"))
+        assert book["exam_definition"]["n_raw_expected"] == want, f"{fname} 冻结名义空间被挤歪"

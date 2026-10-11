@@ -1,0 +1,100 @@
+---
+ttl: task_bound
+title: 矿考循环班·WO-A4 与探针册落地账＋引用随体漂移更正＋窄批待发态
+created: '2026-10-11T14:56:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+ruling_1_route_b_landed:
+  claim_discipline: >-
+    动件前实测：Get-CimInstance 里 st-gpux 车道的 factory_grid_executor.py 自 06:46 起无新写（7.7 小时零动），
+    .ailocks 全域零命中该件，且队列侧 q-20261011-st-gpux-20261011-0015/0016 被存活闸判幽灵（"属主会话已死…直落 dead/"）
+    ⇒ 与 Owner 所说"已放 claim、窗口干净"一致；本班随后 lock_files acquire 持有该件。
+    基线取法＝git checkout dev -- scripts/backtest/factory_grid_executor.py（车道旧副本 2550 行落后 dev 3122 行，
+    直接改必重演我 10-10 那次"把自己的改动盖在别人落地上"的蒸发事故）
+  code_changes: >-
+    ①新增 _resolve_grid_schema(schema_path, freeze_dims)：在 compile **之前**把在册维值集收窄，
+    钉值不在册即 SystemExit（冻结只准收窄，禁静默扩空间）；缺省双空时逐字节走原路 GridCompiler.from_yaml(SCHEMA_PATH)。
+    ②run_batch 增两 keyword-only 参（schema_path/freeze_dims），main 增两旗 --schema-path / --freeze-dims-json；
+    ③batch_meta 与 summary 同步记 schema 生效面＝{schema_path, schema_sha256(16), freeze_dims}，
+    否则日后分不清"同空间不同抽样"与"不同空间同抽样"；④注解用 TYPE_CHECKING 守卫（运行面零新导入，ruff F821/UP037 双清）
+  probe_book: >-
+    新建 config/position_recipe_grid_schema_v3_breadth_probe.yaml＝共享册逐字节副本＋B_top_n 末尾 top150/top200 两档，
+    头部注明"只服务广度邻域窄批，缺省不被读本册"。共享册 config/position_recipe_grid_schema.yaml **一字未动**
+  acceptance_measured:
+    P1_zero_drift: 缺省 n_raw=362,880 逐位不变（sha16=b5faa1299cddf3d3，freeze=None）
+    P1b_freeze_before_expand: 钉 B_top_n=[top50] ⇒ n_raw=72,576（＝362,880/5，证钉值在展开前生效）
+    P2_phase3_no_more_oom: phase=3＋ramp=True＋只钉已探九维 ⇒ 144 格并可编译（旧结构此处 MemoryError；144＝J2×X_stop3×X_breaker2×X_sector3×K4）
+    P3_narrow_only: 在共享册上钉 top150 → SystemExit "维 B_top_n 钉值不在该维在册值集内（冻结只能收窄）"
+    P4_probe_72: 探针册＋窄批钉值＝72 格，与 26_ 册实测口径逐位相符；探针册全钉单核点＝1 格
+    P5b_control_36: 共享册同钉法仅用旧两档＝36 格（＝裁定②的内部对照批，零改任何东西即可发）
+  tests: >-
+    tests/research/backtest/test_factory_grid_executor.py 追加 5 支（42 collected：37 原有＋5 新增），新增 5 支全绿（0.9 秒）；
+    整文件 40 passed / 2 failed，两支失败件＝TestNetReturnsArchive 的 parquet 两测，已在**未改动的 main 基座复跑同码同败**
+    （2 failed in 9.54s）⇒ 属存量非本班引入，未代修、如实登记
+    新增断言里含一道反挤歪正证：共享册 B_top_n.values 必须仍等于 [top10,top20,top30,top50,top100]，
+    且 t3a/t3b 两册 exam_definition.n_raw_expected 必须仍为 725760／4354560——route B 的立论就是"稀释与挤歪都不许发生"
+
+citation_drift_correction:
+  fact: >-
+    本班 25_/26_/28_ 三册引用的执行器行号（compile 1951→1954→1956、topN 解析 1135、_LAMBDA_PEN 731）
+    写下时**对当时的 dev 现值逐条 grep 命中过**，但 st-gpux 随后落地 e869fd1e0d（06:39 预算第二腿）与
+    dda797cca9（07:01 设备面补计数）使文件增长，现值已位移。
+  current_anchors: >-
+    现 dev：GridCompiler 构造＝factory_grid_executor.py:2115、compile＝2117、subspace 过滤＝2120→2122、
+    topN 字符串转整数＝1301、_LAMBDA_PEN＝749
+  rule_adopted: >-
+    引用他人/在飞件的行号时改"符号名＋行号"双写（行号只是路标，符号名才是判据），
+    并在落地册里保留一次随体更正节；单写行号＝定时炸弹（本次已由我主动引爆并更正）
+
+scan_readiness_post_window:
+  precondition: >-
+    两批都是纯 CH 消费者 ⇒ 一律等 Owner 压缩窗关闭；发跑前按新工法三件定窗（任务现值＋进程表＋目录 mtime），
+    并让 E0 日历窗问闸自然放行（--skip-compute-gate 仅 --smoke 允许，正式批禁用，闸拦即报窗主不硬绕）
+  step_0_cpu_first_measure: >-
+    先发 --smoke 8 格（--engine cpu --eval-backend cpu --skip-compute-gate，smoke 允许跳闸）量**纯 CPU 首速**，
+    把 s/格与时间戳三元组回填本册（在册 F5 规则：measured 类回填须 measured_at/run_id/commit 三件齐）
+  batch_2_control_36: >-
+    python scripts/backtest/factory_grid_executor.py --subspace-json <core36.json> --n-samples 100 --seed 20261011
+    --start 2020-01-01 --end 2023-12-31 --engine cpu --eval-backend cpu
+    --exploration-ledger .runtime/nightmine_exploration/scan_ledger_breadthcontrol_s0.jsonl
+    （共享册，零改件即可发；top50/top100 两档内部对照＝广度曲线形状初值）
+  batch_1_probe_72: >-
+    同上加 --schema-path config/position_recipe_grid_schema_v3_breadth_probe.yaml
+    --freeze-dims-json <narrow72.json>（subspace 与 freeze 双轨：freeze 定规模，subspace 兜旧语义）；
+    72 格＝3 A1×3 A2×2 C×4 广度
+  subspace_files: .runtime/tmp/st-mineloop-20261010/subspace_v3_breadth.json（72 格面已生成并实测计数）
+  caliber_guard: >-
+    耗时口径必须分两把尺报：预注册册 per_point_seconds_measured=35.33 秒/格 是**带五档成本门**的 T0 全成本口径，
+    而 10-10 夜批心跳 0.58-0.65 秒/格 是 stage-less 口径（stage 缺省时 per-point 档位扫描不启用）；
+    本两批不带 --stage ⇒ 走后者口径，故 36 格≈21-24 秒、72 格≈42-47 秒（CPU 若明显更慢则以 step_0 实测为准改写本行）
+
+open_next: >-
+  落地后本班按序发 step_0→batch_2（②即刻内部对照）→batch_1（①72 格续曲），三批全程 --exploration-ledger 分册
+  （不占考试 N 账本）、全程 cpu 双旗（GPU 归 st-gpux 基线对拍）；
+  读回后同口径重算广度边际（每档均值＋top1% 富集＋端点判定），据结果决定卡片
+  TDM-E-L1__comparison__05_沪深300池宽top100与top50对照 是否需 v2（若 top150/200 仍升＝两档选择要重冻，属新版本卡，禁原地改）
+
+compliance:
+  ch_queries: 0
+  batches_launched: 0
+  shared_schema_modified: 0
+  prereg_books_modified: 0
+  other_lanes_files_modified: 0
+  gpu_used: 0
+  files_created: 2
+  files_modified: 2
+
+review_commands:
+  probe_run: >-
+    python .runtime/tmp/st-mineloop-20261010/woa4_acceptance_probe.py（P1..P5b 六段，末行应见 ALL PROBE ASSERTS PASS）
+  new_tests: python -m pytest tests/research/backtest/test_factory_grid_executor.py -q -k woa4
+  preexisting_failures_proof: >-
+    在未改动 main 基座复跑 TestNetReturnsArchive ⇒ 同 2 failed（9.54 秒），证非本班引入
+  shared_book_untouched: >-
+    git grep -n "top100.\]" -- config/position_recipe_grid_schema.yaml（共享册 B_top_n 值表应仍止于 top100）
+  t3a_t3b_numbers_untouched: >-
+    sed -n '31p' config/search_space_prereg_t3a.yaml；sed -n '30p' config/search_space_prereg_t3b.yaml（应仍 725760／4354560）
+  current_line_anchors: >-
+    git grep -n "compiler, schema_meta = _resolve_grid_schema|if subspace:|_LAMBDA_PEN: dict" -- scripts/backtest/factory_grid_executor.py

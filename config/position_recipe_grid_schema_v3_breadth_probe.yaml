@@ -1,0 +1,127 @@
+# 【v3 广度探针册·非共享册】Owner 合并裁定令①（总统统筹 2026-10-11）route B 落地件：
+#   与 config/position_recipe_grid_schema.yaml 唯一差异＝B_top_n.values 末尾加 top150/top200 两档；
+#   用途＝只服务『广度邻域窄批』（--schema-path 指本册＋--freeze-dims-json 钉其余维），
+#   共享册数字零动：随机普查批空间不被稀释（362,880 不变），t3a/t3b 两册 n_raw_expected 不被挤歪（禁变相挪门柱）。
+#   本册 n_raw(phase=1)=508,032；窄批实测 72 格（B 四档×A1 三档×A2 三档×C 两档，其余全钉）。
+#   消费方＝scripts/backtest/factory_grid_executor.py --schema-path（缺省不读本册）。
+# F-06 组合层穷尽网格 · 维度 Schema v2（一次定型真源雏形）
+# 真源: docs/_working/2026-09-14-combination-layer-exhaustive-charter.md §十（2026-09-15 裁定批准）
+# 机制: 条件参数空间（SMAC/TPE/Add-Tree）——维度存在性由终局设计空间决定，
+#       维度是否展开由 compile(context) 的 active_if 求值决定（MOD-POS-029）。
+# 默认 context: {strategy_pool: ["primary"], phase: 1, capital_ramp_enabled: false}
+#   → F/J/K 折叠，名义 N_raw = 6×8×5×7×4×2×3×3×3 = 362,880
+#   全激活 N_raw = ×4×2×4 = 11,612,160
+# 消费: GridCompiler.from_yaml(config/position_recipe_grid_schema.yaml).compile(context)
+schema_id: position_recipe_grid_v2
+revisions:
+  - "2026-09-15 v2 定型（立项稿 §十；F/J/K 休眠、G/H 新增，裁定记录见立项稿）"
+dimensions:
+  - id: A1_factor_normalize
+    desc: 因子标准化
+    values: [raw, rank, zscore, industry_neutral, size_neutral, industsize_neutral]
+    baseline: zscore
+    cost_tier: signal_side
+  - id: A2_combine_weight
+    desc: 多因子合成权重
+    values: [equal, ic_mean, ic_ir, halflife20, halflife60, orth_equal, lasso, pc1]
+    baseline: equal
+    cost_tier: signal_side
+  - id: B_top_n
+    desc: 选股截面 Top-N
+    values: ["top10", "top20", "top30", "top50", "top100", "top150", "top200"]
+    baseline: top50
+    cost_tier: signal_side
+  - id: C_sizing
+    desc: 仓位定尺寸
+    values: [equal_weight, mkt_cap, inv_vol, risk_parity, kelly_025, kelly_050, signal_strength]
+    baseline: inv_vol
+  - id: D1_rebalance_freq
+    desc: 调仓频率
+    values: [daily, weekly, biweekly, monthly]
+    baseline: weekly
+  - id: D2_rebalance_trigger
+    desc: 调仓触发
+    values: [periodic, drift_band]
+    baseline: periodic
+  - id: E_single_cap
+    desc: 单票上限
+    values: [cap5, cap10, cap20]
+    baseline: cap10
+  - id: F_merge_policy
+    desc: 多策略合并
+    values: [single, equal_capital, equal_risk, signal_additive]
+    baseline: single
+    active_if: "len(strategy_pool) > 1"
+    depends_on: []
+  - id: G_universe
+    desc: 标的池
+    values: [hs300, zz500, all_a_ex_st]
+    baseline: hs300
+    cost_tier: signal_side
+  - id: H_turnover_lambda
+    desc: 换手惩罚 λ
+    values: [lambda_0, lambda_5bp, lambda_15bp]
+    baseline: lambda_5bp
+  - id: I_cost_tier
+    desc: 成本假设档（鲁棒性重跑层——不进乘法网格，恒折叠；执行器对幸存者单独重跑）
+    values: [frozen_l0, frozen_l1, stress_l2]
+    baseline: frozen_l0
+    active_if: "False"
+  - id: J_regime_switch
+    desc: regime 开关（Owner 已同意二期）
+    # 严禁裸写 on/off——YAML 1.1 解析为 True/False，执行器 J 判定全是 == "on" 字符串
+    # 比较，布尔化即 on 腿静默≡off 腿（regime 增益恒 0=考试失真）。20261006 T0 标定实钓。
+    values: ['off', 'on']
+    baseline: 'off'
+    active_if: "phase >= 2"
+  - id: X_stop
+    desc: 离场族·止损止盈叠加（M1，T3b 加离场考新增；挖矿 §M M1）
+    # 语义=引擎 _apply_exit_overlay：off 恒等/atr3x 入场价−3×cATR14 硬止损带/trail20
+    # 持仓段峰值×0.8 移动止盈（收盘判定，§4.4 已知失真）。phase>=3 才展开（三期=离场考），
+    # phase 1/2 折叠=存量考试零漂移。tp20 已实现未入考卷（T3b 卡 v2 可扩档）。
+    values: ['off', 'atr3x', 'trail20']
+    baseline: 'off'
+    active_if: "phase >= 3"
+  - id: X_breaker
+    desc: 离场族·回撤熔断帽（M2，T3b 加离场考新增；挖矿 §M M2）
+    # 语义=引擎 _apply_dd_breaker_overlay：组合权益 running-max→dd→五帽带（WARN 0.75/
+    # DANGER 0.50/CRISIS 0.25/KILL 0），dd20=kill_dd 0.20。live 机迟滞/毕业/复位面
+    # 不在向量化域=T3b 卡 honesty 披露位。
+    values: ['off', 'dd20']
+    baseline: 'off'
+    active_if: "phase >= 3"
+  - id: X_sector
+    desc: 板块族·强度池+传导后处理（mx07-W5 施工批新增；挖矿 m2 L2-01/L2-06 规格卡）
+    # 语义=引擎 _apply_sector_overlay（A1/A2 后、B Top-N 前=TDM 层级隔离位，只调分
+    # 不重排名）：strength_top15=板块强度四路子分（L2-01-1~4 结构/活跃/多周期动量/
+    # 资金流等权合成）逐日 Top-15% 候选池行业掩码；conduction=先 gate 后 weight
+    # （L2-06-1 三级放行：板块>6 ∧ 个股强度>5 ∧ 日成交>2e8 元，乘数查表
+    # ≥9→1.15/≥6→1.05/<6→0.90=L2-06-3 冻结口径）。phase>=3 展开，折叠相 'off'=存量
+    # 考试零漂移（X_stop/X_breaker 同款先例）；X_sector 进正式考卷=裁定前置（W5 留档
+    # §3 自裁：本批只落引擎+折叠维，正式展开归 T3b 序）。
+    values: ['off', 'strength_top15', 'conduction']
+    baseline: 'off'
+    active_if: "phase >= 3"
+  - id: K_capital_ramp
+    desc: 建仓节奏/资金爬坡（需 harness 支持路径依赖，蓝图 §九-2）
+    values: [lump, linear_20d, linear_60d, pyramid]
+    baseline: lump
+    active_if: "capital_ramp_enabled"
+# context 键声明（谓词可引用的外部输入；编译器 fail-closed 校验）
+context_keys:
+  - strategy_pool           # list，len()>1 时 F 展开
+  - phase                   # int，>=2 时 J 展开
+  - capital_ramp_enabled    # bool，true 时 K 展开
+
+# ── 2.1 行业分类标准真源（2026-09-15 夜班锁定，立项稿 §八风险-1）──────────
+# 词表真源: io_sector_sws_map.yaml（target_vocabulary: sws2021_l1，申万 2021 一级 31 个）
+# 个股归属: c1_market.industry_class 列 industry_sw（industry_level='L1'，PIT: valid_from/valid_to）
+# A1 的 industry_neutral / industsize_neutral 取值求值时 MUST 用本锚点，禁硬编码行业清单
+industry_anchor:
+  vocabulary: sws2021_l1
+  vocabulary_source: docs/01_policies_and_standards/_registry/catalogs/io_sector_sws_map.yaml
+  membership_table: c1_market.industry_class
+  membership_column: industry_sw
+  membership_level: L1
+  known_issue: "2026-09-16 复诊（F-06 解锁）：industry_class 聚合查询已恢复正常——GROUP BY symbol 全表排序/DISTINCT/PREWHERE 聚合/重复 3 次全量拉取（10472 行）全部通过，2026-09-15 的崩溃无法复现，判定为 CH 服务端瞬时故障。数据健康实况（Executor 消费侧已防御，物理删除留数据线职责）：①符号格式混用——L1 现行快照 10472 行中 5534 行（2026-08-03 ifind 批）用裸 6 位符号、4938 行（2026-09-13 ifind 批）用 .SH/.SZ 后缀，6 位化后 5545 只股票、重叠 4927 行，Executor 按 (valid_from, updated_at) 最新者胜（PIT 正确，行序无关）；②词表坏行恰 1 行——688806 裸符号行 industry_sw='nan' 字面量（08-03 批），其 09-13 新批 .SH 行带正常行业（医药生物）接管，Executor 词表校验再兜底拦截；③新旧批行业真冲突仅 1 例（688002：国防军工→电子，取新批）；④两池覆盖=hs300/zz500 成分在 L1 锚下均 100%"
+  fallback_anchor_rejected: "替代锚 c1_market.stock_basic.industry 经 2026-09-16 实证不可用：现行快照（valid_to IS NULL，8,987,931 行）中 8,889,889 行（98.9%）industry 为空串，且值域为证监会门类/大类混合词表（'C 制造业' 等 100 值）非 sws2021_l1，不满足锚点词表一致性；industry_class L1 为唯一可用锚"
