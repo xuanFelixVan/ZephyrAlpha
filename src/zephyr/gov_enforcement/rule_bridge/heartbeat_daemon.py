@@ -2,16 +2,16 @@
 # [MODULE] zephyr.gov_enforcement.rule_bridge.heartbeat_daemon
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.shared.io.paths (REPO_ROOT)
-# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (_spawn_heartbeat_daemon / _kill_heartbeat_daemon)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (_spawn_heartbeat_daemon / _kill_heartbeat_daemon / heartbeat_last_status); zephyr.security.access_control.session_concurrency (_heartbeat_side_proof→heartbeat_last_status); 长班 keeper 侧 register_heartbeat_keepalive/revoke_heartbeat_keepalive（红证面=tests/gov/session/test_session_keepalive_ghost_gate.py）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；worktree 锚点丢失（spawn 传入的 worktree 目录消失=退役/删除）时 daemon 失锚自退（CAND-DAEMON-001 2026-08-17：根治孤儿 daemon 制造假活性，锚点未配置时跳过零行为变更）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-002 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；W-29 豁免（chief3 碰撞处方 2026-09-29）：SessionRegistry.logical=True 的逻辑长会话不被 idle 判死（活会话周期 re-register/mark_logical 即不被判死，opt-in；非逻辑会话自退治本零回退）；不抛异常（所有错误写 log 后 continue）
-# [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / worktree 锚点丢失 / idle 超 _MAX_IDLE_SECONDS 且非 logical 且无队列待落项——W-29 logical + C355 队列等待双豁免）；_append_heartbeat_log 字段集
+# [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；worktree 锚点丢失（spawn 传入的 worktree 目录消失=退役/删除）时 daemon 失锚自退（CAND-DAEMON-001 2026-08-17：根治孤儿 daemon 制造假活性，锚点未配置时跳过零行为变更）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-002 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；W-29 豁免（chief3 碰撞处方 2026-09-29）：SessionRegistry.logical=True 的逻辑长会话不被 idle 判死（活会话周期 re-register/mark_logical 即不被判死，opt-in；非逻辑会话自退治本零回退）；保活正门（2026-10-11 维护二班治本，idle 自退使队列判袋为幽灵=421 袋在册死信族）：长班唯一显式续命入口=register_heartbeat_keepalive 向 .runtime/sessions/<sid>/keepalive.jsonl 追加 grant 授权（reason 名目 + requested_by 请求方 + TTL 缺省 1800s/上限 7200s 硬钳制，缺名目/缺请求方 ValueError 拒），守护 idle 支读到未过期 grant 才不自退并逐轮落 alive(keepalive=registered_keeper) 留痕——**不给旗/不登记=旧 idle 自退语义逐字不变**（"永不退出"非新默认），账本读不到/损坏/过期/末条 revoke 一律按无授权处理（宁自退不扩权）；不抛异常（所有错误写 log 后 continue）
+# [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / worktree 锚点丢失 / idle 超 _MAX_IDLE_SECONDS 且非 logical 且无队列待落项且无在册保活授权——W-29 logical + C355 队列等待 + 2026-10-11 保活正门三豁免皆 opt-in）；_append_heartbeat_log 字段集；keepalive.jsonl 事件字面量 grant/revoke 机读禁改名（read_active_keepalive 只认这两个）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 文件 IO 失败→log warning 不退出；registry 查询失败→continue 下次循环；signal 中断→写 interrupted 记录后退出；无控制台(pythonw)启动→_ensure_usable_streams 先兜底 None 标准流；入口 _run_cli 任何未预期异常→写 fatal(带 traceback) 到 heartbeat.jsonl 落盘留痕(禁无痕死亡)
-# [TESTS] tests/governance/rule_bridge/test_heartbeat_daemon.py
+# [TESTS] tests/governance/rule_bridge/test_heartbeat_daemon.py; tests/gov/session/test_heartbeat_keepalive_root_cure.py
 # [A_module] module_id=MOD-GOV_HEARTBEAT_DAEMON | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 # noqa: m10-time-trigger  M10豁免: daemon 循环是 heartbeat 生命周期，非周期触发
@@ -81,6 +81,11 @@ from __future__ import annotations
 
 __all__ = [
     "heartbeat_file_path",
+    "heartbeat_last_status",
+    "keepalive_file_path",
+    "register_heartbeat_keepalive",
+    "read_active_keepalive",
+    "revoke_heartbeat_keepalive",
     "cleanup_heartbeat_file",
     "run_daemon",
 ]
@@ -116,6 +121,23 @@ try:
     )
 except Exception:  # noqa: BLE001 — 导入失败兜底（daemon 不得因导入失败崩溃）
     _MAX_IDLE_SECONDS = 1800
+
+# ---------------------------------------------------------------------------
+# 保活正门（2026-10-11 维护二班·心跳 idle 自退治本，病根见 run_daemon 5b''' 支）
+# ---------------------------------------------------------------------------
+# 病灶：长班（AI 施工班，pid=0 逻辑会话）的守护在 idle>1800s 自退写末行
+# status="exited"，此后 ①注册表 90s 心跳窗断供→会话被单一活性口径判死→提交被
+# [SESSION-REQUIRED] 拦；②队列存活闸读同一末行短路判幽灵→在途袋直落 dead/
+# （在册条目"心跳 idle 自退使队列判袋为幽灵"，累计 421 袋）。W-29（logical）与
+# C355（队列待落）两条既有豁免都要求会话**自证形态**，普通施工班拿不到；本班
+# 只加第三条**显式登记**的续命正门：受登记 keeper 写一条带名目/带 TTL 的授权记录，
+# 守护在 idle 支读到有效记录才不自退。**缺省行为逐字不变**（不给旗/不登记=旧 idle
+# 自退语义，"永不退出"不会成为新默认），且 TTL 上限硬钳制=keeper 必须周期 renew。
+_KEEPALIVE_FILENAME = "keepalive.jsonl"
+_KEEPALIVE_DEFAULT_TTL_SECONDS = 1800  # 与 idle 上限同长：一次只续一个 idle 周期
+_KEEPALIVE_MAX_TTL_SECONDS = 7200  # 单条授权最长 2h（到期必 renew，防永久保活）
+_KEEPALIVE_MIN_REASON_CHARS = 8  # 无名目不续命（"keeper"/"x" 之类挡在门外）
+_KEEPALIVE_EVENTS = ("grant", "revoke")
 
 
 def heartbeat_file_path(project_root: str | Path, session_id: str) -> Path:
@@ -183,6 +205,162 @@ def _safe_getpid() -> int:
         return os.getpid()
     except Exception:  # noqa: BLE001 — 极端兜底，不应发生
         return 0
+
+
+def _epoch_seconds() -> float:
+    """保活授权面的取钟出口（epoch 秒，与注册表 last_activity 同货币）。
+
+    用 ``datetime.now(timezone.utc).timestamp()`` 而非裸 ``time.time()``——后者是
+    DATETIME-NOW-FORBIDDEN 门在 src/ 新增行的硬拦面（本模块既有 time.time() 属
+    grandfather，新增行不扩违例面，也不为此另开 noqa 豁免）。
+    """
+    return datetime.now(timezone.utc).timestamp()
+
+
+def keepalive_file_path(project_root: str | Path, session_id: str) -> Path:
+    """保活授权账本路径：``<root>/.runtime/sessions/<sid>/keepalive.jsonl``。
+
+    与 heartbeat.jsonl / heartbeat.pid / emergency_count.json 同会话目录（在册
+    生命周期隔离：per-session 区可写，禁向 ``.runtime`` 根直写），随会话收尾同域清理。
+    """
+    return heartbeat_file_path(project_root, session_id).with_name(_KEEPALIVE_FILENAME)
+
+
+def register_heartbeat_keepalive(
+    project_root: str | Path,
+    session_id: str,
+    *,
+    reason: str,
+    requested_by: str,
+    ttl_seconds: int | None = None,
+) -> dict:
+    """保活正门：为 sid 登记一条**带名目、带 TTL** 的续命授权（append-only 审计）。
+
+    这是长班唯一的显式续命入口：守护在 idle 支读到有效授权才不自退（run_daemon
+    5b'''），并逐轮在 heartbeat.jsonl 落 ``keepalive=registered_keeper`` 留痕——
+    "谁（requested_by）、何时（ts/granted_at）、以何名义（reason）"两面可核。
+
+    Args:
+        project_root: 项目根（与会话 heartbeat 同根）。
+        session_id: 被保活的会话。
+        reason: 续命名目（≥8 字符，空/过短一律拒绝——无名目不续命）。
+        requested_by: 请求方标识（会话 id/班次名，空即拒绝；禁匿名授权）。
+        ttl_seconds: 授权时长，缺省 1800s（=一个 idle 周期），上限 7200s
+            （钳制而非报错：超上限按上限落账，到期必须 renew，防"一条记录永不退出"）。
+
+    Returns: 落账的授权记录 dict（含 granted_at/expires_at/ttl_seconds）。
+
+    Raises:
+        ValueError: 名目或请求方缺失（正门不接受无名目授权，静默拒绝反而是漏洞）。
+        OSError: 账本写入失败（保活面 fail-closed：写不进账本就当作没有授权）。
+    """
+    sid = (session_id or "").strip()
+    nominal = (reason or "").strip()
+    asker = (requested_by or "").strip()
+    if not sid:
+        raise ValueError("register_heartbeat_keepalive: session_id 不得为空")
+    if len(nominal) < _KEEPALIVE_MIN_REASON_CHARS:
+        raise ValueError(
+            f"register_heartbeat_keepalive: reason 名目缺失或过短（需 ≥{_KEEPALIVE_MIN_REASON_CHARS} 字符），"
+            "无名目不续命"
+        )
+    if not asker:
+        raise ValueError("register_heartbeat_keepalive: requested_by 不得为空（禁匿名授权）")
+    ttl = _KEEPALIVE_DEFAULT_TTL_SECONDS if ttl_seconds is None else int(ttl_seconds)
+    if ttl <= 0:
+        raise ValueError(f"register_heartbeat_keepalive: ttl_seconds 必须为正（收到 {ttl}）")
+    ttl = min(ttl, _KEEPALIVE_MAX_TTL_SECONDS)
+    granted_at = _epoch_seconds()
+    record: dict = {
+        "event": "grant",
+        "session_id": sid,
+        "requested_by": asker,
+        "reason": nominal,
+        "ttl_seconds": ttl,
+        "granted_at": granted_at,
+        "expires_at": granted_at + ttl,
+        "daemon_pid": _safe_getpid(),
+        "ts": datetime.now(timezone.utc).isoformat(),
+    }
+    path = keepalive_file_path(project_root, sid)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    return record
+
+
+def revoke_heartbeat_keepalive(
+    project_root: str | Path,
+    session_id: str,
+    *,
+    reason: str,
+    requested_by: str,
+) -> dict | None:
+    """撤销授权（追加 revoke 事件，末条即生效；无授权时返回 None 不凭空造账）。"""
+    sid = (session_id or "").strip()
+    current = read_active_keepalive(project_root, sid)
+    if current is None:
+        return None
+    record: dict = {
+        "event": "revoke",
+        "session_id": sid,
+        "requested_by": (requested_by or "").strip(),
+        "reason": (reason or "").strip(),
+        "revokes_granted_at": current.get("granted_at"),
+        "ts": datetime.now(timezone.utc).isoformat(),
+    }
+    path = keepalive_file_path(project_root, sid)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError as e:  # 撤销失败=授权仍在岗（保守侧不静默扩权，但必须留日志）
+        logger.warning("keepalive revoke failed (grant stays): %s (sid=%s)", e, sid)
+    return record
+
+
+def read_active_keepalive(project_root: str | Path, session_id: str, *, now: float | None = None) -> dict | None:
+    """读该会话**当前有效**的保活授权（末条事件判据），无/失效/读不到一律 None。
+
+    判据（与 W-29/C355 同族"opt-in 事实豁免，查不到不扩权"）：
+      * 只认末条事件（append-only 账本，后写覆盖前写）；末条 event=revoke → None；
+      * 末条 event=grant 且 ``now < expires_at`` 且名目在场才算有效；
+      * 文件缺失/全损坏/OSError/末条非本 sid → None（=没有授权，照旧 idle 自退）。
+    """
+    sid = (session_id or "").strip()
+    if not sid:
+        return None
+    path = keepalive_file_path(project_root, sid)
+    try:
+        if not path.exists():
+            return None
+        last: dict | None = None
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except ValueError:
+                continue  # 半行/损坏行：忽略该行（末条可解析行为准）
+            if isinstance(row, dict) and row.get("session_id") == sid:
+                last = row
+    except OSError as e:  # 读不到=无授权（宁自退不扩权保活）
+        logger.debug("keepalive ledger unreadable (assume none): %s (sid=%s)", e, sid)
+        return None
+    if last is None or last.get("event") not in _KEEPALIVE_EVENTS:
+        return None
+    if last.get("event") == "revoke":
+        return None
+    expires_at = last.get("expires_at")
+    if not isinstance(expires_at, (int, float)) or expires_at <= 0:
+        return None
+    t = _epoch_seconds() if now is None else float(now)
+    if t >= float(expires_at):
+        return None
+    if not str(last.get("reason") or "").strip():
+        return None
+    return last
 
 
 class _NullWriter:
@@ -440,6 +618,14 @@ def run_daemon(
           项 → 不自退，写 ``alive``(keepalive=commit_queue_wait) 留痕后继续——
           队列等待 > registry TTL 曾致落地被 SESSION-REQUIRED 误处死；队列清空
           恢复自退（opt-in 事实豁免，零扩权）。
+      5b''' 保活正门（2026-10-11 维护二班治本）：``.runtime/sessions/<sid>/
+          keepalive.jsonl`` 末条为未过期 grant（register_heartbeat_keepalive 落的
+          带名目/带请求方/带 TTL 授权）→ 不自退，写 ``alive``
+          (keepalive=registered_keeper, keeper/requester/reason/剩余 TTL) 留痕后
+          继续。缺省无账本=逐字旧 idle 自退语义；TTL 上限 7200s 硬钳制=必须周期
+          renew（"永不退出"不得成为新默认）。病灶在册：守护自退写的 ``exited``
+          残留既断注册表心跳（SESSION-REQUIRED 拦提交），又让队列存活闸把在岗
+          长班的袋判成幽灵（ghost_session 死信族 421 袋）。
       6. 异常 → 写 ``error`` 记录，continue（不退出）
       7. 致命错误 → 写 ``fatal`` 记录，返回 1
 
@@ -537,16 +723,38 @@ def run_daemon(
                         },
                     )
                 else:
-                    _append_heartbeat_log(
-                        hb_path,
-                        "exited",
-                        {
-                            "reason": "idle timeout",
-                            "idle_seconds": round(idle, 1),
-                            "timeout_seconds": _MAX_IDLE_SECONDS,
-                        },
-                    )
-                    return 0
+                    keeper = read_active_keepalive(root, session_id)
+                    if keeper is not None:
+                        # 保活正门（2026-10-11 维护二班治本）：登记式续命授权在岗
+                        # （带名目/带请求方/带 TTL，账本末条为 grant 且未过期）→ 不
+                        # 自退。与 W-29/C355 同族 opt-in 事实豁免：不登记=逐字旧语义；
+                        # TTL 到期即回到自退面（keeper 必须周期 renew，防"永不退出"
+                        # 变成新默认）。留痕含"谁/名义/剩余 TTL"，与 heartbeat 同链可核。
+                        _append_heartbeat_log(
+                            hb_path,
+                            "alive",
+                            {
+                                "keepalive": "registered_keeper",
+                                "idle_seconds": round(idle, 1),
+                                "keeper": keeper.get("requested_by"),
+                                "keeper_reason": keeper.get("reason"),
+                                "keeper_ttl_remaining_seconds": round(
+                                    float(keeper.get("expires_at", 0.0)) - _epoch_seconds(), 1
+                                ),
+                                "note": "2026-10-11 保活正门：registered keeper grant 在岗，idle 不自退",
+                            },
+                        )
+                    else:
+                        _append_heartbeat_log(
+                            hb_path,
+                            "exited",
+                            {
+                                "reason": "idle timeout",
+                                "idle_seconds": round(idle, 1),
+                                "timeout_seconds": _MAX_IDLE_SECONDS,
+                            },
+                        )
+                        return 0
 
             # 刷新 registry heartbeat
             try:

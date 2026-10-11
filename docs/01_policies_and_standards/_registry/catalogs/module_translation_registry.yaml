@@ -56878,6 +56878,16 @@ entries:
   plain_zh: 给账本生成器当考官：故意抽掉原材料，看它是不是老实报错而不是编数；再用同一批材料算两遍，看两本账是否一模一样；最后核对手改过的账会被查出来。全在临时沙盒里做，不碰真实账本和考场。
   domain_id: D_GOV_SCRIPTS
   responsibility_layer: governance
+- module_path: tests/gov/governance/generators/test_collection_shard_manifest_redpin.py
+  name_zh: 采集分片册反向钉桩
+  plain_zh: 验证按目录切分的采集册不会把真断链测试错标成环境缺席，确保降敏只跳噪声不跳病灶
+  domain_id: D_GOV_CODE_QUALITY
+  responsibility_layer: governance
+- module_path: tests/gov/session/test_session_keepalive_ghost_gate.py
+  name_zh: 心跳保活与幽灵闸红证
+  plain_zh: 钉住心跳守护idle自退不再被当成会话终审死刑，并逐出口验证幽灵闸的赦免腿与判死腿各自计数
+  domain_id: D_GOV_CODE_QUALITY
+  responsibility_layer: governance
 - module_path: tests/gov_code_dedup/__init__.py
   desc_en: ""
   desc_zh: ""
@@ -61162,6 +61172,11 @@ entries:
   name_zh: 守卫Self一致性审计器测试
   plain_zh: 测试：验证守卫自一致性审计器的正确性，出问题尽早发现。
   domain_id: ""
+- module_path: tests/infra/infrastructure/test_resource_schedule_mem_ceiling_invariant.py
+  name_zh: 排班内存上限不变式
+  plain_zh: 同刻并发任务的内存申报之和必须不超在册上限，旧值出红新值出绿，防止靠放宽上限蒙混过关
+  domain_id: D_GOV_CODE_QUALITY
+  responsibility_layer: governance
 - module_path: tests/infra_ops/test_loki_log_pipeline.py
   desc_en: ""
   desc_zh: ""

@@ -1,0 +1,274 @@
+ttl: task_bound
+title: T12 tests/ 采集面按目录分片机生册（夜班错峰/降敏诊断）
+sid: st-maint2-20261011
+derived_from: tests/ first-level directories (pytest testpaths)
+policy: shard + attribution + read-only diagnose; NEVER skips or absolves a collection
+  error (fail-toward-red)
+caveat: 目录分片按 tests/ 一级目录隔离采集，无法复现跨目录 import 污染型收集错误（如 governance 遮蔽链），此类错误只在整库单进程采集时现形；机生册为诊断面非'零错误'真源，权威计数仍以整库单进程
+  --collect-only 为准
+totals:
+  shards: 23
+  collected: 66677
+  errors: 18
+  real_broken_link: 18
+  environmental: 0
+shards:
+- collected: 31
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.13
+  errors: []
+  shard: _rootfiles
+  wall_ms: 1709
+  rc: 0
+- collected: 9478
+  skipped: 6
+  error_count: 1
+  collect_seconds: 29.94
+  errors:
+  - category: real_broken_link
+    first_line: 'E   KeyError: "category_id ''news_sentiment_score'' 未在 business_data_categories.yaml
+      注册。请在真源 YAML 新增品类条目（禁止硬编码表名绕过真源）。"'
+    missing_module: ''
+    file: tests/ai/intelligence/test_news_score_daily.py
+  shard: ai
+  wall_ms: 33537
+  rc: 1
+- collected: 305
+  skipped: 0
+  error_count: 1
+  collect_seconds: 2.0
+  errors:
+  - category: real_broken_link
+    first_line: 'E   ImportError: cannot import name ''arm_protocol_binding'' from
+      ''scripts.backtest.fexam'' (D:\ZephyrAlpha\.worktrees\st-maint2-20261011\scripts\backtest\fexam\__init__.py)'
+    missing_module: scripts
+    file: tests/backtest/test_arm_protocol_binding.py
+  shard: backtest
+  wall_ms: 4229
+  rc: 1
+- collected: 19
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.1
+  errors: []
+  shard: backup
+  wall_ms: 1728
+  rc: 0
+- collected: 1762
+  skipped: 2
+  error_count: 0
+  collect_seconds: 10.78
+  errors: []
+  shard: data
+  wall_ms: 14229
+  rc: 0
+- collected: 23
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.16
+  errors: []
+  shard: data_security
+  wall_ms: 1875
+  rc: 0
+- collected: 10
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.91
+  errors: []
+  shard: factor
+  wall_ms: 2713
+  rc: 0
+- collected: 4
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.11
+  errors: []
+  shard: frontend
+  wall_ms: 1887
+  rc: 0
+- collected: 20896
+  skipped: 12
+  error_count: 3
+  collect_seconds: 148.5
+  errors:
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.gov_enforcement.commit_gates.map_family.strategy_card_lifecycle_map_gate'''
+    missing_module: zephyr
+    file: tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''generate_backtest_coverage_ledger'''
+    missing_module: generate_backtest_coverage_ledger
+    file: tests/gov/governance/d5_architecture/test_generate_backtest_coverage_ledger.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/gov/session/test_session_conflict.py
+  shard: gov
+  wall_ms: 153021
+  rc: 1
+- collected: 10
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.25
+  errors: []
+  shard: gov_enforcement
+  wall_ms: 1871
+  rc: 0
+- collected: 316
+  skipped: 0
+  error_count: 0
+  collect_seconds: 1.08
+  errors: []
+  shard: governance
+  wall_ms: 3135
+  rc: 0
+- collected: 4402
+  skipped: 2
+  error_count: 0
+  collect_seconds: 11.94
+  errors: []
+  shard: infra
+  wall_ms: 15125
+  rc: 0
+- collected: 5
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.08
+  errors: []
+  shard: infra_runtime
+  wall_ms: 1741
+  rc: 0
+- collected: 3747
+  skipped: 0
+  error_count: 0
+  collect_seconds: 6.59
+  errors: []
+  shard: legacy_zephyr
+  wall_ms: 9248
+  rc: 0
+- collected: 7680
+  skipped: 6
+  error_count: 1
+  collect_seconds: 51.41
+  errors:
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/meta/orchestrator/test_state_synchronizer_orchestrator.py
+  shard: meta
+  wall_ms: 56303
+  rc: 1
+- collected: 18
+  skipped: 0
+  error_count: 0
+  collect_seconds: 3.19
+  errors: []
+  shard: regime
+  wall_ms: 5257
+  rc: 0
+- collected: 10332
+  skipped: 0
+  error_count: 2
+  collect_seconds: 39.88
+  errors:
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''data.pattern_event_backfill'''
+    missing_module: data
+    file: tests/research/research/signal_ashare/test_pattern_event_backfill.py
+  - category: real_broken_link
+    first_line: 'E   ImportError: cannot import name ''t0_condition_pack'' from ''zephyr.strategy_pipeline''
+      (D:\ZephyrAlpha\.worktrees\st-maint2-20261011\src\zephyr\strategy_pipeline\__init__.py)'
+    missing_module: zephyr
+    file: tests/research/strategy_pipeline/test_t0_condition_pack.py
+  shard: research
+  wall_ms: 43871
+  rc: 1
+- collected: 7
+  skipped: 0
+  error_count: 0
+  collect_seconds: 1.43
+  errors: []
+  shard: risk
+  wall_ms: 3279
+  rc: 0
+- collected: 119
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.7
+  errors: []
+  shard: signal_ashare
+  wall_ms: 2546
+  rc: 0
+- collected: 9
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.61
+  errors: []
+  shard: strategy_pipeline
+  wall_ms: 2701
+  rc: 0
+- collected: 7475
+  skipped: 3
+  error_count: 10
+  collect_seconds: 19.46
+  errors:
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/trade/trading/root/test_state_propagation_root.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/trade/trading/root/test_state_synchronizer_root.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/trade/trading/test_housekeeping.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/trade/trading/test_incident_postmortem.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/trade/trading/test_rolling_upgrade.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/trade/trading/test_startup_sequencer.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/trade/trading/test_system_transfer.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/trade/trading/test_teardown_manager.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/trade/trading/unit/test_state_propagation_unit.py
+  - category: real_broken_link
+    first_line: 'E   ModuleNotFoundError: No module named ''zephyr.orchestrator.lifecycle'''
+    missing_module: zephyr
+    file: tests/trade/trading/unit/test_state_synchronizer_unit.py
+  shard: trade
+  wall_ms: 23870
+  rc: 1
+- collected: 17
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.69
+  errors: []
+  shard: trading
+  wall_ms: 2833
+  rc: 0
+- collected: 12
+  skipped: 0
+  error_count: 0
+  collect_seconds: 0.56
+  errors: []
+  shard: zephyr
+  wall_ms: 2499
+  rc: 0

@@ -1887,49 +1887,195 @@ def _attempts_exhausted_reason(item: dict) -> str:
 # 自举与 belt daemon 经 drain/pool 同闸覆盖），死袋不重投、meta.ghost=true 封入
 # dead/（死信封印唯一出口同源）；**CLI 手动 requeue 不受此闸**（人工强制=恢复
 # 通道，dead-archive 的 revival 面亦不受影响）。
-# 判定真源：sessions/<sid>/heartbeat.jsonl 末行 status + session_registry.json 在册
-# （=session_worktree 活性语义的 heartbeat/registry 双真源口径，90s 新鲜度 reap 由
-# SessionRegistry.list_active 承担，此处以 exited 终态与在册性为准）；判定不了
-# （无任何信号/IO 异常/空 sid）一律 False=放行——fail-open 宁漏不误，绝不因判定
-# 基础设施缺席冤杀活会话袋子。
+# 判定真源（裁定#507 判定面同源化，2026-10-10 在册；实现于 2026-10-11 维护二班
+# 复位——原 R9 袋被"整档字节落地"蒸发，dev 上本函数字节自裁定#459 引入至今未变）：
+# heartbeat.jsonl 末行 status 只作**守护**面信号，会话终审归注册表活性单一口径
+# （session_concurrency.SessionRegistry.get_session → _is_session_alive 的 90s 心跳
+# /TTL 3600s/pid+三证旁证，禁在本文件私设第四套活性判据）。exited 残留=前代守护
+# 自退的死亡证明（除名/失锚/idle 超时三态同落此值），既不是会话终审，也不得被
+# 当成活证——**残留且册无活性正证 → 照旧判死**（fail-open 宁漏不误的原语义只保
+# 留"判定基础设施缺席"一面：无心跳+无册→活、全损坏→活、册不可读→降级判死）。
+# 三条腿各自独立计数（ghost_gate_counts()）：excused 赦免／judged_dead 判死／
+# downgraded 降级，禁合并成单一 bool 读数（在册"翻转不得静默"）。
 # ---------------------------------------------------------------------------
+
+_GHOST_GATE_EXITS: tuple[str, ...] = (
+    "alive_fast",  # 末行非 exited：活心跳快路放行，不问在册性（原语义逐字保留）
+    "excused",  # 赦免腿：exited 残留 + 注册表单一口径判活（裁定#507 事故形态复刻）
+    "judged_dead",  # 判死腿：exited 残留 + 注册表单一口径判死/除名
+    "downgraded",  # 降级腿：exited 残留 + 册设施不可用 → 退回原"残留→死"语义
+    "not_in_registry",  # 无心跳文件 + 册文件在场且不含 sid（原第二支）
+    "in_registry",  # 无心跳文件 + 册文件在场且含 sid（原第二支）
+    "no_registry_file",  # 无心跳文件 + 册文件缺席：判定基础设施不可用 → 放行
+    "undecidable",  # 空 sid / 心跳全损坏 / IO 异常：判定不了 → 放行
+)
+_GHOST_GATE_COUNTS: dict[str, int] = dict.fromkeys(_GHOST_GATE_EXITS, 0)
+_GHOST_GATE_LOCK = threading.Lock()
+
+
+def ghost_gate_counts() -> dict[str, int]:
+    """存活闸各出口累计计数（只读快照，测试/巡检断言用）。"""
+    with _GHOST_GATE_LOCK:
+        return dict(_GHOST_GATE_COUNTS)
+
+
+def reset_ghost_gate_counts() -> None:
+    """出口计数清零（测试隔离接缝；生产不清零——累计数即幽灵闸账）。"""
+    with _GHOST_GATE_LOCK:
+        for exit_name in _GHOST_GATE_EXITS:
+            _GHOST_GATE_COUNTS[exit_name] = 0
+
+
+def _ghost_liveness_audit(runtime_root: Path, verdict: dict) -> None:
+    """裁决出口审计（在册"翻转不得静默"）：JSONL 追加，fail-open 不阻断排空。
+
+    只落**裁决面**（excused/judged_dead/downgraded/not_in_registry 四支）——
+    alive_fast/undecidable/no_registry_file 是热路径常态（每袋拾取都过），落盘
+    等于给队列加一条无信息量的写放大源；那两面靠 ghost_gate_counts() 观测。
+    体积闸复用 audit_jsonl_writer 同一真源（本文件 T14 口径，零新配置册）。
+    """
+    if verdict.get("exit") not in ("excused", "judged_dead", "downgraded", "not_in_registry"):
+        return
+    try:
+        ledger = Path(runtime_root) / "audit" / "ghost_liveness.jsonl"
+        ledger.parent.mkdir(parents=True, exist_ok=True)
+        from zephyr.shared.io.audit_jsonl_writer import rotate_if_oversized  # noqa: PLC0415
+
+        rotate_if_oversized(ledger)
+        record = dict(verdict)
+        record["ts"] = time.time()
+        with open(ledger, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError as exc:  # noqa: BLE001 — 旁路可观测性写失败不阻断判定
+        logger.warning("[ghost-gate] 审计写入失败（忽略）: %s", exc)
+
+
+def _ghost_exit(runtime_root: Path, exit_name: str, dead: bool, sid: str, **evidence: object) -> dict:
+    """存活闸唯一出口记账：独立计数 + 日志 + 裁决面审计（禁静默翻转）。"""
+    with _GHOST_GATE_LOCK:
+        _GHOST_GATE_COUNTS[exit_name] = _GHOST_GATE_COUNTS.get(exit_name, 0) + 1
+    verdict = {"session_id": sid, "exit": exit_name, "dead": dead, "evidence": dict(evidence)}
+    _ghost_liveness_audit(runtime_root, verdict)
+    if exit_name in ("excused", "downgraded"):
+        logger.warning("[ghost-gate] sid=%s 出口=%s dead=%s evidence=%s", sid, exit_name, dead, evidence)
+    else:
+        logger.debug("[ghost-gate] sid=%s 出口=%s dead=%s", sid, exit_name, dead)
+    return verdict
+
+
+def _registry_liveness_for_ghost(sid: str, runtime_root: Path) -> bool | None:
+    """注册表活性单一口径读数（裁定#507：会话终审归 _is_session_alive，禁第四套）。
+
+    真源=SessionRegistry.get_session（内部 _is_session_alive：pid>0 走 PID+TTL 双判据
+    且判死前必过三证旁证；pid=0 走 90s 心跳窗）。走 get_session 而非 list_active
+    =只看不写：不触发接管台账与分片收割（观测不污染观测对象，三证立法同族铁律）。
+
+    Returns:
+        True=在册且活性在；False=册读得到但无活性正证（判死/除名）；
+        None=册设施不可用（import/构造/查询失败）→ 调用方走降级腿判死，
+        绝不因设施缺席把"判不了"当活证（fail-open 面只保留原有"无任何信号"一支）。
+    """
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry  # noqa: PLC0415
+
+        registry = SessionRegistry(runtime_root.parent)
+    except Exception as exc:  # noqa: BLE001 — 设施不可用=无活性正证（降级判死）
+        logger.debug("[ghost-gate] SessionRegistry 不可构造 sid=%s: %s", sid, exc)
+        return None
+    try:
+        return registry.get_session(sid) is not None
+    except Exception as exc:  # noqa: BLE001 — 同上（查询失败不扩权赦免）
+        logger.debug("[ghost-gate] SessionRegistry.get_session 失败 sid=%s: %s", sid, exc)
+        return None
+
+
+def _heartbeat_tail_status(hb_path: Path) -> tuple[str, object]:
+    """取心跳末个可解析行的 status（原"自尾部取首个可解析行"语义逐字保留）。
+
+    Returns: (kind, status)
+        kind="row" → status=该行 dict 的 status 原值（缺键=None）；
+        kind="not_dict" → 首个可解析行非对象（原语义按判定不了放行）；
+        kind="no_parseable" → 全是空行/损坏行（原语义放行）；
+        kind="io_error" → 读失败（原语义放行）。
+    """
+    try:
+        for line in reversed(hb_path.read_text(encoding="utf-8").splitlines()):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except ValueError:
+                continue  # 半行写入/损坏行：向前再找最近一个可解析行
+            if not isinstance(row, dict):
+                return "not_dict", None
+            return "row", row.get("status")
+        return "no_parseable", None
+    except OSError:
+        return "io_error", None
+
+
+def _session_ghost_verdict(session_id: str, *, runtime_root: Path) -> dict:
+    """幽灵判定出参版（裁定#507 同源化）：返回 dead 结论+出口名+证据。
+
+    判定序与出口（_GHOST_GATE_EXITS 逐一对应）：
+      ① 心跳文件在场 → 取末个可解析行 status：
+         非 "exited" → alive_fast（活心跳快路放行，不问在册性，原语义）；
+         恰 "exited" → 前代守护死亡证明，**不单独判死**，转注册表单一口径：
+            活性在 → excused（赦免）；判死/除名 → judged_dead；册不可读 → downgraded
+            （降级=退回修码前"残留→死"，设施故障不得变成赦免通道）；
+         全损坏/非对象/读失败 → undecidable（放行，宁漏不误，原语义）。
+      ② 心跳文件缺席 → 旧单表 session_registry.json 在册性（本支逐字未动）：
+         册在场且不含 sid → not_in_registry（死）；含 sid → in_registry（活）；
+         册缺席/损坏 → no_registry_file / undecidable（放行，原语义）。
+    """
+    root = Path(runtime_root)
+    sid = (session_id or "").strip()
+    if not sid:
+        return _ghost_exit(root, "undecidable", False, "")
+    hb_path = root / "sessions" / sid / "heartbeat.jsonl"
+    if hb_path.exists():
+        kind, status = _heartbeat_tail_status(hb_path)
+        if kind != "row":
+            return _ghost_exit(root, "undecidable", False, sid, tail_kind=kind)
+        if status != "exited":
+            return _ghost_exit(root, "alive_fast", False, sid, tail_status=status)
+        liveness = _registry_liveness_for_ghost(sid, root)
+        if liveness is True:
+            return _ghost_exit(root, "excused", False, sid, tail_status="exited", registry_alive=True)
+        if liveness is False:
+            return _ghost_exit(root, "judged_dead", True, sid, tail_status="exited", registry_alive=False)
+        return _ghost_exit(
+            root,
+            "downgraded",
+            True,
+            sid,
+            tail_status="exited",
+            note="册设施不可读=无活性正证，退回裁定#459 原语义（残留→死）",
+        )
+    reg_path = root / "session_registry.json"
+    try:
+        if not reg_path.exists():
+            return _ghost_exit(root, "no_registry_file", False, sid)
+        data = json.loads(reg_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return _ghost_exit(root, "undecidable", False, sid)
+    if not isinstance(data, dict):
+        return _ghost_exit(root, "undecidable", False, sid)
+    if sid not in data:
+        return _ghost_exit(root, "not_in_registry", True, sid)
+    return _ghost_exit(root, "in_registry", False, sid)
 
 
 def _session_ghost_dead(session_id: str, *, runtime_root: Path) -> bool:
-    """属主会话已死判定（裁定#459）。
+    """属主会话已死判定（裁定#459；判定面同源化见裁定#507 与本节头注）。
 
     runtime_root=队列根父目录（生产=<repo>/.runtime；测试=tmp 根）——heartbeat 与
     session_registry.json 两真源同根（_REGISTRY_PATH 相对项目根的 .runtime/）。
-    判定序：① heartbeat.jsonl 末行（自尾部取首个可解析行，容忍半行写入）
-    status=="exited" → 死；status 其余值 → 活。② heartbeat 文件缺失 → 册文件
-    session_registry.json 存在且本会话不在册 → 死；册文件也缺失 → 判定不了 → 活。
+    结论真源=_session_ghost_verdict（三调用点语义不变：只问 dead 布尔）；各出口
+    独立计数经 ghost_gate_counts() 可断言。
     """
-    sid = (session_id or "").strip()
-    if not sid:
-        return False
-    hb_path = runtime_root / "sessions" / sid / "heartbeat.jsonl"
-    try:
-        if hb_path.exists():
-            for line in reversed(hb_path.read_text(encoding="utf-8").splitlines()):
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    last = json.loads(line)
-                except ValueError:
-                    continue  # 半行写入/损坏行：向前再找最近一个可解析行
-                return isinstance(last, dict) and last.get("status") == "exited"
-            return False  # 全损坏：判定不了，放行（宁漏不误）
-    except OSError:
-        return False
-    reg_path = runtime_root / "session_registry.json"
-    try:
-        if not reg_path.exists():
-            return False  # 册文件缺席=判定基础设施不可用，放行
-        data = json.loads(reg_path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return False
-    return isinstance(data, dict) and sid not in data
+    return bool(_session_ghost_verdict(session_id, runtime_root=runtime_root)["dead"])
 
 
 def _mark_ghost_dead_fields(item: dict, session_id: str) -> None:
