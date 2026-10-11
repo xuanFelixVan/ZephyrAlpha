@@ -10,7 +10,7 @@
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 恢复/核数失败写 failed 报告后退出 1；临时库确保清理（finally 双通道 DROP + 存在性复核）；判据不满足写 pass=False + status + failed_criteria 后退出 1；T1b（2026-10-11 总统统筹追加件）失败支骨架即带 pass=False+criteria={}——两键原仅 judge_drill 在四条件全评后产出，消费侧按 report['pass'] 直读在失败路径 KeyError（死信三期试点实测）；空 criteria＝一条判据都没评估成，绝不冒领 ok，退出码与状态语义零改动
+# [ERROR_CONTRACT] 恢复/核数失败写 failed 报告后退出 1；临时库确保清理（finally 双通道 DROP + 存在性复核）；判据不满足写 pass=False + status + failed_criteria 后退出 1；T1b→T1c（2026-10-11 总统统筹追加件）失败支骨架即带 judge_drill 全 8 键（pass=False/criteria={}/failed_criteria=[]/rows=0/criteria_version与criteria_change_note沿用成功路径同值/legacy_judge_note=空串）——8 键原仅 judge_drill 在四条件评完后一次产出，消费侧任一键直读在失败路径皆 KeyError（pass 由死信三期试点撞出＝T1b，其余五键同型收口＝T1c）；rows=0 语义＝不可得非零行，空 criteria＝一条判据都没评估成绝不冒领 ok，退出码与状态语义零改动
 # [TESTS] tests/backup/test_restore_drill.py
 # [A_module] module_id=MOD-INF-043 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -623,16 +623,26 @@ def run_drill(
         "dump": str(dump) if dump else None,
         "live_db": live_db,
         "status": "failed",
-        # 报告契约（T1b，2026-10-11 总统统筹追加件；与 T1 静默早退同族同批）：
-        # pass/criteria 两键只由 judge_drill() 在四条件全评后产出，于是所有失败支
+        # 报告契约（T1b→T1c，2026-10-11 总统统筹追加件；与 T1 静默早退同族同批）：
+        # 这 8 键原全部由 judge_drill() 在四条件评完后一次性产出，于是失败支
         # （dump 缺位→提前 return、try 内异常→finally 后 return）交出的报告是
-        # "status=failed 但契约缺项"，消费侧按 report['pass'] 直读必 KeyError（死信
-        # 三期试点当场测出）。缺键不是"未判"而是"判不了=不通过"，故骨架起手就带
-        # pass=False 与 criteria={}：空字典＝一条判据都没评估成，绝不冒领 ok。
-        # 本改动只补键，不改任何判据、阈值、状态语义与退出码（main 的
+        # "status=failed 但契约缺项"，消费侧按任一键直读必 KeyError（死信三期试点
+        # 撞到 pass＝T1b；T1c 按同一裁定把其余五键一并收口）。缺键不是"未判"而是
+        # "判不了=不通过"，故骨架起手就带全键集；四条语义照死信三期裁定：
+        #   failed_criteria=[]            一条判据都没评估成，不指认任何一条为红
+        #   rows=0                        没有行数读数（0=不可得，不是"零行"）
+        #   criteria_version/_change_note  沿用成功路径同值（尺的版本与说明与轮次无关，
+        #                                 缺它读侧无法判"这具报告出自哪把尺"）
+        #   legacy_judge_note=""          旧尺说明只在真做过裁决时才有意义，故缺省空串
+        # 只补键，不改任何判据、阈值、状态语义与退出码（main 的
         # `0 if report.get("pass") else 1` 由 None→False，同 falsy 同 exit 1）。
         "pass": False,
         "criteria": {},
+        "failed_criteria": [],
+        "rows": 0,
+        "criteria_version": _CRITERIA_VERSION,
+        "criteria_change_note": _CRITERIA_CHANGE_NOTE,
+        "legacy_judge_note": "",
     }
     if dump is None:
         report["error"] = "未找到 depgraph.dump（检查 G:/backup/db_dumps 或 --dump）"
