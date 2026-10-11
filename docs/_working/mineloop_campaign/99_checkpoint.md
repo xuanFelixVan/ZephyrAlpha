@@ -392,3 +392,31 @@ P3 共享册钉 top150 被拦"冻结只能收窄"｜P4 探针册窄批＝72 格�
 step0 8 格 smoke 量**纯 CPU 首速**并按在册 F5 三元组（measured_at/run_id/commit）回填；
 batch_2＝36 格内部对照（裁定②，共享册零改件即可发，钉值面 `.runtime/tmp/st-mineloop-20261010/freeze_breadth_control36.json`）；
 batch_1＝72 格探针册续曲（裁定①，`freeze_breadth_probe72.json` ＋ `--schema-path config/position_recipe_grid_schema_v3_breadth_probe.yaml`）。
+
+## 17. 等窗期三件（复联扣发证据／WO-A1 探针结论／L2-09 立场分定义面解冻，16:3x 记）
+
+账在 `30_chwindow_hold_and_unfreeze.yaml`（落地面 5a6e115808，+104/−0 ＋ sector_lane_spec +20/−1，唯一删除行＝被我替换掉的 rating_score_map: __TBD_BY_OWNER__ 那句）。
+
+一、三批按 Owner 批令①的判据**扣发**（不是漏发）：Get-VM 实测 zephyr-ch State=Off Uptime=0；两次仅 SELECT 1 存活探针（15:51/15:52）均 10060 超时；
+15:02/15:11/15:52 三支 journal 全是 `WARN Another backup is running (holder PID 27300 alive...)` + `LOCK_HELD skip_record`，**journal 至今无 Start-VM 行**；
+`.runtime/backup.lock` mtime 停在 13:48（2.1 小时未刷新），持锁者 CPU 累计 8.83 秒／子进程只有 conhost／无 robocopy·vboxmanage·clickhouse 在跑。
+硬发后果＝864 格全死在 `RuntimeError: kline_daily_hfq 数据缺失`，零读数而 negatives.csv 与探索分册被伪阴性灌满 ⇒ 守"断供面禁硬考"。
+按批令②：不碰 27300、不清锁、不开机；Start-VM 后留 30 分钟 I/O 缓释窗，仍三面冻结才走五因子闸（归追凶三班）。
+补一条我自己不要滑过去的边界：持锁脚本在 serializer worktree 影子根，但那份与主区 sha1 逐字节相同（e1cecf852b1c）⇒ **不能拿"影子根"当解释**；
+真正缺的是证据——它 13:48 起跑早于今天 T1 的 journal/transcript 落地（14:54 aafb398927），所以这班一行 journal 都没有，恰是 T1 要治的形态落在 T1 之前起跑的那一班身上。
+
+二、WO-A1 只读探针结论（这句最值钱）：**缺口 100% 在绑定层，不在判官**。
+判官侧现值逐条 grep 命中＝run_card:632 已带 signal_b 形参、_comparison_metrics:309 双臂面齐、_arm_nav_metrics:217 且 :236 原文 `ret = df["e"].shift(0) * df["r"].shift(-1)`；
+而 card_binding.py 全文 grep `signal_b`＝零命中（run_binding_book:591、run_one:624 只回一条 Series）。
+⇒ 适配器只需在 card_binding 加逐臂参数注入＋signal_b 通道，**不动判官、不动卡面阈值**；13 支 blocked_on_impl 卡共用这一个洞。
+另登记一处假分雷：_arm_nav_metrics 把臂序列当**敞口**，卡面若写"池组合收益回放"而适配器把收益直接喂进 e 位，会得到"收益×次日收益"的量纲错——**它不报错，只出假分**。
+
+三、L2-09/03 立场分定义面解冻（批令④）：口径按 Owner 裁 B 进绑定 op 规格，写法是**符号引用**不是抄数字——
+`rating_score_map: import:zephyr.nlp.research_rating.RATING_SCORE`（B 案真源 src/zephyr/nlp/research_rating.py:38-48，自称唯一真源、未知评级不猜值），
+A 案（consensus_daily_compute.py:70-78 的华泰二口径）随弃案注销。复制数字＝造第二真源，两处 map 一旦漂移，本卡与共识日线就各按各的序出分。
+覆盖复核对本班 00:16 已入册实测集（七词＋空串，146,940 行）：B 案七词全覆盖，空串/未知＝None 剔除，与该 op 既有"剔 NaN"同一条规则。
+残留并列对如实登记：A 案两对注销；**B 案自身还剩 卖出=回避=-1.0**（同分类转移不计数），按实测量级更小（全窗 卖出 30／回避 2，IS 窗 5／2）⇒ 记为已知边界，不上调成缺陷也不偷偷并词。
+定义面已解；op 代码实现与出分仍是 CH 面，复联后第一梯队。
+
+四、三批就绪态：探针册已落地（497955b139，n_raw=508,032 只活在探针册里）；两份"其余维全钉"的单因子广度面已生成，格数与 §16 的 P4/P5b 实测逐位相符
+（`freeze_breadth_control36.json`=36 格＝批令②内部对照；`freeze_breadth_probe72.json`=72 格＝批令①续曲）。journal 一出 Start-VM＋probe=1 行，我叠三件定窗连发。
