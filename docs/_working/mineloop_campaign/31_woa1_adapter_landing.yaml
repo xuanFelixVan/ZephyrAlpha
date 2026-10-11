@@ -93,3 +93,32 @@ review_commands:
   suites: python -m pytest tests/backtest/test_arm_protocol_binding.py tests/backtest/test_card_binding.py tests/backtest/test_calibration_exam.py -q 应见 84 passed
   empty_source_book_discipline: python -m pytest tests/backtest/test_card_binding.py -q -k arm_base_sources_book_starts_empty
   deletion_check: git diff dev --numstat -- scripts/backtest/fexam/card_binding.py（+59/-1，-1 为 run_one 那句改结构）
+
+landing_surface_self_verify_found_a_real_defect:
+  symptom: >-
+    三袋落地后我在**落地面主区**复跑测试，83 passed/1 failed：
+    test_arms_from_binding_book_refuses_return_like_base 仍红。但栈显示守卫其实**真红了**——
+    arm_protocol_binding.py:224 抛 not_exposure_face（min=-0.012 max=0.012 越界 3/8 日，
+    消息一路写到"判官 e×r.shift(-1) 会算成收益×收益"），红的原因是**异常类不同一**。
+  root_cause: >-
+    card_binding._arm_pair_builder() 原先先试 `fexam.arm_protocol_binding` 包名，
+    而测试与仓内调用方走 `scripts.backtest.fexam.arm_protocol_binding` ⇒ 同一模块被两个名字各导一次，
+    ArmFaceMismatch 成为两个类对象，pytest.raises 认不出＝**闸真的拦住、测试却判败**。
+    车道内全绿掩盖了它——只有换到落地面（不同 sys.path 起点）才暴露。
+  cure: >-
+    改源头次序（先仓根包名，失败再退 fexam.*；跑批侧 sys.path 只挂 scripts/backtest 时仍能工作），
+    落地 commit ba04e57258（对 dev +4/−1，唯一删除行＝被替换的那句 for 元组）。
+    **不弱化测试**：不接受改成按类名字符串匹配——那会把"闸真红"与"认不出闸"混成一谈。
+  after_fix: 落地面主区 84 passed（三件测试合跑），磁盘==dev 逐行相符（1155/1155）
+  lesson_to_adopt: >-
+    凡"抛出自定义异常＋调用方按类型捕获"的跨包名件，导入路径必须**单义**；
+    且交付判据只能在落地面取（车道绿不算绿——本会话第二次因此自爆，前一次是 worktree 裸 python 导主区包）
+
+pool_staleness_third_occurrence:
+  found: >-
+    scripts/backtest/fexam/arm_protocol_binding.py 在主区呈 `D `（索引记删）同时磁盘有 672 行正常文件——
+    即刚落地的本体件在池里被记成"待删除"，别袋此刻提交整池会**第二次把它从 dev 抹掉**；
+    另 calibration_exam.py 索引面停 815 行旧快照（HEAD=773）。
+  action: 两处均按"逐行判是否 HEAD 纯子集→归档→git checkout HEAD -- <件>"处理，零内容损失；旧字节存证 .runtime/tmp/st-mineloop-20261010/index_stale_blobs_20261011/
+  pattern_count: 同型问题本会话已第三次撞上（§14 四本账册＋23/24 记删、§16 config 冻结预算册、本次码件），
+    根因与已转维护二班的"池面回退方向无闸"是同一条，不另开新账
