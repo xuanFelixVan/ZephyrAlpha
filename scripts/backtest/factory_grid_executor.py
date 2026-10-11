@@ -138,6 +138,12 @@ _EXPLORATION_LEDGER: str | None = None
 #: 定靶凭据=docs/_working/gpufeed_campaign/01_gpux_t0_profile.md（今晚 38,956 格仪表：
 #: eval=82.2% CPU-秒，其内命中路径 60.4%，all_a_ex_st 宇宙独占 74.2%）。
 _EVAL_BACKEND: str = "cpu"
+#: λ 链（ewm 递推＋行和归一）上卡开关（main 里由 --eval-glue-gpu 注入；B1a st-gpux2-20261011）。
+#: 缺省 False=主机续跑段逐字节零漂移（仍走 _apply_freq_trigger/_apply_cap_and_lambda 原 pandas 函数）。
+#: True 仅在 --eval-backend 已上卡时有意义：periodic+λ 格在卡内做完不回主机；drift_band 格的
+#: λ 段在主机 trigger 之后回灌卡上做（H2D 一次 ~0.3ms 换 pandas 一段 ~28ms）。
+#: 独立开关的理由同施工单 §四 7：出问题能单关，不牵动已判绿的逐格设备路径。
+_EVAL_GLUE_GPU: bool = False
 #: 设备面分流计数（观测面，不进 manifest 判据列；summary.eval_gpu 仅在非 cpu 时出现）
 _EVAL_GPU_STATS: dict[str, int] = {
     "prefix_gpu": 0,
@@ -152,6 +158,10 @@ _EVAL_GPU_STATS: dict[str, int] = {
     "memory_pressure": 0,
     "resolve_not_gpu": 0,
     "dev_attempt_failed": 0,
+    # B1a λ 链上卡三面出口（每面各计数，缺一面=静默降级无从判读）
+    "glue_gpu_inline": 0,
+    "glue_gpu_reupload": 0,
+    "glue_gpu_failed": 0,
 }
 #: 逐路显存预算缓存（None=未读；0=册无该键→不设闸并计数出声，见 _vram_per_path_budget_mib）
 _VRAM_BUDGET_MIB: int | None = None
@@ -736,8 +746,7 @@ def _norm_rows(w: pd.DataFrame, top_n: int) -> pd.DataFrame:
 
 def _apply_cap_and_lambda(w: pd.DataFrame, cap: str, lam: str) -> pd.DataFrame:
     """E 单票上限 + H 换手惩罚 λ（λ 收缩向旧权重）。"""
-    cap_map = {"cap5": 0.05, "cap10": 0.10, "cap20": 0.20}
-    c = cap_map[cap]
+    c = _CAP_VAL[cap]
     # cap=硬约束终态 clip，不再 renorm（renorm 会重新突破上限）：
     # 持仓数不足（等权 1/n > cap）时允许低仓位——约束优先于满仓，超额留现金
     w = w.clip(upper=c)
@@ -751,6 +760,9 @@ def _apply_cap_and_lambda(w: pd.DataFrame, cap: str, lam: str) -> pd.DataFrame:
 
 _FREQ_STEPS: dict[str, int] = {"daily": 1, "weekly": 5, "biweekly": 10, "monthly": 21}
 _LAMBDA_PEN: dict[str, float] = {"lambda_0": 0.0, "lambda_5bp": 0.0005, "lambda_15bp": 0.0015}
+#: E 单票上限数值面**单点**（原在 _apply_cap_and_lambda 与设备分流处各手写一份字面量）：
+#: B1a 起 pandas 路吃名字、设备路吃数值，两处不同源＝静默偏离，故收敛为一个字典。
+_CAP_VAL: dict[str, float] = {"cap5": 0.05, "cap10": 0.10, "cap20": 0.20}
 
 
 def _apply_freq_trigger(w: pd.DataFrame, freq: str, trigger: str) -> pd.DataFrame:
@@ -1142,16 +1154,33 @@ def _cell_device_able(v) -> bool:
     )
 
 
+def _cap_lambda_via_device(w: pd.DataFrame, cap_val: float, lam_val: float, xp, gc) -> pd.DataFrame:
+    """把主机续跑段的 cap+λ 搬到卡上——`gpu_core.lambda_chain_gpu` 是 _apply_cap_and_lambda 的逐位镜像。
+
+    只搬执行位置、不搬语义：求和结合序/ewm 递推序/NaN 落点全部按 pandas 与 numpy 源码誊写并被
+    试件钉死（B1a）。行和走成对树还是顺序累加按实测律 `pairwise=有无NaN` 判（被 sum 的那一帧
+    是 clip→ewm 输出帧、恒 F 序，故布局不参与——律由 test_pandas_rowsum_order_follows_layout_rule
+    常驻钉）。xp 须为设备模块（本函数只在设备臂被调；换 numpy 传进来就大声炸，不静默降级）。
+    """
+    arr = w.to_numpy(dtype=np.float64, copy=False)
+    out = gc.lambda_chain_gpu(xp.asarray(arr), cap_val, lam_val, pairwise=bool(np.isnan(arr).any()))
+    return pd.DataFrame(xp.asnumpy(out), index=w.index, columns=w.columns)
+
+
 def _cell_eval_gpu(v, dev_pair, combined, effective_n, cap_val, cols, vol20, mkt_cap_w, rets60_mean, rets60_var, xp):
     """单格定尺寸链上卡（T0 实测=eval 秒数的 60.4% 落在这一面）。失败/不可用返回 None。
 
-    串行步（drift_band / lambda>0）由核内 host_continue 出声，本函数用**原 pandas 函数**
-    续跑 trigger→cap 全序；periodic 行 gather 与 cap clip 均幂等（重跑逐位同），故续跑
-    统一走两步、不分叉——分叉就多一条第二实现面。
+    串行步由核内 host_continue 出声，本函数用**原 pandas 函数**续跑 trigger→cap 全序；
+    periodic 行 gather 与 cap clip 均幂等（重跑逐位同），故续跑统一走两步、不分叉——
+    分叉就多一条第二实现面。_EVAL_GLUE_GPU（B1a，缺省关）开时：periodic+λ 格在卡内做完
+    （不出声），drift_band 格的 cap+λ 段在主机 trigger 之后回灌卡上做完——次序
+    `_sizing→trigger→cap` 一字不变，变的只是执行位置。
     """
     import zephyr.backtest.gpu_core as gc
 
     idx = len(cols)
+    lam_val = _LAMBDA_PEN[v["H_turnover_lambda"]] * 100.0
+    glue = bool(_EVAL_GLUE_GPU)
     try:
         vp = _dev_panel(("vol", id(vol20), idx, cols[0], cols[-1]), lambda: vol20[cols], xp)
         mc = (
@@ -1177,22 +1206,36 @@ def _cell_eval_gpu(v, dev_pair, combined, effective_n, cap_val, cols, vol20, mkt
             freq_step=_FREQ_STEPS[v["D1_rebalance_freq"]],
             trigger=v["D2_rebalance_trigger"],
             cap=cap_val,
-            lam=_LAMBDA_PEN[v["H_turnover_lambda"]] * 100.0,
+            lam=lam_val,
             vol20=vp,
             mkt_cap=mc,
             r60_mean=rm,
             r60_var=rv,
             backend="gpu",
+            glue_gpu=glue,
         )
     except Exception as exc:  # noqa: BLE001 — 算力面异常一律回原路，禁半成品出分
         _instr_warn("cell_eval_gpu", exc)
         return None
     w = pd.DataFrame(np.asarray(out["weights"]), index=combined.index, columns=combined.columns)
     _EVAL_GPU_STATS["cell_gpu"] += 1
+    if out.get("glue_lambda"):
+        _EVAL_GPU_STATS["glue_gpu_inline"] += 1
     if out["host_continue"]:
         _EVAL_GPU_STATS["cell_host_continue"] += 1
         w = _apply_freq_trigger(w, v["D1_rebalance_freq"], v["D2_rebalance_trigger"])
-        w = _apply_cap_and_lambda(w, v["E_single_cap"], v["H_turnover_lambda"])
+        if not glue:
+            w = _apply_cap_and_lambda(w, v["E_single_cap"], v["H_turnover_lambda"])
+            return w
+        # B1a：cap+λ 段回灌卡上做完（H2D 一次 ~0.3ms 换 pandas 一段 ~28ms）；
+        # drift 串行扫仍留主机——它的设备化归 B1b，本袋不接管就不装样子。
+        try:
+            w = _cap_lambda_via_device(w, cap_val, lam_val, xp, gc)
+            _EVAL_GPU_STATS["glue_gpu_reupload"] += 1
+        except Exception as exc:  # noqa: BLE001 — 设备面异常整段回原 pandas，禁半成品出分
+            _instr_warn("glue_lambda_gpu", exc)
+            _EVAL_GPU_STATS["glue_gpu_failed"] += 1
+            w = _apply_cap_and_lambda(w, v["E_single_cap"], v["H_turnover_lambda"])
     return w
 
 
@@ -1305,7 +1348,7 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
     top_n = int(v["B_top_n"].replace("top", ""))
     # E cap 约束的持仓数扩展（B×E 交互的实务语义）: 满仓+单票≤cap 要求
     # M=ceil(1/cap) 只——M>top_n 时有效持仓数扩展为 M（仍按分数序取）
-    cap_val = {"cap5": 0.05, "cap10": 0.10, "cap20": 0.20}[v["E_single_cap"]]
+    cap_val = _CAP_VAL[v["E_single_cap"]]
     effective_n = max(top_n, -(-1 // cap_val) if (top_n * cap_val) < 1.0 else top_n)
     weights = None
     if (
@@ -2301,7 +2344,12 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     # 考窗基对齐（20261006 Owner 并行化前置）：warm 基市值表致 mkt_cap 定尺寸权重并集
     # 变形（230 行≠考窗 120 行）→ GPU 等形守卫全数挡回 CPU（T0 实测 mkt_cap 29/29 CPU）。
     # 对齐=考窗切片逐位恒等（并集多余行全 NaN→引擎丢弃），净零漂移+快路径资格恢复。
-    mkt_cap_w = _load_mkt_cap_wide(warm_start, end, closes_all.columns).reindex(closes.index)
+    _mv_w = _load_mkt_cap_wide(warm_start, end, closes_all.columns)
+    # 市值表缺席（窗口无 mv 数据／CH 空返回，本件文档语义即 None）时下游处处按 None 分支
+    # （_sizing:715 显式 RuntimeError、_prefix_eval_gpu:1101 mv_ok），但原写法 None.reindex
+    # 直接 AttributeError 把整波打死——2026-10-11 实测：自家试件按契约桩 `_load_mkt_cap_wide
+    # → None` 即触发（非环境因素），CH 真缺席时同样一枪毙命。本班补这一句转发面守卫。
+    mkt_cap_w = None if _mv_w is None else _mv_w.reindex(closes.index)
     rets_daily = closes_eval.pct_change()
     rets60_mean = rets_daily.rolling(60).mean()
     rets60_var = rets_daily.rolling(60).var()
@@ -3061,6 +3109,14 @@ def main() -> int:
         "既定交接点回原路并计数出声；auto=cupy+CUDA 在位才上卡。判据面/产物 schema 零改",
     )
     ap.add_argument(
+        "--eval-glue-gpu",
+        action="store_true",
+        help="B1a 续跑段上卡（缺省关=主机续跑逐字节零漂移）：λ 链（ewm 递推＋行和归一，含 clip）"
+        "在卡上按 pandas/numpy 源码序逐位做完——periodic+λ 格不再回主机，drift_band 格的 "
+        "cap+λ 段在主机串行 trigger 之后回灌卡上。只在 --eval-backend 已上卡时有意义；"
+        "判据面/产物 schema 零改，卡面异常计数出声并整段回原 pandas",
+    )
+    ap.add_argument(
         "--verify-counts",
         action="store_true",
         help="只读对账尺：网格产物身份集计数 vs 台账逐批对照（禁任何写）；缺账批显式点名（P0-6）",
@@ -3105,9 +3161,10 @@ def main() -> int:
         "只准收窄禁扩否则 fail-closed；phase>=2/3 用它把 52,254,720 格的整表铺开压回可跑规模）",
     )
     args = ap.parse_args()
-    global _EXPLORATION_LEDGER, _EVAL_BACKEND
+    global _EXPLORATION_LEDGER, _EVAL_BACKEND, _EVAL_GLUE_GPU
     _EXPLORATION_LEDGER = args.exploration_ledger or None
     _EVAL_BACKEND = args.eval_backend
+    _EVAL_GLUE_GPU = bool(args.eval_glue_gpu)
     if args.verify_counts:
         return _verify_counts(args.verify_grid_root or None)
     # 波12 点火类不可旁路——--skip-compute-gate 只关日历窗，不关触发条件与批准卡

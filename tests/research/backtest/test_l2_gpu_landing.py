@@ -250,7 +250,20 @@ def _stub_engine(closes: pd.DataFrame, fail_backends: tuple = (), stats_overlay:
         turnover = w.diff().abs().sum(axis=1).fillna(0.0) / 2.0
         return (w.shift(1) * r).sum(axis=1).fillna(0.0), turnover
 
-    def run_backtest_full(weights, px, gate_limits=True, slippage_bp=None, *, backend=None, pre_tensor=None):
+    # 桩形须与 _c4_engine.run_backtest_full 同签（exec_caliber/px_exec 由 st-ddup-20260925
+    # 双产物改造引入，本班补齐——此前整波被 None.reindex 打死，这条漂移从未暴露过）。
+    # 故意**不写 **kwargs**：桩与生产签名一旦再度漂移要像这次一样大声 TypeError，不要静默吞参。
+    def run_backtest_full(
+        weights,
+        px,
+        gate_limits=True,
+        slippage_bp=None,
+        *,
+        backend=None,
+        pre_tensor=None,
+        exec_caliber="close",
+        px_exec=None,
+    ):
         if seen is not None:
             seen.append(backend)
         if backend in fail_backends:
@@ -1160,3 +1173,321 @@ def test_no_shadowed_test_names_in_gpu_suite():
         dup = sorted(k for k, v in collections.Counter(names).items() if v > 1)
         assert not dup, f"{fp} 内同名重复定义（后名遮蔽前名，前者永不执行）: {dup}"
     assert len(scanned) >= 2, f"本尺实际只扫到 {scanned}——覆盖面不足即失去判别力"
+
+
+# ═══ B1a（st-gpux2-20261011，2026-10-11 夜）：λ 链上卡与它的两面钉 ═══
+
+
+def _lambda_matrix(t: int, s: int, seed: int) -> np.ndarray:
+    """造覆盖全部敏感形态的权重矩阵：首行全 NaN（前置 NaN 不衰减 old_wt）／全 NaN 行
+    （row-sum 走 0→NaN→fillna 路径）／全零行／相邻等值（原码"常数列短路"）／连续 7 个 NaN
+    （old_wt 连乘）／S 取 7·8·129·135 与 450（numpy 成对树的 n<8／8≤n≤128／递归分裂三形）。
+    """
+    rng = np.random.default_rng(seed)
+    w = np.zeros((t, s))
+    for i in range(t):
+        k = int(min(int(rng.integers(1, 40)), s))
+        pick = rng.choice(s, size=k, replace=False)
+        v = rng.random(k) + 0.01
+        w[i, pick] = v / v.sum()
+    w[rng.random((t, s)) < 0.03] = np.nan
+    w[3] = np.nan
+    w[11, :] = 0.0
+    w[12, 5 % s] = w[11, 5 % s]
+    for j in range(0, s, 37):
+        w[40:47, j] = np.nan
+    w[0, :] = np.nan
+    return w
+
+
+@needs_gpu
+@pytest.mark.parametrize(("t", "s"), [(970, 450), (200, 130), (64, 7), (64, 135)])
+@pytest.mark.parametrize("lam_name", ["lambda_5bp", "lambda_15bp", "lambda_0"])
+def test_lambda_chain_gpu_bitwise_matches_pandas(t, s, lam_name):
+    """B1a 正向钉：设备 λ 链与 `_apply_cap_and_lambda` **逐位**等（禁降级成相对容差）。
+
+    逐位不是洁癖：λ 段产物直接进仓位与换手，而 drift_band 的判据是 `nansum>0.2` 这种硬阈值——
+    换求和结合序就换调仓日，换调仓日就换净值，那已经不是"容差内"而是换题。
+    真源=pandas 2.3.3 aggregations.pyx:1791-1827 + core/window/ewm.py:97 + numpy 2.3.5
+    loops_utils.h.src:80-145（本机已对源码逐行誊写并验过树与 pandas 行和逐位等）。
+    """
+    import cupy as cp
+
+    x = _lambda_matrix(t, s, 20261011 + s)
+    ref = fac._apply_cap_and_lambda(pd.DataFrame(x), "cap10", lam_name).to_numpy()
+    lam = fac._LAMBDA_PEN[lam_name] * 100.0
+    got = cp.asnumpy(gpu_core.lambda_chain_gpu(cp.asarray(x), 0.10, lam))
+    if not np.array_equal(ref, got, equal_nan=True):
+        bad = np.nonzero(~((ref == got) | (np.isnan(ref) & np.isnan(got))))
+        i0, j0 = int(bad[0][0]), int(bad[1][0])
+        pytest.fail(
+            f"λ 链设备镜像偏离 shape={(t, s)} lam={lam_name} 不符={len(bad[0])} "
+            f"首处 t={i0} c={j0} pandas={ref[i0, j0]!r} gpu={got[i0, j0]!r} 输入={x[i0, j0]!r}"
+        )
+
+
+@needs_gpu
+def test_lambda_chain_gpu_naive_alpha_route_deviates(monkeypatch):
+    """两面钉的反面（3′ 纪律：守卫必须能红）：省掉 pandas 的 alpha→com→alpha 往返，
+    设备链必须**偏离** pandas——否则上面那条"逐位等"是空跑。
+
+    病形实测：pandas 不吃字面 0.05，它先 com=(1-α)/α 再由核内 α=1/(1+com) 反解，
+    得 0.05000000000000001（差 1 ULP）。少这一步＝整条递推系统偏离，且不报错。
+    """
+    import cupy as cp
+
+    x = _lambda_matrix(200, 129, 99)
+    ref = fac._apply_cap_and_lambda(pd.DataFrame(x), "cap10", "lambda_5bp").to_numpy()
+    lam = fac._LAMBDA_PEN["lambda_5bp"] * 100.0
+    assert np.array_equal(ref, cp.asnumpy(gpu_core.lambda_chain_gpu(cp.asarray(x), 0.10, lam)), equal_nan=True)
+    monkeypatch.setattr(gpu_core, "ewm_alpha_pair", lambda alpha: (1.0 - alpha, alpha))
+    naive = cp.asnumpy(gpu_core.lambda_chain_gpu(cp.asarray(x), 0.10, lam))
+    assert not np.array_equal(ref, naive, equal_nan=True), "字面 alpha 与往返 alpha 同解＝本钉失焦"
+
+
+def test_device_kernel_sources_forbid_single_precision_intrinsics():
+    """静默降级尺：CUDA 的 `__fadd_rn/__fmul_rn/__fdiv_rn` 是**单精度**内在函数，喂 double 会
+    静默降 float32（本班实测：偏离相对量级 9e-8、不报错、不改判据——比 FMA 融合更阴）。
+    双精度唯一正确拼写是 `__dadd_rn/__dmul_rn/__dsub_rn/__ddiv_rn`。
+
+    判据扫 gpu_core 全部 `*_SRC` 内核源；探测器自带红证（含样例必判红），防"尺空跑"。
+    """
+    import ast
+    import re
+
+    tree = ast.parse(Path(gpu_core.__file__).read_text(encoding="utf-8"))
+    srcs: dict[str, str] = {}
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant):
+            if not isinstance(node.value.value, str):
+                continue
+            for tgt in node.targets:
+                if isinstance(tgt, ast.Name) and tgt.id.endswith("_SRC"):
+                    srcs[tgt.id] = node.value.value
+    assert srcs, "没扫到任何内核源常量＝尺空跑"
+    single = re.compile(r"__f(add|sub|mul|div|sqrt)_rn")
+    offenders = {k: sorted(set(single.findall(v))) for k, v in srcs.items() if single.search(v)}
+    assert not offenders, f"内核源出现单精度内在函数（double 静默降 float32）: {offenders}"
+    ewm_src = srcs.get("_EWM_LAMBDA_KERNEL_SRC")
+    assert ewm_src is not None, "λ 链内核源不在位（B1a 未落地或被改名）"
+    assert "__dmul_rn" in ewm_src and "__dadd_rn" in ewm_src and "__ddiv_rn" in ewm_src, (
+        "λ 递推段退回裸运算符＝nvcc 默认 -fmad=true 会把乘加融成一条 FMA＝换结合序"
+        "（pandas 的 C 编译无此融合，逐位等的前提失效）"
+    )
+    assert single.search("void k(){ a = __fmul_rn(x, y); }"), "探测器失效：连样例都抓不住"
+
+
+@needs_gpu
+@pytest.mark.parametrize(
+    ("trigger", "lam", "glue", "expect_hc", "expect_glue"),
+    [
+        ("periodic", 0.05, True, False, True),
+        ("periodic", 0.05, False, True, False),
+        ("drift_band", 0.05, True, True, False),
+        ("drift_band", 0.0, True, True, False),
+        ("periodic", 0.0, True, False, False),
+    ],
+)
+def test_eval_cell_glue_gpu_switch_matrix(trigger, lam, glue, expect_hc, expect_glue):
+    """开关矩阵钉：glue 只清它真接管的段。drift_band 的串行扫归 B1b，未接管就不许装成已上卡
+    （host_continue 必须继续出声，`glue_lambda` 必须为 False）。缺省关＝现网逐字节零漂移。
+    """
+    import cupy as cp
+
+    px = _synth_px()
+    combined = _synth_factors(px, k=1)[0]
+    rank_desc = combined.rank(axis=1, ascending=False)
+    vol = _vol_panel(px).to_numpy(np.float64)
+    out = gpu_core.eval_cell_gpu(
+        cp.asarray(combined.to_numpy(np.float64)),
+        cp.asarray(rank_desc.to_numpy(np.float64)),
+        top_n=10,
+        sizing_mode="equal_weight",
+        freq_step=5,
+        trigger=trigger,
+        cap=0.10,
+        lam=lam,
+        vol20=cp.asarray(vol),
+        backend="gpu",
+        glue_gpu=glue,
+    )
+    assert out["host_continue"] is expect_hc, (trigger, lam, glue, out["host_continue"], expect_hc)
+    assert out["glue_lambda"] is expect_glue, (trigger, lam, glue, out["glue_lambda"], expect_glue)
+
+
+def test_eval_glue_gpu_wiring_is_single_point():
+    """接线钉（防 WO-A4 同型病：包装段各手写一遍参数→漏一处静默回全空间）：
+    ①`_EVAL_GLUE_GPU` 缺省 False（判据面零动的机械保证）；②CLI 是 store_true；
+    ③全文件对该局部的赋值**只有一处**注入点（加上声明共两处），多一处就多一条分叉真源。
+    """
+    import ast
+
+    tree = ast.parse((_REPO / "scripts" / "backtest" / "factory_grid_executor.py").read_text(encoding="utf-8"))
+    decl = [
+        n
+        for n in tree.body
+        if isinstance(n, ast.AnnAssign)
+        and isinstance(n.target, ast.Name)
+        and n.target.id == "_EVAL_GLUE_GPU"
+        and isinstance(n.value, ast.Constant)
+        and n.value.value is False
+    ]
+    assert len(decl) == 1, "_EVAL_GLUE_GPU 必须有一处 `: bool = False` 缺省声明"
+    writes = []
+    for n in ast.walk(tree):
+        if isinstance(n, (ast.Assign, ast.AnnAssign)):
+            tgts = n.targets if isinstance(n, ast.Assign) else [n.target]
+            if any(isinstance(t, ast.Name) and t.id == "_EVAL_GLUE_GPU" for t in tgts):
+                writes.append(n)
+    assert len(writes) == 2, f"_EVAL_GLUE_GPU 赋值点应=2（声明+main 注入），实测 {len(writes)}＝出现第二真源"
+    text = (_REPO / "scripts" / "backtest" / "factory_grid_executor.py").read_text(encoding="utf-8")
+    assert '"--eval-glue-gpu"' in text and "store_true" in text.split('"--eval-glue-gpu"')[1][:200], (
+        "CLI 旗须为 store_true（缺省关）"
+    )
+
+
+@needs_gpu
+@pytest.mark.parametrize("freq_step", [1, 5])
+@pytest.mark.parametrize("with_nan", [False, True])
+def test_eval_cell_glue_gpu_substitution_is_bitwise(freq_step, with_nan):
+    """替换面双面钉（B1a 的真实命题）：**同一份卡上产物**在"回主机跑 pandas λ"与"卡上跑 λ 链"
+    之间必须逐位等。
+
+    刻意不与 `_sizing` 的 pandas 全链对拍——那条上游映射在册只到 rel≤1e-12
+    （test_eval_cell_end_to_end_matches_pandas_chain），拿它当基线会把上游的既有偏差
+    误算到本刀头上（判据要指准自己改的那一段）。
+
+    两个参数轴都是**实测逼出来的**，不是排列组合凑数：
+    ·freq_step=5 会让主机续跑段先过 `iloc[::step].reindex(ffill)`，那一帧变 F 序；
+    ·F 序 + 无 NaN 时 pandas 的行和走**朴素顺序累加**而不是成对树（见
+     test_pandas_rowsum_order_follows_layout_rule）——本袋最初版本正是漏了这条，
+     才在 t=5 暴露 1-2 ULP 偏离（不符 14689 元素，最大 4.16e-17）。
+    """
+    import cupy as cp
+
+    px = _synth_px()
+    combined = _synth_factors(px, k=1)[0]
+    if with_nan:
+        combined = combined.copy()
+        combined.iloc[::7, 0] = np.nan
+    else:
+        combined = combined.fillna(0.0)
+    rank_desc = combined.rank(axis=1, ascending=False)
+    vol = _vol_panel(px)
+    if not with_nan:
+        vol = vol.fillna(0.0)
+    freq = "daily" if freq_step == 1 else "weekly"
+    lam = fac._LAMBDA_PEN["lambda_5bp"] * 100.0
+    args = dict(
+        top_n=10,
+        sizing_mode="inv_vol",
+        freq_step=freq_step,
+        trigger="periodic",
+        cap=0.10,
+        lam=lam,
+        vol20=cp.asarray(vol.to_numpy(np.float64)),
+        backend="gpu",
+    )
+    base = gpu_core.eval_cell_gpu(
+        cp.asarray(combined.to_numpy(np.float64)),
+        cp.asarray(rank_desc.to_numpy(np.float64)),
+        glue_gpu=False,
+        **args,
+    )
+    assert base["host_continue"] is True and base["glue_lambda"] is False
+    w_off = pd.DataFrame(np.asarray(base["weights"]), index=combined.index, columns=combined.columns)
+    assert bool(np.isnan(combined.to_numpy()).any()) is bool(with_nan), "输入夹具形态与声明不符"
+    # 臂 A 的确切形态：主机先重跑幂等 trigger，再跑 pandas cap+λ
+    ref = fac._apply_cap_and_lambda(fac._apply_freq_trigger(w_off, freq, "periodic"), "cap10", "lambda_5bp")
+    glued = gpu_core.eval_cell_gpu(
+        cp.asarray(combined.to_numpy(np.float64)),
+        cp.asarray(rank_desc.to_numpy(np.float64)),
+        glue_gpu=True,
+        **args,
+    )
+    assert glued["host_continue"] is False and glued["glue_lambda"] is True
+    ok = np.array_equal(ref.to_numpy(), glued["weights"], equal_nan=True)
+    if not ok:
+        a, b = ref.to_numpy(), glued["weights"]
+        bad = np.nonzero(~((a == b) | (np.isnan(a) & np.isnan(b))))
+        i0, j0 = int(bad[0][0]), int(bad[1][0])
+        pytest.fail(
+            f"续跑段替换偏离（step={freq_step} nan={with_nan}）：不符={len(bad[0])} "
+            f"最大={float(np.nanmax(np.abs(a[bad] - b[bad]))):.3e} 首处 t={i0} c={j0} "
+            f"回主机={a[i0, j0]!r} 卡上={b[i0, j0]!r} 入参={base['weights'][i0, j0]!r}"
+        )
+
+
+def test_pandas_rowsum_order_follows_layout_rule():
+    """常驻尺（量的是**主机参照自身**，不是我的实现）：`_apply_cap_and_lambda` 里被 sum 的那一帧
+    是 clip→ewm 的输出帧（实测恒 F 序），于是 pandas 的行和结合序只由"有无 NaN"决定：
+
+      有 NaN  → skipna 造新连续数组 → 成对树；
+      无 NaN  → 归约轴跨步 → 朴素顺序累加（-0.0 起手）。
+
+    来源=2026-10-11 实测（`.runtime/tmp/st-gpux2-20261011/pandas_sum_layout_probe.py`，
+    S=36/450/846/5217 一致）。B1a 的 `pairwise` 判据完全建立在它上面；pandas 若改内部布局或
+    skipna 路径，本尺先红，设备镜像判据必须重估——禁沿用旧律静默换数。
+    """
+    rng = np.random.default_rng(20261011)
+    x = np.clip(rng.normal(size=(240, 36)) * 0.05, None, 0.10)
+
+    def tree(r: np.ndarray) -> float:
+        n = len(r)
+        if n < 8:
+            s = -0.0
+            for v in r:
+                s += float(v)
+            return s
+        if n <= 128:
+            a = [float(r[k]) for k in range(8)]
+            i = 8
+            stop = n - (n % 8)
+            while i < stop:
+                for k in range(8):
+                    a[k] += float(r[i + k])
+                i += 8
+            res = ((a[0] + a[1]) + (a[2] + a[3])) + ((a[4] + a[5]) + (a[6] + a[7]))
+            while i < n:
+                res += float(r[i])
+                i += 1
+            return res
+        n2 = n // 2
+        n2 -= n2 % 8
+        return tree(r[:n2]) + tree(r[n2:])
+
+    def seq(r: np.ndarray) -> float:
+        s = -0.0
+        for v in r:
+            s += float(v)
+        return s
+
+    for src in (np.ascontiguousarray(x), np.asfortranarray(x)):
+        we = pd.DataFrame(src).clip(upper=0.10).ewm(alpha=0.05, adjust=False).mean()
+        v = we.to_numpy()
+        assert not v.flags["C_CONTIGUOUS"], "被 sum 的帧应变 F 序（律的前提），布局假设变了要重估 pairwise"
+        rs = we.sum(axis=1).to_numpy()
+        tr = np.array([tree(r) for r in v])
+        sq = np.array([seq(r) for r in v])
+        assert not np.array_equal(tr, sq), "两把参照自己相同＝本尺失去判别力"
+        assert np.array_equal(rs, sq) and not np.array_equal(rs, tr), "无 NaN 应=顺序累加且≠成对树"
+
+    xn = x.copy()
+    xn[rng.random(xn.shape) < 0.15] = np.nan
+    for src in (np.ascontiguousarray(xn), np.asfortranarray(xn)):
+        we = pd.DataFrame(src).clip(upper=0.10).ewm(alpha=0.05, adjust=False).mean()
+        v = we.to_numpy()
+        rs = we.sum(axis=1).to_numpy()
+        tr = np.array([tree(np.where(np.isnan(r), 0.0, r)) for r in v])
+        sq = np.array([seq(np.where(np.isnan(r), 0.0, r)) for r in v])
+        assert not np.array_equal(tr, sq), "有 NaN 组两参照相同＝失去判别力"
+        assert np.array_equal(rs, tr) and not np.array_equal(rs, sq), "有 NaN 应=成对树（skipna 掩码后新连续数组）"
+
+
+def test_eval_gpu_stats_has_all_glue_exits():
+    """三面出口各有计数（在册教训：零计数器与"未触发"同形＝假绿）：卡内做完／回灌卡上／
+    卡面异常回退，任一为空都要能从 summary 读出"到底是没走还是走了没成"。
+    """
+    for key in ("glue_gpu_inline", "glue_gpu_reupload", "glue_gpu_failed"):
+        assert key in fac._EVAL_GPU_STATS, f"缺计数键 {key}＝该出口无从判读"
+        assert fac._EVAL_GPU_STATS[key] == 0, f"{key} 应为模块级零值（测试期不得被生产计数污染）"

@@ -937,6 +937,175 @@ def cap_clip(xp: ModuleType, w: XPArray, cap: float) -> XPArray:
     return xp.clip(w, None, cap)
 
 
+# ——— B1a：λ 链（ewm 递推 + 行和归一）上卡——逐位复刻 pandas 语义，禁自造近似 ———
+# 真源是**读源码**得来的，不是推导：
+#   pandas 2.3.3 `pandas/_libs/window/aggregations.pyx:1791-1827`（ewm，adjust=False/ignore_na=False）
+#   pandas 2.3.3 `pandas/core/window/ewm.py:97`（alpha→com 单向下转，**非恒等**）
+#   numpy 2.3.5 `numpy/_core/src/umath/loops_utils.h.src:80-145`（成对求和树，PW_BLOCKSIZE=128）
+# 两条静默降级形态（本班实测各踩一次，量级分别 1 ULP 与 9e-8，均"不报错、不改判据"级）：
+#   ①字面 alpha 不得直接进核：pandas 先 com=(1-alpha)/alpha，核内再 alpha=1/(1+com) 反解，
+#     0.05 → 0.05000000000000001。少这一步＝整条递推系统偏离（用 ewm_alpha_pair 收口）。
+#   ②CUDA 的 `__fadd_rn/__fmul_rn/__fdiv_rn` 是**单精度**内在函数，喂 double 会静默降 float32；
+#     双精度必须 `__dadd_rn/__dmul_rn/__ddiv_rn`。用内在函数而非裸运算符的目的＝阻断 nvcc 默认
+#     `-fmad=true` 的乘加融合（融合即换结合序，pandas 的 C 路无此融合）。
+_EWM_LAMBDA_KERNEL_SRC = r"""
+extern "C" __global__
+void ewm_lambda_scan(const double* W, double* OUT, const long long T, const long long S,
+                     const double old_wt_factor, const double new_wt)
+{
+    if (T == 0LL) return;
+    // 一 thread 一列：时间轴串行推进（prev 依赖天然串行），同 step 各 thread 连续读 W[t*S+j] 合并访存
+    long long j = (long long)blockIdx.x * (long long)blockDim.x + (long long)threadIdx.x;
+    if (j >= S) return;
+    double weighted = W[j];
+    OUT[j] = weighted;                 // min_periods=0 → 首行原样（含 NaN）
+    double old_wt = 1.0;
+    for (long long t = 1LL; t < T; ++t) {
+        const long long k = t * S + j;
+        const double cur = W[k];
+        const bool is_obs = (cur == cur);
+        if (weighted == weighted) {
+            // ignore_na=False ⇒ `is_obs or not ignore_na` 恒真：NaN 行也推进 old_wt
+            old_wt = __dmul_rn(old_wt, old_wt_factor);
+            if (is_obs) {
+                if (weighted != cur) { // 原码"常数列短路"：等值则整段跳过，不做无谓舍入
+                    const double num = __dadd_rn(__dmul_rn(old_wt, weighted), __dmul_rn(new_wt, cur));
+                    weighted = __ddiv_rn(num, __dadd_rn(old_wt, new_wt));
+                }
+                old_wt = 1.0;          // adjust=False ⇒ 观测后重置
+            }
+        } else if (is_obs) {
+            weighted = cur;            // 前置 NaN ⇒ 以观测值起算，old_wt 不衰减
+        }
+        OUT[k] = weighted;
+    }
+}
+"""
+
+_RENORM_ROWS_KERNEL_SRC = r"""
+static __device__ double mload(const double* p) {
+    const double x = *p;
+    return (x == x) ? x : 0.0;         // skipna：NaN 位先置 0 再入树（numpy/pandas 同次序；
+                                       // 实测"跳 NaN 顺序累加"与 pandas 逐位不等，禁改用）
+}
+
+// numpy 2.3.5 loops_utils.h.src:80-145 逐行誊：n<8 以 -0.0 起手；8<=n<=128 用 8 累加器
+// 同序合并 ((r0+r1)+(r2+r3))+((r4+r5)+(r6+r7)) 再补尾；n>128 对半（向下取 8 的倍数）递归。
+static __device__ double pw_tree(const double* a, const long long n) {
+    if (n < 8LL) {
+        double res = -0.0;
+        for (long long i = 0LL; i < n; ++i) res = __dadd_rn(res, mload(a + i));
+        return res;
+    }
+    if (n <= 128LL) {
+        double r[8];
+        for (int k = 0; k < 8; ++k) r[k] = mload(a + k);
+        long long i = 8LL;
+        const long long stop = n - (n % 8LL);
+        for (; i < stop; i += 8LL) {
+            for (int k = 0; k < 8; ++k) r[k] = __dadd_rn(r[k], mload(a + i + k));
+        }
+        double res = __dadd_rn(
+            __dadd_rn(__dadd_rn(r[0], r[1]), __dadd_rn(r[2], r[3])),
+            __dadd_rn(__dadd_rn(r[4], r[5]), __dadd_rn(r[6], r[7]))
+        );
+        for (; i < n; ++i) res = __dadd_rn(res, mload(a + i));
+        return res;
+    }
+    long long n2 = n / 2LL;
+    n2 -= n2 % 8LL;
+    return __dadd_rn(pw_tree(a, n2), pw_tree(a + n2, n - n2));
+}
+
+// pandas 的行和结合序**随内存布局变**（本机实测，pandas_sum_layout_probe.py）：
+// 有 NaN → skipna 把掩码后的新连续数组喂 numpy → 成对树；无 NaN 且块为 F 序（reindex(ffill)
+// 之后就是 F 序）→ 归约轴跨步 → 朴素顺序累加。设备镜像必须按主机实际会走的那条走，
+// 否则差 1 ULP——1 ULP 在 drift 硬阈值与并列票上会翻判据（在册 3′ 教训）。
+static __device__ double seq_rows(const double* a, const long long n) {
+    double res = -0.0;
+    for (long long i = 0LL; i < n; ++i) res = __dadd_rn(res, mload(a + i));
+    return res;
+}
+
+extern "C" __global__
+void renorm_rows(const double* W, double* OUT, const long long T, const long long S,
+                 const long pairwise) {
+    long long r = (long long)blockIdx.x * (long long)blockDim.x + (long long)threadIdx.x;
+    if (r >= T) return;
+    const double* a = W + r * S;
+    const double rs = pairwise ? pw_tree(a, S) : seq_rows(a, S);
+    if (rs == 0.0) {                   // replace(0, nan) → 整行 NaN → fillna(0)
+        for (long long j = 0LL; j < S; ++j) OUT[r * S + j] = 0.0;
+        return;
+    }
+    for (long long j = 0LL; j < S; ++j) {
+        const double v = __ddiv_rn(mload(a + j), rs);
+        OUT[r * S + j] = (v == v) ? v : 0.0;   // fillna(0.0)：只吃 NaN，inf 原样留（与 pandas 同）
+    }
+}
+"""
+
+_EWM_LAMBDA_KERNEL: Any = None  # 惰性编译缓存（同 _GATE_KERNEL 惯例：模块级全局＋锁，
+_RENORM_ROWS_KERNEL: Any = None  # 不设返回 Any 的辅助函数——GATE-ANY-ABUSE 拦签名裸 Any）
+_LAMBDA_KERNEL_LOCK = threading.Lock()
+
+
+def ewm_alpha_pair(alpha: float) -> tuple[float, float]:
+    """pandas 的 alpha→com→alpha 往返（ewm.py:97 + aggregations.pyx:1776），返回核内两常数。
+
+    单点化：核参数、CPU 侧对拍、测试都从这里取，禁在调用方各写一遍公式（WO-A4 同型病：
+    一处手写漏一处＝静默错）。
+    """
+    com = (1.0 - alpha) / alpha
+    a = 1.0 / (1.0 + com)
+    return 1.0 - a, a
+
+
+def ewm_renorm_gpu(w: XPArray, alpha: float, pairwise: bool = True) -> XPArray:
+    """设备 λ 链后两段：ewm(adjust=False) 递推 → 行和归一（镜像 _apply_cap_and_lambda:700-705）。
+
+    输入须 (T,S) float64 设备数组；编译/执行异常直抛（禁吞）——调用方 fail-closed 回原 pandas 路。
+    `pairwise` 选行和的结合序：True=成对树（主机有 NaN 或块 C 序时走这条），
+    False=朴素顺序累加（主机无 NaN 且块 F 序时走这条）——两形都由实测钉住，见 renorm_rows 注释。
+    """
+    global _EWM_LAMBDA_KERNEL, _RENORM_ROWS_KERNEL
+    t, s = w.shape
+    old_wt_factor, new_wt = ewm_alpha_pair(min(1.0, alpha))
+    w_c = _cp.ascontiguousarray(w)
+    with _LAMBDA_KERNEL_LOCK:
+        if _EWM_LAMBDA_KERNEL is None:
+            _EWM_LAMBDA_KERNEL = _cp.RawKernel(_EWM_LAMBDA_KERNEL_SRC, "ewm_lambda_scan")
+        if _RENORM_ROWS_KERNEL is None:
+            _RENORM_ROWS_KERNEL = _cp.RawKernel(_RENORM_ROWS_KERNEL_SRC, "renorm_rows")
+        ewm_kern, renorm_kern = _EWM_LAMBDA_KERNEL, _RENORM_ROWS_KERNEL
+    out = _cp.empty_like(w_c)
+    ewm_kern(
+        ((s + 255) // 256,),
+        (256,),
+        (w_c, out, np.int64(t), np.int64(s), np.float64(old_wt_factor), np.float64(new_wt)),
+    )
+    out2 = _cp.empty_like(out)
+    renorm_kern(
+        ((t + 255) // 256,),
+        (256,),
+        (out, out2, np.int64(t), np.int64(s), np.int64(1 if pairwise else 0)),
+    )
+    return out2
+
+
+def lambda_chain_gpu(w: XPArray, cap: float, lam: float, pairwise: bool = True) -> XPArray:
+    """完整 λ 链上卡：clip → ewm → 行和归一——_apply_cap_and_lambda 的设备镜像（同序同精度）。
+
+    CPU 侧**不设第二实现面**（分叉就多一条真源）：缺省与回退一律用 factory 原 pandas 函数。
+    `pairwise` 的选择见 renorm_rows 注释的实测律：被 sum 的那一帧是 clip→ewm 输出帧（恒 F 序），
+    无 NaN ⇒ 主机走朴素顺序累加，有 NaN ⇒ skipna 造新连续数组走成对树，即 `pairwise=has_nan`。
+    """
+    out = cap_clip(_cp, w, cap)
+    if lam > 0.0:
+        out = ewm_renorm_gpu(out, lam, pairwise=pairwise)
+    return out
+
+
 def eval_cell_gpu(
     combined: XPArray,
     rank_desc: XPArray,
@@ -952,15 +1121,18 @@ def eval_cell_gpu(
     r60_mean: XPArray | None = None,
     r60_var: XPArray | None = None,
     backend: str | None = None,
+    glue_gpu: bool = False,
 ) -> dict[str, Any]:
     """单格权重链 GPU/CPU 双后端核（T0 实测=hit 路径 60.4% 的 eval 秒数落在此面）。
 
     入参须为已对齐的等形 (T,S) float64 数组：combined=合成截面、rank_desc=其降序平均档
     （二者正是 combine_cache 现有缓存物，命中格零 H2D）。返回 dict：
-      backend / weights (T,S) numpy / host_continue (bool)。
-    host_continue=True 表示该格含卡上未覆盖的串行步（drift_band 或 lambda>0），
-    weights 只算到"可上卡的最后一步"，其余交回调用方原 pandas 函数——**交接出声，
-    禁本件自造近似**（本节头 CPU 交接点 1/2）。
+      host_continue / weights (T,S) numpy / backend。host_continue=True 表示该格含卡上未覆盖的
+    串行步（drift_band，或 glue_gpu 关时的 lambda>0），weights 只算到"可上卡的最后一步"，
+    其余交回调用方原 pandas 函数——**交接出声，禁本件自造近似**（本节头 CPU 交接点 1/2）。
+    glue_gpu=True（B1a，缺省 False=逐字节零漂移）⇒ λ 链后两段（ewm 递推＋行和归一）在卡上
+    按 pandas/numpy 源码序逐位做完，periodic 族不再回主机；drift_band 族仍出声（其串行扫
+    归 B1b，本件不接管就不装样子）。
     """
     be = resolve_backend(backend)
     xp: Any = _cp if be == "gpu" else np
@@ -976,6 +1148,7 @@ def eval_cell_gpu(
         r60_var=r60_var,
     )
     host_continue = False
+    glue_done = False
     if trigger == "drift_band":
         # 串行依赖交接：本件到此为止，trigger→cap 全序交回 factory 原函数。
         # 禁在此提前 cap——factory 次序是 _sizing→_apply_freq_trigger→_apply_cap_and_lambda，
@@ -986,5 +1159,13 @@ def eval_cell_gpu(
             w = periodic_hold_rows(xp, w, freq_step)
         w = cap_clip(xp, w, cap)
         if lam > 0.0:
-            host_continue = True  # ewm 递推+归一交回 pandas（clip 幂等，重跑无害）
-    return {"backend": be, "weights": _to_numpy(w), "host_continue": host_continue}
+            if glue_gpu and be == "gpu":
+                # 行和结合序律（实测，见 host_sum_mode）：λ 链被 sum 的那一帧是 clip→ewm 的
+                # 输出帧，恒为 F 序 ⇒ 无 NaN 时主机走朴素顺序累加、有 NaN 时 skipna 造新连续
+                # 数组走成对树。故判据只看"有无 NaN"，与入参布局无关。
+                pairwise = bool(xp.isnan(w).any())
+                w = ewm_renorm_gpu(w, lam, pairwise=pairwise)  # clip 已做，此处只补后两段
+                glue_done = True
+            else:
+                host_continue = True  # ewm 递推+归一交回 pandas（clip 幂等，重跑无害）
+    return {"backend": be, "weights": _to_numpy(w), "host_continue": host_continue, "glue_lambda": glue_done}
