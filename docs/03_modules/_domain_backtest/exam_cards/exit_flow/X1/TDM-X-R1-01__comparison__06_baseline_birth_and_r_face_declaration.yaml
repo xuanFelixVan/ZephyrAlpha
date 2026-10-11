@@ -1,0 +1,133 @@
+schema_version: '1.0'
+card_id: TDM-X-R1-01/comparison/06_熔断五级梯度减仓对照_基线出生件与r位声明版
+node_id: TDM-X-R1-01
+family: comparison
+title_zh: 熔断五级状态机（梯度减仓 vs 单一全清）·净值回放双臂对照卡·基线出生件与 r 位声明版（06）
+version_of: TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+hypothesis: >-
+  与母卡 02 同一命题（原文不改写）：以组合日盈亏+组合回撤双轴驱动的五级状态机
+  （L1 日亏≥2% 禁加仓 / L2≥4% 停新开 / L3≥6% 梯度减仓 / L4 回撤≥25% 清仓+人工接管，
+  迟滞解除=当日无新低且修复当日跌幅 50% 才降一级）相对"触发即一次性全清、恢复即一次买回"臂，
+  能在同窗内以更小换手成本取得不劣于后者的回撤控制；若判不出来，五级表只是复杂度装饰。
+  本版本卡的**唯一新增**是"被监控组合怎么出生"的四件声明（见 data_binding），判据数值一律沿用 02 原值。
+why_new_version_not_edit: >-
+  G4-5：02 的 implementation_gap 把它自己的基线写成"由 exit_simulator.simulate(stop_enabled=True) 生成的日收益序列"，
+  但没有在卡面钉住**信号面来源/宇宙册/调仓行批次**三件，也没有声明 r 位（次日收益）该由谁产——
+  这三件缺位时任何适配器都只能替卡面挑，挑错则三臂共用同一基线、三臂一起错且查不出（统筹批复二采纳的论证）。
+  补声明＝口径变更，禁原地改 02，只能另起 06。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛，沿用 02）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，沿用 02）
+    crisis: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段，沿用 02）
+  frozen_note: 看数前冻结（裁定#501 纪律）；本版本卡只补出生件与 r 位声明，窗口与 02 逐字同值，事后挪门柱=作废（G4-5）
+buckets:
+  type: arm_matrix
+  'on': 关臂=单一阈值全清/全买回（二值开关）vs 开臂=五级状态机（含迟滞解除）vs 中间臂=五级但无迟滞（解除即回满，检验"禁 V 型回满"这一条的价值）——沿用 02 原文
+  min_obs_per_bucket: 60
+pillars:
+  paired_arm_protocol: 三臂共用同一底层组合净值路径（同一份基线臂净值，其出生件见 data_binding.baseline_birth），仅风控层规则异；风控层成交一律按次日开盘价（prereg stop_rules.exit_exec 同语义，禁当日往返）
+  drawdown_floor: 开臂相对关臂 OOS MaxDD 改善 >= 5pp；相对中间臂改善 >= 1pp（沿用 02）
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1（沿用 02）
+  whipsaw_gate: 开臂 30 日内升降级往返次数 <= 关臂触发次数；且危机段真实触发不缺席（漏触发=0，fail-closed 优先于平滑）（沿用 02）
+  turnover_cost_gate: 年化换手增量 <= 8.0x；40bp 成本档重跑后开臂结论不变，Sharpe >= survival_floor 0.0（沿用 02）
+  oos_stability: IS/OOS 回撤改善同号；两处危机段均不得劣于关臂（取严：任一危机段恶化即 FAIL）（沿用 02）
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  maxdd_improvement_vs_no_hysteresis_min_pp: 1.0
+  sharpe_delta_min: -0.1
+  whipsaw_roundtrip_ratio_max: 1.0
+  missed_crisis_trigger_max: 0
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+pillars_numeric_provenance: >-
+  八个键值全部逐字沿用 02（卡面第 28-35 行实测读得），本班**未新增、未收紧、未放宽任何一个数**。
+  本卡的可批面只在 data_binding 的出生四件；判据与数值与 02 同值＝本卡与 02 的差异可被逐键核对。
+target:
+  primary: OOS 组合 MaxDD / 年化 Sharpe（strategy_exam.window_metrics，244 年化，沿用 02）
+  secondary: 触发次数/在场天数/往返抖动次数 + 危机段逐段明细
+  note: 本节点判的是"等级表"而非仓位数值本身；仓位带属 C1 预算面（禁与本卡混判）
+data_binding:
+  baseline_birth:
+    piece_1_signal_face: >-
+      真源=scripts/backtest/fexam/exit_sim/prereg_frozen.yaml（frozen_at 2026-10-06，E 道首件冻结卡）之
+      device.signal_source 与 columns_cap24 两键——规则原文"indicator_exam_scores_v1.yaml verdict==pass 的
+      ch_backings 首列，文档序去重，cap 24 列（确定性，不挑不调）"，且该冻结卡已把 24 列**逐列点名**
+      （首三列实测=c1_market.technical_indicator.macd_dif/pdi_14/cci_14，各带 provenance 指标号）。
+      本卡只**符号引用**该键路径，禁把 24 列抄进本卡（抄＝造第二真源）。
+    piece_2_universe: >-
+      真源=同一冻结卡的 weights 与 candidate_filter 两键：weights=strategy_exam.monthly_topn_signals top_n=20
+      月频等权步进函数（函数复用禁重造）；candidate_filter=信号日 ATR14 非 NaN 者方可入 top20 候选，
+      不足 20 只=该月空仓（同装置 len<top_n 语义）。即"宇宙"由 ATR 可算性＋top20 选股规则共同界定，
+      不在本卡重述名单（名单是装置的输出，不是输入）。
+    piece_3_rebalance_rows: >-
+      真源=exit_simulator.month_start_rows（符号名+现值行号 146-147）：调仓行=每月首个交易日行号，
+      装置注释原文"与 monthly_topn_signals 内部同一构造……非权重变化行——等权同集连月也必须重置"。
+      本卡不自定义调仓日程。
+    piece_4_r_face_source: >-
+      r 位（次日收益）**声明为基线组合自身日收益**，与 e 位同源同一次装置调用产出，禁借用外部指数：
+      r = exit_simulator.simulate(..., stop_enabled=True) 返回的基线日净值序列的日收益；
+      e = 同一调仓周期内的组合总敞口（weights 逐行和，0..1）。
+      现绑定层缺陷与本判据冲突处已登记（31_ 册 remaining_seam_after_unblock）：card_binding.py:212-218
+      的 index_next_day_return() 返回的是 **CSI300** 日收益（docstring 原文"CSI300 日收益"，实测读到 return 行），
+      统筹批复二令该硬编**与实现同批**改为读本件声明；改前本卡不开考。
+    device_call_face: >-
+      装置＝scripts/backtest/fexam/exit_sim/exit_simulator.py 的 build_signals → simulate
+      （符号名+现值行号：build_signals=158-167，simulate=171-181），参数一律取冻结卡默认
+      （stop_mult=STOP_MULT、commission=COMMISSION 为模块常量，本卡不另赋）。
+      L4 的"Owner 人工解除"在回测中以不可解除近似（02 在册近似，随此披露）。
+  signal_table: c1_market.kline_daily_hfq + c1_market.technical_indicator（经装置 load_* 面，本卡不直查）
+  signal_column: 基线臂日净值（simulate(stop_enabled=True) 产出）；级别判定与迟滞解除回放真源=src/zephyr/risk/core/drawdown_state_machine.py（MOD-RK-049），禁在考卷里重写判定逻辑
+  signal_derivation: >-
+    日盈亏=基线净值日收益；回撤=基线净值/历史峰值-1；级别序列由在册判定件对**基线**净值回放产出
+    （三臂共用同一条级别输入，臂间差异只允许出现在"级别→仓位"映射与解除规则上）；
+    级别→仓位映射沿用 02 冻结原文（L1 100%/L2 100% 禁新开/L3 梯度 80/60/40%/L4 0%）
+  arm_e_face_quote: 三臂输入同一基线净值序列与同一成交口径
+  arm_r_face_quote: 基线臂日净值（由 exit_simulator.simulate(stop_enabled=True) 生成的日收益序列，即被风控层监控的"组合"）
+  target_source: 风控层改写后的净值路径（减仓=按级别比例×次日开盘成交，现金停放 0 收益）→ window_metrics
+  data_window_evidence: >-
+    沿用 02 在册实测：kline_daily_hfq 1990-12-19..2026-09-30 rows=10098785（覆盖 2018 起基线构造窗与两处危机段）；
+    真实账户净值面（c1_market.account_nav_daily 实测仅 5 行）status=blocked_on_data 不变——本卡只用仿真组合
+  impl_gap: >-
+    两件事未到位，缺一不开考：①绑定层 ARM_BASE_SOURCES 仍为空册（底座来源须把 e 位敞口与 r 位日收益**同一次装置调用**产出并自报身份标签）；
+    ②r 位现硬编外部指数，须按本卡 piece_4 改为读声明源（同批，含"喂错底座必红"红证）。
+    本班按批复四排程：本卡先呈 Owner 批卡面，批后与接线同批落地再开考；**本卡不预先声称可考**。
+status: blocked_on_impl
+status_reason: >-
+  出生四件已在卡面钉死（本卡的唯一增量），但绑定层两条实现缝未补（impl_gap ①②）；
+  且本卡的基线指认走的是"卡面 device_ref → 装置自有冻结预注册卡"的符号引用链，须 Owner 签认后方算冻结完成。
+out_of_vocab_pillars:
+  - maxdd_improvement_vs_no_hysteresis_min_pp
+  - missed_crisis_trigger_max
+  - whipsaw_roundtrip_ratio_max
+out_of_vocab_note: 沿用 02 在册申报（calibration/comparison 词表外键，判官侧无对应门柱实现时须显式披露，禁静默跳过）
+lineage:
+  card: TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-R1-01.confidence
+discipline: 冻结后开考；试次全入 n_trial_ledger；读数卡与碰钱卡分面，本卡判风控层规则增益，不判执行成本以外的面
+preregistered_by: st-mineloop-20261010
+preregistered_at: '2026-10-11'
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'
+
+card_face_approved_by: 总统统筹（批复·矿考班 2026-10-11：乙案＝批；甲链＝签认）
+card_face_approved_at: '2026-10-11'
+promotion_note: >-
+  文件名走 ASCII（根宪法 §8 新路径一律 ASCII）；正文与你所批草案逐字同值，仅追加本块三键
+  （署名／时戳／本节说明）。status 仍为 blocked_on_impl：卡面已批但接线两缝未补（impl_gap ①②），
+  本卡不预先声称可考＝自我钉桩保持原样。
+jia_chain_signed: >-
+  三锚实证：02 device_ref 点名 exit_simulator；装置输入由其自有冻结卡
+  scripts/backtest/fexam/exit_sim/prereg_frozen.yaml（frozen_at 2026-10-06 10:10:50+00:00）逐件钉死；
+  stop_mult/commission 为模块常量（exit_simulator.py:59-63）——本班零自由参数，签认成立。

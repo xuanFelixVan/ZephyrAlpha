@@ -120,3 +120,6 @@ preregistered_at: '2026-10-11'
 oos_window_ref:
 - '2025-10-09'
 - '2026-09-30'
+
+promoted_to: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__06_baseline_birth_and_r_face_declaration.yaml
+promotion_status: 已按统筹批复（乙案＝批）转正；本件降为案卷（非在册卡，禁被 runner 拾取——位于 docs/_working 不在 exam_cards 树内），与转正件的差集＝署名四键

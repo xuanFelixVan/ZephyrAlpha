@@ -213,3 +213,25 @@ card_06_draft_20261011:
   next_bag_shape: 接线袋（三件同笼，按在册"门禁代码+它读的册+本体同袋"处方）＝
     ARM_BASE_SOURCES 一个来源（一次装置调用同时产 e 位敞口与 r 位日收益并自报身份标签）
     + card_binding r 位改读声明源 + 绑定册格 arm_base_source 字段 + 同批测试（含"喂错底座必红"红证）
+
+bag_split_after_card_approval:
+  what_owner_approved: 乙案批＋甲链签认＋两袋合并（转正＋接线同袋），落地后先考 3 支 feasible_now
+  what_i_measured_before_wiring: >-
+    量装置返回面时发现的约束（现值行号，符号名 simulate）：exit_simulator.py:324 只
+    `return pd.Series(nav, index=dates, name="nav"), st`——**没有日频敞口/权重面**，
+    权重 W 是函数内局部量。所以卡片 piece_4 里"e 位=同一调仓周期内的组合总敞口（weights 逐行和）"
+    这句在现装置下**取不到手**：要么改装置返回面（动在册件、影响 E 道既有对拍结论），
+    要么适配器自行重建权重（那正是"新造第二台撮合装置"被 scope_must_not 禁的形态）。
+  second_constraint_three_arms: >-
+    三臂的差别不止"级别→仓位映射"一张表：开臂=五级含迟滞解除、中间臂=五级但解除即回满
+    （02 buckets.on 原文）。⇒ 需要**两条级别序列**（有迟滞/无迟滞）分别喂 arm_level_cap_multiply 的
+    levels 参数，而现绑定册单臂单 levels 的形状装不下；这不是缺数字，是缺结构。
+  decision: >-
+    两袋拆开：本轮先把"转正卡面"这一袋落干净（06 已进 exam_cards/exit_flow/X1/，ASCII 文件名按根宪法 §8，
+    正文与你所批草案 25 键逐值相同、仅追加署名四键，status 仍 blocked_on_impl 不自称可考）；
+    接线袋**等这两条结构约束有解**再投——按现形状硬投的结果就是要么改在册装置、要么自行重算权重，
+    两者都会做出"能出分但分是假的"的形态，正是 06 卡被写出来防的东西。
+  what_i_need_from_owner_or_next_round: >-
+    甲＝授权改 exit_simulator.simulate 的返回面（追加敞口/权重日频序列，E 道既有对拍须同批重跑自证零漂移）；
+    乙＝把三臂改成"两臂对"（开臂含迟滞 vs 关臂二值，中间臂另立一卡），则现结构即可承载；
+    丙＝由追凶/维护线判定级别序列双轨是否走 instruments 面。任选其一即可，本班不代裁在册装置的返回面。
