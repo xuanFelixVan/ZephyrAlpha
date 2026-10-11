@@ -48,6 +48,29 @@ $DumpDir = "D:\tmp_db_dumps"
 $ChSshHelper = "$ProjectRoot\scripts\backup\ch_vm_ssh.py"
 
 # -- Utility functions --
+# Run journal + transcript (backfix T1, 2026-10-11): two death paths made every
+# early-departing pass unauditable. (a) stage_timeline lived only in
+# $script:StageLog until STAGE 4 wrote the report, so a pass that died before
+# STAGE 4 left no trace of how far it had got -- the report file it never
+# reached was the only readout, and its absence was the whole signal.
+# (b) every message went to Write-Host into a hidden console with no
+# redirection (the scheduled leg is wscript -> launch_hidden.vbs -> powershell,
+# which owns no output file), so the text of a failure died with the process.
+# Journal = one Append-and-close line per message; Add-Content closes its
+# handle each call, so an external TerminateProcess cannot take buffered lines
+# with it. Transcript = the host's own stream, which additionally carries raw
+# error records that never pass through Write-* (an undefined-cmdlet
+# CommandNotFoundException, a throw with its stack).
+# Observability only: no stage, threshold, guard or exit code is touched, and a
+# journal/transcript failure is swallowed so logging can never block a backup.
+$script:RunStamp = $RunAt.ToString('yyyyMMdd_HHmmss')
+$script:JournalFile = "$ProjectRoot\logs\backup_runlog_$script:RunStamp.log"
+$script:TranscriptFile = "$ProjectRoot\logs\backup_transcript_$script:RunStamp.log"
+function Write-Journal($line) {
+    try {
+        Add-Content -LiteralPath $script:JournalFile -Value ((Get-Date).ToString('yyyy-MM-dd HH:mm:ss') + ' | ' + $line)
+    } catch { }
+}
 # Stage timeline (2026-09-25 audit): a 9.1h pass could previously only be
 # reconstructed from NTFS mtimes. Each stage boundary now stamps
 # seconds-since-start into $script:StageLog, emitted by STAGE 4 as stage_timeline.
@@ -57,10 +80,28 @@ function Write-Stage($msg) {
         $script:StageLog += [ordered]@{ stage = $msg; t_seconds = [math]::Round(((Get-Date) - $backupStartTime).TotalSeconds, 1) }
     }
     Write-Host "[BACKUP] $msg" -ForegroundColor Cyan
+    Write-Journal "STAGE | $msg"
 }
-function Write-OK($msg)    { Write-Host "[OK] $msg" -ForegroundColor Green }
-function Write-Warn($msg)  { Write-Host "[WARN] $msg" -ForegroundColor Yellow }
-function Write-Err($msg)   { Write-Host "[ERR] $msg" -ForegroundColor Red }
+function Write-OK($msg)    { Write-Host "[OK] $msg" -ForegroundColor Green; Write-Journal "OK | $msg" }
+function Write-Warn($msg)  { Write-Host "[WARN] $msg" -ForegroundColor Yellow; Write-Journal "WARN | $msg" }
+function Write-Err($msg)   { Write-Host "[ERR] $msg" -ForegroundColor Red; Write-Journal "ERR | $msg" }
+
+# Arm the run log before anything can fail: the config-missing exit and the
+# target-drive / robocopy-missing exits in STAGE 1 are bare `exit` statements,
+# which raise no error record at all -- without this they left neither a report
+# nor an error line, only an absent pass. The RUN_START line names the script
+# that is actually executing, which matters because backup.ps1 hardcodes
+# $ProjectRoot while the post-commit reconciler can ignite a *copy* of it from
+# a queue worktree: same lock, same logs, same vault day dir, different bytes.
+New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
+Write-Journal "RUN_START | pid=$PID mode=$Mode force=$([bool]$Force) script=$($MyInvocation.MyCommand.Path) root=$ProjectRoot"
+try {
+    $null = Start-Transcript -Path $script:TranscriptFile
+    Write-Journal "TRANSCRIPT_ON | $script:TranscriptFile"
+} catch {
+    Write-Journal "TRANSCRIPT_UNAVAILABLE | $($_.Exception.Message)"
+}
+
 
 # -- Lock file (prevent concurrent runs from daily task + post-commit) --
 # Holder liveness is the primary judgment; age is only a fallback when the holder
@@ -277,6 +318,57 @@ if ($yamlContent -match 'exclude_files:\s*\[([^\]]+)\]') {
 
 $dbStatus = @{}
 
+# ==================== Capacity guard (E-4, 2026-10-09) ====================
+# Semantics ported from backup_ch_vm.ps1 Get-CapacityGuardDecision / the red
+# lines F>=700 / G>=500 free GB (backup_config.yaml capacity_guard section).
+# That sealed script was the section's ONLY reader, so STAGE 3c/3d mirrors and
+# the DB-dumps copy ran unguarded (2026-09-26 F-drive incident class). Contract
+# here: if the target drive's CURRENT free space is already below the
+# registered red line, SKIP that target (warn + report trace) and keep going --
+# never fail the whole pass. Simplification vs the sealed original: these are
+# incremental mirrors, so per-target source sizing would cost a full tree
+# enumeration; the pre-gate is "free already below red line". A missing or
+# unreadable config key falls back to the constant below and stays ON (never
+# silently zero = never silently allow), same as the sealed original.
+$script:MinFreeFallbackGB = 700
+$script:MinFreeGbMap = $null
+function Get-MinFreeGB {
+    param([string]$DriveLetter)
+    if ($null -eq $script:MinFreeGbMap) {
+        $script:MinFreeGbMap = @{}
+        try {
+            $mapJson = ($yamlContent | & python -c "import sys,yaml,json;d=yaml.safe_load(sys.stdin.read()) or {};print(json.dumps((d.get('capacity_guard') or {}).get('min_free_gb') or {}))") -join ''
+            if ($mapJson) { $script:MinFreeGbMap = $mapJson | ConvertFrom-Json }
+        } catch { $script:MinFreeGbMap = @{} }
+        if (-not $script:MinFreeGbMap -or $script:MinFreeGbMap.PSObject.Properties.Count -eq 0) {
+            Write-Warn "capacity_guard.min_free_gb unreadable/empty in backup_config.yaml -- built-in fallback $($script:MinFreeFallbackGB)GB (guard stays ON)"
+        }
+    }
+    $prop = $null
+    if ($script:MinFreeGbMap) { $prop = $script:MinFreeGbMap.PSObject.Properties[$DriveLetter] }
+    if ($prop -and [string]$prop.Value -match '^[0-9]+(\.[0-9]+)?$') { return [double]$prop.Value }
+    return $script:MinFreeFallbackGB
+}
+function Test-CapacityGuardBreach {
+    param([string]$TargetPath)
+    # Returns $true = target drive free space already below the registered red
+    # line -> caller must SKIP this target (warn + trace) and keep going.
+    try {
+        $drive = (Split-Path -Qualifier $TargetPath).TrimEnd(':')
+        $freeGB = [math]::Round((Get-PSDrive -Name $drive -ErrorAction Stop).Free / 1GB, 2)
+        $minFree = Get-MinFreeGB -DriveLetter $drive
+        if ($freeGB -lt $minFree) {
+            Write-Warn ("capacity_guard BREACH on {0}: free={1}GB < red line {2}GB -> skipping this target (run continues)" -f $drive, $freeGB, $minFree)
+            return $true
+        }
+    } catch {
+        # Guard infrastructure failure must not block backups: record + proceed.
+        Write-Warn ("capacity_guard check unavailable for {0}: {1} (target NOT blocked)" -f $TargetPath, $_.Exception.Message)
+        return $false
+    }
+    return $false
+}
+
 # -- Acquire lock --
 if (Test-BackupLock) {
     # Silent-exit hardening (2026-09-15): a lock-skip used to leave zero trace
@@ -298,9 +390,11 @@ if (Test-BackupLock) {
         $skipJson = ($skipObj | ConvertTo-Json) -replace "`r`n", "`n"
         [System.IO.File]::WriteAllText($skipLog, $skipJson, (New-Object System.Text.UTF8Encoding($false)))
     } catch { }
+    Write-Journal "LOCK_HELD | exit 0 skip_record=$skipLog"
     exit 0
 }
 Acquire-Lock
+Write-Journal "LOCK_ACQUIRED | $LockFile"
 # (P-15) the duration clock and the product-name clock are now the SAME instant
 # ($RunAt, taken once at script top) -- two separate Get-Date calls could straddle
 # midnight and disagree about which day this pass belongs to.
@@ -929,57 +1023,6 @@ if ($Mode -ne "ch") {
     }
 }
 
-# ==================== Capacity guard (E-4, 2026-10-09) ====================
-# Semantics ported from backup_ch_vm.ps1 Get-CapacityGuardDecision / the red
-# lines F>=700 / G>=500 free GB (backup_config.yaml capacity_guard section).
-# That sealed script was the section's ONLY reader, so STAGE 3c/3d mirrors and
-# the DB-dumps copy ran unguarded (2026-09-26 F-drive incident class). Contract
-# here: if the target drive's CURRENT free space is already below the
-# registered red line, SKIP that target (warn + report trace) and keep going --
-# never fail the whole pass. Simplification vs the sealed original: these are
-# incremental mirrors, so per-target source sizing would cost a full tree
-# enumeration; the pre-gate is "free already below red line". A missing or
-# unreadable config key falls back to the constant below and stays ON (never
-# silently zero = never silently allow), same as the sealed original.
-$script:MinFreeFallbackGB = 700
-$script:MinFreeGbMap = $null
-function Get-MinFreeGB {
-    param([string]$DriveLetter)
-    if ($null -eq $script:MinFreeGbMap) {
-        $script:MinFreeGbMap = @{}
-        try {
-            $mapJson = ($yamlContent | & python -c "import sys,yaml,json;d=yaml.safe_load(sys.stdin.read()) or {};print(json.dumps((d.get('capacity_guard') or {}).get('min_free_gb') or {}))") -join ''
-            if ($mapJson) { $script:MinFreeGbMap = $mapJson | ConvertFrom-Json }
-        } catch { $script:MinFreeGbMap = @{} }
-        if (-not $script:MinFreeGbMap -or $script:MinFreeGbMap.PSObject.Properties.Count -eq 0) {
-            Write-Warn "capacity_guard.min_free_gb unreadable/empty in backup_config.yaml -- built-in fallback $($script:MinFreeFallbackGB)GB (guard stays ON)"
-        }
-    }
-    $prop = $null
-    if ($script:MinFreeGbMap) { $prop = $script:MinFreeGbMap.PSObject.Properties[$DriveLetter] }
-    if ($prop -and [string]$prop.Value -match '^[0-9]+(\.[0-9]+)?$') { return [double]$prop.Value }
-    return $script:MinFreeFallbackGB
-}
-function Test-CapacityGuardBreach {
-    param([string]$TargetPath)
-    # Returns $true = target drive free space already below the registered red
-    # line -> caller must SKIP this target (warn + trace) and keep going.
-    try {
-        $drive = (Split-Path -Qualifier $TargetPath).TrimEnd(':')
-        $freeGB = [math]::Round((Get-PSDrive -Name $drive -ErrorAction Stop).Free / 1GB, 2)
-        $minFree = Get-MinFreeGB -DriveLetter $drive
-        if ($freeGB -lt $minFree) {
-            Write-Warn ("capacity_guard BREACH on {0}: free={1}GB < red line {2}GB -> skipping this target (run continues)" -f $drive, $freeGB, $minFree)
-            return $true
-        }
-    } catch {
-        # Guard infrastructure failure must not block backups: record + proceed.
-        Write-Warn ("capacity_guard check unavailable for {0}: {1} (target NOT blocked)" -f $TargetPath, $_.Exception.Message)
-        return $false
-    }
-    return $false
-}
-
 # ==================== STAGE 3c: Off-repo critical assets mirror ====================
 # Added 2026-09-08 (Owner approved): mirror off-repo critical assets (C/E drive)
 # to F:\offrepo_backup\<id>\. Registry source: config/asset_inventory.yaml
@@ -1258,8 +1301,14 @@ Write-OK "Backup completed in $([math]::Round($duration.TotalSeconds,1))s"
 Write-Host "==========================================" -ForegroundColor Green
 
 $chFailed = ($dbStatus.clickhouse -and $dbStatus.clickhouse.status -eq "failed")
-if ($chFailed) { exit 2 }
+if ($chFailed) { Write-Journal "EXIT_2 | clickhouse stage failed"; exit 2 }
 
 } finally {
+    # RELEASE_LOCK is the last line a pass can write on its own terms: a journal
+    # that ends here left through STAGE 4, one that ends anywhere else left
+    # through exit / throw / an outside hand, and its final line is the reading
+    # the campaign never had.
+    Write-Journal "RELEASE_LOCK | pid=$PID"
+    try { $null = Stop-Transcript } catch { }
     Release-Lock
 }
