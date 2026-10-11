@@ -290,3 +290,75 @@ tests/gov/governance/redblue_wave73/test_v7_pid_reuse.py；reaper --status 正�
 下一棒入口：T2 板块族余量已收口（17_，8/8 处置）→ 转 W-A 试点 5 张；T3 WO-A1 前置只读探针（在册 simulate
 参数注入面＋在飞归属）；T7 接线工单＝walk-forward 触发面（数据落地事件触发，禁 cron）＋20 行早期不可复跑行；
 T6 情绪先锋候 Gate 0。
+
+## 14. 探索车道改令闭合＋两处自更正＋主区 index 陈旧快照险情（06:0x 记，14 节结构自证）
+
+令面对象＝统筹 2026-10-11 探索车道改令（取代"三阶段立即发车"）①先吃仓 ②聚合决定是否续扫 ③GPU 采样器复活。
+
+| 令 | 状态 | 凭据 |
+|---|---|---|
+| ① 吃仓聚合 | 已交（已落 dev） | `23_exploration_digest.yaml` 机生：27,423 格＝t1 2,462＋p2 24,961，45 格 negatives 排除，窗 2020-01-01..2023-12-31；commit 5e303042e2 |
+| ① 假设池→新卡 | 已交 | `TDM-E-L1__comparison__04_换手惩罚三档两两对照` ＋ `05_沪深300池宽top100与top50对照`，双双 blocked_on_impl（同一缺口＝执行器只落聚合指标、缺逐日敞口/净值序列），考试窗 2024+ 与扫描窗完全不相交 |
+| ② 是否续扫 | 已决且**改口两次** | 先判"定向补扫 648+216 格"（`24_`），落地后继续核价核闸再改口：价格错约 20 倍＋续扫被两道结构闸挡住 ⇒ 全账在 `25_exploration_price_correction_and_blockers.yaml`（commit 5052559681） |
+| ③ GPU 采样器 | 已在岗 | pid 22656（pythonw，600s×240 档），设备曲线续写 `.runtime/nightmine/gpu_util_long.log`，字段逐字沿用改前口径（utilization.gpu｜memory.used｜memory.total｜temperature.gpu），归因另开 `gpu_proc_long.log`（NVML 逐进程，理由＝桌面图形污染 util%，单尺不可归因）；该曲线＝st-gpux 的"改前"基线 |
+
+自更正一（数字，方向＝我把自己吓住了）：`24_` 写"648+216 格 ≈ 13-14.4 小时 CPU 单线程"，
+实测三支心跳末行 4,167 格/2,719.5 秒＝0.652 秒/格、4,167/2,416.8＝0.580、617/621.6＝0.993（含一次数据装载暖机）
+⇒ 864 格 ≈ 9-10 分钟。我把 GPU 化班账袋里的一次性口径当成了网格速率，且错向"更贵"（偏保守所以当时没拦下车）。
+口径如实标注：三值均系 engine=auto（心跳里 gpu_util 11-13%、显存 5.7GB ⇒ 确有部分面上卡），
+**纯 CPU 路径速率未测**——全仓 15 支 grid_ 批次的 batch_meta 无一支 engine=cpu，无历史读数可引，发跑前须先 8 格 smoke 量 CPU 真速。
+
+自更正二（计数，方向＝我把设计折叠算成遗漏）：`24_` finding_1 的"7 维皆钉死"里有 2 维属设计——
+`I_cost_tier`（schema 注释原文"不进乘法网格，恒折叠；执行器对幸存者单独重跑"，预注册册 cost_gate.tiers_bp=[0,5,10,20,40]
+由 exam_cost_gate.run_cost_tier_scan 在考试面消费，且该册明写"成本档禁作搜索轴"）、
+`F_merge_policy`（active_if 要求 strategy_pool 长度>1，单池跑批下恒 single 是设计）⇒ 真未开＝J/X_stop/X_breaker/X_sector/K 共 5 维。
+另另一半证据面同样未开：本班 10 批 27,423 格尚无幸存者进五档梯（`f06_survivors.csv` 在册仅 1 支且 birth_batch=grid_20260916-123551 属老批）。
+
+结构闸一（冻结面）：`config/search_space_prereg.yaml` 头部原文＝"改空间=作废重开预注册（禁跑中改）"，
+frozen_by=裁定#413；现生效卡 f06_grid_v2 frozen_by=夜矿续战令三连裁③（Owner 通道，frozen_at 2026-10-10T12:10）。
+该册自述分工＝网格轴机器真源在 `config/position_recipe_grid_schema.yaml`（GridCompiler 消费），本册＝冻结/预算/防线真源
+（`factory_grid_executor._apply_prereg_budget` 钳制+fail-closed）⇒ 新 λ 档与新池宽档属"改空间"不属"跑新组合"，
+本班不自行改 schema、不自行改预注册册；`24_` 里"本班可自决定向补扫"作废。
+
+结构闸二（执行器次序）：phase=1 空间实测 362,880 格（与 GridCompiler 返回 n_raw 逐位相符）；
+phase=3+ramp=True 乘积 52,254,720 格（144 倍＝J2×X_stop3×X_breaker2×X_sector3×K4），
+直调 compile 实测 **MemoryError**，栈在 `src/zephyr/position/core/position_recipe_compiler.py:269` 的 combos 全展开行；
+且 subspace 过滤发生在 expand **之后**（`factory_grid_executor.py:1951 compile → 1954 if subspace → 1956 才过滤 recipes_all`）
+⇒ `--context-json` 与 `--subspace-json` 无法组合成窄扫（先炸后筛）。需工单 **WO-A4**＝把冻结移到展开前（或新增 --freeze-dims-json）。
+
+附带核出：该册 f06_grid_v2.duration_basis 的"实测 44.8s/格→1000 格≈12.4h；L2 提速落地 3.5s/格后可经裁定通道升点"已过期
+（auto 实测 0.58-0.99 秒/格优于自设前置 3.5-6 倍）；升点按该册文字须经裁定通道，本班不自改 n_samples。
+
+险情登记（非本班起因，本班已就地止血）：主区（＝/d/ZephyrAlpha，非车道）的 index 与工作区里躺着本班四本**已落地账册的陈旧旧快照**——
+`02_binding_book.yaml` IDX/WT=131 行（HEAD=279）、`14_calibration_failclosed_restatement.yaml` IDX=90（HEAD=115）、
+`99_checkpoint.md` IDX=81/WT=175（HEAD=292），另 `23_/24_` 两本被记成 D（删除）。
+他袋此刻提交整池即会把我本班已落地台账**回退掉**＝在册"运行码落后 HEAD"的文档侧同型。
+处置：逐本按行判 IDX/WT 是否 HEAD 的纯子集（02_/14_/99_ 工作区面 unique 行=0 ⇒ 无他人新内容可损；99_ index 面有 9 行旧版残留⇒先归档）
+→ 陈旧 index blob 归档 `.runtime/tmp/st-mineloop-20261010/index_stale_blobs_20261011/` → `git checkout HEAD -- 三本` 复原，
+现 IDX==WT==HEAD（279/115/292），`23_/24_` 同步复原并 sha1 逐位复核；`16_pillar_vocab_census.yaml` 的 IDX=2386>HEAD=2303 属机生再生长非回退⇒**未动**，待其所有者/下次再生物自洽。
+根因呈维护班：主区 index 是多会话自动暂存混合池，失败袋/落袋残留会把旧快照长期滞留在池里，
+而正门合并器只判"袋内字节 vs dev"漂移，**不判"池内旧快照 vs HEAD 的回退方向"**——建议加一支"池内条目若为其 HEAD 版真子集则告警/拒纳"巡检（本班不代修他人池）。
+
+下一步入口：①Owner 三选一（见 `25_` decisions_needed_owner），推荐 option_1 池宽 top150/top200
+（纯 schema 两值；执行器 topN 转整数处 line 1135 已核实为通用解析 ⇒ 零代码，老批读数零动）；
+②WO-A4 落地后才谈得上风控 5 维窄扫（核心区 144 倍×12 核点≈1,728 格）；③窗主起跑后读其 manifest＋heartbeat 复核新速率（CPU/GPU 分口径）。
+
+## 15. CH 压缩窗内账（10:5x 接令＝约 4.5 小时禁一切取数；v3 池宽扫描与 hfq WO-004 顺延窗毕）
+
+窗令解读：CH 面全停＝本班窗内零 CH 查询、零发跑；文档/卡片/git/队列照常 ⇒ 只做不动库的事。GPU 采样器只读 NVML、零 CH ⇒ 照跑。
+
+一、§14 首投死信复盘（q-20261011-st-mineloop-20261010-0051 死于"非注册表族件双侧皆改真冲突（整文件三方）"）：
+根因**不是他人改了我的册**，而是我车道里的基线本身就是旧字节——`git merge-base --is-ancestor 8bc2237b48 7f8bb84fe5` 返 False，
+即 §11/§12/§13 三节只活在 dev、车道 HEAD 从没吃过；"旧基线＋我的追加"对 dev 现值就成双侧皆改。
+工法入册（补上我"袋前数删除行"那条的另半边）：凡此前已落 dev 的同名件再投，MUST 先 `git checkout dev -- <件>` 取正基线再追加，
+`--base-head` 取 `git rev-parse dev`，投前自证"只增不减"＝`git diff --numstat dev -- <件>` 删除列必须 0、节数=旧+N。
+
+二、窗纪再核，把 §14 里"今日 08:00 起跑"这句**证伪了一半**：
+计划任务 ZephyrAlpha_F06Grid 实测（GBK 解码后读数）下次运行时间=N/A、上次运行时间=2026-10-10 21:00、上次结果=0；
+且 11:0x 时点 `data/strategy_intake` 最新目录仍是 10-10 23:37 的六分片，10-11 全天零新目录（按 batch_meta 的 ts 前缀过滤＝空集）。
+⇒ 红线"08:00 考试窗归窗主"**当前无对象**，与 10-10 那次"到点自己跑"被更正为"立即跑"同形态（"窗口须验对象"第三次应验）。
+诚实边界（不把推断当结论）：N/A＋零目录只证"这个注册名今天没有待跑的一次性触发"，不证"无人在跑"；
+窗主若换自起进程或改名任务，本班从任务表查不到——要坐实须窗主自报或读进程表（读进程表不违 CH 令）。
+
+三、本班窗内明确不发：v3 池宽窄批（既属改空间＝待 Owner 批重开预注册，又要 CH）继续等窗毕；
+采样器截至 10:54:44 共 133 档（他班 97 档基线一字未动），归因册同步在写。
