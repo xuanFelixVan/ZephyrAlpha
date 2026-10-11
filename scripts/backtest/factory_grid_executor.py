@@ -2059,6 +2059,25 @@ def _resolve_grid_schema(schema_path: str = "", freeze_dims: dict | None = None)
     return GridCompiler.from_dimensions(dims), meta
 
 
+def _should_write_neff_slot(*, smoke: bool, exploration_ledger: str | None) -> bool:
+    """N 账本披露位写入判据：smoke 与探索分册跑批都不占考试试次。
+
+    探索分册（--exploration-ledger）的既有纪律只挡 summary 收尾那行探索记录，
+    挡不住本披露位——不设此闸则窄批/对照批会把考试侧 N_eff 覆盖成自己的小数值。
+    """
+    return not smoke and not exploration_ledger
+
+
+def _write_neff_slot(n_eff: int, note: str, *, smoke: bool) -> bool:
+    """按判据写 N 账本 n_trials_effective 披露位；返回是否真的写了。"""
+    if not _should_write_neff_slot(smoke=smoke, exploration_ledger=_EXPLORATION_LEDGER):
+        return False
+    from zephyr.backtest.core.n_trial_ledger import TrialLedger
+
+    TrialLedger().set_effective_trials(n_eff, note=note)
+    return True
+
+
 def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun 三参演进（存量批次主入口，参数对象重构归批F账非本批）
     n_samples: int,
     seed: int,
@@ -2551,7 +2570,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 }
             )
 
-    # N_eff（预注册 effective_rank）——批次级双口径披露+账本披露位（非 smoke 才写账本）
+    # N_eff（预注册 effective_rank）——批次级双口径披露+账本披露位（smoke/探索分册批不写账本，见 _should_write_neff_slot）
     if instr is not None:
         instr.set_phase("finalize")
     n_eff: int | None = None
@@ -2561,12 +2580,11 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
 
         if len(nets_for_neff) >= 2:
             n_eff, n_eff_meta = compute_effective_rank(nets_for_neff)
-            if not smoke:
-                from zephyr.backtest.core.n_trial_ledger import TrialLedger
-
-                TrialLedger().set_effective_trials(
-                    n_eff, note=f"batch:{run_ts} n={len(nets_for_neff)} meta={json.dumps(n_eff_meta)}"
-                )
+            _write_neff_slot(
+                n_eff,
+                f"batch:{run_ts} n={len(nets_for_neff)} meta={json.dumps(n_eff_meta)}",
+                smoke=smoke,
+            )
     except Exception as exc:  # noqa: BLE001 N_eff 失败不阻断批次产物（披露位留空诚实缺）
         import logging as _lg
 
