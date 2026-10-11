@@ -155,3 +155,39 @@ arm_base_source_seam_probe_20261011:
     量级＝一次施工袋；第②③支分别要卡面赋数（Owner 门位）与 shadow 族路由（另一道实现缝），
     本班不在未探清前替它们许诺时程
   red_lines_kept: 零代码改动、零写库、零卡面阈值改动；本册只追加一节（键集合差自证）
+
+woa1_first_card_blocker_20261011:
+  self_correction_5th: >-
+    本册上一节（arm_base_source_seam_probe_20261011）把第①支卡的底座装置**点错了名**：
+    我写的是 evaluate_recipe+run_backtest_full（网格重放族）。逐字读卡面 data_binding 后更正＝
+    卡面 device_ref 点名 `scripts/backtest/fexam/exit_sim/exit_simulator.py`（净值与成交口径）
+    + `src/zephyr/risk/core/drawdown_state_machine.py`（判定真源），与网格重放无关。
+    纪律照旧：上一节正文**不改写**（那是当时实测的案卷），更正另起本节。
+  what_i_checked: >-
+    读 simulate 的形参面（exit_simulator.py:171-181，符号名 simulate）：
+    simulate(open_p, close, atr, signals, reb_rows, *, stop_enabled, stop_mult=STOP_MULT, commission=COMMISSION)
+    ——基线日净值的出生需要 **signals 面板＋reb_rows 调仓日程＋atr/open_p/close 三价面**，
+    而卡面只冻了"由 exit_simulator.simulate(stop_enabled=True) 生成的日收益序列"这一句，
+    没有声明 signals 来自哪一路策略、宇宙是哪一册、调仓行是哪一批。
+  blocker_verbatim_on_card: >-
+    卡面自己写着 implementation_gap: 'blocked_on_impl: 状态机件与回测装置无适配器…'；
+    本班把这句的**具体缺项**钉成可批的形式：缺的是"基线组合出生三件（信号面板真源/宇宙册/调仓日程）"，
+    不是缺代码。补上适配器也不够——没有那三件，装置没有输入。
+  why_i_did_not_score_it: >-
+    scope_must_not 第 3 条与 Owner 批令"禁在适配器内自行补未冻参数"是同一条纪律：
+    我要出分就必须替卡面选 signals/宇宙/调仓，那正是"替卡拍数"，出的分是假的（且 pillars 面
+    paired_arm_protocol 明写三臂共用**同一份**基线臂净值——基线选错，三臂一起错，还查不出来）。
+    所以本班走验收的另一个出口：**如实记阻塞原因入册**，未产生 exam_scores_v1 的 signal_b 行。
+  what_would_unblock_either_way: >-
+    甲＝Owner 指认一个在册基线（例：某预注册批次的 baseline recipe_id 或某在册策略 signals 面），
+    则适配器只做参数搬运，卡面引句可指到该真源，我一批内可出首张双臂分；
+    乙＝另起新版本卡把"信号面板真源/宇宙册/调仓日程"三件写进 data_binding（G4-5 禁原地改本卡）。
+    两条都是 Owner 门位（业务口径冻结），本班不自选。
+  other_two_cards_still_blocked_as_reported: >-
+    ②ablation/03＝卡面三项幅度未赋数（趋势门/降风险/预算），build_arms 抛 ArmParamUnfrozen 硬拒；
+    ③shadow/02＝执行核只路由 comparison/ablation 两族（family_not_routed:shadow），缺的是路由面不是数据面。
+  remaining_seam_after_unblock: >-
+    即便基线被指认，还有一道我方缺陷要先堵：双臂分支 r 位现硬编 index_next_day_return()（=CSI300 日收益，
+    card_binding.py:212-218 读到 return 行），而本卡 r 位按卡面应是**基线组合日收益**；
+    现闸只校卡面引句与量纲帽，校不出"注入的序列不是引句讲的那条"。
+    修法＝底座来源自报身份标签＋build_arm_pair 做同一性断言＋"喂错底座必红"红证（已列任务 #13，与接线同批）

@@ -420,3 +420,52 @@ A 案（consensus_daily_compute.py:70-78 的华泰二口径）随弃案注销。
 
 四、三批就绪态：探针册已落地（497955b139，n_raw=508,032 只活在探针册里）；两份"其余维全钉"的单因子广度面已生成，格数与 §16 的 P4/P5b 实测逐位相符
 （`freeze_breadth_control36.json`=36 格＝批令②内部对照；`freeze_breadth_probe72.json`=72 格＝批令①续曲）。journal 一出 Start-VM＋probe=1 行，我叠三件定窗连发。
+
+## 18. 三批点火读数＋第四次自纠＋N 账本分账闸落地（20:0x-21:2x 记，落地面取数）
+
+一、三批已发完（统筹 18:35 点火令，触发面 17:31:24 journal Start-VM+probe=1；本班自证复联＝三批
+8/36/72 格全 out=pos 且 net_returns.parquet 各 970 交易日，价格面真读到才算跑通）。
+
+| 批 | run_id | 格 | 用时 | 秒/格 | 口径 |
+|---|---|---|---|---|---|
+| step0 纯 CPU 首测 | grid_20261011-183549 | 8 | 55.443s | 6.93 | 冷启动（含一次取数＋combine 未命中） |
+| 36 格内部对照 | grid_20261011-200358 | 36 | 23.9s | 0.664 | 共享册 sha16 b5faa1299cddf3d3，16 维全钉 |
+| 72 格探针续曲 | grid_20261011-200438 | 72 | 25.279s | 0.351 | 探针册 sha16 2e8e24cc08cebdaa，B 档加 top150/200 |
+
+跨批对拍：共有 recipe=36、sharpe 逐位不等=0、36⊂72=True、72 批净新增 36 格 ⇒ route B 承诺（只加邻域档不动旧格）机械证实。
+三批 n_trials_effective（summary 面）＝2／2／11。step0 探索分册文件盘上不存在**不是丢件**：
+`if not smoke and _EXPLORATION_LEDGER:`（run_batch 收尾段）——smoke 按设计两册都不进，先读码定性再报。
+
+二、第四次自纠（用自己的跑批证伪自己写下的前提）：26_/29_ 的"池宽未见顶 ⇒ 该续扫 top150/200"依据的是
+23_ 的**边际均值**（joint_GxTopN：top50 0.2835→top100 0.3393，+0.0558）。同窄面**条件曲线**是
+top50 0.4961 → top100 0.4271 → top150 0.4209 → top200 0.4226，相邻差 −0.0690/−0.0062/+0.0017，单调递增核 **0/18**
+⇒ 曲线在 top50 已见顶。误跑批 grid_20261011-190142 反成了教材：200 格里 top10/top20/top30 占 114 格，
+不平衡构成能把下降斜率抹成上升。工法入册：判"未见顶"必须用同窄面条件曲线，任何"该续扫"先问它是按哪一列取的均值。
+后果：卡 `TDM-E-L1__comparison__05` 的 `sharpe_delta_min=0.03`（卡面自述取自 23_ 边际差一半）口径不成立
+⇒ 只能另起 06_ 版本卡（G4-5 禁原地改），口径选择属 Owner 门位，本班不自裁、不催（该卡现 status=blocked_on_impl）。
+误跑批 grid_20261011-190142 保留不删、登记**作废读用**（它走探索分册 scan_ledger_breadthcontrol_s0.jsonl，考试账本未进）。
+
+三、WO-A5 N 账本分账闸已落地（三批 a0e27b1ac3 码／b942162936 测试／12bebcfdf4 账册）。
+缺陷本体：写"最新批次 N_eff 披露位"原先只看 smoke 不看 --exploration-ledger ⇒ 探索窄批按代码会覆盖考试侧。
+今天没出事是**撞上的**：N 账本 CAS 写被 registry_mass_edit_guard 拒（实测 pid=53780 十条 event=refused，
+deleted_lines=4 > threshold=2；同册自 09-22 累计 1690 次拒写、10-11 全天 written=0，披露位停在 10-07 的 value=16）。
+本班只修自己那半（判据 _should_write_neff_slot／写点 _write_neff_slot 单点化，+25/−7，删的 7 行＝被替换的旧 if 块＋旧注释）；
+护栏标定（threshold=max(1,ceil(总行×0.005)) 对中等册＝2 行预算，覆盖中段多行标量块必然替换 ≥4 行 ⇒ 合法写常驻失败；
+建议判据改"净删除行数"）转维护二班，file_utils 在他班在飞域，不代修不放宽。
+落地面验收（统筹令"复跑探针显示 slot 不被探索批覆写"）：
+`python .runtime/tmp/st-mineloop-20261010/neff_gate_probe.py` → ①探索批不写②烟测不写③正常批写（闸不是死闸）④写后再来探索批仍不抢值，
+末行 GATE PROBE PASS；真源册全程零写（自证 value=16），靶面是整档副本且不在 `_registry/catalogs/` 路径判定内
+⇒ 本探针验的是新闸三态，不验护栏，两件事不混。测试面 5 支新增（真值表四态＋AST 结构守卫），
+红证打在 dev 未修字节上三条全红（woa5_red_proof.py）。落地面合跑 130 passed／2 failed
+（那 2 支 TestNetReturnsArchive parquet 存量红，已在未改动基座多次复跑同败，非本班引入）。
+
+四、WO-A1 出分最后一格（15_ 册 scope_must 第 1 条口径）：装置已点名——
+`evaluate_recipe`（executor:1199）产 weights → `_c4_engine.run_backtest_full`（translated/_c4_engine.py:800）产 net，
+e 位=weights 逐行和、r 位=net.pct_change()；禁新造第二台撮合引擎（同真源可派生→必并）。
+诚实预期照 Owner③ 口径＝3 支非 13 支，但逐支重读分诊表后**内部再分档**：
+①`TDM-X-R1-01/comparison/02` 臂参数已赋数 ⇒ 接线即出分；
+②`ablation/03` pending_numeric_params 三项卡面无相邻数值 ⇒ 禁替卡拍数，需赋数或新版本卡；
+③`shadow/02` family_not_routed:shadow ⇒ 卡在族路由不在数据面。
+另有第二道洞（登记不遮掩）：双臂分支 r 位现硬编 `index_next_day_return()`＝**CSI300** 日收益（card_binding.py:212-218 读到 return 行），
+而卡面引句讲的是池组合/基线净值；现校验只查卡面文本与量纲帽，查不出"注入序列并非引句所讲那条"⇒ 会安静出错面分。
+修法与接线同批：底座来源自报身份标签，build_arm_pair 里与 r 引句域做同一性断言＋一颗"喂错底座必红"的红证。
