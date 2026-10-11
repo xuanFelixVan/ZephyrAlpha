@@ -2107,48 +2107,39 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
         raise ValueError(f"engine 须为 {'|'.join(_VALID_ENGINES)}，得到 {engine!r}")
     if factor_surface not in FACTOR_SURFACES:
         raise ValueError(f"factor_surface 须为 {'|'.join(FACTOR_SURFACES)}，得到 {factor_surface!r}")
+    # 包装段转发面单点化（2026-10-11 19:2x 自爆后修）：原先两条重跑分支各列一遍参数，
+    # 结果新加的 schema_path/freeze_dims 被漏掉——带 --freeze-dims-json 的跑批**静默**回到全空间
+    # （batch_meta 里 freeze_dims=None 是唯一痕迹）。收成一份字典后，将来加参数不可能只改一处。
+    _fwd = {
+        "n_samples": n_samples,
+        "seed": seed,
+        "start": start,
+        "end": end,
+        "smoke": smoke,
+        "subspace": subspace,
+        "stratify_dims": stratify_dims,
+        "cost_gate_tiers_bp": cost_gate_tiers_bp,
+        "context_overrides": context_overrides,
+        "factor_surface": factor_surface,
+        "exec_caliber": exec_caliber,
+        "cost_attribution": cost_attribution,
+        "shard_idx": shard_idx,
+        "num_shards": num_shards,
+        "schema_path": schema_path,
+        "freeze_dims": freeze_dims,
+    }
     if not _gpu_rerun:
         try:
-            return run_batch(
-                n_samples,
-                seed,
-                start,
-                end,
-                smoke=smoke,
-                subspace=subspace,
-                stratify_dims=stratify_dims,
-                cost_gate_tiers_bp=cost_gate_tiers_bp,
-                engine=engine,
-                _gpu_rerun=True,
-                context_overrides=context_overrides,
-                factor_surface=factor_surface,
-                exec_caliber=exec_caliber,
-                cost_attribution=cost_attribution,
-                shard_idx=shard_idx,
-                num_shards=num_shards,
-            )
+            return run_batch(**_fwd, engine=engine, _gpu_rerun=True)
         except _GPUWaveFailure as exc:
             import logging as _lg
 
             _lg.getLogger(__name__).warning("GPU 波失败 fail-closed 整波重跑 CPU（禁半成品混合后端）: %s", exc)
             return run_batch(
-                n_samples,
-                seed,
-                start,
-                end,
-                smoke=smoke,
-                subspace=subspace,
-                stratify_dims=stratify_dims,
-                cost_gate_tiers_bp=cost_gate_tiers_bp,
+                **_fwd,
                 engine="cpu",
                 engine_degrade=f"gpu_wave_failed_rerun_cpu:{exc}",
                 _gpu_rerun=True,
-                context_overrides=context_overrides,
-                factor_surface=factor_surface,
-                exec_caliber=exec_caliber,
-                cost_attribution=cost_attribution,
-                shard_idx=shard_idx,
-                num_shards=num_shards,
             )
     # ——以下=单波单趟主体——
     from zephyr.position.core.position_recipe_compiler import GridCompiler
