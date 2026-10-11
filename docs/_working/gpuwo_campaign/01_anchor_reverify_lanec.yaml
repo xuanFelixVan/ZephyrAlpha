@@ -1,0 +1,163 @@
+---
+ttl: task_bound
+title: 四 GPU 工单施工班·第一袋＝§1 锚点重验＋LaneC 10-09 产物完整性体检
+created: '2026-10-11T22:25:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+measurement_window: 2026-10-11 22:00~22:25（全部只读，零写盘于主区）
+---
+
+measured_in_lane: D:\ZephyrAlpha\.worktrees\st-gpuwo-20261011（建车基线 a0e27b1ac3，与 dev 逐字相同）
+
+anchor_1_stopped_surface:  # 原令 §1① —— 结论：全部证实，另补 1 条原令未记的现态
+  night_mining_task: NOT_FOUND（schtasks 全量 76 条 Zephyr 条目内无 ZephyrAlpha_NightMining）
+  kronos_scoring_task: NOT_FOUND（同上，无 ZephyrAlpha_KronosScoring）
+  register_scripts_absent:
+    scripts_root_holds_only: [register_commit_perf_report_task.ps1, register_process_reaper_task.ps1]
+    scripts_tasks_register_count: 32
+    note: 两单点名的新注册册在全仓任何 register 目录均无同名件
+  kronos_adapter_score_only: 0 命中（grep 模式 "score-only|score_only"；件 504 行，与工单 §1 记载行数一致）
+  factory_lane_c: {State: 就绪, Enabled: 已启用, LastRun: '2026-10-09 20:00:00', LastResult: 267014, Next: '2026-10-12 20:00:00', RunAs: fanzi/只使用交互方式}
+  nightly_sentiment: {State: 就绪, LastRun: '2026-10-10 22:30:01', LastResult: 0, Next: '2026-10-11 22:30:00', remark: 进场首夜即有自然触发，本班只观察不动任务本体}
+  f06_grid: 已禁用
+  ollama_serve: 就绪
+  sft_model_dir:
+    path: models/qwen25-7b-sft-v1/
+    present_in_main_area: true
+    present_in_worktree: false   # 业务资产被 gitignore，worktree 天然无此面 ⇒ 训练与转换须按主区绝对路径口径施工，见 blockers
+    items: {adapter_model.safetensors: 10122200B, checkpoint-800: dir, checkpoint-801: dir, tokenizer.json: 11421896B, mtime: '2026-08-09 01:20'}
+  sft_dataset: {train.jsonl: 4312340B, eval.jsonl: 457423B, mtime: '2026-08-08 19:01', path: data/sft/}
+  ollama_model_roster:  # curl 127.0.0.1:11434/api/tags，count=8，零自研 SFT 条目
+    - {name: qwen3:14b, size_g: 9.00}
+    - {name: qwen3:8b, size_g: 5.23}
+    - {name: deepseek-r1:14b, size_g: 8.99}
+    - {name: deepseek-r1:8b, size_g: 5.23}
+    - {name: qwen2.5-coder:14b, size_g: 8.99}
+    - {name: BGE-M3:latest, size_g: 1.16}
+    - {name: Qwen3-Embedding:latest, size_g: 4.68}
+    - {name: qllama/bge-small-en-v1.5:latest, size_g: 0.04}
+  gpu01_ab_preset: GPU-01 三档位（qwen3:8b／qwen3:14b／deepseek-r1:14b）**全部已在册**，A/B 无需下载、零花钱面
+
+anchor_2_lanec_health:  # 原令 §1② —— 结论：定性成立且可归因到步；产物侧新增"两夜零入库"事实
+  log_file: {path: .runtime/logs/factory_lane_c.log, bytes: 1356655, mtime: '2026-10-10 00:00'}
+  segment_split_of_20261009_run:
+    banner: '==== FAC-E1C mine fired at 2026-10-09 20:00:01 ===='
+    bytes_after_banner: 16925
+    lines_after_banner: 152
+    warning_lines: 150     # 全部 pandas ConstantInputWarning（spearmanr 常数列，corr 未定义）
+    non_warning_lines: ['^C']
+    segment_exit_banners_present: []   # 无 mine/intake/construct/translate 任一 exit 行
+    verdict: >-
+      断在**第 1 步 mine 段内部**（scripts/tasks/run/run_factory_lane_c.ps1:36 的
+      lane_c_formula_miner.py mine --top 10），四段 rc 横幅一条都没写 ⇒ intake/construct/translate
+      三步从未开跑，短路与 rc 纪律（该件 :15-18 注释记载的 E2 修复面）本次没有机会生效。
+  termination_attributed_to:
+    primary: 任务自身 ExecutionTimeLimit=4h（scripts/tasks/register/register_factory_lane_c_task.ps1
+      的 New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 4)）；
+      20:00:01 起算 +4h = 00:00，与日志 mtime '2026-10-10 00:00' 对齐，也与原令记的采样器末记录
+      PID 11668 elapsed≈3.9h 对齐。^C 是 cmd.exe 在控制台断点处写入日志的字节形态。
+    ruled_out_reaper: >-
+      data/runtime/reaper_kill.log（1927 行全量，路径真源 src/zephyr/trading/process_reaper.py:191
+      _KILL_LOG）内 11668/lane_c/formula_miner/factory_lane 四模式命中**均为 0** ⇒ 非 reaper 误杀。
+    ruled_out_hang: LastTaskResult 非"运行中"态、State=就绪、无悬挂进程（原令 §1② 实测＋本班复核一致）
+  result_code_caliber:  # 用仓内既有口径，不引外部记忆
+    cited_lines:
+      - config/data_supply_chain_map.yaml:2173 「同日 schtasks Result=267014（未终态）」
+      - config/data_supply_chain_map.yaml:2194 「LastTaskResult=267014（运行中/未回收，复跑时点已 17h+）」
+    conclusion: 267014 在本仓判据里=非终态/未回收，与原令"上次跑结果码残留"同向；任务本体零改动（本单红线）
+  artifact_completeness_four_state_triage:
+    candidates_face:
+      lane_c_candidates.csv: {rows: 40, mtime: '2026-10-10 13:05', latest_birth_batch: E1C-20261007-200003}
+      birth_batch_histogram:
+        E1C-20260914-064126: 8
+        E1C-20260915-002001: 2
+        E1C-20260922-A101: 2
+        E1C-20260922-HF: 4
+        E1C-20261001-005847: 5
+        E1C-20261005-200003: 9
+        E1C-20261007-200003: 10
+      zero_rows_tagged: [20261008, 20261009]   # 七件 manifest 全量正则扫，10-08/10-09 命中均为 0
+      other_manifest_sizes: {lane_b_candidates.csv: 15541B, lane_f_candidates.csv: 7728812B, three_high_candidates.csv: 29062B, translated_manifest.csv: 3502B, constructed_manifest.csv: 172B, lane_e_candidates.csv: 3644B}
+    triage:
+      在飞: 无（该跑已终，无存活进程）
+      有增量需救: 无（10-09 未产出任何候选，无独有产物可救）
+      判死需墓碑: 无（无可删件；本班零删除动作）
+      保留登记: >-
+        四件 intake manifest（lane_b/lane_c/translated/constructed）实测**现字节与 HEAD 全等**
+        （sha256 前 10 位逐件相同：c6caec7fc2／706e31c5d4／f27a9c709a／f2a5e99ebf；
+        git diff HEAD --stat -- data/strategy_intake 输出为空；git status 该面无 M 条）
+        ⇒ 入库面自 E1C-20261007-200003 批以来净变化=0；本班对该面零写入零提交。
+    git_side_evidence:
+      last_commit_touching_lane_c_candidates: c3d37dee53（2026-10-09 09:41，gov token 先行批顺路携带，非候选增量）
+      previous: 73e6c073a5（2026-09-22 21:10）
+    conclusion: >-
+      **半途而废成立且扩大为两夜**：10-09 断在 mine 段内零入库；10-08 虽在日志里以
+      "exit code 0 / lane C full chain rc all green" 收尾，但其候选同样未进 lane_c_candidates.csv，
+      且 translated_manifest.csv 现字节里查无 10-08 批号。夜窗连续两夜对考试/入库面净贡献=0。
+
+new_findings_not_in_original_order:
+  - id: N-1
+    name: 夜窗 LLM 依赖无前置可达闸，且失败被 all-green 横幅掩盖（静默错）
+    evidence: |
+      factory_lane_c.log 的 10-08 段 translate 步 JSON 里，逐条 candidate 均为
+      "translatable": false, "refusal_reason": "llm_error:ConnectionError", "model": "qwen3:8b",
+      "exam_file": ""，顶层 "exam_files": []；紧接其后脚本仍打出
+      "==== lane C full chain rc all green (mine/intake/construct/translate) - E9 heartbeat ====" 并 exit 0。
+      本班进场实测 Ollama 现在可达（v0.34.1），说明那夜是不可达而非模型不存在。
+    why_it_matters: >-
+      hypothesis_translator 在 LLM 全灭时仍返回 0，包装层据 rc 判绿 ⇒ 监控看到的是"链全绿"，
+      真实看到的是"翻译腿零产出"。GPU-01 夜窗批同样依赖 Ollama，若照抄这套 rc 纪律会**继承同一个静默错**。
+    disposition: 非本单授权面（不改 LaneC/translator 判据，属矿考班与判官件禁碰区）；
+      本班动作=在 GPU-01 夜窗批的**自有**执行链里自带"起批前 Ollama 可达探测＋不可达即显式红并退出非 0"，
+      并把 N-1 登记呈批，请统筹决定是否单开一袋修 LaneC 侧。
+  - id: N-2
+    name: intake 面在 10-10 13:05 被非 LaneC 写手同字节重写（触盘无增量）
+    evidence: |
+      七件 candidate/manifest 的 mtime 集中为 '2026-10-10 13:05'，而同窗 .runtime/logs 在
+      10-10 12:00~14:30 内无任何 LaneC 日志件（仅 depgraph 再生/reconcile_worker/c4_exam）；
+      重写后四件与 HEAD 逐字节全等（见上 git_side_evidence），内容仍止于 E1C-20261007-200003。
+      ⇒ 先判"整档重发有增量"是**测早了**：按字节对账后改判为同字节重写，入库面净变化=0。
+    disposition: 只登记，不追属主（属他班在途面）；本班对该面零写入零提交。
+  - id: N-3
+    name: 冷启动 cleanup 清掉 4 枚禁碰面死锁，锁面现归零而车道仍在
+    evidence: 见 00_ledger.md 第 2 节（lock_files.py cleanup 输出 7 枚 + 清后 status=CLEAN + git worktree list 两车道在册）
+    disposition: 呈批面——请统筹令 st-gpux/st-gpux2/st-mineloop 车道对自家在途件重新 claim，否则同文件跨车道禁并发只剩约定。
+
+anchor_3_redline_lifted:  # 原令 §1③ 证实
+  today_commits_touching_scripts_backtest: [a0e27b1ac3 21:57, 88bcdcb947 19:47, ba04e57258, f45ff46d35]
+  gate: GPU-01/GPU-02 源码施工前置满足
+
+anchor_4_gpu03_missing_piece:  # 原令 §1④ 证实 ⇒ Owner 门位，本班不代装
+  in_repo_scripts_present: [scripts/ml/build_sft_dataset.py, scripts/ml/convert_gguf_ollama.py, scripts/ml/run_sft_train.py, scripts/ml/run_sentiment_batch.py, scripts/ml/eval_sentiment.py, scripts/ml/build_eval_set.py, scripts/ml/accept_nlp_pipeline.py, scripts/ml/run_research_rating_batch.py]
+  llama_cpp_absent:
+    repo_and_drive_probe: "D:/ZephyrAlpha/../llama.cpp、C:/llama.cpp、E:/llama.cpp 三处 No such file；find /e -maxdepth 2 -iname '*llama*' 仅命中 /e/OllamaModels"
+    pip_probe: "importlib.util.find_spec('llama_cpp') → None"
+    self_declared_contract: scripts/ml/convert_gguf_ollama.py:14
+      「[ERROR_CONTRACT] adapter 目录/llama.cpp 脚本缺失→exit 1；子进程失败→exit 1」，
+      且 :192 的 --llama-cpp-dir 默认 None、:219-220 实际执行时未指定即 log.error 退出
+  owner_gate_request_text_see: 00_ledger.md 与本班呈批面（版本/用途/体积/落盘路径）
+
+blockers_and_decisions_for_owner:
+  - id: R-1
+    kind: 软件安装＝Owner 门位
+    ask: llama.cpp 工具链（convert_hf_to_gguf.py + llama-quantize，附 ollama create 用的 GGUF 转换）
+    spec:
+      purpose: adapter_model.safetensors → GGUF f16 → Q4_K_M 量化 → 自模型进 Ollama（GPU-03 闭环唯一卡点）
+      suggested_version: llama.cpp master 任一含 convert_hf_to_gguf.py 与 llama-quantize 的稳定 tag（本班不代拍版本，需 Owner 或授权车道定）
+      footprint_est: 源码仓约 0.2G，构建产物 llama-quantize 约 20-40MB；GGUF f16 中间件按 Qwen2.5-7B≈15G、Q4_K_M 成品≈4.7G（对齐现册内 qwen3:8b 5.23G 量级）
+      landing_path_suggested: "E:\\llama.cpp（与模型同盘，避免占 D 盘系统区；F 盘为唯一冷储不放工具链）"
+      readonly_note: 本班只出规格，不下载不编译不拷贝
+    effect_if_denied: P1 停在转换步；训练腿（步骤 1-3）不受阻，可先出 full 档真跑与 Macro-F1 证据
+  - id: R-2
+    kind: 业务资产口径待裁（不阻塞施工，但影响 P1 步骤 1 判据）
+    ask: data/sft/train.jsonl 的"可再生性"若与 build_sft_dataset.py 现输入源不等价，差异是登记即止还是要重建真源
+    why: 训练集 2026-08-08 出厂，两月未动；本班先做机械对账再报，不擅自重灌（重灌会覆盖唯一训练面输入）
+
+plan_next_bags:
+  - 02_gpu03_dataset_reproducibility.yaml（P1 步骤 1：输入源在库/语义等价/差异登记）
+  - 03_gpu03_full_run_and_window.yaml（P1 步骤 2-3：周日日间窗登记＋reaper 白名单＋full 档真跑红绿证）
+  - 04_gpu01_ab_report.yaml（P2 档位 A/B 三档对比）
+  - 05_gpu01_night_window_wiring.yaml（P2 注册册＋执行链＋资源册再生＋两夜实弹）
+  - 06_gpu02_score_only_and_table.yaml（P2' 三缺件）
+  - 07_gpu02_scoring_window.yaml（P2' 注册与首夜）
+  - 08_gpu04_b007_material.yaml（P3 材料包，只呈批）
