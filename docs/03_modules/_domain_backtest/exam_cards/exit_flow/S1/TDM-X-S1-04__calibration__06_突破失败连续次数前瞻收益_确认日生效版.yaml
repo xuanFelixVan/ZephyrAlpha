@@ -1,0 +1,113 @@
+schema_version: '1.0'
+card_id: TDM-X-S1-04/calibration/06_突破失败连续次数前瞻收益_确认日生效版
+node_id: TDM-X-S1-04
+family: calibration
+title_zh: 突破失败·连续失败次数分档校准卡（确认日生效版，母卡 02 的新版本）
+version_of: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
+version_reason: >-
+  G4-5 只走新版本禁原地改：母卡 02 被绑定前复核 reject（docs/_working/mineloop_campaign/11_prebind_review.yaml
+  verdict=reject），两条决定性缺口＝①未来函数（K 的定义要用 t 之后 5 个交易日收盘，而 target_source 写 T+1 收益＝信号未落定就出 IC）
+  ②panel 分档协议缺（四档 K∈{0,1,2,3+} 属词表外声明，现器缺省 10 桶与卡面不符）。
+  本卡＝把这两条**定义**补冻，判据数值一律沿用母卡原值（见 caliber_disclosure，禁拍新数字）。
+hypothesis: >-
+  机制：个股"20 日新高后跌回且当日量能萎缩"是一条**买入理由消失**证据；连续失败次数 K 越大，说明上方抛压/跟风盘越重而承接越弱，
+  后续收益越差，故 K≥3 被 TDM 定为强制清仓触发器。本卡检验的可证伪命题＝
+  以"确认日收盘才落定"的 K 值（剔掉未来函数后）分档，其**次一交易日起算**的前向收益应随 K 单调下降，且 K≥3 档显著劣于 K=0 基线。
+  与母卡关系＝同一机制、同一节点、同一判据数值，只把信号落定时点与分档协议写死（母卡因这两条未冻而根本不能开考）。
+signal_kind: panel
+frozen_definitions:
+  signal_effective_date: >-
+    规则：候选突破日 d0（当日 high > 前 20 交易日最高 close）之后第 5 个交易日 d5 收盘时，
+    "失败/未失败"才落定 ⇒ 该事件的信号生效日＝d5（确认日），不是 d0。
+    任一交易日 t 的信号面 K(t) 只能由**生效日 ≤ t** 的已确认事件累加得到（K 在同票滚动 20 日内累加，
+    成功站稳＝收盘连续 2 日高于突破前高、或超 20 日清零，两条清零也各自在其确认日落库）。
+  forward_window_start: >-
+    前瞻收益自信号生效日（确认日）的**次一交易日**起算：主轴＝确认日次日个股收益，
+    辅轴＝确认日后 1..5 个交易日相对 000300 的累计超额。
+    硬条款＝信号窗与前瞻窗不得重叠（母卡把失败判据的 5 日观察窗同时用作前瞻窗＝自相关读数，本卡禁）。
+  observation_lag_disclosure: >-
+    因此 IS 窗末端 5 个交易日的候选事件在窗内无完整前瞻读数，按"不越窗补数"处理（该尾段自然缺失，禁借 OOS 首日补）；
+    实盘可用性另卡考核（本卡不判执行增益，读数卡与碰钱卡分面）。
+  bucket_protocol: >-
+    分档＝ordinal_event_count 四档显式声明 n_buckets: 4，桶界 K∈{0,1,2,3+}（K≥3 合并入第 4 档），
+    min_obs_per_bucket 沿用母卡 60。桶数由卡面读取（现器 _n_buckets_from_card 已落地，
+    实测 git show dev:scripts/backtest/fexam/calibration_exam.py 命中 1 处定义），故不再被缺省 10 桶吞掉。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos:
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛，段轴真源=entry_flow/L1 校准模板 window.regimes）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  window_lineage: IS/OOS/牛熊四切点与母卡逐字相同（沿用＝不改门柱；本卡只补定义不补窗口）
+buckets:
+  type: ordinal_event_count
+  n_buckets: 4
+  'on': 'K∈{0,1,2,3+}（确认日生效口径下的同票滚动 20 日连续失败计数，见 frozen_definitions）'
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分档中位前向收益（确认日次一交易日起算，取反向标定后）Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频截面 rank IC 均值 >= 0.02 且 IC_IR >= 0.3（沿用战役模板地板不自降标准；事件条件类若达不到即判该读数无独立判别力）
+  gap_vs_baseline: K>=3 档 5 日中位收益相对 K=0 档差值 <= -0.5%（强制清仓触发器的经验门槛；达不到则 K≥3 触发器应降级为观察）
+  lag_profile: t+1..t+5（此处 t＝确认日）至少一档 |IC| 达峰值且半衰期 >= 1 交易日（时滞曲线建档）
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor（条件稳定性）
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+  gap_k3_vs_k0_5d_max: -0.005
+caliber_disclosure: >-
+  如实标注（Owner 合并裁定令② 2026-10-11 亲令"沿用母卡原值＋卡面标注原值从未被有效判过，禁拍数字"）：
+  上面这组数值**此前从未被有效判过**——母卡 02 因两条定义未冻被绑定前复核 reject，从未进过开考面；
+  且同节点战役模板的 ic_ir_min 柱在全仓 215 支带该键的卡里，103 支走 series 路而该键无对应读数面（14_ 册实测），
+  即"判官不在岗"而非"判过不过"。本班不自造新数、不取半、不改量级，原样沿用并留此披露；
+  开考后若红，红在"原值未可判"这一已知事实上，不得事后挪门柱（G4-5）。
+out_of_vocab_pillars: >-
+  gap_k3_vs_k0_5d_max 属词表外键（机生普查实测：docs/_working/mineloop_campaign/16_pillar_vocab_census.yaml
+  的 unique_keys_outside_vocab 面含该键；全仓 119 支卡带词表外键同题）。
+  现器判官面无"第 N 档 vs 基线档中位前向收益差"这一列，故本卡即使数据到位也会在该键上 fail-closed（未知键=不判，非通过）。
+  保留该键不删＝禁静默削弱判据面；其判官补齐属引擎面工单（与 15_ 册 WO-A1 逐臂适配器同族：一次改造同解多支）。
+target:
+  primary: next_day_stock_return_after_confirmation（个股在确认日次一交易日的收益，后复权口径，主轴）
+  secondary: forward_5d_excess_vs_000300（确认日后 1..5 交易日相对 000300 累计超额）
+  note: 主轴与辅轴起点统一＝确认日次日，两轴不得与失败判据的 5 日观察窗重叠（frozen_definitions.forward_window_start）
+lineage:
+  card: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-S1-04.confidence
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: high / close / volume（衍生 20 日新高、跌回判定、量能萎缩比）
+  signal_derivation: >-
+    突破＝当日 high > 前 20 交易日最高 close；失败＝此后 5 个交易日内收盘跌回突破日前高之下 且 当日 volume < 20 日均 volume×0.8；
+    连续失败计数 K 在同票滚动 20 日内累加，成功站稳（收盘连续 2 日高于突破前高）或超 20 日清零；
+    信号取反向标定值 sig=-K 使正相关假设成立（K 越大越该卖）。
+    本条与母卡逐字同，唯一改动＝补"落定时点＝确认日 d5 收盘"与"K(t) 只累加生效日 ≤ t 的事件"两句（frozen_definitions）。
+  target_source: kline_daily_hfq close 的确认日次一交易日简单收益（load_close/forward_returns 复用 ch_data.py 同段）；超额面基准=kline_index symbol='000300' close
+  data_window_evidence: >-
+    沿用母卡 02 的实测窗证据（该证据由母卡在 2026-10-10 取数登记，本卡窗内未发任何 CH 查询＝Owner 10:5x 压缩窗令）：
+    kline_daily_hfq 1990-12-19..2026-09-30 rows=10098785 nsym=5916；kline_index(000300) 2005-01-04..2026-10-09 rows=5284。
+    窗毕开考前须按本卡新定义重取"确认日"面的逐票事件序列，取数命令随绑定层工单出。
+  blocked_faces: >-
+    情绪退潮路/龙虎榜路各自另卡（母卡 02 已披露断供：六段态无 2019..2025 历史序列），本卡不并面、不代判。
+status: blocked_on_impl
+status_reason: >-
+  两条绑定/判官缺口未补即开考必红且不产生有效读数，故如实标 blocked_on_impl（禁装 preregistered）：
+  ①panel 路的确认日事件序列构造缺绑定 op（绑定前复核 cls=B reason=panel_deferred 去重/撮合口径须逐表面核）；
+  ②gap_k3_vs_k0_5d_max 无判官（见 out_of_vocab_pillars）。定义面本卡已全冻，补完上述两项即可转 preregistered 开考。
+preregistered_by: st-mineloop-20261010
+preregistered_at: null
+created_by: st-mineloop-20261010
+created_at: '2026-10-11'
+discipline: >-
+  冻结后开考；试次全入 n_trial_ledger；读数卡不判执行增益；一轮为限（本支若再挂，按在册纪律族归档，禁三度重挂）；
+  母卡 02 原行在册保留不改（G4-5），两卡判据数值相同，任何一侧事后改动都视为挪门柱。
+oos_window_ref:
+- '2024-01-01'
+- '2025-09-09'
