@@ -1,0 +1,69 @@
+---
+ttl: task_bound
+title: 四 GPU 工单施工班·LaneC 假绿双治修复袋（Owner 批复扩面，仅限授权两件）
+created: '2026-10-12T01:00:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+authorization: >-
+  原派工令 §1② 与禁碰清单把"FactoryLaneC 任务本体"划在改动面外；Owner 2026-10-12 批复**显式覆盖该限**，
+  且只授权两件：①Ollama 依赖（跑前拉起或健康探测，连接失败禁记绿）②零步完成＋4h 上限掐断＝显式失败标记禁静默。
+  本袋改动面严格等于这两件；目标=周一 10-12 20:00 前落地。
+
+changed_file: scripts/tasks/run/run_factory_lane_c.ps1（唯一改动件；86 行 → 197 行）
+
+fix_1_ollama_no_longer_masquerades_as_green:
+  measured_root_cause: 见第一袋 N-1（10-08 那跑每条候选 refusal_reason=llm_error:ConnectionError、exam_files=[]，
+    hypothesis_translator 仍返回 0，包装层据 rc 打 "lane C full chain rc all green" 并 exit 0）
+  mechanism:
+    preflight: 起批前 Invoke-RestMethod 探 http://localhost:11434/api/tags
+    recovery: 探不通先 schtasks /run /tn ZephyrAlpha_OllamaServe，等 20s 再探一次
+    if_still_down: >-
+      跳过 translate 段并 Complete-Run 90（不再跑明知会全灭的翻译腿，也不再报绿）
+    zero_output_guard: >-
+      即便 Ollama 通着，翻译腿的 stdout 落独立文件后按 translated/negative 两个计数判定；
+      translated=0 且 negative>0 判 Complete-Run 91；stdout 不可读或读不到计数同样判 91——量不到就不给绿
+  sentinel_rc_table:
+    90: translate SKIPPED（Ollama 不可达＝基础设施失败，非策略失败）
+    91: translate exit 0 但零可用产出（假绿形态）
+    其余: python 段自身退出码，判据与阈值一字未改
+  why_skip_not_run_anyway: 翻译腿在 Ollama 死时必然全灭，跑它只会产出一堆 llm_error 阴性行污染候选台账；
+    跳过＋非 0 收口＝失败可见、候选不被误记
+
+fix_2_killed_run_cannot_pass_silently:
+  measured_root_cause: 10-09 那跑 fired 后只有 150 行 spearmanr 告警、四段横幅一条没写、00:00 被 4h 上限掐死，
+    LastTaskResult 留非终态码，入库面两夜净贡献 0 条且无人知晓（第一袋 anchor_2 有全量数字）
+  mechanism: 起批追加 start 记录到 .runtime/logs/factory_lane_c.run_state；
+    每条收口路径（成功/各段失败/哨兵）经 Complete-Run 追加 end 记录；
+    **下一班起批**先扫孤儿（tail 200 行里 start 数 > end 数）⇒ 落 orphan_detected＋Alerter ERROR 再开工
+  design_note: 被强杀的进程写不了自己的遗嘱，这是机制约束不是偷懒；因此把"发现"外包给下一班，
+    最坏滞后一晚，但绝不静默。若统筹要"当场告警"，需另建 watchdog（属新增常驻件＝另批呈批，本袋不自造）
+
+refactor_disclosure: >-
+  为把"收口必写 end"变成不可遗漏，27 行原有内联语句改写为等价 helper 调用
+  （Write-Log / Notify / Complete-Run）。逐条对应关系：`"==== X exit code $x ====" | Out-File ...` → `Write-Log`；
+  `cmd.exe /c "python -c ""...Alerter..."" >> $log 2>&1"` → `Notify`；
+  四段失败分支的 `exit $x` → `Complete-Run $x <note>`（行为等价：仍打 FAILED 横幅＋ERROR＋以该 rc 退出，
+  只是额外落一条 end 记录并统一 "exit code" 横幅措辞）。末段 `exit $finalRc` → `Complete-Run $finalRc all green`。
+  四段 python 命令、参数、短路顺序全部未动 ⇒ 现产线判定与阈值零变更。
+
+red_green_evidence:
+  green:
+    - PowerShell 解析器 ParseFile：SYNTAX-OK tokens=855（六件新 .ps1 之前也同尺全过）
+    - 逐字节 non_ascii=0（.ps1 纯 ASCII 红线；本班此前两次自犯同一条，这次先测后投）
+    - 零产出判据四桩实测：all-refused→91 ✅ / productive→0 ✅ / stdout 不可读→91 ✅ / 空文件→91 ✅（4/4）
+  red:
+    - 判据打在 10-08 真实形态（translated=0, negative=5）上判 91＝能红；
+      若沿用旧内联 rc 逻辑该形态会判绿——这正是修的东西
+  not_tested: 端到端实跑（今晚不占 LaneC 夜窗；周一 20:00 自然触发即首次实弹，本班按三态回报）
+
+review_commands:
+  - 语法尺（两条命令，只读）：把 ParseFile 探针写成 .ps1 后
+    powershell -NoProfile -ExecutionPolicy Bypass -File <探针路径>（应见 SYNTAX-OK tokens=…）
+  - python -c "import pathlib;b=pathlib.Path('scripts/tasks/run/run_factory_lane_c.ps1').read_bytes();print(sum(1 for x in b if x>127))"（落地后应 0）
+  - 落地后首跑核查：type .runtime\logs\factory_lane_c.run_state 最后一行应成对（start…end），否则周一那次被记 orphan
+  - 周一 20:00 后：schtasks /query /tn ZephyrAlpha_FactoryLaneC /fo LIST /v 上次结果应为 0/90/91 之一；90、91 都是**有意的红**
+
+scope_guard: 未动 lane_c_formula_miner.py / factory_intake_pipeline.py / hypothesis_translator.py 的任何判据或阈值；
+  未动任务本体注册（ZephyrAlpha_FactoryLaneC 触发器与时限一字未改）；未动考试卡面与 fexam 判官件。
