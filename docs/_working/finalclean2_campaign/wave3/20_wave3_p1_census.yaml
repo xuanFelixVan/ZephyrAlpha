@@ -1,0 +1,465 @@
+# 终清波三·P1 全域附属物总账（机生件，禁手改）
+measured_at: '2026-10-12 00:40:33'
+scanner: .runtime/tmp/st-fclean3-20261012/tools/{p1_census.py,mk_p1_ledger.py}
+read_only: true
+surfaces_scanned: 44
+surfaces_bytes_total: 7144068394
+surfaces_files_total: 349096
+empty_shells:
+  - _boot002_backup
+  - _kimi3_checks
+  - _senti_wtest
+  - _stash_wip
+  - _temp_design_memos
+  - ai12_backup
+  - ai_heritage
+  - archive_20260824
+  - audit_20260823
+  - b007_manifests
+  - bakeoff
+  - bdpan_tick
+  - clone_guard_audit
+  - coordination
+  - digest_p2
+  - emergency
+  - emergency_counts
+  - empty_hooks
+  - foreign8_wiring
+  - greatwall_20260909
+  - heartbeat
+  - migration_29
+  - module_factory
+  - night001_akshare_backup
+  - orphan_quarantine
+  - p0_msgs
+  - pg_backups
+  - pkgZ
+  - reexam
+  - reports
+  - semantic_audit
+  - session_closeout
+  - skill_miner
+  - stale_untracked_backup
+  - stash_archive
+  - strategy_activation
+  - strategy_docs
+  - strategy_screen
+  - t9
+  - tiandiban_charts
+  - tracker246_backup
+  - translation_coverage
+  - v2026-08-23a-okx-style
+dir_trees_without_files_n: 26
+dir_trees_without_files:
+  - ai_dc2_05_backup
+  - construction_20260825
+  - digest_20260825
+  - factor_ic_backfill
+  - industry_graph
+  - pt_20260722015121
+  - pytest_cache
+  - pytest_cache_alt
+  - pytest_tmp8
+  - pytest_tmp9
+  - pytest_tmp_all
+  - pytest_tmp_db_after
+  - pytest_tmp_db_before
+  - pytest_tmp_db_check2
+  - pytest_tmp_db_final
+  - pytest_tmp_db_v3
+  - pytest_tmp_db_v4
+  - pytest_tmp_final_all
+  - pytest_tmp_sql1
+  - pytest_tmp_unit
+  - pytest_tmp_unit_before
+  - recycle_bin
+  - style-refs
+  - tech_screen
+  - test_sweep
+  - tmp_pytest
+runtime_root_files:
+  - {name: .probe_95036.tmp, bytes: 0, mtime: '2026-10-04 16:33'}
+  - {name: algoflow_progress.jsonl, bytes: 166467, mtime: '2026-08-31 06:30'}
+  - {name: algoflow_skipped.jsonl, bytes: 5092, mtime: '2026-08-31 06:16'}
+  - {name: archive_watchlist.json, bytes: 1737, mtime: '2026-10-08 06:15'}
+  - {name: board_idx_offset.txt, bytes: 7, mtime: '2026-10-11 09:20'}
+  - {name: boot_sla_probe_report.jsonl, bytes: 3659, mtime: '2026-08-30 13:45'}
+  - {name: code_index_sync_last_attempt, bytes: 17, mtime: '2026-10-10 05:46'}
+  - {name: depgraph_di_seam_cache.json, bytes: 1298622, mtime: '2026-10-11 23:24'}
+  - {name: depgraph_ops_last_attempt, bytes: 16, mtime: '2026-10-10 05:44'}
+  - {name: depgraph_scan_cache.json, bytes: 11219236, mtime: '2026-10-12 00:18'}
+  - {name: frontmatter_sync_last_attempt, bytes: 17, mtime: '2026-10-10 05:46'}
+  - {name: git_performance_log.jsonl, bytes: 485263, mtime: '2026-10-10 23:02'}
+  - {name: pg_probe_state.json, bytes: 224, mtime: '2026-10-11 23:37'}
+  - {name: predictions_v1_backup_1971.jsonl, bytes: 396098, mtime: '2026-08-25 13:16'}
+  - {name: reconcile_launch.lock, bytes: 0, mtime: '2026-10-06 02:39'}
+  - {name: reconciler_health_warn_dedup.json, bytes: 51, mtime: '2026-10-12 00:20'}
+  - {name: session_registry.json, bytes: 6960, mtime: '2026-10-12 00:29'}
+  - {name: takeover_ledger.jsonl, bytes: 1027864, mtime: '2026-10-11 23:51'}
+  - {name: takeover_ledger.jsonl.tmp.23876, bytes: 326345, mtime: '2026-10-08 04:28'}
+  - {name: task_board.db, bytes: 176128, mtime: '2026-10-11 22:33'}
+  - {name: workspace_drift_warn.jsonl, bytes: 761518, mtime: '2026-10-07 04:58'}
+  - {name: worktree_ops_log.jsonl, bytes: 3706386, mtime: '2026-10-12 00:27'}
+session_dirs_n: 481
+registry_sessions: 17
+registry_heartbeat_fresh_30min: 17
+orphan_shells_dirs_minus_registry: 464
+compat_copy_entries: 16
+liveness_source: SessionRegistry.list_active_readonly  # 与工具守卫同源；session_registry.json 自 S4-D 起仅为滞后兼容副本
+staging_nonempty_sessions:
+  - {sid: st-nightmine2-20261010, files: 125, bytes: 681117, oldest: '2026-10-10', quiet_days: 1.0}
+  - {sid: st-constland-20261010, files: 12, bytes: 186839, oldest: '2026-10-10', quiet_days: 1.5}
+  - {sid: st-govjudge-20261010, files: 1, bytes: 862, oldest: '2026-10-10', quiet_days: 1.6}
+surfaces:
+  - surface: .aidrafts
+    n_files: 286575
+    bytes: 4345195213
+    newest: '2026-10-12T00:12:45'
+    quiet_days: 0.0
+    n_families: 15
+    row_detail: None
+    families_top5: 'st-mineloop-20261010=21568件/311.7MB; st-regsolo-20261010=21948件/304.0MB; st-deadcure2-20261009=20517件/298.6MB; st-backfix-patrol-20261011=20693件/297.3MB; st-deadcure3b-chief-20261011=20525件/296.7MB'
+  - surface: .runtime/gate_audit
+    n_files: 403
+    bytes: 1343222913
+    newest: '2026-10-12T00:18:22'
+    quiet_days: -0.0
+    n_families: 2
+    row_detail: None
+    families_top5: '.=397件/1280.9MB; regen_clean=6件/0.1MB'
+  - surface: .runtime/quarantine
+    n_files: 10396
+    bytes: 708917588
+    newest: '2026-10-12T00:15:58'
+    quiet_days: 0.0
+    n_families: 7531
+    row_detail: None
+    families_top5: 'drift_20261008T064246=1件/12.9MB; finalclean2_safety=839件/11.1MB; drift_20261006T122521=1件/7.4MB; drift_20261005T130926=2件/7.4MB; drift_20261008T110659=2件/7.1MB'
+  - surface: .runtime/audit
+    n_files: 29
+    bytes: 501216285
+    newest: '2026-10-12T00:18:25'
+    quiet_days: -0.0
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/audit_rows.csv
+    families_top5: '.=29件/478.0MB'
+  - surface: .runtime/campaign_trash_20261001
+    n_files: 1063
+    bytes: 50191342
+    newest: '2026-10-02T09:40:07'
+    quiet_days: 9.61
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/campaign_trash_20261001_rows.csv
+    families_top5: 'worktree_salvage=1063件/47.9MB'
+  - surface: .runtime/fetch_perf
+    n_files: 54
+    bytes: 36654577
+    newest: '2026-10-12T00:18:20'
+    quiet_days: -0.0
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/fetch_perf_rows.csv
+    families_top5: '.=54件/35.0MB'
+  - surface: .runtime/sessions
+    n_files: 558
+    bytes: 34247338
+    newest: '2026-10-12T00:29:00'
+    quiet_days: 0.0
+    n_families: 384
+    row_detail: None
+    families_top5: 'st-fullflow2-20261008=1件/4.7MB; st-t3series-20261006=1件/1.6MB; st-fig13-bone-20261004=1件/1.4MB; st-nightmine-20261010b=1件/1.2MB; st-matrix-20261006=1件/1.0MB'
+  - surface: .runtime/claim_snapshots
+    n_files: 937
+    bytes: 23445969
+    newest: '2026-10-12T00:12:03'
+    quiet_days: 0.0
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/claim_snapshots_rows.csv
+    families_top5: '.=937件/22.4MB'
+  - surface: .runtime/logs
+    n_files: 420
+    bytes: 19142113
+    newest: '2026-10-12T00:15:42'
+    quiet_days: 0.0
+    n_families: 2
+    row_detail: None
+    families_top5: 'resource_samples=18件/9.8MB; .=402件/8.5MB'
+  - surface: .runtime/session_registry_audit
+    n_files: 2
+    bytes: 16869322
+    newest: '2026-10-11T23:31:10'
+    quiet_days: 0.04
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/session_registry_audit_rows.csv
+    families_top5: '.=2件/16.1MB'
+  - surface: .runtime/retired_lanes
+    n_files: 35095
+    bytes: 13533015
+    newest: '2026-09-24T17:20:19'
+    quiet_days: 17.29
+    n_families: 1
+    row_detail: None
+    families_top5: '20260927=35095件/12.9MB'
+  - surface: .runtime/ops_notifications
+    n_files: 2
+    bytes: 10861402
+    newest: '2026-10-12T00:21:46'
+    quiet_days: 0.0
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/ops_notifications_rows.csv
+    families_top5: '.=2件/10.4MB'
+  - surface: .runtime/drift_watchdog
+    n_files: 5
+    bytes: 10363924
+    newest: '2026-10-12T00:18:22'
+    quiet_days: -0.0
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/drift_watchdog_rows.csv
+    families_top5: '.=5件/9.9MB'
+  - surface: .runtime/evaporation_blackbox
+    n_files: 1
+    bytes: 8351489
+    newest: '2026-10-12T00:16:03'
+    quiet_days: 0.0
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/evaporation_blackbox_rows.csv
+    families_top5: '.=1件/8.0MB'
+  - surface: .ailocks
+    n_files: 95
+    bytes: 6466514
+    newest: '2026-10-12T00:18:15'
+    quiet_days: -0.0
+    n_families: 91
+    row_detail: None
+    families_top5: '.=5件/6.1MB; tests.data.file.test_file_attr_checker.py.lock=1件/0.0MB; tests.data.file.test_file_autoregister.py.lock=1件/0.0MB; tests.data.file.test_file_creator.py.lock=1件/0.0MB; tests.data.file.test_file_task_mapper_root.py.lock=1件/0.0MB'
+  - surface: .runtime/_scratchbt2
+    n_files: 6468
+    bytes: 3798811
+    newest: '2026-09-24T17:10:39'
+    quiet_days: 17.3
+    n_families: 159
+    row_detail: None
+    families_top5: 'test_resolve_base_blobs_chunks0=623件/0.3MB; test_3_sessions_50_commits_zer0=501件/0.1MB; test_k1_matches_legacy_byte_fo0=140件/0.1MB; test_post_commit_guard_passes_0=64件/0.1MB; test_reference_transaction_gua0=64件/0.1MB'
+  - surface: .runtime/lookup_audit
+    n_files: 861
+    bytes: 3374543
+    newest: '2026-10-11T23:23:04'
+    quiet_days: 0.04
+    n_families: 2
+    row_detail: None
+    families_top5: '.=849件/3.2MB; .aliases=12件/0.0MB'
+  - surface: .runtime/reconcile_reports
+    n_files: 1002
+    bytes: 3147241
+    newest: '2026-10-12T00:17:38'
+    quiet_days: 0.0
+    n_families: 1
+    row_detail: None
+    families_top5: '.=1002件/3.0MB'
+  - surface: .runtime/takeover
+    n_files: 488
+    bytes: 2954463
+    newest: '2026-10-11T18:09:19'
+    quiet_days: 0.26
+    n_families: 2
+    row_detail: None
+    families_top5: 'resolved=485件/1.7MB; .=3件/1.2MB'
+  - surface: .runtime/working_archive
+    n_files: 2
+    bytes: 577256
+    newest: '2026-07-05T20:36:28'
+    quiet_days: 98.16
+    n_families: 2
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/working_archive_rows.csv
+    families_top5: '1783250967=1件/0.3MB; 1783285830=1件/0.3MB'
+  - surface: .runtime/handoffs
+    n_files: 261
+    bytes: 343193
+    newest: '2026-10-12T00:17:33'
+    quiet_days: 0.0
+    n_families: 1
+    row_detail: None
+    families_top5: '.=261件/0.3MB'
+  - surface: .runtime/registry_ledger
+    n_files: 94
+    bytes: 283867
+    newest: '2026-10-08T22:38:48'
+    quiet_days: 3.07
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/registry_ledger_rows.csv
+    families_top5: '.=94件/0.3MB'
+  - surface: .runtime/derived_dirty
+    n_files: 3
+    bytes: 273838
+    newest: '2026-10-12T00:17:41'
+    quiet_days: 0.01
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/derived_dirty_rows.csv
+    families_top5: '.=3件/0.3MB'
+  - surface: .runtime/pt_20260722015135
+    n_files: 1255
+    bytes: 268787
+    newest: '2026-07-22T01:58:51'
+    quiet_days: 81.94
+    n_families: 338
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/pt_20260722015135_rows.csv
+    families_top5: 'test_large_batch_events0=1件/0.1MB; wt_test_repo0=103件/0.0MB; test_recent_default0=1件/0.0MB; test_append_large_data0=1件/0.0MB; test_recent0=1件/0.0MB'
+  - surface: .runtime/gate_cache
+    n_files: 2571
+    bytes: 193001
+    newest: '2026-10-11T02:51:25'
+    quiet_days: 0.89
+    n_families: 1
+    row_detail: None
+    families_top5: '.=2571件/0.2MB'
+  - surface: .runtime/entrance_audit
+    n_files: 14
+    bytes: 38421
+    newest: '2026-10-11T18:03:46'
+    quiet_days: 0.26
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/entrance_audit_rows.csv
+    families_top5: '.=14件/0.0MB'
+  - surface: .runtime/cache
+    n_files: 26
+    bytes: 33882
+    newest: '2026-10-12T00:08:23'
+    quiet_days: 0.01
+    n_families: 1
+    row_detail: None
+    families_top5: '.=26件/0.0MB'
+  - surface: .runtime/write_audit
+    n_files: 4
+    bytes: 29674
+    newest: '2026-10-05T17:01:37'
+    quiet_days: 6.3
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/write_audit_rows.csv
+    families_top5: '.=4件/0.0MB'
+  - surface: .runtime/guide_reads
+    n_files: 145
+    bytes: 18939
+    newest: '2026-10-11T23:19:36'
+    quiet_days: 0.05
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/guide_reads_rows.csv
+    families_top5: '.=145件/0.0MB'
+  - surface: .runtime/workspace_alerts
+    n_files: 7
+    bytes: 10381
+    newest: '2026-10-11T23:39:18'
+    quiet_days: 0.03
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/workspace_alerts_rows.csv
+    families_top5: '.=7件/0.0MB'
+  - surface: .runtime/process_reaper
+    n_files: 2
+    bytes: 10249
+    newest: '2026-10-12T00:17:44'
+    quiet_days: 0.0
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/process_reaper_rows.csv
+    families_top5: '.=2件/0.0MB'
+  - surface: .runtime/session_registry
+    n_files: 21
+    bytes: 7963
+    newest: '2026-10-12T00:18:25'
+    quiet_days: -0.0
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/session_registry_rows.csv
+    families_top5: '.=21件/0.0MB'
+  - surface: .runtime/strategy_pipeline
+    n_files: 6
+    bytes: 6517
+    newest: '2026-10-12T00:28:41'
+    quiet_days: 0.0
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/strategy_pipeline_rows.csv
+    families_top5: '.=6件/0.0MB'
+  - surface: .runtime/entity_graph
+    n_files: 1
+    bytes: 4020
+    newest: '2026-09-20T01:25:36'
+    quiet_days: 21.96
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/entity_graph_rows.csv
+    families_top5: '.=1件/0.0MB'
+  - surface: .runtime/schedule_consistency
+    n_files: 1
+    bytes: 3355
+    newest: '2026-10-08T08:09:36'
+    quiet_days: 3.68
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/schedule_consistency_rows.csv
+    families_top5: '.=1件/0.0MB'
+  - surface: .runtime/abuse_monitor
+    n_files: 1
+    bytes: 2849
+    newest: '2026-10-10T23:02:24'
+    quiet_days: 1.06
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/abuse_monitor_rows.csv
+    families_top5: '.=1件/0.0MB'
+  - surface: .runtime/agent_runs
+    n_files: 4
+    bytes: 2199
+    newest: '2026-08-22T14:05:02'
+    quiet_days: 50.43
+    n_families: 4
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/agent_runs_rows.csv
+    families_top5: 'business=1件/0.0MB; algorithm=1件/0.0MB; governance=1件/0.0MB; self_iteration=1件/0.0MB'
+  - surface: .runtime/pf_alloc
+    n_files: 1
+    bytes: 2076
+    newest: '2026-10-09T16:46:38'
+    quiet_days: 2.32
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/pf_alloc_rows.csv
+    families_top5: '.=1件/0.0MB'
+  - surface: .runtime/security_events
+    n_files: 2
+    bytes: 1188
+    newest: '2026-08-22T12:12:54'
+    quiet_days: 50.5
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/security_events_rows.csv
+    families_top5: 'tnr_drill=2件/0.0MB'
+  - surface: .runtime/locks
+    n_files: 215
+    bytes: 1145
+    newest: '2026-10-11T23:31:15'
+    quiet_days: 0.03
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/locks_rows.csv
+    families_top5: '.=215件/0.0MB'
+  - surface: .runtime/autonomy_gate
+    n_files: 1
+    bytes: 756
+    newest: '2026-08-22T14:04:31'
+    quiet_days: 50.43
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/autonomy_gate_rows.csv
+    families_top5: '.=1件/0.0MB'
+  - surface: .runtime/.runtime
+    n_files: 3
+    bytes: 579
+    newest: '2026-10-09T04:37:39'
+    quiet_days: 2.82
+    n_families: 2
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/_runtime_rows.csv
+    families_top5: 'sessions=2件/0.0MB; locks=1件/0.0MB'
+  - surface: .runtime/secret_drift
+    n_files: 1
+    bytes: 101
+    newest: '2026-10-10T22:58:40'
+    quiet_days: 1.06
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/secret_drift_rows.csv
+    families_top5: '.=1件/0.0MB'
+  - surface: .runtime/ai_error_patterns
+    n_files: 1
+    bytes: 96
+    newest: '2026-10-10T23:02:25'
+    quiet_days: 1.06
+    n_families: 1
+    row_detail: .runtime/tmp/st-fclean3-20261012/out/ai_error_patterns_rows.csv
+    families_top5: '.=1件/0.0MB'
