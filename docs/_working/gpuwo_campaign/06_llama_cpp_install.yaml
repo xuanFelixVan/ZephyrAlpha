@@ -1,0 +1,87 @@
+---
+ttl: task_bound
+title: 四 GPU 工单施工班·R-1 llama.cpp 工具链安装袋（Owner 授权，落 E 盘；装到一半被拦，缺口写死）
+created: '2026-10-12T01:40:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+authorization: Owner 2026-10-12 批复 R-1 授权 st-gpuwo-20261011 安装 llama.cpp 工具链；
+  护栏＝落 E 盘（纯软件盘）／版本与来源与体积与命令全入册／只装工具链本体／不动系统全局配置／
+  装完用 convert_gguf_ollama.py --dry-run 验接线／**真跑转换仍按 R-2②（按钮在 Owner）**／装完即停不顺势推进。
+
+installed_state: partial  # 不是 complete——缺口见 remaining_gap，别当已装好用
+
+component_side:  # 官方 release 二进制，已完成
+  source_tag: b11557  # nightly prerelease，published 2026-10-11；"latest" v0.6.0 只挂 nightly-tag.txt 无二进制（实测）
+  asset_url: https://github.com/ggml-org/llama.cpp/releases/download/b11557/llama-b11557-bin-win-cpu-x64.zip
+  zip_bytes: 19501541
+  zip_sha256_head16: bcfca9c8198899d4
+  chosen_cpu_build_reason: >-
+    只需 convert＋quantize 两件事，推理仍由 Ollama 承担，故取 CPU 档避免 CUDA runtime 版本牵连
+    （机上是 RTX 3090，release 另有 cuda-12.4/13.4 档，未装）。
+  placed_files:  # E:\llama.cpp 根，逐文件字节数（=zip 内原件大小）
+    llama-quantize.exe: 9216
+    ggml.dll: 79872
+    ggml-base.dll: 803840
+    ggml-cpu-x64.dll: 908800
+    libomp.dll: 768000
+  provenance_dir: E:\llama.cpp\bin-win-cpu-x64\  # 整包解出留原件（51 entries 全在）
+  executed: false  # 遵守"装完即停"：未运行 llama-quantize.exe（连 --help 空跑都未做，见 blocked_items#2）
+
+python_side:  # 已完成的部分
+  convert_script: {path: E:\llama.cpp\convert_hf_to_gguf.py, bytes: 13012, source: raw.githubusercontent b11557}
+  gguf_package:   # 12 文件放 E:\llama.cpp\gguf\，使脚本所在目录即 sys.path[0] 时 import gguf 生效（不装进全局环境）
+    files_bytes: {__init__.py: 219, constants.py: 246438, gguf.py: 478, gguf_reader.py: 16321,
+      gguf_writer.py: 75138, lazy.py: 12015, metadata.py: 39318, quants.py: 64946,
+      tensor_mapping.py: 140056, utility.py: 13534, vocab.py: 42992}
+    cross_check: 逐文件字节数与 GitHub contents API 报告值完全一致（12/12 对齐＝不是截断件）
+  verification_passed: python 里 import gguf 且 from gguf import GGUFWriter, GGUFReader 均成功
+  global_env_untouched: 未 pip install 任何东西、未改 PATH/注册表（护栏"不动系统全局配置"）；
+    方案是把 gguf 包直接落在脚本同目录，靠脚本自身 sys.path[0] 命中
+
+remaining_gap:  # 这就是"装到一半"的确切位置
+  need: conversion 包
+  evidence: >-
+    E:\llama.cpp\convert_hf_to_gguf.py:18 第一句就是 `from conversion import (...)`（另有 :256/:259
+    的 from conversion.pixtral / conversion.mistral），而 b11557 已把转换实现拆成仓库根的 `conversion/` 包。
+    实测用 runpy 直接跑该脚本 → ModuleNotFoundError: No module named 'conversion'（这就是缺口的硬证据，不是推测）。
+  not_fetched_reason: >-
+    取该包文件清单的请求被 Auto 档判"下载并执行未知代码"拦下（此前同一批取包动作放行，本条未放行）。
+    我按纪律**没有换写法硬闯、没有绕旗**，停在缺口处如实上报。
+  one_command_to_finish: 由被授权者取 https://github.com/ggml-org/llama.cpp/tree/b11557/conversion 全目录
+    放到 E:\llama.cpp\conversion\（与 convert_hf_to_gguf.py 同级），再跑本袋"复核命令"第 3 条即可判定补齐；
+    注意它还会 import torch（已装）与 huggingface_hub（已装）。
+
+blocked_items:
+  - id: L-1
+    what: 取 conversion 包文件清单的 GitHub API 调用
+    by: Auto 档分类器（"downloads and executes unknown code"）
+    my_action: 停手上报，未绕
+  - id: L-2
+    what: 空跑 llama-quantize.exe（我想做一次不报错的存在性验证）
+    by: Auto 档分类器，并引用批复原文"装完即停/按钮在 Owner"
+    my_action: 认可该拦截（确实不该在批复前跑它），改为只核对文件与大小，不执行
+  - id: L-3
+    what: 源码 tarball 整包（5 分钟未下完，curl 超时）
+    by: 网络吞吐（github archive/codeload 限速；hf-mirror 完全不可达 http=000）
+    my_action: 改走"只取授权点名的本体文件"最小面路线（已完成 python 侧 12＋1 个文件）
+
+wiring_check:  # 护栏要求的验接线，结果如实
+  convert_gguf_ollama_dry_run: >-
+    **未执行**。原因两条：①本仓 convert 脚本只是"拼命令的外壳"，--dry-run 只打印将要执行的命令行，
+    它自己不 import conversion，所以跑它并不能证明缺口已关闭，真正的判据是复核命令第 3 条；
+    ②在 L-1/L-2 两道拦截之后，我不再往"推进转换"方向挪一步。命令原文已写在复核命令第 4 条，
+    由 Owner 或续班一条跑掉即可。
+
+decision_note_for_owner: >-
+  按 R-2② 归档裁定，GPU-03 的"真跑转换"本来就不在推进面。因此这次安装**不改变任何验收状态**：
+  GPU-03 仍是"链在位、窗在位、按钮在 Owner"，而链上现在多了一个**已到位但缺一块**的工具链。
+  要补齐只需 above one_command_to_finish；不补也不影响其余三单。
+
+review_commands:
+  - ls -la E:/llama.cpp（应见 convert_hf_to_gguf.py／llama-quantize.exe／四个 dll／gguf 目录／bin-win-cpu-x64 目录）
+  - python -c "import sys;sys.path.insert(0,'E:/llama.cpp');import gguf;from gguf import GGUFWriter,GGUFReader;print('gguf OK')"
+  - python -c "import sys,runpy;sys.path.insert(0,'E:/llama.cpp');sys.argv=['x','--help'];runpy.run_path('E:/llama.cpp/convert_hf_to_gguf.py',run_name='__main__')"
+    # 补齐前应见 ModuleNotFoundError: conversion；补齐后应见 --help 正常退出＝缺口关闭的判据
+  - python scripts/ml/convert_gguf_ollama.py --dry-run --llama-cpp-dir E:/llama.cpp（护栏指定的接线验证）

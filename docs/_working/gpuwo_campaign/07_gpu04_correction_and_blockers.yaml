@@ -1,0 +1,110 @@
+---
+ttl: task_bound
+title: 四 GPU 工单施工班·GPU-04 更正册（自纠三条＋两腿的真实拦路＋治理缺口）
+created: '2026-10-12T01:50:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+why_this_bag_exists: >-
+  Owner 2026-10-12 批 R-5＝GPU-04 只补两腿。我把两腿的落点读到底之后，发现自己 04 号材料包里
+  有三条说法**站不住**，另发现两腿里有一条**按字面做不了**（不是难，是数据面缺要素）。
+  按 Owner 追认的规矩：更正**另起一册、旧案卷保留、不改计数**，所以本册只追加更正与拦路，
+  04 册原文一字不动（旧卷见 docs/_working/gpuwo_campaign/04_gpu04_b007_material.yaml）。
+
+corrections_to_my_own_record:  # 旧案保留，此处逐条改判
+  - id: C-1
+    old_claim: "Owner 门已在位＝CLI --real-training 显式旗，库层默认 False（trainer.py:8/:88）"
+    verdict: "错（我把 docstring 的声明当成了事实）"
+    measured_now: >-
+      全仓 grep real_training 只命中三处：trainer.py:88 的字段定义、trainer.py:8 与 __init__.py 的声明文本、
+      tests/trade/ex_sor/test_td3_trainer.py:102-104 —— **没有任何 CLI、没有任何 --real-training 旗、
+      没有任何代码读取这个字段**。实际跑学习的路径是 run_episode(learn=...)（trainer.py:128-158），
+      与 real_training 完全无关；warmup_from_history:161-167 硬写 learn=False。
+    what_it_means: >-
+      H-04"真训练须 Owner 门"今天只有三样东西：一句注释、一个没人读的 bool、一支断言该 bool 默认值的测试。
+      属"装饰性守卫"家族（判'已防护'必须测'谁调它＋能否改变行为'）——**批复前这不算门**。
+      我不代修（改它＝动真训练触发面，正是 B-007 事项），只把它列成批复前必须知道的实情。
+  - id: C-2
+    old_claim: "replay 流水＝local_replay 产物（工单 §2.2 原话，我照抄）"
+    verdict: "数据面认错"
+    measured_now: >-
+      src/zephyr/data/local_replay.py 不是回放数据集，是 ClickHouse 写库失败后的**三级兜底落盘＋自动重放队列**
+      （:18-40 说明；save_fallback:81-131 写 data/local_fallback/<db>__<table>/*.tsv＋_manifest.jsonl；
+      replay_batch:458-561 重插入 CH 后**成功即删文件** :444）。它是瞬态、无表语义、更无订单语义。
+    corrected_source: >-
+      真正的"执行流水"契约＝CH 表 execution_report，DDL-as-Code
+      schemas/categories/intraday/market_execution_report.py（TABLE_NAME:119、INSERT_COLUMNS:131、列定义 :92-110），
+      生产者 src/zephyr/ex_core/execution_report_producer.py:84/:428/:441，
+      正门读取器 zephyr.data.ch_reader（query_rows:277 / query_rows_table:307，FINAL 注入 :70/:261；
+      禁 ch_writer.query 直读，依据 local_replay.py:248 引的 #ARCH-CH-007）。
+  - id: C-3
+    old_claim: "影子评估＝另建对拍腿（M-1 我写成'没找到实现件'）"
+    verdict: "保守过头，其实有现成缝"
+    measured_now: >-
+      缝在 src/zephyr/ex_sor/core/algo_execution_selector.py：ExecutionOutcome(:281) →
+      AlgoEvaluator Protocol(:322) → AlgoEvaluationResult(:302，含 implementation_shortfall_bps／fill_rate／
+      efficiency_score／verdict)，实现 DefaultAlgoEvaluator(:343，IS bps :345-350，档位 :372-378)，
+      还有 QualityPriorProvider(:329)／ScorerBackedQualityPrior 把评分回灌进 AlgoExecutionSelector.select(:454)。
+      另有两个已生产的度量件：slippage_analyzer.py（MOD-XS-017，基准枚举 SlippageBenchmark:119
+      ARRIVAL/VWAP/TWAP/PREV_CLOSE/DECISION，_calc_slippage_bps:475）与
+      execution_quality_scorer.py（MOD-XS-018，score:330，阈值 :88-91，verdict good≥0.8/acceptable≥0.5）；
+      Perold-IS 分解另有 reporting/default_tca_engine.py:129/:161。
+    corrected_scope: >-
+      M-1 不是"造尺"，是**把 RL 策略登记成一个竞争 AlgoType、走同一对 AlgoEvaluator 跑 A/B**。
+      对照基线也实测到了：execution_engine.py ExecutionConfig:91-99 —— default_algo=TWAP、
+      twap_window_minutes=30、twap_slices=10、max_slippage_bps=5、participation_rate=0.05，
+      下游 algo_trading_engine.py（AlgoParams:222，MAX_PARTICIPATION_RATE:173=0.05、MAX_ADV_FRACTION:175=0.15、
+      LOT_SIZE:177=100，TwapStrategy:435／VwapStrategy:471），分档在
+      ex_core/execution_strategy_selector.py:113-153（<1% ADV 直接限价、1-5% TWAP、5-15% VWAP、>15% 拒）。
+
+blocker_for_M2:  # 这条是要 Owner/统筹定向的实事，不是抱怨
+  statement: >-
+    M-2 按字面"用 execution_report 做 behavior-cloning 预热"**做不了**，原因在观测维度而非工作量：
+    TD3 的 obs 是 24 维（obs_dim_for():42-44＝5 档×(价差比+量占比)×2 侧＋进度 4），
+    state_to_obs():47-67 需要**五档盘口快照**（RlExecState.book.ask_price/bid_price/ask_vol/bid_vol＋last_price）；
+    而 execution_report 一行只有订单与成交侧字段（intended/actual 量价、vwap、slippage_bps、
+    decision_timestamp、algo_type、broker_id）——**没有任何档级盘口**。硬凑 obs＝把不存在的数写进训练面，
+    正是我今夜在 GPU-03 那边抓到的同一类错（"基底有值但口径错"比查无更致命）。
+  options_for_adjudication:
+    - id: W-1
+      name: 按 (symbol, decision_timestamp) 联接档级行情重建 obs
+      needs: market_tick_depth_5 / market_l2_tick / market_tick 三张表之一做 join 源（同 schema 目录下siblings）
+      risk: 档口深史覆盖与 PIT 对齐要先量（本仓有"深史上限"前科，别假设能连上）；CH 读属让路窗外动作
+    - id: W-2
+      name: 降维——BC 只在"动作参数面"学（slice 比例／参与率），不吃档口
+      needs: 重定义 obs（或另建窄策略头），checkpoint 与现 24 维不兼容＝换策略契约，属设计变更
+      risk: 与现 td3_agent 的 [-1,1]^2 语义耦合被改动，且与 env 硬边界契约要重核
+    - id: W-3
+      name: 承认 M-2 暂不可行，先做 M-1（缝已实测存在），BC 等行情联接量完再开
+      cost: 零新代码面损失
+      my_recommendation: 这条。M-1 的缝是真的、可落、能判生死；M-2 缺的是**数据要素**不是工程量，
+        在要素到位前硬写只会产出一个能跑但没有意义的 buffer。
+  also_note: schemas 目录内已有一句实测警示——market_execution_report.py:61 注明
+    "本表 slippage_bps 全库零程序读者"＝这张表今天连一个读取方都没有（我核过，与我 find 的结果一致）。
+
+governance_gap_found:  # 不是本单要修的，但必须报
+  fact: >-
+    docs/01_policies_and_standards/_registry/catalogs/risk_tier_registry.yaml 的 domain_tiers(:67-202，18 域)
+    **不含 D_EX_SOR**；default_tier=low(:41)＋"未显式列出的一律 low"(:29-31) ⇒ 治理面把 D_EX_SOR 记为 low、无 human_gate。
+    而该域代码件全部自声明高安全级：rl_exec_env.py:11 / rl_exec_contract / rl_exec_boundary /
+    algo_execution_selector 均 [SAFETY] H；相邻的 D_EX_CORE 却是 tier: high＋7 条 Owner human_gates(:67-77)，
+    其措辞"交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）"本身也不含 D_EX_SOR。
+  why_it_matters: >-
+    执行域 RL（真训练与产物去向）恰好落在这个错位里：模块说 H，查表说 low。分级不放松 gate，
+    但"未列出＝low"会让 medium/low 全自动那一路径管到本该 Owner 门的东西上。
+  my_action: 只登记不代改（风险分级册属治理热册＋Owner 门位语境）；建议统筹定向补条目或改措辞。
+
+mechanical_fact_for_next_shift: >-
+  本包所有 .py 的 [TESTS] 头写的是 tests/ex_sor/…，实际测试在 **tests/trade/ex_sor/**（19 支在册）；
+  tests/ex_sor/ 目录存在但为空且未被 git 跟踪。⇒ 任何改动这些件头的动作都会撞 TEST-SOURCE-CONSISTENCY 面，
+  动它要么整域一起修、要么别碰（我没碰）。
+
+scope_guard: 本册零代码改动、零新表、零注册、零 CH 查询（现值 01:5x 正处 01:00-04:00 让路窗，全程只读盘上文件）；
+  未动 04 册原文；未动 trainer/selector/registry 任何一件。
+
+review_commands:
+  - grep -rn "real_training" src/zephyr/ex_sor/ tests/ --include="*.py"（应只见字段定义/声明文本/测试断言三处，无 CLI、无读者）
+  - python -c "import yaml,pathlib;d=yaml.safe_load(pathlib.Path('docs/01_policies_and_standards/_registry/catalogs/risk_tier_registry.yaml').read_text(encoding='utf-8'));print('D_EX_SOR' in d.get('domain_tiers',{}), d.get('default_tier'))"（应见 False low）
+  - sed -n '42,67p;161,167p' src/zephyr/ex_sor/services/rl_trainer/trainer.py（obs 维度与 warmup 硬编码 learn=False 的原文）
+  - sed -n '92,110p;119,131p' schemas/categories/intraday/market_execution_report.py（流水表列面＝无档口字段）
