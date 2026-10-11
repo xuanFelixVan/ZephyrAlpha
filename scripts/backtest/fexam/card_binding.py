@@ -58,6 +58,7 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import yaml
@@ -829,6 +830,48 @@ def run_binding_book(card: dict, entry: dict) -> tuple[pd.Series, dict]:
     return ser, ev
 
 
+def _arm_pair_builder():
+    """取真源件的装配函数：两条导入路径都试（包内/仓根），皆败即 raise——禁静默降级成单臂。"""
+    import importlib
+
+    for mod in ("fexam.arm_protocol_binding", "scripts.backtest.fexam.arm_protocol_binding"):
+        try:
+            return importlib.import_module(mod).build_arm_pair
+        except ImportError:
+            continue
+    raise ImportError("arm_protocol_binding 两条导入路径皆不可达＝双臂装配无法校验 e/r 位面，拒装配")
+
+
+#: 双臂底座来源册（WO-A1 绑定侧半件）：名→可调用（按臂参数产日频敞口序列）。
+#: 空册是**有意**的：底座只能由在册重放装置产出，禁在绑定层现编近似序列冒充分母
+#: （arm_protocol_binding.ArmBaseMissing 同一纪律）。每接一个来源，须同批改
+#: tests/backtest/test_card_binding.py 的接线用例与册格 arm_base_source 字段。
+ARM_BASE_SOURCES: dict[str, Any] = {}
+
+
+def arms_from_binding_book(
+    card: dict, entry: dict, *, base: pd.Series, target: pd.Series
+) -> tuple[pd.Series, pd.Series, pd.Series, dict]:
+    """双臂卡三面装配：e 位＝逐臂敞口、e 位配对基臂、r 位＝底座日收益（WO-A1 适配器绑定侧）。
+
+    语义校验（敞口 0..1、日收益量纲帽、e/r 引句必须各落在该卡面对应文本域）**全在真源件
+    arm_protocol_binding 里做**，本函数一行判据都不重复实现（宪法 §4.2 同真源可派生→必并）；
+    这里只干两件事：把调用方注入的底座/目标交过去，再把凭据并上绑定册的算子与引句。
+    """
+    arms_entry = entry.get("arms") or {}
+    if not arms_entry:
+        raise ValueError(f"arms_face_missing:{entry.get('card_id')}（册格未声明 arms 面，禁按单臂路径冒充双臂）")
+    open_arm, base_arm, tgt, ev = _arm_pair_builder()(card, arms_entry, base=base, target=target)
+    ev.update(
+        arm_op_open=ev["op"]["open"],
+        arm_op_base=ev["op"]["base"],
+        reviewed_by=entry.get("reviewed_by"),
+        review_note=entry.get("review_note"),
+        arm_target_len=int(len(tgt)),
+    )
+    return open_arm, base_arm, tgt, ev
+
+
 def load_binding_book(path: Path) -> dict[str, dict]:
     if not path.exists():
         return {}
@@ -880,8 +923,22 @@ def run_one(
     if dry:
         return {"card_id": cid, "dry_run": True, "class": cls["cls"], "recipe": cls["recipe"], "op": cls["op"]}
     before = _judgment_snapshot(card)
+    sig_b: pd.Series | None = None
     try:
-        if entry is not None:
+        if entry is not None and entry.get("arms"):
+            # 双臂通道（WO-A1）：底座敞口序列须由在册重放装置按臂参数产出后注入；
+            # 来源未接线时**如实报错不出分**——静默降级成单臂就是给判官喂错面
+            src = str(entry.get("arm_base_source") or "")
+            if src not in ARM_BASE_SOURCES:
+                return {
+                    "card_id": cid,
+                    "error": f"arm_base_source_unwired:{src or '(empty)'}（双臂卡须声明底座来源且该来源已在 ARM_BASE_SOURCES 接线）",
+                }
+            tgt_arm = index_next_day_return()
+            sig, sig_b, tgt, ev = arms_from_binding_book(
+                card, entry, base=ARM_BASE_SOURCES[src](card, entry), target=tgt_arm
+            )
+        elif entry is not None:
             sig, ev = run_binding_book(card, entry)
         else:
             sig, ev = build_signal(card, cls)
@@ -898,6 +955,7 @@ def run_one(
     row = run_card(
         card_path,
         signal=sig,
+        signal_b=sig_b,
         target=tgt,
         run_id=f"mineloop-{run_tag}-{cid.split('/')[-1][:20]}",
         recorded_by="st-mineloop-20261010",
