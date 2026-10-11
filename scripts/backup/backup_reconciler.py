@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-INF-043 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §3.1
 # [MODULE] scripts.backup.backup_reconciler
 # [DOMAIN] D_INFRASTRUCTURE
-# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcilerSpec, ReconcileResult); scripts.governance.meta.backup_runtime_state (_is_pid_alive — 复用存活判据，勿另起炉灶)
+# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcilerSpec, ReconcileResult); scripts.governance.meta.backup_runtime_state (_is_pid_alive — 复用存活判据，勿另起炉灶); zephyr.shared.infra.process_pool (run_subprocess_hidden — VM 探针唯一子进程入口，trae_067)
 # [CONSUMERS] GitCommitGateway._reconciliation_registry.register
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:双条件触发(重要文件+8h间隔) | INV-10:状态持久化backup_state.json | INV-11:ok状态写入前须过system.backup_log当窗BACKUP_CREATED交叉核验,假绿降级ch_log_missing并连带摘除last_ch_backup_status的ok,cadence-skip单独记账;P-7改点火-托管分离后此核验延后由"下一次事件触发"的settle_previous_ignition(读上一轮脱离日志锚定State saved:主仓state)或日检执行,点火轮本身绝不断言ok | INV-12:gate裁决写入锚定主仓state真源(脱离日志State saved:通道),lock-skip短退出不推进计时不降级真实状态,skipped分因(cadence合法/其余degraded);P-7新增点火前主动锁自查(读.runtime/backup.lock PID:+_is_pid_alive),活则直接记lock_skipped不起子进程 | INV-13(P-7非托管免疫):post-commit通道只点火不托管,backup.ps1经瞬时powershell(Start-Process -WindowStyle Hidden+落盘重定向)脱离启动,使备份进程在收割器扫描时不是worker的活的后代(psutil.children(recursive)沿活PPID链)从而免疫级联收割,不再同步subprocess.run托管长跑;T8早退显化(2026-10-11 总统统筹追加令):settle_previous_ignition 的"无 STAGE 4"支按 ps1 自身锁语义分"在跑/已夭折"——锁消失或锁在而持有者PID已死⇒记 ignite_outcome=early_exit(+_time/_evidence/_ignite_log 四键,同一 ignite_log 幂等一次防热册写风暴),持有者仍活⇒原样 pending;返回值/pending 指针/点火与重试路径零改动,存活与锁解析复用本件既有单口 _is_pid_alive+read_backup_lock_holder_pid,零新增阈值
+# [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:双条件触发(重要文件+8h间隔) | INV-10:状态持久化backup_state.json | INV-11:ok状态写入前须过system.backup_log当窗BACKUP_CREATED交叉核验,假绿降级ch_log_missing并连带摘除last_ch_backup_status的ok,cadence-skip单独记账;P-7改点火-托管分离后此核验延后由"下一次事件触发"的settle_previous_ignition(读上一轮脱离日志锚定State saved:主仓state)或日检执行,点火轮本身绝不断言ok | INV-12:gate裁决写入锚定主仓state真源(脱离日志State saved:通道),lock-skip短退出不推进计时不降级真实状态,skipped分因(cadence合法/其余degraded);P-7新增点火前主动锁自查(读.runtime/backup.lock PID:+_is_pid_alive),活则直接记lock_skipped不起子进程 | INV-13(P-7非托管免疫):post-commit通道只点火不托管,backup.ps1经瞬时powershell(Start-Process -WindowStyle Hidden+落盘重定向)脱离启动,使备份进程在收割器扫描时不是worker的活的后代(psutil.children(recursive)沿活PPID链)从而免疫级联收割,不再同步subprocess.run托管长跑;裁定①单一检出点(2026-10-11 总统统筹):reconcile() 在 settle 之后、锁自查之前先过 is_shadow_checkout——影子根(有正证者：.git 为 FILE 的 linked worktree，或路径含 .worktrees/.aidrafts/commit_queue 标记)一律拒绝点火，记 last_run_outcome=shadow_ignite_refused(+reason/root/time)，不碰锁不动 cadence；判不出形态的根按主区放行(误拦=备份静默停摆，是本院在治的病，不得拿新病换旧病)。病根实测=backup.ps1 硬编码 $ProjectRoot 而 reconciler 按自身根解析脚本路径，同机多版本副本共抢一把锁;裁定②备份↔停机压缩互斥(同日统筹):真正点火前查 Hyper-V 里 ch_backup.vm_name(配置册唯一真源) 的状态，VM 非 Running ⇒ 记 last_run_outcome=vm_off_yield(+yield_time/reason/probe) 且不点火；探针不可得/未配置一律 fail-open 放行并把 last_vm_gate_probe 写进 state 册备追(备份可用性优先于门禁完备性);T8早退显化(2026-10-11 总统统筹追加令):settle_previous_ignition 的"无 STAGE 4"支按 ps1 自身锁语义分"在跑/已夭折"——锁消失或锁在而持有者PID已死⇒记 ignite_outcome=early_exit(+_time/_evidence/_ignite_log 四键,同一 ignite_log 幂等一次防热册写风暴),持有者仍活⇒原样 pending;返回值/pending 指针/点火与重试路径零改动,存活与锁解析复用本件既有单口 _is_pid_alive+read_backup_lock_holder_pid,零新增阈值
 # [MODIFY-GUARD] gate_id="BACKUP-RECONCILER"
 # [STABILITY] evolving
 # [SAFETY] L
@@ -653,6 +653,77 @@ def _fake_green_verdict(
     return ReconcileResult(action="warn", detail=detail)
 
 
+SHADOW_CHECKOUT_MARKERS = (".worktrees", ".aidrafts", "commit_queue")
+VM_PROBE_TIMEOUT_S = 45
+
+
+def is_shadow_checkout(root: Path | None = None) -> tuple[bool, str]:
+    """裁定①（2026-10-11）单一检出点：只允许主区这一份 checkout 点火 backup.ps1。
+
+    病根实测：backup.ps1:34 把 $ProjectRoot 硬编码成 D:\\ZephyrAlpha（锁/logs/state/vault
+    全由它派生），而 post-commit reconciler 按**自身所在根**解析脚本路径——今日 10 发
+    点火里 8 发来自 `.runtime\\commit_queue\\worktree`、`worktrees\\w0|w1`、`.aidrafts\\<sid>`
+    等影子根，各自跑不同 commit 版本的脚本、共抢同一把生产锁、同写一个 vault 日目录
+    （实测同机并存两个 sha 的 backup.ps1）。"修好主链＝修好备份链"因此不成立。
+
+    校准＝只在**有正证**时判影子：`.git` 是文件（git linked worktree 的硬特征，实测三条
+    车道皆 FILE）或路径含已知车道标记。判不出形态的根按主区放行——误拦的代价是备份
+    静默停摆，那正是本战役在治的病，不能拿新病换旧病。
+    """
+    r = Path(root if root is not None else PROJECT_ROOT).resolve()
+    if (r / ".git").is_file():
+        return True, "linked_worktree_dotgit_file"
+    parts = {p.lower() for p in r.parts}
+    for marker in SHADOW_CHECKOUT_MARKERS:
+        if marker in parts:
+            return True, "path_marker:" + marker
+    return False, "primary_or_unproven"
+
+
+def ch_guest_vm_running(config: dict | None = None) -> tuple[str, bool]:
+    """裁定②（2026-10-11）备份↔停机压缩互斥：点火前查 CH 客户机 VM 状态。
+
+    实测碰撞：压缩器 13:45:50 停 VM，2.5 分钟后即有影子点火，该轮 CH 腿逐字
+    `[WARN] ClickHouse not reachable ..., skipping`——两头当时没有任何互斥面。
+    信号源=Hyper-V 的 VM 状态（压缩器与本闸共读同一个事实），VM 名取自配置册单键
+    `ch_backup.vm_name`（不新硬编码第二处真源）。
+
+    返回 (probe_state, running)。除 ("OK", False) 外一律放行（fail-open）：
+    VM 查不到/未配置/超时绝不能演变成"从此不备份"——可用性优先于门禁完备性，
+    且放行事实写进 state 册可事后追。
+    """
+    try:
+        cfg = load_config() if config is None else config
+    except Exception:  # noqa: BLE001  # 配置读不到=门禁未装配，不是拦火的理由
+        return "NO_CONFIG", True
+    name = str(((cfg or {}).get("ch_backup") or {}).get("vm_name") or "").strip()
+    if not name:
+        return "UNCONFIGURED", True
+    script = "(Get-VM -Name '%s' -ErrorAction SilentlyContinue | ForEach-Object { $_.State })" % name.replace("'", "''")
+    try:
+        # trae_067 铁律2：子进程必经 process_pool 统一无窗口入口（BARE-SUBPROCESS 门硬拦裸 run）
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+    except ImportError:
+        return "NO_PROCESS_POOL", True
+    try:
+        r = run_subprocess_hidden(
+            ["powershell", "-NoProfile", "-Command", script],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=VM_PROBE_TIMEOUT_S,
+        )
+    except subprocess.TimeoutExpired:
+        return "TIMEOUT", True
+    except (OSError, ValueError):
+        return "LAUNCH_FAIL", True
+    out = (r.stdout or "").strip()
+    if not out:
+        return ("NO_OUTPUT" if r.returncode != 0 else "NO_VM"), True
+    return "OK", out.lower() == "running"
+
+
 def settle_previous_ignition(session_id: str) -> Any:
     """延后验核（INV-11）：结算上一轮"已点火待验"——由下一次事件触发调用。
 
@@ -838,6 +909,27 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
     except Exception:  # noqa: BLE001  # 结算失败不得影响本轮点火，只降级日志
         logger.warning("settle_previous_ignition failed", exc_info=True)
 
+    # (1a) 单一检出点闸（裁定①）：影子根（linked worktree/提交队列车道）绝不允许点火。
+    shadow, shadow_why = is_shadow_checkout()
+    if shadow:
+        now_iso = datetime.now(timezone.utc).isoformat()
+        try:
+            update_state(
+                last_run_outcome="shadow_ignite_refused",
+                last_shadow_refuse_time=now_iso,
+                last_shadow_refuse_reason=shadow_why,
+                last_shadow_refuse_root=str(PROJECT_ROOT),
+            )
+        except (OSError, TypeError, ValueError):
+            logger.debug("shadow_ignite_refused state write failed", exc_info=True)
+        return ReconcileResult(
+            action="warn",
+            detail=(
+                "shadow-root ignition refused (%s) at %s; single checkout point is the "
+                "main worktree; lock untouched, cadence untouched" % (shadow_why, PROJECT_ROOT)
+            ),
+        )
+
     # (1) 点火前主动锁自查（INV-12 前移）：持锁者活 → 记 lock_skipped、不起子进程。
     held, holder = is_backup_lock_held()
     if held:
@@ -850,6 +942,24 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
         return ReconcileResult(
             action="warn",
             detail=f"backup lock held by live PID {holder}; ignition skipped, cadence untouched",
+        )
+
+    # (1b) 备份↔停机压缩互斥闸（裁定②）：CH 客户机 VM 不在跑 ⇒ 让路留痕，不点火。
+    vm_probe, vm_running = ch_guest_vm_running()
+    if vm_probe == "OK" and not vm_running:
+        now_iso = datetime.now(timezone.utc).isoformat()
+        try:
+            update_state(
+                last_run_outcome="vm_off_yield",
+                last_yield_time=now_iso,
+                last_yield_reason="vm_off:%s" % vm_probe,
+                last_vm_gate_probe=vm_probe,
+            )
+        except (OSError, TypeError, ValueError):
+            logger.debug("vm_off_yield state write failed", exc_info=True)
+        return ReconcileResult(
+            action="warn",
+            detail="backup guest VM is not running (compression window?); yielded without igniting, cadence untouched",
         )
 
     # (2) 完全脱离地点火（DETACHED via Start-Process，非 subprocess.run 同步托管长跑）。
@@ -870,6 +980,7 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
     update_state(
         last_backup_launch_time=now_iso,
         last_ignite_log=str(ignite_log),
+        last_vm_gate_probe=vm_probe,
         last_run_outcome="ignited_pending_verification",
         last_ignite_session_id=session_id,
     )

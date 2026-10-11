@@ -56,6 +56,11 @@ ch_backup:
   base_file: "market.zip"       # 全量基线（一次性创建，inc 膨胀时自动重建）
   inc_file: "inc.zip"           # 每日增量（覆盖重写，非累积）
   rebase_threshold: 0.5         # inc >= 50% × base 时自动重建基线
+  # 裁定②（2026-10-11 总统统筹）备份↔停机压缩互斥闸的**唯一 VM 名真源**：
+  # post-commit reconciler 点火前查这台 Hyper-V 客户机的状态，Off ⇒ 让路留痕不点火
+  # （实测 10-11 13:45:50 压缩器停 VM、2.5 分钟后即有点火进来，那轮 CH 腿必跳过）。
+  # 消费者=backup_reconciler.ch_guest_vm_running；缺键=门禁未装配，按 fail-open 放行。
+  vm_name: "zephyr-ch"
 
 dump_dir: "D:\\tmp_db_dumps"
 

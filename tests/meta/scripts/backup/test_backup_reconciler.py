@@ -208,6 +208,8 @@ class TestLockPrecheckSkipsWithoutSubprocess:
             patch.object(reconciler_module, "PROJECT_ROOT", tmp_path),
             patch.object(reconciler_module, "get_state_file", return_value=state_file),
             patch.object(reconciler_module, "_is_pid_alive", lambda pid: False),
+            # 裁定②新增前置：VM 在跑才允许点火；本例考的是"锁主已死→走点火"，故把 VM 面钉成放行
+            patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: ("OK", True)),
             patch.object(reconciler_module.subprocess, "run", _fake_run),
         ):
             reconciler_module.reconcile([str(tmp_path / "src" / "x.py")], "sess-b")
@@ -223,6 +225,7 @@ class TestLockPrecheckSkipsWithoutSubprocess:
         with (
             patch.object(reconciler_module, "PROJECT_ROOT", tmp_path),
             patch.object(reconciler_module, "get_state_file", return_value=state_file),
+            patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: ("OK", True)),
             patch.object(
                 reconciler_module.subprocess,
                 "run",
@@ -261,6 +264,7 @@ class TestDetachedIgnition:
             patch.object(reconciler_module, "PROJECT_ROOT", tmp_path),
             patch.object(reconciler_module, "get_state_file", return_value=state_file),
             patch.object(reconciler_module, "_is_pid_alive", lambda pid: False),
+            patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: ("OK", True)),
             patch.object(
                 reconciler_module.subprocess,
                 "run",
@@ -676,3 +680,144 @@ class TestDeferredVerification:
         self._settle_bare(reconciler_module, tmp_path, sf)
         second = json.loads(sf.read_text(encoding="utf-8"))["ignite_outcome_time"]
         assert first == second, "重复结算不得刷新观测时间（写风暴防线）"
+
+
+# ── 裁定①＋②（2026-10-11 总统统筹）：单一检出点 ＋ 备份↔停机压缩互斥 ──────────
+# ① 影子根（linked worktree / 提交队列车道）点火必拦：实测今日 10 发点火 8 发来自
+#    `.runtime\commit_queue\worktree`、`worktrees\w0|w1`，它们各自是不同 commit 版本的
+#    backup.ps1，却共用同一把硬编码生产锁与同一个 vault 日目录。
+#    校准＝只拦"有正证"的影子检出（.git 是文件，或路径含车道标记）。误拦的后果是备份
+#    静默停摆——那正是本战役在治的病，不能拿新病换旧病。
+# ② 点火侧前置查 Hyper-V 里 CH 客户机状态：VM Off ⇒ 让路留痕不点火（实测今日 13:45:50
+#    停 VM 后 2.5 分钟即有影子点火，那轮 CH 腿结构性不可成功）。VM 名取自配置册单键，
+#    查不到/未配置一律 fail-open 放行——备份可用性优先于门禁完备性。
+class TestSingleCheckoutPoint:
+    def _capture(self, reconciler_module, root, tmp_path, *, vm=("OK", True), alive=False):
+        sf = tmp_path / "state.json"
+        captured: list = []
+        with (
+            patch.object(reconciler_module, "PROJECT_ROOT", root),
+            patch.object(reconciler_module, "get_state_file", return_value=sf),
+            patch.object(reconciler_module, "_is_pid_alive", lambda pid: alive),
+            patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: vm),
+            patch.object(
+                reconciler_module.subprocess,
+                "run",
+                lambda *a, **k: captured.append((a, k)) or SimpleNamespace(returncode=0, stdout="", stderr=""),
+            ),
+        ):
+            result = reconciler_module.reconcile([str(root / "src" / "x.py")], "sess-checkout")
+        return captured, result, sf
+
+    def test_linked_worktree_root_is_refused(self, reconciler_module, tmp_path):
+        """车道 .git 是 FILE（git worktree）⇒ 有正证的影子根，禁止点火并留痕。"""
+        lane = tmp_path / "lane"
+        _make_ps1(lane)
+        (lane / ".git").write_text("gitdir: /somewhere/.git/worktrees/lane\n", encoding="utf-8")
+        captured, result, sf = self._capture(reconciler_module, lane, tmp_path)
+        assert captured == [], "影子根绝不允许起 backup.ps1"
+        assert _field(result, "action") == "warn"
+        written = json.loads(sf.read_text(encoding="utf-8"))
+        assert written["last_run_outcome"] == "shadow_ignite_refused"
+        assert "linked_worktree_dotgit_file" in written["last_shadow_refuse_reason"]
+
+    def test_commit_queue_lane_path_is_refused(self, reconciler_module, tmp_path):
+        """即便 .git 形态判不出，路径含 commit_queue 车道标记同样必拦。"""
+        lane = tmp_path / ".runtime" / "commit_queue" / "worktree"
+        _make_ps1(lane)
+        captured, result, sf = self._capture(reconciler_module, lane, tmp_path)
+        assert captured == []
+        written = json.loads(sf.read_text(encoding="utf-8"))
+        assert written["last_shadow_refuse_reason"].startswith("path_marker:")
+
+    def test_primary_root_still_ignites(self, reconciler_module, tmp_path):
+        """反向钉：无影子正证的根（等价主区）照常一发，且记 ignited_pending_verification。"""
+        main = tmp_path / "main"
+        _make_ps1(main)
+        captured, result, sf = self._capture(reconciler_module, main, tmp_path)
+        assert len(captured) == 1, "唯一检出点不得被误拦"
+        written = json.loads(sf.read_text(encoding="utf-8"))
+        assert written["last_run_outcome"] == "ignited_pending_verification"
+        assert "last_shadow_refuse_reason" not in written
+
+    def test_shadow_predicate_reports_why_without_raising(self, reconciler_module, tmp_path):
+        missing = tmp_path / "does_not_exist"
+        shadow, why = reconciler_module.is_shadow_checkout(missing)
+        assert shadow is False and why == "primary_or_unproven"
+
+
+class TestVmOffYield:
+    def _ignite(self, reconciler_module, tmp_path, vm):
+        main = tmp_path / "main"
+        _make_ps1(main)
+        sf = tmp_path / "state.json"
+        captured: list = []
+        with (
+            patch.object(reconciler_module, "PROJECT_ROOT", main),
+            patch.object(reconciler_module, "get_state_file", return_value=sf),
+            patch.object(reconciler_module, "_is_pid_alive", lambda pid: False),
+            patch.object(reconciler_module, "ch_guest_vm_running", lambda *a, **k: vm),
+            patch.object(
+                reconciler_module.subprocess,
+                "run",
+                lambda *a, **k: captured.append((a, k)) or SimpleNamespace(returncode=0, stdout="", stderr=""),
+            ),
+        ):
+            result = reconciler_module.reconcile([str(main / "src" / "x.py")], "sess-vm")
+        return captured, result, sf
+
+    def test_vm_off_yields_and_records_without_igniting(self, reconciler_module, tmp_path):
+        captured, result, sf = self._ignite(reconciler_module, tmp_path, ("OK", False))
+        assert captured == [], "VM Off 时不得点火（该轮 CH 腿结构性不可成功）"
+        written = json.loads(sf.read_text(encoding="utf-8"))
+        assert written["last_run_outcome"] == "vm_off_yield"
+        assert "vm_off" in written["last_yield_reason"]
+        assert _field(result, "action") == "warn"
+
+    def test_vm_running_ignites(self, reconciler_module, tmp_path):
+        captured, _, sf = self._ignite(reconciler_module, tmp_path, ("OK", True))
+        assert len(captured) == 1
+        assert json.loads(sf.read_text(encoding="utf-8"))["last_run_outcome"] == "ignited_pending_verification"
+
+    def test_unreadable_vm_probe_fails_open(self, reconciler_module, tmp_path):
+        """VM 状态查不到 ⇒ 放行并留痕：可用性优先，绝不因门禁失能而静默停备份。"""
+        captured, _, sf = self._ignite(reconciler_module, tmp_path, ("TIMEOUT", False))
+        assert len(captured) == 1
+        written = json.loads(sf.read_text(encoding="utf-8"))
+        assert written["last_run_outcome"] == "ignited_pending_verification"
+        assert written["last_vm_gate_probe"] == "TIMEOUT"
+
+    def test_missing_vm_name_config_fails_open(self, reconciler_module, tmp_path):
+        state, running = reconciler_module.ch_guest_vm_running(config={"ch_backup": {}})
+        assert state == "UNCONFIGURED" and running is True
+
+    def test_vm_query_parses_state_string(self, reconciler_module, tmp_path):
+        calls: list = []
+
+        def fake_run(*a, **k):
+            calls.append((a, k))
+            return SimpleNamespace(returncode=0, stdout="Running\n", stderr="")
+
+        with patch.object(reconciler_module.subprocess, "run", fake_run):
+            state, running = reconciler_module.ch_guest_vm_running(
+                config={"ch_backup": {"vm_name": "zephyr-ch"}},
+            )
+        assert (state, running) == ("OK", True)
+        assert "zephyr-ch" in " ".join(str(x) for x in calls[0][0])
+        with patch.object(
+            reconciler_module.subprocess,
+            "run",
+            lambda *a, **k: SimpleNamespace(returncode=0, stdout="Off\n", stderr=""),
+        ):
+            assert reconciler_module.ch_guest_vm_running(config={"ch_backup": {"vm_name": "zephyr-ch"}}) == (
+                "OK",
+                False,
+            )
+        with patch.object(
+            reconciler_module.subprocess,
+            "run",
+            lambda *a, **k: SimpleNamespace(returncode=1, stdout="", stderr="no module"),
+        ):
+            assert (
+                reconciler_module.ch_guest_vm_running(config={"ch_backup": {"vm_name": "zephyr-ch"}})[0] == "NO_OUTPUT"
+            )
