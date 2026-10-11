@@ -144,6 +144,9 @@ def test_charter_v2_schema_nominal_counts() -> None:
         "K_capital_ramp",
         "X_stop",
         "X_breaker",
+        # X_sector 于 2026-10-08 14:16 由 278f283636c（st-mx07-W5）加进共享册，active_if=phase>=3，
+        # 在 DEFAULT_CONTEXT(phase=1) 下同折叠——期望集当时未随更，本行补上（机械对齐，非挪判据门柱）
+        "X_sector",
     }
 
 
