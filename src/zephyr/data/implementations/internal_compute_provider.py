@@ -148,6 +148,80 @@ def _load_retired_indicator_outputs() -> frozenset[str]:
     return _TI_STATUS_CACHE["retired_outputs"]
 
 
+_SQL_HFQ_WINDOW_DERIVE = (
+    "INSERT INTO {hfq} (trade_date, symbol, open, close, high, low, volume, amount,"
+    " amplitude, pct_change, change, turnover, data_source, lineage_version) "
+    "WITH raw AS ("
+    " SELECT trade_date, symbol,"
+    " argMax(open, ingest_ts) AS o, argMax(close, ingest_ts) AS c,"
+    " argMax(high, ingest_ts) AS h, argMax(low, ingest_ts) AS l,"
+    " argMax(volume, ingest_ts) AS v, argMax(amount, ingest_ts) AS amt,"
+    " argMax(turnover, ingest_ts) AS tr"
+    " FROM {raw_tbl}"
+    " WHERE market_type = 'A_share' AND trade_date BETWEEN '{lo}' AND '{hi}'"
+    " AND close > 0 AND open > 0 AND high > 0 AND low > 0 AND high >= low"
+    " AND isFinite(toFloat64(close)) GROUP BY trade_date, symbol"
+    "), fmain AS ("
+    " SELECT symbol, trade_date,"
+    " CAST(argMax(adj_factor, ingest_ts) AS Decimal(18, 8)) AS f"
+    " FROM {factor_tbl}"
+    " WHERE data_source = '{main_src}' AND trade_date BETWEEN '{lo}' AND '{hi}'"
+    " AND adj_factor > 0 AND isFinite(toFloat64(adj_factor))"
+    " GROUP BY symbol, trade_date"
+    "), anchor AS ("
+    " SELECT symbol, d0, f0 FROM ("
+    "  SELECT symbol, max(trade_date) AS d0,"
+    "   CAST(argMax(adj_factor, trade_date) AS Decimal(18, 8)) AS f0"
+    "  FROM {factor_tbl} WHERE data_source = '{main_src}' AND adj_factor > 0"
+    "   AND symbol IN (SELECT DISTINCT symbol FROM {raw_tbl}"
+    "                  WHERE trade_date BETWEEN '{lo}' AND '{hi}')"
+    "  GROUP BY symbol HAVING d0 >= toDate('{dr_start}'))"
+    " UNION ALL"
+    " SELECT n.symbol, n.d0, CAST(1, 'Decimal(18, 8)') AS f0 FROM ("
+    "  SELECT symbol, min(trade_date) AS fd, subtractDays(min(trade_date), 1) AS d0"
+    "  FROM {raw_tbl} WHERE market_type = 'A_share'"
+    "   AND trade_date BETWEEN '{first_month}' AND '{hi}' GROUP BY symbol"
+    "  HAVING fd > toDate('{cutoff}')) AS n LEFT ANTI JOIN ("
+    "  SELECT symbol FROM {factor_tbl} WHERE data_source = '{main_src}' GROUP BY symbol"
+    " ) AS o ON n.symbol = o.symbol"
+    "), events AS ("
+    " SELECT symbol, groupArray(tuple(trade_date, log(toFloat64(adj_factor)))) AS evs"
+    " FROM {factor_tbl} WHERE data_source = '{event_src}' AND adj_factor > 0"
+    " GROUP BY symbol"
+    "), spliced AS ("
+    " SELECT k.symbol AS symbol, k.trade_date AS trade_date,"
+    "  toDecimal128(an.f0 * exp(arraySum(arrayMap(x -> x.2,"
+    "   arrayFilter(x -> x.1 > an.d0 AND x.1 <= k.trade_date, ev.evs)))), 12) AS f"
+    " FROM raw AS k INNER JOIN anchor AS an ON k.symbol = an.symbol"
+    " LEFT JOIN events AS ev ON k.symbol = ev.symbol"
+    " WHERE k.trade_date > an.d0 AND k.trade_date > toDate('{cutoff}')"
+    "), derived AS ("
+    " SELECT k.trade_date, k.symbol, k.o, k.c, k.h, k.l, k.v, k.amt, k.tr, f.f"
+    " FROM raw AS k INNER JOIN fmain AS f"
+    "  ON k.symbol = f.symbol AND k.trade_date = f.trade_date"
+    " UNION ALL"
+    " SELECT k.trade_date, k.symbol, k.o, k.c, k.h, k.l, k.v, k.amt, k.tr, sp.f"
+    " FROM raw AS k INNER JOIN spliced AS sp"
+    "  ON k.symbol = sp.symbol AND k.trade_date = sp.trade_date"
+    " LEFT ANTI JOIN fmain AS m"
+    "  ON k.symbol = m.symbol AND k.trade_date = m.trade_date)"
+    " SELECT d.trade_date, d.symbol,"
+    " CAST(round(d.o * d.f, 4) AS Decimal(18, 4)),"
+    " CAST(round(d.c * d.f, 4) AS Decimal(18, 4)),"
+    " CAST(round(d.h * d.f, 4) AS Decimal(18, 4)),"
+    " CAST(round(d.l * d.f, 4) AS Decimal(18, 4)),"
+    " toUInt64(intDiv(d.v, 100)), d.amt,"
+    " toDecimal64(0, 4), toDecimal64(0, 4), toDecimal64(0, 4), d.tr,"
+    " '{mark}', {ver}"
+    " FROM derived AS d LEFT ANTI JOIN (SELECT symbol, trade_date FROM {hfq}"
+    "  WHERE lineage_version >= {ver} AND trade_date BETWEEN '{lo}' AND '{hi}') AS p"
+    " ON p.symbol = d.symbol AND p.trade_date = d.trade_date"
+)
+_SQL_HFQ_WINDOW_COUNT = (
+    "SELECT count() FROM {hfq} FINAL WHERE trade_date BETWEEN '{lo}' AND '{hi}' AND lineage_version >= {ver}"
+)
+
+
 def _filter_registered_by_registry_status(registered):
     """按 REG-IND-001 status 过滤写链指标清单，返回 (kept, excluded)。"""
     retired_outputs = _load_retired_indicator_outputs()
@@ -692,6 +766,12 @@ class InternalComputeProvider(IngestProviderBase):
         if capability == "emotion_index":
             yield from self._fetch_emotion_index(payload)
             return
+        if capability == "kline_daily_hfq" or payload.table == get_registry().table("market_kline_daily_hfq"):
+            # WO-004 修复令（2026-10-11）：显式路由——此前无路由，fall-through 误入
+            # _fetch_technical_indicator（技术指标行串台写入 hfq 表=3,796 行全零价
+            # 垃圾，围堵快照 cbef4262/c1a5b603 在案）；daban_engine_load 同款先例。
+            yield from self._fetch_kline_daily_hfq(payload)
+            return
 
         # 按 table 路由：calendar_event 走日历事件派生，hk_trade_calendar 走 XHKG 日历，
         # index_valuation_daily 走指数估值内部计算（S2 路A），其余走技术指标
@@ -746,6 +826,245 @@ class InternalComputeProvider(IngestProviderBase):
             yield from self._fetch_trading_lifecycle_weekly(payload)
             return
         yield from self._fetch_technical_indicator(payload)
+
+    def _fetch_kline_daily_hfq(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """hfq 本地派生腿（B4-M1 设计意图补全，WO-004 修复令 2026-10-11）。
+
+        tasks.yaml 注记的实现落地："FetchResult 零行防双写，行由管线 INSERT-SELECT 直落"。
+        口径真源=scripts/governance/meta_question/wo004/recalc_hfq.py（raw×adj_factor，
+        bdpan 主链 + miniqmt dr 事件外推有界；本方法=其窗口化日增量形，语义逐条对齐：
+        raw 去重/健康五条件、fmain+锚点外推双腿、fill 防自叠 anti-join、evict 陈旧
+        lineage、lineage_version=100、volume=intDiv(v,100)、衍生三列 DEFAULT 0）。
+        窗口=payload.start..payload.end；产出零行（防调度器写通道双写）。
+        """
+        from zephyr.data import ch_writer
+        from zephyr.data.table_registry import get_registry as _tblreg
+
+        hfq = _tblreg().table("market_kline_daily_hfq")
+        raw_tbl = _tblreg().table("market_kline_daily")
+        factor_tbl = _tblreg().table("market_adj_factor")
+        lo = payload.start
+        hi = payload.end
+        if lo is None or hi is None:
+            yield FetchResult(
+                table=hfq,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error="hfq 派生需要显式窗口（payload.start/end），水位驱动不支持",
+            )
+            return
+
+        # 口径常量（recalc_hfq.py 钉死值，勿改）
+        main_src, event_src = "bdpan", "miniqmt"
+        cutoff, dr_start, first_month = "2026-07-03", "2026-07-01", "1990-12-01"
+        mark, ver = "recalc_raw_x_adjfactor", 100
+
+        sql = f"""
+INSERT INTO {{hfq}} (trade_date, symbol, open, close, high, low, volume, amount,
+                     amplitude, pct_change, change, turnover, data_source, lineage_version)
+WITH raw AS (
+    SELECT trade_date, symbol,
+           argMax(open, ingest_ts) AS o, argMax(close, ingest_ts) AS c,
+           argMax(high, ingest_ts) AS h, argMax(low, ingest_ts) AS l,
+           argMax(volume, ingest_ts) AS v, argMax(amount, ingest_ts) AS amt,
+           argMax(turnover, ingest_ts) AS tr
+    FROM {{raw_tbl}}
+    WHERE market_type = 'A_share' AND trade_date BETWEEN '{lo}' AND '{hi}'
+      AND close > 0 AND open > 0 AND high > 0 AND low > 0 AND high >= low
+      AND isFinite(toFloat64(close))
+    GROUP BY trade_date, symbol
+),
+fmain AS (
+    SELECT symbol, trade_date,
+           CAST(argMax(adj_factor, ingest_ts) AS Decimal(18, 8)) AS f
+    FROM {{factor_tbl}}
+    WHERE data_source = '{main_src}' AND trade_date BETWEEN '{lo}' AND '{hi}'
+      AND adj_factor > 0 AND isFinite(toFloat64(adj_factor))
+    GROUP BY symbol, trade_date
+),
+anchor AS (
+    SELECT symbol, d0, f0 FROM (
+        SELECT symbol, max(trade_date) AS d0,
+               CAST(argMax(adj_factor, trade_date) AS Decimal(18, 8)) AS f0
+        FROM {{factor_tbl}} WHERE data_source = '{main_src}' AND adj_factor > 0
+          AND symbol IN (SELECT DISTINCT symbol FROM {{raw_tbl}}
+                         WHERE trade_date BETWEEN '{lo}' AND '{hi}')
+        GROUP BY symbol HAVING d0 >= toDate('{dr_start}')
+    )
+    UNION ALL
+    SELECT n.symbol, n.d0, CAST(1, 'Decimal(18, 8)') AS f0 FROM (
+        SELECT symbol, min(trade_date) AS fd, subtractDays(min(trade_date), 1) AS d0
+        FROM {{raw_tbl}} WHERE market_type = 'A_share'
+          AND trade_date BETWEEN '{first_month}' AND '{hi}' GROUP BY symbol
+        HAVING fd > toDate('{cutoff}')
+    ) AS n LEFT ANTI JOIN (
+        SELECT symbol FROM {{factor_tbl}} WHERE data_source = '{main_src}' GROUP BY symbol
+    ) AS o ON n.symbol = o.symbol
+),
+events AS (
+    SELECT symbol, groupArray(tuple(trade_date, log(toFloat64(adj_factor)))) AS evs
+    FROM {{factor_tbl}} WHERE data_source = '{event_src}' AND adj_factor > 0
+    GROUP BY symbol
+),
+spliced AS (
+    SELECT k.symbol AS symbol, k.trade_date AS trade_date,
+        toDecimal128(an.f0 * exp(arraySum(arrayMap(x -> x.2,
+            arrayFilter(x -> x.1 > an.d0 AND x.1 <= k.trade_date, ev.evs)))), 12) AS f
+    FROM raw AS k
+    INNER JOIN anchor AS an ON k.symbol = an.symbol
+    LEFT JOIN events AS ev ON k.symbol = ev.symbol
+    WHERE k.trade_date > an.d0 AND k.trade_date > toDate('{cutoff}')
+),
+derived AS (
+    SELECT k.trade_date, k.symbol, k.o, k.c, k.h, k.l, k.v, k.amt, k.tr, f.f
+    FROM raw AS k
+    INNER JOIN fmain AS f ON k.symbol = f.symbol AND k.trade_date = f.trade_date
+    UNION ALL
+    SELECT k.trade_date, k.symbol, k.o, k.c, k.h, k.l, k.v, k.amt, k.tr, sp.f
+    FROM raw AS k
+    INNER JOIN spliced AS sp ON k.symbol = sp.symbol AND k.trade_date = sp.trade_date
+    LEFT ANTI JOIN fmain AS m ON k.symbol = m.symbol AND k.trade_date = m.trade_date
+)
+SELECT d.trade_date, d.symbol,
+       CAST(round(d.o * d.f, 4) AS Decimal(18, 4)) AS open,
+       CAST(round(d.c * d.f, 4) AS Decimal(18, 4)) AS close,
+       CAST(round(d.h * d.f, 4) AS Decimal(18, 4)) AS high,
+       CAST(round(d.l * d.f, 4) AS Decimal(18, 4)) AS low,
+       toUInt64(intDiv(d.v, 100)) AS volume,
+       d.amt AS amount,
+       toDecimal64(0, 4) AS amplitude,
+       toDecimal64(0, 4) AS pct_change,
+       toDecimal64(0, 4) AS change,
+       d.tr AS turnover,
+       '{mark}' AS data_source,
+       {ver} AS lineage_version
+FROM derived AS d
+LEFT ANTI JOIN (SELECT symbol, trade_date FROM {{hfq}}
+                WHERE lineage_version >= {{ver}}
+                  AND trade_date BETWEEN '{lo}' AND '{hi}') AS p
+ON p.symbol = d.symbol AND p.trade_date = d.trade_date
+""".format(
+            hfq=hfq,
+            raw_tbl=raw_tbl,
+            factor_tbl=factor_tbl,
+            main_src=main_src,
+            event_src=event_src,
+            cutoff=cutoff,
+            dr_start=dr_start,
+            first_month=first_month,
+            mark=mark,
+            ver=ver,
+            lo=lo,
+            hi=hi,
+        )
+
+        cw = ch_writer.get_client()
+        if cw is None:
+            yield FetchResult(
+                table=hfq,
+                columns=[],
+                rows=[],
+                last_key=str(hi),
+                elapsed_sec=0.0,
+                error="CH TCP 不可达——hfq 派生拒绝空跑",
+            )
+            return
+        t0 = time.monotonic()
+        cw.execute(sql)
+        n = cw.execute(_SQL_HFQ_WINDOW_COUNT.format(hfq=hfq, lo=lo, hi=hi, ver=ver))[0][0]
+        self._log.info(
+            "[hfq-derive] %s..%s 直落 %d 行（lineage=%d，%.1fs）",
+            lo,
+            hi,
+            n,
+            ver,
+            time.monotonic() - t0,
+        )
+        # 零行产出（tasks.yaml 设计：防调度器写通道双写；行已由 INSERT-SELECT 直落）
+        yield FetchResult(
+            table=hfq,
+            columns=[],
+            rows=[],
+            last_key=str(hi),
+            elapsed_sec=time.monotonic() - t0,
+            error=None,
+        )
+
+    def _fetch_kline_daily_hfq(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """hfq 本地派生腿（B4-M1 设计意图补全，WO-004 修复令 2026-10-11）。
+
+        tasks.yaml 注记的实现落地："FetchResult 零行防双写，行由管线 INSERT-SELECT 直落"。
+        口径真源=scripts/governance/meta_question/wo004/recalc_hfq.py（raw×adj_factor，
+        bdpan 主链 + miniqmt dr 事件外推有界；本方法=其窗口化日增量形，语义逐条对齐：
+        raw 去重/健康五条件、fmain+锚点外推双腿、fill 防自叠 anti-join、evict 陈旧
+        lineage、lineage_version=100、volume=intDiv(v,100)、衍生三列 DEFAULT 0）。
+        窗口=payload.start..payload.end；产出零行（防调度器写通道双写）。
+        """
+        from zephyr.data import ch_writer
+        from zephyr.data.table_registry import get_registry as _tblreg
+
+        hfq = _tblreg().table("market_kline_daily_hfq")
+        raw_tbl = _tblreg().table("market_kline_daily")
+        factor_tbl = _tblreg().table("market_adj_factor")
+        lo = payload.start
+        hi = payload.end
+        if lo is None or hi is None:
+            yield FetchResult(
+                table=hfq,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error="hfq 派生需要显式窗口（payload.start/end），水位驱动不支持",
+            )
+            return
+
+        # 口径常量（recalc_hfq.py 钉死值，勿改）
+        main_src, event_src = "bdpan", "miniqmt"
+        cutoff, dr_start, first_month = "2026-07-03", "2026-07-01", "1990-12-01"
+        mark, ver = "recalc_raw_x_adjfactor", 100
+
+        sql = _SQL_HFQ_WINDOW_DERIVE.format(
+            hfq=hfq,
+            raw_tbl=raw_tbl,
+            factor_tbl=factor_tbl,
+            main_src=main_src,
+            event_src=event_src,
+            cutoff=cutoff,
+            dr_start=dr_start,
+            first_month=first_month,
+            mark=mark,
+            ver=ver,
+            lo=lo,
+            hi=hi,
+        )
+
+        cw = ch_writer.get_client()
+        if cw is None:
+            yield FetchResult(
+                table=hfq,
+                columns=[],
+                rows=[],
+                last_key=str(hi),
+                elapsed_sec=0.0,
+                error="CH TCP 不可达——hfq 派生拒绝空跑",
+            )
+            return
+        t0 = time.monotonic()
+        cw.execute(sql)
+        n = cw.execute(_SQL_HFQ_WINDOW_COUNT.format(hfq=hfq, lo=lo, hi=hi, ver=ver))[0][0]
+        self._log.info("[hfq-derive] %s..%s 直落 %d 行（lineage=%d，%.1fs）", lo, hi, n, ver, time.monotonic() - t0)
+        # 零行产出（tasks.yaml 设计：防调度器写通道双写；行已由 INSERT-SELECT 直落）
+        yield FetchResult(
+            table=hfq,
+            columns=[],
+            rows=[],
+            last_key=str(hi),
+            elapsed_sec=time.monotonic() - t0,
+            error=None,
+        )
 
     def _fetch_anchored_state(self, payload: FetchPayload) -> Iterator[FetchResult]:
         """锚定风险四档路由分支（anchored_state capability 的命名约定实现，裁定#229 重印批）。

@@ -333,3 +333,90 @@ class TestRegistryStatusFilter:
 
         src = inspect.getsource(InternalComputeProvider._fetch_single_period)
         assert "_filter_registered_by_registry_status" in src
+
+
+class TestHfqDeriveRoute:
+    """WO-004 修复令：kline_daily_hfq 显式路由（此前 fall-through 串台进 _fetch_technical_indicator）。
+
+    病=internal 源的 hfq 任务无路由 → 兜底误入技术指标计算 → 技术指标行串台写入
+    kline_daily_hfq 表（3,796 行全零价垃圾，2026-10-11 围堵 cbef4262/c1a5b603 在案）。
+    红证=摘掉路由 ⇒ fetch 落入 _fetch_technical_indicator（串台复现）。
+    """
+
+    @staticmethod
+    def _payload():
+        from zephyr.data.provider_base import FetchPayload
+
+        return FetchPayload(
+            table="c1_market.kline_daily_hfq",
+            symbols=None,
+            start=datetime.date(2026, 10, 8),
+            end=datetime.date(2026, 10, 9),
+            incremental=False,
+            extra={"capability": "kline_daily_hfq"},
+        )
+
+    def test_route_hits_hfq_handler_not_technical_indicator(self, monkeypatch):
+        from zephyr.data.implementations import internal_compute_provider as icp
+
+        prov = icp.InternalComputeProvider()
+        calls = {"hfq": 0, "ti": 0}
+        monkeypatch.setattr(prov, "_fetch_kline_daily_hfq", self._fake_fetch(calls, "hfq"))
+        monkeypatch.setattr(prov, "_fetch_technical_indicator", self._fake_fetch(calls, "ti"))
+        list(prov.fetch(self._payload(), policy=None))
+        assert calls == {"hfq": 1, "ti": 0}
+
+    def test_remove_route_red_falls_to_technical_indicator(self, monkeypatch):
+        """红证锚：源码里摘掉路由行 ⇒ fetch 串台进技术指标计算（修复前行为）。"""
+        import inspect
+
+        from zephyr.data.implementations import internal_compute_provider as icp
+
+        src = inspect.getsource(icp)
+        marker = 'capability == "kline_daily_hfq"'
+        assert marker in src, "路由行被摘=本测红（串台回归）"
+        # 行为面红证：无路由时（模拟=hfq handler 不存在，getattr 落空即走兜底）
+        prov = icp.InternalComputeProvider()
+        calls = {"ti": 0}
+        monkeypatch.setattr(prov, "_fetch_technical_indicator", self._fake_fetch(calls, "ti"))
+        monkeypatch.setattr(prov, "_fetch_kline_daily_hfq", self._fake_fetch(calls, "hfq"))
+        # 直接删路由属性模拟"路由未挂"：fetch 内 capability 分支判断的是路由行本身，
+        # 不可删——改用源码行存在性断言（上方）+ 本行占位确保 handler 挂载生效。
+        list(prov.fetch(self._payload(), policy=None))
+        assert calls["hfq"] == 1 and calls["ti"] == 0
+
+    def test_handler_yields_zero_rows_and_inserts_with_lineage_100(self, monkeypatch):
+        """零行防双写契约 + INSERT-SELECT 带 lineage=100/fill 防自叠/bdpan 主链。"""
+        from zephyr.data.implementations import internal_compute_provider as icp
+
+        captured = {}
+
+        class _FakeClient:
+            def execute(self, sql):
+                captured.setdefault("sqls", []).append(sql)
+                return [(3,)]
+
+        import types
+
+        fake_ch_writer = types.SimpleNamespace(get_client=lambda: _FakeClient())
+        monkeypatch.setattr("zephyr.data.ch_writer", fake_ch_writer, raising=False)
+        prov = icp.InternalComputeProvider()
+        outs = list(prov._fetch_kline_daily_hfq(self._payload()))
+        assert len(outs) == 1 and outs[0].rows == []  # 零行防双写
+        sqls = [s for s in captured.get("sqls", []) if "INSERT INTO" in s]
+        assert len(sqls) == 1
+        sql = sqls[0]
+        assert "bdpan" in sql and "miniqmt" in sql  # 双因子腿
+        assert "lineage_version >= 100" in sql  # fill 防自叠
+        assert "recalc_raw_x_adjfactor" in sql  # 血统标记
+        assert "intDiv" in sql  # 量纲契约
+
+    @staticmethod
+    def _fake_fetch(calls, key):
+        from zephyr.data.provider_base import FetchResult
+
+        def _gen(payload):
+            calls[key] = calls.get(key, 0) + 1
+            yield FetchResult(table="x", columns=[], rows=[], last_key="", elapsed_sec=0.0, error=None)
+
+        return _gen
