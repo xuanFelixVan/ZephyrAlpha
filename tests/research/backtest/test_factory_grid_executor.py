@@ -699,3 +699,34 @@ def test_woa4_probe_schema_breadth_neighborhood_is_72_cells():
     for fname, want in (("search_space_prereg_t3a.yaml", 725760), ("search_space_prereg_t3b.yaml", 4354560)):
         book = yaml.safe_load((_REPO / "config" / fname).read_text(encoding="utf-8"))
         assert book["exam_definition"]["n_raw_expected"] == want, f"{fname} 冻结名义空间被挤歪"
+
+
+def test_gpu_wave_wrapper_forwards_every_parameter():
+    """结构守卫（2026-10-11 19:2x 自爆回归）：包装段两条重跑分支必须**整体**转发参数。
+
+    病根：run_batch 的 `if not _gpu_rerun` 包装段原先在两条分支里各手写一遍 kwargs，
+    我新加的 schema_path/freeze_dims 只加到了函数签名与真正的实现段，两条重跑分支漏了
+    ⇒ 带 --freeze-dims-json 的跑批**静默**退回全空间抽样（batch_meta.freeze_dims=None 是唯一痕迹，
+    靠它我才抓到；200 格实测跑成了全空间样本而非 36 格窄批）。
+    现在收成单点 _fwd 字典＋`**_fwd`，故此用例查两件事：①_fwd 里必须含这两个新键；
+    ②每个内部 run_batch(...) 调用必须带 ** 展开（禁再回到手写 kwargs）。
+    """
+    import ast
+    import pathlib
+
+    src = pathlib.Path(mod.__file__).read_text(encoding="utf-8")
+    tree = ast.parse(src)
+    fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name == "run_batch")
+    fwd_keys = set()
+    for node in ast.walk(fn):
+        if isinstance(node, ast.Assign) and any(isinstance(tg, ast.Name) and tg.id == "_fwd" for tg in node.targets):
+            fwd_keys = {k.value for k in node.value.keys if isinstance(k, ast.Constant)}
+    assert {"schema_path", "freeze_dims"} <= fwd_keys, f"_fwd 转发面缺新参数：{sorted(fwd_keys)}"
+    inner = [n for n in ast.walk(fn) if isinstance(n, ast.Call) and getattr(n.func, "id", "") == "run_batch"]
+    assert inner, "包装段未找到内部 run_batch 调用（结构被改动，请同步本守卫）"
+    for call in inner:
+        assert any(k.arg is None for k in call.keywords), "内部重跑调用未用 **_fwd 整体转发＝回归风险复发"
+    # 签名里的每个参数都必须在 _fwd 里（engine/engine_degrade/_gpu_rerun 由调用点显式覆盖）
+    sig = {a.arg for a in fn.args.args} | {a.arg for a in fn.args.kwonlyargs}
+    uncovered = sig - fwd_keys - {"engine", "engine_degrade", "_gpu_rerun"}
+    assert not uncovered, f"这些参数没进 _fwd，将来必然重演静默丢参：{sorted(uncovered)}"
