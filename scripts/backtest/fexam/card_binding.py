@@ -849,6 +849,61 @@ def _arm_pair_builder():
 #: 空册是**有意**的：底座只能由在册重放装置产出，禁在绑定层现编近似序列冒充分母
 #: （arm_protocol_binding.ArmBaseMissing 同一纪律）。每接一个来源，须同批改
 #: tests/backtest/test_card_binding.py 的接线用例与册格 arm_base_source 字段。
+
+
+def _exit_sim_baseline(card: dict, entry: dict) -> Any:
+    """底座来源＝在册离场仿真装置（06 卡 piece_1/2/3/4 的符号引用链落地处）。
+
+    只搬运在册装置的输入与输出，零新撮合、零自拟参数：列提取仍受 prereg 冻结清单自校
+    （run_all 同款断言），敞口与净值直接取 simulate 交出的 st["exposure_daily"] 与 nav。
+    series 面（级别/迟滞序列）此处**留空**：级别判定真源在 src/zephyr/risk/core/
+    drawdown_state_machine.py（事件步进式类，非序列进序列出），它的日频适配器未落地前，
+    本来源不许自造级别序列——册格引用 "series:<名>" 会在 _resolve_named_series 处
+    fail-closed 抛 ArmParamUnfrozen（＝不开考，不是出错分）。
+    """
+    from fexam.arm_protocol_binding import ArmBase  # noqa: PLC0415
+    from fexam.exit_sim.exit_simulator import (  # noqa: PLC0415
+        atr14_wilder,
+        build_signals,
+        load_indicator,
+        load_kline,
+        load_pass_columns,
+        simulate,
+    )
+
+    cols = load_pass_columns()
+    if not cols:
+        raise RuntimeError("exit_sim_baseline: 在册指标列提取为空（装置无输入，拒装配）")
+    kline_open = load_kline("open")
+    kline_high = load_kline("high")
+    kline_low = load_kline("low")
+    kline_close = load_kline("close")
+    atr = atr14_wilder(kline_close, kline_high, kline_low)
+    ind_panels = {k: v for k, v in ((k, load_indicator(k)) for k, _ in cols) if not v.empty}
+    signals, close_run, reb_rows = build_signals(ind_panels, kline_close, atr)
+    nav, st = simulate(
+        kline_open.reindex(close_run.index),
+        close_run,
+        atr.reindex(close_run.index),
+        signals,
+        reb_rows,
+        stop_enabled=True,
+    )
+    exposure = st.get("exposure_daily")
+    if exposure is None:
+        raise RuntimeError("exit_sim_baseline: 装置未交付 exposure_daily 返回面（返回面扩展未落地？）")
+    daily_return = nav.astype("float64").pct_change().dropna()
+    return ArmBase(
+        exposure=pd.Series(exposure).reindex(pd.DatetimeIndex(nav.index)),
+        daily_return=daily_return,
+        series={},
+        face_id="exit_sim_baseline_nav",
+    )
+
+
+#: 注册动作刻意留给下一袋（净绿才投）：本袋若同时填入本册，在册的空册纪律桩
+#: test_arm_base_sources_book_starts_empty_by_design 会当场红，中间态红＝整袋死信。
+#: 下一袋＝注册 + 该桩按新纪律句重写（"册内只准在册已签认来源，未列名仍 fail-closed"）同批落。
 ARM_BASE_SOURCES: dict[str, Any] = {}
 
 
@@ -937,10 +992,13 @@ def run_one(
                     "card_id": cid,
                     "error": f"arm_base_source_unwired:{src or '(empty)'}（双臂卡须声明底座来源且该来源已在 ARM_BASE_SOURCES 接线）",
                 }
-            tgt_arm = index_next_day_return()
-            sig, sig_b, tgt, ev = arms_from_binding_book(
-                card, entry, base=ARM_BASE_SOURCES[src](card, entry), target=tgt_arm
-            )
+            src_obj = ARM_BASE_SOURCES[src](card, entry)
+            # r 位（甲案第 5 步）：新来源自报底座日收益＝与 e 位同一次装置调用产出，
+            # 不再硬编外部指数；旧形状（裸 Series）来源仍走旧通道，由身份断言闸只管新面。
+            tgt_arm = getattr(src_obj, "daily_return", None)
+            if tgt_arm is None:
+                tgt_arm = index_next_day_return()
+            sig, sig_b, tgt, ev = arms_from_binding_book(card, entry, base=src_obj, target=tgt_arm)
         elif entry is not None:
             sig, ev = run_binding_book(card, entry)
         else:

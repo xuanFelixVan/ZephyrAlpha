@@ -384,6 +384,79 @@ ARM_OPS: dict[str, dict[str, Any]] = {
 # ──────────────────────────────────────────────────────────────────────────────
 
 
+#: 底座来源身份 → 该身份在卡面 r 引句里必须留下的字样（甲案第 5 步的同一性断言词表）。
+#: 词表只服务一件事：**注入的序列是不是引句讲的那一条**。引句写"基线臂日净值"而喂指数，
+#: 形状与量帽全都过关（日收益就是日收益），只有身份这一层能红——所以词表按"面"不按"名"。
+FACE_ID_KEYWORDS: dict[str, tuple[str, ...]] = {
+    "exit_sim_baseline_nav": ("基线臂日净值", "日收益序列"),
+    "index_csi300_next_day": ("指数", "000300"),
+}
+
+
+class ArmBase:
+    """底座来源的交付面（一次装置调用同时交出 e 位基准敞口、r 位日收益与命名序列）。
+
+    `series` 是给臂算子**按名注入**的序列槽（如双 levels：迟滞状态序列与无迟滞序列），
+    册格写 `levels: "series:levels_hysteresis"` 即可——判定/迟滞逻辑一律由在册件回放产出，
+    本件零重写（15_ 册 scope_must 第 3 条：适配器只做参数搬运与产物对齐）。
+    """
+
+    def __init__(
+        self,
+        exposure: pd.Series,
+        daily_return: pd.Series,
+        series: dict[str, pd.Series] | None = None,
+        face_id: str = "",
+    ) -> None:
+        self.exposure = exposure
+        self.daily_return = daily_return
+        self.series = dict(series or {})
+        self.face_id = face_id
+
+
+def _unwrap_base(base: Any) -> Any:
+    return base.exposure if isinstance(base, ArmBase) else base
+
+
+def _resolve_named_series(params: dict, base: Any) -> dict:
+    """把 params 里形如 "series:<名>" 的值换成底座交付的序列；名不在册即拒（禁静默缺省）。"""
+    out = dict(params)
+    pool = getattr(base, "series", None)
+    for key, val in list(out.items()):
+        if isinstance(val, str) and val.startswith("series:"):
+            name = val[len("series:") :]
+            if not isinstance(pool, dict) or name not in pool:
+                raise ArmParamUnfrozen(
+                    f"series_unavailable:{key}={val}（底座来源未交付该命名序列；"
+                    f"在册可用名={sorted(pool) if isinstance(pool, dict) else '（本底座无 series 面）'}）"
+                )
+            out[key] = pool[name]
+    return out
+
+
+def require_target_identity(base: Any, r_face_quote: str, card_id: str) -> str:
+    """r 位身份断言：底座自报的 face_id 必须在该卡面 r 引句里留下字样。
+
+    这是"喂错底座必红"的那颗闸：量纲帽（require_daily_return_face）挡不住"敞口×指数收益"
+    冒充"敞口×基线组合收益"，因为两者都是合格的日收益序列——只有身份层能分。
+    """
+    face_id = getattr(base, "face_id", "") or ""
+    kws = FACE_ID_KEYWORDS.get(face_id)
+    if kws is None:
+        raise ArmFaceMismatch(
+            f"target_face_id_unknown:{card_id}（底座 face_id={face_id!r} 不在身份词表内，"
+            f"新来源须先在 FACE_ID_KEYWORDS 登记其卡面字样）"
+        )
+    norm = str(r_face_quote).replace(" ", "")
+    if not any(kw.replace(" ", "") in norm for kw in kws):
+        raise ArmFaceMismatch(
+            f"target_face_mismatch:{card_id}（底座 face_id={face_id!r} 要求 r 引句含 "
+            f"{list(kws)} 任一字样，实得引句={str(r_face_quote)[:80]!r}——"
+            f"喂错底座会算成择时面而不是风控面，且形状/量帽两把尺都查不出）"
+        )
+    return face_id
+
+
 def build_arms(card: dict, entry: dict, base: pd.Series | None = None) -> tuple[pd.Series, pd.Series, dict]:
     """臂册格 → (开臂敞口, 基臂敞口, 凭据)；双校验＝算子存在性 + 引句在卡面（缺一即拒）。
 
@@ -403,7 +476,9 @@ def build_arms(card: dict, entry: dict, base: pd.Series | None = None) -> tuple[
         quote = entry.get(f"quote_{side}") or spec["quote"]
         verify_arm_quote(card, str(quote), str(op))
         params = dict(entry.get(f"params_{side}") or {})
-        series = spec["fn"](base, params, entry.get("args") or {})
+        by_name = {k: v for k, v in params.items() if isinstance(v, str) and v.startswith("series:")}
+        params = _resolve_named_series(params, base)
+        series = spec["fn"](_unwrap_base(base), params, entry.get("args") or {})
         # 算子产出必过 e 位面校验（含 arm_identity 直喂底座那条路——底座是收益面时这里就红）
         series = require_exposure_face(series, name=f"arm_{side}", card_id=cid)
         out.append(series)
@@ -412,6 +487,8 @@ def build_arms(card: dict, entry: dict, base: pd.Series | None = None) -> tuple[
         ev.setdefault("params", {})[side] = {
             k: (f"<Series len={len(v)}>" if isinstance(v, pd.Series) else v) for k, v in params.items()
         }
+        if by_name:
+            ev.setdefault("series_injected", {})[side] = by_name
     ev["target_face"] = "同一底座日收益（run_card 的 t 敞口 × t+1 目标即卡面按次日开/收盘改写净值路径的标量读法）"
     return out[0], out[1], ev
 
@@ -427,14 +504,21 @@ def build_arm_pair(
     没声明 r 位的装配一旦喂进判官，就正是那颗"出假分不报错"的雷。
     """
     face = verify_face_pair_quotes(card, entry)
+    cid = str(card.get("card_id"))
+    # 身份断言放在量帽之前：底座一旦不是引句讲的那条，后面的"日收益合格"只会把错面洗成可信数
+    ev_face_id = require_target_identity(base, face["r_face_quote"], cid) if isinstance(base, ArmBase) else ""
+    if target is None and isinstance(base, ArmBase):
+        target = base.daily_return  # 单一来源同时交 e/r 两面（06 卡 piece_4 的同调用要求）
     open_arm, base_arm, ev = build_arms(card, entry, base=base)
     if target is None:
         raise ArmBaseMissing(
             f"arm_target_series_missing:{card.get('card_id')}（r 位须由绑定册注入底座日收益，本件不取数）"
         )
     tgt = _to_dates(pd.Series(target).sort_index())
-    require_daily_return_face(tgt, name="target", card_id=str(card.get("card_id")))
+    require_daily_return_face(tgt, name="target", card_id=cid)
     ev.update(face_contract=face, target_len=int(len(tgt)))
+    if ev_face_id:
+        ev["target_face_id"] = ev_face_id
     return open_arm, base_arm, tgt, ev
 
 
