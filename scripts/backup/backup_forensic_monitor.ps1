@@ -49,10 +49,26 @@ function LogLine([string]$s, [string]$Path) {
 # Returns the number of events actually written. A zero return is RECORDED as an
 # explicit "none" line: an empty OS event window around a silent death is the
 # side-signal of a userland kill, and the old script left that fact unlogged.
-function Dump-EventWindow([string]$LogName, [int]$Minutes, [string]$Path) {
+function Dump-EventWindow([string]$LogName, [int]$Minutes, [string]$Path, [object]$Anchor = $null) {
   $count = 0
+  # Window anchor (backfix T4, 2026-10-11): the dump used to key off the wall clock, so
+  # a patrol reading 30 min after a death scanned [now-15min, now] and could leave the
+  # true death minute OUTSIDE the window -- observed on case #15, where the EVT rows
+  # covered 12:20:07-12:24:46 while the real exit line was 12:19:17. With an anchor the
+  # window is [death-Min, death+2min]: the death minute can no longer fall out of the
+  # readout, and post-mortem noise stays visible. Evidence widening only - no event is
+  # dropped and no judgment or threshold moves. No anchor -> old behaviour unchanged.
+  $fh = @{LogName = $LogName }
+  if ($null -eq $Anchor) {
+    $fh.StartTime = (Get-Date).AddMinutes(-$Minutes)
+    $winDesc = "anchored=now"
+  } else {
+    $fh.StartTime = $Anchor.AddMinutes(-$Minutes)
+    $fh.EndTime = $Anchor.AddMinutes(2)
+    $winDesc = "anchored=death[" + $fh.StartTime.ToString("HH:mm:ss") + ".." + $fh.EndTime.ToString("HH:mm:ss") + "]"
+  }
   try {
-    $ev = Get-WinEvent -FilterHashtable @{LogName = $LogName; StartTime = (Get-Date).AddMinutes(-$Minutes) } -MaxEvents 40 -ErrorAction SilentlyContinue
+    $ev = Get-WinEvent -FilterHashtable $fh -MaxEvents 40 -ErrorAction SilentlyContinue
     foreach ($e in @($ev)) {
       if ($null -eq $e) { continue }
       try {
@@ -66,7 +82,7 @@ function Dump-EventWindow([string]$LogName, [int]$Minutes, [string]$Path) {
       } catch { LogLine ("EVT_ITEM_ERR " + $_.Exception.Message) $Path }
     }
   } catch { LogLine ("EVT_QUERY_FAIL " + $LogName + " " + $_.Exception.Message) $Path }
-  if ($count -eq 0) { LogLine ("EVT_" + $LogName + " none within " + $Minutes + "min window (empty OS log = userland kill side-signal)") $Path }
+  if ($count -eq 0) { LogLine ("EVT_" + $LogName + " none within " + $Minutes + "min window " + $winDesc + " (empty OS log = userland kill side-signal)") $Path }
   return $count
 }
 
@@ -111,8 +127,8 @@ function Get-KillerCandidates([datetime]$DeathTime, [int]$VictimPid, [string]$Pa
 # ---- death forensics burst (shared by both modes) ----
 function Invoke-DeathForensics([int]$VictimPid, [datetime]$DeathTime, [string]$Path) {
   LogLine ("TARGET_DEATH pid=" + $VictimPid + " detected_at=" + (Get-Date -Format "yyyy-MM-dd HH:mm:ss")) $Path
-  $null = Dump-EventWindow -LogName "System" -Minutes 15 -Path $Path
-  $null = Dump-EventWindow -LogName "Application" -Minutes 15 -Path $Path
+  $null = Dump-EventWindow -LogName "System" -Minutes 15 -Path $Path -Anchor $DeathTime
+  $null = Dump-EventWindow -LogName "Application" -Minutes 15 -Path $Path -Anchor $DeathTime
   $c = Get-KillerCandidates -DeathTime $DeathTime -VictimPid $VictimPid -Path $Path
   LogLine ("FORENSICS_DONE candidates=" + $c.Count) $Path
 }
