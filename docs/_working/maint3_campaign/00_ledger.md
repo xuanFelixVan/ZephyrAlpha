@@ -254,3 +254,16 @@ GPU 工单施工班 `a2c46fddca`（00:1x）落了 `scripts/tasks/register/regist
 **待 Owner/统筹回话三件（本班不擅动）**：R1（OS 计划任务重注册＝改活任务；09:45/09:50/06:10 三处**运行态尚未生效**，
 可回退命令在 §二/§五）、R10（外来 staged 删除的归属处置）、R11（`weekend_calibration` 名实差一天）。
 
+**R13（终检时抓到的活体复现，补记）**：四文件合跑时
+`test_resource_schedule_regen_check.py::test_main_view_freshness_only_for_production_registry`
+报 teardown ERROR，`#ARCH-084` 把"生产热册 `capability_canonical_file_registry.yaml` 被写"
+记到 `test_generate_…::test_full_registry_build_and_drift_check` 名下。**先查再判"是不是我改的"，
+结论＝非本班**，三证：①同一组合第一轮 122 passed 零 ERROR（不可复现＝非代码性质）；②该支单跑 passed；
+③写审计尾部三条命中该册：**00:50:18 pid=50640、00:51:00 pid=42252、00:51:43 pid=16932
+——三个不同 pid、`session` 全为空串，85 秒内连写三次**，而本班那一轮只有一个 pytest 进程。
+⇒ 这正是项 4 案卷 §⑥ 点名的缺陷面（写者 `session_id=""`，`os.environ.get("ZEPHYR_SESSION_ID","")`
+未置位）＋§③"会话零动作时也有在册写手改写共享面"的**第二次独立复现**（前一次＝23:26:04 那次，
+当时用"单跑该测 mtime/sha 前后逐字节同"排除）。含义：**方向闸若不带"写者必须填 sid"这一条，
+这类写入永远归不到人**（根宪法 §3.4 owner 责任制落空）——案卷 §⑥ 已把该要求写进提案，本班不放宽判据。
+本班交付面不受影响：16 件在 `dbc86560e3`、结工单段在 `40a48dbbe0`，四文件合跑读数 122 passed。
+
