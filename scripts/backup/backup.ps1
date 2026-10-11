@@ -68,7 +68,14 @@ $script:JournalFile = "$ProjectRoot\logs\backup_runlog_$script:RunStamp.log"
 $script:TranscriptFile = "$ProjectRoot\logs\backup_transcript_$script:RunStamp.log"
 function Write-Journal($line) {
     try {
-        Add-Content -LiteralPath $script:JournalFile -Value ((Get-Date).ToString('yyyy-MM-dd HH:mm:ss') + ' | ' + $line)
+        # Encoding fix (2026-10-12, owner ruling: GBK runlog defect, promoted to a work order):
+        # Add-Content without
+        # -Encoding inherits the console code page (936/GBK here), so any line carrying native
+        # Chinese error text became undecodable as UTF-8 -- the run journal failed strict
+        # UTF-8 decoding on both completed samples. Write explicit UTF-8 (no BOM), same
+        # caliber as the report writer below. No pipeline branch, no judgement, no threshold touched.
+        $text = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss') + ' | ' + $line + [Environment]::NewLine
+        [System.IO.File]::AppendAllText($script:JournalFile, $text, (New-Object System.Text.UTF8Encoding($false)))
     } catch { }
 }
 # Stage timeline (2026-09-25 audit): a 9.1h pass could previously only be

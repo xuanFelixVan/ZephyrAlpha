@@ -111,3 +111,68 @@ def test_dumps_rotation_leg_logs_the_state_value_it_read() -> None:
     assert '$dumpsStateOk = ($dumpsStateRead -eq "ok")' in text, '判据被改动（应仍比较 "ok"）'
     assert "state last_ch_backup_status={0}" in text or "state last_ch_backup_status={1}" in text, "两条出口未内插读值"
     assert 'Write-Warn "DB dumps rotation skipped (CH backup not ok' not in text, "仍留着不可归因的旧 WARN"
+
+
+def _extract_ps_function(text: str, name: str) -> str:
+    """按大括号配对切出顶层 function 原文（含签名行），用于把单个函数搬进临时 harness 真跑。"""
+    marker = "function " + name
+    start = text.index(marker)
+    brace = text.index("{", start)
+    depth = 0
+    for idx in range(brace, len(text)):
+        ch = text[idx]
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start : idx + 1]
+    raise AssertionError("unbalanced braces for " + name)
+
+
+def test_journal_writer_emits_strict_utf8(tmp_path) -> None:
+    """⑫同款可观测性修复（2026-10-12 统筹批复二）：run journal 必须是显式 UTF-8（无 BOM）。
+
+    病形实测：两支完赛样本（194841／225255）严格 UTF-8 解码当场抛错（0xd3@3249／0xbb@2719），
+    根因是 `Add-Content` 不带 -Encoding 时继承控制台代码页（本机 936/GBK），凡带中文原生
+    错误文本的行就永久解不开——"日志在，但读不出"。本测把真函数搬进 harness 真写一行中文，
+    再严格解码回来的字节；harness 本身保持纯 ASCII（PS5.1 读无 BOM UTF-8 脚本会按 ANSI 解，
+    中文源码字面量本身就会被曲解），故中文字符用 [char]0xXXXX 构造。
+    """
+    src = (BACKUP_DIR / "backup.ps1").read_text(encoding="utf-8")
+    fn = _extract_ps_function(src, "Write-Journal")
+    out = tmp_path / "journal.log"
+    harness = tmp_path / "journal_harness.ps1"
+    body = (
+        "$script:JournalFile = '"
+        + out.as_posix().replace("/", "\\")
+        + "'\n"
+        + fn
+        + "\n$zh = [string][char]0x4E2D + [string][char]0x6587\n"
+        + "Write-Journal ('WARN ' + $zh + ' native error text')\n"
+    )
+    harness.write_text(body, encoding="ascii")
+    proc = _run_ps("& '" + harness.as_posix().replace("/", "\\") + "'")
+    assert proc.returncode == 0, f"harness 未跑通: {proc.stderr[:200]}"
+    assert out.exists(), "Write-Journal 没产出任何文件（函数搬家失败或路径不对）"
+    data = out.read_bytes()
+    assert not data.startswith(b"\xef\xbb\xbf"), "journal 落成带 BOM，与 report 的无 BOM 口径不一致"
+    text = data.decode("utf-8")  # 严格解码：GBK 字节会在这里抛 UnicodeDecodeError
+    assert "中文" in text, f"中文行没原样回来: {text!r}"
+    assert "| WARN 中文 native error text" in text, "行格式（时刻 | 消息）被改动"
+
+
+def test_journal_writer_does_not_rely_on_bare_add_content() -> None:
+    """结构位：禁回退到 `Add-Content -LiteralPath $script:JournalFile`（无 -Encoding 即继承代码页）。
+
+    只看**语句位**，不看注释——修因说明里合法地提到 Add-Content。
+    """
+    src = (BACKUP_DIR / "backup.ps1").read_text(encoding="utf-8")
+    fn = _extract_ps_function(src, "Write-Journal")
+    code = [ln.strip() for ln in fn.splitlines() if ln.strip() and not ln.strip().startswith("#")]
+    assert not [ln for ln in code if ln.startswith("Add-Content")], (
+        "Write-Journal 回退到 Add-Content 隐式编码（GBK 陷阱源头）"
+    )
+    joined = " ".join(code)
+    assert "UTF8Encoding" in joined and "$false" in joined, "没写明显式 UTF-8 且无 BOM"
+    assert "AppendAllText" in joined, "写盘口被换成未知路径，回归测与结构测须一起复核"
