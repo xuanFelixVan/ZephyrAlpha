@@ -497,3 +497,56 @@ python .runtime/tmp/st-deadcure3-20261010/tools/adjudicate3.py        # 四终�
 python .runtime/tmp/st-deadcure3-20261010/tools/deadcure3.py verify --qid <q>   # 归档后反查
 python .runtime/tmp/st-deadcure3-20261010/tools/deadcure3.py restore --qid <q>  # 回滚
 ```
+
+## 二十、②试点落地面与转批清单（总统统筹三选全批·本轮执行账）
+
+### 20.1 落地面（批复 1，实测非声明）
+
+| 段 | 实测值 |
+|---|---|
+| 属主三态 | `st-tests-chief-20261004` dead（queue=fs=4442min，`why=[]`） |
+| 净绿前置（仅 4 件·同分钟） | **29 passed / 0 failed**；主区跑＋`PYTHONNOUSERSITE=1`＋断言 `zephyr.__file__` 落主区 src（**不在落后约百 commit 的车道分支跑＝拒假绿**） |
+| token 精确登记 | 窄前缀 `tests/data/dr` dry-run 预览＝**恰好 4 条**（免 `--wide-prefix`，零污染）→ 实登记成功 |
+| 落地 commit | `942c8ca98c`（袋 `q-20261011-st-deadcure3-20261010-0002`，state=done） |
+| 归属核账 | `git show --stat`＝**恰 4 件 / 1036 行全为纯新增 / 零外来吸收**；4 路径 `git cat-file -e HEAD:` 全 OK |
+| 源袋处置 | **不归档**（判据：该族 153 袋含 4151 路径，此 4 件仅其一片，归档袋＝连带销毁其余未落地内容）。只记"这 4 路径 `revive_landed`"，袋留 `dead/` |
+
+### 20.2 呈批核心证据：tests 族分层剥皮（这才是"该复活还是该判废"的答案）
+
+| 层 | 数 | 含义 |
+|---|---:|---|
+| 族内 tests 路径 | 4139 | 袋面全量 |
+| 已在 HEAD（精确路径） | 3202 | 复活＝空转，**不是缺口** |
+| basename 在 HEAD 他处＝搬家 | 580 | 二期自述"缺的 tests 新家取代面"，本轮补上该判据后剔除 |
+| **真缺＝全 HEAD 查无** | **357** | 唯一需要裁的靶 |
+| 袋内字节可取 | 354 | 3 件 blob 已不可取 |
+| import 在现行 HEAD 可解析 | 258 | 可原样复活 |
+| 真缺模块（非探针未定） | 4 | 余 92 件＝我的正则未匹配 `zephyr.` 导入，属未定非判死 |
+
+更正一条本班自错：前轮报"126 袋／13,801 行"用了 `sum(max_lines_only_in_bag)`（每袋只取最大文件）＝**严重少记**；逐文件真值＝153 袋／4151 路径／46,750 唯一行。**教训入法：行数口径一律逐文件求和，袋级 max 只可用于排序不可用于报量。**
+
+### 20.3 移交件（批复 2，本班不顺手改判据）
+
+`tests/data/backup/test_restore_drill.py` **未入本袋**（staged=0 实测确认）。它首轮即测出真缺陷：`scripts/backup/restore_drill.py` 失败路径报告字典缺 `pass`/`criteria` 两键（`KeyError: 'pass'`；打印 `status=failed pass=None criteria={}`）。已排除"实现未落地"这一省事解释——**没有任何死信袋携带 `restore_drill.py`**，故属实现与报告契约确实不一致。按统筹裁定移交 `st-backfix3` 加急（与静默早退同文件族＝backup 报告契约病，同批修）；修复落地后本班只投该测试件。证据案卷＝`common/pilot_dr_first_run.json`。
+
+### 20.4 新死因上报（铁律#5 只上报不自裁）
+
+`batch_creation_tokens.py` **实跑段**（写路径）import `registry_ledger` 时 `ModuleNotFoundError: No module named 'schemas.categories'`。零成本定性＝非缺模块（盘上与 HEAD 均有，HEAD 内 237 个 `schemas/` 件含 `categories/__init__.py`）；真因＝脚本 `sys.path[0]` 为脚本自身目录、**仓根不在路径**，`import schemas.categories` 遂失败。补 `PYTHONPATH="src;."` 即通。**`--dry-run` 不碰写路径所以完全不暴露此坑**——对任何走 PG 账本意图 API 的车道均成立。
+
+### 20.5 转批清单（O(1)·批复 3）
+
+| # | 项 | 裁权 | 建议边界 |
+|---|---|---|---|
+| A | tests 族 258 件可原样复活 | **AI 可裁（统筹直接裁）** | 按 `tests/data/dr` 已证的窄前缀配方分批投；每批 dry-run 预览数回贴 |
+| B | tests 族 4 件 import 真缺模块 | AI 可裁（墓碑＋四元联言） | 随 A 同批出判废面，30 天复活窗 |
+| C | tests 族 92 件"未定" | 本班自清 | 换探针口径重判（`sys.path` 注入型导入），不占你裁量 |
+| D | 非 tests 的 only-copy 各族（≈1089 枚） | **Owner 门位** | 轨 B 判死授权边界；巨型施工面族（`st-cure-p01/p05/p12*`＋`sP` 约 47 万行）是否开专项 |
+| E | 有效删除请求 2 枚 | Owner 门位 | 删除类动作 D1 需另判 |
+
+### 20.6 底册刷新与增速台账（批复 1 前置＋批复④）
+
+`dead_catalog.py --full` 已对新 HEAD 重跑（**lineage.json 字节不动**⇒新旧唯一变量＝HEAD 推进）。对账（`common/diff_prev_vs_new.json`）：1410→1421 袋（到 26／离 15，**离的 15 枚逐一对上本班归档**）；archivable 27→12（净增 **0**）；**workable archivable＝1 ⇒ ①池见底读数入册**；Face A 刷新 63 簇／93 袋／2 片／family 纯度 OK。
+
+⚑ **最关键一条**：其间 `commits_between=96`（31 个动 src/scripts/tests），但 `verdict_transitions={}`、`newly_archivable=0`、`lost_archivable=0` ⇒ **别班干活不会替我们把死信消化掉，地板不降自等**。偏差方向已标：lineage 陈旧使 `landed_then_evolved` 少检 ⇒ archivable 是**下界**（保守，不会虚高）。
+
+增速台账（生成器 `tools/growth3.py`，每轮一行）本轮 3 行：`dead 1421→1421→1433`，到 12 枚＝maint2×5／gpux×4／mineloop×2／datalane×1（**外生持续，非本班产生**）。锚红线第 N+4 次实测合格：两锚仍指 `c2de2face68`，`stash=0`。
