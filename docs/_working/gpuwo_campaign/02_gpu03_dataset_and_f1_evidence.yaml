@@ -1,0 +1,152 @@
+---
+ttl: task_bound
+title: 四 GPU 工单施工班·GPU-03 证据袋（数据集可再生性＋现 adapter 实测 F1＋训练窗登记件＋三态定性）
+created: '2026-10-11T23:35:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+order_step_status:
+  step1_dataset_reproducibility: 已完成（结论见下，含不可再生差异登记）
+  step2_gpu_window_registration: 已完成（两件新 .ps1 随本袋落地；窗口声明=每周周日 10:00，理由见 deviation_note）
+  step3_full_run: "受阻→呈批（三重实测拦路＋判据机械不可达，见 blockers 与 decision_options）"
+  step4_llama_cpp_缺件: 已呈批（第一袋 R-1；本班不代装）
+  step5_convert_and_switch: 未启动（前置=step3/step4 批复；本班已把转换腿固定为 --dry-run，见 wrapper 设计）
+
+verdict_step1_reproducibility:
+  one_line: 分布级可再生＝成立；样本级可再生＝**不成立**（重跑会得到同规模同分布的另一批样本）
+  measured:
+    shipped_totals: {train_rows: 4258, eval_rows: 473, sum: 4731}
+    reproduced_totals: {chinese_balanced: 3600, fpb_english: 1131, sum: 4731, delta: 0}
+    chinese_pool_before_balance: {neutral: 9832, positive: 6346, negative: 1736, collected: 17914}
+    balance_after: {positive: 1200, negative: 1200, neutral: 1200}
+    sample_level_overlap: {repro_ids: 3600, shipped_ids: 3600, intersection: 1178, jaccard: 0.1956, repro_only: 2422, shipped_only: 2422}
+  why_not_sample_level: >-
+    build_sft_dataset.collect_chinese_news 走 news_collector.collect_news（表
+    c3_fundamental.news_data，经 table_registry 解析），查询无 ORDER BY ⇒ 行序非确定；
+    balance_sample 用 random.Random(42).sample(pool, 1200) ⇒ 池序一变取样即变。
+    故"同 seed 同参"在这里**不等于**"同输入"，重灌必然换掉 62.8% 的中文样本。
+  ch_side_availability_per_period:
+    table: c3_fundamental.news_data
+    global: {rows: 8253591, min_publish_time: '2010-01-02', max_publish_time: '2026-10-11 22:24:05'}
+    per_period_avail_vs_want:
+      "2015-06-15~2015-09-15": [75035, 2500]
+      "2015-12-01~2016-02-29": [70912, 2500]
+      "2018-06-01~2019-01-31": [412587, 2500]
+      "2020-02-01~2020-04-30": [205886, 2500]
+      "2022-01-01~2022-05-31": [304725, 2500]
+      "2024-01-01~2024-09-30": [754034, 2500]
+      "2017-03-01~2017-09-30": [150038, 1500]
+      "2023-01-01~2023-09-30": [753905, 1500]
+    conclusion: 八段全部富余（最小 75035 vs 需求 2500），中文腿**在库**
+  fpb_leg:
+    installed: datasets 4.8.5
+    network: huggingface.co 不可达（本班实跑 5 次重试全 ConnectTimeout）
+    cache_used: "C:\\Users\\fanzi\\.cache\\huggingface\\datasets\\mteb___financial_phrasebank\\...（缓存 mtime 2026-08-08 19:01:33）"
+    rows_loaded: 1131
+    reproducibility: 仅在**本地缓存存活**时可再生；缓存一旦被清且无网＝英文腿永久丢失（不可再生差异，登记）
+    doc_drift: build_sft_dataset.py:24-25 文档写 "AllAgree 2264 句"，实际可载 1131 条（口径已变，禁按 2264 规划样本预算）
+  eval_exclusion_leg:
+    file: data/eval/news_sentiment_200.jsonl
+    rows: 200
+    unique_news_id: 199
+    duplicated_id: c8b90cf1fcb0cc9650dae06b65dc6b40
+    effect: load_eval_ids() 取集合 ⇒ 排除面只有 199 条；实测训练集与 eval200 交集=0（无泄露），本条属"账面少一格"非事故
+  provenance_anchors:
+    note: 两批训练资产**不被 git 跟踪**（git ls-files 对 models/qwen25-7b-sft-v1 与 data/sft 均空）⇒ 车道内天然无此面，任何重灌都直接改生产盘且无 git 恢复面
+    sha256_head16:
+      data/sft/train.jsonl: d7938ffbc86968f3
+      data/sft/eval.jsonl: fcc9f94c1db16365
+      data/eval/news_sentiment_200.jsonl: 28c691bed0cdf2b4
+      models/qwen25-7b-sft-v1/adapter_model.safetensors: ad9eae7bd5b688f0
+
+verdict_step3_f1_measurement:  # 决定性证据：不训练、不写权重，只量现成 adapter
+  method: 直接载 4bit 基座（本地缓存 15G/4 shard 全在）＋PeftModel.from_pretrained(现 adapter)＋trainer.validate；零写入
+  must_run_offline: AutoTokenizer.from_pretrained("Qwen/Qwen2.5-7B-Instruct") 在 transformers 里经
+    _patch_mistral_regex→model_info 联网探测，无网即在加载阶段 ConnectTimeout（本班首跑就是这么死的）；
+    带 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 才起得来 ⇒ 已写进新 wrapper
+  measured_now:
+    gold_200_human: {macro_f1: 0.6290, accuracy: 0.6600, n: 200, elapsed_s: 452.5}
+    kw_200_keyword: {macro_f1: 0.5444, accuracy: 0.6300, n: 200, elapsed_s: 535.8}
+  production_baseline_same_set: {macro_f1: 0.7869, accuracy: 0.805, model: "qwen3:8b", route: zero_shot_v2_fewshot, measured_at: '2026-08-25', source: data/eval/zero_shot_metrics.json}
+  gap_vs_baseline: -0.1579   # 15.8 个百分点
+  ab_bar_from_this_order: 不低于通用基线-2% ⇒ 通过线≈0.7669（绝对）／0.7712（相对）；现自模型差 13.8-14.6 个百分点
+  historic_note_conflict: >-
+    zero_shot_metrics.json 的 note 引"历史对照 v1-thinkon 0.7510／v1-thinkoff 0.7643"，与本班实测
+    0.6290/0.5444 **都对不上**；且 SFT 路线的 Phase-8 验收产物 data/eval/sft_metrics.json **盘上不存在**。
+    ⇒ "SFT 门槛 0.75"这句话今天没有任何可复现的盘上证据支撑，只有那条形变说明里的引用值。
+  route_supersession: >-
+    同一 note 原文记"零样本路线（2026-08-25 Owner 裁定替代 SFT 路线验收）"，即情绪验收在 08-25 已改走零样本；
+    GPU-03 工单是 09-17 开的，晚于该裁定。本班不推断"工单作废"，只把两条在册事实同时呈上（见 decision_options）。
+
+blockers_for_full_run:  # 三重实测拦路，任一都不该被我自行绕过
+  - id: B-1
+    kind: 人工闸门归属
+    text: >-
+      src/zephyr/ml_train/services/sentiment_sft_entry.py 头部 INVARIANTS 原文＝"禁真训练大模型——dry_run=False
+      恒抛 ZA-MLT-0003；大模型真训练属 B-007 人工闸门事项，AI 不可自行触发"，其 CONSUMERS 又写
+      "scripts/ml/run_sft_train.py（未来接线）"。而 scripts/ml/run_sft_train.py:105-107 在 main() 里直接
+      import SentimentSFTTrainer 起跑，**不经过该入口** ⇒ 这道 Owner 闸今天对实际 CLI 路径是装饰件。
+      令文一面要我"full 档真跑"，一面把"训练批复"列为只呈批不代拍——我不自行裁定哪句优先。
+    my_action: 新 wrapper 把"按钮"显性化（授权文件缺失=零训练退出 0），既不违令也不越闸
+  - id: B-2
+    kind: 资源窗算术
+    text: >-
+      资源册 manual_run_sft_train est_duration_min=240（config/resource_profile_registry.yaml，manual/gpu_default/planned）。
+      本班实测仅"推理 200 条"一腿就花 452s+536s≈16.5min；full 档 4258 条×3 epoch 的 QLoRA 必超 2h。
+      现在时刻 23:3x ⇒ 起跑必伸进 01:00-04:00 CH 让路窗（令文 §3 红线第 4 条：窗内零跑批）。
+      ⇒ 真跑只能在**周日日间登记窗**，今夜不属该窗。
+  - id: B-3
+    kind: 判据不可达＋产物覆盖
+    text: >-
+      按上面实测，同一份数据同一配方重训，跨 15.8 个百分点的概率极低；且 run_sft_train.py 无 --output-dir，
+      cfg.output_dir 硬编 models/qwen25-7b-sft-v1（scripts/ml/run_sft_train.py:54；训练期 save_steps=100 直写该目录，
+      结束时 save_pretrained 覆盖 adapter_model.safetensors）⇒ 真跑会覆盖**唯一在盘 SFT 产物**且该面无 git 跟踪。
+      若仍要跑，前置＝先做带时间戳的 adapter 备份（10MB 级，本机 D 盘余 76G）。
+
+decision_options_for_owner:  # 只呈批，本班不代拍
+  - id: O-1
+    name: 按令重训（我今夜之后在周日日间窗执行）
+    cost: 1×gpu_default 4h 窗＋一次 adapter 覆盖（备份后可回滚）
+    expected: Macro-F1 大概率仍在 0.62-0.65 区间（同源关键词标注不变）⇒ A/B 门大概率不过
+    needed_from_you: 一句话批准＋（可选）授权文件创建指令我已写在 wrapper 注释里
+  - id: O-2
+    name: 认 08-25 裁定面，GPU-03 改为"链在位、窗在位、按钮在 Owner"归档
+    cost: 零算力
+    effect: completes_when（夜窗情绪批切自模型）改判为"待 Owner 按钮"，工单转"能力在册、路线待裁"
+    my_note: 我倾向这条——理由是 15.8pp 实测差＋Phase-8 产物缺失＋验收路线已被裁定替代三条同时成立
+  - id: O-3
+    name: 换标注源再训（真治本）
+    text: >-
+      build_sft_dataset.py 自己的注释已写"⚠ 同源循环风险：中文训练标签与评估集 ground truth 同为关键词规则"。
+      金标集 data/eval/news_sentiment_200_gold.jsonl 已存在（200 条，中性 103/正面 63/负面 34）——
+      用它做监督源扩充训练集才是把 0.6290 抬到 0.7869 的路径；但那是**新增训练数据资产**（Owner 门位：业务资产面）。
+
+deviation_note_window: >-
+  令文写"双周周日日间训练窗"。资源册生成器解析触发器的 _RE_WEEKLY
+  （scripts/governance/generators/generate_resource_profile_registry.py:903）只认
+  "-Weekly -DaysOfWeek X -At HH:MM"，不认 WeeksInterval；若我落双周，机生册会声明"每周"而实跑"双周"
+  =静默漂移。故注册为**每周周日 10:00**（声明==实测），代价是每两月多一次空火（wrapper 秒退 0）。
+  另：本班实测**从车道根跑生成器只出 69/103 实体**（丢的正是全部 sch_* 家族），从主区根跑出 102=与 HEAD 全等
+  ⇒ 资源册再生必须在主区根执行，这条已写进本袋复核命令。
+
+files_landed_by_this_bag:
+  - scripts/tasks/run/run_sft_train_task.ps1        # 守卫壳：授权文件/CH 让路窗/GPU 忙/HF 离线旗＋两段 rc 纪律
+  - scripts/tasks/register/register_sft_train_window_task.ps1  # 每周周日 10:00，5h 上限，IgnoreNew，Get/Set 幂等
+
+findings_for_coordination:
+  - id: F-1
+    text: 情绪 SFT 路线在盘上**没有 Phase-8 验收产物**（data/eval/sft_metrics.json 不存在），
+      而 run_sft_train.py:9 的 INVARIANTS 自称是该产物的生产者 ⇒ 要么从未跑成，要么产物被清且无登记。
+  - id: F-2
+    text: sentiment_sft_entry 的 B-007 闸与 run_sft_train.py 实际路径互不相干（装饰闸，同族见"判已防护必测谁调它"）。
+  - id: F-3
+    text: 训练/转换链对 huggingface.co 有隐性硬依赖（transformers 联网探测），无网即挂；
+      修法=离线旗（我已在新 wrapper 落）或把基座路径改成本地目录常量。
+
+review_commands:
+  - python -c "import json,pathlib;d=json.loads(pathlib.Path('D:/ZephyrAlpha/.runtime/tmp/gpuwo_adapter_eval.json').read_text(encoding='utf-8'));print(d['runs'])"
+  - python -c "import yaml,pathlib,subprocess;c={e['task_id'] for e in yaml.safe_load(pathlib.Path('config/resource_profile_registry.yaml').read_text(encoding='utf-8'))['entities']};print(len(c))"   # 主区根=103/102 面
+  - powershell -NoProfile -ExecutionPolicy Bypass -File scripts/tasks/register/register_sft_train_window_task.ps1   # 落地后在主区跑；再跑生成器应见 sch_sft_train_window
+  - schtasks /query /tn ZephyrAlpha_SftTrainWindow /fo LIST /v
+  - 复核 GPU-03 判据缺口：python -c "import pathlib;print(pathlib.Path('D:/ZephyrAlpha/data/eval/sft_metrics.json').exists())"（应为 False）
