@@ -7661,6 +7661,14 @@ entries:
   plain_zh: 新股上市日历和募资规模的落库表结构。哪天有新股上市、预备圈多少钱都提前记下来——大新股上市会抽走市场里的钱，提前知道才能提前收着点仓位。
   domain_id: D_DATA
   responsibility_layer: business
+- module_path: schemas/categories/market/market_kronos_prediction_daily.py
+  desc_en: "GPU-02 prediction landing table: Kronos T+1 close quantiles with PIT anchors; stored, not consumed."
+  desc_zh: 工单 GPU-02 缺件②落表面：存放 Kronos 对次日收盘价的 5 分位分布与点估计，带三件套 PIT 时刻，只落不用。
+  name_en: Kronos T+1 quantile prediction daily DDL source
+  name_zh: Kronos T+1 分位预测日表 DDL 真源
+  plain_zh: 这张表就是Kronos模型每天收盘后对第二天收盘价的'预测成绩单'存档处：不是拍一个数，而是给五个分位（很悲观到很乐观），外加一个中间值当点估计；同时记下我是什么时候预测的、只用到哪一天的数据。它只存不用，真要拿它去下单，得先过B-007人工审批。
+  domain_id: D_DATA
+  responsibility_layer: business
 - module_path: schemas/categories/market/market_limit_up_down.py
   desc_en: ""
   desc_zh: 本文件是 c1_market.limit_up_down 表结构的唯一真源（DDL-as-Code 模式）。
@@ -53129,6 +53137,11 @@ entries:
   name_zh: OCP-002 / OCP-003 / OCP-001 扩展点冒烟测试
   plain_zh: 测试：ocp extension points 跨模块这块逻辑要经得起考验，有毛病立刻报出来。
   domain_id: ""
+- module_path: tests/data/backup/test_restore_drill.py
+  name_zh: 恢复演练判据测试
+  plain_zh: 给月度恢复演练的判据本身做体检：拿 2026-09-25 月检的真实数字做红绿对拍，证明新判据既能放行正常演练，也能把『还原库比活库还多行』『少一张表』『老数据内容被改花』三种真故障全判红；全程用假 psql/pg_restore，不连任何真库。
+  domain_id: D_AUDITTEST
+  responsibility_layer: governance
 - module_path: tests/data/implementations/test_tushare_news_connector.py
   desc_en: ""
   desc_zh: ""

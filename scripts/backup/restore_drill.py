@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 恢复/核数失败写 failed 报告后退出 1；临时库确保清理（finally 双通道 DROP + 存在性复核）；判据不满足写 pass=False + status + failed_criteria 后退出 1；T1b→T1c（2026-10-11 总统统筹追加件）失败支骨架即带 judge_drill 全 8 键（pass=False/criteria={}/failed_criteria=[]/rows={}/criteria_version与criteria_change_note沿用成功路径同值/legacy_judge_note=空串）——8 键原仅 judge_drill 在四条件评完后一次产出，消费侧任一键直读在失败路径皆 KeyError（pass 由死信三期试点撞出＝T1b，其余五键同型收口＝T1c）；rows={} 语义＝不可得（与成功路径同型 dict，读侧 report['rows'][t] 不再抛 TypeError；初值 0 经候裁⑦改裁 {}），空 criteria＝一条判据都没评估成绝不冒领 ok，退出码与状态语义零改动
-# [TESTS] tests/backup/test_restore_drill.py
+# [TESTS] tests/data/backup/test_restore_drill.py
 # [A_module] module_id=MOD-INF-043 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: 月度恢复演练 CLI 由 ZEPHYR-RESTORE-DRILL schtasks 月度事件触发，人工直跑为兜底形态，非常驻

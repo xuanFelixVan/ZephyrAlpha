@@ -550,3 +550,35 @@ python .runtime/tmp/st-deadcure3-20261010/tools/deadcure3.py restore --qid <q>  
 ⚑ **最关键一条**：其间 `commits_between=96`（31 个动 src/scripts/tests），但 `verdict_transitions={}`、`newly_archivable=0`、`lost_archivable=0` ⇒ **别班干活不会替我们把死信消化掉，地板不降自等**。偏差方向已标：lineage 陈旧使 `landed_then_evolved` 少检 ⇒ archivable 是**下界**（保守，不会虚高）。
 
 增速台账（生成器 `tools/growth3.py`，每轮一行）本轮 3 行：`dead 1421→1421→1433`，到 12 枚＝maint2×5／gpux×4／mineloop×2／datalane×1（**外生持续，非本班产生**）。锚红线第 N+4 次实测合格：两锚仍指 `c2de2face68`，`stash=0`。
+
+## 廿一、"4 枚真缺模块"负存在知识入册（三期下一段·第 0 项同袋件，生成器=`tools/negative_existence4.py`）
+
+现测 HEAD=`9c41a1f85e`｜正则口径命中 **4** 枚，AST 复confirm 仅 **2** 枚
+⇒ 上一班报的"4 件真缺模块"里有 **2 件是探针假阳性**（正则把 `ast.parse("from zephyr.foo import bar")` 这类**被测源码字符串**里的 import 当成真导入）。
+按在册纪律（trae_065 `asset_state_assertion` 三源正查：①现行 HEAD 全树 ②全分支历史 ADRM ③死信袋宇宙载体），逐件实测：
+
+| 件 | 机判 | 声明导入（现行 HEAD 不可导入） | HEAD 内同名模块真身 |
+|---|---|---|---|
+| `tests/gov/budget/test_budget_forecaster.py` | 真缺(AST 复confirm) | `zephyr.infrastructure.capacity_assurance.budget_forecaster` | `src/zephyr/infrastructure/capacity_assurance/_archive/budget_forecaster.py` |
+| `tests/gov/governance/drift/test_gct_integration.py` | 真缺(AST 复confirm) | `zephyr.governance.drift_fix` | `src/zephyr/infrastructure/rollback/drift_fix.py` |
+| `tests/gov/governance/commit_gates/test_import_integrity_gate.py` | 探针假阳性(AST 查无真 import) | `zephyr.foo` | 查无同名件 |
+| `tests/gov/governance/test_ast_import_rewriter.py` | 探针假阳性(AST 查无真 import) | `zephyr.governance.cost_budget`、`zephyr.governance.escalation_api` | `src/zephyr/governance/ops_governance/cost_budget.py` |
+
+三条结论（负存在断言的**方向**很关键，别当"模块灭绝"记账）：
+1. **两件真缺＝搬家/归档，非灭绝**：`DriftFixHandler` 的 canonical 真源现居 `src/zephyr/infrastructure/rollback/drift_fix.py`（件头自述 MATURITY=production，并经 `rollback/governance/__init__.py` re-export），
+   `git log --all` 见 `src/zephyr/governance/drift_fix.py` 被 `302e126156e`（ARCH-034 P3 三副本去重）删除；
+   `BudgetForecast/BudgetForecaster` 两符号在 `src/zephyr/infrastructure/capacity_assurance/_archive/budget_forecaster.py` 完整存活，
+   搬家凭据=`9d9386da996` 的 `R100`（`capacity_assurance/budget_forecaster.py → …/_archive/budget_forecaster.py`，同批 RENAME-DEPGRAPH-SYNC）。
+   ⇒ 复活这两件测试属**改导入路径的施工**（轨 A），不属判废（轨 B＝Owner 门位）；本班未擅改，列为 A 类之后的候选工单。
+2. **两件假阳性不入负存在册**：`test_import_integrity_gate.py` 的 AST 真导入全部可解析（应归可复活面），
+   `test_ast_import_rewriter.py` 的 AST zephyr 导入数=0（其全部"导入"都在被改写的字符串里，按上一班自定口径属"未定"非判死）。
+3. **口径入法**：以后凡"缺模块/未定"分桶一律先过 AST 再报数——正则口径在本族实测把 4 里虚报了 2（虚报率 50%），
+   同批把 257 件 A 类的可解析性判据也换成 AST（本班 A 类漂移校准项承接）。
+
+复核命令（本班工棚可整段重跑）：
+```
+python .runtime/tmp/st-deadcure3b-chief-20261011/tools/negative_existence4.py
+git show HEAD:src/zephyr/infrastructure/rollback/drift_fix.py | grep -n "class DriftFixHandler"
+git log --all --oneline --name-status --diff-filter=ADRM -- src/zephyr/governance/drift_fix.py
+git show 9d9386da996 --stat -- src/zephyr/infrastructure/capacity_assurance/ | head
+```

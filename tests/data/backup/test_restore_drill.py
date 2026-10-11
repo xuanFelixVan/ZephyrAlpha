@@ -4,10 +4,10 @@
 # 本件证契约与裁决逻辑，不证 dump 真可恢复；月度真跑不得因此撤。
 # [A_test] module_id: MOD-INF-043 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-043 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §dr-drill
-# [MODULE] tests.backup.test_restore_drill
+# [MODULE] tests.data.backup.test_restore_drill
 # [DOMAIN] D_AUDITTEST
 # [DEPENDENCIES] scripts.backup.restore_drill (judge_drill/run_drill/_classify_pg_restore_stderr)
-# [CONSUMERS] pytest tests/backup
+# [CONSUMERS] pytest tests/data/backup
 # [STARTUP] manual
 # [STABILITY] volatile
 # [SAFETY] L
