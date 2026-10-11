@@ -122,3 +122,36 @@ pool_staleness_third_occurrence:
   action: 两处均按"逐行判是否 HEAD 纯子集→归档→git checkout HEAD -- <件>"处理，零内容损失；旧字节存证 .runtime/tmp/st-mineloop-20261010/index_stale_blobs_20261011/
   pattern_count: 同型问题本会话已第三次撞上（§14 四本账册＋23/24 记删、§16 config 冻结预算册、本次码件），
     根因与已转维护二班的"池面回退方向无闸"是同一条，不另开新账
+
+arm_base_source_seam_probe_20261011:
+  purpose: >-
+    CH 复联后把 WO-A1 最后那道缝（ARM_BASE_SOURCES 空册）要喂什么**探到底**，写成可执行的规格；
+    本探针零代码零写库，只读码＋只读卡面，防止"复联即 13 支齐出"这种我自己先前也说漏过的话。
+  contract_measured: >-
+    调用点在 card_binding.run_one 双臂分支：`base=ARM_BASE_SOURCES[src](card, entry)`，
+    且 src 未在册时**先返回 arm_base_source_unwired 再碰 CH**（现值行号 935/942，符号名 run_one）；
+    交出去的 base 进 arm_protocol_binding.build_arm_pair(card, entry, base=..., target=...)
+    （真源件行号 419）——base 位＝逐臂日频**敞口**序列（require_exposure_face：0..1±1e-9），
+    target 位＝底座**日收益**（require_daily_return_face：|r|≤0.5 且拒绝全非负的多头收益冒充）
+  device_found: >-
+    在册重放装置＝scripts/backtest/translated/_c4_engine.py:800 run_backtest_full(weights, closes, ...)
+    返回 (stats, net)；executor 的 run_batch 单元循环正是这样用的（现值行号 2468，符号名 run_batch），
+    并把 net 带日期索引归档（2484-2485 ⇒ nets_archive/nets_for_neff）。
+    ⇒ 底座来源=两件套：evaluate_recipe(recipe, ...)（executor 现值行号 1199）产 weights，
+      run_backtest_full 产 net；敞口位=weights 逐行和，日收益位=net.pct_change()
+  what_the_source_must_add: >-
+    装置只吃"recipe 值集"，而双臂卡的臂参数是**卡面文本**（熔断比例/体制门幅度等）。
+    所以接线工作量在"卡面臂参数→recipe 值集"的逐卡映射，且该映射必须落进绑定册 arms 面并带卡面原文引句
+    （verify_arm_quote 同源校验），禁在 Python 里硬编码数字——那正是"替卡拍数"被禁的形态
+  readiness_correction_of_my_own_earlier_claim: >-
+    先前我对 Owner 说过"复联后先出 feasible_now 的 3 支"。逐支重读 W-A 册 triage_table 与卡面后更正为 **1 支今可出**：
+    ①TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照＝臂参数已赋数（80/60/40%、0%、2%/4%/6%/25%）⇒ 接线即可出分；
+    ②TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量＝pending_numeric_params 三项
+      （趋势门/降风险/预算 均"卡面无相邻数值"）⇒ 卡面未赋数，禁替卡拍数，需新版本卡或 Owner 赋数才谈得上开考；
+    ③TDM-X-R1/shadow/02_拔电源影子运行对照＝family_not_routed:shadow（执行核只对 comparison/ablation 配对）
+      ⇒ 卡在路由面不在数据面。三支里两支各卡一道**非数据**缝，这与我先前口径不同，如实改口
+  honest_next_step_and_cost: >-
+    第①支的接线＝一个 base source＋一条册格 arm_base_source 字段＋一条同批接线用例（真 CH 读一次 hs300 面板），
+    量级＝一次施工袋；第②③支分别要卡面赋数（Owner 门位）与 shadow 族路由（另一道实现缝），
+    本班不在未探清前替它们许诺时程
+  red_lines_kept: 零代码改动、零写库、零卡面阈值改动；本册只追加一节（键集合差自证）

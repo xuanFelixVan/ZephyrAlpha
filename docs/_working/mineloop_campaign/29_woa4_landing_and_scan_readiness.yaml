@@ -98,3 +98,69 @@ review_commands:
     sed -n '31p' config/search_space_prereg_t3a.yaml；sed -n '30p' config/search_space_prereg_t3b.yaml（应仍 725760／4354560）
   current_line_anchors: >-
     git grep -n "compiler, schema_meta = _resolve_grid_schema|if subspace:|_LAMBDA_PEN: dict" -- scripts/backtest/factory_grid_executor.py
+
+three_batches_fired_20261011:
+  order_ref: 三批点火令（统筹 18:35，触发条件 17:31:24 journal Start-VM+probe=1）
+  window_self_check: >-
+    本班自证 CH 已复联（不引他人读数）：三批 8/36/72 格全部 out=pos 且 net_returns.parquet 各 970 交易日×N 列
+    ——价格面真读到了才算跑通；另 batch_meta.pid 与 heartbeat 尾行时间戳同分钟（183549→18:36:45／
+    200358→20:04:22／200438→20:05:04）
+  step_0_cpu_first_measure:
+    measured_at: '2026-10-11T18:36:45+08:00'
+    run_id: grid_20261011-183549
+    commit: >-
+      代码面以字节 sha 为凭＝git rev-parse dev:scripts/backtest/factory_grid_executor.py → 5c1e49735acd84a752d51c485763229e312285e1
+      （18:36 当时的 dev tip 无法回溯点名，故不写 commit 号、写内容 sha——可复验且不受队列重提交改名影响）
+    cells_done: 8
+    elapsed_s: 55.443
+    s_per_cell: 6.93
+    caveat: >-
+      含一次数据加载（progress 首格 fetch/eval 冷启动），故 6.93 是**首测口径**不是稳态口径；
+      稳态看 200358/200438 两批 = 0.664／0.351 秒/格。三把尺与在册预注册 35.33 秒/格（T0 全成本带五档成本门口径）
+      分面并列，禁互相冒充
+    smoke_ledger_note: >-
+      本批探索分册文件 scan_ledger_step0cpu.jsonl 盘上不存在——不是丢件：executor 写探索分册的条件是
+      `if not smoke and _EXPLORATION_LEDGER:`（run_batch 收尾段，符号名+现值行号见复核命令），smoke 批按设计两册都不进
+  batch_2_control_36:
+    run_id: grid_20261011-200358
+    cells: 36
+    elapsed_s: 23.9
+    s_per_cell: 0.664
+    schema_face: 共享册 sha16=b5faa1299cddf3d3，freeze_dims 16 维全钉（B_top_n=[top50,top100]）
+    exploration_ledger: .runtime/nightmine_exploration/scan_ledger_breadthcontrol_s1.jsonl（n_cells=36）
+  batch_1_probe_72:
+    run_id: grid_20261011-200438
+    cells: 72
+    elapsed_s: 25.279
+    s_per_cell: 0.351
+    schema_face: 探针册 config/position_recipe_grid_schema_v3_breadth_probe.yaml sha16=2e8e24cc08cebdaa，B_top_n=[top50,top100,top150,top200]
+    exploration_ledger: .runtime/nightmine_exploration/scan_ledger_breadthprobe_s0.jsonl（n_cells=72）
+  bit_parity: >-
+    两批共有 recipe=36，sharpe 逐位不等=0（阈值 1e-12）；36 格集合 ⊂ 72 格集合=True；72 批净新增 36 格
+    ⇒ 探针册＋freeze 与共享册在同 seed 同窄面上**同空间同抽样**，新档只加格不动旧格
+  conclusion_correction_4th: >-
+    本班第 4 次自纠：26_/29_ 里"广度未见顶 ⇒ 需续扫 top150/200"的前提被这两批自己证伪。
+    条件面（A1×A2×C 平衡全因子，18 核）逐档均值 top50 0.4961 → top100 0.4271 → top150 0.4209 → top200 0.4226，
+    相邻差 −0.0690／−0.0062／+0.0017，单调递增核 0/18 ⇒ 曲线在 top50 已见顶，"未见顶"是 23_ 那张
+    **边际均值曲线**（joint_GxTopN：top50 0.2835→top100 0.3393，差 +0.0558）在全空间不平衡样本上的伪影——
+    190142 那支误跑批给了我们一个同形态的实测样本：200 格里 top10/top20/top30 占 114 格
+    （{top100:49, top30:41, top20:38, top50:37, top10:35}），窄池档与宽池档混算即把下降斜率抹成上升。
+    后果＝卡片 TDM-E-L1__comparison__05 的冻结 sharpe_delta_min=0.03（卡面自述取自 23_ 边际差 0.0558 的一半）口径已废，
+    条件面差是 −0.069（符号相反）⇒ 只能另起新版本卡（G4-5 禁原地改），是否开卡呈 Owner，不自裁
+  misrun_batch_disposition: >-
+    grid_20261011-190142（200 格全空间，WO-A4 包装段丢参所致）保留不删、登记作废读用；
+    它走探索分册 scan_ledger_breadthcontrol_s0.jsonl（n_cells=200），考试 N 账本未进
+  neff_accounting_defect_found: >-
+    发完三批顺手查 N 账本才看见：executor 的 N_eff 披露位写盘只看 smoke，不看 --exploration-ledger
+    ⇒ 探索窄批按设计会覆盖考试侧"最新批次 N_eff"（本三批 N_eff=2/2/11 vs 在册考试批 16）。
+    今天没造成事故是**撞上的**：N 账本 CAS 写被 registry_mass_edit_guard 拒了
+    （.runtime/audit/safe_write.jsonl 实测 pid=53780 即 200438 批，10 条 event=refused
+    reason=registry_mass_edit_guard deleted_lines=4 > threshold=2）；同册自 09-22 累计 1690 次拒写、
+    10-11 全天 0 次 written ⇒ 披露位实际停在 2026-10-07。本班只修自己那半（WO-A5：探索/smoke 双闸＋结构守卫），
+    护栏标定（threshold=max(1,ceil(总行×0.005)) 对小中册过紧，令合法 CAS 写常驻失败）转维护二班，不自修
+  full_account_ref: docs/_working/mineloop_campaign/32_breadth_scan_result.yaml
+  review_commands: >-
+    python .runtime/tmp/st-mineloop-20261010/breadth_digest_32.py（P1..P6 六段，含对拍与分层曲线，只读零 CH）；
+    git grep -n "if not smoke and _EXPLORATION_LEDGER" -- scripts/backtest/factory_grid_executor.py（smoke 不写分册的现值行号）；
+    grep -c registry_mass_edit_guard .runtime/audit/safe_write.jsonl（N 账本拒写累计数）
+
