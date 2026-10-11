@@ -1484,6 +1484,52 @@ def test_pandas_rowsum_order_follows_layout_rule():
         assert np.array_equal(rs, tr) and not np.array_equal(rs, sq), "有 NaN 应=成对树（skipna 掩码后新连续数组）"
 
 
+def test_universe_column_order_is_pinned_sorted():
+    """跨进程可复现钉（根因入法，2026-10-12 n8 归因）：宇宙→列序那一句**必须**是有序生成。
+
+    病案：`cols = [c for c in universe_cache[g] if ...]` 里 `universe_cache[g]` 是 `set[str]`，
+    集合迭代序随字符串哈希（PYTHONHASHSEED）**逐进程变**，而 cols 随即进面板
+    （`closes_eval[cols]`→因子→`universe_cols`）⇒ 同 seed 同参的两次跑批列序不同→并列票位置翻转
+    →净值不可复现。实测三预言（`.runtime/tmp/st-gpux2-20261011/n8_attribution_probe.py`，
+    24 格，PYTHONHASHSEED=1/2/1）：同进程 eval×2 与 bt×2 全逐位等（排除 BLAS/归约序）；
+    换 seed 则列序签名与 net_sha 全变；同 seed 重跑逐位等 ⇒ 列序是唯一变量。
+    修复后（seed=5 vs 6 两进程）列序签名／w_sha／net_sha 三者全同。
+
+    判据取**结构面**而非跨进程 subprocess： subprocess 两支会把"跑批一次"的成本与 CH 依赖
+    引进单测（在册病案：测试禁靠生产数据面自证）；而语义面钉"`cols == sorted(cols)`"必须由
+    生成式保证，AST 直接判那一句的形态最有效且零数据依赖。
+    红证自带：同一判据打在修复前的原文上必须判败（见 _PRE_FIX 分支）。
+    """
+    import ast
+
+    text = (_REPO / "scripts" / "backtest" / "factory_grid_executor.py").read_text(encoding="utf-8")
+    tree = ast.parse(text)
+    hits = []
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Assign, ast.AnnAssign)):
+            tgts = node.targets if isinstance(node, ast.Assign) else [node.target]
+            if any(isinstance(t, ast.Name) and t.id == "cols" for t in tgts):
+                hits.append(node)
+    assert hits, "没扫到任何 `cols =` 赋值＝尺空跑"
+    universe_cols_assigns = [
+        n
+        for n in hits
+        if isinstance(n.value, (ast.ListComp, ast.GeneratorExp, ast.Call)) and "universe_cache" in ast.dump(n.value)
+    ]
+    assert len(universe_cols_assigns) == 1, (
+        f"宇宙→列序的生成点应恰 1 处（多一处就多一条无序真源），实测 {len(universe_cols_assigns)}"
+    )
+    stmt = universe_cols_assigns[0]
+    assert (
+        isinstance(stmt.value, ast.Call) and isinstance(stmt.value.func, ast.Name) and stmt.value.func.id == "sorted"
+    ), f"那一行必须经 sorted() 定序；实测形态={ast.dump(stmt.value)[:160]}"
+    # 红证：修复前的原形态（无 sorted 的裸列表推导）在同判据下必须判败
+    pre_fix = ast.parse("cols = [c for c in universe_cache[g] if c in closes_eval.columns]").body[0]
+    assert not (isinstance(pre_fix.value, ast.Call) and getattr(pre_fix.value.func, "id", "") == "sorted"), (
+        "红证失效：修复前形态也能过这条判据＝本钉没有牙"
+    )
+
+
 def test_eval_gpu_stats_has_all_glue_exits():
     """三面出口各有计数（在册教训：零计数器与"未触发"同形＝假绿）：卡内做完／回灌卡上／
     卡面异常回退，任一为空都要能从 summary 读出"到底是没走还是走了没成"。

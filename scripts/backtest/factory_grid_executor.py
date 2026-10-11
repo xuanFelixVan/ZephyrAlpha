@@ -2436,7 +2436,12 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 _instr_neg("eval", f"universe_load_fail:{type(exc).__name__}")
                 eval_dead += 1
                 continue
-        cols = [c for c in universe_cache[g] if c in closes_eval.columns]
+        # 列序必须确定：`universe_cache[g]` 是 set[str]，直接迭代拿到的顺序随字符串哈希
+        # （PYTHONHASHSEED）逐进程变，而 cols 随即进面板（closes_eval[cols]→因子→universe_cols），
+        # 于是"同 seed 同参"的两次跑批在不同进程里列序不同→并列票位置翻转→净值不可复现。
+        # 实测（n8_attribution_probe，2026-10-12 00:35-00:38）：同进程内 eval×2 与 bt×2 全逐位等，
+        # 换 PYTHONHASHSEED 则列序签名与三格 net_sha 全变 ⇒ 归因=列序，非 BLAS/归约序。
+        cols = sorted(c for c in universe_cache[g] if c in closes_eval.columns)
         if len(cols) < 30:
             negatives.append(
                 NegativeRecord(r.recipe_id, "eval", "universe_too_small", r.values, "", f"cols={len(cols)}")

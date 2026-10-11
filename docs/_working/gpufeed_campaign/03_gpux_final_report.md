@@ -479,3 +479,69 @@ Owner 2026-10-11"刀口改裁"令在**会话层**批准 B1→B2 改刀口、并�
    `python -c "import json;print(json.load(open('<run>/summary.json',encoding='utf-8'))['eval_gpu'])"`
 
 
+## 十、N-8 归因闭合：跨进程不可复现＝列序（集合迭代 × 哈希随机化），修复就绪待裁
+
+> 统筹裁定＝先立底尺（2026-10-12 〇〇:2x）；本节即底尺的读数与结论。探针
+> `.runtime/tmp/st-gpux2-20261011/n8_attribution_probe.py`（24 格同 seed 同分层，
+> 一律 `--exploration-ledger` 分册，考试 N 账本零污染），驱动方式＝同一探针在
+> PYTHONHASHSEED=1／2／1 三进程各跑一遍（修复后补跑 5／6 两进程）。
+
+### 十·A 三预言与实测（全部兑现）
+
+| # | 预言（§八 原判据） | 实测 | 结论 |
+|---|---|---|---|
+| ① | 同进程内 eval×2 逐位等 | 3 格全 True（seed=1 与 seed=2 两进程各测） | **排除** BLAS/归约序 |
+| ①′ | 同进程内 bt×2 逐位等 | 3 格全 True | 同上 |
+| ② | 换 PYTHONHASHSEED ⇒ 列序签名变 | 846 列宇宙 `fe8ba38bf17b4e44 → 0f92984f21114c84`；450 列 `6f691893fe2c1f4e → 7dcf85ae1e9fcbbc` | 列序逐进程随机 ✓ |
+| ②′ | 换 seed ⇒ 净值变 | 三格 `net_sha` 全变 | 列序→净值 ✓ |
+| ③ | 同 seed 重跑 ⇒ 逐位等 | r1 vs r3（均 seed=1）三格 `cols_sig`/`net_sha` 全等 | 唯一变量＝列序，闭合 |
+
+根因位置：`scripts/backtest/factory_grid_executor.py` 宇宙→列序那一句
+（原形态 `cols = [c for c in universe_cache[g] if c in closes_eval.columns]`，
+`_load_universe` 返回 `set[str]`）。集合迭代序随字符串哈希随机化逐进程变，而 `cols`
+随即进面板（`closes_eval[cols]` → `compute_v1_factors` → `universe_cols=cols`）⇒
+并列票位置翻转 ⇒ 净值不可复现。静态扫全文件：这是**唯一**集合直进列序的点。
+
+### 十·B 修复的前后对拍（红绿双向）
+
+修复＝该句改 `sorted(...)`（＋注释说明为何）。同一探针在修复后再跑两进程（seed=5 vs 6）：
+
+| 格 | n_cols | 列序签名两进程相同 | w_sha 相同 | net_sha 相同 |
+|---|---|---|---|---|
+| 3d1db9b4bb6f | 846 | True | True | True |
+| e1ab59d04902 | 846 | True | True | True |
+| 1090312c5b0f | 450 | True | True | True |
+
+⇒ 修复前跨进程三样全不同、修复后三样全同；同进程内 eval/bt 双跑依旧逐位等（未退化）。
+试件面：**124 passed**（`test_factory_grid_executor`＋`test_l2_gpu_landing` 合跑，修复后首验）
+→ 补一支结构面防回归钉后 **83 passed**（本件全量）。**零测试破坏**：实测无一支试件钉住
+真实历史跑批的具体数值（相关测试都自产 `tmp_path` 跑批目录）。
+
+### 十·C 影响面清单（按统筹批复的条件逐条，含处置取向；本节不改写任何历史值）
+
+| # | 受影响对照面 | 现状 | 处置取向（待裁） |
+|---|---|---|---|
+| 1 | 02 件 §"1e-6 档显著⇒逐格归因"表：p₀=17/4 格、p₁=26/13 格、z=1.39/2.19、p=0.166/0.028 | **p₀ 与 p₁ 都是跨进程量** ⇒ 两率同含列序公共项；"设备净增 10 格""A1=rank 命中 11/182"归因**被同一变量污染** | 我不宣布作废，只标"修前读数含列序项"；修后在同一格集重跑 p₀/p₁ 重判 |
+| 2 | 03 件 §八 家族统计（1.62%／2.48%／净增 ≈0.86pp ≈9 格） | 同一条列序项 | 同上，随 1 一并重判 |
+| 3 | 02 件 级3/级4 差异格计数（196/199、1,042/1,049、1,034/1,043、1,048 逐位等） | 差异格可能是列序而非设备 | 修后重跑同一对拍即判得清 |
+| 4 | 01 件 D-F 资源足迹 22 负例（MemoryError） | 判定不依赖列序 | 低风险，修后随批复测一次 |
+| 5 | 历史 N 账本／exam_result／trial_ledger 的格值 | 随机列序时代的产物 | 按统筹条件：**原样留档不改写**；修后重跑自成一档新基线 |
+| 6 | 试件面 | 无钉真实跑批数值 | 零破坏（已实证） |
+| 7 | §二·丙 协议本身 | 协议核了"同日背靠背＋成分面指纹 drift_free"，**没核列序** | 底尺的真正产出：**正确对照形态＝同进程双后端**（列序天然固定）；跨进程配对只能判"有无系统性偏离"，不能判 1 ULP 级差异 |
+
+### 十·D 本节自犯与边界（如实）
+
+- 探针第一轮把 `pct_change` 的 `FutureWarning`（默认 `fill_method='pad'` 已弃用）暴露出来——
+  与本归因无关，**未顺手修**，登记为独立待裁项（它同时是引擎侧一个潜在口径面）。
+- 防回归钉取**结构面**（AST 判那一句必经 `sorted`，并自带"修复前形态必须判败"的红证），
+  不取跨进程 subprocess 对拍：后者要把"跑批一次"的成本与 CH 依赖引进单测（在册禁例）。
+- 修复袋与本账**尚未入队**：跨进程数值对照面（第 1/2/3 条）属数值口径，等统筹正式裁定；
+  生产缺省面（`--eval-backend cpu`／`--eval-glue-gpu` 关）不受本节影响。
+
+复核命令：
+1) `PYTHONHASHSEED=5 PYTHONPATH=src python .runtime/tmp/st-gpux2-20261011/n8_attribution_probe.py .runtime/tmp/st-gpux2-20261011/n8_probe_r5.json`（换 6 再跑一遍，比 `cols_sig`/`net_sha`）
+2) 修复前形态复现：把该句的 `sorted(...)` 临时去掉再跑 1) 两遍 ⇒ 签名与 net_sha 必不同（本袋不落地此步，探针目录留有 r1/r2/r3 原始读数）
+3) `PYTHONPATH=src python -m pytest tests/research/backtest/test_l2_gpu_landing.py -q` → 83 passed
+4) 唯一 set 源自证：`grep -n "for c in universe_cache" scripts/backtest/factory_grid_executor.py` → 1 处，且该行含 `sorted(`
+
+
