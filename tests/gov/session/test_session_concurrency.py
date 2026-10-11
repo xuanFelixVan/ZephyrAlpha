@@ -937,11 +937,19 @@ class TestSessionRegistryRegisterRateGuard:
         assert again.logical is False
 
     def test_existing_logical_entry_exempt(self, tmp_path):
-        """logical 豁免态②：既有条目经 mark_logical 翻转后，register 续注册放行。"""
+        """logical 豁免态②：既有条目经 mark_logical 翻转后，register 续注册放行。
+
+        夹具口径变更（st-maint2-20261011，与维护一班 §二 对 test_logical_request_exempt
+        的同型处方一致）：mark_logical 授标自本班起也要过 W-29 形态核验（原先只有
+        register 的降级腿核验，等于留一条自授权口）。本例意图＝测 register 的**豁免态**，
+        mark_logical 只是 setup ⇒ 把 sid 换成 chief 形态词，让 setup 合法通过，
+        断言本体一字未改。反向钉桩（非 chief 授标必拒）见
+        tests/gov/session/test_takeover_ledger_kwarg_and_mark_logical.py。
+        """
         reg = SessionRegistry(project_root=tmp_path)
-        first = reg.register("sess-guard-5", pid=0)
-        assert reg.mark_logical("sess-guard-5", logical=True) is True
-        second = reg.register("sess-guard-5", pid=0)
+        first = reg.register("sess-chief-guard-5", pid=0)
+        assert reg.mark_logical("sess-chief-guard-5", logical=True) is True
+        second = reg.register("sess-chief-guard-5", pid=0)
         assert second.last_register_ts >= first.last_register_ts
         assert second.logical is True
         assert not (tmp_path.joinpath(*self._AUDIT_REL)).exists()

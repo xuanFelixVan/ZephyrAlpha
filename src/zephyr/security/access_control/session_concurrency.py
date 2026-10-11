@@ -746,10 +746,24 @@ def _salvage_takeover_ledger(
                     sid,
                     registry_entry=data.get(sid) or {},
                     now=now,
+                    # 形参名不改（本班一度误判为错位并改成 death_evidence，实为误伤，已撤回）：
+                    # 被调方 session_takeover_ledger.py:996/1023-1024 收 extra_death_evidence
+                    # 并 {**death_evidence, **extra} 合并，[MODIFY-GUARD]:12 写明它是维护一班
+                    # 三证立法的配套面。⚠ 主区暂存区当前有一份把该形参**纯删 11 行**的旧快照
+                    # （0 增 11 删＝HEAD 真子集回退弹）；它一旦落地，本调用立刻 TypeError，
+                    # 而下面的 broad except 会把它吞成 warning ⇒ "会话死亡显化台账"整条静默失联。
+                    # 因此本处保留 fail-open 语义但把降级**升到 error 级并打可 grep 标记**。
                     extra_death_evidence=None if side is None else {"alive_side_evidence": side},
                 )
             except Exception as e:  # noqa: BLE001 — 单会话显化失败不阻断判死主流程
-                logger.warning("SessionRegistry: takeover ledger write failed sid=%s: %s", sid, e)
+                # 降级必须显化：logger.warning 曾让"写失败"与"本轮没有待判死会话"同形
+                # （在册假绿形态：降级态≠未触发）。只升级可观测性，不改 fail-open 语义。
+                logger.error(
+                    "SessionRegistry: TAKEOVER_LEDGER_DEGRADED sid=%s 显化台账写入失败（判死继续，"
+                    "但该会话的接管条目缺失；首查主区暂存区是否躺着删 extra_death_evidence 的回退弹）: %s",
+                    sid,
+                    e,
+                )
     except Exception as e:  # noqa: BLE001 — 台账设施缺席只降级不阻断
         logger.warning("SessionRegistry: takeover ledger hook unavailable (fail-open): %s", e)
 
@@ -1306,12 +1320,29 @@ class SessionRegistry:
     def mark_logical(self, session_id: str, *, logical: bool = True) -> bool:
         """W-29：原地翻转逻辑会话标志（零触碰 held_files/last_activity/心跳——防判死又不丢 claim）。
 
-        Returns: True=已更新；False=session 不在册（调用方自行决定是否 register）。
+        Returns: True=已更新；False=session 不在册（调用方自行决定是否 register），
+        或**授标未过形态核验**（见下）。
         在册后的周期续期仍用本方法；**开班**请改用 open_session（单一 API，禁裸两步）。
+
+        治本（st-maint2-20261011 裁定包⑤/保活正门评估）：`logical=True` 的唯一实际作用
+        是**豁免 register 的 1860s 重注册频率护栏**（:1102 的豁免腿；它不进 _is_session_alive，
+        故不是"判活通道"而是"免降级钥匙"）。而授标核验 `:1124` 只写在 register 里——
+        本方法原先**不核验**，等于给任意会话一条绕开 W-29 的自授权口（日志原话
+        "chief keepalive should use mark_logical" 正对着这个口）。故授标分支补同一把尺：
+        `_verify_chief_form`（chief 形态词 ∨ 心跳 <120s 真在岗），不过即拒绝并显化留痕。
+        撤标（logical=False）**永远放行**——收紧不对称是原则，只许减少特权不许增加。
         """
         with self._lock:
             entry = self._get_entry(session_id)
             if not isinstance(entry, dict):
+                return False
+            if logical and not bool(entry.get("logical", False)) and not self._verify_chief_form(session_id):
+                logger.error(
+                    "SessionRegistry: MARK_LOGICAL_DENIED sid=%s logical=True 未过 W-29 形态核验"
+                    "（非 chief 形态词 ∧ 心跳不新鲜）——拒绝授标，条目原样不动；"
+                    "长班续命请走 heartbeat_daemon.register_heartbeat_keepalive（具名＋TTL≤7200s＋审计）",
+                    session_id,
+                )
                 return False
             entry["logical"] = bool(logical)
             self._write_own(session_id, entry)
