@@ -1180,3 +1180,20 @@ Test-CapacityGuardBreach : 无法将“Test-CapacityGuardBreach”项识别为 c
 - **工单⑧ 落地正证（只信 HEAD 字节）**：`git show HEAD:scripts/\backup\backup.ps1 | grep -c "Remove-DatedTree"` = **4**（q-20261012-st-backfix3-20261011-0019 落为 `259f097945`，20:15 实测）。19:56 那发跑的是**工作区未落地字节**（reconciler 点的是主检出点磁盘上那份脚本），故 24 秒那组数只作 A/B 参考、**不作 HEAD 验收**；HEAD 字节的首发验收等下一发（事件腿或 10-13 06:00），且 10-13 那发应首次出现 `Rotation start:` 行（cutoff=20260929 ⇒ 20260928 到期），删除提速的直接对比数也在那一发。
 - **零面声明（本段）**：本班杀停进程 0｜活体任务面只动过 ExecutionTimeLimit 一位（已存证可回退）｜注册脚本未重跑｜未碰 `G:\backup` 内容｜`.runtime/\commit_queue` 的 blobs 零碰｜仪器零新起｜state 册零写｜CH 取数 0 次｜他人件与他人 staged 条目零触碰｜本段纯追加（㉞ 那一枚字符修正单列，已按裁定逐位存证与四尺自证）。
 - **署名**：adjudicator=st-backfix3-20261011（本段：四裁定接收、㉞ 外科修正与四尺自证、⑥ 前置测量＋Action 对齐＋红绿证、工单⑧ HEAD 落地正证）。
+
+### 统筹两批一转执行账（㉘ 扩面＋注册重跑归一双面漂移；10-12 20:4x-20:5x 轮）
+
+- **接收**：㉘ 扩面＝批（diff/快照腿补一行起始日志）；注册重跑＝批，且限 10-13 06:00 前，护栏＝前后任务态读数＋bf32 存证可回退；序列化守护死亡＝已并入维护三班合并令（本班不再动）；10-13 两格验收照等。
+- **㉘ 扩面（第三处盲区已补）**：`scripts/backup/backup.ps1` 在 `Diff source vs snapshot` 之后、两次 `Get-SourceFileIndex`（源码树＋上一日树）之前加 `Write-OK ("Snapshot start: source={0} prev={1}")`。判据·阈值·保留线零改，只多一行日志。
+  - 实测依据（同夜两枚，不靠推测）：19:58:11 → 20:45:38 ＝ **47 分 27 秒零日志**，而这一腿最后只产出 `copied=165, replaced=85`；更早 01:07:09 → 02:00:50 ＝ 52 分 41 秒。⇒ 盲区不在"删"，在**逐件走两棵全树**本身，本班前一段只补了两条删除腿确实是没补全。
+  - 新测 `test_snapshot_walk_announces_before_the_two_tree_enumerations` 三断言＝语句在／排在两树枚举之前／必须同时带 `$CodeSource` 与 `$prevDay` 两个被走对象（否则事后仍无法归因是哪棵树慢）。**HEAD 面 i_start=-1 即红**，改后 **17 passed**。
+  - **本班又自犯一处并被自己的尺抓住（如实入账）**：给测试文件加新测时，我把函数签名行连同其 docstring 首行一起当 `old_string` 重写，结果**整段 docstring 被吞**、文件当场语法不合法。抓住它的正是本班在册那条"结构自证"——`git diff -U0` 的 **removed 行数≠0**。复原后两面复测＝removed 0、`ast.parse` OK、17 passed。规则写给下一班：**改相邻代码只能锚定单行尾行做纯追加，凡 old_string 覆盖多行就必检 removed=0**。
+- **注册重跑（双面漂移归一，护栏兑现）**：执行前取活体字段与整档存证 `bf32_task_BEFORE_205255.xml`；脚本 `-RegisterTask` 命中的是**既有任务分支**＝`Set-ScheduledTask`（源码 :244-247），**不是** unregister→register，故无"任务短暂不存在"的空窗；执行后再取 `bf32_task_AFTER_205412.xml`。
+  - **两档 XML 全档 diff＝仅 1 行不同**：`<StartBoundary>` 由 2026-07-28T06:00:00+08:00 变为 2026-10-12T06:00:00+08:00（DailyTrigger 的锚日期，`DaysInterval=1` 与时刻均未动 ⇒ 实测 `NextRun=10/13 06:00`、`LastResult=0`、`State=Ready` 全部照旧）。
+  - 归一正证：`ExecutionTimeLimit=PT12H` 与 Action 逐字串 `wscript.exe || launch_hidden.vbs + backup.ps1 -Mode all -Force || WD=D:/ZephyrAlpha` 在两档**完全相同** ⇒ **真源脚本已能原样复现活体任务**，"谁重跑注册就静默回归闪窗缺陷"的那条通道关闭；MPI=IgnoreNew、RestartCount=1、StartWhenAvailable=True、电池两位、AllowHardTerminate=True、Priority=7、Description **零差**。
+  - 回退路径：用 BEFORE 存证整档还原（`Register-ScheduledTask -TaskName ZephyrAlpha-DailyBackup -Xml (Get-Content 存证 -Raw)`）。本班**未**动 Trigger 语义、未改时刻、未加删除/压缩动作。
+  - **一处尺的不足如实报**：BEFORE/AFTER 的 Principal 四字段我用 CIM 属性读，打出来是 `MSFT_TaskPrincipal2.Id` 这类**属性名而非值**＝尺坏。正解＝整档 XML diff（已做，结论＝Principal 无差）。登记这条，防下一班拿同样的坏读数当"principal 被改过"的证据。
+- **19:56 那发完赛读数（今日第 3 份报告，本班监视器 20:49:19 见终行）**：`duration_seconds=3180.6`；Stage 3 diff 腿 19:58:11→20:45:38＝47m27s（占全轮 89%）；dumps 落 G 在 Stage 3 开跑后 **11 秒**（19:58:11，仍是未落地工作区字节在跑，故 24 秒/11 秒两组数都只作参考不作 HEAD 验收）；`Rotation start:` **未出现**（今日无到期项，符合预期，不是漏打）。今日累计：完赛 3 发（01:06 27844.9s／09:52 1428.7s／19:56 3180.6s）＋跳锁 1 发（06:00）＝runlog 4 支、报告 3 份、skip json 3 枚；⑫ 三发样本全为 `skipped`＝无第三写者。
+- **等办（10-13 两格）**：①`Rotation start:` 活体样本＋删除提速对 6h42m44s 的直接对比（那天 cutoff=20260929 ⇒ 20260928 到期）；②`Snapshot start:` 活体首现＋该腿时长读数；③`dumps_exposure_min` 在 **HEAD 字节轮次**上的首验（验收线 ≤5 分钟，对照旧序 19m29s／7h36m）。
+- **零面声明（本段）**：本班杀停进程 0｜注册脚本重跑只走 Set-ScheduledTask 既有分支、未 unregister、未启动任务、未手动点火｜备份盘内容零写｜`.runtime/commit_queue` 的 blobs 零碰｜仪器零新起（临时监视器为后台命令，随 90 拍自退）｜state 册零写｜CH 取数 0 次｜他人件与他人 staged 条目零触碰｜序列化守护本班未碰（已并入维护三班合并令）｜本段纯追加。
+- **署名**：adjudicator=st-backfix3-20261011（本段：㉘ 第三处盲区补齐＋17 passed 与 HEAD 红证、注册重跑双面归一含单行 XML diff 与整档存证、Principal 坏尺登记、19:56 完赛读数、10-13 三格待验清单）。

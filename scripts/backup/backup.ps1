@@ -906,6 +906,13 @@ if ($Mode -eq "ch") {
     } else {
         # Seed/refresh the day's snapshot: link unchanged + copy changed/new
         Write-Stage ("Diff source vs snapshot: {0}" -f $prevDay)
+        # (2026-10-12 chief order 8 item 2 extension, ruled in the 20:5x reply): the two
+        # full-tree walks below are an hour-scale window with no journal line of their own.
+        # Same-evening measurements: 19:58:11 -> 20:45:38 = 47m27s of silence for a walk that
+        # ended in copied=165/replaced=85; earlier 01:07:09 -> 02:00:50 = 52m41s. Announce the
+        # two inputs first, so "long walk" is separable from "stalled/dead". No judgement,
+        # threshold or retention change -- log only.
+        Write-OK ("Snapshot start: source={0} prev={1}" -f $CodeSource, $prevDay)
         $srcIndex = Get-SourceFileIndex -Root $CodeSource -ExclDirs $ExcludeDirs -ExclFiles $ExcludeFiles
         $prevIndex = Get-SourceFileIndex -Root $prevDay  -ExclDirs $ExcludeDirs -ExclFiles $ExcludeFiles
         Write-OK ("Source files: {0}, snapshot files: {1}" -f $srcIndex.Count, $prevIndex.Count)

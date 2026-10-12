@@ -323,3 +323,23 @@ def test_daily_trigger_action_carries_the_no_flash_launcher() -> None:
     assert "launch_hidden.vbs" in code, "Action 没引用无闪窗启动器件本体"
     assert '-Execute "powershell.exe"' not in code, "旧 powershell 直启 Action 回退"
     assert "Test-Path $FlashFreeLauncher" in code, "启动器缺件没有前置拦截（会注册出一个坏任务）"
+
+
+def test_snapshot_walk_announces_before_the_two_tree_enumerations() -> None:
+    """㉘ 扩面（统筹 20:5x 批复）：diff/快照腿也必须开局打一行，再走两棵全树枚举。
+
+    病形实测（同夜两枚）：19:58:11 → 20:45:38 ＝ **47 分 27 秒零日志**，而那一腿最后只产出
+    copied=165/replaced=85；更早 01:07:09 → 02:00:50 ＝ 52 分 41 秒。两条删除腿已在上一袋
+    补了起始行，这腿是同一病族的第三处——盲区不在"删"，在"逐件走树"本身。
+    判据/阈值/保留线零改：只多一行日志，且它排在两次 Get-SourceFileIndex 之前。
+    """
+    src = (BACKUP_DIR / "backup.ps1").read_text(encoding="utf-8")
+    lines = _ps_code_lines(src)
+    i_start = _first_idx(lines, "Snapshot start: source=")
+    i_walk = _first_idx(lines, "$srcIndex = Get-SourceFileIndex")
+    assert i_start >= 0, "diff/快照腿没有起始日志语句（第三处盲区仍在）"
+    assert i_walk > i_start, f"起始行没排在两棵全树枚举之前（start={i_start} walk={i_walk}，打了等于没打）"
+    stmt = lines[i_start]
+    assert "$CodeSource" in stmt and "$prevDay" in stmt, (
+        "起始行没带上两个被走对象（source/prev），事后仍无法归因是哪棵树慢"
+    )
