@@ -13,6 +13,8 @@
 #   only-add 追加禁改旧行）；判据门柱=卡内 pillars_numeric（裁定#501 冻结面，执行器零裁量）；
 #   verdict=门柱全过才 pass（一票否决）；分数行落 exam_scores_v1.yaml only-add；试次入 n_trial_ledger；
 #   信号/目标可注入（测试零 CH），缺省经 ch_data 按 signal_spec/target_spec 取数。
+#   试次册路径可注入（run_card 的 ledger_registry_path，缺省=生产真源不变）：测试一律注入 tmp_path，
+#   禁经单测写生产 N 账本（根宪法 §9 条目 6；10-12 实测泄漏形态=examcard:TDM-E-TEST/* 进生产册）。
 # [MODIFY-GUARD] tests/backtest/test_calibration_exam.py
 # [STABILITY] experimental
 # [ERROR_CONTRACT] RuntimeError: 卡状态非法/缺 pillars_numeric/信号目标缺失/分数册 CAS 冲突
@@ -205,7 +207,9 @@ def _panel_metrics(signal: pd.DataFrame, target: pd.DataFrame, card: dict) -> di
         oos_ic = float(part.mean()) if len(part) >= 30 else float("nan")
     return {
         "ic_mean": float(st.get("ic_mean", float("nan"))),
-        "ic_ir": float(st.get("ic_ir", float("nan"))),
+        # ic_stats 的回键真名是 "icir"（ic_exam.ic_stats:42），此处曾读 "ic_ir" ⇒ panel 路 ic_ir 恒 NaN，
+        # 而 judge 对 NaN 的处置是"跳过加败"（只可能放行不可能记败）＝卡面冻了 ic_ir_min 却从未被评估。
+        "ic_ir": float(st.get("icir", float("nan"))),
         "mono_spearman": None,
         "regime_ic": seg,
         "oos_ic": oos_ic,
@@ -280,8 +284,8 @@ def _unjudged_pillars(card: dict, m: dict, judged: frozenset) -> dict:
     """未判柱清单（纯观测面，零否决权）：分数册行 MUST 自带"这一分只代表哪些键"。
 
     三面各自如实：①numeric_keys_not_read=卡面冻结了但当前判官根本没读的键（历史 pass 不等于这些键过）；
-    ②numeric_keys_no_machine_face=读了该键但当前 metrics 面无从评估（如 series 路 ic_ir 恒 None、
-    panel 路 mono 恒 None、regime 有效段不足 2）；③pillars_prose_keys=卡面文字门柱原样列表——
+    ②numeric_keys_no_machine_face=读了该键但当前 metrics 面无从评估（如 panel 路 mono 恒 None、
+    ic_ir 未接时 NaN、regime 有效段不足 2）；③pillars_prose_keys=卡面文字门柱原样列表——
     prose↔numeric 的对应关系无在册真源，本件不代拍（该映射是"门柱词表立法"工单的对象，禁改键值）。"""
     p = card.get("pillars_numeric") or {}
     no_face: dict[str, str] = {}
@@ -289,8 +293,9 @@ def _unjudged_pillars(card: dict, m: dict, judged: frozenset) -> dict:
         mono = m.get("mono_spearman")
         if mono is None or mono != mono:
             no_face["mono_spearman_min"] = "mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）"
-    if "ic_ir_min" in p and m.get("ic_ir") is None:
-        no_face["ic_ir_min"] = "series 路 ic_ir 恒 None（现器无 IC_IR 面）"
+    ir_val = m.get("ic_ir")
+    if "ic_ir_min" in p and (ir_val is None or ir_val != ir_val):
+        no_face["ic_ir_min"] = "ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）"
     if "regime_same_sign" in p:
         vals = [v for v in (m.get("regime_ic") or {}).values() if v == v]
         if len(vals) < 2:
@@ -639,6 +644,7 @@ def run_card(
     run_id: str | None = None,
     recorded_by: str = "calibration_exam",
     scores_path: Path = SCORES_PATH,
+    ledger_registry_path: Path | None = None,
 ) -> dict:
     card = yaml.safe_load(Path(card_path).read_text(encoding="utf-8"))
     status = card.get("status")
@@ -733,7 +739,7 @@ def run_card(
     try:
         from zephyr.backtest.core.n_trial_ledger import TrialLedger
 
-        TrialLedger().record_run(
+        TrialLedger(registry_path=ledger_registry_path).record_run(
             kind="exam_card",
             batch_id=f"examcard:{card['card_id']}:{row['date']}",
             n_trials=1,
