@@ -5579,3 +5579,18 @@
   calc_mode: preload
   producer: zephyr.factor.core.batch_output.buffer
   schedule: factor_signal_daily
+
+- category_id: market_kronos_prediction_daily
+  name: "Kronos T+1 分位预测日表(工单GPU-02缺件②批量推理打分落表面;只落不用—消费转正另走B-007人工门;asof_ts判定时刻+input_cutoff_ts数据截断+as_of_date截面三PIT锚;ReplacingMergeTree(asof_ts)同键重算取最新)"
+  engine: clickhouse
+  database: c1_market
+  table: kronos_prediction_daily
+  schema_file: schemas/categories/market/market_kronos_prediction_daily.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "INSERT_COLUMNS 为写入面唯一真源(kronos_adapter --score-only 引用禁硬编码列序);realized_close/hit_50/hit_90/settled_at 四列打分器禁写留 NULL;synthetic=1 冒烟行复核后清理;MATERIALIZED 派生列禁显式写入"
+  calc_mode: batch
+  producer: scripts.backtest.kronos_adapter
+  schedule: kronos_scoring_nightly

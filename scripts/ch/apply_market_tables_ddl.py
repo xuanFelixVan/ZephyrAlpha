@@ -457,6 +457,10 @@ from schemas.categories.market.market_fund_flow_daily import MARKET_FUND_FLOW_DA
 from schemas.categories.market.market_futures_warehouse_receipt import FUTURES_WAREHOUSE_RECEIPT_DDL
 from schemas.categories.market.market_index_valuation_daily import MARKET_INDEX_VALUATION_DAILY_DDL
 from schemas.categories.market.market_ipo_calendar import IPO_CALENDAR_DDL
+
+# 板块层两表 DDL（st-secbuild-20260923 批2，骨架 v0 §5）：sector_state/sector_preference
+# 工单 GPU-02 缺件② 预测落表面（st-gpuwo-20261011，2026-10-11）：Kronos T+1 分位预测日表
+from schemas.categories.market.market_kronos_prediction_daily import KRONOS_PREDICTION_DAILY_DDL
 from schemas.categories.market.market_limit_up_pool import MARKET_LIMIT_UP_POOL_DDL
 
 # D4 物理另类·油价链三件+F13（2026-09-18 夜班，st-datapack-20260918，altdata_line D4 波2）：
@@ -475,8 +479,6 @@ from schemas.categories.market.market_road_freight_index import ROAD_FREIGHT_IND
 from schemas.categories.market.market_sector_fund_flow import MARKET_SECTOR_FUND_FLOW_DDL
 from schemas.categories.market.market_sentiment_panel import SENTIMENT_PANEL_DDL
 from schemas.categories.market.market_stk_limit import STK_LIMIT_DDL
-
-# 板块层两表 DDL（st-secbuild-20260923 批2，骨架 v0 §5）：sector_state/sector_preference
 from schemas.categories.market.market_stock_candidate_pool import STOCK_CANDIDATE_POOL_DDL
 from schemas.categories.market.market_suspend import SUSPEND_DDL
 from schemas.categories.market.market_typhoon_landfall_history import MARKET_TYPHOON_LANDFALL_HISTORY_DDL
@@ -621,6 +623,11 @@ _ALL_DDL: list[tuple[str, str]] = [
     # 消账 DSC-GAP-FFVAL/DSC-GAP-FFSIG；ReplacingMergeTree 同键重放幂等
     ("c1_market.factor_feature_value", FACTOR_FEATURE_VALUE_DDL),
     ("c1_market.factor_signal", FACTOR_SIGNAL_DDL),
+    # 工单 GPU-02 三缺件之②（st-gpuwo-20261011，2026-10-11）：Kronos 批量推理打分前瞻落表面。
+    # 只落不用——消费侧（signal_ashare/ml_forecast/kronos_tsfm_predictor 转正）另走 B-007 人工门；
+    # 表净增=架构数据走 apply_*.py 直写 DB（根宪法硬规则 6 RULE-SSOT），DDL 真源
+    # schemas/categories/market/market_kronos_prediction_daily.py；ReplacingMergeTree(asof_ts) 同键重算取最新
+    ("c1_market.kronos_prediction_daily", KRONOS_PREDICTION_DAILY_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -1215,6 +1222,8 @@ _EXPECTED_ENGINES: dict[str, str] = {
     # 图12/TDM 收官总攻批两表（2026-10-07 st-vm12final-20261007-laneF）：因子族长表同键替换幂等
     "factor_feature_value": "ReplacingMergeTree",
     "factor_signal": "ReplacingMergeTree",
+    # GPU-02 前瞻预测落表面（同键重算取最新，version=asof_ts）
+    "kronos_prediction_daily": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"
