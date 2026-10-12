@@ -485,3 +485,79 @@ class TestInputValidation:
         raw = json.loads((tmp_path / f"{DRAWDOWN_STATE_NAMESPACE}.json").read_text(encoding="utf-8"))
         assert raw["current"] == "WARN"
         assert raw["last_transition"]["from"] == "NORMAL"
+
+
+class TestGraduationFaceAbsentMode:
+    """统筹裁定 2026-10-13 路径 1（署名批准＋Owner 否决窗，故本组测试随补丁同批、补丁未落地前不得单独投）。
+
+    四条钉：①缺省＝旧行为逐字不变（无笔级数据则阶梯一步不晋升，且不计数不打点）；
+    ②显式 absent 才晋升且必留痕（计数≥1）；③拼错取值即拒（禁静默退回缺省）；
+    ④本档只替代"毕业准则"这一腿——给足笔级数据时 required 与 absent 走同样路径（不放宽任何其他门）。
+    """
+
+    @staticmethod
+    def _conf():
+        return ResetConfirmation(
+            confirmed_by="test",
+            override_reason="graduation_face 契约测试",
+            holdings_verified_zero=True,
+            orders_cancelled_verified=True,
+            new_open_locked_verified=True,
+        )
+
+    @staticmethod
+    def _kill_then_reset(sm, day0=0):
+        for i in range(30):
+            sm.evaluate(trade_date=_day(day0 + i), drawdown_pct=-0.30)
+        assert sm.current is DrawdownState.KILL
+        sm.request_manual_reset(TestGraduationFaceAbsentMode._conf(), trade_date=_day(day0 + 31))
+
+    _PNLS = [{"pnl": 1.0, "r_multiple": 0.5, "rule_followed": True} for _ in range(12)]
+
+    def _walk(self, sm, days, pnls):
+        caps = []
+        for i, rpc in enumerate(days):
+            sm.evaluate(trade_date=_day(32 + i * 7), drawdown_pct=-0.02, recovered_pct=rpc, strategy_pnls=pnls)
+            caps.append((sm.recovery_step, sm.position_cap))
+        return caps
+
+    def test_default_face_keeps_legacy_stall_and_leaves_no_trace(self):
+        sm = DrawdownStateMachine(None, DrawdownStateMachineConfig())
+        self._kill_then_reset(sm)
+        caps = self._walk(sm, [0.6, 0.8, 1.0, 1.0, 1.0, 1.0], None)
+        assert all(step == 0 and cap == 0.25 for step, cap in caps), caps
+        assert sm.graduation_face_skips == 0, "缺省档不得计数（计数>0＝本档在没人授权时生效了）"
+
+    def test_absent_face_promotes_and_counts_skip(self):
+        sm = DrawdownStateMachine(None, DrawdownStateMachineConfig(graduation_face="absent"))
+        self._kill_then_reset(sm)
+        caps = self._walk(sm, [0.6, 0.8, 1.0, 1.0, 1.0, 1.0], None)
+        assert caps[-1][0] >= 1, f"absent 档必须至少晋升一级：{caps}"
+        assert caps[-1][1] > 0.25, f"晋升后 cap 必须高于首档 0.25：{caps}"
+        assert sm.graduation_face_skips >= 1, "跳过必计数（留痕面）"
+
+    def test_unknown_face_value_is_rejected(self):
+        with pytest.raises(InvalidDrawdownStateError, match="graduation_face 只能取"):
+            DrawdownStateMachineConfig(graduation_face="skip_all")
+
+    def test_absent_face_does_not_loosen_other_guards(self):
+        """recovered_pct 门槛这一腿在 absent 档下**照样拦**：给 0 补回比例，两档都必须一步不晋升。"""
+        sm_req = DrawdownStateMachine(None, DrawdownStateMachineConfig())
+        self._kill_then_reset(sm_req)
+        no_recover = self._walk(sm_req, [0.0] * 6, self._PNLS)
+        sm_abs = DrawdownStateMachine(None, DrawdownStateMachineConfig(graduation_face="absent"))
+        self._kill_then_reset(sm_abs)
+        no_recover_abs = self._walk(sm_abs, [0.0] * 6, None)
+        assert all(step == 0 for step, _ in no_recover), no_recover
+        assert no_recover_abs == no_recover, "同一门槛在两档下必须同结果（本档只替代毕业准则一腿）"
+
+    def test_with_trade_pnls_both_faces_reach_same_step(self):
+        """给足笔级数据时：required 自己就能毕业，absent 也不该跑得更远（证明它不放宽，只补无面）。"""
+        sm_req = DrawdownStateMachine(None, DrawdownStateMachineConfig())
+        self._kill_then_reset(sm_req)
+        a = self._walk(sm_req, [0.6, 0.8, 1.0, 1.0, 1.0, 1.0], self._PNLS)
+        sm_abs = DrawdownStateMachine(None, DrawdownStateMachineConfig(graduation_face="absent"))
+        self._kill_then_reset(sm_abs)
+        b = self._walk(sm_abs, [0.6, 0.8, 1.0, 1.0, 1.0, 1.0], self._PNLS)
+        assert a == b, (a, b)
+        assert a[-1][0] >= 1, f"笔级数据齐时 required 档本就该晋升（此支若红，说明测试面数据不合格）：{a}"

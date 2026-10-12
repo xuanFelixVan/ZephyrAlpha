@@ -6,7 +6,7 @@
 # [CONSUMERS] 无现役端到端消费方（2026-09-15 实测：唯一 import 方 zephyr.risk.core.drawdown_session_persistence 虽实例化本件，但其对外函数 premarket_initialization/postmarket_persist 于 src 内零调用者、整链未接入任何事件通道；原声称 RiskOrchestrator §6.5 接线位从未落地；其持久化依赖的 JsonStateStore 根目录未被装配、无可达落盘位）。现役回撤分级判定由 DrawdownTracker+DrawdownController 在 evaluate_intraday 内闭环消费，本状态机为并行未启用设计件（非为接线而接线）。阈值口径与 THD-DRAWDOWN-001/002/003(5%/10%/15%) 一致、未改动。证据与回归锁见 tests/risk/test_risk_signal_consumer_wiring.py。
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 升级单调取最严(多源触发直接跳到最高态); 降级不可跳级(WARN→NORMAL/DANGER→WARN/CRISIS→DANGER逐级); 降级三重守卫(半阈值+min_hold+VaR交叉验证); RECOVERY阶梯不可跳过(0→1→2→NORMAL且须毕业准则); KILL仅人工复位可出(无自动路径); 状态外部化(JsonStateStore原子写,损坏抛StateCorruptError不静默兜底); peak语义不属本模块(capital_curve_manager管辖)
+# [INVARIANTS] 升级单调取最严(多源触发直接跳到最高态); 降级不可跳级(WARN→NORMAL/DANGER→WARN/CRISIS→DANGER逐级); 降级三重守卫(半阈值+min_hold+VaR交叉验证); RECOVERY阶梯不可跳过(0→1→2→NORMAL且须毕业准则); KILL仅人工复位可出(无自动路径); 毕业准则腿可显式声明无面(graduation_face=absent，缺省required=旧行为逐字不变，跳过必计数并打点); 状态外部化(JsonStateStore原子写,损坏抛StateCorruptError不静默兜底); peak语义不属本模块(capital_curve_manager管辖)
 # [MODIFY-GUARD] tests/risk/test_drawdown_state_machine.py
 # [STABILITY] evolving
 # [SAFETY] H
@@ -124,6 +124,11 @@ _DEESCALATION_PATH: Final[dict[DrawdownState, DrawdownState]] = {
 }
 
 
+#: 毕业准则这一腿的"面"取值（统筹 2026-10-13 路径 1 批准，Owner 否决窗内不得落地）：
+#:  required=旧行为逐字不变；absent=调用方显式声明本跑无笔级面，该腿跳过并留痕。
+_GRADUATION_FACES: Final[frozenset[str]] = frozenset({"required", "absent"})
+
+
 @dataclass(frozen=True)
 class DrawdownStateMachineConfig:
     """回撤状态机配置（C 类可调参数，默认值真源=35 号 memo §3.11/§3.20/§3.14）。
@@ -166,6 +171,7 @@ class DrawdownStateMachineConfig:
     graduation_min_rule_compliance: float = 0.80
     graduation_max_single_loss_r: float = 1.2
     graduation_window: int = 10
+    graduation_face: str = "required"
     recovery_freeze_days: int = 5
     reset_window_days: int = 20
     max_resets_per_window: int = 3
@@ -207,6 +213,11 @@ class DrawdownStateMachineConfig:
         rec = self.recovery_step_recovered
         if len(rec) != 3 or not (0 < rec[0] < rec[1] < rec[2] <= 1.0):
             raise InvalidDrawdownStateError("recovery_step_recovered 须为递增三元组且 ≤1")
+        if self.graduation_face not in _GRADUATION_FACES:
+            raise InvalidDrawdownStateError(
+                f"graduation_face 只能取 {sorted(_GRADUATION_FACES)}，实得 {self.graduation_face!r}"
+                "（拼错即拒：静默退回缺省会让「无面」档在没人授权时生效）"
+            )
 
 
 @dataclass(frozen=True)
@@ -245,7 +256,7 @@ class ResetConfirmation:
     new_open_locked_verified: bool = False
 
 
-def _trade_field(trade: Any, name: str) -> Any:
+def _trade_field(trade: Any, name: str) -> Any:  # noqa: any-abuse  any-abuse豁免: 桥接 API——同函数用 isinstance(trade, Mapping) 对两类异构交易记录（Mapping 与属性对象）分派取字段，收成单一具体类型即失掉另一类；命中 noqa_exempt_registry.yaml 的 applicable_conditions「桥接 API（同方法接受多种异构类型，用 isinstance 分派）」
     """毕业准则交易记录字段读取（duck-typing：Mapping 或属性对象）。"""
     if isinstance(trade, Mapping):
         return trade.get(name)
@@ -285,6 +296,7 @@ class DrawdownStateMachine:
         self._freeze_days_remaining = 0
         self._last_transition: StateTransition | None = None
         self._last_eval_date: date | None = None
+        self._graduation_face_skips = 0
 
     # ── 只读查询面 ──
 
@@ -511,7 +523,7 @@ class DrawdownStateMachine:
             return None
         if recovered_pct < cfg.recovery_step_recovered[step]:
             return None
-        if not self.graduation_criteria_met(strategy_pnls):
+        if not self._graduation_leg_satisfied(strategy_pnls):
             return None
         if step == 2:
             return self._transition(DrawdownState.NORMAL, "recovery_graduated_new_high", trade_date, to_step=0)
@@ -521,6 +533,28 @@ class DrawdownStateMachine:
             trade_date,
             to_step=step + 1,
         )
+
+    @property
+    def graduation_face_skips(self) -> int:
+        """本进程内"毕业准则腿被显式跳过"的次数（留痕读数，供考卷凭据面复核）。"""
+        return self._graduation_face_skips
+
+    def _graduation_leg_satisfied(self, strategy_pnls: Sequence[Any] | None) -> bool:
+        """RECOVERY 晋升的"毕业准则"这一腿是否满足（含显式无面档）。
+
+        缺省 `graduation_face="required"` 时**整步委托**给 `graduation_criteria_met`，
+        与旧实现逐字同行为；只有调用方显式配 `absent` 才跳过，并计数＋打点留痕
+        （"日频净值回放没有逐笔盈亏"是接口层事实，本档让它可声明、不靠伪造数据糊过去）。
+        """
+        if self._config.graduation_face == "absent":
+            self._graduation_face_skips += 1
+            _logger.warning(
+                "DRAWDOWN_GRADUATION_FACE_ABSENT step=%d total_skips=%d（显式无面档；统筹批＋Owner否决窗）",
+                self._recovery_step,
+                self._graduation_face_skips,
+            )
+            return True
+        return self.graduation_criteria_met(strategy_pnls)
 
     def graduation_criteria_met(self, strategy_pnls: Sequence[Any] | None) -> bool:
         """毕业准则（§3.20 四准则，BloFin "Advance only when objective criteria are met"）。

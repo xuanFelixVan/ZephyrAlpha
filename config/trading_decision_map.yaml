@@ -3733,12 +3733,17 @@ nodes:
   node_type: stage
   point: 持续
   decision_question: 组合现在处于熔断五级的哪一级、升降级条件到了吗
-  algo_note_zh: >-
+  algo_note_zh: >-  # 2026-10-13 本轮修订：补 graduation_face 显式无面档一句（见块末）
     熔断五级状态机（判定轴=组合日盈亏+组合回撤双轴，与六段情绪的市场轴正交）：
     L0 正常 / L1 警戒（日亏≥2%：禁加仓） / L2 禁开仓（日亏≥4%：停新开仓+白名单窄门开启） /
     L3 减仓（日亏≥6%：梯度减仓） / L4 保命（组合回撤≥25% 或生死线：清仓+Owner 人工接管）。
     迟滞解除：当日无新低+修复当日跌幅 50% 才降一级，禁 V 型直接回满。
     （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_risk/algo_flow/drawdown_state_machine.yaml：算法推导图外迁，算法口径不变）
+    （2026-10-13 补丁同步）RECOVERY 阶梯的"毕业准则"一腿新增显式无面档：配置 `graduation_face`
+    取 required（缺省＝旧行为逐字不变，无笔级样本即不毕业）或 absent（调用方声明本跑无笔级面，
+    跳过该腿并计数 `graduation_face_skips`＋打点 DRAWDOWN_GRADUATION_FACE_ABSENT）；未知取值即
+    InvalidDrawdownStateError，禁静默退回缺省。立档理由＝日频净值回放装置只交日频面，
+    而毕业准则六件要逐笔 PnL，照字面调用会让复位后阶梯永停在 step=0/cap=0.25。
   parent_node: TDM-X-R1
   factor_refs: []
   risk_limit_refs: [RLM-KILL-SWITCH-006, RLM-KILLSW-005, RLM-KILL-SWITCH-004, 
