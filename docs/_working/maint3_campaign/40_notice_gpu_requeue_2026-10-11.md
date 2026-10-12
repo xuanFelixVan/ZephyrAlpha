@@ -55,3 +55,25 @@ RESOURCE-SCHEDULE 门本体是 **own-scope** 口径（实测
 - 待本班袋进 `dev`（核账：`git show dev:config/resource_profile_registry.yaml | grep -c "45 9 \* \* \*|5 13 \* \* \*"` 应 ≥1）后重投互斥组袋；
 - 属主会话已判 `ghost_session` 的袋，按在册复投配方：**新袋重投**（正门重注册 `pid=0`＋重拉 heartbeat_daemon 后重新 enqueue，勿 `--from-bag`）；
 - `exclusive_group` 是真源在**表内人审字段**的生产者=人——重投时若改组标，须与 `apply_resource_plan.py` 的 `new_exclusive_group` 通道同批，禁手改册后不再生。
+
+## 五、2026-10-12 03:1x 现网补证：方向尺在**今天的共享池**上又抓到同形态（本班未拦截，只如实呈报）
+
+本班用刚落地的姊妹尺（`registry_mass_deletion_gate.classify_pool_regression_direction`，与
+写者层/入队层同一口径）对主区 `git diff --cached --diff-filter=M` 全集跑了一次读数：
+**14 件在途 M 件＝clean 6／mixed 5／纯驱逐 1／近子集 2／读不动 0**。
+
+| 形态 | 件 | 读数（HEAD 独有／staged 独有） | 本班处置 |
+|------|----|------------------------------|---------|
+| 纯驱逐 strict | `docs/_working/gpufeed_campaign/03_gpux_final_report.md` | 61／0 | **GPU 车道自证**：这是"删了已入库 61 行却一行没加"的形状，与 2026-10-11 夜案卷受害件同形态。若属你道有意收尾（整档改写）请走 `git checkout HEAD -- <件>` 重基后再改；确要覆盖则提交信息带 pool-regression-ack 理由≥10 字（仍留痕）。本班不代判意图、不代改字节。 |
+| 近子集 near | `src/zephyr/backtest/gpu_core.py` | 140／6 | warn 级：比值 0.043≤0.05。请核一遍是不是旧稿覆盖（该件 10-11 案卷里也出现在嫌疑清单）。 |
+| 近子集 near | `tests/research/backtest/test_l2_gpu_landing.py` | 231／1 | 同上（比值 0.004）。 |
+
+复核口令（属主车道可自行跑，只读）：
+
+```
+PYTHONPATH=src python -c "import subprocess,sys;sys.path.insert(0,'src');from zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate import classify_pool_regression_direction as c,_pool_direction_pair as dp;o=lambda a:subprocess.run(a,capture_output=True).stdout.decode('utf-8','replace');[print(p,c(o(['git','show','HEAD:'+p]),o(['git','show',':'+p])),dp(o(['git','show','HEAD:'+p]),o(['git','show',':'+p]))) for p in subprocess.run(['git','diff','--cached','--name-only','--diff-filter=M'],capture_output=True).stdout.decode().splitlines() if p]"
+```
+
+说明两点口径：①这三件都是**他道在途件**，本门 own-scope 生效（外来 staged 只 warn+审计，不连坐），
+所以本班提交不会拦它们、也不该拦；列在这里是因为**形态重现**必须留痕，而不是本班要替谁修。
+②本班自己的两本门册此刻也在同一清单里（clean/mixed），已逐件核过＝纯追加＋标量改行，非驱逐。
