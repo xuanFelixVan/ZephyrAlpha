@@ -6,7 +6,9 @@
 # [CONSUMERS] scripts/ml/run_sft_train.py; P1-E3 NLP 管道 Phase 4
 # [STARTUP] manual
 # [MATURITY] design
-# [INVARIANTS] 中文新闻关键词规则标注+平衡采样；排除评估集 200 条防数据泄露；FPB 英文异源增强；train/eval 9:1 划分
+# [INVARIANTS] 中文新闻关键词规则标注+平衡采样；排除评估集 200 条防数据泄露；FPB 英文异源增强；train/eval 9:1 划分；
+#   样本级可复现（GPU-03B P0）：三条腿一律先按稳定键排序再进 seeded 抽样——CH 无 ORDER BY 的返回序与
+#   datasets 加载序都不是常量，"同 seed"只在池序固定时才等于"同输入"（实测修前重跑只重合 1178/3600）
 # [MODIFY-GUARD] 13_regime_phase3_engineering_plan.md §3.1.9
 # [STABILITY] evolving
 # [SAFETY] L
@@ -77,6 +79,18 @@ FPB_URL = "https://raw.githubusercontent.com/AnonZamura/financial-phrasebank/mas
 LABELS = ("positive", "negative", "neutral")
 
 
+def stable_key(item: dict) -> str:
+    """样本级可复现的唯一排序键。
+
+    中文腿有 news_id 就用它；FPB 英文腿没有 news_id，退到 (source, 全文) ——
+    两者都在同一份输入里唯一，且与 CH/datasets 的返回序无关。
+    """
+    nid = str(item.get("news_id", "") or "")
+    if nid:
+        return f"n|{nid}"
+    return f"c|{item.get('source', '')}|{item.get('title', '')}|{item.get('content', '')}"
+
+
 def load_eval_ids() -> set[str]:
     """加载评估集 news_id（采集时排除，防数据泄露）。"""
     ids: set[str] = set()
@@ -122,6 +136,8 @@ def collect_chinese_news(eval_ids: set[str]) -> list[dict]:
             )
             added += 1
         log.info("采集 %s~%s: +%d（累计 %d）", start, end, added, len(all_news))
+    # CH 无 ORDER BY ⇒ 池序随查询计划/版本变；先按稳定键排死，再让下游 seeded 抽样有意义
+    all_news.sort(key=stable_key)
     return all_news
 
 
@@ -156,7 +172,8 @@ def balance_sample(labeled: list[dict], *, target_per_class: int, seed: int = 42
 
     # 每类采样到 target_per_class（不够全留）——实现三类均衡
     for label in LABELS:
-        pool = by_label[label]
+        pool = sorted(by_label[label], key=stable_key)  # 抽样前先排死池序（seeded 抽样才对"同输入"负责）
+        by_label[label] = pool
         if len(pool) > target_per_class:
             by_label[label] = rnd.sample(pool, target_per_class)
             log.info("%s 采样 %d→%d", label, len(pool), target_per_class)
@@ -224,6 +241,7 @@ def fetch_fpb_english() -> list[dict]:
             }
         )
     log.info("FPB 加载: %d 条英文样本", len(samples))
+    samples.sort(key=stable_key)  # datasets 分片加载序不是常量，与中文腿同规矩排死
     return samples
 
 
