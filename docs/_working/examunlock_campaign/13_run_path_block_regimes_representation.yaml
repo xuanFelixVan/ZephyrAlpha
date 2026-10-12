@@ -1,0 +1,85 @@
+schema_version: examunlock-run-path-block-diagnosis/v1
+sid: st-examunlock-20261013
+date: "2026-10-13T01:3x+08:00"
+found_by: 本班开跑前的离线全链路预演（`.runtime/tmp/st-examunlock-20261013/rehearse_run_path.py`，零 CH、零生产写）
+status: 在册新发现的第三缺口，此前未见任何台账记载（本班 grep 全仓 "regimes" 形态讨论零命中此症状）
+
+symptom: |
+  20 张 `origin=reverse_triage_batch3_20261012` 反向卡即便（a）基序列物化件跑通、
+  （b）绑定册格就位，run 面仍在**出分前**抛：
+  `AttributeError: 'str' object has no attribute 'items'`
+  at `scripts/backtest/fexam/calibration_exam.py:752`（`_event_metrics` 里
+  `for name, span in (w.get("regimes") or {}).items()`）。
+
+root_cause: |
+  卡面把 `window.regimes` 写成散文串：
+  `bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗`
+  而判官对该字段的**四条消费位一律按映射读**：
+  `calibration_exam.py:163`（series 路）、`:200`（panel 路）、`:402`（crisis 多段解析）、`:752`（event 路）。
+  本班全库普查该字段形态（518 张卡，按 yaml 解析后的实际类型计数，不按文本猜）：
+    dict=310 / NoneType=186 / str=22
+  ⇒ 卡面自称"逐字继承 16 卡先例窗"**在表示层不成立**：16 卡与 07 卡的 regimes 都是 dict（本班实测），
+     这 20 卡（外加另 2 张）是散文串，全仓无任何解析器能把散文喂给那四条消费位。
+
+proof_that_this_is_the_only_remaining_block: |
+  本班在 **tmp 副本**里做了一次纯表示层转换（磁盘卡件一字节未动）：
+    prose → {bull: "2019-01-04..2021-06-30", bear: "2021-07-01..2024-01-31"}
+    （解析式只认 `名: YYYY-MM-DD..YYYY-MM-DD`，两段都解不出即断言失败，禁静默补段）
+  再跑完整链：绑定册格 → run_binding_book（prose_quote 校验过）→ _event_base_series(base_csv 路)
+    → op_event_flag_rolling_pctile → run_card（判据 event 路）
+  实测输出（本班原样贴）：
+    REGIMES parsed= {'bull': '2019-01-04..2021-06-30', 'bear': '2021-07-01..2024-01-31'}
+    BIND OK  rows=1373 event_days=477 share=0.3474
+    RUN OK  verdict=**fail**  pillars_all_pass=False
+    fails=['is_gap_bp 2.50bp > 0.0（负向命题要求更负）', 't_stat 0.579 > -2.0（负向命题要求更显著）',
+           'oos 窗事件日 134 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）',
+           "regime_gap 反号 {'bull': {...}} ..."]
+    score_rows_on_disk=1（tmp 分数册）  PROD UNTOUCHED scores=44918（生产分数册零字节变更）
+    CARD status after run=examined  judgment untouched=True
+  ⚑ 关键一条：转换后该卡**判 fail 不是 pass**。⇒ 这条修法不属于"改卡面凑通"，
+     因为它没有让任何命题通过，只是让判据能正常评估该命题。
+
+why_this_shift_did_not_fix_it_here: |
+  1. 卡面 `impl_gap` 明文"任一不通保持 blocked_on_impl，**禁改卡面**凑通"；
+     `window` 属 `card_binding.JUDGMENT_KEYS`（反挪门柱自闸的断言面），本班不单方面动它。
+  2. 卡件属主=st-minedig-20261012（挖矿二班），代码面 calibration_exam.py 属主=矿考二班
+     且其在途袋 q-20261013-st-mineloop2-20261012-0014 正在改该件——本班改=撞件，
+     触 10-12 夜已跨班 5 袋的"双侧皆改真冲突"形态。
+  3. 本班按在册纪律"只登记读数不代写他域"（考试班 §23.3 同一条），交回两案供统筹/Owner 择一。
+
+option_a_card_side_representation_fix:
+  who: 卡件属主（挖矿二班）或受其授权的接班
+  what: 20 张（可加另 2 张散文形卡）的 `window.regimes` 散文→映射，逐张断言
+        ①解析出的段名与段数与原散文一致 ②每段日期串逐字相同 ③括号内注记丢弃但不进判据
+  cost: 每卡 2 行内变更；本班已备可执行配方（见 evidence_files 里的预演件解析式），
+        且转换后判 fail 这一条本身就是"非凑通"的证据
+  reversibility: 逐卡 git revert 即回；不触分数册
+  risk: 触 JUDGMENT_KEYS 字节面，须由属主署名，否则日后对账说不清是谁改的题面
+
+option_b_judge_side_tolerant_parser:
+  who: 矿考二班（判官件属主）
+  what: 一处 helper 把 `regimes` 归一为映射，四条消费位共用；**解不出即显式抛**（fail-closed），
+        禁默认段、禁最近邻补段
+  cost: 一个函数＋配对测试（现有 41 支考尺测试面内可加钉）
+  risk: 判据面代码改动会改变"什么样的卡面能出分"的边界，覆盖面从 310 张扩到 332 张；
+        散文里若出现第三种写法，解析歧义＝静默错段（比现在这种"当场抛"更坏）
+
+option_c_status_quo_do_nothing:
+  consequence: 20 卡继续 blocked_on_impl；本班今晚物化件跑通后它们仍一张也考不出；
+               族计数与开考面双停——这是当前默认态，不是选项
+
+this_shift_recommendation: 甲（改输入面，判官保持严格）
+  依据=在册先例：已批之闸误杀合法路径时才动"喂给闸的输入指向"，禁弱化闸本身；
+  本例闸没误杀——是 22 张卡的字段形态不合既有 schema，动卡面＝动输入面，动判官＝放宽判据面。
+
+evidence_files:
+  - .runtime/tmp/st-examunlock-20261013/rehearse_run_path.py（预演与转换配方，零生产写）
+  - docs/_working/examunlock_campaign/03_binding_book_event20.yaml（20 格绑定册）
+  - docs/_working/examunlock_campaign/02_ti_series_spec.md §五（本班对考试班"甲缺口"的更正：
+    20 卡根本不进配方册闸，真缺口＝物化件＋绑定册格＋本件的表示层）
+
+discipline:
+  cards_modified_on_disk: 0
+  production_scores_written: 0
+  ch_queries_in_this_diagnosis: 0
+  verdict_of_rehearsal: fail   # 明写：修表示层不会让任何命题变绿

@@ -1,0 +1,51 @@
+schema_version: examunlock-ablation8-audit/v1
+sid: st-examunlock-20261013
+date: "2026-10-13"
+question_answered: 令卡"注册册 8 策略 ablation 分解卡起草（06 卡形制）"能否如实落地
+verdict_on_premise: 不可如实落地——8 条里只有 2 条有可机读的腿字段，ablation 需要"去掉某条腿再比臂间差"，
+  单腿且全册 risk_rules/alpha_sources 大面积为空时，逐腿分解卡的内容无从派生；硬写＝自拟判据数值，
+  而 Owner 03:1x 附录明文"卡面判据数值须先呈统筹批，批后才开考"。
+
+measured_evidence:
+  ruler: 现读 docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml，
+    对 8 个 strategy_id 逐条取 alpha_sources / risk_rules / entry_logic / exit_logic / position_sizing 长度
+  roster_8:
+    - {strategy_id: STR-MULTIFACTOR-069, class: multifactor, alpha_sources: 0, risk_rules: 0, entry_len: 9, exit_len: 0, sizing_len: 0, code_path: 有, lifecycle: backtest}
+    - {strategy_id: STR-VREV-017, class: risk_rule, alpha_sources: 0, risk_rules: 0, entry_len: 43, exit_len: 0, sizing_len: 0, code_path: 有, lifecycle: backtest}
+    - {strategy_id: STR-VREV-018, class: value_reversal, alpha_sources: 1, risk_rules: 0, entry_len: 29, exit_len: 0, sizing_len: 0, code_path: 有, lifecycle: backtest, legs: [FCT-INTRADAY-029]}
+    - {strategy_id: STR-VREV-019, class: value_reversal, alpha_sources: 1, risk_rules: 0, entry_len: 62, exit_len: 0, sizing_len: 0, code_path: 有, lifecycle: backtest, legs: [FCT-INTRADAY-029]}
+    - {strategy_id: STR-VREV-024, class: value_reversal, alpha_sources: 0, risk_rules: 0, entry_len: 100, exit_len: 50, sizing_len: 0, code_path: 有, lifecycle: backtest}
+    - {strategy_id: STR-DABAN-022, class: daban, alpha_sources: 0, risk_rules: 0, entry_len: 271, exit_len: 102, sizing_len: 75, code_path: 有, lifecycle: backtest}
+    - {strategy_id: STR-MULTIFACTOR-096, class: multifactor, alpha_sources: 0, risk_rules: 0, entry_len: 243, exit_len: 90, sizing_len: 48, code_path: 有, lifecycle: backtest}
+    - {strategy_id: STR-EVENT-001, class: event_driven, alpha_sources: 0, risk_rules: 0, entry_len: 299, exit_len: 113, sizing_len: 47, code_path: 有, lifecycle: backtest}
+  denominator:
+    strategies_with_machine_readable_legs: 2      # 仅 VREV-018/019，且两条腿是同一个 FCT-INTRADAY-029
+    strategies_with_zero_legs: 6
+    distinct_legs_across_roster: 1                 # 全 8 条只暴露 1 个因子标识
+    ablatable_pairs_available: 0                   # "逐腿拆＋比臂间差"至少需每条 2 条腿或一条可删腿＋在册对照臂
+
+second_blocker_executor_shape:
+  statement: 即便腿字段补齐，本族卡型是"比臂间差"形（双臂/面板），现器绑定层只交单序列
+  evidence: |
+    考试班 03:2x 实测已把这条钉进台账（§十五）：ablation 卡若为"逐腿拆＋比臂间差"形，
+    走双臂/面板形时绑定层实测报 AttributeError: 'Series' object has no attribute 'columns'；
+    本班复核该结论指向的通道现仍在矿考域（04 号件里 16 张双臂形卡同堵）。
+  consequence: 8 张卡到手也一张考不出；绕＝假分
+
+what_this_shift_delivered_instead:
+  - 本审计件（分母与二重堵点全部现读再取，非转述）
+  - 未向 exam_cards 投放任何自拟数值的 ablation 卡（Owner 附录要求判据数值先呈批）
+  - 移交诉求写在本件 request_to_owner_or_chief 三段内（不另起件，防悬空引用）
+
+request_to_owner_or_chief:
+  - id: AB8-1
+    ask: 8 条注册策略的腿字段（alpha_sources/risk_rules/entry→exit→sizing 的可机读分解）由谁补、按哪本册的 schema 补
+    why_without_it: 无腿面则 ablation 族永远只能出生为 blocked_on_impl，族计数永远停在 75
+  - id: AB8-2
+    ask: 双臂/面板消费面（矿考域）落地排期——它同时是 16 张双臂形卡＋本族的唯一出口
+    note: 与 04 号件"目标面通道 94 条腿"合并排期更省（同一条通道解两类堵）
+
+discipline:
+  cards_created: 0
+  thresholds_invented: 0
+  ch_queries: 0

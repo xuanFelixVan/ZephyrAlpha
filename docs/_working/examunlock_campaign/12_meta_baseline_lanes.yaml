@@ -1,0 +1,66 @@
+schema_version: examunlock-meta-baseline/v1
+sid: st-examunlock-20261013
+date: "2026-10-13T02:0x+08:00"
+scope: 令卡 P4"元层基线（lane_b/c/c2 产出质量快照建档，入考通过率三指标）"的本班实测首版
+how_measured: |
+  尺=直接读 data/strategy_intake/*.csv（encoding=utf-8-sig，见 artifacts_found.bom）＋
+  把每行 candidate_id 在 exam_cards/**/*.yaml 全文里做子串命中（=仓库面能否连结）。
+  零 CH、零 DB 写。分母按"数据行=总行-表头"计，非 tail 抽样。
+
+lane_inventory_measured:
+  lane_b_candidates.csv: {data_rows: 106, distinct_candidate_ids: 106, ids_found_in_exam_cards: 0,
+    top_birth_batch: [["E1B-20261001-0", 67], ["E1B-20261012-2", 24]],
+    horizon_field: {"空": 78, "5日": 14, "20日": 10, "其余": 4}}
+  lane_c_candidates.csv: {data_rows: 50, distinct_candidate_ids: 47, ids_found_in_exam_cards: 0,
+    duplicate_ids: 3, top_birth_batch: [["E1C-20261007-2", 10], ["E1C-20261012-2", 10]],
+    horizon_field: {"空": 50}}
+  three_high_candidates.csv: {data_rows: 60, distinct_candidate_ids: 29, ids_found_in_exam_cards: 0,
+    duplicate_ids: 31, top_birth_batch: [["E1D-20260914-0", 40], ["E1D-20261012-2", 20]]}
+  lane_f_candidates.csv: {data_rows: 3772, distinct_candidate_ids: 3772, ids_found_in_exam_cards: 0,
+    top_birth_batch: [["E1F-grid_20260", 3700], ["E1F-grid_20261", 72]]}
+  constructed_manifest.csv: {data_rows: 3, has_constructed_at: true, latest: "2026-10-12T21:40"}
+  translated_manifest.csv: {data_rows: 10, has_translated_at_and_model: true}
+  lane_c2_note: lane_c2_agentic_miner 读同一 lane_c 池（未见独立 candidates.csv；c3/MCTS 面查无文件）
+
+headline_finding:
+  statement: 元层"入考通过率"在仓库面**无法计算**——四条泳道共 3988 行候选、4024 个去重 id，
+    在 exam_cards 全部 518 张卡里命中数=0。
+  why: 挖矿泳道的 candidate_id 与考试卡的 card_id/origin/node_id 之间**没有任何在册连结键**；
+    现册里能连结的只有 birth_batch（批次号）与卡面 origin（族标）两套各自表述，二者无映射表。
+  consequence: 三指标里只有第 1 条（产出量）能在仓内出数；
+    第 2 条（入考通过率）与第 3 条（预检判定分布）的分子分母都在 CH 表
+    `c1_backtest.hypothesis_precheck.verdict`（生产者 `scripts/backtest/hypothesis_precheck.py:373`），
+    本班受让路窗纪律未查，留 04:00 后补或交下一班补——不猜、不以仓内 0 命中冒报"通过率 0"。
+
+three_metric_definition_for_whoever_continues:
+  m1_output_volume_by_batch: {status: 本班已出数, source: data/strategy_intake/*.csv 的 birth_batch}
+  m2_intake_pass_rate:
+    status: 待 CH 读数
+    numerator: hypothesis_precheck.verdict=通过 计数（按 birth_batch 分组）
+    denominator: m1 同批候选数
+    blocker: 仓内无 candidate_id→card_id 连结键（本件 headline_finding）
+  m3_hallucination_or_originality_rate:
+    status: 查无在册口径
+    note: 仅在提案文档出现（2026-10-12-exam-card-mining-meta-method-research.md:187），无门、无字段、无生产者
+
+artifacts_found:
+  bom: data/strategy_intake/*.csv 首列表头带 UTF-8 BOM（`﻿candidate_id`）；
+    用 utf-8 直读的读者会把第一列名读成带 BOM 的键并 KeyError——本班第一遍就踩了，
+    改 utf-8-sig 后才有数。登记此条防后人把"键不存在"当成"数据为空"。
+  duplicate_candidate_ids: lane_c 3 例、three_high 31 例（60 行仅 29 个不同 id）
+    —— 若下游按 candidate_id 去重或做主键，重复行会被静默吞掉；本班不改数据，只登记实测数。
+  no_version_column: 四张 candidates.csv 均无 version/generated_at 字段，
+    批次时间只能靠 birth_batch 字符串（形如 E1B-20261012-2xxxxx）解析。
+
+prior_snapshot_in_book:
+  what_exists: LaneC 体检案卷在 `docs/_working/gpuwo_campaign/`
+    （01_anchor_reverify_lanec.yaml、05_lanec_fakegreen_fix.yaml:55"零产出判据四桩实测"），
+    假绿机理= `_e2_passed_by_channel()` 的 `except: return set()` 静默吞
+    （factory_intake_pipeline.py:267-268 形）——本班的 0 命中读数与该族机理同型，故本件显式区分
+    "连结键缺失"与"真的零入考"，不上报后者。
+
+discipline:
+  ch_queries: 0
+  rows_written_to_data_dir: 0
+  metrics_invented: 0
+  claims_marked_as_pending: [m2_intake_pass_rate, m3_hallucination_or_originality_rate]
