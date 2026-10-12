@@ -943,3 +943,349 @@ B 严＝0.75/20 交易日冷却/须创新高，B 的两个参数机器侧无对�
 
 **在途事实如实报**：q-0015 里的 07b 卡面与 12_ 盘点册都是**更正前**的版本（袋快照即当时字节），
 由 0016 覆盖；本班不撤袋不硬解队列仲裁。
+
+## 廿六、07b 接线袋（0018）实测记录＋两处自造闸误杀的更正（2026-10-13 03:00–04:15 夜班）
+
+### 26.1 本袋内容（两件代码＋两支测试＋一册格＋一张卡）
+
+| 件 | 动作 | 本袋自证 |
+|---|---|---|
+| `scripts/backtest/fexam/card_binding.py` | 档位属性册 `DRAWDOWN_LEVEL_TIERS`（档名唯一真源，`DRAWDOWN_LEVEL_SERIES_NAMES` 由它派生）＋两枚复位档；`replay_drawdown_levels` 增 `reset_recovered_pct` 入参，复位**只调在册件** `request_manual_reset`；`drawdown_level_series_pack` 改**按册格点名取档、无默认全集**；新增 `_validate_recovery_ladder`（阶梯乘子表逐字对卡面）；`arm_context_for_judge` 加 `card` 形参并**申报**档位属性/括号值；`load_binding_book` 变体选择器改"按卡冻结"语义 | `pytest tests/backtest/test_card_binding.py`（基座自证见 26.4） |
+| `scripts/backtest/fexam/calibration_exam.py` | 三柱的"本跑是不是迟滞对照"改读绑定层申报的 `arm_context.base_is_no_hysteresis`，**缺申报即显式记败**（禁按档名字符串猜） | `pytest tests/backtest/test_calibration_exam.py` |
+| `docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__07b_reset_ladder_anchor.yaml` | 卡面补两张"拼好的表"（`five_state_native_with_ladder`／`binary_full_clear_with_ladder`）＋ `ladder_join_provenance`；`implementation_gap` ①–⑤ 逐件去向；`status: blocked_on_impl → preregistered`；`after_reset_ladder` 记一条实测结构发现（26.3 末） | 卡面可解析＋RECOVERY 三行零新数值（逐字=卡面 `recovery_ladder`；关臂按声明取 1.0） |
+| `docs/_working/mineloop_campaign/02_binding_book.yaml` | 追加 07b 格四跑 `arms_variants.{off_A,off_B,mid_A,mid_B}`，`reset_trigger_recovered_pct` 逐跑 0.50/0.75；**纯追加**（写盘前断言 `Counter(旧行)-Counter(新行)` 删除行=0，实测 +129 行、15→16 格；由 `.runtime/tmp/mineloop2/append_07b_book.py` 先校验后落盘） | `pytest -k real_book_carries_07_and_07b` |
+
+### 26.2 两条自造闸误杀（都是本班自己上一批写的，实测暴露，不是他班）
+
+**误杀一：`arm_levels_same_source` 把 off 配对整体拦死。**
+07/07b 卡面 `buckets.on` 原文声明"臂间差异只允许出现在级别→cap 乘子表与解除/复位规则上"，
+off 配对（开臂五态 vs 关臂二值全清）**本来就共用同一条级别序列**。上一批我把"同序列"一律判非法，
+后果＝07 的 off 跑与 07b 的 off_A/off_B 三跑全部装配不出。
+时间线可核：首批双臂出分的 `as_of` 是 `2026-10-12T23:04:28 / 23:05:17`
+（`10_first_dualarm_off.yaml`／`11_first_dualarm_mid.yaml`），而这道闸进 dev 的 commit 是
+`316a8bac16`（10-13 00:58，0014 袋）——**闸晚于那两跑**：首批分数是真分，
+但 04:00 的 07 off 重读会当场弹（我在写 07b 四跑前的**零 CH 预演**里撞到它，不是事后编的归因）。
+现按实质拆三面：同序列＋同乘子表＝两臂逐字全等⇒红；同序列＋无迟滞档＝迟滞对照跑两臂同形⇒红；
+同序列＋不同表＋迟滞档（off 配对）⇒放行。`test_arm_context_same_level_series_three_faces` 三面各钉一次。
+
+**误杀二：`load_binding_book` 要求全册每张双臂格都含被点名的档。**
+07 词表 {off, mid}、07b 词表 {off_A, off_B, mid_A, mid_B} 共用一本册 ⇒ 跑 off_A 被 07 那格弹
+`arms_variant_unknown`，跑 off 又被 07b 那格弹——四跑与 07 重读互相堵死。
+改为：**档名在全册并集里都找不到＝打字错必红**（`arms_variant_typo`，防"静默少跑一张卡"的保护没弱化）；
+找得到而某卡词表不含它＝该卡不参与本跑（跳过；双臂卡 classify 不出双臂面，绝不降级成单臂出分）。
+`arms_variant_required`（禁默认取第一档）一字未松。`test_load_binding_book_variant_vocabularies_are_per_card`。
+
+### 26.3 复位档实测读数（设计路径，非随机游走）
+
+夹具 `_crash_then_climb_nav()`：平顶 20 日 → 10 日跌到 0.65（进 KILL）→ 60 日单调爬回 1.05，共 90 交易日。
+
+| 档 | 复位入口 | 放行 | 守卫拒 | 阶梯晋升 | KILL 驻留 | RECOVERY@0/@1 |
+|---|---|---|---|---|---|---|
+| levels_with_reset | 0.50（括号 A） | 3 | 3 | 1 | 33 | 19 / 11 |
+| levels_with_reset | 0.75（括号 B） | 1 | 0 | 1 | 42 | 10 / 11 |
+
+三条要如实报的：
+1. **拒因来自在册件原文**：`RefuseResetError: [ZA-RK-0061] 距上次复位不足 3 日冷却期（已过 1 日）`——
+   适配器零守卫分支，`refusals_first8` 凭据面逐条带日期，可复核。
+2. **负对照**：同一适配器跑随机游走 700 日（`rng(7)` 负漂移）时四档全部 `resets_granted=0`、KILL=667 天
+   ⇒ 复位入口不是无条件放行；哪天 granted 恒 >0 就是这道闸漂了（方向由
+   `test_replay_bracket_b_resets_fewer_times_than_a` 钉）。
+3. **路径 1 留痕可见**：`graduation_face=absent`＋`graduation_face_skips>=1`＋生产打点
+   `DRAWDOWN_GRADUATION_FACE_ABSENT step=0 total_skips=1`，与统筹批准的申报文字一致。
+
+**实测结构发现**（已写进 07b 卡面 `after_reset_ladder`，属在册件性质非本卡缺陷）：阶梯第 2 档→NORMAL
+的门槛 `recovery_step_recovered[2]=1.0-1e-6` 在**任何日频净值回放面上不可达**——在册回补比例
+（`src/zephyr/ex_core/risk_layer_orchestrator.py:884-888`）在 `dd>=0` 时返回 0.0，而 `recovered=1.0`
+要求 `nav==peak` 即 `dd=0`；创新高当日峰/谷同时重置、比值归 0 ⇒ 深回撤后开臂长期停在 RECOVERY@2（cap 0.75）。
+本班**不自拟替代门槛**（改 1.0-1e-6＝改判据，越权）。**转维护三班**核"生产面同样不可达"是否有意。
+
+### 26.4 基座自证（不写这句就是假绿）
+
+`PYTHONNOUSERSITE=1`＋`PYTHONPATH=<车道>/src` 下 `python -m pytest tests/backtest/test_card_binding.py
+tests/backtest/test_calibration_exam.py tests/backtest/test_arm_protocol_binding.py` = **131 passed**；
+`tests/gov/risk/test_drawdown_state_machine.py` = **49 passed**（0017 契约面）。
+`card_binding.__file__` 打印为车道路径（在册坑复证：不设 `PYTHONNOUSERSITE` 时同命令加载主区码面，
+见记忆 `fexam-pytest-in-lane-reads-main-code-20261013`）。⚠终验仍须落地后在主区复跑，本表不等价于落地面。
+
+### 26.5 主区现场观测两条（都不是本班改的，如实登记＋证据）
+
+1. **主区 index 有 9 条 `D ` 暂存删除**，其一正是本班刚落地的 07b 卡面
+   （`D  docs/.../TDM-X-R1-01__comparison__07b_reset_ladder_anchor.yaml` 与同路径 `??` 并存＝`git rm --cached` 形状；
+   HEAD `a1e8866ecd` 仍持有 blob `1f767cd567`）。本班未动主区 index、未 `git add`、未裸 commit；
+   本袋经队列正门落地（serializer 从 dev 起面），落地本身即恢复该件。其余 8 条属他班，
+   按"他役净删不代裁"只登记。复核：`git status --porcelain | grep -c '^D '`。
+2. **他班测试面存量红 8 支（交叉验证，非本班引起）**：`tests/backtest/test_factory_wiring_night.py::TestMonthlyWindowBroadcast`
+   在主区字节上（本班改动不在场）同样 8 failed / 7 passed，首因
+   `AttributeError: module 'c4_batch_screen_wiring' has no attribute '_prev_oos_window_end'`
+   （测试引用位：该文件 :224/:232/:250/:262；全仓 grep 该符号**只有测试与 `docs/_working/examrun_campaign/00_ledger.md:902,953`
+   的自述**，无定义位）⇒ 是"测试件已落而码件腿未落/改名"的断链，**不是时间敏感 flaky**（
+   失败点是被调符号不存在，与负载/时钟无关，复跑必同形）。owner=考试班，本班不代修。
+
+### 26.6 本袋之后的在途动作（按通宵令自走，不等指示）
+
+1. 0017（路径 1 生产件补丁）落地确认 → 0018（本袋）落地 → 在主区复跑 26.4 两条 pytest；
+2. CH 让路窗（01:00–04:00）已过 ⇒ 单进程驱动连跑 6 次：07 重读（off/mid，only-append 新 run_id、旧行保留）
+   ＋07b 四跑（off_A/off_B/mid_A/mid_B）；试次入账：07b 四条进 `n_trial_ledger`（预算册记 4），
+   07 重读两条按 07 成例以带判别位 batch_id 补记并照单申报；
+3. 两档同号取合议结论（跨括号不同号＝本卡判"规则选择未过稳健性"，不挑好的那档报）；
+   分数册/卡状态/结果总表/凭据面（`arm_level_creds` 含复位与阶梯计数＋`not_judged_pillars`）同袋落；
+4. 散文 22 卡转换：引用解锁班配方件落地后的路径节号（两道防线照案卷），未落地前不硬转。
+
+## 廿七、散文 22 卡 `window.regimes` 表示层转换（解锁班甲案接手，2026-10-13 03:40–03:46）
+
+**令源**：统筹通宵总令（02:30）预签附项——"散文 22 卡修法接手（转换配方待解锁班件落地后引用其路径节号，
+两道防线照案卷）"。配方件已于 `35428dc00e`（10-13 02:58）落地，本节引用的节号逐条可 grep：
+`docs/_working/examunlock_campaign/13_run_path_block_regimes_representation.yaml` 的
+`symptom` / `root_cause` / `option_a_card_side_representation_fix` / `option_b_judge_side_tolerant_parser` /
+`this_shift_recommendation: 甲` / `evidence_files` / `discipline`。
+解锁班不自改的两条理由原文在册（①卡面 `impl_gap` 禁改卡面凑通＋`window` 属 JUDGMENT_KEYS；
+②卡件属主=挖矿二班且当时判官件正被本班 0014 在途改）。本班接手是受统筹令授权，**署名本班、属主仍记挖矿二班**。
+
+**普查复现（本班实测，零 CH）**：主区 527 张卡 `window.regimes` 形态 = dict 319 / NoneType 186 / **str 22**。
+解锁班当时数是 518/310/186/22——**str 数一致（22）**，总数差 9 张＝这 40 分钟内他班又落了新卡（不是口径差）。
+
+**动作**：22 张卡的 `regimes:` 那一行（单行标量）→ 两行映射，`bull`/`bear` 各一段：
+
+```
+  regimes:
+    bull: 2019-01-04..2021-06-30
+    bear: 2021-07-01..2024-01-31
+```
+
+| 防线 | 判据 | 实测 |
+|---|---|---|
+| 一 表示层等值 | 段名序一致＋日期串逐字相同＋散文内日期集合闭合；任一不合该卡不动 | 22 张全过：`skipped=0`（无一"顺手补段"） |
+| 二 零判据漂移 | **行级替换**（禁整档 `yaml.dump` 重排他班卡字节）；`status`/`pillars`/`pillars_numeric`/`buckets`/`data_binding`/`card_id`/`window` 其余键逐字相等 | 22 张全过；Counter 差集里被去掉的行 100% 是 `regimes:` 那一行（脚本内 assert） |
+
+**注记不丢**：原散文里括号注记（"（流动性牛）/（贴现率熊+微盘熊）——逐字继承 16 卡先例窗"）按配方丢弃于判据面，
+但 22 条**原散文全文逐张留在** `.runtime` 生成器产出的日志册
+`docs/_working/mineloop2_campaign/13_regimes_prose_conversion_log.yaml` 的 `original_prose` 字段
+（该日志的 `as_of`/`discipline` 两键是本班在生成器改版前手工补记，已在件内 `manual_note` 如实声明；
+`rows`/`counts`/`two_defenses` 全部生成器产出）。
+
+**转换后实测（零 CH，只验表示层喂得进判官）**：对 `TDM-E-L1-S2__calibration__17_...` 调用
+`calibration_exam._span_pairs` → `[('2019-01-04','2021-06-30'), ('2021-07-01','2024-01-31')]`（两段都在），
+`_in_spans` 掩码命中 1324 个交易日；`tests/backtest/test_calibration_exam.py` = **54 passed**（车道码面）。
+⚠ 本班**没有**对这 22 张卡开考（真缺口另两件＝物化件＋绑定册格，属解锁班/挖矿二班侧；
+且解锁班已实测同一条链转换后判 **fail 不是 pass**，这条正是"非凑通"的证据）。
+
+**车道前置动作（不做这条就是假普查）**：本班车道指针虽已对齐 dev，但工作树磁盘对这 22 张卡是旧面
+（`glob` 实测：车道 497 张 / 0 张散文 vs 主区 527 张 / 22 张散文）——在册坑复现
+（记忆 `lane-pointer-align-leaves-stale-worktree-20261013`）。本班先 `git checkout dev -- <22 件>`
+把车道重基到 dev 现值（逐件校验 lane==dev 后才动手），转换器开头也有一道
+"普查数不等于 22 即拒"的闸（实测：重基前该闸真的会拒）。
+
+**主区 index 污染的第二条观测**（同一夜、同样非本班所改）：见 §廿六.5 的 9 条 `D ` 暂存删除。
+本袋（0021）走队列正门，不动主区 index。
+
+## 廿八、零 CH 预演挖出的两条本班自错＋一条 P0 口径事实（2026-10-13 04:00–04:10）
+
+方法本身值得记：本班照解锁班的做法做了一次**零 CH 全链路预演**
+（`.runtime/tmp/mineloop2/dryrun_07b_synthetic_face.py`，合成净值面喂真判官，scores/ledger 全指 tmp，
+生产分数册 44918 字节一字节未动），六跑全通、`arm_face_readings` 与 `unjudged` 两面都在位。
+就是这次预演挖出了下面两条——**如果直接上真 CH 跑，这两条会在"分数已写进册"之后才暴露**。
+
+### 28.1 P0 口径事实：双臂跑的 r 位曾被外部指数面**无条件覆盖**（现已修，红证在册）
+
+`card_binding.run_one` 里那行 `tgt = index_next_day_return()` 早于双臂接线（10-10 落，
+`66d02fca0e0` 袋），双臂分支从 `arms_from_binding_book` 拿到的**底座日收益**被它盖掉，
+判官实际吃的是 CSI300 指数次日收益（`index_next_day_return` docstring 自述）。
+后果：双臂分数量的是"敞口 × 指数次日收益"＝**择时面**，而卡面声明的是
+"三臂共用同一底层组合净值路径"＝**风控面**；`require_target_identity` 验完就把结果丢了——
+它要防的正是这颗雷，而它没防住是因为**校验对象随后被换掉**（判"已防护"必测"谁调它＋能否改变行为"，
+在册教训 `decorative-guards-without-callers-20260925` 今夜复证）。
+
+改前红证（`tests/backtest/test_card_binding.py::test_arms_path_target_is_base_daily_return_not_index`）：
+```
+    tgt = index_next_day_return()
+E   AssertionError: 双臂跑不许取外部指数面（r 位须＝底座日收益）
+```
+钉法是双道的：①`index_next_day_return` 换成"一调用就抛"的哨兵（实现若回退成无条件覆盖，
+先炸在哨兵上，不会静默换面）；②间谍接住 `run_card` 收到的 target 逐值等于底座日收益，并核
+`signal/signal_b/arm_context` 三件同时到位。修法＝把该行改成 `if tgt is None:` 兜底
+（单臂/册格通道仍用指数面＝那些卡面本就如此声明，零变更）。
+
+**已落地读数的影响（不粉饰）**：本班 10-12 23:04/23:05 那两张首批双臂分数（07 的 off/mid）
+是在**指数面**上出的分，因此它们的正确读法是"择时面读数"，不是卡面命题的读数；
+本班不撤行（分数册 only-add），改用 §廿六.6 的 07 重读（同一卡、修正后的面、新 run_id）作为
+命题面读数，两代行并列在册。⚠同一条覆盖对所有走 `run_one` 双臂通道的卡生效，
+**他班（如 06 卡双臂）若也经此路径出分，同样是指数面**——判据：
+分数行的卡面声明"三臂共用同一基线净值路径"而落地码在 04:00 前含无条件 `tgt = index_next_day_return()`。
+本班不代裁他班读数，登记供统筹/属主班复核。
+
+### 28.2 混合档位 pack 自弹（本班 0018 内自错，同袋修）
+
+`drawdown_level_series_pack` 曾把复位入口参数逐档原样递下去 ⇒
+"一臂复位＋一臂不复位"的混合 pack 被自家 `reset_param_on_non_reset_tier` 弹死。
+现改为：pack 级两道红先过（全非复位却给参数／有复位档却缺参数，都保留），
+再**只把参数发给复位档**。新测试 `test_pack_mixed_reset_and_non_reset_tiers` 钉四点
+（两条序列等长、非复位那条无 RECOVERY 档名、复位那条凭据带括号值且真放行过、两种错配仍红）。
+07/07b 两张卡当前都不走混合 pack，所以这条不影响今晚六跑——但它是埋在码里的下一张卡的地雷。
+
+### 28.3 交叉验证他班已完成件（通宵铁则"用你自己的尺实测验证一遍"）
+
+- 解锁班 `docs/_working/examunlock_campaign/03_binding_book_event20.yaml` 20 格 ×
+  本班 §廿七 转换后的卡面：**20/20 全通**（卡件存在、`window.regimes` 已是映射、
+  `prose_quote` 仍逐字命中 `data_binding` 面）⇒ 本班这次转换没有打断他们的待跑清单，
+  反而把他们诊断的表示层拦路解掉了。
+- 解锁班 13_ 件的普查数复现：他们 518/310/186/22，本班 04:00 实测 527/319/186/**22**
+  ——**str=22 一致**，总数差 9 张＝这 40 分钟内他班新落卡（不是口径差，已按此读）。
+- 考试班测试面存量红 8 支的归因见 §廿六.5.2（被调符号不存在＝断链，非 flaky）。
+
+### 28.4 两条口径披露（读数时必须带着看）
+
+1. **阶梯档进 whipsaw/漏触发柱的形状**：`_whipsaw_roundtrips` 数的是 cap 序列的升降往返，
+   RECOVERY@0→@1 的**阶梯晋升也是一次"升"**；`_crisis_misses` 的触发判据是"当日 cap<1.0"，
+   阶梯档（0.25/0.5/0.75）**天然计为触发**（＝复位后仍在降风险，语义正确）。
+   这两条不是 bug，但 07b 的抖动柱比 07 多算一类事件 ⇒ 跨卡比较 whipsaw 绝对数时禁不报此口径。
+2. **07/07b 卡面各有一处引 `docs/_working/` 盘点册**（永久区引临时区，根宪法 §9.4 知识红线）：
+   该指针是 0015/0016 已落地内容，本班本轮**未新增**同类引用；若判违规，删指针改述为
+   "盘点见班账 §廿三/§廿六"即可，零判据影响。
+
+### 28.5 ⚠本班自犯并自救一次：监视器的"按 dev 重基"把未落地工作面冲掉了
+
+为了"落地面就绪就自动六跑"，本班起了一个监视器（`.runtime/tmp/mineloop2/run_six_watcher.sh`），
+它每轮先 `git checkout dev -- <件>` 把车道重基到 dev 现值再跑预演闸——**这个动作本身是对的**
+（在册坑 `lane-pointer-align-leaves-stale-worktree`：指针等于 dev 不等于盘面等于 dev），
+但它漏了一条前提：**这批件里有本班尚未落地的编辑**（0018/0019/0021 三只袋此刻都在队列 pending）。
+于是第 1 轮（04:14:58）就把车道盘面上的这些件拍回 dev 旧面——包含 07b 卡的状态转换、
+双臂接线、复位档适配器、0019 的 `graduation_face` 补丁，以及**比 0021 快照还新的一处加固**
+（阶梯 cap 非数值须具名红，见 §廿八.2 同族错的第二次）。
+
+- 为什么没有真丢：入袋即快照，字节在队列 blobs 里（`pending/<qid>.json` 的 `blob_sha256`/`blob_ref`），
+  本班按"按时间升序、后袋覆盖前袋"从 blobs 把 6 件写回车道，逐件校验 sha256==袋内值；
+  回写后 `pytest tests/backtest/{test_card_binding,test_calibration_exam,test_arm_protocol_binding}.py
+  tests/gov/risk/test_drawdown_state_machine.py` = **183 passed**，特征位逐项复核
+  （`if tgt is None:`=1、四档档位册=在、07b `status: preregistered`、册格 07b=1 条、`graduation_face`=11 处）。
+- 唯一需要手工重打的是"比快照还新"的那一处加固，已重打并补测试
+  `test_ladder_caps_must_be_numeric_not_silently_coerced`（None/布尔/带引号数字/缺键四形态各红一次）。
+- 监视器已用完成标记 `run_six.done` 令其在下一轮开头自行退出（不动别的进程），
+  **六跑改由本班在袋全落地后亲手跑**；这条教训入记忆：任何"先重基再干活"的自动器，
+  重基清单必须先排除"本会话有未落地编辑的件"，否则它就是个定时删除器。
+- 顺带一条现场事实：车道 `git status` 此刻有 332 条 `D ` 与 87 条 `M`——`D ` 是
+  在册的"soft 快进指针＋目录式 add ⇒ 索引呈假删除"形态（记忆 `soft-reset-index-phantom-deletions`），
+  本班袋内一律显式列文件、从不传目录，故未受影响；他班件的本班一律不碰。
+
+## 廿九、三段式晨间包（执行／自裁／等裁）——截至 04:30 的本班全量交底
+
+> 通宵总令要求：三段式，理想态＝等裁段为空。本班此刻**等裁段不为空**（一件，见 29.3），如实写。
+
+### 29.1 执行了什么（全部走队列正门，无绕门提交；每袋 `ENQUEUED` 后可用
+> `python scripts/commit_queue.py status --session st-mineloop2-20261012` 复核）
+
+| 袋 | 内容 | 状态（04:30 实测） |
+|---|---|---|
+| q-…-0018 | 07b 接线：复位档适配器（复位只调在册 `request_manual_reset`）＋判官申报位＋阶梯乘子表对卡面校验＋四跑册格＋卡面 `blocked_on_impl→preregistered`＋18 支新测试 | pending |
+| q-…-0019 | 路径 1 生产件补丁 `graduation_face`（重投 0017；死因 GATE-ANY-ABUSE 整文件扫命中存量 `_trade_field`，按门自家行级逃生口加 `# noqa: any-abuse`＋在册理由，零行为改动） | pending |
+| q-…-0020 | 散文 22 卡 `window.regimes` → 映射（解锁班甲案，两道防线）＋转换日志（生成器产出，22 条原散文全文留存）＋token 只注入本班一条 | pending |
+| q-…-0021 | P0 修复：双臂 r 位不再被外部指数面覆盖 ＋ 混合档位 pack 自弹修复 ＋ 班账 §廿八 | pending |
+| q-…-0022 | 红蓝加固：阶梯档值非数值须具名红（None/布尔/带引号数字/缺键四形态）＋ §廿八.5 自犯自记 | pending |
+
+另已完成、不占袋的动作：零 CH 全链路预演（生产分数册 44918 字节零改动）、
+解锁班 20 格 × 本班转换卡 的交叉验证 20/20 过、他班测试面 8 支红的归因复测（非 flaky，断链）、
+主区 index 9 条 `D ` 暂存删除的登记（含本班 07b 卡一件，本班未动主区 index）、
+reaper 防误杀登记（`run_six_watcher.sh`/`supplement_trial_six.py`）、记忆三条新增/复证。
+
+测试账（车道码面自证，`PYTHONNOUSERSITE=1`＋`PYTHONPATH=车道/src`，`__file__` 打印为车道路径）：
+`tests/backtest/test_card_binding.py`＋`test_calibration_exam.py`＋`test_arm_protocol_binding.py`
+＋`tests/gov/risk/test_drawdown_state_machine.py` = **183 passed**；`ruff format --check` 与 `ruff check` 全清。
+
+### 29.2 自裁了什么（按"预签裁定＞既定默认＞最保守可行"，逐件可回退）
+
+1. **0017 死信不 requeue，改重投 0019**（统筹对 0011 的先例是"读 dead_reason 转维护班，不 requeue 不删件"；
+   本班这条死因是门整文件扫命中**存量**违规，与本班内容无关，重投才是对症处置——
+   修法是门自家登记的行级逃生口，不改判据、不加白名单、不动阈值）。
+2. **`graduation_face` 补丁按预签令投**（否决窗今夜到期＝条件成就；补丁内容自 0017 起未变，
+   新增只有那一行 `# noqa: any-abuse`）。
+3. **两条自造闸误杀按实质修**（off 配对同序列／一册多卡变体词表）——保护面一条没松：
+   同序列＋同乘子表仍红、迟滞对照跑同序列仍红、`arms_variant_required` 仍红、
+   打字错改成全局并集判定后仍红（`arms_variant_typo`）。
+4. **P0 r 位覆盖当场修并自曝影响面**（含"本班首两张双臂分实为指数面"这条不利自证；
+   分数册 only-add 不撤旧行，用新 run_id 重读作命题面读数）。
+5. **RECOVERY 第 2 档→NORMAL 不可达不自拟门槛**，按"改门槛＝改判据"越权红线，转维护三班核设计意图。
+6. **散文 22 卡转换照解锁班甲案执行**（统筹令明文接手），署名本班、属主记挖矿二班，
+   原散文全文逐张留册；两案中的乙案（放宽判官解析）未采用——它放宽的是判据面。
+7. **监视器自犯冲掉未落地工作面一次**：立即停（写 `run_six.done` 令其下轮退出，不动别的进程）、
+   从队列 blobs 按"后袋覆盖前袋"写回 6 件并逐件 sha256 校验、重打丢失的那处加固、补测试、
+   183 passed 复测。**残余风险如实写明**：监视器的重基清单里仍含代码件——此刻安全，是因为本班已无
+   未落地代码编辑（0018–0022 五袋快照含全部代码面，后续只动数据件与账目件，二者都不在重基清单内）；
+   但这条前提是状态性的：**任何人（含本班）若要再改 `scripts/backtest/fexam/*` 或风控件，
+   必须先 `touch D:/ZephyrAlpha/.runtime/tmp/mineloop2/run_six.done` 让监视器在下一轮开头退出**，
+   否则它会把那件拍回 dev 旧面。六跑本身按"就绪才跑、跑一次即写标记退出"的单向门执行。
+
+### 29.3 等裁什么（一件，且本班可自足推进）
+
+**唯一等裁项：0018–0022 五袋的落地序与六跑的时窗。** 本班不能加速 serializer，
+而六跑必须在落地码面上跑（车道绿不等价落地面绿）。为此已备：
+`.runtime/tmp/mineloop2/run_six.py`（闸一逐件 lane==dev＋五枚特征位含 `_rung_cap`；闸二 CH 让路窗；
+闸三六跑册格＋引句＋配对选择器零 CH 预装配）与 `.runtime/tmp/mineloop2/run_six_watcher.sh`
+（就绪即跑一次、跑完即写 `run_six.done` 退出，禁重复跑），试次判别位补记器
+`supplement_trial_six.py` 已备（默认 dry-run）。
+**若统筹/Owner 先行落袋**：日志 `.runtime/tmp/mineloop2/run_six_watcher.log` 与
+`.runtime/tmp/mineloop2/evidence/six_*.yaml` 即读数凭据，合议结论按裁定②"两档同号"读。
+**若今晨袋仍未落**：本班读数缺口就如实挂红，不做任何"用旧面读数冒充新面"的替代（那是假绿）。
+
+### 29.4 一条提请统筹注意的横向事实（非本班能自裁）
+
+`run_one` 的 r 位覆盖是**通道级**缺陷，凡经该通道出分的双臂卡都在同一口径下（他班 06 卡双臂亦然）。
+本班只修码面＋自曝本班读数，**不代判他班分数行的有效性**；建议由统筹定一条
+"双臂分数须按 run 落地时刻标注 r 面"的统一读法（判据与本案位置见 §廿八.1）。
+
+## 卅一、整块交接卡（上下文若断，接手者按本节继续；每条命令都已在 04:3x 实测跑过）
+
+### 31.1 现在这台流水的状态（一句话）
+
+五只袋在队列里排着，两只监视器在等它们落地：A 负责**跑六次**，B 负责**出交付袋**。
+两者都写成"就绪才动、不满足就拒、只动一次"，都不会把没跑成的东西投成已交付。
+
+### 31.2 在途袋（`python scripts/commit_queue.py status --session st-mineloop2-20261012` 可复核）
+
+| qid 尾号 | 装的是什么 | 若死的处置 |
+|---|---|---|
+| 0018 | 07b 接线（复位档适配器＋判官申报位＋四跑册格＋卡面转 preregistered） | 读 dead_reason；若是"双侧皆改真冲突"＝他班同期改了 `card_binding.py`，按 dev 现值重基后**新袋**重投（勿 requeue 旧袋） |
+| 0019 | 路径 1 生产件补丁 `graduation_face`（含 `# noqa: any-abuse` 存量豁免） | 同上；这条不死，07b 复位档就跑不了（config 会 TypeError） |
+| 0020 | 散文 22 卡表示层转换＋转换日志＋token 单条 | 死了不影响 07b；重投前先 `git checkout dev -- <那 22 件>` |
+| 0021 | P0：双臂 r 位不再被指数面覆盖＋混合 pack 修复＋班账 §廿八 | 死了则六跑**不得**跑（r 面仍是错的）——监视器 A 的特征位会自己拒 |
+| 0022 | 阶梯 cap 非数值须具名红＋班账 §廿八.5 | 死了不影响读数，只少一支测试 |
+
+### 31.3 两只监视器（路径／日志／停法／预算）
+
+- A：`D:/ZephyrAlpha/.runtime/tmp/mineloop2/run_six_watcher.sh`，日志
+  `D:/ZephyrAlpha/.runtime/tmp/mineloop2/run_six_watcher.log`；每 180s 一轮，满 60 轮（≈3h）自停。
+  就绪判据在 `run_six.py` 闸一里（逐件 lane==dev ＋ 五枚特征位：四档档位册、三参 `arm_context_for_judge`、
+  `graduation_face`、`if tgt is None:`、`def _rung_cap(`）。
+  **停法**：`touch D:/ZephyrAlpha/.runtime/tmp/mineloop2/run_six.done`（下一轮开头自己退，不动别的进程）。
+- B：`D:/ZephyrAlpha/.runtime/tmp/mineloop2/deliver_six_results.py --watch`，日志
+  `D:/ZephyrAlpha/.runtime/tmp/mineloop2/deliver_six.log`；每 60s 一轮，满 180 轮自停。
+  拒投条件（任一）：07b 四跑缺任一／某跑 verdict 为空／闭环两面（分数册行 `unjudged`、
+  metrics `arm_face_readings`）缺任一／**分数册旧行少任何一条**（内容级回退直接拒）。
+  **停法**：`touch D:/ZephyrAlpha/.runtime/tmp/mineloop2/delivered_07b.done`。
+- 两条已在 `data/runtime/process_reaper_keep.txt` 登记子串（`run_six_watcher.sh`/
+  `supplement_trial_six.py`/`deliver_six_results.py`），防被 reaper 误杀。
+
+### 31.4 接手者要做的三件事（顺序不能换）
+
+1. 等 A 的日志出现 `DONE 标记已写`，再看 `D:/ZephyrAlpha/.runtime/tmp/mineloop2/evidence/six_summary.yaml`
+   与同目录 `six_<跑次>.yaml` 六个证据件；合议结论按裁定②读（两档同号才算稳健，
+   不同号＝判"规则选择未过稳健性"，**不挑好的那档报**）。
+2. 核 B 是否已投出交付袋（日志末行 `投递完成` 或队列里新增一只袋）；若 B 报了拒投理由，
+   **先补跑/先修，禁手工拼一个"看起来齐"的交付**。
+3. 落地后在**主区码面**复跑一次测试（车道绿不等价落地面绿）：
+   ```
+   cd /d/ZephyrAlpha && PYTHONNOUSERSITE=1 python -m pytest \
+     tests/backtest/test_card_binding.py tests/backtest/test_calibration_exam.py \
+     tests/backtest/test_arm_protocol_binding.py tests/gov/risk/test_drawdown_state_machine.py -q
+   ```
+   期望：全部 passed（本班 04:2x 在车道码面实测 183 passed，主区落地面同一命令**尚未跑过**——
+   这句就是留给接手者的活，别替它背书）。
+
+### 31.5 本班名下未闭的账（不装完）
+
+- 07b 六跑读数与合议结论（等 A/B）。
+- 主区落地面复跑 31.4 第 3 条（等落地）。
+- 转维护三班两条：`RUN_ROOT` 机制（§廿五已转，复述于此）、RECOVERY 第 2 档→NORMAL 门槛不可达（§廿六.3 末）。
+- 转维护四班一条：ALGO-NOTE-SYNC 对折叠块内改注不认（改键行才归属得到）。
+- 提请统筹一条横向：双臂 r 面"按 run 落地时刻标注"的统一读法（§廿九.4）。
+- 临时件清理：`.runtime/tmp/mineloop2/` 下本班脚本在收官前**不删**（两只监视器正在用），
+  监视器退出且交付袋落地后再清；项目根目录当前零临时件（`git status --porcelain` 抽看过，
+  未跟踪仅 `.runtime` 内）。
