@@ -320,8 +320,13 @@ handoff＝本节＋`99_morning_package.md`；车道未 merge（本班成果全�
 
 | 袋 | 内容 | 状态 |
 |---|---|---|
-| `q-…-0001/0002/0003/0004` | 昨夜四投 | 全部 dead（拦条已解／挂 render），blobs sha 无损 |
-| `q-…-0005` | 文档袋终态＝10 件（8 件＋`13_reruler_v1.yaml/.md`），base_head=dev 现值 | 待填 qid 与落地核验 |
+| `q-…-0001/0002/0003/0004` | 昨夜四投 | 全部 dead（拦条已解／代码袋挂 render），袋内 blobs sha256 复核 **32/32 无损** |
+| `q-20261012-st-cband-20261012-0005` | 文档袋终态＝10 件（8 件＋`13_reruler_v1.yaml/.md`），base_head=3b99c9c49d | **已落地**：commit `12bbfd9569`（2026-10-12 20:44:47）；落地面逐件实测＝`00_ledger.md` 328 行/11 节、`99_morning_package.md` 226 行含 `void_pending_recompute`、`02_trial_plan_v1.yaml` 两新键在场、`13_reruler_v1.yaml` 5,293 行＋`.md` 187 行；归属面 `git show --name-only` 逐件＝本袋 10 件**零外来吸收** |
+| 代码袋 8 件（`cband_grid.py`＋3 测试＋两共享件参数位＋manifest＋投影册） | 晨裁①的装置面 | **挂待 render 不重烧**（§11.4）；复投触发判据＝`git show dev:docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml \| grep -c cband_grid ≥ 1`（即维护三班聚合 render 袋落地后），届时按在册配方直接重投 |
+
+预检与三段实测（本袋 0005）：`enqueue_preflight` PASS 33.2s／`registration_gate` PASS 7.7s（findings=0）／
+`inprocess_gates` PASS 440.5s（specs=98）⇒ 硬拦 0/3；TAKEOVER-PENDING 在 `--resolve` 后转 PASS，
+`claim` 车道绝对路径 10/10（注册表 held_files=10 实测）⇒ 死机后复投的正门路径已走通，可复制。
 
 新两件登记：creation_token 走意图 API 逐件 `--prefix <文件全路径>`（预览恒 1，断言 2/2）；
 投影面滞后不阻塞 .yaml/.md（CREATE-GUARD 有 PG 第三源，可正证放行）。
