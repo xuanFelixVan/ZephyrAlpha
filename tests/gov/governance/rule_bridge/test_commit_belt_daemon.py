@@ -694,3 +694,50 @@ class TestT14LedgerSizeGate:
         for i in opens:
             window = "\n".join(src[max(0, i - 5) : i + 1])
             assert re.search(r"rotate_if_oversized\(", window), f"第 {i + 1} 行 append 前无体积闸：{window[-160:]}"
+
+
+# ── #ARCH-084 追加刀：投影自愈写口署名（2026-10-12 维护三班夜班，Owner 通宵令"写者必须署名"）──
+# 病根读数：safe_write 审计的 session 字段取 env ZEPHYR_SESSION_ID（file_utils.py:575），
+# daemon 从不设 ⇒ 热册每轮自愈重写记成空串（实测 03:23-03:31 每 ~50s 一次、pid 互异）。
+
+
+def test_projection_render_write_is_attributed_and_env_restored(monkeypatch) -> None:
+    """红证臂：写口内看得见署名；出口 env 必须复原（别的门也消费这个 env）。"""
+    import os
+
+    seen: dict[str, object] = {}
+
+    def _fake_run(root, mode=None, registry_id=None, physical_path=None, actor_session=None):
+        seen["env"] = os.environ.get("ZEPHYR_SESSION_ID")
+        seen["kw"] = (mode, registry_id, physical_path, actor_session)
+        return "REPORT"
+
+    monkeypatch.delenv("ZEPHYR_SESSION_ID", raising=False)
+    out = cbd._render_projection_with_attribution(_fake_run, Path("."), "REG-X", "p.yaml")
+    assert out == "REPORT"
+    assert seen["env"] == cbd._PROJECTION_WRITE_ACTOR, "写口未署名＝审计面永远空串（本刀白装）"
+    assert seen["kw"] == ("render", "REG-X", "p.yaml", "belt_daemon"), "换壳不得改渲染语义与既有 actor_session"
+    assert "ZEPHYR_SESSION_ID" not in os.environ, "用完没复原＝给后续无关写者挂名"
+
+
+def test_projection_render_attribution_preserves_outer_sid(monkeypatch) -> None:
+    """不误伤臂：外层已设 sid（车道内跑 daemon 探针）⇒ 复原成原值而不是删掉。"""
+    import os
+
+    monkeypatch.setenv("ZEPHYR_SESSION_ID", "outer-sid")
+    cbd._render_projection_with_attribution(lambda *a, **k: None, Path("."), "R", "p")
+    assert os.environ.get("ZEPHYR_SESSION_ID") == "outer-sid"
+
+
+def test_projection_render_attribution_restores_on_exception(monkeypatch) -> None:
+    """异常臂：render 抛错也必须复原 env——否则一次 PG 抖动就把 daemon 变成"署名写者"混入后续流程。"""
+    import os
+
+    monkeypatch.delenv("ZEPHYR_SESSION_ID", raising=False)
+
+    def _boom(*a, **k):
+        raise RuntimeError("PG 断了")
+
+    with pytest.raises(RuntimeError):
+        cbd._render_projection_with_attribution(_boom, Path("."), "R", "p")
+    assert "ZEPHYR_SESSION_ID" not in os.environ

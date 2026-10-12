@@ -2239,3 +2239,223 @@ class TestTransientEnvFailureFamilies:
         assert stats["dead"] == 1 and stats["done"] == 0
         payload = json.loads((queue_root / "dead" / f"{item['qid']}.json").read_text(encoding="utf-8"))
         assert "FAIL:" in payload["dead_reason"], "真违规死因原文必须在袋"
+
+
+# ---------------------------------------------------------------------------
+# 批令二 L1：主工作区快进**方向判据**（池面回退方向闸·写者层）
+# 场景＝10-11 夜回退弹的形状：袋基底 B 之后别的车道把文件推进到 C（HEAD），
+# 而这份袋字节是在 B 上做的、不含 C 新落的行——快进它＝主区逐件被拍回旧版。
+# 尺体不重写（scripts/commit_queue.py:2967），本批只测接入与出口。
+# ---------------------------------------------------------------------------
+
+
+def _regression_repo(tmp_path: Path) -> tuple[Path, dict[str, str]]:
+    """造三方：B(base)→C(dev/HEAD，别人加一行)；另造三个袋变体 N_evict/N_legit/N_delete。
+
+    所有分支操作一次做完，最后才把工作区留成 B 的内容（＝`_converge_one` 的"可对"前提），
+    避免"切分支时工作区脏"被 git 拒（tmp 仓内不牺牲断言语义）。
+    """
+    repo = tmp_path / "regrepo"
+    repo.mkdir()
+    _git(repo, "init", "-q", "-b", "dev")
+    _git(repo, "config", "user.email", "t@example.com")
+    _git(repo, "config", "user.name", "test")
+    _git(repo, "config", "core.autocrlf", "false")
+    f = repo / "f.txt"
+    f.write_text("keep\nbase\n", encoding="utf-8")
+    _git(repo, "add", ".")
+    _git(repo, "commit", "-qm", "B base")
+    old_sha = _git_text(repo, "rev-parse", "HEAD")
+    # 别的车道在 B 之后落一行 → C 成为 dev/HEAD
+    f.write_text("keep\nbase\nlane_B_line\n", encoding="utf-8")
+    _git(repo, "commit", "-aqm", "C other lane")
+    head_sha = _git_text(repo, "rev-parse", "HEAD")
+    # 袋变体①：基于 B 加自己一行（缺 lane_B_line＝会拍回别人那行）
+    _git(repo, "checkout", "-q", "-b", "bag", old_sha)
+    f.write_text("keep\nbase\nmine\n", encoding="utf-8")
+    _git(repo, "commit", "-aqm", "N evict")
+    new_sha = _git_text(repo, "rev-parse", "HEAD")
+    # 袋变体②：基底之上再加一条支（合法袋从 C 长出来，含 lane_B_line）
+    _git(repo, "checkout", "-q", "-b", "bag2", head_sha)
+    f.write_text("keep\nbase\nlane_B_line\nmine\n", encoding="utf-8")
+    _git(repo, "commit", "-aqm", "N legit")
+    legit_sha = _git_text(repo, "rev-parse", "HEAD")
+    # 袋变体③：删除该文件（HEAD 已被别人推进过＝删它同样是回退）
+    _git(repo, "checkout", "-q", "-b", "bag3", old_sha)
+    (repo / "f.txt").unlink()
+    _git(repo, "commit", "-aqm", "N delete")
+    delete_sha = _git_text(repo, "rev-parse", "HEAD")
+    # 回 dev，并把**工作区**打成 B 的内容（index/HEAD 仍是 C）
+    _git(repo, "checkout", "-q", "-f", "dev")
+    f.write_text("keep\nbase\n", encoding="utf-8")
+    return repo, {
+        "old": old_sha,
+        "head": head_sha,
+        "new": new_sha,
+        "legit": legit_sha,
+        "delete": delete_sha,
+    }
+
+
+def _landing(repo: Path, qroot: Path) -> object:
+    return cql.WorktreeLanding(repo_root=repo, queue_root=qroot, gateway=None)
+
+
+def test_converge_one_blocks_write_that_reverts_head_advance(tmp_path: Path) -> None:
+    """红证臂：袋字节缺 HEAD 后落的行 → 拒写（单件 skip，不连坐整袋）。"""
+    repo, shas = _regression_repo(tmp_path)
+    landing = _landing(repo, tmp_path / "cq1")
+    detail: list[dict] = []
+    action = landing._converge_one(
+        "f.txt",
+        shas["old"],
+        shas["new"],
+        False,
+        regression_out=detail,
+    )
+    assert action == "skipped_head_regression", action
+    assert detail and detail[0]["head_only_lines"] == 1, detail
+    assert detail[0]["base_compared"] is True, "基底可读却标 False＝三方尺没接上，退化成两方误报"
+    # 关键：主区字节**没被改**（拦的就是"拍回旧版"这一步本身）
+    assert (repo / "f.txt").read_text(encoding="utf-8") == "keep\nbase\n"
+
+
+def test_converge_one_ack_escape_writes_and_still_measures(tmp_path: Path) -> None:
+    """逃生位＝message 显式申报；越过必须照量、照留痕（宁留痕不静默）。"""
+    repo, shas = _regression_repo(tmp_path)
+    landing = _landing(repo, tmp_path / "cq2")
+    detail: list[dict] = []
+    action = landing._converge_one(
+        "f.txt",
+        shas["old"],
+        shas["new"],
+        False,
+        regression_ack=True,
+        regression_out=detail,
+    )
+    assert action == "fast_forwarded", action
+    assert detail and detail[0]["head_only_lines"] == 1, "越过就不量＝逃生位变成关掉判据"
+    assert (repo / "f.txt").read_text(encoding="utf-8") == "keep\nbase\nmine\n"
+
+
+def test_converge_one_allows_legitimate_fast_forward(tmp_path: Path) -> None:
+    """尺不假红：袋自带 HEAD 后落的行（正常演进后的快进）必须放行。"""
+    repo, shas = _regression_repo(tmp_path)
+    landing = _landing(repo, tmp_path / "cq3")
+    detail: list[dict] = []
+    action = landing._converge_one("f.txt", shas["old"], shas["legit"], False, regression_out=detail)
+    assert action == "fast_forwarded", action
+    assert detail == [], f"合法快进被误报＝在册『26 件误报 17 件』那形态回潮：{detail}"
+    assert (repo / "f.txt").read_text(encoding="utf-8") == "keep\nbase\nlane_B_line\nmine\n"
+
+
+def test_converge_one_blocks_delete_of_file_advanced_in_head(tmp_path: Path) -> None:
+    """删除臂同判：删一个 HEAD 已被别人推进过的文件同样是回退。"""
+    repo, shas = _regression_repo(tmp_path)
+    landing = _landing(repo, tmp_path / "cq4")
+    detail_del: list[dict] = []
+    action = landing._converge_one("f.txt", shas["old"], shas["delete"], True, regression_out=detail_del)
+    assert action == "skipped_head_regression", action
+    assert (repo / "f.txt").exists(), "被拦下却删了文件＝拦了个寂寞"
+    # 反证：袋删除基于当前 tip（HEAD 无后落行）时不该被拦——防把正常删除全洗成拒删
+    _git(repo, "checkout", "-q", "-b", "bag4", shas["head"])
+    (repo / "f.txt").unlink()
+    _git(repo, "commit", "-aqm", "N delete legit")
+    del_ok = _git_text(repo, "rev-parse", "HEAD")
+    _git(repo, "checkout", "-q", "-f", "dev")
+    (repo / "f.txt").write_text("keep\nbase\nlane_B_line\n", encoding="utf-8")  # 基底=C 时工作区须等于 C
+    action2 = landing._converge_one("f.txt", shas["head"], del_ok, True, regression_out=[])
+    assert action2 == "deleted", action2
+
+
+def test_converge_main_workspace_audits_census_and_sid(tmp_path: Path) -> None:
+    """出口普查与署名留痕：拦下必落审计（含 sid），且**不连坐**整袋返回值。"""
+    repo, shas = _regression_repo(tmp_path)
+    qroot = tmp_path / "cq5"
+    landing = _landing(repo, qroot)
+    item = {
+        "qid": "q-reg-1",
+        "session_id": "st-maint3-20261011",
+        "message": "feat: 袋",
+        "files": [{"path": "f.txt", "action": "modify"}],
+    }
+    landing._converge_main_workspace(item, shas["old"], shas["new"])
+    assert (repo / "f.txt").read_text(encoding="utf-8") == "keep\nbase\n"
+    audit = qroot / "main_workspace_sync.jsonl"
+    assert audit.exists(), "拦下来却不留痕＝闸门只有牙没有账"
+    rows = [json.loads(x) for x in audit.read_text(encoding="utf-8").splitlines() if x.strip()]
+    blocked = [r for r in rows if r.get("action") == "pool_regression_blocked"]
+    assert len(blocked) == 1, rows
+    assert blocked[0]["head_only_lines"] == 1 and blocked[0]["sid"] == "st-maint3-20261011"
+    assert blocked[0]["sid_missing"] is False
+    # 空 sid 必须显影为 sid_missing=True（10-11 夜三条 session="" 写入就是这面漏的）
+    item2 = {**item, "qid": "q-reg-2", "session_id": ""}
+    landing._converge_main_workspace(item2, shas["old"], shas["new"])
+    rows2 = [json.loads(x) for x in audit.read_text(encoding="utf-8").splitlines() if x.strip()]
+    assert any(r.get("action") == "pool_regression_blocked" and r.get("sid_missing") is True for r in rows2), rows2
+    # ack 走 message 正则：动作翻成 pool_regression_acked 并带理由
+    item3 = {**item, "qid": "q-reg-3", "message": "fix: x [pool-regression-ack:已与属主车道逐件对过账]"}
+    landing._converge_main_workspace(item3, shas["old"], shas["new"])
+    rows3 = [json.loads(x) for x in audit.read_text(encoding="utf-8").splitlines() if x.strip()]
+    acked = [r for r in rows3 if r.get("action") == "pool_regression_acked"]
+    assert len(acked) == 1 and "属主车道" in acked[0]["ack_reason"], rows3
+
+
+# ── #ARCH-084 追加刀：主工作区收敛写盘必须署名（2026-10-12 维护三班夜班）──
+# 观测事实：safe_write 审计 session 字段取 env ZEPHYR_SESSION_ID（file_utils.py:575），
+# landing 子进程从不设 ⇒ 实测 03:23-03:31 十次热册重写 pid 互异、session 全空串。
+
+
+def _sig_probe_landing(tmp_repo, queue_root, monkeypatch, record):
+    landing, _stub = _make_landing(tmp_repo, queue_root)
+
+    def _impl(item, old_sha, new_sha):
+        record["inside"] = os.environ.get("ZEPHYR_SESSION_ID")
+        record["item_sid"] = str(item.get("session_id") or "")
+
+    monkeypatch.setattr(landing, "_converge_main_workspace_impl", _impl, raising=False)
+    return landing
+
+
+def test_main_workspace_convergence_signs_writer_with_bag_sid(tmp_repo, queue_root, monkeypatch) -> None:
+    """署名臂：袋有属主会话 ⇒ 写盘窗口内 env 必须是该 sid，出窗口必复原（此前从未被复原，因为从未被设）。"""
+    rec: dict[str, str | None] = {}
+    monkeypatch.delenv("ZEPHYR_SESSION_ID", raising=False)
+    landing = _sig_probe_landing(tmp_repo, queue_root, monkeypatch, rec)
+    landing._converge_main_workspace({"qid": "q-sig-1", "session_id": "st-owner-lane"}, "a", "b")
+    assert rec["inside"] == "st-owner-lane", "主区重写不带署名＝案卷 §⑦『空 sid 热册写手』形态未收口"
+    assert "ZEPHYR_SESSION_ID" not in os.environ, "用完不复原＝把袋 sid 泄漏给后续无关写者"
+
+
+def test_main_workspace_convergence_keeps_outer_sid(tmp_repo, queue_root, monkeypatch) -> None:
+    """不误伤臂：外层已有 sid（车道内自跑 landing）⇒ 复原成原值而非删除。"""
+    rec: dict[str, str | None] = {}
+    monkeypatch.setenv("ZEPHYR_SESSION_ID", "outer-lane-sid")
+    landing = _sig_probe_landing(tmp_repo, queue_root, monkeypatch, rec)
+    landing._converge_main_workspace({"qid": "q-sig-2", "session_id": "st-bag-owner"}, "a", "b")
+    assert rec["inside"] == "st-bag-owner"
+    assert os.environ.get("ZEPHYR_SESSION_ID") == "outer-lane-sid"
+
+
+def test_main_workspace_convergence_without_sid_does_not_invent_one(tmp_repo, queue_root, monkeypatch) -> None:
+    """保守臂：袋 sid 为空串 ⇒ 一律不动 env（宁留现状，也不给写者编一个名字）。"""
+    rec: dict[str, str | None] = {}
+    monkeypatch.delenv("ZEPHYR_SESSION_ID", raising=False)
+    landing = _sig_probe_landing(tmp_repo, queue_root, monkeypatch, rec)
+    landing._converge_main_workspace({"qid": "q-sig-3", "session_id": ""}, "a", "b")
+    assert rec["inside"] is None and rec["item_sid"] == ""
+    assert "ZEPHYR_SESSION_ID" not in os.environ
+
+
+def test_main_workspace_convergence_restores_sid_on_exception(tmp_repo, queue_root, monkeypatch) -> None:
+    """异常臂：收敛本体抛错也必须复原 env——否则一次抛错把袋 sid 挂到整条 daemon 后续写盘上。"""
+    landing, _stub = _make_landing(tmp_repo, queue_root)
+
+    def _boom(item, old_sha, new_sha):
+        raise RuntimeError("收敛本体抛错")
+
+    monkeypatch.delenv("ZEPHYR_SESSION_ID", raising=False)
+    monkeypatch.setattr(landing, "_converge_main_workspace_impl", _boom, raising=False)
+    with pytest.raises(RuntimeError):
+        landing._converge_main_workspace({"qid": "q-sig-4", "session_id": "st-bag-owner"}, "a", "b")
+    assert "ZEPHYR_SESSION_ID" not in os.environ

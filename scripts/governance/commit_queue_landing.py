@@ -138,6 +138,9 @@ _LANDING_LOCK_WAIT_SECONDS = 300.0
 _MAIN_WS_SYNC_AUDIT_NAME = (
     "main_workspace_sync.jsonl"  # <queue_root>/ 下——主工作区收敛跳过/异常留痕（66 号 §9.7 受控放松 2026-08-23）
 )
+# 批令二 L1 方向判据的显式逃生位（形状对齐在册 `[allow-mass-deletion:理由≥10字]` 先例，
+# 理由不足 10 字不算申报——防"翻开关不写账"）。越过必留痕，见 _converge_main_workspace。
+_POOL_REGRESSION_ACK_RE: Final = re.compile(r"\[pool-regression-ack:([^\]]{10,})\]")
 
 # 队列标记正则：[GW:{sid}:{qid}]——sid 字符集 [A-Za-z0-9._-]（入队校验保证无冒号/右括号）
 _QUEUE_MARKER_RE = re.compile(r"\[GW:[^\]:\s]+:q-[^\]\s]+\]")
@@ -2717,8 +2720,26 @@ class WorktreeLanding:
         r = self._git_repo("cat-file", "-e", f"{sha}:{rel}", check=False)
         return r.returncode == 0
 
-    def _converge_one(self, rel: str, old_sha: str, new_sha: str, is_delete: bool) -> str:
-        """单文件收敛，返回动作 token（already_*/fast_forwarded/deleted/skipped_*）。"""
+    def _converge_one(
+        self,
+        rel: str,
+        old_sha: str,
+        new_sha: str,
+        is_delete: bool,
+        *,
+        regression_ack: bool = False,
+        regression_out: list[dict] | None = None,
+    ) -> str:
+        """单文件收敛，返回动作 token（already_*/fast_forwarded/deleted/skipped_*）。
+
+        批令二 L1（池面回退方向闸·写者层）：快进前跑一次**方向判据**——比的不是
+        "新字节比 HEAD 少了哪些行"（那是本袋正当删改，两方尺会把它全数误报，在册
+        `commit_queue.py:2980` 已自证 26 件误报 17 件），而是"HEAD 在本件基底 `old_sha`
+        之后新落的行，这份字节里有没有"。尺体零克隆，直接调 `cq._snapshot_head_regressions`
+        （`base_ref`/`item_base_head` 本就是它的入参）。命中即**单件剥除**（返 token，
+        外层逐件 fail-open，不连坐整袋）＋审计留痕；逃生位=`commit message` 里
+        `[pool-regression-ack:<理由≥10 字>]`，越过时照样量、照样留痕（宁留痕不静默）。
+        """
         target = self.repo_root / rel
         if self._worktree_matches(new_sha, rel):
             return "already_deleted" if is_delete else "already_synced"
@@ -2732,6 +2753,14 @@ class WorktreeLanding:
         # untracked 文件对 old_sha 而言不是「一致」是「凭空多出」）。
         if not is_delete and target.exists() and not self._tree_has_path(old_sha, rel):
             return "skipped_dirty"
+        data = b"" if is_delete else self._read_blob_bytes(new_sha, rel)
+        # ── 方向判据（写与删两路同判：删一个 HEAD 已被别人推进过的文件同样是回退）
+        regress = self._pool_direction_regressions(rel, data, old_sha)
+        if regress:
+            if regression_out is not None:
+                regression_out.extend(regress)
+            if not regression_ack:
+                return "skipped_head_regression"
         # 干净（== old_sha）：快进
         if is_delete:
             try:
@@ -2739,12 +2768,38 @@ class WorktreeLanding:
             except FileNotFoundError:
                 return "already_deleted"
             return "deleted"
-        data = self._read_blob_bytes(new_sha, rel)
         target.parent.mkdir(parents=True, exist_ok=True)
         tmp = target.with_name(target.name + ".converge_tmp")
         tmp.write_bytes(data)
         os.replace(tmp, target)  # 原子替换，并发读者不见半成品
         return "fast_forwarded"
+
+    def _repo_head_sha(self) -> str:
+        """主仓当前 HEAD（方向判据的比较面）。取不到=空串→判据按可疑处理，不静默放行。"""
+        r = self._git_repo("rev-parse", "HEAD", check=False)
+        return (r.stdout or "").strip() if r.returncode == 0 else ""
+
+    def _pool_direction_regressions(self, rel: str, data: bytes, old_sha: str) -> list[dict]:
+        """三方口径方向判据的落地侧包装（尺体在 `scripts/commit_queue.py:2967`，此处不重写）。"""
+        head_sha = self._repo_head_sha()
+        if not head_sha:
+            return [{"path": rel, "head_only_lines": -1, "base_compared": False, "sample": ["HEAD 不可读"]}]
+        if head_sha == old_sha:
+            return []  # 基底即当前 tip：不可能存在"别人后落的行"
+        try:
+            return list(
+                cq._snapshot_head_regressions(self.repo_root, [(rel, data)], base_ref=head_sha, item_base_head=old_sha)
+            )
+        except Exception as exc:  # noqa: BLE001 — 探针降级不得被读成"无回退"
+            logger.warning("[landing] 方向判据探针异常 %s: %s（按可疑处置=fail-closed）", rel, exc)
+            return [
+                {
+                    "path": rel,
+                    "head_only_lines": -1,
+                    "base_compared": False,
+                    "sample": [f"probe failed: {str(exc)[:90]}"],
+                }
+            ]
 
     def _index_matches(self, sha: str, rel: str) -> bool:
         """主工作区 INDEX 与 <sha>:<rel> 是否一致（--cached diff 语义；rc>1 抛错）。"""
@@ -2814,20 +2869,83 @@ class WorktreeLanding:
 
     @_timed_phase("converge")
     def _converge_main_workspace(self, item: dict, old_sha: str, new_sha: str) -> None:
-        """landing 后主工作区受限收敛：干净文件快进 / 脏文件跳过留痕（fail-open）。"""
+        """landing 后主工作区受限收敛（对外签名不变）＋写者署名作用域（#ARCH-084 追加刀）。
+
+        病根实测（2026-10-12 夜班）：safe_write 审计的 session 字段取 env `ZEPHYR_SESSION_ID`
+        （file_utils.py:575），而 landing 子进程从不设 ⇒ 主区热册每一轮落地重写都记成空串
+        （03:23-03:31 十条写入 pid 互异、session=''），池面"有写者查不到人"——案卷 §⑦ 那三条
+        空 sid 热册写手就是这么来的。这里把署名挂到**本袋属主会话**（写的确实是这一袋的内容），
+        sid 空则不动 env（宁可维持现状，也不给无关写者挂名）；出作用域必复原，防污染后续步骤。
+        """
+        item_sid = str(item.get("session_id") or "")
+        prev_sid = os.environ.get("ZEPHYR_SESSION_ID")
+        if item_sid:
+            os.environ["ZEPHYR_SESSION_ID"] = item_sid
+        try:
+            self._converge_main_workspace_impl(item, old_sha, new_sha)
+        finally:
+            if item_sid:
+                if prev_sid is None:
+                    os.environ.pop("ZEPHYR_SESSION_ID", None)
+                else:
+                    os.environ["ZEPHYR_SESSION_ID"] = prev_sid
+
+    def _converge_main_workspace_impl(self, item: dict, old_sha: str, new_sha: str) -> None:
+        """受限收敛本体：干净文件快进 / 脏文件跳过留痕（fail-open）。"""
         qid = item.get("qid", "?")
+        # 批令二 L1：逃生位从袋体 message 读（越过后仍逐件量、仍留痕）；写者署名取袋 sid，
+        # 空 sid 显式标 sid_missing（案卷 §⑦ 在册缺陷：遥测 session_id 常为空串＝归不到人）。
+        ack_m = _POOL_REGRESSION_ACK_RE.search(str(item.get("message") or ""))
+        regression_ack = bool(ack_m)
+        item_sid = str(item.get("session_id") or "")
         counts: dict[str, int] = {}
         audit_records: list[dict] = []
         for entry in item.get("files") or []:
             rel = entry.get("path", "")
             if not rel:
                 continue
+            regress_detail: list[dict] = []
             try:
-                action = self._converge_one(rel, old_sha, new_sha, entry.get("action") == "delete")
+                action = self._converge_one(
+                    rel,
+                    old_sha,
+                    new_sha,
+                    entry.get("action") == "delete",
+                    regression_ack=regression_ack,
+                    regression_out=regress_detail,
+                )
             except Exception as exc:  # noqa: BLE001 — 收敛 fail-open（landing 已成功）
                 action = "error"
                 logger.warning("[landing] 主工作区收敛异常 qid=%s %s: %s", qid, rel, exc)
             counts[action] = counts.get(action, 0) + 1
+            for d in regress_detail:
+                audit_records.append(
+                    {
+                        "ts": time.time(),
+                        "qid": qid,
+                        "path": rel,
+                        "action": ("pool_regression_acked" if regression_ack else "pool_regression_blocked"),
+                        "head_only_lines": d.get("head_only_lines"),
+                        "base_compared": d.get("base_compared"),
+                        "sample": d.get("sample"),
+                        "ack_reason": (ack_m.group(1)[:80] if ack_m else None),
+                        "sid": item_sid,
+                        "sid_missing": not item_sid,
+                        "old": old_sha[:12],
+                        "new": new_sha[:12],
+                    }
+                )
+            if regress_detail and not regression_ack:
+                logger.warning(
+                    "[landing] 方向闸拦下 qid=%s %s：HEAD 在本件基底之后新落的 %s 行会被这份快进打回"
+                    "（base_compared=%s）——正路=先 `git checkout dev -- %s` 重基再投；"
+                    "确需越过请在 commit message 写 [pool-regression-ack:理由≥10字]（越过仍留痕）",
+                    qid,
+                    rel,
+                    regress_detail[0].get("head_only_lines"),
+                    str(regress_detail[0].get("base_compared")),
+                    rel,
+                )
             if os.environ.get("RB1_DEBUG"):
                 print(
                     f"RB1DBG qid={qid} old={old_sha[:10]} new={new_sha[:10]} dev_tip={self._git_repo('rev-parse', 'dev').stdout.strip()[:10] if False else '?'} path={rel}"
@@ -2851,7 +2969,7 @@ class WorktreeLanding:
                         "new": new_sha[:12],
                     }
                 )
-            if action in ("skipped_dirty", "skipped_missing", "error"):
+            if action in ("skipped_dirty", "skipped_missing", "skipped_head_regression", "error"):
                 audit_records.append(
                     {
                         "ts": time.time(),

@@ -11,13 +11,16 @@
 # [INVARIANTS] 生成器是投影册唯一合法写者（PG wins）：私改=证据留档+自动再生成，永不
 #   git checkout（会吃他人 staged）；CAS 冲突退避重试 3 次后死信告警；PG 不可达=
 #   零写退出+降级观察行，绝不阻塞调用方（fail-open 纪律）；幂等判据=连续两次运行
-#   第二次零写盘
+#   第二次零写盘；**测试态禁写生产投影册**（2026-10-12 维护三班 #ARCH-084 追加刀，
+#   Owner 通宵令"测试面禁写投影或 fixture 隔离，你班裁"）：PYTEST_CURRENT_TEST 在场且目标
+#   落在真仓根内 ⇒ 拒写＋归因告警（nodeid 直接进日志）＋独立计数，tmp 沙盘 project_root
+#   照常写；判据不可得=fail-open 按现行为放行；一键回退 ZEPHYR_TEST_NO_PROD_PROJECTION=0
 # [MODIFY-GUARD] 新建 2026-09-23 st-wm1-buildB-20260923（W-M1 波0 车道B）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] run 永不向调用方抛 PG/写盘异常——全部折入 Report；只有编程错误（快照模型坏）才 raise
-# [TESTS] tests/governance/registry_projection/test_projection_generator.py
+# [TESTS] tests/governance/registry_projection/test_projection_generator.py；tests/gov/governance/test_projection_prod_write_block.py（测试面禁写守卫四臂）
 """generator.py — 投影生成器编排层（check/render 两模式+四象限处置）。
 
 处置 playbook（丙号文 §3.3，全自动无人工常态参与）：
@@ -39,6 +42,7 @@ from __future__ import annotations
 import difflib
 import json
 import logging
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Final
@@ -68,6 +72,12 @@ EVIDENCE_REL = ".runtime/gate_audit"
 _DEFAULT_REGISTRY_ID = "REG-CAPCAN-001"
 
 _CAS_RETRIES = 3
+
+# 测试面禁写生产投影册（#ARCH-084 第二刀，2026-10-12 维护三班夜班）
+_NO_PROD_WRITE_ENV: Final = "ZEPHYR_TEST_NO_PROD_PROJECTION"
+_GUARD_OFF_VALUES: Final = frozenset({"0", "false", "off"})
+# 独立计数：拒写次数与"照常写"分开可观测（在册假绿教训＝降级态与无动作同形）
+TEST_PROD_PROJECTION_BLOCKED = 0
 
 
 def default_registry() -> tuple[str, str]:
@@ -178,7 +188,53 @@ def _save_evidence(project_root: Path, physical_path: str, disk_text: str, rende
     return str(path)
 
 
+def _repo_root_for_guard() -> Path:
+    """真仓根（测试可 monkeypatch 本函数，把"生产面"指向沙盘，不动生产分支语义）。"""
+    from zephyr.shared.io.paths import REPO_ROOT
+
+    return Path(REPO_ROOT)
+
+
+def _test_prod_projection_block(project_root: Path, physical_path: str) -> str | None:
+    """测试态禁写生产投影册的判定：返回触发上下文（pytest nodeid）＝应拒写；None＝照常写。
+
+    立案证据（#ARCH-084 在册三例＋维护三班 2026-10-12 夜班实测四例）：
+    测试经导入链/在役落地链把 capability_canonical_file_registry.yaml 等**生产册**刷成
+    PG 现态——归因 session 空串、写者无人认领，主区因此长期挂着数百行"未提交新生代"
+    （实测 03:11-03:14 三分钟内 5 个不同 pid 各写一次）。测试沙盘隔离靠的是各工具的
+    project_root 注入点；没带注入点的就是缺陷，禁写比放行更近事实。
+    旁路旗 ZEPHYR_TEST_NO_PROD_PROJECTION=0 一键回退现行为（缺省 ON）。
+    """
+    if os.environ.get(_NO_PROD_WRITE_ENV, "").strip().lower() in _GUARD_OFF_VALUES:
+        return None
+    ctx = os.environ.get("PYTEST_CURRENT_TEST", "").strip()
+    if not ctx:
+        return None
+    try:
+        real = _repo_root_for_guard().resolve()
+        root = Path(project_root).resolve()
+    except Exception as exc:  # noqa: BLE001 — 判据不可得时不拒写（宁保留既有行为，不误伤生产）
+        logger.warning("投影测试面守卫判据不可得，按现行为放行(%s: %s): %s", type(exc).__name__, exc, physical_path)
+        return None
+    # 精确同根才算"写生产册"：basetemp 在仓内 .runtime/tmp/pytest_<pid>（conftest.py:95），
+    # 用"包含"判会把在册沙盘测试一屏打死——沙盘注入点语义必须原样可用。
+    return ctx if root == real else None
+
+
 def _write_rendered(project_root: Path, physical_path: str, rendered: str) -> None:
+    ctx = _test_prod_projection_block(project_root, physical_path)
+    if ctx:
+        global TEST_PROD_PROJECTION_BLOCKED
+        TEST_PROD_PROJECTION_BLOCKED += 1
+        logger.warning(
+            "TEST-PROJECTION-WRITE-BLOCKED（测试面禁写生产投影册，第 %d 次）: %s ← %s"
+            "（修法＝给该测试传 tmp project_root，或带注入点走沙盘；回退旗 %s=0）",
+            TEST_PROD_PROJECTION_BLOCKED,
+            physical_path,
+            ctx,
+            _NO_PROD_WRITE_ENV,
+        )
+        return
     target = project_root / physical_path
     for attempt in range(_CAS_RETRIES):
         expected_base = content_sha256(target.read_text(encoding="utf-8")) if target.exists() else None

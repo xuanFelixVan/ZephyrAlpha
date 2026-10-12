@@ -407,6 +407,8 @@ def _check_daemon_offline_gap(qroot: Path) -> float | None:
 # （盘上 sha vs 投影状态文件 sha）；D≠S 或到了兜底重扫间隔才进生成器全量判别
 # （四象限+PG wins 自愈）。未武装（状态文件不存在）=零动作零成本。
 _PROJECTION_PROBE_COOLDOWN_S = 300.0
+# 投影自愈写口的署名值（safe_write 审计 session 字段来源＝env ZEPHYR_SESSION_ID）
+_PROJECTION_WRITE_ACTOR = "belt_daemon:projection_probe"
 _projection_last_probe: dict = {}
 
 
@@ -449,6 +451,26 @@ def _dualtrack_reconcile_if_armed(root: Path) -> None:
         )
     except Exception:  # noqa: BLE001 — 探针绝不阻断 daemon 主循环
         logger.warning("dual-track reconcile probe fail（下一事件重试）", exc_info=True)
+
+
+def _render_projection_with_attribution(projection_run, root: Path, rid: str, phys: str):
+    """给投影自愈写口临时挂署名（#ARCH-084 追加刀，2026-10-12 维护三班夜班）。
+
+    safe_write 审计的 session 字段取 env `ZEPHYR_SESSION_ID`（file_utils.py:575），daemon 进程
+    从不设 ⇒ 热册每轮自愈重写都记成空串（实测 03:23-03:31 每 ~50 秒一次、pid 互异、session=''），
+    池面因此"有写者而查不到人"——正是项 4 案卷要收口的形态。
+    只包这一处写口且用完即复原：`ZEPHYR_SESSION_ID` 还被 validate_worktree_required /
+    apply_depgraph / git_guard 等消费，在 daemon 全局设置会改动它们的判定输入（越权改语义）。
+    """
+    prev = os.environ.get("ZEPHYR_SESSION_ID")
+    os.environ["ZEPHYR_SESSION_ID"] = _PROJECTION_WRITE_ACTOR
+    try:
+        return projection_run(root, mode="render", registry_id=rid, physical_path=phys, actor_session="belt_daemon")
+    finally:
+        if prev is None:
+            os.environ.pop("ZEPHYR_SESSION_ID", None)
+        else:
+            os.environ["ZEPHYR_SESSION_ID"] = prev
 
 
 def _projection_drift_probe(project_root: Path) -> None:
@@ -520,7 +542,7 @@ def _projection_drift_probe(project_root: Path) -> None:
                 )
         except Exception:  # noqa: BLE001 — premix 失败不阻断探针（render 照走，下一事件重试）
             logger.warning("render premix reconcile 失败（render 照走旧快照）", exc_info=True)
-        projection_run(root, mode="render", registry_id=rid, physical_path=phys, actor_session="belt_daemon")
+        _render_projection_with_attribution(projection_run, root, rid, phys)
     except Exception:  # noqa: BLE001 — 探针绝不阻断 daemon 主循环
         logger.warning("projection drift probe 异常（下一事件重试）", exc_info=True)
 
