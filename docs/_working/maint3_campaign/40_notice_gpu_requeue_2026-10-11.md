@@ -115,3 +115,38 @@ foreign_zero_match_not_in_dev，且与矿考班 `q-20261011-st-mineloop-20261010
 - 一句如实提醒：错峰后 sim_bridge 与 sentinel 仍只差 5 分钟（9:45 起 ExecutionTimeLimit=30min，
   9:50 起=15min），若两者实际同时吃内存，冲突闸（RESOURCE-SCHEDULE/C-5 与 mem_ceiling）仍可能判重叠；
   那是闸的判定面，不是本班可以自行改的预算（`mem_ceiling_gb: 10.0` 令中明令禁动，本班未动）。
+
+## 八、21:2x 全车道通用：接管门＝今日第一大死因（23/70），自愈四步贴此（GPU 四班全在中过招）
+
+> 本节写给**所有**车道，不只 GPU。本班作为队列排空责任班只出尺与配方，不代任何班销账。
+
+- 尺（用门自己的函数，勿凭记忆猜命中面）：`importlib.util.spec_from_file_location` 载入
+  `scripts/governance/session_takeover_ledger.py` → `load_open_entries(root)` → `entry_match_surface(entry)`
+  与你要投的路径求交，**返回空列表才投**。实测口径同时给正对照（已知会命中的册求交必须非空），
+  否则这把尺可能是假红尺。
+- 今日死袋总账（10-12 全天 70 只，按 dead_reason 归族）：非注册表族件双侧皆改真冲突 27｜**TAKEOVER-PENDING 23**｜
+  R5-DIGIT-SUFFIX 4｜BARE-SUBPROCESS 3｜ghost_session 5｜GATE-PRECOMMIT-RUN 6（hook 各族）｜其余 2。
+  23 只 TAKEOVER 按"挡路条目 sid 是否＝提交班 sid"分：**自挡 14／他挡 9**。
+- 自挡历史分布（这些班今日已各踩过，多数已在后续自解）：st-cband-20261012 3／st-statsgov-20261012 3／
+  st-examrun-20261012 2／st-gpuwo-20261011 2／st-gpux2-20261011 2／st-backfix3-20261011 1／st-deadcure3b-chief-20261011 1。
+  **21:2x 现网仍自挡的只剩 2 班**：`st-deadcure3b-chief-20261011`（命中面 3 路 tests/gov/clone_guard/*）与
+  `st-minedig-20261012`（命中面 1 路 mining_sop_policy.md）——这两班请照下面四步各自自愈，一条命令的事。
+- 自愈四步（在册处方：自己那条自己销，无需批准）：
+  1. 判活用**与执行工具守卫同源**的尺：`SessionRegistry().list_active_readonly()` 命中＋`last_heartbeat` age≤90s
+     实测；不要用心跳文件 mtime 自证，也别用"我知道我还活着"。
+  2. 复岗后**别清心跳残留**：条目处方写着"清理 .runtime/sessions/<sid>/ 心跳文件"，那是判死时刻的形态，
+     复岗后清它等于自断活性锚。
+  3. 只读核成果三件，逐件留数不写"已核"：车道 worktree 脏行数（`git -C .aidrafts/<sid> status --porcelain` 行数）、
+     worktree HEAD 与 dev 尖对表、在途袋清单；死袋内容承接面做成**集合差计数**（"只在死袋侧 N 行"）写进 note。
+  4. `python scripts/governance/session_takeover_ledger.py --resolve <sid> --by <sid> --note "<逐条处方结论>"`
+     ⇒ 条目迁 `.runtime/takeover/resolved/`，门自动放行；本班 21:2x 照此自解后同袋重投立刻通过（实测）。
+- 他挡 9 只的挡路源只有三个 sid：`st-mineloop-20261010`（挡 examrun 4／fclean3 1／mineloop2 1）、
+  `st-deadcure2-20261009`（挡 deadcure3b 1）、`st-gpux-20261011`（挡 gpux2 1）。按在册纪律
+  **他班条目须 Owner 批准才销**，本班未代销任何一条（含本班曾撞过的矿考条目那次，成例在册）。
+- 台账面实测数字（供 Owner 定性，本班不改判据）：open 条目 182 条（本班自解 1 条后），
+  命中面并集 232 路，其中 46 路被 ≥2 条同时覆盖；180 条 sid 不在当前活性注册表。
+  两条机制面只报不修：①`--scan` 对 idle 未达阈值的会话以"注册表除名或 PID 已死"立案，而门**不看活性是否已恢复**
+  ⇒ 断电复岗的活班被自己的死班形态长期硬拦（今日自挡 14 只是这一形态的全部产量）；
+  ②命中面里大量条目只由"车道 worktree 脏文件清单"构成，而册面（PG 单源生成册）落进脏清单后
+  会永久挡住任何人对生成册发聚合 render 袋（本班 C4 即卡在此，见本班台账 §十二）。
+- 一句归属声明：本节全部数字来自 21:2x 现网只读实测；销账动作只有本班自己那一条。

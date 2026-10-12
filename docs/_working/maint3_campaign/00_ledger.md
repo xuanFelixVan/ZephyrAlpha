@@ -721,3 +721,143 @@ all_match 30、partial_match 4、**foreign_zero_match_not_in_dev 5**、noop 哨�
 
 另：`.runtime/sessions/st-dexp-20261009.json` 分片损坏致读侧静默 skip（他班早列），本机死机后复测**仍在**，
 状态无变化——留队列完整性簇待办，不属本班今夜可自裁面。
+
+## 十二、统筹四令执行账（2026-10-12 21:5x → 00:0x，含 Card A 止血与接管大扫除）
+
+### 12.1 Card A「清理器正在吃裁定保护面」＝前提成立，止血落在删除集输入面
+
+【实测面积】尺＝`ops_guard_delete.jsonl` 全段流扫（含轮转段 .1/.2/.3），按 `timestamp` 取窗：
+
+- 24h 窗内 `is_protected_zone=TRUE` 且理由含"声明制直通"的删除 **1510 条**，声明方 **全部**＝
+  `GATE-RUNTIME-CLEANUP`，落点 **全部**＝`.runtime/quarantine`；
+- 近 7d 窗同型 **1575 条**（该闸 7d 直通总量 272,379 条的保护区子集）；
+- 盘面存量：`.runtime/quarantine` 9,006 件（其中 >7d＝2,743 件＝下一轮起即删）、
+  `.runtime/takeover` 507 件（>7d 233，＝接管销账证据面）、`.runtime/orphan_quarantine` **现存 0 件**、
+  `.runtime/workspace_alerts` 7 件（>7d 4，含根宪法点名的 `stash_notice.json`）。
+
+【谁的声明／什么口径】（统筹问的第②件）＝`ReconcilerSpec.file_ops=frozenset({"read","delete"})`
+一次性声明覆盖整棵 `.runtime/` 遍历；`guard_remove` 在 reconciler 上下文内走
+"声明即授权直通"（`is_protected_zone` 只**标记**不**判**），与 `guard_rmtree` 的
+"保护区递归＝双保险硬拦"**不对称**。⇒ 单文件通道缺第二次判定，声明的粒度（整树）远大于
+保护面粒度，保护面因而不存在。这就是第五次同族（M1"无声吃掉要留痕"）的机制口径。
+
+【本班改法】按 Owner 在册正解"改喂给闸的输入，不弱化闸"：
+
+1. `make_runtime_cleanup_reconciler` 遍历内加保护区排除面，真源取 `ops_guard.PROTECTED_PREFIXES`
+   （不在清理腿另立第二份清单——多真源必漂移，`RULE-SSOT`）＋`protected_skipped` 独立出口
+   （每出口独立计数，防"降级态与未触发同形"假绿）；
+2. `PROTECTED_PREFIXES` 只**收紧**扩列三支取证面：`.runtime/takeover`／`.runtime/orphan_quarantine`／
+   `.runtime/workspace_alerts`；
+3. 留痕（统筹问的第③件）：保护区删除逐条带 `content_sha256`（M1 原话的 sha 项）。
+   非保护区**不写该键**——7d 直通 27 万条全带 sha 会复刻 3.7GB/42h 洪峰（#ARCH-258 在册）。
+
+【红绿双向自证】合成树探针（stale 8 天线）：四支取证面过期件全部存活＋`protected_skipped=4`；
+同前缀长相目录 `quarantine_lookalike` 与 `handoffs` 照常删（＝修口径未变成停清理）；
+审计段 `.jsonl`/`.jsonl.1`/`.jsonl.23` 全存活、同目录非审计件照删。
+在册他班红队规格 `TestProtectedZoneExemption`（st-fclean4-20261012 在途字节）跑本班代码 **45 passed**。
+
+【本班自纠一条】`.runtime/gate_audit` 一度被本班加进 PROTECTED_PREFIXES，量出副作用后撤回：
+一旦入保护区，审计轮转自己的 `oldest.unlink()` 会被 in-process judge 拦，`rotate_if_oversized`
+的 fail-soft 把"轮转失败"吞成 False ⇒ 当前段永不收缩，正好复刻 #ARCH-258 洪峰。
+真实止血点＝清理腿的后缀豁免认轮转旧段（`*.jsonl.N` 原不匹配 `.jsonl` 后缀，实测 >7d 39 件正被删，
+与在册"旧段移位保留不物理删除"直接冲突），改 `_is_audit_segment`。
+
+【死信两枚对症】0023 死于链内 ruff 以"本提交文件整档"为作用域咬到 `ops_guard.py:223` 存量裸 except
+（非本班新增），按在册 fail-soft 注记惯例补一行 `# noqa: BLE001` 带理由、语义零改动后重投＝0026；
+入队口 ruff 预清把两条存量 `# noqa: m03/m10` 自定义标记当违规，本班**不改那两行**（M03/M10 门在消费
+该标记，改写＝给他班门拆腿），改走在册 `--skip-preflight` 留痕旗、以锁内真门判词为准。
+
+### 12.2 Card B 接管幽灵大扫除：183→173 open，真挡袋 11→2
+
+尺＝门自己的函数（`load_open_entries`＋`entry_match_surface`，带正对照），判活＝
+`SessionRegistry().list_active_readonly()`＋`last_heartbeat age≤90s`（在册配方，不用心跳文件 mtime 自证）。
+
+- 183 条 open 里**只有 11 条**的命中面含仓内可提交路径，其余 172 条命中面全在
+  `.aidrafts/`、`.worktrees/`、序列化器工作树副本内 ⇒ 不挡任何袋（"184 条全在拦袋"是量的错觉，
+  真实拦袋面＝11 条，本班已按此排序处置）；
+- 三证核账（目录在否／`.git/worktrees` 管理面在否／`session/<sid>` 分支在否，逐条实测）后
+  **代销 10 条**：nightmine、nightmine-b、tests-chief、govfix-g6、regsolo、dexp、final4、vm12w、
+  ffllead、deadcure3b（末条为"活班自挡型"：dirty=0 逐件 blob 对拍差 0 件、分支 tip＝dev 尖、零在途袋）；
+  每条 note 逐句对处方表态，证据尺读数落 `.runtime/tmp/maint3_takeover_11_verify.json`；
+- **拒销 2 条**转属主：`st-examrun-20261012`（dirty 5 件中 4 件与 dev 有差＝真未落地成果）、
+  `st-gpux3-20261012`（两条车道 34＋27 件全差分，且心跳 23.6s 新鲜＝活班）。这两条按在册纪律
+  只能该 sid 自销，本班不代。本班 `st-maint3-20261011` 自己的条目已先自销（§十一 之后）。
+- 根因收口（统筹问的③，本班只报不改判据）：崩溃静默期 `--scan` 批量判死立 open 条目，
+  而门**不看活性是否已恢复**；今日自挡死袋 14 枚全部是这一形态。提案两条见 §十二.5 菜单 C11。
+
+### 12.3 Card C 夜间合并令三条读数（其中两条前提被实测证伪）
+
+- ①「序列化守护已死、零进程、processing 压 4 件」→ **证伪**：
+  `commit_belt_daemon` 进程在（`pythonw`/`python` 命令行实测），`belt_daemon.heartbeat` age=11.0s，
+  `serializer.lease` state=drain-active、holder_pid 30476 存活；4 件 in-flight 中 3 件随后落地
+  （dev 尖由 8606f242 → 0a9f7eef，含考试班 21:47 一笔）。本班未重启 drain——重启会造双传送带。
+- ② 接管大扫除 → 见 §十二.2。
+- ③「M14 补全：`registry_mass_deletion_gate` 只 import Final、`__all__: Final` 仍缺」→ **半证伪**：
+  盘面与本班在途袋 blob 两面皆已是 `__all__: Final`（blob 内 grep 实测）；命中的是
+  **dev 现值第 73 行仍是旧裸 `__all__`**（dev 面 grep 实测）——即"门链仍拦"拦的是尚未落地的袋
+  （0021 死于容量型超时，内容已由 0025 重投）。任何班此刻改那本宿主模块都会被门咬，
+  解法不是补注解而是让 0025 落地；本班已把此读数发统筹。
+
+### 12.4 Card D 第四击回退弹：本班三层的在岗状态与署名缺口（喂波四取证车道）
+
+- **L1 在 dev**：`commit_queue_landing.py` 自 10-12 16:12（6e88398e2a）起含
+  `_pool_direction_regressions`／`skipped_head_regression`（`git show dev:` grep＝4 命中）。
+- **L1 没写留痕**：`main_workspace_sync.jsonl` 全窗口动作分布
+  `skipped_dirty 3,665｜index_shadow_clear 3,072｜index_skip_staged_wip 210｜skipped_missing 47｜error 477`，
+  **`skipped_head_regression` ＝ 0 条**。⇒ 收敛臂对这 32＋24 件是"判脏拒写"，不是"写旧字节的人"。
+  本班三层不背这一击，但也**不能据此定凶**——只能说写者不在落地收敛臂里。
+- **哨兵层在岗**：`worktree_drift_watchdog --daemon` 进程在；`.runtime/quarantine/drift_*` 当日按小时
+  ＝08×3／09×4／11×1／15×1／18×10／19×8／**21×6**／22×6，strike-4 窗口 21:41/21:44×4/21:51 六次存证在盘，
+  其中 `drift_20261012T134143`（UTC 命名＝本地 21:41）内含 `data/strategy_intake/constructed_manifest.csv`
+  ＝第四击打的那一族。
+- **署名缺口如实**：哨兵存证只带**路径＋字节**，不带写者 pid/sid；`main_workspace_sync.jsonl` 字段全集
+  ＝`ts/qid/path/action/old/new`，**无 pid、无 session_id**。⇒ "这次 stomper 的 pid/sid"没抓到。
+  文件级写者身份目前只有走 `safe_write_text` 的热册面留痕（本班刀二已把 landing 子进程补上署名），
+  而第四击的 24 件是**盘面旧字节回退**（非 safe_write 面）⇒ 天然无署名。收口方案在菜单 C12。
+- 另案同族（本班当班新发现，非 Card D 原问）：**六个死车道的 `.aidrafts` 目录在 21:07→22:50 之间从盘上消失**
+  （nightmine／nightmine-b／govfix-g6／regsolo／dexp／final4，逐条 `exists()` 复核；`.git/worktrees` 管理面
+  同批消失；`session/<sid>` 分支同批不存在）。机制＝`_sweep_stale_worktrees` 启动清扫（判据三条：
+  目录 age>30min＋sid 不在活性注册表＋分支 tip 是 HEAD 祖先或被取代），
+  **判据不含"脏面是否为空"**——dirty 件在清扫中无判据、无 blob 备份、无遥测事件
+  （`worktree_ops_log.jsonl` 事件种类全集＝pass/sync_reset/fail_closed/sync_rebase/workspace_head_diff/
+  base_freshness_check，**零删除类事件**；`.aidrafts` 又在 `ops_guard.ALLOWED_PREFIXES` 内＝直通删除只计数不落盘）。
+  nightmine 那条本班 21:07 还读到 5 条 token 仅在车道面、dev 与 PG 账本两面皆无——现已无处可取。
+  这是"有主取证面被静默继承前先静默蒸发"的新形状，喂波四车道，并列菜单 C13。
+
+### 12.5 通宵令晨间包增补（C10–C13，接 §十 的 C1–C9）
+
+- **C10 清理腿判据语义等裁（本班只做到"输入面排除"为止）**：`guard_remove` 在 reconciler 上下文内
+  "声明即授权直通"这一条，与 `guard_rmtree` 的保护区递归双保险不对称，是 M3/M5 保护面被吃 1510 件/24h 的
+  机制根。本班**未改**该不对称——改它会让 `DeleteBlockedError` 逃逸出各 reconciler 的 `except OSError`
+  （在册 P0① 提交遮蔽事故同型），须先枚举全部调用方异常面。**建议默认＝把单文件通道对齐递归双保险
+  （保护区内即使已声明也硬拦＋逐条 sha 留痕），前置＝随袋带一张 reconciler 调用方异常处理清单**。
+  不改的代价＝保护面今后仍依赖每条清理腿各自记得排除，忘一条即静默吃一次。
+- **C11 接管门的活性复核（今日 14 枚自挡死袋的根）**：`--scan` 崩溃静默期批量判死立 open 条目，
+  而 `TAKEOVER-PENDING` 门不看活性是否已恢复；现网 open 173 条中 171 条属主不在活性注册表（真死），
+  自挡形态只能靠属主按配方自销（今日已三例验证、本班又销 10 条）。
+  **建议默认＝门在连坐前先做一次同源判活（`list_active_readonly`＋心跳末拍），活班命中自有条目时
+  降级为 warn＋留痕**；替代方案＝scan 判死前强制双源（心跳末拍＋进程表）。两条都动判据面，等裁。
+- **C12 盘面回退的写者署名缺口**：`main_workspace_sync.jsonl` 与 drift 存证皆无 pid/session_id，
+  非 `safe_write_text` 面的整档回退**结构上无法归因**（第四击即此）。
+  **建议默认＝给 landing 收敛臂与工作树写入臂各加一行带 pid＋sid＋前后内容 sha 的遥测**
+  （纯可观测性，不碰判据分支；本班 ⑫款可自裁，但因涉 `safe_write`/landing 两面的字段契约，仍列此呈批）。
+- **C13 车道清扫对脏面无判据（新形状，喂波四）**：`_sweep_stale_worktrees` 三条判据不含"脏面为空"，
+  且 `.aidrafts` 同时在 ops_guard 白名单与遥测豁免里 ⇒ 未落地字节可在无人批准下静默消失
+  （本班 21:07 到 22:50 实测六条车道目录同批蒸发，其中 nightmine 有 5 条 token 仅存在于该面）。
+  **建议默认＝清扫前对 dirty_files 做 blob 存证（refs/quarantine 或 blobs），并在
+  `worktree_ops_log.jsonl` 增设 `sweep_remove`/`sweep_backup` 两类事件**；
+  等裁理由＝给系统态加写面＋涉清扫判据。
+
+### 12.6 本班在途袋终态（判据只认 dev 面读回，不信 done 目录）
+
+| 袋 | 内容 | 结果 |
+|----|------|------|
+| 0023 | Card A 止血两件 | 死（链内 ruff 咬存量一行）→ 已重投 0026 |
+| 0024 | watchdog CloneGuard 合流＋preflight 单口＋两测试 | 在途 |
+| 0025 | 方向闸宿主模块＋专属测试＋两册登记 | 在途 |
+| 0026 | Card A 止血两件（补存量注记后） | 在途 |
+| 0022 | C4 聚合 render 袋（CAPCAN 投影重放，+2139 行／删 0／token 净增 424） | 死（TAKEOVER-PENDING 命中 nightmine）→ nightmine 条目已由本班 §十二.2 三证代销，**待复投** |
+
+已落地件的内容级复验（`git show dev:` 侧读回）：0017 探针与 claim 续租、0018 torch 四面
+（`torch==2.13.0+cu126`／`#ARCH-TORCH-CUDA-PIN`／ENV-001 disposition）、0019 台账 §十一＋知会 §五–§七
+全部在 dev 面命中；三支测试件（投影写拦截／landed_id 探针／claim 续租）在 dev 面存在。
