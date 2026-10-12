@@ -1,0 +1,1617 @@
+schema_version: examunlock-handoff-matrix/v1
+sid: st-examunlock-20261013
+purpose: 总令本班终局＝『177 张未考卡的接线通路铺到只差属主动作』——本件逐张给出该动作是什么、归谁、出处在哪
+ruler: 在册 card_binding.classify_card 现跑（零 CH），堵点类直接取 reason 前缀，不另立第二把尺
+universe: 177
+blocker_histogram:
+  target_face_not_index_next_day: 118
+  needs_replay_engine: 2
+  multi_table_needs_composite_recipe: 14
+  signal_column_not_a_single_identifier: 1
+  no_data_binding_section: 13
+  table_not_in_recipe_book: 11
+  panel_deferred: 17
+  executor_horizon_mismatch: 1
+sum_check:
+  rows: 177
+  histogram_sum: 177
+  equal: true
+cards_with_unlock_side_wiring: 0
+cards:
+- card_id: TDM-E-FLOW/comparison/02_plan_to_execution_chain
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L0-01/comparison/02_scenario_probability_stance_vs_fixed
+  family: comparison
+  cls: C
+  reason: needs_replay_engine(NAV/window_metrics/双臂 arm_protocol)
+  blocker_class: needs_replay_engine
+  owner_action: 双臂/回放协议消费面（07 卡已跑通两档，先例可引用其 run_id 钉法）
+  owner_lane: 矿考二班
+  routing_source: 分数册 07 卡 off/mid 两行＋mineloop2 0014 袋
+  unlock_shift_supplied: false
+- card_id: TDM-E-L0-02/calibration/03_偏离幅度分位响应曲线
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L0-02/comparison/02_deviation_revision_authority
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L0-03/comparison/02_brier_calibration_on_off
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L0-04/comparison/02_intraday_rollback_downgrade
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L0/comparison/02_plan_constraint_on_off
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-C-L1/comparison/02_btc_trend_altseason_gate
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-AGG/ablation/02_state_input_replacement
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  family: calibration
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_backtest.regime_state_anchored', 'c1_market.kline_index']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+  family: calibration
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_backtest.regime_state_anchored', 'c1_market.emotion_index']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S0-1/calibration/03_market_scope_sentiment_series
+  family: calibration
+  cls: U
+  reason: signal_column_not_a_single_identifier:sentiment_index（主）/ avg_polarity、positiv
+  blocker_class: signal_column_not_a_single_identifier
+  owner_action: 把多列信号拆成单列或声明复合形（卡面列名是标识符列表＝题面未收口）
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: card_binding.py:311 col_id fullmatch 闸
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S0/calibration/02_货币卡
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S0/calibration/03_流动性卡
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S0/calibration/04_海外卡
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S0/calibration/05_政策事件卡
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S1/calibration/03_黄白线交叉
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S2/calibration/07_连板家数分布
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S3/calibration/02_昨日涨停溢价
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S3/calibration/03_晋级率
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S3/calibration/04_情绪先锋四态
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S4/calibration/02_期权IV主路径
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S4/calibration/03_合成VIX后备
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S5/calibration/02_11信号环比
+  family: calibration
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+  family: calibration
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_daily_hfq', 'c1_market.kline_index', 'c1_market.stk_limit']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L1/comparison/02_anchored_cap_curve_on_off
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-01-2/calibration/02_板块成交额占比活跃度
+  family: calibration
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-01-3/calibration/02_多周期动量主导度
+  family: calibration
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-01-5/ablation/02_市场级调节注入
+  family: ablation
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_sector_880']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-01/ablation/02_四路等权合成分边际
+  family: ablation
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_sector_880', 'c1_market.sector_constituent']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-01/ablation/03_六指数分布选优通道与候选池分位
+  family: ablation
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_index', 'c1_market.kline_sector_880']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-01/comparison/02_等权与IC加权双臂
+  family: comparison
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-01/comparison/03_缺路处置律重归一与剔除双臂
+  family: comparison
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏
+  family: ablation
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_index', 'c1_market.kline_sector_880']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-02-1/calibration/02_RRG象限迁移
+  family: calibration
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_index', 'c1_market.kline_sector_880']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-02-2/calibration/02_板块见顶预警三信号
+  family: calibration
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-04-1/calibration/02_轮动五态调节分
+  family: calibration
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-04/ablation/02_板块生态三态判定
+  family: ablation
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_sector_880', 'c1_market.limit_up_pool']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-04/comparison/02_主线合取与单腿双臂
+  family: comparison
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.kline_index', 'c1_market.kline_sector_880']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶
+  family: calibration
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_index']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-05-2/ablation/02_信号响应三件套
+  family: ablation
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_index', 'c1_market.kline_sector_880']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-05/ablation/02_水温总开关放行比例
+  family: ablation
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_sector_880']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-06-1/ablation/02_三级放行门槛
+  family: ablation
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-06-3/calibration/02_强度乘数阶梯
+  family: calibration
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-06-3/calibration/03_传导时滞曲线
+  family: calibration
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-06/ablation/02_层级隔离两字段传导
+  family: ablation
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-07-1/ablation/03_强度维单位口径错配
+  family: ablation
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-07-1/calibration/02_回踩四因子合成分
+  family: calibration
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-07-1/calibration/03_死常量两腿_结构破坏与超窗横盘
+  family: calibration
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-07/ablation/02_回踩ABC仓位门控
+  family: ablation
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-07/ablation/03_时间窗外不评级并入观望的边际
+  family: ablation
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-07/comparison/03_追高与低吸胜率对照
+  family: comparison
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-08/calibration/02_板块生命周期动量持续性
+  family: calibration
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-09/calibration/03_评级上调聚集
+  family: calibration
+  cls: A?
+  reason: table_not_in_recipe_book:c3_fundamental.research_report
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-09/calibration/04_业绩预增催化剂腿
+  family: calibration
+  cls: U
+  reason: multi_table_needs_composite_recipe:['c3_fundamental.earnings_forecast', 'c3_fundamental.express_report', 'c3_fundamental.research_report']
+  blocker_class: multi_table_needs_composite_recipe
+  owner_action: 定复合配方（join 键与去重口径须逐表面实证，一格一序列装不下）
+  owner_lane: 挖矿二班＋矿考二班双面
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §表 A?/U 行
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2-09/comparison/02_催化剂加权形式板块恒定与标的指数衰减
+  family: comparison
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L2/ablation/02_板块候选池整体边际
+  family: ablation
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.kline_sector_880
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-01/calibration/02_成交额下限剔除
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-01/comparison/04_宇宙口径完整性对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-03-1/calibration/02_涨停基因
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-03-2/calibration/02_均线多排
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-03-2/calibration/03_温和放量
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-03/ablation/02_双池代理合成
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-04/calibration/02_解禁否决
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-05/calibration/02_连板顺位
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-07-1/ablation/02_烂板剔除步
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-07-2/ablation/02_IC加权对等权
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-07-3/calibration/02_二十日动量排名
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-10/calibration/02_一字板不可成交
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-12-3/calibration/02_获利盘占比
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L3-12-3/calibration/03_股东户数集中度
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-C-L4/comparison/02_breakout_vs_pullback_atr_stop
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-01/comparison/02_batching_all_vs_split
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-02/comparison/02_order_timing_tape
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-03/comparison/02_limit_offset_fill_tradeoff
+  family: comparison
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-04/comparison/02_capital_ranking_order
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-05/comparison/02_daban_mode_three_way
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-06/comparison/02_quality_prior_on_off
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-07/ablation/02_queue_bypass
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-08/comparison/02_breakout_failure_gate_on_off
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-09/comparison/02_hard_constraints_on_off
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-10/comparison/02_state_timeout_policy
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-11/comparison/02_partial_fill_cancel_vs_wait
+  family: comparison
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-12/comparison/02_precheck_five_checks_ablation
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-13/comparison/02_three_way_recon_injection
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4-14/comparison/02_predicted_vs_realized_slippage
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L4/comparison/02_exec_caliber_cost_ladder
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A01/calibration/02_日线动量截面
+  family: calibration
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A01/calibration/03_分钟已实现波动
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A03/calibration/02_880板块相对强弱持续性
+  family: calibration
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A05/calibration/02_盈余惊喜事件研究
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A06/calibration/02_主力净流入截面
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A08/calibration/02_BDI领先航运链
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A10/calibration/02_全球风险因子隔夜传导
+  family: calibration
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.macro_data
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A11/calibration/02_EIA库存意外
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A12/calibration/02_台风与极端高温对电力链
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A13/calibration/02_股东户数环比事件研究
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A15/calibration/02_资金费率拥挤跨市场预警
+  family: calibration
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.hl_funding_history
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A15/calibration/03_币圈镜像资金费率对BTC
+  family: calibration
+  cls: A?
+  reason: table_not_in_recipe_book:c1_market.hl_funding_history
+  blocker_class: table_not_in_recipe_book
+  owner_action: 别补配方册：本班逐张实测该 11 张与 A 路语义不同型（05 号册）；正解＝面板通道或日度聚合 base_csv
+  owner_lane: 矿考二班（面板）／挖矿二班（聚合底座）
+  routing_source: 本班 05_recipe_book_grain_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-A17/calibration/03_一致预期修正
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-D1/ablation/03_假设漏斗闭环率与考试链缺口
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-V1/ablation/02_大盘状态快照T-1纪律
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-V2/ablation/02_情绪相位六段快照就绪
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-E-L9-V3/ablation/02_板块状态快照T-1纪律
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1-01/comparison/02_六桶分类增益对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1-02/comparison/02_时间止损档对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1-03/comparison/02_止盈族三式对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
+  family: calibration
+  cls: B
+  reason: panel_deferred(去重/撮合口径须逐表面核)
+  blocker_class: panel_deferred
+  owner_action: 横截面/面板回放通道 CW-MINELOOP-001 落地后逐表面核去重与撮合口径
+  owner_lane: 矿考二班（令卡原文：前置在其域，解锁班只做消费侧准备）
+  routing_source: 施工令 §你的施工面①＋examrun 台账 §9.3-A
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1-04/calibration/03_席位净卖出派发前瞻收益
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1-04/calibration/04_除权除息参考价分母误判清仓
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1-04/comparison/05_早盘破位假信号时段可靠性
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1-05/ablation/02_融合权重与去抖消融
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1-06/comparison/02_K3连续破位强清对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1/ablation/02_卖出信号段整体消融对照
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S2-01/comparison/02_执行方式路由与流动性三查对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S2-02/calibration/02_连续跌停开板概率与次日处置
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S2-02/calibration/03_新股首日分层卖出三臂
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S2-02/comparison/04_T1可卖额度做T回转延迟成本
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S2-03/comparison/02_执行口径净收益对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S2-04/comparison/02_本地条件单追单闭环对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S2-05/comparison/02_分批止盈阶梯对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S2-06/ablation/02_卖出闭环三率反馈权重消融
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S2/ablation/02_执行约束层现实性税度量
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-R1-03/calibration/02_宽基ETF天量与护盘滞后结构
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-R1/shadow/02_拔电源影子运行对照
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-X-S1-03/comparison/02_dualwindow
+  family: comparison
+  cls: U
+  reason: no_data_binding_section
+  blocker_class: no_data_binding_section
+  owner_action: 补卡面 data_binding（题面未冻结）——本班逐张判定见 06 号册：4 张接线即可考／2 张需新版本卡／7 张拒考
+  owner_lane: 挖矿二班（供题侧）
+  routing_source: 本班 06_skeleton_card_verdicts.yaml
+  unlock_shift_supplied: false
+- card_id: TDM-X-FLOW/ablation/02_离场信号整链消融总账
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C1-01/shadow/02_激活集路由影子
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C1-02/shadow/02_三层栈冠军挑战
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C1-02/shadow/03_置信度配比资金臂
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C1-03/shadow/02_双向渐变vs硬切
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C1/comparison/03_预备金现金贡献
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C1/shadow/02_预算带灰度插值
+  family: shadow
+  cls: C
+  reason: needs_replay_engine(NAV/window_metrics/双臂 arm_protocol)
+  blocker_class: needs_replay_engine
+  owner_action: 双臂/回放协议消费面（07 卡已跑通两档，先例可引用其 run_id 钉法）
+  owner_lane: 矿考二班
+  routing_source: 分数册 07 卡 off/mid 两行＋mineloop2 0014 袋
+  unlock_shift_supplied: false
+- card_id: TDM-F-C2-01/comparison/02_净额轧平省成本
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C2-02/shadow/02_约束栈有vs无
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C2-02/shadow/03_裁剪优先级非策略仓优先
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C2-02/shadow/04_资金额度约束先卖后买与只削买入
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C2-03/comparison/02_相关性cluster上限
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C2-04/shadow/02_三级响应vs即时强裁
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C2/comparison/02_组合聚合vs各自为战
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C3-01/comparison/02_隔夜漂移切账失真
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C3-01/comparison/03_IS三分解与交易持仓二分
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C3-02/shadow/02_减半冻结线有效性
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C3-03/comparison/02_月度调权vs静态基准
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C3-04/shadow/02_四道gate过拟合防线
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C3-05/shadow/02_判准率加权vs等权
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-C3/comparison/02_归因反馈闭环开vs关
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-F-FLOW/comparison/02_终产目标组合vs基准
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P1-02/calibration/02_ATR距止损带对后续下行预测
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P1-02/calibration/04_盈亏百分比腿与ATR缺失降级
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P1-03/calibration/02_因子秩回落对后续超额预测
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P1-04/calibration/04_持仓停滞天数对后续收益预测
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P1-04/calibration/05_板块退潮动量对持仓下行预测
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P1-04/comparison/02_否决线三型可选档对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P1-05/comparison/02_单票上限三档对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P1-05/comparison/03_漂移触发与周期触发对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P1-05/shadow/05_组合体检帽影子对照
+  family: shadow
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P1/comparison/02_否决腿与熔断腿双臂增量
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P2-01/comparison/02_三道门串并开闭与互斥诊断
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P2-01/comparison/03_盘中单边失效腿对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P2-03/comparison/02_未闭环敞口过夜代价双臂
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P2-04/calibration/06_减仓参与率压力对次日价格路径
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P2-04/calibration/07_冲高反弹幅度对次日收益与减半阈值落点
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P2-04/comparison/02_调仓频率与换手惩罚六臂对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P2/comparison/02_做T腿有无对照与底仓恒等性
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P3-01/comparison/03_情绪段加仓权限分层对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P3-01/comparison/04_日亏熔断禁加期分层对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P3-02/calibration/03_加仓触发涨幅对后续收益预测
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P3-03/comparison/02_仓位定尺寸七档对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P3-04/calibration/02_尾盘强势对次日高开概率预测
+  family: calibration
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P3-04/calibration/04_缩量回踩支撑对次日正收益预测
+  family: calibration
+  cls: C
+  reason: executor_horizon_mismatch:next_5d
+  blocker_class: executor_horizon_mismatch
+  owner_action: 多日前向目标面（与聚合 8 卡同一条决定面，勿单独为此卡造面）
+  owner_lane: 矿考二班＋挖矿二班
+  routing_source: 本班 15 号件 §三＋minedig2 收班在册结论
+  unlock_shift_supplied: false
+- card_id: TDM-P-P3-04/comparison/03_尾盘加仓与即时加仓执行价差对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-P3/comparison/02_金字塔三档与一次性足额对照
+  family: comparison
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+- card_id: TDM-P-FLOW/ablation/02_持仓叠层整链消融
+  family: ablation
+  cls: C
+  reason: target_face_not_index_next_day
+  blocker_class: target_face_not_index_next_day
+  owner_action: 立目标面通道（按 04 号件逐腿榜估工：94 种读法、91 种单例、前 10 种覆盖 34 张）
+  owner_lane: 矿考二班＋Owner 立项
+  routing_source: docs/_working/examrun_campaign/00_ledger.md §25.9 与本班 04 号件
+  unlock_shift_supplied: false
+discipline:
+  cards_modified: 0
+  ch_queries: 0
+  owner_adjudications_made: 0
