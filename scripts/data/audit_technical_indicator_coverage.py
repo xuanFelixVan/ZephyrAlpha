@@ -1,17 +1,18 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/blueprint.md
 # [MODULE] scripts.data.audit_technical_indicator_coverage
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.factor.technical_indicators; pandas
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.factor.technical_indicators; zephyr.data.implementations.internal_compute_provider（停算面 status 与写侧同读径）; pandas
 # [CONSUMERS] Owner/施工会话手动触发（REG-IND-001 回填验收闸，回填后必跑）
 # [STARTUP] manual
 # [MATURITY] stable
-# [INVARIANTS] fail-loud：任何批次查询失败/空样本 exit 3 永不假绿；40 列/批分批防 1500+ parts 宽表 CH 内存 241；短窗（<60 行）事件型列 fractal_* 豁免判定仅报告
+# [INVARIANTS] fail-loud：任何批次查询失败/空样本 exit 3 永不假绿；40 列/批分批防 1500+ parts 宽表 CH 内存 241；短窗（<60 行）事件型列 fractal_* 豁免判定仅报告；
+#  判罚面=REG-IND-001 status==active 的输出列（与写侧 T1 停算过滤同册同函数），retired/deprecated 列只披露不判罚；停算面读不到⇒exit 3（尺不可信，禁退化成"全列判罚"或"全列豁免"）
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 退出码 0=PASS/2=存在全 0 列/3=查询失败或空样本
-# [TESTS] 实弹双窗验证（2026-09-16：08 标准窗+09 尾部窗双 PASS）；断言逻辑内嵌 docstring
+# [ERROR_CONTRACT] 退出码 0=PASS/2=存在全 0 列/3=查询失败或空样本或停算面不可读
+# [TESTS] tests/data/data/data/test_regind001_audit_status_alignment.py（裁4 红证：豁免生效时停算列不判罚／摘掉 status 读径必红／全列判罚旧形会因 T1 置 NULL 而假红）；实弹双窗验证（2026-09-16：08 标准窗+09 尾部窗双 PASS）
 # [A_module] module_id=scripts-data-ti-coverage-audit | layer=script | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """技术指标宽表全列覆盖审计器（REG-IND-001 验收闸，回填后必跑）。
@@ -20,19 +21,23 @@
     160+ 指标列 100% 非空（fractal_high/fractal_low 等事件型列按稀疏本性豁免判定，
     仅报告不判罚）。
 
-血泪两条（2026-09-16 实证，违反必复发）：
+血泪三条（2026-09-16/2026-10-12 实证，违反必复发）：
     1. ch_reader.query 失败返回空串——旧版拿空串除零后输出"全 0 列（0）: []"
        假绿，查询失败被当成审计通过。本版 fail-loud：任何批次查询失败/空样本
        一律非零退出。
     2. 162 列单查询在 1500+ active parts 宽表上空载也撞 CH 内存（Code 241→
        HTTP 500）——本版 40 列/批分批查询合并判定。
+    3. 判据 `notna().sum()==0` 把"整列 NULL"也判成缺陷，而 T1 停算立法（REG-IND-001
+       status!=active 的 11 件/13 列，2026-10-10 起不再计算、新增行诚实置 NULL）之后
+       凡新写窗口一律 rc=2——尺与法漂移会造成"验收门永久红→真缺口被习惯性忽略"。
+       本版判罚面按 status 过滤，且与写侧走同一个函数（同册同读径，禁两处各抄一遍）。
 
 用法：
     python scripts/data/audit_technical_indicator_coverage.py                 # 000852 daily 2026-08 标准样本
     python scripts/data/audit_technical_indicator_coverage.py --start 2026-09-01 --end 2026-09-16
     python scripts/data/audit_technical_indicator_coverage.py --symbol 600519 --period weekly
 
-退出码：0=PASS；2=存在全 0 列；3=查询失败/空样本（审计不可信）。
+退出码：0=PASS；2=在产列存在全 0 列；3=查询失败/空样本/停算面不可读（审计不可信）。
 """
 
 from __future__ import annotations
@@ -49,6 +54,10 @@ if str(_REPO_ROOT) not in sys.path:
 import pandas as pd
 
 from zephyr.data import ch_reader
+from zephyr.data.implementations.internal_compute_provider import (  # noqa: SLF001  停算面与写侧同函数，禁本件另抄一份 status 判据
+    _TI_REGISTRY_YAML,
+    _load_retired_indicator_outputs,
+)
 from zephyr.data.table_registry import get_registry
 from zephyr.factor.technical_indicators import autodiscover_technical_indicators
 from zephyr.factor.technical_indicators.indicator_base import TechnicalIndicatorRegistry
@@ -68,7 +77,20 @@ def main() -> int:
 
     autodiscover_technical_indicators()
     all_cols = sorted(TechnicalIndicatorRegistry.list_output_columns())
-    print(f"在产指标列: {len(all_cols)}  样本: {args.symbol} {args.period} {args.start}~{args.end}")
+    # 裁4（2026-10-12 统筹批复）：判罚面与 T1 写侧过滤同册同函数；停算面读不到即判尺不可信
+    if not _TI_REGISTRY_YAML.exists():
+        print(f"FAIL: 指标注册表不可读（{_TI_REGISTRY_YAML}）⇒ 停算面无法确定，审计不可信，不得当全绿也不得全列判罚")
+        return 3
+    retired = _load_retired_indicator_outputs()
+    judged_cols = [c for c in all_cols if c not in retired]
+    exempt_cols = [c for c in all_cols if c in retired]
+    if not judged_cols:
+        print("FAIL: 过滤后在产列为空——册面异常，审计不可信")
+        return 3
+    print(
+        f"在产指标列（判罚面）: {len(judged_cols)}  停算面（status!=active，仅披露不判罚）: {len(exempt_cols)}"
+        f"  样本: {args.symbol} {args.period} {args.start}~{args.end}"
+    )
 
     base = (
         f"FROM {_TBL} "
@@ -76,8 +98,8 @@ def main() -> int:
         f"AND trade_date >= '{args.start}' AND trade_date <= '{args.end}'"
     )
     frames = []
-    for i in range(0, len(all_cols), QUERY_BATCH):
-        cols = all_cols[i : i + QUERY_BATCH]
+    for i in range(0, len(judged_cols), QUERY_BATCH):
+        cols = judged_cols[i : i + QUERY_BATCH]
         tsv = ch_reader.query(f"SELECT {', '.join(cols)} {base} FORMAT TSV")
         if not tsv or not tsv.strip():
             print(f"FAIL: 第 {i // QUERY_BATCH + 1} 批查询失败/空结果（{cols[0]}~{cols[-1]}）——审计不可信，不得当全绿")
@@ -90,7 +112,7 @@ def main() -> int:
         return 3
 
     zero_cols, partial = [], []
-    for c in all_cols:
+    for c in judged_cols:
         pct = df[c].notna().sum() / total * 100
         if pct == 0:
             zero_cols.append(c)
@@ -99,18 +121,19 @@ def main() -> int:
     # 事件型列（fractal_* 只在转折点出值）在短窗口（<60 行）合法为 0——降级警告不判罚；
     # 长窗口下 0% 仍是缺陷（回填缺口的特征是整列空）。
     short_window = total < 60
-    hard_zero = [
-        c for c in zero_cols
-        if not (short_window and c.startswith("fractal_"))
-    ]
+    hard_zero = [c for c in zero_cols if not (short_window and c.startswith("fractal_"))]
     soft_zero = [c for c in zero_cols if c not in hard_zero]
     print(f"样本行数: {total}")
     print(f"全 0 列（{len(zero_cols)}）: {zero_cols}")
     if soft_zero:
         print(f"短窗事件型豁免（{len(soft_zero)}）: {soft_zero}")
     print(f"部分非空列（{len(partial)}）: {partial}")
+    if exempt_cols:
+        print(
+            f"停算面披露（REG-IND-001 status!=active，T1 起新增行诚实置 NULL，不参与判罚 {len(exempt_cols)}）: {exempt_cols}"
+        )
     if hard_zero:
-        print("AUDIT FAIL（存在全 0 列）")
+        print("AUDIT FAIL（在产列存在全 0 列）")
         return 2
     print("AUDIT PASS" + ("（含短窗事件型豁免列，见上）" if soft_zero else ""))
     return 0

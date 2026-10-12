@@ -633,6 +633,13 @@ scripts/data/sz_open_data/*
 # emotion_index append-only 每日快照器收编（st-mx07-L8 2026-10-08，先例=source_health_patrol 同模式；
 # 方向=收编入库增强追踪。快照输出目录另行整目录忽略，见 data/sentiment_batch/ 同款）
 !scripts/data/emotion_index_snapshot.py
+# 裁4 修尺件收编豁免（st-datalane2-20261012 2026-10-13，先例=sz_open_data/backfill_technical_indicator_dwm）：
+# 该件本已 tracked，但 scripts/data/* 通配令 commit_queue prestage 拒收其改动（实测袋 0002 死于
+# "prestage 拒绝：快照路径被 .gitignore 忽略"）——豁免只放开这一只已入库件的修改面，不改通配本身
+!scripts/data/audit_technical_indicator_coverage.py
+# 段二价量半边窗口化回填器收编（统筹裁定② 2026-10-12 夜，st-datalane2-20261012；
+# 先例=sz_open_data/source_health_patrol/backfill_technical_indicator_dwm，方向=收编入库增强追踪，非排除）
+!scripts/data/backfill_kline_daily_history.py
 
 # 2026-09-09 工作区卫生(#ARCH-308 分类处置): 运行时产物与数据源二进制留档不入库
 data/asset_index/offrepo_scan_report.json

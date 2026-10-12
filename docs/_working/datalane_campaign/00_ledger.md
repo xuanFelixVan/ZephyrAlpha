@@ -470,3 +470,131 @@ for x in 1 2 3 4 5 6; do f=.runtime/tmp/st-datalane2-20261012/logs/laneL$x.log; 
 - 袋面清单：`q-20261012-st-datalane2-20261012-0001`（账本首版）死于 `ghost_session`（死因与复命见 卅一·4；字节未丢，账本现面即超集）；`q-20261013-st-datalane2-20261012-0002`（裁4 修尺＋4 钉测试）pending，前置 10 袋；账本本件随末袋重投。
 - 夜跑恢复位：助手任务 `ZephyrAlpha_RestoreTilibNightly_20261013` State=Ready、NextRun=10-13 **02:35**（Action=`schtasks /change /tn tilib_indicator_backfill_nightly /enable`）。本班若在 02:35 后仍在岗，复核 `nightly=Ready` 后删助手；若已离场，接手一条 `schtasks /delete /tn ZephyrAlpha_RestoreTilibNightly_20261013 /f`（删前读 `Get-ScheduledTaskInfo` 的 LastTaskResult 确认它已跑过）。PS5.1 的 `task.Expires` 属性不可写＝实测抛"找不到属性"，故助手不会自销毁。
 - 数据面净效果一行（供统筹对账）：`technical_indicator` 58 片×6 窗补齐（右缘两段性已披露）；`stock_daily_basic` 2017-2020 补 3,393,450 行/974 交易日＋全表源标改 tushare（值面逐格未变）；`kline_daily` 2017-2018 补 1,398,941 行/3,012 票并完成 24 分区收敛（尚缺 590 票待限流冷却）。全程零 DELETE、零数据 mutation（唯一 mutation＝裁3 改标一行一列，前后点数与逐格数值对拍在册）。
+
+## 卅三、更正与本班最后一次实测（按 Owner 追认的"更正另起、留旧案卷"体例，不回改上文）
+
+- 时刻校正：上文 §卅二 把 24 分区收敛写作"02:0x 完成"，实测为 **01:3x 起、01:40 前完成**（本机 `date` 实测链：00:39:16 三车道全 rc=0 → 01:03:24 零行票复探挂死 → 01:40 收敛日志终态 → 01:42:38 计划任务面复测）。本班体感钟长期偏快约一倍（在册自犯条目同族），凡此刻度相关的叙述一律以 `date` 实测为准，旧句不回删、以此条为准。
+- 让路窗如实补一条（不自我豁免）：收敛与 D4c/D5 探针确实落在 01:00-04:00 窗内；窗内的让路对象（`tilib_indicator_backfill_nightly`）经裁1 已跳过 02:30 一批，本班亦未在窗内跑宽表装载读；02:35 助手恢复位已上并将在下文复核回执。
+- **限流未解除的最后一次实测**：01:44:27 单探针——`bs.login()` 通、首只 `sh.60xxxx` 零行票查询 70 秒不返回（SDK 无 socket 超时）⇒ 判定 baostock 侧仍在拉黑/限流，本班**停止重试**（继续撞只会延长封禁）。590 只票的重试窗口请留到源侧冷却后（建议 ≥6 小时后单进程试 3 票，通了再放量；命令在 §卅二）。价量半边因此按"未收工"交接，不签收工。
+
+## 卅四、四裁落地：③呈 Owner 晨包件（两栏＋四件清单）＋590 只重试已上机械闸＋三雷移交包（本班最后一次落账）
+
+### 1. 晨包件：写侧来源标签要不要随形改四处（Owner 面，一句话可裁）
+
+一句话＝**改**：以后每行自己带对来源，不再靠表默认值兜底；**不改**：每个交易日新增约 5,561 行贴错来源标签的行（这是实测日均行数，不是估）。两栏都给了可核的命令，明早不用信本班的话。
+
+- 栏一【批＝四处随形改】零判据变更、零阈值变更、回退＝revert 单袋：
+  - 件① `schemas/categories/market/market_stock_daily_basic.py:69` 现值
+    `INSERT_COLUMNS = "(trade_date, symbol, turnover_rate, float_share, circ_mv, total_mv)"`
+    → 末尾追加 `, data_source`（此文件头 `[AI_AUTONOMY] human_only` ＋ `[MODIFY-GUARD] schema-change`，本班不动它，改动清单只呈上不落地）。
+  - 件② `src/zephyr/data/implementations/tushare_provider.py`：
+    `:1061-1068` `_STOCK_DAILY_BASIC_COLUMNS` 列表追加 `"data_source"`；
+    `:1102-1111` `out.append(( td, code6, _num(...), _num(...), _num(...), _num(...) ))` 行元组末尾追加 `"tushare"`；
+    `:1079` docstring 现句"INSERT_COLUMNS 6 列、data_source 走表 DEFAULT"要同批改——这句是**对现状的正确描述、对目标状态的错误描述**，改码不改它＝码与文分家（在册教训 `silent-degradation-looks-like-not-triggered` 同族）。
+  - 件③ `tests/legacy_zephyr/data/test_providers.py`：
+    `:2173` 断言 `assert rows[0] == ("2026-09-21", "000001", 0.8712, 194591.0, 2116934.8, 2190900.0)` → 追加第 7 项 `"tushare"`；
+    `:2180-2185` `test_columns_align_stock_daily_basic_schema` 是 `set(provider 列) == set(schema INSERT_COLUMNS)` 的**两侧对拍**，同步加列后自动跟上，不改；
+    `test_fetch_route_per_trade_date` 只查 `rows[0][1]` 与 `last_key` → 不受影响。
+    这三条本班已读断言原文逐支定性（非"应该没事"的推断）：一处必改、两处必不改。
+  - 件④ 落地后补一记幂等清账（清掉"改码在飞那几天"日增量腿贴错的行）：
+    `ALTER TABLE c1_market.stock_daily_basic UPDATE data_source='tushare' WHERE data_source='akshare' SETTINGS mutations_sync=2`
+    ——同语句本班 10-12 已实跑过一次，账在册：`system.mutations` 该条 `is_done=1 / parts_to_do=0`（03:0x 实测读回）。
+- 栏二【不批】后果（实测分母，逐条可复算）：
+  - 每日增量腿的产出列里始终没有 `data_source`→ 由表 `DEFAULT 'akshare'` 兜底 ⇒ 每个交易日新增约 5,561 行来源错标。近四日实测：2026-10-08＝5,557、10-09＝5,559、10-12＝5,561 行/日。
+  - 存量已修：**现全表 `data_source='akshare'` 命中 0 行**（03:0x 实测），10,511,976 行 / 10,506,415 个 (trade_date,symbol) 键全标 tushare。
+  - 不批不会错数值、不会错去重键、不会错单位——只是"这行是谁给的"这一个字段会一天天重新变脏。**是标签债，不是数据债**（这正是统筹"机械性纠错非资产判死"的定性，本班照此呈，不抬高也不压低）。
+- 可翻案的预测（留给明早一条 SQL 判真伪，比读本班结论快）：
+  预测＝若件①②未批，10-13 收盘后日增量腿落的行会**再次显示 `akshare`**。
+  复核命令：`python -c "import sys;sys.path.insert(0,'scripts/backtest/fexam');from ch_data import ch_query;print(ch_query(\"SELECT trade_date, data_source, count() FROM c1_market.stock_daily_basic WHERE trade_date>='2026-10-13' GROUP BY trade_date, data_source FORMAT TSV\"))"`
+  出现 akshare＝预测成立且"日损 5.5k 行"成立；仍是 tushare＝本班对写侧路径的判断有误，须另查（那时本班结论作废，以 SQL 为准）。
+- Owner 只需回这几种话之一：「批四处随形改」／「不批，标签债记账」／「批但换班做（本班不动手）」／「先给 CH 现值快照再议」。
+
+### 2. 新实测事实（不在任何上文，本班 03:0x 查 CH 系统表所得，属意外发现非本班所为）
+
+- 2026-09-30 这一日是**整日双版本**：`count()=11,122` 而 `uniqExact(symbol)=5,561`（全表仅此一日有此形态）。逐键值面对拍：5,561 键**全部**在 `ingest_ts` 上不同（两批 `ingest_ts`＝09-30 08:31:56 与 10-08 08:45:56，UTC 列），**值面差异只有 2 个键**，且量级为 float_share 6.7 万股（0.004%）与换手率末位浮点表示——样例：300274 与 688282。
+- 归因＝10-08 那次日增量腿**重采了已入库的 09-30**，一次 insert 整日 5,561 行落成新 part（`system.parts` 实测：`202609_1395_1395_1_2376` 行数恰＝5,561，与主 part `202609_1373_1394_7_2376` 并存未合）。本班改标的 mutation 只是给两个 part 都盖了标签，**不是双版本的来源**（两 part 的 mutation 版本号同为 2376，即改标发生在双版本之后）。
+- 读侧后果（要说透，否则这条会被当成噪声）：表无版本列 ⇒ `FINAL` 取后写入的那版（10-08 修正值）；**不带 FINAL 的读会整天双计**；本班段一/段二验收一律用 `uniqExact((trade_date,symbol))` 而非 `count()`，正是为避开这一形（在册 C1 口径）。这条与统筹"2020-09-18 那 90 行＝留＋读侧非空谓词"同族＝读侧谓词义务，不是删行义务。
+- 是否要 OPTIMIZE 该分区收敛＝可逆动作但非本班被派的面，本班未动，登记为待裁可选项（若裁"收敛"，命令＝`OPTIMIZE TABLE c1_market.stock_daily_basic PARTITION '202609' FINAL`，注意在册实测：`ALTER … OPTIMIZE` 形态报 Code 62，必须用 `OPTIMIZE TABLE` 形态）。
+
+### 3. 590 只重试：预签件已落地并上机械闸（本班零次真撞 baostock）
+
+裁定原文照抄执行面＝"≥6 小时冷却（约 08:00 后）先单探 3 票，通了放量 590；禁再撞"。本班把"禁再撞"写进**文件**而不是写进自觉：三道闸＋"起跑即记账"。
+
+- 待补面重新实测：零行票单 590 只 → 剔掉 CH 里 2017-2018 现已有行的 22 只 → **实际待补 568 只**（放量时不盲跑已入库票，省源侧配额；每次起跑重新按 CH 现值反推，故后续重跑自愈）。
+- 探针用**已知正对照**不是随手抓：`sh.600141 / sh.600556 / sh.600315`，实测三只窗口内各 487 行、且**都不在零行票单里**。理由＝若拿零行票单里的票当探针，"该票真无史"与"通道仍限流"两种病因同形，会把健康通道误判成坏通道（在册自犯条目 `zero-hit-ruler-needs-known-positive-control` 一族，本班这次按正对照做并把理由写在件头）。探针跑 `--dry-run`：不落库、不写 state。三票全通才放量；任一不通 → rc=22、放量 0 票、只留证不重试。
+- 一次性任务已登记（与在册 `tilib_indicator_backfill_nightly` 同参数档，非本班自创）：
+  任务名 `\ZEPHYR-DATALANE2-SEG2-RETRY`｜NextRunTime＝2026-10-13 08:05｜ExecutionTimeLimit＝70 分钟｜`LogonType=Interactive / RunLevel=Limited / UserId=fanzi`（实测读回，与夜跑任务面逐字对齐）｜`StartWhenAvailable`（错过时刻开机即补跑一次）。
+  **作废命令**＝`schtasks /delete /tn ZEPHYR-DATALANE2-SEG2-RETRY /f`（零常驻，删掉即无残留）。
+  防误杀＝任务命令行含 `.runtime/tmp/st-datalane2-20261012/…`，命中在册 keep 裸行 `st-datalane2-20261012`（reaper `_load_keep_patterns` 是**子串**匹配且裸行永不自动清理，本班读源码核实口径后才据此免新增）——**未加新 keep 行**。
+  让路面＝放量段 `--max-minutes 45` 到点自停：08:05 起跑最迟 08:5x 收，早于 09:00 采集与 09:20 板块指数例行；依据＝在册车道日志实测单道 0.41-0.44 票/秒 ⇒ 568 只≈22-23 分钟，45 分钟有余量。截断不算失败：state 只记已完成票，下一轮（须再过 6 小时冷却）同命令自愈。
+- 件与执行记录（三处双存证，接手可直接复跑）：
+  执行器 `.runtime/tmp/st-datalane2-20261012/retry_seg2_zero_row.py`｜启动器 `…/run_retry.cmd`｜登记器 `…/register_retry_task.ps1`（纯 ASCII，遵 .ps1 铁律）；
+  日志目录 `…/seg2/retry_log/`（`wrapper.log` 每行带本机时刻、`scheduled.out` 为任务面输出、`probe_*.log`/`scale_*.log` 为子进程原文）；
+  机械记账 `…/seg2/retry_marker.json`（`last_probe_start` 起跑即写＝冷却闸的判据来源，崩了也算一次，防"失败即免责"）。
+- 自检 9 钉全绿（**全程零 baostock 网络**：管道用桩件验，真探针留给 08:05）：
+  探针管道 rc=0/counts 正确、dry-run 不写 state、探针不通必须挡住放量、挂桩 3.2 秒自停、放量写 state 且计数正确、CH 只读门取到 3,012 覆盖票、待补反推 590→568、正对照三只确不在零行单、冷却闸回 rc=21。
+  自检件 `.runtime/tmp/st-datalane2-20261012/selfcheck_retry_gates.py`（桩件 `stub_done_line.py`，可复跑）。
+- **本班自抓两处设计缺陷（按"更正另起、发现即报"体例，不等被问）**：
+  第一版把"让路窗到点自停"写成**行驱动**（在 `for ln in proc.stdout:` 里看时钟）。子进程 stdout 经管道是**块缓冲**的，真挂住时（baostock SDK 无 socket 超时正是这形态）一行都不出 ⇒ 死线检查永不到达。实测＝02:53:26 起跑的挂桩到 02:56 仍在跑，被本班手动 kill；改成计时驱动（读线程＋主循环只看时钟与 EOF）后同一挂桩实测 3.2 秒自停。
+  第二处：stdout EOF ≠ 进程已退，不 `wait()` 则返回码恒 `None`——自检第一轮两条红抓到（`probe_pipe_ok [rc=None …]`），补 wait 后转绿。
+  意义要说白：这两处若不修，08:05 真挂住时**不会自停**，会把整个让路窗占满并把封禁时长再推一晚。闸的判据必须是落地实测，不是设计愿望（在册 `dry-run-signal-is-not-the-executing-gate` 反面同族：这次连"桩件跑通"都不算，直到真 kill 计时被量出来）。
+
+### 4. 三雷移交包（统筹已立案转维护四班，本班把证据与复核命令点齐，不代修）
+
+- 雷一 ghost 烧袋（并入 W-1b 簇，又一实例）：袋 `q-20261012-st-datalane2-20261012-0001`（23:26:27 入队）死因原文＝`ghost_session: 属主会话 st-datalane2-20261012 已死（heartbeat=exited / 注册表无在册）`。触发链实测＝23:35 本班释放**最后一个** claim → `heartbeat_daemon` 按 idle>1800s 自退并在 `heartbeat.jsonl` 落 `status=exited` → 注册表条目消失 → 袋被存活闸判死。复命四步（已验，本次靠它把账救回）：`register(pid=0)` → 以**包模块**方式起守护 `python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <sid> <root> 30 <worktree>` → `register_heartbeat_keepalive(reason≥8 字, ttl_seconds≤7200 上限)` → `list_active_readonly()` 读回 hb_age≤90s。本班 02:48 复测＝守护 pid 32432 活着、心跳末行 status=alive、age 18s、在册 active_total=11 含本 sid。留给维护四班的问句（本班不代答）：释放最后一个 claim 是否该顺带解除保活义务？判死前是否应先消费三证（在册三证旁证立法）而非只看 heartbeat 末行？
+- 雷二 `scripts/data/*` 通配咬**已跟踪件**（入工法＋转维护四班）：袋 `q-…-0002` 死因原文＝`prestage 拒绝：以下快照路径被 .gitignore 忽略（再生产物区，禁入 git）：scripts/data/audit_technical_indicator_coverage.py`——而该件实测 `git ls-files --error-unmatch` 通过＝**早已在库**。故 `.gitignore:610` 的 `scripts/data/*` 通配拦的不是"新增未收编件"，而是"对在册件的修改"，这与直觉相反（门禁读 index/HEAD 面，prestage 读 ignore 面，两套判据打架）。本班按门自己给的处方②走通（加 `!scripts/data/audit_technical_indicator_coverage.py` 精确豁免，先例＝sz_open_data），复投即合并落地。该成文的规则（供维护四班落册，非本班自封）＝"改在library 的 `scripts/data/` 件，豁免行须与件同袋或先行；只读 prestage 判据可先看 `git ls-files` 命中即豁免"。
+- 雷三 PG 翻译账本测试写穿残留（急件，六行全名点齐供确证）：来源＝本班渲染 `module_translation_registry.yaml` 投影时带出 9 条他人未落地条目，其中 6 条为夹具样名：
+  `src/zephyr/degraded.py`（name_zh 降级模块／plain_zh "降级模块的大白话简介内容"／domain_id **D_TEST**）、
+  `src/zephyr/layered.py`（改名后／D_TEST）、`src/zephyr/lying.py`（谎报模块／D_TEST）、
+  `src/zephyr/new_mod.py`（新模块／D_TEST／responsibility_layer governance）、
+  `src/zephyr/orphan.py`（孤儿模块／domain_id **D_NOT_IN_MAP**）、`src/zephyr/with_extras.py`（写手更新／D_TEST／governance）。
+  本班新做确证＝**六个 module_path 在盘面与 git 双双查无**（03:1x 实测 `test -f` 六连 MISSING ＋ `git ls-files` 零命中）⇒ 不是"未落地新件"而是纯残留行；且 domain_id 只有 D_TEST/D_NOT_IN_MAP 两种，与在册治理词表不兼容。存证＝渲染全文 `.runtime/tmp/st-datalane2-20261012/translation_render_with_foreign.pkl`（实为渲染 YAML 文本，3,589,492 字节；行号 22764/38677/38825/39403/40056/48962）。本班**不清这六行**：写侧在 PG 生产账本、清理须"经确证后走正道"（统筹原话），且与 CH 侧污染同族宜并案治理。
+  另 3 条未落地条目（cband_grid／statsgov_deflation_and_budget／build_distilled_sft_dataset）看着是**真件在飞**，本班同样不代带——代带＝归属篡改（在册 `queue-attribution-when-hot-registry-dirty`）。
+
+### 5. 本班收工态（三清单之"未做与在飞"，如实不签收工）
+
+- 在飞袋四态：`q-…-0003` done（landed 86da0f4248，账本 §十九-卅二）、`q-…-0006` pending（新件六件套：回填器＋7 钉测试＋.gitignore 两行豁免＋三本生成册的本班条目）、`q-…-0001/0002/0004` dead（死因与对症均已落档）。
+- 本班不 merge 车道：主区此刻有他会话在途件（在册铁律"主区有他人在途件时 merge 整条路禁用"），全部作品走队列正门。
+- 待下一班的三件实事（本班不做也不代裁）：①08:05 任务的结果回收（看 `retry_log/scheduled.out` 与 `retry_marker.json` 的 `scale_result`；若 rc=22＝探针不通，按 marker 时刻顺延 ≥6h 再探一次，勿改判据）；②若 Owner 批件①②③④，落地后必须同批改 docstring 并重跑 `tests/legacy_zephyr/data/test_providers.py` 三支；③`\ZEPHYR-DATALANE2-SEG2-RETRY` 跑完即删（作废命令在 : 上文），夜跑任务已复原（`tilib_indicator_backfill_nightly` NextRunTime＝2026-10-14 02:30 实测，恢复助手已注销）。
+- 未闭面照旧如实挂着：2016 及更早的 basic 仍缺；2017-2018 的周月线/后复权表族未跟（是否跟由源件落地时定）；tilib 跑器的"静默空转红退出"与"跨午夜窗新鲜度"根治仍未落（在册缺陷 §廿三 第 3、4 条）。
+
+## 卅五、新件落不了地的通道死因（本班实测 13 行账本-投影差，呈册主车道；当班处置＝摘件分袋，不陪葬）
+
+袋 `q-20261013-st-datalane2-20261012-0006`（在册化六件套）03:1x 落地失败，死因原文＝
+`网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: … 无 plain_zh 简介[scripts/data/backfill_kline_daily_history.py]`。
+**这条处方的前提是"投影册＝真源"，而该前提 10-04 已废**（同病灶 10-10/10-12 两班各撞过一次，本班是第三次，处方在册已写明"整条链只认 YAML 投影，预检与落地都会死"）。
+
+- 三读对质（本班 03:2x 实测，全部只读）：
+  - **PG 账本＝有本班那行且内容合格**：`registry_ledger.fetch_entry('REG-MODULE-TRANSLATION-001','entries','module_path=scripts/data/backfill_kline_daily_history.py')` 回 `entry_pk=89862`，payload 含 name_zh=A股日K线历史窗口回填器／plain_zh 全文／domain_id=D_DATA／responsibility_layer=business；`add_module_translation.py --dry-run` 同口径回"noop（账本已到位）"。⇒ 登记动作本身早已成功，不是本班漏跑意图 API。
+  - **门实际读的源＝YAML 投影**：`module_translation_loader.get_module_translation(该路径)` 回 `None`；该 loader 无 PG 通道（门文件头 :32 自称"真源=PG registry_ledger"，实现却只读 YAML——**门的文档与实现分家**）。
+  - **投影册两处皆落后**：主区盘面与 HEAD 的 `module_translation_registry.yaml` 均 68,214 行、对本班路径 grep 命中 0。⇒ 本班袋内手插的那 5 行投影字节**根本不参与物化**（10-09/10 单源写战役后"袋内字节退出物化"），带上它反而会让落地内容变成**整册 render**（含他人未落地行）＝归属篡改，故本班主动不带这本册。
+- 差集实测（**正确分母＝ entries 族**；第一次本班误把全 registry 的 active 8,612 拿来减投影 8,105 得 507，其中 494 行是 `algo_submodules`/`battle_map_*` 等**别的族**的键，不在这本册的渲染面——已作废重算，教训同"覆盖尺分母"族）：
+  - entries 族 active **8,118**；投影 **8,105**；`账本有而投影无 = 13`；`投影有而账本无（retired 却仍在册）= 0`。
+  - 13 行点名（谁的一行一目了然，代带＝归属篡改，本班一行都不带）：
+    本班 1 行＝`scripts/data/backfill_kline_daily_history.py`；
+    他车道在飞真件 6 行＝`scripts/audit/agg8_series_materialize.py`、`scripts/audit/ti_daily_mean_materialize.py`、`tests/gov/audit/test_ti_daily_mean_materialize.py`、`scripts/backtest/fexam/cband_grid.py`、`scripts/backtest/statsgov_deflation_and_budget.py`、`scripts/ml/build_distilled_sft_dataset.py`；
+    雷三夹具样名 6 行＝`src/zephyr/{degraded,layered,lying,new_mod,orphan,with_extras}.py`——**新做确证升级**：这 6 行在账本里是 `status='active'`（不是 retired），而盘面与 `git ls-files` 双双查无该路径 ⇒ 任何一次 render 袋都会把 6 行测试垃圾**首次推进 HEAD**。这就是为什么"顺手 render 一下"现在不能做：**先定性这 6 行，再谈 render**，顺序不能反。
+- 两条正道（供统筹／册主车道择一，本班不自裁也不绕）：
+  - 路一（Owner 在册固定正解＝改"喂给闸的输入指向"，不弱化门、不白名单、不加豁免）：维护四班先按意图 API `retire` 那 6 条夹具行（带名目），再由册主车道出一次 render 袋落地——那时净增＝7 行（本班 1 ＋他车道 6），投影与账本对齐，此后所有新 .py 不再撞这堵墙。
+    **执行细节别踩空（在册实测）**：`api.retire(registry_id, family_key, entry_key, authority_ref=…, reason=…, session_id=…)` 的 `authority_ref` 为空会机械拒 `AUTHORITY_REQUIRED`，而**禁编造裁定号**（在册事故线：为达标伪造 Owner 署名）。可用Authority 面＝统筹 2026-10-13 四裁原话"PG 翻译账本测试写穿残留＝急件转维护四班……那 6 条行经确证后走正道清理"（引通道原话而非编号，正是该 API 的缺省要求）。entry_key 形态＝翻译族 `module_path=<路径>`、token 族 `file=<路径>|token=<token>`；`status` 只到 `retired`（墓碑制，行永不物理删）。
+  - 路二（半治，先例在册）：给 `translation_coverage_gate`／loader 加 **PG 第三源**，与 10-10 CREATE-GUARD 那次同款（同一病灶至今半治半漏）。代价＝动门本体代码，属治理码改动；收益＝不依赖投影新鲜度。
+- 当班处置（照在册处方"新 .py 摘出、其余件另袋先落、实测数与通道缺陷成册呈批"执行）：
+  - 修尺袋（裁④批准的执行件）已摘出本袋单投：`scripts/data/audit_technical_indicator_coverage.py`＋它的守卫测试＋`.gitignore` 两条豁免。该袋不含 `src/zephyr/`、`scripts/` 下新增 .py（守卫测试在 `tests/` 下＝门的范围外），故不撞这堵墙。
+  - 被摘出的件与它的守卫测试留在盘：`scripts/data/backfill_kline_daily_history.py`（sha256 前 16=c3fedb957c36d66d）＋`tests/data/data/data/test_backfill_kline_daily_history_window.py`（7 钉，03:2x 与修尺测试合跑 **11 passed**，PYTHONPATH 指车道避免"车道跑主区包"的假绿）＋token/manifest 投影行。投影一旦对齐即复投，件面不必重做。
+  - 运行面已先行：08:05 的一次性重试任务读的是**车道副本**（`pick_script()` 主树优先、缺则退车道并同换 PYTHONPATH），所以 §卅四 的 590 只重试不欠这本册的账——数据面与在册面在这里是分开的两件事，本班不把"在册化没落地"写成"回填没跑成"，也不反过来。
+- 本班不做的事（写明免误读）：不代带 13 行中的任何他人行；不为本件加 .gitignore 之外的豁免旗；不改 `add_module_translation.py`／门的判据或阈值；不"先 render 再说"。
+
+## 卅六、路一①已执行（统筹 2026-10-13 批复"路一批①"）：夹具 6 行退役回执＋差集收敛到 7
+
+裁定原文照抄执行面＝"路一批：①先 retire 那 6 条夹具行——authority_ref 用我这句话的原文（"那 6 条行经确证后走正道清理"，统筹署名，禁编裁定号）；②册主出 render 袋（净增 7 行）；③你的在册六件套随之解堵复投"。本班只做①（②明确归册主车道，③要等②落地才成立），并记下为什么①不落给维护班：确证是本班做的、授权是本班的原话、且本班就是被堵的那一方；路二（给门加 PG 第三源）本班一行代码未动，统筹已转维护接任班与 P3 同族收口。
+
+- 执行序＝**先撤 1 条读回校准，再撤余下 5 条**（Owner 在册令"首件校准再放量"，写库面同样适用）。
+- 前态（撤前实测，逐行）：6 行全部 `status=active`、`version=1`、`created_by=add_module_translation`（CLI 缺省归因，非任何车道署名）、name_zh 分别＝降级模块/改名后/谎报模块/新模块/孤儿模块/写手更新；family 唯一命中 `entries`（族名试错：`module_translations`／`translations` 两族查无＝不存在，非本班漏族）。
+- 后态（撤后读回，逐行）：6 行全部 `status=retired`、`version=2`、`updated_by=st-datalane2-20261012`，`created_by` 原样保留（墓碑制，行永不物理删）。
+- 族计数对账（净零自证）：**撤前 active 8,118／retired 640 → 撤后 active 8,112／retired 646**，两侧之和恒 8,758＝行数零增减，只有状态位迁移。若这里出现"总数变了"就是物理删，本班立刻停手上报。
+- 审计面（内容级，非存在级）：`registry_event` 六条 action=retire 全部落齐 `actor_session=st-datalane2-20261012 / base_version=1 / after_version=2 / authority_ref=统筹原话全文（含"禁编裁定号"那句，引通道原话而非编号）/ reason=双面查无的确证内容`。回执件与机读收据＝`.runtime/tmp/st-datalane2-20261012/retire_fixture_rows.py`＋`seg2/retire_receipts.json`＋`seg2/retire_run.out`（可复跑；复跑因 `status!=active` 会回 OK_NOOP，不产生第二次状态迁移）。
+- 投影面零改动（这是刻意的，不是漏做）：loader 投影仍 **8,105** 行、`git show HEAD:` 面未动。本班不碰渲染——②才是 render 的动作，且归属册主。
+- **给册主的现成数（收敛后的差集，正好 7 行，零垃圾）**：`scripts/data/backfill_kline_daily_history.py`（本班）、`scripts/audit/agg8_series_materialize.py`、`scripts/audit/ti_daily_mean_materialize.py`、`tests/gov/audit/test_ti_daily_mean_materialize.py`、`scripts/backtest/fexam/cband_grid.py`、`scripts/backtest/statsgov_deflation_and_budget.py`、`scripts/ml/build_distilled_sft_dataset.py`（后六条＝他车道在飞真件登记）。⇒ 现在任何一次 render 袋的净增＝这 7 行且**不再首次物化测试垃圾**；`账本有而投影无=7／投影有而账本无(幽灵行)=0` 两个方向都清了。
+- 一处踩空实录（别当成"写库失败"）：首次执行在 import 期即 `ModuleNotFoundError: No module named 'schemas.categories'`——`python <按路径跑脚本>` 时 sys.path[0]=脚本目录，`schemas` 不在面；**零行被改**（失败发生在任何写之前）。补 `PYTHONPATH=<仓根>;<仓根>/src` 后一次通过。与在册"车道裸 python 导主区包"是同族坑的反面形态（那次是导错面，这次是导不上面）。
+- 复投前置（③的判据，写给接手而非靠记忆）：`lag==0` 或至少 `scripts/data/backfill_kline_daily_history.py ∈ 投影面`（复核：`python -c "import sys;sys.path.insert(0,'scripts/governance');from _shared.module_translation_loader import get_module_translation as g;print(g('scripts/data/backfill_kline_daily_history.py'))"` 回非 None 即解堵）；届时车道内件面不必重做（sha256 前 16=c3fedb957c36d66d 的双存证仍在）。
+- 待裁面照旧：③写侧来源标签四件改动仍等 Owner 亲裁（统筹已表推荐"批"，但 human_only 门位不代拆）；10-13 收盘后那条可翻案预测的 SQL 复核留给晨班。
