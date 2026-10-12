@@ -81,20 +81,27 @@ reset_rule:
     RECOVERY 敞口上限 `position_cap` = 0.25*(step+1)（:312-326，五态表逐字不变）；
     阶梯晋升门槛 `recovery_step_recovered=(0.50, 0.75, 1.0-1e-6)`（:162）＋
     `min_hold_recovery_step=5`（:161）＋`recovery_freeze_days=5`（:169）；
-    阶梯回退判据 dd>crisis_dd / dd>danger_dd（:476-499 区段）。
+    阶梯回退判据 dd>crisis_dd / dd>danger_dd（:476-499 区段）；
+    复位守卫四值 `reset_window_days=20 / max_resets_per_window=3 / reset_cooldown_days=3 /
+    permanent_lock_threshold=5`（:170-173）与守卫实现（:575-597，触发即抛 RefuseResetError）；
+    毕业准则腿的显式无面档 `graduation_face`（路径 1 补丁新增，缺省 required＝旧行为逐字不变）。
   entry_brackets:
     bracket_A_wide:
       reset_trigger_recovered_pct: 0.50
-      cooldown_trading_days: 0
-      new_high_required: false
-      provenance: 0.50 逐字取在册 recovery_step_recovered[0]，零新参
+      reset_cooldown_and_lock_guards: 全部沿用在册守卫原值，本档零自拟参数
+      provenance: 0.50 逐字取在册 recovery_step_recovered[0]；冷却/窗口/永久锁定沿用在册四值，不另造
     bracket_B_strict:
       reset_trigger_recovered_pct: 0.75
-      cooldown_trading_days: 20
-      new_high_required: true
+      reset_cooldown_and_lock_guards: 与 A 档同一套在册守卫原值（两档只差 recovered_pct 门槛）
       provenance: >-
-        0.75 取在册 recovery_step_recovered[1]；**cooldown=20 交易日与"须创新高"两件机器侧无对应在册值，
-        属本卡自拟**——随此披露，且禁挪用于他卡（统筹裁定③照此）。
+        0.75 取在册 recovery_step_recovered[1]。
+        ⚑ 本班上一版在此写"cooldown=20 交易日与须创新高两件机器侧无对应在册值"——**该句不实，已更正**：
+        在册件本有复位守卫四值（`reset_window_days=20 / max_resets_per_window=3 /
+        reset_cooldown_days=3 / permanent_lock_threshold=5`，:170-173，由 `request_manual_reset` :556-600 逐条强制），
+        我把"窗长 20 自然日"误当成"冷却 20 交易日"用了（单位与语义都不同）。
+        本卡因此**不另造冷却参数**：复位一律走在册守卫原值（冷却 3 日、近 20 日内 ≤3 次、累计 5 次永久锁定），
+        括号之间只差在 recovered_pct 门槛；"须创新高"一件**从两档删除**（无在册对应物，删比自拟干净）。
+        若统筹仍要保留"创新高"一件，请另行指定，本班不自拟。
   after_reset_ladder: >-
     两档复位后的阶梯**同值同规**（0.25/0.50/0.75/1.0，晋升门槛与 min_hold/freeze 一律取上列在册值），
     括号之间**只许差在复位入口**——否则敏感性读的就不是"复位快慢"而是两套恢复纪律。
@@ -106,10 +113,15 @@ reset_rule:
     甲案（统筹裁定①）：在册毕业准则六件（min_trades 3 / min_profit_streak 3 / min_expectancy_r 0.3 /
     min_rule_compliance 0.80 / max_single_loss_r 1.2 / window 10，:163-168）的输入面是**逐笔交易序列**，
     而本卡装置（exit_simulator）只交日频净值/敞口 ⇒ 该面**不可评估**。
-    本班不造代理指标（拿"连续 3 日正收益"冒充"3 笔盈利"＝偷换语义），
-    处置＝本柱不入 pillars_numeric（不新增无面数值键），并以本块＋分数行
-    unjudged.pillars_prose_keys 的 `reset_not_full_reentry` 侧写披露；
-    笔级回放面属乙案（跨域，未立项）。
+    本班不造代理指标（拿"连续 3 日正收益"冒充"3 笔盈利"＝偷换语义）。
+    **落实形态（统筹裁定 2026-10-13 路径 1，署名批准＋Owner 否决窗）**：
+    该柱经 `graduation_face='absent'` 显式跳过并留痕（生产件配置档，统筹批＋Owner 否决窗）——
+    即在册件 `src/zephyr/risk/core/drawdown_state_machine.py` 新增纯追加配置档，
+    缺省 `required` 时旧行为逐字不变，只有显式配 `absent` 才跳过这一腿，
+    且跳过必计数（`graduation_face_skips`）＋打点（`DRAWDOWN_GRADUATION_FACE_ABSENT`），
+    凭据面可复核；拼错取值即 `InvalidDrawdownStateError`（禁静默退回缺省）。
+    路径 2（笔级回放面）留档不承诺；路径 3（适配器内自写阶梯变体）永不采用——
+    那是本班自己钉进 07 的"禁在考卷里重写判定逻辑"，统筹令明文不拆。
 exam_scope_note: >-
   考试范围与合议规则（统筹裁定②）：本卡须跑 **四跑＝2 复位括号 × 2 配对档（off/mid）**，
   配对档由绑定册 `arms_variants.{off,mid}` 显式指名（同 07 裁定甲③，跑与跑之间禁动其他参数）；
@@ -133,8 +145,13 @@ data_binding:
   implementation_gap: >-
     缺一不开考（本卡自钉，不预先声称可考）：
     ①`replay_drawdown_levels` 现只有两档（levels_hysteresis / levels_no_hysteresis），
-    未产"复位＋RECOVERY 阶梯"档——需新增第三档 `levels_with_reset`，
-    且其复位判定必须调在册件的 `request_manual_reset`（禁在适配器里自己写一套复位分支）；
+    未产"复位＋RECOVERY 阶梯"档——需新增第三档 `levels_with_reset`：复位判定只算 recovered_pct 与
+    min_hold，**复位动作本身必须调在册件 `request_manual_reset`**（连带其三项确认与四守卫，
+    禁在适配器里自己写一套复位/冷却/锁定分支）；
+    ⑤路径 1 的生产件补丁（`graduation_face`）已在车道备好并通过 5 支契约测试
+    （缺省档逐步不晋升且零计数／absent 档晋升且计数／取值拼错即拒／其他守卫不放宽／
+    给足笔级数据时两档同结果），但**src/zephyr/risk/core 属生产风控件，
+    明晨 Owner 无否决才投**——补丁未落地前，本卡与 ① 一同保持 blocked_on_impl；
     ②复位后的 RECOVERY 档要进 `level_to_cap_map` 乘子面，`arm_level_cap_multiply` 需认 RECOVERY 档名
     （现按卡面映射表逐字换 cap，RECOVERY 不在两表内⇒会走 `_cap_series` 的"档未覆盖即抛"红线，这是有意的 fail-closed）；
     ③两括号入口参数须由绑定册逐跑注入，禁硬编；

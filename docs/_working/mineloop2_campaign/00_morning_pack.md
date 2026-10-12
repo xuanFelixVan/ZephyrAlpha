@@ -900,3 +900,46 @@ B 严＝0.75/20 交易日冷却/须创新高，B 的两个参数机器侧无对�
 ②`arm_level_cap_multiply`/`_cap_series` 现对 RECOVERY 档名"未覆盖即抛"＝有意 fail-closed，需按卡面
 `recovery_ladder` 表扩；③两括号入口参数须逐跑由绑定册注入禁硬编；④`_span_dates` 修与本卡重读同批）。
 本班不自翻状态——落地袋合并 ①②③ 后，才由该袋把 07b 转 preregistered 并开考。
+
+## 廿五、路径 1 补丁备好（待 Owner 否决窗）＋两处自纠与一份待补袋清单
+
+### 25.1 补丁内容（车道备好，**未投**——生产风控件，明晨无否决才走正门）
+
+`src/zephyr/risk/core/drawdown_state_machine.py` 纯追加 **+36/−2**，被替换的两行全部点名＝
+①`[INVARIANTS]` 头注一行（加长，不改任何既有子句）②阶梯调用点一行
+（`if not self.graduation_criteria_met(...)` → `if not self._graduation_leg_satisfied(...)`）。
+新增面＝`graduation_face`（缺省 `required`）、`graduation_face_skips` 计数、
+`DRAWDOWN_GRADUATION_FACE_ABSENT` 打点、未知取值 `InvalidDrawdownStateError`。
+
+行为面实测（**车道码面**，先打 `module under test` 路径，防主区预导入假绿）：
+
+| 档 | 复位后 6 个评估日（recovered_pct 0.6/0.8/1.0…） | 计数 |
+|---|---|---|
+| 缺省 `required`（＝旧行为） | `step=0 cap=0.25` 全程不动 | skips=0 |
+| 显式 `absent` | 晋升至 `step=1 cap=0.5` | skips=1 |
+| 取值拼错 | — | 直接拒（`[ZA-RK-0060]`） |
+
+配套契约测试 5 支（`tests/gov/risk/test_drawdown_state_machine.py` 纯追加 +76/−0，全件 **49 passed**），
+含两条"不许放宽"的钉：recovered_pct 门槛在两档下同结果；给足笔级数据时两档逐日同结果。
+
+### 25.2 我自纠的两处（都写进卡面留痕，不删旧话）
+
+1. **"机器侧无对应在册值"不成立**：`DrawdownStateMachineConfig` 同一个 dataclass 里就摆着复位守卫四值
+   （:170-173），且 `request_manual_reset`（:556-600）逐条强制；我不但漏读，还把
+   `reset_window_days=20`（自然日窗）当成了"冷却 20 交易日"。处置＝两档不再自造冷却、
+   "须创新高"从两档删除（无对应物就删，不自拟）。负存在断言前必须先把**同族容器整列读一遍**——已入长期记忆。
+2. **盘点尺有一处静默跳**：`window.regimes` 不是键值映射的卡（他班在册实测 22 张散文串）
+   被我的 `if not isinstance(regimes, dict): continue` 直接漏出分母。已改为**单列计数并落册**：
+   重跑后 `cards_with_non_dict_regimes_skipped_from_span_test=22`，与另一班那条独立对上了。
+
+### 25.3 下一袋（0016）清单——0015 落地后一次整包投
+
+- 生产件补丁 + 其契约测试（**Owner 否决窗内不投**，明晨无否决随本袋同批，含 07b 复位档适配器）；
+- 07b 卡面更正版（本班 01:2x 已改：甲案申报改裁定原句、括号去自造参数、锚点补守卫行号、gap 加第⑤条）；
+- 12_ 盘点册更正版（含 25.2② 的 22 条单列）；
+- 01 册 `card07b_path1_received` 节（已写）＋本节班账；
+- 07 两行 only-append 重读的产物（监视器已在跑：每轮先对齐基底，再由三道闸拒/放行，
+  零 override 旗；日志 `.runtime/tmp/mineloop2/reread_07.log`，首轮 01:25 实测 `REFUSED: 裁修件未落 dev`＝闸真会拦）。
+
+**在途事实如实报**：q-0015 里的 07b 卡面与 12_ 盘点册都是**更正前**的版本（袋快照即当时字节），
+由 0016 覆盖；本班不撤袋不硬解队列仲裁。

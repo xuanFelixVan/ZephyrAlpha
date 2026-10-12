@@ -523,3 +523,40 @@ card07b_ruling_received:
   what_this_does_not_do: >-
     不翻 07 v1 的 fail（按裁定①归档）；不开考 07b（接线四条未闭合）；
     不改 07/02/06 任何已冻件面；07b 的参数不再自拟一笔——两档括号即裁定文本。
+
+card07b_path1_received:
+  received_at: '2026-10-13T01:20:00+08:00'
+  ruling: 统筹裁定 2026-10-13（矿考二班）＝路径 1 批（署名＋Owner 否决窗）／今夜按 4／04:00 后 07 重读自走／解析器盘点与三处消费者改法验收／路径 2 留档、3 永不特批
+  executed_tonight:
+    patch_prepared_not_landed: >-
+      生产件 src/zephyr/risk/core/drawdown_state_machine.py 纯追加 +36/-2（被替换两行全部点名＝
+      INVARIANTS 头注一行与阶梯调用点一行）：新增 graduation_face（缺省 required＝旧行为逐字不变）、
+      graduation_face_skips 计数、DRAWDOWN_GRADUATION_FACE_ABSENT 打点、未知取值即
+      InvalidDrawdownStateError（禁静默退回缺省）。明晨 Owner 无否决才投。
+    contract_tests: >-
+      tests/gov/risk/test_drawdown_state_machine.py 纯追加 +76/-0，全件 49 passed：
+      ①缺省档无笔级数据则一步不晋升且零计数（＝非回归主证）②absent 档晋升且计数>=1
+      ③未知取值即拒 ④recovered_pct 门槛在两档下同结果（本档不放宽任何其他门）
+      ⑤给足笔级数据时两档逐日同结果（absent 不跑得更远）。
+    card07b_updated: 甲案申报文字改成裁定原句；implementation_gap 新增第⑤条（补丁待否决窗）；
+      两档括号去掉自造冷却与"创新高"一件；机器锚点补复位守卫四值与守卫实现行号。
+  self_correction: >-
+    ⚑ 本班上一版在 07b 卡面写"cooldown=20 交易日与须创新高两件机器侧无对应在册值"——不实。
+    实读生产件：复位守卫四值俱在（reset_window_days=20 / max_resets_per_window=3 /
+    reset_cooldown_days=3 / permanent_lock_threshold=5，:170-173），由 request_manual_reset
+    （:556-600）逐条强制（非 KILL 拒／三项确认缺一走一拒／累计 5 次永久锁定／冷却 3 日／近 20 日 >3 次拒）。
+    错在我把"窗长 20 自然日"当成"冷却 20 交易日"用（单位与语义双错）。
+    处置＝卡面留痕更正（写明"该句不实，已更正"，不删旧话）、两档不再自造冷却、
+    "创新高"一件从两档删除；若统筹仍要保留请另行指定。
+  bag_scope_note: >-
+    ⚑ 分袋纪律（统筹裁定③"文书修正不压在否决窗后"）：本袋（0016）**只含文书修正**＝
+    07b 卡面更正版＋12_ 盘点册更正版（含 22 条非 dict 单列）＋本册 `card07b_path1_received` 节＋班账 §廿五；
+    **不含**生产件补丁与其契约测试（`src/zephyr/risk/core/drawdown_state_machine.py` ＋
+    `tests/gov/risk/test_drawdown_state_machine.py` 已在车道备好，明晨 Owner 无否决才另袋投）。
+    因此本册里关于 `graduation_face` 的全部叙述都是"已备好待批"的进行时描述，不是落地事实——
+    读到本册的人若想看落地态，请核 `git show dev:` 是否含 `graduation_face`，别看本册措辞。
+  still_open_for_chief: >-
+    ①明晨无否决即投路径 1 补丁，并与 07b 复位档适配器（levels_with_reset，复位动作只调
+    request_manual_reset）、绑定册 07b 册格（两括号×off/mid）同批，缺一不开考；
+    ②RECOVERY 档进乘子面所需 recovery_ladder 表已在卡面给出，扩面随同批；
+    ③04:00 后 07 两行 only-append 重读照做（起跑前重取窗读数并申报，试次另记 2 条）。
