@@ -1,0 +1,120 @@
+---
+ttl: task_bound
+title: 四 GPU 工单施工班·GPU-02 与 GPU-01 施工袋（score-only＋新表＋两套注册/执行件＋lane_b 档位参）
+created: '2026-10-12T00:25:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+scope_of_this_bag:
+  gpu02: 缺件①②③全部落码（前瞻模式／预测表 DDL 真源＋注册／夜窗两件套），**表尚未建、任务尚未注册**（见 remaining_actions，卡 CH 让路窗与落地顺序）
+  gpu01: 夜窗两件套落码＋lane_b 档位参补齐（工单"零代码可 A/B"的前提经实测是**假的**）；档位 A/B 结果册未出（今夜起跑不进 23:00 窗，见 scheduling_finding）
+
+gpu02_score_only:
+  file: scripts/backtest/kronos_adapter.py
+  new_symbols: [SCORE_COLUMNS, _pick_last_window, score_forward, build_prediction_row, write_kronos_predictions, resolve_score_universe, run_score_only]
+  eval_leg_untouched_evidence:
+    method: AST 结构判据（不是"看起来没改"），同一套判据打在 dev 未修码上 5/5 判败、打在本码上 0/5 判败
+    red_proof: "dev(未修) = {early_before_eval_import: False, score_body_clean: False, flag_registered: False, has_score_columns: False, registry_key_ok: False}"
+    tests: "tests/research/backtest/test_kronos_score_only.py 10 支 + 既有 test_kronos_adapter.py 10 支 = 40 passed（含 lane_b 20 支）"
+    isolation_mechanism: main() 里 args.score_only 的早退分支位于 import distribution_forecast_eval **之前**（行号由测试判据锁死）；run_score_only 体内禁出现 evaluate_distribution_forecast/walk_forward_eval/naive_quantiles
+  premise_corrections_measured:
+    - 工单 §2.1 说预测给"分布参数+点估计"——实测 Kronos 只出 **5 个分位**（0.05/0.25/0.5/0.75/0.95），仓内**无 mu/sigma**；点估计取 q050，表里同时存 q050 与 point_estimate 双列并注明同值
+    - 工单 §2.2 要求 PIT 字段含"barre 截面"——实测 schemas/ 全树**无 barra/barre 列先例**；截面口径改用仓内既有 `as_of_date DateTime64(3,'Asia/Shanghai')`（factor_signal.py:63 同族）＋ asof_ts/input_cutoff_ts 双 UTC 锚
+    - prepare_multi_symbol 取"日期交集"且不足即抛 ⇒ **不可**用于全市场（宇宙越宽交集越空）；score-only 改走逐标的尾窗截断 _pick_last_window(max_context=400)
+    - 全市场成本实测面未取（见 blocked_by_classifier）：按代码路径推算 batch=1 时 5000 只×8 样本=4 万次 generate，单夜不可能跑完；批量分块（128-256）才是可行形态，需实测确认
+  self_caught_defects:
+    - "分位索引错位：初版写 q[x][i]（i=枚举序）⇒ 只有 pred_len>=5 才碰巧对；被自己的 test_row_width 抓到 IndexError，改 [0]"
+    - "表名解析用错键：get_registry().table() 认 category_id 不认物理表名；初版传 'kronos_prediction_daily' 直接 KeyError，改 'market_kronos_prediction_daily'（实测 market_a50_futures_daily→c1_market.a50_futures_daily 同构）"
+    - "本袋 .ps1 初版含中文 6 行（45/18 字节）⇒ 违 .ps1 纯 ASCII 红线，被自家逐字节尺抓到后全部改英，现 6 件全 0 非 ASCII"
+
+format_reflow_disclosure: >-
+  本袋在 kronos_adapter.py 上带 103 行**同码重排**（非语义变更），必须在这里说明白，别让人从 diff 里自己猜：
+  实测 dev 那份该件本身就**不是 ruff-format-clean**（把 dev 字节落临时件跑 ruff format --diff，它会主动重排
+  40+ 处：多行 return 拆行、闭合括号单独成行等）。而提交正门的 RUFF-PRECLEAN 预检对入队批要求确定性
+  lint/format 零违规（通道阻断谱 ruff-format+ruff 占全史 46%），所以只要碰这个文件就必须整件顺格式。
+  自证三件：①dev 副本同尺同判（ruff format --check 亦判待改）；②逐行集合差分 LOST=103 全部是同一语句的
+  重新折行，NEW=306 里含我的新增与这些折行；③三支测试 40 passed＋AST 结构判据 0/5 判败＋
+  ruff check/format 现全清。apply_market_tables_ddl.py 同尺 **LOST=0**（纯新增 9 行），未顺带动他人行。
+
+gpu02_new_table:
+  schema_file: schemas/categories/market/market_kronos_prediction_daily.py
+  table: c1_market.kronos_prediction_daily
+  engine: ReplacingMergeTree(asof_ts)
+  partition: toYYYYMM(asof_ts)
+  order_by: "(as_of_date, symbol, model_size, horizon)"
+  pit_columns: [asof_ts, input_cutoff_ts, as_of_date]
+  settlement_columns_forbidden_to_writer: [realized_close, realized_at, hit_50, hit_90, settled_at]
+  wiring_done:
+    - scripts/ch/apply_market_tables_ddl.py（import 一件＋_ALL_DDL 尾挂一条＋_EXPECTED_ENGINES 一条）
+    - docs/03_modules/_cross_layer/database/business_data_categories.yaml（category_id=market_kronos_prediction_daily，Edit 前插于末条之后，删除行 0）
+    - scripts/backtest/kronos_adapter.py 写入走 zephyr.data.ch_writer.write_result(FetchResult) 正门（禁裸 SQL；列序单点=SCORE_COLUMNS，由测试与 schema INSERT_COLUMNS 逐位比对锁死）
+  governance_registration:
+    creation_token: publish_snapshot v242
+    module_translation: publish v24 落地核验 PG active version=1 投影命中 1 行
+    depgraph_node: node_id=16593710 granularity=file（**带 WARN：工具按 docs/03_modules/MOD-BT-195/blueprint.md 猜路径未命中，标 missing**；本件 [BLUEPRINT] 声明与生产者 kronos_adapter.py:1 逐字相同，属工具路径口径而非本件错登，留此备案）
+
+gpu01_night_window:
+  register: scripts/tasks/register/register_night_mining_task.ps1（23:00 周日~周四，2h 上限，IgnoreNew，Get/Set 幂等）
+  runner: scripts/tasks/run/run_night_mining.ps1
+  backlog_discipline: 只跑 lane_b_idea_generator generate ＋ mcts_expression_search；**不调** factory_intake_pipeline run/construct、不调 hypothesis_translator（那三步才是入册/E2判决/考件生成腿）
+  silent_error_fix: 起批前用 Invoke-RestMethod 读 /api/tags，**服务不可达或目标模型 tag 不在册即 Alerter ERROR＋退出非 0**，不再出现 10-08 那种"每条 llm_error:ConnectionError 却报 all green"
+  lane_b_premise_correction: 工单 §2.1 称"--model 参数已支持，零代码"——实测 lane_b **没有** --model（MODEL 常量在 :56，OllamaChat 在 :150，出生证在 :130 硬读 MODEL）；lane_c2(:458)/translator(:344) 才有。故本袋补 lane_b 的 --model（缺省=None⇒沿用常量，现产线零变更），并**同步出生证**：换档后出生证仍写旧常量＝台账把 14b 的产出记成 8b，属不可逆归属错记
+  mcts_note: mcts_expression_search **零 LLM**（随机/UCB 过白名单）⇒ 它不参与档位 A/B，只有 lane_b/lane_c2/translator 参与
+  ab_command_set_pending: |
+    三档各一夜（23:00 窗，次日 10-12/10-13/10-14）：
+      $env:NIGHT_MINING_MODEL="qwen3:8b";  schtasks /run /tn ZephyrAlpha_NightMining
+      $env:NIGHT_MINING_MODEL="qwen3:14b"; schtasks /run /tn ZephyrAlpha_NightMining
+      $env:NIGHT_MINING_MODEL="deepseek-r1:14b"; schtasks /run /tn ZephyrAlpha_NightMining
+    读数面：产出量=lane_b_candidates.csv 按 birth_batch 直方；入考通过率=c1_backtest.hypothesis_precheck.verdict 按批聚合；
+    幻觉率=同一册的 verdict_reason ∈ {reject_no_mechanism, reject_tautology, reject_cost_prohibitive, reject_unfalsifiable, reject_lookahead, reject_out_of_scope} 占比
+    （**注意**：lane_c2 自己的 thin_mechanism/originality_duplicate/llm_error 三类原因只在 stdout，未持久化——那是 A/B 的一个真实盲区，已登记不代修）
+
+scheduling_finding_gpu02: >-
+  令文对 GPU-02 的两个要求互相冲突：①"00:30 周日~周四"②"01:00-04:00 CH 让路窗内零跑批零 CH 查询"。
+  00:30 起跑＋任何超过 30 分钟的跑批都必然伸进让路窗，而 score-only **本身就写 CH**。本袋的处置＝
+  执行链把上限传给适配器（--max-runtime-min，默认 25 分钟＝00:55 收手），到点**自己停并如实报
+  yield_window_hit=true 且零落表不判绿**；ExecutionTimeLimit=35min 只做外层兜底。
+  代价讲明白：这个口径下"全市场 ~5000 标的单夜跑完"（工单验收第 1 条）**机械上不可能达成**。
+  两条出路请统筹定向：(a) 打分窗挪到周日日间（与 SFT 窗同侧，可给 4h）；(b) 宇宙分片（如每日 top-1000，
+  四天铺满一轮）并把验收判据从"单夜全市场"改成"一周内全市场覆盖率"。我不自行改验收口径。
+
+remaining_actions_in_order:
+  - 本袋落地后在**主区根**跑：powershell -ExecutionPolicy Bypass -File scripts\tasks\register\register_kronos_scoring_task.ps1 与 register_night_mining_task.ps1 与 register_sft_train_window_task.ps1
+  - 主区根跑 python scripts\governance\generators\generate_resource_profile_registry.py（预期新增 3 实体：sch_kronos_scoring/sch_night_mining/sch_sft_train_window；从车道跑只出 69/103，**必须主区**）
+  - 冲突闸零红证明：python ...generate_resource_profile_registry.py --check --skip-schtasks ＋ 直调 resource_schedule_gate 的 check_overlap_group/check_mem_ceiling/check_pool_concurrency（对 20:00 LaneC、22:30 情绪窗、新 23:00 夜窗三向核）
+  - 建表（架构数据直写 DB，CH 让路窗外执行）：python scripts\ch\apply_market_tables_ddl.py
+  - 档位 A/B 三夜实弹 → 04_gpu01_ab_report.yaml；两夜零冲突告警后才谈"上线"定性
+  - 长批防误杀登记 data/runtime/process_reaper_keep.txt（**尚未登记**：今夜无长批在跑，等首夜实弹前一并追加）
+
+blocked_by_classifier: >-
+  本班两次尝试"量 Kronos 单标的推理成本"（读 vendor 目录、调用 kronos_adapter.load_predictor）被 Auto 档判为
+  "任务书未点名路径"拦下（第一拦=列 vendor/Kronos 与 vendor/kronos_weights；第二拦=经适配器自身函数探可达性）。
+  我未绕过、未换旗硬闯。后果：全市场吞吐与显存峰值只有**代码路径推算**没有**实测**，
+  工单验收第 1 条"GPU 峰值≤8G"因此暂无证据。要 tonight 出这个数需要 Owner 认一句"允许跑 score-only 冒烟（--symbols 5 只 --synthetic）"。
+
+red_green_evidence:
+  green:
+    - "python -m pytest tests/research/backtest/test_kronos_score_only.py tests/research/backtest/test_kronos_adapter.py tests/research/backtest/test_lane_b_idea_generator.py -q → 40 passed"
+    - "ruff check：本袋新增/改动件 0 新错（kronos_adapter 余 2 条 I001 与 dev 基线同码同数，dev 侧实测 77/430 行＝改动前的同两处）"
+    - "六件 .ps1 逐字节 non_ascii=0"
+  red:
+    - "结构判据打在 dev 未修码上 5/5 判败（见 gpu02_score_only.eval_leg_untouched_evidence.red_proof）"
+    - "空宇宙必红、落表失败必红、让路闸到点零落表必红——三支都是先证其能红再采信其能绿"
+
+review_commands:
+  - python -c "import re;from schemas.categories.market.market_kronos_prediction_daily import INSERT_COLUMNS as I;from scripts.backtest.kronos_adapter import SCORE_COLUMNS as S;print(tuple(re.findall(r'[a-z_0-9]+',I))==tuple(S))"（应 True＝列序单点未漂）
+  - python -c "from zephyr.data.table_registry import get_registry;print(get_registry().table('market_kronos_prediction_daily'))"（应见 c1_market.kronos_prediction_daily；此尺需 business_data_categories.yaml 本册落地后在主区跑）
+  - python -m pytest tests/research/backtest/test_kronos_score_only.py tests/research/backtest/test_lane_b_idea_generator.py -q（应见 30 passed）
+  - I001 归属自证：git show dev:scripts/backtest/kronos_adapter.py 存成临时文件后跑 python -m ruff check --output-format=concise 该文件（应见 2 条 I001，与本袋改动后同数同码⇒非本班引入）
+
+coordinator_followup_r3: >-
+  本节写于 02:3x，接续上面 scheduling_finding_gpu02 提的窗口算术矛盾。统筹 R-3 已裁定：00:30 分片、
+  一夜一片、四夜一轮、25 分钟硬上限、首夜出标定数、分片没跑完禁报绿、不挪周日白天。落码面＝
+  kronos_adapter.py 新增 shard_universe＋CLI --shard-index/--shard-count＋四态退出码（0 全成／1 硬败／
+  3 本片有标的失手／4 让路闸掐断），runner 侧按 DayOfYear 取模轮片并对 rc 非 0 写 NOT GREEN 加 Alerter ERROR
+  后按原码退出（不折 0）。红绿证（新增 9 条判据打在 dev 未修码上 9/9 判败、车道码 0 判败；两测试文件
+  39 passed）与"为什么不自愈——重打投影袋被禁、判官件不越权、防绕过通道不钻"的取证呈批，全在
+  09_r3_shard_and_projection_lag_block.yaml。另按留旧案卷原则不改上面那句"应见 30 passed"：那是当时实测面，
+  分片测件加入后同两条命令面是 39 passed。
+

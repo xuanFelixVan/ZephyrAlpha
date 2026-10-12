@@ -29,13 +29,13 @@ freeze_execution:
   command: python scripts/ml/build_distilled_sft_dataset.py freeze-gold（车道内跑，件未落地）
   inputs:
     draft_rows: 360
-    draft_sha256: 8b073757f921f93717a2accbb6a2a23e2ef32b1ab62504ded0f3485706ef7b02
+    draft_sha256: 8b073757f921f93717a2accbb6a2a23e2ef32b1ab62504ded0f3485706ef7b02  # 草稿未入仓（生产者件卡 G-1），此为车道现字节
   outputs:
     gold_rows: 351
-    gold_sha256: 606ed4af7f3ad591b06d30161af37a15c12b543502e161cd5e6f1c1b36f228e0
+    gold_sha256: 81c4f6ad57194c87a0e38ec7ba1bf55b6f66c4a5e5f039d6777c0ae8ad8016d4  # LF 落地口径；旧 CRLF 值见 file_hashes_in_register
     gold_file: data/eval/gold_expansion_v1.jsonl
     quarantine_rows: 9
-    quarantine_sha256: 2a6421f8c3215f2b633f73b47f3ee35f395a56940d00f3723a213cff51e53ea5
+    quarantine_sha256: f41445fa06e91ccb8c845a733479cf357f35342b00f15764587ad57be6e026a7  # LF 落地口径；归一前 CRLF 值 2a6421f8c3215f2b633f73b47f3ee35f395a56940d00f3723a213cff51e53ea5 仅作连续性记录
     manifest: data/eval/gold_expansion_v1_manifest.yaml
     manifest_note: 冻结时刻、三档分布、来源分布、七条更正明细、9 条隔离与 8 条镜像待观察全清单都在这份 manifest 里
   conservation: 351＋9＝360（漏一条即静默丢数据，测件里钉了这条）
@@ -112,6 +112,37 @@ mirror_watch_8_detail_untouched_by_this_shift:
   - "id: '65510467', title: 欧美股市涨跌不一 国际金价连续5日走低"
 
 file_hashes_in_register:
-  gold_expansion_v1.jsonl: 606ed4af7f3ad591b06d30161af37a15c12b543502e161cd5e6f1c1b36f228e0（351 行 410,493 字节）
-  gold_expansion_v1_quarantine.jsonl: 2a6421f8c3215f2b633f73b47f3ee35f395a56940d00f3723a213cff51e53ea5（9 行 11,014 字节）
-  gold_expansion_v1_manifest.yaml: 73886db68df1f51902373610bf20d414c3c89d34ef478f1f02ee5df637a78561（未入仓，内联于本节）
+  canonical_line_ending: LF（落地口径；git 会把 CRLF 归一，故在册 hash 一律按 LF 字节记，别拿工作树旧字节自证）
+  gold_expansion_v1.jsonl: 81c4f6ad57194c87a0e38ec7ba1bf55b6f66c4a5e5f039d6777c0ae8ad8016d4（351 行 410,142 字节）
+  gold_expansion_v1_quarantine.jsonl: f41445fa06e91ccb8c845a733479cf357f35342b00f15764587ad57be6e026a7（9 行 11,005 字节）
+  gold_expansion_v1_manifest.yaml: 40faf72401201fb32775c40dd987b315ab706c1f132ee1263b151840f8324cbe（未入仓：CREATE-GUARD 要新建 .yaml 的 token，登记通道只按目录前缀扫，见 manifest_inlined 一节）
+  pre_normalization_hashes_crlf: 606ed4af…（gold）／2a6421f8…（quarantine）／73886db6…（manifest）＝归一前行尾的旧字节 hash，仅留连续性，不作验收判据
+
+landing_verification_20261012:
+  verdict: MATCH
+  how_measured: >-
+    进程外读回落地字节（git show dev:<件> 逐件取回后自算 sha256），再与本书 file_hashes_in_register
+    登记的 LF 口径对拍——不是拿车道工作区字节自证（那条正是我上一轮自己踩的坑：
+    在册 hash 是 CRLF 算的，而 git 落地会归一成 LF，于是"尺说没对上"其实是尺拿错了字节）。
+  gold_expansion_v1_jsonl:
+    landed_bytes_sha256: 81c4f6ad57194c87a0e38ec7ba1bf55b6f66c4a5e5f039d6777c0ae8ad8016d4
+    registered_sha256: 81c4f6ad57194c87a0e38ec7ba1bf55b6f66c4a5e5f039d6777c0ae8ad8016d4
+    landed_lines: 351
+    landed_crlf_count: 0
+    match: true
+  gold_expansion_v1_quarantine_jsonl:
+    landed_bytes_sha256: f41445fa06e91ccb8c845a733479cf357f35342b00f15764587ad57be6e026a7
+    registered_sha256: f41445fa06e91ccb8c845a733479cf357f35342b00f15764587ad57be6e026a7
+    landed_lines: 9
+    landed_crlf_count: 0
+    match: true
+  carrier_bag: q-20261012-st-gpuwo-20261011-0028（20:07 入队，20:1x 落地 done；袋内记录的是归一前 sha，
+    落地后真字节＝上面 LF 值，故本块以"落地面读回"为准并保留旧值留连续性）
+  manifest_still_not_in_repo: >-
+    gold_expansion_v1_manifest.yaml 仍未入仓（CREATE-GUARD 要新建 .yaml 的 token，而 token 批登记器
+    只有目录前缀一档——实测 --prefix data/eval 会连扫他会话 3 件，文件名级前缀零命中，
+    register_asset.py 对不存在的路径还会回显"OK 五道手续完成"而 PG 查为零行）。
+    内容已整段内联进本书，盘上留件＋在册 hash，等投影/render 路（G-1，维护三班 C4）落地后正式入册。
+  one_line_plain_meaning: >-
+    大白话：金标扩充集 v1 的 351 道题已经真进了仓库，仓库里那份的指纹与册上写的指纹**逐字节相同**，
+    所以"冻结"这件事现在是可被任何人一条命令复核的，不再只活在我这条车道里。

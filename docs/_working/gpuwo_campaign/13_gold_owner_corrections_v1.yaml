@@ -1,0 +1,75 @@
+---
+ttl: task_bound
+title: GPU-03B 裁定① Owner 七行更正（金标回填的唯一人工改判面）
+created: '2026-10-12T04:40:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+provenance:
+  ruling: Owner 终局裁定①（GPU-03B 金标抽检＝有条件通过），令文卡面 7 行更正
+  pack_version: >-
+    更正编号对齐＝**按层轮转重出版**抽检包（04:29 重渲染，q-…-0021 携带）。
+    对齐尺=.runtime/tmp/gpuwo_pack_align.py，从 q-…-0019 袋 blob 里取回**旧版**包逐行对拍：
+    旧版上 #24 现值已是中性（"方向错→中性"无意义）、#15 分数是 0.50（对不上"0.85→0.60"）⇒ 旧版不自洽；
+    新版上 #24=positive/0.85（"新华财经早报：1月2日"＝无方向目录）、#15 分数恰为 0.85、
+    #47=positive（"3亿只鸡面临断粮"）⇒ 三条一致性判据全中，判定为新版。
+  index_key: 抽检包表格行号 #（1 起）；news_id 为唯一主键，冻结以 news_id 落
+
+corrections:
+  - pack_no: 24
+    news_id: "105753742"
+    field: human_label
+    from_teacher: positive
+    to: neutral
+    class: 方向错
+    title: 新华财经早报：1月2日
+    why_owner_saw_it: 无方向目录类标题被教师判利好（＝系统性偏差的标本）
+  - pack_no: 47
+    news_id: "104246459"
+    field: human_label
+    from_teacher: positive
+    to: negative
+    class: 方向错
+    title: “3亿只鸡面临断粮” 封路别影响了“菜篮子”
+  - pack_no: 11
+    news_id: "104246455"
+    field: human_label
+    from_teacher: negative
+    to: neutral
+    class: 档位
+    title: 对违纪违法者坚决查处
+  - pack_no: 12
+    news_id: 0673d5f014d05aea1d4f43d812f3d181
+    field: human_label
+    from_teacher: positive
+    to: neutral
+    class: 档位
+    title: 坚持长期主义，兼顾发展质量
+  - pack_no: 51
+    news_id: "105753745"
+    field: human_label
+    from_teacher: positive
+    to: neutral
+    class: 档位
+    title: 地方各类金融业态将纳入统一监管框架 相关条例草案向社会公开征求意见
+  - pack_no: 35
+    news_id: "104441064"
+    field: human_label
+    from_teacher: neutral
+    to: negative
+    class: 档位
+    title: 富时中国A50指数期货夜盘跌0.93%
+    note: 反向偏差标本——标题含明确跌幅却被教师判中性，与"无方向判利好"是同一枚硬币的两面
+  - pack_no: 15
+    news_id: "105753741"
+    field: human_confidence
+    from_teacher: 0.85
+    to: 0.60
+    class: 置信
+    title: 民族品牌指数涨0.15%
+
+same_rule_fill: >-
+  未列更正的其余各条按"同规则回填"：human_label := 教师 draft_sentiment、
+  human_confidence := draft_score，但**先过第②步的"无方向目录/口号类"专项复核**——
+  被判为该类且教师给了非中性档的条目一律不入金标集（隔离面，不猜标签）。
