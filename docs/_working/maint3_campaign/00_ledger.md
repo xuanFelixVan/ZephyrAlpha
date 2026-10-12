@@ -973,3 +973,36 @@ critical_warn（不炸 post-commit 主链，在册 #ARCH-PRE-EXISTING-DEBT-001 �
 4. 落地链 27 枚存量红的 node-id 全集对照（§13.1 如实标注只做了本班侧）。
 5. 超时丙的"一夜数据"读数明早该回收：k=4 下再数一次超时死信枚数，与 §十二.7 的 14 枚对比，
    再决定甲（自适应）是否值得批。
+
+### 13.5 投袋自报（防后人复算袋号时对不上口径）
+
+- q-0031 死于 DEPGRAPH-FRESHNESS（快照 24h 过期）→ 按门处方 `generate_project_depgraph.py --force` 刷新后重投。
+- 复测新鲜度时本班第一次用了 PG 节点表 `generated_at`（读出 1544 分钟）——**那不是门的数据源**；
+  门读 `.runtime/depgraph_scan_cache.json` 的 `_meta.saved_at`（刷新后＝2026-10-13T00:57:11）。口径记此一条防再错。
+- 本班一次流程瑕疵自报：为确认 FOLDER-CAPACITY 是否真拦，先投了一袋**探测消息**袋（q-0034），
+  违"死因写进袋内讯息"的在册规矩；随即以完整消息重投同六面（q-0035）。后果如实：内容随 q-0034 落地，
+  其 commit message 为探测句；q-0035 大概率记 noop/无变更。**台账这一节才是正源**，
+  复核者按 §13.1 表读四裁内容与死因，勿以 `git log` 的 q-0034 消息为准。
+- 新增测试件落点教训：`tests/gov/governance/` 平铺 .py 已 130（跟踪）/133（盘面）＞T_soft=120，
+  该目录再放新文件会撞 FOLDER-CAPACITY-HARD-LIMIT（本班 `test_timeout_tier_thresholds.py` 即撞在此），
+  改道候选＝`tests/gov/governance/rule_bridge/`（37 支）或 `.../audit/`（19 支）。
+
+### 13.6 02:30 通宵总令·本班六件的执行与一条全队级发现
+
+- **全队级堵点（本班当班解）**：`q-0032/0034/0035` 三袋同死于 `gate-rules-integrity` 报
+  `thresholds.yaml 哈希不匹配 (known: aa4988d42dfbc4f7 → …)`。根因＝本班改关键阈值册后
+  未先 `git add`＋`validate_rules_integrity.py --register` 就入队（基线库
+  `rules_integrity_db.json` 是 gitignored 纯派生件，C148 出库，门按**暂存归一口径**取哈希）。
+  更要紧的是**该门读的是全局盘面/索引态而不是本袋文件集**：0034/0035 根本不含 thresholds.yaml
+  也被同因打死，02:34 时点队列 pending 已堆 13 只、他班袋同样在咬。处置＝先把盘面恢复 dev 字节
+  解全队锁（恢复后哈希＝基线、`--check` clean），再走 add→register→改册的正路。
+  **待裁登记**：该门与根宪法"内容扫描型 gate 默认 own-diff、外来 staged 违规 warn+审计不阻断无辜提交人"
+  相违，建议 own-scope 收窄——属判据面，本班未改。
+- 六件进度：① 0035 验证与署名遥测四字段＝随 C10-C12 重投袋走（0031 死于 DEPGRAPH-FRESHNESS，
+  按处方 `generate_project_depgraph.py --force` 刷新后重投）；② 超时乙丙＋C13＝`q-0038/0039`
+  （0039 为改道后测试件根深度修正版，5 passed）；③ ①丙 reader 闸＝未做（上下文耗尽）；
+  ④ 死信 1+2 步＝已批未动手；⑤ `gate-errcode-consistency` 仍指扁平化前旧路径 `tests/governance/`
+  疑似常年空跑＝**未顺手修**，修好即让一支从未真跑的测试进入每次提交关键路径，须定窗；
+  ⑥ 四案卷提案在 `.runtime/tmp/maint3_night/`（①合并器／②CH 容量／③schemas 断裂／④午夜指纹）。
+- 自报两条：改道 `rule_bridge/` 后 `REPO parents[3]` 指错根（1 红，已修 5 绿——在册"改道必复跑"又应验一次）；
+  `git add` 传逗号串被当单一路径吞（三次 index.lock 竞争是别班在跑，未删他人锁，等到锁主退出再重试）。
