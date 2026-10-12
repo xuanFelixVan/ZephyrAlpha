@@ -1318,3 +1318,42 @@ HEAD 台账行数＝1269｜含 §廿六＝True｜含自纠条＝True｜节数＝
 2. 容量闸两条路择一（甲 切子目录／乙 裁阈值）→ 本班重投 60 枚；
 3. `test_align_panoramas.py`／`test_blueprint_frontmatter_reconciler.py` 的**体内夹具假样本**触 N-06（在册先例＝上一班 W-7 同形态）→ 等批准走哪条路；
 4. 复核命令：`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/land_reconcile26.py 20261013` → `python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/ledger_26b.py`。
+
+## 廿六·丙、三裁重发后的过渡账（本机生，2026-10-13 04:46）
+
+统筹三裁重发（原文口径，不加工）：**容量 60 枚＝甲为终局**（按域切子目录，切目录归维护接任班执行，本班出重排清单）**＋丙过渡**（先投余量 17 枚，真实落地、不填闸面），乙（改阈值 120）不批；**N-06 五条＝照建议书批**（派归口改件头，改完本班即刻投）；**夹具三类＝挂起等 W-7 族裁定**（改件＝动考语义／豁免＝动闸面／缺 repo_root 夹具＝归口补，都不自办）。
+
+### 一、丙过渡投袋读数（每一步都用闸自己的尺现测，不沿用上轮读数）
+
+```
+本节生成时复测：`tests/gov/governance` 平铺现读 119（闸函数 _count_flat_files，上限 120，只拦 >上限）——注意这是**本班 17 枚已铺在盘上**的面，HEAD 面另读
+选件规则＝派生表（批 101 剔 2 枚真红后的 34 枚）按路径升序取前 17＝确定性可复核、不掺内容偏好（17 枚在册 `common/c17_selection.json`）
+投递器内建预检（铺件前）：现读 102＋本袋 17＝119 ≤ 120 ✓ 投后余量 1
+合批复跑（2026-10-13T03:18:13，即丙批那一次）：============================ 306 passed in 31.12s =============================
+正门：submit rc＝[0]
+袋：q-…-0059（17 件）当轮态＝done｜件级逐字读回＝{"MATCH": 17}
+落地后另跑一次**落地面合并复跑**（17 件同进程，HEAD 面）：306 passed in 38.57s =============================
+```
+
+⚠ **边界如实登记**：他班在途袋 `q-…-st-maint3-20261011-0041` 也向该目录平铺加 1 件。两袋相加＝120，闸只拦 >120，故两种落地顺序都过；但**任何第三方再往该目录加 1 件，就会有一袋死在落地面**。这是丙批的既成代价，不靠弱化闸来消化（与在册 `commit-gates-folder-capacity-saturated` 同一现象，那条说的是另两个深目录满 120）。
+
+### 二、甲案重排清单（已交付维护接任班；本班零改路径、零改注册表）
+
+```
+候选子目录 8 个｜逐件位移表 162 行（自证＝清单行数 与 面件数 相等）
+general 87／commit 31／gate 18／generate 6／registry 6／apply 5／git 5／d3 4
+最大簇 general ＝87 件 < 120 ⇒ 全切走后该目录平铺归 0，闸面不再被顶
+牵连面：每行带 HEAD 里点名该文件的注册表/文档位（正对照已验：test_commit_queue.py 命中 4 处）
+```
+
+### 三、留扣面重算（与统筹说的『余 43』对账）
+
+- 容量待切 **41 枚**＝A/C 剩 17 ＋ B 批 201 的 24；
+- 另 2 枚同目录件属**复跑真红**（病因不是容量）＝['test_scaffold_token_registration.py', 'test_trd_a20_a21_dual_gates.py'] ⇒ 合计 43 枚，与统筹口径『余 43』一致；
+- 扣押册现面 48 枚（含 N-06 建表期 7 枚＝A/C 2＋B 5；夹具两类挂起 2 枚；repo_root 夹具缺失 1 枚；复跑真红 3 枚）；F 类 1 枚随宿主不在册。
+
+### 四、又一条尺自犯（正对照验出，留档）
+
+`referenced_by` 首版把 `git grep -l` 的输出当三段解析（`rev:path` 实为两段），结果牵连面整列『未见外部引用』＝**假红尺**；改两段解析后用正对照复测：`test_commit_queue.py` 命中 `architecture_issue_registry.yaml`／`capability_canonical_file_registry.yaml`／`ruling_registry.yaml`／`path_ownership_map.yaml`。
+
+### 五、复核命令：`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/land_reconcile26.py 20261013`；重排清单重生成＝`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/reorg_face_20261013.py`；丙批选件面＝`common/c17_selection.json`；选件与预检全日志＝`common/drive_c17.log`。
