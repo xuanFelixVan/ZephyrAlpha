@@ -628,3 +628,78 @@ git show 9d9386da996 --stat -- src/zephyr/infrastructure/capacity_assurance/ | h
 
 **队列现实**：单袋过全门链实测 10-40 分钟，本班不轮询空等；收班时未落地袋继续由传送带消化，
 下一段以 `python .runtime/tmp/st-deadcure3b-chief-20261011/tools/closeout.py` 重算逐批进 HEAD 件数即可接手。
+
+## 廿五、二期历史节原文附录（唯一副本继承；W-8 第①步）
+
+- 来源＝接管条目 sid=`st-deadcure2-20261009` 自有 worktree `.aidrafts/st-deadcure2-20261009` 的工作区字节（该车道 HEAD=`fcfc8e0bc6`，10-09 21:45），经零写入快照取回：
+  - 快照件＝`tmp/st-deadcure3b-chief-20261011/safety/deadcure2_ledger_draft/01_phase0_ledger.snapshot.md`，全文 65862 字节 sha256=fdaca67e6831c285；
+  - 本附录正文 11038 字节 sha256=eaab238047896ec9；
+- 为什么必须接＝这三节标题在**现行 HEAD 全树 `git grep` 零命中**（实测＝0/0/0），即此处为唯一副本；按门的处方走 abort 即不可逆销毁；
+- 并入形态＝正文**一字未改**，仅把原 `## ` 标题降为 `### ` 并套进本节容器——因现行册子 §十七~十九 已被三期占用（同号不同文），不降级会同号撞车。原节题依序＝十七、甲改门流水线（Owner 2026-10-10 执行令，序=裁定→门改+红证→复活→销账）；十八、接管规程新增前置与抢救方法论（本次实证两条，Owner 批复第 2/4 条）；十九、A-12 监视器仪器缺陷治本（Owner 2026-10-10 令，两笔定性验收后）；
+- 车道其余 8 个 dirty 文件实测**零独有**：7 件与主区 HEAD 逐字节相等，第 8 件（ruling_registry.yaml）是**落后版**——两边 ruling_id 集合差＝车道独有 0 条（主区反而多 8 条）。
+- 记录者＝st-deadcure3b-chief-20261011（合账继承身份，统筹 2026-10-12 批复 W-8 自办），时刻＝2026-10-12 20:51。
+
+### 十七、甲改门流水线（Owner 2026-10-10 执行令，序=裁定→门改+红证→复活→销账）
+
+**裁定取号让号（记为家法案例）**：`--claim` 先得 **#502**，随即在 dev HEAD 已存提交文字里检出 `st-regsolo-20261010` 的 `e51505f127` message 声明"裁定#502 直写轨退役"要用同号 ⇒ 按"编号不回收＋禁撞号"家法当场 `--release 502`（release 必带 --session，第一次漏带被拒），改取 **#503**（占号文件 `.runtime/ruling_claims/claim_503.json`）。理由=撞号一旦发生队列合并器修不了自己（先例在册：ours=dev 死锁）。
+
+**热册防连坐手法（本次关键）**：主区共享面现测含**他人三条未落地裁定**（index 面 318＝#499/#500/#501 不在 dev 的 315 里），而袋＝整档快照 ⇒ 直接提交脏盘面＝把他人 in-flight 条目吸进我的 commit（归属篡改）。手法＝以 `git show dev:<册>` 315 条为基、只重放我这一条，三证齐才写盘：**added=={裁定#503}／removed=={}／new.startswith(dev 全文)**；主区盘面一字未动。生成器 `tools/register_ruling_503_in_lane.py`（车道侧 315→316 实测）。路径准入引用**在册 active 且带 owner_sign 的 裁定#495**（其 approved_paths 含本册），非自造豁免、非伪造 ARCH 标记。
+
+**三锁实现**（`src/zephyr/ai_layer/redline/negative_list_gates.py`，只动准入面）：锁① `_REAL_KEY_ADMISSION` 封闭枚举 5 条精确路径（Final dict，无通配无模式）；锁② `_ruling_carries_owner_sign()`＝引用须命中在册＋`status=active`＋`owner_sign` 非空，册缺失/解析失败/字段缺一律 False（fail-closed，AI 代裁无资格）；锁③ 每次放行 `_audit(action="admit", ruling_id, paths, timestamp, session_id)`。增量口径与 basename 白名单轴**一字未改**，门 docstring 的"无逃生标记"改写为准确表述（不存在通用 escape，唯一例外是这三锁）。
+
+**红证三向（缺一不算完，实测 13 例全过）**：`tests/ai/ai_layer/redline/test_real_key_admission_surface.py`——
+- 向①：`test_unlisted_path_with_marker_still_blocked_even_with_valid_ruling`（裁定有效也不放行）／`test_directory_prefix_is_not_admitted`（**同目录兄弟件**不被顺带放行，防目录级蔓延）／`test_lock1_admission_list_is_closed_enumeration`（清单本体断言无 `*`/`?`/目录后缀且恰 5 条）；
+- 向②：`test_forged_ruling_reference_blocked`（册不存在）／`test_ruling_without_owner_sign_blocked`（AI 代裁）／`test_superseded_ruling_blocked`（status≠active）／`test_unparseable_ruling_registry_blocks`（坏面不静默放行）；
+- 向③：`test_listed_path_with_owner_sign_ruling_passes_and_audits`×5（逐条 parametrize，断言 action=admit＋ruling_id＋paths＋timestamp＋session）；
+- 边界：`test_admission_does_not_touch_other_scan_logic`（同袋混投时仍整体阻断，且只报未列名者）。
+同目录回归 `tests/ai/ai_layer/redline/` 全套 **118 passed**（含既有 `test_negative_list_gates.py` 16 例）；车道内 `generate_derived_files.py --check` 全一致。
+
+**队列经过（三次，含停手规则）**：`-0010` 死于基底漂移（CAS：dev 在等位期间推进，未声明基底重建）⇒ `requeue --from-bag --base-head <新 dev tip>` 重锚；`-0011` 死于 **GATE-PRECOMMIT-RUN"hook 改文件"**，但同一文件在车道复跑 pre-commit 与派生检查**字节零变化（sha 097066af91a159a7 稳定）**⇒ 判定为序列化工作树侧不可复现变异（已交 总统筹并入 regsolo 物化域证据堆，本专车不追修）；`-0012` 第三次入队，按停手规则：**若仍死于同因则停**，成果留车道＋出案卷，不再刷队列。
+
+#### 十八、接管规程新增前置与抢救方法论（本次实证两条，Owner 批复第 2/4 条）
+
+**① 接管 Rx 执行前必须三态现测——台账快照不构成行动依据。** 实证：增补令下发"st-dexp-20261009 pid 37368 dead"，而三态现测（`lane_liveness.py` 口径）＝registry 在册 pid 24264／心跳距今 10s status=alive／fs 13.8 分钟前有写＋队列 3.8 分钟前有它自己新投的 `q-…-0049`。⇒ 该接管令整体作废（未 resolve、未代投、未碰其任何字节）。
+**为什么台账会错**：dexp 自己的 resolved 注记给出根因＝**keeper 重启空窗**（14:03→14:12 的 9 分钟、14:42→17:20 的 16 分钟）被 scan 按 PID 读死，今日同一条目因此**被开三次**（前两次它自解，第三次由 st-examchief 于 00:00:39 解）。这条与我 §七 9-1/9-2 判死口径升旗同源：scan 用"注册表 pid 位/PID 存活"单判，不看逻辑会话的真实活性。
+**唯一授权项的实测结局**：批复第 3 条授权我 `--resolve` 那条 STALE 条目——现测 `.runtime/takeover_ledger.jsonl` 142 条 open 中 **dexp 计 0 条**，其三条记录全在 `resolved/`（最新 `st-dexp-20261009-1791566031.json`，resolved_by=st-examchief-20261009）。**已在先，我未重复 resolve**（重复 resolve 无对象且会写脏归属）。目标态另用真源函数零写探针验证：`entry_match_surface` 对 `module_translation_registry.yaml` 命中开放条目数＝**0**（解锁成立，图书馆 15:00 前置满足）；本专车四个待写面（队列 yaml／门改 src／红证 tests／裁定册）同样 0 封路。
+
+**② rescue＝`stash create` ＋ 工作树字节双抄，单靠 tag 会漏。** 实证：`rescue/st-dexp-20261009`（`802045500dc1`，19649 件）建好後逐件回验，30 件跟踪脏件中 **7 件盘面 ≠ tag**，且 `tag==index 面`＝`stash create` 的树取的是**索引态**，"先 staged、之后又改盘"的那批**新版字节不在 tag 里**。7 件已全部按当前盘面补抄入 `.runtime/tmp/st-deadcure2-20261009/salvage/st-dexp-20261009/`（含 `src/zephyr/data/ch_writer.py` 64226B／`scripts/ch/rolling_archive_reconciler.py` 32456B／`tests/meta/scripts/test_ch_archiver.py` 26597B／`scripts/backup/backup_config.yaml` 8738B／`tests/gov/governance/test_wave1a_strict_read_canary.py` 7146B／`docs/_working/disk_reorg_campaign/vhdx_precheck_20261009.md` 1351B／`data/audit-trail/vhdx_growth_series.jsonl` 429B）；另 3 件未跟踪件中 `docs/03_modules/_domain_factor/algo_flow/indicator_reader.yaml`(3467B) 不在 blobs ⇒ 已补抄，其余 2 件 sha 已在 blobs。证据双件＝`common/dexp_rescue_proof.json`＋`common/dexp_mismatch7.json`（四面 sha 对照：disk/tag/index/head）。
+方法论定式（未来接管 Rx 照此）：**三态现测 → stash create 建 tag → 逐件盘面字节回验 → 失配件与未跟踪件双抄入抢救区 → 才谈分诊/代投/resolve**。此条待方法论固化时入 SOP（本册先留实证与可复跑命令，不新立 SOP 轴=净零）。
+
+**复核命令**：
+```
+python .runtime/tmp/st-deadcure2-20261009/tools/lane_liveness.py --sids st-dexp-20261009
+python scripts/governance/session_takeover_ledger.py --list | grep -c "^sid="
+python .runtime/tmp/st-deadcure2-20261009/tools/register_ruling_503_in_lane.py   # 重建+三证自 assert
+cd .aidrafts/st-deadcure2-20261009 && python -m pytest tests/ai/ai_layer/redline/ -q   # 118 passed
+```
+
+#### 十九、A-12 监视器仪器缺陷治本（Owner 2026-10-10 令，两笔定性验收后）
+
+**缺陷**：`monitor_a12.py` 把"读到空面"与"读到蒸发"混为一谈。00:09:50 那笔假阳的真因＝并发写者走 tmp+os.replace，监视器在替换瞬读到 0 行，于是把整册 14425 条全报成 FIRED。FIRED 是上报级判据（本期承诺"非零即报"），假阳既淹真阴、也让整套读数失信。
+
+**治本**：新增 `_assert_readable(hk, dk)` 并在 `faces()` 里前置——任一面 0 行而另一面 >100 行 ⇒ `RuntimeError("… face unreadable …")`。异常路径原有行为已核：`rec["probe_error"]` 落账＋样本仍写盘（失明必须可见，不静默跳读）＋`prev_disk/prev_head` **不更新**（保住下一拍对最后良好面的差分，真蒸发仍抓得到）。
+
+**小红证**（`tools/monitor_a12_redprobe.py`，rc=0 四腿全红）：R1 盘面空→unreadable 文案（非 FIRED 语义）／R2 HEAD 空→同样 unreadable（对称失明）／R3 两面皆有值→不 raise（治本不许顺手把正常读数也拦掉）／R4 量化旧行为＝不修会把 **14425** 行报成蒸发。
+
+**同期真事故一笔**（01:28:14，与仪器缺陷无关）：`docs/03_modules/_domain_factor/algo_flow/indicator_reader.yaml | dexp-algo-flow-indicator-reader-20261009` HEAD 有／PG 缺 → PG-wins render 从盘面删 1 行＝A-12 本体机制在三次拆弹后 5 小时再回潮。已按本期授权面（只补登 HEAD/盘面已有而账本缺的行）逐字重放 HEAD payload：`register code=OK entry_pk=88926` → `publish_snapshot v135`（noop=False，14824 条）。复测三面现读 head 14426／disk 14427／pg 14428，**DISK-not-in-PG=0**（render 待删=0＝armed 解除），HEAD-not-in-PG=3 全为账本 retired 解释（unexplained=0）。断源属 regsolo 域，本专车留证不互盖。
+
+复核命令：
+```
+python .runtime/tmp/st-deadcure2-20261009/tools/monitor_a12_redprobe.py
+tail -1 .runtime/tmp/st-deadcure2-20261009/lanes/a12_monitor.jsonl
+```
+
+### 19.1 「扫袋病灶第二案」经实测改判：袋未消失，是门禁死信（且死在我自己的头上）
+
+总统筹转来处置令称 `-0014` 三分区查无＋`_REAL_KEY_ADMISSION` HEAD=0 ⇒ 归为队列扫袋第二案。**现测更正**：`grep -rl` 全队列根命中 `dead/q-20261010-st-deadcure2-20261009-0014.json`（files=2, base=487799a4f356, dep=None），死因是真门禁：
+
+```
+DOC-HEADER-SUITE 阻断: [MODULE-ID-CONSISTENCY] module_id_collision
+  'zephyr.ai_layer.redline' also declared in: tests/ai/ai_layer/redline/conftest.py
+```
+
+根因＝**我照抄了兄弟件的 module_id**（新测试件头注 `[A_test] module_id` 取了 conftest 的包级 id），而这条正是我自己记忆在册的坑（"module_id 禁照抄兄弟件"）。修法＝改锚到**被测模块** `zephyr.ai_layer.redline.negative_list_gates`（同目录 `test_negative_list_gates.py` 的同款写法），重投 `-0017`（内容未变＝车道版 60/118 passed 已复验，两文件 sha 均可在 blobs 寻址：`3d5c17b6b18f627f`／`9d6f11464cdda90a`）。
+
+顺带查实一条设施观察（交 regsolo/总队，非我修）：**`--depends-on` 未落到袋体**——`-0015`/`-0016` 入队时都带了 `--depends-on q-…-0014`，现读两袋 `depends_on=None`，于是 `-0015` 在门改尚未进 dev 的情况下就被 drain（注定再死于 REAL-KEY，且这次是真门拦、不是袋消失）。所以"依赖串"在队列侧当前是**声明不入袋**的形态，后继袋的序要靠自己盯前置落地，不能靠旗标。
+
+判据纪律不变：本案不适用"第三次死于 hook 就停"（那不是不可复现变异，是可复现的门禁判定＋我的头注缺陷）；重投按同签名同内容，不刷队列、不改判据。
