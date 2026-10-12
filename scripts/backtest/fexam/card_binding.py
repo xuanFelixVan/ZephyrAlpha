@@ -845,6 +845,115 @@ def _arm_pair_builder():
     raise ImportError("arm_protocol_binding 两条导入路径皆不可达＝双臂装配无法校验 e/r 位面，拒装配")
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# 级别序列回放适配器（WO-A1 最后一道缝：MOD-RK-049 在册件的日频腿）
+#
+# 卡面 02/06/07 一致声明"级别判定与迟滞解除按在册件回放，禁在考卷里重写判定逻辑"，
+# 而在册件是**事件步进式类**（逐日 evaluate 才有迟滞/持续窗/min_hold 可言），
+# 装置交出的是一条日频净值——两者之间缺的就是本函数。它只做三件事：
+# 算回撤（卡面口径 净值/历史峰值-1）、逐日 evaluate、读 current；
+# 零阈值定义、零状态迁移表、零降级规则——要改那些须改在册件本身。
+#
+# L4 不可解除近似随件：KILL 的唯一出口 request_manual_reset 需三项人工确认，回测面不存在，
+# 故级别序列一旦进 KILL 即整窗驻留。该后果不靠注释自觉，由凭据面 kill_stuck_days 量化。
+# ──────────────────────────────────────────────────────────────────────────────
+
+#: 双臂档位名（绑定册 arms.params_* 里写 levels: "series:<档名>" 即按名注入底座交付的 series 槽）
+DRAWDOWN_LEVEL_SERIES_NAMES = ("levels_hysteresis", "levels_no_hysteresis")
+#: 适配器允许的级别词表＝在册件 position_cap 的五态；出现表外态（含 RECOVERY）即红，禁静默扩档
+_DRAWDOWN_STATE_VOCAB = ("NORMAL", "WARN", "DANGER", "CRISIS", "KILL")
+
+
+def _drawdown_replay_config(arm_cfg: str):
+    """按臂档给在册 config 类的字段值——**只赋值，不定义**：阈值一律沿在册默认。
+
+    levels_no_hysteresis 的构造性取值须如实记账两处：hysteresis_ratio 的在册校验是开区间
+    (0,1)，1.0 会被 InvalidDrawdownStateError 拒，故取 1-1e-9（半阈值≈触发阈值）；
+    而"解除即回满"仍做不到——在册件的降级路径是逐级边（_DEESCALATION_PATH 无跳级边），
+    这一条属卡面近似披露，不在本函数里绕。
+    """
+    from zephyr.risk.core.drawdown_state_machine import DrawdownStateMachineConfig  # noqa: PLC0415
+
+    if arm_cfg == "levels_hysteresis":
+        return DrawdownStateMachineConfig()
+    if arm_cfg == "levels_no_hysteresis":
+        return DrawdownStateMachineConfig(
+            hysteresis_ratio=1.0 - 1e-9,
+            sustained_warn=1,
+            sustained_danger=1,
+            sustained_crisis=1,
+            min_hold_warn=1,
+            min_hold_danger=1,
+            min_hold_crisis=1,
+        )
+    raise RuntimeError(f"drawdown_level_arm_cfg_unknown:{arm_cfg}（合法档名={list(DRAWDOWN_LEVEL_SERIES_NAMES)}）")
+
+
+def replay_drawdown_levels(nav: pd.Series, *, arm_cfg: str = "levels_hysteresis") -> tuple[pd.Series, dict]:
+    """基线日净值 → 日频级别序列（在册态名字符串）＋可复核凭据；判定全在在册件本体里发生。"""
+    from zephyr.risk.core.drawdown_state_machine import DrawdownStateMachine  # noqa: PLC0415
+
+    s = pd.Series(nav).astype("float64").sort_index()
+    if len(s) == 0:
+        raise RuntimeError("drawdown_level_replay_empty_nav（无净值即无级别，禁以空序列冒充全程 NORMAL）")
+    s.index = pd.DatetimeIndex(pd.to_datetime(s.index))
+    n_nan = int(s.isna().sum())
+    if n_nan:
+        # NaN 会被下游读成"当日无回撤"＝把缺失伪装成最轻档，这里先红
+        raise RuntimeError(f"drawdown_level_nav_has_nan:days={n_nan}")
+    if bool((s <= 0).any()):
+        raise RuntimeError("drawdown_level_nav_nonpositive（净值/峰值比值失去意义，禁继续回放级别）")
+
+    cfg = _drawdown_replay_config(arm_cfg)
+    sm = DrawdownStateMachine(None, cfg)  # store=None＝纯内存，零落盘零副作用
+    dd = (s / s.cummax()) - 1.0
+    labels: list[str] = []
+    n_transitions = 0
+    first_kill: str | None = None
+    for ts, d in dd.items():
+        # 只喂 drawdown_pct：统筹批复 A1 裁乙——var/cvar 两槽不喂（全仓唯一日频真实调用点
+        # sim_daily_runner.py:1410 同形），卡面"日亏 2%/4%/6%"系叙事改写非参数。
+        # 想在此处补 var 的，须先改 07 卡面 axis_feeding 并重新呈批，禁在适配器里静默改口径。
+        transition = sm.evaluate(trade_date=ts.date(), drawdown_pct=float(d))
+        if transition is not None:
+            n_transitions += 1
+        state = sm.current.value
+        if state not in _DRAWDOWN_STATE_VOCAB:
+            raise RuntimeError(
+                f"drawdown_level_state_out_of_vocab:{state}@{ts.date()}（卡面五态映射表装不下该态＝"
+                "须先补卡面映射并呈批，禁在适配器里静默扩档给数）"
+            )
+        if state == "KILL" and first_kill is None:
+            first_kill = ts.date().isoformat()
+        labels.append(state)
+
+    levels = pd.Series(labels, index=s.index, name=arm_cfg)
+    # L4 近似的量化：已进 KILL 且当日回撤其实已回到触发阈值以内的那些日＝人工复位本可放行的日子
+    kill_stuck = 0
+    if first_kill is not None:
+        kill_stuck = int((levels.eq("KILL") & (dd.abs() <= cfg.kill_dd)).sum())
+    state_days = {str(k): int(v) for k, v in levels.value_counts().sort_index().items()}
+    creds = {
+        "arm_cfg": arm_cfg,
+        "n_days": int(len(levels)),
+        "state_days": state_days,
+        "transitions": n_transitions,
+        "first_kill_date": first_kill,
+        "kill_stuck_days": kill_stuck,
+        "vocab": list(_DRAWDOWN_STATE_VOCAB),
+    }
+    return levels, creds
+
+
+def drawdown_level_series_pack(nav: pd.Series) -> tuple[dict[str, pd.Series], dict]:
+    """一次净值输入 → 两档级别序列（迟滞/无迟滞）＋两档凭据，供底座来源填进 ArmBase.series。"""
+    series: dict[str, pd.Series] = {}
+    creds: dict[str, dict] = {}
+    for name in DRAWDOWN_LEVEL_SERIES_NAMES:
+        series[name], creds[name] = replay_drawdown_levels(nav, arm_cfg=name)
+    return series, creds
+
+
 #: 双臂底座来源册（WO-A1 绑定侧半件）：名→可调用（按臂参数产日频敞口序列）。
 #: 空册是**有意**的：底座只能由在册重放装置产出，禁在绑定层现编近似序列冒充分母
 #: （arm_protocol_binding.ArmBaseMissing 同一纪律）。每接一个来源，须同批改
