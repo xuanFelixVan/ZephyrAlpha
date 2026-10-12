@@ -830,19 +830,27 @@ def run_binding_book(card: dict, entry: dict) -> tuple[pd.Series, dict]:
     return ser, ev
 
 
-def _arm_pair_builder():
-    """取真源件的装配函数：两条导入路径都试（包内/仓根），皆败即 raise——禁静默降级成单臂。"""
+def _arm_protocol_module():
+    """单点解析臂协议真源件模块：两条导入路径按同一次序试，皆败即 raise（禁静默降级成单臂）。
+
+    次序有讲究：先仓根包名（测试与仓内调用方走这条），失败再退 fexam.*（跑批侧 sys.path 只挂
+    scripts/backtest 时走这条）。反序或各走各的会让同一模块被两个名字各导一次＝同一类成为两个
+    对象：抛出的 ArmFaceMismatch 与调用方 pytest.raises 里的类不同一（17:4x 落地面实测到），
+    以及 isinstance(base, ArmBase) 判不出底座（21:5x 合成装配预证实测到：ArmBase * float 崩）。
+    **装配函数与底座来源构造 ArmBase 必须走这一个解析器**，否则两端口径不同一。
+    """
     import importlib
 
-    # 次序有讲究：先仓根包名（测试与仓内调用方走这条），失败再退 fexam.* （跑批侧 sys.path 只挂
-    # scripts/backtest 时走这条）。反序会让同一模块被两个名字各导一次，抛出的 ArmFaceMismatch
-    # 与调用方 pytest.raises 里的类不是同一个对象＝真拦住了、测试却认不出（17:4x 在落地面实测到）
     for mod in ("scripts.backtest.fexam.arm_protocol_binding", "fexam.arm_protocol_binding"):
         try:
-            return importlib.import_module(mod).build_arm_pair
+            return importlib.import_module(mod)
         except ImportError:
             continue
     raise ImportError("arm_protocol_binding 两条导入路径皆不可达＝双臂装配无法校验 e/r 位面，拒装配")
+
+
+def _arm_pair_builder():
+    return _arm_protocol_module().build_arm_pair
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -965,12 +973,12 @@ def _exit_sim_baseline(card: dict, entry: dict) -> Any:
 
     只搬运在册装置的输入与输出，零新撮合、零自拟参数：列提取仍受 prereg 冻结清单自校
     （run_all 同款断言），敞口与净值直接取 simulate 交出的 st["exposure_daily"] 与 nav。
-    series 面（级别/迟滞序列）此处**留空**：级别判定真源在 src/zephyr/risk/core/
-    drawdown_state_machine.py（事件步进式类，非序列进序列出），它的日频适配器未落地前，
-    本来源不许自造级别序列——册格引用 "series:<名>" 会在 _resolve_named_series 处
-    fail-closed 抛 ArmParamUnfrozen（＝不开考，不是出错分）。
+    series 面（两档级别序列）由 `drawdown_level_series_pack(nav)` 产出——那是**在册判定件**
+    src/zephyr/risk/core/drawdown_state_machine.py 的日频回放适配器（WO-A1 三颗红证在册），
+    本函数零判定/零迟滞逻辑；判定件若拒（空净值/NaN/词表外状态）异常照原样上抛，
+    册格引用未交付的 "series:<名>" 仍在 _resolve_named_series 处抛 ArmParamUnfrozen（＝不开考，不是出错分）。
     """
-    from fexam.arm_protocol_binding import ArmBase  # noqa: PLC0415
+    ArmBase = _arm_protocol_module().ArmBase  # 与装配侧同一模块对象，防类身份跨包名分裂
     from fexam.exit_sim.exit_simulator import (  # noqa: PLC0415
         atr14_wilder,
         build_signals,
@@ -1042,12 +1050,13 @@ def arms_from_binding_book(
         reviewed_by=entry.get("reviewed_by"),
         review_note=entry.get("review_note"),
         arm_target_len=int(len(tgt)),
+        arms_variant=entry.get("arms_variant_applied"),
         arm_level_creds=getattr(base, "level_creds", None),
     )
     return open_arm, base_arm, tgt, ev
 
 
-def load_binding_book(path: Path) -> dict[str, dict]:
+def load_binding_book(path: Path, arms_variant: str | None = None) -> dict[str, dict]:
     if not path.exists():
         return {}
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
@@ -1057,6 +1066,22 @@ def load_binding_book(path: Path) -> dict[str, dict]:
             continue
         if e.get("status") != "approved":
             continue
+        variants = e.get("arms_variants")
+        if variants is not None:
+            if e.get("arms"):
+                raise ValueError(
+                    f"arms_pairing_ambiguous:{e.get('card_id')}（同格并存 arms 与 arms_variants＝"
+                    "哪一跑在跑说不清，禁隐式取舍）"
+                )
+            if arms_variant is None:
+                raise ValueError(
+                    f"arms_variant_required:{e.get('card_id')}（该格配对按跑显式化，"
+                    f"可选档={sorted(variants)}，须 --arms-variant 指名，禁默认第一档）"
+                )
+            chosen = (variants or {}).get(arms_variant)
+            if not chosen:
+                raise ValueError(f"arms_variant_unknown:{e.get('card_id')}:{arms_variant}（在册档={sorted(variants)}）")
+            e = {**e, "arms": chosen, "arms_variant_applied": arms_variant}
         book[str(e["card_id"])] = e
     return book
 
@@ -1248,6 +1273,12 @@ def main() -> int:
     ap.add_argument("--out", required=True, help="普查/凭据输出 yaml（禁 .json，docs/_working 纪律）")
     ap.add_argument("--approve-list", help="run 面：点名卡清单（每行一个 card_id）")
     ap.add_argument("--binding-book", help="run 面：绑定册 yaml（entries[].op+args+prose_quote+status=approved）")
+    ap.add_argument(
+        "--arms-variant",
+        default="",
+        help="run 面：一卡多对臂对照时指名本跑的配对档（绑定册 arms_variants 的键）；"
+        "未指名即拒装配件，禁默认取第一档（统筹裁定 2026-10-12 甲案③）",
+    )
     ap.add_argument("--scores", help="run 面：分数册路径（显式必填，禁默认主区面）")
     ap.add_argument("--tag", default=datetime.now().strftime("%H%M"))
     ap.add_argument("--dry-run", action="store_true")
@@ -1302,7 +1333,11 @@ def main() -> int:
         print(json.dumps({"error": "run 面必须显式 --scores（禁默认主区 SCORES_PATH）"}, ensure_ascii=False))
         return 2
     approve = {l.strip() for l in Path(args.approve_list).read_text(encoding="utf-8").splitlines() if l.strip()}
-    book = load_binding_book(Path(args.binding_book)) if args.binding_book else {}
+    book = (
+        load_binding_book(Path(args.binding_book), arms_variant=(args.arms_variant or None))
+        if args.binding_book
+        else {}
+    )
     results = []
     seen = {r["card_id"] for r in rows}
     for cid in sorted(approve - seen):

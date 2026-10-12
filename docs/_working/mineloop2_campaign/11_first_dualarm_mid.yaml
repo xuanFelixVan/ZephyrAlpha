@@ -1,0 +1,57 @@
+schema_version: mineloop2-dualarm-run/v1
+built_by: .runtime/tmp/mineloop2/run_both_inproc.py（调在册 card_binding.run_one，判据零改动）
+as_of: '2026-10-12T23:05:17'
+card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+arms_variant: mid
+credentials:
+  arms_variant_applied: mid
+  arm_level_creds:
+    levels_hysteresis:
+      arm_cfg: levels_hysteresis
+      n_days: 2123
+      state_days:
+        CRISIS: 148
+        DANGER: 193
+        KILL: 1414
+        NORMAL: 299
+        WARN: 69
+      transitions: 16
+      first_kill_date: '2020-12-03'
+      kill_stuck_days: 267
+      vocab:
+      - NORMAL
+      - WARN
+      - DANGER
+      - CRISIS
+      - KILL
+    levels_no_hysteresis:
+      arm_cfg: levels_no_hysteresis
+      n_days: 2123
+      state_days:
+        CRISIS: 114
+        DANGER: 118
+        KILL: 1414
+        NORMAL: 351
+        WARN: 126
+      transitions: 81
+      first_kill_date: '2020-12-03'
+      kill_stuck_days: 267
+      vocab:
+      - NORMAL
+      - WARN
+      - DANGER
+      - CRISIS
+      - KILL
+  target_face_id: exit_sim_baseline_nav
+  arm_op_open: arm_level_cap_multiply
+  arm_op_base: arm_level_cap_multiply
+  arm_target_len: 2122
+result:
+  card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  verdict: fail
+  metrics:
+    ic_mean: null
+    mono_spearman: null
+    n: null
+    oos_ic: null
+    regime_ic: null

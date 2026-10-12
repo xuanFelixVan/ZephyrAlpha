@@ -277,3 +277,60 @@ entries:
     A 类第三张（连板高度命题：06 母卡口径与 13 导生口径在册指标逐字段全等＝同一命题，分诊规则去重后
     立 06 口径这一张）。底座走本仓已入库 CSV（零 CH）。已知弱点写在卡面：母卡两段牛熊反号
     （bull -0.063 / bear +0.016），event_regime_gap_same_sign 为硬柱，分段反号即 fail。
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  op: arms
+  status: approved
+  arm_base_source: exit_sim_baseline
+  reviewed_by: st-mineloop2-20261012（统筹裁定 2026-10-12 甲案：一卡两跑，每跑只配一对）
+  review_note: >-
+    两档配对的引句均经 verify_face_pair_quotes/verify_arm_quote 机械校验逐字命中该卡面对应文本域；
+    两张 level_map 逐字取卡面 data_binding.level_to_cap_map（five_state_native 与 binary_full_clear），
+    本册零自拟数值；op_open 在两档间**逐字相同**（裁定甲③：跑与跑之间禁动其他参数），
+    只有 op_base 的档位与 level_map/levels 档名随配对切换。
+  arms_variants:
+    "off":
+      e_face_quote: 三臂输入同一基线净值序列与同一成交口径
+      r_face_quote: 基线臂日净值（由 exit_simulator.simulate(stop_enabled=True) 生成的日收益序列
+      op_open: arm_level_cap_multiply
+      op_base: arm_level_cap_multiply
+      quote_open: 级别→仓位映射（五态表 NORMAL 1.0/WARN 0.8/DANGER 0.5/CRISIS 0.3/KILL 0.0）改锚在册判定件并冻结于本卡
+      quote_base: 关臂=五态二值全清（NORMAL/WARN/DANGER/CRISIS 一律 1.0，唯 KILL 0.0）
+      params_open:
+        levels: series:levels_hysteresis
+        level_map:
+          NORMAL: 1.0
+          WARN: 0.8
+          DANGER: 0.5
+          CRISIS: 0.3
+          KILL: 0.0
+      params_base:
+        levels: series:levels_hysteresis
+        level_map:
+          NORMAL: 1.0
+          WARN: 1.0
+          DANGER: 1.0
+          CRISIS: 1.0
+          KILL: 0.0
+    mid:
+      e_face_quote: 三臂输入同一基线净值序列与同一成交口径
+      r_face_quote: 基线臂日净值（由 exit_simulator.simulate(stop_enabled=True) 生成的日收益序列
+      op_open: arm_level_cap_multiply
+      op_base: arm_level_cap_multiply
+      quote_open: 级别→仓位映射（五态表 NORMAL 1.0/WARN 0.8/DANGER 0.5/CRISIS 0.3/KILL 0.0）改锚在册判定件并冻结于本卡
+      quote_base: 中间臂=五态无迟滞构造档（在册件的降级时序守卫全部取最小档，逐级降级结构约束随件披露）
+      params_open:
+        levels: series:levels_hysteresis
+        level_map:
+          NORMAL: 1.0
+          WARN: 0.8
+          DANGER: 0.5
+          CRISIS: 0.3
+          KILL: 0.0
+      params_base:
+        levels: series:levels_no_hysteresis
+        level_map:
+          NORMAL: 1.0
+          WARN: 0.8
+          DANGER: 0.5
+          CRISIS: 0.3
+          KILL: 0.0

@@ -466,3 +466,267 @@ dev 上注册位与 series 接线位现仍 0 命中＝未落。0007 留 dead/ �
   未裁前首考只开**第一对（开臂 vs 关臂）**并带 not_judged 披露，禁把未判读成已过。
 - 待办顺位：本袋落地 → 绑定册 07 册格（`arm_base_source: exit_sim_baseline` ＋ arms 面五态 level_map
   ＋两条 series 档名）→ CH 压缩窗实测核 → 首批开考（真读一次基线面板，试次进 n_trial_ledger）。
+
+# 十五、裁甲执行账（2026-10-12 21:4x-22:0x，开考前置全就位；窗未开故未跑）
+
+## 15.1 CH 让路窗：用门自己的尺读，不猜
+
+`card_binding._in_ch_yield_window(datetime.now())` 实测读数（21:44）＝
+**"21:00-22:30 W1 v2 提前窗让路"** ⇒ **首考此刻不得开跑**；本班未用
+`--override-ch-window-with-reason` 越窗（越窗须有真实理由并留痕，此刻没有）。
+窗后（≥22:30）按同一命令开跑，CH 取数次数与试次计数届时照单申报。
+
+## 15.2 三件新落地物（含两处"预证先红"的自纠）
+
+1. **绑定册 07 册格**（`docs/_working/mineloop_campaign/02_binding_book.yaml`，14→15 格，对 dev 纯追加）：
+   `arms_variants.{off,mid}` 两档配对；`op_open`/`params_open` 两档**逐字相同**（裁甲③机械面），
+   只有 `op_base` 的 levels 档名与 level_map 随配对切换；两张 level_map 逐字取卡面
+   `level_to_cap_map`，本册零自拟数。**YAML 坑一条**：`off:` 未加引号被 1.1 读成布尔 False
+   ⇒ 键必须写 `"off"`（写出来能解析、能 load，但 `sorted()` 当场以 str/bool 比较炸出，未落到袋里）。
+2. **配对选择器**（card_binding）：`load_binding_book(path, arms_variant=...)` ＋ CLI `--arms-variant`，
+   三档 fail-closed——缺档名 `arms_variant_required`（**禁默认取第一档**＝静默换命题）、
+   未知档名 `arms_variant_unknown`、`arms` 与 `arms_variants` 并存 `arms_pairing_ambiguous`；
+   无 variants 的既有格行为零变更；配 3 支用例。
+3. **类身份单解析器修复（落地件里的真 bug，预证抓到）**：`_exit_sim_baseline` 原按 `fexam.*`
+   路径 `import ArmBase`，装配侧 `_arm_pair_builder()` 首选 `scripts.backtest.fexam.*` ⇒
+   同一模块两个包名＝同一个类两个对象，`isinstance` 判不出底座，敞口乘子拿 `ArmBase` 去乘
+   （合成装配预证实测 `TypeError: ArmBase * float`）。与 17:4x"闸真拦、测试认不出"是同一条病根
+   第二次发作（那次修的是异常类）。正解按在册"导入路径单义"：抽 `_arm_protocol_module()` 作唯一
+   解析器，装配与底座构造共用；加不变量用例 `test_arm_protocol_class_identity_is_single_parser`。
+   该崩法是 fail-safe（run_one 收成 error 不出分），不产假分，但首考必开不了。
+
+## 15.3 双档装配预证（合成底座，零 CH）＋一条未核到的诚实附注
+
+同一基线净值（120 日、含深回撤后修复）喂两档各跑一遍三面装配：
+
+| 档 | 装配 | 两臂差异日数 | 两臂值域 | ev 带档名 |
+|---|---|---|---|---|
+| off（开 vs 关） | OK | **65/120** | 均 ∈0..1 | off |
+| mid（开 vs 中间） | OK | **46/120** | 均 ∈0..1 | mid |
+
+⇒ 两对都不退化（同形即门柱吃常数 0 差＝假考，这条在真 CH 之前先证）。
+**未核到的一条如实写**：预证里 `ev["arm_level_creds"]` 为空——因我直造合成 ArmBase 未经
+`_exit_sim_baseline`（只有它挂 level_creds）。生产路径理应不为空，但我还没在真跑里看到；
+首考后须回凭据面确认 `arm_level_creds` 与 `not_judged_pillars` 双双在位，缺一即报。
+
+另核：判定类 `src/zephyr/risk/core/drawdown_state_machine.py` 磁盘==索引==HEAD、主区与车道同字节，
+`position_cap` 六个 return 行原样读到 1.0/0.8/0.5/0.3/0.0（＋RECOVERY 阶梯）
+⇒ 卡面五态映射与**正在执行的**代码逐字相符（不是拿旧盘自证；车道内 `sys.path.insert` 对
+已预导入的 zephyr 无效，这条实测过，故必须核主区那份）。
+
+## 15.4 索引面险情第二次应验前的规避（统筹已广播）
+
+同步绑定册用 `git checkout dev -- <该件>`（本班在该件零本地改动，先核净差为空再动）；
+暂存一律**显式列路径**，入袋前 `git diff --cached --name-status` 计数：本袋五件全 A/M、**D=0**。
+
+## 15.5 队列实况
+
+0005/0006/0009（三件核心）与 0001/0002/0004/0008（账册）均 done；0003/0007 dead 已定性修复；
+0010（07 转正＋§十二/§十三）pending 第 8 位；本袋 0011 含卡面与账册的**严格超集**，
+与 0010 同文件部分被取代或被合批均不丢内容。全队列 pending 11、processing 4——堵但不停。
+
+## 十六、开考前预检三件（22:05-22:12 实测，全是"跑之前就知道"的账）
+
+### 16.1 试次=2 的在册机制冲突（裁定甲② 的执行障碍，证据到行）
+
+裁定甲② 要"同卡两试次，预算册记 2"。实测这条链**结构性记不到 2**：
+
+- `scripts/backtest/fexam/calibration_exam.py:744` 的批次键 `batch_id=f"examcard:{card['card_id']}:{row['date']}"`
+  ——**无跑次判别位**（`run_id` 在 :707 带 tag，但没进这个键）；同卡同日两跑 ⇒ 同一 batch_id。
+- `src/zephyr/backtest/core/n_trial_ledger.py:368` 起 `record_run` 原文"幂等：同 batch_id 存在则跳过返回现状"，
+  `_mutate` 命中已有键时 `return None  # 幂等：已登记`，返回 `status="exists"` 而 **不追加**。
+- 读数面 `n_trial_ledger.py:_count_of` 只把 `batch_records` 的 n_trials 求和 ⇒ 第二跑贡献 0。
+
+本班**不改判官件**（该件是考试班与全部在册卡的共用面，且改键＝动 DSR 分母口径），采两条并行：
+①第二跑后以**同一在册单口** `TrialLedger.record_run` 显式补登一条带跑次判别位的批次
+（`recorded_by` 记本班 sid，note 写明补登理由与撞键证据），使预算册实际计数=2；
+②把"batch_id 缺跑次判别位"作为待裁项呈统筹/考试班（一行键改即可治本，但属判官面）。
+两跑前后各取一次台账快照（batch_records 条数＋求和），差值即本班的入账凭证。
+
+### 16.2 "首张双臂分"结构上不可能是 PASS（前置披露，不做事后解释）
+
+`pillars_route(07)=dual_arm`；判官 `_judge_comparison`（`calibration_exam.py:351-354`）对
+**并集词表外的键一律追加一条 fail**："未支持判据键（机判面待扩）"。实测 07 八柱的键集差：
+
+| 判官有机器面（5 柱） | 判官无机器面（3 柱，必致 fail） |
+|---|---|
+| maxdd_improvement_min / sharpe_delta_min / turnover_delta_annual_max / cost_tier_bp_required / oos_same_sign | **maxdd_improvement_vs_no_hysteresis_min_pp / missed_crisis_trigger_max / whipsaw_roundtrip_ratio_max** |
+
+⇒ 两跑的 `verdict` 都将是 **fail**，且分数行的 `unjudged.numeric_keys_not_read` 正是这三根柱
+（:697 双臂面取 `_UNION_PILLAR_KEYS` 作对照词表，与卡面 `out_of_vocab_pillars` 自报三键逐字一致）。
+本班把"首张双臂分"交成**可读数的 fail 行**：配对实测值（maxdd_improvement_pp / sharpe_delta /
+turnover_delta_annual_x）照报，但**不把它们叙述成门柱全过**，也不做事后补救性解释——
+PASS 候选的成立条件是三根柱获得机器面（词表立法/绑定层扩面），那是统筹排期项不是本班今夜可自决的面。
+
+### 16.3 预检抓到一条别名坑（生产路径无恙，如实划边界）
+
+重跑 §15.3 双档预证时，本班先用 `from fexam.arm_protocol_binding import ArmBase` 造合成底座 ⇒
+两档都在乘法处裸炸 `TypeError: unsupported operand type(s) for *: 'ArmBase' and 'float'`；
+实测 `cb._arm_protocol_module().ArmBase is ArmBase` → **False**（同一文件被 `fexam.*` 与
+`scripts.backtest.fexam.*` 两个包名各载一次，类身份分裂）。改用 `cb._arm_protocol_module().ArmBase`
+后两档均装配成功（e 面 60 日、r 面 59 日、`variant=off/mid` 档名与 `arm_level_creds` 均在位）。
+边界结论：**生产路径单一解析器已一致**（`_exit_sim_baseline` 与装配侧同走 `_arm_protocol_module()`，
+0012 在册红证 `test_arm_protocol_class_identity_is_single_parser` 管的就是这一条），
+暴露的是"外部按别名构造底座"时 `_unwrap_base` 落到 else 分支、错误以 pandas TypeError 形式裸炸而非领域错误。
+拟补（下一袋，非开考阻塞）：`_base_or_raise` 对带 `.exposure` 属性的非 Series 输入抛
+`ArmBaseMissing/ArmFaceMismatch`，并配一颗别名构造必红的红证。
+
+## 十七、开考前的两面账（N 账本 git 面落后运行面＋主区索引陈旧回退面）
+
+### 17.1 N 账本：主区运行面比 dev 多 23 条批次＝13,963 试次从未入 git
+
+实测（22:2x，`git show dev:` 与主区工作树逐 batch_id 对集合差，非计数目测）：
+
+| 面 | batch_records 条数 | 其中 07 相关 |
+|---|---|---|
+| dev（git 面） | **29** | 0 |
+| 主区工作树（运行面，`git status` 呈 ` M`） | **52** | 0 |
+
+差集 23 条的署名分布：`st-mineloop-20261010`（前任）10、`calibration_exam` 5、
+`factory_grid_executor` 4、`st-statsgov-20261012` 3、`st-examchief-20261009` 1；
+`sum(n_trials)` 差 **13,963**。按 batch_id 尾段分桶：`2026-10-10` 9 条、`2026-10-11` 5 条、
+`2026-10-12` 2 条，另有 `grid_20261010-*` 4 条与 `ruler-calib-20261012*` 3 条（9+5+2+4+3=23 自校）。
+⇒ **在册事实**：考试与网格的试次记账历来直接落主区运行面，落地袋无人带这本册
+（`campaign_report.py:209` 与 `batch_window_preflight.py:123` 读的都是 YAML 文件面，无 PG 物化，
+本班已 grep 确认）⇒ DSR/FDR 分母的 **git 面比运行面虚低 13,963**，与在册"试次少记 17.4%"那条
+（根因=`factory_grid_executor` 只 set_effective_trials 从不 record/sync）是**不同层的另一处缺口**：
+那条是单口没调用，这条是调了但整册从未落地。转维护三班＋统筹：本册需要一次专门的"运行面→git 面"收编，
+**不是本班代劳**（袋=整档快照，随袋带他班 23 条未落地条目＝归属篡改，在册禁例）。
+
+对本班处置的三条硬约束：①本班两跑的试次经**同一在册单口** `TrialLedger.record_run` 记入
+**主区运行面**（与前任/网格班同姿势），车道副本**不入袋**；
+②车道 ledger 与主区 ledger 已分叉 23 条，本班**绝不**用 `git checkout dev --` 或 `git restore` 动车道这本册（会连坐他班在途条目）；
+③交付陈述一律写"运行面已记 N 条 / git 面 0 条"两面，不写"已入账"单面话。
+
+### 17.2 主区三件考试共用件的索引面是**旧字节**（内容门读索引⇒回退炸弹在册形态）
+
+`git status --porcelain` 主区呈 `MM`：`card_binding.py`／`calibration_exam.py`／`arm_protocol_binding.py`
+三件的**索引面比 HEAD 旧**（暂存差＝ 5+/180−、6+/12−、2+/86−，工作树差恰为其反号＝工作树才是 HEAD 内容）。
+在册机理（[[content-gates-read-index-not-worktree]]）：内容门禁吃索引字节，
+所以任何后续袋一旦把这三件放进清单，门判的是"被回退 180 行的旧版"，而落地按工作树写＝**门与落地判两个版本**。
+本班不主区动这三件（既不改他班索引也不代修），只把事实登记转告；本班施工与开考一律在车道，
+车道三件的工作树字节＝本班 0012 袋的快照源，且入袋前逐件 `--files-file` 显式列路径。
+
+### 17.3 为什么本班开考必须在车道跑（两面实测）
+
+主区 `02_binding_book.yaml` 里 07 册格命中数 **0**、`card_binding.py` 里 `arms_variant` 命中数 **0**
+（0010/0011/0012 仍 pending 未落）；车道两面各为 **1／11**。
+⇒ 主区现在跑必以 `arm_base_source_unwired`/无配对档如实失败，**只有车道具备已批的接线态**；
+本班在车道起跑（底座与分数册落车道副本），结果袋待 0012 落地后按 §十七.1 的口径整包呈。
+
+## 十八、CH 内存墙：两回合 HTTP 500 的定性与"同进程两跑"的解法
+
+- **22:36/22:52 两回合本班 CLI 两跑全部阵亡**，死位不同：第一跑死在元数据查询
+  （`SELECT name FROM system.columns ... technical_indicator`），第二跑死在数据查询
+  （`... aroonosc FROM c1_market.technical_indicator WHERE period='daily' ...`）⇒ 不是语句问题。
+- 定性用**服务器自己的账**（`system.errors`）：`MEMORY_LIMIT_EXCEEDED` code=241，
+  读数 22:41 时 4,678 次 → 22:54 时 4,805 → 23:00 时 4,916（持续增长），
+  原文 "would use 7.16 GiB ... current RSS: 6.70 GiB, maximum: **7.14 GiB**"；
+  `system.asynchronous_metrics.QueriesPeakMemoryUsage` 实测 6.60 GiB（23:00），
+  `system.processes` 同时刻并发 3 条重查询合计 4.29 GiB（他班技术面面板装载同型）。
+  ⇒ **CH 服务器总内存上限 7.14 GiB 被并发面板装载撞穿**，本班装置单查询 RSS 实测 1.4-2.6 GiB。
+- 本班解法（零判据改动）：两跑改**同进程**执行——装置自带进程内 `_cached`，24 列面板只载一次
+  ⇒ CH 面占用**减半**；驱动器 `.runtime/tmp/mineloop2/run_both_inproc.py` 只调在册
+  `card_binding.run_one`（与 `--mode run` 同一函数同一参数形状），窗口闸仍用门自己的尺
+  `_in_ch_yield_window`（起跑 22:54:50 读数 None＝窗已让位，未用 override 旗）。
+  这条如实记：**不是正门被绕开，是正门的跑法按内存现实重排**；两次 CLI 独立进程的失败面已留
+  `.runtime/tmp/mineloop2/run_two.log`/`run_two2.log`。
+- 转维护三班（非本班门位）：7.14 GiB 上限对"24 列×8 年面板"这类装载是否够，属设备容量问题；
+  另 `system.errors` 里 `NO_ELEMENTS_IN_CONFIG: Volume default must contain at least one disk` 4 次（14:35Z）
+  与 `CANNOT_PARSE_INPUT_ASSERTION_FAILED: expected 'columns format version: 1'` 9 次（10:47Z）同窗口出现，一并入眼。
+
+## 十九、首张双臂分交卷（2026-10-12 23:04/23:05 实测，一卡两跑＝裁定甲）
+
+### 19.1 两跑数值（分数册第 45/46 行，`docs/03_modules/_domain_backtest/exam_scores_v1.yaml`）
+
+| 面 | 跑 1 `arms_variant=off`（开 vs 关臂二值全清） | 跑 2 `arms_variant=mid`（开 vs 中间臂无迟滞） | 卡面冻结门柱 |
+|---|---|---|---|
+| maxdd_improvement_pp | **+3.82** | **+1.64** | ≥5.0 / ≥1.0（后者键无机器面） |
+| sharpe_delta | +0.0051 | +0.0890 | ≥ −0.1 ⇒ 两跑皆过 |
+| turnover_delta_annual_x | **−0.978** | **−1.609** | ≤ 8.0 ⇒ 过（开臂换手反而更低） |
+| open_sharpe@40bp | 0.5467 | 0.5467 | ≥ 0.0 ⇒ 过 |
+| ic_delta_is / oos | −0.000278 / **nan** | +0.000220 / **nan** | oos_same_sign ⇒ 两跑皆败（nan 记败不冒判） |
+| verdict | **fail** | **fail** | 两跑合议后＝不通过 |
+
+逐臂净值面（n=2123 日，两跑的**开臂逐值全等**：maxdd 0.07974454598093661／sharpe 0.6702246613603534／
+turnover 1.719598612281018／ann_ret 0.03637493831260426 ⇒ 同底座同成交口径的配对协议成立，
+两跑唯一差异只在基臂档位）：关臂 maxdd 0.1180／sharpe 0.6651／turnover 2.697／ann_ret 0.0546；
+中间臂 maxdd 0.0961／sharpe 0.5812／turnover 3.329／ann_ret 0.0381。
+
+### 19.2 verdict=fail 的第一条成因与 §十六.2 预告逐字应验
+
+两跑 fails 首条都是 `未支持判据键（机判面待扩）: ['maxdd_improvement_vs_no_hysteresis_min_pp',
+'missed_crisis_trigger_max', 'whipsaw_roundtrip_ratio_max']`，且分数行
+`unjudged.numeric_keys_not_read` 与卡面自报 `out_of_vocab_pillars` **三键逐字同集**；
+`numeric_keys_no_machine_face` 为空 dict（不是"有面读不出"，是**根本没接**）。
+⇒ 首张双臂分**结构上不可能是 PASS**（§十六.2 前置披露过，此处为实测应验，不是事后解释）。
+中间臂那一柱 1.64pp ≥ 1.0 在数值上过线，但判官不认该键名，本班**不代它记成过**。
+
+### 19.3 ⚑ 本次读数最重要的一条：KILL 驻留把 OOS 整窗变成空仓（等裁）
+
+级别回放凭据（`arm_level_creds`，两跑同值，存 `10_/11_first_dualarm_*.yaml`）：
+
+| 档 | NORMAL | WARN | DANGER | CRISIS | KILL | 转换次数 |
+|---|---|---|---|---|---|---|
+| levels_hysteresis（开臂用） | 299 | 69 | 193 | 148 | **1414** | 16 |
+| levels_no_hysteresis（中间臂用） | 351 | 126 | 118 | 114 | **1414** | 81 |
+
+`first_kill_date=2020-12-03`，样本共 2123 日 ⇒ **66.6% 的交易日处于 KILL**；
+`kill_stuck_days=267`＝已进 KILL 且当日回撤其实已回到 kill_dd 阈值以内的那些日
+（= 若"人工复位"存在本可放行却被近似钉住的 267 天，凭据面量化，不靠注释自觉）。
+后果链：A2 追认的 **"L4 不可解除"近似** 让两臂在 2020-12-03 后敞口恒 0 ⇒
+OOS 窗（2025-10-09..2026-09-30）整窗空仓 ⇒ 两臂 `oos_ic` 恒 nan ⇒ `oos_same_sign` 必败，
+且所谓"回撤改善 3.82pp/1.64pp"的实质是**"2020 年那次清仓之后一直空仓"**。
+本班不自解也不重跑（改复位规则＝改卡面语义，须新版本卡重新呈批），呈统筹三选一：
+①承认该近似的读数含义即"本卡判的是 fail-closed 清仓纪律本身"，OOS 面判"不可判"而非"劣化"；
+②另起 07b 新版本卡，把"人工复位"写成**可回放的规则**（如复位条件＝距 KILL 后 N 日且创新高），走 G4-5；
+③判官侧补 `whipsaw/missed_trigger` 两柱机器面＋该键名映射立法（词表工单），本卡数值再读一次。
+**不点会怎样**：07 卡按现冻结面重跑多少次都是 fail＋OOS 空窗，首张 PASS 候选不会从这里出。
+
+### 19.4 试次两面账（照单申报，禁写单面话）
+
+主区运行面（活账，`record_run` 同一单口）：52→**54** 条，`sum(n_trials)` 40,461→**40,463**（本班 +2）。
+两条 batch_id：`examcard:<07>:2026-10-12` 与 `examcard:<07>:2026-10-12#run2-arms-mid`（后者带跑次判别位，
+因 §十六.1 实测判官键无判别位被幂等跳过——**实测应验**：车道册内本卡只 1 条而分数册 2 行）。
+git 面：本班这两条**未入 git**，且本班**不入袋**（§十七.1：该册工作区面已有他班 23 条未落地，
+随袋即归属篡改）。车道副本已复位到 dev 字节（29 条，`git status` 净），复位前存证
+`.runtime/tmp/mineloop2/evidence/lane_ledger_after_exam_20261012T2310.yaml`。
+CH 取数照单：本班只读 `c1_market.kline_daily_hfq`（open/high/low/close 四场）与
+`c1_market.technical_indicator`（在册冻结清单 24 列），装置侧进程内缓存，合计一轮装载。
+
+### 19.5 卡面字节面处置：判官重排版**不入袋**，改按 dev 现值逐行重基（G4-5 卫生＋L3 在册处方）
+
+`run_card` 出分后按在册行为重写卡面（`calibration_exam.py:730-737`），YAML 被 `safe_dump(width=120)`
+重排 ⇒ 键级差虽仅 4 处，**行级差＝241 行**（实测 `Counter(dev 行)－Counter(lane 行)` 去重 231 行）。
+本班据 L3 池面回退预筛（`enqueue_preflight.py:178 pool_regression_preclean`，在册先例
+"先按 dev 逐行重基算账，再对自己改写行留 ack 旗"）判定：折行重排不是本班想要的变更，
+**禁把重排版入袋**（拍回他人/上一袋的行面）。已改为以 dev 现字节为基重放本班改写，
+落盘前后各断言一次，实得净差＝**去掉 3 行、追加 13 行**，且去掉的三行全是本班自己的：
+
+| 去掉的 dev 行（全部=本班自有） | 换成的行 |
+|---|---|
+| `status: preregistered` | `status: examined` |
+| `  run_id: null` | `  run_id: mineloop-dualarm_mid-07_熔断五级梯度减仓对照_五态仓位锚定` |
+| `  score_row: null` | `  score_row: exam_scores_v1.yaml#rows[45]` |
+
+追加的 13 行＝新键 `exam_scope_note_ruling_jia`（统筹裁定甲全文＋一句"本节取代上一键末句
+'未裁前只开第一对'"），**旧 `exam_scope_note` 逐字保留**（在册"旧文不动＋夜版另起节"形态，
+2026-10-12 已被统筹照准为现行）。落盘脚本内三道断言全部实跑通过：
+①去行集恰等于上述三行；②对 dev 的值级差恰为 `.status/.lineage.run_id/.lineage.score_row`
+且新增键恰为 `.exam_scope_note_ruling_jia`；③与判官重排版逐值对表，除 `exam_scope_note`
+一处（该键在重排版里被替换，本班这版保留 dev 原文）外**零差**，且车道无独有键。
+复核命令（主区直贴，期望 `removed= 上述三行`）：
+
+```bash
+python - <<'PY'
+import subprocess, yaml
+from collections import Counter
+p='docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__07_five_state_cap_anchor.yaml'
+dev = subprocess.run(['git','show','dev:'+p], capture_output=True, text=True, encoding='utf-8').stdout
+new = open('.worktrees/st-mineloop2-20261012/'+p, encoding='utf-8').read()
+print('removed=', sorted((Counter(dev.split('\n'))-Counter(new.split('\n'))).elements()))
+d, n = yaml.safe_load(dev), yaml.safe_load(new)
+print('old scope note preserved verbatim=', n['exam_scope_note']==d['exam_scope_note'],
+      '| status=', n['status'], '| ruling_jia present=', 'exam_scope_note_ruling_jia' in n)
+PY
+```

@@ -274,7 +274,7 @@ data_binding:
     已落（新桩 test_arm_base_sources_book_only_holds_signed_sources 在 dev）；②series 面两档级别序列
     由适配器产出并接上（drawdown_level_series_pack 在 _exit_sim_baseline 内调用）；③装置返回面
     exposure_daily/weights_daily 由救援袋落地，同输入两码面红证 nav 逐位最大差 0.0、既有 12 支 st 键零变。
-status: preregistered
+status: examined
 status_reason: >-
   接线两缝（impl_gap ①②）已随 q-0005/q-0006/q-0009 三袋落地闭合，git 侧命中数为据（见 wiring_landed）；
   轴喂法按统筹批复 A1 裁乙、两条近似按 A2 追认并随卡披露、L3 与"恢复即买回"两条负知识按 A3 落 lineage 节。
@@ -286,8 +286,8 @@ out_of_vocab_pillars:
 out_of_vocab_note: 沿用 02 在册申报（calibration/comparison 词表外键，判官侧无对应门柱实现时须显式披露，禁静默跳过）
 lineage:
   card: TDM-X-R1-01/comparison/06_熔断五级梯度减仓对照_基线出生件与r位声明版
-  run_id: null
-  score_row: null
+  run_id: mineloop-dualarm_mid-07_熔断五级梯度减仓对照_五态仓位锚定
+  score_row: exam_scores_v1.yaml#rows[45]
   confidence_writeback: TDM.nodes.TDM-X-R1-01.confidence
   narrative_rewrite_not_param: >-
     统筹批复 A1 附带条件②令本节记此条：**"日亏 2%/4%/6%"是叙事改写，不是参数**。
@@ -331,3 +331,16 @@ exam_scope_note: >-
   三臂两对照的承载方式已另呈统筹（甲=两次开考各判本对且另一柱显式标 not_judged；乙=拆两张卡各判一对）。
   **未裁前首考只开第一对（开臂 vs 关臂）**，且分数行凭据须带
   not_judged_pillars=[maxdd_improvement_vs_no_hysteresis_min_pp]；禁把"某柱未判"读成"该柱已过"。
+exam_scope_note_ruling_jia: >-
+  - 本节**取代**上一键 exam_scope_note 末句"三臂两对照对绑定册单对通道的结构差未裁前只开第一对"：
+    该结构差统筹已于 2026-10-12 裁定（甲案），本卡按"一卡两跑、各判一对"开考，两跑合议方为全卡结论。
+  统筹裁定 2026-10-12＝**甲案（一卡两跑，各判一对）**，三条附加规则随此钉进本卡： ①**PASS 判定＝两跑合议**——本卡最终结论以两次考试行合并判定：
+    `arms_variant=off` 那跑判"开臂 vs 关臂"（所判柱 maxdd_improvement_min=5.0、sharpe_delta_min、
+    turnover_delta_annual_max、missed_crisis_trigger_max、oos_same_sign），
+    `arms_variant=mid` 那跑判"开臂 vs 中间臂"（所判柱 maxdd_improvement_vs_no_hysteresis_min_pp=1.0
+    与 whipsaw_roundtrip_ratio_max）；**任何单跑不得读成全卡结论**，缺任一跑即整卡结论不成立
+    （凭据须带 not_judged_pillars 列明该跑未判之柱）；
+  ②两跑试次**都进 n_trial_ledger**（同卡两试次，预算册记 2，不得只记一跑）； ③配对选择按跑显式化：绑定册本卡片段用 `arms_variants.{off,mid}` 两档，跑由 CLI
+    `--arms-variant` 指名，**op_open 与 params_open 在两档间逐字相同**
+    （在册 build_arms 只循环 open/base 两位，一考只配一对；跑与跑之间禁动其他参数）。
+  乙案（拆两张卡各判一对）被否理由随此记：07 冻结面定义的就是"三臂一假设"的完整实验， 拆卡＝冻结后改假设结构，违 G4-5（要拆也是 07c 新版本卡的事，等本版考完确有需要再说）。

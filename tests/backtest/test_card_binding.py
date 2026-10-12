@@ -648,3 +648,70 @@ def test_drawdown_level_series_pack_names_match_book_contract():
         assert len(s) == len(nav), name
         assert set(s.unique()) <= set(cb._DRAWDOWN_STATE_VOCAB), (name, s.unique().tolist())
         assert s.index.equals(pd.DatetimeIndex(nav.index).sort_values()), name
+
+
+def test_load_binding_book_arms_variant_is_fail_closed(tmp_path):
+    """配对选择器三红：缺档名/未知档名/两键并存，都必须当场红，禁默认取第一档。
+
+    统筹裁定甲③要求"跑与跑之间禁动其他参数"，这道选择器是它的机械面：
+    默认第一档＝静默换命题，与"未接线不出分"同一哲学。
+    """
+    body = {
+        "entries": [
+            {
+                "card_id": "TDM-E-TEST/comparison/99_variant",
+                "status": "approved",
+                "arms_variants": {
+                    "off": {"op_open": "arm_identity", "op_base": "arm_identity"},
+                    "mid": {"op_open": "arm_identity", "op_base": "arm_identity"},
+                },
+            },
+            {
+                "card_id": "TDM-E-TEST/comparison/97_plain",
+                "status": "approved",
+                "arms": {"op_open": "arm_identity", "op_base": "arm_identity"},
+            },
+        ]
+    }
+    f = tmp_path / "book.yaml"
+    f.write_text(yaml.safe_dump(body, allow_unicode=True), encoding="utf-8")
+    with pytest.raises(ValueError, match="arms_variant_required"):
+        cb.load_binding_book(f)
+    with pytest.raises(ValueError, match="arms_variant_unknown"):
+        cb.load_binding_book(f, arms_variant="bogus")
+    assert (
+        cb.load_binding_book(f, arms_variant="mid")["TDM-E-TEST/comparison/99_variant"]["arms_variant_applied"] == "mid"
+    )
+    # 无 arms_variants 的普通格不受选择器影响（单臂与既有双臂通道行为零变更）
+    plain = cb.load_binding_book(f, arms_variant="mid")["TDM-E-TEST/comparison/97_plain"]
+    assert plain["arms"]["op_open"] == "arm_identity" and "arms_variant_applied" not in plain
+
+
+def test_arms_variant_ambiguation_is_red(tmp_path):
+    """两键并存（arms 与 arms_variants 同格）＝哪一跑在跑说不清，必红。"""
+    body = {
+        "entries": [
+            {
+                "card_id": "X/99",
+                "status": "approved",
+                "arms": {"op_open": "arm_identity", "op_base": "arm_identity"},
+                "arms_variants": {"off": {"op_open": "arm_identity", "op_base": "arm_identity"}},
+            }
+        ]
+    }
+    f = tmp_path / "book.yaml"
+    f.write_text(yaml.safe_dump(body, allow_unicode=True), encoding="utf-8")
+    with pytest.raises(ValueError, match="arms_pairing_ambiguous"):
+        cb.load_binding_book(f, arms_variant="off")
+
+
+def test_arm_protocol_class_identity_is_single_parser():
+    """不变量：装配函数与底座来源用的 ArmBase 必须来自**同一个模块对象**。
+
+    同一模块被两个包名各导一次＝同一个类成为两个对象，`isinstance(base, ArmBase)` 判不出
+    底座 ⇒ 敞口乘子会拿 ArmBase 去乘（21:5x 合成装配预证实测到 TypeError: ArmBase * float）。
+    本支把"两处共用一个解析器"钉成断言，谁再各走各的路径即红。
+    """
+    mod = cb._arm_protocol_module()
+    assert cb._arm_pair_builder().__module__ == mod.__name__
+    assert mod.ArmBase.__module__ == mod.__name__

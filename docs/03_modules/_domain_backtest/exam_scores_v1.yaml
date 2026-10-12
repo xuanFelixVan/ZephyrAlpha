@@ -1600,3 +1600,199 @@ rows:
   - 'regime_gap 反号 {''bull'': {''n_event'': 67, ''n_none'': 287, ''mean_event'': 0.0012947549262275532, ''mean_none'': 0.000575062676245909, ''gap_bp'':
     7.196922499816442, ''t_stat'': 0.36122452275214245}, ''bear'': {''n_event'': 133, ''n_none'': 495, ''mean_event'': -0.0017642477113940054,
     ''mean_none'': -0.0004669887547816746, ''gap_bp'': -12.972589566123307, ''t_stat'': -1.3113017199352706}}'
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-dualarm_off-07_熔断五级梯度减仓对照_五态仓位锚定
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  date: '2026-10-12'
+  metrics:
+    arm_open:
+      ic_mean: 0.05545440150671299
+      mono_spearman: 0.6727272727272726
+      n: 2123
+      regime_ic:
+        bull: -0.0002064137339524222
+        bear: .nan
+        crisis: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1621
+      n_buckets_used: 10
+      nav:
+        n: 2123
+        maxdd: 0.07974454598093661
+        sharpe: 0.6702246613603534
+        turnover_annual_x: 1.719598612281018
+        ann_ret: 0.03637493831260426
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.05573258854543597
+      mono_spearman: 0.6727272727272726
+      n: 2123
+      regime_ic:
+        bull: 0.0029461434440656714
+        bear: .nan
+        crisis: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1598
+      n_buckets_used: 10
+      nav:
+        n: 2123
+        maxdd: 0.11795538506548231
+        sharpe: 0.665077365533868
+        turnover_annual_x: 2.6972922593029005
+        ann_ret: 0.05460205997084579
+        cost_bp: .nan
+    maxdd_improvement_pp: 3.82108390845457
+    sharpe_delta: 0.005147295826485432
+    turnover_delta_annual_x: -0.9776936470218824
+    open_sharpe_at_tier_bp: 0.5466703200803625
+    ic_delta_is: -0.0002781870387229754
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+  unjudged:
+    numeric_keys_not_read:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - missed_crisis_trigger_max
+    - whipsaw_roundtrip_ratio_max
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - '未支持判据键（机判面待扩）: [''maxdd_improvement_vs_no_hysteresis_min_pp'', ''missed_crisis_trigger_max'', ''whipsaw_roundtrip_ratio_max'']'
+  - maxdd_improvement 3.82pp < 5.0
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-dualarm_mid-07_熔断五级梯度减仓对照_五态仓位锚定
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  date: '2026-10-12'
+  metrics:
+    arm_open:
+      ic_mean: 0.05545440150671299
+      mono_spearman: 0.6727272727272726
+      n: 2123
+      regime_ic:
+        bull: -0.0002064137339524222
+        bear: .nan
+        crisis: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1621
+      n_buckets_used: 10
+      nav:
+        n: 2123
+        maxdd: 0.07974454598093661
+        sharpe: 0.6702246613603534
+        turnover_annual_x: 1.719598612281018
+        ann_ret: 0.03637493831260426
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.05523399050941251
+      mono_spearman: 0.6727272727272726
+      n: 2123
+      regime_ic:
+        bull: -0.001229014422001825
+        bear: .nan
+        crisis: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1701
+      n_buckets_used: 10
+      nav:
+        n: 2123
+        maxdd: 0.09610509763596431
+        sharpe: 0.5811823720397776
+        turnover_annual_x: 3.3289685008591334
+        ann_ret: 0.03814596619201148
+        cost_bp: .nan
+    maxdd_improvement_pp: 1.63605516550277
+    sharpe_delta: 0.08904228932057578
+    turnover_delta_annual_x: -1.6093698885781154
+    open_sharpe_at_tier_bp: 0.5466703200803625
+    ic_delta_is: 0.00022041099730048253
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+  unjudged:
+    numeric_keys_not_read:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - missed_crisis_trigger_max
+    - whipsaw_roundtrip_ratio_max
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - '未支持判据键（机判面待扩）: [''maxdd_improvement_vs_no_hysteresis_min_pp'', ''missed_crisis_trigger_max'', ''whipsaw_roundtrip_ratio_max'']'
+  - maxdd_improvement 1.64pp < 5.0
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
