@@ -1,0 +1,526 @@
+ttl: task_bound
+title: 全局试次预算册（设计稿 v1，N 账本之上的预算治理层）
+produced_by: scripts/backtest/statsgov_deflation_and_budget.py budget
+spec_source: docs\_working\statsgov_campaign\trial_budget_registry_draft.yaml
+spec_sha16: 206656143b610f57
+as_of_source_mtime: '2026-10-12T11:46:02'
+n_ledger_snapshot:
+  ledger_trials: 38262
+  ledger_runs: 74
+  known_floor: 38262
+  n_trials_effective_disclosure_slot: 16
+  read_error: ''
+unrecorded_grid_trials:
+  post_watermark: 27739
+  all_disk: 53090
+  batches: 56
+  shard_collision_run_ts:
+  - 20261007-032540
+  - 20261010-232435
+  - 20261010-233721
+families:
+- family: A
+  title_zh: 信号/因子族
+  object: 考试卡（calibration/comparison/ablation）、指标批、因子批、另类因子、板块因子、codesym 因子、重考
+  faces:
+  - face: exam_cards_ledger
+    kind: ledger_kind
+    pattern: null
+    status: MEASURED
+    ledger_trials_in_ledger: 34
+    ledger_batches_in_ledger: 34
+  - face: fexam_score_books
+    kind: file_glob
+    pattern: docs/_working/fexam/*exam*_v*.yaml
+    status: PARTIAL_MEASURED
+    matched_count: 12
+    rows_measured: 542
+    count_notes:
+    - 'docs/_working/fexam/00_exam_campaign_summary_v1.yaml :: KEY_ABSENT(requested=results; top_keys=[''approvals_pending_owner'', ''batches'', ''coverage_ledger_join'', ''doc_type'',
+      ''generated_at_utc'', ''negative_result_discipline'', ''version''])'
+    - 'docs/_working/fexam/alt_factor_exam_scores_v1.yaml :: KEY_ABSENT(requested=results; top_keys=[''campaign'', ''counts'', ''data_plane_findings'', ''device_ledger'', ''doc_type'',
+      ''families'', ''generated_at_utc'', ''lane'', ''negative_results_note'', ''prereg_v1_frozen'', ''recompute_note'', ''regime_source'', ''truth_source_spec_cards'', ''version''])'
+    - 'docs/_working/fexam/emotion_index_exam_v1.yaml :: KEY_ABSENT(requested=results; top_keys=[''exam_execution'', ''prereg_v1''])'
+    - 'docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml :: KEY_ABSENT(requested=results; top_keys=[''baseline_ic_all'', ''baseline_used'', ''device_ledger'', ''doc_type'',
+      ''exam_window'', ''family_size'', ''family_verdict'', ''generated_at_utc'', ''per_indicator'', ''prereg_ref'', ''ref_window_report'', ''version''])'
+    - 'docs/_working/fexam/mom029_reexam_v2.yaml :: KEY_ABSENT(requested=results; top_keys=[''adaptation'', ''code_symbol'', ''direction'', ''doc_type'', ''factor_id'', ''generated_at_utc'',
+      ''hypothesis'', ''judge_detail'', ''name_zh'', ''prereg'', ''reason'', ''verdict'', ''version'', ''window_definition''])'
+    - 'docs/_working/fexam/state_recognizer_exam_v1.yaml :: KEY_ABSENT(requested=results; top_keys=[''criteria_frozen_result'', ''exam_execution'', ''prereg_v1'', ''sentiment_layer_inventory'',
+      ''table1_hit_rate'', ''table2_confusion'', ''table3_switch_lag_hmm'', ''table4_baseline_vs_sma200'', ''verdict'', ''verdict_notes''])'
+    count_note_total: 6
+    paths:
+    - docs/_working/fexam/00_exam_campaign_summary_v1.yaml
+    - docs/_working/fexam/alt_factor_exam_scores_v1.yaml
+    - docs/_working/fexam/codesym_factor_exam_v1.yaml
+    - docs/_working/fexam/codesym_strategy_exam_v1.yaml
+    - docs/_working/fexam/emotion_index_exam_v1.yaml
+    - docs/_working/fexam/factor_exam_scores_v1.yaml
+    - docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml
+    - docs/_working/fexam/indicator_exam_scores_v1.yaml
+    - docs/_working/fexam/mom029_reexam_v2.yaml
+    - docs/_working/fexam/sector_factor_exam_v1.yaml
+    - docs/_working/fexam/state_recognizer_exam_v1.yaml
+    - docs/_working/fexam/strategy_exam_scores_v1.yaml
+  - face: mineloop_exam_runs
+    kind: file_glob
+    pattern: docs/_working/mineloop_campaign/*exam_run*.yaml
+    status: MEASURED
+    matched_count: 7
+    rows_measured: 1118
+    count_notes: []
+    count_note_total: 0
+    paths:
+    - docs/_working/mineloop_campaign/03_exam_run_r1.yaml
+    - docs/_working/mineloop_campaign/05_exam_run_r2.yaml
+    - docs/_working/mineloop_campaign/06_exam_run_r3.yaml
+    - docs/_working/mineloop_campaign/07_exam_run_r4.yaml
+    - docs/_working/mineloop_campaign/08_exam_run_r5.yaml
+    - docs/_working/mineloop_campaign/13_exam_run_limit_up.yaml
+    - docs/_working/mineloop_campaign/21_exam_run_event_switch.yaml
+  - face: sector_line_prereg
+    kind: file_glob
+    pattern: docs/_working/sector_line/exam/*.yaml
+    status: PARTIAL_MEASURED
+    matched_count: 1
+    rows_measured: 0
+    count_notes:
+    - 'docs/_working/sector_line/exam/prereg_exam_results_v1.yaml :: KEY_ABSENT(requested=results; top_keys=[''D2'', ''S10'', ''frozen_source'', ''panel_days'', ''panel_sectors'', ''run_date''])'
+    count_note_total: 1
+    paths:
+    - docs/_working/sector_line/exam/prereg_exam_results_v1.yaml
+  - face: pg_score_tables
+    kind: pg_table
+    pattern: exam_scores_v1 / indicator_exam_scores_v1 / factor_exam_scores_v1 / alt_factor_exam_scores_v1 / sector_factor_exam_v1 / codesym_factor_exam_v1
+    status: PG_NOT_PROBED
+    note: 本件不连库：PG 面计数须走 DatabaseService 只读口，且属跨车道共享面，本班只登记表名模式与待测位
+  budget_cap:
+    value: null
+    unit: trials
+    basis: 待裁——建议=全仓 A 族历史消耗 × 放大系数，系数由统筹定
+  cap_status: owner_adopted_formula_pending_terminal_signature
+  consumption_from_ledger: 34
+  consumption_from_books_rows: 1660
+  faces_not_found: &id001 []
+  faces_partial_measured: &id002
+  - fexam_score_books
+  - sector_line_prereg
+  faces_unprobed:
+  - pg_score_tables
+  consumption_components:
+    ledger_by_kind: 34
+    unrecorded_grid_on_disk: 0
+    book_rows_measured: 1660
+  consumption_total: 1694
+  double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
+  transitional_cap_x1: 1694
+- family: B
+  title_zh: 策略配方族
+  object: F06 网格（名义空间 n_raw）、策略重考、codesym 策略、注册册策略、引擎层 strategy_id
+  faces:
+  - face: grid_batches_ledger
+    kind: grid_batch_kind
+    pattern: null
+    status: MEASURED
+    ledger_trials_in_ledger: 31878
+    unrecorded_trials_on_disk: 53090
+  - face: survivor_book
+    kind: file_glob
+    pattern: data/strategy_intake/f06_survivors.csv
+    status: MEASURED
+    matched_count: 1
+    rows_measured: 1
+    count_notes: []
+    count_note_total: 0
+    paths:
+    - data/strategy_intake/f06_survivors.csv
+  - face: grid_oos_book
+    kind: file_glob
+    pattern: docs/_working/fexam/grid_strategy_oos_v1.yaml
+    status: PARTIAL_MEASURED
+    matched_count: 1
+    rows_measured: 0
+    count_notes:
+    - 'docs/_working/fexam/grid_strategy_oos_v1.yaml :: KEY_ABSENT(requested=rows; top_keys=[''date'', ''device_reality_note'', ''doc_type'', ''dsr_ledger'', ''known_device_facts'',
+      ''lane'', ''multiple_testing_note'', ''owner'', ''prereg_v1'', ''results'', ''sources'', ''status'', ''title'', ''version''])'
+    count_note_total: 1
+    paths:
+    - docs/_working/fexam/grid_strategy_oos_v1.yaml
+  - face: strategy_exam_book
+    kind: file_glob
+    pattern: docs/_working/fexam/strategy_exam_scores_v1.yaml
+    status: MEASURED
+    matched_count: 1
+    rows_measured: 161
+    count_notes: []
+    count_note_total: 0
+    paths:
+    - docs/_working/fexam/strategy_exam_scores_v1.yaml
+  - face: codesym_strategy_book
+    kind: file_glob
+    pattern: docs/_working/fexam/codesym_strategy_exam_v1.yaml
+    status: MEASURED
+    matched_count: 1
+    rows_measured: 23
+    count_notes: []
+    count_note_total: 0
+    paths:
+    - docs/_working/fexam/codesym_strategy_exam_v1.yaml
+  - face: mom029_books
+    kind: file_glob
+    pattern: docs/_working/fexam/mom029_*.yaml
+    status: PARTIAL_MEASURED
+    matched_count: 2
+    rows_measured: 0
+    count_notes:
+    - 'docs/_working/fexam/mom029_prereg_v2.yaml :: KEY_ABSENT(requested=results; top_keys=[''amendments'', ''change_log_vs_v1'', ''code_symbol'', ''criterion'', ''doc_type'', ''factor_id'',
+      ''frozen_at_utc'', ''frozen_by'', ''hypothesis'', ''name_zh'', ''owner_approval'', ''version''])'
+    - 'docs/_working/fexam/mom029_reexam_v2.yaml :: KEY_ABSENT(requested=results; top_keys=[''adaptation'', ''code_symbol'', ''direction'', ''doc_type'', ''factor_id'', ''generated_at_utc'',
+      ''hypothesis'', ''judge_detail'', ''name_zh'', ''prereg'', ''reason'', ''verdict'', ''version'', ''window_definition''])'
+    count_note_total: 2
+    paths:
+    - docs/_working/fexam/mom029_prereg_v2.yaml
+    - docs/_working/fexam/mom029_reexam_v2.yaml
+  - face: t0_batches
+    kind: ledger_kind
+    pattern: null
+    status: MEASURED
+    ledger_trials_in_ledger: 0
+    ledger_batches_in_ledger: 0
+  - face: oos_reexam
+    kind: ledger_kind
+    pattern: null
+    status: MEASURED
+    ledger_trials_in_ledger: 81
+    ledger_batches_in_ledger: 1
+  budget_cap:
+    value: null
+    unit: trials
+    basis: 待裁
+  cap_status: owner_adopted_formula_pending_terminal_signature
+  consumption_from_ledger: 31959
+  consumption_from_books_rows: 185
+  faces_not_found: &id003 []
+  faces_partial_measured: &id004
+  - grid_oos_book
+  - mom029_books
+  faces_unprobed: []
+  consumption_components:
+    ledger_by_kind: 31959
+    unrecorded_grid_on_disk: 53090
+    book_rows_measured: 185
+  consumption_total: 85234
+  double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
+  transitional_cap_x1: 85234
+- family: C
+  title_zh: 组合/配置族
+  object: 5 套资产分配器、防守机制（ATR 止损对照）、仓位配方邻域
+  faces:
+  - face: allocator_shadow
+    kind: file_glob
+    pattern: docs/_working/fexam/allocator_shadow_report_v1.yaml
+    status: MEASURED
+    matched_count: 1
+    rows_measured: 5
+    count_notes: []
+    count_note_total: 0
+    paths:
+    - docs/_working/fexam/allocator_shadow_report_v1.yaml
+  - face: exit_sim
+    kind: file_glob
+    pattern: docs/_working/fexam/exit_sim_report_v1.yaml
+    status: PARTIAL_MEASURED
+    matched_count: 1
+    rows_measured: 0
+    count_notes:
+    - 'docs/_working/fexam/exit_sim_report_v1.yaml :: KEY_ABSENT(requested=results; top_keys=[''comparison'', ''device_delta_note'', ''doc_type'', ''generated_at_utc'', ''prereg_frozen'',
+      ''prereg_frozen_at_utc'', ''prereg_frozen_source'', ''provenance'', ''recalibration'', ''reference_engine_nostop'', ''signal_coverage'', ''version'', ''window_definition''])'
+    count_note_total: 1
+    paths:
+    - docs/_working/fexam/exit_sim_report_v1.yaml
+  budget_cap:
+    value: null
+    unit: trials
+    basis: 待裁
+  cap_status: owner_adopted_formula_pending_terminal_signature
+  consumption_from_ledger: 0
+  consumption_from_books_rows: 5
+  faces_not_found: &id005 []
+  faces_partial_measured: &id006
+  - exit_sim
+  faces_unprobed: []
+  consumption_components:
+    ledger_by_kind: 0
+    unrecorded_grid_on_disk: 0
+    book_rows_measured: 5
+  consumption_total: 5
+  double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
+  transitional_cap_x1: 5
+- family: D
+  title_zh: 状态识别/环境族
+  object: HMM 状态识别器、情绪指数择时、情绪六段重建规则
+  faces:
+  - face: state_recognizer
+    kind: file_glob
+    pattern: docs/_working/fexam/state_recognizer_exam_v1.yaml
+    status: PARTIAL_MEASURED
+    matched_count: 1
+    rows_measured: 0
+    count_notes:
+    - 'docs/_working/fexam/state_recognizer_exam_v1.yaml :: KEY_ABSENT(requested=results; top_keys=[''criteria_frozen_result'', ''exam_execution'', ''prereg_v1'', ''sentiment_layer_inventory'',
+      ''table1_hit_rate'', ''table2_confusion'', ''table3_switch_lag_hmm'', ''table4_baseline_vs_sma200'', ''verdict'', ''verdict_notes''])'
+    count_note_total: 1
+    paths:
+    - docs/_working/fexam/state_recognizer_exam_v1.yaml
+  - face: emotion_index
+    kind: file_glob
+    pattern: docs/_working/fexam/emotion_index_exam_v1.yaml
+    status: PARTIAL_MEASURED
+    matched_count: 1
+    rows_measured: 0
+    count_notes:
+    - 'docs/_working/fexam/emotion_index_exam_v1.yaml :: KEY_ABSENT(requested=results; top_keys=[''exam_execution'', ''prereg_v1''])'
+    count_note_total: 1
+    paths:
+    - docs/_working/fexam/emotion_index_exam_v1.yaml
+  budget_cap:
+    value: null
+    unit: trials
+    basis: 待裁
+  cap_status: owner_adopted_formula_pending_terminal_signature
+  consumption_from_ledger: 0
+  consumption_from_books_rows: 0
+  faces_not_found: &id007 []
+  faces_partial_measured: &id008
+  - state_recognizer
+  - emotion_index
+  faces_unprobed: []
+  consumption_components:
+    ledger_by_kind: 0
+    unrecorded_grid_on_disk: 0
+    book_rows_measured: 0
+  consumption_total: 0
+  double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
+  transitional_cap_x1: 0
+- family: E
+  title_zh: 工程件族
+  object: GPU 引擎达标考、判官路由审计复跑、成本模型假设双口径
+  faces:
+  - face: route_audit_replay
+    kind: file_glob
+    pattern: docs/_working/**/18_route_audit_replay*
+    status: MEASURED
+    matched_count: 1
+    rows_measured: 205
+    count_notes: []
+    count_note_total: 0
+    paths:
+    - docs/_working/mineloop_campaign/18_route_audit_replay.yaml
+  - face: exam_run_archive
+    kind: file_glob
+    pattern: data/backtest_artifacts/runs/*/*.yaml
+    status: PARTIAL_MEASURED
+    matched_count: 237
+    rows_measured: 207
+    count_notes:
+    - 'data/backtest_artifacts/runs/VAL-P0-20260912-154118/02_data_gap.yaml :: READ_ERROR(ParserError)'
+    - 'data/backtest_artifacts/runs/VAL-P0-20260912-154118/05_prune_log.yaml :: UNRECOGNIZED_SHAPE'
+    - 'data/backtest_artifacts/runs/VAL-P0-20260912-163755-001/02_data_gap.yaml :: READ_ERROR(ParserError)'
+    - 'data/backtest_artifacts/runs/VAL-P0-20260912-163755-001/05_prune_log.yaml :: UNRECOGNIZED_SHAPE'
+    - 'data/backtest_artifacts/runs/VAL-P0-20260912-163755-002/02_data_gap.yaml :: READ_ERROR(ParserError)'
+    - 'data/backtest_artifacts/runs/VAL-P0-20260912-163755-002/05_prune_log.yaml :: UNRECOGNIZED_SHAPE'
+    - 'data/backtest_artifacts/runs/VAL-P0-20260912-163855-001/02_data_gap.yaml :: READ_ERROR(ParserError)'
+    - 'data/backtest_artifacts/runs/VAL-P0-20260912-163855-001/05_prune_log.yaml :: UNRECOGNIZED_SHAPE'
+    - 'data/backtest_artifacts/runs/VAL-P0-20260912-164116-002/02_data_gap.yaml :: READ_ERROR(ParserError)'
+    - 'data/backtest_artifacts/runs/VAL-P0-20260912-164116-002/05_prune_log.yaml :: UNRECOGNIZED_SHAPE'
+    count_note_total: 42
+    paths:
+    - data/backtest_artifacts/runs/SCR-20260912-192909/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-ADJ-20260913-012358/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260913-002056/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260913-013339/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260913-014220/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260913-232100/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260913-232609/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260914-022107/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260914-023406/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260914-034927/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260914-045225/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260914-051102/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260914-051809/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260914-070216/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260914-070706/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260914-082130/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260914-082555/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260915-012151/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260915-012830/03_data_manifest.yaml
+    - data/backtest_artifacts/runs/SCR-C4-20260915-014654/03_data_manifest.yaml
+  budget_cap:
+    value: null
+    unit: trials
+    basis: 待裁
+  cap_status: owner_adopted_formula_pending_terminal_signature
+  consumption_from_ledger: 0
+  consumption_from_books_rows: 412
+  faces_not_found: &id009 []
+  faces_partial_measured: &id010
+  - exam_run_archive
+  faces_unprobed: []
+  consumption_components:
+    ledger_by_kind: 0
+    unrecorded_grid_on_disk: 0
+    book_rows_measured: 412
+  consumption_total: 412
+  double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
+  transitional_cap_x1: 412
+- family: F
+  title_zh: 挖矿器元层族
+  object: 车道产出质量（lane_b/c/c2）、LLM 研究员档位 A/B（GPU-01）
+  faces:
+  - face: intake_ledger
+    kind: file_glob
+    pattern: data/strategy_intake/*.csv
+    status: MEASURED
+    matched_count: 15
+    rows_measured: 5410
+    count_notes: []
+    count_note_total: 0
+    paths:
+    - data/strategy_intake/c4_deferrals.csv
+    - data/strategy_intake/constructed_manifest.csv
+    - data/strategy_intake/f06_survivors.csv
+    - data/strategy_intake/lane_b_candidates.csv
+    - data/strategy_intake/lane_c2_candidates.csv
+    - data/strategy_intake/lane_c_candidates.csv
+    - data/strategy_intake/lane_chain_candidates.csv
+    - data/strategy_intake/lane_e_candidates.csv
+    - data/strategy_intake/lane_f_candidates.csv
+    - data/strategy_intake/lane_g_candidates.csv
+    - data/strategy_intake/lane_g_seen_urls.csv
+    - data/strategy_intake/raw_manifest.csv
+    - data/strategy_intake/screen_c2.csv
+    - data/strategy_intake/three_high_candidates.csv
+    - data/strategy_intake/translated_manifest.csv
+  - face: paper_pool
+    kind: file_glob
+    pattern: docs/_working/fexam/paper_pool_v1.yaml
+    status: PARTIAL_MEASURED
+    matched_count: 1
+    rows_measured: 0
+    count_notes:
+    - 'docs/_working/fexam/paper_pool_v1.yaml :: KEY_ABSENT(requested=results; top_keys=[''count'', ''doc_type'', ''members'', ''ruling'', ''source_book'', ''version''])'
+    count_note_total: 1
+    paths:
+    - docs/_working/fexam/paper_pool_v1.yaml
+  budget_cap:
+    value: null
+    unit: trials
+    basis: 待裁——元层杠杆最高，建议帽最松但必须存在（无帽=不可审计扩张）
+  cap_status: owner_adopted_formula_pending_terminal_signature
+  consumption_from_ledger: 0
+  consumption_from_books_rows: 5410
+  faces_not_found: &id011 []
+  faces_partial_measured: &id012
+  - paper_pool
+  faces_unprobed: []
+  consumption_components:
+    ledger_by_kind: 0
+    unrecorded_grid_on_disk: 0
+    book_rows_measured: 5410
+  consumption_total: 5410
+  double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
+  transitional_cap_x1: 5410
+numbers_table_for_terminal_signature:
+  cap_formula: transitional_history_x1
+  grid_family_id: B
+  unrecorded_grid_on_disk_shared_across_families: 53090
+  rows:
+  - family: A
+    title_zh: 信号/因子族
+    ledger_by_kind: 34
+    unrecorded_grid_on_disk: 0
+    book_rows_measured: 1660
+    consumption_total: 1694
+    transitional_cap_x1: 1694
+    cap_status: owner_adopted_formula_pending_terminal_signature
+    faces_not_found: *id001
+    faces_partial: *id002
+    faces_pg_unprobed: 1
+  - family: B
+    title_zh: 策略配方族
+    ledger_by_kind: 31959
+    unrecorded_grid_on_disk: 53090
+    book_rows_measured: 185
+    consumption_total: 85234
+    transitional_cap_x1: 85234
+    cap_status: owner_adopted_formula_pending_terminal_signature
+    faces_not_found: *id003
+    faces_partial: *id004
+    faces_pg_unprobed: 0
+  - family: C
+    title_zh: 组合/配置族
+    ledger_by_kind: 0
+    unrecorded_grid_on_disk: 0
+    book_rows_measured: 5
+    consumption_total: 5
+    transitional_cap_x1: 5
+    cap_status: owner_adopted_formula_pending_terminal_signature
+    faces_not_found: *id005
+    faces_partial: *id006
+    faces_pg_unprobed: 0
+  - family: D
+    title_zh: 状态识别/环境族
+    ledger_by_kind: 0
+    unrecorded_grid_on_disk: 0
+    book_rows_measured: 0
+    consumption_total: 0
+    transitional_cap_x1: 0
+    cap_status: owner_adopted_formula_pending_terminal_signature
+    faces_not_found: *id007
+    faces_partial: *id008
+    faces_pg_unprobed: 0
+  - family: E
+    title_zh: 工程件族
+    ledger_by_kind: 0
+    unrecorded_grid_on_disk: 0
+    book_rows_measured: 412
+    consumption_total: 412
+    transitional_cap_x1: 412
+    cap_status: owner_adopted_formula_pending_terminal_signature
+    faces_not_found: *id009
+    faces_partial: *id010
+    faces_pg_unprobed: 0
+  - family: F
+    title_zh: 挖矿器元层族
+    ledger_by_kind: 0
+    unrecorded_grid_on_disk: 0
+    book_rows_measured: 5410
+    consumption_total: 5410
+    transitional_cap_x1: 5410
+    cap_status: owner_adopted_formula_pending_terminal_signature
+    faces_not_found: *id011
+    faces_partial: *id012
+    faces_pg_unprobed: 0
+  reading_zh: 过渡帽=该族已实测历史消耗×1（再挖一遍已烧掉的量即停）；帽值属判据数值，本表呈 Owner 终签后生效
+ledger_kind_coverage:
+  kinds_present_in_ledger:
+    factory_grid_batch_a_voided: 6000
+    exam_card: 34
+    fexam_strategy_batch: 0
+    factory_grid_batch_a: 31878
+    oos_reexam: 81
+  kinds_mapped_by_spec:
+  - exam_card
+  - factory_grid_batch_a
+  - factory_grid_batch_a_voided
+  - fexam_strategy_batch
+  - oos_reexam
+  - t0_material_line
+  - t0_rule_engine
+  - t0_state_match_matrix
+  unmapped_kinds: []
+  reading: 账本里存在但规格件没归族的 kind=族消耗会漏计；反向差集=规格写了但账本没有（多为历史零触发）
+net_zero_note:
+  replaces_or_merges:
+  - 无退役件：本册是 N 账本（L0）之上的派生治理层，族消耗=L0 按 kind 聚合，不新增记账通道
+  - 收编: config/search_space_prereg*.yaml 的 points 类帽在 B 族披露位引用（不复制数值，同真源可派生→必并 §4.2 第一型）
+  why_not_merge_prereg: 预注册卡=算力/墙钟/显存工程预算（对象=跑得起），本册=统计预算（对象=显著性可信），跨域不同对象→不并

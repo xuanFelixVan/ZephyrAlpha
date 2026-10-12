@@ -1,0 +1,160 @@
+ttl: task_bound
+# ─────────────────────────────────────────────────────────────────────────────
+# 全局试次预算册 · 设计稿 v1（st-statsgov-20261012，令 C 交付②）
+# 本文件=规则数据真源（RULE-SSOT：规则归 YAML），族定义/口径声明/映射表在此手改；
+# 条目清单与计数一律由 scripts/backtest/statsgov_deflation_and_budget.py budget 机生，
+# 产物=02_trial_budget_inventory_v1.yaml（宪法 §9.5 静态清单禁手工维护）。
+# 判据数值（各族预算帽、及格线、PBO 门）=null=待统筹/Owner 裁，本班不自裁。
+# ─────────────────────────────────────────────────────────────────────────────
+title: 全局试次预算册（设计稿 v1，N 账本之上的预算治理层）
+status: design_draft_not_yet_promoted
+owner_gate_note: 帽值属判据面；本稿只定结构与派生规则，数值全留 null
+layering:
+  L0_trial_accounting:
+    truth_source: docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml
+    writer: zephyr.backtest.core.n_trial_ledger.TrialLedger（唯一机器写入口，不动）
+    note: 本册不新记一笔试次；族消耗=L0 按 kind 聚合派生（零第二真源）
+  L1_budget_governance: 本册——族→帽→消耗→状态
+  L2_deflation_caliber: 折减口径声明（跨族同一把尺），数值表由 restatement 机生
+family_source_of_truth:
+  cited_from: docs/_working/2026-10-12-exam-card-mining-meta-method-research.md
+  anchors: "§9.1 考试对象六族清单（落盘件实测）行 167-176；§9.2 适用判定行 180-187；§9.4 全局注意行 199"
+  note: 六族此前只存在于该工作稿，无 catalog/config 唯一真源（本案卷实测 NOT FOUND）；本稿是其第一个机器可读形态
+grid_family_id: B  # 磁盘未入账 grid 试次归到这一族（避免六族平摊同一批未入账数造成 6 倍虚增）
+# ─────────────────────────────────────────────────────────────────────────────
+# 族↔N 账本 kind 映射（消耗面派生规则；kind 词表以账本现值为准，禁另造名）
+ledger_kind_to_family:
+  exam_card: A
+  fexam_strategy_batch: B
+  factory_grid_batch_a: B
+  factory_grid_batch_a_voided: B_voided_still_counted
+  oos_reexam: B
+  t0_rule_engine: B
+  t0_material_line: B
+  t0_state_match_matrix: B
+# ─────────────────────────────────────────────────────────────────────────────
+# 设计总则（Owner 令⑥ 2026-10-12 永久原则 + 晨裁结果；判据数值仍待终签）
+design_principles:
+  - id: P-1
+    rule: 闭卷=最终考试；折减抬线不替代考试
+    statement_zh: >
+      提高折减口径（把分母调大、把及格线抬上去）永远不能代替样本外闭卷考试本身。
+      一道成绩没考过闭卷，就不能靠"重算折减"变成通过；反过来，闭卷过了但折减不过，
+      也只能判"存疑/不合格"，不得放行。两者是两道独立闸，禁互相抵充。
+    consequence_for_registry: 预算册只管"能烧多少次试次＋用哪把尺判显著"，不产出任何"免考"通道
+  - id: P-2
+    rule: 阴性对照与阳性对照同判官同阈值
+    statement_zh: 尺子必须先被证明"能挂该挂的"（置换信号）与"能过该过的"（在册强异象），才允许用它判策略
+    consequence_for_registry: 校准件的试次同样入本册记账（族=F 元层——考的是判官本身）
+  - id: P-3
+    rule: 判据面数值由 Owner 终签；AI 代裁必署 adjudicator
+    consequence_for_registry: 本文件所有 budget_cap/pbo 门在未签前保持 null 或标 pending_terminal_signature
+morning_ruling_20261012:
+  M1: A  # 主尺=全仓累计可审计试次并按磁盘实况补齐；口径生效范围照 Owner 在册先例（新批次先行）
+  M2: adopted_as_recommended  # N_eff 只披露不作分母；要用须先解耦估计器输入面
+  M3: adopted_as_recommended  # 过渡帽=各族历史消耗×1；PBO 门沿用在册 0.05；及格线取 M1 尺倒推表
+  M4: adopted_as_recommended  # 两步序：先让账本写得进去（外科追加写）再谈追认；四病根分线修
+  M5: adopted_as_recommended  # 本班不自跑出生批复现；F06 自身 PBO 待后续按预算册记账再考
+  M5_letter_substance_check: >
+    字母-实质对表留痕：令⑥ 用"M2-M5 照推荐"覆盖，但本班 20 号件 M5 原包未标推荐字母（只给"要/不要＋可回退"）。
+    实质读=不自跑出生批复现、暂以替代批读数 PBO=0.4429 作过渡证据；若 Owner 本意是"要跑"，此行须改，且属算力/时间项非花钱项。
+  M6: route_to_maint3_C4  # TRANSLATION-COVERAGE 补 PG 第三源/或册主 render，归维护三班 C4 线
+# ─────────────────────────────────────────────────────────────────────────────
+caliber_declaration:
+  single_ruler_across_families: true
+  primary_denominator: N_ledger_plus_all_disk_trials  # 晨裁 M1=A（2026-10-12 Owner）：全仓累计可审计试次＋磁盘实况补齐；生效范围照在册先例=新批次先行，存量另呈
+  primary_denominator_ruling: Owner 令⑥ 晨裁 M1=A；读数面钉法=账面读 N 账本真源＋未入账面由生成器逐批实测补齐，两面值同时披露（盘面/HEAD 分母不等即 DENOMINATOR_FORK 态）
+  primary_ruler_rationale: >
+    计数边界=可审计机器回测次数（2026-09-15 裁定，在册）；跨族同尺即"全仓累计"而非"族内累计"，
+    否则换个族再挖一遍等于把分母清零。
+  disclosure_only_not_denominator:
+    - N_eff_registered   # 相关性折算位；本批实测 ρ̄=0.634，相关结构真实存在，但 N_eff 由被选中的同一批数据估出＝选择依赖，禁作唯一分母
+    - mean_pairwise_correlation
+  forbidden_as_denominator:
+    - N_space_nominal   # 名义设计空间（362,880 类）：把没试过的格算进分母，2026-09-15 裁定边界不认；只作最保守对照披露
+  threshold_kept: 0.95  # 2026-09-15 已裁：DSR 显著线 0.95 不放水到 0.90（在册裁定，勿再议）
+  pbo_gate_value: 0.05  # 晨裁 M3-A（2026-10-12 Owner）：沿用 correlation_overfitting_audit.py:64 PBO_MAX=0.05 为全仓统一门，同域重复簇收敛唯一
+  pbo_gate_existing_in_book: 0.05  # 源=src/zephyr/factor/analysis/correlation_overfitting_audit.py:64 PBO_MAX
+  budget_cap_formula: transitional_history_x1  # 晨裁 M3-A：过渡帽=该族已实测历史消耗×1（再挖一遍已烧掉的量即停），一季按实测复评
+  budget_cap_formula_owner: Owner 令⑥ 晨裁 M3 照推荐采纳（2026-10-12）；数值由生成器实测派生，禁手填
+  required_sharpe_table_source: docs/_working/statsgov_campaign/01_f06_dsr_restatement_v1.yaml#deflation_gate_line_inversion
+  rank_vs_gate_derived_fact: >
+    本口径集下换 N 不改排行榜名次（E_max(N) 对同批所有格是同一常数），只改"是否过线"；
+    因此试次预算管的是晋级门，不是排序——统一口径的必要条件是门，不是榜。
+  accounting_precedence_on_conflict: 取严者生效（账面分母 vs 磁盘实况分母，任一口径过即算过？否——按账面记消耗，按最严口径判显著，两者皆须出声）
+families:
+  - id: A
+    title_zh: 信号/因子族
+    object: 考试卡（calibration/comparison/ablation）、指标批、因子批、另类因子、板块因子、codesym 因子、重考
+    trial_unit: 一张考试卡=一次可审计试次（账本 kind=exam_card 已是此口径）
+    faces:
+      - {id: exam_cards_ledger, kind: ledger_kind, ledger_kind: exam_card}
+      - {id: fexam_score_books, kind: file_glob, pattern: "docs/_working/fexam/*exam*_v*.yaml", row_rule: key:results}
+      - {id: mineloop_exam_runs, kind: file_glob, pattern: "docs/_working/mineloop_campaign/*exam_run*.yaml", row_rule: key:results}
+      - {id: sector_line_prereg, kind: file_glob, pattern: "docs/_working/sector_line/exam/*.yaml", row_rule: key:results}
+      - {id: pg_score_tables, kind: pg_table, pattern: "exam_scores_v1 / indicator_exam_scores_v1 / factor_exam_scores_v1 / alt_factor_exam_scores_v1 / sector_factor_exam_v1 / codesym_factor_exam_v1"}
+    budget_cap: {value: null, unit: trials, basis: 待裁——建议=全仓 A 族历史消耗 × 放大系数，系数由统筹定}
+  - id: B
+    title_zh: 策略配方族
+    object: F06 网格（名义空间 n_raw）、策略重考、codesym 策略、注册册策略、引擎层 strategy_id
+    trial_unit: 一格（summary.evaluated）=一次；作废批照计入（宁严勿宽，在册先例 factory_grid_batch_a_voided）
+    faces:
+      - {id: grid_batches_ledger, kind: grid_batch_kind, ledger_kind: factory_grid_batch_a}
+      - {id: survivor_book, kind: file_glob, pattern: "data/strategy_intake/f06_survivors.csv", row_rule: csv_rows}
+      - {id: grid_oos_book, kind: file_glob, pattern: "docs/_working/fexam/grid_strategy_oos_v1.yaml", row_rule: key:rows}
+      - {id: strategy_exam_book, kind: file_glob, pattern: "docs/_working/fexam/strategy_exam_scores_v1.yaml", row_rule: key:results}
+      - {id: codesym_strategy_book, kind: file_glob, pattern: "docs/_working/fexam/codesym_strategy_exam_v1.yaml", row_rule: key:results}
+      - {id: mom029_books, kind: file_glob, pattern: "docs/_working/fexam/mom029_*.yaml", row_rule: key:results}
+      - {id: t0_batches, kind: ledger_kind, ledger_kind: t0_rule_engine}
+      - {id: oos_reexam, kind: ledger_kind, ledger_kind: oos_reexam}
+    engineering_caps_referenced_not_duplicated:
+      refs:
+        - config/search_space_prereg.yaml#budget_caps
+        - config/search_space_prereg_t3a.yaml#budget_caps.t3_points
+        - config/search_space_prereg_t3b.yaml#budget_caps.t3b_points
+      note: 统计帽（试次预算）与工程帽（点位/墙钟/显存）对象不同→不并（内收判据 §4.2 第三型），冲突取严
+    budget_cap: {value: null, unit: trials, basis: 待裁}
+  - id: C
+    title_zh: 组合/配置族
+    object: 5 套资产分配器、防守机制（ATR 止损对照）、仓位配方邻域
+    trial_unit: 一组 A/B 对照=一次；参数邻域 mini-grid 按格计
+    faces:
+      - {id: allocator_shadow, kind: file_glob, pattern: "docs/_working/fexam/allocator_shadow_report_v1.yaml", row_rule: key:results}
+      - {id: exit_sim, kind: file_glob, pattern: "docs/_working/fexam/exit_sim_report_v1.yaml", row_rule: key:results}
+    budget_cap: {value: null, unit: trials, basis: 待裁}
+  - id: D
+    title_zh: 状态识别/环境族
+    object: HMM 状态识别器、情绪指数择时、情绪六段重建规则
+    trial_unit: 一个分类器考卷=一次；未冻结规则=零考试资格（不消耗预算，也不得进榜）
+    faces:
+      - {id: state_recognizer, kind: file_glob, pattern: "docs/_working/fexam/state_recognizer_exam_v1.yaml", row_rule: key:results}
+      - {id: emotion_index, kind: file_glob, pattern: "docs/_working/fexam/emotion_index_exam_v1.yaml", row_rule: key:results}
+    budget_cap: {value: null, unit: trials, basis: 待裁}
+  - id: E
+    title_zh: 工程件族
+    object: GPU 引擎达标考、判官路由审计复跑、成本模型假设双口径
+    trial_unit: 一次复跑/一个等价性断言=一次（考"等价/达标"非"预测力"，折减口径不适用→只计消耗不计 DSR）
+    faces:
+      - {id: route_audit_replay, kind: file_glob, pattern: "docs/_working/**/18_route_audit_replay*", row_rule: table_rows}
+      - {id: exam_run_archive, kind: file_glob, pattern: "data/backtest_artifacts/runs/*/*.yaml", row_rule: key:results}
+    budget_cap: {value: null, unit: trials, basis: 待裁}
+  - id: F
+    title_zh: 挖矿器元层族
+    object: 车道产出质量（lane_b/c/c2）、LLM 研究员档位 A/B（GPU-01）
+    trial_unit: 一条被提交的候选=一次（元层考"出题人"：产量/入考通过率/幻觉率）
+    faces:
+      - {id: intake_ledger, kind: file_glob, pattern: "data/strategy_intake/*.csv", row_rule: csv_rows}
+      - {id: paper_pool, kind: file_glob, pattern: "docs/_working/fexam/paper_pool_v1.yaml", row_rule: key:results}
+    budget_cap: {value: null, unit: trials, basis: 待裁——元层杠杆最高，建议帽最松但必须存在（无帽=不可审计扩张）}
+state_machine:
+  unset_cap: UNSET_FAIL_CLOSED  # 无帽=不禁止开新挖，但每批必须出声"该族无帽"，且累计消耗入册呈裁（禁静默扩张）
+  over_cap: BLOCKED_AWAITING_RULING  # 达帽=停批，需裁定加帽或换空间；禁自行放宽口径来续跑
+  stale_denominator: DENOMINATOR_FORK  # 盘面/HEAD 两读法分母不等=登记态分母不可信，须先收口再判显著
+net_zero_note:
+  replaces_or_merges:
+    - 无退役件：本册是 N 账本（L0）之上的派生治理层，族消耗=L0 按 kind 聚合，不新增记账通道
+    - 收编: config/search_space_prereg*.yaml 的 points 类帽在 B 族披露位引用（不复制数值，同真源可派生→必并 §4.2 第一型）
+  why_not_merge_prereg: 预注册卡=算力/墙钟/显存工程预算（对象=跑得起），本册=统计预算（对象=显著性可信），跨域不同对象→不并
+promotion_plan:
+  tonight: 留 docs/_working/statsgov_campaign/（task_bound），不占正式目录、不进 ROOR
+  after_ruling: 帽值裁定后由本册生成器 render 正式版进 docs/01_policies_and_standards/_registry/catalogs/ 并登记 ROOR（须走册主车道，禁他班代打投影）

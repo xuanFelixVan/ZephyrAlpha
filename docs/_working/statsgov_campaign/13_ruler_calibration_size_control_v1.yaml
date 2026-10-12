@@ -1,0 +1,127 @@
+ttl: task_bound
+title: 尺子校准·阳性对照第二件（小市值）v1
+window:
+- '2021-01-01'
+- '2023-12-29'
+window_reason: 市值表 c1_market.stock_daily_basic 实测自 2021-01-04 起（2020 全年无市值数据），故本件窗口缩短
+panel_price:
+  window:
+  - '2021-01-01'
+  - '2023-12-29'
+  rows_fetched: 3532444
+  rows_dropped_bad_or_nan: 356
+  days: 727
+  symbols: 5455
+  cells_available_pct: 89.06
+  dtype: float32
+  source: c1_market.kline_daily.market_type='A_share' (DatabaseService CH 只读口)
+cap_month_ends: 36
+configs:
+  SIZE_total_mv_q10_monthly:
+    sharpe_annual: 1.2383
+    ann_return: 0.2459
+    skew: -0.4218
+    excess_kurt: 3.8206
+    T: 693
+    rebalances_used: 34
+    mean_turnover: 0.14
+  SIZE_total_mv_q10_biweekly:
+    sharpe_annual: 1.2341
+    ann_return: 0.2496
+    skew: -0.3363
+    excess_kurt: 3.6001
+    T: 708
+    rebalances_used: 71
+    mean_turnover: 0.069
+  SIZE_total_mv_q20_monthly:
+    sharpe_annual: 1.0349
+    ann_return: 0.199
+    skew: -0.7912
+    excess_kurt: 3.0835
+    T: 693
+    rebalances_used: 34
+    mean_turnover: 0.114
+  SIZE_total_mv_q20_biweekly:
+    sharpe_annual: 0.9643
+    ann_return: 0.1895
+    skew: -0.7086
+    excess_kurt: 2.9059
+    T: 708
+    rebalances_used: 71
+    mean_turnover: 0.056
+  SIZE_circ_mv_q10_monthly:
+    sharpe_annual: 0.5038
+    ann_return: 0.1056
+    skew: -0.4242
+    excess_kurt: 3.2861
+    T: 693
+    rebalances_used: 34
+    mean_turnover: 0.136
+  SIZE_circ_mv_q10_biweekly:
+    sharpe_annual: 0.3947
+    ann_return: 0.0845
+    skew: -0.3647
+    excess_kurt: 3.1481
+    T: 708
+    rebalances_used: 71
+    mean_turnover: 0.067
+  SIZE_circ_mv_q20_monthly:
+    sharpe_annual: 0.5455
+    ann_return: 0.1081
+    skew: -0.7189
+    excess_kurt: 2.9241
+    T: 693
+    rebalances_used: 34
+    mean_turnover: 0.108
+  SIZE_circ_mv_q20_biweekly:
+    sharpe_annual: 0.3587
+    ann_return: 0.0727
+    skew: -0.6362
+    excess_kurt: 2.7171
+    T: 708
+    rebalances_used: 71
+    mean_turnover: 0.053
+best_config: SIZE_total_mv_q10_monthly
+dsr_governance_N:
+  N: 93820
+  sharpe_annual: 1.2383
+  dsr: 0.008979
+  passes_dsr: false
+  degenerate: false
+dsr_validity_own_N:
+  N: 8
+  sharpe_annual: 1.2383
+  dsr: 0.709336
+  passes_dsr: false
+  degenerate: false
+n_pass_own_N: 0
+n_pass_governance_N: 0
+pbo_own_pool:
+  pbo: 0.0
+  mean_logit: 0.9674
+  n_splits_used: 70
+  n_splits_generated: 70
+  n_trials: 8
+  passes_pbo_gate: true
+  splits_spec:
+    n_groups: 8
+    k_test: 4
+    t1: None（日频点标签）
+    embargo: 0
+ew_market_benchmark:
+  sharpe_annual: 0.2902
+  ann_return: 0.0534
+best_excess_over_ew_market:
+  sharpe_annual: 1.6054
+  ann_return: 0.1925
+trial_accounting:
+  n_trials: 8
+  ledger_write:
+    batch_id: ruler-calib-20261012-size
+    n_trials: '8'
+    status: recorded
+    cumulative_trials: '40730'
+denominator:
+  book_cumulative: 40722
+  disk_unrecorded: 53098
+  primary_denominator_N: 93820
