@@ -169,3 +169,27 @@ discipline:
   - N 账本零写（见 trial_ledger）
   - 8 张卡 status 一律如实 blocked_on_impl，禁为凑开考数改面
   - 判定权全数留 E2/E4
+
+# ── 8. 01:55:01 复测口径 统筹裁定后的追加节（§1–§6 原文与读数零改动，旧案卷留档）──────────
+post_ruling_amendment:
+  ruling_ids_registered: [509, 510, 511, 512, 513]
+  ruling_channel: "统筹 01:55:01 复测口径 对话面补签 A×5 → 本班按裁定登记正门补录（PG 账本 api.register 五条全 OK，next_ruling_id --claim 占号 509-513 无撞号，册字节纯追加 +100/−0）"
+  what_changed_on_card_face: >-
+    8 张卡各加两枚机读键（插在 signal_kind 之后）：target_forward_face=precomputed 与 target_horizon_days={5|10}；
+    ②状态的可复核口径以**卡面尾追加键 status_update_20261013** 承载——卡面原文 status_reason 与 impl_gap
+    一字未动（首版曾就地改写，被落地仲裁按在册判据点名为"dev 在你基底之后新落的行不在这份字节里"，
+    遂改为基底＋尾追加形制，dev_only 行实测归零）。
+    判据位数值零改动（mono_spearman_min 0.6／ic_mean_min 0.02／ic_ir_min 0.3／双 same_sign 逐字仍取
+    预登记册 card_pillars_standard；窗口、分桶、牛熊两段一字未动）⇒ 本节不是挪门柱，是补"卡面冻结前向窗口"
+    的机读申报位（统筹约束原文＝"判据数值零自拟、卡面冻结前向窗口"）。
+  executor_patch_prepared: >-
+    纯追加可选档：calibration_exam._forward_face（缺省 (1, False)=次日语义逐字不变；申报且自洽才 shift(0)）
+    ＋card_binding._declared_forward_face（只开目标面这一环，配方册/滚动窗/z-score/多表复合照拦）。
+    半申报、错拼、越界、两处 horizon 不同值一律 fail-closed 抛错，禁静默退化成次日面出分。
+  classification_recheck_after_keys_added: >-
+    本班以车道码面（含补丁）复测 8/8：cls=A? reason=table_not_in_recipe_book:c1_market.kline_daily_hfq
+    ——即目标面这一环开了、数据面照拦，与"不放宽任何数据面闸"的约束自洽；
+    正对照＝同尺删去两键即回到 cls=C target_face_not_index_next_day（既有 178 张 preregistered 卡零影响）。
+  red_green_tests_added: 11（calibration_exam 5 组含 7 例参数化红证／card_binding 4 支／auto_mount 4 支）
+  regression_run: "tests/backtest/test_calibration_exam.py + test_card_binding.py + tests/research/research/backtest/test_auto_mount_sle3.py = 111 passed（零 CH，合成注入；含本班新增 19 支红绿双向，末次复跑实测 01:55:01）"
+  landing_constraint: "补丁今夜只备好不入队；明晨 Owner 无否决再投（统筹令原文）。多日面与 run_id 两补丁共触 card_binding/calibration_exam/auto_mount 三枚多班在飞件，投前先复测他班在途袋。"

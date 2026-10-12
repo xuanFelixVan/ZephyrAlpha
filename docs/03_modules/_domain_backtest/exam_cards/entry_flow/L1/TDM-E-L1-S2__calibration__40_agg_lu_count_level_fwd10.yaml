@@ -39,6 +39,8 @@ buckets:
   'on': 当日聚合序列值（原值）
   min_obs_per_bucket: 60
 signal_kind: series
+target_forward_face: precomputed  # 卡面冻结前向窗口（机读位；统筹 2026-10-13 01:2x 裁定①立项批）：r 位已是第 10 日前向读数，执行器禁二次位移
+target_horizon_days: 10
 pillars:
   monotonicity: 十分位响应曲线对 10 日面板等权前向收益单调（mono_spearman 过下界）
   ic_level: 时序 IC 均值过下界（母卡同键同值，未为凑数改档）
@@ -87,3 +89,8 @@ lineage:
   run_id: null
   score_row: null
   confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
+status_update_20261013:  # 尾追加更正块：上方 status_reason／impl_gap 原文一字未动（顺序改写会被落地仲裁判真冲突），本班按统筹裁定①在此登记口径
+  trigger: 统筹 2026-10-13 01:2x 裁定①＝多日标的前向面立项批（归本班），本班已备好纯追加可选档
+  gap_2_status_now: ②考面无 10 日前向目标面——补丁备好但未落 dev 前该缺口仍在；本班车道码面复测本卡 cls 已由 C(target_face_not_index_next_day) 转 A?(table_not_in_recipe_book)，即目标面这一环开了、数据面照拦
+  gap_recheck_command: cd scripts/backtest/fexam && python -c "import card_binding as cb, yaml, io; print(cb.classify_card(yaml.safe_load(io.open(r'docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__40_agg_lu_count_level_fwd10.yaml',encoding='utf-8').read())))"
+  gate_after_patch: 落 dev 后本卡仍须停在物化与配方册两件事上（本补丁不放宽任何数据面闸）；status 保持 blocked_on_impl 不变，禁为凑开考数改面
