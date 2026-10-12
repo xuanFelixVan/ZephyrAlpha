@@ -1002,18 +1002,25 @@ def _exit_sim_baseline(card: dict, entry: dict) -> Any:
     if exposure is None:
         raise RuntimeError("exit_sim_baseline: 装置未交付 exposure_daily 返回面（返回面扩展未落地？）")
     daily_return = nav.astype("float64").pct_change().dropna()
-    return ArmBase(
+    levels, level_creds = drawdown_level_series_pack(nav)
+    base = ArmBase(
         exposure=pd.Series(exposure).reindex(pd.DatetimeIndex(nav.index)),
         daily_return=daily_return,
-        series={},
+        series=levels,
         face_id="exit_sim_baseline_nav",
     )
+    # 级别回放凭据随底座走（两档各自的状态驻留日数/转换数/KILL 首现日与驻留日数），
+    # 由 arms_from_binding_book 并进出分凭据——凭据可复核，判定零自造
+    base.level_creds = level_creds
+    return base
 
 
-#: 注册动作刻意留给下一袋（净绿才投）：本袋若同时填入本册，在册的空册纪律桩
-#: test_arm_base_sources_book_starts_empty_by_design 会当场红，中间态红＝整袋死信。
-#: 下一袋＝注册 + 该桩按新纪律句重写（"册内只准在册已签认来源，未列名仍 fail-closed"）同批落。
-ARM_BASE_SOURCES: dict[str, Any] = {}
+#: 双臂底座来源册（WO-A1 绑定侧半件）：名→可调用（按臂参数产日频敞口序列）。
+#: 纪律演进（0081 原注"空册是有意，注册留给下一袋"——本袋即那一袋）：
+#:   册内只准**在册已签认**的来源（统筹批复乙案批 06 卡＋甲链签认；装置返回面由救援袋落地），
+#:   未列名一律 fail-closed（run_one 走 arm_base_source_unwired 如实报错，禁静默降级单臂、
+#:   禁现编近似序列冒充分母）——与 ArmBaseMissing/ArmFaceMismatch 同一哲学。
+ARM_BASE_SOURCES: dict[str, Any] = {"exit_sim_baseline": _exit_sim_baseline}
 
 
 def arms_from_binding_book(
@@ -1035,6 +1042,7 @@ def arms_from_binding_book(
         reviewed_by=entry.get("reviewed_by"),
         review_note=entry.get("review_note"),
         arm_target_len=int(len(tgt)),
+        arm_level_creds=getattr(base, "level_creds", None),
     )
     return open_arm, base_arm, tgt, ev
 

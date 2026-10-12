@@ -470,11 +470,181 @@ def test_run_one_dual_arm_without_wired_source_errors_instead_of_scoring(tmp_pat
     assert not (tmp_path / "scores.yaml").exists(), "拒绑路径不得留下分数行"
 
 
-def test_arm_base_sources_book_starts_empty_by_design():
-    """在册纪律正证：底座来源册**空**是有意的——禁在绑定层现编近似序列冒充分母。
+def test_arm_base_sources_book_only_holds_signed_sources(tmp_path):
+    """在册纪律演进袋（原桩"空册是有意"由 0081 明文指定本批重写，两句纪律一条不松）：
 
-    若哪天有人往这里塞"临时用日收益近似"之类的兜底，本用例先红。"""
-    assert cb.ARM_BASE_SOURCES == {}, (
-        "ARM_BASE_SOURCES 只收在册重放装置产出的按臂敞口序列；"
-        "新增须同批改 test_run_one_dual_arm_... 与册格 arm_base_source 字段"
+    ①册内只准**在册已签认**的来源（统筹批复乙案批 06 卡＋甲链签认；装置返回面另由救援袋落地）；
+    ②未列名一律 fail-closed——run_one 走 arm_base_source_unwired 如实报错，
+      禁静默降级成单臂、禁在绑定层现编近似序列冒充分母（与 ArmBaseMissing/ArmFaceMismatch 同哲学）。
+    有人往这里塞"临时用指数日收益兜底"之类的未签认来源，本用例先红。
+    """
+    assert set(cb.ARM_BASE_SOURCES) == {"exit_sim_baseline"}, sorted(cb.ARM_BASE_SOURCES)
+    src = cb.ARM_BASE_SOURCES["exit_sim_baseline"]
+    assert callable(src), type(src).__name__
+    # ②的活体判据：未列名来源必须落到拒绑出口，而不是回落到别处取数
+    calls = {"n": 0}
+
+    def _boom(*a, **k):
+        calls["n"] += 1
+        raise AssertionError("未签认来源不得触 CH 取数")
+
+    orig = cb.index_next_day_return
+    cb.index_next_day_return = _boom
+    try:
+        card = _arm_card()
+        entry = _arm_entry()
+        entry["arm_base_source"] = "bogus_unsigned_source"
+        p = tmp_path / "c.yaml"
+        p.write_text(yaml.safe_dump(card, allow_unicode=True), encoding="utf-8")
+        r = cb.run_one(p, {card["card_id"]}, tmp_path / "scores.yaml", "t", False, book={card["card_id"]: entry})
+        assert str(r.get("error", "")).startswith("arm_base_source_unwired"), r
+        assert calls["n"] == 0
+        assert not (tmp_path / "scores.yaml").exists()
+    finally:
+        cb.index_next_day_return = orig
+
+
+def test_wrong_base_identity_is_red_before_sizing_gate(tmp_path):
+    """红证"喂错底座必红"（统筹点名的那颗）：底座自报 face_id 与卡面 r 引句所讲的面不符 ⇒ 必抛。
+
+    这条专门防"闸真拦住、测试却认不出"的同名不同类坑：这里**直接用真源件的异常类**，
+    从 card_binding 的装配入口打进去，验的是同一条链（两路导入名归一后同一个类对象）。
+    """
+    from scripts.backtest.fexam.arm_protocol_binding import ArmBase, ArmFaceMismatch
+
+    idx = pd.date_range("2024-01-02", periods=8, freq="D")
+    exposure = pd.Series(0.5, index=idx)
+    daily_return = pd.Series([0.01, -0.02, 0.015, 0.0, -0.01, 0.02, -0.005, 0.01], index=idx)
+    # 身份冒充：形状与量帽都是合格的日收益面，只有 face_id 说漏嘴（喂的是指数收益不是基线组合）
+    wrong = ArmBase(exposure=exposure, daily_return=daily_return, series={}, face_id="index_csi300_next_day")
+    card = _arm_card()
+    entry = _arm_entry()
+    with pytest.raises(ArmFaceMismatch, match="target_face_mismatch"):
+        cb.arms_from_binding_book(card, entry, base=wrong, target=daily_return)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 级别序列回放适配器（MOD-RK-049 在册件的日频腿）——三颗红证＋四颗正证
+# 全部走合成净值，零 CH 零写生产路径（根宪法 §9 条目 6）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _nav(returns: list[float]) -> pd.Series:
+    """日收益序列 → 基线日净值（首日 1.0，其后累乘；峰值即 cummax，与卡面口径同形）。"""
+    idx = pd.bdate_range("2024-01-02", periods=len(returns) + 1)
+    vals: list[float] = []
+    v = 1.0
+    for r in returns:
+        v *= 1.0 + r
+        vals.append(v)
+    return pd.Series([1.0] + vals, index=idx)
+
+
+def test_replay_levels_hysteresis_is_slower_than_no_hysteresis():
+    """正证：两档确实在**降级时序**上分道——否则 maxdd_improvement_vs_no_hysteresis 门柱吃的是常数 0 差＝假考。"""
+    nav = _nav([-0.03, -0.0306, 0.0625] + [0.0] * 12)  # 探到 -6% 进 WARN，次日即完全修复
+    lv_h, cr_h = cb.replay_drawdown_levels(nav, arm_cfg="levels_hysteresis")
+    lv_n, cr_n = cb.replay_drawdown_levels(nav, arm_cfg="levels_no_hysteresis")
+    assert "WARN" in set(lv_h) and "WARN" in set(lv_n), (lv_h.tolist(), lv_n.tolist())
+    last_non_normal_h = len(lv_h) - 1 - int((lv_h[::-1] != "NORMAL").to_numpy().argmax())
+    last_non_normal_n = len(lv_n) - 1 - int((lv_n[::-1] != "NORMAL").to_numpy().argmax())
+    assert last_non_normal_h > last_non_normal_n, (
+        f"迟滞档应在册 min_hold 下更晚回满（h={last_non_normal_h} n={last_non_normal_n}）＝"
+        "两档同形意味着迟滞带根本没被回放"
     )
+    assert cr_h["arm_cfg"] == "levels_hysteresis" and cr_n["arm_cfg"] == "levels_no_hysteresis"
+    assert cr_h["state_days"] != cr_n["state_days"], "两档驻留日数全等＝无迟滞档没生效"
+
+
+def test_replay_levels_deescalates_one_step_per_day_only():
+    """正证＋披露锚：无迟滞档仍**不可跳级**（CRISIS→DANGER→WARN→NORMAL 一日一级）。
+
+    这条同时证明两件事：①级别真由在册件产生（手按 5/10/15/25 逐日查表会得到"即日回满"，
+    与本断言相反）；②07 卡面 approximations_disclosed 里"逐级降级不可跳级"是可测事实不是免责话术。
+    """
+    nav = _nav([-0.06, -0.06, -0.06, 0.2039] + [0.0] * 10)  # 最深 -16.9% 进 CRISIS，次日基本修复
+    lv, cr = cb.replay_drawdown_levels(nav, arm_cfg="levels_no_hysteresis")
+    assert cr["first_kill_date"] is None
+    assert lv.iloc[3:7].tolist() == ["CRISIS", "DANGER", "WARN", "NORMAL"], lv.tolist()
+    # 第 4 日回撤已小于最轻档触发线（5%）却仍停在 DANGER＝"解除即回满"做不到，只能逐级
+    dd4 = float((nav / nav.cummax() - 1.0).iloc[4])
+    assert abs(dd4) < 0.05, dd4
+    assert str(lv.iloc[4]) == "DANGER", lv.tolist()
+
+
+def test_replay_levels_kill_is_sticky_and_quantified():
+    """红证①（L4 不可解除近似）：净值完全修复后 KILL 仍驻留，且凭据把驻留日数量化出来。
+
+    在册件 KILL 的唯一出口是 request_manual_reset（三项人工确认），回测面不可能触发；
+    若将来有人给状态机加了自动复位，本用例的红面（末段仍 KILL）会当场翻红＝披露被钉住。
+    """
+    nav = _nav([-0.10, -0.10, -0.10, -0.05, 0.30] + [0.0] * 10)  # 最深约 -31% 破 kill_dd，后修复到 -10%
+    lv, cr = cb.replay_drawdown_levels(nav, arm_cfg="levels_hysteresis")
+    assert cr["first_kill_date"] is not None
+    assert str(lv.iloc[-1]) == "KILL", lv.tail(5).tolist()
+    assert cr["kill_stuck_days"] > 0, "回撤已回到 25% 阈值内却记 0 驻留日＝近似没被量化"
+
+
+def test_replay_levels_rejects_empty_and_nan_and_nonpositive_nav():
+    """红证②：三类脏净值必须红，禁把"缺失/无数据"伪装成最轻档（NORMAL 全程）。"""
+    with pytest.raises(RuntimeError, match="empty_nav"):
+        cb.replay_drawdown_levels(pd.Series([], dtype="float64"))
+    dirty = pd.Series([1.0, float("nan"), 0.9], index=pd.bdate_range("2024-01-02", periods=3))
+    with pytest.raises(RuntimeError, match="has_nan"):
+        cb.replay_drawdown_levels(dirty)
+    neg = pd.Series([1.0, 0.0, -0.5], index=pd.bdate_range("2024-01-02", periods=3))
+    with pytest.raises(RuntimeError, match="nonpositive"):
+        cb.replay_drawdown_levels(neg)
+
+
+def test_replay_levels_rejects_unknown_arm_cfg_and_out_of_vocab_state():
+    """红证③：档名白名单＋五态词表外出现即红（禁在适配器里静默扩档给数，含 RECOVERY）。"""
+    nav = _nav([-0.03])
+    with pytest.raises(RuntimeError, match="arm_cfg_unknown"):
+        cb.replay_drawdown_levels(nav, arm_cfg="levels_bogus")
+    seen: list[str] = []
+
+    seen: list[str] = []
+    import zephyr.risk.core.drawdown_state_machine as dsm
+
+    orig = dsm.DrawdownStateMachine  # 先取原件再换面，否则 spy 自己套自己无限递归
+
+    class _SpyingMachine:
+        """把在册件的 current 换成词表外的 RECOVERY，验适配器必红（判定逻辑仍在在册件里）。"""
+
+        def __init__(self, *a, **k) -> None:
+            self._real = orig(*a, **k)
+
+        def evaluate(self, **kw):
+            return self._real.evaluate(**kw)
+
+        @property
+        def current(self):
+            from zephyr.risk.core.drawdown_state_machine import DrawdownState
+
+            seen.append("probed")
+            return DrawdownState.RECOVERY
+
+        @property
+        def position_cap(self):
+            return self._real.position_cap
+
+    dsm.DrawdownStateMachine = _SpyingMachine
+    try:
+        with pytest.raises(RuntimeError, match="state_out_of_vocab"):
+            cb.replay_drawdown_levels(nav, arm_cfg="levels_hysteresis")
+    finally:
+        dsm.DrawdownStateMachine = orig
+    assert seen, "间谍机未被调用＝断言测的是空气"
+
+
+def test_drawdown_level_series_pack_names_match_book_contract():
+    """正证：pack 交付的 series 键名＝绑定册 "series:<档名>" 引用的两个名字（册与码面同形）。"""
+    nav = _nav([-0.04, -0.04])
+    series, creds = cb.drawdown_level_series_pack(nav)
+    assert sorted(series) == sorted(cb.DRAWDOWN_LEVEL_SERIES_NAMES) == ["levels_hysteresis", "levels_no_hysteresis"]
+    assert sorted(creds) == sorted(cb.DRAWDOWN_LEVEL_SERIES_NAMES)
+    for name, s in series.items():
+        assert len(s) == len(nav), name
+        assert set(s.unique()) <= set(cb._DRAWDOWN_STATE_VOCAB), (name, s.unique().tolist())
+        assert s.index.equals(pd.DatetimeIndex(nav.index).sort_values()), name
