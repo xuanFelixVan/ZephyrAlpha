@@ -278,3 +278,58 @@ open 接管条目（该会话 pid 41268 已死、claim 泄漏 8 件含 `scripts/
 零面追加：判据数值零动｜02/06/07 卡面判据键零动（本轮只改 07 草案的两行署名性文字）｜
 判官件零改动（panel 设计稿只列"必须改哪些行"，未动一行）｜分数册零行｜N 账本零写｜CH 实跑零次｜
 他班袋与死袋零触碰｜热册投影（车道内 +1400 行他班条目）零入袋。
+
+# 十、代码袋 0003 死信与拦局证据（2026-10-12 20:3x 追加）
+
+## 10.1 死因（读 dead_reason 原文，不猜）
+
+`q-20261012-st-mineloop2-20261012-0003`（card_binding.py +109/−0）落 dead/，
+网关落盘失败＝门禁 **TAKEOVER-PENDING** 阻断，命中**前任会话 `st-mineloop-20261010`** 的
+open 接管条目（判死证据 last_activity idle 31045.3s > 7200s），命中文件正是
+`scripts/backtest/fexam/card_binding.py`。该条目的处方清单含其自有车道
+`.aidrafts/st-mineloop-20261010`（dirty=107）、12 支其自有死袋（含 0080）与心跳残留。
+
+同一拦局对本班两袋的影响（实测台账 `--list` 面复核）：
+`scripts/backtest/fexam/card_binding.py` 与 `tests/backtest/test_card_binding.py` **均**被该条目覆盖 ⇒
+代码袋与测试袋都投不动；`docs/_working/mineloop2_campaign/*` 不被任何 open 条目覆盖 ⇒ 文档袋可走。
+
+## 10.2 决定性证据：前任车道那件与 dev **零内容差**（所以这不是内容冲突，是账面归属）
+
+本班只读复核 `.aidrafts/st-mineloop-20261010/scripts/backtest/fexam/card_binding.py`：
+
+```
+lines theirs=1213  dev=1213
+_exit_sim_baseline: theirs=1 dev=1
+ARM_BASE_SOURCES[: theirs=1 dev=1
+replay_drawdown_levels: theirs=0 dev=0
+register: theirs=4 dev=4
+```
+
+⇒ 其 card_binding.py 面**没有任何未落地差量**（与 dev 同长同符号计数，且不含本班新函数）；
+其 dirty=107 集中在 exam_cards 新卡与几本注册表，不在绑定层。
+所以"我落地会吞前任未落地工作"这一风险在**该件上不成立**；门拦的是归属登记，不是字节冲突。
+本班据此仍**不自解他班账**（他班 12 支死袋与 107 脏件属其属主/维护三班判定面，
+代处置＝归属篡改级），只把这条证据交给有权者以省其复核成本。
+
+## 10.3 本班已做的与未做的
+
+已做：①代码已重基到 0081 落地后的新 dev 字节并实测 +109/−0、+127/−0、54 passed；
+②中间态自证——把 dev 版用例单跑我的新码＝48 passed，证明"码先落、测试后落"这一段 dev 不红；
+③文档袋 0001/0002 已落地（dev 侧 `git cat-file -e` 与 `git log` 双验），设计稿含 §8 分桶精修追加；
+④本班自身接管条目已按处方自销（见 §九 9.3），现存 open 条目 0 条。
+
+未做（属他域或门位）：不 requeue 前任任何死袋（含 0080）、不 `--resolve` 前任账、
+不 `git worktree remove` 前任车道、不动其 107 脏件、不碰热册投影。
+
+## 10.4 呈统筹的处置岔路（本班不自拍，三条均可即刻执行）
+
+- 甲（推荐）＝转维护三班处置 `st-mineloop-20261010` 条目（其 Rx 清单本就在其治理域内），
+  本班随后 requeue 0003 与投测试袋。代价＝本班代码面滞留到处置完成，但卡面/设计稿/账册已全部在外。
+- 乙＝统筹明令授权本班以"§10.2 零内容差"为据 `--resolve st-mineloop-20261010 --by st-mineloop2-20261012`
+  ——**只销账不代处置其死袋与车道**（那两项仍归其属主）。代价＝账面上由别会话销他人条目，需留痕。
+- 丙＝统筹指认另一个有权会话执行乙同款。
+  不点后果＝代码与测试两件持续被同一条目拦，首张双臂真分与 07 卡转正的接线袋都开不了工。
+
+另附一条独立观测请一并转维护三班：`st-cband-20261012` 在 0080 死信里被门禁按"PID 已死/注册表除名"
+判死，而本班随后 `SessionRegistry` 复查该 sid **在册且 logical=True、reincarnation_count=3**；
+即"死"的判定在 PID 面与注册表面不一致（与本班 §九 9.3 自己的三次 keeper 失活同族）。

@@ -226,3 +226,40 @@ def run_backtest_full(weights: pd.DataFrame, px_close: pd.DataFrame,
 - 首张双臂真分的真阻塞＝**0080 死信**（`st-exposure_daily` 返回面未落地）：
   dead 袋内 blob 完整可取（562 行，sha 自校验通过），但按宪法与本令，本班不 requeue 他班袋、
   不改他班件；此事已呈统筹转维护三班。
+
+
+# 8. 分桶精修（vwap 档口径实测，2026-10-12 20:0x 追加；§1.2 原表不改写，本节为增量）
+
+追加动因：§1.3 写"`exec_caliber` 只有 close|next_open|vwap 三档**日频**口径"，
+落笔后本班又把"谁生产 px_exec"查到底，发现一处会影响 D3 排期判断的事实，必须补记。
+
+实测原文（`scripts/backtest/factory_grid_executor.py`）：
+
+```
+2297:    px_exec_all: pd.DataFrame | None = None
+2299:        px_exec_all = wide(px, "open")
+2303:        px_exec_all = _vwap_from_amount_volume(wide(px, "amount"), wide(px, "volume"), closes_all)
+2463:        px_exec_g = None if px_exec_all is None else px_exec_all[cols]
+2518/2527/2571:  ... px_exec=px_exec_g / exec_caliber=exec_caliber ...
+```
+
+⇒ 在册 vwap 档的执行价宽表是 **当日 amount/volume 均价**（日均价），不是 5 分钟 VWAP。
+⇒ 卡面 `TDM-X-S2-03/comparison/02` 要的 `vwap_5min` 与在册 `vwap` **不是同一个东西**——
+这一格的缺口是**口径**（谁来把分钟聚合到日频执行价、按什么口径），不是撮合引擎。
+
+据此把 §1.2 的 B4 桶拆细（原表保留不动）：
+
+| 细分桶 | 支 | 缺什么 | 是否依赖新引擎 |
+|---|---|---|---|
+| B4a 成交价口径异（同一份卖单清单，仅成交价口径异） | TDM-X-S2-03/02 | 日内 VWAP→日频执行价宽表的生产者＋口径冻结；引擎侧 `px_exec` 入口**已在册** | **否**（复用 run_backtest_full） |
+| B4b 分批/追单/参与率/多 bar 状态 | X-S2-01/02、X-S2-04/02、X-S2-05/02(ladder) | 日内状态机（分批节奏、逐 bar 追单 1 tick、最优五档即成剩撤、参与率硬顶）——`scripts/backtest/` 下零命中 | **是** |
+| B3 同日卖出次序 | X-R1-02/02 | "同日多标的按次序分配成交价"的简化面；**待核**：若次序只改变均价而不改变是否成交，可退化为 px_exec 分配问题（未读判据前本班不改口，保持"介于两者之间"） | 待核后定 |
+
+对 D3（排期前置）的改判建议：把"样本面核"扩成两件只读核——
+①分钟数据窗与样本年数（卡面自证起点 2021-09-01 ⇒ IS 仅约 3.3 年，是否满足 min_obs_per_bucket=60
+与两处危机段覆盖）；②日内 VWAP 口径核（B4a 若要免引擎，必须先把"5min VWAP 如何聚合为日频执行价"
+钉成卡面可引句，否则仍是替卡拍数）。核完再决定 B4b 引擎是否立项。
+
+新增一条可复用纪律候选：B4a 是**唯一可能不新增引擎就通的路**，
+且它复用 07 卡族刚立起的"同一装置一次调用产多面"形态（底座来源＋自报身份标签）。
+若统筹要压缩总工时，排期顺序建议 P0 → P1 → **B4a** → 两件只读核 → B4b/B3。
