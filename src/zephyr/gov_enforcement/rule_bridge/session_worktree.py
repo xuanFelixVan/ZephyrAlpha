@@ -472,6 +472,7 @@ def _log_worktree_delete(
     *,
     phase: str = "done",
     with_stack: bool = False,
+    extra: dict | None = None,
 ) -> None:
     """worktree 删除遥测（GATE-DEPGRAPH-OPS 治本 Phase 4）。
 
@@ -518,6 +519,14 @@ def _log_worktree_delete(
             # 现场，如 _sweep_one_dir/cmd_abort）。
             stack_lines = traceback.format_stack()[:-1]
             entry["stack"] = "".join(stack_lines)[-4000:]
+
+        if extra:
+            # C13（统筹裁定 2026-10-13）：退役存证坐标随删除事件同条落盘。
+            # 病根实测＝lane-archive 把 Z1 patch 写进 worktree_abort.jsonl，而统一的擦除
+            # 遥测流 worktree_ops_log.jsonl（GATE-WORKTREE-OPS-TELEMETRY 的审计对象）里
+            # 一条都没有——取证者要跨两本账拼"删了什么／东西在哪"，拼不出来就成悬案。
+            # 只增字段不改判据：op/phase/session_id/source/path 五键语义一字未动。
+            entry.update(extra)
 
         with open(log_dir / "worktree_ops_log.jsonl", "a", encoding="utf-8") as fh:
             fh.write(json.dumps(entry, ensure_ascii=False) + "\n")

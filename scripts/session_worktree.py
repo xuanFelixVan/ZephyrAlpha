@@ -983,6 +983,28 @@ def _rescue_untracked_files(wt_path: Path, sid: str, untracked: list[str]) -> di
     return {"moved": moved, "rescue_dir": rescue_dir}
 
 
+def _log_archive_delete_event(wt_path: Path, phase: str, *, extra: dict | None = None) -> None:
+    """C13 遥测桥接：把 lane-archive 的擦除动作写进统一遥测流（永不阻断归档主链）。
+
+    车道目录名即 sid（`.aidrafts/<sid>`），所以 begin 阶段无需上游传参就能归因到人。
+    rule_bridge 不可达/写盘失败一律静默降级（与 _log_worktree_delete 自身语义一致）。
+    """
+    try:
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import _log_worktree_delete
+
+        _log_worktree_delete(
+            wt_path.name,
+            "lane-archive",
+            wt_path,
+            REPO_ROOT,
+            phase=phase,
+            with_stack=(phase == "begin"),
+            extra=extra,
+        )
+    except Exception:  # noqa: BLE001 — 遥测不得改变归档结果
+        print(f"[ARCHIVE] 遥测降级（phase={phase}），不影响归档主链", file=sys.stderr)
+
+
 def _archive_generate_evidence(sid: str, wt_path: Path) -> dict:
     """退役 patch 存证（复用 rule_bridge Z1 原语；fail-closed——失败调用方必须保留车道）。"""
     try:
@@ -1046,6 +1068,11 @@ def _archive_rescue_phase(info: dict, sid: str, wt_path: Path, skip_rescue: bool
 
 def _archive_remove_and_verify(wt_path: Path) -> bool:
     """③remove（locked 双 force 实测可过；失败 safe_rmtree 兜底）+ ④prune 进程外核实。"""
+    # C13（统筹裁定 2026-10-13）：擦除前先落一条 begin 事件进统一遥测流
+    # （worktree_ops_log.jsonl，GATE-WORKTREE-OPS-TELEMETRY 的审计对象）。
+    # 实测缺口＝lane-archive 历史上只写 worktree_abort.jsonl，遥测流里六条被归档车道
+    # 零命中（st-nightmine-20261010 等）——"谁删的／东西搬到哪"跨账拼不出即成悬案。
+    _log_archive_delete_event(wt_path, "begin")
     r_rm = _run_git(["worktree", "remove", "--force", "--force", str(wt_path)], check=False)
     if r_rm.returncode != 0:
         print(f"  ③ worktree remove 失败（{(r_rm.stderr or '').strip()[:120]}）→ safe_rmtree 兜底", file=sys.stderr)
@@ -1079,6 +1106,19 @@ def _archive_branch_finish(sid: str, branch: str | None, info: dict, patch_path:
         "ARCHIVED",
         "lane-archive 完成",
         {"branch": branch, "verdict": info["verdict"], "ahead": info["ahead"], "patch": patch_path},
+    )
+    # C13：done 事件把"东西在哪"钉进遥测流——patch 存证路径＋三分类读数随删除同条可查，
+    # 事后判"这车道被删了还是被归档了"不必再跨 worktree_abort/ops_log 两本账拼。
+    _log_archive_delete_event(
+        REPO_ROOT / ".aidrafts" / sid,
+        "done",
+        extra={
+            "patch_path": patch_path,
+            "verdict": info.get("verdict"),
+            "ahead": info.get("ahead"),
+            "branch": branch,
+            "pid": os.getpid(),
+        },
     )
 
 
