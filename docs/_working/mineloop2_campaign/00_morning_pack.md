@@ -333,3 +333,78 @@ register: theirs=4 dev=4
 另附一条独立观测请一并转维护三班：`st-cband-20261012` 在 0080 死信里被门禁按"PID 已死/注册表除名"
 判死，而本班随后 `SessionRegistry` 复查该 sid **在册且 logical=True、reincarnation_count=3**；
 即"死"的判定在 PID 面与注册表面不一致（与本班 §九 9.3 自己的三次 keeper 失活同族）。
+
+# 十一、救援袋与接线袋落地账＋本轮四处自纠（2026-10-12 20:4x-21:0x）
+
+## 11.1 统筹令执行序与在途态（只认 git 与队列双侧核账）
+
+| 袋 | 内容 | 态 | 落地判据 |
+|---|---|---|---|
+| q-0005 | 适配器 card_binding.py +109/−0 | **done** | dev 该件内 `replay_drawdown_levels` 命中数 = 2 |
+| q-0006 | 0080 返回面救援 exit_simulator.py +14/−0 | processing | dev 上 `exposure_daily` 现仍 0 命中＝未落 |
+| q-0007 | 接线袋 card_binding +14/−6 与 tests +176/−6 | pending | 注册位 `"exit_sim_baseline": _exit_sim_baseline` 现仍 0 命中 |
+| q-0003 | 首次投的代码袋（已死） | dead（存档，内容由 0005 复活） | — |
+
+三袋逐件核过 `blob sha256 == 车道磁盘字节`，零失配。
+
+## 11.2 0080 救援＝统筹令原样执行（红证三件全过，两档 stop_enabled 各一遍）
+
+基底先核：原袋 `base_head=1075a03e4efe` 的该件与 **dev 现字节逐字符相等**（同 548 行）⇒
+落件字节直接取死袋 blob（sha256 与袋内 `blob_sha256` 相符），零重推导零改写。红证（同输入两码面）：
+输入指纹相等 `b4340dfe16b53bbbfb91`（=True）/`32420c3d24ea0357e292`（=False 档），
+nav 索引相等且**逐位最大差 0.0**，既有 **12 支 st 键零变**，新增键仅
+`exposure_daily`/`weights_daily`，移除 0，arity 不变；自洽附加尺＝敞口∈[0,1] 且
+`weights 行和 − exposure` 最大差 0.0。回归面 `pytest tests/backtest/fexam -q` = **82 passed**。
+零 CH 零生产写。探针：`.runtime/tmp/st-mineloop2-20261012/probe_rescue_0080_two_face.py`。
+
+**在册坑复证一条（我这次真踩）**：两码面副本的放置层不是任意——该件自锚
+`RUN_ROOT = Path(__file__).parent.parents[3]` 且断言 `RUN_ROOT/AGENTS.md` 存在，
+我把副本多放深一层（`.runtime/tmp/<sid>/probe/dev_face/`）就得到
+`AssertionError: RUN_ROOT 解析失败: ...\.runtime` 的**假红**；改到恰四层
+（`.runtime/tmp/<sid>/dev_face/`）即过。指纹还必须取"各码面实收参数字节"，
+在外面算一次再比两次＝恒真、测的是空气（我第一版就是这么写的，已重写）。
+
+## 11.3 连坐账按授权二次销；根治未做（如实报）
+
+`st-mineloop-20261010` 的接管条目时间线（全部实测）：15:22 由 **st-examrun-20261012** 首销 →
+我 20:2x 用门自己的尺测 card_binding/tests **passed=True**（据此以为已通）→ 同轮再测
+exit_simulator **passed=False**，判死证据换成 `orphan_resources: .aidrafts/st-mineloop-20261010 在盘而注册表无此会话`
+⇒ **条目会被 `--scan` 按其仍在盘的车道重开**，只要那 107 脏件的车道还在。
+20:4x 按统筹授权乙案二次 `--resolve ... --by st-mineloop2-20261012`，note 原文入账，
+随后门的尺复验三件全 passed。
+根治＝处置其车道本体（107 件在考试卡与注册表域），本班未做（非本班权限，且需逐件核成果归属）；
+统筹 note 里"遗留归本班继承处置"这句本班接单但**另单执行**，本轮只解绑定层提交连坐。
+
+## 11.4 本轮四处自纠（都改成下班的省事面）
+
+1. **我自己的 PYTHONPATH 泄漏造出"网关 fail-closed"假红**：在主区跑 `git_commit.py` 时
+   沿用了车道的 `PYTHONPATH=$PWD`，于是主区脚本 import 到**车道 8 小时前的旧 src**，
+   报 `POOL-REGRESSION-DIRECTION: factory function not found`（该工厂是今天才落的新门），
+   看着像提交链全局崩。清掉 env 后 `CLAIMED: 1/1`。⇒ 规矩：**主区脚本必须 `env -u PYTHONPATH`；
+   车道脚本必须 `PYTHONPATH=$PWD`**，两者不可混带。
+2. **车道落后 HEAD 八小时**：`arm_protocol_binding.py`（缺 0081 的 ArmBase）与
+   `test_calibration_exam.py` 停在旧面，症状是接线新用例 `ImportError: cannot import name 'ArmBase'`。
+   按文件 `git checkout dev -- <两件>` 同步（本班在这两件上零内容改动，同步后对 dev 净差空）。
+   ⇒ 接任何"他人已落地"的接口前，先 `git diff dev --numstat` 量本车道该件是否落后，别看盘上代码就写用例。
+3. **RUFF-PRECLEAN 预检替本班省一整轮 landing**：入队即拦"Would reformat:
+   test_card_binding.py"（我新加段落多一个空行），修后重投；该门只读不改写，
+   正是"落地侧才见红要烧完一整轮"的通道阻断谱前移。
+4. **接线为什么必须一袋（跨域留痕）**：注册代码与它自己要重写的那道空册纪律桩分处
+   `scripts/`（D_BACKTEST）与 `tests/` 两域，拆开投无论谁先落都必留一个红色中间态
+   （先落码＝dev 旧桩断言空册当场红；先落测试＝新桩断言已签认册红）。
+   按根宪法 §2 第 4 条用 `--allow-multi-domain` 留痕合袋，不拆袋糊。
+
+## 11.5 一条他班存量红（登记不代修，请转考试班）
+
+`tests/backtest/test_calibration_exam.py::test_run_card_consumes_injected_ledger_path` 要
+`run_card(ledger_registry_path=...)`，而 dev 码面 `grep -c ledger_registry_path` = 0；
+在主区落地面复跑同样红（1 failed/37 passed），其用例由 c0da1808f1 自述
+"改前 dev 字节跑＝TypeError，已实测证红"＝先落测试后落码的在途态。
+本班相关面全绿（test_card_binding 39 passed、test_arm_protocol_binding 16 passed），不代修。
+
+## 11.6 落地后本班剩下的两件事
+
+1. 绑定册 07 册格（`arm_base_source: exit_sim_baseline` ＋ arms 面引句与五态 `level_map`）
+   ＋07 卡面转正（creation_token＋ASCII 路径＋depgraph），status 升 preregistered；
+2. 首批开考（真 CH 读一次基线面板出首张双臂分，试次照进 n_trial_ledger）。
+   这两件都等 q-0006/q-0007 落地，缺一不开考——06/07 卡的 impl_gap ①② 到此才算闭合。
