@@ -1,0 +1,16 @@
+{
+  "对象": "挖矿道 20 张反向卡（TDM-E-L1-S2/calibration/17..36_*_high_event）",
+  "实测态": {
+    "status": "blocked_on_impl",
+    "signal_kind": "series",
+    "route": "event",
+    "cls": "U",
+    "cls_reason": "no_data_binding_section",
+    "bucket_type": "event_flag_two_state_contrast",
+    "tables": []
+  },
+  "缺口": "事件开关算子的基序列侧无在册算子：event_flag_rolling_pctile 要 base_op（现有 OPS 里无'指标列→日频序列'）或 base_csv（SERIES_DIR 无该族入库序列）",
+  "需要的一条算子": "technical_indicator 表按列取日频聚合序列（列名＝指标列，agg 与去重须逐表面实证），再喂 event_flag_rolling_pctile；一格一序列，禁把行业/个股截面冒代全市场均值",
+  "绑定纪律引用": "prose_quote 必须是卡面 data_binding 原文子串（run_binding_book:824-827 机械校验）；面板/多序列形另待面板通道（本班级 §9.3-A 实测）",
+  "归属": "card_binding 算子面＝矿考二班他域，本班只登记规格不代写"
+}

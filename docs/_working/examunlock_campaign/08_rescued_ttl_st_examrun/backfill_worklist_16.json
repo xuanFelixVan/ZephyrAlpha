@@ -1,0 +1,281 @@
+{
+ "口径": "dev 面两本对账后的 eligible 正集，逐条带分数册 run_id（统筹令：补账逐条带 run_id 对表）",
+ "条数": 16,
+ "前置两修": "未落地（质量闸预算口径＋探索分册与 record_run 互斥），本清单只备不执行",
+ "表": [
+  {
+   "key": "examcard:TDM-E-L1-S0/calibration/07_margin_flow_shortwindow:2026-10-10",
+   "行数": 1,
+   "run_id": [
+    "mineloop-r1-07_margin_flow_short"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    500
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L1-S0/calibration/07_margin_flow_shortwindow:2026-10-11",
+   "行数": 1,
+   "run_id": [
+    "mineloop-route-audit-07_margin_flow_short"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    500
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L1-S3/calibration/05_limit_up_premium_derived:2026-10-11",
+   "行数": 2,
+   "run_id": [
+    "mineloop-lu-05_limit_up_premium_",
+    "mineloop-route-audit-05_limit_up_premium_"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false,
+    false
+   ],
+   "n_trials_in_score": [
+    1619,
+    1619
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L1-S3/calibration/06_promotion_rate_derived:2026-10-11",
+   "行数": 2,
+   "run_id": [
+    "mineloop-lu-06_promotion_rate_de",
+    "mineloop-route-audit-06_promotion_rate_de"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false,
+    false
+   ],
+   "n_trials_in_score": [
+    1619,
+    1619
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow:2026-10-10",
+   "行数": 1,
+   "run_id": [
+    "mineloop-r1-04_synthetic_downsid"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    5014
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow:2026-10-11",
+   "行数": 1,
+   "run_id": [
+    "mineloop-route-audit-04_synthetic_downsid"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    5014
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L2-02/calibration/02_接棒撤离榜:2026-10-11",
+   "行数": 3,
+   "run_id": [
+    "mineloop-r5-02_接棒撤离榜",
+    "mineloop-recast-02_接棒撤离榜",
+    "mineloop-route-audit-02_接棒撤离榜"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false,
+    false,
+    false
+   ],
+   "n_trials_in_score": [
+    1254,
+    1254,
+    1254
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L2-03/calibration/02_调整周期进度:2026-10-10",
+   "行数": 1,
+   "run_id": [
+    "mineloop-r4-02_调整周期进度"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    1195
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L2-03/calibration/02_调整周期进度:2026-10-11",
+   "行数": 2,
+   "run_id": [
+    "mineloop-recast-02_调整周期进度",
+    "mineloop-route-audit-02_调整周期进度"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false,
+    false
+   ],
+   "n_trials_in_score": [
+    1195,
+    1195
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L2-04-2/calibration/02_虹吸态成交集中度:2026-10-10",
+   "行数": 1,
+   "run_id": [
+    "mineloop-r3-02_虹吸态成交集中度"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    1254
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L2-04-2/calibration/02_虹吸态成交集中度:2026-10-11",
+   "行数": 2,
+   "run_id": [
+    "mineloop-recast-02_虹吸态成交集中度",
+    "mineloop-route-audit-02_虹吸态成交集中度"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false,
+    false
+   ],
+   "n_trials_in_score": [
+    1254,
+    1254
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L3-06/calibration/02_地量档位开关:2026-10-10",
+   "行数": 1,
+   "run_id": [
+    "mineloop-r1-02_地量档位开关"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    5282
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L3-06/calibration/02_地量档位开关:2026-10-11",
+   "行数": 1,
+   "run_id": [
+    "mineloop-route-audit-02_地量档位开关"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    5282
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L9-A09/calibration/02_快讯情感日均值:2026-10-10",
+   "行数": 1,
+   "run_id": [
+    "mineloop-r2-02_快讯情感日均值"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    4067
+   ]
+  },
+  {
+   "key": "examcard:TDM-E-L9-A09/calibration/02_快讯情感日均值:2026-10-11",
+   "行数": 1,
+   "run_id": [
+    "mineloop-route-audit-02_快讯情感日均值"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    4067
+   ]
+  },
+  {
+   "key": "examcard:TDM-X-S1-02/comparison/02_dualwindow:2026-10-10",
+   "行数": 1,
+   "run_id": [
+    "examcard-X-stop-dualwindow-20261010"
+   ],
+   "verdict": [
+    "fail"
+   ],
+   "pillars_all_pass": [
+    false
+   ],
+   "n_trials_in_score": [
+    null
+   ]
+  }
+ ]
+}

@@ -1,0 +1,241 @@
+schema_version: mineloop-binding-book/v1
+title: 考试解锁班绑定册（reverse_triage_batch3 事件开关族 20 格；卡面派生，零自创口径）
+built_by: .runtime/tmp/st-examunlock-20261013/gen_binding_book.py（一次性，产物为本册）
+owner_sid: st-examunlock-20261013
+discipline: '每格 prose_quote 必须是卡面 data_binding 原文子串（运行器机械校验，找不到即拒绑）；
+
+  算子只做卡面已冻结的算法（op_event_flag_rolling_pctile，历史滚动分位），零自创口径；
+
+  判据面（window/buckets/pillars_numeric）由 card_binding.run_one 出分前后做内容级断言；
+
+  本册不改动矿考二班属主册 docs/_working/mineloop_campaign/02_binding_book.yaml；
+
+  底座 CSV 未物化即整卡拒跑（_event_base_series 抛 base_csv_absent_or_empty，不出假分）。
+
+  '
+provenance:
+  spec: docs/_working/examunlock_campaign/02_ti_series_spec.md
+  materializer: scripts/audit/ti_daily_mean_materialize.py
+  cards_face_status: 20 卡原 status=blocked_on_impl，卡面自书'物化接线跑通即转 preregistered 开考，禁改卡面'
+  route_check: 20 卡 pillars_route 全=event 且 pillars_numeric 与已考卡 16 五键全等（零越表词键）
+entries:
+- card_id: TDM-E-L1-S2/calibration/17_ind_volume009_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_adosc_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_adosc_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0718（is_ref5 -0.1195）；有效 regime 段读数：ranging_low_vol -0.0449、trend_up -0.1169；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/18_ind_trend007_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_pdi_14_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_pdi_14_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0703（is_ref5 -0.0728）；有效 regime 段读数：ranging_low_vol -0.0376、trend_up -0.0976；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/19_ind_mom030_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_ar_26_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_ar_26_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0665（is_ref5 -0.0735）；有效 regime 段读数：ranging_low_vol -0.0445、trend_up -0.0995；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/20_ind_vol009_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_natr_14_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_natr_14_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0641（is_ref5 -0.075）；有效 regime 段读数：ranging_low_vol -0.0569、trend_up -0.0916；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/21_ind_vol008_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_histvol_20_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_histvol_20_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0639（is_ref5 -0.0655）；有效 regime 段读数：ranging_low_vol -0.0615、trend_up -0.0877；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/22_ind_vol012_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_parkinson_20_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_parkinson_20_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0633（is_ref5 -0.0703）；有效 regime 段读数：ranging_low_vol -0.0585、trend_up -0.0888；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/23_ind_vol014_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_rogers_satchell_20_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_rogers_satchell_20_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0632（is_ref5 -0.073）；有效 regime 段读数：ranging_low_vol -0.059、trend_up -0.0877；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/24_ind_vol013_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_garman_klass_20_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_garman_klass_20_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0616（is_ref5 -0.069）；有效 regime 段读数：ranging_low_vol -0.0564、trend_up -0.0872；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/25_ind_vol015_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_yang_zhang_20_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_yang_zhang_20_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0615（is_ref5 -0.0678）；有效 regime 段读数：ranging_low_vol -0.0586、trend_up -0.0861；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/26_ind_mom038_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_rmi_14_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_rmi_14_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0609（is_ref5 -0.0523）；有效 regime 段读数：ranging_low_vol -0.0242、trend_up -0.0911；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/27_ind_mom037_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_wt1_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_wt1_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0573（is_ref5 -0.0488）；有效 regime 段读数：ranging_low_vol -0.0213、trend_up -0.0871；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/28_ind_mom015_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_tsi_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_tsi_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0566（is_ref5 -0.0582）；有效 regime 段读数：ranging_low_vol -0.0283、trend_up -0.0855；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/29_ind_mom022_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_rvgi_10_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_rvgi_10_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0549（is_ref5 -0.048）；有效 regime 段读数：ranging_low_vol -0.021、trend_up -0.0784；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/30_ind_mom027_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_ppo_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_ppo_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0526（is_ref5 -0.0763）；有效 regime 段读数：ranging_low_vol -0.0234、trend_up -0.0759；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/31_ind_mom035_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_coppock_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_coppock_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0521（is_ref5 -0.0613）；有效 regime 段读数：ranging_low_vol -0.026、trend_up -0.08；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/32_ind_mom020_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_qqe_14_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_qqe_14_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0517（is_ref5 -0.0562）；有效 regime 段读数：ranging_low_vol -0.0279、trend_up -0.0813；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/33_ind_volume002_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_mfi_14_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_mfi_14_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0515（is_ref5 -0.0443）；有效 regime 段读数：ranging_low_vol -0.0281、trend_up -0.0714；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/34_ind_mom009_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_cmo_14_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_cmo_14_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0511（is_ref5 -0.0533）；有效 regime 段读数：ranging_low_vol -0.0201、trend_up -0.074；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/35_ind_mom024_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_aroon_up_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_aroon_up_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0509（is_ref5 -0.0419）；有效 regime 段读数：ranging_low_vol -0.0233、trend_up -0.0726；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+- card_id: TDM-E-L1-S2/calibration/36_ind_mom031_high_event
+  op: event_flag_rolling_pctile
+  status: approved
+  args:
+    base_csv: ti_ew_cr_26_v1.csv
+    pctile_window: 250
+    pct_threshold: 0.78
+  prose_quote: 过去 250 日滚动分位>0.78
+  reviewed_by: st-examunlock-20261013
+  review_note: 本班考试解锁②接线格（窗/阈/引句逐字取自卡面 signal_derivation，非自拟）。底座=scripts/audit/ti_daily_mean_materialize.py 物化的 ti_ew_cr_26_v1.csv。卡面一轮为限原文：一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。｜卡面已知弱点原文：母行为批3分数册行（非卡）：holdout5
+    ic=-0.0502（is_ref5 -0.0645）；有效 regime 段读数：ranging_low_vol -0.0246、trend_up -0.074；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）

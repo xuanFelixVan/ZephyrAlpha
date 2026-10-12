@@ -1,0 +1,208 @@
+schema_version: examunlock-recipe-book-verdict/v1
+sid: st-examunlock-20261013
+question_answered: 令卡『9 张单表入配方册』能否如实落地（答案：本班实测 0/11 可登，逐表理由在本件）
+method: A? 清单由在册 classify 现场再取（非抄台账）；派生式取卡面 signal_derivation 原文；A 路语义由 SQL_FACE_DAILY/build_signal 现读；表名一律经 TableRegistry 品类派生
+universe_note: preregistered 177，A=0，A?=11，按堵点表分 4 张表
+verdicts:
+- table: c1_market.kline_sector_880
+  category_id: market_sector_kline_880
+  registry_derived_fqn_matches: true
+  cards_blocked_on_it: 7
+  a_path_sql_shape: SELECT toDate(<date_col>) AS d, anyLast(<col>) AS v FROM c1_market.kline_sector_880 WHERE <where> GROUP BY d ORDER BY d
+  a_path_semantics: GROUP BY toDate(date_col) ⇒ 每日一个标量；anyLast 只做同日多版本去重，不做跨键横截面
+  cards_requiring_cross_section: 7
+  cards_a_path_blocker_histogram:
+    cross_section_form: 7
+    agg_caliber_mismatch_vs_anyLast: 4
+    series_not_frozen_to_one_column: 2
+  cards_fit_a_path: 0
+  verdict: 拒登本批
+  reason: 本表 7 张卡全部命中至少一条 A 路不同型标志（横截面形 7 张；聚合口径与 anyLast 不同型 4 张；序列未冻结到一列 2 张）。把它们接进 A 路会产出与命题不同型的日频标量＝造第二判据面（在册铁律：未登记者拒绑而非猜粒度、禁降级喂近似数据出分）
+  correct_channel: 横截面/面板形＝矿考二班 CW-MINELOOP-001 面板通道（在册绑定册 op 面已有 sector_top_n_amount_share/sector_adjustment_progress_mean/sector_relay_retreat_net_ratio
+    三件先例，走 args 携表名，不依赖 _REGISTERED_TABLES）
+  cards:
+  - card_id: TDM-E-L2-01-2/calibration/02_板块成交额占比活跃度
+    signal_column: amount
+    signal_derivation_verbatim: 占比=sector amount / Σ(同 code_family 全体 sector amount)（分母口径=行业族 industry_l1∪industry_ths， 由 c1_market.sector_code_name_map.code_family
+      在册映射界定，禁自拟名单）； 环比=占比/占比.shift(5)−1；series 面取"占比前 10% 板块等权组合的次日超额"与全样本差。
+    cross_section_hit: true
+    agg_mismatch_hit: true
+    pivot_unfrozen_hit: false
+    a_path_blockers:
+    - cross_section_form
+    - agg_caliber_mismatch_vs_anyLast
+    a_path_fit: no_fit
+    cross_section_phrase: 占比
+  - card_id: TDM-E-L2-01-3/calibration/02_多周期动量主导度
+    signal_column: close
+    signal_derivation_verbatim: 三周期收益=q_i = close/close.shift(i) − 1（i∈{3,5,20}，按 sector_code 分组）； 各周期截面 rank-pct 归一 → 主导度=argmax_i(rank_i)；连续面=0.2·rank_q3+0.3·rank_q5+0.5·rank_q20
+      （照在码先验权重原样取，卡只判该权重对不对，不改权）。
+    cross_section_hit: true
+    agg_mismatch_hit: false
+    pivot_unfrozen_hit: false
+    a_path_blockers:
+    - cross_section_form
+    a_path_fit: no_fit
+    cross_section_phrase: 按 sector_code
+  - card_id: TDM-E-L2-01/comparison/02_等权与IC加权双臂
+    signal_column: kline_sector_880.close（日收益与 q3/q5/q20 动量）、kline_sector_880.amount（活跃度路）
+    signal_derivation_verbatim: 截面族冻结=industry_l1 ∪ industry_ths（承同车道 ablation/02 与 L2-07-1 卡的既有分母族口径， 剔除 880001-880011 市场统计指数，承 MOD-SIG-061 件内实证口径），按日在数
+      code 计算分位（禁固定 code 数）； 路A 动量活跃=当日 amount/Σamount 的截面 rank-pct 与其 5 日环比（两子项等权合成后×100）； 路B 多周期动量=0.2×q3+0.3×q5+0.5×q20 收益的 rank-pct×100； arm_A=(路A+路B)/2；arm_B=w_A×路A+w_B×路B，(w_A,w_B)
+      由 IS 窗日频截面 IC 均值 （对 CSI300 次日收益）取正后归一，估毕即冻结不再更新； 双臂各自 clamp [0,100]（件内语义 max(0,min(100,raw))，不加市场
+    cross_section_hit: true
+    agg_mismatch_hit: true
+    pivot_unfrozen_hit: true
+    a_path_blockers:
+    - cross_section_form
+    - agg_caliber_mismatch_vs_anyLast
+    - series_not_frozen_to_one_column
+    a_path_fit: no_fit
+    cross_section_phrase: 截面
+  - card_id: TDM-E-L2-01/comparison/03_缺路处置律重归一与剔除双臂
+    signal_column: kline_sector_880.close、kline_sector_880.amount
+    signal_derivation_verbatim: 截面族冻结=industry_l1 ∪ industry_ths（承同车道统一分母族，剔除 880001-880011 市场统计指数）， 分位/占比按日在数 code 计算； 路A/路B 子分逐字承 comparison/02 的 signal_derivation；
+      屏蔽集=固定种子 20261010 下对 (板块,交易日) 二维抽 20% 置路B 为缺失，双臂共用同一屏蔽集； arm_A：composite=mean(可用路)×100（两路齐⇒(A+B)/2；仅余路A⇒路A×100），随后 clamp [0,100]； arm_B：被屏蔽板块当日整体退出截面（不进
+      rank、不进分母、不入池，等价 MOD-SIG-144 现行为）； 两臂各自加市场级调节 ±10（承 ablation/02 的水温档查表口径）后取 Top-15% 池； 组合收益=池内 880 行业族指数次日等权收益均值
+    cross_section_hit: true
+    agg_mismatch_hit: true
+    pivot_unfrozen_hit: true
+    a_path_blockers:
+    - cross_section_form
+    - agg_caliber_mismatch_vs_anyLast
+    - series_not_frozen_to_one_column
+    a_path_fit: no_fit
+    cross_section_phrase: 截面
+  - card_id: TDM-E-L2-02-2/calibration/02_板块见顶预警三信号
+    signal_column: close, amount, high, low
+    signal_derivation_verbatim: RSI14(Wilder) 按 sector_code 计算；放量滞涨=amount>=roll_max(amount,20) 且 close/close.shift(5)-1 <= 0；series=当日命中 >=1 信号的板块占比（市场级预警密度）；
+      panel 辅轴=板块×日命中数对未来 5 日超额的单调性。
+    cross_section_hit: true
+    agg_mismatch_hit: false
+    pivot_unfrozen_hit: false
+    a_path_blockers:
+    - cross_section_form
+    a_path_fit: no_fit
+    cross_section_phrase: 按 sector_code
+  - card_id: TDM-E-L2-04-1/calibration/02_轮动五态调节分
+    signal_column: close, amount
+    signal_derivation_verbatim: 强度底座=同 L2-01 卡的两路合成分（动量活跃+多周期动量，0.5/0.5）； 截面方差=当日跨板块强度分布 std（分位化）；集中度=Top2 成交额占比（分位化）； 二维各三分位切五态（规则与在码 sector_rotation_state
+      一致但重算，禁直读输出）； 调节标量=高潮 −1 / 派发 −0.75 / 分歧 −0.25 / 混沌 0 / 主线 +0.5（与 +10%/−15% 线性同序）。
+    cross_section_hit: true
+    agg_mismatch_hit: false
+    pivot_unfrozen_hit: false
+    a_path_blockers:
+    - cross_section_form
+    a_path_fit: no_fit
+    cross_section_phrase: 截面
+  - card_id: TDM-E-L2/ablation/02_板块候选池整体边际
+    signal_column: close, amount
+    signal_derivation_verbatim: 板块日收益=close.pct_change（按 sector_code×trade_date）；板块强度合分＝ (成交额占比 rank-pct ×0.25 + 1d 收益 rank-pct ×0.25 + 5d 动量 rank-pct ×0.25
+      + 20d 动量 rank-pct ×0.25)×100，clamp[0,100]，取 Top15% 作候选池掩码； 枢纽 arm 序列=当日池内板块强度均值 − 池外均值（供 series 面判单调）。 行业锚 sector_code 前缀 8803=industry_l1/881=industry_ths（口径经
+      c1_market.sector_code_name_map 在册映射核对，禁自拟名单）。
+    cross_section_hit: true
+    agg_mismatch_hit: true
+    pivot_unfrozen_hit: false
+    a_path_blockers:
+    - cross_section_form
+    - agg_caliber_mismatch_vs_anyLast
+    a_path_fit: no_fit
+    cross_section_phrase: 按 sector_code
+- table: c1_market.hl_funding_history
+  category_id: hl_funding_history
+  registry_derived_fqn_matches: true
+  cards_blocked_on_it: 2
+  a_path_sql_shape: SELECT toDate(<date_col>) AS d, anyLast(<col>) AS v FROM c1_market.hl_funding_history WHERE <where> GROUP BY d ORDER BY d
+  a_path_semantics: GROUP BY toDate(date_col) ⇒ 每日一个标量；anyLast 只做同日多版本去重，不做跨键横截面
+  cards_requiring_cross_section: 1
+  cards_a_path_blocker_histogram:
+    cross_section_form: 1
+    agg_caliber_mismatch_vs_anyLast: 2
+  cards_fit_a_path: 0
+  verdict: 拒登本批
+  reason: 本表 2 张卡全部命中至少一条 A 路不同型标志（横截面形 1 张；聚合口径与 anyLast 不同型 2 张；序列未冻结到一列 0 张）。把它们接进 A 路会产出与命题不同型的日频标量＝造第二判据面（在册铁律：未登记者拒绑而非猜粒度、禁降级喂近似数据出分）
+  correct_channel: 横截面/面板形＝矿考二班 CW-MINELOOP-001 面板通道（在册绑定册 op 面已有 sector_top_n_amount_share/sector_adjustment_progress_mean/sector_relay_retreat_net_ratio
+    三件先例，走 args 携表名，不依赖 _REGISTERED_TABLES）
+  cards:
+  - card_id: TDM-E-L9-A15/calibration/02_资金费率拥挤跨市场预警
+    signal_column: funding_rate
+    signal_derivation_verbatim: 每 8h 结算一行；crowding_t = 主要币（BTC/ETH/SOL/XRP 等流动性前档） funding_rate 的横截面 60 日分位加权均值，按 UTC 日聚合；funding_rate 为 Nullable(Decimal(28,14))
+      ⇒ NULL 必须显式剔除（否则加权均值静默偏）；premium 列为备援读数
+    cross_section_hit: true
+    agg_mismatch_hit: true
+    pivot_unfrozen_hit: false
+    a_path_blockers:
+    - cross_section_form
+    - agg_caliber_mismatch_vs_anyLast
+    a_path_fit: no_fit
+    cross_section_phrase: 截面
+  - card_id: TDM-E-L9-A15/calibration/03_币圈镜像资金费率对BTC
+    signal_column: funding_rate
+    signal_derivation_verbatim: coin='BTC'（实测 coin 键为裸 ticker 'BTC'/'SOL'/'DOGE'，非 'BTC-USDT'）； 每个 UTC 日取 3 期（00/08/16）均值；signal=该日均值的 30 日滚动分位
+    cross_section_hit: false
+    agg_mismatch_hit: true
+    pivot_unfrozen_hit: false
+    a_path_blockers:
+    - agg_caliber_mismatch_vs_anyLast
+    a_path_fit: no_fit
+    cross_section_phrase: ''
+- table: c1_market.macro_data
+  category_id: market_macro_data
+  registry_derived_fqn_matches: true
+  cards_blocked_on_it: 1
+  a_path_sql_shape: SELECT toDate(<date_col>) AS d, anyLast(<col>) AS v FROM c1_market.macro_data WHERE <where> GROUP BY d ORDER BY d
+  a_path_semantics: GROUP BY toDate(date_col) ⇒ 每日一个标量；anyLast 只做同日多版本去重，不做跨键横截面
+  cards_requiring_cross_section: 0
+  cards_a_path_blocker_histogram:
+    series_not_frozen_to_one_column: 1
+  cards_fit_a_path: 0
+  verdict: 拒登本批
+  reason: 本表 1 张卡全部命中至少一条 A 路不同型标志（横截面形 0 张；聚合口径与 anyLast 不同型 0 张；序列未冻结到一列 1 张）。把它们接进 A 路会产出与命题不同型的日频标量＝造第二判据面（在册铁律：未登记者拒绑而非猜粒度、禁降级喂近似数据出分）
+  correct_channel: 横截面/面板形＝矿考二班 CW-MINELOOP-001 面板通道（在册绑定册 op 面已有 sector_top_n_amount_share/sector_adjustment_progress_mean/sector_relay_retreat_net_ratio
+    三件先例，走 args 携表名，不依赖 _REGISTERED_TABLES）
+  cards:
+  - card_id: TDM-E-L9-A10/calibration/02_全球风险因子隔夜传导
+    signal_column: indicator_value
+    signal_derivation_verbatim: 按 indicator_name 取行转列：FRED_VIX / FRED_T10Y2Y_US / FRED_USDCNY / FRED_DXY / FRED_T10YIE_US；signal = 日变化率或 z-score(60 日)；A50
+      面用 c1_market.a50_futures_daily close 的隔夜收益（其 trade_date 与 A 股交易日右齐向前填充，禁未来填充）
+    cross_section_hit: false
+    agg_mismatch_hit: false
+    pivot_unfrozen_hit: true
+    a_path_blockers:
+    - series_not_frozen_to_one_column
+    a_path_fit: no_fit
+    cross_section_phrase: ''
+- table: c3_fundamental.research_report
+  category_id: research_report
+  registry_derived_fqn_matches: true
+  cards_blocked_on_it: 1
+  a_path_sql_shape: SELECT toDate(<date_col>) AS d, anyLast(<col>) AS v FROM c3_fundamental.research_report WHERE <where> GROUP BY d ORDER BY d
+  a_path_semantics: GROUP BY toDate(date_col) ⇒ 每日一个标量；anyLast 只做同日多版本去重，不做跨键横截面
+  cards_requiring_cross_section: 1
+  cards_a_path_blocker_histogram:
+    cross_section_form: 1
+    agg_caliber_mismatch_vs_anyLast: 1
+  cards_fit_a_path: 0
+  verdict: 拒登本批
+  reason: 本表 1 张卡全部命中至少一条 A 路不同型标志（横截面形 1 张；聚合口径与 anyLast 不同型 1 张；序列未冻结到一列 0 张）。把它们接进 A 路会产出与命题不同型的日频标量＝造第二判据面（在册铁律：未登记者拒绑而非猜粒度、禁降级喂近似数据出分）
+  correct_channel: 横截面/面板形＝矿考二班 CW-MINELOOP-001 面板通道（在册绑定册 op 面已有 sector_top_n_amount_share/sector_adjustment_progress_mean/sector_relay_retreat_net_ratio
+    三件先例，走 args 携表名，不依赖 _REGISTERED_TABLES）
+  cards:
+  - card_id: TDM-E-L2-09/calibration/03_评级上调聚集
+    signal_column: industry, rating, rating_change, publish_date, org_name, symbol
+    signal_derivation_verbatim: 按 (org_name,symbol) 时间序列取相邻 rating 变化方向 → 行业-日聚合： 上调占比=上调数/(上调数+下调数)（分母 <3 记 NaN，防小样本假信号）； series=行业加权均值，panel=行业×日。 rating
+      编码序（如 买入>增持>中性>减持）须在开考前以实测取值分布钉死并写入 evidence，禁凭记忆排序。
+    cross_section_hit: true
+    agg_mismatch_hit: true
+    pivot_unfrozen_hit: false
+    a_path_blockers:
+    - cross_section_form
+    - agg_caliber_mismatch_vs_anyLast
+    a_path_fit: no_fit
+    cross_section_phrase: 占比
+correction_to_order_premise: 令卡与考试班价格表把『table_not_in_recipe_book』读作『补登记即解』；实测该 reason 由 classify 在 `len(tables)==1 且表不在册` 处给出（card_binding.py:305-309），它**不校验**卡面派生式是否日频标量形。本班逐张机判结果：11
+  张 A? 卡中 A 路同型=0 张（各表判定见 verdicts）⇒ 补登记＝把横截面/其它聚合口径命题洗成 anyLast 日频标量＝造第二判据面。本班不登记，改出本判定册＋给矿考二班的面板通道消费侧准备（见 07 号件）。
+discipline:
+  registered_tables_added: 0
+  cards_modified: 0
+  ch_queries: 0
+  hand_copied_card_lists: 0

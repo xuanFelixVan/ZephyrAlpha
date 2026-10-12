@@ -1,0 +1,39 @@
+尺: 在册 card_binding.py --mode classify（非本班自造尺）；取数前先验 exam_cards 工作区脏件数=0
+时点: 2026-10-12 23:1x
+卡册: 518
+preregistered宇宙: 178
+cls分布:
+  C: 122
+  U: 28
+  A?: 11
+  B: 17
+A类: 0
+堵点清单:
+- 119|target_face_not_index_next_day
+- 17|panel_deferred(去重/撮合口径须逐表面核)
+- 13|no_data_binding_section
+- 7|table_not_in_recipe_book:c1_market.kline_sector_880
+- 4|multi_table_needs_composite_recipe:['c1_market.kline_index', 'c1_market.kline_sector_880']
+- 2|needs_replay_engine(NAV/window_metrics/双臂 arm_protocol)
+- 2|multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_sector_880']
+- 2|table_not_in_recipe_book:c1_market.hl_funding_history
+- 1|multi_table_needs_composite_recipe:['c1_backtest.regime_state_anchored', 'c1_market.kline_index']
+- 1|multi_table_needs_composite_recipe:['c1_backtest.regime_state_anchored', 'c1_market.emotion_index']
+- 1|signal_column_not_a_single_identifier:sentiment_index（主）/ avg_polarity、positiv
+- 1|multi_table_needs_composite_recipe:['c1_market.kline_daily_hfq', 'c1_market.kline_index',
+  'c1_market.stk_limit']
+- 1|multi_table_needs_composite_recipe:['c1_market.kline_sector_880', 'c1_market.sector_constituent']
+- 1|multi_table_needs_composite_recipe:['c1_market.kline_sector_880', 'c1_market.limit_up_pool']
+- 1|multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_index']
+- 1|multi_table_needs_composite_recipe:['c1_market.emotion_index', 'c1_market.kline_index',
+  'c1_market.kline_sector_880']
+- 1|table_not_in_recipe_book:c3_fundamental.research_report
+- 1|multi_table_needs_composite_recipe:['c3_fundamental.earnings_forecast', 'c3_fundamental.express_report',
+  'c3_fundamental.research_report']
+- 1|table_not_in_recipe_book:c1_market.macro_data
+- 1|executor_horizon_mismatch:next_5d
+自证:
+  堵点求和: 178
+  等于宇宙: true
+  堵点条数: 20
+上限声明: 即便堵点一次全打通，今晚可考分母上限＝preregistered 宇宙 178，不是数千；另两套在册题池已 100% 有考果行

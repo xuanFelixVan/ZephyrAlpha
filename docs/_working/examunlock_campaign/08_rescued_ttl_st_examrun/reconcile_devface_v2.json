@@ -1,0 +1,54 @@
+{
+ "口径": "两本都取 dev 面字节（git show dev:），不读工作区（工作区试次册 M＝他班/PG 物化漂移）",
+ "宇宙A_分数册examcard唯一键": 38,
+ "宇宙B_dev试次册记录": 29,
+ "宇宙B内examcard形": 18,
+ "宇宙B内非examcard形(他班自落)": 11,
+ "非examcard形前缀分布": {
+  "batch:grid": 1,
+  "fexam-strategies-20261006": 1,
+  "grid": 8,
+  "sharpe2": 1
+ },
+ "A有B无_应补账候选": 21,
+ "其中eligible(卡册精确同名)": 16,
+ "其中phantom_card(卡册无同名)": 5,
+ "B内泄漏形(TDM-E-TEST)": 1,
+ "桶和等于missing": true,
+ "正对照": {
+  "eligible_present": true,
+  "phantom_present": true,
+  "leakage_present": true,
+  "known_good_sample(margin_flow)": 2,
+  "card_name_universe_size": 517,
+  "missing里能精确同名card_id的比例": 0.762
+ },
+ "eligible清单": [
+  "examcard:TDM-E-L1-S0/calibration/07_margin_flow_shortwindow:2026-10-10",
+  "examcard:TDM-E-L1-S0/calibration/07_margin_flow_shortwindow:2026-10-11",
+  "examcard:TDM-E-L1-S3/calibration/05_limit_up_premium_derived:2026-10-11",
+  "examcard:TDM-E-L1-S3/calibration/06_promotion_rate_derived:2026-10-11",
+  "examcard:TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow:2026-10-10",
+  "examcard:TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow:2026-10-11",
+  "examcard:TDM-E-L2-02/calibration/02_接棒撤离榜:2026-10-11",
+  "examcard:TDM-E-L2-03/calibration/02_调整周期进度:2026-10-10",
+  "examcard:TDM-E-L2-03/calibration/02_调整周期进度:2026-10-11",
+  "examcard:TDM-E-L2-04-2/calibration/02_虹吸态成交集中度:2026-10-10",
+  "examcard:TDM-E-L2-04-2/calibration/02_虹吸态成交集中度:2026-10-11",
+  "examcard:TDM-E-L3-06/calibration/02_地量档位开关:2026-10-10",
+  "examcard:TDM-E-L3-06/calibration/02_地量档位开关:2026-10-11",
+  "examcard:TDM-E-L9-A09/calibration/02_快讯情感日均值:2026-10-10",
+  "examcard:TDM-E-L9-A09/calibration/02_快讯情感日均值:2026-10-11",
+  "examcard:TDM-X-S1-02/comparison/02_dualwindow:2026-10-10"
+ ],
+ "phantom_card清单": [
+  "examcard:TDM-E-L1-S0/calibration/06_m1m2_scihjorsc_longwindow:2026-10-10",
+  "examcard:TDM-E-L1-S0/calibration/06_m1m2_scihjorsc_longwindow:2026-10-11",
+  "examcard:TDM-E-L1-S2/calibration/16_max_streak_high_event_v2:2026-10-11",
+  "examcard:TDM-E-L1-S3/calibration/07_promotion_rate_high_event_v2:2026-10-11",
+  "examcard:TDM-E-L1-S3/calibration/08_limit_up_premium_high_event_v2:2026-10-11"
+ ],
+ "泄漏清单": [
+  "examcard:TDM-E-TEST/calibration/02:2026-10-10"
+ ]
+}

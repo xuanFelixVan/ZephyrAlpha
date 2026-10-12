@@ -1,0 +1,472 @@
+schema_version: examunlock-skeleton-verdict/v1
+sid: st-examunlock-20261013
+question_answered: 令卡『骨架无绑定 13 张逐张判定（可考/拒考/新版本卡，禁硬凑）』的执行结果
+method: 清单由在册 classify 现场再取（非抄考试班台账）；三分判据只用两条机械条件：①卡面 target.primary 是否含在册次日指数腿（_INDEX_TARGET_RE 同族词），②buckets.type/signal_kind 是否为面板或事件窗形。结论只到「能不能接现器」，不代命题作者补
+  data_binding（补=造第二判据面）
+count: 13
+verdict_histogram:
+  接线即可考: 4
+  需新版本卡: 2
+  拒考: 7
+cards:
+- card_id: TDM-E-L1-S1/calibration/03_黄白线交叉
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S1__calibration__03_黄白线交叉.yaml
+  family: calibration
+  signal_kind: panel
+  buckets_type: event_window
+  target_primary_verbatim: intraday_tail_return（当日尾盘 30min 收益，主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 日内分时黄白线交叉事件对当日尾盘收益方向有短时预测力（t0 考法：事件窗 30/60/120 分钟）。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: false
+  panel_or_eventwindow_form: true
+  verdict: 拒考（卡面 primary 不是次日指数腿，现器无该目标面通道）
+  route_to: 并入「目标面通道」逐腿榜（见 04 号件），立项后另立 v2 卡
+- card_id: TDM-E-L1-S3/calibration/03_晋级率
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__03_晋级率.yaml
+  family: calibration
+  signal_kind: series
+  buckets_type: quantile_decile
+  target_primary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 晋级率分桶对次日情绪六段转移有预测力：2 板率>50% 且 3 板率不塌=情绪主线延续。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: false
+  panel_or_eventwindow_form: false
+  verdict: 拒考（卡面 primary 不是次日指数腿，现器无该目标面通道）
+  route_to: 并入「目标面通道」逐腿榜（见 04 号件），立项后另立 v2 卡
+- card_id: TDM-E-L1-S3/calibration/04_情绪先锋四态
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__04_情绪先锋四态.yaml
+  family: calibration
+  signal_kind: series
+  buckets_type: state_four
+  target_primary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 昨日最高连板股（情绪先锋）今日开盘四态（封死涨停/高开未连板/下跌/跌停）对大盘情绪转移概率的影响可区分：封死涨停>高开未连板>下跌>跌停的转移概率单调。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: false
+  panel_or_eventwindow_form: true
+  verdict: 拒考（卡面 primary 不是次日指数腿，现器无该目标面通道）
+  route_to: 并入「目标面通道」逐腿榜（见 04 号件），立项后另立 v2 卡
+- card_id: TDM-E-L1-S4/calibration/02_期权IV主路径
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration__02_期权IV主路径.yaml
+  family: calibration
+  signal_kind: series
+  buckets_type: quantile_decile
+  target_primary_verbatim: next_day_abs_index_return（次日绝对收益，波动目标特例）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 50ETF/300ETF 期权主力 IV 及其期限结构斜率分桶对次日指数收益波动（|ret|）有预测力：IV 陡升=尾部风险定价。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: false
+  panel_or_eventwindow_form: false
+  verdict: 拒考（卡面 primary 不是次日指数腿，现器无该目标面通道）
+  route_to: 并入「目标面通道」逐腿榜（见 04 号件），立项后另立 v2 卡
+- card_id: TDM-E-L1-S4/calibration/03_合成VIX后备
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S4__calibration__03_合成VIX后备.yaml
+  family: calibration
+  signal_kind: series
+  buckets_type: quantile_decile
+  target_primary_verbatim: next_day_abs_index_return
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 合成 VIX（基于期权价格模型-free 近似）与主路径 IV 的差值分桶对次日波动有增量预测力。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: false
+  panel_or_eventwindow_form: false
+  verdict: 拒考（卡面 primary 不是次日指数腿，现器无该目标面通道）
+  route_to: 并入「目标面通道」逐腿榜（见 04 号件），立项后另立 v2 卡
+- card_id: TDM-E-L1-S5/calibration/02_11信号环比
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__02_11信号环比.yaml
+  family: calibration
+  signal_kind: series
+  buckets_type: event_window
+  target_primary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 11 信号环比骤变（|z|>2）事件对次日情绪六段转移有预测力：骤变=状态切换领先。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: false
+  panel_or_eventwindow_form: false
+  verdict: 拒考（卡面 primary 不是次日指数腿，现器无该目标面通道）
+  route_to: 并入「目标面通道」逐腿榜（见 04 号件），立项后另立 v2 卡
+- card_id: TDM-X-S1-03/comparison/02_dualwindow
+  path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-S1-03__comparison__02_dualwindow.yaml
+  family: comparison
+  signal_kind: series
+  buckets_type: dim_pair
+  target_primary_verbatim: 双臂同装置 on/off 配对（exit_simulator 口径）：压力窗 MaxDD 改善 + 近样年 OOS Sharpe 非劣/MaxDD 改善
+  target_secondary_verbatim: ''
+  hypothesis_verbatim: 移动止盈（Chandelier 2×ATR22 只升不降/峰值回撤 30% 兑现/目标位）在 CRISIS 压力窗改善 MaxDD ≥5pp 且近样年 OOS Sharpe 非劣（≥-0.2）——双窗同过方为真增益（B2：单窗结论被情景区混杂）。
+  sections_present:
+  - binding_note
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - pillars
+  - pillars_dualwindow_frozen
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - ruling_ref
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: false
+  panel_or_eventwindow_form: false
+  verdict: 拒考（卡面 primary 不是次日指数腿，现器无该目标面通道）
+  route_to: 并入「目标面通道」逐腿榜（见 04 号件），立项后另立 v2 卡
+- card_id: TDM-E-L1-S0/calibration/03_流动性卡
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__03_流动性卡.yaml
+  family: calibration
+  signal_kind: series
+  buckets_type: quantile_decile
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: DR007 相对 OMO 利率的偏离分桶对次日指数收益有预测力：资金面收紧尾部=负增量。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: true
+  panel_or_eventwindow_form: false
+  verdict: 接线即可考（题面已含次日指数腿，缺的只是 data_binding 段的表/列/派生式三件）
+  route_to: 供题侧补 data_binding（本班不代写题面：补哪张表哪一列须由命题作者声明，代填=造第二判据面）
+- card_id: TDM-E-L1-S0/calibration/04_海外卡
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__04_海外卡.yaml
+  family: calibration
+  signal_kind: series
+  buckets_type: bivariate_decile
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 隔夜标普收益与美债 10Y 变动分桶对 A 股开盘缺口及日内回补有预测力。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: true
+  panel_or_eventwindow_form: false
+  verdict: 接线即可考（题面已含次日指数腿，缺的只是 data_binding 段的表/列/派生式三件）
+  route_to: 供题侧补 data_binding（本班不代写题面：补哪张表哪一列须由命题作者声明，代填=造第二判据面）
+- card_id: TDM-E-L1-S2/calibration/07_连板家数分布
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__07_连板家数分布.yaml
+  family: calibration
+  signal_kind: series
+  buckets_type: quantile_decile
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 连板家数（2 板及以上）分桶对次日指数收益单调，与涨停家数一阶正交（残差 IC 仍过地板）。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: true
+  panel_or_eventwindow_form: false
+  verdict: 接线即可考（题面已含次日指数腿，缺的只是 data_binding 段的表/列/派生式三件）
+  route_to: 供题侧补 data_binding（本班不代写题面：补哪张表哪一列须由命题作者声明，代填=造第二判据面）
+- card_id: TDM-E-L1-S3/calibration/02_昨日涨停溢价
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__02_昨日涨停溢价.yaml
+  family: calibration
+  signal_kind: series
+  buckets_type: quantile_decile
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 昨日涨停股今日平均溢价分桶对次日指数收益有预测力：溢价>2% 区=情绪健康（algo_note 口径的统计化）。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: true
+  panel_or_eventwindow_form: false
+  verdict: 接线即可考（题面已含次日指数腿，缺的只是 data_binding 段的表/列/派生式三件）
+  route_to: 供题侧补 data_binding（本班不代写题面：补哪张表哪一列须由命题作者声明，代填=造第二判据面）
+- card_id: TDM-E-L1-S0/calibration/02_货币卡
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__02_货币卡.yaml
+  family: calibration
+  signal_kind: panel
+  buckets_type: event_window
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 货币事件日（LPR/MLF 变更）前后指数超额收益的事件窗剖面非零（MacKinlay 事件研究法，方案 §7）。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: true
+  panel_or_eventwindow_form: true
+  verdict: 需新版本卡（目标面是次日指数，但分桶/信号形是面板或事件窗形，现器 series 路装不下）
+  route_to: 矿考二班 CW-MINELOOP-001 面板通道；通道到位后按 G4-5 立 v2 卡，母卡不改
+- card_id: TDM-E-L1-S0/calibration/05_政策事件卡
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__05_政策事件卡.yaml
+  family: calibration
+  signal_kind: panel
+  buckets_type: event_window
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  hypothesis_verbatim: 政策事件日后 5 日指数超额收益分布右偏（政策底效应），事件窗用非重叠抽样防日历堆积。
+  sections_present:
+  - buckets
+  - card_id
+  - discipline
+  - family
+  - hypothesis
+  - lineage
+  - node_id
+  - oos_window_ref
+  - pillars
+  - pillars_numeric
+  - preregistered_at
+  - preregistered_by
+  - schema_version
+  - signal_kind
+  - status
+  - target
+  - title_zh
+  - window
+  classify:
+    cls: U
+    reason: no_data_binding_section
+  has_data_binding_key: false
+  index_next_day_leg_present: true
+  panel_or_eventwindow_form: true
+  verdict: 需新版本卡（目标面是次日指数，但分桶/信号形是面板或事件窗形，现器 series 路装不下）
+  route_to: 矿考二班 CW-MINELOOP-001 面板通道；通道到位后按 G4-5 立 v2 卡，母卡不改
+discipline:
+  cards_modified: 0
+  data_binding_sections_authored: 0
+  ch_queries: 0

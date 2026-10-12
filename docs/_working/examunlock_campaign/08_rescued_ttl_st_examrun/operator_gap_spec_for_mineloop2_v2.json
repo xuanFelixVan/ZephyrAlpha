@@ -1,0 +1,19 @@
+{
+ "版本": "v2（取代 v1：本班 v1 的一处判据被实测证伪，v1 文件保留不删）",
+ "对象": "挖矿道 20 张批3反向分诊事件开关卡（TDM-E-L1-S2/calibration/17..36_ind_*_high_event），今日 15:32 已落 dev（commit acdb1ce096）",
+ "v1_错在哪": "v1 写'OPS 册里没有『指标列→日频序列』这一条⇒缺算子'。实测证伪：card_binding.OPS 键集含 daily_agg_series（op_daily_agg，按日聚合某列，agg/tz/col/table 全来自绑定册 args）与 event_flag_rolling_pctile 两条都在册；卡面 status_reason 也自书'算子已在册'。本班把'没找到'当成了'不存在'，未先在 OPS 键集上跑正对照。",
+ "实测四条": {
+   "1_算子在册": "OPS=daily_agg_series/downside_deviation_250_pctile/event_flag_rolling_pctile/index_amount_sum_rolling_pctile/limit_up_premium_close_mean/macro_scissors_monthly_lag_ffill/margin_balance_5d_change_rate/promotion_rate_from_limit_panel/sector_adjustment_progress_mean/sector_relay_retreat_net_ratio/sector_top_n_amount_share（11 条，实载入册）",
+   "2_表不在配方册": "_REGISTERED_TABLES 只有 3 张 = c1_market.kline_index / c1_market.index_valuation_daily / c1_market.news_sentiment_window；technical_indicator 查无 ⇒ 在册 classify 面会判 A? table_not_in_recipe_book",
+   "3_物化件缺": "SERIES_DIR=docs/_working/nightmine_campaign/series 现有 7 枚 CSV（blast_ratio/limit_down_count/limit_up_count/max_streak_height/net_breadth/seal_ratio/streak_distribution），技术指标族 0 枚 ⇒ event_flag 的 base_csv 路无序列可取",
+   "4_底座二选一硬规": "_event_base_series 要求 base_op 与 base_csv 恰选其一（bool(op)==bool(csv) 即 ValueError），禁第三条取数路（第二真源）"
+ },
+ "真缺口＝两条接线而非新算子": [
+   "甲：把 c1_market.technical_indicator 登记进 card_binding._REGISTERED_TABLES（date_col/where/grain_evidence 三要素齐，逐表面实证 grain，禁抄记忆）",
+   "乙：按卡面 baseline_birth 生成'该指标列逐日全市场等权均值'基序列物化件（只追加 CSV，PHASE 版本化），并把 event flag 列接进 judge_event 做实跑验证——卡面 impl_gap 自书两条验证项：①物化序列逐日可复算 ②event flag 列进 judge_event"
+ ],
+ "口径护栏（勿被顺带改掉）": "禁前向填充冒充缺格；禁全样本分位（须历史滚动窗含当日）；一格一序列，禁拿行业/个股截面冒代全市场等权均值；agg 与时区须逐表面实证并引卡面原文 prose_quote（run_binding_book 双校验：算子存在性＋引句在卡内）",
+ "绑定纪律引用": "prose_quote 必须是卡面 data_binding 原文子串；面板/多序列形另待面板通道（本班 §9.3-A 实测）",
+ "归属": "card_binding 算子/配方册面＝矿考二班他域，本班只登记读数与规格，不代写、不 claim 他域文件",
+ "本班后果声明": "22 张新卡落 dev 后在册 classify 面仍 A=0（普查行数 177 未变，新卡 status 为 blocked_on_impl/blocked_on_data 不入 preregistered 宇宙）⇒ 本班可考面未因供题而扩大，禁重判历史、禁改卡面凑通。"
+}

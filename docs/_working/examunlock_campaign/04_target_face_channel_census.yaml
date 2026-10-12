@@ -1,0 +1,909 @@
+schema_version: examunlock-target-face-channel-census/v1
+built_by: .runtime/tmp/st-examunlock-20261013/gen_target_face_census.py（一次性，产物=本件）
+sid: st-examunlock-20261013
+why_this_ruler_exists: 考试班台账点名的 target_face_census.yaml/unlock_map_23_1x.yaml 在 dev 面与考试班车道面双双查无；Owner 立「目标面通道」项缺的分母=通道要暴露哪几条目标腿、各解几张——本件补该分母，分型一律经在册 card_binding._target_face_kind，不另立第二把尺。
+universe:
+  card_files: 518
+  preregistered: 177
+  cls_tally:
+    C: 121
+    U: 28
+    A?: 11
+    B: 17
+  blocked_on_target_face: 118
+  supported_today: 0
+  supported_definition: 卡面 primary 命中在册 _INDEX_TARGET_RE 且绑定面已通（close-to-close 指数次日收益是唯一在得腿）
+channel_required_legs:
+- target_leg_prose: stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）
+  cards: 14
+  face_kind:
+  - - panel_stock
+    - 14
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L3-01/calibration/02_成交额下限剔除
+  - TDM-E-L3-01/comparison/04_宇宙口径完整性对照
+  - TDM-E-L3-03-1/calibration/02_涨停基因
+  - TDM-E-L3-03-2/calibration/02_均线多排
+  - TDM-E-L3-03-2/calibration/03_温和放量
+  - TDM-E-L3-03/ablation/02_双池代理合成
+  more_card_ids: 8
+- target_leg_prose: cost_adjusted_sharpe
+  cards: 11
+  face_kind:
+  - - other
+    - 10
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-C-L1/comparison/02_btc_trend_altseason_gate
+  - TDM-C-L4/comparison/02_breakout_vs_pullback_atr_stop
+  - TDM-E-FLOW/comparison/02_plan_to_execution_chain
+  - TDM-E-L0-02/comparison/02_deviation_revision_authority
+  - TDM-E-L0/comparison/02_plan_constraint_on_off
+  - TDM-E-L1/comparison/02_anchored_cap_curve_on_off
+  more_card_ids: 5
+- target_leg_prose: next_day_stock_return（t+1 close-to-close）
+  cards: 2
+  face_kind:
+  - - panel_stock
+    - 2
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P2-04/calibration/06_减仓参与率压力对次日价格路径
+  - TDM-P-P2-04/calibration/07_冲高反弹幅度对次日收益与减半阈值落点
+  more_card_ids: 0
+- target_leg_prose: A 臂 vs B 臂的 OOS Sharpe 差与被裁策略 sleeve 权重占比差
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C2-02/shadow/03_裁剪优先级非策略仓优先
+  more_card_ids: 0
+- target_leg_prose: IS 三分解加和闭合误差 + 最大块占比
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C3-01/comparison/03_IS三分解与交易持仓二分
+  more_card_ids: 0
+- target_leg_prose: K≥3 事件子集 20 日收益配对差 + 组合 OOS MaxDD/Sharpe
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S1-06/comparison/02_K3连续破位强清对照
+  more_card_ids: 0
+- target_leg_prose: OOS 年化 Sharpe / MaxDD 的 full-vs-消融差
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S1/ablation/02_卖出信号段整体消融对照
+  more_card_ids: 0
+- target_leg_prose: OOS 年化 Sharpe 与 MaxDD 的 full-vs-消融 差值
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S1-05/ablation/02_融合权重与去抖消融
+  more_card_ids: 0
+- target_leg_prose: OOS 组合 MaxDD / 年化 Sharpe（strategy_exam.window_metrics）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-X-S1-02/comparison/02_时间止损档对照
+  more_card_ids: 0
+- target_leg_prose: OOS 组合 MaxDD / 年化 Sharpe（strategy_exam.window_metrics，244 年化）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+  more_card_ids: 0
+- target_leg_prose: T+0 撞额笔次的顺延执行价差中位与分位数带
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S2-02/comparison/04_T1可卖额度做T回转延迟成本
+  more_card_ids: 0
+- target_leg_prose: aggregated_portfolio_oos_sharpe_vs_maxdd（聚合组合 OOS Sharpe/MaxDD）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C2/comparison/02_组合聚合vs各自为战
+  more_card_ids: 0
+- target_leg_prose: ann_ret_delta_banned_vs_unbanned_add_trades_after_cost（加仓笔成本后年化差，按 B2/B4 两档）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P3-01/comparison/04_日亏熔断禁加期分层对照
+  more_card_ids: 0
+- target_leg_prose: ann_ret_delta_pyramid_minus_lump_by_six_phase（分层）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P3-01/comparison/03_情绪段加仓权限分层对照
+  more_card_ids: 0
+- target_leg_prose: annualized_oneside_turnover_delta_B_minus_A
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P1-05/comparison/03_漂移触发与周期触发对照
+  more_card_ids: 0
+- target_leg_prose: auto_line_portfolio_oos_maxdd（自动减档 vs 无自动线组合 OOS MaxDD）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C3-02/shadow/02_减半冻结线有效性
+  more_card_ids: 0
+- target_leg_prose: both-vs-regime_only 的 OOS MaxDD 净增量（pp）与分解加和误差
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量
+  more_card_ids: 0
+- target_leg_prose: brier_score（主判据，越小越好）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-E-L0-03/comparison/02_brier_calibration_on_off
+  more_card_ids: 0
+- target_leg_prose: car_0_to_20_stock（个股相对 000300 市场模型的 20 日累计异常收益）
+  cards: 1
+  face_kind:
+  - - panel_stock
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-A13/calibration/02_股东户数环比事件研究
+  more_card_ids: 0
+- target_leg_prose: car_0_to_5_elec_sector（电力板块 880305.SH 相对 000300 的 5 日累计异常收益）
+  cards: 1
+  face_kind:
+  - - panel_stock
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-A12/calibration/02_台风与极端高温对电力链
+  more_card_ids: 0
+- target_leg_prose: car_t0_to_t20（个股相对 000300 市场模型的异常收益累计，事件窗 [公告次日,+20]）
+  cards: 1
+  face_kind:
+  - - panel_stock
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-A05/calibration/02_盈余惊喜事件研究
+  more_card_ids: 0
+- target_leg_prose: closed_loop_oos_sharpe（归因反馈闭环组合 OOS Sharpe）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C3/comparison/02_归因反馈闭环开vs关
+  more_card_ids: 0
+- target_leg_prose: cluster_capped_oos_maxdd（设/不设 cluster 上限 OOS 最大回撤）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C2-03/comparison/02_相关性cluster上限
+  more_card_ids: 0
+- target_leg_prose: constrained_portfolio_oos_maxdd（过栈组合 OOS 最大回撤）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C2-02/shadow/02_约束栈有vs无
+  more_card_ids: 0
+- target_leg_prose: cost_adjacent_execution_pnl_delta_B_minus_A
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P3-04/comparison/03_尾盘加仓与即时加仓执行价差对照
+  more_card_ids: 0
+- target_leg_prose: cost_adjusted_sharpe（search_objective.primary 同口径，冻结件声明）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L4/comparison/02_exec_caliber_cost_ladder
+  more_card_ids: 0
+- target_leg_prose: cost_adjusted_sharpe（三臂各一条 NAV）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-E-L0-04/comparison/02_intraday_rollback_downgrade
+  more_card_ids: 0
+- target_leg_prose: cost_adjusted_sharpe（五臂各一条全链 NAV）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-E-L1-AGG/ablation/02_state_input_replacement
+  more_card_ids: 0
+- target_leg_prose: cost_adjusted_sharpe（六臂各一条 NAV）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-E-L4-12/comparison/02_precheck_five_checks_ablation
+  more_card_ids: 0
+- target_leg_prose: cost_adjusted_sharpe（四臂各出一条 NAV）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-E-L4-02/comparison/02_order_timing_tape
+  more_card_ids: 0
+- target_leg_prose: d_vs_a_oos_maxdd_improvement_pp
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P1/comparison/02_否决腿与熔断腿双臂增量
+  more_card_ids: 0
+- target_leg_prose: detection_rate / false_reconciled_count
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L4-13/comparison/02_three_way_recon_injection
+  more_card_ids: 0
+- target_leg_prose: excess_return_next_10d（未来10日相对同日截面中位的超额收益）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P1-03/calibration/02_因子秩回落对后续超额预测
+  more_card_ids: 0
+- target_leg_prose: excess_return_next_10d（未来10日相对同日截面中位超额）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P1-04/calibration/04_持仓停滞天数对后续收益预测
+  more_card_ids: 0
+- target_leg_prose: excess_return_next_10d（未来10日相对截面中位超额）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P3-02/calibration/03_加仓触发涨幅对后续收益预测
+  more_card_ids: 0
+- target_leg_prose: excess_return_next_5d（成员股未来5日相对截面中位超额）
+  cards: 1
+  face_kind:
+  - - panel_stock
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P1-04/calibration/05_板块退潮动量对持仓下行预测
+  more_card_ids: 0
+- target_leg_prose: ex 日破位误判率双臂比（pre_close 臂 / dr 臂）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S1-04/calibration/04_除权除息参考价分母误判清仓
+  more_card_ids: 0
+- target_leg_prose: forward_20d_index_return（000300 未来 20 日收益，主轴）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-R1-03/calibration/02_宽基ETF天量与护盘滞后结构
+  more_card_ids: 0
+- target_leg_prose: forward_5d_excess_vs_000300（未来 5 日相对 000300 超额，主轴）
+  cards: 1
+  face_kind:
+  - - emotion_state
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S1-04/calibration/03_席位净卖出派发前瞻收益
+  more_card_ids: 0
+- target_leg_prose: full-vs-no_exit 的 OOS 年化 Sharpe 差与 MaxDD 差（X 流总账）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-FLOW/ablation/02_离场信号整链消融总账
+  more_card_ids: 0
+- target_leg_prose: full_flow_portfolio_oos_sharpe（全流终产组合 OOS Sharpe vs 基准 v0）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-FLOW/comparison/02_终产目标组合vs基准
+  more_card_ids: 0
+- target_leg_prose: full 臂与各消融臂的 OOS Sharpe / MaxDD 配对差
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S2-06/ablation/02_卖出闭环三率反馈权重消融
+  more_card_ids: 0
+- target_leg_prose: gated_parameter_wfe（过门参数组 walk-forward 效率）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C3-04/shadow/02_四道gate过拟合防线
+  more_card_ids: 0
+- target_leg_prose: msprt_log_lr_champion_vs_each_challenger（降级时 paired_t 统计量）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P1-05/shadow/05_组合体检帽影子对照
+  more_card_ids: 0
+- target_leg_prose: net_bp_per_pair_by_arm（六臂净均 bp 对比）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P2-01/comparison/02_三道门串并开闭与互斥诊断
+  more_card_ids: 0
+- target_leg_prose: net_bp_per_pair_by_arm（各臂"被禁日 vs 未被禁日"的成本后净均 bp 及其差）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P2-01/comparison/03_盘中单边失效腿对照
+  more_card_ids: 0
+- target_leg_prose: net_bp_per_pair_t0on_minus_t0off（扣成本净价差）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P2/comparison/02_做T腿有无对照与底仓恒等性
+  more_card_ids: 0
+- target_leg_prose: netted_vs_gross_turnover_cost（净额 vs 逐笔双边换手成本）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C2-01/comparison/02_净额轧平省成本
+  more_card_ids: 0
+- target_leg_prose: next_20day_sector_return（板块 881449.SH 航运港口 20 日前向收益）
+  cards: 1
+  face_kind:
+  - - sector_series
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-A08/calibration/02_BDI领先航运链
+  more_card_ids: 0
+- target_leg_prose: next_20day_stock_return（个股 20 日前向收益，hfq 收盘）
+  cards: 1
+  face_kind:
+  - - panel_stock
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-A17/calibration/03_一致预期修正
+  more_card_ids: 0
+- target_leg_prose: next_5day_sector_return（880311.SH 石油开采 / 880312.SH 石油加工 5 日前向收益）
+  cards: 1
+  face_kind:
+  - - sector_series
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-A11/calibration/02_EIA库存意外
+  more_card_ids: 0
+- target_leg_prose: next_day_direction_hit（各臂对次日指数方向命中率）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-V2/ablation/02_情绪相位六段快照就绪
+  more_card_ids: 0
+- target_leg_prose: next_day_gap_up_probability（分档）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P3-04/calibration/02_尾盘强势对次日高开概率预测
+  more_card_ids: 0
+- target_leg_prose: next_day_portfolio_return（shift(-1)，现执行器 _series_metrics 兼容）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L0-02/calibration/03_偏离幅度分位响应曲线
+  more_card_ids: 0
+- target_leg_prose: next_day_premium（次日收盘溢价，截面期望）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-E-L4-05/comparison/02_daban_mode_three_way
+  more_card_ids: 0
+- target_leg_prose: next_day_stock_return（个股次日 hfq 收益）
+  cards: 1
+  face_kind:
+  - - panel_stock
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-A06/calibration/02_主力净流入截面
+  more_card_ids: 0
+- target_leg_prose: next_day_stock_return（个股次日 hfq 收盘收益）
+  cards: 1
+  face_kind:
+  - - panel_stock
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-A01/calibration/03_分钟已实现波动
+  more_card_ids: 0
+- target_leg_prose: next_day_unopen_probability（次日开板条件概率，主轴）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S2-02/calibration/02_连续跌停开板概率与次日处置
+  more_card_ids: 0
+- target_leg_prose: oos_maxdd_delta_cap10_minus_cap20
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P1-05/comparison/02_单票上限三档对照
+  more_card_ids: 0
+- target_leg_prose: oos_maxdd_improvement_B_minus_A
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P3/comparison/02_金字塔三档与一次性足额对照
+  more_card_ids: 0
+- target_leg_prose: oos_maxdd_improvement_pp（全叠层臂减 off 臂的 OOS MaxDD 差，pp）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-FLOW/ablation/02_持仓叠层整链消融
+  more_card_ids: 0
+- target_leg_prose: oos_maxdd_improvement_pp（各臂 vs off）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P1-04/comparison/02_否决线三型可选档对照
+  more_card_ids: 0
+- target_leg_prose: overnight_gap_5pct_bps_B_minus_A
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P2-03/comparison/02_未闭环敞口过夜代价双臂
+  more_card_ids: 0
+- target_leg_prose: portfolio_daily_nav_return（组合日净值收益，engine.last_portfolio.nav_series）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-F-C1-02/shadow/02_三层栈冠军挑战
+  more_card_ids: 0
+- target_leg_prose: realized_adverse_slippage_bps
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L4-06/comparison/02_quality_prior_on_off
+  more_card_ids: 0
+- target_leg_prose: rebalanced_portfolio_oos_sharpe（月度调权组合 OOS Sharpe）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C3-03/comparison/02_月度调权vs静态基准
+  more_card_ids: 0
+- target_leg_prose: reliability_weighted_portfolio_oos_sharpe（判准率加权组合 OOS Sharpe）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C3-05/shadow/02_判准率加权vs等权
+  more_card_ids: 0
+- target_leg_prose: reserve_adjusted_oos_maxdd（不同预留档 OOS 最大回撤）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C1/comparison/03_预备金现金贡献
+  more_card_ids: 0
+- target_leg_prose: routed_portfolio_oos_sharpe（当日激活集加权组合 OOS Sharpe）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C1-01/shadow/02_激活集路由影子
+  more_card_ids: 0
+- target_leg_prose: same_day_leak_backtest_inflation（同日穿越造成的回测虚高，占比）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-V1/ablation/02_大盘状态快照T-1纪律
+  more_card_ids: 0
+- target_leg_prose: sector_pick_hit（次日前 1/5 强板块命中率）
+  cards: 1
+  face_kind:
+  - - sector_series
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-V3/ablation/02_板块状态快照T-1纪律
+  more_card_ids: 0
+- target_leg_prose: sharpe_after_cost_delta_by_arm（六臂相对基线）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P2-04/comparison/02_调仓频率与换手惩罚六臂对照
+  more_card_ids: 0
+- target_leg_prose: sharpe_after_cost_delta_vs_equal_weight（七臂）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P3-03/comparison/02_仓位定尺寸七档对照
+  more_card_ids: 0
+- target_leg_prose: sleeve_alpha_rank_agreement（切账后 sleeve alpha 排名与真值秩相关）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C3-01/comparison/02_隔夜漂移切账失真
+  more_card_ids: 0
+- target_leg_prose: stuck_state_share 与 missed_fill_rate（两腿）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L4-10/comparison/02_state_timeout_policy
+  more_card_ids: 0
+- target_leg_prose: switch_period_nav_volatility（切换期净值波动/回撤）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-F-C1-03/shadow/02_双向渐变vs硬切
+  more_card_ids: 0
+- target_leg_prose: tiered_adjustment_turnover_and_dd（分层响应 vs 强裁的换手成本+最大回撤）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C2-04/shadow/02_三级响应vs即时强裁
+  more_card_ids: 0
+- target_leg_prose: worst_return_next_5d（未来5个交易日的最差收盘收益，下行侧口径）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P1-02/calibration/02_ATR距止损带对后续下行预测
+  more_card_ids: 0
+- target_leg_prose: worst_return_next_5d（未来 5 个交易日的最差收盘收益，下行侧口径，与同车道 02 卡同 target 以便直接对卡）
+  cards: 1
+  face_kind:
+  - - probability_hit
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-P-P1-02/calibration/04_盈亏百分比腿与ATR缺失降级
+  more_card_ids: 0
+- target_leg_prose: writeback_direction_accuracy
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-E-L4-14/comparison/02_predicted_vs_realized_slippage
+  more_card_ids: 0
+- target_leg_prose: 三组对照的臂间差（被裁买入笔次差 / 净值与回撤差 / 透支成本）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C2-02/shadow/04_资金额度约束先卖后买与只削买入
+  more_card_ids: 0
+- target_leg_prose: 三臂 OOS 年化 Sharpe 与 MaxDD 配对差（strategy_exam.window_metrics，244 年化）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-X-S2-03/comparison/02_执行口径净收益对照
+  more_card_ids: 0
+- target_leg_prose: 三臂首日实现收益中位差（分层 − 开盘全出；分层 − 次日全出）
+  cards: 1
+  face_kind:
+  - - sector_series
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S2-02/calibration/03_新股首日分层卖出三臂
+  more_card_ids: 0
+- target_leg_prose: 上机策略→node_verdict 的漏斗闭环率（含断链最集中的段）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-E-L9-D1/ablation/03_假设漏斗闭环率与考试链缺口
+  more_card_ids: 0
+- target_leg_prose: 假想净值 OOS MaxDD 改善与错失收益（strategy_exam.window_metrics）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-X-R1/shadow/02_拔电源影子运行对照
+  more_card_ids: 0
+- target_leg_prose: 假破位率的时段差（早盘档 − 尾盘档，pp）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S1-04/comparison/05_早盘破位假信号时段可靠性
+  more_card_ids: 0
+- target_leg_prose: 平均实现差（bp）与当日完成率配对差
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S2-04/comparison/02_本地条件单追单闭环对照
+  more_card_ids: 0
+- target_leg_prose: 平均实现差（bp）与组合层面 OOS MaxDD/Sharpe 配对差
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S2-01/comparison/02_执行方式路由与流动性三查对照
+  more_card_ids: 0
+- target_leg_prose: 现实臂-vs-理想臂 OOS 年化税（累计收益差 bp + Sharpe 差）
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S2/ablation/02_执行约束层现实性税度量
+  more_card_ids: 0
+- target_leg_prose: 组合日净值 OOS MaxDD / 年化 Sharpe（strategy_exam.window_metrics，244 年化，复用禁重造）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-X-S2-05/comparison/02_分批止盈阶梯对照
+  more_card_ids: 0
+- target_leg_prose: 组合日净值序列的 OOS MaxDD 与年化 Sharpe（strategy_exam.window_metrics，sharpe 年化 244，复用禁重造）
+  cards: 1
+  face_kind:
+  - - engine_replay
+    - 1
+  multi_arm_hits: 1
+  card_ids:
+  - TDM-X-S1-03/comparison/02_止盈族三式对照
+  more_card_ids: 0
+- target_leg_prose: 置信度配比臂 vs 冠军臂的 OOS Sharpe 比与 MaxDD 差
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-F-C1-02/shadow/03_置信度配比资金臂
+  more_card_ids: 0
+- target_leg_prose: 被减仓位 20 日累计损失额配对差 + 组合 OOS MaxDD/Sharpe
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+  more_card_ids: 0
+- target_leg_prose: 误清率（卖出后再创新高占比）与 OOS MaxDD/Sharpe 配对差
+  cards: 1
+  face_kind:
+  - - other
+    - 1
+  multi_arm_hits: 0
+  card_ids:
+  - TDM-X-S1-01/comparison/02_六桶分类增益对照
+  more_card_ids: 0
+channel_summary:
+  distinct_legs_required: 94
+  cards_covered_by_top10_legs: 34
+  note: 榜按张数降序；同一命题的不同措辞不会被合并（归一化只做空白折叠），故 distinct_legs 是上界不是精确数
+horizon_ladder:
+  rows_with_horizon_token: 31
+  distribution:
+  - horizon_token: next5d
+    cards: 17
+    already_examinable: 0
+    blocked_on_target_face: 0
+  - horizon_token: next_5d
+    cards: 6
+    already_examinable: 0
+    blocked_on_target_face: 4
+  - horizon_token: next_3d
+    cards: 3
+    already_examinable: 0
+    blocked_on_target_face: 0
+  - horizon_token: next_10d
+    cards: 3
+    already_examinable: 0
+    blocked_on_target_face: 3
+  - horizon_token: next_20d
+    cards: 2
+    already_examinable: 0
+    blocked_on_target_face: 2
+  note_for_v3_draft: 阶梯族预注册的分母：现器只吃 1 日腿，≥2 日腿一律 executor_horizon_mismatch（在册唯一命中样例见 reason 列）
+discipline:
+  ch_queries: 0
+  db_reads: 0
+  cards_modified: 0
+  thresholds_written: 0
+  target_leg_phrases_invented: 0
