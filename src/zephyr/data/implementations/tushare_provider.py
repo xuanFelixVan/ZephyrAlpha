@@ -1065,6 +1065,7 @@ class TushareProvider(IngestProviderBase):
         "float_share",
         "circ_mv",
         "total_mv",
+        "data_source",
     ]
 
     @staticmethod
@@ -1073,11 +1074,13 @@ class TushareProvider(IngestProviderBase):
         td: str,
         symbols_filter: set[str] | None = None,
     ) -> list[tuple]:
-        """tushare pro.daily_basic 记录 → stock_daily_basic 6 列行。
+        """tushare pro.daily_basic 记录 → stock_daily_basic 7 列行。
 
         口径对齐批9 tushare 回填（scripts/data/backfill_stock_daily_basic.py 留盘先例，
-        INSERT_COLUMNS 6 列、data_source 走表 DEFAULT）：四列数值原值 round 4 位直落
+        INSERT_COLUMNS 7 列、data_source 显式带 'tushare' 随形落）：四列数值原值 round 4 位直落
         （不做单位换算）；ingest_ts 由表 DEFAULT now() 兜底。
+        2026-10-13 改：此前不产出 data_source，由表 DEFAULT 'akshare' 兜底——本 provider 写的行
+        因此全表被标成 akshare（存量已经幂等 ALTER 改回），故改为显式带源，禁再靠 DEFAULT。
         NaN/None → NULL（表列 Nullable）。
         td=调用方传入的当日 ISO 日期（pro.daily_basic 按 trade_date 查询时不回列）。
         """
@@ -1107,6 +1110,7 @@ class TushareProvider(IngestProviderBase):
                     _num(r.get("float_share")),
                     _num(r.get("circ_mv")),
                     _num(r.get("total_mv")),
+                    "tushare",  # data_source 显式带源，禁再由表 DEFAULT 'akshare' 兜底
                 )
             )
         return out

@@ -65,5 +65,6 @@ PARTITION_KEY = "toYYYYMM(trade_date)"
 # ORDER_BY 用元组形式——本机 CH 26.6.1 实测拒绝裸逗号多键（Code 62），元组形式可过（批9 实测）
 ORDER_BY = "(trade_date, symbol)"
 
-# 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = "(trade_date, symbol, turnover_rate, float_share, circ_mv, total_mv)"
+# 列清单（用于 INSERT 时显式指定；data_source 自 2026-10-13 随形显式带源——此前不列它
+# 而由表 DEFAULT 'akshare' 兜底，致 tushare 写入的行全表来源错标；ingest_ts 仍由 DEFAULT now() 填充）
+INSERT_COLUMNS = "(trade_date, symbol, turnover_rate, float_share, circ_mv, total_mv, data_source)"

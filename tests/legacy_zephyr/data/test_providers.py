@@ -2170,7 +2170,7 @@ class TestTushareStockDailyBasic:
     def test_map_rows_null_and_filter(self):
         rows = TushareProvider._map_stock_daily_basic_rows(self._basic_records(), "2026-09-21")
         assert len(rows) == 2  # 空 ts_code 丢行
-        assert rows[0] == ("2026-09-21", "000001", 0.8712, 194591.0, 2116934.8, 2190900.0)
+        assert rows[0] == ("2026-09-21", "000001", 0.8712, 194591.0, 2116934.8, 2190900.0, "tushare")
         r1 = rows[1]
         assert r1[0] == "2026-09-21" and r1[1] == "000852"
         assert r1[2] is None and r1[3] is None  # NaN/None → NULL
