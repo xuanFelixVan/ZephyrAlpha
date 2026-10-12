@@ -730,3 +730,111 @@ def test_gate_does_not_bite_bag_residue(tmp_path: Path, monkeypatch: pytest.Monk
     assert spec.check(gw, ["residue.py"], session_id="st-self") == (True, "")
     passed, detail = spec.check(gw, ["scripts/keep.py"], session_id="st-self")
     assert passed is False and "st-dead-other" in detail, "held_files 面照旧咬合"
+
+
+# ---------------------------------------------------------------------------
+# C11 活性复核（统筹裁定 2026-10-12）：活班被自身崩溃期 open 条目连坐 → 降 warn＋留痕；
+# 死会话/他班条目零放宽；verdict 不可达＝保守照拦（读失败不当活证）。
+# ---------------------------------------------------------------------------
+
+
+def _mk_self_entry(sid: str, path: str) -> dict:
+    return {
+        "ts": "unit",
+        "ts_epoch": 1.0,
+        "sid": sid,
+        "status": "open",
+        "refresh_count": 0,
+        "death_evidence": {"reason": "unit-c11", "threshold_seconds": ledger.DEATH_IDLE_SECONDS},
+        "resources": {
+            "held_files": [path],
+            "worktrees": [],
+            "staging": {"file_count": 0},
+            "bags": [],
+            "heartbeat_files": [],
+        },
+        "impacted_modules": [],
+        "prescription": [f"接管完成后 --resolve {sid}"],
+    }
+
+
+def _mk_gate_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, entries: list[dict]):
+    root = tmp_path
+    (root / ".runtime").mkdir(parents=True, exist_ok=True)
+    (root / ".runtime" / "takeover_ledger.jsonl").write_text(
+        "\n".join(json.dumps(e, ensure_ascii=False) for e in entries) + "\n", encoding="utf-8"
+    )
+    monkeypatch.setattr(ledger, "load_open_entries", lambda r: entries)
+    return SimpleNamespace(project_root=str(root))
+
+
+def _patch_verdict(monkeypatch: pytest.MonkeyPatch, state: str | None) -> None:
+    import zephyr.security.access_control.session_concurrency as sc
+
+    if state is None:
+
+        def _boom(session_id: str, now=None):  # 单口不可达
+            raise RuntimeError("verdict facility down")
+
+        monkeypatch.setattr(sc, "liveness_verdict", _boom)
+    else:
+        monkeypatch.setattr(
+            sc,
+            "liveness_verdict",
+            lambda session_id, now=None: SimpleNamespace(
+                session_id=session_id, state=state, authoritative_signal="UNIT-SIGNAL", reasons=[]
+            ),
+        )
+
+
+class TestC11SelfBlockSoften:
+    def test_alive_self_block_softened_and_audited(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """提交人＝条目属主且现判活 → 放行但 detail 带降级说明，且逐次落一行留痕。"""
+        sid = "st-c11-live"
+        gw = _mk_gate_env(tmp_path, monkeypatch, [_mk_self_entry(sid, "docs/a.md")])
+        _patch_verdict(monkeypatch, "alive")
+        spec = make_takeover_pending_gate()
+        passed, detail = spec.check(gw, ["docs/a.md"], session_id=sid)
+        assert passed is True, "活班自挡应降级放行（今日 14 枚自挡死袋的解药）"
+        assert "降级放行" in detail and sid in detail
+        audit = tmp_path / ".runtime" / "session_registry_audit" / "takeover_self_block.jsonl"
+        assert audit.exists(), "降级必须留痕，不许静默翻转"
+        rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
+        assert rec["event"] == "takeover_self_block_softened" and rec["liveness_state"] == "alive"
+
+    def test_degraded_self_block_also_softened(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        gw = _mk_gate_env(tmp_path, monkeypatch, [_mk_self_entry("st-c11-deg", "docs/b.md")])
+        _patch_verdict(monkeypatch, "degraded")
+        passed, _ = make_takeover_pending_gate().check(gw, ["docs/b.md"], session_id="st-c11-deg")
+        assert passed is True
+
+    def test_dead_self_block_still_blocks(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """属主自己判死 → 照拦（跨班保护面一寸不缩，也不能让死会话被静默继承）。"""
+        sid = "st-c11-dead"
+        gw = _mk_gate_env(tmp_path, monkeypatch, [_mk_self_entry(sid, "docs/c.md")])
+        _patch_verdict(monkeypatch, "dead")
+        passed, detail = make_takeover_pending_gate().check(gw, ["docs/c.md"], session_id=sid)
+        assert passed is False and sid in detail
+
+    def test_other_lane_alive_still_blocks(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """活性复核只放开『自挡』一格：他班条目哪怕活着也照拦。"""
+        gw = _mk_gate_env(tmp_path, monkeypatch, [_mk_self_entry("st-other", "docs/d.md")])
+        _patch_verdict(monkeypatch, "alive")
+        passed, detail = make_takeover_pending_gate().check(gw, ["docs/d.md"], session_id="st-me")
+        assert passed is False and "st-other" in detail
+
+    def test_verdict_unreadable_fails_closed(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """单口读不到＝无正证，保守照拦（在册铁律：读失败不得当活证）。"""
+        sid = "st-c11-unread"
+        gw = _mk_gate_env(tmp_path, monkeypatch, [_mk_self_entry(sid, "docs/e.md")])
+        _patch_verdict(monkeypatch, None)
+        passed, detail = make_takeover_pending_gate().check(gw, ["docs/e.md"], session_id=sid)
+        assert passed is False and sid in detail
+
+    def test_empty_session_id_never_softens(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """无提交人身份（kwargs 缺＋env 缺）一律照拦——不许把"不知道是谁"当放行理由。"""
+        monkeypatch.delenv("ZEPHYR_SESSION_ID", raising=False)
+        gw = _mk_gate_env(tmp_path, monkeypatch, [_mk_self_entry("st-x", "docs/f.md")])
+        _patch_verdict(monkeypatch, "alive")
+        passed, _ = make_takeover_pending_gate().check(gw, ["docs/f.md"])
+        assert passed is False

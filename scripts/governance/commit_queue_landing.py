@@ -142,6 +142,36 @@ _MAIN_WS_SYNC_AUDIT_NAME = (
 # 理由不足 10 字不算申报——防"翻开关不写账"）。越过必留痕，见 _converge_main_workspace。
 _POOL_REGRESSION_ACK_RE: Final = re.compile(r"\[pool-regression-ack:([^\]]{10,})\]")
 
+#: C12 写者署名遥测的取证指纹上限（32MB）：超限只记字节数不记 sha，
+#: 失败一律返回标记串而非抛异常——遥测不得改变删除/写入主链路行为。
+_WS_AUDIT_SHA_MAX_BYTES: Final = 32 * 1024 * 1024
+
+
+def _sha_of_bytes(data: bytes) -> str:
+    """写入字节指纹（C12）。"""
+    if len(data) > _WS_AUDIT_SHA_MAX_BYTES:
+        return f"oversize:{len(data)}"
+    return hashlib.sha256(data).hexdigest()
+
+
+def _sha_of_path(path: Path) -> str | None:
+    """盘面被覆盖/删除**前**的字节指纹（C12）；文件不存在=None，读失败=unreadable:<原因>。"""
+    try:
+        size = path.stat().st_size
+    except OSError:
+        return None
+    if size > _WS_AUDIT_SHA_MAX_BYTES:
+        return f"oversize:{size}"
+    try:
+        h = hashlib.sha256()
+        with path.open("rb") as fh:
+            for chunk in iter(lambda: fh.read(65536), b""):
+                h.update(chunk)
+        return h.hexdigest()
+    except OSError as exc:
+        return f"unreadable:{type(exc).__name__}"
+
+
 # 队列标记正则：[GW:{sid}:{qid}]——sid 字符集 [A-Za-z0-9._-]（入队校验保证无冒号/右括号）
 _QUEUE_MARKER_RE = re.compile(r"\[GW:[^\]:\s]+:q-[^\]\s]+\]")
 # 提交归属提取（存量兜底判定用）：直提形态 [GW:sid] 与队列形态 [GW:sid:q-xxx] 都要认，
@@ -2729,6 +2759,7 @@ class WorktreeLanding:
         *,
         regression_ack: bool = False,
         regression_out: list[dict] | None = None,
+        write_out: list[dict] | None = None,
     ) -> str:
         """单文件收敛，返回动作 token（already_*/fast_forwarded/deleted/skipped_*）。
 
@@ -2762,16 +2793,38 @@ class WorktreeLanding:
             if not regression_ack:
                 return "skipped_head_regression"
         # 干净（== old_sha）：快进
+        # C12（统筹裁定 2026-10-12）：真正改写主区盘面这一支历史上**不落任何审计**
+        # （sync 审计只记 index 动作与 skipped_*），所以"盘面被写成旧字节"结构性无署名
+        # ——第四击那种形状查不到人，根子就在这。此处逐次写一行：谁（pid＋袋 sid）
+        # 在什么时候把哪个文件从什么字节（pre_sha256）换成了什么字节（post_sha256）。
+        ev: dict = {
+            "path": rel,
+            "pid": os.getpid(),
+            "is_delete": bool(is_delete),
+            "base_blob": old_sha[:12],
+            "landed_blob": new_sha[:12],
+        }
         if is_delete:
+            ev["pre_sha256"] = _sha_of_path(target)
             try:
                 os.remove(target)
             except FileNotFoundError:
                 return "already_deleted"
+            ev["action"] = "wt_deleted"
+            ev["post_sha256"] = None
+            if write_out is not None:
+                write_out.append(ev)
             return "deleted"
         target.parent.mkdir(parents=True, exist_ok=True)
         tmp = target.with_name(target.name + ".converge_tmp")
+        ev["pre_sha256"] = _sha_of_path(target)
+        ev["post_sha256"] = _sha_of_bytes(data)
+        ev["bytes"] = len(data)
         tmp.write_bytes(data)
         os.replace(tmp, target)  # 原子替换，并发读者不见半成品
+        ev["action"] = "wt_fast_forwarded"
+        if write_out is not None:
+            write_out.append(ev)
         return "fast_forwarded"
 
     def _repo_head_sha(self) -> str:
@@ -2900,6 +2953,7 @@ class WorktreeLanding:
         item_sid = str(item.get("session_id") or "")
         counts: dict[str, int] = {}
         audit_records: list[dict] = []
+        ws_writes: list[dict] = []
         for entry in item.get("files") or []:
             rel = entry.get("path", "")
             if not rel:
@@ -2913,11 +2967,21 @@ class WorktreeLanding:
                     entry.get("action") == "delete",
                     regression_ack=regression_ack,
                     regression_out=regress_detail,
+                    write_out=ws_writes,
                 )
             except Exception as exc:  # noqa: BLE001 — 收敛 fail-open（landing 已成功）
                 action = "error"
                 logger.warning("[landing] 主工作区收敛异常 qid=%s %s: %s", qid, rel, exc)
             counts[action] = counts.get(action, 0) + 1
+            # C12 写者署名：本轮真实改写/删除主区盘面的每一件都落一行（含 pid＋袋 sid＋
+            # 前后内容 sha）。历史上这一支零审计，"盘面被换成旧字节"因此查不到人。
+            for ev in ws_writes:
+                ev["ts"] = time.time()
+                ev["qid"] = qid
+                ev["sid"] = item_sid
+                ev["sid_missing"] = not item_sid
+                audit_records.append(ev)
+            ws_writes.clear()
             for d in regress_detail:
                 audit_records.append(
                     {
