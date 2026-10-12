@@ -1,0 +1,89 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/45_agg_avg_abs_ret_level_fwd10
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: 面板平均绝对日收益（原值）对10日面板等权前向收益的时序单调卡（挖矿二班聚合8·过闸第45号）
+origin: agg8_minedig2_20261013
+parallel_of: null
+mother_score_row: docs/_working/minedig2_campaign/00_agg8_axis_prereg.yaml#agg8_readings[seq=45]
+hypothesis: 面板平均绝对日收益处于自身高位的日子，其后 10 个交易日面板等权收益高于其余日子（筛级时序 Spearman IC=0.1012，
+  t=4.23，n=1733，均为正 ⇒ 本卡复述"热度延续"方向；母命题方向与在册 02 卡的次日反向先验**不同 horizon 不同目标面**，
+  非重述亦非反号）。母结果=挖矿班 2026-10-12 聚合筛级在册读数（如实复述，非事后加冕）。
+mother_card_relation: 本班不重判母读数。母面=聚合筛级 45 读数中过 agg_daily 闸（abs_ts_ic_min 0.08 / t_stat_min
+  3.0 / min_days 400，预登记 sha256=89652c3b… 本班盘面复算全等）的 8 格之一；族级多重比较折减与最终判定权归
+  E2/E4，本卡不预折减、不自加门槛（SOP v1.9.1 总则：闭卷考试＝最终考试，折减不替代考试）。
+one_round_limit: 一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档
+  （族=agg8_minedig2_20261013），禁反复改阈值再考（多重比较防线）。
+known_weakness: |
+  一、母读数=筛级时序 IC（序列 vs 第 10 日面板等权前向收益的秩相关），非考级分位响应曲线；两形态未对拍。
+  二、母读数分母=1733 交易日（2019-02-11..2026-04-02 全程 1860 交易日窗内，扣留段未参与筛选）；
+      序列前 20 日暖机与 10 日右端无值行天然缺席，故各卡 n 不等（1729-1734），禁当同一样本集对拍。
+  三、宇宙=窗内日均成交额 top800 ⇒ 大票偏置（预登记册 panel.universe_bias_disclosure 原文，本卡如实携带）。
+  四、r 位=面板等权均值（_proxy，非指数）⇒ 与在册 02/09 母卡的"次日指数收益"目标面不可直接比较。
+  五、绝对收益同时吃波动与分歧两因，未做分解 ⇒ 机制命名保持机械描述；与在册波动率族（如 vol_20d 相关卡）的正交性未实测，残差增量面只在筛级 g4 对 10 列特征族算过，未对卡池全族算
+window:
+  in_sample:
+  - '2019-02-11'
+  - '2026-04-02'
+  oos: &id001
+  - '2026-04-03'
+  - '2026-10-12'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 看数前冻结（裁定#501 纪律）；IS/OOS 逐字继承同批模板B 卡 __calibration__38，切段规则=预登记册
+    holdout.last_trading_days=126（AHM 末段扣留＝冻结卡 OOS，筛选全程未碰）；牛熊两段逐字继承母卡 02
+    且用 map 形（series 路执行器按 regimes.items() 取段，散文形不可执行）。
+buckets:
+  type: quantile_decile
+  'on': 当日聚合序列值（原值）
+  min_obs_per_bucket: 60
+signal_kind: series
+pillars:
+  monotonicity: 十分位响应曲线对 10 日面板等权前向收益单调（mono_spearman 过下界）
+  ic_level: 时序 IC 均值过下界（母卡同键同值，未为凑数改档）
+  ic_ir_machine_face: ic_ir 下界在册但 series 路当前无机器面（calibration_exam._series_metrics 恒置
+    ic_ir=None，_unjudged_pillars 有披露义务）⇒ 出分时该键须以"未判柱"面呈现，禁按已判过引用本卡分数
+  regime_split: bull/bear 两段 IC 同号，逐段入册，禁只报全样本
+  oos_confirmation: OOS（扣留段）IC 与 IS 同号
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+target:
+  primary: mkt_fwd10_panel_ew_return（面板等权 10 日前向收益均值，_proxy 披露非指数）
+  secondary: 同面分段（bull/bear）与 OOS 扣留段
+  note: 本卡不复判次日面（母卡 02/09 已 examined），只隔离 10 日聚合热度面；r 位面与执行器现形不一致，见
+    status_reason
+status: blocked_on_impl
+status_reason: 三处缺口实测在册（本班逐行自读，非转述）：①聚合基序列未物化——前班管道 _screen_aggregate 只落 {series,transform,target,n,ic,t} 六元组（minedig_pipeline.py:826），逐日序列随函数返回销毁，盘面零存；②考面无 10 日前向目标面——执行器 _series_metrics 硬编码 tgt.shift(-1)（calibration_exam.py:154-156），绑定尺对非『指数次日收益』目标直接判 cls C reason=target_face_not_index_next_day（card_binding.py:259-270），另有 _HORIZON_RE 拦多日 horizon（:271-277）；③表未入配方册——_REGISTERED_TABLES 实载 3 表不含 c1_market.kline_daily_hfq（card_binding.py:338-355）。另 ic_ir 在 series 路无机器面（:184 恒 None）已作未判柱披露，非放行项。⇒ 解锁条件=物化＋配方册＋执行器多日标的前向面三件补齐（禁改卡面凑通）；与前班 20 张反向卡的缺口不同族：那 20 张只差①③，本卡即使补齐①③仍堵在②。
+signal_kind_note: series（逐日一数的市场面序列，非个股截面）
+oos_window_ref: *id001
+discipline: 冻结后开考；事后挪门柱=作废（裁定#501/G4-5）；开考时试次入 n_trial_ledger（kind=exam_card，
+  预算册族 A 口径=一张卡一次可审计试次）；本班立卡阶段零开考 ⇒ N 账本零写
+preregistered_by: st-minedig2-20261012
+preregistered_at: '2026-10-13'
+data_binding:
+  signal_table: c1_market.kline_daily_hfq（经 table_registry，与前班筛级同表；该表未入配方册，见 status_reason）
+  signal_column: close / ret_1d（零新数据源；涨停派生见 signal_derivation）
+  signal_derivation: ret_1d=close/close_prev-1 → 当日非停牌且有值行的绝对值均值 np.nanmean(np.where(susp & isfinite(ret1), abs(ret1), nan), axis=1)
+  piece_1_signal_face: signal_kind=series；表达式=面板平均绝对日收益（原值）单序列，规范 Call 形、零自由常数；特征真源=
+    前班筛级管道 _screen_aggregate 的 market-face 序列集（ret_1d/close 派生 + 涨停近似旗），与母卡 38 同源零新增
+  piece_2_universe: c1_market.kline_daily_hfq 窗内日均成交额 top800（lane_c SQL_UNIVERSE 同式）；top800 全窗均额
+    =大票偏置，如实披露；停牌/0 价/缺列=自然缺格（0 价卫兵置 NaN 后计数与均值均跳过），禁前向填充冒充
+  piece_3_rebalance_rows: 每交易日行（市场面逐日一数，无调仓日程可自定义；分位桶逐日重算）
+  piece_4_r_face_source: r 位=同面板 10 日前向收益 y_fwd10=close_{t+10}/close_t-1（hfq 同表自产，
+    逐股算后按日取等权均值 mkt_fwd10），禁借外部指数冒充面板自身收益；e 位=同一面板调用产出的聚合序列值
+  arm_e_face_quote: e 位=该聚合序列当日原值（逐日一数的市场面标量，非个股截面值）
+  arm_r_face_quote: r 位=面板等权 10 日前向收益均值 mkt_fwd10（同一次面板调用产出，非指数、非组合权重帧）
+  target_source: mkt_fwd10=nanmean(y_fwd10, axis=1)，y_fwd10=close_(t+10)/close_t-1（c1_market.kline_daily_hfq）
+  birth_batch: agg-screen-minedig-20261012
+  birth_cardmaking: minedig2-20261013
+  impl_gap: 开考前考班须逐条验证：①聚合序列逐日可复算并落只追加物化件（六段物化件同款版本化纪律，映射变更升版禁原地改）；②该表进配方册且粒度凭据随条目登记；③执行器有 10 日前向面（或本卡另接等价的 h 日聚合目标列）；④分位桶与 mkt_fwd10 对齐后进 judge。任一不通保持 blocked_on_impl，禁改卡面判据。
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence

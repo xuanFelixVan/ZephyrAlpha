@@ -1,0 +1,171 @@
+# 挖矿二班·聚合 8 卡断言轴集预登记（机读真源；立卡前写定，看数后禁改）
+# ttl: task_bound ｜ session: st-minedig2-20261012 ｜ 令据: 挖矿二班题库收尾令 2026-10-12 §二.1
+kind: assertion_axis_preregistration
+batch_id: agg8-minedig2-20261013
+written_at: '2026-10-13T00:35:00+08:00'
+written_before_any_card_file: true
+session: st-minedig2-20261012
+ttl: task_bound
+sop_anchor: docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md §8.5.1/§8.5.2/§8.5.3 (v1.9.1)
+order_anchor: docs/_working/2026-10-12-minedig-morning-pack.md §六.②（统筹批复「聚合 8 条立卡＝批」）
+
+purpose: >-
+  本件在任何卡片文件写盘之前落笔，承担三件事：①轴集覆盖面声明（SOP §8.5.1 表头铁律
+  「立卡批量生成 MUST 按轴声明覆盖面」）；②判据数值零自拟——每键点名其唯一来源；
+  ③试次账口径声明（SOP §8.5.2 三本账＋预算册族 A 口径）。
+
+# ── 1. 轴集覆盖面（每轴一格＝可枚举参数域）────────────────────────────
+axis_coverage:
+  - axis: T1_transform
+    values_in_batch: [level, z20]
+    excluded: "delta5（15 读数零过 agg_daily 闸，不入卡）"
+    source: .runtime/nightmine_exploration/agg_series_minedig_20261012.json#daily
+  - axis: T2_T7_market_agg_family
+    values_in_batch: [lu_count, lu_ratio, avg_abs_ret]
+    excluded: "down_count、breadth_pos（各 9 读数零过闸）"
+    source: .runtime/nightmine_exploration/agg_series_minedig_20261012.json#daily_pass
+    denominator_note: >-
+      筛级实载 5 序列（daily 键的 series 集合实测）；管道 _screen_aggregate 的 docstring 自称
+      "7 序列…全入账"与实载不符 ⇒ 本班按产物实数登记，docstring 差异另案留前班/矿考二班定性，本班不改他人 tmp 件。
+  - axis: T5_horizon
+    values_in_batch: [fwd5, fwd10]
+    excluded: "fwd1（15 读数零过闸）"
+    source: .runtime/nightmine_exploration/agg_series_minedig_20261012.json#daily_pass
+  - axis: T4_timepoint
+    values_in_batch: [日频收盘后单值]
+    excluded: 分钟/tick 面（WO-A2 断供面；SOP §8.5.3 模板C 铁律＝禁日频近似冒充分钟面）
+  - axis: T6_granularity
+    values_in_batch: [日频]
+  - axis: universe
+    values_in_batch: [窗内日均成交额 top800]
+    bias_disclosure: 大票偏置（逐字取预登记册 panel.universe_bias_disclosure）
+    source: .runtime/nightmine_exploration/prereg_minedig_20261012.yaml#panel
+  - axis: r_face
+    values_in_batch: [面板等权前向 h 日均值（_proxy 非指数）]
+    source: .runtime/nightmine_exploration/prereg_minedig_20261012.yaml#targets.market
+assertion_axis_set: "(3 序列) × (2 变换) × (2 前向) = 8 个已过闸格；零自由常数、零新增轴值、零新数据源"
+
+# ── 2. 判据数值来源表（零自拟：每键点名它来自哪一册哪一键）──────────────
+card_field_sources:
+  pillars_numeric.mono_spearman_min: {value: 0.6, source: "prereg_minedig_20261012.yaml#freeze.card_pillars_standard"}
+  pillars_numeric.ic_mean_min: {value: 0.02, source: "同上（日频标准档，非 card_monthly_pillars 的 0.25）"}
+  pillars_numeric.ic_ir_min: {value: 0.3, source: "同上"}
+  pillars_numeric.regime_same_sign: {value: true, source: "同上"}
+  pillars_numeric.oos_same_sign: {value: true, source: "同上"}
+  buckets.type: {value: quantile_decile, source: "母卡 TDM-E-L1-S2__calibration__02_涨停家数.yaml（日频 series 路先例）"}
+  buckets.min_obs_per_bucket: {value: 60, source: "同上"}
+  window.in_sample: {value: "2019-02-11..2026-04-02", source: "同批模板B 卡 __calibration__38 ＋ 预登记册 holdout 规则"}
+  window.oos: {value: "2026-04-03..2026-10-12", source: "预登记册 holdout.last_trading_days=126（AHM 末段扣留＝冻结卡 OOS）"}
+  window.regimes:
+    value: "bull 2019-01-04..2021-06-30 / bear 2021-07-01..2024-01-31"
+    source: "母卡 02 逐字"
+    form_note: 用 map 形而非散文形——series 路执行器按 card.window.regimes.items() 取段，散文形不可执行
+  screen_gate_reference:
+    value: "abs_ts_ic_min 0.08 / t_stat_min 3.0 / min_days 400"
+    source: "prereg_minedig_20261012.yaml#gates.agg_daily"
+    role: 仅作出生证据引用，未写进任何卡面判据位
+prereg_integrity_recheck:
+  file: .runtime/nightmine_exploration/prereg_minedig_20261012.yaml
+  sha256_disk_recomputed_by_this_class: 89652c3bab76dd69fbec60ba758a470b589177a7309e127b988e358725d75f50
+  sha256_recorded_in_exploration_ledger: 89652c3bab76dd69fbec60ba758a470b589177a7309e127b988e358725d75f50
+  equal: true
+  meaning: 选出这 8 格的闸在面板加载前已写定，看数后零改动
+
+# ── 3. 出生证据（8 格筛级读数，逐字照抄 daily_pass，禁加工）─────────────
+agg8_readings:
+  - {seq: "40", series: lu_count,    transform: level, target: fwd10, n: 1734, ic: 0.1161, t: 4.87}
+  - {seq: "41", series: lu_count,    transform: z20,   target: fwd10, n: 1730, ic: 0.1019, t: 4.26}
+  - {seq: "42", series: lu_ratio,    transform: level, target: fwd10, n: 1733, ic: 0.1207, t: 5.06}
+  - {seq: "43", series: lu_ratio,    transform: z20,   target: fwd10, n: 1729, ic: 0.1001, t: 4.18}
+  - {seq: "44", series: avg_abs_ret, transform: level, target: fwd5,  n: 1733, ic: 0.1015, t: 4.24}
+  - {seq: "45", series: avg_abs_ret, transform: level, target: fwd10, n: 1733, ic: 0.1012, t: 4.23}
+  - {seq: "46", series: avg_abs_ret, transform: z20,   target: fwd5,  n: 1729, ic: 0.1145, t: 4.79}
+  - {seq: "47", series: avg_abs_ret, transform: z20,   target: fwd10, n: 1729, ic: 0.1292, t: 5.41}
+negative_readings_declared:
+  daily_denominator: "5 序列 × 3 变换 × 3 前向 = 45 读数"
+  daily_pass: 8
+  pass_by_series: {avg_abs_ret: 4, lu_count: 2, lu_ratio: 2, breadth_pos: 0, down_count: 0}
+  zero_pass_slices: "fwd1 全部 15 读数；delta5 全部 15 读数；down_count 9 读数；breadth_pos 9 读数"
+  monthly_face: "逐月 85 行聚成 1 个筛级读数（lu_count_20d_sum_vs_next_month_mkt_ret，n_months=85，ic=-0.0104，t=-0.09）"
+  monthly_gate: 未过 agg_monthly（abs_ts_ic_min 0.25 / t_stat_min 2.5 / min_months 30）
+  monthly_consequence: 模板B 卡 __calibration__38 保持 blocked_on_data（本班不为其改面）
+  multiple_comparison_owner: 族级折减与最终判定权归 E2/E4；本批卡面不预折减、不自加门槛
+
+# ── 4. 与在册卡的非同义重考声明（净零内收判据逐条）─────────────────────
+non_duplication:
+  - neighbor: "__02_涨停家数（examined）／__09_limit_up_count_derived（examined）"
+    they_judge: 涨停家数分位 → 次日指数收益
+    batch_diff: 目标面（面板等权 ≠ 指数）＋ horizon 轴（fwd5/fwd10 ≠ 次日）双异
+    ruling: 跨轴不同对象 ⇒ 不并
+  - neighbor: "__16_连板高度过热事件开关／__17-36 反向事件开关卡"
+    they_judge: 事件两态对比（on/off）
+    batch_diff: 本批=序数分位响应曲线（quantile_decile），判据形态不同
+    ruling: 跨轴不同对象 ⇒ 不并
+  - neighbor: "__38_agg_limit_days_monthly"
+    they_judge: 月末 20 日和 → 次月收益（月度口径）
+    batch_diff: 本批全程日频、零月度聚合
+    ruling: 同真源不同口径面 ⇒ 不并（本班不重判 38 的月度结论）
+  - neighbor: "avg_abs_ret／lu_ratio／z20 三个词在整个卡池"
+    they_judge: 查无
+    measurement: 本班 grep -rl 于 exam_cards/ 命中 0 文件；同尺正对照＝grep lu_flag 命中 1 文件（__calibration__38）⇒ 尺非失灵
+    ruling: 新序列新面 ⇒ 非重复
+
+# ── 5. 三本账口径声明（SOP §8.5.2）──────────────────────────────────
+trial_ledger:
+  exam_trials_written_by_this_class: 0
+  reason: 本班立卡零开考；预算册族 A 口径＝一张考试卡一次可审计试次（kind=exam_card），该笔在 run_card 时才入
+  budget_registry_face: docs/_working/statsgov_campaign/trial_budget_registry_draft.yaml（status=design_draft_not_yet_promoted）
+  exploration_readings: "46（日频 45＋月度 1）⇒ 只入探索分册，不占考试试次"
+  predecessor_gap_found: >-
+    探索分册 scan_ledger_minedig_20261012_p2.jsonl 实载 6 行（preregistration/calibration/reverse_triage/
+    P2_screen/P3_freeze/owner_ruling_registered），无聚合筛级专行（46 读数未入任何账）。本班处置＝
+    在**本班新分册** `.runtime/nightmine_exploration/scan_ledger_minedig2_20261013.jsonl` 补记
+    stage=P2_agg_screen 一行（booking_status=backfill_of_prior_shift_missing_row），
+    前班 6 行字节零改动——不往他人账本文件里追加，防共享追加型文件的写者相撞。
+  this_class_ledger_rows: 3（P2_agg_screen 补记／P4_agg8_cards 立卡／D_family_four_criteria 资格验收）
+  deflation: 本班零折减、零抬线；筛级 t 值只作出生证据（SOP v1.9.1 总则：闭卷考试＝最终考试，折减不替代考试）
+  replication: 8 张卡各带可复算出生四件（本件 axis_coverage＋card_field_sources＋agg8_readings 即全部输入）；复算失败＝卡废
+
+# ── 6. status 判定实测面（决定 8 张卡一律 blocked_on_impl）─────────────
+status_measurement:
+  measured_by: 本班逐行自读 HEAD 源码（非转述）
+  gaps:
+    - id: base_series_not_materialized
+      face: 聚合基序列未物化
+      site: .runtime/tmp/st-minedig-20261012/minedig_pipeline.py:826
+      reading: "只 append {series,transform,target,n,ic,t}，逐日序列数组随函数返回销毁 ⇒ 8 序列逐日值在任何盘面零存"
+    - id: no_multiday_target_face
+      face: 考面无 5/10 日前向目标面（决定性缺口）
+      site: scripts/backtest/fexam/calibration_exam.py:154-156 与 card_binding.py:259-277
+      reading: "_series_metrics 硬编码 tgt.shift(-1)；绑定尺对非指数次日目标判 cls C reason=target_face_not_index_next_day，另有 _HORIZON_RE 拦多日 horizon"
+    - id: table_not_in_recipe_book
+      face: 表未入配方册
+      site: scripts/backtest/fexam/card_binding.py:338-355
+      reading: "_REGISTERED_TABLES 实载 3 表（kline_index／index_valuation_daily／news_sentiment_window），不含 c1_market.kline_daily_hfq"
+    - id: zscore_recipe_undecided
+      face: z20 归一配方未决（只影响 4 张 z20 卡）
+      site: scripts/backtest/fexam/card_binding.py:316-325
+      reading: "命中滚动/z-score/分位 ⇒ reason=rolling_window_needs_explicit_n_or_refuse 或 normalization_recipe_undecided"
+    - id: ic_ir_no_machine_face
+      face: ic_ir 在 series 路无机器面（披露项，非门槛项）
+      site: scripts/backtest/fexam/calibration_exam.py:184 与 :296-298
+      reading: "series 路恒 None；_unjudged_pillars 义务披露「ic_ir 无从评估」⇒ 卡面保留母卡 0.3，出分须带未判柱声明"
+  batch_status: 8 张卡全部 status=blocked_on_impl（无一可如实写 preregistered）
+  gate_ran_notmerely_read: >-
+    本班不止读码，直接调真门：card_binding.classify_card(卡面 dict) 对本批 8 张逐一执行，
+    8/8 返回 {cls: C, reason: target_face_not_index_next_day, tables: [c1_market.kline_daily_hfq]}
+    ⇒ 绑定尺在触到"表未入配方册/滚动窗/z-score"这些后续判据之前，已先因目标面短路拒绑，
+    故 no_multiday_target_face 确为本批的决定性缺口（与本件 status_measurement.gaps 顺序一致）。
+    复现命令（零 CH）：cd scripts/backtest/fexam && python -c "import sys;sys.path.insert(0,'.');sys.path.insert(0,'..');
+    import card_binding as cb, yaml, io, glob; [print(cb.classify_card(yaml.safe_load(io.open(f,encoding='utf-8').read()))) for f in glob.glob('…卡片路径')]".
+  choke_point_for_chief: >-
+    与前班 20 张反向卡的缺口不同族：那 20 张只差"物化＋入配方册"两件事，本批 8 张即使补齐仍堵在
+    no_multiday_target_face ⇒ 接线工单须新增"执行器多日标的前向面"这一面，否则本批开考数恒为 0。
+
+discipline:
+  - 零 CH（本件与 8 张卡全程零查询；本班唯一 CH 面在 D 族资格验收件里，且落在 01:00-04:00 让路窗外）
+  - 判据数值零自拟（每键见 card_field_sources）
+  - 卡面阈值零手改（全部逐字继承预登记册与母卡 02/38）
+  - N 账本零写（见 trial_ledger）
+  - 8 张卡 status 一律如实 blocked_on_impl，禁为凑开考数改面
+  - 判定权全数留 E2/E4
