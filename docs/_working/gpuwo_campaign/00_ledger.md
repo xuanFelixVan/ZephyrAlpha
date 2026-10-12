@@ -399,3 +399,167 @@ Kronos 之前，我再注册并复测钟面）。**GPU-01 的夜窗扩产此刻�
 另发现一处**申报面比真面更保守**的新形态：`est_duration_min` 取的是 ExecutionTimeLimit(35)，
 而操作性封箱是包装器里的 25min ⇒ 纸面 00:30+35=01:05"进了"01:00-04:00 让路窗，真面 00:55 没进。
 方向上这是"多报"不是"少报"（不会造成假绿），但属同一缺通道簇，随 11 册一并呈报，本班不自改生成器。
+
+### 6.11 GPU-02 打分窗上膛前的开工前检查：三缺件里的"表"其实**没在 CH 里**，本班按单口补建
+
+上膛（`-Enable`）之后我没有直接走人，而是把"00:30 那一批真要跑起来需要的三样"逐个实测，
+结果抓到一条整班都没发现的缺口：
+
+| 前置 | 在册假设 | 实测（本机 20:5x，全部进程外读回） | 结论 |
+|------|----------|-----------------------------------|------|
+| 官方代码 | `vendor/Kronos/model/kronos.py` 在 | 在（`model/` 目录列出 `kronos.py module.py __init__.py`） | OK |
+| 权重 | 未核过 | `vendor/kronos_weights/` 314M，含 `kronos_small`＋`kronos_tokenizer_base`（默认 `model_size="small"` 解析到的正是这两本） | OK |
+| **目标表** | "GPU-02 预测表三件已随 a8a19e2f63 落地＝表有了" | `SELECT ... FROM system.tables WHERE database='c1_market' AND name LIKE '%kronos%'` 返回 **空列表**，`system.columns` 计数 **0** | **缺表** |
+
+**为什么会漏**：落地的那三件是 DDL-as-Code（`schemas/categories/market/market_kronos_prediction_daily.py`
+＋ `apply_market_tables_ddl.py` 的接线＋ `business_data_categories.yaml` 的册条目）。
+"代码落了"和"库里有表"是两件事——`apply_*.py` 不跑，CH 里就什么都没有，
+而册面/蓝图面/袋面全都显示"已落地"（RULE-SSOT 的架构数据面＝DB 直写，这一步从来不是提交带来的）。
+这正是本_campaign 反复在抓的那类**假绿的新形态**：申报面全绿、运行面零对象。
+不补，今晚 00:30 那批会在写入口炸掉，然后 Alerter 报红——报错是对的，但那是**本班造成的红**。
+
+处置（按 Owner 固定正解＝改喂给闸/改补运行面，不动判据不加豁免）：
+**只建我这一张**，不整批跑 `apply_market_tables_ddl.py`。理由：那个入口默认
+`apply()` 全表矩阵（含对既有表 `ALTER ADD COLUMN` 的可变列路径），波及面是整个数据车道的表，
+超出我一单的需要，也超出我在 21:00 这个点位该承担的半径。
+做法＝用同一个已落地单口（`ch_writer.query`，与 `apply()` 里那行同源）执行
+同一份在册 DDL 常量（`KRONOS_PREDICTION_DAILY_DDL`，经 `dict(amtd._ALL_DDL)` 取，零手写 SQL、零复制粘贴漂移），
+并按在册 `ch-query-fails-soft-trap` 的教训**不信返回值**（DDL 走 query 返回空串是正常态，
+空串也可能吞错）＝改由读回定性：
+`system.tables` → `ReplacingMergeTree / 1`；`system.columns` → `28`；`SELECT count()` → `0`。
+三步验证留痕：必要性＝不建则今晚必炸且册面已声明该表；真实性＝**建前**核的是 `c1_market` 面为空
+（`name LIKE '%kronos%'` 返回空列表），**建后**才补跑跨库复查＝全库现在只有这一张同名表，
+所以"别库已有同名对象"这条不是建前证伪的、是建后排除的，如实标先后；
+可逆性＝空表（`count()` 读回 0 行），删除即回原状（本班不删，只建）。
+
+顺带把"上膛前该核的都核了"这条写成一句可复用判据：
+**注册并 `-Enable` 一个批，验收要看它真要读的那些对象在不在，而不是看脚本与袋在不在。**
+
+### 6.12 今晚 00:30 那批的开工前算术：宇宙 300／今夜片 75／25 分钟顶到 ~20 秒/票才截断
+
+上膛之后、真跑之前，我把包装器的参数原样复算了一遍（只读，零写盘、零模型加载）：
+
+```
+universe size: 300            # SQL_UNIVERSE 成交额降序 top_n=300（与评估腿同一 SQL，不另开口径）
+tonight shard 1/4 size: 75    # DayOfYear(285) % 4 == 1；ceil 分片 -(-300//4)=75，四夜 75×4=300 全覆盖
+2.0s/票 → 2.5min   5.0s/票 → 6.2min   10.0s/票 → 12.5min   20.0s/票 → 25.0min（正好贴 25min 上限）
+```
+
+- 判读：**只要每票不慢于约 20 秒，今晚这一片就在 25 分钟封箱内跑完**；慢于它则 rc=4（截断），
+  包装器会写 `NOT GREEN` ＋ Alerter ERROR——分片失败不许报绿是批复 R-3 的原话，代码里已钉住。
+- 诚实标价：20 秒/票是**容量上限**，不是我对今晚的预测。真模型路径到现在**一次都没跑过**
+  （R-4 那次冒烟是 forced-synthetic，刻意绕开了权重与推理），所以我没有每票实测秒数。
+  首个真读数就在今晚日志里（`calibration.symbols_fit_in_cap` 会把它自己写出来），明早可对账。
+- 权重与代码我核过在位（6.11 表），表也补建了；剩下的未知就是每票耗时与显存占用，
+  这两项只能等真跑，我不拿估算当证据。
+
+一句总结今晚上膛态：`KronosScoring=已上膛（00:30，片 1/4，25min 封箱，keep 已登记）`、
+`NightMining=已注册未上膛（与 LaneC 钟面撞一小时，本班自断，待您一句）`、
+`SftTrainWindow=未注册（训练＝Owner 按钮，线已接通见 6.10）`。
+
+### 6.13 统筹 21:3x 三裁执行账（按钮按下＝条件成就；旧案卷一字未改，按"更正另起一节"走）
+
+统筹批复下来三条，逐条落。本节是**追加**，§6.10 里"本班不代签最后一道闸"那段原文保留——
+它记录的是我在缺认证依据时的判断，今天批复把依据补齐了，动作变了但案卷不能改写。
+
+**裁一「按下按钮＝条件成就即按」** — 已执行。
+成就条件是"金标 v1 冻结 hash 入册的自证附上"，自证取**落地侧读回**（不是车道盘面）：
+
+```
+git show dev:data/eval/gold_expansion_v1.jsonl            -> 351 行, CRLF 0
+  sha256 81c4f6ad57194c87a0e38ec7ba1bf55b6f66c4a5e5f039d6777c0ae8ad8016d4   == 14 册登记值
+git show dev:data/eval/gold_expansion_v1_quarantine.jsonl -> 9 行, CRLF 0
+  sha256 f41445fa06e91ccb8c845a733479cf357f35342b00f15764587ad57be6e026a7   == 14 册登记值
+```
+
+三步动作与读回证据：
+1. 授权文件 `data/runtime/sft_train_authorization.txt` 已建（1069 字节，非 ASCII 字节 0，
+   内含 `RUN_SFT_TRAIN_FULL_APPROVED` ＋来源注记：Owner 裁定①⑤＋统筹 21:3x 批复＋上面两条 hash 自证＋回滚法）。
+   验"闸门真能认这张票"＝用包装器**同一个谓词**复跑：`re.search(re.escape($AuthToken), content)` → True
+   （不是"我看文件里有这个词"，是把执行体的判据搬过来跑一遍）。
+   该路径被 .gitignore:344 `data/runtime/` 覆盖 ⇒ 零 git 足迹，不会被别人扫进袋。
+   一次性语义不变：批跑时 `Move-Item` 成 `.consumed`，一次批准不会在两个窗里各跑一遍。
+2. 注册＋上膛：`register_sft_train_window_task.ps1 -Enable` → `OK registered … (weekly Sunday 10:00, 5h limit)`
+   ＋`STATE enabled`；`Get-ScheduledTask` 读回 **state=Ready, next=2026-10-18 10:00**。
+3. reaper keep：追加 `run_sft_train.py` 一行。**这里我改了 §6.10 的口径，理由摆开**：
+   §6.10 写的是"没跑就不登记，提前写＝给不存在的批发免死牌"；现在的事实是
+   批已授权＋已排定＋触发点在周日 10:00（届时未必有人在班），300 分钟级长批若被孵化/孤儿规则中途收割，
+   既白烧 GPU 又留下一枚假失败。令卡原文是"长批先登记 keep 防误杀"＝**先登记**才是照在册。
+   代价如实说：这一行会在盘上长期存在，任何 cmdline 含 `run_sft_train.py` 的进程都免杀——
+   范围窄（这一个脚本名），且删除即回原状，属可接受。旧口径留在 §6.10 不抹。
+
+顺带一句结构性保险（说明"撞车"不会靠人盯）：包装器自带三道闸——01:00-04:00 让路窗内不启动、
+GPU 已用 >12000 MiB 直接 SKIPPED＋WARN（不与当时在用的批抢卡）、授权文件缺失即 no-op。
+所以周日 10:00 若有别的 GPU 批在跑，这批是**自己让路**而不是把别人挤下去。
+
+**裁二「夜窗＝暂不上膛」** — 与本班 20:5x 的自断一致，无需回滚：
+`ZephyrAlpha_NightMining` 现态 **Disabled**（已注册未上膛），`KronosScoring` **Ready 00:30**。
+GPU-01 的档位 A/B 未跑＝没有实验就上膛是空转，这条我认；时点决策与 A/B 一起等首夜标定读数。
+"扩产产了多少"今夜仍如实报 **零**。
+
+**裁三「两转维护三班」** — 已立案（本册为正源，不另立薄册）：
+- 转①**设施簇**：`q-…-0033`（SFT 测件袋）死于 `git commit` 60s 超时，`recurrence_count=364`。
+  本班未 `--force` 越熔断（越闸会把这条簇的可见性洗掉，统筹已认同）。测件字节两处都在：
+  车道 `tests/meta/scripts/test_ml_run_sft_train.py` ＋ 该死信袋的 blob，随时可取回重投。
+  要请维护三班定性的不是"我这枚"，而是**60s 这个上限在满负荷机上是否还成立**——
+  364 枚同签名说明它已成簇，属落地链容量问题。
+- 转②**门禁面新坑**（本班实测，给该门的判据补一条前置条件）：
+  `TEST-SOURCE-CONSISTENCY` 读 **index 面**判符号存在性；当源码**已由别袋落到 dev、而本车道 index 里
+  还留着车道旧 HEAD 的字节**时，后置的测件袋必被判"符号不存在"＝**假红**（本班连拦两次，
+  两次 dev 面都确有该符号）。修法＝投测件袋前 `git add <自己的源码路径>` 把**车道 index 对齐**
+  （袋内 `--files` 仍只列测件，不夹带源码），对齐后一次通过。
+  这条与已登记的"内容型门禁读 index 暂存面而非盘面"同源，但触发形态是新的：旧形态讲"盘面新、index 旧"，
+  新形态是"dev 新、车道 index 更旧"，同一条尺、同一个方向，专杀"源码先落测件后投"这种
+  被 GATE-TEST-SYMBOL 逼出来的正确秩序。**建议写进该门 docstring 的前置条件**，
+  否则每个后置测件的班都要重新撞两次。
+
+**统筹提到"两枚 ps1 被救出回退弹"的复核**（以 dev 为准，本班三面逐件对拍）：
+`run_sft_train_task.ps1 / register_sft_train_window_task.ps1 / run_kronos_scoring.ps1 /
+register_kronos_scoring_task.ps1 / run_night_mining.ps1 / register_night_mining_task.ps1`
+六件 **dev == 车道 == 主区** 三面全等（逐件 git 侧 sha 前 12 位比对：9cb0d034fb5d / d54fb2b9dfbe /
+40d08ac072da / 3e5dae330e07 / cd5b43f33581 / e6fea1b9ad94）。dev 面内容再点验两处：
+`--pass-line 0.767` 命中 1、`frozen gold v1 not on disk` 那道 DENIED 前置命中 1 ⇒ 本班交付未被回退，
+无需重基，继续以 dev 作为工作面。
+
+### 6.14 P4 链路演练：第一步真过了（离线加载 15.24GB 底座成功），第二步被本机内存余量叫停——负结果入册
+
+统筹 22:1x 批复：转换＝链路演练，GPU-03B 工单 P4 原令有效（旧 adapter＋标记非投产＋`--llama-cpp-dir E:/llama.cpp`），
+"Owner 按钮"指的是**新模型考过后换上夜班**那一下，不是这次演练。本班据此执行，执行到的地方如实报，
+**不把"计划装配成功"说成"链路已闭环"**。
+
+先做的三项可行性核（都是读回，不是推理）：
+- 工具在位：`E:/llama.cpp/convert_hf_to_gguf.py` 与 `E:/llama.cpp/llama-quantize.exe` 两个 `os.path.exists` 全 True；
+  用 `--llama-cpp-dir E:/llama.cpp` 重跑 dry-run，四条命令全部换成绝对路径、rc=0。
+- 底座**已在本地**：`adapter_config.json` 的 `base_model_name_or_path = Qwen/Qwen2.5-7B-Instruct`，
+  HF 缓存里 `snapshots/a09a3545…` 四片实文件合计 **15.24 GB**（不是符号链接空壳，blob 目录为 0 而 snapshots 里是真文件）。
+  ⇒ **不需要任何下载**，这条把"要不要联网拉资产"的问题直接消掉了；
+  为防万一仍带 `HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1` 起批（若真缺就快速失败，绝不静默下 15GB）。
+- 余量：起批前 `D: free 75.8 GB`、`RAM avail 31.2 GB`。
+
+执行与叫停（坐标登记供周日复用）：
+```
+python scripts/ml/convert_gguf_ollama.py \
+  --llama-cpp-dir E:/llama.cpp \
+  --model-name    qwen25-7b-sft-v1-drill20261012 \
+  --output-dir    D:/ZephyrAlpha/models/gguf_drill_20261012
+```
+- 过的一步：**step1 merge 的模型加载真完成**——日志里 `Loading checkpoint shards … 100%|██████████| 4/4 [00:38<00:00]`，
+  即本地底座＋旧 LoRA adapter 能被 peft 装配（这是链路里最容易假失败的一段，此前一次都没真跑过）。
+- 叫停的一刻：`save_pretrained` 写盘期间测到 **`RAM avail = 3.6 GB`**（起批时 31.2），
+  同时段队里还有别班在跑、00:30 的 Kronos 首夜批在约一小时后要起来。本机今天已经**死机两次**。
+  按"量出异常即停手"，本班主动 TaskStop 叫停，没有让它继续吃内存去赌一次蓝屏。
+- 停后复测：子进程已无（按 cmdline 关键字 `merge_and_unload|convert_gguf` 查零命中）、
+  `RAM avail 回到 25.0 GB`、`D: free 70.0 GB`。
+- 残骸清干净：演练目录 5 个文件 5.79 GB 半片 `shutil.rmtree` 删除并 `exists now: False` 复验。
+- 同步撤掉免死牌：刚登记的 `convert_gguf_ollama.py` 那行 keep 一并删（批没在跑就不留免杀面），
+  `process_reaper_keep.txt` 375→373 行，另两行（打分／训练）逐一复验仍在。
+
+**负结论与它的确切边界**（别被这句话外推）：
+- 已被证伪的不是"链路"，是"**这台机器在满负荷时段同时跑演练**"。
+  四步里实测过的是 step1 的加载（绿）与整条计划的装配（绿）；
+  **step1 的 save、step2 convert、step3 quantize、step4 ollama create 四段本轮未跑到＝未证**，
+  不得引用为"已验证"。
+- 判据留在了册里可复用：`merge+save` 的峰值经验值是"RAM avail 从 31.2 掉到 3.6 还没写完"，
+  ⇒ 需要 **≥40 GB 可用内存或空盘时段**才该重跑；周日 10:00 训练完接着转是同一条路的自然时段，
+  但那要先有人在班盯余量。
+- 若下要重跑：命令照上面坐标不变，先把 keep 行加回去（长批），并在 `save_pretrained` 期间盯 `psutil` 一次。
