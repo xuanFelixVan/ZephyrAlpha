@@ -27,6 +27,28 @@ family_id: EXAMRUN-CAMPAIGN-20261012
 建车基线 dev@20fa9c43bb）；SessionRegistry 逻辑会话在册（pid=0）＋心跳 daemon PID 36620；
 reaper keep 已 CAS 追加本 sid 三条（追加后他会话条目零损，`st-mineloop2-20261012` 命中数改前改后皆 3）。
 
+## 0·夜 21:4x 复写头条（旧七行原文留上不动，本节只加不改）
+
+1. 开考仍 **0 张**，且两次在册分类器复测同值（晨间 495 张与夜间 517 张面均为
+   `A=0 / A?=11 / B=17 / C=121 / D=0 / U=28`、preregistered 宇宙 177 行一字未变）——见 §23.2。
+2. 供题**今日到位 22 张**（挖矿班 15:32 反向事件开关 20 张＋21:20 冻结模板 2 张，卡册 495→517），
+   但卡面 status 全为 `blocked_on_impl`(20)／`blocked_on_data`(2)，在册考试宇宙只收 `preregistered`
+   ⇒ **可考面没有因供题扩大**；真缺口＝两条接线（表未入配方册＋基序列物化件缺），非机器非时间（§23.3）。
+3. 上方旧第 4/5 行的两处读数已被后续实测取代，**旧文留上不删**：注入位修已落 dev
+   （本体袋 0018 于 21:12 落地，`git show dev` 注入位=3，主区 `pytest` 38 passed，
+   因本班末倒置造成的 dev 红灯约 10.6h 闭合）；少记口径改按"两本都取 dev 面字节"重算＝
+   38 键 vs 29 条、**A有B无 21**，其中 **eligible 16** 可补、**phantom 5** 不可补
+   （改名漂移 2＋卡册查无 3，run_id 全前缀 `mineloop-` 非本班），泄漏面 dev 1／工作区 6（§22.3）。
+4. 本班自纠一处：给矿考二班的 v1 规格写"OPS 册缺『指标列→日频序列』算子"被实载证伪
+   （`daily_agg_series` 与 `event_flag_rolling_pctile` 两条都在册，卡面自己也这么写）；
+   教训入册——出规格前必须在目标键集上跑正对照，"没找到"≠"不存在"（§23.3）。
+5. 令 B 附录的 8 条注册策略 ablation 卡**仍未到位**（dev ablation 族 75 枚与晨间同值；
+   队列在途袋含 `exam_cards` 路径者 0 件）；GPU 通道仍未解锁。
+6. 本机今晚死机两次＋断电假死，本班被接管闸连坐拦下四个袋；全程**未 `--force` 越闸、
+   未销任何他班条目**（守统筹令"别自己销他账"），命中面用门自己的函数实算＝本班三件全 0（§22.2）。
+7. 待 Owner 点的仍是三件＋一条：目标面通道立项｜面板形绑定通道排产矿考域（本班＝消费侧）｜
+   六段切点 8 张卡｜"测试写生产册"要不要立通用闸（本班夹具只护住一支考尺测试，泄漏面仍在扩大）。
+
 # 一、判据铁律（P0）——已核到代码 return 行，非纪律口号
 
 铁律声明：**存量卡一律按其卡面注册判据考；不得用新阈值/通缩校正重判历史卡；新卡按挖矿班 SOP 新阈值考。**
@@ -702,3 +724,370 @@ CH 查询 0 次（含死机后复员，全程零取数）｜N 账本真源零写
 - 教训一条（写给我自己）：`gate_dry_run` 的"命中面自检"我第一版用 `hasattr(...)` 兜底，
   函数名不对即静默返回空集 ⇒ 判成"零拦截"，实际门里有 1 条。凡"自检尺"必须先证明它能红：
   本次改判据为"用门导出的 `entry_match_surface` 实算＋打印 blocking entries 数"，才看到真阻塞。
+
+# 廿二、dev 复绿闭合读数＋N 账本正集 v2（21:1x–21:2x，两把尺各自纠一次后成立）
+
+## 22.1 dev 考尺红灯闭合（本班致因，本班自验）
+
+- 21:12:11 本体袋 q-…-0018 落 dev（值守日志 `LANDED`）；实测两把：
+  - `git show dev:scripts/backtest/fexam/calibration_exam.py | grep -c ledger_registry_path` = **3**（注入位在 HEAD 面）；
+  - 主区（`HEAD==dev==c52d81aa96`，且两文件工作区字节与 dev 零差）跑
+    `pytest tests/backtest/test_calibration_exam.py` = **38 passed**（§二十 记的红灯时长由此闭合：约 10.6h，非"9 小时"估）。
+- 车道→dev 差集实测：`calibration_exam.py` 差 0 行（本体全落），
+  `test_calibration_exam.py` 差 46 行（＝三支面板钉，另投 0020，车道面 41 passed，包根解析到车道 src 非主区，防导主区假绿）。
+- 面板钉落 dev 后的一条如实提醒（不改判据，只声明后果）：`_panel_metrics` 从前根本不填 `ic_ir`，
+  修后面板路 ICIR 下界**第一次真生效**⇒ 同一张面板形卡重跑可能与历史行判得不一样。
+  本班按 P0 铁律**不重判任何历史行**（分数册只增不改），所以这个差异只会出现在"以后新考的卡"上；
+  接班者若看到同卡两个 verdict，先查是否面板路、再查该行 date 早于 0018 落地时刻即属预期。
+
+## 22.2 守令申明与命中面实测（统筹令"别自己销他账"的执行对表）
+
+- 21:1x 用门自己的函数实算：`load_open_entries(root)` 返回 **182** 条 open（§二十一 记的 183 ⇒ 期间他班销了 1 条），
+  `entry_match_surface` 对本班三件（本体 `calibration_exam.py`／测试 `test_calibration_exam.py`／班账 `00_ledger.md`）
+  命中 **全为 0** ⇒ 0018 能落、0020 无拦。
+- 本班**未再执行任何 `--resolve`**（他账零动作），也未用 `--force`／改判据越闸；
+  统筹令"等维护三班扫除清条目后按死因对症重投"的实质已满足——命中面为空是实测出来的，不是推断的。
+- 死袋 0015 未 requeue（其内容＝班账早期版，正件已在 0017/0019 路线上，blob 仍在，无内容丢失面）。
+
+## 22.3 N 账本正集 v2（dev 面口径，件=`reconcile_devface_v2.json`）——旧 §9.1 留文不删，本节为可补账正集
+
+口径先立：两本都取 **dev 面字节**（`git show dev:`），不读工作区——工作区试次册呈 M（他班在途＋PG 物化漂移，
+52 条 vs dev 29 条），拿它当分母会把别人的在途字节算进本班账。
+
+| 量 | 值 | 说明 |
+|---|---|---|
+| 宇宙 A：分数册 `examcard:<card_id>:<date>` 唯一键 | 38 | 44 行去重后 |
+| 宇宙 B：dev 试次册记录 | 29 | 其中 examcard 形 18、非 examcard 形 11 |
+| 非 examcard 形前缀分布 | grid 8／batch:grid 1／sharpe2 1／fexam-strategies 1 | **全归他班自落，本班不代投** |
+| A 有 B 无（应补账候选） | **21** | 与 §9.1 的 55.3% 同分母 |
+| 其中 eligible（card_id 与卡册精确同名） | **16** | 正集，逐条可 grep |
+| 其中 phantom_card（卡册无同名） | **5** | 两族，见下 |
+| B 内泄漏形（`TDM-E-TEST`） | dev **1**／工作区 **6** | 泄漏仍在扩大，见 22.5 |
+
+- **桶和断言**：eligible 16 ＋ phantom 5 ＝ 21 ＝ missing ✓（这一条是 22.4 自纠后新加的硬闸）。
+- **正对照**：卡册名全集 517 枚；已知真卡 `07_margin_flow_shortwindow` 命中 **2** 条（两日各一）
+  ⇒ eligible 桶非空、尺有判别力；phantom 与泄漏两桶亦非空。
+- phantom 5 条两族归因（全部 `run_id` 前缀 `mineloop-`，即矿考域早期跑，非本班）：
+  - **改名漂移 2 条**：`06_m1m2_scihjorsc_longwindow`（10-10／10-11）——卡册真名是 `06_m1m2_scissors_longwindow`，
+    分数册留着错拼⇒ 补账前须先把 card_id 归一，否则账本与卡册永远对不上；
+  - **卡册查无此卡 3 条**：`16_max_streak_high_event_v2`／`07_promotion_rate_high_event_v2`／
+    `08_limit_up_premium_high_event_v2`（均 10-11）——dev 卡册连不带 `_v2` 的同名卡也没有，
+    即 **分数册超前于卡册**（他班 v2 卡未落地而读数已落地）。
+    这 3 条不可由本班补账：卡不存在⇒"考过哪张卡"无法机器自证，须等卡落地或由属主班自补。
+- 与统筹口径差 1 条如实报：晨裁 ⑤ 批的是"补账 15 条"，本班正集实测 **16 条**。
+  差值最可能出在 `TDM-X-S1-02/comparison/02_dualwindow`（唯一非 entry_flow 族、comparison 形）——
+  本班不自行拍板剔除，等前置两修落完后再与统筹对表一次。
+
+## 22.4 本班尺的两次自犯（留旧读数不删，方向写明）
+
+1. **宇宙混叠**：上一版把"缺失（A 有 B 无）"与"泄漏（B 内测试形）"塞进同一个 `missing` 里分四桶，
+   于是桶和 23 ≠ missing 21 却没人报警——三桶各有成员的正对照**根本发现不了这种错**（三桶都非空但对象不同源）。
+   治本＝把宇宙定义写死成表头（A/B 各一列）＋加"桶和==missing"断言，本节表就是新尺输出。
+2. **card_id↔卡文件名的两处转换漏写**：卡文件名用 `__` 分隔而 `card_id` 用 `/`；且键是 `examcard:<card_id>:<date>`，
+   剥前缀后还要 `rsplit(":",1)` 去掉日期。两处任一漏掉，同名匹配就 **恒假**⇒ eligible 连续两版报 0。
+   靠的是在册纪律"0 命中先跑已知正样本"才没把"零可补账"当结论上报（同族教训见 §9.5 第 2 条的强正则 0/13）。
+
+## 22.5 泄漏面扩大的读数（供统筹判是否立通用闸，§十四 同族）
+
+- dev 面试次册含 `examcard:TDM-E-TEST/calibration/02:2026-10-10` 1 条（`recorded_by=calibration_exam`，
+  即 10-10 那次跑根本没走会话署名）；同一册工作区面已涨到 6 条 ⇒ 10-12 白天还有班在写生产 N 账本，
+  本班 0002 落的 autouse 夹具只保护了 `test_calibration_exam.py` 一支，**没保护别的考尺测试**。
+- 本班只出读数不出处方：判据建议留一句——"任何 `recorded_by` 等于模块名而非 `[A-Za-z]+-\\d{8}` 会话形的记录即视为测试泄漏"，
+  是否立闸归统筹／维护三班。
+
+## 22.6 20 张反向卡的唯一堵点＝一条算子（规格已成交矿考二班，件=`operator_gap_spec_for_mineloop2.json`）
+
+- 实测态（读队列 blob 与卡册，零 CH、零改他班件）：`status=blocked_on_impl`、`route=event`、
+  `bucket_type=event_flag_two_state_contrast`、`tables=[]`、`cls=U`（`no_data_binding_section`）。
+- 缺的不是阈值也不是数据源，是**基序列侧算子**：`event_flag_rolling_pctile` 要 `base_op` 或 `base_csv`，
+  而 OPS 册里没有"指标列→日频序列"这一条，SERIES_DIR 也没有该族入库序列。
+- 需要的规格一句话：从 `technical_indicator` 按列取日频聚合序列（agg 与去重须逐表面实证），
+  再喂 `event_flag_rolling_pctile`；**一格一序列**，禁拿行业／个股截面冒代全市场均值。
+- 归属申明：`card_binding` 算子面＝矿考二班他域，本班只登记规格、不代写、不 claim 他的文件。
+
+## 22.7 本班队列账（截至 21:2x，只报事实）
+
+- done 3（0002 测试件 v1、0017 班账 v1、**0018 本体**）；pending 2（**0019 班账 §廿一袋**、**0020 测试件终版含三面板钉**）；
+  dead 11（0001/0006/0007/0008 R5 路径、0009/0010/0011/0015 TAKEOVER、0012/0016 ghost_session）；processing 0。
+- 0019/0020 由 21:18 起排在他班袋后（全池 pending 10／processing 4，非本班慢）；
+  本班不抢租约、不 `drain` 越序。
+- 保活实测：守护 pid 3488 心跳末行 `status=alive`、文件龄 25s；注册表单口 `list_active_readonly()`
+  命中本班（held_files 2，`reincarnation_count=4`）；本体件 claim 已 release，测试件 claim 随 0020 保留。
+
+# 廿三、供题到位 22 张但可考面仍 0＋本班规格一处自纠（21:3x，全轮零 CH）
+
+## 23.1 供题实测：挖矿班今日两批卡已落 dev
+
+- `git log --diff-filter=A --since="2026-10-12 04:00" -- .../exam_cards` 实测＝**新增 22 张**，分两笔：
+  - `acdb1ce096`（15:32）批3反向分诊 A 类事件开关卡 20 张 = `TDM-E-L1-S2/calibration/17..36_ind_*_high_event`；
+  - `86d80a0bd6`（21:20）冻结模板卡 2 张 = `…/38_agg_limit_days_monthly`、`…/39_intraday_tpl_blocked`。
+- dev 卡册总量随之 495 → **517**；按族 comparison 197／ablation 75／calibration 210／shadow 35
+  ⇒ 新增 22 张全落 calibration 族（晨间 188 → 210，差 22 对上）。
+- 22 张卡面 status 实测：`blocked_on_impl` 20 ＋ `blocked_on_data` 2，**全部带 data_binding 段**
+  （本班晨间 §19 预判的是"无 data_binding⇒cls=U"，落库版已补上绑定段＝预判被新字节取代，旧文留不删）。
+
+## 23.2 在册 classify 面读数：可考面没有因供题扩大（零 CH）
+
+- 用在册 `card_binding.py --mode classify`（非本班自造尺）跑 dev 面 517 张：
+  `tally = {A:0, A?:11, B:17, C:121, D:0, U:28}`，`card_total_preregistered = 177`，rows = 177
+  ⇒ **与晨间 §9.2 完全同值**；新 22 张在普查 rows 里 **0 命中**——在册分类器的宇宙只收 `status=preregistered`，
+  blocked 卡根本不进门。故"考面=0"这条结论今日仍然成立，且不是本班读码推断，是分类器输出。
+- 北极星的如实答复不变：**今晚考了 0 题**（可考面 0），已入账的读数是班账与本节。
+
+## 23.3 本班规格一处自纠：v1 说"缺算子"是错的，真缺口是两条接线（v1 文件留盘不删，件=`operator_gap_spec_for_mineloop2_v2.json`）
+
+- 错在哪：v1 写"OPS 册里没有『指标列→日频序列』这一条⇒缺算子"。实载 `card_binding.OPS` **11 条键**里
+  `daily_agg_series`（`op_daily_agg`：按日聚合某列，agg/tz/col/table 全取自绑定册 args）与
+  `event_flag_rolling_pctile` **两条都在册**；卡面 `status_reason` 也自书"算子已在册"。
+  本班把"没找到"当成了"不存在"，出规格前没在 OPS 键集上跑正对照——同族病见 §9.5 与 §22.4。
+- 真缺口两条接线（逐条实测，可复核）：
+  - **甲·表未入配方册**：`_REGISTERED_TABLES` 只有 3 张（`c1_market.kline_index`／
+    `c1_market.index_valuation_daily`／`c1_market.news_sentiment_window`），`technical_indicator` 查无
+    ⇒ 在册分类器对这类卡给 `A? table_not_in_recipe_book`；
+  - **乙·基序列物化件缺**：`SERIES_DIR=docs/_working/nightmine_campaign/series` 现有 7 枚 CSV
+    （blast_ratio／limit_down_count／limit_up_count／max_streak_height／net_breadth／seal_ratio／streak_distribution），
+    技术指标族 **0 枚** ⇒ `event_flag` 的 `base_csv` 路有序列目录但无该族文件；
+    且 `_event_base_series` 硬规 `base_op` 与 `base_csv` 恰选其一（同有/同无即 ValueError），禁第三条取数路。
+  - 卡面 `impl_gap` 自书开考前验证两项：①物化序列逐日可复算 ②event flag 列进 `judge_event`。
+- 归属不变：甲乙都属矿考二班他域，本班只登记读数，不代写、不 claim。
+
+## 23.4 N 账本补账前置两修状态板（实测＝两条均未落，本班不动册）
+
+- 修一（维护三班域，`src/zephyr/shared/io/file_utils.py`）：`registry_mass_edit_guard` 现字节仍是
+  **删除行比例闸**（`max(1, ceil(0.5%×N))`，超限须显式 `allow_mass_edit`），"预算口径"（按计划删除集放行）未见落地痕迹；
+  守卫读盘失败仍 `deleted_lines=0` 静默跳过＝fail-open 原样。
+- 修二（矿考域执行器，`scripts/backtest/factory_grid_executor.py`）：`_should_write_neff_slot` 现字节
+  `return not smoke and not exploration_ledger` ⇒ 探索分册与 N 账本**仍是互斥二选一**，
+  注释也自认"探索分册的既有纪律只挡 summary 收尾那行"。
+- 结论：§22.3 的 eligible 16 条正集**保持待命**，本班不手抄进册（绕闸＝把补账做成第二次泄漏）。
+
+## 23.5 令 B 附录（注册册 8 条 ablation 分解卡）＝仍未到位
+
+- 实测：dev ablation 族 75 枚（与晨间 `family_distribution.ablation=75` 同值）⇒ 今日新增 22 张里 **ablation 0 张**；
+  队列在途袋（pending＋processing）含 `exam_cards` 路径者 **0 件**。
+- 本班侧动作＝零：按附录"卡面判据数值呈统筹批后开考"，卡未到位则无从呈判据；到位即按 23.2 同一把在册尺复测。
+
+## 23.6 窗况与队列（写本节时）
+
+- 21:00–22:30＝`_in_ch_yield_window` 在册让路窗 ⇒ 本节全部读数走 `git show dev:` 与磁盘，**零 CH 查询**；
+  未用任何 `--override-ch-window-with-reason`。
+- 队列（21:34 实测）：done 3（0002/0017/0018）／processing 1（**0019＝§廿一袋**）／
+  pending 2（**0020＝测试件终版含三面板钉**、**0021＝§廿二袋**）／dead 11 不变；本袋（§廿三）随 0021 之后入队。
+  0019/0020/0021 同会话同件，入队时队列自报"共享注册表路径不可信合并——拒绝压缩，两袋保留"，
+  本班据此确认落地面按 FIFO 取最新超集（§廿二袋字节含 §廿一），不追投、不 requeue。
+
+## 0·夜 附一条袋消息更正（本班自犯，如实入账）
+
+- 队列袋 0021 随附的 commit message 写的是"头条复写成八行、旧七行留 git 史不删"——
+  **与实际动作不符**：实际＝上方 §〇 旧七行**逐字保留未动**，另起 `## 0·夜 21:4x 复写头条` 一节追加。
+- 成因：本班先按"重写"动手，入队时被**池面回退方向预筛**（批令二 L3）拦下——
+  它按行集判"本批字节缺 dev 已在册的 17 行"，正路提示是"重基后再投"。
+  本班**没有**用 `[pool-regression-ack:…]` 旗压闸（那是弱化闸），而是把**输入改对**：
+  回退重写、改成追加，改完实测 dev 独有行=0／lane 独有行=198／前 25 行逐字同 dev，才重新入队。
+- 留这条的意义：闸报的"回退"与我主观想要的"更新"是两件事，被拦时先怀疑自己的形态选择，
+  不要顺手找 ack 旗；同时消息要与动作对表——写错的消息比不写更贵（后人按消息找内容会找不到）。
+
+# 廿四、dev 面 tests/backtest 全目录读数＝10 红 324 绿（非本班件，只报不修）
+
+- 时点与命令：21:44 主区（`HEAD==dev`，工作区两文件与 dev 零差）`python -m pytest tests/backtest -q --timeout=300`
+  ⇒ **10 failed, 324 passed, 1 xpassed**（22.17s）。本班件 `test_calibration_exam.py` 38 支**全绿在册**，
+  失败清单里没有本班任何文件。
+- 红分三簇，逐簇已做判别（不是"看到红就报"）：
+  1. **路由常量簇 1 支**：`test_lane_defaults_match_real_policy` 从 `hypothesis_translator`／
+     `lane_b_idea_generator`／`lane_c2_agentic_miner` 三处 `import TASK_ROUTE`——三文件都在盘上但
+     `grep -c TASK_ROUTE` 全 = 0，全仓 `src scripts` 也查无定义。
+     `git log -S TASK_ROUTE` 只命中 `ae63d6cd1f6`（10-09 01:22 接电批），即**测试先行落地、代码侧从未跟上**
+     （在册死因族＝袋先行/后继袋崩，见 §20 同族）。
+  2. **接线符号簇 7 支**：同文件里 `f06_e4_wfa_exam_wiring.append_screen_ledger`（3 支）、
+     `c4_batch_screen_wiring._BROADCAST_DIR`（3 支）、`_prev_oos_window_end`（1 支）
+     全为 `AttributeError: module has no attribute …`＝同一袋先行形态的第二面。
+  3. **日期地雷簇 2 支**：`test_sim_daily_runner.py::test_replay_one_entry_math_and_fresh_wallet_funding`
+     与 `::test_replay_one_flat_wallet_gets_notional_not_zero`，报
+     `InvalidDrawdownStateError: [ZA-RK-0060] trade_date 倒退: 2026-09-21 < 2026-10-09`。
+     判别做了两步：**单独跑该文件仍 2 红**（排除跨文件顺序敏感）；**单跑其中一支仍红**（排除文件内状态残留）。
+     机理读到 return 行：`drawdown_state_machine` 在恢复快照时把 `_last_eval_date` 置为快照 `as_of`（line 687），
+     line 715-716 见 `trade_date < _last_eval_date` 即抛；测试喂的固定日 `2026-09-21` 已被生产态快照（10-09）越过。
+     ⇒ 这类红**不会自己变绿**（生产日期只前进），且属"测试依赖真实状态而非 tmp_path"的隔离破口——
+     与本文件头 `[INVARIANTS] 测试禁写生产路径……零真库依赖` 的自述相矛盾，值得属主班当班核。
+- 归属与动作：三簇都不是本班域，按总宪 §3.4「他会话在途违规不代修」＋统筹令「别自己销他账」，
+  本班**只出读数、不碰码、不 requeue 他班袋**；建议排给接电批／sim 属主班（或维护三班活性族簇并案）。
+- 对本班的直接意义：北极星的"考"这条路目前**器是好的、题池是空的**——考尺 38 绿，
+  而 dev 面同目录另有 10 支红在别人的接线上；本班不动它们，但把它们写进账，
+  免得下一班拿"tests/backtest 全绿"当既有事实。
+
+# 廿五、统筹四裁入账＋§廿四 的二分更正（本班漏做一次在册正门，已补）
+
+## 25.1 批复入账（照此执行，不再自决）
+
+1. 「继续」照准：守三袋落地＋盯 ablation 卡，零开考批。
+2. **补账按 16 补**——本班实测正集取代旧口径 15；前置两修照旧（两修未落则不动册），
+   逐条带 `run_id` 对表；phantom 5 条（拼写漂移 2＋卡册查无 3）**不补、留档说明**。
+3. sim 那 2 支**不代修**：与 TASK_ROUTE 8 支同入存量红总账；日历地雷型正解＝相对日期化（归属班的改法）。
+4. 头条形态照现行（旧文不动＋夜版另起节）。
+5. 两条读数采信：北极星实际 0 题＝结构事实；规格 v2 更正已同步矿考二班（反向卡解锁比原以为的近——注册＋物化，无需造算子）。
+
+## 25.2 补账对表清单已备（只备不执行，件=`backfill_worklist_16.json`）
+
+- 16 条逐键带分数册 `run_id`，实测形态：11 键 1 行／4 键 2 行／1 键 3 行，合计 **22 行读数**。
+- 一个要在动手前拍清的口径（本机读 `counting_rule` 未见明确，故不自决）：
+  在册幂等键是 `examcard:<card_id>:<date>`——**一键一条记录**，与该行下有几次 `run_id` 无关；
+  若统筹要的是"每次 run 记一条 trial"，则补账量是 22 而非 16。本班按"一键一条"预备（＝裁面 16），
+  并把这个分母差写进账，免得两修落地当天由本班临场拍。
+- 16 条 `recorded_by` 全属 `st-examchief-20261009`／`st-mineloop-20261010`（代投性质，已裁准）；
+  `run_id` 前缀全为 `mineloop-*`，与 phantom 5 条同族，逐条可回验。
+
+## 25.3 §廿四 更正：在册方法条 §6.1 的"HEAD 级 vs 工作区回声"二分，本班当时漏做
+
+- 违令如实报：`construction_ledger_method_policy.md` §6.1 明写"pytest 的红必须先分 HEAD 级与工作区回声，
+  否则会把他班 WIP 判成本班缺陷"，做法＝`git worktree add --detach <scratch> HEAD` 后在净面跑同批 node id 取差集。
+  本班 §廿四 只跑了共享主区面（工作区脏 715 件）就报了 10 红——**方法不完整**，本节补做并把结论改对。
+- 二分实测（同一 node id 集：`test_factory_wiring_night.py`＋`test_sim_daily_runner.py`＋`test_calibration_exam.py`）：
+
+| 面 | 结果 |
+|---|---|
+| 主区（HEAD＋共享工作区） | 该三件 10 红（wiring 8＋sim replay 2），calibration 38 绿 |
+| 净面（detached scratch@HEAD，`PYTHONPATH=src`，包根实测=scratch/src） | 9 红：wiring 同 8 支＋`test_plan_bridge_attack_state_is_unexecutable`；**sim replay 2 支转绿**；calibration 38 绿 |
+
+- 改后的三分类（§廿四 的"两簇＋一簇"表述按此更正，旧文留上不删）：
+  1. **HEAD 级存量红＝8 支**（两面同红）＝wiring 簇：`TASK_ROUTE` 三处 import（1）＋
+     `append_screen_ledger`（3）＋`_BROADCAST_DIR`（3）＋`_prev_oos_window_end`（1），
+     归属＝10-09 接电批 `ae63d6cd1f6` 的测试先行、代码侧从未跟上。
+  2. **生产态依赖型红＝2 支**（主区红／净面绿）＝sim replay 两支：它们在真实工作区里读到生产 drawdown 快照
+     （`as_of=2026-10-09`）才判"trade_date 倒退"，净面无该快照即绿。
+     ⇒ 性质仍是真红且**不会自愈**（生产日只前进），且同时坐实"测试依赖真实态而非 tmp_path"的隔离破口；
+     正解按统筹裁＝相对日期化，归 sim/C4 属主班。
+  3. **净面反向红＝1 支**（主区绿／净面红）＝`test_plan_bridge_attack_state_is_unexecutable`：
+     它的"绿"依赖本机在生产态。这一支不进存量红总数，但登记为**同一隔离破口的第二面**
+     （同一文件里两向都证明它不是纯函数测试）。
+- 本班件复证：`test_calibration_exam.py` 在**两面**均 38 passed ⇒ 已落 dev 的注入位修与面板路修，
+  在无共享工作区干扰的净面上同样成立（§22.1 的结论不是回声）。
+
+## 25.4 自报一条纪律风险：让路窗内在主区跑了全目录测试
+
+- 时点：21:44（处于在册 `_in_ch_yield_window` 的 21:00–22:30 段内）跑 `pytest tests/backtest` 全集。
+- 已知证据：该测试族头 `[INVARIANTS] 测试禁写生产路径——CH 写入函数全 monkeypatch……零真库依赖`；
+  主区文件系统实测 21:41–21:46 **无任何** `data/`、`.runtime/` 的 sim/local_fallback/c1_backtest 产物，
+  全目录扫描 62 个被改写文件全属他班活动（gpux3／deadcure2／fclean4 等）。
+- 未证伪的一面：**直连 HTTP 插入不留本地痕**，所以在窗内无法判"零 CH 写"。
+  ⇒ 处置：22:31 窗毕后做一次只读 `system.query_log` 复核（event_time 落 21:41–21:46 的 INSERT），
+  结果追记本节；此后本班**不在让路窗内跑可能触 CH 的测试全集**，需要跑就放窗外用净面。
+- 现场收尾：scratch 已按方法条 `git worktree remove --force` ＋ `git worktree prune`，
+  现存 worktree 40 条、本班仅 1 条车道，`ls .runtime/tmp/<sid>/` 已无 scratch 残留。
+
+## 25.5 本班队列账（21:5x 实测）
+
+- §廿一袋 0019 **已落**（21:47，dev 面班账 704 行＝超集对上）；0020（测试件终版）processing；
+  0021（§廿二＋廿三＋0·夜＋廿四＋本袋前身）pending；done 累计 4 袋。
+- 待办不变：盯 0020/0021 落地→dev 面复跑考尺（预期 41 passed）→ablation 8 卡到位即按在册尺复测。
+
+## 25.6 §25.4 追记（22:31 窗毕复核结果）＝本班自报破口两处，非"未见异常"
+
+**结论先写：本班 21:44–21:45 在主区跑的三轮考尺回归，向生产表 `c1_backtest.sim_daily_report` 落了 INSERT，
+现存一行物理污染件。** 同时破两条在册纪律：让路窗（21:00–22:30 段）与"测试禁写生产路径"。
+
+- 证据链三条独立、互不对齐也得同一结论：
+  1. `system.query_log` 在 13:44:51／13:45:10／13:45:20（UTC，=本地 21:44:51／21:45:10／21:45:20）
+     三条 `INSERT INTO c1_backtest.sim_daily_report`，`written_rows` 各 1；
+     这三个时刻与本班三次调用逐一对时（全目录 21:44:26 起 22.17s、单文件、单 node id 各一次）。
+  2. 表内按三键唯一定位到一行：`judgment_id='SIMP-2026-09-21-plan_bridge-index000300.SH'`
+     ＋`run_id='simwire-20261012134520'`＋`ingest_ts=2026-10-12 13:45:20`；
+     `judgment_id` 精确等值物理行数=1（不 FINAL 也是 1）。
+  3. 全表 `run_id LIKE 'simwire%'` 仅 3 行，另 2 行是 00:50/00:53 他班跑（report_date=2026-10-09），非本班。
+- 污染件内容（已全 19 列存证 `pollution_row_dump_20261012.json`，删可复原）：
+  `report_date=2026-09-21`（测试硬编的历史日）、`source=plan_bridge`、`subject=index:000300.SH`、
+  `payload` 引真实在册日计划 `01PLAN`/`01ST`、**`synthetic=0`** ⇒ 下游若按日读"当日盘前计划判断"，
+  会把一条 09-21 的假读数当真，且**不带测试标记**（这比带标记的危险）。
+- 首版复核两处尺错，如实记（不重跑就会上报成"未写"＝我第三次同型错）：
+  1. **时区窗写错**：服务器 `timezone()=Etc/UTC`、`now()=14:31:34`，而我把窗写成 `21:41–21:47`，
+     整差 8 小时 ⇒ 首版"窗内 INSERT 0 行"是假清白；按 UTC 等值窗重跑才见 3 条。
+  2. **观测者造信号**：`ILIKE '%sim_daily_report%'` 计数从 3 涨到 8，增量是**本班自己的探针查询**进了 query_log；
+     加排除 `query_log`/`system.` 自观测行后＝6 行＝3 对（QueryStart＋QueryFinish）。
+- 与测试头自述的矛盾：`test_sim_daily_runner.py` 头两行写 `[INVARIANTS] 测试禁写生产路径——CH 写入函数全
+  monkeypatch，tmp_path 隔离；零真库依赖`，而 `plan_bridge`/`replay_one` 路在主区面**真连真写**。
+  ⇒ 本班此前"读了文件头自述就当作安全"＝转述即签字，是这次破口的直接成因之一。
+  另注：净面（detached scratch）那次没写进 CH、只落 `data/local_fallback` 是因为**净面缺 CH 配置**才降级落盘，
+  不是 monkeypatch 在保护——不能把"换到净面跑"当安全配方。
+- 处置＝待裁，本班不自行删（共享生产表上的删除属不可逆面，越权一次就破规矩）。备好的最小处方一条，
+  谓词精确到单键、已存证可复原：
+  `ALTER TABLE c1_backtest.sim_daily_report DELETE WHERE judgment_id='SIMP-2026-09-21-plan_bridge-index000300.SH'`
+  （三备选：甲=执行该 DELETE／乙=改 `synthetic=1` 打标不删／丙=交属主班或数据车道处置。本班建议甲，
+  因该键在真源日（09-21）无任何合法同键行，留着即长期错读；乙会把假读数留在"已合成"面仍可能被 SUM 吞入。）
+- 即刻生效的预防三条：①可能触 CH 的测试只在让路窗外跑，且跑前先 `grep` 目标测试的 CH 写函数面（不自述即信）；
+  ②凡"窗内/窗外"判断先读 `_in_ch_yield_window` 的**两段**（01:00–04:00 与 21:00–22:30），勿按令卡字面只守一段；
+  ③跨时区时间窗一律先 `SELECT timezone()` 取值再换窗，禁拿本地钟写 SQL。
+
+## 25.7 本班被自己的接管条目拦下（心跳缺口 12 分钟＝自因），处置序留案＋转维护三班第 3 例
+
+- 事实链：本班心跳守护 22:19 起以 `session not in registry` 退出（同一时刻注册表单口报
+  `failed to load legacy registry: [Errno 13] Permission denied: .runtime\session_registry.json`），
+  静默 24 分钟被 `session_takeover_ledger --scan` 判死立案 ⇒ 袋 0027 死于
+  `门禁 TAKEOVER-PENDING：commit 命中 open 接管条目`，命中本班 `00_ledger.md` 一件；
+  条目还另记一条"claim 泄漏 1 件"——那是本班**在用的**两件 claim 被按死会话读成泄漏。
+- 自账自销（他账一律未动）处置序，逐步留痕：
+  1. 判活只用**与执行工具同源**的尺：`SessionRegistry.list_active_readonly()` 在册命中＋心跳龄 26s
+     末行 `status=alive`（守护 pid 30984，22:30 复起）；
+  2. keepalive 复授（`register_heartbeat_keepalive`，reason 与 ttl 7200 均在册，复评 `read_active_keepalive` 为真）；
+  3. `--resolve st-examrun-20261012 --by st-examrun-20261012`，note 里对处方逐条表态
+     （在途袋 0020/0021 各有在册死因且已判死／held_files 2 件仍在本班 claim 内非泄漏／staging 0 件／
+     车道 `.worktrees/st-examrun-20261012` 是本班在用车道／命中面里的 `calibration_exam.py` 已落 dev 且 claim 已释放）；
+  4. 投前复算命中面＝用门自己的 `load_open_entries`＋`entry_match_surface`，本班两件命中 **0** 才重投
+     （open 总数由 173 降到 172，销的就是本班自己那条）。
+- 本班死袋账增两枚（合计 15）：0026 死于 `landing 异常: TimeoutExpired: git ls-files --debug timed out after 15.0s`；
+  0027 死于上述 TAKEOVER。复测整仓 `git ls-files --debug` 现仅 **0.1s** ⇒ 该超时是**争用型瞬态**，
+  不是 15s 上限结构性不足；与他班已在册的 git 超时簇（计数 366／6 枚／4 班）同向，本班不另立病灶。
+- C1 合批的一条形态观察（供接班少走弯路）：同会话短窗把"班账＋测试件"两支单文件袋**合成一支 2 文件袋**
+  （`C1-MERGED ... -> 0027（同会话短窗自动合批）`），跨 `docs/_working` 与 `tests/backtest` 两域——
+  若落地撞 COMMIT_SCOPE 就得拆投；本轮改法＝两支分开投、隔一个合批窗。
+- 转维护三班（活性族簇**第 3 例**，处方归扫描/守护侧而非提交侧）：
+  守护读注册表**失败即自退**（fail-closed 自杀），而它退出的直接触发是同刻 legacy 册被独占写导致 `Permission denied`——
+  一个活会话因"读不到册"被判死，且判死后闸门对该会话自己的袋连坐。
+  建议处方候选：①守护读册失败改重试＋降级存活（不退），②scan 判死前先验 legacy 册可读、
+  读不到即本轮不立案（宁可漏判一轮，不可把活班判死），③"claim 泄漏"判据要先排掉仍在用该 claim 的活会话。
+
+## 25.8 23:0x 供题再读数：矿考二班一张卡"转正"进考试宇宙，但开考面仍是 0
+
+- 事实：`4536a42388`（22:40，矿考二班·转正袋）把 `TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版`
+  落进 `exam_cards/`，卡面 `status=preregistered`、判据八键逐字沿用 02 卡（他们自述"零自拟数值"）。
+- 在册分类器复测（读 dev 面工作区，先验 `git status --porcelain exam_cards` **脏件数=0** 才取数）：
+  卡册 517→**518**，preregistered 宇宙 177→**178**，tally `A=0 / A?=11 / B=17 / C=122 / D=0 / U=28`
+  ⇒ 新卡落 **C 类 `target_face_not_index_next_day`**，**A 仍为 0**——本班"可考面=0"这条结论不变，
+  北极星的"考 N 题"今晚仍是 0。
+- 该卡正是统筹排产的**面板形/双臂通道**的第一个消费侧样本：卡面 `tables=[c1_market.kline_daily_hfq,
+  c1_market.technical_indicator]`，目标面是组合/仓位形而非次日前向收益 ⇒ 现器无通道，不是无判据、不是无数据。
+- 本班动作＝零开考（遵统筹批复"零开考批"），只做接考准备：待面板形通道落地（矿考域工程件，§9.3-A 与
+  晨裁 ⑤ 同一条线）后，按在册 classify 复测该类是否由 C 转 A，转 A 才谈开考与入账。
+
+## 25.9 开考面价格表（23:1x 用在册尺重算，求和自证＝宇宙）
+
+件=`unlock_map_23_1x.yaml`。尺＝在册 `card_binding.py --mode classify`（取数前先验 `exam_cards` 工作区脏件数=0），
+宇宙＝preregistered **178** 张，`A=0`；**20 条堵点求和=178＝宇宙**（断言过，不是抽样）。
+
+| 堵点（在册 reason） | 张数 | 一句话：要动的是哪一面 |
+|---|---|---|
+| `target_face_not_index_next_day` | **119** | 目标面通道——卡面要的是组合/仓位/价差形读数，现器只会算"次日指数收益" |
+| `panel_deferred(去重/撮合口径须逐表面核)` | 17 | 面板形绑定通道（统筹已排产矿考域，本班＝消费侧；§9.3-A 与 §25.8 的 C 类卡是同一族） |
+| `no_data_binding_section` | 13 | 骨架卡无绑定段——**属供题侧**，要挖矿班补卡面，不是考尺能补的 |
+| `table_not_in_recipe_book:c1_market.kline_sector_880` | 7 | 单张表进配方册即可（同族 880 深史有在册上限 2021-08-02 的旧账，见记忆档） |
+| `table_not_in_recipe_book:c1_market.hl_funding_history` | 2 | 同上，另一张表 |
+| `multi_table_needs_composite_recipe:*` | 11（4+2+2+1+1+…） | 多表复合配方（要定 join 键与去重口径，逐表面实证） |
+| `needs_replay_engine(NAV/window_metrics/双臂 arm_protocol)` | 2 | 回放引擎双臂协议——与 §25.8 那张 C 类卡同一需求 |
+| 其余零头 | 7 | 逐条见件 |
+
+- 读法（给统筹排产用，非本班裁定）：**打通"目标面通道"一项＝解开 119/178＝67% 的现器不可考面**，
+  这与本班 §0 头条第 7 行、§10.2 解锁地图同口径，只是当日数字随供题从 118 涨到 119（+1 就是 §25.8 那张转正卡）。
+- 北极星的算术上限不变：**即使全打通，可考分母上限是 178，不是数千**——
+  另两套在册题池（原问题 283 问与相邻指标/因子册）已 100% 有考果行，再考＝重判历史，P0 铁律禁。
+
+## 25.10 交付终态：dev 面 41 passed（23:19 实测），并顺手证明"考尺测试不写 CH"
+
+- 测试件终版袋 0029 于 23:17 起 processing、23:19 落 dev（commit `cd934a5e01`）；
+  dev 面 `tests/backtest/test_calibration_exam.py` **702 行**、面板钉 `test_panel_route_ic_ir_is_actually_computed` 在位；
+  主区（`HEAD==dev`）复跑＝**41 passed**。至此令 B 的"两处静默降级修复＋防回归钉"整链在 HEAD 面成立：
+  本体（0018，注入位 3 处）＋测试（0029，41 支）＋班账（本袋）。
+- 复跑前先做一次"这支测试会不会也写 CH"的实测，别把 §25.6 的破口再犯一遍：
+  `system.query_log` 取 13:05–13:25 UTC（＝本班 21:05–21:25 两次考尺跑动的等值窗）全部 INSERT，
+  结果只见 `c1_market.macro_data`／`c3_fundamental.news_data`（他班采集链），**`sim_daily_report` 零条**
+  （同窗 INSERT 计数 24＝尺的正对照，非"查空伪装查无"）⇒ 破口只在 `test_sim_daily_runner` 的
+  `plan_bridge`/`replay_one` 路，`test_calibration_exam.py` 可安全单跑。
+- 由此给属主班留一条判据（不是本班域）：写 CH 的是 sim 那两个测试函数，判"某测试是否触库"要**按 node id 逐只验**，
+  拿整个文件的 `[INVARIANTS]` 自述当保证＝本班这次已经付过一次账。
