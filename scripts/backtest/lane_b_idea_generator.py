@@ -119,15 +119,21 @@ def make_candidate_id(hypothesis_zh: str) -> str:
     return f"CAND-{digest}"
 
 
-def attach_birth_certificate(ideas: list[dict], batch_id: str, theme: str, prompt: str) -> list[dict]:
-    """出生证三件套机器写入（v9 防幻觉块：溯源由流水线代码生成）。"""
+def attach_birth_certificate(
+    ideas: list[dict], batch_id: str, theme: str, prompt: str, *, model: str = MODEL
+) -> list[dict]:
+    """出生证三件套机器写入（v9 防幻觉块：溯源由流水线代码生成）。
+
+    model 必须与实际调用档位同源：档位 A/B（工单 GPU-01）换模型后若出生证仍写 MODEL 常量，
+    台账就会把 14b 的产出记成 8b——那是不可逆的归属错记，比不记更坏。
+    """
     prompt_fp = hashlib.md5(prompt.encode("utf-8")).hexdigest()[:12]
     out = []
     for x in ideas:
         row = dict(x)
         row["birth_channel"] = BIRTH_CHANNEL
         row["birth_batch"] = batch_id
-        row["birth_source"] = f"llm:{MODEL} theme={theme} prompt_md5={prompt_fp}"
+        row["birth_source"] = f"llm:{model} theme={theme} prompt_md5={prompt_fp}"
         out.append(row)
     return out
 
@@ -143,11 +149,15 @@ def load_existing_ids(path: Path) -> set[str]:
         return set()
 
 
-def run_generation(themes: list[str], n_per_theme: int, dry_run: bool = False) -> dict:
-    """主流程：主题×生成→解析→去重→出生证→卸货（dry-run 只回看不写）。"""
+def run_generation(themes: list[str], n_per_theme: int, dry_run: bool = False, *, model: str | None = None) -> dict:
+    """主流程：主题×生成→解析→去重→出生证→卸货（dry-run 只回看不写）。
+
+    model=None 时沿用 MODEL 常量（现产线行为零变更）；档位 A/B 由 --model 显式覆盖。
+    """
     from zephyr.integration.local_model.ollama_chat import OllamaChat
 
-    chat = OllamaChat(model=MODEL)
+    eff_model = model or MODEL
+    chat = OllamaChat(model=eff_model)
     batch_id = datetime.now(ZoneInfo("Asia/Shanghai")).strftime("E1B-%Y%m%d-%H%M%S")
     existing = load_existing_ids(_INTAKE_CSV)
     rows: list[dict] = []
@@ -167,7 +177,7 @@ def run_generation(themes: list[str], n_per_theme: int, dry_run: bool = False) -
         if not ideas:
             failed_themes.append(theme)
             continue
-        certified = attach_birth_certificate(ideas, batch_id, theme, prompt)
+        certified = attach_birth_certificate(ideas, batch_id, theme, prompt, model=eff_model)
         for x in certified:
             cid = make_candidate_id(str(x["hypothesis_zh"]))
             if cid in existing:
@@ -189,6 +199,7 @@ def run_generation(themes: list[str], n_per_theme: int, dry_run: bool = False) -
             )
     record = {
         "batch": batch_id,
+        "model": eff_model,
         "themes": list(themes),
         "generated": len(rows),
         "failed_themes": failed_themes,
@@ -214,10 +225,15 @@ def main() -> int:
     g.add_argument("--themes", default=None, help="逗号分隔主题子集（缺省=全部 12 主题）")
     g.add_argument("--n-per-theme", type=int, default=2, help="每主题生成条数")
     g.add_argument("--dry-run", action="store_true", help="只回看不写台账")
+    g.add_argument(
+        "--model",
+        default=None,
+        help="覆盖 MODEL 常量（工单 GPU-01 档位 A/B：qwen3:8b|qwen3:14b|deepseek-r1:14b）；缺省=现产线档",
+    )
     args = ap.parse_args()
     themes = [t.strip() for t in args.themes.split(",") if t.strip()] if args.themes else list(SEED_THEMES)
     try:
-        record = run_generation(themes, args.n_per_theme, args.dry_run)
+        record = run_generation(themes, args.n_per_theme, args.dry_run, model=args.model)
     except RuntimeError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
