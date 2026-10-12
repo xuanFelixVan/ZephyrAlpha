@@ -5,13 +5,13 @@
 # [CONSUMERS] 全部 AI session（提交入队唯一入口）；B 段 Serializer 落盘执行体（专用 worktree 真落盘）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 单写者（serializer.lease 唯一持有者排空）；纯 FIFO（qid 单调序，无优先级插队）；快照入袋即安全（blob 落盘即完成）；死信不卡队；同键 (session_id,path) pending 内仅留最新（注册表族共享路径例外：顶替前身份集纯加法合并前递，不可信合并拒绝压缩两袋保留——W-CASE st-zcloseout-20260928 lost-update 治本）；C1 同会话短窗合批仅同 session+同 worktree-root（文件集并集不变，absorbed qid 不落状态目录）；永不改主工作区文件
+# [INVARIANTS] 单写者（serializer.lease 唯一持有者排空）；纯 FIFO（qid 单调序，无优先级插队）；快照入袋即安全（blob 落盘即完成）；死信不卡队；同键 (session_id,path) pending 内仅留最新（注册表族共享路径例外：顶替前身份集纯加法合并前递，不可信合并拒绝压缩两袋保留——W-CASE st-zcloseout-20260928 lost-update 治本）；C1 同会话短窗合批仅同 session+同 worktree-root（文件集并集不变，absorbed qid 不落状态目录）；永不改主工作区文件；**队列完整性两把新尺（2026-10-12 维护三班·通宵令）**=①audit_landed_id_integrity 只读探针（done 项按袋内 blob 逐件比 landed_id 与该 commit/dev 现面，零命中且 dev 也无面→foreign_zero_match_not_in_dev 点名；账本族册判"无从核"不冒认；预算截断显影 truncated；health 键 landed_id_integrity 恒在，告警旁路以 landed_probe=False 省 git 预算）②_renew_claims_inflight 入袋口统一续租（交互正门/CLI 直投/requeue/网关改道四通道合流，ttl 沿用 ZEPHYR_ENQUEUE_CLAIM_TTL_S 缺省 7200s，fail-open 不阻断入队；renew_claim 只动本持有者名下已存在条目＝不造锁）
 # [MODIFY-GUARD] 66 号备忘 §6 协议/schema 真源；08 号文 §4.2 Phase 0；CLI 子命令面（enqueue/status/drain）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功（含 drain 拿不到 lease 跳过）; exit 1=参数/IO 错误（含 requeue 取回失败）; exit 2=入队轻检拒绝(DENIED)
-# [TESTS] tests/governance/test_commit_queue.py; tests/governance/test_enqueue_preflight.py
+# [TESTS] tests/governance/test_commit_queue.py; tests/governance/test_enqueue_preflight.py; tests/gov/governance/test_commit_queue_landed_id_probe.py（假落地探针 9 臂）; tests/gov/governance/test_enqueue_claim_renewal.py（入袋口续租 8 臂）
 # [A_module] module_id=MOD-GOV-046 | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: 本文件是 AI/CI 按需调用的 CLI 协调工具（入队自举排空，无常驻进程），与 lock_files.py/task_board.py 同类
@@ -1090,6 +1090,36 @@ def _run_declared_preflight(
         raise QueueReject(prescription)
 
 
+def _renew_claims_inflight(session_id: str, rel_files: list[str]) -> dict:
+    """入袋即续租本袋 claim（2026-10-12 维护三班·通宵令"claim TTL/租约错配修法"）。
+
+    病根实测：续租此前只存在于交互正门一条通道（git_commit.py:1004-1014），而
+    `commit_queue.py enqueue` 直投、`requeue` 复投、网关改道
+    （git_commit_gateway.py:5082 _reroute_commit_auto_to_queue）三条全不续
+    （全仓 `renew_claim` 消费者实测仅一处）。队列深时一袋要等数小时（今夜实测
+    12.8 分钟/袋、pending 51），30min 缺省 claim 早过期；`.ailocks` 面虽有"在途袋保护"
+    （lock_files.py:290-296）挡住外部抢收，但 held_files 那张面靠 90s 心跳判活，
+    会话一断就被静默重建＝归因漂移。放进入袋口＝四条通道共享同一份续租语义。
+
+    口径：best-effort，无锁/已失守一律**不阻断入队**（快照语义=入袋即完成，落地侧仍按
+    队列项 session 重 claim）；ttl 沿用同一旋钮 ZEPHYR_ENQUEUE_CLAIM_TTL_S（缺省 7200s）。
+    """
+    if not session_id or not rel_files:
+        return {"renewed": 0, "requested": len(rel_files), "skipped": "no_session_or_files"}
+    ttl_s = float(os.environ.get("ZEPHYR_ENQUEUE_CLAIM_TTL_S", "7200"))
+    try:
+        import lock_files as _lf  # noqa: PLC0415 — 与 git_commit 交互通道同款延迟导入
+
+        renewed = _lf.renew_claim(session_id, rel_files, ttl_s=ttl_s)
+    except Exception as exc:  # noqa: BLE001 — 续命失败不阻断入队（在册三层互备口径）
+        logger.warning("[enqueue] claim 续租失败（不阻断）: %s", exc)
+        return {"renewed": 0, "requested": len(rel_files), "error": type(exc).__name__}
+    n = len(renewed or [])
+    if n:
+        logger.info("[enqueue] claim 续租 %d/%d 件（ttl=%.0fs sid=%s）", n, len(rel_files), ttl_s, session_id)
+    return {"renewed": n, "requested": len(rel_files), "ttl_s": ttl_s}
+
+
 def enqueue_item(
     session_id: str,
     message: str,
@@ -1115,6 +1145,8 @@ def enqueue_item(
     关键段），跨进程同会话由 O_EXCL 碰撞重试兜底唯一性。
     """
     opts = options or EnqueueOptions()
+    # 入袋即续租（四条入袋通道在此合流：交互正门/CLI 直投/requeue 复投/网关改道）
+    _renew_claims_inflight(session_id, [str(rel) for rel, _data in files])
     base_head = opts.base_head
     base_blobs = opts.base_blobs or {}
     depends_on = opts.depends_on
@@ -3974,7 +4006,179 @@ def _annotate_preflight_face_drift(item: dict, *, repo_root: Path | None = None)
     logger.warning("[drain] qid=%s 预检注册表面漂移（E-4 增信）: %s", item.get("qid", "?"), sorted(drifted))
 
 
-def queue_health(queue_root: str | os.PathLike | None = None) -> dict:
+#: ── LANDED_ID_FOREIGN 只读探针（2026-10-12 维护三班·通宵令"队列完整性簇"首件）──────────
+#: 病根（在册第五形态）：landed_id 取自 git_commit_gateway.py:4976-4981 提交后的
+#: `git rev-parse HEAD`——既不解析本笔 commit sha，也不断言 HEAD 相对提交前发生位移；
+#: 并发窗口里他人提交会被记成"我的落地号"。现网实证：main_workspace_sync.jsonl 存在
+#: old==new 的快进记录（backfix3-0011 与 mineloop-0079 共用 landed_id e572b82e99），
+#: 而 status/health 此前对 landed_id 零校验（查无）。本探针只读、不改任何袋、不判死。
+_LANDED_PROBE_MAX_ITEMS = 25
+_LANDED_PROBE_MAX_CHECKS = 100
+_LANDED_PROBE_REGISTRY_MARK = "/_registry/catalogs/"
+_LANDED_PROBE_NOOP_MARK = "noop@"
+
+
+def _git_blob_id(data: bytes) -> str:
+    """git blob id＝sha1("blob <len>\0"+bytes)。
+
+    与内容 sha256、账本 content_sha256 三口径**不可互换**（在册教训 three-hash-calibers），
+    所以这里自算而不是拿袋里的 blob_sha256 直接比。
+    """
+    h = hashlib.sha1()
+    h.update(b"blob " + str(len(data)).encode() + bytes(1))
+    h.update(data)
+    return h.hexdigest()
+
+
+def audit_landed_id_integrity(
+    queue_root: str | os.PathLike | None = None,
+    repo_root: str | os.PathLike | None = None,
+    max_items: int = _LANDED_PROBE_MAX_ITEMS,
+    max_checks: int = _LANDED_PROBE_MAX_CHECKS,
+) -> dict:
+    """done 项 landed_id 归属读数（只读探针，fail-open：任何 git/读盘异常都折进 verdict）。
+
+    判据（每袋按其 files 逐件比 blob）：
+      - all_match                  袋内可核件全部在该 commit 里逐 blob 相等；
+      - partial_match              部分相等（并行常态，不点名；其中袋字节在 dev 也找不到的
+                                   另记 partial_with_absent_in_dev 并点名前 10 袋）；
+      - foreign_zero_match_not_in_dev  **零命中且袋字节不在 dev 现面**＝done 而内容从未落地
+                                   （在册第五形态的实锤档，本探针的报警面）；
+      - stale_superseded           零命中但袋字节能在 dev 现面找到＝被后继袋覆写（陈旧袋，低警报）；
+      - landed_id_absent / _noop_sentinel / _stub / _unresolvable  取值形态分档；
+      - unverifiable         无可核件（账本族册被 PG-wins 物化＝袋字节不代表落地字节，
+        或 blob 文件已被 purge）——绝不当成"匹配"，也不当成"外来"。
+    另出 shared_landed_id_groups：同一 landed_id 被多袋引用（连坐/覆写嫌疑）。
+    预算：最多扫 max_items 只最新 done 袋、最多 max_checks 次 git 调用，截断如实标注。
+    """
+    root = resolve_queue_root(queue_root)
+    repo = Path(repo_root) if repo_root else Path(__file__).resolve().parents[1]
+    done_dir = root / "done"
+    verdicts: dict[str, int] = {}
+    foreign_qids: list[str] = []
+    partial_absent_qids: list[str] = []
+    landed_to_qids: dict[str, list[str]] = {}
+    scanned = 0
+    checks = 0
+    truncated = False
+    try:
+        cand = sorted(done_dir.glob("q-*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+    except OSError as exc:  # noqa: BLE001 — 目录不可读＝无从判定，如实标注
+        return {"error": f"done 目录不可读: {type(exc).__name__}: {exc}", "scanned_items": 0}
+    for path in cand:
+        if scanned >= max_items or checks >= max_checks:
+            truncated = True
+            break
+        try:
+            item = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            verdicts["item_unreadable"] = verdicts.get("item_unreadable", 0) + 1
+            continue
+        scanned += 1
+        qid = str(item.get("qid") or path.stem)
+        landed = str(item.get("landed_id") or "").strip()
+        if not landed:
+            verdicts["landed_id_absent"] = verdicts.get("landed_id_absent", 0) + 1
+            continue
+        if landed.startswith(_LANDED_PROBE_NOOP_MARK):
+            verdicts["landed_id_noop_sentinel"] = verdicts.get("landed_id_noop_sentinel", 0) + 1
+            continue
+        if landed.startswith("stub:"):
+            verdicts["landed_id_stub"] = verdicts.get("landed_id_stub", 0) + 1
+            continue
+        landed_to_qids.setdefault(landed, []).append(qid)
+        entries = [e for e in (item.get("files") or []) if isinstance(e, dict) and e.get("path")]
+        dev_blobs: dict[str, str] = {}
+        matched = mismatched = unverifiable = absent_in_dev = 0
+        for entry in entries:
+            if checks >= max_checks:
+                truncated = True
+                break
+            rel = str(entry["path"]).replace("\\", "/")
+            if _LANDED_PROBE_REGISTRY_MARK in f"/{rel}":
+                unverifiable += 1  # 账本族册落地字节=PG 现读渲染，不代表袋字节（裁定#502 B 件）
+                continue
+            ref = str(entry.get("blob_ref") or "")
+            blob_path = root / ref if ref else None
+            data = None
+            if blob_path is not None:
+                try:
+                    data = blob_path.read_bytes()
+                except OSError:
+                    data = None
+            if data is None:
+                unverifiable += 1
+                continue
+            checks += 1
+            from zephyr.shared.infra.process_pool import (
+                run_subprocess_hidden,  # noqa: PLC0415 — trae_067 铁律2 统一入口
+            )
+
+            proc = run_subprocess_hidden(
+                ["git", "rev-parse", "--quiet", "--verify", f"{landed}:{rel}"],
+                cwd=str(repo),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=20,
+            )
+            got = (proc.stdout or "").strip()
+            want = _git_blob_id(data)
+            if got == want:
+                matched += 1
+                continue
+            mismatched += 1
+            # 二次核＝该件的**袋字节**是否在 dev 现面：在＝后被别的袋覆写（陈旧袋，低警报）；
+            # 不在＝假落地实锤（done 而内容从未进 dev），这条才是要点名给人的那档。
+            if rel not in dev_blobs:
+                checks += 1
+                pd = run_subprocess_hidden(
+                    ["git", "rev-parse", "--quiet", "--verify", f"dev:{rel}"],
+                    cwd=str(repo),
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    timeout=20,
+                )
+                dev_blobs[rel] = (pd.stdout or "").strip()
+            if dev_blobs[rel] != want:
+                absent_in_dev += 1
+        verifiable = matched + mismatched
+        if verifiable == 0:
+            verdicts["unverifiable"] = verdicts.get("unverifiable", 0) + 1
+        elif mismatched == 0:
+            verdicts["all_match"] = verdicts.get("all_match", 0) + 1
+        elif matched == 0 and absent_in_dev == mismatched:
+            # 袋字节既不在记录的 commit、也不在 dev 现面＝done 而内容从未落地（假落地）
+            verdicts["foreign_zero_match_not_in_dev"] = verdicts.get("foreign_zero_match_not_in_dev", 0) + 1
+            foreign_qids.append(qid)
+        elif matched == 0:
+            # 零命中但袋字节能在 dev 现面找到＝本袋被后继覆写（陈旧袋，低警报）
+            verdicts["stale_superseded"] = verdicts.get("stale_superseded", 0) + 1
+        else:
+            verdicts["partial_match"] = verdicts.get("partial_match", 0) + 1
+            if absent_in_dev:
+                verdicts["partial_with_absent_in_dev"] = verdicts.get("partial_with_absent_in_dev", 0) + 1
+                partial_absent_qids.append(qid)
+    shared = [{"landed_id": k[:12], "qids": v} for k, v in landed_to_qids.items() if len(v) > 1]
+    return {
+        "scanned_items": scanned,
+        "git_checks_used": checks,
+        "truncated": truncated,
+        "verdict_counts": verdicts,
+        "foreign_qids": foreign_qids[:10],
+        "partial_absent_qids": partial_absent_qids[:10],
+        "shared_landed_id_groups": shared[:5],
+        "budget": {"max_items": max_items, "max_checks": max_checks},
+    }
+
+
+def queue_health(
+    queue_root: str | os.PathLike | None = None,
+    landed_probe: bool = True,
+) -> dict:
     """队列健康快照（只读，不触发排空——与 status 的自举排空语义刻意区分）。
 
     聚合：四态计数 + dead 死因分类 + 最老 pending/processing 项龄（小时，积压监控
@@ -4028,6 +4232,12 @@ def queue_health(queue_root: str | os.PathLike | None = None) -> dict:
         "per_session_top": sorted(dead_per_session.items(), key=lambda kv: -kv[1])[:3],
         **ages,
         "blobs": len(list((root / "blobs").glob("*"))),
+        # landed_id 归属探针：键恒在（缺省 OFF 时报 unavailable，不玩"键消失"＝降级态与未触发同形）
+        "landed_id_integrity": (
+            audit_landed_id_integrity(root)
+            if landed_probe
+            else {"skipped": True, "reason": "landed_probe=False（告警旁路省 git 预算）"}
+        ),
         "generated_at": _now_iso(),
     }
 
@@ -4050,7 +4260,7 @@ def emit_dead_backlog_alert(
     约束针对核心业务阈值消费（错阈值=错行为），本函数是旁路可观测性，语义分级处理。
     """
     root = resolve_queue_root(queue_root)
-    snap = health or queue_health(root)
+    snap = health or queue_health(root, landed_probe=False)  # 告警旁路：只算计数，不烧 git 预算
     result: dict = {"fired": False, "action": "skipped"}
     dead_total = snap.get("dead_total", 0)
     if dead_total <= 0:
