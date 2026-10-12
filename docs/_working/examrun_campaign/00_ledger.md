@@ -677,3 +677,28 @@ regime 只报告不判死**；按 Owner 令卡 P3 的"PASS 的价值在于它是
 
 **零面声明（本班全程）**：判据数值零动｜卡面阈值零动｜分数册零写｜卡面 status 零改｜GPU 面零碰｜
 CH 查询 0 次（含死机后复员，全程零取数）｜N 账本真源零写｜他班件零改（只读其队列 blob 与车道 status）。
+
+# 廿一、复员执行账（20:5x，统筹授权后的落地链，含两处根因留痕）
+
+- **班账已落 dev**：commit `c74b75add8`（20:51，`[GW:]` 归属＝本班，单件 `docs/_working/examrun_campaign/00_ledger.md`，679 行）。
+  落地判据只认 `git show dev:` ＋ `git log -1 --name-only` 核归属（在册两条工法，未靠任何通知）。
+- **ghost_session 连死的真根因（不是"我还活着被误判"，是我的守护根本没在写心跳）**：
+  `heartbeat.jsonl` 留痕原文＝`{"ts":"2026-10-12T11:02:16+00:00","pid":11852,"status":"started"}`
+  紧跟 `{"...","status":"exited","reason":"session not in registry"}`——
+  即在册记忆 `session-register-pid0-for-heartbeat-daemon` 那条形态的**我本班复现版**：
+  我先 spawn 守护、后 register（顺序颠倒），守护启动即退，此后三次投袋全被存活闸判 ghost。
+  修法＝先 `register(pid=0)` 再 spawn，并**以心跳日志新增 alive 行为验收**（不是"我以为起来了"）：
+  新守护 pid 3488，40 秒后实测末行 `{"pid":3488,"status":"alive"}` ⇒ 之后 0017 一次落地。
+- **TAKEOVER 自锁循环（转维护三班第 2 例同族）**：本班按统筹授权 resolve 掉 `st-mineloop-20261010`
+  那条 open 条目后，`session_takeover_ledger --scan` 又以 `reason=orphan_resources`（车道在盘而注册表无此会话）
+  **重开同一条**，命中面一字未变 ⇒ 只要该车道未被接棒人处置，任何班提交 `calibration_exam.py` 都会被拦一次。
+  本班第二次 resolve 已在 note 里写明"同授权二次执行"，并登记：`resolve→scan 重开` 是机制病，
+  处方应在扫描侧（已 resolved 且命中面未变者不重开，或重开需带新证据），归维护三班活性族簇。
+- **本班 12 袋账**：done 2（0002 测试件 v1＝造成本末倒置的元凶、0017 班账）；
+  dead 10（0001/0006/0007/0008 死因 R5 数字后缀路径，内容已迁合规路径；
+  0009/0010/0011/0015 死因 TAKEOVER/自锁；0012/0016 死因 ghost_session）；
+  0018＝本体袋在队；死袋一律不 requeue（R5 类改路径重投，TAKEOVER/ghost 类修因后重投），
+  与复发熔断同向：本班**未用 --force 越闸**。
+- 教训一条（写给我自己）：`gate_dry_run` 的"命中面自检"我第一版用 `hasattr(...)` 兜底，
+  函数名不对即静默返回空集 ⇒ 判成"零拦截"，实际门里有 1 条。凡"自检尺"必须先证明它能红：
+  本次改判据为"用门导出的 `entry_match_surface` 实算＋打印 blocking entries 数"，才看到真阻塞。
