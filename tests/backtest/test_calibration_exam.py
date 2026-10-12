@@ -890,3 +890,65 @@ def test_run_card_passes_arm_context_through(tmp_path):
     assert m_without["arm_face_readings"] == {"arm_context_present": False}
     assert m_with["arm_face_readings"]["arm_context_present"] is True
     assert "arm_context" in inspect.signature(ce.run_card).parameters, "run_card 须保留注入位"
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 统筹裁定 2026-10-13：`_span_dates` 多段缺陷＝裁修（实现面背离冻结意图的 bug，非判据变更）
+# 影响面盘点＝docs/_working/mineloop2_campaign/12_regime_multispan_impact_inventory.yaml
+# （518 张卡扫出 12 张多段、8 张第二段被弃；已有分数行的只有 07 一张 2 行＝only-append 重读面）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def test_span_pairs_reads_every_declared_span():
+    """解析器正证＋旧语义保持：单段串结果与旧实现逐字同值；无日期串仍退回"整串当单点"。"""
+    assert ce._span_pairs("2019-01-04..2021-06-30（流动性牛）") == [("2019-01-04", "2021-06-30")]
+    assert ce._span_pairs("2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段）") == [
+        ("2020-02-01", "2020-03-23"),
+        ("2024-01-02", "2024-02-08"),
+    ]
+    assert ce._span_pairs("不可用") == [("不可用", "不可用")]
+
+
+def test_in_spans_masks_both_crisis_segments():
+    idx = pd.bdate_range("2019-06-03", periods=1300)
+    span = "2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段）"
+    mask = ce._in_spans(idx, span)
+    in_first = mask[(idx >= "2020-02-03") & (idx <= "2020-03-20")].all()
+    in_second = mask[(idx >= "2024-01-03") & (idx <= "2024-02-07")].all()
+    between = mask[(idx >= "2021-01-04") & (idx <= "2021-06-30")].any()
+    assert bool(in_first) and bool(in_second), "两段都必须掩到（旧实现只掩第一段）"
+    assert not bool(between), "段间不得被误掩"
+
+
+def test_series_metrics_regime_uses_second_span_only():
+    """⚑判别力（改前必红）：把**关系只放在第二段危机窗**内，第一段全随机。
+    旧实现只切前两日期 ⇒ crisis 段取到的是第一段＝无关系样本 → regime_ic=nan；
+    修后必须读出该段的正相关（数值>0.5）。"""
+    idx = pd.bdate_range("2019-06-03", periods=1300)
+    rng = np.random.default_rng(7)
+    noise = pd.Series(rng.normal(size=len(idx)), index=idx)
+    sig = noise.copy()
+    tgt = noise.copy()
+    seg2 = (idx >= "2024-01-02") & (idx <= "2024-02-08")
+    sig[seg2] = np.arange(seg2.sum(), dtype=float)  # 第二段内严格单调↑
+    tgt[seg2] = np.arange(seg2.sum(), dtype=float) * 2.0
+    card = {"window": {"regimes": {"crisis": "2020-02-01..2020-03-23 与 2024-01-02..2024-02-08"}}, "oos_window_ref": []}
+    m = ce._series_metrics(sig, tgt, card)
+    assert m["regime_ic"]["crisis"] == m["regime_ic"]["crisis"], "第二段必须出读数（nan=旧行为）"
+    assert m["regime_ic"]["crisis"] > 0.5, m["regime_ic"]
+
+
+def test_event_face_mask_pools_both_spans():
+    """事件面同样并段：两危机段各放若干事件日，掩码版的 n_event 必须等于两段之和。"""
+    idx = pd.bdate_range("2019-06-03", periods=1300)
+    sig = pd.Series(0.0, index=idx)
+    nxt = pd.Series(0.01, index=idx)
+    s1 = (idx >= "2020-02-03") & (idx <= "2020-02-14")
+    s2 = (idx >= "2024-01-03") & (idx <= "2024-01-12")
+    sig[s1 | s2] = 1.0
+    nxt[s1 | s2] = -0.02
+    span = "2020-02-01..2020-03-23 与 2024-01-02..2024-02-08"
+    pooled = ce._event_face(sig, nxt, mask=ce._in_spans(idx, span))
+    first_only = ce._event_face(sig, nxt, "2020-02-01", "2020-03-23")
+    assert pooled["n_event"] == int((s1 | s2).sum())
+    assert first_only["n_event"] == int(s1.sum()) and pooled["n_event"] > first_only["n_event"]

@@ -831,3 +831,72 @@ B 严＝0.75/20 交易日冷却/须创新高，B 的两个参数机器侧无对�
 乙案＝改笔级回放面，跨域工期，本班不承诺），本班推荐甲案；
 敏感性协议＝2 档 × 2 配对＝**4 跑、试次 4 入账、结论取两档同号**（成本实测：同进程共用一次底座装载）。
 参数值批下来之前 07b 不起卡件、不开考。
+
+## 廿三、统筹裁定 2026-10-13 接收对表（字母↔实质，逐条落到哪一行）
+
+| 裁定 | 本班实做 | 落点 |
+|---|---|---|
+| ③三柱机器面＝验收 | 已在 0014 袋（pending 中），本班不重投不 self-sign | `00_morning_pack.md §廿一` ＋ q-0014 |
+| 三条自呈口径＝照准 | 照准文本回填进码内注释与卡面，未改一字读数 | `calibration_exam._judge_arm_context_pillars` 族内四函数 |
+| 07b 裁①甲案（毕业准则无面入 not_judged） | 07b 卡面 `reset_rule.graduation_criteria_face_declared_no_face` 声明；**不新增无面数值键** | 07b 卡件 |
+| 07b 裁②两档都跑（4 试次、两档同号取结论） | 07b `exam_scope_note` 钉死四跑与"跨括号取同号，不同号即判规则选择未过稳健，不挑好的那档报" | 07b 卡件 |
+| 07b 裁③B 档自拟值随卡披露＋禁挪他卡 | 原文照写进 `entry_brackets.bracket_B_strict.provenance` | 07b 卡件 |
+| `_span_dates` 多段缺陷＝裁修（动前先出盘点） | 先出盘点（§廿四），再修三处消费者＋统一到单一解析器；受影响 07 的 2 行按 only-append 新 run_id 重读（CH 窗见 §廿四.3） | `calibration_exam._span_pairs/_in_spans` |
+| RUN_ROOT 机制转维护三班 | 已转（§廿一.4 在册＋本节复述），治法属他人件，本班不代改 | 本节 |
+| "三面表"教训入册 | 已入 §二十；并写进本班长期记忆 | `00_morning_pack.md §二十` |
+
+## 廿四、`_span_dates` 裁修：盘点→改→重读三段账
+
+### 24.1 盘点先行（生成器产出，零手抄；宪法 §9.5）
+
+尺：`.runtime/tmp/mineloop2/regime_multispan_inventory.py`（会话临时件，**不入库**——
+若统筹要长期尺，须按新建 .py 的 14 字段＋creation_token＋模块翻译登记另立一件，属净零评估项，
+本班不自立）。产出：`docs/_working/mineloop2_campaign/12_regime_multispan_impact_inventory.yaml`。
+
+实测分母（主区卡面，2026-10-13 00:4x）：**扫卡 518 张**；带多段 regime 串 **12 张**；
+其中**真被弃第二段 8 张**（全部落在 `crisis` 键）；另 4 张的串是**三个日期**（尾注里带日期），
+`pairs_full=1` ⇒ 新旧解析结果逐字同值，故 dropped=0 不计入返工面。
+按 regime 键分布：`crisis` 8／`bull` 2／`bear` 1／`unavailable` 1。
+**已有分数行的受影响卡＝1 张（07）共 2 行** ⇒ 重读面很小，不是全库级返工。
+一处既有语义如实登记、本班未动：`TDM-E-L9-G4` 的 `unavailable` 串本不是区间声明而是历史起注
+（"概念成分历史仅自 2026-08-10、广度快照仅自 2026-08-24、涨跌停表仅自 2026-07-20 ⇒…"），
+旧实现按前两个日期切＝取到 2026-08-10..2026-08-24 这一段；修后 `_span_pairs` 结果与旧值同
+（三日期只成一对），所以这条**不因本次裁修而变**，是否该给它真正的"非区间"语义属另一件（登记不代修）。
+
+### 24.2 改动（一处解析器＋三处消费者＋一把尺收编）
+
+- `_span_dates`（只返回前两日期）→ **`_span_pairs`**（串内全部成对日期）＋ **`_in_spans`**（并段布尔掩码）；
+  单段串与无日期串的返回值与旧行为**逐字同值**（旧 fallback `(span, span)` 原样保留）。
+- 三处消费者改为按掩码切片：`_series_metrics`（regime_ic）、`_panel_metrics`（regime_ic）、
+  `_event_metrics`（regime 面的 `_event_face`）。
+- `_event_face` 加 `mask=` 关键字（`lo/hi` 路径原样保留＝向后兼容）；
+  实现中抓到并修掉一个真实错位：掩码按调用方序列索引算，`df` 是 dropna 后的对齐面（长度可差 1），
+  按位置硬切会炸 `Item wrong length 4000 instead of 3999`——现按标签 `reindex(fill_value=False)` 对齐。
+- **收编**：本班 ③ 时为漏触发柱另写的 `_spans_dates_all` 删除，`_crisis_spans` 改读 `_span_pairs`
+  （§4.2 同真源可派生→必并，禁仓内并存两把 regime 尺）。
+
+### 24.3 测试与重读计划（CH 窗实测后执行）
+
+新增 4 支：解析器三形正证（单段同值／两段全取／无日期退回旧语义）、`_in_spans` 两段都掩到且段间不误掩、
+**判别力主证**＝把关系只放第二段（旧实现读到 nan，修后必须 >0.5）、事件面并段后 `n_event` 等于两段之和。
+实测面：`tests/backtest` 全目录 **347 passed / 8 failed**（8 支＝`test_factory_wiring_night.py` 在册存量红，
+与修前的 8 支同一集合，未增未减）。
+
+重读＝统筹令"受影响读数按 only-append 新 run_id 重读，旧行保留"：目标 07 的 2 行（off/mid 两跑），
+判官侧 `regime_ic.crisis` 读数会因并段而变化（本班 07 首考的 `metrics.arm_open.regime_ic` 面即在此）。
+**窗约束实测**：`card_binding._in_ch_yield_window` 现在（00:5x）返回 `01:00-04:00 夜跑让路窗（矿考循环班令 §三红线）`
+⇒ 本班不在窗内抢跑，重读排 04:00 之后，且照 07 首考成例走同进程两跑（CH 内存墙 7.14GiB 在册）。
+试次照单：重读 2 跑＝再记 2 条批次（带 run_tag 判别位，禁与首考两条混记）。
+
+### 24.4 07b 卡件（②裁定的落地面）
+
+`docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__07b_reset_ladder_anchor.yaml`
+已起（ASCII 名循根宪法 §8；无 front matter，与在册卡形制逐字一致）。
+在册尺自检：`triage_card` → `state=feasible_now`、`pending_numeric_params=[]`（初稿曾报
+`仓位映射@无相邻数值`，已把那处散文改为指向 `data_binding.level_to_cap_map` 后复净）、
+`out_of_vocab_pillars=[]`（③的直接后果）、`arm_count=3`、`pillars_route=dual_arm`。
+`status=blocked_on_impl` **是本班自钉**：implementation_gap 四条未闭合
+（①复位档 `levels_with_reset` 适配器未产，且复位必须调在册 `request_manual_reset` 而非自写分支；
+②`arm_level_cap_multiply`/`_cap_series` 现对 RECOVERY 档名"未覆盖即抛"＝有意 fail-closed，需按卡面
+`recovery_ladder` 表扩；③两括号入口参数须逐跑由绑定册注入禁硬编；④`_span_dates` 修与本卡重读同批）。
+本班不自翻状态——落地袋合并 ①②③ 后，才由该袋把 07b 转 preregistered 并开考。

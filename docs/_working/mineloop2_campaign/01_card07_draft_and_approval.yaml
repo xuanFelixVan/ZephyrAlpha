@@ -486,3 +486,40 @@ card07b_draft:
   what_this_section_does_not_do: >-
     零改 07 v1 卡面（负结果完整保留）、零改判据数值、零动判官件（③的实现另起袋另留痕）、
     本件不声称 07b 已可考——参数未批即不开考，卡未落 dev 即不出分。
+
+card07b_ruling_received:
+  received_at: '2026-10-13T00:35:00+08:00'
+  ruling_summary: 统筹裁定 2026-10-13（三裁全部落到件，逐条对表另见 00_morning_pack.md §廿三）
+  letter_vs_substance:
+    - ruling: "07b 裁①甲案——毕业准则柱无面，入 not_judged 披露"
+      landed_at: "07b 卡面 reset_rule.graduation_criteria_face_declared_no_face"
+      substance_check: >-
+        落实形态＝声明该面不存在并把披露写进卡面，而不是新增一个无机器面的数值键去占位
+        （占位键会被判官按越表键 fail-closed 记败＝把缺口伪装成判据）；
+        乙案（笔级回放面）保留为待办，跨域未立项。
+    - ruling: "07b 裁②两档都跑，4 试次入账、两档同号取结论"
+      landed_at: "07b 卡面 exam_scope_note ＋ buckets.on 括号声明"
+      substance_check: >-
+        "同号取结论"写成硬纪律：跨括号不同号即判规则选择未过稳健性，禁止挑好看的那档报——
+        这是本裁定的实质，不是多跑两次的形式。
+    - ruling: "07b 裁③B 档自拟值（20 日/创新高）随卡披露＋禁挪他卡"
+      landed_at: "07b 卡面 reset_rule.entry_brackets.bracket_B_strict.provenance"
+      substance_check: 原文照写，并标"机器侧无对应在册值＝本卡自拟"，禁挪用。
+  card_file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__07b_reset_ladder_anchor.yaml
+  card_status_as_landed: >-
+    blocked_on_impl（本班自钉）：implementation_gap 四条见卡内，
+    落地袋合并 ①②③ 之后才由该袋把 07b 转 preregistered 并开考。
+  self_check_faces:
+    yaml_parse: "单文档（无 front matter，形制与在册卡一致；初稿误带 ttl 头，已剥）"
+    triage_state: "feasible_now"
+    pending_numeric_params: "空列表（初稿曾报『仓位映射@无相邻数值』，改指向 data_binding.level_to_cap_map 后复净）"
+    out_of_vocab_pillars: "空列表（裁定③ 的直接后果）"
+    pillars_route: "dual_arm"
+    arm_count: "3"
+    ch_queries: "0"
+    score_rows_written: "0"
+    windows_identical_to_07: "true"
+    pillars_numeric_identical_to_07: "true（八键逐字，本班零新增零放宽）"
+  what_this_does_not_do: >-
+    不翻 07 v1 的 fail（按裁定①归档）；不开考 07b（接线四条未闭合）；
+    不改 07/02/06 任何已冻件面；07b 的参数不再自拟一笔——两档括号即裁定文本。

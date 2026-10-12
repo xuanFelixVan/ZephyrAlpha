@@ -67,12 +67,28 @@ class _ToolError(RuntimeError):
 _DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 
-def _span_dates(span: str) -> tuple[str, str]:
-    """行情段跨度解析：取串内前两个日期（容许尾注，如 '2019-01-04..2021-06-30（流动性牛）'）。"""
+def _span_pairs(span: str) -> list[tuple[str, str]]:
+    """行情段跨度解析：取串内**全部**成对日期（统筹 2026-10-13 裁修）。
+
+    旧实现只返回前两个日期，而卡面 regime 串实测写成多段声明
+    （"2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段）"，
+    02/06/07/07b 与另 4 张卡同形）⇒ 第二段起被静默弃。
+    裁定原文＝实现面背离冻结意图的 bug，非判据变更；单段串的解析结果与旧行为逐字同值，
+    不足两个日期时 also 退回旧语义（整串当单点）。
+    """
     hits = _DATE_RE.findall(str(span))
     if len(hits) < 2:
-        return span, span
-    return hits[0], hits[1]
+        return [(str(span), str(span))]
+    return [(hits[i], hits[i + 1]) for i in range(0, len(hits) - 1, 2)]
+
+
+def _in_spans(index: pd.Index, span: str) -> pd.Series:
+    """regime 串的**所有**段并成一条布尔掩码（供逐日切片；单段等价于旧的 >=lo & <=hi）。"""
+    ts = pd.DatetimeIndex(pd.to_datetime(index))
+    mask = np.zeros(len(ts), dtype=bool)
+    for a, b in _span_pairs(span):
+        mask = mask | np.asarray((ts >= pd.Timestamp(a)) & (ts <= pd.Timestamp(b)))
+    return pd.Series(mask, index=index)
 
 
 def _spearman(a: np.ndarray, b: np.ndarray) -> float:
@@ -163,8 +179,7 @@ def _series_metrics(signal: pd.Series, target: pd.Series, card: dict) -> dict:
     regimes = card.get("window", {}).get("regimes", {})
     seg: dict[str, float] = {}
     for name, span in regimes.items():
-        a, b = _span_dates(span)
-        m = aligned[(aligned.index >= pd.Timestamp(a)) & (aligned.index <= pd.Timestamp(b))]
+        m = aligned[_in_spans(aligned.index, span).to_numpy()]
         seg[name] = _spearman(m["s"].to_numpy(), m["t"].to_numpy()) if len(m) >= 60 else float("nan")
     oos = card.get("oos_window_ref") or []
     oos_ic = float("nan")
@@ -200,8 +215,7 @@ def _panel_metrics(signal: pd.DataFrame, target: pd.DataFrame, card: dict) -> di
     regimes = card.get("window", {}).get("regimes", {})
     seg = {}
     for name, span in regimes.items():
-        a, b = _span_dates(span)
-        part = ic[(ic.index >= pd.Timestamp(a)) & (ic.index <= pd.Timestamp(b))]
+        part = ic[_in_spans(ic.index, span).to_numpy()]
         seg[name] = float(part.mean()) if len(part) >= 30 else float("nan")
     oos = card.get("oos_window_ref") or []
     oos_ic = float("nan")
@@ -332,18 +346,6 @@ _WHIPSAW_WINDOW_TRADING_DAYS = 30
 _CAP_EPS = 1e-12
 
 
-def _spans_dates_all(span: str) -> list[tuple[str, str]]:
-    """多段跨度解析：串内**全部**成对日期都取出。
-    在册 `_span_dates` 只取前两个日期，对 02/06/07 的
-    "2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段）"会**静默弃后段**；
-    漏触发柱必须看全段，故本柱用本函数。既有 regime_ic/regime_gap 面是否同改为判据面变更，另案呈裁。"""
-    hits = _DATE_RE.findall(str(span))
-    out: list[tuple[str, str]] = [(hits[i], hits[i + 1]) for i in range(0, len(hits) - 1, 2)]
-    if not out and hits:
-        out.append((hits[0], hits[0]))
-    return out
-
-
 def _cap_series(levels: pd.Series, cap_map: dict) -> pd.Series:
     """级别序列 → 卡面冻结的仓位上限序列（逐日）。出现映射没覆盖的档即抛，禁按缺省 1.0 蒙。"""
     mp = {str(k): float(v) for k, v in (cap_map or {}).items()}
@@ -397,11 +399,11 @@ _ARM_CONTEXT_KEYS = (
 
 
 def _crisis_spans(card: dict) -> list[tuple[str, str]]:
-    """卡面 window.regimes 里所有 crisis 段的**多段**解析（本柱必须看全段，理由见 _spans_dates_all）。"""
+    """卡面 window.regimes 里所有 crisis 段的全段解析（统一用裁修后的 _span_pairs，禁第二把尺）。"""
     spans: list[tuple[str, str]] = []
     for seg_name, span in (card.get("window", {}).get("regimes") or {}).items():
         if "crisis" in str(seg_name).lower():
-            spans.extend(_spans_dates_all(span))
+            spans.extend(_span_pairs(span))
     return spans
 
 
@@ -710,10 +712,18 @@ def _welch_t(a: np.ndarray, b: np.ndarray) -> float:
     return float((float(np.mean(a)) - float(np.mean(b))) / den)
 
 
-def _event_face(sig: pd.Series, nxt: pd.Series, lo: str, hi: str) -> dict:
-    """(窗内) 事件日 vs 非事件日的次日收益差面：gap_bp/t/n（缺窗或样本为零→nan 不冒判）。"""
+def _event_face(sig: pd.Series, nxt: pd.Series, lo: str = "", hi: str = "", *, mask=None) -> dict:
+    """(窗内) 事件日 vs 非事件日的次日收益差面：gap_bp/t/n（缺窗或样本为零→nan 不冒判）。
+
+    `mask` 给定时按掩码取段（regime 多段串用 `_in_spans` 并段，裁修 2026-10-13）；
+    否则按 lo/hi 单窗，与旧行为逐字同路径。"""
     df = pd.concat({"e": sig, "r": nxt}, axis=1).dropna()
-    df = df[(df.index >= pd.Timestamp(lo)) & (df.index <= pd.Timestamp(hi))]
+    if mask is not None:
+        # 掩码按调用方的序列索引算出，而 df 是 dropna 后的对齐面（长度可差 1）——按标签重对齐再切，
+        # 禁按位置硬切（实测错位＝Item wrong length 4000 instead of 3999）
+        df = df[mask.reindex(df.index, fill_value=False).to_numpy(dtype=bool)]
+    else:
+        df = df[(df.index >= pd.Timestamp(lo)) & (df.index <= pd.Timestamp(hi))]
     ev = df.loc[df["e"] > 0, "r"].to_numpy(dtype=float)
     ne = df.loc[df["e"] <= 0, "r"].to_numpy(dtype=float)
     if len(ev) == 0 or len(ne) == 0:
@@ -750,8 +760,7 @@ def _event_metrics(signal: pd.Series, target: pd.Series, card: dict) -> dict:
     full = _event_face(sig, tgt, str(sig.index.min().date()), str(sig.index.max().date()))
     seg: dict[str, dict] = {}
     for name, span in (w.get("regimes") or {}).items():
-        a, b = _span_dates(span)
-        seg[name] = _event_face(sig, tgt, a, b)
+        seg[name] = _event_face(sig, tgt, mask=_in_spans(sig.index, span))
     out = {
         "gap_bp": full["gap_bp"],
         "t_stat": full["t_stat"],

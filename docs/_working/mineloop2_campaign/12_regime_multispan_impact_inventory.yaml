@@ -1,0 +1,223 @@
+schema_version: mineloop2-regime-multispan-inventory/v1
+built_by: python .runtime/tmp/mineloop2/regime_multispan_inventory.py <仓根> <输出>（一次性生成器，零改判据零 CH）
+as_of: '2026-10-13T00:41:26+08:00'
+purpose: 统筹裁修 _span_dates 多段缺陷的前置盘点：哪些卡用了多段 regime、哪些已有分数行会被重读
+detection_rule: 串内 \d{4}-\d{2}-\d{2} 命中数>=4，或 >=3 且含连接词（与/、/及/，/和）⇒ 判为多段声明；pairs_dropped = 串内日期对数 - 1（现行解析器只吃前一对）。逐串原文随 rows 落册，审计可自 eyeball，不靠本判定。
+current_parser_behavior: calibration_exam._span_dates 只取串内**前两个日期**⇒第二段及以后被静默弃（在册件原文实读）
+discipline:
+  cards_modified: 0
+  judge_files_modified: 0
+  ch_queries: 0
+  score_rows_written: 0
+  counts_generated_not_handwritten: true
+census:
+  cards_scanned: 518
+  cards_with_multi_span_regime: 12
+  cards_with_dropped_pairs: 8
+  dropped_pairs_total: 8
+  cards_with_existing_score_rows: 1
+  existing_score_rows_on_affected_cards: 2
+by_regime_key:
+  bear: 1
+  bull: 2
+  crisis: 8
+  unavailable: 1
+rows:
+- card_id: TDM-X-FLOW/ablation/02_离场信号整链消融总账
+  path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/XFLOW/TDM-X-FLOW__ablation__02_离场信号整链消融总账.yaml
+  status: preregistered
+  signal_kind: panel
+  family: ablation
+  multi_span_regimes:
+  - regime_key: crisis
+    date_tokens: 4
+    pairs_full: 2
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 1
+    joiner_present: true
+    text: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（在册危机段）
+  dropped_pairs_total: 1
+  score_rows_existing: 0
+  score_runs_existing: []
+- card_id: TDM-X-R1-01/ablation/03_市场体制条件下熔断减仓增量
+  path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__ablation__03_市场体制条件下熔断减仓增量.yaml
+  status: preregistered
+  signal_kind: series
+  family: ablation
+  multi_span_regimes:
+  - regime_key: crisis
+    date_tokens: 4
+    pairs_full: 2
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 1
+    joiner_present: true
+    text: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（在册危机段）
+  dropped_pairs_total: 1
+  score_rows_existing: 0
+  score_runs_existing: []
+- card_id: TDM-X-R1-01/comparison/02_熔断五级梯度减仓对照
+  path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__02_熔断五级梯度减仓对照.yaml
+  status: preregistered
+  signal_kind: series
+  family: comparison
+  multi_span_regimes:
+  - regime_key: crisis
+    date_tokens: 4
+    pairs_full: 2
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 1
+    joiner_present: true
+    text: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段，T3b 窗+微盘流动性危机窗）
+  dropped_pairs_total: 1
+  score_rows_existing: 0
+  score_runs_existing: []
+- card_id: TDM-X-R1-01/comparison/06_熔断五级梯度减仓对照_基线出生件与r位声明版
+  path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__06_baseline_birth_and_r_face_declaration.yaml
+  status: blocked_on_impl
+  signal_kind: series
+  family: comparison
+  multi_span_regimes:
+  - regime_key: crisis
+    date_tokens: 4
+    pairs_full: 2
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 1
+    joiner_present: true
+    text: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段，沿用 02）
+  dropped_pairs_total: 1
+  score_rows_existing: 0
+  score_runs_existing: []
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__07_five_state_cap_anchor.yaml
+  status: preregistered
+  signal_kind: series
+  family: comparison
+  multi_span_regimes:
+  - regime_key: crisis
+    date_tokens: 4
+    pairs_full: 2
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 1
+    joiner_present: true
+    text: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段，沿用 02）
+  dropped_pairs_total: 1
+  score_rows_existing: 2
+  score_runs_existing:
+  - run_id: mineloop-dualarm_off-07_熔断五级梯度减仓对照_五态仓位锚定
+    date: '2026-10-12'
+    verdict: fail
+  - run_id: mineloop-dualarm_mid-07_熔断五级梯度减仓对照_五态仓位锚定
+    date: '2026-10-12'
+    verdict: fail
+- card_id: TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+  path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-02__comparison__02_L3减仓顺序三臂对照.yaml
+  status: preregistered
+  signal_kind: panel
+  family: comparison
+  multi_span_regimes:
+  - regime_key: crisis
+    date_tokens: 4
+    pairs_full: 2
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 1
+    joiner_present: true
+    text: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（在册危机段）
+  dropped_pairs_total: 1
+  score_rows_existing: 0
+  score_runs_existing: []
+- card_id: TDM-X-R1/shadow/02_拔电源影子运行对照
+  path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1__shadow__02_拔电源影子运行对照.yaml
+  status: preregistered
+  signal_kind: series
+  family: shadow
+  multi_span_regimes:
+  - regime_key: crisis
+    date_tokens: 4
+    pairs_full: 2
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 1
+    joiner_present: true
+    text: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段）
+  dropped_pairs_total: 1
+  score_rows_existing: 0
+  score_runs_existing: []
+- card_id: TDM-X-S1/ablation/02_卖出信号段整体消融对照
+  path: docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1__ablation__02_卖出信号段整体消融对照.yaml
+  status: preregistered
+  signal_kind: panel
+  family: ablation
+  multi_span_regimes:
+  - regime_key: crisis
+    date_tokens: 4
+    pairs_full: 2
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 1
+    joiner_present: true
+    text: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（在册危机段）
+  dropped_pairs_total: 1
+  score_rows_existing: 0
+  score_runs_existing: []
+- card_id: TDM-E-L9-A03/calibration/02_880板块相对强弱持续性
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A03__calibration__02_880板块相对强弱.yaml
+  status: preregistered
+  signal_kind: panel
+  family: calibration
+  multi_span_regimes:
+  - regime_key: bull
+    date_tokens: 3
+    pairs_full: 1
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 0
+    joiner_present: true
+    text: 2020-04-01..2021-06-30（流动性牛，880 数据 2020-03-17 起，牛段可用起点受限已声明）
+  dropped_pairs_total: 0
+  score_rows_existing: 0
+  score_runs_existing: []
+- card_id: TDM-E-L9-G4/ablation/02_概念标签题材热度维度
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-G4__ablation__02_概念标签题材热度维度.yaml
+  status: blocked_on_data
+  signal_kind: series
+  family: ablation
+  multi_span_regimes:
+  - regime_key: unavailable
+    date_tokens: 3
+    pairs_full: 1
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 0
+    joiner_present: true
+    text: 概念成分历史仅自 2026-08-10、广度快照仅自 2026-08-24、涨跌停表仅自 2026-07-20 ⇒ 三臂重放无足够基线日，本卡结论级别=可行性预演
+  dropped_pairs_total: 0
+  score_rows_existing: 0
+  score_runs_existing: []
+- card_id: TDM-E-L9-V1/ablation/02_大盘状态快照T-1纪律
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V1__ablation__02_大盘状态快照T-1纪律.yaml
+  status: preregistered
+  signal_kind: series
+  family: ablation
+  multi_span_regimes:
+  - regime_key: bull
+    date_tokens: 3
+    pairs_full: 1
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 0
+    joiner_present: true
+    text: 2019-04-01..2021-06-30（流动性牛；regime_snapshot_history 实测起 2019-04-01， 与统一牛段起点吻合，本卡是唯一能完整用战役窗口的 V 族卡）
+  dropped_pairs_total: 0
+  score_rows_existing: 0
+  score_runs_existing: []
+- card_id: TDM-E-L9-V3/ablation/02_板块状态快照T-1纪律
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-V3__ablation__02_板块状态快照T-1纪律.yaml
+  status: preregistered
+  signal_kind: panel
+  family: ablation
+  multi_span_regimes:
+  - regime_key: bear
+    date_tokens: 3
+    pairs_full: 1
+    pairs_read_by_current_parser: 1
+    pairs_dropped: 0
+    joiner_present: true
+    text: 2022-09-01..2024-01-31（贴现率熊+微盘熊，sector_state 起点即 2022-09-01）
+  dropped_pairs_total: 0
+  score_rows_existing: 0
+  score_runs_existing: []

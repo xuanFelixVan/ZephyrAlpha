@@ -1,0 +1,160 @@
+schema_version: '1.0'
+card_id: TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版
+node_id: TDM-X-R1-01
+family: comparison
+title_zh: 熔断五级状态机（梯度减仓 vs 单一全清）·净值回放双臂对照卡·复位阶梯锚定版（07b）
+version_of: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+hypothesis: >-
+  与 07 同一命题（原文不改写）：以组合回撤轴驱动的五级状态机
+  （NORMAL/WARN/DANGER/CRISIS/KILL 五态封顶锚定，迟滞解除=半阈值+持续窗+min_hold 三重守卫）
+  相对"触发即一次性全清、恢复即一次买回"臂，能在同窗内以更小换手成本取得不劣于后者的回撤控制；
+  若判不出来，五级表只是复杂度装饰。
+  本版本卡的**唯一新增**＝把 07 卡面上"A2 追认的 L4 不可解除近似"换成**可回放的复位规则**，
+  并令复位后的敞口走在册判定件自家的 RECOVERY 阶梯（不是满仓）——
+  07 v1 实测该近似使 1414/2123 交易日锁在 KILL、OOS 整窗空仓，本卡要判的是"带复位的纪律"，
+  不再是"一次踩死永不松手"。
+why_new_version_not_edit: >-
+  G4-5：07 的近似条款（L4 不可解除）与三臂级别序列定义属其冻结面；把它原地换掉＝口径变更。
+  另起 07b，且 07 v1 的 fail 结论按统筹裁定①**完整保留不翻案**
+  （"本卡判的是 fail-closed 清仓纪律本身，OOS 面不可判"）。
+signal_kind: series
+window:
+  in_sample:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos:
+  - '2025-10-09'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛，沿用 07/02）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，沿用 07/02）
+    crisis: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段，沿用 02/07）
+  multispan_reading_note: >-
+    crisis 串是**两段**声明，读数必须全段覆盖：既有 `_span_dates` 只取前两个日期（实现面背离冻结意图的 bug），
+    统筹 2026-10-13 已裁修；影响面盘点（哪些卡用多段、哪些已有分数行需 only-append 重读）
+    =docs/_working/mineloop2_campaign/12_regime_multispan_impact_inventory.yaml。
+  frozen_note: 看数前冻结（裁定#501 纪律）；本卡窗口三值与 07 逐字同值；事后挪门柱=作废（G4-5）
+buckets:
+  type: arm_matrix
+  'on': >-
+    开臂=五态封顶锚定＋迟滞＋**复位阶梯（本卡新增）** vs 关臂=五态二值全清（NORMAL/WARN/DANGER/CRISIS
+    一律 1.0，唯 KILL 0.0）＋同一复位阶梯 vs 中间臂=五态无迟滞构造档＋同一复位阶梯——
+    三臂共用同一条基线净值与同一成交口径，臂间差异只允许出现在级别→cap 乘子表
+    （本卡 data_binding.level_to_cap_map，档值全部逐字来自在册件）与解除/复位规则上。
+    敏感性括号＝复位入口两档（bracket_A_wide / bracket_B_strict，见 reset_rule），
+    两档各跑一对（off/mid），共四跑。
+  min_obs_per_bucket: 60
+pillars:
+  paired_arm_protocol: 三臂共用同一底层组合净值路径（同一份基线臂净值），仅风控层规则异；风控层成交一律按次日开盘价（prereg stop_rules.exit_exec 同语义，禁当日往返）
+  drawdown_floor: 开臂相对关臂 OOS MaxDD 改善 >= 5pp；相对中间臂改善 >= 1pp（沿用 07）
+  sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1（沿用 07）
+  whipsaw_gate: 开臂 30 个交易日内升降级往返次数 <= 基臂降档触发次数；且危机段（两处在册）真实触发不缺席（沿用 07，读数口径见 ③ 已落地实现）
+  turnover_cost_gate: 年化换手增量 <= 8.0x；40bp 成本档重跑后开臂结论不变，Sharpe >= 0.0（沿用 07）
+  oos_stability: IS/OOS 回撤改善同号；两处危机段均不得劣于关臂（取严：任一恶化即 FAIL）（沿用 07）
+  reset_not_full_reentry: >-
+    本卡新增的唯一文字柱：复位后敞口**必须**走 RECOVERY 阶梯（25%/50%/75% 然后 NORMAL 100%），
+    禁一次买回满仓。这条不是装饰——07 v1 的关臂就是"恢复即一次买回"，
+    若开臂复位也直接回满，两臂在"解除形状"上就同构了，本卡只能判回撤阈值一条腿。
+    机判面＝`arm_level_cap_multiply` 乘子里 RECOVERY 档的 cap 严格递增且首档 <1.0（随 ③ 后扩展实现申报）。
+pillars_numeric:
+  maxdd_improvement_min: 5.0
+  maxdd_improvement_vs_no_hysteresis_min_pp: 1.0
+  sharpe_delta_min: -0.1
+  whipsaw_roundtrip_ratio_max: 1.0
+  missed_crisis_trigger_max: 0
+  turnover_delta_annual_max: 8.0
+  cost_tier_bp_required: 40.0
+  oos_same_sign: true
+pillars_numeric_provenance: >-
+  八键逐字沿用 07（=02/06 同值），本班零新增、零收紧、零放宽。本卡与 07 的可批差异只在
+  reset_rule（复位入口两档＋RECOVERY 阶梯）与 reset_not_full_reentry 那一根文字柱；
+  ③（统筹 2026-10-12 裁定）后三根迟滞/抖动/漏触发柱已有机器面，本卡不再申报 out_of_vocab_pillars。
+reset_rule:
+  ruling_basis: >-
+    统筹裁定 2026-10-13 三裁：①甲案（毕业准则柱无面，入 not_judged 披露）；
+    ②两档都跑（A 宽＋B 严括号敏感性，4 试次入账、两档同号取结论）；
+    ③B 档自拟值（20 交易日/须创新高）随卡披露＋禁挪他卡＝照本班草案写。规则形状（可回放＋预登记＋呈批后开考）已于 2026-10-12 批。
+  machine_anchors: >-
+    逐字镜像在册判定件 src/zephyr/risk/core/drawdown_state_machine.py，本班零自造语义：
+    KILL 唯一出口 `request_manual_reset`（:556，"KILL 无自动出口"见 :377）；
+    复位入参三项确认 `ResetConfirmation`（:236-244）；
+    RECOVERY 敞口上限 `position_cap` = 0.25*(step+1)（:312-326，五态表逐字不变）；
+    阶梯晋升门槛 `recovery_step_recovered=(0.50, 0.75, 1.0-1e-6)`（:162）＋
+    `min_hold_recovery_step=5`（:161）＋`recovery_freeze_days=5`（:169）；
+    阶梯回退判据 dd>crisis_dd / dd>danger_dd（:476-499 区段）。
+  entry_brackets:
+    bracket_A_wide:
+      reset_trigger_recovered_pct: 0.50
+      cooldown_trading_days: 0
+      new_high_required: false
+      provenance: 0.50 逐字取在册 recovery_step_recovered[0]，零新参
+    bracket_B_strict:
+      reset_trigger_recovered_pct: 0.75
+      cooldown_trading_days: 20
+      new_high_required: true
+      provenance: >-
+        0.75 取在册 recovery_step_recovered[1]；**cooldown=20 交易日与"须创新高"两件机器侧无对应在册值，
+        属本卡自拟**——随此披露，且禁挪用于他卡（统筹裁定③照此）。
+  after_reset_ladder: >-
+    两档复位后的阶梯**同值同规**（0.25/0.50/0.75/1.0，晋升门槛与 min_hold/freeze 一律取上列在册值），
+    括号之间**只许差在复位入口**——否则敏感性读的就不是"复位快慢"而是两套恢复纪律。
+  three_confirmation_faces_in_replay: >-
+    holdings_verified_zero ⟺ 复位判定日敞口实测为 0（可自证）；
+    orders_cancelled_verified ⟺ 日频装置无在途挂单概念，以"日频无在途"近似（不可判，随件披露）；
+    new_open_locked_verified ⟺ 复位日起新仓受 RECOVERY cap 约束（由阶梯实现，可判）。
+  graduation_criteria_face_declared_no_face: >-
+    甲案（统筹裁定①）：在册毕业准则六件（min_trades 3 / min_profit_streak 3 / min_expectancy_r 0.3 /
+    min_rule_compliance 0.80 / max_single_loss_r 1.2 / window 10，:163-168）的输入面是**逐笔交易序列**，
+    而本卡装置（exit_simulator）只交日频净值/敞口 ⇒ 该面**不可评估**。
+    本班不造代理指标（拿"连续 3 日正收益"冒充"3 笔盈利"＝偷换语义），
+    处置＝本柱不入 pillars_numeric（不新增无面数值键），并以本块＋分数行
+    unjudged.pillars_prose_keys 的 `reset_not_full_reentry` 侧写披露；
+    笔级回放面属乙案（跨域，未立项）。
+exam_scope_note: >-
+  考试范围与合议规则（统筹裁定②）：本卡须跑 **四跑＝2 复位括号 × 2 配对档（off/mid）**，
+  配对档由绑定册 `arms_variants.{off,mid}` 显式指名（同 07 裁定甲③，跑与跑之间禁动其他参数）；
+  ①**任何单跑不得读成全卡结论**——同一括号内两跑合议（判"开臂 vs 关臂"与"开臂 vs 中间臂"两对），
+  跨括号取**同号**方可读作稳健：两档结论不同号＝本卡判"规则选择未过稳健性"，不挑好的那档报；
+  ②四跑试次**全部进 n_trial_ledger**（同卡四试次，预算册记 4；判官侧 batch_id 无跑次判别位，
+  按 07 成例经同一 record_run 单口以带判别位 batch_id 补记，并照单申报）；
+  ③凭据面须同时显形 `arm_level_creds`（含复位后的 RECOVERY 驻留日数与阶梯晋升次数）
+  与 `not_judged_pillars`，缺一即交付不闭环（07 的验收条件沿用）。
+data_binding:
+  baseline_birth: 出生四件（信号面/宇宙册/调仓行批次/r 位来源）逐字沿用 06 卡 piece_1..piece_4 的符号引用链，真源=scripts/backtest/fexam/exit_sim/prereg_frozen.yaml；本班禁把 24 列名单抄进本卡（抄＝造第二真源）
+  signal_table: c1_market.kline_daily_hfq + c1_market.technical_indicator（经装置 load_* 面，本卡不直查）
+  signal_column: 基线臂日净值（simulate(stop_enabled=True) 产出）；级别判定与迟滞/复位回放真源=src/zephyr/risk/core/drawdown_state_machine.py（MOD-RK-049），禁在考卷里重写判定逻辑
+  level_to_cap_map:
+    five_state_native: {NORMAL: 1.0, WARN: 0.8, DANGER: 0.5, CRISIS: 0.3, KILL: 0.0}
+    binary_full_clear: {NORMAL: 1.0, WARN: 1.0, DANGER: 1.0, CRISIS: 1.0, KILL: 0.0}
+    recovery_ladder: {step_0: 0.25, step_1: 0.5, step_2: 0.75, graduate_to_NORMAL: 1.0}
+    provenance: 前三表逐字取在册件 position_cap 的 return 行（:312-326）与 recovery_step_recovered（:162）；本卡不自拟任何档值
+  arm_protocol: 三臂输入同一基线净值序列与同一成交口径；级别序列由在册判定件按臂档分别从同一基线回放产出（迟滞档/无迟滞档/复位档）
+  device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（净值与成交口径）+ src/zephyr/risk/core/drawdown_state_machine.py（判定真源）+ scripts/backtest/fexam/card_binding.py 的 replay_drawdown_levels（日频适配器）
+  implementation_gap: >-
+    缺一不开考（本卡自钉，不预先声称可考）：
+    ①`replay_drawdown_levels` 现只有两档（levels_hysteresis / levels_no_hysteresis），
+    未产"复位＋RECOVERY 阶梯"档——需新增第三档 `levels_with_reset`，
+    且其复位判定必须调在册件的 `request_manual_reset`（禁在适配器里自己写一套复位分支）；
+    ②复位后的 RECOVERY 档要进 `level_to_cap_map` 乘子面，`arm_level_cap_multiply` 需认 RECOVERY 档名
+    （现按卡面映射表逐字换 cap，RECOVERY 不在两表内⇒会走 `_cap_series` 的"档未覆盖即抛"红线，这是有意的 fail-closed）；
+    ③两括号入口参数须由绑定册逐跑注入，禁硬编；
+    ④`_span_dates` 多段修的落地与 07 受影响 2 行的 only-append 重读（统筹裁定已下，盘点已出）。
+status: blocked_on_impl
+status_reason: >-
+  规则形状与参数已由统筹三裁定稿（甲案／两档都跑／B 档自拟值随卡披露），本件即"冻结稿呈批面"；
+  但 implementation_gap 四件未落地（尤其复位档适配器），故 status 只能是 blocked_on_impl。
+  本班不自翻状态——落地袋合并 ①②③ 后，才由该袋把本卡转 preregistered 并开考。
+lineage:
+  card: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-X-R1-01.confidence
+  relation_to_07: >-
+    07 v1 的 fail 与"OOS 整窗空仓"事实完整保留入册（统筹裁定①：按"本卡判的是 fail-closed 清仓纪律"
+    归档，不翻案）；07b 是**新机制的新卡**，不是 07 的重考或更正。
+discipline: 冻结后开考；试次全入 n_trial_ledger（四跑四条）；事后挪门柱=作废（G4-5）；读数口径照准件见 00_morning_pack.md §廿一.2
+preregistered_by: st-mineloop2-20261012
+preregistered_at: null
+oos_window_ref:
+- '2025-10-09'
+- '2026-09-30'
