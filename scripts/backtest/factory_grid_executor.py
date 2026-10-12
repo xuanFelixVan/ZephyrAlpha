@@ -149,6 +149,11 @@ _EVAL_GLUE_GPU: bool = False
 #: 只有在一个进程、一份数据态里连出"驻留关/驻留开"两臂，才能把"驻留是纯搬运、
 #: 逐位不变"这句证成。尺=.runtime/tmp/st-gpux3-20261012/b2_residency_floor.py。
 _RESIDENCY_OFF_FOR_AB: bool = False
+#: B2 驻留**启用总闸**（缺省 False＝不启用）。加装理由＝本班 n=1,050 全格集铁律针实测
+#: 驻留面未证成数值等价（03 件 §十三·补·补），而核内逐位对拍全绿——分歧在批级整合面、根因未定。
+#: 未证等价的东西不得留在任何会被别人走到的路上，包括 --engine gpu 认证路；
+#: 复现读数请显式置 True（唯一开口，生产路径无人置真），修好等价后由下一班把这行删掉。
+_RESIDENCY_ENABLE_FOR_TEST: bool = False
 #: 设备面分流计数（观测面，不进 manifest 判据列；summary.eval_gpu 仅在非 cpu 时出现）
 _EVAL_GPU_STATS: dict[str, int] = {
     "prefix_gpu": 0,
@@ -2290,7 +2295,15 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     # 一份数据态**里同时产出"驻留关"与"驻留开"两臂，才能把"逐位等"证成而不跨时刻比单价
     # （§十一·F③⑤ 的时钟纪律；铁律尺 b2_residency_floor.py 靠它出 G2↔G3 对）。
     # 生产侧恒 False，无人改它。
-    resident_wave = bool(gpu_wave and _wave_backend == "gpu" and not _RESIDENCY_OFF_FOR_AB)
+    # ⚠启用闸（本班 n=1,050 全格集铁律针实测后加装，据=03 件 §十三·补·补）：
+    # 驻留面在**全格集上未证成数值等价**（A↔G3 越线 29/28/27 vs 改动前 11/10/9；G2↔G3 跨形态
+    # 53 格有差、18 格越线、max_abs=0.216，manifest sharpe 最大动 0.549）——核内逐位对拍虽全绿
+    # （同一份字节经宽表/经载体/经缓存设备数组三路进 tensor_core，gross 与 turnover 差均为 0.0），
+    # 但批级整合面确有分歧，根因未定。故 **缺省不启用**，只保留接线与尺；
+    # 要复现本袋读数须显式置 `_RESIDENCY_ENABLE_FOR_TEST=True`（唯一开口，生产路径无人置真）。
+    resident_wave = bool(
+        gpu_wave and _wave_backend == "gpu" and _RESIDENCY_ENABLE_FOR_TEST and not _RESIDENCY_OFF_FOR_AB
+    )
     try:
         from _c4_engine import set_dev_residency_enabled as _set_res
 
