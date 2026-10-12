@@ -1,0 +1,14 @@
+# 终清波三·归档器影子七日观测账（机生件，禁手改）
+# generated_at: 2026-10-12 11:35:26
+mech: scripts/governance/_tasks/session_closeout_reconciler.py --dry-run --json  # 默认 shadow 零动作
+liveness_source: SessionRegistry.list_active_readonly  # 禁 list_active()（mutating）与单文件兼容副本
+day_counting: 按自然日计，同日多轮只做幂等自证不累加天数
+verdict_rule: 'mode=shadow ∧ errors=0 ∧ suspected=0 ∧ hits_vs_live=[] ⇒ 当日 PASS；任一件不齐即不计当日并暂停转正'
+raw_evidence_location: .runtime/quarantine/fclean3_safety/shadow_rounds/  # 非 TTL 承载（tmp 区 24h 会吃掉证据）
+rounds:
+  - {"durable_copy": ".runtime/quarantine/fclean3_safety/shadow_rounds/shadow_round1.json", "errors": 0, "hits_n": 0, "hits_vs_live": [], "merge_warned": 0, "mode": "shadow", "raw_sha256": "5480cbd1f8addb15fd3fb272f6e95de169a6c4497898b8e29c5bb8d248f2bc36", "round": 1, "scanned": 466, "suspected": 0, "ts": "2026-10-11T17:31:05.375974+00:00", "verdict": "PASS", "would_n": 288, "would_set_sha256": "ff19b201c88e8d848479b75906bd4ef5eb1d81e8dd5d8fac4b963e24fe7b7e88"}
+  - {"durable_copy": ".runtime/quarantine/fclean3_safety/shadow_rounds/shadow_round2.json", "errors": 0, "hits_n": 0, "hits_vs_live": [], "merge_warned": 0, "mode": "shadow", "raw_sha256": "890cdb994d9cfa80bf709c7901967f71b4f99bd9c3cbf38478133f58c9ef4826", "round": 2, "scanned": 466, "suspected": 0, "ts": "2026-10-11T17:55:48.839241+00:00", "verdict": "PASS", "would_n": 288, "would_set_sha256": "ff19b201c88e8d848479b75906bd4ef5eb1d81e8dd5d8fac4b963e24fe7b7e88"}
+  - {"durable_copy": ".runtime/quarantine/fclean3_safety/shadow_rounds/shadow_round3.json", "errors": 0, "hits_n": 0, "hits_vs_live": [], "merge_warned": 0, "mode": "shadow", "raw_sha256": "70a721f72763ff01d1ec3d45a121d07e20f1119989e5dffbd481bfcfad325456", "round": 3, "scanned": 466, "suspected": 0, "ts": "2026-10-11T17:55:51.134268+00:00", "verdict": "PASS", "would_n": 288, "would_set_sha256": "ff19b201c88e8d848479b75906bd4ef5eb1d81e8dd5d8fac4b963e24fe7b7e88"}
+  - {"durable_copy": ".runtime/quarantine/fclean3_safety/shadow_rounds/shadow_round4.json", "errors": 0, "hits_n": 0, "hits_vs_live": [], "merge_warned": 0, "mode": "shadow", "raw_sha256": "56f076e8017604e2e701ceef8a0f2efd579f3bf114a313287abae1277fa04cf8", "round": 4, "scanned": 466, "suspected": 0, "ts": "2026-10-12T03:16:14.422405+00:00", "verdict": "PASS", "would_n": 288, "would_set_sha256": "ff19b201c88e8d848479b75906bd4ef5eb1d81e8dd5d8fac4b963e24fe7b7e88"}
+day1_status: PASS（2026-10-12 四轮 would_set_sha256 全等＝幂等自证通过）
+days_remaining: 6（10-13 至 10-18 各至少一轮，须由周期班/维护三班续跑，见 23_件 §一）
