@@ -598,3 +598,25 @@ for x in 1 2 3 4 5 6; do f=.runtime/tmp/st-datalane2-20261012/logs/laneL$x.log; 
 - 一处踩空实录（别当成"写库失败"）：首次执行在 import 期即 `ModuleNotFoundError: No module named 'schemas.categories'`——`python <按路径跑脚本>` 时 sys.path[0]=脚本目录，`schemas` 不在面；**零行被改**（失败发生在任何写之前）。补 `PYTHONPATH=<仓根>;<仓根>/src` 后一次通过。与在册"车道裸 python 导主区包"是同族坑的反面形态（那次是导错面，这次是导不上面）。
 - 复投前置（③的判据，写给接手而非靠记忆）：`lag==0` 或至少 `scripts/data/backfill_kline_daily_history.py ∈ 投影面`（复核：`python -c "import sys;sys.path.insert(0,'scripts/governance');from _shared.module_translation_loader import get_module_translation as g;print(g('scripts/data/backfill_kline_daily_history.py'))"` 回非 None 即解堵）；届时车道内件面不必重做（sha256 前 16=c3fedb957c36d66d 的双存证仍在）。
 - 待裁面照旧：③写侧来源标签四件改动仍等 Owner 亲裁（统筹已表推荐"批"，但 human_only 门位不代拆）；10-13 收盘后那条可翻案预测的 SQL 复核留给晨班。
+- 在飞袋的锁面观察（只报现象不代裁根因）：03:20 本班为袋 0007 的 4 件逐一 `lock_files.py acquire`（每条回执都写 TTL 30 分钟，`list` 当场可见），03:28 复查同四件＝**在册零条**，而袋仍 pending（ahead=6）。两个候选解释本班在这一窗内分辨不了：①他会话冷启动跑了 `lock_files.py cleanup` 扫走（但该命令按在册语义只清**过期**条，8 分钟不该到期）；②入队侧 finally 释放了本会话这些件的 claim。这与在册铁律"袋在飞禁放锁"是同一风险的**被动失守形态**——不是主动放锁，而是放了会自己不见。下一班若靠 claim 判"这文件有人在改"，请先 `list` 复核再动手，别按自己上一次 acquire 的回执推断现在仍持有。本班处置＝03:29 重新 acquire 四件（已核 4/4 在册），时间线如实留：03:20 可见 → 03:28 零条 → 03:29 重投可见。
+- 同一把尺的第二次读数（把上面那条观察收窄，别让它停在"两个候选解释"）：03:29 重投的账本 claim，其后本班再 acquire 时机械回 `RECLAIMED — 原 st-datalane2-20261012 的过期 claim 已回收（expired，静默窗 30min）`，**而距那次 acquire 只有约 9-10 分钟**（03:29 与 03:39:25 两个 `date` 实测点之间两次 acquire 皆回此讯）＜它自己打印的 30 分钟 TTL。⇒ 除候选①②外还有第三种更可能的：**TTL 的起算点不是本会话这次 acquire 的时刻**（回执打印"剩余 30.0m"，但时钟可能按该文件首次被锁/上一次登记的时刻起算）。本班不据此改任何锁面代码——这是观测面，不是判据面。给下一班的口径因此升级成硬一句：**别把 acquire 回执当"我现在持有"的凭据，动手前 `lock_files.py list` 现读，落袋前后各读一次**。
+  （自我更正一条，按体例当场标注：这段先前草稿写的是"21 分钟／03:5x"，那是本班体感钟又偏快造成的——在册自犯条目"体感钟快约一倍、动作前先 date 实测"同族第三次现场；以 03:39:25 的 `date` 实测为准改写作 9-10 分钟。另防误读一句：本 §卅六 上面那句"③写侧来源标签四件改动仍等 Owner 亲裁"是当时点状态，Owner 已裁「批四处随形改」且本班已落码，见 §卅七——按"更正另起、留旧案卷"体例不回删旧句，只加指针。袋讯若与本行数字不一致，以本行为准。）
+
+## 卅七、③写侧来源标签随形改已落码（Owner 亲裁放行 human_only）＋④幂等清账的触发条件
+
+Owner 裁定原文＝**「批四处随形改」**；authority_ref＝Owner 原话"现在就全部干，全部批，投"（2026-10-13）；回退＝revert 单袋（`q-20261013-st-datalane2-20261012-0013`）。§卅四 栏一那张清单从此不再是"待裁"，而是"已落码待 drain"。
+
+- own-diff 实测 **+10/-5，三件**，四处站点逐条与清单对得上，除这四处零夹带：
+  ①`market_stock_daily_basic.py:69` INSERT_COLUMNS 末位加 `data_source`（连同上一行注释一起改准：原文"排除 DEFAULT 列由 CH 自动填充"在改后就是假声明——**改码不改文＝码与文分家**，这条自约束本班自守）；
+  ②`tushare_provider.py` 列清单加 `"data_source"` ＋ 行元组末尾加 `"tushare"` ＋ docstring 三处同批（6 列→7 列、"走表 DEFAULT"→"显式带 'tushare' 随形落"、并写下此前 DEFAULT 兜底致全表来源错标这一因）；
+  ③`test_providers.py:2173` 断言补第 7 项 `"tushare"`。
+- "两处必不改"这次是**跑出来的不是推出来的**：`:2180-2185` 是 `set(provider)==set(schema)` 两侧对拍，同步加列自动跟上；`test_fetch_route_per_trade_date` 断言的是**请求侧** `fields="ts_code,turnover_rate,float_share,circ_mv,total_mv"`——data_source 是我们补的常量列而非 tushare 回列，请求面一字未动，跑过即证。
+- 消费面扫法与结论（防"第五处随形点"漏改）：`INSERT_COLUMNS`／`_STOCK_DAILY_BASIC_COLUMNS` 全仓引用面＝定义处＋该测试两处，无运行时第三方；其余读本表者（chips 族、`t0_state_match_matrix`、`chip_distribution_engine`、`internal_compute_provider` 换手率并入）一律按**列名**取数，不依赖插入元组形状。
+- CH 侧合法性实测（改前先验，别拿"表里有这列"当记忆）：`system.columns` 该表 `data_source`＝位置 7／`LowCardinality(String)`／带 DEFAULT ⇒ 显式插值合法；**DDL 文本一字未改**，文件头 INVARIANT"本文件 DDL 必须与 ClickHouse 实际表结构一致"仍成立。
+- 红绿证：目标类 12 passed ＋ `test_providers.py` 整档 **132 passed**（车道面跑：`PYTHONNOUSERSITE=1`＋PYTHONPATH 指车道，并先打 `__file__` 自证不是主区码面——他班在册教训同族）；ruff 净（残留 4 条 noqa warning 在 `:269/:278/:326/:335`，非本袋行，本班不顺手修他人面）。
+- 入袋一处程序性留痕：`commit_queue.py enqueue` 侧**没有** `--allow-multi-domain` 旗，预检按 COMMIT-SCOPE 判 2 域拦下；正解是队列自己的处方行（`commit_queue.py:3928`）写的"核实文件归属后用 `git_commit.py --allow-multi-domain`（留痕）重投"⇒ 本班改走 `git_commit.py --enqueue` 正门一次通过。这不是绕闸：码件＋它的守卫测试同批是宪法 §2 第 4 条明列的合法场景，旗也只在袋讯留痕。
+- ④幂等清账**不随本袋盲跑**（按 RULE-DATA-OPS 先过必要性这一步）：现全表 `data_source='akshare'` 命中 **0** 行，此刻跑＝空扫 10,511,976 行。正确触发点＝**本袋已落地** 且 **日增量腿已写过一轮**；判据一条命令：
+  `python -c "import sys;sys.path.insert(0,'scripts/backtest/fexam');from ch_data import ch_query;print(ch_query(\"SELECT count() FROM c1_market.stock_daily_basic WHERE data_source='akshare' FORMAT TSV\"))"`
+  回 0 → ④是空转，不跑；回 >0（说明落地前那一日仍按 DEFAULT 落了错标行）→ 跑
+  `ALTER TABLE c1_market.stock_daily_basic UPDATE data_source='tushare' WHERE data_source='akshare' SETTINGS mutations_sync=2`（幂等，同语句本班 10-12 已实跑一次，`is_done=1/parts_to_do=0` 在册）。
+- §卅四 那条可翻案预测现在升级为**验收项**：10-13 收盘后日增量腿的新行应显 `tushare`。复核＝上一条命令加 `AND trade_date='2026-10-13'` 分组看 `data_source`。若本袋未能在收盘前 drain，预测面会先出现 akshare 行——那是**落地时序**不是判据错误，届时按 ④ 清账即可，别把它记成"改标没生效"。
