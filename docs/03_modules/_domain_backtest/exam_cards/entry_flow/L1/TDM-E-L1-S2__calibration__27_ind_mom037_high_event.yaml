@@ -1,0 +1,73 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/27_ind_mom037_high_event
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: IND-MOM-037市场聚合过热事件开关（批3反向分诊）
+origin: reverse_triage_batch3_20261012
+parallel_of: null
+mother_score_row: docs/_working/fexam/indicator_exam_scores_v1.yaml#results[object_id=IND-MOM-037]
+hypothesis: 全市场IND-MOM-037（c1_market.technical_indicator.wt1 等权日均值）处于自身过去 250 日高分位的日子=该价量维度市场过热区；此类日次日指数收益低于其余交易日。母结果=批3分数册在册负
+  IC（个股截面 5 日收益口径），本卡把『该维度量价同涨后转弱』的反向先验复述成可机判的市场面事件开关命题。
+mother_card_relation: 本卡是批3分数册在册负结果（object_id=IND-MOM-037）先验的反向复述，来源=在册成绩册（如实复述，非事后加冕）；母行为指标考试行而非卡，原行保留在册不改写不重判（G4-5）。批3
+  原判据面=个股截面 5 日前向收益，本卡目标面=次日指数收益（市场聚合事件开关族口径，与 16 卡先例同面），两面不同已如实声明。
+one_round_limit: 一轮为限：本卡只允许一次开考与一次对账；若一轮后仍未确认，本命题挂族归档（族=reverse_triage_batch3_20261012），禁反复改阈值再考（多重比较防线）。
+known_weakness: 母行为批3分数册行（非卡）：holdout5 ic=-0.0573（is_ref5 -0.0488）；有效 regime 段读数：ranging_low_vol -0.0213、trend_up
+  -0.0871；mono 分桶面批3未建（本卡以事件两态对比承担判据形态，event_days_min 族内下限 200 承担样本门槛）
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos:
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  frozen_note: 看数前冻结（裁定#501/G4-5）；窗口逐字继承 reverse_triage_T1 先例（未改一日）
+buckets:
+  type: event_flag_two_state_contrast
+  'on': 事件日=基序列过去 250 日滚动分位 > 0.78 的交易日
+  min_obs_per_bucket: 200
+  note: 机判面对象是两组对比（事件日 vs 非事件日）而非分位响应曲线，不产 mono_spearman；样本门槛由 event_days_min 承担。
+pillars:
+  event_gap_direction: 事件日次日指数收益必须低于非事件日（is_gap_bp ≤ 0）
+  event_gap_significance: Welch t ≤ -2.0（双侧 5% 渐近临界，统计学惯例，非本数据调出）
+  event_days_floor: 事件日 n ≥ 200（族内下限 200，卡面往松不采）
+  oos_confirmation: OOS 窗 gap 与 IS 窗 gap 同号（单窗不算确认）
+  regime_split: 两段行情 regime 的 gap 同号；分段读数逐段入册，禁只报全样本
+pillars_numeric:
+  event_gap_max_bp: 0.0
+  event_t_stat_max: -2.0
+  event_days_min: 200
+  event_oos_gap_same_sign: true
+  event_regime_gap_same_sign: true
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益，执行器 shift(-1) 原生口径）
+status: blocked_on_impl
+status_reason: 聚合基序列物化件未在册（16 卡先例=CSV 真源在库；本卡基序列=技术指标列全市场等权日均值，需先物化出逐日序列并接 judge_event event flag 列）。算子card_binding.op_event_flag_rolling_pctile
+  已在册；物化接线跑通即转 preregistered 开考，禁改卡面。
+signal_kind: series
+oos_window_ref:
+- '2024-01-01'
+- '2025-09-09'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+preregistered_by: st-minedig-20261012
+preregistered_at: '2026-10-12'
+data_binding:
+  baseline_birth:
+    piece_1_signal_face: 真源=c1_market.technical_indicator.wt1（批3 分数册 ch_backings 首列，符号引用禁抄值）；基序列=该列逐日全市场等权均值（非缺格截面），物化版一旦生成为只追加
+      CSV（六段物化件同款纪律：PHASE 版本化，映射变更升版禁原地改）
+    piece_2_universe: technical_indicator 当日非缺格全截面（与批3 分数册同面板口径）；缺格=自然缺格，禁前向填充冒充
+    piece_3_rebalance_rows: 每交易日行；次日收益由执行器 shift(-1) 对齐，禁在卡面换对齐
+    piece_4_r_face_source: r 位=次日指数收益（kline_index symbol='000300' close→next_day_return），本卡目标面即指数（市场事件开关族口径，16
+      卡同款），非组合收益位
+  signal_derivation: 事件日=基序列过去 250 日滚动分位>0.78 的交易日（分位一律历史滚动窗含当日，暖机段无读数不冒充事件；禁全样本分位=用未来定过去门槛）；非事件日=同窗其余交易日。频率推导（碰数前冻，只用窗长与门槛）：IS
+    2019-01-04..2023-12-31≈1213 交易日−250 暖机≈963 可用日 ⇒ 需 freq≥200/963≈20.8% ⇒ 取分位>0.78（22%），预期事件日≈212≥200。
+  arm_e_face_quote: e 位=基序列事件旗（事件日=1/非事件日=0，同一物化序列产出）
+  arm_r_face_quote: r 位=CSI300 次日收益（kline_index 同源），与 e 位逐日对齐
+  target_source: kline_index symbol='000300' close -> next_day_return = close(t+1)/close(t)-1
+  impl_gap: 聚合序列物化与 event flag 接线未实跑验证（零 CH 窗内只立卡面）；开考前考班验证：①物化序列逐日可复算 ②event flag 列进 judge_event；任一不通保持
+    blocked_on_impl，禁改卡面凑通。
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
