@@ -41,8 +41,21 @@
 # - Idempotent non-destructive: Set-ScheduledTask in-place update when present (NEVER Unregister+Register).
 #
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\tasks\register\register_sft_train_window_task.ps1
+#        (registers DISABLED by default; add -Enable to arm the calendar)
 # Verify: schtasks /query /tn ZephyrAlpha_SftTrainWindow /v /fo LIST
 # Then regenerate the resource registry: python scripts\governance\generators\generate_resource_profile_registry.py
+#
+# Two independent locks, both must be true before a training run happens:
+# 1) the calendar is armed (this file with -Enable, or schtasks /change /enable);
+# 2) data/runtime/sft_train_authorization.txt contains RUN_SFT_TRAIN_FULL_APPROVED (Owner's button;
+#    the run script consumes it once and renames it .consumed).
+# Why the calendar is disabled by default: measured on the live registry face (see
+# docs/_working/gpuwo_campaign/11_resource_declaration_and_overlap_precheck.yaml), this sch_* entity
+# lands as resource_class=light / pool=default / exclusive_group=[] because the generator has no
+# per-schedule GPU class channel, and Sunday 10:00+300min sits inside sch_f06_grid's
+# Saturday 23:00+1440min window. The conflict gate would call that "zero red" only because it is blind.
+
+param([switch]$Enable)
 
 $ErrorActionPreference = "Stop"
 
@@ -68,5 +81,12 @@ if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
     Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger `
         -Settings $Settings -Principal $Principal -Force | Out-Null
     Write-Output "OK registered $TaskName (weekly Sunday 10:00, 5h limit)"
+}
+if ($Enable) {
+    Enable-ScheduledTask -TaskName $TaskName | Out-Null
+    Write-Output "STATE enabled (calendar armed; training still needs data/runtime/sft_train_authorization.txt)"
+} else {
+    Disable-ScheduledTask -TaskName $TaskName | Out-Null
+    Write-Output "STATE disabled (default; arm with -Enable or: schtasks /change /tn $TaskName /enable)"
 }
 schtasks /query /tn $TaskName /fo LIST | Select-String "TaskName|Status|Next"

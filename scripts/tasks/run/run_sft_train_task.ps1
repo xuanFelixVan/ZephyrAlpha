@@ -105,7 +105,23 @@ if ($gpuLine -match '^\s*(\d+)\s*$') {
 }
 
 # Segment 1: full QLoRA SFT training + Macro-F1 validate (metrics land in data/eval/sft_metrics.json)
-cmd.exe /c "python scripts\ml\run_sft_train.py --epochs 3 --batch-size 4 --grad-accum 4 >> $Log 2>&1"
+# GPU-03B distill line (Owner final ruling 1 item 5, 2026-10-12): training reads the teacher-distilled
+# pool, scoring reads ONLY the frozen gold v1 (news_sentiment_200 + gold_expansion_v1), pass line 0.767.
+# Paths are absolute because the gold pool is a landed (tracked) asset while the distilled pool is a
+# gitignored derived artifact under data/sft/ (same convention as train.jsonl/eval.jsonl).
+$DistillTrain = Join-Path $RepoRoot "data\sft\distill_train.jsonl"
+$DistillEval = Join-Path $RepoRoot "data\sft\distill_eval.jsonl"
+$GoldLegacy = Join-Path $RepoRoot "data\eval\news_sentiment_200.jsonl"
+$GoldV1 = Join-Path $RepoRoot "data\eval\gold_expansion_v1.jsonl"
+if (-not (Test-Path $DistillTrain)) {
+    "==== SKIPPED: distilled training pool missing ($DistillTrain) - rebuild it before arming ====" | Out-File -FilePath $Log -Append -Encoding utf8
+    exit 0
+}
+if (-not (Test-Path $GoldV1)) {
+    "==== DENIED: frozen gold v1 not on disk ($GoldV1) - training must not score against a non-frozen set ====" | Out-File -FilePath $Log -Append -Encoding utf8
+    exit 1
+}
+cmd.exe /c "python scripts\ml\run_sft_train.py --epochs 3 --batch-size 4 --grad-accum 4 --train-path ""$DistillTrain"" --eval-path ""$DistillEval"" --gold-path ""$GoldLegacy"" ""$GoldV1"" --pass-line 0.767 >> $Log 2>&1"
 $trainExit = $LASTEXITCODE
 "==== train exit code $trainExit ====" | Out-File -FilePath $Log -Append -Encoding utf8
 if ($trainExit -ne 0) {
