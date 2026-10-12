@@ -861,3 +861,42 @@ all_match 30、partial_match 4、**foreign_zero_match_not_in_dev 5**、noop 哨�
 已落地件的内容级复验（`git show dev:` 侧读回）：0017 探针与 claim 续租、0018 torch 四面
 （`torch==2.13.0+cu126`／`#ARCH-TORCH-CUDA-PIN`／ENV-001 disposition）、0019 台账 §十一＋知会 §五–§七
 全部在 dev 面命中；三支测试件（投影写拦截／landed_id 探针／claim 续租）在 dev 面存在。
+
+### 12.7 超时簇定量（统筹"60s 提交上限还成不成立"一问的实测答案）
+
+【死信口径】尺＝`.runtime/commit_queue/dead/q-20261012-*.json` 全量正则取 `timed out after ([\d.]+) seconds`
+＋`Command '[...]'` 首两段动词，今日共 **14 枚**：
+
+| 档位 | 命令 | 枚数 | 会话分布 |
+|------|------|------|----------|
+| 60.0s（write 档） | `git commit --no-verify -F … --pathspec-from-file=…` | 12 | gpuwo 6／backfix3 2／本班 2／cband 1／deadcure3b 1／minedig 1 |
+| 15.0s（read 档） | `git ls-files --error-unmatch -- …` | 2 | 其中 1 枚＝本班 0021（门禁 DOC-HEADER-SUITE 自身异常 fail-closed 打死袋） |
+
+按小时：00 时 3／20 时 3／**21 时 8**。涉 7 个会话（统筹给的签名计数 364→366 是复发型累计，
+本表是当日盘上枚数，两口径并存不互否）。
+
+【档位真源定位】`git_commit_gateway.py:1159` 分级注释＝read 15s／write 60s／其他 30s；
+`thresholds.yaml` 的 `git_operations` 段只 SSoT 化了四类**快照**超时
+（classify／gate_chain／commit_queue_landing 120s／evaporation），commit 与 ls-files 两档仍在代码内。
+⇒ 调参面目前不是单口，这条本身就是要报的口径缺口。
+
+【空载实测对照（本机 22:5x）】`psutil` 读数＝CPU 30.4%、mem 69.7% used（avail 11.8G）。同刻三处计时：
+
+- 主区：`git status --porcelain` 0.23s（668 行）／`git diff --cached --numstat` 0.13s／`git ls-files` 0.03s（20,872 条）；
+- 池工 w2、w3 同面：0.02–0.19s。
+
+⇒ 上限本身有**两个数量级余量**，问题形态是"并发窗内的尾延迟"，不是"60s 结构性过小"。
+21 时 8 枚集中在 4–6 件并发 processing 的窗内（池 k＝6，thresholds 在册）。
+
+【预签条件判定（可自裁面，本班据此不动）】`thresholds.yaml` 注记 Owner 09-26 批 k=6 时写
+"CPU 69% 水位观察，异动回 4"。实测当前 CPU 30.4% ⇒ **时间件不成立，本班未翻 k**；
+但"异动"半件证据在边缘（21 时 8 枚集中、当时 4–6 件并发、本机两次断电＋96.5% 内存水位重启），
+故把 k 的处置一并进菜单而不是自决。
+
+【提案三条（改超时＝队列判据面，带数据呈批）】
+
+- 甲＝自适应档：按 index 条目数×并发工数缩放 read/write 上限并设上下界；改动大、判别力强，单独呈批。
+- 乙＝先搬不改值：把 commit/write 与 ls-files/read 两档搬进 `thresholds.yaml` 的 `git_operations` 段
+  （SSoT 化，数值原样 60/15），零判据改动，是后续任何调参的前置。
+- 丙＝k 回 4 观察一夜（在册回退位，可即时复原，非新判据）。
+- **建议默认＝乙＋丙并行**（二者都不动判据数值），甲另批。
