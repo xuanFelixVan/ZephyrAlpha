@@ -6,7 +6,8 @@
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 全部用例 monkeypatch 账本三步注入点（api.register/publish_snapshot/projection run），
-#   不碰生产 PG；直写轨退役不变量=登记全程投影 YAML 字节零变化
+#   不碰生产 PG；直写轨退役不变量=登记全程投影 YAML 字节零变化；两支生产形态用例只起子进程
+#   做 import 探测（PYTHONPATH 钉本树 src、PYTHONNOUSERSITE=1），零 DB 连接零写盘
 # [MODIFY-GUARD] 2026-10-09 st-regsolo-20261010 随裁定#502 直写轨退役同批重写（原插入锚/守恒闸/
 #   CAS 回滚用例随被删机械退役，语义由账本层测试 tests/governance/test_registry_ledger.py 承接）
 # [STABILITY] evolving
@@ -26,6 +27,8 @@
 
 from __future__ import annotations
 
+import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -333,3 +336,67 @@ def test_detect_file_type_table():
     assert bct.detect_file_type("docs/01_policies_and_standards/_registry/catalogs/x.yaml") == "registry_yaml"
     assert bct.detect_file_type("docs/_working/x.md") == "working_md"
     assert bct.detect_file_type("misc.bin") is None
+
+
+def _script_mode_probe(pre_import_schemas: bool) -> subprocess.CompletedProcess:
+    """起子进程仿真生产脚本形态（sys.path[0]=脚本目录、仓根不在 sys.path）。
+
+    PYTHONPATH 显式钉本树 src：既保证测的是本车道码面（裸 python 经 editable .pth 会
+    锚到主区旧码＝在册假绿形态），也保证仓根不被任何环境面递进来。
+    """
+    repo_root = Path(__file__).resolve().parents[4]
+    script_dir = str(repo_root / "scripts" / "governance" / "d3_metadata")
+    prelude = "import schemas\n" if pre_import_schemas else ""
+    bootstrap = (
+        "import sys\n"
+        "sys.path[0] = "
+        + repr(script_dir)
+        + "\n"
+        + prelude
+        + "import zephyr.governance.registry_ledger.registry_ledger_ddl as ddl\n"
+        "print('SCHEMA=' + ddl.SCHEMA_NAME)\n"
+        "print('DDL=' + str(ddl.__file__))\n"
+        "print('REPO=' + " + repr(str(repo_root)) + ")\n"
+    )
+    env = {k: v for k, v in os.environ.items() if k not in ("PYTHONPATH", "PYTHONNOUSERSITE")}
+    env["PYTHONPATH"] = str(repo_root / "src")
+    env["PYTHONNOUSERSITE"] = "1"
+    return subprocess.run(
+        [sys.executable, "-c", bootstrap],
+        capture_output=True,
+        cwd=str(repo_root),
+        env=env,
+        text=True,
+        timeout=180,
+    )
+
+
+def _probe_lines(proc: subprocess.CompletedProcess) -> list[str]:
+    return [ln.split("=", 1)[1] for ln in (proc.stdout or "").strip().splitlines()]
+
+
+def test_write_leg_imports_in_production_script_mode():
+    """生产脚本形态（`python <路径>`）下写腿可导入，且 DDL 常量取自本树真源。
+
+    pip 包 safety_schemas 在 site-packages 落成命名空间包 `schemas`（无 __init__.py），
+    仓根不在 sys.path 时 `import schemas` 假成功（__file__=None）而炸点在子模块
+    `schemas.categories`——登记正门写腿（insert_block → api → ddl）必断。
+    pytest 轮经 rootdir 注入仓根路径，同断言在本进程内恒真＝假绿温床，故必须起子进程。
+    """
+    proc = _script_mode_probe(pre_import_schemas=False)
+    assert proc.returncode == 0, f"写腿 import 断裂 rc={proc.returncode}: {(proc.stderr or '')[-500:]}"
+    schema, ddl_file, repo_root = _probe_lines(proc)
+    assert schema == "registry_ledger"
+    # 码面取自本树（防"绿了但测的是 .pth 锚定的主区旧码"）
+    assert ddl_file.startswith(repo_root + os.sep)
+
+
+def test_write_leg_survives_namespace_schemas_preimported():
+    """同进程先 `import schemas` 落命名空间份、后触写腿——仍须解蔽。
+
+    命名空间包的 __path__ 在首次导入时就算死，晚装配 sys.path 对它无效；池工进程里
+    任何先触 schemas 的模块（如 ex_core.execution_report_producer）都会造出这个次序。
+    """
+    proc = _script_mode_probe(pre_import_schemas=True)
+    assert proc.returncode == 0, f"遮蔽次序下写腿断裂 rc={proc.returncode}: {(proc.stderr or '')[-500:]}"
+    assert _probe_lines(proc)[0] == "registry_ledger"
