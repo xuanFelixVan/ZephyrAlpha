@@ -1006,3 +1006,37 @@ critical_warn（不炸 post-commit 主链，在册 #ARCH-PRE-EXISTING-DEBT-001 �
   ⑥ 四案卷提案在 `.runtime/tmp/maint3_night/`（①合并器／②CH 容量／③schemas 断裂／④午夜指纹）。
 - 自报两条：改道 `rule_bridge/` 后 `REPO parents[3]` 指错根（1 红，已修 5 绿——在册"改道必复跑"又应验一次）；
   `git add` 传逗号串被当单一路径吞（三次 index.lock 竞争是别班在跑，未删他人锁，等到锁主退出再重试）。
+
+### 13.7 归因收回与清面记录（统筹终版裁定五＝"宁可留白不写半条假账"为对，本节由接任班 st-maint5-20261013 代补录）
+
+**本节只转录三班自己的讯息并标本班能独立复算的部分；代拟一条都没有。**
+
+1. **归因收回（正源＝三班 q-20261013-st-maint3-20261011-0041 袋 message）**，原文要害：
+   "config/flags.yaml:127 integrity_baseline_mode.mode=\"head\"（Owner 批 09-30 翻转，DB 已退出判定链），
+   所以本班先前『未及时 add+--register 基线库』的归因**作废**"。该袋补录时点仍在
+   `.runtime/commit_queue/pending/`（未落 dev），故本班不在此处替它举落地证；其字节入库后由任一班把指针补成 dev commit 号。
+   同袋另记一条真机制：判定面读**主区工作树 × HEAD blob 对照**，未列入本袋的受保护件一律计 TAMPERED→exit 2，
+   而解释位 `[CHANGING_IN_COMMIT]` 只把本袋自带路径判 own ⇒ 同班多袋并发持有受保护件 WIP 时彼此互咬。
+2. **本班的独立复算（不靠转述，与统筹终版裁定一"归因定案"同判）**：`config/flags.yaml` dev 面读到 mode=head；
+   `rules_integrity_db.json` 不在判定链上；03:2x–03:4x 盘面复量下表＝"主区 WIP 系三班自改、已清回基线"这条**成立**。
+
+   | 受保护件 | 主区盘面 sha256[:12]（CRLF 归一口径） | HEAD 同径值 | 态 |
+   |---|---|---|---|
+   | `scripts/governance/_shared/thresholds.yaml` | aa4988d42dfb | aa4988d42dfb | 清回基线（卡片所称"aa4988d4 复量在案"＝本班独立复现） |
+   | `src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py` | 0bc5492681ed | 0bc5492681ed | SAME |
+   | `src/zephyr/governance/audit/reconciliation_registry.py` | 0713f2670b2a | 0713f2670b2a | SAME |
+   | `src/zephyr/gov_enforcement/commit_gates/takeover_pending_gate.py` | 13209f0dd6ea | 13209f0dd6ea | SAME |
+   | `docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml` | 6bd8bb33a602 | 42359606bb42 | **仍 DIFF＝属主班 st-datalane2-20261012 的在途面（其 q-…-0006/0007 在队），非三班自改，本班不代修（根宪法 §3 第4条）** |
+
+3. **一条须入账的字节账**（不是追责，是防后人把"已清回基线"读成"零损失"）：维护四班 P7 案卷 §二 表所记
+   主区 thresholds 中间态 `4ba66f1b617b`，本班按 sha256 前缀逐只扫 `.runtime/commit_queue/blobs/` 与
+   `blobs_archive/` ＝ **两面查无** ⇒ 该字节态已随清面消失、不可复算。语义面本班核过无损：三班并袋 0041 所载
+   thresholds 字节 `f9067a9fd448` 相对 dev 键集合差＝**新增 3 键（git_operations 三档 15/60/30）／缺失 0 键**，
+   且 `decision_chain_sentinel.commit_queue_landing_pool_workers=4`（超时丙）齐备 ⇒ 判据内容零丢失；
+   但"中间态字节不再可复算"这条应与 §13.2 两处更正同留存，口径＝**语义无损、字节有损**。
+4. **同场一条 sha 校对接力（承 §13.5 末段"新测试件落点教训"）**：卡片所指"正确版在 q-0039 blob"＝**内容判断成立、
+   sha 值记错**。本班逐只实测：q-0039 五枚 blob 为 c4526845/f9067a9f/adebb1c6/199ce91f/5e361f6d，
+   **查无 d589de0f**；正确版＝`5e361f6dbdf9`（`REPO = Path(__file__).resolve().parents[4]`），
+   而 `.runtime/tmp/maint3_night/rescue_20261013/` 与 st-maint4 车道两份都＝`4ac2ddd426cc`（parents[3] 错版）。
+   ⇒ 抢救区那份不可用于重投；本班未双投 C10-C13（同件只投一袋，且以错版回退在途 0041 会造真冲突）。
+。
