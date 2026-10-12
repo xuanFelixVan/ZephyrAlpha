@@ -1,23 +1,24 @@
 ---
 ttl: task_bound
-completes_when: 两个 .py 经维护三班 C4（M6）入正式目录后，本件降级为历史留证指针；在此之前本件是它们的唯一持久副本
+completes_when: 两个 .py 经维护三班 C4（M6）入正式目录后，本件降级为历史留证指针；在此之前本件是它们的持久副本
 ---
 
 # 本班未入库源码留证·第二件——折减重述与预算册生成器＋自家测试（M6 待维护三班 C4）
 
-## 0. 为什么要留这份证
+## 0·补 版本更正（留证件自己曾经过期）
 
-本班两个 .py 至今只在车道未跟踪面上（`scripts/backtest/statsgov_deflation_and_budget.py`、
-`tests/backtest/test_statsgov_deflation_and_budget.py`），入库被 TRANSLATION-COVERAGE 拦住（该门只读投影，
-M6 已裁归维护三班 C4 线：补 PG 第三源或册主 render）。在它们落地前，**未跟踪字节可能被启动清扫静默吃掉**
-（在册坑：清扫三判据不含"脏面为空"、worktree 遥测零删除事件、`.aidrafts` 在白名单）。
-故按本班既有留证法（同目录 `90_calibration_runners_source.md`，那份已落 dev 并做过 sha256 复验）把源码全文入册。
+本件首版（q-…-0012 落 dev 的那版）是在 `23:5x` 打的证，而生成器随后又被改过两次（补第四枚生效戳 `as_of_newest_input_mtime`＋`n_inputs_read`；把表头里一句未核实的因果换成可核算表述）。
+**留证件 protecting 的正是最新版，过期即失去意义**——故本版按车道现字节整段重打，并留下差异账：
+
+- `scripts/backtest/statsgov_deflation_and_budget.py`：上一版在册记 1116 行 / 56623 字节 / sha256 `5b3215b03ad9f791…`，本版实为 1129 行 / 57693 字节 / `02aade444ca306b8…`
+
+⇒ 立一条随件纪律：**每次改完 .py 若要动这个归档，必须先跑本生成脚本再入袋**；只改文档不重打证＝假留证。
 
 ## 1. 清单与指纹（落地面复算即可判真伪）
 
 | 件 | 行数 | 字节 | sha256 |
 |---|---|---|---|
-| `scripts/backtest/statsgov_deflation_and_budget.py` | 1116 | 56623 | 5b3215b03ad9f791813757852be18695f7dcae9da3f7609cf14123cd176ad0c1 |
+| `scripts/backtest/statsgov_deflation_and_budget.py` | 1129 | 57693 | 02aade444ca306b8a4085449286f3bdaf26fa9c949da3d64f4a0e82f5f673848 |
 | `tests/backtest/test_statsgov_deflation_and_budget.py` | 247 | 12173 | 45f5933455d1c2df312fa7ba51294eed67d5b1af45585c4701698f51facfe25a |
 
 复现（粘回后跑，须与上表同 sha）：
@@ -30,7 +31,8 @@ PYTHONPATH=D:/ZephyrAlpha/src python -m pytest tests/backtest/test_statsgov_defl
 ⚑ 两条随件纪律（不写进代码就一定会被后来者踩）：
 1. 测试里的计数 fixture **必须每条多键**——单键件会让"误返回键数当记录数"这类缺陷隐形（本班自犯并被逼出双向验红）。
 2. 上界口径＝**上包络**（最大容器 ∪ 计数型整数量级标量 ∪ 带 p/t 统计量的检验记录数）；
-   改任何一条都要重跑 `budget` 并核对 `spec_sha16`／`as_of_source_mtime`，数值表签名绑这两个戳（批复④）。
+   改任何一条都要重跑 `budget` 并核对四枚生效戳（`as_of_newest_input_mtime`＋`n_inputs_read`＋`spec_sha16`＋账本快照），
+   规格件 mtime 只随规格件自己动、签不到磁盘/账本自增（批复④口径＝B）。
 
 ## 2. 源码全文
 
@@ -735,11 +737,11 @@ def _rel(p: Path, repo_root: Path) -> str:
 def budget_inventory(repo_root: Path, spec_path: Path, out_path: Path) -> dict:
     """按 spec 的族→识别模式展开清单并实测计数（条目靠模式派生，计数靠磁盘/账本实测）。"""
     spec = yaml.safe_load(spec_path.read_text(encoding="utf-8"))
+    led_path = repo_root / "docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml"
+    touched: list[Path] = [spec_path, led_path]  # 读数 touched 面，用于派生"最新输入 mtime"签名戳（批复④）
     ledger = None
     try:
-        ledger = TrialLedger(
-            registry_path=repo_root / "docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml"
-        ).snapshot()
+        ledger = TrialLedger(registry_path=led_path).snapshot()
     except Exception as exc:  # noqa: BLE001 — 账本不可读要报红，不能装成 0
         ledger_error = f"{type(exc).__name__}: {exc}"
     else:
@@ -758,9 +760,11 @@ def budget_inventory(repo_root: Path, spec_path: Path, out_path: Path) -> dict:
                 rec["rows_measured"] = len(hits)
                 rec["status"] = "MEASURED" if hits else "NOT_FOUND"
                 rec["count_basis"] = face.get("count_basis", "一个匹配目录=一次可审计考/跑")
+                touched.extend(hits)
                 rec["paths"] = [_rel(h, repo_root) for h in hits][:10]
             elif kind == "file_glob":
                 hits = sorted(repo_root.glob(face["pattern"]))
+                touched.extend(hits)
                 rows_measured, count_notes, uncounted, conservative = _count_rows(
                     repo_root, hits, face.get("row_rule") or ""
                 )
@@ -813,6 +817,11 @@ def budget_inventory(repo_root: Path, spec_path: Path, out_path: Path) -> dict:
         )
 
     # 三面分列消耗＋过渡帽（晨裁 M3-A 公式：历史消耗×1）——数值全由实测派生，禁手填
+    grid_files = sorted((repo_root / "data" / "strategy_intake").glob("grid_*/summary.json"))
+    touched.extend(grid_files)
+    _inputs = [x for x in touched if x.is_file()]
+    n_inputs_read = len({str(x) for x in _inputs})
+    newest_input_mtime = max((_mtime_iso(x) for x in _inputs), default="UNAVAILABLE")
     grid_unrecorded = int(unreg["all_missing_trials"])
     cap_formula = (spec.get("caliber_declaration") or {}).get("budget_cap_formula")
     for f in families:
@@ -886,6 +895,8 @@ def budget_inventory(repo_root: Path, spec_path: Path, out_path: Path) -> dict:
         "spec_source": _rel(spec_path, repo_root),
         "spec_sha16": _sha16(spec_path),
         "as_of_source_mtime": _mtime_iso(spec_path),
+        "as_of_newest_input_mtime": newest_input_mtime,
+        "n_inputs_read": n_inputs_read,
         "n_ledger_snapshot": None
         if ledger is None
         else {
@@ -1075,10 +1086,14 @@ def emit_numbers_fragment(doc: dict, md_path: Path) -> None:
         f"- 网格未入账试次 {nt.get('unrecorded_grid_on_disk_shared_across_families')} 次全部计入族 "
         f"`{nt.get('grid_family_id')}`（不平摊六族，免得一份数虚增六倍）",
         "- 读数真源=`02_trial_budget_inventory_v1.yaml#numbers_table_for_terminal_signature`（本表由同一次运行派生）",
-        f"- ⚑**本表签名绑定读数时戳**：`as_of_source_mtime={doc.get('as_of_source_mtime')} / "
-        f"spec_sha16={doc.get('spec_sha16')} / 账本快照 trials={_snap(doc, 'ledger_trials')} / "
-        f"floor={_snap(doc, 'known_floor')}`"
-        "——消耗面含**活目录/活账本**读数（如 F 族 intake_ledger 随他班写入自增），换时戳重跑即换数；"
+        f"- ⚑**本表签名绑定读数时戳**：`最新输入 mtime={doc.get('as_of_newest_input_mtime')} / "
+        f"规格件 mtime={doc.get('as_of_source_mtime')} / spec_sha16={doc.get('spec_sha16')} / "
+        f"账本快照 trials={_snap(doc, 'ledger_trials')}/floor={_snap(doc, 'known_floor')} / "
+        f"读过输入 {doc.get('n_inputs_read')} 件`"
+        "——⚠规格件 mtime 只记规格件自己的动作：实测两次重跑间成绩册面 1,726 行未动，"
+        "而账本被他会话入账 34→36（trials 40,730→40,732）令 A 帽 1,760→1,762 ⇒ 只绑规格件 mtime "
+        "就签不到这类自增，故生效签名以**最新输入 mtime＋已读输入数**为准；"
+        " 消耗面含**活目录/活账本**读数（如 F 族 intake_ledger 随他班写入自增），换时戳重跑即换数；"
         "不绑时戳的签名＝假精度（批复④），隔日复照须先重跑本件另出表再谈。",
         "",
         "| 族 | 账本(kind) | 磁盘未入账 | 成绩册行数 | 消耗合计 | 过渡帽×1 | 帽状态 | 红旗 |",
