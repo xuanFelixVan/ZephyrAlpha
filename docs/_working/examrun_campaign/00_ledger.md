@@ -1241,3 +1241,53 @@ CH 查询 0 次（含死机后复员，全程零取数）｜N 账本真源零写
   CH 污染行已按裁删至零；账＝0 题开考（结构事实，上限 178，最大单项堵点 119）；
   补账 16 条待前置两修（判据级实测未落）。
 - 01:00–04:00 让路窗内本班动作面＝零 CH、零开考、零可能触库的测试；只剩值守与落地读回。
+
+# 三十、通宵总令本班节执行账（02:3x–02:4x）
+
+- 开工判活三查：reaper `source=live`、last_run 02:35:37、ghosts 0；会话在册＋心跳龄 6s 末行 `alive`；
+  keepalive 复授 ttl 7200（reason 在册）。水位 `worktree_changes=702`（并行漂移风险，非本班起因），
+  `commit_pct` 与 `degraded` 当刻未报降级。
+- 四袋终态：0033／0035／0036／0038 已落 dev；0034 死于本班立案的那条三方冲突（0033 在 0034 基底之后落同一件），
+  **按已照准补救序对症重投＝0038 一次落地**，读回判据达成：处方件 **122 行含 §7.2**、班账 **1243 行含 §廿九**；
+  0039（散文 regime 案卷，路由挖矿二班）在队。全程零 `--force`、零 ack 旗、零他账动作。
+- dev 面本战役五件齐：00_ledger 1243／21 处方件 122／22 案卷 57／23 名单 62／24 待 0039。
+
+# 卅一、交叉验证五组（用本班的尺，全部零 CH）
+
+1. **解锁班抢救本班六件**（`docs/_working/examunlock_campaign/08_rescued_ttl_st_examrun/`）＝忠实件。
+   首轮我用裸字节比对报"四件不等"——**那是我自己第四把尺的坑**：`Path.write_text` 在 Windows 写 CRLF、
+   仓内 blob 是 LF；剥 CR 与解析后逐字段比较＝**四件全等**，另两件本就字节等。
+   记法入库：判"是否被他人改写过"之前先归一行尾（方法条 §6.3 同条），否则假警报会误伤协作。
+2. **`03_binding_book_event20.yaml` 双校验复算通过**：20 格 ⇒ `op` 全在 11 键 OPS 册内（0 例外）、
+   `prose_quote` 全部是卡面 data_binding 原文子串（0 例外）、`card_id` 在卡册全部存在（0 查无）。
+3. **`04_target_face_channel_census.yaml` 与本班 classify 同数**＝两路加固：
+   preregistered 177／`C=121, A?=11, B=17, U=28`／`blocked_on_target_face=118`／`supported_today=0`；
+   他们另把分母细化到"distinct 目标腿 94 条（上界，同一命题不同措辞不合并）／top10 腿覆盖 34 张"。
+4. **`06_skeleton_card_verdicts.yaml`**：骨架 13 张三分＝接线即可考 4／需新版本卡 2／**拒考 7**
+   （"禁硬凑"口径下拒 7 张是好消息，不是欠账）。
+5. **异数·更正本班自己的价格表**（`05_recipe_book_grain_verdicts.yaml`，其判 11 张 A? 卡可登数＝0/11）：
+   本班独立复核**确认其机理成立**——classify 在 `len(tables)==1 且表不在册` 处直接给
+   `A? table_not_in_recipe_book`（`card_binding.py` 该分支，约 305-309 行），**不校验卡面派生式是否日频标量形**；
+   抽两张 `kline_sector_880` 卡看派生式：①「板块成交额占比＝sector amount / Σ(同 code_family 全体 sector amount)」
+   ②「三周期截面 rank-pct 归一 → argmax 主导度」，而 A 路只有 `anyLast_per_day` 一形
+   ⇒ 补登记＝把横截面命题洗成日频标量＝造第二判据面。
+   **故 §25.9 价格表里"最便宜单项＝两张表进配方册解 9 张"一行作废**，替代结论＝这 9 张与那 118 张同属
+   "目标面/截面·面板通道"堵点；旧表留档不删，只在本节标废。
+
+# 卅二、07 卡两行重读＋一条弱项观察
+
+- 双档各一行：`mineloop-dualarm_off-…`／`mineloop-dualarm_mid-…`，`verdict=fail`、
+  `pillars_all_pass=false`、`oos_ok=false`、未判柱披露位在（`numeric_keys_not_read`／
+  `numeric_keys_no_machine_face`／`pillars_prose_keys`／`mapping_note`）；两档同号 ⇒ 按裁定甲合议＝fail。
+  分数册 46 行、**pass 仍 0**；07b 新卡 `status=blocked_on_impl`（等其 04:00 路径）。
+- 一条弱项观察（非缺陷，记给属主班参考，本班不代改）：arm 身份目前只活在 `run_id` 字面里，
+  行内无结构化 arm/variant 字段 ⇒ 机器复算"两跑合议"要靠字符串解析；若日后按腿计数，加一个字段更稳。
+
+# 卅三、04:00 后待办（按预签自动执行，不等 Owner）
+
+1. 复测污染键 `judgment_id='SIMP-2026-09-21-plan_bridge-index000300.SH'`：非零即**再报重裁、不自建删循环**；
+2. dev 面实跑考尺 48 支（他班新加 7 支若有红，先按方法条 §6.1 净面二分再定性）；
+3. `classify` 复测：若 `A>0` 即刻按卡面判据开考、每试次入账（CH 窗毕后可跑）；
+4. 前置两修若已落：按 16 条正集动册（逐条带 `run_id` 对表，口径＝幂等键一键一条）；
+5. 收工前：红蓝对抗一轮（对今晚交付做破坏性输入）＋循环自检连续两轮问题＝0＋临时件清理＋
+   晨间包三段式（执行/自裁/等裁），并按总令给出终句。
