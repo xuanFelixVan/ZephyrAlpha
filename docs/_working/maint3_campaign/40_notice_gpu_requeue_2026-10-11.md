@@ -77,3 +77,41 @@ PYTHONPATH=src python -c "import subprocess,sys;sys.path.insert(0,'src');from ze
 说明两点口径：①这三件都是**他道在途件**，本门 own-scope 生效（外来 staged 只 warn+审计，不连坐），
 所以本班提交不会拦它们、也不该拦；列在这里是因为**形态重现**必须留痕，而不是本班要替谁修。
 ②本班自己的两本门册此刻也在同一清单里（clean/mixed），已逐件核过＝纯追加＋标量改行，非驱逐。
+
+## 六、03:5x 补：新装的落地探针在你们道上点出两只假落地（本班只读，未改你们任何件）
+
+`commit_queue.py` 今夜新增只读探针 `audit_landed_id_integrity`（done 项逐件比：袋内 blob ↔ 记录的
+landed_id ↔ dev 现面）。主区实测读数（扫最新 23 只 done 袋，预算 100 次 git 调用，truncated 已显影）：
+
+| qid | 判据档 | 含义 | 建议动作（属主自证，本班不代做） |
+|-----|--------|------|--------------------------------|
+| `q-20261011-st-gpux2-20261011-0004` | **foreign_zero_match_not_in_dev** | 记的 landed_id=`b9a0bb9fac`（那笔是"GPU 化 B1a 附注袋"），袋里 `docs/_working/gpufeed_campaign/03_gpux_final_report.md` 的字节既不在那笔、也不在 dev 现面 ⇒ 状态 done 而内容从未落地 | 按通宵令 GPU 班"0006 落地核验（dev blob == 车道 blob）"同法核验 0004；正路＝取修复后内容**另起新袋**（勿 `--from-bag`，快照重放闸 `commit_queue.py:3235` 会拒并要求 `--allow-snapshot-replay`） |
+| `q-20261011-st-gpux2-20261011-0005` | partial_with_absent_in_dev | 部分件在 dev 无面 | 同上逐件核 |
+| `docs/_working/gpufeed_campaign/03_gpux_final_report.md`（见 §五） | 池面纯驱逐读数 HEAD 独有 61 行／staged 零新增 | 与 0004 同一文件两面互证：主区 index 里躺着的是旧稿 | 先 `git checkout HEAD -- <件>` 取回现字节再改，或明确声明有意覆盖并留 head寸 |
+
+复核口令（只读，可直接贴）：
+
+```
+PYTHONPATH=src python -c "import sys;sys.path.insert(0,'scripts');import commit_queue as cq,json;print(json.dumps(cq.audit_landed_id_integrity(),ensure_ascii=False,indent=1))"
+git rev-parse --quiet --verify b9a0bb9faccc9aa8eebef24934cc16148332156:docs/_working/gpufeed_campaign/03_gpux_final_report.md
+```
+
+同时知会追凶三班（同夜读数，非 GPU 面）：`q-20261011-st-backfix3-20261011-0011` 也是
+foreign_zero_match_not_in_dev，且与矿考班 `q-20261011-st-mineloop-20261010-0079` **共用落地号
+`e572b82e99e5`**——与只读车道独立取到的 `main_workspace_sync.jsonl` old==new 记录互合。
+本班未动这两袋（归属纪律），清单与坐标留在本班台账 §9.14 供属主车道自证。
+
+## 七、04:2x 放行读数：T7 运行态两条件皆满足，GPU 互斥组现在可以重投
+
+- 册面（项 4 的核账口径，实测已过）：`git show HEAD:config/resource_profile_registry.yaml`
+  第 2178 行 `window_expr: 45 9 * * *|5 13 * * *`、第 1699 行 `50 9 * * *`、第 2115 行 `10 6 * * *`；
+  `generate_resource_profile_registry.py --check` 报"注册表无漂移（104 实体）"，
+  且复核前后册字节同 sha256（202b5abe…）⇒ --check 确为只读，非我写过再自证。
+- 系统面（预签3 的实测条件）：`schtasks` 三枚 StartBoundary 已是 09:45＋13:05／09:50／06:10；
+  今晨 09:00-09:59 窗内全量读数＝9:01 PatternMining、9:20 BoardIndexRealtime、9:25 PaperSession、
+  9:45 SimBridgeExecute（两腿各一条记录）、9:50 DecisionChainSentinel ⇒ **旧 09:35/09:40 相撞那一对已不存在**。
+- 因此 §四 那句"待本班袋进 dev 后重投互斥组袋"的前置条件成立：**请重投 exclusive_group 组标袋**；
+  重投请走 `apply_resource_plan.py` 的 `new_exclusive_group` 通道（表内人审字段唯一合法写口），禁手改册后不再生成。
+- 一句如实提醒：错峰后 sim_bridge 与 sentinel 仍只差 5 分钟（9:45 起 ExecutionTimeLimit=30min，
+  9:50 起=15min），若两者实际同时吃内存，冲突闸（RESOURCE-SCHEDULE/C-5 与 mem_ceiling）仍可能判重叠；
+  那是闸的判定面，不是本班可以自行改的预算（`mem_ceiling_gb: 10.0` 令中明令禁动，本班未动）。

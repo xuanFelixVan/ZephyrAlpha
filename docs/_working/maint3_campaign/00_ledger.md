@@ -267,3 +267,457 @@ GPU 工单施工班 `a2c46fddca`（00:1x）落了 `scripts/tasks/register/regist
 这类写入永远归不到人**（根宪法 §3.4 owner 责任制落空）——案卷 §⑥ 已把该要求写进提案，本班不放宽判据。
 本班交付面不受影响：16 件在 `dbc86560e3`、结工单段在 `40a48dbbe0`，四文件合跑读数 122 passed。
 
+## 七、统筹批复执行账（双令齐发 2026-10-12 01:0x）
+
+### 7.1 批令一·重跑注册（已完成，时间敏感项，09:35 前必办）
+
+**动手前预检（不做就把好任务改成必然炸的坏任务）**：三枚注册器的 `$RepoRoot` 全是硬编码
+`"D:\ZephyrAlpha"`（非 `PSScriptRoot` 上溯）⇒ **不携带**拆簇遗留病（cc056bf 修过同簇 `register_sector_eqw_task.ps1`
+"少一层"那类）；且三枚各自 `Test-Path` 把关引用目标——实测三目标全在场：
+`scripts/run_sim_bridge_execute_daily.ps1`、`scripts/governance/decision_chain_sentinel.py`、
+`scripts/governance/generators/generate_resource_week_view.py`。三枚 ps1 `isascii()` 全 True（根宪法 §9.7）。
+
+**注册前基线快照**（进程外 `Get-ScheduledTask` 实测，证明确实是"在册未生效"）：
+
+| 任务 | 注册前 NextRun | 注册前 StartBoundary |
+|---|---|---|
+| `ZephyrAlpha_SimBridgeExecute` | 10-12 **09:35** | `09:35` + `13:05` 两腿 |
+| `ZephyrAlpha_DecisionChainSentinel` | 10-12 **09:40** | `09:40` |
+| `ZephyrAlpha_ResourceViewPublish` | 10-12 **05:50** | `05:50` |
+
+**执行**：逐枚 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/tasks/register/<枚>.ps1`
+（首试因 bash 把 `\\$f` 吞成字面量而**根本没执行**——零半态，改正斜杠后三枚全 `Updated existing task in place`）。
+
+**注册后复验**（进程外读回，含 Action 未被牵连）：
+
+| 任务 | 复验 State | 复验 NextRun | Action/Arguments |
+|---|---|---|---|
+| `ZephyrAlpha_SimBridgeExecute` | Ready | **10-12 09:45** | `powershell.exe … -File "D:\ZephyrAlpha\scripts\run_sim_bridge_execute_daily.ps1"`；两腿 StartBoundary=`09:45`＋`13:05`（13:05 未被牵连） |
+| `ZephyrAlpha_DecisionChainSentinel` | Ready | **10-12 09:50** | `pythonw.exe "…decision_chain_sentinel.py"`（脚本自检同读数） |
+| `ZephyrAlpha_ResourceViewPublish` | Ready | **10-12 06:10** | `pythonw.exe "…generate_resource_week_view.py" --publish-alerts` |
+
+**在册铁律复跑**：`generate_resource_profile_registry.py --check` ⇒ **"注册表无漂移（104 实体）"**；
+把 T7 原方案再喂一次单口 ⇒ 两枚均 **`noop: true`／verdict=pass**（＝真源已在目标值，工具自证幂等，不是"我以为改了"）。
+
+**回退命令（成对留档，本班未执行）**：
+
+```bash
+# 1) 真源与表回退（逐字节还原到本次写回前）
+python scripts/governance/apply_resource_plan.py --rollback \
+  .runtime/sessions/st-maint3-20261011/archive/plan_20261011T151409Z   # T7 两腿
+python scripts/governance/apply_resource_plan.py --rollback \
+  .runtime/sessions/st-maint3-20261011/archive/plan_20261011T162521Z   # 05:50 带
+# 2) OS 侧回退：重跑三枚注册器即可（注册器读的是 ps1 里的时刻，回退真源后重跑就回到 09:35/09:40/05:50）
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/tasks/register/register_sim_bridge_execute_task.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/tasks/register/register_decision_chain_sentinel_task.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/tasks/register/register_resource_view_publish_task.ps1
+# 3) 复验（三条读数应回到旧时刻）
+powershell -NoProfile -Command "foreach ($n in 'ZephyrAlpha_SimBridgeExecute','ZephyrAlpha_DecisionChainSentinel','ZephyrAlpha_ResourceViewPublish') { (Get-ScheduledTask -TaskName $n | Get-ScheduledTaskInfo).NextRunTime }"
+```
+
+### 7.2 批令三·热册待登记面（量测并登记，本班不代落）
+
+`capability_canonical_file_registry.yaml` 工作区面 vs HEAD 实测（**键集合差尺，不肉眼**）：
+
+| 量 | 读数 |
+|---|---|
+| 行差 | **+1190 / −0**（统筹给的 +1135 是更早一刻，此后又被别班 render 追加） |
+| `creation_tokens` 条目 | HEAD=14513 → 盘面=14751＝**净增 238 条** |
+| 净减（＝他人面被抹） | **0**（PG-wins render 未吞任何条目；顶层键集合差亦 0） |
+| 净增归属（`created_by` 分布） | `st-deadcure3b-chief-20261011` **140**／`st-mineloop-20261010` 39／`st-maint2-20261011` 16／`st-gpuwo-20261011` 13／`st-fclean3-20261012` 10／`st-maint3-20261011`（本班）**5**／其余 15 枚零散 |
+
+本班立场与理由：这 238 条**不是本班的账**——一袋=整档快照，随袋提交即把五个会话的登记挂到本班 `[GW:]` 名下
+＝归属篡改（Owner 10-10 已明令禁出"重打投影袋"，在册另两次实证连坐）。本班只做到两件：
+①本班自建的 5 枚新件 token **已进 PG 真源**（三口径尺：盘面 5／index 0／HEAD 0，CREATE-GUARD 走 PG 第三源放行，
+本班两袋均因此能落地）；②把待落地面**量化到条目级**交统筹，供册主车道出一只**聚合袋**（归属写清"投影重放、
+非本会话登记"）或由各属主自投。
+
+## 八、批令二施工账·池面回退方向闸三层（全部带红证）
+
+### 8.1 三层落点与实测
+
+| 层 | 落点（本班实改） | 判据 | 出口 |
+|---|---|---|---|
+| **L1 写者层** | `commit_queue_landing.py` `_converge_one`（主区工作树**唯一字节写口**，三个上游全汇于 `_converge_main_workspace` 单点调用） | 写入/删除前调 `cq._snapshot_head_regressions(root, [(rel,data)], base_ref=<主区 HEAD>, item_base_head=<本件基底>)`——**尺体零克隆**；命中返 `skipped_head_regression` | 单件剥除（外层逐件 fail-open，**不连坐整袋**）＋`main_workspace_sync.jsonl` 记 `pool_regression_blocked/acked`，含 `head_only_lines`/`base_compared`/`sid`/`sid_missing` |
+| **L2 池面快照层** | `worktree_drift_watchdog.py` `scan_once`（在册 60s 全量＋10s 热件；已实测 20:40:05 目击 531 drifted 却全程无声） | 仅当 `wh≠hb` 时读字节做行集差（控住量级）；`regression_strict`＝`head_only≥1 且 work_only==0`；`regression_near`＝`head_only≥20 且比值≤0.05` | `summary["pool_regressions"]` 无条件普查（新键恒在）；逐件方向读数**并进既有"未登记写者"那条已去重报文**（`alerted` 签名 dedupe 生效），另加**每轮一条**批量汇总（含未署名件数）；快照沿用在册 `known_quarantine` 面 |
+| **L3 提交层（入队正门）** | `enqueue_preflight.py` 新增 `pool_regression_preclean`，挂在 `run_enqueue_preflight` 的 ruff 之后 | 同一把三方尺，`base_ref="dev"`、`item_base_head=<提交者本地 HEAD>` ⇒ 主区提交恒不命中（HEAD==dev），只拦**车道基底落后 dev 的整档重放** | 处方→上游 `QueueReject`（在册"被拦件连 pending 都不进"通道）；处方首条正路＝`git checkout dev -- <件>` 重基（**改喂闸的输入指向**，非弱化判据）；env `ZEPHYR_ENQUEUE_POOL_REGRESSION=0` 一键回退；设施故障 degraded 放行**但必记日志** |
+
+阈值不拍脑袋：本班对 `.runtime/tmp/pool_rollbackbomb_20261011/code_drift/` 里 **28 件受害旧字节**逐件重算
+`HEAD vs 盘` 行集差＝严格子集 5 件（含 `head_only=6/9` 的小件，故严格臂不设最小值）；近子集比
+0.012/0.019/0.037/0.04/0.045…0.167 拖尾（故近臂取 ≤0.05 且 `head_only≥20`，且只升级不阻断）。
+
+### 8.2 红证与回归（每层先证明能红，防幽灵闸）
+
+| 面 | 修后 | HEAD 基线（受控换文件跑完即按 sha 复原，已核一致） |
+|---|---|---|
+| L1 新测 5 支（拦下／ack 越过仍量／合法快进不假红／删除臂含反证臂／出口普查与署名） | 5 passed | **5 failed** |
+| L2 新测 3 支（读数三态／探针降级显影 unknown／scan_once 普查＋告警带署名） | 3 passed | **3 failed** |
+| L3 新测 4 支（落后车道重放必拦／主区不假红／ack 与 env 两开关／无 git 环境 fail-open 不炸） | 4 passed | **4 failed** |
+| 全族 | `test_enqueue_preflight`＋`test_worktree_drift_watchdog` **94 passed**；`test_commit_queue_landing` 68 passed | 该族 HEAD 基线即 **27 failed／63 passed**（同一批 27 支逐支同名，病因＝"注册表项基底不可知（拒绝猜基底）"族）⇒ 本班**零新增红**，68＝63＋本班 5 支 |
+| ruff | `check` 全绿、`format` 六支 left unchanged（两支 `# noqa` 写法警告系存量） | — |
+
+### 8.3 L3 为何先落入队正门而不新造 commit-gate
+
+Owner 批准的是"三层"这个覆盖面而非某个 gate_id。新造 in-process commit-gate 必须**同批**改 7 处：
+门本体＋`in_process_gate_registry.yaml` 条目**及其 `total_gates` 标量 106→107**＋`commit_gates/__init__.py`
+ORPHAN-MODULE 静态 import＋`generate_gate_registry.py` 重生成（`own_scope` 靠门文件 import
+`_split_own_foreign`/`_build_own_scope` 才被探测为 True）＋creation_token（须 `map_mounts` 真在册挂点或
+`no_mount_reason`）＋`add_module_translation` 大白话简介＋自家测试。其中**标量漏改＝全册 107 台门集体装载失败**
+（在册事故形态）、`map_mounts` 编造即硬拦。凌晨拿全册门装载去赌一次性大批登记性价比为负，故第三层
+接进已确立的入队快败通道（同尺、可回退、零新资产），并把 commit-gate 形态完整装机清单（含 priority
+安全空段 161-199，实测零占用；勿碰 830＝reconciler 专用）留予下一班一次做完。
+**差口如实报**：绕过队列的直连 commit 不走 L3（L1/L2 仍在写者与池面两维兜，落地侧权威链不缺席）。
+
+### 8.4 案卷订正（另起一节留旧案，不改历史判据）
+
+`30_pool_rollback_rootcause_casefile.md` §⑥ 有一条被本班实测否掉：**"同尺须装在 B5 `git add` 之前"**——
+`_auto_stage_candidates`（worktree_drift_watchdog.py:153）用 `git ls-files --others --exclude-standard --
+docs/_working`，作用面＝**untracked 且仅此前缀**；untracked 在 HEAD 无字节，"盘是 HEAD 真子集"这条谓词
+在它身上结构上不成立。B5 的真实风险是另一回事：它把未挂名写者造出的未跟踪件**固化进共享 index**
+（本班案卷自己曾被 `AM` 化即活证），需要的是"只自动暂存有主 claim 的件／写入带 sid"，不是方向尺。
+订正已随案卷 §⑨ 落盘（旧 §⑥ 原文不动）。
+
+
+### 8.5 自查更正（同类缺陷当场修，不留到下班）
+
+首版 L2 我另起了一条"逐件 critical_warn"循环——**绕过了既有 `alerted` 签名 dedupe**，
+后果＝同一个未修好的回退件每 60s 再刷一条告警、且与既有"未登记写者"报文重复计数。
+更正＝方向读数**并进那条已去重的报文**，本层只另加"每轮一条"批量汇总（含未署名件数）；
+测试同步改为断言"逐件报文含方向＋汇总含未署名 1 件"。复跑：watchdog 单跑 51 passed
+（合跑那次 `test_self_heal_on_resolve` 报 WinError 5 os.replace 拒绝访问＝Windows 瞬时锁，
+单跑与复跑均绿，非逻辑失败）。
+
+### 8.6 交付态
+
+6 码件＝3 源（写者层净增 101/−5、入队层 86/−0、哨兵层 ~107/−0）＋3 自家测试（纯追加
+160/63/72 行）；治理文档 2 件（本账＋案卷 §⑨）。零新 gate_id、零新 .py 资产、零注册表标量改动、
+零判据阈值放宽、零他人面随袋（逐支 `git diff --numstat` 核：删除数只发生在本班重构的 5 行）。
+待办如实留册：commit-gate 形态的 L3 完整版（7 处同批，含两册 total_gates 与 priority 161-199 空段）
+＝下一班的活，装机清单已在 §8.3 落定。
+
+## 九、批令二 L3 完整版装机账（Owner 问答点头"本班接着把门装完"，2026-10-12 02-04 时窗）
+
+### 9.1 终态＝共台而非新建件（结构性发现，不是选择偏好）
+
+`src/zephyr/gov_enforcement/commit_gates/` 与 `tests/gov/governance/commit_gates/` 的平铺件数
+**实测均已达 T_soft=120 硬上限**（`folder_capacity_hard_limit_gate._count_flat_files`＝120/120；
+我的第 121 件一落地就 FOLDER-CAPACITY-HARD-LIMIT 硬阻断）。两件事同批量出来：
+
+- 该 tests 深目录 HEAD 在册只有 66 件，盘上 121 件＝**55 件是未落地工作件**，其中
+  `git status` 可见 10 件已 staged 的新测试件（test_ttl_gate / test_translation_coverage_gate /
+  test_unsafe_dict_spread_gate …全属他道）；容量被在途件吃掉，本班无权也无法腾。
+- 结论口径：**本仓现在放不进"新门＋新测试"这对最小件**。这不是本班绕行理由——共台
+  （工厂并入 `registry_mass_deletion_gate.py`，双工厂先例＝本仓 8 个多工厂门模块）就是
+  在册治本路；测试件落 `tests/gov/governance/`（实测 103 件，有余量）。
+  腾容量＝退役/搬迁他道资产＝Owner 门位，本班不代裁，只如实标价。
+
+### 9.2 装载七处（全绿自证）
+
+| 面 | 落位 | 自证 |
+|----|------|------|
+| 判据本体 | `registry_mass_deletion_gate.py` 追加 ~130 行（`_pool_line_set`/`_pool_direction_pair`/`classify_pool_regression_direction`/`_pool_modified_staged_files`/`make_pool_regression_direction_gate`） | ruff format+check 2 件全绿；[DEPENDENCIES]/[INVARIANTS]/[MODIFY-GUARD] 三门自述同步改 |
+| 自家测试 | `tests/gov/governance/test_pool_regression_direction_gate.py`（13 条，FakeGateway 直供字节不碰真仓） | 13 passed；宿主原 13 条复跑仍 13 passed |
+| in_process 册 | 本门条目 module_path 改指宿主＋register_line 注记 | 单行改动（逐行索引比对 len 相等／差 1 行），total_gates 107==条目数 |
+| gate_registry 册 | HEAD 基重放＋只注入本条目，190→191 | 键集合差：净增={本门}，净减=∅，STRATEGY-CARD 仍在 |
+| 装载实测 | `auto_register_gates` | 99 门在册、POOL-REGRESSION-DIRECTION 可装载、priority 零撞号（161 独属本门） |
+| creation_token | 不需要（零新建 src 件） | 先登记后撤账，见 9.3 |
+| 大白话简介 | 不需要（同上） | 同上 |
+
+### 9.3 本班自登记两条账的撤账（retired，非物理删）
+
+装机中途我先按"新建件"形态登了 creation_token 与 module_translation 两条 PG 条目；改道共台后
+这两个路径永不落地，遂 `api.retire` 撤账（authority_ref=本班批令二通道，reason 写明改道原因）。
+**这是我自己 30 分钟内造的账，不是他人资产**。当前 PG 状态：两条 status=retired。
+
+### 9.4 CREATE-GUARD 双源分歧（在册缺陷，呈统筹定位，本班不代修）
+
+实测两台判据读的不是同一源：`_pg_confirmed_token_files` 只确认"该 file 在 PG 有 token"（第三源，
+2026-10-10 maint1 加）；而 `_check_map_mounts` 走 `_collect_token_entries(registry_data)`＝**只读投影 YAML**。
+后果：一个真源已在 PG 登记、但投影尚未重打的新建 `src/zephyr/**.py`，若投影里恰好没有该条目则
+MAP-MOUNTS 静默跳过（`entry is None: continue`），若投影里有该条目却无 map_mounts/no_mount_reason
+则**硬阻断**——同一门的两臂对"何谓在册"口径不一致。本班按窄口径同时登了 `no_mount_reason`，故不受影响；
+缺陷如实留册。
+
+### 9.5 挂图申报面实测（no_mount_reason 的承重证据）
+
+`_load_node_map_index(.)` 实测 6 张图，**nodes 面零 gate 类节点**（含 'gate' 子串的节点＝0）。
+所以本模块属"非节点图资产"，走 no_mount_reason 逃生＋审计是事实而非取巧；扩图/立格＝Owner 终审，本班不自加挂点。
+
+### 9.6 热册生成器与投影的三处对撞（全部只测量，不改他人面）
+
+1. **生成器会静默剪掉在册义务**：`generate_gate_registry.py` 重打时丢掉 `STRATEGY-CARD-LIFECYCLE-MAP`
+   条目（其实现件不在 HEAD/盘/index），而该门在 `deadcure_campaign/07_residual_bags_index.yaml:235`
+   是**登记在案的待补真缺口**；同一条事实的另一路证据＝auto_registrar 打印
+   `MAP-ALIGNMENT files_trigger 死触发（HEAD 树零命中）: .../strategy_card_lifecycle_map_gate.py`。
+   本班处置＝HEAD 基重放保住该条目，不替生成器背书。
+2. **翻译册被 6+1 条幽灵行劫持**：`registry_ledger.registry_entry`（REG-MODULE-TRANSLATION-001/entries）
+   现存 active 行 7 条指向盘上与 HEAD 都不存在的文件——`src/zephyr/{degraded,layered,lying,new_mod,orphan,with_extras}.py`
+   （created_by 全＝`add_module_translation` 缺省归因名，即测试经真 CLI 写进生产账本，违根宪法 §9.6 测试隔离）
+   ＋`scripts/ml/build_distilled_sft_dataset.py`（created_by=st-gpuwo-20261011，待该道自证是否未落地件）。
+   任何一次合法 render 都会把这 7 条重打进被跟踪投影（实测盘上投影 vs HEAD＝+7 条/49 行）。
+   本班处置＝只注入本行、其余还原 HEAD，**未替他道退役**（治理资产净删＝墓碑制＋属主车道，非本班面）。
+3. **正名册 +1290 行＝批令三移交面的量化**：一次 render 把 PG 里未落地 token 全量物化（按 created_by 分布
+   st-deadcure3b-chief 153／st-mineloop 39／st-gpuwo 17／st-maint2 16／st-fclean3 14／**本班 6**／其余…）。
+   本班已把该册还原 HEAD 字节并留证 `.runtime/tmp/maint3_shift/capability_canonical_render_20261012.yaml`。
+   **重打投影袋＝禁出**（Owner 10-10 已明令）；正解＝各属主车道自投或册主车道出一只归属写清的聚合袋。
+
+### 9.7 一处"只读复核命令"实为写盘（自纠）
+
+跑 `tests/gov/governance/test_derived_books_parity.py` 复核派生册一致性时，conftest 的 #ARCH-084 tracked
+写入守护抓到**该测试自己写了生产册** `capability_canonical_file_registry.yaml`。该文件另有 7 条红：
+逐条对过口径＝均属在册三版未定真源家族（`total_command_closeout/wave2/lane_bagging_plan.md` §四-11
+"同题多版未定真源前禁各自成袋"＋deadcure P0 tests 洞），与本班两册标量无关——本班标量的判别面是
+`test_gate_auto_registrar/test_files_trigger_wiring/test_files_trigger_validation`＝61 passed。
+本班未修该测试（非本班件、且它一跑就写生产册），只登记。
+
+### 9.8 一处对外件的回撤（如实标价证据等级）
+
+为共台我曾把 13 条测试追加进 `tests/gov/governance/commit_gates/test_registry_mass_deletion_gate.py`，
+随后发现该件 **不在 HEAD**（?? 未跟踪，疑为他道在途/残件），已全部逆向撤回到追加前形态：
+逐条反向替换＋行数复原（202 行）＋该件原 13 条复跑 passed。
+证据等级＝**构造级**（该件无 git 基线可作字节比对），不是"与 HEAD 零差"实测级。
+
+### 9.9 交队列态
+
+`q-20261012-st-maint3-20261011-0007`（4 件：宿主门＋自家测试＋两本门册）为本班第 7 袋。
+前 6 袋（写者层/入队层/哨兵层＋三自家测试）仍在队；留守盯到落地，逐袋按 dead_reason 处置。
+
+### 9.10 生产热册被测试写盘的第二处实证（本班一夜三次还原）
+
+`tests/gov/governance/test_commit_queue_landing.py` 合跑时，#ARCH-084 tracked 写入守护在会话
+teardown 抓到 **3 支存量测试写了生产册 `capability_canonical_file_registry.yaml`**：
+`TestMainWorkspaceConvergence::test_delete_action_already_missing_is_noop_without_audit`／
+`TestRegistryMergeLandingIntegration::test_three_writer_scenario_zero_loss`／
+`::test_ours_retirement_honored_via_real_path_check`。
+三支均**在 HEAD 在册**（git show HEAD 该行号实测 597/689/1647/1674/1786），非本班追加类；
+症状与 §9.6-②/§9.7 同源（测试经真 CLI 或缺省 PROJECT_ROOT 写生产账本/投影）。
+本班本班面上做的事只有还原：`capability_canonical_file_registry.yaml` 一夜三次被写脏
+（render 一次＋两次测试跑），三次都还原为 HEAD 字节并留证
+`.runtime/tmp/maint3_shift/capability_canonical_render_20261012.yaml`。
+**本班起的后续验证一律带 `PYTHONNOUSERSITE=1` 且不再在主区合跑这两支文件**（改单跑自有测试）。
+守护代码口径也如实登记：`tests/conftest.py:508` 只在 `ZEPHYR_TEST_GUARD_STRICT=1` 时硬失败，
+缺省 warn——所以"抓到"不等于"拦下"。
+
+### 9.11 同路径多修订袋的回退风险＝落地侧已有同伴闸（实测在册判据，非推测）
+
+本班 8 袋里 `00_ledger.md` 有 4 版、watchdog 与其测试有 2 版（袋序＝入队序，落地序不按 FIFO：
+实测 belt 按 lane 取件，head 那袋 00:31 入 processing 而 03:07 才真跑）。
+判据真源＝`scripts/governance/commit_queue_landing.py:2016` `_witness_stale_carry`：
+陈旧携带按 **stale-path 级剥除**（"部分命中=剥除危险携带路径后其余照常落地，全部命中=拒落整袋"），
+另配 `_noop_overwrite_paths`（git blob 同值才短接）。
+⇒ 后到的陈旧袋不会把已落地新版拍回旧字节，**本班台账不存在自造回退弹**。
+这条同时是项 4 案卷的补强读数：落地侧早有方向保护的同伴闸，缺口在**直连提交/主区工作树同步**那一路
+（L1 写者层补的正是那一路，L3 门补的是完全绕过队列的直连形态）。
+
+### 9.12 队列实时态与本班袋的落地 ETA（实测标价，非承诺）
+
+`commit_queue.py health`（03:08）＝pending 51／processing 1／done 747／dead 1456，
+oldest_pending 2.6h。dev 实测落地节拍＝近 40 笔跨 512 分钟＝**12.8 分钟/袋**（0.078 笔/分）。
+本班 0007 前还有 47 袋 ⇒ 线性外推 **ETA≈10 小时**（不含死信重试与整点高峰）。
+本班是"留守盯到落地"，但按此节拍把班挂在空轮询上不划算；处置＝
+①八袋入队后逐件 `blob_sha256 vs 盘面` 全量核过（16 件 MATCH，6 件"不匹配"全部是**同路径旧修订快照**，
+ 已由 §9.11 判据证明无害）；②盘面 11 件方向闸覆盖面字节已存档
+  `.runtime/tmp/maint3_shift/faces_snapshot_20261012/`＋`MANIFEST.json`（落地前后双向可比，防回退弹偷吃）；
+③接班复核口令（逐条可贴）＝
+
+```
+git show dev:src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py | grep -c "make_pool_regression_direction_gate"   # 应 1
+git show dev:docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml | grep -c "POOL-REGRESSION-DIRECTION"      # 应 1
+git show dev:docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml | grep -c "total_gates: 191"                          # 应 1
+git show dev:scripts/governance/commit_queue_landing.py | grep -c "skipped_head_regression"                                             # 应 >=2
+git show dev:src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py | grep -c "regression_strict"                            # 应 >=2
+python scripts/commit_queue.py status --session st-maint3-20261011   # 八袋 state 全应为 done；出现 dead 读 dead_reason 对症 requeue
+```
+
+## 十、通宵令执行账与晨间裁定包（st-maint3-20261011，2026-10-12 01:15 令 → 04:1x 自收）
+
+北极星对齐：本班今夜四病根里"池面回退有闸"＝三层＋提交层已齐（§八/§九）；"队列完整性有探针"＝本节 §9.14/§9.16；
+"时钟"＝§〇 预签3 实测（NextRunTime 三枚全为新时刻）；"注册表"＝§9.6+§十.3-4 撤账与治法。
+
+### 10.1 预签3 复核（T7 运行态）＝满足，不回退
+
+实测：`schtasks //query //tn <三枚> //xml` 取 StartBoundary＝
+`ZephyrAlpha_SimBridgeExecute` 09:45 与 13:05 两腿／`ZephyrAlpha_DecisionChainSentinel` 09:50／
+`ZephyrAlpha_ResourceViewPublish` 06:10；NextRunTime 三枚均为新时刻（09:35/09:40 旧冲突时刻已消失）。
+资源册 `--check` 零写复核＝"注册表无漂移（104 实体）"，册字节前后同 sha256（202b5abe…，证 --check 确为只读）；
+`test_resource_schedule_mem_ceiling_invariant.py` 11 passed。⇒ 依预签3"两条件皆满足＝完成入册"，不执行回退命令。
+`--check` 同时报 14 条健康码（sched_task_missing×6＝册上有而系统无任务／sched_task_disabled×1／
+sched_task_orphan×9 减 3 条在册豁免／GAP×5 申报受闸而源码无闸调用），全部存量、非本班引入；
+其中 **sched_task_orphan 含 `ZephyrAlpha_BeltDaemon`（Running）**＝提交传送带自身不在资源画像与冲突闸内，
+如实登记为待裁观察项（§十.6-C7）。
+
+### 10.2 队列完整性簇＝两把尺（本班清位第一项）
+
+尺一 LANDED_ID_FOREIGN 只读探针 `commit_queue.audit_landed_id_integrity`：袋内 blob（自算 git blob id，
+**与内容 sha256/PG 口径不互换**）逐件比 ①记录 landed_id 里该路径 blob ②dev 现面该路径 blob。
+分档：all_match／partial_match(+partial_with_absent_in_dev)／**foreign_zero_match_not_in_dev**（假落地实锤，点名）／
+stale_superseded（零命中但 dev 有面＝被后继覆写，不冤枉）／unverifiable（账本族册 PG-wins、blob 已 purge）／
+noop 哨兵／stub／空值／item_unreadable。health 输出键 `landed_id_integrity` **恒在**（缺省 OFF 时打
+skipped 而不玩"键消失"）；死信告警旁路以 `landed_probe=False` 不烧 git 预算；预算截断显影 truncated。
+测试 9 臂全绿（全 tmp 隔离；其中 stale_superseded 臂首版我构造错场景——把"后继改同文件"当成覆写档案，
+实际 blob 仍相等判成 all_match，改为"记录号里无此件＋dev 另有该件"后绿，教训＝构造档要按判据集合而不是直觉）。
+尺二＝入袋口续租：`_renew_claims_inflight` 放进 `enqueue_item`（四通道合流：交互正门/CLI 直投/requeue/网关改道），
+ttl 沿用同一旋钮 ZEPHYR_ENQUEUE_CLAIM_TTL_S 缺省 7200s，fail-open；读 `lock_files.renew_claim` 实现确认
+"只动本持有者名下已存在条目、无条目即 continue"⇒ 不造锁、测试不污染真 .ailocks。测试 8 臂全绿。
+回归：`test_commit_queue_base_head + resilience` 合跑 446 支＝1 红，
+`test_h2_from_bag_requeue_keeps_original_base` 撞快照重放闸（commit_queue.py:3235 要求 --allow-snapshot-replay），
+与本班两把尺无因果（该 raise 在 requeue 判据支），按授权矩阵"他基座复跑定性存量红→照册登记不代修"处理。
+
+### 10.3 终清波三移交 4 条悬挂 token＝已撤账（先自核再动手）
+
+撤账前自核（不采信只读车道转述）：PG 四条 active v1、created_by=st-fclean3-20261012、
+四路径 `git cat-file -e HEAD:` 全 ABSENT 且盘上不存在；`grep -rl` 在 done/＋dead/＋pending/＋processing/ **零引用**；
+wave3 族 token 全表 18 条中后继 `lane_*.md` 7 条**全部不动**——它们正在 st-fclean3-20261012 的
+pending 袋 0001/0002/0004 内待落（＝合法 token 先行，撤了会让人家落地撞 CREATE-GUARD）。
+`api.retire` 四条全 OK，authority_ref 照本班令原文＝"通宵令§五·维护三班清位清单（原文：终清波三移交的
+4 条悬挂 token retire）"，未编造任何裁定号；随后 publish_snapshot v409（entry_count 15583）。
+
+### 10.4 热册治理两刀＝本班自裁（Owner 通宵令原文授权"你班裁"）
+
+刀一＝投影生成器测试面禁写生产册（`_write_rendered` 入口，精确同根判定＋nodeid 归因＋独立计数＋
+ZEPHYR_TEST_NO_PROD_PROJECTION=0 一键回退）。**自纠一处**：首版用"目标在真仓根之下"判，把
+`basetemp=.runtime/tmp/pytest_<pid>`（conftest.py:95 在册 PID-unique 设计）的合法沙盘测试一屏打死 2 支，
+A/B 关旗复跑立即 9 passed 才定位到判据过宽，改精确同根后宿主 9 支复绿。
+刀二＝写者署名：landing 主工作区收敛按**袋属主 sid**挂 env 作用域（出界必复原，含抛错臂；sid 空一律不动）＋
+belt 投影自愈探针写口署 `belt_daemon:projection_probe`。选"只包这一处"而非全局设 ZEPHYR_SESSION_ID，
+理由＝该 env 还被 validate_worktree_required／apply_depgraph／git_guard／lock_files 消费，全局设置会改它们判定输入。
+测试 3＋4 臂全绿，零新建 src/scripts 件（工厂/守卫全部并入既有模块，容量原因见 §9.1）。
+
+### 10.5 一处口径自我更正（重要，防后人误读 §9.10）
+
+§9.10 曾把热册被写归因给"三支 HEAD 在册测试＋一支派生册测试"。**该归因不成立**，证据与结论：
+①开关对照——同三支测试在守卫 ON／OFF 两次跑，结果都是"2 failed／1 error"且册都变了字节，
+说明写者不在这些测试里；②per-test sha 归因两次给出**不同的肇事名单**（一次三支、一次两支），
+外部写者节拍约 50s，短时窗内 sha 变化会被记到"当时在跑的那支"名下；③真写者特征＝safe_write 审计里
+`session=''` ＋**每次 pid 都不同**⇒ 不是常驻 daemon 单进程，而是每个落地事件派生的短命进程在做渲染
+（belt 投影探针 cooldown=300s，量级也对不上"每 50s"）。
+⇒ 结论下调为"存在未署名外部渲染写者，per-test 归因不可信"；本班因此补了刀二（署名）让审计面自己能答。
+证据等级＝**实测**（对照实验＋审计读数），不是推断。
+
+### 10.6 等裁清单（Owner 醒后一次转统筹；每条给建议默认）
+
+- **C1 torch 归属二选一**。实测：单环境（系统 Python312，`__editable__` 挂 src），torch=2.13.0+cu126、
+  CUDA 可用、RTX 3090；`requirements.txt:5-10` 写着"2026-07-21 裁定 #ARCH-TORCH-CPU-ONLY…已替换为 CPU 版
+  (2.13.0+cpu)"，而 `pyproject.toml:115` 写着"torch 须单独装 CUDA 版（cu126 wheel）"，实装跟后者；
+  torch 不入任何 dependencies 声明面（靠 sentence-transformers 传递决定版本），ml-train extras 只列 peft/trl/…；
+  消费面实测 3 支（ex_sor rl_trainer 顶层 import、kronos_adapter 惰性、sentiment_sft_trainer QLoRA），
+  另有无主件 cuda-toolkit 12.9.2／cupy-cuda12x／nvidia-*-cu12（Required-by 全空）。
+  A＝收编：torch 入 ml-train extras 钉 `torch==2.13.0+cu126`＋撤改 #ARCH-TORCH-CPU-ONLY 注记为"训练轨 CUDA 例外"；
+  B＝判外来：卸 CUDA 轮改 CPU 轮（代价＝Kronos 考尺与 QLoRA 训练轨即瘫）。
+  **建议默认＝A**（B 的前提"无消费者"已被 3 支在册消费者证伪；07-21 裁定那句"项目代码 0 个 import torch"已过时）。
+  不可自裁理由＝动裁定口径＋依赖声明面镜像同改。装机来源（08-08 谁装的）＝查无 provenance。
+- **C2 提交网关 landed_id 判据**。根因照只读车道地图：`git_commit_gateway.py:4976-4981` 取提交后
+  `rev-parse HEAD`，不解析本笔 sha、不断言 HEAD 位移；`landing:2668` 的 `update-ref new old` 在 new==old 时
+  是 no-op 且 rc=0 ⇒ CAS 不报错；`:1913-1921` 的"已落盘"判定只跑 is-ancestor 零 blob 复核。
+  本班只出了**观测尺**（§10.2）未动提交语义。**建议默认＝授权按"提交后校验本笔 sha 且 old!=new 才记 landed_id，
+  否则记 landed_id_unverified"改造**，属判据改动故等裁。
+- **C3 翻译册幽灵行 6＋1 条**（`src/zephyr/{degraded,layered,lying,new_mod,orphan,with_extras}.py` 六条
+  created_by=`add_module_translation` 缺省名＝测试经真 CLI 写进生产账本；`scripts/ml/build_distilled_sft_dataset.py`
+  一条属 st-gpuwo-20261011 待自证）。**建议默认＝六条本班上墓碑（一条命令）、gpuwo 那条转属主自证**；
+  治本＝那条测试改走 tmp 账本/投影根（PROJECTION_ROOT 注入点在册）。等裁理由＝治理资产净删走墓碑制。
+- **C4 投影物化与"禁出重打投影袋"的结构性冲突**：PG 领先 HEAD 面约 +500 行未落地 token（实测 publish
+  entry_count 15583 vs 投影 15048 行），每次渲染都把他人未落地条目刷进被跟踪册并留在主区，而本班被明令
+  禁出重打投影袋 ⇒ 池面在该册上**不可能保持干净**（本班一夜还原 3 次，最后一次起已放弃拉锯，改为刀二署名）。
+  **建议默认＝由册主车道择窗出一只归属写清"投影重放、非本会话登记"的聚合袋，其余车道禁带该册**。
+- **C5 派生册一致性测试家族**：`test_derived_books_parity.py` 7 红＋`test_gate21_selfcheck_fix_channel_is_scalar_only`
+  写生产册，在册三版未定真源家族（`total_command_closeout/wave2/lane_bagging_plan.md` §四-11）。
+  **建议默认＝指定唯一真源版后一次性并版**，本班未代修。
+- **C6 FOLDER-CAPACITY 饱和**：commit_gates 两深目录实测满 120（该 tests 目录 121 件里仅 66 件在库）。
+  **建议默认＝排一次"门族分目录"专波（含 depgraph 同步），在此之前新门一律走双工厂共台**；本班已按共台落地并留标尺。
+- **C7 BeltDaemon 不在资源画像**（sched_task_orphan，状态 Running）：传送带自身不受冲突闸/资源预算管辖。
+  **建议默认＝收编为受控实体并给窗**（涉排班册新实体＝Owner 门位）。
+- **C8 weekend_calibration 周一/周二差一天**＝本班 §四 R11 已登记候裁（低优先，今夜未动）。
+- **C9 快照重放闸 vs h2 测试期望**：`test_h2_from_bag_requeue_keeps_original_base` 期望 --from-bag 保基底，
+  现闸要求显式 `--allow-snapshot-replay`。**建议默认＝改测试期望（闸是治本面，测试是旧语义）**，属判据面故等裁。
+
+### 10.7 本班袋与接班复核口令
+
+本班 12 袋全在队（0001-0012），无一 dead；实测队列 12.8 分钟/袋、pending 51、本班 0012 前约 47-52 袋
+⇒ 线性 ETA ≈ 10 小时（0007 起为门与册，0011/0012 为今夜新尺）。同路径多修订袋不会互回退（§9.11 判据真源）。
+方向闸覆盖面的 11 件字节已存档 `.runtime/tmp/maint3_shift/faces_snapshot_20261012/`＋MANIFEST.json（落地前后双向可比）。
+
+```
+git show dev:scripts/commit_queue.py | grep -c "def audit_landed_id_integrity"      # 应 1
+git show dev:scripts/commit_queue.py | grep -c "_renew_claims_inflight(session_id"  # 应 1
+git show dev:src/zephyr/governance/registry_projection/projection_generator.py | grep -c "TEST-PROJECTION-WRITE-BLOCKED"   # 应 1
+git show dev:scripts/governance/commit_queue_landing.py | grep -c "_converge_main_workspace_impl"                          # 应 2（包裹＋本体）
+git show dev:src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py | grep -c "_PROJECTION_WRITE_ACTOR"              # 应 2
+git show dev:src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py | grep -c "make_pool_regression_direction_gate"  # 应 1
+python scripts/commit_queue.py status --session st-maint3-20261011                  # 12 袋应全 done；dead 读 dead_reason 对症 requeue
+PYTHONPATH=src python -c "import sys;sys.path.insert(0,'scripts');import commit_queue as cq;print(cq.queue_health()['landed_id_integrity']['verdict_counts'])"
+```
+
+## 十一、断电善后与 Owner 裁定③执行账（2026-10-12 15:3x-20:3x，本机两次断电之后）
+
+### 11.1 断电后果实测（不猜，逐面对账出来的）
+
+队列在本班离席期间继续排空，本班 14 袋终态＝**done 3（0001 台账初版／0010 GPU 知会／0011 热册两刀）
+＋ dead 11**，死因三族，逐族取全文死因后对症：
+
+| 族 | 袋 | 死因（门/ landing 原话摘要） | 处置 |
+|----|----|------------------------------|------|
+| 裸 subprocess | 0003、0005、0012 | BARE-SUBPROCESS：`enqueue_preflight.py:195`、`commit_queue.py:4115/4134` 三处裸 `subprocess.run` 违 trae_067 铁律2 | 全改在册统一入口 `process_pool.run_subprocess_hidden`，**未走 `# noqa: bare-subprocess` 逃生**；顺手清掉因改法而失效的函数内 `import subprocess`（不留死语句）。重投＝0016/0017 |
+| 可变常量缺 Final | 0007 | MUTABLE-CONST-WITHOUT-FINAL：`registry_mass_deletion_gate.py:75` 的 `__all__`（我把宿主 `__all__` 扩成双工厂时该行进 own-diff） | 改 `__all__: Final = [...]` 正形＋补 `from typing import Final`（本文件有 `from __future__ import annotations` 也躲不掉：`__all__` 是运行时求值的真实赋值，不是注解位——此交界面如实登记）。重投＝0015 |
+| 台账三方真冲突 | 0002、0004、0006、0008、0009、0013、0014 | landing：非注册表族件"双侧皆改"→整文件三方冲突死信 | 见 11.2 机制账 |
+
+### 11.2 台账七连死的机制（终清波三收班袋替我钉到机制层，本班实测复核）
+
+`5be65ce20b`（fclean3 收班袋）原话：袋的 `base_head` 是**车道分支旧 HEAD**而非 dev 现头 ⇒ base 面内
+根本没有该件 ⇒ "dev 侧与我侧都算改动" ⇒ **即使把内容做成 dev 的严格超集也救不了**。据此给在册两条
+纪律加前置条件：**"新建件先入队后落码"与"同会话后袋＝严格超集"两条仅在 base_head 与 dev 同源时成立**。
+
+本班实测同一机制在主区的第三种触发路径：0001 落地后，dev 的 `00_ledger.md` 变了，而 0002 之后各袋的
+`base_blob` 仍是落地前那版 ⇒ 七袋全被判"双侧皆改"。对策（本机已验证成立）：主区 `git rev-parse HEAD`
+与 `dev` 实测**同源**（13439e6679f1 == 13439e6679f1），此时重新入袋的 `base_head/base_blob` 即 dev 现值，
+且 dev 面台账字节是磁盘版的**严格前缀**（`disk.startswith(dev)=True`，269→648 行纯追加）⇒ 单一侧改动，
+三方合并可过。新袋＝0019（本节所在袋）。
+
+### 11.3 断电把本班会话判死：按在册配方复活，未加旗绕行
+
+死机后第一次入队被 `[SESSION-REQUIRED] session 未注册` 拦（`st-maint3-20261011` 注册条目随重启消失）。
+按在册配方处置：`SessionRegistry().register(sid, pid=0)` → `_spawn_heartbeat_daemon`（实测 pid 28668，
+心跳 30s 一跳，`heartbeat.jsonl` status=alive）→ `register_heartbeat_keepalive(ttl=7200)`，
+再以门自己的尺核命中面：`.runtime/takeover_ledger.jsonl` 全 183 条里**本会话零条目**（不必自解，
+他班条目不碰）。全程未用 `allow_overlap` 之类旗子洗掉判据。
+
+### 11.4 落地后复跑探针：假落地面比夜间读数更大（尺已在 dev，读数可复算）
+
+`audit_landed_id_integrity` 现从落地面跑（40 袋窗口／195 次 git 比对／truncated 如实显影）：
+all_match 30、partial_match 4、**foreign_zero_match_not_in_dev 5**、noop 哨兵 1，共用落地号组 0。
+点名：`gpux2-0019/0020`、`minedig-0002/0005/0007`；partial 且袋字节在 dev 无面：
+`gpuwo-0009/0012/0022`、`minedig-0003`。逐件二次核（本机实测，别只信分档名）：
+- `minedig-0002`：20 件全部 `记录的 landed_id 里的 blob == dev 现 blob != 袋 blob` ⇒ 记的号是真的、
+  **落的内容不是这袋的**（同路径被别版覆盖）。这档不是"号指错人"，是"done 而本袋内容未进库"。
+- `gpux2-0019`：袋/记录号/dev 三方 blob 互不相同（该道后续又纯追加过一版）⇒ 属"陈旧袋被后继覆写"，
+  与我 `stale_superseded` 档语义相邻但当前分档判 foreign（因袋字节确实不在 dev）——
+  **尺的边界如实记：本探针按"袋字节是否在库"判，不按"内容是否被后继演进"判**；要区分演进需另加
+  按行集包含关系的第二判据（未做，避免今夜动尺的判据面）。
+
+### 11.5 Owner 裁定③（torch 收编）执行五款，四件同批已入队 0018
+
+①钉版 `torch==2.13.0+cu126` 进 pyproject `[project.dependencies]` ＋ requirements 镜像同串＋
+内嵌 `--extra-index-url https://download.pytorch.org/whl/cu126`；②清除 requirements:5-10 的 CPU-only
+矛盾句（旧正文留在被取代条目 adjudication 内，声明面不留假指令）；③登记正门＝
+`#ARCH-TORCH-CPU-ONLY` → superseded＋`superseded_by` 指回新条目 `#ARCH-TORCH-CUDA-PIN`
+（adjudicator=st-maint3-20261011，内容=裁定③原文转录＋本机取证；**账本与 YAML 两侧同批改**，
+实测改前 818/818 全等、改中一度差 1 条、补登后 819/819 双向零差；identity roundtrip＋entrykey parity
+2 passed；字段合法性校验器只报存量 final_adjudication 漂移 19 条）；④三支消费点 import 冒烟全通；
+⑤ENV-001 `disposition` 写"已收编钉版"并按该件自带 `generation_command` 现算复测＝
+`2.13.0+cu126 12.6 True`（常数不搬进债账，遵本件 net_zero 口径）。
+同步闸 `_check_pair` 复跑 findings=3 条与 HEAD 基线逐条同名（asia 幻影/gplearn+ta_lib/demo websockets），
+**零新增噪声**；我一度把长注放进 deps 块内，被解析器读出一个假 `torch` 依赖名（块内任何双引号片段都会被
+当依赖名，HEAD 里 `asia` 那条噪声正是同坑）——已把长注移到块外并留短注说明此坑。
+
+### 11.6 今晚新登记的两条在册缺陷（入晨间包，本班未代修）
+
+1. **`api.update` 对 REG-ARCH-ISSUE-001 旧行连"原样 payload"都拒**：`INVALID_ARGUMENT
+   {payload identity mismatch with entry_key}`。根因＝身份键 `entry_composite_key` 取 payload
+   **首个标量字段**现算，而 PG `jsonb` 不保键序（旧行在 PG 里首键是 `title`，在册 entry_key 却是
+   `issue_id=…`）。对策＝身份字段置首重投（本班已据此成功，旧行 v2 status=superseded）。
+   根治建议＝账本 catalog 为各册显式声明 `identity_fields`，禁按字典序碰运气；属 REG 账本层判据，等裁。
+2. **REG-ARCH-ISSUE-001 在 ROOR 标 `maintenance: manual`，实为 PG 真源册**（账本 1633 行／active 818→819，
+   且在 P0 七册齐平名单内）：标与机制不合，会诱导车道只改 YAML 而破齐平（本班 0018 差点踩中，
+   靠复跑齐平测试才发现）。与 C4（投影滞后）同族。
+
+另：`.runtime/sessions/st-dexp-20261009.json` 分片损坏致读侧静默 skip（他班早列），本机死机后复测**仍在**，
+状态无变化——留队列完整性簇待办，不属本班今夜可自裁面。

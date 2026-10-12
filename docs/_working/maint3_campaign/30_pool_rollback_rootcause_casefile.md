@@ -201,3 +201,27 @@ b942162936 dev@{2026-10-11 22:03:15}
 ## 落盘受阻
 
 【实测】无。本案卷两次 `Write`/多次 `Edit` 全部成功；未遇 CREATE-GUARD、TTL 标记、`creation_token`、GATE-SELFDOC 或任何门的拦截报文（写盘路径 = `docs/_working/maint3_campaign/30_pool_rollback_rootcause_casefile.md`，frontmatter 含 `ttl: task_bound`，无 `doc_type` 字段，文件名纯 ASCII，非 `.json`）。本车道未伪造任何 token 或豁免标记。临时工作区仅 `.runtime/tmp/maint3_pool_rc/`（一度写 `head_side.tmp` 供行集比对，已删）。
+
+## ⑨ 订正（总包复核后追加，§⑥ 原文一字不动）
+
+**被否掉的一条 §⑥ 论断**：「同一把尺必须装在 B5 的 `git add` 之前——该护盾会把池面当下字节写进共享 index」。
+
+【实测】`_auto_stage_candidates`（`src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py:153`）
+的命令是 `git ls-files --others --exclude-standard -z -- docs/_working`——作用面＝**untracked、且只限
+`docs/_working` 前缀**；而 untracked 文件在 HEAD 没有字节（同文件 `_head_blob` 对此返回空串），
+故"盘上是 HEAD 的真子集"这条谓词在 B5 上**结构上不成立**，方向尺装在它之前不会有任何效果。
+本班据此把 L2 的接入点改在 `scan_once` 逐件循环（同文件 :1142 起），并对 untracked 面另立判据需求。
+
+【实测】B5 真正的风险是**另一种**：它把"未挂名写者造出的未跟踪件"固化进共享 index
+（本案卷自己就曾被 `AM` 化即活证）。对症的是"只自动暂存有主 claim 的件／写入必须带 sid"，
+不是方向尺——该需求已随施工账 §八 L2/L3 的署名读数（`sid_missing`／"未署名(sid 空)"）部分兑现。
+
+【实测】另两处对本案卷的独立复核（结论=维持）：`scripts/commit_queue.py:2967`（三方尺定义）＋
+`:3191`（**唯一**调用点，在 requeue 路径）＋`:2984`「实测 26 件里误报 17 件，闸就废了」原话，
+以及 `scripts/governance/commit_queue_landing.py:2720` `_converge_one`（主区工作树唯一字节写口，
+写点 :2742-2747）——**订正一处配对**：案卷 §⑥ 引用的 `:2527` 属 `_apply_snapshot`（写的是 serializer
+专用 worktree，非主区池面），`:2743-2746` 才属主区写口 `_converge_one`；故写者层的唯一有效接入点＝
+`_converge_one`（三个上游 `:3115`/`:3418`/`:3508` 全汇于 `_converge_main_workspace:2826` 单点调用）。
+另实测：`_converge_index_one`（写共享 index）现役**不可达**——`_index_convergence_mode()` 读
+`data/runtime/main_index_convergence.{off,live}`，实测两旗皆无 ⇒ 恒 shadow，故今日 index 面回退
+不可能是落地链所致（与 §⑤"字面版证伪"同向加强）。
