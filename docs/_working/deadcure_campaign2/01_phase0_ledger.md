@@ -1267,3 +1267,54 @@ INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov
 为"等前一进程退出再接下一批"本班用了 `kill -0 <pid>` 做门——git-bash 看不见 Windows PID，门当场失真，导致同会话两支投递进程并发（批 101 与批 102-106）。本轮内容未受损（不同批次不同件、锁面由全局 Mutex 串行），但**判活必须换权威面**：看工棚日志是否长出新行，或 `Get-CimInstance Win32_Process`。同一轮还暴露两处并已修：①`--drop` 之后仍按全表铺件，会把已定性的真红件重新写回盘上成未跟踪件；②submit 预检快败（rc=8）后件会留在**共享 index**里＝他人 commit 可吸收，退件面已加"先 `git restore --staged` 再退回工棚"的处置（本轮实清 7 枚假扣押、37 枚共享 index 残留件退回工棚）。
 
 复核命令：`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/ledger_26.py`；C 类取证重跑＝`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/c_dyn_resolve.py`；容量面重算＝`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/capacity_hold.py`（dry，加 --apply 才入册）；扣押册对账＝`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/hold_reconcile.py`；未定项表重生成＝`python tools/undetermined_plan.py A,C uclass 100`／`python tools/undetermined_plan.py B bclass 200`
+
+## 廿六·补、落地逐字读回终态（本机生，2026-10-13 02:45）
+
+读回口径三条（写在册，免得下次再用『应该落了』交差）：
+①袋态＝队列四目录实测；②件是否落地＝`git ls-tree HEAD` 有该路径 **且** HEAD 字节 sha256 == 袋内 `blob_sha256`（不等时补 AST 等价层，按 §廿三·补 已入册口径）；③台账件额外读 HEAD 行数/节数/工作树是否等于 HEAD。
+
+### 一、袋与件
+
+```
+袋：done 8／processing 0／pending 0／dead 0
+done qid＝['0050', '0051', '0052', '0053', '0054', '0055', '0056', '0057']
+dead qid＝[]
+件级读回（18 枚）＝MATCH 18
+分表 MATCH＝{"A/C": {"MATCH": 8, "其他态": 0}, "B": {"MATCH": 9, "其他态": 0}, "LEDGER": {"MATCH": 1, "其他态": 0}}
+未 MATCH 明细（前 8 条）＝[]
+```
+
+### 二、台账面
+
+```
+HEAD 台账行数＝1269｜含 §廿六＝True｜含自纠条＝True｜节数＝29
+工作树==HEAD＝True
+本班 claim 列举行＝0 条（收尾序列要求归零）
+```
+
+### 三、四路终局（对照 §廿六 一节的裁定）
+
+- A/C 表已落 MATCH＝8 枚（未落／在途件数见上一节分表）；
+- B 表已落 MATCH＝9 枚（201 整族因同目录容量留扣，202-205 已投）；
+- C：5 枚逐件人工判＝目标全在仓，随 A 复活；负存在册**零条目**——两条『幻影』实为路径漂移，真源在 `architecture_governance`／`data_governance` 子包（见 §廿六 二·补）；
+- F：随宿主不单独复活，配对已登记（`common/uclass_f_linkage.json`，same_bag_pairing=True）。
+
+### 四、一条真因追查（§廿六 里那条 `批 101 rc=4` 到底是什么）
+
+`pytest` 报 `file or directory not found: tests/gov/governance/test_apply_dataflowgraph_smoke.py` ＝**该路径根本没被铺过**：它属 B 表（批 201）件，不属 A/C 批 101。时间线（工棚文件 mtime 实测）：
+
+```
+00:25:18  ship_log stage 批101 create=36      ← 按 A/C 表铺件（正确）
+00:25:2x  本班的 B 表生成器把 common/uclass_plan.json 覆成 B 表（输出名写死＝本案卷覆写缺陷）
+00:25:26  ship_log run    批101 rc=4          ← driver 下一步重读同一张表，拿到的是 B 的 24 件名单
+00:27:05  重建 A/C 表（输出改按表名分文件＋批号段 1xx/2xx 分开）
+```
+
+⇒ 结论：既不是外部删件、也不是 git 侧事故，而是本班自己的『两张表写同一个输出文件』，叠加『投递进程每一步都从盘面重读表』的既有设计（为了幂等可重跑），在覆写窗口里读到了别张表的名单。修法已落：`tools/undetermined_plan.py` 输出按 `stem` 分文件（uclass_/bclass_），批号段分开（1xx/2xx），讯息里的表路径改为动态取 `_plan`。
+
+### 五、下一步（不待批准就能做的归本班；要点头的已列 §廿六 七）
+
+1. 归口把 5 枚件头 module_id 改掉（建议书＝`common/N06_patch_proposal.md`，每条建议值都过了闸自己的正则）→ 本班重投；
+2. 容量闸两条路择一（甲 切子目录／乙 裁阈值）→ 本班重投 60 枚；
+3. `test_align_panoramas.py`／`test_blueprint_frontmatter_reconciler.py` 的**体内夹具假样本**触 N-06（在册先例＝上一班 W-7 同形态）→ 等批准走哪条路；
+4. 复核命令：`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/land_reconcile26.py 20261013` → `python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/ledger_26b.py`。
