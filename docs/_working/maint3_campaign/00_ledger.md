@@ -900,3 +900,76 @@ all_match 30、partial_match 4、**foreign_zero_match_not_in_dev 5**、noop 哨�
   （SSoT 化，数值原样 60/15），零判据改动，是后续任何调参的前置。
 - 丙＝k 回 4 观察一夜（在册回退位，可即时复原，非新判据）。
 - **建议默认＝乙＋丙并行**（二者都不动判据数值），甲另批。
+
+## 十三、四裁执行账与两处自我更正（统筹裁定 2026-10-12 23:5x → 10-13 00:4x）
+
+### 13.1 四裁＋超时乙丙的落地面
+
+| 裁 | 改了什么 | 袋 | 落地面读数 |
+|----|----------|----|------------|
+| C10 | `guard_remove` 单文件通道补保护区双保险（已声明也硬拦）＋异常带 `zone_protected` 来源标记＋框架文案分叉 | 0031 | 45 passed；BLOCKED 审计行含 `content_sha256`；白名单面照删（非保护区不写 sha 键） |
+| C11 | `TAKEOVER-PENDING` 连坐前同源判活（只放开"提交人＝条目属主且判活"一格）＋逐次留痕 | 0031 | 25 passed（新 6 臂：alive/degraded 放行留痕／dead 照拦／他班照拦／verdict 不可达照拦／无 sid 照拦） |
+| C12 | 主区收敛臂"真正改写盘面"那一支补署名：pid＋袋 sid＋pre/post 内容 sha＋字节数（32MB 上限，读失败写标记串不改主链） | 0031 | 待 0031 落地后在 sync 面读回 |
+| C13 | lane-archive 擦除动作进统一遥测流（begin 带栈／done 带 patch 路径＋verdict＋ahead＋pid），`_log_worktree_delete` 只增 `extra` 不改五键语义 | 0032 | 探针实测两条 `op=worktree_delete` 落流，done 条带 patch_path |
+| 超时乙 | 15/60/30 三档搬进 thresholds.yaml `git_operations`，消费方 `git_commit_gateway._resolve_git_timeout` 走同一 `get()` 单口（照 `commit_queue_landing.py:129` 先例），坏值/缺键/异常退原常量 | 0032 | 实测 `READ 15 WRITE 60 DEFAULT 30`；`classify git commit→60`、`git ls-files→15`；注入桩证键非装饰 |
+| 超时丙 | `commit_queue_landing_pool_workers` 6→4（在册回退位，非新判据） | 0032 | 全册键集合差＝新增 3 键／删除 0 键／值变更仅 6→4 一处 |
+
+C10 前置的调用方异常面清单（AST 全仓）＝18 个 `guard_*` 调用点：14 处只捕 `OSError/PermissionError`、
+3 处无 try、1 处 `except Exception` 兜住；逃逸面由 `reconciliation_registry:980-998` 框架层收为
+critical_warn（不炸 post-commit 主链，在册 #ARCH-PRE-EXISTING-DEBT-001 形态）——这就是"带清单才改"的清单。
+
+存量红登记不代修：`tests/gov/governance/test_commit_queue_landing.py` 27 failed/72 passed，
+对 dev 现值基座复跑同为 27/72 且尾部 node id 同名（含 `TestIndexConvergenceRB1` 三支、
+`TestF2ExitBurst`、`TestRegistryThreeWayMergePure` 等）⇒ 非本袋引入。**如实标注**：node-id 全集对照
+只做了本班侧（`.runtime/tmp/maint3_night/red_mine.txt` 27 行），dev 侧只留了计数与尾部 6 条同名，
+落地后应由任一班补一次两侧全集差集。
+
+### 13.2 ⚠ 本班两处案卷错，另起一节留旧案（不改写 §十二 原文）
+
+**更正一（§十二.4 末尾"另案同族"段）**：我写了"清扫判据不含脏面、dirty 件无 blob 备份、
+`worktree_ops_log.jsonl` 零删除类事件、nightmine 五条 token 现已无处可取"。四句里三句错：
+
+1. **有存证，且 fail-closed**：`_generate_retire_patch_evidence`（CAND-WORKTREE-001 Z1）在退役前把
+   全量 `git diff HEAD` patch 写到 `.runtime/quarantine/<sid>-retire-<ts>.patch`（不在被删的车道里）。
+   nightmine 那条**此刻就在盘上，3,217,124 字节、三分类 substantive=259**。
+2. **遥测不是零删除事件**：`_log_worktree_delete` 写的键是 `op/phase/session_id/source/path`，
+   我第一把尺只按 `event`/`stage` 分组，把 10,822 行读成"?"，因此把在册 171 条 `phase=done` 的
+   删除事件整个看漏＝**假红尺**（在册教训同源：0 命中上报前必须配正对照——这次正对照没做，
+   是下一班该盯的我自己的洞）。
+3. **真凶不是 `_sweep_stale_worktrees` 而是 `lane-archive`**：六条车道存证头写
+   `source=lane-archive`，`.runtime/gate_audit/worktree_abort.jsonl` 里 10-12 22:20-22:21 有
+   `RETIRE_EVIDENCE`＋`needs_rescue` 逐条记录，**带 pid（7792/19688…）、分支、ahead、patch 路径**。
+   也就是说：动作是有主、有审计、有存证的归档，不是我写的"静默蒸发"。
+4. **四条 token 可取回**：`adjudication_routing_policy`／`t2-handover-claim-grid0926`／
+   `t2-subspace-json-grid0926`／`t2-subspace-meta-grid0926` 在 `.runtime/quarantine/drift_*/…`
+   的 CAPCAN 副本里命中 8/7/7 个文件；`chiefc-99-delivery-20261009` 也在 nightmine patch 内。
+   取回属主车道的事（归属纪律），本班只报坐标不动手。
+
+真实剩余缺口收窄成两条，且都已在本次两袋里堵上：**遥测流缺 lane-archive 的擦除事件**（C13 已补）、
+**存证面 `.runtime/quarantine` 曾被 TTL 腿按 7 天线吃**（Card A 已堵；被吃掉的过去件已不可回，
+实测 7d 内 1575 条，其中就包括别班早年的 `*-retire-*.patch`）。
+
+**更正二（§十二.2 已写，这里补一句给统筹的复盘）**：令上"184 条 open 正在批量拦袋"的量不是拦袋量——
+真含仓内可提交路径的只有 11 条，其余 172 条命中面全在 `.aidrafts/.worktrees/序列化器副本`里。
+按总量排处置序会把一整夜花在不必销的条目上。
+
+### 13.3 今夜新增四件的案卷落点（三路案卷班只读出，未改任何跟踪文件）
+
+| 件 | 一句话读数 | 案卷路径 |
+|----|------------|----------|
+| ① 三方真冲突合并器 | raise 在 `commit_queue_landing.py:2446`（`_merge_registry_file` 内）；**非族件分支只有两次整文件相等判定**（:2432 noop／:2444 取袋／否则死信）——无行集、无超集、无并集语义，"严格超集也死"在源码上成立；base 取工作区自己的 HEAD(:4492)，⚑`requeue` 不带旗会在 :3312 继承旧袋陈旧 base_head；不弱化门即可校正（`--base-head $(git rev-parse dev)`）；在册三方尺 `_snapshot_head_regressions` 已存在但合并分支不调它，且是 set 语义＝无前缀判定；"同件只投一袋"是纪律不是机械门 | `.runtime/tmp/maint3_night/merger_3way_dossier.md`（处方件主文＝考试班台账 §25.11） |
+| ② CH 7.14GiB | 真源**不是 settings/profile 也不是传参**：`max_memory_usage=0`（查询级不限量），7.14GiB＝服务器级 `max_server_memory_usage` 的实时派生值（0.9×cgroup/RAM，会漂：10 分钟内 7,761,811,089→7,771,823,280；Hyper-V 动态内存，启动日志自述 Available RAM 7.75GiB）。面板分母实测 daily 20,027,656 行／2019-01-02 起＝7.78 年非 8 年／格数 8.93M（名义满格 11.41M）／同键多版本 2.59× ⇒ **结论＝条件够**：逐列路线峰值 0.86GiB＝上限 0.12；24 列同查一条 SQL 理论 5.5GiB＝0.77；同族实测锚（204 列×100 只×1 年一条 SQL）3 日内 2,092 异常 vs 39 成功、峰值 7.33GiB>上限；最挤分钟 9 条重查询合计 24.9GiB＝3.4× ⇒ **24 列一次同查在本 VM 是异常路线，逐列才是安全路线**。`NO_ELEMENTS_IN_CONFIG`＝Code 139 一条（14:35:27Z）原文 `Volume default must contain at least one disk`，语义是"卷 default 解析到 0 个 disk＝配置段元素个数为 0"，不是"某设置为空值"；当前态 1 卷 1 盘不空；具体空的配置段需 VM 文件系统读面，本班未测 | `.runtime/tmp/maint3_night/ch_capacity_dossier.md`（原始读数 probe3–10_raw.json 同目录） |
+| ③ schemas 遮蔽断裂 | 遮蔽本体＝pip 包 `safety_schemas` 在 site-packages 落的**命名空间包 `schemas`**（无 `__init__.py`，`import schemas` 假成功、`__file__=None`）；炸点在 `registry_ledger_ddl` 模块级 `from schemas.categories…` → ModuleNotFoundError。五面实测：PYTHONPATH=仓根通（正对照，mock 全链 register→publish→render 走通）；PYTHONPATH=src、w2 车道裸 python、以及**正规脚本直调形态**（`python <路径>`，sys.path[0]=脚本目录，不带 cwd）三面全断 ⇒ 统筹原说法需修正：不是"只在 PYTHONPATH=仓根放行"，是**正门脚本形态必断**。最险影响面＝`factory_intake_pipeline.py:311` 子进程不查 rc 全静默；`register_asset` rc≠0 但归因误指 PG。旧叙述"落投影 YAML 被覆盖"未复现——直写轨已随 #502 删除，现形态是 raise 被吞＝**根本没登记** | `.runtime/tmp/maint3_night/schemas_shadow_dossier.md`（修法候选 5 条各附代价，未选未批） |
+| ④ 午夜指纹 | **陷阱成立**，判据式＝`src/zephyr/data/catchup_guard.py:154` 用 `last_success.date()`（UTC，源 `progress_store.py now_utc()`）对 `:194` `date.today()`（本地）与 `:193-197` 本地交易日历，在 `:160/:162/:164` 同式比较，消费方 `scheduler.py:337-339` ⇒ 真改补跑行为。两笔后果：凌晨跑成功⇒`daily` 桶**误判已跑过**（当日少跑）／`always_on` 桶**误判没跑过**（重复补跑），只覆盖本地 00:00-07:59 记账窗。不成立的四支已逐一排除（belt 水位／backup 8h／计划任务三色／heartbeat UTC↔UTC）；`safe_write.jsonl` 的 ts 确为 UTC 但**仓内零读者**。修法四条各附代价，首条＝`d` 改 `astimezone(上海).date()` 一行 | `.runtime/tmp/maint3_night/midnight_fingerprint_dossier.md`（跨 00:00 分桶实证本班未做，取样止于 23:5x） |
+
+### 13.4 本班残余（交下一班或统筹定序）
+
+1. ②③④① 四件的**修法选择全部未批**（案卷只出候选＋代价）；其中③是 P1 正门断裂，
+   最小止血＝在 `registry_ledger_ddl` 起点自装仓根 sys.path（在册先例 `reconcile_worker` 的
+   `#ARCH-264`-同款裁定），但选哪条应统筹定，因它牵动 pip 依赖面（卸 `safety_schemas` 一条会碰依赖库）。
+2. C12 的 sync 面读回复验（0031 落地后 `tail .runtime/commit_queue/main_workspace_sync.jsonl`
+   看是否出现带 pid/sid/pre_sha/post_sha 的 `wt_fast_forwarded` 行）。
+3. ④ 午夜窗的**跨 00:00 分桶实证**（本班未做，取样止于 23:5x）。
+4. 落地链 27 枚存量红的 node-id 全集对照（§13.1 如实标注只做了本班侧）。
+5. 超时丙的"一夜数据"读数明早该回收：k=4 下再数一次超时死信枚数，与 §十二.7 的 14 枚对比，
+   再决定甲（自适应）是否值得批。
