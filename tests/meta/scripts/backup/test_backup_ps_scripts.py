@@ -306,3 +306,20 @@ def test_daily_task_time_limit_clears_the_worst_measured_run() -> None:
     hours = int(match.group(1))
     assert hours >= 12, f"时限 {hours}h 容不下实测最长轮 7.73h，会复现半程硬停"
     assert "-Hours 4" not in src, "旧值 4h 回退（会把长跑截断成残锁）"
+
+
+def test_daily_trigger_action_carries_the_no_flash_launcher() -> None:
+    """统筹裁定⑥：注册脚本的 Action 必须与活体任务同形（wscript + launch_hidden.vbs）。
+
+    病形：无闪窗治本只存在于活体任务面（实测 EXEC=wscript.exe ARG="…launch_hidden.vbs
+    …backup.ps1" -Mode all -Force），而脚本真源仍是 powershell.exe -File backup.ps1
+    ⇒ 任何人重跑注册脚本，闪窗缺陷就**静默回归**（每次运行弹一个控制台窗），
+    且回归后没有测试会红。副作用前置测量已在台账 ⑥ 段留痕：四条收割路径都够不到
+    wscript/powershell，vbs 又是等待式启动（无早退父），故对齐不新增被杀面。
+    """
+    src = (BACKUP_DIR / "backup_daily_trigger.ps1").read_text(encoding="utf-8")
+    code = "\n".join(_ps_code_lines(src))
+    assert '-Execute "wscript.exe"' in code, "注册脚本 Action 不是无闪窗启动器（闪窗回归通道开着）"
+    assert "launch_hidden.vbs" in code, "Action 没引用无闪窗启动器件本体"
+    assert '-Execute "powershell.exe"' not in code, "旧 powershell 直启 Action 回退"
+    assert "Test-Path $FlashFreeLauncher" in code, "启动器缺件没有前置拦截（会注册出一个坏任务）"

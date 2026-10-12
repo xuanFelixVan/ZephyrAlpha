@@ -187,10 +187,25 @@ if ($RegisterTask) {
 
     if (-not (Test-Path $BackupScript)) { Write-Err "backup.ps1 not found: $BackupScript"; exit 1 }
 
-    # Action: run backup.ps1 -Mode all -Force
+    # Action: run backup.ps1 -Mode all -Force through the no-flash launcher.
+    # 2026-10-12 chief ruling on the order-8 follow-up: the LIVE task has been running
+    #     wscript.exe -> scripts\launch_hidden.vbs -> backup.ps1
+    # since the no-flash fix, while this script still produced
+    #     powershell.exe -NoProfile ... -File backup.ps1
+    # so any re-registration here would silently regress that fix (one visible console
+    # window per run). Aligning the script to the live chain puts the fix back into the
+    # source of truth for registrations.
+    # Side-effect scan done BEFORE aligning (measured, read from the reaper source):
+    # none of the four kill paths can reach wscript/powershell -- path 1 takes only
+    # names containing "python", path 2 only llama-server/ollama markers with a dead
+    # parent, path 3 is the incubation ledger, path 4 the Trae CN ghost line. And
+    # launch_hidden.vbs waits (sh.Run cmd, 0, True), so there is no early parent exit
+    # to trip the job-object grandchild-kill note documented inside that vbs.
+    $FlashFreeLauncher = Join-Path $ProjectRoot "scripts\launch_hidden.vbs"
+    if (-not (Test-Path $FlashFreeLauncher)) { Write-Err "launcher not found: $FlashFreeLauncher"; exit 1 }
     $action = New-ScheduledTaskAction `
-        -Execute "powershell.exe" `
-        -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$BackupScript`" -Mode all -Force" `
+        -Execute "wscript.exe" `
+        -Argument "`"$FlashFreeLauncher`" `"$BackupScript`" -Mode all -Force" `
         -WorkingDirectory $ProjectRoot
 
     # Trigger: daily at 06:00
