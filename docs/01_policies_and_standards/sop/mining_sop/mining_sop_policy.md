@@ -7,7 +7,7 @@ title: 挖矿 SOP——全网调研+内部反查的全面挖掘方法论（六�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.9.0"
+version: "1.9.1"
 date: 2026-10-12
 topic: mining_sop
 ---
@@ -18,6 +18,7 @@ topic: mining_sop
 > **诞生**：2026-09-14，Owner 裁定"继续挖，把矿挖干为止"——另类数据消费端方案三批 20 轮挖矿（R1-R20，signal 15/noise 4）的完整流程沉淀升 permanent。
 > **实战范例（方法论唯一完整实例）**：[docs/_working/alt_data_consumption_plan.md](../../../_working/alt_data_consumption_plan.md) §5-§7（三批挖矿日志+因子位 F1-F27 演化）。
 > **亲缘**：[trading_decision_map_pathfinding_policy.md](trading_decision_map_pathfinding_policy.md) = 本 SOP 在 TDM 地图增长域的专用实例（六向协议源头）；[skeleton_mining_policy.md](skeleton_mining_policy.md) = 本 SOP 在**骨架/分类学域**的专用实例（新域开工先挖骨架：四层分层/三问停止判据/状态标记纪律/封矿判据）；本文件 = 通用研究方法论真源。方法论冲突时，地图域以 TDM 版为准，骨架域以骨架版为准，其余域以本版为准。
+> **Owner 永久原则（2026-10-12 裁定②，挖矿 SOP 总则）**：**闭卷考试＝最终考试；折减抬线（deflated/抬阈）不替代考试**——记账纪律（试次账/DSR/增量闸）只负责把运气算出来，任何账面好看的条目未经闭卷考试一律禁用于实盘与候选（成例=F06 冠军 38b453ca3683 账面 1.721＝10,080 试次期望最大值，E4 闭卷 FAIL 即终局）。
 > **施工闭环挂接**：[construction_workflow_policy.md](../construction_sop/construction_workflow_policy.md) Step 1.9（2026-09-14）——施工前先做方案，方案先挖矿，把矿挖干再施工；本 SOP 的矿脉枯竭封矿+挖后自审闸（§6）=施工准入闸。
 
 ---
@@ -174,6 +175,7 @@ topic: mining_sop
 
 | 日期 | 版本 | 变更 | 批准 |
 |------|------|------|------|
+| 2026-10-12 | 1.9.1 | 总则增设 Owner 永久原则：闭卷考试＝最终考试、折减抬线不替代考试（F06 冠军 1.721 成例入注，配套标签贴 f06_survivors.csv）；净零=零新册零新 gate | Owner 裁定②（令⑪晨裁随批，st-minedig-20261012 署名落地） |
 | 2026-10-12 | 1.9.0 | 增设 §8.5 表达式级挖矿：12 轴生成矩阵（信号本体/映射面/关系治理三组）＋三本账升级（试次账 t≥3.0 通缩纪律入法/增量账对族残差化/复制账沿用 route-audit）＋涨停族三条即用立卡模板（隔夜日内双腿/聚合月度/日内时点 blocked_on_WO-A2）；净零=零新册零新 gate，清单机生 | 挖矿班令 A st-minedig-20261012（元方法调研件 6578afb599 为据，adjudicator 署名） |
 | 2026-09-14 | 1.0.0 | 初稿：三批 20 轮实战流程沉淀（六向/双噪音/四闸/时间盒/失败模式） | Owner"继续挖，把矿挖干为止"指令与全程实战 |
 | 2026-09-14 | 1.0.1 | 施工闭环挂接：接入 construction_workflow_policy.md Step 1.9（方案先挖矿，挖干再施工，双噪音封矿=施工准入闸） | Owner 指令 |
