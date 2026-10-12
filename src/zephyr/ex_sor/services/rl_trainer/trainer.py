@@ -5,14 +5,15 @@
 # [STARTUP-NOTE] torch 惰性导入（调用侧 import 触发）；无守护线程无副作用
 # [MATURITY] evolving
 # [DEPENDENCIES] torch, numpy, zephyr.ex_sor.core.rl_exec_env, zephyr.ex_sor.services.rl_trainer.td3_agent
-# [INVARIANTS] obs 编码确定性纯函数; 动作解码输出恒在契约域内; 产物只进模拟盘对拍; H-04: real_training=True 须 Owner 门（CLI --real-training 显式旗，库层默认 False 仅预热）
+# [INVARIANTS] obs 编码确定性纯函数; 动作解码输出恒在契约域内; 产物只进模拟盘对拍; H-04: real_training=True 须 Owner 门（库层默认 False 仅预热；⚑ 2026-10-12 实测：该旗今日零读者，"CLI --real-training"并不存在，勿把它当已生效的门——取证与呈批见 docs/_working/gpuwo_campaign/07 册 C-1）; GPU-04 影子对拍腿只读数不接线（shadow_compare 只回字典，无写盘、无生产路径 import）
 # [MODIFY-GUARD] 参数≤7（TrainerConfig dataclass 打包）; 复杂度≤15; 常量 Final
-# [CONSUMERS] scripts（CLI）; tests/ex_sor/test_td3_trainer.py
+# [CONSUMERS] scripts（CLI）; tests/trade/ex_sor/test_td3_trainer.py（GPU-04 影子腿测件）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] env 合同缺键 fail-loud; checkpoint 路径不可写 fail-loud
-# [TESTS] tests/ex_sor/test_td3_trainer.py
+# [ERROR_CONTRACT] env 合同缺键 fail-loud; checkpoint 路径不可写 fail-loud; 影子腿参考腿缺位或动作参数越界 fail-loud（禁"没对台也出一个数"）
+# [TESTS] tests/trade/ex_sor/test_td3_trainer.py
+
 # [TTL] permanent
 """TD3 训练循环：obs 编码→agent→动作解码回 RlExecAction；历史 replay 预热+checkpoint。
 
@@ -27,7 +28,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Final
+from typing import Any, Callable, Final
 
 import numpy as np
 
@@ -165,3 +166,114 @@ def warmup_from_history(env: RlExecEnv, agent: TD3Agent, buffer: ReplayBuffer, e
     for _ in range(episodes):
         run_episode(env, agent, buffer, noise_sigma=-1.0, rng=rng, learn=False)
     return len(buffer) - before
+
+
+# ── 工单 GPU-04 腿 M-1：影子对拍（统筹 R-5 只批这一腿；真训练＝B-007 Owner 门，本段零触发）──
+# 为什么放在训练器而不是改选择器：选择器 MOD-XS-011 是 production/SAFETY-H 的实盘路径，
+# 影子评估的语义恰恰是"不进那条路径也能先把两个数摆在一起看"。本段只 import 已有的
+# env/agent/解码单点，不新增任何生产侧依赖。
+
+RawActor = Callable[[np.ndarray], np.ndarray]
+
+
+def passive_reference_actor(offset_idx: int, ratio: float, offset_count: int) -> RawActor:
+    """参考腿：每片同一档、同一参与率——把"不动脑子"量化成有数可比的基线。
+
+    产出口径刻意是 [-1,1]^2 原始动作而不是 RlExecAction：解码必须继续走 decode_action
+    这一个点。若这里另造一条"直接给动作对象"的通道，对拍比的就是两套解码而不是一套策略。
+    """
+    if not 0 <= offset_idx < offset_count:
+        raise ValueError(f"offset_idx={offset_idx} 越界（offset_count={offset_count}）")
+    if not 0.0 <= ratio <= 1.0:
+        raise ValueError(f"ratio={ratio} 须落在 [0,1]")
+    denom = max(offset_count - 1, 1)
+
+    def _actor(_obs: np.ndarray) -> np.ndarray:
+        raw0 = 2.0 * offset_idx / denom - 1.0
+        raw1 = 2.0 * ratio - 1.0
+        return np.array([raw0, raw1], dtype=np.float32)
+
+    return _actor
+
+
+def agent_reference_actor(agent: TD3Agent, sigma: float = 0.0, rng: np.random.Generator | None = None) -> RawActor:
+    """候选腿：TD3 actor 出动作（sigma=0 缺省＝评估态，不掺探索噪声）。"""
+    _rng = rng if rng is not None else np.random.default_rng(0)
+
+    def _actor(obs: np.ndarray) -> np.ndarray:
+        return agent.select_action(obs, noise_sigma=sigma, rng=_rng)
+
+    return _actor
+
+
+def run_shadow_leg(env: RlExecEnv, actor: RawActor) -> dict[str, Any]:
+    """一条腿走完一回合：逐切片记（档, 比例, 成交量, 本步成本），回合级汇总成本与完成率。"""
+    state = env.reset()
+    total = float(env.contract.total_quantity) or 1.0
+    slices = env.contract.slice_count
+    levels = len(env.contract.offset_levels)
+    actions: list[tuple[int, float]] = []
+    fills: list[float] = []
+    step_costs: list[float] = []
+    done = False
+    while not done:
+        obs = state_to_obs(state, slices, env.contract.total_quantity)
+        action = decode_action(actor(obs), levels)
+        state, reward, done, info = env.step(action)
+        fill = info.get("fill")
+        fills.append(float(getattr(fill, "filled_quantity", 0) or 0.0))
+        actions.append((action.price_offset_idx, round(action.quantity_ratio, 6)))
+        step_costs.append(round(-float(reward), 6))
+    filled = float(sum(fills))
+    return {
+        "steps": len(actions),
+        "actions": actions,
+        "fills": fills,
+        "step_costs": step_costs,
+        "is_total": round(float(sum(step_costs)), 6),
+        "filled_quantity": filled,
+        "fill_ratio": round(filled / total, 6),
+    }
+
+
+def shadow_compare(
+    env_factory: Callable[[], RlExecEnv],
+    legs: dict[str, RawActor],
+    *,
+    reference: str,
+    ratio_tolerance: float = 0.05,
+) -> dict[str, Any]:
+    """同 seed 同盘口序列下多腿逐切片对拍，输出分歧率与成本差（只读数，不接线）。
+
+    判据先钉死，不留解释空间：分歧率=与参考腿不同的切片占比（档不同，或比例差>tolerance）；
+    成本差=is_total(该腿) - is_total(参考腿)，正数＝比参考腿更贵。env_factory 必须每次造出
+    同 seed＋同 book_provider 的环境，否则"同一段行情"这个前提就没了，两数不可比。
+    """
+    if reference not in legs:
+        raise ValueError(f"参考腿 {reference!r} 不在 legs 里：对拍必须有对台，禁单腿自证")
+    reports = {name: run_shadow_leg(env_factory(), actor) for name, actor in legs.items()}
+    base = reports[reference]
+    divergence: dict[str, float] = {}
+    cost_delta: dict[str, float] = {}
+    for name, rep in reports.items():
+        if name == reference:
+            continue
+        n = max(len(base["actions"]), len(rep["actions"]))
+        diffs = 0
+        for i in range(n):
+            pair_a = base["actions"][i] if i < len(base["actions"]) else None
+            pair_b = rep["actions"][i] if i < len(rep["actions"]) else None
+            if pair_a is None or pair_b is None:
+                diffs += 1  # 一边提前终止＝切片结构本身分歧
+            elif pair_a[0] != pair_b[0] or abs(pair_a[1] - pair_b[1]) > ratio_tolerance:
+                diffs += 1
+        divergence[name] = round(diffs / n, 6) if n else 1.0
+        cost_delta[name] = round(float(rep["is_total"]) - float(base["is_total"]), 6)
+    return {
+        "reference": reference,
+        "ratio_tolerance": ratio_tolerance,
+        "legs": reports,
+        "divergence_rate": divergence,
+        "is_delta_vs_reference": cost_delta,
+        "consumption": "影子对拍读数（未接任何生产/实盘路径；转正走 B-007 Owner 门）",
+    }
