@@ -7,7 +7,7 @@ generated_at: '2026-10-04T16:56:37Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 190
+total_gates: 191
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -907,6 +907,18 @@ gates:
   files_trigger:
   - '*.py'
   - '*.yaml'
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
+  enforcement_channel: commit-gate
+- gate_id: POOL-REGRESSION-DIRECTION
+  name: 'POOL-REGRESSION-DIRECTION: 池面回退方向门禁（POOL-REGRESSION-DIRECTION，批令二 L3 提交层）（CommitGate,
+    priority=161）'
+  entry: in-process (GitCommitGateway)
+  description: 池面回退方向门禁（POOL-REGRESSION-DIRECTION，批令二 L3 提交层）
+  files_trigger: ''
   always_run: false
   category: commit_gate
   status: active

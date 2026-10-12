@@ -1,17 +1,17 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file, _read_head_file, _split_own_foreign); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.gate_auto_registrar（YAML 驱动自动注册）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 登记表 mass-deletion 门禁——staged 登记表类 YAML 净删行（删>插）**或条目身份消失（HEAD 有而 staged 无的条目键）**→ 阻断（2026-09-09 险些蒸发 4703 行治本，nodebt 晨报裁定 7）；YAML 条目数减少 → 无论行数直接阻断；白名单=commit message 标记 [allow-mass-deletion:reason]（reason≥10 字，随 message 永久留痕，对标 capability_lookup_required_gate [no-lookup:reason] 先例）；阈值内合法重排（整文件重生成等）走标记逃生；阻断与放行均落审计 .runtime/gate_audit/registry_mass_deletion.jsonl；fail-open（HEAD 缺失/YAML 解析失败/文件不可读 → 跳过该文件，不误报）
-# [MODIFY-GUARD] gate_id="REGISTRY-MASS-DELETION"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [INVARIANTS] 登记表 mass-deletion 门禁——staged 登记表类 YAML 净删行（删>插）**或条目身份消失（HEAD 有而 staged 无的条目键）**→ 阻断（2026-09-09 险些蒸发 4703 行治本，nodebt 晨报裁定 7）；YAML 条目数减少 → 无论行数直接阻断；白名单=commit message 标记 [allow-mass-deletion:reason]（reason≥10 字，随 message 永久留痕，对标 capability_lookup_required_gate [no-lookup:reason] 先例）；阈值内合法重排（整文件重生成等）走标记逃生；阻断与放行均落审计 .runtime/gate_audit/registry_mass_deletion.jsonl；fail-open（HEAD 缺失/YAML 解析失败/文件不可读 → 跳过该文件，不误报）；**同模块第二台 POOL-REGRESSION-DIRECTION（priority=161，批令二 L3 提交层，2026-10-12 st-maint3-20261011）**＝own-scope 被修改件的 staged 字节若为自身 HEAD 版严格真子集（HEAD 独有>0 且 staged 零新增行＝纯驱逐）硬阻断，近子集（HEAD 独有≥20 行且比值≤0.05）warn+审计，tests/ 豁免，任一侧不可读 fail-open 但必记日志（降级态不得伪装成无回退），越闸头寸 [pool-regression-ack:理由≥10字] 对齐本文件 allow-mass-deletion 形状且越过仍留痕；共台而非新建件＝commit_gates/ 与 tests/gov/governance/commit_gates/ 平铺件数实测均已达 T_soft=120 硬上限（再新建一件即 FOLDER-CAPACITY-HARD-LIMIT 阻断），先例=本仓 8 个双工厂门模块
+# [MODIFY-GUARD] gate_id="REGISTRY-MASS-DELETION"|"POOL-REGRESSION-DIRECTION"（双工厂共台）; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git show HEAD 失败（新增文件）/YAML 解析失败/文件不可读 → fail-open 跳过该文件（不误报，encoding/syntax 类 gate 覆盖）；检出净删行或条目数减少且无逃生标记 → fail-closed 阻断（passed=False）；审计写失败静默降级
-# [TESTS] tests/governance/commit_gates/test_registry_mass_deletion_gate.py
+# [TESTS] tests/gov/governance/test_pool_regression_direction_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L
 # [TTL] permanent
 """
@@ -59,18 +59,21 @@ import logging
 import re
 import time
 from pathlib import Path
+from typing import Final
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _audit_foreign_staged,
     _build_own_scope,
     _norm_rel,
+    _read_head_file,
     _read_staged_file,
+    _split_own_foreign,
 )
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["make_registry_mass_deletion_gate"]
+__all__: Final = ["make_pool_regression_direction_gate", "make_registry_mass_deletion_gate"]
 
 # 审计落点（.runtime/gate_audit/ 家族惯例，对标 protected_paths_gate）
 _AUDIT_REL = ".runtime/gate_audit/registry_mass_deletion.jsonl"
@@ -447,3 +450,134 @@ def entry_identity_key(item: object, declared_fields: tuple[str, ...] | None = N
         if isinstance(value, (str, int, float, bool)):
             return f"{field}={value}"
     return None
+
+
+# ---------------------------------------------------------------------------
+# POOL-REGRESSION-DIRECTION（批令二 L3 提交层，2026-10-12 st-maint3-20261011）
+# 与 REGISTRY-MASS-DELETION 同模块共台的判据分工：那台量"登记表条目的净删/身份消失"，
+# 本台量"任意 own-scope 被修改件的字节方向"（HEAD 有而 staged 无＝驱逐）。
+# 共台而非新建件的原因＝在册硬上限：commit_gates/ 与 tests/.../commit_gates/ 平铺件数
+# 均已达 T_soft=120（实测 _count_flat_files=120），新建一件即 FOLDER-CAPACITY-HARD-LIMIT
+# 硬阻断；先例=本仓 8 个模块双工厂（vocab_hardcode/perm_trigger/blueprint_format…）。
+#
+# 病根（实测 2026-10-11 夜，案卷 docs/_working/maint3_campaign/30_pool_rollback_rootcause_casefile.md）：
+# 主区池面发生一次逐件"拍回自己旧版本"的回退弹——当天已落 HEAD 的件在盘/暂存面上退回旧字节，
+# 28 件里 5 件是 HEAD 的严格真子集。复盘的结构性结论：**门禁只防"前进方向"的违规，
+# 没有任何一台门检查"某个件被写成它 HEAD 版的子集"**——所以写者可以是任何人、账上却查不到。
+#
+# 为什么不用两方差集当全部判据：在册三方尺（scripts/commit_queue.py 的 _snapshot_head_regressions）
+# 已自证"两方 dev_lines − snapshot_lines 会把本袋自己正当删改全数计成回归（26 件误报 17 件）"。
+# 直连提交这一路没有"袋基底"这一维（基底恒等于当前 HEAD），所以此处退化为"严格子集"这一
+# 最强也最少误报的形状；需要基底维的场合由入队层与落地层承担（它们手里有 base_head）。
+# ---------------------------------------------------------------------------
+
+_POOL_GATE_ID = "POOL-REGRESSION-DIRECTION"
+
+# 近子集臂（只 warn+审计）：阈值由 2026-10-11 夜 28 件受害旧字节逐件重算标定
+_POOL_NEAR_MIN_HEAD_ONLY = 20
+_POOL_NEAR_RATIO = 0.05
+
+# 越过头寸：理由须 ≥10 字（防"写个标记就算交代"），形状对齐本模块 [allow-mass-deletion:...]
+_POOL_ACK_RE = re.compile(r"\[pool-regression-ack:([^\]]{10,})\]")
+
+
+def _pool_line_set(text: str) -> set[str]:
+    """行集合：行尾先归一（CRLF 是第四把口径，不归一会造"丢失 N 行"假案）、空行不计。"""
+    return set(text.replace("\r\n", "\n").split("\n")) - {""}
+
+
+def _pool_direction_pair(head_text: str, staged_text: str) -> tuple[int, int]:
+    """纯函数：返回 (HEAD 独有行数, staged 独有行数)。拆出来给测试直钉（不依赖 git）。"""
+    h, s = _pool_line_set(head_text), _pool_line_set(staged_text)
+    return len(h - s), len(s - h)
+
+
+def classify_pool_regression_direction(head_text: str, staged_text: str) -> str:
+    """方向分档：clean / strict_subset / near_subset / mixed。"""
+    head_only, staged_only = _pool_direction_pair(head_text, staged_text)
+    if head_only <= 0:
+        return "clean"
+    if staged_only == 0:
+        return "strict_subset"
+    if head_only >= _POOL_NEAR_MIN_HEAD_ONLY and staged_only / head_only <= _POOL_NEAR_RATIO:
+        return "near_subset"
+    return "mixed"
+
+
+def _pool_modified_staged_files(gateway) -> list[str]:
+    """本仓 staged 里"被修改的跟踪文件"（M 态）：新增件 HEAD 无字节无从判，删除件归他门。"""
+    try:
+        r = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=M"])
+    except Exception as exc:  # noqa: BLE001 — git 不可达=无从判定
+        logger.warning("%s fail-open: git diff 异常(%s: %s)", _POOL_GATE_ID, type(exc).__name__, exc)
+        return []
+    if getattr(r, "returncode", 1) != 0:
+        logger.warning("%s fail-open: git diff 失败(rc=%s)", _POOL_GATE_ID, getattr(r, "returncode", "?"))
+        return []
+    out = (getattr(r, "stdout", "") or "").splitlines()
+    return [x.strip().replace("\\", "/") for x in out if x.strip() and not is_test_exempt(x.strip())]
+
+
+def make_pool_regression_direction_gate() -> GateSpec:
+    """构造池面回退方向 GateSpec（own-scope 硬阻断型，priority=161＝治理簇尾 160 之后空段）。"""
+
+    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        cand = _pool_modified_staged_files(gateway)
+        if not cand:
+            return True, ""
+        own, foreign = _split_own_foreign(gateway, cand, files, kwargs.get("session_id"), gate_name=_POOL_GATE_ID)
+        if foreign:
+            logger.info("%s：外来 staged %d 件已 warn+审计不连坐（根宪法 §3.1）", _POOL_GATE_ID, len(foreign))
+        if not own:
+            return True, ""
+        strict: list[str] = []
+        near: list[str] = []
+        for rel in own:
+            head_text = _read_head_file(gateway, rel)
+            staged_text = _read_staged_file(gateway, rel)
+            if head_text is None or staged_text is None:
+                # 读不动＝无从判定，放行但必须留一行——降级态与"无回退"同形是在册假绿教训
+                logger.warning("%s：HEAD/staged 任一侧不可读，跳过判定 %s", _POOL_GATE_ID, rel)
+                continue
+            kind = classify_pool_regression_direction(head_text, staged_text)
+            if kind == "strict_subset":
+                head_only, _ = _pool_direction_pair(head_text, staged_text)
+                strict.append(f"  {rel}：HEAD 独有 {head_only} 行而 staged 零新增行（纯驱逐）")
+            elif kind == "near_subset":
+                head_only, staged_only = _pool_direction_pair(head_text, staged_text)
+                near.append(f"  {rel}：HEAD 独有 {head_only} 行／staged 仅新增 {staged_only} 行（近似子集）")
+        if near:
+            logger.warning(
+                "%s warn-only（不阻断）：%d 件为 HEAD 版近似子集，建议核对是否旧稿覆盖：\n%s",
+                _POOL_GATE_ID,
+                len(near),
+                "\n".join(near[:10]),
+            )
+        if not strict:
+            return True, ""
+        msg = str(kwargs.get("commit_message") or "")
+        ack = _POOL_ACK_RE.search(msg)
+        if ack:
+            logger.warning(
+                "%s 越过留痕（理由=%s）：%d 件纯驱逐\n%s",
+                _POOL_GATE_ID,
+                ack.group(1)[:80],
+                len(strict),
+                "\n".join(strict[:10]),
+            )
+            return True, ""
+        detail = (
+            f"{_POOL_GATE_ID}：本批 {len(strict)} 个被修改文件提交进的是**自己 HEAD 版的严格真子集**"
+            "（删了已入库的行却一行都没加＝纯驱逐）。\n"
+            + "\n".join(strict[:10])
+            + "\n  病根：2026-10-11 夜主区池面回退弹即此形态（28 件受害，5 件严格子集），"
+            "当时没有任何一台门看得见字节的方向。\n"
+            + "  正路＝改喂进闸的输入指向：先 `git checkout HEAD -- <件>` 取回现字节再改，"
+            "或按队列正门重投（落地侧带 base_head 走三方尺归因）。\n"
+            + "  确属有意覆盖（如正当整档退役）：在 commit message 写 "
+            "[pool-regression-ack:理由≥10字] 越过（仍留痕，不弱化判据）。"
+        )
+        logger.error("%s gate block:\n%s", _POOL_GATE_ID, detail)
+        return False, detail
+
+    return GateSpec(gate_id=_POOL_GATE_ID, check=_check, priority=161)
