@@ -717,3 +717,150 @@ Owner 2026-10-11"刀口改裁"令在**会话层**批准 B1→B2 改刀口、并�
 - **设备 bt 面**：全格集三档越线**各 0**，max_abs=2.2204e-16（**1 ULP**）、max_rel=8.973e-12，一格都未被离散放大。
 - **两腿全上卡**（D 臂，n=1,050）：三档越线 **11/10/9**，与 CPU-bt 逐档相同 ⇒ **bt 上卡零新增越线**；`degraded_recipes/vram_refused/host_mem_refused/resolve_not_gpu/dev_attempt_failed` 全 0。
 - **落地面**：`test_l2_gpu_landing`＋`test_gpu_core_parity`＋`test_c4_engine_gpu_wiring` ＝ **101 passed**，`test_factory_grid_executor` ＝ **48 passed**（主区磁盘==dev 后在**主区**跑）。
+
+## 十三、B2 施工账＝设备驻留接线落地（本班 st-gpux3-20261012，2026-10-12 21:5x `date` 实测入册）
+
+**一句话**：按 §十二·B 的定价起刀，**零新核**——把"元数据随设备数组走"接上（`gpu_core.DevicePanel`），
+并把 bt 侧两张批级常量面板（价格／封板掩码）常驻到设备上；实测 all_a 形状下**权重往返税 22.04ms/格**
+被消成"该格不发生 PCIe"，且**缺省面逐位零漂移**（16 组对照全等）。
+两条读数改写了 B2 的收益构成，都点名上报（十三·C）。
+
+### 十三·A 施工面与判据（改了什么，凭哪条）
+
+| # | 面 | 落点 | 依据 |
+|---|---|---|---|
+| 1 | 载体 | `gpu_core.DevicePanel`（frozen dataclass：`arr/index/columns`＋`to_host_frame()` 唯一逃生口） | §十二·B①「不需要新核，需要把 (index, columns) 与设备数组打包传递」 |
+| 2 | eval 出口 | `gpu_core.eval_cell_gpu(resident=True)` 不再 `_to_numpy`；`factory_grid_executor._cell_eval_gpu` 包成载体 | 同上 |
+| 3 | bt 入口 | `_c4_engine._backtest_core_gpu` 吃载体（`_as_f64_2d` 同 buffer 直通），`index/columns` 供 `_load_seal_masks` 取掩码而不物化矩阵 | §十一·E「设备侧主成本是 40MB 稠密回传」 |
+| 4 | 批级常驻 | `_dev_resident()` 缓存价格面板与两张掩码（内容键＋**命中时核宿主对象身份**，引用随值 pin 住） | §十一·F⑥「稠密 H2D 占设备 bt 核 63–71%」 |
+| 5 | 设备侧下游消费者 | stats 中唯一吃全量矩阵的位 `hold_days_pct` 改由核内行归约给出（`want_hold_days`），经侧信道紧邻消费 | §十二·B③「只把权重留设备而结果回主机算＝把往返搬到别处」 |
+| 6 | 开启条件 | `resident_wave = gpu_wave ∧ _wave_backend=="gpu"`——**两个已在册开关合起来**，auto/env 解析出的 gpu 不开 | §十一·F④「B2 第一步不是写新核而是合开关」＋晨裁② 只认证不动缺省 |
+
+三条红线自查：缺省面（engine=auto／`--eval-backend cpu`）**逐位零漂移**（十三·B①）；判据线值一条未动；
+`evaluate_recipe` **缺省返回型不变**（该函数有三个外部直调方无条件要主机全量宽表，改返回型＝把它们打成静默错读）。
+
+### 十三·B 红绿证（四件，全部实测非推演）
+
+**① 零漂移红线可执行证明**＝`b2_zero_drift_proof.py`（把 dev 面两件 `git show` 到临时区当第二模块装载，
+同输入双版对拍）：**16 组全 True**——缺省/auto/cpu × 闸开关 × `exec_caliber=next_open` × stats 全字典
+× 掩码 fail-open × `tensor_core` CPU 后端；判定行 `PASS（缺省面与全部 CPU 支路逐位等）`。
+
+**② B2 自己的底尺**＝`b2_residency_floor.py`（n=24 同进程**五臂**：A=cpu×cpu／G2=gpu×gpu×驻留关／
+G3=gpu×gpu×驻留开／G2b、G3b＝各形态再跑一遍）。判据是**对自噪底不对零**（原因见十三·C①）：
+
+| 对照 | 逐位等格数 | max_abs | 三档越线 |
+|---|---|---|---|
+| G2↔G2b（臂自身两跑） | 23/24 | **5.551e-17** | 0/0/0 |
+| G3↔G3b（驻留两跑） | 23/24 | 2.776e-17 | 0/0/0 |
+| **G2↔G3（跨形态）** | 23/24 | **1.908e-17**（小于两臂各自底） | 0/0/0 |
+| A↔G3（CPU↔GPU＝正对照） | **0/24** | 2.220e-16 | 0/0/0 |
+
+manifest 面 G2↔G3：`sharpe/ann_return/max_drawdown/avg_turnover_1side/hold_days_pct` **n_nonzero 全 0**，
+`backend/degrade/degraded_dimensions/net_days` 不一致 **0 格**。判定 `B2_claim=PASS`
+（四条件全 True：噪声未放大∧三档全零∧manifest 全零∧正对照可见）。
+A↔G3 那行就是**尺有牙的证据**——同一比较器看得出 CPU↔GPU 的 0/24 逐位差，
+所以它报"G2↔G3 不放大噪声"不是空转。
+
+**③ 每核同步段计时**＝`b2_seg_timing_residency.py`（(970,5217)＝38.6MB/张，reps=9，**两序交错**各测一遍，
+每段之后 `Stream.null.synchronize()`）：M1 权重 D2H 17.067/14.455ms、M2 权重 H2D 8.512/7.579ms、
+M3 载体直通 0.002ms（两序同值＝不发生 PCIe）、M4 单张掩码 1.119/0.957ms。
+⇒ **权重往返税 M1+M2＝22.04ms/格**，掩码两张 1.91ms/格；两序 spread 8–15% 再次说明
+**绝对值禁跨时刻比、只报比值**（§二·丁 推论二）。
+
+**④ 配对试件**＝`tests/research/backtest/test_gpu_core_parity.py` 第 8 节（＋113/−0 纯追加，11→24 项）：
+hold_days 两面五族帧（top_n_equal_nan／all_nan_rows／all_zero_rows／denormal_positive／signed_weights）
+× cpu/gpu 双后端逐格等；`test_hold_days_ruler_has_teeth`＝注入 `>=0` 与"NaN 不置零"两条**错式**必须翻红
+（否则第 8 节是恒绿装饰）；载体同 buffer 断言；`_backtest_core_gpu` 载体路 vs 宽表路 gross/turnover
+`array_equal`＋载体缺核内值时 `ValueError`（禁静默回主机物化）。
+**101 passed**（改后复跑同采集面）＋配对面 **118 passed, 1 xpassed**。
+
+### 十三·C 三条必须上报的实测事实（都改变定价，不是坏消息）
+
+1. **GPU 设备臂逐位不可复现 ⇒ 在册 `p₀≡0` 只属 CPU 两跑，不得外推。**
+   同配置连跑两遍（G2↔G2b）就有 1/24 格差 1 ULP（5.551e-17）。本班第一版判据写成"必须逐位等"，
+   于是**改动前形态自己就过不了这条线**（首跑判 `FAIL-驻留改了数值`，实为判据错非代码错）。
+   已改为"对自噪底比"。**引用 §二·丙·补 (a) 那句时须带"CPU 两跑"限定词**，否则后人会当成全引擎性质。
+2. **载体驻留覆盖率只有约 17%（4/24 格），瓶颈是既有交接面不是本袋。**
+   `cell_host_continue=15/24`——缺省 `_EVAL_GLUE_GPU=False` 下 λ>0 格回主机，`drift_band` 格回主机
+   （§十一·G 明写的 **B1b**，本班不接管就不装样子）。⇒ 权重驻留的收益面 = 非 drift ∧（λ=0 ∨ glue 开）的格。
+   与之相对，**价格面板＋掩码常驻是全 GPU 臂格数都吃到**（px_hit 21/px_put 3、mask_hit 21/mask_put 3）。
+   所以 B2 的真实收益构成＝"常驻批级面板（全覆盖）＋权重驻留（17% 面）"，
+   下一棒要把权重面打开，落点是 **B1b**，不是再改本袋接线。
+3. **前班五支底尺存在裂脑测量风险（本班上工实测出的机制，未代修）。**
+   `n8_band_rejudge.py`／`dev_seg_timing.py` 等统一写 `sys.path.insert(0, LANE/src)`，
+   而本仓 `zephyr` 由 usercustomize **在解释器启动时从主区预导入**——包进 `sys.modules` 后
+   子模块解析不再看 `sys.path` 顺序 ⇒ `zephyr.backtest.gpu_core` 读**主区**、
+   `factory_grid_executor` 经 importlib 绝对路径读**车道**（后者确实生效）。
+   本班实测复现（断言直接炸出主区路径），所有本班尺改为
+   `PYTHONPATH=<lane>/src;<lane>/scripts` ＋脚本内 `assert "__file__" 含车道`。
+   **读前班数字时请分清"车道形态"与"主区形态"**；判它是否影响某条已入册结论属他役测量面归属，本班不代裁。
+
+### 十三·D 残余与下一棒入口（不自扩）
+
+- **铁律 11 格全格集复跑**＝`B2_ARMS=3` 的 n=1,050 版底尺（A/G2/G3 三臂，≈40min/臂）在飞，
+  出表后按 §二·丙 三档带逐格报形态补 §十三·补；n=24 面已证"驻留不放大噪声"，
+  全格集面证"11 格名单与形态一字不动"（在册分母 1,049，不可拿 24 格替）。
+- **终局两线**：吞吐比与逐进程 SM 归因由 `b2_throughput_sm.py`（A/B/A/B 交错＋1s NVML 逐进程采样线程）
+  采，在册验收尺**一拍未改**（晨裁③ 维持现制），其"新形态下可判性重估"材料在 json 的 `ruler_rejudge` 段。
+- **本袋未做**：B1b（drift_band 串行扫上卡）／N-1 批并行核（"一次端 50 道菜"）／
+  `--engine gpu` 缺省面（晨裁② 只认证不动缺省，本班未动）。
+- **头部门牌复正**：三件 `[TESTS]/[MODIFY-GUARD]` 锚点原写迁移前 `tests/backtest/` 旧根
+  （该目录 2026-10-04 已被清空，真身 `tests/research/backtest/`），本班随批改到真实路径并补
+  `test_c4_engine_gpu_wiring`（属"尺指向幽灵位置"家族，非本袋引入）。
+
+### 十三·E 复核命令（全只读）
+
+```bash
+# 零漂移红线（合成面，零 CH 零 GPU 依赖）
+PYTHONPATH=<lane>/src;<lane>/scripts python .runtime/tmp/st-gpux3-20261012/b2_zero_drift_proof.py
+# B2 底尺（五臂同进程；判据对自噪底不对零）
+PYTHONPATH=<lane>/src;<lane>/scripts python .runtime/tmp/st-gpux3-20261012/b2_residency_floor.py 24
+# 全格集铁律针（三臂，≈2h，需 ClickHouse 在线）
+B2_ARMS=3 PYTHONPATH=<lane>/src;<lane>/scripts python .runtime/tmp/st-gpux3-20261012/b2_residency_floor.py 1050
+# 每核同步段计时（两序交错，只报比值）
+PYTHONPATH=<lane>/src python .runtime/tmp/st-gpux3-20261012/b2_seg_timing_residency.py
+# 配对试件（24 项含第 8 节驻留钉与失焦自检）
+PYTHONPATH=<lane>/src;<lane>/scripts python -m pytest -q tests/research/backtest/test_gpu_core_parity.py
+```
+⚠ 跑批产物 `data/strategy_intake/grid_20261012-*/` 在车道里是**未跟踪且未 ignore** 的 GB 级目录，禁 commit。
+
+### 十三·补 终局两线的实测结论（本班 2026-10-12 22:3x `date` 续测；两条都**未达线**，且都给了算得过来的账）
+
+**① 吞吐线：交错序把首臂冷启动伪影抓出来了，驻留的端到端收益在本批形态下量不到。**
+`b2_throughput_sm.py`（A/B/A/B 交错，同 n 同 seed 同窗同进程）：
+
+| 臂序 | 驻留关 wall | 驻留开 wall | 比值 |
+|---|---|---|---|
+| rep1（首臂含 CH/盘冷建） | 273.06s | 155.25s | 1.76x ← **伪影** |
+| rep2（两臂皆暖态） | **140.65s** | **140.31s** | **1.00x** |
+
+⇒ rep1 那个 1.76x 全部来自"谁先跑谁付冷建"，正是 §十一·F③⑤「单序列连跑的差不能当收益」这条纪律
+在本班的**再次实测复现**（第三次撞同型，§十一·F⑥ 原话）。取暖态配对：**驻留不改端到端吞吐**。
+这与 §十二·B② 的诚实标价一致（往返税对整批墙钟只是 2–3% 量级），本班先前"每格 22ms 省下来"
+是**段内**真数（十三·B③ 每核同步实测），但它不在关键路径上——瓶颈仍是一格一次 kernel-launch 的形态。
+
+**② SM 线：尺是好的，是形态让它测不到——而且这次能算平账。**
+先证尺（在册 NVML 逐进程 `sm_util_pct`，真负载实测）：采样线程读得
+`sm_util_pct` **1→10→17→22**、`in_compute_table=True`、`compute_pid_count=5`，
+**同刻设备级 `device_util_pct=100`** ⇒ 设备曲线与进程归因分属两件事，这条既有结论再次实证。
+再量批：n=59/60 两臂，1s 一拍共 171／87 枚采样，**命中 0 枚**。这不是尺坏，是占空比算得过来：
+批内设备侧总占用 ≈ 19 格 × ~10ms ＝ **0.2s**，摊在 89.9–174.1s 墙钟上 ≈ **0.2% 占空比**，
+1s 采样落在 0.2% 活动缝里的期望命中数本就不足 1 枚。
+⇒ **「≥70%」在逐格形态下依旧是"测不到"而不是"没达到"**（§十一·F② 的原判一字不改）；
+   晨裁③ 说"驻留落地后在新形态下重估该尺可判性"——**本班给出的重估结论是：驻留没改变可判性**，
+   因为它消除的是 PCIe 而不是 kernel-launch 次数。要让它可判，必须换形态＝**N-1 批内并行**
+   （§〇 大白话"一次端 50 道菜进灶"），那是另一把刀，不属 B2 施工面，本班不扩面自裁。
+
+**③ 覆盖率账（本班这条改动到底动了多少格）**：n=60 两臂 `cell_resident=7`、`cell_resident_materialized=36`、
+`cell_resident_kept_cpu=0`（n=120 面为 15／—／0）。缺省 `_EVAL_GLUE_GPU=False` 下 drift_band 与 λ>0 格
+一律回主机续跑（§十一·G 已明写 B1b 未做）⇒ **权重面驻留覆盖率约 12–17%**；
+而价格面板＋封板掩码的批级常驻覆盖**全部 GPU 臂格数**（n=24 面 px_hit 21/px_put 3、mask_hit 21/mask_put 3）。
+
+**④ 本班没做的事（不装样子）**：B1b（drift_band 串行扫上卡，打开覆盖率的唯一钥匙）、
+N-1（批内并行，打开 SM 线的唯一钥匙）、`--engine gpu` 缺省面（晨裁② 只认证不动缺省）、
+n=1,050 全格集铁律针（三臂 ≈40min/臂，本班窗口不足以整块收，**留作下一棒首件**，
+命令已在十三·E 给出，判据与自噪底沿用十三·B② 的"对底不对零"）。
+
+**⑤ 交付判定**：B2 施工面（元数据随设备数组走＋设备侧下游消费者）**已交付且可证零语义改动**
+（十三·B 四件）；**终局两线（吞吐≥3x／SM≥70%）本袋未达**，且未达的原因已从"没做到"改判为
+"不在这把刀的射程内"——上面①②两条各带一份算平账的读数。

@@ -3,14 +3,16 @@
 # [DOMAIN] D_BACKTEST
 # [TTL] permanent
 # [AI_AUTONOMY] ai_modifiable
-# [TESTS] tests/backtest/test_gpu_core_parity.py; tests/backtest/test_l2_gpu_landing.py
+# [TESTS] tests/research/backtest/test_gpu_core_parity.py; tests/research/backtest/test_l2_gpu_landing.py
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [ERROR_CONTRACT] 后端显式不可用->fail-closed 降级 CPU 并记 degraded（禁静默）；backend 取值非法->ValueError；
 #   RawKernel 编译/执行异常直抛（调用方 fail-closed 整波重跑 CPU，禁半成品）；
 #   输入含非有限值不特殊处理（与引擎同域：NaN=fail-open 语义由调用方/掩码承担）
-# [DEPENDENCIES] numpy; cupy(可选,缺省无); cupyx.scatter_add(随 cupy,可选); pandas(仅入参鸭子类型); zephyr.shared.utils.time_utils(now_utc)
+# [DEPENDENCIES] numpy; cupy(可选,缺省无); cupyx.scatter_add(随 cupy,可选); pandas(仅入参鸭子类型
+#   ＋DevicePanel.to_host_frame() 的局部 import=驻留唯一逃生口，模块顶层仍不绑 pandas);
+#   zephyr.shared.utils.time_utils(now_utc)
 # [CONSUMERS] scripts/backtest/translated/_c4_engine.py（P1 接线/L2-B 守卫披露）；
 #   scripts/backtest/factory_grid_executor.py（L2-C --engine 三态透传+manifest backend/degrade 列）；
 #   scripts/backtest/l2_bench_probe.py（L2 终验探针转正件）；
@@ -29,7 +31,10 @@
 #   语义与 CPU 串行循环逐式同构，同输入逐位一致由 test_l2_gpu_landing 钉住）;
 #   成本常量=镜像 _c4_engine.py:52-54 冻结土规（COMMISSION_BP=2.5/STAMP_BP=10.0/SLIPPAGE_BP=5.0），真源在引擎，parity test 钉住漂移;
 #   显式 gpu 后端 + cupy/CUDA 不可用 = 降级 CPU 且记 degraded 出声（rewrite_architecture_three_tiers.md §二回退路径，禁静默）;
-#   指数对齐/reindex 等索引语义留在 CPU pandas 侧（本件只吃已对齐的等形数组，禁在本件内做索引重排）;
+#   指数对齐/reindex 等索引语义留在 CPU pandas 侧（本件只吃已对齐的等形数组，禁在本件内做索引重排；
+#   B2 驻留载体 DevicePanel 随行的 index/columns 是不透明透传件，本件只递不解释，消费方=引擎
+#   _load_seal_masks——"标签留 CPU"改判为"标签随数组走"，据=统筹晨裁 2026-10-12 第⑤条＋Owner
+#   B2 开工令 2026-10-12，真源=docs/_working/gpufeed_campaign/03_gpux_final_report.md §十二·B①）;
 #   判定面（三门/DSR/单调性）永不移入本件（治理面与算力面分离，rewrite_architecture_three_tiers.md §〇）
 """GPU/CPU 双后端回测张量核——考试引擎热路径的 CuPy 薄核（P0）。
 
@@ -60,6 +65,7 @@ from __future__ import annotations
 import logging
 import os
 import threading
+from dataclasses import dataclass
 from types import ModuleType  # xp 双后端模块注解（numpy|cupy module 对象）
 from typing import Any, Final, Sequence
 
@@ -68,6 +74,8 @@ import numpy as np
 # xp 数组语义别名（numpy|cupy 无共同基类可注解；签名面禁裸 Any=GATE-ANY-ABUSE，
 # 语义经别名表达：真约束=FP64 红线由 _as_f64_2d 运行时收口，非类型面）
 XPArray = Any
+# pandas 行列表签别名：本件不解释其内容，只随 DevicePanel 透传（同上，签名面禁裸 Any）
+PandasLabels = Any
 
 from zephyr.shared.utils.time_utils import now_utc
 
@@ -286,8 +294,58 @@ def nvml_device_memory() -> dict[str, Any]:
     }
 
 
+def device_module() -> ModuleType | None:
+    """设备计算模块（cupy）或 None——本仓唯一的 cupy 取用口（import 守卫只此一份）。
+
+    调用方需要自己上/下卡数据时走本函数取 xp，禁再写一份 try/import（两套守卫=漂移面，
+    且 HAS_GPU 探测自带 catch_warnings 隔离，重写一份会在 pytest 告警策略下假阴）。
+    """
+    return _cp if HAS_GPU else None
+
+
+@dataclass(frozen=True)
+class DevicePanel:
+    """已对齐的 (T,S) 设备数组＋随行列表签——B2 设备驻留载体（st-gpux3-20261012）。
+
+    为什么存在：eval 面算完的权重若在这里 `_to_numpy` 回主机（all_a 970×5,217 float64
+    ＝38.6MB/格），bt 面紧接着又把它整个搬上卡；两端同形、中间零运算，回传纯属白付
+    （真源=03 件 §十二·B：稠密回传/上传占设备 bt 核 63–71%，且 §十二·B① 实测
+    `_as_f64_2d` 对设备数组是同 buffer 零拷贝直通 ⇒ 治法=接线而非新核）。
+    载体把"标签"与"数组"打包走，`index/columns` 这两件 pandas 元数据不再需要靠
+    物化整张矩阵来换取。
+
+    边界（不是放宽，是原样保留）：本件仍**不做任何索引运算**——`index/columns` 在此是
+    不透明透传件，唯一消费方=引擎 `_load_seal_masks`（拿标签去查封板掩码）。对齐/reindex
+    一律先于上卡完成，见文件头 [INVARIANTS] 同条。
+    `to_host_frame()` 是回主机的**唯一**逃生口：调用方一旦走到它，省下的一次 D2H 就
+    没省下，必须自行计数出声（禁静默把往返搬到别处——§十二·B③ 的原话病）。
+    """
+
+    arr: XPArray
+    index: PandasLabels
+    columns: PandasLabels
+
+    @property
+    def shape(self) -> tuple[int, int]:
+        return self.arr.shape  # type: ignore[no-any-return]
+
+    @property
+    def size(self) -> int:
+        t, s = self.arr.shape
+        return int(t) * int(s)
+
+    def to_host_frame(self) -> PandasLabels:
+        """物化回主机 pandas 宽表（逃生口；设备→主机一次整幅 D2H，调用方须计数）。"""
+        import pandas as pd
+
+        host = _to_numpy(self.arr)
+        return pd.DataFrame(host, index=self.index, columns=self.columns, dtype=float)
+
+
 def _as_f64_2d(a: XPArray, xp: ModuleType) -> XPArray:
-    """任意 2D 数组类入参（ndarray/DataFrame）→ xp float64 矩阵（FP64 红线收口点）。"""
+    """任意 2D 数组类入参（ndarray/DataFrame/DevicePanel）→ xp float64 矩阵（FP64 红线收口点）。"""
+    if isinstance(a, DevicePanel):  # 驻留载体：取设备数组本体，标签不参与运算
+        a = a.arr
     if hasattr(a, "to_numpy"):  # pandas DataFrame/Series——引擎侧调用形态
         a = a.to_numpy(dtype=np.float64)
     arr = xp.asarray(a)
@@ -302,6 +360,8 @@ def _as_bool_2d(a: XPArray | None, shape: tuple[int, int], xp: ModuleType) -> XP
     """掩码入参→xp bool 矩阵；None=fail-open 全 False（与引擎掩码缺失语义同态）。"""
     if a is None:
         return xp.zeros(shape, dtype=xp.bool_)
+    if isinstance(a, DevicePanel):  # 掩码驻留形态（引擎设备缓存直供）
+        a = a.arr
     if hasattr(a, "to_numpy"):
         a = a.to_numpy()
     arr = xp.asarray(a)
@@ -438,6 +498,7 @@ def tensor_core(
     slippage_bps: Sequence[float] = (SLIPPAGE_BP,),
     gate_limits: bool = True,
     backend: str | None = None,
+    want_hold_days: bool = False,
 ) -> dict[str, Any]:
     """考试引擎张量核的 GPU/CPU 双后端实现（_backtest_core+_net_line 的 xp 薄核）。
 
@@ -449,9 +510,12 @@ def tensor_core(
         （与引擎 CH 不可得分支同态）；gate_limits=False 时掩码被忽略（旧行为对照通道）；
       slippage_bps: 档位标量列表（None 档语义由调用方传 SLIPPAGE_BP 常量，引擎同式）；
       backend: "gpu"|"cpu"|None（None=按 resolve_backend 解析 env/auto）。
+      want_hold_days: True=随产 hold_days_pct（持仓天数占比，引擎 stats 的唯一权重行归约；
+        入参为 DevicePanel 驻留载体时必开，否则下游拿不到该位——见下方可证等价注）。
 
     返回 dict：backend / device / gross(T,) / turnover(T,)（一侧换手）/
-      nets {bp: net(T,)}——全部 numpy float64（GPU 侧已回传收口）。
+      nets {bp: net(T,)}——全部 numpy float64（GPU 侧已回传收口，回传面=三条 (T,) 向量而非
+      (T,S) 整幅矩阵）；want_hold_days=True 时增 hold_days_pct（float）。
 
     精度与等价：CPU 后端与引擎 _backtest_core+_net_line 逐位一致（parity 钉住）；
     GPU 后端 FP64（3090 1/64 吞吐换 1e-12 相对差内一致），禁 float32/TF32。
@@ -490,13 +554,28 @@ def tensor_core(
 
     # ——— _net_line 多档标量成本线（逐位镜像 _c4_engine.py:491-497）———
     nets = {float(bp): _to_numpy(_net_from_gt(xp, gross, turnover, bp)) for bp in slippage_bps}
-    return {
+    out: dict[str, Any] = {
         "backend": be,
         "device": device,
         "gross": _to_numpy(gross),
         "turnover": _to_numpy(turnover),
         "nets": nets,
     }
+    if want_hold_days:
+        # stats 里唯一吃整幅 (T,S) 权重归约的位=引擎 _stats_from_net 的 hold_days_pct
+        # （其余 stats 只消费 (T,) 的 net/turnover）。驻留形态下这一位若回主机算，
+        # 就把刚省下的 38.6MB 又搬回去了（§十二·B③ 点名的"把往返搬到别处"病）。
+        # 式子取主机式 sum(axis=1)>0 的**结构性镜像**而非等价改写：NaN 先置 0.0 再沿轴求和
+        # （pandas skipna 同解：全 NaN 行两侧同读 0.0⇒不 >0；补 0 项不改部分和）。
+        # 禁改走 xp.nansum——All-NaN 片在 numpy/cupy 都发 RuntimeWarning，本仓 pytest
+        # filterwarnings=error 会把它炸成失败（同 signal_strength 那段 +inf 占位的成因）。
+        # 逐位性：设备臂权重恒非负（sizing_weights 五模式皆 base≥0 × 非负因子，cap_clip 只削
+        # 上界，periodic 是行 gather），非负浮点的和 ≥ 其最大项，无抵消⇒"和>0"与求和序无关；
+        # 若日后新增带符号 sizing 模式，本式退化为在册 ULP 带（自噪底＝0 口径下的合法设备分歧），
+        # 而不会像"正项计数"改写那样静默换语义。两面逐格对拍=test_gpu_core_parity 的 hold_days 钉。
+        row_sum = xp.where(xp.isnan(w), 0.0, w).sum(axis=1)
+        out["hold_days_pct"] = float(_to_numpy(row_sum > 0).mean())
+    return out
 
 
 # ——— L2-D：prefix 求值核（工厂 combine_cache 前缀热路径 GPU 快通道）———
@@ -1122,6 +1201,7 @@ def eval_cell_gpu(
     r60_var: XPArray | None = None,
     backend: str | None = None,
     glue_gpu: bool = False,
+    resident: bool = False,
 ) -> dict[str, Any]:
     """单格权重链 GPU/CPU 双后端核（T0 实测=hit 路径 60.4% 的 eval 秒数落在此面）。
 
@@ -1133,6 +1213,9 @@ def eval_cell_gpu(
     glue_gpu=True（B1a，缺省 False=逐字节零漂移）⇒ λ 链后两段（ewm 递推＋行和归一）在卡上
     按 pandas/numpy 源码序逐位做完，periodic 族不再回主机；drift_band 族仍出声（其串行扫
     归 B1b，本件不接管就不装样子）。
+    resident=True（B2，缺省 False=逐字节零漂移）且后端确为 gpu ⇒ `weights` 直接是**设备数组**
+    （不再 `_to_numpy` 回传），由调用方包成 DevicePanel 带上行列表签。本件拿不到标签，
+    故不自行打包；`host_continue=True` 时调用方须自行物化回主机（那格本就未驻留，如实计数）。
     """
     be = resolve_backend(backend)
     xp: Any = _cp if be == "gpu" else np
@@ -1168,4 +1251,10 @@ def eval_cell_gpu(
                 glue_done = True
             else:
                 host_continue = True  # ewm 递推+归一交回 pandas（clip 幂等，重跑无害）
-    return {"backend": be, "weights": _to_numpy(w), "host_continue": host_continue, "glue_lambda": glue_done}
+    return {
+        "backend": be,
+        "weights": w if (resident and be == "gpu") else _to_numpy(w),
+        "resident": bool(resident and be == "gpu"),
+        "host_continue": host_continue,
+        "glue_lambda": glue_done,
+    }

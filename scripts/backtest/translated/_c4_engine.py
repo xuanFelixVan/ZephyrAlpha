@@ -21,12 +21,12 @@
 #   T3a S2 成交价口径（st-tclose-t3a-20261005）：exec_caliber=close|next_open|vwap 全入口
 #   透传（缺省 close=现行逐位零漂移；非 close 口径=rets 换源恒 CPU+guard_reason 显性披露，
 #   见 _VALID_EXEC_CALIBERS/exec_interval_returns/_vwap_from_amount_volume）
-# [MODIFY-GUARD] tests/backtest/test_c4_batch_smoke.py; tests/backtest/test_c4_deflated_sharpe_runner.py; tests/backtest/test_c4_auto_oos.py
+# [MODIFY-GUARD] tests/research/backtest/test_c4_batch_smoke.py; tests/research/backtest/test_c4_deflated_sharpe_runner.py; tests/research/backtest/test_c4_auto_oos.py
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError(数据缺失)
-# [TESTS] tests/backtest/test_c4_batch_smoke.py; tests/backtest/test_c4_deflated_sharpe_runner.py; tests/backtest/test_c4_auto_oos.py; tests/backtest/test_c4_limit_gate.py（S1-A8 裁定 2026-09-17：原锚 test_c4_engine.py 从未存在于 git 历史=幽灵引用，改锚真实守护件）
+# [TESTS] tests/research/backtest/test_c4_batch_smoke.py; tests/research/backtest/test_c4_deflated_sharpe_runner.py; tests/research/backtest/test_c4_auto_oos.py; tests/research/backtest/test_c4_limit_gate.py; tests/research/backtest/test_c4_engine_gpu_wiring.py（S1-A8 裁定 2026-09-17：原锚 test_c4_engine.py 从未存在于 git 历史=幽灵引用，改锚真实守护件；2026-10-12 st-gpux3-20261012 复正：四条锚点仍写迁移前 tests/backtest/ 旧根，该目录 2026-10-04 已被清空，真身=tests/research/backtest/，并补本件 B2 驻留的直接守护件 test_c4_engine_gpu_wiring）
 # [A_module] module_id=MOD-BT-039 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """C4 批量翻译共享引擎——数据装载+统一回测+Deflated Sharpe。
@@ -123,6 +123,34 @@ def _vwap_from_amount_volume(
 _SEAL_MASK_CACHE: OrderedDict[tuple, tuple[pd.DataFrame, pd.DataFrame]] = OrderedDict()
 _SEAL_MASK_CACHE_MAX = 6
 _SEAL_MASK_LOCK = threading.Lock()
+
+# ── B2 设备驻留缓存（st-gpux3-20261012；据=03 件 §十二·B①"元数据随设备数组走"＋§十一·F⑥
+#  比值"两张稠密 (970,5217) float64 的上传占设备 bt 核 63%（无负载）／71%（有负载）"）──
+# 靶：设备臂每格都把价格面板（随宇宙变，批级常量）与封板掩码（随(窗,列集)变，批级常量）
+# 各重上一遍卡。上/下卡是整幅字节搬运、中间零运算 ⇒ 常驻化＝记忆化同一调用的结果，
+# 逐位不变（这不是归约改动，是搬运改动；11 格形态理应一字不动，动了就是我引入了语义差）。
+# 键纪律：内容派生键＋**命中时再核宿主对象身份**（value[0] is frame）。既有 `_dev_panel`
+# 的 id() 键不持宿主引用——宿主被 GC 后 id 可复用＝脏命中（在册风险面）；本缓存把宿主引用
+# 随值一起存（pin 住⇒id 不可能被复用）＋身份等值判定，两条都堵。
+# 容量：整清式（同 _dev_panel 的批轮换语义），显存峰值≈8×(38.6MB 价格＋10MB 掩码)≈0.4GB。
+# 失败面：MemoryError ⇒ 整清＋本格回逐格上传（＝改动前行为），计数出声，禁静默少省。
+_DEV_RESIDENCY: OrderedDict[tuple, tuple[Any, tuple[Any, ...]]] = OrderedDict()
+_DEV_RESIDENCY_MAX = 8
+_DEV_RESIDENCY_STATS: dict[str, int] = {"px_hit": 0, "px_put": 0, "mask_hit": 0, "mask_put": 0, "mem_clear": 0}
+#: 驻留总闸（与执行器 `_RESIDENCY_OFF_FOR_AB` 同步置位，缺一半就出"对照臂不干净"的假 A/B：
+#: 载体关了而价格/掩码常驻还开着 ⇒ "改动前"臂已经吃了 B2 的一半收益，跨臂差被读成噪声）。
+#: 缺省 True=生产认证面（engine 显式 gpu 且 eval 上卡）开全；非驻留路径由调用方置 False。
+_DEV_RESIDENCY_ENABLED: bool = True
+
+
+def set_dev_residency_enabled(on: bool) -> None:
+    """置驻留总闸并清缓存（关闭时清=不留上一形态的驻留件，避免混态读数）。"""
+    global _DEV_RESIDENCY_ENABLED
+    _DEV_RESIDENCY_ENABLED = bool(on)
+    if not on:
+        _DEV_RESIDENCY.clear()
+    _DEV_RESIDENCY_STATS["enabled"] = int(bool(on))
+
 
 # 最近一次窗口宇宙加载的披露（E4 retrofit：幸存者偏差可见化，禁静默）
 _UNIVERSE_DISCLOSURE: dict | None = None
@@ -538,6 +566,13 @@ _GUARD_SMALL_PANEL: str = "auto_guard_below_min_cells"
 _GUARD_INELIGIBLE: str = "fastpath_ineligible"
 _LAST_BACKEND_GUARD: dict[str, str] = {"backend": "cpu", "guard_reason": ""}
 
+# B2 驻留态下 hold_days_pct 的唯一出口（与 _LAST_BACKEND_GUARD 同一条纪律：同步执行流内
+# 紧邻消费，无跨线程读；_backtest_core_gpu 每次调用都覆写，绝不残留上格值）。
+# 为什么走侧信道而不加 _backtest_core 的返回元数：test_gpu_core_parity:82 与
+# test_ibt_d01_cost_caliber_redproofs:59 两处外部直调按 (gross, turnover) 解包，
+# 改元数=把它们打成崩点；本位只在驻留格非空，主机格恒 None（消费端回原式）。
+_LAST_GPU_HOLD_DAYS: dict[str, float | None] = {"hold_days_pct": None}
+
 
 def _resolve_engine_backend(backend: str | None) -> str:
     """后端解析（委托 gpu_core.resolve_backend：显式入参 > env ZEPHYR_COMPUTE_BACKEND > auto）。
@@ -564,26 +599,97 @@ def _gpu_fastpath_eligible(weights: pd.DataFrame, px_close: pd.DataFrame) -> boo
     return len(weights.index) > 0 and weights.index.equals(px_close.index) and weights.columns.equals(px_close.columns)
 
 
+def _dev_resident(kind: str, host_ref: Any, xp: Any, build: Any) -> tuple[Any, ...] | None:
+    """批级设备面板缓存：同 (kind, 窗口, 列首尾) 且**宿主对象身份相同**即命中，免整幅 H2D。
+
+    命中判据含 `ent[0] is host_ref`——内容键相同而宿主不同（如价格面板与执行价面板同窗同列）
+    时重建而非脏命中；宿主引用随值同存即 pin 住，杜绝 id() 复用那一类脏命中。
+    build() 抛 MemoryError ⇒ 整清＋返回 None＝本格回逐格上传（改动前行为），出声计数不静默。
+    """
+    if host_ref is None or xp is None:
+        return None
+    # 键面按"有什么用什么"：价格面板是 DataFrame（有标签），掩码既可以是 DataFrame
+    # 也可以是裸 ndarray（配对测试的合成注入就是 ndarray，`_synthetic()` 返回掩码数组）——
+    # 一律取 .index 会把那条既有通路打死。真正的防脏命中靠命中时的宿主身份判定，
+    # 内容键只是查找入口，退化到 shape 不降低安全性。
+    shape = tuple(host_ref.shape)
+    if hasattr(host_ref, "index") and hasattr(host_ref, "columns") and len(host_ref.columns) > 0:
+        idx, cols = host_ref.index, host_ref.columns
+        if len(idx) == 0:
+            return None
+        key = (kind, shape, str(idx[0]), str(idx[-1]), str(cols[0]), str(cols[-1]))
+    else:
+        key = (kind, shape)
+    ent = _DEV_RESIDENCY.get(key)
+    if ent is not None and ent[0] is host_ref:
+        _DEV_RESIDENCY_STATS[f"{kind}_hit"] += 1
+        return ent[1]
+    try:
+        val = build()
+    except MemoryError:
+        _DEV_RESIDENCY.clear()
+        _DEV_RESIDENCY_STATS["mem_clear"] += 1
+        return None
+    if len(_DEV_RESIDENCY) >= _DEV_RESIDENCY_MAX:
+        _DEV_RESIDENCY.clear()  # 批轮换/宇宙切换=旧键失效，整清最省（同 _dev_panel 语义）
+    _DEV_RESIDENCY[key] = (host_ref, val)
+    _DEV_RESIDENCY_STATS[f"{kind}_put"] += 1
+    return val
+
+
 def _backtest_core_gpu(
-    weights: pd.DataFrame, px_close: pd.DataFrame, gate_limits: bool, backend: str | None
+    weights: pd.DataFrame | Any, px_close: pd.DataFrame, gate_limits: bool, backend: str | None
 ) -> tuple[pd.Series, pd.Series]:
     """GPU 张量核薄封装：掩码原料（CH 查询）留在本件，gpu_core 只吃等形数组。
 
     掩码 None 语义：gate_limits=False=fail-open 全 False（gpu_core 同态）；闸原料 CH
     不可得=_load_seal_masks 返回全 False 宽表（fail-open 如实），语义与原路径一致。
     返回 Series 与原路径同构（index=weights.index，float64）。
-    """
-    from zephyr.backtest.gpu_core import tensor_core
 
+    B2 驻留面（缺省关：入参仍是主机 DataFrame 时逐字节走改动前形态）：
+      · `weights` 为 DevicePanel ⇒ 设备数组＋随行列表签一起进来，`_as_f64_2d` 同 buffer 直通
+        （§十二·B① 实测零拷贝已成立），本格不再出现 38.6MB 的 D2H→H2D 来回；
+      · 价格面板与封板掩码按批级常驻（`_dev_resident`），逐格整幅上传降为一次；
+      · 驻留态下 stats 唯一吃全量矩阵的位 `hold_days_pct` 改由核内行归约给出（见
+        gpu_core.tensor_core 的 want_hold_days 注），经 `_LAST_GPU_HOLD_DAYS` 紧邻消费
+        （同 `_LAST_BACKEND_GUARD` 的"同步执行流内无跨线程读"纪律）。
+    """
+    from zephyr.backtest.gpu_core import DevicePanel, device_module, tensor_core
+
+    resident = isinstance(weights, DevicePanel)
+    xp = device_module()
     masks = _load_seal_masks(weights.index, weights.columns) if gate_limits else None
+    px_in: Any = px_close
+    if xp is not None and _DEV_RESIDENCY_ENABLED:
+        # 价格面板与掩码的批级常驻也归同一闸——对照臂（驻留关）必须连这一半也不吃，
+        # 否则"改动前"已含 B2 一半收益，跨臂差就量不出驻留到底改了什么。
+        # _dev_resident 的值契约=**设备对象元组**（掩码两位同键共驻留）；单面板也必须包成 1-元组，
+        # 否则下面 px_dev[0] 取到的是数组的首行而不是数组本身（ndim=1，被 _as_f64_2d 硬拦）。
+        px_dev = _dev_resident("px", px_close, xp, lambda: (xp.asarray(px_close.to_numpy(dtype=np.float64)),))
+        if px_dev is not None:
+            px_in = px_dev[0]
+        if masks is not None:
+            mk_dev = _dev_resident(
+                "mask",
+                masks[0],
+                xp,
+                lambda: (
+                    xp.asarray(np.asarray(masks[0], dtype=bool)),
+                    xp.asarray(np.asarray(masks[1], dtype=bool)),
+                ),
+            )
+            if mk_dev is not None:
+                masks = mk_dev
     res = tensor_core(
         weights,
-        px_close,
+        px_in,
         gate_masks=masks,
         slippage_bps=(SLIPPAGE_BP,),
         gate_limits=gate_limits,
         backend=backend,
+        want_hold_days=resident,
     )
+    _LAST_GPU_HOLD_DAYS["hold_days_pct"] = res.get("hold_days_pct") if resident else None
     gross = pd.Series(res["gross"], index=weights.index, dtype=float)
     turnover = pd.Series(res["turnover"], index=weights.index, dtype=float)
     return gross, turnover
@@ -598,6 +704,28 @@ def prep_px_tensor(weights_index: pd.DatetimeIndex, px_close: pd.DataFrame) -> t
     closes = px_close.reindex(weights_index.union(weights_index)).ffill()
     rets = closes.pct_change()
     return closes, rets
+
+
+def _materialize_for_host(weights: Any, reason: str) -> Any:
+    """DevicePanel 落回主机路径的唯一物化口——**出声计数**，禁静默。
+
+    驻留一旦在这里破产，刚省下的那次 38.6MB D2H 就又付了一遍（改动前后同价），
+    账面必须看得见：计数进 `_DEV_RESIDENCY_STATS["host_materialize:<reason>"]`，
+    由 `residency_stats()` 出仓（执行器折进 summary 的驻留面）。
+    """
+    from zephyr.backtest.gpu_core import DevicePanel
+
+    if not isinstance(weights, DevicePanel):
+        return weights
+    key = f"host_materialize:{reason}"
+    _DEV_RESIDENCY_STATS.setdefault(key, 0)
+    _DEV_RESIDENCY_STATS[key] += 1
+    return weights.to_host_frame()
+
+
+def residency_stats() -> dict[str, int]:
+    """本进程设备驻留计数器（只读快照；执行器 summary/日志消费，禁另抄一份判据）。"""
+    return dict(_DEV_RESIDENCY_STATS)
 
 
 def _backtest_core(
@@ -623,6 +751,9 @@ def _backtest_core(
     （GPU 核仅 close 等形面），缺 px_exec=ValueError（禁静默回落）。
     L2-B：实际后端与守卫判定记入 _LAST_BACKEND_GUARD（消费见 _stats_from_net 的
     backend/guard_reason 披露键；同步执行流内紧邻消费，无跨线程读）。
+    weights 可为 gpu_core.DevicePanel（B2 驻留：eval 产物不回主机直供本核）——仅设备快路径
+    原样吃它；任一主机分支（exec_caliber≠close／非等形／小面板守卫／cpu 后端）都经
+    `_materialize_for_host` 物化并计数，禁静默把省下的往返又付回去。
     """
     if exec_caliber != "close":
         if exec_caliber not in _VALID_EXEC_CALIBERS:
@@ -630,6 +761,7 @@ def _backtest_core(
         if px_exec is None:
             raise ValueError(f"exec_caliber={exec_caliber} 需执行价宽表 px_exec（禁静默回落 close）")
         _LAST_BACKEND_GUARD.update(backend="cpu", guard_reason=_GUARD_EXEC_CALIBER)
+        weights = _materialize_for_host(weights, _GUARD_EXEC_CALIBER)
         px_x = px_exec.reindex(weights.index.union(weights.index)).ffill()
         w = weights.reindex(px_x.index).ffill().fillna(0.0)
         w = apply_fillability_gate(w, gate_limits=gate_limits)
@@ -650,6 +782,9 @@ def _backtest_core(
         _LAST_BACKEND_GUARD.update(backend="cpu", guard_reason=_GUARD_INELIGIBLE)
     else:
         _LAST_BACKEND_GUARD.update(backend="cpu", guard_reason="")
+    # 走到这里=主机张量路：驻留载体必须物化回宽表（下面的 reindex/ffill 是 pandas 语义），
+    # 且**必须出声**——这一格等于没省下 D2H，计数进 residency_stats() 的 host_materialize:* 键。
+    weights = _materialize_for_host(weights, _LAST_BACKEND_GUARD["guard_reason"] or "host_path")
     if pre_tensor is not None:
         closes, rets = pre_tensor
     else:
@@ -704,14 +839,43 @@ def _net_line(
     return gross - turnover * (cost_model.round_trip_bps(slippage_bp=slippage_bp)) / 10000.0
 
 
+def _host_hold_days(weights: pd.DataFrame) -> float:
+    """主机原式（未取整）——设备驻留位的对拍参照，也是 stats 主机路径的算式本体。"""
+    return float((weights.sum(axis=1) > 0).mean())
+
+
+def _hold_days_value(carrier: Any, provided: float | None) -> float:
+    """驻留格的 hold_days_pct 取数：只认核内值，缺失即炸不代算。
+
+    这里**不做**"拿不到就物化回主机补算"的兜底——那正是 §十二·B③ 点名的"把往返搬到别处"，
+    而且账面看着省了、实际没省（静默降级家族）。宁可整袋红。
+    """
+    if provided is None:
+        raise ValueError(
+            f"DevicePanel 入参缺核内 hold_days_pct（carrier.shape={getattr(carrier, 'shape', None)}）："
+            "检查调用链是否绕过 _backtest_core_gpu 的 want_hold_days 支路"
+        )
+    return float(provided)
+
+
 def _stats_from_net(
-    net: pd.Series, turnover: pd.Series, weights: pd.DataFrame, *, backend_info: dict[str, str] | None = None
+    net: pd.Series,
+    turnover: pd.Series,
+    weights: pd.DataFrame | Any,
+    *,
+    backend_info: dict[str, str] | None = None,
+    hold_days_pct: float | None = None,
 ) -> dict[str, Any]:
     """net/turnover→stats 摘要（run_backtest/run_backtest_full/run_backtest_full_with_tiers
     三处同式收敛一处，内收声明；表达式同序同精度=逐位一致）。
     backend_info（L2-B 守卫披露）：传 _LAST_BACKEND_GUARD 时 stats 增 backend/guard_reason
     两键（backend=实际后端 gpu|cpu；guard_reason=守卫结构化原因码，空=未介入）——
-    消费方=factory manifest backend/degrade 列；缺省 None=不增键（纯函数兼容存量直调）。"""
+    消费方=factory manifest backend/degrade 列；缺省 None=不增键（纯函数兼容存量直调）。
+    hold_days_pct（B2 驻留）：weights 为主机宽表时**恒不传**，本函数按原式就地算（一字未动）；
+    weights 为 DevicePanel（矩阵不回主机）时必须由调用方从 _LAST_GPU_HOLD_DAYS 递来核内值，
+    缺失=ValueError（禁静默回主机物化——那等于把刚省下的 38.6MB 再搬一遍而账面看不见）。"""
+    from zephyr.backtest.gpu_core import DevicePanel
+
     equity = (1.0 + net).cumprod()
     years = max(len(net) / 244.0, 1e-9)
     sharpe = float(net.mean() / net.std() * np.sqrt(244)) if net.std() > 0 else 0.0
@@ -723,7 +887,11 @@ def _stats_from_net(
         "max_drawdown": round(mdd, 4),
         "avg_turnover_1side": round(float(turnover.mean()), 4),
         "equity_final": round(float(equity.iloc[-1]), 4),
-        "hold_days_pct": round(float((weights.sum(axis=1) > 0).mean()), 3),
+        "hold_days_pct": (
+            _hold_days_value(weights, hold_days_pct)
+            if isinstance(weights, DevicePanel)
+            else round(float((weights.sum(axis=1) > 0).mean()), 3)
+        ),
     }
     if backend_info is not None:
         stats["backend"] = backend_info.get("backend", "cpu")
@@ -764,7 +932,9 @@ def run_backtest(
         px_exec=px_exec,
     )
     net = _net_line(gross, turnover, slippage_bp)
-    return _stats_from_net(net, turnover, weights, backend_info=_LAST_BACKEND_GUARD)
+    return _stats_from_net(
+        net, turnover, weights, backend_info=_LAST_BACKEND_GUARD, hold_days_pct=_LAST_GPU_HOLD_DAYS["hold_days_pct"]
+    )
 
 
 def daily_net_returns(
@@ -825,7 +995,9 @@ def run_backtest_full(
         px_exec=px_exec,
     )
     net = _net_line(gross, turnover, slippage_bp)
-    return _stats_from_net(net, turnover, weights, backend_info=_LAST_BACKEND_GUARD), net.fillna(0.0)
+    return _stats_from_net(
+        net, turnover, weights, backend_info=_LAST_BACKEND_GUARD, hold_days_pct=_LAST_GPU_HOLD_DAYS["hold_days_pct"]
+    ), net.fillna(0.0)
 
 
 def run_backtest_full_with_tiers(
@@ -855,7 +1027,9 @@ def run_backtest_full_with_tiers(
         px_exec=px_exec,
     )
     net = _net_line(gross, turnover, None)
-    stats = _stats_from_net(net, turnover, weights, backend_info=_LAST_BACKEND_GUARD)
+    stats = _stats_from_net(
+        net, turnover, weights, backend_info=_LAST_BACKEND_GUARD, hold_days_pct=_LAST_GPU_HOLD_DAYS["hold_days_pct"]
+    )
     nets_by_tier = {float(bp): _net_line(gross, turnover, bp).fillna(0.0) for bp in slippage_bps}
     return stats, net.fillna(0.0), nets_by_tier
 

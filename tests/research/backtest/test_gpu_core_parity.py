@@ -210,3 +210,119 @@ def test_output_shape_and_backend_label():
     out = gpu_core.tensor_core(w_df, px_df, gate_masks=masks, backend="cpu")
     assert out["gross"].shape == (T,) and out["turnover"].shape == (T,)
     assert float(_c4_engine.SLIPPAGE_BP) in out["nets"]
+
+
+# ——— 8. B2 设备驻留（st-gpux3-20261012）：载体直通＋hold_days 两面逐位等 ———
+# 本节的**唯一断言对象**="驻留是纯数据搬运，不改任何数值"。它必须能红：
+# 9.1 的失焦对照故意把 `> 0` 写成 `>= 0`、把 NaN 留成 NaN，用例集须翻出差异，
+#     否则本节只是一条恒绿装饰（在册教训：判通过的尺须先证明能红）。
+
+_HOLD_FRAMES: tuple[str, ...] = (
+    "top_n_equal_nan",  # 最贴生产：每行 top_n 个 1/top_n，其余 NaN
+    "all_nan_rows",  # 全 NaN 行（pandas skipna→0.0 不 >0）
+    "all_zero_rows",  # 和恰为 0 的边界
+    "denormal_positive",  # 下溢量级正项
+    "signed_weights",  # 带符号权重（抽掉"非负⇒求和序无关"这条便利前提仍须同解）
+)
+# 不设 inf 用例：权重是 ≤cap 的分数，inf 在生产形状里不可产生，而它触发的 RuntimeWarning
+# 落在 gross/turnover 路径（inf-inf），与本节要断言的 hold_days 无关——用本仓
+# filterwarnings=error 下会红的用例去测另一个位＝测的不是想测的东西（禁造第二病）。
+
+
+def _hold_frame_sets() -> dict[str, pd.DataFrame]:
+    idx = pd.date_range("2020-01-01", periods=T, freq="B")
+    cols = pd.Index([f"{600000 + i:06d}" for i in range(S)])
+    rng = np.random.default_rng(20261012)
+    base = np.full((T, S), np.nan)
+    for i in range(T):
+        base[i, rng.choice(S, size=max(1, S // 5), replace=False)] = 1.0 / max(1, S // 5)
+    out: dict[str, np.ndarray] = {"top_n_equal_nan": base}
+    m = base.copy()
+    m[::7] = np.nan
+    out["all_nan_rows"] = m
+    m = base.copy()
+    m[::5] = 0.0
+    out["all_zero_rows"] = m
+    out["denormal_positive"] = np.where(rng.random((T, S)) < 0.3, rng.random((T, S)) * 5e-320, np.nan)
+    out["signed_weights"] = np.where(rng.random((T, S)) < 0.5, rng.normal(0.0, 1.0, (T, S)), np.nan)
+    return {k: pd.DataFrame(v, index=idx, columns=cols) for k, v in out.items()}
+
+
+def _px_for(frame: pd.DataFrame) -> pd.DataFrame:
+    """同形价格面板（本测试只取 hold_days 一路，闸关，值不参与该位）。"""
+    mat = np.where(np.isnan(frame.to_numpy()), np.nan, 100.0)
+    return pd.DataFrame(mat, index=frame.index, columns=frame.columns)
+
+
+@pytest.mark.parametrize(
+    "be",
+    ["cpu", pytest.param("gpu", marks=[pytest.mark.skipif(not gpu_core.gpu_available(), reason="cupy/CUDA 不可用")])],
+)
+@pytest.mark.parametrize("name", _HOLD_FRAMES)
+def test_hold_days_device_matches_host_formula(name: str, be: str):
+    """核内行归约 vs 引擎主机原式——同一取整位上逐格等（stats 落 manifest 的就是这个值）。"""
+    frame = _hold_frame_sets()[name]
+    host = _c4_engine._host_hold_days(frame)
+    out = gpu_core.tensor_core(frame, _px_for(frame), gate_limits=False, backend=be, want_hold_days=True)
+    assert round(float(out["hold_days_pct"]), 3) == round(host, 3), (name, be, host, out["hold_days_pct"])
+
+
+def test_hold_days_ruler_has_teeth():
+    """失焦对照：两条"错式"必须在本用例集上翻红，否则第 8 节是恒绿装饰。"""
+    sets = _hold_frame_sets()
+    ge_variant = {"all_zero_rows", "all_nan_rows"}  # >=0 会把"无持仓行"读成持仓
+    nan_keep = {"all_nan_rows"}  # NaN 不置零会把全 NaN 行读成持仓
+    seen_ge, seen_nan = set(), set()
+    for name, frame in sets.items():
+        vals = frame.to_numpy()
+        host = _c4_engine._host_hold_days(frame)
+        v_ge = float((frame.sum(axis=1) >= 0).mean())
+        v_nan = float(((vals**0).sum(axis=1) > 0).mean())  # NaN**0=1 ⇒ 全 NaN 行被计入
+        if round(v_ge, 3) != round(host, 3):
+            seen_ge.add(name)
+        if round(v_nan, 3) != round(host, 3):
+            seen_nan.add(name)
+    assert seen_ge & ge_variant, f">=0 错式未翻红＝比较器无判别力: {seen_ge}"
+    assert seen_nan & nan_keep, f"NaN 不置零错式未翻红＝比较器无判别力: {seen_nan}"
+
+
+@pytest.mark.skipif(not gpu_core.gpu_available(), reason="cupy/CUDA 不可用")
+def test_device_panel_unwraps_to_same_buffer_and_keeps_labels():
+    """载体直通=零拷贝（§十二·B① 的在册结论从此由测试钉住，不再靠口头）。"""
+    cp = gpu_core.device_module()
+    assert cp is not None
+    arr = cp.zeros((T, S), dtype=cp.float64)
+    idx, cols = pd.date_range("2020-01-01", periods=T), pd.Index([f"{i:06d}" for i in range(S)])
+    panel = gpu_core.DevicePanel(arr, idx, cols)
+    assert gpu_core._as_f64_2d(panel, cp).data.ptr == arr.data.ptr
+    assert panel.shape == (T, S) and panel.size == T * S
+    host = panel.to_host_frame()
+    assert host.index.equals(idx) and host.columns.equals(cols)
+
+
+@pytest.mark.skipif(not gpu_core.gpu_available(), reason="cupy/CUDA 不可用")
+def test_backtest_core_gpu_carrier_path_matches_host_frame_bitwise():
+    """B2 主断言的单元形态：同数值经载体进 vs 经宽表进 ⇒ (gross, turnover) 与 hold_days 逐位等。
+
+    价格/掩码常驻在两次调用间会命中缓存，正是"第二次调用不该改变任何数值"这条要钉的东西。
+    """
+    w_df, px_df, masks = _synthetic()
+    orig = _c4_engine._load_seal_masks
+    _c4_engine._load_seal_masks = lambda i, c: (masks[0], masks[1])  # type: ignore[method-assign]
+    try:
+        cp = gpu_core.device_module()
+        panel = gpu_core.DevicePanel(cp.asarray(w_df.to_numpy(dtype=np.float64)), w_df.index, w_df.columns)
+        g_host, t_host = _c4_engine._backtest_core_gpu(w_df, px_df, True, "gpu")
+        h_host = _c4_engine._host_hold_days(w_df)
+        _c4_engine._LAST_GPU_HOLD_DAYS["hold_days_pct"] = None
+        g_dev, t_dev = _c4_engine._backtest_core_gpu(panel, px_df, True, "gpu")
+        h_dev = _c4_engine._LAST_GPU_HOLD_DAYS["hold_days_pct"]
+        assert np.array_equal(g_host.to_numpy(), g_dev.to_numpy())
+        assert np.array_equal(t_host.to_numpy(), t_dev.to_numpy())
+        assert round(float(h_dev), 3) == round(h_host, 3)
+        st = _c4_engine._stats_from_net(g_dev, t_dev, panel, hold_days_pct=h_dev)
+        assert st["hold_days_pct"] == round(h_host, 3)
+        with pytest.raises(ValueError, match="hold_days_pct"):
+            _c4_engine._stats_from_net(g_dev, t_dev, panel, hold_days_pct=None)
+    finally:
+        _c4_engine._load_seal_masks = orig  # type: ignore[method-assign]

@@ -6,12 +6,12 @@
 # [STARTUP] manual
 # [MATURITY] experimental
 # [INVARIANTS] schema 一次定型（config/position_recipe_grid_schema.yaml 唯一真源，禁删维）；抽样完整性 100%（抽了必跑，禁截断）；每 recipe 带出生证+degraded 标记；阴性记录 MUST 带死亡层+死因否则校验拒绝；回测口径=冻结土规 T+1（引擎复用零重实现）；行业真源=sws2021_l1（schema industry_anchor）；降级取值必须标 degraded（结构知识阶段剔除，禁静默）
-# [MODIFY-GUARD] tests/backtest/test_factory_grid_executor.py
+# [MODIFY-GUARD] tests/research/backtest/test_factory_grid_executor.py
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError(数据缺失/求值失败)；ValueError(schema/契约非法)
-# [TESTS] tests/backtest/test_factory_grid_executor.py
+# [TESTS] tests/research/backtest/test_factory_grid_executor.py
 # [A_module] module_id=MOD-BT-196 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """F-06 组合层穷尽网格——批次 A 普查执行器（MOD-BT-196）。
@@ -144,6 +144,11 @@ _EVAL_BACKEND: str = "cpu"
 #: λ 段在主机 trigger 之后回灌卡上做（H2D 一次 ~0.3ms 换 pandas 一段 ~28ms）。
 #: 独立开关的理由同施工单 §四 7：出问题能单关，不牵动已判绿的逐格设备路径。
 _EVAL_GLUE_GPU: bool = False
+#: B2 设备驻留的同进程 A/B 手柄（**不是产品开关**，生产侧恒 False 无人改）。
+#: 存在理由=铁律要求"改动前后逐格报形态"，而单价绝对值禁跨时刻比（§十一·F③⑤）——
+#: 只有在一个进程、一份数据态里连出"驻留关/驻留开"两臂，才能把"驻留是纯搬运、
+#: 逐位不变"这句证成。尺=.runtime/tmp/st-gpux3-20261012/b2_residency_floor.py。
+_RESIDENCY_OFF_FOR_AB: bool = False
 #: 设备面分流计数（观测面，不进 manifest 判据列；summary.eval_gpu 仅在非 cpu 时出现）
 _EVAL_GPU_STATS: dict[str, int] = {
     "prefix_gpu": 0,
@@ -162,6 +167,11 @@ _EVAL_GPU_STATS: dict[str, int] = {
     "glue_gpu_inline": 0,
     "glue_gpu_reupload": 0,
     "glue_gpu_failed": 0,
+    # B2 设备驻留三面出口（同样逐出口独立计数：驻留成／驻留后又物化回／根本没驻留，
+    # 三态在墙钟上同形，只报总数就会把"一个都没省"读成"都省了"——静默降级家族）
+    "cell_resident": 0,
+    "cell_resident_materialized": 0,
+    "cell_resident_kept_cpu": 0,
 }
 #: 逐路显存预算缓存（None=未读；0=册无该键→不设闸并计数出声，见 _vram_per_path_budget_mib）
 _VRAM_BUDGET_MIB: int | None = None
@@ -1167,7 +1177,20 @@ def _cap_lambda_via_device(w: pd.DataFrame, cap_val: float, lam_val: float, xp, 
     return pd.DataFrame(xp.asnumpy(out), index=w.index, columns=w.columns)
 
 
-def _cell_eval_gpu(v, dev_pair, combined, effective_n, cap_val, cols, vol20, mkt_cap_w, rets60_mean, rets60_var, xp):
+def _cell_eval_gpu(  # noqa: long-param-list  存量函数签名（11 参→本袋加 resident=12 参；参数对象重构归批F账，同 evaluate_recipe 案）
+    v,
+    dev_pair,
+    combined,
+    effective_n,
+    cap_val,
+    cols,
+    vol20,
+    mkt_cap_w,
+    rets60_mean,
+    rets60_var,
+    xp,
+    resident: bool = False,
+):
     """单格定尺寸链上卡（T0 实测=eval 秒数的 60.4% 落在这一面）。失败/不可用返回 None。
 
     串行步由核内 host_continue 出声，本函数用**原 pandas 函数**续跑 trigger→cap 全序；
@@ -1213,14 +1236,27 @@ def _cell_eval_gpu(v, dev_pair, combined, effective_n, cap_val, cols, vol20, mkt
             r60_var=rv,
             backend="gpu",
             glue_gpu=glue,
+            resident=resident,
         )
     except Exception as exc:  # noqa: BLE001 — 算力面异常一律回原路，禁半成品出分
         _instr_warn("cell_eval_gpu", exc)
         return None
-    w = pd.DataFrame(np.asarray(out["weights"]), index=combined.index, columns=combined.columns)
     _EVAL_GPU_STATS["cell_gpu"] += 1
     if out.get("glue_lambda"):
         _EVAL_GPU_STATS["glue_gpu_inline"] += 1
+    if resident and out.get("resident") and not out["host_continue"]:
+        # B2 驻留出口（三条件同时成立才走）：调用方要驻留／核确在卡上产数／该格无卡未覆盖
+        # 的串行步。产出=DevicePanel（设备数组＋随行 index/columns），本格零 D2H。
+        _EVAL_GPU_STATS["cell_resident"] += 1
+        return gc.DevicePanel(out["weights"], combined.index, combined.columns)
+    # 其余一律物化回宽表＝改动前形态；核若已在卡上则这次 D2H 是必付项，单独计数不混账。
+    if resident:
+        _EVAL_GPU_STATS["cell_resident_materialized" if out.get("resident") else "cell_resident_kept_cpu"] += 1
+    w = pd.DataFrame(
+        gc._to_numpy(out["weights"]) if out.get("resident") else out["weights"],
+        index=combined.index,
+        columns=combined.columns,
+    )
     if out["host_continue"]:
         _EVAL_GPU_STATS["cell_host_continue"] += 1
         w = _apply_freq_trigger(w, v["D1_rebalance_freq"], v["D2_rebalance_trigger"])
@@ -1252,8 +1288,16 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
     combine_cache: dict | None = None,
     j_schedule: pd.DataFrame | None = None,
     sector_ctx: dict | None = None,
+    device_out: bool = False,
 ) -> tuple[pd.DataFrame, tuple[str, ...]]:
     """recipe → (weights 宽表, degraded 维元组)。求值失败抛 RuntimeError（fail-closed，调用方记阴性）。
+
+    device_out（B2 设备驻留，缺省 False=**返回型与今日逐字节同**）：True 时，凡设备臂一路
+    做完、无卡外串行步的格，返回 `gpu_core.DevicePanel`（设备数组＋随行 index/columns），
+    下游 `_c4_engine` 直接吃它，本格不再付 38.6MB 的 D2H→H2D 来回。
+    缺省必须留 False：本函数有三个**外部直调方**无条件要主机全量宽表
+    （f06_e4_wfa_exam.py 的 .loc 切片＋拼接、t1_t2_handover.py、calibrate_cost_tier_redblue.py），
+    改返回型=把它们打成静默错读；驻留只在 run_batch 侧按臂开启。
 
     combine_cache（T2c）: 按 (G,A1,A2) prefix 复用 combined 截面+rank——同 prefix 格点
     的 normalize/combine 输入确定则输出确定（industry_map/mkt_cap_w 批内恒定），rank 仅
@@ -1364,7 +1408,18 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
         # 等形守卫：pandas 的 base*mkt_cap_w 会按索引/列并集扩张，索引不等形时设备逐格
         # 乘算与它不同解——不等形即整格回原路（_c4_engine 等形资格守卫同族纪律）
         weights = _cell_eval_gpu(
-            v, dev_pair, combined, effective_n, cap_val, cols, vol20, mkt_cap_w, rets60_mean, rets60_var, xp
+            v,
+            dev_pair,
+            combined,
+            effective_n,
+            cap_val,
+            cols,
+            vol20,
+            mkt_cap_w,
+            rets60_mean,
+            rets60_var,
+            xp,
+            resident=device_out,
         )
         if weights is None:
             _EVAL_GPU_STATS["cell_cpu_kept"] += 1
@@ -2227,6 +2282,21 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     except ImportError:
         _gpu_resolve = None
     gpu_wave = _gpu_resolve is not None and _gpu_resolve(_wave_backend) == "gpu"
+    # B2 设备驻留（"把两个已在册的开关合起来"，据=03 件 §十一·F④ 末段＋§十二·B①）：
+    # 仅当 **eval 臂与 bt 臂都显式认证为 gpu** 时开启。auto/env 解析出的 gpu 不开——
+    # 驻留态下 bt 若被尺寸/等形守卫挡回主机路，要多付一次物化且账面更难判读；
+    # 缺省面（engine="auto"）恒 False＝生产形态逐字节不变（晨裁"只认证不动缺省"同条）。
+    # `_RESIDENCY_OFF_FOR_AB`＝同进程 A/B 手柄（不是产品开关）：B2 底尺必须在**一个进程、
+    # 一份数据态**里同时产出"驻留关"与"驻留开"两臂，才能把"逐位等"证成而不跨时刻比单价
+    # （§十一·F③⑤ 的时钟纪律；铁律尺 b2_residency_floor.py 靠它出 G2↔G3 对）。
+    # 生产侧恒 False，无人改它。
+    resident_wave = bool(gpu_wave and _wave_backend == "gpu" and not _RESIDENCY_OFF_FOR_AB)
+    try:
+        from _c4_engine import set_dev_residency_enabled as _set_res
+
+        _set_res(resident_wave)  # 闸关时同时清缓存=不留混态（对照臂必须连价格/掩码常驻也不吃）
+    except Exception as exc:  # noqa: BLE001 — 本件常被当顶层模块装载，取不到=沿用引擎缺省
+        _instr_warn("residency_gate_set", exc)
     compiler, schema_meta = _resolve_grid_schema(schema_path, freeze_dims)
     compile_ctx = {**DEFAULT_CONTEXT, **(context_overrides or {})}
     expansion = compiler.compile(compile_ctx)
@@ -2481,6 +2551,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                     combine_cache=combine_cache,
                     j_schedule=j_schedule,
                     sector_ctx=sector_ctx,
+                    device_out=resident_wave,
                 )
             )
         except Exception as exc:  # noqa: BLE001
@@ -2720,6 +2791,21 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     if _EVAL_BACKEND != "cpu":
         # 观测面键（非判据面）：eval 上卡的分流计数；缺省 cpu 路不出此键=产物零漂移
         summary["eval_gpu"] = dict(_EVAL_GPU_STATS)
+        # B2 驻留面计数折进同一观测块（三态必须同表才看得见"驻留开了但没省"）：
+        # cell_resident=真省下的格数／cell_resident_materialized=驻留后又物化的格数／
+        # host_materialize:*=bt 侧守卫挡回主机的格数。全零而 resident_wave=True＝静默没省。
+        try:
+            from _c4_engine import residency_stats as _res_stats
+
+            from zephyr.backtest import gpu_core as _gc_sum
+
+            summary["resident"] = {
+                "wave_on": bool(resident_wave),
+                "bt": _res_stats(),
+                "engine_backend": _gc_sum.resolve_backend(_wave_backend),
+            }
+        except Exception as exc:  # noqa: BLE001 — 观测面缺失不得影响出分
+            summary["resident"] = {"wave_on": bool(resident_wave), "error": f"{type(exc).__name__}: {exc}"}
     if engine_degrade:
         # L2-C：GPU 波败 fail-closed 整波重跑 CPU 的披露键（空=未发生降级）
         summary["engine_degrade"] = engine_degrade
