@@ -1,13 +1,15 @@
 ttl: task_bound
 title: 全局试次预算册（设计稿 v1，N 账本之上的预算治理层）
 produced_by: scripts/backtest/statsgov_deflation_and_budget.py budget
-spec_source: docs\_working\statsgov_campaign\trial_budget_registry_draft.yaml
-spec_sha16: 786676134511e404
-as_of_source_mtime: '2026-10-12T20:42:33'
+spec_source: .worktrees/st-statsgov-20261012/docs/_working/statsgov_campaign/trial_budget_registry_draft.yaml
+spec_sha16: 1484f6837b05b89e
+as_of_source_mtime: '2026-10-12T23:36:08'
+as_of_newest_input_mtime: '2026-10-12T23:36:08'
+n_inputs_read: 110
 n_ledger_snapshot:
-  ledger_trials: 40730
-  ledger_runs: 77
-  known_floor: 40730
+  ledger_trials: 40732
+  ledger_runs: 79
+  known_floor: 40732
   n_trials_effective_disclosure_slot: 16
   read_error: ''
 unrecorded_grid_trials:
@@ -27,19 +29,22 @@ families:
     kind: ledger_kind
     pattern: null
     status: MEASURED
-    ledger_trials_in_ledger: 34
-    ledger_batches_in_ledger: 34
+    ledger_trials_in_ledger: 36
+    ledger_batches_in_ledger: 36
   - face: fexam_score_books
     kind: file_glob
     pattern: docs/_working/fexam/*exam*_v*.yaml
-    status: PARTIAL_MEASURED
+    status: MEASURED_CONSERVATIVE_PENDING_EXACT
     uncounted_files: []
+    conservative_estimate_files:
+    - docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml
+    - docs/_working/fexam/mom029_reexam_v2.yaml
     matched_count: 12
-    rows_measured: 569
+    rows_measured: 596
     count_notes:
-    - 'docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml :: COUNTED_AS_SINGLE_RECORD(原=KEY_ABSENT(chain=[''results'', ''batches'', ''exam_execution'', ''records'', ''families''];
-      top_keys)'
-    - 'docs/_working/fexam/mom029_reexam_v2.yaml :: COUNTED_AS_SINGLE_RECORD(原=KEY_ABSENT(chain=[''results'', ''batches'', ''exam_execution'', ''records'', ''families'']; top_keys)'
+    - 'docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml :: CONSERVATIVE_UPPER_BOUND(key_used=p_t_bearing_test_records;chain_tried=[''results'', ''batches'', ''exam_execution'',
+      ''records'
+    - 'docs/_working/fexam/mom029_reexam_v2.yaml :: CONSERVATIVE_UPPER_BOUND(key_used=prereg;chain_tried=[''results'', ''batches'', ''exam_execution'', ''records'', ''families''];pen'
     count_note_total: 2
     paths:
     - docs/_working/fexam/00_exam_campaign_summary_v1.yaml
@@ -59,6 +64,7 @@ families:
     pattern: docs/_working/mineloop_campaign/*exam_run*.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 7
     rows_measured: 1118
     count_notes: []
@@ -76,6 +82,7 @@ families:
     pattern: docs/_working/sector_line/exam/*.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 12
     count_notes: []
@@ -91,22 +98,23 @@ families:
     value: null
     unit: trials
     basis: 待裁——建议=全仓 A 族历史消耗 × 放大系数，系数由统筹定
-  cap_status: owner_signed_20261012_measurement_incomplete
-  consumption_from_ledger: 34
-  consumption_from_books_rows: 1699
+  cap_status: owner_signed_20261012_conservative_estimate_pending_exact_count
+  consumption_from_ledger: 36
+  consumption_from_books_rows: 1726
   faces_not_found: &id001 []
-  faces_partial_measured: &id002
-  - fexam_score_books
+  faces_partial_measured: &id002 []
   faces_unprobed:
   - pg_score_tables
   consumption_components:
-    ledger_by_kind: 34
+    ledger_by_kind: 36
     unrecorded_grid_on_disk: 0
-    book_rows_measured: 1699
-  consumption_total: 1733
+    book_rows_measured: 1726
+  consumption_total: 1762
   double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
-  transitional_cap_x1: 1733
-  cap_review_flag: 族面 ['fexam_score_books'] 为 PARTIAL_MEASURED（点名键不存在≠零消耗）⇒ 本帽只作下界，定稿前须先修 row_rule 复跑
+  transitional_cap_x1: 1762
+  faces_conservative_pending_exact: &id003
+  - fexam_score_books
+  cap_review_flag: 族面 ['fexam_score_books'] 用最大容器上界计入（宁高勿低，统筹批复），待精算＝逐册点名键补齐后复算终值；本帽可先用
 - family: B
   title_zh: 策略配方族
   object: F06 网格（名义空间 n_raw）、策略重考、codesym 策略、注册册策略、引擎层 strategy_id
@@ -122,6 +130,7 @@ families:
     pattern: data/strategy_intake/f06_survivors.csv
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 1
     count_notes: []
@@ -133,6 +142,7 @@ families:
     pattern: docs/_working/fexam/grid_strategy_oos_v1.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 12
     count_notes: []
@@ -144,6 +154,7 @@ families:
     pattern: docs/_working/fexam/strategy_exam_scores_v1.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 161
     count_notes: []
@@ -155,6 +166,7 @@ families:
     pattern: docs/_working/fexam/codesym_strategy_exam_v1.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 23
     count_notes: []
@@ -166,6 +178,7 @@ families:
     pattern: docs/_working/fexam/mom029_reexam_v2.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 6
     count_notes: []
@@ -191,8 +204,8 @@ families:
   cap_status: owner_signed_20261012
   consumption_from_ledger: 31959
   consumption_from_books_rows: 203
-  faces_not_found: &id003 []
-  faces_partial_measured: &id004 []
+  faces_not_found: &id004 []
+  faces_partial_measured: &id005 []
   faces_unprobed: []
   consumption_components:
     ledger_by_kind: 31959
@@ -201,6 +214,7 @@ families:
   consumption_total: 85252
   double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
   transitional_cap_x1: 85252
+  faces_conservative_pending_exact: &id006 []
   cap_review_flag: null
 - family: C
   title_zh: 组合/配置族
@@ -211,6 +225,7 @@ families:
     pattern: docs/_working/fexam/allocator_shadow_report_v1.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 5
     count_notes: []
@@ -222,6 +237,7 @@ families:
     pattern: docs/_working/fexam/exit_sim_report_v1.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 4
     count_notes: []
@@ -235,8 +251,8 @@ families:
   cap_status: owner_signed_20261012
   consumption_from_ledger: 0
   consumption_from_books_rows: 9
-  faces_not_found: &id005 []
-  faces_partial_measured: &id006 []
+  faces_not_found: &id007 []
+  faces_partial_measured: &id008 []
   faces_unprobed: []
   consumption_components:
     ledger_by_kind: 0
@@ -245,6 +261,7 @@ families:
   consumption_total: 9
   double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
   transitional_cap_x1: 9
+  faces_conservative_pending_exact: &id009 []
   cap_review_flag: null
 - family: D
   title_zh: 状态识别/环境族
@@ -255,6 +272,7 @@ families:
     pattern: docs/_working/fexam/state_recognizer_exam_v1.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 8
     count_notes: []
@@ -266,6 +284,7 @@ families:
     pattern: docs/_working/fexam/emotion_index_exam_v1.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 9
     count_notes: []
@@ -279,8 +298,8 @@ families:
   cap_status: owner_signed_20261012
   consumption_from_ledger: 0
   consumption_from_books_rows: 17
-  faces_not_found: &id007 []
-  faces_partial_measured: &id008 []
+  faces_not_found: &id010 []
+  faces_partial_measured: &id011 []
   faces_unprobed: []
   consumption_components:
     ledger_by_kind: 0
@@ -289,19 +308,24 @@ families:
   consumption_total: 17
   double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
   transitional_cap_x1: 17
+  faces_conservative_pending_exact: &id012 []
   cap_review_flag: null
 - family: E
   title_zh: 工程件族
   object: GPU 引擎达标考、判官路由审计复跑、成本模型假设双口径
   faces:
   - face: route_audit_replay
-    kind: dir_glob
+    kind: file_glob
     pattern: docs/_working/**/18_route_audit_replay*
-    status: NOT_FOUND
-    matched_count: 0
-    rows_measured: 0
-    count_basis: 一个匹配目录=一次可审计考/跑
-    paths: []
+    status: MEASURED
+    uncounted_files: []
+    conservative_estimate_files: []
+    matched_count: 1
+    rows_measured: 205
+    count_notes: []
+    count_note_total: 0
+    paths:
+    - docs/_working/mineloop_campaign/18_route_audit_replay.yaml
   - face: exam_run_archive
     kind: dir_glob
     pattern: data/backtest_artifacts/runs/*
@@ -326,18 +350,18 @@ families:
     basis: 待裁
   cap_status: owner_signed_20261012
   consumption_from_ledger: 0
-  consumption_from_books_rows: 194
-  faces_not_found: &id009
-  - route_audit_replay
-  faces_partial_measured: &id010 []
+  consumption_from_books_rows: 399
+  faces_not_found: &id013 []
+  faces_partial_measured: &id014 []
   faces_unprobed: []
   consumption_components:
     ledger_by_kind: 0
     unrecorded_grid_on_disk: 0
-    book_rows_measured: 194
-  consumption_total: 194
+    book_rows_measured: 399
+  consumption_total: 399
   double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
-  transitional_cap_x1: 194
+  transitional_cap_x1: 399
+  faces_conservative_pending_exact: &id015 []
   cap_review_flag: null
 - family: F
   title_zh: 挖矿器元层族
@@ -348,8 +372,9 @@ families:
     pattern: data/strategy_intake/*.csv
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 15
-    rows_measured: 5410
+    rows_measured: 5543
     count_notes: []
     count_note_total: 0
     paths:
@@ -373,6 +398,7 @@ families:
     pattern: docs/_working/fexam/paper_pool_v1.yaml
     status: MEASURED
     uncounted_files: []
+    conservative_estimate_files: []
     matched_count: 1
     rows_measured: 78
     count_notes: []
@@ -385,17 +411,18 @@ families:
     basis: 待裁——元层杠杆最高，建议帽最松但必须存在（无帽=不可审计扩张）
   cap_status: owner_signed_20261012
   consumption_from_ledger: 0
-  consumption_from_books_rows: 5488
-  faces_not_found: &id011 []
-  faces_partial_measured: &id012 []
+  consumption_from_books_rows: 5621
+  faces_not_found: &id016 []
+  faces_partial_measured: &id017 []
   faces_unprobed: []
   consumption_components:
     ledger_by_kind: 0
     unrecorded_grid_on_disk: 0
-    book_rows_measured: 5488
-  consumption_total: 5488
+    book_rows_measured: 5621
+  consumption_total: 5621
   double_count_risk: book_rows 与 ledger_by_kind 可能部分重叠（考试卡既在账本 kind=exam_card 又在成绩册行数里）；本表三面分列不做合并去重，终签若要合一口径须先点名去重规则
-  transitional_cap_x1: 5488
+  transitional_cap_x1: 5621
+  faces_conservative_pending_exact: &id018 []
   cap_review_flag: null
 numbers_table_for_terminal_signature:
   cap_formula: transitional_history_x1
@@ -404,14 +431,15 @@ numbers_table_for_terminal_signature:
   rows:
   - family: A
     title_zh: 信号/因子族
-    ledger_by_kind: 34
+    ledger_by_kind: 36
     unrecorded_grid_on_disk: 0
-    book_rows_measured: 1699
-    consumption_total: 1733
-    transitional_cap_x1: 1733
-    cap_status: owner_signed_20261012_measurement_incomplete
+    book_rows_measured: 1726
+    consumption_total: 1762
+    transitional_cap_x1: 1762
+    cap_status: owner_signed_20261012_conservative_estimate_pending_exact_count
     faces_not_found: *id001
     faces_partial: *id002
+    faces_conservative_pending_exact: *id003
     faces_pg_unprobed: 1
   - family: B
     title_zh: 策略配方族
@@ -421,8 +449,9 @@ numbers_table_for_terminal_signature:
     consumption_total: 85252
     transitional_cap_x1: 85252
     cap_status: owner_signed_20261012
-    faces_not_found: *id003
-    faces_partial: *id004
+    faces_not_found: *id004
+    faces_partial: *id005
+    faces_conservative_pending_exact: *id006
     faces_pg_unprobed: 0
   - family: C
     title_zh: 组合/配置族
@@ -432,8 +461,9 @@ numbers_table_for_terminal_signature:
     consumption_total: 9
     transitional_cap_x1: 9
     cap_status: owner_signed_20261012
-    faces_not_found: *id005
-    faces_partial: *id006
+    faces_not_found: *id007
+    faces_partial: *id008
+    faces_conservative_pending_exact: *id009
     faces_pg_unprobed: 0
   - family: D
     title_zh: 状态识别/环境族
@@ -443,36 +473,39 @@ numbers_table_for_terminal_signature:
     consumption_total: 17
     transitional_cap_x1: 17
     cap_status: owner_signed_20261012
-    faces_not_found: *id007
-    faces_partial: *id008
+    faces_not_found: *id010
+    faces_partial: *id011
+    faces_conservative_pending_exact: *id012
     faces_pg_unprobed: 0
   - family: E
     title_zh: 工程件族
     ledger_by_kind: 0
     unrecorded_grid_on_disk: 0
-    book_rows_measured: 194
-    consumption_total: 194
-    transitional_cap_x1: 194
+    book_rows_measured: 399
+    consumption_total: 399
+    transitional_cap_x1: 399
     cap_status: owner_signed_20261012
-    faces_not_found: *id009
-    faces_partial: *id010
+    faces_not_found: *id013
+    faces_partial: *id014
+    faces_conservative_pending_exact: *id015
     faces_pg_unprobed: 0
   - family: F
     title_zh: 挖矿器元层族
     ledger_by_kind: 0
     unrecorded_grid_on_disk: 0
-    book_rows_measured: 5488
-    consumption_total: 5488
-    transitional_cap_x1: 5488
+    book_rows_measured: 5621
+    consumption_total: 5621
+    transitional_cap_x1: 5621
     cap_status: owner_signed_20261012
-    faces_not_found: *id011
-    faces_partial: *id012
+    faces_not_found: *id016
+    faces_partial: *id017
+    faces_conservative_pending_exact: *id018
     faces_pg_unprobed: 0
   reading_zh: 过渡帽=该族已实测历史消耗×1（再挖一遍已烧掉的量即停）；帽值属判据数值，本表呈 Owner 终签后生效
 ledger_kind_coverage:
   kinds_present_in_ledger:
     factory_grid_batch_a_voided: 6000
-    exam_card: 34
+    exam_card: 36
     fexam_strategy_batch: 0
     factory_grid_batch_a: 31878
     calibration_ruler_exam: 2468

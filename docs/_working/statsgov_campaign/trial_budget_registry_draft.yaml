@@ -53,6 +53,19 @@ design_principles:
   - id: P-3
     rule: 判据面数值由 Owner 终签；AI 代裁必署 adjudicator
     consequence_for_registry: 本文件所有 budget_cap/pbo 门在未签前保持 null 或标 pending_terminal_signature
+  - id: P-4
+    rule: 帽定 0（或取低值）之前必须先证明"是没数到"还是"真零"——测不准一律按保守上界入帽＋待精算标记
+    statement_zh: >
+      2026-10-12 晚实测：C/D 两族一度报"帽=待定/低值"，追下去是我的 row_rule 键名没命中（测量缺陷），
+      不是该族真没烧过试次；同一缺陷在 A 族表现为"查无点名键⇒按下界计 1 件"。
+      统计合法性战役的历史病根就是分母虚低（欠折减=放水），所以"数不到"若按下界入帽，等于把测量缺陷签成治理结论。
+    consequence_for_registry: >
+      点名键与候选链都不在场时，生成器取上包络计入该行＝最大容器长度 ∪ 计数型整数量级标量 ∪
+      带 p/t 统计量的假设检验记录数（一条检验=一个试次；只取容器或自报量级仍会偏低——
+      实测 indicator_conditional 册 family_size=11 而册内真含 22 条检验记录），
+      逐件标 pending_exact_count、族级 cap_status 挂 conservative_estimate_pending_exact_count；
+      连容器与计数标量都没有的件进 uncounted 并把整面降为 PARTIAL_MEASURED（绝不静默计 0）。
+      终值版待精算后照出，帽宁高勿低。
 morning_ruling_20261012:
   M1: A  # 主尺=全仓累计可审计试次并按磁盘实况补齐；口径生效范围照 Owner 在册先例（新批次先行）
   M2: adopted_as_recommended  # N_eff 只披露不作分母；要用须先解耦估计器输入面
@@ -63,6 +76,21 @@ morning_ruling_20261012:
     字母-实质对表留痕：令⑥ 用"M2-M5 照推荐"覆盖，但本班 20 号件 M5 原包未标推荐字母（只给"要/不要＋可回退"）。
     实质读=不自跑出生批复现、暂以替代批读数 PBO=0.4429 作过渡证据；若 Owner 本意是"要跑"，此行须改，且属算力/时间项非花钱项。
   M6: route_to_maint3_C4  # TRANSLATION-COVERAGE 补 PG 第三源/或册主 render，归维护三班 C4 线
+evening_ruling_20261012:
+  R1_E_cap: land_then_close_shift  # 批复①：E 帽照落地值收班，判据=dev 面显示 399
+  R2_backfill: merged_two_segment_workorder_to_data_domain  # 批复②：两段合并派数据域、段一先行；本班只出派工单，不含取数
+  R2_precondition_blocking: name_reality_check_on_backfill_stock_daily_basic  # 该脚本调 ak.stock_zh_a_hist（价量）却以 daily_basic 命名，核查不清不许跑
+  R3_unparseable_books: conservative_upper_bound_into_cap  # 批复③：不可解析册"数进来"——上界入帽＋待精算，终值版照出（判据见 P-4）
+  R4_clause5: awaiting_owner_verbatim_text  # 批复④：裁定②款⑤等 Owner 贴原文，本班不转抄以防转写漂移
+evening_ruling2_20261012:
+  # 统筹批复四裁（第二轮，2026-10-12 夜 23:2x）——本班为登记入账，判据数值仍由 Owner 终签
+  N1_landing_gate: wait_for_land_watch_dev_E399  # ①等落地，盯到 dev 显 E=399 才收班；不刷投
+  N2_A_cap_signed: "1760_pending_exact_at_consumption"  # ②A 帽按 1,760 签；精算推迟到预算册开始消费试次时，随预登记件定试次单位口径（6 次/0.3% 不值一袋）
+  N3_segment2_annex: attached  # ③段二附件照附＝27 号件（2017-2018 三通道实测清单＋回补验收核账）
+  N4_numbers_table_binding: bind_as_of_source_mtime  # ④数值表绑 as_of_source_mtime／spec_sha16／账本快照，不绑时戳的签名＝假精度；F 族是活面
+  N4b_evidence_20261012: "本班 22:16 与 23:5x 两次复跑同码同册：A 1760→1762、账本 trials 40730→40732（他班 2 次入账）⇒ 漂移是实测事实非推演"
+  N5_backfill_prechecks: six_defects_hardened_to_dispatch_preconditions  # 六缺陷全部升级为派工硬前置（不清不许跑）
+  N5b_new_workitem: stock_daily_basic_source_label_integrity_audit  # §1-C 越出回补范围，登记为数据域独立工作件，与 26 号件一并交数据车道二班
 # ─────────────────────────────────────────────────────────────────────────────
 caliber_declaration:
   single_ruler_across_families: true
@@ -147,7 +175,8 @@ families:
     object: GPU 引擎达标考、判官路由审计复跑、成本模型假设双口径
     trial_unit: 一次复跑/一个等价性断言=一次（考"等价/达标"非"预测力"，折减口径不适用→只计消耗不计 DSR）
     faces:
-      - {id: route_audit_replay, kind: dir_glob, pattern: "docs/_working/**/18_route_audit_replay*", row_rule: one_per_match}
+      - {id: route_audit_replay, kind: file_glob, pattern: "docs/_working/**/18_route_audit_replay*", row_rule: one_per_match}
+      # 自纠（2026-10-12 21:0x）：route_audit_replay 曾误设 dir_glob 而目标是 .md 件 ⇒ 该面掉零、E 帽被低估成 194；改回 file_glob+one_per_match
       - {id: exam_run_archive, kind: dir_glob, pattern: "data/backtest_artifacts/runs/*",
         row_rule: one_per_match, count_basis: 一个 run 档案=一次可审计考}
     budget_cap: {value: null, unit: trials, basis: 待裁}
