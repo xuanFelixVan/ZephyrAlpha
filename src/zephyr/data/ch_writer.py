@@ -1,17 +1,17 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.ch_writer
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] http.client(标准库); clickhouse-driver(pip); zephyr.data.local_replay; zephyr.data.ch_config; zephyr.shared.observability.metrics
+# [DEPENDENCIES] http.client(标准库); clickhouse-driver(pip); zephyr.data.local_replay; zephyr.data.ch_config; zephyr.shared.observability.metrics; config/flags.yaml(①丙 写口只读开关真源，直读——嵌套子键不进 FlagRegistry)
 # [CONSUMERS] zephyr.data.scheduler; zephyr.data.ch_reader（query_strict/parse_tsv_rows/ClickHouseQueryError，W-180.1）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 二级降级：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(8123)→本地落盘兜底(local_replay); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client; ClickHouse 不可达时数据写入本地 TSV 文件待回灌（裁定 #ARCH-CH-013）; create_fallback=False 时HTTP失败跳过本地落盘（回灌路径专用，防重复TSV）; health_check() 提供传输路径健康诊断; get_table_engine 只缓存**非空**结果，探测失败计入 engine_probe_failures 并 log.warning（GATE-P0-ENGINE-PROBE，2026-10-09 治本——旧实现把失败的 空串也当权威值缓存，一次瞬态故障令该进程永久认为引擎未知，并连累严格通道静默跳过 FINAL）; get_table_engine_strict 对未知必抛，绝不把"未知"当"非 Replacing"回答; query_strict() 与 query() 共用同一传输层，仅错误契约不同（失败必抛、只读语句白名单）
+# [INVARIANTS] 二级降级：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(8123)→本地落盘兜底(local_replay); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client; ClickHouse 不可达时数据写入本地 TSV 文件待回灌（裁定 #ARCH-CH-013）; create_fallback=False 时HTTP失败跳过本地落盘（回灌路径专用，防重复TSV）; health_check() 提供传输路径健康诊断; get_table_engine 只缓存**非空**结果，探测失败计入 engine_probe_failures 并 log.warning（GATE-P0-ENGINE-PROBE，2026-10-09 治本——旧实现把失败的 空串也当权威值缓存，一次瞬态故障令该进程永久认为引擎未知，并连累严格通道静默跳过 FINAL）; get_table_engine_strict 对未知必抛，绝不把"未知"当"非 Replacing"回答; query_strict() 与 query() 共用同一传输层，仅错误契约不同（失败必抛、只读语句白名单）; ①丙（统筹裁定 2026-10-13）四个写入口（http_insert/query 非只读动词/ensure_database 的 CREATE/delete_where）先过 _assert_write_allowed，测试进程＋enforce 即拒写、非测试进程恒放行（本开关不是生产刹车）、开关读不到按 shadow 不静默 off
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] write_result失败->返回False+log; query失败->返回空字符串(存量静默契约，判据类读数禁用，改走 query_strict); delete_where失败->返回False; query_strict失败->raise ClickHouseQueryError(W-180.1，禁降级为空值/空表)
-# [TESTS] tests/legacy_zephyr/data/test_ch_writer.py
+# [ERROR_CONTRACT] write_result失败->返回False+log; query失败->返回空字符串(存量静默契约，判据类读数禁用，改走 query_strict); delete_where失败->返回False; query_strict失败->raise ClickHouseQueryError(W-180.1，禁降级为空值/空表); ①丙 enforce 命中->raise ClickHouseWriteGuardBlocked（测试进程写生产 CH，shadow 态只留痕 .runtime/gate_audit/ch_write_guard.jsonl 不抛）
+# [TESTS] tests/legacy_zephyr/data/test_ch_writer.py, tests/data/data/db/test_ch_write_guard.py
 # [A_module] module_id=MOD-GOV-ch_writer | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 r"""
@@ -49,13 +49,17 @@ from __future__ import annotations
 import datetime
 import http.client
 import io
+import json
 import logging
 import os
+import re
+import sys
 import threading
 import time
 import urllib.parse
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 from typing import TYPE_CHECKING, Final
 
 if TYPE_CHECKING:
@@ -363,6 +367,134 @@ def _note_http_failure(reason: str) -> None:
         _http_fail_streak = 0
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# ①丙 写口只读开关（统筹裁定 2026-10-13；考试案卷"测试进程写生产 CH"三条待判定之①丙）
+# ═══════════════════════════════════════════════════════════════════════════
+# 病根（案卷全只读证据，query_log 五笔可逐行归因）：落地链 GATE-PRECOMMIT-RUN 在排袋时自动重跑
+# 袋内相关测试，simwire 三支测试的 CH 写入腿没被 monkeypatch，00:04:07/00:04:40 两笔真插进生产
+# c1_backtest.sim_daily_report。根宪法 §9 条目 6"测试禁写生产路径"在**落地侧无门可拦**——现有门禁
+# 只看文件内容与暂存面，不看测试运行时是否连真库。前任在册缺口原话＝"在册 ch_writer 内读不到
+# 只读开关"，本段补的就是这一口（把红线从"文件头自述"变成"可拦之物"）。
+#
+# 三条判据（改它们＝改判据，须再裁）：
+#  1) 只咬**测试进程**（pytest 进 sys.modules / PYTEST_CURRENT_TEST / ZEPHYR_TEST_PG=1 三判据任一）。
+#     非测试进程（采集链、reconciler、池工、API）一律放行——本开关不是生产刹车，生产刹车=KillSwitch
+#     （zephyr.security.access_control.kill_switch），此处禁重复造。翻 enforce 不会让采集链停摆。
+#  2) state 三态：off=全退｜shadow=只留痕不抛（§5 flag 下放＝shadow 制，默认态）｜enforce=命中即抛。
+#  3) 开关读不到（flags.yaml 缺失/解析炸/未知值）＝按 shadow——宁留痕不误杀，也绝不静默 off。
+#     优先级 env ZEPHYR_CH_WRITE_GUARD > config/flags.yaml flags.ch_write_guard.mode > shadow。
+#     （直读 flags.yaml 而非走 FlagRegistry：嵌套子键不进注册表是在册陷阱，同
+#     git_commit_gateway._flags_immutable_tree 先例；两处读法判定对象与校验逻辑不同，非 extract 克隆）
+#
+# 留痕面＝.runtime/gate_audit/ch_write_guard.jsonl，逐条带 pid＋session_id（ZEPHYR_SESSION_ID 惯例，
+# 与 safe_write 审计同署名口径）＋op＋target＋state＋action。同一 (state,op,target) 每进程只落一条
+# ——#ARCH-258 的 3.7GB/42h 洪峰教训在前，留痕不得变成第二病灶。
+_WRITE_GUARD_STATES: Final = ("off", "shadow", "enforce")
+_WRITE_GUARD_FALLBACK_STATE: Final = "shadow"
+_WRITE_GUARD_ENV: Final = "ZEPHYR_CH_WRITE_GUARD"
+_WRITE_GUARD_AUDIT_REL: Final = ".runtime/gate_audit/ch_write_guard.jsonl"
+_GUARD_REPO_ROOT = Path(__file__).resolve().parents[3]
+# 只读语句白名单：不在此列的一律按写处理（宁可多问一次，不把 OPTIMIZE/ALTER 当 DDL 放过）
+_READONLY_SQL_PREFIXES: Final = ("SELECT", "DESCRIBE", "SHOW", "SYSTEM", "WITH", "EXPLAIN")
+_SQL_TARGET_RE: Final = re.compile(
+    r"\b(?:INTO|TABLE|DATABASE)\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?`?([A-Za-z0-9_.]+)`?",
+    re.IGNORECASE,
+)
+_write_guard_audited: set[tuple[str, str, str]] = set()
+_write_guard_lock = threading.Lock()
+
+
+class ClickHouseWriteGuardBlocked(RuntimeError):
+    """①丙：测试进程触碰 ClickHouse 写口时被拒写（enforce 态）。"""
+
+
+def _test_process_detected() -> bool:
+    """是否处在测试进程内（三判据任一即算，全零写面只读探测）。"""
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return True
+    if os.environ.get("ZEPHYR_TEST_PG") == "1":
+        return True
+    return "pytest" in sys.modules
+
+
+def _write_guard_state() -> str:
+    """只读开关当前态：env > flags.yaml > shadow；任何异常回 shadow（不静默 off）。"""
+    raw = (os.environ.get(_WRITE_GUARD_ENV) or "").strip().lower()
+    if raw in _WRITE_GUARD_STATES:
+        return raw
+    if raw:
+        log.warning("[ch_write_guard] 未知 %s=%r，改读 flags 真源", _WRITE_GUARD_ENV, raw)
+    try:
+        import yaml  # type: ignore[import-untyped]  # noqa: PLC0415
+
+        doc = yaml.safe_load((_GUARD_REPO_ROOT / "config" / "flags.yaml").read_text(encoding="utf-8")) or {}
+        cfg = (doc.get("flags") or {}).get("ch_write_guard") or {}
+        if not cfg.get("enabled", True):
+            return "off"
+        mode = str(cfg.get("mode", "")).strip().lower()
+        return mode if mode in _WRITE_GUARD_STATES else _WRITE_GUARD_FALLBACK_STATE
+    except Exception:  # noqa: BLE001 — 开关设施不可达=按 shadow 留痕，不放开也不误杀
+        return _WRITE_GUARD_FALLBACK_STATE
+
+
+def _sql_target(sql: str) -> str:
+    """从 SQL 里取被写对象名（仅供留痕与归因，取不到就退首词，绝不因此拒判）。"""
+    m = _SQL_TARGET_RE.search(sql or "")
+    if m:
+        return m.group(1)
+    return (sql or "").strip().split(maxsplit=1)[0] if (sql or "").strip() else "<empty>"
+
+
+def _write_guard_audit(state: str, op: str, target: str, action: str) -> bool:
+    """落一行审计；同 (state,op,target) 每进程只落一次。返回是否首次（真落了）。"""
+    key = (state, op, target)
+    with _write_guard_lock:
+        if key in _write_guard_audited:
+            return False
+        _write_guard_audited.add(key)
+    rec = {
+        "ts": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+        "pid": os.getpid(),
+        "session_id": os.environ.get("ZEPHYR_SESSION_ID", ""),
+        "op": op,
+        "target": target,
+        "state": state,
+        "action": action,
+    }
+    try:
+        path = _GUARD_REPO_ROOT / _WRITE_GUARD_AUDIT_REL
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    except Exception as exc:  # noqa: BLE001 — 审计写永不回业务面，也永不改判定
+        log.warning("[ch_write_guard] 审计落盘失败（不影响判定）: %s", exc)
+    return True
+
+
+def _assert_write_allowed(op: str, target: str, sql: str = "") -> None:
+    """①丙唯一判定口：任何 CH 写动作进传输层之前先问只读开关。"""
+    state = _write_guard_state()
+    if state == "off" or not _test_process_detected():
+        return
+    detail = f" sql={sql[:120]}" if sql else ""
+    if state == "enforce":
+        _write_guard_audit(state, op, target, "blocked")
+        raise ClickHouseWriteGuardBlocked(
+            f"[ch_write_guard] 测试进程不得写生产 ClickHouse：op={op} target={target}{detail}。"
+            "红线＝根宪法 §9 条目 6（测试禁写生产路径）。正解＝把该测试的 CH 写口 monkeypatch 掉"
+            "（考试班文件头自述的写法），或把这一批移出测试轮；"
+            "确需在生产面跑写路径，只能在测试进程之外发起。"
+            f"临时退让＝{_WRITE_GUARD_ENV}=off（须写进袋内讯息，禁默认带）。"
+        )
+    if _write_guard_audit(state, op, target, "would_block"):
+        log.warning(
+            "[ch_write_guard] shadow 命中：测试进程正在写生产 CH（op=%s target=%s%s）——翻 enforce 前先收计数",
+            op,
+            target,
+            detail,
+        )
+
+
 def http_insert(
     sql: str,
     tsv_bytes: bytes,
@@ -383,6 +515,7 @@ def http_insert(
     Returns:
         是否成功。
     """
+    _assert_write_allowed("http_insert", _sql_target(sql), sql=sql)
     global _http_host_empty_logged
     http_host = get_http_host()
     if not http_host:
@@ -433,6 +566,11 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
 
     失败时 log 错误并返回空字符串（不抛异常）。
     """
+    # ①丙：query() 能把任意语句送到传输层（本函数下方就走 DDL 分支），所以写/读在这里分岔——
+    # 只读白名单外的动词（INSERT/OPTIMIZE/ALTER/DROP/TRUNCATE/DELETE/RENAME…）一律按写问闸。
+    _head = (sql or "").strip().upper()
+    if not _head.startswith(_READONLY_SQL_PREFIXES):
+        _assert_write_allowed("query", _sql_target(sql), sql=sql)
     # 策略1: clickhouse-driver TCP
     client = get_client()
     if client is not None:
@@ -499,6 +637,7 @@ def ensure_database(name: str, timeout: int = _DEFAULT_TIMEOUT) -> bool:
     probe = query(f"SELECT name FROM system.databases WHERE name = '{name}'", timeout=timeout)
     if probe.strip():
         return True
+    _assert_write_allowed("create_database", name, sql=f"CREATE DATABASE IF NOT EXISTS {name}")
     client = get_client()
     if client is None:
         log.error("ensure_database(%s): 库不存在且 TCP 不可用——需管理员预建（apply_rbac.py）", name)
@@ -1093,6 +1232,7 @@ def delete_where(
     Returns:
         是否成功。
     """
+    _assert_write_allowed("alter_delete", table, sql=f"ALTER TABLE {table} DELETE WHERE {condition}")
     sql = f"ALTER TABLE {table} DELETE WHERE {condition}"
     # 策略1: clickhouse-driver TCP
     client = get_client()

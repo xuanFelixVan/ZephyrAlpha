@@ -55,6 +55,24 @@ flags:
     #   main_only=worktree 语境只记账不 spawn，消费归主区事件。
     # 翻转属 Owner 门位（flag 出厂翻转=high tier）。
 
+  ch_write_guard:
+    enabled: true
+    mode: "shadow"
+    description: >-
+      ①丙 写口只读开关（统筹裁定 2026-10-13；考试案卷"测试进程写生产 CH"三条待判定之①丙）。
+      ch_writer 四个写入口（http_insert / query 的非只读动词 / ensure_database 的 CREATE DATABASE /
+      delete_where）在进传输层之前先问本旗。只咬测试进程（pytest 已进 sys.modules，或
+      PYTEST_CURRENT_TEST 在场，或 ZEPHYR_TEST_PG=1）；非测试进程（采集链、reconciler、池工、API）
+      恒放行——本旗不是生产刹车，生产刹车=KillSwitch，此处禁重复造。三态：off=全退｜
+      shadow=只留痕不抛（出厂态，宪法 §5 flag 下放＝shadow 制）｜enforce=命中即抛
+      ClickHouseWriteGuardBlocked。开关读不到（本文件缺失/解析炸/未知值）＝按 shadow，
+      宁留痕不误杀，绝不静默 off。优先级 env ZEPHYR_CH_WRITE_GUARD=off|shadow|enforce > 本 mode。
+      留痕面=.runtime/gate_audit/ch_write_guard.jsonl，逐条带 pid＋session_id（ZEPHYR_SESSION_ID
+      惯例）＋op＋target＋state＋action；同 (state,op,target) 每进程只落一条，防 #ARCH-258 式
+      审计洪峰。翻 enforce 的判据＝shadow 期读数只命中在册已知触库测试，且那些测试的 CH 写口已
+      monkeypatch 化或已移出测试轮。回滚＝mode 改回 shadow（一个 YAML 值，不动码）。
+    implementation_status: "gated"
+
   archive:
     enabled: false
     description: "遥测数据归档 (未实现，保留flag)"
