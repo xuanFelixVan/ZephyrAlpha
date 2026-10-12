@@ -379,18 +379,72 @@ def _ffill_axis0(xp: ModuleType, a: XPArray) -> XPArray:
     mask = xp.isnan(a)
     if not bool(mask.any()):
         return a
-    idx = xp.where(~mask, xp.arange(a.shape[0])[:, None], 0)
-    # cupy 未实现 maximum.accumulate 原语（NotImplementedError，2026-09-28 真机实测）：
-    # 此处是行号（int）沿 axis0 的 running-max=前向回填，T≤1e4 且非热点主体——
-    # cupy 分支走 host 等价回环（整数行号逐位恒等，parity test 钉住）；实现分叉、语义零分叉。
     if _cp is not None and xp is not np:
-        import numpy as _host_np
-
-        idx = xp.asarray(_host_np.maximum.accumulate(xp.asnumpy(idx), axis=0))
-    else:
-        idx = xp.maximum.accumulate(idx, axis=0)
+        # L2-F（st-gpux4-20261013）：行号 running-max 与回填 gather 同 kernel 内完成。
+        # 原形态"下卡→主机 np.maximum.accumulate→再上卡"付的是**整幅 int64 双程**
+        # （all_a 970×5,217＝38.6MB×2 PCIe），且**与 NaN 数量无关**——生产价格帧（停牌）
+        # 与权重帧（未选中=NaN）必触发，实测两序交错比值 83–115x（据=g4_ffill_calib.json）。
+        # 逐位性可证且非经验对齐：本核输出的每个元素都取自 `A[run*S+j]`，run 是**整数**
+        # running-max（与旧式 idx 逐元素同值），搬的是同一个 double 的位——无算术、
+        # 无结合序、无 dtype 转换 ⇒ 与旧 host 回环及 pandas .ffill() 三向逐位等
+        # （8/8 帧族 × uint64 位视图，含 inf/-inf/-0.0/次正规/全 NaN 列/leading-NaN 块）。
+        return _ffill_rawkernel(a)
+    idx = xp.where(~mask, xp.arange(a.shape[0])[:, None], 0)
+    idx = xp.maximum.accumulate(idx, axis=0)
     cols = xp.arange(a.shape[1])[None, :]
     return a[idx, cols]
+
+
+# ——— L2-F：设备侧 ffill 扫描（GPU 分支专用；替换 _ffill_axis0 的 host 回环）———
+_FFILL_KERNEL_SRC = r"""
+extern "C" __global__
+void ffill_axis0_scan(const double* A, double* OUT, const long long T, const long long S)
+{
+    // 一 thread 一列：有效行号的 running-max 在寄存器内串行推进（整数累计⇒天然无浮点结合序
+    // 问题，与 _GATE_KERNEL_SRC 的 prev 依赖同型），同 step 各 thread 连续读 A[t*S + j]
+    // ⇒ 合并访存；S=5.2k 列仅 ~21 个 block。回填在同一 kernel 内取 A[run*S + j]，
+    // 于是 idx 那张 (T,S) int64 中间矩阵连同它的 D2H/H2D 双程一起消失。
+    long long j = (long long)blockIdx.x * (long long)blockDim.x + (long long)threadIdx.x;
+    if (j >= S) return;
+    long long run = 0;                    // 与旧式同初值：NaN 位给 0 ⇒ 无前值时引用首行
+    for (long long t = 0; t < T; ++t) {   // 旧式 where(~mask, arange, 0) + maximum.accumulate
+        const long long k = t * S + j;
+        if (!isnan(A[k])) run = t;
+        OUT[k] = A[run * S + j];          // 旧式 a[idx, cols] 的花式索引
+    }
+}
+"""
+
+_FFILL_KERNEL: Any = None  # 惰性编译缓存（RawKernel；进程内一次）
+_FFILL_KERNEL_LOCK = threading.Lock()
+
+
+def _ffill_rawkernel(a: XPArray) -> XPArray:
+    """设备侧整幅 ffill（L2-F）——一次 launch 完成 running-max 行号＋回填，零 PCIe 双程。
+
+    入参 (T,S) float64；C-contiguous 由本函数收口（同 _apply_gate_rawkernel 纪律）。
+    输出与 _ffill_axis0 的 host 回环分支逐位等（同一元素搬运，无算术）。
+    编译/执行异常直抛（禁吞）——调用方 fail-closed 重跑 CPU。
+    """
+    global _FFILL_KERNEL
+    t, s = a.shape
+    a_c = _cp.ascontiguousarray(a)
+    if a_c.dtype != _cp.float64:
+        # RawKernel 按 `const double*` 解读显存，dtype 走错=静默重解释成乱码而非报错；
+        # 本核现有两处调用方都在 _as_f64_2d（FP64 红线收口点）之后，此处只拦未来直调。
+        raise ValueError(f"ffill 设备核只吃 float64，得到 {a_c.dtype}")
+    out = _cp.empty_like(a_c)
+    with _FFILL_KERNEL_LOCK:
+        if _FFILL_KERNEL is None:
+            _FFILL_KERNEL = _cp.RawKernel(_FFILL_KERNEL_SRC, "ffill_axis0_scan")
+    threads = 256
+    blocks = (s + threads - 1) // threads
+    _FFILL_KERNEL(
+        (blocks,),
+        (threads,),
+        (a_c, out, np.int64(t), np.int64(s)),
+    )
+    return out
 
 
 def _shift1_axis0(xp: ModuleType, a: XPArray) -> XPArray:
@@ -585,7 +639,7 @@ def tensor_core(
 #   rank    = 逐日截面降序平均档（pandas rank(axis=1, ascending=False) 同态；NaN→NaN）
 # 精度纪律：行内归约走分块 Neumaier 补偿（块内树和+块间补偿项，消除 GPU 归约树序差，
 # parity≤1e-12 红线实测富余到 1e-16 量级）；rank 并列组计数走 cupyx.scatter_add
-# （numpy 路径等价 np.add.at——实现分叉、语义零分叉，同 _ffill_axis0 host 回环纪律）。
+# （numpy 路径等价 np.add.at——实现分叉、语义零分叉，同 _ffill_axis0 的设备核/主机 numpy 双支）。
 
 _NEUMAIER_BLOCK: Final = 512  # 分块宽度（块数=ceil(S/512)≈11 次 host 循环 @S=5.4k，可忽略）
 

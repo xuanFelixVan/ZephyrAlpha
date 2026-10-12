@@ -959,3 +959,113 @@ max_abs=0.0"，其机读分母 `pairs["G1↔G2_跨形态_驻留前后"].bands.n 
 `_RESIDENCY_ENABLE_FOR_TEST=False` 已按字节读回核实未被后袋覆写；claim held=0、保活已 revoke；
 死信 `0002`＝base_head 陈旧那条，已 `--base-head dev` 重基并以逐行算账 ack 由 `0003` 落地；
 尺与配方留在 `.runtime/tmp/st-gpux3-20261012/`（`b2_one_arm_isolated.py` 为④的入口件）。
+
+## 十四、B2 刀一施工账＝设备侧 ffill 扫描核（本班 st-gpux4-20261013，2026-10-13 03:39 `date` 实测入册）
+
+**一句话**：开工令点名的新靶（`gpu_core._ffill_axis0` 遇任一 NaN 即"下卡→主机 numpy 累计→再上卡"）
+**已按"整数 running-max 行号核"治掉**，实测比值 **63–130x**（宽宇宙含 NaN 帧），
+且这是**可证的逐位等**而非"带内近似"——段面 8/8 帧族三向逐位、端到端 `tensor_core` 8/8 组逐位，
+缺省与 CPU 面一字未动。刀二与全格集分族报告在本节末（未完即写未完）。
+
+### 十四·A 施工面与判据（改了什么，凭哪条）
+
+| # | 面 | 落点 | 依据 |
+|---|---|---|---|
+| 1 | 核 | `gpu_core._FFILL_KERNEL_SRC`＋`_ffill_rawkernel`（RawKernel，一 thread 一列，行号 running-max 在寄存器内串行推进，回填 `OUT[t*S+j]=A[run*S+j]` 收进同一 kernel） | 开工令第①把刀原文"设备侧整数 running-max 行号核（整数累计、天然无浮点结合序问题）" |
+| 2 | 分支 | `_ffill_axis0` 的 cupy 分支改指本核；`xp is np` 分支（`maximum.accumulate` 原式）**逐字保留** | §一 表 L1 行"CPU 后端＝逐位基准"；缺省面零漂移红线 |
+| 3 | 短路 | `if not mask.any(): return a` 原样保留（无 NaN 帧仍零复制、零 PCIe） | 十四·B 实测该面比值 1.0x＝无回归 |
+| 4 | dtype 闸 | `_ffill_rawkernel` 非 float64 直抛 `ValueError` | RawKernel 按 `const double*` 解读显存，dtype 走错是**静默重解释**不是报错；现有两处调用方均在 `_as_f64_2d`（FP64 红线收口点）之后，本闸只拦未来直调 |
+
+形态选择如实记一句：卡片写的是"行号核"，本核确实在寄存器里推进**整数行号** `run` 并做 gather，
+另把 `isnan` 判定折进同一趟（旧式先物化 (T,S) bool 再物化 (T,S) int64＝38.6MB bool＋38.6MB int64，
+本核一张都不留）。逐位性不靠经验对齐：每个输出元素＝`A[run*S+j]` 的同一份 double 位，无算术、无结合序、无 dtype 转换。
+
+### 十四·B 红绿证（三件，全部实测非推演）
+
+**① 三向逐位对拍**＝`g4_ffill_verify.py`（改动前＝**dev 字节面** `git show dev:...` 装第二模块，
+不靠我抄写旧式；比较器＝float64 的 **uint64 位视图**全等，非 `==`——`==` 会把 `-0.0/0.0` 与 NaN 判成相等）。
+8 帧族 × 三面全 True：
+
+| 帧族 | shape | NaN 占比 | dev 面 ms（r1/r2） | 落地面 ms（r1/r2） | 比值（r1/r2） |
+|---|---|---|---|---|---|
+| px_halt_runs（生产价格帧·停牌） | 970×5,217 | 0.0028 | 79.59／77.16 | 0.676／0.809 | **117.7x／95.4x** |
+| w_topn_sparse（生产权重帧·未选中=NaN） | 970×5,217 | 0.9992 | 87.19／74.79 | 0.673／0.650 | **129.6x／115.1x** |
+| leading_nan_block（首段无前值） | 970×5,217 | 0.0646 | 77.94／66.03 | 0.679／0.618 | 114.9x／106.8x |
+| all_nan_columns（永不推进列） | 970×5,217 | 0.0042 | 74.71／69.35 | 0.608／0.776 | 122.8x／89.4x |
+| no_nan_control（短路面） | 970×5,217 | 0.0000 | 0.93／0.98 | 0.957／0.967 | 1.0x／1.0x |
+| bitwise_edge_values（inf/−inf/−0.0/次正规） | 970×5,217 | 0.0028 | 66.47／70.39 | 1.047／1.026 | 63.5x／68.6x |
+| narrow_hs300 | 970×300 | 0.0016 | 3.44／4.81 | 0.763／0.646 | 4.5x／7.4x |
+| short_T_60（E-3 天数贴线） | 60×5,217 | 0.0022 | 6.02／6.48 | 0.272／0.223 | 22.2x／29.1x |
+
+（每核同步口径：cupy 14 的 `cuda.Event` 本机**无** `elapsed_time`（实测），故用 `perf_counter`＋段后 `Stream.null.synchronize()`
+——同步点由尺自己给，正合 §二·丁"段的边界由同步点决定"。两序交错 r1=dev→land、r2=land→dev。
+**毫秒绝对值只在本表内自比，禁跨时刻引用**；跨时刻可比量＝末列比值。）
+三向＝落地面 vs dev 面 / 落地面 vs `pandas .ffill()` 原式（独立第三参照，非自我循环）/ 落地面 CPU 分支 vs dev 面 CPU 分支——**8/8 全 True**。
+
+**② 端到端核面零语义改动**＝同一针的 ③ 段：`tensor_core` 在 (970,500) 与 (970,300) × {gpu,cpu} × {闸开,闸关}
+= **8 组**，`gross`／`turnover`／五档 `nets`／`hold_days_pct` **逐位全等**（`core_ALL_BITWISE=true`），`backend_pair` 两组同值（无静默降级）。
+
+**③ 试件＋突变自证**＝`test_gpu_core_parity`＋`test_l2_gpu_landing`＋`test_c4_engine_gpu_wiring` 车道内
+**114 passed**（41.22s／加 dtype 闸后 44.35s，采集面 114 枚一字未动）；
+再把核突变一行（`if (!isnan(A[k])) run=t;` → `run=t;`＝不填前值）复跑
+→ **`test_gpu_parity_within_1e_12` FAILED（gross GPU/CPU 相对差 1.890e-03 超 1e-12）**，改回后 sha256 前 16 位
+`da3398a4f1582a42` 与突变前逐字相同。⇒ 在册试件对**这把新核**有牙，114 绿不是恒绿装饰。
+
+### 十四·C 两条更正（一条改前班读数读法，一条是本班自己第一版尺的坑）
+
+1. **§十三·C③"PYTHONPATH 指车道而包仍读主区"的机制归因错了，但现象是真的、防线仍必要。**
+   本班实测：把车道写成 **真 Windows 路径**（`D:\ZephyrAlpha\.aidrafts\<sid>\src`）时
+   `zephyr.backtest.gpu_core.__file__` **确实落在车道**；写成 git-bash 形态 `/d/ZephyrAlpha/...`
+   会被拼成 **`D:\d\ZephyrAlpha\...`**（不存在的路径），于是 `sys.path` 里那条是死条目，
+   editable 安装的 `.pth`（指主区 `D:\ZephyrAlpha\src`）自然胜出 ⇒ **静默读主区**。
+   另一条同族坑：`python -s` 虽能躲 usercustomize，但本机 CUDA_PATH 也由 `.pth` 提供，
+   `-s` 下 cupy 立刻发 `CUDA path could not be detected` 警告 ⇒ 旁路不是解法。
+   **对本班的后果**：断言 `__file__` 含车道这条防线**保留**（它恰好能抓住路径串形错），
+   但"前班数字属主区形态"这个标签不该由归因决定——**引用前班任一读数前请按本节命令实测其装载面**。
+   本节所有数＝车道形态（针首行断言＋`lane_src` 字段入 json）。
+2. **本班自犯并如实上报**：第一版校准针把 `no_nan_control` 写成 `px.copy()`，而 `px` 当时已被注入停牌 NaN
+   ⇒ 标称"短路面"实际 nan_frac=0.0028，**该面根本没测到**，且 `short_circuit_no_copy` 整列读 `None`。
+   这是"族名与构造不符"的假绿家族（在册病型），发现后改为独立 `clean` 面板重跑，
+   短路面才拿到 1.0x／`new is a and old is a = True` 的真读数。同批补齐窄宇宙 (970,300) 与小 T (60,5217) 两形。
+3. **本班第二犯（同一班内，写本节时）**：十四·B① 表初稿把 `bitwise_edge_values`／`narrow_hs300`／`short_T_60`
+   三行的毫秒列**抄串了行**（把 `leading_nan_block` 与 `all_nan_columns` 的数搬过来，又把校准针的数当成验收针的数），
+   比值列却是对的——这种"比值对、绝对值错"的表最危险，因为读者按比值核账会全过。
+   现已按 `g4_ffill_verify.json` 真字节逐行回放更正（`narrow_hs300` 的 nan_frac 也从校准值 0.0245 改回验收值 0.0016，
+   两针的 NaN 注入构造本就不同）。教训入本节：**搬表只搬比值不搬绝对值**是 §二·丁 推论二的字面要求，
+   而"绝对值一旦入表就必须逐行按 json 回放"是它没写的另一半，本班补在这里。
+
+### 十四·D 残余与下一件（不自扩）
+
+- **刀二（价格→收益率批级共享）＝本节写作时未起**，按开工令顺序在刀一之后。
+  落点已勘察清楚：`tensor_core` 每格都重算 `closes`/`rets`（gpu_core.py:588-589），
+  而 `pre_tensor` 这条 L1 hoist **只被主机路消费**（`_c4_engine.py:748` 原话"仅 CPU 原路径消费"）
+  ⇒ 刀二＝给设备路配它自己的批级 `rets` 共享，键纪律沿用 `_dev_resident`（内容键＋命中时核宿主对象身份、**引用随值 pin 住**），
+  禁复制 `_DEV_PANEL_CACHE` 那种"键含 `id()` 而不持引用"的形（见十四·E）。
+- **铁律① 的全格集分族报告未跑**（§二·戊 已立法，真源位=verification_framework.md §二·戊，
+  故本节按修订后口径写：分母＝全格集分族，具名 11 格降为 fast-fail 面）。
+- **驻留闸维持关**（`_RESIDENCY_ENABLE_FOR_TEST=False` 一字未动），按开工令"驻留排在两刀后，根因由检验道收网"。
+
+### 十四·E 一条移交件（属检验道，本班不代修）
+
+本班读 §二·戊 纪律2 时按"引用必先 grep 到命中"的规矩去核了它点名的符号，事实如下：
+`_dev_panel` 确实存在，但**不在 gpu_core**，而在 `scripts/backtest/factory_grid_executor.py:1009`；
+其键面**确含 `id(宿主对象)`**（:1155 `("w", id(w), ...)`、:1213 `("vol", id(vol20), ...)`、
+:1217 `("mvw", id(mkt_cap_w), ...)`、:1222/:1227 `("r60m"/"r60v", id(...), ...)`、:1055 `("fwdrank", id(closes), ...)`），
+而 `_dev_cache_put` 存的是 `_DEV_PANEL_CACHE[key] = val`——**只存设备数组、不存宿主引用**（:1006）。
+⇒ §二·戊 纪律2 那句"宿主被 GC 后 id 可复用＝脏命中风险"在 HEAD 上**逐字成立且未修**。
+这条与十三·补·补 那 18/1049（max_abs 0.216）**形状吻合**：脏命中改变的是"进归约的是哪张面板"，
+所以差是格级大数而非 ULP，且单元级三路喂核（同字节）必然查不出来。
+**归属**：开工令已写"根因由检验道收网"，本班不改他役在途病灶、不代裁；
+只把这条**机制级线索＋行号**移交，并声明本班刀二**不会**采用这种键形。
+
+### 十四·F 复核命令（全只读；车道形态须先看 `lane_src`）
+
+```bash
+LANE='D:\ZephyrAlpha\.aidrafts\st-gpux4-20261013'
+cd D:/ZephyrAlpha/.aidrafts/st-gpux4-20261013
+PYTHONPATH="$LANE\src;$LANE\scripts" python D:/ZephyrAlpha/.runtime/tmp/st-gpux4-20261013/g4_ffill_verify.py
+# 期望末三行：core_ALL_BITWISE=true 且 ffill_ALL_BITWISE=true；8 帧族 old=new/=pandas/cpu 三列全 True；短路面 1.0x
+PYTHONPATH="$LANE\src;$LANE\scripts" python -m pytest -q tests/research/backtest/test_gpu_core_parity.py tests/research/backtest/test_l2_gpu_landing.py tests/research/backtest/test_c4_engine_gpu_wiring.py
+# 期望 114 passed
+```
+
