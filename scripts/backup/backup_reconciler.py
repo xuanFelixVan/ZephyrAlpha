@@ -1009,6 +1009,11 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
         )
 
     # (2) 完全脱离地点火（DETACHED via Start-Process，非 subprocess.run 同步托管长跑）。
+    # 尺法（2026-10-12 统筹批复③，纯注释零逻辑改动）：本行取 UTC ⇒ 点火件名日期比
+    # backup.ps1 的 runlog 名（本地时刻）早 8 小时——本地 10-12 01:06 那发的点火件名是
+    # 件名 20261011_170604 而 runlog 是 20261012_010605。按本地日期 find 点火件必零命中，
+    # 换算＝本地减 8 小时／件名加 8 小时。命名不改（改即造混制日历并毁既有件可追溯性），
+    # 本注释块＋战役台账为该尺法唯一真源。
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     ignite_log = get_ignite_log_dir() / f"{IGNITE_LOG_PREFIX}{ts}.log"
     try:
