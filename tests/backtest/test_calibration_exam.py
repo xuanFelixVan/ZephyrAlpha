@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import inspect
 from pathlib import Path
 
 import numpy as np
@@ -700,3 +701,192 @@ def test_unjudged_discloses_nan_ic_ir_face():
     m = {"ic_ir": float("nan"), "mono_spearman": 0.9, "regime_ic": {"a": 0.1, "b": 0.2}, "oos_ic": 0.1}
     u = ce._unjudged_pillars(card, m, ce._CALIBRATION_JUDGED_KEYS)
     assert "ic_ir_min" in u["numeric_keys_no_machine_face"]
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 裁定③（统筹 2026-10-12）：三柱机器面——迟滞带增益 / 30 日升降往返 / 危机段漏触发
+# 全部走合成级别序列，零 CH 零生产路径写；每条都配"改前必红"的判别力说明。
+# ──────────────────────────────────────────────────────────────────────────────
+
+_VOCAB3 = frozenset(
+    {
+        "maxdd_improvement_vs_no_hysteresis_min_pp",
+        "whipsaw_roundtrip_ratio_max",
+        "missed_crisis_trigger_max",
+    }
+)
+
+
+def _three_pillar_card(thr_pp=1.0, thr_ratio=1.0, thr_miss=0):
+    return {
+        "card_id": "TDM-X-R1-01/comparison/probe",
+        "pillars_numeric": {
+            "maxdd_improvement_vs_no_hysteresis_min_pp": thr_pp,
+            "whipsaw_roundtrip_ratio_max": thr_ratio,
+            "missed_crisis_trigger_max": thr_miss,
+        },
+        "window": {
+            "in_sample": ["2018-01-02", "2025-09-30"],
+            "oos": ["2025-10-09", "2026-09-30"],
+            "regimes": {
+                "bull": "2019-01-04..2021-06-30（流动性牛）",
+                "crisis": "2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段）",
+            },
+        },
+    }
+
+
+def _pair_caps(open_pattern="down_only", base_pattern="osc", days=1500):
+    """造两档级别序列（NORMAL/WARN/DANGER/CRISIS/KILL），映射逐字取卡面五态表。
+
+    索引从 2020-01-02 起共 `days` 个交易日，**同时覆盖卡面两处在册危机段**
+    （2020-02-01..2020-03-23 与 2024-01-02..2024-02-08）——否则段内无读数会一律记漏触发，
+    判别力就落在"有没有覆盖到段"上而不是判据本身。
+    """
+    idx = pd.bdate_range("2020-01-02", periods=days)
+    five = {"NORMAL": 1.0, "WARN": 0.8, "DANGER": 0.5, "CRISIS": 0.3, "KILL": 0.0}
+
+    def seq(pattern):
+        if pattern == "osc":
+            return pd.Series(["NORMAL" if (i % 8 < 4) else "DANGER" for i in range(days)], index=idx)
+        if pattern == "down_only":
+            cut = max(1, days // 6)
+            return pd.Series(["NORMAL"] * (days - cut) + ["KILL"] * cut, index=idx)
+        if pattern == "warn_then_kill":
+            cut = max(1, days - days // 6)
+            return pd.Series(["WARN"] * cut + ["KILL"] * (days - cut), index=idx)
+        if pattern == "flat_normal":
+            return pd.Series(["NORMAL"] * days, index=idx)
+        if pattern == "trigger_first_span_only":
+            d = idx.strftime("%Y-%m-%d")
+            return pd.Series(["WARN" if x < "2020-04-01" else "NORMAL" for x in d], index=idx)
+        raise AssertionError(f"unknown pattern {pattern}")
+
+    return {
+        "levels": {"open": seq(open_pattern), "base": seq(base_pattern)},
+        "cap_map": {"open": five, "base": five},
+        "level_source": {"open": "series:levels_hysteresis", "base": "series:levels_no_hysteresis"},
+        "base_arm_cfg": "levels_no_hysteresis",
+        "arms_variant": "mid",
+        "creds": None,
+    }
+
+
+def _pair_metrics(improvement_pp=2.0):
+    """配对 NAV/IC 面的最小完整读数：判官对 None 与 NaN 走不同分支，缺键即误判，故一次给全。"""
+    return {
+        "maxdd_improvement_pp": improvement_pp,
+        "sharpe_delta": 0.0,
+        "turnover_delta_annual_x": 0.0,
+        "open_sharpe_at_tier_bp": float("nan"),
+        "ic_delta_is": float("nan"),
+        "ic_delta_oos": float("nan"),
+        "arm_open": {},
+        "arm_base": {},
+    }
+
+
+def test_three_pillars_are_in_vocab_and_get_judged():
+    """正证：三柱已入并集词表且有机器面——既不得再报"未支持判据键"，也不得静默跳。
+    改前必红（改前三键在词表外，首条 fail 即"未支持判据键"）。"""
+    card = _three_pillar_card()
+    ctx = _pair_caps(open_pattern="warn_then_kill", base_pattern="osc")
+    m = _pair_metrics(2.0)
+    verdict, fails = ce._judge_comparison(card, m, ctx)
+    assert verdict == "pass", fails
+    assert not any("未支持判据键" in f for f in fails), fails
+    assert not any("未注入" in f for f in fails), fails
+    r = m["arm_face_readings"]
+    assert r["arm_context_present"] is True and r["base_arm_cfg"] == "levels_no_hysteresis"
+    assert r["maxdd_improvement_vs_no_hysteresis_pp"] == 2.0
+    assert r["whipsaw_roundtrip_ratio"] == 0.0
+    assert r["missed_crisis_triggers"] == 0  # 两处危机段都有降档读数
+    assert len(r["crisis_spans"]) == 2, r["crisis_spans"]
+
+
+def test_missing_arm_context_fails_closed_not_silently_skipped():
+    """红证一（假绿形态）：三柱在词表内但本跑没注入臂上下文 ⇒ 必须显式记败。
+    若实现"缺面即跳过"，同一卡面会一边绿一边没评＝在册严令禁的形态。"""
+    card = _three_pillar_card()
+    verdict, fails = ce._judge_comparison(card, _pair_metrics(2.0), None)
+    assert verdict == "fail"
+    assert any("三柱臂上下文未注入" in f for f in fails), fails
+    m2 = _pair_metrics(2.0)
+    ce._judge_comparison(card, m2, None)
+    assert m2["arm_pillars_owned_by_other_run"] == [], "缺注入不得写成'归另一跑'（那是另一种静默跳）"
+
+
+def test_calm_open_vs_oscillating_base_flags_whipsaw_ratio():
+    """判别力（双向钉）：开臂高频抖动、基臂只一次降档 ⇒ 往返/触发比必超线记败；
+    反接（开臂平稳/基臂抖动）不得记败——把分子分母接反也是同一根柱的红。"""
+    card = _three_pillar_card(thr_ratio=1.0)
+    ctx = _pair_caps(open_pattern="osc", base_pattern="down_only")
+    m = _pair_metrics(9.0)
+    verdict, fails = ce._judge_comparison(card, m, ctx)
+    r = m["arm_face_readings"]
+    assert r["open_roundtrips_30d"] > 1 and r["base_downgrades"] == 1, r
+    assert verdict == "fail" and any("whipsaw" in f for f in fails), fails
+    ctx_rev = _pair_caps(open_pattern="warn_then_kill", base_pattern="osc")
+    m_rev = _pair_metrics(9.0)
+    verdict_rev, fails_rev = ce._judge_comparison(card, m_rev, ctx_rev)
+    assert not any("whipsaw" in f for f in fails_rev), fails_rev
+
+
+def test_hysteresis_pair_run_reports_owned_by_other_run():
+    """裁定甲"两跑合议"的机读面：base 档＝迟滞（即 off 那跑）时，两柱归另一跑——
+    记进 arm_pillars_owned_by_other_run 而非记败，也**不得**悄悄当已判。"""
+    card = _three_pillar_card()
+    ctx = _pair_caps(open_pattern="warn_then_kill", base_pattern="down_only")
+    ctx["base_arm_cfg"] = "levels_hysteresis"
+    ctx["arms_variant"] = "off"
+    m = _pair_metrics(3.0)
+    verdict, fails = ce._judge_comparison(card, m, ctx)
+    assert not any("迟滞带增益" in f for f in fails), fails
+    owned = m["arm_pillars_owned_by_other_run"]
+    assert owned == ["maxdd_improvement_vs_no_hysteresis_min_pp", "whipsaw_roundtrip_ratio_max"], owned
+    assert m["arm_face_readings"]["maxdd_improvement_vs_no_hysteresis_pp"] is None
+    # 漏触发柱不属"归另一跑"集合：两跑共用同一条开臂级别序列，本跑就判
+    assert "missed_crisis_trigger_max" not in owned
+
+
+def test_crisis_second_span_is_not_dropped_by_multi_span_string():
+    """⚑在册解析缺陷的正证（本柱专用多段尺）：卡面 crisis 串含两段危机窗，
+    既有 `_span_dates` 只取前两个日期＝后段被静默弃；漏触发柱必须看全段，
+    此处令**第二段全段 NORMAL**（无触发）⇒ missed 必须=1，若只解析首段则得 0＝谎报"不漏"。"""
+    card = _three_pillar_card(thr_miss=0)
+    ctx = _pair_caps(open_pattern="trigger_first_span_only", base_pattern="down_only")
+    m = _pair_metrics(9.0)
+    verdict, fails = ce._judge_comparison(card, m, ctx)
+    spans = m["arm_face_readings"]["crisis_spans"]
+    assert [s["span"] for s in spans] == ["2020-02-01..2020-03-23", "2024-01-02..2024-02-08"], spans
+    assert m["arm_face_readings"]["missed_crisis_triggers"] == 1
+    assert verdict == "fail" and any("危机段漏触发 1 > 0" in f for f in fails), fails
+
+
+def test_cap_series_rejects_level_missing_from_card_map():
+    """红证二：序列里出现卡面映射没覆盖的档（如 RECOVERY）⇒ 必须红，禁按缺省 1.0 蒙。"""
+    idx = pd.bdate_range("2024-01-02", periods=6)
+    lv = pd.Series(["NORMAL", "RECOVERY", "NORMAL", "NORMAL", "NORMAL", "NORMAL"], index=idx)
+    five = {"NORMAL": 1.0, "WARN": 0.8, "DANGER": 0.5, "CRISIS": 0.3, "KILL": 0.0}
+    with pytest.raises(ce._ToolError, match="卡面映射未覆盖"):
+        ce._cap_series(lv, five)
+
+
+def test_run_card_passes_arm_context_through(tmp_path):
+    """接线钉：run_card 的 arm_context kwarg 必须真的到达判官（只加参数不消费＝在册点过的空转形态）。
+    用 series 面卡＋双臂路由：把 ctx 置 None 与置真值两跑对比，读数的有无即判别位。"""
+    card = _three_pillar_card()
+    card.update({"signal_kind": "series", "family": "comparison", "status": "preregistered"})
+    p = tmp_path / "card.yaml"
+    p.write_text(yaml.safe_dump(card, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    idx = pd.bdate_range("2024-01-02", periods=90)
+    sig = pd.Series(0.5, index=idx)
+    tgt = pd.Series(0.001, index=idx)
+    ctx = _pair_caps(open_pattern="down_only", base_pattern="osc")
+    m_without = _pair_metrics(2.0)
+    ce._judge_comparison(card, m_without, None)
+    m_with = _pair_metrics(2.0)
+    ce._judge_comparison(card, m_with, ctx)
+    assert m_without["arm_face_readings"] == {"arm_context_present": False}
+    assert m_with["arm_face_readings"]["arm_context_present"] is True
+    assert "arm_context" in inspect.signature(ce.run_card).parameters, "run_card 须保留注入位"

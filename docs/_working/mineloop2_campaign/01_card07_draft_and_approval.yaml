@@ -425,3 +425,64 @@ self_check_before_submitting:
   score_rows_written: 0
   judge_files_modified: 0
   cards_modified_on_dev: 0
+
+card07b_draft:
+  section_status: 呈批件——统筹裁定 2026-10-12 已批**规则形状**（回放规则＋预登记＋呈批后开考），**参数值待批**
+  why_new_version: >-
+    07 v1 实测（本班 2026-10-12 23:04/23:05 两跑，分数册第 45/46 行）：级别回放
+    `arm_level_creds` 记 KILL 驻留 1414/2123 交易日（66.6%）、first_kill_date=2020-12-03、
+    kill_stuck_days=267（＝回撤已回到 kill_dd 线内却被"不可解除"近似钉住的日数）；
+    由此 OOS 窗 2025-10-09..2026-09-30 整窗敞口恒 0 ⇒ 两臂 `oos_ic` 恒 NaN ⇒ `oos_same_sign` 必败，
+    且 +3.82pp/+1.64pp 的"回撤改善"实质＝"2020 年那次清仓之后一直没回场"。
+    07 v1 的 fail 结果**按裁定①的解读入册归档、不翻案**（本卡判的是 fail-closed 清仓纪律本身，OOS 面不可判）。
+  machine_anchors_verbatim: >-
+    复位规则一律镜像在册判定件 src/zephyr/risk/core/drawdown_state_machine.py，本班零自造语义——
+    ①唯一出口：KILL 仅 `request_manual_reset`（:556，KILL→RECOVERY，"KILL 无自动出口"见 :377）；
+    ②复位入参三项确认：`ResetConfirmation`（:236-244）= holdings_verified_zero /
+       orders_cancelled_verified / new_open_locked_verified ＋ confirmed_by / override_reason；
+    ③复位后**不是满仓**：`position_cap` 对 RECOVERY 取 0.25*(step+1)（:325-326），
+       `recovery_factor` 同阶梯（:328-334），五态表 NORMAL 1.0/WARN 0.8/DANGER 0.5/CRISIS 0.3/KILL 0.0 逐字不变；
+    ④阶梯晋升在册门槛：`recovery_step_recovered=(0.50, 0.75, 1.0-1e-6)`（:162）＋
+       `min_hold_recovery_step=5`（:161）＋`recovery_freeze_days=5`（:169）；
+    ⑤阶梯回退在册判据：dd>crisis_dd 退一级（step=0 时转冻结）、dd>danger_dd 且 step>0 退一级、
+       dd>warn_dd 即停晋升（:476-499 区段）；
+    ⑥毕业准则六件（:163-168）：min_trades 3 / min_profit_streak 3 / min_expectancy_r 0.3 /
+       min_rule_compliance 0.80 / max_single_loss_r 1.2 / window 10 ——**需笔级 strategy_pnls 输入**。
+  daily_frequency_gap_declared: >-
+    在册毕业准则的输入面是**逐笔交易序列**（strategy_pnls），而 06/07 系装置
+    （scripts/backtest/fexam/exit_sim/exit_simulator.py）产出的是**日频组合净值/敞口**，
+    日频面无逐笔盈亏 ⇒ 毕业准则在日频回放中**不可评估**（这是接口层事实，非本班取舍）。
+    本班不自造代理指标（如"连续 3 日正收益"冒充 min_profit_streak=3 笔）——那会把笔级语义偷换成日级语义。
+    处置＝两案待批：甲案＝07b 明文声明"毕业准则在本卡无面"，阶梯晋升只受 ④⑤ 两件在册时序守卫约束，
+    并把该柱列入 unjudged/not_judged 披露；乙案＝07b 改在**笔级回放面**开考（依赖执行成本域，工期跨域，本班不擅自承诺）。
+    本班推荐甲案（可今夜落地、披露完整），乙案列为工单。
+  parameter_menu_pending_approval:
+    note: 两档括号**全部预登记**、禁事后挑档；档位只改"复位入口"三件，复位后的阶梯一律用 ③④⑤ 在册值不动
+    bracket_A_wide:
+      reset_trigger: recovered_pct >= 0.50（＝逐字取在册 recovery_step_recovered[0]，零新参）
+      cooldown_trading_days: 0
+      new_high_required: false
+      rationale: 镜像机器自家第一阶门槛，自由参数最少
+      honest_price: 复位最快，可能吃到 V 型假修复（这正是卡面"禁 V 型回满"那条所反对的形态，须由两档对照暴露）
+    bracket_B_strict:
+      reset_trigger: recovered_pct >= 0.75（＝逐字取在册 recovery_step_recovered[1]）
+      cooldown_trading_days: 20
+      new_high_required: true
+      rationale: 更保守的"人工确认"替身
+      honest_price: cooldown=20 日与"创新高"两件**机器侧无对应在册值**（属本卡自拟），须随卡面披露并禁挪用于他卡
+  sensitivity_protocol: >-
+    按裁定"若代价低，同卡跑两档括号做敏感性"——本班实测代价：同进程两档共用一次底座装载
+    （24 列面板只载一次，CH 面减半，见 00_morning_pack.md §十八），每跑净值回放与判分本身 <1 分钟，
+    故 2 档 × 2 配对（off/mid）＝**4 跑，试次 4 入账**，结论取**两档同号**方可读作稳健；
+    任一档单独成立不得读成全卡结论（同 07 裁定甲①"任何单跑不得读成全卡结论"的同族纪律）。
+  reset_confirmation_faces_in_replay: >-
+    三项确认在回放中的可自证替身（逐条申报近似，禁静默充当已满足）：
+    holdings_verified_zero ⟺ 复位判定日组合敞口实测为 0（由 `st["exposure_daily"]` 自证，可判）；
+    orders_cancelled_verified ⟺ 日频装置无在途挂单概念，**以"日频无在途"近似**（随件披露，不可判）；
+    new_open_locked_verified ⟺ 复位日起新仓受 RECOVERY cap 约束（由阶梯乘子实现，可判）。
+  dependency_on_item_3: >-
+    07b 开考**不等**③（三柱机器面）则首考仍会以"未支持判据键"记败；本班按统筹令并行推进：
+    ③ 立项即刻开工（判官件归本班域），07b 卡面冻结稿随参数值呈批。二者任一先行都不阻塞另一件的事实申报。
+  what_this_section_does_not_do: >-
+    零改 07 v1 卡面（负结果完整保留）、零改判据数值、零动判官件（③的实现另起袋另留痕）、
+    本件不声称 07b 已可考——参数未批即不开考，卡未落 dev 即不出分。

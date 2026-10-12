@@ -715,3 +715,82 @@ def test_arm_protocol_class_identity_is_single_parser():
     mod = cb._arm_protocol_module()
     assert cb._arm_pair_builder().__module__ == mod.__name__
     assert mod.ArmBase.__module__ == mod.__name__
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 裁定③（统筹 2026-10-12）：三柱读数的注入上下文由绑定层组装（判官零自取底座）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _ctx_entry(**over):
+    idx = pd.bdate_range("2024-01-02", periods=10)
+    five = {"NORMAL": 1.0, "WARN": 0.8, "DANGER": 0.5, "CRISIS": 0.3, "KILL": 0.0}
+    arms = {
+        "op_open": "arm_level_cap_multiply",
+        "op_base": "arm_level_cap_multiply",
+        "params_open": {"levels": "series:levels_hysteresis", "level_map": five},
+        "params_base": {"levels": "series:levels_no_hysteresis", "level_map": five},
+    }
+    arms.update(over.pop("arms", {}))
+    e = {"card_id": "TDM-X-R1-01/comparison/probe", "arms": arms, "arms_variant_applied": "mid"}
+    e.update(over)
+    return idx, five, e
+
+
+def _ctx_base(idx, five, drop=None):
+    mod = cb._arm_protocol_module()
+    series = {
+        "levels_hysteresis": pd.Series(["NORMAL"] * 10, index=idx),
+        "levels_no_hysteresis": pd.Series(["WARN"] * 10, index=idx),
+    }
+    if drop:
+        series.pop(drop)
+    base = mod.ArmBase(
+        exposure=pd.Series(1.0, index=idx),
+        daily_return=pd.Series(0.001, index=idx).round(6),
+        series=series,
+        face_id="exit_sim_baseline_nav",
+    )
+    base.level_creds = {"probe": True}
+    return base
+
+
+def test_arm_context_resolves_named_series_from_base():
+    """正证：册格按名点两档级别序列 ⇒ 上下文齐（序列/映射/档名/基臂档/变体/凭据）。"""
+    idx, five, entry = _ctx_entry()
+    ctx = cb.arm_context_for_judge(entry, _ctx_base(idx, five))
+    assert ctx is not None
+    assert ctx["base_arm_cfg"] == "levels_no_hysteresis" and ctx["arms_variant"] == "mid"
+    assert list(ctx["levels"]["open"].unique()) == ["NORMAL"] and len(ctx["levels"]["open"]) == 10
+    assert ctx["cap_map"]["open"] == five and ctx["creds"] == {"probe": True}
+
+
+def test_arm_context_is_none_when_base_has_no_named_series():
+    """红证（空转形态）：底座没交命名序列（旧裸 Series 形状）⇒ 返回 None，
+    由判官侧显式记败——绝不允许退化成"用敞口序列冒充级别序列"。"""
+    idx, five, entry = _ctx_entry()
+    base = _ctx_base(idx, five, drop="levels_no_hysteresis")
+    assert cb.arm_context_for_judge(entry, base) is None
+    bare = pd.Series(1.0, index=idx)
+    assert cb.arm_context_for_judge(entry, bare) is None
+
+
+def test_arm_context_refuses_unnamed_level_source():
+    """红证（第二真源形态）：册格把 levels 写成裸序列或别的字面量（非 "series:<名>"）⇒ None。
+    判官不许从"来路不明的序列"上读数——档位来源必须可追到在册回放件。"""
+    idx, five, entry = _ctx_entry()
+    entry["arms"]["params_open"]["levels"] = pd.Series(["NORMAL"] * 10, index=idx)
+    assert cb.arm_context_for_judge(entry, _ctx_base(idx, five)) is None
+    idx2, five2, entry2 = _ctx_entry()
+    entry2["arms"]["params_base"].pop("level_map")
+    assert cb.arm_context_for_judge(entry2, _ctx_base(idx2, five2)) is None
+
+
+def test_arm_context_refuses_both_arms_reading_the_same_level_series():
+    """红证（两臂同形）：开臂与基臂引用同一条级别序列 ⇒ 必抛。
+    这一条专防"两跑之间把 params_base.levels 也改成 levels_hysteresis"——
+    那时两臂逐日全等，判官会把 0 差读成"迟滞带无增益"，数值像模像样而实验已废。"""
+    idx, five, entry = _ctx_entry()
+    entry["arms"]["params_base"]["levels"] = "series:levels_hysteresis"
+    with pytest.raises(ValueError, match="arm_levels_same_source"):
+        cb.arm_context_for_judge(entry, _ctx_base(idx, five))

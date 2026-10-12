@@ -1056,6 +1056,51 @@ def arms_from_binding_book(
     return open_arm, base_arm, tgt, ev
 
 
+def arm_context_for_judge(entry: dict, base: Any) -> dict | None:
+    """双臂判官三柱的**读数上下文**（统筹裁定③ 2026-10-12：三柱机器面立项，归本班域）。
+
+    三柱（`maxdd_improvement_vs_no_hysteresis_min_pp`／`whipsaw_roundtrip_ratio_max`／
+    `missed_crisis_trigger_max`）判的是**级别序列的时序形状**与"该臂用的是哪一档级别序列"，
+    这些量只存在于底座交付面 `ArmBase.series`（由在册判定件 MOD-RK-049 回放产出）与绑定册
+    逐臂点名的 `params_*.levels`／`level_map` 里。本函数**只搬运不重算**：按册格点名的档名
+    从底座取序列，判官侧绝不按名再取一次底座（那是第二真源，违宪法 §4.2）。
+    任一件缺位即返回 None——判官对 None 记显式败（禁静默跳），与 arm_base_source_unwired 同一哲学。
+    """
+    arms = entry.get("arms") or {}
+    pool = getattr(base, "series", None)
+    if not isinstance(pool, dict):
+        return None
+    ctx: dict[str, Any] = {"levels": {}, "cap_map": {}, "level_source": {}}
+    for side in ("open", "base"):
+        params = arms.get(f"params_{side}") or {}
+        raw = params.get("levels")
+        # 只认字面量档名："series:<名>"。裸 Series/None/数字一律拒（禁在此处既收名字又收序列——
+        # 收了序列就等于允许调用方自带一份级别真源，判官读数不再是"在册回放件的输出"）
+        ref = raw if isinstance(raw, str) else ""
+        if not ref.startswith("series:"):
+            return None
+        name = ref[len("series:") :]
+        if name not in pool:
+            return None
+        cmap = params.get("level_map")
+        if not isinstance(cmap, dict) or not cmap:
+            return None
+        ctx["levels"][side] = pool[name]
+        ctx["cap_map"][side] = cmap
+        ctx["level_source"][side] = name
+    ctx["base_arm_cfg"] = ctx["level_source"]["base"]
+    ctx["level_source_open"] = ctx["level_source"]["open"]
+    # 两档同源即「一卡两跑之间动了级别序列来源」——裁定甲③禁的事，在这里当场显形而不是留到事后核
+    if ctx["level_source"]["open"] == ctx["level_source"]["base"]:
+        raise ValueError(
+            f"arm_levels_same_source:{ctx['level_source']['open']}（开臂与基臂引用同一条级别序列＝两臂同形，"
+            "判官会把常数 0 差读成「迟滞带无增益」；配对必须由两档分别回放）"
+        )
+    ctx["creds"] = getattr(base, "level_creds", None)
+    ctx["arms_variant"] = entry.get("arms_variant_applied")
+    return ctx
+
+
 def load_binding_book(path: Path, arms_variant: str | None = None) -> dict[str, dict]:
     if not path.exists():
         return {}
@@ -1124,6 +1169,7 @@ def run_one(
         return {"card_id": cid, "dry_run": True, "class": cls["cls"], "recipe": cls["recipe"], "op": cls["op"]}
     before = _judgment_snapshot(card)
     sig_b: pd.Series | None = None
+    arm_ctx: dict | None = None
     try:
         if entry is not None and entry.get("arms"):
             # 双臂通道（WO-A1）：底座敞口序列须由在册重放装置按臂参数产出后注入；
@@ -1141,6 +1187,17 @@ def run_one(
             if tgt_arm is None:
                 tgt_arm = index_next_day_return()
             sig, sig_b, tgt, ev = arms_from_binding_book(card, entry, base=src_obj, target=tgt_arm)
+            # 三柱读数上下文（裁定③）：起始面自证注入了什么（档名/变体/序列长度），不落 Series 本体进 yaml
+            arm_ctx = arm_context_for_judge(entry, src_obj)
+            ev["arm_context_injected"] = {
+                "present": arm_ctx is not None,
+                "base_arm_cfg": (arm_ctx or {}).get("base_arm_cfg"),
+                "arms_variant": (arm_ctx or {}).get("arms_variant"),
+                "level_source": (arm_ctx or {}).get("level_source"),
+                "levels_len": {
+                    k: int(len(v)) for k, v in ((arm_ctx or {}).get("levels") or {}).items() if v is not None
+                },
+            }
         elif entry is not None:
             sig, ev = run_binding_book(card, entry)
         else:
@@ -1164,6 +1221,7 @@ def run_one(
         recorded_by="st-mineloop-20261010",
         scores_path=scores_path,
         force=force,
+        arm_context=arm_ctx,
     )
     after = _judgment_snapshot(yaml.safe_load(card_path.read_text(encoding="utf-8")))
     if json.dumps(before, sort_keys=True, default=str) != json.dumps(after, sort_keys=True, default=str):

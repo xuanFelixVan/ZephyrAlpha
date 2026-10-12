@@ -15,6 +15,9 @@
 #   信号/目标可注入（测试零 CH），缺省经 ch_data 按 signal_spec/target_spec 取数。
 #   试次册路径可注入（run_card 的 ledger_registry_path，缺省=生产真源不变）：测试一律注入 tmp_path，
 #   禁经单测写生产 N 账本（根宪法 §9 条目 6；10-12 实测泄漏形态=examcard:TDM-E-TEST/* 进生产册）。
+#   三柱（迟滞带增益/升降往返/危机段漏触发）读数须由绑定层 arm_context 注入（run_card 的新 kwarg，
+#   与 ledger_registry_path 同属"注入位"惯例）：判官零自取底座、零重写判定逻辑，缺注入即显式记败，
+#   测试用合成级别序列注入零 CH（统筹裁定③ 2026-10-12 立项）。
 # [MODIFY-GUARD] tests/backtest/test_calibration_exam.py
 # [STABILITY] experimental
 # [ERROR_CONTRACT] RuntimeError: 卡状态非法/缺 pillars_numeric/信号目标缺失/分数册 CAS 冲突
@@ -264,6 +267,12 @@ _COMPARISON_KNOWN_KEYS = frozenset(
         "turnover_delta_annual_max",
         "cost_tier_bp_required",
         "oos_same_sign",
+        # 裁定③（统筹 2026-10-12，三柱机器面立项）：以下三键自 02 族第一天就申报"词表外"，
+        # 从此有判官接手——入词表**不等于**无条件放行：读数须由绑定层注入 arm_context，
+        # 缺注入即显式记败（与 misfire_reduction_min 的"无机判面如实记败"同款，禁静默跳）。
+        "maxdd_improvement_vs_no_hysteresis_min_pp",
+        "whipsaw_roundtrip_ratio_max",
+        "missed_crisis_trigger_max",
     }
 )
 
@@ -311,6 +320,184 @@ def _unjudged_pillars(card: dict, m: dict, judged: frozenset) -> dict:
     }
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# 裁定③（统筹 2026-10-12：三柱机器面立项，归矿考二班域）
+# 纪律：三柱读数一律由绑定层注入的 `arm_context`（在册判定件 MOD-RK-049 回放的级别序列＋
+#   卡面冻结的级别→仓位映射）算出——判官零重写判定逻辑、零自取底座（那是第二真源）。
+#   口径选择逐条在本段声明并随班账呈批；缺注入显式记败，禁静默跳（与 misfire 柱同款）。
+# ──────────────────────────────────────────────────────────────────────────────
+
+#: 卡面原文"30 日内升降级往返"的窗位；量距用**该序列自身的交易日序号**（非自然日），读法随此声明
+_WHIPSAW_WINDOW_TRADING_DAYS = 30
+_CAP_EPS = 1e-12
+
+
+def _spans_dates_all(span: str) -> list[tuple[str, str]]:
+    """多段跨度解析：串内**全部**成对日期都取出。
+    在册 `_span_dates` 只取前两个日期，对 02/06/07 的
+    "2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段）"会**静默弃后段**；
+    漏触发柱必须看全段，故本柱用本函数。既有 regime_ic/regime_gap 面是否同改为判据面变更，另案呈裁。"""
+    hits = _DATE_RE.findall(str(span))
+    out: list[tuple[str, str]] = [(hits[i], hits[i + 1]) for i in range(0, len(hits) - 1, 2)]
+    if not out and hits:
+        out.append((hits[0], hits[0]))
+    return out
+
+
+def _cap_series(levels: pd.Series, cap_map: dict) -> pd.Series:
+    """级别序列 → 卡面冻结的仓位上限序列（逐日）。出现映射没覆盖的档即抛，禁按缺省 1.0 蒙。"""
+    mp = {str(k): float(v) for k, v in (cap_map or {}).items()}
+    s = pd.Series(levels).astype(str)
+    unknown = sorted({str(v) for v in s.dropna().unique() if str(v) not in mp})
+    if unknown:
+        raise _ToolError(f"级别序列含卡面映射未覆盖的档 {unknown}（禁替卡面拍档值）", {"levels": unknown})
+    return s.map(mp).astype(float)
+
+
+def _whipsaw_roundtrips(caps: pd.Series, window: int = _WHIPSAW_WINDOW_TRADING_DAYS) -> tuple[int, int]:
+    """返回 (window 个交易日内的升降往返次数, 降档触发次数)。
+
+    往返＝相邻两次**反向**的档位变动（先降后升或先升后降），且两腿间隔 ≤ window 交易日；
+    降档（cap 变小）＝风控层"触发一次"，即卡面分母"关臂触发次数"在档位面上的读法。
+    """
+    chg = caps.astype(float).diff().dropna()
+    chg = chg[chg.abs() > _CAP_EPS]
+    dates = list(chg.index)
+    dirs = [float(v) for v in np.sign(chg)]
+    pos = {d: i for i, d in enumerate(caps.index)}
+    rev = sum(
+        1 for i in range(1, len(dates)) if dirs[i] != dirs[i - 1] and (pos[dates[i]] - pos[dates[i - 1]]) <= window
+    )
+    return int(rev), int(sum(1 for v in dirs if v < 0))
+
+
+def _crisis_misses(caps_open: pd.Series, spans: list[tuple[str, str]]) -> tuple[int, list[dict]]:
+    """危机段漏触发：逐段判开臂是否出现"风控动作发生"（当日仓位上限 < 1.0）。
+    段内无读数 ⇒ 同样计一次漏触发（不可判不得当确认证据，fail-closed 同 n≥200 那条先例）。"""
+    missed = 0
+    detail: list[dict] = []
+    for s, e in spans:
+        seg = caps_open.loc[str(s) : str(e)]
+        if seg.empty:
+            missed += 1
+            detail.append({"span": f"{s}..{e}", "n": 0, "triggered": False, "note": "段内无读数（不可判≠确认）"})
+            continue
+        hit = bool((seg.astype(float) < 1.0 - _CAP_EPS).any())
+        if not hit:
+            missed += 1
+        detail.append({"span": f"{s}..{e}", "n": int(len(seg)), "triggered": hit})
+    return int(missed), detail
+
+
+_ARM_CONTEXT_KEYS = (
+    "maxdd_improvement_vs_no_hysteresis_min_pp",
+    "whipsaw_roundtrip_ratio_max",
+    "missed_crisis_trigger_max",
+)
+
+
+def _crisis_spans(card: dict) -> list[tuple[str, str]]:
+    """卡面 window.regimes 里所有 crisis 段的**多段**解析（本柱必须看全段，理由见 _spans_dates_all）。"""
+    spans: list[tuple[str, str]] = []
+    for seg_name, span in (card.get("window", {}).get("regimes") or {}).items():
+        if "crisis" in str(seg_name).lower():
+            spans.extend(_spans_dates_all(span))
+    return spans
+
+
+def _pillar_no_hysteresis_gain(p: dict, m: dict, readings: dict, owned: list, is_mid_pair: bool) -> list[str]:
+    """柱一：迟滞带增益。只在"基臂＝无迟滞那档"的那跑评（裁定甲①的机读归属）。"""
+    if not is_mid_pair:
+        readings["maxdd_improvement_vs_no_hysteresis_pp"] = None
+        owned.append("maxdd_improvement_vs_no_hysteresis_min_pp")
+        return []
+    thr = float(p["maxdd_improvement_vs_no_hysteresis_min_pp"])
+    imp = m.get("maxdd_improvement_pp")
+    if imp != imp:
+        return ["maxdd_improvement_vs_no_hysteresis nan（配对 NAV 面无读数）"]
+    readings["maxdd_improvement_vs_no_hysteresis_pp"] = float(imp)
+    if float(imp) < thr:
+        return [f"迟滞带增益 {imp:.2f}pp < {thr}"]
+    return []
+
+
+def _pillar_whipsaw(p: dict, readings: dict, owned: list, is_mid_pair: bool) -> list[str]:
+    """柱二：30 交易日窗内升降往返 ÷ 基臂降档触发次数；分母 0 记败（不可判不得当通过）。"""
+    if not is_mid_pair:
+        readings["whipsaw_roundtrip_ratio"] = None
+        owned.append("whipsaw_roundtrip_ratio_max")
+        return []
+    thr = float(p["whipsaw_roundtrip_ratio_max"])
+    if readings["base_downgrades"] == 0:
+        return ["whipsaw 分母为 0（基臂无降档触发＝无从比，不可判记败）"]
+    ratio = float(readings["open_roundtrips_30d"]) / float(readings["base_downgrades"])
+    readings["whipsaw_roundtrip_ratio"] = ratio
+    if ratio > thr:
+        return [f"whipsaw 往返/触发 {ratio:.3f} > {thr}"]
+    return []
+
+
+def _pillar_crisis_misses(p: dict, card: dict, caps_open: pd.Series, readings: dict) -> list[str]:
+    """柱三：危机段漏触发。两跑共用同一条开臂级别序列，故本跑即判、不归另一跑。"""
+    thr = int(p["missed_crisis_trigger_max"])
+    missed, detail = _crisis_misses(caps_open, _crisis_spans(card))
+    readings["crisis_spans"] = detail
+    readings["missed_crisis_triggers"] = missed
+    if missed > thr:
+        return [f"危机段漏触发 {missed} > {thr}（段明细见 arm_face_readings.crisis_spans）"]
+    return []
+
+
+def _judge_arm_context_pillars(
+    card: dict, m: dict, p: dict, arm_context: dict | None
+) -> tuple[list[str], dict, list[str]]:
+    """三柱判读的装配腿（每柱各自成函数，违 §5.158 循环复杂度反模式者不入本仓）。
+
+    返回 (fails, readings, owned_by_other_run)。`owned_by_other_run`=本跑不判但归另一跑的键
+    （裁定甲"两跑合议"的机读凭据，纯观测零否决权）；缺 arm_context 时**不**记成"归其他跑"
+    而是显式记败——静默跳过就是假绿。
+    """
+    keys = [k for k in _ARM_CONTEXT_KEYS if k in p]
+    if not keys:
+        return [], {}, []
+    if not isinstance(arm_context, dict) or not (arm_context.get("levels") or {}):
+        reason = (
+            f"三柱臂上下文未注入: {sorted(keys)}（判官不自取底座——须由绑定层 arm_context 交级别序列；"
+            "缺注入如实记败，禁静默跳）"
+        )
+        return [reason], {"arm_context_present": False}, []
+    readings: dict[str, object] = {
+        "arm_context_present": True,
+        "base_arm_cfg": arm_context.get("base_arm_cfg"),
+    }
+    try:
+        caps_open = _cap_series(arm_context["levels"]["open"], arm_context["cap_map"]["open"])
+        caps_base = _cap_series(arm_context["levels"]["base"], arm_context["cap_map"]["base"])
+    except _ToolError as exc:  # 档位装不下＝序列与卡面映射不同源，如实记败不猜
+        return [f"臂上下文档位校验失败: {exc}"], readings, []
+    rev_open, downs_open = _whipsaw_roundtrips(caps_open)
+    rev_base, downs_base = _whipsaw_roundtrips(caps_base)
+    readings.update(
+        {
+            "open_roundtrips_30d": rev_open,
+            "open_downgrades": downs_open,
+            "base_roundtrips_30d": rev_base,
+            "base_downgrades": downs_base,
+            "n_days_open": int(len(caps_open)),
+        }
+    )
+    is_mid_pair = arm_context.get("base_arm_cfg") == "levels_no_hysteresis"
+    owned: list[str] = []
+    fails: list[str] = []
+    if "maxdd_improvement_vs_no_hysteresis_min_pp" in p:
+        fails += _pillar_no_hysteresis_gain(p, m, readings, owned, is_mid_pair)
+    if "whipsaw_roundtrip_ratio_max" in p:
+        fails += _pillar_whipsaw(p, readings, owned, is_mid_pair)
+    if "missed_crisis_trigger_max" in p:
+        fails += _pillar_crisis_misses(p, card, caps_open, readings)
+    return fails, readings, owned
+
+
 def _comparison_metrics(sig_open: pd.Series, sig_base: pd.Series, target: pd.Series, card: dict) -> dict:
     """对照/消融配对面：双臂各自 IC 面（复用 _series_metrics）+ NAV 回放面 + 配对差。
 
@@ -339,7 +526,7 @@ def _comparison_metrics(sig_open: pd.Series, sig_base: pd.Series, target: pd.Ser
     }
 
 
-def _judge_comparison(card: dict, m: dict) -> tuple[str, list[str]]:
+def _judge_comparison(card: dict, m: dict, arm_context: dict | None = None) -> tuple[str, list[str]]:
     """对照/消融判（并集词表：配对侧键在配对面上评，校准侧五柱在**开臂** IC 面上评；两侧都不认＝fail-closed）。
 
     统筹 03:3x 裁定①扩面：混形卡（卡面同时冻了 NAV 柱与 mono/ic/regime/oos 柱）的另一侧门柱
@@ -388,6 +575,12 @@ def _judge_comparison(card: dict, m: dict) -> tuple[str, list[str]]:
     # 并集词表（裁定①）：混形卡的校准侧柱子在开臂 IC 面上评。oos_same_sign 除外——
     # 它在对照卡上的冻结语义＝"配对 IC 差的 OOS 与 IS 同号"，上面那条规则就是它的真身，
     # 再按单信号语义评一遍＝同一键两套判据，禁。
+    # 裁定③三柱（级别序列时序形状面）：读数与"本跑不判哪柱"一并写进 metrics，
+    # 分数册行因此自带凭据（run_card 的 metrics 透传，仅剔 bucket_medians），审计可复核不靠散文。
+    ac_fails, ac_readings, ac_owned = _judge_arm_context_pillars(card, m, p, arm_context)
+    fails.extend(ac_fails)
+    m["arm_face_readings"] = ac_readings
+    m["arm_pillars_owned_by_other_run"] = ac_owned
     cal_face = {k: v for k, v in p.items() if k in _CALIBRATION_JUDGED_KEYS and k != "oos_same_sign"}
     if cal_face:
         fails.extend(_judge_calibration_face(cal_face, m.get("arm_open") or {}, sample_gate=False))
@@ -640,6 +833,7 @@ def run_card(
     signal=None,
     signal_b=None,
     target=None,
+    arm_context: dict | None = None,
     force: bool = False,
     run_id: str | None = None,
     recorded_by: str = "calibration_exam",
@@ -672,7 +866,7 @@ def run_card(
                 {"card_id": card.get("card_id"), "family": family, "route": "dual_arm"},
             )
         m = _comparison_metrics(signal, signal_b, target, card)
-        verdict, fails = _judge_comparison(card, m)
+        verdict, fails = _judge_comparison(card, m, arm_context)
     elif used_nav is False and pillars_route(card) == "event":
         m = _event_metrics(signal, target, card)
         verdict, fails = judge_event(card, m)

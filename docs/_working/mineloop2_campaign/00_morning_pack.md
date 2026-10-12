@@ -730,3 +730,104 @@ print('old scope note preserved verbatim=', n['exam_scope_note']==d['exam_scope_
       '| status=', n['status'], '| ruling_jia present=', 'exam_scope_note_ruling_jia' in n)
 PY
 ```
+
+## 二十、自纠一条归因（旧案卷留着不删）：§11.5 那条"他班存量红"作废
+
+§11.5 原文照旧留档，其结论**错了**，此处更正：
+`tests/backtest/test_calibration_exam.py::test_run_card_consumes_injected_ledger_path` 不是考试班的
+"先落测试后落码"在途态。实测三面对表（23:4x，同一命令各跑一遍）：
+
+| 面 | `grep -c ledger_registry_path`（码件 / 测试件） |
+|---|---|
+| `git show dev:` 码件 | **3** |
+| `git show dev:` 测试件 | 1 |
+| 主区工作树码件 / 测试件 | 3 / 1 |
+| **本班车道工作树（更正前，即 2087d4160b 那份旧 blob）** | **码件 0 / 测试件 1** |
+
+真因＝**本班车道的工作树面对 dev 变更过的件仍是旧字节**：我用 `update-ref`＋`reset`（mixed）
+把车道指针对齐到 dev 时，**工作树不随动**（这正是我 23:2x 自己选的规避手法，规避了"快进会拍回
+在途件"，却把盘面留在旧内容上）。实锤尺：`git hash-object` 读盘＝`ba7b62c908`，
+而 `HEAD:`／`0a9f:`／`a9e2a0d:` 三处同一 blob `d91e0484ac`——盘上是 **20:55 那次指针对齐前
+（2087d4160b）的旧内容**，考试班 21:11 的止血袋（d1301c3472）没进我的盘面。
+差面规模实测：`git diff --name-status HEAD` = **347 件**（286 D ＋ 59 M ＋ 2 A），他域件也在内。
+
+后果与教训（写死在册，免得下班再踩）：
+1. **报红前先做三面表**（盘 / 本车道 HEAD / dev），并按 node id 逐支看，不看汇总计数；
+   本班这次靠"单跑必红、合跑却绿"的反差才逼出机制——反差本身就是尺。
+2. 更正后在真落地面复跑：`tests/backtest/{test_card_binding,test_calibration_exam,test_arm_protocol_binding}.py`
+   ＝ **99 passed / 0 failed**（当时口径），后续 ③ 落地后为 **110 passed**（§廿一）。
+3. 同步手法只在"本班在该件零本地改动"时使用：先 `git diff --quiet HEAD -- <件>` 核净差，
+   再 `git checkout <dev> -- <件>`；本班当晚同步的正是这两件。
+
+## 廿一、裁定③落地：三柱机器面＋键名映射（判官件扩面，含两条口径自呈与一处在册解析缺陷）
+
+统筹裁定 2026-10-12＝三柱机器面**即刻立项、归本班域**（"判官件是你家"）。已实现并自证：
+
+### 21.1 改了哪四处（全部只加读面，阈值与既有判决零动）
+
+| 件 | 改动 | 行数 |
+|---|---|---|
+| `scripts/backtest/fexam/calibration_exam.py` | `_COMPARISON_KNOWN_KEYS` +三键；新 `run_card(arm_context=...)` 注入位（与在册 `ledger_registry_path` 同惯例）；`_judge_comparison(card, m, arm_context)`；新私有四件 `_spans_dates_all`/`_cap_series`/`_whipsaw_roundtrips`/`_crisis_misses`＋`_judge_arm_context_pillars`；读数与"本跑不判之柱"写进 `metrics.arm_face_readings`/`arm_pillars_owned_by_other_run`（分数册行因此自带凭据，审计不靠散文） | 头 INVARIANTS＋3 行 |
+| `scripts/backtest/fexam/card_binding.py` | 新 `arm_context_for_judge(entry, base)`：只按册格 `series:<名>` 从在册底座取序列；`run_one` 注入并在 `ev["arm_context_injected"]` 自证（档名/变体/长度，不塞 Series 进 yaml） | — |
+| `tests/backtest/test_calibration_exam.py` | ＋7 支（1 正证 pass／缺注入显式败／往返双向钉／两跑归属钉／多段危机钉／档位越界红证／注入位消费钉） | 41→48 |
+| `tests/backtest/test_card_binding.py` ＋ `test_arm_protocol_binding.py` | ＋4 支装配红证；1 支旧断言随实（02 的越表清单由"含 whipsaw"改为"清空"） | 42→46 |
+
+实测面：`tests/backtest` 全目录 **343 passed / 8 failed**，8 支全在
+`test_factory_wiring_night.py`（他域），**正对照**同一文件在"主区码面（dev 字节，零本班改动）"
+同样 8 failed / 7 passed ⇒ 存量红，非本班连带（`TASK_ROUTE` 在 dev/主区/车道三处命中数皆 0）。
+
+### 21.2 三条口径自呈（读数怎么算的，禁事后挪门柱；如另有指定即改）
+
+1. **`maxdd_improvement_vs_no_hysteresis_min_pp`**：仅当 `arm_context.base_arm_cfg ==
+   "levels_no_hysteresis"`（即本跑基臂就是中间臂那档）时评 `maxdd_improvement_pp >= 阈值`；
+   off 那跑不评该柱，改为写进 `arm_pillars_owned_by_other_run` 显式披露——
+   **既不静默跳、也不越跑代判**。这正是裁定甲①"两跑合议"的机读形态。
+2. **`whipsaw_roundtrip_ratio_max`**：分子＝开臂在 30 个交易日内的**档位反向变动次数**
+   （先降后升或先升后降，两腿间隔按该序列自身交易日序号量距，非自然日）；
+   分母＝基臂的**降档次数**（cap 变小一次＝风控触发一次，即卡面"关臂触发次数"在档位面上的读法）。
+   分母为 0 ⇒ 记败（不可判不得当通过）。分子分母接反也是同一根柱的红，已配双向钉。
+3. **`missed_crisis_trigger_max`**：对卡面 `window.regimes.crisis` 解析出的**每一段**危机窗，
+   开臂段内出现任一"仓位上限 < 1.0"即算触发；段内无读数同样计一次漏触发（不可判≠确认）。
+   档位取"cap<1.0"而非"cap=0"，读的是卡面原文"真实触发不缺席"里"风控动作发生"的最宽字面；
+   若统筹要"必须进 CRISIS/KILL 才算"，一行即改（本班不自决收紧）。
+
+### 21.3 顺带显形的一处在册判据面缺陷（呈裁，本班不自改）
+
+`calibration_exam._span_dates`（既有件）对串内只取**前两个日期**，而 02/06/07 的 crisis 串是
+`2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段）` ⇒ **第二处危机段被静默弃**。
+影响面＝所有用多段串的卡的 `regime_ic`/`regime_gap` 读数（`_series_metrics`/`_panel_metrics`/
+`_event_metrics` 三处消费）。本班**只在漏触发柱**上用新的多段解析器 `_spans_dates_all`
+（新读面必须看全段），**既有 regime 面一字未动**——把它一并改掉＝历史卡的读数口径变，
+属判据面变更，须统筹裁定后再做（已列为待裁项）。
+正对照：新钉 `test_crisis_second_span_is_not_dropped_by_multi_span_string` 断言两段都出现，
+若退回旧解析器该支必红。
+
+### 21.4 一条工具层机制显形（转维护三班，非本班门位）
+
+`card_binding.py:71` 以 `RUN_ROOT`（源自 `zephyr.shared.io.paths`，而 zephyr 由 usercustomize
+**从主区预导入**，见在册"zephyr 预导入"条）把 `sys.path.insert(0, <主区>/scripts/backtest)`。
+⇒ **在车道里默认跑 pytest，`fexam.*` 解析到的是主区码面**，本班改动测不到（假绿方向＝"我改红了但
+显示绿"与"我改绿了实际没测"两种都可能）。实测两面差：同一批新测试，主区码面 2 failed
+（`arm_context_for_judge` 不存在），车道码面 110 passed。
+在册解法＝考试班已用的配方：`PYTHONNOUSERSITE=1` ＋ PYTHONPATH 指车道（本班当晚照此复核）。
+治本建议（属他人件，本班不代改）：`RUN_ROOT` 应按**被调用件自身位置**解析而非按预导入的 zephyr 根。
+
+### 21.5 PASS 结构性不可达的账，从今夜起改写
+
+07 三柱从此有机器面；02 族（含 06）自冻结第一天申报的 `out_of_vocab_pillars` 三键**清空**，
+分箱侧旧断言随实（§21.1 表内那支）。**但**：07 v1 卡面仍带 `out_of_vocab_pillars` 三键申报与
+`kill_stuck` 那条 OOS 空窗事实（§十九.3），故 07 v1 重跑仍不是 PASS 候选——
+可 PASS 的形态在 07b（复位规则）＋两跑合议面，见 §廿二。本班不自翻 07 v1 的 fail 结论。
+
+## 廿二、裁定②呈批面：07b 草案已就位，只等参数值
+
+草案落在 `docs/_working/mineloop2_campaign/01_card07_draft_and_approval.yaml` 新节
+`card07b_draft`（本袋同批），内含：机器锚点逐字行号（`request_manual_reset:556`、
+`ResetConfirmation:236-244`、`position_cap` 五态表与 `0.25*(step+1)` 阶梯 `:312-326`、
+`recovery_step_recovered=(0.50,0.75,1-1e-6):162`、`min_hold_recovery_step=5:161`、
+`recovery_freeze_days=5:169`、毕业准则六件 `:163-168`）；两档括号**预登记**（A 宽＝0.50/零冷却/不要求新高，
+B 严＝0.75/20 交易日冷却/须创新高，B 的两个参数机器侧无对应在册值＝本班自拟，须随卡披露且禁挪他卡）；
+**日频装置无笔级 PnL ⇒ 毕业准则不可评估**的缺口申报（甲案＝声明无面并入 not_judged 披露，
+乙案＝改笔级回放面，跨域工期，本班不承诺），本班推荐甲案；
+敏感性协议＝2 档 × 2 配对＝**4 跑、试次 4 入账、结论取两档同号**（成本实测：同进程共用一次底座装载）。
+参数值批下来之前 07b 不起卡件、不开考。

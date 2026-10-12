@@ -156,8 +156,10 @@ def test_triage_real_feasible_card() -> None:
     assert r["state"] == "feasible_now"
     assert r["signal_kind"] == "series" and r["arm_count"] == 3
     assert r["scalar_expressible"] is True and r["numeric_frozen"] is True
-    # 门柱词表外键须如实点出（P1 立法面），禁谎报"全在机判面内"
-    assert "whipsaw_roundtrip_ratio_max" in r["out_of_vocab_pillars"]
+    # 裁定③（统筹 2026-10-12，三柱机器面立项）后：词表外键须**清空**——
+    # 改前此支断言 whipsaw_roundtrip_ratio_max 在越表清单里（02 族自冻结第一天就申报"无机器面"），
+    # 该事实被裁定③消灭，测试随实；判据数值与卡面其余面零动（越表读数仍由 _judge_comparison 逐柱点名）。
+    assert r["out_of_vocab_pillars"] == []
 
 
 def test_triage_real_panel_card_goes_to_engine() -> None:
