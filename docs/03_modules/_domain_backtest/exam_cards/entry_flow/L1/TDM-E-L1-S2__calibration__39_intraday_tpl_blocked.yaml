@@ -1,0 +1,40 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/39_intraday_tpl_blocked
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: 日内时点族卡（Gao et al. 2018 模板C·blocked_on_WO-A2）
+hypothesis: 开盘 N 分钟/午前/午后涨停家数×量级×后续收益（Gao et al. 2018 头半小时动量的涨停族移植）。硬依赖=WO-A2 五分钟切片器（个股分钟面存在性核查未证），按断供面禁硬考纪律如实
+  blocked，禁日频近似冒充分钟面。WO-A2 解锁后本卡升级为时点族首卡。
+window:
+  in_sample:
+  - '2019-02-11'
+  - '2026-04-02'
+  oos:
+  - '2026-04-03'
+  - '2026-10-12'
+  regimes: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——沿用卡池冻结惯例两段'
+  frozen_note: 看数前冻结（裁定#501/G4-5）；OOS=本班筛选全程未触碰的末段扣留段（AHM 协议）
+buckets:
+  type: quantile_decile
+  'on': 当日因子横截面值
+  min_obs_per_bucket: 60
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+preregistered_by: st-minedig-20261012
+preregistered_at: '2026-10-12'
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
+status: blocked_on_data
+status_reason: blocked_on_WO-A2：个股分钟面数据闸未解锁（15_work_orders_engine_and_vocab.yaml WO-A2）；本班零触碰
+data_binding:
+  signal_table: 待 WO-A2 解锁后登记（5 分钟切片面）
+  note: 出生四件于解锁批补齐；本卡仅占位声明方向与依赖

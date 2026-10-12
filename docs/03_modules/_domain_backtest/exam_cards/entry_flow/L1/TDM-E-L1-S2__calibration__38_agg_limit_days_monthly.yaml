@@ -1,0 +1,54 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/38_agg_limit_days_monthly
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: 聚合涨停天数月度口径卡（Cai et al. 2022 模板B·挖矿班冻结）
+hypothesis: 日涨停家数（lu_flag 逐日计数）20 日滚动和的月末值，对次月市场等权累计收益有预测力（Cai et al. 2022 聚合涨停=注意力测度的月度口径）。与在册 02_涨停家数（日频）差异=horizon
+  轴（T5）+聚合口径，非同义重考。筛级月度证据：n_months=85，Spearman IC=-0.0104，t=-0.09。
+window:
+  in_sample:
+  - '2019-02-11'
+  - '2026-04-02'
+  oos:
+  - '2026-04-03'
+  - '2026-10-12'
+  regimes: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——沿用卡池冻结惯例两段'
+  frozen_note: 看数前冻结（裁定#501/G4-5）；OOS=本班筛选全程未触碰的末段扣留段（AHM 协议）
+buckets:
+  type: ordinal
+  'on': 月末 lu_count_20d
+  min_obs_per_bucket: 8
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.25
+  ic_ir_min: 0.5
+  regime_same_sign: true
+  oos_same_sign: true
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+preregistered_by: st-minedig-20261012
+preregistered_at: '2026-10-12'
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
+target:
+  primary: next_month_market_ew_return（面板等权 proxy，非指数，如实披露）
+  secondary: next_month_market_ew_return 分段（前/后半月）
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: close（ret_1d>=0.095 派生 lu_flag）
+  signal_derivation: lu_flag 逐日全面板计数 → 20 日滚动和 → 月末取值；市场收益=面板等权均值累计
+  piece_1_signal_face: signal_kind=series；表达式=lu_count(20d sum, monthly edge)（规范 Call 形，白名单算子）；特征真源=lane_c
+    compute_features（close/turnover/amount）+涨停派生三列（lu_flag=ret_1d>=0.095 / lu_cnt_10d / lu_cnt_60d，同一
+    kline 表派生，零新数据源）
+  piece_2_universe: c1_market.kline_daily_hfq 窗内日均成交额 top800（lane_c SQL_UNIVERSE 同式）；top800 全窗均额=大票偏置，如实披露；停牌/缺列=矩阵
+    NaN 自然缺格
+  piece_3_rebalance_rows: 每交易日行（日频横截面，分位桶逐日重算；不自定义调仓日程）
+  piece_4_r_face_source: r 位=同面板前向收益 y_fwd1=close_{t+1}/close_t-1（hfq 同表自产），禁借外部指数；e 位=因子横截面值（同一次面板调用产出）
+  arm_e_face_quote: e 位=月末聚合涨停天数序列（全面板计数）
+  arm_r_face_quote: r 位=次月面板等权累计收益（proxy 自产，禁借外部指数冒充）
+  birth_batch: screen-minedig-20261012
+status: blocked_on_data
+status_reason: 月度样本 n=85 或 IC/t 未过预登记月度闸（agg_monthly），不开考
