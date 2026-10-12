@@ -1,0 +1,29 @@
+# 终清波三·影子观测账 附录 A（新文件追加入册；27_ 本体不动）
+kind: addendum
+addendum_to: docs/_working/finalclean2_campaign/wave3/27_wave3_shadow_watch_log.yaml
+generated_at: '2026-10-12 19:52:51'
+why_separate_file: ⚑ 27_ 在 dev 上已由 q-0007 落为 v1；本班两次复投同件（q-0009、q-0010）均死于『landing 异常: 非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）』
+root_cause: 袋的 base_head 取的是车道分支 HEAD（ccf6d852cc…，10-11 23:1x 建道时刻）而非 dev 现头；base 面内根本没有 27_ ⇒ dev 侧与我侧都算改动该件 ⇒ **把内容做成 dev 的超集也救不了**，唯一可落地路径＝换新文件做追加册
+knowledge_correction: ⚑ 在册两条『新建件先入队后落码／同会话后袋补救＝做成严格超集』只在 base_head 与 dev 同源时成立；车道长期落后 dev 时该式失效并必判真冲突（本班实测两连死，已回写记忆）
+round5_data:
+  ts: '2026-10-12T08:47:03.021445+00:00'
+  mode: shadow
+  scanned: 475
+  would_n: 296
+  would_set_sha256: c9739bf5e618e43157c06149685d96aaa1d82906efca8a61fe1016d3c1606831
+  round4_would_set_sha256: ff19b201c88e8d848479b75906bd4ef5eb1d81e8dd5d8fac4b963e24fe7b7e88
+  new_vs_round4: ["st-capcov-survey-20261005", "st-cbsurg-20261005", "st-f11-requeue-20261005", "st-f12-doctor3-20261005", "st-f13-superseded-20261005", "st-f8-orphan-20261004", "st-sP-bottleneck-20261005", "st-vm12v-20261004"]
+  gone_vs_round4: []
+  errors: 0
+  suspected: 0
+  hits_vs_live_n: 0
+  verdict: PASS
+  raw_location: .runtime/quarantine/fclean3_safety/shadow_rounds/shadow_round5.json
+method_correction: ⚑ 采纳统筹入册——同日轮次才可用 would_set_sha256 全等做幂等自证（round1-4 全等 ff19b201c88e8d84）；跨轮比较一律改用 would_n ＋ new/gone 差集，否则第 7 天会被误读成机制不稳
+growth_explanation: would 288→296、gone=0，新增 8 支＝6 支 20261005 系＋2 支 20261004 系（st-f8-orphan-20261004／st-vm12v-20261004）；根因＝归档器门『无注册表条目 ∧ mtime>7d』在 10-11~10-12 陆续跨过 7 天门 ⇒ 可预期的单调增长，非读数抖动
+post_crash_notes:
+  - 15:5x 与 18:3x 两次工作机重启致全 fleet 心跳归零；本班三次复位。顺序要诀：先起 heartbeat_daemon 再 register(logical=True)，否则被 chief-form 校验降级为 logical=False
+  - st-dexp-20261009 分片 JSON 损坏（读侧 skip＋warn）⇒ 会话隐形、可被任何 mutating 调用误判死；并案维护三班活性族簇
+  - 接管台账 188 条 status 全为 open，而销账走 .runtime/takeover/resolved/ 目录面 ⇒ 开账与销账两面不同源（同列观测，非本班判死依据）
+day1_final: PASS（round1-5 五轮全 PASS）；day2＝10-13 起由周期班/维护三班按 23_卡续跑，跨轮按本附录新口径记 new/gone
+superseded_statement: 本附录更正 27_ v1 内『四轮全等』的范围（应限同日）与 day1_status 轮数（实为五轮）；27_ 本体保持不动（Owner 追认纪律：更正另起一节、旧案卷不留改动痕迹）
