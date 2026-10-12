@@ -1,0 +1,2033 @@
+doc_type: cband_allocator_raw
+version: v1
+generated_at_utc: '2026-10-11 22:04:41.228006+00:00'
+reading_class: 未折减（pre-deflation）；轻面读数——与在册批4 引擎面不同面，禁混排同表直读
+prereg_ref: docs/_working/cband_neighborhood_campaign/01_prereg_axis_sets_v1.yaml
+partial: false
+selftest: false
+device:
+  face: exit_sim.simulate(stop_enabled=False) 消费分配器权重帧（无 PIT/剔ST/滑点/冲击/参与率，佣金同源双边）
+  param_faces_used:
+  - three_layer_weights(w_eq/w_iv/w_mom)
+  - pa015_weights(up_w_iv/up_w_mom/down_w_iv/down_w_mom)
+  composite_columns_n: 24
+  columns_source: docs/_working/fexam/allocator_shadow_report_v1.yaml
+  windows:
+    run:
+    - '2018-01-02'
+    - '2026-09-30'
+    is:
+    - '2018-01-02'
+    - '2025-09-30'
+    oos:
+    - '2025-10-09'
+    - '2026-09-30'
+  regime_source: sma200_default
+  regime_delta_vs_register_v1: 在册 v1 标 regime_table+sma_fallback；本班跑现默认 SMA200 帘子 ⇒ ALC-PA015 行不得当同面重跑读
+  priceable_mask:
+    masked_columns: 1
+    months_with_masked_target: 21
+    note: 秩仍在全截面（含不可定价列）上算，只在目标权重帧里剔除无收盘价的标的＝与在册引擎面 flat.dropna(subset=['close']) 同语义；被剔份额留为现金（轻面无杠杆，与 leg② 同装置）
+data_face:
+  columns_loaded: 24
+  composite_shape:
+  - 1880
+  - 5818
+  first_date: '2019-01-02'
+  last_date: '2026-09-30'
+  non_nan_share: 0.8161
+  run_window:
+  - '2018-01-02'
+  - '2026-09-30'
+  note: last_date 即本班发跑时点的在册数据末班；2018-2020 空仓属覆盖现实（在册 exit_sim 同款申报）
+rate_calibration:
+  per_cell_seconds_mean: 0.976
+  n_cells_timed: 44
+baseline_cell_ids:
+  ALC-THREELAYER-001: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  ALC-RK08-001: d44d9a2b#allocator=ALC-RK08-001;iv_lookback=60
+  ALC-PA015-001: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  ALC-SIG131-001: 1bd64b64#allocator=ALC-SIG131-001;cap_frac=0.5
+  ALC-EQUAL-001: 9b7800e5#allocator=ALC-EQUAL-001
+in_register_engine_face_v1:
+  source: docs/_working/fexam/allocator_shadow_report_v1.md
+  oos_sharpe:
+    ALC-THREELAYER-001: 0.52
+    ALC-EQUAL-001: -0.22
+    ALC-RK08-001: 0.36
+    ALC-PA015-001: 0.32
+    ALC-SIG131-001: -0.22
+  face_note: 引擎面，与本批轻面只作排序一致性观察，不作数值对照
+counts:
+  rows: 44
+  ok: 44
+  error_rows: 0
+evidence_vs_baseline:
+- allocator: ALC-THREELAYER-001
+  challenger: 83e652b9#allocator=ALC-THREELAYER-001;eq=0.3;iv=0.2;mom=0.5
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: -0.00071
+  t_stat: -0.171
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: d3418d8f#allocator=ALC-THREELAYER-001;eq=0.3;iv=0.3;mom=0.4
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: -0.00124
+  t_stat: -0.5642
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 33c3c1d0#allocator=ALC-THREELAYER-001;eq=0.3;iv=0.4;mom=0.3
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: -0.002296
+  t_stat: -0.648
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 8cd43a58#allocator=ALC-THREELAYER-001;eq=0.4;iv=0.2;mom=0.4
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: -5.8e-05
+  t_stat: -0.0159
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 40fa667c#allocator=ALC-THREELAYER-001;eq=0.4;iv=0.3;mom=0.3
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: -0.000568
+  t_stat: -0.539
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: ac12f530#allocator=ALC-THREELAYER-001;eq=0.4;iv=0.4;mom=0.2
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: -0.001646
+  t_stat: -0.5651
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 28a8f852#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.2;mom=0.3
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: 0.000664
+  t_stat: 0.1854
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 5457b270#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.4;mom=0.1
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: -0.001074
+  t_stat: -0.4217
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: e786e6b5#allocator=ALC-THREELAYER-001;eq=0.6;iv=0.2;mom=0.2
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: 0.001335
+  t_stat: 0.3432
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 5327aceb#allocator=ALC-THREELAYER-001;eq=0.6;iv=0.3;mom=0.1
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: 0.000497
+  t_stat: 0.5079
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 8ed6925c#allocator=ALC-THREELAYER-001;iv_lookback=30
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: 0.001142
+  t_stat: 0.0649
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: a6eac444#allocator=ALC-THREELAYER-001;iv_lookback=90
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: -0.010885
+  t_stat: -0.7908
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 0ffe00fc#allocator=ALC-THREELAYER-001;iv_lookback=120
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: -0.014097
+  t_stat: -0.8084
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 8bc2d572#allocator=ALC-THREELAYER-001;mom_lookback=10
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: -0.000759
+  t_stat: -0.3402
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: a555eb53#allocator=ALC-THREELAYER-001;mom_lookback=40
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: 0.001686
+  t_stat: 0.8279
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: f85b492d#allocator=ALC-THREELAYER-001;mom_lookback=60
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: 0.00147
+  t_stat: 0.6801
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 25eaa062#allocator=ALC-THREELAYER-001;cap_frac=0.25
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: 0.0
+  t_stat: null
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 185cbdaf#allocator=ALC-THREELAYER-001;cap_frac=0.75
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: 0.0
+  t_stat: null
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-THREELAYER-001
+  challenger: 149f299c#allocator=ALC-THREELAYER-001;cap_frac=1.0
+  baseline: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  n_days: 2122
+  ann_diff: 0.0
+  t_stat: null
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-RK08-001
+  challenger: 6faf9af3#allocator=ALC-RK08-001;iv_lookback=20
+  baseline: d44d9a2b#allocator=ALC-RK08-001;iv_lookback=60
+  n_days: 2122
+  ann_diff: 0.003232
+  t_stat: 0.0955
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-RK08-001
+  challenger: 4ffc8ffb#allocator=ALC-RK08-001;iv_lookback=30
+  baseline: d44d9a2b#allocator=ALC-RK08-001;iv_lookback=60
+  n_days: 2122
+  ann_diff: 0.011221
+  t_stat: 0.3484
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-RK08-001
+  challenger: 47a73062#allocator=ALC-RK08-001;iv_lookback=40
+  baseline: d44d9a2b#allocator=ALC-RK08-001;iv_lookback=60
+  n_days: 2122
+  ann_diff: 0.002122
+  t_stat: 0.0736
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-RK08-001
+  challenger: 51fe0966#allocator=ALC-RK08-001;iv_lookback=90
+  baseline: d44d9a2b#allocator=ALC-RK08-001;iv_lookback=60
+  n_days: 2122
+  ann_diff: -0.020963
+  t_stat: -0.9057
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-RK08-001
+  challenger: d5703fd4#allocator=ALC-RK08-001;iv_lookback=120
+  baseline: d44d9a2b#allocator=ALC-RK08-001;iv_lookback=60
+  n_days: 2122
+  ann_diff: -0.029522
+  t_stat: -0.8798
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-PA015-001
+  challenger: 3d2c25fd#allocator=ALC-PA015-001;down=[0.6, 0.4];up=[0.3, 0.7]
+  baseline: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  n_days: 2122
+  ann_diff: 0.001899
+  t_stat: 1.2551
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-PA015-001
+  challenger: 40a9c4a3#allocator=ALC-PA015-001;down=[0.5, 0.5];up=[0.3, 0.7]
+  baseline: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  n_days: 2122
+  ann_diff: 0.004086
+  t_stat: 1.264
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-PA015-001
+  challenger: 0ddf2767#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.4, 0.6]
+  baseline: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  n_days: 2122
+  ann_diff: 0.001287
+  t_stat: 0.4627
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-PA015-001
+  challenger: 75e058c3#allocator=ALC-PA015-001;down=[0.6, 0.4];up=[0.4, 0.6]
+  baseline: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  n_days: 2122
+  ann_diff: 0.003265
+  t_stat: 1.0271
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-PA015-001
+  challenger: 21f545a2#allocator=ALC-PA015-001;down=[0.5, 0.5];up=[0.4, 0.6]
+  baseline: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  n_days: 2122
+  ann_diff: 0.005599
+  t_stat: 1.3059
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-PA015-001
+  challenger: a7af55df#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.5, 0.5]
+  baseline: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  n_days: 2122
+  ann_diff: 0.002722
+  t_stat: 0.5579
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-PA015-001
+  challenger: cb8ce26b#allocator=ALC-PA015-001;down=[0.6, 0.4];up=[0.5, 0.5]
+  baseline: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  n_days: 2122
+  ann_diff: 0.00478
+  t_stat: 0.9348
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-PA015-001
+  challenger: cc63fecb#allocator=ALC-PA015-001;down=[0.5, 0.5];up=[0.5, 0.5]
+  baseline: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  n_days: 2122
+  ann_diff: 0.007209
+  t_stat: 1.2292
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-PA015-001
+  challenger: 270c4eb9#allocator=ALC-PA015-001;mom_lookback=10
+  baseline: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  n_days: 2122
+  ann_diff: 0.001776
+  t_stat: 0.2701
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-PA015-001
+  challenger: 29d0c949#allocator=ALC-PA015-001;mom_lookback=40
+  baseline: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  n_days: 2122
+  ann_diff: 0.008202
+  t_stat: 1.2327
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-SIG131-001
+  challenger: 930a0512#allocator=ALC-SIG131-001;cap_frac=0.0
+  baseline: 1bd64b64#allocator=ALC-SIG131-001;cap_frac=0.5
+  n_days: 2122
+  ann_diff: 0.0
+  t_stat: 0.0
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-SIG131-001
+  challenger: 136ff88f#allocator=ALC-SIG131-001;cap_frac=0.25
+  baseline: 1bd64b64#allocator=ALC-SIG131-001;cap_frac=0.5
+  n_days: 2122
+  ann_diff: 0.0
+  t_stat: null
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-SIG131-001
+  challenger: 90251a15#allocator=ALC-SIG131-001;cap_frac=0.75
+  baseline: 1bd64b64#allocator=ALC-SIG131-001;cap_frac=0.5
+  n_days: 2122
+  ann_diff: 0.0
+  t_stat: null
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-SIG131-001
+  challenger: 8aee97cd#allocator=ALC-SIG131-001;cap_frac=1.0
+  baseline: 1bd64b64#allocator=ALC-SIG131-001;cap_frac=0.5
+  n_days: 2122
+  ann_diff: 0.0
+  t_stat: null
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+- allocator: ALC-SIG131-001
+  challenger: 736f0e19#allocator=ALC-SIG131-001;cap_frac=1.5
+  baseline: 1bd64b64#allocator=ALC-SIG131-001;cap_frac=0.5
+  n_days: 2122
+  ann_diff: 0.0
+  t_stat: null
+  note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+rows:
+- cell_id: 83e652b9#allocator=ALC-THREELAYER-001;eq=0.3;iv=0.2;mom=0.5
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.3
+  iv: 0.2
+  mom: 0.5
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.21832575
+      max_drawdown: -0.86847223
+      total_return: -0.55539964
+      n_days: 1882.0
+    oos:
+      sharpe: -0.35938111
+      max_drawdown: -0.53807152
+      total_return: -0.24204245
+      n_days: 241.0
+    run:
+      sharpe: -0.23603837
+      max_drawdown: -0.86847223
+      total_return: -0.66079351
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.196325
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 223
+    n_deferred_sells: 1
+    n_rebalance_trades: 3369
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.2016
+- cell_id: d3418d8f#allocator=ALC-THREELAYER-001;eq=0.3;iv=0.3;mom=0.4
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.3
+  iv: 0.3
+  mom: 0.4
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.2164291
+      max_drawdown: -0.86870905
+      total_return: -0.55388423
+      n_days: 1882.0
+    oos:
+      sharpe: -0.35888974
+      max_drawdown: -0.53516195
+      total_return: -0.24019359
+      n_days: 241.0
+    run:
+      sharpe: -0.23454875
+      max_drawdown: -0.86870905
+      total_return: -0.65894028
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.225499
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 226
+    n_deferred_sells: 1
+    n_rebalance_trades: 3359
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.0371
+- cell_id: 33c3c1d0#allocator=ALC-THREELAYER-001;eq=0.3;iv=0.4;mom=0.3
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.3
+  iv: 0.4
+  mom: 0.3
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.21137174
+      max_drawdown: -0.86805849
+      total_return: -0.54953482
+      n_days: 1882.0
+    oos:
+      sharpe: -0.3622731
+      max_drawdown: -0.53377113
+      total_return: -0.24055203
+      n_days: 241.0
+    run:
+      sharpe: -0.23109844
+      max_drawdown: -0.86805849
+      total_return: -0.65588114
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.247456
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 228
+    n_deferred_sells: 1
+    n_rebalance_trades: 3360
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1002
+- cell_id: 8cd43a58#allocator=ALC-THREELAYER-001;eq=0.4;iv=0.2;mom=0.4
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.4
+  iv: 0.2
+  mom: 0.4
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22372201
+      max_drawdown: -0.86854794
+      total_return: -0.55946334
+      n_days: 1882.0
+    oos:
+      sharpe: -0.34965041
+      max_drawdown: -0.53562945
+      total_return: -0.23768628
+      n_days: 241.0
+    run:
+      sharpe: -0.23874113
+      max_drawdown: -0.86854794
+      total_return: -0.66192911
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.191744
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 220
+    n_deferred_sells: 1
+    n_rebalance_trades: 3372
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.0993
+- cell_id: 40fa667c#allocator=ALC-THREELAYER-001;eq=0.4;iv=0.3;mom=0.3
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.4
+  iv: 0.3
+  mom: 0.3
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22138317
+      max_drawdown: -0.86883005
+      total_return: -0.55768818
+      n_days: 1882.0
+    oos:
+      sharpe: -0.3509632
+      max_drawdown: -0.533272
+      total_return: -0.23669468
+      n_days: 241.0
+    run:
+      sharpe: -0.23721559
+      max_drawdown: -0.86883005
+      total_return: -0.66026316
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.220394
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 229
+    n_deferred_sells: 1
+    n_rebalance_trades: 3362
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1009
+- cell_id: ac12f530#allocator=ALC-THREELAYER-001;eq=0.4;iv=0.4;mom=0.2
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.4
+  iv: 0.4
+  mom: 0.2
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.21610115
+      max_drawdown: -0.86832299
+      total_return: -0.5533015
+      n_days: 1882.0
+    oos:
+      sharpe: -0.35446864
+      max_drawdown: -0.5322307
+      total_return: -0.23723085
+      n_days: 241.0
+    run:
+      sharpe: -0.23361639
+      max_drawdown: -0.86832299
+      total_return: -0.6572424
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.242201
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 229
+    n_deferred_sells: 1
+    n_rebalance_trades: 3358
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1168
+- cell_id: 28a8f852#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.2;mom=0.3
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.5
+  iv: 0.2
+  mom: 0.3
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.2291766
+      max_drawdown: -0.86862547
+      total_return: -0.56369031
+      n_days: 1882.0
+    oos:
+      sharpe: -0.34059414
+      max_drawdown: -0.53325012
+      total_return: -0.23359132
+      n_days: 241.0
+    run:
+      sharpe: -0.24161309
+      max_drawdown: -0.86862547
+      total_return: -0.66334454
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.187561
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 224
+    n_deferred_sells: 1
+    n_rebalance_trades: 3366
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1006
+- cell_id: a7bddf22#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.3;mom=0.2
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.5
+  iv: 0.3
+  mom: 0.2
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22577459
+      max_drawdown: -0.8688722
+      total_return: -0.5610518
+      n_days: 1882.0
+    oos:
+      sharpe: -0.34342899
+      max_drawdown: -0.53146496
+      total_return: -0.23339688
+      n_days: 241.0
+    run:
+      sharpe: -0.23949213
+      max_drawdown: -0.8688722
+      total_return: -0.66136265
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.215674
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 230
+    n_deferred_sells: 1
+    n_rebalance_trades: 3357
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1609
+- cell_id: 5457b270#allocator=ALC-THREELAYER-001;eq=0.5;iv=0.4;mom=0.1
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.5
+  iv: 0.4
+  mom: 0.1
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22039131
+      max_drawdown: -0.86845773
+      total_return: -0.55668724
+      n_days: 1882.0
+    oos:
+      sharpe: -0.34709193
+      max_drawdown: -0.53074677
+      total_return: -0.23410847
+      n_days: 241.0
+    run:
+      sharpe: -0.23584863
+      max_drawdown: -0.86845773
+      total_return: -0.65842438
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.237297
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 229
+    n_deferred_sells: 1
+    n_rebalance_trades: 3362
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1201
+- cell_id: e786e6b5#allocator=ALC-THREELAYER-001;eq=0.6;iv=0.2;mom=0.2
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.6
+  iv: 0.2
+  mom: 0.2
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.23422013
+      max_drawdown: -0.86866555
+      total_return: -0.5676295
+      n_days: 1882.0
+    oos:
+      sharpe: -0.33214897
+      max_drawdown: -0.53100103
+      total_return: -0.22978782
+      n_days: 241.0
+    run:
+      sharpe: -0.24426023
+      max_drawdown: -0.86866555
+      total_return: -0.66470031
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.183726
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 229
+    n_deferred_sells: 1
+    n_rebalance_trades: 3360
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1373
+- cell_id: 5327aceb#allocator=ALC-THREELAYER-001;eq=0.6;iv=0.3;mom=0.1
+  allocator: ALC-THREELAYER-001
+  kind: simplex
+  eq: 0.6
+  iv: 0.3
+  mom: 0.1
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22979511
+      max_drawdown: -0.86888619
+      total_return: -0.5641339
+      n_days: 1882.0
+    oos:
+      sharpe: -0.33605983
+      max_drawdown: -0.52973062
+      total_return: -0.2302028
+      n_days: 241.0
+    run:
+      sharpe: -0.24149692
+      max_drawdown: -0.86888619
+      total_return: -0.6623129
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.211298
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 230
+    n_deferred_sells: 1
+    n_rebalance_trades: 3361
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.098
+- cell_id: 8ed6925c#allocator=ALC-THREELAYER-001;iv_lookback=30
+  allocator: ALC-THREELAYER-001
+  kind: ofat
+  iv_lookback: 30
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.26613511
+      max_drawdown: -0.8651756
+      total_return: -0.59698927
+      n_days: 1882.0
+    oos:
+      sharpe: -0.17687424
+      max_drawdown: -0.52929307
+      total_return: -0.1719189
+      n_days: 241.0
+    run:
+      sharpe: -0.24387724
+      max_drawdown: -0.8651756
+      total_return: -0.66378962
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.228456
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 250
+    n_deferred_sells: 1
+    n_rebalance_trades: 3316
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.0461
+- cell_id: a6eac444#allocator=ALC-THREELAYER-001;iv_lookback=90
+  allocator: ALC-THREELAYER-001
+  kind: ofat
+  iv_lookback: 90
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.16009996
+      max_drawdown: -0.85526606
+      total_return: -0.49352326
+      n_days: 1882.0
+    oos:
+      sharpe: -0.44564398
+      max_drawdown: -0.53185902
+      total_return: -0.27147781
+      n_days: 241.0
+    run:
+      sharpe: -0.20384687
+      max_drawdown: -0.85526606
+      total_return: -0.6292063
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.21441
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 215
+    n_deferred_sells: 1
+    n_rebalance_trades: 3387
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1037
+- cell_id: 0ffe00fc#allocator=ALC-THREELAYER-001;iv_lookback=120
+  allocator: ALC-THREELAYER-001
+  kind: ofat
+  iv_lookback: 120
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.1305325
+      max_drawdown: -0.85147983
+      total_return: -0.46181378
+      n_days: 1882.0
+    oos:
+      sharpe: -0.51499704
+      max_drawdown: -0.54882384
+      total_return: -0.30070536
+      n_days: 241.0
+    run:
+      sharpe: -0.19195023
+      max_drawdown: -0.85147983
+      total_return: -0.62175429
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.216801
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 204
+    n_deferred_sells: 1
+    n_rebalance_trades: 3402
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1068
+- cell_id: 8bc2d572#allocator=ALC-THREELAYER-001;mom_lookback=10
+  allocator: ALC-THREELAYER-001
+  kind: ofat
+  mom_lookback: 10
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22518111
+      max_drawdown: -0.86774725
+      total_return: -0.56003084
+      n_days: 1882.0
+    oos:
+      sharpe: -0.33371383
+      max_drawdown: -0.52759885
+      total_return: -0.22922118
+      n_days: 241.0
+    run:
+      sharpe: -0.23737299
+      max_drawdown: -0.86774725
+      total_return: -0.65872328
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.215674
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 231
+    n_deferred_sells: 1
+    n_rebalance_trades: 3355
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.105
+- cell_id: a555eb53#allocator=ALC-THREELAYER-001;mom_lookback=40
+  allocator: ALC-THREELAYER-001
+  kind: ofat
+  mom_lookback: 40
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.23150326
+      max_drawdown: -0.86842419
+      total_return: -0.5662465
+      n_days: 1882.0
+    oos:
+      sharpe: -0.34853854
+      max_drawdown: -0.53049414
+      total_return: -0.23458754
+      n_days: 241.0
+    run:
+      sharpe: -0.24513203
+      max_drawdown: -0.86842419
+      total_return: -0.66598795
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.215674
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 231
+    n_deferred_sells: 1
+    n_rebalance_trades: 3354
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.051
+- cell_id: f85b492d#allocator=ALC-THREELAYER-001;mom_lookback=60
+  allocator: ALC-THREELAYER-001
+  kind: ofat
+  mom_lookback: 60
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.23078617
+      max_drawdown: -0.8698475
+      total_return: -0.56497804
+      n_days: 1882.0
+    oos:
+      sharpe: -0.34897009
+      max_drawdown: -0.52989847
+      total_return: -0.23472153
+      n_days: 241.0
+    run:
+      sharpe: -0.24465487
+      max_drawdown: -0.8698475
+      total_return: -0.66510608
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.215674
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 233
+    n_deferred_sells: 1
+    n_rebalance_trades: 3353
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.9716
+- cell_id: 25eaa062#allocator=ALC-THREELAYER-001;cap_frac=0.25
+  allocator: ALC-THREELAYER-001
+  kind: ofat
+  cap_frac: 0.25
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22577459
+      max_drawdown: -0.8688722
+      total_return: -0.5610518
+      n_days: 1882.0
+    oos:
+      sharpe: -0.34342899
+      max_drawdown: -0.53146496
+      total_return: -0.23339688
+      n_days: 241.0
+    run:
+      sharpe: -0.23949213
+      max_drawdown: -0.8688722
+      total_return: -0.66136265
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.215674
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 230
+    n_deferred_sells: 1
+    n_rebalance_trades: 3357
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1608
+- cell_id: 185cbdaf#allocator=ALC-THREELAYER-001;cap_frac=0.75
+  allocator: ALC-THREELAYER-001
+  kind: ofat
+  cap_frac: 0.75
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22577459
+      max_drawdown: -0.8688722
+      total_return: -0.5610518
+      n_days: 1882.0
+    oos:
+      sharpe: -0.34342899
+      max_drawdown: -0.53146496
+      total_return: -0.23339688
+      n_days: 241.0
+    run:
+      sharpe: -0.23949213
+      max_drawdown: -0.8688722
+      total_return: -0.66136265
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.215674
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 230
+    n_deferred_sells: 1
+    n_rebalance_trades: 3357
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.0585
+- cell_id: 149f299c#allocator=ALC-THREELAYER-001;cap_frac=1.0
+  allocator: ALC-THREELAYER-001
+  kind: ofat
+  cap_frac: 1.0
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22577459
+      max_drawdown: -0.8688722
+      total_return: -0.5610518
+      n_days: 1882.0
+    oos:
+      sharpe: -0.34342899
+      max_drawdown: -0.53146496
+      total_return: -0.23339688
+      n_days: 241.0
+    run:
+      sharpe: -0.23949213
+      max_drawdown: -0.8688722
+      total_return: -0.66136265
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.215674
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 230
+    n_deferred_sells: 1
+    n_rebalance_trades: 3357
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1125
+- cell_id: 6faf9af3#allocator=ALC-RK08-001;iv_lookback=20
+  allocator: ALC-RK08-001
+  kind: ofat
+  iv_lookback: 20
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.23999265
+      max_drawdown: -0.85852999
+      total_return: -0.58926396
+      n_days: 1882.0
+    oos:
+      sharpe: -0.21045697
+      max_drawdown: -0.51836344
+      total_return: -0.18448886
+      n_days: 241.0
+    run:
+      sharpe: -0.22948973
+      max_drawdown: -0.85852999
+      total_return: -0.66296854
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.849138
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 237
+    n_deferred_sells: 1
+    n_rebalance_trades: 3348
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.7933
+- cell_id: 4ffc8ffb#allocator=ALC-RK08-001;iv_lookback=30
+  allocator: ALC-RK08-001
+  kind: ofat
+  iv_lookback: 30
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.27423936
+      max_drawdown: -0.87183438
+      total_return: -0.61835416
+      n_days: 1882.0
+    oos:
+      sharpe: -0.20133898
+      max_drawdown: -0.51971636
+      total_return: -0.17617987
+      n_days: 241.0
+    run:
+      sharpe: -0.25626963
+      max_drawdown: -0.87183438
+      total_return: -0.68342505
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.836836
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 262
+    n_deferred_sells: 1
+    n_rebalance_trades: 3297
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.8004
+- cell_id: 47a73062#allocator=ALC-RK08-001;iv_lookback=40
+  allocator: ALC-RK08-001
+  kind: ofat
+  iv_lookback: 40
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22516388
+      max_drawdown: -0.8633599
+      total_return: -0.577136
+      n_days: 1882.0
+    oos:
+      sharpe: -0.26552939
+      max_drawdown: -0.5231041
+      total_return: -0.20470753
+      n_days: 241.0
+    run:
+      sharpe: -0.22526582
+      max_drawdown: -0.8633599
+      total_return: -0.66054602
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.819507
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 245
+    n_deferred_sells: 1
+    n_rebalance_trades: 3327
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.8911
+- cell_id: d44d9a2b#allocator=ALC-RK08-001;iv_lookback=60
+  allocator: ALC-RK08-001
+  kind: ofat
+  iv_lookback: 60
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.16626027
+      max_drawdown: -0.87204499
+      total_return: -0.52565657
+      n_days: 1882.0
+    oos:
+      sharpe: -0.4962354
+      max_drawdown: -0.52734409
+      total_return: -0.28464797
+      n_days: 241.0
+    run:
+      sharpe: -0.21548433
+      max_drawdown: -0.87204499
+      total_return: -0.65879462
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.795182
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 232
+    n_deferred_sells: 1
+    n_rebalance_trades: 3356
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.8341
+- cell_id: 51fe0966#allocator=ALC-RK08-001;iv_lookback=90
+  allocator: ALC-RK08-001
+  kind: ofat
+  iv_lookback: 90
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.04553937
+      max_drawdown: -0.85366698
+      total_return: -0.37719336
+      n_days: 1882.0
+    oos:
+      sharpe: -0.69264669
+      max_drawdown: -0.52489646
+      total_return: -0.35282209
+      n_days: 241.0
+    run:
+      sharpe: -0.149041
+      max_drawdown: -0.85366698
+      total_return: -0.59597978
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.790848
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 202
+    n_deferred_sells: 1
+    n_rebalance_trades: 3409
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.8043
+- cell_id: d5703fd4#allocator=ALC-RK08-001;iv_lookback=120
+  allocator: ALC-RK08-001
+  kind: ofat
+  iv_lookback: 120
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.0068341
+      max_drawdown: -0.82994573
+      total_return: -0.32900144
+      n_days: 1882.0
+    oos:
+      sharpe: -0.72947384
+      max_drawdown: -0.5365387
+      total_return: -0.36458732
+      n_days: 241.0
+    run:
+      sharpe: -0.12106826
+      max_drawdown: -0.82994573
+      total_return: -0.57246384
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.799015
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 194
+    n_deferred_sells: 1
+    n_rebalance_trades: 3425
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.8887
+- cell_id: 9592518f#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.3, 0.7]
+  allocator: ALC-PA015-001
+  kind: split
+  up:
+  - 0.3
+  - 0.7
+  down:
+  - 0.7
+  - 0.3
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.17398159
+      max_drawdown: -0.87153008
+      total_return: -0.52558828
+      n_days: 1882.0
+    oos:
+      sharpe: -0.40670907
+      max_drawdown: -0.53591594
+      total_return: -0.25863082
+      n_days: 241.0
+    run:
+      sharpe: -0.20764981
+      max_drawdown: -0.87153008
+      total_return: -0.64609729
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.773264
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 225
+    n_deferred_sells: 1
+    n_rebalance_trades: 3370
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.9904
+- cell_id: 3d2c25fd#allocator=ALC-PA015-001;down=[0.6, 0.4];up=[0.3, 0.7]
+  allocator: ALC-PA015-001
+  kind: split
+  up:
+  - 0.3
+  - 0.7
+  down:
+  - 0.6
+  - 0.4
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.18048873
+      max_drawdown: -0.87187874
+      total_return: -0.53165018
+      n_days: 1882.0
+    oos:
+      sharpe: -0.4120908
+      max_drawdown: -0.53634219
+      total_return: -0.26017045
+      n_days: 241.0
+    run:
+      sharpe: -0.21390094
+      max_drawdown: -0.87187874
+      total_return: -0.65136108
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.761634
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 223
+    n_deferred_sells: 1
+    n_rebalance_trades: 3367
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.0843
+- cell_id: 40a9c4a3#allocator=ALC-PA015-001;down=[0.5, 0.5];up=[0.3, 0.7]
+  allocator: ALC-PA015-001
+  kind: split
+  up:
+  - 0.3
+  - 0.7
+  down:
+  - 0.5
+  - 0.5
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.1877229
+      max_drawdown: -0.87225741
+      total_return: -0.53834926
+      n_days: 1882.0
+    oos:
+      sharpe: -0.41948556
+      max_drawdown: -0.53706927
+      total_return: -0.26237668
+      n_days: 241.0
+    run:
+      sharpe: -0.22108187
+      max_drawdown: -0.87225741
+      total_return: -0.65739061
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.745965
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 224
+    n_deferred_sells: 1
+    n_rebalance_trades: 3372
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.9424
+- cell_id: 0ddf2767#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.4, 0.6]
+  allocator: ALC-PA015-001
+  kind: split
+  up:
+  - 0.4
+  - 0.6
+  down:
+  - 0.7
+  - 0.3
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.17558926
+      max_drawdown: -0.87200176
+      total_return: -0.52840468
+      n_days: 1882.0
+    oos:
+      sharpe: -0.42215979
+      max_drawdown: -0.53395699
+      total_return: -0.26284365
+      n_days: 241.0
+    run:
+      sharpe: -0.2114758
+      max_drawdown: -0.87200176
+      total_return: -0.6502527
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.773264
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 229
+    n_deferred_sells: 1
+    n_rebalance_trades: 3360
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.9961
+- cell_id: 75e058c3#allocator=ALC-PA015-001;down=[0.6, 0.4];up=[0.4, 0.6]
+  allocator: ALC-PA015-001
+  kind: split
+  up:
+  - 0.4
+  - 0.6
+  down:
+  - 0.6
+  - 0.4
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.18233094
+      max_drawdown: -0.87238643
+      total_return: -0.53468374
+      n_days: 1882.0
+    oos:
+      sharpe: -0.42793678
+      max_drawdown: -0.53426422
+      total_return: -0.26443982
+      n_days: 241.0
+    run:
+      sharpe: -0.21798719
+      max_drawdown: -0.87238643
+      total_return: -0.65567338
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.761634
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 228
+    n_deferred_sells: 1
+    n_rebalance_trades: 3358
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.1247
+- cell_id: 21f545a2#allocator=ALC-PA015-001;down=[0.5, 0.5];up=[0.4, 0.6]
+  allocator: ALC-PA015-001
+  kind: split
+  up:
+  - 0.4
+  - 0.6
+  down:
+  - 0.5
+  - 0.5
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.19008517
+      max_drawdown: -0.87283218
+      total_return: -0.54187611
+      n_days: 1882.0
+    oos:
+      sharpe: -0.4356148
+      max_drawdown: -0.53483864
+      total_return: -0.26665052
+      n_days: 241.0
+    run:
+      sharpe: -0.22564476
+      max_drawdown: -0.87283218
+      total_return: -0.66203381
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.745965
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 230
+    n_deferred_sells: 1
+    n_rebalance_trades: 3359
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.0292
+- cell_id: a7af55df#allocator=ALC-PA015-001;down=[0.7, 0.3];up=[0.5, 0.5]
+  allocator: ALC-PA015-001
+  kind: split
+  up:
+  - 0.5
+  - 0.5
+  down:
+  - 0.7
+  - 0.3
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.17731836
+      max_drawdown: -0.87236413
+      total_return: -0.53126262
+      n_days: 1882.0
+    oos:
+      sharpe: -0.43983591
+      max_drawdown: -0.53237501
+      total_return: -0.26786541
+      n_days: 241.0
+    run:
+      sharpe: -0.21576454
+      max_drawdown: -0.87236413
+      total_return: -0.65480175
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.773264
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 231
+    n_deferred_sells: 1
+    n_rebalance_trades: 3356
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.0595
+- cell_id: cb8ce26b#allocator=ALC-PA015-001;down=[0.6, 0.4];up=[0.5, 0.5]
+  allocator: ALC-PA015-001
+  kind: split
+  up:
+  - 0.5
+  - 0.5
+  down:
+  - 0.6
+  - 0.4
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.1843379
+      max_drawdown: -0.87275702
+      total_return: -0.53780303
+      n_days: 1882.0
+    oos:
+      sharpe: -0.4458724
+      max_drawdown: -0.53267773
+      total_return: -0.26950758
+      n_days: 241.0
+    run:
+      sharpe: -0.2225288
+      max_drawdown: -0.87275702
+      total_return: -0.66037796
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.761634
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 231
+    n_deferred_sells: 1
+    n_rebalance_trades: 3352
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.0105
+- cell_id: cc63fecb#allocator=ALC-PA015-001;down=[0.5, 0.5];up=[0.5, 0.5]
+  allocator: ALC-PA015-001
+  kind: split
+  up:
+  - 0.5
+  - 0.5
+  down:
+  - 0.5
+  - 0.5
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.19242284
+      max_drawdown: -0.87324221
+      total_return: -0.54531021
+      n_days: 1882.0
+    oos:
+      sharpe: -0.45373507
+      max_drawdown: -0.53316382
+      total_return: -0.2717019
+      n_days: 241.0
+    run:
+      sharpe: -0.23049071
+      max_drawdown: -0.87324221
+      total_return: -0.66691803
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.745965
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 234
+    n_deferred_sells: 1
+    n_rebalance_trades: 3350
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.0767
+- cell_id: 270c4eb9#allocator=ALC-PA015-001;mom_lookback=10
+  allocator: ALC-PA015-001
+  kind: ofat
+  mom_lookback: 10
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.1850211
+      max_drawdown: -0.86953441
+      total_return: -0.53505143
+      n_days: 1882.0
+    oos:
+      sharpe: -0.39121736
+      max_drawdown: -0.52545228
+      total_return: -0.25189952
+      n_days: 241.0
+    run:
+      sharpe: -0.21415927
+      max_drawdown: -0.86953441
+      total_return: -0.65002865
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.773264
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 229
+    n_deferred_sells: 1
+    n_rebalance_trades: 3362
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.0753
+- cell_id: 29d0c949#allocator=ALC-PA015-001;mom_lookback=40
+  allocator: ALC-PA015-001
+  kind: ofat
+  mom_lookback: 40
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.20333551
+      max_drawdown: -0.8739623
+      total_return: -0.55540354
+      n_days: 1882.0
+    oos:
+      sharpe: -0.42068721
+      max_drawdown: -0.52832074
+      total_return: -0.25904649
+      n_days: 241.0
+    run:
+      sharpe: -0.23427787
+      max_drawdown: -0.8739623
+      total_return: -0.66890428
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.773264
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 234
+    n_deferred_sells: 1
+    n_rebalance_trades: 3353
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 1.104
+- cell_id: 930a0512#allocator=ALC-SIG131-001;cap_frac=0.0
+  allocator: ALC-SIG131-001
+  kind: ofat
+  cap_frac: 0.0
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22826597
+      max_drawdown: -0.86181742
+      total_return: -0.56191298
+      n_days: 1882.0
+    oos:
+      sharpe: -0.27739849
+      max_drawdown: -0.53300606
+      total_return: -0.21488955
+      n_days: 241.0
+    run:
+      sharpe: -0.22941762
+      max_drawdown: -0.86181742
+      total_return: -0.6531779
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.052632
+    weight_sum_mean: 0.885714
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 199
+    n_deferred_sells: 1
+    n_rebalance_trades: 3409
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.5914
+- cell_id: 136ff88f#allocator=ALC-SIG131-001;cap_frac=0.25
+  allocator: ALC-SIG131-001
+  kind: ofat
+  cap_frac: 0.25
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22826597
+      max_drawdown: -0.86181742
+      total_return: -0.56191298
+      n_days: 1882.0
+    oos:
+      sharpe: -0.27739849
+      max_drawdown: -0.53300606
+      total_return: -0.21488955
+      n_days: 241.0
+    run:
+      sharpe: -0.22941762
+      max_drawdown: -0.86181742
+      total_return: -0.6531779
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.052632
+    weight_sum_mean: 0.885714
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 199
+    n_deferred_sells: 1
+    n_rebalance_trades: 3409
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.5755
+- cell_id: 1bd64b64#allocator=ALC-SIG131-001;cap_frac=0.5
+  allocator: ALC-SIG131-001
+  kind: ofat
+  cap_frac: 0.5
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22826597
+      max_drawdown: -0.86181742
+      total_return: -0.56191298
+      n_days: 1882.0
+    oos:
+      sharpe: -0.27739849
+      max_drawdown: -0.53300606
+      total_return: -0.21488955
+      n_days: 241.0
+    run:
+      sharpe: -0.22941762
+      max_drawdown: -0.86181742
+      total_return: -0.6531779
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.052632
+    weight_sum_mean: 0.885714
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 199
+    n_deferred_sells: 1
+    n_rebalance_trades: 3409
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.7343
+- cell_id: 90251a15#allocator=ALC-SIG131-001;cap_frac=0.75
+  allocator: ALC-SIG131-001
+  kind: ofat
+  cap_frac: 0.75
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22826597
+      max_drawdown: -0.86181742
+      total_return: -0.56191298
+      n_days: 1882.0
+    oos:
+      sharpe: -0.27739849
+      max_drawdown: -0.53300606
+      total_return: -0.21488955
+      n_days: 241.0
+    run:
+      sharpe: -0.22941762
+      max_drawdown: -0.86181742
+      total_return: -0.6531779
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.052632
+    weight_sum_mean: 0.885714
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 199
+    n_deferred_sells: 1
+    n_rebalance_trades: 3409
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.7187
+- cell_id: 8aee97cd#allocator=ALC-SIG131-001;cap_frac=1.0
+  allocator: ALC-SIG131-001
+  kind: ofat
+  cap_frac: 1.0
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22826597
+      max_drawdown: -0.86181742
+      total_return: -0.56191298
+      n_days: 1882.0
+    oos:
+      sharpe: -0.27739849
+      max_drawdown: -0.53300606
+      total_return: -0.21488955
+      n_days: 241.0
+    run:
+      sharpe: -0.22941762
+      max_drawdown: -0.86181742
+      total_return: -0.6531779
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.052632
+    weight_sum_mean: 0.885714
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 199
+    n_deferred_sells: 1
+    n_rebalance_trades: 3409
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.7077
+- cell_id: 736f0e19#allocator=ALC-SIG131-001;cap_frac=1.5
+  allocator: ALC-SIG131-001
+  kind: ofat
+  cap_frac: 1.5
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22826597
+      max_drawdown: -0.86181742
+      total_return: -0.56191298
+      n_days: 1882.0
+    oos:
+      sharpe: -0.27739849
+      max_drawdown: -0.53300606
+      total_return: -0.21488955
+      n_days: 241.0
+    run:
+      sharpe: -0.22941762
+      max_drawdown: -0.86181742
+      total_return: -0.6531779
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.052632
+    weight_sum_mean: 0.885714
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 199
+    n_deferred_sells: 1
+    n_rebalance_trades: 3409
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.7172
+- cell_id: 9b7800e5#allocator=ALC-EQUAL-001
+  allocator: ALC-EQUAL-001
+  kind: reference
+  status: ok
+  metrics:
+    is:
+      sharpe: -0.22630786
+      max_drawdown: -0.86181742
+      total_return: -0.56015269
+      n_days: 1882.0
+    oos:
+      sharpe: -0.27699812
+      max_drawdown: -0.53313539
+      total_return: -0.21487233
+      n_days: 241.0
+    run:
+      sharpe: -0.2277684
+      max_drawdown: -0.86181742
+      total_return: -0.65178392
+      n_days: 2123.0
+  weights_face:
+    max_weight: 0.05
+    weight_sum_mean: 0.885238
+    n_rebalance_rows: 105
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 198
+    n_deferred_sells: 1
+    n_rebalance_trades: 3411
+    n_symbols_traded: 1068
+    n_days: 2123
+  seconds: 0.4057

@@ -1,0 +1,166 @@
+# [MODULE] docs/_working/cband_neighborhood_campaign/02_trial_plan_v1.yaml
+# [TTL] task_bound
+ttl: task_bound
+doc_type: cband_trial_plan
+version: v1
+campaign: cband-20261012
+session: st-cband-20261012
+prereg_ref: docs/_working/cband_neighborhood_campaign/01_prereg_axis_sets_v1.yaml
+statement: >-
+  本班试次计划自班台账。令 C 的全局试次预算册（§9.4 "全局注意"所指）实测未落地
+  （grep "试次预算|trial_budget" 在 catalogs 与 docs/_working 仅命中调研册散文），
+  故先按本册挂账；预算册落地后按下节 migration 字段迁移挂账关系。
+
+planned_batches:
+  - batch_id: cband-atr-stop-coupled-20261012
+    leg: ②
+    planned_trials: 90
+    reading_face: exploration（逐格 jsonl）
+    occupies_exam_n_ledger: false
+    note: coupled 面=候选过滤与止损共用轴值 ATR 窗
+  - batch_id: cband-atr-stop-decoupled-20261012
+    leg: ②
+    planned_trials: 24
+    reading_face: exploration
+    occupies_exam_n_ledger: false
+    note: decoupled 面=过滤恒 w=14，止损用轴值 w，仅 initial_or_trailing_max
+  - batch_id: cband-atr-stop-nostop-ref-20261012
+    leg: ②
+    planned_trials: 1
+    reading_face: exploration
+    occupies_exam_n_ledger: false
+    note: 参考臂；须与在册 exit_sim_report_v1 nostop 读数对锚
+  - batch_id: cband-allocator-light-grid-20261012
+    leg: ④
+    planned_trials: 46
+    reading_face: exploration
+    occupies_exam_n_ledger: false
+    note: 轻面（simulate stop off 消费分配器权重帧）45 邻域格＋等权参照臂 1
+  - batch_id: cband-allocator-engine-pilot-20261012
+    leg: ④
+    planned_trials: 1
+    reading_face: exploration
+    occupies_exam_n_ledger: false
+    note: 引擎面单臂试点（成本实测＋面间锚点），40 分钟墙钟止损线
+totals:
+  planned: 162
+  cap_from_order: 200
+  headroom: 38
+
+ledger_channel:
+  decision: >-
+    本批=参数邻域探索面（不出裁定），故逐格走自班探索分册 jsonl；
+    批次级同时向 N 账本 TrialLedger.record_run(kind="cband_exploration_grid") **追加** batch_records，
+    目的是不让 DSR 分母少记（在册教训 [[trial-ledger-undercount-20260927]]：目录存在≠已入账，报显著性前须逐批对账）。
+    披露位 n_trials_effective 不动（在册判据 _should_write_neff_slot：探索批不抢考试 N_eff，WO-A5 已闸）。
+  known_blocker: >-
+    registry_mass_edit_guard 对中等规模册的行删除预算=2，而 batch_records 追加+重排序通常替换 ≥4 行
+    ⇒ 考试班实测 10-11 全天 written=0、自 09-22 累计 1690 次拒写；护栏标定修复已转维护二班，本班不代修、不放宽。
+  on_refusal: 如实登记 refused 原文与计划数，禁重试轰炸、禁绕过护栏；账目以本册为唯一真源直至护栏可写
+  actual_write_outcome: >-
+    实测=考试 N 账本 L0 写入 0 次、n_trials_effective 披露位零动（**设计如此，非失败**，依 §8.5.2 与上文 B1 更正）；
+    逐格探索分册已落 .runtime/nightmine_exploration/scan_ledger_cband_atr_stop.jsonl（118 行=115 格＋3 批次行）
+    与 scan_ledger_cband_allocator_light.jsonl；护栏 registry_mass_edit_guard 本班未触发（未尝试写 L0），
+    其标定缺陷读数仍沿用考试班 10-11 实测，禁本班冒充新证。
+
+migration_to_order_c_budget_registry:
+  status: pending（令 C 预算册未落地）
+  fields_to_fill: [family_id(C 族), budget_bucket_id, consumed_trials, deflation_caliber]
+  owner_of_registry: 令 C 车道（预算册主）；本班只申报计数与轴集，不自造第二本预算册
+
+# ─────────────────────────────────────────────────────────────
+# 更正节（先于任何跑批；上文原文保留不删）
+# ─────────────────────────────────────────────────────────────
+amendments_before_first_run:
+  - id: B1-通道更正
+    at_local: "2026-10-12 02:3x"
+    replaces: ledger_channel.decision（原文"批次级同时向 N 账本 record_run 追加"作废）
+    new_channel: >-
+      依 mining_sop_policy.md §8.5.2（v1.9.0，本班接令当夜立法）——筛选/探索批全部入探索分册，
+      不占考试试次。本班 160 格逐格进 `.runtime/nightmine_exploration/scan_ledger_cband_*.jsonl`
+      （与同夜令 A 车道同目录同形态，文件名带本班 sid 前缀避撞），加一条批次级 summary 行；
+      N 账本零写、n_trials_effective 零动。known_blocker/on_refusal 两段随通道作废而失去对象，
+      但保留作护栏缺陷读数供维护二班引用（该缺陷非本班触发）。
+      actual_write_outcome 键改记为：exam_n_ledger_writes=0（设计如此，非失败）。
+  - id: B2-格数更正
+    at_local: "2026-10-12 02:3x"
+    reason: 腿④ ofat_min_valid_inv 两格移除（详见 01 册 A1），RK08 小计 8→6
+    new_totals: {cband-atr-stop-coupled-20261012: 90, cband-atr-stop-decoupled-20261012: 24,
+                 cband-atr-stop-nostop-ref-20261012: 1, cband-allocator-light-grid-20261012: 44,
+                 cband-allocator-engine-pilot-20261012: 1}
+    planned_total: 160
+    cap_from_order: 200
+    headroom: 40
+
+# ─────────────────────────────────────────────────────────────
+# 挂账迁移对象已定位（03:2x 实测；不折改上文"未落地"原判——那句对的是 dev 面）
+# ─────────────────────────────────────────────────────────────
+budget_registry_locator_update:
+  found_at: "2026-10-12 03:2x"
+  state: 令 C 的册在**队列 pending**，不在 dev／主区盘面
+  bags: [q-20261012-st-statsgov-20261012-0002]
+  path_in_bag: docs/_working/statsgov_campaign/trial_budget_registry_draft.yaml
+  blob_sha256: fdcdb06329dfa6e4ceb44a79dde062b66623f0e8fbb2d2b7addadfc4f6b923bf
+  their_c_family_verbatim:
+    trial_unit: "一组 A/B 对照=一次；参数邻域 mini-grid 按格计"
+    alignment: 与本班"每格一笔试次"的计法逐字相符（本班 160 格=160 次，A/B 参照臂按一组计）
+    faces_in_their_draft: [allocator_shadow]
+  their_layering_constraint: "L1 预算册不新记一笔试次；族消耗=L0（trial_ledger_registry）按 kind 聚合派生＝零第二真源"
+  open_caliber_question_for_registry_owner: >-
+    本班 160 格按 mining_sop §8.5.2 只进探索分册、不进 L0；而该册派生规则只看 L0 的 kind 聚合
+    ⇒ C 族消耗会显示为 0（除非册主裁定"探索批以 kind 进 L0 但不占 N_eff 披露位"，或给该册加一条读探索分册的派生面）。
+    这与该册自己列的"漏计第四条＝护栏常驻拒写"同族，但属**口径立法面**，非本班可代裁。
+    本班申报的可机读料＝两册 reports 的 counts 键＋逐格 jsonl（路径见下），册主若要派生不必等我。
+  handoff_for_registry_owner:
+    per_cell_ledger: [.runtime/nightmine_exploration/scan_ledger_cband_atr_stop.jsonl,
+                      .runtime/nightmine_exploration/scan_ledger_cband_allocator_light.jsonl,
+                      .runtime/nightmine_exploration/scan_ledger_cband_allocator_engine_pilot.jsonl]
+    machine_reports: [docs/_working/cband_neighborhood_campaign/10_atr_stop_raw_v1.yaml,
+                      docs/_working/cband_neighborhood_campaign/11_allocator_light_raw_v1.yaml,
+                      docs/_working/cband_neighborhood_campaign/12_allocator_engine_pilot_v1.yaml]
+    suggested_kind_names: [cband_atr_stop_grid, cband_allocator_grid]
+    kind_name_note: 名字由册主定；本班不自造进 L0（禁另造 kind 词表，their draft 原文"kind 词表以账本现值为准，禁另造名"）
+
+implementation_gaps_registered:
+  registered_by: 统筹晨裁 2026-10-12 ②（"SIG131 登记实现面缺口＝批；五套定义禁改照旧"）
+  note: 本节只登记缺口与证据键，不改任何实现面、不改五套分配器定义、不改筛阈（G4-5）
+  gaps:
+    - gap_id: cband-gap-sig131-identity
+      asset: ALC-SIG131-001
+      device_face: scripts/backtest/fexam/allocator_shadow.clamp_weights
+      measured_fact: cap_frac 六档 OOS Sharpe 逐位相同（6 格仅 1 个不同取值）；三层栈里 3 个非基线档亦与基线逐位相同
+      register_face_evidence: 在册引擎面 v1 的 ALC-SIG131-001 与 ALC-EQUAL-001 两条 metrics 字典本就相等
+      evidence_file: docs/_working/cband_neighborhood_campaign/11_allocator_light_raw_v1.yaml
+      disposition_per_ruling: 登记为 C 族实现面缺口（钳制应作后级叠加而非独立一套分配器）
+      downstream_caliber: 与腿④ 两把新尺下 0/39 同族——分配器邻域这条矿脉现阶段无增量，记录在案不硬挖
+    - gap_id: cband-gap-rk08-threshold-hardcoded
+      asset: ALC-RK08-001
+      device_face: scripts/backtest/fexam/allocator_shadow.w_inverse_vol
+      measured_fact: min_valid_inv 是函数内硬编码常数，非参数位 ⇒ 该维"邻域"当前不可考（本班按 01 册 A1 于跑批前撤 2 格）
+      unblock_shape: 开 keyword-only 阈值位＋零漂移自证的独立小袋（缺省值必须保持现语义）
+      disposition_per_ruling: 待实现面 owner 排期；本班不动共享面第二处硬编码
+
+l0_consumption_payload_for_statsgov:
+  forwarded_by: 统筹晨裁 2026-10-12 ③（"L0 消耗数据转令 C 册主＝批"）
+  self_declaration: 本班不写 L0（exam_n_ledger_writes=0，按 mining_sop_policy §8.5.2）；此处只交可机读消耗料，
+    是否进 L0 与派生口径属册主立法面
+  trial_unit: 参数邻域 mini-grid 按格计（与册主草稿逐字相符）
+  batches:
+    - batch_id: cband_atr_stop_grid_v1
+      leg: ②
+      cell_count: 115
+      axes_used_ref: docs/_working/cband_neighborhood_campaign/01_prereg_axis_sets_v1.yaml#leg2
+      per_cell_jsonl: .runtime/nightmine_exploration/scan_ledger_cband_atr_stop.jsonl
+      machine_report: docs/_working/cband_neighborhood_campaign/10_atr_stop_raw_v1.yaml#counts
+    - batch_id: cband_allocator_light_grid_v1
+      leg: ④
+      cell_count: 44
+      axes_used_ref: docs/_working/cband_neighborhood_campaign/01_prereg_axis_sets_v1.yaml#leg4
+      per_cell_jsonl: .runtime/nightmine_exploration/scan_ledger_cband_allocator_light.jsonl
+      machine_report: docs/_working/cband_neighborhood_campaign/11_allocator_light_raw_v1.yaml#counts
+    - batch_id: cband_allocator_engine_pilot_v1
+      leg: ④引擎面
+      cell_count: 0
+      status: 未发（04:0x 内存墙；晨裁④＝排队，与"池减半前不加新格"叠加后本班不自发）
+      machine_report: docs/_working/cband_neighborhood_campaign/12_allocator_engine_pilot_v1.yaml
+  validity_of_underlying_readings: void_pending_recompute（晨裁①原文；159 格待⑤复算后才是终读）

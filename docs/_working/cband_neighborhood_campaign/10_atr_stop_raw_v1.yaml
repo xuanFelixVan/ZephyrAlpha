@@ -1,0 +1,4895 @@
+doc_type: cband_atr_stop_raw
+version: v1
+generated_at_utc: '2026-10-11 22:03:11.420894+00:00'
+reading_class: 未折减（pre-deflation）：不判 pass/fail，不作采纳依据；折减待令 C 预算册统一口径
+prereg_ref: docs/_working/cband_neighborhood_campaign/01_prereg_axis_sets_v1.yaml
+partial: false
+selftest: false
+device:
+  module: scripts/backtest/fexam/exit_sim/exit_simulator.py
+  in_register_prereg_frozen_at: '2026-10-06 10:10:50.146205+00:00'
+  param_faces_used:
+  - simulate(stop_mode=…)
+  - atr14_wilder(n=…)
+  windows:
+    run:
+    - '2018-01-02'
+    - '2026-09-30'
+    is:
+    - '2018-01-02'
+    - '2025-09-30'
+    oos:
+    - '2025-10-09'
+    - '2026-09-30'
+  top_n: 20
+  composite_columns_n: 24
+axes_used:
+  A_multiplier:
+  - 2.0
+  - 2.5
+  - 3.0
+  - 3.5
+  - 4.0
+  - 5.0
+  B_atr_lookback:
+  - 7
+  - 10
+  - 14
+  - 21
+  - 30
+  C_stop_type:
+  - initial_only
+  - trailing_only
+  - initial_or_trailing_max
+data_face:
+  columns_loaded: 24
+  composite_shape:
+  - 1880
+  - 5818
+  first_date: '2019-01-02'
+  last_date: '2026-09-30'
+  non_nan_share: 0.8161
+  run_window:
+  - '2018-01-02'
+  - '2026-09-30'
+  note: last_date 即本班发跑时点的在册数据末班；2018-2020 空仓属覆盖现实（在册 exit_sim 同款申报）
+nostop_baseline_reconciliation:
+  in_register:
+    oos_sharpe: -0.18693
+    oos_maxdd: -0.57556
+    run_sharpe: -0.33015
+  measured:
+    oos_sharpe: -0.58972502
+    oos_maxdd: -0.71423225
+    run_sharpe: -0.26260609
+  verdict: 与在册不等——如实登记偏差（疑似数据面自 10-06 起重算：后复权表族/指标面续供），禁调装置凑数
+rate_calibration:
+  per_cell_seconds_mean: 0.8003
+  n_cells_timed: 114
+  note: 本装置实测口径；在册 0.53s/格属 c4 网格引擎（T3a 专用），exit_sim prereg legacy_ban 禁引用
+counts:
+  coupled: 90
+  decoupled: 24
+  reference: 1
+  rows: 115
+  error_rows: 0
+rows:
+- cell_id: reference#nostop
+  face: reference
+  mode: 'off'
+  metrics:
+    is:
+      sharpe: -0.19948172
+      max_drawdown: -0.84255565
+      total_return: -0.62435083
+      n_days: 1882.0
+    oos:
+      sharpe: -0.58972502
+      max_drawdown: -0.71423225
+      total_return: -0.40953707
+      n_days: 241.0
+    run:
+      sharpe: -0.26260609
+      max_drawdown: -0.84918456
+      total_return: -0.77751291
+      n_days: 2123.0
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 0
+    n_stop_exits: 0
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 46
+    n_deferred_sells: 8
+    n_rebalance_trades: 3634
+    n_symbols_traded: 1477
+    n_days: 2123
+  status: ok
+- cell_id: 61c80032#face=coupled;mode=initial_only;mult=2.0;win=7
+  face: coupled
+  mult: 2.0
+  win: 7
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.22490928
+      max_drawdown: -0.8050848
+      total_return: -0.55941718
+      n_days: 1882.0
+    oos:
+      sharpe: 0.44900042
+      max_drawdown: -0.4841017
+      total_return: 0.10109259
+      n_days: 241.0
+    run:
+      sharpe: -0.11960675
+      max_drawdown: -0.8050848
+      total_return: -0.51172224
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.0387
+    oos_maxdd_improve_pp: 23.01
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.062909
+    t_stat: 1.242
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 788
+    n_stop_exits: 785
+    n_stop_pending_at_end: 3
+    n_cash_capped_buys: 69
+    n_deferred_sells: 10
+    n_rebalance_trades: 2834
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8514
+- cell_id: d7f76b25#face=coupled;mode=trailing_only;mult=2.0;win=7
+  face: coupled
+  mult: 2.0
+  win: 7
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.24851868
+      max_drawdown: -0.79141802
+      total_return: -0.53207604
+      n_days: 1882.0
+    oos:
+      sharpe: 0.39109523
+      max_drawdown: -0.38008891
+      total_return: 0.07559017
+      n_days: 241.0
+    run:
+      sharpe: -0.15980569
+      max_drawdown: -0.79141802
+      total_return: -0.49582858
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.9808
+    oos_maxdd_improve_pp: 33.41
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.056345
+    t_stat: 0.7874
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1408
+    n_stop_exits: 1408
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 57
+    n_deferred_sells: 9
+    n_rebalance_trades: 2236
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8183
+- cell_id: ede110df#face=coupled;mode=initial_or_trailing_max;mult=2.0;win=7
+  face: coupled
+  mult: 2.0
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.25828145
+      max_drawdown: -0.79087625
+      total_return: -0.53110116
+      n_days: 1882.0
+    oos:
+      sharpe: 0.41488284
+      max_drawdown: -0.38173951
+      total_return: 0.08349521
+      n_days: 241.0
+    run:
+      sharpe: -0.16384719
+      max_drawdown: -0.79087625
+      total_return: -0.49110195
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.0046
+    oos_maxdd_improve_pp: 33.25
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.056094
+    t_stat: 0.7726
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1413
+    n_stop_exits: 1413
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 70
+    n_deferred_sells: 8
+    n_rebalance_trades: 2217
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7922
+- cell_id: 9689a640#face=coupled;mode=initial_only;mult=2.5;win=7
+  face: coupled
+  mult: 2.5
+  win: 7
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.15143848
+      max_drawdown: -0.82001521
+      total_return: -0.50893358
+      n_days: 1882.0
+    oos:
+      sharpe: -0.04948307
+      max_drawdown: -0.57634988
+      total_return: -0.12971412
+      n_days: 241.0
+    run:
+      sharpe: -0.13168301
+      max_drawdown: -0.82001521
+      total_return: -0.5711551
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5402
+    oos_maxdd_improve_pp: 13.79
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.056127
+    t_stat: 1.4207
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 585
+    n_stop_exits: 580
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 63
+    n_deferred_sells: 10
+    n_rebalance_trades: 3032
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8206
+- cell_id: 4638503e#face=coupled;mode=trailing_only;mult=2.5;win=7
+  face: coupled
+  mult: 2.5
+  win: 7
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.24008497
+      max_drawdown: -0.83011295
+      total_return: -0.56364254
+      n_days: 1882.0
+    oos:
+      sharpe: 0.09863185
+      max_drawdown: -0.49124649
+      total_return: -0.04083332
+      n_days: 241.0
+    run:
+      sharpe: -0.18738818
+      max_drawdown: -0.83011295
+      total_return: -0.58231651
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6884
+    oos_maxdd_improve_pp: 22.3
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.043353
+    t_stat: 0.7729
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1166
+    n_stop_exits: 1163
+    n_stop_pending_at_end: 3
+    n_cash_capped_buys: 60
+    n_deferred_sells: 9
+    n_rebalance_trades: 2478
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7797
+- cell_id: 182f1cc5#face=coupled;mode=initial_or_trailing_max;mult=2.5;win=7
+  face: coupled
+  mult: 2.5
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.26276606
+      max_drawdown: -0.83406432
+      total_return: -0.57404494
+      n_days: 1882.0
+    oos:
+      sharpe: 0.0896492
+      max_drawdown: -0.49450024
+      total_return: -0.04385416
+      n_days: 241.0
+    run:
+      sharpe: -0.20567324
+      max_drawdown: -0.83406432
+      total_return: -0.59242702
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6794
+    oos_maxdd_improve_pp: 21.97
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.038994
+    t_stat: 0.6804
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1176
+    n_stop_exits: 1173
+    n_stop_pending_at_end: 3
+    n_cash_capped_buys: 64
+    n_deferred_sells: 8
+    n_rebalance_trades: 2454
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7852
+- cell_id: 953b9fa6#face=coupled;mode=initial_only;mult=3.0;win=7
+  face: coupled
+  mult: 3.0
+  win: 7
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.15605528
+      max_drawdown: -0.83805801
+      total_return: -0.54086786
+      n_days: 1882.0
+    oos:
+      sharpe: -0.18460115
+      max_drawdown: -0.61960604
+      total_return: -0.20638252
+      n_days: 241.0
+    run:
+      sharpe: -0.15728527
+      max_drawdown: -0.83805801
+      total_return: -0.63434667
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.4051
+    oos_maxdd_improve_pp: 9.46
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.044786
+    t_stat: 1.4421
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 425
+    n_stop_exits: 419
+    n_stop_pending_at_end: 6
+    n_cash_capped_buys: 67
+    n_deferred_sells: 10
+    n_rebalance_trades: 3192
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.801
+- cell_id: c58b8572#face=coupled;mode=trailing_only;mult=3.0;win=7
+  face: coupled
+  mult: 3.0
+  win: 7
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.192607
+      max_drawdown: -0.83853267
+      total_return: -0.5472887
+      n_days: 1882.0
+    oos:
+      sharpe: -0.00531342
+      max_drawdown: -0.54929809
+      total_return: -0.09794968
+      n_days: 241.0
+    run:
+      sharpe: -0.15963734
+      max_drawdown: -0.83853267
+      total_return: -0.58978524
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5844
+    oos_maxdd_improve_pp: 16.49
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.048194
+    t_stat: 1.0531
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 948
+    n_stop_exits: 943
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 58
+    n_deferred_sells: 10
+    n_rebalance_trades: 2692
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7986
+- cell_id: 770ec8ed#face=coupled;mode=initial_or_trailing_max;mult=3.0;win=7
+  face: coupled
+  mult: 3.0
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.18540128
+      max_drawdown: -0.83670798
+      total_return: -0.53284001
+      n_days: 1882.0
+    oos:
+      sharpe: 0.01107925
+      max_drawdown: -0.54812906
+      total_return: -0.09102846
+      n_days: 241.0
+    run:
+      sharpe: -0.15066711
+      max_drawdown: -0.83670798
+      total_return: -0.57344493
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6008
+    oos_maxdd_improve_pp: 16.61
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.051582
+    t_stat: 1.1096
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 957
+    n_stop_exits: 952
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 65
+    n_deferred_sells: 9
+    n_rebalance_trades: 2668
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8175
+- cell_id: c98fb4ed#face=coupled;mode=initial_only;mult=3.5;win=7
+  face: coupled
+  mult: 3.5
+  win: 7
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.16651415
+      max_drawdown: -0.84239166
+      total_return: -0.56821448
+      n_days: 1882.0
+    oos:
+      sharpe: -0.18735228
+      max_drawdown: -0.63091071
+      total_return: -0.2113901
+      n_days: 241.0
+    run:
+      sharpe: -0.16661859
+      max_drawdown: -0.84239166
+      total_return: -0.65844548
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.4024
+    oos_maxdd_improve_pp: 8.33
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.040074
+    t_stat: 1.5161
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 298
+    n_stop_exits: 292
+    n_stop_pending_at_end: 6
+    n_cash_capped_buys: 63
+    n_deferred_sells: 10
+    n_rebalance_trades: 3315
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7301
+- cell_id: 752560ac#face=coupled;mode=trailing_only;mult=3.5;win=7
+  face: coupled
+  mult: 3.5
+  win: 7
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.17774942
+      max_drawdown: -0.83871649
+      total_return: -0.55177748
+      n_days: 1882.0
+    oos:
+      sharpe: -0.19008684
+      max_drawdown: -0.60857994
+      total_return: -0.19126551
+      n_days: 241.0
+    run:
+      sharpe: -0.17560956
+      max_drawdown: -0.83871649
+      total_return: -0.635595
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3996
+    oos_maxdd_improve_pp: 10.57
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.040286
+    t_stat: 1.1512
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 769
+    n_stop_exits: 765
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 65
+    n_deferred_sells: 11
+    n_rebalance_trades: 2865
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8102
+- cell_id: e52c9fd6#face=coupled;mode=initial_or_trailing_max;mult=3.5;win=7
+  face: coupled
+  mult: 3.5
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.15723329
+      max_drawdown: -0.83133049
+      total_return: -0.52523004
+      n_days: 1882.0
+    oos:
+      sharpe: -0.13518397
+      max_drawdown: -0.60055626
+      total_return: -0.16858107
+      n_days: 241.0
+    run:
+      sharpe: -0.14974561
+      max_drawdown: -0.83133049
+      total_return: -0.60318524
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.4545
+    oos_maxdd_improve_pp: 11.37
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.049304
+    t_stat: 1.3624
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 774
+    n_stop_exits: 770
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 64
+    n_deferred_sells: 10
+    n_rebalance_trades: 2845
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8033
+- cell_id: 3cfc9055#face=coupled;mode=initial_only;mult=4.0;win=7
+  face: coupled
+  mult: 4.0
+  win: 7
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.17914203
+      max_drawdown: -0.84154047
+      total_return: -0.58838506
+      n_days: 1882.0
+    oos:
+      sharpe: -0.35042669
+      max_drawdown: -0.6651138
+      total_return: -0.30118628
+      n_days: 241.0
+    run:
+      sharpe: -0.20416903
+      max_drawdown: -0.84154047
+      total_return: -0.71147577
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.2393
+    oos_maxdd_improve_pp: 4.91
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.024841
+    t_stat: 1.1234
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 211
+    n_stop_exits: 204
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 70
+    n_deferred_sells: 11
+    n_rebalance_trades: 3401
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7957
+- cell_id: 7864bddc#face=coupled;mode=trailing_only;mult=4.0;win=7
+  face: coupled
+  mult: 4.0
+  win: 7
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.17392854
+      max_drawdown: -0.84127353
+      total_return: -0.56072863
+      n_days: 1882.0
+    oos:
+      sharpe: -0.22845477
+      max_drawdown: -0.61646607
+      total_return: -0.21000391
+      n_days: 241.0
+    run:
+      sharpe: -0.17844641
+      max_drawdown: -0.84127353
+      total_return: -0.65081435
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3613
+    oos_maxdd_improve_pp: 9.78
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.037964
+    t_stat: 1.2589
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 626
+    n_stop_exits: 621
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 62
+    n_deferred_sells: 11
+    n_rebalance_trades: 3006
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8183
+- cell_id: 386fdeaa#face=coupled;mode=initial_or_trailing_max;mult=4.0;win=7
+  face: coupled
+  mult: 4.0
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.17218495
+      max_drawdown: -0.83552991
+      total_return: -0.55499614
+      n_days: 1882.0
+    oos:
+      sharpe: -0.19838847
+      max_drawdown: -0.61190297
+      total_return: -0.19799149
+      n_days: 241.0
+    run:
+      sharpe: -0.17210279
+      max_drawdown: -0.83552991
+      total_return: -0.64087859
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3913
+    oos_maxdd_improve_pp: 10.23
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.040494
+    t_stat: 1.2963
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 632
+    n_stop_exits: 627
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 69
+    n_deferred_sells: 10
+    n_rebalance_trades: 2985
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8546
+- cell_id: bf2b9f6d#face=coupled;mode=initial_only;mult=5.0;win=7
+  face: coupled
+  mult: 5.0
+  win: 7
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.17024325
+      max_drawdown: -0.84051763
+      total_return: -0.58763526
+      n_days: 1882.0
+    oos:
+      sharpe: -0.55725762
+      max_drawdown: -0.70096841
+      total_return: -0.38627759
+      n_days: 241.0
+    run:
+      sharpe: -0.23272186
+      max_drawdown: -0.84173297
+      total_return: -0.74614646
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.0325
+    oos_maxdd_improve_pp: 1.33
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.012782
+    t_stat: 0.7382
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 105
+    n_stop_exits: 98
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 66
+    n_deferred_sells: 11
+    n_rebalance_trades: 3507
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.849
+- cell_id: 11b9f37b#face=coupled;mode=trailing_only;mult=5.0;win=7
+  face: coupled
+  mult: 5.0
+  win: 7
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.20643454
+      max_drawdown: -0.85190967
+      total_return: -0.61464183
+      n_days: 1882.0
+    oos:
+      sharpe: -0.39160634
+      max_drawdown: -0.66369106
+      total_return: -0.30219403
+      n_days: 241.0
+    run:
+      sharpe: -0.23301818
+      max_drawdown: -0.85190967
+      total_return: -0.73015254
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.1981
+    oos_maxdd_improve_pp: 5.05
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.015135
+    t_stat: 0.74
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 397
+    n_stop_exits: 393
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 59
+    n_deferred_sells: 12
+    n_rebalance_trades: 3231
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8677
+- cell_id: a57827d1#face=coupled;mode=initial_or_trailing_max;mult=5.0;win=7
+  face: coupled
+  mult: 5.0
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.19210287
+      max_drawdown: -0.84582021
+      total_return: -0.59791016
+      n_days: 1882.0
+    oos:
+      sharpe: -0.37896514
+      max_drawdown: -0.66088888
+      total_return: -0.29521319
+      n_days: 241.0
+    run:
+      sharpe: -0.21917534
+      max_drawdown: -0.84582021
+      total_return: -0.71561942
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.2108
+    oos_maxdd_improve_pp: 5.33
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.020517
+    t_stat: 0.9436
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 402
+    n_stop_exits: 397
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 73
+    n_deferred_sells: 11
+    n_rebalance_trades: 3212
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7797
+- cell_id: 8cc74203#face=coupled;mode=initial_only;mult=2.0;win=10
+  face: coupled
+  mult: 2.0
+  win: 10
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.35109555
+      max_drawdown: -0.79594659
+      total_return: -0.64863191
+      n_days: 1882.0
+    oos:
+      sharpe: 0.64839011
+      max_drawdown: -0.44263505
+      total_return: 0.18245848
+      n_days: 241.0
+    run:
+      sharpe: -0.20118459
+      max_drawdown: -0.79594659
+      total_return: -0.58049312
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.2381
+    oos_maxdd_improve_pp: 27.16
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.041074
+    t_stat: 0.7222
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 868
+    n_stop_exits: 866
+    n_stop_pending_at_end: 2
+    n_cash_capped_buys: 67
+    n_deferred_sells: 7
+    n_rebalance_trades: 2758
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.9035
+- cell_id: 10c18ccc#face=coupled;mode=trailing_only;mult=2.0;win=10
+  face: coupled
+  mult: 2.0
+  win: 10
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.35333382
+      max_drawdown: -0.78801542
+      total_return: -0.60111436
+      n_days: 1882.0
+    oos:
+      sharpe: 0.60652225
+      max_drawdown: -0.3392413
+      total_return: 0.14742486
+      n_days: 241.0
+    run:
+      sharpe: -0.2205191
+      max_drawdown: -0.78801542
+      total_return: -0.54154583
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.1962
+    oos_maxdd_improve_pp: 37.5
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.042521
+    t_stat: 0.5541
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1429
+    n_stop_exits: 1429
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 66
+    n_deferred_sells: 7
+    n_rebalance_trades: 2203
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8403
+- cell_id: dafe43bc#face=coupled;mode=initial_or_trailing_max;mult=2.0;win=10
+  face: coupled
+  mult: 2.0
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.37906328
+      max_drawdown: -0.78909002
+      total_return: -0.61283097
+      n_days: 1882.0
+    oos:
+      sharpe: 0.62114994
+      max_drawdown: -0.3325564
+      total_return: 0.15091968
+      n_days: 241.0
+    run:
+      sharpe: -0.24150865
+      max_drawdown: -0.78909002
+      total_return: -0.55469456
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.2109
+    oos_maxdd_improve_pp: 38.17
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.03813
+    t_stat: 0.4893
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1440
+    n_stop_exits: 1440
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 68
+    n_deferred_sells: 7
+    n_rebalance_trades: 2192
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7967
+- cell_id: c1b5eaa6#face=coupled;mode=initial_only;mult=2.5;win=10
+  face: coupled
+  mult: 2.5
+  win: 10
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.28276054
+      max_drawdown: -0.82663897
+      total_return: -0.62797757
+      n_days: 1882.0
+    oos:
+      sharpe: 0.037
+      max_drawdown: -0.56583361
+      total_return: -0.09381429
+      n_days: 241.0
+    run:
+      sharpe: -0.2231262
+      max_drawdown: -0.82663897
+      total_return: -0.65999679
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6267
+    oos_maxdd_improve_pp: 14.84
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.027597
+    t_stat: 0.6568
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 691
+    n_stop_exits: 686
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 65
+    n_deferred_sells: 8
+    n_rebalance_trades: 2932
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7778
+- cell_id: 0c39e9f8#face=coupled;mode=trailing_only;mult=2.5;win=10
+  face: coupled
+  mult: 2.5
+  win: 10
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.34856076
+      max_drawdown: -0.83286569
+      total_return: -0.64961555
+      n_days: 1882.0
+    oos:
+      sharpe: 0.22544211
+      max_drawdown: -0.4544677
+      total_return: 0.01433292
+      n_days: 241.0
+    run:
+      sharpe: -0.26363266
+      max_drawdown: -0.83286569
+      total_return: -0.64433294
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.8152
+    oos_maxdd_improve_pp: 25.98
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.022585
+    t_stat: 0.3771
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1183
+    n_stop_exits: 1181
+    n_stop_pending_at_end: 2
+    n_cash_capped_buys: 55
+    n_deferred_sells: 8
+    n_rebalance_trades: 2460
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7762
+- cell_id: 136dcc1e#face=coupled;mode=initial_or_trailing_max;mult=2.5;win=10
+  face: coupled
+  mult: 2.5
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.37765008
+      max_drawdown: -0.84193649
+      total_return: -0.65948123
+      n_days: 1882.0
+    oos:
+      sharpe: 0.20596695
+      max_drawdown: -0.46490189
+      total_return: 0.00738432
+      n_days: 241.0
+    run:
+      sharpe: -0.28923348
+      max_drawdown: -0.84193649
+      total_return: -0.65654014
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7957
+    oos_maxdd_improve_pp: 24.93
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.016874
+    t_stat: 0.2755
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1197
+    n_stop_exits: 1195
+    n_stop_pending_at_end: 2
+    n_cash_capped_buys: 69
+    n_deferred_sells: 7
+    n_rebalance_trades: 2435
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.718
+- cell_id: 4f0864fc#face=coupled;mode=initial_only;mult=3.0;win=10
+  face: coupled
+  mult: 3.0
+  win: 10
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.25328997
+      max_drawdown: -0.83487521
+      total_return: -0.62360398
+      n_days: 1882.0
+    oos:
+      sharpe: -0.02711549
+      max_drawdown: -0.57931382
+      total_return: -0.12223716
+      n_days: 241.0
+    run:
+      sharpe: -0.2112984
+      max_drawdown: -0.83487521
+      total_return: -0.66722686
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5626
+    oos_maxdd_improve_pp: 13.49
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.028887
+    t_stat: 0.803
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 526
+    n_stop_exits: 521
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 67
+    n_deferred_sells: 8
+    n_rebalance_trades: 3092
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7926
+- cell_id: 33e2e848#face=coupled;mode=trailing_only;mult=3.0;win=10
+  face: coupled
+  mult: 3.0
+  win: 10
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.26928167
+      max_drawdown: -0.83430505
+      total_return: -0.61802162
+      n_days: 1882.0
+    oos:
+      sharpe: -0.0361823
+      max_drawdown: -0.55268951
+      total_return: -0.10914891
+      n_days: 241.0
+    run:
+      sharpe: -0.22805962
+      max_drawdown: -0.83430505
+      total_return: -0.65798428
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5535
+    oos_maxdd_improve_pp: 16.15
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.026749
+    t_stat: 0.588
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 939
+    n_stop_exits: 934
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 57
+    n_deferred_sells: 8
+    n_rebalance_trades: 2702
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8038
+- cell_id: 5bf28d96#face=coupled;mode=initial_or_trailing_max;mult=3.0;win=10
+  face: coupled
+  mult: 3.0
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.29370526
+      max_drawdown: -0.83959269
+      total_return: -0.62619403
+      n_days: 1882.0
+    oos:
+      sharpe: 0.02295493
+      max_drawdown: -0.54588265
+      total_return: -0.08502091
+      n_days: 241.0
+    run:
+      sharpe: -0.23682858
+      max_drawdown: -0.83959269
+      total_return: -0.6552342
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6127
+    oos_maxdd_improve_pp: 16.83
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.025567
+    t_stat: 0.5404
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 958
+    n_stop_exits: 953
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 69
+    n_deferred_sells: 7
+    n_rebalance_trades: 2668
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.725
+- cell_id: 3a17ae74#face=coupled;mode=initial_only;mult=3.5;win=10
+  face: coupled
+  mult: 3.5
+  win: 10
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.24247196
+      max_drawdown: -0.84316318
+      total_return: -0.63513805
+      n_days: 1882.0
+    oos:
+      sharpe: -0.20093013
+      max_drawdown: -0.62114756
+      total_return: -0.21394906
+      n_days: 241.0
+    run:
+      sharpe: -0.23100449
+      max_drawdown: -0.84316318
+      total_return: -0.71219377
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3888
+    oos_maxdd_improve_pp: 9.31
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.018504
+    t_stat: 0.6725
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 387
+    n_stop_exits: 381
+    n_stop_pending_at_end: 6
+    n_cash_capped_buys: 60
+    n_deferred_sells: 8
+    n_rebalance_trades: 3231
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7442
+- cell_id: 84f8882d#face=coupled;mode=trailing_only;mult=3.5;win=10
+  face: coupled
+  mult: 3.5
+  win: 10
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.28241046
+      max_drawdown: -0.84626764
+      total_return: -0.65231826
+      n_days: 1882.0
+    oos:
+      sharpe: -0.15503069
+      max_drawdown: -0.60458312
+      total_return: -0.17542591
+      n_days: 241.0
+    run:
+      sharpe: -0.25632372
+      max_drawdown: -0.84626764
+      total_return: -0.7115849
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.4347
+    oos_maxdd_improve_pp: 10.96
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.013304
+    t_stat: 0.3847
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 752
+    n_stop_exits: 748
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 56
+    n_deferred_sells: 9
+    n_rebalance_trades: 2884
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7284
+- cell_id: d7840fb0#face=coupled;mode=initial_or_trailing_max;mult=3.5;win=10
+  face: coupled
+  mult: 3.5
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.28462836
+      max_drawdown: -0.84576772
+      total_return: -0.64552747
+      n_days: 1882.0
+    oos:
+      sharpe: -0.07929135
+      max_drawdown: -0.59293688
+      total_return: -0.14404749
+      n_days: 241.0
+    run:
+      sharpe: -0.2454484
+      max_drawdown: -0.84576772
+      total_return: -0.69476194
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5104
+    oos_maxdd_improve_pp: 12.13
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.018166
+    t_stat: 0.4879
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 767
+    n_stop_exits: 763
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 65
+    n_deferred_sells: 8
+    n_rebalance_trades: 2854
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.6837
+- cell_id: 8a9dba24#face=coupled;mode=initial_only;mult=4.0;win=10
+  face: coupled
+  mult: 4.0
+  win: 10
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.2560723
+      max_drawdown: -0.84801921
+      total_return: -0.65730993
+      n_days: 1882.0
+    oos:
+      sharpe: -0.28174429
+      max_drawdown: -0.65538033
+      total_return: -0.26986398
+      n_days: 241.0
+    run:
+      sharpe: -0.2549167
+      max_drawdown: -0.84801921
+      total_return: -0.74902237
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.308
+    oos_maxdd_improve_pp: 5.89
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.007392
+    t_stat: 0.3182
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 289
+    n_stop_exits: 282
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 63
+    n_deferred_sells: 8
+    n_rebalance_trades: 3327
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7595
+- cell_id: 2974a64e#face=coupled;mode=trailing_only;mult=4.0;win=10
+  face: coupled
+  mult: 4.0
+  win: 10
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.2501888
+      max_drawdown: -0.84788574
+      total_return: -0.63986456
+      n_days: 1882.0
+    oos:
+      sharpe: -0.21922317
+      max_drawdown: -0.61819928
+      total_return: -0.20605156
+      n_days: 241.0
+    run:
+      sharpe: -0.24015605
+      max_drawdown: -0.84788574
+      total_return: -0.71228884
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3705
+    oos_maxdd_improve_pp: 9.6
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.016354
+    t_stat: 0.587
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 585
+    n_stop_exits: 580
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 56
+    n_deferred_sells: 9
+    n_rebalance_trades: 3049
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7239
+- cell_id: 955ba54b#face=coupled;mode=initial_or_trailing_max;mult=4.0;win=10
+  face: coupled
+  mult: 4.0
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.26338367
+      max_drawdown: -0.84791094
+      total_return: -0.64574001
+      n_days: 1882.0
+    oos:
+      sharpe: -0.14732935
+      max_drawdown: -0.60643589
+      total_return: -0.17571082
+      n_days: 241.0
+    run:
+      sharpe: -0.23949013
+      max_drawdown: -0.84791094
+      total_return: -0.70616721
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.4424
+    oos_maxdd_improve_pp: 10.78
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.017485
+    t_stat: 0.5796
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 599
+    n_stop_exits: 594
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 70
+    n_deferred_sells: 8
+    n_rebalance_trades: 3020
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7084
+- cell_id: 40dffd9b#face=coupled;mode=initial_only;mult=5.0;win=10
+  face: coupled
+  mult: 5.0
+  win: 10
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.22569222
+      max_drawdown: -0.84011702
+      total_return: -0.64237291
+      n_days: 1882.0
+    oos:
+      sharpe: -0.47880924
+      max_drawdown: -0.68502865
+      total_return: -0.35337045
+      n_days: 241.0
+    run:
+      sharpe: -0.26385431
+      max_drawdown: -0.84011702
+      total_return: -0.76803862
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.1109
+    oos_maxdd_improve_pp: 2.92
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.001712
+    t_stat: 0.1106
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 142
+    n_stop_exits: 135
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 68
+    n_deferred_sells: 9
+    n_rebalance_trades: 3473
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7445
+- cell_id: 895a544c#face=coupled;mode=trailing_only;mult=5.0;win=10
+  face: coupled
+  mult: 5.0
+  win: 10
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.24398027
+      max_drawdown: -0.84722214
+      total_return: -0.65428241
+      n_days: 1882.0
+    oos:
+      sharpe: -0.47633594
+      max_drawdown: -0.68977343
+      total_return: -0.35663991
+      n_days: 241.0
+    run:
+      sharpe: -0.27829609
+      max_drawdown: -0.84722214
+      total_return: -0.7767988
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.1134
+    oos_maxdd_improve_pp: 2.45
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: -0.003193
+    t_stat: -0.2046
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 350
+    n_stop_exits: 344
+    n_stop_pending_at_end: 6
+    n_cash_capped_buys: 58
+    n_deferred_sells: 10
+    n_rebalance_trades: 3282
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7343
+- cell_id: 5646931a#face=coupled;mode=initial_or_trailing_max;mult=5.0;win=10
+  face: coupled
+  mult: 5.0
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.23663473
+      max_drawdown: -0.84194675
+      total_return: -0.64380741
+      n_days: 1882.0
+    oos:
+      sharpe: -0.44914929
+      max_drawdown: -0.68348818
+      total_return: -0.34243371
+      n_days: 241.0
+    run:
+      sharpe: -0.26761913
+      max_drawdown: -0.84194675
+      total_return: -0.76495807
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.1406
+    oos_maxdd_improve_pp: 3.07
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.001587
+    t_stat: 0.0881
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 360
+    n_stop_exits: 354
+    n_stop_pending_at_end: 6
+    n_cash_capped_buys: 67
+    n_deferred_sells: 9
+    n_rebalance_trades: 3257
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7326
+- cell_id: b418f09a#face=coupled;mode=initial_only;mult=2.0;win=14
+  face: coupled
+  mult: 2.0
+  win: 14
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.32137551
+      max_drawdown: -0.78850543
+      total_return: -0.60825639
+      n_days: 1882.0
+    oos:
+      sharpe: 0.72827877
+      max_drawdown: -0.39810479
+      total_return: 0.20648425
+      n_days: 241.0
+    run:
+      sharpe: -0.16886235
+      max_drawdown: -0.78850543
+      total_return: -0.52281695
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.318
+    oos_maxdd_improve_pp: 31.61
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.052432
+    t_stat: 0.8239
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 929
+    n_stop_exits: 929
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 57
+    n_deferred_sells: 5
+    n_rebalance_trades: 2711
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7507
+- cell_id: 7687a895#face=coupled;mode=trailing_only;mult=2.0;win=14
+  face: coupled
+  mult: 2.0
+  win: 14
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.43986526
+      max_drawdown: -0.8178867
+      total_return: -0.63485369
+      n_days: 1882.0
+    oos:
+      sharpe: 0.4558177
+      max_drawdown: -0.30788055
+      total_return: 0.09100437
+      n_days: 241.0
+    run:
+      sharpe: -0.31956591
+      max_drawdown: -0.8178867
+      total_return: -0.60096184
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.0455
+    oos_maxdd_improve_pp: 40.64
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.022428
+    t_stat: 0.2668
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1482
+    n_stop_exits: 1482
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 71
+    n_deferred_sells: 5
+    n_rebalance_trades: 2163
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7218
+- cell_id: 69ee1fc2#face=coupled;mode=initial_or_trailing_max;mult=2.0;win=14
+  face: coupled
+  mult: 2.0
+  win: 14
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.46338399
+      max_drawdown: -0.81546075
+      total_return: -0.6404039
+      n_days: 1882.0
+    oos:
+      sharpe: 0.42632122
+      max_drawdown: -0.30252043
+      total_return: 0.08100698
+      n_days: 241.0
+    run:
+      sharpe: -0.34540114
+      max_drawdown: -0.81546075
+      total_return: -0.61152969
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.016
+    oos_maxdd_improve_pp: 41.17
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.01807
+    t_stat: 0.2105
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1494
+    n_stop_exits: 1494
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 61
+    n_deferred_sells: 5
+    n_rebalance_trades: 2152
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7787
+- cell_id: b0a05b19#face=coupled;mode=initial_only;mult=2.5;win=14
+  face: coupled
+  mult: 2.5
+  win: 14
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.28747217
+      max_drawdown: -0.81178425
+      total_return: -0.61177736
+      n_days: 1882.0
+    oos:
+      sharpe: 0.23041372
+      max_drawdown: -0.5204543
+      total_return: 0.00149968
+      n_days: 241.0
+    run:
+      sharpe: -0.19872328
+      max_drawdown: -0.81178425
+      total_return: -0.60854132
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.8201
+    oos_maxdd_improve_pp: 19.38
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.038513
+    t_stat: 0.8116
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 780
+    n_stop_exits: 775
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 68
+    n_deferred_sells: 6
+    n_rebalance_trades: 2857
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.707
+- cell_id: 61bb59fa#face=coupled;mode=trailing_only;mult=2.5;win=14
+  face: coupled
+  mult: 2.5
+  win: 14
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.40911622
+      max_drawdown: -0.85298799
+      total_return: -0.66597587
+      n_days: 1882.0
+    oos:
+      sharpe: 0.27157984
+      max_drawdown: -0.41282332
+      total_return: 0.03358017
+      n_days: 241.0
+    run:
+      sharpe: -0.30992983
+      max_drawdown: -0.85298799
+      total_return: -0.65511367
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.8613
+    oos_maxdd_improve_pp: 30.14
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.014334
+    t_stat: 0.2213
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1232
+    n_stop_exits: 1231
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 67
+    n_deferred_sells: 5
+    n_rebalance_trades: 2408
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7646
+- cell_id: 5fa924bd#face=coupled;mode=initial_or_trailing_max;mult=2.5;win=14
+  face: coupled
+  mult: 2.5
+  win: 14
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.42702308
+      max_drawdown: -0.84581951
+      total_return: -0.67035541
+      n_days: 1882.0
+    oos:
+      sharpe: 0.1885556
+      max_drawdown: -0.42121093
+      total_return: 0.00547503
+      n_days: 241.0
+    run:
+      sharpe: -0.33700185
+      max_drawdown: -0.84581951
+      total_return: -0.66892618
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7783
+    oos_maxdd_improve_pp: 29.3
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.008433
+    t_stat: 0.1272
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1252
+    n_stop_exits: 1251
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 67
+    n_deferred_sells: 5
+    n_rebalance_trades: 2390
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.6994
+- cell_id: d08a9a36#face=coupled;mode=initial_only;mult=3.0;win=14
+  face: coupled
+  mult: 3.0
+  win: 14
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.2296073
+      max_drawdown: -0.82298546
+      total_return: -0.58432652
+      n_days: 1882.0
+    oos:
+      sharpe: 0.0650054
+      max_drawdown: -0.55842254
+      total_return: -0.08077614
+      n_days: 241.0
+    run:
+      sharpe: -0.17499922
+      max_drawdown: -0.82298546
+      total_return: -0.61407873
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6547
+    oos_maxdd_improve_pp: 15.58
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.04268
+    t_stat: 1.067
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 605
+    n_stop_exits: 601
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 63
+    n_deferred_sells: 6
+    n_rebalance_trades: 3027
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7776
+- cell_id: dc23ebf6#face=coupled;mode=trailing_only;mult=3.0;win=14
+  face: coupled
+  mult: 3.0
+  win: 14
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.27417474
+      max_drawdown: -0.83344231
+      total_return: -0.60599675
+      n_days: 1882.0
+    oos:
+      sharpe: 0.11878633
+      max_drawdown: -0.51317584
+      total_return: -0.03530461
+      n_days: 241.0
+    run:
+      sharpe: -0.21047628
+      max_drawdown: -0.83344231
+      total_return: -0.61798643
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7085
+    oos_maxdd_improve_pp: 20.11
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.035087
+    t_stat: 0.6914
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 982
+    n_stop_exits: 978
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 50
+    n_deferred_sells: 6
+    n_rebalance_trades: 2675
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7616
+- cell_id: 869c7b52#face=coupled;mode=initial_or_trailing_max;mult=3.0;win=14
+  face: coupled
+  mult: 3.0
+  win: 14
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.2910446
+      max_drawdown: -0.83658631
+      total_return: -0.6066
+      n_days: 1882.0
+    oos:
+      sharpe: 0.22916663
+      max_drawdown: -0.49551735
+      total_return: 0.00961698
+      n_days: 241.0
+    run:
+      sharpe: -0.20495872
+      max_drawdown: -0.83658631
+      total_return: -0.598836
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.8189
+    oos_maxdd_improve_pp: 21.87
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.038366
+    t_stat: 0.7163
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1005
+    n_stop_exits: 1001
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 61
+    n_deferred_sells: 5
+    n_rebalance_trades: 2635
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.741
+- cell_id: be79d150#face=coupled;mode=initial_only;mult=3.5;win=14
+  face: coupled
+  mult: 3.5
+  win: 14
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.22729787
+      max_drawdown: -0.83920343
+      total_return: -0.60265965
+      n_days: 1882.0
+    oos:
+      sharpe: 0.00646378
+      max_drawdown: -0.57718548
+      total_return: -0.1085745
+      n_days: 241.0
+    run:
+      sharpe: -0.18465764
+      max_drawdown: -0.83920343
+      total_return: -0.64324196
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5962
+    oos_maxdd_improve_pp: 13.7
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.037437
+    t_stat: 1.0988
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 486
+    n_stop_exits: 481
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 67
+    n_deferred_sells: 6
+    n_rebalance_trades: 3147
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8169
+- cell_id: f94fcf5e#face=coupled;mode=trailing_only;mult=3.5;win=14
+  face: coupled
+  mult: 3.5
+  win: 14
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.23658941
+      max_drawdown: -0.83066975
+      total_return: -0.60163071
+      n_days: 1882.0
+    oos:
+      sharpe: -0.10281344
+      max_drawdown: -0.58442828
+      total_return: -0.15193773
+      n_days: 241.0
+    run:
+      sharpe: -0.20997336
+      max_drawdown: -0.83066975
+      total_return: -0.66031837
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.4869
+    oos_maxdd_improve_pp: 12.98
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.030087
+    t_stat: 0.7922
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 771
+    n_stop_exits: 767
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 59
+    n_deferred_sells: 7
+    n_rebalance_trades: 2878
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.773
+- cell_id: e2119dec#face=coupled;mode=initial_or_trailing_max;mult=3.5;win=14
+  face: coupled
+  mult: 3.5
+  win: 14
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.27907744
+      max_drawdown: -0.84159132
+      total_return: -0.62452975
+      n_days: 1882.0
+    oos:
+      sharpe: -0.01786622
+      max_drawdown: -0.57324815
+      total_return: -0.1160419
+      n_days: 241.0
+    run:
+      sharpe: -0.2290521
+      max_drawdown: -0.84159132
+      total_return: -0.66533575
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5719
+    oos_maxdd_improve_pp: 14.1
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.025702
+    t_stat: 0.6233
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 808
+    n_stop_exits: 804
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 66
+    n_deferred_sells: 6
+    n_rebalance_trades: 2828
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.6911
+- cell_id: ed78accc#face=coupled;mode=initial_only;mult=4.0;win=14
+  face: coupled
+  mult: 4.0
+  win: 14
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.22881171
+      max_drawdown: -0.84750372
+      total_return: -0.61814097
+      n_days: 1882.0
+    oos:
+      sharpe: -0.23120666
+      max_drawdown: -0.62396806
+      total_return: -0.2267447
+      n_days: 241.0
+    run:
+      sharpe: -0.22457306
+      max_drawdown: -0.84750372
+      total_return: -0.70369142
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3585
+    oos_maxdd_improve_pp: 9.03
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.021185
+    t_stat: 0.8084
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 374
+    n_stop_exits: 368
+    n_stop_pending_at_end: 6
+    n_cash_capped_buys: 68
+    n_deferred_sells: 6
+    n_rebalance_trades: 3257
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7248
+- cell_id: 8c76881d#face=coupled;mode=trailing_only;mult=4.0;win=14
+  face: coupled
+  mult: 4.0
+  win: 14
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.2204231
+      max_drawdown: -0.83710092
+      total_return: -0.60645831
+      n_days: 1882.0
+    oos:
+      sharpe: -0.16403037
+      max_drawdown: -0.60974459
+      total_return: -0.18324274
+      n_days: 241.0
+    run:
+      sharpe: -0.20654452
+      max_drawdown: -0.83710092
+      total_return: -0.67656852
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.4257
+    oos_maxdd_improve_pp: 10.45
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.028634
+    t_stat: 1.0047
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 595
+    n_stop_exits: 590
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 53
+    n_deferred_sells: 7
+    n_rebalance_trades: 3052
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7436
+- cell_id: 2f1085b7#face=coupled;mode=initial_or_trailing_max;mult=4.0;win=14
+  face: coupled
+  mult: 4.0
+  win: 14
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.25363369
+      max_drawdown: -0.84560411
+      total_return: -0.62312877
+      n_days: 1882.0
+    oos:
+      sharpe: -0.10798418
+      max_drawdown: -0.59835781
+      total_return: -0.15843994
+      n_days: 241.0
+    run:
+      sharpe: -0.22434809
+      max_drawdown: -0.84560411
+      total_return: -0.68086338
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.4817
+    oos_maxdd_improve_pp: 11.59
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.024374
+    t_stat: 0.7594
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 630
+    n_stop_exits: 625
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 66
+    n_deferred_sells: 6
+    n_rebalance_trades: 3005
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7281
+- cell_id: 3c653c00#face=coupled;mode=initial_only;mult=5.0;win=14
+  face: coupled
+  mult: 5.0
+  win: 14
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.20502729
+      max_drawdown: -0.84653842
+      total_return: -0.61648558
+      n_days: 1882.0
+    oos:
+      sharpe: -0.37159797
+      max_drawdown: -0.66650698
+      total_return: -0.30847759
+      n_days: 241.0
+    run:
+      sharpe: -0.22875796
+      max_drawdown: -0.84653842
+      total_return: -0.73397791
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.2181
+    oos_maxdd_improve_pp: 4.77
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.015744
+    t_stat: 0.8682
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 206
+    n_stop_exits: 199
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 62
+    n_deferred_sells: 7
+    n_rebalance_trades: 3422
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.6776
+- cell_id: 768d7546#face=coupled;mode=trailing_only;mult=5.0;win=14
+  face: coupled
+  mult: 5.0
+  win: 14
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.19223378
+      max_drawdown: -0.84003353
+      total_return: -0.60237691
+      n_days: 1882.0
+    oos:
+      sharpe: -0.45240145
+      max_drawdown: -0.6852083
+      total_return: -0.34369071
+      n_days: 241.0
+    run:
+      sharpe: -0.23227983
+      max_drawdown: -0.84003353
+      total_return: -0.73812076
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.1373
+    oos_maxdd_improve_pp: 2.9
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.014275
+    t_stat: 0.9955
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 337
+    n_stop_exits: 330
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 56
+    n_deferred_sells: 8
+    n_rebalance_trades: 3307
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8064
+- cell_id: a099b87a#face=coupled;mode=initial_or_trailing_max;mult=5.0;win=14
+  face: coupled
+  mult: 5.0
+  win: 14
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.2008966
+      max_drawdown: -0.84094405
+      total_return: -0.60608671
+      n_days: 1882.0
+    oos:
+      sharpe: -0.35301803
+      max_drawdown: -0.66712583
+      total_return: -0.30117621
+      n_days: 241.0
+    run:
+      sharpe: -0.22212159
+      max_drawdown: -0.84094405
+      total_return: -0.7237583
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.2367
+    oos_maxdd_improve_pp: 4.71
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.018905
+    t_stat: 0.9536
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 362
+    n_stop_exits: 355
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 60
+    n_deferred_sells: 7
+    n_rebalance_trades: 3267
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.6578
+- cell_id: 5303ed07#face=coupled;mode=initial_only;mult=2.0;win=21
+  face: coupled
+  mult: 2.0
+  win: 21
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.31416619
+      max_drawdown: -0.77294821
+      total_return: -0.58879721
+      n_days: 1882.0
+    oos:
+      sharpe: 0.84391849
+      max_drawdown: -0.347858
+      total_return: 0.24753589
+      n_days: 241.0
+    run:
+      sharpe: -0.15174492
+      max_drawdown: -0.77294821
+      total_return: -0.48776724
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.4336
+    oos_maxdd_improve_pp: 36.64
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.058386
+    t_stat: 0.8276
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 987
+    n_stop_exits: 986
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 75
+    n_deferred_sells: 6
+    n_rebalance_trades: 2646
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7563
+- cell_id: 46d8fc2d#face=coupled;mode=trailing_only;mult=2.0;win=21
+  face: coupled
+  mult: 2.0
+  win: 21
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.3656202
+      max_drawdown: -0.76282495
+      total_return: -0.5542421
+      n_days: 1882.0
+    oos:
+      sharpe: 0.05355814
+      max_drawdown: -0.28078299
+      total_return: -0.01668987
+      n_days: 241.0
+    run:
+      sharpe: -0.31307148
+      max_drawdown: -0.76282495
+      total_return: -0.56168174
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6433
+    oos_maxdd_improve_pp: 43.34
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.029295
+    t_stat: 0.3241
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1550
+    n_stop_exits: 1550
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 63
+    n_deferred_sells: 5
+    n_rebalance_trades: 2099
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.6607
+- cell_id: 6fb3488e#face=coupled;mode=initial_or_trailing_max;mult=2.0;win=21
+  face: coupled
+  mult: 2.0
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.37972315
+      max_drawdown: -0.76486395
+      total_return: -0.55908705
+      n_days: 1882.0
+    oos:
+      sharpe: 0.18686936
+      max_drawdown: -0.26223395
+      total_return: 0.01570988
+      n_days: 241.0
+    run:
+      sharpe: -0.30889145
+      max_drawdown: -0.76486395
+      total_return: -0.55216036
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7766
+    oos_maxdd_improve_pp: 45.2
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.031117
+    t_stat: 0.3407
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1556
+    n_stop_exits: 1556
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 65
+    n_deferred_sells: 5
+    n_rebalance_trades: 2094
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7628
+- cell_id: 8b8a0db7#face=coupled;mode=initial_only;mult=2.5;win=21
+  face: coupled
+  mult: 2.5
+  win: 21
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.34889002
+      max_drawdown: -0.79992912
+      total_return: -0.64181809
+      n_days: 1882.0
+    oos:
+      sharpe: 0.48979961
+      max_drawdown: -0.43510377
+      total_return: 0.11575821
+      n_days: 241.0
+    run:
+      sharpe: -0.22253629
+      max_drawdown: -0.79992912
+      total_return: -0.59650776
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.0795
+    oos_maxdd_improve_pp: 27.91
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.035662
+    t_stat: 0.6086
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 861
+    n_stop_exits: 859
+    n_stop_pending_at_end: 2
+    n_cash_capped_buys: 67
+    n_deferred_sells: 7
+    n_rebalance_trades: 2767
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.717
+- cell_id: 053fd825#face=coupled;mode=trailing_only;mult=2.5;win=21
+  face: coupled
+  mult: 2.5
+  win: 21
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.33163128
+      max_drawdown: -0.8111813
+      total_return: -0.58125575
+      n_days: 1882.0
+    oos:
+      sharpe: 0.32477524
+      max_drawdown: -0.36124522
+      total_return: 0.05308613
+      n_days: 241.0
+    run:
+      sharpe: -0.23898698
+      max_drawdown: -0.8111813
+      total_return: -0.55829106
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.9145
+    oos_maxdd_improve_pp: 35.3
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.038012
+    t_stat: 0.5095
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1316
+    n_stop_exits: 1315
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 63
+    n_deferred_sells: 5
+    n_rebalance_trades: 2327
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7248
+- cell_id: 13efd16e#face=coupled;mode=initial_or_trailing_max;mult=2.5;win=21
+  face: coupled
+  mult: 2.5
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.36791523
+      max_drawdown: -0.80257951
+      total_return: -0.60187893
+      n_days: 1882.0
+    oos:
+      sharpe: 0.14492266
+      max_drawdown: -0.36300063
+      total_return: -0.00158452
+      n_days: 241.0
+    run:
+      sharpe: -0.29775092
+      max_drawdown: -0.80257951
+      total_return: -0.60277133
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7346
+    oos_maxdd_improve_pp: 35.12
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.024514
+    t_stat: 0.3212
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1337
+    n_stop_exits: 1336
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 60
+    n_deferred_sells: 5
+    n_rebalance_trades: 2307
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7198
+- cell_id: 0ce615c1#face=coupled;mode=initial_only;mult=3.0;win=21
+  face: coupled
+  mult: 3.0
+  win: 21
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.32788259
+      max_drawdown: -0.82712284
+      total_return: -0.64954382
+      n_days: 1882.0
+    oos:
+      sharpe: 0.12574342
+      max_drawdown: -0.54839047
+      total_return: -0.0540004
+      n_days: 241.0
+    run:
+      sharpe: -0.24468477
+      max_drawdown: -0.82712284
+      total_return: -0.66620569
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7155
+    oos_maxdd_improve_pp: 16.58
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.022775
+    t_stat: 0.4919
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 721
+    n_stop_exits: 716
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 71
+    n_deferred_sells: 7
+    n_rebalance_trades: 2903
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7827
+- cell_id: d70d2f7b#face=coupled;mode=trailing_only;mult=3.0;win=21
+  face: coupled
+  mult: 3.0
+  win: 21
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.38952881
+      max_drawdown: -0.8498769
+      total_return: -0.66366622
+      n_days: 1882.0
+    oos:
+      sharpe: 0.08970104
+      max_drawdown: -0.44674089
+      total_return: -0.03141025
+      n_days: 241.0
+    run:
+      sharpe: -0.31737439
+      max_drawdown: -0.8498769
+      total_return: -0.67343371
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6794
+    oos_maxdd_improve_pp: 26.75
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.01004
+    t_stat: 0.1624
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1097
+    n_stop_exits: 1096
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 69
+    n_deferred_sells: 5
+    n_rebalance_trades: 2545
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7793
+- cell_id: a5abb359#face=coupled;mode=initial_or_trailing_max;mult=3.0;win=21
+  face: coupled
+  mult: 3.0
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.40852838
+      max_drawdown: -0.84820885
+      total_return: -0.66736558
+      n_days: 1882.0
+    oos:
+      sharpe: 0.13035938
+      max_drawdown: -0.44273048
+      total_return: -0.01616261
+      n_days: 241.0
+    run:
+      sharpe: -0.32887182
+      max_drawdown: -0.84820885
+      total_return: -0.67311284
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7201
+    oos_maxdd_improve_pp: 27.15
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.008625
+    t_stat: 0.1348
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1124
+    n_stop_exits: 1123
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 66
+    n_deferred_sells: 5
+    n_rebalance_trades: 2519
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7312
+- cell_id: aaa4a0e4#face=coupled;mode=initial_only;mult=3.5;win=21
+  face: coupled
+  mult: 3.5
+  win: 21
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.27484348
+      max_drawdown: -0.82478601
+      total_return: -0.62688421
+      n_days: 1882.0
+    oos:
+      sharpe: 0.02962283
+      max_drawdown: -0.56373802
+      total_return: -0.09574295
+      n_days: 241.0
+    run:
+      sharpe: -0.218118
+      max_drawdown: -0.82478601
+      total_return: -0.65923515
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6193
+    oos_maxdd_improve_pp: 15.05
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.028617
+    t_stat: 0.7044
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 589
+    n_stop_exits: 584
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 70
+    n_deferred_sells: 7
+    n_rebalance_trades: 3034
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7768
+- cell_id: 7df9f7ae#face=coupled;mode=trailing_only;mult=3.5;win=21
+  face: coupled
+  mult: 3.5
+  win: 21
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.32479957
+      max_drawdown: -0.83634028
+      total_return: -0.6510322
+      n_days: 1882.0
+    oos:
+      sharpe: -0.02662432
+      max_drawdown: -0.54244346
+      total_return: -0.10103333
+      n_days: 241.0
+    run:
+      sharpe: -0.27290136
+      max_drawdown: -0.83634028
+      total_return: -0.68506412
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5631
+    oos_maxdd_improve_pp: 17.18
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.01471
+    t_stat: 0.3073
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 864
+    n_stop_exits: 860
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 72
+    n_deferred_sells: 7
+    n_rebalance_trades: 2760
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7783
+- cell_id: 58928fe2#face=coupled;mode=initial_or_trailing_max;mult=3.5;win=21
+  face: coupled
+  mult: 3.5
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.33348752
+      max_drawdown: -0.83196332
+      total_return: -0.64670679
+      n_days: 1882.0
+    oos:
+      sharpe: 0.07735895
+      max_drawdown: -0.52789465
+      total_return: -0.05853787
+      n_days: 241.0
+    run:
+      sharpe: -0.26113679
+      max_drawdown: -0.83196332
+      total_return: -0.66444101
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6671
+    oos_maxdd_improve_pp: 18.63
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.020028
+    t_stat: 0.3953
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 906
+    n_stop_exits: 902
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 72
+    n_deferred_sells: 7
+    n_rebalance_trades: 2718
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.7336
+- cell_id: 8ef05545#face=coupled;mode=initial_only;mult=4.0;win=21
+  face: coupled
+  mult: 4.0
+  win: 21
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.31802302
+      max_drawdown: -0.84998755
+      total_return: -0.67729723
+      n_days: 1882.0
+    oos:
+      sharpe: -0.01569133
+      max_drawdown: -0.57992514
+      total_return: -0.11824631
+      n_days: 241.0
+    run:
+      sharpe: -0.2631019
+      max_drawdown: -0.84998755
+      total_return: -0.71368231
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.574
+    oos_maxdd_improve_pp: 13.43
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.011645
+    t_stat: 0.3255
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 483
+    n_stop_exits: 478
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 73
+    n_deferred_sells: 7
+    n_rebalance_trades: 3137
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.6988
+- cell_id: 66c4f0fd#face=coupled;mode=trailing_only;mult=4.0;win=21
+  face: coupled
+  mult: 4.0
+  win: 21
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.27580087
+      max_drawdown: -0.82980725
+      total_return: -0.63954947
+      n_days: 1882.0
+    oos:
+      sharpe: -0.13171734
+      max_drawdown: -0.58487283
+      total_return: -0.1637019
+      n_days: 241.0
+    run:
+      sharpe: -0.24724717
+      max_drawdown: -0.82980725
+      total_return: -0.69701116
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.458
+    oos_maxdd_improve_pp: 12.94
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.017441
+    t_stat: 0.4616
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 679
+    n_stop_exits: 674
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 68
+    n_deferred_sells: 7
+    n_rebalance_trades: 2943
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8017
+- cell_id: 104ee4ff#face=coupled;mode=initial_or_trailing_max;mult=4.0;win=21
+  face: coupled
+  mult: 4.0
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.32835058
+      max_drawdown: -0.8352547
+      total_return: -0.66691714
+      n_days: 1882.0
+    oos:
+      sharpe: -0.0434125
+      max_drawdown: -0.57316731
+      total_return: -0.12694477
+      n_days: 241.0
+    run:
+      sharpe: -0.27362145
+      max_drawdown: -0.8352547
+      total_return: -0.70661381
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5463
+    oos_maxdd_improve_pp: 14.11
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.011021
+    t_stat: 0.2642
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 727
+    n_stop_exits: 722
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 75
+    n_deferred_sells: 7
+    n_rebalance_trades: 2895
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.797
+- cell_id: 01d118b8#face=coupled;mode=initial_only;mult=5.0;win=21
+  face: coupled
+  mult: 5.0
+  win: 21
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.26661978
+      max_drawdown: -0.85343382
+      total_return: -0.65914219
+      n_days: 1882.0
+    oos:
+      sharpe: -0.2722497
+      max_drawdown: -0.65005034
+      total_return: -0.2654331
+      n_days: 241.0
+    run:
+      sharpe: -0.26147316
+      max_drawdown: -0.85343382
+      total_return: -0.74874028
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3175
+    oos_maxdd_improve_pp: 6.42
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.006099
+    t_stat: 0.2488
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 302
+    n_stop_exits: 295
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 70
+    n_deferred_sells: 8
+    n_rebalance_trades: 3316
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8294
+- cell_id: d800ad82#face=coupled;mode=trailing_only;mult=5.0;win=21
+  face: coupled
+  mult: 5.0
+  win: 21
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.24943194
+      max_drawdown: -0.84431758
+      total_return: -0.64766359
+      n_days: 1882.0
+    oos:
+      sharpe: -0.32823188
+      max_drawdown: -0.6641266
+      total_return: -0.2912627
+      n_days: 241.0
+    run:
+      sharpe: -0.25709733
+      max_drawdown: -0.84431758
+      total_return: -0.74941
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.2615
+    oos_maxdd_improve_pp: 5.01
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.006874
+    t_stat: 0.3052
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 377
+    n_stop_exits: 370
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 72
+    n_deferred_sells: 7
+    n_rebalance_trades: 3242
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.9025
+- cell_id: 502e6c58#face=coupled;mode=initial_or_trailing_max;mult=5.0;win=21
+  face: coupled
+  mult: 5.0
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.27434371
+      max_drawdown: -0.84934125
+      total_return: -0.65823282
+      n_days: 1882.0
+    oos:
+      sharpe: -0.21099746
+      max_drawdown: -0.64532906
+      total_return: -0.24054322
+      n_days: 241.0
+    run:
+      sharpe: -0.25679998
+      max_drawdown: -0.84934125
+      total_return: -0.73953361
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3787
+    oos_maxdd_improve_pp: 6.89
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.008801
+    t_stat: 0.3262
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 434
+    n_stop_exits: 427
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 67
+    n_deferred_sells: 7
+    n_rebalance_trades: 3185
+    n_symbols_traded: 1478
+    n_days: 2123
+  seconds: 0.8564
+- cell_id: 24390364#face=coupled;mode=initial_only;mult=2.0;win=30
+  face: coupled
+  mult: 2.0
+  win: 30
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.30727449
+      max_drawdown: -0.76214965
+      total_return: -0.56821086
+      n_days: 1882.0
+    oos:
+      sharpe: 0.69678623
+      max_drawdown: -0.32622897
+      total_return: 0.18185323
+      n_days: 241.0
+    run:
+      sharpe: -0.16945757
+      max_drawdown: -0.76214965
+      total_return: -0.49114124
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.2865
+    oos_maxdd_improve_pp: 38.8
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.05519
+    t_stat: 0.7519
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1057
+    n_stop_exits: 1056
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 56
+    n_deferred_sells: 4
+    n_rebalance_trades: 2603
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.9202
+- cell_id: aa12323f#face=coupled;mode=trailing_only;mult=2.0;win=30
+  face: coupled
+  mult: 2.0
+  win: 30
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.3801929
+      max_drawdown: -0.76667328
+      total_return: -0.53855379
+      n_days: 1882.0
+    oos:
+      sharpe: 0.10236739
+      max_drawdown: -0.23905282
+      total_return: -0.00216724
+      n_days: 241.0
+    run:
+      sharpe: -0.32154263
+      max_drawdown: -0.76667328
+      total_return: -0.53955385
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6921
+    oos_maxdd_improve_pp: 47.52
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.031908
+    t_stat: 0.3356
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1624
+    n_stop_exits: 1624
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 51
+    n_deferred_sells: 3
+    n_rebalance_trades: 2058
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.885
+- cell_id: aaee09b5#face=coupled;mode=initial_or_trailing_max;mult=2.0;win=30
+  face: coupled
+  mult: 2.0
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.41283531
+      max_drawdown: -0.76779053
+      total_return: -0.55401715
+      n_days: 1882.0
+    oos:
+      sharpe: 0.07689378
+      max_drawdown: -0.23354947
+      total_return: -0.00749671
+      n_days: 241.0
+    run:
+      sharpe: -0.35271179
+      max_drawdown: -0.76779053
+      total_return: -0.55736056
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6666
+    oos_maxdd_improve_pp: 48.07
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.026629
+    t_stat: 0.2783
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1628
+    n_stop_exits: 1628
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 52
+    n_deferred_sells: 3
+    n_rebalance_trades: 2056
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.9249
+- cell_id: 640d03a5#face=coupled;mode=initial_only;mult=2.5;win=30
+  face: coupled
+  mult: 2.5
+  win: 30
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.31830303
+      max_drawdown: -0.79373649
+      total_return: -0.60890735
+      n_days: 1882.0
+    oos:
+      sharpe: 0.60287124
+      max_drawdown: -0.39468239
+      total_return: 0.15711191
+      n_days: 241.0
+    run:
+      sharpe: -0.18365657
+      max_drawdown: -0.79373649
+      total_return: -0.54280578
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.1926
+    oos_maxdd_improve_pp: 31.95
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.048015
+    t_stat: 0.751
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 929
+    n_stop_exits: 928
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 55
+    n_deferred_sells: 4
+    n_rebalance_trades: 2723
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.8749
+- cell_id: c5a9881e#face=coupled;mode=trailing_only;mult=2.5;win=30
+  face: coupled
+  mult: 2.5
+  win: 30
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.29458242
+      max_drawdown: -0.77103068
+      total_return: -0.52487788
+      n_days: 1882.0
+    oos:
+      sharpe: -0.02284569
+      max_drawdown: -0.33221963
+      total_return: -0.04114154
+      n_days: 241.0
+    run:
+      sharpe: -0.25941207
+      max_drawdown: -0.77103068
+      total_return: -0.54442513
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5669
+    oos_maxdd_improve_pp: 38.2
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.037286
+    t_stat: 0.4571
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1431
+    n_stop_exits: 1430
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 56
+    n_deferred_sells: 3
+    n_rebalance_trades: 2242
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.9204
+- cell_id: 6abaa5cd#face=coupled;mode=initial_or_trailing_max;mult=2.5;win=30
+  face: coupled
+  mult: 2.5
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.26174844
+      max_drawdown: -0.75671571
+      total_return: -0.49145874
+      n_days: 1882.0
+    oos:
+      sharpe: -0.0322215
+      max_drawdown: -0.3233638
+      total_return: -0.04302214
+      n_days: 241.0
+    run:
+      sharpe: -0.23193365
+      max_drawdown: -0.75671571
+      total_return: -0.51333727
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5575
+    oos_maxdd_improve_pp: 39.09
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.044349
+    t_stat: 0.5383
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1439
+    n_stop_exits: 1438
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 52
+    n_deferred_sells: 3
+    n_rebalance_trades: 2234
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.8167
+- cell_id: db08c8b4#face=coupled;mode=initial_only;mult=3.0;win=30
+  face: coupled
+  mult: 3.0
+  win: 30
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.30746232
+      max_drawdown: -0.80416549
+      total_return: -0.62127067
+      n_days: 1882.0
+    oos:
+      sharpe: 0.46335506
+      max_drawdown: -0.44271081
+      total_return: 0.10620789
+      n_days: 241.0
+    run:
+      sharpe: -0.19125629
+      max_drawdown: -0.80416549
+      total_return: -0.5770129
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.0531
+    oos_maxdd_improve_pp: 27.15
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.043188
+    t_stat: 0.7681
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 799
+    n_stop_exits: 796
+    n_stop_pending_at_end: 3
+    n_cash_capped_buys: 66
+    n_deferred_sells: 5
+    n_rebalance_trades: 2850
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.8938
+- cell_id: 9869d4c5#face=coupled;mode=trailing_only;mult=3.0;win=30
+  face: coupled
+  mult: 3.0
+  win: 30
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.3214408
+      max_drawdown: -0.81861919
+      total_return: -0.58821972
+      n_days: 1882.0
+    oos:
+      sharpe: 0.28130713
+      max_drawdown: -0.36698473
+      total_return: 0.0388129
+      n_days: 241.0
+    run:
+      sharpe: -0.23815444
+      max_drawdown: -0.81861919
+      total_return: -0.57271708
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.871
+    oos_maxdd_improve_pp: 34.72
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.036295
+    t_stat: 0.5031
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1205
+    n_stop_exits: 1204
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 43
+    n_deferred_sells: 3
+    n_rebalance_trades: 2463
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.8465
+- cell_id: 557c0b71#face=coupled;mode=initial_or_trailing_max;mult=3.0;win=30
+  face: coupled
+  mult: 3.0
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.35473932
+      max_drawdown: -0.81718113
+      total_return: -0.60642685
+      n_days: 1882.0
+    oos:
+      sharpe: 0.15705146
+      max_drawdown: -0.36911854
+      total_return: 0.00020646
+      n_days: 241.0
+    run:
+      sharpe: -0.28421345
+      max_drawdown: -0.81718113
+      total_return: -0.60660551
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7468
+    oos_maxdd_improve_pp: 34.51
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.02553
+    t_stat: 0.3453
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1229
+    n_stop_exits: 1228
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 45
+    n_deferred_sells: 3
+    n_rebalance_trades: 2440
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.9498
+- cell_id: 7121fd77#face=coupled;mode=initial_only;mult=3.5;win=30
+  face: coupled
+  mult: 3.5
+  win: 30
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.27459446
+      max_drawdown: -0.81881893
+      total_return: -0.61593527
+      n_days: 1882.0
+    oos:
+      sharpe: 0.1393228
+      max_drawdown: -0.54209169
+      total_return: -0.04640437
+      n_days: 241.0
+    run:
+      sharpe: -0.20031181
+      max_drawdown: -0.81881893
+      total_return: -0.63052264
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.729
+    oos_maxdd_improve_pp: 17.21
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.035742
+    t_stat: 0.7917
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 676
+    n_stop_exits: 672
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 60
+    n_deferred_sells: 5
+    n_rebalance_trades: 2971
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.8878
+- cell_id: 1175733e#face=coupled;mode=trailing_only;mult=3.5;win=30
+  face: coupled
+  mult: 3.5
+  win: 30
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.39095396
+      max_drawdown: -0.84553854
+      total_return: -0.67299558
+      n_days: 1882.0
+    oos:
+      sharpe: 0.02836727
+      max_drawdown: -0.44852346
+      total_return: -0.05036379
+      n_days: 241.0
+    run:
+      sharpe: -0.33043974
+      max_drawdown: -0.84553854
+      total_return: -0.68934502
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6181
+    oos_maxdd_improve_pp: 26.57
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.005257
+    t_stat: 0.0859
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1012
+    n_stop_exits: 1011
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 59
+    n_deferred_sells: 5
+    n_rebalance_trades: 2638
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.8908
+- cell_id: f92b91c7#face=coupled;mode=initial_or_trailing_max;mult=3.5;win=30
+  face: coupled
+  mult: 3.5
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.39822557
+      max_drawdown: -0.84133861
+      total_return: -0.66815445
+      n_days: 1882.0
+    oos:
+      sharpe: 0.20353003
+      max_drawdown: -0.42641069
+      total_return: 0.0101238
+      n_days: 241.0
+    run:
+      sharpe: -0.3126278
+      max_drawdown: -0.84133861
+      total_return: -0.66516412
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7933
+    oos_maxdd_improve_pp: 28.78
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.012186
+    t_stat: 0.1904
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1047
+    n_stop_exits: 1046
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 65
+    n_deferred_sells: 5
+    n_rebalance_trades: 2603
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.896
+- cell_id: 380b99f2#face=coupled;mode=initial_only;mult=4.0;win=30
+  face: coupled
+  mult: 4.0
+  win: 30
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.28537687
+      max_drawdown: -0.82522973
+      total_return: -0.6414111
+      n_days: 1882.0
+    oos:
+      sharpe: 0.03750049
+      max_drawdown: -0.56205704
+      total_return: -0.09287718
+      n_days: 241.0
+    run:
+      sharpe: -0.22608563
+      max_drawdown: -0.82522973
+      total_return: -0.67146457
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6272
+    oos_maxdd_improve_pp: 15.22
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.025374
+    t_stat: 0.6235
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 567
+    n_stop_exits: 562
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 61
+    n_deferred_sells: 5
+    n_rebalance_trades: 3080
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.9032
+- cell_id: 629ac1e7#face=coupled;mode=trailing_only;mult=4.0;win=30
+  face: coupled
+  mult: 4.0
+  win: 30
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.34824041
+      max_drawdown: -0.85175369
+      total_return: -0.67109934
+      n_days: 1882.0
+    oos:
+      sharpe: 0.09905156
+      max_drawdown: -0.50770709
+      total_return: -0.04027894
+      n_days: 241.0
+    run:
+      sharpe: -0.27847877
+      max_drawdown: -0.85175369
+      total_return: -0.68324028
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6888
+    oos_maxdd_improve_pp: 20.65
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.013979
+    t_stat: 0.268
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 805
+    n_stop_exits: 803
+    n_stop_pending_at_end: 2
+    n_cash_capped_buys: 60
+    n_deferred_sells: 5
+    n_rebalance_trades: 2842
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.8033
+- cell_id: fd0cdb63#face=coupled;mode=initial_or_trailing_max;mult=4.0;win=30
+  face: coupled
+  mult: 4.0
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.38170084
+      max_drawdown: -0.84925634
+      total_return: -0.6832311
+      n_days: 1882.0
+    oos:
+      sharpe: 0.18404687
+      max_drawdown: -0.49498519
+      total_return: -0.00604256
+      n_days: 241.0
+    run:
+      sharpe: -0.29101415
+      max_drawdown: -0.84925634
+      total_return: -0.68193895
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7738
+    oos_maxdd_improve_pp: 21.92
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.012254
+    t_stat: 0.2226
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 856
+    n_stop_exits: 854
+    n_stop_pending_at_end: 2
+    n_cash_capped_buys: 58
+    n_deferred_sells: 5
+    n_rebalance_trades: 2793
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.8325
+- cell_id: 7f115379#face=coupled;mode=initial_only;mult=5.0;win=30
+  face: coupled
+  mult: 5.0
+  win: 30
+  mode: initial_only
+  metrics:
+    is:
+      sharpe: -0.2507137
+      max_drawdown: -0.84923576
+      total_return: -0.63866919
+      n_days: 1882.0
+    oos:
+      sharpe: -0.23886898
+      max_drawdown: -0.63981398
+      total_return: -0.24998231
+      n_days: 241.0
+    run:
+      sharpe: -0.2424537
+      max_drawdown: -0.84923576
+      total_return: -0.72781211
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3509
+    oos_maxdd_improve_pp: 7.44
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.013854
+    t_stat: 0.4686
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 393
+    n_stop_exits: 386
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 64
+    n_deferred_sells: 6
+    n_rebalance_trades: 3252
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.856
+- cell_id: 419cf68c#face=coupled;mode=trailing_only;mult=5.0;win=30
+  face: coupled
+  mult: 5.0
+  win: 30
+  mode: trailing_only
+  metrics:
+    is:
+      sharpe: -0.27358557
+      max_drawdown: -0.84415947
+      total_return: -0.65928632
+      n_days: 1882.0
+    oos:
+      sharpe: -0.32316913
+      max_drawdown: -0.65844436
+      total_return: -0.28392994
+      n_days: 241.0
+    run:
+      sharpe: -0.27570651
+      max_drawdown: -0.84415947
+      total_return: -0.75517072
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.2666
+    oos_maxdd_improve_pp: 5.58
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.001943
+    t_stat: 0.0687
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 479
+    n_stop_exits: 472
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 61
+    n_deferred_sells: 5
+    n_rebalance_trades: 3166
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.8704
+- cell_id: 3d662596#face=coupled;mode=initial_or_trailing_max;mult=5.0;win=30
+  face: coupled
+  mult: 5.0
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.27354792
+      max_drawdown: -0.84369895
+      total_return: -0.64652961
+      n_days: 1882.0
+    oos:
+      sharpe: -0.24886828
+      max_drawdown: -0.64442567
+      total_return: -0.25207558
+      n_days: 241.0
+    run:
+      sharpe: -0.26213001
+      max_drawdown: -0.84369895
+      total_return: -0.73447644
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3409
+    oos_maxdd_improve_pp: 6.98
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.008682
+    t_stat: 0.2624
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 546
+    n_stop_exits: 539
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 62
+    n_deferred_sells: 5
+    n_rebalance_trades: 3100
+    n_symbols_traded: 1485
+    n_days: 2123
+  seconds: 0.9444
+- cell_id: fcc99914#face=decoupled_filter14;mode=initial_or_trailing_max;mult=2.0;win=7
+  face: decoupled_filter14
+  mult: 2.0
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.35026274
+      max_drawdown: -0.8087867
+      total_return: -0.60813287
+      n_days: 1882.0
+    oos:
+      sharpe: 0.41488284
+      max_drawdown: -0.38173951
+      total_return: 0.08349521
+      n_days: 241.0
+    run:
+      sharpe: -0.24273277
+      max_drawdown: -0.8087867
+      total_return: -0.57470481
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.0046
+    oos_maxdd_improve_pp: 33.25
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.035408
+    t_stat: 0.4942
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1414
+    n_stop_exits: 1414
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 68
+    n_deferred_sells: 5
+    n_rebalance_trades: 2229
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8803
+- cell_id: e0e082dd#face=decoupled_filter14;mode=initial_or_trailing_max;mult=2.5;win=7
+  face: decoupled_filter14
+  mult: 2.5
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.33513387
+      max_drawdown: -0.84455279
+      total_return: -0.63562752
+      n_days: 1882.0
+    oos:
+      sharpe: 0.0896492
+      max_drawdown: -0.49450024
+      total_return: -0.04385416
+      n_days: 241.0
+    run:
+      sharpe: -0.26631784
+      max_drawdown: -0.84455279
+      total_return: -0.65135201
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6794
+    oos_maxdd_improve_pp: 21.97
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.021156
+    t_stat: 0.3789
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1176
+    n_stop_exits: 1173
+    n_stop_pending_at_end: 3
+    n_cash_capped_buys: 62
+    n_deferred_sells: 5
+    n_rebalance_trades: 2465
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8707
+- cell_id: ecead5a8#face=decoupled_filter14;mode=initial_or_trailing_max;mult=3.0;win=7
+  face: decoupled_filter14
+  mult: 3.0
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.26559268
+      max_drawdown: -0.84680775
+      total_return: -0.61192274
+      n_days: 1882.0
+    oos:
+      sharpe: 0.01107925
+      max_drawdown: -0.54812906
+      total_return: -0.09102846
+      n_days: 241.0
+    run:
+      sharpe: -0.21739884
+      max_drawdown: -0.84680775
+      total_return: -0.6456539
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6008
+    oos_maxdd_improve_pp: 16.61
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.030412
+    t_stat: 0.6827
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 959
+    n_stop_exits: 954
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 62
+    n_deferred_sells: 5
+    n_rebalance_trades: 2680
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.9988
+- cell_id: 003ebf05#face=decoupled_filter14;mode=initial_or_trailing_max;mult=3.5;win=7
+  face: decoupled_filter14
+  mult: 3.5
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.22135453
+      max_drawdown: -0.83925164
+      total_return: -0.59355483
+      n_days: 1882.0
+    oos:
+      sharpe: -0.13518397
+      max_drawdown: -0.60055626
+      total_return: -0.16858107
+      n_days: 241.0
+    run:
+      sharpe: -0.20264448
+      max_drawdown: -0.83925164
+      total_return: -0.66029139
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.4545
+    oos_maxdd_improve_pp: 11.37
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.031601
+    t_stat: 0.9334
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 772
+    n_stop_exits: 768
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 70
+    n_deferred_sells: 6
+    n_rebalance_trades: 2863
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8736
+- cell_id: 82d53467#face=decoupled_filter14;mode=initial_or_trailing_max;mult=4.0;win=7
+  face: decoupled_filter14
+  mult: 4.0
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.23379555
+      max_drawdown: -0.84378724
+      total_return: -0.61821274
+      n_days: 1882.0
+    oos:
+      sharpe: -0.19838847
+      max_drawdown: -0.61190297
+      total_return: -0.19799149
+      n_days: 241.0
+    run:
+      sharpe: -0.22298258
+      max_drawdown: -0.84378724
+      total_return: -0.69189485
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3913
+    oos_maxdd_improve_pp: 10.23
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.023049
+    t_stat: 0.8119
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 630
+    n_stop_exits: 625
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 58
+    n_deferred_sells: 6
+    n_rebalance_trades: 3003
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8665
+- cell_id: c38c1cc8#face=decoupled_filter14;mode=initial_or_trailing_max;mult=5.0;win=7
+  face: decoupled_filter14
+  mult: 5.0
+  win: 7
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.23504813
+      max_drawdown: -0.85228219
+      total_return: -0.64000483
+      n_days: 1882.0
+    oos:
+      sharpe: -0.37896514
+      max_drawdown: -0.66088888
+      total_return: -0.29521319
+      n_days: 241.0
+    run:
+      sharpe: -0.25424347
+      max_drawdown: -0.85228219
+      total_return: -0.74539114
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.2108
+    oos_maxdd_improve_pp: 5.33
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.007883
+    t_stat: 0.4602
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 395
+    n_stop_exits: 390
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 68
+    n_deferred_sells: 7
+    n_rebalance_trades: 3235
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.9068
+- cell_id: 14b33f95#face=decoupled_filter14;mode=initial_or_trailing_max;mult=2.0;win=10
+  face: decoupled_filter14
+  mult: 2.0
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.35163564
+      max_drawdown: -0.78743753
+      total_return: -0.59099361
+      n_days: 1882.0
+    oos:
+      sharpe: 0.62114994
+      max_drawdown: -0.3325564
+      total_return: 0.15091968
+      n_days: 241.0
+    run:
+      sharpe: -0.21760135
+      max_drawdown: -0.78743753
+      total_return: -0.52957816
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 1.2109
+    oos_maxdd_improve_pp: 38.17
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.044293
+    t_stat: 0.5696
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1444
+    n_stop_exits: 1444
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 64
+    n_deferred_sells: 5
+    n_rebalance_trades: 2199
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.9313
+- cell_id: 277d7ee7#face=decoupled_filter14;mode=initial_or_trailing_max;mult=2.5;win=10
+  face: decoupled_filter14
+  mult: 2.5
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.35295068
+      max_drawdown: -0.84616861
+      total_return: -0.6402836
+      n_days: 1882.0
+    oos:
+      sharpe: 0.20596695
+      max_drawdown: -0.46490189
+      total_return: 0.00738432
+      n_days: 241.0
+    run:
+      sharpe: -0.26812135
+      max_drawdown: -0.84616861
+      total_return: -0.63717669
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7957
+    oos_maxdd_improve_pp: 24.93
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.023022
+    t_stat: 0.3782
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1196
+    n_stop_exits: 1194
+    n_stop_pending_at_end: 2
+    n_cash_capped_buys: 65
+    n_deferred_sells: 5
+    n_rebalance_trades: 2445
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.9618
+- cell_id: b191f69f#face=decoupled_filter14;mode=initial_or_trailing_max;mult=3.0;win=10
+  face: decoupled_filter14
+  mult: 3.0
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.28918049
+      max_drawdown: -0.84472378
+      total_return: -0.62118438
+      n_days: 1882.0
+    oos:
+      sharpe: 0.02295493
+      max_drawdown: -0.54588265
+      total_return: -0.08502091
+      n_days: 241.0
+    run:
+      sharpe: -0.23293476
+      max_drawdown: -0.84472378
+      total_return: -0.65061373
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6127
+    oos_maxdd_improve_pp: 16.83
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.026912
+    t_stat: 0.5764
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 961
+    n_stop_exits: 956
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 58
+    n_deferred_sells: 5
+    n_rebalance_trades: 2678
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8508
+- cell_id: 17b564e8#face=decoupled_filter14;mode=initial_or_trailing_max;mult=3.5;win=10
+  face: decoupled_filter14
+  mult: 3.5
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.27798563
+      max_drawdown: -0.85031971
+      total_return: -0.63853694
+      n_days: 1882.0
+    oos:
+      sharpe: -0.07929135
+      max_drawdown: -0.59293688
+      total_return: -0.14404749
+      n_days: 241.0
+    run:
+      sharpe: -0.23984805
+      max_drawdown: -0.85031971
+      total_return: -0.68874236
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5104
+    oos_maxdd_improve_pp: 12.13
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.02018
+    t_stat: 0.5528
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 769
+    n_stop_exits: 765
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 62
+    n_deferred_sells: 6
+    n_rebalance_trades: 2865
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8628
+- cell_id: 594fef47#face=decoupled_filter14;mode=initial_or_trailing_max;mult=4.0;win=10
+  face: decoupled_filter14
+  mult: 4.0
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.24598918
+      max_drawdown: -0.84999168
+      total_return: -0.62912514
+      n_days: 1882.0
+    oos:
+      sharpe: -0.14732935
+      max_drawdown: -0.60643589
+      total_return: -0.17571082
+      n_days: 241.0
+    run:
+      sharpe: -0.22502875
+      max_drawdown: -0.84999168
+      total_return: -0.69238639
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.4424
+    oos_maxdd_improve_pp: 10.78
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.022549
+    t_stat: 0.7721
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 597
+    n_stop_exits: 592
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 61
+    n_deferred_sells: 6
+    n_rebalance_trades: 3035
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8574
+- cell_id: f1c20bcc#face=decoupled_filter14;mode=initial_or_trailing_max;mult=5.0;win=10
+  face: decoupled_filter14
+  mult: 5.0
+  win: 10
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.21541562
+      max_drawdown: -0.84483314
+      total_return: -0.62257998
+      n_days: 1882.0
+    oos:
+      sharpe: -0.44914929
+      max_drawdown: -0.68348818
+      total_return: -0.34243371
+      n_days: 241.0
+    run:
+      sharpe: -0.25050137
+      max_drawdown: -0.84483314
+      total_return: -0.75095066
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.1406
+    oos_maxdd_improve_pp: 3.07
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.007994
+    t_stat: 0.4906
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 358
+    n_stop_exits: 352
+    n_stop_pending_at_end: 6
+    n_cash_capped_buys: 61
+    n_deferred_sells: 7
+    n_rebalance_trades: 3272
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8567
+- cell_id: c5de4653#face=decoupled_filter14;mode=initial_or_trailing_max;mult=2.0;win=21
+  face: decoupled_filter14
+  mult: 2.0
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.36056328
+      max_drawdown: -0.75669509
+      total_return: -0.54440286
+      n_days: 1882.0
+    oos:
+      sharpe: 0.18686936
+      max_drawdown: -0.26223395
+      total_return: 0.01570988
+      n_days: 241.0
+    run:
+      sharpe: -0.29209538
+      max_drawdown: -0.75669509
+      total_return: -0.53724548
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7766
+    oos_maxdd_improve_pp: 45.2
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.034851
+    t_stat: 0.3831
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1555
+    n_stop_exits: 1555
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 58
+    n_deferred_sells: 6
+    n_rebalance_trades: 2110
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.8721
+- cell_id: eec5346c#face=decoupled_filter14;mode=initial_or_trailing_max;mult=2.5;win=21
+  face: decoupled_filter14
+  mult: 2.5
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.34541735
+      max_drawdown: -0.79996635
+      total_return: -0.58464472
+      n_days: 1882.0
+    oos:
+      sharpe: 0.14492266
+      max_drawdown: -0.36300063
+      total_return: -0.00158452
+      n_days: 241.0
+    run:
+      sharpe: -0.27836138
+      max_drawdown: -0.79996635
+      total_return: -0.58557575
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7346
+    oos_maxdd_improve_pp: 35.12
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.029377
+    t_stat: 0.3867
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1336
+    n_stop_exits: 1335
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 58
+    n_deferred_sells: 6
+    n_rebalance_trades: 2323
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.874
+- cell_id: f727777f#face=decoupled_filter14;mode=initial_or_trailing_max;mult=3.0;win=21
+  face: decoupled_filter14
+  mult: 3.0
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.38365282
+      max_drawdown: -0.8457905
+      total_return: -0.6508748
+      n_days: 1882.0
+    oos:
+      sharpe: 0.13035938
+      max_drawdown: -0.44273048
+      total_return: -0.01616261
+      n_days: 241.0
+    run:
+      sharpe: -0.30786134
+      max_drawdown: -0.8457905
+      total_return: -0.65690699
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7201
+    oos_maxdd_improve_pp: 27.15
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.014288
+    t_stat: 0.2249
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1120
+    n_stop_exits: 1119
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 56
+    n_deferred_sells: 6
+    n_rebalance_trades: 2536
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7417
+- cell_id: 1314ca87#face=decoupled_filter14;mode=initial_or_trailing_max;mult=3.5;win=21
+  face: decoupled_filter14
+  mult: 3.5
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.28045205
+      max_drawdown: -0.82597667
+      total_return: -0.60452589
+      n_days: 1882.0
+    oos:
+      sharpe: 0.07735895
+      max_drawdown: -0.52789465
+      total_return: -0.05853787
+      n_days: 241.0
+    run:
+      sharpe: -0.21729729
+      max_drawdown: -0.82597667
+      total_return: -0.62437747
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6671
+    oos_maxdd_improve_pp: 18.63
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.033171
+    t_stat: 0.6668
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 907
+    n_stop_exits: 903
+    n_stop_pending_at_end: 4
+    n_cash_capped_buys: 55
+    n_deferred_sells: 7
+    n_rebalance_trades: 2743
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7774
+- cell_id: fea42cd5#face=decoupled_filter14;mode=initial_or_trailing_max;mult=4.0;win=21
+  face: decoupled_filter14
+  mult: 4.0
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.2771509
+      max_drawdown: -0.82916497
+      total_return: -0.626922
+      n_days: 1882.0
+    oos:
+      sharpe: -0.0434125
+      max_drawdown: -0.57316731
+      total_return: -0.12694477
+      n_days: 241.0
+    run:
+      sharpe: -0.23175157
+      max_drawdown: -0.82916497
+      total_return: -0.67138527
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5463
+    oos_maxdd_improve_pp: 14.11
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.024311
+    t_stat: 0.5987
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 729
+    n_stop_exits: 724
+    n_stop_pending_at_end: 5
+    n_cash_capped_buys: 54
+    n_deferred_sells: 7
+    n_rebalance_trades: 2919
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7371
+- cell_id: 22ec85d0#face=decoupled_filter14;mode=initial_or_trailing_max;mult=5.0;win=21
+  face: decoupled_filter14
+  mult: 5.0
+  win: 21
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.2231533
+      max_drawdown: -0.84271776
+      total_return: -0.61404719
+      n_days: 1882.0
+    oos:
+      sharpe: -0.21099746
+      max_drawdown: -0.64532906
+      total_return: -0.24054322
+      n_days: 241.0
+    run:
+      sharpe: -0.21556939
+      max_drawdown: -0.84271776
+      total_return: -0.70585902
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3787
+    oos_maxdd_improve_pp: 6.89
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.023099
+    t_stat: 0.9132
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 435
+    n_stop_exits: 428
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 50
+    n_deferred_sells: 7
+    n_rebalance_trades: 3210
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.818
+- cell_id: 1366841f#face=decoupled_filter14;mode=initial_or_trailing_max;mult=2.0;win=30
+  face: decoupled_filter14
+  mult: 2.0
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.4048498
+      max_drawdown: -0.75268535
+      total_return: -0.54463392
+      n_days: 1882.0
+    oos:
+      sharpe: 0.07689378
+      max_drawdown: -0.23354947
+      total_return: -0.00749671
+      n_days: 241.0
+    run:
+      sharpe: -0.34522609
+      max_drawdown: -0.75268535
+      total_return: -0.54804767
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.6666
+    oos_maxdd_improve_pp: 48.07
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.028702
+    t_stat: 0.3012
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1607
+    n_stop_exits: 1607
+    n_stop_pending_at_end: 0
+    n_cash_capped_buys: 53
+    n_deferred_sells: 6
+    n_rebalance_trades: 2063
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7069
+- cell_id: ceb78fd2#face=decoupled_filter14;mode=initial_or_trailing_max;mult=2.5;win=30
+  face: decoupled_filter14
+  mult: 2.5
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.25252312
+      max_drawdown: -0.73811393
+      total_return: -0.47948605
+      n_days: 1882.0
+    oos:
+      sharpe: -0.0322215
+      max_drawdown: -0.3233638
+      total_return: -0.04302214
+      n_days: 241.0
+    run:
+      sharpe: -0.22368114
+      max_drawdown: -0.73811393
+      total_return: -0.50187967
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.5575
+    oos_maxdd_improve_pp: 39.09
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.046651
+    t_stat: 0.5691
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1421
+    n_stop_exits: 1420
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 52
+    n_deferred_sells: 6
+    n_rebalance_trades: 2238
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7172
+- cell_id: 9610c692#face=decoupled_filter14;mode=initial_or_trailing_max;mult=3.0;win=30
+  face: decoupled_filter14
+  mult: 3.0
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.32987812
+      max_drawdown: -0.81228261
+      total_return: -0.58337471
+      n_days: 1882.0
+    oos:
+      sharpe: 0.15705146
+      max_drawdown: -0.36911854
+      total_return: 0.00020646
+      n_days: 241.0
+    run:
+      sharpe: -0.26231804
+      max_drawdown: -0.81228261
+      total_return: -0.58356384
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7468
+    oos_maxdd_improve_pp: 34.51
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.031639
+    t_stat: 0.4305
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1211
+    n_stop_exits: 1210
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 56
+    n_deferred_sells: 6
+    n_rebalance_trades: 2447
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7679
+- cell_id: 75347b2d#face=decoupled_filter14;mode=initial_or_trailing_max;mult=3.5;win=30
+  face: decoupled_filter14
+  mult: 3.5
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.34884309
+      max_drawdown: -0.83689834
+      total_return: -0.62902155
+      n_days: 1882.0
+    oos:
+      sharpe: 0.20353003
+      max_drawdown: -0.42641069
+      total_return: 0.0101238
+      n_days: 241.0
+    run:
+      sharpe: -0.2698391
+      max_drawdown: -0.83689834
+      total_return: -0.62567858
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7933
+    oos_maxdd_improve_pp: 28.78
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.024531
+    t_stat: 0.3877
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 1036
+    n_stop_exits: 1035
+    n_stop_pending_at_end: 1
+    n_cash_capped_buys: 55
+    n_deferred_sells: 7
+    n_rebalance_trades: 2615
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7451
+- cell_id: c8ed9cc4#face=decoupled_filter14;mode=initial_or_trailing_max;mult=4.0;win=30
+  face: decoupled_filter14
+  mult: 4.0
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.33686515
+      max_drawdown: -0.84497172
+      total_return: -0.64718414
+      n_days: 1882.0
+    oos:
+      sharpe: 0.18404687
+      max_drawdown: -0.49498519
+      total_return: -0.00604256
+      n_days: 241.0
+    run:
+      sharpe: -0.25260241
+      max_drawdown: -0.84497172
+      total_return: -0.64574495
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.7738
+    oos_maxdd_improve_pp: 21.92
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.024139
+    t_stat: 0.4451
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 850
+    n_stop_exits: 848
+    n_stop_pending_at_end: 2
+    n_cash_capped_buys: 54
+    n_deferred_sells: 7
+    n_rebalance_trades: 2798
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.7305
+- cell_id: 38a82565#face=decoupled_filter14;mode=initial_or_trailing_max;mult=5.0;win=30
+  face: decoupled_filter14
+  mult: 5.0
+  win: 30
+  mode: initial_or_trailing_max
+  metrics:
+    is:
+      sharpe: -0.23233827
+      max_drawdown: -0.83747651
+      total_return: -0.60607661
+      n_days: 1882.0
+    oos:
+      sharpe: -0.24886828
+      max_drawdown: -0.64442567
+      total_return: -0.25207558
+      n_days: 241.0
+    run:
+      sharpe: -0.22883261
+      max_drawdown: -0.83747651
+      total_return: -0.70408853
+      n_days: 2123.0
+  status: ok
+  delta_vs_nostop:
+    oos_sharpe_delta: 0.3409
+    oos_maxdd_improve_pp: 6.98
+  paired_vs_nostop:
+    n_days: 2122
+    ann_diff: 0.020552
+    t_stat: 0.6493
+    note: 配对 t 为证据量参考（在册 _evidence_report 同口径）；本批不判终胜负
+  sim_stats:
+    n_rebalance_exec_days: 105
+    n_empty_months: 12
+    n_stop_pierces: 544
+    n_stop_exits: 537
+    n_stop_pending_at_end: 7
+    n_cash_capped_buys: 51
+    n_deferred_sells: 7
+    n_rebalance_trades: 3103
+    n_symbols_traded: 1477
+    n_days: 2123
+  seconds: 0.717

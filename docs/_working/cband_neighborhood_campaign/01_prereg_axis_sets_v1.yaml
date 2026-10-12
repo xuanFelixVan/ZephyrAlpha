@@ -1,0 +1,256 @@
+# [MODULE] docs/_working/cband_neighborhood_campaign/01_prereg_axis_sets_v1.yaml
+# [TTL] task_bound
+ttl: task_bound
+doc_type: cband_prereg_axis_sets
+version: v1
+campaign: cband-20261012
+session: st-cband-20261012
+order: 令 D·C 族邻域班 st-cband-20261012（终局目标=普查②/④ 第一批折减前原始读数）
+frozen_at_local: "2026-10-12 02:3x"
+freeze_note: >-
+  本册在任何仿真跑批之前落盘冻结。轴值集/格数上限/降级规则一经本册写下即禁改（G4-5）；
+  读数出来后禁回头增删轴值或改判据口径，要改只能另起 v2 版本册。
+
+# ─────────────────────────────────────────────────────────────
+# 0. 全局纪律（本班适用）
+# ─────────────────────────────────────────────
+discipline:
+  reading_class: 未折减原始读数（pre-deflation）
+  reading_class_note: >-
+    本批全部读数一律标 "未折减"：不做 DSR/PBO 折减、不出 pass/fail、不进分数册。
+    多重检验折减须待令 C 全局试次预算册落地后按统一口径重述（本班只负责把试次数与轴集如实入账）。
+  verdict_policy: 只出证据量与对照差分，不出裁定（判定面不入核）
+  trial_budget_suggestion_from_order: "<=200 试次/首批"
+  trial_budget_self_limit: 本班首批合计 162 格（② 115 ＋ ④ 轻面 46 ＋ ④ 引擎面试点 1），逐批见 02_trial_plan_v1.yaml
+  prereg_no_tuning: 筛阈与轴集禁看数后调；跑批中途不得加格/减格/换值
+
+# ─────────────────────────────────────────────────────────────
+# 1. 腿②：ATR 止损邻域 mini-grid（普查②，优先级 2）
+# ─────────────────────────────────────────────
+leg_atr_stop:
+  id: CBAND-ATR-STOP-NEIGHBORHOOD
+  base_case_source: docs/_working/fexam/exit_sim_report_v1.yaml（E 道离场族 ATR 止损 A/B，全仓唯一环节级成功：OOS MaxDD 改善 +16.54pp／SharpeΔ +0.6189）
+  reuse_principle: 同底座对照——装置逐字沿用 exit_sim prereg_frozen.yaml，只把三根轴开成参数，其余零动
+
+  device_frozen:
+    module: scripts/backtest/fexam/exit_sim/exit_simulator.py
+    signal_source: indicator_exam_scores_v1.yaml verdict==pass 的 ch_backings 首列，文档序去重 cap 24（load_pass_columns，确定性不挑）
+    composite: strategy_exam.composite_signal（directions 全部=+1，逐日截面秩等权均值）——函数复用禁重造
+    selection: strategy_exam.monthly_topn_signals top_n=20 月频等权——函数复用禁重造
+    execution: 调仓信号=月首交易日收盘生成；执行=T+1 开盘；日收盘 pierce 次日开盘离场
+    atr_definition: TR=max(H-L,|H-C_prev|,|L-C_prev|)；ATR_w=Wilder 平滑（种子=前 w 个有效 TR 的 SMA，此后 ATR_t=((w-1)*ATR_{t-1}+TR_t)/w；TR 缺失沿用前值）——wilder_atr_one 复用
+    price_basis: c1_market.kline_daily_hfq 后复权 high/low/close 自算，全程同口径，数据只读
+    commission: 双边 COMMISSION_RATE（matching_logic 单一真源）
+    windows:
+      run: ["2018-01-02", "2026-09-30"]
+      is: ["2018-01-02", "2025-09-30"]
+      oos_holdout: ["2025-10-09", "2026-09-30"]
+      kline_load_warmstart: "2017-10-01"
+    candidate_filter: 信号日 ATR 非 NaN 者方入 top20 候选；不足 20 只=该月空仓（在册装置语义）
+    no_leverage: 现金不足按可负担封顶（在册 simulate 语义）
+
+  axes_pre_registered:
+    A_multiplier:
+      desc: 止损倍数 k（ATR 单位）
+      values: [2.0, 2.5, 3.0, 3.5, 4.0, 5.0]
+      baseline: 3.0
+      n: 6
+    B_atr_lookback:
+      desc: ATR 回看窗 w（交易日）
+      values: [7, 10, 14, 21, 30]
+      baseline: 14
+      n: 5
+    C_stop_type:
+      desc: 止损类型（有效止损位的构成方式）
+      values:
+        initial_only: 有效止损 = 入场价 − k×ATR_w(信号日)，持仓期不抬升
+        trailing_only: 有效止损 = 持仓期最高收盘 − k×ATR_w(当日)，无入场地板
+        initial_or_trailing_max: 有效止损 = max(初始, 移动)——即在册 A/B 止损臂（Chandelier 式）
+      baseline: initial_or_trailing_max
+      n: 3
+      vocabulary_note: >-
+        本轴词与 config/position_recipe_grid_schema.yaml 的 X_stop 维（values=[off,atr3x,trail20]）
+        **不同口径且不得互换引用**：X_stop 的 trail20=引擎 _apply_exit_overlay 的"峰值×0.8 百分比移动止盈"，
+        本轴 trailing_only=峰值−k×ATR（Chandelier）；X_stop 的 atr3x 用引擎侧 cATR14 单档，本轴 k 与 w 均为搜索轴。
+        引用 X_stop 读数即口径错。
+
+  confounder_declared:
+    name: ATR 窗同时决定候选过滤与止损距离
+    statement: >-
+      在册装置里候选过滤与止损共用同一 ATR 面板，故 w 变动同时改票池与止损位——这是混淆项，不是干净单轴。
+      处置=两面对拍，不假装它是单因子：
+    faces:
+      coupled: 主面——过滤=stop=同一 w（最接近在册 A/B 语义），格数 6×5×3=90
+      decoupled_filter14: 对照面——候选过滤恒用 w=14，止损用轴值 w；只在 C=initial_or_trailing_max 上开，格数 6×5=30
+    dedupe: coupled 与 decoupled 在 w=14 行完全同构 → decoupled 面剔除 6 格（w=14 的 6 个倍数档），实开 24 新格
+    nostop_reference: 参考臂 stop_enabled=False 只算 1 次（两面对它同构，因过滤恒 w=14 时与主面一致；主面 nostop=在册基线）
+
+  cell_count:
+    arithmetic: coupled 6×5×3=90；decoupled 6×5=30 剔与 coupled 同构的 w=14 行 6 格=24；nostop 参考臂 1
+    main_coupled: 90
+    control_decoupled: 24
+    nostop_reference: 1
+    total: 115
+
+  metric_face:
+    per_cell_metrics: [is/oos/run 的 sharpe、max_drawdown、total_return、n_days，sim_stats 的 n_stop_pierces/n_stop_exits/n_empty_months/n_rebalance_trades/n_cash_capped_buys]
+    delta_reference: 每格报 (stop − nostop) 的 OOS SharpeΔ 与 OOS MaxDD 改善 pp（沿用在册 judge_frozen 的语义符号口径 (stop−nostop)，erratum 随册）
+    reference_arm_expected: >-
+      nostop 臂期望复现在册读数（OOS sharpe=-0.18693, OOS maxdd=-0.57556, run sharpe=-0.33015）。
+      若不等，如实登记差值与可能来源（10-06 以来 kline_daily_hfq/指标面重算＝已知嫌疑，见 [[hfq-table-family-cascade]]），
+      禁为凑齐旧数而调装置。
+    forbidden: 禁在本腿任何格上写 pass/fail/录取/上岗
+
+# ─────────────────────────────────────────────────────────────
+# 2. 腿④：分配器参数邻域 mini-grid（普查④，优先级 4）
+# ─────────────────────────────────────────────
+leg_allocator_grid:
+  id: CBAND-ALLOCATOR-NEIGHBORHOOD
+  base_case_source: docs/_working/fexam/allocator_shadow_report_v1.yaml（批4 五套影子考：THREELAYER OOS Sharpe 0.52 / EQUAL -0.22 / RK08 0.36 / PA015 0.32 / SIG131 -0.22）
+  five_allocators_source_of_truth: scripts/backtest/fexam/allocator_shadow.py（头部 MODIFY-GUARD=五套定义禁改；本班只调其权重变换函数的参数位，不动五套定义本身）
+
+  device_delta_declared: >-
+    在册五套跑在 DefaultBacktestEngine(MOD-BT-001)（PIT/剔ST/滑点/冲击/参与率全默认开）。
+    实测成本：批4 五臂约 3 小时（凭据=落地 commit 6bfca4265e1 原文"批4 三小时计算"）⇒ ≈36 分钟/臂，
+    45 格≈27 小时，超出单夜窗且本机 commit_pct 已 84% ⇒ 引擎面夜间放量不可行。
+    本腿主面改跑**轻面**=exit_sim.simulate(stop_enabled=False) 消费分配器权重帧（同一撮合与现金约束语义，
+    无 PIT/剔ST/滑点/冲击/参与率），并另跑 1 格引擎面试点作面间锚点。
+    后果如实：轻面读数与在册 v1 引擎面读数**不同面不可直读**；本腿只判"参数邻域内部的相对排序"，
+    并把轻面基线排序与 v1 引擎面排序并列呈报作面间一致性观察（非判据）。
+
+  device_frozen:
+    composite_columns_pin: 逐字沿用 allocator_shadow_report_v1.yaml composite_selection.columns（24 列，fallback 路径首 24 sorted）
+    composite_columns_recheck: 发跑前实测 factor_exam_scores_v1.yaml 仍 verdict==pass 零条（若已出现 pass，_pick_composite_columns 会换列＝装置漂移，届时改用显式 pin 而禁扩列）
+    signal: composite_signal(directions={}) ＋ monthly_topn_signals top_n=20 → base 帧
+    transform: allocator_shadow._apply_per_rebalance ＋ 各套权重函数（import 复用，禁复制实现）
+    window: 同 strategy_exam.WINDOW_RUN/IS ＋ ch_data.WINDOW_HOLDOUT（2018-01-02..2026-09-30 / IS 至 2025-09-30 / OOS 2025-10-09..2026-09-30）
+    regime: ch_data.regime_series(*WINDOW_RUN) 现值默认=SMA200 帘子（#489 号裁定之②，写法避裸挂）
+    regime_delta: >-
+      ⚠ 在册 v1 跑的 regime_source 标的是 "regime_table+sma_fallback"（#489② 之前），
+      本班=当前默认 sma200_default ⇒ ALC-PA015 行与 v1 那行**体制面定义不同**，不得当同面重跑读；
+      其余四套不吃 regime，无此项漂移。
+    stop: 恒关（本腿不考止损，避免与腿② 混轴）
+
+  axes_pre_registered:
+    ALC-THREELAYER-001:
+      layer_weight_simplex:
+        desc: (eq_share, iv_share)，mom_share=1-eq-iv，约束 mom_share>=0.05
+        eq_values: [0.3, 0.4, 0.5, 0.6]
+        iv_values: [0.2, 0.3, 0.4]
+        baseline: {eq: 0.5, iv: 0.3}
+        n: 11
+      ofat_iv_lookback: {values: [30, 60, 90, 120], baseline: 60, new_n: 3}
+      ofat_mom_lookback: {values: [10, 20, 40, 60], baseline: 20, new_n: 3}
+      ofat_clamp_cap_frac: {values: [0.25, 0.5, 0.75, 1.0], baseline: 0.5, new_n: 3}
+      subtotal: 20
+    ALC-EQUAL-001:
+      subtotal: 0
+      statement: 等权定义无可调参数；其"邻域"属装置维（B_top_n=E 单票 cap），不在本腿，申报零格不凑数
+      reference_arm: 等权臂作为配对参照跑 1 格（记入 reference，不计入可调邻域格）
+    ALC-RK08-001:
+      ofat_iv_lookback: {values: [20, 30, 40, 60, 90, 120], baseline: 60, n: 6}
+      ofat_min_valid_inv:
+        desc: "逆波有效列数兜底阈值（w_inverse_vol 内 inv.notna().sum() < 5 回退等权）"
+        status: 已移除（见文末 amendments_before_first_run A1，先于任何跑批）
+        values_removed: [10, 20]
+        baseline: 5
+        new_n: 0
+      subtotal: 6
+    ALC-PA015-001:
+      regime_split_cross:
+        desc: trend_up 臂 (iv,mom) 三档 × 非 trend_up 臂 (iv,mom) 三档
+        up_values: [[0.3, 0.7], [0.4, 0.6], [0.5, 0.5]]
+        down_values: [[0.7, 0.3], [0.6, 0.4], [0.5, 0.5]]
+        baseline: {up: [0.3, 0.7], down: [0.7, 0.3]}
+        n: 9
+      ofat_mom_lookback: {values: [10, 40], baseline: 20, new_n: 2}
+      subtotal: 11
+    ALC-SIG131-001:
+      ofat_clamp_cap_frac: {values: [0.0, 0.25, 0.5, 0.75, 1.0, 1.5], baseline: 0.5, n: 6}
+      degenerate_note: cap_frac=0.0 时钳制把所有权重压到均值＝等权退化（结构校验格，如实标注退化不解读）
+      subtotal: 6
+
+  cell_count:
+    grids: 43
+    equal_reference: 1
+    total_light_face: 44
+    grids_pre_amendment: 45
+    grids_amendment_ref: 见文末 A1（先于任何跑批，RK08 的 ofat_min_valid_inv 两格移除）
+    engine_face_pilot: 1
+    engine_face_pilot_spec: ALC-THREELAYER-001 基线参数单臂（DefaultBacktestEngine，全量 flat 数据）；用途=实测当码/当机每臂秒数＋轻面↔引擎面单点差分
+    engine_face_stop_rule: >-
+      试点预算 40 分钟（墙钟）。到点未完即终止该腿，如实登记"引擎面单臂成本>40min ⇒ 邻域放量不可行"，
+      禁为凑一个数把整夜班钉死在一格上，也禁偷换成轻面冒报引擎面。
+
+  metric_face:
+    per_cell_metrics: [is/oos/run sharpe、max_drawdown、total_return、n_days，n_rebalance_trades、n_cash_capped_buys、max_weight（单日最大权重）、mean_weight]
+    evidence_face: 各套基线臂 vs 同套邻域臂的配对日收益差＋t 值（沿用 _evidence_report 口径：配对 t 为证据量参考，mSPRT 需逐日流入数据=影子考不判终胜负）
+    forbidden: 禁判冠军/禁写"该上岗"/禁把轻面读数与 v1 引擎面读数混排同一张表
+
+# ─────────────────────────────────────────────────────────────
+# 3. 运行前必须成立的前置（写死，未成立即停腿并如实报）
+# ─────────────────────────────────────────────
+preconditions:
+  - id: PC1-共享件扩展申报
+    statement: >-
+      腿② 需要 scripts/backtest/fexam/exit_sim/exit_simulator.py 开两个默认保持的参数位：
+      simulate(..., stop_mode="initial_or_trailing_max") 与 atr14_wilder(..., n=ATR_N)。
+      类型轴无法用现有入参表达（单一 atr 帧同时供初始与移动腿），而 runner 内复制日循环＝extract 级克隆（RULE-CLONEGUARD 无逃生），
+      故选择最小参数化扩展：缺省路径逐字节走原码，扩展前后同输入 nav 逐位等值自证（先例=同件 [RETURN-FACE-EXTENSION] 甲案）。
+    claim: 改前 lock_files.py acquire 该件（与考试班 st-mineloop-20261010 在途袋 0080/0081 同件，纯追加＋袋前先取 dev 现字节为基）
+  - id: PC2-CH 窗
+    statement: 需 CH 的腿（数据装载与全部跑批）04:00 后发；04:00 前只做轴设计/预登记/脚手架/零 CH 自证
+    window_verification_method: 在册"三件定窗"＝计划任务现值（Get-ScheduledTask State/NextRunTime/LastTaskResult）＋进程表（先减自家观测自匹配）＋产物目录 mtime；单条不作判据
+    ch_liveness: 发跑前做存活探针；10-11 曾实测 zephyr-ch VM State=Off＋仅 SELECT 1 也 10060 超时 ⇒ 禁凭账面假设 CH 可用
+  - id: PC3-数据只读
+    statement: 全程 CH 只读 SELECT（ch_data 契约）；禁 DDL/INSERT；禁写生产 data/ 业务目录（宪法 §9.6）；临时件走 .runtime/tmp/st-cband-20261012/
+  - id: PC4-账本通道
+    statement: >-
+      本批属探索面：逐格进自班探索分册 jsonl，批次级进自班台账；考试 N 账本占用与否按在册判据
+      _should_write_neff_slot（smoke 与 --exploration-ledger 批不占考试 N）定性，
+      若判定为需追认则用 TrialLedger.record_run(kind=..., batch_id=...) 幂等追加，禁 UPDATE/DELETE 历史行。
+      令 C 全局试次预算册尚未落地（实测：catalogs 与 docs/_working grep "试次预算|trial_budget" 仅命中 §9.4 散文），
+      故本班先自班挂账并留迁移位。
+  - id: PC5-并发避让
+    statement: 发跑前读 reaper 的 commit_pct（02:06 实测 84.62）与进程表；跑批单进程串行或 ≤2 worker，禁自造并发把机器打崩（[[mem-commit-limit-incident-20260915]] 形态）
+
+# ─────────────────────────────────────────────────────────────
+# 4. 晨间包承诺（交付形态）
+# ─────────────────────────────────────────────
+morning_package:
+  must_contain:
+    - 每格原始读数（含全部轴值与 IS/OOS/RUN 三窗指标）＋逐格试次计数
+    - 冻结轴集原文（本册）
+    - 参考臂/基线复现与在册读数的偏差申报
+    - 速率口径实测（每格秒数，禁引用不相干旧口径）
+    - 未折减声明＋令 C 预算册迁移待办
+    - 未跑成的腿/格与原因（fail-closed 如实，不装成已跑）
+  never_claim: 本批任何一格"显著/可上岗/超过基线故采纳"
+
+# ─────────────────────────────────────────────────────────────
+# 5. 冻结更正（两则，均先于任何跑批；旧案原文留在上文不删，按"更正另起一节"工法）
+# ─────────────────────────────────────────────────────────────
+amendments_before_first_run:
+  - id: A1-轴集缩一则
+    at_local: "2026-10-12 02:3x"
+    what: >-
+      腿④ ALC-RK08-001 的子轴 ofat_min_valid_inv（兜底阈值 [5,10,20] 里的 10/20 两格）从本批轴集移除。
+      原因＝该阈值在 allocator_shadow.w_inverse_vol 内是硬编码常数，开它＝在同一夜动第二处共享执行面
+      （第一处=exit_simulator 的 stop_mode/n，已申报并零漂移自证）；该件头部 MODIFY-GUARD 写"五套定义禁改"，
+      本班不在夜里自扩解释面。
+    effect_on_counts: ④ 邻域格 45→43（轻面总数 46→44）；本班首批合计 162→160
+    not_doing: 禁在 runner 里复制 w_inverse_vol 的三行来绕开（RULE-CLONEGUARD），也禁顺手改 allocator_shadow 常数
+    follow_up: 登记为实现面缺口——若该轴要考，需给 w_inverse_vol 开 keyword-only 阈值位（独立小袋＋零漂移自证）
+  - id: A2-入账通道更正
+    at_local: "2026-10-12 02:3x"
+    what: >-
+      撤回上文 PC4 与本腿"批次级同时向 N 账本 TrialLedger.record_run 追加 batch_records"的打算。
+      真源更正＝docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md §8.5.2（v1.9.0，本班接令当夜由令 A 车道立法）原文：
+      "筛选/探索批全部入探索分册（.runtime/nightmine_exploration/scan_ledger_*.jsonl，不占考试试次；
+      intake 池不自动入册，GPU-01 同款纪律）；开考试次照旧 n_trial_ledger（run_card 钩子）"。
+      本班 160 格全部属筛选/探索批 ⇒ 只进探索分册＋自班台账，不写考试 N 账本，不动 n_trials_effective 披露位。
+    retained_concern: >-
+      在册教训 [[trial-ledger-undercount-20260927]]（分母少记 17.4%）仍成立，但其处方是"报显著性前逐批对账"，
+      不是"把探索批塞进考试账"。本班交付的试次计数即是对账料：折减时由预算册主把探索分册格数并入分母口径，
+      而非由本班代记。若日后判"探索批也须进 N 账本"，属试次账立法面改动＝Owner/裁定门位，非本班自决。
+    significance_bar_note: 同节立法 t≥3.0 起步的显著性门槛适用于筛选/考级；本班只出未折减原始读数，不套该门槛出结论
