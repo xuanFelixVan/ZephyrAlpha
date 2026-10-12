@@ -629,6 +629,340 @@ git show 9d9386da996 --stat -- src/zephyr/infrastructure/capacity_assurance/ | h
 **队列现实**：单袋过全门链实测 10-40 分钟，本班不轮询空等；收班时未落地袋继续由传送带消化，
 下一段以 `python .runtime/tmp/st-deadcure3b-chief-20261011/tools/closeout.py` 重算逐批进 HEAD 件数即可接手。
 
+
+
+## 廿二·补 执行账更正版＋一条新暴露的结构闸（生成器现算，补 §廿二 扣押清单缺口）
+
+更正版读数（§廿二 正文扣押面只列 6 批，实测应列 11 批；本班袋面那句「扣押 11 批」与此一致，正文漏项属生成器 HOLD_CAUSE 未随波次 5 更新，现补齐）：
+- 投出 **25 批 / 128 件**＝[2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 16, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 30, 32, 33]；扣押 **11 批 / 129 件**＝[1, 9, 14, 15, 17, 22, 29, 31, 34, 35, 36]。
+
+| 批 | 件 | pytest 摘要 | 点名件 |
+|---|---:|---|---|
+| 1 | 5 | `104 passed, 3 errors in 15.77s` | test_db_integration.py |
+| 9 | 6 | `1 error in 3.29s` | c... |
+| 14 | 15 | `348 passed, 1 skipped, 1 error in 350.61s (0:05:50)` | test_hooks.py |
+| 15 | 42 | `4 failed, 766 passed, 18 skipped, 7 xfailed, 1 xpassed, 1 error in 390` | test_commit_queue_cascade_diff.py, test_intelligence_governance_facade.py, test_liveness_verdict_20261003.py, test_registry_alignment_layer2.py |
+| 17 | 49 | `1 failed, 1071 passed in 121.89s (0:02:01)` | test_registry_yaml_parse_gate.py, 结构校验未过: |
+| 22 | 1 | `7 failed, 39 passed, 1 error in 186.20s (0:03:06)` | test_add_module_translation.py |
+| 29 | 6 | `1 failed, 43 passed in 25.91s` | test_phase1_gate_check.py |
+| 31 | 1 | `23 failed, 17 passed in 2.06s` | test_post_sync_validation.py |
+| 34 | 2 | `2 failed, 33 passed, 8 xfailed in 10.10s` | test_n_trial_ledger.py, test_reexam_cpcv_harness.py |
+| 35 | 1 | `(无跑测记录)` | — |
+| 36 | 1 | `2 failed, 13 passed in 8.13s` | test_intake.py |
+
+**新暴露一条结构闸（本班踩实并当场解除）**：`GOV-DOC-018` 平铺目录容量硬上限 T_soft=120。
+`tests/gov/governance/commit_gates/` 在 HEAD 有 65 件，本班曾把批 17（49 件，红扣）与批 18（10 件，净绿）**同时铺在盘上**
+⇒ 目录实测 121 件 ⇒ 预检 `FOLDER-CAPACITY-HARD-LIMIT` 硬拦，**把本可出货的净绿批 18 连坐拦下**。
+处置＝先把 129 枚扣押件从仓树退回工棚 `hold_out/`（退回前逐件 `sha256` 与 `stage/aclass/<批>/` 副本断言等值，
+零丢失、可一键放回），目录回落 73 件后批 18 顺利入袋 `q-20261012-…-0028`（10 件）。
+
+⚑ **入法一条（对以后所有复活班生效）**：扣押批的待投件不得留在仓树内——它既撑爆容量/扫描型闸（连坐净绿批），
+又正是"未跟踪工作件"暴露面（被整树 transit 抹掉时 git 侧零痕迹）。正确姿势＝留在工棚，出货时才铺。
+
+**批 17 的前置**：该批 49 件若日后要落，须先解 120 上限——拆子目录＝改路径＝不再是"原门牌归位"（会破坏与死袋 path 的对账），
+属统筹/Owner 决策，非本班可自决；本班已在扣押册点名，不动一件。
+
+复核：`python .runtime/tmp/st-deadcure3b-chief-20261011/tools/closeout.py`；
+退回清单=`.runtime/tmp/st-deadcure3b-chief-20261011/common/hold_out_manifest.json`（moved=129，无一份缺工棚副本）。
+
+## 廿三、通宵执行与晨间裁定包（sid=st-deadcure3b-chief-20261011，生成器=`tools/morning_package.py`，2026-10-12T05:55）
+
+令源＝Owner 直令"一口气把能施工的全部施工完，中途不问不做选择，需裁定的最后堆到一起"。三段如下。
+
+### 一、执行了什么（带锚点，全部实测级）
+
+1. **第 0 项对齐袋**＝commit `9f270424aa`（4 件恰落，零外来吸收）：`[TESTS]` 一行＋件侧 `[MODULE]`/`[CONSUMERS]`
+   ＋depgraph 节点（生成器 --force）＋翻译册 PG v1 与投影 5 行＋token PG 核实＋负存在知识 §廿一。
+   铁则复核＝改前 66 passed／改后 66 passed／**落地后再跑仍 66 passed**。
+2. **A 类原表 36 批**：投出 29 批（袋 0001–0030 号段），
+   现测 HEAD 已含 A 类件 **90/257**；本班 commit 计数＝20 笔。
+3. **解连坐（本包最大增量）**：扣押批按**逐件**取证后重出表（`tools/perfile_classify.py`＋`tools/split_plan.py`），
+   129 枚扣押件实测 **GREEN 113 / RED 16**
+   ⇒ 终表 6 批／101 件（批 101–106，容量真扣 0 件）投出；
+   留扣面共 28 枚＝逐件红 16 ＋整批交互 0 ＋module_id 撞名 1
+   ＋N-06 命名校验拒 claim 2 ＋静态符号漂移门 1 ＋容量真扣 0（四类合计与留扣册逐条可点验）。
+   其中已进 HEAD＝0 件（收班读数）。
+4. **袋死即对症处置**：`0002`（批 6，dev CAS 六次耗尽）→ 按现字节另起新袋 `0025`；
+   `0011`（批 13，landing 侧 `git commit` 超时）→ 重投 `0030`。两条都属授权矩阵"死袋按死因重投/另起新袋"。
+5. **台账**：§廿一（负存在）＋§廿二（执行账）＋§廿二·补（更正与容量闸）＋本节，全部纯追加，节数自证（20→24）。
+
+### 二、自裁了什么（逐条＋依据＋证据位置）
+
+| # | 自裁项 | 依据（授权矩阵/预签） | 证据 |
+|---|---|---|---|
+| Z1 | 把"批次原子性"降为**逐件绿红**（解连坐），红件仍一律不投 | 可自裁"域内技术选型与施工序"；纪律"净绿才投"未放宽反而加严（逐件单跑） | `common/perfile_classify.json`（129 行逐件 rc/摘要）＋`common/aclass_plan_split.json` |
+| Z2 | 逐件尺自身纠错：摘要正则误取表头 ⇒ 42 枚 rc=0 件被判红（**假红**） | 三序之"最保守"不适用——这是判据 bug，修尺重跑 | 修前后对比：批 15 由 42 RED → 38 GREEN/4 RED |
+| Z3 | 129 枚扣押件先退工棚、后又放回取证，最终仅绿件留树 | 在册"扣押件不得留树"（本夜实测：撑爆 GOV-DOC-018 120 上限连坐拦下净绿批 18） | `common/hold_out_manifest.json`（moved=129，逐件 sha 断言）＋§廿二·补 |
+| Z4 | 令牌登记从目录前缀退为**逐件前缀**（防替他件领令牌） | 可自裁"执行细节" | `tokens batch …  预览 N 条 ≠ 本批件数 ⇒ 逐件` 留痕于 `ship_log` |
+| Z5 | 预检包装器 NOT_EXECUTED 兜底（缺讯息件时禁报"零硬拦"，保守用双旗） | 在册"降级态与未触发同形⇒假绿" | `cmd_preflight` 现码 |
+| Z6 | 批 32 入袋前 `ruff format` 归一（19+/9-，纯排版），改后复跑 24 passed | 可自裁"执行细节"；动的是排版不是判据 | 袋 `0023` 讯息内自带声明段 |
+| Z7 | 队列 `--allow-non-worktree/--allow-multi-domain` 按预检**实测**逐批加旗（非盲挂） | AGENTS.md §2 第 4 条 误判留痕通道 | `common/gate_dry_batch_*.json` 逐批留档 |
+| Z8 | 二道尺（整批复跑）再剔 12 枚"逐件绿、整批红"的跨件交互件（首号疑犯＝写生产热册族） | 纪律"净绿才投"取**出货粒度**为准（整批一起跑才是投出去的那一批） | `common/aclass_plan_final.json` rounds_log 三轮点名＋`common/red_hold_manifest.json` |
+| Z9 | 容量算法自纠：`room` 曾把"本批自己铺在盘上的件"重复减一次 ⇒ 66 件误扣；正解＝先摘本批候选再算余位 | 在册"量出结构约束停下呈报非硬合"；不放宽闸只改喂闸的输入 | `tools/final_table.py` 注释＋终表实扣 0 件 |
+| Z11 | 待发面**先用门禁原函数预扫**（`check_file` 命名／module_id 撞名尺＋正对照校准），替代"投了看死因"试错 | 可自裁"执行细节"；先验再写＝全纪律 | `common/claim_blocked_files.json`＋`common/module_id_collisions.json`（正对照＝在册已知违规件，两尺互验一致） |
+| Z10 | 令牌判据从"工具自报"改为**落 PG 真源反查＋一次重试**（并发下工具会瞬报异常件） | 在册"禁信工具自报 pre_existing/自报计数" | `ship_log` 的 `missing_after_retry` 逐批留痕 |
+
+### 三、等裁什么（编号菜单＋证据＋建议默认；Owner 醒后一次转统筹）
+
+**M1｜28 枚留扣件的处置路线**（含 12 枚"逐件绿/整批红"交互件）（三选一：改测试语义施工／归口修被测试的代码／判废＝轨 B Owner 门位）。
+证据＝下表逐件 rc 与首条断言；建议默认＝**逐件读后再分派，禁整批判废**。
+⚠ 其中疑犯族＝"测试经导入链刷新投影写生产热册"（`test_f18_redblue`／`test_commit_queue`／`test_flag_lifecycle` 等），
+与维护三班今夜在治的 #ARCH-084/热册面同源——他们落地后这些件可能自然转绿，复跑判定归我班，不预先改件。
+
+| 件 | 判色来自 | 证据摘要 |
+|---|---|---|
+| `tests/data/db/test_db_integration.py` | 逐件单跑 | `['tests/data/db/test_db_integration.py']` |
+| `tests/gov/clone_guard/test_relate_adapter.py` | 逐件单跑 | `1 error in 3.13s` |
+| `tests/gov/clone_guard/test_vendetect_adapter.py` | 逐件单跑 | `4 failed, 19 passed in 3.87s` |
+| `tests/gov/f_lifecycle/test_hooks.py` | 逐件单跑 | `['tests/gov/f_lifecycle/test_hooks.py']` |
+| `tests/gov/governance/test_commit_queue_cascade_diff.py` | 逐件单跑 | `1 failed, 15 passed in 49.55s` |
+| `tests/gov/governance/test_intelligence_governance_facade.py` | 逐件单跑 | `1 failed, 3 passed in 1.81s` |
+| `tests/gov/governance/test_liveness_verdict_20261003.py` | 逐件单跑 | `1 failed, 26 passed in 3.73s` |
+| `tests/gov/governance/test_registry_alignment_layer2.py` | 逐件单跑 | `1 failed, 17 passed in 42.38s` |
+| `tests/gov/governance/commit_gates/test_registry_yaml_parse_gate.py` | 逐件单跑 | `['tests/gov/governance/commit_gates/test_registry_yaml_parse_gate.py']` |
+| `tests/gov/governance/d3_metadata/test_add_module_translation.py` | 逐件单跑 | `['tests/gov/governance/d3_metadata/test_add_module_translation.py']` |
+| `tests/gov/governance/governance_e2e/test_phase1_gate_check.py` | 逐件单跑 | `['tests/gov/governance/governance_e2e/test_phase1_gate_check.py']` |
+| `tests/gov/governance/shared/test_post_sync_validation.py` | 逐件单跑 | `['tests/gov/governance/shared/test_post_sync_validation.py']` |
+| `tests/research/backtest/test_n_trial_ledger.py` | 逐件单跑 | `['tests/research/backtest/test_n_trial_ledger.py']` |
+| `tests/research/backtest/test_reexam_cpcv_harness.py` | 逐件单跑 | `['tests/research/backtest/test_reexam_cpcv_harness.py']` |
+| `tests/research/pf_alloc/test_pf_alloc_event_wiring.py` | 逐件单跑 | `test session starts` |
+| `tests/research/strategy_pipeline/test_intake.py` | 逐件单跑 | `['tests/research/strategy_pipeline/test_intake.py']` |
+| `tests/gov/f_lifecycle/test_f18_redblue.py` | 整批复跑点名 | `整批第 1 轮点名（批 103）：328 passed, 1 skipped, 1 error in 464.08s (0:07:44)` |
+| `tests/gov/f_lifecycle/test_flag_lifecycle.py` | 整批复跑点名 | `整批第 1 轮点名（批 103）：328 passed, 1 skipped, 1 error in 464.08s (0:07:44)` |
+| `tests/gov/governance/test_audit_return_contract_usage.py` | 整批复跑点名 | `整批第 1 轮点名（批 104）：705 passed, 18 skipped, 7 xfailed, 1 xpassed, 1 error` |
+| `tests/gov/governance/test_w4_selfref_exemption.py` | 整批复跑点名 | `整批第 1 轮点名（批 104）：705 passed, 18 skipped, 7 xfailed, 1 xpassed, 1 error` |
+| `tests/gov/governance/test_commit_chain_campaign_20260922.py` | 整批复跑点名 | `整批第 2 轮点名（批 104）：664 passed, 18 skipped, 7 xfailed, 1 xpassed, 1 error` |
+| `tests/gov/governance/test_w4_env_no_residual.py` | 整批复跑点名 | `整批第 2 轮点名（批 104）：664 passed, 18 skipped, 7 xfailed, 1 xpassed, 1 error` |
+| `tests/gov/governance/test_commit_queue.py` | 整批复跑点名 | `整批第 3 轮点名（批 104）：624 passed, 18 skipped, 7 xfailed, 1 xpassed, 1 error` |
+| `tests/gov/governance/test_sync_yaml_to_depgraph_smoke.py` | 整批复跑点名 | `整批第 3 轮点名（批 104）：624 passed, 18 skipped, 7 xfailed, 1 xpassed, 1 error` |
+| `tests/gov/governance/commit_gates/test_resource_schedule_gate.py` | 整批复跑点名 | `module_id 与 src/scripts 在册件撞名（MOD-RESCHED-GATE→['src/zephyr/gov_enforc` |
+| `tests/gov/governance/test_battle_map_execution_flow.py` | 整批复跑点名 | `claim 前被 N-06 命名校验拒：rule=N-06; message=module_id 格式不符合双轨制(裁定#208): MOD` |
+| `tests/gov/governance/commit_gates/test_module_id_consistency_gate.py` | 整批复跑点名 | `claim 前被 N-06 命名校验拒：rule=N-06; message=module_id 格式不符合双轨制(裁定#208): MOD` |
+| `tests/gov/governance/test_audit_worktree_ops_telemetry.py` | 整批复跑点名 | `TEST-SOURCE-CONSISTENCY 静态符号漂移：from zephyr.gov_enforcement.rule_bridge` |
+
+**M2｜`tests/data/data/…` 双路径错位 83 件归口**
+（含 37 件三重路径；夹具归属被门牌错开，批 1 的 3 枚红即其受害者）。建议默认＝指派归口班做 git mv＋depgraph 同步。
+
+**M3｜`tests/gov/governance/commit_gates/` 顶 GOV-DOC-018 上限后的余件**（本班终表容量真扣 0 件；
+HEAD 顶层 63 件＋已投/拟投即近 120 线）。建议默认＝先落本批，剩余件等"拆子目录 vs 目录饱和"定性——拆＝改路径＝放弃原门牌对账。
+
+**M4｜未定 88 枚（令面记 89）AST 换尺读数**＝{"F": 1, "C": 5, "B": 39, "A": 43}
+⇒ **真缺 0**；建议默认＝A(测脚本)+B(纯自包含)+F(非代码件) 并入下一轮出货，C(动态导入 5 枚) 授权做导入面显形取证。
+证据＝`common/PENDING_undetermined88_docket.md`。
+
+**M5｜正则口径 vs AST 口径**：4 枚"真缺模块"里 AST 只confirm 2 枚，且 2 枚真缺皆**搬家/归档非灭绝**
+（`_archive/budget_forecaster.py`、`infrastructure/rollback/drift_fix.py`）。建议默认＝分桶判缺先过 AST 入法（已写 §廿一）。
+
+**M6｜本班误登的 1 枚令牌**（`tests/gov/compliance/test_f62_compliance_gate_wiring.py`，目录前缀扫进 HEAD 老件）：
+`retire` 需 `authority_ref`，本班**不自签**。给个批件号即可执行，命令已备
+（`common/RESIDUAL_over_registered_token.json`）。
+
+**M7｜验收口径**：令面"台账 dead_n 随批下降"实测不可达——族内 138 袋／4737 缺席路径，本班出货后**全袋解决=0**，
+且源袋不归档（在册判据：归档＝连带销毁唯一副本）。建议默认＝改用路径级 `revive_landed`（现 90/257）。
+
+**M8b｜N-06 命名校验在 claim 前拦下 2 枚复活件（本班已留扣并给全文证据）**
+- `tests/gov/governance/commit_gates/test_module_id_consistency_gate.py`：件内**夹具字面量** `MOD-001/MOD-002`
+  被校验器当"声明的 module_id"判不合双轨制 ⇒ 该件永远 claim 不进（考命名规则的件被命名规则杀掉）。
+- `tests/gov/governance/test_battle_map_execution_flow.py`：头位 id `MOD-TEST-278-TEST_BATTLE_MAP_EXECUTION_…` 超长不合轨。
+建议默认＝①校验器只扫头部声明区（不扫函数体/字符串字面量）＝归口门主车道定；②或本班下一段改头（属治理命名决策，今夜不自签）。
+证据＝`common/claim_blocked_files.json`（用 `check_naming_convention.check_file` 原函数逐件预扫所得，与 lock_files 实拒互验一致）。
+
+**M9｜跨班连坐一条（今夜实测，本班未代修）**：批 105（46 件）入队被共享暂存池里的**外班在途违规**拦下——
+`src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py:75` 的 `__all__ = [...]` 缺 `Final` 标注
+（MUTABLE-CONST-WITHOUT-FINAL），该件由 **st-maint3-20261011 持有 claim 并已 staged**（实测 claim 185 分钟）。
+按宪法 §3 第 4 条"他会话在途违规不代修＝owner 责任制"，本班未碰该件；其一行修法（`__all__: Final = [...]`）归维护三班。
+本班动作＝批 105 留投（其件仍完好在树内/工棚可一键重放），并在其落地后重试；证据＝`common/gate_scan_105.json` 与 `lock_files.py status` 读数。
+
+**M8｜跨班依赖一条**：批 14 的红件（`test_f18_redblue.py` 运行时写热册）正撞维护三班今夜在治的
+#ARCH-084/热册投影面（他们令内"测试面禁写投影或 fixture 隔离"）。他们落地后该件可能自然转绿——
+建议默认＝由本班下一段复跑判定，**不预先改件**。
+
+### 四、队列与红线现状（收班时读数）
+
+袋态={"pending": 14, "done": 20, "dead": 2}；死袋=[{"qid": "q-20261011-st-deadcure3b-chief-20261011-0002", "why": "dev CAS 冲突重试耗尽（6 次，池化重放）——死信回退人工"}, {"qid": "q-20261012-st-deadcure3b-chief-20261011-0011", "why": "landing 异常: TimeoutExpired: Command '['git', 'commit', '--no-verify', '-F', 'C:\\\\Users\\\\fanzi\\\\AppData\\\\Local\\\\Temp\\\\gw_commit_msg__845dkxn.txt', '--p"}]；
+全局队列 counts={"pending": 59, "processing": 1, "done": 759, "dead": 1460}。
+两锚仍指 `c2de2face6`；keeper 33344/43084 未动；`blobs/`、`G:\backup` 零触碰；写侧 `restore_drill.py` 除授权一行外零改动。
+在飞袋的 claim **故意不放**（在册铁律：袋在飞禁放锁）；enqueue 时已续租 7200s。
+
+复核一条命令：`python .runtime/tmp/st-deadcure3b-chief-20261011/tools/morning_package.py --print-only`
+
+## 廿三·补、快照后续账（本机生，2026-10-12 08:18）
+
+### 一、袋态与 A 类落地面（现读现算）
+
+```
+done       袋 27 枚／袋面件 133 枚
+processing 袋  0 枚／袋面件   0 枚
+pending    袋 12 枚／袋面件 113 枚
+dead       袋  3 枚／袋面件  22 枚
+全局队列 {'pending': 57, 'processing': 1, 'done': 773, 'dead': 1465}
+本班在途最老袋 4.43h
+最近 slow_item（本班，秒）[('0022', 422.6), ('0023', 473.7), ('0024', 502.0), ('0025', 390.5), ('0026', 740.8), ('0027', 374.1), ('0028', 432.6), ('0030', 552.5)]
+```
+A 类逐件核账（口径＝`git ls-tree HEAD` 有该路径，再比工棚字件）：
+
+```
+{"planned": 257, "in_head": 128, "by_my_bag": 128, "by_other_deadcure_bag": 0, "by_foreign_bag": 0, "sha_identical": 127, "ast_only(reflow)": 1, "semantic_diff": 0}
+```
+- `FORMAT_REFLOW` `tests/governance/commit_gates/test_tdm_mount_coverage_gate.py`
+
+### 二、本段新撞出的两条硬顶（都不是内容问题，登记不代修）
+
+1. **队列 R2 大批硬顶＝单批 ≤40 文件**：46 件袋被 `QueueReject` 当场拒（讯息点名 `--allow-oversize-`）。本班**不自拍豁免旗**（那是改判据面），改走生成器重切：
+   - 批 105＝`tests/gov/governance/commit_gates` 40 件
+   - 批 205＝`tests/gov/governance/commit_gates` 6 件
+2. **落地侧会跑格式化** ⇒ 纯『字节全等』判据会把 ruff 折行重排误判成假落地。实测 1 件 `CONTENT_DIFF`，AST 比对＝全等（语义零漂移）。呈批：落地面核验口径补一层『AST 等价』（补判据层，不改任何阈值数值）。
+
+
+### 三、B 类（整批点名后扣）逐件取证结果
+
+单跑分类＝{'GREEN': 6}（件数 6）——**逐件单跑全绿**，证明旧表『整批有 error』是连坐而非件本身红。
+
+| 件 | 单跑 | passed | rc |
+|---|---|---|---|
+| `test_audit_return_contract_usage.py` | GREEN | 35 | 0 |
+| `test_commit_queue.py` | GREEN | 120 | 0 |
+| `test_sync_yaml_to_depgraph_smoke.py` | GREEN | 16 | 0 |
+| `test_w4_env_no_residual.py` | GREEN | 2 | 0 |
+| `test_w4_selfref_exemption.py` | GREEN | 6 | 0 |
+| `test_flag_lifecycle.py` | GREEN | 8 | 0 |
+
+**再一层：24 枚扣押件按现行基底整组复跑**（预签裁定＝存量红用基底复跑归因，非改判据）：
+
+```
+真闸(N-06/N-03)拦下 6 件｜铺就 18 件｜收集期错剔除 1 件
+末轮（17 件同进程）rc=1
+末轮判读＝**会话被 pytest-timeout（120s/件）击杀，无末行摘要**——凶手是打到生产 ClickHouse 挂等的 `test_pf_alloc_event_wiring.py`（详见 §六 与 W-2）；故本轮**不给『投』结论**，只按进度行逐件归位作旧判词复核。
+末轮件清单＝['test_db_integration.py', 'test_vendetect_adapter.py', 'test_f18_redblue.py', 'test_hooks.py', 'test_registry_yaml_parse_gate.py', 'test_resource_schedule_gate.py', 'test_add_module_translation.py', 'test_phase1_gate_check.py', 'test_post_sync_validation.py', 'test_audit_worktree_ops_telemetry.py', 'test_commit_queue_cascade_diff.py', 'test_intelligence_governance_facade.py', 'test_registry_alignment_layer2.py', 'test_n_trial_ledger.py', 'test_reexam_cpcv_harness.py', 'test_pf_alloc_event_wiring.py', 'test_intake.py']
+```
+- `test_relate_adapter.py` ← ERROR_COLLECTING
+
+但补投在 **claim 面**被 N-06 命名校验拦 2 件（真闸 `lock_files._check_naming` 现调，非自写正则）：
+- `test_audit_return_contract_usage.py` ← [N-06] module_id 格式不符合双轨制(裁定#208): MOD-TEST-279-TEST_AUDIT_RETURN_CONTRACT（应为 MOD-{LAYER
+- `test_sync_yaml_to_depgraph_smoke.py` ← [N-06] module_id 格式不符合双轨制(裁定#208): MOD-TEST-280-TEST_SYNC_YAML_TO_DEPGRAPH（应为 MOD-{LAYER
+
+⚠ **顺序坑（本班白跑一轮换来）**：该闸只在件『未被 git 跟踪』时全量跑，且**读盘上件内容**——铺件前 claim＝只查文件名（会过），铺件后再 claim 才现拦。正解＝补投表生成器先用**工棚字节**过一遍真闸（`tools/hold8_plan.py::naming_blocked`），过不了的不进表、直接进扣押册并附闸原文。
+处置：连同 `test_commit_chain_campaign_20260922.py`（非 ISO 日期后缀名）共 3 件**留扣呈批**——改名或改 module_id＝动死袋内容，非『零逻辑改动复活』授权面。
+
+实际入袋补投面：批 107＝3 件（`tests/gov/governance`），批 108＝1 件（`tests/gov/f_lifecycle`），批 109＝2 件（`tests/gov/f_lifecycle`）
+
+### 四、本班袋面两处需登记的形状
+
+- **同内容双袋**：批 106 因脚本重跑被 ship 两次（两枚袋 files 同集、blob 同 sha，仅 base_head 不同），先落者生效、后落者会以『无变化/派生漂移』死信——非内容问题；队列目录在禁碰清单上，本班不代删，只登记 qid 供事后清账。
+- **他班在途违规连坐面**（M9 复证）：`registry_mass_deletion_gate.py`（属主 st-maint3-20261011）仍在共享暂存面且缺 `Final`，其自身袋已于 05:56 死信（`非注册表族件双侧皆改真冲突`）⇒ **不会自愈**，需属主重投或统筹指派归口。
+- **一颗『已被他班主动删除』的件**：`tests/research/strategy_pipeline/test_intake.py` 先由 st-map9-f4 于 10-05 落新家（`3cba5dae9e6`，added），10-06 又被 st-tests-chief-20261004 的『旧路径删除·第三波3』`189f367bcf5` 删除 ⇒ 它今天表现为 absent_in_head 而进 A 类表，但**复活它＝回退他班的删除裁决**⇒ 本班停手呈批（这类件在表里只会显示为"红/扣"，真因是裁决冲突，勿混）。
+- **存在性判据一条（本班自纠）**：`git log -1 -- <path>` 会命中**后来的删除提交**，把已删件读成"曾落地"；存在性只认 `git ls-tree HEAD`/`git cat-file -e HEAD:<path>`。`tools/bag_reconcile.py` 已按此改，并报出 `in_history_not_in_head` 一类。
+
+### 五、队列吞吐诚实标价（现算，非估算）
+
+```
+{"landed_last_60min": 3, "landed_avg_last_3h_per_h": 5.7, "queue_pending": 57, "my_pending": 12, "my_positions": [27, 28, 29, 35, 38, 39, 41, 48, 49, 54, 55, 57], "min_per_bag": 10.5, "eta_my_last_bag_h": 10.0, "recent_landed": ["06:45", "06:53", "07:00", "07:07", "07:13", "07:22", "07:29", "07:35"]}
+```
+口径＝`done/` 件的真 `landed_at`：近 60 分钟完赛 **3 枚**，近 3 小时平均 **5.7 枚/小时**（后者更稳，前者受本班自跑的长 pytest（如 f18 单件 477s）与 40 件大批挤压而抖动）。取用速率≈10.5 分钟/枚。全局在途 57 枚，本班占 12 枚，本班最末一枚排第 57 位 ⇒ **本班全部袋自然排空约需 10.0 小时**。
+⚠ 诚实标价两条：①**本班自身的长复跑确实在和串行单飞抢 CPU/锁**（f18 单件 477s、17 件组跑 19min），这是本班造成的减速，下一段若要快投应先停自跑复验；②`257 件尽落`今晚不由本班决定，由传送带吞吐决定。
+⇒ 本班不自行动传送带（`.runtime/commit_queue/` 在禁碰清单上，且改并发/改序＝新协议口径，非本班可自裁）；在册真因面见 [[commitspeed-regression-20260924]]（D4 幽灵 pending 那条链）。
+
+### 六、案卷面与终读数（交班直接引用）
+
+- 扣押终册（28 件逐件现测病因）＝`common/HOLD_final_register.md`；
+- 下一段开工单 W-1..W-5＝`common/NEXT_SHIFT_work_orders.md`（含一颗把测试打到**生产 ClickHouse**并挂等的毒丸：`test_pf_alloc_event_wiring.py` 第 347 行）；
+- 收班凭据读数＝`common/step_closeout.json`（机生）。
+- 复跑转绿件的逐件复核：绿 2／红 1（绿者已按批 109 入袋：['test_f18_redblue.py', 'test_hooks.py']；红者留扣：['test_intelligence_governance_facade.py']）
+- ⚠ **组读不是判决书**：`test_intelligence_governance_facade.py` 在 17 件同进程里读作绿、单跑即红（1 failed）⇒ 连坐式**假绿**；本班一律『逐件复跑定定投』。
+
+复核一条命令：`python .runtime/tmp/st-deadcure3b-chief-20261011/tools/ledger_23b.py`
+
+## 廿四、晨裁落地账与崩溃复位账（本机生，2026-10-12 21:57）
+
+### 一、统筹晨裁逐条落点（唯一真源＝`common/morning_rulings.json`，禁散文转述）
+
+- **M13＝批**：6 件归口班改件头后重投
+  - 本班动作＝留扣＋开工单 W-1，等件头改后按现字节重投
+- **M14＝批**：该门 Final 已由维护三班装上，死袋按 dead_reason 对症重投
+  - ⚑**本班实测与前提不符**＝前提未证实：门链现仍点 registry_mass_deletion_gate.py:75 缺 Final；暂存新增行含 Final 者＝0；claim 仍由 st-maint3-20261011 持有 497.9min
+  - 本班三枚死袋（0002/0011/0029）均已在位重投：0025 已落、0030 已落、0043 在途 ⇒ 无待重投
+- **M15＝批沙箱化**：测试打生产 CH 违 §9 第 6 条，归口班必修后才能进复活流
+  - 本班动作＝该件不投，登记 W-2 毒丸
+- **M16＝裁继续删**：『旧路径删除』在册裁定无新证据不回退；该件从 257 分母剔除并在台账记差因
+  - 本班动作＝denominator_exclusions.json 已登记，有效分母 257→256
+- **M17＝自然排空不抢**：不改传送带、不与在途抢速
+  - 本班动作＝停自跑长复验（曾与串行单飞抢 CPU/锁），只盯落地
+- **M10/M11/M12＝全按默认**：AST 等价层正式入册；0033/0035 后落者自然死信季度清账
+  - 本班动作＝落地面核验已含 AST 第二层；双袋不代删只登记
+- 全局令＝队列池减半前不开新面，只消化在途
+
+### 二、M14 前提核正（生成当刻现探，请统筹复核；本班不据此改判）
+
+- 探时刻＝21:57
+- 暂存面状态＝M  src/zephyr/gov_enforcement/commit_gates/registry_mass_del
+- HEAD 的 __all__ 行＝__all__ = ["make_registry_mass_deletion_gate"]
+- 暂存字节的 __all__ 行＝__all__: Final = ["make_pool_regression_direction_gate", "make_registry_mass_d
+- 暂存新增行里出现 Final 的次数＝2
+- 结论＝维护三班确已 import Final，但被点名的 `__all__` 那行仍未加注解 ⇒ 门链照旧拦；统筹'已装上'的前提只完成一半，本班不据此放宽自己批 105 的处置
+⇒ 本班按『门拦得对就不强解』处理：不代修他班门件，也不拿这条当前提去动批 105/205 的处置。
+
+### 三、崩溃复位账（只用件证，不猜时刻）
+
+- 后果①：本班会话被死亡显化钩子立案 `TAKEOVER-PENDING`（立案时刻 2026-10-12T11:00:08.75650；本班最后一次工棚写入在 10-12 21:57，其间对本会话零活性；判死依据＝注册表除名＋PID 3452 已死，**非** idle 超阈）；
+- 后果②：全局 open 接管条目 **182 条**（绝大多数是他班；本班一条不动别人的账，交维护三班/巡检班归口）；
+- 后果③：台账袋 0043 被这道门当场打死（命中面＝快照 held_files 里的 3 件＋worktree＋在途袋面）；
+- 本班处置（全部只做在自己名下）：①`gateway.release_files` 精准释放 3 件 stale claim→现余 0 枚；②重注册＋logical 授标后心跳新鲜，`liveness_verdict` 由 dead 翻回 **alive**（权威信号 REGISTRY-FRESH）；③自有 worktree `.aidrafts/st-deadcure3b-chief-20261011`（dirty=0）**不动**——处方点名 removal 须走裁定通道，禁裸 git worktree remove；④他班死信一律不 --resolve、不 --force。
+
+### 四、崩溃后新增两道落地面硬闸（各拖死一袋，已对症拆分）
+
+1. **`gate-naming` 的 N-16（文件名唯一性）只在落地面 pre-commit 跑**，`gate_dry_run` 不覆盖 ⇒ 0032 袋（clone_guard 4 件）被 1 件打死：[N-16] 文件名不唯一: test_orchestrator.py (新增: tests/gov/clone_guard/test_orchestrator.py, 已有: tests/gov/governance/audit/test_orchestrator.py)。本班不自拍豁免、不改名（改名＝动死袋路径），**拆成 3 件重投＋1 件留扣**。
+2. **`gate-no-tests-unit` 被测试夹具字面量触发**：`test_precommit_offline_gate.py` 第 168/388 行是它用来测『离线替代钩子』的假配置字符串（内容里就写着该旧路径字面量），落地面按『旧路径重引入』拦下 ⇒ 0038 袋（40 件）被 1 件打死。本班**拆成 39 件重投＋1 件留扣**，并点名这是与 N-06 同型的『夹具字面量当声明』判据面问题，呈归口班。
+- 治本一条（本班已自办，属『改喂闸的输入』不属弱化闸）：投前预检加调真钩子 `check_naming_convention.py --check-new`，让 N-16 在入队前就看得见。
+
+### 五、终读数（现算）
+
+```
+{"nominal": 257, "excluded": 1, "effective": 256, "landed": 233, "in_flight": 0, "dead_bag_awaiting_resubmit": 0, "landing_gate_blocked": 2, "held_by_cause": 21, "check_sum": 256}
+```
+校验：四项之和 256＝有效分母 256；其中死袋待重投 0 件（对症拆分后已入 0044/0045 袋）、**落地面闸门拦下 2 件**（N-16 撞名 1＋夹具字面量触闸 1，本班判定不再重投，见 common/landing_gate_blocked.json）、真扣押 21 件。差因 1 件（M16）已从 257 名义分母剔除。
+袋态：done 39／pending 0／processing 0／dead 8（死袋逐枚 qid＝['0002', '0011', '0029', '0032', '0037', '0038', '0043', '0047']，皆按 dead_reason 对症处置）。
+
+### 六、本班停手面（不代办）
+
+- `tests/gov/clone_guard/test_orchestrator.py`：N-16 撞名，改名属跨班资产位移 ⇒ 开工单 W-6；
+- `tests/gov/governance/commit_gates/test_precommit_offline_gate.py`：夹具字面量触闸，改测试语义/给闸加夹具豁免都要上面点头 ⇒ 开工单 W-7；
+- 全局 open 接管条目 182 条中，除本班这 1 条外全是他班的，本班一条不碰。
+
+### 七、本战役台账被**他班**接管条目冻住（要统筹派的，本班不自解）
+
+复核命令：`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/ledger_24.py`；接管台账只读列示＝`python scripts/governance/session_takeover_ledger.py --list`
+
+## 廿四·补、更正一条与 W-8 收口账（本机生，2026-10-12 21:58）
+
+### 一、自纠：干跑器报红不等于被执行门会拦（旧毛病复发，留旧案卷不改写）
+
+- 已投文本（§廿四 二）里写过『门链照旧拦』——该句来源＝`gate_dry_run` 的 `[FAIL]` 报红，而落地侧 GATE-PRECOMMIT-RUN 用的是 **own-scope 临时索引**，二者不同尺；本班**没有**实测过落地门对该文件的拦截，故此句不作门行为结论。
+- 仍成立的字节事实：可直接断言的只有字节事实：HEAD 版 `__all__` 行无 Final（逐字节读）；暂存版该行已加 `: Final` 注解；维护三班自身袋此前死于三方冲突（死信原文）。
+- 处置：按『更正另起一节、留旧案卷』在册规矩，本节只追加不改写 §廿四 原文；同时把这条自犯登记进记忆面（第三次同型）。
+
+### 二、保命进程退役登记（统筹令＝不重启、登记退役）
+
+- 在册 PID＝[33344, 43084]；令由＝统筹 2026-10-12 令＝不重启、登记退役（其监护面正是本次归并清退的二期车道，重启反会复活要清的面）
+- 实测：崩溃后 tasklist 两 PID 均不在进程表；会话注册表分片与 .runtime/sessions/*/keeper* 对两 PID 归属实测 0 命中 ⇒ 无从按会话登记，退役登记落本台账 §廿四·补
+- 本班动作＝只登记不重启（启动属 Owner/运行班门位，宪法 §0 第 2 条与 keep 册卷首同口径）。
+
+### 三、W-8 四步终态与遗留
+
+- ①归并＝完成——三节以 §廿五 附录形态入 HEAD（commit 30fa8dc141，21:04；回查 HEAD 命中＝3/3）
+- ②销账＝完成——--resolve st-deadcure2-20261009 迁 resolved/（含批复原文 sid 笔误 20260909→实名 20261009 的更正注记；顺序修正＝先销账后落地，因该条目自身连坐拦死碰台账的提交）
+- ③清退＝部分完成——worktree 已 remove --force（9 件 dirty 全量存证于 safety/deadcure2_lane/，其中 7 件与主区 HEAD 逐字节相等、注册表为落后版且 ruling_id 集合差＝车道独有 0）；branch -d 被拒（not fully merged，分支仍有 2 枚未合提交，其中 3-dot diff 对 HEAD 为空＝内容零独有）⇒ **本班不 -D**，留待裁定；
+- ④四节回投＝首投袋 0047 死于 gate-no-tests-unit（ARCH-029）——死因是**本班自己的描述文本**：§廿四 里为解释该闸，把该闸所禁的旧路径字面量原样抄了一遍（正则匹配『tests 目录 + unit + 尾斜杠』，实测第 913 行 1 处）。已改措辞（不动闸、不讨豁免），并把该字面量纳入投前断言；重投＝§廿二·补～§廿四 ＋ §廿四·补 合为一袋。
+- 现场：resolved 文件＝['st-deadcure2-20261009-1791809579.json']；车道目录存在＝False；worktree 列表现含该车道＝False；分支仍存在＝True ⇒ `git branch -d` 被拒（`not fully merged`：分支仍有 2 枚未合提交，但其相对主区的 3-dot diff 为空＝内容零独有），**本班未用 `-D`**，是否强删请裁定（倾向＝留档不删，留零成本反悔面）。
+- ⚑批复前置更正两条（供后续引用者避坑）：①令文 sid 作 `st-deadcure2-20260909`，台账实名 `st-deadcure2-20261009`（已按实名执行并在 resolve note 里写明）；②令文『HEAD 是祖先 前置已验』实测为**否**（merge-base --is-ancestor 失败），故 `-d` 必被拒、`worktree remove` 必带 `--force`（本班在独有内容归零＋9 件全量存证之后才执行）。
+
+### 四、A 类终读数（现算）
+
+```
+{"nominal": 257, "effective": 256, "landed": 233, "in_flight": 0, "landing_gate": 2, "held": 21}
+```
+有效分母 256＝已落 233＋在途 0＋落地面闸拦 2＋扣押 21（差因 1 件＝M16 已剔）。
+
+复核：`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/ledger_24c.py`
 ## 廿五、二期历史节原文附录（唯一副本继承；W-8 第①步）
 
 - 来源＝接管条目 sid=`st-deadcure2-20261009` 自有 worktree `.aidrafts/st-deadcure2-20261009` 的工作区字节（该车道 HEAD=`fcfc8e0bc6`，10-09 21:45），经零写入快照取回：
@@ -656,7 +990,7 @@ git show 9d9386da996 --stat -- src/zephyr/infrastructure/capacity_assurance/ | h
 
 **队列经过（三次，含停手规则）**：`-0010` 死于基底漂移（CAS：dev 在等位期间推进，未声明基底重建）⇒ `requeue --from-bag --base-head <新 dev tip>` 重锚；`-0011` 死于 **GATE-PRECOMMIT-RUN"hook 改文件"**，但同一文件在车道复跑 pre-commit 与派生检查**字节零变化（sha 097066af91a159a7 稳定）**⇒ 判定为序列化工作树侧不可复现变异（已交 总统筹并入 regsolo 物化域证据堆，本专车不追修）；`-0012` 第三次入队，按停手规则：**若仍死于同因则停**，成果留车道＋出案卷，不再刷队列。
 
-#### 十八、接管规程新增前置与抢救方法论（本次实证两条，Owner 批复第 2/4 条）
+### 十八、接管规程新增前置与抢救方法论（本次实证两条，Owner 批复第 2/4 条）
 
 **① 接管 Rx 执行前必须三态现测——台账快照不构成行动依据。** 实证：增补令下发"st-dexp-20261009 pid 37368 dead"，而三态现测（`lane_liveness.py` 口径）＝registry 在册 pid 24264／心跳距今 10s status=alive／fs 13.8 分钟前有写＋队列 3.8 分钟前有它自己新投的 `q-…-0049`。⇒ 该接管令整体作废（未 resolve、未代投、未碰其任何字节）。
 **为什么台账会错**：dexp 自己的 resolved 注记给出根因＝**keeper 重启空窗**（14:03→14:12 的 9 分钟、14:42→17:20 的 16 分钟）被 scan 按 PID 读死，今日同一条目因此**被开三次**（前两次它自解，第三次由 st-examchief 于 00:00:39 解）。这条与我 §七 9-1/9-2 判死口径升旗同源：scan 用"注册表 pid 位/PID 存活"单判，不看逻辑会话的真实活性。
@@ -673,7 +1007,7 @@ python .runtime/tmp/st-deadcure2-20261009/tools/register_ruling_503_in_lane.py  
 cd .aidrafts/st-deadcure2-20261009 && python -m pytest tests/ai/ai_layer/redline/ -q   # 118 passed
 ```
 
-#### 十九、A-12 监视器仪器缺陷治本（Owner 2026-10-10 令，两笔定性验收后）
+### 十九、A-12 监视器仪器缺陷治本（Owner 2026-10-10 令，两笔定性验收后）
 
 **缺陷**：`monitor_a12.py` 把"读到空面"与"读到蒸发"混为一谈。00:09:50 那笔假阳的真因＝并发写者走 tmp+os.replace，监视器在替换瞬读到 0 行，于是把整册 14425 条全报成 FIRED。FIRED 是上报级判据（本期承诺"非零即报"），假阳既淹真阴、也让整套读数失信。
 
