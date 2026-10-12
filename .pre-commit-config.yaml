@@ -547,7 +547,7 @@ repos:
       # 行为变化：原 GATE-18/GATE-19 分别 pass_filenames=false 自扫描，合并后 run_gate_chain 等价。
       - id: gate-test
         name: "GATE-TEST: 测试门禁合并（GATE-18 staged收集 + GATE-19 结构）"
-        entry: 'bash -c "files=$(git diff --cached --name-only --diff-filter=AMR -- tests/ | grep ''\.py$'' | tr ''\n'' '' ''); if [ -z \"$files\" ]; then echo ''[gate-test] no staged test files, skip collect (B1 2026-09-30)''; rc1=0; else pytest --collect-only -q --tb=line -p no:asyncio --import-mode=importlib -m ''not slow and not e2e'' $files; rc1=$?; fi; python scripts/governance/d11_compliance/check_test_structure.py; rc2=$?; if [ $rc1 -ge 2 ] || [ $rc2 -ge 2 ]; then exit 2; fi; if [ $rc1 -ne 0 ] || [ $rc2 -ne 0 ]; then exit 1; fi; exit 0"'
+        entry: 'bash -c "files=$(git diff --cached --name-only --diff-filter=AMR -- tests/ | grep ''\.py$'' | tr ''\n'' '' ''); if [ -z \"$files\" ]; then echo ''[gate-test] no staged test files, skip collect (B1 2026-09-30)''; rc1=0; else ZEPHYR_TEST_PG=1 python -m pytest --collect-only -q --tb=line -p no:asyncio --import-mode=importlib -m ''not slow and not e2e'' $files; rc1=$?; fi; python scripts/governance/d11_compliance/check_test_structure.py; rc2=$?; if [ $rc1 -ge 2 ] || [ $rc2 -ge 2 ]; then exit 2; fi; if [ $rc1 -ne 0 ] || [ $rc2 -ne 0 ]; then exit 1; fi; exit 0"'
         language: system
         pass_filenames: false
         always_run: false
@@ -583,7 +583,7 @@ repos:
       # 模式：硬阻断（pytest exit≠0 拒绝提交）
       - id: gate-errcode-consistency
         name: "GATE-ERRCODE: error_code 注册表↔代码双向对账（#ARCH-ERRCODE-001）"
-        entry: python -m pytest tests/governance/test_error_code_consistency.py -q --tb=line -p no:asyncio --import-mode=importlib
+        entry: bash -c "ZEPHYR_TEST_PG=1 python -m pytest tests/governance/test_error_code_consistency.py -q --tb=line -p no:asyncio --import-mode=importlib"
         language: system
         pass_filenames: false
         always_run: false
