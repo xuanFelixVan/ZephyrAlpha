@@ -279,3 +279,194 @@ INSERT-SELECT 直落，非独立拉数）→TI 小批→周月级联→情绪 bu
 - [ ] 53472 收官确认→T2 探针+冷档→T3/T4 放量
 - [ ] T1 今晚 02:30 夜跑写入量对比（明晨读 state+当日入库行数）
 - [ ] merge 本班分支回 dev；release 全部 claim；99_delivery 逐件哈希+复核命令
+
+---
+
+# 追加班·数据车道二班 st-datalane2-20261012（2026-10-12 21:2x 起，三件按序）
+
+> 令件=Owner 2026-10-12 指令卡「数据车道二班——数据合并工单」；规格真源=`docs/_working/statsgov_campaign/24_positive_control_backfill_spec_v1.md`（下称 24 号件）。
+> 本班写面只两张表：`technical_indicator`（件①）、`stock_daily_basic`（件②③的市值半边）。全程零 DELETE、零 mutation、零改判据、零改在册件字节。
+
+## 十九、开班冷启动与并发结构自决
+
+- RULE-ENV：Python 3.12.8；`setup_dev_env.py --check` usercustomize 在岗（指向 D:\ZephyrAlpha）。
+- RULE-GUARDIAN：`lock_files.py cleanup`=CLEAN 无死锁（附带一条 `st-dexp-20261009.json` 分片损坏被跳过的告警，非本班件、未处置）；reaper `--status`=source=live、last_run=21:24:42、scanned=31/whitelist=27、killed=0 ⇒ 写操作门位放行。
+- 建班时水位：RAM avail 27.94GiB、commit_pct 66.96%、cpu 75.7%、D 盘余 69.6GB；`worktree_changes=716>50`（并行漂移告警，如实记）。
+- RULE-WORKTREE：车道=`.worktrees/st-datalane2-20261012`（分支 `ai/st-datalane2-20261012/task-datalane2-threepack`，建时基 7599a6aff2；同期 dev 已进至 0a9f7eef）。本台账按热件配方先 `cp -n` 存证再取 dev 现面重基：dev 面与车道面均 281 行、零漂移。
+- 并发结构（令卡一·四条授权自决）：1 条主区编排进程＋5 条独立 `--state-dir` 车道，片号互斥：L1=023-028／L2=029-034／L3=035-042／L4=043-050／L5=051-057。分片内票集互斥（同表禁双开的实质判据），跨表（basic）互不相干。主区腿在跑期间持主区 P3 单实例锁（21:49-21:57），**交锁后主区无持锁者**⇒明晨 02:30 夜跑照常起批（届时本班车道已全部收尾，不构成双开；但对"表不再变动"这条前置有影响，处置见 廿五·3）。
+- 首件校准后再放量：先只开主区腿＋L1＋L2，实测单窗 50-110s（对照夜跑串行 25 分钟/片）且标的清单哈希与全宇宙快照逐片相同，再补开 L3/L4/L5。
+- reaper keep 追加：`data/runtime/process_reaper_keep.txt` 尾新增 2 行（注释＋本 sid 子串），键集差自证=+2/-0；在册 runner/worker 子串（`tilib_dwm_shard_runner`/`backfill_technical_indicator_dwm`）本已在册。
+- RULE-CAPABILITY-LOOKUP：`CapabilityLookup().find()` 三条反查（A 股历史日线回填／缺口补齐量纲／daily_basic 市值回补）**0 命中**；正对照同尺查"技术指标"命中 1 条（technical_indicator）⇒ 尺是活的，0 命中是真结论：A 股日线历史窗口回填在册无入口（详见 廿二）。
+
+## 廿、②段一 stock_daily_basic 2019-2020 全落＋验收四判据实测
+
+**名实核查（24 号件 §2 点名的前置，先给结论再给数）**
+- `scripts/data/backfill_stock_daily_basic.py` 两条腿名实不同：
+  - akshare 腿（缺省）：`fetch_symbol` 实调 `ak.stock_zh_a_hist`（价量接口，:46），`to_tsv` 只取 `日期/换手率` 两列，`float_share/circ_mv/total_mv` 一律写 `\N`（:60）⇒ **产换手率＋市值三列空**，跑段一会把市值写成空值＝段一无效。本班未用此腿。
+  - tushare 腿（`--source tushare`）：`pro.daily_basic(trade_date, fields=ts_code,turnover_rate,float_share,circ_mv,total_mv)` ⇒ **四列全真值**＝段一/段二市值半边正解。
+- 该腿一处硬伤：交易日清单 SQL 硬编码 `trade_date >= '2021-01-01'`（:137-138），`--start/--end` 在该腿**完全未被消费** ⇒ 照命令行"补 2019-2020"去跑，实际重灌的是 2021+ 全段。本班不改在册件字节（见 廿三·缺陷①），改为在临时驱动器里按窗口实算交易日清单后显式传入 `run_tushare()`，同一映射函数、同一 INSERT 形状。
+- 单位口径实测对拍（不是推断）：2021-06-01 000001/600519 的 CH 行四列与 `pro.daily_basic` 原值**逐位相同**⇒ 既有段与回补段同为 tushare 原生口径（市值=万元、股本=万股、换手=%），24 号件 §3 判据 4 的单位面成立、无需换算。
+
+**执行账（三段，全走在册件 `run_tushare`）**
+| 腿 | 窗口/日数 | 插入行 | 失败日 | 时刻 |
+|---|---|---|---|---|
+| 试点 | 2019-01-02 × 1 日 | 3,555 | 0 | 21:56:08-09 |
+| 主腿 full | 2019-01-01..2020-12-31 × 487 日 | 1,816,924 | 4 | 21:56:38-22:01:40 |
+| 自愈腿 missing（按 kline 日历差集） | 4 日 | 14,948 | 0 | 22:02:02-09 |
+
+**验收（24 号件 §3 判据逐条，只读、无 FINAL 正门 fexam.ch_data.ch_query）**
+- C1 逐年票数：2019 uniqExact(symbol)=**3,768**，对 kline_daily 在市面 3,771=**0.9992**、对 adj_factor(bdpan) 因子面 3,960=**0.9515**；2020=**4,340**，对 4,366=**0.9940**、对 4,378=**0.9913**。两条分母口径均 ≥0.95 ⇒ 达标；且与"表面 2019 起、实则 237 票"的假完整形态不同（本班实测 2019-01-02 单日 3,555 票）。
+- C2 逐日对账：kline 交易日 487／basic 有值日 **487**／缺日 **0**／缺日率 **0.00000%**；日票数比 min=0.96175、median=0.98892、max=0.99775（缺口=停牌/当日无 daily_basic 快照，未填 0 收益，可区分）。
+- C3 抽 20 票 × 40 交易日单位自证对拍：`circ_mv/float_share ÷ close` 偏离 ≤5% 的通过 **800/800**，偏离>5%=0（本地 join，不在 CH 里做大 JOIN——写库高峰期 JOIN 实测触发 HTTP 500/Code 241，见 廿三·缺陷⑤）。
+- C4 净键与空值面：`count()` 与 `uniqExact((trade_date,symbol))` 逐年相等（2019=885,332／2020=946,540）⇒ **零重复版本**（试点日 2019-01-02 被主腿同键重写一次，入库即在同 part 内合并，无第二版本，如实记）。2019 全列零异常；2020 残余异常面=**90 行四列全 `\N`，全部集中在 2020-09-18 一日**（源侧当日该 90 票无值），另 turnover=0 共 11 行、circ_mv>total_mv 15 行、turnover>100% 1 行（603733 于 2020-08-05，源侧原值）。本班**未删未补**：删需快照+mutation 三步验证，且全 `\N` 行仍是"源查得该票但无市值"的可追溯痕迹；处置权交统筹（见 廿五·待窗②）。
+- 行数与 24 号件估算对照：实测 1,831,872 行 vs 估算 198 万 ⇒ 差 = 估算按 (3,771+4,366)/2×487 的"满票面"，实测按源侧逐日在市有快照票数（median 0.989），非漏采。
+
+## 廿一、③段二 市值半边 stock_daily_basic 2017-2018 全落（含两轮自愈）
+
+- 交易日历分母改走源侧 `pro.trade_cal(SSE)`（=487 日），**不用 kline_daily 日历**——因 2017-2018 的 kline 本身是 240 票 stub，拿它当分母等于让被测件出题。
+- 执行账：主腿 full_cal 1,428,900 行/444 日（**fail_days=43**，其中 1 日为 CH `Code: 241 memory limit exceeded`：CH RSS 6.43GiB vs 上限 6.80GiB，六车道写库高峰撞墙）→ 自愈一 missing_cal 129,550 行/42 日 → 自愈二 3,128 行/1 日 ⇒ **487/487 日全覆盖，合计 1,561,578 行**。
+- 自愈走"CH 实测缺日差集"而非整窗重灌（整窗重灌=给已覆盖键再造一套版本）。
+- 验收：C1 2017=**3,468**（对 adj_factor 因子面 3,635=**0.9541**）、2018=**3,611**（对 3,758=**0.9609**）≥0.95 达标；C2 487 交易日零缺日；C3 与 kline 收盘对拍在重叠面（stub 只 240 票）取到 4 票 × 40 日=**160/160 通过**；C4 `count()`=`uniqExact((trade_date,symbol))`（2017=743,941／2018=817,637）零重复版本，四列零 NULL 零非正、circ≤total，换手率越界仅 2017/2018 各 1/2 行（=0，无交易日的源侧 0 值）。
+- 净增对盘：`stock_daily_basic` 现覆盖 2017-01-03..2026-10-12（此前 2021-01-04 起）＝**2016 及更早仍缺**（24 号件批复三范围含 2016，本令卡三件只点到 2017-2018，本班未扩窗）。
+
+## 廿二、③段二 价量半边（kline_daily 2017-2018）：本班未执行——实测案卷与可点火处方
+
+**一句话**：在册没有"按窗口给在市股补历史日线"的入口，而今晚要么即兴自造写入口（违 24 号件 §5"不自建第二采集入口"），要么在 22:3x 往全项目被读最多的面注入约 150 万行且留下重复版本——两条都不做，把实测代价与处方交回统筹排窗。
+
+**已实测的事实面（全部零写）**
+1. 现状=stub：2017=240 票／2018=237 票（57,213／57,180 行），`data_source='Baostock'`，ingest 2026-08-15..09-29，量纲实测为**股/元**（000005 2017-06-05 volume=3,145,700、amount=16,118,580，与 close=5.11 自洽）；与在档"1990 起但 2019 前仅约 237 票、15× 断崖"同形。
+2. 量纲主口径已治本且在册：kline_daily 2019+ 现行 volume/amount 与 `pro.daily` 对照=**vol×100（手→股）、amount×1000（千元→元）**（2019-01-02 000001 CH 53,938,600 股 vs tushare 539,386.32 手；2021-06-01/2026-10-09 同形）。在册参照实现=`tushare_provider._map_bj_kline_rows`（:926-990，16 列、×100/×1000、amplitude=(h-l)/preclose×100、adj_factor=1 不复权、market_type='A_share'、data_source='tushare'）。
+3. baostock 通道实测**可用且免换算**：login 1.1s；`query_history_k_data_plus('sh.600000', 2017-01-01..2018-12-31, d, 不复权)` 返回 **487 行**（=满日历）、耗时 **3.74s/票**、volume/amount 原生股/元。按 3,635 票（2017 因子面）串行估 **3.7 小时**；baostock 有 IP 拉黑前科（baostock_provider:136 注记），并发放量前须先小批验。
+4. 在册两条相关能力，都不能当本班的窗口化正门：
+   - `kline_daily_delisted_backfill`（tasks.yaml:1542，source=baostock，capability=kline_daily_delisted，schedule=monthly_static，incremental=false）：universe=**仅退市股**（`query_stock_basic(status=0)`），每股取 [ipoDate, outDate] **全史**，span 覆盖即跳过 ⇒ 首跑量级=数千退市票×最多 30 年，且会同时新增 2019-2026 段票面（幸存者偏差治理 DS-002 本体，不是"顺手补 2017-2018"能框住的改动）。
+   - baostock `kline_daily` 能力：`supports_symbols_null=False` ⇒ 必须显式票清单；`kline_daily_incremental` 主源=miniqmt＋水位驱动，`python -m zephyr.data run` 只有"今日"语义（子命令 status/list/run/rerun-failed/pause/resume/start/speed-test，**无窗口参数**）。
+5. 反查留痕：能力反查 0 命中（正对照有效）⇒ 结论与代码勘察一致：**在市股历史窗口回填无在册入口**。
+
+**待统筹点的窗（本班建议，不代裁）**
+- 施工内容：新增一次"窗口化 A 股日线全史回填"的在册化（把 2. 的映射从 BJ 专用泛化为后缀集合＋新增按窗口跑在市股的任务或在册脚本），带测试与红证；票面分母建议同时定"在市＋退市"两套（含 000029/200011 这类源侧有快照但无行情的票怎么处理）。
+- 写盘义务：2017-2018 与既有 240 票 stub 同键 ⇒ 落地后必须按 24 个月分区做收敛（同键版本去重）并出 `count()` vs `uniqExact((trade_date,symbol))` 对账，否则无 FINAL 读面会双计（在册前科：FINAL 旧行覆盖修正行／重算换名后增量腿回灌）。
+- 时序义务：避开 01:00-04:00 夜跑让路窗与 21:00-22:30 W1 窗（窗口须验对象：本班实测夜跑任务 Ready、NextRun 10-13 02:30，对象在）；与 statsgov/cband/mineloop 等在读车道的读窗协调。
+- 级联义务：kline_daily 属表族（daily/weekly/monthly 同源派生，WO-004 先例＝周月线须同批跟改）；`kline_daily_hfq` 派生走 bdpan 因子主链（`adj_factor` data_source='bdpan' **实测 1990-2026 全覆盖**，2017=3,635 票／2018=3,758 票 ⇒ hfq 半边不需要新因子源，raw 落完即可用在册派生腿重算）；但复考读面=**`kline_daily` raw（13 号册/11 号册 §source 明记）**，故 hfq/周月线非复考前置，可另行排工。
+
+## 廿三、在册件缺陷与坑（本班挖到，逐条给处方；未落地原因在每条内）
+
+1. `backfill_stock_daily_basic.py --source tushare` 无视 `--start/--end`（交易日清单硬编码 `>=2021-01-01`）⇒ 名实核查合格但"补哪一年"错位，照令跑会重灌 2021+。处方：把该清单改为经 `date.fromisoformat` 校验后的窗口起止（并顺带 5. 的形状问题）；测试钉=给 2019 窗口断言清单内不含 2021 及以后日期。本班未落地原因：主区/车道同件有他会话在途、队列头袋已等 50 分钟，代码袋＋测试袋今晨不划算，处方与临时旁路（显式传日清单）都写在这里。
+2. `stock_daily_basic.data_source` 全表标为 `'akshare'`，而 7,118,526 行既有值与本班新 3,393,450 行均为 **tushare daily_basic 逐位等值** ⇒ 标注与真源不符。根因是表 DEFAULT('akshare')＋两条写腿（在册件与 `tushare_provider._map_stock_daily_basic_rows`，其 docstring :1078-1080 明记"data_source 走表 DEFAULT"）都不带该列。本班**未自造第三标**（会让 `WHERE data_source='akshare'` 的读取面静默丢掉新行＝把显式错标换成静默缺数），也未改标 7.1M 行（批量更新属 Owner 门位）。呈批见 廿五·待窗①。
+3. tilib 续跑陷阱：`shard_already_done` 只看 `exit==0 ∧ 当日`，于是 022（当日 3/6 窗、exit=0）被整片判"已完成"并跳过，只有 `--only-shard` 能旁路（:357 与 :360-362 的分支差）⇒ 断电后的半截片会被静默漏掉。本班实测命中并靠 `--only-shard 22` 补回 3 窗。处方：跳过判据加"全部窗都在 done 集内"一条。
+4. 年窗复用是"当日＋同指纹＋同起止"三条件（`resumable_windows` :140-156）⇒ 跨 0 点后当日成果全部作废、整片重算。本班因此必须在 24 点前收口，并把这一点写进排窗前置。
+5. `ch_reader.query` 对 ReplacingMergeTree **自动注入 FINAL**，宽表 FINAL 读=已登记的 241 杀手；本班全程走 `fexam.ch_data.ch_query`（无 FINAL、只读强制）。另该件在册 SQL 里 `DISTINCT ... ORDER BY 1` 的形状在写库高峰会以 **HTTP 500 掩码**出现（同条 SQL 单发即 OK），错误体被网关吞掉——别把 500 当 SQL 错（在册前科：T3 的 500 掩码误判）。
+6. 单实例锁语义澄清（防下班误"清锁"）：`data/runtime/dwm_shard_state/tilib_dwm_runner_instance.lock` 由 `scheduler.acquire_single_instance_lock` 持 OS 字节排他锁，**句柄随进程生死⇒崩溃/被杀不留 stale**；盘上文件是惰性残留，本班实测其内 PID 8016 不在进程表，未删该文件、直接由新进程取锁成功。禁把"删 state 目录"当处方（2026-10-09 已废止每晚整目录清理：整目录清=每晚全史重灌 11,227,985 行/趟）。
+7. **`--only-shard N` 在取数面退化时会静默空转 rc=0 且零片态**（本班实测命中 1 片：L2 的 030）。机理：`load_symbols()` 走 `InternalComputeProvider._get_symbols`，CH `Code: 241 memory limit exceeded` 时不抛异常而拿到残缺票单⇒`n_shards` 掉到 31 以下⇒`for i in range(n_shards)` 根本不含 30⇒既不打印"开始"、不写 JSON，还照打 `runner done rc= 0`。与在档"查空伪装成查无／静默降级与未触发同形"同族，且比超时更阴——超时至少留 `exit="timeout"`。本班由"发车次数 vs 落盘片数"求差抓到并补跑（L6 车道，22:36-22:4x）。处方：runner 应在 `args.only_shard >= n_shards` 时报红退出。**任何用车道跑片的下班，收工前必须做这个差集，只看 rc=0 会把空转片当已完成。**
+
+## 廿四、①tilib 断点续跑终态（本班收工判据，21:4x-23:1x 实测）
+
+- 停点定性：回填停在 `daily_shard_022` 的 3/6 年窗、`finished_at=2026-10-12T11:51:59`，根因=**断电**（系统日志 Kernel-Power 41 @11:55:55，两证在 cband 台账 :245 与其晨间包 :211），非 reaper 收割（`.runtime/process_reaper/last_run.json` 无 11:5x 击杀记录）。该片 `log_tail` 另有 CH `Code: 241 memory limit exceeded (OvercommitTracker)` 与 `degraded_batches=1`（比对基读失败⇒整窗全写，是"宁多写不少写"的在册降级形）。
+- 断点账（逐件点名，非聚合）：000-021=当日 6/6 exit=0（02:30→11:38 夜跑腿）；003=当日 4/6 且 exit=1（`MemoryError` @`src/zephyr/data/buffered_writer.py:184`）；022=当日 3/6 但 exit=0 ⇒ 命中续跑陷阱被整片误判已完成（廿三·3）；023-057=10-10 旧形件（无 windows/done_windows/指纹三键）⇒ `resumable_windows` 返回空 ⇒ 整片重算。
+- 执行结构：主区腿（`--only-shard 3`→`--only-shard 22`，复用当日已跑窗，5 窗/461s，21:49-21:57 rc=0）＋L1-L5 五条独立 state-dir 车道（35 片×6 窗，单窗实测 50-110s，21:49:34→23:13:20 全 rc=0）＋L6 一条补跑车道（030 静默空转补回，331.8s @22:41:45，见 廿三·7）。
+- **片态终账（只认今晚六个目录，逐片三前置：6/6 ∧ exit=0 ∧ 指纹==本班全宇宙快照）**：`今晚目录片数=58 满足=58 未完成片号=无 今晚查无此片=无 非零退出记录=0`。
+- 标的清单不变式：车道 `daily_symbols_shard_NNN.txt` 与本班 21:5x 落盘的全宇宙快照（**5,792 票／58 片**，`daily_shard_057`=92 票）逐片 sha256 相同，35/35 通过；相对 10-10 的 state，第 2300 位之后插入 1 只票使 023 起片边界整体后移，000-022 指纹未变 ⇒ 本班片号语义与主区一致，无漏票无叠票。
+- 镜像腿：五条车道＋L6 的 35 组成对 JSON/TXT 已按三前置复制进主区目录 `data/runtime/dwm_shard_state/`（覆盖 10-10 旧形件为今晚真形，前后 sha256 逐片留痕于 `.runtime/tmp/st-datalane2-20261012/`；零删除、零改数据）。主区目录自此与今晚实跑自洽。
+- CH 实测面（收工只认这块，片态是工具）：`technical_indicator` period='daily' 逐年 `uniqExact(symbol)` = 2019:**3,770**／2020:**4,366**／2021:**4,845**／2022:**5,184**／2023:**5,382**／2024:**5,437**／2025:**5,501**／2026:**5,599**，对同表 `kline_daily`(A_share) 同年 3,771/4,366/4,844/5,183/5,381/5,436/5,500/5,598 ⇒ **逐年差 0-1 票，覆盖率≈1.000**，无 24 号件 §1 点名的"15× 断崖"形。版本行数同时下降（2021 3,762,504→2,905,392、2024 4,105,725→3,292,598）＝后台 merge 收敛＋P1 值级跳过生效。表体积 202.59→**190.61 GiB**、active parts 1097→**995**。
+- 右缘两段性披露（不是本班缺口，是夜跑新鲜度语义的必然）：2026 年窗最大 trade_date 分布=**10-12：2,901 票**（本班车道腿跑时源已到 10-12）／**10-09：2,663 票**（02:30 夜跑腿当时源只到 10-09）／9 月下旬：14 票（退市/长停牌）。cband ⑤ 的 RUN/IS/OOS 右界=2026-09-30，该界内 5,564 票全部有值 ⇒ 复算面成立；最后三个交易日的两段不齐由明晨 02:30 夜跑结构性覆盖，本班不追加写 burst 去动刚交出的静默面（如统筹要即刻齐右缘，处方=对 000-021 用 worker 直调补 2026 窗：`python -u scripts/data/backfill_technical_indicator_dwm.py --periods daily --start-daily 2026-01-01 --end <今日> --symbols-file data/runtime/dwm_shard_state/daily_symbols_shard_0NN.txt`，22 片约 15-30 分钟/三车道）。
+- **在册验收门 REG-IND-001 本班跑出 rc=2（如实报，不粉）**：`audit_technical_indicator_coverage.py --symbol 600519 --period daily --start 2026-08-01 --end 2026-08-31` → "全 0 列（12）"= ac/chop_14/highpass_40/ht_dcperiod/ht_dcphase/ht_leadsine/ht_sine/ht_trendmode/macd_divergence/squeeze_mom/squeeze_on/wad。逐列回查 `technical_indicator_registry.yaml`：这 12 列全部落在 **status=retired（6 件）∪ deprecated（5 件）= T1 停算集**（本班数据车道一期 §一 已立法：自 T1 落地起只算 `status==active`，新增行该 13 列=NULL 诚实缺位）。该尺判据是 `df[c].notna().sum()==0`（**全 NULL 即判"全 0 列"**），而 `list_output_columns()` 返回 214 列不按 status 过滤 ⇒ 尺与法漂移，凡 T1 之后写入的窗口一律 rc=2。归因证据（按 ingest_ts 分层计数，同月同标的）：写入于 2026-10-10 的 21 行 `squeeze_on=0`；写入于 2026-10-11/10-12 的 21 行 `squeeze_on IS NULL` ⇒ **NULL 形态早于本班 21:49 起批就已存在**，本班车道只重算 2021-2026 年窗且码面=主区 HEAD（零本班改动）。处方归治理面：该尺应与写侧同册同读径过滤 status，把 retired/deprecated 列移入"诚实缺位"豁免（勿由本班代改他域尺，owner 责任制）。
+- 三清单（本班）：
+  - 已做且自证：①58 片补齐＋主区镜像＋CH 逐年覆盖对账；②2019-2020 市值 1,831,872 行＋四判据；③2017-2018 市值 1,561,578 行＋四判据；停点归因/续跑陷阱/静默空转三条坑各带处方入册。
+  - 未做（带承重证据）：③段二**价量**半边（在册无窗口化入口＋需版本收敛与级联决定，实测案卷在 廿二）；2016 及更早的 basic（令卡只点到 2017-2018）；右缘齐 10-12 的补写（刚交出静默面不再动）；两条在册件代码修复（队列头袋已等 50 分钟，代码袋＋测试袋落地窗口不属本班可自决时段）。
+  - 待裁：见 廿五 五条。
+
+
+## 廿五、要 Owner/统筹点头的事（本班不代裁，逐条给"是什么·为什么要点·不点的后果"）
+
+1. **`stock_daily_basic.data_source` 全表错标**（是什么：7,118,526 行既有＋本班新 3,393,450 行都标 `akshare`，值实为 tushare daily_basic 逐位等值；两条写腿都不带这列、吃表 DEFAULT。为什么要点：改标=对 1,050 万行做批量更新，属破坏性 DB 面；不改标=继续在审计面说谎。不点的后果：任何"按源分账/换源止损"的读法都失真，24 号件 §3 判据 4 永远过不了真。本班处方：先给读侧加一条"源标不可信"的在册告示，改标另起窗、先快照后谓词 UPDATE、逐字段集合差自证）。
+2. **段二价量半边的排窗与一个小施工**（是什么：2017-2018 的 `kline_daily` 仍只有 240 票 stub，而复考读的就是这张 raw 面；在册无"窗口化在市股历史回填"入口（廿二 已实测）。为什么要点：要么授权把 baostock `kline_daily` 能力做窗口化在册化（含测试红证＋24 个月分区版本收敛＋周月线级联决定），要么复考继续停在 T≈1,180/t≈2.62 够不到 3.104。不点的后果：批复三"回补到 2016-2018"只做掉市值半边，阳性对照仍出不了终读。本班已给：可用通道实测（baostock login 1.1s、487 行/票、3.74s/票、量纲原生股/元免换算）、票面分母三源、去重与级联义务、避窗清单）。
+3. **cband 令晨裁⑤ 的复算窗**（是什么：⑤="tilib 收工后 159 格同册复算＝强制"，本班已把"收工"兑现；但夜跑 `tilib_indicator_backfill_nightly` 明晨 02:30 起跑、实测今晨 02:30→11:38 都没跑完 58 片。为什么要点：复算必须在静默面上读，否则又是一次"回填中途快照"（在册前科：同装置 nostop 基线 OOS Sharpe 从 -0.187 变 -0.590 就是中途读数造成的）。不点的后果：⑤ 复算再出一版void 读数。本班建议二选一：明晨 02:30 前那 3 小时窗内跑完，或申请暂停夜跑一晚（可回退：Disabled→Ready，前任班 10-10 已有同款操作与恢复记录）。**注：暂停计划任务属改系统态，本班未自行动手。**
+4. **2020-09-18 一日 90 行四列全 `\N`**（是什么：源侧当日该 90 票 daily_basic 无值，本班按"源有什么写什么"落库，未删未补。为什么要点：留=可追溯但"有行无值"会被"行存在即有数"的读法误当有数；删=要先快照＋DELETE 谓词（破坏性三步）。不点的后果：读侧若不用 `total_mv IS NOT NULL` 谓词会踩空。本班处方：读侧统一加"市值列非空"谓词，删否交统筹）。
+5. **D 盘与 CH 内存水位**（是什么：本班期间 CH RSS 顶到 6.08/6.68GiB 一次并因 `Code: 241` 打穿一片取数；D 盘余 69.6GB；`technical_indicator` 现 202.59GiB/1097 active parts。为什么要点：OPTIMIZE/排水属既有排程窗（前班 10-10 全扫 47 分钟收 57.87GiB）。不点的后果：parts 继续堆，写库高峰的 241 会变成常态而非偶发。本班未动 CH 配置、未跑 OPTIMIZE）。
+6. **REG-IND-001 验收尺与 T1 停算立法漂移**（是什么：`audit_technical_indicator_coverage.py` 把 T1 起诚实置 NULL 的 12 个 retired/deprecated 列判成"全 0 列"，凡 T1 之后写入的窗口一律 rc=2。为什么要点：这是技术指标域的**验收门**，红着就没法给任何回填/夜跑收官发绿；改法应是与写侧同册同读径按 `status==active` 过滤，属治理面小施工。不点的后果：要么门永久红灯被习惯性忽略（真缺口也看不见），要么有人为了让门绿去把停算列重新灌 0＝把立法倒回去。本班未动他域尺，证据与逐列映射在 廿四 末段）。
+
+## 廿六、复核命令逐条（全部只读，Git Bash 可直接粘）
+
+```
+# 0) 门位与水位（RULE-GUARDIAN）
+python scripts/lock_files.py cleanup && python -m zephyr.trading.process_reaper --status
+
+# 1) ①收工账（只认今晚六个目录，逐片点名；期望=58 片全 ok 且 0 PEND）
+python -u .runtime/tmp/st-datalane2-20261012/mirror_lane_state.py            # DRY：plan=58 skip=0 才算收满
+python -u .runtime/tmp/st-datalane2-20261012/verify_ti_state.py               # 今晚目录内的 PEND/非零退出清单
+
+# 2) ①CH 实测面（TI daily 逐年票数与右缘；无 FINAL 正门，count 为版本数）
+python -u -c "import sys;sys.path[:0]=['D:/ZephyrAlpha','D:/ZephyrAlpha/src','D:/ZephyrAlpha/scripts/backtest'];from fexam.ch_data import ch_query;print(ch_query(\"SELECT toYear(trade_date) y,uniqExact(symbol) s,min(trade_date) d0,max(trade_date) d1 FROM c1_market.technical_indicator WHERE period='daily' GROUP BY y ORDER BY y FORMAT TSV\"))"
+
+# 3) ①在册验收门（REG-IND-001；退出码 0=PASS 2=存在全0列 3=查询失败/空样本，禁把 3 当绿）
+python scripts/data/audit_technical_indicator_coverage.py --symbol 000852 --period daily --start 2026-08-01 --end 2026-08-31; echo rc=$?
+
+# 4) ②③落账红绿证（净键=版本数 ⇒ 零重复版本；C1-C4 判据实测）
+python -u .runtime/tmp/st-datalane2-20261012/verify_window.py 2019-01-01 2020-12-31   # 段一
+python -u .runtime/tmp/st-datalane2-20261012/verify_window.py 2017-01-01 2018-12-31   # 段二市值半边
+python -u -c "import sys;sys.path[:0]=['D:/ZephyrAlpha','D:/ZephyrAlpha/src','D:/ZephyrAlpha/scripts/backtest'];from fexam.ch_data import ch_query;print(ch_query(\"SELECT toYear(trade_date) y,count() v,uniqExact((trade_date,symbol)) k,uniqExact(symbol) s,uniqExact(toYYYYMMDD(trade_date)) d FROM c1_market.stock_daily_basic WHERE trade_date BETWEEN '2017-01-01' AND '2020-12-31' GROUP BY y ORDER BY y FORMAT TSV\"))"
+
+# 5) 名实核查复算（akshare 腿产换手率＋三列空 vs tushare 腿四列真值）
+sed -n '43,61p;81,119p;128,142p' scripts/data/backfill_stock_daily_basic.py
+
+# 6) 静默空转复现判据（发车次数 != 落盘片数 即为空转，本班实测 1 片）
+for x in 1 2 3 4 5 6; do f=.runtime/tmp/st-datalane2-20261012/logs/laneL$x.log; d=data/runtime/dwm_shard_state_resume_20261012_l$x; echo "L$x inv=$(grep -c 'shard=' $f) started=$(grep -c 开始 $f) files=$(ls $d/daily_shard_*.json 2>/dev/null | wc -l)"; done
+```
+
+---
+
+# 追加班·数据车道二班 下半程：统筹五裁执行账（2026-10-12 23:40 → 10-13 凌晨）
+
+> 五裁真源=统筹 2026-10-12 夜批复（本班对话内承接，逐条给执行证据；凡属门位动作一律先存证后动手）。
+
+## 廿七、裁1 夜跑停一晚＝已停＋自销毁恢复位已上
+
+- 改前存证：`Export-ScheduledTask` 落 `.runtime/tmp/st-datalane2-20261012/task_def_before_disable.xml`（1,452 字节，sha256 前 16=b38fc7878f162337）；定义要点=日触发 StartBoundary 2026-09-27T02:30:00+08:00、Action=`powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "D:\ZephyrAlpha\scripts\data\backfill_night.ps1"`、UserId=本机账户 SID。
+- 改后实测：`tilib_indicator_backfill_nightly` State=**Disabled**、LastRun 仍 10-12 02:30:01、NextRun 面显示 10-13 02:30（Disabled 下不触发）。
+- 恢复位（防本班不在场把夜跑永久停着）：一次性质助手任务 `ZephyrAlpha_RestoreTilibNightly_20261013`，Action=`schtasks /change /tn tilib_indicator_backfill_nightly /enable`，Once 触发 10-13 **02:35**，实测 State=Ready/NextRun=10/13 2026 02:35。PS 5.1 的 `Expires` 属性不可写（实测抛"找不到属性"），故助手不会自销毁——**收尾动作**：本班在岗则于 02:35 后手动核 `nightly=Ready` 并删助手；若本班已离场，接手班一条命令撤助手（`schtasks /delete /tn ZephyrAlpha_RestoreTilibNightly_20261013 /f`），删除前先读 `Get-ScheduledTaskInfo` 的 LastTaskResult 确认它已跑过。
+- 附带门位账：reaper 计划任务全程未动（本班只碰 tilib 一只）；RULE-GUARDIAN 前提（写操作需计划在岗）全程成立。
+
+## 廿八、裁1 附带新缺陷登记＝夜跑跨午夜"当日戳"整片重灌陷阱（机理实测＋根治处方待裁）
+
+- 机理（读码到判据行，非推断）：`tilib_dwm_shard_runner.py` 两条日期闸——`shard_already_done`（:101-111，`exit==0 ∧ finished_at 前 10 位==今天`）与 `resumable_windows`（:140-156，`当日戳 ∧ 同标的指纹 ∧ 同起止` 三条件，跨 0 点一律返回空）。⇒ 02:30 起跑的夜跑只要跨过 0 点，当晚已完成的全部片在"今天"的定义下集体作废，下一晚 58 片×6 窗从头重灌。
+- 实测代价（本台机器今日数字）：今晨 02:30→11:38 共 9h08m 只走完 **22/58 片**，且 11:51:59 被断电截断；本班 21:49 起同码六车道并行实测单窗 50-110s（同片同窗不同负载），即串行一晚跑不完是结构性而非偶发。附带两条同源后果：①同键版本堆到每趟+1（今日 21:4x 实测 202.59GiB/1097 parts，本班跑完 190.61GiB/995 parts——后台 merge 抵掉一部分）；②"表不再变动"对下游复算永不成立（裁⑤ 窗口的真约束）。
+- 根治处方（待统筹排窗，本班不动生产码面）：新鲜度**按窗分治**——终点早于 `today-lookback_days` 的历史年窗一旦 6/6 完成即长期有效（源侧行情对过去日期不再改变），只有包含最近 N 日的那个当年窗需要每晚重算；改动点=`shard_already_done/resumable_windows` 两处日期判据（各一处，配 `--lookback-days` 缺省 7），测试钉=历史窗跨日不复算＋当年窗跨日必复算＋同标的指纹变更即作废。预期把夜跑从 9-24h 压到 ≈当年窗一片的量级（实测当年窗单窗 50-250s×58 片串行≈1-2.5h，六车道并行更短），Code 241 写峰与静默面缺失两条同源问题一并缓解。**本条只是处方，未落地，勿引为已修。**
+
+## 廿九、裁2 段二价量半边＝执行账与在册化（数字以收工账为准）
+
+- 票面分母（本班定源并留可复算式）：`c1_market.stock_list` 中 A 股前缀（60/68/00/30，与在册 `_DELISTED_A_PREFIXES` 同族）且 `list_date<=2018-12-31` 且（未退市或 `delist_date>=2017-01-01`）=**3,577 票**（2017=240→目标 ~3.6k、2018=237→~3.76k 的因子面互为交叉：adj_factor(bdpan) 实测 2017=3,635/2018=3,758）。清单落 `.runtime/tmp/st-datalane2-20261012/seg2/universe_part{1,2,3}.txt`（交错切分，1,193/1,192/1,192）。
+- 通道＝在册 baostock `kline_daily` 能力（`supports_symbols_null=False`，逐票 payload）：`adjustflag=3 不复权`（#196 主口径）、volume/amount 用 baostock 原生"股/元"（本班实测 sh.600000 2017-2018=487 行满日历、3.74s/票、amount/(volume×close)≈1.006 ⇒ 与治本后口径一致，**零自算换算**）；写入走 `BufferedWriter` 正门。**没有**用 `fill_gaps_tushare.py`（其 :191 裸存"手"，跑一次即把该段灌成 1/100 量纲——本班列为在册缺陷，见 廿三·6 同族）。
+- 编排件（在册化小施工，见 三十 的码面清单）：`scripts/data/backfill_kline_daily_history.py`——逐票 state 续跑（重跑=自愈，不是重灌）、不可解析票点名不静默、失败票不落 state 且 rc=1、dry-run 零写。
+- 执行账（三车道并行，三进程各自 rc=0、日志内 FAIL 行数=0）：part1 1,193 票/554,056 行（23:45:01→00:33:36，48.6min）、part2 1,192 票/447,754 行（→00:39:47，54.8min）、part3 1,192 票/397,131 行（→00:35:04，44.7min）＝**票单 3,577 全跑、写库 1,398,941 行**。
+- ⚠ 但**判据 1 未过，本班不宣布价量半边收工**：D1 实测 2017=2,945 票/699,246 版本行/净键 687,094、2018=3,007 票/735,278/723,505；按 24 号件"当年在市"分母（stock_list 前缀 60/68/00/30 且当年在市）2017=3,472／2018=3,572 ⇒ 覆盖率 **0.8482／0.8418 < 0.95**。缺的 565-590 票全部是**零行票**（清单 `.runtime/tmp/st-datalane2-20261012/seg2/zero_row_codes.txt`，590 只，全部 sh.60xxxx 段），根因＝baostock 对连拉 ~5,000 次后的会话限流：在册 provider 那段是 `while rs.error_code=='0' and rs.next()`，**限流时既不给行也不给 error**，与"窗口内真无行情"完全同形（本班级别事故同族：查空伪装成查无）。本班 01:03 复探两票直接挂死（SDK 无 socket 超时）⇒ 判定 IP 仍在冷却，**不硬撞重试**。
+- 已改的静默形态（在新件码面里，随未落地件保存）：零行票**不写 state**、单列 `<state>.zero_row.txt`、整体 rc≠0，配 2 条测试钉（零行不判成功／下轮必重试）；车道 state 是旧码跑的，故 590 只已被记成"完成"——重试须用零行清单另起一份 state（命令见 廿六·7 与本节末）。
+- 自愈命令（冷却后一条即续，幂等）：`python scripts/data/backfill_kline_daily_history.py --start 2017-01-01 --end 2018-12-31 --symbols-file .runtime/tmp/st-datalane2-20261012/seg2/zero_row_codes.txt --state-file .runtime/tmp/st-datalane2-20261012/seg2/state_retry.txt`（新件当前只在车道 `.worktrees/st-datalane2-20261012/scripts/data/`，字节存证 sha256 前 16=c3fedb957c36d66d，测试件 2318792bffded355，见 三十 的登记阻断原因）。
+- 收工判据实测（价量半边，全部只读）：D0 同键双版本 23,925 个而**值分叉键=0**（老 stub 与新行同源同口径 ⇒ 合并保留哪版都一样）；D2 逐日 487/487 零缺日，kline/basic 日票数比 min=0.838 median=0.908（差值＝停牌日 basic 有快照而 kline 无行，未填 0 收益可区分）；D3 与 tushare 市值面跨源对拍 20 票×40 日 **800/800** 通过（circ_mv/float_share÷close 偏离≤5%）；D4b 坏值面 `close<=0`=0、`open<=0`=0、`high<low`=0、`turnover` 非零=15,508/15,946（本能力不取 turn 列，与 2019+ 段同形为 0 兜底）；D4c 量纲比值按月分片实测见下（首版整表 median 撞 HTTP 500＝CH 内存墙，改分片后全过）**min 0.9987／median 1.0000／max 1.0012** ⇒ 全段 volume=股、amount=元，无"手"口径混入（若为手该比值≈100，若踩 09-22 前旧坑则≈0.01）。
+- 周月线"跟不跟改"决策（本班随件定，证据在此）：D5 表族实测 2017-2018 段＝`kline_daily_hfq` 113,310 行/240 票、`kline_weekly_hfq` 23,638/239、`kline_monthly_hfq` 5,570/239（三支仍 stub 形），`kline_weekly`/`kline_monthly` 两名查无（表族实际＝raw daily ＋ 三支 *_hfq）；`adj_factor` 同段 1,898,327 行/4,189 票 ⇒ 后复权因子源齐备，hfq 半边随时可用在册派生腿（WO-004，bdpan 主链）补 ⇒ 结论=本轮**不扩到 hfq/周/月**：复考读面是 `kline_daily` raw（11/13 号册 §source 明记），把表族级联塞进今晚只扩大静默面扰动而无验收收益；已列为 卅一·6 独立待排件。
+
+## 三十、裁3 改标＝存量已改，写侧修复被一条门位挡住
+
+- 三步验证留痕：①必要性=统筹批复"机械性纠错非资产判死，执行归你班"；②真实性（逐行来源证明，本班前置判据）=`countIf(turnover_rate IS NOT NULL AND (float_share IS NULL OR circ_mv IS NULL OR total_mv IS NULL))` = **0**，即 akshare 腿（产换手率＋三列 `\N`）在全表从未成功落过一行 ⇒ 10,511,976 行的值面均来自 tushare `pro.daily_basic`（另有逐位等值对拍：2019-01-02 与 2021-06-01 两票四列全等）；③可逆性=改前逐字快照 `F:/zephyr_cold/50_archive/c1_market/stock_daily_basic_datasource_relabel_snapshot_20261013/`（10 个年度 TSV＋MANIFEST.tsv，行数合计 10,511,976 与表内 `count()` 相等，逐年 sha256 在册）。
+- 执行：走在册 TCP 通道 `ch_writer.get_client()`，`ALTER TABLE ... UPDATE data_source='tushare' WHERE data_source='akshare' SETTINGS mutations_sync=2`。前后自证：PRE=akshare 10,511,976／非 akshare 0 ⇒ POST=**tushare 10,511,976／残留 akshare 0／总行数不变 10,511,976**；固定 10 行样本（2017-06-05/2019-01-02/2021-06-01/2023-03-01/2026-10-12 × 000001/600519）前六列**逐格未变=True**（数值面零改动）。证据全文=`.runtime/tmp/st-datalane2-20261012/logs/relabel_basic.log`。
+- ⚠ 写侧修复没做，原因是一条门位而不是懒：表结构真源 `schemas/categories/market/market_stock_daily_basic.py` 头部标 `[AI_AUTONOMY] human_only` + `[MODIFY-GUARD] schema-change`，且 `tests/legacy_zephyr/data/test_providers.py::TestTushareStockDailyBasic::test_columns_align_stock_daily_basic_schema` 把"provider 产出列 == schema 的 `INSERT_COLUMNS`"钉死 ⇒ 只改 provider 会红那条钉，改 provider＋弱化那条钉＝拆真源一致性（禁）。本班不越闸。**要的一句话**：授权把该 schema 文件的 `INSERT_COLUMNS` 加 `data_source`（配套四处：schema 一行／provider `_STOCK_DAILY_BASIC_COLUMNS` 加一列／`_map_stock_daily_basic_rows` 行元组尾追 `"tushare"`／上述测试两断言随形）。
+- 临时态如实报：写侧修复落地前，日常增量腿新写的行仍会吃表 DEFAULT('akshare') ⇒ 全表 uniformity 会重新破损；修复落地后**同一条 predicate 重跑一次即可**（本班脚本幂等，重跑安全）。
+
+## 卅一、残余·待排窗·待授权（下半程新增，逐条给后果）
+
+1. **裁2 授权语（schema 之外的写侧两处）**：`tushare_provider` 的列与行映射加 `data_source`，与 三十 的 schema 改动同批——批了本班就能一次把"改标＋写侧修好＋复跑一次清破损"收口。不批的后果=源标会继续每日新破损。
+2. **`scripts/data/*` 通配忽略的收编惯例**：本班新件按在册先例（`sz_open_data`／`source_health_patrol`／`backfill_technical_indicator_dwm`／`emotion_index_snapshot`）加了一行 `!scripts/data/backfill_kline_daily_history.py` 豁免；同时发现 `backfill_stock_daily_basic.py` 与 `fill_gaps_tushare.py` **至今未跟踪**（前者是 tasks.yaml 明记的"人工兜底"件，后者是被 廿三·6 判为量纲过时的件）⇒ 兜底件长期脱管、清扫即蒸发（在册先例：onboard_source/fx_ecb 那批就是 commit message 写了豁免但 .gitignore 实未合入）。建议下一班按同模式收编或退役。
+3. **机生清单的存量缺口（非本班件）**：`generate_manifest.py` 全树重扫得 1,248 条，在册投影只有 1,243 条，差 5 条中除本班新件外有 4 条 `backtest/fexam/arm_protocol_binding.py`／`backtest/fexam/card_binding.py`／`backup/backup_reconciler_shadow.py`／`governance/generators/generate_collection_shard_manifest.py` 长期未登记。本班只在袋内**代带自己那 1 条**（键集差自证 +1/-0），其余 4 条留给各自主人，未代改。
+4. **Ghost session 咬掉本班第一只袋**（在册五形态之四的现场复现）：23:35 本班 release 唯一 claim 后无活动，心跳守护按 idle>1800s 自退，注册表条目消失 ⇒ 队列落地侧判死，`q-20261012-st-datalane2-20261012-0001` 死于 `dead_reason=ghost_session`（自动重投被存活闸拒绝）。本班已按在册正门复命（`register(pid=0)` ＋ 守护入口=包模块重拉 PID 32432 ＋ 具名 keepalive TTL 7200），账本改随末袋重投。教训入册：**长批在飞期间 release 掉最后一个 claim 之前，必须先授 keepalive 或留一个刷活通道**。
+5. **段二价量半边的 24 个月分区收敛义务**：本班实测同键双版本的分叉与否见 廿九 D0；收敛动作（按月 OPTIMIZE FINAL）属排水窗家族，本班不在写库高峰自启。
+
+
+
+
+## 卅二、收尾账（02:0x）：收敛已做、在册化差一步、袋与恢复位清单
+
+- **24 个月分区版本收敛已完成**（裁2 明列授权项）：逐分区 `OPTIMIZE TABLE c1_market.kline_daily PARTITION '<yyyymm>' FINAL`，24/24 全 dup=0；收敛前 2017=699,246 版本/687,094 键（dup 12,152）、2018=735,278/723,505（dup 11,773）⇒ 收敛后两年度 **versions==keys**，票面 2,945/3,007 与交易日 244/243 一根没少。语法一条（本机 CH 实测，值得入册）：`ALTER TABLE ... OPTIMIZE PARTITION ID 'x' FINAL` 判 **Code 62 语法错**，可用形是 `OPTIMIZE TABLE ... PARTITION '201701' FINAL`；通道=ch_writer TCP 正门（fexam 只读门必拒 ALTER，实测"拒绝非只读查询"）。日志 `.runtime/tmp/st-datalane2-20261012/logs/converge5.log`——该日志"用时"字段本班自犯一处（monotonic 与 epoch 混算致打印成天文数字），分区级 dup 数字才是判据，未用它支撑任何结论。
+- **价量半边状态＝未收工（如实）**：票面覆盖 0.848／0.842 < 0.95，缺的 590 只全在 sh.60xxxx 段＝baostock 限流造成的零行票（清单 `seg2/zero_row_codes.txt`）。本班 01:03 复探两票直接挂死（SDK 无 socket 超时）⇒ 判定仍在冷却，**不硬撞**（继续撞会换来更长的 10001011 黑名单）。接手一条命令自愈（新码已把"零行不判成功"钉死，重跑只补零行票）：
+  `python scripts/data/backfill_kline_daily_history.py --start 2017-01-01 --end 2018-12-31 --symbols-file .runtime/tmp/st-datalane2-20261012/seg2/zero_row_codes.txt --state-file .runtime/tmp/st-datalane2-20261012/seg2/state_retry.txt`
+- **在册化差最后一步（工具层墙，非本班偷懒）**：新件与测试已写好且被本班实跑用过（1,398,941 行经它落库；7 钉测试全绿、ruff 净），但**入不了袋**——`batch_creation_tokens.py`/`register_asset.py` 的候选扫描是 `git ls-files -- <prefix>`，以**主区工作树**为准；按 RULE-WORKTREE 隔离在车道的新件永远"前缀为空"，token 与翻译册投影位都登记不上，两次实跑均回"无待登记文件"。本班不把件拷进主区强登（那会把隔离面与归属面搅混，且主区暂存池本就混着 8 个会话）。字节双存证：车道 `.worktrees/st-datalane2-20261012/scripts/data/backfill_kline_daily_history.py`（sha256 前 16=**c3fedb957c36d66d**）＋ `tests/data/data/data/test_backfill_kline_daily_history_window.py`（**2318792bffded355**），另有 `.runtime/tmp/st-datalane2-20261012/quarantine/` 同名副本（在册教训"未入库源码归档过期＝没留"，本班两处同取）。接手三步（在主区跑即一次通过）：①`batch_creation_tokens.py --prefix scripts/data/backfill_kline_daily_history.py --created-by <sid> --capability data_supply_chain --merge-evaluation "非第二真源：取数与换算单点仍在册 baostock provider，本件只做窗口编排与续跑"`；②`add_module_translation.py --path <同路径> --domain D_DATA --name-zh "A股日K线历史窗口回填器" --plain-zh <≥8 字大白话>`；③`.gitignore` 加一行 `!scripts/data/backfill_kline_daily_history.py` 收编豁免（先例=sz_open_data／source_health_patrol／backfill_technical_indicator_dwm）＋`generate_manifest.py` 只取本件那条（键集差自证 +1/-0）。**注**：②的 render 会把 PG 内他人未落地条目一并写进投影（本班实测带进 9 条：cband_grid／statsgov_deflation_and_budget／build_distilled_sft_dataset／src/zephyr 下 6 个夹具样名，后者疑为测试写穿 PG 的残留，另列待查），代带＝归属篡改，接手须走"投影先行同步＋点名代带"或先清 PG 他人行。
+- 袋面清单：`q-20261012-st-datalane2-20261012-0001`（账本首版）死于 `ghost_session`（死因与复命见 卅一·4；字节未丢，账本现面即超集）；`q-20261013-st-datalane2-20261012-0002`（裁4 修尺＋4 钉测试）pending，前置 10 袋；账本本件随末袋重投。
+- 夜跑恢复位：助手任务 `ZephyrAlpha_RestoreTilibNightly_20261013` State=Ready、NextRun=10-13 **02:35**（Action=`schtasks /change /tn tilib_indicator_backfill_nightly /enable`）。本班若在 02:35 后仍在岗，复核 `nightly=Ready` 后删助手；若已离场，接手一条 `schtasks /delete /tn ZephyrAlpha_RestoreTilibNightly_20261013 /f`（删前读 `Get-ScheduledTaskInfo` 的 LastTaskResult 确认它已跑过）。PS5.1 的 `task.Expires` 属性不可写＝实测抛"找不到属性"，故助手不会自销毁。
+- 数据面净效果一行（供统筹对账）：`technical_indicator` 58 片×6 窗补齐（右缘两段性已披露）；`stock_daily_basic` 2017-2020 补 3,393,450 行/974 交易日＋全表源标改 tushare（值面逐格未变）；`kline_daily` 2017-2018 补 1,398,941 行/3,012 票并完成 24 分区收敛（尚缺 590 票待限流冷却）。全程零 DELETE、零数据 mutation（唯一 mutation＝裁3 改标一行一列，前后点数与逐格数值对拍在册）。
