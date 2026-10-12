@@ -1,0 +1,427 @@
+---
+ttl: task_bound
+title: 矿考二班·07 新版本卡草案（五态仓位锚定版）＋双臂/三臂冻结参数呈批面
+created: '2026-10-12T02:10:00+08:00'
+sid: st-mineloop2-20261012
+family_id: MINELOOP-CAMPAIGN
+---
+
+placement_note: >-
+  本件是**草案**，落 docs/_working 非 exam_cards——照 06 先例（31_ 册 card_06_draft_20261011：
+  未批件放进考卷树会被 runner 当在册卡拾取）。统筹批复后方可进
+  docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/ 并登记 creation_token 转正。
+
+ruling_basis: >-
+  统筹已预付裁定（矿考二班开班令）：①L3 语义差＝起 07 新版本卡（lineage 06→07）；
+  ②级别→仓位映射逐字锚定机器五态表 1.0/0.8/0.5/0.3/0.0＋迟滞；③开臂＝机器原生阶梯／
+  关臂＝二值全清／中间臂＝五态无迟滞；④02/06 的 L3 三档梯度记"机器侧无对应态、原语义不可考"
+  负存在知识一条；⑤中间臂无迟滞参数与关臂阈值随 07 卡面一并冻结呈批。
+  本草案逐条落地；**新出现的两处口径分叉**（轴喂法、逐级降级近似）在 approval_request 里另呈，不自裁。
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 一、卡面本体（拟原文进 exam_cards，批复后逐字搬运，本块之外不加判据）
+# ══════════════════════════════════════════════════════════════════════════════
+
+card_draft:
+  schema_version: '1.0'
+  card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  family: comparison
+  title_zh: 熔断五级状态机（五态仓位锚定 vs 单一全清）·净值回放双臂对照卡·五态仓位锚定版（07）
+  version_of: TDM-X-R1-01/comparison/06_熔断五级梯度减仓对照_基线出生件与r位声明版
+  hypothesis: >-
+    与母卡 02/06 同一命题（原文不改写）：以组合日盈亏+组合回撤双轴驱动的五级状态机
+    （L1 日亏≥2% 禁加仓 / L2≥4% 停新开 / L3≥6% 梯度减仓 / L4 回撤≥25% 清仓+人工接管，
+    迟滞解除=当日无新低且修复当日跌幅 50% 才降一级）相对"触发即一次性全清、恢复即一次买回"臂，
+    能在同窗内以更小换手成本取得不劣于后者的回撤控制；若判不出来，五级表只是复杂度装饰。
+    本版本卡的**唯一新增**是把"级别→仓位映射"从卡面自拟的 L1..L4 数字改锚为
+    在册判定件（MOD-RK-049）position_cap 的五态表逐字值（见 data_binding.level_to_cap_map），
+    出生四件与 r 位声明一律沿用 06，判据数值沿用 02。
+    **本卡实际考的阶梯＝回撤轴驱动的五态**（统筹批复 A1 裁乙：var/cvar 两槽不喂，
+    与全仓唯一日频真实调用点 sim_daily_runner.py:1410 的同形跑法）；
+    日亏触发路径不进本卡判据，未覆盖面随件披露见 data_binding.approximations_disclosed。
+  why_new_version_not_edit: >-
+    G4-5：改映射＝口径变更，禁原地改 02/06。02 把级别→仓位写成 L1 100%/L2 100% 禁新开/
+    L3 梯度 80/60/40%/L4 0%，06 逐字沿用；而在册状态机的 position_cap 是
+    NORMAL 1.0/WARN 0.8/DANGER 0.5/CRISIS 0.3/KILL 0.0——**两侧不同数**，
+    且 L3 的三档梯度在机器侧没有对应三态（见 negative_existence_knowledge）。
+    统筹裁定采"以在册 position_cap 为准并走新版本卡更新语义"，故另起 07。
+  signal_kind: series
+  window:
+    in_sample:
+    - '2018-01-02'
+    - '2025-09-30'
+    oos:
+    - '2025-10-09'
+    - '2026-09-30'
+    regimes:
+      bull: 2019-01-04..2021-06-30（流动性牛，沿用 02）
+      bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，沿用 02）
+      crisis: 2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段，沿用 02）
+    frozen_note: 看数前冻结（裁定#501 纪律）；本版本卡只改级别→仓位映射锚点，窗口与 02/06 逐字同值，事后挪门柱=作废（G4-5）
+  buckets:
+    type: arm_matrix
+    'on': >-
+      开臂=机器原生阶梯（含迟滞解除，五态表逐字乘子）vs 关臂=五态二值全清
+      （NORMAL/WARN/DANGER/CRISIS 一律 1.0，唯 KILL 0.0）vs 中间臂=五态无迟滞构造档
+      （在册件的降级时序守卫全部取最小档，逐级降级结构约束随件披露）——
+      三臂共用同一基线净值与同一成交口径，级别序列按臂档分别从同一基线净值回放产出
+    min_obs_per_bucket: 60
+  pillars:
+    paired_arm_protocol: 三臂共用同一底层组合净值路径（同一份基线臂净值，其出生件见 data_binding.baseline_birth），仅风控层规则异；风控层成交一律按次日开盘价（prereg stop_rules.exit_exec 同语义，禁当日往返）
+    drawdown_floor: 开臂相对关臂 OOS MaxDD 改善 >= 5pp；相对中间臂改善 >= 1pp（沿用 02）
+    sharpe_floor: 开臂 OOS Sharpe 减关臂 >= -0.1（沿用 02）
+    whipsaw_gate: 开臂 30 日内升降级往返次数 <= 关臂触发次数；且危机段真实触发不缺席（漏触发=0，fail-closed 优先于平滑）（沿用 02；本卡往返计数对象=NORMAL/WARN/DANGER/CRISIS 间的状态往返，与五态表同命名）
+    turnover_cost_gate: 年化换手增量 <= 8.0x；40bp 成本档重跑后开臂结论不变，Sharpe >= survival_floor 0.0（沿用 02）
+    oos_stability: IS/OOS 回撤改善同号；两处危机段均不得劣于关臂（取严：任一危机段恶化即 FAIL）（沿用 02）
+  pillars_numeric:
+    maxdd_improvement_min: 5.0
+    maxdd_improvement_vs_no_hysteresis_min_pp: 1.0
+    sharpe_delta_min: -0.1
+    whipsaw_roundtrip_ratio_max: 1.0
+    missed_crisis_trigger_max: 0
+    turnover_delta_annual_max: 8.0
+    cost_tier_bp_required: 40.0
+    oos_same_sign: true
+  pillars_numeric_provenance: >-
+    八个键值全部逐字沿用 02（06 同值），本班**未新增、未收紧、未放宽任何一个数**。
+    本卡与 06 的差异只有两处可逐键核对：级别→仓位映射的锚点（五态表）、
+    三臂级别序列的产出方式（按臂档分别从同一基线回放）。
+    **所指收窄句（统筹批复 A2 令写入本键）**：maxdd_improvement_vs_no_hysteresis_min_pp=1.0
+    的数值逐字沿用 02 未动，但其**所指对象**已从 02 原文的"禁 V 型回满"收窄为
+    "降级时序守卫（半阈值/持续窗/min_hold）三项之差"——在册件的逐级降级边不可跳，
+    故"跳级回满"不在该门柱所测范围内；读数者按收窄后的所指读。
+  target:
+    primary: OOS 组合 MaxDD / 年化 Sharpe（strategy_exam.window_metrics，244 年化，沿用 02）
+    secondary: 触发次数/在场天数/往返抖动次数 + 危机段逐段明细
+    note: 本节点判的是"等级表"而非仓位数值本身；仓位带属 C1 预算面（禁与本卡混判）
+  data_binding:
+    baseline_birth:
+      piece_1_signal_face: >-
+        真源=scripts/backtest/fexam/exit_sim/prereg_frozen.yaml（frozen_at 2026-10-06，E 道首件冻结卡）之
+        device.signal_source 与 columns_cap24 两键——规则原文"indicator_exam_scores_v1.yaml verdict==pass 的
+        ch_backings 首列，文档序去重，cap 24 列（确定性，不挑不调）"，且该冻结卡已把 24 列**逐列点名**。
+        本卡只**符号引用**该键路径，禁把 24 列抄进本卡（抄＝造第二真源）。（沿用 06 原文）
+      piece_2_universe: >-
+        真源=同一冻结卡的 weights 与 candidate_filter 两键：weights=strategy_exam.monthly_topn_signals top_n=20
+        月频等权步进函数（函数复用禁重造）；candidate_filter=信号日 ATR14 非 NaN 者方可入 top20 候选，
+        不足 20 只=该月空仓（同装置 len<top_n 语义）。（沿用 06 原文）
+      piece_3_rebalance_rows: >-
+        真源=exit_simulator.month_start_rows：调仓行=每月首个交易日行号，装置注释原文
+        "与 monthly_topn_signals 内部同一构造……非权重变化行——等权同集连月也必须重置"。
+        本卡不自定义调仓日程。（沿用 06 原文）
+      piece_4_r_face_source: >-
+        r 位（次日收益）声明为基线组合自身日收益，与 e 位同源同一次装置调用产出，禁借用外部指数：
+        r = exit_simulator.simulate(..., stop_enabled=True) 返回的基线日净值序列的日收益；
+        e = 同一调仓周期内的组合总敞口（装置 st["exposure_daily"]，持仓市值/净值，0..1）。
+        （沿用 06 原文；甲案第 1-3 步返回面扩展已投袋 q-20261012-st-mineloop-20261010-0080，
+        card_binding.py 的 CSI300 硬编改读声明源在第 4-5 步袋 0081）
+      piece_5_level_replay_face: >-
+        级别序列真源=src/zephyr/risk/core/drawdown_state_machine.py（MOD-RK-049）的
+        DrawdownStateMachine 逐日 evaluate 回放，输入只有基线净值派生量
+        （回撤=净值/历史峰值-1；风险轴喂法见 axis_feeding，待裁）；
+        本卡与适配器**一律不写判定逻辑**（禁在考卷里重写判定逻辑），只按臂档给 config 参数与查表乘子。
+    level_to_cap_map:
+      five_state_native:
+        NORMAL: 1.0
+        WARN: 0.8
+        DANGER: 0.5
+        CRISIS: 0.3
+        KILL: 0.0
+      binary_full_clear:
+        NORMAL: 1.0
+        WARN: 1.0
+        DANGER: 1.0
+        CRISIS: 1.0
+        KILL: 0.0
+      map_provenance: >-
+        five_state_native 五值逐字取自在册件 position_cap 属性的 return 行
+        （NORMAL/WARN/DANGER/CRISIS/KILL → 1.0/0.8/0.5/0.3/0.0），本班未增删任何档位；
+        RECOVERY 档（0.25*(step+1)）在回测面**不可达**（见 approximations_disclosed），
+        故不进本表；binary_full_clear 只在 five_state_native 上把非 KILL 档一律置 1.0，
+        "全清"触发点即在册件 KILL 升级面，不另设阈值。
+    hysteresis_config_freeze:
+      arm_open_native: >-
+        开臂=DrawdownStateMachineConfig() 全默认（hysteresis_ratio 0.5、sustained 3/3/5、
+        min_hold 5/10/20、逐级降级），即"机器原生阶梯"——统筹裁定②的"＋迟滞"＝沿用在册默认，
+        本班不赋新值。
+      arm_mid_no_hysteresis: >-
+        中间臂=同一 config 类的**构造性无迟滞档**：hysteresis_ratio 取 0.999999999
+        （在册校验要求 0<r<1 开区间，1.0 会被 InvalidDrawdownStateError 拒，故取该浮点构造值＝
+        半阈值≈触发阈值，降级不再要求"修复 50%"）；sustained_warn/danger/crisis 各取 1；
+        min_hold_warn/danger/crisis 各取 1。三处取值均为在册字段的最小合法值或开区间上端构造值，
+        本班不自创新参数、不改阈值语义、不碰升级面。
+      arm_off_binary: >-
+        关臂=与开臂同一条原生级别序列，仅乘子表换成 binary_full_clear；
+        全清触发阈值即在册升级面（回撤轴 25%＝卡面 L4 原文"回撤≥25%"，
+        风险轴 2%/4%/6% 不参与关臂判别，因非 KILL 档一律 1.0）。
+      freeze_status: >-
+        统筹批复 2026-10-12 已裁：A1 轴喂法＝乙（var/cvar 不喂）；A2 追认"KILL 不可解除"与
+        "逐级降级不可跳级"两条近似并令随 07 卡面披露；两档构造参数（hysteresis_ratio 0.999999999
+        + sustained/min_hold 全取 1）按裁定"中间臂＝五态无迟滞"落地，
+        其中**具体构造值属隐含批准、统筹未逐值点名**——若另有指定即改，本班不把它当成已显式签批。
+    axis_feeding:
+      question: >-
+        在册件的升级面有两组轴：回撤轴 warn_dd/danger_dd/crisis_dd/kill_dd=5%/10%/15%/25% 与
+        风险轴 warn_var/danger_var/crisis_var=2%/4%/6%（字段名义=VaR_95）。卡面 L1/L2/L3 的
+        2%/4%/6% 原文写的是"**日亏**"，与风险轴三值逐字相同但语义不同。
+      evidence_in_register: >-
+        本班实测（只读，逐条可读回）：①在册件字段注释 src/zephyr/risk/core/drawdown_state_machine.py:133
+        "warn_var/danger_var/crisis_var: 升级 VaR_95 阈值"；②设计真源 35 号 memo §3.11 转换表
+        （docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md:424-426）
+        "NORMAL | drawdown > 5% 或 VaR > 2% | WARN"等，风险轴定义=VaR；
+        ③VaR 的算法真源=src/zephyr/risk/core/var_calculator.py:25（历史模拟经验分位数），
+        其置信度默认 0.95（同文件 :134 confidence_level: float = 0.95）；
+        ④全仓**唯一日频真实调用点** scripts/backtest/sim_daily_runner.py:1410 原文
+        `machine.evaluate(trade_date=date.fromisoformat(day), drawdown_pct=drawdown_pct)`
+        ——var/cvar 两槽在该调用点根本不喂；⑤卡面"日亏≥2%"出自 config/trading_decision_map.yaml:3738，
+        而同节点 threshold_refs(:3746) 指向的是 5%/10%/15% 回撤册
+        （docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml:69-70 等，
+        THD-DRAWDOWN-001/002/003 全是回撤轴），2%/4%/6% 在阈值册上无日亏条目。
+      proposal_yi_recommended: >-
+        乙（**本班推荐**）=var_95=None、cvar_95=None，只走回撤轴 5%/10%/15%/25%。
+        理由：与④唯一在册日频用法同形，零语义替代、零新增参数，五个态全部仍可达
+        （WARN/DANGER/CRISIS 由回撤 5/10/15% 触发，KILL 由 25%＝卡面 L4 原文触发）。
+        代价：卡面"日盈亏+回撤双轴"里的日亏触发路径不进本卡判据，须在卡面如实标为未覆盖面。
+      proposal_jia: >-
+        甲=var_95 槽喂当日亏损幅度 max(0, -基线日收益)。得：卡面"日亏≥2%"字面成立。
+        失：与①②③的在册字段语义冲突（该槽名义是 VaR_95 分位损失），
+        等于用适配器替卡面把"日亏"翻译成"VaR"，属口径替代而非参数搬运；须 Owner/统筹显式批准并随册披露。
+      proposal_bing: >-
+        丙=var_95 槽喂在册 VaRCalculator 算出的真 VaR_95（对基线日收益滚动窗计算）。
+        得：语义纯＋双轴保留，零第二真源。失：**窗长是卡面与在册件都没有的新数字**
+        （VaRConfig 只给 min_history=30 这个"最少样本"下限，不給窗长），
+        选窗＝替卡拍数；且 VaRCalculator 前 29 日样本不足会抛 InsufficientVaRHistoryError，
+        该段只能 var=None，级别触发面在窗口起点前后不一致。
+      adjudication_needed: false
+      adjudicated: >-
+        统筹批复 2026-10-12（矿考二班晨间包 A1）＝**裁乙**：var_95/cvar_95 两槽一律不喂，
+        级别只由回撤轴 5%/10%/15%/25% 驱动。决定性证据＝④全仓唯一日频真实调用点
+        sim_daily_runner.py:1410 本就不喂两槽，本卡考"产线阶梯 vs 二值"，按产线实际跑法考才是对的命题。
+        甲被否＝把日亏塞进 VaR 名义槽＝静默口径替代；丙被否＝窗长是谁都没冻结的新数字＝替卡拍数。
+      attached_conditions_landed: >-
+        批复三附带条件全部落本卡面：①未覆盖面显式标注（见 approximations_disclosed
+        的"未覆盖面-var 轴日亏触发路径"，与 L4 近似同款醒目）；
+        ②"日亏 2%/4%/6%"按证据⑤记"叙事改写非参数"入 lineage（阈值册无此日亏条目、
+        threshold_refs 指回撤册）；③hypothesis 段已注明"实际考的阶梯＝回撤轴驱动的五态"。
+      note: 三案的判据数值完全相同，差在**级别由哪几根轴触发**；乙案已由统筹裁定，本卡不再自裁。
+    approximations_disclosed:
+      - id: 未覆盖面-var 轴日亏触发路径
+        text: >-
+          **本卡未覆盖面（与 L4 近似同款醒目，统筹批复 A1 附带条件①）**：在册件的升级面
+          本有回撤轴（warn_dd 5%/danger_dd 10%/crisis_dd 15%/kill_dd 25%）与风险轴
+          （warn_var 2%/danger_var 4%/crisis_var 6%）两组，统筹裁乙后**风险轴两槽不喂**
+          （var_95=None、cvar_95=None，与全仓唯一日频真实调用点 sim_daily_runner.py:1410 同形）。
+          后果：卡面 L1"日亏≥2% 禁加仓"/L2"日亏≥4% 停新开"/L3"日亏≥6% 梯度减仓"三条
+          **日亏触发路径整体不进本卡判据**——三档改由回撤 5%/10%/15% 到达，
+          五态仍全可达，但"因连续单日大亏而报警"这一路不在本卡所测范围。
+          读数者不得把本卡结论读成"日亏报警机制已被判过"。
+      - id: L4-不可解除
+        text: >-
+          在册件的 KILL 态无自动出口（唯一出口 request_manual_reset 需三项人工确认），
+          回测面不存在"Owner 人工解除"，故级别序列一旦进 KILL 即**整窗驻留 0.0**。
+          02 已在册声明该近似（implementation_gap 原文"L4 的 Owner 人工解除在回测中须以
+          不可解除近似（fail-closed），该近似本身须随册披露"），本卡随件复述。
+          连带效应须知悉：关臂因此变成"触发即永久离场"，与 02 原文"恢复即一次买回"**不等值**
+          （该不等值已按统筹批复 A2 入 negative_existence_knowledge 负知识，与 L3 梯度同族）。
+          追认状态：统筹批复 A2 已追认（2026-10-12），红证
+          tests/backtest/test_card_binding.py::test_replay_levels_kill_is_sticky_and_quantified
+          随接线袋落地为前置条件。
+      - id: 逐级降级不可跳级
+        text: >-
+          在册件的降级路径固定为 CRISIS→DANGER→WARN→NORMAL（_DEESCALATION_PATH 无跳级边），
+          故中间臂即便取无迟滞构造档，"解除即回满"仍需逐日多级；
+          02 原文中间臂语义（解除即回满，检验禁 V 型回满的价值）在本卡**只能部分表达**——
+          中间臂与开臂的差被限定为"降级时序守卫（半阈值/持续窗/min_hold）"，不含"跳级回满"。
+          判据 maxdd_improvement_vs_no_hysteresis_min_pp=1.0 的 referent 随之改变
+          （数值零动，所指收窄，收窄句已按批复 A2 写进 pillars_numeric_provenance）。
+          追认状态：统筹批复 A2 已追认（2026-10-12），红证
+          tests/backtest/test_card_binding.py::test_replay_levels_deescalates_one_step_per_day_only
+          随接线袋落地为前置条件。
+      - id: 禁新开面无标量表达
+        text: >-
+          卡面 L1"禁加仓"/L2"停新开仓"在在册件里是 defensive_only 标志（CRISIS/KILL 才置真），
+          不是仓位乘子；本卡的三臂只经敞口乘子表达，故"禁新开"面**不进本卡判据**，
+          与 02/06 同（02 亦只以级别→仓位乘子对照）。如实记为未覆盖面，不称已判。
+      - id: RECOVERY 档不可达
+        text: >-
+          RECOVERY 只能由 request_manual_reset 进入，回测面永不触发，故
+          position_cap 的 RECOVERY 阶梯（0.25/0.5/0.75）不出现在级别序列里；
+          five_state_native 表因此只需五档，若实跑见 RECOVERY 即判适配器红（禁静默扩档）。
+    negative_existence_knowledge:
+      - id: L3-三档梯度无对应态
+        text: >-
+          02/06 的"级别→仓位映射"里 L3 写作梯度 80/60/40%（三档软去杠杆阶梯，
+          溯源注记=TDM 节点注释 breakingalpha 口径）。在册判定件（MOD-RK-049）实测
+          只有 NORMAL/WARN/DANGER/CRISIS/KILL＋RECOVERY 阶梯六个态，
+          **没有与"80→60→40"三档对应的三个态**，也没有任何在册件承载该三档语义
+          （已查：position_cap return 行逐档列举，无梯度子档）。
+          结论按负存在记账：该三档的**原语义不可考**——不是"我们还没找到映射"，
+          而是"机器侧无对应态"。故 07 不再沿用这三档，改锚五态表（统筹裁定①④）。
+      - id: 关臂"恢复即一次买回"无对应机制
+        text: >-
+          02/06 原文把关臂写成"触发即一次性全清、**恢复即一次买回**"（二值开关的双向动作）。
+          在册判定件（MOD-RK-049）实测**没有"从 KILL 自动买回"的任何路径**：KILL 的唯一出口是
+          request_manual_reset（需持仓清零/挂单已撤/锁新开仓三项人工确认，且受复位窗口/冷却/
+          永久锁定三重守卫），回测面无人工在场＝该出口永不开。
+          结论按负存在记账（与 L3 三档梯度同族，统筹批复 A2 定性）：
+          "恢复即一次买回"的**原语义在机器侧不可考**——不是映射还没找到，是机制不存在。
+          故 07 的关臂只表达"触发即永久离场"这一半，另半边不进判据也不假装覆盖。
+      - id: L1/L2 与 WARN/DANGER 的仓位不等值
+        text: >-
+          卡面 L1/L2 写作 100%/100%（禁新开但不清仓），在册件对应档 WARN=0.8、DANGER=0.5。
+          两侧本就不是同一个数，改锚后 07 采在册值；该差异如实记此，勿读成"已对齐"。
+    device_call_face: >-
+      装置＝scripts/backtest/fexam/exit_sim/exit_simulator.py 的 build_signals → simulate，
+      参数一律取冻结卡默认（stop_mult=STOP_MULT、commission=COMMISSION 为模块常量，本卡不另赋）；
+      底座来源落地处＝card_binding._exit_sim_baseline（0081 袋内已定义未注册，
+      注册与 series 面填充由本班接线袋同批完成）。
+    signal_table: c1_market.kline_daily_hfq + c1_market.technical_indicator（经装置 load_* 面，本卡不直查）
+    signal_column: 基线臂日净值（由 exit_simulator.simulate(stop_enabled=True) 生成的日收益序列，即被风控层监控的组合）；级别判定与迟滞解除回放真源=src/zephyr/risk/core/drawdown_state_machine.py（MOD-RK-049），禁在考卷里重写判定逻辑
+    signal_derivation: >-
+      日盈亏=基线净值日收益；回撤=基线净值/历史峰值-1；级别序列由在册判定件对**基线**净值回放产出
+      （三臂共用同一基线净值，臂间差异只允许出现在"回放档配置"与"映射表五档 1.0/0.8/0.5/0.3/0.0"两面，
+      不得出现在净值/成交口径上）；级别→仓位映射（五态表 1.0/0.8/0.5/0.3/0.0）按在册判定件锚定
+      （见 data_binding.level_to_cap_map）
+    arm_protocol: >-
+      三臂输入同一基线净值序列与同一成交口径；级别→仓位映射（五态表 NORMAL 1.0/WARN 0.8/
+      DANGER 0.5/CRISIS 0.3/KILL 0.0）改锚在册判定件并冻结于本卡；
+      02 原 L3 三档 80/60/40% 在机器侧无对应态，原语义不可考（见 negative_existence_knowledge）
+    arm_e_face_quote: 三臂输入同一基线净值序列与同一成交口径
+    arm_r_face_quote: 基线臂日净值（由 exit_simulator.simulate(stop_enabled=True) 生成的日收益序列
+    target_source: 风控层改写后的净值路径（减仓=按级别比例×次日开盘成交，现金停放 0 收益）→ window_metrics
+    data_window_evidence: >-
+      沿用 02 在册实测：kline_daily_hfq 1990-12-19..2026-09-30 rows=10098785
+      （覆盖 2018 起基线构造窗与两处危机段）；真实账户净值面（c1_market.account_nav_daily 实测仅 5 行）
+      status=blocked_on_data 不变——本卡只用仿真组合
+    impl_gap: >-
+      三件事未到位，缺一不开考：①绑定层 ARM_BASE_SOURCES 仍为空册且注册须与空册纪律桩同批重写；
+      ②底座来源的 series 面（迟滞/无迟滞两条级别序列）尚未由适配器产出——适配器代码已就绪
+      （card_binding.replay_drawdown_levels/drawdown_level_series_pack，车道内 90 passed，待落地）；
+      ③轴喂法已由统筹批复 A1 裁乙，卡面与适配器两面已按乙案对齐，剩余动作＝接线袋接上 series 面
+      并同批重写空册桩。本班不自称可考。
+  status: blocked_on_impl
+  status_reason: >-
+    出生四件沿用 06、五态映射已按裁定锚定、轴喂法已裁乙并落卡，但接线两缝
+    （impl_gap ①②）未闭合；本卡转正尚须 creation_token＋depgraph 两道手续。
+    本卡不预先声称可考＝自我钉桩保持原样。
+  out_of_vocab_pillars:
+  - maxdd_improvement_vs_no_hysteresis_min_pp
+  - missed_crisis_trigger_max
+  - whipsaw_roundtrip_ratio_max
+  out_of_vocab_note: 沿用 02 在册申报（calibration/comparison 词表外键，判官侧无对应门柱实现时须显式披露，禁静默跳过）
+  lineage:
+    card: TDM-X-R1-01/comparison/06_熔断五级梯度减仓对照_基线出生件与r位声明版
+    run_id: null
+    score_row: null
+    confidence_writeback: TDM.nodes.TDM-X-R1-01.confidence
+    narrative_rewrite_not_param: >-
+      统筹批复 A1 附带条件②令本节记此条：**"日亏 2%/4%/6%"是叙事改写，不是参数**。
+      证据链（本班只读实测）：config/trading_decision_map.yaml:3738 把 L1 写成"日亏≥2%"，
+      而同节点 threshold_refs(:3746) 指向的是 THD-DRAWDOWN-001/002/003=0.05/0.10/0.15
+      （docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml:69-70/89/108），
+      即阈值册里**根本没有 2%/4%/6% 的日亏条目**；这三值在册侧的原始身份是
+      warn_var/danger_var/crisis_var（drawdown_state_machine.py:150-152，字段注释 :133"升级 VaR_95 阈值"）。
+      所以"日亏"字样是 TDM 节点叙事对 VaR 阈值的改写，不是另一套待冻结的参数；
+      据此 07 不再为"日亏"三值寻找映射，而按裁乙只走回撤轴。
+    negative_knowledge_landing: >-
+      统筹批复 A3 定的两处落点：本节＋why_new_version_not_edit 为人读落点（卡面内）；
+      机读账落 docs/_working/mineloop_campaign/33_negative_knowledge_ledger.yaml
+      （mineloop 战役台账负知识节）。两案均不入裁定册（非裁定）、不入词库（非术语）。
+  discipline: 冻结后开考；试次全入 n_trial_ledger；读数卡与碰钱卡分面，本卡判风控层规则增益，不判执行成本以外的面
+  oos_window_ref:
+  - '2025-10-09'
+  - '2026-09-30'
+  drafted_by: st-mineloop2-20261012
+  drafted_at: '2026-10-12'
+  approval_state: conditionally_approved_by_chief_20261012
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 三、批复回执与字母-实质对表（统筹按实质裁、不按本班菜单字母，故先做映射再落卡）
+# ══════════════════════════════════════════════════════════════════════════════
+
+chief_ruling_received:
+  at: '2026-10-12T02:3x+08:00'
+  by: 总统统筹（矿考二班晨间包批复）
+  letter_to_substance_map:
+  - chief_label: A1
+    chief_substance: 轴喂法＝裁乙（var/cvar 两槽不喂，只走回撤轴）＋三附带条件
+    this_class_menu_item: 本班菜单第 A4 项
+    landed_where: card_draft.hypothesis（条件③）＋data_binding.axis_feeding.adjudicated
+      ＋approximations_disclosed 首条"未覆盖面-var 轴日亏触发路径"（条件①）
+      ＋lineage.narrative_rewrite_not_param（条件②）
+  - chief_label: A2
+    chief_substance: 追认两条近似；关臂"恢复即买回"入负知识；所指收窄句写进 provenance；两支红证为前置
+    this_class_menu_item: 本班菜单第 A2/A3/A5 三项（无迟滞构造档＋关臂阈值＋近似追认）
+    landed_where: hysteresis_config_freeze.freeze_status ＋negative_existence_knowledge
+      新增"关臂恢复即一次买回无对应机制" ＋pillars_numeric_provenance 收窄句
+      ＋两条红证在 tests/backtest/test_card_binding.py（随接线袋落地为前置）
+  - chief_label: A3
+    chief_substance: L3 负知识落点＝卡面 lineage/why_new_version 节（人读）＋战役台账负知识节（机读）；不进裁定册不进词库
+    this_class_menu_item: 本班菜单第 A6 项
+    landed_where: lineage.negative_knowledge_landing ＋
+      docs/_working/mineloop_campaign/33_negative_knowledge_ledger.yaml（机读账新建）
+  - chief_label: B1
+    chief_substance: 采信 19/16/3；§19"30 支全 needs"改口；缺的是一个横截面回放面，登记次日候选呈排期，今夜不开
+    this_class_menu_item: 本班账册 §三 B1
+    landed_where: 33_negative_knowledge_ledger.yaml 的 candidate_work_items 节（机读）＋本班账册 §六
+  - chief_label: B2
+    chief_substance: 接受今晚交付修订（16 支是线级终局非今晚口径），今晚达标
+    this_class_menu_item: 本班账册 §三 B2
+    landed_where: 本班账册 §六
+  - chief_label: C
+    chief_substance: keeper 实测存活；本班接管 keeper 生命周期监控；pending 已 40 件，keeper 若死不等 drain，立即第四态抢救＋上报转维护三班
+    this_class_menu_item: 本班账册 §三 C
+    landed_where: 本班账册 §六（含巡检命令与抢救处方）
+  not_explicitly_named: >-
+    统筹按实质裁，未逐值点名"无迟滞构造档"的三个具体数（0.999999999/1/1）——
+    本班按裁定"中间臂＝五态无迟滞"落地并在 freeze_status 内标明"隐含批准未显式点名"，
+    另有指定即改；本卡转正（本班菜单 A1 项）经 A1-A3 三条件满足后视为条件性批准，
+    转正动作仍排在接线袋同批（禁在接线前把卡升 preregistered）。
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 二、呈批面（统筹只需回这几种话）
+# ══════════════════════════════════════════════════════════════════════════════
+
+approval_request:
+  items:
+  - id: A1
+    what: 卡面本体（card_draft 整块）是否批准进 exam_cards 转正
+    default_if_silence: 不转正（保持 draft，不开考，零假分）
+    cost: 批准后仍需接线袋落地方能出分；批准本身不产生分数
+  - id: A2
+    what: 中间臂无迟滞构造档取值（hysteresis_ratio 0.999999999 + sustained=1 + min_hold=1）
+    why_asking: 这三个数是"无迟滞"在在册 config 类里的构造性表达，卡面没写过，属新增冻结参数
+    备选: 若不批准，中间臂不可考（三臂退两臂＝被禁的降级形态），本卡只出开臂 vs 关臂即违反裁定
+    default_if_silence: 中间臂不产序列，册格引用 series:levels_no_hysteresis 当场 ArmParamUnfrozen 红（不开考）
+  - id: A3
+    what: 关臂阈值（采在册 KILL 升级面，即回撤 25%；不另设数）
+    why_asking: 等裁项·§19 三.3 建议默认是"以 25% 为单一阈值、factor=0.0"，本卡进一步把"单一阈值"
+      钉成"由在册件产生 KILL 态的那根轴"，从而关臂与开臂共用同一条级别序列，零第二真源
+    default_if_silence: 同 A2 逻辑——未批则关臂不产序列
+  - id: A4
+    what: 轴喂法乙/甲/丙（只走回撤轴 vs var 槽喂当日亏损 vs var 槽喂在册 VaRCalculator 真 VaR_95）
+    why_asking: 卡面 2%/4%/6% 写的是"日亏"，在册字段名义是 VaR_95；数值相同语义不同，
+      且全仓唯一日频真实调用点根本不喂 var 槽（sim_daily_runner.py:1410 原文已读）——
+      这是口径分叉不是缺数字，AI 不自裁
+    recommendation: >-
+      本班荐**乙**（var=None 只走回撤轴）：零新增数字、零语义替代、五态全可达，
+      与在册唯一日频用法同形；代价是卡面"双轴"里的日亏触发路径不进判据（须随册标未覆盖面）。
+    cost_of_jia: 卡面"日亏≥2%"字面成立，但适配器替卡面把日亏翻译成 VaR 槽＝口径替代，须显式批准
+    cost_of_bing: 语义纯且双轴保留，但窗长是卡面与在册件都没有的新数字（选窗＝替卡拍数），
+      且前 29 日样本不足只能 var=None，窗口起点前后触发面不一致
+    default_if_silence: 三案都不写，适配器拒绝产级别序列（红），不开考
+  - id: A5
+    what: 追认"逐级降级不可跳级"与"禁新开面无标量表达"两条近似（approximations_disclosed）
+    why_asking: 它们是裁定③的必然后果，不是本班新引入的口子；不追认则须另立版本卡
+  - id: A6
+    what: L3 三档 80/60/40% 记负存在知识（机器侧无对应态、原语义不可考）
+    why_asking: 统筹已裁"记负存在知识一条"，本班请明确该条落册处（本卡内 or 词库/裁定册）
+
+self_check_before_submitting:
+  quote_domain_verified: 见 harness_probe.probe_07_card_face_parts.py 运行结果（引句落域机械校验）
+  numbers_untouched: pillars_numeric 八键逐值＝02/06；本班零新增零放宽（键集合差自证见账册）
+  ch_queries: 0
+  score_rows_written: 0
+  judge_files_modified: 0
+  cards_modified_on_dev: 0
