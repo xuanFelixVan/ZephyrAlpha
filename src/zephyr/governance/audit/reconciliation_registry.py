@@ -7752,6 +7752,19 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
     _PROTECTED_SUFFIX = ".jsonl"
 
+    def _is_audit_segment(name: str) -> bool:
+        """审计段豁免判定：当前段 `*.jsonl` 与轮转旧段 `*.jsonl.<N>` 同为取证面。
+
+        实测漏口：旧判据只做 `endswith(".jsonl")`，而 audit_jsonl_writer 的轮转命名是
+        `<filename>.1/.2/.3`（RotatingFileHandler 同型，N 越大越老）——3 个历史段全部不匹配，
+        于是在册承诺"旧段移位保留不物理删除（B-016）"被本 TTL 腿静默击穿；
+        实测 .runtime/gate_audit 内 >7d 件数=39，正是这些旧段。
+        """
+        if name.endswith(_PROTECTED_SUFFIX):
+            return True
+        head, _, tail = name.rpartition(".")
+        return tail.isdigit() and head.endswith(_PROTECTED_SUFFIX)
+
     def _trigger(committed_files: list[str]) -> bool:
 
         return True  # .runtime/ 增长与每次 commit 正相关
@@ -7780,12 +7793,25 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
         # worktree 完整性（>7 天旧文件被静默删）。
         _PRUNE_DIR_NAMES = frozenset({"commit_queue", "__pycache__"})
 
+        # 止血（统筹急令 2026-10-12，维护三班执行）：删除集里不得出现保护区/取证存证面。
+        # 真源＝ops_guard.PROTECTED_PREFIXES（同一把尺，禁在本函数另立第二份清单——多真源必漂移）。
+        # 被吃面积实测（ops_guard_delete.jsonl，24h 窗）：is_protected_zone=True 且 reason 含
+        # "声明制直通" 共 1510 条，声明方全属本班 GATE-RUNTIME-CLEANUP，落点全在 .runtime/quarantine。
+        # 口径注：guard_remove 在 reconciler 上下文内"声明即授权直通"（与 guard_rmtree 的
+        # 保护区递归双保险不对称），故排除面必须建在本 leg 的遍历输入上，而非等守卫来拦。
+        from scripts.ops_guard import PROTECTED_PREFIXES as _OPS_GUARD_PROTECTED
+
+        def _under_protected(rel_posix: str) -> bool:
+            return any(rel_posix == _pp or rel_posix.startswith(_pp.rstrip("/") + "/") for _pp in _OPS_GUARD_PROTECTED)
+
         # 单批删除上限（同实证）：.runtime/tmp 曾积压 15 万过期文件，逐文件 guard_remove
         # （每文件 保护区判定+声明校验+审计落盘）= 单次 reconcile 数小时阻塞、心跳停滞、
         # 占住 claim 堵死 INTEGRITY 重钉链。上限后每 commit 收敛一批，渐进清零。
         _MAX_DELETES_PER_RUN = 2000
 
         capped = False
+
+        protected_skipped = 0
 
         for dirpath, dirnames, filenames in os.walk(runtime_dir):
             dirnames[:] = [d for d in dirnames if d not in _PRUNE_DIR_NAMES and not d.startswith("_wt_")]
@@ -7798,6 +7824,11 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
                 filepath = os.path.join(dirpath, filename)
 
                 try:
+                    rel = filepath[len(str(runtime_dir) + os.sep) :].replace(os.sep, "/")
+                    if _under_protected(".runtime/" + rel):
+                        protected_skipped += 1  # 有主取证面=只归档不删（M3/M5 在册裁定）
+                        continue
+
                     mtime = os.path.getmtime(filepath)
 
                     if now - mtime < _TTL_SECONDS:
@@ -7806,8 +7837,8 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
                     if filename in _PROTECTED_NAMES:
                         continue  # 目录结构标记
 
-                    if filename.endswith(_PROTECTED_SUFFIX):
-                        continue  # append-only 审计日志
+                    if _is_audit_segment(filename):
+                        continue  # append-only 审计日志（含轮转旧段 *.jsonl.<N>）
 
                     # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
                     from scripts.ops_guard import guard_remove
@@ -7873,6 +7904,7 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
         return ReconcileResult(
             action="clean" if errors == 0 else "warn",
             detail=f".runtime/ TTL cleanup: deleted={deleted}, errors={errors}, locked_skipped={locked_skipped}"
+            f", protected_skipped={protected_skipped}"
             + (f", capped_at={_MAX_DELETES_PER_RUN}（残余留待后续 commit 收敛）" if capped else ""),
         )
 

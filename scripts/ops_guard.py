@@ -97,6 +97,22 @@ PROTECTED_PREFIXES: tuple[str, ...] = (
     # 授权通道唯一化：watchdog retention 清扫经 safe_rmtree 授权通道（留痕），
     # 人工处置走 ZEPHYR_FORCE_DELETE=1。
     ".runtime/quarantine",
+    # 统筹急令止血（2026-10-12 维护三班）：取证存证家族其余三支同属"有主取证面、只归档不删"。
+    # 实测喂给删除集的面积（.runtime 盘面计数／>7d 即 TTL 命中的那批）：
+    #   quarantine 9006 件（>7d 2743）｜takeover 507 件（>7d 233，销账证据面）｜
+    #   orphan_quarantine 现存 0 件（先带外消失，与统筹 1134 空壳同族）｜workspace_alerts 7 件（>7d 4，
+    #   根宪法"编辑消失先查 stash_notice.json"依赖面）。gate_audit 靠 *.jsonl 后缀豁免幸存。
+    # 判据方向=只收紧不放宽：本清单是"哪些路径不许自动化删"的唯一真源，消费方含
+    # make_runtime_cleanup_reconciler 的删除集排除面（改输入，不弱化闸）。
+    ".runtime/takeover",
+    ".runtime/orphan_quarantine",
+    ".runtime/workspace_alerts",
+    # 注：`.runtime/gate_audit` 未进本清单——本清单是"不许自动化删除"面，一旦列入会让
+    # 审计轮转自己的 `oldest.unlink()`（audit_jsonl_writer._rotate）被 in-process judge 拦下，
+    # rotate_if_oversized 的 fail-soft 分支会把"轮转失败"吞成 False ⇒ 当前段永不收缩，
+    # 直接复刻 3.7GB/42h 洪峰事故（#ARCH-258 在册）。
+    # 旧段被 TTL 腿吃掉的真实止血点＝清理腿的后缀豁免认轮转段名（`.jsonl` 与 `.jsonl.N`），
+    # 见 reconciliation_registry.make_runtime_cleanup_reconciler._is_audit_segment。
 )
 
 # 白名单前缀（这些路径下的删除放行）
@@ -204,7 +220,8 @@ def _get_project_root() -> Path:
             check=True,
         )
         root = Path(result.stdout.strip())
-    except Exception:
+    except Exception:  # noqa: BLE001 — 根探测 fail-soft：git 缺失/非仓/import 失败一律退 cwd，
+        # 退化成 Path.cwd() 后仍由下方 worktree/.aidrafts 段剥离归一，绝不因探测失败阻断删除判定
         root = Path.cwd()
     norm = str(root).replace("\\", "/")
     for marker in ("/.worktrees/", "/.aidrafts/"):
@@ -331,6 +348,28 @@ def _targets_hash(targets: list[str]) -> str:
     return hashlib.sha256(content.encode("utf-8")).hexdigest()[:16]
 
 
+def _forensic_sha(path_str: str | Path, *, max_bytes: int = 8 * 1024 * 1024) -> str | None:
+    """保护区删除前的内容指纹（M1 裁定"每次删除打一行审计（闸/时刻/路径/sha）"的 sha 项）。
+
+    读不到/超限 → 返回 None 并记 `oversize`/`unreadable` 前缀标记，绝不因取证指纹失败而
+    阻断删除主链路（与 audit_delete 的非阻断语义一致）。
+    """
+    try:
+        size = os.path.getsize(path_str)
+    except OSError:
+        return "unreadable"
+    if size > max_bytes:
+        return f"oversize:{size}"
+    try:
+        h = hashlib.sha256()
+        with open(path_str, "rb") as fh:
+            for chunk in iter(lambda: fh.read(65536), b""):
+                h.update(chunk)
+        return h.hexdigest()
+    except OSError:
+        return "unreadable"
+
+
 # ============================================================================
 # 审计
 # ============================================================================
@@ -341,6 +380,7 @@ def audit_delete(
     command: str,
     verdict: DeleteVerdict,
     cwd: str | None = None,
+    content_sha256: str | None = None,
 ) -> None:
     """删除操作审计落盘（非阻断，jsonl 追加 + 分级落盘 + 大小轮转）。
 
@@ -375,6 +415,8 @@ def audit_delete(
         "targets_hash": _targets_hash(verdict.targets),
         "pid": os.getpid(),
     }
+    if content_sha256 is not None:  # 仅保护区/取证面携带（M1 留痕），其余不写键防膨胀
+        record["content_sha256"] = content_sha256
     _token = _AUDIT_REENTRANT.set(True)  # 写盘窗口：rotate 的 rename/unlink 重入 judge 直接放行
     try:
         from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
@@ -794,6 +836,13 @@ def guard_remove(path: str | Path, *, cwd: str | Path | None = None) -> None:
 
     reconciler 上下文内：校验 file_ops 声明（未声明 delete → 阻断）；
     已声明 → 直通执行+审计（声明即授权，is_protected_zone 标记照记）。
+    ⚠ 与 guard_rmtree 的不对称在册（保护区内递归=双保险硬拦，单文件=声明即直通）：
+    该不对称 2026-10-12 被实测吃掉 .runtime/quarantine 1510 件/24h，止血做在调用侧
+    删除集排除面（reconciliation_registry 的 GATE-RUNTIME-CLEANUP 遍历），本函数判据未动——
+    改这里会让 DeleteBlockedError 逃逸出各 reconciler 的 `except OSError`（ALLOWED_PREFIXES
+    段在册的 P0① 提交遮蔽事故同型），须先枚举全部调用方的异常面再呈批。
+    取证留痕（M1 裁定"每次删除打一行审计（闸/时刻/路径/sha）"）：保护区目标删除前后各带
+    content_sha256，非保护区不计算（272,379 条/7d 直通量的成本与洪峰约束，批5c 在册）。
     """
     path_str = str(path)
     ctx = _RECONCILER_CTX.get()
@@ -801,15 +850,22 @@ def guard_remove(path: str | Path, *, cwd: str | Path | None = None) -> None:
         rel = _resolve_to_repo_rel(path_str, cwd)
         _enforce_file_ops("delete", [rel], cwd=cwd)
         _enforce_docs_untracked(path_str, cwd)  # T3②：声明制不豁免 untracked 人工确认
+        is_prot = any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
         verdict = DeleteVerdict(
             allowed=True,
             reason=f"reconciler {ctx[0]} 已声明 delete（声明制直通）",
             primitive="python_remove",
             targets=[rel],
             is_recursive=False,
-            is_protected_zone=any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES),
+            is_protected_zone=is_prot,
         )
-        audit_delete("guard_remove", f"os.remove('{path_str}')", verdict, cwd=str(cwd) if cwd else None)
+        audit_delete(
+            "guard_remove",
+            f"os.remove('{path_str}')",
+            verdict,
+            cwd=str(cwd) if cwd else None,
+            content_sha256=_forensic_sha(path_str) if is_prot else None,
+        )
         try:
             os.remove(path_str)
         except FileNotFoundError:
@@ -819,7 +875,13 @@ def guard_remove(path: str | Path, *, cwd: str | Path | None = None) -> None:
     _enforce_docs_untracked(path_str, cwd)  # T3②
     cmd_repr = f"os.remove('{path_str}')"
     verdict = analyze_delete_command(cmd_repr, cwd)
-    audit_delete("guard_remove", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
+    audit_delete(
+        "guard_remove",
+        cmd_repr,
+        verdict,
+        cwd=str(cwd) if cwd else None,
+        content_sha256=_forensic_sha(path_str) if verdict.is_protected_zone else None,
+    )
 
     if not verdict.allowed:
         raise DeleteBlockedError(f"[OPS-GUARD] remove 被阻断——{verdict.reason}\n  目标: {path_str}")
@@ -1185,9 +1247,7 @@ _AUDIT_STATS: dict[str, int] = {
 #: 触发 _rotate → _rotate 的 rename 停在 judge 前置判定永不真正执行 → 当前段
 #: 永不缩小 → 每层审计再触发 rotate → 无限递归。审计基础设施自身的段移位
 #: （gate_audit/ops_guard_delete.jsonl.N 的 rename/unlink）不属业务删除，不再判定。
-_AUDIT_REENTRANT: contextvars.ContextVar[bool] = contextvars.ContextVar(
-    "ops_guard_audit_reentrant", default=False
-)
+_AUDIT_REENTRANT: contextvars.ContextVar[bool] = contextvars.ContextVar("ops_guard_audit_reentrant", default=False)
 
 
 def get_audit_stats() -> dict[str, int]:
