@@ -408,3 +408,61 @@ exit_simulator **passed=False**，判死证据换成 `orphan_resources: .aidraft
    ＋07 卡面转正（creation_token＋ASCII 路径＋depgraph），status 升 preregistered；
 2. 首批开考（真 CH 读一次基线面板出首张双臂分，试次照进 n_trial_ledger）。
    这两件都等 q-0006/q-0007 落地，缺一不开考——06/07 卡的 impl_gap ①② 到此才算闭合。
+
+# 十二、base-head 之坑第二次应验（这次是我自己造）＋合袋定性（2026-10-12 21:0x）
+
+q-0007（接线袋）落地侧死信：`[landing] 非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）:
+scripts/backtest/fexam/card_binding.py`。读袋内 `base_head` = **20fa9c43bb36**＝**我车道自己的 HEAD**
+（八小时前从 dev 分出的那个点），而不是投件时我写在命令行里的 dev sha。
+
+机理（在册记忆的第三种形态，这次实测坐实）：`git_commit.py --enqueue` 的 base_head
+**取 worktree-root 自己的 HEAD**，我传什么旗标都不改它。车道分支从建好就没提交过，
+HEAD 一直停在开工那一刻，而 dev 这几小时前进了十几笔（含我自己 0005/0006 落的两件）⇒
+落地侧看"基底有、dev 也有但两边都改了同一文件"＝真冲突，直接死信。
+
+修法两条，本次走第②条：
+① 走 `commit_queue.py enqueue/requeue --base-head $(git rev-parse dev)`（我前面 0001/0002/0004/
+   0005/0006/0008 六袋都这样，base 都对）——**但这条路没有 `--allow-multi-domain`**，
+   跨域合袋会在预检就被 COMMIT-SCOPE 拦（requeue 0007 时就撞了这个）。
+② 把车道指针快进到 dev，再走 `git_commit.py --enqueue --allow-multi-domain`。安全前置两道实测：
+   `git rev-list --count dev..HEAD` = **0**（车道无独有提交）且 `git merge-base --is-ancestor HEAD dev` 为真，
+   然后 `git reset --soft <dev>`——只动分支指针，**索引与工作文件一字不动**（我的
+   +14/−6 与 +176/−6 净差在指针移动前后逐字相同）。复位后 q-0009 的 base_head = dev ✓。
+
+⇒ 给后续班的硬规矩：**车道里用 `git_commit.py --enqueue` 之前，先核 `git rev-parse HEAD` 等不等于 dev**；
+不等就要么快进指针（无独有提交时 `--soft` 安全），要么改走 commit_queue + 显式 `--base-head`。
+"每轮修改即 git add"不等于"车道随手 commit"——车道多一个独有提交，base_head 就被自己污染成死袋。
+
+合袋定性补记：注册代码与它必须同批重写的空册纪律桩分处 scripts/ 与 tests/ 两域，
+拆开无论先后都留一个红色中间态（先落码则 dev 旧桩断言空册红，先落测试则新桩断言已签认册红），
+故按根宪法 §2 第 4 条用 `--allow-multi-domain` 合为一袋留痕；落地侧对跨域已容忍（§2.6），
+真正卡住的从来不是跨域，是 base-head。
+
+当前在途（21:0x 实测）：q-0008 文档袋 processing、q-0009 接线袋 pending，全队列 pending 10/processing 4；
+dev 上注册位与 series 接线位现仍 0 命中＝未落。0007 留 dead/ 存档不删。
+
+# 十三、07 卡面转正袋（2026-10-12 21:3x，统筹"不拦"令执行）
+
+- 转正件：`docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__07_five_state_cap_anchor.yaml`
+  （ASCII 路径＝根宪法 §8；333 行；creation_token 走意图 API 登记，merge_evaluation 写明
+  02→06→07 lineage 并存不替代）。
+- 生成方式是**逐字切块**非重排：从草案 `card_draft` 块切出 313 行（去缩进 2 空格），
+  状态性改动只有三处且全部带等值断言锚（status、status_reason、impl_gap），其余原文一字未动；
+  追加块只含批准与接线凭据，**不含任何判据**。
+- 五项机械自证（全过，非肉眼）：①八柱与 02 **逐值相等且键集合差为空**；
+  ②窗口 in_sample/oos 与 02 逐字相等；③`verify_face_pair_quotes` 对拟投册格的
+  e/r 两引句**落域通过**（e 在臂定义面、r 在底座出处面）；④`verify_arm_quote` 五态映射长引句命中；
+  ⑤在册分箱器 `triage_card` = feasible_now／arm_count 3／pending_numeric 空／out_of_vocab 三柱与 02 同。
+- 落地点本轮踩到并自纠的一处：初版卡面引了两条 **docs/_working 临时区路径**
+  （35 号 memo 归档件、负知识机读账），触根宪法 §9 第 4 条"永久区禁引临时区"；
+  已改判为同区可核指针（"设计真源=35 号 memo §3.11，其在册代码投影即 :133/:150-152 三行，本卡以代码面为准"
+  ＋"负知识机读账＝战役台账 NK-MINELOOP-001/002/003，随战役台账走，非本卡判据依赖"），
+  改后 `grep -c '_working|.runtime'` = **0** 并重跑③⑤两项自证仍全绿。
+- **首考前必须先裁的一条结构事实（已写入卡面 exam_scope_note，本班不自裁）**：
+  本卡八柱里同时含"开臂 vs 关臂"（maxdd_improvement_min=5.0）与"开臂 vs 中间臂"
+  （maxdd_improvement_vs_no_hysteresis_min_pp=1.0），而在册 `build_arms` 只循环 open/base **两位**、
+  comparison 通道每次只配一对 ⇒ "三臂两对照"在现结构下一考只能判一对。
+  甲＝两次开考各判本对、另一柱在凭据里显式标 not_judged；乙＝拆两张卡各判一对。
+  未裁前首考只开**第一对（开臂 vs 关臂）**并带 not_judged 披露，禁把未判读成已过。
+- 待办顺位：本袋落地 → 绑定册 07 册格（`arm_base_source: exit_sim_baseline` ＋ arms 面五态 level_map
+  ＋两条 series 档名）→ CH 压缩窗实测核 → 首批开考（真读一次基线面板，试次进 n_trial_ledger）。
