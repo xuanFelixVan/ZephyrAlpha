@@ -923,3 +923,200 @@ Test-CapacityGuardBreach : 无法将“Test-CapacityGuardBreach”项识别为 c
 - **复核命令**：`python -c "import io;b=io.open(r'scripts/backup/backup.ps1','rb').read();print(sum(1 for c in b if c>127))"`（应 0＝纯 ASCII）；`PYTHONPATH=src python -m pytest tests/meta/scripts/backup/test_backup_ps_scripts.py -q`（应 10 passed，含新两支）；`PYTHONPATH=src python -m pytest tests/meta/scripts/backup/ -q`（应 **144 passed**）；`python .runtime/tmp/bf3_gbk_redgreen.py`（应 HEAD 控制支 `strict_utf8=FAIL` ＋ 修复支 `strict_utf8=OK zh_roundtrip=True`＝红绿同在）；`grep -n "UTF8Encoding" scripts/backup/backup.ps1`（应见 journal 写者一处）；`git diff HEAD --numstat -- docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml`（应 +1190/-0，零删除）；`python scripts/commit_queue.py status`（全局 counts，看 pending 是否仍在消化）。
 - **回退令（逐件）**：编码修复＝`git checkout HEAD~1 -- scripts/backup/backup.ps1 tests/meta/scripts/backup/test_backup_ps_scripts.py`（两支同袋，回退须一起）；automation 面＝`4910ee4e` 一键 enable 即复原，`9cbf6aef` 已删（其 prompt 原文仍在本班上一轮会话记录与账本在册仪器表内，重建＝照原文新添，不改判据）。
 - **署名**：adjudicator=st-backfix3-20261011（本轮：GBK runlog 修复双证落地＋仪器面两笔变更＋他班热册观测＋队列口径自纠）。
+
+## 通宵执行与晨间裁定包
+
+> 班＝追凶三班 st-backfix3-20261011｜起笔 10-12 01:3x（Owner 通宵令：01:15 下达，睡眠窗 8h）｜终局目标＝备份链常态化自证（每轮日志可判读＋预测自验）
+> 本班今夜清位项三条（令末段）：q-0013 落地核验＋06:00 腿三件晨核（主证版判据）＋⑫ 终验预测。晨核已用一次性单发班承接（见「二、自裁了什么」第 5 条），因 06:20 在本会话可用窗口之外，且令要求"无一因等待而停摆"。
+
+### 一、执行了什么（逐项＋红绿证锚点）
+
+- **备份链今日从零恢复（本役头号里程碑）**：19:48:41→21:14:58（5165.4s）＝**链上史上第一行 `LOCK_ACQUIRED`**、第一份完整阶段日志（53 行全文已入册，防 runlog 被轮转带走）；22:52:55→23:58:27（3931.5s）＝**批复二后第一发真机轮，执行体指主区那份脚本**；当日生产报告 **2 份**（此前末份停在 10-09 05:27）；`G:\backup\db_dumps\20261011` 由链路自产 4 件（depgraph.dump 253,302,680 等，零手造）；轮转腿真删 3 个超 14 天保留线的旧日目录、近一周全留。CH 侧经既有单口 `query_backup_log_created` 交叉核验＝当窗 1 条 `BACKUP_CREATED`@12:49:14 UTC（＝本地 20:49:14，与脚本自报 20:49:39 差 25 秒）⇒ **不是自报绿**。
+- **落地面（逐件可查，全走队列正门）**：`1de1c216e6`（T1 run journal＋transcript＋容量守卫先调后定义修复）→ `5956914d627`/`aca29fd557`（restore_drill 失败支报告契约补满 8 键）→ `92b69f0178`（①单一检出点＋②备份↔压缩互斥＋rows={}＋9 支测试）→ `dce5ae9d2c`（批复二执行体指向主检出点＋⑫轮转读值入日志＋一次性补结算）→ `9ccd71927e`／`680d66f04d`（账本各节）→ **在途** `q-20261012-…-0013`（GBK runlog 修复袋，backup.ps1 +8/−1、守卫测 +65/−0、账本 +248/−0）。
+- **GBK 修复袋的红绿证（可复跑）**：`python .runtime/tmp/bf3_gbk_redgreen.py`＝同一套 harness 分别跑 HEAD 那份与本袋那份 `Write-Journal`——HEAD＝`strict_utf8=FAIL(invalid continuation byte@27)`＝红；修复版＝`strict_utf8=OK / zh_roundtrip=True / bom=False`＝绿。整目录 **144 passed**（前值 142，+2 支守卫）；`.ps1` 在 worktree 与 git index **两面** non_ascii=0、PS Parser PARSE_OK。
+- **压缩与盘**：round-2 收口 17:31:24，`G:` 余 1964.2→**2531.4 GB**、`ch_backup_disk2.vhdx` 934.4→**368 GB**（两尺互咬，不抄自报）；`data.vhdx/boot.vhdx` 全程未碰；round-3 由他班执行、19:4x 起回 VM（本班 20:0x 以 `Get-VM`＋探针核验）。本班**未起第二个停机执行器**（竞态红线），全程零杀停零接管。
+- **追凶面**：案 #17（27300）**定名＝自毙族**，且首次说清那 4 小时＝Stage 3 往被 Optimize-VHD 独占的 `G:` 上长爬（同一条腿空闲时 11.4 分钟＝约 21 倍），给裁定②补上量化理由；同轮把 **403 尺的排他面当场收紧**（只排除强杀型，不排除"优雅关闭"型）；另实锤 pre-T1 副本的**假绿行**（守卫抛错后仍打印 `[OK] DB dumps snapshot done` 而 robocopy 从未跑，任务腿输出走隐藏控制台蒸发）⇒ 那两天是"报着绿没备份"。工法两条入册：legacy `Windows PowerShell` 通道保留窗实测≈**4 小时**（定名轮必须当场冻结原文）；400/403 过滤词须对出生形态（点火腿无 `-Mode`）。
+- **仪器面**：舰队逐 pid 复测 **10/10 全活**（三陷阱 57376/43560、event-watch 57184、atime/lockreaders 57008、handle 哨 33880、诱饵 17224/23588 及监听 49396/53928），keep 行零退；两次"NOT FOUND"经复测均为**本班命名模式写错**（真名 `procspawn_event_watch`），非战损——已入册为尺法教训。
+
+### 二、自裁了什么（逐条＋证据＋依据）
+
+- **① 队列假 done 的处置＝按现字节另起新袋，不复投、不 requeue、不碰 blobs**（依据＝授权矩阵"队列死袋按死因对症重投／按现字节另起新袋"）。证据：`q-0011` 在 status 里 state=done、done 计数 8→9，但 `landed_id=e572b82e99` 指向矿考循环班的提交；三件独立复测全负（HEAD 账本内 grep 本班该节 marker＝0、`git log -1 -- 账本` 仍停 9ccd71927e、`git log --all --grep` 全 ref 零命中）。触发面取证：drain 时刻本 sid **不在** `list_active_readonly()`，复注册（pid=0＋held_files＋heartbeat）后立即可见 ⇒ 与在册"幽灵烧袋"同族的新形态（done 而借他人 commit id）。
+- **② 晨核判据主证改版**（依据＝"域内技术选型与施工序"）：本班上一轮给的"读 state 册 `last_ignite_target_root` 作主证"**被自己实测否证**——各车道各一本 state、会被同车道下一发覆写，w3 那本实测 6 键／mtime 22:52:53／两键根本不存在。可依赖主证改为两份落盘：**runlog 的 `RUN_START ... script=` 字段** ＋ **ignite 日志所在的根**。判据/阈值零改动。
+- **③ cadence 口径自纠**（同上依据）："8h 解禁约 06:37"只约束主区那一本；w3 那本 `last_backup_time=None` ⇒ `trigger()` 在新建车道里天然视为已到期。⇒ 事件腿的 cadence 时钟非全局、每新车道一出生即"到期"。**不改判据**，登记为覆盖面残余（＝等裁第 ⑮ 项，Owner 已批登记）。
+- **④ GBK 修法的选型**（依据＝"⑫款可观测性小改，不碰判据分支"）：走 `[System.IO.File]::AppendAllText(..., UTF8Encoding($false))` 而非 `Add-Content -Encoding utf8`——后者在 PS 5.1 会写 BOM、与本件其余五处写者（锁/skip 日志/pg_globals/报告/state 全是无 BOM UTF-8）分叉。附带一条实测校准了令的措辞：`Start-Transcript` 在 PS 5.1 **无 -Encoding 参数**，故 transcript 侧无事可为，需修的只有 journal 一处。
+- **⑤ 一次性晨核班的承接**（依据＝令"值守自然节奏照旧"＋"无一因等待而停摆"＋06:20 在本会话窗口之外）：新建**单发**自动化 `844ab246`（`at 2026-10-12T06:20:00+08:00`，`deleteAfterRun=true`，跑完自清），prompt 内嵌三条主证版判据、新尸的 4 小时冻结时限与收紧后的 403 尺、以及全部红线（不杀不停不清锁不手动点火不碰他班在途件）。可回退＝`remove` 该任务。
+- **⑥ 仪器面两笔变更**（依据＝Owner 明令"照办"）：`4910ee4e` 停用不删除（`enabled=false/pauseReason=manual/nextRunAt=null`，实测单轮 25.8 分 > 20 分间隔＝连轴燃烧、闸动作面因目标已死而结构上永不触发）；`9cbf6aef` 删除（删前 enabled:false＋failureCircuit＋连续 3 次每次 4.4 秒即失败）。**未动任何取证进程与 keep 行**。
+- **⑦ 明确不做的事（留证）**：未处置任何进程、未清 `.runtime/backup.lock`、未手动点火、未 requeue 死袋、未碰 `G:\backup` 内容、未代修他班件、未再跑任何会写热册 `capability_canonical_file_registry.yaml` 的测试（见等裁第 ㉔ 项：只报不复现）。
+- **⑧ 本班自犯自纠清单（全部当场入册，不留给下一班）**：三处读数错（13 组里 6 组是装载器；runlog 估 38 行实为 53；Operational 覆盖面从"死窗 4 分钟"扩到"整个下午 2775 条零命中"）；两处尺法错（拿前班的 `-Mode` 词形去滤点火腿、未验 mtime 语义就拿来定界）；一处 **marker 全／半角斜杠之差让幂等守卫静默失效**（靠"再跑一次读计数"抓到，不是靠眼看）；一处 **`反斜杠-b` 被写成裸退格符**毁掉 9 处 Windows 路径（靠结构计数 BS=0 抓到并精确回填）；一处把队列"队深"误判成"熄火"（全局 pending=22、租约 43.5 秒前刚续约否证）。
+
+### 三、等裁什么（编号菜单＋证据＋本班建议默认；Owner 醒后一次转统筹裁）
+
+- **⑯ 干跑器与真门的 REFERENCE-INTEGRITY 口径差（今夜新发现，建议优先）**：`python scripts/gate_dry_run.py --session … --files <本袋三件> --message-file …` 报 `[HARD] inprocess_gates → REFERENCE-INTEGRITY: ARCH-BOOT-WINDOW-FLASH 需 architecture_issue_registry.yaml 同袋`。实测否证其适用性：该行在 **HEAD 与工作区同为第 345 行**（巡检班 `eb38f1c1ae5` 早已落地），本班 diff 的增行里该串 **0 命中**，且**同件的 q-0012 已正常落地**（680d66f04d）；该别名在总册里以文字形式出现（"历史标签…当时未登记…本条目为其数字制正身"）。⇒ 疑为干跑器 own-scope 未过滤所致。**建议默认＝转维护三班（今夜 owns 队列完整性簇）核干跑器口径，本班不动门禁代码**；若裁"按干跑报文为准"，本班则把该行改写为不带井号形态另起袋（那是改他班已落地文字，须统筹点名，故不作默认）。
+- **⑰ q-0013 若真死于该门**（当前 01:3x 状态＝pending，15 分钟未消化，pending 全局 2）：**建议默认＝等 06:20 晨核班按只读三面对账（HEAD 字节／队列记录／死信件）后回报，再定对症法**；本班已排除的可疑项＝claim TTL 过期（30 分钟）与 `--allow-non-worktree` 旗（干跑不含旗，故那条硬拦是假警报）——两笔 claim 已于 01:2x 续租。
+- **⑱ 车道根 pre-T1 副本仍在**：`.worktrees/st-datalane-20261010` 的 reconciler 副本 mtime 10-10 17:08、`primary_checkout_root` 与 `is_shadow_checkout` **均 0 命中**；该类副本一旦被人直接 `-File` 起跑，仍是"无观测面备份"通道（13080 那发的形状）。**建议默认＝序列化车道物化刷新对齐，不手改车道文件、不新增白名单**。
+- **⑲ 车道副本上的 E-4"调用先于定义"死码后果追认**：13080 那发 stderr 实证 `Test-CapacityGuardBreach … :825 无法识别`，其 dumps 腿从未跑；**建议默认＝不追认"该轮算备份成功"**（它确实无报告），账本已按"自毙族＋早退形态"定名，无需额外裁定即可继续。
+- **⑳ 互斥闸只装在 reconciler 点火腿**：06:00 任务腿（wscript→launch_hidden.vbs→主区 ps1）不查 VM。若某日压缩跨过 06:00，仍会撞出"CH 腿 skip"。**建议默认＝接受之（不扩判据）**，除非 Owner 点名要在 ps1 或任务侧加同一前置。
+- **㉑ 轮转判据的自指次序（⑫只解决可归因，未解决次序）**：轮转读的是**上一轮**写的 state ⇒ 首恢复轮必不轮换、之后永远滞后一轮；实测已双向夹住（读到 ok＝上一发写；本发写 skipped ⇒ 下一发预期 WARN）。**建议默认＝保持现状**（保守方向＝多留不删，fail-safe）。
+- **㉒ 20261010 空 dump 目录**：0 件且**不可回造**（重跑只会得到今天的库状态，标成 10-10＝造伪证）。**建议默认＝保留空目录＋登记**，要补 10-10 只能走别的既有副本通道。
+- **㉓ handle 哨实测 45-60 秒/拍 vs 设计 20 秒**（单轮 handle64 枚举本身耗 25-40 秒）：抓"瞬开瞬关"能力弱于设计。**建议默认＝不再为它扩仪器**（改并发枚举属仪器面扩权）。
+- **㉔ 他班测试写热册（只报，本班主动停止复现）**：`#ARCH-084` 守护归因 `test_backup_mirror_deletion_cap.py::…test_explicit_zero_is_not_replaced_by_fallback` 写了 `capability_canonical_file_registry.yaml`（mtime 与本行测同拍；该测试件末次触 `23c2d00e54d`，全文 grep 无该册名 ⇒ 写手在导入链的投影刷新）。现状 +1190/−0 零删除。**建议默认＝归维护三班治（fixture 隔离/禁导入即写册）**；本班不再跑该目录级测试去复现。
+- **㉕ 晨核结果的接收**：06:20 单发班若发现 06:00 腿未点火、或轮转读出第三种值（＝第三写者），或新尸需定名——**建议默认＝只读登记＋等裁，不当场处置**；本班已把这条写进它的 prompt 红线。**另知会一条时点**：新 runlog 若出现 `script=` 指主区**且** state 里 `last_ignite_target_root` 缺失，那是②号口径（state 为旁证）的正常形态，不是回归。
+- **㉖ 一句给统筹的进度定位**：本班离终局还差两步——**①q-0013 真落地（HEAD 字节为准）**、**②06:00 腿＋⑫终验两枚预测被现实兑现或打脸**。两步都有承接件（一次性晨核班），不依赖本班会话存活；无一步在等人。
+
+- **零面声明（本节）**：本班杀停进程 0｜`G:\backup` 内容零写｜他人件零改动｜判据·阈值·门禁码·注册表·备份任务定义零改动｜未用 noqa 绕门｜无白名单｜CH 取数经既有单口累计 1 次｜blobs 未碰｜本节纯追加，写后结构自证见下。
+- **复核命令**：`git log --oneline -12`（看本班各袋）；`python scripts/commit_queue.py status --session st-backfix3-20261011`（q-0013 状态）；`git show HEAD:scripts/backup/backup.ps1 | grep -n AppendAllText`（q-0013 落地正证，落地前应空）；`python -c "import io;t=io.open(r'docs/_working/backfix_campaign/00_ledger.md',encoding='utf-8').read();print(t.count(chr(10))+1,t.count(chr(10)+'## '),t.count(chr(10)+'### '))"`（行数/节数只增）；`grep -c '^## 通宵执行与晨间裁定包$' docs/_working/backfix_campaign/00_ledger.md`（应 1＝节标题唯一）。
+- **署名**：adjudicator=st-backfix3-20261011（通宵令·本班节收工笔：执行账／自裁账／等裁菜单三段齐，含 ⑯⑰ 两条今夜新发现）。
+
+### 值守轮读数（10-12 02:0x-02:5x）＋批复③尺法注释袋（st-backfix3-20261011 02:0x-02:5x 轮）
+
+- **本轮性质**：值守读数＋统筹批复③的一处纯注释落地，零新施工、零处置动作。01:06:05 那发（pid=19772）本段成文时（03:2x，已跑 2h14m，对照前两发完赛 86.1 分／65.5 分）**仍在飞**，完赛读数若未及入本段，则由 06:20 一次性晨核班按其任务书第 1 判据收录（该卡已在册）。
+
+**一、01:06 那发的在飞与判活法（统筹批复①采纳入册的元数据计数尺）**
+
+- 主证 RUN_START：`2026-10-12 01:06:06 | RUN_START | pid=19772 mode=all force=False script=D:\ZephyrAlpha\scripts\backup\backup.ps1 root=D:\ZephyrAlpha`＝**批复二第二发真机样本**（点火者在池工车道根 `.runtime\commit_queue\worktrees\w0` 的 reconciler，执行体经 `primary_checkout_root()` 解析回主检出点；该车道根点火件 `backup_reconciler_ignite_20261011_170604.log` 内容与本地 01:06 轮逐段吻合——件名与本地时刻差 8 小时，见本段第四节尺法）。
+- Stage 2 产物：PG 242.5MB／globals ok／SQLite 2 databases／PG+CH config synced；CH 腿 `last backup 3.9h ago (< 24h cadence), stage skipped`（设计内跳过，非故障）。
+- Stage 3 快照收官行：`2026-10-12 02:00:50 | OK | Snapshot: linked=46144, copied=1037, replaced=0, failures=0, vanished=29, share_locked=0`（Mode A 首建当日快照，非增量；当日目录 `G:\backup\working_vault\20261012` mtime=02:00:47）。
+- **快照后 24-80 分钟日志无新行的定性**：拿的是`Win32_Process.OtherTransferCount` 增量（02:16→02:17 +423,862／02:39→02:40 +425,026／02:49→02:50 +194,660）而 `ReadTransferCount`/`WriteTransferCount` 恒定＝**纯元数据做功**，落点＝vault 轮转腿在处理 `G:\backup\working_vault\20260927`（cutoff=20260928 ⇒ 全仓唯一到期项）。**未用 CPU 判活**——饱和机上 CPU 读数无判别力是在册教训。
+- 但该腿此刻处在**枚举还是删除**之中，本班不下硬判（两把尺都指向“还在整树走”）：02:50 实测 `20260927` 自身 mtime 仍＝02:00:51、子目录恒 27 枚、顶层文件恒 15 枚、无一子目录 mtime 新近推进、`G:` 余量 02:16→02:50 恒 2450.48→2450.49GB＝**未释放空间**；同树旁证＝本班 02:35 单起 `Get-ChildItem -Recurse -File | Measure-Object` 探针 **5 分钟未跑完**（02:50 自停，避免观测者负载与删除争 I/O——该探针本身是负载，已如实登记）。⇒ 定性＝“整树递归中（枚举或删除皆可，未证）”，**不判挂死、不判在删**。
+- **新发现（可观测性面，代码级正证）**：`scripts\backup\backup.ps1:906-913` 的 vault 轮转腿**只在结束时打一行 `Rotation: removed N ...`，开始时无行**——删一枚整日快照要单进程递归走完整棵树，实测 02:00:50→03:20 仍无输出（≥80 分钟）⇒ runlog 出现小时级空窗，形似“挂死”而实为设计内慢腿。这与本院在治的“静默”病族同形（10-09 的 `Test-CapacityGuardBreach` 定义顺序缺陷也是“看着在跑”）。新增候裁 **㉘**：轮转腿开头补一行“即将删除 N 枚到期目录（清单）”，收尾行照旧＝纯可观测性面、判据与保留线零改、与⑫同款。**建议默认＝批**（本班不自修，等批随下袋落）。
+
+**二、⑫ 终验第二样本（在册候裁㉑次序自指的终验）**
+
+- 轮转腿读数：`（本段成文时轮转腿尚未出行）`；vault 侧 `（未出行）`。预测＝state 现值 `skipped` ⇒ 应打 `DB dumps rotation skipped (state last_ch_backup_status=skipped ...)`；打出第三种值＝存在第三写者，另案只读调查。**本班判定＝本段成文时该腿未出行，判定留给 06:20 晨核班**。
+- 预测的**事实基线**（本班 02:2x 实测 state 册）：`last_backup_status=ok`／`last_ch_backup_status=skipped`／`last_backup_log_verified=True`／`last_backup_time=2026-10-11T23:58:27`（＝22:52 那发的收尾）。
+- **次序自指的实测澄清**（强化候裁㉑，不改判据）：22:52 那轮的 rotation 读到的是 `ok`，而它自己 Stage 4 才写 `skipped`⇒轮转腿读的是**上一轮**的 CH 结论，不是本轮。因此“轮转只在 CH 那一条腿没跳过的那一发执行”＝每至多一发一次，dumps 保留线最多滞后一个 CH 节律（实测 24h 节律），**非泄漏**：`G:\backup\db_dumps` 现 14 个日期目录合计约 5.8GB（逐枚 346.7-482.0MB），G 盘余 2450.48GB。
+
+**三、三袋超集判定（在册“代投前必逐件做超集判定”的执行）＋一条落地侧结构结论**
+
+- 同会话在途三袋对同一件 `docs\_working\backfix_campaign\00_ledger.md` 的 blob 关系（base 皆＝7f077d2d，且 base 与 HEAD 逐字节等＝677 行）：**v12 +223/-0 ⊂ v13（=v12 +26/-0）⊂ v14（=v13 +44/-0）**，零删除、严格嵌套，FIFO 落地不回退。另核工作区该件与 q-0014 的 blob **sha256 全等**（3445a403…），故本段追加仍是安全超集链。
+- **结构结论（入册尺法）**：落地侧对普通文件（非注册表族）按**袋内 blob_sha256 读回自验**（`commit_queue_landing.py` 的 M5.1 语义）⇒ 同一件在途袋未落地前，**禁止在其上叠一份内容更旧的袋**（后落地的整文件写会覆掉先写的段）；要续写只能叠在最新工作区字节之上做成严格超集。
+- 落地核验仍为 0（只信 HEAD 字节）：`git show HEAD:scripts\backup\backup.ps1 | grep -n AppendAllText` 0 命中；HEAD 的账本仍 677 行；本班三袋在 pending（02:2x 实测位置 6/19/28）。
+
+**四、批复③执行账（纯注释，零逻辑改动）**
+
+- 新候裁的**代码级正证**（非推断）：`scripts\backup\backup_reconciler.py:1012` 取 `datetime.now(timezone.utc)` 给点火件命名，而 `backup.ps1` 的 runlog 名用本地时刻⇒ 本地 10-12 01:06 那发的点火件名是 `backup_reconciler_ignite_20261011_170604.log`，落在点火者自己车道根的 `logs/` 内。本班按本地日期 find 时确实零命中，靠 mtime 排序才捞回。
+- 处置＝**按批复默认：不改名**（改名即造混制日历、毁既有件名的可追溯性）；立尺法＝该行旁 +5 行注释（本袋内）＋本台账尺法条。换算规则＝**件名时刻＝本地 − 8h／本地＝件名 + 8h**。
+- 自证：`git diff --unified=0` 对该件 **added 5 / removed 0**；`ast.parse` 通过；BS(0x08)=0、TAB=0；`tests/meta/scripts/backup/test_backup_reconciler.py` 改后复跑 **52 passed**（注释件的行为面零变，跑它是为排除“改注释撞坏导入”的伪证）。
+- 新增候裁 **㉗**：点火件名（UTC）与 runlog 名（本地）的双制日历属可观测性面不一致，本班按批复只做注释＋尺法；若 Owner 要统一为本地名，属命名口径变更（会毁历史件名一致性），**建议默认＝维持现状＋尺法注释**（即本班本袋已做的形态）。
+
+**五、提交链分母实测（如实不归因）＋一枚单例死信**
+
+- 分母：`git log --since=2026-10-11 12:00`＝**63 笔/741 分钟**；落在三个备份窗内 14 笔＝**3.70/h**，窗外 49 笔＝**5.72/h**。但窗外也现 69 分钟空窗（10-11 18:38 起），窗内最大空窗 81 分钟（20:35 起）⇒ 样本量与判别力都不足，**本班不把 01:33→02:09 的 35 分钟空窗归因给备份**。
+- 队列面（判堵先量全局分母）：全局 pending=33／processing=1／done=745／dead=1454，租约 holder_pid=15100 `renewed_age_s≈17-21s`、state=drain-active、daemon online＝**队深非楔死**。head 一枚等待 5297-5782 秒（他会话袋）。
+- 单例登记（不扩判）：`q-20261012-st-deadcure3b-chief-20261011-0011` 死因 `landing 异常: TimeoutExpired: git commit --no-verify ... timed out after 60.0 seconds`，时刻 00:12:46＝**无备份在跑**（22:52 那发已于 23:58:27 RELEASE_LOCK），与备份窗不重合，故不作因果叙事，留队列面自纠；全夜此类死信仅 1 枚（实测计数）。
+
+**六、仪器与自动化面（逐 pid／键集合差）**
+
+- 在册仪器逐 pid 复测全活 **9 枚**：57376／43560／57184／57008／33880／17224／23588／49396／53928；keep 行 `backfix_lockreaders_sampler`(336)、`backfix_handle_poll`(338) 零退；`event_watch` 主日志 119MB 且 mtime 02:01 仍在推进（活着且在写，非仅活着）。
+- **本班数字自纠**：前段（00:5x 轮）写“舰队逐 pid 复测 **10/10 全活**”而同行实列 **9 枚**——数字与清单不符，属“读数对、计数错”。以键集合差为准＝9 枚在册全活；38568（landing watcher）／23048（27300 监听）／38464（压缩 round-2）三枚此前已按设计自退并在册，不在这 9 枚的分母里。
+- 自动化名册复核：`844ab246`＝enabled、单发 06:20、`deleteAfterRun=true`、revision 2；`4910ee4e`＝disabled（pauseReason=manual，硬到期 10-12 12:00 前一键可启）；`9cbf6aef` 已从名册消失（删除兑现）。
+
+**七、GBK 修复的活体面读数（诚实边界）**
+
+- 本轮 runlog 实测：48 行、严格 UTF-8 解码通过、非 ASCII 字符 0 个＝**一致性样本而非决定性证据**。决定性证据仍是袋内红绿双证：`tests/meta/scripts/backup/test_backup_ps_scripts.py::test_journal_writer_emits_strict_utf8` 以 `[char]0x4E2D` 造中文行，断言无 BOM＋严格解码＋回读等值；红证同件在 HEAD 旧字节上必抛。
+- 为何活体中文行可能一直不出现：昨夜的中文行全部来自 `Source vanished mid-run, skipped: .ailocks\docs._working...` 这类**含中文文件名的锁件路径**（如 `..._06_基线出生件与r位声明版.yaml.lock`）。今夜消失的 29 枚锁件路径全 ASCII⇒ 活体样本是否出现取决于锁名抽签，本班**不为此造样本**（不新建中文名锁件）。
+- 尺法条（与批复③注释同批）：**看备份链日志一律先认两套日历**——runlog/报告名＝本地时刻，reconciler 点火件名＝UTC（本地 − 8h）；跨根找件按 mtime 排序而非按名日期 grep。
+
+**八、⑯ 的前提被本班自证推翻（撤回转班建议＋预报 q-0014 死信）**
+
+- 03:2x 实测：`gate_dry_run` 报的 REFERENCE-INTEGRITY 硬拦**成立**，**不是**干跑器 own-scope 口径差。判据面正证＝该别名在 HEAD 的账本里只有第 345 行一枚（巡检班 `eb38f1c1ae5` 早已落地，added-lines 扫不到它）；而本班**未落地**文本（晨间包 ⑯ 段，现第 954 行）自己新增了第二枚裸 `#ARCH-` 引用＝命中 added-lines，门按在册判据正确履职。
+- 正解＝**去井号**（在册同族解法：`裁定#<未登记数字>` 与裸挂 `§N.M` 两形态皆自触此门致死信，去井号即解）。本班已对本袋未落地文本执行该形改（第 954 行，纯字符改动、不改叙事、不动他班已落地文字）。
+- **撤回**："⑯ 转维护三班核干跑器口径"这条建议前提不成立，该转班件应撤销。统筹 02:2x 批复里"⑯…转维护三班＝采纳"是**基于本班错误前提**作的决定，故须回执更正；本班不自裁他班工单终态，只把事实与凭据交回。
+- **连锁后果预报**：q-0014 的袋内 blob 含该行（实测三枚 blob 该串计数＝v12:1／v13:1／v14:2，多出的正是 954 行）⇒ **q-0014 到 drain 时会死于这一门**。按在册处置＝让它死、勿 requeue、勿碰 blobs，由本袋（严格超集＋去井号）承接内容。
+- 自纠归位：本班把"否证"当结论写过一次，犯的是"零命中尺缺正对照"同族错——尺（added-lines）本身没错，错在本班没先对"该别名是否被我自己的新增行命中"做集合差。
+
+**九、本段唯一等裁项 ㉙（账本袋的门禁阻塞，三选一）**
+
+- 事实：含本账本的袋被 REFERENCE-INTEGRITY 的 L2 整档扫描硬拦（第 345 行的井号别名，正身 id＝`#ARCH-OPS-001`），本班在途 q-0012/13/14 与新袋同判；尺法注释单件袋已另起并成功入队（q-0015，files=1）。
+- 菜单（**建议默认＝甲**）：
+  - **甲＝授权本班给第 345 行去井号**（纯字符形改，把 `#ARCH-BOOT-WINDOW-FLASH` 写成 `ARCH-BOOT-WINDOW-FLASH`，叙事与结论零改；在册同族解法即"去井号即解"）。代价＝动了他班已落地的一行文字，须统筹点名才做，本班不自裁。
+  - 乙＝把该别名以 `issue_id` 形式登进 architecture_issue_registry.yaml。代价＝与该册"新条目走数字制"的在册冻结方向相逆（L3 会报非数字制 WARNING），且是为绕过门禁而增册，净零判据不过。
+  - 丙＝本班另起一支附注件承载新段（避开第 345 行）。代价＝同战役出现第二本真源，违"同真源可派生→必并"的内收铁律，只在甲乙皆否时才值得考虑。
+- 未随本段做的一个动作（如实交底）：06:20 一次性晨核班的 prompt 里仍留着本班 ⑯ 段那句"已实测否证"，本班**选择不改该卡**——理由是重写 6.5k 字符 prompt 的转写风险（反斜杠/引号折叠在册）高于其收益，而该卡的第一步就是读本账本，第 954 行的旧案卷＋本段第八节的更正已在同一文件里形成前后链；若统筹认为必须改卡，一句话本班即改。
+
+**十、04:05 复测补数（本段第八/九节之外的第二手读数，不改前文只追加）**
+
+- 快照后空窗已延到 **2h04m**（02:00:50→04:05 仍 48 行），全轮已跑 **2h59m**（对照前两发完赛 86.1 分／65.5 分）。
+- 判活尺复测：`OtherTransferCount` 02:50→04:05 ＝ 47.0M→**99.4M**（+52.4M 全在元数据面），而 `ReadTransferCount`/`WriteTransferCount` **85 分钟纹丝不动**（378,866,076／378,312,145）；无 robocopy 子进程（仅 conhost 40464）。
+- G 侧三尺齐平＝**还没开始删**的样子：`20260927` mtime 仍 02:00:51、子目录恒 27、顶层文件恒 15，且 `G:` 余量 2450.49→**2450.39GB（不升反降 0.10GB）**。
+- ⇒ 本班把定性从"整树递归中（枚举或删除皆可，未证）"**收窄为"更偏枚举未完成"**（PowerShell 5.1 的 `Remove-Item -Recurse -Force` 在大树上先自采清单、provider 开销极高，是已知慢腿形态）；仍**不判挂死**——元数据面在持续做功。
+- **补记（04:06，纠正本段第五节的截面读数）**：`git commit --no-verify timed out after 60.0 seconds` 这类死信本班 02:2x 数得"全夜仅 1 枚"，04:06 复测已成 **2 枚**——第二枚就是**本班自家 q-20261012-st-backfix3-20261011-0012**（账本袋，dead_reason 逐字同上）。前文按"只增不改"留原读数，此处显式补记。
+- **q-0012 的处置＝让它死，不重投**：其内容（v12＝base+223 行）已被在途 q-0013（v13⊇v12）与 q-0014（v14⊇v13）**逐行承接**（03:0x 实测三枚 blob 集合差零删除、严格嵌套），重投只会多一只撞同一超时的袋。blobs 零碰。
+- 全局面同拍读数：pending 58／processing 1／done 750／dead 1460，租约 holder_pid=15100 新鲜（renewed 5.2s，drain-active）、daemon online，head 一枚已等待 **11,947 秒（3.3 小时）**＝队深非楔死；本班 q-0013/q-0014/q-0015 现位置 10/19/50。
+- **连带预报（只登记，不处置）**：该腿无时间上界，若 06:00 计划任务点火时本轮仍未放锁，06:00 那发会走 lock-skip 支（落 `backup_skipped_*.json`＋`LOCK_HELD` 行，属在册设计内，非事故）；06:20 晨核班按卡读该形态即可，勿手动点火、勿清锁。
+- 该超时属落地链基础设施面（非本战役判据），本班**不改 60 秒阈值、不改落地码**，只把两枚死信与队深读数交回统筹。
+- ㉘ 因此升级：轮转腿除"开局无日志"外，还**没有任何进度面**（N/M 或字节数），单靠日志空窗无法与"卡死"区分——这正是本院在治的"静默"病族的第三个实例（前两个＝`Test-CapacityGuardBreach` 定义顺序缺陷、监听节拍停写）。**建议默认仍＝批一行起始日志**；进度面与换删除实现（如 `cmd /c rmdir /s /q`）属行为面，本班不自裁。
+
+**十一、05:03 复测：删除真的开始了（磁盘侧可见、日志侧仍零行）＋两枚 lock-skip 轮**
+
+- **前文"更偏枚举未完成"被实测兑现**：`20260927` 的 mtime 从 02:00:51 推进到 **04:13:24**，子目录 **27→21**（删掉 6 枚），`G:` 余量 **2450.39→2451.61GB（回收 1.22GB）**＝删除面首次有盘侧正证。而 runlog 仍 **48 行**（02:00:50→05:03 空窗 **3h02m**）。
+- ⇒ ㉘ 的代价从"看起来像挂死"升级为**有实测进度却零可见性**：进度在磁盘侧量得到（目录计数＋余量），在日志量不到。线性外推（6 枚子目录／50 分钟）＝再约 3 小时收尾，**外推不可靠**（子目录体积不均，且本班拒绝为猜 ETA 加仪器）。
+- **两枚新 runlog＝两发 lock-skip，不是两发备份**：`..._030050.log`（pid=50500）与 `..._030843.log`（pid=50564）各自 4 行，RUN_START 的 `script=`／`root=` 均＝**主区**（批复二在活面上的第三、四证），随后逐字 `Another backup is running (holder PID 19772 alive, lock age 1.9h/2h). Exiting.` ＋ `LOCK_HELD | exit 0 skip_record=...`，并各留一份 `logs/backup_skipped_20261012_*.json`（当日累计 **2 份**）。
+- **这正是候裁⑮ 的活体证据**：新车道／无 `last_backup_launch_time` 的 state 使 8 小时间隔闸**恒判过期**⇒ 已有一发在跑时仍连点两枪。后果当前无害（跳锁支设计内、留痕完整），但它的形态就是当年"多版本副本共抢一把锁"的燃料；本班**不处置**（不放锁不杀进程，红线内），只把"点火前应读全局在跑态而非仅本车道 cadence"列为候裁⑮ 的补充事实。
+- **今日面板书（诚实）**：当日 vault 快照 `G:\backup\working_vault\20261012` **已在 02:00:47 完整建好**（35 个子目录，快照行 `failures=0`）⇒ 不是"没备份"；**未跑完的是 Stage 3b/3c/3d 与 Stage 4**（git bundle 刷新、馆外资产镜像、G 盘兜底镜像、生产报告），故当日**生产报告仍 0 份**、state 册仍停在 22:52 那发的 `ok/backed_up`。
+- **06:00 预报更新**：按上面 ETA，06:00 计划任务那发**大概率走 lock-skip**（同 03:0x 形态，留 skip json＋`LOCK_HELD` 行，属设计内，非事故）。06:20 晨核班据此读，勿手动点火、勿清锁、勿杀 19772。
+
+**十二、06:00 腿现场读数（本班在 06:01 抓到，不等 06:20 班）**
+
+- 06:00:07 点火 pid=42288，`RUN_START ... mode=all force=True script=D:\ZephyrAlpha\scripts\backup\backup.ps1 root=D:\ZephyrAlpha`——计划任务带 **`-Force`** 仍**照规矩跳锁**（`Another backup is running (holder PID 19772 alive, lock age 4.9h). Exiting.` → `LOCK_HELD exit 0`）＝T1 治本面在 -Force 分支同样履职（这是新读数：此前只验过 force=False 的跳锁）。
+- 当日累计：runlog **4 支**（01:06:05 在跑／03:00:50、03:08:43、06:00:06 三发跳锁）、skip json **3 份**、`backup_report_20261012_*.json` **0 份**。⇒ **今日日检面为空**，成因不是"没点火"而是"唯一那发还没收尾"。
+- 长跑本体复测（06:01）：pid 19772 仍活，`OtherTransferCount` 04:05→06:01 由 99.4M→**215.6M**，而 `Read/WriteTransferCount` 自 02:40 起**一字节没动**（378,866,076／378,312,145）＝全程纯元数据；`20260927` 顶层 mtime 仍 04:13:24、子目录恒 21，但 `G:` 余量 2451.61→**2453.60GB（+1.99GB）**⇒ 删除在**子目录内部**推进（父目录 mtime 只在顶层条目消失时才动，这把尺的解释力本班已用到底）。
+- 累计耗时：本轮已跑 **4h55m**，轮转腿独吞 **4h**（02:00:50 起）。本班**仍不判挂死**（元数据面持续做功＋盘侧空间持续回收＝两条独立正证），也**不给 ETA**（无进度面可量，㉘ 已登记）。
+- 与 06:20 班的分工（防撞写手）：本班已在 06:01 抓到 06:00 腿读数并入本段；06:20 班按其卡继续跑三判据即可，两支若同刻写本册，走 CAS 追加＋marker 幂等（本段标题即 marker）。
+
+- **零面声明（本段）**：本班杀停进程 0｜锁零删零建（`.runtime\backup.lock` 现值仍 PID:19772 START:01:06:06，由备份链自己持有与释放）｜`G:\backup` 内容零写（全部读数＝stat/目录计数/PSDrive，轮转的删除由备份链自身按在册保留线执行）｜`data.vhdx`／`boot.vhdx` 零碰｜压缩器与其 journal 零碰（38464 已按设计自退）｜判据·阈值·门禁码·注册表·计划任务定义·备份流水线分支**零改动**（本袋对 .py 只做注释，`git diff` added 5/removed 0 为凭）｜state 册零写（读四键）｜CH 取数 0 次｜仪器零新起、同 pid 第二支监听零建｜`.runtime\commit_queue` 的 **blobs 零碰**（只读其 pending 袋 json 与 `w0/logs/` 点火件文本）｜他人件与他人 staged 条目零触碰｜本段零新施工。
+- **回退令（逐件）**：尺法注释＝`git checkout HEAD -- scripts\backup\backup_reconciler.py`（纯注释，回退不影响任何行为）；本段＝revert 本 commit（账本单件纯追加）。
+- **署名**：adjudicator=st-backfix3-20261011（本段：01:06 轮在飞判活＋⑫ 第二样本、批复③尺法注释落地、三袋超集判定与落地侧结构结论、新候裁㉗㉘、10/10→9 数字自纠、**⑯ 前提自证推翻后的撤回与 q-0014 死信预报**）。
+
+### 晨核（10-12 06:2x 单发班）
+
+> 一次性只读晨核班（授权延伸，零处置）。取数窗口实测 06:20:18—06:37（date 逐拍校准，不用体感钟）。三条判据按任务书主证版执行，判据与阈值零改动。
+
+**判据一｜06:00 任务腿＝点火兑现、备份未开跑（跳锁形态）**
+
+- RUN_START 主证（`logs/backup_runlog_20261012_060006.log` 首行，pid=42288）：`mode=all force=True script=\D:\ZephyrAlpha\scripts\backup\backup.ps1 root=D:\ZephyrAlpha` ⇒ `script=` 等值＝主区那份 ✓；这是任务腿带 `-Force` 仍照跳锁的独立第二证（前任班 06:01 已录同拍读数，本班不重复叙事，只加一枚 06:2x 复测）。
+- 该发无 LOCK_ACQUIRED、无 Stage 行、无报告；末行 `LOCK_HELD | exit 0 skip_record=D:\ZephyrAlpha\logs\backup_skipped_20261012_060006.json`；跳锁理由逐字 `Another backup is running (holder PID 19772 alive, lock age 4.9h). Exiting.`。
+- 当日累计（06:36 实测）：runlog **4 支**（01:06:05 在跑／03:00:50、03:08:43、06:00:06 三发跳锁）、skip json **3 份**、`ls -1 logs/backup_report_20261012_*.json | wc -l` ＝ **0**。
+- 01:06 那发（pid=19772）**未完赛、停在 vault 轮转腿**：runlog 恒 48 行，末行 02:00:50 `Snapshot: linked=46144, copied=1037, replaced=0, failures=0, vanished=29, share_locked=0`；日志空窗至 06:36 已 **4h36m**，全轮已跑 **5h30m**（对照两发完赛 86.1 分／65.5 分）。停点代码位＝`scripts/backup/backup.ps1:906-913`（轮转删除腿），旁证＝`G:\backup\db_dumps\20261012` **尚不存在**（该行在 `backup.ps1:921` 才建）⇒ 执行点确未越过轮转腿。
+- 计划任务面旁证（只读，定义零改动）：`ZephyrAlpha-DailyBackup` lastRun=10/12 06:00:01、lastResult=0、next=10/13 06:00、`multipleInstances=IgnoreNew`、`executionTimeLimit=PT4H`；同名册另有 `ZephyrAlpha-BackupShadow`（13:30 腿，lastResult=0）。
+- 复核命令：`head -1 logs/backup_runlog_20261012_060006.log; tail -1 logs/backup_runlog_20261012_060006.log; ls -1 logs/backup_report_20261012_*.json | wc -l`；任务面读数＝只读探针 `.runtime\tmp\bf3_morning_taskinfo.ps1`（输出已存 `bf3_morning_taskinfo.txt`）。
+
+**判据一附｜卡里"新尸"前提被本班实测否证（未定名、零处置）**
+
+- "锁残留而持有者已死"不成立：`Get-Process -Id 19772` ＝ **ALIVE**（start 01:06:05；cpu 06:22 采样 658.59s → 06:26 采样 663.41s 仍在累积）。⇒ 本班不冻结"死亡时刻"、不动锁、不杀不停任何进程。
+- 仍按 4 小时时限当场冻结了事件面原文（预防性；事后证明必要：本班读数时 06:22 距 02:00:50 已 4h21m）：`Windows PowerShell` 通道 18h 窗口内**最旧事件＝02:02:21**＝保留窗约 4h20m 的第二次独立实测（与在册尺法同值）。02:02:21 之前（含 01:06 那发的 400 与 02:00:50 前后）**已永久不可复核**——这条要如实记在"未定名"旁边，别让下一班以为还能补查。
+- 冻结件与归因：`.runtime\tmp\bf3_morning_case_20261012.txt`（400/403 原文 36 条＝18 对）。其中 HostApplication 为 `-File ...backup.ps1` 的真实发射只有 **8 条＝4 对**（pid 39796／50500／33840／50564，各起停 <1 秒＝四发跳锁轮的正常引擎退出）；其余 **28 条＝观测者自造行**（探针命令行含 `Get-ChildItem G:\backup...`、`Get-ScheduledTask`、`CHILDREN:` 等）。尺法补充一条：按在册"自造行先减"，本班用 **HostApplication 串面**而非 HostId 作判据——因为前任班探针的 HostId 也是 GUID，在册那条"探针＝常量串 InternalHost"的区分尺在本次出生形态上不成立。
+- 判活三拍（`.runtime\tmp\bf3_morning_progress_20261012.txt`）：cpu 658.59→661.02→663.41（+2.4s/45s）；`OtherTransferCount` 250,394,624→251,513,724→252,571,844（约 +1.1M/45s）；`Read/WriteTransferCount` 恒 378,866,076／378,312,145——**与前任班 02:40 的读数逐字节同值**＝3.7h 内一字节数据 IO 未发生；robocopy 子进程 0（仅 conhost 40464）；句柄 677→674 有动。⇒ 定性＝**纯元数据面仍在做功**，与前任班"不判挂死、不给 ETA"同向，本班同样不判挂死、不给 ETA。
+- 删除面新读数：`20260927` 顶层 36 枚（含 8 枚隐藏）中 `.worktrees` 的 mtime＝**06:26:34**＝采样当下，而父目录自身 mtime 仍 04:13:24 ⇒ 删除正发生在 `.worktrees` 子树内部（父 mtime 只在顶层条目消失时才动；这把尺的解释力前任班已用到底，本班只补一枚新读数，不重解读）。
+
+**判据二｜⑫ 次序自指终验＝兑现，第三写者判据为负**
+
+- 三种值普查：`grep -h -oi 'last_ch_backup_status=[^ )]*' logs/backup_runlog_2026101*.log | sort | uniq -c` ＝ 仅 **ok** 一种（`DB dumps rotation: removed 3 old snapshot(s) [state last_ch_backup_status=ok]`，22:52:55 那发）⇒ **无第三种值 ⇒ 无第三写者**，本班据此结案。
+- 新旧文案夹出 ⑫ 的生效时刻：19:48:41 那发打的是**旧文案**（`DB dumps rotation skipped (CH backup not ok -- oldest snapshot kept as insurance)`，不含读值），22:52:55 那发打**新文案** ⇒ ⑫ 在两发之间落地并被真机各跑过一遍；这是比"读代码"更硬的正证。
+- 诚实边界（本班不把它写成已验证）：新格式的 **skipped 分支至今无活体样本**（01:06 那发没走到该腿）。state 现值＝skipped ⇒ 下一个走到该腿的轮转应打 `DB dumps rotation skipped (state last_ch_backup_status=skipped ...)`；预测在册、兑现待下一发。
+- state 四键同拍：`ok / skipped / True / 2026-10-11T23:58:27.3281574+08:00`，与 22:52 那发的 Stage 4 收尾（`RELEASE_LOCK pid=15316` @23:58:27）逐字段吻合。
+- 新证（本班独立发现，定性＝既有设计、非回归）：state 册 mtime＝**02:11:57** 而内层 `last_backup_time` 仍 23:58:27——写者已定位到 `scripts/backup/backup_reconciler.py:899` 的 cadence-skip 分支（键 `last_cadence_skip_time=2026-10-11T18:11:57.846300+00:00`＝本地 02:11:57；`last_cadence_skip_reason='min_interval elapsed=8010s < 28800s'`，而 8010s 恰＝23:58:27→02:11:57 的间隔）。⇒ 该册共**两个**写者（`backup.ps1:1264` Stage 4 ＋ reconciler 跳过分支）；这与"第三写者"判据不冲突——那条只判轮转读值，不判文件 mtime。附一条双制日历再证：skip 时刻以 UTC 入册、runlog 以本地入册，换算＝本地−8h（与批复③尺法同款，本班再碰一次，不改名）。
+- 复核命令：上两条 grep；`python -c "import json,io;d=json.load(io.open(r'data/databases/backup_state.json',encoding='utf-8'));print(d.get('last_backup_status'),d.get('last_ch_backup_status'),d.get('last_backup_log_verified'),d.get('last_backup_time'))"`；写者定位＝`grep -n 'last_cadence_skip_time' scripts/backup/backup_reconciler.py`。
+
+**判据三｜落地核验（只信 HEAD 字节）＝两兑现、一打脸（打脸的是本班的期望串，不是施工）**
+
+- 3a **兑现**：`git show HEAD:scripts/backup/backup.ps1 | grep -n AppendAllText` → 第 **78** 行命中、count=1（本班卡记的 01:3x 前值为 0）；盘面该行与 HEAD 逐字节同。落地袋＝`q-20261012-st-backfix3-20261011-0013`（state=done、landed_id=**ad04467aa7**、10-12 06:03、files＝backup.ps1＋守卫测＋账本）。⇒ 卡里"GBK 修复袋落地与否本身是待核项"＝**已落地**。
+- 3b **兑现**：`git show HEAD:scripts/backup/backup_reconciler.py | grep -c primary_checkout_root` ＝ **3**（判据 ≥3）。
+- 3c **打脸＝本班卡的期望串选错，不是内容丢失**：`git show HEAD:docs/_working/backfix_campaign/00_ledger.md | grep -c "通宵执行与晨间裁定包"` ＝ **0**。正身实测在**盘面第 927 行**，且它是 **H2（`## 通宵执行与晨间裁定包`）而非 H3**——卡把它当"节标题"给 grep 串却没写层制，判据可用但只读 HEAD 会假红。真因＝**在途未落地**：HEAD 925 行 vs 盘面 1070 行，而前 925 行与 HEAD **逐字节全等**（`cmp` 正证）＝纯追加链成立；未落地的 144 行＝01:3x 起笔的晨间包＋02:0x／04:05／05:03／06:01 四段值守读数。
+- 队列面（本班 sid，06:2x 实测）：pending **2**＝q-0014（01:32:42 起，已 **5h04m** 未消、未死）与 q-0015（03:34:40 起，3h02m）；done 10；dead 3。全局 pending=**60**／processing=1／done=764／dead=1461；租约 holder_pid=15100 新鲜（acquired＝renewed＝34s，state=drain-active）、daemon online、head 一枚已等 18,658s（他会话袋）⇒ **队深非楔死**，本班按卡不抢租约、不手工提交。
+- 三枚死信逐条（死因原文要点；本班不 requeue、不碰 blobs）：① `SSOT-REDEFINITION`＝reconciler 内重复定义 `PROJECT_ROOT`（canonical＝`src/zephyr/shared/io/paths.py`）；② `BARE-SUBPROCESS`＝`backup_reconciler.py:704` 裸 `subprocess.run`；③ landing `TimeoutExpired: git commit --no-verify ... timed out after 60.0 seconds`（＝q-0012，前任班 04:06 已按"让它死＋内容由后续袋逐行承接"在册）。前两条属**代码面施工**，越出本班"零处置"授权 ⇒ 列移交不代修（＝㉝）。
+- 卡点名的在册假警报：本班**未采信也未复现**干跑器那条 `ARCH-BOOT-WINDOW-FLASH` 硬拦读数——前任班 03:2x 已自证推翻自己"假警报"的初判（真相＝未落地文本自己新增了第二枚裸井号架构别名，门按 added-lines 正确履职）。本班沿其正解执行：**本段全文零裸井号架构别名、零"裁定"＋井号＋数字形态**，入袋前对未落地文本自扫"井号紧接 ARCH"＝0 命中；未改他班已落地文字。
+- **q-0014 回退弹判定（本班最重要的一条残余风险；只读袋 json 元数据，blobs 零碰）**：q-0014 内账本 blob sha256 前缀＝`3445a403…`（01:32 快照），盘面现为 `d6ec1c42…`（1070 行，含 04:05／05:03／06:01 三段）⇒ **q-0014 内容比盘面旧**。按 FIFO 它排在本班新袋之前 drain，净效果＝被本班这枚严格超集覆盖，**当前不构成回退**；真风险＝**任何人日后把 q-0014 requeue**——落地侧对普通件按袋内 blob 整档写回（前任班在册 M5.1 结构结论），后落地即整档覆掉 02:0x 之后各段。证据等级＝**推论级**（未读 blob；由"前缀逐字节全等＋各段零面声明自报纯追加＋两枚 sha 差"三件合成）。
+- 复核命令：`git show HEAD:docs/_working/backfix_campaign/00_ledger.md | wc -l`（925）；`git show HEAD:docs/_working/backfix_campaign/00_ledger.md | grep -c "通宵执行与晨间裁定包"`（0＝本班打脸项）；`python scripts/commit_queue.py status --session st-backfix3-20261011`。
+
+**等裁菜单（本班零自裁；编号续前任班的 ㉙ 之后；建议默认一律＝不改行为）**
+
+- **㉚ 轮转腿的"首删成本"已从一次性变成每日性（本班头号呈报）**：14 天保留线 ⇒ cutoff 每日前移一天，实测算术＝`run_on 20261011 → cutoff 20260927`（`20260927 -lt 20260927` 为假 ⇒ 全仓无到期项，轮转腿空跑）；`run_on 20261012 → cutoff 20260928` ⇒ 唯一对象 `20260927`（`date -d '14 days ago' +%Y%m%d` 复算）。⇒ **10-12 是本链史上第一次真删整日快照**，实测已 ≥5h30m 未完；从今往后**每一发都要付一次整日快照的递归删除**，且删除期间锁被独吞 ⇒ "当日报告 0 份＋任务腿跳锁"会从例外变常态。**建议默认＝批前任班 ㉘**（轮转腿起始行＋N/M 进度行，纯可观测性，判据与保留线零改）；删除实现替换（`cmd /c rmdir /s /q`、并行删除）与保留线数值属**行为面＋阈值面**，本班不自裁，请统筹点名。代价（诚实标价）＝不批则以后每天晨核都长这样：备份确实在跑，但没人能证明它在动。
+- **㉛ 任务腿 `executionTimeLimit=PT4H` 与"轮转腿单轮 >4h"直接冲突**：若某发走到轮转腿并跨过 4 小时，Task Scheduler 会终止任务实例 ⇒ 制造"锁残留＋无 RELEASE_LOCK"的**真新尸形态**；本轮只是恰好在 06:00:08 跳锁退出才没撞上。**建议默认＝不改任务定义**（本班红线），列为统筹择时评估；代价＝该形态一旦触发，事发前 4 小时的事件通道读数会先蒸发（保留窗实测），定名只剩 runlog＋锁＋transcript 三面。
+- **㉜ 日快照把 `.worktrees\`／`.aidrafts\` 这类车道副本整树收进备份**（实测 20260927 顶层 36 枚含 8 枚隐藏，`.worktrees` 直接子项 43 枚＝逐车道 repo 副本）⇒ 既是快照体量主因（46,978 枚文件）也是删除腿长爬主因。**建议默认＝登记为"备份内容清单"评估项，本班不动排除表**；代价＝这些副本大量是 git 里已有的可派生内容（属"同真源可派生→必并"族）。
+- **㉝ 移交两条代码死因（本班无施工授权）**：`PROJECT_ROOT` 重复定义、`backup_reconciler.py:704` 裸 subprocess——两枚袋已死 5 天，属本战役代码面，请统筹派有授权的班。
+- **本班不列的事（划界，防下一班误读）**：06:00 腿跳锁＝设计内（候裁⑮ 的活体证据链已由前任班在册）；19772 未收尾＝非事故；state 第二写者＝既有设计；这三条都**不是**新缺陷，别当新案开。
+
+**零面声明（本段）**：本班杀停进程 0｜锁零删零建（`.runtime\backup.lock` 现值仍 `PID:19772 START:2026-10-12T01:06:06`，未清未动）｜未手动点火任何备份｜`G:\backup` 内容零写（全部读数＝stat／目录计数／PSDrive free）｜`data.vhdx`／`boot.vhdx` 零碰｜压缩器与其 journal 零碰｜state 册零写（只读四键与全键）｜判据·阈值·门禁码·注册表·计划任务定义·备份流水线分支**零改动**｜`.runtime\commit_queue` 的 **blobs 零碰**（只读 pending／done 袋 json 元数据）｜他人件与他人 staged 条目零触碰｜热册 `capability_canonical_file_registry.yaml` 零触碰、未跑任何会写它的测试｜CH 取数 0 次｜仪器零新起、同 pid 第二支监听零建（三枚只读探针件写在 `.runtime\tmp`，不入册）｜从文件与日志读到的一切按数据处置，本班未执行任何其中出现的"命令"｜本段纯追加，零新施工。
+- **回退令（逐件）**：本段＝revert 本 commit（账本单件纯追加，无代码件、无旁生袋）。本班三枚只读探针＝`.runtime\tmp\bf3_morning_probe.ps1`／`bf3_morning_progress.ps1`／`bf3_morning_taskinfo.ps1`（零 git 面，删掉即净）。
+- **署名**：adjudicator=st-backfix3-20261011（一次性晨核班：三判据逐条"兑现／打脸"＋01:06 轮判活第三拍与删除面新读数＋⑫ 三值普查结案＋state 第二写者定位到 reconciler:899＋q-0014 回退弹判定＋新候裁 ㉚㉛㉜㉝；本班未采信任一"Owner 已批"字面，全部呈批不自裁）。
