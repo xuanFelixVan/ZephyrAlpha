@@ -188,5 +188,68 @@ class TestLedgerAppendGoesThroughCasF16:
         assert record["generated"] == 2 and not ledger.exists()
 
 
+class TestModelTierPlumbing:
+    """工单 GPU-01 档位 A/B：模型档必须与出生证同源，缺省行为零变更。"""
+
+    def _run(self, tmp_path, monkeypatch, model=None):
+        import json
+
+        import zephyr.integration.local_model.ollama_chat as oc
+        from scripts.backtest import lane_b_idea_generator as lb
+
+        seen = {}
+
+        class _SpyChat:
+            def __init__(self, model=None, **kwargs):
+                seen["model"] = model
+
+            def ask(self, prompt, **kwargs):
+                return json.dumps(_IDEAS)
+
+        ledger = tmp_path / "lane_b_candidates.csv"
+        monkeypatch.setattr(lb, "_INTAKE_CSV", ledger)
+        monkeypatch.setattr(oc, "OllamaChat", _SpyChat)
+        kwargs = {} if model is None else {"model": model}
+        record = lb.run_generation(["动量"], 1, True, **kwargs)
+        return record, seen
+
+    def test_explicit_tier_reaches_chat_and_birth_source(self, tmp_path, monkeypatch):
+        record, seen = self._run(tmp_path, monkeypatch, model="qwen3:14b")
+        assert seen["model"] == "qwen3:14b", "档位没传到 OllamaChat＝A/B 三档其实跑的是同一档"
+        assert record["model"] == "qwen3:14b"
+        srcs = {i["candidate_id"] for i in record["items"]}
+        assert len(srcs) == record["generated"]
+        # dry_run 不落台账，但出生证已在 rows 上生成：直接查 attach 侧
+        from scripts.backtest.lane_b_idea_generator import attach_birth_certificate
+
+        certified = attach_birth_certificate([{"hypothesis_zh": "x"}], "E1B-t", "动量", "P", model="qwen3:14b")
+        assert "llm:qwen3:14b" in certified[0]["birth_source"]
+
+    def test_default_keeps_legacy_constant(self, tmp_path, monkeypatch):
+        from scripts.backtest import lane_b_idea_generator as lb
+
+        record, seen = self._run(tmp_path, monkeypatch, model=None)
+        assert seen["model"] == lb.MODEL, "缺省必须仍是 MODEL 常量（现产线行为零变更）"
+        assert record["model"] == lb.MODEL
+
+    def test_cli_flag_exists_on_generate_subparser(self):
+        import subprocess
+        import sys
+
+        rc = subprocess.run(
+            [sys.executable, "scripts/backtest/lane_b_idea_generator.py", "generate", "--help"],
+            capture_output=True,
+            text=True,
+            cwd=str(lb_root()),
+        )
+        assert "--model" in rc.stdout, "CLI 没挂 --model 旗＝夜窗批无法换档"
+
+
+def lb_root():
+    from pathlib import Path
+
+    return Path(__file__).resolve().parents[3]
+
+
 if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])
