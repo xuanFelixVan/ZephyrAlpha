@@ -1,0 +1,228 @@
+---
+ttl: task_bound
+title: 矿考二班·横截面回放面（panel replay face）设计稿＝呈批件，零施工
+created: '2026-10-12T15:40:00+08:00'
+sid: st-mineloop2-20261012
+family_id: MINELOOP-CAMPAIGN
+ruling_basis: 统筹晨裁 2026-10-12 ⑨（CW-MINELOOP-001 排我域，先出设计稿呈批再动工）
+---
+
+# 0. 一句话结论（先给判据，再给方案）
+
+**"一块面服务 16 支"这个说法要改口：panel 面不是缺引擎，是缺三样不同的东西。**
+实测分桶后：日频权重帧回放**已在册**（`_c4_engine.run_backtest_full`，含涨跌停可成交性闸与
+三档成交价口径）；真正缺的是①**逐臂净值的配对面**（判官侧零改动不可达，最小必改 17 行）
+和②**日内/分钟撮合面**（全仓零命中）；③至于按臂产出 weights 的接线，是小件。
+所以排产顺序＝P0 配对判据面（Owner/统筹门位）→ P1 按臂权重帧接线（我域）→ P2 分钟撮合面（另案）。
+
+# 1. 实测证据面（全部本班本轮 grep/sed 读回，未读到的写零命中）
+
+## 1.1 采集面与分母
+
+- `arm_protocol_binding.triage_dir('docs/03_modules/_domain_backtest/exam_cards')` 直调：
+  带 arms 面卡 19 支，其中 `signal_kind=panel` **16 支**（其余 3 支 feasible_now 走日频标量面，不在本设计稿范围）。
+- 考试班面板绑定的同一出口（共同前置的实证）：`scripts/backtest/fexam/card_binding.py:287-290` 原文
+  `if kind == "panel": return {"cls": "B", "reason": "panel_deferred(去重/撮合口径须逐表面核)"}`，
+  同文件头部判据表 :48 原文 `B  panel 宽表 → 本班后置（去重与撮合口径须逐表面核，禁批量近似）`。
+  ⇒ 单臂 panel 卡与双臂 panel 卡**卡在同一个后置出口**，统筹"共同前置"的定性成立。
+
+## 1.2 十六支按"臂差真正落在哪根轴"分桶（逐支原文凭据见 §1.5 表）
+
+| 桶 | 支数 | card_id | 现有能力可否承载 |
+|---|---|---|---|
+| B1 权重形式/构成异（symbol×日帧上改权重或改入组） | 3 | TDM-E-L2-09/02、TDM-E-L2-07/03、TDM-X-S1-05/ablation02(权重表腿) | **引擎已在册**，缺配对面（→P0） |
+| B2 离场/确认规则异（按臂改退出档、确认分层、生死线） | 6 | TDM-X-FLOW/ablation02、TDM-X-S1/ablation02、X-S1-01/02、X-S1-02/02、X-S1-03/02、X-S1-06/02 | 需**按臂参数化调用装置**＋配对面（→P0＋P1） |
+| B3 同日卖出次序异 | 1 | TDM-X-R1-02/02 | 需"同日按次序分配成交价"的简化撮合＋配对面（→P0＋P2-lite） |
+| B4 日内分批/追单/参与率/可成交硬顶 | 4 | X-S2-01/02、X-S2-03/02、X-S2-04/02、X-S2-05/02 | **分钟撮合面零命中**（→P2，另案） |
+| B5 反馈权重消融（臂差在打分权重） | 2 | TDM-X-S2-06/ablation02、X-S1-05 的去抖/紧迫度腿 | 同 B1/B2，属参数化产出面（→P1） |
+
+## 1.3 已在册的日频权重帧回放装置（**这是复用件，不是新写件**）
+
+`scripts/backtest/translated/_c4_engine.py:800-830` 原文签名与返回：
+
+```
+def run_backtest_full(weights: pd.DataFrame, px_close: pd.DataFrame,
+                      gate_limits: bool = True, slippage_bp: float | None = None, *,
+                      backend: str | None = None,
+                      pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
+                      exec_caliber: str = "close",
+                      px_exec: pd.DataFrame | None = None) -> tuple[dict[str, Any], pd.Series]:
+    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, ...)
+    net = _net_line(gross, turnover, slippage_bp)
+    return _stats_from_net(net, turnover, weights, backend_info=_LAST_BACKEND_GUARD), net.fillna(0.0)
+```
+
+- `:86` `_VALID_EXEC_CALIBERS = ("close", "next_open", "vwap")`；`:627-631` 非 close 口径**必须**给
+  `px_exec` 宽表，否则 raise（原文"禁静默回落 close"）⇒ 三档**日频**口径在册，**没有** 5 分钟/VWAP 逐 bar 档。
+- `:495-502` `apply_fillability_gate(weights, gate_limits=True)` 原文"涨跌停可成交性闸（E7 引擎洞修复）：
+  封板日禁开新仓/禁出逃"，原料 CH `stk_limit` 与 `kline_daily`（:11-12 注记），
+  `gate_limits=False` 仅供反例对照 ⇒ **可成交性约束已在册**，B4 桶缺的不是这一条，是日内时间轴。
+- 换手与成本：引擎侧已算 `turnover` 并在 `_net_line(gross, turnover, slippage_bp)` 内扣费 ⇒
+  **net 是费后量**（这条决定 P0 的接口形状，见 §3.2）。
+
+## 1.4 判官侧的硬事实（决定 P0 为什么是门位而非我域自裁）
+
+`scripts/backtest/fexam/calibration_exam.py`（773 行）逐行读到：
+
+- `:632-642` `run_card(card_path, *, signal=None, signal_b=None, target=None, ...)` ——
+  三入参**无类型注解**，全件对它们**无 isinstance 检查**，`:668` 原样透传给 `_comparison_metrics`。
+- `:236` 唯一回放式 `ret = df["e"].shift(0) * df["r"].shift(-1)  # t 敞口吃 t+1 收益`；
+  `:237` 换手 `turn = df["e"].diff().abs().iloc[1:]`（**从敞口位取**）；
+  `:239` 逐日扣费 `ret_net = ret - turn * cbp / 10000.0`；`:240` `nav = (1+ret_net).cumprod()`。
+- 净值入口：判官件内**零命中**（无 nav/net 形参；`nav` 只是 :240 的局部量）。
+  相邻在册件有 `strategy_exam.py:107 window_metrics(nav, ...)`，但判官只在 :51 import ic_exam，够不到它。
+- DataFrame 的现有态度：`_panel_metrics(signal: pd.DataFrame, target: pd.DataFrame, card)` 在 `:191` **在册**，
+  但只被单臂路径 `:674` 用；comparison/ablation 分支（`:668`）不碰它。
+  且 `:217 _arm_nav_metrics` 与 `:152 _series_metrics` 注解 Series、**无显式 DataFrame 拒绝**：
+  多列会在 `:243 float()` 抛 TypeError，**单列 DataFrame 会静默通过**（隐式吞并＝假绿面）。
+- 词表外键是**显式披露**不是静默跳过：`:346-349` `unknown = set(p) - _UNION_PILLAR_KEYS` → `fails.append(...)`，
+  `:389` 有 fails 即 fail；另 `:302` 观测面出 `numeric_keys_not_read`。
+
+**判官最小必改集（17 行，逐行号）**：`217, 224-227, 236, 237, 238-239, 240-243, 244-251`（返回面），
+`309, 315, 316, 319, 325-326, 327-330`（`_comparison_metrics` 签名与三处调用位、配对差取 nav 标量）。
+连带（条件触发）：若弃 arm IC 面 → `313, 314, 320-323, 376-382, 388, 678`；若新增门柱键 →
+`254-264, 394, 397, 400-409, 413-439, 346-349, 302, 690-697`；若净值仍进 series/panel 面 → `135, 138, 152-157`；
+出分面落 DataFrame → `708, 723`（`yaml.safe_dump` 无 `default=str`，会抛 RepresenterError）。
+
+⇒ **结论：只要臂的结果是"逐臂净值"，判官就非改不可。**"判官零改动"与"16 支 panel 出分"二者不可得兼；
+这不是施工难度问题，是判据面变更，属 Owner/统筹门位（根宪法 §5）。本班据此**不出"绕开判官"的方案**——
+在判官之外自建净值对照再写分数＝造第二判官＝第二真源，正是要防的形态。
+
+## 1.5 逐支臂定义凭据（原文，可复核）
+
+（以下每条为 `arm_def_text(card)` 前 180 字逐字摘录，分桶判据取自其中的命中原词）
+
+- `TDM-E-L2-09/02`「两臂共用同一 symbol×日行集与同一目标序列（paired_arm_protocol：**仅权重形式异**）；
+  衰减形式与半衰期常数取在码既有值（2^(−age/4.0)，EARNINGS 腿），恒定加权形式取地图字面值（×1.2）」→ B1
+- `TDM-E-L2-07/03`「两臂共用同一行集（仅入组条件异，零行循环差异）；fib_ratio 与新高判定全部用本卡
+  signal_derivation 自算口径，禁直读 sector_state 列」→ B1
+- `TDM-X-S1-05/ablation02`「full vs equal_weight（权重表→等权）vs no_resonance（去 +0.2 共振加成）
+  vs no_confirm（散去抖确认层）vs no_urgency_routing（紧迫度三档→二值）」→ B1＋B5
+- `TDM-X-FLOW/ablation02`「三臂各跑一次 simulate()」→ B2（**按臂参数化调用装置**，非新引擎）
+- `TDM-X-S1/ablation02`「full（S1 全套）vs price_only_-7pct vs price_only_atr3x」→ B2
+- `TDM-X-S1-01/02`「关臂=全桶合并 immediate vs 开臂=六桶+分桶确认模式 vs 中间臂=六桶但全 immediate
+  （隔离"词表"与"确认分层"两个增益来源）」→ B2
+- `TDM-X-S1-02/02`「时间止损全关 vs 仅亏损仓 3 日档 vs 仅盈利仓 5 日不涨档 vs 两档并开」→ B2
+- `TDM-X-S1-03/02`「止盈档全关 vs 单档开（chandelier_trail/peak_giveback30/target_px）vs 复合开」→ B2
+- `TDM-X-S1-06/02`「开臂=K≥3 事件当日收盘确认、次日开盘无条件市价清仓（紧迫度置 1.0，绕过确认层）」→ B2
+- `TDM-X-R1-02/02`「减仓总量三臂锁定一致（只比顺序不比幅度），禁某臂偷偷少减；
+  关臂=随机顺序（固定 seed）vs 开臂=TDM 顺序 vs 反臂=反向顺序；三臂同一持仓快照、同一减仓量、
+  同一成交价口径（次日开盘），仅卖出次序异」→ B3
+- `TDM-X-S2-01/02`「关臂=全部一次性市价（对手价吃单）vs 开臂A=3 批×1/3 间隔 5 分钟
+  vs 开臂B=流动性三查硬顶（单笔≤买一档量 / 日量×10%…）」＋「分钟数据起点实测 2021-09-01 决定 IS 起点
+  （禁越界外推）」→ B4
+- `TDM-X-S2-03/02`「exec_caliber=close（基准臂）vs next_open vs vwap_5min；分市场板别（主板/双创/北交所）
+  与尾盘时段（14:57 前后）双层披露；同一份卖单清单（逐笔一致），仅成交价口径异」→ B4
+- `TDM-X-S2-04/02`「关臂=触发即按该分钟 bar 全额吃单成交 vs 开臂=限价触发→未成交逐 bar 追 1 tick 重挂
+  （预算 15-20 轮）→耗尽转"最优五档即成剩撤"兜底；按标的流动性分档（成交额十分位）」→ B4
+- `TDM-X-S2-05/02`「all_at_once vs ladder_1r（1R=entry×0.07 固定档，卡内钉定）vs ladder_atr（1R=ATR14×3）」→ B4
+- `TDM-X-S2-06/ablation02`（三率反馈权重消融）→ B5
+
+# 2. 设计目标与非目标
+
+**目标**：让臂的定义落在 symbol×日（或日内）帧上的卡，也能进同一套裁决与分数面，
+且不新增第二判官、不新增第二引擎、不改任何卡面判据数值。
+
+**非目标（明确不做）**：
+1. 不做"把 panel 臂折算成日频总敞口再喂现有 e 位"的捷径——折算丢掉的正是要判的信息（构成/次序/分批），
+   出的分是假分；此路由意为**禁用**，不是待议。
+2. 不在判官之外自建净值对照并写分数（第二真源）。
+3. 不动 `0080/0081` 他班在途件、不动 02/06/07 卡面判据数值。
+4. 本设计稿不含任何施工：批准前一行代码不写（统筹令）。
+
+# 3. 三件分层设计
+
+## P0 逐臂净值配对面（**门位件，须批准后才有后续**）
+
+**接口形状（建议）**：新增一个**净值交付面**而非改语义——
+`ArmNavFace(net: pd.Series, turnover: pd.Series, gross: pd.Series | None, cost_bp: float, face_id: str)`，
+由引擎侧 `run_backtest_full` 的 `(stats, net)` ＋ `turnover` 直接装配（引擎已产出 turnover，不新算）。
+判官 comparison 分支改为**按交付面分派**：吃 `e/r` 标量对 → 走现路径（逐位零漂移）；
+吃 `ArmNavFace` → 走净值路径。
+
+**关键风险 1（重复扣费，必须设计掉）**：判官 `:237-239` 从敞口算换手并扣费；引擎 `_net_line` 也已扣费。
+净值路径若再走 :239 就是**系统性双扣**。处方＝净值路径**不得**再扣费，且 `cost_bp` 只作披露位；
+并由一颗红证钉死（见 §4 R2）。
+
+**关键风险 2（单列 DataFrame 静默吞并）**：`:217/:152` 无显式拒绝，单列 DataFrame 会一路静默通过。
+处方＝净值路径入口加**类型闸**（非 `ArmNavFace` 且非 Series 即 raise），把现有隐式崩溃/吞并改成显式红。
+
+**必须自证（批准的先决条件，非可选项）**：
+- 零漂移重放：取 dev 上最近 **100 笔**在册 comparison/ablation 分数行，用改后判官重跑，
+  逐笔核 outcome 与全部数值列逐位等值（在册纪律：合并/改判官须重放 100 笔自证）。
+- `arm IC 面` 归属：净值臂没有"敞口×次日收益"的逐日 IC，`:313-323` 的 ic 列必然缺值。
+  两种处置须统筹选其一（见 §5 待裁 D1），本班不代裁。
+
+**规模**：判官侧 17 行＋装配件约 60-90 行＋重放自证脚本一次性（tmp，不入袋）；
+测试面新增 ≥6 支（红证 3＋正证 3）；**不新建模块**（净零，仍落既有件）。
+
+## P1 按臂权重帧接线（我域可施工，依赖 P0）
+
+- B1/B5（5 支）：按臂产出 `weights: pd.DataFrame`，直接调 `run_backtest_full(weights, px_close, ...)`
+  → 得该臂 net＋turnover → 装 `ArmNavFace` → 交 P0 配对面。
+  引擎与可成交性闸**全复用**（`gate_limits=True` 默认开），本班零新撮合代码。
+- B2（6 支）：`simulate()` 的按臂参数化调用（卡面原文自己写着"三臂各跑一次 simulate()"）。
+  需要先把 `stop_mult/commission` 之外的**臂级参数**（时间止损档、确认分层、生死线档）做成
+  simulate 的显式入参或配置注入——这一步**可能动在册装置**，动它须同批重跑 E 道既有对拍自证零漂移
+  （与 0080 返回面扩展同型处方）。故 B2 的"动装置"部分单独呈批（见 §5 D2）。
+- 绑定册侧新增算子（走在册 ARM_OPS 通道，带卡面原文引句校验），禁 Python 硬编码档值——
+  这条纪律沿用 31_ 册 arm_base_source_seam_probe 的在册结论。
+
+## P2 日内/分钟撮合面（另案，4 支，成本最高）
+
+- 实测现状：`exec_caliber` 只有 `close|next_open|vwap` 三档**日频**口径；
+  5 分钟分批、逐 bar 追单 1 tick 重挂、"最优五档即成剩撤"兜底、参与率硬顶、尾盘 14:57 分段
+  ——**全部零命中**（无任何在册日内撮合件可复用）。
+- 样本面硬约束：卡面自证"分钟数据起点实测 2021-09-01（禁越界外推）"，OOS=2025-10-09..2026-09-30
+  ⇒ IS 窗仅约 3.3 年（2021-09..2025-09），跨不到 02/07 卡用的 2018 起长窗。
+  **这是排产前必须先核的事实面**：样本年数不足可能使这 4 支卡的 min_obs_per_bucket=60 与
+  危机段覆盖判据先天不可满足——若如此，缺的不是引擎而是**数据窗**，排引擎就是错排。
+- 建议：P2 先做"数据窗与样本面核"（只读，1 个班次），核完再决定引擎是否立项。
+
+# 4. 红证设计（每条都是"改坏了必红"，不是恒绿）
+
+- R1 折算捷径必红：把 panel 臂的 weights 帧直接 `.sum(axis=1)` 折成标量敞口喂 e 位
+  ⇒ 类型闸当场 raise（钉住 §2 非目标 1）。
+- R2 重复扣费必红：构造一个已知 net 与 turnover 的 `ArmNavFace`，使"扣费一次"与"扣费两次"
+  的 ann_ret/maxdd 可区分 ⇒ 断言只扣一次；若净值路径误走 `:239`，此证红。
+- R3 零漂移必红：100 笔在册分数重放，任何一行的 outcome 或数值列变化 ⇒ 红（这是批准前置）。
+- R4 单列 DataFrame 静默吞并必红：喂单列 DataFrame ⇒ 必须 raise，不得出分。
+- R5 权重帧可成交性闸不得旁路：`gate_limits=False` 只准出现在反例对照用例，
+  生产路径出现即红（在册 E7 修复的守卫）。
+- R6 卡面档值不得进 Python：算子参数里出现硬编码数字而绑定册无对应卡面引句 ⇒ `ArmQuoteNotFound` 红
+  （沿用在册引句双校验）。
+
+# 5. 待裁菜单（每条给建议默认＋不点的后果）
+
+- **D1（P0 批准后必须选）净值臂的 arm IC 面怎么处置**：
+  甲=净值路径不产 ic 列，判据面把 ic 相关柱置为"不可算"并显式披露（后果：07 卡的
+  `whipsaw_roundtrip_ratio_max` 类"抖动/往返"柱在 panel 卡上换算法，须另议）；
+  乙=改判据词表新增净值族门柱键（后果：动 `:254-264/394-439` 连带面，扩表面积大）。
+  建议默认＝甲（改动面小、披露诚实），但**须统筹定**。不点＝P0 无法定稿，后续全停。
+- **D2 B2 桶要不要动在册装置 simulate**：
+  甲=把臂级参数做成 simulate 显式入参（后果：动在册件，须同批重跑 E 道既有对拍自证零漂移）；
+  乙=在适配器侧重建（后果＝造第二台撮合装置，被 scope_must_not 禁，本班不推）。
+  建议默认＝甲＋零漂移重放。不点＝6 支 B2 卡全部继续 deferred。
+- **D3 P2 排期前置**：是否先花一个班次做"分钟数据窗与样本面核"（只读，零施工）。
+  建议默认＝先核再立项。不点＝可能花掉一个引擎的工，最后卡在样本年数不足。
+- **D4 P0 的落地门位归属**：判官件属"判据核"，请统筹明确是 AI 施工＋Owner 批判据变更，
+  还是整件呈 Owner。本班不自报分类（按 risk_tier_registry 查表）。
+  建议默认＝设计稿＋代码由本班出，判据面变更走 Owner 批。
+
+# 6. 如果批准，本班的排程（不动工前的承诺面）
+
+1. 先 P0 设计定稿（按 D1/D4 的选择）→ 判官最小必改 17 行 → 100 笔零漂移重放 → 三红三正用例 → 呈复核。
+2. 再 P1：B1/B5 五支先通（复用引擎，最薄的一条路），逐支出分；B2 六支待 D2 批准。
+3. B4 四支随 P2 的样本面核结果另行排期。
+4. 全程：卡面判据数值零动、02/06/07 不改、0080/0081 不碰、新件不建（净零）；
+   CH 实跑只在出分时发生并逐次计数申报。
+
+# 7. 与本班既有交付的衔接（别把两件事混了）
+
+- 已落 dev：299e1f40dc（本班账册三件）。
+- 在车道待投：适配器 `card_binding.py +109/−0` 与用例 `test_card_binding.py +127/−0`
+  （已重基到 0081 落地后的新 dev 字节，实测 38 passed；本件**不属** P0/P1，它只服务 X-R1 族的
+  日频标量双臂，与 panel 面无耦合）。
+- 首张双臂真分的真阻塞＝**0080 死信**（`st-exposure_daily` 返回面未落地）：
+  dead 袋内 blob 完整可取（562 行，sha 自校验通过），但按宪法与本令，本班不 requeue 他班袋、
+  不改他班件；此事已呈统筹转维护三班。

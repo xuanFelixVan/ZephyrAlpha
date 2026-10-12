@@ -159,7 +159,7 @@ card_draft:
         统筹批复 2026-10-12 已裁：A1 轴喂法＝乙（var/cvar 不喂）；A2 追认"KILL 不可解除"与
         "逐级降级不可跳级"两条近似并令随 07 卡面披露；两档构造参数（hysteresis_ratio 0.999999999
         + sustained/min_hold 全取 1）按裁定"中间臂＝五态无迟滞"落地，
-        其中**具体构造值属隐含批准、统筹未逐值点名**——若另有指定即改，本班不把它当成已显式签批。
+        三值（hysteresis_ratio=1.0-1e-9、sustained=1、min_hold=1）经统筹晨裁 2026-10-12 ⑨ **追认批准**，定性为工程近似值而非判据数；原「隐含批准未显式点名」标注按令撤销（撤销动作本身记在 chief_ruling_received）。
     axis_feeding:
       question: >-
         在册件的升级面有两组轴：回撤轴 warn_dd/danger_dd/crisis_dd/kill_dd=5%/10%/15%/25% 与
@@ -375,7 +375,7 @@ chief_ruling_received:
     landed_where: 本班账册 §六（含巡检命令与抢救处方）
   not_explicitly_named: >-
     统筹按实质裁，未逐值点名"无迟滞构造档"的三个具体数（0.999999999/1/1）——
-    本班按裁定"中间臂＝五态无迟滞"落地并在 freeze_status 内标明"隐含批准未显式点名"，
+    本班按裁定"中间臂＝五态无迟滞"落地时曾标 "隐含批准未显式点名"，该标注经 2026-10-12 ⑨ 晨裁撤销（见 freeze_status），
     另有指定即改；本卡转正（本班菜单 A1 项）经 A1-A3 三条件满足后视为条件性批准，
     转正动作仍排在接线袋同批（禁在接线前把卡升 preregistered）。
 

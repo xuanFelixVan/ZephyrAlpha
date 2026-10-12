@@ -214,3 +214,67 @@ python scripts/commit_queue.py status | grep -A4 "mineloop-20261010-008"
 4. 我先前写下的"关臂与开臂共用同一条级别序列⇒零第二真源"是自裁设计，批复 A2 已追认；
    但**无迟滞档三个具体值**统筹未逐一点名，本班已在卡面 `freeze_status` 内标明"隐含批准未显式点名"，
    不冒充已签批（在册教训：代理不得为达标自造签批署名）。
+
+# 九、晨裁 ⑨ 落实与本机两次死机账（2026-10-12 15:2x-18:3x 补）
+
+## 9.1 晨裁三条全部执行
+
+1. **撤"隐含批准"标注**：`01_card07_draft_and_approval.yaml` 的 `hysteresis_config_freeze.freeze_status`
+   与 `chief_ruling_received.not_explicitly_named` 两处按令改写为
+   "三值经 2026-10-12 ⑨ 追认批准，定性为工程近似值非判据数"，撤销动作本身留痕。
+   机械自证：替换前数命中（各 1），替换后残句计数=0、"追认批准"计数=1、行数仍 427；
+   对 dev 净差 **+2/−2**（删除的 2 行就是被改写的那 2 行，纯本班自有件）。
+2. **账册袋 0001 已落地**＝commit 299e1f40dc，三件 `git cat-file -e dev:<路径>` 全部 ON_DEV 实测。
+3. **代码已重基到 0081 落地后的新 dev 字节**：`git diff dev --numstat`＝
+   `scripts/backtest/fexam/card_binding.py +109/−0`、`tests/backtest/test_card_binding.py +127/−0`
+   （删除行实测 0），用例 38 passed（含 0081 落地的在册空册桩与新三面装配用例仍绿）。
+
+## 9.2 重基过程自犯一条（记法不记功）
+
+第一次拼接用 `devnew[:anchor] + block` 漏了 `+ devnew[anchor:]`，把整档写成 956 行
+（对 dev **+102/−359**＝截断），且已 `git add`。靠"写后核 `written==expect`＋`git diff dev --numstat`
+删除行必须为 0"两道尺当场抓到并修复（1322=1213+109，numstat 回到 +109/−0）。
+⇒ 入工法：**任何整档重写后，先核行数配对与删除行计数，再谈 git add**；
+Edit 类工具吃标题的教训（在册 [[edit-append-anchor-consumes-heading]]）在 python 切片拼接上是同一形态。
+
+## 9.3 本机两次死机＝本班 keeper 三次失活（批复 C 条职责的第一手数据）
+
+| 时点 | 事件 | 处置 |
+|---|---|---|
+| 02:1x | 建车后约 40 分钟守护 `idle timeout 1808s` 自退，注册表条目消失 | 按保活正门三步修复（register pid=0→起守护→grant＋mark_logical） |
+| 15:2x 前 | 第一次死机，双 keeper 末拍停在 03:55Z（断 3.5h） | 同三步修复（新 pid 2648），并实测 `mark_logical` 需心跳先新鲜才不被降级 |
+| 18:3x 前 | 第二次死机，末拍停在 09:25Z（断约 1h），条目再次消失 | 同三步修复（新 pid 22496，grant TTL 1800s） |
+
+⇒ 给后续班的事实：**本机每次死机都会带走 keeper 并让注册表条目消失**，
+所以"投袋前先 `tail -1 .runtime/sessions/<sid>/heartbeat.jsonl`＋`get_session(sid)` 两查"
+必须做成开工第一动作，而不是等袋被判 ghost 再查。前任的 ghost 连死两袋是同一机理。
+
+## 9.4 他班死信一件（本班零触碰，已呈报）
+
+`q-20261012-st-mineloop-20261010-0080`（exit_simulator 返回面扩展）落 `dead/`，
+dead_reason 原文＝门禁 TAKEOVER-PENDING 阻断，命中**死会话 `st-cband-20261012`** 的
+open 接管条目（该会话 pid 41268 已死、claim 泄漏 8 件含 `scripts/backtest/fexam/exit_sim/exit_simulator.py`）。
+本班实测：①dev 上 `exposure_daily` 零命中（0080 确未落地）；②0081 已落地 ⇒
+在册 `_exit_sim_baseline` 现在跑必 raise（它明写"装置未交付 exposure_daily 返回面＝返回面扩展未落地？"）；
+③死袋内容**完整可取**（blob 存在、sha256 自校验通过、562 行）＝第四态抢救面在，无时限风险尚未到。
+⇒ 按宪法 §2.7 与本令纪律：本班**不 requeue 他班袋、不改他班件、不代处置他死会话的 claim 与车道**；
+此事是"首张双臂真分"的当前真阻塞，已列入 §9.5 呈统筹转维护三班（队列治理权在其域）。
+另记一条实测改判：早前本班报"st-cband 判死存疑"——本轮 `SessionRegistry` 复查该 sid
+**在册且 logical=True、reincarnation_count=3**，即门禁当时按"PID 已死/注册表除名"判死，
+而注册表侧后来又有条目＝"死"的判定在两面（PID 面/注册表面）之间不一致，
+这条观测请一并转维护三班（与在册"活性锚失效五形态"同族，非本班能自裁）。
+
+## 9.5 下一步（照晨裁 ⑨ 的序）
+
+1. 文档袋（本袋）：撤标注＋panel 设计稿＋本节账。
+2. 代码袋：待本袋落地后再投（同会话短窗连投会被 C1 合批成跨域袋＝在册死信形态），
+   内容＝已重基的 `+109/−0` 与 `+127/−0` 两件，**不含注册**（注册须等 0080 内容落地，
+   否则 `_exit_sim_baseline` 必 raise，且空册桩重写会钉在一个跑不通的来源上）。
+3. 接线袋：0080 内容落地后＝`ARM_BASE_SOURCES` 注册＋`series` 面接上＋空册桩按新纪律句重写
+   ＋"喂错底座必红"红证＋绑定册 07 册格＋07 卡面转正（creation_token 随袋）。
+4. panel 设计稿 D1-D4 待统筹裁；裁前本班零施工（本令已执行：只出稿未动一行业务码）。
+5. 呈统筹转维护三班两件：0080 死信与 st-cband 接管条目（含 9.4 末条的活性两面不一致观测）。
+
+零面追加：判据数值零动｜02/06/07 卡面判据键零动（本轮只改 07 草案的两行署名性文字）｜
+判官件零改动（panel 设计稿只列"必须改哪些行"，未动一行）｜分数册零行｜N 账本零写｜CH 实跑零次｜
+他班袋与死袋零触碰｜热册投影（车道内 +1400 行他班条目）零入袋。
