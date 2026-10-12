@@ -1,0 +1,259 @@
+schema_version: mineloop2-regimes-prose-conversion/v1
+built_by: .runtime/tmp/mineloop2/convert_regimes22.py（生成器产出，禁手改本件）
+session_id: st-mineloop2-20261012
+ruling_basis: 统筹通宵令（2026-10-13 02:30）预签附项＝散文 22 卡修法接手；配方与两案真源=docs/_working/examunlock_campaign/13_run_path_block_regimes_representation.yaml（option_a 卡面表示层修法＋this_shift_recommendation=甲；解锁班不自改的两条理由原文在册）
+census_reproduced: 改前普查：dict=319 / NoneType=186 / str=22（主区口径，本班实测复现）
+two_defenses:
+  defense_1_representation: 段名序一致＋日期串逐字相同＋日期集合闭合，任一不合该卡不动
+  defense_2_no_judgement_drift: 行级替换（只换 regimes 那一行，禁整档重排）；status/pillars/pillars_numeric/buckets/data_binding/card_id/window 其余键逐字相等；原散文全文逐张留在本件 original_prose 里⇒
+    括号注记丢弃不丢信息
+counts:
+  cards_seen: 519
+  prose_before: 22
+  converted: 22
+  planned_not_applied: 0
+  skipped: 0
+  yielded_to_other_session: 0
+rows:
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__17_ind_volume009_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/17_ind_volume009_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__18_ind_trend007_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/18_ind_trend007_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__19_ind_mom030_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/19_ind_mom030_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__20_ind_vol009_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/20_ind_vol009_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__21_ind_vol008_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/21_ind_vol008_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__22_ind_vol012_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/22_ind_vol012_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__23_ind_vol014_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/23_ind_vol014_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__24_ind_vol013_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/24_ind_vol013_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__25_ind_vol015_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/25_ind_vol015_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__26_ind_mom038_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/26_ind_mom038_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__27_ind_mom037_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/27_ind_mom037_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__28_ind_mom015_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/28_ind_mom015_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__29_ind_mom022_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/29_ind_mom022_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__30_ind_mom027_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/30_ind_mom027_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__31_ind_mom035_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/31_ind_mom035_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__32_ind_mom020_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/32_ind_mom020_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__33_ind_volume002_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/33_ind_volume002_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__34_ind_mom009_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/34_ind_mom009_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__35_ind_mom024_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/35_ind_mom024_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__36_ind_mom031_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/36_ind_mom031_high_event
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——逐字继承 16 卡先例窗
+  annotation_retained: true
+  status_before: blocked_on_impl
+  action: converted
+  replaced_line: 23
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__38_agg_limit_days_monthly.yaml
+  card_id: TDM-E-L1-S2/calibration/38_agg_limit_days_monthly
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——沿用卡池冻结惯例两段'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——沿用卡池冻结惯例两段
+  annotation_retained: true
+  status_before: blocked_on_data
+  action: converted
+  replaced_line: 15
+- path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__39_intraday_tpl_blocked.yaml
+  card_id: TDM-E-L1-S2/calibration/39_intraday_tpl_blocked
+  owner_sid_hint: st-minedig-20261012（反向三批）
+  original_prose: 'bull: 2019-01-04..2021-06-30（流动性牛）；bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——沿用卡池冻结惯例两段'
+  parsed:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）——沿用卡池冻结惯例两段
+  annotation_retained: true
+  status_before: blocked_on_data
+  action: converted
+  replaced_line: 15
