@@ -1,0 +1,82 @@
+---
+ttl: task_bound
+title: D 族资格冻结稿（状态识别/环境族）——段数/边界/特征集/重建规则逐项钉死呈批版
+created: '2026-10-12'
+session: st-minedig-20261012
+family_id: MINEDIG-CAMPAIGN
+status: draft_for_ruling
+---
+
+# D 族资格冻结稿（状态识别/环境族）——只起草呈批，不开考
+
+> **令据**：令 A 附录批 3 同包之「D 族资格冻结稿（普查 D 族"先补资格"）」：起草状态识别族的冻结稿——段数/边界/特征集/重建规则（含情绪六段）逐项钉死成可考面；**只起草呈批，不自行开考（判据面等裁）**。
+> **普查锚**：[2026-10-12-exam-card-mining-meta-method-research.md](2026-10-12-exam-card-mining-meta-method-research.md) §9 :174（"六段规则未冻结＝无考试资格"）/:185（"适用，先补冻结资格"）。
+> **纪律**：本稿为资格面冻结草案（呈批件），非开考令；引用式冻结优先（能指真源就不抄数值，防第二真源，27_five_card_freeze_protocol 精神）；全稿零 CH、零卡、零考试。
+
+## 1. 对象与成员清单（普查 D 族＝状态识别/环境）
+
+| # | 成员 | 段数/边界现状 | 真源锚 | 资格面现状 |
+|---|---|---|---|---|
+| D1 | **情绪六段**（本稿主对象） | 6 段词表已定稿，判定规则两腿合成，**重建规则半冻结** | `src/zephyr/shared/vocab/market_state.py:66-78`；`config/trading_decision_map.yaml:4474,6454`（v1.2 定稿） | 未冻（§2/§3） |
+| D2 | 宏观 regime（HMM 4+3 overlay） | 7 态：r1/r2/r3/r4＋r10 危机/r11 修复/r12 突破 | `src/zephyr/regime/core/regime_detector.py:47-49` | 半冻（HMM 拟合随机性，§3.4） |
+| D3 | 锚定风险四档 | r3≤0.30/r2 0.30-0.60/r1 0.60-0.80/r4>0.80（vol_pct 250 日分位，零拟合纯阈值） | `anchored_state_machine.py:36-56`（裁定#229 禁调） | **资格已齐** |
+| D4 | 盘中五态→六段映射 | 五态已定，降采样映射一条 proposed | `market_state.py:81-104` | 未冻（§3.2） |
+| D5 | 地量档位开关 | 20 日分位十分位＋8000 亿绝对线二值 | `exam_cards/entry_flow/L3/TDM-E-L3-06__calibration__02`（status: examined） | 已考在册 |
+| D6 | 流动性五层（成本模型） | ADV 五分位边界已标定冻结 | `cost_model_calibration.py:174-200` | 资格已齐 |
+| D7 | 波动率档 | 未立独立档（t0 用三桶 vol 代理） | `archive/2026-10/t0_matrix/LEDGER.md:61` | 缺位（普查已记） |
+| D8 | 拥挤度档 | 未见 | 普查 :114 | 缺位（普查已记） |
+
+## 2. 情绪六段逐项钉死（D1 可考面）
+
+### 2.1 段数与段名（冻结，已定稿勿动）
+
+6 段：`投降(冰点) / 蓄势 / 点火 / 主升 / 亢奋 / 退潮(派发)`——真源=`market_state.py:66-78` `EmotionCycleSixVocab`，出处=`trading_decision_map.yaml` state_matrix.states（v1.2 定稿，Owner 裁定"机构命名+修复期独立成段"）。**段名段数本稿零改动**。
+
+### 2.2 边界（两腿合成规则，全部可符号引用）
+
+- **宏观腿映射 R2SIX**（`scripts/backtest/auto_mount.py:135`）：`r10→投降 / r4→蓄势 / r11→蓄势 / r3→主升 / r12→点火`；r1/r2（低/中波震荡）**无六段对应＝不路由**。
+- **优先级 PREEMPT**（`auto_mount.py:270-281`）：`宏观极端态(r10/r11) > 退潮 > 亢奋 > 基础映射`——宏观极端不被微观读数覆盖。
+- **微观腿阈值**（`auto_mount.py:95-102, 246-268`，纯 trailing 无前视）：
+  - 亢奋 = 乖离度(close/MA20−1) 250 日分位 ≥ 0.90 ∧ 20 日上涨家数占比 250 日分位 ≥ 0.85 ∧ 60 日收益 > 0；
+  - 退潮 = 亢奋后 60 日记忆窗内破 MA20 ∧ br20 < 0.50。
+- **特征集**：宏观腿=HMM 七态 dominant（特征列序真源=MOD-REGIME-002 FEATURE_NAMES）；微观腿=广度帧（399106 广度指数主源＋EQW_ALLA 补位，`auto_mount._breadth_frame`）。
+
+### 2.3 重建规则（幂等性是资格核心）
+
+- **物化通道**：`scripts/audit/t0_six_phase_materialize.py`（1,816 日物化全史在册）——`PHASE_VERSION="sixphase-v1"`（映射变更须升版禁原地改）、`CLOSED_BOOK_CUTOFF="2025-09-09"`、`PHASE_WARMUP_DAYS=700`、`PIT_TAIL_LAG=1`、双写日 fail-closed（`load_phase_panel` 对重不 Duplicate 拒收）。
+- **宏观腿 HMM 侧**（有拟合随机性，冻结稿必须钉）：组件数=4；槽位确定性=`anchored_component_order`（主锚 vol 列 0 升序、次锚 slope 列 2，裁定#304 抗 label switching）；训练/重拟合节奏=季度 walk-forward；**run_id 钉法先例**=`regime_recal_protocol_2026_09_17.md` §2（`run_id='VAL-P0-20260916-230726'`）。
+- **幂等验收标准（引先例）**：同一码本两次重放 dominant 序列**逐日一致**（`regime_recal_protocol_2026_09_17.md` §5"重放幂等"）——本稿建议将其立为 D 族重建资格的机械判据。
+- 六段实测分布（在册 meta）：expansion 388 / distribution 221 / capitulation 202 / accumulation 201 / euphoria 40 / ignition 2 / **unrouted 762 日（41.9%）**。
+
+## 3. 未冻点清单（呈批裁决项，逐项编号）
+
+| # | 未冻点 | 事实 | 裁决选项（建议默认加粗） |
+|---|---|---|---|
+| 3.1 | **r1/r2 不路由** | 六段不闭仓：1,816 日中 762 日无段（41.9%），fail-closed"宁漏勿误" | **A 保持不路由（unrouted 合法态，卡面 bucket 单列）**；B 补映射（r1→?/r2→? 须 Owner 定名）；C 按六段占比降权 |
+| 3.2 | 盘中 EUPHORIC→IGNITION 映射 proposed | `market_state.py:98-104` 自标"待 Owner 校准" | **A 维持 proposed 挂起（本稿不代钉）**；B 批准转正式 |
+| 3.3 | **两源分歧 21.09%** | 六段宏观腿 vs 包体宏观腿 dominant 逐日一致率仅 383/1816（`t0_matrix/reconcile_pack_v1_summary.csv`；同名 rN 语义不同） | **A 钉 t0 物化件（sixphase-v1）为六段唯一重建真源，包体口径另轴并存禁混用**；B 先做语义对账再定 |
+| 3.4 | HMM label switching 残余 | anchored 重排已落地（裁定#304），但跨 run 漂移无逐日验收在册 | **A 按 recal 协议补"重放幂等"验收入资格面**；B 维持现状 |
+| 3.5 | 微观腿广度源断供 | 399106 有断更死日成例（补洞=dd04d9d20c） | **A 维持 EQW_ALLA 补位规则并在卡面披露**；B 另选主源 |
+
+## 4. 其余成员资格判定一句话
+
+D3 锚定四档（阈值裁定#229 在册，零拟合）＝**资格已齐，可直接作考试条件轴**；D5 地量卡已考在册；D6 流动性五层成本标定冻结在册；D7 波动率档、D8 拥挤度档＝缺位，按普查记录留待后续矿脉（本稿不代建）。
+
+## 5. "补齐资格"的机械定义（何谓冻结完成）
+
+D1 情绪六段获得考试资格 ⇔ 以下四件全绿：
+1. **段定义冻结**：词表+R2SIX+PREEMPT+微观阈值以 `sixphase-v1` 版本号整体引用（升版=新资格，禁原地改）；
+2. **重建幂等**：同一码本两次重放 dominant 序列逐日一致（§2.3 判据）；
+3. **PIT 无前视**：trailing 窗+CLOSED_BOOK_CUTOFF+PIT_TAIL_LAG 三件在册且被物化件执行；
+4. **逐日落台可读**：六段序列以逐日快照表可查（解锁 `TDM-E-L1__ablation__02` 的 blocked_reason(1) 与 TDM:5939 红节点的前提）。
+
+## 6. 呈批菜单（Owner 门位，建议默认已标注）
+
+1. §3.1-3.3 三大未冻点逐项裁决（建议默认 A/A/A）；
+2. §5 四件资格判据是否追认为 D 族通用门槛（建议：追认，写回本稿转正式）；
+3. 冻结稿批准后：六段重建资格验收跑一轮（重放幂等+落台核查，跑数前本稿经网关 commit，跑数后只允许执行判据不允许改判据——regime_recal 协议 §0 纪律）；
+4. D7/D8 缺位档是否立项（普查矿脉清单已有位，本稿不催）。
+
+## 7. compliance
+
+零 CH ｜ 零新卡 ｜ 零考试 ｜ 零注册表改动 ｜ 本稿 files_created=1 ｜ 判据面等裁（G4-5：批准前无人可挪门柱）

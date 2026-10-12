@@ -1,0 +1,421 @@
+schema_version: mineloop-reverse-triage/v1
+generated_by: st-minedig-20261012（批3 反向分诊机，机读分数册生成，禁手抄指标；重跑同命令可复现）
+generated_at: '2026-10-12T02:55:51.611948+08:00'
+order_clause: 令A附录批3：指标批3 78 pass 反向分诊＝A 类候选池；20_reverse_triage 现成模板逐个出反向卡（出生声明照 06 先例）；零 CH
+source:
+  scores: docs/_working/fexam/indicator_exam_scores_v1.yaml
+  n_pass: 78
+  headline_horizon: '5'
+  paper_pool: docs/_working/fexam/paper_pool_v1.yaml
+classification_rule:
+  note: 照抄 20_reverse_triage classification_rule，两处窗长适配逐处披露（对象=批3指标考试行而非卡）
+  direction_filter: metrics.per_horizon['5'].holdout.ic_mean < 0（headline horizon=5）
+  hard_gate_for_A: is_ref['5'].ic_mean < 0 且 holdout<0（模板 is_oos_same_sign 适配：批3 IS 参照窗=is_ref，考试窗=holdout）
+  regime_same_sign_adapted: HMM 四态词表下 n_obs>=60 的有效段 IC 全同负（NaN 段不计；模板为 bull/bear 两段）
+  n_ge_1200_adapted: 批3 行 n_obs≈240（考试窗日数）；分母由卡窗供给——改钉卡窗 IS 可用日≥900（2019-01-04..2023-12-31≈1213−250≈963，构造性满足）
+  mono_face_present: 批3 无分桶面：全体如实 fail（模板非硬闸不阻断）
+  ranking: 过闸数降序 → holdout5 ic 升序 → object_id 字典序（照抄模板）
+  same_proposition_dedup: ch_backings 列集全等＝同一底座序列，只立一张，另一张归 B（模板五元组在批3 无母卡导生对，取底座列集等价）
+  A_cap: 20
+  A_cap_note: 本班盲设（模板 A_cap=4 为上一轮册的本轮上限；本班池=78 行，cap20=25.6% 封顶防卡池灌水）
+red_line_self_check:
+  rows_total: 78
+  A_count: 20
+  B_unstable: 0
+  B_dedup: 0
+  B_cap_overflow: 55
+  C_positive_direction: 3
+  bulk_reflip_forbidden: 禁全翻：零张原地重判；母行保留在册；反向卡全为新增 parallel 件（status=blocked_on_impl 待接线）
+A_class:
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__17_ind_volume009_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/17_ind_volume009_high_event
+  object_id: IND-VOLUME-009
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__18_ind_trend007_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/18_ind_trend007_high_event
+  object_id: IND-TREND-007
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__19_ind_mom030_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/19_ind_mom030_high_event
+  object_id: IND-MOM-030
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__20_ind_vol009_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/20_ind_vol009_high_event
+  object_id: IND-VOL-009
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__21_ind_vol008_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/21_ind_vol008_high_event
+  object_id: IND-VOL-008
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__22_ind_vol012_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/22_ind_vol012_high_event
+  object_id: IND-VOL-012
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__23_ind_vol014_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/23_ind_vol014_high_event
+  object_id: IND-VOL-014
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__24_ind_vol013_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/24_ind_vol013_high_event
+  object_id: IND-VOL-013
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__25_ind_vol015_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/25_ind_vol015_high_event
+  object_id: IND-VOL-015
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__26_ind_mom038_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/26_ind_mom038_high_event
+  object_id: IND-MOM-038
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__27_ind_mom037_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/27_ind_mom037_high_event
+  object_id: IND-MOM-037
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__28_ind_mom015_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/28_ind_mom015_high_event
+  object_id: IND-MOM-015
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__29_ind_mom022_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/29_ind_mom022_high_event
+  object_id: IND-MOM-022
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__30_ind_mom027_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/30_ind_mom027_high_event
+  object_id: IND-MOM-027
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__31_ind_mom035_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/31_ind_mom035_high_event
+  object_id: IND-MOM-035
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__32_ind_mom020_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/32_ind_mom020_high_event
+  object_id: IND-MOM-020
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__33_ind_volume002_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/33_ind_volume002_high_event
+  object_id: IND-VOLUME-002
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__34_ind_mom009_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/34_ind_mom009_high_event
+  object_id: IND-MOM-009
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__35_ind_mom024_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/35_ind_mom024_high_event
+  object_id: IND-MOM-024
+- '**card_file**': docs\03_modules\_domain_backtest\exam_cards\entry_flow\L1\TDM-E-L1-S2__calibration__36_ind_mom031_high_event.yaml
+  card_id: TDM-E-L1-S2/calibration/36_ind_mom031_high_event
+  object_id: IND-MOM-031
+A_class_metrics:
+- object_id: IND-VOLUME-009
+  gates_passed: 4
+  holdout5_ic: -0.0718
+  is_ref5_ic: -0.1195
+  regime_valid:
+    ranging_low_vol: -0.0449
+    trend_up: -0.1169
+- object_id: IND-TREND-007
+  gates_passed: 4
+  holdout5_ic: -0.0703
+  is_ref5_ic: -0.0728
+  regime_valid:
+    ranging_low_vol: -0.0376
+    trend_up: -0.0976
+- object_id: IND-MOM-030
+  gates_passed: 4
+  holdout5_ic: -0.0665
+  is_ref5_ic: -0.0735
+  regime_valid:
+    ranging_low_vol: -0.0445
+    trend_up: -0.0995
+- object_id: IND-VOL-009
+  gates_passed: 4
+  holdout5_ic: -0.0641
+  is_ref5_ic: -0.075
+  regime_valid:
+    ranging_low_vol: -0.0569
+    trend_up: -0.0916
+- object_id: IND-VOL-008
+  gates_passed: 4
+  holdout5_ic: -0.0639
+  is_ref5_ic: -0.0655
+  regime_valid:
+    ranging_low_vol: -0.0615
+    trend_up: -0.0877
+- object_id: IND-VOL-012
+  gates_passed: 4
+  holdout5_ic: -0.0633
+  is_ref5_ic: -0.0703
+  regime_valid:
+    ranging_low_vol: -0.0585
+    trend_up: -0.0888
+- object_id: IND-VOL-014
+  gates_passed: 4
+  holdout5_ic: -0.0632
+  is_ref5_ic: -0.073
+  regime_valid:
+    ranging_low_vol: -0.059
+    trend_up: -0.0877
+- object_id: IND-VOL-013
+  gates_passed: 4
+  holdout5_ic: -0.0616
+  is_ref5_ic: -0.069
+  regime_valid:
+    ranging_low_vol: -0.0564
+    trend_up: -0.0872
+- object_id: IND-VOL-015
+  gates_passed: 4
+  holdout5_ic: -0.0615
+  is_ref5_ic: -0.0678
+  regime_valid:
+    ranging_low_vol: -0.0586
+    trend_up: -0.0861
+- object_id: IND-MOM-038
+  gates_passed: 4
+  holdout5_ic: -0.0609
+  is_ref5_ic: -0.0523
+  regime_valid:
+    ranging_low_vol: -0.0242
+    trend_up: -0.0911
+- object_id: IND-MOM-037
+  gates_passed: 4
+  holdout5_ic: -0.0573
+  is_ref5_ic: -0.0488
+  regime_valid:
+    ranging_low_vol: -0.0213
+    trend_up: -0.0871
+- object_id: IND-MOM-015
+  gates_passed: 4
+  holdout5_ic: -0.0566
+  is_ref5_ic: -0.0582
+  regime_valid:
+    ranging_low_vol: -0.0283
+    trend_up: -0.0855
+- object_id: IND-MOM-022
+  gates_passed: 4
+  holdout5_ic: -0.0549
+  is_ref5_ic: -0.048
+  regime_valid:
+    ranging_low_vol: -0.021
+    trend_up: -0.0784
+- object_id: IND-MOM-027
+  gates_passed: 4
+  holdout5_ic: -0.0526
+  is_ref5_ic: -0.0763
+  regime_valid:
+    ranging_low_vol: -0.0234
+    trend_up: -0.0759
+- object_id: IND-MOM-035
+  gates_passed: 4
+  holdout5_ic: -0.0521
+  is_ref5_ic: -0.0613
+  regime_valid:
+    ranging_low_vol: -0.026
+    trend_up: -0.08
+- object_id: IND-MOM-020
+  gates_passed: 4
+  holdout5_ic: -0.0517
+  is_ref5_ic: -0.0562
+  regime_valid:
+    ranging_low_vol: -0.0279
+    trend_up: -0.0813
+- object_id: IND-VOLUME-002
+  gates_passed: 4
+  holdout5_ic: -0.0515
+  is_ref5_ic: -0.0443
+  regime_valid:
+    ranging_low_vol: -0.0281
+    trend_up: -0.0714
+- object_id: IND-MOM-009
+  gates_passed: 4
+  holdout5_ic: -0.0511
+  is_ref5_ic: -0.0533
+  regime_valid:
+    ranging_low_vol: -0.0201
+    trend_up: -0.074
+- object_id: IND-MOM-024
+  gates_passed: 4
+  holdout5_ic: -0.0509
+  is_ref5_ic: -0.0419
+  regime_valid:
+    ranging_low_vol: -0.0233
+    trend_up: -0.0726
+- object_id: IND-MOM-031
+  gates_passed: 4
+  holdout5_ic: -0.0502
+  is_ref5_ic: -0.0645
+  regime_valid:
+    ranging_low_vol: -0.0246
+    trend_up: -0.074
+four_swaps_required:
+- ①假设面写经济学机制＋与母结果关系声明（本卡是批3分数册在册负 IC 行的反向复述，来源=在册成绩，禁事后加冕）
+- ②判据形态换事件开关卡（族内 judge_event：事件日 vs 非事件日次日收益差＋Welch t，IS/OOS 两窗＋牛熊分列）
+- ③阈值碰数前冻（事件日定义取『过去 250 日滚动分位>0.78』自标定式，频率推导只用窗长与门槛，禁绝对阈值拍数）
+- ④卡面预写『一轮为限，再挂即族归档』
+B_class_旁证挂靠:
+  unstable_IS_OOS_flip: []
+  dedup_same_base: []
+  cap_overflow:
+  - object_id: IND-VOLUME-007
+    holdout5_ic: -0.0501
+    is_ref5_ic: -0.052
+  - object_id: IND-MOM-014
+    holdout5_ic: -0.0499
+    is_ref5_ic: -0.0782
+  - object_id: IND-TREND-037
+    holdout5_ic: -0.049
+    is_ref5_ic: -0.0587
+  - object_id: IND-MOM-039
+    holdout5_ic: -0.0486
+    is_ref5_ic: -0.0412
+  - object_id: IND-MOM-028
+    holdout5_ic: -0.0481
+    is_ref5_ic: -0.0753
+  - object_id: IND-TREND-005
+    holdout5_ic: -0.0481
+    is_ref5_ic: -0.0753
+  - object_id: IND-VOLUME-014
+    holdout5_ic: -0.0478
+    is_ref5_ic: -0.0797
+  - object_id: IND-MOM-025
+    holdout5_ic: -0.0475
+    is_ref5_ic: -0.0399
+  - object_id: IND-VOL-018
+    holdout5_ic: -0.0472
+    is_ref5_ic: -0.0771
+  - object_id: IND-MOM-004
+    holdout5_ic: -0.0468
+    is_ref5_ic: -0.0622
+  - object_id: IND-MOM-008
+    holdout5_ic: -0.0467
+    is_ref5_ic: -0.0684
+  - object_id: IND-TREND-010
+    holdout5_ic: -0.0466
+    is_ref5_ic: -0.0665
+  - object_id: IND-VOL-010
+    holdout5_ic: -0.0464
+    is_ref5_ic: -0.0632
+  - object_id: IND-MOM-018
+    holdout5_ic: -0.0461
+    is_ref5_ic: -0.0679
+  - object_id: IND-MOM-034
+    holdout5_ic: -0.0455
+    is_ref5_ic: -0.0696
+  - object_id: IND-VOLUME-004
+    holdout5_ic: -0.0454
+    is_ref5_ic: -0.0374
+  - object_id: IND-STAT-009
+    holdout5_ic: -0.0447
+    is_ref5_ic: -0.0549
+  - object_id: IND-VOL-007
+    holdout5_ic: -0.0447
+    is_ref5_ic: -0.0549
+  - object_id: IND-STAT-005
+    holdout5_ic: -0.0442
+    is_ref5_ic: -0.0452
+  - object_id: IND-STAT-006
+    holdout5_ic: -0.0442
+    is_ref5_ic: -0.0452
+  - object_id: IND-STAT-001
+    holdout5_ic: -0.0439
+    is_ref5_ic: -0.0421
+  - object_id: IND-TREND-034
+    holdout5_ic: -0.0437
+    is_ref5_ic: -0.0631
+  - object_id: IND-CYC-007
+    holdout5_ic: -0.0435
+    is_ref5_ic: -0.0469
+  - object_id: IND-TREND-015
+    holdout5_ic: -0.0433
+    is_ref5_ic: -0.0369
+  - object_id: IND-MOM-026
+    holdout5_ic: -0.0428
+    is_ref5_ic: -0.0406
+  - object_id: IND-MOM-005
+    holdout5_ic: -0.0423
+    is_ref5_ic: -0.0559
+  - object_id: IND-VOLUME-016
+    holdout5_ic: -0.0407
+    is_ref5_ic: -0.0502
+  - object_id: IND-CHIPS-001
+    holdout5_ic: -0.0406
+    is_ref5_ic: -0.0402
+  - object_id: IND-STAT-008
+    holdout5_ic: -0.0404
+    is_ref5_ic: -0.0534
+  - object_id: IND-VOL-011
+    holdout5_ic: -0.0403
+    is_ref5_ic: -0.0611
+  - object_id: IND-MOM-017
+    holdout5_ic: -0.04
+    is_ref5_ic: -0.0259
+  - object_id: IND-MOM-041
+    holdout5_ic: -0.0396
+    is_ref5_ic: -0.0354
+  - object_id: IND-VOL-017
+    holdout5_ic: -0.0383
+    is_ref5_ic: -0.046
+  - object_id: IND-VOLUME-010
+    holdout5_ic: -0.0377
+    is_ref5_ic: -0.041
+  - object_id: IND-MOM-002
+    holdout5_ic: -0.037
+    is_ref5_ic: -0.0548
+  - object_id: IND-TREND-008
+    holdout5_ic: -0.0367
+    is_ref5_ic: -0.0509
+  - object_id: IND-VOL-001
+    holdout5_ic: -0.0361
+    is_ref5_ic: -0.049
+  - object_id: IND-VOL-006
+    holdout5_ic: -0.0339
+    is_ref5_ic: -0.0623
+  - object_id: IND-VOLUME-013
+    holdout5_ic: -0.0304
+    is_ref5_ic: -0.0302
+  - object_id: IND-MOM-021
+    holdout5_ic: -0.0298
+    is_ref5_ic: -0.034
+  - object_id: IND-MOM-012
+    holdout5_ic: -0.0297
+    is_ref5_ic: -0.0237
+  - object_id: IND-REV-004
+    holdout5_ic: -0.0282
+    is_ref5_ic: -0.0486
+  - object_id: IND-TREND-033
+    holdout5_ic: -0.0277
+    is_ref5_ic: -0.0237
+  - object_id: IND-VOLUME-006
+    holdout5_ic: -0.0273
+    is_ref5_ic: -0.0405
+  - object_id: IND-VOLUME-011
+    holdout5_ic: -0.0242
+    is_ref5_ic: -0.0252
+  - object_id: IND-MOM-016
+    holdout5_ic: -0.0283
+    is_ref5_ic: -0.0242
+  - object_id: IND-STAT-004
+    holdout5_ic: -0.0266
+    is_ref5_ic: -0.0496
+  - object_id: IND-VOL-005
+    holdout5_ic: -0.0266
+    is_ref5_ic: -0.0496
+  - object_id: IND-CYC-006
+    holdout5_ic: -0.0247
+    is_ref5_ic: -0.0294
+  - object_id: IND-CYC-008
+    holdout5_ic: -0.0244
+    is_ref5_ic: -0.0302
+  - object_id: IND-MOM-001
+    holdout5_ic: -0.0234
+    is_ref5_ic: -0.0225
+  - object_id: IND-MOM-006
+    holdout5_ic: -0.0203
+    is_ref5_ic: -0.0176
+  - object_id: IND-TREND-022
+    holdout5_ic: -0.0202
+    is_ref5_ic: -0.0248
+  - object_id: IND-TREND-031
+    holdout5_ic: -0.02
+    is_ref5_ic: -0.0252
+  - object_id: IND-TREND-032
+    holdout5_ic: -0.02
+    is_ref5_ic: -0.0253
+C_class_正方向排除:
+- object_id: IND-MOM-003
+  holdout5_ic: 0.027
+  is_ref5_ic: 0.0322
+- object_id: IND-MOM-013
+  holdout5_ic: 0.0234
+  is_ref5_ic: 0.0225
+- object_id: IND-MOM-042
+  holdout5_ic: 0.0306
+  is_ref5_ic: -0.0197
+compliance:
+  ch_queries: 0
+  cards_modified: 0
+  scores_modified: 0
+  registries_modified: 0
+  files_created: 21
+  code_modified_by_this_file: 0
