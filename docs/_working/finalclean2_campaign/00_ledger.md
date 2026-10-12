@@ -614,3 +614,15 @@ git for-each-ref --format='%(refname:short)' 'refs/tags/quarantine/finalclean2-t
 wc -l .runtime/quarantine/finalclean2_safety/wave2_rescue_manifest.jsonl \
       .runtime/quarantine/finalclean2_safety/wave2b_rescue_manifest.jsonl  # 期望 3＋6
 ```
+
+
+## 十四、波三·通宵执行与晨间裁定包（追加式，属主＝st-fclean3-20261012，承 10-12 01:15 通宵令 §六）
+
+> 本节只登记指针与三段式摘要，**明细在波三自家册**：`docs/_working/finalclean2_campaign/wave3/24_wave3_morning_package.md`
+> （全文 13 条待裁菜单 M1-M13＋两处更正 §三）。波三与波二共用本册，故此处纯追加、不改写波二任何一行（基线双向零差已证）。
+
+- **执行了什么**：①全域 149 面机生总账＋工令 §1 六处基线差因（`.aidrafts` 286,575 件/4.04GB 非"13 件"、quarantine 主体 drift_* 7,434 枚占 97% 字节且写者自带 30d retention、staging 实测 3 会话、未跟踪 `-uall` 558）；②**真删 46 个零文件目录**（清单 sha256 `0b0cae988df22cca4767662b0f01a1e882a7ababb6b03ec8868fc42008065f7a`，自底向上 `os.rmdir`，deleted=46/failed=0/复存=0）；③归档器**影子 round1-3 幂等自证**（三轮 would=288 逐轮全等、errors=[]、与 `list_active_readonly()` 交叉核三轮命中在飞=0）；④日检交接卡 `wave3/23_...md` 交周期班（影子期禁注册计划任务）；⑤aidrafts 唯一字节 25 件存证（23 件 sha 全等＋2 件密钥仅登记哈希）；⑥`.runtime` 根 22 枚散件内容证据冻结（防 GATE-RUNTIME-CLEANUP 7d TTL 无声吃掉）。
+- **自裁了什么**：散件 22 枚**零删除**（14 在飞∧5 查无写者故不可证"机器可再生"∧1 有独有字节）；口径冲突取"以机制自算为准"（288 vs 手工 268，差因登记不硬合）；密钥二份只登记不处置；Q3 382.8MB 交册主车道；`.aidrafts` 16 棵工作树今夜零动（令文"大面实处置等晨裁"）。依据＝授权矩阵"不可自裁：物理不可逆删除"+预签三序"预签＞既定默认＞最保守"。
+- **⚑ 更正两则（另起一节，波二原文不动）**：波三 P1 册 §五-3 那句"`_save` merge-upsert 永不删 ⇒ 本班 register 结构上不可能逐出他人条目"**作废**——逐出不走 `_save` 而走 `list_active(mutating=True)`：`session_concurrency.py:1516`＋收割循环 `:1552-1559`＋`_delete_shard:1048-1054`（**删片＋`legacy.pop`＋整表重写兼容副本**，宽限 `_REAP_GRACE_SECONDS=900s`）。本班 00:37 诊断脚本确实调用过该 mutating 版；因 `_write_legacy_raw` 不经 `safe_write_text` ⇒ **无写者审计面**，同窗另有 72 处 mutating 调用方在跑 ⇒ 归因＝**机制确证、时刻吻合、计数不可追认**，维持未决但嫌疑面扩大。后果实测仍为零（`dead/` 无新增，被收侧 30s 自愈）。**纪律升级**：`list_active()`＝写操作，只读一律 `list_active_readonly()`；`session_registry.json` 单文件禁作判活源。第二则：车道实测"merge-upsert 永不删"在片面上不成立（片数随活性涨落），累积面实为 8 枚 `*.tmp` 崩溃残件（27.6%，零读者无清理代码）→ 新增 M10 待裁。
+- **等裁 13 条（M1-M13）**：散件 22 枚（含 3 枚将被 TTL 在 10-13/10-15/10-18 无声吃掉）、aidrafts 16 棵工作树实处置、quarantine Q1-Q5、Q3 出证催办、gate_audit/audit"**先扩取证窗再缩容**"（现取证窗仅 3.7d/0.7d）、only-copy 死信 1,425 袋与 tmp C2 49.88GiB（Owner 六面）、T8 第二份明文密钥、T7 `takeover_ledger` 主表少 75 条、双轨收敛四组、`.tmp` 残件、4 条悬挂 token、影子转正＋任务注册、面覆盖缺口（102 面已建账 101，余 6 面写者未定位需指唯一纠正出口）。
+- **落地状态如实**：`q-...-0001/0002/0003` 02:0x 仍 pending（dev 上 `wave3/` 零命中），波三**不称任何一袋完成**；判落地只认 `git log -- <path>`／`git show dev:<path>`。
