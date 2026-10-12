@@ -30,6 +30,7 @@ from pathlib import Path
 
 import pytest
 
+from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw_mod
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
     CommitStatus,
     GitCommitGateway,
@@ -493,3 +494,58 @@ class TestE4to1UnifiedSnapshot:
 
         gw.commit("t-e3", [str(gone)], "test: e3 delete conservative", allow_non_worktree=True)
         assert calls == ["run"], "删除面保守不跳，交通道判定"
+
+
+# ---------------------------------------------------------------------------
+# P7 甲-0 钉：通道的仓根必须指向"本提交真要落进去的那棵树"
+# ---------------------------------------------------------------------------
+
+
+class TestChannelWorktreeRootEnv:
+    def test_channel_env_points_at_committing_tree(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """金-hash 门的判定面＝本提交所在树，不是多会话共享的主区磁盘。
+
+        病根（维护四班 P7 案卷 §二/§三之补实测）：`zephyr.shared.io.paths.find_repo_root()` 由
+        editable .pth 反推仓根，不设 `ZEPHYR_WORKTREE_ROOT` 时恒=主仓 ⇒ 落地链把"他班未提交的
+        受保护件 WIP"计成 TAMPERED 拦下无辜袋。本钉只判输入指向（门本体/阈值/exit code 零改动）。
+        """
+        repo = _mk_repo(tmp_path)
+        target = repo / "pkg" / "mod.py"
+        target.write_text("X = 1" + chr(10), encoding="utf-8")
+        gw = GitCommitGateway(project_root=str(repo))
+        seen: dict = {}
+
+        def _spy(env, root, rel_existing, rel_deleted, tmp_index):
+            seen["env_root"] = env.get("ZEPHYR_WORKTREE_ROOT")
+            seen["root"] = root
+            seen["inherited"] = env.get("GIT_INDEX_FILE") is not None
+            return "", 0, False, "", True
+
+        monkeypatch.setattr(gw, "_precommit_run_scoped", _spy)
+        monkeypatch.setattr(gw_mod, "_precommit_run_enabled", lambda: True)
+
+        assert gw._run_precommit_channel("t-p7", [str(target)]) is None
+        assert seen.get("env_root") == seen.get("root") == str(repo), (
+            f"通道未把仓根指向本提交所在树：env={seen.get('env_root')} root={seen.get('root')}"
+        )
+        assert seen.get("inherited") is True, "own-scope 临时索引注入不得被顺手改掉"
+
+    def test_channel_env_leg_is_the_only_added_key(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """反向自证配套：注入腿摘掉后本类两支必同时转红（突变实测在案），故此钉判"腿真在 env 字典里成形"。"""
+        repo = _mk_repo(tmp_path)
+        target = repo / "pkg" / "mod.py"
+        target.write_text("X = 1" + chr(10), encoding="utf-8")
+        gw = GitCommitGateway(project_root=str(repo))
+        seen: dict = {}
+
+        def _spy(env, root, rel_existing, rel_deleted, tmp_index):
+            seen["has_key"] = "ZEPHYR_WORKTREE_ROOT" in env
+            return "", 0, False, "", True
+
+        monkeypatch.setattr(gw, "_precommit_run_scoped", _spy)
+        monkeypatch.setattr(gw_mod, "_precommit_run_enabled", lambda: True)
+        monkeypatch.delenv("ZEPHYR_WORKTREE_ROOT", raising=False)
+
+        gw._run_precommit_channel("t-p7", [str(target)])
+        # 本钉不判"没注入时的世界"，只判注入这一条腿确实在 env 字典里成形（防装饰闸）
+        assert seen.get("has_key") is True

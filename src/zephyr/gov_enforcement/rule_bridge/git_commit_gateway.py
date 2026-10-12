@@ -3917,6 +3917,12 @@ class GitCommitGateway:
             **os.environ,
             "GIT_INDEX_FILE": tmp_index,
             "ZEPHYR_COMMIT_GATEWAY": "1",
+            # P7 甲-0（在册 env 注入口，见 zephyr.shared.io.paths.find_repo_root 的 S4 治本自述）：
+            # 金-hash 门的仓根由 `zephyr.__file__` 反推，editable .pth 把它恒锚主仓——不设本 env 时
+            # 通道读的是"多会话共享的主区磁盘"而非本提交真要落进去的那棵树，于是外来 WIP 被计
+            # TAMPERED、拦下的却是无辜袋。门本体/阈值/exit code/判定式零改动，只改喂给门的输入指向；
+            # 目标树缺 src/zephyr/__init__.py 时 find_repo_root 自动回退原解析，无伪造根风险。
+            "ZEPHYR_WORKTREE_ROOT": root,
             "PRE_COMMIT_COLOR": "never",
             "SKIP": _PRECOMMIT_CHANNEL_SKIP_HOOKS,
         }
