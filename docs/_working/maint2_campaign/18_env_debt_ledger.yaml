@@ -30,7 +30,11 @@ entries:
       实装 = +cu126（CUDA 构建），在册裁定要求 = +cpu。版本号同为 2.13.0 极易被误读成"已达标"
       ——版本号相同而构建后缀相反，故判据必须取后缀（这条是"存在性判据≠内容判据"的环境版）。
     cost_claimed_by_ruling: "4.27GB → 0.48GB（裁文原值，非本班实测）"
-    disposition: open
+    disposition: >-
+      已收编钉版。真源指回 #ARCH-TORCH-CUDA-PIN（2026-10-12 Owner 终局裁定③·发令卡⑦执行）；
+      旧裁定 #ARCH-TORCH-CPU-ONLY 同批改判 superseded，其正文留档未删。版本常数不搬进本件——
+      钉版落点在 pyproject.toml 的 dependencies 与 requirements.txt 镜像两处，本件只记差对的
+      处置结论（遵本件 net_zero_declaration 口径）。
     why_not_fixed_now: |
       换回 CPU 版会改变 sentence-transformers 的运行面，且本班正被 GPU 化班（st-gpux-20261011）
       同机使用 CUDA 的窗口期覆盖——降级属环境/花钱类动作且可能打断他班，按统筹权限四条第 3 款
@@ -38,3 +42,17 @@ entries:
       Owner/统筹门位（涉磁盘占用与依赖口径）。
     owner_of_record: "环境/依赖治理车道（非本班）"
     revival_condition: "任一 pip 重装事件，或 GPU 化班收口后的一次复测"
+    # ── 2026-10-12 维护三班执行 Owner 裁定③：本条闭合 ─────────────────────────
+    resolved_on: "2026-10-12"
+    resolved_by: st-maint3-20261011
+    closure_evidence:
+      declared_face: "pyproject.toml [project.dependencies] 与 requirements.txt 两侧同串（本件不复制常数）"
+      remeasured_at: "2026-10-12 20:0x +0800（date 实测，非体感钟）"
+      generation_command_output: "2.13.0+cu126 12.6 True"
+      consumer_smoke: "3 支 import 冒烟全通：ex_sor rl_trainer.td3_agent（顶层）／scripts.backtest.kronos_adapter（惰性）／ml_train sentiment_sft_trainer（QLoRA）"
+      drift_now: "无——在册申报面与本机实装同向（原判据『版本号同而构建后缀相反』的陷阱已由钉版消除）"
+    residual_note: >-
+      仍留两项未闭：①无主件 cuda-toolkit 12.9.2.0／cupy-cuda12x 14.2.0／nvidia-*-cu12 12.9.x
+      （pip show 的 Required-by 全空，实测无在册消费者），是否收编或清理＝环境/花钱类，待统筹；
+      ②08-08 那次 CUDA 轮的装机来源查无 provenance（dist-info 无记录，pip 日志未留存），
+      故"谁改的环境"这一面本条给不出答案，只记事实。

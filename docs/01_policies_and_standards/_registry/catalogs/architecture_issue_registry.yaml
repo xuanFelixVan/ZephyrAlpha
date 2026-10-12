@@ -9857,12 +9857,23 @@ entries:
   related_adjudication: TRAE-062 SSoT 分类铁律, FP-ISO.4C worktree 君子协定, ARCH-DEPGRAPH-RECONCILER-FAILSILENT
 - issue_id: "#ARCH-TORCH-CPU-ONLY"
   title: PyTorch CPU 版替换（2.5.1+cu121 4.27GB → 2.13.0+cpu 0.48GB）
-  status: decided
+  status: superseded
   created: "2026-07-16"
   severity: P2中
   fix_phase: 已落地（requirements.txt L5-10, embedding_router.py device="cpu"）
   adjudication: 项目代码 0 个 import torch，由 sentence-transformers 间接引入。裁定将 torch 替换为 CPU 版（2.5.1+cu121 4.27GB → 2.13.0+cpu 0.48GB），embedding_router.py 明确 device="cpu"。节省 3.79GB 依赖体积。
-  last_updated: "2026-07-29"
+  last_updated: "2026-10-12"
+  superseded_by: "#ARCH-TORCH-CUDA-PIN"
+  supersede_note: 「2026-10-12 Owner 终局裁定③（发令卡⑦·维护三班执行）：本裁定前提——项目代码 0 个 import torch——被实测否证（在册消费点 3 支 import 冒烟全通），且『已替换为 CPU 版 2.13.0+cpu』与本机实装 2.13.0+cu126 互斥；按『前提失效、事实性取代』改判 superseded。上方 adjudication 正文一字未删（历史留档，符合更正另起不重写铁律），新真源=紧邻的
+- issue_id: "#ARCH-TORCH-CUDA-PIN"
+  title: "torch 收编为显式核心依赖并锁版 2.13.0+cu126（升级须新裁定）——取代 #ARCH-TORCH-CPU-ONLY"
+  status: decided
+  created: "2026-10-12"
+  severity: P2中
+  fix_phase: 已落地（同批改四件）：pyproject.toml 的 dependencies 钉 torch==2.13.0+cu126；requirements.txt 镜像同约束并内嵌 extra-index-url cu126 行，同时清除其 CPU-only 矛盾句（旧正文留在被取代条目的 adjudication 里，不在声明面留假指令）；ENV 债台账 ENV-001 disposition 写『已收编钉版』指回本条目。
+  adjudication: "2026-10-12 Owner 终局裁定③原文引用（发令卡⑦含 Owner 裁定③）：「①torch 2.13.0+cu126 钉入 requirements.txt/pyproject.toml 并锁版本号（升级须新裁定）；②清除 requirements 内 CPU-only、已换 2.13.0+cpu 过时矛盾句；③#ARCH-TORCH-CPU-ONLY 裁定按前提失效、事实性取代走裁定登记正门（adjudicator 署名＋Owner 追认原文引用本裁定）；④3 处在册消费点 import 冒烟验证；⑤ENV-001 disposition 写已收编钉版指回本裁定。」\n    adjudicator=st-maint3-20261011（维护三班执行班；AI 代登记署名按根宪法 §5.3。本条内容=Owner 裁定③转录＋本机实测取证，非本班自创判据，判据数值零改动。）\n    实测取证（本机 2026-10-12 20:0x +0800）：importlib.metadata.version(torch)=2.13.0+cu126、torch.version.cuda=12.6、torch.cuda.is_available()=True、device=NVIDIA GeForce RTX 3090；三支消费点 import 冒烟全通——zephyr.ex_sor.services.rl_trainer.td3_agent（顶层 import）、scripts.backtest.kronos_adapter（惰性，experimental）、zephyr.ml_train.implementations.sentiment_sft_trainer（QLoRA）。\n    两条真源互斥的病灶：requirements.txt 第 5-10 行载 07-21 裁定 CPU-only 且称已换 2.13.0+cpu；pyproject ml-train 段注载须单独装 CUDA 版 cu126 wheel；实装跟后者，而 torch 在两本声明面都不存在（版本由 sentence-transformers 传递决定＝幽灵依赖，同 python-dotenv 与 #ARCH-REQ-CLASSIFY-001 案）。\n    落位选择如实登记：torch 入 project.dependencies 而非只进 ml-train extras——因裁定③第①款点名两本声明面，而 requirements.txt 文件头自述其为 dependencies 的镜像；只进 extras 会被 GATE-REQUIREMENTS-VERSION-SYNC 判两侧不一致（实测该闸逐组比名字与约束串）。代价与前置＝干净环境安装必须带 extra-index-url https://download.pytorch.org/whl/cu126（本地版本号 +cu126 在 PyPI 无解），该索引行已内嵌 requirements.txt（实测其解析器显式跳过 -- 开头行，不引入新依赖名）。回退＝git revert 本袋：纯声明面，不动已装环境、不涉任何数据。\n    登记面选择如实说明：本对条目走 architecture_issue_registry（ARCH 系真源，maintenance=manual）；不另立 裁定#509——ruling_registry.yaml 是 PG 账本 REG-RULING-001 的机生投影（文件头 GENERATED 明载手改必被覆盖，裁定#502），而该册投影现滞后账本，新立裁定号若只入账本未落投影，引用它会自触 RULING-REFERENCE/REFERENCE-INTEGRITY 把袋打死（在册同型事故：引用未登记数字＝死信）。是否补登裁定号待 C4 聚合 render 袋落地后由统筹定。\n    闸噪声自证：改后复跑一致性判据 findings=3 条，与 HEAD 基线逐条同名（asia 幻影/gplearn+ta_lib 缺面/demo websockets），零新增噪声；asia 那条与本条同坑（解析器把块内双引号片段当依赖名），属存量，本班不顺手修他人注释。"
+  last_updated: "2026-10-12"
+  related_adjudication: "#ARCH-REQ-CLASSIFY-001（依赖归类显式化先例）; #ARCH-084 家族; ENV-001（docs/_working/maint2_campaign/18_env_debt_ledger.yaml）"
 - issue_id: "#ARCH-TRADING-DECISION-MAP-001"
   title: 交易决策地图（决策内容索引层，项目第 7 张地图性质）V0 落地登记——三流骨架+状态矩阵+引用校验
   status: decided

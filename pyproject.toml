@@ -28,6 +28,18 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Office/Business :: Financial :: Investment",
 ]
+# ── torch 归属（#ARCH-TORCH-CUDA-PIN，2026-10-12 Owner 裁定③·维护三班执行）──────────────
+# 病根：requirements.txt 旧注（#ARCH-TORCH-CPU-ONLY 2026-07-21：项目代码 0 个 import torch、
+# 已换 2.13.0+cpu）与本文件 ml-train 段旧注（torch 须单独装 CUDA 版 cu126 wheel）两条真源互斥，
+# 而实装跟后者——本机实测 2.13.0+cu126／cuda 12.6／cuda.is_available()=True／RTX 3090；
+# 且 torch 不在任何 dependencies 声明面，版本由 sentence-transformers 传递依赖决定（幽灵依赖，
+# 同 python-dotenv 案）。在册消费点实测 3 支 import 冒烟全通：ex_sor rl_trainer.td3_agent（顶层）、
+# scripts/backtest.kronos_adapter（惰性，experimental）、ml_train sentiment_sft_trainer（QLoRA）。
+# 裁定③第①款＝锁版本号，升级须新裁定；干净环境装法：
+#   pip install --extra-index-url https://download.pytorch.org/whl/cu126 -e .[ml-train]
+#（requirements.txt 已内嵌同一 --extra-index-url 行；同步闸对 -- 开头行免疫，实测其
+#  _parse_requirements_file 显式跳过；旧裁定正文保留在 architecture_issue_registry.yaml）
+
 dependencies = [
     "pydantic>=2.0.0,<3.0.0",
     "pyyaml>=6.0,<7.0",
@@ -40,6 +52,10 @@ dependencies = [
     "mcp>=1.0.0,<2.0.0",
     "openai>=1.0.0,<2.0.0",
     "sentence-transformers>=3.0.0,<4.0.0",
+    # #ARCH-TORCH-CUDA-PIN（2026-10-12 Owner 裁定③）：torch 收编为显式核心依赖并锁版，升级须新裁定。
+    # 说明放块外：本块解析器 _parse_pyproject_dependencies 会把块内任何双引号片段当依赖名读出来
+    #（HEAD 里那条 asia 幻影噪声即同一坑），故此处不留带引号长注。装法须带 CUDA 索引，见 requirements.txt。
+    "torch==2.13.0+cu126",
     "structlog>=24.1.0,<25.0.0",
     "pyarrow>=15.0.0,<26.0.0",  # 上界放宽 <20→<26：datasets 4.x 要求 pyarrow>=21（P1-E3 ML 训练轨）
     "psycopg2-binary>=2.9.0,<3.0.0",
@@ -112,7 +128,9 @@ clone-guard = [
     "filelock>=3.12.0,<4.0.0",  # 跨进程文件锁（Unlicense），EchoGuardAdapter lazy-import
 ]
 # P1-E3 NLP 管道训练轨依赖（#ARCH-NLP-PIPELINE-001，按需安装，非核心包）
-# 安装：pip install -e ".[ml-train]"；torch 须单独装 CUDA 版（cu126 wheel）
+# 安装：pip install -e ".[ml-train]"；torch 本体已在 [project.dependencies] 钉版
+#       （#ARCH-TORCH-CUDA-PIN，2026-10-12 Owner 裁定③——旧注"torch 须单独装 CUDA 版"至此
+#        从"口头约定"变成"声明面锁版"，装法须带 --extra-index-url cu126，见上）
 # 推理轨复用 local_model（Ollama/DeepSeek），训练轨用 peft/trl QLoRA + bitsandbytes 4bit 量化
 ml-train = [
     "peft>=0.20.0",           # QLoRA adapter（Apache-2.0），LoraConfig + get_peft_model

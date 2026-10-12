@@ -2,12 +2,13 @@
 # This file is a mirror of pyproject.toml; update pyproject.toml first, then sync here.
 # 5.17.11 修复：统一 SSoT + 添加主版本上界（防止 breaking change）
 #
-# 2026-07-21 裁定 #ARCH-TORCH-CPU-ONLY:
-# 项目代码 0 个 `import torch`,但 sentence-transformers 间接依赖。
-# embedding_router.py 明确 device="cpu" —— GPU CUDA 完全浪费。
-# 治本:torch 已替换为 CPU 版 (2.5.1+cu121 4.27GB → 2.13.0+cpu 0.48GB)。
-# 重装命令: pip install torch --index-url https://download.pytorch.org/whl/cpu --no-deps
-# 阿里云镜像备用: pip install torch -i https://mirrors.aliyun.com/pypi/simple/ --no-cache-dir
+# torch 构建口径（#ARCH-TORCH-CUDA-PIN，2026-10-12 Owner 裁定③·维护三班执行）：
+# 本文件旧注曾载"2026-07-21 裁定 #ARCH-TORCH-CPU-ONLY：项目代码 0 个 import torch，
+# 已替换为 CPU 版 2.13.0+cpu"——该前提已被实测否证（在册消费点 3 支 import 冒烟全通、
+# 本机实装 2.13.0+cu126 且 cuda.is_available()=True）。旧裁定按"前提失效、事实性取代"
+# 改判 superseded，正文留在 docs/01_policies_and_standards/_registry/catalogs/
+# architecture_issue_registry.yaml（不删历史）。装法须带 CUDA 索引，见下方 --extra-index-url。
+--extra-index-url https://download.pytorch.org/whl/cu126
 pydantic>=2.0.0,<3.0.0
 pyyaml>=6.0,<7.0
 pandas>=2.0.0,<3.0.0
@@ -19,6 +20,7 @@ chromadb>=0.4.24,<1.0.0
 mcp>=1.0.0,<2.0.0
 openai>=1.0.0,<2.0.0
 sentence-transformers>=3.0.0,<4.0.0
+torch==2.13.0+cu126  # #ARCH-TORCH-CUDA-PIN 锁版（升级须新裁定）；装法带 --extra-index-url cu126
 structlog>=24.1.0,<25.0.0
 pyarrow>=15.0.0,<26.0.0  # 上界与 SSoT pyproject.toml 对齐（<20→<26：datasets 4.x 要求 pyarrow>=21）
 psycopg2-binary>=2.9.0,<3.0.0
