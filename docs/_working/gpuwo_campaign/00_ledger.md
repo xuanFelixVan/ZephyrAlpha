@@ -563,3 +563,132 @@ python scripts/ml/convert_gguf_ollama.py \
   ⇒ 需要 **≥40 GB 可用内存或空盘时段**才该重跑；周日 10:00 训练完接着转是同一条路的自然时段，
   但那要先有人在班盯余量。
 - 若下要重跑：命令照上面坐标不变，先把 keep 行加回去（长批），并在 `save_pretrained` 期间盯 `psutil` 一次。
+
+### 6.15 首夜标定读数＋P4 演练补完（甲档执行账，04:10 起续跑班）
+
+令源：统筹批「甲档演练」带三护栏＋Owner 终局裁定①⑤＋统筹 21:3x 批复仍有效。本班为 st-gpuwo-20261011 续跑执行者，
+`date` 实测 2026-10-13 04:10:13（过 04:00 才碰 CH）、Python 3.12.8。
+**本班零判据改动、零阈值改动、零消费接线**；两处自犯已在本节内自报。
+
+**⓪ 活性登记（读回才算活）**：`SessionRegistry(Path('.')).register(sid, pid=0)` 返回 SessionInfo(pid=0, …)；
+`register_heartbeat_keepalive(..., ttl_seconds=7200)` 返回 `{'event':'grant', 'daemon_pid':22800, 'expires_at':1791843047}`（＝本地 06:10:47）；
+`list_active_readonly()` 命中本 sid **1 条**。同刻盘面另见 `st-examrun-20261012` 被判活（心跳 3.1s＋袋在飞 207.6s），本班避让、未碰其面。
+
+**① Kronos 首夜标定读数（只读；日志 1020 字节、mtime 00:30）**
+- fired 行原文：`==== Kronos scoring fired at 2026-10-13 00:30:00 (top_n=300 shard=2/4 cap=25m) ====`
+- calibration 块：`elapsed_min 0.82`／`sec_per_symbol 0.65`／`symbols_fit_in_cap 2299`（75 只耗 0.82 分钟；顶到 25 分钟可容 2299 只）
+- 片内计数：universe_total 300、shard 2/4、shard_size 75、**scored 75 / unscored 0 / failed 0 / failed_detail [] / shard_status complete**、
+  device cuda、model_size small、sample_count 8、pred_len 1、max_context 400、yield_window_hit false、run_id `kronos-score-20261012-163002`（asof_ts 2026-10-12T16:30:02+00:00）
+- exit 行两条：`==== score-only exit code 0 (shard 2 of 4) ====`、`==== exit code 0 ====`；`grep -c "NOT GREEN"` ＝ **0** ⇒ 批体自述全绿
+- CH 读回（走 `kronos_adapter._make_cli()`，与该批同源；不信返回码、只认读回值）：
+  `count(), count(DISTINCT symbol), min(as_of_date), max(as_of_date)` ＝ **(75, 75, 2026-10-09, 2026-10-12)**；
+  同句加 `FINAL` 得同一组值 ⇒ 无待合并重复；独立对照 `system.parts`（active）＝ **1 个 part / 75 行**，两口径相符 ⇒ **这批写成了，不是 0 行**
+  按 run_id 分组：唯一 run_id `kronos-score-20261012-163002` 计 75 行、`max(synthetic)=0` ⇒ 表里全是真行、无冒烟件、且只落了**一片**（覆盖 75/300 ＝ 25%）
+  健康探针：`isNaN/NULL q050`=0、`context_len=0`=0、`q005>q095`（区间倒挂）=0、context_len min/median/max ＝ **73/277/278**
+- **本班新读数两条（只登记，不判定）**：`as_of_date` 分成两簇 ＝ **2026-10-09 共 43 行 / 2026-10-12 共 32 行**，
+  对应 `input_cutoff_ts` 2026-10-08T16:00Z 与 2026-10-11T16:00Z ⇒ 本片 75 只有 **43 只（57.3%）是拿前一交易日（10-09）的最后一根 bar 打的分**。
+  这属供数新鲜度面，改不改、谁改不属本班权限。
+- 取证面自报：两条 `system.tables` 探针 SQL 报 `Code: 47`（我按记忆写的 `total_rows/part_count/countPart` 列名在该版本不存在），
+  随即换成 `system.parts` 做行数对照——**结论不依赖失败的那两条**。
+- 令卡勘误（照原文跑不通的一口）：卡上写 `count(DISTINCT symbol_canonical)`，`DESCRIBE TABLE` 实测该表**无 `symbol_canonical` 列**，真实列名 ＝ **`symbol`**。
+  本班按真实列读回并把勘误留在册里，未改卡上判据、也未替卡改口径。
+
+**② 护栏①起批门槛（判定＝通过，但余量薄）**
+- 04:1x（date 04:10:13 之后第一次量）：total 63.85GB／avail **21.83GB**／percent 65.8 ⇒ 对 20GB 线通过，**余量仅 1.83GB**
+- 04:14:21 起批前复测：avail **25.32GB**（他班收尾腾出）
+- 当时 top5（psutil rss）：python 31424=3131.4MB、python 15488=2880.4MB、Qoder CN 14228=2347.6MB、MemCompression 5860=1132.3MB、python 33632=849.9MB
+
+**③ 免杀登记与一处自犯（`data/runtime/process_reaper_keep.txt`，本机件、`git ls-files` 查无）**
+- 追加后进程外读回：383 行，末两行＝注释＋`convert_gguf_ollama.py`；`grep -c '^convert_gguf_ollama.py$'`=1；原 `kronos_adapter.py --score-only`(365)／`run_sft_train.py`(369) 未动
+- ⚠**自犯**：追加用了文本模式 `open(...,'a')`，Windows 把换行译成 CRLF ⇒ 全册原 381 个 bare LF，唯独我那 2 行是 CRLF（第四把口径又踩一次）。撤回时把 CRLF 一并带走，现册 CRLF 计数 **0**、字节 16574→16338、行数 383→381。
+
+**④ 演练执行（坐标照卡一字未改）**
+- 起批前四要素预检（全读回）：`models/qwen25-7b-sft-v1/adapter_config.json` 的 `base_model_name_or_path=Qwen/Qwen2.5-7B-Instruct`＋`adapter_model.safetensors` 10,122,200B；
+  `E:/llama.cpp/convert_hf_to_gguf.py` 与 `E:/llama.cpp/llama-quantize.exe` 存在；ollama CLI 在位；
+  HF 缓存 `models--Qwen--Qwen2.5-7B-Instruct/snapshots/…` 四片实文件 3,945,441,440＋3,864,726,352＋3,864,726,424＋3,556,377,672 ＝ **15,231,271,888B（15.23GB）** ⇒ 无需任何下载
+- dry-run rc=**0**（四条命令绝对路径装配＋Modelfile 文本）——只证明"计划可拼"，不证明"执行会过"
+- 真跑（后台任务 id `b4nwvkqw4`，04:14:27 起，带 `HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1`）：**step1 merge 崩**
+  末行 `[ERROR] merge 失败（exit 3221225477）`（＝0xC0000409，Windows fast-fail），崩点 `Loading checkpoint shards: 75%|███████▌ | 3/4 [00:29<00:09, 9.86s/it]`；
+  脚本按 `[ERROR_CONTRACT]` 走 `return 1`（后台任务终态 rc=1，与本班面板读数一致）
+- **step2 convert／step3 quantize／step4 ollama_create ＝未执行**（`run_plan` 首步非零即返回，日志里没有这三段的执行行）
+- 离线红线守住：全日志 `grep -ic "http|downloading"` ＝ **0**，无 HF 离线缺件报错 ⇒ 崩在装配段而非取数段，**没有触发任何下载**
+
+**⑤ 护栏②实时止损：未触发（8 个巡检点全程 ≥25GB）**
+- 巡检 55s 间隔、04:14:37→04:21:02 的 avail 序列（GB）：**25.06／28.37／30.27／31.68／31.03／30.91／31.07／30.47** ⇒ 从未 <8GB，没走进止损分支；
+  第 5 步的清理义务改按"批自然终了"执行（见⑥），止损三证里的"当时 avail"因此＝崩后复测值而非截停值
+- 口径要说清：`psutil.virtual_memory().available` 是**物理内存**口径。04:21:54 另取 `GlobalMemoryStatusEx`：
+  CommitLimit **95.85GB**／CommitAvail **25.41GB**／CommitUsed 70.44GB（73.5%）／dwMemoryLoad 57%。
+  bf16 底座实测 15.23GB ⇒ fp32 装配需 ~30.4GB 提交位 > 当刻 CommitAvail ⇒ 崩点与"提交位不足"**一致**；
+  但**根因未证**：日志无 traceback（fast-fail 无 Python 层残迹）、事件日志近 30 分钟 `Application Error|Windows Error Reporting|.NET Runtime` **零命中**、
+  `AppData/Local/CrashDumps` 无 pid 22048 的新 dump。本班只写"一致"，不写"已验证为 OOM"。
+- 由 ④⑤ 得一条**待裁登记（本班不自改）**：护栏①以"物理 avail≥20GB"放行，而这个作业的约束量在**提交位**；
+  同一坐标同一台机两次给出不同崩点（6.14 死在 save、物理 avail 掉到 3.6；本班死在 3/4 装载、物理 avail 全程 ≥25）
+  ⇒ 该门槛对此作业**判别力不足**。改门槛＝改判据，呈统筹/Owner，不在本班权限内。
+
+**⑥ 三证＋逐段 rc（按卡 6.1–6.4 逐项，含失败态）**
+- 逐段 rc：merge ＝ **3221225477（0xC0000409）**；convert／quantize／ollama_create ＝ **未执行（无 rc）**；脚本整体 ＝ **1**
+- 子进程零命中：首轮关键字 `merge_and_unload|convert_hf_to_gguf|llama-quantize|convert_gguf_ollama` 命中 12 条，**逐条核后 12 条全是本班观测壳自身**
+  （3 个 bash.exe＋1 个 python 探针，命中物是探针 cmdline 里的关键字字符串＝自造信号）；减掉观测面后**真命中 0**；`llama-quantize` 运行数 0；
+  日志里 torch 报出的子进程号 **22048 → `psutil.pid_exists(22048)=False`**
+- RAM 回到起批前量级：04:21:54 物理 avail **27.37GB**（≥ 起批前 25.32GB、≥ 门槛测 21.83GB）；CommitAvail 25.41GB 仍偏紧（他班在跑，非本班所致）
+- 产物清单与体积（期望四件 vs 实测）：merged-hf ~15GB ＝ **无**；`*-f16.gguf` ~15GB ＝ **无**；`*-Q4_K_M.gguf` ~4.6GB ＝ **无**；Modelfile ＝ **有，216B**（sha256 前缀 `adb4d438bca1b24e`）；`models/` 现存项仅 `qwen25-7b-sft-v1`
+- `ollama list`：跑前 8 个模型、跑后仍 8 个、`grep -c drill20261012` ＝ **0** ⇒ 演练件从未注册，"ollama 可见"这一条 **未证（没跑到，不是跑失败）**
+- 存证与残骸：日志（1177B，sha256 前缀 `ec558eeb7fca1995`）与 Modelfile 已先 cp 进 `.runtime/tmp/gpuwo_drill2_evidence/`，
+  再对演练目录做守卫式删除（断言解析后全等＋目录内文件数==1 且为 .Modelfile）⇒ 删后 `exists? False`
+- keep 撤回复验：`convert_gguf_ollama` 计数 **0**；`kronos_adapter.py --score-only` 仍在 **365 行**、`run_sft_train.py` 仍在 **369 行**；行数 383→381
+- 未动面（只读取证）：`ZephyrAlpha_NightMining` State=**Disabled**（LastRunTime 1999-11-30＝从未跑过）；`ZephyrAlpha_KronosScoring` State=Ready；
+  `src/zephyr/backtest/gpu_core.py`／`factory_grid_executor.py` 的 N-1/N-2 与考试卡本班一律未碰
+
+**⑦ 与 6.14 的关系（旧案卷一字未改，更正另起本节）**
+- 6.14 的边界表述仍成立：四段里实测过的只有"装载"与"计划装配 rc=0"。本班把它的经验判据往前推了一条——
+  **同一坐标、同一台机、两次死在不同段**：10-12 死在 `save_pretrained`（物理 avail 31.2→3.6），10-13 死在 3/4 装载（物理 avail 全程 ≥25、崩在 fast-fail）。
+  ⇒ 6.14 留下的"需要 ≥40GB avail"这条判据**覆盖不了第二次的崩点**；要重跑，需要盯的是**提交位**（CommitAvail 明显 >30GB）＋空盘时段，
+  周日 10:00 训练完再转仍是自然时段，但当班须在两个口径上同时读数。
+- **仍未证的四段**：step1 的 save、step2 convert、step3 quantize、step4 ollama create。本轮**没有新增任何一段为"已验证"**。
+
+**⑧ 复核命令（本班已照原文跑过，期望值即当刻实测值）**
+
+```
+cd /d/ZephyrAlpha
+grep -c "NOT GREEN" .runtime/logs/kronos_scoring.log
+grep -c "convert_gguf_ollama" data/runtime/process_reaper_keep.txt
+grep -n "^kronos_adapter.py --score-only$" data/runtime/process_reaper_keep.txt
+ollama list | grep -c drill20261012
+ls -d models/gguf_drill_20261012 2>&1
+```
+
+逐条期望值（当刻实测）：`0`／`0`／`365:kronos_adapter.py --score-only`／`0`／`No such file or directory`。
+CH 侧另有一条：用 `kronos_adapter._make_cli()` 读 `c1_market.kronos_prediction_daily` 的 `count(), count(DISTINCT symbol), min(as_of_date), max(as_of_date)`，
+本班钉住的值是 **(75, 75, 2026-10-09, 2026-10-12)**；后续分片落地后行数会涨，涨本身不算异常，**降到 0 才算**。
+
+### 6.16 袋 0042 死于 `env:ghost_session`（不是 60s 超时簇）＋心跳断供机制取证与修法
+
+本班 6.15 的投递袋 `q-20261013-st-gpuwo-20261011-0042` 于 **06:24:19 判死**，死因签名
+`env:ghost_session`，`dead_reason` 原文照录（其中裁定引用按在册处方去井号，避免本册自触引用完整性门）＝
+`属主会话 st-gpuwo-20261011 已死（heartbeat=exited / 注册表无在册），
+自动重投被存活闸拒绝（459 号裁定；CLI 手动 requeue 不受闸限，人工可强制）`。
+**这条不是卡上点名的 `git commit 60s 超时` 簇**（那簇禁 requeue/禁 force 的条款在此不适用），
+但同样不走 `--force`——按处方走"整件新袋"，因为本袋 `recurrence_fused=True`（复发计数 **442**）已被熔断。
+
+**门的判死是正确读数，不是误杀（三处实据）**：
+- `.runtime/sessions/st-gpuwo-20261011/heartbeat.jsonl` 末行＝
+  `{"ts":"2026-10-12T18:02:29+00:00"(=本地 10-13 02:02:29), "pid":18044, "status":"exited", "reason":"idle timeout", "idle_seconds":5636.1, "timeout_seconds":1800}`
+  ⇒ 服务本会话的 heartbeat daemon **02:02 就因 idle 30 分钟上限自退了**，此后没人再写心跳；
+- 本班两次保活授权（04:10 与 05:31，均 `event=grant`，`ttl_seconds=7200`）**只落进 `keepalive.jsonl`（mtime 05:31）**，
+  而它的消费者（daemon）早已不在 ⇒ **"授权在册"与"心跳在跳"是两件事**，前者不产生后者；
+- 门用的尺（`scripts/commit_queue.py:_registry_liveness_for_ghost` → `SessionRegistry.get_session` → `_is_session_alive`）
+  写明 `pid=0 走 90s 心跳窗`。本班是跨进程短命链（全程 pid=0），05:31 之后 53 分钟无心跳 ⇒ 90s 窗必判死。
+  在册同族死信面（`dead/` 现存）＝**231 只 `env:ghost_session`**，逐日 10-08:6／10-09:8／10-10:3／10-11:10／10-12:11／10-13:1（本班这只）；
+  本机此刻另有 12 个 heartbeat_daemon 进程在跑（他班 sid），**唯独没有本 sid 的**。
+
+**本班修法（不弱化闸、不加豁免、不改判据）**：起一个**带真 PID 的自持心跳常驻器**——
+`register(sid, pid=os.getpid())` 后每 45–60s 调 `SessionRegistry.heartbeat(sid)`，一边盯落地一边续心跳；
+判活改走 `pid>0` 那一支（PID 存活＋心跳新鲜，TTL 3600s 兜底），不再依赖 90s 窗与已退出的 daemon。
+投新袋前先用**门自己的尺**复命（`_registry_liveness_for_ghost(sid, runtime_root)` 必须返回 True）再 enqueue，
+避免把第 232 只喂进同一簇。整件面复验：`git log 4419b8ed2a..dev -- <台账>` 计数 **0**（dev 面仍是 565 行／sha 16c0662731c803a7，
+即我基底未动）⇒ 新袋是干净尾追加，不吞他班面。
+
+**登记一条维护面事实（不代裁）**：本会话在 04:10 冷启动序列里 `register_heartbeat_keepalive` 返回 grant，
+但**没有任何一道闸检查"该 sid 是否真有活着的 daemon 在消费这份授权"**——这正是 442 次复发的形状：
+短链会话拿到授权→daemon 早已 idle 退出→心跳断供→袋子成批成幽灵。本班按权限只登记现象与尺的读数，
+补哪道闸、补在哪一层属判官域/维护线，不在本班权限内。
