@@ -1037,3 +1037,233 @@ DOC-HEADER-SUITE 阻断: [MODULE-ID-CONSISTENCY] module_id_collision
 顺带查实一条设施观察（交 regsolo/总队，非我修）：**`--depends-on` 未落到袋体**——`-0015`/`-0016` 入队时都带了 `--depends-on q-…-0014`，现读两袋 `depends_on=None`，于是 `-0015` 在门改尚未进 dev 的情况下就被 drain（注定再死于 REAL-KEY，且这次是真门拦、不是袋消失）。所以"依赖串"在队列侧当前是**声明不入袋**的形态，后继袋的序要靠自己盯前置落地，不能靠旗标。
 
 判据纪律不变：本案不适用"第三次死于 hook 就停"（那不是不可复现变异，是可复现的门禁判定＋我的头注缺陷）；重投按同签名同内容，不刷队列、不改判据。
+
+## 廿六、未定项 88 件四类四路执行账（本机生，2026-10-13 01:39）
+
+裁定源＝统筹 2026-10-13《死信未定项 88 件 triage：四类四路》；执行面＝本班（重呼，不新开班）；优先序 A→C（穿插）→B→F。
+
+### 一、四路各自的实测落地读数（数字全现读，勿手改）
+
+| 类 | 裁定 | 入表面 | 建表被真闸拦 | 说明 |
+|---|---|---:|---:|---|
+| A（43 件）＋ C（5 件）随 A | 复活 | 46 件／6 批（101-106） | 2 件 | 表=`common/uclass_plan.json`；建表基线 HEAD `e7a7393181`；容量闸留扣另见 §三·补 |
+| B（39 件） | 复活·第二优先 | 34 件／5 批（201-205） | 5 件 | 表=`common/bclass_plan.json`；批号段单开（2xx）的原因＝铺件目录/复跑取证件/讯息件都按批号命名，复用 1xx 会覆掉已落袋讯息点名的那份取证 |
+| C（5 件动态导入型） | 逐件人工判先行 | 目标全在仓 5/5 | — | 幻影目标=0 ⇒ 负存在册无需开条目 |
+| F（1 件 fixture） | 随宿主，不留孤儿 | 不单独复活 | — | 宿主 `test_vendetect_adapter.py` 在 HEAD=False、扣押病因=宿主逐件单跑即红（HOLD_final_register.md：F=4 E=0，批 9）；夹具与宿主最新修订同袋（same_bag_pairing=True）⇒ 宿主转绿那批一并放入 |
+
+### 二、C 类逐件解析表（统筹要的那张人工判表）
+
+| 件 | 动态点位（行/站点/目标） | HEAD 真源 | 判定 |
+|---|---|---|---|
+| `test_l10_compliance.py` | L20 importorskip→zephyr.governance.security_governance.；L21 importorskip→zephyr.gov_drift.artifact_scanner；L22 importorskip→zephyr.governance.intelligence_governa；L23 importorskip→zephyr.governance.security_governance. | — | 目标全在仓⇒随 A 复活 |
+| `test_backfill_module_domain.py` | （正则零命中，人工读件） | scripts/governance/d3_metadata/backfill_module_domain.py | 目标全在仓⇒随 A 复活 |
+| `test_check_gate_inventory_drift.py` | L47 import_module→scripts.governance.generators.check_ga | — | 目标全在仓⇒随 A 复活 |
+| `test_scaffold_module_registration.py` | （正则零命中，人工读件） | scripts/__init__.py;scripts/_archive/construction/create_db_alignment_ | 目标全在仓⇒随 A 复活 |
+| `test_trd_a20_a21_dual_gates.py` | （正则零命中，人工读件） | scripts/governance/check_trd_a20_a21_dual_gates.py | 目标全在仓⇒随 A 复活 |
+
+尺的两次自纠（都用正对照验出，非推测）：①`git ls-files '*/name.py'` 这种 pathspec **不跨目录层**，会把 `scripts/governance/d3_metadata/backfill_module_domain.py` 读成查无＝假红，正解 `git ls-files '*name*'`；②第一版尺把 `__future__`/`__import__("json")` 这类诱饵当幻影目标，据此曾把 5 件全判"幻影"——诱饵与第三方名（pytest/yaml）须先摘出再判负存在。
+
+### 二·补、收集期 skip 面（全 87 枚工棚字节扫 `importorskip`，非只点名批 202）
+
+```
+目标不在仓的 import＝2 枚｜其中真负存在＝0 枚 （零）｜路径漂移＝2 枚
+漂移两条的真源：`zephyr.governance.architecture_principles` → ['src/zephyr/governance/architecture_governance/architecture_principles.py']；`zephyr.governance.data_source_reliability` → ['src/zephyr/governance/data_governance/data_source_reliability.py']
+一行归位可行性探针（临时铺件＋只替模块名，跑完即删，未 add 未入袋）：test_gov_architecture_principles.py：1 failed, 21 passed／test_gov_data_source_reliability.py：27 passed
+```
+
+⇒ 结论修正（旧案卷口径保留）：本班先前把这两枚说成『幻影/负存在』**不成立**——模块都在，只是搬了家（`architecture_governance`／`data_governance` 子包），负存在册因此**不开条目**；而袋 q-…-0054 里这两枚件落地即『收集期跳过＝零断言』，本班已在讯息与本章如实声明（旧讯息未列 skip＝`tools/batch_msg.py` 当时没有 skip 计数面，已补）。
+
+### 三、投袋与逐件定性（现读队列四态＋HEAD）
+
+```
+袋（20261013，属主 st-deadcure3b-chief-20261011）：done 1／pending 6／processing 0／dead 0
+袋面件合计 17｜HEAD 命中（存在性判据=git ls-tree）1 件
+逐批复跑读数：
+  批 104 passed=45 failed=0 error=0 rc=0 green=True 表=uclass_plan.json
+  批 101 passed=0 failed=0 error=0 rc=4 green=False 表=uclass_plan.json
+  批 101 passed=633 failed=3 error=0 rc=1 green=False 表=uclass_plan.json
+  批 101 passed=618 failed=0 error=0 rc=0 green=True 表=uclass_plan_b101_derived.json
+  批 102 passed=83 failed=0 error=1 rc=1 green=False 表=uclass_plan.json
+  批 103 passed=55 failed=0 error=0 rc=0 green=True 表=uclass_plan.json
+  批 104 passed=45 failed=0 error=0 rc=0 green=True 表=uclass_plan.json
+  批 105 passed=59 failed=0 error=1 rc=1 green=False 表=uclass_plan.json
+  批 106 passed=15 failed=0 error=0 rc=0 green=True 表=uclass_plan.json
+  批 103 passed=55 failed=0 error=0 rc=0 green=True 表=uclass_plan.json
+  批 102 passed=48 failed=0 error=0 rc=0 green=True 表=uclass_plan_b102_derived.json
+  批 106 passed=15 failed=0 error=0 rc=0 green=True 表=uclass_plan.json
+  批 103 passed=55 failed=0 error=0 rc=0 green=True 表=uclass_plan.json
+  批 202 passed=71 failed=0 error=0 rc=0 green=True 表=bclass_plan.json
+  批 203 passed=34 failed=0 error=0 rc=0 green=True 表=bclass_plan.json
+  批 204 passed=27 failed=0 error=0 rc=0 green=True 表=bclass_plan.json
+  批 205 passed=1 failed=0 error=84 rc=1 green=False 表=bclass_plan.json
+```
+
+逐件复跑定性（在册纪律：**组读不是判决书**，本轮反向也成立——组内红未必是点名件的病）：
+· 批 101 合批跑出 3 条 failed（涉 2 枚件），两枚件**单跑仍红**＝真红 ⇒ 剔出本批，剔后子集复跑绿才投（派生表 `common/uclass_plan_b101_derived.json`，件数 34）；
+· 批 102 合批 1 error：逐件单跑却**全部绿**——说明红在组合不在件。四种组合实测：去 `test_regen_clean_check.py`＝仍红（ERROR 换邻件）、去 `test_generate_commit_guide.py`＝绿、只剩 3 非写者＝绿、两写者同进程＝绿 ⇒ **肇事面＝`test_regen_clean_check.py`**（它在测试内写热册，#ARCH-084 守护把 ERROR 抬给同进程邻件，点名件反而绿）。本班按"剔肇事件后的 4 件组合复跑绿"投（袋 q-…-0051），`test_regen_clean_check.py` 带因留扣——**逐件单跑表不足以定凶手，凶手要靠组合对拍**。
+
+| 批 | 件 | 单跑 | 计数 | nodeid 级病因 |
+|---|---|---|---|---|
+| 101 | `test_scaffold_token_registration.py` | RED | 3 passed／2 failed | `（该件红在组合态，见上）` |
+| 101 | `test_trd_a20_a21_dual_gates.py` | RED | 12 passed／1 failed | `（该件红在组合态，见上）` |
+| 102 | `test_align_all_orphan_census.py` | GREEN | 5 passed／0 failed | `（该件红在组合态，见上）` |
+| 102 | `test_check_gate_inventory_drift.py` | GREEN | 13 passed／0 failed | `（该件红在组合态，见上）` |
+| 102 | `test_generate_commit_guide.py` | RED | 8 passed／0 failed | `（该件红在组合态，见上）` |
+| 102 | `test_generate_gate_registry.py` | GREEN | 22 passed／0 failed | `（该件红在组合态，见上）` |
+| 102 | `test_regen_clean_check.py` | GREEN | 35 passed／0 failed | `（该件红在组合态，见上）` |
+
+### 三·补、结构性闸与偏离读数（都用闸自己的函数/账本现读，非估算）
+
+```
+FOLDER-CAPACITY-HARD-LIMIT 上限=120；超闸目录 1 个：`tests/gov/governance` 现读 103＋欲投 60＝163（余量仅 17）
+⇒ 因该目录容量留扣 60 枚（拆袋无解：闸看落后面）
+字节偏离（改输入不改闸）：1 枚 `test_backfill_module_domain.py` 233ed402→179a73a2（UP032_ONLY）
+扣押册对账：移出『假扣押』留痕 7 枚（同会话后袋已成功入队，旧条目不算面积）
+```
+
+### 四、两条本班自犯（留档不删，按"更正另起一节"惯例）
+
+1. **自报假成功**：00:30 前后我向记录断言"本班 6 袋全部 done"，**当时无据**——所读文件 `common/uclass_ship_log.jsonl` 在本班工棚根本不存在（真名=`ship_log.jsonl`），而队列四态里 20261013 属主袋当时实测为 0；真值＝批 101 首跑判红退件。判据固化：**袋态只认 `.runtime/commit_queue/{{pending,processing,done,dead}}` 四目录实测 ＋ `git ls-tree HEAD` 命中**，两证齐才允许写"已投/已落"；引用任何工棚文件名前先证明它在盘上。
+2. **投前 N-16 探针是瞎的**：上一班我把 `check_naming_convention.py --check-new` 当"落地面 N-16 投前可见"，实测该模式 `require_staged=True`，只认 `git diff --cached --diff-filter=AR` 的新增集——铺在盘上未 `git add` 的件被整批过滤＝**零命中假尺**。正解＝`--check-new-full`；正对照在册：喂一个与 `tests/ai/a2a/test_a2a_agent_blocklist.py` 同名的假路径，`--check-new-full` 报 `[N-16]` 且 rc=1。已据此改 `tools/aclass_ship.py::cmd_preflight` 与 `tools/uclass_drive.py::n16_hits`。
+
+### 五、扣押册（带因；本班不改件、不判废、不讨豁免、不讨容量豁免）
+
+现册 **65 枚**（单一真源＝`common/uclass_hold.json`；多病因件 36 枚并表不覆写）：
+
+| 病因族 | 枚数 |
+|---|---:|
+| 目录容量闸 | 60 |
+| 复跑真红/组内肇事 | 3 |
+| 建表期 N-06 件头 | 2 |
+
+逐件（病因取首条原文，全量见册）：
+
+| 件 | 病因（截断） |
+|---|---|
+| `tests/gov/governance/d5_architecture/test_dev_delivery_map_adversarial.py` | 复跑未绿（批 105）：passed=59 failed=0 error=1 rc=1 |
+| `tests/gov/governance/generators/test_regen_clean_check.py` | 逐件复跑定性＝真红（nodeid 级病因＋计数见 common/perfile_batch_102.json）；统筹令『红者带因扣押』⇒ 本班不改件、不判废、不讨豁免 |
+| `tests/gov/governance/integration/test_all_scripts.py` | 复跑未绿（批 205）：passed=1 failed=0 error=84 rc=1 |
+| `tests/gov/governance/test_algo_quality.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_apply_dataflowgraph_smoke.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_apply_decisiongraph.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_apply_depgraph_smoke.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_apply_depgraph_transition_sync.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_architecture_health_dashboard_metrics.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_architecture_health_dashboard_metrics_p2.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_audit_fix_lanes_rulers.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_blob_gc.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_blueprint_frontmatter_reconciler.py` | [N-06] module_id 格式不符合双轨制(裁定#208): MOD（MOD 前缀后必须用连字符 - 分隔，禁止下划线 _） |
+| `tests/gov/governance/test_ch_probe_json_serialization_canary.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_chart_pattern_registry_integrity.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_check_blueprint_code_alignment.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_check_commit_message.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_check_test_symbol_validity.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_check_wiring_orphan.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_chief_lease.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_commit_guide_delivery.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_commit_perf_report_judgment.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_commit_queue_b5_backoff.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_commit_queue_backfill_lane.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_commit_queue_c1_debounce.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_commit_queue_compaction_registry_merge.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_generate_decision_graph.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_generate_gate_face_reconciliation.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_generate_map_coverage_ledger.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_generate_project_depgraph_smoke.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_generate_skeleton_health.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_git_hooks_marker_forgery.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_git_safety_wrapper.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_header_fix_dry_run.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_lane_leases.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_merge_domain_fk_scan_guard.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_migrate_sqlite_to_pg.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_module_translation_loader.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_mount_route_consistency.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_next_ruling_id.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_ops_guard_red_team.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_panorama_common.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_pool_dead_letter_seal.py` | [N-06] module_id 格式不符合双轨制(裁定#208): MOD-GOV-047-TEST_POOL_DEAD_LETTER_SEAL（应为  |
+| `tests/gov/governance/test_post_commit_oscillation_guard.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_qcure_offset_report.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_query_module_panorama.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_reconcile_generators.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_reference_tx_hook_m3.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_regen_offload_m2.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_register_asset_cli.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_registry_dedup_audit.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_registry_derivation_canary.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_registry_entry_counts.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+| `tests/gov/governance/test_ruff_preclean_enqueue.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_run_gate_chain.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_scaffold_module_registration.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_scaffold_token_registration.py` | 逐件复跑定性＝真红（nodeid 级病因＋计数见 common/perfile_batch_101.json）；统筹令『红者带因扣押』⇒ 本班不改件、不判废、不讨豁免；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 |
+| `tests/gov/governance/test_session_closeout_reconciler.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_split_coordination.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_standards_lib.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_sync_panorama_module.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_sync_registry_from_blueprints.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_task_board.py` | 正门未收（批 101）：处方；改源头册后用 generate_commit_guide.py 重生成）
+INFO: message-file 保留（commit 失；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60  |
+| `tests/gov/governance/test_trd_a20_a21_dual_gates.py` | 逐件复跑定性＝真红（nodeid 级病因＋计数见 common/perfile_batch_101.json）；统筹令『红者带因扣押』⇒ 本班不改件、不判废、不讨豁免；FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 |
+| `tests/gov/governance/test_validate_yaml_summaries.py` | FOLDER-CAPACITY-HARD-LIMIT：`tests/gov/governance` 现读平铺 103 件＋本批 60 件＝163 件 > 闸上限 120（闸函数 _count_flat_files 现读，非估算）；拆袋无解（闸看落后面），本班不人为填满闸面 ⇒ 整族留扣；呈批两条：甲 |
+
+对账留痕：`stale_removed` 7 枚（第一次失败登记后同会话重投成功，旧条目移出并留痕）＝`tools/hold_reconcile.py`。
+
+### 六、面账（分母对账，禁背数）
+
+```
+88 件 = A 43 ＋ B 39 ＋ C 5 ＋ F 1（`common/undetermined_triage.json` 现读 cls 计数）
+入批复活面 = A/C 46 ＋ B 34 = 80（F 不入表＝随宿主）
+本班 20261013 袋 7 枚／袋面件 17 枚｜HEAD 命中 1 件
+留扣 65 枚（含容量闸 60、建表期 N-06 2、复跑真红/肇事 3）＋B 表建表面另册 5 枚（`common/bclass_hold.json`）＝两册合计 70 枚
+字节偏离（ruff 规范）1 枚｜F 类 1 枚随宿主不单独复活
+```
+
+### 七、呈批三条（本班不自决）
+
+1. **目录容量死区（60 枚）**：`tests/gov/governance` 现读 103 平铺件、闸上限 120 ⇒ 余量仅 17 枚，本班欲投 60 枚；拆袋无解（闸判"落后面"）。请点一条：**甲**＝归口把该目录按域切子目录（同目录已有 8 个子目录同构；但改路径＝动资产面，且袋内字节要跟着改 import，非本班授权）；**乙**＝Owner 裁阈值（改判据数值）。本班已按最保守面整族留扣，**没有**把闸面人为填满到上限——填满＝下一支任何班的袋当场撞闸，等于用合法动作消解闸的意图。
+2. **B 表建表期 N-06 拦 5 枚**：件头 `[A_module] module_id=MOD-TEST-2xx-TEST_*` 带下划线不合裁定#208 双轨制；改件头＝动死袋内容 ⇒ 按 M13 先例请归口班改，改完本班重投（逐件行号与原文＝`common/uclass_n06_held_evidence.json`）。
+3. **复跑真红 7 枚（两族病因）**：①期望未跟上被测面演进：`test_scaffold_token_registration.py`（现读令牌格式校验把 `auto-scaffold-*-<日期>` 判非法）与 `test_trd_a20_a21_dual_gates.py::test_g7_pass_when_confirmed_and_signed`（G7 现读 FAIL 而件内期望 PASS）——改期望＝改考语义；②`#ARCH-084 tracked 区写入守护`族：`test_regen_clean_check.py`、`test_dev_delivery_map_adversarial.py` 在测试内写热册 `capability_canonical_file_registry.yaml`（根宪法 §9 第 6 条：测试禁写生产路径），危害＝同进程邻件被抬成 ERROR。修法＝件内改 tmp_path 隔离，属归口班动件。
+
+### 八、瞬态坑一条（登记以免下次误判成闸）
+
+共享主区多车道并发时 `git add` 会撞 `.git/index.lock: File exists`（实测 rc=128，锁随即消失）＝**瞬态环境失败**而非门禁判红：本班批 103 第一次即死于此，重跑一次即入袋（q-…-0053）。投递器已加退避重试（6 次、8s 起递增，**仅当 stderr 含 index.lock 才重试**，内容型失败绝不靠重试遮）。
+
+### 九、并发自伤一条（如实登记）
+
+为"等前一进程退出再接下一批"本班用了 `kill -0 <pid>` 做门——git-bash 看不见 Windows PID，门当场失真，导致同会话两支投递进程并发（批 101 与批 102-106）。本轮内容未受损（不同批次不同件、锁面由全局 Mutex 串行），但**判活必须换权威面**：看工棚日志是否长出新行，或 `Get-CimInstance Win32_Process`。同一轮还暴露两处并已修：①`--drop` 之后仍按全表铺件，会把已定性的真红件重新写回盘上成未跟踪件；②submit 预检快败（rc=8）后件会留在**共享 index**里＝他人 commit 可吸收，退件面已加"先 `git restore --staged` 再退回工棚"的处置（本轮实清 7 枚假扣押、37 枚共享 index 残留件退回工棚）。
+
+复核命令：`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/ledger_26.py`；C 类取证重跑＝`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/c_dyn_resolve.py`；容量面重算＝`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/capacity_hold.py`（dry，加 --apply 才入册）；扣押册对账＝`python D:/ZephyrAlpha/.runtime/tmp/st-deadcure3b-chief-20261011/tools/hold_reconcile.py`；未定项表重生成＝`python tools/undetermined_plan.py A,C uclass 100`／`python tools/undetermined_plan.py B bclass 200`
