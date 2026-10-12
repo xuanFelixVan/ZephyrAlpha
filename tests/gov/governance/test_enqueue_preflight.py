@@ -429,3 +429,75 @@ class TestDeadLetterPrescription:
         dead = _read_dead(queue_root, item["qid"])
         assert dead["prescription"], "处方字段 MUST 非空"
         assert dead["owner_session"] == "AI-R"
+
+
+# ── 批令二 L3：入队口**池面回退方向**预筛（st-maint3-20261011，同一把三方尺零克隆）────
+# 拦的是"车道基底落后 dev 的整档重放"——正是 10-11 夜回退弹替代嫌疑的形状。
+
+
+def _g(root: Path, *args: str) -> str:
+    import subprocess
+
+    r = subprocess.run(["git", *args], cwd=str(root), capture_output=True, text=True, timeout=60)
+    assert r.returncode == 0, f"git {args} -> {r.stderr[:200]}"
+    return (r.stdout or "").strip()
+
+
+@pytest.fixture()
+def stale_lane_repo(tmp_path: Path) -> tuple[Path, Path]:
+    """主仓 dev 前进一行，另建一个基底停在旧点、文件仍是旧字节的车道工作树。"""
+    main = tmp_path / "main"
+    main.mkdir()
+    _g(main, "init", "-q", "-b", "dev")
+    _g(main, "config", "user.email", "t@t")
+    _g(main, "config", "user.name", "t")
+    _g(main, "config", "core.autocrlf", "false")
+    (main / "f.txt").write_text("base\n", encoding="utf-8")
+    _g(main, "add", ".")
+    _g(main, "commit", "-qm", "A")
+    lane = tmp_path / "lane"
+    _g(main, "worktree", "add", "-q", "-b", "session/lane", str(lane), "HEAD")
+    # dev 往前落一行（别人已入库）
+    (main / "f.txt").write_text("base\nlane_B_line\n", encoding="utf-8")
+    _g(main, "commit", "-aqm", "B other lane")
+    # 车道工作树文件仍是 A 的整档字节（＝重放形态）
+    (lane / "f.txt").write_text("base\n", encoding="utf-8")
+    return main, lane
+
+
+def test_pool_regression_blocks_stale_lane_replay(stale_lane_repo: tuple) -> None:
+    from scripts.governance.enqueue_preflight import pool_regression_preclean
+
+    _main, lane = stale_lane_repo
+    rx = pool_regression_preclean(lane, ["f.txt"], "feat: 车道整档重放")
+    assert rx is not None, "车道基底落后 dev 的整档重放必须被拦（放过去＝落地即拍回他人已落地面）"
+    assert "f.txt" in rx and "1 行" in rx, rx
+    assert "重基" in rx, f"处方必须给正路（改喂闸的输入指向），不是只说'被拦': {rx}"
+
+
+def test_pool_regression_passes_when_base_is_dev_head(stale_lane_repo: tuple) -> None:
+    """尺不假红：主区提交者 HEAD==dev ⇒ 不存在"别人后落的行"，一律放行。"""
+    from scripts.governance.enqueue_preflight import pool_regression_preclean
+
+    main, _lane = stale_lane_repo
+    assert pool_regression_preclean(main, ["f.txt"], "feat: 主区正常提交") is None
+
+
+def test_pool_regression_ack_and_env_off(stale_lane_repo: tuple, monkeypatch: pytest.MonkeyPatch) -> None:
+    """越过多留痕、env 关得掉——两臂都必须**仍去量**（关档要记一行，防降级看起来像没触发）。"""
+    from scripts.governance.enqueue_preflight import pool_regression_preclean
+
+    _main, lane = stale_lane_repo
+    acked = pool_regression_preclean(lane, ["f.txt"], "fix: x [pool-regression-ack:已与该件属主车道对过账]")
+    assert acked is None
+    monkeypatch.setenv("ZEPHYR_ENQUEUE_POOL_REGRESSION", "0")
+    assert pool_regression_preclean(lane, ["f.txt"], "feat: env 关档") is None
+
+
+def test_pool_regression_fail_open_on_broken_probe(tmp_path: Path) -> None:
+    """探针故障=放行但不得静默（预检不是新权威；这里钉"不炸、不误拦"）。"""
+    from scripts.governance.enqueue_preflight import pool_regression_preclean
+
+    nowhere = tmp_path / "not-a-repo"
+    nowhere.mkdir()
+    assert pool_regression_preclean(nowhere, ["f.txt"], "feat: 无 git 环境") is None

@@ -48,6 +48,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -149,6 +150,88 @@ _RUFF_PRECLEAN_TRUNC = 800
 def ruff_preclean_enabled() -> bool:
     """env 开关读取：ZEPHYR_ENQUEUE_RUFF_PRECLEAN 缺省 ON，"0"/"false"/"off"=回退现行为。"""
     return os.environ.get(RUFF_PRECLEAN_ENV, "").strip().lower() not in {"0", "false", "off"}
+
+
+# ---------------------------------------------------------------------------
+# 批令二 L3：入队口**池面回退方向**预筛（GATE-POOL-REGRESSION-DIRECTION 第三层落点）
+# ---------------------------------------------------------------------------
+# 为什么接在这里而不是新造一台 commit-gate：本模块是已确立的"注定死信的单子在入队口快败"
+# 通道（被拦件连 pending 都不进），装新 commit-gate 需同批改 7 处（含两册 total_gates 标量，
+# 漏改=全册门集体装载失败的在册事故形态），凌晨不做这种赌。判据尺**零克隆**——直接调
+# scripts/commit_queue.py:2967 的三方尺（`lines_only_in_head`），本函数只负责接线。
+# 拦的是什么：车道基底落后 dev 时的**整档重放**——它提交的字节里没有"别人后落进行"，
+# 落地即把那些行打回旧版（10-11 夜回退弹的替代嫌疑正是此形态；受害 3 件＝某袋 payload）。
+# 为什么不假红：主区提交者 HEAD==dev ⇒ `dev_lines − HEAD_lines = ∅` 恒不命中；
+# 只有"基底确实落后且重放字节确实缺行"才报，且与在册两方误报（26 件误报 17 件）无缘。
+POOL_REGRESSION_ENV = "ZEPHYR_ENQUEUE_POOL_REGRESSION"
+# 大批限流（ruff 同款保守口径：预检是快败优化不是新权威，落地侧权威链兜底不缺席）
+_POOL_REGRESSION_MAX_FILES = 200
+# 逃生位与写者层同款（[pool-regression-ack:理由≥10字]；越过仍量、仍记日志）
+_POOL_REGRESSION_ACK_RE = re.compile(r"\[pool-regression-ack:([^\]]{10,})\]")
+
+
+def pool_regression_enabled() -> bool:
+    """env 开关：缺省 ON，"0"/"false"/"off"=一键回退现行为（与 Rx-1 同族）。"""
+    return os.environ.get(POOL_REGRESSION_ENV, "").strip().lower() not in {"0", "false", "off"}
+
+
+def pool_regression_preclean(worktree_root: Path | str, files: list[str], message: str = "") -> str | None:
+    """入队前方向预筛。返回 None=放行；str=处方（调用方 QueueReject）。
+
+    设施故障/不可判定一律放行（本模块 fail-open 口径），但**必须留日志**——
+    降级态与"未触发"同形是在册假绿教训，无日志的跳过等于把判据关掉。
+    """
+    if not pool_regression_enabled():
+        logger.info("[enqueue-preflight] 方向预筛被 env 关闭（%s）", POOL_REGRESSION_ENV)
+        return None
+    root = Path(worktree_root)
+    rels = [str(f).replace("\\", "/") for f in (files or []) if str(f).strip()][:_POOL_REGRESSION_MAX_FILES]
+    if not rels:
+        return None
+    acked = _POOL_REGRESSION_ACK_RE.search(message or "")
+    try:
+        from scripts.commit_queue import _snapshot_head_regressions  # noqa: PLC0415 — 尺体单源
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415 — trae_067 铁律2 统一入口
+
+        proc = run_subprocess_hidden(
+            ["git", "-C", str(root), "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        local_head = (proc.stdout or "").strip() if proc.returncode == 0 else ""
+        payload: list[tuple[str, bytes]] = []
+        for rel in rels:
+            p = root / rel
+            if p.is_file():  # 缺失/删除件此处不可判（删除方向由写者层 L1 兜）
+                payload.append((rel, p.read_bytes()))
+        if not payload:
+            return None
+        regress = list(_snapshot_head_regressions(root, payload, base_ref="dev", item_base_head=local_head or None))
+    except Exception as exc:  # noqa: BLE001 — 预检故障放行，但降级必须显影
+        logger.warning("[enqueue-preflight] 方向预筛异常，degraded 放行（落地侧权威链兜底）: %s", exc)
+        return None
+    if not regress:
+        return None
+    lines = [
+        f"  - {r['path']}：dev 在你基底之后新落的 {r['head_only_lines']} 行不在这份字节里"
+        f"（base_compared={r.get('base_compared')}）"
+        for r in regress[:10]
+    ]
+    hint = "正路=先 `git checkout dev -- <件>` 重基本袋再投（或 requeue --worktree-root 取现字节）"
+    if acked:
+        logger.warning(
+            "[enqueue-preflight] 方向预筛越过（留痕，理由=%s）：%d 件缺 dev 后落行",
+            acked.group(1)[:80],
+            len(regress),
+        )
+        return None
+    return (
+        f"池面回退方向预筛拦截（批令二 L3）：本批 {len(regress)} 件的字节缺 dev 已在册行，"
+        f"入队即注定把他人已落地面拍回旧版（或落地侧真冲突死信）。\n"
+        + "\n".join(lines)
+        + f"\n{hint}\n确属有意覆盖时，在 commit message 写 [pool-regression-ack:理由≥10字] 越过（仍留痕）。"
+    )
 
 
 def _ruff_preclean_py_files(root: Path, files: list[str] | None) -> list[str]:
@@ -314,6 +397,10 @@ def run_enqueue_preflight(
     _ruff_rx = ruff_preclean(worktree_root, list(files))
     if _ruff_rx is not None:
         return _ruff_rx
+    # 批令二 L3：方向预筛（同 fail-open 口径；env ZEPHYR_ENQUEUE_POOL_REGRESSION=0 回退）
+    _pool_rx = pool_regression_preclean(worktree_root, list(files), message)
+    if _pool_rx is not None:
+        return _pool_rx
     if gateway_factory is None:
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: PLC0415
             GitCommitGateway as gateway_factory,

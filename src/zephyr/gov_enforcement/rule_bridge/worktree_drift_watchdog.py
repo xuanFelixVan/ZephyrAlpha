@@ -102,6 +102,11 @@ _QUARANTINE_EMPTY_GRACE_SECONDS = 60
 _DESIGN_MEMO_PREFIX = "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/"
 _KNOWN_QUARANTINE_CAP = 500  # known_quarantine 登记上限（防状态文件膨胀）
 _DELETION_MASS_THRESHOLD = 10  # 单轮扫描未暂存消失 ≥N 件=批量删除事故，追加汇总升级
+# ── 批令二 L2：池面回退**方向**分量（阈值由 st-maint3-20261011 对 10-11 夜 28 件受害旧字节
+#    全量重算标定：严格子集 5 件含 head_only=6/9 的小件，近子集比 ≤0.05 另有 5 件）──────
+_POOL_REG_STRICT_MIN = 1  # work 是 HEAD 的严格真子集：HEAD 独有 ≥1 行且盘上零独有行
+_POOL_REG_NEAR_RATIO = 0.05  # 近子集：盘独有/HEAD 独有 低于此比＝"改了几个字节的旧稿"形态
+_POOL_REG_NEAR_MIN = 20  # 近子集还要求 HEAD 独有 ≥N 行，防小文件噪音
 
 # ── B2 auto-stage 护盾（2026-09-14 docs/_working 删除事故三层防线②）──────────
 # docs/_working 新增 untracked 文件由 daemon 每轮自动 git add 进 index：
@@ -125,22 +130,53 @@ _allowlist_cache: dict = {}  # {root_str: (mtime, exact_set, patterns_list)}—�
 # ── git 原语（全部经 run_subprocess_hidden，禁裸 subprocess 直调）────────────────
 
 
-def _git(root: Path, args: list[str]) -> tuple[int, str]:
-    """执行只读 git 命令，返回 (returncode, stdout)。失败返回 (rc, '') 不抛异常。"""
+def _git(root: Path, args: list[str], *, binary: bool = False) -> tuple[int, str | bytes]:
+    """执行只读 git 命令，返回 (returncode, stdout)。失败返回 (rc, '') 不抛异常。
+
+    binary=True 时返回**原始字节**（方向判据要逐行做集合差，text=True 的解码抖动会造出假差集）；
+    两口径共用本函数（CloneGuard 判"新建同形函数"为零逃生：原 _git_bytes 与 _git 100% 同形已被拦）。
+    """
     from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
 
     try:
         r = run_subprocess_hidden(
             ["git", *args],
             capture_output=True,
-            text=True,
+            text=not binary,
             cwd=str(root),
             timeout=30,
         )
-        return r.returncode, (r.stdout or "")
-    except Exception as e:  # noqa: BLE001 — git 不可达降级
+        return r.returncode, (r.stdout or (b"" if binary else ""))
+    except Exception as e:  # noqa: BLE001 — git 不可达降级（方向读数按"未知"处理，不判成"无回退"）
         logger.debug("git %s failed: %s", args[:1], e)
-        return 2, ""
+        return 2, (b"" if binary else "")
+
+
+def _line_set(raw: bytes) -> set[bytes]:
+    """行集合（行尾先归一再切分；空行不计——与 scripts/commit_queue.py:2967 两行铁律同口径）。"""
+    return set(raw.replace(b"\r\n", b"\n").split(b"\n")) - {b""}
+
+
+def _direction_readout(root: Path, rel: str, head_blob: str) -> tuple[int, int] | None:
+    """批令二 L2：盘字节 vs HEAD 字节的**方向**读数，返回 (head_only, work_only)；读不动=None。
+
+    在册缺口补位（案卷 §⑤）：三方尺 `commit_queue.py:2967` 读的是"袋 payload vs dev"，
+    **从不读池面**；本函数补的正是"池面 vs HEAD"这一维。二者共用同一行集口径，
+    但这里**没有** base 这一维（池面对 HEAD 不存在"本袋正当删改"），故两方即正确口径
+    ——案卷 §⑥ 已就此写明"两方数只适用于池面"。
+    """
+    if not head_blob:
+        return None  # HEAD 无此件（新增件）＝无从回退，判据不适用
+    rc, head_raw = _git(root, ["cat-file", "blob", head_blob], binary=True)
+    if rc != 0:
+        return None  # 探针降级＝读数未知，绝不当"无回退"放行
+    p = root / rel
+    try:
+        work_raw = p.read_bytes() if p.exists() else b""
+    except OSError:
+        return None
+    hs, ws = _line_set(head_raw), _line_set(work_raw)
+    return len(hs - ws), len(ws - hs)
 
 
 def _head_sha(root: Path) -> str:
@@ -1065,6 +1101,7 @@ def scan_once(
         "deletion_alerted": 0,
         "auto_staged": 0,
         "shielded": 0,
+        "pool_regressions": 0,  # 批令二 L2：盘字节为 HEAD 旧版子集的件数（恒在，防键集随轮漂移）
     }
     head_sha = _head_sha(root)
     if not head_sha:
@@ -1138,6 +1175,7 @@ def scan_once(
     summary["scanned"] = len(dirty)
     seen_drift: set[str] = set()
     deletion_alerts: list[str] = []  # 本轮升级的删除型漂移（批量删除汇总用）
+    regression_alerts: list[tuple] = []  # 批令二 L2：本轮盘被拍回旧版的件（含方向与署名读数）
 
     for rel in dirty:
         if not _real_drift(root, rel):
@@ -1157,6 +1195,35 @@ def scan_once(
             "active_sessions": sessions,
             "claimed_by": claimed.get(rel, ""),
         }
+        # ── 批令二 L2：方向分量（只在 wh≠hb 时算＝盘与 HEAD 内容确实不同，逐件多 1 次子进程；
+        #    wh==hb 的文件没有"被拍回旧版"这回事，直接跳过以控住 531 件/轮的量级）。
+        #    在册事实：本哨自 20:40:05 就目击过 531 件 drifted，但判据只到
+        #    "盘≠index ∪ index≠HEAD"（_real_drift:241），**没有方向**——10-11 夜那批
+        #    "逐件被拍回各自旧版"的回退弹因此全程无声。
+        if wh and hb and wh != hb:
+            readout = _direction_readout(root, rel, hb)
+        else:
+            readout = None
+        if readout is None:
+            base["direction"] = "unknown"  # 读动不了≠没回退（降级必须显影，防"未触发"同形假绿）
+            base["head_only_lines"] = None
+            base["work_only_lines"] = None
+        else:
+            head_only, work_only = readout
+            base["head_only_lines"] = head_only
+            base["work_only_lines"] = work_only
+            if head_only >= _POOL_REG_STRICT_MIN and work_only == 0:
+                base["direction"] = "regression_strict"
+            elif head_only >= _POOL_REG_NEAR_MIN and work_only / head_only <= _POOL_REG_NEAR_RATIO:
+                base["direction"] = "regression_near"
+            elif head_only == 0 and work_only > 0:
+                base["direction"] = "forward"
+            else:
+                base["direction"] = "mixed"
+        if str(base.get("direction", "")).startswith("regression_"):
+            regression_alerts.append(
+                (rel, base["direction"], base["head_only_lines"], base["work_only_lines"], claimed.get(rel, ""))
+            )
         # ── 删除型漂移硬化（2026-09-14 docs/_working 批量误删事故复盘）──────────
         # 未暂存删除（工作区文件消失、HEAD/index 仍在）与内容漂移性质不同：claim
         # 授权的是"改"不是"删"，grace 宽限窗保护的是"派生回写"，而 dedup 按签名去重
@@ -1270,6 +1337,15 @@ def scan_once(
                 wa_suspects = _write_audit_suspects(root, rel)
                 if wa_suspects:
                     detail += f"；WriteAudit 嫌疑: {wa_suspects}"
+                # 批令二 L2：方向读数**并进这条已去重的报文**（不另发一条——另发就绕过了
+                # alerted 签名 dedupe，会变成 60s 一轮的刷屏与重复账）。
+                if str(base.get("direction", "")).startswith("regression_"):
+                    detail += (
+                        f"；池面回退方向=盘上是 HEAD 的"
+                        f"{'严格真子集' if base['direction'] == 'regression_strict' else '近似子集'}"
+                        f"（HEAD 独有 {base['head_only_lines']} 行／盘独有 {base['work_only_lines']} 行）"
+                        f"——恢复=git checkout HEAD -- {rel}（先确认非他意 WIP）"
+                    )
                 _log_results(root, "critical_warn", detail)
                 _audit(root, {**base, "verdict": "alerted", "snapshot": snap, "write_audit_suspects": wa_suspects})
                 alerted[rel] = wh
@@ -1280,6 +1356,8 @@ def scan_once(
                     del known_q[:-_KNOWN_QUARANTINE_CAP]
                 summary["alerted"] += 1
         files_state[rel] = {"work_hash": wh, "head_blob": hb, "last_seen": _now_iso()}
+
+    summary["pool_regressions"] = len(regression_alerts)  # 无条件普查（alert_enabled=False 也要数得出来）
 
     # 批量删除升级（2026-09-14 docs/_working 批量误删事故形态）：单轮 ≥N 件未暂存消失
     # =清扫器级事故，逐条 critical_warn 易被信息流淹没，追加一条汇总便于值守一眼识别。
@@ -1292,6 +1370,21 @@ def scan_once(
             f"批量删除型漂移: 单轮扫描 {len(deletion_alerts)} 件 tracked 文件未暂存消失"
             f"（阈值 {_DELETION_MASS_THRESHOLD}），样本: {preview}",
         )
+
+    # ── 批令二 L2 升级：只补**汇总**一条（逐件告警不在这里发——既有"未登记写者"支路已带
+    # signature dedupe（alerted 字典）逐轮去重，本件另发一份就成了 60s 一轮的刷屏＋重复账；
+    # 方向读数改为并进那条已有报文，见 scan_once 内 direction_txt）。
+    if alert_enabled and regression_alerts:
+        _log_results(
+            root,
+            "critical_warn",
+            f"批量池面回退方向: 单轮扫描 {len(regression_alerts)} 件 tracked 文件盘字节为 HEAD 旧版子集"
+            f"（严格 {sum(1 for r in regression_alerts if r[1] == 'regression_strict')} 件／"
+            f"近 {sum(1 for r in regression_alerts if r[1] == 'regression_near')} 件），"
+            f"未署名 {sum(1 for r in regression_alerts if not r[4])} 件，"
+            f"样本: {', '.join(r[0] for r in regression_alerts[:6])}",
+        )
+        summary["pool_regressions"] = len(regression_alerts)
 
     # 自愈：曾告警文件本轮已干净（diff 消失=恢复/HEAD 推进=已提交吸收）
     if alert_enabled:

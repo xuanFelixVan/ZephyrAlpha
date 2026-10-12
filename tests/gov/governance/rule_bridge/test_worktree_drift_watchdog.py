@@ -229,14 +229,14 @@ def test_reflog_anchor_extends_grace(git_repo: Path, monkeypatch) -> None:
     real_git = wd._git
     now = wd.now_utc().timestamp()
 
-    def fake_git(root, args):
+    def fake_git(root, args, *, binary=False):  # binary 形参必须透传：_git 已合流（CloneGuard 拦同形新建）
         if args[:2] == ["log", "-1"]:  # last commit 两小时前（超窗）
             return 0, str(now - 7200)
         if args[:1] == ["reflog"] and "stash" in args:  # stash 刚活动过
             return 0, str(now - 10)
         if args[:1] == ["reflog"]:
             return 0, str(now - 7200)
-        return real_git(root, args)
+        return real_git(root, args, binary=binary)
 
     monkeypatch.setattr(wd, "_git", fake_git)
     s = wd.scan_once(git_repo, grace_seconds=600)
@@ -249,14 +249,14 @@ def test_grace_expired_still_alerts(git_repo: Path, monkeypatch) -> None:
     real_git = wd._git
     now = wd.now_utc().timestamp()
 
-    def fake_git(root, args):
+    def fake_git(root, args, *, binary=False):  # binary 形参必须透传：_git 已合流（CloneGuard 拦同形新建）
         if args[:2] == ["log", "-1"]:
             return 0, str(now - 7200)
         if args[:1] == ["reflog"] and "stash" in args:
             return 0, ""  # 无 stash
         if args[:1] == ["reflog"]:
             return 0, str(now - 7200)
-        return real_git(root, args)
+        return real_git(root, args, binary=binary)
 
     monkeypatch.setattr(wd, "_git", fake_git)
     s = wd.scan_once(git_repo, grace_seconds=600)
@@ -1092,3 +1092,69 @@ class TestR05StatePersistenceDecoupled:
         assert s2["alerted"] == 1, s2
         rows = _read_log_actions(git_repo)
         assert sum(1 for r in rows if r[1] == "critical_warn") == 1
+
+
+# ── 批令二 L2：池面回退**方向**分量（st-maint3-20261011，10-11 夜回退弹的结构性终点）────
+# 本哨自 20:40:05 就目击过 531 件 drifted，但判据只到"盘≠index ∪ index≠HEAD"，
+# 没有方向——"逐件被拍回各自旧版"因此全程无声。以下三测钉：读数正确／升级有账／
+# 降级必须显影为 unknown（绝不把"读不动"当成"无回退"）。
+
+
+def _advance_head_and_revert(repo: Path, rel: str = "hot.txt") -> None:
+    """HEAD 先推进到 3 行，再把工作区拍回 1 行（＝严格真子集形态）。"""
+    p = repo / rel
+    p.write_text("v1\nlane_B_1\nlane_B_2\n", encoding="utf-8")
+    _git(repo, "add", rel)
+    _git(
+        repo,
+        "-c",
+        "user.email=t@t",
+        "-c",
+        "user.name=t",
+        "-c",
+        "core.autocrlf=false",
+        "commit",
+        "-q",
+        "-m",
+        "other lane advances",
+    )
+    p.write_text("v1\n", encoding="utf-8")  # 盘上退成 HEAD 的真子集
+
+
+def test_direction_readout_strict_subset_and_forward(git_repo: Path) -> None:
+    """读数级：严格子集/前进/新增件三态各归其位（阈值标定见 28 件受害旧字节重算）。"""
+    _advance_head_and_revert(git_repo)
+    hb = wd._head_blob(git_repo, "hot.txt")
+    assert hb
+    head_only, work_only = wd._direction_readout(git_repo, "hot.txt", hb)
+    assert (head_only, work_only) == (2, 0), (head_only, work_only)
+    # 反臂：工作区含 HEAD 全部行且另加一行＝前进，不得被当回退
+    (git_repo / "hot.txt").write_text("v1\nlane_B_1\nlane_B_2\nmine\n", encoding="utf-8")
+    assert wd._direction_readout(git_repo, "hot.txt", hb) == (0, 1)
+    # HEAD 无此件（新增件）＝无从回退，判据不适用而非 (0,0)
+    assert wd._direction_readout(git_repo, "hot.txt", "") is None
+
+
+def test_direction_probe_degradation_is_unknown_not_zero(git_repo: Path) -> None:
+    """探针降级必须显影：blob 读不动 → None，绝不返回 (0,0) 被上游读成"无回退"。"""
+    assert wd._direction_readout(git_repo, "hot.txt", "0" * 40) is None
+
+
+def test_scan_once_counts_and_alerts_pool_regression(git_repo: Path) -> None:
+    """出口级：summary 普查恒在＋critical_warn 落库＋报文带署名读数（空 claim 显影"未署名"）。"""
+    _advance_head_and_revert(git_repo)
+    summary = wd.scan_once(git_repo, grace_seconds=0)
+    assert summary.get("pool_regressions") == 1, summary
+    audit = [r for r in _read_audit(git_repo) if r.get("file") == "hot.txt"]
+    assert any(r.get("direction") == "regression_strict" and r.get("head_only_lines") == 2 for r in audit), audit
+    rows = _read_log_actions(git_repo)
+    texts = [d for (_g, _a, d) in rows]
+    assert any("池面回退方向" in t and "严格真子集" in t and "git checkout HEAD -- hot.txt" in t for t in texts), texts[
+        -3:
+    ]
+    batch = [t for t in texts if "批量池面回退方向" in t]
+    assert batch and "未署名 1 件" in batch[-1], batch  # 署名读数进汇总（逐件报文沿既有 dedupe 不重发）
+    # 尺不假红：正常演进（盘含 HEAD 全行 + 自己一行）不得计成回退
+    (git_repo / "hot.txt").write_text("v1\nlane_B_1\nlane_B_2\nmine\n", encoding="utf-8")
+    summary2 = wd.scan_once(git_repo, grace_seconds=0)
+    assert summary2.get("pool_regressions") == 0, summary2
