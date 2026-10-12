@@ -7,6 +7,10 @@
 # [MATURITY] new
 # [INVARIANTS] staging 转正件；判定面不入核
 # [MODIFY-GUARD] docs/_working/matrix_campaign/90_execution_log.md
+# [RETURN-FACE-EXTENSION] 甲案（统筹批复 2026-10-11）：simulate 的 st 追加 exposure_daily/weights_daily 两面，
+#   只交出现有循环内已算出的 contrib，不新增撮合、不改 arity（唯一解包点 nav, stats = simulate(...) 保持）；
+#   与 E 道锁定结论的关系＝**无关且不受影响**：run_all 仅 print(stats)，锁定报告不逐键序列化 st，
+#   故既有报告与 nav 序列零漂移；漂移与否由 tests/backtest/fexam + 同输入两码面逐元素对拍自证（非声明自证）。
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -203,6 +207,10 @@ def simulate(
     deferred_sell = np.zeros(N, bool)
     last_px = np.full(N, np.nan)
     nav = np.full(T, np.nan)
+    # 返回面扩展（甲案，统筹批复四护栏）：以下两面仅供双臂卡底座读取，纯追加进 st，
+    # 既参与撮合也不参与既有 nav 计算——E 道既有对拍结论与 nav 字节级不变。
+    exposure_daily = np.full(T, np.nan)
+    weights_daily = np.zeros((T, N), dtype="float64")
 
     st = {
         "n_rebalance_exec_days": len(execs),
@@ -292,6 +300,10 @@ def simulate(
         assert not (held_any & ~np.isfinite(last_px)).any(), f"持仓缺估值标记 t={t}"
         contrib = np.where(held_any, shares * np.nan_to_num(last_px, nan=0.0), 0.0)
         nav[t] = cash + float(contrib.sum())
+        mv = float(contrib.sum())  # 与上一行同一表达式同一求和序＝逐位同值，不改既有 nav
+        nv = float(nav[t])
+        exposure_daily[t] = (mv / nv) if nv > 0 else 0.0
+        weights_daily[t] = contrib / nv if nv > 0 else 0.0
         if stop_enabled:
             held = (shares > 0) & c_fin & np.isfinite(a) & np.isfinite(atr_entry)
             hi_close[held] = np.maximum(hi_close[held], c[held])
@@ -321,6 +333,8 @@ def simulate(
     st["n_symbols_traded"] = int((np.abs(sig.values).sum(axis=0) > 0).sum())
     st["final_equity"] = float(nav[-1])
     st["n_days"] = int(T)
+    st["exposure_daily"] = pd.Series(exposure_daily, index=dates, name="exposure")
+    st["weights_daily"] = pd.DataFrame(weights_daily, index=dates, columns=list(sig.columns))
     return pd.Series(nav, index=dates, name="nav"), st
 
 
