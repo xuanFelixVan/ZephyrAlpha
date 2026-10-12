@@ -1,0 +1,117 @@
+---
+ttl: task_bound
+title: GPU-03B 裁定① 执行记录·金标扩充集 v1 冻结（hash 入册）与两次死机的复位申报
+created: '2026-10-12T18:46:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+ruling_restated: >-
+  Owner 终局裁定①：金标抽检＝有条件通过，执行序①按 7 行更正回填 ②回填前对"无方向目录/口号类标题"
+  跑专项复核 ③360 道同规则回填→冻结为金标集 v1（hash 入册） ④第24/47行改正前禁冻结 ⑤冻结后训练线开跑
+  （训练窗/互斥组/reaper keep 照在册，及格线 0.767 不变）。本节记①-④的落地事实与⑤的当前态。
+
+numbering_alignment:
+  issue: >-
+    裁定里的井号 N 是抽检包表格行号，而我在 04:29 重渲染过一次包（取样从"前 60 条"改成"按层轮转"）
+    ⇒ 同一行号在两版包里指向不同 news_id，错一版就把人工改判落到别的样本上。
+  how_resolved: >-
+    尺=.runtime/tmp/gpuwo_pack_align.py：从 q-…-0019 死袋的 blob 里取回**旧版**包字节（sha256 自校验 True），
+    与车道现版（q-…-0021 携带）逐行对拍三条一致性判据——
+    旧版：第24行现值已是中性（"方向错→中性"无意义）FAIL、第15行分数 0.50（对不上"0.85→0.60"）FAIL；
+    现版：第24行=positive/0.85 且标题正是"新华财经早报：1月2日"（无方向目录标本）PASS、第15行分数恰 0.85 PASS、
+    第47行=positive 且标题是"3亿只鸡面临断粮"PASS。⇒ 判定裁定按重渲染版编号，七条全部自洽。
+  recorded_correction_to_my_own_report: >-
+    我在 04:33 的晨报里只说了"包已重渲染并换了袋"，没提醒"行号会变"——这是给裁定埋坑；
+    取样改动一旦影响人读的面，就必须同步给"新旧行号对照"。此条入记忆当班戒。
+
+freeze_execution:
+  command: python scripts/ml/build_distilled_sft_dataset.py freeze-gold（车道内跑，件未落地）
+  inputs:
+    draft_rows: 360
+    draft_sha256: 8b073757f921f93717a2accbb6a2a23e2ef32b1ab62504ded0f3485706ef7b02
+  outputs:
+    gold_rows: 351
+    gold_sha256: 606ed4af7f3ad591b06d30161af37a15c12b543502e161cd5e6f1c1b36f228e0
+    gold_file: data/eval/gold_expansion_v1.jsonl
+    quarantine_rows: 9
+    quarantine_sha256: 2a6421f8c3215f2b633f73b47f3ee35f395a56940d00f3723a213cff51e53ea5
+    manifest: data/eval/gold_expansion_v1_manifest.yaml
+    manifest_note: 冻结时刻、三档分布、来源分布、七条更正明细、9 条隔离与 8 条镜像待观察全清单都在这份 manifest 里
+  conservation: 351＋9＝360（漏一条即静默丢数据，测件里钉了这条）
+  label_source_breakdown:
+    owner_correction: 7
+    teacher_ratified_by_ruling1: 344
+  label_dist: {positive: 105, negative: 55, neutral: 191}
+  human_gold_arithmetic: 原人工金标 200 ＋ 本次冻结 351 ＝ 551 ≥ 令文 500 ⇒ P1 数量线达标
+  caveat_written_into_manifest: >-
+    344 条是"教师预标经裁定批量采信"，不是独立人工标；只有 7 条是人写的。
+    任何后续指标读数必须知道这一点——否则"金标"这个词会被读成比实际更强的人工面。
+
+quarantine_rationale: >-
+  9 条全部是"标题无方向（目录/口号类）而教师给了非中性档"：概念股一览、日报体、"坚决查处"、"全力打造"、
+  "助力"、"引领…可期"这一族，与 第24/11/12 行同型。处置＝**挡在金标门外**而不是替它写一个中性标签：
+  启发式没有资格替人写金标（复核只标不改，写进代码注释与测件）。
+  另有 8 条"镜像"（标题含明确涨跌/百分比而教师判中性，第35 行同型）也只列清单不动手，交下次人工。
+
+guards: >-
+  冻结面新增 9 支测件（tests/meta/scripts/test_distilled_sft_pipeline.py TestFreezeGoldV1）：
+  目录/口号命中且"口号＋方向词"不得误拦、人工改判覆盖教师档且保留教师原档做审计、
+  置信更正不动标签、未知更正字段必须炸、隔离行绝不偷偷写标签、总量守恒、金标按 stable_key 定序、
+  教师档缺失禁入金标、更正册可带 frontmatter 且缺 news_id 直接炸。实测 28 passed（含 P0 定序 6 支）。
+
+blocked_then_fixed_self_faults:
+  - 死机把 build_distilled_sft_dataset.py 截断在"新常量引用 re 但 import re 未落"的破损态（import 即 NameError）。
+    我先把模块 import 测跑出来才动手，避免在坏件上继续施工；补 hashlib/re 后一切正常。
+  - 我自己一次 Edit 追加把类文档串首行吃了（在册旧坑第二次），当场靠"计数＋语法"抓住并补回；
+    本册所有追加都走"先算账后落盘＋改后数结构"的写法。
+
+reset_declaration_two_crashes: >-
+  本机两次死机（04:35→15:38、16:07→18:27 前后），期间我的会话被引擎判死并开了接管账（open 条目点名
+  车道 dirty 与在途袋）；死袋八只（0013/0014/0015/0017/0018/0019/0020/0021）死因逐只读全：
+  ①GATE-TEST-SYMBOL：测件 import 的符号在**落地面 HEAD**里不存在 ⇒ 同袋放"源码＋新测件"必死，
+  与入队预检 TEST-SOURCE-CONSISTENCY 的要求相反（一个要同袋、一个要源码先落）——这是两道门互相夹人，
+  我按"先源码袋、落地后再投测件袋"重排，不绕门；②账册三方真冲突（我车道那份台账基底落后 dev，已由
+  班台账按 dev 现值逐行重基）；③TAKEOVER-PENDING（死机造成的假死）。已落地面（实测在 dev）＝
+  0008 LaneC 修件、0009 两册、0011 P0 可复现修复、0012 GPU-02 表三件（D_DATA 域）。
+
+next_in_order: >-
+  ⑤训练线：distill-train 出训练面（教师标＋与冻结金标硬分源断言）→ run_sft_train 真训 →
+  在冻结金标上量 macro-F1，及格线 0.767 不变。reaper keep 已登记本班长批件；
+  CH 让路窗（01:00-04:00）内零跑批零 CH 照守。代码件重投按"源码先落、测件后落"排。
+
+manifest_inlined: >-
+  冻结现场清单（data/eval/gold_expansion_v1_manifest.yaml，sha256 73886db68df1f51902373610bf20d414c3c89d34ef478f1f02ee5df637a78561）在本节全文内联，因为该 manifest 文件本体今夜入不了仓：
+  CREATE-GUARD 要新建 .yaml 先登记 creation_token，而唯一的登记通道 batch_creation_tokens.py 只按**目录前缀**
+  扫（data/eval 一把扫到 7 件，其中 news_sentiment_200.jsonl、news_sentiment_200_gold.jsonl、  zero_shot_metrics.json 三件是他班已入库件）——把我名下的 capability 贴到别人件上＝归属篡改，不做；
+  收窄前缀到 data/eval/gold_expansion 又匹配不到（该工具按目录通配，文件名前缀无效）。
+  另一条要报的工具缺陷：register_asset.py --path 在**该文件不存在的根**下仍回
+  "OK: 五道手续完成（已办: token）"，我去 PG 账本按 entry_key LIKE 'file=data/eval/gold_expansion%' 反查，
+  零行——即它对不存在的件假成功（fail-open）。这不是我要绕过的理由，是治理车道该收的一处真缺陷；
+  manifest 本体等 G-1（投影册追齐）后与生产者代码同批落，届时按本节 sha256 回验，不重写内容。
+
+quarantined_9_detail:
+  - "id: '104246532', flag: slogan_like, teacher: positive, title: 华泰股份捐赠500万元助力抗击新冠病毒疫情"
+  - "id: '104441538', flag: slogan_like, teacher: positive, title: 兰州新区：全力打造千亿级绿色化工园区"
+  - "id: '105753755', flag: directionless_catalog, teacher: positive, title: 世界最大的抽水蓄能电站正式投产发电 概念股一览"
+  - "id: '105753757', flag: slogan_like, teacher: positive, title: 新能源汽车推广应用财政补贴政策调整 坚持平缓补贴退坡力度"
+  - "id: '108142531', flag: directionless_catalog, teacher: positive, title: 【长三角日报】合肥官宣：生二孩补贴2000元 生三孩补贴5000元"
+  - "id: '108142550', flag: directionless_catalog, teacher: negative, title: 安徽一黄金回收店用“鬼秤”被顶格罚款！拟列入违法失信名单"
+  - "id: '18df8d684da06792ea7e7622efa627a4', flag: slogan_like, teacher: positive, title: 股东助力全国化发展，多元业务协同成长可期"
+  - "id: '46edc0f96a9e01f6bd453f141d8bf22b', flag: slogan_like, teacher: positive, title: 9月销量环比复苏，高阶智驾上车助力"
+  - "id: '577feffb4d380a7c52e89fbc6e79c5c4', flag: slogan_like, teacher: positive, title: 公司深度报告：成本+资金双优势引领，未来出栏高增可期"
+
+mirror_watch_8_detail_untouched_by_this_shift:
+  - "id: '102978503', title: 2016年上海税收收入11847亿元 同比增长5.5%"
+  - "id: '102978529', title: 香港多项公共服务加价 海洋公园成人票上调约14%"
+  - "id: '103669081', title: 重组方案即将闯关股东大会 TCL集团突然要分红13.55亿"
+  - "id: '103669092', title: 1月2日动力煤期货行情上涨"
+  - "id: '103669103', title: 欧洲股市低开 法国CAC40指数下跌1.9%"
+  - "id: '105753754', title: 上涨270%的股票还能继续涨吗？元宇宙这两个细分方向值得重点关注 | A股2022投资策略"
+  - "id: '105753763', title: 券商金股收益排名出炉！最牛组合暴赚80% 七成“荐股”正收益 13家预测“不靠谱”"
+  - "id: '65510467', title: 欧美股市涨跌不一 国际金价连续5日走低"
+
+file_hashes_in_register:
+  gold_expansion_v1.jsonl: 606ed4af7f3ad591b06d30161af37a15c12b543502e161cd5e6f1c1b36f228e0（351 行 410,493 字节）
+  gold_expansion_v1_quarantine.jsonl: 2a6421f8c3215f2b633f73b47f3ee35f395a56940d00f3723a213cff51e53ea5（9 行 11,014 字节）
+  gold_expansion_v1_manifest.yaml: 73886db68df1f51902373610bf20d414c3c89d34ef478f1f02ee5df637a78561（未入仓，内联于本节）
