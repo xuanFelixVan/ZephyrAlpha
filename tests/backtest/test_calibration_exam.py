@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-BT-247 | docs/03_modules/_domain_backtest/blueprint.md
 # [TESTS] tests/backtest/test_calibration_exam.py
-# 测试隔离：卡/分数册全在 tmp_path；信号/目标合成注入（零 CH）。
+# 测试隔离：卡/分数册全在 tmp_path；信号/目标合成注入（零 CH）；
+# 试次册由本文件 autouse 夹具整体改指 tmp（改前缺省直写生产 N 账本，见 _isolate_trial_ledger 注释）。
 # [TTL] permanent
 """校准卡执行器红蓝双向：门柱机械判/状态机/分数册 only-add/试次留痕/fail-closed。"""
 
@@ -14,6 +15,64 @@ import pytest
 import yaml
 
 from scripts.backtest.fexam import calibration_exam as ce
+from zephyr.backtest.core import n_trial_ledger as _ntl
+
+#: 生产真源在 import 时的原值（autouse 夹具只改模块属性，不改本快照），供"生产册一字未动"两测对照。
+_REAL_PROD_LEDGER = Path(_ntl.LEDGER_REGISTRY_PATH)
+
+
+def _sha(p: Path) -> str:
+    import hashlib
+
+    return hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else "<absent>"
+
+
+@pytest.fixture(autouse=True)
+def _isolate_trial_ledger(tmp_path, monkeypatch):
+    """本支全篇禁写生产 N 账本（根宪法 §9 条目 6）。
+
+    改前形态：`run_card` 没有试次册注入位，缺省直取 `n_trial_ledger.LEDGER_REGISTRY_PATH`
+    ＝生产真源 ⇒ 单测把 `examcard:TDM-E-TEST/*` 写进生产册（10-12 实测：dev 面 1 条 2026-10-10、
+    主区工作区面再添 2 条 recorded_at=2026-10-11T16:58:56Z）。
+    """
+    from zephyr.backtest.core.n_trial_ledger import TrialLedger
+
+    target = tmp_path / "trial_ledger_registry.yaml"
+    TrialLedger(registry_path=target).load_registry(create_if_missing=True)
+    monkeypatch.setattr(_ntl, "LEDGER_REGISTRY_PATH", target)
+    yield target
+
+
+def test_run_card_consumes_injected_ledger_path(tmp_path, _isolate_trial_ledger):
+    """注入位真被消费（改前必红＝改前无该 kwarg，直接 TypeError）。"""
+    p = _card(tmp_path)
+    sig, tgt = _synthetic(strength=1.0)
+    injected = tmp_path / "injected_ledger.yaml"
+    from zephyr.backtest.core.n_trial_ledger import TrialLedger
+
+    TrialLedger(registry_path=injected).load_registry(create_if_missing=True)
+    before = _sha(_REAL_PROD_LEDGER)
+    row = ce.run_card(
+        p,
+        signal=sig,
+        target=tgt,
+        scores_path=tmp_path / "s.yaml",
+        ledger_registry_path=injected,
+    )
+    assert not row.get("ledger_warning"), row.get("ledger_warning")
+    assert "TDM-E-TEST/calibration/02" in injected.read_text(encoding="utf-8")
+    assert _sha(_REAL_PROD_LEDGER) == before
+
+
+def test_suite_default_ledger_is_not_production(tmp_path, _isolate_trial_ledger):
+    """autouse 隔离闸自身的判别力（摘掉夹具或把缺省指回生产真源，本支必红）。"""
+    p = _card(tmp_path)
+    sig, tgt = _synthetic(strength=1.0)
+    before = _sha(_REAL_PROD_LEDGER)
+    row = ce.run_card(p, signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    assert not row.get("ledger_warning"), row.get("ledger_warning")
+    assert "TDM-E-TEST/calibration/02" in _isolate_trial_ledger.read_text(encoding="utf-8")
+    assert _sha(_REAL_PROD_LEDGER) == before
 
 
 def _card(tmp_path, **kw) -> str:
