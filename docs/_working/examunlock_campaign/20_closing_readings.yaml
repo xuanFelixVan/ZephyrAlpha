@@ -1,0 +1,81 @@
+schema_version: examunlock-closing-readings/v1
+sid: st-examunlock-20261013
+date: "2026-10-13T05:2x+08:00"
+title: 收尾读数（末袋投后用同一把尺在当下 dev 面复测的三组事实，含行级定位）
+scope_note: 本件只记"复测到的数"与"复核命令"，不重复 14/16/18 号件的结论；数值若与他班随后落地冲突，以本件各节 rulers 重跑为准。
+
+exam_face_remeasured:
+  at: "05:0x（date 实测），基底＝dev 41c3a400db"
+  dev_card_yaml_files: 527
+  status_histogram: {preregistered: 177, empty: 186, blocked_on_impl: 68, blocked_on_data: 64, examined: 32}
+  score_book_rows: 46
+  score_book_unique_cards: 32
+  verdict_histogram: {fail: 46}
+  pass_rows: 0
+  headline: 开考面仍为 0；本班 00:4x 基线（A0/A?11/B17/C121/D0/U28 与 46 行全 fail）至今未被任何班改写
+
+card_face_drift_check:
+  question: 本班车道基（9fabb46a73）之后 dev 上被改动的卡面，会不会让 18 号矩阵过期？
+  modified_card_files_since_base: 9
+  inside_my_177_universe: 0
+  how_judged: 逐张取 dev 面 card_id 与 18 号件 card_id 集合求差；另在 18 号件正文 grep 卡名（命中 0）
+  matrix_histogram_now: {C: 121, U: 28, "A?": 11, B: 17}
+  sum_check: "121+28+11+17 = 177 == 在册行数 177"
+  conclusion: 那 9 枚（8 张 agg_*_fwd* ＋ 1 张 07b 复位阶梯锚定版）不属本班宇宙（非 preregistered），矩阵无一行需回写
+
+data_wiring_proof:
+  claim_under_test: 本班绑定册 20 格的 args.base_csv 能被运行器**自己的**读取器解析成非空序列（＝接线已闭，只差属主定夺表示层与翻状态）
+  method: import scripts/backtest/fexam/card_binding，逐格调 _load_csv_series(base_csv)，禁自造第三条取数路
+  SERIES_DIR_resolved: docs/_working/nightmine_campaign/series（车道内实测指向该目录）
+  series_dir_csv_count: 27   # 在册 7 枚广度序列 ＋ 本班 20 枚 ti_ew 序列
+  book_base_csv_distinct: 20
+  landed_ti_ew_files: 20
+  set_equality: {book_only: 0, file_only: 0}
+  loader_nonempty: "20 / 20"
+  sample_rows: 1622
+  disclosure: 这是**函数级**证明，不是开考；本班全程未跑 run 面、分数册零写（开考属属主班，见 16 号件丙段路由与在册令"本班宇宙零开考照守"）
+
+regimes_consumption_sites:
+  re_measured_on: dev 41c3a400db
+  file: scripts/backtest/fexam/calibration_exam.py
+  line_numbers: [179, 215, 404, 762]
+  routes: {179: series 路, 215: panel 路, 404: crisis 多段解析, 762: event 路}
+  card_binding_py_regimes_hits: 0
+  correction_for_successor: >-
+    消费位**全在判官侧 calibration_exam.py**，绑定器 card_binding.py 内 grep 'regimes' 零命中。
+    13 号件落地时写的行号（163/200/402/752）是被矿考二班两袋推走前的旧值，16 号件丁段已登记位移；
+    本件给的是当下实测值，接班按本件行号定位即可，不必再回 13 号件换算。
+
+overnight_leg_exposure_evidence:
+  claim_under_test: 本班 15 号件 §一自纠"隔夜腿不是缺算子/缺物化，而是缺曝露位"是否仍成立
+  evidence_lines:
+    - "card_binding.py:125 注释即写明 ret_open = open/lag(close)-1（后复权空间，卡面原文）"
+    - "card_binding.py:142 SQL 里 if(lag_c > 0, o / lag_c - 1, -99.0) AS ret_open"
+    - "card_binding.py:150 avgIf(ret_open, lu_prev = 1) AS prem_open"
+    - "card_binding.py:621 _PANEL_COLS 已含 prem_open"
+    - "card_binding.py:673 open_ser, _ = _apply_set_floor(panel, 'prem_open', min_set)"
+  what_happens_to_it: open_ser 只被用作两条诊断证据（open_form_days / open_form_median），函数 return 只交回收盘侧序列
+  therefore: 隔夜腿在 CH 面**已算出**，缺的只是把它作为可消费序列曝露出来＋卡面检验量立法 ⇒ 属主动作是"改返回面"，不需要第二次装载
+  zero_extra_ch_cost: true
+
+runner_cli_flags_checked:
+  present: [--mode, --approve-list, --binding-book, --scores, --tag]
+  scores_explicit_required: true   # help 原文"run 面：分数册路径（显式必填，禁默认主区面）"
+  cli_level_end_to_end: 仍未验（本班不用 --override-ch-window-with-reason 绕窗闸，且开考不归本班）
+
+queue_state_when_written:
+  my_last_bag: q-20261013-st-examunlock-20261013-0004（27 件，pending）
+  blob_vs_lane_bytes: "27 / 27 sha256 全等（入袋快照即车道现值）"
+  belt_alive: true   # serializer.lease 22s 前续期；belt_daemon.heartbeat 16s 前
+  heads_ahead_of_me: [q-20261013-st-deadcure3b-chief-20261011-0060, q-20261013-st-examrun-20261012-0042]
+  foreign_in_processing: q-20261013-st-datalane2-20261012-0013（claim 已 ~98min 未完成，非本班件，只如实登记不动它）
+
+rulers:
+  - name: 宇宙与分数册
+    cmd: "对 dev 面 exam_cards 全量跑 classify/status 直方 ＋ 读 exam_scores_v1.yaml 行数与 verdict"
+  - name: 接线证明
+    cmd: "import card_binding 后对 03_binding_book_event20.yaml 逐格调 _load_csv_series(args.base_csv)"
+  - name: 行号定位
+    cmd: "git show dev:scripts/backtest/fexam/calibration_exam.py | grep -n regimes"
+  - name: 隔夜腿曝露位
+    cmd: "git show dev:scripts/backtest/fexam/card_binding.py | grep -n 'prem_open\\|open_ser'"
