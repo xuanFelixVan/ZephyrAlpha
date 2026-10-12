@@ -376,6 +376,26 @@ function Test-CapacityGuardBreach {
     return $false
 }
 
+# Native recursive delete for dated snapshot trees (2026-10-12 chief order 8 item 3).
+# Why: the PowerShell provider path (Remove-Item -Recurse -Force) was measured at
+# 6h42m44s for ONE dated vault tree (run 2026-10-12 01:06:06: journal line
+# "Snapshot: linked=46144" at 02:00:50 -> "Rotation: removed 1 old snapshot(s):
+# 20260927" at 08:43:34, i.e. 86% of a 27844.9s run, with zero journal lines in
+# between). Retention semantics are untouched: the caller still decides WHICH dirs
+# are due (regex '^\d{8}$' + cutoff), and a dir is only counted as rotated after
+# Test-Path says it is really gone -- same fail-closed verification as before.
+# Paths reaching this command line are always VaultBase/DumpsTarget joined to a
+# digits-only dir name, and quotes are stripped defensively.
+function Remove-DatedTree {
+    param([string]$Path)
+    if (-not (Test-Path -LiteralPath $Path)) { return $true }
+    $q = '"' + $Path.Replace('"', '') + '"'
+    & cmd.exe /c "rmdir /s /q $q" 2>&1 | Out-Null
+    if (-not (Test-Path -LiteralPath $Path)) { return $true }
+    Write-Warn ("native delete left the tree in place: {0}" -f $Path)
+    return $false
+}
+
 # -- Acquire lock --
 if (Test-BackupLock) {
     # Silent-exit hardening (2026-09-15): a lock-skip used to leave zero trace
@@ -724,6 +744,58 @@ if ($Mode -eq "ch") {
 } else {
     Write-Stage "Stage 3: Code backup (versioned vault, hardlink dedup, retention ${VaultRetentionDays}d)"
 
+    # DB dumps: versioned dated snapshots (ruling #380-7/#381: 14-day rolling by default;
+    # rotation gated on CH backup ok -- oldest snapshot only removed when data body is in DB
+    # and doubly backed up. Legacy /MIR files at target root stay as frozen extra copy.)
+    # ORDER (2026-10-12 chief order 8 item 1): this block runs at the TOP of Stage 3, before
+    # the space guard and before the vault rotation delete, so the dumps this run just
+    # produced reach the backup drive immediately. Nothing else about it changed: same
+    # target, same robocopy switches, same capacity pre-gate, same state-gated rotation.
+    if (Test-Path $DumpDir) {
+        $dumpsDay = $RunAt.ToString("yyyyMMdd")
+        $dumpsDayTarget = Join-Path $DumpsTarget $dumpsDay
+        New-Item -ItemType Directory -Path $dumpsDayTarget -Force | Out-Null
+        # (E-4) capacity red-line pre-gate: breach = skip the dumps copy (warn +
+        # trace), rotation below is cheap and stays available.
+        $rcDumps = 0
+        $dumpsSkippedByGuard = $false
+        if (Test-CapacityGuardBreach $dumpsDayTarget) {
+            $dumpsSkippedByGuard = $true
+            $dbStatus.db_dumps = @{status="warn"; reason="capacity_guard"; error="target drive below registered red line, dumps copy skipped"}
+        } else {
+            & robocopy $DumpDir $dumpsDayTarget "/E" "/COPY:DAT" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
+            $rcDumps = $LASTEXITCODE
+        }
+        if (-not $dumpsSkippedByGuard) {
+            if ($rcDumps -ge 8) { Write-Warn "robocopy dumps failed (exit $rcDumps)" } else { Write-OK ("DB dumps snapshot done: {0}" -f $dumpsDayTarget) }
+        }
+        $rotatedDumps = @()
+        $dumpsStateOk = $false
+        # Observability (ruling 12, 2026-10-11): this gate reads the state file written by
+        # Stage 4 of a PREVIOUS run, so a bare "not ok" WARN cannot be attributed afterwards
+        # between "stale value" and "read failed". Log the exact value we read; judgement,
+        # thresholds and the rotation itself are unchanged.
+        $dumpsStateRead = "<unreadable>"
+        try {
+            $sJson = Get-Content $StateFile -Raw -Encoding UTF8 | ConvertFrom-Json
+            $dumpsStateRead = [string]$sJson.last_ch_backup_status
+            $dumpsStateOk = ($dumpsStateRead -eq "ok")
+        } catch { $dumpsStateOk = $false }
+        if ($dumpsStateOk) {
+            # (B5, 2026-09-24): retention is configurable (ruling #380-7/#381) --
+            # parse it instead of the hardcoded 14.
+            $dumpsRetention = 14
+            if ($yamlContent -match 'db_dumps:[\s\S]*?retention_days:\s*(\d+)') { $dumpsRetention = [int]$matches[1] }
+            $cutoffDumps = (Get-Date).AddDays(-$dumpsRetention).ToString("yyyyMMdd")
+            foreach ($d in @(Get-ChildItem -LiteralPath $DumpsTarget -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d{8}$' -and $_.Name -lt $cutoffDumps } | Sort-Object Name)) {
+                if (Remove-DatedTree $d.FullName) { $rotatedDumps += $d.Name }
+            }
+            if ($rotatedDumps.Count -gt 0) { Write-OK ("DB dumps rotation: removed {0} old snapshot(s) [state last_ch_backup_status={1}]" -f $rotatedDumps.Count, $dumpsStateRead) }
+        } else {
+            Write-Warn ("DB dumps rotation skipped (state last_ch_backup_status={0} -- oldest snapshot kept as insurance)" -f $dumpsStateRead)
+        }
+    }
+
     # Space guard (v2.1.1): while free space below floor, evict OLDEST snapshots
     # first, but never keep fewer than $VaultMinKeepDays pre-today snapshots.
     # Steady-state size depends on daily churn (unknowable in advance) -- this
@@ -740,10 +812,15 @@ if ($Mode -eq "ch") {
             Where-Object { $_.Name -match '^\d{8}$' -and $_.Name -lt (Get-Date).ToString("yyyyMMdd") } |
             Sort-Object Name)
         $evictCount = [Math]::Max(0, $datedDirs.Count - $VaultMinKeepDays)
-        foreach ($d in ($datedDirs | Select-Object -First $evictCount)) {
-            if ((Get-PSDrive -Name $vaultDrive).Free -ge $floorBytes) { break }
-            Remove-Item -LiteralPath $d.FullName -Recurse -Force -ErrorAction SilentlyContinue
-            if (-not (Test-Path -LiteralPath $d.FullName)) { $spaceEvicted += $d.Name }
+        if ($evictCount -gt 0) {
+            # Same observability shape as the rotation leg (2026-10-12 chief order 8 item 2):
+            # these deletes can each run for hours, so announce the plan before starting.
+            $dueEvict = @($datedDirs | Select-Object -First $evictCount | ForEach-Object { $_.Name })
+            Write-OK ("Space guard start: about to evict {0} snapshot(s) to reach the floor: {1}" -f $dueEvict.Count, ($dueEvict -join ','))
+            foreach ($d in ($datedDirs | Select-Object -First $evictCount)) {
+                if ((Get-PSDrive -Name $vaultDrive).Free -ge $floorBytes) { break }
+                if (Remove-DatedTree $d.FullName) { $spaceEvicted += $d.Name }
+            }
         }
         $freeBytes = (Get-PSDrive -Name $vaultDrive).Free
         if ($freeBytes -lt $floorBytes) {
@@ -903,63 +980,27 @@ if ($Mode -eq "ch") {
         }
     }
 
+    # (2026-10-12 chief order 8 item 1) The DB dumps copy+rotation block used to sit
+    # here, i.e. AFTER the vault rotation delete below. Measured cost of that order:
+    # dumps were produced 01:07:04 but only reached the backup drive at 08:43:51
+    # because the rotation delete ran 6h42m44s first -- a 7h36m single-copy exposure
+    # for the day's database backups. The block now runs at the top of Stage 3 instead.
     # Rotation: remove dated dirs older than retention window
     $rotated = @()
     $cutoff = (Get-Date).AddDays(-$VaultRetentionDays).ToString("yyyyMMdd")
-    foreach ($d in (Get-ChildItem -LiteralPath $VaultBase -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d{8}$' -and $_.Name -lt $cutoff } | Sort-Object Name)) {
-        Remove-Item -LiteralPath $d.FullName -Recurse -Force -ErrorAction SilentlyContinue
-        if (-not (Test-Path -LiteralPath $d.FullName)) { $rotated += $d.Name }
+    $dueDirs = @(Get-ChildItem -LiteralPath $VaultBase -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d{8}$' -and $_.Name -lt $cutoff } | Sort-Object Name)
+    if ($dueDirs.Count -gt 0) {
+        # (2026-10-12 chief order 8 item 2) start-of-rotation journal line: this leg can
+        # run for hours, and with only a completion line it is indistinguishable from a
+        # hang. Judgement, cutoff and retention are untouched -- log only.
+        Write-OK ("Rotation start: about to remove {0} expired snapshot(s): {1}" -f $dueDirs.Count, (($dueDirs | ForEach-Object { $_.Name }) -join ','))
+        foreach ($d in $dueDirs) {
+            if (Remove-DatedTree $d.FullName) { $rotated += $d.Name }
+        }
     }
     if ($rotated.Count -gt 0) { Write-OK ("Rotation: removed {0} old snapshot(s): {1}" -f $rotated.Count, ($rotated -join ',')) }
 
-    # DB dumps: versioned dated snapshots (ruling #380-7/#381: 14-day rolling by default;
-    # rotation gated on CH backup ok -- oldest snapshot only removed when data body is in DB
-    # and doubly backed up. Legacy /MIR files at target root stay as frozen extra copy.)
-    if (Test-Path $DumpDir) {
-        $dumpsDay = $RunAt.ToString("yyyyMMdd")
-        $dumpsDayTarget = Join-Path $DumpsTarget $dumpsDay
-        New-Item -ItemType Directory -Path $dumpsDayTarget -Force | Out-Null
-        # (E-4) capacity red-line pre-gate: breach = skip the dumps copy (warn +
-        # trace), rotation below is cheap and stays available.
-        $rcDumps = 0
-        $dumpsSkippedByGuard = $false
-        if (Test-CapacityGuardBreach $dumpsDayTarget) {
-            $dumpsSkippedByGuard = $true
-            $dbStatus.db_dumps = @{status="warn"; reason="capacity_guard"; error="target drive below registered red line, dumps copy skipped"}
-        } else {
-            & robocopy $DumpDir $dumpsDayTarget "/E" "/COPY:DAT" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
-            $rcDumps = $LASTEXITCODE
-        }
-        if (-not $dumpsSkippedByGuard) {
-            if ($rcDumps -ge 8) { Write-Warn "robocopy dumps failed (exit $rcDumps)" } else { Write-OK ("DB dumps snapshot done: {0}" -f $dumpsDayTarget) }
-        }
-        $rotatedDumps = @()
-        $dumpsStateOk = $false
-        # Observability (ruling 12, 2026-10-11): this gate reads the state file written by
-        # Stage 4 of a PREVIOUS run, so a bare "not ok" WARN cannot be attributed afterwards
-        # between "stale value" and "read failed". Log the exact value we read; judgement,
-        # thresholds and the rotation itself are unchanged.
-        $dumpsStateRead = "<unreadable>"
-        try {
-            $sJson = Get-Content $StateFile -Raw -Encoding UTF8 | ConvertFrom-Json
-            $dumpsStateRead = [string]$sJson.last_ch_backup_status
-            $dumpsStateOk = ($dumpsStateRead -eq "ok")
-        } catch { $dumpsStateOk = $false }
-        if ($dumpsStateOk) {
-            # (B5, 2026-09-24): retention is configurable (ruling #380-7/#381) --
-            # parse it instead of the hardcoded 14.
-            $dumpsRetention = 14
-            if ($yamlContent -match 'db_dumps:[\s\S]*?retention_days:\s*(\d+)') { $dumpsRetention = [int]$matches[1] }
-            $cutoffDumps = (Get-Date).AddDays(-$dumpsRetention).ToString("yyyyMMdd")
-            foreach ($d in (Get-ChildItem -LiteralPath $DumpsTarget -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d{8}$' -and $_.Name -lt $cutoffDumps } | Sort-Object Name)) {
-                Remove-Item -LiteralPath $d.FullName -Recurse -Force -ErrorAction SilentlyContinue
-                if (-not (Test-Path -LiteralPath $d.FullName)) { $rotatedDumps += $d.Name }
-            }
-            if ($rotatedDumps.Count -gt 0) { Write-OK ("DB dumps rotation: removed {0} old snapshot(s) [state last_ch_backup_status={1}]" -f $rotatedDumps.Count, $dumpsStateRead) }
-        } else {
-            Write-Warn ("DB dumps rotation skipped (state last_ch_backup_status={0} -- oldest snapshot kept as insurance)" -f $dumpsStateRead)
-        }
-    }
+
     $vaultOk = ($rcCode -lt 8) -and ($linkFail -eq 0)
     $codeResult = @{
         status=$(if($vaultOk){"ok"}else{"failed"}); mode="versioned"

@@ -12,6 +12,7 @@ PowerShell 脚本不在任何测试/门禁射程内，只在真实备份时才�
 
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -176,3 +177,132 @@ def test_journal_writer_does_not_rely_on_bare_add_content() -> None:
     joined = " ".join(code)
     assert "UTF8Encoding" in joined and "$false" in joined, "没写明显式 UTF-8 且无 BOM"
     assert "AppendAllText" in joined, "写盘口被换成未知路径，回归测与结构测须一起复核"
+
+
+# ==================== 2026-10-12 统筹工单⑧：备份轮转腿改造三判据 ====================
+
+
+def _ps_code_lines(text: str) -> list[str]:
+    """语句位扫描：剔除整行注释与空行。
+
+    为什么必须这样量：修因说明里会**合法地**提到被禁形态（如 Remove-Item -Recurse），
+    拿全文 grep 当判据会把说明文本读成违规；而只看语句位又会让"被包进注释的修复"
+    蒙混过关——所以两处并用：结构测走语句位，行为测真跑函数。
+    """
+    return [ln.strip() for ln in text.splitlines() if ln.strip() and not ln.strip().startswith("#")]
+
+
+def _first_idx(lines: list[str], needle: str) -> int:
+    for idx, ln in enumerate(lines):
+        if needle in ln:
+            return idx
+    return -1
+
+
+def test_dumps_copy_leg_runs_before_the_slow_rotation_delete() -> None:
+    """工单⑧第1项（最高优先＝数据安全）：当日 DB dumps 必须先落备份盘，再删旧快照。
+
+    病形实测（2026-10-12 那发 duration_seconds=27844.9）：PG/SQLite dump 于 01:07:04 产出，
+    而 "DB dumps snapshot done: G:/backup/db_dumps/20261012" 打在 08:43:51——中间隔着一轮
+    6h42m44s 的 vault 轮转删除（02:00:50 → 08:43:34），当日数据库备份单份裸奔 7h36m。
+    """
+    src = (BACKUP_DIR / "backup.ps1").read_text(encoding="utf-8")
+    lines = _ps_code_lines(src)
+    i_copy = _first_idx(lines, "& robocopy $DumpDir")
+    i_done = _first_idx(lines, "DB dumps snapshot done")
+    i_rot = _first_idx(lines, "Rotation start: about to remove")
+    assert min(i_copy, i_done, i_rot) >= 0, (
+        f"锚语句没找到（被改名或掉进注释）：copy={i_copy} done={i_done} rotation_start={i_rot}"
+    )
+    assert i_copy < i_rot and i_done < i_rot, (
+        f"腿序回退：dumps 拷贝在 {i_copy}/{i_done}，轮转删除在 {i_rot}（必须更小）"
+    )
+
+
+def test_rotation_and_space_guard_legs_announce_before_deleting() -> None:
+    """工单⑧第2项（＝候裁㉘ 落地）：长删除腿必须"开局打一行"，否则小时级零输出与挂死同形。
+
+    01:06 那发的日志形状：02:00:50 打完 Snapshot 行后整整 6h42m 零行，直到 08:43:34 才出现
+    "Rotation: removed 1 old snapshot(s)"——观测面上与进程死掉无法区分。
+    """
+    src = (BACKUP_DIR / "backup.ps1").read_text(encoding="utf-8")
+    lines = _ps_code_lines(src)
+    i_rot = _first_idx(lines, "Rotation start: about to remove")
+    i_evict = _first_idx(lines, "Space guard start: about to evict")
+    assert i_rot >= 0, "轮转腿没有起始日志语句（又退回只打收官行的形状）"
+    assert i_evict >= 0, "空间闸逐出腿没有起始日志语句（同形病，删的也是整日树）"
+    i_del = next((j for j in range(i_rot, len(lines)) if "Remove-DatedTree $d.FullName" in lines[j]), -1)
+    assert i_del > i_rot, "起始日志没排在轮转删除动作之前（打了等于没打）"
+
+
+def test_dated_tree_deletes_use_native_helper_defined_before_first_call() -> None:
+    """工单⑧第3项：整日快照树的删除改走原生单程递归，且函数必须先定义后调用。
+
+    两条各对应一场在册病：①provider 递归删在整日树上实测 6h42m（PS 引擎逐件开销）；
+    ②"定义晚于首次调用"是本链的 P0 形态（Test-CapacityGuardBreach 曾定义在 :963 而首调在
+    :825，EAP=Continue 下整个 if/else 被静默跳过，dumps 腿空转两天）。
+    """
+    src = (BACKUP_DIR / "backup.ps1").read_text(encoding="utf-8")
+    lines = _ps_code_lines(src)
+    offenders = [ln for ln in lines if "Remove-Item" in ln and "-Recurse" in ln]
+    assert not offenders, f"仍有 provider 整树递归删的语句位：{offenders[:3]}"
+    i_def = _first_idx(lines, "function Remove-DatedTree")
+    assert i_def >= 0, "Remove-DatedTree 没定义"
+    calls = [j for j, ln in enumerate(lines) if "Remove-DatedTree " in ln and not ln.startswith("function")]
+    assert len(calls) >= 3, f"调用面不足：实测 {len(calls)} 处，应覆盖 vault 轮转／空间闸逐出／dumps 轮转三处"
+    late = [c for c in calls if c < i_def]
+    assert not late, f"首次调用 {late[:3]} 早于定义 {i_def}（E-4 同族静默空转病复发）"
+
+
+def test_remove_dated_tree_actually_deletes_a_nested_tree(tmp_path) -> None:
+    """行为红绿证：把真函数搬进 harness，对含只读文件与空目录的嵌套树实测删干净。
+
+    提速改动不能只测"语句位像不像"：rotated 计数由调用方按 Test-Path 复核后才累加，
+    所以这里同时验返回值与"树真的没了"，并带一个只读件（两条删除路径都得吃下只读属性）。
+    """
+    src = (BACKUP_DIR / "backup.ps1").read_text(encoding="utf-8")
+    fn = _extract_ps_function(src, "Remove-DatedTree")
+    root = tmp_path / "20260927"
+    (root / "a" / "b").mkdir(parents=True)
+    (root / "a" / "empty").mkdir()
+    (root / "f0.txt").write_text("x", encoding="ascii")
+    deep = root / "a" / "b" / "f1.txt"
+    deep.write_text("y" * 64, encoding="ascii")
+    deep.chmod(0o444)
+    assert root.exists() and any(root.rglob("*")), "测试自设的树没建起来，本测无判别力"
+    harness = tmp_path / "del_harness.ps1"
+    body = (
+        "function Write-Warn($m){ Write-Output ('WARN ' + $m) }\n"
+        + fn
+        + "\n$t='"
+        + root.as_posix().replace("/", "\\")
+        + "'\n$r=Remove-DatedTree $t\n"
+        + "Write-Output ('RET=' + $r)\n"
+        + "Write-Output ('STILL=' + (Test-Path -LiteralPath $t))\n"
+    )
+    harness.write_text(body, encoding="ascii")
+    proc = _run_ps("& '" + harness.as_posix().replace("/", "\\") + "'")
+    assert proc.returncode == 0, f"harness 没跑通: {proc.stderr[:200]}"
+    out = proc.stdout
+    assert "RET=True" in out, f"函数返回值不是 True: {out[:240]}"
+    assert "STILL=False" in out, f"Test-Path 说树还在: {out[:240]}"
+    assert not root.exists(), "树还在盘上（返回 True 却没删＝计数会虚报）"
+
+
+def test_daily_task_time_limit_clears_the_worst_measured_run() -> None:
+    """工单⑧第3项后半：注册脚本里的 ExecutionTimeLimit 必须容得下实测最长轮（7h44m）。
+
+    病形：任务动作链是 wscript.exe -> launch_hidden.vbs -> backup.ps1，而该 vbs 用等待式
+    启动（`sh.Run cmd, 0, True`，文内无任何超时/杀原语），所以整棵备份树都在任务时限里；
+    旧值 PT4H < 2026-10-12 实测 27844.9s＝7h44m ⇒ 长跑半程会被硬停（AllowHardTerminate
+    节点缺省＝true），留下"死 PID 持有 .runtime/backup.lock"的残锁＋截断的轮。
+    本测钉住脚本真源值；活体任务面另由 Set-ScheduledTask 改（凭据见台账工单⑧段）。
+    """
+    src = (BACKUP_DIR / "backup_daily_trigger.ps1").read_text(encoding="utf-8")
+    i = src.find("-ExecutionTimeLimit")
+    assert i >= 0, "注册脚本里没有 -ExecutionTimeLimit 语句位（时限由谁定？须先查明再改判据）"
+    match = re.search(r"-\s*Hours\s+(\d+)", src[i : i + 220])
+    assert match, f"-ExecutionTimeLimit 之后 220 字符内找不到 New-TimeSpan -Hours N：{src[i : i + 220]!r}"
+    hours = int(match.group(1))
+    assert hours >= 12, f"时限 {hours}h 容不下实测最长轮 7.73h，会复现半程硬停"
+    assert "-Hours 4" not in src, "旧值 4h 回退（会把长跑截断成残锁）"

@@ -196,11 +196,21 @@ if ($RegisterTask) {
     # Trigger: daily at 06:00
     $trigger = New-ScheduledTaskTrigger -Daily -At 6:00am
 
-    # Settings: 4h time limit, StartWhenAvailable (catch-up if off at 06:00),
+    # Settings: 12h time limit, StartWhenAvailable (catch-up if off at 06:00),
     # allow start on battery, don't stop on idle. StartWhenAvailable lives in
     # Settings (NOT Trigger) on Windows Task Scheduler.
+    # Time limit raised 4h -> 12h (2026-10-12 chief order 8 item 3). Why: the task
+    # action chain is wscript.exe -> launch_hidden.vbs -> backup.ps1, and the vbs
+    # waits for the child (sh.Run cmd, 0, True), so the whole backup tree runs INSIDE
+    # this limit. A dated-snapshot rotation delete measured 6h42m44s on 2026-10-12
+    # (total run 27844.9s = 7h44m), i.e. longer than the old 4h ceiling. All runs that
+    # survived did so because they were ignited by the reconciler, outside the task.
+    # Under the old limit a long 06:00 run gets hard-terminated mid-flight (default
+    # AllowHardTerminate=true), which leaves .runtime/backup.lock held by a dead PID
+    # and a truncated backup -- the exact silent-outage shape this chain is built to
+    # avoid. 12h = 3x the worst measured run, still a backstop, not unlimited.
     $settings = New-ScheduledTaskSettingsSet `
-        -ExecutionTimeLimit (New-TimeSpan -Hours 4) `
+        -ExecutionTimeLimit (New-TimeSpan -Hours 12) `
         -StartWhenAvailable `
         -AllowStartIfOnBatteries `
         -DontStopIfGoingOnBatteries `
