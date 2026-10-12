@@ -654,3 +654,49 @@ def test_event_floor_applies_to_the_confirming_window(tmp_path):
     assert oos_n < 200, oos_n
     assert row["verdict"] == "fail"
     assert any("oos 窗事件日" in f for f in row["fails"]), row["fails"]
+
+
+# ---------------------------------------------------------------------------
+# 面板路两处结构缺陷的防回归钉（考试班 st-examrun-20261012，10-12 实测证红后修）
+# ---------------------------------------------------------------------------
+
+
+def _panel_pair(n: int = 900, ncols: int = 40, seed: int = 7):
+    """合成面板＋前向收益宽表（ICIR 明显为正，用来验"键名读错=恒 NaN"这一类静默降级）。"""
+    rng = np.random.default_rng(seed)
+    idx = pd.bdate_range("2021-01-04", periods=n)
+    cols = [f"S{i:04d}" for i in range(ncols)]
+    panel = pd.DataFrame(rng.normal(size=(n, ncols)), index=idx, columns=cols)
+    fwd = pd.DataFrame(0.05 * panel.to_numpy() + 0.01 * rng.normal(size=(n, ncols)), index=idx, columns=cols)
+    return panel, fwd
+
+
+def test_panel_route_ic_ir_is_actually_computed():
+    """`ic_exam.ic_stats` 回键是 "icir"；面板路曾读 "ic_ir" ⇒ 恒 NaN，卡面冻的 ic_ir_min 从未被评估。
+    修后必须出数，且与 ic_stats 对同一 IC 序列的读数同值（改前必红=nan != nan 为 False）。"""
+    from scripts.backtest.fexam.ic_exam import fast_rank_ic, ic_stats
+
+    panel, fwd = _panel_pair()
+    m = ce._panel_metrics(panel, fwd, {"window": {"regimes": {}}, "oos_window_ref": []})
+    expect = float(ic_stats(fast_rank_ic(panel, fwd.shift(-1)).dropna())["icir"])
+    assert m["ic_ir"] == m["ic_ir"], "ic_ir 仍是 NaN（键名未对齐 ic_stats 真形）"
+    assert m["ic_ir"] == pytest.approx(expect)
+
+
+def test_panel_route_high_icir_floor_now_fails_instead_of_passing():
+    """单向收紧证明：把 ic_ir_min 抬到面上不可能达的值，修后必须记败；
+    改前形态=ic_ir 恒 NaN 被 judge 跳过加败 ⇒ 一张 5/5 全冻的卡只被评了 3 柱就 pass。"""
+    panel, fwd = _panel_pair()
+    m = ce._panel_metrics(panel, fwd, {"window": {"regimes": {}}, "oos_window_ref": []})
+    card = {"pillars_numeric": {"ic_mean_min": 0.0, "ic_ir_min": 9.0}}
+    verdict, fails = ce.judge(card, m)
+    assert verdict == "fail" and any("ic_ir" in f for f in fails), fails
+
+
+def test_unjudged_discloses_nan_ic_ir_face():
+    """观测面同样不得漏：ic_ir 为 NaN（未接面）时必须进 no_machine_face 清单。
+    改前判据只查 `is None` ⇒ NaN 静默不披露（分数行声称评过 5 柱，实际 4 柱）。"""
+    card = {"pillars_numeric": {"ic_ir_min": 0.3}}
+    m = {"ic_ir": float("nan"), "mono_spearman": 0.9, "regime_ic": {"a": 0.1, "b": 0.2}, "oos_ic": 0.1}
+    u = ce._unjudged_pillars(card, m, ce._CALIBRATION_JUDGED_KEYS)
+    assert "ic_ir_min" in u["numeric_keys_no_machine_face"]
