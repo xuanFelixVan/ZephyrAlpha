@@ -1291,3 +1291,38 @@ CH 查询 0 次（含死机后复员，全程零取数）｜N 账本真源零写
 4. 前置两修若已落：按 16 条正集动册（逐条带 `run_id` 对表，口径＝幂等键一键一条）；
 5. 收工前：红蓝对抗一轮（对今晚交付做破坏性输入）＋循环自检连续两轮问题＝0＋临时件清理＋
    晨间包三段式（执行/自裁/等裁），并按总令给出终句。
+
+# 卅四、红蓝对抗·对本班今晚交付动手（02:5x，全零 CH）
+
+攻的目标＝名单袋的**完备性**（维护三班照单排除，漏一支＝继续污染）。三路独立攻：
+
+1. **动态证据（已有，非新造）**：21:44 那次 `tests/backtest` 全目录跑动之后，同窗 `query_log` 里
+   与测试相关的 INSERT 只有 `c1_backtest.sim_daily_report` 三条 ⇒ 在 `tests/backtest` 目录内，
+   名单 6 支是**完备**的（别的测试没写库）。
+2. **静态全仓扫**（`tests/**` 全量）：真调 CH 写口（`write_tsv(`／`insert_rows(`／`delete_where(`／
+   `ch_writer.xxx(`）且文件内未见 monkeypatch 的，只剩 3 个文件；逐一定性后**全部是假警报**——
+   `test_ch_batch_size_gate.py` 是 `ast.parse("write_tsv(data)")` 的字符串样本；
+   `test_gpu_consensus_scheduler.py` 命中的是 `scheduler.submit_batch(`（GPU 调度器自有队列，非 CH 写口），
+   我的正则把它当写口属**尺过宽**，已记；
+   `tests/legacy_zephyr/data/test_ch_writer.py` 确实直调 `write_tsv("c1_market.kline_daily", b"v1\tv2\n")`
+   与 `delete_where(... date='2026-07-05')`，但它 `from src.zephyr.data.ch_writer import …` 且
+   `patch("src.zephyr.data.ch_writer.http_insert")` **同面自洽** ⇒ 不写生产。
+3. **一个新查出的机制事实（值得转判官域/维护四班）**：`zephyr.data.ch_writer` 与
+   `src.zephyr.data.ch_writer` 在本仓**能同时导入且是两个不同模块对象**（实测 `a is b = False`、
+   `http_insert` 不同体，同一文件路径）——命名空间包造成的裂脑。
+   ⇒ 任何"导入一个面、打补丁另一个面"的测试都会变成**空 patch＝真写生产库**。
+   本班扫遍 `tests/**`：**当前混面文件数 = 0**（干净），但这根闸是空的——建议判官域把
+   "同模块双身份导入"做成检查（导入面与 patch 面必须同源），否则将来谁混面一次就静默写真库。
+
+结论：名单对本班域（`tests/backtest`）**完备**；跨目录未见其他未 mock 的真写测试；
+另附一条裂脑隐患与其为零的当前实测。本班不代改任何人代码，只交判据与复算命令。
+
+# 卅五、今晚交叉验证的收尾两笔（03:1x）＋统筹三裁
+
+- 矿考二班多段危机窗修复＝**独立实测为真**：dev 面 `_span_pairs` 单段→1、两段→2、三段→3 全对
+  （我先拿旧名 `_span_dates`／`_spans_dates_all` 查得"查无"，**那是我的尺过期不是他们没做**；
+  纪律：查他班实现先认新名再判有无）。
+- 混面案卷 25 的"0→2、1 现行空 patch"更正与三裁（P1 升级／安全验证次序为实施协议／circuit_breaker 入乙修重点）
+  已写入案卷 §七/§八；判据脚本含反向自证（evil_mixed 红、good_same 绿，全仓 4036 文件扫、`src.` 面 34、混面 2）。
+- 队列：0040（§三十～卅四）processing、0041（案卷 25 初版）pending；
+  案卷 §七/§八 与本班账 §卅五 将在 0041 落地后以新 dev sha **并成一袋**追加（同件不双袋）。

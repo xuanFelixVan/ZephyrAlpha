@@ -76,3 +76,39 @@ python -c "import importlib; a=importlib.import_module('zephyr.data.ch_writer');
 
 出处：班账 `docs/_working/examrun_campaign/00_ledger.md` §卅四；
 同族案卷 `docs/_working/examrun_campaign/22_landing_test_isolation_dossier.md`、名单 `23_ch_writing_test_nodeids.md`。
+
+# 七、§三"混面 0"作废：精确尺抓到 2 个混面文件，其中 1 个是**现行空 patch**（03:0x 更正）
+
+撤稿后再撤一次——本次是**我错在尺不够准**：§三用"逐文件两面各用一个宽正则数命中"的粗尺，
+换成**按模块根（`src` vs 包内）对导入面与 patch 面做集合差**后，结果从 0 变成 **2**。
+
+| 文件 | 导入面 | patch 面 | 定性 |
+|---|---|---|---|
+| `tests/legacy_zephyr/data/test_source_circuit_breaker.py` | 包内面（`from zephyr.data.scheduler import IntegratorScheduler`） | `BufferedWriter.add/flush` 打在 **`src.` 面**（296/297 行） | **现行空 patch**：被测真身持有的是包内面对象，桩未落在它身上；`BufferedWriter.flush()` 下游是 `ch_writer.write_tsv_outcome`（`buffered_writer.py:186`），该文件 fixture 配置目标表＝**生产表 `c1_market.kline_daily`**（254 行），且 `pyproject.toml:154` 的 `norecursedirs` **未排除** `tests/legacy_zephyr` ⇒ **在默认收集面内** |
+| `tests/legacy_zephyr/data/test_ch_writer.py` | `src.` 面 | 2 处打在包内面（`zephyr.data.local_replay.save_fallback`） | **不构成生产写**：`ch_writer.py:902` 是**函数内** `from zephyr.data.local_replay import save_fallback`，调用时才解析到包内面 ⇒ 该 patch 恰好有效；属"两面在此处等效"的**假警报**，我在 §七 明标以免后人误读 §三 |
+
+- **已证**：两面同存且不同模块对象（`a is b = False`、`http_insert` 不同体）；circuit_breaker 的桩打在非被测面上；
+  该文件被默认收集；其目标表为生产表；`flush()` 下游函数确为 CH 写口。
+- **未证**（不含糊）：这些用例真跑时是否**真的落了库**——取决于喂入 rows 是否非空、`http_insert` 是否在别处已被桩、
+  列校验是否先失败。本班**不自行跑它做实验**（那正是今晚已罚过一次的动作类型）。
+- **实施协议（统筹 03:1x 批准为协议）**：先上乙（conftest 禁 `src.` 面导入生产包，或先给 `ch_writer` 写口注入
+  fail-closed 护栏）→ 再单跑该文件 → 跑前跑后各取 `system.query_log` 中 `c1_market.kline_daily` 的 INSERT 计数，
+  **两侧都必为 0 才算证伪**；未做这一步之前，任何人不得用"它本来就该红/该写"来定性。
+- **定级改**：混面闸 P2 → **P1 的一项**（现行空 patch ＋ 生产表目标 ＋ 默认收集面）；
+  两案顺序不变（甲先行、乙随后），但乙的修点重点清单里**先做这 2 个文件**（`circuit_breaker` 优先），
+  余下 32 个遗留文件按批改面。
+
+# 八、判据脚本与反向自证（实施班可直接抄）
+
+```python
+IMP   = re.compile(r"^\s*(?:from|import)\s+((?:src\.)?zephyr(?:\.[a-zA-Z0-9_]+)*)", re.M)
+PATCH = re.compile(r"""patch\(\s*["']((?:src\.)?zephyr(?:\.[a-zA-Z0-9_]+)*)\.""", re.M)
+def roots(fs): return {"src" if f.startswith("src.") else "pkg" for f in fs}
+# 判据：导入面根集合 与 patch 面根集合 不相等 ⇒ 混面（红）
+```
+
+- 全仓实跑（`src`＋`scripts`＋`tests`）：**扫描 4036 文件、用 `src.` 面者 34、混面 2**（即 §七 两个）。
+- **反向自证**（样本造在仓外 `.runtime/tmp/.../mf_sample/`，绝不落进 `tests/`）：
+  `evil_mixed.py`（导入 `src.` 面、patch 包内面）⇒ **被抓红**；
+  `good_same.py`（两面同为包内面）⇒ **不报**；
+  ⇒ 判据方向正确，甲闸上线后请以同样两件样本再验一次（红/绿各一，缺一即闸无效）。
