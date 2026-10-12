@@ -10,12 +10,12 @@ ttl: task_bound
 
 | 族 | 账本(kind) | 磁盘未入账 | 成绩册行数 | 消耗合计 | 过渡帽×1 | 帽状态 | 红旗 |
 |---|---|---|---|---|---|---|---|
-| A 信号/因子族 | 34 | 0 | 1660 | **1694** | 1694 | owner_adopted_formula_pending_terminal_signature | 册面键名未命中(PARTIAL)['fexam_score_books', 'sector_line_prereg']→该行合计**偏低**；PG 面未测 1 处 |
-| B 策略配方族 | 31959 | 53090 | 185 | **85234** | 85234 | owner_adopted_formula_pending_terminal_signature | 册面键名未命中(PARTIAL)['grid_oos_book', 'mom029_books']→该行合计**偏低** |
-| C 组合/配置族 | 0 | 0 | 5 | **5** | 5 | owner_adopted_formula_pending_terminal_signature | 册面键名未命中(PARTIAL)['exit_sim']→该行合计**偏低** |
-| D 状态识别/环境族 | 0 | 0 | 0 | **0** | 0 | owner_adopted_formula_pending_terminal_signature | 册面键名未命中(PARTIAL)['state_recognizer', 'emotion_index']→该行合计**偏低**；合计=0：帽若照抄=该族立即停，须先修册面读取再谈帽 |
-| E 工程件族 | 0 | 0 | 412 | **412** | 412 | owner_adopted_formula_pending_terminal_signature | 册面键名未命中(PARTIAL)['exam_run_archive']→该行合计**偏低** |
-| F 挖矿器元层族 | 0 | 0 | 5410 | **5410** | 5410 | owner_adopted_formula_pending_terminal_signature | 册面键名未命中(PARTIAL)['paper_pool']→该行合计**偏低** |
+| A 信号/因子族 | 34 | 0 | 1699 | **1733** | 1733 | owner_signed_20261012_measurement_incomplete | 册面键名未命中(PARTIAL)['fexam_score_books']→该行合计**偏低**；PG 面未测 1 处 |
+| B 策略配方族 | 31959 | 53090 | 203 | **85252** | 85252 | owner_signed_20261012 | — |
+| C 组合/配置族 | 0 | 0 | 9 | **9** | 9 | owner_signed_20261012 | — |
+| D 状态识别/环境族 | 0 | 0 | 17 | **17** | 17 | owner_signed_20261012 | — |
+| E 工程件族 | 0 | 0 | 194 | **194** | 194 | owner_signed_20261012 | 模式零命中['route_audit_replay'] |
+| F 挖矿器元层族 | 0 | 0 | 5488 | **5488** | 5488 | owner_signed_20261012 | — |
 
 ## 终签前必读的三条限制
 

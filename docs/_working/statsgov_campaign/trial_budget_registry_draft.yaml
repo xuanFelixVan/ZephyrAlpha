@@ -16,6 +16,10 @@ layering:
     note: 本册不新记一笔试次；族消耗=L0 按 kind 聚合派生（零第二真源）
   L1_budget_governance: 本册——族→帽→消耗→状态
   L2_deflation_caliber: 折减口径声明（跨族同一把尺），数值表由 restatement 机生
+overlap_notes:
+  - A 族通配 *exam*_v*.yaml 会同时命中 mom029_reexam_v2.yaml，而 B 族也点名该件 ⇒ 该件在 A/B 两处各计一次，
+    六族合计存在 1 次量级的跨族重计；正式定帽前须指定唯一归属（建议归 A，B 侧改点名 strategy 类件）
+  - 单体记录册（无容器键的 reexam/conditional 卡）按 COUNTED_AS_SINGLE_RECORD=1 次计入，basis 逐件留痕在 02 号件
 family_source_of_truth:
   cited_from: docs/_working/2026-10-12-exam-card-mining-meta-method-research.md
   anchors: "§9.1 考试对象六族清单（落盘件实测）行 167-176；§9.2 适用判定行 180-187；§9.4 全局注意行 199"
@@ -73,10 +77,17 @@ caliber_declaration:
   forbidden_as_denominator:
     - N_space_nominal   # 名义设计空间（362,880 类）：把没试过的格算进分母，2026-09-15 裁定边界不认；只作最保守对照披露
   threshold_kept: 0.95  # 2026-09-15 已裁：DSR 显著线 0.95 不放水到 0.90（在册裁定，勿再议）
-  pbo_gate_value: 0.05  # 晨裁 M3-A（2026-10-12 Owner）：沿用 correlation_overfitting_audit.py:64 PBO_MAX=0.05 为全仓统一门，同域重复簇收敛唯一
+  pbo_gate_value: null  # 统筹批复（2026-10-12 晚）撤销"PBO≤0.05 作跨族统一门"——本班尺子校准实测推翻其前提（阴性 2,400 随机族 PBO=0.0286 反过门，真异象族 0.0 同过 ⇒ 同质池上无判别力）
+  pbo_role_after_revocation: in_family_diagnostic_only  # PBO 保留为**族内相对诊断指标**（报告项、非晋级门）；失效证据=21_negative_results_family_v1.md #2，原在册值 0.05 见 correlation_overfitting_audit.py:64（保留数值本身，撤销其"统一门"地位）
+  promotion_gate_kept: DSR>=0.95 + 闭卷考试  # 统筹批复一：DSR 门维持——t 换算证明 N=8 时 0.95 线=t3.104≈在册学术线 HLZ t>3.0（deflated_sharpe_calculator.py:378），病在样本长度与不能做空，不在尺
   pbo_gate_existing_in_book: 0.05  # 源=src/zephyr/factor/analysis/correlation_overfitting_audit.py:64 PBO_MAX
   budget_cap_formula: transitional_history_x1  # 晨裁 M3-A：过渡帽=该族已实测历史消耗×1（再挖一遍已烧掉的量即停），一季按实测复评
   budget_cap_formula_owner: Owner 令⑥ 晨裁 M3 照推荐采纳（2026-10-12）；数值由生成器实测派生，禁手填
+  budget_cap_signing:
+    signed_by: 统筹批复（2026-10-12 晚，批复二）
+    signed_scope: 公式与"照签出正式版"已批；C/D 两族因册面 row_rule 未命中（PARTIAL_MEASURED，实测合计偏低）判"帽待定"，
+      不得照抄机械值定 0 帽误停该两族——须先修 row_rule 复跑或另呈帽值
+    machine_side_status: 由生成器 cap_status 字段派生（owner_signed_20261012 / owner_signed_20261012_measurement_incomplete），禁手填
   required_sharpe_table_source: docs/_working/statsgov_campaign/01_f06_dsr_restatement_v1.yaml#deflation_gate_line_inversion
   rank_vs_gate_derived_fact: >
     本口径集下换 N 不改排行榜名次（E_max(N) 对同批所有格是同一常数），只改"是否过线"；
@@ -89,9 +100,9 @@ families:
     trial_unit: 一张考试卡=一次可审计试次（账本 kind=exam_card 已是此口径）
     faces:
       - {id: exam_cards_ledger, kind: ledger_kind, ledger_kind: exam_card}
-      - {id: fexam_score_books, kind: file_glob, pattern: "docs/_working/fexam/*exam*_v*.yaml", row_rule: key:results}
-      - {id: mineloop_exam_runs, kind: file_glob, pattern: "docs/_working/mineloop_campaign/*exam_run*.yaml", row_rule: key:results}
-      - {id: sector_line_prereg, kind: file_glob, pattern: "docs/_working/sector_line/exam/*.yaml", row_rule: key:results}
+      - {id: fexam_score_books, kind: file_glob, pattern: "docs/_working/fexam/*exam*_v*.yaml", row_rule: "key:results,batches,exam_execution,records,families"}
+      - {id: mineloop_exam_runs, kind: file_glob, pattern: "docs/_working/mineloop_campaign/*exam_run*.yaml", row_rule: "key:results,runs,records,rows"}
+      - {id: sector_line_prereg, kind: file_glob, pattern: "docs/_working/sector_line/exam/*.yaml", row_rule: "key:results,D2,S10,records"}
       - {id: pg_score_tables, kind: pg_table, pattern: "exam_scores_v1 / indicator_exam_scores_v1 / factor_exam_scores_v1 / alt_factor_exam_scores_v1 / sector_factor_exam_v1 / codesym_factor_exam_v1"}
     budget_cap: {value: null, unit: trials, basis: 待裁——建议=全仓 A 族历史消耗 × 放大系数，系数由统筹定}
   - id: B
@@ -101,12 +112,13 @@ families:
     faces:
       - {id: grid_batches_ledger, kind: grid_batch_kind, ledger_kind: factory_grid_batch_a}
       - {id: survivor_book, kind: file_glob, pattern: "data/strategy_intake/f06_survivors.csv", row_rule: csv_rows}
-      - {id: grid_oos_book, kind: file_glob, pattern: "docs/_working/fexam/grid_strategy_oos_v1.yaml", row_rule: key:rows}
-      - {id: strategy_exam_book, kind: file_glob, pattern: "docs/_working/fexam/strategy_exam_scores_v1.yaml", row_rule: key:results}
-      - {id: codesym_strategy_book, kind: file_glob, pattern: "docs/_working/fexam/codesym_strategy_exam_v1.yaml", row_rule: key:results}
-      - {id: mom029_books, kind: file_glob, pattern: "docs/_working/fexam/mom029_*.yaml", row_rule: key:results}
+      - {id: grid_oos_book, kind: file_glob, pattern: "docs/_working/fexam/grid_strategy_oos_v1.yaml", row_rule: "key:results,rows,cells"}
+      - {id: strategy_exam_book, kind: file_glob, pattern: "docs/_working/fexam/strategy_exam_scores_v1.yaml", row_rule: "key:results,strategies,records"}
+      - {id: codesym_strategy_book, kind: file_glob, pattern: "docs/_working/fexam/codesym_strategy_exam_v1.yaml", row_rule: "key:results,codes,records"}
+      - {id: mom029_books, kind: file_glob, pattern: "docs/_working/fexam/mom029_reexam_v2.yaml", row_rule: "key:results,reexam,judge_detail,records"}
       - {id: t0_batches, kind: ledger_kind, ledger_kind: t0_rule_engine}
       - {id: oos_reexam, kind: ledger_kind, ledger_kind: oos_reexam}
+    face_notes: 预登记卡 mom029_prereg_v2 不是成绩件，已从计数面移出（只数 reexam 结果件）
     engineering_caps_referenced_not_duplicated:
       refs:
         - config/search_space_prereg.yaml#budget_caps
@@ -119,32 +131,34 @@ families:
     object: 5 套资产分配器、防守机制（ATR 止损对照）、仓位配方邻域
     trial_unit: 一组 A/B 对照=一次；参数邻域 mini-grid 按格计
     faces:
-      - {id: allocator_shadow, kind: file_glob, pattern: "docs/_working/fexam/allocator_shadow_report_v1.yaml", row_rule: key:results}
-      - {id: exit_sim, kind: file_glob, pattern: "docs/_working/fexam/exit_sim_report_v1.yaml", row_rule: key:results}
+      - {id: allocator_shadow, kind: file_glob, pattern: "docs/_working/fexam/allocator_shadow_report_v1.yaml", row_rule: "key:results,allocators,comparison,records"}
+      - {id: exit_sim, kind: file_glob, pattern: "docs/_working/fexam/exit_sim_report_v1.yaml", row_rule: "key:results,comparison,records"}
     budget_cap: {value: null, unit: trials, basis: 待裁}
   - id: D
     title_zh: 状态识别/环境族
     object: HMM 状态识别器、情绪指数择时、情绪六段重建规则
     trial_unit: 一个分类器考卷=一次；未冻结规则=零考试资格（不消耗预算，也不得进榜）
     faces:
-      - {id: state_recognizer, kind: file_glob, pattern: "docs/_working/fexam/state_recognizer_exam_v1.yaml", row_rule: key:results}
-      - {id: emotion_index, kind: file_glob, pattern: "docs/_working/fexam/emotion_index_exam_v1.yaml", row_rule: key:results}
+      - {id: state_recognizer, kind: file_glob, pattern: "docs/_working/fexam/state_recognizer_exam_v1.yaml", row_rule: "key:results,exam_execution,criteria_frozen_result"}
+      - {id: emotion_index, kind: file_glob, pattern: "docs/_working/fexam/emotion_index_exam_v1.yaml", row_rule: "key:results,exam_execution"}
     budget_cap: {value: null, unit: trials, basis: 待裁}
   - id: E
     title_zh: 工程件族
     object: GPU 引擎达标考、判官路由审计复跑、成本模型假设双口径
     trial_unit: 一次复跑/一个等价性断言=一次（考"等价/达标"非"预测力"，折减口径不适用→只计消耗不计 DSR）
     faces:
-      - {id: route_audit_replay, kind: file_glob, pattern: "docs/_working/**/18_route_audit_replay*", row_rule: table_rows}
-      - {id: exam_run_archive, kind: file_glob, pattern: "data/backtest_artifacts/runs/*/*.yaml", row_rule: key:results}
+      - {id: route_audit_replay, kind: dir_glob, pattern: "docs/_working/**/18_route_audit_replay*", row_rule: one_per_match}
+      - {id: exam_run_archive, kind: dir_glob, pattern: "data/backtest_artifacts/runs/*",
+        row_rule: one_per_match, count_basis: 一个 run 档案=一次可审计考}
     budget_cap: {value: null, unit: trials, basis: 待裁}
   - id: F
     title_zh: 挖矿器元层族
     object: 车道产出质量（lane_b/c/c2）、LLM 研究员档位 A/B（GPU-01）
     trial_unit: 一条被提交的候选=一次（元层考"出题人"：产量/入考通过率/幻觉率）
     faces:
-      - {id: intake_ledger, kind: file_glob, pattern: "data/strategy_intake/*.csv", row_rule: csv_rows}
-      - {id: paper_pool, kind: file_glob, pattern: "docs/_working/fexam/paper_pool_v1.yaml", row_rule: key:results}
+      - {id: intake_ledger, kind: file_glob, pattern: "data/strategy_intake/*.csv", row_rule: csv_rows,
+        note: 含 negatives/manifest 类逐格件＝行数≠试次数，已在 B 族按 grid 批实测，本行只作候选台账面}
+      - {id: paper_pool, kind: file_glob, pattern: "docs/_working/fexam/paper_pool_v1.yaml", row_rule: "key:members,results,pool"}
     budget_cap: {value: null, unit: trials, basis: 待裁——元层杠杆最高，建议帽最松但必须存在（无帽=不可审计扩张）}
 state_machine:
   unset_cap: UNSET_FAIL_CLOSED  # 无帽=不禁止开新挖，但每批必须出声"该族无帽"，且累计消耗入册呈裁（禁静默扩张）
