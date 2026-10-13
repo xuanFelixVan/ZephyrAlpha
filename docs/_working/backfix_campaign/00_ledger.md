@@ -1241,3 +1241,51 @@ Test-CapacityGuardBreach : 无法将“Test-CapacityGuardBreach”项识别为 c
 
 - **零面声明（本段）**：本班全程**零施工零干预**——未杀停任何进程（含 cmd.exe 20660 与 powershell 34004，两者已自行收尾）、未清锁（06:04:44 `RELEASE_LOCK` 由链自身所放）、未动 `G:\backup`／`F:` 任何字节、未改判据·阈值·保留线·计划任务·任务时限、未注册/重跑任务、未新建或复挂仪器（退役令在册）、未碰 `.runtime/\commit_queue` 的 blobs、state 册与 CH 均只读；本段纯追加。
 - **署名**：adjudicator=st-backfix3-20261011（末段：工单⑧三格销账、甲条件成立的时长对账与回退 prescription、格③新方向读数、ok 支零输出的防误判预警）。
+
+## 令五白班执行账：甲回退＋第四项前移（st-bakday-20261013，2026-10-13 20:5x-21:2x 轮·车道施工）
+
+- **点名件复述（照在册纪律"追加令到手先复述任务号＋被点名文件＋要求的键/行为"）**：令五＝备份线白班两件"已裁未施工"。甲＝`scripts/backup/backup.ps1` 的 `Remove-DatedTree` **函数体**回退到 provider 递归删＋`Test-Path` 复核，**三处调用位与两行起始/收官日志不动**；第四项＝dumps 拷贝腿**前移进 Stage 2**（PG/SQLite dump 产出之后、CH 增量腿之前），**判据/开关/阈值/保留线零动**，验收线 `dumps_exposure_min ≤ 5 分钟` 不变。依据＝本册「工单⑧三格销账」段格②/格③的移交 prescription 与记忆档 `dr-backup-armed-handoff-20261013`。
+
+- **锚点校准（不凭记忆；交接档点名的行号在 HEAD `3adc34d1ca` 上逐字成立）**：定义 :389、三处调用位 :791/:822/:1005、dumps 块 :747-800、Stage 2 起 :450、CH 腿 :552-729、Stage 3 起 :731——全部实查命中。改后新位：定义 :391（注释变长两行所致，**非代码位移**），三处调用位 :580/:828/:1014，dumps 块 :531-586。
+
+- **甲 落地事实**：函数体＝`Remove-Item -LiteralPath $Path -Recurse -Force -ErrorAction SilentlyContinue` 单句＋前后两支 `Test-Path`；`cmd.exe /c "rmdir /s /q"` 与配套引号剥离一并撤除（实测全文 `cmd.exe /c "rmdir` 命中 **0**）。WARN 文案随实现改口径（`native delete…`→`provider delete…`），原句在新实现下是假叙述。三处调用位与 `Rotation start:`／`Rotation:`／`Space guard start:`／`Space guard:` 四支日志**逐字零动**。
+
+- **防炸三条 逐条处置**：
+  - ① 结构测撞自家判据＝**如期发生**，并按规定正解同批改口径：`test_dated_tree_deletes_use_native_helper_defined_before_first_call` 在回退后当场红于 `assert not offenders`（offenders 实测＝`['Remove-Item -LiteralPath $Path -Recurse -Force -ErrorAction SilentlyContinue']`）。处置＝**改名＋换尺的对象，未删测、未弱化**：新测 `test_dated_tree_deletes_route_through_helper_defined_before_first_call` 钉四件事——整树递归只准出现在 helper 体内（体外命中即红）、调用面**恰好**三处（原为 `>=3`，改后更严）、三腿计数行必须同时含 `Remove-DatedTree $d.FullName`（计数只能由单口返回值把守）、定义先于每一处调用。"用哪个原语"不再是判据，"是否走单口＋先后序"取代它，保护面不缩。测名外部引用实测 **0** 处（仅 pytest 缓存与 pycache 命中），改名无断链。
+  - ② 行为测在两种实现下都绿＝回退后的真绿证，已取：`test_remove_dated_tree_actually_deletes_a_nested_tree` 改后 `1 passed`（本测一字未动），它真跑嵌套树＋只读件，验返回值与 `Test-Path` 一致，不是语句位。
+  - ③ 未把任何代码移过定义/调用边界：定义 :391 < 首调 :580，且由新测机械盯住（`late` 非空即红）。
+
+- **红绿双证（新尺有牙，非橡皮章）**：把 vault 轮转腿改成绕单口自写 `Remove-Item -Recurse`＋自带 `Test-Path`，新尺当场 `1 failed`（`整树递归删绕过了 helper 单口`）；随后逐字节还原（`RESTORED_SHA256=389ddf969dca76c8` 与变异前同值）并复跑 **17 passed**。
+
+- **第四项 落地事实**：51 行块（含 ORDER 注释）自 Stage 3 顶部整块移入 Stage 2 的 `if ($Mode -ne "ch")` 分支内、`Write-OK "SQLite dump: $sqliteOk databases"` 之后。位移后实测腿序（1-based，结构自证）：Stage 2 头 :451 → SQLite 收官 :529 → **dumps 拷贝 :555／落账 :559** → CH 腿头 :610 → Stage 3 头 :789 → vault 轮转 :1012。花括号 `{`／`}` 配对 **489/489**，总行数 **1377→1377 守恒**（先切后插，非复制）。
+  - 语义零动的三条实证：①robocopy 开关逐字未变（`/E /COPY:DAT /R:2 /W:5 /MT:8 /NFL /NDL /NP`）；②E-4 预闸、`$dumpsStateOk = ($dumpsStateRead -eq "ok")` 判据、`retention_days` 读值口径、`<unreadable>` 占位全部随行零改（在册测 `test_dumps_rotation_leg_logs_the_state_value_it_read` 正钉这几条，改后仍绿）；③`$Mode` 门形状等价——原块在 Stage 3 的 `else`（即 Mode≠"ch"），新块在 Stage 2 的 `if ($Mode -ne "ch")`，对 all/code/ch 三档的启停集合相同。轮转读的是**上一轮** Stage 4 写的 state 位，位移不改语义。
+  - 随迁失效的叙述同步改齐两处（文档矛盾＝事故口径）：块内 ORDER 注释、Stage 3 内 "used to sit here" 那段历史注。
+
+- **验收状态（如实，不冒充已证）＋一条会影响下一班判读的实测**：`dumps_exposure_min ≤ 5 分钟` 只在**代码面**达成（拷贝腿不再排在 CH 之后），实效要等一发 **CH 真跑**的轮次才能证。本班实测 10-13 当日 5 发 runlog：其中 **4 发 CH 被 24h cadence 跳过**（`184317`／`191809`／`202551`／`210709`），这些轮 exposure 仅 **0.17-0.32 分**——**但它们跑的都是 HEAD 旧字节**，即旧序在"CH 跳过"时天然达标。唯一有判别力的样本＝`003608` 那发（含 `ClickHouse dump (incremental): ok`，exposure **44.43 分**＝与在册 44 分 26 秒同值，本班尺获正对照）。⇒ 下一发 CH 真跑（10-14 06:00 计划任务窗；CH 上次成功约 06:02）才是验收轮；**读数须按 chRan 分档，勿把 CH 跳过轮的 0.2 分当战果**。
+  - 复核命令（本班从正文抽出、在真实 runlog 上原样跑通；两步各带期望值）：
+
+    ```
+    # 第 1 步：只挑 CH 真跑的轮次（chRan 判别位）。实测命中 2 支：
+    #   backup_runlog_20261011_194841.log／backup_runlog_20261013_003608.log
+    grep -l "ClickHouse dump (incremental): ok" logs/backup_runlog_*.log | tail -3
+    # 第 2 步：读该发的两个时间戳，相减即 dumps_exposure_min（改前实测 00:36:51→01:21:17＝44 分 26 秒）
+    grep -E "SQLite dump|DB dumps snapshot done|ClickHouse dump \(incremental\): ok" logs/backup_runlog_20261013_003608.log
+    # 改后验收：同一支 CH 真跑轮里该差值须 <5 分；CH 被跳过（"stage skipped"）的轮次只作旁证，不作达标证据
+    ```
+
+- **回归面实测与既有红归因**：`tests/meta/scripts/backup/` 整目录＋`tests/backup/test_stage3_vault_mtime_and_verdict.py`＋`tests/data/dr/` 四件＝**180 passed / 9 failed**，9 支全落在 `test_stage3_vault_mtime_and_verdict.py`。**归因＝先于本班的既有红，非本班造成**：主区 HEAD 纯净态（`git diff --stat HEAD` 对该件零输出）同测 **9 failed**，两次 FAILED 的 nodeid 集合 `diff` 为空＝逐条同集。病形＝该测要求 Stage 4 段内存在 `last_backup_partial_items`，实测该键在 HEAD 与现值**均 0 命中**＝测册在等一个从未落地的 Stage 4 键。本班**不代修、不顺手扩面**（补它＝改备份报告/state 汇总语义，属判据面且不在令五点名范围），列为呈报件交统筹。
+  - 门禁面：`GATE-DETECT-SHELL-DANGEROUS` 对改后 backup.ps1 **0 findings**（其模式集＝Unix 根目录递归删／Windows 递归强制删与盘符删除／磁盘格式化／磁盘覆写写盘／fork bomb／过度授权／块设备覆写 这几类，**不含 Remove-Item 的递归删**，故甲回退不撞提交面；`tests/` 在其 EXCLUDE 内。本班正文原先直接枚举这些被禁字面量，被本门自家拦下一次＝"列禁令的册要写进清洁册须走行级豁免标记或改用非字面描述"，记此给下一班）；`GATE-DETECT-GIT-DANGEROUS` 0 findings。`ops_guard` 的删除拦截作用于**命令行**、不扫文件内容，同样不拦。
+  - 纯度与语法：PS `Parser.ParseFile` 语法测 5/5 绿；非 ASCII 字节 **0**；行尾全 **LF**（CRLF=0）——根宪法 §9.7 满足。
+
+- **净零与登记面**：零新建文件、零重命名、零新能力声明（既有件回退＋位移）⇒ RULE-DEPGRAPH 的 `--add-design-node` 无对象可登、`generate_project_depgraph.py --force` 无触发条件；RULE-CAPABILITY-LOOKUP 已留审计（4 关键词；其扫描根＝`src/zephyr`＋`scripts/governance`，`scripts/backup` 不在根内故 0 命中；尺本身有效——正对照 `kill_switch` 得 4 命中，勿当"查无"）。
+
+- **回退令（逐件可执行）**：本班影子位（改前 HEAD 字节）＝`.runtime/tmp/bakday_rollback/backup.ps1.HEAD_3adc34d1ca`（83,071 字节，sha256 前缀 `c053c3ca663140ec`）与 `test_backup_ps_scripts.py.HEAD_3adc34d1ca`（18,924 字节，`ecffc6ee36385fc1`）；改后现值＝backup.ps1 83,905 字节 `e777099a1b0dd82c`／测试件 20,187 字节 `c480a8bbadf9c888`。
+  - 两件同袋整体回退＝`git revert <本 commit>`；
+  - 只回甲（保留位移）＝把 :391 函数体那句换回 `$q = '"' + $Path.Replace('"', '') + '"'` ＋ `& cmd.exe /c "rmdir /s /q $q" 2>&1 | Out-Null`、WARN 文案改回 `native delete…`，**并把测册新测第 1 条断言换回"语句位禁一切 `Remove-Item -Recurse`"**（否则复原即测红——两处是同一改口的两面，必须同批）；
+  - 只回第四项＝把 :531-586 那 56 行块整块搬回 Stage 3 的 `# Rotation: remove dated dirs` 之前（在册测 `test_dumps_copy_leg_runs_before_the_slow_rotation_delete` 两种位置都绿——它只钉"拷贝早于轮转删除"，不钉所在 Stage，故不构成回退阻碍）。
+
+- **候 Owner 裁（本班新增 1 件）**：`tests/backup/test_stage3_vault_mtime_and_verdict.py` 9 支既有红（测册等 `last_backup_partial_items` 而脚本从未写过该键）＝**要么补脚本 Stage 4 的 partial 镜像键（改判据面，需裁），要么改测册口径（改判据面，亦需裁）**，两条都不属本班令五授权，故只显形不自裁。
+
+- **零面声明**：本班对 `G:\backup`／`F:` 业务面**零写**；未碰 `.runtime/commit_queue` 的 blobs；未改任何判据·阈值·保留线·计划任务·任务时限；未注册或复挂仪器；未杀停任何进程（在飞的 21:07 那发 pid 37684 全程未干预，其执行体指主区 HEAD 字节，本班改动始终在车道内）。`backup.ps1`／测册／本账三件均先 claim 后改；本账为**纯尾追加**（写前 1243 行／8 个 `## ` 节，写后按前缀性质机检通过、零删除）。
+
+- **署名**：adjudicator=st-bakday-20261013（令五白班：甲回退＋结构测判据口径同批改＋第四项前移＋新尺变异自证＋既有红归因与呈报；实效验收待下一发 CH 真跑轮）。

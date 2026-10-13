@@ -235,23 +235,40 @@ def test_rotation_and_space_guard_legs_announce_before_deleting() -> None:
     assert i_del > i_rot, "起始日志没排在轮转删除动作之前（打了等于没打）"
 
 
-def test_dated_tree_deletes_use_native_helper_defined_before_first_call() -> None:
-    """工单⑧第3项：整日快照树的删除改走原生单程递归，且函数必须先定义后调用。
+def test_dated_tree_deletes_route_through_helper_defined_before_first_call() -> None:
+    """令五甲回退（2026-10-13）：尺的对象从"删除用哪个原语"换成"三腿是否走单口＋先后序"。
 
-    两条各对应一场在册病：①provider 递归删在整日树上实测 6h42m（PS 引擎逐件开销）；
-    ②"定义晚于首次调用"是本链的 P0 形态（Test-CapacityGuardBreach 曾定义在 :963 而首调在
-    :825，EAP=Continue 下整个 if/else 被静默跳过，dumps 腿空转两天）。
+    为什么必须换口径而不是放行：原第 3 条断言在语句位扫掉一切 `Remove-Item -Recurse`，
+    它把实现形当成了判据，因而与甲的裁定直接互斥——回退一发即当场红
+    （offenders=['Remove-Item -LiteralPath $Path -Recurse -Force -ErrorAction SilentlyContinue']）。
+    新尺钉的是两件事，任何一腿想绕开 Remove-DatedTree 自写整树删照旧红：
+    ① 三腿（dumps 轮转／空间闸逐出／vault 轮转）的计数只能由单口的返回值把守——
+       病形是"删没删干净没人复核"，provider 递归还是原生递归都不改变这一点；
+    ② helper 必须先定义后调用——"定义晚于首次调用"是本链的 P0 形态
+       （Test-CapacityGuardBreach 曾定义在 :963 而首调在 :825，EAP=Continue 下整个
+       if/else 被静默跳过，dumps 腿空转两天）。
+    整树递归仍然只准出现在 helper 体内：断言面没有收缩，只是不再管体内用哪个原语。
     """
     src = (BACKUP_DIR / "backup.ps1").read_text(encoding="utf-8")
     lines = _ps_code_lines(src)
+    fn_lines = set(_ps_code_lines(_extract_ps_function(src, "Remove-DatedTree")))
     offenders = [ln for ln in lines if "Remove-Item" in ln and "-Recurse" in ln]
-    assert not offenders, f"仍有 provider 整树递归删的语句位：{offenders[:3]}"
+    bypass = [ln for ln in offenders if ln not in fn_lines]
+    assert not bypass, f"整树递归删绕过了 helper 单口：{bypass[:3]}"
+
     i_def = _first_idx(lines, "function Remove-DatedTree")
     assert i_def >= 0, "Remove-DatedTree 没定义"
     calls = [j for j, ln in enumerate(lines) if "Remove-DatedTree " in ln and not ln.startswith("function")]
-    assert len(calls) >= 3, f"调用面不足：实测 {len(calls)} 处，应覆盖 vault 轮转／空间闸逐出／dumps 轮转三处"
+    assert len(calls) == 3, f"调用面不是三处：实测 {len(calls)} 处，应为 dumps 轮转／空间闸逐出／vault 轮转"
     late = [c for c in calls if c < i_def]
     assert not late, f"首次调用 {late[:3]} 早于定义 {i_def}（E-4 同族静默空转病复发）"
+
+    for leg in ("$rotatedDumps += $d.Name", "$spaceEvicted += $d.Name", "$rotated += $d.Name"):
+        hits = [ln for ln in lines if leg in ln]
+        assert hits, f"轮转/逐出腿的计数语句位消失：{leg}"
+        assert all("Remove-DatedTree $d.FullName" in ln for ln in hits), (
+            f"{leg} 这腿的计数不再由单口返回值把守（自写删除＝漏 Test-Path 复核，rotated 会虚报）"
+        )
 
 
 def test_remove_dated_tree_actually_deletes_a_nested_tree(tmp_path) -> None:
