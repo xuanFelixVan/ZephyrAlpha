@@ -7,7 +7,7 @@
 # [CONSUMERS] src/zephyr/security/access_control/session_concurrency.py（_salvage_takeover_ledger 判死钩子，函数内延迟 import）；src/zephyr/gov_enforcement/commit_gates/takeover_pending_gate.py（L3 门禁读 open 条目）；命令行（--scan/--list/--resolve）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 接管台账（Takeover Ledger）L1/L2 显化真源——死亡判据=last_activity 距今>7200s 且非 logical；条目幂等（同 sid 已 open 只 refresh 资源数不重复生成，原子 tmp+os.replace）+ refresh 节流窗 600s（判死钩子在 list_active 热路径，窗内原样返回防 git status/staging 重 IO 风暴）；resolve 迁移 .runtime/takeover/resolved/ 改 status；只读写 .runtime 运行态面（禁碰 git 元数据/生产数据）；PID/心跳为辅助证据（取不到=null 不阻断）；worktree dirty 经 git status --porcelain（非 git 目录=-1 记 git_status_unavailable）；文件清单截断上限 200（DIRTY/STAGING 各自）防台账膨胀
+# [INVARIANTS] 接管台账（Takeover Ledger）L1/L2 显化真源——死亡判据=last_activity 距今>7200s 且非 logical；条目幂等（同 sid 已 open 只 refresh 资源数不重复生成，原子 tmp+os.replace）+ refresh 节流窗 600s（判死钩子在 list_active 热路径，窗内原样返回防 git status/staging 重 IO 风暴）；resolve 迁移 .runtime/takeover/resolved/ 改 status；只读写 .runtime 运行态面（禁碰 git 元数据/生产数据）；PID/心跳为辅助证据（取不到=null 不阻断）；worktree dirty 经 git status --porcelain（非 git 目录=-1 记 git_status_unavailable）＋盘字节已等于落地面 _LANDING_REF 的**跟踪件**移出命中面并记 excluded_dev_identical=n（统筹 2026-10-13 批①：status 报的是对自家 HEAD 之差，车道指针落后 dev 时同字节件也报 M，会隔空挡死无辜袋；比对不可用/未跟踪件一律保留＝只缩不扩）；文件清单截断上限 200（DIRTY/STAGING 各自）防台账膨胀
 # [MODIFY-GUARD] 死亡判据阈值/资源收集面变更须与 takeover_pending_gate.py 及 docs/_working/branch_zero_takeover_20261002/t1_takeover_infra.md 同批
 # [MODIFY-GUARD] 2026-10-10 sid=st-maint1-t3lane 三证立法（PID 亡＝必要非充分）配套面：write_takeover_entry 新增 extra_death_evidence 入参（判死钩子把三证读数原文并入 death_evidence.alive_side_evidence），改名/删该字段须与 session_concurrency._salvage_takeover_ledger 及 tests/gov/session/test_takeover_pid_false_positive.py 同批；本件自身判据（DEATH_IDLE_SECONDS=7200 idle 轨）零改动
 # [STABILITY] evolving
@@ -102,6 +102,9 @@ _WORKTREE_ROOTS: tuple[str, ...] = (".aidrafts", ".worktrees")
 # 台账内文件清单截断上限（防死会话巨量脏文件撑爆台账；总数另行计数）
 _LISTING_CAP: int = 200
 
+# 命中面比对的落地面（"他人未落地成果"的参照系＝真要落进去的那条分支，不是各车道自家 HEAD）
+_LANDING_REF: str = "dev"
+
 # open 条目 refresh 节流窗（秒）：窗内重复触发（判死钩子在 list_active 热路径上会被
 # grace 窗内每次调用反复命中）直接返回既有条目，不重收集资源（git status/staging
 # rglob/袋 glob 是重 IO）——台账粒度 10min 对接管语义足够，IO 风暴防复发。
@@ -189,8 +192,55 @@ def _worktree_dirty(root: Path, wt_rel: str) -> dict:
         info.update({"dirty_count": -1, "dirty_note": "git_status_failed", "dirty_files": []})
         return info
     lines = [ln for ln in proc.stdout.splitlines() if ln.strip()]
-    files = sorted({ln[3:].strip().lstrip('"') for ln in lines if len(ln) > 3})
-    info.update({"dirty_count": len(files), "dirty_files": files[:_LISTING_CAP]})
+    files: set[str] = set()
+    tracked_files: set[str] = set()
+    for ln in lines:
+        if len(ln) <= 3:
+            continue
+        path = ln[3:].strip().lstrip('"')
+        files.add(path)
+        if ln[:2] != "??":
+            tracked_files.add(path)
+    excluded: list[str] = []
+    dirty_note = ""
+    if tracked_files:
+        # 命中面剔除（统筹 2026-10-13 批①；实证＝双臂班
+        # .runtime/tmp/mineloop2/evidence/takeover_hit_face_proof_20261013.txt）：
+        # status 报的是"对自家 HEAD 之差"，而车道指针可能落后 dev ⇒ 盘字节已等于落地面的件也报
+        # M，被当成"他人未落地成果"隔空挡死无辜袋（解锁班／挖矿二班／维护五班同墙）。
+        # 比对用 `git diff --name-only <落地面>` 批量走一次（工作树 vs 落地面，吃仓内 filters，
+        # 与 commit_queue_landing._worktree_matches 同族口径）；**禁自算 blob sha 比对**——磁盘
+        # CRLF 与 blob 归一面不同口径，会把同字节件误读成在途（本班 17:2x 就据此误判过一次）。
+        # 只缩不扩：比对不可用（异常/非零 rc）＝整批保留；未跟踪件（?? ）落地面查无此路径，不移出。
+        # 已知局限：core.quotePath 默认非 ASCII 加引号，status 侧旧口径只 lstrip 前引号，
+        # 故中文名件两侧配不上＝照旧保留（宁少剔不误剔，扩面属判据变更需另裁）。
+        try:
+            pr = run_subprocess_hidden(
+                ["git", "-c", "core.quotePath=false", "-C", str(wt), "diff", "--name-only", _LANDING_REF, "--"],
+                capture_output=True,
+                text=True,
+                timeout=60,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            pr = None
+        if pr is not None and pr.returncode == 0:
+            differs = {ln.strip().lstrip('"') for ln in pr.stdout.splitlines() if ln.strip()}
+            excluded = sorted(tracked_files - differs)
+        else:
+            dirty_note = "dev_identical_check_unavailable"
+    excluded_set = set(excluded)
+    hit = sorted(files - excluded_set)
+    info.update(
+        {
+            "dirty_count": len(hit),
+            "dirty_files": hit[:_LISTING_CAP],
+            "excluded_dev_identical": len(excluded),
+            "excluded_dev_identical_files": excluded[:_LISTING_CAP],
+        }
+    )
+    if dirty_note:
+        info["dirty_note"] = dirty_note
     return info
 
 

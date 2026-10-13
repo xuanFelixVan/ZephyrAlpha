@@ -39,6 +39,11 @@ write_takeover_entry(root, sid, *, resources=None, death_evidence=None,
                      registry_entry=None, now=None) -> dict  # 幂等生成/刷新 open 条目（600s 节流窗内原样返回）
 load_open_entries(root) -> list[dict]                      # L3 门禁消费面
 entry_match_surface(entry) -> set[str]                     # 命中面=held_files∪worktree dirty∪staging files（repo-relative posix）
+# 命中面剔除（统筹 2026-10-13 批①）：_worktree_dirty 把"盘字节已等于落地面 _LANDING_REF(=dev)"的
+# 跟踪件移出 dirty_files，另记 excluded_dev_identical=n 与 excluded_dev_identical_files 留痕；
+# 病根=status 报的是对自家 HEAD 之差，车道指针落后 dev 时同字节件也报 M ⇒ 隔空挡死无辜袋
+# （实证 .runtime/tmp/mineloop2/evidence/takeover_hit_face_proof_20261013.txt：card_binding.py
+#  磁盘 sha==dev sha 仍被算作他人成果，挡死两枚码面袋）。比对不可用/未跟踪件一律保留＝只缩不扩。
 resolve_entry(root, sid, by, note="") -> dict              # 终态迁移 .runtime/takeover/resolved/<sid>-<ts>.json
 
 # CLI

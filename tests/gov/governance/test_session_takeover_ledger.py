@@ -4,7 +4,7 @@
 # [CONSUMERS] pytest（tests/governance/）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] tmp_path 假 root 全隔离（零真库/零真 registry/零真 worktree）；worktree dirty 与 PID 存活经 monkeypatch 确定性化；四态覆盖=scan 幂等/条目字段/resolve 迁移/gate 命中与放行；钩子集成用真 SessionRegistry.list_active 判死路径
+# [INVARIANTS] tmp_path 假 root 全隔离（零真库/零真 registry/零真 worktree）；worktree dirty 与 PID 存活经 monkeypatch 确定性化；四态覆盖=scan 幂等/条目字段/resolve 迁移/gate 命中与放行；钩子集成用真 SessionRegistry.list_active 判死路径；命中面剔除两支（统筹 2026-10-13 批①）用 tmp_path 内**真 git 仓＋落后 dev 的 worktree**（隔离性不变，只把 status 假阳性这一形复刻进来）——dev-同字节件须移出并记 excluded_dev_identical，参照系不可用须整批保留
 # [MODIFY-GUARD] 判据变更与 scripts/governance/session_takeover_ledger.py + takeover_pending_gate.py 同批
 # [STABILITY] stable
 # [SAFETY] L
@@ -838,3 +838,76 @@ class TestC11SelfBlockSoften:
         _patch_verdict(monkeypatch, "alive")
         passed, _ = make_takeover_pending_gate().check(gw, ["docs/f.md"])
         assert passed is False
+
+
+# ---------------------------------------------------------------------------
+# 命中面剔除（统筹 2026-10-13 批①）——真 git 面，非 monkeypatch
+# 病根实证：.runtime/tmp/mineloop2/evidence/takeover_hit_face_proof_20261013.txt
+#   车道 HEAD 落后 dev 时，盘字节已等于落地面的件仍被 status 报 M，被算成"他人未落地成果"，
+#   隔空挡死分毫无关的码面袋（解锁班／挖矿二班／维护五班三班同墙）。
+# ---------------------------------------------------------------------------
+
+
+def _mk_lagging_lane(tmp_path: Path) -> tuple[Path, str]:
+    """造一个真仓＋一条落后 dev 的车道，含三种件：dev-同字节（假阳性）／真在途／未跟踪。"""
+    import subprocess
+
+    root = tmp_path / "repo"
+    root.mkdir()
+
+    def g(*args: str, cwd: Path | None = None) -> None:
+        subprocess.run(
+            ["git", *args],
+            cwd=str(cwd or root),
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+    g("init", "-b", "dev")
+    g("config", "user.email", "t@example.invalid")
+    g("config", "user.name", "t")
+    (root / "a.txt").write_text("v1\n", encoding="utf-8")
+    (root / "d.txt").write_text("base\n", encoding="utf-8")
+    g("add", "a.txt", "d.txt")
+    g("commit", "-m", "c1")
+    lane = root / ".worktrees" / "lane"
+    g("worktree", "add", str(lane), "-b", "lane")  # 车道 HEAD 停在 c1＝落后 dev
+    (root / "a.txt").write_text("v2\n", encoding="utf-8")
+    g("add", "a.txt")
+    g("commit", "-m", "c2")
+    # 假阳性形状复刻：车道里把 a.txt 取成 dev 现值 ⇒ 盘字节==dev，但对自家 HEAD 报 "M  a.txt"
+    g("checkout", "dev", "--", "a.txt", cwd=lane)
+    (lane / "d.txt").write_text("lane-only-work\n", encoding="utf-8")  # 真在途成果
+    (lane / "u.txt").write_text("untracked\n", encoding="utf-8")  # 未跟踪
+    return root, ".worktrees/lane"
+
+
+def test_worktree_dirty_excludes_dev_identical_files(tmp_path: Path) -> None:
+    """盘字节==落地面的跟踪件移出命中面并计数留痕；真在途与未跟踪件一律保留。"""
+    root, wt_rel = _mk_lagging_lane(tmp_path)
+    info = ledger._worktree_dirty(root, wt_rel)
+    assert info["dirty_files"] == ["d.txt", "u.txt"], info
+    assert info["dirty_count"] == 2, info
+    assert info["excluded_dev_identical"] == 1, info
+    assert info["excluded_dev_identical_files"] == ["a.txt"], info
+    # 剔除不是"文件消失"：被移出者须能被独立复核为等于落地面（防自算口径把真在途件洗掉）
+    import subprocess
+
+    same = subprocess.run(
+        ["git", "-C", str(root / wt_rel), "diff", "--quiet", ledger._LANDING_REF, "--", "a.txt"],
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert same.returncode == 0, same.stderr
+
+
+def test_worktree_dirty_keeps_all_when_ref_unavailable(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """参照系不可用＝整批保留＋注记（只缩不扩：宁可多挡一枚袋，绝不静默放行真在途成果）。"""
+    root, wt_rel = _mk_lagging_lane(tmp_path)
+    monkeypatch.setattr(ledger, "_LANDING_REF", "no-such-landing-ref")
+    info = ledger._worktree_dirty(root, wt_rel)
+    assert info["dirty_files"] == ["a.txt", "d.txt", "u.txt"], info
+    assert info["excluded_dev_identical"] == 0, info
+    assert info["dirty_note"] == "dev_identical_check_unavailable", info
