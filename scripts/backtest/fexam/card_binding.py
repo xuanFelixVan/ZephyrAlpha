@@ -76,7 +76,12 @@ SERIES_DIR = RUN_ROOT / "docs" / "_working" / "nightmine_campaign" / "series"
 #: 表名面唯一真源=TableRegistry（品类 id 派生全限定名；业务代码禁字面量表名——TABLE-NAME-REGISTRY 门约束）
 _TBL = {
     c: get_registry().table(c)
-    for c in ("market_index_kline", "market_index_valuation_daily", "market_news_sentiment_window")
+    for c in (
+        "market_index_kline",
+        "market_index_valuation_daily",
+        "market_news_sentiment_window",
+        "backtest_regime_state_anchored",
+    )
 }
 
 # §5.160.2 SQL 集中化面：全部参数化模板收本块 SQL_* 常量（AST 豁免面），函数体零裸 SQL；
@@ -409,6 +414,16 @@ _REGISTERED_TABLES: dict[str, dict] = {
         "date_col": "window_ts",
         "where": "scope='market' AND window_type='1d'",
         "grain_evidence": "前役 load_news_sentiment 同式（TDM-E-L1-S0-1 已出分在册；PIT 日度段=夜矿 T0a 治本面 2,421 行/2,421 uniq 日）",
+    },
+    # 复合族入口批-A 第 1 张（L1-AGG/02）新登记表：三要素全部抄自在册真源，本班零新 CH 查。
+    _TBL["backtest_regime_state_anchored"]: {
+        "date_col": "trade_date",
+        "where": "data_source='anchored_state_machine'",
+        "grain_evidence": "DDL 真源 schemas/categories/backtest/backtest_regime_state_anchored.py 原文："
+        "ENGINE=ReplacingMergeTree(ingest_ts)＋ORDER BY trade_date（日频一键，多版本行按 anyLast 取末版，"
+        "禁把两版当两天）；data_source 列 DEFAULT 'anchored_state_machine'（过滤式取该字面值，非自拟名单）；"
+        "覆盖与行数为在册引用＝卡面 data_window_evidence（2017-07-11..2026-10-09／4,488 行，列实测 "
+        "close/ma20/ma60/ma120/vol_pct/dominant/data_source/ingest_ts）＋22 册 evidence_a 同指该 ORDER_BY",
     },
 }
 
@@ -824,6 +839,150 @@ def op_event_flag_rolling_pctile(card: dict, args: dict) -> tuple[pd.Series, dic
     return flag, ev
 
 
+#: 复合族入口（CW-MINELOOP-001 批-A，统筹 2026-10-13 D5 放行）的对齐形；新增形须先在设计稿登记
+_COMBINE_ALIGNS = ("inner_on_keys",)
+
+
+def _norm_text(df: pd.DataFrame, date_pos: int, val_pos: int) -> pd.Series:
+    """`_norm` 的文本值版（dominant 这类 LowCardinality(String) 列经 to_numeric 会全列变 NaN）。
+
+    同位置协议（列名 c1..cN、NULL=空串）＋同日多版本 keep=last；空串原样留着，
+    由映射侧的"态名不在登记表内即红"接住——禁在这里替空值编一个档位。
+    """
+    dates = pd.to_datetime(df.iloc[:, date_pos])
+    vals = df.iloc[:, val_pos].astype(str)
+    s = pd.Series(vals.to_numpy(), index=dates)
+    s = s[~s.index.duplicated(keep="last")]
+    return s.sort_index()
+
+
+def _card_composite_pairs(card: dict) -> list[dict]:
+    """卡面 composite_join_rules.pairs＝22 册（examunlock 班冻结）的卡面镜像，本段的唯一键面真源。"""
+    rules = (card.get("data_binding") or {}).get("composite_join_rules") or {}
+    return [p for p in (rules.get("pairs") or []) if isinstance(p, dict)]
+
+
+def _check_legs_keys_on_card_face(card: dict, legs: list[dict]) -> None:
+    """R2：每条腿声明的共键必须在卡面镜像里逐字存在（禁本班替 examunlock 拍键、禁自补一个键）。"""
+    pairs = _card_composite_pairs(card)
+    if not pairs:
+        raise ValueError("composite_card_face_rules_absent（卡面无 composite_join_rules 块＝不许走复合口）")
+    for leg in legs:
+        t = str(leg.get("table") or "").strip().lower()
+        lk = {str(k) for k in (leg.get("keys") or [])}
+        hit = [p for p in pairs if t in {str(x).lower() for x in (p.get("tables") or [])}]
+        if not hit:
+            raise ValueError(f"composite_leg_absent_on_card_face_pairs:{t}")
+        if not any({str(k) for k in (p.get("keys") or [])} >= lk for p in hit):
+            raise ValueError(f"composite_leg_keys_not_on_card_face:{t}:{sorted(lk)}")
+
+
+def _load_composite_leg(leg: dict) -> tuple[pd.Series, dict]:
+    """一腿一次在册装载口调用（批-A 只开 face_daily 形；表未进配方册即拒=R3）。"""
+    from fexam.ch_data import ch_query_df
+
+    name = str(leg.get("name") or "").strip()
+    table = str(leg.get("table") or "").strip().lower()
+    loader = str(leg.get("loader") or "")
+    if not name:
+        raise ValueError("composite_leg_unnamed")
+    if loader != "face_daily":
+        raise ValueError(f"composite_loader_not_registered:{loader}")
+    face = _REGISTERED_TABLES.get(table)
+    if face is None:
+        raise ValueError(f"leg_table_not_in_recipe_book:{table}")
+    col = str(leg.get("column") or "").strip()
+    if not re.fullmatch(r"[a-z_][a-z0-9_]{1,40}", col):
+        raise ValueError(f"leg_column_not_an_identifier:{col[:40]}")
+    cast = str(leg.get("cast") or "float")
+    if cast not in ("float", "text"):
+        raise ValueError(f"leg_cast_unknown:{cast}")
+    sql = SQL_FACE_DAILY.format(date_col=face["date_col"], col=col, tbl=table, where=face["where"])
+    df = ch_query_df(sql)
+    ser = _norm(df, 0, 1) if cast == "float" else _norm_text(df, 0, 1)
+    ev = {
+        "name": name,
+        "table": table,
+        "column": col,
+        "cast": cast,
+        "keys": [str(k) for k in (leg.get("keys") or [])],
+        "rows": int(len(ser)),
+        "grain_evidence": face["grain_evidence"],
+    }
+    return ser, ev
+
+
+def assemble_composite_legs(card: dict, legs: list[dict], align: str = "inner_on_keys") -> tuple[dict, dict]:
+    """多腿装载＋按冻结共键对齐，交付 {腿名: Series} 与凭据面。出口仍是日频序列面（判官零改动）。
+
+    R1 腿集合：册内腿的表必须都在卡面 signal_table 申报过（禁多绑/偷绑）；
+    R2 键面：见 `_check_legs_keys_on_card_face`；
+    R5 对齐可见：inner join 后各腿丢了多少行**逐腿入凭据**，禁静默吞行，也禁前向填充
+       （卡面 alignment 原文"1:1 行对齐；不做前向填充"）。
+    """
+    if not legs:
+        raise ValueError("composite_entry_has_no_legs")
+    if align not in _COMBINE_ALIGNS:
+        raise ValueError(f"composite_align_not_registered:{align}")
+    declared = set(tables_of(str((card.get("data_binding") or {}).get("signal_table") or "")))
+    wanted = {str(l.get("table") or "").strip().lower() for l in legs}
+    if not wanted <= declared:
+        raise ValueError(f"composite_legs_not_declared_on_card:{sorted(wanted - declared)}")
+    _check_legs_keys_on_card_face(card, legs)
+    series: dict[str, pd.Series] = {}
+    per_leg: list[dict] = []
+    for leg in legs:
+        ser, ev = _load_composite_leg(leg)
+        if len(ser) == 0:
+            raise ValueError(f"composite_leg_empty:{ev['name']}")
+        series[ev["name"]] = ser
+        per_leg.append(ev)
+    frame = pd.concat(series, axis=1, join="inner")
+    rows_after = int(len(frame))
+    for ev in per_leg:
+        ev["rows_dropped_by_alignment"] = int(ev["rows"] - rows_after)
+    aligned = {name: frame[name] for name in series}
+    return aligned, {
+        "align": align,
+        "aligned_rows": rows_after,
+        "legs": per_leg,
+        "fill_policy": "none（禁 ffill/禁补零，缺日如实少行）",
+    }
+
+
+def op_agg4_state_ordinal_series(card: dict, args: dict) -> tuple[pd.Series, dict]:
+    """L1-AGG/02：dominant 四档态名 → 先验冻结档序数值序列（r3/r2/r1/r4 → 1/2/3/4）。
+
+    R6：档值**不在本函数里定义**——`ordinal_map` 必须由绑定册 args 整表传入（内容逐字抄自卡面
+    signal_derivation 的"档序映射 …（先验冻结）"）； observed 态名不在表内即红（禁悄悄丢行、
+    禁把 CH 的空串 NULL 面当某一档）。本卡不重算阈值：0.30/0.60/0.80 属实现件 anchored_state_machine。
+    """
+    legs = args.get("legs") or {}
+    om_raw = args.get("ordinal_map")
+    if not isinstance(om_raw, dict) or not om_raw:
+        raise ValueError("agg4_ordinal_map_unfrozen_in_book")
+    om = {str(k): v for k, v in om_raw.items()}
+    for k, v in om.items():
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            raise ValueError(f"agg4_ordinal_map_value_not_numeric:{k}")
+    state_name = str(args.get("state_leg") or "state")
+    if state_name not in legs:
+        raise ValueError(f"agg4_state_leg_missing:{state_name}")
+    state = legs[state_name]
+    observed = sorted({str(v) for v in state.dropna().unique()})
+    unknown = [v for v in observed if v not in om]
+    if unknown:
+        raise ValueError(f"agg4_state_out_of_declared_vocab:{unknown[:6]}")
+    out = state.map(lambda v: float(om[str(v)])).dropna()
+    return out, {
+        "op": "agg4_state_ordinal_series",
+        "state_leg": state_name,
+        "state_observed": observed,
+        "ordinal_map_size": len(om),
+        "n_rows": int(len(out)),
+    }
+
+
 #: 算子册（每格都逐字引用卡面 signal_derivation 原文，禁自创口径；新增算子须同步测试）
 OPS: dict[str, dict] = {
     "event_flag_rolling_pctile": {
@@ -870,6 +1029,10 @@ OPS: dict[str, dict] = {
         "fn": op_sector_relay_retreat_ratio,
         "quote_key": "series 面=当日(接棒板块数−撤离板块数)/板块总数",
     },
+    "agg4_state_ordinal_series": {
+        "fn": op_agg4_state_ordinal_series,
+        "quote_key": "本卡不重算阈值",
+    },
 }
 
 
@@ -883,8 +1046,20 @@ def run_binding_book(card: dict, entry: dict) -> tuple[pd.Series, dict]:
     blob = _card_text(card)
     if q.replace(" ", "") not in blob.replace(" ", ""):
         raise ValueError(f"prose_quote_not_found_on_card:{op}:{q[:24]}")
-    ser, ev = spec["fn"](card, entry.get("args") or {})
+    args = dict(entry.get("args") or {})
+    composite_ev: dict | None = None
+    if entry.get("legs"):
+        # 复合族入口（批-A）：先按卡面冻结的共键装配多腿，再把腿面交给算子；判据值一律来自册 args。
+        legs, composite_ev = assemble_composite_legs(
+            card,
+            entry["legs"],
+            align=str((entry.get("combine") or {}).get("align") or "inner_on_keys"),
+        )
+        args["legs"] = legs
+    ser, ev = spec["fn"](card, args)
     ev.update(op=op, prose_quote=q, reviewed_by=entry.get("reviewed_by"), review_note=entry.get("review_note"))
+    if composite_ev is not None:
+        ev.update(source="composite_legs", composite=composite_ev, combine=entry.get("combine") or {})
     return ser, ev
 
 

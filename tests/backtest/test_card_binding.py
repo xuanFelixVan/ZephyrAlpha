@@ -1432,3 +1432,210 @@ def test_load_named_series_empty_name_is_none_not_crash():
     """申报位空缺 ⇒ 返回 None 交调用方 fail-closed（禁把空名当有效序列名去拼路径）。"""
     assert cb.load_named_series("") is None
     assert cb.load_named_series(None) is None
+
+
+# ---------- 2026-10-13 批-A：复合族入口（legs/combine，统筹 22:1x D5 放行，CW-MINELOOP-001） ----------
+_COMP_TABLES = ("c1_backtest.regime_state_anchored", "c1_market.kline_index")
+_PROSE = "档序映射 r3→1、r2→2、r1→3、r4→4（先验冻结）"
+
+
+def _comp_card(tables=_COMP_TABLES, keys=("trade_date",), rules=True):
+    bd = {
+        "signal_table": " + ".join(tables),
+        "signal_column": "dominant（四档态名）",
+        "signal_derivation": f"{_PROSE}； 本卡不重算阈值",
+        "target_source": "next_day_return(px_close['000300'])",
+    }
+    if rules:
+        bd["composite_join_rules"] = {"pairs": [{"tables": list(tables), "keys": list(keys), "joinable_now": True}]}
+    # target.primary 必须与真卡同形：目标面闸读的是 primary 里的 `next_day_index_return` 字样
+    # （真卡 target_source 只写 next_day_return，靠 primary 命中），夹具缺这行就会在
+    # C:target_face_not_index_next_day 早退，测不到多表出口（22:53 实跑红过一次，红得对）。
+    return {
+        "card_id": "TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调",
+        "signal_kind": "series",
+        "target": {"primary": "next_day_index_return（000300 T+1 收益，执行器现器 shift(-1) 口径可用）"},
+        "data_binding": bd,
+    }
+
+
+def _comp_legs():
+    return [
+        {
+            "name": "state",
+            "table": "c1_backtest.regime_state_anchored",
+            "loader": "face_daily",
+            "column": "dominant",
+            "cast": "text",
+            "keys": ["trade_date"],
+        },
+        {
+            "name": "bench_close",
+            "table": "c1_market.kline_index",
+            "loader": "face_daily",
+            "column": "close",
+            "cast": "float",
+            "keys": ["trade_date"],
+        },
+    ]
+
+
+def _fake_loader(state, close):
+    def _load(leg):
+        ser = state if leg["name"] == "state" else close
+        return ser, {
+            "name": leg["name"],
+            "table": leg["table"],
+            "rows": int(len(ser)),
+            "keys": list(leg["keys"]),
+            "grain_evidence": "在册引用（用例面）",
+        }
+
+    return _load
+
+
+def test_composite_legs_align_and_map_ordinal(monkeypatch):
+    """正证：两腿按共键 1:1 内对齐，dominant 文本态名映射成册 args 里的先验档序。"""
+    import pandas as pd
+
+    dts = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    monkeypatch.setattr(
+        cb,
+        "_load_composite_leg",
+        _fake_loader(pd.Series(["r3", "r2", "r1"], index=dts), pd.Series([10.0, 11.0, 12.0], index=dts)),
+    )
+    legs, ev = cb.assemble_composite_legs(_comp_card(), _comp_legs())
+    assert ev["align"] == "inner_on_keys" and ev["aligned_rows"] == 3
+    ser, oev = cb.op_agg4_state_ordinal_series(
+        _comp_card(), {"legs": legs, "ordinal_map": {"r3": 1, "r2": 2, "r1": 3, "r4": 4}}
+    )
+    assert [float(v) for v in ser.values] == [1.0, 2.0, 3.0], oev
+    assert oev["state_observed"] == ["r1", "r2", "r3"] and oev["ordinal_map_size"] == 4
+
+
+def test_composite_inner_join_drops_are_disclosed(monkeypatch):
+    """R5：腿长不等时内对齐丢的行逐腿入凭据（禁静默吞行，也禁 ffill 把缺日补成有日）。"""
+    import pandas as pd
+
+    state = pd.Series(["r3", "r2"], index=pd.to_datetime(["2024-01-02", "2024-01-03"]))
+    close = pd.Series([1.0, 2.0, 3.0], index=pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"]))
+    monkeypatch.setattr(cb, "_load_composite_leg", _fake_loader(state, close))
+    legs, ev = cb.assemble_composite_legs(_comp_card(), _comp_legs())
+    assert ev["aligned_rows"] == 2
+    drops = {l["name"]: l["rows_dropped_by_alignment"] for l in ev["legs"]}
+    assert drops == {"state": 0, "bench_close": 1}, drops
+    assert "none" in ev["fill_policy"] and len(legs["bench_close"]) == 2
+
+
+def test_composite_leg_table_not_declared_on_card_is_red(monkeypatch):
+    """R1：册里塞一条卡面没申报的表＝多绑，拒。"""
+    import pandas as pd
+
+    s = pd.Series(["r3"], index=pd.to_datetime(["2024-01-02"]))
+    monkeypatch.setattr(cb, "_load_composite_leg", _fake_loader(s, s))
+    card = _comp_card(tables=("c1_market.kline_index",))
+    with pytest.raises(ValueError, match="composite_legs_not_declared_on_card"):
+        cb.assemble_composite_legs(card, _comp_legs())
+
+
+def test_composite_leg_keys_not_on_card_face_is_red(monkeypatch):
+    """R2：腿的共键必须在卡面镜像里逐字存在（禁本班替 examunlock 班拍键/自补一个键）。"""
+    import pandas as pd
+
+    s = pd.Series(["r3"], index=pd.to_datetime(["2024-01-02"]))
+    monkeypatch.setattr(cb, "_load_composite_leg", _fake_loader(s, s))
+    card = _comp_card(keys=("trade_date",))
+    legs = _comp_legs()
+    legs[0]["keys"] = ["trade_date", "symbol"]
+    with pytest.raises(ValueError, match="composite_leg_keys_not_on_card_face"):
+        cb.assemble_composite_legs(card, legs)
+
+
+def test_composite_card_face_rules_absent_is_red():
+    """卡面没有 composite_join_rules 块＝键面真源缺失，不许走复合口。"""
+    with pytest.raises(ValueError, match="composite_card_face_rules_absent"):
+        cb.assemble_composite_legs(_comp_card(rules=False), _comp_legs())
+
+
+def test_composite_loader_not_registered_is_red():
+    """批-A 只开 face_daily 形；册里写未登记的装载口即拒（须先进设计稿再开形）。"""
+    legs = _comp_legs()
+    legs[0]["loader"] = "sector_family_panel"
+    with pytest.raises(ValueError, match="composite_loader_not_registered"):
+        cb._load_composite_leg(legs[0])
+
+
+def test_composite_leg_table_outside_recipe_book_is_red():
+    """R3：腿表不在 _REGISTERED_TABLES 即拒（沿用"拒绑而非猜粒度"纪律，零扩权零白名单）。"""
+    leg = dict(_comp_legs()[0], table="c1_market.some_unregistered_table")
+    with pytest.raises(ValueError, match="leg_table_not_in_recipe_book"):
+        cb._load_composite_leg(leg)
+
+
+def test_composite_align_not_registered_is_red(monkeypatch):
+    import pandas as pd
+
+    s = pd.Series(["r3"], index=pd.to_datetime(["2024-01-02"]))
+    monkeypatch.setattr(cb, "_load_composite_leg", _fake_loader(s, s))
+    with pytest.raises(ValueError, match="composite_align_not_registered"):
+        cb.assemble_composite_legs(_comp_card(), _comp_legs(), align="forward_fill")
+
+
+def test_agg4_ordinal_map_must_come_from_book():
+    """R6：档值不得进 Python——args 缺 ordinal_map 即红。"""
+    import pandas as pd
+
+    legs = {"state": pd.Series(["r3"], index=pd.to_datetime(["2024-01-02"]))}
+    with pytest.raises(ValueError, match="agg4_ordinal_map_unfrozen_in_book"):
+        cb.op_agg4_state_ordinal_series(_comp_card(), {"legs": legs})
+
+
+def test_agg4_state_out_of_declared_vocab_is_red():
+    """观测态名不在册表内（含 CH 的 NULL 空串面）＝红，禁悄悄丢行、禁把空串当某一档。"""
+    import pandas as pd
+
+    legs = {"state": pd.Series(["r3", "RECOVERY"], index=pd.to_datetime(["2024-01-02", "2024-01-03"]))}
+    with pytest.raises(ValueError, match="agg4_state_out_of_declared_vocab"):
+        cb.op_agg4_state_ordinal_series(
+            _comp_card(), {"legs": legs, "ordinal_map": {"r3": 1, "r2": 2, "r1": 3, "r4": 4}}
+        )
+
+
+def test_norm_text_keeps_string_column_that_norm_would_blank():
+    """防复发钉：dominant 这类 String 列走 `_norm` 会被 to_numeric 洗成全 NaN＝"有数"伪装成"查无"。
+
+    同一条数据两副面孔都断言到位（在册 silent-degradation 形态：降级与未触发同形）。"""
+    import pandas as pd
+
+    df = pd.DataFrame({"c1": ["2024-01-02", "2024-01-03"], "c2": ["r3", "r2"]})
+    numeric = cb._norm(df, 0, 1)
+    text = cb._norm_text(df, 0, 1)
+    assert numeric.isna().all() and len(text) == 2 and list(text) == ["r3", "r2"]
+
+
+def test_multitable_card_without_book_entry_still_u():
+    """R8 分类器不扩权：没有册格的复合卡必须仍返 U:multi_table_needs_composite_recipe。"""
+    r = cb.classify_card(_comp_card())
+    assert r["cls"] == "U" and r["reason"].startswith("multi_table_needs_composite_recipe"), r
+
+
+def test_run_binding_book_composite_branch_attaches_provenance(monkeypatch):
+    """出口面自证：走 legs 分支时凭据带 source/composite 两键，且卡面引句双校验照生效。"""
+    import pandas as pd
+
+    dts = pd.to_datetime(["2024-01-02", "2024-01-03"])
+    monkeypatch.setattr(
+        cb, "_load_composite_leg", _fake_loader(pd.Series(["r3", "r4"], index=dts), pd.Series([9.0, 8.0], index=dts))
+    )
+    entry = {
+        "op": "agg4_state_ordinal_series",
+        "legs": _comp_legs(),
+        "combine": {"align": "inner_on_keys"},
+        "args": {"ordinal_map": {"r3": 1, "r2": 2, "r1": 3, "r4": 4}},
+        "prose_quote": _PROSE,
+    }
+    ser, ev = cb.run_binding_book(_comp_card(), entry)
+    assert ev["source"] == "composite_legs" and ev["composite"]["aligned_rows"] == 2
+    assert [float(v) for v in ser.values] == [1.0, 4.0]
+    with pytest.raises(ValueError, match="prose_quote_not_found_on_card"):
+        cb.run_binding_book(_comp_card(), dict(entry, prose_quote="这句不在卡面上"))

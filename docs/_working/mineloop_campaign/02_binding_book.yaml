@@ -463,3 +463,43 @@ entries:
           RECOVERY@0: 0.25
           RECOVERY@1: 0.5
           RECOVERY@2: 0.75
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  op: agg4_state_ordinal_series
+  status: approved
+  legs:
+    - name: state
+      table: c1_backtest.regime_state_anchored
+      loader: face_daily
+      column: dominant
+      cast: text
+      keys: [trade_date]
+    - name: bench_close
+      table: c1_market.kline_index
+      loader: face_daily
+      column: close
+      cast: float
+      keys: [trade_date]
+  combine:
+    align: inner_on_keys
+  args:
+    state_leg: state
+    ordinal_map:
+      r3: 1
+      r2: 2
+      r1: 3
+      r4: 4
+  prose_quote: "档序映射 r3→1、r2→2、r1→3、r4→4（先验冻结）"
+  reviewed_by: st-mineloop2-20261012
+  review_note: |
+    批-A 校准格（统筹 2026-10-13 22:1x D5 放行：先 1 张校准再放量，CW-MINELOOP-001 复合族入口）。
+    键面逐字抄卡面 data_binding.composite_join_rules.pairs（tables=[regime_state_anchored,
+    kline_index]、keys=[trade_date]、joinable_now=true、alignment 原文"同日对齐（两侧共享键同名同频，
+    1:1 行对齐；不做前向填充）"）——本班零自补键；
+    档序四值整表来自同块 signal_derivation 原文"档序映射 r3→1、r2→2、r1→3、r4→4（先验冻结）"，
+    代码侧不出现任何档值字面量（红证 R6：args 缺 ordinal_map 即 raise agg4_ordinal_map_unfrozen_in_book）；
+    dominant 走 cast: text：该列 DDL 是 LowCardinality(String)，经在册 _norm 的 to_numeric 会全列 NaN
+    ＝把"有数"伪装成"查无"，故复合口单开文本装载口（红证钉在用例）；
+    粒度三要素登记在 card_binding._REGISTERED_TABLES（DDL 真源 ORDER BY trade_date＋
+    data_source DEFAULT 'anchored_state_machine' 字面值），覆盖与行数用在册引用
+    （本卡 data_window_evidence：2017-07-11..2026-10-09／4,488 行）⇒ 本格零新 CH 查；
+    目标腿仍由执行器现供 index_next_day_return()（14/14 复合卡皆然）⇒ 判官零改动。
