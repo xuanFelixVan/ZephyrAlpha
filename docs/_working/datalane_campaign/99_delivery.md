@@ -84,3 +84,42 @@ completes_when: T2/T3/T4 收官回执被二号/后续班签收 + T1 次夜写入
 3. **T5 钉任务**：day2/3 连跑由值守自动化执行（12:35），满 3 天自动钉
    ZephyrAlpha_EmotionIndexSnapshot+回执写台账；自动化人工撤除点=钉任务成功后。
 4. **主区对平降级直改×2**：原因与范围见台账 §一/§七（GW 计数为准）。
+
+---
+
+## 六、本班终账（sid=st-datalane2-20261012，2026-10-12 22:0x → 10-13 23:3x）
+
+> 本班＝数据合并回填工单三件＋统筹五裁/四裁/四令/收口令的执行班。全程滚动账在 `00_ledger.md` §十九~四十；本节只记**可复核的终态读数**与未闭面。
+
+**一、交付与验收读数（全部 CH/PG/git 实测，非账面）**
+
+| 件 | 终态读数 | 尺 |
+|---|---|---|
+| ① tilib 断点续跑 | 58 片/5,792 票按在册分片配方跑完，收工口径＝C 族邻域班复算触发条件达成 | 六车道 state 面按 (shard, symbols_sha256) 键对账（曾两次假绿，见 §廿七/册三） |
+| ② 段一 basic 2019-2020 | **1,831,872 行 / 4,352 票** | `uniqExact((trade_date,symbol))`，非 count() |
+| ③ 段二 basic 2017-2018 | **1,561,578 行 / 3,616 票**，rows==keys，487 交易日，全标 `tushare` | 同上 |
+| ③ 段二 kline 2017-2018 | **1,657,332 行 / 3,580 票**；C1 覆盖 **3,580/3,592=0.9967 ≥0.95**；`rows≠keys` 日期 **0** | 分母＝stock_list 曾在市（含 1970-01-01 在市哨兵）；首算误得 254 已自纠 |
+| 590 只零行票补齐 | 08:05 一次性任务：探针 3/3 通 → 放量 **ok=568 fail=0 zero=0**（13′36″）→ 复核仍未覆盖 0 | 三道机械闸＋已知正对照；任务已注销 |
+| 市值表改标（裁③） | 存量：akshare 10-12 23:53 改标；增量存量再清：21:30 `ALTER_RUN` **11,122→0** | 逐行来源判据（四列全实＋日志 `integrator.tushare … 5561 行`） |
+| 写侧四处随形改（Owner 亲裁） | dev 面 7 列 + 行末 `'tushare'`；主区 **132 passed** 复跑绿；重启后新子 9548 起于 21:32:47（晚于落地笔 16.2h） | 判据②（首笔新写显 tushare）**留明日 16:3x 那笔**，未签收 |
+| 收版（已批第三步） | 202610 分区每键版本 2→**1**×5,561；四项业务列校验和与 max ingest_ts **逐项全等前像**；非 FINAL 与 FINAL 一致 | 三步验证照 RULE-DATA-OPS，顺序铁律（改标→回执→收版）未倒 |
+| REG-IND-001 修尺（裁④） | 审计脚本停算面改读在册真源＋册不可读回 rc=3；4 钉测试含**反向对照**（打回空集合必 rc=2） | 假门桩按真门 NULL 字面 `"None"` 形状（非 `\N`） |
+| 夹具 6 行退役（路一①） | 账本 active 8,118→8,112／retired 640→646（**净零行**）；投影差集 13→**7 零垃圾** | `api.retire` 单口，authority_ref＝统筹原话，事件面内容级读回 |
+
+**二、未闭面（都有主、有时刻，不塞本班）**
+
+1. 判据②：明日 10-14 16:3x 那笔 basic 新写的 `data_source` 应为 `tushare`（统筹侧复核）；若仍 akshare ⇒ 另找第二写者，按台账 §卅九 三读对质法，不改判据。
+2. 六件套在册化：袋 `0020` 在飞（前一道死袋 `0019` 死于落地时读到共享 index 的半写册面瞬时态——该 hazard 已连同据链交清队列/维护线）。落地后**归档车道**（`session_worktree.py archive --execute`，含会话壳与影子指令面）。
+3. `scripts/script-manifest.yaml` 未随袋：车道面与 dev 面差 **+299/-3**（旧渲染），带它＝整档改写；清单归位＝由 `generate_manifest.py` 生成（根宪法 §9.5 禁手工维护静态清单）。
+4. 2016 及更早 basic 仍缺；2017-2018 周线/月线/后复权表族是否跟，由源件落地时定。
+5. tilib 跑器两条根治：`--only-shard` 越界静默空转须红退出；跨午夜窗新鲜度（指纹陷阱）根治未落。
+
+**三、复核命令（只读）**
+
+```
+python -c "import sys;sys.path.insert(0,'scripts/backtest/fexam');from ch_data import ch_query as q;print(q(\"SELECT count(), uniqExact((trade_date,symbol)) FROM c1_market.stock_daily_basic WHERE trade_date='2026-10-12'\"))"
+cat .runtime/tmp/st-datalane2-20261012/seg2/step4_receipt.json
+cat .runtime/tmp/st-datalane2-20261012/seg2/retry_marker.json
+python -c "import sys;sys.path.insert(0,'scripts/governance');from _shared.module_translation_loader import get_module_translation as g;print(g('scripts/data/backfill_kline_daily_history.py'))"
+python scripts/commit_queue.py status --session st-datalane2-20261012
+```
