@@ -51,6 +51,25 @@ pillars_numeric:
   oos_same_sign: true
 oos_window_ref: *id001
 data_binding:
+  composite_join_rules:
+    registered_by: st-examunlock-20261013
+    registered_at: '2026-10-13'
+    basis_casefile: docs/_working/examunlock_campaign/19_composite_join_probe.yaml
+    executor_note: 执行器当下无复合配方入口（card_binding.classify_card 多表一律 U:multi_table_needs_composite_recipe）；本块＝共键与对齐规则冻结，待横截面回放面（CW-MINELOOP-001，矿考二班域）落地即零二次讨论可跑
+    card_face_declared_join_key_before: true
+    pairs:
+    - left: c1_market.emotion_index
+      right: c1_market.kline_sector_880
+      tables:
+      - c1_market.emotion_index
+      - c1_market.kline_sector_880
+      keys:
+      - trade_date
+      alignment: 同日对齐（两侧共享键同名同频，1:1 行对齐；不做前向填充）
+      pit_rule: 信号侧取 t 日行，目标侧取 t+1 日收益，禁未来信息（卡面 signal_derivation 原文冻结）
+      key_evidence_a: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+      key_evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+      joinable_now: true
   signal_table: c1_market.kline_sector_880 + c1_market.emotion_index
   signal_column: kline_sector_880.close/amount（板块强度底座）、emotion_index.emotion_index（市场态底座）
   signal_derivation: >-

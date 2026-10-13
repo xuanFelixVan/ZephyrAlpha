@@ -56,6 +56,25 @@ numeric_face_mapping_note: >-
   地板 0.02 口径登记，本卡预期符号为负，负结果如实入册即支持"状态轴作废"分支）；两段同号、OOS 同号。
 oos_window_ref: *id001
 data_binding:
+  composite_join_rules:
+    registered_by: st-examunlock-20261013
+    registered_at: '2026-10-13'
+    basis_casefile: docs/_working/examunlock_campaign/19_composite_join_probe.yaml
+    executor_note: 执行器当下无复合配方入口（card_binding.classify_card 多表一律 U:multi_table_needs_composite_recipe）；本块＝共键与对齐规则冻结，待横截面回放面（CW-MINELOOP-001，矿考二班域）落地即零二次讨论可跑
+    card_face_declared_join_key_before: false
+    pairs:
+    - left: c1_backtest.regime_state_anchored
+      right: c1_market.kline_index
+      tables:
+      - c1_backtest.regime_state_anchored
+      - c1_market.kline_index
+      keys:
+      - trade_date
+      alignment: 同日对齐（两侧共享键同名同频，1:1 行对齐；不做前向填充）
+      pit_rule: 信号侧取 t 日行，目标侧取 t+1 日收益，禁未来信息（卡面 signal_derivation 原文冻结）
+      key_evidence_a: DDL 真源 schemas/categories/backtest/backtest_regime_state_anchored.py 的 ORDER_BY=trade_date
+      key_evidence_b: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+      joinable_now: true
   signal_table: c1_backtest.regime_state_anchored（dominant/vol_pct 列实测在册）+ c1_market.kline_index（symbol='000300' 的 close 列，标的价）
   signal_column: dominant（四档态名）、vol_pct（分位自变量，审计用）；000300 close → 次日收益
   signal_derivation: >-

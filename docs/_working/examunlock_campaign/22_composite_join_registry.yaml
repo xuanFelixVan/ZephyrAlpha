@@ -1,0 +1,491 @@
+schema_version: examunlock-composite-join-registry/v1
+sid: st-examunlock-20261013
+date: '2026-10-13'
+title: 复合族共键与对齐规则登记册（统筹 15:0x 令件二；卡面块的镜像，供执行器侧选形绑定）
+ruler: 表集合=卡面 data_binding 原文正则；键面=schema ORDER_BY 真源优先，无 schema_file 者用**回验过的**读取件/审计件证据；每条 cite 生成时都到文件里命中过关键 token
+executability_note: 登记＝判据面冻结，不等于当下可考：classify_card 对多表卡一律返回 U:multi_table_needs_composite_recipe，执行器无复合入口（07 号协调单＝矿考二班 CW-MINELOOP-001）。本班不谎报这 14 张已可开考。
+cards:
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  family: calibration
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.kline_index
+  pairs:
+  - tables:
+    - c1_backtest.regime_state_anchored
+    - c1_market.kline_index
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: DDL 真源 schemas/categories/backtest/backtest_regime_state_anchored.py 的 ORDER_BY=trade_date
+    evidence_b: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: 逐日取 regime_state_anchored.dominant（该列由 classify_state(vol_pct) 按 <=0.30→r3 / <=0.60→r2 / <=0.80→r1 / >0.80→r4 生成，源码实测 anchored_state_machine.py:98-110，本卡不重算阈值）； 档序映射 r3→1、r2→2、r1→3、r4→4（先验冻结）； 目标 = 000300 close 的 T+1 简单收益（shift(-1) 口径）； PIT：状态取 t 日、收益取 t+1 日，禁未来信息（源码头注释 INVARIANTS 已声明 vol_pct 为 t 及以前 rolling 分位）。
+  registered: true
+- card_id: TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+  family: calibration
+  tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.emotion_index
+  pairs:
+  - tables:
+    - c1_backtest.regime_state_anchored
+    - c1_market.emotion_index
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: DDL 真源 schemas/categories/backtest/backtest_regime_state_anchored.py 的 ORDER_BY=trade_date
+    evidence_b: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: true
+  signal_derivation_verbatim: 三腿各取 250 日滚动窗标准化 z 分（窗内均值/标准差，PIT 仅用 t 及以前）； 合成分 = (z_trend + z_limitup_temp + z_promotion)/3（等权 1/3，禁加权拟合）； 传导终点 = regime_state_anchored.dominant 的档序（r3=1/r2=2/r1=3/r4=4，阈值 0.30/0.60/0.80 取自源码，本卡不重算）； components 的键解析由总包按实测列型固化为单一取数表达式（禁双口径混算，本卡只认 C1_limitup_temp/C2_promotion 两键名，实测出处见 data_window_evidence）。
+  registered: true
+- card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+  family: calibration
+  tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_index
+  - c1_market.stk_limit
+  pairs:
+  - tables:
+    - c1_market.kline_daily_hfq
+    - c1_market.kline_index
+    keys: []
+    joinable_now: false
+    evidence_a: 查无键面证据（本班不猜）
+    evidence_b: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+  - tables:
+    - c1_market.kline_daily_hfq
+    - c1_market.stk_limit
+    keys: []
+    joinable_now: false
+    evidence_a: 查无键面证据（本班不猜）
+    evidence_b: DDL 真源 schemas/categories/market/market_stk_limit.py 的 ORDER_BY=trade_date, symbol
+  - tables:
+    - c1_market.kline_index
+    - c1_market.stk_limit
+    keys:
+    - symbol
+    - trade_date
+    joinable_now: true
+    evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+    evidence_b: DDL 真源 schemas/categories/market/market_stk_limit.py 的 ORDER_BY=trade_date, symbol
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: ①涨停家数环比、②跌停家数环比、③涨停/跌停比（L1-S2 卡 09/10 同导生口径，跨卡可比）； ④全市场成交额环比 sum(amount)/sum(amount_{-1})-1；⑤指数振幅 (high-low)/close（000300）； ⑥创新高家数比 countIf(close >= max(close,60 回看))；⑦跌破 MA20 家数比； 每项取 60 日滚动均值/标准差标准化为 z，合成 z = mean(z_i)（缺项不补零，直接少项取均值并记覆盖率）； 实现锚=src/zephyr/signal_ashare/core/daily_condition_sensor.py（TDM module_ref，实测存在）。
+  registered: true
+- card_id: TDM-E-L2-01-5/ablation/02_市场级调节注入
+  family: ablation
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  pairs:
+  - tables:
+    - c1_market.emotion_index
+    - c1_market.kline_sector_880
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+    evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: true
+  signal_derivation_verbatim: 五态重算=按日 (板块强度截面方差分位, 涨停/涨幅集中度分位) 查表分 高潮/主线/分歧/派发/混沌 （口径同 L2-04-1 卡，两卡共用一次重算、各自判不同问题，禁各算各的导致口径分叉）； arm 变量=是否按态给强度分 ±10%/−15%。市场态底座不得直读 market_forecast_fusion 输出 （被测件自证循环），只从 880/emotion_index 重算。
+  registered: true
+- card_id: TDM-E-L2-01/ablation/02_四路等权合成分边际
+  family: ablation
+  tables:
+  - c1_market.kline_sector_880
+  - c1_market.sector_constituent
+  - c1_market.sector_constituent_snapshot
+  - c1_market.sector_state
+  pairs:
+  - tables:
+    - c1_market.kline_sector_880
+    - c1_market.sector_constituent
+    keys:
+    - sector_code
+    joinable_now: true
+    evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+    evidence_b: 在册审计读数：236,836 行 / uniqExact(sector_code) / max(update_date)——**日期列是 update_date，月频**（证据 docs/_working/total_command_closeout/review_int_number_audit.md）
+  - tables:
+    - c1_market.kline_sector_880
+    - c1_market.sector_constituent_snapshot
+    keys: []
+    joinable_now: false
+    evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+    evidence_b: 查无键面证据（本班不猜）
+  - tables:
+    - c1_market.kline_sector_880
+    - c1_market.sector_state
+    keys: []
+    joinable_now: false
+    evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+    evidence_b: 查无键面证据（本班不猜）
+  - tables:
+    - c1_market.sector_constituent
+    - c1_market.sector_constituent_snapshot
+    keys: []
+    joinable_now: false
+    evidence_a: 在册审计读数：236,836 行 / uniqExact(sector_code) / max(update_date)——**日期列是 update_date，月频**（证据 docs/_working/total_command_closeout/review_int_number_audit.md）
+    evidence_b: 查无键面证据（本班不猜）
+  - tables:
+    - c1_market.sector_constituent
+    - c1_market.sector_state
+    keys: []
+    joinable_now: false
+    evidence_a: 在册审计读数：236,836 行 / uniqExact(sector_code) / max(update_date)——**日期列是 update_date，月频**（证据 docs/_working/total_command_closeout/review_int_number_audit.md）
+    evidence_b: 查无键面证据（本班不猜）
+  - tables:
+    - c1_market.sector_constituent_snapshot
+    - c1_market.sector_state
+    keys: []
+    joinable_now: false
+    evidence_a: 查无键面证据（本班不猜）
+    evidence_b: 查无键面证据（本班不猜）
+  pit_axis_conflict: true
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: 路A 动量活跃=amount/Σamount 的截面 rank-pct + 其 5 日环比； 路B 多周期动量=0.2×q3+0.3×q5+0.5×q20 收益的 rank-pct； arm full2=(A+B)/2×100；drop_* 只余单路；market_adj 叠加 L1 水温档 ±10 分（查表）。 结构路（涨停比/梯队）与资金路（主力净流入）在 2026-07-22 前不可算—— 成分快照仅 2026-07-22 起（见 evidence），禁以"板块指数涨幅"冒充"板块内涨停占比"（裸扩口径）。
+  registered: true
+  alignment_rule: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+  ruling_basis: 统筹 03:1x 预签形状（as-of 先行）
+- card_id: TDM-E-L2-01/ablation/03_六指数分布选优通道与候选池分位
+  family: ablation
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  pairs:
+  - tables:
+    - c1_market.kline_index
+    - c1_market.kline_sector_880
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+    evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: 分布腿=直接调用在册件 src/zephyr/pf_alloc/core/sector_distribution_comparator.py 的 _predict_quantiles(close, train_window=500, warmup=30) 逐指数独立拟合（特征=ret + lag_{1,5,10,20} + vol_20， QUANTILES=(0.05,0.50,0.95)，FEATURE_LAGS=(1,5,10,20)，均为件内实读常量，禁改）； 排序键=收益-风险比 = q50 / (q95 − q05)（件 docstring 原文"比较预测分布的收益-风险比（中位数/区间宽度）"）； 强度分腿=承同车道 ablation/02 的两路可算合成分口径（路A amount 占比+环比、路
+  registered: true
+- card_id: TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏
+  family: ablation
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  - c1_market.sector_state
+  pairs:
+  - tables:
+    - c1_market.kline_index
+    - c1_market.kline_sector_880
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+    evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+  - tables:
+    - c1_market.kline_index
+    - c1_market.sector_state
+    keys: []
+    joinable_now: false
+    evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+    evidence_b: 查无键面证据（本班不猜）
+  - tables:
+    - c1_market.kline_sector_880
+    - c1_market.sector_state
+    keys: []
+    joinable_now: false
+    evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+    evidence_b: 查无键面证据（本班不猜）
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: 与同车道 calibration/02 逐字同口径重算（禁直读 c1_market.sector_state.rrg_quadrant，那是被测件同族产物=自证循环； 该列仅作口径一致交叉核对，差异 >10% 先查口径再开考）； 新增面=按日构造"code×昨日象限→今日象限"标签序列，再按采信规则把标签转成信号： raw=当日跨界即置 1；confirm_k=须连续 k 日处同一目标象限才置 1（否则视作仍在旧象限）； rare_guard=在 confirm2 之上，若该转移的经验概率（过去 250 交易日频率）<10% 则再延后 1 日； 历史长度层=每 code 自其首个 trade_date 起累计 in-window 交易日数（用于 universe_guard 分层）。
+  registered: true
+- card_id: TDM-E-L2-02-1/calibration/02_RRG象限迁移
+  family: calibration
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  - c1_market.sector_state
+  pairs:
+  - tables:
+    - c1_market.kline_index
+    - c1_market.kline_sector_880
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+    evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+  - tables:
+    - c1_market.kline_index
+    - c1_market.sector_state
+    keys: []
+    joinable_now: false
+    evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+    evidence_b: 查无键面证据（本班不猜）
+  - tables:
+    - c1_market.kline_sector_880
+    - c1_market.sector_state
+    keys: []
+    joinable_now: false
+    evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+    evidence_b: 查无键面证据（本班不猜）
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: RS=100·exp(4 日累计 ln(板块收盘/基准收盘)) 平移口径，RRI=RS 的 4 日 EMA； 象限按 (RRI,RS) 相对 100 中枢四分为 leading/improving/weakening/lagging； series=当日 leading 占比 − lagging 占比；categorical 迁移标签=昨日象限→今日象限。 禁直读 c1_market.sector_state.rrg_quadrant 作信号（那是被测件同族产物，自证循环）； 该列仅用作口径一致性的交叉核对（差异 >10% 时先查口径再开考）。
+  registered: true
+- card_id: TDM-E-L2-04/ablation/02_板块生态三态判定
+  family: ablation
+  tables:
+  - c1_market.daban_engine_load
+  - c1_market.kline_sector_880
+  - c1_market.limit_up_down
+  - c1_market.limit_up_pool
+  pairs:
+  - tables:
+    - c1_market.daban_engine_load
+    - c1_market.kline_sector_880
+    keys: []
+    joinable_now: false
+    evidence_a: 查无键面证据（本班不猜）
+    evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+  - tables:
+    - c1_market.daban_engine_load
+    - c1_market.limit_up_down
+    keys: []
+    joinable_now: false
+    evidence_a: 查无键面证据（本班不猜）
+    evidence_b: 查无键面证据（本班不猜）
+  - tables:
+    - c1_market.daban_engine_load
+    - c1_market.limit_up_pool
+    keys: []
+    joinable_now: false
+    evidence_a: 查无键面证据（本班不猜）
+    evidence_b: DDL 真源 schemas/categories/market/market_limit_up_pool.py 的 ORDER_BY=(trade_date, symbol)
+  - tables:
+    - c1_market.kline_sector_880
+    - c1_market.limit_up_down
+    keys: []
+    joinable_now: false
+    evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+    evidence_b: 查无键面证据（本班不猜）
+  - tables:
+    - c1_market.kline_sector_880
+    - c1_market.limit_up_pool
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+    evidence_b: DDL 真源 schemas/categories/market/market_limit_up_pool.py 的 ORDER_BY=(trade_date, symbol)
+  - tables:
+    - c1_market.limit_up_down
+    - c1_market.limit_up_pool
+    keys: []
+    joinable_now: false
+    evidence_a: 查无键面证据（本班不猜）
+    evidence_b: DDL 真源 schemas/categories/market/market_limit_up_pool.py 的 ORDER_BY=(trade_date, symbol)
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: 高潮分=当日板块强度榜 Top5 的 1 日收益截面 z 合成分位（0-100，重算自 880，不读模块输出）； Top2 集中度=前 2 板块成交额 / 全板块成交额（880 amount，可算，历史 2021-08-02 起）； 梯队连击=行业内连续涨停（consec_limit）>=2 的家数>=2 ⇒ 仅 2026-09-01 起可得， 本卡以"板块 1 日收益>= 行业族内 95 分位 + 该板块 3 日连涨"作梯队代理， 代理差异在此明列，出分后不得当作梯队连击本身的结论。
+  registered: true
+- card_id: TDM-E-L2-04/comparison/02_主线合取与单腿双臂
+  family: comparison
+  tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  pairs:
+  - tables:
+    - c1_market.kline_index
+    - c1_market.kline_sector_880
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+    evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: 截面族冻结=industry_l1 ∪ industry_ths，剔除 880001-880011 市场统计指数 （承 MOD-SIG-061 件内实证口径"880001 作 RRG 基准/市场收益代理，剔除出板块全集"）； 连击腿=逐日取该族内当日 1 日收益最高者为领涨板块，按 analysis_utils.lead_streaks 语义累计 "同一板块连续领涨天数"，换领涨板块即归零（件内定义原文：mainline_candidates.py:24 "lead_streak 连续领涨天数——逐日领涨板块（当日收益最高者）连续领涨日数"）； 集中度腿=当日该族内 amount 前 2 名之和 / 该族当日 amount 总和（**取成交额口径**， 即节点原文与件常量名 TURNOVER_CONCENTRA
+  registered: true
+- card_id: TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶
+  family: calibration
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_index
+  - c1_market.sentiment_panel
+  pairs:
+  - tables:
+    - c1_market.emotion_index
+    - c1_market.kline_index
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+    evidence_b: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+  - tables:
+    - c1_market.emotion_index
+    - c1_market.sentiment_panel
+    keys: []
+    joinable_now: false
+    evidence_a: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+    evidence_b: 查无键面证据（本班不猜）
+  - tables:
+    - c1_market.kline_index
+    - c1_market.sentiment_panel
+    keys: []
+    joinable_now: false
+    evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+    evidence_b: 查无键面证据（本班不猜）
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: 日级档=emotion_index 按在册六段阈值分档（S0..S5）； 月级态=以自然月聚合 000300 月收盘，7 态=（月收盘 vs 月 MA3 上下）×（月涨跌 >+5/0..+5/<0 三档） +（连续两月同向）修正，月级"熊市反弹"判定=月收盘<月 MA3 且当月涨幅>0； 最终档=min(日级档, 月级允许上限)。
+  registered: true
+- card_id: TDM-E-L2-05-2/ablation/02_信号响应三件套
+  family: ablation
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  pairs:
+  - tables:
+    - c1_market.emotion_index
+    - c1_market.kline_index
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+    evidence_b: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+  - tables:
+    - c1_market.emotion_index
+    - c1_market.kline_sector_880
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+    evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+  - tables:
+    - c1_market.kline_index
+    - c1_market.kline_sector_880
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+    evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: 板块强度=两路合成分（与 L2-01 共用重算）；水温档=emotion_index 六段（与 L2-05-1 共用）； 象限=RS/RRI 四分（与 L2-02-1 共用口径）； arm 变量：权重缩放=按档乘 0.5/0.8/1.0/1.2；门槛升降=池规模分位上下移一档； 象限过滤=水冰档只保留 leading/improving 象限板块。 三件全用=查表切换；单件剔除=该件退回中性值（权重 1.0/门槛不升/不过滤）。
+  registered: true
+- card_id: TDM-E-L2-05/ablation/02_水温总开关放行比例
+  family: ablation
+  tables:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  - c1_market.sentiment_panel
+  pairs:
+  - tables:
+    - c1_market.emotion_index
+    - c1_market.kline_sector_880
+    keys:
+    - trade_date
+    joinable_now: true
+    evidence_a: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+    evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+  - tables:
+    - c1_market.emotion_index
+    - c1_market.sentiment_panel
+    keys: []
+    joinable_now: false
+    evidence_a: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+    evidence_b: 查无键面证据（本班不猜）
+  - tables:
+    - c1_market.kline_sector_880
+    - c1_market.sentiment_panel
+    keys: []
+    joinable_now: false
+    evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+    evidence_b: 查无键面证据（本班不猜）
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: 水温档=emotion_index 的六段态（S0..S5，按在册分段规则映射；分段阈值与 L1 同源， 本卡不重定义分段，只考"板块层是否该按它开关"）； arm 变量=板块强度榜的放行比例与门槛位移（按档查表）； 被门控对象=当日两路合成分强度榜（与 L2-01 共用重算，禁各算各的）。
+  registered: true
+- card_id: TDM-E-L2-09/calibration/04_业绩预增催化剂腿
+  family: calibration
+  tables:
+  - c3_fundamental.earnings_forecast
+  - c3_fundamental.express_report
+  - c3_fundamental.research_report
+  pairs:
+  - tables:
+    - c3_fundamental.earnings_forecast
+    - c3_fundamental.express_report
+    keys: []
+    joinable_now: false
+    evidence_a: 只有采集侧 fetcher，**盘面无 DDL 真源**⇒键须由属主声明（证据 src/zephyr/data/implementations/miniqmt_provider.py）
+    evidence_b: 无 schema_file 且本班未在本仓找到逐列表→键面 查无，须属主声明（证据 src/zephyr/data/implementations/miniqmt_provider.py）
+  - tables:
+    - c3_fundamental.earnings_forecast
+    - c3_fundamental.research_report
+    keys: []
+    joinable_now: false
+    evidence_a: 只有采集侧 fetcher，**盘面无 DDL 真源**⇒键须由属主声明（证据 src/zephyr/data/implementations/miniqmt_provider.py）
+    evidence_b: DDL 真源（有 schema_file）（证据 schemas/categories/fundamental/fundamental_research_report.py）
+  - tables:
+    - c3_fundamental.express_report
+    - c3_fundamental.research_report
+    keys: []
+    joinable_now: false
+    evidence_a: 无 schema_file 且本班未在本仓找到逐列表→键面 查无，须属主声明（证据 src/zephyr/data/implementations/miniqmt_provider.py）
+    evidence_b: DDL 真源（有 schema_file）（证据 schemas/categories/fundamental/fundamental_research_report.py）
+  pit_axis_conflict: false
+  card_face_declares_join_key_before: false
+  signal_derivation_verbatim: 市场级 series=按 `first_announce_date` 归集当日预告：净占比 =（预增+扭亏 家数 − 预减+首亏 家数）/ 当日预告总家数； 强度面 = profit_change 中位（取 (min+max)/2，1%–99% 截尾，总家数 <30 的日判 nan 禁补零）； PIT 纪律=「只用 first_announce_date ≤ T 的行，同一 (symbol, report_period) 只取首次披露」（修订稿不得回溯覆盖， 防"以公告日 vs 首次公告日"混用造成的前视——该表两列并存正是本卡选 first_announce_date 的理由）； 行业级 panel 辅轴=symbol→industry 以 「≤T 最近一次 research_report 的 industr
+  registered: false
+  not_registered_reason: 统筹 03:1x 原裁：三表其中两张盘面无 DDL 真源＝缺真源项，转数据域缺真源积压清单，不代声明、不硬凑；新令授权范围是“照已挖好的证据登记”，此张恰无证据
+summary:
+  total: 14
+  registered: 13
+  not_registered:
+  - TDM-E-L2-09/calibration/04_业绩预增催化剂腿
+  as_of_prefrozen:
+  - TDM-E-L2-01/ablation/02_四路等权合成分边际
+  key_evidence_basis: schema ORDER_BY 真源优先，无 schema_file 者用回验过的在册读取件/审计件证据
+face_writes:
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__calibration__02_四档风险轴前向收益单调.yaml
+  judgment_sha: 06cca9d8c1c7d4126dacca1a48b48fd884d1e899cfb55df531a47fd2dab59c89
+- card_id: TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__calibration__03_子信号族到状态轴传导保真度.yaml
+  judgment_sha: f03e204f877fb2000d7e36b59a3b54cb01e436939251f119609bf50b6f520c78
+- card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+  judgment_sha: 1b4774945a0351e97b6309022577a7b25ec32034892ac81922fb9db07c2b787a
+- card_id: TDM-E-L2-01-5/ablation/02_市场级调节注入
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-5__ablation__02_市场级调节注入.yaml
+  judgment_sha: 56bd3c579d1c21cbb818b00be3ea6a86a4d4c4c6a2e01446d85ae5d869fa1b87
+- card_id: TDM-E-L2-01/ablation/02_四路等权合成分边际
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01__ablation__02_四路等权合成分边际.yaml
+  judgment_sha: 96cb82de3f0d9521bb678b9749f6586df88e8c01b0713fcfc6e3dc16a4c35119
+- card_id: TDM-E-L2-01/ablation/03_六指数分布选优通道与候选池分位
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01__ablation__03_六指数分布选优通道与候选池分位.yaml
+  judgment_sha: 29dcc7ff6c232556943623eb35bce9d704730a8afee54d4affc7326e1ae64366
+- card_id: TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__ablation__03_象限迁移确认腿与稀有路径护栏.yaml
+  judgment_sha: fa39445721fab94116ba0c61d2d8585cde69a3c5e3c27e3186e54bdcffcd60ec
+- card_id: TDM-E-L2-02-1/calibration/02_RRG象限迁移
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__calibration__02_RRG象限迁移.yaml
+  judgment_sha: 05cfa584733ab914869f93dd2a86979c1339cff2a0919a8df51cb98ca8089c22
+- card_id: TDM-E-L2-04/ablation/02_板块生态三态判定
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04__ablation__02_板块生态三态判定.yaml
+  judgment_sha: 6540551541a408f16c08b90af2554447a9fa129ff8a4df39c4f691965cc8ac45
+- card_id: TDM-E-L2-04/comparison/02_主线合取与单腿双臂
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04__comparison__02_主线合取与单腿双臂.yaml
+  judgment_sha: cd9f5ff20901dc85e15f687149ca69a029aa1773b2d61198bc1a8f70832c17c0
+- card_id: TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-1__calibration__02_水温档读数与月级封顶.yaml
+  judgment_sha: 77096d6674ed1f5e8ddd22fecf10a12296d7bc2707142818b95656d0b7b29ac5
+- card_id: TDM-E-L2-05-2/ablation/02_信号响应三件套
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__ablation__02_信号响应三件套.yaml
+  judgment_sha: 1e18aabf3a03a0f3fa54fd76f4ffc4f6473e3ef9f2ee58ccfbec26c7d13a82b3
+- card_id: TDM-E-L2-05/ablation/02_水温总开关放行比例
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05__ablation__02_水温总开关放行比例.yaml
+  judgment_sha: 10691a16d8e7563c2e26f677660357a5f8dcd392acb9de420bfcb04fd47b87ca

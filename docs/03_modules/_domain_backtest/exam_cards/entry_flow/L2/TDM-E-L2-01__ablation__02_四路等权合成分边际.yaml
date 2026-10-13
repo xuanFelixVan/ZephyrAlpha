@@ -53,6 +53,80 @@ pillars_numeric:
   oos_same_sign: true
 oos_window_ref: *id001
 data_binding:
+  composite_join_rules:
+    registered_by: st-examunlock-20261013
+    registered_at: '2026-10-13'
+    basis_casefile: docs/_working/examunlock_campaign/19_composite_join_probe.yaml
+    executor_note: 执行器当下无复合配方入口（card_binding.classify_card 多表一律 U:multi_table_needs_composite_recipe）；本块＝共键与对齐规则冻结，待横截面回放面（CW-MINELOOP-001，矿考二班域）落地即零二次讨论可跑
+    card_face_declared_join_key_before: false
+    pairs:
+    - left: c1_market.kline_sector_880
+      right: c1_market.sector_constituent
+      tables:
+      - c1_market.kline_sector_880
+      - c1_market.sector_constituent
+      keys:
+      - sector_code
+      alignment: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      pit_rule: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      key_evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+      key_evidence_b: 在册审计读数：236,836 行 / uniqExact(sector_code) / max(update_date)——**日期列是 update_date，月频**（证据 docs/_working/total_command_closeout/review_int_number_audit.md）
+      joinable_now: true
+    - left: c1_market.kline_sector_880
+      right: c1_market.sector_constituent_snapshot
+      tables:
+      - c1_market.kline_sector_880
+      - c1_market.sector_constituent_snapshot
+      keys: []
+      alignment: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      pit_rule: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      key_evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+      key_evidence_b: 查无键面证据（本班不猜）
+      joinable_now: false
+    - left: c1_market.kline_sector_880
+      right: c1_market.sector_state
+      tables:
+      - c1_market.kline_sector_880
+      - c1_market.sector_state
+      keys: []
+      alignment: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      pit_rule: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      key_evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+      key_evidence_b: 查无键面证据（本班不猜）
+      joinable_now: false
+    - left: c1_market.sector_constituent
+      right: c1_market.sector_constituent_snapshot
+      tables:
+      - c1_market.sector_constituent
+      - c1_market.sector_constituent_snapshot
+      keys: []
+      alignment: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      pit_rule: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      key_evidence_a: 在册审计读数：236,836 行 / uniqExact(sector_code) / max(update_date)——**日期列是 update_date，月频**（证据 docs/_working/total_command_closeout/review_int_number_audit.md）
+      key_evidence_b: 查无键面证据（本班不猜）
+      joinable_now: false
+    - left: c1_market.sector_constituent
+      right: c1_market.sector_state
+      tables:
+      - c1_market.sector_constituent
+      - c1_market.sector_state
+      keys: []
+      alignment: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      pit_rule: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      key_evidence_a: 在册审计读数：236,836 行 / uniqExact(sector_code) / max(update_date)——**日期列是 update_date，月频**（证据 docs/_working/total_command_closeout/review_int_number_audit.md）
+      key_evidence_b: 查无键面证据（本班不猜）
+      joinable_now: false
+    - left: c1_market.sector_constituent_snapshot
+      right: c1_market.sector_state
+      tables:
+      - c1_market.sector_constituent_snapshot
+      - c1_market.sector_state
+      keys: []
+      alignment: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      pit_rule: 月频成分侧取严格早于该交易日的最近一次月频行（as-of），日频侧取该交易日行；禁未来泄漏（规则形状＝统筹 03:1x 预签文本，本班未加严也未放宽）
+      key_evidence_a: 查无键面证据（本班不猜）
+      key_evidence_b: 查无键面证据（本班不猜）
+      joinable_now: false
   signal_table: c1_market.kline_sector_880（两路可算面）；c1_market.sector_constituent（结构路，受限）
   signal_column: close, amount（两路）；strength（sector_state，仅 2026 起）
   signal_derivation: >-
