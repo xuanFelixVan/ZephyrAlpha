@@ -133,8 +133,18 @@ use_when: 00:46 起跑的等窗驱动器（detached，pid 见 .runtime/tmp/examc
    另**新增 11_pe_shadow_plan.yaml**（§3.5 未列）——不随袋则收班归档车道即毁掉统筹已批 PE 批（袋 3）的唯一规约成文面；
    它是纯文档、不碰 `calibration_exam.py`，故 §5.0 的"判官零改动"硬时序不被本班自污（袋 3 施工仍未做，交下一班）。
    袋 1 done 已核（`landed_id=0e3835338404508d096a4d671e4a621c15d15a85`）；投影册复位后与 dev `byte_identical`（71112 行）。
-4. 收班**动作次序**（本条写的是次序，不是完成声明；本班按 §3 先投袋再收班，逐条完成后在班账 §五-补 落数）：
+4. 收班**动作次序**（原文保留，勿当已完成读）：
    袋 2 入队 → 袋 2 done → 撤 reaper keep 本班两行（`data/runtime/process_reaper_keep.txt`）→
    写保活 `revoke` 事件（`.runtime/sessions/st-examchief-20261014/keepalive.jsonl`，字面量 `revoke`）→
    `git_commit.py --release-only`（接班时实测 `held_files=[]`，仍走正门留痕）→ 归档车道。
    若袋 2 未 done 而本班会话中断：**勿归档车道**，11/09/10/07 四件只在车道存在。
+   4b. 上条的**执行结果**（本班 05:1x 逐条实测，全账在班账 §五-补 第 11 条）：
+   袋 2 首投 `q-…-0002` **dead**（袋基取车道 HEAD 早于自家袋 1 ⇒ base_blob=None ⇒ 00_ledger 被判"双侧皆改"），
+   修因后重投 `q-…-0003` **done**＝`landed_id=f6966fa18b1b`（commit 内恰七件零他班件；dev vs 车道 7/7 行级多重集全等，
+   四件 sha 差＝纯 CRLF/LF 归一）；主区 index 回退弹按 §9.4 `git add` 复位并留机证；
+   reaper keep 本班两行已撤（387→385 行，CAS 正门，写后按字节读回自证）；保活 `revoke` 已落 `keepalive.jsonl` 末条
+   （`read_active_keepalive`→None）；`--release-only` 得 `released=7 denied=0`；归档前扫车道 14 枚脏件对 dev 逐枚等值＝零独有残留。
+   **仍开的两条给下一班/统筹**：①死信 `q-…-0002` 经 `dead-archive --content-level` 判 `content_held=1` **未销账**
+   （袋字节 CRLF vs 落地 blob LF，LF 归一后 7/7 全等＝实质已 landed、形式判据不认；改该判据属死信放量班门位，本班不自改）；
+   ②**袋 3＝PE 止血闸未施工**（§5.0 的硬时序前置"袋 2 done"现已成就，可动工；规约见 `11_pe_shadow_plan.yaml`，
+   验收四条在其 §4、自动回退三条在其 §5，不碰 PA/W-1/W-3 数值面）。

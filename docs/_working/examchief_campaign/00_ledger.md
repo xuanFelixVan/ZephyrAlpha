@@ -209,6 +209,32 @@ D8 的放行判据机械式：象限一致率 <0.90 或 日截面占比差最大
     （`PG row: RealDictRow({'entry_key': 'ruling_id=…520', 'version': 1, 'updated_by': 'st-examchief-20261014'})`）；
     其间本班自己写坏过一次（`chr(35)` 拼接漏掉"裁定"两字 ⇒ 查询返回 None），当场发现、补回、二次跑通——如实登记不抹。
     改写后同一自扫 **passed=True**。520 号在 PG 真源的实查＝`REG-RULING-001` 现有 510–521 连续在账，`ruling_id=…520 / version=1 / updated_by=st-examchief-20261014` 命中在案。
+11. 收班与落地账（本班 05:1x 实测；**本节由袋 2B 携带**，其上一袋 `q-20261014-st-examchief-20261014-0003` 已落地）：
+    - **首投 dead**：`q-20261014-st-examchief-20261014-0002` 落地判 `[landing] 非注册表族件双侧皆改真冲突: 00_ledger.md`。
+      修因＝**袋基不是内容**：`git_commit.py --enqueue` 的 base_head 由 `resolve_base_head(车道)` 取＝车道 HEAD `b05345f8`
+      （早于本班袋 1 落地点），故 00_ledger 的 `base_blob=None`，而 dev 现值已含袋 1 的 222 行（blob `cc4e39c5`）
+      ⇒ 落地器把"我自己袋 1 的落地"读成 dev 侧改动＝双侧皆改。这条是 §3.3"袋基核验"的**新形态**（当时测的是快进被挡，这次是异步正门取错基）。
+    - **重投走正门三步**：①先用尺本体复现不信报文——`_snapshot_head_regressions` 对同一份袋字节跑三种基底
+      ＝`None`→1 件／`b05345f8`→1 件／`dev 现值`→**0 件**（唯一被报"缺 dev 已在册"的行＝本班自改的旧标题行，§九 已留痕），
+      坐实是基底丢失型假案；②**不写 `[pool-regression-ack:]` 旗**（在册红线：那等于亲手承认要拍回他人落地面，把假阳性固化成豁免面），
+      改喂给闸的输入侧＝`git worktree add --detach .runtime/tmp/examchief/wt_dev dev` 装字节（七件逐枚 sha256 与车道对表全 MATCH）；
+      ③`commit_queue.py requeue … --worktree-root=<scratch> --base-head=<dev> --force`——`--force` 只因复发熔断按"同签名家族计数"判盲投
+      （签名 `other:landing 异常`，窗内 422 次是他班共账，本班 recurrence_count=422），越线理由已写进袋内讯息。
+    - **落地 done**：`q-20261014-st-examchief-20261014-0003` → `landed_id=f6966fa18b1b`，`git log -1 --name-only` 核实
+      commit 内**恰本班七件、零他班件**；逐字读回＝dev 现值 vs 车道字节 **7/7 行级多重集全等**
+      （其中 00/08/09/10 四件 sha 不同＝纯 EOL：袋 CRLF／落地 LF，`only_in_dev=0 且 only_in_lane=0`，非内容损失）。
+    - **主区暂存区回退弹已复位**：落地后主区 `git status` 对自家七件报 `MM`／`D `（index 停在袋 pre-image：
+      00_ledger index blob `cc4e39c5`＝本 commit 父版本、五枚新件 index 无条目＝父版本也不存在）⇒ 判＝**纯回退弹、零他人独有行**，
+      按宪法 §9.4 `git add` 刷成 HEAD，机证 `.runtime/tmp/examchief/evidence/main_index_stale_evidence.json`（随 TTL 退役，结论已在本文）。
+    - **死信四态分诊（当日不隔夜）**：`dead-archive --content-level --session st-examchief-20261014 --days 0` 判
+      `archived=0 content_held=1`＝**本班 -0002 未销账**。归因实测＝袋 blob sha1 对 dev 现值 4/7 不等，
+      而这 4 件 LF 归一后与落地 blob **全等**（`lf_norm_equal=True` 7/7）＝内容级实质已落地、形式判据不认 EOL。
+      本班不自改该判据（改尺属死信放量班/统筹门位），只把读数摊在册上。
+    - **收班**：reaper keep 两行已撤（`process_reaper_keep.txt` 387→385 行，走 CAS `safe_write_text`；
+      两拒一写——首两次 `StaleWriteRefused` 是本班把 base 算成 raw bytes 而工具按 `read_text` 的 LF 归一口径算 hash，
+      第三次通过；写后 `verify_failed` 同属 CRLF↔LF 口径差，**按字节读回实测 385 行／CRLF 保留／本班两行已无**＝零内容损失）；
+      保活授权 `revoke_heartbeat_keepalive` 已落 `keepalive.jsonl` 末条（`read_active_keepalive`→None）；
+      `--release-only --files <七件>` 得 `released=7 denied=0`；车道归档前已扫**14 枚脏件对 dev 逐枚等值＝零独有残留**。
 
 # 六、残余与转他班（不装完）
 
