@@ -1757,3 +1757,69 @@ python scripts/git_commit.py --session st-mineloop2-20261012 \
   `python scripts/governance/session_takeover_ledger.py --resolve st-minedig2-20261012 --by <接管者> --note <处置结论>`。
   解锁后本班一条命令即续跑（清单与袋文已备好，勿重复劳动）：
   `python scripts/git_commit.py --session st-mineloop2-20261012 --files "$(paste -sd, .runtime/tmp/mineloop2/files_R1code.txt)" --message-file .runtime/tmp/mineloop2/bag_msg_R1code.txt --keep-message-file --allow-multi-domain --enqueue`
+
+### 32.16 更正一处本班先前的半对诊断（四连死真因＝袋基取车道 HEAD 而非 dev）＋接管命中面的假阳性定位
+
+- **更正**：§32.14 把 0024/0025/0026/0030 的死因记为"同一本账被多袋携带"。那是**半因**。
+  实测袋基：`0030 base_head=624cb3d1e3`（= 06:2x 的 dev，投袋时刻 dev 已是 63c2800251），
+  而 `0031 base_head=3d136da494`（新鲜）⇒ **同一件、同一内容，换新鲜基即一次落地成功**。
+  机制：`git_commit.py --enqueue` 把 base_head 记成**车道 HEAD**，车道指针落后 dev 时，
+  仲裁就看到"base→ours 期间 dev 也改过这本账"＝双侧皆改，非注册表族件判真冲突回死信（在册死法
+  lane-base-head-three-way-conflict：解＝让基等于 dev）。
+- 本班动作（无损）：`git -C <lane> reset --soft dev` ＋ `git -C <lane> reset`（mixed，只冲索引）——
+  八件关键文件（两码面＋两测试＋两卡/册＋班账＋01）复位前后 sha256 **逐字不变**（实测打印 `True`），
+  车道 HEAD 由 624cb3d1e3 → 3d136da494 与 dev 同点；随后 `0031`（班账单件袋）done。
+  在册坑再确认：`--soft` 后索引对 dev 呈大量假删除（本班车道 350 → 385 条），
+  故本班暂存**只写显式文件路径**，禁目录形式。
+- **接管命中面的假阳性（值得队列治理班一刀）**：
+  `scripts/governance/session_takeover_ledger.py:165-193 _worktree_dirty()` 用
+  `git -C <那条车道> status --porcelain` 取 dirty_files——这是**对该车道自己的 HEAD 比**，
+  不是对 dev 比。于是"车道指针落后 dev、磁盘内容其实已等于 dev"的文件也被计入命中面。
+  实测本案：`st-minedig2-20261012` 车道的 `card_binding.py` 磁盘 sha256 前缀 `bb14e4c9`
+  与 `dev:` 同值、`test_card_binding.py` 同理（`4b80544a`），**零作者内容**，
+  却仍进 dirty 清单并把本班的码面袋挡死（0032，recurrence 83）。
+  建议修法（改台账不改门语义，方向保守）：`_worktree_dirty` 收完清单后，
+  对每个路径比 `git show dev:<path>` 字节，逐字相等者从 `dirty_files` 移出并记
+  `excluded_dev_identical=<n>` 留痕；真在途成果（字节不等于 dev）一律保留。
+  反向自证：该排除只会缩小命中面，不会放行"他人未落地内容被覆盖"——因为要覆盖的字节
+  与落地面本来就一致。门侧无需改动（其 INVARIANTS 要求判据/命中面变更与台账同批）。
+- **门里已有一条正解，但只有属主能用**：`takeover_pending_gate.py` 的 C11 活性复核
+  （统筹裁定 2026-10-12）——"提交人 sid ＝ 条目属主 sid 且 verdict∈{alive,degraded}"才降级 warn＋留痕，
+  **他班/死会话条目一律照拦**。本班不是该条目属主，故无路可走。
+  统筹 13:3x 裁定"minedig2 心跳活着＝活班不代销"，与台账判死（idle 7984s、心跳末行 exited）并存；
+  若他们确为活班，则最省事的解锁是**他们自己**落/撤该条目（C11 对他们软化），
+  或按上面那一刀把本班这类"零内容假命中"摘掉。
+- 本班拒绝执行的两步（都会造成真内容损失或代签）：
+  ① 把 `calibration_exam.py` 复位成 dev 字节——他们车道该件有 **58 行非空独有内容**
+  （整段 `_forward_face` 函数与其中"多日标的前向面申报位……统筹署名批准"的申报语义），
+  复位＝抹掉一份署名批准的未落地成果；字节已存证 `evidence/deadlane_st-minedig2/`；
+  ② 自签 `--resolve`。
+- 落地序现状（15:1x）：dev 已含 `off_A` 册格、07b `five_state_native_with_ladder`、
+  `preregistered` 与 40 节班账；**只差 `card_binding.py` 一格**，六跑即由监视器 A 自动开考。
+  本班不再重复投码面袋轰炸熔断位（0028/0032 已各计一次），等命中面缩小或属主自解后，
+  一条命令续跑（`.runtime/tmp/mineloop2/files_R1code.txt` ＋ `bag_msg_R1code.txt`）。
+
+### 32.17 追加型热件的投袋铁则：袋基必须晚于"自己上一次同件落地"（0033 死于基太新但不新鲜）
+
+- 反直觉的一处：0033 只带班账一件、内容对 dev 是纯尾追加，仍死于
+  `非注册表族件双侧皆改真冲突`。查袋基：`base_head=3d136da494`（= 14:35 我车道对齐时的 dev），
+  而 0031（同一本账）在 14:4x–15:0x 之间落地，**dev 因此又前进了一次**；
+  于是 0033 的"base→ours"窗口里 dev 侧确实改过这本账（改它的人就是我自己的上一袋）。
+  ⇒ 半因修完还剩另一半：**袋基不仅要"等于 dev 曾经的一个点"，还要不早于该件最近一次落地**。
+- 本班固化的三步（每件追加型热件投前都跑，写死成动作不靠记忆）：
+  ① `git -C <lane> reset --soft dev && git -C <lane> reset`（只动指针与索引，工作树字节不动，
+     投前后按 sha256 逐件复核＝实测八件零改动）；
+  ② 形态自检：`dev 现值 == 车道现值的前缀` ⇒ 本次是**纯尾追加**（在册仲裁只认这个形）；
+     若不是前缀，说明我在中间改了旧行 ⇒ 必须先把改动拆到别的面或改走整档重排之外的路；
+  ③ **同件在飞只允许一袋**：0033 死掉之前我并没有第二本账在飞，但 0031 落地本身就是那次 dev 前进，
+     所以规则补一句——上一袋落地后必须重新做 ①② 再投下一袋。
+- 实测回报（15:2x）：`lane HEAD=1e9794182a==dev`，班账 `dev 1759 行 / 车道 1800 行`、前缀判真＝`True`；
+  本袋（0034）按上述三步投出，内容＝§32.16＋本节。
+- 另记一条**假警报的自我更正**：我在 15:1x 用 `127.0.0.1:8123/9000` 探 CH 连通性，三端口全超时，
+  差点上报"ClickHouse 停了"。走真调用路径后 `DatabaseService.get_clickhouse_conn(role='reader')`
+  返回 `clickhouse_driver.client.Client`，`execute("SELECT 1")→[(1,)]`（0.04s）、
+  `hostName()='zephyr-ch' version()='26.6.1.1193'`、`SHOW DATABASES→c0_meta/c1_backtest/c1_market/
+  c3_fundamental/system`——CH 活着，主机/库名都是我凭记忆猜的（我猜的 `zephyr` 库根本不存在，
+  报"DB 不存在"是**我的尺错**不是环境错）。判据口径：连通性/存在性一律走在册单口与真表名，
+  禁拿 localhost 端口探测当"服务在不在"的证据（在册同型：`config-consumed-by-only-one-code-path`、
+  `zero-hit-ruler-needs-known-positive-control`）。
