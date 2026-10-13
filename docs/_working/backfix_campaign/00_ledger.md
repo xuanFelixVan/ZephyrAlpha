@@ -1289,3 +1289,62 @@ Test-CapacityGuardBreach : 无法将“Test-CapacityGuardBreach”项识别为 c
 - **零面声明**：本班对 `G:\backup`／`F:` 业务面**零写**；未碰 `.runtime/commit_queue` 的 blobs；未改任何判据·阈值·保留线·计划任务·任务时限；未注册或复挂仪器；未杀停任何进程（在飞的 21:07 那发 pid 37684 全程未干预，其执行体指主区 HEAD 字节，本班改动始终在车道内）。`backup.ps1`／测册／本账三件均先 claim 后改；本账为**纯尾追加**（写前 1243 行／8 个 `## ` 节，写后按前缀性质机检通过、零删除）。
 
 - **署名**：adjudicator=st-bakday-20261013（令五白班：甲回退＋结构测判据口径同批改＋第四项前移＋新尺变异自证＋既有红归因与呈报；实效验收待下一发 CH 真跑轮）。
+
+## 第 14② 条入册：06:00 计划任务与 24h 节流"差 4 分钟"的定性＋验收读法（维护六班 st-maint6-20261013，2026-10-13 23:2x 轮·纯尾追加）
+
+统筹补充令（2026-10-13 22:1x）第 14② 条挂给维护六班：定性"06:00:01 计划任务 vs 24h
+节流差 4 分钟"，并把已裁的验收读法入册。实测定性如下——**令面结论成立，但病名与
+机制差一处**，按"留旧案卷、另起一节"口径单列，不改本节上方任何旧叙述。
+
+- **锚点取整轮收尾时刻，不取 CH 腿完成时刻**：`scripts/backup/backup.ps1:1302-1304` 在
+  STAGE 4 内、仅当该轮 CH 状态为 ok 时写 `last_ch_backup_time = (Get-Date)`；节流门读的
+  正是这个键（:642-644，`-not $Force -and ... < 24` 判 skip）。10-13 那发实测：CH 腿
+  完成 01:21:08、整轮收尾 06:04:36（`duration_seconds=19707.2`＝5h28m27s）⇒ 锚点被 CH
+  之后的 vault/轮转腿抬高 **4 小时 43 分 28 秒**。
+- **"差 4 分 36 秒"的实测位置**：state 锚点 2026-10-13T06:04:36+08:00 对次日 06:00:00
+  点火＝elapsed 1435.40 分 < 1440 分，差 **4.60 分**。
+- **机制差（对令面表述的一处更正）**：计划任务 `ZephyrAlpha-DailyBackup` 执行体＝
+  `wscript.exe scripts/launch_hidden.vbs scripts/backup/backup.ps1 -Mode all -Force`，
+  带 `-Force` ⇒ 按 :642 的 `-not $Force` 短路，**06:00 那发根本不受 24h 节流约束**。
+  它不承载 CH 腿的真实原因是**撞锁早退**：06:00 窗两轮（`logs/backup_runlog_20261012_060006.log`
+  ／`logs/backup_runlog_20261013_060004.log`）四行即出，第三行
+  `Another backup is running (holder PID 34004 alive, lock age 5.4h). Exiting.` ＋
+  `LOCK_HELD exit 0`，skip_record 落 `logs/backup_skipped_20261013_060004.json`——持有者
+  正是前一晚 00:36:08 起跑、06:04:36 才收尾的那发长轮。⇒ "06:00 结构性不承载 CH 腿"
+  成立，但病名＝**长轮跨过次日触发点 4 分 36 秒**；节流差只是同一时长在锚点上的
+  另一种读数。受节流的是 force=False 的事件轮：10-13 全天实测＝CH 真跑 1 发
+  （003608）／cadence skip 13 发（143734 起至 230854）／撞锁早退 4 发。
+- **净态与风险面（如实）**：CH 腿功能上仍每日一发（10-13 实测 ok，83.07 GB／926153 文件／
+  226 表／verified=True），但备份年龄峰值＝24h＋一整轮时长；"06:00 计划任务"这个名字与
+  它实际承载的腿不符＝判读易误读，本条要治的正是判读。
+- **验收读法（统筹已裁，在此入册，勿再议）**：`dumps_exposure_min ≤ 5 分钟` 只按
+  **CH 真跑**那发读（chRan 判别位＝下面复核命令 1，沿用本节上方在册尺，不另立二套）；
+  被节流跳过的轮次读数 0.17-0.32 分**不作达标证据**＝假绿陷阱（旧次序在 CH 跳过时
+  天然达标，白班已证）。
+- **复核命令（本班从本节正文抽出、在主区真值上原样跑通，期望值随注）**：
+
+  ```
+  # 1) chRan 判别位（在册命令，沿用本册"验收状态"段）
+  grep -l "ClickHouse dump (incremental): ok" logs/backup_runlog_*.log | tail -3
+  # 2) 锚点对次日 06:00 点火的差额：实测 elapsed_min=1435.40 deficit_min=4.60
+  python -c "import json,datetime,pathlib;s=json.loads(pathlib.Path('data/databases/backup_state.json').read_text(encoding='utf-8-sig'));a=datetime.datetime.fromisoformat(s['last_ch_backup_time']);f=datetime.datetime.fromisoformat('2026-10-14T06:00:00+08:00');print('elapsed_min=%.2f deficit_min=%.2f'%((f-a).total_seconds()/60,1440-(f-a).total_seconds()/60))"
+  # 3) 06:00 轮撞锁正证：命中 1 行
+  grep -c "LOCK_HELD" logs/backup_runlog_20261013_060004.log
+  # 4) 06:00 轮带 -Force 正证（故节流门被短路）：输出 mode=all force=True
+  grep -o "mode=all force=True" logs/backup_runlog_20261013_060004.log | head -1
+  # 5) 锚点被抬高 4h43m28s 的正证：CH 腿 01:21:08 完成 vs 整轮 06:04:36 收尾
+  grep -E "ClickHouse dump \(incremental\): ok" logs/backup_runlog_20261013_003608.log
+  ```
+
+- **处置归属（本班零动码）**：锚点改记 CH 腿完成时刻、或在触发点与节流量之间留安全
+  余量＝改备份判据面，呈备份线按本节读数定策；撞锁早退是既有语义且已留 skip_record，
+  不改。
+- **同册销账一条**：本节上方"候 Owner 裁（本班新增 1 件）"那 9 支红，Owner 令三 v2 第 13
+  条已裁并执行＝走"改测册对齐真实键集"；配套脚本腿（队列 blob
+  d882e1314ade9ab70d0cf6ecc5028e327e881d3bce8f6437280125804c831e00，对 backup.ps1 全史
+  45 版逐版 sha256 比对零命中＝从未落地）判定**不救回**，理由（旧腿要治的病已由
+  Copy-FileShareTolerant／source_missing／share_locked 三条后落地通道替代）与双面自证
+  见 `docs/_working/maint6_campaign/00_ledger.md`。
+- **登记**：st-maint6-20261013（令三 v2 第 14② 条：定性与验收读法入册；裁定归属＝统筹
+  补充令 2026-10-13 22:1x）。本节为纯尾追加——写前 1291 行／9 个 `## ` 节，写后 10 节，
+  前 1291 行字节零改动（改后按 `git show dev:` 前缀差分自证）。
