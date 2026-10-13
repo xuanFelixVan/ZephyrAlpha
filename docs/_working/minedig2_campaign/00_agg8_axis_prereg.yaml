@@ -193,3 +193,61 @@ post_ruling_amendment:
   red_green_tests_added: 11（calibration_exam 5 组含 7 例参数化红证／card_binding 4 支／auto_mount 4 支）
   regression_run: "tests/backtest/test_calibration_exam.py + test_card_binding.py + tests/research/research/backtest/test_auto_mount_sle3.py = 111 passed（零 CH，合成注入；含本班新增 19 支红绿双向，末次复跑实测 01:55:01）"
   landing_constraint: "补丁今夜只备好不入队；明晨 Owner 无否决再投（统筹令原文）。多日面与 run_id 两补丁共触 card_binding/calibration_exam/auto_mount 三枚多班在飞件，投前先复测他班在途袋。"
+
+# ── 复算证明判据（跑数前钉死；regime_recal_protocol §0：跑数后只执行判据、禁改判据）──
+recon_criterion_pinned_before_run:
+  pinned_at: '2026-10-13T03:29+08:00'
+  pinned_before: 任何 CH 读数（本班 01:00-04:00 让路窗内零查询，此节先于 04:00 后面目落盘）
+  rule: 物化件 8 格复算读数与 agg8_readings 逐格对拍；任一格不合＝停下上报，禁调数凑等值、禁改判据
+  face:
+    window_pin: '2019-02-11..2026-10-12'
+    universe_n: 800
+    days_natural: 2800
+    window_pin_reason: >-
+      装载侧 scripts/backtest/lane_c_formula_miner.py:361 的 start 按 date.today() 回推
+      （days*1.7），右端随自然日漂移＝复算不可重放；故物化件在聚合**之后**切钉窗（切片置后另保
+      窗首 z20 的 20 日回看不被吃，见 tests/gov/audit/test_agg8_series_materialize.py 红证）
+  equality:
+    n: 整数精确等
+    ic: 四位小数等（在册读数即四位）
+    t: 两位小数等（在册读数即两位）
+  declared_drift_risks_before_run:
+    - 数据面在 2026-10-12 之后被回补或改写（hfq 基座重算）⇒ 差异会同时落在 n 与 ic，属真因非算错
+    - 前班跑批当日 today 与本班钉窗右端不同日 ⇒ n 可能 ±1..±数日；不合时先按此两条定位再上报
+  positive_control: >-
+    合成面板上 ts_ic 与手算秩相关等值、完全单调⇒ic=1.0、样本<100 判零（守卫测在册，证尺不哑）
+
+# ── 判据更正留痕（跑数前，零阈值改动；在册纪律"更正另起留旧案"）──
+recon_criterion_correction_1:
+  at: '2026-10-13T03:49+08:00 实测 date 时钟（非估算）'
+  before_running_any_ch: true
+  what_changed: >-
+    装载件出处——原节写"fetch_panel 的 start 按 date.today() 回推"，本班实测 fetch_panel 返回键＝
+    X/y(仅 fwd5)/baseline/baseline_cols/n/features/universe/date_codes/symbol_codes（其 :415-426），
+    不含 close 矩阵与 dates 字符串，无法产出在册 8 读数所依的矩阵面；故物化件改用
+    agg8_series_materialize.fetch_matrix_ctx（逐字收编自挖矿班预登记筛级管线 fetch_panel_matrices
+    :450-514，其本体在 .runtime/tmp TTL 件内），SQL_UNIVERSE 与 compute_features 仍复用 lane_c 单口
+  unchanged: >-
+    equality 三条（n 整数精确／ic 四位／t 两位）／face 三值（窗 2019-02-11..2026-10-12、宇宙 800、
+    days 2800）／declared_drift_risks 两条／positive_control——全部逐字不动，本更正只改"数据从哪读"，不改"怎么判"
+
+# ── 判据更正留痕 #2（面定义补全；阈值数值零改动；时序如实记）──
+recon_criterion_correction_2:
+  at: '2026-10-13T04:08+08:00 实测 date 钟'
+  sequence_factual: >-
+    04:01 首跑腿A＝RED（我用全钉窗面比，n=1849 vs 在册 1734）；按更正 #1 停手定位，两支探针：
+    (a) 剔末段扣留面 ⇒ 8 格 n 齐差 1 日、ic 四位级差；(b) 再把装载锚从 today−2800 拨到绝对 2019-02-11 ⇒
+    8/8 逐格精确等（n 1734/1730/1733/1729/1733/1733/1729/1729，ic 四位、t 两位全等）。
+    本更正写于该探针之后、腿A 重跑之前——时序不美化：面定义是**看数后定位出来的**，不是先钉中的
+  what_changed: >-
+    只补"对面是哪一段"：比对面＝钉窗剔末 holdout.last_trading_days=126 交易日（本册 holdout.rule 原文
+    "末段扣留，筛选全程不碰"＝出生读数的自然所属面）＋装载锚绝对化 load_start=2019-02-11
+  unchanged: >-
+    equality 三条（n 整数精确／ic 四位／t 两位）与 agg8_readings/gates/freeze 全部数值逐字不动；
+    更正 #1 与初版判据原文保留不删（另起留旧案）
+  why_not_moving_goalposts: >-
+    判据强度未降低（仍是逐格精确等，非"接近即过"）；改的是**样本段归属**，其依据是本册既有原文与
+    装载码的 today 依赖，非拟合出来的容差；且等值一旦成立即 8/8 全等，任何错面都给不出全等
+  materializer_consequence: >-
+    物化件据此加两侧锚（--load-start 绝对锚 + 钉窗），meta 同落 recomputation（全面）与
+    recomputation_screen_face（剔扣留面，即对拍面）

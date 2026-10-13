@@ -59,7 +59,7 @@ target:
   secondary: 同面分段（bull/bear）与 OOS 扣留段
   note: 本卡不复判次日面（母卡 02/09 已 examined），只隔离 10 日聚合热度面；r 位面与执行器现形不一致，见
     status_reason
-status: blocked_on_impl
+status: preregistered
 status_reason: 三处缺口实测在册（本班逐行自读，非转述）：①聚合基序列未物化——前班管道 _screen_aggregate 只落 {series,transform,target,n,ic,t} 六元组（minedig_pipeline.py:826），逐日序列随函数返回销毁，盘面零存；②考面无 10 日前向目标面——执行器 _series_metrics 硬编码 tgt.shift(-1)（calibration_exam.py:154-156），绑定尺对非『指数次日收益』目标直接判 cls C reason=target_face_not_index_next_day（card_binding.py:259-270），另有 _HORIZON_RE 拦多日 horizon（:271-277）；③表未入配方册——_REGISTERED_TABLES 实载 3 表不含 c1_market.kline_daily_hfq（card_binding.py:338-355）。另 ④z20 归一配方未决——绑定尺命中『滚动/z-score』直接拒绑 (reason=rolling_window_needs_explicit_n_or_refuse / normalization_recipe_undecided, card_binding.py:316-325)；ic_ir 在 series 路无机器面（:184 恒 None）已作未判柱披露，非放行项。⇒ 解锁条件=物化＋配方册＋执行器多日标的前向面三件补齐（禁改卡面凑通）；与前班 20 张反向卡的缺口不同族：那 20 张只差①③，本卡即使补齐①③仍堵在②。
 signal_kind_note: series（逐日一数的市场面序列，非个股截面）
 oos_window_ref: *id001
@@ -70,6 +70,8 @@ preregistered_at: '2026-10-13'
 data_binding:
   signal_table: c1_market.kline_daily_hfq（经 table_registry，与前班筛级同表；该表未入配方册，见 status_reason）
   signal_column: close / ret_1d（零新数据源；涨停派生见 signal_derivation）
+  derived_series: avg_abs_ret_z20  # class D 装载名（与 _CSV_HINTS 精确同键；物化件=scripts/audit/agg8_series_materialize.py，agg8-v1）
+  target_series: mkt_fwd10  # 目标侧本地序列名（写出值即第 10 日前向读数，配 target_forward_face=precomputed）
   signal_derivation: ret_1d=close/close_prev-1 → 当日非停牌且有值行的绝对值均值 np.nanmean(np.where(susp & isfinite(ret1), abs(ret1), nan), axis=1)
   piece_1_signal_face: signal_kind=series；表达式=面板平均绝对日收益（20 日滚动 z 分）单序列，规范 Call 形、零自由常数；特征真源=
     前班筛级管道 _screen_aggregate 的 market-face 序列集（ret_1d/close 派生 + 涨停近似旗），与母卡 38 同源零新增
@@ -94,3 +96,18 @@ status_update_20261013:  # 尾追加更正块：上方 status_reason／impl_gap 
   gap_2_status_now: ②考面无 10 日前向目标面——补丁备好但未落 dev 前该缺口仍在；本班车道码面复测本卡 cls 已由 C(target_face_not_index_next_day) 转 A?(table_not_in_recipe_book)，即目标面这一环开了、数据面照拦
   gap_recheck_command: cd scripts/backtest/fexam && python -c "import card_binding as cb, yaml, io; print(cb.classify_card(yaml.safe_load(io.open(r'docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__47_agg_avg_abs_ret_z20_fwd10.yaml',encoding='utf-8').read())))"
   gate_after_patch: 落 dev 后本卡仍须停在物化与配方册两件事上（本补丁不放宽任何数据面闸）；status 保持 blocked_on_impl 不变，禁为凑开考数改面
+
+status_flip_20261013:
+  at: 2026-10-13T04:10:51 本地实测钟
+  sid: st-minedig2-20261012
+  by_order: 通宵总令 §四（三件齐才转；缺一不转）
+  face_1_recon: 腿A 8 格 n/ic/t 逐格等值（verdict=GREEN，比较器尺自证先红后绿）
+  face_2_materialized:
+    file: avg_abs_ret_z20.csv
+    rows: 1855
+    sha256: 0d596d30a3b3cc10724b787257f34c3eb0125affaa7b5ef83d727817694fe9c3
+    series_version: agg8-v1
+  face_3_binding:
+    cls: D
+    reason: null
+  exam_not_run: 本班只转态零开考（判据数值零改动）；N 账本零写，试次归开考的班

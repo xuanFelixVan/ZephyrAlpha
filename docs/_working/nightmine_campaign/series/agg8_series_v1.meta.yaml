@@ -1,0 +1,165 @@
+series_version: agg8-v1
+files:
+  lu_count:
+    file: lu_count.csv
+    rows: 1860
+    first: '2019-02-11'
+    last: '2026-10-12'
+    sha256: 44bd2854fb445948b1379245b43e3d1ca20a816c2f163cf791d6227966d985d6
+  lu_count_z20:
+    file: lu_count_z20.csv
+    rows: 1856
+    first: '2019-02-15'
+    last: '2026-10-12'
+    sha256: 054150374b49eaddb2c2bd990e77272629cf3c76beba3788266a2fb229c2da76
+  lu_ratio:
+    file: lu_ratio.csv
+    rows: 1859
+    first: '2019-02-12'
+    last: '2026-10-12'
+    sha256: 4d89d627c5d6226bec5b01b0e59cedb3424d451aa9f6f289f7c386e7046120b5
+  lu_ratio_z20:
+    file: lu_ratio_z20.csv
+    rows: 1855
+    first: '2019-02-18'
+    last: '2026-10-12'
+    sha256: 1548557950a2fea94237d875cf33d370c19d37c1698feed900e00b32516336d8
+  avg_abs_ret:
+    file: avg_abs_ret.csv
+    rows: 1859
+    first: '2019-02-12'
+    last: '2026-10-12'
+    sha256: f7e656e8f1913888238d5a5f07c0fa98f5ea252c31be1c97a6fc1ad9bea5c8f3
+  avg_abs_ret_z20:
+    file: avg_abs_ret_z20.csv
+    rows: 1855
+    first: '2019-02-18'
+    last: '2026-10-12'
+    sha256: 0d596d30a3b3cc10724b787257f34c3eb0125affaa7b5ef83d727817694fe9c3
+  mkt_fwd5:
+    file: mkt_fwd5.csv
+    rows: 1855
+    first: '2019-02-11'
+    last: '2026-09-28'
+    sha256: 5c000370cbce2cf87d0e2ff7bb6054ba07f1e8e50587c88cba9812849f8f5cf9
+  mkt_fwd10:
+    file: mkt_fwd10.csv
+    rows: 1850
+    first: '2019-02-11'
+    last: '2026-09-18'
+    sha256: 6314ebb4f845cf2ffca1c4569fcf41126842ad3f98196f7ba99690c3ddbce7c7
+generated: '2026-10-12T20:09:39+00:00'
+sid: st-minedig2-20261012
+sql_free: false
+inputs:
+  panel_loader: 本件 fetch_matrix_ctx（收编自挖矿班预登记筛级管线 fetch_panel_matrices，其本体为 TTL 临时件）
+  reused_single_sources: lane_c_formula_miner.SQL_UNIVERSE＋compute_features（宇宙口径与特征工程零重写）
+  own_sql: SELECT trade_date, symbol_canonical AS s, open, close, turnover, amount
+    FROM {kline} WHERE trade_date >= %(start)s AND symbol_canonical IN %(syms)s ORDER
+    BY trade_date
+  fetch_meta:
+    universe_n: 800
+    load_start: '2019-02-11'
+    load_start_mode: absolute_pin
+    calendar_days_param: 2800
+    rows_dates: 1860
+    window:
+    - '2019-02-11'
+    - '2026-10-12'
+    kline_table: c1_market.kline_daily_hfq
+  table: c1_market.kline_daily_hfq（经 table_registry）
+  universe_rule: 窗内日均成交额 top800（SQL_UNIVERSE 同式）；大票偏置如实披露
+  requested:
+    start: '2019-02-11'
+    end: '2026-10-12'
+    days: 2800
+    universe_n: 800
+    load_start: '2019-02-11'
+  face_pin: 两侧都钉死：装载锚 start=2019-02-11（绝对日期，非 today−days）＋面目钉窗 [2019-02-11, 2026-10-12]。实测原因＝装载按
+    date.today() 回推时挪一日即改掉 top800 宇宙选择，8 格读数全体偏移（n±1、ic 四位级）＝复算不可重放；切片置后同时保住窗首 z20
+    的 20 日回看
+  lu_flag: ret_1d>=0.095（10%/20% 板混池近似，前班已披露）
+  z20: ((x-tail20均值)/(tail20标准差+1e-9)) 截断 ±10，min_periods=5，纯 trailing 无全样本归一
+  target_face: mkt_fwd<h>=nanmean(y_fwd<h> 非停牌行, axis=1)（_proxy 非指数；写出值即第 h 日前向读数，执行器禁二次位移）
+  holdout: 末 126 交易日＝预登记册 holdout 扣留段（冻结卡 OOS，卡面逐张 2026-04-03..2026-10-12）。比对面按该规则剔除扣留段（其
+    rule 原文"筛选全程不碰"），考卷 CSV 仍写全钉窗＝考级要读 OOS 段
+coverage:
+  rows: 1860
+  span:
+  - '2019-02-11'
+  - '2026-10-12'
+  per_column_non_null:
+    lu_count: 1860
+    lu_count_z20: 1856
+    lu_ratio: 1859
+    lu_ratio_z20: 1855
+    avg_abs_ret: 1859
+    avg_abs_ret_z20: 1855
+    mkt_fwd5: 1855
+    mkt_fwd10: 1850
+recomputation:
+  lu_count|level|fwd10:
+    n: 1850
+    ic: 0.0962
+    t: 4.15
+  lu_count_z20|z20|fwd10:
+    n: 1846
+    ic: 0.1039
+    t: 4.49
+  lu_ratio|level|fwd10:
+    n: 1849
+    ic: 0.1023
+    t: 4.42
+  lu_ratio_z20|z20|fwd10:
+    n: 1845
+    ic: 0.1023
+    t: 4.41
+  avg_abs_ret|level|fwd5:
+    n: 1854
+    ic: 0.0828
+    t: 3.58
+  avg_abs_ret|level|fwd10:
+    n: 1849
+    ic: 0.0826
+    t: 3.56
+  avg_abs_ret_z20|z20|fwd5:
+    n: 1850
+    ic: 0.1029
+    t: 4.45
+  avg_abs_ret_z20|z20|fwd10:
+    n: 1845
+    ic: 0.1133
+    t: 4.9
+recomputation_screen_face:
+  lu_count|level|fwd10:
+    n: 1734
+    ic: 0.1161
+    t: 4.87
+  lu_count_z20|z20|fwd10:
+    n: 1730
+    ic: 0.1019
+    t: 4.26
+  lu_ratio|level|fwd10:
+    n: 1733
+    ic: 0.1207
+    t: 5.06
+  lu_ratio_z20|z20|fwd10:
+    n: 1729
+    ic: 0.1001
+    t: 4.18
+  avg_abs_ret|level|fwd5:
+    n: 1733
+    ic: 0.1015
+    t: 4.24
+  avg_abs_ret|level|fwd10:
+    n: 1733
+    ic: 0.1012
+    t: 4.23
+  avg_abs_ret_z20|z20|fwd5:
+    n: 1729
+    ic: 0.1145
+    t: 4.79
+  avg_abs_ret_z20|z20|fwd10:
+    n: 1729
+    ic: 0.1292
+    t: 5.41
