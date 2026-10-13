@@ -1,0 +1,82 @@
+probe: D10 两式对照（一次性探针，留 receipt，不建常驻资产）
+sid: st-mineloop2-20261012
+date: '2026-10-13'
+ttl: task_bound
+completes_when: D10 经 Owner 批文消费后随 MINELOOP-CAMPAIGN 归档
+window_days_requested: 500
+ch_queries: 6  # 本轮（修尺后）6 次；含首轮回废读数的那次共 12 次，见班账 §33.10
+map_table_from_book_args: c1_market.sector_code_name_map
+families:
+- industry_l1
+- industry_ths
+benchmark_used_here: 卡面基准 000300（两式同基准，先隔离公式差异）
+third_divergence: 在册件 docstring 声明其基准=880001.SH（缺失时以全板块均值替代），与卡面基准 000300 不同型 ⇒ 即使公式统一，基准仍须再裁一次
+cross_sectional_share:
+  抽样板块数: 4
+  共同日数: 497
+  横截面share相关_卡面vs工具: .nan
+  卡面share标准差: 0.0
+  工具share标准差: 0.5344
+  卡面share取值种数: 1
+  工具share取值种数: 9
+per_sector:
+- sector_code: 881187.SH
+  共同交易日: 497
+  RS_相关系数_卡面rs_vs工具rs_ratio: 0.488
+  象限一致率_映射一_RRI为慢线: 0.4044
+  象限一致率_映射二_RS为慢线: 0.4044
+  卡面式四象限分布:
+    LEADING: 0.0
+    IMPROVING: 0.0
+    WEAKENING: 0.0
+    LAGGING: 1.0
+  工具式四象限分布:
+    LEADING: 0.31
+    IMPROVING: 0.171
+    WEAKENING: 0.115
+    LAGGING: 0.404
+- sector_code: 881252.SH
+  共同交易日: 497
+  RS_相关系数_卡面rs_vs工具rs_ratio: 0.3013
+  象限一致率_映射一_RRI为慢线: 0.4286
+  象限一致率_映射二_RS为慢线: 0.4286
+  卡面式四象限分布:
+    LEADING: 0.0
+    IMPROVING: 0.0
+    WEAKENING: 0.0
+    LAGGING: 1.0
+  工具式四象限分布:
+    LEADING: 0.382
+    IMPROVING: 0.105
+    WEAKENING: 0.085
+    LAGGING: 0.429
+- sector_code: 880360.SH
+  共同交易日: 497
+  RS_相关系数_卡面rs_vs工具rs_ratio: 0.3889
+  象限一致率_映射一_RRI为慢线: 0.501
+  象限一致率_映射二_RS为慢线: 0.501
+  卡面式四象限分布:
+    LEADING: 0.0
+    IMPROVING: 0.0
+    WEAKENING: 0.0
+    LAGGING: 1.0
+  工具式四象限分布:
+    LEADING: 0.334
+    IMPROVING: 0.095
+    WEAKENING: 0.07
+    LAGGING: 0.501
+- sector_code: 881002.SH
+  共同交易日: 497
+  RS_相关系数_卡面rs_vs工具rs_ratio: 0.4997
+  象限一致率_映射一_RRI为慢线: 0.4205
+  象限一致率_映射二_RS为慢线: 0.4205
+  卡面式四象限分布:
+    LEADING: 0.0
+    IMPROVING: 0.0
+    WEAKENING: 0.0
+    LAGGING: 1.0
+  工具式四象限分布:
+    LEADING: 0.384
+    IMPROVING: 0.115
+    WEAKENING: 0.08
+    LAGGING: 0.421
