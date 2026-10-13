@@ -1,7 +1,24 @@
 ---
-created: 2026-09-14
 ttl: task_bound
+created: 2026-09-14
+gate_selfdoc: GIT-DANGEROUS
+
 ---
+
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：已结案（v4 三发现 F1/F2/F9 修复全部码侧实证在仓、裁定#252 原子入库、击穿现场分支残留实测已清，留 v5 开口项由具名继任 v5 报告接管且判 17/17 PASS）**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - F1 worktree 语法门禁修复：证据=syntax_validation_gate.py 及测试在仓（git ls-files 命中 src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py + tests/.../test_syntax_validation_gate.py），文内实弹复测读数=堵点本 source=worktree_commit 13:17:43 落账、17/17 绿。
+> - F2 HELD-OVERLAP 双轨修复+上游裁定落地：证据=git grep 实测 held_overlap_gate.py 含 _ailocks_other_holders（2 处命中）；裁定#252 实测命中 ruling_registry.yaml L1127；原子提交 a287099285 实测存在（"feat(gov): 裁定#252——lock_files 锁存活=会话存活"）。
+> - F9 不重复施工声明核实：文内指认 st-patmine 29c751b5d7 完成容量门 own-scope 化（他役件，本册仅记录，与 §3 册"已注册他役不阻结案"口径一致）。
+> - 攻击面损害清场：证据=git log 实测攻击提交 8264d62b2d 在册可溯（xt4tmp 样本按裁定#252 附录已被吸收出库）；git branch --list "*xt4*" 实测零命中=session/xt4-red2 击穿现场分支已清、无残留。
+> - 继任链闭环：v5 复测报告在仓（ls 实测 docs/_working/archive/2026-09/redblue/2026-09-15-xtreme-redblue-v5-report.md，入库 commit 02d6a8fb62 读数"裁定#252 全链路 17/17 PASS"），本册 F5/F10"留 v5"开口项有了具名接管且已验收。
+> **⚠️ 未完成（逐条）**
+> - 无（本册工作包=复测+记录+修复批+裁定落地，全部实测闭环；旧章 09-15"未结案 2 条"其一 F7 系"豁免边界由单测覆盖"的被连坐记录非独立工包，其二清库挂起已由裁定#252 附录吸收出库条款覆盖）。
+> **与归档孪生件的裁定**：根面 vs archive/2026-09/c_class_scattered/ 同名件——差异实质：①归档版丢失 frontmatter `gate_selfdoc: GIT-DANGEROUS` 标记（本册列有 git branch -D 等危险命令，无标记触 GATE-SELFDOC 照拦）；②归档版 1 处 `git branch -D` 被洗坏为 U+2011 `git‑branch -D`；正文其余逐字节相同；建议=真身留根面。
+> **核验方式**：全文读（场景对账表+新发现清单+修复批附录+裁定#252 附录+旧章）；git log -1 验 8264d62b2d/a287099285/02d6a8fb62 三哈希真实存在；git grep 验 _ailocks_other_holders；git ls-files 验修复件与测试在仓；git branch --list 实测 xt4 分支零残留；ls 验 v5 报告在档；grep 验裁定#252 在 ruling_registry.yaml L1127；diff 根面 vs 孪生；git log -1 最后改动=2026-10-07（created 字段机械回填批，非内容变动）；HEAD=b05345f8e6
+> **证据等级**：A=修复件、裁定登记、哈希指认、分支清场均命令复现
+> **处置建议**：可归档（archive/2026-10）——建议与 v3 三件套/v5 报告同族归位，归档时保留 gate_selfdoc 标记并防 U+2011 洗坏
 
 > ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
 > **总结论：未结案（仍有待办）。处置=**保留**。**
@@ -72,7 +89,7 @@ ttl: task_bound
   `git rm --cached` 两文件 → 网关提交即可出库（staged-delete 跳过已生效）。
 - F1 击穿文件仅在 worktree 分支 session/xt4-red2（未并回 dev），无主分支损害；
   worktree 未 abort（现场保留供 Owner 复查），确认后 `session_worktree_abort('xt4-red2')` 或
-  删 .aidrafts/xt4-red2 + git‑branch -D session/xt4-red2。
+  删 .aidrafts/xt4-red2 + git branch -D session/xt4-red2。
 - 未跟踪探针 9 件列待删清单移交 Owner。
 
 ## 红蓝 v4 总判定
