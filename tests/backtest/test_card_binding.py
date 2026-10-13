@@ -1396,12 +1396,15 @@ def test_arm_context_refuses_unnamed_level_source():
 
 # ---------- 2026-10-13 挖矿二班：聚合 8 卡走 class D 本地序列路（物化件 agg8-v1） ----------
 def test_agg8_declared_names_are_registered_hints():
-    """正证：8 卡申报的 derived_series/target_series 全部命中 _CSV_HINTS 精确键（禁靠子串误绑）。"""
-    from pathlib import Path as _P
+    """正证：8 卡申报的 derived_series/target_series 全部命中 _CSV_HINTS 精确键（禁靠子串误绑）。
 
+    走查面＝模块自带 CARDS_DIR（有界）。禁写成 `_P(".").rglob("docs/**")`：那会从仓库根
+    下穿 .runtime（队列 blobs 2.7 万＋dead 面）与全部嵌套 worktree——主区实测 45s 不返、
+    车道秒过，同一件两副耗时面孔，卡住的正是本班落地面复跑（2026-10-13 21:4x 实测）。
+    """
     import yaml
 
-    cards = sorted(_P(".").rglob("docs/03_modules/**/*__calibration__4*_agg_*.yaml"))
+    cards = sorted(cb.CARDS_DIR.rglob("*__calibration__4*_agg_*.yaml"))
     assert len(cards) == 8, len(cards)
     for c in cards:
         b = yaml.safe_load(c.read_text(encoding="utf-8"))["data_binding"]
