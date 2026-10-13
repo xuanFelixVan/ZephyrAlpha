@@ -312,94 +312,14 @@ schedules:
     max_instances: 1
     description: "板块状态盘前——T 日 close_final 复制为 pre_open+大盘×情绪偏好重映射（sector_preference，丁线 owner_gate C1 乙档治本供料端）"
 
-    nightly_news_score:
-      cron: "50 8 * * *"
-      executor: default
-      max_instances: 1
-      description: "逐条新闻情绪分日更——news_data 当日增量打分入 news_sentiment_score（近30日缺口自愈，规则法口径单源）"
-
-    # L0 集合竞价高频层：9:15-9:25 每10秒抓取五档盘口（cron 6段：second minute hour day month day_of_week）
-    # 用于主力挂撤单行为分析。间隔从3秒调整为10秒：全量~5200标的 get_full_tick 批量抓取耗时>3s，
-    # 在 max_instances=1+coalesce=True 下 3秒间隔会导致后续触发全部 collapse 为1次（实测仅出1次快照）。
-    # 10秒间隔确保单次抓取完成后再触发下一次，600秒窗口内可获~60次快照，满足主力行为分析需求。
-    # 改用 cron 6 段（含 second）替代 interval trigger，避免 IntervalTrigger 全天每10秒唤醒刷屏日志
-    auction_highfreq:
-      type: cron
-      cron: "*/10 15-25 9 * * 0-4"
-      executor: realtime
-      description: "集合竞价高频层——9:15-9:25每10秒抓取五档盘口快照，用于主力行为分析"
-
-    # L12 另类宏观日频层：工作日 23:35（ECB 参考汇率发布≈北京 22:15-23:15 之后）
-    # L1 上架流水线首个正门槽位（夜班战役台账 §1.5）；假日缺价由保守游标下一班自愈
-    daily_alt_fx:
-      cron: "35 23 * * 0-4"
-      executor: default
-      max_instances: 1
-      description: "另类宏观日频层——ECB 汇率（alt_fx_ecb/frankfurter.app）盘后拉取"
-
-    # L13.5 日终对账档期：15:40 周一至周五（收盘 15:00 + 柜台/经纪商日终批处理窗之后，
-    # 且早于 L4 daily_kline 16:30，使对账结论当日可用于盘后链路）。全流通战役 R-015 排班：
-    # 唯一入口=src/zephyr/trading/recon_runner.py:392 run_daily_reconciliation（日终核对批，
-    # 非自愈 reconciler 环路——宪法 §9.3"reconciler 必须事件触发"约束的是自愈环，本槽位是
-    # 定时事实核对，与 L11 integrity_check 同性质）；盘中持仓对账走 position 事件入口（R-015）。
-    # 注：execution_report 的事件扇出（PositionReconciler.handle_execution_report）属 z-land 实现面，
-    # 本车道只排班+哨兵，不碰其实现。
-    eod_reconciliation:
-      cron: "40 15 * * 0-4"
-      executor: default
-      max_instances: 1
-      description: "日终对账层——recon_runner.run_daily_reconciliation 三账核对（柜台/内部/持仓），产出 execution_report 侧留痕并触发告警"
-
-    # L13 数据断供哨兵层：每日 06:50（表侧 max(date) 停更检测，MOD-L00-004-SS）
-    # 与 L10.7 catchup_guard(05:30 调度侧对账) 分工：本层=表内数据新鲜度（SOP §10.2 停更阈值）。
-    # 诞生背景=股东户数断供两月无人知（事件日期表被 L11 日频口径强制跳过的盲区）。
-    # 含周末运行：停更检测须在周末继续盯（周末断供周一才报=重演两月盲区）。
-    # 2026-09-18 全流通战役 st-ff-sentinel 托管扩权：本槽位同时是 **quality_sentinel
-    # （L11 同族变异巡检：1970 纪元/时区偏移/空段）的排班正门**——宿主
-    # supply_sentinel.run_supply_sentinel -> _run_hosted_quality_sweep ->
-    # quality_sentinel.run_hosted_sweep。为什么不在本文件另开 `quality_sentinel:` 槽位：
-    # scheduler.py:_run_special_schedule 是硬编码白名单（scheduler.py 非本车道可写面），
-    # 新开有名无实的槽位会落到 run_schedule 的"时段 X 无任务"分支后静默返回成功
-    # （scheduler.py:2110）= R-021 假通道。四要素落点与 7 天节奏闸真源见
-    # config/quality_sentinel_tables.yaml 的 wiring 块；停摆总闸=
-    # data/runtime/quality_sentinel.disabled（每次触发实查，即时生效）。
-    data_supply_sentinel:
-      cron: "50 6 * * *"
-      executor: default
-      description: "数据断供哨兵——业务新鲜度/维度切片/行数地板/关键列填充率停更检测（配置=config/data_supply_sentinel.yaml）+ 托管 quality_sentinel 三类变异巡检（配置=config/quality_sentinel_tables.yaml，7 天节奏闸），告警经 Alerter"
-
-
-    # L13.5 交易日历逐日 diff 检查器：每日 07:10（哨兵 06:50 之后）。交易日历×表内日期集合
-    # 逐日差集（补 max-date 原理性失明：tick 09-17 内部洞/stock_basic 09-16 缺日型盲区，
-    # MOD-L00-004-CCC）。随本槽事件触发，无自建常驻进程（宪法 §9.3）。
-    calendar_coverage_check:
-      cron: "10 7 * * *"
-      executor: default
-      description: "交易日历逐日覆盖检查——日频族表逐交易日 diff 缺日/多余日清单（zephyr.data.calendar_coverage_checker，告警经 Alerter）"
-
-    # L14 日循环总扳手自动圈：16:45 周一至周五（日K线层 16:30 落库窗口之后、补下载层
-    # 17:00 之前）。原 MANUAL-ONLY 约束经 Owner 批准解除（2026-09-21，st-dloop-20260921）：
-    # 编排型调用走特殊槽（同 nightly_sentiment/consensus_crosscheck 先例），不入 tasks.yaml
-    # 表构建管线。run_daily_loop(None) 无参=自动解析最新业务日；幂等=全量委托底层模块既有
-    # 闸（prediction_log UNIQUE/台账查重/业务日记号），可安全重跑；零下单（裁定#305 安全态）。
-    # 总闸=data/runtime/daily_loop_master.disabled（每次触发实查，即时生效）。
-    # 周末已由 cron 排除；法定假日空跑由底层幂等闸+数据就绪门（fail-closed）吸收。
-    dloop_post:
-      cron: "45 16 * * 0-4"
-      executor: default
-      max_instances: 1
-      description: "日循环总扳手自动圈——run_daily_loop(None) 全链排班编排（预案/盘中/收盘/结算/拍板，观察记录模式零下单），失败 ERROR 告警经 Alerter"
-
-    # 板块状态管道两槽（st-secbuild-20260923 批2，骨架 v0 §6）：close_final 盘后定格=真源态，
-    # pre_open 盘前消费=T 日定格态复制+偏好重映射。特殊槽编排型调用（dloop_post 同款，
-    # 不入 tasks.yaml）；总闸 data/runtime/sector_state_pipeline.disabled。
-    sector_close_final:
-      cron: "10 15 * * 0-4"
-      executor: default
-      max_instances: 1
-      description: "板块状态定格——sector_state 五成分截面落库（c1_market.sector_state stage=close_final，L2 门三原料供料真源）"
-    sector_pre_open:
-      cron: "15 9 * * 0-4"
-      executor: default
-      max_instances: 1
-      description: "板块状态盘前——T 日 close_final 复制为 pre_open+大盘×情绪偏好重映射（sector_preference，丁线 owner_gate C1 乙档治本供料端）"
+  # [st-cdx-sector-20261013 修复] 以下 nightly_news_score 原被 c3f8e601324（2026-10-09
+  # staged 补投）以 4 空格缩进误嵌为 sector_pre_open 子键——自 10-09 起静默未注册未触发
+  # （注册日志 0 命中实证）；同批误嵌的 8 个头块重复键（auction_highfreq/daily_alt_fx/
+  # eod_reconciliation/data_supply_sentinel/calendar_coverage_check/dloop_post/
+  # sector_close_final/sector_pre_open）已删（惰性副本，头块真源不动）。留证=
+  # docs/_working/condaxis/sector/8_prereg_validation.md §7-4。
+  nightly_news_score:
+    cron: "50 8 * * *"
+    executor: default
+    max_instances: 1
+    description: "逐条新闻情绪分日更——news_data 当日增量打分入 news_sentiment_score（近30日缺口自愈，规则法口径单源）"
