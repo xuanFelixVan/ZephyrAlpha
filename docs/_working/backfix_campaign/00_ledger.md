@@ -1215,3 +1215,29 @@ Test-CapacityGuardBreach : 无法将“Test-CapacityGuardBreach”项识别为 c
 - **关班确认（全部可复算）**：链 8 全在 HEAD——q-0019→`259f097945`、q-0020→`3b99c9c49d`、q-0021→`cac7ac2132`；尺＝`Remove-DatedTree`=4／`Hours 12`=1／旧 powershell 直启 Action=0／`Snapshot start`=1／账本 C0(LF/CR 除外)=0／`AppendAllText` 在 HEAD 第 78 行。班账 **done 15→16、dead 6、零在途**；claim 归零、`held_files=[]`。
 - **零面声明（本段）**：本班杀停进程 0｜退役只动 keep 文本、未新建或复挂任何监听｜未动 `backup.ps1` 与 `CH-OptimizeMerge`/`BackupShadow`/馆册备份与演练四张计划任务｜未碰 `G:/backup` 内容｜blobs 零碰｜state 册零写｜CH 取数 0 次｜他人件零触碰（keep 文件内他班行原样）｜本段纯追加。
 - **署名**：adjudicator=st-backfix3-20261011（关班段：舰队退役与致敬、⑮ 移交包、残余三条、链 8 HEAD 正证复算）。
+
+### 工单⑧三格销账（10-13 00:36 轮真实时长；丙已取时→甲条件成立；st-backfix3-20261011 末段）
+
+- **裁定链**：统筹 02:4x 批"三格两验收＋新方向"，03:4x 裁**丙主甲备**（让本轮跑完取真实时长，若仍小时级则下一发回退 provider 递归删、保留两行日志；乙不裁）。本段即丙的产物。
+
+- **格① 06:00 任务腿（主证版判据，三件齐）**：`2026-10-13 06:00:05 | RUN_START | pid=8496 mode=all force=True script=D:\ZephyrAlpha\scripts\backup\backup.ps1 root=D:\ZephyrAlpha` ⇒ 执行体指主区（**两日 11 支 runlog 逐支命中＝11/11**；尺＝Python 按 `chr(92)` 构串——本班先用 bash grep 数得 **0＝假零**，反斜杠在 shell 与 grep 两层各折一次即其因，属"零命中尺缺正对照"同族第三犯，记此防下一班照抄坏尺）；随后 `Another backup is running (holder PID 34004 alive, lock age 5.4h). Exiting.` ＋ `LOCK_HELD | exit 0 skip_record=logs/backup_skipped_20261013_060004.json` ⇒ 任务腿**跳锁留痕**（**两日累计第 7 枚**同形态 skip json＝实测 10-12 六枚＋10-13 一枚；本班先前写"本机第 7 枚"是把两日面积误记成单日，此处按实测改齐）；state 册四键＝`last_backup_status=ok`／`last_ch_backup_status=ok`／`last_backup_log_verified=True`／`last_backup_time=2026-10-13T06:04:36`；当日报告 1 份 `logs/backup_report_20261013_003608.json`（`duration_seconds=19707.2`，postgres／sqlite／pg_globals／clickhouse **四态全 ok**）。
+
+- **格② 删除提速的真实时长＝3h44m59s ⇒ 甲条件成立**：`Rotation start:` 02:14:02 → `Rotation: removed 1 old snapshot(s): 20260928` 05:59:01；report 侧 `code_backup.rotated=['20260928']`、`failures=0`、`hardlinked=46819`、`copied=784`、无 space_evicted。
+  - 对账要分两层，否则会把两件事混成一件：对昨日 provider 全程 6h42m44s 是 **1.79 倍**；但昨日可拆为"枚举 2h12m（02:00:50→首个顶层删除 04:13:24）＋删除 4h30m"，**同为纯删除面只快约 17%**（4h30m→3h45m）。⇒ 本次改造**兑现的是"枚举黑盒被消掉＋3 秒即动刀＋起止可读"，未兑现吞吐**。
+  - 移交 prescription（给白班/重呼班，本班零施工）：把 `Remove-DatedTree` 的**函数体**改回 `Remove-Item -LiteralPath $Path -Recurse -Force -ErrorAction SilentlyContinue` ＋原 `Test-Path` 复核——**三处调用位与两行日志一律不动**（最小改动面，可判性不再依赖 cmd.exe 侧证据）；回退单件命令逐字在"工单⑧执行账"段末。若改后仍要提速，方向是"把到期目录改名后再异步删"（把删除移出关键路径），属新工单不属回退。
+  - 过程读数（为何当时判"未兑现"而不停手）：删除期间 `cmd.exe 20660` 元数据计数以约 44 万/分钟推进（120 秒实测 +879,730），却在 03:34 前 80 分钟内**无可测成果**（顶层恒 26 子目录／19 文件、父 mtime 恒 02:14:05、三棵子树两次相隔 150 秒采样一次不差、G 余量不动）⇒ 按"不判卡死、只报未兑现"处理，丙裁定与之完全一致；同时排掉最坏假设：目标顶层**零 reparse point**、源树 47 顶层目录与 `.git`／`src\zephyr` 完好、其余日快照各 35-36 子目录完好。
+
+- **格③ `dumps_exposure_min` HEAD 字节首验＝44 分 26 秒，未达 ≤5 分钟线**：`SQLite dump: 2 databases` 00:36:51 → `DB dumps snapshot done: G:\backup\db_dumps\20261013` 01:21:17。成因定案＝**Stage 2 内的 ClickHouse 增量腿本体 44 分 04 秒**（00:37:04 起，77.4 GiB／926153 文件／226 表，`verified=True`，双写 chbackup_local→chbackup2），dumps 拷贝虽已移到 Stage 3 开头仍排在 CH 之后。⇒ 第四项腿序微调（前移进 Stage 2、dump 产出之后 CH 之前；判据/开关零动、验收线不变）已批，落地归白班或重呼一小袋。
+
+- **`Snapshot start:` 活体首现＝㉘ 扩面兑现**：01:21:17 逐字 `Snapshot start: source=D:\ZephyrAlpha prev=G:\backup\working_vault\20261012`，其后 diff 腿 01:21:17→02:14:02＝**52 分 45 秒**由"不可见黑洞"变可读账。另记一条：全轮 19707.2 秒里这一腿＋轮转腿＝**95%**，3b/3c/3d 仅 5 分 43 秒（05:59:01→06:04:44），链体本身不慢，慢在两处全树遍历。
+
+- **⑫/㉑ 收官与一条"缺席不算失败"预警**：本轮 CH 成功 ⇒ state 首次转 `ok`。但**下一发的 dumps 轮转即使走 ok 支也大概率零输出**：保留线 14 天 ⇒ cutoff=20260929，而 20260928 已被本轮删除、无更小名目录 ⇒ `$rotatedDumps.Count=0` 时该支**不打行**（只有 else 支打 skipped 行）。这不是漏打也不是回归，下一班别据此报红；是否给 ok 支补一行"无到期项"未获裁，本班不动。同轮另证㉑：本轮 CH 已 ok，但本轮自己的 dumps 轮转读的仍是**上一轮**（19:56 那发 20:49 写的）`skipped`——"本轮 ok、轮转照跳"的配对样本已入册并被统筹采信。
+
+- **同族再一起（落地核验时，故在本袋内追补）**：核 index 字节时把标记名**手打成 UTF-8 转义串**，其中"单"的 `E5 8D 95` 误打成 `E5 8D 98` ⇒ 尺再数得 0＝假零；同一尺改用码位程序现构（`''.join(chr(x)...).encode('utf-8')`）即 True。**收口尺法＝凡尺子里含手打的字节/转义/正则串，一律改由程序现构，且必须带一条在册已知命中件做正对照**——本日三班同一形状连踩四次，写这条是给下一班的硬处方而非检讨。
+
+- **标签改齐（本机自纠）**："两批一转执行账"段所写"等办（10-13 两格）"实为**三格**，且三格今已全取——按"更正另起一节留旧案卷"留原样，本段即更正文。
+
+- **尺法自纠第二条（正对照救回的假零，记此防照抄）**：本段复核命令初稿把标记名写成 `chr(9312)` 拼串——9312=U+2460 是"①"不是"⑧"（⑧=U+2467=9319），尺当场数得 0＝**假零**；改用码位直书 `(0x5DE5,0x5355,0x2467,0x4E09,0x683C,0x9500,0x8D26)`，并以两条正对照夹逼（标题行 `### 工单⑧三格销账`=1，全文子串=2——署名行也算），才拿到真口径。**在册教训复证：零命中先怀疑自己的分子**；同一班两天内两把尺各假零一次（bash grep 反斜杠折一次＝上面的第三犯，本条是第四犯），故本段的复核命令一律写成"可直接抽出跑、期望值随附"的形式，不再留口头尺。
+
+- **零面声明（本段）**：本班全程**零施工零干预**——未杀停任何进程（含 cmd.exe 20660 与 powershell 34004，两者已自行收尾）、未清锁（06:04:44 `RELEASE_LOCK` 由链自身所放）、未动 `G:\backup`／`F:` 任何字节、未改判据·阈值·保留线·计划任务·任务时限、未注册/重跑任务、未新建或复挂仪器（退役令在册）、未碰 `.runtime/\commit_queue` 的 blobs、state 册与 CH 均只读；本段纯追加。
+- **署名**：adjudicator=st-backfix3-20261011（末段：工单⑧三格销账、甲条件成立的时长对账与回退 prescription、格③新方向读数、ok 支零输出的防误判预警）。
