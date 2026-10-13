@@ -205,3 +205,24 @@ except Exception as e: print('钉-1 复现:',type(e).__name__,str(e)[:60])
 print('钉-2 复现:',get_registry().table('market_sentiment_panel'))"
 ```
 期望：钉-1 抛 KeyError（未注册），钉-2 返回 `c1_market.sentiment_panel`（该品类 name 字段=币圈宏观情绪面板）。
+
+# 9. 改口（2026-10-14 矿考三班 st-examchief-20261014，Owner 令己：批-A 改口入设计稿）
+
+§4 原文"批-A（可即刻，零门位）：8 张"**保留不删不改**（历史设计面按其当时认知在册）；本节为实测改口面。
+
+实测结论：批-A 8 张里**今日可绑＝2 张**（L1-AGG/calibration/02 已出分；
+L2-02-1/calibration/02b 由本班开出 880 板块截面形后具备绑定条件），其余 5 张各缺一件不同的东西，
+逐卡缺件与 file:line 证据见 `docs/_working/examchief_campaign/07_batchA_remainder_blocker_dossier.yaml`：
+
+| 卡 | 缺的那一件 | 归口 |
+|---|---|---|
+| L1-AGG/03 | 两腿原料 `daban_board_event` 在全冻结窗内 `status:"missing"/obs:0`（史浅 <120 观测）＋两处口径未定 | 丙批跨线连接件 `docs/_working/examchief_campaign/10_crossline_daban_backfill_to_condaxis.yaml`（→条件轴情绪线）＋卡面作者班 |
+| L2-01-5/02 | 四臂对照的机器面（`ARM_BASE_SOURCES` 现仅一支；卡无 NAV 级键⇒判官走单序列路，臂柱落 `unjudged`） | 09 包 §2/§4（并 P0 一次呈批） |
+| L2-01/03 | 六臂需"每臂一行＋跨 run 对照协议"；且 `face_daily` 表级 where 钉死 `symbol='000300'`，一条腿载不了六 symbol | 同上 ＋本班域新装载形（多 symbol 拆列形） |
+| L2-04/comparison/02 | 逐臂净值交付面（04_ 稿 P0）＋880 码剔除旋钮＋费率真源缺 `net_fee` 节（双臂侧把 NaN 当 0＝静默零费） | 04_ 稿 P0 已裁 D1-D4＋09 包 W-3 |
+| L2-02-1/ablation/03b、L2-05-2/ablation/02b | 臂面（未接即按在册 `arm_base_source_unwired` 报错不出分）；后者还缺 emotion 腿的 stage 唯一性断言形 | 09 包 §2/§4.2/§4.4 |
+
+⇒ 设计稿 §0 那句"批-A 8 张现在就能通"的成立条件，实测是**"臂面与净值配对面已在册"这一前置不成立**；
+故本班按 Owner 乙批把 B/C/D 的臂面并入 P0 一次呈批（09 包），并把"批-A 分档"改成
+"按缺件类型分档"（缺数据／缺臂面／缺装载形三档），后续排产以 07 案卷为准。
+本班零改判据面数值、零动 §0-§8 原文、零动他班在途件（该节写法沿 §33.8"更正另起不篡改历史"体例）。

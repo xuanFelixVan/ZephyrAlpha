@@ -155,6 +155,61 @@ PG `exam_result`，与 YAML 试次册不同对象 ⇒ 无尺按该字段分组�
 D8 的放行判据机械式：象限一致率 <0.90 或 日截面占比差最大值 >0.10 ⇒ halt（卡面"先查口径再开考"），
 诊断档 ±5 带宽只回答"差异是不是带宽造成的"，不改本班承接的在册口径。
 
+## 五·补：续跑班 04:2x 实读与结局判定（本段由续跑班 st-examchief-20261014 接班后补，零预写）
+
+**结局＝C（批次未出分），且 08 包 §2 C 给的手跑路径经实测同样不可达——根因是 D8 探针自身的读取形态缺陷，
+既不是数据无源，也不是卡面口径分歧。本班据此不开考、不签任何方向的结论。**
+
+1. 04:01:50 等窗驱动器（pid 40916，本班接班时已退，`tasklist` 查无）唤醒后两步原样落日志：
+   - `drift_r7.py snapshot` **rc=1**，但内容面全绿：分数册 73 行／绑定册无 legs 格 16 条／判官件对 dev `numstat` 空串／
+     分数册与试次册对 dev `lost=0 added=0`；
+   - `d8_rrg_crosscheck_probe.py` **rc=2**，原文 `REFUSED: sector_state 列集里没有 rrg_quadrant，交叉核对面无源（列集=['[', "'", 't', …]）`；
+   - 驱动器按 fail-closed 分支自行结束（日志末行 `D8 未放行（rc=2 decision=''）＝按卡面纪律不开考，只交回执`）。
+   - `evidence/d8_crosscheck.yaml` 与 `evidence/score_run_creds.yaml` **两个文件都不存在**＝回执从未写出（本班 `ls` 实测目录仅有 log／snapshot json／driver.pid／repro 四件）。
+2. 本班 04:24 用 08 包 §2 C 的**同一命令、一字未改**复跑：`snapshot` rc=1、`probe` rc=2，输出与上逐字同
+   （复跑不为改变结论，只为排除"进程根本没跑起来"那一型）。
+3. rc=1 定性＝机械伪影，非判据破：`drift_r7.py:99` 写的是 `raise SystemExit(snapshot() if MODE=="snapshot" else compare())`，
+   而 `snapshot()` 返回 **dict**；Python 对非 int 参数会把 repr 打到 stderr 并以 1 退出
+   （批次日志第 7 行那段被截断的 `{'scores_rows': 73, 'scores_row_shas': […]}` 就是它）。判据本体 `compare()` 返回 int，rc 语义正常。
+   ⇒ R7 四条在册判据（A 判官零差／B only-append／C 无 legs 格不减／D lost=0）在 snapshot 面上无一条被破。
+4. "无源"判定**证伪**（本班独立只读探针，共 4 次 CH 只读，04:22–04:25 均在两个让路窗之外、未用任何 override 旗）：
+   - `SELECT name,type FROM system.columns WHERE database='c1_market' AND table='sector_state'` ⇒ **14 列，含 `rrg_quadrant LowCardinality(String)`**；
+   - 全库 `lower(name) LIKE '%rrg%'` ⇒ 唯一命中就是这一列（表/列/类型三项同帧打印）；
+   - 表体量＝**432,817 行**，`trade_date` 覆盖 **2022-09-01..2026-10-09**；
+   - 正对照＝同进程把同一 SQL 连读 5 次，**5/5 全等 `(14, True)`**，非偶发也非软失败伪装。
+5. 真拒因（行级定位）：探针 `:72` 用 `[str(x) for x in (cols.iloc[0, 0] if len(cols) else [])]` 取列集，
+   而 `ch_query_df` 对 `groupArray(name)` 返回的是 **str**（本班实测 `type=str, len=178`，形如 `"['trade_date','stage',…]"`），
+   `for x in <str>` 逐**字符**展开 ⇒ `"rrg_quadrant" not in col_list` **恒成立** ⇒ rc=2 自拒。
+   ⇒ 该探针在任何数据面下都走不到 `decision:` 那一行，08 包 §2 C 的"decision=proceed 才继续"是**永假前置**
+   （本交接包这一条前提被本班实测证伪，按在册纪律停手上报、不自修尺）。
+6. 本班动作＝**不开考**，三条理由：①08 包 §2 C 明令"勿改尺"，而唯一能让 D8 真跑起来的动作就是改探针读取形态；
+   ②02b 卡面原文（本班逐字复核，`:157-158`）"禁直读 c1_market.sector_state.rrg_quadrant 作信号（那是被测件同族产物，自证循环）；
+   该列仅用作口径一致性的交叉核对（差异 >10% 时先查口径再开考）"——交叉核对拿不到任何读数时，"先查口径"这一步无从做起；
+   ③判据面零自拟：既无 halt 数值也无 proceed 数值，签 pass／fail／halt 中的任何一个都是自拟结论。
+7. 出分面逐字节实测（本班 `bag2_superset_check.py` 现算，非引用他班计数）：
+   `exam_scores_v1.yaml` 3804 行 **byte_identical vs dev**（新增分数行=0）；02b 卡 179 行 byte_identical（`status` 未翻＝未出分）；
+   `trial_ledger_registry.yaml` 369 行 byte_identical（＋1 试次=0）；码面三件（`card_binding.py` 2256／`test_card_binding.py` 1986／
+   `02_binding_book.yaml` 557）与投影册 71112 行全部 byte_identical＝袋 1 已完整落地且车道无回退弹。
+   ⇒ **首张 RRG 分不存在，三张 RRG 卡维持 0 出分。** 08 包 §4 三条披露今日**无读对象**但**不作废**
+   （原文仍在 08 包 §4 与本账 §六 第 10 条：`ic_ir_min` series 路恒不评估／`mono_spearman` 是 10 分位代理／净费与 `min_obs_per_bucket` 无机器面），
+   下一个真开考的班仍须带着这三行读分。
+8. 本班自我更正留痕（按在册"更正另起、留旧案卷"）：本班第一次读 `system.columns` 时曾把输出记成"row-form 也无此列"，
+   随后同一 SQL 同进程 5/5 读到 `True`、且全库 `%rrg%` 扫描独立命中 ⇒ **该初判作废**，以本 §五-4 的数值为准；
+   未覆写他班任何读数，本班零 CH 写操作。
+9. 袋 2 组成的连带变化：§3.5 十枚清单里**出分依赖的三件今日无变更**（分数册／试次册／02b 卡 status），
+   逐字节对 dev 等值＝放进袋里就是空改动，故本班袋 2 实投 7 枚（00/07/08/09/10/11＋mineloop2 05 稿追加 §9），
+   并把 **11 号 PE 规约件并入袋 2**（不在 §3.5 清单内）——理由＝收班要归档车道，而 11 件是统筹已批 PE 批（袋 3）
+   的唯一规约成文面且不落 dev 就随归档一起消失；它是纯文档、不碰 `calibration_exam.py`，
+   故 R7 判据 A"判官零改动"证据链不自污（§5.0 的硬时序针对的是**动判官件**，本班未动）。
+10. 去井号改写留痕（本班动过的唯一文字面，零数值、零判据、零 PG 写）：入袋前一命令自扫＝**直接调门本体**
+    `make_reference_integrity_gate().check(gateway, <袋内七件>)`（主区码面＋车道文件面，只读），初判 **passed=False**，
+    命中形态＝"裁定"＋井号＋数字三连字符共 **5 处**：本账 §八丁批行 1／08 包 §3.5 的**那句禁令自己**（它把字面写出来了）／
+    09 包 §6 一行＋§7 两行。⇒ 按令卡第五条统一改去井号形；09 包 §7 的 PG 复核命令改为 `'ruling_id=裁定' + chr(35) + '520'`
+    拼同一个 entry_key，本班把**正文抽出原样**跑到期望值
+    （`PG row: RealDictRow({'entry_key': 'ruling_id=…520', 'version': 1, 'updated_by': 'st-examchief-20261014'})`）；
+    其间本班自己写坏过一次（`chr(35)` 拼接漏掉"裁定"两字 ⇒ 查询返回 None），当场发现、补回、二次跑通——如实登记不抹。
+    改写后同一自扫 **passed=True**。520 号在 PG 真源的实查＝`REG-RULING-001` 现有 510–521 连续在账，`ruling_id=…520 / version=1 / updated_by=st-examchief-20261014` 命中在案。
+
 # 六、残余与转他班（不装完）
 
 1. 八格 categorical 无机判面（族级 5 枚卡）＝面板机判面缺口，属 04_ 稿 P0 门位族，非本班可自签；
@@ -167,6 +222,28 @@ D8 的放行判据机械式：象限一致率 <0.90 或 日截面占比差最大
 6. 引用陈旧转他班：02 卡面 `data_window_evidence` 的 000300"5284 行"与 §33.9 实测 5,286 行不同值，
    属主案卷在他班，本班只在新卡里追加本班实测行，不改母卡；
 7. 六跑读数与 D1 甲的只读前置（两臂 `oos_ic` 皆 nan ⇒ delta nan 是下游）在册，本班未动判官面；
+9. **批-A 余量四张实测今日一张都不能绑**（逐卡缺件见
+   `docs/_working/examchief_campaign/07_batchA_remainder_blocker_dossier.yaml`）：
+   A=L1-AGG/03 两腿数据面在全冻结窗内为空（C1/C2 源=daban_board_event，活面 `status:"missing"/obs:0`）
+   ＋两处口径未定（raw_value vs percentile；趋势腿两条式）；
+   B=L2-01-5/02 与 C=L2-01/03 是**臂面**（`ablation_arm`），但 `pillars_numeric` 无 NAV 级键 ⇒
+   判官仍走 calibration 单序列路，四臂/六臂对照落在 `unjudged`＝考不到臂；且 C 的六指数腿
+   `face_daily` 承载不了（表级 where 钉死 `symbol='000300'`，无 leg 级过滤）；
+   D=L2-04/comparison/02 是唯一路由站得住的（`dual_arm`），但缺新 `ARM_BASE_SOURCES`、
+   缺 880 码剔除面，且卡面冻的"单边 10bp"**无处落地**——见下列 10；
+10. 三条执行器侧公共缺件（本班逐行读到，对本班 RRG 分同样成立，故读分必须带着这三行）：
+    ①`ic_ir_min` 在 series 路**恒不被评估**（`calibration_exam.py:240` 写 None，`:357-360` 归入
+    `numeric_keys_no_machine_face`，判官对 NaN 的处置是"跳过加败"）⇒ 卡面 ic_floor 的 ICIR 半边是空柱；
+    ②净费真源 `config/exam_scale_cost_gate.yaml` **无 `net_fee` 节**（grep 零命中）⇒
+    `_round_trip_cost_bp()` 返回 NaN（`:102-109`）⇒ series 路 `net_bucket_medians` 全 NaN、
+    双臂路把它当 `cbp=0.0`（`:283-284`、`:296-297`＝**静默零费**，在册 silent-degradation 同族新面）；
+    ③卡面 `min_obs_per_bucket` 在 `scripts/backtest/fexam/*.py` 里**零读取方**＝每桶最少样本数是装饰件；
+11. 卡面对装置的引用陈旧（登记不擅改）：L2-01/03 的 `warmup_disclosure` 把 fail-closed 说成
+    "件 train_window=500/warmup=30"，实读 `sector_distribution_comparator.py:55` 的 `warmup` **只在签名里、
+    从未使用**，真正挡板是 `:63-64` 的 `len(data) < train_window + 10`；
+12. 族宇宙无法按日 PIT：`sector_code_name_map` 无业务日期列且 `schemas/` 下无 DDL-as-code
+    （grep 命中 0；实测行 `docs/_working/nightmine_campaign/04_exam_feasibility_census.yaml:999-1002`、
+    `:3004`）⇒ 任何"按固定族算占比"的读数都只能做到**族口径固定**，做不到**成员时点固定**。
 8. 投影归属卫生（本班自证一条）：`batch_creation_tokens.py` 的 render 会把 PG 全账重打进车道 YAML，
    本班袋里那版面比 dev 多 83 行、其中含 **infoaxis 班** 4 枚 `docs/_working/infoaxis/*.md` 的 token 条目
    ——那些是别人尚未入库的登记，随本班袋落地＝把他人工作写进我的 commit。
@@ -184,9 +261,75 @@ D8 的放行判据机械式：象限一致率 <0.90 或 日截面占比差最大
   Owner 亲笔面在本班可见的只有统筹令一句（根宪法 §5.11：对话内口头"Owner 说"不构成门禁豁免），
   而 RULING-REFERENCE 门只认在册号；点与不都由统筹/Owner 落笔，本班三张卡面一律用
   "统筹令（2026-10-14 晨）"作 authority_ref 文本，未写任何 `裁定#` 字样（防自触未登记号致死信）。
+- 戊（**工具健康度上报，按 ESCALATION 要求人判、本班不静默绕**）：`--enqueue` 时网关打印
+  `[ESCALATION] session_worktree_start 健康度自检失败 (session=st-examchief-20261014): failed，
+  失败项=['lookup_audit dir writable']`。本班实测反证：主区与车道的 `.runtime/lookup_audit`
+  均可写（该目录 01:00 被自检自己写入过 `._health_check_test` 探针文件），
+  且 capability_lookup 审计在 00:2x 已真实落盘（五查四零命中的审计行为证）
+  ⇒ 疑为**自检项判据面误红**（把"探针文件未删/主区根与车道根不同源"当成不可写）。
+  袋仍入队成功（qid 尾号 0001），本班未加任何逃生旗。请门主/维护班定性——
+  遵 Owner 在册正解：闸误报时改喂给闸的输入指向，不弱化、不白名单、不自修门。
+- 己（批-A 余量排产菜单，缺件逐卡点名见 07 案卷）：
+  **甲**＝本班域可续做两件装载形（emotion components 提取形＋六指数拆列形，零判据面）——
+  但做完只解 C 的装载，不解 C 的宇宙对齐与跨臂对照，收益有限；
+  **乙**＝把 B/C/D 的臂面并入 04_ 稿 P0（逐臂净值配对面）一次呈批——**本班认为最治本**：
+  三张卡的判据主体都在臂对照上，单序列通道先天考不到臂（B 的四臂、C 的六臂、D 的双臂净值）；
+  **丙**＝A 卡转数据班回补 C1/C2 事件面后另卡重考。
+  本班建议＝**乙优先**；甲只在乙批下来后作附属件做，避免造出"能装载不能判"的半成品面
+  （统筹此前否掉"建了没卡消费＝半成品"那一型，本班照同一条纪律提这一手）。
+- 庚（**D8 探针读取形态缺陷＝本班 04:2x 实测定性，续跑班不代修、不代签开考**，证据全在 §五-4/5）：
+  事实＝探针 `:72` 把 `ch_query_df` 对 `groupArray(name)` 返回的 **str**（`len=178`，形如 `"['trade_date',…]"`）
+  按元素迭代 ⇒ 逐**字符**展开 ⇒ `"rrg_quadrant" not in col_list` **恒成立** ⇒ rc=2 自拒，任何数据面下都到不了 `decision:` 行。
+  数据面不缺：该列真实存在（`c1_market.sector_state` 14 列含 `rrg_quadrant LowCardinality(String)`；
+  全库 `%rrg%` 唯一命中；432,817 行；2022-09-01..2026-10-09；同进程 5/5 稳定读到）。
+  ⇒ 卡面"先查口径再开考"这道纪律**自始至今从未真正执行过一次**（两个班、两次同命令都停在尺的自拒上），
+  而"看着像执行过"正是最贵的那种失效。菜单（各带代价与可回退，本班不点）：
+  **甲**＝单点修探针读取形态（改按行读 `SELECT name FROM system.columns … ORDER BY position`；
+  判据常数 0.90／0.10 与 ±5 诊断档**一字不动**、卡面引句不动、分数册与判官件不动）→ 重跑 D8 拿真 decision，proceed 才开考。
+  代价＝零资产净增（该件在 `.runtime/tmp/examchief/`，一次性只读、TTL 自然退役、不落库）；可回退＝无对象可 revert。
+  **乙**＝把 D8 交叉核对升为**在册常驻件**（须走能力反查＋大白话简介登记＋净零声明）；
+  代价＝与探针 docstring 首行自陈的"一次性只读、不建常驻面"规约冲突，且新增常驻面要过全资产净零闸——值不值由统筹判。
+  **丙**＝今日不修，三张 RRG 卡随 09 包 P0 一并排，把"开考闸门"当作 P0 的附属缺件登记。
+  本班建议＝**甲**（最小面、当天能拿到真 decision），但**本班不自签**：08 包 §2 C 明令"勿改尺"，
+  而这一行改的正是"是否允许开考"的读法，属跨班裁断；遵 Owner 在册正解＝改喂给闸的**输入指向**、不弱化判据、不白名单、不自修门。
+  不点后果＝RRG 三卡在 P0 批下来之后**照样出不了分**（闸门自己先死），且 §五 这条"尺永拒"的形态会留给下一班重新踩。
+
+# 八、Owner 2026-10-14 批复五件的本班执行账（01:44 令；本班当班办完乙/丙/丁/己四件，戊无可动作）
+
+| 批 | Owner 令 | 本班当班动作 | 落点与实测 |
+|---|---|---|---|
+| 继续 | 04:01 出分→04:20 收口→袋 2，不绕窗 | 分离进程 pid 40916 等窗（日志已证），04:20 一次性收口任务 id `fe2bc1b3-a9fc-49c6-a73a-811fd67abf1b`（跑完自删）；**未用 override 旗** | `.runtime/tmp/examchief/evidence/shift_batch.log` 两行挂起记录 |
+| 乙批 | B/C/D 臂面并入 04_ 稿 P0 一次呈批＋判据面变更汇总表（含三公共缺件）＋甲项并呈 | 出 `09_p0_arm_face_pack_for_approval.yaml`：§1 承接 D1-D4 已裁（不重议）、§2 三卡同缺件论证、§3 五行变更表 W-1..W-5、§4 施工设计、§5 待批五点各给默认与不点后果 | 实测分母（01:5x 全树现算，命令与期望值在 09 包 §7，已逐字实跑对得上）：卡 530 枚／冻 `ic_ir_min` **229**／声明 `min_obs_per_bucket` **334**／桶型不在词表 **402**（缺 type 186＋off-vocab 216）／臂型桶 **120** 枚 38 种 |
+| 丙批 | A 卡数据腿转条件轴情绪线，协调后另卡重考 | 出 `10_crossline_daban_backfill_to_condaxis.yaml`：三条实查事实（原料位/史浅 22 日/活面 `status:"missing"` 摘录）＋要回的三个数＋考卷侧三条后手；另列名一处**口径张力**（调研行说"akshare 仅存 30 日需回补"，终报说"daban=kline 派生可全史重放"＝两条不同路径，走后者须先钉与在产 builder 的一致性对拍）——本班不代拍 | 引用全部经本班 grep 命中后落笔（`condaxis/00_campaign_summary.md:23,38`、`sentiment/1_L1_thermometer.md:20`、`00_inputs/…research.md:180`、`matrix_campaign/rescued_tmp_20261007/probes/explore_out.md:25,36,47`） |
+| 丁批 | 520 号补签，照 515 先例写 adjudicator，随袋正门落账 | 走意图 API 单口 `api.register(REG-RULING-001,"entries",payload)`→`publish_snapshot`（v28）；PG 实查 `entry_key=ruling_id=520 号裁定（PG 侧字面为"裁定"＋井号＋520，本册按令卡第五条去井号形书写，防 RULING-REFERENCE 门自触） / version=1 / updated_by=st-examchief-20261014`。**册面 YAML 不随袋**：本班 render 比 dev 多 64 行、内含 517/518/519 三条他班未入库条目，随袋＝归属篡改（Owner 10-10 明令"重打投影你不做"）⇒ 案卷内一律写"520 号裁定"去井号引用，投影追齐归册主车道 | 附带自报＋已复位：render 曾把 64 行进主区工作树，本班 `git checkout --` 还原（复位前实测该 diff 为 `+64/-0` 纯新增＝未毁任何在途行；留证副本 `D:/tmp_qoder/ruling_registry_render_with_517_520.yaml`） |
+| 戊 | 自检误红已转维护线 | 本班不再动作；不再自修门 | — |
+| 己 | 批-A 改口入设计稿（引 07 案卷） | 在 `docs/_working/mineloop2_campaign/05_composite_leg_face_design.yaml` **尾部追加 §9**（§0-§8 原文一字不动，遵 §33.8"更正另起不篡改历史"）：今日可绑＝2 张，其余逐卡缺件表＋归口；并把"按分档放量"的档改成**按缺件类型分档**（缺数据／缺臂面／缺装载形） | 结构自证：前 207 行与 dev 逐行等值、追加 21 行、lost=0、h2 节数 9→10、frontmatter 仍可解析 |
+
+统筹 02:xx 确认三条入本账：①车道退回险情的处置（字节级复原＋改掉整树快进做法＋写入 08 包）批为"处置满分"；
+②PE 排袋 3 的时序判断批为正确——"复合面零判官改动"是这张分的证据链命门，先改判官＝自污；
+③PE 双触发条件（off-vocab ∧ 真走分位代理）量得对，3 枚 ordinal 假阳避开；
+   23 枚 `event_flag_two_state_contrast` 的"命题是否本就按信号分位判"由统筹**并入 PA 包子问题**随 Owner 晨批
+   （已登记在 09 包 §5 末，本班不猜）；丙的跨线转达由统筹写入条件轴晨班增补，本班不再向他班案卷落行
+   （10 件 §5 末已记状态，防两处成文漂移）。
+
+⚑ 一条自我约束登记：五批里**没有任何一条让本班改判据数值**，本班也没改——
+`09` 包 §3 五行全是"加闸/补面/列名呈批"方向，费率值与 ICIR 定义一律待 Owner 给或在册件既有定义，
+本班不拍数。
+
+# 九、复核命令（每条都实跑过，期望值随命令）
+
+⚑ 编号更正留痕：本节原为"八、复核命令"，本班 02:0x 追加"八、Owner 批复五件执行账"时
+把原标题行当锚点吃掉（在册自犯形态 `edit-append-anchor-consumes-heading` 本班今夜第二次撞，
+第一次是初稿时间标签）；已当场发现并以此编号修复，结构自证见下：
+
+本件相对 dev 的行差实测＝**+55/−1**：唯一被删行是旧标题行 `# 八、复核命令（每条都实跑过，期望值随命令）`，其替代行就是本节现标题（改名不改内容，零信息损失）——袋 2 落地时该 −1 属此因，非回退弹。
+
+```
+cd /d/ZephyrAlpha/.worktrees/st-examchief-20261014 && grep -c '^# ' docs/_working/examchief_campaign/00_ledger.md
+```
+期望：`10`（〇 一 二 三 四 五 六 七 八 九 十节齐，其中"九、复核命令"在位）
 
 
-# 八、复核命令（每条都实跑过，期望值随命令）
 
 ```
 cd /d/ZephyrAlpha/.worktrees/st-examchief-20261014 && PYTHONNOUSERSITE=1 \

@@ -1,0 +1,73 @@
+---
+ttl: task_bound
+title: 矿考三班·PE 止血闸实施规约（桶型口径代理披露，warn-only/shadow 7 天，零数值）
+created: '2026-10-14T02:10:00+08:00'
+sid: st-examchief-20261014
+family_id: MINELOOP-CAMPAIGN
+ruling_basis: 统筹令 2026-10-14（"PE 批，warn-only/shadow 起步……7 天观察后再议 enforce；PE 先于 PA 不冲突"）
+completes_when: 10-21 观察期满且 §5 判据齐 ⇒ 议 enforce；或任一回退条件触发即 revert
+depends_on:
+  - docs/_working/examchief_campaign/09_p0_arm_face_pack_for_approval.yaml（W-4/PE 原始条目）
+  - docs/_working/vocab-consolidation shadow 先例（根宪法 §5"flag 下放＝shadow 制≥7 天＋自动回退判据"）
+---
+
+# 1. 这条闸要说什么（大白话）
+
+判官算 `mono_spearman` 时只会"把当天那条曲线自己切成 10 段比大小"。
+**卡面冻的如果不是十分位/五分位那种切法（例如"八格象限迁移"、"两态对照"），这个数就不是卡面要考的东西**——
+但它现在照样进 verdict 面，且不留一句说明。本规约只补这一句说明，**不动任何判定**。
+
+# 2. 落点与形状（唯一处，warn-only）
+
+- 文件：`scripts/backtest/fexam/calibration_exam.py`，函数 `_unjudged_pillars`（它本就是
+  "这一分只代表哪些键"的披露面，`calibration_exam.py:344-372` 实读）。
+- 新增一个披露键（建议名 `numeric_keys_bucket_caliber_proxy`），命中时值为：
+  `{"buckets.type": <原文型名>, "n_buckets_used": <实跑桶数>, "mono_spearman": "按信号值分位分桶的代理读数（非卡面冻的格）", "mode": "warn_only"}`。
+- **触发条件两合（缺一只吵）**：①`buckets.type` 不在 `_BUCKET_TYPE_N` 词表且不匹配 `quantile_<n>`；
+  ②且本次真的走了分位分支——用现成可观测量表达：信号唯一值数 > 实跑桶数
+  （`_bucket_response` 的 ordinal 分支在 `nunique() <= n_buckets` 时是按**卡面冻的档值**分桶的，
+  那条路径不是代理，不该报）。
+- 硬约束：**不进 `fails`、不改 verdict、不改任何数值、不加阈值**；warn-only 期间该键
+  与 `numeric_keys_no_machine_face` 同级，属"只可能披露不可能改判"。
+
+# 3. 为什么要加第二个条件（本班实测出来的，不是想当然）
+
+在册 73 行／54 枚已出分卡里，桶型不在词表的有 **29 枚**，类型分布：
+`event_flag_two_state_contrast` 23／`ordinal` 2／`arm_matrix` 2／`ordinal_bucket` 1／`dim_pair` 1。
+其中 **3 枚 `ordinal*`** 的信号是少数离散档值 ⇒ 走的是 ordinal 分支，读数本身就落在卡面冻的档上。
+若只按条件①报，这 3 枚就是**假阳**——warn 面一旦吵，七天后议 enforce 时判据就不干净。
+（同族在册教训：`silent-degradation-looks-like-not-triggered`／`zero-hit-ruler-needs-known-positive-control`。）
+
+# 4. 配对测试（gate＋自家测试同批，合法）
+
+1. **T1 warn-only 不改判**：同一卡两次跑判官（一次改前一次改后）⇒ `outcome` 与全部数值列逐位等值，
+   新行仅多该披露键。红证形态＝若有人把披露接进 `fails`，此证必红。
+2. **T2 词表内卡不报**：`buckets.type: quantile_decile` 的卡 ⇒ 该键不出现。
+3. **T3 ordinal 分支不报**：桶型 off-vocab 但信号只有 4 个离散档值（模拟 L1-AGG/02）⇒ 该键**不出现**
+   （钉住 §3 那 3 枚假阳）。
+4. **T4 连续代理必报**：桶型 off-vocab 且信号连续（模拟 RRG 02b 的占比差序列）⇒ 该键出现且 `mode=warn_only`。
+
+# 5. 自动回退判据（shadow 制的硬前置）
+
+- 回退触发任一条即 `git revert <PE commit>`，不议不改：
+  R-a 任何在册 73 行的 `outcome` 或数值列变化（零漂移重放跑出非空 diff）；
+  R-b T1 红（warn 被接进判定路径）；
+  R-c 观察期内该键出现在 **ordinal 分支**行上（假阳复现）。
+- enforce 议点（10-21 之后，须再批，不在本规约授权内）：把该披露改为进 `fails`，
+  即"桶型不在词表且走分位代理 ⇒ 该柱不可判"；届时影响面实测＝29−3＝**26 枚已出分卡**（其中
+  `event_flag_two_state_contrast` 23 枚是大头，须先确认它们命题是否本就想按信号分位判——
+  这是 enforce 前唯一的开放问题，本班现在不猜）。
+
+# 6. 时序硬约束（为什么本班现在不动判官件）
+
+**04:01 的首张 RRG 分必须先出完、且袋 2 落地，再动 `calibration_exam.py`。**
+理由：本班 R7 零漂移自证器的判据 A＝"判官件对 dev 零差"，它是"复合面产出日频序列即判官零改动"
+这条主张的唯一证据（矿考二班 §33.9 首次拿到实物证明，本班 880 形要复用它）。
+若先改判官再出首分，那张分的"零判官改动"证据链就自污——这正是 09 包 §3 W-1..W-5 里
+本班反复拒绝的"把改动混进别人的读数"形态。⇒ PE 实施＝**袋 3**，排在袋 2 done 之后。
+
+# 7. 净零声明
+
+不新建模块、不新建配置节、不新建 gate；shadow 旗用件内常量（注释带本规约路径与批文日期），
+根宪法 §5 的 shadow 制时限（≥7 天）与自动回退判据齐备＝不新增豁免面；
+观察期台账行由分数册自身承载（该披露键即台账面），不另立清册（§9.5 禁手工静态清单）。

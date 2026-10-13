@@ -1,0 +1,71 @@
+---
+ttl: task_bound
+title: 矿考三班·丙批跨线连接件（L1-AGG/03 的 daban 数据腿 → 条件轴情绪线）
+created: '2026-10-14T01:56:00+08:00'
+sid: st-examchief-20261014
+family_id: MINELOOP-CAMPAIGN
+ruling_basis: Owner 2026-10-14 批复"丙批·跨线连接"（A 卡数据腿转条件轴情绪线，协调后另卡重考）
+completes_when: 情绪线确认接回补并给出回补后观测数（≥120 日）→ 本班/下一班据其另起版本卡重考 A 命题
+depends_on:
+  - docs/_working/examchief_campaign/07_batchA_remainder_blocker_dossier.yaml（§2 A 卡阻塞实测）
+  - docs/_working/condaxis/00_campaign_summary.md（P2 情绪线"深史翻案（daban=kline 派生可全史重放）"）
+  - docs/_working/condaxis/sentiment/1_L1_thermometer.md（C1 史浅降档现场与原料位）
+  - docs/_working/condaxis/00_inputs/2026-10-13-sentiment-output-contract-research.md（回补路径与实查行数）
+---
+
+# 1. 一句话（大白话）
+
+考试卡 A 要用"涨停温度、晋级率"两条腿，这两条腿的原料表只存了 22 个交易日的近期数据，
+而考卷要考 2019-2025——**没米下锅**。条件轴情绪线已经证明这张原料表其实是从日线价量**派生**出来的、
+可以整段重放，所以这块米该由他们那条线种出来，考卷这边等着换米重考。
+本班不自己另起一台重放器（那会是第二真源）。
+
+# 2. 交接给情绪线的三件事实（全部实查，非转述）
+
+| # | 事实 | 出处 |
+|---|---|---|
+| F-1 | A 卡两腿的原料同为 `c1_market.daban_board_event`：C1 涨停温度（0.4 触板家数+0.3 最高连板+0.3 封住率）与 C2 晋级率；该表 `FINAL 1,906 行 / 22 交易日`（2026-09-01..10-12），`<120` 观测 ⇒ C1/C2 长期 `insufficient` | `docs/_working/condaxis/sentiment/1_L1_thermometer.md:20`；`docs/_working/condaxis/00_inputs/2026-10-13-sentiment-output-contract-research.md:180` |
+| F-2 | 情绪线已完成**深史翻案**："daban=kline 派生可全史重放"，且双表已补齐 22→24 交易日（09-25=中秋休市如实修正）；重放排期挂在 sentiment 侧，须 Owner 夜间窗 | `docs/_working/condaxis/00_campaign_summary.md:23`（P2 情绪线行）＋`:38` 追加项⑤"daban 深史重放排期（须 Owner 夜间窗）" |
+| F-3 | 卡面活读数为证（不是推测）：`{"name":"C1_limitup_temp", "raw_value":null, "percentile":null, "status":"missing", "obs":0, "source":"daban_board_event", "note":"sub_missing=['touched','max_consec','seal_rate']"}`、`{"name":"C2_promotion", ..., "status":"missing", "obs":0, "source":"daban_board_event(self-join)"}` | `docs/_working/matrix_campaign/rescued_tmp_20261007/probes/explore_out.md:25,36,47` |
+
+⚑ **一处本班据实提请注意的口径张力（不裁，交情绪线定）**：F-1 引用的调研行把回补路径写成
+"候选源=akshare 涨停池族，源侧仅存近约 30 交易日 ⇒ 深史需回补"，而 F-2 的翻案结论是
+"daban=kline 派生，可全史重放"（即**不需外部源**）。两条路径不同型，
+若走 kline 派生重放，须先钉**派生式与在产 builder 的一致性对拍**（否则回补出来的 C1/C2
+与现产 22 日段不同口径＝把考卷的两段窗混成两把尺）。本班不代拍这一手，只列名。
+
+# 3. 考卷侧需要情绪线回的三个数（回补完成后）
+
+1. 回补后 `daban_board_event` 的 `FINAL` 行数与覆盖窗（要能罩住 A 卡 IS 2019-01-04..2023-12-31／OOS 2024-01-01..2025-09-09）；
+2. 该窗内 C1/C2 的 `obs` 与 `status`（须 ≥120 观测方脱 `insufficient`，阈出自 builder `_MIN_OBS=120`，非本班新造）；
+3. 与现产 22 日段的一致性对拍结果（同式重放 vs 在产读数，差异与口径归因）。
+
+# 4. 考卷侧的后手（三条，全部依赖上面的回补，本班今日不做也不预写分数）
+
+- 甲：回补到位 ⇒ 本班/下一班**另起版本卡**（G4-5）重考 A 命题；A 的卡面文字不动，
+  但两处口径未定必须先由卡面作者班补定义（raw_value vs percentile；趋势腿两条式选一，见 07 案卷 §2 阻塞-2/-3）——
+  **这是开考前置，不是本班可自裁项**。
+- 乙：`components` JSON 提取形装载口（本班域，05_ 稿自陈"批-A 里唯一一处新装载形"）可与回补并行做，
+  但做完只解装载，**不出分**（避"能装不能判"的半成品面）。
+- 丙：A 卡的判据对象冲突（卡面主柱是"合成分秩 vs AGG 档序秩"，绑定册单序列通道硬把 r 位换成指数次日收益）
+  已列进 09 包 §3 W-5 呈批，与本连接件并行不互等。
+
+# 5. 转达面（Owner 2026-10-14 令"转条件轴晨班时把这条一并转达"）
+
+**要请他们定的一句话**：`docs/_working/condaxis/00_inputs/2026-10-13-sentiment-output-contract-research.md:180`
+写的是"候选源=akshare 涨停池族，源侧仅存近约 30 交易日 ⇒ 深史需回补"；
+而 `docs/_working/condaxis/00_campaign_summary.md:23` 的翻案结论是"daban=kline 派生可全史重放"。
+**两条路径不同型**——前者是外部源回补，后者是从日线派生重放。
+若走后者，请先钉**"派生重放式与在产 `emotion_index_builder` 的 C1/C2 一致性对拍"**
+（同式在 2026-09-01..10-12 现产 22 日段上逐格等值或差值可归因），
+否则回补出的 C1/C2 与现产段是两把尺，A 卡重考时会把"史浅修复"冒充"信号变化"。
+本班不代拍这一手（拍数＝替他人命题定口径），只列名转达。
+
+⚑ **本班没有写进他们的案卷**：`st-condaxis-20261013` 会话 02:0x 在 registry 里仍 present（活班），
+按纪律"他会话在途件不代修/不在其 files 面留痕"，转达以本件为载体，
+由 Owner/统筹在晨班指令面点给他们；若他们愿我方可补一行到 `condaxis/sentiment/1_L1_thermometer.md`（该件当前无在飞袋命中）。
+
+**转达状态（统筹 02:xx 回执）**：本条已由统筹写入**条件轴晨班增补**，故本班**不再自行向他班案卷落行**
+（同一转达两处成文会各自漂移）。后续若条件轴回补到位，考卷侧后手按本件 §4 三条走，
+仍须卡面作者班先补 §2 的两处口径未定项（raw_value vs percentile；趋势腿两条式选一）。
+

@@ -1,0 +1,145 @@
+---
+ttl: task_bound
+title: 矿考三班·P0 并包呈批件（逐臂净值配对面 ＋ B/C/D 三卡臂面并入 ＋ 判据面变更汇总表 ＋ 八格面板机判面）
+created: '2026-10-14T01:52:00+08:00'
+sid: st-examchief-20261014
+family_id: MINELOOP-CAMPAIGN
+ruling_basis: Owner 2026-10-14 批复"乙批"（并入一次呈批）＋统筹 2026-10-13 D1-D4 已裁在先（本班不重议只承接）
+completes_when: 本包 §5 五点经 Owner/统筹批文后随 MINELOOP-CAMPAIGN 归档；批前零施工（判据面不动）
+depends_on:
+  - docs/_working/mineloop2_campaign/04_panel_replay_face_design.yaml（P0 原设计稿：净值交付面＋17 行最小必改＋R1-R6 红证）
+  - docs/_working/mineloop2_campaign/05_composite_leg_face_design.yaml（复合族入口与批-A/B/C 三档）
+  - docs/_working/examchief_campaign/07_batchA_remainder_blocker_dossier.yaml（本包缺件逐卡实测来源）
+---
+
+# 0. 一句话（大白话）
+
+**要考"改了规则会怎样"，就得让每次改动能各出一条完整曲线放到同一把尺上比。
+现在这把尺只会量"一条曲线"，所以 120 张考臂的卡（含统筹点名的 B/C/D 三张）永远考不到臂本身。**
+本包就是把这把尺补成"两条曲线成对比"，顺带把三处"册子上写了、机器上没装"的门槛补齐。
+
+# 1. 承接面（统筹已裁，本班不重议、不改写）
+
+| 号 | 统筹裁定原文位 | 本班承接方式 |
+|---|---|---|
+| D1 | 甲＝净值路径不产 ic 柱＋显式披露，whipsaw 换算法另案 | 本包 §3 表 W-1/W-5 沿用"显式披露不静默"同一哲学，不新造豁免 |
+| D2 | 甲＋零漂移铁律＝臂级参数进 `simulate` 显式入参，同批重跑 E 道对拍 | §4.2 按臂参数化只走显式入参；零漂移判据沿用本班 `drift_r7.py` 四条 |
+| D3 | 批＝P2 四支日内卡先做一个只读班次核分钟窗与样本面 | 本包**不含** P2/分钟面；日内四支仍等那一次只读核 |
+| D4 | 设计稿与代码本班出、判据面变更汇总成一份变更单走 Owner 批，落地按 M-3 先例补签裁定号 | **本文件即该汇总单**（§3）；号由 Owner 点后才补签（D10 那条已按丁批补签，见 §6） |
+
+# 2. 为什么 B/C/D 三张要并进 P0（不是顺路捎带，是同一块缺面）
+
+实测分母（本班 01:5x 全树 rglob＋yaml 解析现算，非引用他人计数）：
+卡面总数 **530** 枚；桶型形如臂的 **120** 枚，覆盖 **38** 种臂型名
+（`ablation_arm` 32／`arm_matrix` 17／`arm_comparison` 21／`dim_pair` 7／`ablation_set` 5／`arm_x_*`  singleton 族 30 余）。
+
+| 卡 | 臂面形状（卡面原文） | 现执行器能给什么 | 缺的那一件 |
+|---|---|---|---|
+| B `TDM-E-L2-01-5/ablation/02` | 四臂 `{no_adj, mainline_plus10_head, distribution_minus15_all, five_state_full}`，主柱=每件剔除相对基臂的判别面下降 ≥0.01 | 判官按 `pillars_numeric` 无 NAV 级键 ⇒ 走 calibration 单序列路，只判**一条**合成分 | 臂→对照的机器面（`ARM_BASE_SOURCES` 现仅 `exit_sim_baseline` 一支，未接即 `arm_base_source_unwired`） |
+| C `TDM-E-L2-01/ablation/03` | 六臂择优规则，卡面 executor 自陈"每臂一行 series 记录" | 同上；且 `face_daily` 的 where 是**表级** `symbol='000300'`，一条腿载不了六个 symbol | 两支：多 symbol 拆列装载形 ＋ **跨 run 对照协议**（现每跑只写一行，边际/剂量响应柱无对比对象） |
+| D `TDM-E-L2-04/comparison/02` | `dim_pair` 双臂逐日配对，`pillars_numeric` 带 `maxdd_improvement_min: 2.0`/`sharpe_delta_min: -0.10` ⇒ 路由确为 `dual_arm` | 判官会要 `signal_b`（缺即 raise 不出分），但净值面缺交付口 | 逐臂净值交付面（04_ 稿 P0 原物）＋新臂底座来源＋880 码剔除旋钮 |
+
+⇒ 三张卡的共同缺件＝**"臂的结果"今天没有任何在册机器面承载**。把它们各自单独施工＝
+造三套局部对照器（第二/第三判官），正撞 §4.2 内收铁律与 04_ 稿 §2 非目标 2；并进 P0＝一次补齐一把尺。
+
+# 3. 判据面变更汇总表（Owner 要的核心表；每行都带现测证据与可回退）
+
+| # | 缺件 | 实测证据（行号=本班实读） | 受影响面（实测分母） | 拟议改动 | 谁受益/谁受害 | 可回退 |
+|---|---|---|---|---|---|---|
+| **W-1** | `ic_ir_min` 在 series 路**恒不被评估**：`_series_metrics` 直接写 `"ic_ir": None`，判官随把它归入 `numeric_keys_no_machine_face`，对 NaN 的处置是"跳过加败"（只可能放行、不可能记败） | `scripts/backtest/fexam/calibration_exam.py:240`＋`:357-360`（注释自陈同型 panel 路缺陷） | **229 枚卡**的 `pillars_numeric` 冻了 `ic_ir_min`＝卡面 ic_floor 柱的右半边在全库范围内从未被真判 | 二选一（须 Owner 点）：甲＝判官补 ICIR 机判面（`ic_mean` 序列均值 / 其标准差，按 `ic_exam.ic_stats` 既有回键 `icir`，**不新造定义**）；乙＝把这 229 枚的 `ic_ir_min` 逐卡改版本卡显式声明"不判"（改动面大得多且要 229 次 G4-5） | 甲=一张判官补丁救全库；乙=合规但成本 229 倍 | 甲可回退：判官件 revert ＋ 分数册 only-append 旧行不动 |
+| **W-2** | `min_obs_per_bucket` **零读取方**：全 `scripts/backtest/fexam/*.py` grep 零命中；实际唯一挡板是 `len(df) < n_buckets*10` | grep 实测＋`calibration_exam.py:157` | **334 枚卡**声明了它＝卡面写的"每桶至少 N 观测"是装饰件，桶数缺样时判官照判 | 二选一：甲＝执行器在 `_bucket_response` 前加**逐桶样本闸**（不足即该柱置 NaN 并入 `no_machine_face` 披露，fail-closed 不静默）；乙＝按内收判据"零触发零消费→退役"把该字段从卡面模板剔除（**禁**原地改 334 张已冻卡，只禁新卡） | 甲=判据更严可能把现 pass 卡改判（须零漂移重放在册 73 行先量影响面）；乙=账面诚实但门槛真消失 | 甲可回退（闸独立函数）；乙只在生成器侧，不动卡 |
+| **W-3** | 净费真源缺节：`_round_trip_cost_bp()` 读 `config/exam_scale_cost_gate.yaml` 的 `net_fee` 节，**该节不存在**（grep 零命中）⇒ 返回 NaN ⇒ series 路 `net_bucket_medians` 全 NaN；双臂路把 NaN 当 `cbp=0.0` 用＝**静默零费** | `calibration_exam.py:102-109`＋`:230-231`；`config/exam_scale_cost_gate.yaml` 顶层键集实读；双臂侧 `:283-284`、`:296-297` | 所有出分卡（在册 73 行）的"费后"读数为空；**臂/净值卡（120 枚）一旦上净值面就会拿到 0 费** | 甲＝补 `net_fee` 节（费率数值**不新造**，取在册既有档位；本班不拍数字，待 Owner/统筹给值或引在册档）；乙＝双臂侧把 NaN 当 0 的兜底改**显式红**（`cost_face_absent` 不出分），并把"无费率即不得判净值柱"写进判据面 | 甲=有数；乙=无数但不再假绿 | 两者皆可回退；乙不改任何数值 |
+| **W-4** | **八格/非分位桶型无面板机判面**（甲项，Owner 令随包并呈）：`buckets.type` 不在词表者走缺省 10 桶 ⇒ `mono_spearman` 是"信号值十分位序"代理，不是卡面冻的格 | `calibration_exam.py:126-135`（`_BUCKET_TYPE_N` 只有 8 个分位词）＋`:138-149`（缺省 10）；在册同型判例＝绑定册 `L2-02-2/02` 拒绑理由②"分桶协议不可执行／ORDINAL_FALLTHROUGH" | **402 枚**卡的桶型不在词表（其中 186 枚无 `buckets.type`＋216 枚用臂型/状态型/事件型名）⇒ 这些卡的 mono 柱一律是代理读数；RRG 三卡的八格是其中一个具体案例 | 丙＝**面板机判面**：判官接 `(板块×日)` 标签面，按卡面冻的格算次日均值与先验秩相关（即 04_ 稿 P0 的姊妹面）；短期止血＝执行器对"桶型不在词表且卡面未声明代理可用"直接判**不可判**并披露（不弱化、不默认放行） | 丙=真解；止血=先把 402 枚的假绿风险关进披露面 | 止血是加闸，可回退；丙不动任何卡面数值 |
+| **W-5** | 判官路由与卡面命题错配的第二形态：卡把"传导终点/档序"当判据对象，绑定册单序列通道却硬把 r 位换成 000300 次日收益 | `card_binding.py:2014-2019`（tgt 兜底）＋`calibration_exam.py:213`（shift(-1)） | 至少 1 枚实卡（L1-AGG/03，`numeric_face_mapping_note` 自陈机判映射是"合成分秩 vs 档序秩"）；同类风险面＝所有 `secondary` 非指数目标的卡 | 不在本包内自裁——**列名呈批**：要么卡面作者班补声明（走版本卡），要么执行器加"卡面申报的判据对象与 r 位不一致即拒跑"闸 | 现状态下出分＝半命题被静默替换 | 加闸可回退 |
+
+⚑ 本表纪律：**本班不在这五行里改任何阈值数字**。W-1 的"甲"用的是 `ic_exam` 既有 `icir` 定义，
+W-3 的"甲"等 Owner 给在册费率值；W-2/W-4 的止血都是**加闸**不是放宽。
+
+# 4. 施工设计（批准后按此序做；零新建模块，全部扩在册件面）
+
+1. **P0 净值配对面**（照 04_ 稿 §3 原设计，不重画）：`ArmNavFace(net, turnover, gross|None, cost_bp, face_id)`
+   由 `run_backtest_full` 的 `(stats, net)`＋`turnover` 直接装配；判官 comparison 分支按交付面分派；
+   **净值路径不得再扣费**（防双扣，红证 R2）；非 `ArmNavFace`/非 Series 入口加**类型闸**（防单列 DataFrame 静默吞并，R4）。
+2. **新臂底座来源**（B/C/D 三卡所需，接进 `ARM_BASE_SOURCES`）：形状=**按臂产出日频信号序列**
+   （05_ 稿 §2 备注原话），一臂一序列；e/r 双引句仍按在册双臂协议校验，档值全部从绑定册 args 进，
+   Python 不出现档值（红证 R6 沿用）。
+3. **跨 run 对照协议**（C 的六臂必需）：一次跑 N 臂 ⇒ 产出 N 行分数**共用同一 `run_group` 判别位**，
+   边际/剂量响应柱在该组内比对；无组位即拒判该柱（禁跨日期跨班拼行——与 §33.8"两根柱归另一 run"
+   同一条在册读法纪律的机器化）。
+4. **两支装载形**（本班域，随包附属）：emotion_index `components` JSON 提取形（带 stage='close_final'＋
+   同键唯一性断言，先例 `emotion_linkage_exam.py:25,79-80,246-248`）；六指数拆列形（多 symbol，禁求和塌成一条）。
+5. **八格面板机判面**（W-4 的丙项）：判官接 `(板块×日)` 格标签 ⇒ 按卡面冻的八格算次日均值与先验秩。
+
+# 5. 待批点（每条给默认与不点后果）
+
+- **PA**：P0 净值配面对不对 B/C/D 三卡开面？默认＝对（三卡臂面并入本包同批施工）。
+  不点＝120 枚臂型卡继续只能出"单序列代理分"，且 B/C/D 永远 0 出分。
+- **PB**：W-1 取甲（补 ICIR 机判面）还是乙（逐卡声明不判）？默认＝甲，
+  且先做在册 73 行零漂移重放量影响面再动。不点＝229 枚卡的 ic_floor 半边继续空转。
+- **PC**：W-2 取甲（加逐桶样本闸）还是乙（新卡模板剔除字段）？默认＝**甲＋先重放**。
+  不点＝"每桶 60 观测"继续是装饰，桶内少样照判。
+- **PD**：W-3 费率值从哪来（Owner 给在册档 or 引 `cost_gate` 现有档）？默认＝**先加显式红**（乙），
+  有值后再开甲。不点＝任何净值柱都拿 0 费，"费后"两字无意义。
+- **PE**：W-4 止血闸（桶型不在词表且卡面未声明代理 ⇒ 判不可判）要不要今日就上？默认＝上（加闸方向）。
+  不点＝402 枚卡的 mono 柱继续以代理读数进 verdict 面。
+
+**PA 子问题（统筹 02:xx 并入本包，随 Owner 晨批）**：PE 影响面 26 枚里有 **23 枚** 是
+`buckets.type: event_flag_two_state_contrast`——这一族的命题**是否本就要求按信号值分位判**，
+决定 PE enforce 后它们是"改判不可判"还是"照判但带披露"。本班不猜（猜＝替 23 张卡拍口径），
+待统筹/Owner 或该族卡面作者班在 enforce 前定；登记位＝本包 §3 W-4 行的影响面列。
+
+# 6. 本班已做的两件事与边界
+
+- **丁批已办**：D10-甲批补签＝520 号裁定（adjudicator 按令注明"Owner 经统筹转呈批文 2026-10-14 晨"），
+  走意图 API 单口 `register → publish_snapshot(REG-RULING-001, v28)`，PG 实查 entry_key
+  `ruling_id=520 号裁定（PG 字面为井号形，本件按去井号形引用） / version=1 / updated_by=st-examchief-20261014` 为证。
+  **册面 YAML 未随袋**：本班实测 render 现值比 dev 多 64 行，其中含 517/518/519 三条**他班尚未入库**条目
+  ⇒ 随袋＝把他人登记写进本班 commit（Owner 10-10 明令"重打投影你不做"）。
+  故本班案卷内一律以"520 号裁定"去井号引用（在册防自触形态），落账真源＝PG 账本，
+  投影追齐交册主车道。附带自报：render 曾把 64 行写进主区工作树，本班已 `git checkout --` 复位
+  （复位前留证 `+64/-0` 纯新增＝未毁任何人在途行）。
+- **边界**：本包不含 P2/日内分钟面（D3 未做那一次只读核之前不排）；不含任何卡面数值改动；
+  不含 02b 之外的新卡；判官件在批准前一行不改（R7 判据 A 保持零差）。
+
+# 7. 复核命令（本班实跑过，期望值随命令）
+
+```
+cd /d/ZephyrAlpha/.worktrees/st-examchief-20261014 && PYTHONNOUSERSITE=1 python - <<'PY'
+import yaml, glob, pathlib, re, json
+MAP={"quantile_decile","quantile_quintile","quantile_tercile","quantile_quartile",
+     "tercile","quartile","decile","quintile"}
+tot=ir=minobs=notype=proxy=arm=0
+for p in glob.glob("docs/03_modules/_domain_backtest/exam_cards/**/*.yaml", recursive=True):
+    try: c=yaml.safe_load(pathlib.Path(p).read_text(encoding="utf-8"))
+    except Exception: continue
+    if not isinstance(c,dict) or "card_id" not in c: continue
+    tot+=1; pn=c.get("pillars_numeric") or {}; bt=str((c.get("buckets") or {}).get("type"))
+    if "ic_ir_min" in pn: ir+=1
+    if (c.get("buckets") or {}).get("min_obs_per_bucket") is not None: minobs+=1
+    if bt=="None": notype+=1
+    elif bt not in MAP: proxy+=1
+    if bt.startswith("arm_") or bt in {"ablation_arm","arm_matrix","dim_pair","ablation_set",
+        "arm_comparison","arm_comparison_with_vol_strata","cash_constraint_arm","trim_priority_arm",
+        "allocator_scheme","constraint_binding","constraint_layer_hit"}: arm+=1
+print(json.dumps({"cards_total":tot,"ic_ir_min":ir,"min_obs_declared":minobs,
+                  "bucket_type_missing":notype,"bucket_type_off_vocab":proxy,
+                  "mono_proxy_sum":notype+proxy,"arm_shaped":arm},sort_keys=True))
+PY
+```
+期望（逐字）：`{"arm_shaped": 120, "bucket_type_missing": 186, "bucket_type_off_vocab": 216,
+"cards_total": 530, "ic_ir_min": 229, "min_obs_declared": 334, "mono_proxy_sum": 402}`
+
+```
+cd /d/ZephyrAlpha && PYTHONNOUSERSITE=1 python -c "
+import sys; sys.path.insert(0,'src')
+from zephyr.infrastructure.database_service import DatabaseService
+from zephyr.governance.registry_ledger.registry_ledger_ddl import SCHEMA_NAME
+c=DatabaseService().get_depgraph_conn(read_only=True)
+with c.cursor() as cur:
+    cur.execute(f'SELECT entry_key, version, updated_by FROM \"{SCHEMA_NAME}\".registry_entry WHERE registry_id=%s AND entry_key=%s', ('REG-RULING-001','ruling_id=裁定' + chr(35) + '520'))
+    print('PG row:', cur.fetchone())"
+```
+期望：`PG row: RealDictRow({'entry_key': 'ruling_id=〔井号〕520', 'version': 1, 'updated_by': 'st-examchief-20261014'})`
+（`〔井号〕`＝chr(35)＝PG 里 entry_key 的字面字符；本件按令卡第五条写去井号形——直写"裁定"＋井号＋数字会自触
+RULING-REFERENCE 死信（续跑班 04:3x 门本体自扫实测），chr(35) 拼出的仍是同一个 entry_key，读回值不受影响。）
+（= 520 号已在账本真源，册面投影滞后属在册形态，非未登记。）

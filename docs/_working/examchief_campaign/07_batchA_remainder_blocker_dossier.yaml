@@ -1,0 +1,150 @@
+---
+ttl: task_bound
+title: 矿考三班·批-A 余量四卡阻塞案卷（逐卡可绑性实测，零施工零出分）
+created: '2026-10-14T01:20:00+08:00'
+sid: st-examchief-20261014
+family_id: MINELOOP-CAMPAIGN
+ruling_basis: 统筹令（2026-10-14 晨）第 3 条"出首张 RRG 分→继续 D5 批-A 余量（按分档放量）"
+depends_on:
+  - docs/_working/mineloop2_campaign/05_composite_leg_face_design.yaml（批-A 8 张清单与三档排产）
+  - docs/_working/mineloop2_campaign/14_composite_leg_census.yaml（腿面普查唯一计数来源）
+  - docs/_working/examunlock_campaign/22_composite_join_registry.yaml（键面冻结属主）
+conclusion: 余量四张今日**一张都不能绑**——每张缺的东西各不相同，且三类属门位/属主班，非本班可自裁
+---
+
+# 0. 一句话（大白话）
+
+上一班的计划表说"批-A 8 张卡现在就能通"。**实测是：除已出分的 L1-AGG/02 与本班在做的一支 RRG 卡，
+剩下 4 张每张都缺一件不同的东西**——缺数据、缺装载形、缺臂面装配、缺费率参数节。
+本班没有"凑一张算一张"：凑出来的分是假分，考卷上写假分比不写更糟。下面逐卡给缺件与归口。
+
+# 1. 执行器侧三条公共事实（本班逐行读到，非转述）
+
+| # | 事实 | 出处（行号=本班实读） |
+|---|---|---|
+| P-1 | **ic_floor 的一半没有机器面**：series 路 `_series_metrics` 把 `ic_ir` 写成 None，判官随即把 `ic_ir_min` 归入 `numeric_keys_no_machine_face`（"series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败"）⇒ 卡面冻了 ICIR 门槛而它**从未被评估** | `scripts/backtest/fexam/calibration_exam.py:240`＋`:357-360` |
+| P-2 | **净费读数是 NaN 不是零**：`_round_trip_cost_bp()` 读 `config/exam_scale_cost_gate.yaml` 的 `net_fee` 节，该文件**没有这一节**（grep 零命中）⇒ 返回 NaN ⇒ series 路 `net_bucket_medians` 全列 NaN；双臂路 `_arm_nav_metrics` 则把 NaN 当 `cbp=0.0` 用（＝静默零费） | `calibration_exam.py:102-109`＋`:230-231`；`config/exam_scale_cost_gate.yaml`（顶层键无 net_fee）；双臂侧读值 `:283-284`、`:296-297` |
+| P-3 | **`min_obs_per_bucket` 无人读取**：全 `scripts/backtest/fexam/*.py` grep 零命中⇒卡面冻的"每桶至少 60 个观测"这条门槛在考卷侧是**装饰件**（唯一实际挡板是 `len(df) < n_buckets*10`） | grep 实测；`calibration_exam.py:157` |
+
+这三条对**本班已出的 RRG 分同样成立**，所以分数行会自带 `numeric_keys_no_machine_face` 披露——
+本班在班账 §五 读分时必须带着这三行读，不得把"没被判"读成"过了"。
+
+# 2. A｜TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+
+- 形状：`signal_kind: series`、`buckets.type: quantile_decile`、`status: preregistered`；
+  卡面复合块 1 对 pair（`regime_state_anchored`＋`emotion_index`，keys=[trade_date]，`joinable_now: true`）。
+- 冻结构造（卡面 `signal_derivation` 原文）："三腿各取 250 日滚动窗标准化 z 分…合成分 =
+  (z_trend + z_limitup_temp + z_promotion)/3（等权 1/3，禁加权拟合）"。
+- **阻塞-1 数据面不存在（决定性）**：涨停温度腿与晋级腿都来自 `c1_market.daban_board_event`
+  （`src/zephyr/alt_data/emotion_index_builder.py:255-285`），而活面读数里这两支长期是
+  `{"name": "C1_limitup_temp", "raw_value": null, "percentile": null, "status": "missing", "obs": 0,
+  "source": "daban_board_event"}` 与 `{"name": "C2_promotion", ..., "status": "missing", "obs": 0,
+  "source": "daban_board_event(self-join)"}`
+  （实证摘录 `docs/_working/matrix_campaign/rescued_tmp_20261007/probes/explore_out.md:25,36,47`；
+  事件面起点另见 `docs/_working/mineloop_campaign/emotion_lane_status.yaml:36-39`
+  "live rows 65／min_date 2026-09-01"）。卡面冻结窗是 IS 2019-01-04..2023-12-31／OOS 2024-01-01..2025-09-09
+  ⇒ **三腿里两腿在全窗内为空**，`inner_on_keys` 会塌成不可用面，且 fill_policy=none 禁补。
+- **阻塞-2 口径未定（禁自拟）**：卡面只写 `components.C1_limitup_temp`／`components.C2_promotion`，
+  未指明取 `raw_value` 还是 `percentile`——而 C1 的 raw_value 在构造上恒 null
+  （`emotion_index_builder.py:213-231` 的 `_sub_component` 传 None 作 raw），只有 percentile 存在；
+  C2 两者皆有。卡面自己又写"禁双口径混算"⇒ **选哪个＝替卡拍数**，须卡面作者班补定义。
+- **阻塞-3 趋势腿有两个式子**：`signal_column` 写"趋势腿=close/ma60−1 与 ma20/ma60−1"（两条），
+  `signal_derivation` 只有一个 `z_trend` ⇒ 未定。
+- **阻塞-4 判官面与命题面冲突**：卡的主柱是（三腿合成分秩, AGG 状态档序秩）的 Spearman，
+  但绑定册单序列通道把 r 位硬编成 000300 次日收益（`card_binding.py:2014-2019`），
+  且判官对目标做 `shift(-1)`（`calibration_exam.py:213`）——档序不是前向量，位移后语义变。
+  ⇒ 一次跑只能服务"传导保真"或"对次日收益 IC"其中一面，另一面必被换成指数面。
+- **缺装载形**：`components` 是 JSON 明细列，现行两支形都承载不了
+  （`_COMPOSITE_LOADERS=("face_daily","sector_family_panel")`；face_daily 的 `_norm` 会把 JSON 串全列 NaN）。
+  05_ 稿 §4 自陈"emotion components 提取形＝批-A 里唯一一处新装载形"。
+- **缺表登记**：`c1_market.emotion_index` 不在 `_REGISTERED_TABLES`（card_binding.py 里 grep
+  `market_emotion_index` 零命中）；登记时 `where` 必须带 `stage='close_final'`——该表
+  `ORDER BY (trade_date, stage)`（`schemas/categories/market/market_emotion_index.py:44`）。
+- 归口：数据班（事件面回补）＋卡面作者班（阻塞-2/-3/-4 的口径补齐，走新版本卡）＋本班域（提取形＋登记表）。
+
+# 3. B｜TDM-E-L2-01-5/ablation/02_市场级调节注入
+
+- 形状：`buckets.type: ablation_arm`，四臂 `{no_adj, mainline_plus10_head, distribution_minus15_all, five_state_full}`
+  ⇒ **臂面**，不是单序列面。但卡面 `pillars_numeric` 里没有 NAV 级键 ⇒ `pillars_route` 仍判 calibration
+  路（`calibration_exam.py:313-341`、`:665-690`）：跑起来只会把**一条**合成分序列按缺省 10 桶判，
+  四臂对照（`ablation_marginal … >= 0.01`）落在 `unjudged.pillars_prose_keys`＝**考不到臂**。
+- 真要判臂＝`arms`/`arms_variants` 通道，而 `ARM_BASE_SOURCES` 现仅一支 `exit_sim_baseline`
+  （`card_binding.py:1787`；未接线即 `arm_base_source_unwired` `:1970-1978`）＝需要新臂底座来源；
+  且双臂装配要求 e 位引句来自**臂定义域**（`buckets.on`/`frozen_note`）、r 位引句来自**来源域**
+  （`signal_derivation`/`target_source`）——两域白名单见 `scripts/backtest/fexam/arm_protocol*.py` 的
+  `_ARM_DEF_KEYS`/`_PROVENANCE_KEYS`。
+- **口径三分叉（须裁）**：卡面说集中度轴是"涨停/涨幅集中度分位"，`signal_column` 却把市场态底座写成
+  标量 `emotion_index.emotion_index`，而被指为"口径同 L2-04-1 卡"的那张卡冻的是
+  "集中度=Top2 成交额占比（分位化）"＋"二维各三分位切五态"（`docs/03_modules/_domain_backtest/
+  exam_cards/entry_flow/L2/TDM-E-L2-04-1__calibration__02_轮动五态调节分.yaml`）。
+  三种读法互不相同，且卡 B 自身**没有写三分位切点**；而"涨停集中度"的真口径需 `limit_up_pool`
+  （仅 2026-09-01 起 1,426 行，见 L2-04-1 卡内登记）⇒ 字面读法在数据上也堵。
+- 依赖链：强度截面方差底座＝L2-01 的两路合成分，而 `TDM-E-L2-01/ablation/02` 在普查里是
+  `bindable_now: false / blocker_kind: unfrozen_input_keys`（`docs/_working/mineloop2_campaign/
+  14_composite_leg_census.yaml` 的 cards 段）⇒ 上游未绑，下游"共用一次重算"无从共用。
+- 缺表登记：同 A 的 emotion_index（含 stage 陷阱）。
+
+# 4. C｜TDM-E-L2-01/ablation/03_六指数分布选优通道与候选池分位
+
+- 形状：`ablation_arm` 六臂，且卡面 `executor` 自陈"需 exam 侧新写 ≤80 行 arm driver（每臂一行 series 记录）"
+  ⇒ 六臂＝六次跑六行分，而**跨臂对照柱（边际/剂量响应）没有任何在册机制**去比较跨 run 的行
+  （执行器每次只写一行，无跨 run 协议）。
+- **装载形承载不了六指数**：`face_daily` 的过滤式取**表级** `where`
+  （`card_binding.py:970-976`），而 `c1_market.kline_index` 在配方册登记的 where 是 `symbol='000300'`
+  （`:404-408`）⇒ 一条腿只能出一个 symbol；六指数腿需要 `symbol IN (...)` 的**多列形**，
+  现行在册 SQL 常量 `SQL_INDEX_AMOUNT_SUM` 是"求和＋HAVING uniqExact=n"形（`:119-122`），
+  不是"按 symbol 拆列"形 ⇒ 需要一支新装载形（禁把六腿偷偷合成一条，那会改掉卡面的"逐指数独立拟合"）。
+- **装置逐日成本与私有函数**：卡面钉 `_predict_quantiles(close, train_window=500, warmup=30)` 逐指数逐日拟合
+  （`src/zephyr/pf_alloc/core/sector_distribution_comparator.py:54-55` 签名、`:71-72` 逐日 new 一个
+  `QuantileRegressor(solver="highs", alpha=0.01)`）——六条序列合计约 3.5 万次 sklearn 拟合；
+  公开的 `compare_sectors` 不是日频面（它把每条票收敛成 q05/q50/q95 的中位数后只排一次序），
+  所以只能走带下划线的那支私有函数＝**考卷依赖私有实现面**。
+- **卡面对装置的引用已过时**：卡面 `warmup_disclosure` 把 fail-closed 语义写成"件 train_window=500/warmup=30"，
+  实读该件 `warmup` 参数**只出现在签名**（`:55`）从未被使用，真正的挡板是
+  `if len(data) < train_window + 10: return pd.DataFrame(columns=["q05","q50","q95"])`（`:63-64`）
+  ⇒ 卡面这条柱的"代码依据"与代码不符，属**卡面引用陈旧**（登记，转卡面作者班；本班不改卡面文字）。
+- **宇宙不可比**：卡面自证 880 宇宙在 IS 内 266→677→728（+155%），要求"分位阈值类读数的分母族必须按日截面算"；
+  而族宇宙来自 `sector_code_name_map`——该维表**无业务日期列**（`docs/_working/nightmine_campaign/
+  04_exam_feasibility_census.yaml:999-1002` 实测 rows=1198／engine=ReplacingMergeTree／date_col=null，
+  另见同册 `:3004` "无业务日期列（静态维表面，窗判不适用）"），且 `schemas/` 下**无 DDL-as-code 文件**
+  （grep `sector_code_name_map` 命中 0）⇒ 宇宙成员无法按日 PIT。
+- **叠加臂两端宇宙不同**：分布腿给 6 个指数的排序，强度腿给约 600 个板块的截面排序，
+  卡面"两秩算术平均（0.5/0.5）"**从未说明 6 项如何对齐到 600 项** ⇒ 未定，禁自拟。
+- 继承口径：强度分腿"承同车道 ablation/02…不重造不改系数"，而该上游卡 `bindable_now: false`（同上）。
+
+# 5. D｜TDM-E-L2-04/comparison/02_主线合取与单腿双臂
+
+- 形状：`buckets.type: dim_pair` 双臂（arm_A 合取／arm_B 单腿），`pillars_numeric` 带
+  `maxdd_improvement_min: 2.0` 与 `sharpe_delta_min: -0.10` ⇒ `pillars_route = dual_arm`，
+  `run_card` 在缺 `signal_b` 时直接raise（"判据键含 NAV/笔级面（双臂配对面）⇒需双臂信号"）——
+  **这是四张里唯一一张判官路由本身站得住的**，但它要的是净值配对面。
+- 缺件-1：需要一个新 `ARM_BASE_SOURCES`（现仅 `exit_sim_baseline`），且它的 r 位必须交出
+  **000300 次日收益**（双臂通道从底座自报 `daily_return` 取 r 位，`card_binding.py:1982-1985`），
+  并通过 `require_target_identity` 的引句核验。
+- 缺件-2：卡面冻结"剔除 880001-880011 市场统计指数"，而 880 面板形只有 `period`＋`code_family IN(...)`
+  两个过滤面（`SQL_SECTOR_FAMILY_PANEL` 与 args 白名单），**没有剔除码名单的旋钮**；
+  在册常量是 `_MARKET_INDEX_CODES = frozenset(f"880{i:03d}.SH" ...)`（`mainline_candidates.py:88`）
+  ＝带 `.SH` 后缀，与卡面写的"880001-880011"前缀形不同 ⇒ 需卡面作者班确认码形，或在装载形加**在册来源**的剔除面。
+- 缺件-3：卡面冻"暴露变动日扣单边 10bp"，但费率真源 `config/exam_scale_cost_gate.yaml` **无 `net_fee` 节**
+  ⇒ 双臂路会把 NaN 当 `cbp=0.0`（静默零费，见 §1 P-2）⇒ **本卡的费率柱今日无法 honored**，
+  且 `10bp`/`frozen_note` 都在 prose_quote 校验域之外（`_card_text` 只看四个 data_binding 字段），
+  连"在册声明"都写不进绑定格 ⇒ 须补参数节＋把费率声明搬进可校验字段（均非本班可自裁）。
+- 缺件-4：`state_share`（arm_A ⊂ arm_B 的子集闭包校验）与 `leg_trigger_rate >= 0.90 ⇒
+  DEVICE_INCONCLUSIVE` 两柱无任何机器读取方——按 §1 P-3 同类形态，只能凭据面披露，不能判。
+- 装置面已在册（本班核过，属"缺组装不缺实现"）：`sector_ecology_judge.py:39` `LEAD_STREAK_MIN=2`、
+  `:41` `TURNOVER_CONCENTRATION_MIN=0.30`、`:122` 合取式；`analysis_utils.py:57 lead_streaks`；
+  `mainline_candidates.py:88` 剔除码常量。
+
+# 6. 本班据此给统筹的排产判断（不是裁定）
+
+1. 批-A 的"8 张现在就能通"这句**要改口**：实测口径是 **2 张可绑**（L1-AGG/02 已出分、
+   RRG 02b 由本班今日开出 880 形），其余按缺件分三类——
+   **缺数据**（A 的 C1/C2、B 的涨停集中度真口径）＝数据班；
+   **缺臂面装配**（B/C/D 的 arms/净值配对通道，含新 `ARM_BASE_SOURCES`、跨 run 对照协议）＝
+   与 04_ 稿 P0 同族，属门位或至少属"判据核扩面"；
+   **缺装载形**（emotion components 提取形、六指数拆列形）＝本班域，可在下一批做，
+   但做完也只解 C 的装载、不解 C 的宇宙对齐与跨臂对照。
+2. 三张 RRG 卡之外，本班今日**不出任何新分**：凑分＝把"缺件"洗成"有分"，正是班账 §32.13
+   那类自污（把真卡面写脏以过预演）。
+3. 若要本班继续，建议优先级：**甲** 先补费率参数节与 emotion/六指数两支装载形（本班域，零判据面）；
+   **乙** 把 B/C/D 的臂面并入 P0 一次呈批（门位）；**丙** 把 A 卡转数据班回补 C1/C2 后另卡重考。
