@@ -1961,3 +1961,38 @@ D9 承 04_ 稿 D1-D4（逐臂净值面仍未批，16 支双臂卡与本面互不
 - 05_/14_ 两件新档的 creation_token 与大白话登记：走 `register_asset.py` 单口，与本批同袋。
 - 孤儿工作树 `.aidrafts/st-mineloop-20261010` 处置建议（abort＋resolve）仍在等属主/统筹执行。
 - 临时件清理：`.runtime/tmp/mineloop2/` 收官前不删（两只监视器正在用）。
+
+### 33.6 21:3x–21:5x 补记：呈批袋落地＋自纠袋＋一条更正（判官腿结案）
+
+- **0038 已落地**（设计稿 05_＋普查册 14_＋两件 token 同袋）：dev 面 `11 files changed` 那笔即本班四件＋他班同批；
+  车道随后 `merge --ff-only` 追平到 `2bd481a551`（`HEAD..dev=0`），§卅三 与两件新档均已回到车道跟踪面。
+  快进前挡道的两类面已按"先证无损再动"处理：4 件跟踪件（含本班班账与能力册）磁盘值逐件 sha 对拍＝旧 dev 快照，
+  `git checkout --` 复位；2 件未跟踪新档（05_/14_，磁盘值与 dev 逐字节等值）先 `mv` 到
+  `.runtime/tmp/mineloop2/evidence/pre_ff/` 再让 git 以跟踪态恢复——**没用裸 stash**（共享 worktree 禁令在册）。
+- **他班未落地面一件，已快照非销毁**：车道磁盘 `scripts/backup/backup.ps1` 相对 HEAD 有 11 条独有行，
+  且与 dev 现值也不同（第三种形状：既非 HEAD 也非 dev）。判据＝`git hash-object` 后 `--find-object` 查史，
+  命中 `ad04467aa7f`（10-12 06:03 备份链追凶三班）⇒ **是旧落地面残留（本班重基时整片拷盘带进来的）**，非他人在写工作。
+  处置＝快照 `evidence/backup_ps_from_lane_stmineloop2_20261013_2155.ps1`（sha 前缀 45a7dd16）＋`git checkout --`，
+  交还属主面在此留名：备份链追凶三班（若他们要看车道里那份旧值，快照路径即取处）。
+- **判官腿（§31.5 旧账 0028）结案：无需再投**。双证不同强度，分开记：
+  判官件 `calibration_exam.py` 面 `git apply -R --check` 对 HEAD **干净**＝patch 逐字节已在册；
+  测试件 `test_calibration_exam.py` 面反向套用**不净**（hunk 起点 853 行位置对不上），
+  但 40/40 增行**全部存在**于 HEAD＝0037 三方归并时重了排版。⇒ 内容在、形状异，据"存在性≠内容判据"纪律
+  不把它写成"逐字节已落地"。**更正一条先前措辞**：§31.5 曾把这条列为"parked 等他班复 claim"，
+  实际阻塞早已随 0037 解除。
+- **⚑ 本班自纠：先前"车道 N passed"的绿读证明力缩了一档**。21:4x 在主区做落地面复跑时，
+  `tests/backtest/test_card_binding.py` 撞 45s Timeout（栈=pathlib `os.scandir`，点名 1404 行），
+  而车道同一支 1.85s 过。两个因都查实了：
+  ① 该测试写的是 `_P(".").rglob("docs/03_modules/**/…")`——从 CWD **整树下穿**，
+     主区 CWD 下有 `.runtime/commit_queue/blobs` 27,083 枚＋`git worktree list` 50 只（每只都是整份仓库副本）；
+     修法＝走查面绑到模块自带 `cb.CARDS_DIR`（有界），主区实测新面命中 8 耗时 **0.004s**，命中集与旧面同形（40..47）；
+     已入 **0039 自纠袋**（files=1，ruff check/format 全绿，四件套 202 passed 重取）。零断言弱化：`len(cards)==8` 原样。
+  ② **测量前提被证伪**：车道 `py.ini` 相对 HEAD 少 10 行、`pyproject.toml` 少 34 行
+     （缺统筹当日追加③的六支 `--deselect` 名单），而主区配置面==HEAD。
+     ⇒ **本班此前所有"车道 passed"读数是在旧 pytest 配置面上取的，对"落地面绿"不构成完整证明**；
+     现已 `git checkout HEAD -- py.ini pyproject.toml` 追平后重取（202 passed in 14.71s 是追平后的数）。
+     由此定一条收班核验判据：**车道追平与否要逐件 sha 对拍，且配置件必须显式列入对拍清单**——
+     件数相同≠字节相同，这条比"车道绿≠落地面绿"的老话更具体（老话只讲代码件，今晚栽在配置件上）。
+- **下一步（无需人盯）**：22:30 CH 让路窗一关，监视器 A 自动开六跑（round 9 实测"闸一 落地面逐字==dev OK（9 件）"
+  已就绪，只等窗）；A 写 `run_six.done` 后 B 投递，随后补记器 `--apply` 进试次单口，合议按裁定②读。
+
