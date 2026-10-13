@@ -266,3 +266,62 @@ git show dev:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-
 ⑭ **班中调 `session_worktree_start` 复命会话**：它按设计去主区 reconcile 工作面，实测打出 `git restore failed … .git/index.lock exists`——若当时主区无锁，它会把别班在途文件 restore 掉。班中复命只准 `register(pid=0)`＋keeper＋keepalive 三件。
 ⑮ **`lock_files.py acquire-batch` 参数位用错**：owner 是**位置参**（`acquire-batch <owner> <paths…>`），`--session` 是可选参数；本班把 `--session` 打在首位 ⇒ 17 枚 claim 一度挂到字面 owner `--session` 名下，且 `--ttl-minutes 180` 的数值被当路径收走 ⇒ 3 枚伪路径 claim。已全部 release 并按正形重取（复核面＝`.ailocks/registry.json` owner 计数）。
 ⑯ **尺子假 0 险成结论**：在车道 cwd 下 `git show dev:<含反斜杠的 glob 路径>` returncode≠0 而 stdout 为空，Counter 差集遂报"dev_only=0＝严格超集"。补 `assert(returncode==0)`＋路径反斜杠归一后真值＝每卡 dev_only=1（正是本班改写的那行 status）。在册教训"零命中须正对照"第三次自犯，此次被顺手加的 returncode 断言拦住。
+
+## 十一、终读回与移交（2026-10-13 15:1x 实测；本班不得收班句，理由见 §11.2）
+
+### 11.1 落地读回（判据＝`git show dev:<件>` 与 `git log -- <件>`，非队列自报）
+
+| 面 | dev 落地件 | commit | 实测 |
+|---|---|---|---|
+| 数据面 | 8 枚 CSV＋meta | `24c5c24bf6`（0010） | rows 1860/1856/1859/1855/1859/1855/1855/1850，纯 LF，跨 2019-02-11..2026-10-12 |
+| 卡面（含转态取证） | 8 张聚合卡 | `24c5c24bf6`（0010） | 复算 8/8 等值、绑定 cls=D、sha 与盘上字节逐张全等 |
+| 绑定面 | `card_binding.py`＋`auto_mount.py`＋`t0_six_phase_materialize.py`＋sle3 测试 | `20744a3cc3`（0016） | dev grep `lu_count_z20`=1、`run_id`=17 |
+| 测试面（class D 那支） | `tests/backtest/test_card_binding.py` | `7fc0e94631`（0013） | 承码已在 dev ⇒ 与 §11.1 绑定面同代 |
+| 执行器面 | **未落地** `calibration_exam.py` | 死袋 0012/0014/0019 | dev grep `_forward_face`=0 |
+| 物化器码 | **未落地** `scripts/audit/agg8_series_materialize.py`＋其测试 | 死袋 0012 | dev 无此二件（数据与读数已落，重跑能力暂缺） |
+
+### 11.2 本班终局判读＝未达，且本班主动把 8 卡退回 blocked_on_impl（fail-closed）
+
+实测出险形态（非假想）：绑定面已落地＝`classify_card` 认可本组卡 `target_forward_face=precomputed` 且能给 `load_named_series` 取到两面；
+而执行器消费档在 `calibration_exam.py`，它**没落地**。此时开考这 8 张，`_series_metrics` 会按缺省对"已算好的第 h 日前向目标"再 `shift(-1)` 一次
+⇒ 得到第 h+1 日收益冒充第 h 日＝**静默错值，不报错**。所以：
+
+- 状态从 preregistered 退回 blocked_on_impl（另起 `status_rollback_20261013` 一节，转态取证块保留不删＝另起留旧案）；
+- 数据/复算/绑定三面证据零改动，判据数值零改动，只动状态机一位（每卡 dev-only 行实测＝1，删除集==计划内）；
+- 依据：开考普查只枚举 preregistered（在册教训 `classify-census-excludes-examined-cards`），回退即把这 8 张移出供题面；
+  且"宁漏勿误"优先于"凑终局数"——本班不写"全链路已打通、全绿、无遗留、无待裁"这句，因为它现在不真。
+
+### 11.3 死信账（本班六袋，逐袋死因与本班处置）
+
+| 袋 | 死因（dead_reason 原文摘） | 本班处置 |
+|---|---|---|
+| 0005 | 同件双侧皆改真冲突（99_delivery 自家两袋相撞） | 让它死（内容被 0007 超集取代），不 requeue |
+| 0008 | 非注册表族件双侧皆改真冲突：calibration_exam.py（base_head 取了车道 HEAD） | 改 `--base-head dev` 重投＝0012 |
+| 0009 | 同上（test_calibration_exam.py） | 同因重投＝0013（后已落地） |
+| 0012 | 落地门 TRANSLATION-COVERAGE：新建 .py 在**投影册**缺 plain_zh（本班 PG 行 active，主区投影滞后） | 拆袋：不新建 .py 的部分先行落地＝0016；新建件待投影追齐后 requeue（blob 健在） |
+| 0014 | TAKEOVER-PENDING：命中文件 calibration_exam.py，open 接管条目属**他会话** st-examrun-20261012 | 不代裁不硬闯；摘出该件先落其余＝0016 |
+| 0017 | ghost_session：本班属主会话 idle 自退（keepalive 授权 05:31 到期未续） | 复命后**新袋** 0018 投出（不走 requeue，避复发熔断），自撤袋已落地 |
+| 0019 | 同 0014（TAKEOVER-PENDING 命中同一件） | 见 §11.4 移交① |
+
+### 11.4 移交与等裁（三件，各给"这是什么／为什么要点头／不点会怎样"）
+
+1. **处置 st-examrun-20261012 的 open 接管条目**（该会话经门的同一尺复测确已死：不在 list_active、注册片缺席、心跳 04:51 exited、现存 claim 0）。
+   不点＝任何触碰 `scripts/backtest/fexam/calibration_exam.py` 的袋都被挡（本班三袋实证＋后续任何班同撞），
+   聚合 8 卡因此不能转回 preregistered，多日标的前向面永远缺半。点法＝属主班/统筹按接管处方 merge 或 abort 其 dirty=10 worktree、requeue 其死袋。
+2. **翻译册投影追齐**（REG-MODULE-TRANSLATION-001 本班行 active 而 YAML 投影滞后；该门 loader 只读投影、无 PG 第三源——与解锁班 ti_daily_mean_materialize 同病灶第二例）。
+   不点＝新建 .py 落不了地；追齐后本班死袋 0012 原样 requeue 即可，本班零新写。
+3. **主区 index 混池里出现 8 枚自家卡的 staged  deletion**（实测 `git diff --cached HEAD`＝D 11 枚：本班 8 枚聚合卡＋他班 exit_flow 卡 1 枚＋测试 2 枚；worktree 面是旧字节未跟踪）。
+   本班不代裁他人删除面（Owner 门位），只报：本班 8 枚的正身内容在 dev `24c5c24bf6` 可一键取回；
+   不点的后果＝任一从主区整池提交的班会把这 8 枚（含他班 3 枚）从库里删掉。
+
+### 11.5 自犯追加两条
+
+⑰ **把"三件齐"当作终局达成来转态，未先核承码是否同代落地**：绑定面与执行面是两袋，0016 落了前半、0019 被挡后半，
+dev 于是出现"认可 precomputed 却仍 shift(-1)"的组合＝静默错值风险。教训＝跨袋交付的"可考"判据必须包含**承码同代性**检查
+（投袋前先问"这个判据要在哪几个件上都成立"），否则半落地比不落地更坏。
+⑱ **keepalive 授权只续 2h 却排了 6h+ 的落地链**：0017 死于 ghost session（可避免）。教训＝长链投袋前按"最晚一袋的预计落地时刻"续保活，或每袋投前复测 `list_active`＋held_files 两证（在册五形态之第四形态）。
+
+### 11.6 本班终态一句话
+
+聚合 8 卡的**数据面与复算证明已落 dev 且逐格精确等**（这是本班夜班的真金），
+执行器承码半落地未闭合 ⇒ 本班已把 8 卡退回 blocked_on_impl 并列明解锁路径；本班不收"全绿无遗留"句。

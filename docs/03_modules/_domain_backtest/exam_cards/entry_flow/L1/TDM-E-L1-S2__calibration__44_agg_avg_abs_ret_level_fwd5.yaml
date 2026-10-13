@@ -59,7 +59,7 @@ target:
   secondary: 同面分段（bull/bear）与 OOS 扣留段
   note: 本卡不复判次日面（母卡 02/09 已 examined），只隔离 5 日聚合热度面；r 位面与执行器现形不一致，见
     status_reason
-status: preregistered
+status: blocked_on_impl
 status_reason: 三处缺口实测在册（本班逐行自读，非转述）：①聚合基序列未物化——前班管道 _screen_aggregate 只落 {series,transform,target,n,ic,t} 六元组（minedig_pipeline.py:826），逐日序列随函数返回销毁，盘面零存；②考面无 5 日前向目标面——执行器 _series_metrics 硬编码 tgt.shift(-1)（calibration_exam.py:154-156），绑定尺对非『指数次日收益』目标直接判 cls C reason=target_face_not_index_next_day（card_binding.py:259-270），另有 _HORIZON_RE 拦多日 horizon（:271-277）；③表未入配方册——_REGISTERED_TABLES 实载 3 表不含 c1_market.kline_daily_hfq（card_binding.py:338-355）。另 ic_ir 在 series 路无机器面（:184 恒 None）已作未判柱披露，非放行项。⇒ 解锁条件=物化＋配方册＋执行器多日标的前向面三件补齐（禁改卡面凑通）；与前班 20 张反向卡的缺口不同族：那 20 张只差①③，本卡即使补齐①③仍堵在②。
 signal_kind_note: series（逐日一数的市场面序列，非个股截面）
 oos_window_ref: *id001
@@ -111,3 +111,30 @@ status_flip_20261013:
     cls: D
     reason: null
   exam_not_run: 本班只转态零开考（判据数值零改动）；N 账本零写，试次归开考的班
+
+# ── 状态回退留痕（另起一节，§十.6 转态记录保留不删）──
+status_rollback_20261013:
+  at: '2026-10-13T15:16:42 本地实测钟'
+  sid: st-minedig2-20261012
+  from: preregistered
+  to: blocked_on_impl
+  why: >-
+    承码半落地造成的静默风险，不是数据或判据出了问题：绑定面（card_binding.py，已落 20744a3cc3）已认可
+    本卡的 target_forward_face=precomputed 与本地序列两面，而执行器侧消费档
+    （scripts/backtest/fexam/calibration_exam.py 的 _forward_face）仍未落地——
+    它被他会话 st-examrun-20261012 的 open 接管条目逐文件挡住（TAKEOVER-PENDING；
+    本班 0012/0014/0019 三袋同因死信，处置权在属主班/统筹门位，本班不代裁不硬闯）。
+    此时若开考，缺省路径会对"已算好的第 h 日前向目标"再 shift(-1) 一次
+    ⇒ 得到第 h+1 日收益冒充第 h 日＝静默错值不报错。按"宁漏勿误/fail-closed"回退状态。
+  unchanged: >-
+    环节6 复算 8/8 逐格等值证据、8 枚 CSV 与 meta（sha256 已登卡面 status_flip_20261013 取证块）、
+    判据数值与阈值、断言轴集预登记——全部零改动，只动状态机一位。
+  unblock_path: >-
+    ①处置 st-examrun-20261012 的接管条目（merge/abort 其 dirty=10 worktree、requeue 其死袋）；
+    ②calibration_exam.py 与本班 95 行测试（副本在 .runtime/tmp/st-minedig2-20261012/keep/）同袋重投；
+    ③翻译册投影追齐后新建物化件袋 requeue（死袋 q-20261013-st-minedig2-20261012-0012，blob 健在）；
+    ④三件齐后本班或下一班把 status 转回 preregistered——取证块 status_flip_20261013 已给逐格读数与 sha，
+    重转无需重跑 CH 腿。
+  exam_side_note: >-
+    开考普查只枚举 preregistered（在册教训），故本回退即把这 8 张移出供题面；
+    本班零开考、N 账本零写。
