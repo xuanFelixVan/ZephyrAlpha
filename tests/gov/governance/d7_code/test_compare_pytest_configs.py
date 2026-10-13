@@ -14,6 +14,8 @@ DCR-005 禁 config/*.ini，独立件需 .gitignore 放行=撞 PROTECTED-PATHS Ow
 from __future__ import annotations
 
 import importlib.util
+import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -136,6 +138,69 @@ def test_repo_py_ini_actually_aligned() -> None:
     findings, detail = cpc.compare(root)
     assert findings == [], findings
     assert "slow" in detail["markers_ini"] and detail["ini_section"] == "pytest"
+
+
+def test_deselect_single_side_drift_detected(tmp_path: Path) -> None:
+    """看守项 E 判别力自证（甲案断源，统筹 2026-10-13 追加③）：单侧点名排除必须判漂移。
+
+    双侧同名单时必须零 findings——否则 E 项恒红＝无判别力的尺（在册教训：判通过的
+    脚本须先证明它能红）。ini 侧用多行续行写法，同时钉住"续行确实被解析成 addopts 值"。
+    """
+    one = "tests/backtest/test_sim_daily_runner.py::test_plan_bridge_attack_state_is_unexecutable"
+    py = _ALIGNED_PYPROJECT.replace('addopts = ["-v"]', f'addopts = ["-v", "--deselect={one}"]')
+    # 单侧：pyproject 有、ini 无 → 必判漂移
+    root = _make_repo(tmp_path, py, _ALIGNED_INI)
+    findings, detail = cpc.compare(root)
+    assert any("--deselect" in f for f in findings), findings
+    assert detail["deselect_pyproject"] == [one]
+    assert detail["deselect_ini"] == []
+    # 双侧等值（ini 缩进续行）→ 零 findings
+    both = tmp_path / "both"
+    both.mkdir()
+    ini = _ALIGNED_INI.replace("addopts = -q --strict-markers", f"addopts = -q --strict-markers\n    --deselect={one}")
+    _make_repo(both, py, ini)
+    findings2, detail2 = cpc.compare(both)
+    assert findings2 == [], findings2
+    assert detail2["deselect_ini"] == [one]
+
+
+def test_repo_deselect_roster_is_live_and_effective() -> None:
+    """真配置面钉扎：名单存在＋指向真实（防陈旧排除）＋两种跑法实际排除生效。
+
+    三件各有病根：①双配置不等值＝假止血（精简跑法照写生产）；②测试改名后陈旧
+    --deselect 静默零命中＝断源悄悄失效；③反向对照——同文件其余用例必须仍被收集，
+    防"整文件/整目录被跳过"式过度止血被当成精确断源。
+    """
+    root = Path(__file__).resolve().parents[4]
+    if not (root / "py.ini").is_file():
+        pytest.skip("py.ini 缺失=检出破损（根目录既有纳管件）")
+    findings, detail = cpc.compare(root)
+    assert findings == [], findings
+    roster = detail["deselect_pyproject"]
+    assert len(roster) >= 6, f"甲案六支触库 node id 为下限，现名册 {len(roster)} 支"
+    assert roster == detail["deselect_ini"]
+    for node in roster:
+        file_part, _, fn = node.partition("::")
+        host = root / file_part
+        assert host.is_file(), f"排除名单指向缺失文件（陈旧排除=静默假止血）: {node}"
+        text = host.read_text(encoding="utf-8", errors="replace")
+        assert f"def {fn}(" in text, f"排除名单里的函数名在宿主文件中不存在: {node}"
+
+    target = roster[0].partition("::")[0]
+    names = {n.partition("::")[2] for n in roster if n.startswith(f"{target}::")}
+    out = subprocess.run(
+        [sys.executable, "-m", "pytest", target, "--collect-only", "-q"],
+        cwd=str(root),
+        capture_output=True,
+        text=True,
+        timeout=600,
+    ).stdout
+    for fn in names:
+        assert not re.search(rf"\b{re.escape(fn)}\b", out), f"{fn} 仍出现在收集面（排除未生效）"
+    m = re.search(r"(\d+)/(\d+) tests? collected(?: \((\d+) deselected\))?", out)
+    assert m, out[-400:]
+    assert int(m.group(3) or 0) == len(names), f"排除支数与名册不符: {out[-300:]}"
+    assert int(m.group(1)) >= 5, f"同文件其余用例须仍被收集（反向对照）: {out[-300:]}"
 
 
 def test_main_never_raises_on_garbage(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
