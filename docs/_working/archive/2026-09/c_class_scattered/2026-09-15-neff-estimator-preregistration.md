@@ -1,7 +1,16 @@
 ---
-created: 2026-09-15
 ttl: task_bound
+created: 2026-09-15
 ---
+> ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
+> **总结论：已结案（N_eff 估计器预注册锁定记录：effective_rank 双口径锁定防 p-hacking，义务=锁定本身，已完成且未被违反性更换）**
+> **✅ 已完成（摘录）**
+> - ①估计器/备选/排除/披露口径七项锁定；②估计器规格四步定义；③排除 clustering 的 Owner 裁定理由留痕
+> **⚠️ 未完成**
+> - 无（实现已实证：src/zephyr/backtest/core/n_trial_ledger.py 在仓，bizmine G3 判据按本预注册消费）
+> **核验方式**：全文读+n_trial_ledger.py 存在性与消费面 grep 实证
+> **处置建议**：可归档（archive/2026-10）
+
 
 # 4.1 N_eff 估计器预注册（立项稿 §11.2，2026-09-15 夜班锁定）
 

@@ -1,6 +1,6 @@
 ---
-created: 2026-09-14
 ttl: task_bound
+created: 2026-09-14
 ---
 
 # 2026-09-14 行情数据缺口修复报告（v2 重建版）
@@ -34,7 +34,7 @@ ttl: task_bound
 > `verify_final.py`、`repair_kline5min_tz_deprecated_update_key.py` 三个未跟踪脚本
 > 无副本，确认丢失（功能已由本轮脚本覆盖/不再需要）。教训：**工作区产物每轮即
 > `git add`**（本次交接包因未 add 曾两度丢失，add 后未再丢）。
-> 【根因结案 08:1x】清空者=commit 队列 serializer 落地时在主工作区跑 `git‑clean -fd`（队列
+> 【根因结案 08:1x】清空者=commit 队列 serializer 落地时在主工作区跑 `git clean -fd`（队列
 > 死信原文暴露，详见 §五-补），已立 **#ARCH-311** 登记证据，Owner 裁定交专门修复批；
 > 短期避险=产物每轮 git add。
 
