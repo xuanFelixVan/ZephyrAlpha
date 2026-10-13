@@ -1,0 +1,207 @@
+---
+ttl: task_bound
+title: 矿考二班·复合族执行器入口（CW-MINELOOP-001 复合面）设计稿＝呈批件，零施工
+created: '2026-10-13T21:26:00+08:00'
+sid: st-mineloop2-20261012
+family_id: MINELOOP-CAMPAIGN
+ruling_basis: 统筹 2026-10-13 15:0x 令件二（22 册共键冻结"供执行器侧选形绑定"）＋晨裁⑨（CW-MINELOOP-001 排本班域，先设计稿呈批再动工）
+completes_when: §6 待裁 D5-D9 经统筹/Owner 批复，且批-A 8 张复合卡按本册出分（或据批复改道）后随 MINELOOP-CAMPAIGN 归档
+depends_on:
+  - docs/_working/mineloop2_campaign/14_composite_leg_census.yaml（本册全部计数唯一来源）
+  - docs/_working/examunlock_campaign/22_composite_join_registry.yaml（键面与对齐规则判据冻结，属主 st-examunlock-20261013）
+  - docs/_working/mineloop2_campaign/04_panel_replay_face_design.yaml（双臂净值面 P0，门位件，与本面并列不捆绑）
+---
+
+# 0. 一句话结论（先给判据，再给方案）
+
+**复合族入口不是第二台引擎，也不撞 P0 的判官门位。** 实测 14/14 张复合卡的**目标腿一律是
+`next_day_index_return`**（执行器现供：card_binding.py:1610/:1645），22 册登记的 join **全部落在
+信号腿之间**（0/14 存在"只出现在目标面"的 join 腿）。因此复合面只要把多条信号腿装配成
+**一条日频 Series**，判官零改动、零新阈值、分数面沿用现册。机判分桶结果＝
+**批-A 8 张现在就能通**（合计只欠 3 张表进配方册＋逐卡合成算子），**批-B 5 张**堵在 22 册自标的
+"键面未冻结"，**批-C 1 张** 22 册未登记。⇒ 本面可与 04_ 设计稿（逐臂净值面，Owner 门位）**解耦排产**。
+
+动笔前的假说与被证伪（留案不遮）：本班原猜"不少复合卡的 join 其实是信号腿↔目标腿，
+因而可退化成单腿登记、连合成都省了"。P2 谓词直接否证（tgt_only 恒空，14/14 全在多信号腿之间）。
+但结论方向反过来更省：正因为目标腿恒为指数次日收益，复合面不必动判官——省的是**门位**而不是代码。
+
+# 1. 实测证据面（每条都能指回生成物或在册件行号，基线字节=790520df35）
+
+| 事实 | 取法 | 读数 |
+|---|---|---|
+| 复合卡总数/族分布 | 22 册 `cards` 全集 | 14（calibration 6／ablation 7／comparison 1；表数 2 表 5 张、3 表 7 张、4 表 2 张） |
+| 目标腿是否恒为指数次日收益 | 卡面 `target.primary` 正则 | **14/14** 命中 |
+| 是否存在"仅目标面"的 join 腿 | P2（pairs 表集 × 卡面 signal_table/target_source 差集） | **0/14** |
+| 键面全冻的卡数 | P5（pair.joinable_now 原值） | all-pairs-joinable=6；按输入腿覆盖口径 bindable_now=**8** |
+| 堵点分类 | blocker_kind 字段 | keys_and_category_ok 8／unfrozen_input_keys 5／not_registered_in_22 1 |
+| 腿表全集 vs 配方册现状 | P3 品类解析＋P4 读 `_REGISTERED_TABLES` | distinct 腿表 **16** 张，配方册在库仅 **3** 张（:397） |
+| 两枚数据面硬钉 | P7＋TableRegistry 直调 | 见 §3（一枚未注册品类、一枚异轴顶替风险） |
+
+生成器与谓词全写在册头（`14_composite_leg_census.yaml` 的 `ruler`/`discipline` 字段）；
+尺的阳/阴对照：L1-AGG/02 判可绑（阳例）＋L2-09/04 判不可绑（阴例，22 册 `registered: false`）＋
+`kline_index` 品类解析必成（哨兵），三件任一不符生成器即 assert 退出、不出册。
+
+执行器现状位（新 dev 字节逐行读到）：分类器 `classify_card` :296，多表出口 :393
+`U:multi_table_needs_composite_recipe`（**这就是 0 出分的闸**）；配方册 :397（3 表）；单表取数 `build_signal` :416；
+算子册 `OPS` :828（**11 条**）；绑定册驱动 `run_binding_book` :876，引句不在卡面即 raise :885；
+让路窗闸 `_in_ch_yield_window` :1670（21:00-22:30 与 01:00-04:00 两个窗，本班实测在拦）。
+
+可复用装载口（**不新建引擎**的关键，全部在册）：`SQL_FACE_DAILY` :87（anyLast 逐日去版本行）、
+`SQL_SECTOR_FAMILY_PANEL` :97 ＋ `load_sector_family_panel` :493（板块×日宽帧，一次取数多卡复用，
+族名单经 `sector_code_name_map` 在册映射界定、禁自拟）、`SQL_INDEX_AMOUNT_SUM` :113（多指数形，
+带 `HAVING uniqExact(symbol)=n_sym` 防半集冒充）、`SQL_LIMIT_UP_PANEL` :128（个股×日→日频聚合的
+FINAL 去重形）。class D 本地序列口 `load_named_series` :192 亦在（夜矿 CSV 族）。
+
+能力反查（RULE-CAPABILITY-LOOKUP 已留审计）：`复合绑定`／`多表 join`／`共键对齐`／`series 腿装载`
+四查零命中，`横截面 面板` 命中 1 条=`multifactor_sleeve_strategy`（D_PF_CORE，组合 sleeve 件，
+与本面不同对象）。同批有非零命中 ⇒ 尺在岗；结论=**无在册复合入口可复用**，本面属补缺非重复建设。
+
+# 2. 设计：复合面＝绑定册 v2 的 `legs`/`combine` 形（净零：不新建模块）
+
+每卡一格，沿用 binding book v1 全部字段，只新增两键；`legs` 逐腿带键面与粒度凭据，
+`combine` 只声明卡面已冻结的算法：
+
+```yaml
+- card_id: TDM-E-L2-02-1/calibration/02_RRG象限迁移
+  status: proposed                  # 批准前不置 approved（沿用在册册格纪律）
+  legs:
+    - table: c1_market.kline_sector_880
+      loader: sector_family_panel   # 复用 :493，args 携 families/period/close_col/amount_col
+      keys: [trade_date]            # 逐字抄 22 册 pair.keys，禁自补一个键
+      grain_evidence: "22 册 evidence_a/evidence_b 原文＋schema ORDER_BY 指针"
+    - table: c1_market.kline_index
+      loader: face_daily            # 复用 :87，000300 基准收盘
+      keys: [trade_date]
+  combine:
+    op: rrg_quadrant_series         # 新算子名，进 OPS 册（:828 同一本）
+    align: inner_on_keys            # 对齐方式由 22 册键面驱动，非算子自选
+    prose_quote: "RS=100·exp(4 日累计 ln(板块收盘/基准收盘))"   # 卡面原文子串，机械校验
+  arms: null                        # 双臂/消融卡走现 arm_base_source 通道（新增来源=按臂产出信号序列）
+```
+
+分类器改法（**不弱化**，这是本设计最要紧的一条）：`classify_card` 的多表出口照旧返回 U；
+只有当该卡在绑定册里存在 `legs` 格、且**三条件齐**（腿品类全可解析＋输入腿键面全冻＋22 册 registered）
+才给新类号 `X`（复合可绑）。任一不满足照拦并点名缺哪条腿（沿用 :366 `table_not_in_recipe_book` 的
+"拒绑而非猜粒度"纪律）。禁关键词匹配、禁按表名拼 SQL、禁把 `A?`/`U` 改宽。
+
+批-A 的装配清单（机械派生自本册，非手抄）：
+- 卡：8 张（L1-AGG/02、L1-AGG/03、L2-01-5/02、L2-01/03、L2-02-1/ablation03、L2-02-1/calibration02、
+  L2-04/comparison02、L2-05-2/02）；输入腿数 2/2/2/2/2/2/2/3。
+- 需新登记进 `_REGISTERED_TABLES` 的输入腿：**3 张**
+  （`c1_backtest.regime_state_anchored`、`c1_market.emotion_index`、`c1_market.kline_sector_880`）；
+  `c1_market.kline_index` 已在册。每张登记须带 `date_col`/`where`/`grain_evidence` 三要素，
+  逐条抄自卡面与 schema 真源，禁自拟。
+- 需新算子（OPS 册扩面，每个都必须是"卡面 signal_derivation 原文已冻结的算法"）：
+  档序映射（r3/r2/r1/r4→1/2/3/4，卡面先验冻结值）、滚动 z（卡面钉 250 日窗）、
+  RS/RRI 象限重算（禁直读 `sector_state.rrg_quadrant`，该列只作交叉核对）、
+  水温档查表缩放（消融臂变量）。**零新阈值**：阈值一律从卡面引句取。
+- emotion_index 的 `components` 是 JSON 明细列（品类硬约束原文"components JSON 明细必带"），
+  取 C1/C2 子键需一个**提取形**装载口；这是批-A 里唯一一处新装载形，其余全是复用。
+
+与 04_ 设计稿的关系：P0（逐臂净值配对面＝判官 17 行改动）服务的是"臂的结果是净值"的 16 支双臂 panel 卡；
+本面服务"臂/信号的结果是日频序列"的复合族。两面共用同一批装载口，但**判据面影响完全不同**
+（本面零判官改动），故必须分开批准、分开施工，不许捆成一件呈批。
+
+# 3. 两枚数据面硬钉（非本班域，本班不代裁不代登）
+
+**钉-1：`market_sector_constituent_snapshot` 品类未注册，而生产与消费两侧都在用它。**
+实测：`TableRegistry.table("market_sector_constituent_snapshot")` 抛 KeyError（原文"未在
+business_data_categories.yaml 注册"），本轮两次独立复现；而 `src/zephyr/alt_data/board_index_supply.py:89`
+把它写成 `CATEGORY_SECTOR_CONSTITUTENT` 常量在用，`scripts/data/run_sector_snapshot.py:34` 在往
+`c1_market.sector_constituent_snapshot` INSERT。表名唯一真源被绕过＝触 TABLE-NAME-REGISTRY 约束面。
+影响卡：L2-01/ablation/02（四路等权合成分边际，其"结构路/资金路"腿）。
+处置归属＝数据班/统筹（补注册须带 schema_file/SLA/lifecycle；或判该表为私有派生件、禁卡面引用）。
+本班不代登：注册表字段一填就错＝把别人的生命周期承诺写进我的袋。
+
+**钉-2：`c1_market.sentiment_panel` 是**币圈**宏观情绪面板，被两张 A股水温卡当情绪腿引用。**
+实测：品类 `market_sentiment_panel`（business_data_categories.yaml:2563-2576）name 字段原文
+"币圈宏观情绪面板"、`data_source: [crypto_sentiment_panel]`；引用它的两张卡＝
+L2-05-1/calibration/02（水温档读数与月级封顶）与 L2-05/ablation/02（水温总开关放行比例），
+两卡在 22 册里该 pair 均 `joinable_now: false / keys: []`（examunlock 班已如实标了不可冻）。
+在册同族纪律可引：emotion_index 品类硬约束原文"禁 fear_greed 异轴顶替（t0 判例）"。
+本班选择＝**不绑这条腿、不出分**，两卡按 `blocked_on_caliber` 呈批；卡面改写须走新版本卡（G4-5），
+本班不自改——**宁可这两张 0 出分，也不拿顶替面出一张假分**。
+
+# 4. 三档排产（每档给判据与分母，不含"建完就通"的空头）
+
+- **批-A（可即刻，零门位）**：8 张。工作量＝3 张表登记＋1 个新装载形（emotion components 提取）＋
+  3-5 个合成算子＋绑定册 legs/combine 通道＋分类器 `X` 出口。**先 1 张校准再放量**
+  （选 L1-AGG/02：单条新腿＋档序映射，最薄的一条路；跑通即证 legs/combine 通道形状对）。
+- **批-B（等键面，非本班能自解）**：5 张。未覆盖输入腿并集点名 6 张表
+  （`kline_daily_hfq`／`sector_constituent_snapshot`／`sector_state`／`daban_engine_load`／
+  `limit_up_down`／`sentiment_panel`）。处方＝22 册属主补键，或卡面删腿；本班不替它拍键。
+- **批-C（等登记）**：1 张（L2-09/calibration/04，22 册 `registered: false`，属主自陈未落登记）。
+- 与 04_ 稿的 B4（日内撮合）无关：那 4 支卡仍按 D3 先做两件只读核（分钟窗与 VWAP 口径），不在本册范围。
+
+# 5. 红证设计（每条都是"改坏了必红"，禁恒绿）
+
+- R1 腿集合不符必红：卡面 `data_binding` 申报表集合 ≠ 册内 `legs` 表集合 ⇒ 拒绑（防多绑/漏绑）。
+- R2 键面自补必红：`legs.keys` 与 22 册 `pair.keys` 不逐字等值 ⇒ 拒绑（防本班替 examunlock 拍键）。
+- R3 未登记腿必红：`legs.table` 不在 `_REGISTERED_TABLES` ⇒ 拒绑（沿用 :366 现纪律，零扩权）。
+- R4 引句不在卡面必红：`combine.prose_quote` 非卡面原文子串 ⇒ raise（沿用 :885 双校验）。
+- R5 对齐静默吞行必红：inner join 后行数 < min(各腿行数) 而未在凭据面披露 ⇒ 红；
+  缺腿禁补零（卡面原文"缺项不补零，直接少"），NaN 比例超阈值仍走 :1268 现质量闸。
+- R6 异轴顶替必红：任何 `legs` 指向 `market_sentiment_panel` 作 A股情绪腿 ⇒ 名单闸直接红（钉-2 机器化）。
+- R7 判官零改动自证：批-A 出分前后重放 **100 笔**在册分数行（04_ 稿 §3 同款处方），
+  outcome 与全部数值列逐位等值；不等即中止上报。这条是本面的**批准前置**，不是可选项。
+- R8 分类器不扩权必红：对"无 legs 格"的多表卡，`classify_card` 必须仍返 U——用例钉死，
+  防止"加了复合入口顺手放宽单表判定"。
+
+# 6. 待裁菜单（每条：这是什么／为何要您点头／不点会怎样）
+
+- **D5 批-A 是否即刻放行**。这是本班域内的纯取数面施工（3 表登记＋算子＋legs 通道），
+  判官零改动、卡面判据数值零动、不新建模块。**不点＝8 张复合卡继续 0 出分**，
+  而 22 册的判据冻结一直悬着没人消费。
+- **D6 钉-1 归口**：由数据班补注册（带 schema/SLA/lifecycle），还是判该表为私有派生件、
+  禁止卡面引用并改卡。**不点＝L2-01/02 长期堵**，且表名真源绕过会复制到别的卡。
+- **D7 钉-2 归口**：两张水温卡的 `sentiment_panel` 腿——改绑 emotion_index 走新版本卡（G4-5），
+  还是判 `blocked_on_caliber` 不计入考面。**不点＝要么不出分，要么出一张币圈面板顶替 A股情绪的假分**。
+- **D8 交叉核对面形制**：RRG 两卡要求"与 `sector_state.rrg_quadrant` 差异 >10% 先查口径再开考"。
+  甲＝一次性只读探针（零登记，留 receipt，随批交付）；乙＝常驻审计腿（该表进配方册）。
+  本班建议**甲**（常驻面只保留"被测件禁直读"纪律，不给自证循环留常驻通道）。**不点＝两卡按不可出分处理**。
+- **D9（承 04_ 稿）**：D1-D4 四枚仍未批 ⇒ 逐臂净值面全线停。本设计稿不依赖它，
+  但 16 支双臂 panel 卡的排期仍等那四枚——请一并处理，别让两件事互相等。
+
+# 7. 净零与边界声明
+
+零新建模块（legs/combine 落既有绑定册＋card_binding 的 OPS 册，净零按宪法 §4.1 声明为
+"扩在册件的一面"）；零判据数值改动；零卡面改写（钉-2 两卡是**呈批**不是改）；
+不碰他班在途件；CH 实跑只在出分时发生并逐次计数申报，且 21:00-22:30／01:00-04:00 两让路窗
+照在册闸执行（本班本轮实测该闸在 21:2x 真拦住了六跑，非纸面纪律）；
+新增两份临时探针脚本留在 `.runtime/tmp/mineloop2/`（task_bound，收官前不删，因监视器仍在用）。
+
+# 8. 复核命令（正文每条计数都能由本节复现；已在 21:2x 实跑，期望值随命令给出）
+
+```
+cd /d/ZephyrAlpha/.worktrees/st-mineloop2-20261012 && python - <<'PY'
+import yaml
+from pathlib import Path
+d=yaml.safe_load(Path("docs/_working/mineloop2_campaign/14_composite_leg_census.yaml").read_text(encoding="utf-8"))
+a=d["aggregate"]
+print("cards",a["cards"],"target14",a["cards_target_is_index_next_day"],
+      "bindable",a["cards_bindable_now"],"kinds",a["blocker_kind_counts"],
+      "distinct_legs",len(a["distinct_leg_tables"]),"recipe_today",len(a["recipe_book_tables_today"]))
+b=[r for r in d["cards"] if r["bindable_now"]]
+print("批A需新登记",sorted({t for r in b for t in r["legs_needing_registration"] if t not in r["forbidden_read_tables"]}))
+PY
+```
+期望（本班 21:2x 实跑读数，逐字）：`cards 14 target14 14 bindable 8 kinds {'keys_and_category_ok': 8,
+'not_registered_in_22': 1, 'unfrozen_input_keys': 5} distinct_legs 16 recipe_today 3`＋
+`批A需新登记 ['c1_backtest.regime_state_anchored', 'c1_market.emotion_index', 'c1_market.kline_sector_880']`。
+（kinds 的键序按 Python 字典序输出，别按散文顺序找。）
+
+```
+cd /d/ZephyrAlpha && grep -n "multi_table_needs_composite_recipe" scripts/backtest/fexam/card_binding.py
+grep -n "tgt = index_next_day_return()\|tgt_arm = index_next_day_return()" scripts/backtest/fexam/card_binding.py
+grep -c '"fn": op_' scripts/backtest/fexam/card_binding.py
+```
+期望：`393:`／`1610:`＋`1645:`／`11`（基线字节 790520df35）。
+
+```
+cd /d/ZephyrAlpha && PYTHONPATH="D:/ZephyrAlpha/src" python -c "
+from zephyr.data.table_registry import get_registry
+try: print(get_registry().table('market_sector_constituent_snapshot'))
+except Exception as e: print('钉-1 复现:',type(e).__name__,str(e)[:60])
+print('钉-2 复现:',get_registry().table('market_sentiment_panel'))"
+```
+期望：钉-1 抛 KeyError（未注册），钉-2 返回 `c1_market.sentiment_panel`（该品类 name 字段=币圈宏观情绪面板）。

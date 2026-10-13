@@ -1,0 +1,823 @@
+schema_version: mineloop2-composite-leg-census/v1
+generated_by: .runtime/tmp/mineloop2/composite_leg_census.py
+generated_for: 05_composite_leg_face_design.yaml（CW-MINELOOP-001 复合族入口设计稿）
+sid: st-mineloop2-20261012
+date: '2026-10-13'
+ttl: task_bound
+completes_when: 复合族入口设计稿经统筹/Owner 批复并随施工批转正后，本册由转正生成器再生覆盖
+ruler: P1 卡面 data_binding 正则＝在册 card_binding._TABLE_RE 同式｜P3 品类解析＝TableRegistry._categories 全集｜P4 配方册现状＝import 主区 dev 字节 fexam.card_binding._REGISTERED_TABLES（实测主区/车道两份常量同为
+  3 表 11 算子，本班在途袋 0037 未触碰该常量）｜P5 键面＝22 册 pair.joinable_now/keys 原值｜P7 输入腿＝卡面 signal_table ∪ (22 册 join 表 − 卡面点名禁直读 − 仅目标面表)；bindable_now＝输入腿全被冻 pair 覆盖 且 腿品类全可解析 且 22 册 registered=true
+discipline: 零阈值零判据零 CH：本册只做存在性/登记态/键面冻结态的采集，不含任何'能不能考'的结论；结论面在 05_ 设计稿，且设计稿每条计数须能指回本册字段
+aggregate:
+  cards: 14
+  cards_all_pairs_joinable: 6
+  cards_with_unfrozen_keys: 8
+  cards_target_is_index_next_day: 14
+  cards_all_legs_signal_side: 8
+  cards_with_unregistered_category_leg: 1
+  cards_with_leg_already_in_recipe_book: 8
+  cards_needing_only_new_registration: 6
+  cards_bindable_now: 8
+  cards_bindable_now_ids:
+  - TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  - TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+  - TDM-E-L2-01-5/ablation/02_市场级调节注入
+  - TDM-E-L2-01/ablation/03_六指数分布选优通道与候选池分位
+  - TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏
+  - TDM-E-L2-02-1/calibration/02_RRG象限迁移
+  - TDM-E-L2-04/comparison/02_主线合取与单腿双臂
+  - TDM-E-L2-05-2/ablation/02_信号响应三件套
+  blocker_kind_counts:
+    keys_and_category_ok: 8
+    not_registered_in_22: 1
+    unfrozen_input_keys: 5
+  inputs_uncovered_tables_distinct:
+  - c1_market.daban_engine_load
+  - c1_market.kline_daily_hfq
+  - c1_market.limit_up_down
+  - c1_market.sector_constituent_snapshot
+  - c1_market.sector_state
+  - c1_market.sentiment_panel
+  - c3_fundamental.earnings_forecast
+  - c3_fundamental.express_report
+  - c3_fundamental.research_report
+  distinct_leg_tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.daban_engine_load
+  - c1_market.emotion_index
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  - c1_market.limit_up_down
+  - c1_market.limit_up_pool
+  - c1_market.sector_constituent
+  - c1_market.sector_constituent_snapshot
+  - c1_market.sector_state
+  - c1_market.sentiment_panel
+  - c1_market.stk_limit
+  - c3_fundamental.earnings_forecast
+  - c3_fundamental.express_report
+  - c3_fundamental.research_report
+  recipe_book_tables_today:
+  - c1_market.index_valuation_daily
+  - c1_market.kline_index
+  - c1_market.news_sentiment_window
+cards:
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  family: calibration
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__calibration__02_四档风险轴前向收益单调.yaml
+  declared_signal_tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.kline_index
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（000300 T+1 收益，执行器 _series_metrics 现器 shift(-1) 口径可用）
+  target_is_index_next_day: true
+  n_pairs: 1
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 0
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_backtest.regime_state_anchored
+    on_signal_face: true
+    on_target_face: false
+    category_id: backtest_regime_state_anchored
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.kline_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_index_kline
+    category_resolved: true
+    in_recipe_book: true
+  all_legs_on_signal_face: true
+  legs_unresolved_category: []
+  legs_already_in_recipe_book:
+  - c1_market.kline_index
+  legs_needing_registration:
+  - c1_backtest.regime_state_anchored
+  forbidden_read_tables: []
+  input_legs:
+  - c1_backtest.regime_state_anchored
+  - c1_market.kline_index
+  inputs_covered_by_frozen_pairs:
+  - c1_backtest.regime_state_anchored
+  - c1_market.kline_index
+  inputs_uncovered: []
+  bindable_now: true
+  blocker_kind: keys_and_category_ok
+  window_self_declared: []
+- card_id: TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+  family: calibration
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-AGG__calibration__03_子信号族到状态轴传导保真度.yaml
+  declared_signal_tables:
+  - c1_backtest.regime_state_anchored
+  - c1_market.emotion_index
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（000300 T+1，执行器 shift(-1) 现器口径可用）
+  target_is_index_next_day: true
+  n_pairs: 1
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 0
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_backtest.regime_state_anchored
+    on_signal_face: true
+    on_target_face: false
+    category_id: backtest_regime_state_anchored
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.emotion_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_emotion_index
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: true
+  legs_unresolved_category: []
+  legs_already_in_recipe_book: []
+  legs_needing_registration:
+  - c1_backtest.regime_state_anchored
+  - c1_market.emotion_index
+  forbidden_read_tables: []
+  input_legs:
+  - c1_backtest.regime_state_anchored
+  - c1_market.emotion_index
+  inputs_covered_by_frozen_pairs:
+  - c1_backtest.regime_state_anchored
+  - c1_market.emotion_index
+  inputs_uncovered: []
+  bindable_now: true
+  blocker_kind: keys_and_category_ok
+  window_self_declared: []
+- card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+  family: calibration
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+  declared_signal_tables:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_index
+  - c1_market.stk_limit
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 000300 次日收益）
+  target_is_index_next_day: true
+  n_pairs: 3
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 2
+  join_keys_union:
+  - symbol
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_market.kline_daily_hfq
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_kline_daily_hfq
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.kline_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_index_kline
+    category_resolved: true
+    in_recipe_book: true
+  - table: c1_market.stk_limit
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_stk_limit
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: true
+  legs_unresolved_category: []
+  legs_already_in_recipe_book:
+  - c1_market.kline_index
+  legs_needing_registration:
+  - c1_market.kline_daily_hfq
+  - c1_market.stk_limit
+  forbidden_read_tables: []
+  input_legs:
+  - c1_market.kline_daily_hfq
+  - c1_market.kline_index
+  - c1_market.stk_limit
+  inputs_covered_by_frozen_pairs:
+  - c1_market.kline_index
+  - c1_market.stk_limit
+  inputs_uncovered:
+  - c1_market.kline_daily_hfq
+  bindable_now: false
+  blocker_kind: unfrozen_input_keys
+  window_self_declared: []
+- card_id: TDM-E-L2-01-5/ablation/02_市场级调节注入
+  family: ablation
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-5__ablation__02_市场级调节注入.yaml
+  declared_signal_tables:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益）
+  target_is_index_next_day: true
+  n_pairs: 1
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 0
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_market.emotion_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_emotion_index
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.kline_sector_880
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_sector_kline_880
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: true
+  legs_unresolved_category: []
+  legs_already_in_recipe_book: []
+  legs_needing_registration:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  forbidden_read_tables: []
+  input_legs:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  inputs_covered_by_frozen_pairs:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  inputs_uncovered: []
+  bindable_now: true
+  blocker_kind: keys_and_category_ok
+  window_self_declared: []
+- card_id: TDM-E-L2-01/ablation/02_四路等权合成分边际
+  family: ablation
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01__ablation__02_四路等权合成分边际.yaml
+  declared_signal_tables:
+  - c1_market.kline_sector_880
+  - c1_market.sector_constituent
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益）
+  target_is_index_next_day: true
+  n_pairs: 6
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 5
+  join_keys_union:
+  - sector_code
+  pit_axis_conflict: true
+  legs:
+  - table: c1_market.kline_sector_880
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_sector_kline_880
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.sector_constituent
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_sector_constituent_880
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.sector_constituent_snapshot
+    on_signal_face: false
+    on_target_face: false
+    category_id: null
+    category_resolved: false
+    in_recipe_book: false
+  - table: c1_market.sector_state
+    on_signal_face: false
+    on_target_face: false
+    category_id: market_sector_state
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: false
+  legs_unresolved_category:
+  - c1_market.sector_constituent_snapshot
+  legs_already_in_recipe_book: []
+  legs_needing_registration:
+  - c1_market.kline_sector_880
+  - c1_market.sector_constituent
+  - c1_market.sector_state
+  forbidden_read_tables: []
+  input_legs:
+  - c1_market.kline_sector_880
+  - c1_market.sector_constituent
+  - c1_market.sector_constituent_snapshot
+  - c1_market.sector_state
+  inputs_covered_by_frozen_pairs:
+  - c1_market.kline_sector_880
+  - c1_market.sector_constituent
+  inputs_uncovered:
+  - c1_market.sector_constituent_snapshot
+  - c1_market.sector_state
+  bindable_now: false
+  blocker_kind: unfrozen_input_keys
+  window_self_declared: []
+- card_id: TDM-E-L2-01/ablation/03_六指数分布选优通道与候选池分位
+  family: ablation
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01__ablation__03_六指数分布选优通道与候选池分位.yaml
+  declared_signal_tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，series 主轴=池等权组合的次日超额）
+  target_is_index_next_day: true
+  n_pairs: 1
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 0
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_market.kline_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_index_kline
+    category_resolved: true
+    in_recipe_book: true
+  - table: c1_market.kline_sector_880
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_sector_kline_880
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: true
+  legs_unresolved_category: []
+  legs_already_in_recipe_book:
+  - c1_market.kline_index
+  legs_needing_registration:
+  - c1_market.kline_sector_880
+  forbidden_read_tables: []
+  input_legs:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  inputs_covered_by_frozen_pairs:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  inputs_uncovered: []
+  bindable_now: true
+  blocker_kind: keys_and_category_ok
+  window_self_declared: []
+- card_id: TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏
+  family: ablation
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__ablation__03_象限迁移确认腿与稀有路径护栏.yaml
+  declared_signal_tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益）
+  target_is_index_next_day: true
+  n_pairs: 3
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 2
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_market.kline_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_index_kline
+    category_resolved: true
+    in_recipe_book: true
+  - table: c1_market.kline_sector_880
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_sector_kline_880
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.sector_state
+    on_signal_face: false
+    on_target_face: false
+    category_id: market_sector_state
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: false
+  legs_unresolved_category: []
+  legs_already_in_recipe_book:
+  - c1_market.kline_index
+  legs_needing_registration:
+  - c1_market.kline_sector_880
+  - c1_market.sector_state
+  forbidden_read_tables:
+  - c1_market.sector_state
+  input_legs:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  inputs_covered_by_frozen_pairs:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  inputs_uncovered: []
+  bindable_now: true
+  blocker_kind: keys_and_category_ok
+  window_self_declared: []
+- card_id: TDM-E-L2-02-1/calibration/02_RRG象限迁移
+  family: calibration
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__calibration__02_RRG象限迁移.yaml
+  declared_signal_tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益）
+  target_is_index_next_day: true
+  n_pairs: 3
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 2
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_market.kline_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_index_kline
+    category_resolved: true
+    in_recipe_book: true
+  - table: c1_market.kline_sector_880
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_sector_kline_880
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.sector_state
+    on_signal_face: false
+    on_target_face: false
+    category_id: market_sector_state
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: false
+  legs_unresolved_category: []
+  legs_already_in_recipe_book:
+  - c1_market.kline_index
+  legs_needing_registration:
+  - c1_market.kline_sector_880
+  - c1_market.sector_state
+  forbidden_read_tables:
+  - c1_market.sector_state
+  input_legs:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  inputs_covered_by_frozen_pairs:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  inputs_uncovered: []
+  bindable_now: true
+  blocker_kind: keys_and_category_ok
+  window_self_declared: []
+- card_id: TDM-E-L2-04/ablation/02_板块生态三态判定
+  family: ablation
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04__ablation__02_板块生态三态判定.yaml
+  declared_signal_tables:
+  - c1_market.kline_sector_880
+  - c1_market.limit_up_pool
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益）
+  target_is_index_next_day: true
+  n_pairs: 6
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 5
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_market.daban_engine_load
+    on_signal_face: false
+    on_target_face: false
+    category_id: market_daban_engine_load
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.kline_sector_880
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_sector_kline_880
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.limit_up_down
+    on_signal_face: false
+    on_target_face: false
+    category_id: market_limit_up_down
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.limit_up_pool
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_limit_up_pool
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: false
+  legs_unresolved_category: []
+  legs_already_in_recipe_book: []
+  legs_needing_registration:
+  - c1_market.daban_engine_load
+  - c1_market.kline_sector_880
+  - c1_market.limit_up_down
+  - c1_market.limit_up_pool
+  forbidden_read_tables: []
+  input_legs:
+  - c1_market.daban_engine_load
+  - c1_market.kline_sector_880
+  - c1_market.limit_up_down
+  - c1_market.limit_up_pool
+  inputs_covered_by_frozen_pairs:
+  - c1_market.kline_sector_880
+  - c1_market.limit_up_pool
+  inputs_uncovered:
+  - c1_market.daban_engine_load
+  - c1_market.limit_up_down
+  bindable_now: false
+  blocker_kind: unfrozen_input_keys
+  window_self_declared: []
+- card_id: TDM-E-L2-04/comparison/02_主线合取与单腿双臂
+  family: comparison
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-04__comparison__02_主线合取与单腿双臂.yaml
+  declared_signal_tables:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  declared_target_tables: []
+  target_primary_verbatim: 双臂暴露组合（底座=kline_index 000300 次日收益）的 OOS Sharpe 差与 MaxDD 改善
+  target_is_index_next_day: true
+  n_pairs: 1
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 0
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_market.kline_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_index_kline
+    category_resolved: true
+    in_recipe_book: true
+  - table: c1_market.kline_sector_880
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_sector_kline_880
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: true
+  legs_unresolved_category: []
+  legs_already_in_recipe_book:
+  - c1_market.kline_index
+  legs_needing_registration:
+  - c1_market.kline_sector_880
+  forbidden_read_tables: []
+  input_legs:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  inputs_covered_by_frozen_pairs:
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  inputs_uncovered: []
+  bindable_now: true
+  blocker_kind: keys_and_category_ok
+  window_self_declared: []
+- card_id: TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶
+  family: calibration
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-1__calibration__02_水温档读数与月级封顶.yaml
+  declared_signal_tables:
+  - c1_market.emotion_index
+  - c1_market.kline_index
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益）
+  target_is_index_next_day: true
+  n_pairs: 3
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 2
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_market.emotion_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_emotion_index
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.kline_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_index_kline
+    category_resolved: true
+    in_recipe_book: true
+  - table: c1_market.sentiment_panel
+    on_signal_face: false
+    on_target_face: false
+    category_id: market_sentiment_panel
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: false
+  legs_unresolved_category: []
+  legs_already_in_recipe_book:
+  - c1_market.kline_index
+  legs_needing_registration:
+  - c1_market.emotion_index
+  - c1_market.sentiment_panel
+  forbidden_read_tables: []
+  input_legs:
+  - c1_market.emotion_index
+  - c1_market.kline_index
+  - c1_market.sentiment_panel
+  inputs_covered_by_frozen_pairs:
+  - c1_market.emotion_index
+  - c1_market.kline_index
+  inputs_uncovered:
+  - c1_market.sentiment_panel
+  bindable_now: false
+  blocker_kind: unfrozen_input_keys
+  window_self_declared: []
+- card_id: TDM-E-L2-05-2/ablation/02_信号响应三件套
+  family: ablation
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__ablation__02_信号响应三件套.yaml
+  declared_signal_tables:
+  - c1_market.emotion_index
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益）
+  target_is_index_next_day: true
+  n_pairs: 3
+  n_pairs_joinable: 3
+  n_pairs_keys_empty: 0
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_market.emotion_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_emotion_index
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.kline_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_index_kline
+    category_resolved: true
+    in_recipe_book: true
+  - table: c1_market.kline_sector_880
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_sector_kline_880
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: true
+  legs_unresolved_category: []
+  legs_already_in_recipe_book:
+  - c1_market.kline_index
+  legs_needing_registration:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  forbidden_read_tables: []
+  input_legs:
+  - c1_market.emotion_index
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  inputs_covered_by_frozen_pairs:
+  - c1_market.emotion_index
+  - c1_market.kline_index
+  - c1_market.kline_sector_880
+  inputs_uncovered: []
+  bindable_now: true
+  blocker_kind: keys_and_category_ok
+  window_self_declared: []
+- card_id: TDM-E-L2-05/ablation/02_水温总开关放行比例
+  family: ablation
+  registered_in_22: true
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05__ablation__02_水温总开关放行比例.yaml
+  declared_signal_tables:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益）
+  target_is_index_next_day: true
+  n_pairs: 3
+  n_pairs_joinable: 1
+  n_pairs_keys_empty: 2
+  join_keys_union:
+  - trade_date
+  pit_axis_conflict: false
+  legs:
+  - table: c1_market.emotion_index
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_emotion_index
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.kline_sector_880
+    on_signal_face: true
+    on_target_face: false
+    category_id: market_sector_kline_880
+    category_resolved: true
+    in_recipe_book: false
+  - table: c1_market.sentiment_panel
+    on_signal_face: false
+    on_target_face: false
+    category_id: market_sentiment_panel
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: false
+  legs_unresolved_category: []
+  legs_already_in_recipe_book: []
+  legs_needing_registration:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  - c1_market.sentiment_panel
+  forbidden_read_tables: []
+  input_legs:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  - c1_market.sentiment_panel
+  inputs_covered_by_frozen_pairs:
+  - c1_market.emotion_index
+  - c1_market.kline_sector_880
+  inputs_uncovered:
+  - c1_market.sentiment_panel
+  bindable_now: false
+  blocker_kind: unfrozen_input_keys
+  window_self_declared: []
+- card_id: TDM-E-L2-09/calibration/04_业绩预增催化剂腿
+  family: calibration
+  registered_in_22: false
+  card_file_found: true
+  card_file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09__calibration__04_业绩预增催化剂腿.yaml
+  declared_signal_tables:
+  - c3_fundamental.earnings_forecast
+  - c3_fundamental.express_report
+  - c3_fundamental.research_report
+  declared_target_tables: []
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，series 主轴）
+  target_is_index_next_day: true
+  n_pairs: 3
+  n_pairs_joinable: 0
+  n_pairs_keys_empty: 3
+  join_keys_union: []
+  pit_axis_conflict: false
+  legs:
+  - table: c3_fundamental.earnings_forecast
+    on_signal_face: true
+    on_target_face: false
+    category_id: fund_earnings_forecast
+    category_resolved: true
+    in_recipe_book: false
+  - table: c3_fundamental.express_report
+    on_signal_face: true
+    on_target_face: false
+    category_id: fund_express_report
+    category_resolved: true
+    in_recipe_book: false
+  - table: c3_fundamental.research_report
+    on_signal_face: true
+    on_target_face: false
+    category_id: fund_research_report
+    category_resolved: true
+    in_recipe_book: false
+  all_legs_on_signal_face: true
+  legs_unresolved_category: []
+  legs_already_in_recipe_book: []
+  legs_needing_registration:
+  - c3_fundamental.earnings_forecast
+  - c3_fundamental.express_report
+  - c3_fundamental.research_report
+  forbidden_read_tables: []
+  input_legs:
+  - c3_fundamental.earnings_forecast
+  - c3_fundamental.express_report
+  - c3_fundamental.research_report
+  inputs_covered_by_frozen_pairs: []
+  inputs_uncovered:
+  - c3_fundamental.earnings_forecast
+  - c3_fundamental.express_report
+  - c3_fundamental.research_report
+  bindable_now: false
+  blocker_kind: not_registered_in_22
+  window_self_declared: []

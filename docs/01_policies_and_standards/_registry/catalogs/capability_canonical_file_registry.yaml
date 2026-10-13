@@ -3694,6 +3694,11 @@ creation_tokens:
   token: auto-sector-attribute-mapping-yaml-20260823
   capability: sector_attribute_rules
   created_by: AI-K3-GW-GAP7
+- file: config/sector_universe_router.yaml
+  token: sector-universe-router-sector-universe-router-20261013
+  capability: sector_universe_router
+  created_by: st-cdx-sector-20261013
+  merge_evaluation: "板块口径路由规则册（B_yaml 声明态）：替代无（口径路由规则本体挖矿册§1认证不存在）；与 sector_attribute_mapping.yaml 不同域（属性标注非口径路由）不并；判别式单一真源防每模块自选口径。"
 - file: config/sla_targets.yaml
   token: auto-sla-targets-yaml-20260706
   capability: sla_targets_config
@@ -7822,6 +7827,46 @@ creation_tokens:
   capability: minedig_examcard
   created_by: st-minedig-20261012
   merge_evaluation: "卡池唯一消费方，新对象（模板C blocked WO-A2）"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__40_agg_lu_count_level_fwd10.yaml
+  token: minedig2-examcard-tdm-e-l1-s2--calibration--40-agg-lu-count-level-fwd10-20261012
+  capability: minedig2_examcard
+  created_by: st-minedig2-20261012
+  merge_evaluation: "卡池是唯一消费方，新对象（聚合8卡：日频市场面聚合序列对5/10日面板等权前向收益；与在册02/09/38跨轴不同对象不并）"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__41_agg_lu_count_z20_fwd10.yaml
+  token: minedig2-examcard-tdm-e-l1-s2--calibration--41-agg-lu-count-z20-fwd10-20261012
+  capability: minedig2_examcard
+  created_by: st-minedig2-20261012
+  merge_evaluation: "卡池是唯一消费方，新对象（聚合8卡：日频市场面聚合序列对5/10日面板等权前向收益；与在册02/09/38跨轴不同对象不并）"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__42_agg_lu_ratio_level_fwd10.yaml
+  token: minedig2-examcard-tdm-e-l1-s2--calibration--42-agg-lu-ratio-level-fwd10-20261012
+  capability: minedig2_examcard
+  created_by: st-minedig2-20261012
+  merge_evaluation: "卡池是唯一消费方，新对象（聚合8卡：日频市场面聚合序列对5/10日面板等权前向收益；与在册02/09/38跨轴不同对象不并）"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__43_agg_lu_ratio_z20_fwd10.yaml
+  token: minedig2-examcard-tdm-e-l1-s2--calibration--43-agg-lu-ratio-z20-fwd10-20261012
+  capability: minedig2_examcard
+  created_by: st-minedig2-20261012
+  merge_evaluation: "卡池是唯一消费方，新对象（聚合8卡：日频市场面聚合序列对5/10日面板等权前向收益；与在册02/09/38跨轴不同对象不并）"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__44_agg_avg_abs_ret_level_fwd5.yaml
+  token: minedig2-examcard-tdm-e-l1-s2--calibration--44-agg-avg-abs-ret-level-fwd5-20261012
+  capability: minedig2_examcard
+  created_by: st-minedig2-20261012
+  merge_evaluation: "卡池是唯一消费方，新对象（聚合8卡：日频市场面聚合序列对5/10日面板等权前向收益；与在册02/09/38跨轴不同对象不并）"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__45_agg_avg_abs_ret_level_fwd10.yaml
+  token: minedig2-examcard-tdm-e-l1-s2--calibration--45-agg-avg-abs-ret-level-fwd10-20261012
+  capability: minedig2_examcard
+  created_by: st-minedig2-20261012
+  merge_evaluation: "卡池是唯一消费方，新对象（聚合8卡：日频市场面聚合序列对5/10日面板等权前向收益；与在册02/09/38跨轴不同对象不并）"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__46_agg_avg_abs_ret_z20_fwd5.yaml
+  token: minedig2-examcard-tdm-e-l1-s2--calibration--46-agg-avg-abs-ret-z20-fwd5-20261012
+  capability: minedig2_examcard
+  created_by: st-minedig2-20261012
+  merge_evaluation: "卡池是唯一消费方，新对象（聚合8卡：日频市场面聚合序列对5/10日面板等权前向收益；与在册02/09/38跨轴不同对象不并）"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__47_agg_avg_abs_ret_z20_fwd10.yaml
+  token: minedig2-examcard-tdm-e-l1-s2--calibration--47-agg-avg-abs-ret-z20-fwd10-20261012
+  capability: minedig2_examcard
+  created_by: st-minedig2-20261012
+  merge_evaluation: "卡池是唯一消费方，新对象（聚合8卡：日频市场面聚合序列对5/10日面板等权前向收益；与在册02/09/38跨轴不同对象不并）"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration.yaml
   token: exam-card-tdm-e-l1-s3--calibration-20261009
   capability: exam_card
@@ -8602,6 +8647,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L2
   merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__calibration__05_市场获利盘水位.yaml
+  token: condaxis-capital-exam-tdm-e-l3-12-3--calibration--05--20261013
+  capability: condaxis_capital_exam
+  created_by: st-cdx-capital-20261013
+  merge_evaluation: "A1 获利盘消费端考试卡（#257④ chip_distribution_engine 转正唯一通道）；与 panel 卡 02 跨域不同对象（市场级择时面 vs 个股截面选股面，w5_1 判据不并）非第二真源"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__comparison.yaml
   token: exam-card-tdm-e-l3-12-3--comparison-20261009
   capability: exam_card
@@ -9487,6 +9537,11 @@ creation_tokens:
   capability: mineloop2_dual_arm_card
   created_by: st-mineloop2-20261012
   merge_evaluation: "同真源可派生→不并：本件是 02→06→07 lineage 链上的新版本卡（G4-5 禁原地改口径），判据八键逐字沿用 02、映射按统筹裁定锚在册五态表，与 02/06 并存不替代其历史分数行"
+- file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-01__comparison__07b_reset_ladder_anchor.yaml
+  token: mineloop2-ruling3-faces-tdm-x-r1-01--comparison--07b-reset-ladder-anchor-20261012
+  capability: mineloop2_ruling3_faces
+  created_by: st-mineloop2-20261012
+  merge_evaluation: "③裁修影响面盘点册与07b复位阶梯新版本卡：前者带分母与尺口径、后者承接07负结果不翻案（G4-5另起版本），均不可替代故不合并不替代"
 - file: docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/TDM-X-R1-02__comparison.yaml
   token: exam-card-tdm-x-r1-02--comparison-20261009
   capability: exam_card
@@ -25684,6 +25739,11 @@ creation_tokens:
   token: btfix-p1p2-trendline-sr-detector-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_signal/algo_flow/universe_router.yaml
+  token: sector-universe-router-universe-router-20261013
+  capability: sector_universe_router
+  created_by: st-cdx-sector-20261013
+  merge_evaluation: "universe_router 的 ALGO_FLOW 外部锚（GATE-ALGO-FLOW 硬要求实存），随批登记零新增能力面。"
 - file: docs/03_modules/_domain_signal/algo_flow/volume_regime_adaptive.yaml
   token: btfix-p1p2-volume-regime-adaptive-20260915
   capability: btfix_p1p2
@@ -27757,6 +27817,16 @@ creation_tokens:
   capability: minedig_pack
   created_by: st-minedig-20261012
   merge_evaluation: "晨间包唯一消费方=Owner晨读，新对象"
+- file: docs/_working/2026-10-13-capital-behavior-research-dossier.md
+  token: capital-flow-research-2026-10-13-capital-behavior-research-dossier-20261013
+  capability: capital_flow_research
+  created_by: st-capflow-20261013
+  merge_evaluation: "grep 仓内无同域资金行为调研总册；本册收口三视角问题定义与外部调研，替代散落会话结论"
+- file: docs/_working/2026-10-13-sentiment-output-contract-research.md
+  token: sentiment-contract-2026-10-13-sentiment-output-contract-research-20261013
+  capability: sentiment_contract
+  created_by: st-sentdef-20261013
+  merge_evaluation: "内收判定：本文为研究汇总与契约提案，替代零个旧条目；待批后作为情绪线判据冻结的引用真源"
 - file: docs/_working/ai_layer_vision/HANDOFF_wave2_closeout.md
   token: c314-wave2-closeout-handoff-handoff-wave2-closeout-20261007
   capability: c314-wave2-closeout-handoff
@@ -38295,6 +38365,226 @@ creation_tokens:
   capability: commit_speedup
   created_by: st-commitspeed-tbl-20260924
   merge_evaluation: "原始调查报告随役归档（ttl:task_bound），与 campaign 卷宗同域同役唯一真源，不新增治理面"
+- file: docs/_working/condaxis/00_inputs/2026-10-13-capital-behavior-research-dossier.md
+  token: condaxis-research-inputs-2026-10-13-capital-behavior-research-dossier-20261013
+  capability: condaxis_research_inputs
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域（大盘两态/板块/情绪/资金行为）研究输入四件集，替代无（docs/_working/condaxis/ 首批），内收 w5_1 不并（四域研究底稿非规则数据，产出面后续按域收敛）；总包令=Owner 2026-10-13 st-condaxis 全授权"
+- file: docs/_working/condaxis/00_inputs/2026-10-13-sentiment-output-contract-research.md
+  token: condaxis-research-inputs-2026-10-13-sentiment-output-contract-research-20261013
+  capability: condaxis_research_inputs
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域（大盘两态/板块/情绪/资金行为）研究输入四件集，替代无（docs/_working/condaxis/ 首批），内收 w5_1 不并（四域研究底稿非规则数据，产出面后续按域收敛）；总包令=Owner 2026-10-13 st-condaxis 全授权"
+- file: docs/_working/condaxis/00_inputs/formreg_survey_2026_10_13.md
+  token: condaxis-research-inputs-formreg-survey-2026-10-13-20261013
+  capability: condaxis_research_inputs
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域（大盘两态/板块/情绪/资金行为）研究输入四件集，替代无（docs/_working/condaxis/ 首批），内收 w5_1 不并（四域研究底稿非规则数据，产出面后续按域收敛）；总包令=Owner 2026-10-13 st-condaxis 全授权"
+- file: docs/_working/condaxis/00_inputs/sector_problem_definition_2026_10_13.md
+  token: condaxis-research-inputs-sector-problem-definition-2026-10-13-20261013
+  capability: condaxis_research_inputs
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域（大盘两态/板块/情绪/资金行为）研究输入四件集，替代无（docs/_working/condaxis/ 首批），内收 w5_1 不并（四域研究底稿非规则数据，产出面后续按域收敛）；总包令=Owner 2026-10-13 st-condaxis 全授权"
+- file: docs/_working/condaxis/01_ruling_package.md
+  token: condaxis-ruling-package-01-ruling-package-20261013
+  capability: condaxis_ruling_package
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴 P1 统一呈批包（37 项合并裁决总表），替代=四份研究档各自散状待裁段（收拢为单一呈批入口），内收 w5_1 不并（呈批面非规则数据）"
+- file: docs/_working/condaxis/02_p3_design.md
+  token: condaxis-p3-design-02-p3-design-20261013
+  capability: condaxis_p3_design
+  created_by: st-condaxis-20261013
+  merge_evaluation: "P3 端到端设计册（四腿组合口径+全绿预注册定义+执行序），替代无（战役终局设计首建），内收 w5_1 不并（设计底稿非规则数据）"
+- file: docs/_working/condaxis/capital/00_skeleton.md
+  token: condaxis-mining-workbooks-00-skeleton-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/capital/10_etf_snapshot_gap_investigation.md
+  token: condaxis-capital-lane-10-etf-snapshot-gap-investigation-20261013
+  capability: condaxis_capital_lane
+  created_by: st-cdx-capital-20261013
+  merge_evaluation: "三件=车道产物（跑考台账 yaml/ETF 断供调查报告/收口呈批件）互为跨域不同对象不并；呈批件=5_module_consolidation 接口级方案的形式化非第二真源（上游矿册在册）"
+- file: docs/_working/condaxis/capital/1_A_structure.md
+  token: condaxis-mining-workbooks-1-a-structure-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/capital/2_B_flow_nature.md
+  token: condaxis-mining-workbooks-2-b-flow-nature-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/capital/3_C_actor_profile.md
+  token: condaxis-mining-workbooks-3-c-actor-profile-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/capital/4_D_synthesis.md
+  token: condaxis-mining-workbooks-4-d-synthesis-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/capital/5_module_consolidation.md
+  token: condaxis-mining-workbooks-5-module-consolidation-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/capital/6_data_audit.md
+  token: condaxis-mining-workbooks-6-data-audit-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/capital/7_consolidation_ruling_draft.md
+  token: condaxis-capital-lane-7-consolidation-ruling-draft-20261013
+  capability: condaxis_capital_lane
+  created_by: st-cdx-capital-20261013
+  merge_evaluation: "三件=车道产物（跑考台账 yaml/ETF 断供调查报告/收口呈批件）互为跨域不同对象不并；呈批件=5_module_consolidation 接口级方案的形式化非第二真源（上游矿册在册）"
+- file: docs/_working/condaxis/capital/8_exam_binding_book.yaml
+  token: condaxis-capital-lane-8-exam-binding-book-20261013
+  capability: condaxis_capital_lane
+  created_by: st-cdx-capital-20261013
+  merge_evaluation: "绑定册=card_binding 运行期配置数据（--binding-book 单一口），形制复用 mineloop 02_binding_book 同一执行器与校验面非第二实现；跨域不同对象（本车道卡集）不并"
+- file: docs/_working/condaxis/capital/9_exam_run_a1.yaml
+  token: condaxis-capital-lane-9-exam-run-a1-20261013
+  capability: condaxis_capital_lane
+  created_by: st-cdx-capital-20261013
+  merge_evaluation: "三件=车道产物（跑考台账 yaml/ETF 断供调查报告/收口呈批件）互为跨域不同对象不并；呈批件=5_module_consolidation 接口级方案的形式化非第二真源（上游矿册在册）"
+- file: docs/_working/condaxis/formreg/00_skeleton.md
+  token: condaxis-mining-workbooks-00-skeleton-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/formreg/1_feat_bridge.md
+  token: condaxis-mining-workbooks-1-feat-bridge-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/formreg/2_state_machine.md
+  token: condaxis-mining-workbooks-2-state-machine-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/formreg/3_grayscale.md
+  token: condaxis-mining-workbooks-3-grayscale-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/formreg/4_turning_signal.md
+  token: condaxis-mining-workbooks-4-turning-signal-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/formreg/5_vocab_registry.md
+  token: condaxis-mining-workbooks-5-vocab-registry-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/formreg/6_condition_package.md
+  token: condaxis-mining-workbooks-6-condition-package-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/formreg/7_validation.md
+  token: condaxis-mining-workbooks-7-validation-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/formreg/8_prereg_targeting.md
+  token: condaxis-formreg-prereg-8-prereg-targeting-20261013
+  capability: condaxis_formreg_prereg
+  created_by: st-cdx-formreg-20261013
+  merge_evaluation: "不并：预注册判据文书是 G4-5 先 commit 后跑数纪律的独立载体，与挖矿簿 0-7（状态=mining_workbook）对象不同；净零面=替代口头判据（零载体）"
+- file: docs/_working/condaxis/sector/00_skeleton.md
+  token: condaxis-mining-workbooks-00-skeleton-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sector/1_universe_router.md
+  token: condaxis-mining-workbooks-1-universe-router-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sector/2_mainline.md
+  token: condaxis-mining-workbooks-2-mainline-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sector/3_lifecycle.md
+  token: condaxis-mining-workbooks-3-lifecycle-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sector/4_turning.md
+  token: condaxis-mining-workbooks-4-turning-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sector/5_conduction.md
+  token: condaxis-mining-workbooks-5-conduction-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sector/6_env_gate.md
+  token: condaxis-mining-workbooks-6-env-gate-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sector/7_validation_class.md
+  token: condaxis-mining-workbooks-7-validation-class-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sector/8_prereg_validation.md
+  token: condaxis-sector-prereg-8-prereg-validation-20261013
+  capability: condaxis_sector_prereg
+  created_by: st-cdx-sector-20261013
+  merge_evaluation: "板块验证班判据预冻结册（7号册§3草案正式化）：替代该草案节（正式版吸收）；同族先例=config/chart_resonance_prereg.yaml（跨域不同对象不并）；冻结后跑数前禁改门柱。"
+- file: docs/_working/condaxis/sentiment/00_skeleton.md
+  token: condaxis-mining-workbooks-00-skeleton-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sentiment/1_L1_thermometer.md
+  token: condaxis-mining-workbooks-1-l1-thermometer-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sentiment/2_L2_phase.md
+  token: condaxis-mining-workbooks-2-l2-phase-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sentiment/3_L3_events.md
+  token: condaxis-mining-workbooks-3-l3-events-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sentiment/4_validation.md
+  token: condaxis-mining-workbooks-4-validation-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sentiment/5_self_sustaining.md
+  token: condaxis-mining-workbooks-5-self-sustaining-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sentiment/6_tdm_wiring.md
+  token: condaxis-mining-workbooks-6-tdm-wiring-20261013
+  capability: condaxis_mining_workbooks
+  created_by: st-condaxis-20261013
+  merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sentiment/7_deep_history_assessment.md
+  token: condaxis-sentiment-7-deep-history-assessment-20261013
+  capability: condaxis_sentiment
+  created_by: st-cdx-sent-20261013
+  merge_evaluation: "情绪线作业簿家族追加第 7/8 册（深史源评估＋P2 施工台账）：无同真源可派生对象（深史源候选盘点与缺日回补留证皆本班新产出），跨域不同对象不并，task_bound 随 CONDAXIS-CAMPAIGN 归档"
+- file: docs/_working/condaxis/sentiment/8_p2_construction_record.md
+  token: condaxis-sentiment-8-p2-construction-record-20261013
+  capability: condaxis_sentiment
+  created_by: st-cdx-sent-20261013
+  merge_evaluation: "情绪线作业簿家族追加第 7/8 册（深史源评估＋P2 施工台账）：无同真源可派生对象（深史源候选盘点与缺日回补留证皆本班新产出），跨域不同对象不并，task_bound 随 CONDAXIS-CAMPAIGN 归档"
 - file: docs/_working/constland_campaign/00_ledger.md
   token: constland-campaign-00-ledger-20261010
   capability: constland_campaign
@@ -38504,6 +38794,11 @@ creation_tokens:
   token: kimi-audit-retirement-audit-20260916
   capability: kimi_audit
   created_by: qoder-verify-20260916
+- file: docs/_working/deadclean_campaign/00_ledger.md
+  token: deadclean-00-ledger-20261013
+  capability: deadclean
+  created_by: st-deadclean-20261013
+  merge_evaluation: "沿用 finalclean2_campaign 的 waveN/lanes 案卷惯例，不新建第二真源；立法全部并句入既有 AGENTS/政策册与既有脚本段，新增规则条目=0、新增 gate=0、新增脚本=0，测试为两支既有文件追加"
 - file: docs/_working/deadcure_campaign/00_charter.md
   token: deadcure-campaign-deadcure-campaign-00-charte-20261009
   capability: deadcure-campaign
@@ -39888,11 +40183,181 @@ creation_tokens:
   capability: examrun_overnight_b
   created_by: st-examrun-20261012
   merge_evaluation: "本班班账目录改名合规化（去 _NN 数字后缀，R5 在册明令）；替代旧路径 docs/_working/examrun_campaign_20261012/（该路径四袋死于 R5，内容整档迁入本件，非新增真源）"
+- file: docs/_working/examrun_campaign/21_three_way_conflict_prescription_for_maint3.md
+  token: examrun-campaign-21-three-way-conflict-prescription-for-maint3-20261012
+  capability: examrun_campaign
+  created_by: st-examrun-20261012
+  merge_evaluation: "净零：一次性机制处方文档，不新建闸不新建脚本，消费完随战役袋退役；判据与替代真源均在他班在册件内"
+- file: docs/_working/examrun_campaign/22_landing_test_isolation_dossier.md
+  token: examrun-campaign-22-landing-test-isolation-dossier-20261012
+  capability: examrun_campaign
+  created_by: st-examrun-20261012
+  merge_evaluation: "净零：一次性案卷文档，不新建闸不新建脚本；判据与修复面归维护三班与判官域，随战役袋退役"
+- file: docs/_working/examrun_campaign/23_ch_writing_test_nodeids.md
+  token: examrun-campaign-23-ch-writing-test-nodeids-20261012
+  capability: examrun_campaign
+  created_by: st-examrun-20261012
+  merge_evaluation: "净零：一次性名单交付件，不新建闸不新建脚本；排除点与护栏归维护三班，随战役袋退役"
+- file: docs/_working/examrun_campaign/24_prose_regime_cards_case_for_minedig2.md
+  token: examrun-campaign-24-prose-regime-cards-case-for-minedig2-20261012
+  capability: examrun_campaign
+  created_by: st-examrun-20261012
+  merge_evaluation: "净零：一次性案卷文档，路由属主班实施；本班不改他班卡面不新建闸，随战役袋退役"
+- file: docs/_working/examrun_campaign/25_dual_module_identity_case.md
+  token: examrun-campaign-25-dual-module-identity-case-20261012
+  capability: examrun_campaign
+  created_by: st-examrun-20261012
+  merge_evaluation: "净零：一次性机制案卷，不新建闸不新建脚本；两道护栏归判官域/维护线实施，随战役袋退役"
 - file: docs/_working/examrun_campaign_20261012/00_ledger.md
   token: examrun-overnight-b-00-ledger-20261011
   capability: examrun_overnight_b
   created_by: st-examrun-20261012
   merge_evaluation: "本班首件班台账；与前役各班自家 00_ledger 跨班不同对象不并"
+- file: docs/_working/examunlock_campaign/00_ledger.md
+  token: examunlock-campaign-00-ledger-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班交付册（含 00 台账与 13 诊断件）"
+- file: docs/_working/examunlock_campaign/02_ti_series_spec.md
+  token: examunlock-campaign-02-ti-series-spec-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/03_binding_book_event20.yaml
+  token: examunlock-campaign-03-binding-book-event20-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/04_target_face_channel_census.yaml
+  token: examunlock-campaign-04-target-face-channel-census-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/05_recipe_book_grain_verdicts.yaml
+  token: examunlock-campaign-05-recipe-book-grain-verdicts-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/06_skeleton_card_verdicts.yaml
+  token: examunlock-campaign-06-skeleton-card-verdicts-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/07_interface_notes_for_mineloop2.md
+  token: examunlock-campaign-07-interface-notes-for-mineloop2-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/08_rescued_ttl_st_examrun/backfill_worklist_16.json
+  token: examunlock-campaign-backfill-worklist-16-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/08_rescued_ttl_st_examrun/operator_gap_spec_for_mineloop2.json
+  token: examunlock-campaign-operator-gap-spec-for-mineloop2-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/08_rescued_ttl_st_examrun/operator_gap_spec_for_mineloop2_v2.json
+  token: examunlock-campaign-operator-gap-spec-for-mineloop2-v2-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/08_rescued_ttl_st_examrun/reconcile_devface_v2.json
+  token: examunlock-campaign-reconcile-devface-v2-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/08_rescued_ttl_st_examrun/target_face_census.yaml
+  token: examunlock-campaign-target-face-census-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/08_rescued_ttl_st_examrun/unlock_map_23_1x.yaml
+  token: examunlock-campaign-unlock-map-23-1x-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班考试解锁交付册；08 子目录为他班 TTL 件抢救存证（归属标 st-examrun-20261012，非本班著述）"
+- file: docs/_working/examunlock_campaign/09_overnight_intraday_vein_spec.md
+  token: examunlock-campaign-09-overnight-intraday-vein-spec-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班矿脉规格/存在性核查/元层基线三件，无同族件"
+- file: docs/_working/examunlock_campaign/10_ablation8_leg_audit.yaml
+  token: examunlock-campaign-10-ablation8-leg-audit-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班矿脉规格/存在性核查/元层基线三件，无同族件"
+- file: docs/_working/examunlock_campaign/11_woa2_minute_face_check.md
+  token: examunlock-campaign-11-woa2-minute-face-check-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班矿脉规格/存在性核查/元层基线三件，无同族件"
+- file: docs/_working/examunlock_campaign/12_meta_baseline_lanes.yaml
+  token: examunlock-campaign-12-meta-baseline-lanes-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班矿脉规格/存在性核查/元层基线三件，无同族件"
+- file: docs/_working/examunlock_campaign/13_run_path_block_regimes_representation.yaml
+  token: examunlock-campaign-13-run-path-block-regimes-representation-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：本班交付册（含 00 台账与 13 诊断件）"
+- file: docs/_working/examunlock_campaign/14_ti_series_receipt.yaml
+  token: examunlock-campaign-14-ti-series-receipt-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：物化回执册"
+- file: docs/_working/examunlock_campaign/15_division_and_correction.md
+  token: examunlock-campaign-15-division-and-correction-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：分工与自纠件，替代把更正塞进已投件（避同件跨袋冲突）"
+- file: docs/_working/examunlock_campaign/16_morning_pack.md
+  token: examunlock-campaign-16-morning-pack-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：晨包三段式，替代把执行/自裁/等裁混写进班账正文"
+- file: docs/_working/examunlock_campaign/17_evidence_and_regeneration.md
+  token: examunlock-campaign-17-evidence-and-regeneration-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：存证与再生件，替代把一次性脚本留在会被清理的 TTL 区"
+- file: docs/_working/examunlock_campaign/18_handoff_matrix_177.yaml
+  token: examunlock-campaign-18-handoff-matrix-177-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：逐张交接矩阵（177 全覆盖，求和自证），替代把同一信息散写进多份散文"
+- file: docs/_working/examunlock_campaign/19_composite_join_probe.yaml
+  token: examunlock-campaign-19-composite-join-probe-20261012
+  capability: examunlock_campaign
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：复合配方共键探针，替代把'定复合配方'当可执行动作下发"
+- file: docs/_working/examunlock_campaign/20_closing_readings.yaml
+  token: examunlock-20-closing-readings-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "收尾读数册不派生自任何在册册（含 05:0x-05:2x 三组复测与两处行级定位），与 14/16/18 号件互不重复；零新判据零新门"
+- file: docs/_working/examunlock_campaign/21_status_flip_receipt.md
+  token: examunlock-21-status-flip-receipt-20261013
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "登记回执件不派生自在册册：它记的是本袋 20 卡状态登记的四道机械断言实测与统筹令字母-实质对表，与 14/16/18/20 号件互不重复"
+- file: docs/_working/examunlock_campaign/22_composite_join_registry.yaml
+  token: examunlock-22-composite-join-registry-20261013
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "复合族共键登记册＝卡面块的镜像单点，供执行器侧选形绑定；不派生自 19 号件（19 是取证面，本件是登记面），二者角色不同不并"
+- file: docs/_working/examunlock_campaign/23_exam_run_receipt.md
+  token: examunlock-23-exam-run-receipt-20261013
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "开考回执件记本次跑批的三件前置实测与负结果判分依据，不派生自 20/21/22 号件（那些是接线与登记面）"
+- file: docs/_working/examunlock_campaign/24_skeleton_declaration_request.yaml
+  token: examunlock-24-skeleton-declaration-request-20261013
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "待声明单不派生自在册册：它只列 4 张骨架卡缺的三件与填法路径，本班不代填题面"
 - file: docs/_working/external_audit_20261007/00_audit_plan.md
   token: ext-audit-20261007-00-audit-plan-20261007
   capability: ext_audit_20261007
@@ -40543,6 +41008,36 @@ creation_tokens:
   capability: fclean4_wave4_dossier
   created_by: st-fclean4-20261012
   merge_evaluation: "净零：波四册沿用波三 waveN/lanes 目录惯例（案卷入册替代留在 TTL 临时区被吃），M3 结论为负结果留档不新建门不新建尺"
+- file: docs/_working/finalclean2_campaign/wave4/25_wave4_shadow_rounds.md
+  token: fclean4-wave4-dossier-25-wave4-shadow-rounds-20261012
+  capability: fclean4_wave4_dossier
+  created_by: st-fclean4-20261012
+  merge_evaluation: "净零：收班册/晨包/影子轮账三件并入既有 wave4 册集，不新建目录面；影子实读数另册而非改写已落地件（同件后袋只允许字节超集）"
+- file: docs/_working/finalclean2_campaign/wave4/26_wave4_shadow_numbering_correction.md
+  token: fclean4-wave4-dossier-26-wave4-shadow-numbering-correction-20261012
+  capability: fclean4_wave4_dossier
+  created_by: st-fclean4-20261012
+  merge_evaluation: "净零：更正另起一册（26_），已落地 25_ 正文零改写；不新建面"
+- file: docs/_working/finalclean2_campaign/wave4/27_wave4_command_errata.md
+  token: fclean4-wave4-dossier-27-wave4-command-errata-20261012
+  capability: fclean4_wave4_dossier
+  created_by: st-fclean4-20261012
+  merge_evaluation: "净零：勘误另起一册（27_），已落地各册正文零改写；不新建面不新建尺"
+- file: docs/_working/finalclean2_campaign/wave4/28_wave4_closeout_ack.md
+  token: fclean4-wave4-dossier-28-wave4-closeout-ack-20261012
+  capability: fclean4_wave4_dossier
+  created_by: st-fclean4-20261012
+  merge_evaluation: "净零：收班确认并入 wave4 册集，不新建面；四裁承接全部指向已有册的复核入口"
+- file: docs/_working/finalclean2_campaign/wave4/30_wave4_morning_package.md
+  token: fclean4-wave4-dossier-30-wave4-morning-package-20261012
+  capability: fclean4_wave4_dossier
+  created_by: st-fclean4-20261012
+  merge_evaluation: "净零：收班册/晨包/影子轮账三件并入既有 wave4 册集，不新建目录面；影子实读数另册而非改写已落地件（同件后袋只允许字节超集）"
+- file: docs/_working/finalclean2_campaign/wave4/99_wave4_delivery.md
+  token: fclean4-wave4-dossier-99-wave4-delivery-20261012
+  capability: fclean4_wave4_dossier
+  created_by: st-fclean4-20261012
+  merge_evaluation: "净零：收班册/晨包/影子轮账三件并入既有 wave4 册集，不新建目录面；影子实读数另册而非改写已落地件（同件后袋只允许字节超集）"
 - file: docs/_working/finalclean2_campaign/wave4/evidence/aidrafts_fingerprint.yaml
   token: fclean4-wave4-dossier-aidrafts-fingerprint-20261012
   capability: fclean4_wave4_dossier
@@ -45196,6 +45691,11 @@ creation_tokens:
   capability: maint3_shift
   created_by: st-maint3-20261011
   merge_evaluation: "跨域不同对象→不并：维护三班四件各承一面（班账 00_／池面根因案卷 30_／T7 排班输入件 20_／跨车道知会 40_），零新门禁零新真源零判据阈值改动"
+- file: docs/_working/maint5_campaign/00_ledger.md
+  token: maint5-shift-ledger-00-ledger-20261012
+  capability: maint5_shift_ledger
+  created_by: st-maint5-20261013
+  merge_evaluation: "跨域不同对象→不并：本班班账与前班班账同格式不同属主与不同事实面，按留白规则不得写入他班册，无同真源可派生项"
 - file: docs/_working/map_build/00_campaign_brief.md
   token: map-build-00-campaign-brief-20260924
   capability: map_build
@@ -48522,6 +49022,26 @@ creation_tokens:
   capability: metaq-question-exam-campaign
   created_by: st-metaq-20260923
   merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/minedig2_campaign/00_agg8_axis_prereg.yaml
+  token: minedig2-campaign-00-agg8-axis-prereg-20261012
+  capability: minedig2_campaign
+  created_by: st-minedig2-20261012
+  merge_evaluation: "本campaign目录是本班交付落点，新对象＝聚合8卡断言轴集预登记册＋D族资格验收记录；与 docs/_working/2026-10-12-minedig-morning-pack.md（前班班账）零重叠，非重复登记"
+- file: docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  token: minedig2-campaign-10-dfamily-qualification-acceptance-20261012
+  capability: minedig2_campaign
+  created_by: st-minedig2-20261012
+  merge_evaluation: "本campaign目录是本班交付落点，新对象＝聚合8卡断言轴集预登记册＋D族资格验收记录；与 docs/_working/2026-10-12-minedig-morning-pack.md（前班班账）零重叠，非重复登记"
+- file: docs/_working/minedig2_campaign/30_agg8_unlock_dossier.md
+  token: minedig2-campaign-30-agg8-unlock-dossier-20261013
+  capability: minedig2_campaign_docs
+  created_by: st-minedig2-20261012
+  merge_evaluation: "同域内收：单档十节案卷替代骨架＋子档分件（Owner 侧拒收文档增殖后收敛），零新建第二真源；环节6/9 的 CH 腿实测位已留"
+- file: docs/_working/minedig2_campaign/99_delivery.md
+  token: minedig2-campaign-99-delivery-20261012
+  capability: minedig2_campaign
+  created_by: st-minedig2-20261012
+  merge_evaluation: "同真源可派生→本件是收班交付记录非新增判据册；与 10_ 验收件分工：10_=证据本体，99_=交付三清单与复核命令，零重复真源"
 - file: docs/_working/mineloop2_campaign/00_morning_pack.md
   token: mineloop2-dual-arm-00-morning-pack-20261011
   capability: mineloop2_dual_arm
@@ -48537,6 +49057,11 @@ creation_tokens:
   capability: mineloop2_panel_design
   created_by: st-mineloop2-20261012
   merge_evaluation: "跨域不同对象→不并：本件是统筹晨裁 ⑨ 指定的 panel 回放面设计稿（呈批件），与 01 卡面草案/00 账册对象不同；不动判官不建引擎故无替换件"
+- file: docs/_working/mineloop2_campaign/05_composite_leg_face_design.yaml
+  token: mineloop-composite-face-05-composite-leg-face-design-20261013
+  capability: mineloop_composite_face
+  created_by: st-mineloop2-20261012
+  merge_evaluation: "扩在册绑定册/分类器的一面（净零：不新建模块）；与 04_ 逐臂净值面并列不合并"
 - file: docs/_working/mineloop2_campaign/10_first_dualarm_off.yaml
   token: mineloop2-dualarm-runface-10-first-dualarm-off-20261012
   capability: mineloop2_dualarm_runface
@@ -48547,6 +49072,21 @@ creation_tokens:
   capability: mineloop2_dualarm_runface
   created_by: st-mineloop2-20261012
   merge_evaluation: "双臂跑分凭据面（arm_level_creds/档位档名/底座身份），与分数册正交：册内只有判据读数，本件带装配凭据，不可替代故不合并不替代"
+- file: docs/_working/mineloop2_campaign/12_regime_multispan_impact_inventory.yaml
+  token: mineloop2-ruling3-faces-12-regime-multispan-impact-inventory-20261012
+  capability: mineloop2_ruling3_faces
+  created_by: st-mineloop2-20261012
+  merge_evaluation: "③裁修影响面盘点册与07b复位阶梯新版本卡：前者带分母与尺口径、后者承接07负结果不翻案（G4-5另起版本），均不可替代故不合并不替代"
+- file: docs/_working/mineloop2_campaign/13_regimes_prose_conversion_log.yaml
+  token: regimes-prose-to-mapping-conversion-log-13-regimes-prose-conversion-log-20261012
+  capability: regimes_prose_to_mapping_conversion_log
+  created_by: st-mineloop2-20261012
+  merge_evaluation: "本件为 22 张卡表示层转换的逐张动作凭据册（原散文全文＋动作＋两道防线计数）；与 12_ 盘点册同族不同对象：12_ 是改前影响面盘点，13_ 是改后动作凭据，不并"
+- file: docs/_working/mineloop2_campaign/14_composite_leg_census.yaml
+  token: mineloop-composite-face-14-composite-leg-census-20261013
+  capability: mineloop_composite_face
+  created_by: st-mineloop2-20261012
+  merge_evaluation: "扩在册绑定册/分类器的一面（净零：不新建模块）；与 04_ 逐臂净值面并列不合并"
 - file: docs/_working/mineloop_campaign/00_rolling_report_r1.md
   token: mineloop-campaign-00-rolling-report-r1-20261010
   capability: mineloop_campaign
@@ -49999,6 +50539,11 @@ creation_tokens:
   capability: nightmine_campaign
   created_by: st-nightmine2-20261010
   merge_evaluation: "夜矿战役台账续册件，并入既有 NIGHTMINE-CAMPAIGN 台账族（非新册，替代无）"
+- file: docs/_working/nightmine_campaign/series/agg8_series_v1.meta.yaml
+  token: minedig2-agg8-series-meta-20261013
+  capability: minedig2_agg8_materialize
+  created_by: st-minedig2-20261012
+  merge_evaluation: "同域内收：物化件形制沿用六段物化件先例（版本键＋逐文件 sha256＋复算读数），与在册 7 枚夜矿 CSV 同目录同形制，不另立目录"
 - file: docs/_working/nightmine_campaign/series/blast_ratio.csv
   token: nightmine-campaign-blast-ratio-20261009
   capability: nightmine_campaign
@@ -50034,6 +50579,111 @@ creation_tokens:
   capability: nightmine_campaign
   created_by: st-nightmine-20261010
   merge_evaluation: "过夜总令战役作业面追加（总报告机生件＋各车道台账＋广度序列产物）：与首班 9 条同族，只增不删"
+- file: docs/_working/nightmine_campaign/series/ti_ew_adosc_v1.csv
+  token: examunlock-ti-ew-adosc-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_ar_26_v1.csv
+  token: examunlock-ti-ew-ar-26-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_aroon_up_v1.csv
+  token: examunlock-ti-ew-aroon-up-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_cmo_14_v1.csv
+  token: examunlock-ti-ew-cmo-14-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_coppock_v1.csv
+  token: examunlock-ti-ew-coppock-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_cr_26_v1.csv
+  token: examunlock-ti-ew-cr-26-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_garman_klass_20_v1.csv
+  token: examunlock-ti-ew-garman-klass-20-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_histvol_20_v1.csv
+  token: examunlock-ti-ew-histvol-20-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_mfi_14_v1.csv
+  token: examunlock-ti-ew-mfi-14-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_natr_14_v1.csv
+  token: examunlock-ti-ew-natr-14-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_parkinson_20_v1.csv
+  token: examunlock-ti-ew-parkinson-20-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_pdi_14_v1.csv
+  token: examunlock-ti-ew-pdi-14-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_ppo_v1.csv
+  token: examunlock-ti-ew-ppo-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_qqe_14_v1.csv
+  token: examunlock-ti-ew-qqe-14-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_rmi_14_v1.csv
+  token: examunlock-ti-ew-rmi-14-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_rogers_satchell_20_v1.csv
+  token: examunlock-ti-ew-rogers-satchell-20-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_rvgi_10_v1.csv
+  token: examunlock-ti-ew-rvgi-10-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_series_v1.meta.yaml
+  token: ti-ew-series-ti-ew-series-v1meta-20261012
+  capability: ti_ew_series
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：单点 provenance（逐列 meta 可派生故并入，§4.2）"
+- file: docs/_working/nightmine_campaign/series/ti_ew_tsi_v1.csv
+  token: examunlock-ti-ew-tsi-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_wt1_v1.csv
+  token: examunlock-ti-ew-wt1-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
+- file: docs/_working/nightmine_campaign/series/ti_ew_yang_zhang_20_v1.csv
+  token: examunlock-ti-ew-yang-zhang-20-v1-20261012
+  capability: examunlock
+  created_by: st-examunlock-20261013
+  merge_evaluation: "考试卡族 ti_ew 日频基序列唯一面（20 列＋汇总册）；收编并替代前役一次性件 st-nightmine-20261010 的 derive_breadth_series.py 输出契约，同域不另起第二库"
 - file: docs/_working/oddjobs_20260923/index.md
   token: oddjobs-night-ledger-index-20260922
   capability: oddjobs-night-ledger
@@ -51822,11 +52472,26 @@ creation_tokens:
   capability: statsgov_trial_budget
   created_by: st-statsgov-20261012
   merge_evaluation: "派工单（批复②）：只出规格与验收不含取数；24 号件缺口实测与本单的名实不符/标签失真/日期硬编码三查互不可派生，独立成件"
+- file: docs/_working/statsgov_campaign/27_segment2_channel_probe_and_acceptance_v1.md
+  token: statsgov-trial-budget-27-segment2-channel-probe-and-acceptance-v1-20261012
+  capability: statsgov_trial_budget
+  created_by: st-statsgov-20261012
+  merge_evaluation: "批复②③附件（27＝验收核账＋段二三通道实测）与 M6 源码留证（91＝未入库两 .py 的指纹与全文）：均不可从 24/25/26/90 号件派生，各服务不同面"
+- file: docs/_working/statsgov_campaign/28_workorder_landing_face_and_gate_scope_v1.md
+  token: statsgov-trial-budget-28-workorder-landing-face-and-gate-scope-v1-20261012
+  capability: statsgov_trial_budget
+  created_by: st-statsgov-20261012
+  merge_evaluation: "裁定②授权工单：落地输入面污染取证＋内容型门 own_scope 定性请求，二者对象是队列/门装载面，不可从 25/26/27 号件派生"
 - file: docs/_working/statsgov_campaign/90_calibration_runners_source.md
   token: statsgov-trial-budget-90-calibration-runners-source-20261012
   capability: statsgov_trial_budget
   created_by: st-statsgov-20261012
   merge_evaluation: "净零:三份跑批件源码以代码围栏留证,因M6新.py不能入库故先存证据件,不新建真源"
+- file: docs/_working/statsgov_campaign/91_generator_and_test_source.md
+  token: statsgov-trial-budget-91-generator-and-test-source-20261012
+  capability: statsgov_trial_budget
+  created_by: st-statsgov-20261012
+  merge_evaluation: "批复②③附件（27＝验收核账＋段二三通道实测）与 M6 源码留证（91＝未入库两 .py 的指纹与全文）：均不可从 24/25/26/90 号件派生，各服务不同面"
 - file: docs/_working/statsgov_campaign/trial_budget_registry_draft.yaml
   token: statsgov-trial-budget-trial-budget-registry-draft-20261011
   capability: statsgov_trial_budget
@@ -55287,6 +55952,11 @@ creation_tokens:
   token: auction-backfill-run-all-20260916
   capability: auction_backfill
   created_by: st-auction-bridge-20260917
+- file: scripts/audit/agg8_series_materialize.py
+  token: minedig2-agg8-materialize-agg8-series-materialize-20261012
+  capability: minedig2_agg8_materialize
+  created_by: st-minedig2-20261012
+  merge_evaluation: "同域内收：不新建第二取数路（面板复用 lane_c_formula_miner.fetch_panel 单口）；本件是聚合8卡唯一物化真源，与六段物化件同纪律；tests 件豁免在册"
 - file: scripts/audit/cost_trio_exam.py
   token: cost-trio-exam-cost-trio-exam-20260922
   capability: cost_trio_exam
@@ -55325,6 +55995,11 @@ creation_tokens:
   capability: t0_matrix
   created_by: st-t0-matrix-20260924
   merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: scripts/audit/ti_daily_mean_materialize.py
+  token: examunlock-ti-series-ti-daily-mean-materialize-20261012
+  capability: examunlock_ti_series
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：收编一次性件 derive_breadth_series 输出契约并替代之；与既有件零功能交集（02 号规格册 §一）"
 - file: scripts/audit_news_publish_time.py
   token: auto-audit-news-publish-time-20260830
   capability: news_publish_time_audit
@@ -56865,6 +57540,11 @@ creation_tokens:
   token: auction-backfill-backfill-auction-snapshot-history-20260916
   capability: auction_backfill
   created_by: st-auction-bridge-20260917
+- file: scripts/data/backfill_kline_daily_history.py
+  token: data-supply-chain-backfill-kline-daily-history-20261012
+  capability: data_supply_chain
+  created_by: st-datalane2-20261012
+  merge_evaluation: "非第二真源：取数与换算单点仍在册 baostock kline_daily 能力，本件只做窗口编排与逐票续跑"
 - file: scripts/data/backfill_lof_minute_history.py
   token: asset-v2-lof-minute-backfill-20260911
   capability: backfill_lof_minute_history
@@ -65371,6 +66051,31 @@ creation_tokens:
   created_by: st-menu-t1b5-20260930
   no_mount_reason: TDM-E-L1-S0 宏观环境传感器复活件（NB1-B5 R2-R3 处方），挂点未在 config 图族注册，module_ref 落图后补挂（commitmap-cure P03 车道落地前置补申报）
   merge_evaluation: "跨域不同对象不并：TDM-E-L1-S0 宏观环境传感器真消费模块（NB1-B5 R2-R3处方件，政策表态分析器不消费MAC数值实证在案）"
+- file: src/zephyr/regime/formreg/__init__.py
+  token: condaxis-formreg---init---20261013
+  capability: condaxis_formreg
+  created_by: st-cdx-formreg-20261013
+  merge_evaluation: "不并：P-S 年代学/jump 两态/双边 CUSUM/BOCPD 四件=跨方法不同对象（规则层/概率层/检测器三族），仓内负存在已证零同义（挖矿簿 R5 负存在复认：jump/cusum 双边/bocpd/P-S 全仓零命中）；净零面=替代研究册四车道外部方法自建"
+- file: src/zephyr/regime/formreg/bocpd_online.py
+  token: condaxis-formreg-bocpd-online-20261013
+  capability: condaxis_formreg
+  created_by: st-cdx-formreg-20261013
+  merge_evaluation: "不并：P-S 年代学/jump 两态/双边 CUSUM/BOCPD 四件=跨方法不同对象（规则层/概率层/检测器三族），仓内负存在已证零同义（挖矿簿 R5 负存在复认：jump/cusum 双边/bocpd/P-S 全仓零命中）；净零面=替代研究册四车道外部方法自建"
+- file: src/zephyr/regime/formreg/cusum_two_sided.py
+  token: condaxis-formreg-cusum-two-sided-20261013
+  capability: condaxis_formreg
+  created_by: st-cdx-formreg-20261013
+  merge_evaluation: "不并：P-S 年代学/jump 两态/双边 CUSUM/BOCPD 四件=跨方法不同对象（规则层/概率层/检测器三族），仓内负存在已证零同义（挖矿簿 R5 负存在复认：jump/cusum 双边/bocpd/P-S 全仓零命中）；净零面=替代研究册四车道外部方法自建"
+- file: src/zephyr/regime/formreg/jump_layer.py
+  token: condaxis-formreg-jump-layer-20261013
+  capability: condaxis_formreg
+  created_by: st-cdx-formreg-20261013
+  merge_evaluation: "不并：P-S 年代学/jump 两态/双边 CUSUM/BOCPD 四件=跨方法不同对象（规则层/概率层/检测器三族），仓内负存在已证零同义（挖矿簿 R5 负存在复认：jump/cusum 双边/bocpd/P-S 全仓零命中）；净零面=替代研究册四车道外部方法自建"
+- file: src/zephyr/regime/formreg/ps_chronology.py
+  token: condaxis-formreg-ps-chronology-20261013
+  capability: condaxis_formreg
+  created_by: st-cdx-formreg-20261013
+  merge_evaluation: "不并：P-S 年代学/jump 两态/双边 CUSUM/BOCPD 四件=跨方法不同对象（规则层/概率层/检测器三族），仓内负存在已证零同义（挖矿簿 R5 负存在复认：jump/cusum 双边/bocpd/P-S 全仓零命中）；净零面=替代研究册四车道外部方法自建"
 - file: src/zephyr/regime/index_market_brief.py
   token: auto-index-market-brief-20260823
   capability: index_market_brief
@@ -66232,6 +66937,12 @@ creation_tokens:
   token: auto-sector-volume-anomaly-20260823
   capability: sector_volume_anomaly
   created_by: AI-K3-GW-GAP7
+- file: src/zephyr/signal_ashare/sector/universe_router.py
+  token: sector-universe-router-universe-router-20261013
+  capability: sector_universe_router
+  created_by: st-cdx-sector-20261013
+  no_mount_reason: 口径路由工具件非TDM计算节点（无算法输出无module_ref语义）；TDM-E-L2板块子树27计算节点已挂满（00_skeleton §2实查），挂接经消费件（验证班面板装配/五件套信号件）间接发生
+  merge_evaluation: "同真源可派生判据：仓内零口径路由件（capability_lookup零命中复认）——非并集而是空白新建；判别式真源唯一落YAML，本件零硬编码板块码防第二真源。"
 - file: src/zephyr/signal_ashare/sentiment/__init__.py
   token: sig-init-sentiment-20260913
   created_by: schemas-split-20260912
@@ -67365,6 +68076,11 @@ creation_tokens:
   token: auto-test-warroom-20260829
   capability: warroom_playbook
   created_by: AI-WAVE4-001（tests/ 豁免自愿补登随 SELL-001 先例）
+- file: tests/gov/audit/test_ti_daily_mean_materialize.py
+  token: examunlock-ti-series-test-ti-daily-mean-materialize-20261012
+  capability: examunlock_ti_series
+  created_by: st-examunlock-20261013
+  merge_evaluation: "净零：物化件配对测试，tests/ 面按在册为门自身豁免、入队预检不豁免，故照登留痕"
 - file: tests/gov/clone_guard/test_mcrit_adapter.py
   token: deadcure3b-tests-revival-test-mcrit-adapter-20261011
   capability: deadcure3b_tests_revival
@@ -68075,6 +68791,11 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 20 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance/compliance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/compliance/test_l10_compliance.py
+  token: deadcure3b-tests-revival-test-l10-compliance-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 104 批（源族 st-cure-p01-20261006 最新修订版字节，前缀 tests/gov/governance/compliance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/compliance/test_owner_absent.py
   token: deadcure3b-tests-revival-test-owner-absent-20261011
   capability: deadcure3b_tests_revival
@@ -68095,6 +68816,31 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 21 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance/context_governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/d1_structure/test_check_directory_contract_dcr008.py
+  token: deadcure3b-tests-revival-test-check-directory-contract-dcr008-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 B 复活（统筹 2026-10-13 裁定＝复活）第 203 批（源族 st-cure-p01-20261006 最新修订版字节，前缀 tests/gov/governance/d1_structure）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/d1_structure/test_check_mirror_tree.py
+  token: deadcure3b-tests-revival-test-check-mirror-tree-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 B 复活（统筹 2026-10-13 裁定＝复活）第 203 批（源族 st-cure-p01-20261006 最新修订版字节，前缀 tests/gov/governance/d1_structure）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/d1_structure/test_untracked_phantom_docs_guard.py
+  token: deadcure3b-tests-revival-test-untracked-phantom-docs-guard-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 B 复活（统筹 2026-10-13 裁定＝复活）第 203 批（源族 st-cure-p01-20261006 最新修订版字节，前缀 tests/gov/governance/d1_structure）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/d3_metadata/test_backfill_module_domain.py
+  token: deadcure3b-tests-revival-test-backfill-module-domain-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 103 批（源族 st-cure-p01-20261006 最新修订版字节，前缀 tests/gov/governance/d3_metadata）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/d3_metadata/test_backfill_roor_reg_annotation.py
+  token: deadcure3b-tests-revival-test-backfill-roor-reg-annotation-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 103 批（源族 st-cure-p01-20261006 最新修订版字节，前缀 tests/gov/governance/d3_metadata）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/delegation/test_vibe_coding_enforcer.py
   token: deadcure3b-tests-revival-test-vibe-coding-enforcer-20261011
   capability: deadcure3b_tests_revival
@@ -68120,6 +68866,11 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 24 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance/depgraph）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/depgraph/test_upgrade_tested_modules.py
+  token: deadcure3b-tests-revival-test-upgrade-tested-modules-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 106 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/depgraph）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/docs/test_api_doc_version_syncer.py
   token: deadcure3b-tests-revival-test-api-doc-version-syncer-20261011
   capability: deadcure3b_tests_revival
@@ -68165,6 +68916,21 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 27 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance/escalation）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/fullflow/test_fullflow_crosscheck_generator.py
+  token: deadcure3b-tests-revival-test-fullflow-crosscheck-generator-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 B 复活（统筹 2026-10-13 裁定＝复活）第 204 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/fullflow）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/generators/test_align_all_orphan_census.py
+  token: deadcure3b-tests-revival-test-align-all-orphan-census-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 102 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/generators）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/generators/test_check_gate_inventory_drift.py
+  token: deadcure3b-tests-revival-test-check-gate-inventory-drift-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 102 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/generators）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/generators/test_externalize_algo_flow_mirror.py
   token: deadcure3b-tests-revival-test-externalize-algo-flow-mirror-20261011
   capability: deadcure3b_tests_revival
@@ -68180,6 +68946,16 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 28 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance/generators）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/generators/test_generate_commit_guide.py
+  token: deadcure3b-tests-revival-test-generate-commit-guide-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 102 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/generators）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/generators/test_generate_gate_registry.py
+  token: deadcure3b-tests-revival-test-generate-gate-registry-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 102 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/generators）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/generators/test_generate_module_algorithm_overview.py
   token: deadcure3b-tests-revival-test-generate-module-algorithm-overview-20261011
   capability: deadcure3b_tests_revival
@@ -68205,6 +68981,31 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 29 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance/governance_e2e）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/governance_e2e/test_gov_architecture_principles.py
+  token: deadcure3b-tests-revival-test-gov-architecture-principles-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 B 复活（统筹 2026-10-13 裁定＝复活）第 202 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/governance_e2e）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/governance_e2e/test_gov_consequence_manager.py
+  token: deadcure3b-tests-revival-test-gov-consequence-manager-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 B 复活（统筹 2026-10-13 裁定＝复活）第 202 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/governance_e2e）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/governance_e2e/test_gov_data_source_reliability.py
+  token: deadcure3b-tests-revival-test-gov-data-source-reliability-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 B 复活（统筹 2026-10-13 裁定＝复活）第 202 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/governance_e2e）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/governance_e2e/test_gov_microstructure_defense.py
+  token: deadcure3b-tests-revival-test-gov-microstructure-defense-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 B 复活（统筹 2026-10-13 裁定＝复活）第 202 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/governance_e2e）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/governance_e2e/test_gov_session_concurrency.py
+  token: deadcure3b-tests-revival-test-gov-session-concurrency-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 B 复活（统筹 2026-10-13 裁定＝复活）第 202 批（源族 st-chiefc-20261009 最新修订版字节，前缀 tests/gov/governance/governance_e2e）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/governance_e2e/test_naming_e2e.py
   token: deadcure3b-tests-revival-test-naming-e2e-20261011
   capability: deadcure3b_tests_revival
@@ -68230,6 +69031,21 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 31 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance/shared）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_algo_quality.py
+  token: deadcure3b-tests-revival-test-algo-quality-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_architecture_health_dashboard_metrics.py
+  token: deadcure3b-tests-revival-test-architecture-health-dashboard-metrics-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_architecture_health_dashboard_metrics_p2.py
+  token: deadcure3b-tests-revival-test-architecture-health-dashboard-metrics-p2-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_audit_return_contract_usage.py
   token: deadcure3b-tests-revival-test-audit-return-contract-usage-20261011
   capability: deadcure3b_tests_revival
@@ -68260,6 +69076,36 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_chart_pattern_registry_integrity.py
+  token: deadcure3b-tests-revival-test-chart-pattern-registry-integrity-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_check_blueprint_code_alignment.py
+  token: deadcure3b-tests-revival-test-check-blueprint-code-alignment-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_check_commit_message.py
+  token: deadcure3b-tests-revival-test-check-commit-message-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_check_test_symbol_validity.py
+  token: deadcure3b-tests-revival-test-check-test-symbol-validity-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_check_wiring_orphan.py
+  token: deadcure3b-tests-revival-test-check-wiring-orphan-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_chief_lease.py
+  token: deadcure3b-tests-revival-test-chief-lease-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_collect_write_audit_4663.py
   token: deadcure3b-tests-revival-test-collect-write-audit-4663-20261011
   capability: deadcure3b_tests_revival
@@ -68270,11 +69116,51 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_commit_guide_delivery.py
+  token: deadcure3b-tests-revival-test-commit-guide-delivery-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_commit_queue.py
   token: deadcure3b-tests-revival-test-commit-queue-20261011
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_commit_queue_b5_backoff.py
+  token: deadcure3b-tests-revival-test-commit-queue-b5-backoff-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_commit_queue_backfill_lane.py
+  token: deadcure3b-tests-revival-test-commit-queue-backfill-lane-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_commit_queue_c1_debounce.py
+  token: deadcure3b-tests-revival-test-commit-queue-c1-debounce-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_commit_queue_compaction_registry_merge.py
+  token: deadcure3b-tests-revival-test-commit-queue-compaction-registry-merge-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_generate_gate_face_reconciliation.py
+  token: deadcure3b-tests-revival-test-generate-gate-face-reconciliation-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_generate_map_coverage_ledger.py
+  token: deadcure3b-tests-revival-test-generate-map-coverage-ledger-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_generate_skeleton_health.py
+  token: deadcure3b-tests-revival-test-generate-skeleton-health-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_gov_policy_manager.py
   token: deadcure3b-tests-revival-test-gov-policy-manager-20261011
   capability: deadcure3b_tests_revival
@@ -68285,6 +69171,11 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_lane_leases.py
+  token: deadcure3b-tests-revival-test-lane-leases-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_library_reconcilers_red_blue.py
   token: deadcure3b-tests-revival-test-library-reconcilers-red-blue-20261011
   capability: deadcure3b_tests_revival
@@ -68300,6 +69191,31 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_migrate_sqlite_to_pg.py
+  token: deadcure3b-tests-revival-test-migrate-sqlite-to-pg-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_module_translation_loader.py
+  token: deadcure3b-tests-revival-test-module-translation-loader-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_mount_route_consistency.py
+  token: deadcure3b-tests-revival-test-mount-route-consistency-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_next_ruling_id.py
+  token: deadcure3b-tests-revival-test-next-ruling-id-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_ops_guard_red_team.py
+  token: deadcure3b-tests-revival-test-ops-guard-red-team-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_pg_dsn_utf8_guard.py
   token: deadcure3b-tests-revival-test-pg-dsn-utf8-guard-20261011
   capability: deadcure3b_tests_revival
@@ -68325,6 +69241,16 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_regen_offload_m2.py
+  token: deadcure3b-tests-revival-test-regen-offload-m2-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_registry_derivation_canary.py
+  token: deadcure3b-tests-revival-test-registry-derivation-canary-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_registry_entry_counts_reconciler.py
   token: deadcure3b-tests-revival-test-registry-entry-counts-reconciler-20261011
   capability: deadcure3b_tests_revival
@@ -68350,6 +69276,11 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_ruff_preclean_enqueue.py
+  token: deadcure3b-tests-revival-test-ruff-preclean-enqueue-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_rule_patterns.py
   token: deadcure3b-tests-revival-test-rule-patterns-20261011
   capability: deadcure3b_tests_revival
@@ -68360,6 +69291,11 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_run_gate_chain.py
+  token: deadcure3b-tests-revival-test-run-gate-chain-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_s1_immutable_tree_wire.py
   token: deadcure3b-tests-revival-test-s1-immutable-tree-wire-20261011
   capability: deadcure3b_tests_revival
@@ -68370,6 +69306,11 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_scaffold_module_registration.py
+  token: deadcure3b-tests-revival-test-scaffold-module-registration-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_scan_scope_convergence_equivalence.py
   token: deadcure3b-tests-revival-test-scan-scope-convergence-equivalence-20261011
   capability: deadcure3b_tests_revival
@@ -68380,6 +69321,11 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_session_closeout_reconciler.py
+  token: deadcure3b-tests-revival-test-session-closeout-reconciler-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_session_reincarnation_guard.py
   token: deadcure3b-tests-revival-test-session-reincarnation-guard-20261011
   capability: deadcure3b_tests_revival
@@ -68395,21 +69341,46 @@ creation_tokens:
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_split_coordination.py
+  token: deadcure3b-tests-revival-test-split-coordination-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_standard_checkup.py
   token: deadcure3b-tests-revival-test-standard-checkup-20261011
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_standards_lib.py
+  token: deadcure3b-tests-revival-test-standards-lib-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_strategy_family_attribution.py
   token: deadcure3b-tests-revival-test-strategy-family-attribution-20261011
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_sync_panorama_module.py
+  token: deadcure3b-tests-revival-test-sync-panorama-module-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_sync_registry_from_blueprints.py
+  token: deadcure3b-tests-revival-test-sync-registry-from-blueprints-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_sync_yaml_to_depgraph_smoke.py
   token: deadcure3b-tests-revival-test-sync-yaml-to-depgraph-smoke-20261011
   capability: deadcure3b_tests_revival
   created_by: st-deadcure3b-chief-20261011
   merge_evaluation: "A 类复活第 104 批（族 st-tests-chief-20261004 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
+- file: tests/gov/governance/test_task_board.py
+  token: deadcure3b-tests-revival-test-task-board-20261012
+  capability: deadcure3b_tests_revival
+  created_by: st-deadcure3b-chief-20261011
+  merge_evaluation: "未定项 A＋C 复活（统筹 2026-10-13 裁定＝复活）第 101 批（源族 st-chiefc-20261009／st-cure-p05-20261006 最新修订版字节，前缀 tests/gov/governance）：非新建能力=死信唯一副本归位，零新门禁零新依赖，替代面=该件在 HEAD 查无（absent_in_head）"
 - file: tests/gov/governance/test_w4_env_no_residual.py
   token: deadcure3b-tests-revival-test-w4-env-no-residual-20261011
   capability: deadcure3b_tests_revival
