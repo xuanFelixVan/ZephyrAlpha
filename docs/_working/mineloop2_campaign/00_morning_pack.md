@@ -1850,3 +1850,49 @@ python scripts/git_commit.py --session st-mineloop2-20261012 \
   `text=False`）；Windows 下 `write_text` 写 CRLF 令判据假阴（第四把口径，改 `write_bytes`＋`core.autocrlf=false`）。
 - 现状（15:43）：dev 已含 `0034`（§32.16–§32.17，落地凭据走 `git log -- <册>`）；
   六跑仍差 `card_binding.py` 一格，A/B/C 三只监视器全部在岗（A≤700 轮、B≤1500 分钟、C≤360 轮）。
+
+
+### 32.19 统筹续令（19:4x）逐条复测＋四件码面"逐函数三方归因"重基＋新的唯一挡点换成孤儿资源
+
+**令中前提复测（全过，未照单全收）**：①`a67009f3ef`/`3d4f8b51db`＝挖矿二班 B1/B2 确在 dev（16:06/16:09）✓；
+②`st-gpuwo` 接管条目已在 `.runtime/takeover/resolved/`（该目录 521 条，本班命中面已消）✓；
+③本班交出的台账补丁确被维护五班同题抢先落地 `9348d8d90d`（17:31，落地面已带 `excluded_dev_identical` 字段）
+ ⇒ 本班交接件**作废留档**，不再投，也不再自签任何 resolve ✓；④A 监视器实测已空转到第 148 轮并报
+ FATAL（pending 空＝在飞袋全死），按令停：三只监视器全部 kill（`kill_ab2.ps1`＋`kill_c.ps1`），
+ 停后日志末次活动 19:58:3x，无残留。
+
+**车道重基（令②的"与 dev 现值对齐"）**：
+- `git -C <lane> restore --source=dev --pathspec-from-file=<删除清单>` 只补"dev 有而车道无"的 385 件
+  （纯新增，绝不覆盖本班作者面）：脏条目 464 → 90，删除态 350 → 0，**本班八件 sha 逐字不变**；
+  其中 8 张 `4*_agg_*` 卡恢复后，挖矿二班随 B1/B2 落地的 `test_agg8_declared_names_are_registered_hints`
+  由红转绿——即"车道缺件"曾让他班测试在我的面上假红。
+- 四件码面合并法（令②"重放增量"的可执行版）：**逐函数/逐常量三方归因**而非文本 merge-file
+  （`git merge-file` 在中块冲突处把缩进弄坏，本班当场弃用）——
+  对每个顶层定义：`dev==基线` ⇒ 用我的；`我==基线` ⇒ 用 dev 的；双方都动 ⇒ 保守留 dev（本案只有
+  `_series_metrics`，且实测我那 1 行已在 dev 内，不丢）；dev 没有的 ⇒ 尾追加；
+  常量额外做**依赖定序＋插到首处引用之前**（否则 `tuple(DRAWDOWN_LEVEL_TIERS)` 这类初值求值即 NameError）。
+  另补回我独有 import 两支（`copy`/`numpy`）。合并后实测 **186 passed**；合并前车道另存
+  `evidence/pre_rebase_1959/`，合并后快照存 `evidence/merged_face_20261013_2014/`（防车道被清扫）。
+- 被本班改道取代的旧测试摘除 1 支：`test_arm_context_refuses_both_arms_reading_the_same_level_series`
+  （它断言 `arm_levels_same_source` 必抛，而 off 配对"两臂同序列不同乘子表"是本班 §廿六 更正后的合法形；
+  替代面 `test_arm_context_same_level_series_three_faces` 在册，摘的是被推翻的旧断言而非删除覆盖面）。
+
+**MSG-STYLE 的尺我要更正一处（本班先宽后准）**：门实际只有两个违规码
+`unicode_arrow` 与 `cn_period_end`（`msg_style_gate.py:133/160/217`），**全角标点不是违规**。
+我第一次按"全角皆违规"扫出 29 处并改了 81 行——那是过宽改写（会平白扩大 diff 面），已全部推倒重做，
+现值＝最小改动（唯一必需项 `0→1→2→NORMAL` 早已在 05:1x 改为 ASCII）。顺带量到
+`scripts/backtest/fexam/arm_protocol_binding.py:298` 在**已落地 dev 面**存在同类违规（非本班件、本班不改），
+登记移交：该文件下次由属主触碰时一并修。
+
+**唯一剩余挡点（换了对象，这次是真差不是测量误差）**：门实测"命中文件 2 件"来自孤儿工作树
+`.aidrafts/st-mineloop-20261010`（dirty=43，且该条目已带新剔除字段＝剩下的确是字节不同者）。
+符号级核对结论：其 `card_binding.py` 独有 22 行涉及的 5 个符号在 dev 全部存在（同义已落地）；
+其 `calibration_exam.py` 独有 22 行的关键差异是旧 `def _span_dates`——已被 `_span_pairs` 裁修取代。
+故建议 **abort（放弃孤儿面）＋ `--resolve`**，而非 merge 回主区（merge 会把 `_span_pairs` 打回旧行为＝回退他人成果）。
+完整处置建议与执行命令：`evidence/orphan_st-mineloop-20261010_disposition_note.md`。
+本班不自签 resolve、不代删 worktree（物理移除须走裁定通道）。
+
+**解锁后自动链（一步不落地）**：码面袋 kit 已备好（`files_R1code.txt`＋`bag_msg_R1code.txt`，
+内容＝上面的合并面，186 passed＋MSG-STYLE 净＋ruff format 待跑）；resolve 一出现即投，
+落地后重装 A/B（就绪判据不变：闸一 lane==dev＋两道封口任一＋CH 窗），六跑合议按裁定②读，
+r 面按统筹新定案"以 run 落地时刻标注"随件披露；随后主区复跑四件套 pytest，再接任务②复合入口 CW-MINELOOP-001。
