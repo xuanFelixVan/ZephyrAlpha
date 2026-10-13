@@ -8559,6 +8559,11 @@ entries:
   plain_zh: 运行all，执行治理规则与门禁（run all）
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
+- module_path: scripts/audit/agg8_series_materialize.py
+  name_zh: 聚合市场面序列逐日物化件
+  plain_zh: 把全市场涨停家数、涨停占比、面板平均绝对收益这三类每日市场面数字（以及它们的 20 日标准化版本）算成逐日一条的 CSV 存下来，同时把未来 5 日、10 日的市场等权平均收益也算好存下来，供考试卡在本地直接读取；算法与当初筛选时一字不差，跑完还会自己复算一遍相关系数与样本数，跟登记在册的读数对不上就停下报警。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
 - module_path: scripts/audit/cost_trio_exam.py
   desc_en: ""
   desc_zh: 做T配对成本三件套判据脚本：bt产物D后成交按symbol×day双边配对，出CST-T0-001成本口径下的毛/净价差四数与insufficient土规判定
@@ -8621,6 +8626,11 @@ entries:
   name_en: ""
   name_zh: 六段情绪相位历史物化件
   plain_zh: 想知道过去每一天市场情绪处在点火、主升还是退潮这六个阶段里的哪一个，就照着仓库里已经定好的那套规则一天一天算出来，存成一张表给考试用；自己不加任何新规矩，只把现成的规则跑一遍
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/audit/ti_daily_mean_materialize.py
+  name_zh: 技术指标族日频基序列物化件
+  plain_zh: 把考试卡里写明的某个技术指标列，按天算成全市场等权平均数并落成 CSV 序列，供事件开关算子当底座；列名和窗口都从卡面原文里读，不手抄、不自造阈值，取不到列就报错不出假数据
   domain_id: D_BACKTEST
   responsibility_layer: business
 - module_path: scripts/audit_news_publish_time.py
@@ -9007,6 +9017,11 @@ entries:
   name_en: ""
   name_zh: 考试卡取数绑定层
   plain_zh: 把每张考卷声明的数据来源自动接成判卷程序能吃的序列，判据一个字不改，绑不上就如实报缺
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/cband_grid.py
+  name_zh: C族参数邻域小网格跑批器
+  plain_zh: 把止损参数和资金分配配比这两类旋钮各自摆开一批取值同时回测，一格一笔记进探索分册，只交原始数字不下录取结论，防止挑最好那一格当成有效发现
   domain_id: D_BACKTEST
   responsibility_layer: business
 - module_path: scripts/backtest/fexam/ch_data.py
@@ -9552,6 +9567,11 @@ entries:
   name_en: ""
   name_zh: sim 转正建议书生成器
   plain_zh: 每月自动把模拟盘里各策略的成绩单整理成一页报告：谁的实盘表现、哪些还在观察期、下一步值不值得老板签字转正。只备料不做主，签字权永远在 Owner 手里。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/statsgov_deflation_and_budget.py
+  name_zh: 试次折减与预算盘点出品件
+  plain_zh: 把从几万格里挑出来的最好成绩按试过多少次打折，量出打折后及格线该画在哪、还剩几格过关，并清点六类挖矿各自烧掉多少次试次
   domain_id: D_BACKTEST
   responsibility_layer: business
 - module_path: scripts/backtest/strategy_intake_inventory.py
@@ -11149,6 +11169,11 @@ entries:
   name_en: Technical Indicator Coverage Auditor
   name_zh: 技术指标覆盖审计器
   plain_zh: 回填补完数据后跑它验收：把指标宽表的每一列挨个查一遍有没有空列。查询失败会大声报错绝不假装全绿，162 列拆成小批查免得把数据库内存顶爆。全绿打印 AUDIT PASS，有缺口退出码非零
+  domain_id: D_DATA
+  responsibility_layer: business
+- module_path: scripts/data/backfill_kline_daily_history.py
+  name_zh: A股日K线历史窗口回填器
+  plain_zh: 按票清单加起止日期给 kline_daily 补历史日线：取数与换算全部复用在册 baostock 的 kline_daily 能力（不复权、量纲股与元），写入走 BufferedWriter 正门，逐票续跑可自愈；解决 2016-2018 只有 240 票 stub 的假完整面。
   domain_id: D_DATA
   responsibility_layer: business
 - module_path: scripts/data/backfill_lof_minute_history.py
@@ -17599,6 +17624,14 @@ entries:
   plain_zh: "accept_nlp_pipeline.py — P1-E3 Phase 8: NLP 管道验收检查清单自动化。"
   domain_id: D_DATA
   responsibility_layer: business
+- module_path: scripts/ml/build_distilled_sft_dataset.py
+  desc_en: Replaces keyword self-labeling with teacher pre-labeling for training data and expands the human gold eval set; strict source separation, refuses to emit when the teacher is down.
+  desc_zh: 把情绪自研模型的训练标签从关键词自标换成教师模型预标，并把人工金标题从200扩到500以上；两面严格分源，教师挂了就不出货。
+  name_en: GPU-03B sentiment data pipeline (gold expansion + teacher distillation)
+  name_zh: GPU-03B 情绪数据管线（金标扩题＋教师蒸馏）
+  plain_zh: 以前训练和考试都用同一套关键词规则打分，等于自己出题自己判卷，分数好看也不可信。这一步把两件事分开：训练用的标签请现网的通用大模型先打一遍（教师打分），考试题改成人来判、并且题量翻倍到500以上；而且只把老师给的标签喂给学生，绝不喂进考卷。要是那个大模型连不上或者一半以上都失败，程序就直接报错不出货，不会交一份看着完整其实全废的数据集。
+  domain_id: D_ML_TRAIN
+  responsibility_layer: ai
 - module_path: scripts/ml/build_eval_set.py
   desc_en: ""
   desc_zh: 分层抽样（危机期/复苏期/常态期）从 ClickHouse 采集新闻，关键词规则标注 sentiment，存为 news_sentiment_200.jsonl，断点续作追加写入。
@@ -41184,6 +41217,31 @@ entries:
   plain_zh: Wyckoff 吸筹 FSM 6 阶段识别 + 评分（MOD-REGIME-002 Phase 2c）。把 OHLCV + 量能 z-score 映射成 Wyckoff 吸筹理论的 6 阶段事件 + 累加评分（0-100），供 OverlaySignalsConstructor 组装 s2_wyckoff_score 维度喂 RegimeDetector S2 confirm。
   domain_id: D_REGIME
   responsibility_layer: business
+- module_path: src/zephyr/regime/formreg/__init__.py
+  name_zh: 两态形态识别包壳
+  plain_zh: 大盘两态形态识别线的包门面：把牛熊年代学、跳变两态、双边检测、在线变点四件工具集中对外，方便条件轴战役统一领用，不装任何业务逻辑。
+  domain_id: D_REGIME
+  responsibility_layer: business
+- module_path: src/zephyr/regime/formreg/bocpd_online.py
+  name_zh: BOCPD 在线变点检测
+  plain_zh: 边收数据边算拐点的贝叶斯在线检测器：维护一张当前距上次拐点过了多久的概率表，每来一个新数就更新一次，离群新数据会把概率质量推回零点，输出今天恰好是拐点的概率当连续灰度用；观测模型用抗厚尾的学生 t 分布防极端值捣乱。
+  domain_id: D_REGIME
+  responsibility_layer: business
+- module_path: src/zephyr/regime/formreg/cusum_two_sided.py
+  name_zh: 双边 CUSUM 拐点检测
+  plain_zh: 盯住一个指标序列的双向报警器：把偏离基线的量分上行和下行两路累积，哪一路攒够门槛就朝哪个方向报警并清零重来，输出报警时间、方向和攒下的量三样，用来抓住行情转向的早期苗头；横盘零波动时会明确标记降级而不是装聋。
+  domain_id: D_REGIME
+  responsibility_layer: business
+- module_path: src/zephyr/regime/formreg/jump_layer.py
+  name_zh: 两态跳变概率层
+  plain_zh: 把连续特征帧喂给跳变模型切成上涨态和下跌态两种持久状态：跳变惩罚控制不轻易换状态，治状态来回抖的老毛病；拟合后按特征均值把组件重新排到固定语义槽位，保证不同轮次跑出来的 1 号 2 号状态含义永远一致，并输出每天属于各状态的概率。
+  domain_id: D_REGIME
+  responsibility_layer: business
+- module_path: src/zephyr/regime/formreg/ps_chronology.py
+  name_zh: P-S 牛熊年代学核
+  plain_zh: 用月度收盘价找出历史上每轮牛市和熊市的起止点：在前后八个月的窗口里找局部高点低点，强制高低交替，再用最短月数和幅度门槛剔除太短的波段，最终输出一张谁先谁后、各涨跌多少的牛熊年表，给后续验证当真值基准。
+  domain_id: D_REGIME
+  responsibility_layer: business
 - module_path: src/zephyr/regime/index_market_brief.py
   desc_en: ""
   desc_zh: ""
@@ -47164,6 +47222,11 @@ entries:
   name_en: Sector Volume Anomaly Detector
   name_zh: 板块量能异动检测器
   plain_zh: 看每个板块今天成交额跟它前 20 天的平均量差多少——翻倍以上叫 显著放量，差三成叫温和放量，腰斩以下叫显著缩量，用来找资金突然涌入或 撤离的板块。历史不够或当天缺数据的板块直接跳过并写明原因。
+  domain_id: D_ASHARE_SIGNAL
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/sector/universe_router.py
+  name_zh: 板块口径路由薄件
+  plain_zh: 做什么：把'板块指哪套板块'变成机械判定——板块代码进、口径族出（申万主口径/880盘中辅助/THS881资金桥/概念事件标签）。解决什么：三套板块口径并存六套数字打架，每个新模块自选一套口径导致人工对账。怎么做：读config/sector_universe_router.yaml判别式正则首命中路由，纯函数零查库，市场统计指数剔除，歧义码fail-loud不猜。
   domain_id: D_ASHARE_SIGNAL
   responsibility_layer: business
 - module_path: src/zephyr/signal_ashare/sentiment/extreme_sentiment_reversal_detector.py
@@ -56883,6 +56946,11 @@ entries:
   plain_zh: "治本 2026-07-24 (): --reconciler-verify 模式要求主工作区"
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
+- module_path: tests/gov/audit/test_ti_daily_mean_materialize.py
+  name_zh: 技术指标物化件配对测试
+  plain_zh: 用假数据和临时目录检查那个物化件：列名是不是从卡面读的、没证的列会不会被拦住、重复日期会不会拒写、产出的 CSV 表头对不对、窗口会不会被闭卷切点钳住，全程不碰数据库
+  domain_id: D_BACKTEST
+  responsibility_layer: business
 - module_path: tests/gov/governance/d5_architecture/test_generate_backtest_coverage_ledger.py
   desc_en: ""
   desc_zh: fixtures 断言渲染形态；缺真源/计数断言失败必报错不静默；幂等与--check 漂移
