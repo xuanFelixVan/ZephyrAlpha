@@ -2682,3 +2682,397 @@ dev 严格前缀）由"字节等 dev"变成"落后 dev"。**这正是本班本�
 本班这一袋的绕行形＝**只投 03 件**（00 件那半袋已单独落地 `172d9c776c`，本袋不需要它），
 并同步把 00 面按同一四步口对齐——顺序是先落本班 03 袋、再刷 00（刷 00 受台账 600s 刷新节流窗约束，
 本班不自造 `now` 绕窗）。两枚件的备份都留在 quarantine 同名路径，sha 记在 `g5_takeover_fix_log.jsonl`。
+
+## 十八、第二把刀施工账＝A1 归一化批内去重落地＋步骤0接管处置＋底尺负载标定（本班 st-gpux6-20261013，`date` 实测＝2026-10-13 21:41:51 起本节，装配时刻逐条另标）
+
+**大白话五句**：①接班第一件事不是写码，是把四班死车道那两卷**落后件**面对齐到落地面——否则任何碰它们的袋都会被 TAKEOVER-PENDING 再挡一次。本班按五班 §十七·M 的四步口做了，命中面从 20 项缩到只剩 18 枚未跟踪跑批目录（照统筹令保持显化、未销、未 `--resolve`）。
+②五班定价 8.0 倍的"第二把刀"（A1 归一化批内去重）在本班从草稿变成代码＋11 支试件＋七刀突变自证；n=200 等价四臂给出**本刀一格未新增分歧**，且 cross 与 floor 是**同一批 4 格**＝五班 §十七·G 那四格哈希种子族。
+③本班用同一把针先复现上一班读数，量到一条会影响终局线可判性的事：**外来负载 92% 时 CPU 臂慢 1.91 倍、GPU 臂慢 1.97–2.21 倍 ⇒ 比值被压成 0.86 倍**。线在 3.0x 而五班富余只有 1.3–2.5%，所以复证**不能在污染面上签**——本班加了一道"采之前先量面"的静默窗闸（判据线值、协议、判读函数一字未动）。
+④本班自己挖出一处真缺陷并当场修掉：草稿的字节预算尺用 `getattr(v,"nbytes",0)`，而 pandas 2.3.3 的 DataFrame **没有** `.nbytes` ⇒ 恒得 0＝预算是永不触发的装饰件。修好后 n=200 面实测逐出 18 次，**去重比从定价 8.0 倍落到实测 1.79 倍**——计数收益与墙钟收益本班分开签（§十七·E② 那条纪律的反面教材差点又写一遍）。
+⑤五班转来的另两件（核内出口级指纹、M-5 驻留构成重算）与全格集/iso/交替配对三条腿在 §十八·E、·F，读数落一行写一行，**未落不写**。
+
+### 十八·A 步骤 0＝接管处置（五班四步口的多件版，四步一条口、每步读回）
+
+先证内容再动面（零写盘针 `g6_takeover_probe.py`，产物 `g6_takeover_probe.json`）：死车道 HEAD `a1e8866ecd` **是 dev 祖先**（`merge-base --is-ancestor` rc=0）；心跳 PID 40680 经 `tasklist` 实测 **DEAD**；台账该 sid 只有 1 条 open（立案 ts `2026-10-13T12:10:18Z`＝统筹令所说"死亡钩子重新写入"那一条，`refresh_count=0`）。
+
+| 件（跟踪） | dev sha12 | 车道 sha12 | dev 行 | 车道行 | **车道独有行** | 字节等 dev | 处置 |
+|---|---|---|---|---|---|---|---|
+| `src/zephyr/backtest/gpu_core.py` | `c38ec0a22bd8` | `c38ec0a22bd8` | 1346 | 1346 | **0** | 是 | 台账批①已自动剔除，本班未动 |
+| `scripts/backtest/translated/_c4_engine.py` | `68a3e6b5e5ce` | `68a3e6b5e5ce` | 1243 | 1243 | **0** | 是 | 同上 |
+| `tests/research/backtest/test_gpu_core_parity.py` | `5de8e4329f5d` | `5de8e4329f5d` | 503 | 503 | **0** | 是 | 同上 |
+| `docs/.../00_gpufeed_report.md` | `50198dc43043` | `aa734461eaca` | 734 | 673 | **0** | 否（落后） | 本班对齐（存证 `aa734461…`） |
+| `docs/.../03_gpux_final_report.md` | `116de453c511` | `3fe8d707a625` | 2684 | 2162 | **0** | 否（落后） | 本班对齐（存证 `3fe8d707…`） |
+
+四步口执行（`g6_takeover_fix.py`，log `g6_takeover_fix_log.jsonl`）：①逐件 `cp -n` 存证到 `.runtime/quarantine/gpux6_takeover_20261013/<件>.lane_face` 并记 sha；②写 `git show dev:<件>` 的**原字节**进该车道工作树面；③用**台账批①那把尺**逐件复核（`git -C 车道 diff --name-only dev -- <件>` 必须空）——**任一件不达期望则全部还原并停手**；④只对该 sid 调一次台账幂等单口 `write_takeover_entry`。
+
+读回（不是推定）：`face_after_count=18`（全部是 `data/strategy_intake/grid_20261013-03xxxx～05xxxx/`，合计 **100,496,927 B**，一字未删未搬）；`excluded_after=5`（上表五件全进 `excluded_dev_identical_files`）；`still_blocked_paths=[]`；台账总行 **185→185**、open **185→185**；带最新 ts `2026-10-13T12:56:35Z` 的行**恰 1 枚**且其 sid＝`st-gpux4-20261013`；`refresh_count=1`。
+
+**两处与令的字面差，如实写出**：①统筹令第②步写 `git checkout dev -- <五件>`，本班用"把 `git show dev:<件>` 的原字节写进工作树面"——理由＝`checkout dev --` 会同时改死车道的 **index**，而台账收集面读的正是"工作树 vs 落地面"那把尺（`session_takeover_ledger.py:219`），写工作树即可达同一效果且不动他人 index/HEAD（与五班 §十七·M② 同形，非本班新发明）。②令说"五件逐件 sha 存证"，本班照做，但**对齐只碰了两件落后件**——那三件盘字节已等于 dev，再写一次是零效果动作，本班把它们的内容级判据（独有行＝0）留在表里可重算。
+⚠ **复发预告（照统筹令原话在册）**：本班每落一次 03 件，四班车道的副本就又落后一次 ⇒ **每袋投前重复本节四步口**。根治＝P-9（加性判据"车道 HEAD 是 dev 祖先 ∧ 独有行＝0 ⇒ 移出命中面并记 `excluded_lagging_behind_landing=n`"），属维护六班裁定面，本班**未实施一字**。
+
+### 十八·B 底尺校准＝同一把针复现上一班读数（n=40 四臂），以及由它立下的静默窗闸
+
+针＝`g6_n1_accept.py`（源＝五班 `g5_n1_accept.py`，改动只有 LANE/TMP 面指向、产物前缀 `g5_n1_→g6_n1_`、车道守卫串三处；**判读段 `bands`/`diff_ids`/`family_face`/`_per_dim`/`phase_face`/`SmSampler`/`KEEP11`/`DEV_BASELINE` 与五班逐字同 sha**，机验见本节末命令）。产物 `n200/g6_n1_accept_n40.json`（本班首跑）对 `st-gpux5-20261013/g5_n1_accept_n40.json`（五班）。
+
+| 读数（n=40，seed=20261010，同分层同窗） | 五班（dev 面） | 本班（刀开面） | 判 |
+|---|---|---|---|
+| 四臂共有格 | 40 | 40 | 同 |
+| L0 臂 `pc` | hit 37／put 177／evict 0 | hit 37／put 177／evict 0 | **逐字同** |
+| N1 臂 `pc` | hit 171／put 43／evict 0 | hit 171／put 43／evict 0 | **逐字同** |
+| `bands_A_vs_L0` | 越线 0/0/0，max_abs 2.220446049250313e-16 | 同值 | **逐字同** |
+| `bands_A_vs_N1` | 越线 0/0/0，max_abs 2.220446049250313e-16 | 同值 | **逐字同** |
+| `bands_L0_vs_N1` | 逐位等 39/40，max_abs 2.7755575615628914e-17 | 同值 | **逐字同** |
+| 差集 `|cross−floor|`／`|floor−cross|` | 0／0（各 1 格） | 0／0（同 1 格 `6455e8f407c1`） | **同集** |
+| A_cpu 墙钟 | 93.8s（＝2.35s/格） | 179.2s（＝4.48s/格） | **1.91 倍慢** |
+| GPU 三臂墙钟 | L0 42.7／N1 39.2／N1b 40.5 | 84.1／86.8／80.5 | **1.97／2.21／1.99 倍慢** |
+
+⇒ **两件事同时成立**：①**内容面与计数面在本班车道逐字复现五班**（含"刀开的那一臂与 dev 面在 A↔L0／A↔N1／L0↔N1 三对上末位差都相同"——这是本刀不改数的一条独立旁证，虽在 n=40 小面上，不外用）；②**墙钟面整面被外来负载抬高**，且 GPU 臂抬得比 CPU 臂更多（本机 GPU 臂的主体也是主机 pandas，§十七·A 第 2 条改判的又一次复现）⇒ 比值被**压低**到 `A/N1=2.065`（五班同面 2.39，即 0.86 倍）。
+据此本班**不拿污染面签终局线**，并加一道采样面闸（`g6_quiet_gate.py`）：发车前连采 cpu_pct（6×2s，均值须 <**45%**）；发车后用针自己的 CPU 臂复算 s/格（须 ≤**2.2s/格**，即五班底尺 1.54–1.76s/格 的 ~1.3 倍内）才继续第二条腿。两个阈值是本节实测写死的**采样条件**，不是判据线值；≥3x 那条线、n=120、seed、分层、窗、A/B/A/B 形、判读函数一律未动。
+
+### 十八·C 施工面＝第二把刀（一件代码＋一件试件，只动主机归一化站点，判据线值零改动）
+
+| # | 构件 | 落点 | 依据 |
+|---|---|---|---|
+| 1 | 记忆化口 `_normalize_cached` | `factory_grid_executor.py:1164`（新增）＝键等 ∧ 宿主 pin 三元组逐个 `is` 等 ∧（丙开时）因子面板内容指纹等；**同一函数体**，求值次数从 8 遍并成 1 遍 | 五班 §十七·I P-1 定价（144 个 (G,A1,A2) 前缀只落 18 个 (G,A1) 组）；`_normalize` 是 A2 无关纯函数；构造式论证与刀二 `px_rets` 同形 |
+| 2 | 站点接线 | `:1623`（原 `_normalize(f, …)` 直调）改指缓存口，参数按位传 `factors[n]` 作宿主 pin | 唯一主机归一化站点（本班 AST 普查：模块内 `_normalize` 的**调用者**只剩缓存口本体一条；设备路 A1 走 `gc.normalize_rows`，未碰一字） |
+| 3 | `raw` 档直传不缓存 | 缓存口首两行 | `_normalize` 在 raw 下**返回入参本身**，塞进缓存＝无谓延长一张瞬态切片的寿命且零收益 |
+| 4 | 六出口独立计数 | `_EVAL_GPU_STATS` 新增 `nc_hit/nc_put/nc_identity_miss/nc_dirty_hit/nc_evict/nc_verifier_off` | 与 `pc_*` 同一条在册纪律（零计数器与"未触发"同形是病型；`nc_verifier_off` 让"绿归因到乙不是丙"可读——五班 §十七·K① 的原话） |
+| 5 | 批起点释放面 | `reset_panel_cache()` 内加 `_NORM_CACHE.clear()` | 乙把宿主引用 pin 进值里 ⇒ 批起点是唯一释放面；不清＝上一批的 `id()` 跨批复用＝脏命中温床（§十七·B⑤ 同条） |
+| 6 | **字节预算尺修正** | `_norm_cache_bytes()` 用 `v.memory_usage(deep=False).sum()`，**不用** `getattr(v,"nbytes",0)` | 本班实测：pandas 2.3.3 的 DataFrame 无 `.nbytes` 属性（`AttributeError`）⇒ 草稿形会恒得 0，640MB 预算成装饰件。设备面板那本账不受影响（其值是 cupy 数组，有 `.nbytes`） |
+
+六条都没碰：判据线值／容差／每核同步定义／`--engine gpu` 缺省／`_RESIDENCY_ENABLE_FOR_TEST`（四裁③"驻留不摘"）／丙哨兵缺省关／`_EVAL_BACKEND` 解析／生产风控件／矿考判官件。
+**就地改写审计本班独立复做**（不转述五班）：AST 扫 `_normalize`／`_combine`／`_normalize_cached`／`_demean_by_group`／`_regress_out`／`_ic_weight_frame` 六个函数体 ⇒ `inplace=True` **0 处**、属性赋值 **0 处**、下标赋值 3 处＝`_NORM_CACHE[key]=…` 两本账写入＋`_combine:714 w_by_date[start:start+60]=w_new`（该变量是 `_combine` 内 `np.full` 新建的局部件，:681，不写任何共享件）；`_combine:637 normalized=[nf.reindex(dates) …]` 返新件 ⇒ 共享帧不会被下游改写。
+
+### 十八·D 红绿证（全部实测，非推演）
+
+**① 试件 11 枚**（`test_l2_gpu_landing.py` §九，纯尾追加）：六出口键齐／命中复用且 `_normalize` 只调一次／三档（zscore·rank·未知降级档）缓存值与直调**逐位等**＋ raw 直传不进缓存／键等而宿主不等必重建／丙开时就地改写被抓并重建／STRICT 必抛／**丙关档同一改写必须仍判命中**（反向对照——两档同形则"丙抓到了"不可证伪）／逐出剩 CAP 枚且逐最旧／字节预算按 `memory_usage` 计（含一条"尺先瞎了则断言是空判"的前置自证）／批起点复位同时清两本账／**装配守卫**（AST 判"站点确实接上缓存口"，成因＝§十七·K② 那条漏站点被宽 `except` 吞成 fail-open 的在册教训）。
+采面 `test_gpu_core_parity + test_l2_gpu_landing + test_c4_engine_gpu_wiring` ＝ **146 passed**（在册 135＋本班 11；`--collect-only` 独立复核同值 **146 collected**，其中 §九＝11 支点名可见）。`test_factory_grid_executor.py` 在车道面 **49 passed**。
+
+**② 突变自证七刀**（`g6_mutation_selfproof.py`，产物 `g6_mutation_selfproof.json`；每刀跑**点名下那一支**，判据＝`rc≠0 ∧ 输出含 "1 failed"`，零突变基线必须先 `1 passed`，末了按 sha256 还原并与好件逐字相同）：
+
+| 刀 | 退回的形 | 点名用例 | 实测 |
+|---|---|---|---|
+| M1 | 撤宿主身份判定（`all(a is b…)`→`if False`） | `…_rejects_same_key_different_host` | `1 failed`（计数停在 `nc_put=2/nc_identity_miss=0`） |
+| M2 | 撤内容指纹比较（`nc_dirty_hit` 支路） | `…_sentinel_catches_in_place_mutation` | `1 failed` |
+| M3 | 逐出改回整清 | `…_evicts_one_not_everything` | `1 failed`（"溢出后剩 0 枚"） |
+| **M4** | **字节尺退回 `.nbytes` 写法** | `…_respects_byte_budget` | `1 failed`（"仍留 3 枚"）＝**§十八·C 第 6 条那条缺陷的牙齿证明** |
+| M5 | 站点退回直调 `_normalize` | `test_normalize_host_site_is_closed_behind_the_cache` | `1 failed`（"找不到缓存口调用点"） |
+| M6 | `raw` 档不再直传 | `…_equals_fresh_normalize_by_construction` | `1 failed` |
+| M7 | 批起点不清这本账 | `…_reset_panel_cache_clears_norm_cache` | `1 failed` |
+
+`ALL_TEETH_OK = True`，好件 sha 复核 `True`。口径如实：本证只立"**至少一枚点名用例判红**"，不立"恰好一枚"（M2 同理会连带把 STRICT 那支也打红）；11 枚中 **M1–M7 覆盖 7 枚**，其余 4 枚（键齐／复位事件面／反向对照／装配守卫）退回旧形时是断言级还是 AttributeError 级，本节不美化：键齐那支退形后是 `KeyError` 级，不是牙。
+
+**③ n=200 等价四臂**（同进程 A/K0/K1/K1b，`g6_knife_accept.py 200 knife`，产物 `n200/g6_knife_n200.json`；四臂 `evaluated=200` 同值、`engine_degrade=null`、`_RESIDENCY_ENABLE_FOR_TEST` 全程 False）：
+
+| 对照 | 形态 | 逐位等 | 越线 1e-8/1e-6/1e-4 | max_abs | 差集格 id |
+|---|---|---|---|---|---|
+| K1↔K1b | 同码两跑＝**本刀自噪底** | 196/200 | **0/0/0** | 5.551115e-17 | `6455e8f407c1 aab0312c06b6 c198c1f61572 e4695880b801` |
+| K0↔K1 | 跨形态＝**本刀** | 196/200 | **0/0/0** | 5.551115e-17 | **同一批 4 格** |
+| A↔K0 | CPU↔设备（正对照位） | 1/200 | 3/3/2 | 5.889885e-04 | — |
+
+差集算账 `|cross−floor|=0`、`|floor−cross|=0`、`|cross|=|floor|=4` ⇒ **本刀一格未新增分歧**；`named11_in_cross=[]` ⇒ 本刀不改归约序（§十一·C 那 10/11 格未被重排，在册 M-7 那条"开工前先问处置"本班同样**用证据回答**）。
+分族 `family_K0_vs_K1.families_crossing = {}`（146 族全无穿越）。**那 4 格不是新病**：逐字＝五班 §十七·G 随 `PYTHONHASHSEED` 换位的四格，且本班 floor（同码两跑）也落在同四格 ⇒ 在本面它们是**自噪底**不是刀痕。
+`nc` 读数（收益本体）：K0 全零（刀关臂不吃这本账，对照臂干净）；K1＝**hit 33／put 42／evict 18／identity_miss 0／dirty_hit 0／verifier_off 33**，K1b 逐字同 ⇒ 计数面确定可复现。⇒ 求值趟数 **75 并成 42＝1.79 倍去重（n=200 面）**，**不是定价的 8.0 倍**；差距的成因就是第 6 条修好的字节预算窗（640MB 在 all_a 宽面板上只装得下 ~16 枚，逐出 18 次）。这条本班如实分签：**计数收益可复现（1.79 倍，跨两臂逐字同）／墙钟收益在 §十八·E② 交替配对上才敢签**。
+正对照 `counts_match=false` 的**口径说明**（防止把它读成"本刀改了数"）：`DEV_BASELINE 11/10/9` 属 **1,048/1,049 分母**，在 n=200 面上 A↔K0 给 3/3/2 是该面的正确形态（五班 n=40 面同样 `positive_control_holds=false`）⇒ 该判据只在 §十八·E① 全格集面上有效力，本节的 `PASS=false` 是**分母不足**不是等价失败；等价判据（cross⊆floor ∧ named11∩cross=∅）在本面四条中三条真、`existence_holds` 真。
+
+**④ HEAD 级存量红的绕行登记**（统筹令"两条挂死地雷已转维护六班，本班绕行"）：`test_factory_grid_stage_cost_tiers.py` 在本班车道面（dev 字节＋本班两件套）**6 failed / 21 passed**，与五班 §十七·C④ 的 pre-bag 独立工作树读数**逐字同数**；`tests/research/backtest` 整目录清扫照五班处方**不做**（120s/支挂死面未变），本班一律按**具名文件集**跑（`test_gpu_core_parity`／`test_l2_gpu_landing`／`test_c4_engine_gpu_wiring`／`test_factory_grid_executor`）⇒ 本节所有"passed"都是具名采面，不代表目录级。
+
+
+### 十八·E 链路读数（驱动器 `g6_run_chain.py` 串行 12 步，单卡红线 `vram.concurrency:1` 内一步不并）
+
+| 步 | rc | 耗时 | 产物 |
+|---|---|---|---|
+| knife1050（全格集四臂） | 0 | 1283.8s | `g6_knife_n1050.json` |
+| iso_K0／K0b／K1／K1b（一臂一进程） | 0/0/0/0 | 174.4／210.2／178.8／195.2s | `g6_n1_summary_iso_*.json` |
+| iso_cmp | 0 | 2.2s | `g6_iso_compare.json` |
+| kpair200（本刀墙钟交替配对 4 对） | 0 | 757.8s | `g6_kpair_n200.json` |
+| fp_hs0／hs1／hs2（换哈希种子三进程） | 0/0/0 | 176.8／189.0／177.7s | `g6_fp_records_hs*.json` |
+| fp_cmp | 0 | 1.5s | `g6_fp_levels_compare.json` |
+| m5 | **1** | 2.0s | 本班取数笔误（把 `MIX` 当 `OLD_TABLE` 迭代）⇒ 首跑 TypeError，见 §十八·G8 |
+| m5_rerun（修正后） | 0 | ≈2s | `g6_m5_recompose.json` |
+
+#### 十八·E① 全格集铁律针＝"刀关↔刀开前后各跑"同一分母（协议 n=1,050 ⇒ 机读 `cells_common=1049`）
+
+| 对照 | 形态 | 逐位等 | 越线 1e-8／1e-6／1e-4 | max_abs |
+|---|---|---|---|---|
+| K1↔K1b | 同码两跑＝**本刀自噪底** | 1014/1049 | **0／0／0** | 1.1102230246251565e-16 |
+| K0↔K1 | 跨形态＝**本刀** | 1014/1049 | **0／0／0** | 2.498001805406602e-16 |
+| A↔K0 | CPU↔设备＝**正对照** | 2/1049 | **11／10／9** | **0.0013782476464733046** |
+
+**判绿四条（全实测，verdict `PASS=true`）**：`cross_subset_of_floor` ✓（`|cross−floor|=0` 且 `|floor−cross|=0`，两集各 35 格＝**同一批**）；`positive_control_holds` ✓（`counts_match` 与 `max_abs_match` 双真，逐字复现在册 dev 读数 11/10/9 与 1.3782476464733046，且 `bitwise_equal_cols=2` 同值 ⇒ 分母、格集、比较器三者不错位，上面那两个"越线 0"才是有效负面结论）；`named11_untouched` ✓（`named11_in_cross=[]` 且 `named11_in_floor=[]` ⇒ 本刀不改归约序，**§十一·C 那 10/11 格未被重排**，令要求的"前后各跑"由同进程 K0/K1 配对与 §十八·E② 跨进程两形共同交付）；`existence_holds` ✓（`nc_K1.hit=45／put=45／evict=21／verifier_off=45` 与 `nc_K0` 全零相对，K1b 逐字同 ⇒ 本刀确实接线且计数面确定）。
+`evaluated=1049` 四臂同值、`engine_degrade=null`（无静默降级）、`_RESIDENCY_ENABLE_FOR_TEST` 全程 False（四裁③"驻留不摘"）、`families_crossing={}`（281 族无穿越）。
+**nc 与 pc 两本账互不污染**：`pc_K0 == pc_K1`（hit 4438／put 122／evict 74 逐字同）⇒ 本刀没动面板缓存那一半，五班那把刀的读数面原样在。
+
+#### 十八·E② 一臂一进程复现腿（四独立进程，同 seed／同分层／同窗，n=1,050）
+
+六对全部 `逐位等 1014/1049`、`越线 0／0／0`、`具名11∩差=[]`；同形态两对（跨进程底）max_abs 4.163336e-16，四对跨形态 2.498002／3.608225e-16 量级 ⇒ `cross_max_abs_within_floor_order=true`、`counters_reproducible_across_processes=true`、**`knife_counters_reproducible_across_processes=true`（本班新增那条）**、`knife_engaged_in_iso=true`、`PASS=true`。
+
+#### 十八·E③ 本刀墙钟收益＝同进程交替配对（**这条没签成，如实记反向读数**）
+
+| 对（轮序按奇偶互换） | K0（刀关） | K1（刀开） | 比值 K0/K1 |
+|---|---|---|---|
+| p1（K1 先） | 93.8s | 102.5s | **0.915** |
+| p2（K0 先） | 92.5s | 85.3s | 1.084 |
+| p3（K1 先） | 92.7s | 99.1s | **0.935** |
+| p4（K0 先） | 92.0s | 96.2s | **0.956** |
+
+`median_ratio=0.946`，`all_pairs_above_1=false`，且**K1 臂自身散布 1.201x（102.5／85.3）远大于 K0 臂的 1.020x（93.8／92.0）**。
+⇒ 本班判定＝**"计数面收益真实（75 趟并成 42 趟，n=200；90 并成 45，n=1,049），墙钟面在本面未测出收益、中位偏负 5.4%"**。这不是"刀没接"（E① 的 `existence_holds` 与 E② 的逐字复现都证明它接上了），而是**省下的求值没有变成墙钟**：§十七·A 给 `_normalize` 定的价（cumtime 43.69s／93 次／总墙 148s＝29.5%）是 **cProfile cumtime**，含被它调用的下游；而本面省 33 趟却只见 −4.3s 到中位 −0.9s 之间摆动 ⇒ **要么 cumtime 定价不能当边际单价用（省下的那 33 趟的平均单价远低于均值），要么缓存 pin 住的宽面板把省下的付了回去（RSS／逐出抖动）**。本班**不自裁修法**、不把 §十七·E② 那条"计数与墙钟分开签"的纪律反过来用，只做了一把三形两序的诊断针（`kdig` 模式：K0／K1 缺省预算／K1 小预算 CAP=4＋字节预算=1，另记每臂 RSS 峰值与缓存末端枚数），读数见 §十八·E③·补。
+
+#### 十八·E③·补 CPU 参照臂影响＝cpair 同进程交替配对（这条才是"线为什么会动"的那一半）
+
+针＝`g6_knife_accept.py <n> cpair`（新形＝两臂只差刀开关，顺序按轮奇偶互换；其余一字不动）。
+n=120、seed=20261010、同分层同窗，`engine cpu × eval cpu` 两对四臂：
+
+| 轮 | 臂位 | C0（刀关） | C1（刀开） | 该对 C0/C1 |
+|---|---|---|---|---|
+| r1 | 刀开先 | 377.5s | 359.7s | **1.049** |
+| r2 | 刀关先 | 315.7s | **210.0s** | **1.503** |
+
+`median_ratio=1.276`、`all_pairs_above_1=true`、两臂 `evaluated=120` 同值、`engine_degrade=null`。
+**计数面**：CPU 臂刀开时 `nc_hit=171／nc_put=45／nc_evict=21／verifier_off=171`（两轮逐字同），
+即 **216 次归一化求值并成 45 次＝4.8 倍去重**；GPU 臂同面只有 1.79 倍（33/42）——
+差别是结构性的：CPU 臂**每个前缀**都走主机归一化，GPU 臂只有不可上卡的那几档走。
+**如实标弱**：只有两对，且散布大（C0 1.196、C1 **1.713**——C1_r2 那一臂正落在外来负载的下坡段），
+所以这条只够定**方向**（本刀确实缩短 CPU 参照面），不够定**量级**（1.05–1.50 之间，中位 1.276）。
+
+⇒ **合起来看本刀对终局线的净效果（本班只报数不裁）**：GPU 臂未测出收益（E③ 中位 0.946），
+CPU 参照臂确定变快（E③·补 中位 1.276）⇒ 比值 `CPU/GPU` 会**因参照面被同一把刀改善而下移**，
+按今测两数的粗算量级是 −20%～−30%，即五班那条"3.04/3.08 富余 1.3–2.5%"的线**大概率被推到 3.0 以下**。
+这不是"GPU 化变慢了"——绝对墙钟两边都在降（本机总吞吐上升）；这是**这条线衡量的东西变了**。
+线的身份（是"GPU 化收益比"还是"性能达标线"）属统筹／Owner 裁，本班**不挪线、不改尺、不自裁**，登记为 §十八·H Q-7。
+
+> 说明：本班原计划另跑一把三形（K0／K1 缺省预算／K1 小预算 CAP=4）的 `kdig` 诊断来分离"归一化不在关键路径"
+> 与"缓存 pin 住宽面板推高 RSS 抖动"两种解释，**今夜未跑**（单卡窗口先让给终局线两趟腿，其后负载回到 99%）。
+> 针已备好在 `g6_knife_accept.py`（`kdig` 模式，带每臂 RSS 峰值与 `_NORM_CACHE` 末端枚数读数），**未跑就不写数**，
+> 该缺口登记在 §十八·H Q-1。
+
+#### 十八·E④ 三级指纹＝核内出口级补全（检验道转来那条）
+
+针＝五班 `g5_fp_levels.py` 的六班版 `g6_fp_levels.py`：在 `tensor_core` 调用窗内包 `_to_numpy`（D2H 唯一嘴），**先在设备上**算顺序无关内容摘要（uint8 字节和＋加权和，mod 2^64 整数环⇒与归约顺序无关），再与落到主机后的同一摘要对拍。
+
+| 级 | 随哈希种子换位的格数（n=200，seed=20261010 固定，`PYTHONHASHSEED` 0/1/2） |
+|---|---|
+| L1 进核前（主机 weights） | 4（2.0%） |
+| L2 上卡后回读 | 4（2.0%） |
+| L3 核出口（主机可见 gross/turnover/net@5bp） | 4（2.0%） |
+| **L3dev 核内出口（未回主机那枚数组本身）** | **4（2.0%）——与 L1 同一批** |
+
+`cells_common=200`；`div(L3dev)−div(L1)=[]` 且 `div(L1)−div(L3dev)=[]` ⇒ **末位差在进核前就已存在，核只是继承**；
+核出口覆盖与无损＝`cells_with_xfers=200/200`、`xfers_total_recorded=1800`（三进程各 600 趟）、`cells_all_exact=600`、`cells_any_not_exact=0`、`size_skipped=0` ⇒ **搬运＋核出口物化逐位无损，一级都不掉**；
+`pc_dirty_hit=0`、`dirty_events=0`（丙开档在真实面板上一条假告警都没造，五班 §十七·C③ 同形）；换位 4 格全落 `C_sizing=signal_strength`（该族在本面对照面 21 格），格 id 与五班 §十七·G 逐字同（`6455e8f407c1`／`aab0312c06b6`／`c198c1f61572`／`e4695880b801`）。
+判词六键全真：`seed_changes_host_face`／`upload_is_bit_exact`／`no_dirty_hit_on_real_data`／**`kernel_exit_transfer_lossless`**／**`div_L3dev_eq_div_L1`**／**`kernel_exit_coverage_holds`**。
+**这条把配方③的第四候选（cupy 归约／原子序）继续锁住**：核内出口级已证"核不造差"，动 cupy 无任何证据支持，本班按令未动一字。
+
+#### 十八·E⑤ M-5 驻留收益构成重算（尺＝四班 `b2_residency_pricing.py` 同一把：合成面板、每核同步、9 次取中位）
+
+| 宇宙 | S | 稳态格数 | 权重 D2H | 权重 H2D | 掩码 H2D×2 | 新上界 ms/格 | 旧表 ms/格 | 整批新上界 | 零拷贝直通 |
+|---|---|---|---|---|---|---|---|---|---|
+| all_a_ex_st | 5,217 | 317 | 10.671 | 7.339 | 0.712＋0.618 | **19.34** | 30.48 | **6.13s** | True |
+| hs300 | 300 | 341 | 0.887 | 0.252 | 0.095＋0.090 | **1.32** | 1.53 | **0.45s** | True |
+| zz500 | 500 | 331 | 1.638 | 0.504 | 0.114＋0.108 | **2.36** | 2.38 | **0.78s** | True |
+
+整批（1,049 稳态构成）：**旧表口径 10.97s → 新构成 7.36s**。三条读数纪律：
+① **绝对值禁跨时刻比**（§二·丁 推论二）：旧表 21.21ms 是**忙时**读数，它自己注过"深夜无负载同尺 10.7–13ms"，本班今测 10.67ms 正落在那一带 ⇒ "上界从 11s 降到 7.4s"这句**不能**读成驻留变差了，其中约 1.4 倍是时刻差。
+② **构成变化是本条的正题**：旧表只给"权重往返"一项定价；新构成里 **px 那一半已从驻留菜单上消失**——`gpu_core.tensor_core:619-625` 在 `pre_rets` 非 None 时"px 整幅不上卡、不算 ffill、不算 shift/除"，而 `_PRE_RETS_ENABLED` 缺省 True ⇒ 若按旧构成逐格上 px，值＝与权重同形同 dtype 的 7.339ms/格，整批 2.58s（all_a 2.33s＋zz500 0.17s＋hs300 0.09s），**这 2.58s 是刀二收走的，不是驻留能再收的**。
+③ **旧表漏定价的"掩码常驻"本班补上**：两枚 bool (T,S) 逐格 H2D＝1.33ms/格（all_a），整批 0.42s；驻留落地后这项归零，属新上界的加项。
+⇒ **交统筹的新表述**：驻留（闸仍关，四裁③）今夜的边际上界＝**权重往返＋掩码常驻两项 ≈ 7.4s/批（今尺）**，其中 all_a 一路占 6.13s＝83%；旧表 11.0s 不得再被引为"驻留上界"，它既含已被刀二覆盖的 px 半边、又是忙时读数。
+
+### 十八·F 终局线复证＝刀关形态两序腿过了，三 rep 腿被夜窗负载吃掉（**"稳定达标"不签**）
+
+统筹令的条件句是"同一把针同协议复证一轮，过了才签稳定达标"。本班照此执行，并**先于发车**把采样面闸门写进 `g6_quiet_gate.py`（§十八·B 已给依据：cpu_mean <45% 才发车，发车后用针自己的 CPU 臂复算 s/格，>2.2s/格 的腿只作观察不参与签署）。两趟四腿的实况：
+
+| 趟（形态） | 腿 | 发车条件实测 | 配对读数 | 判 |
+|---|---|---|---|---|
+| 刀关（＝五班 dev 行为形态） | tp 两序 n=120 | round1 cpu_mean **33.6%**＜45%，CPU 臂 **1.959s/格** ≤2.2 | r1（CPU 先）**3.11**＝235.1/75.6；r2（GPU 先）**3.036**＝225.9/74.4；`ge3x_by_pair.both=true` | **过**（与五班 3.168／3.017 逐对相差 −1.8%／+0.6%，同形复现） |
+| 刀关 | rep3 三 rep n=120 | 同窗续跑，但本轮期间外来负载回到 **92%**：CPU 臂 278.3／362.5／377.9s＝**2.32／3.02／3.15s/格 ＞2.2 闸** | 暖态两对 **2.791／2.920**（rep1 冷建 2.066 不采信），GPU 臂 129.9／129.4s＝1.08／1.08s/格（五班同位 0.51） | **不采信**（污染面观测；方向与 §十八·B 标定一致＝负载把比值往下压） |
+| 刀开 | tp／rep3 | 本班**主动中止**（同一污染面继续跑只会产出不可签读数，且单卡红线内不该占着卡产垃圾） | 半成品 `n1_knife_on/` 无终件 | 未采 |
+
+**判定（只按预注册判据签，不放宽也不借污染面否证）**：
+① 五班终局线的**两序腿在本班独立复现成立**（两对均 ≥3.0，且是在比五班更热的面上读到的——按 §十八·B 的标定，热面把比值往下压，故这条是**偏保守**的复现）；
+② 五班签的那两个暖态数（3.039／3.076）所依赖的**三 rep 腿，本班未能在可判面上复证**；
+③ 因此"稳定达标"**不签**，终局线身份维持五班自签的"**达标（富余薄，须同协议复证）**"，本班交付的是"两序已复证、三 rep 待清窗"；
+④ 交接口已备好：`g6_quiet_gate.py`（闸门＋两趟四腿＋kdig 续跑）与 `g6_knife_accept.py`（同判读函数）都在本班 TTL 面，**明日起 TTL 到期待长命化**（承五班 P-7 同一条矛盾：针在 24h 面、复算命令在案卷——见 §十八·H Q-6）。
+
+**顺带一条对终局线身份的观察（不是本班裁）**：本班实测**本刀对 GPU 臂墙钟没有可判收益**（§十八·E③ 中位 0.946）而它同时是**两条臂共用**的主机腿——若它对 CPU 参照臂的收益更大，`CPU/GPU` 这条线的比值会**因分子变小而下降**，与"GPU 化更快"的原意相反。本班用同进程 CPU 臂交替配对量了这一半（§十八·E③·补 cpair），**只报数、不挪线、不改线的身份**；线的定性属统筹／Owner。
+
+### 十八·G 本班自犯并如实上报（十条，全部由本班自己的试件、复核或实测抓到）
+
+1. **照搬草稿的字节尺没先实测**：§十八·C 第 6 条那个 `.nbytes` 恒 0 缺陷，**源头是五班草稿**（`g5_hoist_draft_block.py.txt` 里就这么写的），本班第一版原样照搬 ⇒ 是自家试件 `test_norm_cache_respects_byte_budget` 先红（"仍留 3 枚"）才暴露。教训两条：①"未验证、禁直接落地"这条统筹令不是客套，草稿里连**读数面**都可能是坏的；②本班不把它写成"本班先见"，写成"本班照搬＋试件抓到"。
+2. **多留了两行死代码**：`g6_fp_compare.py` 初版里有 `xfer_exact = sum(... for x in [dict()])` 与 `errors = [... for x in []]` 两行——零作用的装饰行。自查删掉（留在这种文件里＝下一个读它的人要花时间证它没用）。
+3. **沿用五班脚本时踩类型错**：`--dry` 分支 `QUAR / Path(rel).name + ".lane_face"` 是 `WindowsPath + str`，直接 `TypeError`。修法＝加括号。登记此条是因为它暴露一个更普遍的形状：**搬别人脚本时，搬的是意图不是字形**。
+4. **装配守卫首版假红**：第一版把 `_normalize_cached` 函数体内部那一趟 `_normalize` 调用也算成"绕过缓存的站点"⇒ 判红自己。改成按 AST 的函数行域排除本体后再判 ⇒ 这是"新立的尺要先证明它能绿"的同族课（在册"零命中尺须配正对照"的反向形：**零命中如果是自己造的，就是假红**）。
+5. **n=200 正对照 false 差点写错**：`positive_control_A_vs_K0 counts_match=false` 第一眼会被读成"本刀改了数"。核对分母后才写正：`DEV_BASELINE 11/10/9` 属 1,048/1,049 面，n=200 面 A↔K0 给 3/3/2 才是正确形态（五班 n=40 同位亦 false）⇒ 该判据只在 §十八·E① 全格集面上有效力。**判据的适用分母要写在判据旁边**，否则下一棒要重考古一次。
+6. **体感钟又快约一倍（在册条目第 N 次复发）**：两次以为"过了十几分钟"实际 `date` 只过 1–2 分钟。本班所有时间相关动作（claim 续租、600s 刷新节流窗、发车时机）一律先 `date` 实测。
+7. **令的字面与执行形不同**：统筹令第②步写 `git checkout dev -- <五件>`，本班实际写"把 `git show dev:<件>` 的原字节放进工作树面"（理由与等价性见 §十八·A 末段）。这条**不是改进声明**，是差异登记：如果统筹要的是"连 index 一起对齐"，本班这一步就没做到，需另行补。
+8. **M-5 首跑被自己一处取数笔误挡住**：`old_total_ms = sum(v["round_trip"] * ...)` 把 `MIX`（值=元组）当
+   `OLD_TABLE`（值=字典）迭代 ⇒ `TypeError`，链路第 12 步 rc=1。修后单独重跑（`m5_rerun` rc=0），
+   台账行如实留两条（一条 rc=1 一条 rc=0），不把失败那步抹成没发生。
+9. **复核命令 1 的期望值最初写错**：本班照五班格式写"dev／主区磁盘／车道 三面全 True"，**原样跑到才发现
+   主区磁盘这一列不等于 dev**——磁盘还停在上一版落地袋 `bbeb0aa36c` 的字节（executor `cd001332a07b`、
+   test_l2 `92b29b7bf807`）而 HEAD 已是 `f88c0c2c6053`＝在册"HEAD 有而运行面读磁盘旧码"P0 形。
+   本班把命令 1 改成**三面表并写明这一列的期望是 False**，同时把这条升格成给下一棒的观察：
+   §十八·D 的 146 passed 是**车道字节==dev** 面上的读数，主区磁盘上的复跑读到的仍是五班码面。
+10. **会话活性失察（这条最贵，代价＝一次入队失败＋一次全班风险）**：本班在 21:24 进入"等卡/等空窗"的
+   长静默期，心跳 daemon 按 `idle>1800s` 自退（`heartbeat.jsonl` 末行 `{"status":"exited","reason":"idle timeout","idle_seconds":1827}`），
+   registry 条目随后被摘；到 22:2x 投袋才撞上 `[SESSION-REQUIRED] session 未注册`——**真因在一小时前，
+   现场长得却像"提交门挡我"**。本班起手时 `session_worktree_start` 返回的是 `registered:true / heartbeat_daemon_alive:true`，
+   那两只绿灯只证明"起班那一刻活着"，不证明"整班活着"。修法＝走保活正门
+   `register_heartbeat_keepalive(reason=…, requested_by=…, ttl_seconds=7200)`（已登记，到期 00:24，
+   之后每班投袋前重新读三面：`list_active_readonly` 命中＋心跳龄 ≤90s＋grant 未过期，
+   尺已固进 `g6_liveness_check.py`）；本班**没有**动 `allow_overlap` 逃生旗，也没改门一字。
+
+### 十八·H 残余与下一棒入口（不自扩，每条自带凭据位与"为什么本班不做"）
+
+| # | 项 | 本班量到的数 / 事实 | 为什么本班不做 |
+|---|---|---|---|
+| Q-1 | 第二把刀的**去重率离定价 8.0 倍还差一层** | n=200 面实测 hit 33／put 42／evict 18 ⇒ 1.79 倍；差距成因＝字节预算窗（640MB 在 all_a 40MB 帧上只装 ~16 枚）＋FIFO 逐出 | 抬预算或换 LRU 触碰都是**参数/策略改动**，要重跑等价三腿；且与五班 P-2（FIFO→LRU）同批做最省——本班不自扩，交下一棒合并 |
+| Q-2 | `_NORM_CACHE` 与 `_DEV_PANEL_CACHE` 同闸不同账 | 丙哨兵开时两本账都用 `_panel_fp`，但键与 pin 各自独立；`nc_*` 与 `pc_*` 独立计数已保证归因不混 | 合并成一本＝判据面改动（五班 §十五·B 边界①"另起一本"的理由仍成立） |
+| Q-3 | 键的**列端点采样**理论上可撞 | 沿用 §十七·B③/§十七·J5 的在册已知边界，本班未加码 | 加码（全列名入键）要重跑全腿；登记为在册边界，不加码 |
+| Q-4 | 终局线的**身份问题**（不是本班裁） | 趟二（刀开）若把比值拉低，那是"CPU 参照面也被本刀加速"的构成变化——`_normalize` 是**两条臂共用**的主机腿 | 线值与线的身份属统筹/Owner；本班只交两条趟的实测与一句定性，**不挪线、不改尺** |
+| Q-5 | 面板缓存的字节预算仍按 `.nbytes` | `_dev_cache_bytes()` 的值是 cupy 数组，**有** `.nbytes` ⇒ 那条尺没坏（本班实测过：cupy (970,5217) f64 nbytes=40,483,920）；但同族写法在不同值类型上的可用性差异应有一条守卫 | 加"值类型探针"属他件改动；本班把这条**测过的**结论写在这儿，防止下一棒照 `.nbytes` 的形又改一遍设备侧 |
+| Q-6 | `nc_*` 六出口无展示面 | `panel_cache_stats()` 只过滤 `pc_` 前缀 ⇒ 新计数只有读 `_EVAL_GPU_STATS` 才可见（本班试件与针都这么读） | 加 `norm_cache_stats()` 是新增 API；零消费者（在册内收判据"零触发零消费→退役"的反向：先不建） |
+| Q-7 | **本刀与终局线的身份冲突**（本班**呈批项，不自裁**） | GPU 臂墙钟未测出收益（E③ 中位 0.946）而 CPU 参照臂确定变快（E③·补 中位 1.276，两对均 >1）⇒ 比值 `CPU/GPU` 按粗算 −20%～−30% 下移，可能跌破 3.0 | 线值与线的身份属统筹／Owner（AGENTS §5／裁定路由 Gate 4）；本班**不挪线、不改尺、不因"线会掉"就不交刀**。三个可选项各带代价：①保留本刀＋把线改称"绝对墙钟吞吐"→ 需重跑两趟四腿定新基线；②保留本刀＋线的 3.0 不动→ 复证大概率判未达，须重谈富余；③暂撤本刀（revert `eaee950853fb`）→ 回到五班收班态，省下的是"两臂共用的主机腿"那部分绝对时间，本班不建议（收益方向明确为正，只是线量错了对象） |
+| Q-8 | 三 rep 暖态腿的**清窗复证** | 本班在 45% 闸内只拿到两序腿（3.11／3.036 均 ≥3）；rep3 腿 CPU 臂 2.32–3.15s/格超闸 ⇒ 不采信（§十八·F） | 针与闸都在本班 TTL 面可直接复用（`g6_quiet_gate.py`：发车前量面、发车后用针自己的 s/格 复判、两趟四腿＋kdig 续跑）；本班未靠运气等到来，**不签"稳定达标"** |
+| Q-9 | `kdig` 三形诊断未跑 | 见 §十八·E③·补 末注（分离"不在关键路径"与"RSS/逐出抖动"两种解释） | 单卡窗口今夜全被终局线两趟腿与等窗占满；跑法与判据已写好，代价≈10 分钟静默面 |
+
+### 十八·I 复核命令（本班逐条从正文抽出原样跑到期望值）
+
+**依赖划分**：命令 1／2／3／10／11 只依赖 dev 落地面与两班车道（永久面，谁都能重算）；
+命令 4—9 依赖本班针的产物（`.runtime/tmp/st-gpux6-20261013/`＝**24h TTL 面**，到期后须重跑针本体，
+重跑成本＝knife 腿 ≈21min、iso 四进程 ≈13min、kpair 八臂 ≈13min、cpair 四臂 ≈20min、fp 三进程 ≈9min、
+tp／rep3 各 ≈10／24min、m5 ≈2s）。在册规矩照抄一句：**0 命中/空集必须配正对照**，故命令 5 同时给
+"尺立着"的那两条数（11/10/9 与 1.3782476464733046）。
+
+```sh
+cd /d/ZephyrAlpha
+# 1) 落地字节三面读（dev／本班车道／主区磁盘）＝期望前两列全等且
+#    executor 前缀 f88c0c2c6053、test_l2 d72e6111d2e0（这证明"落地面==本班交付面"）；
+#    ⚠ 主区磁盘这一列本班实测**不等于 dev**：磁盘停在上一版落地袋 bbeb0aa36c 的字节
+#    （executor cd001332a07b、test_l2 92b29b7bf807）＝在册 P0 形"HEAD 有而运行面读磁盘旧码"
+#    （在册 P0 形"HEAD 有修复而运行面读磁盘旧码"，判据＝磁盘独有行集合，不是 git 全绿）。
+#    ⇒ 任何"落地面复跑"要么先把主区推进到 HEAD，要么按 `git show dev:<件>` 取字节跑；
+#      本班 §十八·D 的 146 passed 是在**车道字节==dev** 这一面取的（命令 1 的前两列就是它的凭据）。
+python - <<'PY'
+import hashlib, subprocess, pathlib
+for f in ['scripts/backtest/factory_grid_executor.py','tests/research/backtest/test_l2_gpu_landing.py',
+          'src/zephyr/backtest/gpu_core.py','scripts/backtest/translated/_c4_engine.py']:
+    a=hashlib.sha256(subprocess.run(['git','show','dev:'+f],capture_output=True).stdout).hexdigest()[:12]
+    b=hashlib.sha256(pathlib.Path(f).read_bytes()).hexdigest()[:12]
+    c=hashlib.sha256(pathlib.Path('.aidrafts/st-gpux6-20261013/'+f).read_bytes()).hexdigest()[:12]
+    print(f, 'dev', a, 'lane', c, 'dev==lane', a==c, '| 主区磁盘', b, '磁盘==dev', a==b)
+PY
+
+# 2) 试件面（期望 146 passed；只跑本班 §九 那十一枚＝11 passed in ~2s）
+python -m pytest tests/research/backtest/test_gpu_core_parity.py \
+  tests/research/backtest/test_l2_gpu_landing.py \
+  tests/research/backtest/test_c4_engine_gpu_wiring.py -q
+python -m pytest tests/research/backtest/test_l2_gpu_landing.py -k "norm_cache or normalize_host_site" -q
+
+# 3) 判读函数同形机验（"禁另立第二判读面"的可重算式；期望六行全 True）
+python - <<'PY'
+import ast, pathlib
+A=pathlib.Path('.runtime/tmp/st-gpux5-20261013/g5_n1_accept.py').read_text(encoding='utf-8')
+B=pathlib.Path('.runtime/tmp/st-gpux6-20261013/g6_knife_accept.py').read_text(encoding='utf-8')
+def seg(s,n):
+    for x in ast.walk(ast.parse(s)):
+        if isinstance(x,(ast.FunctionDef,ast.ClassDef)) and x.name==n:
+            return ast.get_source_segment(s,x)
+for n in ('bands','diff_ids','family_face','_per_dim','phase_face','SmSampler'):
+    print(n, seg(A,n)==seg(B,n))
+PY
+
+# 4) 全格集分母与存在性前置（期望 cells_common=1049、PASS=True、knife_actually_engaged=True、
+#    nc K1=hit 45/put 45/evict 21/verifier_off 45 且 K0 全零、pc 两臂逐字同）
+python - <<'PY'
+import json,pathlib
+d=json.loads(pathlib.Path('.runtime/tmp/st-gpux6-20261013/g6_knife_n1050.json').read_text(encoding='utf-8'))
+print(d['cells_common'], d['verdict']['PASS'], d['existence_precondition']['knife_actually_engaged'])
+print({k:{kk:d['arms'][k]['nc'][kk] for kk in ('nc_hit','nc_put','nc_evict','nc_verifier_off')}
+      for k in ('K0','K1','K1b')})
+print('pc 两臂同＝', d['existence_precondition']['pc_K0']==d['existence_precondition']['pc_K1'])
+PY
+
+# 5) 等价与正对照（期望 cross/floor 各 35 格且互差 0、named11_in_cross=[]、
+#    bands_A_vs_K0 counts 11/10/9 与 max_abs 0.0013782476464733046、positive_control 双真）
+python - <<'PY'
+import json,pathlib
+d=json.loads(pathlib.Path('.runtime/tmp/st-gpux6-20261013/g6_knife_n1050.json').read_text(encoding='utf-8'))
+print(len(d['setdiff_cross_minus_floor']), len(d['setdiff_floor_minus_cross']),
+      len(d['diff_ids_K0_vs_K1']), len(d['diff_ids_K1_vs_K1b']), d['named11_in_cross'])
+b=d['bands_A_vs_K0']; print(b['counts'], b['max_abs'], d['positive_control_A_vs_K0']['counts_match'],
+      d['positive_control_A_vs_K0']['max_abs_match'])
+print('families_crossing', d['family_K0_vs_K1']['families_crossing'])
+PY
+
+# 6) 一臂一进程六对（期望 PASS=True、六对越线全 0、cross 与 floor 同量级、nc 跨进程逐字同）
+python -c "
+import json,pathlib
+d=json.loads(pathlib.Path('.runtime/tmp/st-gpux6-20261013/g6_iso_compare.json').read_text(encoding='utf-8'))
+print({k:(v['kind'],v['counts'],format(v['max_abs'],'.6e'),v['named11_in_diff']) for k,v in d['pairs'].items()})
+print(d['verdict'])"
+
+# 7) 本刀墙钟与 CPU 参照臂影响（kpair 期望 median 0.946／all_pairs_above_1 False；
+#    cpair 期望全对>1＝本刀确实缩短 CPU 参照面，两数一起才是"线为何会动"的完整证据）
+python -c "
+import json,pathlib
+T=pathlib.Path('.runtime/tmp/st-gpux6-20261013/')
+k=json.loads((T/'g6_kpair_n200.json').read_text(encoding='utf-8'))
+print('kpair',k['ratio_per_pair'],k['median_ratio'],k['all_pairs_above_1'])
+c=json.loads((T/'g6_cpair_n120.json').read_text(encoding='utf-8'))
+print('cpair',c['ratio_per_pair'],c['median_ratio'],c['all_pairs_above_1'],c['spread_C0'],c['spread_C1'])
+print('cpair nc',{t:c['arms'][t]['nc']['nc_hit'] for t in c['arms']})"
+
+# 8) 核内出口级（期望六键全 True、cells_with_xfers==cells_common、cells_any_not_exact==0、
+#    且 div(L3dev) 与 div(L1) 两个差集都空、换位 4 格全落 signal_strength）
+python -c "
+import json,pathlib
+d=json.loads(pathlib.Path('.runtime/tmp/st-gpux6-20261013/g6_fp_levels_compare.json').read_text(encoding='utf-8'))
+print(d['verdict']); print(d['kernel_exit_level'], d['div_L3dev_minus_div_L1'], d['div_L1_minus_div_L3dev'])
+print({k:v['n_cells_differ'] for k,v in d['level_divergence'].items()}, d['family_of_diverging'])"
+
+# 9) M-5 构成重算（期望三宇宙 asarray_zero_copy 全 True、新上界合计 7.36s、
+#    px 半边 2326.5+85.9+166.8=2579.2ms、且 px_H2D 与权重 H2D 同值（同形同 dtype））
+python -c "
+import json,pathlib
+d=json.loads(pathlib.Path('.runtime/tmp/st-gpux6-20261013/g6_m5_recompose.json').read_text(encoding='utf-8'))
+print({k:(v['per_cell_residency_upper_new_ms'],v['batch_upper_new_ms'],v['px_half_covered_by_knife2_ms'],v['asarray_zero_copy']) for k,v in d['universes'].items()})
+print(d['batch_upper_old_s_1049'], d['batch_upper_new_s_1049'])"
+
+# 10) 步骤 0 复算（期望 face_after_count=18、tracked_left_in_face=[]、excluded_after=6、
+#     且带最新 ts 的行恰 1 枚＝st-gpux4-20261013）
+python -c "
+import json,pathlib
+rows=[json.loads(l) for l in pathlib.Path('.runtime/tmp/st-gpux6-20261013/g6_takeover_fix2_log.jsonl').read_text(encoding='utf-8').splitlines() if l.strip()]
+r=rows[-1]; print(r['face_after_count'], r['tracked_left_in_face'], r['excluded_after'], r['rows_with_newest_ts'], r['refresh_count'])"
+
+# 11) 突变自证与本节纯尾追加（期望 ALL_TEETH_OK True＋好件 sha 复核 True；
+#     第 11 条**在车道目录里跑**：期望 numstat 新增列为本班本节行数且 dev_is_strict_prefix True）
+python -c "
+import json,pathlib
+d=json.loads(pathlib.Path('.runtime/tmp/st-gpux6-20261013/g6_mutation_selfproof.json').read_text(encoding='utf-8'))
+print(d['ALL_TEETH_OK'], len(d['mutations']))"
+```
+
+```sh
+cd /d/ZephyrAlpha/.aidrafts/st-gpux6-20261013
+# 11b) 本节是纯尾追加（车道内跑；期望 dev_is_strict_prefix True）
+git diff --numstat dev -- docs/_working/gpufeed_campaign/03_gpux_final_report.md
+python -c "
+import subprocess,pathlib
+f='docs/_working/gpufeed_campaign/03_gpux_final_report.md'
+dev=subprocess.run(['git','show','dev:'+f],capture_output=True).stdout.decode('utf-8','replace').splitlines()
+lane=pathlib.Path(f).read_text(encoding='utf-8').splitlines()
+print('dev_lines',len(dev),'lane_lines',len(lane),'dev_is_strict_prefix',dev==lane[:len(dev)])"
+```
+
+**证据等级逐条标**（在册六道闸之一，不混级）：命令 1／2／3／10／11＝**落地面直读**（最高级，永久面可重算）；
+命令 4—9＝**产物重算**（中级：数由本班针产生、判读式在案，TTL 到期后要么重跑针要么认"当时读数"）；
+本节正文里的"结构性论证"另立一级——`_normalize_cached` 的"共享==逐格重算"由**同一函数体**构造成立
+（且 §十八·D① 那条"三档与直调逐位等"的合成用例把它钉成断言），对拍只是复核不是唯一凭据
+（与刀一 `ffill` 扫描核、刀二 `px_rets` 同一条论证形）。
+
+**回退**＝revert 本班代码袋 `eaee950853fb`（两件同批：executor 与 test_l2），班账本节随下一袋 revert。
+回退后无中间态残留：缓存口、六个 `nc_*` 键、站点接线、`reset_panel_cache()` 里的 `_NORM_CACHE.clear()`
+全在同一件内；`_NORM_CACHE` 除本件外零消费者（`grep -rn "_NORM_CACHE\|_normalize_cached" src/ scripts/ tests/`
+只命中本件与本班试件），`nc_*` 无外部读取方（`panel_cache_stats()` 只过滤 `pc_` 前缀，本班未扩它＝零新 API）。
