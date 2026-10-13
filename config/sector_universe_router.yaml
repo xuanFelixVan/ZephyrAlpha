@@ -1,0 +1,162 @@
+# --- 治理锚定 ---
+# blueprint: MOD-SIG-161（板块口径路由薄件，BLUEPRINT 未单建——真源=docs/_working/condaxis/sector/1_universe_router.md §4 施工裁定）
+# module_id: MOD-SIG-161
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# sector_universe_router.yaml — 板块口径路由规则册（三口径唯一化声明态真源，B_yaml）
+#
+# 用途：声明"板块到底指哪套板块"——主口径/辅助口径/事件标签层三族唯一化；逐口径登记
+# 数据表品类锚与实查事实；给板块代码→口径族的判别式。消费方=
+# zephyr.signal_ashare.sector.universe_router（薄路由实现，load_sector_universe_router）。
+#
+# 决策依据（P1 边界 2026-10-13，条件轴总包战役 Owner 全授权令）：
+#   - 主口径=申万（S1 建议默认先行；对齐 PG ig_* 产业链图谱的申万 category 轴）；
+#   - 通达信 880=盘中快照辅助口径（盘中量价面现成产线）；
+#   - 概念=事件标签层（题材语境，非行情主轴）。
+#   （挖矿册 1_universe_router.md §2 原建议主口径=880xxx，P1 已改荐申万——本册以 P1 为准，
+#    880 降为辅助口径但其行情面仍是现役产线。）
+#
+# 实查事实锚：全部行数/覆盖窗=2026-10-13 ClickHouse 只读实查（挖矿册
+# 1_universe_router.md §1 台账，品类锚=docs/03_modules/_cross_layer/database/
+# business_data_categories.yaml）。行数为登记时快照（advisory），判别逻辑不依赖行数。
+#
+# 表名纪律（RULE-SSOT / 裁定 #ARCH-CH-024）：本册只登记 category_id，禁写死表名到
+# 消费代码；消费端一律 TableRegistry.table(category_id) 解析。
+#
+# 红线（挖矿册 §3 实读坑，消费端必须遵守）：
+#   1. kline_sector 三源混存断代：tdx 腿 2025-07-31 停；查询必须带 data_source 过滤，
+#      禁直接 UNION（重叠期 2026-06-17~07-31 双计）。
+#   2. 880001-880009 市场统计指数剔除（intraday_aggregator 先例），防大盘双计。
+#   3. 881 码同号不同义：唯一 THS 881 真源=sector_meta（sector_constituent/
+#      kline_sector_intraday 的 881 码是另一命名空间，见 sector_code_bridge 头注排雷）。
+#   4. 概念双源（EM 主源+THS fallback）成分集有漂移，概念口径标"源版本敏感"。
+#   5. 盘中面=582 轮询池子集（454×880+128×881），天然小于日全面 729 码，非断供。
+#   6. 禁建第 5 套板块表（挖矿册 §2：13 张既有表+3 采集器全复用，零新建数据表）。
+
+schema_version: '1.0.0'
+doc_type: sector_universe_router
+title: 板块口径路由规则册——申万主口径/880 盘中辅助/概念事件标签层
+created: '2026-10-13'
+session: st-cdx-sector-20261013
+status: active
+family_id: CONDAXIS-CAMPAIGN
+evidence_asof: '2026-10-13'
+
+decision:
+  primary_caliber: shenwan_l1        # 主口径=申万一级（S1 默认先行，P1 2026-10-13）
+  roles:
+    shenwan: 主口径（行业语义轴；对齐 ig_* 图谱申万 category 轴；PIT 分类真源）
+    tdx880: 盘中快照辅助（盘中量价/快照/分钟面现役产线）
+    ths881: 资金流跨口径（THS 行业 90 码，经 sector_code_bridge 转 880）
+    concept: 事件标签层（题材语境/事件命中定位；禁作行情主轴）
+  degradation_order: [shenwan_l1, tdx880, ths881]   # 主口径数据面不可用时降级序
+
+calibers:
+  shenwan_l1:
+    family: shenwan
+    role: primary
+    level: '1'                        # 申万一级（L2/L3 留升级位，判别式同构）
+    identity: {kind: level_name, levels: ['1', '2', '3']}   # 申万无板块数码——身份=(level, industry_name)
+    tables:
+      - category_id: market_industry_class
+        facts: >-
+          31,414 行；L1/L2/L3 各约 10,472 股；PIT valid_from/valid_to 列在表；
+          采集=tushare index_classify+index_member（#ARCH-IFIND-FAILOVER，failover 已落）
+    derived_views:
+      - name: shenwan_market_agg
+        note: >-
+          申万只有分类映射，无板块级行情/资金流表——行情聚合层经 industry_class PIT
+          成分 ∩ 个股行情现算（消费端派生视图，禁物化为第 5 套板块表）
+    constraints:
+      - 行情/资金面为派生视图（上条），首期主口径行情可暂以 880 辅助口径供给并标口径来源
+
+  tdx880:
+    family: tdx880
+    role: intraday_auxiliary
+    code_namespace: 880xxx（TDX 板块指数；盘中轮询池子集另含 881xxx 腿）
+    tables:
+      - category_id: market_sector_kline_880
+        facts: >-
+          766,114 行；729 码=601×880xxx+128×881xxx；period=1d/1m/5m；
+          max(trade_date)=2026-10-13 当日新鲜；ReplacingMergeTree 幂等
+      - category_id: market_sector_snapshot_880
+        facts: >-
+          127,894 行；盘中轮询池 582（454×880+128×881，2026-07-22 实测）；
+          无主力净流入字段（inside/outside 近恒 0-4，不作资金口径）
+      - category_id: market_sector_kline_intraday
+        facts: 12,091,377 行；880 盘中分钟腿（分钟资金流本体=🌑 外购门位）
+      - category_id: market_sector_constituent_880
+        facts: 106,625 行；727 码（与 kline 差 2 码=对账行）；PIT SCD-2 过滤件
+      - category_id: market_sector_state
+        facts: >-
+          432,208 行；close_final/pre_open 双 stage（回测取数必须 stage=close_final
+          过滤，pre_open 是 T 日复制行）；2026-10-12 起断更事件见 8_prereg_validation.md §7
+      - category_id: market_sector_kline
+        facts: >-
+          87,439 行三源混存：tqcenter 726 码（2026-06-17 起）/ tdx 593 码
+          （2025-07-18~2026-07-31 已停）/ tqcenter_880fix 2 码（一次性修复）；
+          查询必须 data_source 过滤，禁 UNION 拼接
+
+  ths881:
+    family: ths881
+    role: fund_flow_bridge
+    code_namespace: 881xxx（THS 行业指数；唯一真源=sector_meta）
+    tables:
+      - category_id: market_sector_meta
+        facts: 2,970 行；90 码（sector_type=同花顺行业 全表唯一）；max=2026-10-13
+      - category_id: market_sector_fund_flow
+        facts: >-
+          12,110 行仅 industry 腿（concept 腿采集器已支持未接线）；
+          min(trade_date)=2026-09-15——**史窗仅 29 交易日（硬约束：凡涉资金腿判据
+          须标注此史窗，<60 交易日门槛的信号降级剔除不判负）**
+    bridge: sector_code_bridge（881→880 90/90 全映射零缺失，纯函数常量 SSoT）
+
+  concept:
+    family: concept
+    role: event_tag_layer
+    code_namespace: 6 位数字串（与个股码同形——判别必须带 source_hint，见 routing_rules）
+    tables:
+      - category_id: market_concept_board
+        facts: 376 板块；max(updated_at)=2026-10-13 10:08 当日
+      - category_id: market_concept_board_constituent
+        facts: 35,512 成分行；EM 主源+THS fallback 双源（源版本敏感）
+      - category_id: market_concept_sector
+        facts: 375 行
+    out_of_scope:
+      - PG stock_concept（61,053 行）=链图谱域第 4 套概念真源，归 chainmap 域，不入本路由
+
+routing_rules:                        # 判别式（自上而下首命中生效；实现=universe_router.route_sector_code；码长=6 位：880+3 位段）
+  - {pattern: '^88000[1-9](\.(SH|SZ))?$', family: tdx880, role: market_stat_index,
+     action: exclude, note: 市场统计指数剔除（intraday_aggregator 先例，防大盘双计）}
+  - {pattern: '^880[34]\d{2}(\.(SH|SZ))?$', family: tdx880, role: industry}
+  - {pattern: '^8802\d{2}(\.(SH|SZ))?$', family: tdx880, role: region}
+  - {pattern: '^880[5-9]\d{2}(\.(SH|SZ))?$', family: tdx880, role: concept_style}
+  - {pattern: '^880\d{3}(\.(SH|SZ))?$', family: tdx880, role: sector, note: 880 段兜底（含 8800/8801 统计段余码）}
+  - {pattern: '^881\d{3}(\.(SH|SZ))?$', family: ths881, role: industry,
+     note: 同号不同义坑——881 真源仅 sector_meta（THS 体系）；SC/KI 表内 881 码勿直接路由}
+  - {pattern: '^\d{6}$', family: ambiguous, role: ambiguous,
+     note: 与个股码同形——须 source_hint=concept/stock 消歧，无 hint 判 unknown 不猜}
+
+cross_caliber_bridges:
+  - name: sector_code_bridge
+    span: THS881 ↔ TDX880（90 行业 90/90 零缺失；多 881 同目标净额 SUM）
+    status: production（src/zephyr/data/implementations/sector_code_bridge.py）
+  - name: sw_to_880_overlap
+    span: 申万 L1/L2 ↔ TDX880
+    status: unbuilt
+    note: >-
+      唯一机械路径=成分股重叠派生（industry_class PIT ∩ sector_constituent）；
+      面板装配件施工时一并落（挂起件，非本册范围）
+  - name: ig_category_projection
+    span: 主题 → 申万一级 → ig_chain.category → 环节（ACC-F 四跳先例）
+    status: precedent（ACC-F-CHAINMAP-CATALYST 24 事件窗 4 命中实证）
+
+universe_size_hints:                  # advisory 快照（2026-10-13 实查 uniqExact；判别逻辑不依赖）
+  shenwan_industries: {L1: 32, L2: 131, L3: 336}   # industry_class uniqExact(industry_sw) 按层
+  shenwan_stocks: 5545                # uniqExact(symbol_canonical)（行级 31,414 含 PIT 版本行）
+  tdx880_total_codes: 729             # 601×880xxx + 128×881xxx（kline 面）
+  ths881_industry_codes: 90
+  concept_boards: 376
