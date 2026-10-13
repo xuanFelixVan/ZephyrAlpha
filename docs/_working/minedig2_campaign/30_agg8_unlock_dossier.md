@@ -100,6 +100,10 @@ CRLF 再翻一次，读回多空行且 sha 与落盘字节不同物——本班�
 
 - CREATE-GUARD：新 .py 与 8 枚 CSV 均需 token；`batch_creation_tokens.py` 意图 API 已在**车道内**跑通
   （主区脚本扫主区 ls-files 看不见车道新件，会假报"无待登记文件"——在册新证同型）。
+  **本行"8 枚 CSV 需 token"于 11:2x 实测更正＝CSV 不在受管扩展名内**：`create_guard.py:188`
+  `_OTHER_FORMAT_EXTENSIONS=(.md/.sh/.ps1/.mmd/.json)`，另单列 .py/.yaml；受管集不含 .csv。自然实验同证＝
+  在册 7 枚夜矿 CSV 由 1905a7c9818 袋落 dev 时零 token。本班实际登记＝物化件 .py＋meta .yaml＋案卷 .md 三枚
+  （PG entry_key 逐条 active，11:2x 反查在册）。另记＝本班初版把装载声明为"零 SQL"亦于同日实测更正（见 环节1/环节6）。
 - TRANSLATION-COVERAGE：**实测只读 YAML 投影面**（`module_translation_loader` 无 PG 通道；主区投影查询 MISS），
   故新 .py 必须走"翻译册独立先行袋落 HEAD"，否则预检与落地双红。本班 render 面含他人 12 条未落地登记 ⇒
   **不随袋**（Owner 禁重打投影袋在册），改以 dev 字节为基只注入本班 1 条（`git diff --numstat`＝+5/−0，
@@ -119,6 +123,14 @@ CRLF 再翻一次，读回多空行且 sha 与落盘字节不同物——本班�
 ③fail-closed 三面（零行/日期重复/close 全非有限）必抛。另在执行器侧 7 例参数化红证（半申报/错拼/越界/
 str 与 bool 冒充/两处不同值全拒）。绑定侧红证＝文件不在时 reason 必须点名 `series_csv_absent:<具体文件>`，
 放入后转 `cls D`。CH 窗后补：复算不等值即红（环节6），以及他班视角复验（环节10）。
+
+**11:2x 落地字节上的红蓝四件（零 CH，跑在真产物上而非合成件）**：
+①**真面负对照**＝在 `meta.recomputation_screen_face` 的实际读数上把其中一格 n 改 1 ⇒ 等值数由 8/8 掉到 7/8
+（证等值尺对真字节仍有判别力，不是只在玩具数据上能红）；②**面选择反证**＝同一把尺跑全钉窗面（含扣留段）＝**0/8**，
+即"剔末 126 交易日"不是随便挑出来能匹配的那个面，两面的差别是二值的而非程度性的；③**取证防伪**＝8 张卡
+`status_flip_20261013.face_2_materialized.sha256` 与盘上 CSV 实际字节 sha256 逐张全等（8/8），卡面登记的不是空头数字；
+④**撞名排查**＝本班 8 个序列名与在册 7 枚夜矿 CSV（blast_ratio/limit_down_count/limit_up_count/max_streak_height/
+net_breadth/seal_ratio/streak_distribution）交集＝**空集**（撞名会让 class D 单口静默读到别人的面）。
 
 ## 环节10 他班交叉验证与让路面
 
