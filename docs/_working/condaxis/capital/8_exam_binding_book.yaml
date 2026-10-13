@@ -1,0 +1,33 @@
+schema_version: condaxis-capital-binding-book/v1
+title: CONDAXIS 资金线 P2 绑定册（卡面原文引句 → 算子实现，一卡一格；未列卡=不绑不出分）
+built_by: scripts/backtest/fexam/card_binding.py --mode run --binding-book <本件>
+owner_sid: st-cdx-capital-20261013
+discipline: |
+  每格 prose_quote 必须是卡面 data_binding 原文子串（运行器机械校验，找不到即拒绑）；
+  算子只做卡面已冻结的算法，零自创口径；判据面（window/buckets/pillars_numeric）由
+  card_binding.run_one 出分前后做内容级断言，被改动即 BindingIntegrityError 整卡中止。
+  本册形制对齐 mineloop_campaign/02_binding_book.yaml 先例（同执行器同校验面）。
+entries:
+- card_id: TDM-E-L3-12-3/calibration/05_市场获利盘水位
+  op: chips_winner_cs_median
+  status: approved
+  args:
+    table: c1_market.technical_indicator
+    date_col: trade_date
+    symbol_col: symbol
+    col: chips_winner
+    version_col: ingest_ts
+    period: daily
+    invert: true
+  prose_quote: "先 (日,标的) argMax(ingest_ts) 去版本再按日 medianExact"
+  reviewed_by: st-cdx-capital-20261013
+  review_note: |
+    实测（2026-10-13 20:4x CH 只读，命令原文全录卡面 data_window_evidence）：
+    period='daily' 覆盖 2019-01-02..2026-10-12 / 19,754,690 行 / chips_winner 非空 19,706,276（99.75%）；
+    多版本实证 2026-10-08=15,895 行 vs uniq (日,标的)=5,562（2.86 倍）⇒ argMax(ingest_ts) 去重
+    （与 L3-12-3 卡 02 冻结口径一致）；period 9 值混存实测在案，漏过滤即污染。
+    invert: true 的凭据：卡面 criteria_provenance ②——负向假设（M_t 高→次日承压）×执行器单侧下限
+    门柱（calibration_exam._judge_calibration_face 只判 <min 记败）⇒ 交付反向读数 −M_t 与正向门柱
+    同构；卡面 signal_derivation 同句声明（双处留痕）。
+    IS 2019-01-04..2023-12-31 与 OOS 2024-01-01..2026-09-30 均落在信号窗（1,883 日）内；
+    目标面 kline_index 000300 5,286 行全覆盖信号窗。
