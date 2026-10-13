@@ -197,3 +197,72 @@ idle>1800s 自退）；01:00-04:00 让路窗内本班零 CH 零开考。
 不在这份字节里"，本袋自有实核：dev_only 行改写前=8 件×2、改后＝**0**），故改形制不改内容。
 判据位数值、窗口、分桶、牛熊段零改动（逐张打印比对）；变换以幂等脚本
 `.runtime/tmp/st-minedig2-20261012/amend_cards_tail.py` 承载，二跑 0 rewrite＝源面与盘面同形（防"假留证"）。
+
+## 十、通宵总令终账（2026-10-13 04:0x 两腿 → 10:5x 三袋入队；晨间补记，Owner 睡眠窗内零中继）
+
+### 10.1 执行账（令 §四 本班终局＝聚合 8 卡可考：多日面＋物化＋绑定三件齐）
+
+| 前置 | 实测（非声明） | 判据出处 |
+|---|---|---|
+| 复算证明 | **8/8 逐格精确等**：lu_count level fwd10 n=1734 ic=.1161 t=4.87；lu_count_z20 1730/.1019/4.26；lu_ratio 1733/.1207/5.06；lu_ratio_z20 1729/.1001/4.18；avg_abs_ret level fwd5 1733/.1015/4.24；fwd10 1733/.1012/4.23；avg_abs_ret_z20 fwd5 1729/.1145/4.79；fwd10 1729/.1292/5.41 | 预登记册 `agg8_readings`＋`recon_criterion_pinned_before_run`（等值三条：n 整数／ic 四位／t 两位） |
+| 腿B run_id 钉版 | GREEN 四项：钉版 1,625 日 ⊂ 全表 1,638 日（超出 0）／重叠段 dom·six 逐日差 **0**／钉版内部同日重复 0／同码本两次重放逐日一致 True；正对照＝乱真 run_id 显式 RuntimeError（尺不哑） | D 族冻结稿 §5 判据②＋统筹"run_id 钉死＝批" |
+| 绑定尺 | 8/8 由 `U·series_csv_absent:<具体文件>` 转 **`D`·reason=None**；读侧 signal＋target 双取到，对齐有效 1845..1854 日（闸内 min_days=400） | `card_binding.classify_card` 现器实测 |
+| 卡面 | 8/8 `blocked_on_impl → preregistered`（每卡一处状态行＋尾部 18 行取证块：复算结论／CSV 名+rows+sha256+版本／绑定 cls／"只转态零开考"） | 收尾令原文"如实状态，禁凑张数" |
+| 数据面 | 8 枚 CSV＋meta 落 `docs/_working/nightmine_campaign/series/`，跨 2019-02-11..2026-10-12，rows 1860/1856/1859/1855/1859/1855/1855/1850，实测纯 LF（与在册 7 枚夜矿 CSV 同形制） | 物化件 `agg8_series_materialize.py`（SERIES_VERSION=agg8-v1） |
+| 三袋 | 0008＝D_BACKTEST 7 件＋它自己要读的翻译册 1 件；0009＝tests/backtest 2 件（depends-on 0008）；0010＝8 CSV＋meta＋8 卡＋预登记册＋案卷 19 件（depends-on 0008） | 拆袋理由＝COMMIT-SCOPE 用自己的路径→域尺量出 D_BACKTEST×D_AUDITTEST 跨域；册与 .py 同袋因 TRANSLATION-COVERAGE 的 loader 只读投影册、无 PG 第三源 |
+
+### 10.2 自裁账（零中继窗口内本班自决五件，各给名目·代价·可回退）
+
+1. **判据更正两节（比对面定义）**——时序如实入册：04:01 首跑 RED 后，按本册 `holdout.rule`"末段扣留，筛选全程不碰"原文＋装载侧 today 依赖定位出比对面；**阈值数值零改动、等值判据未降强度**（改的是样本段归属；一旦成立即 8/8 全等，任何错面给不出全等）。代价＝判据节多两节留痕；回退＝旧文未删可逐字比。
+2. **装载收编 `fetch_matrix_ctx`** 取代"复用 lane_c.fetch_panel"——实测 fetch_panel 返回键无 close 矩阵与 dates 字符串（其 :415-426），产不出出生读数所依的矩阵面；原管线本体在 `.runtime/tmp` TTL 工棚内，不搬进册即随清理蒸发。代价＝本件带一条 kline SELECT（原 `SQL_FREE=True` 声明已更正为 False，SQL 全文落 `meta.inputs.own_sql` 可审）；宇宙口径与特征工程仍逐字复用 lane_c 单口（§4.2 同真源必并）。
+3. **走 class D 本地序列路而非配方册 class A**——Owner 固定正解"改喂给闸的输入，不改闸"；配方册因此不是本班前置（他班"9 张单表入册"前提由他们自证，本班不引用其结论）。代价＝8 张卡的数据真源是仓内 CSV 而非 CH 单表。
+4. **卡面转态**——三件齐才转，逐张取证；缺一保持 blocked（本班实测三件全齐后方动）。
+5. **会话复命走 `SessionRegistry.register(pid=0)`＋keeper＋keepalive 正门**，不用 `session_worktree_start`——后者实测会去主区做工作面 reconcile（撞他班在途面；本班第一次尝试因主区 index.lock 在位而未遂，事后核车道 index 20915 条目零变动）。
+
+### 10.3 等裁账：无
+
+本班面上无待 Owner 点头项。唯一外部依赖＝三袋落地读回；开考与试次入账归矿考二班／考试班（本班零开考、N 账本零写）。
+
+### 10.4 复核命令（照抄可跑；本班 10:57 已在车道逐条自跑得出期望值，袋落地后在主区复跑同尺）
+
+```bash
+# 1) 复算逐格等值（零 CH；期望 RECON exact= 8 of 8）
+python -c "
+import yaml, io
+meta = yaml.safe_load(io.open('docs/_working/nightmine_campaign/series/agg8_series_v1.meta.yaml', encoding='utf-8'))
+pre  = yaml.safe_load(io.open('docs/_working/minedig2_campaign/00_agg8_axis_prereg.yaml', encoding='utf-8'))
+rec  = {(r['series'] + ('_' + r['transform'] if r['transform'] != 'level' else '') + '|' + r['transform'] + '|' + r['target']): r for r in pre['agg8_readings']}
+sc   = meta['recomputation_screen_face']
+hit  = sum(1 for k, g in sc.items() if int(g['n']) == int(rec[k]['n']) and round(float(g['ic']), 4) == round(float(rec[k]['ic']), 4) and round(float(g['t']), 2) == round(float(rec[k]['t']), 2))
+print('RECON exact=', hit, 'of', len(sc))
+"
+
+# 2) 绑定尺与卡面状态同尺（零 CH；期望只出一组合 ('D', 'preregistered')）
+python -c "
+import yaml, io, glob
+from scripts.backtest.fexam import card_binding as cb
+out = sorted({(cb.classify_card(yaml.safe_load(io.open(p, encoding='utf-8')))['cls'], yaml.safe_load(io.open(p, encoding='utf-8'))['status']) for p in glob.glob('docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__4[0-7]_agg_*.yaml')})
+print('CLASSIFY+STATUS:', out)
+"
+
+# 3) 产物形制（零 CH；期望 8 枚全 True＝表头 trade_date,value 且字节内零回车符）
+python -c "
+from pathlib import Path
+names = ['lu_count','lu_count_z20','lu_ratio','lu_ratio_z20','avg_abs_ret','avg_abs_ret_z20','mkt_fwd5','mkt_fwd10']
+LF, CR = bytes([10]), bytes([13])
+for n in names:
+    raw = Path('docs/_working/nightmine_campaign/series/' + n + '.csv').read_bytes()
+    print(n, raw.partition(LF)[0] == b'trade_date,value' and CR not in raw)
+"
+
+# 4) 落地判据（只认 git，不认队列自报）
+git log --oneline -3 dev -- docs/_working/nightmine_campaign/series/agg8_series_v1.meta.yaml
+git show dev:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__40_agg_lu_count_level_fwd10.yaml | grep -m1 '^status: '
+```
+
+### 10.5 本班自犯追加四条（旧案 ①-⑫ 不销，见 §六）
+
+⑬ **比对面定义系看数后补**：初版判据钉了"面目窗"，未钉"装载集合锚"与本册自己的 holdout 归属 ⇒ 首跑 RED。教训＝判据要同时钉"从哪读"与"读哪段"，只钉其一是把定位工作留给 RED 之后。
+⑭ **班中调 `session_worktree_start` 复命会话**：它按设计去主区 reconcile 工作面，实测打出 `git restore failed … .git/index.lock exists`——若当时主区无锁，它会把别班在途文件 restore 掉。班中复命只准 `register(pid=0)`＋keeper＋keepalive 三件。
+⑮ **`lock_files.py acquire-batch` 参数位用错**：owner 是**位置参**（`acquire-batch <owner> <paths…>`），`--session` 是可选参数；本班把 `--session` 打在首位 ⇒ 17 枚 claim 一度挂到字面 owner `--session` 名下，且 `--ttl-minutes 180` 的数值被当路径收走 ⇒ 3 枚伪路径 claim。已全部 release 并按正形重取（复核面＝`.ailocks/registry.json` owner 计数）。
+⑯ **尺子假 0 险成结论**：在车道 cwd 下 `git show dev:<含反斜杠的 glob 路径>` returncode≠0 而 stdout 为空，Counter 差集遂报"dev_only=0＝严格超集"。补 `assert(returncode==0)`＋路径反斜杠归一后真值＝每卡 dev_only=1（正是本班改写的那行 status）。在册教训"零命中须正对照"第三次自犯，此次被顺手加的 returncode 断言拦住。
