@@ -741,3 +741,213 @@ def test_projection_render_attribution_restores_on_exception(monkeypatch) -> Non
     with pytest.raises(RuntimeError):
         cbd._render_projection_with_attribution(_boom, Path("."), "R", "p")
     assert "ZEPHYR_SESSION_ID" not in os.environ
+
+
+# ---------------------------------------------------------------------------
+# 段二常态化两条腿（Owner 2026-10-13 死信放量班追加令；99_delivery §四-4 交接面）
+#   腿①＝当日四态分诊的自动触发（事件驱动，禁 cron）——只判不删；
+#   腿②＝主区暂存区无主 staged 巡检——TierA 存证后复位 index，TierB 歧义面只记不修。
+# 判据本身（内容级四态门）已由 tests/gov/governance/test_commit_queue.py 的
+# TestDeadArchiveContentGate 钉扎，本批只测"接线面"：触发/幂等/只判不删/谓词分档/停腿。
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture()
+def triage_repo(tmp_path, monkeypatch):
+    """临时仓 + dead/ 两封袋 + 假门（判据注入，本批不测判据）。"""
+    monkeypatch.setattr(cbd, "_DEAD_TRIAGE_LEDGER", tmp_path / "triage_ledger.jsonl")
+    monkeypatch.setattr(cbd, "_dev_head_sha", lambda root: "sha-v1")
+    qroot = cbd._queue_root(tmp_path)
+    (qroot / "dead").mkdir(parents=True)
+    for qid, verdict in (("q-20261013-sA-0001", "A_LANDED"), ("q-20261013-sB-0002", "C_UNIQUE_WOULD_REGRESS")):
+        (qroot / "dead" / f"{qid}.json").write_text(
+            json.dumps({"qid": qid, "session_id": qid.split("-")[2], "dead_at": "2026-10-13T10:00:00+08:00"}),
+            encoding="utf-8",
+        )
+        # 每封一条判定：A 放行、C 不放行
+
+    def _fake_gate(item):
+        v = "A_LANDED" if item["qid"].endswith("0001") else "C_UNIQUE_WOULD_REGRESS"
+        return (v == "A_LANDED"), {"verdict": v, "n_items": 1, "n_unique": 0 if v == "A_LANDED" else 1}
+
+    monkeypatch.setattr(cbd, "_triage_state", {"dev_sha": "sha-v1", "gate": _fake_gate})
+    return tmp_path
+
+
+class TestDeadTriageProbe:
+    def test_writes_one_verdict_row_per_unjudged_bag(self, triage_repo) -> None:
+        out = cbd.dead_triage_probe(triage_repo, now="2026-10-13T21:00:00+08:00", force=True)
+        assert out["scanned"] == 2 and out["triaged"] == 2
+        rows = [json.loads(l) for l in (triage_repo / "triage_ledger.jsonl").read_text(encoding="utf-8").splitlines()]
+        assert {r["verdict"] for r in rows} == {"A_LANDED", "C_UNIQUE_WOULD_REGRESS"}
+        assert rows[0]["kind"] == "dead_letter_triage" and rows[0]["triage_day"] == "2026-10-13"
+        assert [r["allow_archive_by_gate"] for r in rows] == [True, False]
+
+    def test_idempotent_same_day_and_other_day_rejudges(self, triage_repo) -> None:
+        cbd.dead_triage_probe(triage_repo, now="2026-10-13T21:00:00+08:00", force=True)
+        again = cbd.dead_triage_probe(triage_repo, now="2026-10-13T21:05:00+08:00", force=True)
+        assert again["scanned"] == 0 and again["triaged"] == 0, "当日已判过的袋不得重复落行（禁积压翻倍）"
+        nxt = cbd.dead_triage_probe(triage_repo, now="2026-10-14T00:30:00+08:00", force=True)
+        assert nxt["triaged"] == 2, "跨日须重新分诊（当日不隔夜＝按日账）"
+
+    def test_probe_never_moves_bags_or_creates_archive(self, triage_repo) -> None:
+        """只判不删：跑完 dead/ 两封仍在原位，且不得出现任何归档目录。"""
+        cbd.dead_triage_probe(triage_repo, now="2026-10-13T21:00:00+08:00", force=True)
+        qroot = cbd._queue_root(triage_repo)
+        assert len(list((qroot / "dead").glob("q-*.json"))) == 2
+        assert not list(triage_repo.rglob("dead_archive_*")), "分诊腿自动清袋＝把'存疑回态④'变成'自动硬清'"
+
+    def test_cooldown_requires_event_not_timer(self, triage_repo) -> None:
+        cbd.dead_triage_probe(triage_repo, now="2026-10-13T21:00:00+08:00")  # 非 force：本轮建账
+        skip = cbd.dead_triage_probe(triage_repo, now="2026-10-13T21:00:30+08:00")
+        assert skip["skipped_cooldown"] is True and skip["triaged"] == 0
+
+    def test_gate_error_records_row_and_does_not_raise(self, triage_repo, monkeypatch) -> None:
+        def _boom(item):
+            raise RuntimeError("rev-list 炸了")
+
+        monkeypatch.setattr(cbd, "_triage_state", {"dev_sha": "sha-v1", "gate": _boom})
+        out = cbd.dead_triage_probe(triage_repo, now="2026-10-13T21:00:00+08:00", force=True)
+        assert out["verdicts"] == {"GATE_ERROR": 2}
+        rows = [json.loads(l) for l in (triage_repo / "triage_ledger.jsonl").read_text(encoding="utf-8").splitlines()]
+        assert "rev-list 炸了" in rows[0]["gate_error"]
+
+    def test_index_rebuilt_when_dev_head_moves(self, triage_repo, monkeypatch) -> None:
+        seen: list = []
+
+        def _gate(item):
+            seen.append(item["qid"])
+            return True, {"verdict": "A_LANDED"}
+
+        import scripts.commit_queue as cq
+
+        monkeypatch.setattr(cq, "make_dead_letter_content_gate", lambda *a, **k: _gate)
+        monkeypatch.setattr(cbd, "_triage_state", {"dev_sha": "sha-v1", "gate": _gate})
+        cbd.dead_triage_probe(triage_repo, now="2026-10-13T21:00:00+08:00", force=True)
+        assert len(seen) == 2
+        monkeypatch.setattr(cbd, "_dev_head_sha", lambda root: "sha-v2")  # dev 前进＝旧索引作废
+        (cbd._queue_root(triage_repo) / "dead" / "q-20261013-sC-0003.json").write_text(
+            json.dumps({"qid": "q-20261013-sC-0003", "session_id": "sC", "dead_at": "2026-10-13T22:00:00+08:00"}),
+            encoding="utf-8",
+        )
+        out = cbd.dead_triage_probe(triage_repo, now="2026-10-13T21:30:00+08:00", force=True)
+        assert out["triaged"] == 1 and cbd._triage_state["dev_sha"] == "sha-v2"
+
+
+# ── 腿②：主区暂存区无主 staged 巡检 ──────────────────────────────────────
+
+
+def _git(repo: Path, *a: str) -> str:
+    import subprocess
+
+    r = subprocess.run(["git", *a], cwd=repo, capture_output=True, text=True, encoding="utf-8", check=True)
+    return r.stdout.strip()
+
+
+@pytest.fixture()
+def staging_repo(tmp_path, monkeypatch):
+    """临时仓：a.md=纯索引幽灵(TierA)、b.md=盘也改(TierB)、c.md=有主跳过。"""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-b", "dev")
+    _git(repo, "config", "user.email", "t@l")
+    _git(repo, "config", "user.name", "t")
+    for n in ("a.md", "b.md", "c.md"):
+        (repo / n).write_text(f"{n} head\n", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-m", "init")
+
+    # TierA：index 留旧快照，工作区随后回到 HEAD（磁盘即真源）
+    (repo / "a.md").write_text("stale index snapshot\n", encoding="utf-8")
+    _git(repo, "add", "a.md")
+    (repo / "a.md").write_text("a.md head\n", encoding="utf-8")
+    # TierB：index 与工作区都改（歧义面）
+    (repo / "b.md").write_text("both sides changed\n", encoding="utf-8")
+    _git(repo, "add", "b.md")
+    (repo / "b.md").write_text("worktree further edited\n", encoding="utf-8")
+    # 有主：c.md 同 TierA 形态，但被"活跃会话 claim"
+    (repo / "c.md").write_text("stale snapshot claimed\n", encoding="utf-8")
+    _git(repo, "add", "c.md")
+    (repo / "c.md").write_text("c.md head\n", encoding="utf-8")
+
+    class _Sess:
+        held_files = ["c.md"]
+
+    class _Reg:
+        def __init__(self, *a, **k):
+            pass
+
+        def list_active_readonly(self):
+            return [_Sess()]
+
+    import zephyr.security.access_control.session_concurrency as sc
+
+    monkeypatch.setattr(sc, "SessionRegistry", _Reg)
+    monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "bottleneck_ledger.jsonl")
+    monkeypatch.setattr(cbd, "_PHANTOM_STAGING_EVIDENCE", Path(".runtime/quarantine/phantom_staging"))
+    return repo
+
+
+class TestPhantomStagingProbe:
+    def test_tier_a_reset_to_head_with_evidence(self, staging_repo) -> None:
+        out = cbd.phantom_staging_probe(staging_repo, force=True)
+        assert out["tier_a"] == 1 and out["reset"] == 1
+        assert "a.md" not in _git(staging_repo, "diff", "--cached", "--name-only").splitlines(), (
+            "index 仍压旧快照＝没复位"
+        )
+        assert (staging_repo / "a.md").read_text(encoding="utf-8") == "a.md head\n", "工作区字节一个都不许动"
+        man = list((staging_repo / ".runtime/quarantine/phantom_staging").rglob("MANIFEST.jsonl"))
+        assert man, "复位必须留证"
+        row = json.loads(man[0].read_text(encoding="utf-8").splitlines()[0])
+        assert row["path"] == "a.md" and row["action"] == "reset_index_to_head"
+        assert (man[0].parent / row["evidence"]).exists(), "存证字节必须可回放"
+
+    def test_tier_b_ambiguous_left_untouched(self, staging_repo) -> None:
+        out = cbd.phantom_staging_probe(staging_repo, force=True)
+        assert out["tier_b"] == 1
+        staged = _git(staging_repo, "diff", "--cached", "--name-only").splitlines()
+        assert "b.md" in staged, "歧义面被自动复位＝可能洗掉他班在途编辑"
+        assert (staging_repo / "b.md").read_text(encoding="utf-8") == "worktree further edited\n"
+
+    def test_owned_paths_skipped_via_readonly_ruler(self, staging_repo) -> None:
+        out = cbd.phantom_staging_probe(staging_repo, force=True)
+        assert out["owned"] == 1
+        assert "c.md" in _git(staging_repo, "diff", "--cached", "--name-only").splitlines()
+
+    def test_kill_switch_disables_mutation_only(self, staging_repo) -> None:
+        (staging_repo / ".runtime/registry_ledger").mkdir(parents=True)
+        (staging_repo / ".runtime/registry_ledger/phantom_staging.disabled").write_text("1\n", encoding="utf-8")
+        out = cbd.phantom_staging_probe(staging_repo, force=True)
+        assert out.get("disabled") is True and out["reset"] == 0
+        assert "a.md" in _git(staging_repo, "diff", "--cached", "--name-only").splitlines()
+
+    def test_execute_false_is_pure_noop(self, staging_repo) -> None:
+        out = cbd.phantom_staging_probe(staging_repo, execute=False, force=True)
+        assert out == {"scanned": 0, "tier_a": 0, "tier_b": 0, "owned": 0, "reset": 0, "evidence_dir": ""}
+
+    def test_ledger_row_written_for_each_round(self, staging_repo) -> None:
+        cbd.phantom_staging_probe(staging_repo, force=True)
+        led = Path(cbd._LEDGER)
+        rows = [json.loads(l) for l in led.read_text(encoding="utf-8").splitlines()]
+        ps = [r for r in rows if r["kind"] == "phantom_staging"]
+        assert len(ps) == 1 and ps[0]["scanned"] == 3 and ps[0]["phantom"] == 1
+        assert "TierB" in ps[0]["detail"] and ps[0]["session_id"] == "belt_daemon:phantom_staging_probe"
+
+    def test_missing_evidence_write_blocks_reset(self, staging_repo, monkeypatch) -> None:
+        """fail-closed：取不到存证字节就不复位（防"无证的不可逆动作"）。
+
+        写侧现走 process_pool 统一入口（BARE-SUBPROCESS 铁律），所以探针打在同一个口上。
+        """
+        import zephyr.shared.infra.process_pool as pp
+
+        real = pp.run_subprocess_hidden
+
+        def _only_cat_file_fails(cmd, *a, **k):
+            if "cat-file" in cmd:
+                raise RuntimeError("存不了证")
+            return real(cmd, *a, **k)
+
+        monkeypatch.setattr(pp, "run_subprocess_hidden", _only_cat_file_fails)
+        out = cbd.phantom_staging_probe(staging_repo, force=True)
+        assert out["reset"] == 0, "没留证就复位＝制造查无此事的不可逆动作"
+        assert "a.md" in _git(staging_repo, "diff", "--cached", "--name-only").splitlines()

@@ -35,7 +35,7 @@ import sqlite3
 import subprocess
 import threading
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -2049,3 +2049,212 @@ class TestGhostSessionGate:
         assert cq.classify_dead_reason(reason) == "env"
         rx = cq.dead_letter_prescription(reason)
         assert "requeue" in rx or "dead-archive" in rx
+
+
+# 段三立法（Owner 2026-10-13 派工令 v2，st-deadclean-20261013）：
+#   ①死信归档门必须问内容（"路径在不在 dev"会把从未落地的袋判成可销——在册已证
+#     假绿灯：账面 537 可销、内容级真判 33）；
+#   ②删袋必留处置台账行（袋号/判定/证据 sha，机生禁手写）；
+#   ③复发熔断带 7 天衰减窗（实测 673 封/81 封终身累计把散场根因当在发，挡死合法重投）。
+# 判据数值 _RECURRENCE_FUSE_LIMIT=3 未动，动的只是计数时间轴。
+# ---------------------------------------------------------------------------
+
+
+def _content_dead_bag(
+    root: Path, qid: str, entries: list[tuple[str, bytes]], *, dead_age_days: float = 10.0, base_blob: str = "b" * 40
+) -> dict:
+    """带 blob 实体的死信袋：袋记 blob_sha256/blob_ref，字节落 root/blobs/<sha>。"""
+    import hashlib
+
+    now = datetime.now().astimezone()
+    files = []
+    blobs = root / "blobs"
+    blobs.mkdir(parents=True, exist_ok=True)
+    for path, content in entries:
+        sha = hashlib.sha256(content).hexdigest()
+        (blobs / sha).write_bytes(content)
+        files.append(
+            {
+                "path": path,
+                "action": "modify",
+                "blob_sha256": sha,
+                "blob_ref": f"blobs/{sha}",
+                "base_blob": base_blob,
+            }
+        )
+    bag = {
+        "qid": qid,
+        "session_id": "content-gate-test",
+        "created_at": (now - timedelta(days=dead_age_days + 1)).isoformat(timespec="seconds"),
+        "branch": "dev",
+        "base_head": None,
+        "message": "content gate bag",
+        "files": files,
+        "meta": {},
+        "dead_at": (now - timedelta(days=dead_age_days)).isoformat(timespec="seconds"),
+        "dead_reason": "COMMIT_FAILED: 网关落盘失败: CREATE-GUARD 阻断",
+    }
+    (root / "dead").mkdir(parents=True, exist_ok=True)
+    (root / "dead" / f"{qid}.json").write_text(json.dumps(bag, ensure_ascii=False, indent=2), encoding="utf-8")
+    return bag
+
+
+class TestDeadArchiveContentGate:
+    """内容级四态门：只有"袋内每件字节都在 git 对象面有归宿"才放行归档。"""
+
+    @staticmethod
+    def _all_true_checker():
+        return lambda path, action: True
+
+    @staticmethod
+    def _stub_index(monkeypatch, *, tip, hist=None, refs=None):
+        monkeypatch.setattr(
+            cq,
+            "_dev_object_index",
+            lambda repo_root: (tip, hist or set(), refs or set()),
+        )
+
+    def test_gate_off_behavior_unchanged_and_ledger_sha_fields_written(self, queue_root: Path, monkeypatch) -> None:
+        """门不开＝现行判据逐字不变，但台账三栏（袋体 sha／blob 集摘要／件数）必写。"""
+        bag = _content_dead_bag(queue_root, "q-20261013-cg-0001", [("docs/a.md", b"alpha\n")])
+        res = cq.dead_archive_letters(queue_root, days=7, execute=True, landed_checker=self._all_true_checker())
+        assert res["archived"] == ["q-20261013-cg-0001"]
+        assert res["kept"]["content_held"] == 0, "门不开不产 content_held 计数"
+        line = json.loads(
+            (queue_root / f"dead_archive_{datetime.now():%Y%m%d}" / "manifest.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()[0]
+        )
+        assert len(line["bag_json_sha256"]) == 64
+        assert len(line["blob_set_sha256"]) == 64
+        assert line["n_blob_refs"] == len(bag["files"])
+        assert line["verdict"] == "", "门不开时无判定栏值（不伪造判定）"
+
+    def test_landed_content_passes_gate_and_verdict_lands_in_ledger(self, queue_root: Path, monkeypatch) -> None:
+        """字节在 dev 现值＝A_LANDED 放行，判定进台账行（事后可答"当时判的是什么"）。"""
+        content = b"already in dev\n"
+        bag = _content_dead_bag(queue_root, "q-20261013-cg-0002", [("docs/a.md", content)])
+        self._stub_index(monkeypatch, tip={"docs/a.md": cq._git_blob_sha1(content)})
+        gate = cq.make_dead_letter_content_gate(queue_root, repo_root=queue_root)
+        res = cq.dead_archive_letters(
+            queue_root,
+            days=7,
+            execute=True,
+            landed_checker=self._all_true_checker(),
+            content_gate=gate,
+        )
+        assert res["archived"] == ["q-20261013-cg-0002"]
+        line = json.loads(
+            (queue_root / f"dead_archive_{datetime.now():%Y%m%d}" / "manifest.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()[0]
+        )
+        assert line["verdict"] == "A_LANDED"
+        assert line["content_evidence"]["n_unique"] == 0
+
+    def test_unique_never_landed_content_blocked_and_zero_disk_change(self, queue_root: Path, monkeypatch) -> None:
+        """从未落地字节＝UNIQUE：不放行、不 mv、不建归档袋（尺能红的正向锚）。"""
+        _content_dead_bag(queue_root, "q-20261013-cg-0003", [("docs/only_here.md", b"never landed\n")])
+        self._stub_index(monkeypatch, tip={"docs/other.md": "f" * 40})
+        gate = cq.make_dead_letter_content_gate(queue_root, repo_root=queue_root)
+        res = cq.dead_archive_letters(
+            queue_root,
+            days=7,
+            execute=True,
+            landed_checker=self._all_true_checker(),
+            content_gate=gate,
+        )
+        assert res["archived"] == []
+        assert res["kept"]["content_held"] == 1
+        assert (queue_root / "dead" / "q-20261013-cg-0003.json").exists()
+        assert not list(queue_root.glob("dead_archive_*")), "不放行就不该建归档袋"
+
+    def test_blob_missing_and_tampered_both_blocked(self, queue_root: Path, monkeypatch) -> None:
+        """证据件缺失/字节与袋记 sha256 不符＝证据面坏了，判不了即不放行（fail-closed）。"""
+        _content_dead_bag(queue_root, "q-20261013-cg-0004", [("docs/gone.md", b"x\n")])
+        _content_dead_bag(queue_root, "q-20261013-cg-0005", [("docs/rot.md", b"y\n")])
+        self._stub_index(monkeypatch, tip={})
+        gate = cq.make_dead_letter_content_gate(queue_root, repo_root=queue_root)
+        # 缺失：直接搬走 0004 的 blob
+        bag4 = json.loads((queue_root / "dead" / "q-20261013-cg-0004.json").read_text(encoding="utf-8"))
+        (queue_root / bag4["files"][0]["blob_ref"]).unlink()
+        # 篡改：0005 的 blob 改一字节（袋记 sha256 不再吻合）
+        bag5 = json.loads((queue_root / "dead" / "q-20261013-cg-0005.json").read_text(encoding="utf-8"))
+        (queue_root / bag5["files"][0]["blob_ref"]).write_bytes(b"tampered\n")
+        res = cq.dead_archive_letters(
+            queue_root,
+            days=7,
+            execute=True,
+            landed_checker=self._all_true_checker(),
+            content_gate=gate,
+        )
+        assert res["archived"] == []
+        assert res["kept"]["content_held"] == 2
+        allow, ev4 = gate(bag4)
+        assert allow is False and ev4["n_evidence_lost"] == 1
+        allow, ev5 = gate(bag5)
+        assert allow is False and ev5["n_evidence_tampered"] == 1
+
+    def test_history_and_other_ref_destinations_also_count_as_landed(self, queue_root: Path, monkeypatch) -> None:
+        """归宿三态（dev 现值/dev 全史/任意 ref）都算"字节还在"——漏认会永久留袋。"""
+        c1, c2 = b"in history\n", b"on other ref\n"
+        _content_dead_bag(queue_root, "q-20261013-cg-0006", [("docs/h.md", c1)])
+        _content_dead_bag(queue_root, "q-20261013-cg-0007", [("docs/r.md", c2)])
+        self._stub_index(
+            monkeypatch,
+            tip={},
+            hist={cq._git_blob_sha1(c1)},
+            refs={cq._git_blob_sha1(c2)},
+        )
+        gate = cq.make_dead_letter_content_gate(queue_root, repo_root=queue_root)
+        res = cq.dead_archive_letters(
+            queue_root,
+            days=7,
+            execute=True,
+            landed_checker=self._all_true_checker(),
+            content_gate=gate,
+        )
+        assert sorted(res["archived"]) == ["q-20261013-cg-0006", "q-20261013-cg-0007"]
+
+
+class TestRecurrenceDecayWindow:
+    """复发熔断 7 天衰减窗：熔断只认窗内复发，终身累计面留作审计不清零。"""
+
+    @staticmethod
+    def _prepare(root: Path) -> None:
+        (root / "dead").mkdir(parents=True, exist_ok=True)
+
+    def test_window_resets_after_gap_longer_than_seven_days(self, queue_root: Path) -> None:
+        self._prepare(queue_root)
+        t0 = time.time()
+        bump = lambda ts: cq._bump_recurrence(  # noqa: E731 — 三处同参调用，局部闭包不扩 API
+            queue_root, "item:GATE-X", owner="s1", first_dead_at="x", now_ts=ts
+        )
+        assert bump(t0)["window_count"] == 1
+        assert bump(t0 + 86_400)["window_count"] == 2
+        e3 = bump(t0 + 86_400 * 2)
+        assert e3["window_count"] == 3 and e3["count"] == 3, "窗内三连即熔断线（阈值未动）"
+        e4 = bump(t0 + 86_400 * 11)  # 距上次 9 天 > 7 天窗 ⇒ 旧账清零
+        assert e4["window_count"] == 1, "超窗复发必须重新起算，否则散场根因永久熔断"
+        assert e4["count"] == 4, "终身累计面保留（审计不清零）"
+        assert e4["window_started_at"], "窗起点入册，衰减可复算"
+
+    def test_fuse_hot_reads_live_state_not_the_frozen_bag_flag(self, queue_root: Path) -> None:
+        self._prepare(queue_root)
+        t0 = time.time()
+        cq._bump_recurrence(queue_root, "item:GATE-Y", owner="s1", first_dead_at="x", now_ts=t0)
+        bag = {
+            "dead_signature": "item:GATE-Y",
+            "recurrence_fused": True,
+            "dead_at": datetime.fromtimestamp(t0, tz=timezone.utc).astimezone().isoformat(timespec="seconds"),
+        }
+        hot, probe = cq._recurrence_fuse_hot(queue_root, bag, now_ts=t0 + 3600)
+        assert hot is True and probe["source"] == "recurrence_state.last_dead_at"
+        cold, probe2 = cq._recurrence_fuse_hot(queue_root, bag, now_ts=t0 + 86_400 * 8)
+        assert cold is False and probe2["since_last_h"] > 24 * 7
+
+    def test_unreadable_time_base_stays_conservatively_hot(self, queue_root: Path) -> None:
+        self._prepare(queue_root)
+        hot, probe = cq._recurrence_fuse_hot(queue_root, {"dead_signature": "item:NOT-IN-STATE"}, now_ts=time.time())
+        assert hot is True, "判不了时刻＝保守当热（宁误挡一次，不放开盲重投）"
+        assert probe["source"] == "unreadable->conservative_hot"

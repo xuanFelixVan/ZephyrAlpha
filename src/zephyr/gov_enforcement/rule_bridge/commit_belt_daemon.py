@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GOV_GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.rule_bridge.commit_belt_daemon
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] scripts.governance.commit_queue_landing (bootstrap_drain_with_landing); zephyr.shared.infra.process_pool (is_pid_alive); zephyr.shared.io.audit_jsonl_writer (rotate_if_oversized——T14 堵点本五处裸 append 体积闸)
+# [DEPENDENCIES] scripts.governance.commit_queue_landing (bootstrap_drain_with_landing); scripts.commit_queue (make_dead_letter_content_gate——段二腿①复用在册内容级四态门，零新判据); zephyr.shared.infra.process_pool (is_pid_alive); zephyr.shared.io.audit_jsonl_writer (rotate_if_oversized——T14 堵点本五处裸 append 体积闸); zephyr.security.access_control.session_concurrency (SessionRegistry.list_active_readonly——段二腿②活死尺与工具守卫同源)
 # [CONSUMERS] CLI python -m zephyr.gov_enforcement.rule_bridge.commit_belt_daemon [--once|--status|stop]
 # [STARTUP] manual/daemon（watchdog 事件触发，无常驻轮询——M10 合规）
 # [MATURITY] production
-# [INVARIANTS] 提交传送带常驻消费端（Owner 2026-09-16 口述设计）：AI 会话快照入袋即返回继续施工，本守护 watchdog 事件驱动（pending/ 目录 file-created）自动自举排空——不占 AI 会话一秒等待；单例锁 .runtime/commit_queue/belt_daemon.lock（PID+TTL 600s+僵尸检测）；lease 被持=正常让位（自举失败不阻断，等下一事件）；pytest 内不 spawn 真守护（对标 write_audit_daemon 先例）；新死信自动登记堵点本 .runtime/audit/bottleneck_ledger.jsonl（专人专事协议：施工 AI 不修基建债，高模型维护班清账）；W5（st-regfix-laneB-20260922）：heartbeat 文件（队列根 belt_daemon.heartbeat，30s 心跳窗刷新=活性标记非业务轮询）+启动时离线缺口检查（>THD-ALERT-007 阈值→堵点本告警）+堵点本记账 API 三 kind（registry_drift/landing_staleness/phantom_staging，记账行不入积压计数）；st-k4-20260923：心跳线程化（独立线程 30s 续写，长 drain/池化单波不再心跳假死——夜班四轮实证定性）+排空经 bootstrap_drain_with_landing 自动获得 k=4 池化（thresholds commit_queue_landing_pool_workers，k=1 降级）
+# [INVARIANTS] 提交传送带常驻消费端（Owner 2026-09-16 口述设计）：AI 会话快照入袋即返回继续施工，本守护 watchdog 事件驱动（pending/ 目录 file-created）自动自举排空——不占 AI 会话一秒等待；单例锁 .runtime/commit_queue/belt_daemon.lock（PID+TTL 600s+僵尸检测）；lease 被持=正常让位（自举失败不阻断，等下一事件）；pytest 内不 spawn 真守护（对标 write_audit_daemon 先例）；新死信自动登记堵点本 .runtime/audit/bottleneck_ledger.jsonl（专人专事协议：施工 AI 不修基建债，高模型维护班清账）；W5（st-regfix-laneB-20260922）：heartbeat 文件（队列根 belt_daemon.heartbeat，30s 心跳窗刷新=活性标记非业务轮询）+启动时离线缺口检查（>THD-ALERT-007 阈值→堵点本告警）+堵点本记账 API 三 kind（registry_drift/landing_staleness/phantom_staging，记账行不入积压计数）；st-k4-20260923：心跳线程化（独立线程 30s 续写，长 drain/池化单波不再心跳假死——夜班四轮实证定性）+排空经 bootstrap_drain_with_landing 自动获得 k=4 池化（thresholds commit_queue_landing_pool_workers，k=1 降级）；段二常态化两腿（Owner 2026-10-13 追加令，落地方事件触发+900s 冷却，禁 cron/Timer）＝dead_triage_probe（对"当日新死且未判"袋逐封落内容级四态判定行进 .runtime/audit/dead_letter_triage_ledger.jsonl，复用在册 make_dead_letter_content_gate，**只判不删**——归档处置永不自动触发）＋phantom_staging_probe（主区 index 无主 staged 巡检：有主=活跃会话 held_files∨pending/processing 袋引用，活死尺与工具守卫同源 list_active_readonly；TierA=index≠HEAD∧工作区==HEAD⇒纯索引幽灵，先按 blob sha 存证 .runtime/quarantine/phantom_staging/<日>/ 再 `git restore --staged` 复位；TierB=工作区也≠HEAD 的歧义面一律只记不修；永不写工作区、永不带 --worktree、禁 checkout/plumbing；一键停腿=.runtime/registry_ledger/phantom_staging.disabled 只停"动手"支，判据零弱化；两腿全 fail-open 绝不阻断 drain 主循环）
 # [MODIFY-GUARD] 观察目录集=commit_queue 五状态目录 + 队列根（serializer.lease/belt_daemon.lock 事件，R4 租约释放唤醒 st-commitchain-20260922——etcd「过期删除=delete 事件」语义的单机等效实现）；drain 永远经 bootstrap_drain_with_landing（lease 单写者语义不变）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -80,6 +80,28 @@ _HEARTBEAT_FILE = "belt_daemon.heartbeat"
 # 快照陈旧告警线（landing_staleness）：pending 项龄超过即写堵点本记账行。
 # 值出处=施工令 W5③ 原文「快照 base 龄>30min 告警行」（经验拍定，同模块常量口径）。
 _STALE_BASE_S = 1800.0
+
+# ── 段二常态化两条腿（Owner 2026-10-13 死信放量班追加令；前任 99_delivery §四-4 交接）──
+# 腿①：当日四态分诊的自动触发腿——"当日分诊不隔夜"（根宪法 §2 第 6 条）此前只有人工 CLI，
+#       没有任何自动腿。事件驱动（落地方事件触发本探针，禁 cron/Timer/sleep-loop——§9.3 铁律），
+#       冷却只在"两次事件之间不重复建索引"，无事件零动作。
+#       判据复用在册 make_dead_letter_content_gate（零新判据、零新门）；**只判不删**：
+#       探针产出判定账（A/B/C/D 四态行），归档处置仍由正门/维护班决定——把"存疑回态④"
+#       自动变成"自动硬清"是本腿明令禁止的形态。
+_DEAD_TRIAGE_COOLDOWN_S = 900.0
+_DEAD_TRIAGE_LEDGER = Path(".runtime/audit/dead_letter_triage_ledger.jsonl")
+# 腿②：主区暂存区无主 staged 巡检器——根宪法 §9.4「巡检发现无主件按 HEAD 复位并留存证」的
+#       系统化落码（今晚双臂班实录"index 压着约百档旧快照"，各班会话只自清自家那份）。
+#       TierA=index≠HEAD 且 工作区==HEAD（纯索引幽灵，磁盘即真源，复位零内容损失）→ 存证后复位；
+#       TierB=index≠HEAD 且 工作区≠HEAD（可能是他班在途编辑）→ 只记不修（存疑不硬清）；
+#       只动 index（git restore --staged），永不写工作区；活死判定与执行工具守卫同源
+#       （SessionRegistry.list_active_readonly，在册"尺上的死不算死"教训）。
+_PHANTOM_STAGING_COOLDOWN_S = 900.0
+_PHANTOM_STAGING_BUDGET = 200
+_PHANTOM_STAGING_EVIDENCE = Path(".runtime/quarantine/phantom_staging")
+_probe_last: dict[str, float] = {}
+# 腿①的内容级索引缓存（dev 头寸变更即整体弃置重建；键=dev_sha，值=在册门闭包）
+_triage_state: dict = {}
 
 
 def _queue_root(project_root: Path) -> Path:
@@ -307,6 +329,252 @@ def record_phantom_staging(
             "detail": detail,
         }
     )
+
+
+def _cooldown_ok(key: str, span: float) -> bool:
+    """事件驱动探针的冷却闸：只有事件到来才评估，无事件零动作（非轮询、非 Timer）。"""
+    now = time.monotonic()
+    if now - _probe_last.get(key, 0.0) < span:
+        return False
+    _probe_last[key] = now
+    return True
+
+
+def _dev_head_sha(root: Path) -> str:
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+    try:
+        return (
+            run_subprocess_hidden(
+                ["git", "-C", str(root), "rev-parse", "dev"],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                check=False,
+            ).stdout.strip()
+            or ""
+        )
+    except Exception:  # noqa: BLE001 — 头寸读不到=本轮不重建索引，用旧索引继续判
+        return ""
+
+
+def dead_triage_probe(root: Path, *, now: str | None = None, force: bool = False) -> dict:
+    """段二腿①：给"当日新死且未判过"的死信逐封落一行内容级四态判定（只判不删）。
+
+    Returns 记账摘要 dict（scanned/triaged/skipped_cooldown/verdicts）。
+    fail-open：任何异常只记日志并返回已做部分，绝不阻断守护主循环。
+    """
+    from datetime import datetime as _dt  # noqa: PLC0415
+
+    summary = {"scanned": 0, "triaged": 0, "skipped_cooldown": False, "verdicts": {}}
+    try:
+        qroot = _queue_root(Path(root))
+        dead = qroot / "dead"
+        if not dead.is_dir():
+            return summary
+        if not force and not _cooldown_ok("dead_triage", _DEAD_TRIAGE_COOLDOWN_S):
+            summary["skipped_cooldown"] = True
+            return summary
+
+        day = (now or _dt.now().astimezone().isoformat(timespec="seconds"))[:10]
+        led = Path(root) / _DEAD_TRIAGE_LEDGER
+        judged: set[str] = set()
+        if led.exists():
+            for line in led.read_text(encoding="utf-8").splitlines():
+                try:
+                    j = json.loads(line)
+                except ValueError:
+                    continue
+                if str(j.get("triage_day")) == day:
+                    judged.add(str(j.get("qid")))
+
+        pending = [p for p in sorted(dead.glob("q-*.json")) if p.stem not in judged]
+        summary["scanned"] = len(pending)
+        if not pending:
+            return summary
+
+        dev_sha = _dev_head_sha(Path(root))
+        state = _triage_state
+        if state.get("dev_sha") != dev_sha or "gate" not in state:
+            from scripts.commit_queue import make_dead_letter_content_gate  # noqa: PLC0415
+
+            state.clear()
+            state.update(
+                {
+                    "dev_sha": dev_sha,
+                    "gate": make_dead_letter_content_gate(qroot, repo_root=Path(root)),
+                }
+            )
+        gate = state["gate"]
+
+        led.parent.mkdir(parents=True, exist_ok=True)
+        rows = []
+        for p in pending:
+            try:
+                item = json.loads(p.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            if not isinstance(item, dict):
+                continue
+            _allow = False
+            try:
+                _allow, ev = gate(item)
+            except Exception as exc:  # noqa: BLE001 — 单封判据故障=该行记 error，不影响其余
+                ev = {"verdict": "GATE_ERROR", "gate_error": f"{type(exc).__name__}: {str(exc)[:120]}"}
+            row = {
+                "kind": "dead_letter_triage",
+                "triage_day": day,
+                "qid": item.get("qid") or p.stem,
+                "session_id": item.get("session_id"),
+                "dead_at": item.get("dead_at"),
+                "allow_archive_by_gate": bool(_allow),
+                **ev,
+            }
+            rows.append(row)
+            summary["verdicts"][str(ev.get("verdict"))] = summary["verdicts"].get(str(ev.get("verdict")), 0) + 1
+        if rows:
+            with led.open("a", encoding="utf-8") as fh:
+                for row in rows:
+                    fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+            summary["triaged"] = len(rows)
+    except Exception:  # noqa: BLE001 — 探针绝不阻断 daemon 主循环
+        logger.warning("dead_triage_probe fail（下一事件重试）", exc_info=True)
+    return summary
+
+
+def phantom_staging_probe(root: Path, *, execute: bool = True, force: bool = False) -> dict:
+    """段二腿②：主区暂存区无主 staged 巡检——TierA 存证后按 HEAD 复位 index，TierB 只记不修。
+
+    谓词（全部机器判，禁肉眼）：
+      有主 = 活跃会话 held_files（list_active_readonly 同源尺）∨ pending/processing 袋引用该路径；
+      TierA = index blob ≠ HEAD blob 且 工作区字节 == HEAD blob（磁盘即真源⇒索引纯幽灵）；
+      TierB = index blob ≠ HEAD blob 且 工作区也 ≠ HEAD（歧义面，可能他班在途）＝保留并点名。
+    复位只用 `git restore --staged`（永不带 --worktree，禁 checkout/plumbing）；
+    复位前把 index 字节按 sha 存进 .runtime/quarantine/phantom_staging/<日>/ 留证。
+    """
+    from datetime import datetime as _dt  # noqa: PLC0415
+
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden as _hidden  # noqa: PLC0415
+
+    out = {"scanned": 0, "tier_a": 0, "tier_b": 0, "owned": 0, "reset": 0, "evidence_dir": ""}
+    try:
+        root = Path(root)
+        if not execute:
+            return out
+        # 一键停腿（不弱化判据，只停"动手"这一支）：留证与记账照跑，零 git 写。
+        if (root / ".runtime/registry_ledger/phantom_staging.disabled").exists():
+            out["disabled"] = True
+            return out
+        if not force and not _cooldown_ok("phantom_staging", _PHANTOM_STAGING_COOLDOWN_S):
+            return out
+
+        def _git(*a: str) -> str:
+            r = _hidden(
+                ["git", "-C", str(root), *a],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=60,
+                check=False,
+            )
+            return (r.stdout or "").strip()
+
+        staged = [p for p in _git("diff", "--cached", "--name-only").splitlines() if p]
+        out["scanned"] = len(staged)
+        if not staged:
+            return out
+
+        from zephyr.security.access_control.session_concurrency import SessionRegistry  # noqa: PLC0415
+
+        owned: set[str] = set()
+        try:
+            reg = SessionRegistry(str(root))
+            for s in reg.list_active_readonly():
+                owned.update(str(x).replace("\\", "/") for x in (s.held_files or []))
+        except Exception:  # noqa: BLE001 — 活性面读不到=全判有主（宁不动手）
+            owned.update(staged)
+        qroot = _queue_root(root)
+        for st in ("pending", "processing"):
+            d = qroot / st
+            if not d.is_dir():
+                continue
+            for f in d.glob("q-*.json"):
+                try:
+                    bag = json.loads(f.read_text(encoding="utf-8"))
+                except (OSError, ValueError):
+                    continue
+                owned.update(str(x.get("path") or "").replace("\\", "/") for x in (bag.get("files") or []))
+
+        day = _dt.now().astimezone().strftime("%Y%m%d")
+        ev_root = root / _PHANTOM_STAGING_EVIDENCE / day
+        targets: list[str] = []
+        tier_b_names: list[str] = []
+        for p in staged:
+            if p in owned:
+                out["owned"] += 1
+                continue
+            h = _git("rev-parse", f"HEAD:{p}")
+            i = _git("ls-files", "-s", "--", p).split()[1] if _git("ls-files", "-s", "--", p) else ""
+            w = _git("hash-object", "--", p) if (root / p).exists() else ""
+            if not i or i == h:
+                continue
+            if w and w == h:
+                out["tier_a"] += 1
+                if len(targets) < _PHANTOM_STAGING_BUDGET:
+                    ev_dir = ev_root / "blobs"
+                    ev_dir.mkdir(parents=True, exist_ok=True)
+                    try:
+                        blob = _hidden(
+                            ["git", "-C", str(root), "cat-file", "-p", i],
+                            capture_output=True,
+                            text=False,
+                            timeout=120,
+                            check=True,
+                        ).stdout
+                        (ev_dir / f"{i}.blob").write_bytes(blob)
+                        with (ev_root / "MANIFEST.jsonl").open("a", encoding="utf-8") as _mfh:
+                            _mfh.write(
+                                json.dumps(
+                                    {
+                                        "path": p,
+                                        "index_blob": i,
+                                        "head_blob": h,
+                                        "bytes": len(blob),
+                                        "action": "reset_index_to_head",
+                                        "evidence": f"blobs/{i}.blob",
+                                        "ts": _dt.now().astimezone().isoformat(timespec="seconds"),
+                                    },
+                                    ensure_ascii=False,
+                                )
+                                + "\n"
+                            )
+                        targets.append(p)
+                    except Exception:  # noqa: BLE001 — 存证失败=该路径不复位（fail-closed）
+                        out["tier_a"] -= 1
+                        logger.warning("phantom_staging 存证失败，跳过复位: %s", p, exc_info=True)
+            else:
+                out["tier_b"] += 1
+                tier_b_names.append(p)
+
+        if targets:
+            for chunk_start in range(0, len(targets), 40):
+                _git("restore", "--staged", "--", *targets[chunk_start : chunk_start + 40])
+            out["reset"] = len(targets)
+            out["evidence_dir"] = str(ev_root)
+        record_phantom_staging(
+            scanned=out["scanned"],
+            phantom=out["tier_a"],
+            session_id="belt_daemon:phantom_staging_probe",
+            detail=(
+                f"TierA 复位 index={out['reset']}（存证 {out['evidence_dir']}）"
+                f"｜TierB 歧义只记不修={out['tier_b']}"
+                f"｜有主跳过={out['owned']}｜TierB 点名={tier_b_names[:12]}"
+            ),
+        )
+    except Exception:  # noqa: BLE001 — 探针绝不阻断 daemon 主循环
+        logger.warning("phantom_staging_probe fail（下一事件重试）", exc_info=True)
+    return out
 
 
 def _touch_heartbeat(qroot: Path) -> None:
@@ -927,6 +1195,7 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
     _check_daemon_offline_gap(qroot)  # W5：启动即查离线缺口（上次心跳年龄，观测复活）
     _touch_heartbeat(qroot)  # W5：上线即打首个心跳
     _projection_drift_probe(root)  # W-M1：投影漂移兜底探针（未武装零动作）
+    dead_triage_probe(root)  # 段二腿①：启动即把当日未判死信补判（事件驱动的另一入口）
     stale_alerted: set[str] = set()
     _scan_stale_pending(root, stale_alerted)  # W5：启动即扫存量陈旧快照
     # 心跳线程化（st-k4-20260923）：独立线程 30s 续写，长 drain（池化单波更长）
@@ -980,6 +1249,8 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
                 _check_ledger_backlog()
                 _touch_heartbeat(qroot)  # W5：事件处理完即续心跳
                 _projection_drift_probe(root)  # W-M1：投影漂移兜底探针（事件驱动+冷却）
+                dead_triage_probe(root)  # 段二腿①：当日四态分诊自动触发（只判不删，冷却 900s）
+                phantom_staging_probe(root)  # 段二腿②：主区暂存区无主 staged 巡检（TierA 复位+存证）
                 _scan_stale_pending(root, stale_alerted)
                 events += 1
                 # 裁定#281①：drain 已返回=lease 已释放=安全点；纪元变更即原地 re-exec

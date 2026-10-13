@@ -207,3 +207,74 @@ def test_archive_detached_lane(tmp_repo):
     assert rc == 0, "detached 车道归档应成功"
     assert name not in _git(repo, "worktree", "list").stdout
     assert not wt.exists()
+
+
+# 收班即清（Owner 2026-10-13 派工令 v2 段二第三条）：会话壳 .runtime/sessions/<sid>
+# 随归档一起拆，不留给下一班。实测分母（主区当日）：497 壳＝108 空＋382 只剩心跳/pid
+# 机制件＋7 有实质面——前三类可拆，最后一类必须保留并点名（在册红线：被清除面≠净收官）。
+# ---------------------------------------------------------------------------
+
+
+def _shell(repo: Path, sid: str, *rel_files: str) -> Path:
+    d = repo / ".runtime" / "sessions" / sid
+    d.mkdir(parents=True, exist_ok=True)
+    for name in rel_files:
+        (d / name).write_text("x\n", encoding="utf-8")
+    return d
+
+
+def test_prune_shell_empty_removed(tmp_repo):
+    mod, repo = tmp_repo
+    d = _shell(repo, "st-empty-shell")
+    assert mod._prune_session_shell(repo, "st-empty-shell") is True
+    assert not d.exists(), "空壳必须随收班拆掉"
+
+
+def test_prune_shell_only_mechanical_files_removed(tmp_repo):
+    """只剩心跳/PID（机制件）＝拆。这两件本就是本会话自己的活性 plumbing，注销后即无读者。"""
+    mod, repo = tmp_repo
+    d = _shell(repo, "st-hb-shell", "heartbeat.jsonl", "heartbeat_daemon.pid")
+    assert mod._prune_session_shell(repo, "st-hb-shell") is True
+    assert not d.exists()
+
+
+def test_prune_shell_keeps_substantive_face(tmp_repo):
+    """有实质面（staging 成果/keepalive 审计）＝保留不删，且一个字节都不许动。"""
+    mod, repo = tmp_repo
+    d = _shell(repo, "st-real-shell", "heartbeat.jsonl")
+    (d / "staging").mkdir()
+    (d / "staging" / "deliverable.md").write_text("成果未 promote\n", encoding="utf-8")
+    assert mod._prune_session_shell(repo, "st-real-shell") is False
+    assert d.exists() and (d / "staging" / "deliverable.md").exists(), "实质面被误删＝把第六态藏起来"
+    assert (d / "heartbeat.jsonl").exists(), "保留态不得顺手删机制件（要么整壳走要么整壳留）"
+
+
+def test_prune_shell_refuses_traversal_and_foreign_paths(tmp_repo):
+    """谓词①②：sid 带分隔符/越出 sessions 层＝一律拒绝，且不得碰别的目录。"""
+    mod, repo = tmp_repo
+    victim = _shell(repo, "st-victim", "heartbeat.jsonl")
+    assert mod._prune_session_shell(repo, "../st-victim") is False
+    assert mod._prune_session_shell(repo, "a/b") is False
+    assert mod._prune_session_shell(repo, "") is False
+    assert victim.exists(), "拒绝对外越界时不得伤到在册壳"
+    nested = repo / ".runtime" / "sessions" / "st-outer" / "st-inner"
+    nested.mkdir(parents=True, exist_ok=True)
+    (nested / "heartbeat.jsonl").write_text("x\n", encoding="utf-8")
+    assert mod._prune_session_shell(repo, "st-outer/st-inner") is False
+    assert nested.exists()
+
+
+def test_prune_shell_missing_is_noop(tmp_repo):
+    mod, repo = tmp_repo
+    assert mod._prune_session_shell(repo, "st-never-existed") is False
+
+
+def test_archive_execute_prunes_session_shell(tmp_repo):
+    """端到端：归档通道跑完，会话壳（纯机制件）不该继续留在盘上。"""
+    mod, repo = tmp_repo
+    sid = "st-e2e-shell"
+    _make_lane(repo, sid)
+    d = _shell(repo, sid, "heartbeat.jsonl")
+    rc = mod.cmd_archive(_ns(mod, [sid], execute=True))
+    assert rc == 0
+    assert not d.exists(), "archive 之后壳仍在＝收班留给下一班（本次立法要堵的口）"

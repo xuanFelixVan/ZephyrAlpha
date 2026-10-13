@@ -37,6 +37,20 @@ algo_flow: |
     #   desc: prev None=启动种子不动作；lease 被持等下一安全点；ZEPHYR_BELT_DAEMON_NO_REEXEC=1 运维停用；pytest 上界模式关闭。
     #   inputs: 三子树纪元 lease 活体态
     #   outputs: execv 进程映像替换
+    # - id: A4
+    #   name_zh: ④ 当日四态分诊自动触发腿
+    #   name_en: dead_triage_probe
+    #   intro: 落地方事件后对"当日新死且未判"袋逐封复用在册 make_dead_letter_content_gate 落判定行进 dead_letter_triage_ledger.jsonl。
+    #   desc: 只判不删（归档处置永不自动触发＝存疑回态④不被自动化取代）；900s 冷却只在事件之间防重复建索引，无事件零动作（禁 cron/Timer）；dev 头寸变更即弃旧索引重建；单袋判据异常写 GATE_ERROR 行不上抛。
+    #   inputs: dead/ 目录 dev 对象面索引 triage_ledger 当日已判集
+    #   outputs: 四态判定账 jsonl
+    # - id: A5
+    #   name_zh: ⑤ 主区暂存区无主 staged 巡检腿
+    #   name_en: phantom_staging_probe
+    #   intro: 三态谓词（有主/TierA 纯索引幽灵/TierB 歧义面）机器判，TierA 先按 blob sha 存证再 git restore --staged 复位 index。
+    #   desc: 活死尺与工具守卫同源 list_active_readonly；有主=活跃会话 held_files ∨ pending/processing 袋引用；TierB 一律只记不修；永不写工作区、永不带 --worktree、禁 checkout 与 plumbing；存证写不进即不复位（fail-closed）；停腿=.runtime/registry_ledger/phantom_staging.disabled 只停动笔支；每轮预算 200 路径。
+    #   inputs: git index HEAD 工作区字节 claim 在途袋清单
+    #   outputs: phantom_staging 堵点本行 存证 MANIFEST 复位后 index
     # 层: 输出
     # - id: O1
     #   name: 排空与自检产物
@@ -46,6 +60,8 @@ algo_flow: |
     # I1 --> A1
     # I2 --> A1
     # A1 --> A2
-    # A2 --> A3
+    # A2 --> A4
+    # A4 --> A5
+    # A5 --> A3
     # A3 --> O1
     # [/ALGO_FLOW]
