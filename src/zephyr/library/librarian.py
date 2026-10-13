@@ -24,8 +24,11 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Sequence
 from typing import Any, Protocol
+
+logger = logging.getLogger(__name__)
 
 
 class PgCursor(Protocol):
@@ -91,7 +94,9 @@ from zephyr.library.ledger_schema import (
     _SQL_LOOKUP_FILTER_TAG,
     _SQL_LOOKUP_TAIL,
     _SQL_MARK_DECEASED,
+    _SQL_TRANSLATION_PROSE,
     _SQL_UPSERT_ASSET,
+    TRANSLATION_REGISTRY_ID,
     validate_action,
 )
 
@@ -200,6 +205,21 @@ class Librarian:
         self._conn.commit()
         return event_id
 
+    def _prose_title_map(self) -> dict[str, str]:
+        """翻译册 PG 账本 → {module_path: name_zh}（散文轴供数，裁定③④ join）。
+
+        fail-soft 但**必记日志**（GATE-SILENT-DEGRADATION：降级路径不得伪装成正常）——
+        账本不可达时本次入账退回采集器自带 title（文件名），借阅面就仍是"散文查不到"
+        的旧形态，故必须留警告行让降级可见。
+        """
+        try:
+            with self._conn.cursor() as cur:
+                cur.execute(_SQL_TRANSLATION_PROSE, (TRANSLATION_REGISTRY_ID,))
+                return {str(path): str(name_zh) for path, name_zh in cur.fetchall() if path and name_zh}
+        except Exception as exc:  # noqa: BLE001 — 供数轴缺失不得阻断全量入账
+            logger.warning("librarian: 散文轴供数不可达（本次入账沿用采集器 title）: %s: %s", type(exc).__name__, exc)
+            return {}
+
     def register_batch(self, assets: list[dict[str, Any]], actor: str) -> int:
         """批量登记（采集器全量入账专用：单事务，避免逐条 commit 风暴）。
 
@@ -210,6 +230,7 @@ class Librarian:
         Returns:
             实际登记条数。
         """
+        prose = self._prose_title_map()  # 散文轴（一次装载，禁止逐行查库）
         count = 0
         with self._conn.cursor() as cur:
             for asset in assets:
@@ -232,7 +253,9 @@ class Librarian:
                         None,
                         asset.get("owner_domain"),
                         "long",
-                        asset.get("title"),
+                        # 散文轴优先（join 翻译册，借阅谓词含 title ILIKE）；无在册中文名
+                        # 时沿用采集器自带的文件名 title，语义零强加。
+                        prose.get(str(asset.get("home") or "")) or asset.get("title"),
                         asset.get("one_liner"),
                         asset.get("potential_consumers"),
                         asset.get("ai_contract"),

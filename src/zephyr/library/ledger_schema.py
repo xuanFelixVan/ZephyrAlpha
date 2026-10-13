@@ -141,6 +141,22 @@ ON CONFLICT (asset_id) DO UPDATE SET
   tags = EXCLUDED.tags
 """
 
+# 散文轴供数（统筹裁定③④ join，st-libstale-20261013）：翻译册 PG 账本（真源=
+# REG-MODULE-TRANSLATION-001）的 module_path→name_zh 投影。病根实测=lib_assets.title
+# 至今只装文件名 basename，而借阅谓词是三列 `asset_id/home/title ILIKE`
+# （_SQL_LOOKUP 与 ledger_cache._NEEDLE_COLUMNS 同轴）⇒ 8,889 条在册中文标题结构性
+# 不可查（抽 5 条 name_zh 总口 4 条 0 命中；token 形态查询 5/5 命中，散文 7/7 全空）。
+# 可 join 面积实测：module 4,004＋file 3,994＋doc 88＋registry 4=8,190 行 active 资产。
+# 键=home ↔ payload->>'module_path'（两侧同为仓内路径形态，实测样例含 config/*.yaml）。
+TRANSLATION_REGISTRY_ID: Final[str] = "REG-MODULE-TRANSLATION-001"
+_SQL_TRANSLATION_PROSE = """
+SELECT payload->>'module_path', payload->>'name_zh'
+FROM registry_ledger.registry_entry
+WHERE registry_id = %s AND status = 'active'
+  AND coalesce(nullif(payload->>'module_path', ''), '') <> ''
+  AND coalesce(nullif(payload->>'name_zh', ''), '') <> ''
+"""
+
 # 供数反查轴守卫计数（总筹裁-07）：非空 potential_consumers 行数，全量入账前后快照对比
 _SQL_COUNT_NONEMPTY_CONSUMERS = """
 SELECT count(*) FROM lib_assets WHERE cardinality(potential_consumers) > 0
