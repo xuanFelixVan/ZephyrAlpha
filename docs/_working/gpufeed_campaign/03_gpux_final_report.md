@@ -565,6 +565,17 @@ Owner 2026-10-11"刀口改裁"令在**会话层**批准 B1→B2 改刀口、并�
 
 ### 十一·C 1e-8 档 11 格逐表（§二·补 第 5 条七元组口径；差异天数分母=970 交易日）
 
+
+> **口径标注（统筹裁定 2026-10-13 四裁第②条；标注落位在此，表身 11/10/9 三个数一字未改）**
+> 本节三档越线数 11／10／9 **原样留档**，不重判、不删表、不改任何线值；
+> 但按四裁第①条新立的底尺读法，其中**一部分越线格是"末位差 × 离散触发放大"的读数**，
+> 不是设备实现的稳态属性——复算入口＝本班 §十三·检·D（四进程矩阵：三面 manifest 字节全同、
+> 第四面单独偏 0.329）与 §十三·检·F（全格集一臂一进程：35/1,049 有差而**三档越线 0/0/0**、
+> max_abs 4.163e-16、且 35 格全落 `C_sizing=signal_strength` 一族）。
+> ⇒ 双禁：①禁把本节数当"设备侧固有代价"继续外推（例如再据它算"设备净增几格"）；
+> ②也禁为让这些数变绿而**动卡或改线**（§二·丙 明文禁例，本标注不构成任何豁免）。
+> 引用本节时须同带这条标注——单引数字即视为口径不完整。
+
 | cell | 相对差max | 绝对差max | 差异天数 | 首日 | A1×A2 | top_n | trig | universe | manifest 五项非零项 |
 |---|---|---|---|---|---|---|---|---|---|
 | 7cf9c699134e | 1.940e+00 | 1.378e-03 | 726 | 22 | rank×equal | top20 | periodic | zz500 | sharpe +0.004／ann +0.0008 |
@@ -1340,3 +1351,673 @@ max_abs 1.7–1.9e-16、三档越线 0——这与 §十一·B 的 CPU 面 `p₀
 - **尺与配方**留 `.runtime/tmp/st-gpux4-20261013/`（24h TTL 暂存面）；长命真源是本节表格＋§十四·F／晨间包 §五的复算命令。
   跑批产物在车道 `data/strategy_intake/grid_20261013-*`（未跟踪、未 ignore、单目录 ~0.4MB，禁 commit）。
 
+### 十三·检 检验道案卷＝"跨格复用的批级状态"定名＋本案卷两处勘误（本班 st-gpuux3v-20261013，承统筹第④裁；2026-10-13 03:1x–0X:XX `date` 实测入册）
+
+**大白话三句**：①显卡上有一份"公共临时货架"，取件凭证只写了"架子编号"没写"里面装什么"——
+架子拆了又搭、编号会被下一批货复用，于是 A 题去取数可能取回 B 题的数。这个毛病本班证实了，还当场抓到一次。
+②但上一班判红的那道题**不是**这个毛病造成的：本班把"公共货架"整个撤掉（每格现造现拿），
+那 11 道末位有差的题**一道没变**——说明末位差的源头比这份货架更早一步（在数据还没进这份缓存之前）。
+③末位差本身极小（小数点第 16 位），可它撞上"差一点就要重新调仓"的那种题，
+会被放大成完全不同的换手和净值（上一班量到的 0.329 就是这一种放大，不是把题算错了）。
+⇒ 要修的是**两件事、分开记账**：把货架凭证修好（防"取回别人的数"，§十三·检·H）；
+另外单独查"为什么换个进程末位就变"（本班未查完，配方交下一棒，§十三·检·I⑤）。
+开关本身（驻留）两头都不沾。
+
+**一句话结论（三句，逐句都有机读面支撑；本班把"缺陷确证"与"归因否证"分开写）**：
+
+1. **缺陷确证＝定名到位**：候选"跨格复用的批级状态"确实存在，指
+   `scripts/backtest/factory_grid_executor.py` 的批级设备面板缓存 `_DEV_PANEL_CACHE`——
+   九站点键均含 `id(宿主对象)` 而**命中面零内容校验**；单元针确定性证伪"命中即安全"
+   （同键不同内容⇒吃旧值），真实批次里本班抓到 **1 条现行串味**（`w` 站、`ic_ir` 族，§十三·检·E）。
+   其中 `("w", id(w), a2, len(names))`（dev 面 1155 行）结构必撞：宿主＝每次前缀调用新建的瞬态帧，
+   键内不含窗/列标签/形状任何内容位，而同（宇宙,A2）键位覆盖 4–6 个 A1 前缀（可达面）；
+   实测命中率稀疏（每臂 64 次求值 1 次命中）但**命中即错（1/1）**。
+2. **归因否证＝这一条不在册判据的因果链上**：施工道 §十三·补·补 记的 12/400 与 max_abs=3.291e-01，
+   在本班四进程矩阵里**跟着进程走、不跟着 `resident` 走**（§十三·检·D），
+   且本班**把跨格复用整个关掉**（fresh 面）后，那 11 格 ULP 底**一字不动**
+   （10 臂 45 对全表：每对都 389/400 逐位等、差集**同一批 11 格**、max_abs 上界 1.94e-16、三档越线合计 0）
+   ⇒ 所以这份批级缓存**既不是驻留那一审判红的原因，也不是本班量到的 ULP 底的原因**。
+3. **那 11 格 ULP 底另有所源（本班未定名，交下一棒）**：它对"驻留开/关、复用开/关、内容校验开/关、
+   同配置换进程"四个变量**全部不变**⇒ 种子在比 `_DEV_PANEL_CACHE` 更上游的**进程级列序/帧布局**面
+   （在册跨进程实测面＝**CPU 侧**：03 件 §十一·F 第 642／645 行 E0@02:16 ↔ F0@02:33 进程 120/120 逐位等，
+   甚至跨 n 不敏感；**eval gpu × engine gpu 认证面的跨进程同配置复现性在册无记录**，本班首量
+   ⇒ 结论＝**GPU 认证面有 11/400 格跨进程换末位**）；
+   而施工道那 **1 格 0.329** ＝这批末位差里的临界格被 `drift_band` 离散触发放大
+   （该格 `avg_turnover` 0.3941↔0.0485、而 `net_days`/`backend`/`degraded_dimensions` 三项同值；
+   放大族在册已证＝§十一·B/D 的"9 格 >1e-4、9 格 drift_band"同型）。
+⇒ **驻留开关不是病灶**（②），但**也不得**由本班结果读成"驻留已证等价可以摘闸"——
+闸仍关、`_RESIDENCY_ENABLE_FOR_TEST` 缺省 False 一字未动（§十三·检·I③）。
+⇒ 缺陷（第 1 句）与末位种子（第 3 句）是**两件事，禁并账**：修法见 §十三·检·H，
+   末位种子的下一步探针配方见 §十三·检·I⑤。
+
+#### 十三·检·A 归属锚（本班验的是哪一份字节）
+
+| 件 | dev blob sha（`git rev-parse dev:`） | 本班车道 sha | 关系 |
+|---|---|---|---|
+| `scripts/backtest/factory_grid_executor.py` | `390b5f42a5416fd6…` | 建道时逐字节同值（开工实测） | 本班在其上加**只读诊断补丁**，补丁版有两档（**口径注明**：git blob sha ≠ 文件字节 sha256，两者禁互引）：v1＝blob `67062f38f23f13b2`（03:3x–03:57:40，指纹含 NaN 假阳）、v2＝blob `9273e0a684695c6ad393…`／字节 sha256 前 12 `e1fd590cac5c`（修后） |
+| `src/zephyr/backtest/gpu_core.py` | `838fe1ea6692ade6…` | 同值，**未改** | 驻留出口与载体面照旧 |
+| `scripts/backtest/translated/_c4_engine.py` | `3c2a66262dfd4f51…` | 同值，**未改** | `_dev_resident` 面照旧 |
+
+- 诊断补丁的量＝`git diff --numstat dev -- scripts/backtest/factory_grid_executor.py` = **+171/−14**（04:2x 复测值，含 03:57:40 那次指纹修复），全部落在 `_DEV_PANEL_CACHE` 的读取裁决口与两处派生字段的分支上；**缺省 `_V3_PANEL_MODE="stock"` 分支＝dev 面原代码逐字保留**
+  （n=24 校准针实测 `v3_stats={}`／`v3_events=0`，即 stock 面探针零介入）。
+- 探针版本锚的**留痕边界（诚实条）**：`probe_fge_sha12` 字段自 04:0x 起才写进臂产物，故 `on_verify`／`off_verify`／`on_stock_b`／`off_stock_b` 四臂有 v2 锚（`e1fd590cac5c`），而 `on_stock`／`off_stock`／`on_fresh`／`off_fresh`／`on_digest`／`off_digest` 六臂**无该字段**，只能按 `arms_400.log` 的发车时刻（03:39–03:57）对读 v1 窗口——本节凡引用这六臂的 `v3_stats` 处已标探针版本。
+- 收件台纪律承前任：施工/检验一律在**自己车道**跑批，产物落自己车道 `data/strategy_intake/`，
+  绝不写他车道；`PYTHONPATH` 用 Windows 形式三段（`D:/…/src;D:/…/scripts/backtest;…/translated`），
+  三断言齐（`gpu_core.__file__`∈车道、`fge.__file__`∈车道、`hasattr(gc,'DevicePanel')`）。
+
+#### 十三·检·B 单元级红绿证（不依赖批次时序，据=`v3_unit_proof.json`）
+
+同一个键、两次调用、`build()` 每次产**不同内容**——这四行是本战役今晚最便宜的一条硬证据：
+
+| 模式 | 命中是否返回同一设备对象 | 第二次调用得到的内容 | 判读 |
+|---|---|---|---|
+| stock（＝今日面） | **是** | **旧内容**（新内容匹配=False） | 红：命中不校验内容，同键即吃旧值 |
+| fresh（禁跨格复用） | 否 | 新内容 | 绿 |
+| digest（内容指纹校验） | 否 | 新内容＋记 1 条 DIRTY 事件 | 绿＝修法可用 |
+| verify（照旧出数＋显形） | 是 | 旧内容＋记 1 条 DIRTY 事件 | 探测器在岗 |
+
+- 键的身份分量足不足：同形状 `(970×3)` 瞬态 DataFrame 造 40 次、每次用完即 `del` ⇒
+  **40 次只出现 1 个 `id()`**（`id_reuse.max_reuse=40`，distinct_ids=1）。
+  `_ic_weight_frame` 产出的 `w` 正是这个寿命形态（函数内局部件，返回即失引用）。
+- 正对照（尺有牙）：`verdict.teeth = stock_dirty ∧ digest_clean = True`；
+  同件内 `DevicePanel` 命中 9 处证明 grep 尺本身不瞎（0 命中不等于不存在）。
+
+#### 十三·检·C 站点清单（九个 `id()` 键站点，宿主寿命决定危险性）
+
+行号＝`git show dev:scripts/backtest/factory_grid_executor.py` 面计数。
+
+| kind | dev 行 | 宿主对象 | 宿主寿命 | 键内内容位 | 危险度 |
+|---|---|---|---|---|---|
+| `logmv` | 1044 | `mkt_cap_w` | 批级一次建（2435） | 列数＋首末列＋行数 | 低 |
+| `fwdrank` | 1055（键构造行；1056 是 `.get(key)` 行） | `closes` | 批级一次建（2387） | 列数＋首末列 | 低 |
+| `logmvdm` | 1072（键构造行；1073 是 `.get(key)` 行） | `mkt_cap_w` | 批级 | 全市场列数＋行数＋列数＋首末列（**不含 industry_map**） | 中 |
+| `f` | 1136 | `factors[n]` | 按宇宙缓存（2537） | 因子名＋列数＋首末列＋行数 | 低 |
+| **`w`** | **1155** | **`_ic_weight_frame` 每前缀新建** | **瞬态** | **仅 a2＋因子个数，无窗无列** | **高＝结构必撞** |
+| `vol` | 1213 | `vol20` | 批级一次建（2425） | 列数＋首末列 | 低 |
+| `mvw` | 1217 | `mkt_cap_w` | 批级 | 列数＋首末列 | 低 |
+| `r60m` | 1222 | `rets60_mean` | 批级一次建（2437） | 列数＋首末列 | 低 |
+| `r60v` | 1227 | `rets60_var` | 批级一次建（2438） | 列数＋首末列 | 低 |
+
+⇒ 只有 `w` 的宿主寿命与键内容位**同时**失守；其余站点靠"批级长寿命＋形状/列标签位"事实上挡住了 id 复用，
+但**一律没有内容校验**（B 节证的是站点共性），所以"低危险"是概率判断不是保证——
+`_DEV_PANEL_CACHE` 的 cap=12 整清与逐出时序本身也是批级状态的一部分（在册已报的三套缓存交互项）。
+
+键位覆盖面不是推演，n=400 面按 `manifest.csv` 的 `values_json` 复算：可移植 IC 族
+（`ic_ir`／`ic_mean`／`halflife20`／`halflife60`；`lasso`／`pc1` 在 `_prefix_eval_gpu` 首行判不可移植即返回 None，不进本站）
+里，同一个 `(G_universe, A2)` **键位**下的不同 A1 前缀数＝4–6 个
+（hs300/ic_ir=6、zz500/ic_ir=6、all_a_ex_st/ic_ir=5、zz500/halflife60=6、all_a_ex_st/ic_mean=6…），
+同宇宙内因子数同为 `len(names)=3` ⇒ 这 4–6 个前缀**落在同一把键的可达范围内**。
+
+**但"可达"不等于"必撞"，本班把这两句分开写**：十臂实测 `w` 站点每臂求值 64 次＝
+`put 63／DIRTY_HIT 1`（digest 臂）、`put 64／命中 0`（verify 臂）、`fresh_rebuild 64`（fresh 臂）
+⇒ 未命中占绝对多数，原因是 `cap=12` 整清往往先把它逐出；
+**可一旦命中就是错的（1/1）**——因为键的身份分量在瞬态宿主上没有意义（B 节 40/40 同址实测）。
+所以定它＝"稀疏彩票型缺陷"，不定它＝"常态污染源"（后者正是本班十臂全表测不到的东西）。
+
+#### 十三·检·D 四进程对拍矩阵＝本案卷的定名证据（据=`v3_xproc.json`，全部 n=400／seed=20261010／同窗／同分层，只读存证面）
+
+四个 run 目录先 `cp -n` 进 `.runtime/tmp/st-gpuux3v-20261013/evidence/`（施工车道在清理窗内，原始面不保证长存；
+net_returns.parquet sha256 前 12：they_off `f072c9c321a5`／they_on `84235aec2e37`／
+mine_on `eebfbb60ea7f`／mine_off `819d2d3e8937`），再两两对拍（15 尺全在下表 6 尺，其余为同配置重复）：
+
+| 配对 | 对象 | 逐位等 | 三档越线 | max_abs |
+|---|---|---|---|---|
+| they_off↔they_on | 施工道在册那一对（驻留关↔开） | 388/400 | 1/1/1 | **3.291e-01** |
+| **they_off↔mine_off** | **同配置（都驻留关）跨进程跨车道** | 388/400 | 1/1/1 | **3.291e-01** |
+| they_off↔mine_on | 交叉 | 388/400 | 1/1/1 | **3.291e-01** |
+| they_on↔mine_off | 交叉 | 389/400 | 0/0/0 | 1.110e-16 |
+| they_on↔mine_on | 同配置（都驻留开）跨进程跨车道 | 389/400 | 0/0/0 | 8.327e-17 |
+| mine_off↔mine_on | 本班那一对（驻留关↔开） | 389/400 | 0/0/0 | 1.110e-16 |
+
+**读法（这一列顺序就是结论）**：那 0.329 跟着 **`they_off` 这一个进程**走，不跟着 `resident` 走——
+`they_off` 与**其它三面任意一面**都比出同一批 12 格（三对差集**逐格相等**），
+而 `they_on`／`mine_off`／`mine_on` 三面互比只剩 11 格 ULP 级（本班全表逐格区间 1.388e-17～1.943e-16）。
+把 12 格按幅度分层：**11 格是 ULP**（＝GPU 臂自噪底量级，在册同进程底 5.551e-17／2.776e-17），
+**只有 1 格是实质差**：`4ddfbf3e43ca`，max_abs=3.2907e-01，
+维面＝`G=all_a_ex_st, A1=rank, A2=ic_ir, B=top50, C=kelly_050, D2=drift_band`。
+⇒ 在册"12/400 有差、max_abs=3.291e-01"这句**本班用自己的尺复算为真**（数值一字不差），
+但它的**归因**不是驻留：同一份字节、同一 seed，驻留开的那一面和三面里的另外两面都在 ULP 带内。
+
+本班十臂四十五对全表（`v3_compare_on_stock_…_off_stock_b.json`；
+`stock/fresh/digest/verify × 驻留关/开` ＋ **同配置换进程重复臂** `on_stock_b`／`off_stock_b`，n=400）
+给出一条更硬的话：**45 对全部＝389/400 逐位等、差集是同一批 11 格、`max_abs` 上界 1.943e-16、三档越线合计 0**。
+逐对分母（§二·戊 纪律 1 要求带机读分母原值）：每对 `bands.n=400`、`bitwise_equal_cols=389`、
+`counts={1e-8:0, 1e-6:0, 1e-4:0}`；十臂 `eval_gpu.cell_gpu=365`／`prefix_gpu=97`／`prefix_cpu_kept=35` 同值。
+
+⇒ 这把"跨格复用的批级状态"从 **cause 的位置上拿掉了**：`fresh` 面把九站点的跨格复用**全部关掉**
+（每格现造现传），那 11 格末位差**一道没少**；"同配置换进程"两对也是同一批 11 格。
+⇒ 同一条证据又说：**本班量到的 ULP 底是进程级的、对本班四个开关全不变**，
+种子在比 `_DEV_PANEL_CACHE` 更上游的面上（本班未定名，下一步配方见 §十三·检·I⑤）；
+而 §十三·检·E 那条串味是**另一条独立缺陷**（幅度可任意、发生率稀疏：十臂里现场抓到 1 条）。
+⇒ 因此**在册那次 FAIL 的两个候选（驻留／跨格缓存）本班都没能立住**；
+但"驻留未证等价"这句的**事实面**（当时确有 12/400 与 0.329，本班复算为真）与
+"缓存可串味"这句的**事实面**各自留着——两句各归各账，见 §十三·检·I③。
+
+#### 十三·检·E 串味现行犯（digest 面当场抓到，据=`v3_events_on_digest.json`）
+
+本班 `on_digest` 臂（n=400，驻留开，命中须内容指纹相符）抓到 **1 条真实串味**：
+
+```
+kind=w  key=['w', 2471056299872, 'ic_ir', 3]
+tag  = all_a_ex_st / size_neutral / ic_ir / top30 / biweekly / periodic / cap10 / lambda_0
+fp_cached = (970×3, 2910, NaN 数 0, 一阶和 970.0,  二阶和 830.103…, 首 0.3333, 末 0.06143)
+fp_now    = (970×3, 2910, NaN 数 0, 一阶和 970.0,  二阶和 951.252…, 首 0.3333, 末 0.0)
+```
+
+同一把键下两次内容**确实不同**（二阶和与末列都变了）。
+**同一条串味在另一臂 `off_digest`（驻留关）里也被抓到**——`id` 不同（`1558701545792`）
+而 `fp_cached`／`fp_now` 两个数值**逐字相同**（830.1033442816142 → 951.2520497727016），
+即"同一对权重板在两种驻留态各自发生了一次同样的串味"＝可复现旁证，不是单次抖动。
+而键里三个分量（`"w"`／`id`／`a2`／`len(names)`）
+一个都没变——这正是 §十三·检·B 单元针（40 次新建同形状瞬态帧只得 1 个 `id()`）在真实批次里的现行形态。
+它属 `ic_ir` 族、`all_a_ex_st` 宇宙，与 D 节那 1 格实质差同族同宇宙（`A2=ic_ir` 是硬交集）——
+**但本班不据此写因果**：D 节十臂全表已示"关掉全部跨格复用，11 格末位差一道没少"，
+故这一条串味的**数值后果**在本班十臂里一次都没出现（`on_stock↔on_digest`＝ULP 同底）。
+定它"缺陷确证、后果未观测到"，不升格成"那 0.329 的因"。
+
+⚠ 同件另有 **515 条假告警，是本班的尺自己造的**（自犯条见 §十三·检·J）：
+指纹里留了 `float('nan')`，而 `nan != nan` ⇒ 凡首/末元素为 NaN 的站点（`vol` 165／`r60v` 174／`r60m` 172／
+`f` 3／`fwdrank` 1）都被判成"内容变了"。已改（`_v3_fp` 把 NaN 折成哨兵值 `"NaN"`），
+改后相位二（n=1,049 全格集）的 digest 面事件数才是可引用数；本节只引用**不受该假阳影响**的 `w` 一条
+（它的差异落在二阶和与末列两个非 NaN 分量上）。
+
+#### 十三·检·E2 替代解释逐条处置（排除／不解释／并列首选，每条都给实测；据=`evidence/*/summary.json` 与 `manifest.csv` 对读）
+
+本班结论要成立，必须先排掉"两次跑根本不是在比同一件事"。七条候选逐一给处置（排除／不解释／改判首选）：
+
+| # | 替代解释 | 排除凭据（实测） |
+|---|---|---|
+| ① | 考窗内数据变了（夜里有导入） | 同配置两跑（他们 OFF↔本班 OFF）**388/400 格逐位等**、非零元素只集中在 12 格、其中 11 格 ULP 级。数据面若有任何移动，不可能只有 1 格变 |
+| ② | 配方/网格配置不同车道不同 | 两件 schema 文件 sha256 同值＝`b5faa1299cddf3d3`（两车道各自路径下字节全等），`summary.schema.schema_sha256` 自证一致；`freeze_dims` 同为 null |
+| ③ | 某一臂因资源压力降级走了另一实现面 | `eval_gpu` 全 18 个计数键逐项相等（`cell_gpu` 365=365、`prefix_gpu` 97=97、`prefix_cpu_kept` 35=35、`cell_host_continue` 306=306），且 `vram_refused`／`vram_unmeasured`／`host_mem_refused`／`host_mem_unmeasured`／`memory_pressure`／`dev_attempt_failed`／`resolve_not_gpu` **两侧全 0** |
+| ④ | 差是驻留语义改出来的 | 他们 OFF↔他们 ON＝他们 OFF↔本班 OFF＝他们 OFF↔本班 ON，**三对差集逐格相等（同一批 12 格、同一个 3.291e-01）**；而他们 ON／本班 OFF／本班 ON 三面互比全是 11 格 ULP。差的轨迹跟着**进程**走，不跟着 `resident` 走 |
+| ⑤ | 本班读的不是他们那份字节 | **行为面同形**：两跑 `eval_gpu` 全 18 计数键逐项相等（含 `cell_resident` 0=0／`prefix_gpu` 97=97）＋驻留三面计数 `px_hit 397／px_put 3／enabled 0` 全同；**字节面**：施工车道三件现值 sha 与 dev 现值同值（`390b5f42a541…`／`838fe1ea6692…`／`3c2a66262dfd…`，本班 03:5x 实测 `git hash-object` 对读）。⚠ 诚实边界：跑时（23:53）的工作树字节 git 侧无快照可回溯，本班只能证"现值同值＋行为同形"，不能证"跑时字节逐字同" |
+| ⑥ | 在册那条"列序修复后跨进程闭合"（03 件 §十）能不能解释本班读数 | 那条的闭合实测面是 **CPU 臂 n=120**（E0↔F0 逐位等，据在册 §十·B），而本班量的是 **GPU 认证面跨进程**——这一面在册此前只有"同进程两跑"底（5.551e-17／2.776e-17），**跨进程复现性从未量过**。本班首量结果：同配置跨进程跨车道仍有 **11 格 ULP、且是同一批格** ⇒ 列序修复不解释本班读数，本班读数也不推翻它（两句各量各面，不并账） |
+| ⑦ | 那 0.329 是不是"设备面本来就有 11 格 ULP 末位差"被离散放大，而非缓存串味 | **改判首选，且本班已用十臂全表把串味从 cause 位拿掉**：该格 `D2=drift_band`、`avg_turnover` 0.3941↔0.0485，而 `net_days`/`backend`/`degraded_dimensions` 三项同值——机制与在册 §十一·B(b)/B(c)＋§九·D 那族（"末位差被放大成 9 格 >1e-4"、"帧布局/行和结合序敏感修后**仍在**"）**同型**；⚠ 边界照实写：该格**不在** §十一·C 那 11 格名单里，也**不在**施工道 n=1,050 同进程三臂的 53 格差集里（本班两处 grep 各 0 命中）⇒ 本班说的是**同一机制族**，不是**同一批格**；而本班 `fresh` 面（九站点跨格复用全关）与同配置换进程面，末位差集**一字没变（同一批 11 格）**⇒ 末位差的源头不在 `_DEV_PANEL_CACHE`，串味只是**同一份缓存的另一条独立缺陷**（幅度可任意，后果本班未观测到） |
+
+⇒ ①②③④⑤⑥ 六条把"比的不是同一件事"这一类解释排除干净；剩下的两个**互不等价**的事实是：
+（甲）末位差的源头在**比这份缓存更上游**的进程级面（本班未定名，配方 §十三·检·I⑤）；
+（乙）`_DEV_PANEL_CACHE` 的 `id()` 键**能**换内容（单元针确证＋§十三·检·E 现场抓到 1 条），
+    只是这十臂里它的数值后果一次都没出现。**甲乙分开修、分开记账，禁并成一条。**
+⚠ 本表 ①—⑤ 与 ⑦ 只在 n=400 这个面上成立；全格集面（n=1,050，串行重投版）见 §十三·检·F。
+#### 十三·检·F 全格集面（n=1,050 请批，§二·戊 的验收分母）与分族读数
+
+**分母先说死**：本节请求面＝n=1,050（在册 §十一 同 seed=20261010／同窗 2020-01-01..2023-12-31／同分层 `G_universe,A1_factor_normalize,B_top_n`），实测 `evaluated` 逐臂见下表；本班结论里凡引用本节者一律标 **n=1,049/1,050 面**，凡只由 n=400 面支持者一律留在 §十三·检·D/E/E2 不升级。
+
+| 臂 | 语义 | evaluated | cell_gpu | prefix_gpu | cell_resident | px_hit | 真串味事件 | wall_s |
+|---|---|---|---|---|---|---|---|---|
+| `p2_off_stock` | 全格集·驻留关·stock | 1049 | 1014 | 108 | 0 | 0 | 0 | 248.9 |
+| `p2_on_stock` | 全格集·驻留开·stock | 1049 | 1014 | 108 | 162 | 1047 | 0 | 260.3 |
+| `p2_off_digest` | 全格集·驻留关·digest | 未落（本班落袋时该臂仍在跑或已放弃，不引其读数） | | | | | | |
+| `p2_on_digest` | 全格集·驻留开·digest | 1049 | 1014 | 108 | 162 | 1047 | 1 | 539.8 |
+| `p2_cpu_ref` | 全格集·CPU 参照面 | 未落（本班落袋时该臂仍在跑或已放弃，不引其读数） | | | | | | |
+| `p2_on_verify` | 全格集·驻留开·verify（零改数探测器） | 未落（本班落袋时该臂仍在跑或已放弃，不引其读数） | | | | | | |
+
+**配对读数（bands 口径逐字沿用在册尺，`max_abs` 为净值面）**：
+
+| 配对 | 逐位等 | 1e-8/1e-6/1e-4 越线 | max_abs | 有差格 |
+|---|---|---|---|---|
+| p2_off_stock_vs_p2_on_digest | 1014/1049 | 0/0/0 | 4.163e-16 | 35 |
+| p2_off_stock_vs_p2_on_stock | 1014/1049 | 0/0/0 | 4.163e-16 | 35 |
+| p2_on_stock_vs_p2_on_digest | 1014/1049 | 0/0/0 | 5.274e-16 | 35 |
+
+**分族（据 `v3_compare_p2_off_stock_p2_on_stock_p2_on_digest_family.json`，§二·戊 要求逐族报）**：
+
+- `p2_off_stock_vs_p2_on_digest`：差格 35，max_abs=4.163e-16，与具名 11 格交集=0
+    - G_universe: zz500=15, hs300=12, all_a_ex_st=8
+    - A1_factor_normalize: industsize_neutral=19, industry_neutral=16
+    - A2_combine_weight: ic_ir=8, ic_mean=7, orth_equal=6, halflife20=6, equal=4
+    - D2_rebalance_trigger: drift_band=21, periodic=14
+    - C_sizing: signal_strength=35
+- `p2_off_stock_vs_p2_on_stock`：差格 35，max_abs=4.163e-16，与具名 11 格交集=0
+    - G_universe: zz500=15, hs300=12, all_a_ex_st=8
+    - A1_factor_normalize: industsize_neutral=19, industry_neutral=16
+    - A2_combine_weight: ic_ir=8, ic_mean=7, orth_equal=6, halflife20=6, equal=4
+    - D2_rebalance_trigger: drift_band=21, periodic=14
+    - C_sizing: signal_strength=35
+- `p2_on_stock_vs_p2_on_digest`：差格 35，max_abs=5.274e-16，与具名 11 格交集=0
+    - G_universe: zz500=15, hs300=12, all_a_ex_st=8
+    - A1_factor_normalize: industsize_neutral=19, industry_neutral=16
+    - A2_combine_weight: ic_ir=8, ic_mean=7, orth_equal=6, halflife20=6, equal=4
+    - D2_rebalance_trigger: drift_band=21, periodic=14
+    - C_sizing: signal_strength=35
+
+**这一面读到的**（`p2_off_stock_vs_p2_on_stock`）：驻留关↔驻留开＝逐位等 **1014/1049**、有差 **35 格（3.34%）**、三档越线 **{'1e-8': 0, '1e-6': 0, '1e-4': 0}**、max_abs=4.163e-16。
+
+⇒ 读法：全集上有差 35/1049＝3.34%，但**三档越线全 0**、幅度上界是 ULP 级——所以在册 §十三·补·补 那句「全格集上 18/18/18 越线、max_abs=0.216」**在「一臂一进程」这一形上不成立**；那一读来自**同进程三臂**（A→G2→G3 连跑），差别变量＝同进程里跨臂共享的模块级缓存，不是驻留语义本身。与具名 11 格（fast-fail 面）的交集＝**0** ⇒ §二·戊 立的「具名清单不是代表面」在本面再次成立。
+
+**族集中度（本班今晚给下一棒的最锋利一条线索）**：35/1049 个末位差格里**35/35 全落在 `C_sizing=signal_strength` 一族**（该族基数 134/1049＝12.8%，族内命中率 26.1%），其余族＝无；若这些格子是按族均匀随机抽的，全落一族的概率≈5.3e-32。⇒ 末位差的源头**不是全引擎噪声**，而是 `signal_strength` 定尺寸那条**行归约/归一**路（与在册 §九·D／§十一·B(c)「帧布局对行和结合序的敏感度、修列序后仍在」同一条）——下一棒的探针应**先在该族内**做三级指纹（进缓存前／上卡后／核出口），不必再全引擎扫。
+
+⚠ 本班**不写**「驻留已证等价」：按在册 §十·C 第 7 条，跨进程配对只判「有无系统性偏离」，判不了 1 ULP；而本班 n=400 面已证**单个进程可以单独漂出 1 格 O(0.3)**（§十三·检·D）——一次配对＝单样本，立不起「等价已证」这类正面结论，只立得起「本面未见系统性偏离」这句负面结论。
+
+**判读纪律（本节的红线）**：本节只回答两个问题——①全格集上驻留两臂有无**系统性偏离**（在册 §十·C 第 7 条：跨进程配对判得了这个，判不了 1 ULP）；②内容校验面（digest）与不校验面（stock）在全格集上的**差格数**（＝串味的规模）。凡把本节读成「驻留等价／不等价已证」者，均越出本班凭据。
+#### 十三·检·G 本案卷两处勘误（对本班前任记录，旧案不抹、另起留痕）
+
+> 这两处勘误的**对象原文**已随本袋落在 §十三·检·M（前任检验道案卷原稿，一字未改）——
+> 本节只更正、不改写 M 节任何一句，读者两节对照即可自证。
+
+**勘误一：分母**（承统筹第②裁与施工道 §十三·补·补·续 ②，本班独立复算机读值确认）
+`.runtime/tmp/st-gpux3-20261012/b2_verify_ab.json` 实测：四对全部 `bands.n = **11**`、
+`bitwise_equal_cols = 11/11`、`max_abs_over_n = [0.0]×11`、三档越线 0/0/0；
+`runs[*].evaluated` 逐臂＝hs300 648＋zz500 64＋all_a_ex_st 1＝**713＝批大小**，
+该件内**不存在**任何 `n=713` 或 `n=712` 的配对记录（grep `"n": 7[0-9][0-9]` 命中 0）。
+⇒ 前任案卷 §三 表末行"全 713 格面 G1↔G2＝713/713"**在机读面上无对应配对**，属**配对标签错位**：
+唯一的全格逐位等读数在 `b2_glueon_check.json.full_face = {n:712, bitwise_equal:712, max_abs:0.0}`，
+其配对对象是 **G5(glue 开)↔G2(glue 关基线)**，不是驻留前↔后；同件 `targets11.n = **10**`（该针未带 all_a 那格）。
+"驻留前后跨形态"这条断言的分母**只有 11**——这正是 §二·戊 立法的直接动因（本班复算支持，不改其结论）。
+
+**勘误二：`pre_rets` 三面归零**（施工道 §十三·补·补·续 ③ 转来的更正，本班复核**照单接受**）
+`grep -c pre_rets` 实测三面全 0（逐件列，计数尺同件正对照＝同尺对 `DevicePanel` 在 dev `gpu_core.py` 命中 9）：
+dev 面三件各 0（`src/zephyr/backtest/gpu_core.py`／`scripts/backtest/factory_grid_executor.py`／
+`scripts/backtest/translated/_c4_engine.py`）；施工车道 `.worktrees/st-gpux3-20261012` 同三件各 0；
+检验收件台 `.aidrafts/st-gpux3-20261012` 同三件各 0；
+而本班前任**自己冻结的 253 行**里命中 **8 处**（`mine_snapshot/gpu_core.py` 6＋`mine_snapshot/_c4_engine.py` 2）。
+⇒ 前任 §一 那句"DevicePanel／resident／pre_rets 三符号俱在"中，**`pre_rets` 从来不是施工道的字节**，
+是检验道自己那份未落地草稿的符号。其对施工道其余判断（DevicePanel/resident 确在、按字节搬收件台、sha 双向核）不受影响。
+
+#### 十三·检·H 修法提案（**不实施**，呈统筹裁；本班只给配方＋代价＋反向自证）
+
+三条都是"改喂给闸的输入指向"型修法（不动算式、不动阈值、不动判据面），按侵入度从小到大：
+
+| # | 配方 | 挡住什么 | 挡不住什么 | 代价（本班实测面） |
+|---|---|---|---|---|
+| 甲 | `w` 站点不进缓存（`("w", id(w), a2, len(names))` 一处改直传） | 本案卷现行犯那一条（E 节 `w` 串味）与同类瞬态宿主站点 | 其余八站点仍是"命中零校验"，只是宿主长寿命使概率低 | n=400 面 `w` 站点求值 64 次／臂（fresh 面计数），单次＝(970×F) f64 上传 |
+| 乙 | `_DEV_PANEL_CACHE` 全面照 `_c4_engine._dev_resident` 已在册纪律改：随值 **pin 宿主引用**＋命中须 `ent[0] is host_ref` | 全部 id 复用型串味（瞬态宿主自动退化为不命中＝天然含甲） | 同对象被**就地改写**（`is` 仍真）——施工道已逐支读到 return 排除过 px/掩码这一类，未排除面板类 | 缓存项多持一个宿主引用；all_a 最宽面板 970×5058 f64≈39MB／帧，须先算 cap×帧预算再放量 |
+| 丙 | 内容指纹键（本班 digest 面）：命中须指纹相符，不符即重建＋计数出声 | 甲乙丙里唯一同时挡"就地改写"的一条 | 指纹是采样式（形状＋NaN 数＋一/二阶和＋首末元素），非逐位哈希——理论上可被同矩不同阵碰撞（本班用 `w` 现行犯验证其对本族有效） | 每次命中多一趟主机侧切片＋`nansum`；本班该臂 wall 163.5s→226.2s，⚠**跨时刻读数只作量级线索，不据以定单价**（§二·丁） |
+
+本班取向（不代裁）：**乙为落地面、丙为守卫面**（丙先只在测试/认证针上开，产 `DIRTY_HIT` 计数当运行期哨兵），
+甲是乙的退化特例、不单独做。三条都必须**同一袋里带上它们的尺**，且判据重跑＝
+①全格集分族（§二·戊）＋②同进程两跑底＋③**新增"同配置跨进程两跑"底**——
+D 节已证明缺③就会把进程彩票读成语义差（在册底尺只有①②，本案卷的 FAIL 归因事故正是从这里漏的）。
+
+#### 十三·检·I 影响面与呈批（登记，不自裁）
+
+1. **在册"设备侧合法分歧"读数的性质要重判（重判方向＝本班测到的"末位×放大"族，不是串味）**：
+   §十一·C 的 11/10/9 与 §二·丙·补 的容差对象是"CPU 面↔GPU 面"**一次跑批**的差。本班实测：
+   GPU 认证面**自身跨进程**就有 11/400 格换末位（ULP 级、格集稳定、对本班四个开关全不变），
+   而其中临界格会被 `drift_band` 放大成 O(0.3)（本班复算施工道那 1 格即此形：
+   `avg_turnover` 0.3941↔0.0485 而 `net_days`/`backend`/`degraded` 三项同值）。
+   ⇒ 这批越线格**不是设备实现的稳态属性**，是"末位差×离散触发放大"的读数；
+   在册 §十一·D 预签② 已立过"1e-8 档混入并列翻转⇒该格判未过"的规矩，本班这条是其加强版
+   （并列翻转的**种子面比当时认的更宽——跨进程就换**）。
+   ⇒ 本班**不重判、不改数、不删表**，只登记复算入口：`v3_xproc.py`（四进程矩阵）＋
+   `v3_compare_*.json`（十臂 45 对）＋§十三·检·F 全格集面。是否重开 §二·丙·补 容差账＝统筹裁。
+2. **底尺要加一条腿**（方法学，属框架域）：现册"对底不对零"的底＝**同进程**两跑
+   （在册实测 5.551e-17／2.776e-17）。本班实测：**同进程底盖不住跨进程那 11 格末位方差**
+   （本班同配置换进程两跑＝同一批 11 格、max_abs 上界 1.943e-16，比同进程底大一个数量级），
+   也盖不住 `id()` 型串味（同进程地址轨迹重合）。建议统筹把"同配置跨进程两跑"写进
+   `verification_framework.md` 的底尺定义——本班**未自行立法**，只在此登记。
+3. **B2 驻留的评价要改写方向，但方向是"两个候选都没立住"而不是"翻绿"**：
+   本班量到"那一红里属于驻留的部分＝0（ULP 带内）"，同时**也量到"属于跨格缓存的部分＝0"**
+   （`fresh` 面把复用全关，末位差集一字没变）。
+   故**不得**由本班结果推出"驻留可以摘闸启用"（闸仍关，缺省 False 一字未动，本班无权限也无证据改它）；
+   同样**不得**再由施工道那 18/1,049 越线把账记在驻留头上。两句都请统筹落裁定时逐字带上。
+5. **本班未查完的那一条＝末位种子的上游源**（登记为下一棒入口，非本班残余工）：
+   已知边界＝它对"驻留开/关、九站点复用开/关、内容校验开/关、换进程"四者都不变，
+   故候选只剩**比 `_DEV_PANEL_CACHE` 更上游**的进程级面。零成本探针配方（下一棒可直接按此做，全只读）：
+   ① 同 seed 换 `PYTHONHASHSEED` 各跑一进程（在册 §十·A 的手法，但**换到 GPU 认证面＋这 11 格**上），
+      看那 11 格是否随哈希种子换末位——是⇒列序/集合迭代族在 GPU 面仍有残留泄漏点（`_load_universe` 之外还有 set 源）；
+   ② 若①不动，则在这 11 格的公共前缀上加"输入面板逐位指纹"（复用本班 `_v3_fp`，已修 NaN 假阳），
+      分三级落：进缓存前（主机 ndarray）／上卡后回读（`asnumpy`）／`tensor_core` 出口——
+      哪一级先换末位，病灶就在哪一级；
+   ③ 三条候选算式已在册逐支读过 return（`_shift1_axis0`／`_apply_gate_rawkernel`／`_ffill_axis0`），
+      本班**不重走**；若②指到设备内核内，才动第四候选（cupy 归约/原子序）。
+4. **清理窗在吃证据**：施工车道 `data/strategy_intake/` 与 `.runtime/tmp` 属 TTL/清理面，
+   本班已在 03:5x 把四份 run 目录的 `net_returns.parquet`＋`manifest.csv`＋`summary.json` `cp -n` 进
+   `evidence/` 并列 sha256（D 节）。相位二产物同样要在收工前存证，否则晨间包无法复算。
+
+#### 十三·检·J 本班自犯并如实上报（不藏）
+
+1. **本班自己的尺造出 515 条假告警**：`_v3_fp` 里留了 `float('nan')`，而 `nan != nan`，
+   凡首/末元素为 NaN 的站点全被判成"内容变了"（`vol` 165／`r60v` 174／`r60m` 172／`f` 3／`fwdrank` 1）。
+   发现方式＝逐条打印 `fp_cached` 与 `fp_now` 全量对读，见"两行数字一模一样却被判不等"才定位到 NaN 分量。
+   已修（NaN 折成哨兵 `"NaN"`），**修前的这 515 条不进任何结论**；修后重跑的相位二 digest 面才是可引用事件数。
+   这条与在册"假红尺"同族：0 命中要正对照，**满命中同样要负对照**。
+2. **拿子串当锚点批量改自己的脚本，改坏了三处**：用 `if '"mine_on"' in line` 整行替换，
+   误伤了 `ORDER=[...]` 与 `SAME_CFG={...}` 两行（它们也含该子串），脚本 AST 直接炸。
+   已整体重写复原并 `ast.parse` 自证＋逐行对读。教训入库：**批量替换只准按精确行内容或按行号，改后必做结构计数/AST 自证**。
+3. **能力反查（RULE-CAPABILITY-LOOKUP）连错两次才跑对**：第一次把模块路径当命令执行（零输出），
+   第二次按 `capability_lookup.find(...)` 调顶层函数（该模块只有类方法 `CapabilityLookup().find`）。
+   留痕＝三查全 0 命中（`设备面板缓存 跨格复用`／`驻留 residency 面板`／`device panel cache`），
+   并配正对照两条证明尺在岗（`注册表 能力 反查` 19 命中、`capability_registry` 1 命中）
+   ⇒ 结论＝本战役这块能力**在册无登记**，不是本班没查到。
+4. **首次入袋前的基底核对差点用错尺**：本班先建了 `v3_bag_check.py`（difflib 逐行对齐），
+   再用它自比 dev 面同件（应 0/0）与"删一行＋中段插一行"的负对照（应 RED）——两把都验过之后才敢拿它判"纯插入"；
+   同批发现框架件 dev 现值行数=318 且 §二·戊 末行在第 246 行（`## 三、` 前插＝纯插入）。
+5. **一处收件台路径被我写成截断形态**（会话号尾巴丢字），初稿就这么落进了 §十三·检·G 的勘误二；
+   复测时以三件逐面干净计数替换了整句（真名见 G 节现文本），并按"引用必先 grep 到命中"补了正对照。
+   本条由本班收工自检尺（`v3_selfcheck.py` 第 3 项"路径截断残留"）抓出——**该检查项就是因此次自犯而新增的**。
+6. **并行发车的两臂写进同一个 run 目录，本班差点把假绿当重大结论**（04:2x，最险一条）：
+   `run_batch` 的 `out_dir` 名只到**秒**（`grid_YYYYMMDD-HHMMSS`），本班为赶时间为全格集两臂**并行**发车，
+   两臂同秒 ⇒ 同一目录互相覆盖 ⇒ 对拍报出"1049/1049 逐位等、max_abs=0.0"，
+   看上去是"驻留在全格集上完全等价"的强结论。发现方式＝本班**没有信这条绿**、去核两臂 `out_dir`，
+   实测两支 json 指向同一个 `grid_20261013-042103`、parquet sha256 同值（`a051597cf24e`）
+   ＝**拿一份文件与它自己比**。
+   已修三处：①杀并行臂、改**串行＋臂间 sleep 3s**（`run_p2c.sh`）；②`v3_compare.py` 加**同 out_dir 守卫**
+   （两臂同目录直接 RED、rc=3 拒绝比较；本班拿被污染的旧数据实测该守卫打红）；
+   ③§十三·检·F 只认串行重投版读数，并行版作废（不引、不删，留此条为证）。
+   入库话：**新增一条"读数"之前，先问它是不是同一份文件的两次自比**。
+7. **在活性锚已死的情况下投了袋，袋被 `ghost_session` 烧掉（11:2x 才发现并复命）**：
+   本班 04:48 入队，11:22 读 `dead/` 见
+   `dead_reason=ghost_session: 属主会话 st-gpuux3v-20261013 已死（heartbeat=exited / 注册表无在册），
+   自动重投被存活闸拒绝，号 459；CLI 手动 requeue 不受该闸限，人工可强制`。
+   死因**逐字可查**：`.runtime/sessions/st-gpuux3v-20261013/heartbeat.jsonl` 末行
+   `{"ts":"2026-10-12T19:54:08+00:00"（＝本地 03:54）,"status":"exited","reason":"idle timeout","idle_seconds":1802.3}`
+   ——即心跳守护在**我入队前 54 分钟**就已 idle 自退，而我 03:1x 做过判活三查之后**没有再复查就投了**。
+   在册原话就在档案里（第七形态）："`grant` 只进 `keepalive.jsonl`，只证明我写过授权，不证明有人跳心跳"、
+   "**每次入队前都要重新读三面**"——两条我都没执行，属于"读过规矩≠执行过规矩"。
+   复命按在册四步做完并**逐项读回**：`register(pid=0)`→起 `python -m zephyr…heartbeat_daemon`（入口是包模块）
+   →心跳末行 `status=alive`、龄 2.7s→`liveness_verdict` 打"存活"→`list_active_readonly` 命中→
+   接管台账 open 条目对"属主＝本班"与"命中本班两件"均 **0**（不连坐、无需 `--resolve`）→
+   claim 用 `claim_files_batch` 复挂**主区形＋车道形两套**，读回 `held_files=4`
+   （CLI `acquire-batch` 会把锁建起来但**注册条目 held_files 仍 0**＝在册第六形态，本班实测复现一次）。
+8. **一条预判落空、一条预判落空得有价值**：本班交接件里预防的"同位双追加被仲裁判冲突"没发生
+   （gpux4 袋先落地 `75d46639775e`，本班改为以当下 dev 重基），实际死因是自家活性锚——
+   说明**死亡模式的排查顺序应是"先自家锚、再撞面"**，交接件据此补了这条顺序（不改它已有的三步补救序）。
+
+#### 十三·检·K 复核命令（六条，本班逐条从正文抽出原样跑到期望值；依赖面逐条标注）
+
+**先划依赖**：命令 1 依赖本班车道上那份**不落地**的诊断补丁（他人复算须按 §十三·检·A 自行加同样几行）；
+命令 2—6 不依赖补丁。前任 TTL 面（`.runtime/tmp/st-gpux3-20261012/`）本班要用到的
+`b2_verify_ab.json`／`b2_glueon_check.json`／`b2_residency_floor_n1050.json`／`b2_residency_floor_n24.json`／
+`iso_iso_G2_off.json`／`iso_iso_G3_on.json` ＋ `mine_snapshot` 两件源码，已 `cp -n` 进
+`.runtime/tmp/st-gpuux3v-20261013/evidence/prior_face/`（TTL 到期后以存证副本为准；副本上重测
+`pre_rets` 仍是 6／2 两处，与 §十三·检·G 勘误二同数）。
+
+```sh
+cd /d/ZephyrAlpha
+# 1) 机制单元针（依赖车道补丁；期望 verdict.teeth=true、id_reuse.distinct_ids=1、trials=40）
+PYTHONPATH="D:/ZephyrAlpha/.worktrees/st-gpuux3v-20261013/src;D:/ZephyrAlpha/.worktrees/st-gpuux3v-20261013/scripts/backtest;D:/ZephyrAlpha/.worktrees/st-gpuux3v-20261013/scripts/backtest/translated" \
+  python .runtime/tmp/st-gpuux3v-20261013/v3_unit_proof.py
+
+# 2) 四进程矩阵（期望 they_off 三对 max_abs=3.291e-01 且差集同一批 12 格；其余三对 11 格 ULP）
+python .runtime/tmp/st-gpuux3v-20261013/v3_xproc.py
+
+# 3) 十臂四十五对全表（期望打印：45 {389} {11} ≈1.94e-16 0）
+python - <<'PY'
+import json
+f='.runtime/tmp/st-gpuux3v-20261013/v3_compare_on_stock_off_stock_on_fresh_off_fresh_on_digest_off_digest_on_verify_off_verify_on_stock_b_off_stock_b.json'
+P=json.load(open(f,encoding='utf-8'))['pairs']
+print(len(P), {v['bitwise_equal_cols'] for v in P.values()}, {len(v['diff_ids']) for v in P.values()},
+      max(v['max_abs'] for v in P.values()),
+      sum(v['counts']['1e-8']+v['counts']['1e-6']+v['counts']['1e-4'] for v in P.values()))
+PY
+
+# 4) 分母勘误（期望 [11, 11, 11, 11]；同尺正对照命中 4、待证 0——0 命中必须配正对照，在册规矩）
+python - <<'PY'
+import json
+d=json.load(open('.runtime/tmp/st-gpuux3v-20261013/evidence/prior_face/b2_verify_ab.json',encoding='utf-8'))
+print([v['bands']['n'] for v in d['pairs'].values()])
+PY
+grep -c '"n": 11' .runtime/tmp/st-gpuux3v-20261013/evidence/prior_face/b2_verify_ab.json
+grep -c -E '"n": 7[0-9][0-9]' .runtime/tmp/st-gpuux3v-20261013/evidence/prior_face/b2_verify_ab.json
+
+# 5) pre_rets 三面归零（期望三件各 0；同尺正对照 DevicePanel 在 dev gpu_core=9；前任冻结面 6＋2）
+for f in src/zephyr/backtest/gpu_core.py scripts/backtest/factory_grid_executor.py scripts/backtest/translated/_c4_engine.py; do
+  printf "%s dev=%s gpux3=%s aidrafts=%s\n" "$f" "$(git show dev:$f|grep -c pre_rets)" \
+    "$(grep -c pre_rets .worktrees/st-gpux3-20261012/$f)" "$(grep -c pre_rets .aidrafts/st-gpux3-20261012/$f)"
+done
+grep -c pre_rets .runtime/tmp/st-gpuux3v-20261013/evidence/prior_face/gpu_core.py \
+       .runtime/tmp/st-gpuux3v-20261013/evidence/prior_face/_c4_engine.py
+
+# 6) 本袋纯插入判据（期望"dev 独有行（必须 0）=0"，两件各判一次；此尺先经"删一行"负对照验红，见 §十三·检·J·4）
+python .runtime/tmp/st-gpuux3v-20261013/v3_bag_check.py docs/_working/gpufeed_campaign/03_gpux_final_report.md \
+  .worktrees/st-gpuux3v-20261013/docs/_working/gpufeed_campaign/03_gpux_final_report.md
+python .runtime/tmp/st-gpuux3v-20261013/v3_bag_check.py docs/_working/gpu_rewrite/verification_framework.md \
+  .worktrees/st-gpuux3v-20261013/docs/_working/gpu_rewrite/verification_framework.md
+```
+
+**尺与产物清单**（全在 `.runtime/tmp/st-gpuux3v-20261013/`）：
+尺九件＝`v3_one_arm.py`（一臂一进程＋面板模式）／`v3_compare.py`（含**同 out_dir 守卫**，J·6 对症）／
+`v3_family.py`／`v3_xproc.py`／`v3_unit_proof.py`／`v3_bag_check.py`／`v3_bag_build.py`／`v3_write_F.py`／`v3_selfcheck.py`；
+驱动＝`run_arms.sh`（n=400 八臂串行）／`run_analysis.sh`（自噪底补臂＋四十五对全表）／`run_p2b.sh`（并行作废版，留证）／`run_p2c.sh`（全格集串行重投版）；
+产物＝`v3_*.json`／`v3_compare_*.json`／`v3_events_*.json`／`arms_400.log`／`p2c.log`／
+`evidence/grid_*`（四方 run 目录存证：parquet＋manifest＋summary）／`evidence/prior_face/`（前任 TTL 副本）。
+
+#### 十三·检·L 红蓝对抗一轮（本班委托独立复核，12 条"站不住"逐条落改，此处留痕不抹）
+
+本班把四块文稿＋证据面交给**不知情**的独立复核员攻击（只读，禁跑 GPU 批），得 12 条"站不住"＋6 条"需补一句"。
+**逐条处置**（每条都改了文稿，不是在答辩）：
+
+| # | 复核员打中的地方 | 本班处置 |
+|---|---|---|
+| 1 | 补丁量写 `+164/−14`，现值 `+171/−14`（指纹修复后没回测） | 改实测值＋标"04:2x 复测" |
+| 2 | 归属锚 `67062f38f23f13b2` 无处可查 | 补**口径注明**（git blob sha ≠ 字节 sha256，两档禁互引）＋加"探针版本留痕边界"条：`probe_fge_sha12` 字段只从 04:0x 起的四臂有，前六臂只能按发车时刻对读 v1 窗 |
+| 3 | 框架件 dev 现值"318 行"，`wc -l` 是 317 | 改 317，并注明 318 是 `split("\n")` 的尾空元素口径（同一件两把尺差一行，正是 §十三·检·G 那条 CRLF 家族的邻族） |
+| 4 | ULP 区间写 5.5e-17～1.1e-16，自家最新产物里有 1.943e-16 | 全表改 **1.388e-17～1.943e-16**，下界也换成实测下界（原 5.5e-17 是别对的最大值被当了下界） |
+| 5 | "4–6 个 A1 共用一把键＝结构必撞"与自家实测"64 次求值仅 1 次命中"自相矛盾 | 拆成两句：**键位覆盖面** 4–6（设计面）＋**命中率** 1/64（实测面）＋**命中即错 1/1**；定名降级为"稀疏彩票型缺陷"，不写"常态污染源" |
+| 6 | 结论头把串味写成"真病灶"，而本班全表证明它无数值后果 | 结论条重写为三句（缺陷确证／归因否证／上游未定名），"病灶"字样只留在缓存**能**换内容这一义项上 |
+| 7 | "D 节已证明缺③就把进程彩票读成语义差"过强 | 改"本班按该协议句判 they_off 为**系统性偏离**"，实质差只在**一个进程**出现（n=1），不外推发生率 |
+| 8 | 跨进程闭合的出处引成"§十·B"，实为 §十一·F 第 642/645 行 | 改引用位＋补在册 §十·C 第 7 条协议句（跨进程配对只判系统性偏离） |
+| 9 | 把 0.329 那格写成"在册 §十一·B/D 那族"，实际它既不在 11 格也不在 53 格 | 改"同**机制**族、非同**批**格"，并列出两处 grep 0 命中为凭 |
+| 10 | 引 n=1,049 面读数而该面当时**零读数**（相位二脚本未跑成） | 撤回全部全集引用，改"以串行重投版为准"；见 J·6 |
+| 11 | 复核命令依赖本班车道补丁与 `.runtime/tmp` TTL 面 | 命令 1 标"依赖不落地的车道补丁（他人复算须自行加 12 行）"，其余五条不依赖；`b2_verify_ab.json`／`b2_glueon_check.json` 两份**前任 TTL 面**已 `cp -n` 进本班 `evidence/` |
+| 12 | 文稿内 §E2/§F 在装配清单里但"交付四块"话术没算它们；一处自犯条指到 §G | 装配清单六块（A/B/C・D/E・E2・F・G/H/I/J/K）对齐；§G→§J 改对 |
+
+**复核员同时给出两条本班漏掉的正向证据，已补进去**：
+①同一条 `w` 串味在 `off_digest`（驻留关）也抓到，`id` 不同而 `fp_cached`／`fp_now` 逐字相同＝可复现旁证（补 §E）；
+②三个不同进程的 `manifest.csv` **字节全同**（`c2595cfa0bf9`），第四个（they_off）不同＝"单进程系统性偏离"的最硬旁证（补 §D）。
+**本班自己另抓到一条复核员没看到的**：见 J·6（并行两臂写进同一 run 目录造成的假绿）——
+这条是**本班自己不信那条绿**才逮住的，也是本班今晚最该被记住的一次自我拦截。
+
+#### 十三·检·M 附＝前任检验道验收案卷**原稿落袋**（st-gpux3-20261012 检验道实例作，本班只搬运＋加勘误指针）
+
+**为什么由本班落袋**：该件一直停在 `.runtime/sessions/st-gpux3-20261012/staging/`（24h TTL 面），从未落地；本班按就绪判据（0004 落 dev）把它随本案卷一并入袋，以免证据面到期满归零。**搬运纪律**：正文**一字未改**（含它自己的错误读数），只把标题降级为 `#### 十三·验·N` 以免与本件既有节号冲突；其中两处记录由本班在 §十三·检·G 出勘误（分母 713→11、`pre_rets` 三面归零），**旧案不抹、另起留痕**。原稿 frontmatter（`owner: st-gpux3-20261012`／`role: 检验道（同 sid 第二实例，Owner 2026-10-12 21:5x 裁 A）`／`subject: B2 设备驻留四件 +459/−23 的独立验收`）记录于此；副本 sha256 前 16＝`ccb6ef040230c067`（本班存证面 `evidence/prior_face/b2_verification_casefile.md`）。
+
+**一句话**：驻留这套接线**数值上是干净的**（本班 713 格面逐位等 713/713、三档越线 0、manifest 五项零移动、
+CPU 缺省面跨码版逐位等 11/11，五支 GPU/网格试件 172 passed），**但它今晚真正生效的格极少**
+（缺省 glue 关实测 engage=1/713＝0.14%；glue 开＝32/712＝4.5%），
+所以"吞吐 ≥3x、SM ≥70%"这两条终局线**不会因为 B2 落地就前进**——
+卡点有两处：drift_band 串行扫还在主机（在册 B1b），以及本班归因出的**更大那头**：
+all_a 设备 bt 核的 89% 时间花在 `_ffill_axis0` 的含-NaN host 回环上（同针 N1/N0=48.5x），
+B2 消掉的那 30ms 往返在这笔账里是零头（第七节）。
+
+#### 十三·验·一、归属锚（我验的是哪一份字节）
+
+| 件 | sha256 前 16 | 对拍方式 |
+|---|---|---|
+| src/zephyr/backtest/gpu_core.py | 2eb564ff005c95cb | 21:55 快照 = 本班收件台 = 他们 staged 三面同值 |
+| scripts/backtest/translated/_c4_engine.py | 63157ab1d61720f0* | 同上（*原文见 b2_verify_ab.json.provenance） |
+| scripts/backtest/factory_grid_executor.py | d116946734edc2ac | 同上（EOL 归一后对拍） |
+| tests/research/backtest/test_gpu_core_parity.py | ec4cc0f23f96345d | 同上 |
+
+- 搬法：施工车道四件按字节 cp 进本班车道 `.aidrafts/st-gpux3-20261012`（收件台），
+  跑批产物落收件台，绝不写施工车道；22:2x 复核 `git show :<件>` 与快照仍同值 ⇒ 结论可归属到将要落地的那份码。
+- 包来源防线（在册教训复证并**加码**）：`zephyr` 在解释器启动即被 usercustomize 预导入，
+  `sys.path.insert` 对 `zephyr.*` 完全无效；**PYTHONPATH 必须写 Windows 形式**（`D:/...`），
+  多段 POSIX 形式（`/d/a;/d/b`）会被原样透传而**静默不生效**（本班实测：改写法前读到主区旧码、无任何报错）。
+  本班 harness 内三条断言齐：`gpu_core.__file__`∈车道、`_c4_engine.__file__`∈车道、`hasattr(gc,'DevicePanel')`。
+- 另需一条环境前提：`.aidrafts/<sid>` 新车道缺 `config/.env.clickhouse`（主区那份是 gitignore 未跟踪件，
+  施工车道那份是硬链接）。缺它时 CH 读**响亮**炸 `RuntimeError: CH TCP 客户端不可用`；
+  而封板掩码走的是在册有意的 fail-open 全 False——任何吞异常的调用方会交出"整扇闸门关着"的数。
+  本班以 `os.link` 补链（密钥不落第二份）。
+
+#### 十三·验·二、底尺自证（先证明我这把尺量的是同一件事）
+
+改动前先跑四臂（cpu／gpu_eval×cpu_bt／gpu×gpu／cpu 复跑，713 格面）：
+`b2_cell11_before.json` 与在册 `03_gpux_final_report.md` §十一·C 对账——
+
+- 1e-8／1e-6／1e-4 越线 = **11／10／9**（与在册逐字同）；
+- 11 格的 `rel_max`（按在册公布的 4 位有效数字）、`差异天数`、`首日` 三项 = **11/11 全等**；
+- 同进程 CPU 两跑逐位等 11/11（p₀=0 在本面成立）；单侧 NaN 格 = 0。
+
+⇒ 本案的"改动前"不是自称，是能复算别人那张表的。
+
+#### 十三·验·三、铁律①红绿证（改动前后 11 格逐格形态）
+
+配对＝同一进程五臂：A_cpu／G1 驻留关／G2 驻留开／G3 驻留关再跑／G4 驻留开再跑。
+
+| 对照 | n | 逐位等 | max_abs | 三档越线 | manifest 五项非等格 |
+|---|---|---|---|---|---|
+| G1↔G2 跨形态（驻留前/后） | 11 | **11** | 0.0 | 0/0/0 | 0/0/0/0/0 |
+| G1↔G3 驻留关自身两跑（底） | 11 | 11 | 0.0 | 0/0/0 | — |
+| G2↔G4 驻留开自身两跑（底） | 11 | 11 | 0.0 | 0/0/0 | — |
+| A_cpu↔改动前 CPU（跨码版） | 11 | **11** | 0.0 | 0/0/0 | 0/0/0/0/0 |
+| **全 713 格面** G1↔G2 | 713 | **713** | **0.0** | 0/0/0 | — |
+
+"对底不对零"（在册 `gpu-arm-self-noise` 的判据）在本面自动满足：跨形态差 = 自身两跑差 = 0。
+
+⚠**这条全等不能读成"驻留路径对全体格子无副作用"**：本面里驻留真正 engage 的只有 1 格（见第四节）。
+其余 712 格走的是与改动前同一条形态，所以它们当然逐位等。
+载体路径的独立证据在施工班新增单元件 `test_backtest_core_gpu_carrier_path_matches_host_frame_bitwise`
+（经载体进 vs 经宽表进 ⇒ gross/turnover/hold_days 逐位等）＋其 n=24 针（engage=4/24）。
+
+#### 十三·验·四、今晚真正省下了多少（engage 实测，这是终局线的真瓶颈）
+
+- 实测三态计数（模块级累计，本针逐臂差分）：G2_on 全针 **cell_resident=1**／materialized=712／kept_cpu=0；
+  G4_on_again 再跑同形 ⇒ 再 +1（同一格）。唯一 engage 的格 = `1c7fee0b6d54`（all_a_ex_st，periodic，λ=0）。
+- 组成学上限（同一 manifest 的 values_json 计数，n=713）：
+  `D2_rebalance_trigger` = **drift_band 680／periodic 33**；periodic 里 `H_turnover_lambda`
+  = λ0 仅 **1** 格、λ>0 **32** 格；X/J 叠加族全 off（713/713）＝不是拦路的族。
+  ⇒ 缺省 glue 关：engage 上限 **1/713＝0.14%**；glue 开：上限 **33/713＝4.6%**；
+     drift_band 那 680 格（95.4%）要等 **B1b**（串行漂移扫上卡）才可能进驻留。
+- **glue 开之后的实测（第二针 `b2_glueon_check.json`，hs300+zz500 共 712 格）**：
+  `cell_resident=32`、`glue_gpu_inline=32`、materialized=680 ⇒ **engage=32/712＝4.5%**，
+  与组成学上限（periodic 且 λ>0 的 32 格）**逐格对上**；且这 32 格经"λ 链上卡＋载体直供"出来后，
+  与 glue 关那臂**全 712 格逐位等（max_abs=0.0）**——这一条同时钉住了
+  B1a 的"λ 链换执行位置不换数"与 B2 的"载体直供不换数"，是**在 engage 面上**证的，不只是单元件里证的。
+  同针 wall：G5(glue+驻留) 107.4s vs G2 111.3s＝快 3.5%（仍在同形态噪声 0.72–0.85 带内，不可判）。
+- 因此本针 wall 比值（同刻配对，只报比值）：G1_off↔G2_on = **0.9993**（同形态自身两跑噪声 0.72–0.85）
+  ⇒ 驻留的吞吐收益在这个面上**量不出来**，不是"量到很小"。
+- all_a 单格面另有一读：A_cpu/all_a 61.9s → G1_off 40.2s → G2_on 34.0s（n=1，噪声不可判，只作线索）。
+
+#### 十三·验·五、设备面总吞吐（与终局 ≥3x 线的对表）
+
+同针 wall：A_cpu 245.4s／G2_on 145.3s ⇒ **1.689x**；G1_off 145.2s ⇒ 改动前设备面 1.690x。
+在册 §十一·F④ 的 5.3x 是 **all_a 冷缓存主导的 n=120 面**，与本面分母不同，不得同表引用（在册纪律）。
+⇒ 在"以 hs300/zz500 为主的小宇宙混合面"上，两腿全上卡今晚的实测是 **1.7x**，
+   距 3x 的缺口按本班读数集中在 bt 腿的 drift 串行扫（B1b）与逐格仍重算的 rets 面（第七节）。
+
+#### 十三·验·六、实现审查（读码结论，逐条给位）
+
+施工班四件的设计点，本班逐条读到 return 行后认可：
+1. 载体 `gpu_core.DevicePanel`（frozen dataclass，`to_host_frame()` 为唯一回主机逃生口）＋
+   `_as_f64_2d/_as_bool_2d` 的 DevicePanel 分支取同一 buffer——与在册零拷贝实测一致。
+2. 混态对照的收口有凭据：21:33 针 `resident.wave_on=false` 而 `px_hit=21/mask_hit=21`
+   （＝"改动前"臂已经吃了驻留的一半收益，跨臂差读成噪声）；21:38 加 `_RESIDENCY_OFF_FOR_AB` 后，
+   22:03 针同臂 `px_hit=0/mask_hit=0/enabled=0` ⇒ 对照臂已干净。**两针为证，不是口头。**
+3. 驻留缓存键纪律：内容键 + 命中时 `ent[0] is host_ref` 且随值 pin 宿主引用（堵 id() 复用脏命中）；
+   MemoryError ⇒ 整清 + 本格回逐格上传并计数（`mem_clear`）。
+4. `hold_days_pct`（stats 里唯一吃整幅矩阵的位）改由核内行归约给（`want_hold_days`），
+   经 `_LAST_GPU_HOLD_DAYS` 紧邻消费；缺失=**ValueError 不兜底**（拒绝"回主机补算"那种把往返搬到别处的静默）；
+   非负权重 ⇒ 行和符号与归约序无关的论证写在件头，且有"尺有牙"负对照件钉住错式会翻红。
+5. 主机回退路全部经 `_materialize_for_host(..., reason)` 物化并**分原因计数**（exec_caliber/守卫/小面板）。
+6. 附带修正两条在册陈旧锚：`[TESTS]/[MODIFY-GUARD]` 从已清空的 `tests/backtest/` 复正到
+   `tests/research/backtest/`，并补 `test_c4_engine_gpu_wiring.py` 为直接守护件。
+
+本班**不认可/待补**的两点：
+- A. rets 面仍逐格重算：`_dev_resident("px", ...)` 只常驻**原始价格面板**，
+  `tensor_core` 每格照旧跑 `_ffill_axis0(px)→shift→减一`。而 `_ffill_axis0` 在含 NaN 帧上走
+  `asnumpy→numpy.maximum.accumulate→asarray` 的**在册处方回环**（gpu_core 注），
+  即每格多付一趟 (T,S) int64 的双向跨边界；§十一·F⑥ 那个 "ffill 0.24ms" 是在**无 NaN 合成帧**上量的
+  （`if not bool(mask.any())` 短路），生产 px 含停牌 NaN ⇒ 该短路不成立。定价见第七节。
+- B. SM≥70% 的读数面：施工班吞吐针 `b2_tp_run2` 自报 `sm_samples=0 / sm_unavailable=268`，
+  即这条线目前是**测不到**，不是低。本班用独立探针复核尺本身可否判（第八节）。
+
+#### 十三·验·七、归因改靶（本班最硬的一条读数：all_a 设备 bt 核的主成本不是 B2 砍掉的那 30ms）
+
+`b2_ffill_attribution.json`（同一形状 970×5,217，每核同步，**两序交错**各测一遍，只报同针比值）：
+
+| 帧形态 | tensor_core 设备入参 | tensor_core 主机入参 | 其中 `_ffill_axis0(px)` 段 |
+|---|---|---|---|
+| N0＝无 NaN（`mask.any()` 短路） | **2.72 / 2.54 ms** | 19.10 / 15.00 ms | 0.14 / 0.13 ms |
+| N1＝含 NaN（3%） | **131.85 / 125.19 ms** | 163.44 / 142.82 ms | 63.06 / 78.15 ms |
+
+**N1/N0 = 48.5x**。机制：`gpu_core._ffill_axis0` 在含 NaN 帧上走在册处方
+`asnumpy → numpy.maximum.accumulate(axis=0) → asarray`（cupy 缺该原语），
+代价＝(T,S) int64≈40MB 的双向跨边界＋主机列向跨步累计，**与 NaN 密度无关，只要有一个 NaN 就整段发生**。
+生产面两帧都必然含 NaN：px 有停牌/未上市 NaN，权重帧未选中位是 NaN（`base=where(mask,1.0,nan)`）。
+
+对照在册：§十一·F⑥ 那句"ffill 0.24ms、两张稠密 f64 的 H2D 占设备 bt 核 63%"是在**无 NaN 合成帧**上量的
+（同一短路），而 §十一·F④ 在真批上量到 all_a GPU bt **211.8ms/格**——本针把这两个数接上了：
+173.8（本班 seam 针）/131.9（本针）＝同一主体，且 89% 落在两次 ffill 往返（`hidden_roundtrip_share=0.889`）。
+
+⇒ **下一步的正解不是继续消往返，而是把行号 running-max 放上卡**（整数累计，天然逐位确定、无浮点结合序问题）
+ ＋把 px 的 rets 面批级共享（同窗同宇宙算一次，`rets_from_close_panel` 本班存证件里已抽好唯一实现位）。
+ 按本针量级：all_a bt 腿 131.9→约 5–10ms/格 量级，才是把 1.7x 推到 ≥3x 的那把刀；
+ B2 今晚消掉的 30ms 在其中是零头。
+
+#### 十三·验·八、试件五支与 SM 尺可判性
+
+- **GPU/网格试件五支在收件台上全绿**：`test_gpu_core_parity + test_l2_gpu_landing + test_c4_engine_gpu_wiring
+  + test_c4_limit_gate + test_factory_grid_executor` ＝ **172 passed / 0 failed（127.4s，rc=0）**；
+  其中 B2 新增 13 支单独点名复跑 **13 passed**（含 `test_hold_days_device_matches_host_formula` 的
+  `all_nan_rows / all_zero_rows / denormal_positive / signed_weights` 四形 × cpu/gpu 双臂、
+  `test_hold_days_ruler_has_teeth` 负对照、`test_device_panel_unwraps_to_same_buffer_and_keeps_labels`、
+  `test_backtest_core_gpu_carrier_path_matches_host_frame_bitwise`）。采集面＝上述五支文件名，非全库。
+  首次采集失败是我这边的启动形态问题（`-o addopts=` 触发 `Unknown config option: cache_dir` 被
+  filterwarnings=error 升级成 INTERNALERROR），加 `-W ignore::pytest.PytestConfigWarning` 后即跑通——
+  **不是被验件的红灯**。
+- **SM≥70% 这条线的可判性＝尺在岗，读数要看负载形态**（`b2_sm_ruler_check.json`）：
+  本进程持续 matmul 12s 时 NVML 逐进程 `sm_util_pct` 读到 **91%**（2/2 样本 available，
+  `in_compute_table=true`）；空闲/未建计算上下文时 `available=false, reason=GetProcessUtilization rc!=0`
+  （他们吞吐针的 `sm_samples=0 / sm_unavailable=268` 就是这个形态——**尺没坏，是采样落进了卡空窗**）。
+  ⇒ 结论：≥70% 在"逐格短促核＋主机准备占大头"的网格形态下**依然测不到**，
+     要它变绿只能等第七节那把刀（把卡喂满）；本班未改拍、未换全卡读数（铁律④）。
+
+#### 十三·验·九、本班自犯并如实上报
+
+1. **改错车道**：第一次 Edit 打在主区 `D:\ZephyrAlpha\src\zephyr\backtest\gpu_core.py`（应打收件台）。
+   已用反向 Edit 精确还原，并用 `git hash-object` vs `git rev-parse HEAD:` 双向核同值
+   （27f7ca16c7c37cf28e05648cef88b3a68bc0b7ec）。**未**用 `git checkout`——主区 index 里压着该件的
+   陈旧回退快照（缺 `ewm_alpha_pair/ewm_renorm_gpu/lambda_chain_gpu` 三符号，−193 行），checkout 会把回退带进工作树。
+2. **假尺两次**：①`grep -c $'\r'` 在本 shell 里等于"匹配所有行"（报 3272/3337 全含 CR），
+   真值要用 `tr -cd '\r' | wc -c`（主区/dev 面 0，施工车道 fge 面 3337）；
+   ②第一次拿在册 4 位有效数字与本班全精度值按 1e-6 相对差对账，误报"仅 2/11 全等"，
+   改为按同一公布精度对账后 11/11 全等。两处都在写进本案卷前自纠。
+3. **重复施工 253 行**：撞车前本班已独立写了 DevicePanel/pre_rets/掩码与 px 常驻/hold_days 设备化
+   （2 文件 +253/−22，sha 存证 `.runtime/tmp/st-gpux3-20261012/mine_snapshot/`），
+   Owner 裁 A 后冻结、不 git add、不入队、不落地；施工班那版覆盖面更广（含 rets 之外的三态计数与
+   `_RESIDENCY_OFF_FOR_AB`），本班版不再作第二真源。
+
+#### 十三·验·十、复核命令（谁都能重算）
+
+```sh
+sh /d/ZephyrAlpha/.runtime/tmp/st-gpux3-20261012/run_verify.sh      # 五臂配对（含 before 基线对照）
+python - <<'PY'
+import json;d=json.load(open('D:/ZephyrAlpha/.runtime/tmp/st-gpux3-20261012/b2_verify_ab.json',encoding='utf-8'))
+print(d['verdict_对底不对零']); print(d['wall_ratios'])
+PY
+cd /d/ZephyrAlpha/.worktrees/st-gpux3-20261012 && git show :src/zephyr/backtest/gpu_core.py | sha256sum
+```
+
+#### 十三·检·N 统筹四裁落账（裁定人＝统筹，落笔＝检验道 st-gpuux3v-20261013，2026-10-13 12:3x `date` 实测；本班**不自裁**，逐字转录后附执行边界）
+
+**四裁原文（全批）**：
+
+> ①底尺加跨进程腿＝批（病灶族已证，现册只有同进程底盖不住）。
+> ②容差账不动＝批（11/10/9 原样＋末位×放大口径标注）。
+> ③FAIL 改写按你三句逐字入册——尤其第 2 句（0.329 跟进程不跟驻留，十臂 45 对全表解冤）
+>   与第 3 句（35/35 落 signal_strength 族 p≈5e-32，下一棒三级指纹、禁全引擎扫）。
+> ④修法乙＋丙＝批排一批（配方已交，下一班实施）。
+> 前任 190 行案卷抢救入袋＋两勘误＝收。同位双追加的死法预判与三步交接件＝防线在位。
+
+**三句（裁③要求逐字入册者，此后引用以此为准）**：
+
+1. **缺陷确证**：`_DEV_PANEL_CACHE` 命中面零内容校验、九站点键均含 `id(宿主)`；最险站点
+   `("w", id(w), a2, len(names))`（IC 权重板，dev 面 1155 行）宿主为每次前缀调用新建的瞬态帧——
+   单元针 40 次同形状只得 1 个 `id()`，批次里 n=400 两臂各抓到 1 条、n=1,049 又抓到 1 条串味
+   （同一条权重板、不同 `id`、指纹对逐字相同；同期 2368 次命中全部指纹相符＝负对照在位）。
+2. **归因否证**：在册那句 FAIL 的 0.329 **跟着进程走，不跟着 `resident` 走**——四进程矩阵里
+   "同配置跨进程跨车道"（两边都驻留关）比出**同一批 12 格、同一个 3.291e-01**，
+   而其余三面互比只剩 11 格 ULP；十臂 45 对全表（含把跨格复用整个关掉的 `fresh` 面）
+   全是同一批 11 格、max_abs 上界 1.943e-16、三档越线合计 0；
+   全格集 n=1,049 一臂一进程＝**1014/1049、越线 0/0/0、max_abs 4.163e-16、与具名 11 格交集 0**。
+3. **上游线索**：那 35 格（含 n=400 的 11 格）**35/35 全落 `C_sizing=signal_strength` 一族**
+   （基率 12.8%，随机概率≈5e-32）⇒ 末位差源头收窄到该族行归约面（与在册 §九·D／§十一·B(c) 同一条），
+   **下一棒只做族内三级指纹，禁全引擎扫**。
+
+**本班执行边界（四裁各自落在哪）**：
+
+| 裁 | 落点 | 本班做了什麼 |
+|---|---|---|
+| ① | `verification_framework.md` 新增 §二·戊·补·续（立法正文三腿＋两条禁区） | 已落笔；**只加腿，未动任何线值/容差/每核同步/禁动卡条款** |
+| ② | 03 件 §十一·C 节首加"口径标注"（表身 11/10/9 一字未改） | 已落笔；双禁（禁外推"设备固有代价"、禁为变绿动卡）写进标注里 |
+| ③ | 本节节末三句逐字入册，此后引用以此为准 | 已落笔 |
+| ④ | 修法乙＋丙**下一班实施**，本班只交配方 | 本班**未碰代码**；`_RESIDENCY_ENABLE_FOR_TEST` 缺省 False 一字未动，闸仍关 |
+
+**四裁落账后仍开着的两件事（不当已结）**：
+1. 末位差的**上游定源**未做（裁①只立了底尺，裁④只批了修法）；探针入口＝裁③第 3 句的族内三级指纹，
+   配方三条在 §十三·检·I⑤。
+2. 本班这一袋 04:48 首投死于 `ghost_session`（**不是**预判的同位双追加——gpux4 袋 `75d46639775e` 先落地了，
+   本班按三步以**当下 dev** 重基后重投，两件仍各判"dev 独有行＝0"）；死因与复命读回见 §十三·检·J·8。
