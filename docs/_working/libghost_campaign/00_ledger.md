@@ -470,3 +470,42 @@ capability_canonical creation_tokens 主区盘面 15,500 vs dev 面 15,443（差
 ⇒ 翻根的代价＝这 13/57 条未落地投影会从门的输入面消失（translation_coverage 首当其冲），
 **先把投影落地链收敛、再谈翻根**，否则半治换全治会换来新一类假红。
 全治 (b)（门按 project_root 查源）＝判据面，留裁不动；13.1-1 的命名空间包面是同一条的另一半。
+
+## §14 钮项核销读数（统筹 05:4x 更正令：原第 4 条作废，改"核 0021＋跑三行对照＋读数入册"）
+
+**核 0021 的结果＝该钮并未落地（三处指向逐条实测，非推断）**
+
+| 令卡指向 | 实测 | 尺 |
+|---|---|---|
+| "维护七班袋 0021 已直接落码" | **dead**，`landed_id=None`，dead_at 04:05:58，family=other | 队列四态文件＋袋 JSON 字段 |
+| 钮在 HEAD/全史可 grep 否 | **0 命中**：`git show dev:scripts/governance/commit_queue_landing.py \| grep -c ZEPHYR_ALPHA_ROOT`=0；`git log --all -S'ZEPHYR_ALPHA_ROOT' -- 该文件`=空 ⇒ 从未有任何落地笔引入 | dev 面＋全史取数 |
+| "读 §十九 全文判半治/全治，出处＝落地链那条链子的本班账" | 落不到该链：维护七班两本账小节止于「一…八」与「〇…七」，全仓 `§十九` 只命中 datalane/fms/mineloop2 等他线账；全仓 `scoped-env\|三向变异` 唯一命中＝**本班班账 §12**（即前任写的"待投方案"文本） | 逐册 grep |
+
+⇒ 判读：该修正令把**计划件当成了落地件**。半治/全治之争当前无对象可判，本班不动落地链、不重投他班袋。
+
+**0021 的真实死因（一条可解锁，归维护七班自决）**：`[landing] 非注册表族件双侧皆改真冲突（整文件三方）:
+docs/_working/maint7_campaign/lanes/lane_b_closeout.md`——被同袋自带的收班册带死，
+**两个代码件零门点**（无任何门在 dead_reason 里点名 commit_queue_landing.py 或其测试）。
+对症＝代码件单独成袋，或把该收班册按 dev 现面重建为纯追加件后同批再投。
+
+**§12.3 三行原样双跑对照（本道＝干净 dev＋②待投面；令卡说脚本在
+`.runtime/tmp/st-libstale-20261013/`——该目录不存在，前任是把三行写在班账 §12.3 正文里，本班按正文原样跑）**
+
+| 腿 | 命令（正文抽出） | 读数 |
+|---|---|---|
+| ① 钮=主区 | `ZEPHYR_ALPHA_ROOT=D:/ZephyrAlpha pytest tests/gov/gov_enforcement/test_library_tri_consistency_gate.py -q` | **1 error during collection**（＝死袋形态） |
+| ② 钮=本车道 | `ZEPHYR_ALPHA_ROOT="$PWD" pytest 同件` | **13 passed** |
+| ③ import 落点 | `python -c "import zephyr;print(zephyr.__file__)"` | 主区 `D:\ZephyrAlpha\src\zephyr\__init__.py` ↔ 车道 `.worktrees\st-libstale2-20261014\src\zephyr\__init__.py` |
+| ④ **不设钮**（＝落地链现况） | 同上，去 env | `D:\ZephyrAlpha\src\zephyr\__init__.py` ⇒ 落地链仍绑主区 |
+
+三态结论：钮**有效但未生效**（有 env 才翻落点；落地链现在没人设）。令卡第 2 点的"两侧都绿属预期"在本件上**不成立**——本测试件对开关是真敏感（①红②绿），因为它 import 的门本体只在车道面；这与"测试件已落且导 landed 符号⇒两侧同绿"是两种不同情形，勿混。按令卡三检查逐项：钮 HEAD 查不到（不成立）；证据袋（本班 -0006 测试袋 04:4x 建）晚于钮袋建袋（钮袋 03:2x 建、04:05 死）；敏感度＝真敏感（上表①②）。
+
+**§12 补丁文本降为参照件**：本班不再投；本班车道内那份 13 行实现已随本班一次误清丢失（见 §14 末），
+恢复点＝§12.1 原文逐字，且需按现 dev 面重定位行位（原记 :236 / 3444-3445 / 3524-3527 已漂）。
+
+**主区脏件归属自证（回应令卡"147 枚/开工 153 枚，勿误判无主件复位"）**：本班 05:4x 实测
+`git status -uno --porcelain`=**470**（含未跟踪 640），按 mtime 分层：≥04:15 者仅 **5** 件，
+<04:15 者 **465** 件；其中 3 支（project_handbook 两支＋04_...README）疑与本班 04:19 那次
+`apply_depgraph --transition-build-status` **未带 `ZEPHYR_SKIP_REGENERATE=1`** 所触发的后台重生有关
+（此后四跳均带该旗，见 §13/本报告）；1 支 config、1 支 tests/ai/library 早于/无关本班动作。
+与令卡数字差 323 枚，请维护线核对计数口径（是否只数工棚登记面）。本班对主区任一脏件**未做复位/未代修**。
