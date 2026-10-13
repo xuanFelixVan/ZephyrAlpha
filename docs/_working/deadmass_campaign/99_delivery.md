@@ -75,3 +75,53 @@ completes_when: 段二两腿在 dev 面复验落地＋C/D 放量袋落窗清账�
    三枚 `heartbeat.jsonl.takenover-by-*` 取证改名）——promote 是各属主班或 Owner 的事，本班不动。
 8. **worktree 池位**：`git worktree list` 52 条中仅 1 条目录已消失且 **locked**（`.aidrafts_pool/pool-20260919202729-c433`）；
    不自解他人 locked 池位。
+
+## 五、统筹裁定与三项处置落卡（2026-10-14 00:5x）
+
+裁定原文要点：归档窗＝**A→自然并 C**（轮询挂到 00:50 自停；抓到窗逐片清并逐片 manifest 对账；
+没抓到不硬等，第 1 条命令化交下一班）；**不取 B**（停传送带会堵夜间所有班的落地，死袋零风险不值）；
+0001 让死不 requeue 准（0002 严格超集）；0002/0003 落地后按交接卡收口。
+
+- **处置①→维护七班**：gate_audit 存量两段超 `DEFAULT_MAX_BYTES=50MB`（实测 120.3MB／65.3MB）。
+  要办的不是删存量，而是**定位绕过 `rotate_if_oversized` 入口闸的写入者**（总 1,214MB/293 件；
+  >3 天未动的 182 件仅 26MB＝大头全在"有写侧不过闸"的热文件里），并给存量处置建议。政策面不急。
+  尺的入口：`src/zephyr/shared/io/audit_jsonl_writer.py`（`rotate_if_oversized`，[CONSUMERS] 行已列五处自带 append 的写侧）。
+- **处置②→下一班按墓碑制提升后拆壳**（四件真成果，点名去处）：
+  `st-gpuux3v-20261013` 的 `staging/v3_section_03_note11C.md`／`v3_section_13.md`／`handoff_st-gpuux3v-20261013.md`
+  → 归 `docs/_working/gpufeed_campaign/`；`st-maint3-20261011` 的 `archive/plan_20261011T151409Z/`（plan.yaml＋
+  manifest.json＋report.json）→ 归 `docs/_working/`；`st-nightmine2-20261010` 的 `t1_quarantine_hash_index.json`
+  → 归其 campaign 目录；`st-datasop-20260930`／`st-gomap-b-20261006`／`st-mastertc-l5` 三枚
+  `heartbeat.jsonl.takenover-by-*`／`.resolved-by-p12a` 取证改名件 → 归 `.runtime/quarantine/` 案卷区。
+  ⚑ **提升之后**才拆这 4 个壳，别把未入库成果一起清掉（在册红线"被清除面≠净收官"）。
+  其余 11 壳只剩 `keepalive.jsonl`＝保活授权审计，可按前任先例 promote 入墓园后直接拆。
+- **处置③→并入维护七班查**：那条 locked 池位（`.aidrafts_pool/pool-20260919202729-c433`，目录已不存在但
+  注册表仍 locked）——本班不自解，交由维护七班按接管/检疫通道查。
+
+## 六、投影分叉一条（本刻实测，值得维护班记账）
+
+`REGISTRY-YAML-PARSE` 的判据＝capability 册 `file|token` **复合键集合差**（`_head_token_lag_issue`）。
+本班两袋（0001/0002）都因"随了一份陈旧投影"被拦——**拦得对**，但实测暴露更深一层：
+23:5x 时 HEAD 有 `docs/_working/tdm_goal_structure_research_2026_10_13.md|token=…-20261013` 一行，
+而**从 PG 重打的投影里没有这一行**（PG 副本当时 缺=1）⇒ 任何诚实 render 都会相对该 HEAD"少 1 条"，
+即这条是 **PG 账本与 YAML 面的真分叉**（该行当年很可能是直写 YAML 入库、PG 无对应行）。
+00:1x 他班一笔 render 落地时把该行从 dev 抹平，同时把我班三处登记（ARCH 议题条目＋两枚 deadmass token）
+从 PG 物化进 dev ⇒ 本班 0004 袋遂"零注册表文件"过门。
+处方（在册定案的复证）：**内容袋不要随投影册**——PG 是真源，投影由登记/落地侧各自追齐；
+随册＝携带陈旧面＝必被他道新条目打脸。另建议维护班补一条"YAML 有行而 PG 无行"的巡检（本例即漏网形态）。
+
+## 七、跨日首轮自动分诊（腿①的当日账已自证）
+
+00:29 本班再跑一次 `dead_triage_probe`（跨日＝按新日重判，同日复跑则幂等跳过）：
+`scanned=1604 triaged=1604`，10-14 分态＝**C_UNIQUE_WOULD_REGRESS 1,391／A_LANDED 67／
+B_UNIQUE_REQUEUEABLE 101／D_EVIDENCE_MIXED 43／D_EVIDENCE_LOST 2**；
+账本 `.runtime/audit/dead_letter_triage_ledger.jsonl` 累计 3,191 行（10-13＝1,587，10-14＝1,604）。
+对照本班 23:10 独立尺：dead 1,583→1,604（**＋21 枚新死，gone=0**），
+A 56→67（他班落地把一些 C/D 面转成了已落），C 1,376→1,391。
+⇒ "当日四态分诊不隔夜"自本袋起由事件面自动出账，不再依赖人工 CLI；下一班的放量只需消费判定表。
+
+交接卡 1 的复跑参数请按下值更新（本班实测窗未开，判据表需重跑一次以纳 21 枚新死）：
+`python -u .runtime/tmp/deadmass_c_measure.py --sample 60` 重建表 →
+`python -u .runtime/tmp/deadmass_c_archive.py --execute --chunk 20 --attempts 200 --sleep 15`；
+逐片对账口径＝打印的 `[片 N/10 成] archived=… kept=…`＋终局 `[台账] … 本批判定分布=`。
+
+
