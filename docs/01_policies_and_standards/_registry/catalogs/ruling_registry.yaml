@@ -4550,6 +4550,148 @@ entries:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   related_rulings:
   - 裁定#505
+- ruling_id: 裁定#509
+  date: "2026-10-13"
+  title: D 族未冻点 §3.1 r1/r2 不路由＝选项 A（保持不路由）（总统统筹 2026-10-13 补签；挖矿二班按令登记）
+  status: active
+  summary: 六段不闭仓：1,824 日面板中 762 日（41.9%）无六段对应（宏观态 r1/r2 在 auto_mount.R2SIX 无对应且当日无微观相位）。裁 A：保持不路由，unrouted 为合法态（fail-closed 宁漏勿误），卡面 bucket 须单列 unrouted 而非并入任一相邻段；禁为凑闭仓补映射或硬塞最近邻。 署名=总统统筹（2026-10-13 01:2x 对话面补签；原五裁 2026-10-12 亦在对话面给出，但当时未走登记正门，令卡写'已入册'系错——登记由 st-minedig2-20261012 按统筹指令补录，本班不代裁）
+  category: 治理
+  evidence: docs/_working/2026-10-12-d-family-qualification-freeze-draft.md §3（未冻点原文）；docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md §2/§3/§5（本班验收读数与结构性风险登记）
+  adjudicator: 总统统筹（对话面补签 2026-10-13 01:2x）；登记执行=st-minedig2-20261012
+  superseded_by: ""
+  affected_files:
+  - docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  - docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  - docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  related_rulings:
+  - 裁定#501
+  - 裁定#304
+- ruling_id: 裁定#510
+  date: "2026-10-13"
+  title: D 族未冻点 §3.2 盘中 EUPHORIC→IGNITION 映射＝选项 A（维持 proposed 挂起）（总统统筹 2026-10-13 补签；挖矿二班按令登记）
+  status: active
+  summary: market_state.py:98-104 五态→六段降采样映射中该条自标'待 Owner 校准'。裁 A：维持 proposed 挂起，冻结稿与验收轮均不代钉；本裁不改变任何现行六段读数面（本班验收重放逐日一致已证）。 署名=总统统筹（2026-10-13 01:2x 对话面补签；原五裁 2026-10-12 亦在对话面给出，但当时未走登记正门，令卡写'已入册'系错——登记由 st-minedig2-20261012 按统筹指令补录，本班不代裁）
+  category: 治理
+  evidence: docs/_working/2026-10-12-d-family-qualification-freeze-draft.md §3（未冻点原文）；docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md §2/§3/§5（本班验收读数与结构性风险登记）
+  adjudicator: 总统统筹（对话面补签 2026-10-13 01:2x）；登记执行=st-minedig2-20261012
+  superseded_by: ""
+  affected_files:
+  - docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  - docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  - docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  related_rulings:
+  - 裁定#501
+  - 裁定#304
+- ruling_id: 裁定#511
+  date: "2026-10-13"
+  title: D 族未冻点 §3.3 两源分歧 21.09%＝选项 A（钉 sixphase-v1 物化件为唯一重建真源）（总统统筹 2026-10-13 补签；挖矿二班按令登记）
+  status: active
+  summary: 六段宏观腿与包体宏观腿 dominant 逐日一致率仅 383/1816（t0_matrix/reconcile_pack_v1_summary.csv），同名 rN 语义不同。裁 A：钉 docs/_working/t0_matrix/six_phase_history_v1.csv（sixphase-v1）为六段唯一重建真源；包体口径作另轴并存，禁混用于同一考卷。 署名=总统统筹（2026-10-13 01:2x 对话面补签；原五裁 2026-10-12 亦在对话面给出，但当时未走登记正门，令卡写'已入册'系错——登记由 st-minedig2-20261012 按统筹指令补录，本班不代裁）
+  category: 治理
+  evidence: docs/_working/2026-10-12-d-family-qualification-freeze-draft.md §3（未冻点原文）；docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md §2/§3/§5（本班验收读数与结构性风险登记）
+  adjudicator: 总统统筹（对话面补签 2026-10-13 01:2x）；登记执行=st-minedig2-20261012
+  superseded_by: ""
+  affected_files:
+  - docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  - docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  - docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  related_rulings:
+  - 裁定#501
+  - 裁定#304
+- ruling_id: 裁定#512
+  date: "2026-10-13"
+  title: D 族未冻点 §3.4 HMM label switching 残余＝选项 A（重放幂等验收入资格面）（总统统筹 2026-10-13 补签；挖矿二班按令登记）
+  status: active
+  summary: anchored_component_order（裁定#304）已抗标签翻转，但跨 run 漂移无逐日验收在册。裁 A：按 regime_recal_protocol §5 判据'同一码本两次重放 dominant 序列逐日一致'入 D 族资格机械判据；本班 2026-10-13 首轮验收＝两次独立进程重放 1,824 日零不一致，正对照（改 --start→1,395 行）证非缓存回放。 署名=总统统筹（2026-10-13 01:2x 对话面补签；原五裁 2026-10-12 亦在对话面给出，但当时未走登记正门，令卡写'已入册'系错——登记由 st-minedig2-20261012 按统筹指令补录，本班不代裁）
+  category: 治理
+  evidence: docs/_working/2026-10-12-d-family-qualification-freeze-draft.md §3（未冻点原文）；docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md §2/§3/§5（本班验收读数与结构性风险登记）
+  adjudicator: 总统统筹（对话面补签 2026-10-13 01:2x）；登记执行=st-minedig2-20261012
+  superseded_by: ""
+  affected_files:
+  - docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  - docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  - docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  related_rulings:
+  - 裁定#501
+  - 裁定#304
+- ruling_id: 裁定#513
+  date: "2026-10-13"
+  title: D 族未冻点 §3.5 微观腿广度源断供＝选项 A（维持 EQW_ALLA 补位并在卡面披露）（总统统筹 2026-10-13 补签；挖矿二班按令登记）
+  status: active
+  summary: 广度指数 399106 的 advance/decline 自 2026-07-03 结构性断更（known_data_gaps F4），auto_mount._breadth_frame 按 RegimeFeatureBuilder 同口径回退 kline_index_calc 的 EQW_ALLA。裁 A：维持该补位规则，消费六段的卡面须如实披露补位面，禁另选主源或当无缺。 署名=总统统筹（2026-10-13 01:2x 对话面补签；原五裁 2026-10-12 亦在对话面给出，但当时未走登记正门，令卡写'已入册'系错——登记由 st-minedig2-20261012 按统筹指令补录，本班不代裁）
+  category: 治理
+  evidence: docs/_working/2026-10-12-d-family-qualification-freeze-draft.md §3（未冻点原文）；docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md §2/§3/§5（本班验收读数与结构性风险登记）
+  adjudicator: 总统统筹（对话面补签 2026-10-13 01:2x）；登记执行=st-minedig2-20261012
+  superseded_by: ""
+  affected_files:
+  - docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  - docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  - docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md
+  related_rulings:
+  - 裁定#501
+  - 裁定#304
+- ruling_id: 裁定#514
+  date: "2026-10-13"
+  title: 统筹三裁（2026-10-13 15:4x）：①授权挖矿二班代处置 st-examrun-20261012 死条目 ②解锁即投承码袋（多日标的前向面）③翻译册投影 render 归维护线；并追认 8 张聚合卡 fail-closed 回退与承码同代性重转（登记执行=st-minedig2-20261012）
+  status: active
+  summary: 三裁原文经本班 16:2x 执行复算：①处方=session_takeover_ledger.py --resolve st-examrun-20261012 --by st-minedig2-20261012（note 照令原文），执行前 --list 该 sid 命中 1（open：held 7／worktrees 1 dirty=10／bags 16／heartbeat 1）、执行后命中 0 且条目迁 .runtime/takeover/resolved；本班未代做他班 worktree 的 merge/abort、未 requeue 他班死袋（处置权仍归属主/统筹）。②解锁后投承码袋：0021→dev a67009f3ef（calibration_exam.py 多日标的前向面，缺省 next-day 语义逐字不变），0022→dev 3d4f8b51dbff（配对测试 95 行，dev_only=0 严格超集）；令文原写四件同袋，本班实测其中两件已在 dev（20744a3cc3／7fc0e94631）且 COMMIT-SCOPE 判跨域，故按门自己的形制拆两袋并 depends-on 保序——此偏离经本班入册不视为违令。③render 归维护线（第三次撞同一堵墙）：本班 16:1x 实测 dev 投影册 grep agg8_series_materialize=0＝未追齐，本班不重打投影袋（Owner 禁：会把他人未落地登记一并带进 commit＝归属篡改），追齐后动作=requeue q-20261013-st-minedig2-20261012-0012。另追认一条纪律：本班 8 张卡 15:1x 因'绑定面已落、执行器面被死条目连坐'的半落地态主动退回 blocked_on_impl（此时开考会对已算好的第 h 日前向目标再 shift(-1)＝静默错值不报错），待承码同代后用零 CH 全链预演重转 preregistered（出生面 5/8 逐位等、3/8 差 1e-4 系两把 Spearman 实现末位取整差；红证 8/8＝删申报键后 ic 必变，证申报位真被消费）——统筹批语：'半装配比不装配更坏'这个判断本身就是今晚最好的 fail-closed 案例。
+  category: 治理
+  evidence: docs/_working/minedig2_campaign/99_delivery.md §十一/§十二（死信账、预演读数表、落地补记）；docs/_working/minedig2_campaign/30_agg8_unlock_dossier.md 环节6/环节8；.runtime/takeover/resolved（sid=st-examrun-20261012）
+  adjudicator: 总统统筹（对话面 2026-10-13 15:4x 三裁＋三件裁定批复）；登记执行=st-minedig2-20261012（本班不代裁，仅按令走正门补录）
+  superseded_by: ""
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/minedig2_campaign/99_delivery.md
+  - docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__40_agg_lu_count_level_fwd10.yaml
+  - scripts/governance/session_takeover_ledger.py
+  - scripts/backtest/fexam/calibration_exam.py
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/minedig2_campaign/99_delivery.md
+  related_rulings:
+  - 裁定#502
+  - 裁定#509
+  - 裁定#510
+  - 裁定#511
+  - 裁定#512
+  - 裁定#513
+  - 裁定#459
+  - 裁定#252
+- ruling_id: 裁定#515
+  date: "2026-10-13"
+  title: 统筹 M-3 补签：GPU 网格批 SM≥70% 由验收线降为披露线；N-1 验收线＝吞吐≥3x（两序协议）＋实现等价零越线
+  status: active
+  session: chief-coordinator-st-20261013
+  summary: 统筹对话通道裁定（2026-10-13 20:1x 令三 v2 面 P1）之册面补签，两条改线一次定形：①GPU 网格批的 SM≥70% 由「验收线」降为「披露线」——读数面照旧逐进程 NVML sm_util_pct 采集并随批披露，不再参与合格/不合格判定；②N-1 验收线改为「吞吐≥3x（两序协议）＋实现等价零越线」，其中两序协议＝同进程 A/B 交替配对、暖态先行（跨进程与跨班绝对值一律不参与判定），实现等价零越线＝跨形态差集 ⊆ 同码自噪底差集 ∧ 一臂一进程复现（不是「跨形态越线数为 0」）。线值与容差数值零自拟：70／3x／1e-8／1e-6／1e-4 全按在册原值转录，本班不改尺、不改拍、不重测。登记语义而非授权语义：approved_paths 留空，本裁定不构成任何受保护路径写授权。
+  category: 治理
+  evidence: 先例与实据面（逐处实查，非凭记忆）：docs/_working/gpufeed_campaign/03_gpux_final_report.md §十七·E③ :2387-2402（SM 落地面中位 7→9、≥70% 占比 0.0；:2401-2402 自陈「前班收班袋记 Owner 准裁降为披露位、同句自陈未签裁定号」⇒ 有口头准裁、无册面署名，本条即补该署名缺口）＋ §十七·I P-4 :2487（形式登记缺口行；勘正注一条在册：该行交叉引用写作 E②，而该算术实位于 E③，他班件不代改）＋ §十七·E① :2358-2364（吞吐两序协议读数＝暖态两对 3.039x/3.076x、连先前两序腿共 5 配对全 ≥3x、最小 3.017；交叉配对 2.94 不过线在案；前班判定「达标但富余薄，须下一班同协议复证」，未签稳定达标）＋ §十七·D :2315-2321（等价面 L0↔N1 逐位等 1013/1048、越 1e-8/1e-6/1e-4 三档＝0/0/0、max_abs=4.718e-16）；线值真源位 docs/_working/gpu_rewrite/verification_framework.md :208-210（现文仍书「验收」，降线后的文档同步须由 GPU 六班按其班面自行执行，本裁定只定形判定身份）；检验道收口面 docs/_working/gpufeed_campaign/00_gpufeed_report.md :406 与该班收班回执叙述（M-3 呈裁原文 :460-465：默认取向＝甲＋把 ≥70% 从验收线降为披露线，呈裁班不自裁降线）。
+  adjudicator: chief-coordinator-st-20261013（统筹对话通道裁定 2026-10-13 20:1x，非 Owner 亲笔数值）；登记执行=st-maint6-20261013（维护六班，AI 代登记署名依根宪法 §5.3；内容系裁定转录，判据数值与口径零改动）
+  superseded_by: ""
+  affected_files:
+  - docs/_working/gpufeed_campaign/03_gpux_final_report.md
+  - docs/_working/gpu_rewrite/verification_framework.md
+  approved_paths: []
+  related_rulings: []
 - ruling_id: 裁定#6
   date: "2026-06-20"
   title: 路径SSoT（路径真源铁律）
