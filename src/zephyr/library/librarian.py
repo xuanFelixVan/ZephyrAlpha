@@ -186,8 +186,10 @@ class Librarian:
                         ai_contract,
                         tags_list,
                         actor,
-                        # 冲突分支裸参数重传（第 15 占位）：VALUES COALESCE 已把 NULL
-                        # 预空成 '{}'，EXCLUDED 恒非 NULL——守卫只能引用裸参数（裁-07）
+                        # 冲突分支裸参数重传（第 15/16 占位）：status 缺省=None ⇒ 保留在册
+                        # 处置态（K9）；potential_consumers 同构（VALUES COALESCE 已把 NULL
+                        # 预空成 '{}'，EXCLUDED 恒非 NULL——守卫只能引用裸参数，裁-07）
+                        status,
                         potential_consumers,
                     ),
                 )
@@ -236,7 +238,9 @@ class Librarian:
                         asset.get("ai_contract"),
                         asset.get("tags") or [],
                         actor,
-                        # 冲突分支裸参数重传（第 15 占位，裁-07 根因修复）
+                        # 冲突分支裸参数重传（第 15/16 占位，裁-07 根因修复＋K9 处置态保护）：
+                        # 采集器恒不申报 status（传 None）⇒ 在册态不被洗回 active
+                        None,
                         asset.get("potential_consumers"),
                     ),
                 )

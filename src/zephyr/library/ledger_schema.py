@@ -109,6 +109,15 @@ CREATE INDEX IF NOT EXISTS lib_events_asset_idx ON lib_events (asset_id);
 # NULL，引用 EXCLUDED 的守卫形同虚设（实证：09-24~27 三轮全量 ingest 把 #410② 回填
 # 68 资产清零，总筹裁-07 取证；影子表探针复现 head_conflict_none='[]'）。
 # 占位共 15 个——potential_consumers 参数须传两次（VALUES 位+冲突位）。
+# 处置态保护（K9 一致性修复，st-libstale-20261013，统筹裁定③）：冲突分支的
+# `status` 旧面是本表唯一无 COALESCE 保护的写回（其余字段全有），而 VALUES 已把缺省
+# 预空成 'active' ⇒ 引用 EXCLUDED.status 恒非 NULL，等于每次采集必把在册态改写。
+# 修法与同句 potential_consumers 同构=重传裸参数（裁-07 先例）：省略 status 的入账
+# 保留在册态，显式申报的调用面（Librarian.act 回写/注销）语义零变化。
+# 实测受害（本班只读取证）：46 行带 delete 事件而 status 仍 active；115 只幽灵行
+# built_at>2026-10-09（built_at=now() 只在冲突分支触发）；4,119/4,783 只 tests/ 幽灵
+# generation≥10（最高 376）——三族同因。参数位次：VALUES 14 位 + SET 裸参数 2 位
+# （status 在 potential_consumers 之前，按 SET 子句文字顺序），共 16 位。
 _SQL_UPSERT_ASSET = """
 INSERT INTO lib_assets (
   asset_id, kind, home, fingerprint_sha256, fingerprint_aux, status,
@@ -124,7 +133,7 @@ ON CONFLICT (asset_id) DO UPDATE SET
   fingerprint_aux = COALESCE(EXCLUDED.fingerprint_aux, lib_assets.fingerprint_aux),
   built_at = now(),
   generation = lib_assets.generation + 1,
-  status = EXCLUDED.status,
+  status = COALESCE(%s, lib_assets.status),
   title = COALESCE(EXCLUDED.title, lib_assets.title),
   one_liner = COALESCE(EXCLUDED.one_liner, lib_assets.one_liner),
   potential_consumers = COALESCE(%s::text[], lib_assets.potential_consumers),
