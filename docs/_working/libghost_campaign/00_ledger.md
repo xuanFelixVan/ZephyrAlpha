@@ -180,4 +180,293 @@ grep -n "status = EXCLUDED" src/zephyr/library/ledger_schema.py
 python -c "from zephyr.governance.depgraph_schema import get_depgraph_pg_connection as g;import os;c=g();cur=c.cursor();cur.execute(\"select count(*) from public.lib_assets where coalesce(array_length(potential_consumers,1),0)>0\");print('nonempty potential_consumers =',cur.fetchone()[0])"
 ```
 
+## §8 K8/K9 治本交付与一条系统性拆袋律（统筹裁定②③，10-14 01:3x→01:5x）
 
+### 8.1 K8 统一册重生不再净删他门（裁定②，前提半证伪已如实改报）
+
+- 修法按令执行：`generate_gate_registry.py` 弃"每台模块只取首个 gate_id"，改**两遍**——
+  第一遍与旧尺逐字节同（122 台主台行零改写），第二遍只登第一遍未认领 id，gate_id 两种写法
+  （字面 / 常量绑定 `gate_id=_X_GATE_ID`）全收。实测在册：多 id 模块 10 台。
+- **裁定②"净增 2 行"被实测改判为 1+1**：两台里只有 POOL-REGRESSION-DIRECTION 是真门
+  （in_process 名册 enabled:true，`auto_register_gates` 装载面实见 priority=161）；
+  STRATEGY-CARD-LIFECYCLE-MAP **无源**——同名模块在 commit_gates/ 下于 HEAD 树与全史
+  `git ls-tree -r`／`git log --all --diff-filter=D` 双向零命中（从未实现，非删除遗留），
+  其同名测试采集期即 ImportError；该行入库笔=d314bb0d980（2026-10-05）。
+  ⇒ 处置=按在册"缺源禁装/0 占位禁"判据转 **MANUAL_GATES 墓碑条目**（status: active→deprecated，
+  行不删、id 保留、redirect_to 指本账；复活=实现落位后删墓碑行、由第二遍自动出行）。
+  本笔属如实记账而非新政策，但状态字段变更仍请 Owner 追认（不追认=一行 revert）。
+- 判别力自证：三突变全见红（删第二遍→POOL 缺行红；去"已认领守卫"→重复行＋归属改写红；
+  墓碑改名→状态断言红）；另加幂等自证（连跑两次 generate() 逐字节同）与"只增不改"契约测试
+  （既有行任一字段被姊妹台改写即红，MAP-ALIGNMENT 跨三模块点名锁定）。
+  测试并入既有 `tests/gov/governance/generators/test_generate_gate_registry.py`（净零：未新建测试件）=28 passed。
+- 顺带查实并在册的新事实：**GATE-21 的 `--check` 只比 `total_gates` 一个数**（不比行内容），
+  且 HEAD 现面即红——`generate_gate_registry.py --check` rc=1"磁盘 191 ≠ 生成 189"
+  （已避开"管道 $? 量的是 tail"的假绿坑，重定向后直取 rc）。K8 落地后该计数归位 191=191
+  ⇒ 今晚"谁装新门谁死"的锁有一半由本袋解开。
+
+### 8.2 K9 处置态保护（裁定③，"补 COALESCE"字面为恒真式，已按同构先例改为裸参数重传）
+
+- 字面 `status = COALESCE(EXCLUDED.status, lib_assets.status)` 是**空操作**：VALUES 侧已写
+  `COALESCE(%s,'active')`，EXCLUDED.status 恒非 NULL。真修法照抄同句在册先例
+  （potential_consumers 裸参数重传，裁-07）：`status = COALESCE(%s, lib_assets.status)`，
+  参数 15→16 位且按 SET 子句文字序 status 在 consumers 之前，`act`/`register_batch` 两处元组同步扩列
+  （在册事故形态=扩列不同步元组必炸）。
+- 语义 A/B（同一 pg_temp shadow 表、各自事务回滚、零生产写）：省略 status 的全量入账——
+  旧面 `deceased → active`（generation 5→6 证明确实触达）；新面 `deceased` 保留且 generation 照递增
+  （指纹刷新语义不变）；`archived` 同样受保护；显式申报 status 的调用面照写不变。
+- 判别力自证：SQL revert 回 EXCLUDED 形态 ⇒ 4 支测试红（新 3 支＋在册 1 支
+  `test_conflict_branch_references_raw_param_not_excluded`）；restore ⇒ 23 passed；馆内全套 249 passed/4 skipped。
+- 46 枚被洗回 active 的受害行一次性处置方案（裁定③要求随袋附呈）：
+  谓词=`status='active' AND EXISTS (SELECT 1 FROM lib_events e WHERE e.asset_id=a.asset_id AND e.action='delete')`
+  （实测 46 行）；处置=按 §4 族分三批走 `Librarian.act('delete', authority=…)`——同名对偶 4,571 条可挂
+  `successor_of`，其余须死亡证明。本班**未动一行账**（撤账=Owner 终裁治理面，K11 在册）。
+
+### 8.3 系统性拆袋律（今晚用 5 只死袋换来的操作结论）
+
+落地链把 `zephyr` 包预绑到主区：GATE-TEST 钩子的 rootdir 是 serializer worktree，import 却解析到
+`D:\ZephyrAlpha\src\zephyr`（两次复现：bag -0004 ImportError；`PYTHONPATH=主区 python -m pytest <新测试>`
+同形复算）。TEST-SOURCE-CONSISTENCY 又按同一主区源码面判"测试 import 的符号不存在"（bag -0005 死因）。
+⇒ **"代码＋钉新行为的测试"同袋必死**（宪法 §2.4 允许的 gate+自家测试同批，在当前 import 绑定下
+   与之冲突）。本班统一改走：**代码袋先投、测试袋后投**——代码袋不含任何引用未落地符号的测试文件，
+   可同时绕过 GATE-TEST 与 TEST-SOURCE-CONSISTENCY。在册旁路（测试顶部
+   `pytest.skip(allow_module_level=True)`）不采：那会产出永不执行的测试件。
+
+## §9 拆袋律的正解＝落地钩子 import 绑定一处可修（裁定②"先治本后立法"，交维护线）
+
+根因实测（非推演）：`scripts/setup_dev_env.py` 安装的 usercustomize
+（`%APPDATA%\Roaming\Python\Python312\site-packages\usercustomize.py:26-34`）把
+`<repo_root>/src` 插到 sys.path[0]，而 `_repo_root` **默认硬编码 `D:\ZephyrAlpha`**，
+仅当环境变量 `ZEPHYR_ALPHA_ROOT` 存在时才改指。⇒ serializer worktree 的 rootdir 是 worktree，
+`import zephyr` 却绑到主区 ⇒ 同袋新符号不可见（GATE-TEST ImportError 与
+TEST-SOURCE-CONSISTENCY"模块不存在"两门同源于此）。
+
+**修法=一行环境注入，不改 usercustomize、不改宪法 §2.4**：序列化落地链
+（git_commit_gateway / commit_queue 起 pytest 处）导出
+`ZEPHYR_ALPHA_ROOT=<当次 worktree 根>`。
+
+A/B 实证（用那条能杀死 -0004 的测试，车道内**不带** PYTHONPATH 跑）：
+
+| 环境 | 结果 |
+|---|---|
+| `ZEPHYR_ALPHA_ROOT=主区` | `ERROR collecting tests/ai/library/test_lookup_on_disk_marker.py / Interrupted: 1 error during collection`（=死袋形态复现） |
+| `ZEPHYR_ALPHA_ROOT=车道` | **12 passed** |
+| `import zephyr` 落点 | 主区 `D:\ZephyrAlpha\src\zephyr\__init__.py` ↔ 车道 `D:\ZephyrAlpha\.worktrees\<sid>\src\zephyr\__init__.py` |
+
+⇒ 拆袋是**绕开缺陷的临时工作法**，不是该入法的规则；§8.3 的结论以本节改判为准。
+旁证：生成器测试自带 `sys.path.insert(0, 项目根)` 且导 `scripts.*`（未被预绑）⇒
+"代码+自家测试"同袋可过——`ZEPHYR_ALPHA_ROOT=主区` 下仍 28 passed，说明缺陷面只在 zephyr 包。
+
+## §10 ③④ 散文轴 join 交付（裁定③④，净零=join 既有翻译册，不立第二真源）
+
+- 支点依据（实测）：借阅谓词三列 `asset_id ILIKE OR home ILIKE OR title ILIKE`
+  （`ledger_schema.py:172/183`）与缓存侧 `_NEEDLE_COLUMNS=("asset_id","home","title")`
+  （`ledger_cache.py:81-82`）**同轴含 title**，而 title 至今只装文件名 basename ⇒
+  散文/中文查询结构性 0 命中。把 name_zh 灌进 title＝单点生效、SQL 与缓存两路同治。
+- 面积实测：翻译册 PG 账本 8,889 条带 name_zh，可 join 到 active 资产
+  **module 4,004＋file 3,994＋doc 88＋registry 4 = 8,190 行**；键=`home ↔ payload->>'module_path'`。
+- 落点=`Librarian.register_batch`（采集器全量入账唯一咽喉）；SQL 提为模块级常量
+  `_SQL_TRANSLATION_PROSE` + `TRANSLATION_REGISTRY_ID`（NO-BARE-SQL 合规）；散文优先、
+  无在册散文时沿用采集器文件名（不造标题、不置空）；账本不可达 fail-soft **且必记
+  logger.warning**（GATE-SILENT-DEGRADATION：降级不得伪装成正常，已入测试断言）。
+- 自测：馆内全套＋影子门 **266 passed / 4 skipped**；突变自证=摘掉散文优先后
+  `test_register_batch_prefers_prose_title` 判红（1 failed / 21 passed），恢复即全绿；
+  净零自证=新 SQL 只读 registry_ledger、串内不含 `lib_assets`（不改总账列面）。
+- **时序硬约束（勿犯）**：本班**未跑任何全量入账**。K9 未落地＝部署面仍是
+  `status = EXCLUDED.status`，此时 ingest 会把 deceased/archived 洗回 active（§8.2 A/B 已证）。
+  join 生效须由 K9 落地后的自然 post-commit 入账链带动；④ 的销账（family a/c 4,664＋b 119）
+  同理**必须排在 K9 落地之后**，否则 tombstone 被自己人洗掉——这条是本账对裁定④的唯一附加条件。
+- 留裁 K12：写侧灌 title 之后，馆页四列（asset_id/kind/status/home）**不展示 title** ⇒
+  人类读者看不到散文、只有查询命中可见。是否把 title 加进展页/输出列＝视图口径变更，留裁。
+
+## §11 交接清点（统筹 02:2x 裁定②：停在这里，序交下一班；读回义务随本节省交）
+
+### 11.1 在队五袋（`ls .runtime/commit_queue/pending/` 02:2x 实点，FIFO 即序）
+
+| qid 尾号 | 内容 | 落地后自愈什么 | 风险 |
+|---|---|---|---|
+| -0008 | `src/zephyr/library/lookup.py`（读侧存在性标注，代码件） | ① 读侧防幻觉上线 | 低（无测试件＝不触 GATE-TEST 陷阱） |
+| -0009 | 生成器补丁＋其测试 | K8：POOL 行可导出、GATE-21 计数 191=191 归位 | 该测试导 `scripts.*`（未被预绑），同袋或可过；若死于 TEST-SOURCE-CONSISTENCY 则拆两袋重投 |
+| -0010 | `ledger_schema.py`＋`librarian.py`（K9 码） | 处置态不再被采集链洗回 | 低 |
+| -0011 | 本账（§1–§8 版） | 班账上 dev | 低 |
+| -0012 | `ledger_schema.py`＋`librarian.py`（join 码，严格超集） | ③④ 散文轴可供数 | 低；**生效须等 K9 落地后的入账**（勿手动跑 ingest） |
+
+### 11.2 只在车道、不在任何活袋的工件（-0007 死后失载，务必按此重建）
+
+`src/zephyr/gov_enforcement/commit_gates/library/library_tri_consistency_gate.py`（新门本体）、
+`src/zephyr/gov_enforcement/commit_gates/__init__.py`（静态接线边，缺它 ORPHAN-MODULE 必拦）、
+`docs/.../in_process_gate_registry.yaml`（107→108 行）、`docs/.../generator_registry.yaml`
+（`trigger_sources=[db:lib_assets]`）、`tests/gov/gov_enforcement/test_library_tri_consistency_gate.py`、
+`docs/_working/libghost_campaign/01_state_independence_design.md`、`docs/_working/examcard_campaign/99_delivery.md`（更正行）。
+
+重建法（K8 落地后）：在**干净 dev 面**跑 `generate_gate_registry.py`（无 `--check`）重生总册
+⇒ 191→192（含新门行、POOL 回归在册、ghost 走 MANUAL_GATES 墓碑），与"新门＋`__init__`＋两册＋总册"
+同袋投＝② 代码袋；随后单独投 ② 测试袋。**总册不要在落后车道里重生**（=假重基净删他人门行）。
+
+### 11.3 本班留下的两处"脏面"，下一班请勿随袋带走
+
+1. `docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml` 与
+   `module_translation_registry.yaml`：车道盘面上含本班令牌/翻译行**外加他班物化行**
+   （主区盘面已按 S9/S7 用探针先算 +133/−0、+37/−0 纯追加后 render，索引面未触碰）。
+   两册一律**不入袋**（S7 在册判据：袋=整档快照＝归属篡改）。
+2. `docs/02_enterprise_architecture/04_architecture_principles_decisions/`（README＋project_handbook/01..07，
+   共 7 支生成文档）＝本班一次 `apply_depgraph.py --add-design-node` 尝试的**副产物**
+   （该命令在参数报错下仍起了后台重生，与在册"apply_depgraph --dry-run 也写 PG 并起后台重生"同族）。
+   本班未据以改动任何真源，处置=在干净面重跑生成器覆盖或直接丢弃，**勿并入任何袋**。
+
+### 11.4 会话态与移交义务
+
+- 车道 `st-libstale-20261013` 与全部 claims **保留不放**（五袋在飞，"袋在飞禁放锁"）；
+  心跳保活授到 ~03:5x，若续做需再 grant。
+- 读回义务（随 1→6 序移交）：每袋落地后 `git show dev:<file>` 逐字读回＋
+  `git log -1 --name-only` 核归属；① 的验收判据＝`git show dev:src/zephyr/library/lookup.py | grep -c missing-on-disk` ≥1。
+- ④ 销账闸门：**只在 K9 落地后开**（§10 时序硬约束，A/B 已在 pg_temp shadow 表证死）；
+  谓词/分族/回退面见 §4 与 §8.2。
+- ③ 维护线一行 env（`ZEPHYR_ALPHA_ROOT=<worktree>`）落地后，全队回到"码＋测同批"，§8.3 拆袋工作法作废。
+
+## §12 待投补丁：序列化落地链的 scoped-env 钮（统筹 02:5x 定版「先写待投、排空即投」）
+
+**归属三依据已核**：钮位文件 `scripts/governance/commit_queue_landing.py` **不在任何在飞袋**
+（`git status --porcelain` 该文件净；pending/processing 里无它）；动因=本班报的落地面；
+习语=该文件自身已有的 try/finally 环境对（不必借 belt）。`session_worktree.py` 归 B，本班不碰。
+
+### 12.1 精确改点（唯一一处，六行；两枚 commit 调用共用同一 env  scope）
+
+现形（`scripts/governance/commit_queue_landing.py`）：`_GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"` 在 **:236**；
+设置对在 **3444-3445**；复原对在 **3524-3527**（同一 `finally`）；第二枚 `gateway.commit(` 在 **:3501**，
+落在同一 try 内 ⇒ **一个 scope 覆盖两条落盘路径**（legacy 与重试/池路径）。
+
+```python
+# :236 后追加一行常量
+_ALPHA_ROOT_ENV = "ZEPHYR_ALPHA_ROOT"   # 子解释器 usercustomize 的仓根指向（缺省硬编码主区）
+
+# 3445 之后同一位置追加（与 _GATEWAY_ENV 同设同复）
+prev_root = os.environ.get(_ALPHA_ROOT_ENV)
+os.environ[_ALPHA_ROOT_ENV] = str(self.worktree_path)
+
+# 3524-3527 的 finally 里按同款 prev/None 复原
+if prev_root is None:
+    os.environ.pop(_ALPHA_ROOT_ENV, None)
+else:
+    os.environ[_ALPHA_ROOT_ENV] = prev_root
+```
+
+### 12.2 这枚钮治什么、不治什么（别当成全治）
+
+| 失败门 | 执行体 | 本钮 | 依据 |
+|---|---|---|---|
+| GATE-PRECOMMIT-RUN / GATE-TEST | pre-commit **子进程**里再 spawn 的 pytest（新解释器，启动时读 usercustomize） | **治** | -0004 现场 rootdir=serializer worktree 而 `zephyr` 绑主区 |
+| TEST-SOURCE-CONSISTENCY | serializer **进程内** in-process gate（`zephyr` 已预绑，中途设 env 不改已导入包） | **不治** | -0005/-0007 判"模块不存在"，而模块当时就在袋内/在 worktree 盘上 |
+
+⇒ 第二半（另批，需先测后写）二选一：①drain worker 起程即带 `ZEPHYR_ALPHA_ROOT=<worktree>`
+（但工棚同进程还要读主区名册，`anchor_main_root` 一族判定输入会被牵动，须先量）；
+②改 TEST-SOURCE-CONSISTENCY 的源面解析=按 `gateway.project_root` 走路径查存在性，不靠 import 绑定
+（与 `create_guard._load_capability_registry` 的 anchor_main_root 反向，属门禁判据面＝留 Owner）。
+**在第二半落地前，"码＋钉新行为测试"仍须分袋投**（§8.3 工作法继续有效，§9 只算半治）。
+
+### 12.3 取证脚本（纯只读，零落地链动作；两跑对照即证钮有效）
+
+```bash
+cd /d/ZephyrAlpha/.worktrees/<本道车道>
+ZEPHYR_ALPHA_ROOT=D:/ZephyrAlpha        python -m pytest tests/ai/library/test_lookup_on_disk_marker.py -q   # 期望：collection ERROR（=死袋形态）
+ZEPHYR_ALPHA_ROOT="$PWD"                python -m pytest tests/ai/library/test_lookup_on_disk_marker.py -q   # 期望：12 passed
+python -c "import zephyr;print(zephyr.__file__)"                                                            # 落点即钮位生效证据
+```
+
+### 12.4 提交时机与配套（等排空，不在排空中动落地链）
+
+- 触发条件：**0018 落地**（并与 B 的 0014/0016/0017 一并排空）后即投；
+- 袋内容=`commit_queue_landing.py` 本钮 ＋ **双侧对照测试**（同袋：knob=off 见 collection error、
+  knob=on 见 passed；单侧断言＝无判别力）＋ 本节文本；
+- 排空期间本班**零动态**：不动落地链、不跑入账、不销账（§10 时序硬约束仍在：K9 未落＝tombstone 会被洗回）。
+- 更正一处引用：统筹文里点名的 `_has_m10_exemption` 在全仓 `*.py` **零命中**
+  （`grep -rn "_has_m10_exemption\|m10_exemption" src scripts/` 空；在册只有 `# noqa: m10-time-trigger` 标记族）。
+  该引用不作为钮有效性的证据采信；钮的有效性以 §9 的 import 落点 A/B 与 12.3 复算为准。
+
+## §13 本班续账（st-libstale2-20261014，统筹 10-14 晨令 1→6 序；每条带判据与复算口径，禁转述）
+
+### 13.1 对前班归因的三处实测更正
+
+1. **-0005/-0007 的死因不是"进程内 zephyr 预绑"。** 真判据面：TEST-SOURCE-CONSISTENCY 的
+   `_module_to_path` 只会把点路径映射成 `X.py` 或 `X/__init__.py` 两种形态，而
+   `commit_gates/library/` 是无 `__init__.py` 的命名空间包（dev 跟踪面实测该目录仅 3 支 .py）⇒
+   写法 `from 包 import 模块` **恒判"模块不存在"**，与袋内是否含该模块、与钮设不设**都无关**。
+   直调该门函数复算（钮=车道、门文件在车道盘上实存的两形对照）：包写法⇒判红；全点号写法⇒判绿。
+   面积实测：tests/ 全 4,056 支、ImportFrom 15,060 个，该尺判"模块不存在"共 13 行，其中
+   命名空间包假红=**0**；正对照=盘上实存件 tag_vocab_gate 的包写法**被抓进假红桶**（证此尺不哑）。
+   13 行全为真无源（`zephyr.orchestrator.lifecycle.*` 一族＋map_family/strategy_card_lifecycle_map_gate，
+   后者与 §8.1 无源行互为独立印证：两条通道同结论）。
+   ⇒ 本班②测试袋件面据此改写为在册三姊妹门惯例（`import 全点号路径 as 别名`＋全点号 from），
+   零测试体改动、零判据改动。
+2. §9「正解=一行环境注入」对 GATE-TEST 腿成立；对 TEST-SOURCE-CONSISTENCY 腿，"不治"的**理由**
+   不是绑定而是 13.1-1 的包形态解析。§12.2 的结论（此钮属半治）保留，机制归属改判。
+   本班 A/B 四腿实测留档：钮=主区⇒1 collection error；钮=前班车道⇒1 passed；
+   钮=本车道且袋内含码⇒1 passed；不设钮⇒1 error（usercustomize 硬绑主区）。
+3. 仓里其实有**两枚**根钮且分工不同：`ZEPHYR_ALPHA_ROOT` 只被 usercustomize 读（决定
+   `import zephyr` 落点）；`ZEPHYR_WORKTREE_ROOT` 才是 `find_repo_root` 的显式覆盖口
+   （S4 治本自述），且网关 pre-commit 通道**已在注入后者**。本班实测：车道内不注根时
+   生成器的 `REPO_ROOT=D:\ZephyrAlpha`（⇒"车道里重生总册"实际扫的是多会话混杂的主区盘面）；
+   注根后才指车道。⇒ §11.2「在干净 dev 面重生」这句必须补上"显式注根"，否则口径不成立。
+
+### 13.2 两件当班修（各有判别力自证，非顺手）
+
+- **总册 priority 认错人（K8 残余缺陷）**：第一遍取"全文件首个 `priority=`"，而双工厂件的
+  [INVARIANTS] 头注释里写着**姊妹台**的数字 ⇒ REGISTRY-MASS-DELETION 在册被写成 161
+  （源码实参与真装载面均为 140；POOL 才是 161），并与姊妹台撞号。全仓同判不符=**13 行**
+  （dev 现面已含 12 行，非 K8 引入；MAP-ALIGNMENT 在册 830 而 GateSpec 实参 141 同型）。
+  修法=第一遍改取"本 gate_id 自己那条 GateSpec 的实参"，无匹配才退旧口径（零 fail-closed 新风险）；
+  为不动前班"只增不改"契约测试的姊妹台隔离桩，提取器本体改名 `_gatespec_calls_raw`、
+  `_gatespec_calls` 留作第二遍可桩接缝。自证：合成夹具（注释 999／主台 11／姊妹台 999）＋真树双工厂
+  点名两支⇒突变面 2 failed/28 passed、还原面 30 passed（在册 28 支零改动全绿）；真装载面
+  auto_register_gates 实跑 100 台零失败、无同 priority 多台、新门=142。修后同判不符=**0 行**。
+- **GATE-21 的 --check 只比 total_gates 一个数**（§8.1 已记）⇒ 10-04 的旧册长期"绿"而内容过期；
+  本次在注根后的干净面重生，行差实测 21 行（entry 串、own_scope 翻转、files_trigger 形如 `added:`
+  前缀、priority）。消失 gate_id=0、新增仅本门⇒不吃 REGISTRY-MASS-DELETION。
+  本袋另随带追平两支与本袋无关的存量漂移：script_manifest（他班 10-12 新落脚本未重生，563→564）
+  与 rule_catalog 标量（305→306）——后者走该验证器**自己的** `--heal-derived-totals` 通道
+  （在册理由：整册重生会搅他人条目），非本班新造通道。
+
+### 13.3 ④ 销账闸：本班**未**开批量撤账，两条硬据＋已做部分
+
+- 前置达成：K9 已落地且主区运行码逐件 hash 对读=dev；账本现面 `potential_consumers` 非空行
+  =0/54,476（--feeds 死面未变，K10 仍开）。
+- 分族**复算**（自尺，不沿用 §4）：active∧kind∈{file,doc,module}∧home∈tests/ = 8,893 行，
+  幽灵 4,783=53.8%；(a) 命中全史删除集 4,088、(c) 同名对偶在跟踪面 576、(b) git 从未有过 114，
+  另**避让摘出 5 行**（路径出现在他班在飞袋件面或车道未落地清单）——4,088/576/119 与 §4 独立复现一致。
+- 未开批量的两条硬据：①在册裁定链查无授权——图书馆面 Owner 授权真源经 裁定#492 勘误后只有
+  #398-七＋#399-四，内容=宪法挂图一行，**不含账本注销**；②根宪法 §5 的治理资产净删下放=墓碑制，
+  其配套三腿之一"引用即复活评估"在 lib_assets 面无实现（全仓 grep successor_of/复活 只命中
+  写侧 UPDATE 与 lookup 渲染侧，无任何 reconciler）⇒ 下放条件不闭合。
+  ⇒ 呈批件：要么 Owner 一句批文（批件号可直接进 authority 字段；三份名单已复算待 promote，
+  谓词与脚本在本班工棚，清班前须先落到 docs/_working/libghost_campaign/ 否则可按下述谓词重生成），
+  要么先补"引用即复活"那条腿再批量。
+- 本班已做的是**账内自证的一致性修复**（非新处置）：K9 事故把 46 行"自带在册死亡证明"的
+  deceased 洗回 active。逐件复核现面后，只对"盘上无∧跟踪面无"的 **42 行**走
+  `Librarian.act('delete')` 单口，authority **逐行沿用该行原批件字符串**（零口径改动），
+  修复理由/谓词/回退命令写进 `lib_events.detail`（batch=libstale2-20261014-k9wash-restore）。
+  另 4 行经核实**已回活**（3 行盘面＋跟踪面双有、1 行仅在盘）⇒ 不动，其行内陈旧批件
+  正好留作"引用即复活"缺腿的样例。读回：洗回面 46→4；deceased 95→137；本批事件留痕 42；
+  回退谓词（按 detail->>'batch' 取行）命中面=0。
+
+### 13.4 K10 措辞（--feeds 死面）实测形态
+
+该腿 SQL 只带 limit、关键词在 Python 侧过滤 ⇒ 空结果有两种**含义相反**的成因：整轴零供给，
+或轴上有供给而此词未命中（且受 limit 截断，未命中集可能落在截断之外）。旧文案
+`(no assets feeding 'kline')` 把两态并成一态＝"查空"被读成"查无"。修法＝未命中路径上补一次
+同面空关键词探针（命中路径零额外查询），两态各自披露；生产面 A/B 实跑对照：
+新面输出"供数轴现面零供给……不等于'该关键词无消费者'"，旧面仅输出 `(no assets feeding 'kline')`。
+判别力自证：把两态退回单文案⇒新两支判红（2 failed/9 passed），还原⇒11 passed；
+馆内全套 tests/ai/library 255 passed/4 skipped 零回归。
+
+### 13.5 全治 (a) 代价面数字（呈批用，本班实测）
+
+REPO_ROOT/find_repo_root 消费者 **696** 个；其中经 `anchor_main_root` 钉回主区 **10** 个（钮翻不动）；
+**提交链上未钉回 15** 个（钮会把它们的输入面从"主区投影现面"翻到"袋所在树现面"）：
+blueprint_format／import_integrity／library_blood_flesh／protected_paths／resource_schedule／
+scripts_import_integrity／tdm_mount_coverage／test_source_consistency／translation_coverage
+＋ rule_bridge 的 commit_preflight／emergency_commit／gate_auto_registrar／session_claim／
+worktree_lifecycle／worktree_pool。
+当下投影滞后实面（同一把尺）：module_translation entries 主区盘面 8,131 vs dev 面 8,118（差 13 条）；
+capability_canonical creation_tokens 主区盘面 15,500 vs dev 面 15,443（差 57 条）
+⇒ 翻根的代价＝这 13/57 条未落地投影会从门的输入面消失（translation_coverage 首当其冲），
+**先把投影落地链收敛、再谈翻根**，否则半治换全治会换来新一类假红。
+全治 (b)（门按 project_root 查源）＝判据面，留裁不动；13.1-1 的命名空间包面是同一条的另一半。
