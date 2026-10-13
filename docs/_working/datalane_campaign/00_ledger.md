@@ -632,6 +632,23 @@ Owner 裁定原文＝**「批四处随形改」**；authority_ref＝Owner 原话
 - **落地面终验（按在册"终验须冻车道后在落地面复跑"）**：主区跑 `tests/legacy_zephyr/data/test_providers.py` **132 passed**，并打身份三证——`zephyr` 包解析到 `D:\ZephyrAlpha\src\zephyr`（主区面，非车道）、`_STOCK_DAILY_BASIC_COLUMNS` 回 7 列、`_map_stock_daily_basic_rows` 行末两项＝`(2190900.0, 'tushare')`、`INSERT_COLUMNS` 尾部＝`, total_mv, data_source)`。
 - **会话复活实录（这条的顺序不是"可选稳妥"，是必需）**：11:49 实测心跳已 stale **22,574 秒**、末行 `status=exited reason=idle timeout`（守护按 idle>1800s 自退），注册表 `total=7` 无本班条目。第一次按"先 register、再单独起守护"做，守护起来即退并写 `status=exited, reason="session not in registry"`，而我刚注册的条目随后也被吞（再次 list＝无我）。**把 `register(pid=0)` 与 `Popen(DETACHED_PROCESS)` 装进同一进程一次性做**才成功：daemon pid 2144、心跳 age 9.8s、条目在册。⇒ 这里有个鸡生蛋窗：守护无条目即退，条目无新鲜心跳被 mutating list 面回收；分开做就掉进窗里。keepalive 已重授至 14:02（上限 7200s 是钳制不是报错，到点必须续）。另 `logical=True` 仍被 W-29 降级（本班非 chief 形态），无害，照旧靠 keepalive。
 - 现在仍未闭的（不塞进本班）：2016 及更早的 basic 仍缺；2017-2018 的周线/月线/后复权表族未跟（跟不跟由源件落地时定）；tilib 跑器"静默空转红退出"与"跨午夜窗新鲜度"两条根治；六件套等 render 袋；④等今晚 21:30 自证。
+
+## 卅九、§卅八 那条"候选机制"已用码面证实（并落的原因不是运气，也不是甲）＋一条别照抄的警告
+
+统筹把"同会话同件能否并落"转维护线定性。本班是当事人也是观测面，就把尺做到底——读了落地仲裁本体，结论**从假设升为证实**，但同时发现它**不该被当成技巧抄用**。
+
+- 证实的机制（袋 `base_head` 存**分支名字面量 `dev`** 时两条闸同时失效）：
+  1. 漂移闸 `commit_queue_landing._conflict_reason`：`anchor = merge_base(base, current_dev)`，而 `git merge-base dev dev` ≡ `git rev-parse dev`（15:0x 实测同一 sha `1e9794182a…`），`git cat-file -t dev`＝commit 过型别检查 ⇒ `overlap = changed_paths_between(dev, dev) = ∅` ⇒ **不判冲突**；
+  2. 基底字节面 `resolve_base_blobs`（同文件 :4580-4592）用 `git ls-tree <base> -- <路径>` 取 `base_blob`，base="dev" 时取到的是**落地那一刻的 dev 现面** ⇒ 三方仲裁里 `ours_text == base` ⇒ 放行取袋侧。
+  ⇒ 于是 0007（600 行面）先落、0012（622 行严格超集）后落，两只都净落；而 0004/0006 当年存的是**钉死 sha**，前袋一落地 dev 就动 ⇒ "双侧皆改真冲突"。§卅四/§卅八 反复写的"其一必死"预测正是被这条机制推翻的，预测本身错在把"钉死 sha 的行为"当成了唯一形态。
+- 时序自证（排除"甲已落地所以并落"这一 competing explanation）：dev 上 `commit_queue_landing.py` 最近一次改动是 `d36a6df2ec`（07:07:59，维护五班代投维护三班 C11+C12＝TAKEOVER-PENDING 同源判活＋写者署名），**不是甲**；本班 grep `前缀|纯追加|_append_prefix` 在该文件只见无关位（:48/:51/:124/:402/:577/:795/:1094/:1944），甲的"基底＋尾部纯追加前缀可比"分支**尚未在 dev 码面**。我两袋并落发生在 07:07 之后但甲之前 ⇒ 解释只剩上面那条。
+- ⚠ **别照抄，这条带自废武器的副作用**：`base_head="dev"` 等于让 §6.4 陈旧基底闸**结构性空转**（overlap 恒空）。那道闸存在的理由码面自己写着（:1983 一带原话要点：当年吃人的袋**带** base_head、只是口径错，"在册的 4442b1b4f6 修复被整文件覆掉"就是这类形态）。在**纯追加型台账**上侥幸无害（我这两袋就是追加），一旦用到**整档快照/热册面**上就是自己把保护关掉。他班在册正解仍是显式钉 `--base-head $(git rev-parse dev)`（`lane-base-head-three-way-conflict-20261012`），而根治归甲（`queue-landing-append-vs-conflict-arbitration-20261013`：甲须用"基底＋尾部纯追加"的**行前缀**判据、禁行多重集，后者会把带删除的袋误判成 noop 吸收＝删除意图静默丢失，那班自检反例矩阵已证两次）。
+- 给维护线的一条判据建议（**属观测面，本班不动码也不动闸**）：入队侧若收到的是分支名而非 sha，落地前应**先解析成 sha 再落袋**，或干脆由甲的前缀判据接管——否则"基底"这个字段在字面量形态下失去语义，而它是 66 号 §6.4 整条防线的输入。
+- 复核命令（可直接粘，均只读）：
+  `python -c "import json;print(json.load(open('.runtime/commit_queue/done/q-20261013-st-datalane2-20261012-0012.json',encoding='utf-8'))['base_head'])"` → 期望 `dev`（字面量）
+  `python -c "import json;print(json.load(open('.runtime/commit_queue/dead/q-20261013-st-datalane2-20261012-0004.json',encoding='utf-8'))['base_head'])"` → 期望 sha
+  `git merge-base dev dev; git rev-parse dev; git cat-file -t dev` → 同 sha ＋ commit
+  `git log -1 --format="%h %ad %s" --date=iso dev -- scripts/governance/commit_queue_landing.py` → 判甲是否已落地（甲落地后本节时序自证需复算）
 - 在飞袋的锁面观察（只报现象不代裁根因）：03:20 本班为袋 0007 的 4 件逐一 `lock_files.py acquire`（每条回执都写 TTL 30 分钟，`list` 当场可见），03:28 复查同四件＝**在册零条**，而袋仍 pending（ahead=6）。两个候选解释本班在这一窗内分辨不了：①他会话冷启动跑了 `lock_files.py cleanup` 扫走（但该命令按在册语义只清**过期**条，8 分钟不该到期）；②入队侧 finally 释放了本会话这些件的 claim。这与在册铁律"袋在飞禁放锁"是同一风险的**被动失守形态**——不是主动放锁，而是放了会自己不见。下一班若靠 claim 判"这文件有人在改"，请先 `list` 复核再动手，别按自己上一次 acquire 的回执推断现在仍持有。本班处置＝03:29 重新 acquire 四件（已核 4/4 在册），时间线如实留：03:20 可见 → 03:28 零条 → 03:29 重投可见。
 - 同一把尺的第二次读数（把上面那条观察收窄，别让它停在"两个候选解释"）：03:29 重投的账本 claim，其后本班再 acquire 时机械回 `RECLAIMED — 原 st-datalane2-20261012 的过期 claim 已回收（expired，静默窗 30min）`，**而距那次 acquire 只有约 9-10 分钟**（03:29 与 03:39:25 两个 `date` 实测点之间两次 acquire 皆回此讯）＜它自己打印的 30 分钟 TTL。⇒ 除候选①②外还有第三种更可能的：**TTL 的起算点不是本会话这次 acquire 的时刻**（回执打印"剩余 30.0m"，但时钟可能按该文件首次被锁/上一次登记的时刻起算）。本班不据此改任何锁面代码——这是观测面，不是判据面。给下一班的口径因此升级成硬一句：**别把 acquire 回执当"我现在持有"的凭据，动手前 `lock_files.py list` 现读，落袋前后各读一次**。
   （自我更正一条，按体例当场标注：这段先前草稿写的是"21 分钟／03:5x"，那是本班体感钟又偏快造成的——在册自犯条目"体感钟快约一倍、动作前先 date 实测"同族第三次现场；以 03:39:25 的 `date` 实测为准改写作 9-10 分钟。另防误读一句：本 §卅六 上面那句"③写侧来源标签四件改动仍等 Owner 亲裁"是当时点状态，Owner 已裁「批四处随形改」且本班已落码，见 §卅七——按"更正另起、留旧案卷"体例不回删旧句，只加指针。袋讯若与本行数字不一致，以本行为准。）
