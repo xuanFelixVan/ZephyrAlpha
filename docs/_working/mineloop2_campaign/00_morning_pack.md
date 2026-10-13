@@ -2205,3 +2205,44 @@ ablation/03 卡面要的 confirm_k 语义即此件，**不需要重写**。分�
 - 待修在册缺陷（本班发现未擅动）：`run_one` 把 `recorded_by` 硬编码为 `st-mineloop-20261010`，
   复合首分的试次记录因此记错归属会话；修法＝参数化默认取调用方 sid，动手前先核对有无尺按 `recorded_by` 分组。
 - 引用陈旧（转他班）：L1-AGG/02 卡面 `data_window_evidence` 写 000300 覆盖"1,843 行"，本班实测该腿 5,286 行。
+
+### 33.11 00:0x 交接卡补三行（统筹附言：Owner 已裁 **甲**）
+
+**裁定记录（如实，与我班建议相反但属 Owner 门位）**：D10 Owner 裁 **甲** ＝三张卡口径改承在册
+`sector_rrg.compute_rrg_series`（10/26 双 EMA 式）。本班原荐"甲会改坏命题"的意见未被采，
+§33.10 对照包作为**口径变更依据**升呈并被采信——两份记录都在册，执行按批文走，不重议。
+⚑ 顺带消解一处：甲路下"4 日式＋平移口径缺定义"（§33.10 第四分叉）不再需要补定义，
+   但**基准分叉（卡面 000300 vs 在册件 docstring 的 880001.SH）仍未被裁**，下一班必须单独定一行，
+   否则 10/26 式接上后基准还是两处来源。
+
+① **受影响三张卡（清单，开卡即读）**
+   - `TDM-E-L2-02-1/calibration/02_RRG象限迁移`
+   - `TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏`（其 22 册另有 2 对 pair 未冻键＝批-B，勿与本题混做）
+   - `TDM-E-L2-05-2/ablation/02_信号响应三件套`（三腿含 emotion_index，另撞 stage 粒度陷阱，见③）
+   三张现均为 preregistered、0 出分；卡面改写走**新版本卡**（G4-5，另号不改旧卡），
+   旧卡上"4 日式"的 `signal_derivation` 文字在新版里须整段替换为 10/26 式并留 why_new_version_not_edit 说明。
+
+② **口径变更依据**：`docs/_working/mineloop2_campaign/15_d10_two_formula_probe_receipt.yaml`（回执，袋 0048）
+   ＋ 本文件 §33.10（两式数学、4 板块×497 日实证读数 RS 相关 0.30–0.50／象限一致率 0.40–0.50、
+   四道分叉清单）。新版卡面引用这两处即可，不必重算。
+
+③ **880 形接口要点与象限复用位（下一班照此接线，零自拟）**
+   - 装载口：复用 `scripts/backtest/fexam/card_binding.py` 的 `load_sector_family_panel`（:493）
+     ＋ `SQL_SECTOR_FAMILY_PANEL`（:97），它返回 **(日, 板块) 长帧**（列 d/code/close/amount，
+     组内已 `anyLast` 去版本行）；复合通道现只开了 `face_daily` 一支装载形，
+     新增 `sector_family_panel` 支时需同时把 `_load_composite_leg` 的返回类型放宽到 Series|DataFrame，
+     并把 `assemble_composite_legs` 的 `inner_on_keys` 在混合形状下定义为**日集交集**（Series reindex 到交集、
+     长帧按日过滤），`fill_policy` 仍守 none（禁 ffill/禁补零，卡面 alignment 原文）。
+     表名/族名单不硬编码：`map_table`＋`families` 取在册 args 原值（`02_binding_book.yaml:98-102`）。
+   - 象限映射**不重写**：`src/zephyr/signal_ashare/sector/sector_rrg.py`
+     `classify_quadrant(rs_ratio, rs_momentum)`（:153-157，100 中枢四分）与
+     `confirm_quadrant_series(quadrants, confirm_days=2)`（:165，连续 N 日保持新象限才采信，
+     正是 ablation/03 要的 confirm_k 语义）；公共性与调用先例见 `mainline_candidates.py:65`。
+     最小数据量约束（`long×2+short=62` 日、两序列须等长）由 `compute_rrg_series` 自己 raise，
+     不在绑定腿里预削窗口。
+   - emotion_index 腿（L2-05-2 用到）**必须**带 `stage='close_final'` 过滤＋FINAL 后同键唯一性断言，
+     取法与先例：卡面自声明该 stage；`emotion_linkage_exam.py:25,79-80` 为 SQL 先例、:246-248 为断言先例。
+     裸 `SQL_FACE_DAILY` 会把 close_final 与 pre_open 混成一日一行＝造第二读数。
+   - 待修在册缺陷（本班发现未擅动）：`card_binding.run_one` 把 `recorded_by` 硬编码为
+     `st-mineloop-20261010`，复合族出分的试次记录因此记错归属会话；改法＝参数化默认取调用方 sid，
+     动手前先核对有无尺按 `recorded_by` 分组。
