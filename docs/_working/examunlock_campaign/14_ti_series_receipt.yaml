@@ -1,0 +1,129 @@
+schema_version: examunlock-ti-series-receipt/v1
+sid: st-examunlock-20261013
+date: "2026-10-13T04:25+08:00"
+title: 技术指标族日频基序列物化回执（考试解锁②的 CH 段实测）
+doc_form_note: 本件是机读 YAML（非散文）；首版误写成"yaml 后缀的 markdown"，本班 04:2x 自查 parse 失败后重写。
+
+result:
+  columns_materialized: 20
+  cards_covered: 20
+  phase_version: ti-ew-v1
+  window: ["2019-01-04", "2025-09-09"]
+  closed_book_ok_all: true
+  rows_range: [1472, 1622]
+  universe_symbols_min: 302
+  universe_symbols_max: 5428
+  reproducible_proof:  # 卡面 impl_gap 验证项①
+    mode: verify
+    exit_code: 0
+    columns: 20
+    not_reproducible: 0
+    index_identical_all: true
+    text_mismatch_days_all: 0
+    independent_runs: 4   # 本班日志具名：04:05（判红）/04:09/04:16/04:19；04:25 前另有复跑与口径 A/B，总读次以 discipline 段的 query_log 反查（182）为准
+  landed_files: "docs/_working/nightmine_campaign/series/ti_ew_<col>_v1.csv × 20 ＋ ti_ew_series_v1.meta.yaml"
+  ch_window_discipline: "01:00-04:00 让路窗内零查询；04:04 按窗判据自动起跑；每查询自带 max_memory_usage=3GiB 与 max_bytes_before_external_group_by=1.5GiB（在册 CH 共享上限 7.14GiB 的邻居纪律）"
+
+fixes_made_this_shift:
+  - id: FIX-1
+    name: 去重口径改确定性写法
+    change: "anyLast(col) → argMax(col, ingest_ts)"
+    why: >-
+      首跑（04:04）复算腿判红：adosc 逐日最大绝对差 3.5e7，早段（2019）逐日全等、差集中在 2025-07 起。
+      该表 ENGINE=ReplacingMergeTree 未带版本参数、ORDER BY (symbol,period,trade_time)，ingest_ts 只是普通列
+      ⇒ 同键多版共存时 anyLast 挑哪一版跨执行不确定。在册不变量原文＝
+      "聚合去重口径 anyLast(argMax 同义) per day"，故 argMax(值, ingest_ts) 是同口径的确定性写法，非新造口径。
+    ruled_out_first:
+      - "外部写入中：system.processes 过滤自身后零条 TI 查询、system.mutations 零未完成"
+      - "自家观测污染：一次 count() 命中 1 条其实是我自己的探针语句含过滤词（在案老坑，已排除）"
+      - "内存墙：取错误体后确认那次 500 是本公司把 anyLast 写成两参的语法错——500 不等于墙"
+  - id: FIX-2
+    name: 复算判据改为逐字符等（不拍容差）
+    change: 'max_abs_diff == 0 → 与写盘同一格式（%.10g）逐字符相等；抽成可测函数 repro_check()'
+    why: 写盘只有 10 位有效数字，用浮点差判等会把书写精度误判成数据漂移（换口径后 adosc 余差 0.048/量级 1e8）
+    tests_added: 3   # 值动到第10位有效数字必须红／日期错位必须红／缺文件必须红
+    suite: "12 → 15 支，全绿"
+  - id: FIX-3
+    name: 行尾归一到在册 LF 契约
+    change: "csv 写手补 lineterminator=LF；在盘 21 枚文件 CRLF → LF"
+    why: 02 号规格自写 LF 契约，且在册 7 枚序列实测零 CRLF，而本班首跑 20/20 带 CRLF（DictWriter 默认 \\r\\n）
+    evidence: "归一后复扫仍含 CRLF 的文件数=0；verify 第四次仍 20/20 not_reproducible=[]"
+  - id: FIX-4
+    name: provenance 收成单点
+    change: "取消逐列 .meta.yaml，只落汇总册 ti_ew_series_v1.meta.yaml（含统一 caliber 块），汇总册加字段 per_column_meta_materialized_separately: 0"
+    why: 逐列册内容全可由汇总册派生 ⇒ 按根宪法 §4.2 同真源可派生必并，避免 41 枚与 1 枚长期两写
+  - id: FIX-5
+    name: 口径注记回流生成器（防"文件改了、册上还写旧口径"）
+    change: >-
+      汇总册 caliber.dedup 原文只写 anyLast，与 FIX-1 后的实现不符。本班 04:5x 把确定性写法的说明写进
+      生成器常量（dedup 文案与汇总册逐字节同源，用 ast 取字面量比对为真），再过 ruff format；
+      序列 CSV 零改动（数值与本件 result 段全部读数不变），只 caliber 注记一行变更。
+    why: 在册教训"改完 .py 必重跑归档件再入袋"＋"文档与实现分写两口径＝下一班按旧口径复算必红"
+    sha_after: "物化件 19,054B/c8cada6e…；测试 10,274B/4d054692…；汇总册 11,065B（parse 通过，dedup 与生成器字面量等）"
+    tests_rerun: "15 passed（04:5x 复跑）"
+
+disclosure_for_exam_owner:
+  statement: >-
+    这批卡的 signal_derivation 用「IS 2019-01-04..2023-12-31 ≈ 1213 交易日 − 250 暖机 ≈ 963 可用日
+    ⇒ freq ≥ 200/963 ≈ 20.8% ⇒ 取分位 >0.78」做频率推导。实测部分列首日晚于 2019-01-04
+    （最晚 2019-03-18，约少 45-50 个交易日），且个别列早期截面仅 300 余只票（自然缺格，本班未填补）。
+  action_owner: 卡面属主（挖矿二班）——按各自列实际可用日数复核那一行推导是否仍成立
+  this_shift_action: 零改动、零放宽；本班不代确认
+
+why_still_not_flipped:
+  cards_status_now: blocked_on_impl
+  impl_gap_item_1_逐日可复算: 已证（本件 result.reproducible_proof）
+  impl_gap_item_2_event_flag进判官: >-
+    实质已证（旗标进 _event_metrics 并出五柱读数，函数级预演）；但同一 run 路径被卡面
+    window.regimes 散文形拦在出分前（见 13_run_path_block_regimes_representation.yaml），
+    且统筹 03:1x 已把该修法判给矿考二班接手。
+  conclusion: 属主定夺前翻状态只会把"宇宙 177→197、崩溃换成 20 行 error"，零增益 ⇒ 本班不翻
+
+sha_updated_after_fixes:
+  scripts/audit/ti_daily_mean_materialize.py: {bytes: 19054, sha256_prefix: c8cada6e44669cdb9977ebcf}
+  tests/gov/audit/test_ti_daily_mean_materialize.py: {bytes: 10274, sha256_prefix: 4d05469242c771aa1ab2cb34}
+  history: "04:2x＝18765/49ff779d…（FIX-1..3 后）⇒ 04:5x FIX-5 与 ruff format 后刷新为上两行；旧值不删，供对账"
+  carrier: >-
+    两件字节已全文内嵌 17_evidence_and_regeneration.md §六（04:3x 追加），复原校验式随节内给出并
+    本班实测两红一绿：末位改一位即红、少一个换行即红、原样即绿。
+  supersedes: "17_evidence_and_regeneration.md §三 旧两行（17622/58ea5d84… 与 8511/8053c8f2…）——本班 04:3x 已把该两件行就地改写为本节数值，旧案卷不留悬空引用"
+  still_unlanded_note: >-
+    上述两件仍未入库（翻译门 loader 只读 YAML 投影、无 PG 通道，本班 04:3x 复读源码确认；R-1 已归维护三班 C4 族）。
+    入库前接班要跑本件 review_commands 里的三条依赖命令，先从 17 §六 复原落盘即可，不必联系本班。
+
+review_commands:
+  - cmd: "PYTHONNOUSERSITE=1 python -m pytest tests/gov/audit/test_ti_daily_mean_materialize.py -q"
+    expect: "15 passed"
+    needs_unlanded_code: true
+  - cmd: "PYTHONNOUSERSITE=1 PYTHONPATH=. python scripts/audit/ti_daily_mean_materialize.py --mode census"
+    expect: "cards: 20 / columns: 20 / window ['2019-01-04','2025-09-09'] / statuses [blocked_on_impl]"
+    needs_unlanded_code: true
+  - cmd: "ls docs/_working/nightmine_campaign/series/ti_ew_*_v1.csv | wc -l"
+    expect: "20"
+    needs_unlanded_code: false
+  - cmd: "按 17_evidence_and_regeneration.md §六 的『复原校验式』原样跑"
+    expect: "三行均以 `OK ` 开头（19054/c8cada6e… ＋ 10274/4d054692… ＋ 6608/a5703548…）"
+    needs_unlanded_code: false
+  - cmd: "PYTHONNOUSERSITE=1 PYTHONPATH=. python scripts/audit/ti_daily_mean_materialize.py --mode verify"
+    expect: "退出码 0；not_reproducible: []"
+    needs_unlanded_code: true
+
+discipline:
+  ch_read_decomposition:
+    self_audit_correction: >-
+      本班 05:3x 用 system.query_log 反查自家读次，**推翻本班 04:2x 记的那份"≈110"分解**（低记）。
+      尺＝`type=2`(QueryFinish) ＋ `query LIKE 'avg(v) AS m'` ＋ `query NOT LIKE '%query_log%'`
+      （后一项是必须的：不加它时本班自己的审计 SQL 因为含有过滤词而被自己数进去，
+      命中数从 182 涨到 366/20:26 之后还多出一条"05:26 自查"假读数——在案老坑"自家观测污染"再复现一次）。
+    finished_selects_total: 182
+    by_caliber: {argMax_class: 140, anyLast_class_pre_fix: 42}
+    rounds_implied: "182 ≈ 9 轮 ×20 列（本班日志具名的 4 次 verify 之外还有 A/B 口径对照与 LF 归一后的复跑，04:2x 那份没记全）"
+    first_query_local: "04:04:13"
+    last_query_local: "04:25:06"
+    inside_yield_window: 0   # event_time < 2026-10-12 20:00:00Z（=本地 04:00）计数＝0，窗内零查询这条从"我记得"升级为"日志可核"
+    note_per_column_meta: "列级 meta 未逐列另册（汇总册 per_column_meta_materialized_separately: 0），读次按列一次一查询计"
+  ch_writes: 0
+  cards_modified_on_disk: 0
+  score_book_rows_written: 0
+  hot_registry_bytes_shipped: 0
+  gates_bypassed: 0

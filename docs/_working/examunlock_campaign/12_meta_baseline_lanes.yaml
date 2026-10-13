@@ -53,11 +53,12 @@ artifacts_found:
     批次时间只能靠 birth_batch 字符串（形如 E1B-20261012-2xxxxx）解析。
 
 prior_snapshot_in_book:
-  what_exists: LaneC 体检案卷在 `docs/_working/gpuwo_campaign/`
-    （01_anchor_reverify_lanec.yaml、05_lanec_fakegreen_fix.yaml:55"零产出判据四桩实测"），
-    假绿机理= `_e2_passed_by_channel()` 的 `except: return set()` 静默吞
-    （factory_intake_pipeline.py:267-268 形）——本班的 0 命中读数与该族机理同型，故本件显式区分
-    "连结键缺失"与"真的零入考"，不上报后者。
+  what_exists: >-
+    LaneC 体检案卷在 docs/_working/gpuwo_campaign/
+    （01_anchor_reverify_lanec.yaml、05_lanec_fakegreen_fix.yaml:55"零产出判据四桩实测"）。
+    假绿机理＝`_e2_passed_by_channel()` 内的裸 except 静默 return 空集
+    （factory_intake_pipeline.py:267-268 形）——本班 0 命中读数与该族机理同型，
+    故本件显式区分"连结键缺失"与"真的零入考"，不上报后者。
 
 discipline:
   ch_queries: 0

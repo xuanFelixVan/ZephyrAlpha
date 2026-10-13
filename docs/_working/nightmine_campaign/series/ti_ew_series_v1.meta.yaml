@@ -1,0 +1,317 @@
+schema_version: ti-ew-batch-meta/v1
+phase_version: ti-ew-v1
+origin: reverse_triage_batch3_20261012
+window:
+- '2019-01-04'
+- '2025-09-09'
+columns_materialized: 20
+cards_covered: 20
+caliber_shared_by_all_columns:
+  table_category_id: market_technical_indicator
+  period_filter: daily
+  definition: 逐日全市场等权均值（非缺格截面）
+  dedup: '先 (symbol, 日) 取单版再跨票 avg；口径原文=anyLast，实现取确定性写法 argMax(col, ingest_ts)（该表 ReplacingMergeTree 无版本参数，anyLast 跨执行不确定；二者同为"任取一版"口径非新造——见 14 号件 FIX-1）'
+  null_policy: IS NOT NULL 且禁前向填充
+  source_card_face: data_binding.baseline_birth.piece_1_signal_face / piece_2_universe
+per_column_meta_materialized_separately: 0
+series:
+- column: adosc
+  rows: 1622
+  date_span:
+  - '2019-01-04'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 1767
+    n_symbols_median: 4846.0
+    n_symbols_max: 5428
+    n_symbols_first_day: 1767
+    n_symbols_last_day: 5428
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/17_ind_volume009_high_event
+- column: ar_26
+  rows: 1477
+  date_span:
+  - '2019-03-15'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 302
+    n_symbols_median: 4849.0
+    n_symbols_max: 5418
+    n_symbols_first_day: 2819
+    n_symbols_last_day: 5417
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/19_ind_mom030_high_event
+- column: aroon_up
+  rows: 1540
+  date_span:
+  - '2019-01-22'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 313
+    n_symbols_median: 4850.5
+    n_symbols_max: 5424
+    n_symbols_first_day: 368
+    n_symbols_last_day: 5424
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/35_ind_mom024_high_event
+- column: cmo_14
+  rows: 1540
+  date_span:
+  - '2019-01-22'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 313
+    n_symbols_median: 4842.0
+    n_symbols_max: 5422
+    n_symbols_first_day: 367
+    n_symbols_last_day: 5422
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/34_ind_mom009_high_event
+- column: coppock
+  rows: 1487
+  date_span:
+  - '2019-03-13'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 302
+    n_symbols_median: 4852.0
+    n_symbols_max: 5419
+    n_symbols_first_day: 2826
+    n_symbols_last_day: 5419
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/31_ind_mom035_high_event
+- column: cr_26
+  rows: 1472
+  date_span:
+  - '2019-03-18'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 302
+    n_symbols_median: 4853.0
+    n_symbols_max: 5417
+    n_symbols_first_day: 2819
+    n_symbols_last_day: 5417
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/36_ind_mom031_high_event
+- column: garman_klass_20
+  rows: 1510
+  date_span:
+  - '2019-01-29'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 307
+    n_symbols_median: 4851.5
+    n_symbols_max: 5422
+    n_symbols_first_day: 368
+    n_symbols_last_day: 5422
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/24_ind_vol013_high_event
+- column: histvol_20
+  rows: 1504
+  date_span:
+  - '2019-01-30'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 302
+    n_symbols_median: 4852.0
+    n_symbols_max: 5422
+    n_symbols_first_day: 368
+    n_symbols_last_day: 5422
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/21_ind_vol008_high_event
+- column: mfi_14
+  rows: 1546
+  date_span:
+  - '2019-01-21'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 313
+    n_symbols_median: 4842.0
+    n_symbols_max: 5422
+    n_symbols_first_day: 367
+    n_symbols_last_day: 5422
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/33_ind_volume002_high_event
+- column: natr_14
+  rows: 1546
+  date_span:
+  - '2019-01-21'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 313
+    n_symbols_median: 4850.0
+    n_symbols_max: 5424
+    n_symbols_first_day: 368
+    n_symbols_last_day: 5424
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/20_ind_vol009_high_event
+- column: parkinson_20
+  rows: 1510
+  date_span:
+  - '2019-01-29'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 307
+    n_symbols_median: 4851.5
+    n_symbols_max: 5422
+    n_symbols_first_day: 368
+    n_symbols_last_day: 5422
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/22_ind_vol012_high_event
+- column: pdi_14
+  rows: 1546
+  date_span:
+  - '2019-01-21'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 313
+    n_symbols_median: 4842.0
+    n_symbols_max: 5422
+    n_symbols_first_day: 367
+    n_symbols_last_day: 5422
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/18_ind_trend007_high_event
+- column: ppo
+  rows: 1622
+  date_span:
+  - '2019-01-04'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 1767
+    n_symbols_median: 4846.0
+    n_symbols_max: 5428
+    n_symbols_first_day: 1767
+    n_symbols_last_day: 5428
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/30_ind_mom027_high_event
+- column: qqe_14
+  rows: 1612
+  date_span:
+  - '2019-01-04'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 318
+    n_symbols_median: 4845.0
+    n_symbols_max: 5427
+    n_symbols_first_day: 342
+    n_symbols_last_day: 5427
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/32_ind_mom020_high_event
+- column: rmi_14
+  rows: 1594
+  date_span:
+  - '2019-01-09'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 318
+    n_symbols_median: 4846.5
+    n_symbols_max: 5427
+    n_symbols_first_day: 364
+    n_symbols_last_day: 5426
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/26_ind_mom038_high_event
+- column: rogers_satchell_20
+  rows: 1510
+  date_span:
+  - '2019-01-29'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 307
+    n_symbols_median: 4851.5
+    n_symbols_max: 5422
+    n_symbols_first_day: 368
+    n_symbols_last_day: 5422
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/23_ind_vol014_high_event
+- column: rvgi_10
+  rows: 1552
+  date_span:
+  - '2019-01-18'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 313
+    n_symbols_median: 4836.0
+    n_symbols_max: 5422
+    n_symbols_first_day: 367
+    n_symbols_last_day: 5421
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/29_ind_mom022_high_event
+- column: tsi
+  rows: 1617
+  date_span:
+  - '2019-01-04'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 318
+    n_symbols_median: 4845.0
+    n_symbols_max: 5428
+    n_symbols_first_day: 368
+    n_symbols_last_day: 5428
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/28_ind_mom015_high_event
+- column: wt1
+  rows: 1617
+  date_span:
+  - '2019-01-04'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 318
+    n_symbols_median: 4845.0
+    n_symbols_max: 5428
+    n_symbols_first_day: 368
+    n_symbols_last_day: 5428
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/27_ind_mom037_high_event
+- column: yang_zhang_20
+  rows: 1504
+  date_span:
+  - '2019-01-30'
+  - '2025-09-09'
+  closed_book_ok: 1
+  universe:
+    n_symbols_min: 302
+    n_symbols_median: 4852.0
+    n_symbols_max: 5422
+    n_symbols_first_day: 368
+    n_symbols_last_day: 5422
+    statement: 逐日截面票数只此记账，不进 value 列、不设筛阈（本班零自创判据）；截面塌缩若影响卡面判据，由开考读数与分数册承担，不由本件代裁
+  cards_bound:
+  - TDM-E-L1-S2/calibration/25_ind_vol015_high_event

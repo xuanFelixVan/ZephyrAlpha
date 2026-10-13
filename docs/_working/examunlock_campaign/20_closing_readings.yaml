@@ -63,12 +63,37 @@ runner_cli_flags_checked:
   scores_explicit_required: true   # help 原文"run 面：分数册路径（显式必填，禁默认主区面）"
   cli_level_end_to_end: 仍未验（本班不用 --override-ch-window-with-reason 绕窗闸，且开考不归本班）
 
+classify_ruler_third_run:
+  at: "05:4x（date 实测），基底＝dev 3422a5c2d6（本班 00:4x 基线之后约 20 笔他班袋）"
+  how: 对 dev 面全量卡逐张跑在册 classify_card（零 CH：读取的是卡面＋TableRegistry，不查库）
+  preregistered: 177
+  tally: {C: 121, U: 28, "A?": 11, B: 17}
+  A: 0
+  D: 0
+  sum_check: "121+28+11+17 = 177"
+  identical_to_baseline: true
+  independent_runs: 3   # 00:4x（本班建线）／02:5x（同步 dev 后复跑，跨 25 袋）／05:4x（本件，跨至今）
+  meaning: >-
+    "开考面 0"不是本班一次读数，而是**同一把尺三次同值**；且本班 18 号矩阵的逐张类别
+    在 dev 又推进约 20 笔之后仍无一行需要回写（另见 card_face_drift_check：dev 改的 9 枚卡面
+    有 0 枚落在本班宇宙）。
+
 queue_state_when_written:
   my_last_bag: q-20261013-st-examunlock-20261013-0004（27 件，pending）
   blob_vs_lane_bytes: "27 / 27 sha256 全等（入袋快照即车道现值）"
   belt_alive: true   # serializer.lease 22s 前续期；belt_daemon.heartbeat 16s 前
   heads_ahead_of_me: [q-20261013-st-deadcure3b-chief-20261011-0060, q-20261013-st-examrun-20261012-0042]
   foreign_in_processing: q-20261013-st-datalane2-20261012-0013（claim 已 ~98min 未完成，非本班件，只如实登记不动它）
+
+approve_list_without_temp_files:
+  problem: 16 号件丁段原指"跑 .runtime/tmp 里的 gen_status_flip.py 生成 20 卡点名清单"——TTL 区件收班即清，接班不该依赖它拿清单
+  one_command: >-
+    PYTHONNOUSERSITE=1 python -c "import yaml;
+    d=yaml.safe_load(open('docs/_working/examunlock_campaign/03_binding_book_event20.yaml',encoding='utf-8'));
+    print(chr(10).join(e['card_id'] for e in d['entries'] if e['status']=='approved'))"
+    > approve_list_20.txt
+  self_proved: "本班 05:4x 实跑＝20 行；并与 dev 面族标 origin=reverse_triage_batch3_20261012 的卡集合双向核对（清单有族无 0／族有清单无 0）"
+  note: 翻状态仍需 17 §六 复原的 gen_status_flip.py（它带四条前置断言：缺底座即拒翻、只改两键、^status: 行数=1、JUDGMENT_KEYS 前后 sha 等）
 
 rulers:
   - name: 宇宙与分数册
