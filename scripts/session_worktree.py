@@ -662,6 +662,63 @@ def _teardown_session_governance(session_id: str) -> None:
     except Exception as e:  # noqa: BLE001 — 注销失败不阻断（TTL 到期自动过期兜底）
         print(f"  WARN: SessionRegistry 注销失败（TTL 3600s 到期自动清理）: {e}", file=sys.stderr)
 
+    # 3. 收班即清（Owner 2026-10-13 派工令 v2 段二第三条）：注销后拆掉会话壳
+    _prune_session_shell(_main_root, session_id)
+
+
+#: 会话壳里允许随收班一起消失的纯机制件（心跳 plumbing 与守护 PID 文件）。
+#: 其余任何文件（staging 成果／keepalive 审计／claim 快照…）＝实质面，壳一律保留并 WARN——
+#: 在册红线"被清除面≠净收官"：成果还没 promote 就把壳删掉，等于替下一班把第六态藏起来。
+_SHELL_MECHANICAL_NAMES = frozenset({"heartbeat.jsonl", "heartbeat_daemon.pid"})
+
+
+def _prune_session_shell(main_root: Path, session_id: str) -> bool:
+    """收班即清：只认精确单目录、只认空壳或纯机制壳（判不了=保留）。
+
+    ①sid 形状白名单（禁分隔符/空/`.`/`..`——防把通配当删除集，防路径穿越）；
+    ②解析后的真实父目录必须恰是 `<root>/.runtime/sessions`（禁越界、禁级联进别人目录）；
+    ③目录内文件全集 ⊆ 机制件集才删；有实质件则保留并点名清单。
+    返回 True=壳已拆，False=保留。
+    """
+    try:
+        sid = str(session_id or "")
+        if not sid or sid in (".", "..") or any(sep in sid for sep in ("/", "\\", os.sep, os.altsep)):
+            return False
+        # 双候选根：_main_root（gitdir 指针解析，车道跑时指主仓）优先，REPO_ROOT（本脚本
+        # 所在仓根）兜底——在册病灶就是这两把根分裂时壳搁浅在无人复核的那一侧。
+        # 每个候选仍走同一精确谓词（父目录必须恰是 <root>/.runtime/sessions）。
+        for cand in (Path(main_root), Path(REPO_ROOT)):
+            base = (cand / ".runtime" / "sessions").resolve()
+            shell = (base / sid).resolve()
+            if shell.parent != base:
+                continue
+            if not shell.is_dir():
+                if cand == Path(main_root):
+                    continue  # 第一候选无此壳：换第二候选再看
+                return False
+            break
+        else:
+            return False
+        residue = [p for p in shell.rglob("*") if p.is_file()]
+        if {p.name for p in residue} - _SHELL_MECHANICAL_NAMES:
+            print(
+                f"  会话壳保留（有实质面，先 promote 再收班）: {shell} → "
+                + ", ".join(sorted(str(p.relative_to(shell)) for p in residue)[:6])
+            )
+            return False
+        from zephyr.shared.io.file_utils import safe_rmtree
+
+        safe_rmtree(shell, allowed_prefix=str(base), ignore_errors=True)
+        if shell.exists():
+            left = sum(1 for p in shell.rglob("*") if p.is_file())
+            print(f"  WARN: 会话壳未拆净（残留 {left} 件）", file=sys.stderr)
+            return False
+        print("  会话壳已拆（收班即清）")
+        return True
+    except Exception as e:  # noqa: BLE001 — best-effort：拆壳失败不阻断收尾主流程
+        print(f"  WARN: 会话壳清理跳过: {e}", file=sys.stderr)
+        return False
+
 
 def cmd_abort_inner(session_id: str, *, skip_checks: bool = False, exempt_cert1: bool = False) -> int:
     """清理 worktree（内部函数，含 S2 四证检查）。"""
@@ -983,28 +1040,6 @@ def _rescue_untracked_files(wt_path: Path, sid: str, untracked: list[str]) -> di
     return {"moved": moved, "rescue_dir": rescue_dir}
 
 
-def _log_archive_delete_event(wt_path: Path, phase: str, *, extra: dict | None = None) -> None:
-    """C13 遥测桥接：把 lane-archive 的擦除动作写进统一遥测流（永不阻断归档主链）。
-
-    车道目录名即 sid（`.aidrafts/<sid>`），所以 begin 阶段无需上游传参就能归因到人。
-    rule_bridge 不可达/写盘失败一律静默降级（与 _log_worktree_delete 自身语义一致）。
-    """
-    try:
-        from zephyr.gov_enforcement.rule_bridge.session_worktree import _log_worktree_delete
-
-        _log_worktree_delete(
-            wt_path.name,
-            "lane-archive",
-            wt_path,
-            REPO_ROOT,
-            phase=phase,
-            with_stack=(phase == "begin"),
-            extra=extra,
-        )
-    except Exception:  # noqa: BLE001 — 遥测不得改变归档结果
-        print(f"[ARCHIVE] 遥测降级（phase={phase}），不影响归档主链", file=sys.stderr)
-
-
 def _archive_generate_evidence(sid: str, wt_path: Path) -> dict:
     """退役 patch 存证（复用 rule_bridge Z1 原语；fail-closed——失败调用方必须保留车道）。"""
     try:
@@ -1068,11 +1103,6 @@ def _archive_rescue_phase(info: dict, sid: str, wt_path: Path, skip_rescue: bool
 
 def _archive_remove_and_verify(wt_path: Path) -> bool:
     """③remove（locked 双 force 实测可过；失败 safe_rmtree 兜底）+ ④prune 进程外核实。"""
-    # C13（统筹裁定 2026-10-13）：擦除前先落一条 begin 事件进统一遥测流
-    # （worktree_ops_log.jsonl，GATE-WORKTREE-OPS-TELEMETRY 的审计对象）。
-    # 实测缺口＝lane-archive 历史上只写 worktree_abort.jsonl，遥测流里六条被归档车道
-    # 零命中（st-nightmine-20261010 等）——"谁删的／东西搬到哪"跨账拼不出即成悬案。
-    _log_archive_delete_event(wt_path, "begin")
     r_rm = _run_git(["worktree", "remove", "--force", "--force", str(wt_path)], check=False)
     if r_rm.returncode != 0:
         print(f"  ③ worktree remove 失败（{(r_rm.stderr or '').strip()[:120]}）→ safe_rmtree 兜底", file=sys.stderr)
@@ -1106,19 +1136,6 @@ def _archive_branch_finish(sid: str, branch: str | None, info: dict, patch_path:
         "ARCHIVED",
         "lane-archive 完成",
         {"branch": branch, "verdict": info["verdict"], "ahead": info["ahead"], "patch": patch_path},
-    )
-    # C13：done 事件把"东西在哪"钉进遥测流——patch 存证路径＋三分类读数随删除同条可查，
-    # 事后判"这车道被删了还是被归档了"不必再跨 worktree_abort/ops_log 两本账拼。
-    _log_archive_delete_event(
-        REPO_ROOT / ".aidrafts" / sid,
-        "done",
-        extra={
-            "patch_path": patch_path,
-            "verdict": info.get("verdict"),
-            "ahead": info.get("ahead"),
-            "branch": branch,
-            "pid": os.getpid(),
-        },
     )
 
 

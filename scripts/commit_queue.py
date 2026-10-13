@@ -56,7 +56,15 @@
   dead/         死信（含 dead_reason/dead_at；永不自动清理，66 号 §8；
                 人工 dead-archive 归档除外——mv 非删，RB2；属主会话已死的自动重投
                 被存活闸拦落此，meta.ghost=true，裁定#459——CLI 手动 requeue 不受闸限）
+                当日分诊不隔夜（Owner 2026-10-13 派工令 v2 段二）：新死信当日必须走完
+                四态判定＋处置＋台账行，判定尺=内容级（dead-archive --content-level，
+                袋字节→git blob sha 对 dev 现值/全史/任意 ref 比对），禁按条数估；
+                删袋必留处置台账行（qid/verdict/bag_json_sha256/blob_set_sha256，
+                由 dead_archive_letters 机生写 manifest.jsonl，禁手写补录）
   blobs/        内容寻址快照（sha256 命名，tmp+os.replace 原子写）
+                与袋绑定清（Owner 2026-10-13 段二）：袋出 dead/ 即失该路引用，blob 转
+                孤儿/归档引用态，末段由 scripts/governance/blob_gc.py 当日归档一次，
+                不隔夜挂账（phase2=D 类"仅归档引用"随清袋走＝本班 Owner 直令裁定）
   {session_id}.seq  会话内单调序号（qid 组成部分；唯一性最终由 O_EXCL 保证）
   serializer.lease  Serializer 租约（TTL=300s + 僵尸 PID 检测）
 
@@ -89,7 +97,7 @@ CLI
   python scripts/commit_queue.py drain [--queue-root DIR] [--max-items N]
   python scripts/commit_queue.py requeue <qid> [--worktree-root DIR] [--no-bootstrap]
   python scripts/commit_queue.py cleanup [--done-ttl-days N]
-  python scripts/commit_queue.py dead-archive [--days N] [--no-verify-landed] [--execute] [--session SID] [--json]
+  python scripts/commit_queue.py dead-archive [--days N] [--no-verify-landed] [--content-level] [--execute] [--session SID] [--json]
   python scripts/commit_queue.py backfill-base-head [--repo-root DIR] [--execute] [--json]
   python scripts/commit_queue.py health [--no-alert]
 
@@ -2581,6 +2589,23 @@ def try_bootstrap_drain(queue_root: str | os.PathLike | None = None, *, landing=
 #: 同签名复发熔断阈值：第 3 封即熔断升级根因工序单（10_wave_plan R-M 判据）
 _RECURRENCE_FUSE_LIMIT = 3
 
+#: 复发熔断 7 天衰减窗（Owner 2026-10-13 派工令 v2 段二第二条"治 366+ 假信号"）。
+#: 病根实证（dead/_recurrence_state.json 本班实测）：item:网关落盘失败（COMMIT_FAILED）
+#: 一类累计 673 封跨 13 天、item:TAKEOVER-PENDING 单袋 recurrence_count=81——终身累计把
+#: 早已散场的根因当"正在复发"永久熔断，挡死的是合法重投，不是第二次犯错。
+#: 语义＝熔断只认**窗内**复发：距上次同签名死亡超 7 天＝旧账清零重新起算（count 终身
+#: 累计保留做审计面，裁决面换 window_count）。阈值数值 3 零改动，改的只是计数时间轴。
+_RECURRENCE_DECAY_DAYS = 7.0
+
+
+def _recurrence_window_open(entry: dict, now_ts: float) -> bool:
+    """衰减窗是否还开着：entry 无 last_dead_at（升级前的历史条目）按开着处理＝行为不变。"""
+    last = entry.get("last_dead_at")
+    if not isinstance(last, (int, float)):
+        return True
+    return (now_ts - float(last)) <= _RECURRENCE_DECAY_DAYS * 86400.0
+
+
 # F5 门禁 id 提取（st-govfix-g2-20261007）：熔断签名从 family 级下沉 gate_id 级。
 # 病根实证（.runtime/commit_queue/dead/_root_cause/）：family:头部 粒度下 733 封
 # "网关落盘失败（COMMIT_FAILED）" 全部聚进一张工序单 item_网关落盘失败_COMMIT_FAILED.json
@@ -2644,13 +2669,60 @@ def _recurrence_state_path(root: Path) -> Path:
     return root / "dead" / "_recurrence_state.json"
 
 
-def _bump_recurrence(root: Path, signature: str, *, owner: str, first_dead_at: str) -> dict:
-    """同签名复发计数 +1 并持久化；返回该签名条目 {count, first_dead_at, owner_sessions}。
+def _recurrence_fuse_hot(root: Path, old_item: dict, *, now_ts: float | None = None) -> tuple[bool, dict]:
+    """熔断此刻是否还热（衰减窗探针；纯读，零写盘）。
+
+    时基优先级：复发表 `signatures[<sig>].last_dead_at`（跨会话真复发时刻）→ 袋自身
+    `dead_at`/`first_dead_at` → 全读不到则**保守当热**（宁误挡一次不误放盲重投；
+    调用方 --force 显式旗仍在）。返回 (是否热, 探针 dict)——探针随 RequeueError
+    details 出参，人工复核不必再回去考古状态文件。
+    """
+    now_ts = time.time() if now_ts is None else float(now_ts)
+    sig = str(old_item.get("dead_signature") or "")
+    probe: dict = {"signature": sig, "source": "", "since_last_h": None, "window_count": None}
+    entry: dict = {}
+    try:
+        state = json.loads(_recurrence_state_path(root).read_text(encoding="utf-8"))
+        if isinstance(state, dict):
+            got = (state.get("signatures") or {}).get(sig)
+            if isinstance(got, dict):
+                entry = got
+    except (OSError, ValueError, TypeError):
+        entry = {}
+    probe["window_count"] = entry.get("window_count")
+    last_ts: float | None = None
+    if isinstance(entry.get("last_dead_at"), (int, float)):
+        last_ts = float(entry["last_dead_at"])
+        probe["source"] = "recurrence_state.last_dead_at"
+    if last_ts is None:
+        for key in ("dead_at", "first_dead_at"):
+            try:
+                last_ts = datetime.fromisoformat(str(old_item.get(key))).timestamp()
+                probe["source"] = f"item.{key}"
+                break
+            except (TypeError, ValueError):
+                continue
+    if last_ts is None:
+        probe["since_last_h"] = 0.0
+        probe["source"] = "unreadable->conservative_hot"
+        return True, probe
+    hours = (now_ts - last_ts) / 3600.0
+    probe["since_last_h"] = round(hours, 2)
+    return hours <= _RECURRENCE_DECAY_DAYS * 24.0, probe
+
+
+def _bump_recurrence(
+    root: Path, signature: str, *, owner: str, first_dead_at: str, now_ts: float | None = None
+) -> dict:
+    """同签名复发计数 +1 并持久化；返回该签名条目 {count, window_count, last_dead_at,
+    first_dead_at, owner_sessions}。
 
     首封定基（first_dead_at 取首封，此后不覆写）；owner_sessions 逐封去重累积。
     状态文件缺失/损坏按零起算（红队 P2 口径：熔断语义不因脏数据崩溃——计数丢失只
     损失一次熔断时机，绝不误伤）。调用方负责 _ensure_dirs。
+    `now_ts` 仅供测试注入时钟（缺省取实测时刻，衰减窗判定必须可复算）。
     """
+    now_ts = time.time() if now_ts is None else float(now_ts)
     path = _recurrence_state_path(root)
     try:
         state = json.loads(path.read_text(encoding="utf-8"))
@@ -2668,11 +2740,25 @@ def _bump_recurrence(root: Path, signature: str, *, owner: str, first_dead_at: s
         count = int(entry.get("count") or 0) + 1
     except (TypeError, ValueError):
         count = 1
+    # 衰减窗裁决面：窗开着就在旧 window_count 上加一，窗关着＝旧账清零从 1 重新起算。
+    # 历史条目无 window_count 时以终身 count 播种（保守：不因为升级当场解除既有熔断）。
+    window_open = _recurrence_window_open(entry, now_ts)
+    try:
+        prev_window = int(entry.get("window_count") or 0)
+    except (TypeError, ValueError):
+        prev_window = 0
+    if prev_window == 0:
+        prev_window = int(entry.get("count") or 0)
+    window_count = 1 if not window_open else prev_window + 1
     owners = [o for o in (entry.get("owner_sessions") or []) if o]
     if owner and owner not in owners:
         owners.append(owner)
     new_entry = {
         "count": count,
+        "window_count": window_count,
+        "last_dead_at": now_ts,
+        "window_started_at": (entry.get("window_started_at") if window_open else "")
+        or datetime.fromtimestamp(now_ts).astimezone().isoformat(timespec="seconds"),
         "first_dead_at": entry.get("first_dead_at") or first_dead_at or "",
         "owner_sessions": owners,
     }
@@ -2893,6 +2979,10 @@ def _seal_dead_letter(queue_root: str | os.PathLike, item: dict) -> list[str]:
         first_dead_at=str(item.get("first_dead_at") or ""),
     )
     count = int(entry.get("count") or 0)
+    try:
+        window_count = int(entry.get("window_count") or 0)
+    except (TypeError, ValueError):
+        window_count = count  # 脏值回退终身累计面（宁多熔不误放，7 天衰减窗口径）
     # 车道复发计数与告警（车道 C）：计数面独立于签名复发（签名被死因文本噪声击穿，
     # 见 _session_lane_key docstring）；告警失败不置位、下次复发补告（宁多喊不静默）。
     # 计数只落 dead/_recurrence_state.json 不写袋体——cascade_diff 差分尺钉死死袋
@@ -2903,7 +2993,8 @@ def _seal_dead_letter(queue_root: str | os.PathLike, item: dict) -> list[str]:
         if _alert_session_lane_stall(lane_key, lane_entry, item):
             _mark_session_lane_alerted(root, lane_key)
     item["recurrence_count"] = count
-    if count >= _RECURRENCE_FUSE_LIMIT:
+    item["recurrence_window_count"] = window_count
+    if window_count >= _RECURRENCE_FUSE_LIMIT:
         item["recurrence_fused"] = True
         ticket_rel = f"dead/_root_cause/{_signature_slug(signature)}.json"
         item["root_cause_ticket"] = ticket_rel
@@ -3111,14 +3202,31 @@ def requeue_dead_item(
     # 波 1B 1.7c 复发熔断（st-zc9-lane-r1）：同签名死信已 _RECURRENCE_FUSE_LIMIT 次
     # ⇒ 盲 requeue 拒绝（修根因前不再烧 landing）；根因工序单随 details 一跳可达；
     # --force 显式旗留痕越过（meta.requeue_forced 留痕）。先于 requeue_count 熔断。
+    # 7 天衰减窗（Owner 2026-10-13 派工令 v2 段二）：袋上 recurrence_fused 是**封印当时**
+    # 的快照，裁决面必须问当下——同签名距上次死亡已超 7 天＝旧账散场，熔断随之衰减，
+    # 不再挡合法重投（实测 673/81 累计型假信号即此形态）。阈值数值零改动，只加时间轴。
     if old_item.get("recurrence_fused") and not force:
-        raise RequeueError(
-            f"复发熔断：{qid} 同签名死信已 {old_item.get('recurrence_count', _RECURRENCE_FUSE_LIMIT)} 次，"
-            "盲重投拒绝——按根因工序单修因后再取回（确需越过的用 --force，留痕）",
-            details={
-                "root_cause_ticket": old_item.get("root_cause_ticket") or "",
-                "dead_signature": old_item.get("dead_signature") or "",
-            },
+        hot, fuse_probe = _recurrence_fuse_hot(root, old_item)
+        if hot:
+            raise RequeueError(
+                f"复发熔断：{qid} 同签名死信已 "
+                f"{old_item.get('recurrence_window_count', old_item.get('recurrence_count', _RECURRENCE_FUSE_LIMIT))} "
+                f"次（窗内）且距上次同签名死亡 {fuse_probe['since_last_h']:.1f}h ≤ "
+                f"{_RECURRENCE_DECAY_DAYS:g} 天衰减窗，"
+                "盲重投拒绝——按根因工序单修因后再取回（确需越过的用 --force，留痕）",
+                details={
+                    "root_cause_ticket": old_item.get("root_cause_ticket") or "",
+                    "dead_signature": old_item.get("dead_signature") or "",
+                    "fuse_probe": fuse_probe,
+                },
+            )
+        logger.info(
+            "[requeue] 熔断衰减放行 %s：签名 %s 距上次死亡 %.1fh 已超 %g 天窗（探针=%s）",
+            qid,
+            old_item.get("dead_signature") or "",
+            fuse_probe.get("since_last_h") or 0.0,
+            _RECURRENCE_DECAY_DAYS,
+            fuse_probe,
         )
     # M1.3-③ 重投熔断：新袋计数=旧袋+1，≥_REQUEUE_CIRCUIT_LIMIT 拒绝并给死因处方
     # （连败链说明重复重试不可解）；--force 显式旗可越（meta.requeue_forced=true 留痕）。
@@ -3534,6 +3642,165 @@ def _assert_session_filter_closed(sessions: set[str], item_sid: str, qid: str) -
     )
 
 
+#: 内容级门放行集：袋内每件字节都能在 git 对象面找到归宿（dev 现值 / dev 全史 /
+#: 任一有效 ref）。三态之外（UNIQUE=从未落地、EVIDENCE_*=证据件缺失或被改）一律不放行。
+#: 口径同 blobs 内容寻址：比的是 git blob sha1（git ls-tree / rev-list 同源），
+#: 完整性核验用袋记 blob_sha256（内容字节 sha256）——两把尺各管各的，禁互拼。
+_CONTENT_GATE_ALLOW = frozenset({"IN_DEV_TIP", "IN_DEV_HISTORY", "IN_OTHER_REF"})
+
+
+def _git_blob_sha1(data: bytes) -> str:
+    """git blob 对象 id（`blob <len>\\0` 前缀 + sha1），与 ls-tree/rev-list 同口径。"""
+    h = hashlib.sha1()
+    h.update(b"blob ")
+    h.update(str(len(data)).encode("ascii"))
+    h.update(b"\0")
+    h.update(data)
+    return h.hexdigest()
+
+
+def _archive_ledger_evidence(entry: Path, files: list[dict]) -> dict:
+    """处置台账三栏（机生禁手写）：袋体字节 sha256＋袋内 blob 集合摘要＋引用计数。
+
+    集合摘要＝袋内 blob_sha256 排序后换行拼接再 sha256——去顺序噪声，同内容两袋可比。
+    袋体读不到按空串记（不抛：台账缺栏比整批不动盘好，判定面另有 content_gate 兜）。
+    """
+    try:
+        bag_sha = hashlib.sha256(entry.read_bytes()).hexdigest()
+    except OSError:
+        bag_sha = ""
+    refs = sorted(str(f.get("blob_sha256") or "") for f in files)
+    return {
+        "bag_json_sha256": bag_sha,
+        "blob_set_sha256": hashlib.sha256("\n".join(refs).encode("utf-8")).hexdigest(),
+        "n_blob_refs": len(refs),
+    }
+
+
+def _dev_object_index(repo_root: Path) -> tuple[dict[str, str], set[str], set[str]]:
+    """dev 现值 path→blob sha1 ＋ dev 全史对象集 ＋ 任意 ref 可达对象集。
+
+    三次 git 只读调用建全量索引（千袋×万件共用一份，禁逐件起子进程）。任一调用
+    失败 → 抛 RuntimeError，由调用方按 fail-closed 处理（判不了就不放行）。
+    """
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+    def _run(args: list[str]) -> str:
+        # trae_067 铁律2：仓内 subprocess 一律走 process_pool 统一入口（Windows 加
+        # CREATE_NO_WINDOW 免闪窗）——本班首投袋 q-…-0006 就是被 BARE-SUBPROCESS 门
+        # 当场拦下的（裸 subprocess.run 在 3689 行），此为该门禁的真门禁发现。
+        proc = run_subprocess_hidden(
+            ["git", "-C", str(repo_root), *args],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=600,
+            check=False,
+        )
+        if proc.returncode != 0:
+            raise RuntimeError(f"git {' '.join(args)} 失败 rc={proc.returncode}")
+        return proc.stdout
+
+    tip: dict[str, str] = {}
+    for line in _run(["ls-tree", "-r", _TARGET_BRANCH]).splitlines():
+        meta, _, path = line.partition("\t")
+        parts = meta.split()
+        if len(parts) >= 3 and parts[1] == "blob":
+            tip[path] = parts[2]
+    if not tip:
+        raise RuntimeError(f"{_TARGET_BRANCH} 树为空——内容级判据不可用")
+    hist = {l.split(" ", 1)[0] for l in _run(["rev-list", "--objects", _TARGET_BRANCH]).splitlines()}
+    refs = {l.split(" ", 1)[0] for l in _run(["rev-list", "--objects", "--all"]).splitlines()}
+    return tip, hist, refs
+
+
+def make_dead_letter_content_gate(
+    queue_root: str | os.PathLike | None = None,
+    *,
+    repo_root: Path | None = None,
+) -> Callable[[dict], tuple[bool, dict]]:
+    """内容级四态判据工厂（Owner 2026-10-13 派工令 v2 段三"禁按条数估"的落码形态）。
+
+    四态：A_LANDED（每件都在 git 对象面有归宿，放行归档）｜B_UNIQUE_REQUEUEABLE
+    （有从未落地件且基底==dev 现值，属"待重投"非"可销"，不放行归档交 requeue）｜
+    C_UNIQUE_WOULD_REGRESS（有从未落地件且 dev 已前进，盲重投即回退弹，不放行）｜
+    D_EVIDENCE_*（blob 文件缺失/字节与袋记 sha256 不符，不放行，交人工确认已失）。
+    索引惰性建一次（首批件时），此后逐件纯内存比对。
+    """
+    root = resolve_queue_root(queue_root)
+    base = repo_root if repo_root is not None else _REPO_ROOT
+    box: dict[str, object] = {"idx": None}
+
+    def _gate(item: dict) -> tuple[bool, dict]:
+        if box["idx"] is None:
+            box["idx"] = _dev_object_index(Path(base))
+        tip, hist, refs = box["idx"]  # type: ignore[misc]
+        files = item.get("files") or []
+        states: list[str] = []
+        uniq_paths: list[str] = []
+        lost: list[str] = []
+        tampered: list[str] = []
+        base_still_current = True
+        for f in files:
+            path = str(f.get("path") or "")
+            ref = str(f.get("blob_ref") or "")
+            want = str(f.get("blob_sha256") or "")
+            if not ref:
+                states.append("EVIDENCE_LOST")
+                lost.append(path)
+                continue
+            bp = root / ref.replace("\\", "/")
+            try:
+                data = bp.read_bytes()
+            except OSError:
+                states.append("EVIDENCE_LOST")
+                lost.append(path)
+                continue
+            if want and hashlib.sha256(data).hexdigest() != want:
+                states.append("EVIDENCE_TAMPERED")
+                tampered.append(path)
+                continue
+            sha1 = _git_blob_sha1(data)
+            head = tip.get(path)
+            if head == sha1:
+                states.append("IN_DEV_TIP")
+            elif sha1 in hist:
+                states.append("IN_DEV_HISTORY")
+            elif sha1 in refs:
+                states.append("IN_OTHER_REF")
+            else:
+                states.append("UNIQUE")
+                uniq_paths.append(path)
+                if head is not None and f.get("base_blob") != head:
+                    base_still_current = False
+        have_unique = bool(uniq_paths)
+        have_evidence_fault = bool(lost or tampered)
+        if not files:
+            verdict = "Z_EMPTY_BAG"
+        elif have_evidence_fault:
+            verdict = "D_EVIDENCE_LOST" if not have_unique else "D_EVIDENCE_MIXED"
+        elif not have_unique:
+            verdict = "A_LANDED"
+        elif base_still_current:
+            verdict = "B_UNIQUE_REQUEUEABLE"
+        else:
+            verdict = "C_UNIQUE_WOULD_REGRESS"
+        allow = verdict == "A_LANDED"
+        return allow, {
+            "verdict": verdict,
+            "n_items": len(files),
+            "n_unique": len(uniq_paths),
+            "unique_paths": uniq_paths[:20],
+            "n_evidence_lost": len(lost),
+            "n_evidence_tampered": len(tampered),
+            "base_still_current": base_still_current,
+            "states_seen": sorted(set(states)),
+        }
+
+    return _gate
+
+
 def dead_archive_letters(
     queue_root: str | os.PathLike | None = None,
     *,
@@ -3543,6 +3810,7 @@ def dead_archive_letters(
     now: datetime | None = None,
     landed_checker: Callable[[str, str], bool] | None = None,
     sessions: set[str] | None = None,
+    content_gate: Callable[[dict], tuple[bool, dict]] | None = None,
 ) -> dict:
     """dead/ 官方归档（RB2）：全落+超龄死信整体 mv 进根级 dead_archive_<日>/ 袋+manifest。
 
@@ -3553,6 +3821,11 @@ def dead_archive_letters(
       ③落地校验（默认开）：逐 files[].path 判 dev HEAD（modify=在树；delete=已消失，
         取反语义）；有未落路径 → 留并附 dead_letter_prescription 处方（M3.3 复用）。
         --no-verify-landed 显式关闭须留 verify=off 痕（已取代型批量归档先例复用）。
+      ④内容级门（可选，content_gate）：注入 callable(item)→(放行?, 证据 dict) 时先于
+        落地校验执行，判不放行计 kept["content_held"] 留原位；证据 dict 并入台账行。
+        这是"路径在不在 dev"之上的**更严**判据（袋字节→git blob sha 对 dev 现值/全史
+        比对），不是放宽——默认 None 时现行行为逐字不变（向后兼容，测试零改）。
+        立法据＝Owner 2026-10-13 派工令 v2「内容级判定禁按条数估（行集差法）」。
 
     安全五条（设计 §3.4）：①mv 非删可逆，命令永久无删除域；②verify 默认开、delete
     取反；③租约存活整体拒绝（非逐件）+后继在途逐件跳过；④manifest.jsonl 逐件留痕
@@ -3587,7 +3860,13 @@ def dead_archive_letters(
     verify = "on" if verify_landed else "off"
     bag = root / f"dead_archive_{ref:%Y%m%d}"
     archived: list[str] = []
-    kept: dict[str, int] = {"young": 0, "revival_in_flight": 0, "unlanded": 0, "other_session": 0}
+    kept: dict[str, int] = {
+        "young": 0,
+        "revival_in_flight": 0,
+        "unlanded": 0,
+        "other_session": 0,
+        "content_held": 0,
+    }
     skipped_corrupt = 0
     prescriptions: list[dict] = []
     spot_check: dict[str, int] | None = (
@@ -3632,6 +3911,26 @@ def dead_archive_letters(
         if rq and ((root / "pending" / f"{rq}.json").exists() or (root / "processing" / f"{rq}.json").exists()):
             kept["revival_in_flight"] += 1
             continue
+        # ④ 内容级门（先于落地校验）：不放行留原位；判据自身出错按不放行处理
+        # （fail-closed，与默认落地判据"判不了落地就不归档"同口径，宁留勿丢）。
+        content_evidence: dict = {}
+        if content_gate is not None:
+            try:
+                _allow, content_evidence = content_gate(item)
+            except Exception as exc:  # noqa: BLE001 — 门故障降级为"不动盘"，绝不外溢成批量误归档
+                kept["content_held"] += 1
+                prescriptions.append(
+                    {
+                        "qid": item.get("qid", entry.stem),
+                        "dead_reason": str(item.get("dead_reason") or "")[:120],
+                        "content_gate_error": f"{type(exc).__name__}: {str(exc)[:160]}",
+                        "prescription": "内容级判据读取失败——人工复核该袋后再归档（本闸不放行）",
+                    }
+                )
+                continue
+            if not _allow:
+                kept["content_held"] += 1
+                continue
         files = item.get("files") or []
         # ③ 落地校验（默认开）：modify=dev 在树；delete=dev 已无（取反判）
         if verify_landed:
@@ -3654,6 +3953,7 @@ def dead_archive_letters(
                 if verdict != "unknown":
                     spot_check["checked"] += 1
                     spot_check[verdict] += 1
+        ledger_evidence = _archive_ledger_evidence(entry, files)
         if execute:
             # T13 fail-closed 闸：请求了 --session 却在此处解析出非请求 sid 的件 ⇒
             # 整体拒绝、零 mv（防过滤条件写反变成"顺手归档他人死信"——本项目在册红线：
@@ -3671,6 +3971,13 @@ def dead_archive_letters(
                 "n_files": len(files),
                 "verify": verify,
                 "tool": "commit_queue.dead-archive",
+                # 处置台账三栏（机生禁手写，Owner 2026-10-13 派工令 v2 段三）：袋号已在
+                # qid，此处补"判定"与"证据 sha"——归档后仍能逐袋回答"这袋当时装的是什么"，
+                # 失配核查不必回读 blob。取证时刻必须在 mv 之前（件搬走就读不到原字节，
+                # 本班回归测试当场把这一笔测红过）。
+                **ledger_evidence,
+                "verdict": str(content_evidence.get("verdict") or ""),
+                "content_evidence": content_evidence or None,
             }
             with open(bag / "manifest.jsonl", "a", encoding="utf-8") as fh:
                 fh.write(json.dumps(manifest, ensure_ascii=False) + "\n")
@@ -5012,6 +5319,7 @@ def _cmd_dead_archive(args: argparse.Namespace) -> int:
             verify_landed=not args.no_verify_landed,
             execute=args.execute,
             sessions=sessions or None,
+            content_gate=(make_dead_letter_content_gate(args.queue_root) if args.content_level else None),
         )
     except DeadArchiveError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -5021,8 +5329,10 @@ def _cmd_dead_archive(args: argparse.Namespace) -> int:
         f"DEAD-ARCHIVE: archived={len(result['archived'])} "
         f"kept={sum(kept.values()) + result['skipped_corrupt']} "
         f"(young={kept['young']}/unlanded={kept['unlanded']}/revival_in_flight={kept['revival_in_flight']}"
-        f"/other_session={kept['other_session']}/skipped_corrupt={result['skipped_corrupt']}) days={args.days:g} "
+        f"/other_session={kept['other_session']}/content_held={kept['content_held']}"
+        f"/skipped_corrupt={result['skipped_corrupt']}) days={args.days:g} "
         f"verify={result['verify']} execute={args.execute} bag={result['bag']}"
+        f" content_gate={'on' if args.content_level else 'off'}"
         f"{' sessions=' + ','.join(sorted(sessions)) if sessions else ''}"
     )
     if args.json:
@@ -5157,6 +5467,13 @@ def main(argv: list[str] | None = None) -> int:
         help="只归档该 sid 名下的死信（可重复给或逗号分隔；不给=全量旧行为，全量模式会跨会话、需人工确认避让他人袋）",
     )
     p_da.add_argument("--json", action="store_true", help="机器可读输出（archived 清单/kept 分布/未落处方）")
+    p_da.add_argument(
+        "--content-level",
+        action="store_true",
+        help="启用内容级四态门（袋字节→git blob sha1 对 dev 现值/全史/任意 ref 比对）："
+        "只放行 A_LANDED（袋内每件字节都在 git 对象面有归宿），其余留原位并写进台账判定栏。"
+        "不开=沿用路径存在性判据（Owner 2026-10-13 段三立法：内容级判定禁按条数估）",
+    )
     p_da.set_defaults(func=_cmd_dead_archive)
 
     p_hl = sub.add_parser(
