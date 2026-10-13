@@ -2,8 +2,8 @@
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] pytest; zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate
 # [CONSUMERS] C 件质量守卫：REGISTRY-YAML-PARSE watch 面 P0 扩面（六册）+投影 tamper 全档案生效
-# [INVARIANTS] 全部用例 tmp 状态文件/桩 gateway（零主区零 PG）；红蓝双向=手改拦/生成器过；
-#   独立成文件避让他会话 staged 的 test_registry_yaml_parse_gate.py WIP（共写禁令）
+# [INVARIANTS] 全部用例 tmp 状态文件/桩 gateway（零主区；PG 一律桩 conn，零真连）；
+#   红蓝双向=手改拦/生成器过；独立成文件避让他会话 staged 的 test_registry_yaml_parse_gate.py WIP（共写禁令）
 # [MODIFY-GUARD] 新建 2026-10-09 st-regsolo-20261010（热册单口写战役 C 件随批测试，tests/ 豁免 token）
 # [TTL] permanent
 """REGISTRY-YAML-PARSE watch 面扩面守卫（裁定#502 战役 C 件）。
@@ -141,3 +141,151 @@ def test_unarmed_registry_fail_open(tmp_path):
     gate = make_registry_yaml_parse_gate()
     ok, msg = gate.check(gw, [], session_id=None)
     assert ok is True, f"未武装册零行为（got: {msg}）"
+
+
+# ===========================================================================
+# P0-2② 真源对齐：HEAD 滞后差集改由 PG 账本判该不该拦（st-maint7-20261014）
+# ===========================================================================
+# 病根实证（10-13 夜 6 只死信同一条）：拦袋的
+# docs/_working/tdm_goal_structure_research_2026_10_13.md 的 token 在 PG 里
+# status='retired'，而当时 HEAD 的 YAML 还挂着退役残留——守门拿滞后面当基准，
+# 把按真源重打投影的无辜袋连杀多轮。本节验"只加对账、不松门禁"两面。
+
+_CAP_REL = "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
+
+
+def _cap_yaml(entries: list[tuple[str, str]]) -> str:
+    body = "schema_version: 1.1.0\ncapabilities: []\ncreation_tokens:\n"
+    for file_v, token_v in entries:
+        body += f"  - file: {file_v}\n    token: {token_v}\n"
+    return body
+
+
+class _FakeCursor:
+    """按 SQL 形态判命中：entry_key=%s 精确／LIKE %s 前缀（键形漂移保守面）。"""
+
+    def __init__(self, hits):
+        self._hits = hits
+        self._res = None
+
+    def execute(self, sql, params):
+        self._res = self._hits(sql, tuple(params))
+
+    def fetchone(self):
+        return self._res
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+
+class _FakeConn:
+    def __init__(self, hits):
+        self._hits = hits
+
+    def cursor(self):
+        return _FakeCursor(self._hits)
+
+    def close(self):
+        pass
+
+
+def _patch_pg(monkeypatch, hits):
+    """桩掉账本连接（PG 零真连）；calls 计数供"无差集不打扰账本"自证。"""
+    from zephyr.infrastructure import database_service as dbs
+
+    calls = {"n": 0}
+
+    def _get(self, read_only=False):
+        calls["n"] += 1
+        if isinstance(hits, Exception):
+            raise hits
+        return _FakeConn(hits)
+
+    monkeypatch.setattr(dbs.DatabaseService, "get_depgraph_conn", _get, raising=False)
+    return calls
+
+
+def _lag_gateway(tmp_path, head_text):
+    gw = SimpleNamespace(project_root=str(tmp_path))
+    gw.run_git = lambda cmd: SimpleNamespace(returncode=0, stdout=head_text)
+    return gw
+
+
+_HEAD_TWO = _cap_yaml([("a.md", "t-a"), ("b.md", "t-b")])
+_STAGED_ONE = _cap_yaml([("a.md", "t-a")])
+_MISSING_KEY = "file=b.md|token=t-b"
+
+
+def test_pg_retired_entry_no_longer_kills_innocent_bag(tmp_path, monkeypatch):
+    """真源不背书（retired/查无）⇒ HEAD 那份是残留：放行＋落审计（10-13 夜六袋形态）。"""
+    from zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate import _head_token_lag_issue
+
+    calls = _patch_pg(monkeypatch, lambda sql, params: None)
+    issue = _head_token_lag_issue(_lag_gateway(tmp_path, _HEAD_TWO), _CAP_REL, _STAGED_ONE, "")
+    assert issue is None, f"PG 已 retire 的残留不该判死: {issue}"
+    assert calls["n"] == 1, "对账必须只开一次连接"
+    audit = tmp_path / ".runtime" / "gate_audit" / "registry_yaml_parse.jsonl"
+    assert audit.exists(), "放行必须留审计痕（可见性不靠沉默）"
+    rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
+    assert rec["event"] == "head_token_lag_pg_cleared"
+    assert rec["cleared_by_pg"] == ["b.md|token=t-b"]
+    assert rec["still_blocking"] == []
+
+
+def test_pg_active_entry_still_blocks(tmp_path, monkeypatch):
+    """真源 active 命中该复合键⇒ staged 缺它＝真整档回退，照拦（判据本体不松）。"""
+    from zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate import _head_token_lag_issue
+
+    def hits(sql, params):
+        return {"?column?": 1} if params[2] == _MISSING_KEY and "entry_key=%s" in sql else None
+
+    _patch_pg(monkeypatch, hits)
+    issue = _head_token_lag_issue(_lag_gateway(tmp_path, _HEAD_TWO), _CAP_REL, _STAGED_ONE, "")
+    assert issue is not None and "相对 HEAD 少 1 条" in issue, issue
+    assert "PG 对账：1 条 active 照拦" in issue, issue
+
+
+def test_pg_key_drift_same_file_active_still_blocks(tmp_path, monkeypatch):
+    """精确键未命中、同 file 却有 active 条目（键形漂移）⇒ 保守照拦，宁不误放。"""
+
+    def hits(sql, params):
+        return {"?column?": 1} if "LIKE %s" in sql else None
+
+    from zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate import _head_token_lag_issue
+
+    issue = _head_token_lag_issue(_lag_gateway(tmp_path, _HEAD_TWO), _CAP_REL, _STAGED_ONE, "")
+    assert issue is not None and "相对 HEAD 少 1 条" in issue, issue
+
+
+def test_pg_unreachable_keeps_block(tmp_path, monkeypatch):
+    """账本不可达＝全照拦——禁止"读不到账本"变成放行（与 create_guard T4 同哲学）。"""
+    from zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate import _head_token_lag_issue
+
+    _patch_pg(monkeypatch, RuntimeError("pg down"))
+    issue = _head_token_lag_issue(_lag_gateway(tmp_path, _HEAD_TWO), _CAP_REL, _STAGED_ONE, "")
+    assert issue is not None and "相对 HEAD 少 1 条" in issue, issue
+    assert "照拦" in issue, issue
+
+
+def test_degenerate_identity_cannot_be_reconciled_blocks(tmp_path, monkeypatch):
+    """非复合身份（无 file/token 对的退化条目）无法对账⇒照拦。"""
+    from zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate import _head_token_lag_issue
+
+    calls = _patch_pg(monkeypatch, lambda sql, params: None)
+    head = "creation_tokens:\n- path: legacy_entry.md\n"
+    issue = _head_token_lag_issue(_lag_gateway(tmp_path, head), _CAP_REL, "creation_tokens: []\n", "")
+    assert issue is not None and "相对 HEAD 少 1 条" in issue, issue
+    assert calls["n"] == 0, "无复合身份可对账时不该去开账本连接"
+
+
+def test_no_missing_never_touches_pg(tmp_path, monkeypatch):
+    """HEAD==staged（无差集）⇒ 零账本开销（常见路径不加成本）。"""
+    from zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate import _head_token_lag_issue
+
+    calls = _patch_pg(monkeypatch, lambda sql, params: None)
+    issue = _head_token_lag_issue(_lag_gateway(tmp_path, _STAGED_ONE), _CAP_REL, _STAGED_ONE, "")
+    assert issue is None
+    assert calls["n"] == 0

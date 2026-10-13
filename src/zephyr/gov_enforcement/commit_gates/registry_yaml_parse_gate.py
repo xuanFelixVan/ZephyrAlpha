@@ -17,6 +17,12 @@
 #   staged==PG 投影，不证投影未落后 HEAD；直提 render-sync 整档覆盖抹他道 token 的
 #   病根封堵）；白名单=[allow-mass-deletion:reason≥10字]（与 REGISTRY-MASS-DELETION
 #   同标记）；HEAD 缺失/解析失败 fail-open
+#   2026-10-14 真源对齐（st-maint7-20261014 P0-2②）：差集不再直接判死——逐条问 PG
+#   registry_ledger（REG-CAPCAN-001／family_key=creation_tokens，键=复合身份加 file= 前缀），
+#   仅真源 status='active' 者计入阻断；PG 查无／已 retire 者＝HEAD 挂的是退役残留，
+#   投影按真源剔除属合法收敛，放行并落审计 event=head_token_lag_pg_cleared（实证形态＝
+#   10-13 夜 6 袋全被同一条 retired token 拦死）。账本不可达／查询异常／非复合身份
+#   ⇒ 全条照旧阻断（只加对账不放行，与 create_guard T4 第三源同哲学）
 # [MODIFY-GUARD] gate_id="REGISTRY-YAML-PARSE"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；
 #   2026-10-10 st-maint1-20261010 件③：新增公开判据函数 preflight_merge_terminal（merge 通道补检，
 #   git merge-tree 算合并终态字节+就地复用本门 _structural_issues，两条 merge 通道共用单一真源）
@@ -194,6 +200,14 @@ def _projection_tamper_issue(gateway, watch_file: str) -> str | None:
 # 失败/解析失败 → fail-open。挂本文件不新增 gate（净零红线），own-scope 既有。
 _PROJECTION_LAG_MARKER_RE = re.compile(r"\[allow-mass-deletion:([^\]]{10,})\]")
 
+# SQL 集中化（§5.160.2 NO-BARE-SQL，对标 create_guard._SQL_PG_ACTIVE_TOKEN_BY_FILE 同规格）：
+# {schema} 由调用点 format 注入，参数化 %s 承载 registry_id/family_key/entry_key 值。
+# 与 create_guard 那条的差别=精确键匹配（对账单条身份），非按 file 前缀问存在。
+_SQL_PG_ACTIVE_TOKEN_BY_KEY = (
+    "SELECT 1 FROM {schema}.registry_entry "
+    "WHERE registry_id=%s AND family_key=%s AND status='active' AND entry_key=%s LIMIT 1"
+)
+
 
 def _creation_token_identities(text: str) -> dict[str, str] | None:
     """顶层 creation_tokens 条目复合身份集（file|token= → 展示名）。解析失败/结构不符 → None。"""
@@ -224,6 +238,84 @@ def _creation_token_identities(text: str) -> dict[str, str] | None:
     return out
 
 
+def _pg_endorsed_token_ids(gateway, missing_ids: list[str]) -> tuple[set[str], str]:
+    """问 PG 账本：HEAD 有而投影无的条目里，哪些**真源仍背书**（该留在拦截止里）。
+
+    病根实证（非推测）：10-13 夜 6 只死信全被同一条拦——
+    ``docs/_working/tdm_goal_structure_research_2026_10_13.md`` 的 token 条目。查 PG：
+    该 entry ``status='retired'``（真源 15470 active／181 retired），而当时 HEAD 的
+    YAML 还挂着它的退役残留，新重打的投影已按真源剔除 ⇒ 本守门拿**滞后的 HEAD** 当
+    基准，把六个无辜袋连杀三轮以上。令卡处方＝"token 真源＝PG，判据读面与真源方向
+    对齐，禁投影滞后判死"（Owner 在册正解：改喂给闸的输入指向，不弱化判据）。
+
+    判据方向（只加对账，不松门禁）：
+      1. 真源 ``status='active'`` 命中该复合键 ⇒ 该条目确实该在投影里，staged 缺它＝
+         真整档回退 ⇒ 留在拦截止（照拦，本体不动）；
+      2. 真源查无／已 retire ⇒ HEAD 里那份是退役残留，投影按真源剔除＝合法收敛 ⇒ 放行；
+      3. 同 file 有其他 active 条目而精确键未命中（键形漂移）⇒ 保守照拦；
+      4. 账本不可达／驱动异常／查询异常 ⇒ **全部按 active 处理（照拦）**，绝不让
+         "读不到账本"变成放行（与 create_guard T4 第三源同哲学）；
+      5. 非复合身份（``_creation_token_identities`` 的退化单键形态）无法与 PG entry_key
+         对账 ⇒ 照拦（宁不误放）。
+
+    registry_id/family_key/SQL 形态沿 create_guard 的在册单点（``_SQL_PG_ACTIVE_TOKEN_BY_FILE``
+    + ``_CREATION_TOKEN_REGISTRY_ID``，ROOR 同物理路径双挂号取正源常量的理由见其注释），
+    故对本模块零新增真源；懒加载 import 避免给 gate 装载链添依赖。永不抛异常。
+    """
+    composite = [k for k in missing_ids if "|token=" in k]
+    degenerate = [k for k in missing_ids if "|token=" not in k]
+    if not composite:
+        return set(missing_ids), "无复合身份可对账（退化形态全照拦）"
+    try:
+        # 私约复用：create_guard 不 import 本模块（无环），取其在册 SQL/registry_id 单点
+        from zephyr.gov_enforcement.commit_gates.create_guard import (
+            _CREATION_TOKEN_REGISTRY_ID,
+            _SQL_PG_ACTIVE_TOKEN_BY_FILE,
+        )
+        from zephyr.governance.registry_ledger.registry_ledger_ddl import SCHEMA_NAME
+        from zephyr.infrastructure.database_service import DatabaseService
+    except Exception as exc:  # noqa: BLE001 — 账本侧不可达=全照拦
+        logger.warning(
+            "REGISTRY-YAML-PARSE: PG 真源对账不可达（%s: %s），按投影口径照拦。",
+            type(exc).__name__,
+            str(exc)[:160],
+        )
+        return set(missing_ids), "PG 账本不可达（照拦）"
+
+    endorsed: set[str] = set()
+    sql_exact = _SQL_PG_ACTIVE_TOKEN_BY_KEY.format(schema=SCHEMA_NAME)
+    sql_file = _SQL_PG_ACTIVE_TOKEN_BY_FILE.format(schema=SCHEMA_NAME)
+    conn = None
+    try:
+        conn = DatabaseService().get_depgraph_conn(read_only=True)
+        with conn.cursor() as cur:
+            for ident in composite:
+                cur.execute(sql_exact, (_CREATION_TOKEN_REGISTRY_ID, "creation_tokens", f"file={ident}"))
+                if cur.fetchone() is not None:
+                    endorsed.add(ident)
+                    continue
+                file_part = ident.split("|token=", 1)[0]
+                cur.execute(sql_file, (_CREATION_TOKEN_REGISTRY_ID, "creation_tokens", f"file={file_part}|%"))
+                if cur.fetchone() is not None:
+                    endorsed.add(ident)  # 键形漂移保守面：同 file 有 active 条目 ⇒ 照拦
+    except Exception as exc:  # noqa: BLE001 — 查询异常=全照拦，禁止读不到即放行
+        logger.warning(
+            "REGISTRY-YAML-PARSE: PG 真源对账查询异常（%s: %s），按投影口径照拦。",
+            type(exc).__name__,
+            str(exc)[:160],
+        )
+        return set(missing_ids), "PG 查询异常（照拦）"
+    finally:
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:  # noqa: BLE001 — 只读连接回收失败不影响已取定的判定
+                logger.debug("PG token 对账连接回收失败（忽略）", exc_info=True)
+    endorsed |= set(degenerate)
+    cleared_n = len(missing_ids) - len(endorsed)
+    return endorsed, f"PG 对账：{len(endorsed)} 条 active 照拦／{cleared_n} 条真源不背书放行"
+
+
 def _head_token_lag_issue(gateway, watch_file: str, staged_text: str, message: str) -> str | None:
     """直提通道 capability 册 token 级只增不减判别（返回问题文案或 None=通过/不适用）。永不抛异常。"""
     try:
@@ -235,6 +327,33 @@ def _head_token_lag_issue(gateway, watch_file: str, staged_text: str, message: s
         if head_ids is None or staged_ids is None:
             return None  # 判不了 → fail-open（结构面由 _structural_issues 把守）
         missing = sorted(set(head_ids) - set(staged_ids))
+        if not missing:
+            return None
+        # 真源对齐（st-maint7-20261014 P0-2②）：HEAD 是滞后面，不是真源——差集里哪些条目
+        # 该存在由 PG 账本判；真源已 retire 的残留不再把无辜袋判死（详见函数 docstring）。
+        endorsed, pg_note = _pg_endorsed_token_ids(gateway, missing)
+        cleared = [k for k in missing if k not in endorsed]
+        if cleared:
+            logger.warning(
+                "REGISTRY-YAML-PARSE: %s 相对 HEAD 少 %d 条，其中 %d 条经 PG 真源判定不该在投影里"
+                "（退役残留/真源查无），不按回退判死: %s",
+                watch_file,
+                len(missing),
+                len(cleared),
+                "; ".join(head_ids[k] for k in cleared[:3]),
+            )
+            _audit(
+                gateway,
+                {
+                    "event": "head_token_lag_pg_cleared",
+                    "file": watch_file,
+                    "missing_total": len(missing),
+                    "cleared_by_pg": cleared[:20],
+                    "still_blocking": [head_ids[k] for k in missing if k in endorsed][:20],
+                    "pg_note": pg_note,
+                },
+            )
+        missing = [k for k in missing if k in endorsed]
         if not missing:
             return None
         if _PROJECTION_LAG_MARKER_RE.search(message or ""):
@@ -250,6 +369,7 @@ def _head_token_lag_issue(gateway, watch_file: str, staged_text: str, message: s
             f"会抹掉他道已落条目（陈旧投影/双轨滞后）。修法：PG 登记（api.register）后"
             f"重打投影（registry_projection_generator --render）再提交；确属合法退役"
             f"（PG retire 已对账）：commit message 加 [allow-mass-deletion:<reason≥10字>]"
+            f"［PG 对账状态：{pg_note}］"
         )
     except Exception:  # noqa: BLE001 — 执法扩展整体 fail-open
         logger.debug("head token lag check fail-open", exc_info=True)

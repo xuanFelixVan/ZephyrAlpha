@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)；波13·包13.1（2026-09-26）新建 .py 查功能关键词：对每个新建 .py 取查询面（文件名 stem+模块 docstring 首段+顶层类/函数名）切探针，逐探针调既有 CapabilityLookup.find()，命中>0（canonical 指向本文件或同批新建者除外）⇒硬阻断，逃生标记 '# create-guard-not-dup: <一句话理由>' 按文件豁免，命中=0 ⇒ 放行且由 find() 既有审计通道 .runtime/lookup_audit/<sid>.jsonl 的 result_count=0 行做漂移日志（不新建日志文件）；find 故障 fail-closed；取代 L827-848 fail-open basename 尺的判重角色（后者降为冗余后备）与 capability_overlap_gate stage-1 文件名词元启发式（见其 docstring 注释）；同批 CLASS-UNIQUENESS git grep 批量化为每批一次 -E alternation 调用+Python 侧按类名归因（非 ASCII 类名回退逐名查询，判据与逐名版全等，100+样本重放见 docs/_working/three_piece_infra/piece1_gate/CASE.md）；裁定#456（2026-09-30）判重腿两档化：探针命中字段∈{capability_id,aliases,canonical_file}（标识符级）维持硬拦，仅命中 description（散文面）降为 warn（logger.warning+审计 .runtime/gate_audit/create_guard_keyword_dup_warn.jsonl，不阻断；处方=逃生标记或 python -m zephyr.library.lookup 正查），逃生标记/判死阈值语义零改动；S4-C（2026-09-30，手术簿 s4_c_p90_cache.md）进程级 lookup 单例：_build_capability_lookup 失效键=registry(normcase+mtime_ns+size)∪双根扫描概要(scan_root_summary)，未变复用常驻实例/变即重建，env ZEPHYR_CG_LOOKUP_SINGLETON=0 一键回退每次新构造，warm_capability_lookup_async 判重链后后台预热（daemon，异常全吞），判定语义零变化（检索面/#456 两档/fail-closed 出口不动，monkeypatch 注入缝保留）；S4-B（2026-09-30，手术簿 s4_b_token_sim.md）判重二阶段 token 相似度影子采集：触发面收敛=仅 #456 散文级 warn 命中条目，结构证据=新建 .py 与命中条目 canonical_file 的 AST 标识符有序序列（_TOKEN_SIM_TRUNC 截断护栏）经 _tokenize 切词后 diff_utils.similarity_ratio（stdlib 零新依赖），canonical 侧 (normcase,mtime_ns,size) 键缓存（失败不缓存），audit-only 只落 .runtime/gate_audit/create_guard_token_sim_shadow.jsonl（fail-open），would_block 恒 False/threshold 恒 None——不改任何判定，相似度分布一周后 Owner 门位定档；挂图申报必填面（Owner 2026-10-04 三点批准，st-mapmount-surg-20261004）：新建 src/zephyr/**.py（own-scope，tests/ 豁免照旧）token 条目须声明 map_mounts（逐条 "<map_id>:<node_id>" 两端在册=config 节点图索引，防编造挂点）或 no_mount_reason（非空理由逃生+审计 .runtime/gate_audit/create_guard_map_mounts_escape.jsonl 季度复核）；两者皆无→硬阻断；存量零迁移（仅本次 commit 新增文件生效）；scripts/.ps1 面 v1 暂缓；图族不可达→索引空→挂点判不在册阻断（fail-closed 对齐本 gate 哲学）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)；波13·包13.1（2026-09-26）新建 .py 查功能关键词：对每个新建 .py 取查询面（文件名 stem+模块 docstring 首段+顶层类/函数名）切探针，逐探针调既有 CapabilityLookup.find()，命中>0（canonical 指向本文件或同批新建者除外）⇒硬阻断，逃生标记 '# create-guard-not-dup: <一句话理由>' 按文件豁免，命中=0 ⇒ 放行且由 find() 既有审计通道 .runtime/lookup_audit/<sid>.jsonl 的 result_count=0 行做漂移日志（不新建日志文件）；find 故障 fail-closed；取代 L827-848 fail-open basename 尺的判重角色（后者降为冗余后备）与 capability_overlap_gate stage-1 文件名词元启发式（见其 docstring 注释）；同批 CLASS-UNIQUENESS git grep 批量化为每批一次 -E alternation 调用+Python 侧按类名归因（非 ASCII 类名回退逐名查询，判据与逐名版全等，100+样本重放见 docs/_working/three_piece_infra/piece1_gate/CASE.md）；裁定#456（2026-09-30）判重腿两档化：探针命中字段∈{capability_id,aliases,canonical_file}（标识符级）维持硬拦，仅命中 description（散文面）降为 warn（logger.warning+审计 .runtime/gate_audit/create_guard_keyword_dup_warn.jsonl，不阻断；处方=逃生标记或 python -m zephyr.library.lookup 正查），逃生标记/判死阈值语义零改动；S4-C（2026-09-30，手术簿 s4_c_p90_cache.md）进程级 lookup 单例：_build_capability_lookup 失效键=registry(normcase+mtime_ns+size)∪双根扫描概要(scan_root_summary)，未变复用常驻实例/变即重建，env ZEPHYR_CG_LOOKUP_SINGLETON=0 一键回退每次新构造，warm_capability_lookup_async 判重链后后台预热（daemon，异常全吞），判定语义零变化（检索面/#456 两档/fail-closed 出口不动，monkeypatch 注入缝保留）；S4-B（2026-09-30，手术簿 s4_b_token_sim.md）判重二阶段 token 相似度影子采集：触发面收敛=仅 #456 散文级 warn 命中条目，结构证据=新建 .py 与命中条目 canonical_file 的 AST 标识符有序序列（_TOKEN_SIM_TRUNC 截断护栏）经 _tokenize 切词后 diff_utils.similarity_ratio（stdlib 零新依赖），canonical 侧 (normcase,mtime_ns,size) 键缓存（失败不缓存），audit-only 只落 .runtime/gate_audit/create_guard_token_sim_shadow.jsonl（fail-open），would_block 恒 False/threshold 恒 None——不改任何判定，相似度分布一周后 Owner 门位定档；挂图申报必填面（Owner 2026-10-04 三点批准，st-mapmount-surg-20261004）：新建 src/zephyr/**.py（own-scope，tests/ 豁免照旧）token 条目须声明 map_mounts（逐条 "<map_id>:<node_id>" 两端在册=config 节点图索引，防编造挂点）或 no_mount_reason（非空理由逃生+审计 .runtime/gate_audit/create_guard_map_mounts_escape.jsonl 季度复核）；两者皆无→硬阻断；存量零迁移（仅本次 commit 新增文件生效）；scripts/.ps1 面 v1 暂缓；图族不可达→索引空→挂点判不在册阻断（fail-closed 对齐本 gate 哲学）；registry 盘面读加固（st-maint7-20261014 P0-2①）：B1 三次重试耗尽后不直接 fail-closed，先经 _read_registry_head_text 读 HEAD 稳定面快照（git blob 不可变，无撕裂窗口）——解析成 dict 即用该面继续判并 logger.warning＋审计 STABLE_SURFACE_RESCUED；HEAD 面也不可得/仍解析失败才照旧 fail-closed（消息含两面死因）。方向性＝只治"设施瞬态误判违规"，token 判据本体零松动：HEAD 面查无 token 者照样硬拦，投影面判缺者仍走 T4 的 PG active 正证通道；不回填磁盘缓存（键=盘面 stat，混入 HEAD 内容会毒后续消费者）
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 #   施工行: sid=st-mapmount-surg-20261004 + Owner 2026-10-04 三点批准（①新 src/zephyr .py 全量必填
 #   ②存量零迁移走覆盖账本季清 ③图例罩不住先拒走 Owner 终审）——新增 _check_map_mounts 挂图申报面
@@ -300,6 +300,31 @@ def _read_registry_text(registry_path) -> str:
     不触碰磁盘真源（测试隔离铁律）。
     """
     return registry_path.read_text(encoding="utf-8")
+
+
+def _read_registry_head_text(gateway, registry_rel: str) -> str | None:
+    """从 HEAD 对象读 registry 文本（稳定面快照——st-maint7-20261014 P0-2①）。
+
+    病根（在册审计实证，非推测）：热册盘面临时撕裂读——.runtime/audit/
+    create_guard_parse_fail.jsonl 全 42 条里 10-13 一晚就 3 条（15:13/15:15/15:18 UTC
+    同一行 66087 三连），形态是 ``created_by: <sid>- file: <路径>`` 粘连＝外来非 CAS
+    直改热册留下的半写窗口；投影器自身走 safe_write_text（CAS 原子），故撕裂源不属本文件
+    可修面。数据班 0019 袋即死于该瞬时态（YAML ScannerError，"当时为真现不在"）。
+
+    git blob 不可变：HEAD 面读到的永远是完整可解析的前像，故只作**盘面重试耗尽后的
+    兜底**，不作首选——首选盘面是裁定#480 手术③的在册结论（"会话入队前在主区登记的
+    creation_token 不在 worktree 盘面上"，盘面才是登记完成的即时真源）。
+
+    独立成单点：撕裂读兜底与测试 monkeypatch 只需 patch 本函数（与
+    ``_read_registry_text`` 同规格，测试隔离铁律）。
+    """
+    try:
+        result = gateway.run_git(["git", "show", f"HEAD:{registry_rel}"])
+    except Exception:  # noqa: BLE001 — 稳定面读不到=退回既有 fail-closed，不新增放行
+        return None
+    if result is None or getattr(result, "returncode", 1) != 0:
+        return None
+    return getattr(result, "stdout", None) or None
 
 
 def _audit_registry_parse_fail(project_root, registry_path, reason: str) -> None:
@@ -801,9 +826,39 @@ def _load_capability_registry(gateway) -> tuple[dict | None, str]:
         return data, ""
     if not parsed:
         _audit_registry_parse_fail(gateway.project_root, _registry_yaml, f"{type(last_err).__name__}: {last_err}")
+        # 稳定面兜底（st-maint7-20261014 P0-2①）：盘面 3 次重试仍撕裂时，改读 HEAD 快照。
+        # 只治"设施瞬态把合法提交判成违规"这一面——token 判据本体不动：HEAD blob 里查无
+        # 该 token 者照样硬拦；后续"投影面判缺者再问 PG 账本"的 T4 正证通道照常走。
+        head_text = _read_registry_head_text(gateway, "/".join(_rel_parts))
+        head_data: object = None
+        head_err: Exception | None = None
+        if head_text is not None:
+            try:
+                head_data = yaml.safe_load(head_text)
+            except Exception as e:  # noqa: BLE001 — HEAD 面也坏=极罕见，退回 fail-closed
+                head_err = e
+        if isinstance(head_data, dict):
+            _audit_registry_parse_fail(
+                gateway.project_root,
+                _registry_yaml,
+                f"STABLE_SURFACE_RESCUED: 盘面 {type(last_err).__name__} 后按 HEAD 快照放行"
+                f"（盘面首因={str(last_err)[:120]}）",
+            )
+            logger.warning(
+                "CREATE-GUARD: 盘面容器的 registry 撕裂读（%s）已由 HEAD 稳定面兜底解析成功；"
+                "撕裂源=热册被非 CAS 直改（在册审计 42 条形态实证），修复面在写侧不在本门。",
+                type(last_err).__name__,
+            )
+            return head_data, ""
+        head_note = (
+            f"HEAD 稳定面亦解析失败（{type(head_err).__name__}: {head_err}）"
+            if head_err is not None
+            else "HEAD 稳定面不可达/无该路径"
+        )
         return None, (
             f"CREATE-GUARD fail-closed: capability registry 解析失败"
-            f"（{_REGISTRY_PARSE_RETRIES} 次重试后仍失败，{type(last_err).__name__}: {last_err}）。"
+            f"（{_REGISTRY_PARSE_RETRIES} 次重试后仍失败，{type(last_err).__name__}: {last_err}；"
+            f"{head_note}）。"
             f"设施故障（注册表解析失败，非违规——请稍后重试或检查并发写）。"
             f"禁止放行——registry 是 creation_token 真源，"
             f"设施故障=检测器失效。修复：修正 {_registry_yaml} 的 YAML 语法，"
