@@ -1,0 +1,68 @@
+schema_version: examunlock-declaration-request/v1
+sid: st-examunlock-20261013
+date: '2026-10-13'
+title: 骨架 4 张卡的题面声明待办单（缺 data_binding 三件，属命题作者，本班不代填）
+why_not_filled_by_us: 统筹 15:0x 令授权的是『照本班已挖好的 join 键证据登记』（复合族共键/对齐/PIT）；这 4 张缺的不是 join 规则，而是 data_binding 的 signal_table
+  / signal_column / signal_derivation 三件＝题面声明。代填＝在命题作者之外造第二个判据来源，与本班 06 号判定册 route_to 同一结论，也与在册『禁降级喂近似数据出分』同向。
+owner_lane: st-minedig2-20261012（挖矿二班，卡面属主）
+cards:
+- card_id: TDM-E-L1-S0/calibration/03_流动性卡
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__03_流动性卡.yaml
+  signal_kind: series
+  buckets_type: quantile_decile
+  missing_three:
+  - data_binding.signal_table
+  - data_binding.signal_column
+  - data_binding.signal_derivation
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  index_next_day_leg_present: true
+  current_class: U:no_data_binding_section
+- card_id: TDM-E-L1-S0/calibration/04_海外卡
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S0__calibration__04_海外卡.yaml
+  signal_kind: series
+  buckets_type: bivariate_decile
+  missing_three:
+  - data_binding.signal_table
+  - data_binding.signal_column
+  - data_binding.signal_derivation
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  index_next_day_leg_present: true
+  current_class: U:no_data_binding_section
+- card_id: TDM-E-L1-S2/calibration/07_连板家数分布
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__07_连板家数分布.yaml
+  signal_kind: series
+  buckets_type: quantile_decile
+  missing_three:
+  - data_binding.signal_table
+  - data_binding.signal_column
+  - data_binding.signal_derivation
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  index_next_day_leg_present: true
+  current_class: U:no_data_binding_section
+- card_id: TDM-E-L1-S3/calibration/02_昨日涨停溢价
+  path: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S3__calibration__02_昨日涨停溢价.yaml
+  signal_kind: series
+  buckets_type: quantile_decile
+  missing_three:
+  - data_binding.signal_table
+  - data_binding.signal_column
+  - data_binding.signal_derivation
+  target_primary_verbatim: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  target_secondary_verbatim: emotion_six_state_transition（情绪六段态转移概率，辅轴）
+  index_next_day_leg_present: true
+  current_class: U:no_data_binding_section
+what_we_already_proved:
+  target_leg_present: 4/4 卡面含 next_day_index_return（次日指数腿在册可算）
+  score_book_rows_for_these: 0
+  ch_reads_needed: 0
+how_to_fill_once_declared:
+- 1) 属主在卡面写 data_binding 三件；要走 A 类则该表须先入 card_binding._REGISTERED_TABLES（配方册，当下仅 3 表在册）
+- 2) 若复用本班已落地的 ti_ew 底座族：照 docs/_working/examunlock_campaign/03_binding_book_event20.yaml 的绑定册形状（approved 格＋prose_quote
+  子串判据）
+- 3) 再按 23 号件 §二 两步开考：先 --dry-run（零 CH 验接线）后实跑
+sum_check:
+  cards: 4
+  expected: 4

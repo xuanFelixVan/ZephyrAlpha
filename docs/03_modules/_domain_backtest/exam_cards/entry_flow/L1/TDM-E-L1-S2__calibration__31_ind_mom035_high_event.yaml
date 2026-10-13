@@ -43,7 +43,7 @@ pillars_numeric:
   event_regime_gap_same_sign: true
 target:
   primary: next_day_index_return（CSI300 000300 次日收益，执行器 shift(-1) 原生口径）
-status: preregistered
+status: examined
 status_reason: 物化接线已跑通（2026-10-13）：底座=物化件 ti_daily_mean_materialize（未入库，字节全文存证 docs/_working/examunlock_campaign/17_evidence_and_regeneration.md §六）产 docs/_working/nightmine_campaign/series/ti_ew_<col>_v1.csv，verify 面见 14_ti_series_receipt.yaml；绑定=docs/_working/examunlock_campaign/03_binding_book_event20.yaml 本格；卡面判据面（window/buckets/pillars/pillars_numeric/target）逐字节未改（G4-5）。
   已在册；物化接线跑通即转 preregistered 开考，禁改卡面。
 signal_kind: series
@@ -70,6 +70,6 @@ data_binding:
     blocked_on_impl，禁改卡面凑通。
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: 'mineloop-1556-31_ind_mom035_high_e'
+  score_row: 'exam_scores_v1.yaml#rows[60]'
   confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
