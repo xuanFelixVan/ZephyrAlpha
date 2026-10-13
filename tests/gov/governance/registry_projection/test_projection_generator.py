@@ -66,6 +66,96 @@ def _setup(tmp_path, text: str = REG_V1):
     return _snapshot_json(tmp_path, text, 1)
 
 
+# ===========================================================================
+# P0-2② 扩面：creation_tokens 双向一致性对账（st-maint7-20261014，统筹增补第 2 条）
+# ===========================================================================
+# 甲向复现对照＝PG 有行而盘上无（矿考二班 10-13 夜撞 4 次的滞后面）；
+# 乙向复现对照＝盘上有行而 PG 无（死信放量班实证的历史直写遗留面，
+#   真实样本 docs/_working/tdm_goal_structure_research_2026_10_13.md 在 PG 是 retired）。
+
+
+def _snap_from(text: str):
+    from zephyr.governance.registry_projection.model import snapshot_from_yaml
+
+    return snapshot_from_yaml(text, registry_id="REG-CAPCAN-001", physical_path=REG_REL)
+
+
+def test_token_diff_both_directions_empty_when_in_sync():
+    """两面全等 ⇒ 零差集（尺在同步面上不误报）。"""
+    from zephyr.governance.registry_projection.projection_generator import token_two_way_diff
+
+    d = token_two_way_diff(_snap_from(REG_V1), REG_V1)
+    assert d["comparable"] is True
+    assert d["pg_only_n"] == 0 and d["disk_only_n"] == 0
+
+
+def test_token_diff_direction_a_pg_has_row_disk_lacks():
+    """甲向（滞后）：PG 快照有 b.md 行、盘上 YAML 只有 a.md ⇒ pg_only=1、disk_only=0。"""
+    from zephyr.governance.registry_projection.projection_generator import token_two_way_diff
+
+    s = _snap_from(REG_V2)  # PG 侧两条
+    d = token_two_way_diff(s, REG_V1)  # 盘上一条
+    assert d["comparable"] is True
+    assert d["pg_only_n"] == 1 and d["disk_only_n"] == 0
+    assert d["pg_only"] == ["file=b.md|token=tok-b"], d["pg_only"]
+
+
+def test_token_diff_direction_b_disk_has_row_pg_lacks():
+    """乙向（直写遗留）：盘上有 b.md 行而 PG 无 ⇒ disk_only=1，即"诚实 render 会少 1 条"那一面。"""
+    from zephyr.governance.registry_projection.projection_generator import token_two_way_diff
+
+    s = _snap_from(REG_V1)  # PG 侧一条
+    d = token_two_way_diff(s, REG_V2)  # 盘上两条
+    assert d["comparable"] is True
+    assert d["disk_only_n"] == 1 and d["pg_only_n"] == 0
+    assert d["disk_only"] == ["file=b.md|token=tok-b"], d["disk_only"]
+
+
+def test_token_diff_never_reports_zero_when_unmeasurable():
+    """不可比必须自报 comparable=False＋成因，禁把"量不了"报成"零差异"（在册假绿族）。"""
+    from zephyr.governance.registry_projection.projection_generator import token_two_way_diff
+
+    d_empty = token_two_way_diff(_snap_from(REG_V1), "   \n")
+    assert d_empty["comparable"] is False and d_empty["reason"]
+
+    d_broken = token_two_way_diff(_snap_from(REG_V1), "creation_tokens:\n  bad: [unclosed\n")
+    assert d_broken["comparable"] is False
+    assert "不可解析" in d_broken["reason"] or "空册" in d_broken["reason"], d_broken["reason"]
+
+    other = _snap_from("schema_version: 1.1.0\nentries:\n- ruling_id: x\n")
+    d_other = token_two_way_diff(other, REG_V1)
+    assert d_other["comparable"] is False and "族" in d_other["reason"], d_other["reason"]
+
+
+def test_render_warns_on_two_way_diff_and_still_writes(tmp_path, caplog):
+    """告警是纯观测面：render 前把两向差集说出来，象限与写盘行为零变化。"""
+    import logging
+
+    snap_file = _setup(tmp_path, REG_V1)  # 盘上=PG 皆一条，先同步
+    # 制造乙向：盘上多一条 PG 没有的直写遗留行
+    target = tmp_path / REG_REL
+    target.write_text(REG_V2, encoding="utf-8", newline="\n")
+    with caplog.at_level(logging.WARNING, logger="zephyr.governance.registry_projection.projection_generator"):
+        rep = run(tmp_path, mode="render", source=snap_file, registry_id="REG-CAPCAN-001", physical_path=REG_REL)
+    assert rep.ok, rep.detail
+    warns = [r.getMessage() for r in caplog.records if "双向一致性告警" in r.getMessage()]
+    assert warns, "盘上有行而 PG 无（乙向）必须出声"
+    assert "盘上有行而 PG 无/非 active=1 条" in warns[0], warns[0]
+    # 写盘行为：诚实 render 按 PG 剔掉遗留行（PG wins 铁律不破）
+    assert "b.md" not in target.read_text(encoding="utf-8")
+
+
+def test_render_silent_when_projection_in_sync(tmp_path, caplog):
+    """同步面不出声（防空洞告警刷屏，也证上一条的红不是恒真）。"""
+    import logging
+
+    snap_file = _setup(tmp_path, REG_V1)
+    with caplog.at_level(logging.WARNING, logger="zephyr.governance.registry_projection.projection_generator"):
+        rep = run(tmp_path, mode="render", source=snap_file, registry_id="REG-CAPCAN-001", physical_path=REG_REL)
+    assert rep.ok, rep.detail
+    assert not [r for r in caplog.records if "双向一致性告警" in r.getMessage()]
+
+
 def test_unmanaged_is_zero_behavior(tmp_path):
     snap_file = _setup(tmp_path)
     report = run(tmp_path, mode="check", source=snap_file)

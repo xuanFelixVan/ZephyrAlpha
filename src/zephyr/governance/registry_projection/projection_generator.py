@@ -14,7 +14,14 @@
 #   第二次零写盘；**测试态禁写生产投影册**（2026-10-12 维护三班 #ARCH-084 追加刀，
 #   Owner 通宵令"测试面禁写投影或 fixture 隔离，你班裁"）：PYTEST_CURRENT_TEST 在场且目标
 #   落在真仓根内 ⇒ 拒写＋归因告警（nodeid 直接进日志）＋独立计数，tmp 沙盘 project_root
-#   照常写；判据不可得=fail-open 按现行为放行；一键回退 ZEPHYR_TEST_NO_PROD_PROJECTION=0
+#   照常写；判据不可得=fail-open 按现行为放行；一键回退 ZEPHYR_TEST_NO_PROD_PROJECTION=0；
+#   双向一致性告警（st-maint7-20261014 P0-2② 扩面）：render/check 取到 rendered 后调
+#   token_two_way_diff 比 PG 侧快照与盘上 YAML 的 creation_tokens 复合身份（键形
+#   file=<路径>|token=<值>，对齐 registry_entry.entry_key），甲向=PG 有行盘上无（滞后）、
+#   乙向=盘上有行 PG 无/非 active（历史直写遗留）——两向皆非零即 logger.warning 带计数与
+#   样本；纯观测面：不改象限、不改写盘、异常全吞（投影器"绝不阻塞调用方"铁律不破）；
+#   comparable=False（本册无该族/盘上不可解析/空册）时降级 debug 并把成因说清，
+#   禁把"量不了"报成"零差异"
 # [MODIFY-GUARD] 新建 2026-09-23 st-wm1-buildB-20260923（W-M1 波0 车道B）
 # [STABILITY] stable
 # [SAFETY] L
@@ -391,6 +398,105 @@ def _drift_write_phase(
     )
 
 
+# ── 双向投影一致性对账（st-maint7-20261014 P0-2② 扩面，统筹 2026-10-14 增补第 2 条）──
+# 两面病根（都有实证，非推测）：
+#   甲向＝PG 有行而 YAML 无行（投影滞后）——矿考二班 10-13 夜撞 4 次拦袋；
+#   乙向＝YAML 有行而 PG 无行/非 active（历史直写 YAML 入库的遗留行）——死信放量班
+#     实证样本 docs/_working/tdm_goal_structure_research_2026_10_13.md 的 token 在 PG
+#     是 status='retired'，而当时 HEAD 的 YAML 仍挂该行：诚实 render 相对 HEAD 恒
+#     "少 1 条"，必被 registry_yaml_parse_gate 的 file|token 只增不减守门拦死
+#     （同夜 6 只死信全被这同一条点名）。
+# 本段职责＝把两向差集在 **render/check 就说出来**（此前只有门在拦的那一刻才说话），
+# 且零阻塞——投影器铁律"绝不阻塞任何调用方"：不改象限、不改写盘、不外抛异常。
+# 键形对齐 PG registry_entry.entry_key（``file=<路径>|token=<值>``）；与门侧
+# _creation_token_identities 的无 ``file=`` 前缀形态刻意不同——对账两侧同键形才可比。
+_TOKEN_FAMILY: Final = "creation_tokens"
+
+
+def _token_identity_set(entries: object) -> set[str]:
+    """creation_tokens 条目族 → 复合身份集（无 file/token 对的条目不计，与门侧同口径）。"""
+    out: set[str] = set()
+    if not isinstance(entries, list):
+        return out
+    for entry in entries:
+        if isinstance(entry, list):
+            pairs = dict(entry)
+        elif isinstance(entry, dict):
+            pairs = entry
+        else:
+            continue
+        file_v = pairs.get("file")
+        token_v = pairs.get("token")
+        if isinstance(file_v, str) and isinstance(token_v, (str, int, float)):
+            out.add(f"file={file_v}|token={token_v}")
+    return out
+
+
+def token_two_way_diff(snapshot: ProjectionSnapshot, disk_text: str) -> dict[str, object]:
+    """PG 侧（本次快照）与盘上 YAML 的 creation_tokens 双向差集（纯函数，零写、零抛）。
+
+    Returns:
+        dict 含 pg_only/disk_only（排序样本截 20）、pg_only_n/disk_only_n、
+        comparable、reason。**comparable=False 时绝不把"量不了"报成"零差异"**
+        （静默降级与未触发同形＝已在册假绿族）。
+    """
+    base: dict[str, object] = {"pg_only": [], "disk_only": [], "pg_only_n": 0, "disk_only_n": 0}
+    sec = snapshot.section(_TOKEN_FAMILY)
+    if sec is None:
+        return {**base, "comparable": False, "reason": f"快照无 {_TOKEN_FAMILY} 族（本册不管 token 条目）"}
+    if not (disk_text or "").strip():
+        return {**base, "comparable": False, "reason": "盘上无正文（新册/空册），无对面可比"}
+    try:
+        disk_snap = snapshot_from_yaml(
+            disk_text, registry_id=snapshot.registry_id, physical_path=snapshot.physical_path
+        )
+    except Exception as exc:  # noqa: BLE001 — 盘上字节不可解析本身就是要说出来的不一致
+        return {
+            **base,
+            "comparable": False,
+            "reason": f"盘上 YAML 不可解析（{type(exc).__name__}: {str(exc)[:120]}）",
+        }
+    pg_ids = _token_identity_set(sec.entries)
+    dsec = disk_snap.section(_TOKEN_FAMILY)
+    disk_ids = _token_identity_set(dsec.entries) if dsec is not None else set()
+    pg_only = sorted(pg_ids - disk_ids)
+    disk_only = sorted(disk_ids - pg_ids)
+    return {
+        "pg_only": pg_only[:20],
+        "disk_only": disk_only[:20],
+        "pg_only_n": len(pg_only),
+        "disk_only_n": len(disk_only),
+        "comparable": True,
+        "reason": f"PG 侧 {len(pg_ids)} 条／盘上 {len(disk_ids)} 条复合身份",
+    }
+
+
+def _warn_token_two_way_diff(snapshot: ProjectionSnapshot, disk_text: str, physical_path: str) -> None:
+    """render/check 前的双向一致性告警（观测件：只说话，永不影响判定与写盘）。"""
+    try:
+        diff = token_two_way_diff(snapshot, disk_text)
+    except Exception:  # noqa: BLE001 — 观测件任何故障都不外抛（投影器绝不阻塞调用方）
+        logger.debug("token 双向对账探针异常（忽略）", exc_info=True)
+        return
+    if not diff.get("comparable"):
+        logger.debug("token 双向对账不可比：%s (%s)", physical_path, diff.get("reason"))
+        return
+    pg_n = int(diff["pg_only_n"] or 0)
+    disk_n = int(diff["disk_only_n"] or 0)
+    if not (pg_n or disk_n):
+        return
+    logger.warning(
+        "投影双向一致性告警 %s：PG 有行而盘上无=%d 条（滞后，本次 render 补上，样本=%s）；"
+        "盘上有行而 PG 无/非 active=%d 条（直写遗留，本次 render 剔除——落盘后若被 "
+        "REGISTRY-YAML-PARSE 按『相对 HEAD 少 N 条』拦袋即此形态，样本=%s）",
+        physical_path,
+        pg_n,
+        list(diff["pg_only"])[:3],
+        disk_n,
+        list(diff["disk_only"])[:3],
+    )
+
+
 def run(
     project_root: str | Path,
     mode: str = "check",
@@ -429,6 +535,10 @@ def run(
         self_check(rendered, snapshot)
     except SemanticMismatch as exc:
         return ProjectionReport(ok=False, quadrant=QUADRANT_CONFLICT, detail={"error": f"渲染自校验拒写: {exc}"})
+
+    # 双向一致性告警（st-maint7-20261014 P0-2② 扩面，统筹 2026-10-14 增补第 2 条）：
+    # 只告警零阻塞——投影器的铁律是"绝不阻塞任何调用方"，本段不改象限、不改写盘。
+    _warn_token_two_way_diff(snapshot, disk_text, phys)
 
     if state is None:
         return _armed_initial_write(root, phys, snapshot, rendered)
