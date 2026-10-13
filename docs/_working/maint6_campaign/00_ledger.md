@@ -25,7 +25,7 @@ campaign: 维护六班（Owner 令三 v2·维护线施工总包：P0-1 render �
    capability 投影、`.runtime/quarantine/` 无该件——**git 侧与队列侧零痕迹＝第六态（未跟踪工作件）
    全灭**。现重写并即刻 add。教训入记忆档：**"每轮修改即 git add"对我自己的班账同样成立**，
    班账必须与代码件同等待遇。
-4. 提交面纪律：本班全部件走队列正门（17 袋），零裸 `git commit`、零 `--skip-preflight`、
+4. 提交面纪律：本班全部件走队列正门（18 只袋，口径与死因分类见 §十一），零裸 `git commit`、零 `--skip-preflight`、
    零 `--force` 越闸；两次"能落地但会多烧一枚死信"的自撤（§二）与一次"熔断拦 requeue 不拦新袋"
    的改道（§五）都按不越闸处理。
 
@@ -67,6 +67,28 @@ campaign: 维护六班（Owner 令三 v2·维护线施工总包：P0-1 render �
   配套钉 `test_dot_worktrees_form_does_not_widen_authorization`（AGENTS.md 仍须被拦）＋嵌套树剥前缀。
 - 袋：0001 → 153796c9d83d（gate＋自家测试同批，`--allow-multi-domain` 留痕＝宪法 §2.4 合法面）。
 - 取号：按 号514 的先例走意图 API 占号 515 并随 §一 的 ruling 册袋物化。
+
+### 三.-A 甲-0 的命中面读法（统筹更正入账，本班原判作废）
+
+统筹原判"甲-0 未落地＝袋 0003 landed=noop@bd9a708a92，盘上无该改动"——**此判读有误，按统筹终裁更正**：
+`bd9a708a92b8` 确是维护六班的真实落地 commit（非"他班 commit 而本班件未进"），甲-0 改动已在 dev 面
+（实测 `scripts/governance/meta/validate_rules_integrity.py` 命中 `narrow_active` 位）。
+正确读法＝**landed 值非本 qid 的 `noop@` 时须查 `git log -- <件>` 双证**，不可当"未落地"。
+⇒ 教训留此：noop 有两种语义（"内容已在册"与"派生标量不在配对表⇒盘上零变化"，见
+[[derived-scalar-cannot-land-via-queue]]），判落地只认 git log ＋ 盘侧 grep 双证，
+别拿 landed_id 的形状当结论。本班 §二 的"已落地"读数经二次复核成立。
+
+### 三.-B M-3 真因＝`.worktrees/<sid>/` 前缀未剥（统筹采信）
+
+令面把 PROTECTED-PATHS 拦车道件归因为"缺签号"。实测：当时 号479 在册且 `expires_at` 未到，
+`resolve_approval` 仍返回 `approved=False / source=none`——根因＝命中路径带 `.worktrees/<sid>/`
+（或 `.aidrafts/`）前缀，未剥前缀就去查授权路径⇒永远"查无"⇒**有授权也判无**。
+处置＝改**喂给闸的输入**（循环剥 4 种形态，上界＝标记种数＋2 防死循环），
+**不弱化判据、不白名单、不开新豁免**。
+配套钉 `test_dot_worktrees_form_does_not_widen_authorization`（AGENTS.md 仍须被拦＝防扩权自证）＋嵌套树剥前缀。
+落地＝commit `153796c9d83d`（gate＋自家测试同批，`--allow-multi-domain` 留痕＝宪法 §2-4 合法面）。
+⇒ 与 §七.② 的"06:00 撞锁早退"同属**根因级更正**，两处均已获统筹采信；本班 §三 正文保留原判读叙述，
+按"留旧案卷、另起一节"口径不改旧文。
 
 ## 四、base_head 字面量入队侧修正（已落地）
 
@@ -199,9 +221,14 @@ campaign: 维护六班（Owner 令三 v2·维护线施工总包：P0-1 render �
    收尾时刻，或在固定触发点与 24h 节流之间留安全余量（否则 06:00 计划任务名实不符）；
    ②wave-4 四键（`last_backup_partial_items` 等）是否落 partial 档属判据面，落则须同批改
    `rolling_archive_reconciler.py:121` 的 `!= "ok"` 轮转闸与日检 SLO 读法。
-2. **`ai/st-bakday-20261013/task-bakday-wu5` 分支 ref 人工删除**：
-   `git branch -D ai/st-bakday-20261013/task-bakday-wu5`（`-d` 对 cherry-等值分支必拒、
-   `-D` 在危险命令清单内）；内容零丢失已双证（cherry 判全等＋tip SHA 入 branch_refs.log）。
+2. **`ai/st-bakday-20261013/task-bakday-wu5` 分支 ref**：统筹终裁＝**不授权强删**
+   （危险命令清单里的强删旗是 agent 禁手，这道门存在的意义就在这；`-d` 对 cherry-等值分支必拒），
+   本班留白名单行即可，内容零丢失已双证（cherry 判全等＋tip SHA 已入 `.runtime/quarantine/branch_refs.log`
+   末行 `0ba7828941de…`）＝**删不删零功能影响**，Owner 亲自跑或长期留白均可。
+   - **一行教训（本袋必须写下来）**：本账第一版在此处**逐字写出了那条危险命令**，
+     于是袋 0016 被 `GATE-PRECOMMIT-RUN`（hook=`gate-detect-git-dangerous`）当场拦死＝
+     **案卷里抄危险命令字面量＝案卷自己过不了门**。此处起改用非字面描述；
+     若确需列举禁令原文，走在册的 `GATE-SELFDOC` 行级标记通道（清洁册口径，本账不属该族）。
 3. **`tests/gov/governance/audit/test_file_ops_enforcement.py::test_undeclared_delete_blocked_and_critical_warn`
    ＝存量红（非本班）**：车道红／主区红／两面按 HEAD 字节检出后仍红（三跑同集），本班已按
    "先备份 edited 再换 pristine"的处方做过换面 A/B。属 OPS-GUARD 判定面，建议维护线下一班
@@ -227,27 +254,48 @@ campaign: 维护六班（Owner 令三 v2·维护线施工总包：P0-1 render �
 8. **P2-3①③ 未办**（维护五班移交三件的另两件：P7 本体施工卡 §十二.4 与 26 件存证面、
    sim 班 `test_sim_daily_runner.py:111` monkeypatch 只登记待属主）：同 §十.6 处理。
 
-## 十一、本班袋账（17 袋全清单）
+## 十一、本班袋账（实测口径，四行说清"袋／commit／件／死因"）
 
-| 袋 | 态 | 件 | 落地 |
+尺＝`pending/processing/done/dead` 四态下 `q-20261013-st-maint6-20261013-*.json` 的 **manifest 本体**
+（`files[].path` 与 `landed_id`），非账面自报；本表口径经统筹终裁指正后重写。
+
+1. **袋**：本班累计 **18 只入队**（0001–0018，末只＝本收口账袋）；其中 **12 只 done**、**5 只 dead**
+   （本袋落地后＝13 done／5 dead）。
+2. **commit**：12 只 done 袋对应 **12 个不同 landed commit hash**（distinct 实测＝12，无同 hash 重复计数）。
+3. **件面**：**18 件次落袋**（各 done 袋 files 数相加：2+1+3+2+1+1+1+1+1+3+1+1）；
+   去重＝**18 个仓内唯一件**（本班袋间零重复件——0004/0007/0010/0011 四只死袋的字节面分别由
+   0003/0008/0014/0014 承接，故件面不增）；相对本班基 `3adc34d1ca`，**新增唯一件＝2 只**
+   （`docs/_working/maint4_campaign/00_ledger.md` 代投＋`docs/_working/maint6_campaign/00_ledger.md` 本账），
+   其余 16 件均为在册件的改动。
+4. **死因分类（5 只）**：自撤 2（0004 重复入袋、0007 为 号515 单袋物化让路）
+   ＋门禁 3（0010 `RELATIVE-PATH-LITERAL`、0011 `TAKEOVER-PENDING`、0016 `GATE-PRECOMMIT-RUN`
+   ／hook=`gate-detect-git-dangerous`＝案卷抄危险命令字面量自触，见 §十.2 教训）。
+   三只门禁死袋的内容面均由后续新袋承接落地（0010/0011→0014，0016→0017），**零内容丢失**。
+
+| 袋 | 态 | 件 | 落地 commit |
 |---|---|---|---|
-| 0001 | done | approval_resolver ＋ test_approval_wiring | 153796c9d83d |
+| 0001 | done | approval_resolver 前缀剥净 ＋ 自家测试 | 153796c9d83d |
 | 0002 | done | module_translation_registry（render 追齐） | 7e25b44708eb |
-| 0003 | done | validate_rules_integrity ＋ 折叠测试 ＋ gate_registry 一行 | bd9a708a92b8 |
+| 0003 | done | validate_rules_integrity own-scope ＋ 折叠测试 ＋ gate_registry 一行 | bd9a708a92b8 |
 | 0004 | dead（自撤） | 与 0003 同字节重复袋 | — |
-| 0005 | done | commit_queue_landing（`_trusted_base_head`）＋ 3 钉 | 78d89452294f |
+| 0005 | done | commit_queue_landing（`_trusted_base_head`）＋ 测试 3 钉 | 78d89452294f |
 | 0006 | done | arm_protocol_binding.py:298 字面改口 | 174b70ddaad1 |
 | 0007 | dead（让路自撤） | ruling 册（改与 0008 合批带 509-515） | — |
 | 0008 | done | ruling_registry（render 物化 514/515） | 2367ce12d985 |
 | 0009 | done | maint4 班账代投 | ac3bc04a984e |
-| 0010 | dead | ops_guard 存证钩子（RELATIVE-PATH-LITERAL） | — |
-| 0011 | dead | 同件三袋（TAKEOVER-PENDING，后已 resolve） | — |
+| 0010 | dead | 存证钩子（RELATIVE-PATH-LITERAL） | — |
+| 0011 | dead | 同三件袋（TAKEOVER-PENDING，接管面后已 resolve） | — |
 | 0012 | done | 第 13 条测册重写 | 1ecef831bfa0 |
-| 0013 | processing | 第 14② 条 backfix 班账尾追加 | — |
-| 0014 | pending | 第 8② 条存证钩子三件（blobs 取回后重投） | — |
-| 0015 | pending | P2-1 案卷行 render 追齐 | — |
-| 0016 | pending | 本班班账（本件第一版） | — |
-| 0017 | pending | 本班班账（含 §十.7 P2-3② 不代投依据）＝以后袋为准 | — |
+| 0013 | done | 第 14② 条 backfix 班账尾追加 | 439f3f446ab1 |
+| 0014 | done | 第 8② 条存证钩子三件（blobs 取回后正门重投） | a4ce7fa87d04 |
+| 0015 | done | P2-1 案卷行 render 追齐 | c58ee2080b1d |
+| 0016 | dead | 本账第一版（案卷抄危险命令字面量自触门） | — |
+| 0017 | done | 本账第二版（含 §十.7 P2-3② 不代投依据） | 6eb4d04815a0 |
+| 0018 | 在飞 | 本账第三版＝统筹终裁四处补齐（三.-A／三.-B／袋账实测口径／§十.2 去字面量化） | — |
+
+**对统筹指正的认领**：先前"17 袋"是把**袋数当件数**说，且未区分 done/dead；
+现按 manifest 实测四行口径书写，后续凡报"落了几个件"一律用同一把尺
+（`done/` 袋 `files[].path` 求和＋去重＋相对基新增三值并报）。
 
 ## 十二、零面声明
 
