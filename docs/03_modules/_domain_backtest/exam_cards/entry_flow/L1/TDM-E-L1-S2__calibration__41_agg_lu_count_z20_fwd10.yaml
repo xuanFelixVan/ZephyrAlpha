@@ -59,7 +59,7 @@ target:
   secondary: 同面分段（bull/bear）与 OOS 扣留段
   note: 本卡不复判次日面（母卡 02/09 已 examined），只隔离 10 日聚合热度面；r 位面与执行器现形不一致，见
     status_reason
-status: blocked_on_impl
+status: preregistered
 status_reason: 三处缺口实测在册（本班逐行自读，非转述）：①聚合基序列未物化——前班管道 _screen_aggregate 只落 {series,transform,target,n,ic,t} 六元组（minedig_pipeline.py:826），逐日序列随函数返回销毁，盘面零存；②考面无 10 日前向目标面——执行器 _series_metrics 硬编码 tgt.shift(-1)（calibration_exam.py:154-156），绑定尺对非『指数次日收益』目标直接判 cls C reason=target_face_not_index_next_day（card_binding.py:259-270），另有 _HORIZON_RE 拦多日 horizon（:271-277）；③表未入配方册——_REGISTERED_TABLES 实载 3 表不含 c1_market.kline_daily_hfq（card_binding.py:338-355）。另 ④z20 归一配方未决——绑定尺命中『滚动/z-score』直接拒绑 (reason=rolling_window_needs_explicit_n_or_refuse / normalization_recipe_undecided, card_binding.py:316-325)；ic_ir 在 series 路无机器面（:184 恒 None）已作未判柱披露，非放行项。⇒ 解锁条件=物化＋配方册＋执行器多日标的前向面三件补齐（禁改卡面凑通）；与前班 20 张反向卡的缺口不同族：那 20 张只差①③，本卡即使补齐①③仍堵在②。
 signal_kind_note: series（逐日一数的市场面序列，非个股截面）
 oos_window_ref: *id001
@@ -138,3 +138,25 @@ status_rollback_20261013:
   exam_side_note: >-
     开考普查只枚举 preregistered（在册教训），故本回退即把这 8 张移出供题面；
     本班零开考、N 账本零写。
+
+# ── 重转留痕（统筹令②；§十 转态与 §十一 回退两节均保留不删＝另起留旧案）──
+status_reflip_20261013:
+  at: '2026-10-13T16:16:21 本地实测钟'
+  sid: st-minedig2-20261012
+  order: 统筹裁定 2026-10-13 ①授权代处置死条目 ②解锁即投承码袋 ③"8 卡重转 preregistered 不用等 CH 腿"
+  code_same_generation_evidence:
+    executor: scripts/backtest/fexam/calibration_exam.py 已落 dev（a67009f3ef，实测 dev grep _forward_face=5）
+    binding: scripts/backtest/fexam/card_binding.py 已落 dev（20744a3cc3）
+    data: 8 枚 CSV＋meta 已落 dev（24c5c24bf6）
+  zero_ch_rehearsal:
+    script: .runtime/tmp/st-minedig2-20261012/preview_8cards.py（喂内存副本，跑后断言真卡面 sha256 未变）
+    full_window_ic: '0.1037'
+    screen_face_ic: '0.1019（剔末 126 交易日＝出生面）'
+    born_ic: '0.1019'
+    exact_on_born_face: true
+    note: >-
+      执行器在出生面复现在册 IC；三格（44/46/47）差 1e-4＝两把 Spearman 实现的末位取整差
+      （判官 _spearman vs 物化件 ts_ic），非数据或口径分家；全窗 IC 与出生 IC 的差＝考卷面含 OOS 段（设计如此）。
+    red_control: 删 target_forward_face/target_horizon_days 两申报键后 ic 必变（8/8 变＝申报位真被消费，非"写了没人读"）
+  not_recomputed_here: 本班不在此重算 n/t——那两面已由环节6 在同一把尺（ts_ic）上逐格证过，此处另建第二把尺＝造第二真源
+  exam_side: 开考与 n_trial_ledger 试次入账归矿考二班／考试班；本班零开考

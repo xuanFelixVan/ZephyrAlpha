@@ -325,3 +325,58 @@ dev 于是出现"认可 precomputed 却仍 shift(-1)"的组合＝静默错值风
 
 聚合 8 卡的**数据面与复算证明已落 dev 且逐格精确等**（这是本班夜班的真金），
 执行器承码半落地未闭合 ⇒ 本班已把 8 卡退回 blocked_on_impl 并列明解锁路径；本班不收"全绿无遗留"句。
+
+## 十二、统筹三件裁定执行账（2026-10-13 15:4x-16:1x，本班照 ①→② 顺序推进）
+
+### 12.1 ①代处置 examrun 死条目（统筹授权，note 原文照令）
+
+处方执行：`python scripts/governance/session_takeover_ledger.py --resolve st-examrun-20261012 --by st-minedig2-20261012 --note "<统筹令原文，逐字>"`。
+执行前后各跑一把尺：执行前 `--list` 该 sid 命中 1（open，resources=held 7／worktrees 1 dirty=10／bags 16／heartbeat 1），
+且 `.ailocks` 里该 sid 现存 claim＝0（Rx 第一条实测已不需要）；执行后 `--list` 该 sid 命中 **0**，条目迁至 `.runtime/takeover/resolved`。
+本班只解"提交连坐"，未代做他班 worktree 的 merge/abort，也未 requeue 他班死袋（那些处置权仍归属主/统筹）。
+
+### 12.2 ②承码袋投出与落地（含本班一处偏离，理由给实测）
+
+| 袋 | 内容 | 态 |
+|---|---|---|
+| 0021 | `calibration_exam.py`（多日标的前向面，dev_only=1 即本班改写的那行 shift） | **已落 dev `a67009f3ef`**（实测 dev grep `_forward_face`=5） |
+| 0022 | `test_calibration_exam.py` 95 行（§十一 自撤的正身重投，dev_only=0＝严格超集） | 在途（落地判据＝`git show dev:tests/backtest/test_calibration_exam.py`，本班不代报绿） |
+
+偏离一处并给理由：令文写"calibration_exam.py＋card_binding.py＋两测试件"四件同袋，本班实测 `card_binding.py`（20744a3cc3）
+与 `test_card_binding.py`（7fc0e94631）**已在 dev**，再投＝同件双袋连坐（在册死法），故本袋只含未落地的两件；
+且 COMMIT-SCOPE 用自己的路径→域尺把 tests/backtest（D_AUDITTEST）与 scripts（D_BACKTEST）判为跨域，四件同袋必死，
+本班按门自己的形制拆两袋并以 depends-on 保序（先码后测）。
+
+### 12.3 承码同代性预演（本班把 ⑰ 那条教训落成一把尺，零 CH）
+
+脚本＝`.runtime/tmp/st-minedig2-20261012/preview_8cards.py`：经**已落地**绑定单口取两面 ⇒ 交**已落地**执行器 `_series_metrics`，
+并断言跑完 8 张真卡面 sha256 未变（在册教训：判官跑完会重写卡面，故只喂内存副本）。
+
+| seq | 全窗 ic | 出生面 ic（剔末 126 交易日） | 在册 ic | 出生面逐格等值 | 删申报键后 ic 是否变 |
+|---|---|---|---|---|---|
+| 40 | 0.0961 | 0.1161 | 0.1161 | 是 | 变（红证在） |
+| 41 | 0.1037 | 0.1019 | 0.1019 | 是 | 变 |
+| 42 | 0.1023 | 0.1207 | 0.1207 | 是 | 变 |
+| 43 | 0.1022 | 0.1001 | 0.1001 | 是 | 变 |
+| 44 | 0.0828 | 0.1014 | 0.1015 | 差 1e-4 | 变 |
+| 45 | 0.0826 | 0.1012 | 0.1012 | 是 | 变 |
+| 46 | 0.1028 | 0.1144 | 0.1145 | 差 1e-4 | 变 |
+| 47 | 0.1132 | 0.1291 | 0.1292 | 差 1e-4 | 变 |
+
+读法三条，全部如实：①**全窗≠出生面**是设计而非缺陷——考卷面含 OOS 段，出生读数产自"筛选全程不碰"的那一段；
+②出生面上执行器复现在册 IC，5/8 逐位等、3/8 差 1e-4＝判官 `_spearman` 与物化件 `ts_ic` 两把实现的**末位取整差**（已登记，不改任何判据数值，也不在本班此刻去统一两把尺——那是尺面统一工程，归门禁/判官域，需另案）；
+③"删申报键 ic 必变"8/8 成立＝申报位真被执行器消费（在册教训：真源只被一条路径消费＝审计面生效、提交面空转）。
+本班**不在此重算 n/t**：那两面环节6 已在同一把尺上证过，此处另建第二把尺＝造第二真源。
+
+### 12.4 ③投影 render 归维护线（本班复测：仍未追齐）
+
+实测 `git show dev:docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml | grep -c agg8_series_materialize` ＝ **0**，
+主区磁盘同样 0 ⇒ 维护线的 render 袋尚未落。本班**不重打投影袋**（Owner 禁，且会带上他人未落地条目＝归属篡改）。
+追齐后动作＝`requeue q-20261013-st-minedig2-20261012-0012`（新建物化件 .py＋其测试＋在册件共 8 件，blob 健在在队列里）。
+
+### 12.5 终判（此刻）
+
+8 张聚合卡＝**preregistered**（承码同代性已用 12.3 那把尺证过，取证块逐卡入面）；
+本班残余两件＝①0022 测试袋落地待读回；②新建物化件袋待投影追齐后 requeue（不阻塞这 8 张卡开考，
+因为考卷数据面与执行器面都已各自在 dev，缺的只是"重跑数据的能力"在册）。
+开考与试次入账归矿考二班／考试班；本班零开考、N 账本零写。
