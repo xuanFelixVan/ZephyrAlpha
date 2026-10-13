@@ -671,3 +671,64 @@ claim 4/5 已放（第 5 件 03 件现由 `st-gpuux3v-20261013` 合法持有，�
   任何判据线值与容差／每核同步定义／生产风控件／矿考判官件／`tests/backtest` 存量红／前班死袋与其 worktree。
 - 收班即清（根宪法 §2 第 9 条新版）：claim 全释放／保活 revoke／车道与 `wt_prebag` 基线工作树就地归档，
   不给下一班留第六态。
+
+### 七、本班终态与接管挡点的实际解法（2026-10-13 19:2x `date` 实测；追加于 §六 之后，§六 原文一字未改）
+
+**先更正 §六 那一句的路线**：§六 写"只差一次授权＝`--resolve st-gpux4-20261013` 后重投即走"。实际落地**没走那条**——
+只读取证证明那枚命中件是**落后件不是未落地件**（车道 HEAD 是 dev 祖先、其对 dev 的多重集独有行数＝0），
+于是本班改为**修喂给闸的那一侧输入**（把死车道的陈旧面对齐到落地面），
+再经台账自身幂等单口只刷该 sid，**不 `--resolve`、不 `--scan`、不 remove 他班 worktree、不删他那 18 枚未跟踪跑批目录**
+⇒ open 条目与全部可见性保留（碰那 18 枚目录仍会被挡）。全过程、四步口、副作用实测在 03 件 §十七·M。
+本节把这条**呈批件**交出去，本班不自裁：
+
+- **P-9（新，请统筹／维护线裁）＝接管命中面缺一条"落后件"识别腿**。
+  这是什么：维护五班批①的剔除口径是"盘字节 == 落地面才移出命中面"，它按"只缩不扩"设计，本班不翻；
+  但它**结构上看不见"车道面 ⊆ 落地面而字节不等"**——即死车道停在旧落地面、dev 之后被别的班往前推。
+  为何要点头：后果不是一次性的，是**每班一撞**——本班 03 件撞死一袋，解完后 00 件立刻进面（因为本班 18:43 那＋101 行
+  把 dev 推前了），下一班碰这两卷任意一卷还要再撞；GPU 战役的班账卷天生是追加型共享件，所以只会越来越密。
+  不点会怎样：每班各自花一轮做"内容级取证＋对齐车道面＋单口刷新"（本班这一轮＝两针＋一次刷新＋四步口），
+  并且每班都可能选错路（有人可能直接 `--resolve` 抹掉整条目可见性，或改判据白名单＝那才是事故）。
+  本班建议形（**不实施一字**）＝加性判据：跟踪件若同时满足"`车道 HEAD 是 dev 祖先` ∧ `Counter(车道面)−Counter(dev 面) 行数＝0`"
+  则同批移出命中面，条目里记 `excluded_lagging_behind_landing=n` 与原因串；
+  必留反对照两支＝"真未落地件仍被拦"＋"车道 HEAD 非 dev 祖先时不移出"。成本＝台账收集口一次多重集运算（只对跟踪件）。
+  本班已把 00 件那一枚也按同一四步口对齐了（同证：572 行、独有行数 0、dev 严格前缀），
+  刷新受台账 600s 节流窗约束，本班不自造 `now` 绕窗。
+  ⚠ **并且实测到这条病灶会来回翻**：本班 03 袋 19:17 落地（dev 2162→2684）后，
+  11:22:51Z 那次刷新的读数就是"`00` 已移出命中面、**`03` 又回到命中面**"——
+  两枚件随 dev 前推轮流进面，与本节 P-9 是同一条病；本班后续不再投 03 件，故不受它挡。
+  **下一棒若见这两卷中任意一卷在某条命中面上，先按 §十七·M 的四条只读判据量它是落后件还是未落地件，再决定动哪一侧**
+  （勿直接 `--resolve`：`--resolve` 是**整条目**终态，会把那 18 枚未跟踪目录的可见性一并抹掉）。
+  另记一条副作用实测（不推定"字节未变"那种话）：本次刷新前后台账 open 行数 **185→185**，
+  带最新 ts 的行**恰 1 枚**且 sid＝`st-gpux4-20261013`；期间新增的第 185 枚条目是 11:17:14Z 由别的写方生成的
+  `st-condaxis-20261013`，与本班无关，本班未动它。
+
+**三袋终态（只认字节，`done` 与回显都不算证据）**：
+`bbeb0aa36c`＝码面袋（`factory_grid_executor.py` ＋205/−38、`test_l2_gpu_landing.py` ＋212/−0，10 枚试件）；
+`172d9c776c`＝00 件半袋（晨间裁定包 §一～§六，＋101/−0）；
+`efdeb62e17`＝03 件整袋（§十七 A–M 十三小节，**＋522/−0**，父面 2,162 行为其严格前缀，落地字节 sha 前缀 `116de453c511`
+与本班车道工作树逐字节等）。三件面试件在 03 袋落地笔**之后**复跑一次＝**135 passed in 41.54s**（与落地前同数，
+连同 §六 那两轮 223 passed＝本班累计三轮同集合零失败）。
+前袋 `q-20261013-st-gpux5-20261013-0002` 保留在 `dead/` 不 requeue——
+它的两件已分别由 0003／0004 落地，重投会把陈旧 blob 弹回去（在册"在途袋会成回退弹"形），本班按"让它死"处置并在此留名。
+
+**落地核验指令（本班落地笔之后逐条原样跑过，期望值即真读数）**：
+
+```bash
+git show dev:docs/_working/gpufeed_campaign/03_gpux_final_report.md | wc -l           # 期望 2684
+git show dev:docs/_working/gpufeed_campaign/03_gpux_final_report.md | grep -c "十七·"  # 期望 39（本班实测；A–M 十三小节齐，另含正文互引）
+git show dev:docs/_working/gpufeed_campaign/00_gpufeed_report.md | grep -c "gpux5-20261013"   # 期望 6（本班实测：§一～§七 标题行＋三枚 qid/路径行）
+git show dev:scripts/backtest/factory_grid_executor.py | grep -c "_DEV_PANEL_VERIFY"   # 期望 8（本班实测：丙的开关面）
+git log -1 --name-only --format="%h %s" efdeb62e17                                    # 期望只有那一件
+python - <<'PY'                                                                        # 期望 True True（纯尾追加＋三面同）
+import subprocess,hashlib,pathlib
+f='docs/_working/gpufeed_campaign/03_gpux_final_report.md'
+d=subprocess.run(['git','show','dev:'+f],capture_output=True).stdout
+p=subprocess.run(['git','show','efdeb62e17^:'+f],capture_output=True).stdout
+print(d==pathlib.Path('.aidrafts/st-gpux5-20261013/'+f).read_bytes(),
+      p.decode('utf-8','replace').splitlines()==d.decode('utf-8','replace').splitlines()[:len(p.decode('utf-8','replace').splitlines())])
+PY
+```
+
+**收工动作（本节落地后执行，全部可逆）**：claim 释放（03／00 两件）／保活 `revoke`／
+死车道对齐件的原面留在 `.runtime/quarantine/gpux5_takeover_20261013/`（sha 记 `g5_takeover_fix_log.jsonl`）／
+`dead/` 里的 0002 走 `dead-archive`（mv 非删）或按 死信清零班 的内容级门留档，本班不裸删任何死信。
