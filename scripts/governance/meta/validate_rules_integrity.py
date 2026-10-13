@@ -1,12 +1,17 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_rules_integrity.py | §
 # [MODULE] scripts.governance.meta.validate_rules_integrity
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] scripts.governance.meta.__init__
+# [DEPENDENCIES] scripts.governance.meta.__init__；zephyr.gov_enforcement.commit_gates._diff_helpers（_build_own_scope/_norm_rel/_audit_foreign_staged，通道内惰性 import）
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS]
-# [MODIFY-GUARD]
+# [INVARIANTS] 判定式=hash(工作树) vs hash(参考面)，参考面两态由 flags.integrity_baseline_mode.mode 定（现=head）。
+#   own-diff 收窄（甲-0，Owner 批 2026-10-13）：仅 mode=head 且通道内（ZEPHYR_COMMIT_GATEWAY=1 ∧ GIT_INDEX_FILE 在）
+#   生效——本袋 own 范围外的 TAMPERED/MISSING 降为 FOREIGN_WIP/FOREIGN_MISSING（critical=False、不计数、
+#   经 _audit_foreign_staged 留痕）；own 件判定式/阈值/exit code 一字不动。通道外（人工直跑/独立巡检）
+#   与原语不可用/异常一律不收窄＝全量阻断（fail-closed，判定更严）。册面 own_scope 由
+#   generate_gate_registry 按"_build_own_scope 在文本中"机械派生，禁手改。
+# [MODIFY-GUARD] 甲-0 own-diff 收窄 2026-10-13 st-maint6-20261013（承维护五班 jia0 落地面：env 指向已治，本批治门自身作用域）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -475,6 +480,51 @@ def _staged_change_set(rel_paths: list[str]) -> set[str]:
     return {ln.strip().replace("\\", "/") for ln in result.stdout.splitlines() if ln.strip()}
 
 
+class _ChannelTreeView:
+    """脚本侧 own-scope 视图——共享 own-diff 原语只取 project_root/_registry 两面。
+
+    GATE-INTEGRITY 是 pre-commit 脚本型门（entry=本脚本），不持 gateway 对象；
+    宪法 §3.1 的 own-diff 作用域判据与 in-process 台同源，故复用 `_diff_helpers`
+    原语而非另写一份拆分（拆分自写会撞 FUNCTION-DUP/CAPABILITY-OVERLAP 自身门）。
+    `_registry=None` 使 `_build_own_scope` 退化为 files-only、`_attribute_foreign`
+    返回 None（分类不可判时调用方维持两态），均与其 ERROR_CONTRACT 一致。
+    """
+
+    def __init__(self, root: Path) -> None:
+        self.project_root = root
+        self._registry = None
+
+
+def _own_scope_narrowing(in_commit: set[str]) -> tuple[bool, set[str], object | None, object | None]:
+    """提交链通道内的 own-diff 作用域三态（fail-closed 回全量阻断）。
+
+    Returns:
+        (narrow_active, own_norm_set, gateway 视图, norm 函数)。narrow_active=False 的
+        三种情形一律维持现行"全量阻断"：①不在网关通道内（无 ZEPHYR_COMMIT_GATEWAY=1
+        或无 own-scope 临时索引 GIT_INDEX_FILE——人工直跑/独立巡检必须仍能看见全量漂移）；
+        ②原语不可导入（src 面不可用）；③原语抛异常（保守面不改宽）。
+        own_norm_set 可为空集＝本袋不碰任何受保护件，此时全部漂移按外来处理。
+    """
+    if os.environ.get("ZEPHYR_COMMIT_GATEWAY") != "1" or not os.environ.get("GIT_INDEX_FILE"):
+        return False, set(), None, None
+    try:
+        from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: PLC0415
+            _build_own_scope,
+            _norm_rel,
+        )
+    except Exception:  # noqa: BLE001 — 原语不可用=不收窄（判定更严）
+        return False, set(), None, None
+    view = _ChannelTreeView(_REPO_ROOT)
+    try:
+        scope = _build_own_scope(view, sorted(in_commit), None)
+    except Exception:  # noqa: BLE001 — 异常不收窄
+        return False, set(), None, None
+    # 通道内 own 范围以临时索引为准：_build_own_scope 对空清单返回 None（历史直调语义），
+    # 本处"空"=本袋零受保护件在途，是收窄的最典型形态，故显式归一为空集而非退回全量。
+    normalized = {_norm_rel(view, p) for p in (scope or set())}
+    return True, normalized, view, _norm_rel
+
+
 def _baseline_mode() -> str:
     """完整性基线真源态读取唯一点（scripts 侧；fail-closed 回现状，不翻出厂默认）。
 
@@ -516,6 +566,13 @@ def check(baseline_mode: str | None = None) -> dict:
       HEAD 面整体不可读（head 态）                    → HEAD_UNREADABLE（计数阻断，
         禁"读不到就回退默认"的第三种分支）
 
+    own-diff 收窄两态（甲-0，Owner 批 2026-10-13；仅 mode=head 且在网关通道内生效）：
+      上列 TAMPERED / MISSING 且该路径**不在本袋 own 范围内** → FOREIGN_WIP /
+      FOREIGN_MISSING（critical=False、不计数、warn+审计行落 .runtime/gate_audit/）。
+      判据式一字未改，只改"谁为该件受阻"：own 件照旧阻断，外来件转属主责任制
+      （宪法 §3.1/§3.4）。通道外（人工直跑、独立巡检）不收窄——全量漂移照旧可见，
+      原语不可用或异常亦不收窄（fail-closed，判定更严）。
+
     工作树面继续读不是遗漏：WIP 篡改只有读工作树才看得见；参考面换 HEAD 后
     它从"不同源所以假红"变成"同源所以真判"。
     """
@@ -541,6 +598,20 @@ def check(baseline_mode: str | None = None) -> dict:
         refs = {p: (db_files.get(p, {}) or {}).get("hash", "") for p in paths}
         in_commit = set()
 
+    # 甲-0 own-diff 收窄（宪法 §3.1"内容扫描型 gate 默认 own-diff 作用域；外来
+    # staged 违规=warn+审计，不阻断无辜提交人"；Owner 批 2026-10-13·维护六班）：
+    # 只在提交链通道内生效——工作树面照旧读，own 件的判定式/阈值/exit code 一字不动，
+    # 仅"非本袋外来漂移"从阻断降为 warn+审计（属主责任制 §3.4，无主外来附顺路修处方）。
+    narrow_active, own_norm, narrow_view, narrow_norm_fn = (
+        _own_scope_narrowing(in_commit) if mode == "head" else (False, set(), None, None)
+    )
+    foreign_hits: list[str] = []
+
+    def _is_foreign(rel: str) -> bool:
+        if not narrow_active or narrow_norm_fn is None:
+            return False
+        return str(narrow_norm_fn(narrow_view, rel)) not in own_norm
+
     if len(_DYNAMIC_GATE_ENTRIES) < _MIN_DYNAMIC_GATES:
         # MQ-3：清单数低于阈值即红——glob 静默归零（目录改名族）不得无红无日志。
         results.append(
@@ -560,6 +631,17 @@ def check(baseline_mode: str | None = None) -> dict:
         fp = _REPO_ROOT / entry["path"]
         rel = entry["path"]
         if not fp.exists():
+            if _is_foreign(rel):
+                foreign_hits.append(rel)
+                results.append(
+                    {
+                        "file": rel,
+                        "status": "FOREIGN_MISSING",
+                        "detail": "非本袋件缺失（own-diff 收窄：warn+审计，不阻断无辜提交人）",
+                        "critical": False,
+                    }
+                )
+                continue
             results.append(
                 {
                     "file": rel,
@@ -607,6 +689,20 @@ def check(baseline_mode: str | None = None) -> dict:
                 }
             )
         elif current_hash != known_hash:
+            if _is_foreign(rel):
+                foreign_hits.append(rel)
+                results.append(
+                    {
+                        "file": rel,
+                        "status": "FOREIGN_WIP",
+                        "detail": (
+                            f"非本袋件工作树漂移 (known: {known_hash} → current: {current_hash})"
+                            "（own-diff 收窄：warn+审计，不阻断无辜提交人）"
+                        ),
+                        "critical": False,
+                    }
+                )
+                continue
             results.append(
                 {
                     "file": rel,
@@ -631,12 +727,33 @@ def check(baseline_mode: str | None = None) -> dict:
     # last_check_at 仅为信息性元数据，不参与哈希校验逻辑，移除写入不影响完整性检测。
     # 基线更新（含 last_check_at）由 register() 在 post-commit reconciler 中执行。
 
+    if foreign_hits:
+        # 外来漂移与 in-process 台同口：_audit_foreign_staged 归因+留痕（永不抛异常；
+        # registry 不可读时归因不可判，只留痕不定性属主）。收窄只改"谁为该件受阻"，
+        # 不改任何判定式——篡改面照样被记录并可被属主袋/巡检追认。
+        try:
+            from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: PLC0415
+                _audit_foreign_staged,
+            )
+
+            _audit_foreign_staged(narrow_view, None, foreign_hits, gate_name="GATE-INTEGRITY")
+        except Exception as exc:  # noqa: BLE001 — 审计设施故障不放大为阻断
+            print(f"[INTEGRITY] ⚠ 外来漂移审计未落盘（{len(foreign_hits)} 项）: {exc}", file=sys.stderr)
+        print(
+            f"[INTEGRITY] 🟡 外来漂移 {len(foreign_hits)} 项按 warn+审计处理（own-diff 收窄，"
+            f"宪法 §3.4 属主责任制，本班不代修）: "
+            f"{', '.join(foreign_hits[:5])}{'...' if len(foreign_hits) > 5 else ''}",
+            file=sys.stderr,
+        )
+
     return {
         "timestamp": now.isoformat(),
         "total": len(results),
         "ok_count": sum(1 for r in results if r["status"] == "OK"),
         "baseline_mode": mode,
         "changing_count": sum(1 for r in results if r["status"] == "CHANGING_IN_COMMIT"),
+        "foreign_count": len(foreign_hits),
+        "own_scope_narrowed": narrow_active,
         "tampered_count": tampered,
         "results": results,
         "clean": tampered == 0,
@@ -726,10 +843,13 @@ def main() -> None:
         else:
             if result["clean"]:
                 _chg = result.get("changing_count", 0)
+                _fm = result.get("foreign_count", 0)
                 _tail = f"（本提交在途变更 {_chg} 项，已解释）" if _chg else ""
+                _tail += f"（外来漂移 {_fm} 项 warn+审计，非本袋件）" if _fm else ""
                 print(
                     f"[INTEGRITY] ✅ 全部 {result['total']} 个规则文件完整"
-                    f"[基线面={result.get('baseline_mode', 'snapshot')}]{_tail}",
+                    f"[基线面={result.get('baseline_mode', 'snapshot')}"
+                    f"{'+own-diff' if result.get('own_scope_narrowed') else ''}]{_tail}",
                     file=sys.stderr,
                 )
             else:

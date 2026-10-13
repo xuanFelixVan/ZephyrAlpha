@@ -139,3 +139,95 @@ def test_fold_preserves_wip_tamper_detection(sandbox):
     assert result["clean"] is False
     tampered_files = [r["file"] for r in result["results"] if r["status"] == "TAMPERED"]
     assert "beta.py" in tampered_files
+
+
+# ── 甲-0 own-diff 收窄（Owner 批 2026-10-13·维护六班；宪法 §3.1/§3.4）──────────────
+
+
+@pytest.fixture()
+def head_channel(sandbox, monkeypatch):
+    """head 参考面 + 网关通道沙箱：参考面恒与盘面不等，own 范围由 in_commit 注入。"""
+    monkeypatch.setattr(v, "_read_head_blobs", lambda paths: {p: "REF-MISMATCH" for p in paths})
+    monkeypatch.setattr(v, "_MIN_DYNAMIC_GATES", 0)  # 假 manifest 不触发 MQ-3 空清单红
+    monkeypatch.setenv("ZEPHYR_COMMIT_GATEWAY", "1")
+    monkeypatch.setenv("GIT_INDEX_FILE", str(sandbox["root"] / "own-scope.index"))
+    return sandbox
+
+
+def _foreign_audit_calls(monkeypatch) -> list[list[str]]:
+    """把共享审计原语换成记录器，验证"外来降级"确实留痕（不是只改文案）。"""
+    import zephyr.gov_enforcement.commit_gates._diff_helpers as dh
+
+    calls: list[list[str]] = []
+    monkeypatch.setattr(
+        dh,
+        "_audit_foreign_staged",
+        lambda gateway, session_id, foreign, *, gate_name: calls.append(list(foreign)),
+    )
+    return calls
+
+
+class TestOwnScopeNarrowing:
+    """收窄只改"谁为该件受阻"：own 件判定式一字不动，外来件转 warn+审计。"""
+
+    def test_foreign_drift_downgraded_and_own_kept_blocked(self, head_channel, monkeypatch):
+        """本袋只碰 alpha（在途）时，beta 的外来漂移不得拦本袋；alpha 自身缺失照旧阻断。"""
+        calls = _foreign_audit_calls(monkeypatch)
+        (head_channel["root"] / "beta.py").write_text("PWNED\n", encoding="utf-8")
+        (head_channel["root"] / "alpha.py").unlink()  # own 件缺失＝critical 阻断
+        monkeypatch.setattr(v, "_staged_change_set", lambda paths: {"alpha.py"})
+
+        result = v.check(baseline_mode="head")
+
+        statuses = {r["file"]: r["status"] for r in result["results"]}
+        assert statuses["beta.py"] == "FOREIGN_WIP"
+        assert statuses["alpha.py"] == "MISSING"
+        assert result["tampered_count"] == 1 and result["clean"] is False
+        assert result["foreign_count"] == 1 and result["own_scope_narrowed"] is True
+        assert calls == [["beta.py"]], "外来降级必须经共享审计原语留痕"
+
+    def test_empty_own_scope_makes_every_drift_foreign(self, head_channel, monkeypatch):
+        """本袋零受保护件在途（治理面袋的典型形态）→ 全部漂移按外来，袋放行。"""
+        _foreign_audit_calls(monkeypatch)
+        (head_channel["root"] / "beta.py").write_text("WIP by another session\n", encoding="utf-8")
+        monkeypatch.setattr(v, "_staged_change_set", lambda paths: set())
+
+        result = v.check(baseline_mode="head")
+
+        assert result["own_scope_narrowed"] is True
+        assert {r["file"]: r["status"] for r in result["results"]}["beta.py"] == "FOREIGN_WIP"
+        assert result["tampered_count"] == 0 and result["clean"] is True
+
+    def test_outside_channel_keeps_full_scan_blocking(self, head_channel, monkeypatch):
+        """反向对照（不收窄面）：通道外人工直跑/独立巡检仍把外来漂移判 TAMPERED。"""
+        monkeypatch.delenv("ZEPHYR_COMMIT_GATEWAY")
+        (head_channel["root"] / "beta.py").write_text("drift\n", encoding="utf-8")
+        monkeypatch.setattr(v, "_staged_change_set", lambda paths: set())
+
+        result = v.check(baseline_mode="head")
+
+        assert result["own_scope_narrowed"] is False
+        assert {r["file"]: r["status"] for r in result["results"]}["beta.py"] == "TAMPERED"
+        assert result["clean"] is False
+
+    def test_snapshot_mode_does_not_narrow(self, head_channel, monkeypatch):
+        """回滚态（snapshot 参考面）不收窄——own 解释位在该态本就不存在（in_commit 恒空）。"""
+        monkeypatch.setattr(v, "_staged_change_set", lambda paths: set())
+        (head_channel["root"] / "beta.py").write_text("drift\n", encoding="utf-8")
+
+        result = v.check(baseline_mode="snapshot")
+
+        assert result["own_scope_narrowed"] is False
+
+    def test_narrowing_helper_is_fail_closed(self, tmp_path, monkeypatch):
+        """helper 三态：无通道 env→不收窄；有通道无临时索引→不收窄；两者齐→收窄且空 own 合法。"""
+        monkeypatch.delenv("ZEPHYR_COMMIT_GATEWAY", raising=False)
+        monkeypatch.delenv("GIT_INDEX_FILE", raising=False)
+        assert v._own_scope_narrowing(set())[0] is False
+        monkeypatch.setenv("ZEPHYR_COMMIT_GATEWAY", "1")
+        assert v._own_scope_narrowing(set())[0] is False
+        monkeypatch.setenv("GIT_INDEX_FILE", str(tmp_path / "idx"))
+        active, own, view, norm = v._own_scope_narrowing({"scripts/x.py"})
+        assert active is True and view is not None and norm is not None
+        assert own == {str(norm(view, "scripts/x.py"))}
+        assert v._own_scope_narrowing(set())[1] == set()

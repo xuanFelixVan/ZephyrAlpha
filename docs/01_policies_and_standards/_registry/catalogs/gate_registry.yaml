@@ -127,7 +127,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
   enforcement_channel: pre-commit
 - gate_id: GATE-12
   name: 'GATE-12: 蓝图真源准入门禁（Wave 0 V-12）'
