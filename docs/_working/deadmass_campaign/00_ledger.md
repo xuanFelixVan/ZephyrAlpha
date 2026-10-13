@@ -197,5 +197,120 @@ col0 坏行=0（他道后续 render 追齐）；本班随后经在册 `projectio
 正常口再打一次（ledger_revision=541，added=1=本班 token 行，removed=0），
 读回 parse OK。**结论＝在册"投影滞后假拦、render 追齐即通"定案复证一次**，本班未修他道字节。
 
+## 八、二班班账（st-deadmass2-20261014，2026-10-14 02:2x → 03:2x）
+
+令据＝统筹令 2026-10-14 晨（接本班 §七交接卡）；角色与并发四条＝只读类多车道并行／写盘按片分区／
+事件驱动不空等／首件小步校准后放量／一口气执行到底中途不问 Owner。
+
+### 八-1 冷启动与保活（复命四步全读回）
+
+RULE-ENV＝python 3.12.8＋`setup_dev_env.py --check` installed=True；RULE-GUARDIAN＝reaper
+`source=live`（commit_pct 67.11%、worktree_changes=213 只报不处置）。保活只走 grant 正门：
+`register(sid, pid=0)`→心跳守护按在册三元形态起（入口=包模块 `-m zephyr...heartbeat_daemon`，
+**非** `scripts/heartbeat_daemon.py`，后者查无＝Popen 假成功旧坑）→`register_heartbeat_keepalive`
+→用门自己的尺 `list_active_readonly()` 命中＋心跳龄 ≤90s 收尾核验。实测心跳面 30s 一跳
+（`status=alive`，单一 pid=30364，无复数守护），grant 剩余 1,189s 时由保活腿自动续。
+⚑ 首版把保活/归档 stdout 直插 `| tail` ⇒ 块缓冲致日志恒空＝"没跑"假象，改用文件重取后
+以进程表证实两腿一直在跑（在册"空日志≠没跑"复证，本班自犯登录第八-3 条）。
+
+### 八-2 校准复现（首件小步，未先放量）
+
+`deadmass_c_measure.py --sample 60` 两轮（02:2x/02:5x）：**正对照 MATCH**（AGENTS.md rev-parse
+== 尺算 sha）＋**负对照 DIFF**；与在册真门对表 **agree=60 disagree=0**（前任 60/60 复现）。
+分母 dead=1,638→1,639；分态 C_UNIQUE_WOULD_REGRESS 1,403/1,404、A_LANDED 75/76、
+B_UNIQUE_REQUEUEABLE 115/114、D_MIXED 43、D_LOST 2。
+**独立尺对拍**：段二腿①自动分诊账 10-14 面 C 1,400/A 75/B 118/D 43+2＝1,638，与本班上表
+同总数、C↔B 差 3 枚（其间他班落地所致）⇒ 两把尺互证，非自证。
+
+### 八-3 墓园接力（存证先行，判据零放宽）
+
+前任池自证：MANIFEST 5,898 行 == dst 在盘 5,898（manifest-only=0／disk-only=0）。
+本班新面缺口 85 枚／37.10 MiB → 独立池 `E:/_tomb_quarantine/st-deadmass2-20261014/C_unique_20261014/`
+（署名/回滚/到期各行自成一册，不与前任混账）。逐枚回读 **mismatch=0 missing=0**；
+现表唯一面 5,980/5,980 归宿＝**覆盖率 100.0000%**，源 blob 缺失 0 枚。
+
+### 八-4 租约空窗实测（本班主役的真瓶颈）
+
+0.2s×898 样本连续采样 180s：**FREE 跨段=0**；`_lease_snapshot` 全程 `present&alive`
+（holder_pid=3452 为常驻守护级进程）。读码定性＝这不是尺的bug而是闸的本义：
+①`commit_queue.py:1394-1420` 活体持有者超 TTL 判"慢项在途，**绝不可抢**"（2026-09-17
+11 条 pathspec 死信病根治本，抢=两 drain 并发同 serializer worktree，硬复位加深扫清理毁未 commit 新文件
+毁未 commit 新文件）；②`dead_archive_letters:3855` 官方通道**自身**即以"serializer 租约存活"
+整体拒绝并行维护操作。⇒ pending 非空期"抓窗"结构上不可达；本班按令挂轮询不越闸不停带，
+并把该片实测作为呈批依据（前任 §四-1 "若仍无空窗"分支）。带量吞吐实测：done 838→845、
+pending 27→25，约 8–9 min/枚 ⇒ 25 枚积压需 ~3.5h 才可能出真空窗。
+
+### 八-5 B 面改判（按属主活性分道，统筹令第 4 条落地）
+
+115 枚 B_UNIQUE_REQUEUEABLE 分账：**活属主 18 枚**（5 sid：bakdr/condaxis/gpux6/libstale/maint7）
+⇒ 留位不代投（代投字节会因本道后落地变回退弹，在册 parked-bag 条）；
+**死属主 97 枚**（35 sid）⇒ 走内容级通道。判据不是偏好而是机械的：属主已死之袋 requeue 必再死于
+`ghost_session`（`commit_queue.py:2129/2396`），而唯一面已逐枚入墓园 ⇒ mv＋manifest 行＋证据 sha
+零丢失且留 30 天复活窗。render 袋 0010 按前任"被重渲染取代＝销账"随 C 面走，本班未 requeue。
+归档器因此重投一次（旧进程按 PID 39100 精确停，无按镜像名杀）：新分布
+C_TOMBSTORED 1,404／B_DEAD_OWNER_TOMBSTORED 97／A_LANDED 76／D_MIXED 43／D_CONFIRMED_LOST 2
+＝放行 1,622，B_LIVE_OWNER_LEAVE 17 不放行。
+
+### 八-6 blob_gc phase2 首轮（随清袋走，仍只归档不删）
+
+`scripts/governance/blob_gc.py --phase 2 --archive`：**moved 4,710 枚／984.3 MiB，
+竞态复扫 skip=0，dst 既存=0**；blobs/ 21,209→16,501，blobs_archive/ 10,883。
+承重墙复证＝竞态复扫的"仍引用"只数活引用面（不计 ARCHIVE），否则 D 类被自己的归档 JSON
+判成在引而旗空转——本轮 skip=0 即该墙的正面读数。第二pass 挂本班 C/D 归档之后。
+
+### 八-7 前班车道退场（统筹令第 2 条，接线核查＝已落）
+
+钩子在 `scripts/ops_guard.py:1288-1316`；**调用侧**实测落 dev：
+`scripts/session_worktree.py:1080 _tomb_ctx_factory` 被 `:1197` 消费（`man.verified` 为假时
+factory=None＝fail-closed 不放宽），`:1139 _patch_new_file_bytes` 从退役 patch 真读回正文字节。
+退场前先落前任未落地交接面：车道 99_delivery 127 行 vs dev 77 行，且 **dev 字节是车道字节的
+严格前缀**（`new[:len(old)]==old` 实测 True）⇒ 纯追加 4,418 字节搬入，走正门
+`--enqueue`（袋 q-20261014-st-deadmass2-20261014-0001；网关 lease 被持自动改道入队，非直连强抢）。
+退场四处读回＝worktree 目录消失／`git worktree list` 无该条／分支 `ai/st-deadmass-20261013/*` 已删／
+session 已注销；退役 patch substantive=11（1,436 行 `+`）；**执行窗内接管台账新增 0 行**
+（192→192，按 ts_epoch 过滤非按字符串猜），动手前同分钟实测 10 个在册活会话心跳龄 ≤22s ⇒ 无外班分片可收。
+
+### 八-8 会话壳与根散件
+
+壳面 33 → **17**。13 壳只剩 keepalive.jsonl ⇒ promote 入墓园后走在册 `_prune_session_shell`
+拆壳（拆 13 保留 0）；3 枚取证改名件（datasop/gomap-b/mastertc-l5）按"已存证即放行"mv＋拆
+（dst 逐枚 sha 等值才 unlink，一物一行不重记）。3 壳真成果（gpuux3v 17 面／maint3 17 面／
+nightmine2 1 面）实质面 38 枚／927,352 字节全部 tomb 复制留证，**壳暂不拆**——理由见八-10。
+墓园总账：MANIFEST 136 行（85 blob＋38 实质＋13 keepalive）逐枚回读 **mismatch=0 missing=0**，
+INDEX 21→40 行，本班 20 行 expires=2026-11-13。备份覆盖面核实＝
+`scripts/backup/backup_config.yaml:129-130` tomb_quarantine 源＝`E:\_tomb_quarantine` 整根，
+本班新子池自动入 G 盘夜镜像。
+根层平铺未跟踪件=**0**（正对照＝同一尺在全仓面报 168 条 `??`／未跟踪总数 550，非零命中尺）。
+
+### 八-9 gate_audit 一条前提被实测改判
+
+存量 292 件／1,209.5 MB；最大两段 `test_source_consistency_foreign_staged.jsonl.1` 120.3MB／
+`no_upward_import_foreign_staged.jsonl.1` 65.3MB **同前任读数一致**，但两族的 **live 段实测仅
+2.2MB／1.2MB** ⇒ 这两段是**已移位保留段**（轮转在转），不是"此刻还在涨的不过闸热文件"。
+本班未修他道字节，只把该读数呈维护线（维护七班班账 dev 面 `gate_audit` 零命中＝尚未定性）。
+删除属政策变更，本班不删、不自造豁免。
+
+### 八-10 本班自犯与未做（无一遮蔽）
+
+1. **Edit 追加把他班 keep 行写坏**：给 `process_reaper_keep.txt` 追加本班两行时，锚文本里
+   `ZephyrAlpha-CHVMConfigSnapshot` 被我误打成 `ZephyrCHVMConfigSnapshot`（备份线夜班那一行被
+   静默改写）。下一步即 grep 自纠复原＋行数对拍（385→387 恰为本班两行）。教训＝追加型热件的
+   锚段必须逐字复制，改后要用**行数差＝计划差**自证，不能只看"我的两行进去了"。
+2. **保活/归档日志管道坑**（八-1 已记）：`python -u … | tail -N` 在长跑下等于把输出锁在缓冲区，
+   据此判"没跑"会误杀自己的腿。
+3. **`clone_guard_audit.py` 无 argparse**：本想读它的用法，`--help` 被当位置参数直跑了一轮
+   L2 全量 .py 审计（findings=0 健康 A，产物 `.runtime/clone_guard_audit/audit_20261014T031448.json`）。
+   副作用登记在此；该尺只覆 .py，对本班 .md promote 无判别力。
+4. **宪法宣称的写前预查 API 不存在**（`clone_guard.check_before_write`/`resolve_finding` 全仓零命中，
+   在册案卷 `fullflow_mining/m3_governance/06_f103_clone_guard_code_dedup.md` 已记为须治理裁定）
+   ⇒ 本班**无法**在写前判克隆，只能在 commit 面吃事后 `check(staged)`。
+5. **仓库侧 promote 本班未做（有意搁置，非漏做）**：复测证伪了交接卡的两处计数——
+   gpuux3v 实质面是 **17 枚非 3 枚**、maint3 是 **两个 plan 批（151409Z＋162521Z）共 17 枚非一个**；
+   且 `v5_section_13_O.md` 签名行实测**已存在**于 dev 的 `gpufeed_campaign/03_gpux_final_report.md`
+   ⇒ 前置（CLONEGUARD acknowledged 对／散文去重）未清，在 25 枚积压、8–9 min/枚的拥堵队列里
+   盲投一个可能死信的袋＝给下一班新增死信，与本班"每降一枚有 manifest 行"的判据反向。
+   处方已命令化进二班收班册 §三，3 壳因此保留未拆（内容另有墓园双证）。
+
+
 
 
