@@ -295,7 +295,7 @@ def arm_level_cap_multiply(base: pd.Series, params: dict, args: dict) -> pd.Seri
     b = _to_dates(_base_or_raise(base, op))
     level_map = params.get("level_map")
     if not isinstance(level_map, dict) or not level_map:
-        raise ArmParamUnfrozen(f"{op}:level_map 未给（卡面级别→仓位映射数值须整表传入，禁自拟档位）")
+        raise ArmParamUnfrozen(f"{op}:level_map 未给（卡面级别到仓位映射数值须整表传入，禁自拟档位）")
     levels = params.get("levels")
     if levels is None:
         raise ArmParamUnfrozen(f"{op}:levels 未注入（级别序列须由在册判定件回放产出，本件禁重写迟滞解除逻辑）")
