@@ -380,3 +380,28 @@ dev 于是出现"认可 precomputed 却仍 shift(-1)"的组合＝静默错值风
 本班残余两件＝①0022 测试袋落地待读回；②新建物化件袋待投影追齐后 requeue（不阻塞这 8 张卡开考，
 因为考卷数据面与执行器面都已各自在 dev，缺的只是"重跑数据的能力"在册）。
 开考与试次入账归矿考二班／考试班；本班零开考、N 账本零写。
+
+### 12.6 落地补记（16:2x 实测，只认 git）
+
+§12.2/§12.5 写"0022 在途"时的判据成立，现已落地，逐袋补号（done 记录 landed_id 与 `git log` 双面对拍）：
+
+| 袋 | 内容 | landed commit | 落地面复测 |
+|---|---|---|---|
+| 0021 | calibration_exam.py 多日档 | `a67009f3ef5d49` | dev grep `_forward_face`=5 |
+| 0022 | test_calibration_exam.py 95 行 | `3d4f8b51dbff58` | dev grep `_forward_face`=17；车道存证副本与该字节面全等后已撤（防"假留证"） |
+| 0023 | 8 卡重转＋本件 §十二 | `baeac13bc1c58f` | dev 面 8 卡 `status: preregistered`；本文件 `grep -c '^## '`＝12（§十二 止） |
+
+终验环（落地面同代性）：车道六件 `calibration_exam/card_binding/auto_mount/test_calibration_exam/test_card_binding/test_auto_mount_sle3`
+与 dev 逐字节 SAME（六件全 SAME，非抽样），module `__file__` 复测指车道面（防"车道 pytest 读主区码面"在册假绿形态），
+合跑 **168 passed**（零 CH）。本班 claim 11 枚已全部 release（`.ailocks` 复测本班持 0）。
+
+残余只剩一件，且不挡开考：**新建物化件 .py＋其测试**待维护线投影追齐后 `requeue q-20261013-st-minedig2-20261012-0012`
+（16:1x 实测 dev 投影册 grep `agg8_series_materialize`=0＝未追齐；本班不重打投影袋）。
+本班此处不写"全链路打通、无遗留"——上面这条就是遗留，且它是"重跑数据的能力"而非"考卷面"。
+
+### 12.7 统筹三裁入册（裁定#514，按硬规则第 8 条同 commit 原子）
+
+本节与 `ruling_registry.yaml` 新条目、8 张卡面同袋投出（引裁定号必经登记正门）。三裁原文与执行复算见册内 `裁定#514` 条目。
+顺带一条实测登记（供后人不再误判"未落地"）：本班 16:3x 复测 `git show dev:…/ruling_registry.yaml` 的 YAML 面**至今没有** 509-513 五条，
+而 PG 账本 `REG-RULING-001` 五号全 active＝该册是 PG-backed、落地走 render，投影滞后≠登记缺失；
+判"裁定是否在册"的尺＝PG 账本点查，判"是否已物化到工作树面"的尺＝dev grep——两把尺不可互换（在册教训：落地≠生效，须三面 sha）。
