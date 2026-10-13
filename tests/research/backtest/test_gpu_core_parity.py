@@ -326,3 +326,178 @@ def test_backtest_core_gpu_carrier_path_matches_host_frame_bitwise():
             _c4_engine._stats_from_net(g_dev, t_dev, panel, hold_days_pct=None)
     finally:
         _c4_engine._load_seal_masks = orig  # type: ignore[method-assign]
+
+
+# ——— 9. 刀一 设备侧 ffill 扫描核 ＋ 刀二 批级 rets 共享（st-gpux4-20261013）———
+# 钉的对象是"两把刀都不得改数值"：刀一换的是 _ffill_axis0 的 cupy 分支实现（host 回环→设备核），
+# 刀二换的是 rets 的求值次数（逐格→批级一次）。两者按 §一 表都属 L1 级＝**逐位等、容差 0**，
+# 所以这里的判据全部用 uint64 位视图（`==` 会把 -0.0/0.0 与 NaN 判成相等，不够严）。
+
+
+def _bits(a: np.ndarray) -> np.ndarray:
+    """float64 → uint64 位视图（逐位等的比较器；先把设备件收回主机再取位）。"""
+    import cupy as _cp_local  # 仅在本文件已 skipif 到 cupy 可用的用例里调用
+
+    if isinstance(a, _cp_local.ndarray):
+        a = _cp_local.asnumpy(a)
+    a = np.ascontiguousarray(a, dtype=np.float64)
+    return a.view(np.uint64)
+
+
+def _ffill_numpy_reference(host: np.ndarray) -> np.ndarray:
+    """改动前 cupy 分支那条算式的主机同形：where(~mask, arange, 0)→maximum.accumulate→gather。
+
+    这里**故意不 import 旧实现**（旧分支已被替换，盘上不存在），而是按算式逐字重写一遍当参照；
+    跨版本的字节级参照由 `.runtime/tmp/st-gpux4-20261013/g4_ffill_verify.py` 用
+    `git show dev:` 装载第二模块来给（两把尺指向不同对象：本函数证"语义没跑偏"，那针证"字节没变过"）。
+    """
+    t, s = host.shape
+    idx = np.where(~np.isnan(host), np.arange(t)[:, None], 0)
+    idx = np.maximum.accumulate(idx, axis=0)
+    return host[idx, np.arange(s)[None, :]]
+
+
+def _ffill_families(tt: int = 64, ss: int = 24) -> dict[str, np.ndarray]:
+    rng = np.random.default_rng(20261013)
+    base = 100.0 + np.cumsum(rng.normal(0, 1.0, size=(tt, ss)), axis=0)
+    halt = base.copy()
+    halt[12:19, 3] = np.nan
+    halt[30:44, 11] = np.nan
+    lead = base.copy()
+    lead[:9, :] = np.nan
+    allnan = base.copy()
+    allnan[:, 5] = np.nan
+    sparse = np.full((tt, ss), np.nan)
+    for i in range(0, tt, 4):
+        sparse[i, rng.choice(ss, size=3, replace=False)] = rng.random(3) / 3.0
+    edge = base.copy()
+    edge[4, 2], edge[6, 7], edge[8, 9] = np.inf, -0.0, 5e-324
+    edge[20, :4] = np.nan
+    return {
+        "halt_runs": halt,
+        "leading_nan": lead,
+        "all_nan_col": allnan,
+        "topn_sparse": sparse,
+        "bitwise_edge": edge,
+        "no_nan": base.copy(),
+    }
+
+
+@pytest.mark.skipif(not gpu_core.gpu_available(), reason="cupy/CUDA 不可用")
+@pytest.mark.parametrize("family", list(_ffill_families().keys()))
+def test_ffill_device_kernel_bitwise_three_way(family: str):
+    """刀一主钉：设备核 vs numpy 算式参照 vs pandas .ffill() 三向逐位等（含短路面）。"""
+    import cupy as cp
+
+    host = _ffill_families()[family]
+    ref_np = _ffill_numpy_reference(host)
+    ref_pd = pd.DataFrame(host).ffill().to_numpy(dtype=np.float64)
+    dev = gpu_core._ffill_axis0(cp, cp.asarray(host))
+    if family == "no_nan":
+        assert dev is not None and np.array_equal(_bits(dev), _bits(host))
+        assert ref_np.shape == host.shape
+        return
+    assert np.array_equal(_bits(dev), _bits(ref_np)), f"{family}: 设备核≠numpy 算式参照"
+    assert np.array_equal(_bits(dev), _bits(ref_pd)), f"{family}: 设备核≠pandas .ffill()"
+
+
+@pytest.mark.skipif(not gpu_core.gpu_available(), reason="cupy/CUDA 不可用")
+def test_ffill_ruler_has_teeth():
+    """失焦对照：两条"错式"必须与正解不等，且**两条错式彼此也不等**（同一把尺的两个参照若互等，
+    说明它们量的不是同一件事——在册"两把参照必须互不相同"同族自检）。"""
+    import cupy as cp
+
+    host = _ffill_families()["leading_nan"]
+    good = gpu_core._ffill_axis0(cp, cp.asarray(host))
+    bad_fill0 = cp.where(cp.isnan(good), 0.0, good)  # 错式一：无前值补 0（洗掉 leading NaN）
+    idx = np.minimum.accumulate(
+        np.where(~np.isnan(host), np.arange(host.shape[0])[:, None], host.shape[0] - 1), axis=0
+    )  # 错式二：方向写反＝bfill
+    bad_bfill = cp.asarray(host)[cp.asarray(idx), cp.arange(host.shape[1])[None, :]]
+    assert not np.array_equal(_bits(good), _bits(bad_fill0)), "补 0 错式未被识出＝尺对 leading NaN 无牙"
+    assert not np.array_equal(_bits(good), _bits(bad_bfill)), "bfill 错式未被识出＝尺对填充方向无牙"
+    assert not np.array_equal(_bits(bad_fill0), _bits(bad_bfill)), "两条错式互等＝参照构造退化"
+
+
+@pytest.mark.skipif(not gpu_core.gpu_available(), reason="cupy/CUDA 不可用")
+def test_ffill_rawkernel_rejects_non_float64():
+    """dtype 闸：RawKernel 按 const double* 解读显存，float32 直调必须是 ValueError 不是乱码。"""
+    import cupy as cp
+
+    a = cp.ones((8, 4), dtype=cp.float32)
+    a[2, 1] = cp.nan
+    with pytest.raises(ValueError, match="float64"):
+        gpu_core._ffill_rawkernel(a)
+
+
+@pytest.mark.skipif(not gpu_core.gpu_available(), reason="cupy/CUDA 不可用")
+def test_pre_rets_shared_matches_per_cell_bitwise():
+    """刀二主钉：`pre_rets=None`（逐格现算）vs 传入批级共享件 ⇒ 五档 nets 逐位等。
+
+    共享件的产出式＝`gpu_core.prep_rets_device`，与核内侧同一个 `px_rets` 函数体，
+    所以这条钉的是"接线没接错"，而数值等价本身由构造给出。
+    """
+    w_df, px_df, masks = _synthetic()
+    cp = gpu_core.device_module()
+    shared = gpu_core.prep_rets_device(px_df, cp)
+    kw = dict(
+        gate_masks=masks,
+        slippage_bps=(0.0, 5.0, 10.0, 20.0, 40.0),
+        gate_limits=True,
+        backend="gpu",
+        want_hold_days=True,
+    )
+    r0 = gpu_core.tensor_core(w_df, px_df, **kw)
+    r1 = gpu_core.tensor_core(w_df, px_df, pre_rets=shared, **kw)
+    assert np.array_equal(_bits(r0["gross"]), _bits(r1["gross"]))
+    assert np.array_equal(_bits(r0["turnover"]), _bits(r1["turnover"]))
+    for bp, n0 in r0["nets"].items():
+        assert np.array_equal(_bits(n0), _bits(r1["nets"][bp])), f"{bp}bp 档 nets 不等"
+    assert r0["hold_days_pct"] == r1["hold_days_pct"]
+
+
+@pytest.mark.skipif(not gpu_core.gpu_available(), reason="cupy/CUDA 不可用")
+def test_pre_rets_teeth_wrong_panel_differs():
+    """失焦对照：供入**另一张**价格面板的 rets，gross 必须变（否则上一条全等可能是空等）。"""
+    w_df, px_df, masks = _synthetic()
+    cp = gpu_core.device_module()
+    other = px_df.copy()
+    other.iloc[40:, 3] = other.iloc[39, 3]  # 造一条真不同的价格路径
+    assert not other.equals(px_df)
+    kw = dict(gate_masks=masks, slippage_bps=(0.0,), gate_limits=True, backend="gpu", want_hold_days=False)
+    good = gpu_core.tensor_core(w_df, px_df, **kw)
+    bad = gpu_core.tensor_core(w_df, px_df, pre_rets=gpu_core.prep_rets_device(other, cp), **kw)
+    assert not np.array_equal(_bits(good["gross"]), _bits(bad["gross"]))
+
+
+@pytest.mark.skipif(not gpu_core.gpu_available(), reason="cupy/CUDA 不可用")
+def test_pre_rets_cache_hits_and_pins_host_identity():
+    """缓存账：第二次必须 hit（不 hit 时"逐位等"什么都没证）；同内容不同宿主对象必须 put 而非 hit。
+
+    键纪律钉的是"引用随值 pin 住"那一半——`_DEV_PANEL_CACHE` 的 id() 键不持引用（在册脏命中风险面），
+    本缓存若退化成那种形，这条会红。
+    """
+    cp = gpu_core.device_module()
+    px_df = _synthetic()[1]
+    saved = dict(_c4_engine._PRE_RETS_STATS)
+    try:
+        _c4_engine._PRE_RETS.clear()
+        _c4_engine._PRE_RETS_STATS.update({"rets_hit": 0, "rets_put": 0})
+        first = _c4_engine._pre_rets_cache(px_df, cp)
+        second = _c4_engine._pre_rets_cache(px_df, cp)
+        assert _c4_engine._PRE_RETS_STATS["rets_put"] == 1
+        assert _c4_engine._PRE_RETS_STATS["rets_hit"] == 1
+        assert first.data.ptr == second.data.ptr  # 同一设备缓冲＝真复用，不是又算一遍
+        twin = px_df.copy()
+        _c4_engine._PRE_RETS.clear()
+        _c4_engine._PRE_RETS_STATS.update({"rets_hit": 0, "rets_put": 0})
+        _c4_engine._pre_rets_cache(px_df, cp)
+        third = _c4_engine._pre_rets_cache(twin, cp)
+        assert _c4_engine._PRE_RETS_STATS["rets_hit"] == 0, "同内容不同宿主被判 hit＝身份判定失守"
+        assert _c4_engine._PRE_RETS_STATS["rets_put"] == 2
+        assert np.array_equal(_bits(third), _bits(first)), "同内容重建件与原件不同位＝产出式随宿主身份漂移"
+        assert _c4_engine._pre_rets_cache(px_df, None) is None, "xp=None 必须回 None（禁静默走设备路）"
+    finally:
+        _c4_engine._PRE_RETS.clear()
+        _c4_engine._PRE_RETS_STATS.clear()
+        _c4_engine._PRE_RETS_STATS.update(saved)

@@ -10,6 +10,11 @@
 #   （kline_daily_hfq/kline_index/kline_etf_daily/stk_limit/index_constituent/stock_basic）；
 #   涨跌停可成交性闸默认开（E7 引擎洞修复 2026-09-18：封板收盘禁开仓/跌停收盘禁出逃，
 #   判定单位对齐原始价 kline_daily vs stk_limit；gate_limits=False 仅供反例对照）；
+#   批级设备缓存（_DEV_RESIDENCY／_PRE_RETS）的成立前提=价格宽表与掩码宽表交进本件后**只读**：
+#   两本都按"内容派生键＋命中时核宿主对象身份＋引用随值 pin 住"记忆化，就地改写同一 DataFrame
+#   对象会让缓存返回改写前的位（id 复用那一类脏命中已被 pin 堵住，这一类堵不住）。
+#   现调用图实测无此写法（executor 与 engine 全档 `inplace` 命中 0、`.loc[..]=` 仅命中掩码装配一处），
+#   故按声明不变式管理而非加内容指纹（指纹=每格再扫 38.6MB，会把省下的搬运又付回去）。
 #   st-ddup-20260925 去重改造（内收声明）：掩码 pivot 向量化+批级 LRU 缓存（替代逐行
 #   dict/iat+每 pass 重查 CH）、_backtest_core 单趟共享（替代 run_backtest 与
 #   daily_net_returns 同式两算）、net_returns_by_tiers 多档标量成本线（替代五档各全跑）；
@@ -150,6 +155,63 @@ def set_dev_residency_enabled(on: bool) -> None:
     if not on:
         _DEV_RESIDENCY.clear()
     _DEV_RESIDENCY_STATS["enabled"] = int(bool(on))
+
+
+# ── 刀二：价格→收益率批级共享（st-gpux4-20261013；据=开工令第②把刀原文
+#  "价格→收益率批级共享（同窗同宇宙算一次，逐位等可证）"＋03 件 §十一·F⑥ 的
+#  CPU 侧同型证据"批内已 hoist 的 bt 474ms vs 孤立不 hoist 2,098ms"）──
+# 靶：rets 只依赖价格面板，与格点的因子/合成/权重全无关，但设备臂过去**每格**都重上一遍
+# px（38.6MB H2D）再重算一遍 ffill+shift+除（§十一·F⑥：H2D 占设备 bt 核 63–71% 的就是这两张）。
+# 逐位等为什么可证而不是"量出来看着像"：缓存的产出式＝gpu_core.prep_rets_device，
+# 核内侧走的也是同一个 px_rets 函数体（同序、同 dtype 收口、同无原子归约），
+# 于是"共享"与"逐格重算"是同一表达式的两次求值，而非两套实现的碰巧相等。
+# 键纪律沿用 _dev_resident：内容派生键＋命中时核宿主对象身份（value[0] is host_ref），
+# 宿主引用随值 pin 住 ⇒ id 复用那一类脏命中结构上不可能发生。
+# **另起一本而不并进 _DEV_RESIDENCY**：检验道正按"三套缓存的命中/逐出时序交互"收网驻留红账，
+# 塞进同一本会互相污染占用序列，且 set_dev_residency_enabled(False) 会把本刀一起清掉。
+# 失败面：MemoryError ⇒ 整清＋本格回逐格现算（＝改动前形态），计数出声禁静默。
+_PRE_RETS: OrderedDict[tuple, tuple[Any, Any]] = OrderedDict()
+_PRE_RETS_MAX = 4  # 峰值显存≈4×38.6MB≈0.15GB（批内宇宙族数 hs300/zz500/all_a 有余量）
+_PRE_RETS_STATS: dict[str, int] = {"rets_hit": 0, "rets_put": 0, "rets_mem_clear": 0}
+#: 本刀独立手柄（同进程 A/B 用，不是产品开关）：缺省 True=设备臂吃批级共享；
+#: 置 False 即回到"每格现算"形态，供底尺配对臂使用。
+_PRE_RETS_ENABLED: bool = True
+
+
+def set_pre_rets_enabled(on: bool) -> None:
+    """置刀二手柄并清缓存（关闭时清＝不留上一形态的共享件，配对臂必须连省下的也不吃）。"""
+    global _PRE_RETS_ENABLED
+    _PRE_RETS_ENABLED = bool(on)
+    if not on:
+        _PRE_RETS.clear()
+    _PRE_RETS_STATS["enabled"] = int(bool(on))
+
+
+def _pre_rets_cache(px_close: pd.DataFrame, xp: Any) -> Any | None:
+    """批级设备 rets：同 (窗口, 宇宙)＋宿主对象身份相同即复用，否则现算并 pin 宿主引用。"""
+    from zephyr.backtest.gpu_core import prep_rets_device
+
+    if px_close is None or xp is None or not _PRE_RETS_ENABLED:
+        return None
+    idx, cols = px_close.index, px_close.columns
+    if len(idx) == 0 or len(cols) == 0:
+        return None
+    key = ("rets", tuple(px_close.shape), str(idx[0]), str(idx[-1]), str(cols[0]), str(cols[-1]))
+    ent = _PRE_RETS.get(key)
+    if ent is not None and ent[0] is px_close:
+        _PRE_RETS_STATS["rets_hit"] += 1
+        return ent[1]
+    try:
+        val = prep_rets_device(px_close, xp)
+    except MemoryError:
+        _PRE_RETS.clear()
+        _PRE_RETS_STATS["rets_mem_clear"] += 1
+        return None
+    if len(_PRE_RETS) >= _PRE_RETS_MAX:
+        _PRE_RETS.clear()  # 批轮换/宇宙切换=旧键失效，整清最省（同 _dev_resident 语义）
+    _PRE_RETS[key] = (px_close, val)
+    _PRE_RETS_STATS["rets_put"] += 1
+    return val
 
 
 # 最近一次窗口宇宙加载的披露（E4 retrofit：幸存者偏差可见化，禁静默）
@@ -688,6 +750,7 @@ def _backtest_core_gpu(
         gate_limits=gate_limits,
         backend=backend,
         want_hold_days=resident,
+        pre_rets=_pre_rets_cache(px_close, xp),
     )
     _LAST_GPU_HOLD_DAYS["hold_days_pct"] = res.get("hold_days_pct") if resident else None
     gross = pd.Series(res["gross"], index=weights.index, dtype=float)
@@ -724,8 +787,13 @@ def _materialize_for_host(weights: Any, reason: str) -> Any:
 
 
 def residency_stats() -> dict[str, int]:
-    """本进程设备驻留计数器（只读快照；执行器 summary/日志消费，禁另抄一份判据）。"""
-    return dict(_DEV_RESIDENCY_STATS)
+    """本进程设备驻留＋刀二批级共享计数器（只读快照；执行器 summary/日志消费，禁另抄一份判据）。
+
+    两本各留各键（`px_*/mask_*`＝驻留，`rets_*`＝刀二）：驻留闸现缺省关着，若把刀二的
+    hit/put 混进驻留键面，读 summary 的人会把"批级共享命中"当成"驻留已开"——正是 §十三·C②
+    那种"覆盖率读错"的形状。
+    """
+    return {**_DEV_RESIDENCY_STATS, **_PRE_RETS_STATS}
 
 
 def _backtest_core(

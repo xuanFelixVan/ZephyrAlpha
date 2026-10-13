@@ -400,3 +400,141 @@ bt 面三档各 0、max_abs=2.2204e-16；两腿全上卡三档与 CPU-bt 逐档�
   代价＝§二·丁/§十一/§十二 这三段（口径立法＋11 格逐表＋B2 新靶定价）在 dev 上缺席，后人只能从 00 件读到摘要。
 - 丙＝**先解 framework 一支**（§二·丁 是立法件，时效最敏感），03 件两段随乙处理。本班**不推荐**：同一前班条目按文件拆着解等于选择性销账，台账会留下"部分处置"的模糊态。
   默认取向＝**乙**（不动他人台账），若您要今晚上册就点甲。
+
+## 通宵执行与晨间裁定包（st-gpux4-20261013，GPU 化四班·B2 两刀；本班 2026-10-13 05:12 `date` 实测入册）
+
+**开工令**：终局＝ffill NaN 48.5 倍消除＋网格引擎 GPU 吞吐推向 ≥3x、SM≥70%；两把刀按序＝①设备侧整数 running-max 行号核 ②价格→收益率批级共享；驻留排在两刀后（闸维持关，根因由检验道收网）。
+
+### 一、执行了什么（逐项＋红绿证锚点）
+
+1. **刀一已落**（`gpu_core._ffill_axis0` 的 cupy 分支：host 回环 → 设备侧 RawKernel，一 thread 一列、寄存器内推进整数行号 running-max、回填 gather 收进同一 kernel）。
+   红绿证＝03 件 §十四·B 三件：①`git show dev:` 字节装第二模块，8 帧族**三向逐位等**（落地面 vs dev 面／vs `pandas .ffill()` 独立第三参照／CPU 分支 vs dev CPU 分支），比较器＝float64 的 uint64 位视图；
+   ②端到端 `tensor_core` 8 组（两形 × gpu/cpu × 闸开闸关）gross/turnover/五档 nets/hold_days **逐位全等**；
+   ③在册试件 **114→125 passed**＋**突变能红**（改一行 `run=t` → `test_gpu_parity_within_1e_12` FAILED，相对差 1.890e-03）。
+   计时（每核同步＋两序交错，只报比值）＝宽宇宙含 NaN 帧 **63.5–129.6x**、小 T 面 22.2–29.1x、窄宇宙 4.5–7.4x、无 NaN 短路面 **1.0x（无回归）**。
+2. **刀二已落**（`_c4_engine._PRE_RETS` 批级设备 rets 共享 → `tensor_core(pre_rets=…)`；px 整幅不再上卡）。
+   红绿证＝03 件 §十五·B 三层：构造层（缓存产出式与核内侧同一函数体 `px_rets`）／端到端层（五档 nets 逐位）／批形层（**`rets_hit=7`／8 格、n=24 车道烟测 `hit=21/put=3`、全格集臂 hit 破千**——命中为 0 时前两层是空转，所以它是前置存在性证明）；
+   另两条防线：同内容不同宿主对象 ⇒ put 而非 hit；供入另一张面板的 rets ⇒ 必须翻红。宽面比值 **1.53x**（窄面只有 1.26–1.45x，不同分母不同表）。
+   全格集上缓存确实吃到：`rets_hit=1047／rets_put=3`（三个宇宙各建一次）。
+3. **全格集铁律针已跑完两把**（n=1,050、seed/分层/窗与 §十一 §十三 逐字同；驻留闸全程关）：分母机读原值 `cells_common=1049`。
+   刀一＝**PASS**（A↔R0 的 11/10/9 越线与 `max_abs=1.3782476464733046e-03` **与前班在册 dev 码读数逐位相同**，>1e-4 的 9 格 id 同一组⇒ 跨版本零改判）；
+   刀二＝**PASS**（一臂一进程六对三档越线全 0，跨形态 max_abs 2.4980e-16 落在同形态跨进程底 1.6653e-16 同量级，`rets_hit=1047／put=3` 证真命中）。
+   同进程那 4 格越线经隔离复现**归零**⇒ 是 R1 臂位产物（族签名 `raw×ic_ir×hs300`，在 eval 侧 id 键面上），不是刀二。详见 03 件 §十六。
+4. **终局两线（n=120、A/B/A/B 交错三对、逐进程 NVML 真尺不改拍）**：
+   **吞吐线未达 ≥3x**＝暖态两对 **2.52–2.86x**（rep1 那个 2.995x 是首臂冷建伪影，按 §十三·补① 不采信；三对递减，本班不挑最大值）；
+   **SM 线由"测不到"改判为"测得到且没达到"**＝三 GPU 臂 226 拍里 **167 拍拿到非空逐进程 SM**（中位 6–9%／p90 12–14%／峰值 31%／**≥70% 占比 0/167**）。
+   差距主因仍是一格一整套 launch＋主机收口的串行形态，开它的钥匙＝N-1 批内并行，不在两刀令内，本班不自扩。详表 03 件 §十六·D。
+5. **第二车道 04:10 首夜读数——已取**（读日志＋CH 计数，未碰 01:00–04:00 窗）：
+   `ZephyrAlpha_KronosScoring` 首夜批 00:30:00 起跑，`.runtime/logs/kronos_scoring.log` 末态 `shard_status=complete, scored=75/75, failed=0, sec_per_symbol=0.65, symbols_fit_in_cap=2299, cap=25m, device=cuda`；
+   CH 计数（`DatabaseService.get_clickhouse_conn` 单口，FINAL）＝`c1_market.kronos_prediction_daily` **75 行、run_id 1 个**（`kronos-score-20261012-163002`），仍"只落不用"。
+   令文"三档都在"已实测复算（Ollama 在册 8 枚：qwen3:14b 8.38GB／qwen3:8b 4.87GB／deepseek-r1:14b 8.37GB／deepseek-r1:8b 4.87GB…）；
+   `ZephyrAlpha_FactoryLaneC` 末跑 10-12 20:00 rc=0 all green、下次 20:00；**任务计划里查无 NightMining**（`Get-ScheduledTask` 匹配 Night|Mining 只命中 `tilib_indicator_backfill_nightly`）＝与令文"NightMining 维持 Disabled"逐字一致。
+   `GPU-01 档位 A/B` **本班未起**，硬约束见三等裁 M-2（不是"没做"，是两条分母/配额都实测堵着）。
+6. **两条移交件**（不代修，只给机制＋行号）：见 §十四·E 与前班采样器键错位一条（§十六·D 末）。
+
+### 二、自裁了什么（逐条＋证据＋依据）
+
+| # | 自裁 | 依据与证据 |
+|---|---|---|
+| Z-1 | 刀二**另起一本缓存**而不并入 `_DEV_RESIDENCY` | 检验道正在按"三套缓存命中/逐出时序交互"查驻留红账（§十三·补·补 唯一未排除候选）；并入会污染其占用序列，且 `set_dev_residency_enabled(False)` 会连本刀一起清 ⇒ 对照臂不干净。另起一本＝两本各记各账，`residency_stats()` 合并出仓并写明键面归属 |
+| Z-2 | `_ffill_rawkernel` 非 float64 **直抛** | RawKernel 按 `const double*` 解读显存，dtype 走错是静默重解释而非报错；现有两处调用方均在 `_as_f64_2d` 之后，本闸只拦未来直调（配 `test_ffill_rawkernel_rejects_non_float64`） |
+| Z-3 | 两个改动都放**缺省参数位**（`pre_rets=None`）＋保留 `mask.any()` 短路 | 缺省面零漂移红线；短路面实测 1.0x 且 `new is a and old is a`＝无 NaN 帧一个字节都没多动 |
+| Z-4 | 把"绝对值入表必逐行回放"从纪律**变成工具**（`g4_emit_tables.py` 直接从 json 打 markdown 行） | 本班第二犯＝手抄三行毫秒列串行而比值列正确（§十四·C 第 3 条）；机制化后同类错不可能再发生 |
+| Z-5 | 未动任何判据线值／未动 `--engine gpu` 缺省／未摘驻留闸／未碰前班死袋与其 worktree | 晨裁②③、§十三·补·补 残余状态更正、开工令禁碰条；对 `_dev_panel` 与 `_DEV_PANEL_CACHE` **零写入** |
+
+### 三、等裁什么（编号菜单＋证据＋建议默认）
+
+- **M-1 刀二终态（本班按判据取"开"，若您要更保守可点关）**：两层证据都绿——段面/端到端/批形三层逐位＋全格集一臂一进程六对三档越线全 0；
+  故本班让 `_PRE_RETS_ENABLED` 缺省 True（设备支路生效），手柄与 `rets_hit/put/mem_clear` 计数器在册，
+  关闸回退命令＝`_c4_engine.set_pre_rets_enabled(False)`（一行，清缓存不留混态）。
+  ⚠ 本班**不援引"PASS"去碰缺省引擎面**：`--engine gpu` 仍只认证不动缺省（晨裁② 一字未改），
+  本刀生效面＝`engine=auto` 解析到设备的那条既有路（改动前后同路，只换实现与求值次数）。
+  若您判"仍需第二班复核再开"，点关＝把上面那行置 False，接线与尺全部留着（沿用 §十三·补·补 的关闸法）。
+- **M-2 GPU-01 档位 A/B 今晚为何没起**（两条都是实测，不是推演）：
+  ①**分母为 0**——三指标里的"入考通过率"，其可考面现器为零：`docs/_working/examunlock_campaign/04_target_face_channel_census.yaml`
+  第 7 行 `preregistered: 177`／第 13 行 `blocked_on_target_face: 118`／**第 14 行 `supported_today: 0`**（本班按 `git show dev:` 取字节后 grep 命中，非转述）；
+  ②**夜窗装不下**——`config/gguf_vram_budget.yaml` 第 46–48 行 night 段 `inference_quota_gb: 4.0`，而三档最小者 qwen3:8b 在册 `vram_gb: 5.4`（第 57 行），14b 档 9.2（第 69–81 行）⇒ 必须走手动窗＋临时配额，
+  而手动窗与本班的 GPU 全格集针/吞吐针互斥（单卡 `vram.concurrency: 1`，§一·补 硬件红线）。
+  默认取向＝**待解锁班把 A 面打开、且排一个不与网格批争卡的手动窗**后由下一班跑；本班只交首夜读数＋这两条堵点的行号级证据。
+  （若只要"产出量"单指标先跑，本班可做，但那是把三指标实验降成一指标——属改实验设计，不属本班自裁面。）
+- **M-3 SM≥70% 线：本班按铁律④ 用逐进程真尺、不改拍重测后，"测不到"改判为"测得到且没达到"**（167/226 拍非空，中位 6–9%，≥70% 占比 0/167）。
+  于是这道题从"尺有没有效"变成"要不要为达线改形态或改尺"：
+  甲＝维持现尺现形态，接受逐格形态下 SM 就是个位数，**≥70% 这条验收线在网格批形下永久不可达**（它描述的是常驻大核形态）；
+  乙＝改形态（N-1 批内并行），达线由占空比自然抬升，代价＝那是另一把刀、且归约序改动会重排 §十一·C 那 10 格；
+  丙＝改尺（"累计核时间/格"替代瞬时 SM，或把拍从 1s 降到 ~2s），代价＝晨裁③ 明写"不改拍"，需您点头。
+  默认取向＝**甲＋把 ≥70% 从验收线降为披露线**（本班不自裁降线）。
+  ⚠ 另有一条归因边界须您或尺主班定性：CPU 臂也拿到 13 拍非空（紧接 GPU 臂之后的十几秒），
+  ⇒ **"在不在计算表"不能当二值闸用**；本针未据此断言机制。
+- **M-4 前班采样器键错位**（`b2_throughput_sm.py:61` 存 `r.get("sm_pct")`，而 `nvml_process_util()` 实测返回键是 `sm_util_pct`，无 `sm_pct`）
+  ⇒ 其 `sm_unavailable` 恒等于总拍数，那句"171／87 枚采样命中 0 枚"**是尺的空读，不是现场事实**。
+  本班已用对键复跑并三口径分计（总拍／在表／非空），数在 03 件 §十六·D②。
+  待裁＝是否要求前班那两支依赖此数的在册结论做一次复核（本班只报复现，不改他人账）。
+- **M-5 驻留收益构成改写**：刀二命中后核内**不再读 px** ⇒ §十二·B 给驻留定的价里"价格面板常驻"这一半被覆盖（掩码常驻＋权重驻留两半不受影响）。
+  属读数不属裁决；请检验道在收网时按新构成重算，别拿旧表当上界。
+
+### 四、本班自犯并如实上报（**八条**，全部本班自己抓到，非他人指出）
+
+1. **校准针族名与构造不符**：第一版把 `no_nan_control` 写成 `px.copy()`，而 `px` 当时已被注入停牌 NaN
+   ⇒ 标称"短路面"实测 nan_frac=0.0028、`short_circuit_no_copy` 整列 None，**该面根本没测到**。
+   修为独立 `clean` 面板重跑才拿到 1.0x／`new is a and old is a = True`；同批补齐窄宇宙 (970,300) 与小 T (60,5217) 两形。
+2. **入册表格手抄串行**：§十四·B① 表初稿把 `bitwise_edge_values／narrow_hs300／short_T_60` 三行的毫秒列
+   搬了别的族的数，而比值列是对的——"比值对、绝对值错"最危险，读者按比值核账会全过。
+   已按 json 真字节逐行回放更正；并写了**表格发射器＋装配器**，此后入册表格一律由 json 直出（见 Z-4）。
+3. **Edit 追加吃掉上一函数的 `finally:`**：把试件新节插在 `finally` 之前，导致该块被挪到全文件末尾、`ast.parse` SyntaxError。
+   复位后改用结构计数自证（funcs=28／try_blocks=4／文件尾不再是 finally）。这是在册"追加锚点吃标题"病的**吃收尾块**变体。
+4. **旧注释指针指向已消失分支**：替换 `_ffill_axis0` 后，同文件 :638 仍写"同 _ffill_axis0 host 回环纪律"
+   ⇒ 该分支已不存在，属"尺/注释指向幽灵位置"家族；已改指"设备核/主机 numpy 双支"。
+5. **判据整段从前班针搬来**（最实质的一条）：`claim_knife2` 首判 FAIL，成因是 `跨形态三档越线全 0` 这条
+   在全格集上连**同码两臂**都可能过不了（本批 R1↔R1b 同开关也报 4 格）——而前班 §十三·C① 自己明写"设备臂逐位不可复现，判据须对底不对零"。
+   改判形为"跨形态差集 ⊆ 同码底差集 ∧ 一臂一进程复现"后 PASS。**若照首判关闸，就是把写错的尺当成被测物不合格。**详见 03 件 §十六·G。
+6. **装配器与追加脚本读了不同文件**：装配器把填好的版本写成 `final_*.md`，追加脚本却仍读原始草稿
+   ⇒ 三类占位标记（TABLE／CELLS／TIME，下划线包裹式）原样进档（5＋1 处）。已截回尾部重贴，并加"标记数必须为 0"的写后自证。
+7. **`write_text` 把三份文档整档转成 CRLF**：仓内 `.gitattributes` 定 eol=lf，git 归一化后 diff 看着干净（0 删除），
+   但**盘上字节已整档变**——他人按盘字节做的尺会读到差异。已按字节归一回 LF，归一前后 numstat（104/359/65/103/175）与试件 35 passed 不变。
+8. **两把我自己的 grep 正则指向幽灵位置**（同一条病型在本班出现两次）：
+   `^\[(A|R)_` 漏掉臂名带数字的 `[R0_...]`／`[R1_...]`，让我一度以为 GPU 臂没在跑；
+   `^\| 族名 ` 漏掉族名后紧跟全角括号的行，让我一度以为 §十四表只剩 1 行。
+   两次都是**观测面错**而非被测物错，但都差点据此误判进度/文档完整性——正对照应先于结论。
+
+### 五、复核命令（全只读）### 五、复核命令（全只读）
+
+```bash
+LANE='D:\ZephyrAlpha\.aidrafts\st-gpux4-20261013'
+cd D:/ZephyrAlpha/.aidrafts/st-gpux4-20261013
+# 刀一三向对拍（含 git show dev 字节面装第二模块）
+PYTHONPATH="$LANE\src;$LANE\scripts" python D:/ZephyrAlpha/.runtime/tmp/st-gpux4-20261013/g4_ffill_verify.py
+# 刀二三层对拍＋宽面比值
+PYTHONPATH="$LANE\src;$LANE\scripts" python D:/ZephyrAlpha/.runtime/tmp/st-gpux4-20261013/g4_rets_verify.py
+PYTHONPATH="$LANE\src;$LANE\scripts" python D:/ZephyrAlpha/.runtime/tmp/st-gpux4-20261013/g4_rets_big.py
+# 全格集四臂铁律针（≈30min，需 ClickHouse 在线；驻留闸在针内恒关）
+PYTHONPATH="$LANE\src;$LANE\scripts" python D:/ZephyrAlpha/.runtime/tmp/st-gpux4-20261013/g4_fullcell_floor.py 1050
+# 试件（期望 125 passed 与 39 passed）
+PYTHONPATH="$LANE\src;$LANE\scripts" python -m pytest -q tests/research/backtest/test_gpu_core_parity.py tests/research/backtest/test_l2_gpu_landing.py tests/research/backtest/test_c4_engine_gpu_wiring.py
+PYTHONPATH="$LANE\src;$LANE\scripts" python -m pytest -q tests/research/backtest/test_c4_limit_gate.py tests/research/backtest/test_c4_batch_smoke.py tests/research/backtest/test_c4_auto_oos.py
+# 班账表格发射器（入册数字一律由它产出，禁手抄）
+PYTHONPATH="$LANE\src" python D:/ZephyrAlpha/.runtime/tmp/st-gpux4-20261013/g4_emit_tables.py
+```
+⚠ 车道 PYTHONPATH **必须写真 Windows 路径**（`D:\…\.aidrafts\<sid>\src`）；写成 `/d/…` 会被拼成 `D:\d\…`（不存在的死条目），
+   于是 editable 安装的 `.pth` 静默胜出、包读主区——本班实测这才是 §十三·C③ 那个"裂脑"现象的机制（现象真、归因错，详见 03 件 §十四·C 第 1 条）。
+   `python -s` 不能当旁路：本机 CUDA_PATH 也由 `.pth` 提供，`-s` 下 cupy 立刻发 "CUDA path could not be detected" 警告。
+
+### 六、本班收工态与落地核验指令（本班 2026-10-13 05:5x `date` 实测）
+
+- **三袋在飞**：`q-20261013-st-gpux4-20261013-0001`（刀一袋）＝processing；`-0002`（刀二＋验收）pending ahead=15；
+  `-0003`（终袋＝红蓝对抗＋声明不变式＋自犯改实数）pending ahead=17。**0003 是同五件的严格超集**，按序落地即终态。
+  队列合并器两次报"共享注册表路径不可信合并——拒绝压缩，两袋保留"⇒ **不存在同会话后袋静默取代前袋**那种风险。
+- **claim held=5 未放**（`gpu_core.py`／`_c4_engine.py`／`test_gpu_core_parity.py`／03 件／00 件，
+  均按**车道绝对路径** claim——相对路径会 0/8 零告警，在册病型）；**袋在飞禁放锁**。
+  保活经 `register_heartbeat_keepalive` 复授至 **07:51**（reason 在册），心跳 daemon pid 见 `.runtime/sessions/st-gpux4-20261013/heartbeat.jsonl`。
+- **落地只认字节**（`done` 计数与 `[enqueue]` 回显都不算证据）：
+
+```bash
+git show dev:src/zephyr/backtest/gpu_core.py | grep -c "ffill_axis0_scan"        # 刀一：期望 2（核源＋RawKernel 名）
+git show dev:scripts/backtest/translated/_c4_engine.py | grep -c "_PRE_RETS"     # 刀二：期望 ≥6
+git show dev:docs/_working/gpufeed_campaign/00_gpufeed_report.md | grep -c "st-gpux4-20261013"   # 晨间包：期望 ≥2
+```
+  任一为 0 ⇒ 该件未落地，勿按"已入队"记账。若 0001 判 dead：读 `dead_reason` 修正后 `commit_queue.py requeue <qid>`，
+  或直接重投 0003（超集）；**不要动他班袋**。
+- **临时件与产物**：尺与配方留 `.runtime/tmp/st-gpux4-20261013/`（24h TTL，含 `backup_g4/SHA256.txt` 五件字节存证，
+  供车道被清扫时按 sha 反查恢复）；跑批产物 `data/strategy_intake/grid_20261013-*`（10 目录、单目录 ~0.4MB、
+  未跟踪且未 ignore，**禁 commit**）。项目根目录零临时文件（本班核对未新增根级文件）。

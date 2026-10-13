@@ -452,6 +452,28 @@ def _shift1_axis0(xp: ModuleType, a: XPArray) -> XPArray:
     return xp.concatenate([xp.full((1,) + a.shape[1:], xp.nan, dtype=a.dtype), a[:-1]], axis=0)
 
 
+def px_rets(xp: ModuleType, px: XPArray) -> XPArray:
+    """价格宽表 → 日收益宽表（**本式唯一真源位**：`tensor_core` 与批级共享缓存共用它）。
+
+    式子＝`_c4_engine` 主机路 `px.ffill().pct_change()` 的 xp 等价（ffill 后首段 NaN 语义同态）。
+    单列成函数不是为了整洁：刀二（st-gpux4-20261013）要把这一式的产物按 (窗口, 宇宙) 批级缓存一次
+    复用，若缓存侧与核内侧各写一遍式子，"逐位等"就成了我抄写自己的对拍——两处共用同一函数体，
+    等价性才由构造给出（调用次序、中间量、dtype 转换面全同）。
+    """
+    closes = _ffill_axis0(xp, px)  # px.reindex(...).ffill()
+    return closes / _shift1_axis0(xp, closes) - 1.0  # pct_change()
+
+
+def prep_rets_device(px_close: XPArray, xp: ModuleType) -> XPArray:
+    """宽表入参 → 设备侧日收益宽表（刀二批级缓存的**产出式**，st-gpux4-20261013）。
+
+    收口点与 `tensor_core` 逐字节同一：先 `_as_f64_2d`（FP64 红线＋ndim 硬拦＋DataFrame
+    的 `to_numpy(dtype=float64)` 形态），再 `px_rets`。引擎侧缓存若另写一遍上卡式，
+    "共享==逐格重算"就退化成两套实现的碰巧相等——所以这里连 `_as_f64_2d` 都不让调用方自拼。
+    """
+    return px_rets(xp, _as_f64_2d(px_close, xp))
+
+
 def _apply_gate_serial(xp: ModuleType, w: XPArray, su: XPArray, sd: XPArray) -> XPArray:
     """涨跌停可成交性闸的串行循环——逐位复刻 _c4_engine.apply_fillability_gate 行循环。
 
@@ -553,6 +575,7 @@ def tensor_core(
     gate_limits: bool = True,
     backend: str | None = None,
     want_hold_days: bool = False,
+    pre_rets: XPArray | None = None,
 ) -> dict[str, Any]:
     """考试引擎张量核的 GPU/CPU 双后端实现（_backtest_core+_net_line 的 xp 薄核）。
 
@@ -566,6 +589,10 @@ def tensor_core(
       backend: "gpu"|"cpu"|None（None=按 resolve_backend 解析 env/auto）。
       want_hold_days: True=随产 hold_days_pct（持仓天数占比，引擎 stats 的唯一权重行归约；
         入参为 DevicePanel 驻留载体时必开，否则下游拿不到该位——见下方可证等价注）。
+      pre_rets: None（缺省）=按 px_close 逐格现算（**改动前形态，逐字节不变**）；
+        传入 xp float64 (T,S) 收益宽表=批级共享直供（刀二，st-gpux4-20261013），此时
+        px_close 不参与运算、整幅不上卡。产出方必须是 `gpu_core.px_rets`（同函数体才谈逐位等），
+        引擎侧由 `_pre_rets_cache` 按 (窗口, 宇宙)＋宿主对象身份 pin 住缓存。
 
     返回 dict：backend / device / gross(T,) / turnover(T,)（一侧换手）/
       nets {bp: net(T,)}——全部 numpy float64（GPU 侧已回传收口，回传面=三条 (T,) 向量而非
@@ -584,13 +611,18 @@ def tensor_core(
         device = "cpu"
 
     w = _as_f64_2d(weights, xp)
-    px = _as_f64_2d(px_close, xp)
-    if w.shape != px.shape:
-        raise ValueError(f"weights/px_close 须等形，得到 {w.shape} vs {px.shape}")
-
-    # ——— _backtest_core 张量面（xp 单路径，语义逐位镜像 _c4_engine.py:476-488）———
-    closes = _ffill_axis0(xp, px)  # px.reindex(...).ffill()
-    rets = closes / _shift1_axis0(xp, closes) - 1.0  # pct_change()（ffill 后首段 NaN 语义同态）
+    if pre_rets is None:
+        px = _as_f64_2d(px_close, xp)
+        if w.shape != px.shape:
+            raise ValueError(f"weights/px_close 须等形，得到 {w.shape} vs {px.shape}")
+        rets = px_rets(xp, px)
+    else:
+        # 刀二（st-gpux4-20261013）：批级共享的 rets 直供——px 不再上卡（省一整张 38.6MB H2D）、
+        # 不再 ffill、不再 shift/divide。缓存侧与这里调的是**同一个** `px_rets` 函数体，
+        # 所以"共享 == 逐格重算"由构造成立而非由对拍成立（对拍照旧做，但它是复核不是唯一凭据）。
+        rets = _as_f64_2d(pre_rets, xp)
+        if w.shape != rets.shape:
+            raise ValueError(f"weights/pre_rets 须等形，得到 {w.shape} vs {rets.shape}")
     w_ff = _ffill_axis0(xp, w)
     w_ff = xp.where(xp.isnan(w_ff), 0.0, w_ff)  # .fillna(0.0)
     if gate_limits:
