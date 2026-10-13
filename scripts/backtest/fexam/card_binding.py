@@ -925,25 +925,272 @@ def _arm_pair_builder():
 # ──────────────────────────────────────────────────────────────────────────────
 
 #: 双臂档位名（绑定册 arms.params_* 里写 levels: "series:<档名>" 即按名注入底座交付的 series 槽）
-DRAWDOWN_LEVEL_SERIES_NAMES = ("levels_hysteresis", "levels_no_hysteresis")
+
+
+def _cap_maps_identical(a: dict, b: dict) -> bool:
+    """两张级别→仓位乘子表是否逐字同值（档位名与数值全对上才算同一张）。"""
+    try:
+        return {str(k): float(v) for k, v in a.items()} == {str(k): float(v) for k, v in b.items()}
+    except (TypeError, ValueError):
+        return False
+
+
+DRAWDOWN_LEVEL_TIERS = {
+    "levels_hysteresis": {"hysteresis": True, "reset": False},
+    "levels_no_hysteresis": {"hysteresis": False, "reset": False},
+    "levels_with_reset": {"hysteresis": True, "reset": True},
+    "levels_no_hysteresis_with_reset": {"hysteresis": False, "reset": True},
+}
+
+_RECOVERY_RUNG_MAX_STEP = 2  # 阶梯 0→1→2→NORMAL，毕业即回 NORMAL（在册件 :516-517）
+
+_RECOVERY_RUNG_CARD_KEYS = tuple(f"step_{i}" for i in range(_RECOVERY_RUNG_MAX_STEP + 1))
+
+_RECOVERY_RUNG_LABELS = tuple(f"RECOVERY@{i}" for i in range(_RECOVERY_RUNG_MAX_STEP + 1))
+
+
+def _card_ladder_triples(card: dict) -> dict[tuple[float, ...], str]:
+    """卡面各处声明过的 RECOVERY 三档 cap（三元组→出处名），返回空表示卡面没冻结过阶梯面。
+
+    为什么按"三元组集合"收：07b 卡面里阶梯出现在三处——`recovery_ladder`（在册 position_cap 的
+    0.25/0.50/0.75）、带阶梯的五态表、以及**关臂**的"复位即一次买回"表（三档全 1.0，那是它的角色
+    而不是缺陷）。臂表必须等于其中一条，等不上就是在册外面拍数。
+    """
+    tables = (card.get("data_binding") or {}).get("level_to_cap_map") or {}
+    out: dict[tuple[float, ...], str] = {}
+    for tname, tmap in tables.items() if isinstance(tables, dict) else []:
+        if not isinstance(tmap, dict):
+            continue
+        rows = {str(k): v for k, v in tmap.items()}
+        if all(k in rows for k in _RECOVERY_RUNG_CARD_KEYS):  # recovery_ladder 本身用步号做键
+            out[tuple(_rung_cap(rows[k], f"{tname}:{k}") for k in _RECOVERY_RUNG_CARD_KEYS)] = f"{tname}(step_k 形)"
+            continue
+        if all(lbl in rows for lbl in _RECOVERY_RUNG_LABELS):
+            out[tuple(_rung_cap(rows[lbl], f"{tname}:{lbl}") for lbl in _RECOVERY_RUNG_LABELS)] = str(tname)
+    return out
+
+
+def _ladder_label(state: str, step: int, *, is_reset_tier: bool, arm_cfg: str) -> str:
+    """RECOVERY 态 → 带步号的档名；步号越界即红（阶梯表装不下时禁取模、禁就地扩表）。"""
+    if state != "RECOVERY" or not is_reset_tier:
+        return state  # 非复位档出现 RECOVERY 时原样交回，由调用处的词表闸判红——不在这里收
+    if step > _RECOVERY_RUNG_MAX_STEP:
+        raise RuntimeError(
+            f"recovery_step_out_of_ladder:{step}@{arm_cfg}（在册阶梯 0->1->2->NORMAL，毕业即回 NORMAL；"
+            "出现第 3 档＝档名表装不下，须先呈批补表，禁取模冒充）"
+        )
+    return f"RECOVERY@{step}"
+
+
+def _level_tier_flags(arm_cfg: str) -> dict[str, bool]:
+    """按档名取档位属性；未登档名即红（"未知档按无迟滞处理"那种静默降级就是不报错的错分）。"""
+    flags = DRAWDOWN_LEVEL_TIERS.get(arm_cfg)
+    if flags is None:
+        raise RuntimeError(f"drawdown_level_arm_cfg_unknown:{arm_cfg}（合法档名={list(DRAWDOWN_LEVEL_SERIES_NAMES)}）")
+    return flags
+
+
+def _named_series_tiers(entry: dict) -> list[str]:
+    """从册格两臂 params 里取被点名的档位名（值形如 "series:<档名>"）；一个都没有即红。"""
+    arms = entry.get("arms") or {}
+    names: list[str] = []
+    for side in ("open", "base"):
+        ref = (arms.get(f"params_{side}") or {}).get("levels")
+        if isinstance(ref, str) and ref.startswith("series:"):
+            names.append(ref[len("series:") :])
+    if not names:
+        raise RuntimeError(
+            "arms_levels_not_named_by_book（两臂都没按 series:<档名> 点名级别序列来源，禁在底座来源里替册格选档）"
+        )
+    bad = sorted({n for n in names if n not in DRAWDOWN_LEVEL_TIERS})
+    if bad:
+        raise RuntimeError(
+            f"series_tier_unknown:{bad}（在册档位={list(DRAWDOWN_LEVEL_SERIES_NAMES)}；"
+            "新档须先登 DRAWDOWN_LEVEL_TIERS 并补卡面映射，禁册格先点名后补实现）"
+        )
+    return names
+
+
+def _peak_trough_pairs(nav: pd.Series) -> list[tuple[float, float]]:
+    """逐日 (历史峰值, 自该峰以来的谷值)——逐字镜像在册件 drawdown_tracker.py:276-287 的更新次序。
+
+    只镜像"峰/谷怎么更新"这一件事实，本函数零阈值、零判据；等值性由
+    tests/backtest/test_card_binding.py 拿真 `DrawdownTracker` 逐日对拍钉住（不靠注释自觉）。
+    """
+    pairs: list[tuple[float, float]] = []
+    peak = trough = float(nav.iloc[0])
+    for v in nav.tolist():
+        if v > peak:
+            peak, trough = v, v  # 新峰值 → 谷值随峰重置（在册 :280）
+        if v < trough:
+            trough = v
+        pairs.append((peak, trough))
+    return pairs
+
+
+def _recovered_pct_values(nav: pd.Series, pairs: list[tuple[float, float]]) -> list[float]:
+    """逐日回补比例＝**直调**在册公式件 `RiskLayerOrchestrator._recovered_pct`（:884-888）。
+
+    直调而不在此重写：复位入口档（07b 括号 A=0.50／B=0.75）判的正是这条比值，本地另写一份
+    就等于给判官喂第二个真源，生产面与考卷面从此可以各漂各的。
+    """
+    from zephyr.ex_core.risk_layer_orchestrator import RiskLayerOrchestrator  # noqa: PLC0415
+
+    calc = RiskLayerOrchestrator._recovered_pct
+    out: list[float] = []
+    for v, (peak, trough) in zip(nav.tolist(), pairs, strict=True):
+        dd = (v - peak) / peak if peak > 0 else 0.0  # 在册 tracker 的回撤口径（:287）
+        out.append(float(calc(dd, v, peak, trough)))
+    return out
+
+
+def _replay_confirmation(sm: Any, arm_cfg: str, ts: pd.Timestamp):
+    """复位申请的三项确认＝07b 卡面 `three_confirmation_faces_in_replay` 的逐件对应物。
+
+    holdings_verified_zero 不靠自觉：读在册件自家的 `position_cap`（KILL 档=0.0，:323-324），
+    它非 0 就说明当日并非"敞口实测为零"，那一次复位就不该发生（在册件会拒，这里不替它放行）。
+    orders_cancelled_verified=日频装置无在途挂单概念，按卡面声明的"日频无在途"近似置真并随件披露；
+    new_open_locked_verified=复位日起新仓受 RECOVERY 阶梯 cap 约束（由阶梯本身实现）。
+    """
+    from zephyr.risk.core.drawdown_state_machine import ResetConfirmation  # noqa: PLC0415
+
+    return ResetConfirmation(
+        confirmed_by=f"replay:{arm_cfg}@{ts.date().isoformat()}",
+        override_reason="07b 日频净值回放面的复位申请（三项确认按卡面 three_confirmation_faces_in_replay 逐件对应）",
+        holdings_verified_zero=float(sm.position_cap) == 0.0,
+        orders_cancelled_verified=True,
+        new_open_locked_verified=True,
+    )
+
+
+def _reset_entry_param(entry: dict, tiers: list[str]) -> float | None:
+    """复位入口参数＝绑定册逐跑交（07b implementation_gap ③：两括号参数禁硬编）。
+
+    四种组合只放行两种：无复位档且无参数（07 现面，逐字不变）、有复位档且有参数（07b）。
+    "有复位档却无参数"＝括号没冻结；"没复位档却给了参数"＝两跑之间动了别的东西——两者都红。
+    """
+    arms = entry.get("arms") or {}
+    raw = arms.get("reset_trigger_recovered_pct")
+    needs = [t for t in tiers if DRAWDOWN_LEVEL_TIERS[t]["reset"]]
+    if needs and raw is None:
+        raise RuntimeError(
+            f"reset_bracket_not_injected:{needs}（复位档缺绑定册的 reset_trigger_recovered_pct＝括号未冻结，不开考）"
+        )
+    if not needs and raw is not None:
+        raise RuntimeError(
+            f"reset_bracket_unused:{raw}（本跑没点复位档却收到复位参数＝跑与跑之间动了别的参数，裁定甲③禁的事）"
+        )
+    return None if raw is None else float(raw)
+
+
+def _rung_cap(value: Any, where: str) -> float:
+    """阶梯档值必须是数——`float(None)` 抛 TypeError 会把"卡面没给数值"洗成"调用面写错了"。
+
+    红蓝对抗实测（2026-10-13）撞出来的同族错：pack 参数那一侧已修过一次，这里是第二遍。
+    带引号的 "0.25" 也不放行：档位数值写成文字＝没冻结，禁 coerce 着继续跑。
+    """
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise RuntimeError(
+            f"recovery_rung_cap_not_numeric:{where}（实得={value!r}＝档位数值缺失或写成文字，禁按 0/1 蒙一个继续跑）"
+        )
+    return float(value)
+
+
+def _try_in_register_reset(sm: Any, ts: pd.Timestamp, recovered: float, trigger: float, arm_cfg: str) -> str:
+    """KILL 且回补比例达入口档 → 经在册件唯一出口申请复位。
+
+    返回 `"not_attempted"`（本日不该复位）／`"granted"`（在册件放行）／其余＝在册件给的拒因原文。
+    守卫（冷却/窗内上限/永久锁定）**一律由在册件自己判**（:575-597），本函数一条都不复制；
+    被拒不放行、不重试、不改参数——只把拒因计数进凭据面。复位史在 store=None 的纯内存面里
+    由在册件自家 `_mem_reset_history`（:694-704）累积，故守卫在回放面同样真的生效、不是空转。
+    """
+    if not sm.kill_switch_closed or recovered < trigger:
+        return "not_attempted"
+    from zephyr.risk.core.drawdown_state_machine import RefuseResetError  # noqa: PLC0415
+
+    try:
+        sm.request_manual_reset(_replay_confirmation(sm, arm_cfg, ts), trade_date=ts.date())
+    except RefuseResetError as exc:
+        return f"{type(exc).__name__}: {str(exc)[:160]}"
+    return "granted"
+
+
+def _validate_recovery_ladder(card: dict, side: str, cap_map: dict, flags: dict) -> dict:
+    """复位档乘子表的阶梯面校验＝07b 文字柱 `reset_not_full_reentry` 的机判面。
+
+    数值一律不在这里定：册格给的三档 cap 必须**等于卡面某处冻结过的三元组**（见
+    `_card_ladder_triples`），否则就是在本层替卡面拍数。在此之上对**开臂**加卡面自报的形状约束
+    （严格递增、首档 <1.0）——这一柱管的就是"开臂复位后不许直接回满"，回满会让两臂在解除形状上
+    同构、本卡只剩回撤阈值一条腿；关臂的 1.0/1.0/1.0 是它的声明角色，不受该形状约束。
+    查不过即抛＝如实报错不出分，禁降级成"观测一行照样给分"。
+    """
+    if not flags["reset"]:
+        return {}
+    want_map = _card_ladder_triples(card)
+    if not want_map:
+        raise RuntimeError(
+            f"recovery_ladder_face_missing:{card.get('card_id')}（复位档卡面必须冻结 RECOVERY 阶梯表，缺表即不开考）"
+        )
+    absent = sorted(lbl for lbl in _RECOVERY_RUNG_LABELS if str(lbl) not in {str(k) for k in cap_map})
+    if absent:
+        raise RuntimeError(
+            f"recovery_rung_cap_unfrozen:{side}:{absent}（复位档乘子表须整表覆盖三档阶梯，禁跑到位次再替卡面拍值）"
+        )
+    triple = tuple(_rung_cap(cap_map[lbl], f"{side}:{lbl}") for lbl in _RECOVERY_RUNG_LABELS)
+    if triple not in want_map:
+        raise RuntimeError(
+            f"recovery_rung_cap_off_card_face:{side}（册格={triple} 卡面只冻结过 "
+            f"{ {v: k for k, v in want_map.items()} }，两表不同源即红）"
+        )
+    if side != "open":
+        return {"rung_caps": list(triple), "declined_from": want_map[triple]}
+    increasing = all(triple[i] < triple[i + 1] for i in range(len(triple) - 1))
+    if not increasing or triple[0] >= 1.0:
+        raise RuntimeError(
+            f"reset_not_full_reentry_violated:open（卡面声明开臂阶梯须严格递增且首档<1.0，实得={triple}＝"
+            "复位即回满与关臂同形，本卡从此只剩回撤阈值一条腿可判）"
+        )
+    return {"rung_caps": list(triple), "strictly_increasing": True, "first_rung_below_full": True}
+
+
+DRAWDOWN_LEVEL_SERIES_NAMES = tuple(DRAWDOWN_LEVEL_TIERS)
 #: 适配器允许的级别词表＝在册件 position_cap 的五态；出现表外态（含 RECOVERY）即红，禁静默扩档
 _DRAWDOWN_STATE_VOCAB = ("NORMAL", "WARN", "DANGER", "CRISIS", "KILL")
 
 
-def _drawdown_replay_config(arm_cfg: str):
+def _drawdown_replay_config(arm_cfg: str, reset_recovered_pct: float | None):
     """按臂档给在册 config 类的字段值——**只赋值，不定义**：阈值一律沿在册默认。
 
     levels_no_hysteresis 的构造性取值须如实记账两处：hysteresis_ratio 的在册校验是开区间
     (0,1)，1.0 会被 InvalidDrawdownStateError 拒，故取 1-1e-9（半阈值≈触发阈值）；
     而"解除即回满"仍做不到——在册件的降级路径是逐级边（_DEESCALATION_PATH 无跳级边），
     这一条属卡面近似披露，不在本函数里绕。
+
+    复位档另加一件：`graduation_face="absent"`（统筹 2026-10-13 路径 1，署名批准＋Owner 否决窗）。
+    毕业准则腿要的是逐笔交易面，日频回放装置交不出；沿用缺省 `required` 档时本班实测阶梯永久停在
+    0 档不动——那不是判据而是死锁。跳过必计数、必打点，凭据面可复核。
     """
     from zephyr.risk.core.drawdown_state_machine import DrawdownStateMachineConfig  # noqa: PLC0415
 
-    if arm_cfg == "levels_hysteresis":
-        return DrawdownStateMachineConfig()
-    if arm_cfg == "levels_no_hysteresis":
-        return DrawdownStateMachineConfig(
+    flags = _level_tier_flags(arm_cfg)
+    if flags["reset"] and reset_recovered_pct is None:
+        raise RuntimeError(
+            f"reset_tier_entry_param_missing:{arm_cfg}（复位档的入口 recovered_pct 须由绑定册逐跑注入，禁硬编也禁缺省）"
+        )
+    if not flags["reset"] and reset_recovered_pct is not None:
+        raise RuntimeError(
+            f"reset_param_on_non_reset_tier:{arm_cfg}（该档不复位却收到复位参数＝跑与跑之间动了别的参数，裁定甲③禁的事）"
+        )
+    kwargs: dict[str, Any] = {}
+    if flags["reset"]:
+        if not 0.0 < float(reset_recovered_pct) <= 1.0:
+            raise RuntimeError(
+                f"reset_trigger_recovered_pct_out_of_range:{reset_recovered_pct}"
+                "（须∈(0,1]——在册 recovered_pct 的定义域见 :720，越界即无从比）"
+            )
+        kwargs["graduation_face"] = "absent"
+    if not flags["hysteresis"]:
+        kwargs.update(
             hysteresis_ratio=1.0 - 1e-9,
             sustained_warn=1,
             sustained_danger=1,
@@ -952,11 +1199,21 @@ def _drawdown_replay_config(arm_cfg: str):
             min_hold_danger=1,
             min_hold_crisis=1,
         )
-    raise RuntimeError(f"drawdown_level_arm_cfg_unknown:{arm_cfg}（合法档名={list(DRAWDOWN_LEVEL_SERIES_NAMES)}）")
+    return DrawdownStateMachineConfig(**kwargs)
 
 
-def replay_drawdown_levels(nav: pd.Series, *, arm_cfg: str = "levels_hysteresis") -> tuple[pd.Series, dict]:
-    """基线日净值 → 日频级别序列（在册态名字符串）＋可复核凭据；判定全在在册件本体里发生。"""
+def replay_drawdown_levels(
+    nav: pd.Series,
+    *,
+    arm_cfg: str = "levels_hysteresis",
+    reset_recovered_pct: float | None = None,
+) -> tuple[pd.Series, dict]:
+    """基线日净值 → 日频级别序列（在册态名；复位档带阶梯步号）＋可复核凭据。
+
+    判定全在在册件本体里发生：升级、迟滞解除、阶梯晋升/回退、复位守卫都是 `DrawdownStateMachine`
+    自家的方法。本函数只做三件事——算输入（回撤、回补比例）、喂 `evaluate`、读输出
+    （`current`/`recovery_step`），零阈值定义、零状态迁移表、零复位分支。
+    """
     from zephyr.risk.core.drawdown_state_machine import DrawdownStateMachine  # noqa: PLC0415
 
     s = pd.Series(nav).astype("float64").sort_index()
@@ -970,28 +1227,48 @@ def replay_drawdown_levels(nav: pd.Series, *, arm_cfg: str = "levels_hysteresis"
     if bool((s <= 0).any()):
         raise RuntimeError("drawdown_level_nav_nonpositive（净值/峰值比值失去意义，禁继续回放级别）")
 
-    cfg = _drawdown_replay_config(arm_cfg)
+    flags = _level_tier_flags(arm_cfg)
+    is_reset = bool(flags["reset"])
+    cfg = _drawdown_replay_config(arm_cfg, reset_recovered_pct)
     sm = DrawdownStateMachine(None, cfg)  # store=None＝纯内存，零落盘零副作用
     dd = (s / s.cummax()) - 1.0
+    recovered = _recovered_pct_values(s, _peak_trough_pairs(s))
+    allowed = _DRAWDOWN_STATE_VOCAB + (_RECOVERY_RUNG_LABELS if is_reset else ())
     labels: list[str] = []
     n_transitions = 0
     first_kill: str | None = None
-    for ts, d in dd.items():
-        # 只喂 drawdown_pct：统筹批复 A1 裁乙——var/cvar 两槽不喂（全仓唯一日频真实调用点
-        # sim_daily_runner.py:1410 同形），卡面"日亏 2%/4%/6%"系叙事改写非参数。
-        # 想在此处补 var 的，须先改 07 卡面 axis_feeding 并重新呈批，禁在适配器里静默改口径。
-        transition = sm.evaluate(trade_date=ts.date(), drawdown_pct=float(d))
+    resets_granted = 0
+    refusals: list[dict[str, str]] = []
+    ladder = {"promotions": 0, "retreats": 0, "graduated_to_normal": 0}
+    for (ts, d), r in zip(dd.items(), recovered, strict=True):
+        if is_reset:
+            outcome = _try_in_register_reset(sm, ts, float(r), float(reset_recovered_pct), arm_cfg)
+            if outcome == "granted":
+                resets_granted += 1
+            elif outcome != "not_attempted":
+                refusals.append({"date": ts.date().isoformat(), "reason": outcome})
+        # 只喂 drawdown_pct（＋在册口径的 recovered_pct）：统筹批复 A1 裁乙——var/cvar 两槽不喂
+        # （全仓唯一日频真实调用点 sim_daily_runner.py:1410 同形），卡面"日亏 2%/4%/6%"系叙事改写非参数。
+        # 想在此处补 var 的，须先改卡面 axis_feeding 并重新呈批，禁在适配器里静默改口径。
+        transition = sm.evaluate(trade_date=ts.date(), drawdown_pct=float(d), recovered_pct=float(r))
         if transition is not None:
             n_transitions += 1
-        state = sm.current.value
-        if state not in _DRAWDOWN_STATE_VOCAB:
+            reason = str(transition.reason)
+            if reason.startswith("recovery_step_up_"):
+                ladder["promotions"] += 1
+            elif reason.startswith("recovery_retreat_"):
+                ladder["retreats"] += 1
+            elif reason == "recovery_graduated_new_high":
+                ladder["graduated_to_normal"] += 1
+        label = _ladder_label(sm.current.value, int(sm.recovery_step), is_reset_tier=is_reset, arm_cfg=arm_cfg)
+        if label not in allowed:
             raise RuntimeError(
-                f"drawdown_level_state_out_of_vocab:{state}@{ts.date()}（卡面五态映射表装不下该态＝"
+                f"drawdown_level_state_out_of_vocab:{label}@{ts.date()}（卡面五态映射表装不下该态＝"
                 "须先补卡面映射并呈批，禁在适配器里静默扩档给数）"
             )
-        if state == "KILL" and first_kill is None:
+        if label == "KILL" and first_kill is None:
             first_kill = ts.date().isoformat()
-        labels.append(state)
+        labels.append(label)
 
     levels = pd.Series(labels, index=s.index, name=arm_cfg)
     # L4 近似的量化：已进 KILL 且当日回撤其实已回到触发阈值以内的那些日＝人工复位本可放行的日子
@@ -999,24 +1276,68 @@ def replay_drawdown_levels(nav: pd.Series, *, arm_cfg: str = "levels_hysteresis"
     if first_kill is not None:
         kill_stuck = int((levels.eq("KILL") & (dd.abs() <= cfg.kill_dd)).sum())
     state_days = {str(k): int(v) for k, v in levels.value_counts().sort_index().items()}
-    creds = {
+    creds: dict[str, Any] = {
         "arm_cfg": arm_cfg,
+        "tier_flags": dict(flags),
         "n_days": int(len(levels)),
         "state_days": state_days,
         "transitions": n_transitions,
         "first_kill_date": first_kill,
         "kill_stuck_days": kill_stuck,
-        "vocab": list(_DRAWDOWN_STATE_VOCAB),
+        "vocab": list(allowed),
+        "recovered_pct_source": "峰/谷＝在册 drawdown_tracker.py:276-287 语义镜像；比值＝直调在册 risk_layer_orchestrator.py:884-888",
     }
+    if is_reset:
+        creds.update(
+            {
+                "reset_trigger_recovered_pct": float(reset_recovered_pct),
+                "resets_granted": resets_granted,
+                "resets_refused": len(refusals),
+                "refusals_first8": refusals[:8],
+                "ladder_promotions": ladder["promotions"],
+                "ladder_retreats": ladder["retreats"],
+                "graduated_to_normal": ladder["graduated_to_normal"],
+                "recovery_rung_days": {k: v for k, v in state_days.items() if str(k).startswith("RECOVERY@")},
+                "graduation_face": cfg.graduation_face,
+                "graduation_face_skips": int(getattr(sm, "graduation_face_skips", -1)),
+            }
+        )
     return levels, creds
 
 
-def drawdown_level_series_pack(nav: pd.Series) -> tuple[dict[str, pd.Series], dict]:
-    """一次净值输入 → 两档级别序列（迟滞/无迟滞）＋两档凭据，供底座来源填进 ArmBase.series。"""
+def drawdown_level_series_pack(
+    nav: pd.Series,
+    *,
+    tier_names: list[str],
+    reset_recovered_pct: float | None = None,
+) -> tuple[dict[str, pd.Series], dict]:
+    """一次净值输入 → 按绑定册点名的档位产级别序列＋逐档凭据，供底座来源填进 ArmBase.series。
+
+    档位必须逐档点名、无"默认全集"：默认全产会让新档位悄悄进每一跑，07 的既有读数面从此不可比，
+    而 07b 的复位入口参数又必须逐跑不同（括号 A/B）——两件事都指向"由册格说要哪几档"。
+    """
+    names = list(dict.fromkeys(tier_names))
+    # 两道 pack 级红先过（"全都不复位却收到参数"与"有复位档却没参数"），
+    # 再逐档分发：混合 pack（一臂复位、一臂不复位）里非复位档必须收 None，
+    # 把参数原样递给每一档会被 replay 的 `reset_param_on_non_reset_tier` 当场弹（2026-10-13 零 CH 预演实测）
+    needs = [n for n in names if _level_tier_flags(n)["reset"]]
+    if needs and reset_recovered_pct is None:
+        raise RuntimeError(
+            f"reset_tier_entry_param_missing:{needs}（复位档的入口 recovered_pct 须由绑定册逐跑注入，禁硬编也禁缺省）"
+        )
+    if not needs and reset_recovered_pct is not None:
+        raise RuntimeError(
+            f"reset_param_on_non_reset_tier:{names}（本 pack 没有复位档却收到复位参数＝跑与跑之间动了别的参数）"
+        )
     series: dict[str, pd.Series] = {}
     creds: dict[str, dict] = {}
-    for name in DRAWDOWN_LEVEL_SERIES_NAMES:
-        series[name], creds[name] = replay_drawdown_levels(nav, arm_cfg=name)
+    for name in names:
+        # 参数只发给复位档；非复位档拿 None＝07 现面逐字不变
+        series[name], creds[name] = replay_drawdown_levels(
+            nav,
+            arm_cfg=name,
+            reset_recovered_pct=reset_recovered_pct if _level_tier_flags(name)["reset"] else None,
+        )
     return series, creds
 
 
@@ -1031,9 +1352,9 @@ def _exit_sim_baseline(card: dict, entry: dict) -> Any:
 
     只搬运在册装置的输入与输出，零新撮合、零自拟参数：列提取仍受 prereg 冻结清单自校
     （run_all 同款断言），敞口与净值直接取 simulate 交出的 st["exposure_daily"] 与 nav。
-    series 面（两档级别序列）由 `drawdown_level_series_pack(nav)` 产出——那是**在册判定件**
+    series 面（按册格点名的档位序列）由 `drawdown_level_series_pack(nav, tier_names=…)` 产出——那是**在册判定件**
     src/zephyr/risk/core/drawdown_state_machine.py 的日频回放适配器（WO-A1 三颗红证在册），
-    本函数零判定/零迟滞逻辑；判定件若拒（空净值/NaN/词表外状态）异常照原样上抛，
+    本函数零判定/零迟滞/零复位分支逻辑；判定件若拒（空净值/NaN/词表外状态/复位守卫拒绝）异常照原样上抛，
     册格引用未交付的 "series:<名>" 仍在 _resolve_named_series 处抛 ArmParamUnfrozen（＝不开考，不是出错分）。
     """
     ArmBase = _arm_protocol_module().ArmBase  # 与装配侧同一模块对象，防类身份跨包名分裂
@@ -1068,7 +1389,11 @@ def _exit_sim_baseline(card: dict, entry: dict) -> Any:
     if exposure is None:
         raise RuntimeError("exit_sim_baseline: 装置未交付 exposure_daily 返回面（返回面扩展未落地？）")
     daily_return = nav.astype("float64").pct_change().dropna()
-    levels, level_creds = drawdown_level_series_pack(nav)
+    # 档位由册格点名（07＝两档迟滞对照，07b＝含复位档四跑各取所需），复位入口参数同样逐跑由册给
+    tiers = _named_series_tiers(entry)
+    levels, level_creds = drawdown_level_series_pack(
+        nav, tier_names=tiers, reset_recovered_pct=_reset_entry_param(entry, tiers)
+    )
     base = ArmBase(
         exposure=pd.Series(exposure).reindex(pd.DatetimeIndex(nav.index)),
         daily_return=daily_return,
@@ -1114,7 +1439,7 @@ def arms_from_binding_book(
     return open_arm, base_arm, tgt, ev
 
 
-def arm_context_for_judge(entry: dict, base: Any) -> dict | None:
+def arm_context_for_judge(card: dict, entry: dict, base: Any) -> dict | None:
     """双臂判官三柱的**读数上下文**（统筹裁定③ 2026-10-12：三柱机器面立项，归本班域）。
 
     三柱（`maxdd_improvement_vs_no_hysteresis_min_pp`／`whipsaw_roundtrip_ratio_max`／
@@ -1123,12 +1448,15 @@ def arm_context_for_judge(entry: dict, base: Any) -> dict | None:
     逐臂点名的 `params_*.levels`／`level_map` 里。本函数**只搬运不重算**：按册格点名的档名
     从底座取序列，判官侧绝不按名再取一次底座（那是第二真源，违宪法 §4.2）。
     任一件缺位即返回 None——判官对 None 记显式败（禁静默跳），与 arm_base_source_unwired 同一哲学。
+
+    07b 追加两件（implementation_gap ②③）：档位属性**申报**进上下文（判官禁按档名猜），
+    复位档的阶梯乘子表逐字对卡面校验（不符即抛，不给分）。
     """
     arms = entry.get("arms") or {}
     pool = getattr(base, "series", None)
     if not isinstance(pool, dict):
         return None
-    ctx: dict[str, Any] = {"levels": {}, "cap_map": {}, "level_source": {}}
+    ctx: dict[str, Any] = {"levels": {}, "cap_map": {}, "level_source": {}, "tier_flags": {}, "recovery_ladder": {}}
     for side in ("open", "base"):
         params = arms.get(f"params_{side}") or {}
         raw = params.get("levels")
@@ -1143,30 +1471,70 @@ def arm_context_for_judge(entry: dict, base: Any) -> dict | None:
         cmap = params.get("level_map")
         if not isinstance(cmap, dict) or not cmap:
             return None
+        flags = _level_tier_flags(name)
         ctx["levels"][side] = pool[name]
         ctx["cap_map"][side] = cmap
         ctx["level_source"][side] = name
-    ctx["base_arm_cfg"] = ctx["level_source"]["base"]
+        ctx["tier_flags"][side] = dict(flags)
+        ctx["recovery_ladder"][side] = _validate_recovery_ladder(card, side, cmap, flags)
+    # `base_arm_cfg` 的契约＝**迟滞族档名**（判官按它认"基臂是不是无迟滞对照腿"），不是册内序列名：
+    # 复位档的真实册名是 `levels_no_hysteresis_with_reset`，把册名直接交给只认
+    # `== "levels_no_hysteresis"` 的落地面判官，会让 07b 的 off 与 mid 两跑都把柱一/柱二推给对方
+    # ⇒ 两跑互让＝零判（假绿面，非报错面）。真实册名不丢：见 ctx["level_source"]。
+    # 显式布尔 `base_is_no_hysteresis` 留给扩面判官（待投腿）读，两者在 07 面逐字等价。
+    ctx["base_arm_cfg"] = "levels_no_hysteresis" if not ctx["tier_flags"]["base"]["hysteresis"] else "levels_hysteresis"
+    ctx["base_arm_cfg_tier"] = ctx["level_source"]["base"]
     ctx["level_source_open"] = ctx["level_source"]["open"]
-    # 两档同源即「一卡两跑之间动了级别序列来源」——裁定甲③禁的事，在这里当场显形而不是留到事后核
+    # 迟滞/复位属性由档位册显式申报，判官禁按档名字符串猜：`levels_no_hysteresis_with_reset`
+    # 拿 == "levels_no_hysteresis" 去匹配会读成"不是无迟滞档"⇒ 三柱静默不判＝假绿面，必须堵住
+    ctx["base_is_no_hysteresis"] = not ctx["tier_flags"]["base"]["hysteresis"]
+    ctx["open_is_no_hysteresis"] = not ctx["tier_flags"]["open"]["hysteresis"]
+    ctx["reset_trigger_recovered_pct"] = arms.get("reset_trigger_recovered_pct")
+    # 同一条级别序列不天然非法：07/07b 卡面都声明"臂间差异只允许出现在级别→cap 乘子表"，
+    # off 配对正是同一序列×两张不同乘子表。真非法的是两面——见下面两条各自的解释。
     if ctx["level_source"]["open"] == ctx["level_source"]["base"]:
-        raise ValueError(
-            f"arm_levels_same_source:{ctx['level_source']['open']}（开臂与基臂引用同一条级别序列＝两臂同形，"
-            "判官会把常数 0 差读成「迟滞带无增益」；配对必须由两档分别回放）"
-        )
+        if _cap_maps_identical(ctx["cap_map"]["open"], ctx["cap_map"]["base"]):
+            raise ValueError(
+                f"arms_identical_source_and_map:{ctx['level_source']['open']}（两臂连档位与乘子表都逐字相同＝"
+                "单臂卡冒充双臂，判官拿到的差恒为 0）"
+            )
+        if not ctx["tier_flags"]["base"]["hysteresis"]:
+            raise ValueError(
+                f"arm_levels_same_source:{ctx['level_source']['open']}（迟滞对照跑的两臂引用同一条级别序列＝"
+                "常数 0 差会被读成「迟滞带无增益」，该配对必须由两档分别回放）"
+            )
     ctx["creds"] = getattr(base, "level_creds", None)
     ctx["arms_variant"] = entry.get("arms_variant_applied")
     return ctx
 
 
 def load_binding_book(path: Path, arms_variant: str | None = None) -> dict[str, dict]:
+    """绑定册读取＋按跑配对选择器（统筹裁定 2026-10-12 甲案③：跑与跑之间禁动其他参数）。
+
+    变体词表是**按卡冻结**的：07 只有 off/mid，07b 有 off_A/off_B/mid_A/mid_B，两卡共用一本册。
+    选择器判据因此是"全局有没有这一档"而不是"每一张双臂卡都得有这一档"——
+    ①`arms_variant` 为 None 却有任一变体格 → 拒（禁默认取第一档）；
+    ②`arms_variant` 在全册任何一格都找不到 → 拒（这是打字错，比静默少跑一张卡危险）；
+    ③`arms_variant` 存在但某张卡的词表不含它 → **跳过该卡**（本跑就是不含它，不是错），
+      含它的卡正常装配。跳过绝不降级成单臂：调用方拿到"册里没这张"会走 classify，
+      而双臂卡 classify 不出双臂面，出不了分（fail-closed，与 arm_base_source_unwired 同哲学）。
+    """
     if not path.exists():
         return {}
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    entries = [e for e in (data.get("entries") or []) if isinstance(e, dict) and e.get("card_id")]
+    variant_entries = [e for e in entries if e.get("arms_variants") is not None]
+    if variant_entries and arms_variant is None:
+        named = sorted({str(e.get("card_id")) for e in variant_entries})
+        raise ValueError(f"arms_variant_required:{named}（这些格配对按跑显式化，须 --arms-variant 指名，禁默认第一档）")
+    all_variants = {v for e in variant_entries for v in (e.get("arms_variants") or {})}
+    if arms_variant is not None and variant_entries and arms_variant not in all_variants:
+        raise ValueError(
+            f"arms_variant_typo:{arms_variant}（全册在册档名并集={sorted(all_variants)}；"
+            "一根都没命中＝打字错，禁当成'本跑不含双臂卡'静默少跑一张）"
+        )
     book = {}
-    for e in data.get("entries") or []:
-        if not isinstance(e, dict) or not e.get("card_id"):
-            continue
+    for e in entries:
         if e.get("status") != "approved":
             continue
         variants = e.get("arms_variants")
@@ -1176,14 +1544,9 @@ def load_binding_book(path: Path, arms_variant: str | None = None) -> dict[str, 
                     f"arms_pairing_ambiguous:{e.get('card_id')}（同格并存 arms 与 arms_variants＝"
                     "哪一跑在跑说不清，禁隐式取舍）"
                 )
-            if arms_variant is None:
-                raise ValueError(
-                    f"arms_variant_required:{e.get('card_id')}（该格配对按跑显式化，"
-                    f"可选档={sorted(variants)}，须 --arms-variant 指名，禁默认第一档）"
-                )
             chosen = (variants or {}).get(arms_variant)
-            if not chosen:
-                raise ValueError(f"arms_variant_unknown:{e.get('card_id')}:{arms_variant}（在册档={sorted(variants)}）")
+            if not chosen:  # 该卡词表没这一档＝本跑不装它（按卡冻结，非错误）
+                continue
             e = {**e, "arms": chosen, "arms_variant_applied": arms_variant}
         book[str(e["card_id"])] = e
     return book
@@ -1228,6 +1591,7 @@ def run_one(
     before = _judgment_snapshot(card)
     sig_b: pd.Series | None = None
     arm_ctx: dict | None = None
+    tgt: pd.Series | None = None  # 双臂通道在 try 里就交回底座日收益；其余通道走下面的指数面
     try:
         if entry is not None and entry.get("arms"):
             # 双臂通道（WO-A1）：底座敞口序列须由在册重放装置按臂参数产出后注入；
@@ -1246,12 +1610,18 @@ def run_one(
                 tgt_arm = index_next_day_return()
             sig, sig_b, tgt, ev = arms_from_binding_book(card, entry, base=src_obj, target=tgt_arm)
             # 三柱读数上下文（裁定③）：起始面自证注入了什么（档名/变体/序列长度），不落 Series 本体进 yaml
-            arm_ctx = arm_context_for_judge(entry, src_obj)
+            arm_ctx = arm_context_for_judge(card, entry, src_obj)
             ev["arm_context_injected"] = {
                 "present": arm_ctx is not None,
                 "base_arm_cfg": (arm_ctx or {}).get("base_arm_cfg"),
                 "arms_variant": (arm_ctx or {}).get("arms_variant"),
                 "level_source": (arm_ctx or {}).get("level_source"),
+                # 跑次判别面（07b 四跑＝2 复位括号 × 2 配对档）：括号入口值与档位属性必须逐跑显形，
+                # 否则四行分数长得一样、事后无从分辨哪一跑用的哪一档入口（裁定甲③的可核账要求）
+                "tier_flags": (arm_ctx or {}).get("tier_flags"),
+                "base_is_no_hysteresis": (arm_ctx or {}).get("base_is_no_hysteresis"),
+                "reset_trigger_recovered_pct": (arm_ctx or {}).get("reset_trigger_recovered_pct"),
+                "recovery_ladder": (arm_ctx or {}).get("recovery_ladder"),
                 "levels_len": {
                     k: int(len(v)) for k, v in ((arm_ctx or {}).get("levels") or {}).items() if v is not None
                 },
@@ -1267,7 +1637,12 @@ def run_one(
     nan_ratio = float(pd.Series(sig).isna().mean())
     if nan_ratio > 0.5:
         return {"card_id": cid, "error": f"binding_rejected_quality:nan_ratio={nan_ratio:.3f}", **ev}
-    tgt = index_next_day_return()
+    if tgt is None:
+        # 单臂/册格通道的 r 位＝外部指数次日收益（那些卡面就是这么声明的）。
+        # 双臂通道**绝不能**走到这里：它的 r 位已由 `arms_from_binding_book` 交出底座日收益
+        # （卡面"三臂共用同一基线净值路径"），覆盖成指数面就把风控实验量成了择时面——
+        # 2026-10-13 零 CH 预演实测这行曾无条件执行（红证见 tests ::test_arms_path_target_is_base_daily_return_not_index）
+        tgt = index_next_day_return()
     from fexam.calibration_exam import run_card
 
     row = run_card(

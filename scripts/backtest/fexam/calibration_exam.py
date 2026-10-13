@@ -526,7 +526,21 @@ def _judge_arm_context_pillars(
             "n_days_open": int(len(caps_open)),
         }
     )
-    is_mid_pair = arm_context.get("base_arm_cfg") == "levels_no_hysteresis"
+    # 迟滞对照与否＝绑定层**申报**的档位属性，不是本件按档名猜的字符串：
+    # 复位档叫 levels_no_hysteresis_with_reset，按 == "levels_no_hysteresis" 匹配会读成"非无迟滞档"
+    # ⇒ 三柱静默不判（假绿）。缺申报位同样如实记败，禁"没申报就当不用判"。
+    if "base_is_no_hysteresis" not in arm_context:
+        return (
+            [
+                "臂上下文未申报基臂迟滞属性（arm_context.base_is_no_hysteresis 缺位）："
+                f"{sorted(keys)} 三柱无从判读，禁按档名字符串猜档，如实记败"
+            ],
+            readings,
+            [],
+        )
+    is_mid_pair = bool(arm_context["base_is_no_hysteresis"])
+    readings["base_is_no_hysteresis"] = is_mid_pair
+    readings["open_is_no_hysteresis"] = bool(arm_context.get("open_is_no_hysteresis"))
     owned: list[str] = []
     fails: list[str] = []
     if "maxdd_improvement_vs_no_hysteresis_min_pp" in p:

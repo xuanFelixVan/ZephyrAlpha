@@ -18,6 +18,43 @@ import yaml
 from scripts.backtest.fexam import calibration_exam as ce
 from zephyr.backtest.core import n_trial_ledger as _ntl
 
+
+def test_pillars_fail_when_base_tier_flag_not_declared():
+    """红证（07b 接线期的真雷）：档位属性没申报 ⇒ 三柱必须显式记败。
+    判官若按 `base_arm_cfg == "levels_no_hysteresis"` 认迟滞对照，复位档名
+    `levels_no_hysteresis_with_reset` 会被读成"非无迟滞档"⇒ 三柱静默不判 yet 出分＝假绿。"""
+    card = _three_pillar_card()
+    ctx = _pair_caps(open_pattern="warn_then_kill", base_pattern="osc")
+    ctx.pop("base_is_no_hysteresis")
+    m = _pair_metrics(2.0)
+    verdict, fails = ce._judge_comparison(card, m, ctx)
+    assert verdict == "fail"
+    assert any("未申报基臂迟滞属性" in f for f in fails), fails
+    assert m["arm_pillars_owned_by_other_run"] == [], "缺申报不得写成'归另一跑'（那是同一支静默跳）"
+
+
+def test_reset_tier_base_name_is_judged_from_declared_flag():
+    """判别力（双向钉）：基臂档名换成 levels_no_hysteresis_with_reset（复位档，属性仍＝无迟滞）
+    ⇒ 三柱照判；把属性改回 True→False 即不判。钉的是"读数跟着申报走、不跟字符串走"。"""
+    card = _three_pillar_card()
+    ctx = _pair_caps(open_pattern="warn_then_kill", base_pattern="osc")
+    ctx["base_arm_cfg"] = "levels_no_hysteresis_with_reset"
+    m = _pair_metrics(2.0)
+    verdict, fails = ce._judge_comparison(card, m, ctx)
+    assert verdict == "pass", fails
+    r = m["arm_face_readings"]
+    assert r["base_is_no_hysteresis"] is True and r["whipsaw_roundtrip_ratio"] == 0.0
+    assert r["maxdd_improvement_vs_no_hysteresis_pp"] == 2.0
+    ctx["base_is_no_hysteresis"] = False
+    m_off = _pair_metrics(2.0)
+    ce._judge_comparison(card, m_off, ctx)
+    assert m_off["arm_face_readings"]["maxdd_improvement_vs_no_hysteresis_pp"] is None
+    assert m_off["arm_pillars_owned_by_other_run"] == [
+        "maxdd_improvement_vs_no_hysteresis_min_pp",
+        "whipsaw_roundtrip_ratio_max",
+    ], m_off["arm_pillars_owned_by_other_run"]
+
+
 #: 生产真源在 import 时的原值（autouse 夹具只改模块属性，不改本快照），供"生产册一字未动"两测对照。
 _REAL_PROD_LEDGER = Path(_ntl.LEDGER_REGISTRY_PATH)
 
@@ -836,6 +873,9 @@ def _pair_caps(open_pattern="down_only", base_pattern="osc", days=1500):
         "cap_map": {"open": five, "base": five},
         "level_source": {"open": "series:levels_hysteresis", "base": "series:levels_no_hysteresis"},
         "base_arm_cfg": "levels_no_hysteresis",
+        # 档位属性由绑定层**申报**（判官禁按档名猜），夹具须给真上下文形状
+        "base_is_no_hysteresis": True,
+        "open_is_no_hysteresis": False,
         "arms_variant": "mid",
         "creds": None,
     }
@@ -907,6 +947,7 @@ def test_hysteresis_pair_run_reports_owned_by_other_run():
     card = _three_pillar_card()
     ctx = _pair_caps(open_pattern="warn_then_kill", base_pattern="down_only")
     ctx["base_arm_cfg"] = "levels_hysteresis"
+    ctx["base_is_no_hysteresis"] = False  # 迟滞对照属性由绑定层申报，判官不再自己认字符串
     ctx["arms_variant"] = "off"
     m = _pair_metrics(3.0)
     verdict, fails = ce._judge_comparison(card, m, ctx)

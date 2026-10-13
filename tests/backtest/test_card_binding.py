@@ -10,14 +10,561 @@ prose_quote 校验、缺 data_binding 拒绑三处都写了"应当拒"的正例�
 
 from __future__ import annotations
 
+import copy
 import datetime as dt
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import pytest
 import yaml
 
 from scripts.backtest.fexam import card_binding as cb
+
+
+def _crash_then_climb_nav():
+    """平顶 20 日 → 10 日跌到 0.65（进 KILL）→ 60 日单调爬回 1.05（回补比例一路走高）。"""
+    seg = [1.0] * 20 + list(np.linspace(1.0, 0.65, 10)) + list(np.linspace(0.66, 1.05, 60))
+    return pd.Series(seg, index=pd.bdate_range("2023-01-02", periods=len(seg)), dtype="float64")
+
+
+def _ctx_card(ladder=None, extra_tables=None):
+    """判官上下文要的卡面：07b 的 `data_binding.level_to_cap_map` 最小形（阶梯表可改坏以验红线）。
+
+    `ladder=None` ＝不给 recovery_ladder（非复位档用得上：缺表也必须照样过）。
+    `extra_tables` 用来添"带阶梯的行"（开臂走在册阶梯、关臂按声明复位即回满），
+    卡面没声明过的三元组一律算在册外拍数——这正是被拦的那一面。
+    """
+    maps = {
+        "five_state_native": {"NORMAL": 1.0, "WARN": 0.8, "DANGER": 0.5, "CRISIS": 0.3, "KILL": 0.0},
+        "binary_full_clear": {"NORMAL": 1.0, "WARN": 1.0, "DANGER": 1.0, "CRISIS": 1.0, "KILL": 0.0},
+    }
+    if ladder is not None:
+        maps["recovery_ladder"] = ladder
+    for k, v in (extra_tables or {}).items():
+        maps[k] = v
+    return {"card_id": "TDM-X-R1-01/comparison/probe", "data_binding": {"level_to_cap_map": maps}}
+
+
+def _reset_ctx_pair(rung=None):
+    """07b 形配对（两臂都点复位档）：册格＋底座的最小完整夹具，rung 可改坏以验红线。"""
+    five = {"NORMAL": 1.0, "WARN": 0.8, "DANGER": 0.5, "CRISIS": 0.3, "KILL": 0.0}
+    ladder = {"step_0": 0.25, "step_1": 0.5, "step_2": 0.75} if rung is None else rung
+    rungs = {f"RECOVERY@{i}": ladder[f"step_{i}"] for i in range(3)}
+    arms = {
+        "op_open": "arm_level_cap_multiply",
+        "op_base": "arm_level_cap_multiply",
+        "reset_trigger_recovered_pct": 0.5,
+        "params_open": {"levels": "series:levels_with_reset", "level_map": {**five, **rungs}},
+        "params_base": {"levels": "series:levels_no_hysteresis_with_reset", "level_map": {**five, **rungs}},
+    }
+    idx = pd.bdate_range("2024-01-02", periods=10)
+    entry = {"card_id": "TDM-X-R1-01/comparison/probe", "arms": arms, "arms_variant_applied": "mid_A"}
+    mod = cb._arm_protocol_module()
+    pool = {
+        "levels_with_reset": pd.Series(["NORMAL"] * 10, index=idx),
+        "levels_no_hysteresis_with_reset": pd.Series(["RECOVERY@0"] * 10, index=idx),
+    }
+    base = mod.ArmBase(
+        exposure=pd.Series(1.0, index=idx),
+        daily_return=pd.Series(0.001, index=idx).round(6),
+        series=pool,
+        face_id="exit_sim_baseline_nav",
+    )
+    return entry, base
+
+
+def test_arm_context_declares_tier_flags_and_bracket_for_judge():
+    """接线钉：档位属性/复位括号值必须**申报**进上下文（判官禁按档名猜，四跑要能事后分辨）。"""
+    idx, five, entry = _ctx_entry()
+    entry["arms"]["reset_trigger_recovered_pct"] = 0.75
+    ctx = cb.arm_context_for_judge(_ctx_card(), entry, _ctx_base(idx, five))
+    assert ctx["tier_flags"] == {
+        "open": {"hysteresis": True, "reset": False},
+        "base": {"hysteresis": False, "reset": False},
+    }
+    assert ctx["base_is_no_hysteresis"] is True and ctx["open_is_no_hysteresis"] is False
+    assert ctx["reset_trigger_recovered_pct"] == 0.75
+    assert ctx["recovery_ladder"] == {"open": {}, "base": {}}  # 非复位档：阶梯面无事可做
+
+
+def test_arm_context_off_pair_base_arm_may_declare_full_reentry():
+    """形状约束只管开臂：关臂的"复位即一次买回"（三档 1.0）是卡面声明的角色，必须放行。
+    卡面没声明过的三元组（0.9 那种）照红——放行的是"卡面说过"，不是"看起来宽松"。"""
+    entry, base = _reset_ctx_pair()
+    card = _ctx_card(
+        ladder={"step_0": 0.25, "step_1": 0.5, "step_2": 0.75},
+        extra_tables={
+            "binary_full_clear_with_ladder": {
+                "NORMAL": 1.0,
+                "WARN": 1.0,
+                "DANGER": 1.0,
+                "CRISIS": 1.0,
+                "KILL": 0.0,
+                "RECOVERY@0": 1.0,
+                "RECOVERY@1": 1.0,
+                "RECOVERY@2": 1.0,
+            }
+        },
+    )
+    e = copy.deepcopy(entry)
+    for lbl in cb._RECOVERY_RUNG_LABELS:
+        e["arms"]["params_base"]["level_map"][lbl] = 1.0
+    ctx = cb.arm_context_for_judge(card, e, base)
+    assert ctx["recovery_ladder"]["base"]["rung_caps"] == [1.0, 1.0, 1.0]
+    assert ctx["recovery_ladder"]["base"]["declined_from"] == "binary_full_clear_with_ladder"
+    assert ctx["recovery_ladder"]["open"]["strictly_increasing"] is True
+    e2 = copy.deepcopy(e)
+    e2["arms"]["params_base"]["level_map"]["RECOVERY@0"] = 0.9
+    with pytest.raises(RuntimeError, match="recovery_rung_cap_off_card_face:base"):
+        cb.arm_context_for_judge(card, e2, base)
+
+
+def test_arm_context_same_level_series_three_faces():
+    """同一条级别序列的三面分开钉（off 配对是合法面，不是漏网面）。
+
+    卡面声明"臂间差异只允许出现在级别→cap 乘子表"，07/07b 的 off 配对就是**同一序列×两张不同表**；
+    上一版把这一面也一并拦了（＝把自己批过的配对拦死，2026-10-13 实测才暴露），按实质拆三面：
+    ①同序列＋同乘子表＝两臂逐字全等⇒红；②同序列＋不同表但那是**无迟滞**档＝迟滞对照跑两臂同形⇒红；
+    ③同序列＋不同表且是迟滞档（off 配对）＝合法，上下文照出。"""
+    idx, five, entry = _ctx_entry()
+    entry["arms"]["params_base"]["levels"] = "series:levels_hysteresis"
+    with pytest.raises(ValueError, match="arms_identical_source_and_map"):
+        cb.arm_context_for_judge(_ctx_card(), entry, _ctx_base(idx, five))
+
+    idx, five, e2 = _ctx_entry()
+    e2["arms"]["params_base"]["level_map"] = {**five, "WARN": 1.0}  # 表不同，但两臂都读无迟滞档
+    e2["arms"]["params_open"]["levels"] = "series:levels_no_hysteresis"
+    e2["arms"]["params_base"]["levels"] = "series:levels_no_hysteresis"
+    with pytest.raises(ValueError, match="arm_levels_same_source"):
+        cb.arm_context_for_judge(_ctx_card(), e2, _ctx_base(idx, five))
+
+    idx, five, e3 = _ctx_entry()
+    e3["arms"]["params_base"]["levels"] = "series:levels_hysteresis"
+    e3["arms"]["params_base"]["level_map"] = {**five, "WARN": 1.0}
+    ctx = cb.arm_context_for_judge(_ctx_card(), e3, _ctx_base(idx, five))
+    assert ctx is not None and ctx["base_is_no_hysteresis"] is False
+    assert ctx["level_source"] == {"open": "levels_hysteresis", "base": "levels_hysteresis"}
+
+
+def test_arm_context_validates_recovery_ladder_against_card_face():
+    """正证＋四面红线（07b implementation_gap ②＝文字柱 reset_not_full_reentry 的机判面）。
+
+    阶梯 cap 逐字取自卡面 recovery_ladder，本层只查"册格表==卡面表"与卡面自报的形状
+    （严格递增、首档<1.0）；查不过即抛不出分——复位即回满会让本卡退化成只判回撤一条腿。
+    """
+    entry, base = _reset_ctx_pair()
+    card = _ctx_card(ladder={"step_0": 0.25, "step_1": 0.5, "step_2": 0.75})
+    ctx = cb.arm_context_for_judge(card, entry, base)
+    assert ctx["recovery_ladder"]["open"] == {
+        "rung_caps": [0.25, 0.5, 0.75],
+        "strictly_increasing": True,
+        "first_rung_below_full": True,
+    }
+    # 基臂与开臂同表时也放行，但凭据面写的是"从哪张卡面表落下"，不是"递增通过"
+    assert ctx["recovery_ladder"]["base"]["rung_caps"] == [0.25, 0.5, 0.75]
+    assert ctx["recovery_ladder"]["base"]["declined_from"].startswith("recovery_ladder")
+    with pytest.raises(RuntimeError, match="recovery_ladder_face_missing"):
+        cb.arm_context_for_judge(_ctx_card(), entry, base)  # 卡面没冻结阶梯表＝不开考
+    e2 = copy.deepcopy(entry)
+    e2["arms"]["params_base"]["level_map"].pop("RECOVERY@2")
+    with pytest.raises(RuntimeError, match="recovery_rung_cap_unfrozen"):
+        cb.arm_context_for_judge(card, e2, base)  # 跑到位次再替卡面拍值的形态
+    e3 = copy.deepcopy(entry)
+    e3["arms"]["params_open"]["level_map"]["RECOVERY@0"] = 0.5
+    with pytest.raises(RuntimeError, match="recovery_rung_cap_off_card_face"):
+        cb.arm_context_for_judge(card, e3, base)  # 册格与卡面不同源
+    bad_card = _ctx_card(ladder={"step_0": 1.0, "step_1": 1.0, "step_2": 1.0})
+    e4 = copy.deepcopy(entry)
+    for side in ("open", "base"):
+        e4["arms"][f"params_{side}"]["level_map"].update({"RECOVERY@0": 1.0, "RECOVERY@1": 1.0, "RECOVERY@2": 1.0})
+    with pytest.raises(RuntimeError, match="reset_not_full_reentry_violated"):
+        cb.arm_context_for_judge(bad_card, e4, base)  # 开臂复位即回满＝与关臂同形
+
+
+def test_arms_path_target_is_base_daily_return_not_index(tmp_path, monkeypatch):
+    """⚑零 CH 预演暴露的 r 位覆盖 bug（钉"双臂跑的 target 必须是底座日收益"）。
+
+    `run_one` 里 `tgt = index_next_day_return()` 那行早于双臂接线（10-10 落），双臂分支算出的
+    底座日收益被它**无条件覆盖**成 CSI300 指数面 ⇒ 判官量的是"敞口×指数次日收益"（择时面），
+    而卡面声明的是"三臂共用同一基线净值路径"（风控面）。`require_target_identity` 验完就丢，
+    正是它要防的那颗雷。
+    钉法两道：①把 `index_next_day_return` 换成"一调用就抛"的哨兵——实现若回退成无条件覆盖，
+    测试先炸在哨兵上（静默换面最坏）；②间谍接住 `run_card` 收到的 target，逐值等于底座日收益。
+    """
+    mod = cb._arm_protocol_module()
+    idx = pd.bdate_range("2024-01-02", periods=24)
+    base_ret = pd.Series([0.004, -0.003] * 12, index=idx)
+    fake = mod.ArmBase(
+        exposure=pd.Series(1.0, index=idx),
+        daily_return=base_ret,
+        series={
+            "levels_hysteresis": pd.Series(["NORMAL"] * 12 + ["CRISIS"] * 12, index=idx),
+            "levels_no_hysteresis": pd.Series(["WARN"] * 24, index=idx),
+        },
+        face_id="exit_sim_baseline_nav",
+    )
+    fake.level_creds = {"probe": True}
+    monkeypatch.setitem(cb.ARM_BASE_SOURCES, "exit_sim_baseline", lambda card, entry: fake)
+
+    def _sentinel():
+        raise AssertionError("双臂跑不许取外部指数面（r 位须＝底座日收益）")
+
+    monkeypatch.setattr(cb, "index_next_day_return", _sentinel)
+    captured: dict = {}
+
+    def _spy(card_path, **kw):
+        captured.update(kw)
+        return {"verdict": "pass", "metrics": {}, "card_id": "spy"}
+
+    import fexam.calibration_exam as ce
+
+    monkeypatch.setattr(ce, "run_card", _spy)
+
+    five = {"NORMAL": 1.0, "WARN": 0.8, "DANGER": 0.5, "CRISIS": 0.3, "KILL": 0.0}
+    cid = "TDM-X-R1-01/comparison/probe_r_face"
+    card = {
+        "card_id": cid,
+        "status": "preregistered",
+        "signal_kind": "series",
+        "family": "comparison",
+        "data_binding": {
+            "signal_table": "c1_market.kline_daily_hfq",
+            "arm_protocol": "三臂输入同一基线净值序列与同一成交口径",
+            "signal_column": "基线臂日净值（simulate(stop_enabled=True) 产出）",
+        },
+        "pillars": {"paired_arm_protocol": "三臂共用同一底层组合净值路径"},
+    }
+    f = tmp_path / "card.yaml"
+    f.write_text(yaml.safe_dump(card, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    entry = {
+        "card_id": cid,
+        "status": "approved",
+        "op": "arms",
+        "arm_base_source": "exit_sim_baseline",
+        "arms": {
+            "e_face_quote": "三臂输入同一基线净值序列与同一成交口径",
+            "r_face_quote": "基线臂日净值（simulate(stop_enabled=True) 产出）",
+            "op_open": "arm_level_cap_multiply",
+            "op_base": "arm_level_cap_multiply",
+            "quote_open": "三臂输入同一基线净值序列与同一成交口径",
+            "quote_base": "三臂输入同一基线净值序列与同一成交口径",
+            "params_open": {"levels": "series:levels_hysteresis", "level_map": five},
+            "params_base": {"levels": "series:levels_no_hysteresis", "level_map": five},
+        },
+    }
+    res = cb.run_one(f, {cid}, tmp_path / "scores.yaml", "probe", False, {cid: entry}, False)
+    assert res.get("verdict") == "pass", res
+    tgt = captured["target"]
+    assert float(tgt.iloc[0]) == 0.004 and len(tgt) == len(base_ret), tgt.head()
+    assert captured["signal"] is not None and captured["signal_b"] is not None
+    assert captured["arm_context"]["base_is_no_hysteresis"] is True, captured["arm_context"]
+
+
+def test_ladder_caps_must_be_numeric_not_silently_coerced():
+    """红队四形态：None/布尔/带引号的数字/缺键，全部要**具名**红。
+
+    来历：2026-10-13 红蓝对抗实测里 `float(None)` 抛的是 TypeError——那会把"卡面没给档位数值"
+    洗成"调用面写错了"（同族错在 pack 参数上已修过一次，这里是同一课的第二遍，所以钉成测试）。
+    带引号的 "0.25" 也不许静默 coerce：阶梯 cap 是卡面冻结数值，写成文字就是没冻结。
+    """
+    entry, base = _reset_ctx_pair()
+    card = _ctx_card(ladder={"step_0": 0.25, "step_1": 0.5, "step_2": 0.75})
+    cases = {
+        "recovery_rung_cap_not_numeric": {"RECOVERY@1": None},
+        "recovery_rung_cap_not_numeric_bool": {"RECOVERY@0": True},
+        "recovery_rung_cap_not_numeric_str": {"RECOVERY@2": "0.75"},
+        "recovery_rung_cap_unfrozen": {"RECOVERY@2": "__drop__"},
+    }
+    for expect, mutate in cases.items():
+        e = copy.deepcopy(entry)
+        for lbl, val in mutate.items():
+            if val == "__drop__":
+                e["arms"]["params_open"]["level_map"].pop(lbl)
+            else:
+                e["arms"]["params_open"]["level_map"][lbl] = val
+        code = expect.split("_bool")[0].split("_str")[0]
+        with pytest.raises(RuntimeError, match=code):
+            cb.arm_context_for_judge(card, e, base)
+
+
+def test_level_tier_registry_is_single_source_for_names_and_flags():
+    """档位册自证：四档齐、属性逐档申报、名字面由册派生（禁 tuple 与 dict 两处各写一遍）。"""
+    assert sorted(cb.DRAWDOWN_LEVEL_TIERS) == sorted(cb.DRAWDOWN_LEVEL_SERIES_NAMES)
+    assert cb.DRAWDOWN_LEVEL_TIERS["levels_no_hysteresis_with_reset"] == {"hysteresis": False, "reset": True}
+    assert cb.DRAWDOWN_LEVEL_TIERS["levels_with_reset"]["reset"] is True
+    assert cb.DRAWDOWN_LEVEL_TIERS["levels_hysteresis"] == {"hysteresis": True, "reset": False}
+    assert cb._RECOVERY_RUNG_LABELS == ("RECOVERY@0", "RECOVERY@1", "RECOVERY@2")
+    assert cb._RECOVERY_RUNG_CARD_KEYS == ("step_0", "step_1", "step_2")
+
+
+def test_load_binding_book_variant_vocabularies_are_per_card(tmp_path):
+    """⚑2026-10-13 实测误杀的正证：一册多卡、变体词表**按卡冻结**时必须能各自选档。
+
+    旧语义拿"每一张双臂格都得含这一档"当判据 ⇒ 07（off/mid）与 07b（off_A/off_B/mid_A/mid_B）
+    共用一本册后，跑 07b 的 off_A 会被 07 那格弹死，而修 07 的 off 跑又会被 07b 那格弹死——
+    四跑与 07 重读全都开不出来。新语义两条都没放松：档名在全册并集里找不到＝打字错必红；
+    找得到而某卡词表不含它＝该卡不参与本跑（跳过，绝不降级成单臂）。
+    """
+    body = {
+        "entries": [
+            {
+                "card_id": "CID_07",
+                "status": "approved",
+                "arms_variants": {
+                    "off": {"op_open": "arm_identity", "op_base": "arm_identity"},
+                    "mid": {"op_open": "arm_identity", "op_base": "arm_identity"},
+                },
+            },
+            {
+                "card_id": "CID_07B",
+                "status": "approved",
+                "arms_variants": {
+                    "off_A": {"op_open": "arm_identity", "op_base": "arm_identity"},
+                    "mid_B": {"op_open": "arm_identity", "op_base": "arm_identity"},
+                },
+            },
+        ]
+    }
+    f = tmp_path / "book.yaml"
+    f.write_text(yaml.safe_dump(body, allow_unicode=True), encoding="utf-8")
+    assert sorted(cb.load_binding_book(f, arms_variant="off_A")) == ["CID_07B"]
+    assert sorted(cb.load_binding_book(f, arms_variant="off")) == ["CID_07"]
+    with pytest.raises(ValueError, match="arms_variant_typo"):
+        cb.load_binding_book(f, arms_variant="off_C")
+    with pytest.raises(ValueError, match="arms_variant_required"):  # 禁默认第一档这条一字未松
+        cb.load_binding_book(f)
+
+
+def test_named_series_tiers_and_bracket_injection_are_fail_closed():
+    """红证组（07b ③＝参数由册逐跑给，禁硬编也禁"没用上就算了"）：五种错配各红一次。"""
+    two = {
+        "arms": {
+            "params_open": {"levels": "series:levels_hysteresis"},
+            "params_base": {"levels": "series:levels_no_hysteresis"},
+        }
+    }
+    assert cb._named_series_tiers(two) == ["levels_hysteresis", "levels_no_hysteresis"]
+    assert cb._reset_entry_param(two, cb._named_series_tiers(two)) is None
+    reset = {
+        "arms": {
+            "params_open": {"levels": "series:levels_with_reset"},
+            "params_base": {"levels": "series:levels_with_reset"},
+        }
+    }
+    with pytest.raises(RuntimeError, match="reset_bracket_not_injected"):
+        cb._reset_entry_param(reset, cb._named_series_tiers(reset))  # 括号没冻结
+    stray = {"arms": {**two["arms"], "reset_trigger_recovered_pct": 0.75}}
+    with pytest.raises(RuntimeError, match="reset_bracket_unused"):
+        cb._reset_entry_param(stray, cb._named_series_tiers(stray))  # 两跑之间动了别的参数
+    ghost = {
+        "arms": {
+            "params_open": {"levels": "series:levels_with_reset_v2"},
+            "params_base": {"levels": "series:levels_hysteresis"},
+        }
+    }
+    with pytest.raises(RuntimeError, match="series_tier_unknown"):
+        cb._named_series_tiers(ghost)  # 册格先点名、代码后补＝红
+    with pytest.raises(RuntimeError, match="arms_levels_not_named_by_book"):
+        cb._named_series_tiers({"arms": {"params_open": {}, "params_base": {}}})  # 禁替册格选档
+
+
+def test_non_reset_tier_face_unchanged_by_reset_wiring():
+    """⚑07 读数面不漂钉：无复位档的标签序列必须与"直接在册件上裸跑 evaluate"逐日相等。
+    本袋给判官多喂了 recovered_pct、给 config 加了档位分支——这两处一旦动了 07 的读数即红。"""
+    from zephyr.risk.core.drawdown_state_machine import DrawdownStateMachine, DrawdownStateMachineConfig
+
+    nav = _crash_then_climb_nav()
+    s = pd.Series(nav).astype("float64").sort_index()
+    dd = (s / s.cummax()) - 1.0
+    cfgs = {
+        "levels_hysteresis": DrawdownStateMachineConfig(),
+        "levels_no_hysteresis": DrawdownStateMachineConfig(
+            hysteresis_ratio=1.0 - 1e-9,
+            sustained_warn=1,
+            sustained_danger=1,
+            sustained_crisis=1,
+            min_hold_warn=1,
+            min_hold_danger=1,
+            min_hold_crisis=1,
+        ),
+    }
+    for name, cfg in cfgs.items():
+        sm = DrawdownStateMachine(None, cfg)
+        ref = []
+        for ts, d in dd.items():
+            sm.evaluate(trade_date=ts.date(), drawdown_pct=float(d))
+            ref.append(sm.current.value)
+        assert list(cb.replay_drawdown_levels(nav, arm_cfg=name)[0]) == ref, name
+
+
+def test_pack_mixed_reset_and_non_reset_tiers():
+    """零 CH 预演暴露的本袋自错：混合 pack（一臂复位＋一臂不复位）曾被"逐档原样递参数"弹死。
+
+    现在钉四件：①混合 pack 出两条等长序列；②非复位那条**没有** RECOVERY 档名（参数没漏给它）；
+    ③复位那条凭据带括号值且真放行过；④"整 pack 没有复位档却给参数"仍然是红（没为修 bug 放宽判据）。
+    """
+    nav = _crash_then_climb_nav()
+    series, creds = cb.drawdown_level_series_pack(
+        nav, tier_names=["levels_hysteresis", "levels_with_reset"], reset_recovered_pct=0.5
+    )
+    assert sorted(series) == ["levels_hysteresis", "levels_with_reset"]
+    assert len(series["levels_hysteresis"]) == len(series["levels_with_reset"]) == len(nav)
+    assert not [x for x in series["levels_hysteresis"].unique() if str(x).startswith("RECOVERY")]
+    assert creds["levels_hysteresis"]["vocab"] == list(cb._DRAWDOWN_STATE_VOCAB)
+    assert creds["levels_with_reset"]["reset_trigger_recovered_pct"] == 0.5
+    assert creds["levels_with_reset"]["resets_granted"] >= 1
+    with pytest.raises(RuntimeError, match="reset_param_on_non_reset_tier"):
+        cb.drawdown_level_series_pack(nav, tier_names=["levels_hysteresis"], reset_recovered_pct=0.5)
+    with pytest.raises(RuntimeError, match="reset_tier_entry_param_missing"):
+        cb.drawdown_level_series_pack(nav, tier_names=["levels_hysteresis", "levels_with_reset"])
+
+
+def test_peak_trough_pairs_match_in_register_tracker():
+    """对拍钉：本件的峰/谷更新与在册 `DrawdownTracker` 逐日等值（"镜像"不是自述）。"""
+    from datetime import timezone
+
+    from zephyr.risk.core.drawdown_tracker import DrawdownTracker
+
+    nav = _crash_then_climb_nav()
+    tr = DrawdownTracker(initial_net_value=float(nav.iloc[0]))
+    got = []
+    for ts, v in nav.items():
+        snap = tr.update(float(v), now=ts.to_pydatetime().replace(tzinfo=timezone.utc))
+        got.append((round(snap.peak, 10), round(snap.trough, 10)))
+    mine = [(round(p, 10), round(t, 10)) for p, t in cb._peak_trough_pairs(nav)]
+    assert mine == got
+
+
+def test_real_book_carries_07_and_07b_variant_vocabularies():
+    """在册真册的同形契约：07 两档＋07b 四档逐跑可装配，档位名/括号值/阶梯表全部过判官上下文。
+
+    读的是**生产路径的在册字节**（只读，零写入），钉的是"册格与码面同形"这条不能靠记忆守的账：
+    任何一档装配不出上下文、或括号值漂出 {0.50, 0.75}，本测试即红。
+    """
+    book_path = Path(__file__).resolve().parents[2] / "docs/_working/mineloop_campaign/02_binding_book.yaml"
+    assert book_path.exists(), "绑定册不在册？同形契约无从可核"
+    cid_07 = "TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版"
+    cid_07b = "TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版"
+    card_07b = yaml.safe_load(
+        (
+            Path(__file__).resolve().parents[2] / "docs/03_modules/_domain_backtest/exam_cards/exit_flow/X1/"
+            "TDM-X-R1-01__comparison__07b_reset_ladder_anchor.yaml"
+        ).read_text(encoding="utf-8")
+    )
+    idx = pd.bdate_range("2024-01-02", periods=8)
+    pool = {
+        n: pd.Series(["NORMAL", "KILL", "RECOVERY@0", "RECOVERY@1"] * 2, index=idx) for n in cb.DRAWDOWN_LEVEL_TIERS
+    }
+    mod = cb._arm_protocol_module()
+    base = mod.ArmBase(
+        exposure=pd.Series(1.0, index=idx),
+        daily_return=pd.Series(0.001, index=idx).round(6),
+        series=pool,
+        face_id="exit_sim_baseline_nav",
+    )
+    for v, want_cards in (
+        ("off", {cid_07}),
+        ("mid", {cid_07}),
+        ("off_A", {cid_07b}),
+        ("off_B", {cid_07b}),
+        ("mid_A", {cid_07b}),
+        ("mid_B", {cid_07b}),
+    ):
+        got = cb.load_binding_book(book_path, arms_variant=v)
+        assert {k for k in (cid_07, cid_07b) if k in got} == want_cards, (v, sorted(got))
+        if v not in ("off", "mid"):
+            e = got[cid_07b]
+            assert e["arms"]["reset_trigger_recovered_pct"] == (0.5 if v.endswith("_A") else 0.75), v
+            ctx = cb.arm_context_for_judge(card_07b, e, base)
+            assert ctx is not None and ctx["arms_variant"] == v
+            assert ctx["base_is_no_hysteresis"] is v.startswith("mid"), (v, ctx["tier_flags"])
+            assert ctx["recovery_ladder"]["open"]["rung_caps"] == [0.25, 0.5, 0.75], v
+            # 落地面判官的认腿表达式逐字重放（它写的是 `base_arm_cfg == "levels_no_hysteresis"`）：
+            # 复位档若把册名直接交出去，这条等式对 mid 跑恒假 ⇒ 柱一/柱二两跑互推＝零判。
+            assert (ctx["base_arm_cfg"] == "levels_no_hysteresis") is v.startswith("mid"), (v, ctx["base_arm_cfg"])
+            assert ctx["base_arm_cfg_tier"].endswith("_with_reset") or v in ("off", "mid"), ctx["base_arm_cfg_tier"]
+            assert ctx["level_source"]["base"] == ctx["base_arm_cfg_tier"], "真实册名必须另面保留，族名不得顶掉它"
+
+
+def test_recovered_pct_is_the_in_register_formula_and_saturates_below_one():
+    """直调证明＋一条实测结构发现（须随卡披露，不是本件缺陷）。
+
+    在册公式在 dd>=0 时返回 0.0，而 recovered==1.0 要求 nav 恰等于 peak ⇔ dd==0 ⇒
+    回升途中 recovered 严格 <1，故阶梯第 2 档→NORMAL 的门槛（recovery_step_recovered[2]=1.0-1e-6）
+    在**任何**日频回放面上都不可达：深回撤后的臂会长期停在 RECOVERY@2（cap 0.75），
+    要回 NORMAL 只有"回撤加深退级"一条路。读 07b 的敞口面时必须按这条读，禁当成复位失效。
+    """
+    from zephyr.ex_core.risk_layer_orchestrator import RiskLayerOrchestrator as R
+
+    nav = _crash_then_climb_nav()
+    pairs = cb._peak_trough_pairs(nav)
+    vals = cb._recovered_pct_values(nav, pairs)
+    for i, (v, (p, t)) in enumerate(zip(nav.tolist(), pairs, strict=True)):
+        dd = (v - p) / p if p > 0 else 0.0
+        assert vals[i] == float(R._recovered_pct(dd, v, p, t)), i
+    assert max(vals) < 1.0, "本路径竟触到 1.0＝上面那条结构结论要重查"
+
+
+def test_replay_bracket_b_resets_fewer_times_than_a():
+    """括号敏感性方向钉：入口更严（0.75）⇒ 复位次数不得比 0.50 多，且驻留形状要能差别。
+    两档跑出一模一样的数＝括号参数根本没进回放面（那 07b 的四跑就是同一跑跑四遍）。"""
+    nav = _crash_then_climb_nav()
+    _, a = cb.replay_drawdown_levels(nav, arm_cfg="levels_with_reset", reset_recovered_pct=0.50)
+    _, b = cb.replay_drawdown_levels(nav, arm_cfg="levels_with_reset", reset_recovered_pct=0.75)
+    assert b["resets_granted"] < a["resets_granted"], (a["resets_granted"], b["resets_granted"])
+    assert (a["reset_trigger_recovered_pct"], b["reset_trigger_recovered_pct"]) == (0.5, 0.75)
+    assert a["state_days"] != b["state_days"], "两档级别序列逐日全等＝入口参数没改变任何读数"
+
+
+def test_replay_config_rejects_bracket_param_mismatch():
+    """四态错配各红一次：无复位档收到参数／复位档缺参数／入口值越界／档名未登。"""
+    nav = _crash_then_climb_nav().head(40)
+    with pytest.raises(RuntimeError, match="reset_param_on_non_reset_tier"):
+        cb.replay_drawdown_levels(nav, arm_cfg="levels_hysteresis", reset_recovered_pct=0.5)
+    with pytest.raises(RuntimeError, match="reset_tier_entry_param_missing"):
+        cb.replay_drawdown_levels(nav, arm_cfg="levels_with_reset")
+    with pytest.raises(RuntimeError, match="out_of_range"):
+        cb.replay_drawdown_levels(nav, arm_cfg="levels_with_reset", reset_recovered_pct=1.5)
+    with pytest.raises(RuntimeError, match="arm_cfg_unknown"):
+        cb.replay_drawdown_levels(nav, arm_cfg="levels_reset")  # 差一个字也不算档名
+
+
+def test_replay_non_reset_tiers_never_emit_recovery_labels():
+    """07 的两档在词表上仍只有五态：出现 RECOVERY 即红（禁因为加了复位档就顺手放宽旧档）。"""
+    nav = _crash_then_climb_nav()
+    for name in ("levels_hysteresis", "levels_no_hysteresis"):
+        lv, creds = cb.replay_drawdown_levels(nav, arm_cfg=name)
+        assert not [x for x in lv.unique() if str(x).startswith("RECOVERY")], (name, sorted(lv.unique()))
+        assert creds["vocab"] == list(cb._DRAWDOWN_STATE_VOCAB)
+
+
+def test_replay_refusals_come_from_in_register_guards():
+    """守卫面判别力：括号 A（0.50 入口）在这条路径上会撞在册冷却守卫，拒因须是在册件原文。
+    本函数零守卫代码——查的就是"被拒不放行、不重试、不改参数，只计数"。"""
+    nav = _crash_then_climb_nav()
+    _, creds = cb.replay_drawdown_levels(nav, arm_cfg="levels_with_reset", reset_recovered_pct=0.50)
+    assert creds["resets_refused"] >= 1, creds
+    joined = " ".join(r["reason"] for r in creds["refusals_first8"])
+    assert "RefuseResetError" in joined and "冷却期" in joined, joined[:220]
+    assert all({"date", "reason"} <= set(r) for r in creds["refusals_first8"])
+
+
+def test_replay_reset_tier_uses_in_register_reset_and_ladder():
+    """正证：复位档真的经在册件出口离开 KILL，并按在册 RECOVERY 阶梯给出带步号的档名。
+    若复位动作是适配器自己写的分支（卡面禁的形态），这里不会看到在册守卫与毕业留痕。"""
+    nav = _crash_then_climb_nav()
+    plain, plain_creds = cb.replay_drawdown_levels(nav, arm_cfg="levels_hysteresis")
+    reset, creds = cb.replay_drawdown_levels(nav, arm_cfg="levels_with_reset", reset_recovered_pct=0.50)
+    assert int(plain.eq("KILL").sum()) == plain_creds["state_days"]["KILL"] > int(reset.eq("KILL").sum()), (
+        "复位档没把 KILL 驻留日数降下来＝复位路径根本没跑，读数会与 07 同形"
+    )
+    assert creds["resets_granted"] >= 1 and creds["tier_flags"] == {"hysteresis": True, "reset": True}
+    rungs = creds["recovery_rung_days"]
+    assert rungs and sum(rungs.values()) >= creds["resets_granted"]
+    assert set(rungs) <= set(cb._RECOVERY_RUNG_LABELS), rungs
+    assert creds["graduation_face"] == "absent" and creds["graduation_face_skips"] >= 1
+    assert creds["ladder_promotions"] >= 1, "进了阶梯却没晋升＝min_hold/冻结面没被走到"
 
 
 def _card(**kw) -> dict:
@@ -629,6 +1176,10 @@ def test_replay_levels_rejects_unknown_arm_cfg_and_out_of_vocab_state():
         def position_cap(self):
             return self._real.position_cap
 
+        @property
+        def recovery_step(self):
+            return self._real.recovery_step
+
     dsm.DrawdownStateMachine = _SpyingMachine
     try:
         with pytest.raises(RuntimeError, match="state_out_of_vocab"):
@@ -639,15 +1190,25 @@ def test_replay_levels_rejects_unknown_arm_cfg_and_out_of_vocab_state():
 
 
 def test_drawdown_level_series_pack_names_match_book_contract():
-    """正证：pack 交付的 series 键名＝绑定册 "series:<档名>" 引用的两个名字（册与码面同形）。"""
+    """正证：pack 交付的 series 键名＝册格 "series:<档名>" 点名的那几个（册与码面同形）。
+
+    档位册是档名唯一真源，`DRAWDOWN_LEVEL_SERIES_NAMES` 由它派生；pack **无默认全集**——
+    默认全产会让复位档悄悄进 07 的每一跑，两卡的读数面从此不可比。
+    """
     nav = _nav([-0.04, -0.04])
-    series, creds = cb.drawdown_level_series_pack(nav)
-    assert sorted(series) == sorted(cb.DRAWDOWN_LEVEL_SERIES_NAMES) == ["levels_hysteresis", "levels_no_hysteresis"]
-    assert sorted(creds) == sorted(cb.DRAWDOWN_LEVEL_SERIES_NAMES)
+    two = ["levels_hysteresis", "levels_no_hysteresis"]
+    series, creds = cb.drawdown_level_series_pack(nav, tier_names=two)
+    assert sorted(series) == two and sorted(creds) == two
     for name, s in series.items():
         assert len(s) == len(nav), name
         assert set(s.unique()) <= set(cb._DRAWDOWN_STATE_VOCAB), (name, s.unique().tolist())
         assert s.index.equals(pd.DatetimeIndex(nav.index).sort_values()), name
+    with pytest.raises(TypeError):
+        cb.drawdown_level_series_pack(nav)  # 不点名档位＝调用面缺件，禁"默认给你全部"
+    with pytest.raises(RuntimeError, match="drawdown_level_arm_cfg_unknown"):
+        cb.drawdown_level_series_pack(nav, tier_names=["levels_bogus"])
+    with pytest.raises(RuntimeError, match="reset_tier_entry_param_missing"):
+        cb.drawdown_level_series_pack(nav, tier_names=["levels_with_reset"])
 
 
 # ---------- 2026-10-13 挖矿二班：多日标的前向面申报（统筹立项批；只开目标面这一环） ----------
@@ -724,7 +1285,7 @@ def test_load_binding_book_arms_variant_is_fail_closed(tmp_path):
     f.write_text(yaml.safe_dump(body, allow_unicode=True), encoding="utf-8")
     with pytest.raises(ValueError, match="arms_variant_required"):
         cb.load_binding_book(f)
-    with pytest.raises(ValueError, match="arms_variant_unknown"):
+    with pytest.raises(ValueError, match="arms_variant_typo"):
         cb.load_binding_book(f, arms_variant="bogus")
     assert (
         cb.load_binding_book(f, arms_variant="mid")["TDM-E-TEST/comparison/99_variant"]["arms_variant_applied"] == "mid"
@@ -805,7 +1366,7 @@ def _ctx_base(idx, five, drop=None):
 def test_arm_context_resolves_named_series_from_base():
     """正证：册格按名点两档级别序列 ⇒ 上下文齐（序列/映射/档名/基臂档/变体/凭据）。"""
     idx, five, entry = _ctx_entry()
-    ctx = cb.arm_context_for_judge(entry, _ctx_base(idx, five))
+    ctx = cb.arm_context_for_judge(_ctx_card(), entry, _ctx_base(idx, five))
     assert ctx is not None
     assert ctx["base_arm_cfg"] == "levels_no_hysteresis" and ctx["arms_variant"] == "mid"
     assert list(ctx["levels"]["open"].unique()) == ["NORMAL"] and len(ctx["levels"]["open"]) == 10
@@ -817,9 +1378,9 @@ def test_arm_context_is_none_when_base_has_no_named_series():
     由判官侧显式记败——绝不允许退化成"用敞口序列冒充级别序列"。"""
     idx, five, entry = _ctx_entry()
     base = _ctx_base(idx, five, drop="levels_no_hysteresis")
-    assert cb.arm_context_for_judge(entry, base) is None
+    assert cb.arm_context_for_judge(_ctx_card(), entry, base) is None
     bare = pd.Series(1.0, index=idx)
-    assert cb.arm_context_for_judge(entry, bare) is None
+    assert cb.arm_context_for_judge(_ctx_card(), entry, bare) is None
 
 
 def test_arm_context_refuses_unnamed_level_source():
@@ -827,20 +1388,10 @@ def test_arm_context_refuses_unnamed_level_source():
     判官不许从"来路不明的序列"上读数——档位来源必须可追到在册回放件。"""
     idx, five, entry = _ctx_entry()
     entry["arms"]["params_open"]["levels"] = pd.Series(["NORMAL"] * 10, index=idx)
-    assert cb.arm_context_for_judge(entry, _ctx_base(idx, five)) is None
+    assert cb.arm_context_for_judge(_ctx_card(), entry, _ctx_base(idx, five)) is None
     idx2, five2, entry2 = _ctx_entry()
     entry2["arms"]["params_base"].pop("level_map")
-    assert cb.arm_context_for_judge(entry2, _ctx_base(idx2, five2)) is None
-
-
-def test_arm_context_refuses_both_arms_reading_the_same_level_series():
-    """红证（两臂同形）：开臂与基臂引用同一条级别序列 ⇒ 必抛。
-    这一条专防"两跑之间把 params_base.levels 也改成 levels_hysteresis"——
-    那时两臂逐日全等，判官会把 0 差读成"迟滞带无增益"，数值像模像样而实验已废。"""
-    idx, five, entry = _ctx_entry()
-    entry["arms"]["params_base"]["levels"] = "series:levels_hysteresis"
-    with pytest.raises(ValueError, match="arm_levels_same_source"):
-        cb.arm_context_for_judge(entry, _ctx_base(idx, five))
+    assert cb.arm_context_for_judge(_ctx_card(), entry2, _ctx_base(idx2, five2)) is None
 
 
 # ---------- 2026-10-13 挖矿二班：聚合 8 卡走 class D 本地序列路（物化件 agg8-v1） ----------
