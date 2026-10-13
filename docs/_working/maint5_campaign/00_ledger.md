@@ -406,3 +406,47 @@ cd /d/ZephyrAlpha && python -c "import sys;sys.path.insert(0,r'D:/ZephyrAlpha/sr
 # ④ 留痕面（期望：rows=2 real=0）
 cd /d/ZephyrAlpha && python -c "import json,pathlib;rows=[json.loads(l) for l in pathlib.Path('.runtime/gate_audit/ch_write_guard.jsonl').read_text(encoding='utf-8').splitlines() if l.strip()];real=[r for r in rows if 'maint5' not in str(r.get('target'))];print(len(rows),len(real))"
 ```
+
+# 十四、统筹批三件（17:1x–17:5x）：命中面测量修正／render 袋仍未出（附不丢字节的存证）／前端补扫零读者
+
+## 十四.1 批①＝接管台账命中面剔除 dev-同字节跟踪件（袋 `q-…-0015` 已落 dev）
+
+- 病根读码定性（非本班推测）：`_worktree_dirty`（session_takeover_ledger.py:165）用 `git status --porcelain` 取面，status 报的是**对自家 HEAD 之差**；车道指针落后 dev 时盘字节早已等于落地面的件照样报 `M`，经 `entry_match_surface`（:1123 只取 dirty_files）进 L3 硬阻断面＝隔空挡死无辜袋。双臂班实证件那四行读数原文照录：`M scripts/backtest/fexam/card_binding.py`／`rev-parse dev:件`=7df3696c／`hash-object 磁盘`=7df3696c／`他们HEAD:件`=3eca6f3d。
+- 修法＝收清单后与落地面 `_LANDING_REF`(=dev) 批量比一次 `git diff --name-only dev --`（吃仓内 filters，与 `commit_queue_landing._worktree_matches` 同族口径），相等者移出 dirty_files 并记 `excluded_dev_identical=n`＋`excluded_dev_identical_files` 留痕。三条承重墙＝①**禁自算 blob sha**（磁盘 CRLF≠blob 归一面，本班 17:2x 就据此把 gpuwo 车道册面误判成"三面在争"，反面教训写进注释）；②未跟踪件（`??`）永不移出、比对不可用＝整批保留＋`dirty_note=dev_identical_check_unavailable`（宁多挡不误放）；③非 ASCII 路径两侧引号口径配不上＝照旧保留（要让它可剔属扩面＝判据变更，须另裁，本袋不做）。
+- 同批第三件＝`docs/_working/branch_zero_takeover_20261002/t1_takeover_infra.md` 补 5 行剔除口径（该件 [MODIFY-GUARD] 明文要求收集面变更须与 gate 及设计文档同批；gate 侧零改动）。
+- 判别力三条腿突变自证（每条断言"确有 1 failed"，不拿 rc≠0 当能红；基线与复原后皆 2 passed，两件 sha 逐字节复原，备份存 `.runtime/quarantine/maint5_dirtymeasure_mutation_20261013/`）：摘剔除⇒excludes 测试红；把"不可用"改成整批移出⇒keeps_all 测试红；把未跟踪件也进剔除面⇒excludes 测试红。新两支用 tmp_path 内**真 git 仓＋落后 dev 的 linked worktree**复刻假阳性形状。
+- 落地面真车道路测（只读）＝`st-minedig2-20261012` dirty 30→6、`excluded_dev_identical=24`，`card_binding.py` **已不在命中面**；`st-gpuwo-20261011` dirty 52→40、`excluded=12`，`module_translation_registry.yaml` **仍在命中面**（真差异，本修不该替它洗掉）。
+
+## 十四.2 两条本班程序错与一条系统态副作用（如实入账，未掩饰）
+
+- ⚠ **跑完才量副作用**：在册铁律是"改系统态前先只读量副作用"，本班 17:3x 跑 `--scan` 前只做了文件快照没做影响面预算。实测后果＝open 条目 176→184，**新增 8 枚**，其中 4 枚带非零命中面（`st-cband-20261012`=10／`st-gpux4-20261013`=19／`st-mineloop-20261010`=43／`st-fclean4-20261012`=2）＝这些件现在会挡对应班的袋。可回退＝`cp .runtime/quarantine/maint5_takeover_prescan_20261013/takeover_ledger_before.jsonl .runtime/takeover_ledger.jsonl`（跑前 sha256 `ff095f5de92e`）。本班判断＝这 8 枚是判死钩子本该生成的显化（今日已有 worker-* 条目由钩子自发写入），**不回退**——回退等于把真实未落地成果藏回黑箱，比多挡更坏；但这条决定属治理面，请统筹复核后追认或另处方。
+- ⚠ **批①对存量面不自愈**：`--scan` 当日死亡集里查不到 gpuwo/minedig2（早已除名），两条既存条目 ts 停在 10-12、`excluded_dev_identical=None`＝面纹丝不动。本班随后只用台账自己的幂等单口 `write_takeover_entry(root, sid)` 刷这两条（不新增、不 resolve、不改判据），实测 52→40 与 26→6。处方补一句给维护线：**凡改命中面口径，须同时给"存量条目如何刷新"的出口**，否则修只在将来生效。
+
+## 十四.3 批②＝render 袋仍未出，本班不代签处置（附不丢字节的存证与三条路）
+
+- 本班 C4（`q-…-0010`）的挡点是**真差异**不是假阳性：`git -C .worktrees/st-gpuwo-20261011 diff --quiet dev -- <册>` rc=1。批①不替它洗掉（本班 17:2x 一度用错口径以为可解，已在十四.1 记为反面教训）。
+- 那 35 行差异是什么：相对 dev 增 35 行、删 0 行；其中 28 行在本班袋面里查无，且内容全属测试夹具形状——`- module_path: src/zephyr/degraded.py`（name_zh=降级模块／plain_zh="降级模块的大白话简介内容"）、`src/zephyr/layered.py`（改名后）、`src/zephyr/lying.py`（谎报模块）、`domain_id: D_TEST` ×5。即＝某轮测试把夹具条目直接写进了他们车道的热册，不是作者成果。
+- 为什么本班不 resolve：`--resolve` 是**整条目**终态（该条目现面 40 件，本班只逐件核过其中 1 件），跨 39 件未核件替死会话下结论＝在册禁止的"代修他会话在途面"；且绕过 L3 显化会把可见性洗掉（Owner 在册认可过"不越闸"）。
+- 不丢字节的存证＝`gpuwo_registry_face.yaml`（3588317B，sha256 `1af8f9e64ef6`）＋跑前台账 `takeover_ledger_before.jsonl`（`ff095f5de92e`）。三条路供裁：甲＝统筹/Owner 签 `--resolve st-gpuwo-20261011 --by <署名> --note "该件 delta=D_TEST 夹具残留，原面已存证 sha=1af8f9e64ef6"`，随后本班重投 render 袋；乙＝先由有预算的班把那 40 件逐件核成"成果/残留"二分再 resolve；丙＝维持现状（render 继续躺 dead/，解锁班与挖矿二班同类件按十四.2 的刷新处方走批①通道，不受此挡）。本班建议＝甲（面积只涉一枚册件、字节已存证、可逆），但署名不归本班。
+
+## 十四.4 批③＝sim_daily_report 前端/散落读取面补扫：零读者（三面共证）
+
+- 可执行读者面（`*.py/*.sql/*.ps1/*.js/*.ts/*.ipynb` 排除 src/scripts/tests）＝**只有** `schemas/categories/sim_daily_report.py`（DDL 声明件，非读者）。
+- 登记面两面自证：`data/strategy_intake/matrix_inventory.yaml` DS-338 该表 `wiring` 四腿全 false、`wiring_level_max: L0_orphan`；`docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml` 该表两处 `consumed_by_jobs: []`。
+- 前端面：`src/zephyr/frontend/dashboard/api_server.py` 查无按表名通用读面；web/features 里 `daily_report` 命中是无关模块名（`daily_report_orchestrator` 词条），不指该表。`paper_outpost` 是**写者**（source=paper_outpost 汇总行）不是读者。
+- 清账后的聚合终读数（report_date='2026-09-21'，FINAL 按来源）＝e4_replay 46 行（45 行 eval_score=1）＋plan_execute 1＋platform 1＝48 行、`plan_bridge` **0 行**；eval_score=1 合计 47（清账前 48）；全表 `source='plan_bridge'` 键数 9→8。
+
+## 十四.5 复核命令（本班已按原文逐条跑过，期望值＝实测所得）
+
+```
+# ① 批① 落地面读数（期望：minedig2 dirty=6 excluded=24 card_binding 不在面；gpuwo dirty=40 excluded=12 册件仍在面）
+cd /d/ZephyrAlpha && python -c "import sys;sys.path.insert(0,r'D:/ZephyrAlpha');sys.path.insert(0,r'D:/ZephyrAlpha/src');from pathlib import Path;from scripts.governance import session_takeover_ledger as L;R='docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml';[print(rel,(lambda i:(i['dirty_count'],i.get('excluded_dev_identical'),'scripts/backtest/fexam/card_binding.py' in i['dirty_files'],R in i['dirty_files']))(L._worktree_dirty(Path(r'D:/ZephyrAlpha'),rel))) for rel in ('.worktrees/st-minedig2-20261012','.worktrees/st-gpuwo-20261011')]"
+#    期望：(6, 24, False, True) / (40, 12, False, True)
+# ② 套件与格式（期望：27 passed；already formatted；All checks passed）
+cd /d/ZephyrAlpha && python -m pytest tests/gov/governance/test_session_takeover_ledger.py -q --no-header 2>&1 | tail -1
+cd /d/ZephyrAlpha && ruff format --check scripts/governance/session_takeover_ledger.py tests/gov/governance/test_session_takeover_ledger.py 2>&1 | tail -1
+# ③ 台账副作用可核（期望：before=176 after=184，新增八枚名单见 §十四.2）
+cd /d/ZephyrAlpha && python -c "import json;from pathlib import Path;b={json.loads(l)['sid'] for l in Path('.runtime/quarantine/maint5_takeover_prescan_20261013/takeover_ledger_before.jsonl').read_text(encoding='utf-8').splitlines() if l.strip() and json.loads(l).get('status','open')=='open'};a=[json.loads(l) for l in Path('.runtime/takeover_ledger.jsonl').read_text(encoding='utf-8').splitlines() if l.strip() and json.loads(l).get('status','open')=='open'];print(len(b),len(a),sorted({x['sid'] for x in a}-b))"
+# ④ 批③ 聚合终读数（期望：plan_bridge 键数 8；09-21 三来源 46/1/1）
+cd /d/ZephyrAlpha && python -c "import sys;sys.path.insert(0,r'D:/ZephyrAlpha/src');from zephyr.data import ch_writer as cw;T='c1_backtest.sim_daily_report';f=lambda s:[list(r) for r in cw.query_strict(s)];print('plan_bridge 键数',f('SELECT count() FROM '+T+\" FINAL WHERE source='plan_bridge'\"));print('09-21 按来源',f(\"SELECT source, count(), sum(eval_score=1) FROM \"+T+\" FINAL WHERE report_date='2026-09-21' GROUP BY source ORDER BY source\"))"
+```
