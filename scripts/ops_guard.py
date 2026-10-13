@@ -690,6 +690,21 @@ def _is_docs_untracked(path_str: str, cwd: str | Path | None = None) -> bool:
         return False
 
 
+def _tomb_cover_targets(targets: list[str], cwd: str | Path | None = None) -> tuple[bool, str]:
+    """一组目标的存证核验（文件走 sha、目录走整棵覆盖）；空目标不放行。"""
+    if not targets:
+        return False, "empty_targets"
+    reasons: list[str] = []
+    for t in targets:
+        p = Path(t)
+        ok, why = _tomb_covered_tree(t, cwd) if p.is_dir() else _tomb_covered(t, cwd)
+        if not ok:
+            reasons.append(why)
+    if reasons:
+        return False, ";".join(reasons[:3])
+    return True, "all_targets_covered"
+
+
 def _enforce_docs_untracked(path_str: str, cwd: str | Path | None = None) -> None:
     """docs/ 下 untracked 文件删除/移动的人工确认闸门（T3②）。
 
@@ -705,11 +720,30 @@ def _enforce_docs_untracked(path_str: str, cwd: str | Path | None = None) -> Non
     if not _is_docs_untracked(path_str, cwd):
         return
     rel = _resolve_to_repo_rel(path_str, cwd)
+    # 存证核验支路（第8条②）：仅在调用方显式携带 MANIFEST 上下文时才可能走到，
+    # 且必须 sha 逐位相等才放行；无上下文/不覆盖＝照旧走下方人工确认阻断。
+    tomb_ok, tomb_why = _tomb_covered(path_str, cwd)
+    if tomb_ok:
+        audit_delete(
+            "docs_untracked_tomb_release",
+            f"docs-untracked('{rel}')",
+            DeleteVerdict(
+                allowed=True,
+                reason=f"墓园/隔离区存证 sha 覆盖核验通过（T3② 有证放行）: {tomb_why}",
+                primitive="docs_untracked",
+                targets=[rel],
+                is_protected_zone=True,
+            ),
+            cwd=str(cwd) if cwd else None,
+            content_sha256=_forensic_sha(path_str),
+        )
+        return
     verdict = DeleteVerdict(
         allowed=False,
         reason=(
             f"docs/ 下 untracked 文件删除/移动需人工确认（T3② 清风草稿丢失治本）: {rel}——"
             f"三重无保护文件（不在 git/归档器可动/删除无追溯），自动化代理禁动"
+            f"；存证核验未过: {tomb_why}"
         ),
         primitive="docs_untracked",
         targets=[rel],
@@ -749,7 +783,8 @@ def analyze_delete_command(cmd: str, cwd: str | Path | None = None) -> DeleteVer
     is_protected, resolved_targets = _judge_protected(targets, is_recursive, cwd)
     authorized, _ = _is_delete_authorized()
 
-    if is_protected and not authorized:
+    tomb_ok, _tomb_why = _tomb_cover_targets(resolved_targets, cwd)
+    if is_protected and not authorized and not tomb_ok:
         return DeleteVerdict(
             allowed=False,
             reason=f"递归删除命中保护区: {resolved_targets}",
@@ -761,8 +796,9 @@ def analyze_delete_command(cmd: str, cwd: str | Path | None = None) -> DeleteVer
 
     # T3②：docs/ 下 untracked 文件（含非递归单文件——_judge_protected 对非递归
     # 直接放行，此处补齐盲区）删除/移动需人工确认（FORCE_ENV，gateway 标记不算）。
+    # 存证核验在位时（第8条②）逐件 sha 覆盖通过者不计入 hits，其余照拦。
     if os.environ.get(FORCE_ENV) != "1":
-        untracked_hits = [t for t in resolved_targets if _is_docs_untracked(t, cwd)]
+        untracked_hits = [t for t in resolved_targets if _is_docs_untracked(t, cwd) and not _tomb_covered(t, cwd)[0]]
         if untracked_hits:
             return DeleteVerdict(
                 allowed=False,
@@ -777,9 +813,13 @@ def analyze_delete_command(cmd: str, cwd: str | Path | None = None) -> DeleteVer
             )
 
     reason = (
-        "白名单路径"
-        if any(_is_whitelisted(rt) for rt in resolved_targets)
-        else ("授权放行" if authorized else "非保护区")
+        "墓园/隔离区存证 sha 覆盖核验放行"
+        if tomb_ok and is_protected
+        else (
+            "白名单路径"
+            if any(_is_whitelisted(rt) for rt in resolved_targets)
+            else ("授权放行" if authorized else "非保护区")
+        )
     )
     if is_protected and authorized:
         reason = "授权放行（命中保护区但有授权标记）"
@@ -1173,6 +1213,155 @@ def get_reconciler_context() -> tuple[str, frozenset] | None:
     return _RECONCILER_CTX.get()
 
 
+# ── 墓园/隔离区存证核验上下文（第8条②，2026-10-13 st-maint6-20261013）─────────────
+# 病根（两法互卡，死信班与考试解锁班先后实证）：车道退场的 rescue 步要搬/删车道内
+# 未入库案卷，而 T3②（docs/ untracked 人工确认）与 .worktrees 保护区判定对自动化代理
+# 一律拦死。两侧都是既有红线，谁为谁让路都是拆闸——出路是补一条**可证**的放行条件：
+# 待删那份字节已逐位存在于既有存证（墓园 MANIFEST / 退役 patch）里，且删之前没被人改过。
+# 三条硬约束：①无上下文＝行为与今天逐字相同（零放宽、零白名单）；②放行只认"行内
+# sha256==readback_sha256 且 verified is True 且与待删件实算 sha 三者全等"，任一不成立
+# 照拦（含读不到/超限——_forensic_sha 的前缀标记一律判不覆盖）；③不新增 env、不新增门、
+# 不改任何阈值/判据式，只在 T3② 与保护区两个既有出口各加一个前置查证分支（净零＝扩通道）。
+_TOMB_SHA_RE = re.compile(r"\A[0-9a-f]{64}\Z")
+
+#: 点斜杠前缀的拆串构造（同 approval_resolver._CUR_PREFIX 惯例）：登记面偶见以点斜杠
+# 开头的相对形态需剥；直接写该裸字面量会被 RELATIVE-PATH-LITERAL 判成仓内相对路径依赖。
+_CUR_DOT_SLASH = "." + "/"
+
+_TOMB_VERIFY_CTX: contextvars.ContextVar[tuple[str, dict[str, str]] | None] = contextvars.ContextVar(
+    "ops_guard_tomb_verify", default=None
+)
+
+#: 车道树前缀在 `_tomb_rel_candidates` 内就地列出（存证按仓相对路径登记，
+#: 车道内目标要剥掉 .worktrees/<sid>/ 或 .aidrafts/<sid>/ 两段才对上登记面）
+
+
+def _tomb_rel_candidates(path_str: str | Path, cwd: str | Path | None = None) -> list[str]:
+    """待删目标在存证里可能出现的登记形态：仓相对 ＋ 剥车道前缀后的相对路径。"""
+    rel = _resolve_to_repo_rel(path_str, cwd).replace("\\", "/")
+    out = [rel]
+    for marker in (".worktrees/", ".aidrafts/"):
+        seg = marker.rstrip("/")
+        parts = rel.split("/")
+        if seg in parts:
+            i = parts.index(seg)
+            # 车道前缀占两段：marker 段＋sid 段（marker 已去尾斜杠，故比较的是段名）
+            if i + 2 < len(parts):
+                stripped = "/".join(parts[i + 2 :])
+                if stripped and stripped not in out:
+                    out.append(stripped)
+    return out
+
+
+def load_tomb_manifest(manifest_path: str | Path, *, sid: str | None = None) -> dict[str, str]:
+    """读存证 MANIFEST.jsonl → {normcase(rel): sha256}。
+
+    只收三条件齐的行：`verified is True`、`sha256 == readback_sha256`、两者皆 64 位
+    十六进制。缺字段/自相矛盾/未核验/非 sha 形态一律丢弃——宁可不放行，不可认假存证。
+    `sid` 非空时再按行的 sid 过滤（缺 sid 的通用行保留，防墓园格式差异把核验整体打死）。
+    """
+    rows: dict[str, str] = {}
+    path = Path(manifest_path)
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        if not line.strip():
+            continue
+        try:
+            rec = json.loads(line)
+        except ValueError:
+            continue
+        if not isinstance(rec, dict) or rec.get("verified") is not True:
+            continue
+        row_sid = str(rec.get("sid") or "")
+        if sid and row_sid and row_sid != str(sid):
+            continue
+        rel = str(rec.get("rel") or "").strip().replace("\\", "/")
+        while rel.startswith(_CUR_DOT_SLASH):  # 拆串构造，规避 RELATIVE-PATH-LITERAL 对该裸字面量的拦截
+            rel = rel[2:]
+        sha = str(rec.get("sha256") or "")
+        back = str(rec.get("readback_sha256") or "")
+        if not rel or sha != back or not _TOMB_SHA_RE.match(sha):
+            continue
+        rows[os.path.normcase(rel)] = sha
+    return rows
+
+
+def set_tomb_verification(manifest_path: str | Path, *, sid: str | None = None) -> contextvars.Token:
+    """注入存证核验上下文（车道归档 rescue/remove 前调用）。返回 reset 用 token。
+
+    读不到 MANIFEST / 零合格行 → 抛异常（调用方必须按"无核验"处理，不得静默放宽）。
+    """
+    rows = load_tomb_manifest(manifest_path, sid=sid)
+    if not rows:
+        raise ValueError(f"tomb manifest 无合格存证行（verified+双 sha 全等）: {manifest_path}")
+    return _TOMB_VERIFY_CTX.set((str(manifest_path), rows))
+
+
+def reset_tomb_verification(token: contextvars.Token) -> None:
+    """复位存证上下文（防泄漏到下一次删除/其他 reconciler）。"""
+    _TOMB_VERIFY_CTX.reset(token)
+
+
+def get_tomb_verification() -> tuple[str, dict[str, str]] | None:
+    """读取当前存证核验上下文（None=未携带，判据退回既有全量阻断）。"""
+    return _TOMB_VERIFY_CTX.get()
+
+
+@contextlib.contextmanager
+def tomb_verification(manifest_path: str | Path, *, sid: str | None = None):
+    """存证核验作用域（与 bulk_delete_approved 同构：进入注入、finally 复位）。"""
+    token = set_tomb_verification(manifest_path, sid=sid)
+    try:
+        yield get_tomb_verification()
+    finally:
+        reset_tomb_verification(token)
+
+
+def _tomb_covered(path_str: str | Path, cwd: str | Path | None = None) -> tuple[bool, str]:
+    """单文件 sha 覆盖核验：待删/待移件与存证行逐位相等才算已存证。
+
+    Returns:
+        (是否放行, 归因串)。归因串进审计行，供事后追认"哪一行存证放的这一件"。
+    """
+    ctx = _TOMB_VERIFY_CTX.get()
+    if ctx is None:
+        return False, "no_tomb_context"
+    manifest, rows = ctx
+    rels = _tomb_rel_candidates(path_str, cwd)
+    want = next((rows[os.path.normcase(r)] for r in rels if os.path.normcase(r) in rows), None)
+    if want is None:
+        return False, f"not_in_manifest({rels[0][:80]})"
+    sha = _forensic_sha(path_str)
+    if sha is None or not _TOMB_SHA_RE.match(sha or ""):
+        return False, f"live_sha_unavailable({sha})@{rels[0][:60]}"
+    if sha != want:
+        return False, f"sha_mismatch@{rels[0][:60]}(存证={want[:12]} 盘面={sha[:12]})"
+    return True, f"tomb_verified:{rels[0]}|manifest={manifest}"
+
+
+def _tomb_covered_tree(path_str: str | Path, cwd: str | Path | None = None) -> tuple[bool, str]:
+    """递归目标的整体覆盖核验：子树内每个现存文件都必须各自通过 sha 核验。
+
+    空目录/纯目录节点不阻断（无字节可丢）；任一文件不覆盖即整棵不放行（列前 3 个原因）。
+    """
+    p = Path(path_str)
+    if not p.is_dir():
+        return _tomb_covered(path_str, cwd)
+    gaps: list[str] = []
+    n = 0
+    for f in sorted(p.rglob("*")):
+        if not f.is_file():
+            continue
+        n += 1
+        ok, why = _tomb_covered(str(f), cwd)
+        if not ok:
+            gaps.append(why)
+            if len(gaps) >= 3:
+                break
+    if gaps:
+        return False, f"tree_not_covered(files={n},gaps={gaps})"
+    return True, f"tree_verified(files={n})"
+
+
 def _enforce_file_ops(op: str, targets: list[str], cwd: str | Path | None = None) -> None:
     """file_ops 声明强校验：reconciler 上下文内未声明 delete/move 而执行对应操作
     → 审计落盘 + raise DeleteBlockedError（由 reconcile_for 映射 critical_warn）。
@@ -1431,22 +1620,42 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
         return
     if _enforce_docs_untracked_inprocess(op, path_str, recursive=recursive):
         return  # 观测模式：would_block 已落审计，放行
+    tomb_ok, tomb_why = _tomb_covered_tree(path_str) if recursive else _tomb_covered(path_str)
     if any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES) and not _is_authorized():
-        verdict = DeleteVerdict(
-            allowed=False,
-            reason=f"in-process 裸删除命中保护区: {rel}",
-            primitive=f"inprocess_{op}",
-            targets=[rel],
-            is_recursive=recursive,
-            is_protected_zone=True,
-        )
-        if _raise_or_observe(
-            verdict,
-            f"{op}('{path_str}')",
-            f"[OPS-GUARD] in-process 删除被阻断——{verdict.reason}\n"
-            f"  解决方案: 治理代理改用 guard_* API 并在 ReconcilerSpec.file_ops 显式声明",
-        ):
-            return  # 观测模式：would_block 已落审计，放行
+        if not tomb_ok:
+            verdict = DeleteVerdict(
+                allowed=False,
+                reason=f"in-process 裸删除命中保护区: {rel}（存证核验未过: {tomb_why}）",
+                primitive=f"inprocess_{op}",
+                targets=[rel],
+                is_recursive=recursive,
+                is_protected_zone=True,
+            )
+            if _raise_or_observe(
+                verdict,
+                f"{op}('{path_str}')",
+                f"[OPS-GUARD] in-process 删除被阻断——{verdict.reason}\n"
+                f"  解决方案: 治理代理改用 guard_* API 并在 ReconcilerSpec.file_ops 显式声明",
+            ):
+                return  # 观测模式：would_block 已落审计，放行
+        else:
+            # 存证核验在位（第8条②）：T3② 与保护区两道判定同时通过的唯一条件＝sha 逐位相等，
+            # 全量留痕不降级（保护区 allow 本就每次落盘，与 M1 裁定一致）。
+            _AUDIT_STATS["allow"] += 1
+            audit_delete(
+                "inprocess_tomb_release",
+                f"{op}('{path_str}')",
+                DeleteVerdict(
+                    allowed=True,
+                    reason=f"墓园/隔离区存证 sha 覆盖核验放行（in-process 保护区）: {tomb_why}",
+                    primitive=f"inprocess_{op}",
+                    targets=[rel],
+                    is_recursive=recursive,
+                    is_protected_zone=True,
+                ),
+                content_sha256=_forensic_sha(path_str),
+            )
+            return
     _AUDIT_STATS["allow"] += 1
     audit_delete(
         "inprocess_allow",

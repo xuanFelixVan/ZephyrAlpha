@@ -706,3 +706,251 @@ class TestStaticScanGate:
             gw, ["src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"]
         )
         assert passed is True
+
+
+# ---------------------------------------------------------------------------
+# 11. 墓园/隔离区存证核验（第8条②，2026-10-13 st-maint6-20261013）
+#     判据：无上下文＝逐字旧行为；放行只认"行 verified+双 sha 自等+与盘面实算全等"。
+# ---------------------------------------------------------------------------
+
+
+def _tomb_manifest(root: Path, rows: list[dict], *, name: str = "tomb-MANIFEST.jsonl") -> Path:
+    p = root / name
+    root.mkdir(parents=True, exist_ok=True)
+    p.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
+    return p
+
+
+def _file_sha(root: Path, rel: str) -> str:
+    import hashlib
+
+    return hashlib.sha256((root / rel).read_bytes()).hexdigest()
+
+
+@pytest.mark.usefixtures("_restore_primitives")
+class TestTombVerification:
+    """存证核验支路的正反面（含"能红"钉：假存证/改过一个字节都不放行）。
+
+    挂 `_restore_primitives`：本类断言硬拦语义，必须剥掉 conftest 推广期的
+    audit-only 环境（否则 in-process 补丁走"观测模式"=只记 would_block 后放行，
+    对照面会假绿）。
+    """
+
+    def _make_casefile(self, tmp_path, monkeypatch) -> tuple[Path, str]:
+        """造一个"docs/ 下未入库案卷"面：仓根锚 tmp＋相对路径解析进保护区。"""
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        rel = "docs/_working/probe_campaign/00_ledger.md"
+        f = tmp_path / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text("案卷正文 v1\n", encoding="utf-8")
+        return f, rel
+
+    def test_no_context_behaves_exactly_as_before(self, tmp_path, monkeypatch):
+        """反向对照（零放宽钉）：不携带上下文时 T3② 照旧硬拦，且不发生任何删除副作用。"""
+        f, rel = self._make_casefile(tmp_path, monkeypatch)
+        assert ops_guard_mod.get_tomb_verification() is None
+        with pytest.raises(DeleteBlockedError):
+            ops_guard_mod._enforce_docs_untracked(str(f))
+        assert (tmp_path / rel).exists(), "无上下文不得有任何删除副作用"
+
+    def test_covered_file_releases_with_audit(self, tmp_path, monkeypatch):
+        """正向：存证 sha 与盘面逐位相等 → 放行，且落一行可追认的审计。"""
+        f, rel = self._make_casefile(tmp_path, monkeypatch)
+        sha = _file_sha(tmp_path, rel)
+        man = _tomb_manifest(
+            tmp_path,
+            [
+                {
+                    "sid": "st-probe",
+                    "rel": rel,
+                    "sha256": sha,
+                    "readback_sha256": sha,
+                    "verified": True,
+                    "tomb_path": str(tmp_path / "tomb.patch"),
+                }
+            ],
+        )
+        with ops_guard_mod.tomb_verification(man, sid="st-probe"):
+            ops_guard_mod._enforce_docs_untracked(str(f))  # 不抛＝放行
+        rows = _read_audit(tmp_path)
+        hit = [r for r in rows if r.get("action") == "docs_untracked_tomb_release"]
+        assert hit, f"放行必经共享审计原语留痕，实得动作集={sorted({r.get('action', '') for r in rows})}"
+        assert sha[:12] in json.dumps(hit[-1], ensure_ascii=False)
+
+    def test_one_byte_change_denies_release(self, tmp_path, monkeypatch):
+        """能红钉：存证之后文件被改过一个字节 → 不放行（防"拿旧存证放新删除"）。"""
+        f, rel = self._make_casefile(tmp_path, monkeypatch)
+        stale = _file_sha(tmp_path, rel)
+        f.write_text("案卷正文 v1 被改\n", encoding="utf-8")  # 盘面已变
+        man = _tomb_manifest(
+            tmp_path,
+            [{"sid": "st-probe", "rel": rel, "sha256": stale, "readback_sha256": stale, "verified": True}],
+        )
+        with pytest.raises(DeleteBlockedError):
+            with ops_guard_mod.tomb_verification(man, sid="st-probe"):
+                ops_guard_mod._enforce_docs_untracked(str(f))
+        assert f.exists(), "sha 不匹配时不得发生删除"
+        blocked = [r for r in _read_audit(tmp_path) if r.get("action") == "docs_untracked_block"]
+        assert blocked and "sha_mismatch" in json.dumps(blocked[-1], ensure_ascii=False), (
+            "阻断理由必须点名核验未过的具体原因（可追认性）"
+        )
+
+    def test_manifest_loader_rejects_self_contradictory_rows(self, tmp_path):
+        """装载器三态：未核验/双 sha 不自等/非 64 位十六进制 一律丢行（宁不放行）。"""
+        good = "a" * 64
+        rows = [
+            {"rel": "docs/g.md", "sha256": good, "readback_sha256": good, "verified": True},
+            {"rel": "docs/h.md", "sha256": good, "readback_sha256": good, "verified": False},
+            {"rel": "docs/i.md", "sha256": good, "readback_sha256": "b" * 64, "verified": True},
+            {"rel": "docs/j.md", "sha256": "deadbeef", "readback_sha256": "deadbeef", "verified": True},
+            {"rel": "", "sha256": good, "readback_sha256": good, "verified": True},
+        ]
+        man = _tomb_manifest(tmp_path, rows)
+        got = ops_guard_mod.load_tomb_manifest(man)
+        assert set(got) == {os.path.normcase("docs/g.md")}, f"只应收下唯一合格行，实得={list(got)}"
+        # 只剩不合格行的表 → 注入上下文直接抛（不得静默变成"零存证也放行"）
+        bad_only = _tomb_manifest(tmp_path, [rows[1]], name="bad.jsonl")
+        with pytest.raises(ValueError, match="无合格存证行"):
+            ops_guard_mod.set_tomb_verification(bad_only)
+
+    def test_inprocess_protected_delete_denies_without_full_coverage(self, tmp_path, monkeypatch):
+        """递归/目录目标：子树内任一文件不被覆盖即整棵不放行（兜"漏一件就整批放行"）。"""
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        base = tmp_path / "docs" / "_working" / "probe"
+        base.mkdir(parents=True)
+        (base / "a.md").write_text("A\n", encoding="utf-8")
+        (base / "b.md").write_text("B\n", encoding="utf-8")
+        rows = [
+            {
+                "rel": f"docs/_working/probe/{n}",
+                "sha256": _file_sha(tmp_path, f"docs/_working/probe/{n}"),
+                "readback_sha256": _file_sha(tmp_path, f"docs/_working/probe/{n}"),
+                "verified": True,
+            }
+            for n in ("a.md",)  # b.md 故意缺存证
+        ]
+        man = _tomb_manifest(tmp_path, rows)
+        with ops_guard_mod.tomb_verification(man):
+            ok_tree, why = ops_guard_mod._tomb_covered_tree(str(base))
+        assert ok_tree is False and "not_in_manifest" in why
+        # 两件齐了才放行
+        rows.append(
+            {
+                "rel": "docs/_working/probe/b.md",
+                "sha256": _file_sha(tmp_path, "docs/_working/probe/b.md"),
+                "readback_sha256": _file_sha(tmp_path, "docs/_working/probe/b.md"),
+                "verified": True,
+            }
+        )
+        man2 = _tomb_manifest(tmp_path, rows)
+        with ops_guard_mod.tomb_verification(man2):
+            ok_tree2, why2 = ops_guard_mod._tomb_covered_tree(str(base))
+        assert ok_tree2 is True and "tree_verified" in why2
+
+    def test_lane_prefix_form_resolves_against_repo_rel_manifest(self, tmp_path, monkeypatch):
+        """车道内绝对路径（.worktrees/<sid>/docs/…）必须能对上按仓相对登记的存证行。"""
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        rel_lane = ".worktrees/st-probe/docs/_working/probe/00_ledger.md"
+        f = tmp_path / rel_lane
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text("车道案卷\n", encoding="utf-8")
+        sha = _file_sha(tmp_path, rel_lane)
+        man = _tomb_manifest(
+            tmp_path,
+            [  # 存证按剥车道前缀后的仓相对路径登记（墓园 MANIFEST 实际格式）
+                {"rel": "docs/_working/probe/00_ledger.md", "sha256": sha, "readback_sha256": sha, "verified": True}
+            ],
+        )
+        with ops_guard_mod.tomb_verification(man):
+            ok, why = ops_guard_mod._tomb_covered(str(f))
+        assert ok is True, f"车道前缀形态应命中存证行，实得={why}"
+
+    # ── 端到端：归档通道自己出表 → rescue 真搬动（第8条②整链，含"能红"面）──
+
+    @staticmethod
+    def _load_sw():
+        import importlib.util
+
+        root = Path(ops_guard_mod.__file__).resolve().parent  # scripts/（与 ops_guard 同目录）
+        spec = importlib.util.spec_from_file_location("_sw_tomb_probe", root / "session_worktree.py")
+        assert spec is not None and spec.loader is not None
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules["_sw_tomb_probe"] = mod
+        spec.loader.exec_module(mod)
+        return mod
+
+    @staticmethod
+    def _mk_patch(path: Path, rel: str, body: str) -> None:
+        lines = [
+            f"diff --git a/{rel} b/{rel}",
+            "new file mode 100644",
+            "--- /dev/null",
+            f"+++ b/{rel}",
+            "@@ -0,0 +1,1 @@",
+        ]
+        lines += [f"+{ln}" for ln in body.split("\n")]
+        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    def test_archive_manifest_end_to_end(self, tmp_path, monkeypatch):
+        """整链正反两面：表覆盖→rescue 搬得动；表与实际字节不符→照旧拦（不是绕过）。"""
+        import shutil
+
+        sw = self._load_sw()
+        monkeypatch.setattr(sw, "REPO_ROOT", tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        lane = tmp_path / ".worktrees" / "st-probe"
+        rel = "docs/_working/probe_campaign/00_ledger.md"
+        f = lane / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text("案卷正文\n", encoding="utf-8")
+        patch = tmp_path / ".runtime" / "quarantine" / "st-probe-retire.patch"
+        patch.parent.mkdir(parents=True, exist_ok=True)
+        self._mk_patch(patch, rel, "案卷正文")
+
+        # ① 回读核验：patch 内正文与盘面**换行归一后**逐位相等才算覆盖（登记面仍记盘面原始
+        # 字节 sha，消费侧按原始字节复算——两侧语义在此测试里分别钉住）
+        live = f.read_bytes()
+        assert sw._patch_new_file_bytes(patch, rel) == live.replace(b"\r\n", b"\n")
+        man = sw._archive_write_tomb_manifest(lane, "st-probe", patch, [rel])
+        assert man["verified"] == 1 and Path(man["manifest"]).is_file()
+        row = json.loads(Path(man["manifest"]).read_text(encoding="utf-8").splitlines()[0])
+        assert row["sha256"] == row["readback_sha256"] == _file_sha(lane, rel), (
+            "登记两枚 sha 位必须等于盘面原始字节 sha（ops_guard 就是拿它复算比对的）"
+        )
+
+        # ② 装护栏后：无上下文拦、带表放行（同一支 shutil.move 两次对照）
+        install_inprocess_enforcement()
+        dst1 = tmp_path / "out1" / rel
+        dst1.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            with pytest.raises(DeleteBlockedError):
+                shutil.move(str(f), str(dst1))
+            assert f.exists(), "无存证上下文时不得发生移动"
+            assert not dst1.exists(), "被拦的移动不得留下半个目标文件"
+            with ops_guard_mod.tomb_verification(man["manifest"], sid="st-probe"):
+                r = sw._rescue_untracked_files(lane, "st-probe", [rel])
+            assert r["moved"] == 1 and not f.exists(), f"带表应搬走，实得={r}"
+        finally:
+            uninstall_inprocess_enforcement()
+        rows = _read_audit(tmp_path)
+        assert any(x.get("action") in ("inprocess_tomb_release", "docs_untracked_tomb_release") for x in rows), (
+            "放行必须留可追认审计行"
+        )
+
+    def test_archive_manifest_refuses_when_bytes_diverge(self, tmp_path, monkeypatch):
+        """存证之后案卷被改过一个字节 → 表判不覆盖（verified=0），不得注入上下文。"""
+        sw = self._load_sw()
+        monkeypatch.setattr(sw, "REPO_ROOT", tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        lane = tmp_path / ".worktrees" / "st-probe2"
+        rel = "docs/_working/probe_campaign/00_ledger.md"
+        f = lane / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text("案卷正文\n", encoding="utf-8")
+        patch = tmp_path / "p.patch"
+        self._mk_patch(patch, rel, "案卷正文")
+        f.write_text("案卷正文被改过\n", encoding="utf-8")  # 存证后漂移
+        man = sw._archive_write_tomb_manifest(lane, "st-probe2", patch, [rel])
+        assert man["verified"] == 0 and man["gaps"] == [rel]
+        with pytest.raises(ValueError, match="无合格存证行"):
+            ops_guard_mod.set_tomb_verification(man["manifest"], sid="st-probe2")

@@ -1077,6 +1077,102 @@ def _archive_hard_guards(entry: dict, sid: str, wt_path: Path, branch: str | Non
     return True, 0
 
 
+def _tomb_ctx_factory():
+    """取 ops_guard 的存证核验上下文工厂（取不到＝返回 None，归档照旧被拦不放宽）。"""
+    try:
+        from scripts.ops_guard import tomb_verification  # noqa: PLC0415
+    except ImportError:  # python scripts/session_worktree.py 直跑：sys.path[0]=scripts/
+        try:
+            from ops_guard import tomb_verification  # noqa: PLC0415
+        except Exception:  # noqa: BLE001 — 守卫不可用即不放宽（fail-closed）
+            return None
+    except Exception:  # noqa: BLE001
+        return None
+    return tomb_verification
+
+
+def _patch_new_file_bytes(patch_path: str | Path, rel: str) -> bytes | None:
+    """从退役 patch 里取某个"新增文件"段的正文字节（存证真读回，不信任自报 sha）。
+
+    与 `docs/_working/examunlock_campaign/17 号件 §六` 的复原约定一致：块内正文＝源文件
+    去掉末尾换行后的全部内容，复原时补一个换行；CRLF 归一为 LF 后比对。
+    取不到段（非新增件/被排除/格式外）→ None＝该行判不覆盖（宁可不放行）。
+    """
+    try:
+        text = Path(patch_path).read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+    head = f"diff --git a/{rel} b/{rel}"
+    i = text.find(head)
+    if i < 0:
+        return None
+    j = text.find("\ndiff --git ", i + len(head))
+    seg = text[i:] if j < 0 else text[i : j + 1]
+    body = [ln[1:] for ln in seg.splitlines() if ln.startswith("+") and not ln.startswith("+++")]
+    if not body:
+        return None
+    return ("\n".join(body) + "\n").replace("\r\n", "\n").encode("utf-8")
+
+
+def _archive_write_tomb_manifest(wt_path: Path, sid: str, patch_path: str | Path, untracked: list[str]) -> dict:
+    """②之前为未入库案卷逐件出存证核验表（sha 与 patch 回读双算，verified 只由相等决定）。
+
+    放行的判据在 ops_guard 侧（本表只作证）：行内 sha256==readback_sha256 且 verified is
+    True 且删除当时盘面实算 sha 仍等于它——三者缺一不放行，故"改过一个字节就不给放"。
+    """
+    import hashlib
+
+    rows: list[dict] = []
+    verified = 0
+    for raw in untracked:
+        rel = raw.strip().strip('"').rstrip("/")
+        if not rel:
+            continue
+        src = wt_path / rel
+        if not src.is_file():
+            continue
+        try:
+            live = src.read_bytes()
+        except OSError:
+            continue
+        live_sha = hashlib.sha256(live).hexdigest()
+        back = _patch_new_file_bytes(patch_path, rel)
+        # 生产者侧唯一一次 EOL 归一：git 的 patch 文本面按 LF 承载，而盘面可能是 CRLF；
+        # 归一只用于"patch 是否真含这份内容"的判定。登记面两枚 sha 位一律记**盘面原始
+        # 字节**的 sha（消费侧 ops_guard 删除当时按原始字节复算比对，改一个字节即不放行），
+        # patch 侧证据另立 patch_sha256 字段——三态可追认，互不顶替。
+        norm_live = live.replace(b"\r\n", b"\n")
+        ok = back is not None and back == norm_live
+        rows.append(
+            {
+                "sid": sid,
+                "lane": str(wt_path.relative_to(REPO_ROOT)).replace("\\", "/")
+                if wt_path.is_relative_to(REPO_ROOT)
+                else str(wt_path),
+                "rel": rel,
+                "bytes": len(live),
+                "sha256": live_sha,
+                "readback_sha256": live_sha,
+                "patch_sha256": hashlib.sha256(back).hexdigest() if back is not None else "",
+                "eol_normalized_readback": back is not None and back != live,
+                "verified": ok,
+                "kind": "退役 patch 内嵌正文回读",
+                "tomb_path": str(patch_path),
+                "recorded_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+            }
+        )
+        verified += int(ok)
+    out = Path(patch_path).with_suffix(".manifest.jsonl")
+    try:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
+    except OSError as e:
+        print(f"  ①b 存证核验表写入失败（不放宽，照旧人工）: {e}", file=sys.stderr)
+        return {"manifest": None, "rows": len(rows), "verified": 0}
+    gaps = [r["rel"] for r in rows if not r["verified"]]
+    return {"manifest": str(out), "rows": len(rows), "verified": verified, "gaps": gaps}
+
+
 def _archive_rescue_phase(info: dict, sid: str, wt_path: Path, skip_rescue: bool) -> tuple[bool, str | None]:
     """①patch 存证（fail-closed）+ ②？？rescue。返回 (是否失败, patch_path)。"""
     patch_path: str | None = None
@@ -1094,7 +1190,25 @@ def _archive_rescue_phase(info: dict, sid: str, wt_path: Path, skip_rescue: bool
     patch_path = ev.get("patch_path")
     print(f"  ① patch 存证: {patch_path}（三分类={ev.get('counts')}）")
     if info["untracked"] and not skip_rescue:
-        r_rescue = _rescue_untracked_files(wt_path, sid, info["untracked"])
+        # ①b 存证核验表：rescue 要搬的正是"从未入库案卷"，OPS-GUARD T3② 对代理一律拦死
+        # （死信班与考试解锁班先后撞同一死锁）。本表把"字节确实在 patch 里"变成可机判事实，
+        # ops_guard 只在 sha 逐位相等时放行；无表/不覆盖＝照旧阻断（不改判据、不用 env）。
+        man = _archive_write_tomb_manifest(wt_path, sid, patch_path, info["untracked"])
+        factory = _tomb_ctx_factory() if man.get("verified") else None
+        if man.get("rows"):
+            print(
+                f"  ①b 存证核验: {man['verified']}/{man['rows']} 件 sha 覆盖通过"
+                f"（表={man['manifest'] or '-'}）"
+                + (f"，未覆盖 {len(man.get('gaps') or [])} 件仍走人工" if man.get("gaps") else "")
+            )
+        ctx = factory(man["manifest"], sid=sid) if (factory and man.get("manifest")) else None
+        try:
+            if ctx is not None:
+                ctx.__enter__()
+            r_rescue = _rescue_untracked_files(wt_path, sid, info["untracked"])
+        finally:
+            if ctx is not None:
+                ctx.__exit__(None, None, None)
         print(f"  ② ？？rescue: {r_rescue['moved']} 项 → {r_rescue['rescue_dir']}（mapping.json 台账）")
     elif info["untracked"]:
         print("  ② ？？rescue: SKIP（--skip-rescue）")
