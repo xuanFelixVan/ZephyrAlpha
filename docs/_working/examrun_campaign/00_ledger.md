@@ -1497,3 +1497,42 @@ CH 查询 0 次（含死机后复员，全程零取数）｜N 账本真源零写
     修复 `if tgt is None:` 实测未落 dev）。
 - 两把尺按现谓词**交集为 0**（examined 卡被普查天然排除），这是口径事实不是数据缺失；
   是否把 `--force` 定为普查默认档属判官域，本班不改尺、只登记（§36.3）。
+
+# 卅八、统筹二批（三件归维护线）＋本班交出的清账前置测量（13:1x）
+
+## 38.1 二批随记（本班无新增动作，只交先例与测量）
+
+- ①清账＝治理侧连结算影响一起清（快照→在册单口 `ch_writer.delete_where`→重放该 judgment 域结算腿→复验聚合面）；
+  ②翻 enforce 前置红证＝批，由维护线造一次受控写（沙箱 env＋synthetic 标记，须见 `ch_write_guard.jsonl` 留痕行）；
+  ③甲案 6 支 node-id 排除＝给维护线班单，落地判据＝三面 grep ≥1 命中＋被排测试的 collect-only 复验。
+- 本班旧袋 0036 那份名单实测在 dev 面＝`docs/_working/examrun_campaign/23_ch_writing_test_nodeids.md`，
+  **62 行、6 支 node id 逐支可 grep**（`^tests/backtest/test_sim_daily_runner.py::` 命中 6）；
+  甲案"三面零命中"本班独立复现（`git grep test_plan_bridge_unclassified_is_pending dev -- scripts config pyproject.toml` 空）。
+
+## 38.2 ① 的清账前置测量：物理面只剩 1 行，而且这张表"后写吃前写"
+
+- 现存假行（`c1_backtest.sim_daily_report FINAL`，谓词 `report_date='2026-09-21' AND source='plan_bridge'`）＝**1 行**：
+  asof_ts=2026-10-12 19:25:22、run_id 现为 `settle-20261013004545`、eval_method=posture_check、eval_score=1、
+  evaluated_by=sim_settler。假判定性依据＝asof 与 query_log 里 19:25:22Z 那笔 INSERT 一一对上（那笔来自测试轮）。
+- **二批里"两行"的说法要按现面改写**：10-12 21:45、10-13 03:25 两次测试写与 10-13 08:45 的结算改写都落在
+  同一 ORDER BY 键 `(report_date, source, subject)` 上，表是 `ReplacingMergeTree(ingest_ts)`，合并后只留最新版本
+  ⇒ 快照对象是"现存 1 行＋该键未合并的若干版本"，不是两行；删除仍走 judgment_id 精确谓词没问题，但
+  别把"删后 count=0"当成"恢复原状"。
+- ⚠ 必须加一步"重放"而不是"删完即毕"：`report_date=2026-09-21` 当天共 49 行（FINAL），分组为
+  e4_replay 46 行（run_id `settle-2026092205104x`）＋plan_execute 1 行＋platform 1 行＋plan_bridge 1 行（即假行）。
+  全表 plan_bridge 的 `report_date` 与 `toDate(asof_ts)` 并不总相同（09-19 键的 asof 是 09-21、09-30 键的 asof 是 10-09），
+  ⇒ **回填合法行是常态**，本班无法从表内证明 09-21 这个 plan_bridge 键在测试写之前是否已有合法行
+  （同键后写覆盖前写，旧版本已被合并丢弃、表内不可取）。
+  处方增补＝删后以 09-21 的合法输入重放判定腿：入口实测为 `scripts/backtest/sim_daily_runner.py:872 settle(day: str)`
+  （`evaluated_by="sim_settler"` 在其 868 行），重放判据＝该键重新出现且 `run_id` 不再是 settle-20261013004545。
+- 聚合面口径提醒：`git grep -l sim_daily_report dev -- src scripts` 只命中 5 处
+  （sim_daily_runner／DDL 部署件／script-manifest／ch_writer 注释／paper_outpost），**dev 面上查无独立命中率汇总表**
+  ⇒"复验聚合面归零"的落点应是"该键重放后 paper_outpost／日报读取面的命中计数"，不是一张大表；
+  前端/SQL 散落读取本班未扫（只扫了 src+scripts），由维护线补这一面。
+
+## 38.3 本班本节投递规则（不复制 0033/0042 那次同件双袋）
+
+- §卅六＋§卅七 已在途＝`q-20261013-st-examrun-20261012-0043`（base_head 20744a3cc3，blob 与车道磁盘同 sha）；
+  本节 §卅八 只在车道追加，等 0043 落定后以当时 dev sha 再投一袋。
+- 结构自证（写完后实测）：车道班账 1526 行、`^# ` 42 节、`^## 38\.` 3 小节；对 dev 1328 行 HEAD 独有行＝0、
+  前缀逐行等＝严格尾追加。
