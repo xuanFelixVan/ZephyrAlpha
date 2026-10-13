@@ -207,9 +207,9 @@ _WT_PREFIX_PLURAL = "".join([".", "runtime/commit_queue/worktrees/"])
 
 
 def _strip_worktree_prefix(rel: str) -> str:
-    """剥会话/serializer 工作树前缀 → 主仓相对路径。
+    """剥会话/serializer 工作树前缀 → 主仓相对路径（嵌套树循环剥到无标记为止）。
 
-    三种形态（均为"锚主仓根后命中路径仍带树前缀，不剥则 approved_paths
+    四种形态（均为"锚主仓根后命中路径仍带树前缀，不剥则 approved_paths
     （仓库相对 posix 登记）恒不匹配——有授权也审批不过"同病家族）：
 
     1. serializer 单数落地树（裁定#480 手术③时序倒置治本，q-...-0013 死信实证）：
@@ -219,19 +219,36 @@ def _strip_worktree_prefix(rel: str) -> str:
        物理树 ``<repo>/.aidrafts/<sid>/``——worktree 内 commit 的 PROTECTED-PATHS
        判定剥出该前缀才是真实仓相对路径；同日 A 袋死信实证=会话 worktree 内
        携 ruling_registry.yaml 的袋被 #479 活跃裁定授权却因前缀未剥恒不命中）
+    4. 会话 worktree 第二物理树（2026-10-13 st-maint6-20261013 实测补：
+       session_worktree.py create 现势落 ``<repo>/.worktrees/<sid>/``——同 #479
+       授权在位而前缀未剥，P0 投影追齐袋在锁外预检被 PROTECTED-PATHS 判"无审批
+       通道命中"，与本函数 docstring 第 3 形态同病灶同解法）
+
+    嵌套形态（车道内再开车道，实测 ``.worktrees/<sid>/.aidrafts/<sid>/`` 存在）：
+    单趟只剥一层会留下内层标记，故循环剥；每趟必须真剥掉一段才继续，否则即收敛。
     """
-    if rel.startswith(_WT_PREFIX_SINGULAR):
-        parts = rel.split("/")
-        # .runtime / commit_queue / worktree / <真实相对路径>（无 slot 段）
-        return "/".join(parts[3:]) if len(parts) > 3 else rel
-    if rel.startswith(_WT_PREFIX_PLURAL):
-        parts = rel.split("/")
-        # .runtime / commit_queue / worktrees / <slot> / <真实相对路径>
-        return "/".join(parts[4:]) if len(parts) > 4 else rel
-    if rel.startswith(".aidrafts/"):
-        parts = rel.split("/")
-        # .aidrafts / <sid> / <真实相对路径>（sid 单段；不存在嵌套会话树形态）
-        return "/".join(parts[2:]) if len(parts) > 2 else rel
+    session_markers = (".aidrafts/", ".worktrees/")
+    for _ in range(len(session_markers) + 2):  # 上界=标记种数+serializer 两形态，防死循环
+        if rel.startswith(_WT_PREFIX_SINGULAR):
+            parts = rel.split("/")
+            # .runtime / commit_queue / worktree / <真实相对路径>（无 slot 段）
+            rel = "/".join(parts[3:]) if len(parts) > 3 else rel
+            continue
+        if rel.startswith(_WT_PREFIX_PLURAL):
+            parts = rel.split("/")
+            # .runtime / commit_queue / worktrees / <slot> / <真实相对路径>
+            rel = "/".join(parts[4:]) if len(parts) > 4 else rel
+            continue
+        hit = False
+        for marker in session_markers:
+            if rel.startswith(marker):
+                parts = rel.split("/")
+                # <marker> / <sid> / <真实相对路径>（sid 单段；不存在嵌套同层多段形态）
+                rel = "/".join(parts[2:]) if len(parts) > 2 else rel
+                hit = True
+                break
+        if not hit:
+            break
     return rel
 
 

@@ -171,3 +171,56 @@ class TestCreateGuardRegistryAnchoring:
         data, err = _load_capability_registry(_FakeGateway(wt))
         assert data is not None, f"registry 不可达: {err}"
         assert new_file in _collect_registered_files(data), "worktree 内必须读到主区盘面登记的 token"
+
+
+class TestSessionWorktreePrefixForms:
+    """会话工作树第四形态（``<repo>/.worktrees/<sid>/``）回归（st-maint6-20261013 实证）。
+
+    病根：session_worktree.py create 现势把车道落在 ``.worktrees/<sid>/``，而
+    ``_strip_worktree_prefix`` 只认 ``.aidrafts/<sid>/``（第三形态）与 serializer 两
+    形态 → 车道内提交携 ruling_registry.yaml 时命中路径带 ``.worktrees/`` 前缀，
+    盘面 active 裁定（#479 同款明文覆盖该册）恒不匹配＝"有授权也审批不过"，
+    P0 投影追齐袋在锁外预检被 PROTECTED-PATHS 判"no approval channel matched"。
+    """
+
+    @staticmethod
+    def _hit(root: Path, rel: str, *tree: str) -> str:
+        return str(root.joinpath(*tree) / rel)
+
+    def test_dot_worktrees_form_hits_active_ruling(self, tmp_path):
+        """.worktrees/<sid>/ 形态剥前缀后必须命中 #461 approved_paths（P0 袋重放）。"""
+        _make_ruling_registry(tmp_path, [_ruling_461()])
+        hit = self._hit(tmp_path, _RULING_REGISTRY_REL, ".worktrees", "st-maint6-20261013")
+        v = resolve_approval([hit], None, tmp_path)
+        assert v.approved is True, f"车道内命中路径未剥 .worktrees 前缀: {v.detail}"
+        assert v.source == SOURCE_RULING and "裁定#461" in v.detail
+
+    def test_aidrafts_form_still_normalized(self, tmp_path):
+        """第三形态（.aidrafts/<sid>/）不回退——修四不许废三。"""
+        _make_ruling_registry(tmp_path, [_ruling_461()])
+        hit = self._hit(tmp_path, _RULING_REGISTRY_REL, ".aidrafts", "st-x-20261013")
+        v = resolve_approval([hit], None, tmp_path)
+        assert v.approved is True and v.source == SOURCE_RULING
+
+    def test_nested_session_tree_strips_every_marker(self, tmp_path):
+        """嵌套车道（.worktrees/<sid>/.aidrafts/<sid2>/，实测存在）循环剥到仓位相对。"""
+        _make_ruling_registry(tmp_path, [_ruling_461()])
+        hit = self._hit(tmp_path, _RULING_REGISTRY_REL, ".worktrees", "outer", ".aidrafts", "inner")
+        v = resolve_approval([hit], None, tmp_path)
+        assert v.approved is True, f"嵌套树单趟只剥一层仍带标记: {v.detail}"
+
+    def test_dot_worktrees_form_does_not_widen_authorization(self, tmp_path):
+        """归一不放大授权面：#461 未覆盖的 AGENTS.md 在车道形态下照拦。"""
+        _make_ruling_registry(tmp_path, [_ruling_461()])
+        hit = self._hit(tmp_path, "AGENTS.md", ".worktrees", "st-maint6-20261013")
+        v = resolve_approval([hit], None, tmp_path)
+        assert v.approved is False and v.source == SOURCE_NONE
+
+    def test_gate_passes_via_ruling_channel_in_session_worktree_form(self, tmp_path):
+        """gate 层同形态放行（判据仍走 resolve_approval，无自有裁定遍历）。"""
+        _make_ruling_registry(tmp_path, [_ruling_461()])
+        gate = make_protected_paths_gate()
+        hit = self._hit(tmp_path, _RULING_REGISTRY_REL, ".worktrees", "st-maint6-20261013")
+        passed, detail = gate.check(_FakeGateway(tmp_path), [hit], commit_message="chore: 投影追齐")
+        assert passed is True, f"gate 层车道形态仍判无授权: {detail}"
+        assert "裁定#461" in detail
