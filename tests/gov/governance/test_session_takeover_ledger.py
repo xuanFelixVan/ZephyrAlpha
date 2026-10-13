@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import time
 from pathlib import Path
 from types import SimpleNamespace
@@ -911,3 +912,108 @@ def test_worktree_dirty_keeps_all_when_ref_unavailable(tmp_path: Path, monkeypat
     assert info["dirty_files"] == ["a.txt", "d.txt", "u.txt"], info
     assert info["excluded_dev_identical"] == 0, info
     assert info["dirty_note"] == "dev_identical_check_unavailable", info
+
+
+# ---------------------------------------------------------------------------
+# 态5：存量条目刷新出口（维护七班 P2，2026-10-14）
+#   病根＝open 条目一旦"注册表除名＋资源已清完"就再不进 --scan 候选集，带旧证据永久挂 open，
+#   L3 门禁按 entry_match_surface 逐件挡无辜袋（维护六班袋 0011 实测死在该形态）。
+# ---------------------------------------------------------------------------
+
+
+def _strip_all_resources(root: Path, *, keep_bag: bool = False) -> None:
+    """把 DEAD_SID 的五类资源面清到零（held 走注册表条目改写，其余走删目录）。"""
+    reg = root / ".runtime" / "session_registry.json"
+    data = json.loads(reg.read_text(encoding="utf-8"))
+    if DEAD_SID in data:
+        data[DEAD_SID] = {**data[DEAD_SID], "held_files": []}
+        reg.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    for rel in (Path(".aidrafts") / DEAD_SID, Path(".runtime") / "sessions" / DEAD_SID):
+        target = root / rel
+        if target.is_dir():
+            shutil.rmtree(target)
+    bags_dir = root / ".runtime" / "commit_queue" / "dead"
+    if bags_dir.is_dir() and not keep_bag:
+        for b in bags_dir.glob(f"*{DEAD_SID}*.json"):
+            b.unlink()
+
+
+def _ledger_bytes(root: Path) -> bytes:
+    return (root / ".runtime" / "takeover_ledger.jsonl").read_bytes()
+
+
+def test_refresh_dry_run_moves_nothing(fake_root: Path) -> None:
+    """默认 dry-run：只报数，台账字节零变（与 blob_gc --archive／sweep-absorbed 同哲学）。"""
+    ledger.write_takeover_entry(fake_root, DEAD_SID, now=NOW)
+    before = _ledger_bytes(fake_root)
+    rep = ledger.refresh_open_entries(fake_root, execute=False, now=NOW)
+    assert _ledger_bytes(fake_root) == before, "dry-run 动了盘"
+    rec = next(r for r in rep if r["sid"] == DEAD_SID)
+    assert rec["action"] == "dry-run" and rec["all_clear"] is False, rec
+    assert rec["after"]["held"] >= 1 and rec["after"]["bags"] >= 1, rec
+
+
+def test_refresh_all_clear_resolves_only_on_execute(fake_root: Path) -> None:
+    """资源面复测归零：dry-run 不收口，--execute 才走 resolve 同一通道搬进 resolved/。"""
+    ledger.write_takeover_entry(fake_root, DEAD_SID, now=NOW)
+    _strip_all_resources(fake_root)
+    rep = ledger.refresh_open_entries(fake_root, execute=False, now=NOW + 10)
+    rec = next(r for r in rep if r["sid"] == DEAD_SID)
+    assert rec["all_clear"] is True and rec["action"] == "dry-run", rec
+    assert all(v == 0 for v in rec["after"].values()), rec["after"]
+    assert ledger.load_open_entries(fake_root), "dry-run 不该收口"
+
+    rep2 = ledger.refresh_open_entries(fake_root, execute=True, now=NOW + 20)
+    rec2 = next(r for r in rep2 if r["sid"] == DEAD_SID)
+    assert rec2["action"] == "resolved_all_clear", rec2
+    assert all(r["sid"] != DEAD_SID for r in ledger.load_open_entries(fake_root))
+    resolved = list((fake_root / ".runtime" / "takeover" / "resolved").glob("*.json"))
+    assert any(json.loads(f.read_text(encoding="utf-8"))["sid"] == DEAD_SID for f in resolved)
+
+
+def test_refresh_keeps_entry_open_when_any_residue_remains(fake_root: Path) -> None:
+    """残留即不收口：只剩一只死袋也必须留 open（刷新只缩数不造放行）。"""
+    ledger.write_takeover_entry(fake_root, DEAD_SID, now=NOW)
+    _strip_all_resources(fake_root, keep_bag=True)
+    rep = ledger.refresh_open_entries(fake_root, execute=True, now=NOW + 30)
+    rec = next(r for r in rep if r["sid"] == DEAD_SID)
+    assert rec["all_clear"] is False and rec["action"] == "refreshed", rec
+    assert rec["after"]["held"] == 0 and rec["after"]["worktrees"] == 0, rec["after"]
+    assert rec["after"]["bags"] >= 1, f"死袋残留被清零＝收口判据被撑大: {rec['after']}"
+    assert any(r["sid"] == DEAD_SID for r in ledger.load_open_entries(fake_root))
+
+
+def test_refresh_bypasses_throttle_window_but_hook_path_still_throttled(fake_root: Path) -> None:
+    """节流窗只属判死钩子热路径防 IO 风暴；显式 CLI 刷新必须能**越窗把旧资源数缩到实测面**。
+
+    现场形态＝deadclean：claim 已释放、车道已退、心跳已清，但条目还挂着立案当天的
+    held=3/worktrees=1 —— 这些旧数会经 `entry_match_surface` 继续挡别人的袋。
+    本测试把这条挡道面直接钉住：窗内（+60s < 600s）刷新后，账面 held/worktrees 必须归零，
+    仅死袋残留保留（不收口）。去掉写账的 force 旁路＝这条必红（突变实测）。
+    """
+    ledger.write_takeover_entry(fake_root, DEAD_SID, now=NOW)
+    stale = next(r for r in ledger.load_open_entries(fake_root) if r["sid"] == DEAD_SID)
+    assert len(stale["resources"]["held_files"]) >= 1, "前置：立案时 held 面非空"
+
+    # 钩子路径在节流窗内仍原样返回（IO 风暴防护不许动）
+    same = ledger.write_takeover_entry(fake_root, DEAD_SID, now=NOW + 60)
+    assert same.get("refresh_count", 0) == 0, "钩子路径不该在节流窗内重刷"
+
+    _strip_all_resources(fake_root, keep_bag=True)  # 只剩一只死袋＝有残留，走刷新支不收口
+    rep = ledger.refresh_open_entries(fake_root, execute=True, now=NOW + 60)
+    rec = next(r for r in rep if r["sid"] == DEAD_SID)
+    assert rec["action"] == "refreshed" and rec["all_clear"] is False, rec
+    live = next(r for r in ledger.load_open_entries(fake_root) if r["sid"] == DEAD_SID)
+    counts = ledger._resource_counts(live["resources"])
+    assert counts["held"] == 0 and counts["worktrees"] == 0, f"旧资源数没被缩掉＝挡道面还在: {counts}"
+    assert counts["bags"] >= 1, f"死袋残留被吞＝收口判据被撑大: {counts}"
+    assert int(live.get("refresh_count", 0)) >= 1, "窗内刷新未落账（force 旁路失效）"
+
+
+def test_refresh_single_sid_and_unknown_sid(fake_root: Path) -> None:
+    """给 SID 只刷一条；刷不存在的 open 条目＝显式 LookupError（对齐 resolve 语义）。"""
+    ledger.write_takeover_entry(fake_root, DEAD_SID, now=NOW)
+    rep = ledger.refresh_open_entries(fake_root, sid=DEAD_SID, now=NOW)
+    assert [r["sid"] for r in rep] == [DEAD_SID]
+    with pytest.raises(LookupError):
+        ledger.refresh_open_entries(fake_root, sid="st-never-opened", now=NOW)

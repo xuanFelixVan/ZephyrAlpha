@@ -95,3 +95,30 @@ python scripts/governance/session_takeover_ledger.py --list     # 看谁死了�
 python scripts/governance/session_takeover_ledger.py --resolve <sid> --by <你的sid> --note <结论>
 # 若 commit 被 TAKEOVER-PENDING 拦截：错误消息里就是处方，处置+resolve 后自动放行
 ```
+
+## 7. 存量条目刷新出口（维护七班 P2，2026-10-14 追加）
+
+**病根（实测，非推断）**：`--scan` 的候选集只有两个来源——注册表判死会话（`scan_dead_sessions`）
+与在盘孤儿资源（`_scan_orphan_resources`）。一条 open 条目一旦走到"会话已从注册表除名 **且**
+资源面已被清完"，就再不进任何候选集，于是**永久带着立案当天的旧资源数挂着 open**。
+现场＝`st-deadclean-20261013`：处方三项（claim 3 件／车道 1 棵／心跳 1 件）23:4x 复核均已归零，
+条目仍报 `held=3 worktrees=1 heartbeat=1`，L3 门禁按 `entry_match_surface` 逐件挡道，
+把维护六班的存证钩子袋（q-…-0011）挡成死信；当时只能人工 `--resolve` 绕行。
+
+**出口（本文件 §7 与代码 docstring 同源）**：`--refresh [SID] [--execute]`
+1. 逐条（或指定一条）用 L1 同一把尺 `collect_resources` 重取五类资源面并写回；
+   写回带 `force=True` 越 600s 节流窗——那是判死钩子热路径的 IO 防护，不是给人工刷新设的闸；
+   `death_evidence` 沿用立案原文（开账条目必须自带"当时三证读数"，刷新不许改写历史证据）；
+2. **只有五类全零**（held／worktrees／staging／bags／heartbeat）才走 `resolve_entry`
+   同一通道收口，注记固定为"刷新出口复测：五类资源面全零，无待接管项"；
+   有任何残留（**含死袋**——死袋要四态分诊不许静默消失）一律留 open，只把数字缩到实测面；
+3. 默认 **dry-run 只报数不动盘**（与 blob_gc `--archive`、`--sweep-absorbed` 同哲学），
+   `--execute` 才写。
+
+**判别力（在册测试，两条突变实测各红）**：
+`tests/gov/governance/test_session_takeover_ledger.py` 新增 6 支（dry-run 零动盘／
+归零支非 execute 不收口／残留即不收口／**窗内刷新必须缩数**／单条 SID／未知 SID 显式 LookupError）。
+- 突变 1（写账去掉 `force=True`）→ `test_refresh_bypasses_throttle_window_...` 红，
+  读数 `{'held': 1, 'worktrees': 1, 'staging': 2, 'bags': 1, 'heartbeat': 2}` ＝旧数没缩掉＝挡道面还在；
+- 突变 2（`all(v==0)` 改成 `any(v==0)`）→ 残留支被误收口，红于 `refreshed != resolved_all_clear`；
+- 复原后 6 passed（sha `fbc5fbb8d54b7adecba8f5d5` 逐次核回）。

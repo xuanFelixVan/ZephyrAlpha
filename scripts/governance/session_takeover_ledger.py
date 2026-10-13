@@ -7,8 +7,9 @@
 # [CONSUMERS] src/zephyr/security/access_control/session_concurrency.py（_salvage_takeover_ledger 判死钩子，函数内延迟 import）；src/zephyr/gov_enforcement/commit_gates/takeover_pending_gate.py（L3 门禁读 open 条目）；命令行（--scan/--list/--resolve）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 接管台账（Takeover Ledger）L1/L2 显化真源——死亡判据=last_activity 距今>7200s 且非 logical；条目幂等（同 sid 已 open 只 refresh 资源数不重复生成，原子 tmp+os.replace）+ refresh 节流窗 600s（判死钩子在 list_active 热路径，窗内原样返回防 git status/staging 重 IO 风暴）；resolve 迁移 .runtime/takeover/resolved/ 改 status；只读写 .runtime 运行态面（禁碰 git 元数据/生产数据）；PID/心跳为辅助证据（取不到=null 不阻断）；worktree dirty 经 git status --porcelain（非 git 目录=-1 记 git_status_unavailable）＋盘字节已等于落地面 _LANDING_REF 的**跟踪件**移出命中面并记 excluded_dev_identical=n（统筹 2026-10-13 批①：status 报的是对自家 HEAD 之差，车道指针落后 dev 时同字节件也报 M，会隔空挡死无辜袋；比对不可用/未跟踪件一律保留＝只缩不扩）；文件清单截断上限 200（DIRTY/STAGING 各自）防台账膨胀
+# [INVARIANTS] 接管台账（Takeover Ledger）L1/L2 显化真源——死亡判据=last_activity 距今>7200s 且非 logical；条目幂等（同 sid 已 open 只 refresh 资源数不重复生成，原子 tmp+os.replace）+ refresh 节流窗 600s（判死钩子在 list_active 热路径，窗内原样返回防 git status/staging 重 IO 风暴）；resolve 迁移 .runtime/takeover/resolved/ 改 status；**存量条目刷新出口 `--refresh [SID]`（维护七班 P2）＝逐条重取五类资源实测面并写回，默认 dry-run、`--execute` 才动盘，五类全零（held/worktrees/staging/bags/heartbeat）才走 resolve 同一通道收口，有任何残留（含死袋）一律留 open；写回经 force 旁路 600s 节流窗（该窗属判死钩子热路径 IO 防护，不约束显式人工刷新），判零口径与 L1 `collect_resources` 同源不另立二套；death_evidence 沿用立案原文不重写**；只读写 .runtime 运行态面（禁碰 git 元数据/生产数据）；PID/心跳为辅助证据（取不到=null 不阻断）；worktree dirty 经 git status --porcelain（非 git 目录=-1 记 git_status_unavailable）＋盘字节已等于落地面 _LANDING_REF 的**跟踪件**移出命中面并记 excluded_dev_identical=n（统筹 2026-10-13 批①：status 报的是对自家 HEAD 之差，车道指针落后 dev 时同字节件也报 M，会隔空挡死无辜袋；比对不可用/未跟踪件一律保留＝只缩不扩）；文件清单截断上限 200（DIRTY/STAGING 各自）防台账膨胀
 # [MODIFY-GUARD] 死亡判据阈值/资源收集面变更须与 takeover_pending_gate.py 及 docs/_working/branch_zero_takeover_20261002/t1_takeover_infra.md 同批
+# [MODIFY-GUARD] 2026-10-14 维护七班 P2 刷新出口面：write_takeover_entry 新增 force 入参（显式 CLI 刷新越 600s 节流窗），改名/删该字段须与 refresh_open_entries 及 tests/gov/governance/test_session_takeover_ledger.py::test_refresh_bypasses_throttle_window_but_hook_path_still_throttled 同批；判死阈值与 L3 门禁命中面零改动
 # [MODIFY-GUARD] 2026-10-10 sid=st-maint1-t3lane 三证立法（PID 亡＝必要非充分）配套面：write_takeover_entry 新增 extra_death_evidence 入参（判死钩子把三证读数原文并入 death_evidence.alive_side_evidence），改名/删该字段须与 session_concurrency._salvage_takeover_ledger 及 tests/gov/session/test_takeover_pid_false_positive.py 同批；本件自身判据（DEATH_IDLE_SECONDS=7200 idle 轨）零改动
 # [STABILITY] evolving
 # [SAFETY] L
@@ -61,6 +62,7 @@ from pathlib import Path
 
 __all__ = [
     "DEATH_IDLE_SECONDS",
+    "refresh_open_entries",
     "scan_dead_sessions",
     "write_takeover_entry",
     "load_open_entries",
@@ -1044,6 +1046,7 @@ def write_takeover_entry(
     registry_entry: dict | None = None,
     now: float | None = None,
     extra_death_evidence: dict | None = None,
+    force: bool = False,
 ) -> dict:
     """生成/更新一条 open 接管条目（幂等：同 sid 已 open 只 refresh 资源数）。
 
@@ -1080,7 +1083,7 @@ def write_takeover_entry(
     for row in rows:
         if row.get("sid") == sid and row.get("status") == "open":
             age = now - float(row.get("ts_epoch") or 0.0)
-            if 0 <= age < _REFRESH_MIN_INTERVAL_SECONDS:
+            if not force and 0 <= age < _REFRESH_MIN_INTERVAL_SECONDS:
                 return row
             break
     refreshed: dict | None = None
@@ -1131,6 +1134,81 @@ def entry_match_surface(entry: dict) -> set[str]:
     # 注：袋内文件（resources.bags[].residue_files）**故意不入面**——D-2 裁定，
     # 见 bag_residue_files 文档串内的实测否决数据。台账列出=让人看见；门去咬=事故。
     return {Path(f).as_posix() for f in surface if f}
+
+
+def _resource_counts(resources: dict) -> dict[str, int]:
+    """五类资源计数（刷新出口的比对面；staging 取 file_count 不取截断清单长度）。"""
+    st = resources.get("staging") or {}
+    staging_n = int(st.get("file_count", len(st.get("files") or []))) if isinstance(st, dict) else 0
+    return {
+        "held": len(resources.get("held_files") or []),
+        "worktrees": len(resources.get("worktrees") or []),
+        "staging": staging_n,
+        "bags": len(resources.get("bags") or []),
+        "heartbeat": len(resources.get("heartbeat_files") or []),
+    }
+
+
+def refresh_open_entries(
+    root: str | Path,
+    *,
+    sid: str | None = None,
+    execute: bool = False,
+    by: str = "takeover-refresh",
+    now: float | None = None,
+) -> list[dict]:
+    """存量 open 条目的**刷新出口**（维护七班 P2，2026-10-14；病根见下）。
+
+    病根实测：`--scan` 的候选集＝注册表判死会话（`scan_dead_sessions`）＋在盘孤儿资源
+    （`_scan_orphan_resources`）。一条 open 条目若其会话**既已从注册表除名、资源又已被清完**，
+    就再不进任何候选集 ⇒ 带着立案当天的旧资源数（held=N/worktrees=1/heartbeat=1）永久挂 open，
+    L3 门禁按 `entry_match_surface` 逐件挡无辜袋——维护六班袋 0011 就死在这个形态上
+    （st-deadclean-20261013：处方三项在 23:4x 复核均已归零，条目仍报 held=3/worktrees=1）。
+
+    本出口做两件事，**默认 dry-run 只报数不动盘**（与 blob_gc --archive／sweep-absorbed 同哲学）：
+    1. 逐条重取五类资源实测面并写回（`force=True` 越 600s 节流窗——那是判死钩子热路径的
+       IO 防护，不是给显式人工刷新设的闸）；death_evidence 沿用立案原文，**不重写判死证据**；
+    2. 五类全零（held/worktrees/staging/bags/heartbeat）者走 `resolve_entry` 同一通道收口，
+       注记写明"资源面复测归零"——收口的唯一条件就是全零，有任何残留（含死袋）一律留 open。
+
+    禁 env 绕过、禁弱化判据：判零口径与 L1 采集面同源（`collect_resources`），不另立第二套。
+    """
+    root = Path(root)
+    now = time.time() if now is None else now
+    registry = _load_registry(root)
+    rows = _read_lines(root / _LEDGER_REL)
+    report: list[dict] = []
+    for row in rows:
+        if row.get("status") != "open":
+            continue
+        this_sid = row.get("sid") or ""
+        if sid is not None and this_sid != sid:
+            continue
+        entry = registry.get(this_sid) or {}
+        resources = collect_resources(root, this_sid, entry, now=now)
+        after = _resource_counts(resources)
+        before = _resource_counts(row.get("resources") or {})
+        all_clear = all(v == 0 for v in after.values())
+        rec = {"sid": this_sid, "before": before, "after": after, "all_clear": all_clear, "action": "dry-run"}
+        if execute:
+            if all_clear:
+                resolve_entry(root, this_sid, by=by, note="刷新出口复测：五类资源面全零，无待接管项")
+                rec["action"] = "resolved_all_clear"
+            else:
+                write_takeover_entry(
+                    root,
+                    this_sid,
+                    resources=resources,
+                    death_evidence=row.get("death_evidence"),
+                    registry_entry=entry,
+                    now=now,
+                    force=True,
+                )
+                rec["action"] = "refreshed"
+        report.append(rec)
+    if sid is not None and not report:
+        raise LookupError(f"no open takeover entry for sid={sid}")
+    return report
 
 
 def resolve_entry(root: str | Path, sid: str, by: str, note: str = "") -> dict:
@@ -1232,6 +1310,26 @@ def _cmd_resolve(root: Path, sid: str, by: str, note: str) -> int:
     return 0
 
 
+def _cmd_refresh(root: Path, sid: str | None, execute: bool = False) -> int:
+    """刷新出口 CLI：逐条打印 before→after，末行汇总（默认 dry-run）。"""
+    try:
+        rep = refresh_open_entries(root, sid=sid, execute=execute)
+    except LookupError as exc:
+        print(f"REFRESH: {exc}", file=sys.stderr)
+        return 1
+    mode = "EXECUTE" if execute else "DRY-RUN"
+    closed = 0
+    for r in rep:
+        if r["action"] == "resolved_all_clear":
+            closed += 1
+        print(
+            f"  [{mode}] {r['sid']}: {r['before']} -> {r['after']}"
+            f"  {'ALL_CLEAR→' + r['action'] if r['all_clear'] else '留 open（有残留）' if r['action'] == 'refreshed' else ''}"
+        )
+    print(f"refresh [{mode}]: 条目={len(rep)} 归零收口={closed}")
+    return 0
+
+
 def _cmd_sweep_absorbed(root: Path, age_hours: int = 48, execute: bool = False) -> int:
     """死信清算（已升级为史实归因版，旧单判据版已退役，理由见下）。
 
@@ -1290,10 +1388,21 @@ def main(argv: list[str] | None = None) -> int:
         help="事实归因清算：可分诊销账/抢救保留（默认零写，需 --execute 才动盘）",
     )
     parser.add_argument("--execute", action="store_true", help="配合 --sweep-absorbed：确认后真正执行销账搬迁")
+    parser.add_argument(
+        "--refresh",
+        nargs="?",
+        const="",
+        default=None,
+        metavar="SID",
+        help="存量 open 条目刷新出口：重取五类资源实测面（缺省全部，给 SID 只刷一条）；"
+        "默认 dry-run 只报数，配 --execute 才写盘/收口",
+    )
     parser.add_argument("--age-hours", type=int, default=48, help="超龄阈值（小时，缺省 48）")
     parser.add_argument("--root", default=".", help="仓库根（缺省=.）")
     args = parser.parse_args(argv)
     root = Path(args.root).resolve()
+    if args.refresh is not None:
+        return _cmd_refresh(root, (args.refresh or None), execute=args.execute)
     if args.sweep_absorbed:
         return _cmd_sweep_absorbed(root, args.age_hours, execute=args.execute)
     if args.scan:
