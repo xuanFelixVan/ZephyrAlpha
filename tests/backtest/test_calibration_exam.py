@@ -703,6 +703,75 @@ def test_unjudged_discloses_nan_ic_ir_face():
     assert "ic_ir_min" in u["numeric_keys_no_machine_face"]
 
 
+# ---------- 2026-10-13 挖矿二班：多日标的前向面（统筹立项批，纯追加可选档） ----------
+def _fwd_card(h: int = 10) -> dict:
+    return {
+        "target": {"primary": f"mkt_fwd{h}_panel_ew_return（面板等权 {h} 日前向收益均值，_proxy 非指数）"},
+        "target_forward_face": "precomputed",
+        "target_horizon_days": h,
+    }
+
+
+def test_forward_face_default_is_next_day_untouched():
+    """正对照（缺省面零改）：两键都不在卡面 ⇒ (1, False)，既有 178 张 preregistered 卡语义一字不动。"""
+    assert ce._forward_face({"target": {"primary": "next_day_index_return"}}) == (1, False)
+    assert ce._forward_face({}) == (1, False)
+
+
+def test_forward_face_declared_consumes_precomputed():
+    """申报且自洽 ⇒ 返回 (h, True)，执行器对注入的前向序列禁二次位移。"""
+    assert ce._forward_face(_fwd_card(10)) == (10, True)
+    assert ce._forward_face(_fwd_card(5)) == (5, True)
+
+
+@pytest.mark.parametrize(
+    "bad, frag",
+    [
+        ({"target_forward_face": "precomputed", "target": {"primary": "mkt_fwd10_x"}}, "半申报：有 face 无 horizon"),
+        ({"target_forward_face": "precomp", "target_horizon_days": 10}, "face 拼错不得静默退次日面"),
+        ({"target_forward_face": "precomputed", "target_horizon_days": 1}, "h=1 属次日面，须走缺省形制"),
+        ({"target_forward_face": "precomputed", "target_horizon_days": 253}, "越界"),
+        ({"target_forward_face": "precomputed", "target_horizon_days": "10"}, "字符串冒充"),
+        ({"target_forward_face": "precomputed", "target_horizon_days": True}, "bool 冒充整数"),
+        (
+            {"target_forward_face": "precomputed", "target_horizon_days": 10, "target": {"primary": "mkt_fwd5_x"}},
+            "两处不同值",
+        ),
+    ],
+)
+def test_forward_face_half_or_inconsistent_declared_rejected(bad, frag):
+    """红证：半申报/错拼/越界/两处不自洽 ⇒ 必抛，禁退化成次日面静默出分（方向性=fail-closed）。"""
+    with pytest.raises(ce._ToolError) as ei:
+        ce._forward_face(bad)
+    assert "拒" in str(ei.value) or "禁" in str(ei.value), frag
+
+
+def test_series_metrics_precomputed_differs_from_next_day_on_same_input():
+    """同一组 signal/target：申报面按 shift(0)、缺省面按 shift(-1) ⇒ 读数必不同（防"配置写了不消费"空转）。"""
+    idx = pd.bdate_range("2020-01-01", periods=30)
+    sig = pd.Series(np.sin(np.arange(30.0)), index=idx)
+    tgt = pd.Series(np.cos(np.arange(30.0)), index=idx)
+    plain = ce._series_metrics(sig, tgt, {"target": {"primary": "next_day_index_return"}})
+    fwd = ce._series_metrics(sig, tgt, _fwd_card(10))
+    assert plain["n"] == 29 and fwd["n"] == 30
+    assert plain["ic_mean"] != fwd["ic_mean"]
+    # 申报面必须等价于"不做任何位移"的手算（前向已在数据侧算完）
+    manual = ce._spearman(sig.to_numpy(), tgt.to_numpy())
+    assert abs(fwd["ic_mean"] - manual) < 1e-12
+
+
+def test_series_metrics_next_day_face_byte_identical_to_old_formula():
+    """红证对照：缺省面读数与改前公式 shift(-1) 手算逐位等——本补丁禁动既有次日语义。"""
+    idx = pd.bdate_range("2020-01-01", periods=40)
+    rng = np.random.default_rng(11)
+    sig = pd.Series(rng.normal(size=40), index=idx)
+    tgt = pd.Series(rng.normal(size=40) * 0.01, index=idx)
+    card = {"target": {"primary": "next_day_index_return"}, "window": {"regimes": {}}}
+    m = ce._series_metrics(sig, tgt, card)
+    ref = ce._spearman(*pd.concat({"s": sig, "t": tgt.shift(-1)}, axis=1).dropna().T.to_numpy())
+    assert abs(m["ic_mean"] - ref) < 1e-12
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # 裁定③（统筹 2026-10-12）：三柱机器面——迟滞带增益 / 30 日升降往返 / 危机段漏触发
 # 全部走合成级别序列，零 CH 零生产路径写；每条都配"改前必红"的判别力说明。
@@ -952,3 +1021,29 @@ def test_event_face_mask_pools_both_spans():
     first_only = ce._event_face(sig, nxt, "2020-02-01", "2020-03-23")
     assert pooled["n_event"] == int((s1 | s2).sum())
     assert first_only["n_event"] == int(s1.sum()) and pooled["n_event"] > first_only["n_event"]
+
+
+def test_declared_local_faces_load_signal_and_target(tmp_path, monkeypatch):
+    """卡面申报本地序列名 ⇒ run_card 无需外部注入即可两面齐（挖矿二班 class D 路）；未申报 ⇒ 照旧抛。"""
+    import pandas as _pd
+
+    from scripts.backtest.fexam import card_binding as _cbb
+
+    idx = _pd.bdate_range("2020-01-01", periods=80)
+    sig = _pd.Series(range(80), index=idx, dtype=float)
+    tgt = _pd.Series([x * 0.001 for x in range(80)], index=idx)
+    for name, ser in (("lu_count", sig), ("mkt_fwd5", tgt)):
+        _pd.DataFrame({"value": ser.to_numpy()}, index=ser.index).rename_axis("trade_date").to_csv(
+            tmp_path / f"{name}.csv"
+        )
+    monkeypatch.setattr(_cbb, "SERIES_DIR", tmp_path)
+    card = {
+        "data_binding": {"derived_series": "lu_count", "target_series": "mkt_fwd5"},
+        "target_forward_face": "precomputed",
+        "target_horizon_days": 5,
+    }
+    s2, t2 = ce._declared_local_faces(card)
+    assert len(s2) == 80 and len(t2) == 80
+    # 未申报（键全缺）＝零装载，由调用方按既有口径抛，缺省行为不被本档改变
+    assert ce._declared_local_faces({}) == (None, None)
+    assert ce._declared_local_faces({"data_binding": {"derived_series": "lu_count"}})[1] is None

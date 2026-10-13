@@ -650,6 +650,53 @@ def test_drawdown_level_series_pack_names_match_book_contract():
         assert s.index.equals(pd.DatetimeIndex(nav.index).sort_values()), name
 
 
+# ---------- 2026-10-13 挖矿二班：多日标的前向面申报（统筹立项批；只开目标面这一环） ----------
+def _agg_card(h: int = 10, **kw) -> dict:
+    """聚合 8 卡的卡面形制：r 位=面板等权 h 日前向（_proxy 非指数），表未入配方册。"""
+    c = _card(
+        target={"primary": f"mkt_fwd{h}_panel_ew_return（面板等权 {h} 日前向收益均值，_proxy 披露非指数）"},
+        data_binding=_binding(
+            signal_table="c1_market.kline_daily_hfq",
+            signal_column="close",
+            target_source=f"mkt_fwd{h}=nanmean(y_fwd{h}, axis=1)",
+        ),
+    )
+    c.update(kw)
+    return c
+
+
+def test_forward_face_absent_still_refused_by_index_gate():
+    """正对照（缺省语义零改）：不申报的聚合卡照旧死在 target_face_not_index_next_day——
+    既有 178 张 preregistered 卡与 5 类拒绑 reason 的分布不受本补丁影响。"""
+    r = cb.classify_card(_agg_card(10))
+    assert r["cls"] == "C" and r["reason"] == "target_face_not_index_next_day"
+
+
+def test_declared_forward_face_opens_target_gate_only():
+    """申报且自洽 ⇒ 目标面放行，但**数据面照拦**（表未入配方册）——证明本补丁没顺手放宽别的闸。"""
+    c = _agg_card(10, target_forward_face="precomputed", target_horizon_days=10)
+    r = cb.classify_card(c)
+    assert r["cls"] == "A?" and r["reason"].startswith("table_not_in_recipe_book"), r
+
+
+def test_declared_forward_face_half_or_inconsistent_refused():
+    """红证：半申报（只给 horizon）与两处不同值都必须照拦，reason 点名缺陷形态。"""
+    half = _agg_card(10, target_horizon_days=10)
+    r_half = cb.classify_card(half)
+    assert r_half["cls"] == "C" and r_half["reason"].startswith("declared_forward_face_bad_marker"), r_half
+    mism = _agg_card(10, target_forward_face="precomputed", target_horizon_days=5)
+    r_mis = cb.classify_card(mism)
+    assert r_mis["cls"] == "C" and r_mis["reason"] == "declared_forward_face_horizon_mismatch:5vs10", r_mis
+
+
+def test_other_multi_day_wording_still_horizon_blocked():
+    """不弱化：申报面只摘掉自己声明的 mkt_fwd<h> 记号，卡面另有多日措辞（next_5d）仍判 executor_horizon_mismatch。"""
+    c = _agg_card(10, target_forward_face="precomputed", target_horizon_days=10)
+    c["target"]["primary"] += "；另看 next_5d 表现"
+    r = cb.classify_card(c)
+    assert r["cls"] == "C" and r["reason"].startswith("executor_horizon_mismatch"), r
+
+
 def test_load_binding_book_arms_variant_is_fail_closed(tmp_path):
     """配对选择器三红：缺档名/未知档名/两键并存，都必须当场红，禁默认取第一档。
 
@@ -794,3 +841,40 @@ def test_arm_context_refuses_both_arms_reading_the_same_level_series():
     entry["arms"]["params_base"]["levels"] = "series:levels_hysteresis"
     with pytest.raises(ValueError, match="arm_levels_same_source"):
         cb.arm_context_for_judge(entry, _ctx_base(idx, five))
+
+
+# ---------- 2026-10-13 挖矿二班：聚合 8 卡走 class D 本地序列路（物化件 agg8-v1） ----------
+def test_agg8_declared_names_are_registered_hints():
+    """正证：8 卡申报的 derived_series/target_series 全部命中 _CSV_HINTS 精确键（禁靠子串误绑）。"""
+    from pathlib import Path as _P
+
+    import yaml
+
+    cards = sorted(_P(".").rglob("docs/03_modules/**/*__calibration__4*_agg_*.yaml"))
+    assert len(cards) == 8, len(cards)
+    for c in cards:
+        b = yaml.safe_load(c.read_text(encoding="utf-8"))["data_binding"]
+        assert b["derived_series"] in cb._CSV_HINTS, (c.name, b.get("derived_series"))
+        assert b["target_series"] in cb._CSV_HINTS, (c.name, b.get("target_series"))
+
+
+def test_class_d_requires_the_file_and_names_it_when_absent(tmp_path, monkeypatch):
+    """红证＋绿证：文件不在 ⇒ cls U 且 reason 点名缺哪枚 CSV；放入后 ⇒ cls D 绑到该文件。"""
+    import pandas as _pd
+
+    monkeypatch.setattr(cb, "SERIES_DIR", tmp_path)
+    card = _agg_card(10, target_forward_face="precomputed", target_horizon_days=10)
+    card["data_binding"] = dict(card["data_binding"], derived_series="lu_count")
+    r_absent = cb.classify_card(card)
+    assert r_absent["cls"] == "U" and r_absent["reason"] == "series_csv_absent:lu_count.csv", r_absent
+    _pd.DataFrame({"value": [1.0, 2.0]}, index=_pd.to_datetime(["2024-01-01", "2024-01-02"])).rename_axis(
+        "trade_date"
+    ).to_csv(tmp_path / "lu_count.csv")
+    r_present = cb.classify_card(card)
+    assert r_present["cls"] == "D" and r_present["recipe"] == "local_series_csv", r_present
+
+
+def test_load_named_series_empty_name_is_none_not_crash():
+    """申报位空缺 ⇒ 返回 None 交调用方 fail-closed（禁把空名当有效序列名去拼路径）。"""
+    assert cb.load_named_series("") is None
+    assert cb.load_named_series(None) is None
