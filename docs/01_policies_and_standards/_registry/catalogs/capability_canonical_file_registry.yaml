@@ -36239,6 +36239,16 @@ creation_tokens:
   token: backfix-99-delivery-20261010
   capability: backfix_campaign_ledger
   created_by: st-backfix-20261010
+- file: docs/_working/backfix_campaign/dr_drill_plan.md
+  token: dr-drill-plan-dr-drill-plan-20261013
+  capability: dr_drill_plan
+  created_by: st-bakdr-20261013
+  merge_evaluation: "新增=四类恢复演练方案袋（零施工），收编而非新建：尺外形沿用 PG 已裁 judge_drill 八键契约，SQLite 用既有零消费者的 verify_backup，CH 用每轮已产的 226 条 manifest 作结构基线，替代 2026-09-15 那次未入库的人工演练脚本"
+- file: docs/_working/backfix_campaign/dr_drill_plan_20261013.md
+  token: dr-drill-plan-dr-drill-plan-20261013-20261013
+  capability: dr_drill_plan
+  created_by: st-bakdr-20261013
+  merge_evaluation: "新增=四类恢复演练方案袋（零施工），收编而非新建：尺外形沿用 PG 已裁 judge_drill 八键契约，SQLite 用既有零消费者的 verify_backup，CH 用每轮已产的 226 条 manifest 作结构基线，替代 2026-09-15 那次未入库的人工演练脚本"
 - file: docs/_working/backfix_campaign/e1_reading_table_v2.md
   token: backfix-e1table-v2-20261010
   capability: backfix_e1_reading_table_v2
@@ -38365,6 +38375,11 @@ creation_tokens:
   capability: commit_speedup
   created_by: st-commitspeed-tbl-20260924
   merge_evaluation: "原始调查报告随役归档（ttl:task_bound），与 campaign 卷宗同域同役唯一真源，不新增治理面"
+- file: docs/_working/condaxis/00_campaign_summary.md
+  token: condaxis-campaign-summary-00-campaign-summary-20261013
+  capability: condaxis_campaign_summary
+  created_by: st-condaxis-20261013
+  merge_evaluation: "战役总结一页纸（总账/负结果/呈批入口/交接遗留），替代无，内收不并（总结底稿）"
 - file: docs/_working/condaxis/00_inputs/2026-10-13-capital-behavior-research-dossier.md
   token: condaxis-research-inputs-2026-10-13-capital-behavior-research-dossier-20261013
   capability: condaxis_research_inputs
@@ -38379,6 +38394,7 @@ creation_tokens:
   token: condaxis-research-inputs-formreg-survey-2026-10-13-20261013
   capability: condaxis_research_inputs
   created_by: st-condaxis-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "条件轴四域（大盘两态/板块/情绪/资金行为）研究输入四件集，替代无（docs/_working/condaxis/ 首批），内收 w5_1 不并（四域研究底稿非规则数据，产出面后续按域收敛）；总包令=Owner 2026-10-13 st-condaxis 全授权"
 - file: docs/_working/condaxis/00_inputs/sector_problem_definition_2026_10_13.md
   token: condaxis-research-inputs-sector-problem-definition-2026-10-13-20261013
@@ -38459,46 +38475,55 @@ creation_tokens:
   token: condaxis-mining-workbooks-00-skeleton-20261013
   capability: condaxis_mining_workbooks
   created_by: st-condaxis-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
 - file: docs/_working/condaxis/formreg/1_feat_bridge.md
   token: condaxis-mining-workbooks-1-feat-bridge-20261013
   capability: condaxis_mining_workbooks
   created_by: st-condaxis-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
 - file: docs/_working/condaxis/formreg/2_state_machine.md
   token: condaxis-mining-workbooks-2-state-machine-20261013
   capability: condaxis_mining_workbooks
   created_by: st-condaxis-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
 - file: docs/_working/condaxis/formreg/3_grayscale.md
   token: condaxis-mining-workbooks-3-grayscale-20261013
   capability: condaxis_mining_workbooks
   created_by: st-condaxis-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
 - file: docs/_working/condaxis/formreg/4_turning_signal.md
   token: condaxis-mining-workbooks-4-turning-signal-20261013
   capability: condaxis_mining_workbooks
   created_by: st-condaxis-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
 - file: docs/_working/condaxis/formreg/5_vocab_registry.md
   token: condaxis-mining-workbooks-5-vocab-registry-20261013
   capability: condaxis_mining_workbooks
   created_by: st-condaxis-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
 - file: docs/_working/condaxis/formreg/6_condition_package.md
   token: condaxis-mining-workbooks-6-condition-package-20261013
   capability: condaxis_mining_workbooks
   created_by: st-condaxis-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
 - file: docs/_working/condaxis/formreg/7_validation.md
   token: condaxis-mining-workbooks-7-validation-20261013
   capability: condaxis_mining_workbooks
   created_by: st-condaxis-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
 - file: docs/_working/condaxis/formreg/8_prereg_targeting.md
   token: condaxis-formreg-prereg-8-prereg-targeting-20261013
   capability: condaxis_formreg_prereg
   created_by: st-cdx-formreg-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "不并：预注册判据文书是 G4-5 先 commit 后跑数纪律的独立载体，与挖矿簿 0-7（状态=mining_workbook）对象不同；净零面=替代口头判据（零载体）"
 - file: docs/_working/condaxis/sector/00_skeleton.md
   token: condaxis-mining-workbooks-00-skeleton-20261013
@@ -38884,6 +38909,16 @@ creation_tokens:
   capability: deadletter_r5_exemption
   created_by: st-sJ-doctorb2-20261004
   merge_evaluation: "跨域不同对象不并——R5豁免标记文件属门禁机制数据产物，与战役骨架册内容件不同对象，无替代无退役"
+- file: docs/_working/deadmass_campaign/00_ledger.md
+  token: deadmass-00-ledger-20261013
+  capability: deadmass
+  created_by: st-deadmass-20261013
+  merge_evaluation: "净零：沿用 deadclean/deadcure_campaign 的 00_ledger 案卷惯例，不新建第二真源；本班全部判定走在册 dead-archive 正门与既有墓园 INDEX，新增 gate=0 新增脚本=0"
+- file: docs/_working/deadmass_campaign/99_delivery.md
+  token: deadmass-99-delivery-20261013
+  capability: deadmass
+  created_by: st-deadmass-20261013
+  merge_evaluation: "净零：沿用 deadclean/finalclean2_campaign 的 00_ledger＋99_delivery 两册同目录惯例，本册为收班账非新规则载体"
 - file: docs/_working/decision_map_campaign/links/L05_t0/material_precapacity_sample20_stats.yaml
   token: decision-map-campaign-material-precapacity-sample20-stats-rename-20260925
   capability: decision_map_campaign
@@ -45034,6 +45069,11 @@ creation_tokens:
   token: industry-chain-alpha-industry-chain-global-expansion-plan-20260916
   capability: industry_chain_alpha
   created_by: st-igalpha-20260917
+- file: docs/_working/infoaxis/00_goal_structure_research_2026_10_13.md
+  token: tdm-goal-structure-infoaxis-00-20261013
+  capability: tdm_goal_structure
+  created_by: st-goaldef-20261013
+  merge_evaluation: "successor_of=file=docs/_working/tdm_goal_structure_research_2026_10_13.md|token=tdm-goal-structure-tdm-goal-structure-research-2026-10-13-20261013（同实体随迁，FOLDER-CAPACITY 治本）。纯新增调研档(task_bound一次性快照)；不替代旧条目——互引 condaxis 呈批包/fullflow 57缺口矩阵/f35一问一考/l9_readiness 在册真源，不重建第二真源（裁定#375 内收）。"
 - file: docs/_working/infrastructure_pipelines_engines_construction_plan.md
   token: auto-infra-pipelines-engines-plan-20260806
   capability: infrastructure_construction_plan
@@ -49107,6 +49147,11 @@ creation_tokens:
   capability: mineloop_composite_face
   created_by: st-mineloop2-20261012
   merge_evaluation: "扩在册绑定册/分类器的一面（净零：不新建模块）；与 04_ 逐臂净值面并列不合并"
+- file: docs/_working/mineloop2_campaign/15_d10_two_formula_probe_receipt.yaml
+  token: mineloop-composite-face-15-d10-two-formula-probe-receipt-20261013
+  capability: mineloop_composite_face
+  created_by: st-mineloop2-20261012
+  merge_evaluation: "一次性探针回执 promote 入册（非常驻资产，随 D10 批文消费后归档）"
 - file: docs/_working/mineloop_campaign/00_rolling_report_r1.md
   token: mineloop-campaign-00-rolling-report-r1-20261010
   capability: mineloop_campaign
@@ -52757,11 +52802,6 @@ creation_tokens:
   token: tdm20-expansion-index-20260922
   capability: tdm20_expansion
   created_by: st-tdm20-20260923
-- file: docs/_working/tdm_goal_structure_research_2026_10_13.md
-  token: tdm-goal-structure-tdm-goal-structure-research-2026-10-13-20261013
-  capability: tdm_goal_structure
-  created_by: st-goaldef-20261013
-  merge_evaluation: "纯新增调研档(task_bound一次性快照)；不替代旧条目——互引 condaxis 呈批包/fullflow 57缺口矩阵/f35一问一考/l9_readiness 在册真源，不重建第二真源（裁定#375 内收）"
 - file: docs/_working/tdm_mount/A_blueprint_id_unification.md
   token: tdm-mount-a-blueprint-id-unification-20261003
   capability: tdm_mount
@@ -61033,6 +61073,11 @@ creation_tokens:
   token: auto-sync-panorama-module-20260716
   capability: panorama_module_sync_engine
   created_by: session-sess-29636-20260716185504
+- file: scripts/governance/tdm_goal_blocks.py
+  token: tdm-goal-blocks-injector-20261013
+  capability: tdm_goal_mechanism
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "Q5 目标机制三件之一：TDM goal 块注入器＋--check 漂移探针（151 核心节点四字段＋挂起显式标）；替代无（新执法/读数面），消费方=goal_readiness 生成器(Q6)+开班令 gate(Q7)＋对齐检查 align_all 族；净零声明=战役台账 §5"
 - file: scripts/governance/test_concurrent_safety.ps1
   token: auction-backfill-test-concurrent-safety-20260916
   capability: auction_backfill
@@ -66080,26 +66125,31 @@ creation_tokens:
   token: condaxis-formreg---init---20261013
   capability: condaxis_formreg
   created_by: st-cdx-formreg-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "不并：P-S 年代学/jump 两态/双边 CUSUM/BOCPD 四件=跨方法不同对象（规则层/概率层/检测器三族），仓内负存在已证零同义（挖矿簿 R5 负存在复认：jump/cusum 双边/bocpd/P-S 全仓零命中）；净零面=替代研究册四车道外部方法自建"
 - file: src/zephyr/regime/formreg/bocpd_online.py
   token: condaxis-formreg-bocpd-online-20261013
   capability: condaxis_formreg
   created_by: st-cdx-formreg-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "不并：P-S 年代学/jump 两态/双边 CUSUM/BOCPD 四件=跨方法不同对象（规则层/概率层/检测器三族），仓内负存在已证零同义（挖矿簿 R5 负存在复认：jump/cusum 双边/bocpd/P-S 全仓零命中）；净零面=替代研究册四车道外部方法自建"
 - file: src/zephyr/regime/formreg/cusum_two_sided.py
   token: condaxis-formreg-cusum-two-sided-20261013
   capability: condaxis_formreg
   created_by: st-cdx-formreg-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "不并：P-S 年代学/jump 两态/双边 CUSUM/BOCPD 四件=跨方法不同对象（规则层/概率层/检测器三族），仓内负存在已证零同义（挖矿簿 R5 负存在复认：jump/cusum 双边/bocpd/P-S 全仓零命中）；净零面=替代研究册四车道外部方法自建"
 - file: src/zephyr/regime/formreg/jump_layer.py
   token: condaxis-formreg-jump-layer-20261013
   capability: condaxis_formreg
   created_by: st-cdx-formreg-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "不并：P-S 年代学/jump 两态/双边 CUSUM/BOCPD 四件=跨方法不同对象（规则层/概率层/检测器三族），仓内负存在已证零同义（挖矿簿 R5 负存在复认：jump/cusum 双边/bocpd/P-S 全仓零命中）；净零面=替代研究册四车道外部方法自建"
 - file: src/zephyr/regime/formreg/ps_chronology.py
   token: condaxis-formreg-ps-chronology-20261013
   capability: condaxis_formreg
   created_by: st-cdx-formreg-20261013
+  no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "不并：P-S 年代学/jump 两态/双边 CUSUM/BOCPD 四件=跨方法不同对象（规则层/概率层/检测器三族），仓内负存在已证零同义（挖矿簿 R5 负存在复认：jump/cusum 双边/bocpd/P-S 全仓零命中）；净零面=替代研究册四车道外部方法自建"
 - file: src/zephyr/regime/index_market_brief.py
   token: auto-index-market-brief-20260823

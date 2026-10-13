@@ -4692,6 +4692,30 @@ entries:
   - docs/_working/gpu_rewrite/verification_framework.md
   approved_paths: []
   related_rulings: []
+- ruling_id: 裁定#516
+  date: "2026-10-13"
+  title: Owner 2026-10-13 全批 Q1-Q8＋追批 Q9-Q10：G0 夏普阶梯制（北极星 3-4）／应通分母=151 核心节点／信息供给轴＋日内做T 六域开役授权／TDM goal 块四字段+目标就绪度生成器+开班令目标块硬前置三件立项／千股千评·互动易出信号先行／L2 逐笔委托不开采集
+  status: active
+  session: st-infoaxis-20261013
+  summary: Owner 谈话全批（裁决记录=调研档 §8）逐条转录：Q1 G0=夏普阶梯制——北极星 3-4（Owner 定锚），v1=成本后样本外夏普≥1 量级＋年化下限双达标→v2≥2→v3 逼近 3-4（模拟盘；实盘=Owner 保留面）；测量纪律四条=成本后/全期连续/样本外/双达标。Q2 应通分母=151 核心决策节点（31 源线身份节点＋4 币圈骨架＋13 条 B/C 挂起源线不计分母，挂起有据不计红）。Q3 信息供给轴战役开班（本裁定即批件）。Q4 修订：做T/日内域提前与本役并发；其余决策流域（L3 选股/卖出/持仓其余）排本役之后。Q5 TDM 节点 goal 块升级（+goal_statement/output_contract/exam_ref/campaign_ref 四字段，151 核心节点全量，18 族目标首批灌入，真源=调研档 §4，挂起节点显式标）。Q6 目标就绪度生成器立项（对标 l9_readiness：事件触发禁 cron/绿黄红分档/fail-open 禁静默绿/suspended 不计红；绿=有目标＋有考卡＋有消费方＋有读数）。Q7 开班令目标块硬前置（gate 挂接，无目标块的新开班令=拦，自我适用）。Q8 千股千评＋互动易出信号先行（散户情绪/公司活跃度微信号），一季内无增量按内收原则退役走墓碑。Q9 追批：做T 优先级放高＝第六域，与本役五域同时开挖并发施工。Q10 追批：L2 逐笔委托不开采集（要花钱，实盘盈利后再议），资金班 C4 审计面收窄为现有源可用性；tick 供给口径更正——miniQMT 模拟盘常挂在跑=实时源，QMT 桥可取 tick 五档、慢 3-5 秒（进回测须计入防前视），旧「清退后无在跑源」记载作废（A02 源线读数面引用式更正）。宏观 S0 归属=P0 挖矿后出建议默认先行，非保留面。模型分层=方案 B（GLM 5.3 守闸口＋GLM 5.3 Flash 跑车道，Owner 2026-10-13 定，全役适用）。
+  category: 治理
+  evidence: docs/_working/infoaxis/00_goal_structure_research_2026_10_13.md §8（Q1-Q8 呈批表＋裁决记录：2026-10-13 Owner 谈话全批＋同日追批 Q9-Q10）；开班令 v2《信息供给轴＋日内做T 总包 st-infoaxis-20261013》§四（Owner 已批事项速览：Q1-Q10 全文）——本裁定为其正门落账。
+  adjudicator: Owner（2026-10-13 谈话全批＋追批）；登记执行=st-infoaxis-20261013（信息轴总包首包代登记，AI 代登记署名依根宪法 §5.3；内容系 Owner 裁决转录，数值与口径零自拟）
+  superseded_by: ""
+  affected_files:
+  - docs/_working/infoaxis/00_goal_structure_research_2026_10_13.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  approved_paths:
+  - docs/_working/infoaxis/00_goal_structure_research_2026_10_13.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings:
+  - 裁定#424
+  - 裁定#502
+  - 裁定#375
+  - 裁定#229
+  - 裁定#230
+  - 裁定#304
+  - 裁定#400
 - ruling_id: 裁定#6
   date: "2026-06-20"
   title: 路径SSoT（路径真源铁律）
