@@ -372,6 +372,10 @@ def _run_feeds_query(keyword: str, limit: int) -> int:
 
     恒现读真源（不经世代缓存）：potential_consumers 属写侧对账轴，世代快照未携该列
     ——宁可多一次查询，也不让供数反查读到旧代（S4 §⑤ 不可缓存位；同代化留 R2 判）。
+    空结果两态披露（K10 措辞）：该腿 SQL 只带 limit、关键词在 Python 侧过滤，
+    故 0 行既可能是"整轴零供给"也可能是"轴上有供给而此词未命中（且受 limit 截断）"——
+    两态含义相反，混为一谈会把"查空"读成"查无"。零供给态只在同面空关键词探针亦 0 行
+    时才宣布；探针仅在未命中路径上发生（命中路径零额外查询）。
     """
     from zephyr.governance.depgraph_schema import (  # noqa: PLC0415 — R4 惰性化（见模块头注释）
         get_depgraph_pg_connection,
@@ -382,10 +386,21 @@ def _run_feeds_query(keyword: str, limit: int) -> int:
     try:
         lib = Librarian(conn)
         rows = lib.lookup_by_feeds(keyword, limit=limit)
+        supply = [] if rows else lib.lookup_by_feeds("", limit=limit)
     finally:
         release_depgraph_pg_connection(conn)
     if not rows:
-        print(f"(no assets feeding {keyword!r})")
+        if not supply:
+            print(
+                f"(no assets feeding {keyword!r}: 供数轴现面零供给——同面同 limit 的空关键词探针亦 0 行，"
+                "即 lib_assets.potential_consumers 非空行本身为 0；本结果不等于'该关键词无消费者'，"
+                "供数写侧采集器未接线为在册缺口)"
+            )
+        else:
+            print(
+                f"(no assets feeding {keyword!r}: 供数轴现有 {len(supply)} 行供给"
+                f"（同面 limit={limit} 截断后未命中，不等于无消费者)"
+            )
         return 1
     for row in rows:
         consumers = ",".join(row.get("potential_consumers") or [])
