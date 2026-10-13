@@ -430,6 +430,38 @@ def _is_git_tracked(file_path: str) -> bool:
         return False
 
 
+def _remaining_life_face(info: dict[str, Any], now: float) -> str:
+    """把一条锁记录的**实际过期点**渲染成人话（纯观察面，不参与任何判定）。
+
+    病根（维护七班 st-maint7-20261014 §五-2 定性，统筹 2026-10-14 增补交本班落地）：
+    同一把锁在四个打印面上口径不一——`list` 报剩余、`status`/`check`/`guard-write` 只报
+    "已锁定 Xs"（那是 acquire 时刻的过去时龄），而 expires_at 会被两条腿改写
+    （失败收窄 `shorten_claim_ttl`＝300s 级；入队续命 `renew_claim_ttl`＝now+30min 并打
+    `renewed_at`），旧格式锁还有一条"回退 timestamp+DEFAULT_TTL_S 且忽略续期"的分支。
+    ⇒ 观察者无法复核"这条 claim 还能活多久／是不是已经过期却还挂在册上"。
+    本函数让四面共用一把尺，并把改写来源一并打出来（只加观察面，锁语义逐字不变）。
+    """
+    expires_at = info.get("expires_at")
+    if expires_at is None:
+        ts = info.get("timestamp", 0)
+        return f"已锁定 {(now - ts) / 60.0:.1f}m（旧格式无 expires_at，判活回退 timestamp+DEFAULT_TTL_S）"
+    remain = float(expires_at) - now
+    if remain > 0:
+        body = f"剩余 {remain / 60.0:.1f}m"
+    else:
+        body = f"已过期 {-remain / 60.0:.1f}m（待 cleanup，仍挂册＝惰性清理）"
+    if info.get("retention"):
+        src = f"来源=收窄({info['retention']})"
+    elif info.get("renewed_at") is not None:
+        src = "来源=入队续期"
+    else:
+        src = "来源=acquire 原 TTL"
+    ttl_s = info.get("ttl_s")
+    if isinstance(ttl_s, (int, float)) and ttl_s:
+        src += f"，ttl={ttl_s / 60.0:.0f}m"
+    return f"{body}｜{src}"
+
+
 def cmd_status() -> int:
     _ensure_lock_root()
     registry = _load_registry()
@@ -439,17 +471,29 @@ def cmd_status() -> int:
         print("CLEAN — 当前无任何文件锁")
         return 0
 
-    print(f"LOCKED — {len(locks)} 个文件被锁定：\n")
+    now = time.time()
+    lapsed = 0
+    legacy = 0
+    for info in locks.values():
+        if info.get("expires_at") is None:
+            legacy += 1
+        elif float(info["expires_at"]) <= now:
+            lapsed += 1
+    print(
+        f"LOCKED — {len(locks)} 个文件被锁定（活 {len(locks) - lapsed - legacy}／"
+        f"已过期仍挂册 {lapsed}／旧格式无 expires_at {legacy}）：\n"
+    )
     for file_path, info in sorted(locks.items()):
         owner = info.get("owner_id", "unknown")
         task = info.get("task", "")
         ts = info.get("timestamp", 0)
-        age = time.time() - ts
+        age = now - ts
         age_str = f"{age:.0f}s" if age < 60 else f"{age / 60:.1f}m"
         task_str = f" [{task}]" if task else ""
         print(f"  {file_path}")
         print(f"    持有者: {owner}{task_str}")
         print(f"    已锁定: {age_str}")
+        print(f"    剩余寿命: {_remaining_life_face(info, now)}")
 
     return 0
 
@@ -483,6 +527,7 @@ def cmd_check(file_path: str) -> int:
     age = time.time() - ts
     age_str = f"{age:.0f}s" if age < 60 else f"{age / 60:.1f}m"
     print(f"  已锁定: {age_str}")
+    print(f"  剩余寿命: {_remaining_life_face(owner, time.time())}")
     return 1
 
 
@@ -1462,12 +1507,7 @@ def cmd_list(session_id: str | None = None) -> int:
         task = info.get("task", "")
         task_str = f" [{task}]" if task else ""
         expires_at = info.get("expires_at")
-        if expires_at is not None:
-            remain = expires_at - now
-            ttl_str = f"剩余 {remain / 60.0:.1f}m" if remain > 0 else "已过期（待 cleanup）"
-        else:
-            ts = info.get("timestamp", 0)
-            ttl_str = f"已锁定 {(now - ts) / 60.0:.1f}m（旧格式无 expires_at）"
+        ttl_str = _remaining_life_face(info, now)
         print(f"  {file_path}")
         print(f"    持有者: {owner}{task_str} | {ttl_str}")
 
@@ -1610,6 +1650,8 @@ def cmd_guard_write(file_path: str, session_id: str, task: str = "") -> int:
             age = time.time() - ts
             age_str = f"{age:.0f}s" if age < 60 else f"{age / 60:.1f}m"
             print(f"  已锁定: {age_str}")
+            if owner:
+                print(f"  对方剩余寿命: {_remaining_life_face(owner, time.time())}")
             return 1
 
     rc = cmd_acquire(file_path, session_id, AcquireOptions(task=task))

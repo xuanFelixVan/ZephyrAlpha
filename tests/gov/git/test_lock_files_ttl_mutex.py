@@ -466,3 +466,124 @@ class TestBatchLockInterface:
     def test_collect_path_args_rejects_bad_list(self) -> None:
         assert lock_files._collect_path_args(["--files-from", "Z:/no/such/list.txt"]) is None
         assert lock_files._collect_path_args(["--files"]) is None
+
+
+# ── 10. 打印面剩余寿命同源（统筹 2026-10-14 增补，落维护七班 §五-2"打印口径与实际过期点不同源"）──
+# 只加观察面：以下断言全部针对**文本**，判定分支（_is_stale／cleanup）逐字不变。
+import re  # noqa: E402
+
+
+def _put_lock(lock_root: Path, path: str, session: str, **overrides) -> dict:
+    """正常 acquire 后，按真实改写形态覆写 registry＋owner.json 的过期相关字段。"""
+    _run(lock_files.cmd_acquire, path, session, options=lock_files.AcquireOptions(skip_naming_check=True))
+    reg = _registry(lock_root)
+    reg["locks"][path].update(overrides)
+    (lock_root / "registry.json").write_text(json.dumps(reg, ensure_ascii=False), encoding="utf-8")
+    of = lock_files._owner_file(lock_files._lock_dir(path))
+    owner = json.loads(of.read_text(encoding="utf-8"))
+    owner.update(overrides)
+    of.write_text(json.dumps(owner, ensure_ascii=False), encoding="utf-8")
+    return reg["locks"][path]
+
+
+def _minutes(text: str, label: str) -> float | None:
+    m = re.search(label + r"\s+(-?\d+(?:\.\d+)?)m", text)
+    return float(m.group(1)) if m else None
+
+
+def test_status_prints_remaining_life_matching_expires_at(isolated_lock_root: Path) -> None:
+    """改前红：status 原本只有"已锁定 X"（过去时龄），无"剩余寿命"行。"""
+    _put_lock(isolated_lock_root, "docs/rl1.md", "sess-a")
+    rc, out = _run(lock_files.cmd_status)
+    assert rc == 0, out
+    assert "剩余寿命:" in out, out
+    assert "来源=acquire 原 TTL" in out, out
+    # 默认 TTL=1800s ⇒ 剩余应在 30m 附近，而不是把过去时龄当剩余
+    assert _minutes(out, "剩余") is not None and 29.0 <= _minutes(out, "剩余") <= 30.1
+
+
+def test_status_reflects_failed_claim_narrowing_not_acquire_ttl(isolated_lock_root: Path) -> None:
+    """提交失败收窄腿（shorten_claim_ttl→300s）必须体现在打印面——这正是"9–10 分钟即 expired"的成因。"""
+    now = time.time()
+    _put_lock(
+        isolated_lock_root,
+        "docs/rl2.md",
+        "sess-b",
+        ttl_s=300.0,
+        expires_at=now + 300.0,
+        retention="commit-failed-retained",
+    )
+    rc, out = _run(lock_files.cmd_status)
+    assert rc == 0, out
+    assert "来源=收窄(commit-failed-retained)" in out, out
+    rem = _minutes(out, "剩余")
+    assert rem is not None and rem <= 5.1, out
+    # 反向自证：若打印面仍按 acquire 的 30 分钟口径，这条会报 ~30m —— 必须不是
+    assert not (29.0 <= rem <= 30.1), out
+
+
+def test_status_reflects_enqueue_renewal(isolated_lock_root: Path) -> None:
+    """入队续命腿（renew_claim_ttl→now+30min 并打 renewed_at）须被打印面认出来。"""
+    now = time.time()
+    _put_lock(isolated_lock_root, "docs/rl3.md", "sess-c", ttl_s=6840.0, expires_at=now + 6840.0, renewed_at=now)
+    rc, out = _run(lock_files.cmd_status)
+    assert rc == 0, out
+    assert "来源=入队续期" in out, out
+    rem = _minutes(out, "剩余")
+    assert rem is not None and 113.5 <= rem <= 114.1, out
+
+
+def test_status_names_expired_but_still_listed_lazily(isolated_lock_root: Path) -> None:
+    """惰性清理形态必须点名：过期却仍挂册＝不能伪装成活跃 claim。"""
+    now = time.time()
+    _put_lock(isolated_lock_root, "docs/rl4.md", "sess-d", ttl_s=1800.0, expires_at=now - 120.0)
+    _put_lock(isolated_lock_root, "docs/rl5.md", "sess-e")
+    rc, out = _run(lock_files.cmd_status)
+    assert rc == 0, out
+    assert "已过期" in out and "（待 cleanup，仍挂册＝惰性清理）" in out, out
+    assert "活 1／已过期仍挂册 1／旧格式无 expires_at 0" in out, out
+    # 另一把活锁不受影响（谓词只圈那条）
+    assert _minutes(out, "剩余") is not None
+
+
+def test_legacy_lock_without_expires_at_prints_fallback_wording(isolated_lock_root: Path) -> None:
+    """旧格式（无 expires_at）：打印面须显式声明走回退口径，并单独计数。"""
+    _put_lock(isolated_lock_root, "docs/rl6.md", "sess-f", expires_at=None)
+    rc, out = _run(lock_files.cmd_status)
+    assert rc == 0, out
+    assert "旧格式无 expires_at，判活回退 timestamp+DEFAULT_TTL_S" in out, out
+    assert "旧格式无 expires_at 1" in out, out
+    rc2, out2 = _run(lock_files.cmd_list)
+    assert rc2 == 0 and "旧格式无 expires_at" in out2, out2
+
+
+def test_four_print_faces_agree_on_remaining_minutes(isolated_lock_root: Path) -> None:
+    """核心判据＝四面同源：同一把锁在 status／check／list／guard-write 报同一个剩余分钟数。"""
+    now = time.time()
+    path = "docs/rl7.md"
+    _put_lock(isolated_lock_root, path, "sess-g", ttl_s=900.0, expires_at=now + 900.0, renewed_at=now)
+
+    _, out_status = _run(lock_files.cmd_status)
+    _, out_list = _run(lock_files.cmd_list)
+    rc_check, out_check = _run(lock_files.cmd_check, path)
+    assert rc_check == 1 and "LOCKED" in out_check, out_check
+    rc_guard, out_guard = _run(lock_files.cmd_guard_write, path, "sess-other")
+    assert rc_guard == 1 and "BLOCKED" in out_guard, out_guard
+    assert "对方剩余寿命" in out_guard, out_guard
+
+    vals = [
+        _minutes(out_status, "剩余"),
+        _minutes(out_list, "剩余"),
+        _minutes(out_check, "剩余"),
+        _minutes(out_guard, "剩余"),
+    ]
+    assert all(v is not None for v in vals), vals
+    # 15m 的锁四面都须报 ~15m；容差 0.3m 只吸收跨调用时钟抖动，不吸收口径差
+    assert max(vals) - min(vals) <= 0.3, vals
+    assert 14.7 <= vals[0] <= 15.1, vals
+    assert all("来源=入队续期" in t for t in (out_status, out_list, out_check, out_guard)), (
+        out_status,
+        out_list,
+        out_check,
+        out_guard,
+    )
