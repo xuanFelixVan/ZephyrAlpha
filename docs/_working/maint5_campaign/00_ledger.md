@@ -450,3 +450,36 @@ cd /d/ZephyrAlpha && python -c "import json;from pathlib import Path;b={json.loa
 # ④ 批③ 聚合终读数（期望：plan_bridge 键数 8；09-21 三来源 46/1/1）
 cd /d/ZephyrAlpha && python -c "import sys;sys.path.insert(0,r'D:/ZephyrAlpha/src');from zephyr.data import ch_writer as cw;T='c1_backtest.sim_daily_report';f=lambda s:[list(r) for r in cw.query_strict(s)];print('plan_bridge 键数',f('SELECT count() FROM '+T+\" FINAL WHERE source='plan_bridge'\"));print('09-21 按来源',f(\"SELECT source, count(), sum(eval_score=1) FROM \"+T+\" FINAL WHERE report_date='2026-09-21' GROUP BY source ORDER BY source\"))"
 ```
+
+# 十五、收口回执对账（20:1x）：三件候裁全有结论＋两条更正归本班＋车道不自撤
+
+## 十五.1 统筹收口三件逐条对账
+
+- 8 枚新增接管条目＝**追认不回退**（§十四.2 请示项结案）。其中 `st-gpux4-20261013` 那枚由 GPU 五班独立逐件核验"五件跟踪件车道独有行全为零＝无成果可救"后由统筹 resolve ⇒ 与本班 §十四.2 的判断同向（不回退＝不把真实未落地成果藏回黑箱；处置须由逐件核验者签，不是扫描者签）。
+- render 袋＝**甲路已由统筹执行**：`resolve st-gpuwo-20261011`，原面存证 sha `1af8f9e64ef6`＋锚点 `.runtime/quarantine/commander_takeover_resolve_20261013/`。本班 0010 袋本体被存活闸按"属主会话已死"拦下，统筹两笔 requeue 尝试 0017/0018 亦同因判死留痕；重渲染**移交维护六班**（本班 C4 就此关闭，署名与执行皆不在本班）。
+- 前端补扫零读者＋清账读数＝采信入册（§十四.4 三面共证与 09-21 按来源 46/1/1、plan_bridge 键数 9→8 读数）。
+
+## 十五.2 两条更正归本班（写清因果，防下一班踩同一坑）
+
+- ⚠ 本班 17:0x 报"保活授权到 20:08"是**算错的**：grant 落账 09:08:28Z（UTC）＋ttl 7200 ⇒ 到期 **11:08:28Z＝本地 19:08**，不是 20:08。守护在到期 20 秒后（11:08:48Z）按合同自退（末行 `exited reason=idle timeout idle=5072.8s`），注册表条目随除名。
+- ⇒ 统筹 19:25:25Z／19:27:46Z 两笔 requeue 死於 `ghost_session` 的**根因是本班保活断供**，不是存活闸误拦（闸的判定与留痕都正确，在册"CLI 手动 requeue 不受闸限，人工可强制"也属实——但强制不该由统筹代做）。教训改写成一行的处方：**长班把保活当跨空闲期的持续义务**（ttl 上限 7200，到期即死，没有"最后一次续命管到底"这回事）；班尾若把"他班 requeue 本班袋"列为外部事件，须显式写明"本班已停保活，重投请在 X 时前通知我续命"。本班此刻已复命（register＋grant ttl 7200 至 14:08:34Z＋守护 pid 38856，`list_active` 在册）仅为投完本收口袋。
+- 一条只呈不改的观测面建议（不属本收口工，留给维护线）：存活闸死因文本可带"属主最后一次 grant 到期时刻"，让重投者一眼看出"叫属主续命"比"强制 requeue"更省一枚袋。
+
+## 十五.3 车道与存证：本班不自撤
+
+- `.worktrees/st-maint5-20261013` **不自行归档**（收口令明文）——死信班将按行集差重测后走"墓园留证＋归档"通道。本班车道现面＝§十五 追加后对 dev 严格尾追加，无未落地代码件（三枚代码袋 0011/0012/0013＋一枚修正袋 0015 全落 dev，班账 0014/0016/0017→见下）。
+- claim 状态：注册表 `held_files=[]`，目标件零占锁（收班前复量）。
+- 本班全部持久存证区（字节都在他道可复核）：`maint5_salvage_20261013/`（2699 件＋MANIFEST.csv）、`maint5_tmp_promote_20261013/`（25 件维护四班案卷）、`maint5_rescue_mirror_20261013/`（11 件 sha 等）、`maint5_p7_workface_20261013/`（P7 本体施工卡 26 件）、`maint5_hotreg_snapshot_1104/`、`maint5_simdaily_snapshot_143x/rows.json`（10 行）、`maint5_simdaily_predelete_164x/target_row.json`（sha `e114aa5dd50d`）、`maint5_deselect_mutation_20261013/`、`maint5_dirtymeasure_mutation_20261013/`、`maint5_takeover_prescan_20261013/`（跑前台账 `ff095f5de92e`＋gpuwo 册面 `1af8f9e64ef6`）、`maint5_ledger_copies/`（班账逐节副本）。
+- 未闭事项移交清单（本班不签"无遗留"）：①P7 本体（甲-1 剥非计数行＋own 命中精确相等）施工卡在 `maint5_p7_workface_20261013/`，须按 §十二.4 的理由交有预算的一班；②超时乙丙代投（`test_timeout_tier_thresholds.py` 正版 blob `5e361f6dbdf9`，勿取抢救版 `4ac2ddd426cc`）；③甲案六支 node-id 排除的**解除**须等 ch_write_guard 翻 enforce，且真治本＝给 `test_sim_daily_runner.py:111` 补 monkeypatch（属 sim 班）；④存量接管条目刷新出口那条处方（§十四.2）无人接，属判据面。
+
+## 十五.4 复核命令（本班已按原文跑过）
+
+```
+# ① 本班队列终态（期望：done 十一枚＝0001/0003/0005/0006/0008/0011/0012/0013/0014/0015/0016＋本次收口袋；
+#    dead 六枚＝0002/0004/0009/0010/0017/0018；pending/processing 零）
+cd /d/ZephyrAlpha && python -c "import glob,os;[print(st,os.path.basename(p)[-10:-5]) for st in ('pending','processing','done','dead') for p in glob.glob(r'D:/ZephyrAlpha/.runtime/commit_queue/%s/*maint5-20261013*'%st)]"
+# ② 保活断供时间线（期望：grant 09:08:28Z→expires 11:08:28Z；daemon exited 11:08:48Z idle=5072.8s；0017=11:25:25Z／0018=11:27:46Z）
+cd /d/ZephyrAlpha && python -c "import json,pathlib,datetime as d;f=lambda t:d.datetime.fromtimestamp(t,d.timezone.utc).strftime('%H:%M:%SZ');rows=[json.loads(l) for l in pathlib.Path('.runtime/sessions/st-maint5-20261013/keepalive.jsonl').read_text(encoding='utf-8').splitlines() if l.strip()];print([(r['event'],f(r['granted_at']),f(r['expires_at']),r['ttl_seconds']) for r in rows[-3:]])"
+# ③ claim 归零（期望：held= [] 且 target 件零占锁）
+cd /d/ZephyrAlpha && python -c "import sys;sys.path.insert(0,r'D:/ZephyrAlpha/src');from zephyr.security.access_control.session_concurrency import SessionRegistry;print([ (s.session_id,s.pid,list(s.held_files or [])) for s in SessionRegistry(r'D:/ZephyrAlpha').list_active_readonly() if s.session_id=='st-maint5-20261013'])"
+```
