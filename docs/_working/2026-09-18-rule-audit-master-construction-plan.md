@@ -12,54 +12,28 @@ session: st-ruledisp-20260918
 decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 created: 2026-09-18
 ---
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：已结案（一条龙总方案已被执行链消费且有具名继任台账：D 系列裁定封口在册（抽验 #340/#351/#357/#359/#360 各命中 1 行）、WP1/WP17 代码面实证落地；未完项全部注册于 CONSTRUCTION_LEDGER.md 与裁定#480 呈批件，属"已注册他役"不阻结案；旧章结论今日仍成立）**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - D 系列裁定被判决流程消费并升格为在册裁定：证据=docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml 抽验 `- ruling_id: 裁定#340/#351/#357/#360` 各恰好 1 行（grep -c 实测），#359 在 :2526
+> - WP17 落地并通过终验：证据=commit e0e115a93e0「W1-G 裁定#359 WP17 对抗校验器恒真修复」+ d141ab7ee64「W1-G WP17/#351+#357 终验」；代码面 src/zephyr/security/adversarial_validation/cli.py:52 区分度自检 discrimination_self_check() 实测在码；台账 R-A51 证伪"一字段修复"后扩为三件处方（CONSTRUCTION_LEDGER.md:159,786）最终仍闭环
+> - WP1 两个坏写入端治本实证：证据=src/zephyr/infrastructure/rollback/rollback_verifier.py:63-65 按活库实列 gate_run_id/passed 重写、:147-151 clean_pycache is_relative_to 三重护栏（同 gate-identity 件报告）
+> - 方案真源地位与继任关系：证据=CONSTRUCTION_LEDGER.md:9 明文"方案与 gate-identity 详案是裁定真源，本册只记施工事实"；台账末次更新 2026-09-22（345516da8c0，距今 22 天零变动）
+> - WP11 第 1 点处方已按"派生件"语义改写：证据=docs/03_modules/index.md:91 现为"纯派生件，派生退库 03df6215e8，由 sync_registry_from_blueprints.py 运行时重生"，不再声称 SSoT
+> **⚠️ 未完成（逐条；均属他役在册，不阻本件结案）**
+> - WP4 净零对价（退役 GATE-ERRCODE pre-commit 版）：现状=gate_registry.yaml:349 仍列 `GATE-ERRCODE`，退役未执行｜缺口=由对账门施工批执行，注册于 CONSTRUCTION_LEDGER C 项与裁定#480 呈批件（ruling_registry.yaml:4059，提案笔 commit 54f3906f676）
+> - WP12 trigger 扩前缀：现状=reconciliation_registry.py:3993 仍为 `rules/` 前缀（:3998 另有 `_registry/` 分支，疑为 D-17 拆分后形态，是否等效"扩到全域"证据不足）｜缺口=终验读数未指认，台账在册
+> - WP5 第四册生成器：现状=_registry.yaml:5 last_updated 仍 2026-09-18（total: 91 已对齐实际条数）｜缺口=生成器化由台账接管，本文件不重复挂账
+> **对 2026-10-06 旧章的结论复核**：仍成立且获终验补强（#359 修复与 W1-G 终验两笔在 git log 可指认，未见倒退）；旧章格式缺陷在案——第 21–62 行为逐字符断行残章，回拼整句读作"无（进度义务已移交台账；frontmatter status: active 已过时）"（暂存区实测原文），语义无损失；本件三面实测：HEAD 仍是断行残章版（:23 实测为 `> - 度` 一字行），暂存区 `git show :<件>` 已被总包回拼为整句行（grep "进度任务已移交" 实测命中），当前工作区副本又回到断行旧态（与暂存区不一致，疑 stash/回退漂移）；残章依留档原则原样保留，提交时请总包以暂存区回拼版为基统一并接上本章表头
+> **核验方式**：全文读＋ruling_registry.yaml 逐号 grep 抽验 5 个裁定号＋git log 指认 WP17 落地/终验两笔＋读 cli.py 与 rollback_verifier.py 代码面＋grep CONSTRUCTION_LEDGER.md 消费关系与 R-A51/C-64 条目＋gate_registry/reconciliation_registry/index.md 三点实测未完项＋`git show HEAD:` 对比工作区残章（HEAD=b05345f8e6）
+> **证据等级**：A=实测可复现（裁定在册、WP1/WP17 代码面、台账引用行）；B=仅存在性（WP11 派生件改写、各未完项的他役注册指针）
+> **处置建议**：可归档（archive/2026-10）
 > ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
 > **总结论：已结案（规则与审计一条龙总方案已全线进入执行并由活台账继任：D-1..D-18 封口裁定全部消费，施工事实以 CONSTRUCTION_LEDGER.md 为唯一进度真源）**
 > **✅ 已完成（摘录）**
 > - ①18 条裁定封口+17 条全局纪律；②WP1-WP17 施工卡与波次编排；③夜裁映射与 Max 判决（#340..#360）承接
 > **⚠️ 未完成**
-> - 无
-> - （
-> - 进
-> - 度
-> - 义
-> - 务
-> - 已
-> - 移
-> - 交
-> - 台
-> - 账
-> - ；
-> - f
-> - r
-> - o
-> - n
-> - t
-> - m
-> - a
-> - t
-> - t
-> - e
-> - r
-> -  
-> - s
-> - t
-> - a
-> - t
-> - u
-> - s
-> - :
-> -  
-> - a
-> - c
-> - t
-> - i
-> - v
-> - e
-> -  
-> - 已
-> - 过
-> - 时
-> - ）
+> - 无（进度义务已移交台账；frontmatter status: active 已过时）
 > **核验方式**：全文读+判决书/台账继任文件核验
 > **处置建议**：可归档（archive/2026-10）
 

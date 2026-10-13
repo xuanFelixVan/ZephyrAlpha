@@ -5,6 +5,24 @@ title: 提交链路全组件存留裁定与提速方案（挖矿交接版）
 session: st-gate-rationalize-20260929
 deliverable_to: 施工对话（ 门禁/提交链提速施工班）
 ---
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：未结案（§11 第二波已被大幅消费：flag 三翻转+登记债+快段单趟+装表续作均实测落地，但通道出锁/簇4 共享/warn-only 转硬仍未落）。**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - §11 第二波"生成器登记债"3 个实跑 hook 已补登统一册：证据=docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml:2324/:2335/:2345（"登记债#4 补登记"字样逐条命中 gate-detect-git-dangerous/shell-dangerous/permanent-deletion）
+> - flag 翻转 integrity_baseline_mode 已翻至 head（Owner 批）：证据=config/flags.yaml:143-146（mode: "head"，行内注释"[翻转 2026-09-30·Owner批] snapshot->head，实现+测试随 SW19 袋 228ce95188 落地，head_baseline12 19/19 绿"）
+> - 附翻：post-commit regen 改 main_only（治"75% 静默丢弃"，config/flags.yaml:48 注释点名本方案 A6）；gate_preflight P2⑦/门禁结果缓存 P2⑧ 均 enabled=true+production（config/flags.yaml:122-125 及缓存条目）
+> - 单趟化以 Rx-4 形态落码（Phase-B SKIP 反选快段，快段只跑一次=§5.1.2 处方 B 案）：证据=git grep 命中 src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:388-393 注释+extra_skip 通道 :3665
+> - 装表续作有批次：证据=commit cd6ad4f7d0c（C157 门禁链残差相计时，_timed_phase 共享+最重 3 台挂相+4 单测）
+> **⚠️ 未完成（逐条）**
+> - hook 通道出锁（§5.1.1/§8.8）：现状=通道执行点仍在落地链内（近期 gateway 提交如 8619a7b03ee 未见出锁改造），未找到出锁实现｜缺口=通道移出全局锁+锁内 staged 指纹复核（需与单趟化重设计同批，本件旧章判断仍有效）
+> - warn-only 观察群 4 台转硬（§8.7）：实测 .pre-commit-config.yaml:398/:724/:1033/:1082 均仍 --warn-only｜缺口=存量清零清障专项未立项
+> - 簇4 注册表 parse 共享（§8.11）：本轮未命中对应实现（未验证≠已做，按未完成记）｜缺口=_capability_registry_io 扩展施工+留痕
+> - S1 own-tree 视图独立 flag：config/flags.yaml 未 grep 到 own_tree 命名项（gate_preflight/缓存为相邻但不同物）｜缺口=核实 S1 以何形态生效
+> **对旧章/落码宣称的复核**：已推进＋部分更正——上一班（10-06）称"integrity_baseline_mode 仍出厂现行"与现盘面矛盾：现值 flags.yaml:145 mode=head 且翻转注释日期 2026-09-30（早于上一班核验），推断旧班核的行位失配或误读；其余旧章"未做"项（通道出锁/warn-only/簇4）复核仍成立
+> **核验方式**：通读 §8/§9/§11；grep config/flags.yaml、.pre-commit-config.yaml；git grep gateway SKIP/Phase 符号；git log --since=2026-10-05 gateway/flags；开工 HEAD=b05345f8e6（核验期间主区推进至 57e1b68351，diff 均按开工基线读）
+> **证据等级**：A=实测可复现（flags/注册表/配置文件行位命中+commit 哈希在册）
+> **处置建议**：留根面（残余三项归门禁治理线，继续追踪第二波收尾）
+
 > ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
 > **总结论：未结案（仍有待办）。处置=保留。**
 > **✅ 已完成（摘录）**

@@ -5,6 +5,21 @@ completes_when: 死信清偿专案复活批：原战役未落地台账件按袋 
 ---
 ttl: task_bound
 ---
+
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：未结案（交接令无继任落地笔——分支 ai/st-sM2-ownscope-20261004/own-scope-expansion 四笔 commit 实测均未合入 dev，主区 gate_registry 现册 own_scope: true=63 台，与分支终态 149 台的差距即在「merge 未执行」；本件 2026-10-09 仅被死信复活批按原袋复原，复原≠接管施工）**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - 分支侧 4/4 批施工完成（本件自述，限分支面）：证据=git branch -a 实测 ai/st-sM2-ownscope-20261004/own-scope-expansion 与 session/st-sM2-ownscope-20261004 两分支仍在册；47118f66/e5f811d0/17064093/15fcd498 逐笔 `git merge-base --is-ancestor … dev` 实测=NOT-ON-DEV（分支上存在、dev 上没有）
+> - 死信复活复原落地：证据=270ae7fbba0 | 2026-10-09 | [死信清偿·53 件复活批·乙] 本件按袋 blob 复原入 docs/_working（git log -1 实测）
+> - claims 已 release：证据=本件 §五自述＋`.ailocks/registry.json` 实测无本件在途 claim
+> **⚠️ 未完成（逐条）**
+> - merge 回 dev（本件 §二 接管者执行清单第 1-4 步）：现状=四笔 commit 实测 NOT-ON-DEV，worktree 列表中已无 st-sM2 车道（git worktree list 实测）｜缺口=后继会话/总筹按 §二 指引执行 session_worktree.py merge + gate_registry 重生成 + archive
+> - own_scope 扩面成果（True=149）在主区生效：现状=主区 gate_registry.yaml 实测 `own_scope: true` 仅 63 台，None 清零等分支终态未兑现｜缺口=随 merge 落地后由生成器重生成对齐
+> **继任与消费面**：无具名继任接管落地笔（2026-10-05 后 dev 上 own_scope 相关 commit 均属他役 own-diff 收窄/图批登记，如 bd9a708a92（st-maint6 GATE-INTEGRITY own-diff）、9ce6d4075d（st-fig16 挂轴），实测与本分支四笔无继承关系）；本件被 270ae7fbba0 复活批登记为「战役未落地台账」在途件。
+> **核验方式**：读全文（§一成果表/§二 merge 指引/§五 claims）+ git log -1 本件 + git branch --merged dev / git branch -a 实查 + 四笔哈希逐条 merge-base --is-ancestor 判 + grep -c "own_scope: true" 主区 gate_registry 读数 + git log --grep own_scope 后续扫描 + git worktree list（HEAD=b05345f8e6）
+> **证据等级**：A=实测可复现（分支存在性/NOT-ON-DEV 判定/册内 63 台读数）/ C=§一表内早期哈希与 §四测试快照未重跑，属文档自述
+> **处置建议**：留根面＋待总筹安排落地（工作未做＝merge 未执行，非等 Owner 呈批项，不满足 CLOSED 条件④；结案与否取决于继任 merge 笔）
+
 # Handoff: 车道M own_scope 扩面班（st-sM2-ownscope-20261004）
 
 - 日期: 2026-10-05

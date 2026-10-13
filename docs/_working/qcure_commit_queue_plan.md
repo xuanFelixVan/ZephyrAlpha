@@ -3,58 +3,28 @@ ttl: task_bound
 title: QCure — 提交队列死信治本临时施工方案 v0.1
 session: st-qcure-20260925
 ---
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：已结案（代码面复验通过：M1 预检挂线与 M4 裁定适配器两大核心均在仓且有测试批次留痕，死信治本方案已被落码消费）。**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - M1 预检挂线（enqueue 侧同源预检）：证据=scripts/commit_queue.py:1000-1057 实读 preflight_root 声明式预检根+run_enqueue_preflight 锁外只读（注释自注"波 1B 包 1.7 防绕过 st-zc9-lane-r1"，含 degraded 同口径与 skip 生效面规则，与本案 M1 处方语义一致）
+> - 预检测试在岗：证据=commit 3d7d3cd5b6 提交信息实测"test_enqueue_preflight 43 条=60 passed"复跑读数在册
+> - M4 裁定适配器全链：证据=git grep approved_paths 命中 src/zephyr/gov_enforcement/commit_gates/approval_resolver.py、protected_paths_gate.py、rule_bridge/commit_preflight.py 三件消费方+ruling_registry.yaml:3227/:3279 在册条目带 approved_paths 字段（schema 扩展+门消费两端实证）
+> - 本案死因排行榜 395 笔证据学底座被后续班复用（deadclean/维护班多个提交引用死信处方体系，如 561a8b08af 死信四态门）：证据=git log -- scripts/commit_queue.py 近 4 条
+> **⚠️ 未完成（逐条；均为已注册/延期项，不阻结案）**
+> - M5.3 热册三向合并族（64 笔最大单一死因，本案原文即"只登记不挖、另开专包"）：现状=git grep 三向合并 于 docs/_working 仅命中各班账本/台账记录，未见专包设计文档｜缺口=专包立项（属"已注册他役不阻结案"口径）
+> - M2.4 GATE-VOCAB 轻量预检（本案自注"优先级最低可延后"）：现状=未逐件核验其落码，按原案延期记
+> - M5.1/M5.2/M5.4（SNAPSHOT 回读/环境误判改判/blobs 退役）：现状=本轮未逐条验码｜缺口=后续按 M5 各件补勾（维护二班 d69abf35230 已做部分邻近处方如 --from-bag fail-closed，非逐条对应）
+> **对旧章/落码宣称的复核**：仍成立（旧章判"已结案·方案被落码消费"，本班独立代码面 triple-check 命中同一证据链）；另登记一处盘面异常：本件存在他会话 staged 改动（-47/+1，疑似他班在清上一份报告中一字一行的残章行，工作区净值=HEAD），本班只写工作区未动索引，暂存区残留归总包按主区暂存区规则处置
+> **核验方式**：全文读 §1-§6；git grep commit_queue.py/approval_resolver/protected_paths_gate/ruling_registry；git log scripts/commit_queue.py；git status/diff 脏因实测；HEAD=b05345f8e6
+> **证据等级**：A=实测可复现（符号行位+commit 哈希）
+> **处置建议**：可归档（archive/2026-10）——但归档移动前先处置上述他会话 staged 残留（总包权责）
+
 > ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
 > **总结论：已结案（QCure 提交队列死信治本方案 v0.1 已被后续施工消费落码：enqueue 侧预检与裁定适配器两大核心机制在仓）**
 > **✅ 已完成（摘录）**
 > - ①enqueue 侧预检=commit_queue.py preflight_root/run_enqueue_preflight + tests/governance/test_enqueue_preflight.py；②M4 裁定适配器=裁定#410 schema+approval_resolver.py/protected_paths_gate.py 消费链；③死因排行榜 395 笔证据学为 10-01 治本共同底图
 > **⚠️ 未完成**
-> - M
-> - 5
-> - .
-> - 3
-> -  
-> - 热
-> - 册
-> - 三
-> - 向
-> - 合
-> - 并
-> - 族
-> - '
-> - 另
-> - 开
-> - 专
-> - 包
-> - '
-> - 至
-> - 今
-> - 未
-> - 见
-> - 专
-> - 包
-> - 文
-> - 档
-> - （
-> - 设
-> - 计
-> - 即
-> - 延
-> - 期
-> - 项
-> - ，
-> - 随
-> - 章
-> - 转
-> -  
-> - O
-> - w
-> - n
-> - e
-> - r
-> -  
-> - 菜
-> - 单
-> - ）
+> - M5.3 热册三向合并族'另开专包'至今未见专包文档（设计即延期项，随章转 Owner 菜单）
 > **核验方式**：全文读+preflight/approved_paths 代码链与裁定登记 triple-check
 > **处置建议**：可归档（archive/2026-10）
 

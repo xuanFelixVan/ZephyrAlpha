@@ -4,6 +4,20 @@ ttl: task_bound
 title: 提交链灾难四死因治本终报（st-commitfix-20261001 总包）
 session: st-commitfix-20261001
 ---
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：未结案（上一班判的移交清单 5 项逐条实测后收窄为 1.5 项：①③⑤已核销、④已转役而当日逐笔可核性失、②"103 测试逐一隔离审计"仍无结案记录且无具名接管——治本七笔本身 7/7 为 dev 祖先，主体役毕、单堵点未通）**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - 四死因治本七笔落地：证据=`git merge-base --is-ancestor` 复测 6fc89459/217c8ee7/8533f645/fb357faa/5a48e1ba/a0c0299e/b7acad9b 共 7/7 OK（§一表全部指认成立）
+> - 移交项 1（C0 两件归档迁移）已核销：证据=`ls scripts/run_ollama_exam.py scripts/grep_coverage.ps1` 实测零命中（根面已空），scripts/_archive/run_ollama_exam.py、scripts/_archive/grep_coverage.ps1 实存；⚠副产品：grep_coverage.ps1 归档面出现两份拷贝（find 实测另有 scripts/_archive/ops/grep_coverage.ps1），疑新重复面，请总包转查重车道核
+> - 移交项 3（存量红 test_dead_process_detected）已核销（较旧章推进）：证据=commit ebe26abd4bd（st-tclose-infracure2-20261005）治本笔原文"验证=test_dead_process_detected 转绿+全文件 28/28 绿"，含实弹根因（usercustomize 致 python 启动 1.30-1.38s，固定 1.0s sleep 下进程真活着）；测试今址 tests/infra/resource/test_process_pool.py（find 实测，旧路径 tests/resource/ 已不存）
+> - 移交项 5（claim 双平面漂移）已核销：证据=处方为二选一"acquire 加 SR 同步 **或** 合并读"，合并读实测在码——scripts/lock_files.py:161 "探针唯一真源=SessionRegistry._has_fresh_heartbeat（禁第二判据）"、:175-226 SR 会话判活/import 落地（死/过期 session 持有不计）
+> **⚠️ 未完成（逐条）**
+> - 移交项 2（pytest 隔离审计 P0，test_git_commit_gateway.py 全套 103 测试逐一验 tmp_path、禁默认真仓构造）：现状=套件已重组迁至 tests/gov/git/（find 实测），tmp_path 出现 466 次（grep -c 实测）、隔离训令已立宪（AGENTS.md §9.6 含 basetemp 截径机理），但"103 项逐一审计"的结案记录在 docs 全扫无命中（git grep "隔离审计|103 测试" 仅回指本件与无关翻译册快照），亦无具名继任指认｜缺口=逐一体审计底稿或把该审计显式注册到他役——本项为本件仍判未结案的主因
+> - 移交项 4（145 封死信、84 封批量 requeue）：现状=机制面已闭环（C6=b7acad9b env 死因分类 7/7 祖先之一，处方在 §四-4）；死信面今由后续治理车道接管——.runtime/commit_queue/dead 实测 1625 条目、_root_cause 41 张票据在盘，且 docs/_working/finalclean2_campaign/wave3/lanes/lane_deadletter.md 引用本案卷｜缺口=当日 84 封的逐笔 requeue 核销已不可回溯验证（证据不足，如实登记；不构成本文件自有工作包）
+> **对 2026-10-06 旧章的复核**：方向仍成立（未结案）但读数已推进——旧章列三项缺口（①未迁/③存量红无处置/②⑤无结案文档），今实测①③⑤均核销，残余收窄为②审计底稿缺失＋④逐笔核销不可回溯；旧章本身无残章格式缺陷（条目均为整句行，无需回拼）
+> **核验方式**：全文读＋末笔提交实测 2026-10-06（e19125bc4a5）＝距今 8 天（判据③达标）＋7 笔 merge-base 复测＋scripts 根面/_archive find/ls 实测＋lock_files.py/gov 套件 grep 实测＋git grep 结案文档搜读＋.runtime/commit_queue/dead 计数＋`git show :本件` 章态对比（HEAD=b05345f8e6）
+> **证据等级**：A=实测可复现（祖先/存在性/grep/计数亲测）；C=仅文档自述（84 封 requeue 逐笔核销不可回溯，标证据不足）
+> **处置建议**：留根面（移交项 2 审计底稿或他役注册补齐后可改判已结案再归档；grep_coverage.ps1 双拷贝转查重段处理）
 > ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
 > **总结论：未结案（仍有待办）。处置=保留。**
 > **✅ 已完成（摘录）**

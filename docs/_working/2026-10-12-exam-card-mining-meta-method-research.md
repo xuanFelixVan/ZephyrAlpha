@@ -7,6 +7,21 @@ author: 主区会话（Owner 直令产出）
 method_source: docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md（六向寻路/防噪音四闸/挖后自审闸）
 status: active
 ---
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：役内在用·待役终（frontmatter status: active、末改 10-13 01:33 距今 1 天，且被三个在途考试/挖矿役当活输入——不判结案、不建议归档）。**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - 主体交付物①轴清单超集 12 轴+3 本账（§5）与②三派流程对比（§3/§4）、③涨停邻域落点（§6）：证据=本稿正文三节齐备，§2 挖矿日志含检索式/信噪/噪音四闸记录
+> - §9 全仓考试对象六族普查+元方法适用矩阵（Owner 直令追加）：证据=本稿 §9.1-9.4 实读；§9.2 的 D 族判定"先补冻结资格"已被冻结稿（2026-10-12-d-family-qualification-freeze-draft.md）接续执行
+> - 10-13 追加反证指针节（原文零改动，另起留旧案卷）：证据=本稿文末"追加·2026-10-13 挖矿二班"节，引用判据与产物路径 docs/_working/minedig2_campaign/10_dfamily_qualification_acceptance.md 实测存在
+> **⚠️ 未完成（役内工作项与剩余，逐条）**
+> - §9.4 优先级建议 6 件的逐件立项/执行（幸存者 DSR/PBO 折减重述、ATR 止损 mini-grid、批3 反向分诊、分配器网格、注册册 ablation、GPU-01 档位）：现状=本班未逐件核验落点，其中消费面可见 cband/examrun/examunlock 三役台账实读引用本文件（git grep 命中 docs/_working/cband_neighborhood_campaign/00_ledger.md、examrun_campaign/00_ledger.md、examunlock_campaign/09_overnight_intraday_vein_spec.md）｜缺口=随各役推进补勾
+> - §7 开放问题 3 条：券商研报全文细节（GP 参数/半衰 IC 公式）、龙虎榜/席位微结构数据面、Kozak-Nagel-Santosh 与 Gu-Kelly-Xiu 两条经典"下轮验证后升级为正式引用"——现状=均悬置（原文自认）｜缺口=下轮矿验证
+> - §9.1/9.2 普查计数面（D 族资格状态列改写）：文末追加节明示归普查件属主或统筹定序，本班未代改，仍开放
+> - 役活跃性实测：.aidrafts/st-cband-20261012 等车道在 git worktree list 在途；minedig2/cband 族 10-13 后仍有提交（如 7f4a10af2f）——判"役终"前不动本件
+> **对旧章/落码宣称的复核**：无旧结案章；frontmatter status: active 与正文/引用方活跃性一致（本件属"头部状态行恰好为真"，仍按判据以引用方车道实测为准）
+> **核验方式**：全文读（§0-§9+追加节）；git grep 文件名反查引用方（含 capability_canonical_file_registry.yaml、mining_sop_policy.md 在册引用）；git worktree list+git log 查引用役活跃性；git log -1 末改 10-13 01:33、工作区 clean 实测；HEAD=b05345f8e6
+> **证据等级**：A=引用面与活跃性实测；文献条目为 B/C（未逐条外部复搜，本轮任务亦不要求）
+> **处置建议**：留根面（役内在用，待各考试役终后随役归档；届时 §9 计数面须由属主改写）
 
 # 考试卡挖矿的"元方法"调研——他们是怎么挖矿的
 

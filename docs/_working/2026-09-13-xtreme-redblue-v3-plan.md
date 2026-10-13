@@ -5,6 +5,19 @@ gate_selfdoc: GIT-DANGEROUS
 
 ---
 
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：已结案（v3 方案已被完整执行并交付日志+报告两件套——commit 9b55a63075b 同批入库，收尾清理实测无残留，发现项由具名继任链 v4 报告/v5 报告（裁定#252 实测在册）接管）**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - 阶段 7 最终交付物落盘：证据=git log --diff-filter=A 实测 docs/_working/2026-09-13-xtreme-redblue-v3-log.md 与 -v3-report.md 由 commit 9b55a63075b 同批入库（现归档于 archive/2026-09/c_class_scattered/，ls 实测两件均在），提交 message 自带读数"worktree 落账三要素过/主网关归因全精确/UNKNOWN 复活×4/blackout 二连发"。
+> - 阶段 6 收尾清理（§10 真仓必须干净）：证据=git ls-files docs/_working/xt_lab3 实测零命中（lab 文件已按 §6.3 整批删除入库）。
+> - 发现项有具名继任接管：证据=继任链可指认——v4 修复面复测报告（commit c36083b8a97，本文书同批分件的 2026-09-14-xtreme-redblue-v4-report.md）+ v5 复测报告（commit 02d6a8fb62c"17/17 PASS"，裁定#252 实测命中 ruling_registry.yaml L1127）。
+> **⚠️ 未完成（逐条）**
+> - 无（方案自身工作包=执行+日志+报告+清理四件，全部实测闭环；旧章 09-15 报告所列"未完成 2 条"经通读系 §0.1 铁律第 5 条正文换行的误抽，非工作项；发现类开口项已注册继任役 v4/v5，不阻本案卷结案）。
+> **与归档孪生件的裁定**：根面 vs archive/2026-09/c_class_scattered/ 同名件——差异实质：①归档版丢失 frontmatter `gate_selfdoc: GIT-DANGEROUS` 标记（本文列禁令命令册，无标记会被 GATE-SELFDOC 门照拦）；②归档版 ≥4 处命令字面被洗坏为 U+2011（git‑reset/git‑clean/git‑filter-branch/git‑branch，对"照抄执行"的测试方案是字面损伤）；建议=真身留根面（根面干净且带门豁免标记）。
+> **核验方式**：全文读（§0-§11+附录+旧章）；git log --diff-filter=A --name-only 追 xtreme-redblue 全族入库史；ls 验 v3-log/v3-report 现存位置；git ls-files 验 xt_lab3 残留为零；grep 实测裁定#252 在 ruling_registry.yaml L1127；diff 根面 vs 孪生逐字节；git log -1 最后改动=2026-10-07（系 created 字段机械回填批 01bf541fbbe，非内容变动）；HEAD=b05345f8e6
+> **证据等级**：A=日志/报告入库、清理归零、继任链均可命令复现
+> **处置建议**：可归档（archive/2026-10）——若归档须整案卷（plan+log+report）同移并保留 gate_selfdoc 标记不洗坏
+
 > ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
 > **总结论：未结案（仍有待办）。处置=**保留**。**
 >

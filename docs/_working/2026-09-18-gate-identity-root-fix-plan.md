@@ -11,41 +11,27 @@ scope: global
 session: st-ruledisp-20260918
 created: 2026-09-18
 ---
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：已结案（本施工案已被执行链消费并有具名继任台账：WP1 改1/改2 实证在码、WP17 区分度自检在码且裁定#359 在册；剩余工作包并入"门禁身份一本账"登记于裁定#480；2026-10-06 旧章结论今日复核仍成立）**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - B′ 方案被施工链消费（非仅自述）：证据=docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md:9 明文"方案与 gate-identity 详案是裁定真源"；git log e0e115a93e0「W1-G 裁定#359 WP17 对抗校验器恒真修复（st-final3-20260919）」指认落地笔
+> - WP1 改1（heal_db_consistency 按活库实列重写）：证据=src/zephyr/infrastructure/rollback/rollback_verifier.py:63-65（`_SQL_GATES_SCAN` 用 gate_run_id/passed）、:158-160（UPDATE 定位用 gate_run_id）
+> - WP1 改2（clean_pycache 三重护栏拆 rmtree 地雷）：证据=rollback_verifier.py:147-151（resolve() 后 is_relative_to 护栏在码，注释"三重护栏之①"）
+> - WP17 区分度自检＋裁定#359：证据=src/zephyr/security/adversarial_validation/cli.py:52 注释"裁定#359 WP17 ②：区分度自检"+ discrimination_self_check() 调用实测命中；ruling_registry.yaml:2526 `- ruling_id: 裁定#359` 查册命中
+> - §1.3 对 gate_persistence 的误判已在正文自我推翻并由台账登记更正：证据=CONSTRUCTION_LEDGER.md:437 C-3 条目
+> **⚠️ 未完成（逐条）**
+> - WP2 新表 `gate_trigger_log`：现状=全仓 grep（src/scripts/docs 注册表面）零命中，未以原名落地｜缺口=触发台账载体演化已并入"门禁身份一本账"方案，注册于裁定#480（ruling_registry.yaml:4059 在册；提案笔=st-commitmap-chief-20261003 04 呈批件，commit 54f3906f676）——已注册他役，按判据④不阻结案
+> - WP4 对账门/WP5 第四册生成器/WP6 存量 962 条清理/WP7 risk_tier 补域：现状=未见以本方案原名直接落地笔（gate_registry.yaml grep `IDENTITY` 零命中；rule_enforcement/_registry.yaml:5 last_updated 仍 2026-09-18、:839 total: 91）｜缺口=由 CONSTRUCTION_LEDGER.md（final3 战役，另含 :820/:1486 门禁身份未铸造续核）与裁定#480 呈批件接管执行，本文件作为详案真源自身无未执行工作包残留
+> **对 2026-10-06 旧章的复核**：结论仍成立且进一步实证（本次复检 WP1 两处改动与 #359 自检均仍在码，未倒退）；旧章格式缺陷在案——第 20–48 行为逐字符断行残章，回拼整句读作"无（余量 WP 以施工台账回执为准，本文件为裁定与详案真源）"，语义无损失；三面实测：HEAD（末笔 01bf541fbbe@2026-10-07）仍是断行残章版，暂存区 `git show :<件>` 已被总包回拼为整句行（grep 实测命中），当前工作区副本又回到断行旧态（与暂存区不一致，疑 stash/回退漂移）；残章依留档原则原样保留，提交时请总包以暂存区回拼版为基统一并接上本章表头
+> **核验方式**：全文读＋`git log -1` 实测末次变动=2026-10-07（距今 7 天，达标③）＋读 rollback_verifier.py/cli.py 代码面实证＋查 ruling_registry.yaml 命中 #359/#480＋grep CONSTRUCTION_LEDGER.md 确认消费/继任关系＋全仓 grep gate_trigger_log 零命中（HEAD=b05345f8e6）
+> **证据等级**：A=实测可复现（WP1/WP17/裁定#359/#480/继任台账引用行均为本次实测命中）
+> **处置建议**：可归档（archive/2026-10）
 > ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
 > **总结论：已结案（门禁身份 B′ 治本施工令已被执行链消费：WP17 假绿修复在码[adversarial_validation/cli.py:52 裁定#359 区分度自检]，战役施工由 rule_audit_campaign/CONSTRUCTION_LEDGER.md 活台账继任）**
 > **✅ 已完成（摘录）**
 > - ①B′ 方案三面一致性设计交底（WP1-WP7+顺序依赖）；②WP17 治本落地实证；③误码声明与普查分母可复跑脚本登记
 > **⚠️ 未完成**
-> - 无
-> - （
-> - 余
-> - 量
-> -  
-> - W
-> - P
-> -  
-> - 以
-> - 施
-> - 工
-> - 台
-> - 账
-> - 回
-> - 执
-> - 为
-> - 准
-> - ，
-> - 本
-> - 文
-> - 件
-> - 为
-> - 裁
-> - 定
-> - 与
-> - 详
-> - 案
-> - 真
-> - 源
-> - ）
+> - 无（余量 WP 以施工台账回执为准，本文件为裁定与详案真源）
 > **核验方式**：全文读+WP17 代码实证+继任台账存在性核验
 > **处置建议**：可归档（archive/2026-10）
 

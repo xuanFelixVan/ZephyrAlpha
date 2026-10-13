@@ -3,6 +3,22 @@ ttl: task_bound
 completes_when: 新对话完成交接接管并确认 NIGHT_STATE §十一 后本件归档
 ---
 
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：未结案（MIXED 态——战役主体已收口，但本交接件无具名继任接管落地笔，任务 A–E 工作包在 dev 无落地笔；最后变动 2026-10-09，5 天＜7 天不满足 CLOSED 条件③）**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - 战役主体收口账本落地：证据=3e6a630b78d | 2026-10-09 | NIGHT_STATE §十一收口（清欠哈希链+双轮循环检查两轮全零 RULE-EIGHTEEN 过），本件与 NIGHT_STATE.md 最后 commit 同为该批（git log -1 实测）
+> - 收尾清欠五批直投落地：证据=aef7b1e5091 / d69125b1de5 / f3edb356140 / ae63d6cd1f6 / 07663e42b8b（2026-10-09，均 [st-fullscore-20260930] 署名，git log --grep=fullscore 实测命中）
+> - 深度真源 NIGHT_STATE.md 在盘且已收口：证据=docs/_working/fullscore_night/10_coordination/NIGHT_STATE.md 实测存在，最后 commit=3e6a630b78d
+> - 整装回测 v2 处方件在盘：证据=docs/_working/fullscore_night/03_integrated_backtest/ 实测含 v2_verdict.md / prereg_v2.md / fresh_pool_v2.yaml
+> **⚠️ 未完成（逐条）**
+> - 任务 A 整装回测 v2 复考（重做批 D 选择窗）：现状=git log --since=2026-10-08 -i --grep="整装回测|v3 复考|批 D 选择窗" 实测零命中｜缺口=无新会话认领与落地笔
+> - 任务 B–E（F4 做T语料画像 / W3-5 商用源插座 / worktree 大扫除 dry-run / coverage 翻转 CI）：现状=本件 §0/§5 自述待办，dev 上未见 st-fullscore 系后续 commit｜缺口=继任者未接手
+> - completes_when「新对话完成交接接管并确认 NIGHT_STATE §十一」：现状=§十一已由收口批自身落账（3e6a630b78d），但无外部继任会话确认/归档动作的 commit 痕迹｜缺口=继任确认或转档
+> **继任与消费面**：无具名继任接管落地笔（2026-10-09 后 fullscore 线零新 commit）；本件被 docs/_working/deadcure_campaign2/01_phase0_ledger.md 与 NIGHT_STATE.md 引用（git grep 实测命中），引用方为治理台账非施工车道；2026-10-11 gpufeed 班 commit 仅历史引用 c4c7960bb8d 属另一战役记账，非本件任务 A–E 落地。
+> **核验方式**：读全文（§0 任务清单/§3 完成表/§5 遗留裁定表）+ git rev-parse HEAD + git log -1 本件与 NIGHT_STATE + git log --since=2026-10-08 --grep=fullscore 全量核 + git grep 引用面 + ls 03_integrated_backtest 实盘核对（HEAD=b05345f8e6）
+> **证据等级**：A=实测可复现（收口批哈希、引用面、任务 A 零命中）/ C=§3 表内早期哈希（8011104d 等）未逐一重验，属文档自述
+> **处置建议**：留根面（近期件+无继任收口，未满 CLOSED 四条件；待任务 A–E 有继任落地或 Owner 判移交他役后再议归档）
+
 # 七域满分通宵战役·交接文档（新对话一键接管）
 
 > 生成：2026-10-08（st-fullscore-20260930 总包会话收尾）

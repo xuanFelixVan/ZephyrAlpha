@@ -3,40 +3,28 @@ ttl: task_bound
 title: 通宵班交接令（Flash 夜班 → Max 日班）
 created: 2026-09-19
 ---
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：已结案（交接令消费链完整：日班判决书在册、夜裁 01..24 升格为 #340..#360 共 21 个裁定号全数在册、§三 8 笔实测 8/8 为 dev 祖先、W5 三工棚实测已拆、夜裁-23/WP17 已修复并过终验——较旧章两处属已推进）**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - §三 8 笔治本落地：证据=`git merge-base --is-ancestor` 复测 bdc21c8811/3a67233f41/0406b66fce/40bfe9a7c8/3450edb560/7877077bf7/864618bc7a/e9fb06c2d4 共 8/8 OK
+> - 夜裁 24 条被日班判决消费：证据=docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml grep `ruling_id: 裁定#3[45][0-9]` 命中 20 行（#340..#359）＋#360 单验命中 1 行，共 21 号；判决文书存在=docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md（grep WP13/#354/#355 命中 9 行）
+> - 夜裁-23（WP17 对抗校验器恒真）已完成：证据=commit e0e115a93e0「裁定#359 WP17 对抗校验器恒真修复」＋d141ab7ee64「W1-G WP17/#351+#357 终验」＋代码面 src/zephyr/security/adversarial_validation/cli.py:52 discrimination_self_check() 实测在码（本项较旧章时点"未施工"为已推进）
+> - W5 工棚拆除已完成：证据=实测 `ls .worktrees | grep -iE "ruledisp|auditdoc|NIGHT-CF1"` 零命中（交接令点名的三棚全拆）
+> - A2 成品抢救入 git 跟踪区：证据=docs/_working/rule_audit_campaign/a2_handoff/ 实存含 A2_M5_prescriptions.md、rules_m1_repoint_archive.md（原 .patch 更名归档，重指点落地进度由日班判决/WP9 面追踪）
+> **⚠️ 未完成（逐条；均已注册他役，按判据④不阻结案）**
+> - 夜裁-01（55 台 pre-commit 门禁合法通道零执行权）：现状=收敛方案已并入"门禁身份一本账"四分处置呈批（ruling_registry.yaml:4059 裁定#480，提案笔 commit 54f3906f676）｜缺口=Owner 批复＋手术批执行，注册在该他役
+> - 夜裁-02（3 台门禁补 `--ci`）/夜裁-03（删除类打包）：现状=Owner 门位项，经 #340..#360 升格后移交日班判决书处置｜缺口=执行笔核销在战役台账面，本文件无欠账
+> - W6 记忆文档 A/B 班：现状=日班判决书含 WP13 相关 9 行（grep 实测）｜缺口=A/B 执行进度在 rule_audit_campaign/CONSTRUCTION_LEDGER.md 自有追踪面，本道未核销读数
+> **对 2026-10-06 旧章的复核**：结论仍成立且新增推进两笔（旧章时点 WP17 已修但未注终验、今复核 d141ab7ee64 终验在案；W5"仍欠"三棚今实测 GONE）；旧章格式缺陷在案——工作区副本第 12–39 行为逐字符断行残章，回拼整句读作"无（W1-W6 后续工作清单已由日班判决书与战役台账接手）"；实测 HEAD 仍为断行版，而暂存区 `git show :本件` 第 11 行已是回拼整句，工作区副本又回到断行旧态（偏离暂存区，疑 stash/回退漂移）；残章依留档原则原样保留，提交时请总包以暂存区回拼版为基统一并接上本章表头
+> **核验方式**：全文读＋8 笔 commit merge-base 实测＋ruling_registry 裁定号 grep 计数＋日班判决书/a2_handoff/.worktrees 存在性实测＋cli.py 代码面实证＋`git show HEAD:`/`git show :` 三面章态对比；末笔提交实测 2026-10-07（01bf541fbbe）＝距今 7 天（判据③达标）（HEAD=b05345f8e6）
+> **证据等级**：A=实测可复现（祖先/裁定号/代码面/工棚零命中均本班亲测）；B=仅存在性（日班判决书与 a2_handoff 内容面未展开审读）
+> **处置建议**：可归档（archive/2026-10）
 > ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
 > **总结论：已结案（通宵班→Max 日班交接令已消费：§五 夜裁-01..24 全部获正式裁定 #340..#360，§三 8 笔 commit 经祖先关系复核在 dev）**
 > **✅ 已完成（摘录）**
 > - ①8 笔治本落地+统一根因归并；②24 条待裁逐条列据；③并发/避让与认账清单
 > **⚠️ 未完成**
-> - 无
-> - （
-> - W
-> - 1
-> - -
-> - W
-> - 6
-> -  
-> - 后
-> - 续
-> - 工
-> - 作
-> - 清
-> - 单
-> - 已
-> - 由
-> - 日
-> - 班
-> - 判
-> - 决
-> - 书
-> - 与
-> - 战
-> - 役
-> - 台
-> - 账
-> - 接
-> - 手
-> - ）
+> - 无（W1-W6 后续工作清单已由日班判决书与战役台账接手）
 > **核验方式**：全文读+max-dayshift-rulings.md 头部映射声明核验+CONSTRUCTION_LEDGER.md 继任核验
 > **处置建议**：可归档（archive/2026-10）
 

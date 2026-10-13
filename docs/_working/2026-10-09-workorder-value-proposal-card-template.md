@@ -3,6 +3,21 @@ ttl: task_bound
 completes_when: 模板被实际工单持续引用；连续 90 天零引用则按墓碑制退役评估
 created: 2026-10-09
 ---
+
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：役内在用·待役终（本件=Gate 0 三件套工单模板规范真源，已入能力正典册登记并被政策锚引用；completes_when 为持续性判据「被实际工单持续引用/90 天零引用才评退役」，观察窗自 2026-10-09 起仅 5 天，远未到判点，不归档）**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - 模板本体交付（v1.0，Gate 0 三件套并入 TaskCard 结构词）：证据=1c5a56a85e3 | 2026-10-10 | [st-libfront-20261009] B2 价值主张立项卡模板批落地（git log -1 实测）
+> - 正典册登记在册：证据=git grep 实测本件被 docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml 引用 1 处（creation_token/正典文件面）
+> - 政策锚两件在盘：证据=docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md 与 docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md（正文 §政策锚所指路径，git grep 命中册内）
+> - 迷你实例（本轮 A 件根治单）随源批落地：证据=1c5a56a85e3 commit message 明写「A 前门再生挂链+B1 裁定先例机检 CLI+B2 模板」三件同批（实测 git log）
+> **⚠️ 未完成（逐条）**
+> - 无（本件为长期规范模板真源，非一次性任务；其 completes_when 本身即「持续被引用」型活体判据，除该观察窗未到期外无缺口）
+> **继任与消费面**：无继任（不需）；消费面=capability_canonical_file_registry 在册引用＋政策两册（adjudication_routing_policy §2.0 Gate 0 / task_card_work_order_policy §2.4）为现行役政策真源，后续开卡工单按本件复制卡体即构成消费（截至核验日 git grep 未见其他 _working 工单件显式引用文件名，属正常早期——模板出生仅 5 天）。
+> **核验方式**：读全文（frontmatter/用法/卡体/示例/版本记录）+ git log -1 本件 + git grep -ln "value-proposal-card-template|价值主张立项卡" 全仓消费面 + git grep -c 引用计数（HEAD=b05345f8e6）
+> **证据等级**：A=实测可复现（落地哈希、册内引用命中）/ B=政策两册锚点存在性系 grep 命中未逐行精读
+> **处置建议**：留根面（规范/模板真源不适用结案归档；90 天零引用判据到点后再评）
+
 <!-- creation_token: 见 capability_canonical_file_registry creation_tokens 段（st-libfront-20261009 登记） -->
 # 工单·价值主张立项卡模板（Gate 0 三件套版 v1.0）
 
