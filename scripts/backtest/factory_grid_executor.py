@@ -109,7 +109,7 @@ import threading
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -172,6 +172,14 @@ _EVAL_GPU_STATS: dict[str, int] = {
     "glue_gpu_inline": 0,
     "glue_gpu_reupload": 0,
     "glue_gpu_failed": 0,
+    # 批级设备面板缓存六出口（st-gpux5-20261013 修法乙＋丙；逐出口独立计数＝
+    # "命中为 0 时全等是空转"那条在册防线的读数面，禁合成一个总数）
+    "pc_hit": 0,
+    "pc_put": 0,
+    "pc_identity_miss": 0,
+    "pc_dirty_hit": 0,
+    "pc_evict": 0,
+    "pc_verifier_off": 0,
     # B2 设备驻留三面出口（同样逐出口独立计数：驻留成／驻留后又物化回／根本没驻留，
     # 三态在墙钟上同形，只报总数就会把"一个都没省"读成"都省了"——静默降级家族）
     "cell_resident": 0,
@@ -189,8 +197,21 @@ _HOST_MEM_PROBE: tuple[float, int] | None = None
 _HOST_MEM_PROBE_TTL_S: float = 5.0
 #: 册上 budget_caps 子块缓存（section→dict；读败/缺册={}，两路预算共用同一加载口）
 _PREREG_BUDGET_SECTIONS: dict[str, dict] = {}
-#: 批级设备面板缓存（键含入参对象身份=批轮换自然失效；容量上限逐出防显驻膨胀）
+#: 批级设备面板缓存：键 → (宿主引用 pin, 设备面板, 内容指纹或 None)。
+#: 乙（st-gpux5-20261013，承统筹 2026-10-13 裁④"修法乙＋丙＝批排一批"）＝把
+#: `_c4_engine._dev_resident` 已在册的纪律平移进来：宿主引用**随值同存即 pin 住**，
+#: 命中还须 `ent[0] is host`——杜绝"宿主被 GC 后 id() 被下一块同形瞬态帧复用"的脏命中
+#: （检验道案卷 §十三·检·B 单元针 40 次同形状只得 1 个 id、§十三·检·E 批次现行犯各 1 条）。
+#: 瞬态宿主站点（`w`）不吃 pin：它的键改用内容指纹，见 `_ic_weight_frame` 调用处。
 _DEV_PANEL_CACHE: dict = {}
+#: 丙＝内容指纹当运行期哨兵。缺省关＝命中面零额外开销（缺省面零漂移）；认证针上开，
+#: 不符即出声计数＋记事件，STRICT 档直接判红（"不匹配即红"的执行位）。
+#: 代价如实：哨兵要过一遍主机面板，检验道实测该臂 wall +38%——所以它是守卫面不是缺省面。
+_DEV_PANEL_VERIFY: bool = False
+_DEV_PANEL_VERIFY_STRICT: bool = False
+#: 脏命中事件留证面（ capped，防长跑把内存吃掉；总数看 _EVAL_GPU_STATS["pc_dirty_hit"]）
+_DEV_PANEL_EVENTS: list[dict] = []
+_DEV_PANEL_EVENT_CAP = 200
 # NO-BARE-SQL + TABLE-NAME-REGISTRY 配方: SQL 常量化+表名走 TableRegistry 真源
 from zephyr.data.table_registry import get_registry as _get_table_registry
 
@@ -829,7 +850,13 @@ def _combine_cache_store(cache: dict, key, entry: tuple) -> None:
 # 对象交给下游——bt/成本门/manifest/台账面一行不改（判据面与算力面分离，
 # docs/_working/gpu_rewrite/new_asset_gpu_cpu_checklist.md §二.4）。索引/列标签仍留 CPU
 # （同件 §二.5 与 gpu_core 文件头 INVARIANTS）。
-_DEV_CACHE_CAP: int = 12
+#: 面板缓存容量。旧值 12 配的是"溢出即整清"，而工作集是 3 宇宙 × ~10 站点 ≈ 30 枚
+#: ——每次溢出把全部已建面板丢掉，缓存退化成"每前缀重算"（本班归因针实测：
+#: `_dev_panel` 978 次调用合计 8.67s；`_dev_fwd_ranked` 52 次里只有 3 个不同键＝16 倍重算）。
+#: 现逐出改 FIFO 单枚（见 `_dev_cache_put`），容量按工作集放宽，另加字节预算兜显驻。
+_DEV_CACHE_CAP: int = 48
+_DEV_PANEL_BYTE_CAP: int = 3 * 1024**3
+
 _A1_DEV_PORTABLE: tuple[str, ...] = ("raw", "zscore", "rank", "industry_neutral", "size_neutral", "industsize_neutral")
 _A2_DEV_PORTABLE: tuple[str, ...] = ("equal", "orth_equal", "ic_mean", "ic_ir", "halflife20", "halflife60")
 
@@ -1000,24 +1027,143 @@ def _dev_xp():
         return None
 
 
-def _dev_cache_put(key: tuple, val) -> None:
-    if len(_DEV_PANEL_CACHE) >= _DEV_CACHE_CAP:
-        _DEV_PANEL_CACHE.clear()  # 批轮换/宇宙切换=旧键失效，整清最省（面板数≤个位数）
-    _DEV_PANEL_CACHE[key] = val
+def _panel_fp(host: Any) -> tuple:
+    """采样式内容指纹（丙的料）：形状＋NaN 数＋一/二阶和＋首末元素。
+
+    两处"看起来等价、其实不等价"的坑，本函数必须先归一化再归约，否则指纹会把
+    **一字未变**的内容判成变了（尺造红）：
+    ① NaN 必须折成哨兵值——`float('nan') != float('nan')`，凡首/末元素为 NaN 的站点全被
+      判成"内容变了"（检验道 §十三·检·J·1 自犯＝515 条假告警，`vol`/`r60v`/`r60m` 全中招）；
+    ② 归约序随**帧布局**变——`to_numpy(copy=False)` 在原件与 `.copy()` 上可给出不同内存序，
+      `np.sum` 的配对求和因此差出 1 ULP（本班首版尺实测：59.2799294131226 vs ...61，
+      与在册"pandas 行和结合序随帧布局变"同族）。故先 `ascontiguousarray` 定序再归约。
+    它是**出声哨兵不是等价证明**：同矩不同阵理论上仍可碰撞，所以等价性由 §二·戊 的验收针判，
+    禁拿本指纹替代对拍。
+    """
+    raw = (
+        host.to_numpy(dtype=np.float64, copy=False) if hasattr(host, "to_numpy") else np.asarray(host, dtype=np.float64)
+    )
+    arr = np.ascontiguousarray(raw)
+    if arr.ndim == 0:
+        arr = arr.reshape(1)
+    nan_ct = int(np.isnan(arr).sum())
+    if nan_ct:
+        filled = np.where(np.isnan(arr), 0.0, arr)
+        s1 = float(filled.sum())
+        s2 = float((filled * filled).sum())
+    else:
+        s1 = float(arr.sum())
+        s2 = float((arr * arr).sum())
+    flat = arr.reshape(-1)
+
+    def _elt(v: float) -> float | str:
+        return "NaN" if v != v else float(v)
+
+    return (tuple(arr.shape), nan_ct, s1, s2, _elt(float(flat[0])), _elt(float(flat[-1])))
 
 
-def _dev_panel(key: tuple, build, xp):
+def _note_dirty_event(key: tuple, fp_cached: tuple, fp_now: tuple) -> None:
+    if len(_DEV_PANEL_EVENTS) < _DEV_PANEL_EVENT_CAP:
+        _DEV_PANEL_EVENTS.append({"key": [str(k) for k in key], "fp_cached": fp_cached, "fp_now": fp_now})
+
+
+def _dev_cache_bytes() -> int:
+    return sum(int(getattr(v, "nbytes", 0)) for (_h, v, _f) in _DEV_PANEL_CACHE.values())
+
+
+def _dev_cache_put(key: tuple, val, host_ref: Any = None, fp: tuple | None = None) -> None:
+    """逐出＝FIFO 单枚＋字节预算，**不再整清**。
+
+    旧形 `len>=cap → clear()` 在溢出时把全部已建面板一起丢掉（原因见 `_DEV_CACHE_CAP` 注释）。
+    值面不受影响：这里每一枚都是宿主内容的纯函数，重建必得同位——所以改逐出策略
+    属"换执行位置不换数"的 L1 类改动（逐位性由 §十六 族验收针判，不靠本句声明）。
+    """
+    _DEV_PANEL_CACHE[key] = (host_ref, val, fp)
+    while len(_DEV_PANEL_CACHE) > _DEV_CACHE_CAP or _dev_cache_bytes() > _DEV_PANEL_BYTE_CAP:
+        oldest = next(iter(_DEV_PANEL_CACHE))
+        if oldest == key:
+            break  # 单枚就超预算时如实留着它，逐空自己＝立刻又重算，只会更慢
+        del _DEV_PANEL_CACHE[oldest]
+        _EVAL_GPU_STATS["pc_evict"] += 1
+
+
+def _dev_panel_dev(key: tuple, build_dev, host: Any = None):
+    """设备面板缓存通用口。命中三闸：键等 ∧ 宿主对象身份等（乙）∧ 内容指纹等（丙，缺省关）。
+
+    `host=None`＝该站点的宿主是瞬态件（`_ic_weight_frame` 每前缀新建），身份判定永假；
+    这类站点必须把内容做进键里（见 `w` 站点），否则就退回"命中零校验"那一族。
+    """
+    ent = _DEV_PANEL_CACHE.get(key)
+    if ent is not None:
+        ent_host, ent_val, ent_fp = ent
+        if host is not None and ent_host is not host:
+            # 键（含 id()）撞了而宿主不是同一个对象＝在册脏命中的现行形态，拦下重建
+            _EVAL_GPU_STATS["pc_identity_miss"] += 1
+        elif _DEV_PANEL_VERIFY and host is not None:
+            fp_now = _panel_fp(host)
+            if ent_fp is None:
+                _DEV_PANEL_CACHE[key] = (ent_host, ent_val, fp_now)  # 中途开哨兵＝就地补指纹，不静默跳过
+                _EVAL_GPU_STATS["pc_hit"] += 1
+                return ent_val
+            if fp_now != ent_fp:
+                _EVAL_GPU_STATS["pc_dirty_hit"] += 1
+                _note_dirty_event(key, ent_fp, fp_now)
+                if _DEV_PANEL_VERIFY_STRICT:
+                    raise RuntimeError(f"面板缓存内容指纹不符（丙哨兵 STRICT）: key={key[0]}")
+            else:
+                _EVAL_GPU_STATS["pc_hit"] += 1
+                return ent_val
+        else:
+            _EVAL_GPU_STATS["pc_hit"] += 1
+            _EVAL_GPU_STATS["pc_verifier_off"] += 1  # 这枚命中没吃内容校验＝绿要归因到乙不是丙
+            return ent_val
+    val = build_dev()
+    _EVAL_GPU_STATS["pc_put"] += 1
+    _dev_cache_put(key, val, host, _panel_fp(host) if (_DEV_PANEL_VERIFY and host is not None) else None)
+    return val
+
+
+def _dev_panel(key: tuple, build, xp, host: Any = None):
     """(T,S) 设备侧 float64 面板，按（入参对象身份+列切+窗）缓存→逐格零 H2D。
 
     build() 产主机侧 DataFrame（须已 reindex 到考窗行，与 _combine:526 的异基对齐同序——
     A1 全是逐行算子，先行对齐后求值与先求值后对齐逐行同解，但反过来不行：因子面板可能
     挂 warm 行或考窗行，不重index 就是拿错行号做截面）。
+    `host`=决定该面板内容的主机对象（长寿命件才传，用来做身份 pin 与内容指纹）。
     """
-    hit = _DEV_PANEL_CACHE.get(key)
-    if hit is None:
-        hit = xp.asarray(build().to_numpy(dtype=np.float64))
-        _dev_cache_put(key, hit)
-    return hit
+    return _dev_panel_dev(key, lambda: xp.asarray(build().to_numpy(dtype=np.float64)), host)
+
+
+def reset_panel_cache() -> None:
+    """批起点复位：清缓存＋清事件。（键里带的是**上一批**宿主对象的 `id()`，留着不清
+    就是脏命中的温床——上一班宿主释放后新批次对象可以拿到同一个地址。）
+
+    乙把宿主引用 pin 进了值里，所以这里同时是**释放面**：不接这刀，pin 会跨批把
+    宽面板（all_a 单枚 970×5,217 f64≈39MB）连同设备缓冲一起按住不放。
+    """
+    _DEV_PANEL_CACHE.clear()
+    del _DEV_PANEL_EVENTS[:]
+
+
+def set_panel_cache_verify(on: bool, strict: bool = False) -> None:
+    """丙的手柄：内容指纹运行期哨兵开/关（缺省关＝命中面零额外开销＝缺省面零漂移）。
+
+    `strict=True`＝指纹不符直接抛（"不匹配即红"的执行位，给验收针用）；
+    `strict=False`＝不符即重建＋计数＋记事件（照旧出数，给长跑哨兵用）。
+    这是同进程 A/B 手柄，不是产品开关——开它要付主机侧一整个面板的三趟扫描。
+    """
+    global _DEV_PANEL_VERIFY, _DEV_PANEL_VERIFY_STRICT
+    _DEV_PANEL_VERIFY = bool(on)
+    _DEV_PANEL_VERIFY_STRICT = bool(strict)
+    reset_panel_cache()  # 换档即换判据，旧条目（没带指纹）不能跨档复用
+
+
+def panel_cache_stats() -> dict:
+    return {k: v for k, v in _EVAL_GPU_STATS.items() if k.startswith("pc_")}
+
+
+def panel_cache_events() -> list[dict]:
+    return list(_DEV_PANEL_EVENTS)
 
 
 def _dev_col_codes(cols, industry_map: dict[str, str] | None):
@@ -1044,6 +1190,7 @@ def _dev_log_mv(mkt_cap_w, cols, dates, xp):
         ("logmv", id(mkt_cap_w), len(cols), cols[0], cols[-1], len(dates)),
         lambda: np.log(mkt_cap_w.where(mkt_cap_w > 0))[cols].reindex(dates),
         xp,
+        host=mkt_cap_w,
     )
 
 
@@ -1052,13 +1199,11 @@ def _dev_fwd_ranked(closes, cols, xp):
     产生（含 pad 缺省填充语义），只把 0.7s/档的秩搬上卡——禁在算力面重造 pct_change。"""
     import zephyr.backtest.gpu_core as gc
 
-    key = ("fwdrank", id(closes), len(cols), cols[0], cols[-1])
-    hit = _DEV_PANEL_CACHE.get(key)
-    if hit is None:
+    def _build_dev():
         fwd = closes[cols].pct_change().shift(-1)
-        hit = gc._rank_rows(xp, xp.asarray(fwd.to_numpy(dtype=np.float64)), ascending=True)
-        _dev_cache_put(key, hit)
-    return hit
+        return gc._rank_rows(xp, xp.asarray(fwd.to_numpy(dtype=np.float64)), ascending=True)
+
+    return _dev_panel_dev(("fwdrank", id(closes), len(cols), cols[0], cols[-1]), _build_dev, host=closes)
 
 
 def _dev_ctrl_demeaned(mkt_cap_w, cols, dates, industry_map, xp):
@@ -1067,23 +1212,34 @@ def _dev_ctrl_demeaned(mkt_cap_w, cols, dates, industry_map, xp):
     顺序不可换：先切片再去均值会把组均值从"全市场该行业"改成"宇宙内该行业"，那是另一套数
     （st-gpux-20261011 的 8 格真实对拍里，两支 industsize_neutral 格因此漂到 sharpe 4.9e-2，
     超 `verification_framework.md §一·补` 的 0.005 冻结线）。size_neutral 无组步骤，切片安全。
+
+    键里补 `id(industry_map)`：该面板的内容由分组映射决定，旧键不含它＝换了行业映射仍可命中
+    （检验道 §十三·检·C 给本站点标"中危"的同一条：键内内容位缺什么，命中就可能错什么）。
     """
     full_cols = list(mkt_cap_w.columns)
-    key = ("logmvdm", id(mkt_cap_w), len(full_cols), len(dates), len(cols), cols[0], cols[-1])
-    hit = _DEV_PANEL_CACHE.get(key)
-    if hit is not None:
-        return hit
-    import zephyr.backtest.gpu_core as gc
+    key = (
+        "logmvdm",
+        id(mkt_cap_w),
+        id(industry_map),
+        len(full_cols),
+        len(dates),
+        len(cols),
+        cols[0],
+        cols[-1],
+    )
 
-    codes_f, ng_f = _dev_col_codes(full_cols, industry_map)
-    if codes_f is None or ng_f <= 0:
-        raise ValueError("industsize 控制板需行业锚覆盖市值面板列集")
-    full = xp.asarray(np.log(mkt_cap_w.where(mkt_cap_w > 0)).reindex(dates).to_numpy(dtype=np.float64))
-    dm = gc.normalize_rows(xp, full, "industry_neutral", codes=xp.asarray(codes_f), n_groups=ng_f)
-    pos = xp.asarray([full_cols.index(c) for c in cols], dtype=np.int64)
-    hit = dm[:, pos]
-    _dev_cache_put(key, hit)
-    return hit
+    def _build_dev():
+        import zephyr.backtest.gpu_core as gc
+
+        codes_f, ng_f = _dev_col_codes(full_cols, industry_map)
+        if codes_f is None or ng_f <= 0:
+            raise ValueError("industsize 控制板需行业锚覆盖市值面板列集")
+        full = xp.asarray(np.log(mkt_cap_w.where(mkt_cap_w > 0)).reindex(dates).to_numpy(dtype=np.float64))
+        dm = gc.normalize_rows(xp, full, "industry_neutral", codes=xp.asarray(codes_f), n_groups=ng_f)
+        pos = xp.asarray([full_cols.index(c) for c in cols], dtype=np.int64)
+        return dm[:, pos]
+
+    return _dev_panel_dev(key, _build_dev, host=mkt_cap_w)
 
 
 def _a1_dev_mode(mode: str, has_industry: bool, has_mv: bool) -> tuple[str, bool]:
@@ -1136,6 +1292,7 @@ def _prefix_eval_gpu(v, factors, closes, cols, industry_map, mkt_cap_w, xp):
             ("f", n, id(factors[n]), len(cols), cols[0], cols[-1], len(dates)),
             lambda nn=n: factors[nn][cols].reindex(dates),
             xp,
+            host=factors[n],
         )
         if a1 == "industsize_neutral":
             normed.append(gc.industsize_rows(xp, arr, codes_dev, ng, ctrl_dm))
@@ -1152,7 +1309,10 @@ def _prefix_eval_gpu(v, factors, closes, cols, industry_map, mkt_cap_w, xp):
         ic_np = np.column_stack([gc._to_numpy(c) for c in ic_cols])
         ic_all = pd.DataFrame(ic_np, index=dates, columns=names)
         w = _ic_weight_frame(ic_all, a2, names, dates)
-        w_dev = _dev_panel(("w", id(w), a2, len(names)), lambda: w, xp)
+        # `w` 的宿主是**每次前缀调用新建的瞬态帧**（函数内局部，返回即失引用）——乙的身份 pin
+        # 在这里永假（照搬会把该站点退化成永不命中），所以改把内容做进键里：帧只有 (T,F) 宽，
+        # 指纹是微秒级，既挡住 id() 复用（检验道 §十三·检·E 现行犯那条），又保住命中率。
+        w_dev = _dev_panel_dev(("w", a2, len(names), _panel_fp(w)), lambda: xp.asarray(w.to_numpy(dtype=np.float64)))
         combined = gc.weighted_combine(xp, normed, w_dev)
     rank = gc._rank_desc_average(xp, combined)
     return {"combined": combined, "rank": rank, "a1_deg": a1_deg, "a2_deg": False}
@@ -1210,21 +1370,25 @@ def _cell_eval_gpu(  # noqa: long-param-list  存量函数签名（11 参→本�
     lam_val = _LAMBDA_PEN[v["H_turnover_lambda"]] * 100.0
     glue = bool(_EVAL_GLUE_GPU)
     try:
-        vp = _dev_panel(("vol", id(vol20), idx, cols[0], cols[-1]), lambda: vol20[cols], xp)
+        vp = _dev_panel(("vol", id(vol20), idx, cols[0], cols[-1]), lambda: vol20[cols], xp, host=vol20)
         mc = (
             None
             if mkt_cap_w is None
-            else _dev_panel(("mvw", id(mkt_cap_w), idx, cols[0], cols[-1]), lambda: mkt_cap_w[cols], xp)
+            else _dev_panel(("mvw", id(mkt_cap_w), idx, cols[0], cols[-1]), lambda: mkt_cap_w[cols], xp, host=mkt_cap_w)
         )
         rm = (
             None
             if rets60_mean is None
-            else _dev_panel(("r60m", id(rets60_mean), idx, cols[0], cols[-1]), lambda: rets60_mean[cols], xp)
+            else _dev_panel(
+                ("r60m", id(rets60_mean), idx, cols[0], cols[-1]), lambda: rets60_mean[cols], xp, host=rets60_mean
+            )
         )
         rv = (
             None
             if rets60_var is None
-            else _dev_panel(("r60v", id(rets60_var), idx, cols[0], cols[-1]), lambda: rets60_var[cols], xp)
+            else _dev_panel(
+                ("r60v", id(rets60_var), idx, cols[0], cols[-1]), lambda: rets60_var[cols], xp, host=rets60_var
+            )
         )
         out = gc.eval_cell_gpu(
             dev_pair[0],
@@ -2422,6 +2586,9 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     # T2c: g → (closes_eval[cols], vol20[cols]) 切片一次复用（免每格点重切 T×S）；prefix 级 combined 缓存
     slice_cache: dict[str, tuple[pd.DataFrame, pd.DataFrame]] = {}
     combine_cache: dict = {}  # (G,A1,A2) → (combined, rank, a1_deg, a2_deg)
+    # 批起点复位设备面板缓存：旧键里的 id() 属于上一批宿主，跨批复用＝脏命中；
+    # 且乙把宿主引用 pin 进值里，这里同时是唯一的释放面（不接＝宽面板跨批按住不放）。
+    reset_panel_cache()
     vol20 = closes_eval.pct_change().rolling(20).std()
     # T2a 精确实现数据面: 市值宽表 + 60 日收益矩（mkt_cap/kelly sizing 消费）
     # 考窗基对齐（20261006 Owner 并行化前置）：warm 基市值表致 mkt_cap 定尺寸权重并集

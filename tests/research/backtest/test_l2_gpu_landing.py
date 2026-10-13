@@ -1537,3 +1537,215 @@ def test_eval_gpu_stats_has_all_glue_exits():
     for key in ("glue_gpu_inline", "glue_gpu_reupload", "glue_gpu_failed"):
         assert key in fac._EVAL_GPU_STATS, f"缺计数键 {key}＝该出口无从判读"
         assert fac._EVAL_GPU_STATS[key] == 0, f"{key} 应为模块级零值（测试期不得被生产计数污染）"
+
+
+# ——— 八、批级设备面板缓存的纪律（st-gpux5-20261013 修法乙＋丙）———
+# 被测面全部用 numpy 替身跑，不占卡、不碰 CH：要判读的是"命中三闸与逐出策略"，
+# 与设备无关。真设备面由 §十六 的全格集分族验收针负责，两把尺各判各的，禁互相顶替。
+_PC_KEYS = ("pc_hit", "pc_put", "pc_identity_miss", "pc_dirty_hit", "pc_evict", "pc_verifier_off")
+
+
+class _FakeXP:
+    """xp 替身：记"真的建了几趟"，于是 hit/miss 能从调用数差分判读而不是从叙述判读。
+
+    `asarray` 必须**拷**而不是取视图：真设备路里 `xp.asarray` 出来的是一份与主机缓冲无关的
+    设备副本，缓存值因此不会被宿主后来的就地改写带着一起变。取视图的话"重建件与原件不等"
+    这条判据会假绿（本班首版就假在这——改完宿主，连缓存里那枚旧值也跟着改了）。
+    """
+
+    def __init__(self) -> None:
+        self.builds = 0
+
+    def asarray(self, a):
+        self.builds += 1
+        return np.array(a, dtype=np.float64, copy=True)
+
+
+def _pc_reset(verify: bool = False, strict: bool = False) -> None:
+    fac.set_panel_cache_verify(verify, strict)
+    fac.reset_panel_cache()
+    for k in _PC_KEYS:
+        fac._EVAL_GPU_STATS[k] = 0
+
+
+def _pc(**want: int) -> None:
+    got = {k: fac._EVAL_GPU_STATS[k] for k in want}
+    assert got == dict(want), f"面板缓存计数不符：得到 {got}，期望 {dict(want)}"
+
+
+def _panel_frame(seed: int = 11, rows: int = 30, cols: int = 6) -> pd.DataFrame:
+    rng = np.random.default_rng(seed)
+    return pd.DataFrame(
+        rng.normal(1.0, 0.3, size=(rows, cols)),
+        index=pd.bdate_range("2022-01-03", periods=rows),
+        columns=[f"{600000 + i}" for i in range(cols)],
+    )
+
+
+def test_panel_cache_exposes_all_six_exits():
+    """六出口各有键（零计数器与"未触发"同形是在册病型，先证读数面齐）。"""
+    for k in _PC_KEYS:
+        assert k in fac._EVAL_GPU_STATS, f"缺计数键 {k}＝该出口无从判读"
+
+
+def test_panel_cache_rejects_same_key_different_host():
+    """乙：键撞而宿主不是同一对象＝必须不命中并重建（id() 复用型脏命中的正面判据）。
+
+    现实里这条的触发形态是"上一块面板被 GC、新面板拿到同一个地址"——那在测试里不可靠，
+    所以这里直接把"同键＋不同宿主"当它的等价形喂进来（键由 id() 组成，两对象同址时键必等）。
+    """
+    _pc_reset()
+    xp = _FakeXP()
+    key = ("logmv", 1234, 6, "600000", "600005", 30)
+    host_a = _panel_frame(11)
+    first = fac._dev_panel(key, lambda: host_a, xp, host=host_a)
+    _pc(pc_put=1, pc_hit=0)
+    second = fac._dev_panel(key, lambda: host_a, xp, host=host_a)
+    assert first is second, "同宿主同键必须复用同一枚设备缓冲（没复用＝本刀白做）"
+    _pc(pc_put=1, pc_hit=1)
+    assert xp.builds == 1, f"第二次不该再建一趟，实际建了 {xp.builds} 趟"
+
+    host_b = _panel_frame(12)  # 同形不同内容，且是另一个对象
+    third = fac._dev_panel(key, lambda: host_b, xp, host=host_b)
+    _pc(pc_put=2, pc_hit=1, pc_identity_miss=1)
+    assert xp.builds == 2, "身份不符却没重建＝pin 判定失守（脏命中）"
+    assert not np.array_equal(third, first), "重建件与脏件同值＝比较器没有牙，上面那条判绿是白判"
+
+
+def test_panel_cache_sentinel_catches_in_place_mutation():
+    """丙：同一宿主被就地改写（乙的 `is` 仍真）必须被内容指纹抓到并重建。"""
+    _pc_reset(verify=True)
+    xp = _FakeXP()
+    key = ("vol", 4321, 6, "600000", "600005")
+    host = _panel_frame(21)
+    first = fac._dev_panel(key, lambda: host, xp, host=host)
+    _pc(pc_put=1, pc_dirty_hit=0)
+    host.iloc[5, 2] = 9.995  # 就地改写：对象身份不变，乙挡不住这一类
+    second = fac._dev_panel(key, lambda: host, xp, host=host)
+    _pc(pc_put=2, pc_hit=0, pc_dirty_hit=1)
+    assert not np.array_equal(second, first), "抓到脏命中却没重建＝哨兵只是摆设"
+
+
+def test_panel_cache_sentinel_strict_raises():
+    """丙的"不匹配即红"执行位：STRICT 档下同一场景直接抛，不静默重建。"""
+    _pc_reset(verify=True, strict=True)
+    xp = _FakeXP()
+    key = ("mvw", 555, 6, "600000", "600005")
+    host = _panel_frame(31)
+    fac._dev_panel(key, lambda: host, xp, host=host)
+    host.iloc[0, 0] = -1234.5
+    with pytest.raises(RuntimeError, match="内容指纹不符"):
+        fac._dev_panel(key, lambda: host, xp, host=host)
+    _pc(pc_dirty_hit=1)
+
+
+def test_panel_cache_in_place_mutation_slips_through_when_sentinel_off():
+    """反向对照（缺省档）：哨兵关着时同一改写**必须**被判成命中并返回旧值。
+
+    这条是上一切的判别力来源——若两档行为一致，则"丙抓到了"根本没法证伪。
+    同时如实记在缺省面读数里的 `pc_verifier_off`：绿要能读出"这枚命中没吃内容校验"。
+    """
+    _pc_reset(verify=False)
+    xp = _FakeXP()
+    key = ("r60m", 777, 6, "600000", "600005")
+    host = _panel_frame(41)
+    first = fac._dev_panel(key, lambda: host, xp, host=host)
+    host.iloc[5, 2] = 9.995
+    second = fac._dev_panel(key, lambda: host, xp, host=host)
+    assert first is second, "缺省档不校验内容＝这枚命中本就该是旧值（改了说明哨兵在缺省面偷偷跑）"
+    _pc(pc_put=1, pc_hit=1, pc_dirty_hit=0, pc_verifier_off=1)
+    assert xp.builds == 1
+
+
+def test_panel_cache_fingerprint_is_nan_stable():
+    """指纹不得把"含 NaN 但一字未变"判成变了（检验道自犯＝515 条假告警那一族）。"""
+    host = _panel_frame(51)
+    host.iloc[0, 0] = np.nan
+    host.iloc[-1, -1] = np.nan
+    a = fac._panel_fp(host)
+    b = fac._panel_fp(host.copy())
+    assert a == b, f"同一内容两副本指纹不等＝满命中假阳的源头没修掉：{a} vs {b}"
+    # 无 NaN 面同判：原件与副本的内存布局可不同，归约序随之差 1 ULP（本班首版尺实测到）
+    clean = _panel_frame(52)
+    assert fac._panel_fp(clean) == fac._panel_fp(clean.copy()), "同内容因帧布局换末位＝布局敏感假阳"
+    f_ordered = pd.DataFrame(
+        np.asfortranarray(clean.to_numpy(dtype=np.float64)), index=clean.index, columns=clean.columns
+    )
+    assert fac._panel_fp(f_ordered) == fac._panel_fp(clean), "F 序同内容换末位＝归约序没先归一化"
+    other = host.copy()
+    other.iloc[0, 0] = 0.0  # NaN 与 0.0 必须是两回事，否则哨兵对首/末 NaN 失明
+    assert fac._panel_fp(other) != a, "NaN 与 0.0 折成同一位＝首末元素失明"
+    moved = host.copy()
+    moved.iloc[7, 3] += 1.0
+    assert fac._panel_fp(moved) != a, "内容变了指纹却不动＝尺瞎"
+
+
+def test_panel_cache_w_site_keys_on_content_not_identity():
+    """瞬态宿主站点（`w`＝每前缀新建）：乙的 `is` 永假，所以键改用内容指纹——
+    既保住命中率（同内容必命中），又挡住脏命中（不同内容必不命中）。"""
+    _pc_reset()
+    w1 = _panel_frame(61, rows=20, cols=3)
+    w2 = w1.copy()  # 同内容、不同对象＝现实里"下一个前缀新算出一张一样的权重板"
+    k1 = ("w", "ic_ir", 3, fac._panel_fp(w1))
+    k2 = ("w", "ic_ir", 3, fac._panel_fp(w2))
+    assert k1 == k2, "同内容权重板键不等＝命中面永远空转（乙把该站点打成永久失配的前兆）"
+    xp = _FakeXP()
+    first = fac._dev_panel_dev(k1, lambda: xp.asarray(w1.to_numpy(dtype=np.float64)))
+    second = fac._dev_panel_dev(k2, lambda: xp.asarray(w2.to_numpy(dtype=np.float64)))
+    assert first is second, "内容键命中失败＝本刀在该站点只换来一次重算"
+    _pc(pc_put=1, pc_hit=1)
+    w3 = w1.copy()
+    w3.iloc[2, 2] = 77.0
+    k3 = ("w", "ic_ir", 3, fac._panel_fp(w3))
+    assert k3 != k1, "不同内容同键＝脏命中的门还开着"
+    fac._dev_panel_dev(k3, lambda: xp.asarray(w3.to_numpy(dtype=np.float64)))
+    _pc(pc_put=2, pc_hit=1)
+
+
+def test_dev_cache_put_evicts_one_not_everything():
+    """N-1②：溢出改 FIFO 逐一枚。旧形整清会把工作集全丢（实测＝缓存退化成每前缀重算）。
+
+    这里不动 `_DEV_CACHE_CAP` 的真值，只按它的当前值造溢出——若将来容量再调，
+    这条判据（"逐出后仍剩 cap 枚，且最新那枚在、最旧那枚不在"）照样成立。
+    """
+    _pc_reset()
+    cap = fac._DEV_CACHE_CAP
+    keys = [(f"e{i}",) for i in range(cap + 3)]
+    for kk in keys:
+        fac._dev_cache_put(kk, np.zeros(16, dtype=np.float64), None, None)
+    assert len(fac._DEV_PANEL_CACHE) == cap, (
+        f"逐出后剩 {len(fac._DEV_PANEL_CACHE)} 枚，既不是 cap 也不是整清后的 0/1＝逐出形不可读"
+    )
+    assert keys[-1] in fac._DEV_PANEL_CACHE, "刚放进去的就被逐掉＝预算算错了"
+    assert keys[0] not in fac._DEV_PANEL_CACHE, "最旧那枚没被逐掉＝不是 FIFO"
+    assert fac._DEV_PANEL_CACHE[keys[3]] is not None, "整清复发（连中段都保不住）"
+    _pc(pc_evict=3)
+
+
+def test_dev_cache_put_respects_byte_budget(monkeypatch):
+    """字节预算兜显驻：超预算时按 FIFO 逐，且不会把刚放入的那枚逐空自己。"""
+    _pc_reset()
+    monkeypatch.setattr(fac, "_DEV_PANEL_BYTE_CAP", 300)
+    for i in range(6):
+        fac._dev_cache_put((f"b{i}",), np.zeros(32, dtype=np.float64), None, None)  # 每枚 256B
+    # 预算 300B 而每枚 256B ⇒ 稳态只能剩最新那一枚（不是 0 枚、也不是全部）：
+    # 逐空自己＝把缓存改成"每格重算"，两个方向都要钉住。
+    assert len(fac._DEV_PANEL_CACHE) == 1, f"预算稳态应只剩 1 枚，实际 {len(fac._DEV_PANEL_CACHE)} 枚"
+    assert ("b5",) in fac._DEV_PANEL_CACHE, "留下的不是最新那枚＝FIFO 与预算的配合反了"
+    assert sum(int(getattr(v, "nbytes", 0)) for (_h, v, _f) in fac._DEV_PANEL_CACHE.values()) <= 300
+
+
+def test_reset_panel_cache_clears_events_and_pins():
+    """批起点复位面：缓存与事件一起清（乙 pin 住宿主引用，这里同时是唯一释放面）。"""
+    _pc_reset(verify=True)
+    xp = _FakeXP()
+    host = _panel_frame(71)
+    key = ("fwdrank", 909, 6, "600000", "600005")
+    fac._dev_panel(key, lambda: host, xp, host=host)
+    host.iloc[3, 3] = 5.5
+    fac._dev_panel(key, lambda: host, xp, host=host)
+    assert fac.panel_cache_events(), "抓到脏命中却不留事件＝晨间包无法复算"
+    assert fac.panel_cache_stats()["pc_dirty_hit"] == 1
+    fac.reset_panel_cache()
+    assert not fac._DEV_PANEL_CACHE, "缓存未随批起点复位＝上一批的 id() 还在这本账上"
+    assert not fac.panel_cache_events(), "事件跨批残留＝把上一批的现行犯算进本批头上"
