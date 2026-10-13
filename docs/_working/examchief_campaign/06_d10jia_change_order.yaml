@@ -1,0 +1,150 @@
+---
+ttl: task_bound
+title: 矿考三班·D10 甲批落地变更单（三张 RRG 卡走 G4-5 新版本卡＋880 截面形开形）
+created: '2026-10-14T00:33:00+08:00'
+sid: st-examchief-20261014
+family_id: MINELOOP-CAMPAIGN
+ruling_basis: 统筹令（2026-10-14 晨，D10 Owner 已裁甲）＋同令增补"基准保持 000300"裁定
+completes_when: 三张版本卡入册＋880 截面形出首张 RRG 分（或如实报负结果）后随 MINELOOP-CAMPAIGN 归档
+depends_on:
+  - docs/_working/mineloop2_campaign/00_morning_pack.md（§33.10 对照包＝本单口径变更依据；§33.11 交接卡）
+  - docs/_working/mineloop2_campaign/05_composite_leg_face_design.yaml（复合族入口 CW-MINELOOP-001 设计稿，批-A 三档排产）
+  - docs/_working/examunlock_campaign/22_composite_join_registry.yaml（共键与对齐规则冻结，属主 st-examunlock-20261013）
+---
+
+# 1. 一句话（大白话）
+
+**改的是"用什么公式画这张 RRG 图"，不是"考试要考什么、及格线是多少"。**
+旧卡自己写的公式（4 天累计涨跌的指数式）实测画出来是一条直线——497 个交易日里板块永远落在
+同一个象限、横截面占比的标准差＝0，等于拿一把没有刻度的尺去考试。所以换成仓库里早就在册、
+被生产件在用的那条公式（10/26 双 EMA）。按 G4-5 的规矩，旧卡一个字都不动，另起三张"版本卡"。
+
+# 2. 判据数值零改动的机械自证（不是嘴上说"没改"）
+
+对照面＝同车道母卡字节；取法＝yaml.safe_load 后逐子键 norm=json.dumps(sort_keys=True) 等值比较。
+实测（2026-10-14 00:3x，本班车道，零 CH）：
+
+| 新版卡 | buckets | pillars | pillars_numeric | oos_window_ref | window.in_sample/oos/regimes | data_binding.signal_table/signal_column/target_source | composite_join_rules.pairs |
+|---|---|---|---|---|---|---|---|
+| L2-02-1/calibration/02b | 等值 | 等值 | 等值 | 等值 | 全等值 | 全等值 | 逐字节等值（3 对） |
+| L2-02-1/ablation/03b | 等值 | 等值 | 等值 | 等值 | 全等值 | 全等值 | 逐字节等值（3 对） |
+| L2-05-2/ablation/02b | 等值 | 等值 | 等值 | 等值 | 全等值 | 全等值 | 逐字节等值（3 对） |
+
+被改动的只有四处，且每处都是"口径面"而不是"判据面"：
+1. `window.frozen_note`——把冻结的构造式从 4 日式换成在册 10/26 式（这正是甲批文的内容）；
+2. `data_binding.signal_derivation`——构造式整段替换（旧句逐字见 §3 废止面）；
+3. `data_binding.data_window_evidence`——**只追加**本班 2026-10-14 复现读数一行，母卡原文一字不删；
+4. `target.note`（03b/02b 两卡）——共用口径的**锚点指针**由 calibration/02 改为 02b；
+   primary/secondary 两支等值未动。
+
+# 3. 逐卡变更面（旧句留痕，不覆写）
+
+## 3.1 TDM-E-L2-02-1/calibration/02_RRG象限迁移 → …/02b_RRG象限迁移_在册10_26双EMA口径版
+
+- 废止面（母卡原文逐字）：frozen_note 的"看数前冻结；RS=ln(板块 4 日累计相对收益)+0.5、
+  RRI=RS 4 日平滑、象限以 100 中枢±带宽划分（带宽=5，取自 RRG 通行口径并在此钉死，事后不可调）"；
+  signal_derivation 的"RS=100·exp(4 日累计 ln(板块收盘/基准收盘)) 平移口径，RRI=RS 的 4 日 EMA；
+  象限按 (RRI,RS) 相对 100 中枢四分为 leading/improving/weakening/lagging"。
+- 新面（在册真源逐字）：`sector_rrg.py:19-22` 三行式＋`:47-48` 参数 10/26＋
+  `:153-157` classify_quadrant 的 100 中枢严格四分＋`:89-101` EMA 通达信口径；
+  快慢序由该函数签名固定（第二分叉的"坐标快慢序"在甲路下自然消解，本班不再自拟映射）。
+- 保留面：series 定义"当日 leading 占比 − lagging 占比"、迁移标签定义、
+  禁直读 `sector_state.rrg_quadrant`＋差异 >10% 先查口径、族口径固定、按日截面分母、
+  62 日最小数据量由装置自身 raise（不在绑定腿预削窗口）。
+- 新增声明面：`buckets.machine_face_gap`——八格 categorical 面无法由一条日频序列复现，
+  执行器 series 路径会走分位分桶缺省 10 桶（在册同型拒绑先例＝绑定册 L2-02-2/02 的理由②
+  "分桶协议不可执行／ORDINAL_FALLTHROUGH"）；本班据此**不把十分位代理读数当八格先验秩来签 pass**。
+
+## 3.2 TDM-E-L2-02-1/ablation/03_… → …/03b_…_在册10_26口径版
+
+- 废止面：frozen_note 的"RS/RRI 口径逐字承同车道 calibration/02 的冻结（RS=100·exp(4 日累计
+  ln(板块收盘/000300 收盘)) 平移口径、RRI=RS 的 4 日 EMA、象限以 100 中枢±带宽 5 四分）"。
+- 新面：锚点移到 02b，"故意不另起口径"这条纪律本身逐字保留。
+- 保留面：四臂 {raw, confirm2, confirm3, rare_guard_confirm2}、250 交易日经验转移频率窗、
+  <10% 稀有跨界 +1 日、62 日门槛三层读数、全部 pillars 与 pillars_numeric。
+- 复用位零自拟：confirm_k = `sector_rrg.confirm_quadrant_series`（:165-197，DEFAULT_CONFIRM_DAYS=2 :49），
+  只换 confirm_days 入参；公共性与调用先例＝`mainline_candidates.py:65`（import）＋:459（调用）。
+- 新增声明面：`implementation_gap`——四臂的日频判别面需要"按臂产出信号序列"的来源接入，
+  未接即按在册 `arm_base_source_unwired` 报错不出分。
+
+## 3.3 TDM-E-L2-05-2/ablation/02_信号响应三件套 → …/02b_…_在册10_26口径版
+
+- 废止面：signal_derivation 的"象限=RS/RRI 四分（与 L2-02-1 共用口径）"。
+- 新面：象限=在册双 EMA 式对 100 中枢四分（与 L2-02-1/02b 共用同一次重算）。
+- 保留面：水温档六段、板块强度两路合成分、五臂集合、权重 0.5/0.8/1.0/1.2 阶梯、
+  "水冰档只保留 leading/improving"的过滤语义、全部判据数值。
+- 新增声明面：`implementation_gap` 三条——①五臂装配面未接；②emotion_index 腿必须带
+  stage='close_final'＋同键唯一性断言（该表 ORDER BY=(trade_date, stage)，裸 face_daily 会把
+  close_final 与 pre_open/auction 混成一日一行＝造第二读数；先例
+  `emotion_linkage_exam.py:25,79-80,246-248`）；③板块强度腿所依 sector_constituent_snapshot
+  品类未注册（05_ 稿钉-1，属主＝数据班/统筹，非本班可自解）。
+
+# 4. 基准分叉（统筹已裁，本单落定一行）
+
+**基准保持 000300。** 命题声明的输入面不随甲批文自动切换；在册件 `sector_rrg.py:120` 的
+880001.SH（缺失时以全板块均值替代）只是该函数自身的缺省参数说明，传参保留。
+若日后"条件轴板块线"裁 RRG 基准唯一化，再统一呈批，不在本班自行改。
+
+# 5. 依据读数（本班 2026-10-14 00:3x 复现，同尺同参，仅换读取根）
+
+探针＝矿考二班 `.runtime/tmp/mineloop2/d10_two_formula_probe.py` 的逐行克隆（差异仅 5 行：
+读取根、输出路径、sid、date、probe 标题），本班 00:19 收据
+`.runtime/tmp/examchief/evidence/repro_d10_probe.yaml`（task_bound，不入袋）。
+
+| 项 | 矿考二班 23:3x | 本班复现 00:19 | 等值 |
+|---|---|---|---|
+| 抽中 4 板块 | 881187/881252/880360/881002 | 同 | 是 |
+| 共同日数 | 497 | 497 | 是 |
+| RS 相关（逐板块） | 0.488/0.301/0.389/0.500 | 0.488/0.3013/0.3889/0.4997 | 是 |
+| 象限一致率（逐板块） | 0.404/0.429/0.501/0.421 | 0.4044/0.4286/0.501/0.4205 | 是 |
+| 卡面式 share 标准差／种数 | 0.0／1 | 0.0／1 | 是 |
+| 在册式 share 标准差／种数 | 0.534／9 | 0.5344／9 | 是 |
+| 横截面 share 相关 | nan（无定义） | nan | 是 |
+| CH 只读查询次数 | 6（修尺后重跑腿） | 6 | 是 |
+
+⇒ 本班据 §33.10 的退化结论成立且可复现，才据此动卡面；负向披露照旧：**样本偏**＝只抽了 4 个
+长史板块（HAVING count()>=500 按历史长度取前 4），横截面粒度粗，该读数只用于"是否退化为常量"，
+不用于水平高低比较。
+
+# 6. 净零与边界声明
+
+- 零新建模块：三张版本卡进既有 exam_cards 树；880 截面形＝`card_binding.py` 复合口的第 2 支装载形
+  （复用在册 `load_sector_family_panel`/`SQL_SECTOR_FAMILY_PANEL`），算子进同一本 OPS 册。
+- 母卡三张不撤、不并、不原地改（G4-5）；其 0 出分现状不变，无历史分数行需承接。
+- 不碰他班在途件：`docs/_working/mineloop2_campaign/00_morning_pack.md` 与
+  `15_d10_two_formula_probe_receipt.yaml` 在矿考二班袋 0049/0050 的 files 面内，本班一律不改写
+  （§33.8 在册教训＝交付器在飞的袋，其 files 面在落地前禁再编辑）。
+- CH 实跑只在出分与只读探针时发生，逐次计数申报；21:00-22:30／01:00-04:00 两个让路窗照在册闸执行。
+
+# 7. 复核命令（每条都在本班车道实跑过，期望值随命令给出）
+
+```
+cd /d/ZephyrAlpha/.worktrees/st-examchief-20261014 && PYTHONNOUSERSITE=1 python - <<'PY'
+import yaml,json,pathlib
+L2=pathlib.Path("docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2")
+trip=[("TDM-E-L2-02-1__calibration__02b_rrg_quadrant_10_26_caliber.yaml","TDM-E-L2-02-1__calibration__02_RRG象限迁移.yaml"),
+("TDM-E-L2-02-1__ablation__03b_quadrant_confirm_leg_10_26_caliber.yaml","TDM-E-L2-02-1__ablation__03_象限迁移确认腿与稀有路径护栏.yaml"),
+("TDM-E-L2-05-2__ablation__02b_signal_response_trio_10_26_caliber.yaml","TDM-E-L2-05-2__ablation__02_信号响应三件套.yaml")]
+n=lambda x:json.dumps(x,sort_keys=True,ensure_ascii=False,default=str)
+for a,b in trip:
+    A=yaml.safe_load((L2/a).read_text(encoding="utf-8")); B=yaml.safe_load((L2/b).read_text(encoding="utf-8"))
+    print(a.split("__")[1], "pairs_eq", n(A["data_binding"]["composite_join_rules"]["pairs"])==n(B["data_binding"]["composite_join_rules"]["pairs"]),
+          "numeric_eq", n(A["pillars_numeric"])==n(B["pillars_numeric"]),
+          "buckets_eq", n({k:v for k,v in A["buckets"].items() if k!="machine_face_gap"})==n(B["buckets"]),
+          "window3_eq", all(n(A["window"][k])==n(B["window"][k]) for k in ("in_sample","oos","regimes")),
+          "frozen_changed", n(A["window"]["frozen_note"])!=n(B["window"]["frozen_note"]),
+          "derived_changed", n(A["data_binding"]["signal_derivation"])!=n(B["data_binding"]["signal_derivation"]))
+PY
+```
+期望（逐字）：
+`calibration  pairs_eq True numeric_eq True buckets_eq True window3_eq True frozen_changed True derived_changed True`
+`ablation  pairs_eq True numeric_eq True buckets_eq True window3_eq True frozen_changed True derived_changed True`
+`ablation  pairs_eq True numeric_eq True buckets_eq True window3_eq True frozen_changed True derived_changed True`
+（三行前缀按文件名第 2 段输出，两张 ablation 卡同名前缀属预期，非重复卡。）
+
+```
+cd /d/ZephyrAlpha/.worktrees/st-examchief-20261014 && PYTHONNOUSERSITE=1 python -c "
+from zephyr.data.table_registry import get_registry
+print(get_registry().table('market_sector_kline_880'))"
+```
+期望：`c1_market.kline_sector_880`（表名经品类派生，禁字面量表名）。

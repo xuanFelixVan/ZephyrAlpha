@@ -81,6 +81,7 @@ _TBL = {
         "market_index_valuation_daily",
         "market_news_sentiment_window",
         "backtest_regime_state_anchored",
+        "market_sector_kline_880",
     )
 }
 
@@ -424,6 +425,19 @@ _REGISTERED_TABLES: dict[str, dict] = {
         "禁把两版当两天）；data_source 列 DEFAULT 'anchored_state_machine'（过滤式取该字面值，非自拟名单）；"
         "覆盖与行数为在册引用＝卡面 data_window_evidence（2017-07-11..2026-10-09／4,488 行，列实测 "
         "close/ma20/ma60/ma120/vol_pct/dominant/data_source/ingest_ts）＋22 册 evidence_a 同指该 ORDER_BY",
+    },
+    # 复合族入口批-A 第 2 支装载形（880 板块截面形）新登记表：三要素同样抄自真源，非自拟。
+    _TBL["market_sector_kline_880"]: {
+        "date_col": "trade_date",
+        "where": "period='1d'",
+        "grain_evidence": "DDL 真源 schemas/categories/kline/market_kline_sector_880.py :65-67 原文："
+        "ENGINE = ReplacingMergeTree(fetched_at)／PARTITION BY (period, toYYYYMM(trade_date))／"
+        "ORDER BY period, sector_code, timestamp ⇒ 该表粒度是 (周期, 板块, 时点) 而非 (日, 板块)，"
+        "日频腿必须先把版本行收敛：本形用在册模板 SQL_SECTOR_FAMILY_PANEL（GROUP BY d, code ＋ "
+        "anyLast 去版本，与两张已批在册板块卡 sector_adjustment_progress/sector_relay_retreat 同式），"
+        "where 的 period='1d' 字面值取自在册读取件常量（scripts/backtest/p1_conditional_tables.py，"
+        '22 册 evidence_b 同指）与册内 args period: "1d"；'
+        "族宇宙经 sector_code_name_map.code_family 在册映射界定（禁自拟名单，卡面明令）",
     },
 }
 
@@ -877,8 +891,68 @@ def _check_legs_keys_on_card_face(card: dict, legs: list[dict]) -> None:
             raise ValueError(f"composite_leg_keys_not_on_card_face:{t}:{sorted(lk)}")
 
 
-def _load_composite_leg(leg: dict) -> tuple[pd.Series, dict]:
-    """一腿一次在册装载口调用（批-A 只开 face_daily 形；表未进配方册即拒=R3）。"""
+#: 复合口在册装载形清单（每加一支都须：①该表在 `_REGISTERED_TABLES` 有 date_col/where/grain_evidence
+#: 三要素；②一支红证用例。第二支 `sector_family_panel` 由 D10 甲批文解锁（RRG 要按板块算象限
+#: 再出日截面占比，单列日频腿承载不了），装载口与 SQL 模板全复用在册件，非本班新写形。
+_COMPOSITE_LOADERS = ("face_daily", "sector_family_panel")
+
+
+def _load_panel_leg(leg: dict, table: str, face: dict, name: str) -> tuple[pd.DataFrame, dict]:
+    """(日 × 板块) 长帧腿：装载口与 SQL 模板全复用在册件（`load_sector_family_panel` 与
+    `SQL_SECTOR_FAMILY_PANEL`），族名单／映射表／周期／列名四要素整表取自册 args——本函数不写
+    任何族名或表名（卡面明令"由 sector_code_name_map.code_family 在册映射界定，禁自拟名单"）。
+    """
+    a = leg.get("args") or {}
+    missing = [k for k in ("map_table", "families", "close_col", "amount_col") if not a.get(k)]
+    if missing:
+        raise ValueError(f"panel_leg_args_incomplete:{sorted(missing)}（族面板四要素须整表来自册 args）")
+    if str(a.get("table") or table).strip().lower() != table:
+        raise ValueError(f"panel_leg_table_mismatch:{str(a.get('table'))[:60]}!={table}")
+    for k in ("close_col", "amount_col"):
+        if not re.fullmatch(r"[a-z_][a-z0-9_]{1,40}", str(a[k])):
+            raise ValueError(f"panel_leg_col_not_an_identifier:{k}:{str(a[k])[:40]}")
+    map_table = str(a["map_table"]).strip().lower()
+    if not _TABLE_RE.fullmatch(map_table):
+        raise ValueError(f"panel_leg_map_table_not_a_qualified_name:{map_table[:60]}")
+    families = [str(f) for f in a["families"]]
+    bad = [f for f in families if not re.fullmatch(r"[a-z0-9_]+", f)]
+    if not families or bad:
+        raise ValueError(f"panel_leg_family_not_an_identifier:{(bad or families)[:4]}")
+    period = str(a.get("period") or "1d")
+    if not re.fullmatch(r"[0-9]+[a-z]{1,3}", period):
+        raise ValueError(f"panel_leg_period_not_a_value:{period[:20]}")
+    df = load_sector_family_panel(
+        {
+            "table": table,
+            "map_table": map_table,
+            "families": families,
+            "period": period,
+            "close_col": str(a["close_col"]),
+            "amount_col": str(a["amount_col"]),
+        }
+    )
+    ev = {
+        "name": name,
+        "table": table,
+        "loader": "sector_family_panel",
+        "grain": "day_x_sector",
+        "columns": [str(c) for c in df.columns],
+        "rows": int(len(df)),
+        "days": int(df["d"].nunique()) if len(df) else 0,
+        "codes": int(df["code"].nunique()) if len(df) else 0,
+        "keys": [str(k) for k in (leg.get("keys") or [])],
+        "family": families,
+        "period": period,
+        "map_table": map_table,
+        "close_col": str(a["close_col"]),
+        "dedup": "在册模板 (日,板块) anyLast 去版本行（禁把多版本行当多行样本）",
+        "grain_evidence": face["grain_evidence"],
+    }
+    return df, ev
+
+
+def _load_composite_leg(leg: dict) -> tuple[pd.Series | pd.DataFrame, dict]:
+    """一腿一次在册装载口调用（批-A 两支形见 `_COMPOSITE_LOADERS`；表未进配方册即拒=R3）。"""
     from fexam.ch_data import ch_query_df
 
     name = str(leg.get("name") or "").strip()
@@ -886,11 +960,13 @@ def _load_composite_leg(leg: dict) -> tuple[pd.Series, dict]:
     loader = str(leg.get("loader") or "")
     if not name:
         raise ValueError("composite_leg_unnamed")
-    if loader != "face_daily":
+    if loader not in _COMPOSITE_LOADERS:
         raise ValueError(f"composite_loader_not_registered:{loader}")
     face = _REGISTERED_TABLES.get(table)
     if face is None:
         raise ValueError(f"leg_table_not_in_recipe_book:{table}")
+    if loader == "sector_family_panel":
+        return _load_panel_leg(leg, table, face, name)
     col = str(leg.get("column") or "").strip()
     if not re.fullmatch(r"[a-z_][a-z0-9_]{1,40}", col):
         raise ValueError(f"leg_column_not_an_identifier:{col[:40]}")
@@ -913,7 +989,7 @@ def _load_composite_leg(leg: dict) -> tuple[pd.Series, dict]:
 
 
 def assemble_composite_legs(card: dict, legs: list[dict], align: str = "inner_on_keys") -> tuple[dict, dict]:
-    """多腿装载＋按冻结共键对齐，交付 {腿名: Series} 与凭据面。出口仍是日频序列面（判官零改动）。
+    """多腿装载＋按冻结共键对齐，交付 {腿名: Series|DataFrame} 与凭据面。出口仍是日频序列面（判官零改动）。
 
     R1 腿集合：册内腿的表必须都在卡面 signal_table 申报过（禁多绑/偷绑）；
     R2 键面：见 `_check_legs_keys_on_card_face`；
@@ -930,21 +1006,62 @@ def assemble_composite_legs(card: dict, legs: list[dict], align: str = "inner_on
         raise ValueError(f"composite_legs_not_declared_on_card:{sorted(wanted - declared)}")
     _check_legs_keys_on_card_face(card, legs)
     series: dict[str, pd.Series] = {}
+    panels: dict[str, pd.DataFrame] = {}
     per_leg: list[dict] = []
     for leg in legs:
-        ser, ev = _load_composite_leg(leg)
-        if len(ser) == 0:
+        obj, ev = _load_composite_leg(leg)
+        if len(obj) == 0:
             raise ValueError(f"composite_leg_empty:{ev['name']}")
-        series[ev["name"]] = ser
+        ev.setdefault("grain", "day_x_sector" if isinstance(obj, pd.DataFrame) else "day")
+        if isinstance(obj, pd.DataFrame):
+            panels[ev["name"]] = obj
+        else:
+            series[ev["name"]] = obj
         per_leg.append(ev)
-    frame = pd.concat(series, axis=1, join="inner")
-    rows_after = int(len(frame))
+    if not panels:
+        frame = pd.concat(series, axis=1, join="inner")
+        rows_after = int(len(frame))
+        for ev in per_leg:
+            ev["rows_dropped_by_alignment"] = int(ev["rows"] - rows_after)
+        aligned = {name: frame[name] for name in series}
+        return aligned, {
+            "align": align,
+            "aligned_rows": rows_after,
+            "legs": per_leg,
+            "fill_policy": "none（禁 ffill/禁补零，缺日如实少行）",
+        }
+
+    def _day_axis(obj) -> pd.DatetimeIndex:
+        idx = obj["d"] if isinstance(obj, pd.DataFrame) else obj.index
+        return pd.DatetimeIndex(pd.to_datetime(idx.unique() if isinstance(obj, pd.DataFrame) else idx))
+
+    # 混合粒度下 `inner_on_keys` 的定义＝各腿"日轴键集"的交集（长帧取 d 列唯一值、序列取 index）；
+    # 交集之外如实少行，禁把长帧折成日频标量冒充对齐（那是折算捷径＝丢掉正是要判的信息）。
+    common: pd.DatetimeIndex | None = None
+    for obj in list(series.values()) + list(panels.values()):
+        days = _day_axis(obj)
+        common = days if common is None else common.intersection(days)
+    if common is None or len(common) == 0:
+        raise ValueError("composite_legs_no_common_days（腿之间没有任何共享日＝拒，不静默出空面）")
+    aligned_mixed: dict[str, pd.Series | pd.DataFrame] = {}
+    for name, s in series.items():
+        aligned_mixed[name] = s.reindex(common)
+    for name, p in panels.items():
+        aligned_mixed[name] = p[p["d"].isin(common)].sort_values(["d", "code"]).reset_index(drop=True)
+    rows_after = int(len(common))
     for ev in per_leg:
-        ev["rows_dropped_by_alignment"] = int(ev["rows"] - rows_after)
-    aligned = {name: frame[name] for name in series}
-    return aligned, {
+        if ev["grain"] == "day_x_sector":
+            kept_rows = int(len(aligned_mixed[ev["name"]]))
+            ev["days_dropped_by_alignment"] = int(ev["days"] - rows_after)
+            ev["rows_dropped_by_alignment"] = int(ev["rows"] - kept_rows)
+            ev["rows_kept"] = kept_rows
+        else:
+            ev["rows_dropped_by_alignment"] = int(ev["rows"] - rows_after)
+    return aligned_mixed, {
         "align": align,
         "aligned_rows": rows_after,
+        "aligned_days": rows_after,
+        "mixed_grain": "inner_on_keys 在混合粒度上＝日轴键集交集（序列 reindex 到该日集、长帧按该日集过滤）",
         "legs": per_leg,
         "fill_policy": "none（禁 ffill/禁补零，缺日如实少行）",
     }
@@ -981,6 +1098,83 @@ def op_agg4_state_ordinal_series(card: dict, args: dict) -> tuple[pd.Series, dic
         "ordinal_map_size": len(om),
         "n_rows": int(len(out)),
     }
+
+
+def op_rrg_quadrant_series(card: dict, args: dict) -> tuple[pd.Series, dict]:
+    """L2-02-1/02b：在册 10/26 双 EMA 式逐板块算 RRG 象限，再出日截面"leading 占比 − lagging 占比"。
+
+    零自拟四条钉死（本函数里不出现任何公式系数、带宽或阈值）：
+    ①构造式=`sector_rrg.compute_rrg_series`（参数取该件 DEFAULT_SHORT_PERIOD/DEFAULT_LONG_PERIOD
+      的缺省值，本函数不传数字，也不复制该式）；
+    ②象限四分=该件 `classify_quadrant` 的 100 中枢规则，快慢序由函数签名固定
+      （§33.10 第三分叉"坐标快慢序未指明"在甲路下由被承接的装置自身解决）；
+    ③band 不存在＝该件四分规则没有带宽项，母卡的"±带宽 5"随锚点废止，本班不补回；
+    ④采信=raw（"连续 2-3 日确认值不值"是 03b 卡的考题，本卡不预设；confirm_quadrant_series
+      的复用位留给 03b 的臂面，本函数不调它）。
+    62 日最小数据量由 `compute_rrg_series` 自身 raise 守⇒不足的历史整段不参与，逐数披露，
+    禁在绑定腿里预削窗口（那会把节点 fallback 悄悄改成装载口策略）。
+    """
+    from zephyr.signal_ashare.sector.sector_rrg import (
+        DEFAULT_LONG_PERIOD,
+        DEFAULT_SHORT_PERIOD,
+        compute_rrg_series,
+    )
+
+    legs = args.get("legs") or {}
+    panel_name = str(args.get("panel_leg") or "panel")
+    bench_name = str(args.get("bench_leg") or "bench")
+    if panel_name not in legs or bench_name not in legs:
+        raise ValueError(f"rrg_legs_missing:{sorted(legs)}（须含 {panel_name}/{bench_name} 两条腿）")
+    panel, bench = legs[panel_name], legs[bench_name]
+    if not isinstance(panel, pd.DataFrame) or not {"d", "code", "close"} <= set(panel.columns):
+        raise ValueError(f"rrg_panel_leg_shape_unexpected:{list(getattr(panel, 'columns', []))[:6]}")
+    if not isinstance(bench, pd.Series):
+        raise ValueError(f"rrg_bench_leg_must_be_series:{type(bench).__name__}")
+    bench = bench.sort_index()
+    bench_pos = bench.dropna()
+    if len(bench_pos) == 0:
+        raise ValueError("rrg_bench_leg_all_nan（基准面无任何读数＝拒，禁拿板块均值冒充基准）")
+    bad_bench = int((bench_pos <= 0).sum())
+    if bad_bench:
+        raise ValueError(
+            f"rrg_bench_nonpositive_close_days:{bad_bench}（卡面硬约束"
+            "『基准价须 >0』由装置自身守，本班不剔日、不替换基准）"
+        )
+    min_len = DEFAULT_LONG_PERIOD * 2 + DEFAULT_SHORT_PERIOD
+    quads: dict[str, pd.Series] = {}
+    skipped_short: list[str] = []
+    for code, g in panel.groupby("code"):
+        gg = g.sort_values("d").set_index("d")
+        both = pd.concat([gg["close"].rename("s"), bench_pos.rename("b")], axis=1, join="inner").dropna()
+        if len(both) < min_len:
+            skipped_short.append(str(code))
+            continue
+        pts = compute_rrg_series(list(both["s"]), list(both["b"]))
+        quads[str(code)] = pd.Series([p.quadrant.value for p in pts], index=both.index)
+    if not quads:
+        raise ValueError(f"rrg_no_sector_leg_passed_min_length:{min_len}（{len(skipped_short)} codes 全不足）")
+    wide = pd.DataFrame(quads)
+    denom = wide.notna().sum(axis=1)
+    ser = ((wide.eq("LEADING").sum(axis=1) - wide.eq("LAGGING").sum(axis=1)) / denom.where(denom > 0)).dropna()
+    dist = {str(k): int((wide == k).sum().sum()) for k in ("LEADING", "IMPROVING", "WEAKENING", "LAGGING")}
+    ev = {
+        "op": "rrg_quadrant_series",
+        "construction": "sector_rrg.compute_rrg_series（RS=100×P_sector/P_bench；RS-Ratio=EMA(RS,10)/EMA(RS,26)×100；"
+        "RS-Momentum=EMA(RS-Ratio,10)/EMA(RS-Ratio,26)×100；象限=classify_quadrant 100 中枢四分）",
+        "short": DEFAULT_SHORT_PERIOD,
+        "long": DEFAULT_LONG_PERIOD,
+        "min_len": min_len,
+        "admitted_caliber": "raw（连续确认腿由 03b 卡判）",
+        "denominator_rule": "按日截面分母＝当日在数 code 数（族口径固定，防宇宙扩张冒充信号改善）",
+        "codes_in_panel_leg": int(panel["code"].nunique()),
+        "codes_computed": len(quads),
+        "codes_skipped_below_min_len": len(skipped_short),
+        "skipped_examples": skipped_short[:8],
+        "quadrant_cell_counts": dist,
+        "rows": int(len(ser)),
+        "span": [str(ser.index.min().date()), str(ser.index.max().date())] if len(ser) else [],
+    }
+    return ser, ev
 
 
 #: 算子册（每格都逐字引用卡面 signal_derivation 原文，禁自创口径；新增算子须同步测试）
@@ -1032,6 +1226,10 @@ OPS: dict[str, dict] = {
     "agg4_state_ordinal_series": {
         "fn": op_agg4_state_ordinal_series,
         "quote_key": "本卡不重算阈值",
+    },
+    "rrg_quadrant_series": {
+        "fn": op_rrg_quadrant_series,
+        "quote_key": "series=当日 leading 占比 − lagging 占比",
     },
 }
 
@@ -1739,6 +1937,7 @@ def run_one(
     dry: bool,
     book: dict[str, dict] | None = None,
     force: bool = False,
+    recorded_by: str = "",
 ) -> dict:
     card = yaml.safe_load(card_path.read_text(encoding="utf-8"))
     cid = str(card.get("card_id"))
@@ -1826,7 +2025,7 @@ def run_one(
         signal_b=sig_b,
         target=tgt,
         run_id=f"mineloop-{run_tag}-{cid.split('/')[-1][:20]}",
-        recorded_by="st-mineloop-20261010",
+        recorded_by=recorded_by or "card_binding_unattributed",
         scores_path=scores_path,
         force=force,
         arm_context=arm_ctx,
@@ -1950,6 +2149,12 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--override-ch-window-with-reason", default="")
     ap.add_argument("--force", action="store_true", help="已考卡重跑：分数册 only-add 追加新行，禁改旧行")
+    ap.add_argument(
+        "--recorded-by",
+        default="",
+        help="run 面：试次台账的归属会话 sid（显式必填）。旧版把该字段写死成上一班 sid＝台账面归属"
+        "篡改（在册缺陷登记＝mineloop2_campaign 班账 §33.9 尾段），修法＝参数化且不猜默认值。",
+    )
     args = ap.parse_args()
 
     cards_dir = Path(args.cards_dir)
@@ -1998,6 +2203,17 @@ def main() -> int:
     if not args.scores:
         print(json.dumps({"error": "run 面必须显式 --scores（禁默认主区 SCORES_PATH）"}, ensure_ascii=False))
         return 2
+    if not args.recorded_by and not args.dry_run:
+        print(
+            json.dumps(
+                {
+                    "error": "recorded_by_required：run 面必须显式 --recorded-by <本班 sid>"
+                    "（试次台账归属字段禁写死、禁猜默认）"
+                },
+                ensure_ascii=False,
+            )
+        )
+        return 2
     approve = {l.strip() for l in Path(args.approve_list).read_text(encoding="utf-8").splitlines() if l.strip()}
     book = (
         load_binding_book(Path(args.binding_book), arms_variant=(args.arms_variant or None))
@@ -2009,7 +2225,16 @@ def main() -> int:
     for cid in sorted(approve - seen):
         results.append({"card_id": cid, "skipped": "not_enumerated_not_preregistered_or_absent"})
     for r in rows:
-        res = run_one(Path(RUN_ROOT) / r["path"], approve, Path(args.scores), args.tag, args.dry_run, book, args.force)
+        res = run_one(
+            Path(RUN_ROOT) / r["path"],
+            approve,
+            Path(args.scores),
+            args.tag,
+            args.dry_run,
+            book,
+            args.force,
+            args.recorded_by,
+        )
         results.append(res)
         print(json.dumps(res, ensure_ascii=False, default=str)[:400], flush=True)
     out = {

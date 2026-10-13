@@ -1558,11 +1558,17 @@ def test_composite_card_face_rules_absent_is_red():
 
 
 def test_composite_loader_not_registered_is_red():
-    """批-A 只开 face_daily 形；册里写未登记的装载口即拒（须先进设计稿再开形）。"""
+    """装载形必须逐支登记；写未登记的装载口即拒（须先进设计稿再开形）。
+
+    批-A 现开两支=face_daily＋sector_family_panel（后者由 D10 甲批文解锁）；
+    用一支**在册但未进复合口**的装载形来证闸在岗——`load_limit_up_panel` 确实存在，
+    但它没登记进 `_COMPOSITE_LOADERS`，走复合口即红（拿"根本不存在的名字"测不出边界）。
+    """
     legs = _comp_legs()
-    legs[0]["loader"] = "sector_family_panel"
+    legs[0]["loader"] = "limit_up_panel"
     with pytest.raises(ValueError, match="composite_loader_not_registered"):
         cb._load_composite_leg(legs[0])
+    assert cb._COMPOSITE_LOADERS == ("face_daily", "sector_family_panel")
 
 
 def test_composite_leg_table_outside_recipe_book_is_red():
@@ -1639,3 +1645,342 @@ def test_run_binding_book_composite_branch_attaches_provenance(monkeypatch):
     assert [float(v) for v in ser.values] == [1.0, 4.0]
     with pytest.raises(ValueError, match="prose_quote_not_found_on_card"):
         cb.run_binding_book(_comp_card(), dict(entry, prose_quote="这句不在卡面上"))
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 880 板块截面形（sector_family_panel 装载形）＋rrg_quadrant_series 算子
+# 开形依据＝统筹令（2026-10-14 晨）转录 Owner D10 甲批；族名/映射表一律整表来自册 args。
+# ──────────────────────────────────────────────────────────────────────────────
+
+_PANEL_ARGS = {
+    "table": "c1_market.kline_sector_880",
+    "map_table": "c1_market.sector_code_name_map",
+    "families": ["industry_l1", "industry_ths"],
+    "period": "1d",
+    "close_col": "close",
+    "amount_col": "amount",
+}
+
+
+def _panel_leg(**over):
+    leg = {
+        "name": "panel",
+        "table": "c1_market.kline_sector_880",
+        "loader": "sector_family_panel",
+        "keys": ["trade_date"],
+        "args": dict(_PANEL_ARGS),
+    }
+    leg.update(over)
+    return leg
+
+
+def _mixed_legs():
+    return [
+        _panel_leg(),
+        {
+            "name": "bench",
+            "table": "c1_market.kline_index",
+            "loader": "face_daily",
+            "column": "close",
+            "cast": "float",
+            "keys": ["trade_date"],
+        },
+    ]
+
+
+def _mixed_fake(panel, bench):
+    def _load(leg):
+        if str(leg.get("loader")) == "sector_family_panel":
+            return panel, {
+                "name": leg["name"],
+                "table": leg["table"],
+                "grain": "day_x_sector",
+                "rows": int(len(panel)),
+                "days": int(panel["d"].nunique()),
+                "codes": int(panel["code"].nunique()),
+            }
+        return bench, {"name": leg["name"], "table": leg["table"], "grain": "day", "rows": int(len(bench))}
+
+    return _load
+
+
+def _card_880():
+    return _comp_card(tables=("c1_market.kline_sector_880", "c1_market.kline_index"))
+
+
+def test_panel_leg_missing_book_args_is_red():
+    """族面板四要素缺一即拒——禁在本函数里补"默认族名/默认列"（那是替卡面拍数）。"""
+    with pytest.raises(ValueError, match="panel_leg_args_incomplete"):
+        cb._load_composite_leg(_panel_leg(args={"map_table": "c1_market.sector_code_name_map"}))
+
+
+def test_panel_leg_family_injection_is_red():
+    with pytest.raises(ValueError, match="panel_leg_family_not_an_identifier"):
+        cb._load_composite_leg(_panel_leg(args=dict(_PANEL_ARGS, families=["industry_l1') OR (1=1 --"])))
+
+
+def test_panel_leg_family_empty_is_red():
+    """族名单给空表＝按"没给"处理，红在缺要素这一关（比名单形状关更早，同样不许放行）。"""
+    with pytest.raises(ValueError, match="panel_leg_args_incomplete"):
+        cb._load_composite_leg(_panel_leg(args=dict(_PANEL_ARGS, families=[])))
+
+
+def test_panel_leg_map_table_must_be_qualified_is_red():
+    with pytest.raises(ValueError, match="panel_leg_map_table_not_a_qualified_name"):
+        cb._load_composite_leg(_panel_leg(args=dict(_PANEL_ARGS, map_table="sector_code_name_map")))
+
+
+def test_panel_leg_table_mismatch_is_red():
+    """args.table 与 leg.table 不一致＝两条腿指向不同表，拒（防册格内自相矛盾）。"""
+    with pytest.raises(ValueError, match="panel_leg_table_mismatch"):
+        cb._load_composite_leg(_panel_leg(args=dict(_PANEL_ARGS, table="c1_market.kline_index")))
+
+
+def test_panel_leg_col_not_identifier_is_red():
+    with pytest.raises(ValueError, match="panel_leg_col_not_an_identifier"):
+        cb._load_composite_leg(_panel_leg(args=dict(_PANEL_ARGS, close_col="close; DROP")))
+
+
+def test_panel_leg_period_not_a_value_is_red():
+    with pytest.raises(ValueError, match="panel_leg_period_not_a_value"):
+        cb._load_composite_leg(_panel_leg(args=dict(_PANEL_ARGS, period="1d' OR '1'='1")))
+
+
+def test_panel_leg_passes_book_args_untouched(monkeypatch):
+    """正证：装载口收到的 args 与册 args 整表等值（本班不补默认、不改族名、不写表名）。"""
+    import pandas as pd
+
+    seen = {}
+
+    def _fake(args):
+        seen.update(args)
+        return pd.DataFrame(
+            {
+                "d": pd.to_datetime(["2024-01-02", "2024-01-03"]),
+                "code": ["881187.SH", "881187.SH"],
+                "close": [1.0, 2.0],
+                "amount": [10.0, 20.0],
+            }
+        )
+
+    monkeypatch.setattr(cb, "load_sector_family_panel", _fake)
+    df, ev = cb._load_composite_leg(_panel_leg())
+    assert seen == {
+        k: _PANEL_ARGS[k] for k in ("table", "map_table", "families", "period", "close_col", "amount_col")
+    }, seen
+    assert len(df) == 2
+    assert ev["grain"] == "day_x_sector" and ev["days"] == 2 and ev["codes"] == 1
+    assert ev["family"] == ["industry_l1", "industry_ths"] and ev["map_table"] == "c1_market.sector_code_name_map"
+    assert "ReplacingMergeTree(fetched_at)" in ev["grain_evidence"]
+    assert "anyLast" in ev["grain_evidence"]
+
+
+def test_panel_leg_table_outside_recipe_book_is_red():
+    """R3 对新形同样生效：腿表没进配方册就先登记三要素，否则拒（零扩权、零白名单）。"""
+    leg = _panel_leg(table="c1_market.some_unregistered_table")
+    with pytest.raises(ValueError, match="leg_table_not_in_recipe_book"):
+        cb._load_composite_leg(leg)
+
+
+def test_mixed_grain_aligns_on_day_intersection(monkeypatch):
+    import pandas as pd
+
+    days = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    panel = pd.DataFrame(
+        {"d": list(days) + [days[1]], "code": ["A", "A", "A", "B"], "close": [1.0, 2.0, 3.0, 5.0], "amount": [9.0] * 4}
+    )
+    bench = pd.Series(
+        [100.0, 101.0, 102.0, 103.0], index=pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"])
+    )
+    monkeypatch.setattr(cb, "_load_composite_leg", _mixed_fake(panel, bench))
+    legs, ev = cb.assemble_composite_legs(_card_880(), _mixed_legs())
+    assert ev["aligned_rows"] == 3 and len(legs["bench"]) == 3
+    assert str(legs["bench"].index[-1])[:10] == "2024-01-04"
+    assert len(legs["panel"]) == 4 and set(legs["panel"]["d"].unique()) == set(days)
+    by = {l["name"]: l for l in ev["legs"]}
+    assert by["bench"]["rows_dropped_by_alignment"] == 1
+    assert by["panel"]["days_dropped_by_alignment"] == 0 and by["panel"]["rows_dropped_by_alignment"] == 0
+    assert "none" in ev["fill_policy"] and "mixed_grain" in ev
+
+
+def test_mixed_grain_drops_disclosed_on_both_axes(monkeypatch):
+    """R5 在混合粒度上的形状：面板腿的掉数按"日轴"和"行数轴"分别披露，禁两套粒度混成一个数。"""
+    import pandas as pd
+
+    panel = pd.DataFrame(
+        {
+            "d": pd.to_datetime(["2024-01-02", "2024-01-03"]),
+            "code": ["A", "A"],
+            "close": [1.0, 2.0],
+            "amount": [9.0, 9.0],
+        }
+    )
+    bench = pd.Series([100.0, 101.0, 102.0], index=pd.to_datetime(["2024-01-03", "2024-01-04", "2024-01-05"]))
+    monkeypatch.setattr(cb, "_load_composite_leg", _mixed_fake(panel, bench))
+    legs, ev = cb.assemble_composite_legs(_card_880(), _mixed_legs())
+    assert ev["aligned_rows"] == 1
+    by = {l["name"]: l for l in ev["legs"]}
+    assert by["panel"]["days_dropped_by_alignment"] == 1 and by["panel"]["rows_dropped_by_alignment"] == 1
+    assert by["panel"]["rows_kept"] == 1
+    assert by["bench"]["rows_dropped_by_alignment"] == 2
+    assert len(legs["bench"]) == 1 and float(legs["bench"].iloc[0]) == 100.0
+
+
+def test_mixed_grain_no_common_days_is_red(monkeypatch):
+    """两条腿没有任何共享日＝拒，不静默出一张空面（空面进判官会读成"查无"而非"绑不上"）。"""
+    import pandas as pd
+
+    panel = pd.DataFrame({"d": pd.to_datetime(["2024-02-01"]), "code": ["A"], "close": [1.0], "amount": [9.0]})
+    bench = pd.Series([100.0], index=pd.to_datetime(["2024-01-02"]))
+    monkeypatch.setattr(cb, "_load_composite_leg", _mixed_fake(panel, bench))
+    with pytest.raises(ValueError, match="composite_legs_no_common_days"):
+        cb.assemble_composite_legs(_card_880(), _mixed_legs())
+
+
+def test_series_only_composite_provenance_keys_unchanged(monkeypatch):
+    """零漂移钉：全 Series 腿时凭据面键集必须与批-A 首跑一致（新形的键不得渗进旧腿形状）。"""
+    import pandas as pd
+
+    dts = pd.to_datetime(["2024-01-02", "2024-01-03"])
+    state = pd.Series(["r3", "r2"], index=dts)
+    close = pd.Series([1.0, 2.0], index=dts)
+    monkeypatch.setattr(cb, "_load_composite_leg", _fake_loader(state, close))
+    _legs, ev = cb.assemble_composite_legs(_comp_card(), _comp_legs())
+    assert set(ev) == {"align", "aligned_rows", "legs", "fill_policy"}, sorted(ev)
+
+
+def _rrg_panel():
+    """两支 80 日合成板块（一支加速上行⇒LEADING，一支加速下行⇒LAGGING）＋一支 40 日短史。
+
+    期望象限不是本班拍的：先用在册件跑出来的实测面（day0 为 LAGGING 是 EMA 种子=首值的
+    暖机面，非数据缺陷），断言只写"上行板进 leading、短史板被装置自己挡在门外"。
+    """
+    import math
+
+    import pandas as pd
+
+    idx = pd.bdate_range("2024-01-02", periods=80)
+    up = [100.0 * math.exp(0.0002 * t * t) for t in range(80)]
+    dn = [100.0 * math.exp(-0.0002 * t * t) for t in range(80)]
+    rows = [{"d": d, "code": "UP", "close": c} for d, c in zip(idx, up, strict=True)]
+    rows += [{"d": d, "code": "DN", "close": c} for d, c in zip(idx, dn, strict=True)]
+    rows += [{"d": d, "code": "SHORT", "close": 100.0} for d in idx[:40]]
+    return pd.DataFrame(rows)
+
+
+def _rrg_bench():
+    import pandas as pd
+
+    return pd.Series([100.0] * 80, index=pd.bdate_range("2024-01-02", periods=80))
+
+
+def test_rrg_op_outs_daily_leading_minus_lagging_share():
+    import pandas as pd
+
+    ser, ev = cb.op_rrg_quadrant_series(_comp_card(), {"legs": {"panel": _rrg_panel(), "bench": _rrg_bench()}})
+    # 10/26/62 不是本班的阈值，是"版本卡承接的在册缺省值"的字面钉：
+    # 若 `sector_rrg` 的缺省参数哪天改了，此证必红＝逼三张版本卡重议口径，不许静默跟值。
+    assert ev["short"] == 10 and ev["long"] == 26
+    assert ev["codes_in_panel_leg"] == 3 and ev["codes_computed"] == 2
+    assert ev["codes_skipped_below_min_len"] == 1 and ev["skipped_examples"] == ["SHORT"]
+    assert len(ser) == 80
+    assert float(ser.iloc[0]) == -1.0
+    assert all(abs(float(v)) < 1e-12 for v in ser.iloc[1:])
+    assert isinstance(ser, pd.Series) and str(ser.index[0])[:10] == "2024-01-02"
+    assert set(ev["quadrant_cell_counts"]) == {"LEADING", "IMPROVING", "WEAKENING", "LAGGING"}
+
+
+def test_rrg_op_denominator_is_that_days_live_codes():
+    """分母＝当日在数 code 数（不是宇宙固定值）：只留一支上行板时占比才该等于 1。"""
+    panel = _rrg_panel()
+    panel = panel[panel["code"] == "UP"].reset_index(drop=True)
+    ser, ev = cb.op_rrg_quadrant_series(_comp_card(), {"legs": {"panel": panel, "bench": _rrg_bench()}})
+    assert ev["codes_computed"] == 1
+    assert all(abs(float(v) - 1.0) < 1e-12 for v in ser.iloc[1:])
+
+
+def test_rrg_op_requires_both_legs():
+    with pytest.raises(ValueError, match="rrg_legs_missing"):
+        cb.op_rrg_quadrant_series(_comp_card(), {"legs": {"panel": _rrg_panel()}})
+
+
+def test_rrg_op_panel_leg_must_be_frame():
+    """把长帧腿当序列喂＝形状不符即拒（禁悄悄 reindex 出一条假面板）。"""
+    with pytest.raises(ValueError, match="rrg_panel_leg_shape_unexpected"):
+        cb.op_rrg_quadrant_series(_comp_card(), {"legs": {"panel": _rrg_bench(), "bench": _rrg_bench()}})
+
+
+def test_rrg_op_bench_leg_must_be_series():
+    with pytest.raises(ValueError, match="rrg_bench_leg_must_be_series"):
+        cb.op_rrg_quadrant_series(_comp_card(), {"legs": {"panel": _rrg_panel(), "bench": _rrg_panel()}})
+
+
+def test_rrg_op_rejects_nonpositive_bench_without_dropping_days():
+    """卡面硬约束"基准价须 >0"＝点名报错，不剔日、不换基准（剔日＝替卡面重划样本）。"""
+    bench = _rrg_bench()
+    bench.iloc[5] = 0.0
+    with pytest.raises(ValueError, match="rrg_bench_nonpositive_close_days"):
+        cb.op_rrg_quadrant_series(_comp_card(), {"legs": {"panel": _rrg_panel(), "bench": bench}})
+
+
+def test_rrg_op_rejects_all_nan_bench():
+    import pandas as pd
+
+    bench = pd.Series([float("nan")] * 80, index=pd.bdate_range("2024-01-02", periods=80))
+    with pytest.raises(ValueError, match="rrg_bench_leg_all_nan"):
+        cb.op_rrg_quadrant_series(_comp_card(), {"legs": {"panel": _rrg_panel(), "bench": bench}})
+
+
+def test_rrg_op_all_codes_below_min_length_is_red():
+    """全部板块都不足 62 日＝没有任何面可判，报错不出分（禁把短史硬塞进暖机段冒充样本）。"""
+    panel = _rrg_panel()
+    panel = panel[panel["code"] == "SHORT"].reset_index(drop=True)
+    with pytest.raises(ValueError, match="rrg_no_sector_leg_passed_min_length"):
+        cb.op_rrg_quadrant_series(_comp_card(), {"legs": {"panel": panel, "bench": _rrg_bench()}})
+
+
+def test_rrg_op_prose_quote_is_on_the_02b_card_face():
+    """引句双校验：OPS 册的 quote_key 必须是新版本卡面原文子串（禁自创口径）。"""
+    card = yaml.safe_load(
+        (cb.CARDS_DIR / "entry_flow/L2/TDM-E-L2-02-1__calibration__02b_rrg_quadrant_10_26_caliber.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    q = cb.OPS["rrg_quadrant_series"]["quote_key"]
+    blob = cb._card_text(card)
+    assert q.replace(" ", "") in blob.replace(" ", ""), q
+    assert "compute_rrg_series" in card["data_binding"]["signal_derivation"]
+    assert "4 日累计" not in card["data_binding"]["signal_derivation"]
+
+
+def test_run_one_records_trial_attribution_to_caller_sid(tmp_path, monkeypatch):
+    """在册缺陷（班账 §33.9 尾段）修复自证：归属字段取调用方显式 sid，不再写死上一班名。"""
+    import fexam.calibration_exam as ce
+    import pandas as pd
+
+    idx = pd.bdate_range("2024-01-02", periods=6)
+    monkeypatch.setattr(cb, "run_binding_book", lambda card, entry: (pd.Series(range(6), index=idx), {"op": "probe"}))
+    monkeypatch.setattr(cb, "index_next_day_return", lambda: pd.Series([0.001] * 6, index=idx))
+    captured: dict = {}
+
+    def _spy(card_path, **kw):
+        captured.update(kw)
+        return {"verdict": "fail", "metrics": {}, "card_id": "spy"}
+
+    monkeypatch.setattr(ce, "run_card", _spy)
+    cid = "TDM-E-L2-02-1/calibration/probe_attr"
+    card = {
+        "card_id": cid,
+        "status": "preregistered",
+        "signal_kind": "series",
+        "family": "calibration",
+        "data_binding": {"signal_table": "c1_market.kline_sector_880"},
+    }
+    f = tmp_path / "card.yaml"
+    f.write_text(yaml.safe_dump(card, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    book = {cid: {"op": "rrg_quadrant_series"}}
+    cb.run_one(f, {cid}, tmp_path / "scores.yaml", "t", False, book, False, "st-examchief-20261014")
+    assert captured["recorded_by"] == "st-examchief-20261014", captured
+    cb.run_one(f, {cid}, tmp_path / "scores.yaml", "t", False, book, False)
+    assert captured["recorded_by"] == "card_binding_unattributed", captured
+    assert "st-mineloop-20261010" not in Path(cb.__file__).read_text(encoding="utf-8")

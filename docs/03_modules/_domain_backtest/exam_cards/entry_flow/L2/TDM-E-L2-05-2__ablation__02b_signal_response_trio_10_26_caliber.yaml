@@ -1,0 +1,161 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-05-2/ablation/02b_信号响应三件套_在册10_26口径版
+node_id: TDM-E-L2-05-2
+family: ablation
+version_of: TDM-E-L2-05-2/ablation/02_信号响应三件套
+title_zh: 水温→信号三件套（权重/门槛/象限过滤）·消融卡·在册 10/26 双 EMA 口径版（02b）
+hypothesis: >-
+  随水温档查表切换的三件套（信号权重 ×0.5~1.2、打分门槛升降、象限过滤"水冰只放主线象限"）
+  各自有正边际且非冗余：逐件剔除（权重固定 1.0 / 门槛不升降 / 不做象限过滤）后
+  板块池次日风险调整指标下降；若某件剔除后不降，则该件=可退役参数（净零候选）。
+  （命题原文逐字承 02，本版本卡不改命题、不改门柱数值，只改三件套中"象限过滤"一支的构造式口径。）
+why_new_version_not_edit: >-
+  G4-5 判据版本化禁追溯：02 的 signal_derivation 把第三件冻结为"象限=RS/RRI 四分（与 L2-02-1 共用口径）"，
+  而 L2-02-1 的共用口径原文是 4 日累计 ln 的 exp 平移式——该式已被 D10 对照包实测判为退化面
+  （横截面 share 标准差=0.0／取值种数=1，497 日恒为同一值）。Owner 裁甲（2026-10-14 统筹令）要求
+  三张卡一并承在册 10/26 式；原地改共用口径＝同时改掉 02 与 L2-02-1 两支冻结面。
+  故另起本版本卡，02 原卡面留痕不覆写（02 现 0 出分，无分数行需保留）。
+caliber_change_basis:
+  ruled_by: 统筹令（2026-10-14 晨）转录 Owner 对 D10 的裁决＝甲（三张卡口径改承在册 10/26 式）
+  paper_trail:
+    - docs/_working/mineloop2_campaign/00_morning_pack.md §33.10（D10 对照包）
+    - docs/_working/mineloop2_campaign/15_d10_two_formula_probe_receipt.yaml（对照包回执）
+    - docs/_working/examchief_campaign/06_d10jia_change_order.yaml（本班变更单）
+  anchor_moves_to: TDM-E-L2-02-1/calibration/02b_RRG象限迁移_在册10_26双EMA口径版（象限口径唯一真源，本卡共用同一次重算）
+  benchmark_ruling: >-
+    基准保持 000300（统筹 2026-10-14 增补裁定）；在册件 sector_rrg.py:120 的 880001.SH 只是该函数
+    自身缺省参数说明，传参保留。本卡的 kline_index 腿仍按 000300 装载。
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: 看数前冻结；IS 起点受板块强度对象侧 880 上限 2021-08-02 约束（水温面本身 1991 起可用）；
+    本版本卡相对 02 的唯一变更=第三件"象限过滤"所依的 RRG 构造式（逐字承 02b，即在册
+    `sector_rrg.py:19-22` 的 RS/RS-Ratio/RS-Momentum 双 EMA 式，short=10／long=26，
+    象限=classify_quadrant :153-157 的 100 中枢严格四分，快慢序由该函数签名固定）；
+    02 原文的"±带宽 5"随锚点废止（在册四分规则无带宽参数）；水温档与板块强度两支口径未受本次裁定触及，逐字不动。
+buckets:
+  type: ablation_arm
+  'on': arm 集合 {all_three, drop_weight_scale, drop_gate_shift, drop_quadrant_filter, weight_only}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: 每件剔除臂相对 all_three 的判别面下降 >= 0.01（三件各自必要）；
+    不达则该件标 retirement_candidate
+  ic_floor: all_three arm 的池加权次日收益 IC 均值 >= 0.02、IC_IR >= 0.3
+  lag_profile: 三件套效应半衰期 >= 1 交易日
+  regime_stability: bear/rebound 两段同号（重点检验 rebound 段收紧是否纯踏空）
+  param_drift: 查表参数逐档敏感性（权重 0.5/0.8/1.0/1.2 四点的次阶梯）登记不出分
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: sector_gate_pass_rate_stability（放行率跨档稳定性，辅轴）
+  note: 象限过滤依赖 RRG 象限（L2-02-1/02b 同口径重算，一次重算两卡共用）
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-05-2.confidence
+  relation_to_parent: >-
+    02 维持 preregistered/0 出分原状，不改不撤不重审；本卡与其并存＝同命题的口径版本序列。
+implementation_gap: >-
+    本卡开考前的硬前置（缺一不开考，如实申报，全部为本班实测在册）：
+    ①五臂装配面须由"按臂产出信号序列"的来源接入（05_composite_leg_face_design.yaml §2 备注形状），
+    现册只有 face_daily 与本班新建的 sector_family_panel 两支装载形⇒未接即按 arm_base_source_unwired
+    报错不出分（fail-closed，禁静默降级成单臂）；
+    ②emotion_index 腿**必须**带 stage='close_final' 过滤＋FINAL/去版本后的同键唯一性断言：
+    该表 ORDER BY=(trade_date, stage)，裸 SQL_FACE_DAILY 的 toDate(trade_date) 分组会把 close_final
+    与 pre_open/auction 混成一日一行＝造第二读数（矿考二班 §33.9 实测查明）。在册先例=
+    scripts/backtest/fexam/emotion_linkage_exam.py:25（stage 声明）、:79-80（SQL 形）、
+    :246-248（"FINAL 后同键多行（PIT-c 违例）"断言形）；本班不自拟第二种取法；
+    ③板块强度腿（与 L2-01 共用重算）所依 sector_constituent_snapshot 品类未注册
+    （05_composite_leg_face_design.yaml §3 钉-1，属主=数据班/统筹，非本班可自解）。
+preregistered_by: st-examchief-20261014
+preregistered_at: '2026-10-14'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  composite_join_rules:
+    registered_by: st-examchief-20261014
+    registered_at: '2026-10-14'
+    inherited_from: TDM-E-L2-05-2/ablation/02_信号响应三件套（键面属主 st-examunlock-20261013，本块=逐字镜像转录，禁自补一个键）
+    mirror_note: pairs 子树与母卡同名块逐字节等值（含母卡执笔班的第一人称措辞），本版本卡只新增 registered_by/registered_at/inherited_from/mirror_note 四键
+    basis_casefile: docs/_working/examunlock_campaign/22_composite_join_registry.yaml
+    executor_note: 键面与对齐规则沿用 22 册冻结原值；本版本卡只换象限构造式，共键面零变更
+    card_face_declared_join_key_before: false
+    pairs:
+    - left: c1_market.emotion_index
+      right: c1_market.kline_index
+      tables:
+      - c1_market.emotion_index
+      - c1_market.kline_index
+      keys:
+      - trade_date
+      alignment: 同日对齐（两侧共享键同名同频，1:1 行对齐；不做前向填充）
+      pit_rule: 信号侧取 t 日行，目标侧取 t+1 日收益，禁未来信息（卡面 signal_derivation 原文冻结）
+      key_evidence_a: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+      key_evidence_b: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+      joinable_now: true
+    - left: c1_market.emotion_index
+      right: c1_market.kline_sector_880
+      tables:
+      - c1_market.emotion_index
+      - c1_market.kline_sector_880
+      keys:
+      - trade_date
+      alignment: 同日对齐（两侧共享键同名同频，1:1 行对齐；不做前向填充）
+      pit_rule: 信号侧取 t 日行，目标侧取 t+1 日收益，禁未来信息（卡面 signal_derivation 原文冻结）
+      key_evidence_a: DDL 真源 schemas/categories/market/market_emotion_index.py 的 ORDER_BY=(trade_date, stage)
+      key_evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+      joinable_now: true
+    - left: c1_market.kline_index
+      right: c1_market.kline_sector_880
+      tables:
+      - c1_market.kline_index
+      - c1_market.kline_sector_880
+      keys:
+      - trade_date
+      alignment: 同日对齐（两侧共享键同名同频，1:1 行对齐；不做前向填充）
+      pit_rule: 信号侧取 t 日行，目标侧取 t+1 日收益，禁未来信息（卡面 signal_derivation 原文冻结）
+      key_evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+      key_evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+      joinable_now: true
+  signal_table: c1_market.kline_sector_880 + c1_market.emotion_index + c1_market.kline_index
+  signal_column: kline_sector_880.close/amount；emotion_index.emotion_index；kline_index.close(000300 基准)
+  signal_derivation: >-
+    板块强度=两路合成分（与 L2-01 共用重算）；水温档=emotion_index 六段（与 L2-05-1 共用）；
+    象限=RS-Ratio 与 RS-Momentum 双 EMA 式对 100 中枢四分（与 L2-02-1/02b 共用口径，
+    构造式逐字承在册 sector_rrg.py:19-22：RS = 100 × P_sector / P_bench、
+    RS-Ratio = EMA(RS, 10) / EMA(RS, 26) × 100、RS-Momentum = EMA(RS-Ratio, 10) / EMA(RS-Ratio, 26) × 100）；
+    arm 变量：权重缩放=按档乘 0.5/0.8/1.0/1.2；门槛升降=池规模分位上下移一档；
+    象限过滤=水冰档只保留 leading/improving 象限板块。
+    三件全用=查表切换；单件剔除=该件退回中性值（权重 1.0/门槛不升/不过滤）。
+    板块宇宙=sector_code_name_map.code_family IN (industry_l1, industry_ths) 的在册映射界定，禁自拟名单；
+    禁直读 c1_market.sector_state.rrg_quadrant 作信号（被测件同族产物＝自证循环，仅口径交叉核对）。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    承 02 的 2026-10-10 实测段逐字保留（kline_sector_880 industry_l1(61)/industry_ths(128) 板块指数
+    =2021-08-02..2026-10-08，78263/163038 行，amount/close 满配；emotion_index close_final
+    =1991-06-10..2026-09-30/8617 行；kline_index 000300=2005-01-04..2026-10-09/5284 行；
+    本节点 TDM data_refs 为空 [] ⇒ 全部输入来自上游件，取数面靠上述三表重算，
+    登记为"无自有数据面"而非"可得"；象限过滤真口径依赖 RRG，其象限在本仓有
+    sector_state.rrg_quadrant（2022-09-01 起满配）但属被测件产物，仅交叉核对不直读）；
+    本班 2026-10-14 补一行实测：emotion_index 的 stage 面除 close_final 外另有 pre_open/auction 行，
+    故本卡的 emotion 腿须按 implementation_gap ② 的在册取法装载，否则日频面被造第二读数。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_gate.py + MOD-SIG-059/094/107/131（象限口径真源
+    =src/zephyr/signal_ashare/sector/sector_rrg.py :109-157）
+sources:
+  - 族级矿脉 S4（状态→参数映射/门控），URL+发布方+年份见台账 §2-S4
+  - 口径变更依据=docs/_working/mineloop2_campaign/00_morning_pack.md §33.10（D10 对照包）

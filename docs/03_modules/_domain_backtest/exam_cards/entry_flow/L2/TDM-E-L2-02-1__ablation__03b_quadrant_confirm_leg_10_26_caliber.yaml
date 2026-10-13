@@ -1,0 +1,173 @@
+schema_version: '1.0'
+card_id: TDM-E-L2-02-1/ablation/03b_象限迁移确认腿与稀有路径护栏_在册10_26口径版
+node_id: TDM-E-L2-02-1
+family: ablation
+version_of: TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏
+title_zh: RRG 象限迁移确认腿与稀有路径护栏·消融卡·在册 10/26 双 EMA 口径版（03b）
+hypothesis: >-
+  TDM 本节点 `invalidation` 原文="象限转移须连续 「2-3 日确认」，单日跳变不采信；transition 概率「<10% 异常路径加 1 日确认」"，
+  `fallback` 原文="板块日K 不足 「62 日」（DualEma 最小数据量）→该板块不参与序列排名"。
+  这两条是节点对实现下的「硬约束」，而同车道 calibration/02 把迁移面显式降为
+  "transition_matrix：象限迁移矩阵 5 日平稳性登记（纯描述性，不做门柱）"⇒"这道确认滤波本身值不值"从未被考。
+  本卡四臂：raw（单日跨界即采信，=现行考卷口径）/ confirm2（连续 2 日同象限才采信）/ confirm3 /
+  rare_guard（对上日转移概率 <10% 的稀有跨界再额外 +1 日确认）。
+  假设：确认腿降低信号翻转次数（滤波有效）且不削弱增益（信息未被滤掉）；
+  若 raw 与 confirm2/3 的增益无差，则"单日跳变不采信"是凭经验的过度滤波，应简化实现（净零：零触发零消费→退役）；
+  若 confirm2 显著更好，则现行考卷与在码 sector_rrg 的采信规则须对齐。62 日门槛作为宇宙护栏单列（实测影响面仅 8/729 codes，
+  预期判 no_binding，如实报而非宣称验证）。
+  （命题原文逐字承 03，本版本卡不改命题、不改门柱数值，只改构造式口径。）
+why_new_version_not_edit: >-
+  G4-5 判据版本化禁追溯：03 的 frozen_note 明写"RS/RRI 口径逐字承同车道 calibration/02 的冻结
+  （RS=100·exp(4 日累计 ln(板块收盘/000300 收盘)) 平移口径、RRI=RS 的 4 日 EMA）"——
+  它把口径**锚在 02 的 4 日式**上，"故意不另起口径"。Owner 裁甲（2026-10-14 统筹令）改的是构造式，
+  03 的锚点必须跟着换；原地改＝抹掉 03 的冻结面。故另起 03b，03 原卡面留痕不覆写（03 现 0 出分，无分数行）。
+caliber_change_basis:
+  ruled_by: 统筹令（2026-10-14 晨）转录 Owner 对 D10 的裁决＝甲（三张卡口径改承在册 10/26 式）
+  paper_trail:
+    - docs/_working/mineloop2_campaign/00_morning_pack.md §33.10（D10 对照包）
+    - docs/_working/mineloop2_campaign/15_d10_two_formula_probe_receipt.yaml（对照包回执）
+    - docs/_working/examchief_campaign/06_d10jia_change_order.yaml（本班变更单）
+  anchor_moves_to: TDM-E-L2-02-1/calibration/02b_RRG象限迁移_在册10_26双EMA口径版（同口径唯一真源，两卡共用一次重算）
+window:
+  in_sample:
+  - '2021-08-02'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-08-02..2022-10-31（贴现率熊+微盘熊）
+    rebound: 2022-11-01..2023-12-31（防疫转向+风格修复）
+  frozen_note: >-
+    看数前冻结。RS/RS-Ratio/RS-Momentum 口径逐字承同车道 02b 的冻结（即在册
+    `sector_rrg.py:19-22` JdK DualEma 标准式：RS=100×P_sector/P_bench、
+    RS-Ratio=EMA(RS,10)/EMA(RS,26)×100、RS-Momentum=EMA(RS-Ratio,10)/EMA(RS-Ratio,26)×100，
+    short=10／long=26 取该件 :47-48 默认值，象限=classify_quadrant :153-157 的 100 中枢严格四分）——
+    「故意不另起口径」这条纪律本身逐字保留，只是锚点从 02 的 4 日式换成 02b 的在册式；
+    03 原文的"100 中枢±带宽 5"随锚点一并废止（在册四分规则无带宽参数）；
+    基准保持 000300（统筹 2026-10-14 增补裁定：命题声明的输入面不随甲批文自动切换）；
+    "连续 2-3 日确认"取 2 与 3 两档（节点给的是区间，两档都跑不挑一个）；
+    "转移概率<10%"的估计窗=过去 250 交易日的经验转移频率（开考前钉死，禁事后扫窗）。
+buckets:
+  type: ablation_arm
+  'on': 采信规则臂 {raw, confirm2, confirm3, rare_guard_confirm2}
+  min_obs_per_bucket: 60
+pillars:
+  ablation_marginal: confirm2 相对 raw 的判别面（"新进领先占比−新进落后占比"对次日指数收益的 IC）提升 >= 0.01 且
+    mono_spearman>=0.6 ⇒ 确认腿必要；若 < 0 ⇒ 判"过度滤波"，登记为简化提案（不撤码，只入册）
+  flip_reduction: 信号翻转次数（日频象限标签变更次数）confirm2/confirm3 相对 raw 下降 >= 30%，
+    且增益不劣 ⇒ 滤波的净效果为正；翻转降而增益也降=信息被滤掉，如实入册
+  rare_path_honesty: 稀有路径（上日转移经验概率 <10%）子集单独出数并披露样本数；子集 obs < 60 判 nan 禁并入主判
+    （节点这条是给异常路径的，不许用全样本平均把它抹平）
+  ic_floor: 各臂连续面（leading 占比−lagging 占比）日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
+  regime_stability: bear/rebound 两段同号且均过 ic_floor
+  universe_guard: 62 日门槛面=按"当日 code 的历史长度"分层报增益（<62 / 62-180 / >=180 三层，实测 IS 内 8/22/… 个 code，见 evidence）：
+    若 <62 层的预测误差显著更大 ⇒ 节点门槛有据，保留并在考卷侧守；若无差异 ⇒ 门槛是历史长度歧视，
+    登记为"可放宽"提案；「该柱禁与确认腿混判」（不同对象，内收判据铁律：跨域不同对象→不并）
+target:
+  primary: next_day_index_return（CSI300 次日收益）
+  secondary: quadrant_signal_flip_count（翻转次数，本卡专属判据面）与 sector_next5d_excess
+  note: 与同车道 calibration/02b 分工=02b 考"象限位置/迁移方向有没有预测力"，本卡考"节点规定的采信规则要不要、值多少"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-02-1.confidence
+  relation_to_parent: >-
+    03 维持 preregistered/0 出分原状，不改不撤不重审；本卡与其并存＝同命题的口径版本序列。
+implementation_gap: >-
+    本卡开考前的硬前置（缺一不开考，如实申报）：四臂各自的日频判别面须由"按臂产出信号序列"的
+    来源接入（05_composite_leg_face_design.yaml §2 备注的形状=arm_base_source 的新来源），
+    现册只有 face_daily 与本班新建的 sector_family_panel 两支装载形，双臂装配口未接该形状⇒
+    跑起来会按在册纪律 arm_base_source_unwired 报错不出分（fail-closed，禁静默降级成单臂）。
+    确认腿与稀有路径的实现位＝零自拟复用 `sector_rrg.confirm_quadrant_series`
+    （:165-197，DEFAULT_CONFIRM_DAYS=2 :49），confirm2/confirm3 只换 confirm_days 入参；
+    rare_guard 的 +1 日与 250 日经验转移频率面须按卡面原文另装（本卡不自拟概率式）。
+preregistered_by: st-examchief-20261014
+preregistered_at: '2026-10-14'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  composite_join_rules:
+    registered_by: st-examchief-20261014
+    registered_at: '2026-10-14'
+    inherited_from: TDM-E-L2-02-1/ablation/03_象限迁移确认腿与稀有路径护栏（键面属主 st-examunlock-20261013，本块=逐字镜像转录，禁自补一个键）
+    mirror_note: pairs 子树与母卡同名块逐字节等值（含母卡执笔班的第一人称措辞），本版本卡只新增 registered_by/registered_at/inherited_from/mirror_note 四键
+    basis_casefile: docs/_working/examunlock_campaign/22_composite_join_registry.yaml
+    executor_note: 键面与对齐规则沿用 22 册冻结原值；sector_state 两对 pair 键面未冻＝批-B，与本口径变更无关，勿混做
+    card_face_declared_join_key_before: false
+    pairs:
+    - left: c1_market.kline_index
+      right: c1_market.kline_sector_880
+      tables:
+      - c1_market.kline_index
+      - c1_market.kline_sector_880
+      keys:
+      - trade_date
+      alignment: 同日对齐（两侧共享键同名同频，1:1 行对齐；不做前向填充）
+      pit_rule: 信号侧取 t 日行，目标侧取 t+1 日收益，禁未来信息（卡面 signal_derivation 原文冻结）
+      key_evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+      key_evidence_b: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+      joinable_now: true
+    - left: c1_market.kline_index
+      right: c1_market.sector_state
+      tables:
+      - c1_market.kline_index
+      - c1_market.sector_state
+      keys: []
+      alignment: 同日对齐（两侧共享键同名同频，1:1 行对齐；不做前向填充）
+      pit_rule: 信号侧取 t 日行，目标侧取 t+1 日收益，禁未来信息（卡面 signal_derivation 原文冻结）
+      key_evidence_a: 在册配方表 SQL：symbol 维＋toDate(trade_date) 分组＋anyLast 去重（证据 scripts/backtest/fexam/card_binding.py）
+      key_evidence_b: 查无键面证据（本班不猜）
+      joinable_now: false
+    - left: c1_market.kline_sector_880
+      right: c1_market.sector_state
+      tables:
+      - c1_market.kline_sector_880
+      - c1_market.sector_state
+      keys: []
+      alignment: 同日对齐（两侧共享键同名同频，1:1 行对齐；不做前向填充）
+      pit_rule: 信号侧取 t 日行，目标侧取 t+1 日收益，禁未来信息（卡面 signal_derivation 原文冻结）
+      key_evidence_a: 在册读取件 SQL 常量：SELECT trade_date, sector_code, sector_name, close … WHERE period='1d'（证据 scripts/backtest/p1_conditional_tables.py）
+      key_evidence_b: 查无键面证据（本班不猜）
+      joinable_now: false
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_index
+  signal_column: kline_sector_880.close where period='1d'（键列=sector_code）；kline_index.close where symbol='000300'
+  signal_derivation: >-
+    与同车道 02b 逐字同口径重算（禁直读 c1_market.sector_state.rrg_quadrant，那是被测件同族产物=自证循环；
+    该列仅作口径一致交叉核对，差异 >10% 先查口径再开考）；
+    构造式=在册 `sector_rrg.py:19-22` 的 RS/RS-Ratio/RS-Momentum 双 EMA 式（short=10／long=26），
+    象限=classify_quadrant 的 100 中枢严格四分，快慢序由该函数签名固定；
+    新增面=按日构造"code×昨日象限→今日象限"标签序列，再按采信规则把标签转成信号：
+    raw=当日跨界即置 1；confirm_k=须连续 k 日处同一目标象限才置 1（否则视作仍在旧象限）；
+    rare_guard=在 confirm2 之上，若该转移的经验概率（过去 250 交易日频率）<10% 则再延后 1 日；
+    历史长度层=每 code 自其首个 trade_date 起累计 in-window 交易日数（用于 universe_guard 分层）；
+    板块宇宙=sector_code_name_map.code_family IN (industry_l1, industry_ths) 的在册映射界定，禁自拟名单；
+    占比类读数按日截面分母（当日在数 code 数）；
+    最小数据量 62 日（long×2+short）由 compute_rrg_series 自身 raise 守，不在绑定腿里预削窗口。
+  target_source: kline_index 000300 close→next_day_return
+  data_window_evidence: >-
+    承 03 的 2026-10-10 实测段逐字保留（列集 ['period','trade_date','timestamp','sector_code',
+    'sector_name','open','high','low','close','volume','amount','forward_factor','data_source',
+    'fetched_at','ingest_ts'] ⇒ 键列是 sector_code；宇宙漂移 2021-08-02=266／2023-12-29=677／
+    2026-10-08=728 codes ⇒ 占比类读数必须按日截面分母，禁固定 code 数；
+    62 日门槛影响面 <62 日=8 codes、62-180 日=22 codes、全 code=729 ⇒ 该柱预期 no_binding，如实报；
+    全表 785204 行）；本班 2026-10-14 复现腿补一行：同一探针切片下 4 个长史板块共同 497 日、
+    在册 10/26 式横截面 share 标准差 0.5344／种数 9（4 日式为 0.0／1）。
+  impl_ref: src/zephyr/signal_ashare/sector/sector_rrg.py（MOD-SIG-026，TDM module_ref；
+    compute_rrg_series :109-150／classify_quadrant :153-157／confirm_quadrant_series :165-197；
+    确认腿的在码现状已实读＝该件已实现 2-3 日确认，而考卷 03 用 raw⇒本卡同时是
+    "考卷与被测件口径不一致"的治理产出，该结论随锚点换式后仍成立）
+executor: scripts/backtest/fexam/calibration_exam.py:run_card（series 面机判）+ exam 侧 ≤60 行臂组装（纯标签重放，无引擎语义改动）
+origin: cross_probe_RXA（漏矿来源=TDM 节点 invalidation/fallback 两字段原文）
+sources:
+  - 族级矿脉 S1（RRG 四象限口径），URL+发布方+年份见 L1 台账 §2-S1；本卡复用不重复挖外部矿
+  - 口径变更依据=docs/_working/mineloop2_campaign/00_morning_pack.md §33.10（D10 对照包）
