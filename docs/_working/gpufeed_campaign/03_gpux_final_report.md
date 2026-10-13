@@ -2021,3 +2021,142 @@ cd /d/ZephyrAlpha/.worktrees/st-gpux3-20261012 && git show :src/zephyr/backtest/
    配方三条在 §十三·检·I⑤。
 2. 本班这一袋 04:48 首投死于 `ghost_session`（**不是**预判的同位双追加——gpux4 袋 `75d46639775e` 先落地了，
    本班按三步以**当下 dev** 重基后重投，两件仍各判"dev 独有行＝0"）；死因与复命读回见 §十三·检·J·8。
+
+#### 十三·检·O 裁④的双班撞车、本班撤投，与对五班码面的独立复核（附一支装配级常驻守卫）
+
+（本班 st-gpuux3v-20261013；落笔 2026-10-13 17:1x `date` 实测。承统筹"现在实施"令开工，
+开工期间同一修法由另一班先行落地，故本节把**归属如实交给五班**，本班只交复核读数与一支装配守卫；
+本班不签他人成果，也不把同一修法实现第二遍。**判据面一字未动**——§二·丙 三档线值、§一·补 0.005
+冻结线、每核同步口径、`_RESIDENCY_ENABLE_FOR_TEST`（缺省 False）全部原样。）
+
+**一、时序（逐条实测，commit 时戳与 `date` 对读）**
+
+| 时刻 | 事实 |
+|---|---|
+| 10-13 12:3x | 统筹四裁原文：裁④"修法乙＋丙＝批排一批（配方已交，下一班实施）"（§十三·检·N 逐字在册） |
+| 10-13 午后 | 统筹改判：裁④"＝现在实施……再等一班等于让一个已命名的缺陷多活一天"，并加"代码件同袋带尺"、落地判据"红绿双向＋三级指纹配方复验" |
+| 10-13 14:3x | 五班 st-gpux5-20261013 进场（在册 reaper 追加式登记行为证），按其**收到的原令**施工同一修法 |
+| 10-13 16:16:45 | 五班袋落地 `bbeb0aa36c719cf9e9369c2dea72b84d7b7bcb9e`：两文件 417 增 38 删（`factory_grid_executor.py` 243 行被触、`test_l2_gpu_landing.py` 212 行全增）；执行器 dev blob `6adcd10d21d76d7681586e44229853bdde949dd2`／bytes-sha256[:12] `cd001332a07b`（3,538 行） |
+| 10-13 16:3x | 本班按在册纪律自跑"复核命令"⇒ 主区文件里既无本班的两个计数键、`_dev_panel` 站点又已是 `host=` 形 ⇒ 判基底已换，**当即停手不复投** |
+
+**二、撤投的理由（不写成"重基继续投"）**
+
+本班代码袋是**整档快照**：若按 14:4x 的车道基线（执行器 blob `390b5f42a5416fd622aa3ccd62c5f2db149bf193`）
+继续入队，落地就把 `bbeb0aa36c` 的 243 行改动整片覆回旧面＝归属篡改＋静默蒸发（在册同族两条病案：
+袋=整档快照驱逐他班、CAS 重放整树回退）。本班两件车道文件已复位到 dev 现字节（用 `git show dev:<件>` 取字节
+覆盖盘面，**非裸 checkout**，不污染共享索引）；本班作废字节存证在 `.runtime/tmp/st-gpuux3v-20261013/`
+（`v4_fge_fixed.py` bytes-sha `176d23b00b16`／`v4_tests_mine.py` bytes-sha `c1553f3d4d7a`）——
+TTL 面，只供口径比对，不声称长存。
+
+**三、五班实施面与本班作废草稿的差异（如实记"他们多做/多做对了什么"）**
+
+| 项 | 本班草稿（作废） | 五班落地（dev 现面） |
+|---|---|---|
+| 命中身份 | 弱引用 `ref() is host` | 强引用 pin `ent[0] is host`＋`pc_identity_miss` 计数出声 |
+| `w` 瞬态站点 | 身份永不相等⇒退化为每次重建 | **把内容做进键里** `("w", a2, len(names), _panel_fp(w))`＝既不串味也不退化（优于本班） |
+| `logmvdm` 键位 | 本班列为"残余①未动" | **已加 `id(industry_map)`** ⇒ 本班该条残余在此更正为**已闭**（旧案不抹，另起留痕） |
+| 逐出 | 未动（仍是 cap=12 整清） | FIFO 单枚＋字节预算（`pc_evict`），另有 `reset_panel_cache()` 批起点复位 |
+| 内容哨兵 | `_DEV_PANEL_FP_GUARD` 缺省关 | `_DEV_PANEL_VERIFY` 缺省关＋STRICT 档（不符即抛）＋事件册 |
+| 观测键 | 两键（`panel_host_mismatch`／`panel_dirty_hit`） | 六键 `pc_*` ⇒ `summary.eval_gpu` 现面 **24 键** |
+| 试件 | 六支（行为级＋一支装配普查） | 十支（行为级，含 NaN 稳定性、逐出预算、`w` 站点内容键） |
+
+⇒ 本班草稿里唯一仍属**加项**的是装配级判据（第四节），已单独成件入本袋。
+另须更正本班先前那句：`summary.eval_gpu` 键数不是 18→20，而是 dev 现面 **24**；
+旧案卷"eval_gpu 全 18 计数键逐项相等"那句引用对 §十三·检·L 之后的批次一律失效，请按 24 重算。
+
+**四、本袋唯一代码面改动＝一支装配级常驻守卫**
+
+`tests/research/backtest/test_factory_grid_executor.py::test_panel_cache_sites_close_the_lesion_by_host_or_by_content`：
+谓词＝每个 `_dev_panel(...)`／`_dev_panel_dev(...)` 调用点**二选一**——要么把宿主传进去
+（`host=` 或足量位置参），要么把 `_panel_fp(...)` 做进键里；两者皆无＝该站点回到"键撞了就命中、零校验"那一族。
+红证内置（不靠外部换面）：对源码**定点抹掉**一处 `host=`，同一谓词必须恰抓 1 处。
+为什么十支行为试件还不够：行为级试件测"函数有没有牙"，看不见**装配漏改**——
+本班 15:0x 首版正是漏了一处调用（站点 `r60v`）而被 `_cell_eval_gpu` 的宽 except 吞成 fail-open，
+格面照样出分，只有覆盖面断言 `cell_gpu=0` 报了红（详见第六节第 1 条）。
+
+**五、对五班码面的独立复核读数（全部本班自跑，未采信任何自证）**
+
+行为级＝`-k "panel_cache or dev_cache or fingerprint or reset_panel"` ⇒ **10 passed, 83 deselected**（2.62s）。
+装配级＝调用点普查 **10 处，违例 0 处**（`w` 站点由内容键合法）。
+
+零语义改动复算（§二·戊·补·续 三条腿的第一次跨班实战）：n=400、seed=20261010、窗 2020-01-01→2023-12-31、
+分层三轴同、eval gpu × engine gpu、驻留关、**一臂一进程＋串行发车**（同 out_dir 守卫命中即 rc=3 拒读）。
+底＝A1↔A2（修复前 dev 面两臂）与 C1↔C2（五班面两臂，`cd001332a07b`）；跨码面＝A1/A2↔C1/C2 四对。
+
+| 配对 | 性质 | 读数 |
+|---|---|---|
+| A1↔A2 | 同码跨进程（修复前底） | 389/400 逐位等｜越线 0/0/0｜max_abs=6.939e-17｜差集 11 格 |
+| C1↔C2 | 同码跨进程（五班面底） | 389/400 逐位等｜越线 0/0/0｜max_abs=1.943e-16｜差集 11 格 |
+| A1↔C1 | **跨码面** | 389/400 逐位等｜越线 0/0/0｜max_abs=1.665e-16｜差集 11 格 |
+| A2↔C2 | 跨码面 | 389/400 逐位等｜越线 0/0/0｜max_abs=8.327e-17｜差集 11 格 |
+
+判据（本班尺里写死，不满足就不出这份回单）：**六个配对的 net 差集成员一字不差**
+（同一批 11 格，样本 `02cd08ac7e82`／`32ae61c83918`／`6455e8f407c1`；逐对对称差集全空），
+三档越线全 0/0/0，max_abs 上界 1.943e-16 落在在册 ULP 带 1.388e-17–1.943e-16 内；
+manifest 面 `sharpe`/`max_drawdown`/`avg_turnover`/`net_days` 与 `backend`/`degrade`/`degraded_dimensions`/`prefix_key`
+全 0，唯 `ann_return` 5 格差——**且两个底里同样是 5**（跨进程面固有，不归因给任何一方）。
+⇒ 本班独立复核判：**五班这次改动（含逐出策略改造与 `logmvdm` 加键位）没有把任何一格搬出设备面自噪底**。
+
+现役计数读数（五班面，一臂 n=400，`summary.eval_gpu`）：
+`pc_hit 1814／pc_put 98／pc_identity_miss 0／pc_dirty_hit 0／pc_evict 50／pc_verifier_off 1814`。
+两条读法请一并带上，否则会被读反：① 这一臂**零 identity-miss**＝没遇到地址复用，
+而本班作废字节在同配置的另一臂里**当场抓到过 1 次**（`panel_host_mismatch 1`）——
+既不得由"零触发"推病灶已绝迹，也不得由"一次"推修复天天在拦；
+② `pc_verifier_off == pc_hit` 是缺省（哨兵关）下的**正确形态**，其码内自注已写明
+"绿要归因到乙不是丙"，不是"丙 空转"的证据。
+
+三级指纹复验（§十三·检·I⑤ 的②，本班作废字节上的读数，方法仍可用）：七支"指纹即所缓存内容"的站点
+**级1（进缓存前）↔级2（上卡后回读）零不等**＝H2D 这一级不换末位；两支不等（`fwdrank 63/63`＋`logmvdm 16/16`）
+是**本班探针口径不同源**（指纹取输入而缓存存变换后输出），不是设备病——见第六节第 2 条。
+级3（`tensor_core` 核出口）＝统筹已并入 GPU 化五班令任务 2 的族内探针，不属本节，本班不代跑也不代裁。
+
+**六、本班自犯五条（不藏，逐条给抓法与处置）**
+
+1. **漏站点**：`_dev_panel(...)` 共 7 处调用（另 2 处直接走 `_dev_cache_get`，合计九站点），首版乙 改了 6 处、
+   **漏 `r60v`**；宽 except 把它吞成 `fail-open`，stderr 只留一行
+   `TypeError: _dev_panel() missing 1 required positional argument: 'host'`，格面照样出分（走 CPU）。
+   抓它的不是本班而是常驻集成钉 `test_evaluate_recipe_wiring_backend_switch_matches_cpu`
+   （`覆盖面不足：prefix_gpu=5 cell_gpu=0`）；补上后该支复绿。对症＝第四节那支装配守卫。
+2. **三级指纹口径不自洽**：`fwdrank`／`logmvdm` 两站的"级1≠级2"共 79 次，全是本班探针把
+   输入指纹与变换后输出对拍所致（分解到站点之前差点被读成设备病＝在册"同值簇＝测量伪影红旗"同族）。
+   处置＝专跑第 4 臂做逐站点分解，七支同形站点全 0 才敢写数。
+3. **换面驱动器 finally 自爆**：`bytes.count(chr(10))` 是 `TypeError`，首启即崩且 `finally` 同崩，
+   两 faces 字节约 1 分钟停在"车道＝dev 旧面"态；恢复支把车道写回（读回 sha 对平），
+   此后所有臂都带装载后 sha 复测（不符即作废该臂）。教训＝**带 finally 的换面脚本，finally 本身必须先冒烟**。
+4. **首版装配尺把 `w` 站点误判 RED（假红）**：谓词里没有"内容做进键里"这一支。
+   在册已知合法站点＝现面 `w` 站点，拿它跑正对照才暴露尺坏；处置＝改成二选一判据（第四节那条即修正版）。
+5. **动手与落地之间 1.5 小时未复测基底**：14:47 本班核过 `git log a1e8866ecd..dev -- <两件>` = 0 命中
+   （当时属实），之后 16:16 他班落地，本班直到 16:3x 自跑复核命令才从"键不存在"发现。
+   对症处方（并入 §J 与记忆，不只救本袋）＝**投前最后一秒逐件对读"袋内 base blob == 当下 dev blob"**，
+   而不是"进场时核过一次"；发现基底已换时**停手撤投**而非重基继续投。
+
+**七、呈统筹三件（本班不自裁）**
+
+1. 裁④的落地归属请在裁定/台账面落一句＝**五班袋 `bbeb0aa36c`**；本班两键计数与六支试件**不并入**（避免同题双实现）。
+2. 同题双班的成因是**令的传导时序**（"批排一批"与"现在实施"两道令各自被执行），不是施工错误；
+   建议改判令里点名"已在实施的原班"或先撤一道再发一道——措辞归统筹，本班不代定。
+3. 装配级守卫现落 `test_factory_grid_executor.py`，五班十支行为试件在 `test_l2_gpu_landing.py`；
+   是否同册合台＝统筹指认落点，本班不自并。
+
+**八、复核命令（四条，本班已从正文抽出原样跑到期望值；依赖面见末行）**
+
+```bash
+cd D:/ZephyrAlpha/.worktrees/st-gpuux3v-20261013
+# 1) 本班装配守卫（期望 1 passed；红证内置，无须换面即可判它有没有牙）
+PYTHONNOUSERSITE=1 python -m pytest tests/research/backtest/test_factory_grid_executor.py -k panel_cache_sites -q
+# 2) 五班十支行为试件在落地面复跑（期望 10 passed）
+PYTHONNOUSERSITE=1 python -m pytest tests/research/backtest/test_l2_gpu_landing.py -k "panel_cache or dev_cache or fingerprint or reset_panel" -q
+# 3) 码面对读：车道字节 == dev 字节（期望两个 sha 相同且为 cd001332a07b）
+python -c "import hashlib,subprocess;a=hashlib.sha256(open('scripts/backtest/factory_grid_executor.py','rb').read()).hexdigest()[:12];b=hashlib.sha256(subprocess.run(['git','-C','D:/ZephyrAlpha','show','dev:scripts/backtest/factory_grid_executor.py'],capture_output=True).stdout).hexdigest()[:12];print(a,b,a==b)"
+# 4) 现面计数键数（期望 24，其中含五班新增的六支 `pc_*`）
+python -c "import sys,importlib.util as u;s=u.spec_from_file_location('f','scripts/backtest/factory_grid_executor.py');m=u.module_from_spec(s);sys.modules['f']=m;s.loader.exec_module(m);print(len(m._EVAL_GPU_STATS))"
+```
+依赖面声明：第 3/4 条只读仓内两件；第五节的六臂对拍读数在
+`.runtime/tmp/st-gpuux3v-20261013/`（`v4_A*.json`／`v4_C*.json`／`v4_cmp_A1_A2_C1_C2.json`）＝TTL 面，
+**不声称长存**；要复算跨码面等价＝重跑 `python v4_face.py`（一臂一进程＋串行＋同 out_dir 守卫已编进驱动器），
+把 `FACES` 表里加 `g5=cd001332a07b` 即可指向任一码面。
+
+**九、本节的判据次序声明**（统筹转述 Owner 认可语，逐字入册，已进项目记忆）：
+**假绿的否证优先于真绿的确认。**
+本节的"绿"全部来自**别人落地的码面**＋本班自己的装配红证；本节的"红"（本班草稿作废、
+`w` 站点假红、基底漂移）全部如实写出且不折成绿。

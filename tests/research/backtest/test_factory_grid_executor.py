@@ -797,3 +797,52 @@ class TestNeffLedgerGate:
         assert bare == [], "调用点绕过闸门直写 N 账本"
         gated = [n for n in ast.walk(fn) if isinstance(n, ast.Call) and getattr(n.func, "id", "") == "_write_neff_slot"]
         assert len(gated) == 1, f"finalize 段应恰好一处走闸调用，实得 {len(gated)}"
+
+
+# ── 装配守卫（检验道 st-gpuux3v-20261013 独立复核，2026-10-13 `date` 实测入册）──────────────
+# 面板缓存站点的"命中须有依据"是**装配面**性质：每个调用点要么把宿主传进去（乙 的身份 pin），
+# 要么把内容指纹做进键里（如 `w` 站点）。两者皆无＝该站点回到"键撞了就命中、零校验"那一族。
+# 存在理由＝本班自犯：给 `_dev_panel` 加 host 形参时漏改一处调用，宽 except 把它吞成 fail-open，
+# 格面照样出分——行为级试件看不见装配漏改，只有装配普查看得见。红证自带（函数内定点变异），非恒绿装饰。
+
+_PANEL_FNS = {"_dev_panel": 4, "_dev_panel_dev": 3}  # 值＝带宿主的**最少**位置参数个数（host 走 kwargs 另判）
+
+
+def _panel_site_violations(src: str) -> list[tuple[int, str]]:
+    """谓词：返回"既没传宿主、键里也没内容指纹"的面板缓存调用点 (行号, 函数名)。"""
+    import ast
+
+    out: list[tuple[int, str]] = []
+    for n in ast.walk(ast.parse(src)):
+        if not (isinstance(n, ast.Call) and getattr(n.func, "id", "") in _PANEL_FNS):
+            continue
+        fn = str(n.func.id)
+        has_host = "host" in {k.arg for k in n.keywords} or len(n.args) >= _PANEL_FNS[fn]
+        content_in_key = bool(
+            n.args
+            and isinstance(n.args[0], ast.Tuple)
+            and any(isinstance(el, ast.Call) and getattr(el.func, "id", "") == "_panel_fp" for el in n.args[0].elts)
+        )
+        if not (has_host or content_in_key):
+            out.append((n.lineno, fn))
+    return out
+
+
+def test_panel_cache_sites_close_the_lesion_by_host_or_by_content() -> None:
+    """装配普查判据＋定点变异红证：同一谓词打在两种源上——真面必 0 处，抹掉一处 host 必恰 1 处。"""
+    import ast
+    import pathlib
+    import re
+
+    src = pathlib.Path(mod.__file__).read_text(encoding="utf-8")
+    calls = [n for n in ast.walk(ast.parse(src)) if isinstance(n, ast.Call) and getattr(n.func, "id", "") in _PANEL_FNS]
+    assert len(calls) >= 8, f"装配普查本身失灵（只扫到 {len(calls)} 处调用）＝尺没吃到面"
+    bad = _panel_site_violations(src)
+    assert not bad, f"面板缓存站点既无宿主又无内容键，行号 {bad}＝该站仍走零校验命中"
+
+    m = re.search(r"(_dev_panel(?:_dev)?\([^\n]*?),\s*host=[A-Za-z_][A-Za-z0-9_]*\)", src)
+    assert m, "红证前提不成立：面上找不到单行 `host=` 站点可抹"
+    mutated = src[: m.start(1)] + m.group(1) + ")" + src[m.end(0) :]
+    assert mutated != src, "定点变异未生效（字符串没改动）＝红证是假的"
+    hit = _panel_site_violations(mutated)
+    assert len(hit) == 1, f"抹掉一处 host 后谓词抓到 {len(hit)} 处＝判据没有牙（恒绿或过杀）"
