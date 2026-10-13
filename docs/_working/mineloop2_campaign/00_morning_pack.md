@@ -1823,3 +1823,30 @@ python scripts/git_commit.py --session st-mineloop2-20261012 \
   报"DB 不存在"是**我的尺错**不是环境错）。判据口径：连通性/存在性一律走在册单口与真表名，
   禁拿 localhost 端口探测当"服务在不在"的证据（在册同型：`config-consumed-by-only-one-code-path`、
   `zero-hit-ruler-needs-known-positive-control`）。
+
+
+### 32.18 统筹裁定收悉（15:4x）＋治本刀已做成"可验证交接件"，本班不自签不越权
+
+- 裁定三条并行：①治本刀转维护线（死信清零班/接任班谁先领谁做）；②C 监视器照跑，
+  等 st-minedig2 自己把 calibration_exam 的多日前向面（其已批代码）落袋，M 行一消失本班自动续投；
+  ③统筹另发催落令给他们。**"哪条先到走哪条"**，本班不再等任何一项。
+- 本班对被推翻的前提如实入册：我上一版把五连死归给"同件多袋"是半因，真因＝袋基取车道 HEAD
+  （§32.17 已固化三步）；而统筹原裁定"复位四件为 dev 字节"建立在"dirty＝内容差"上，
+  实测 dirty 里含**与 dev 逐字节相同**的文件（车道指针落后 56 笔），复位是 no-op——
+  该实测双证已升级为治本刀的立项依据。
+- 治本刀交付物（本班**不改生产工具**，等领用方落地）：
+  `evidence/takeover_fix_patch/` 下四件——
+  `takeover_dev_identical_exclusion.patch`（对当前 dev 的 `session_takeover_ledger.py` 可 `git apply --check`）、
+  `session_takeover_ledger.py.patched`（全量对照件）、
+  `README_howto_apply.md`（一行落地命令＋三条必查坑）、
+  两把反证靶件（`*.before_text_false`、`*.before_import_fix`）。
+  判据：工作树字节==`dev:<path>` 者移出命中面并记 `excluded_dev_identical=n`＋`excluded_files` 留痕；
+  不等/新建/删除/读不到/异常一律保留（fail-closed 朝照挡方向）。
+- 验收尺已备且**自证有判别力**：
+  `python D:/ZephyrAlpha/.runtime/tmp/mineloop2/probe/redproof_takeover_patch.py` → `PATCHREDPROOF PASS`；
+  合成仓五断言（`equal.py` 移出、`real.py`/`gone.py`/`brand_new.py` 仍挡、计数=1）
+  ＋两把反证（未加 `text=False`、helper 缺 import 的版本在同一输入下一件都缩不掉）。
+  过程中本班又踩并当场记下两处工具口径：`run_subprocess_hidden` 缺省 `text=True`（bytes 比较必须显式
+  `text=False`）；Windows 下 `write_text` 写 CRLF 令判据假阴（第四把口径，改 `write_bytes`＋`core.autocrlf=false`）。
+- 现状（15:43）：dev 已含 `0034`（§32.16–§32.17，落地凭据走 `git log -- <册>`）；
+  六跑仍差 `card_binding.py` 一格，A/B/C 三只监视器全部在岗（A≤700 轮、B≤1500 分钟、C≤360 轮）。
