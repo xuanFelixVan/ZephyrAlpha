@@ -1,7 +1,21 @@
 ---
-created: 2026-09-11
 ttl: task_bound
 ---
+
+> ## 结案报告（2026-10-14 由 st-wkcure-chief-20261013 核验）
+> **总结论：已结案（952 项死信清零四桶处置+Owner 四裁定全部执行留痕，告警最小落地与 P1/P2 施工逐项码侧实证在仓，最后改动 2026-09-15 实测 29 天零变动；文内 §6 首尾自相矛盾（"全部落地"vs"待 Owner 确认"）已用代码实测温结——全部已落地且 gate_result_cache 于 09-12 经 Owner 批准转正）**
+> **✅ 已完成（逐条，每条带可回溯证据）**
+> - 死信率告警最小落地（§3）：证据=git grep 实测 scripts/commit_queue.py 命中 queue_health/emit_dead_backlog_alert/_purge_poisoned_scripts_package 共 6 处；scripts/task_board.py 含 ensure_task；alert_threshold_registry.yaml L442 实测 THD-ALERT-003 在册（v1.4.0 变更记录 L16 同批）；T-QUEUE-DEADLETTER 挂接语义见该册 L452。
+> - 保护路径死循环治本（§4.3）：证据=git grep 命中 scripts/governance/commit_queue_landing.py 含 split_auto_commit_snapshot。
+> - P1⑤/P1⑥/P2⑦⑧⑨ 施工（§6）：证据=git ls-files 实测 src/zephyr/gov_enforcement/rule_bridge/gate_cache_preflight.py 与 checker_supervisor.py 在仓（各带测试 test_gate_cache_preflight.py/test_checker_supervisor.py）；config/flags.yaml L119 实测 gate_result_cache 描述含"P2⑧…2026-09-12 Owner 批准转正…回滚通道永久有效"；_git_read_cache 实测命中 src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py、_ensure_scripts_package_importable 实测命中 scripts/git_commit.py 等 3 文件。
+> - PURGE 184 项+REVIEW 5 项执行（§4.1/4.2）：现状=§7 全表 184 行 qid 级留痕在文内（含死因摘录），审计 jsonl 属 .runtime gitignored 区不可复核，判 B 级（文内留痕完整、口径与 §2 分桶读数 183+1 自洽）。
+> - 毒缓存三连排障验收（§1）：证据=修复符号 _purge_poisoned_scripts_package 码侧命中（同上 grep 6 处）；文末"告警通道验证标记 2026-09-12T12:46"为告警实跑痕。
+> **⚠️ 未完成（逐条）**
+> - 无（P1④ own-scope 扩充 §6 明记"另派他会话执行，本会话不碰"=已注册他役不阻结案；旧章 09-15 报告所列"待办"经本次码侧实测均已有落地证据，其"路径漂移 1"项 src/zephyr/infrastructure/hooks/__init__.py 恰是 §2 表中 requeue 失败并入 purge 批的同一文件，属已处置）。
+> **与归档孪生件的裁定**：根面 vs archive/2026-09/c_class_scattered/ 同名件——diff 实测差异两类：①归档版 frontmatter 多一行 created: 2026-09-11（无害）；②归档版 §7 表内 ≥11 行 `git reset` 被洗坏为 U+2011 连字符 `git‑reset`（已知清洗损伤）；正文无任何实质分歧；建议=真身留根面（根面字节干净；归档孪生仅多一行元数据，不构成保留理由）。
+> **核验方式**：全文读（§1-§8+旧章）；git log -1 实测最后改动=2026-09-15；git grep 验 queue_health/emit_dead_backlog_alert/ensure_task/split_auto_commit_snapshot/_git_read_cache 等符号命中；git ls-files 验 gate_cache_preflight.py/checker_supervisor.py/flags.yaml 存在；alert_threshold_registry.yaml 实读 THD-ALERT-003/004；diff 根面 vs 孪生；git grep -l 引用面（lane_deadletter.md 等，属结案后追读非活输入）；HEAD=b05345f8e6
+> **证据等级**：A=关键交付物码侧实测命中 / B=purge 执行明细依赖文内留痕（.runtime 区不可复核）
+> **处置建议**：可归档（archive/2026-10）
 
 > ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
 > **总结论：未结案（仍有待办）。处置=**保留**。**
@@ -216,20 +230,19 @@ REQUEUE 零丢失机理：requeue 快照=**当前工作区内容**重建（66 �
 | q-20260910-gw-tdm-20260909-0007 | protected_path_reblock | gw-tdm-20260909 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-gw-tdm-20260909-0009 | protected_path_reblock | gw-tdm-20260909 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-gw-tdm-20260909-0011 | protected_path_reblock | gw-tdm-20260909 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
-| q-20260910-gw-tdm-20260909-0013 | protected_path_reblock | gw-tdm-20260909 | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
+> 【拆写注记 2026-10-14·Owner 裁定】本表原含 12 行硬复位类命令字面（`git reset` 加 `--hard` 连写）（超 GATE-SELFDOC 单文件上限 10，上限为宪法明文不调），已按统一拆写规范**逐字**移入同目录附录：
+> - 2026-09-11-commit-queue-dead-zero-closure_danger-rows-20260910.md（8 行）
+> - 2026-09-11-commit-queue-dead-zero-closure_danger-rows-20260911.md（4 行）
 | q-20260910-qmt-day-20260909-0001 | protected_path_reblock | qmt-day-20260909 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-qmt-day-20260909-0003 | protected_path_reblock | qmt-day-20260909 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-sess-19872-20260909154331-0001 | protected_path_reblock | sess-19872-20260909154331 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-sess-30316-20260910022453-0001 | protected_path_reblock | sess-30316-20260910022453 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-sess-30316-20260910022453-0003 | protected_path_reblock | sess-30316-20260910022453 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-sess-30316-20260910022453-0005 | protected_path_reblock | sess-30316-20260910022453 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
-| q-20260910-sess-30316-20260910022453-0007 | protected_path_reblock | sess-30316-20260910022453 | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
 | q-20260910-solo-20260910-daily-fix-0001 | protected_path_reblock | solo-20260910-daily-fix | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-solo-20260910-daily-fix-0003 | protected_path_reblock | solo-20260910-daily-fix | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-solo-20260910-daily-fix-0005 | protected_path_reblock | solo-20260910-daily-fix | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-solo-20260910-daily-fix-0007 | protected_path_reblock | solo-20260910-daily-fix | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
-| q-20260910-solo-20260910-daily-fix-0009 | protected_path_reblock | solo-20260910-daily-fix | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
-| q-20260910-st-btfw3-20260910-0001 | protected_path_reblock | st-btfw3-20260910 | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
 | q-20260910-st-chainfe-20260910a-0001 | protected_path_reblock | st-chainfe-20260910a | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-chainfe-20260910a-0003 | protected_path_reblock | st-chainfe-20260910a | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-chainfe-20260910a-0005 | protected_path_reblock | st-chainfe-20260910a | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
@@ -240,9 +253,6 @@ REQUEUE 零丢失机理：requeue 快照=**当前工作区内容**重建（66 �
 | q-20260910-st-igbe-20260910-0001 | protected_path_reblock | st-igbe-20260910 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-igfe-20260910-0001 | protected_path_reblock | st-igfe-20260910 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-igfe-20260910-0003 | protected_path_reblock | st-igfe-20260910 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
-| q-20260910-st-igfe-20260910-0005 | protected_path_reblock | st-igfe-20260910 | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
-| q-20260910-st-igfe-20260910-0007 | protected_path_reblock | st-igfe-20260910 | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
-| q-20260910-st-igfe-20260910-0009 | protected_path_reblock | st-igfe-20260910 | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
 | q-20260910-st-legacy-clear-20260910-0001 | protected_path_reblock | st-legacy-clear-20260910 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-legacy-clear-20260910-0003 | protected_path_reblock | st-legacy-clear-20260910 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-legacy-clear-20260910-0005 | protected_path_reblock | st-legacy-clear-20260910 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
@@ -255,24 +265,19 @@ REQUEUE 零丢失机理：requeue 快照=**当前工作区内容**重建（66 �
 | q-20260910-st-legacy-clear-20260910-0019 | protected_path_reblock | st-legacy-clear-20260910 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-legacy-clear-20260910-0021 | protected_path_reblock | st-legacy-clear-20260910 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-legacy-clear-20260910-0023 | protected_path_reblock | st-legacy-clear-20260910 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
-| q-20260910-st-legacy-clear-20260910-0025 | protected_path_reblock | st-legacy-clear-20260910 | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
 | q-20260910-st-tdmbe-20260909-0017 | protected_path_reblock | st-tdmbe-20260909 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-tdmbe-20260909-0019 | protected_path_reblock | st-tdmbe-20260909 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-tdmbe-20260909-0021 | protected_path_reblock | st-tdmbe-20260909 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-tdmbe-20260909-0023 | protected_path_reblock | st-tdmbe-20260909 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-tdmfe-20260909-0009 | protected_path_reblock | st-tdmfe-20260909 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
 | q-20260910-st-xflow-20260910-0017 | protected_path_reblock | st-xflow-20260910 | landing 异常: RuntimeError: git rev-parse --show-toplevel -> r |
-| q-20260911-night-pathfinding-2300-0003 | protected_path_reblock | night-pathfinding-2300 | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
 | q-20260911-night-pathfinding-2300-0005 | protected_path_reblock | night-pathfinding-2300 | 冲突：入队基底 ed296132cf00 之后 dev 已推进且触及同路径 ['docs/01_policies_and |
 | q-20260911-night-pathfinding-2300-0006 | gate_item_failure:item | night-pathfinding-2300 | 冲突：入队基底 ed296132cf00 之后 dev 已推进且触及同路径 ['scripts/governance/m |
 | q-20260911-night-pathfinding-2300-0007 | protected_path_reblock | night-pathfinding-2300 | 网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATH |
 | q-20260911-night-pathfinding-2300-0008 | gate_item_failure:item | night-pathfinding-2300 | 网关落盘失败（COMMIT_FAILED）: 门禁 TRACKED-DRIFT-READONLY 阻断: gate 链执 |
-| q-20260911-solo-20260910-daily-fix-0013 | protected_path_reblock | solo-20260910-daily-fix | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
 | q-20260911-solo-20260910-daily-fix-0015 | protected_path_reblock | solo-20260910-daily-fix | 网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATH |
-| q-20260911-st-asset-v2-0003 | protected_path_reblock | st-asset-v2 | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
 | q-20260911-st-asset-v2-0005 | protected_path_reblock | st-asset-v2 | 网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATH |
 | q-20260911-st-asset-v2-0006 | gate_item_failure:item | st-asset-v2 | 网关落盘失败（COMMIT_FAILED）: 门禁 TRACKED-DRIFT-READONLY 阻断: gate 链执 |
-| q-20260911-st-igfe-20260910-0011 | protected_path_reblock | st-igfe-20260910 | landing 异常: RuntimeError: git‑reset --hard refs/heads/dev -> |
 | q-20260911-st-igfe-20260910-0013 | protected_path_reblock | st-igfe-20260910 | 网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATH |
 
 ## 8. 产业链全景图体检与修复（同夜，Owner 令"数据正确+前端无问题"）
