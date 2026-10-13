@@ -135,7 +135,7 @@ completes_when: §13 九项经条件轴总包 P1 统一呈批包呈 Owner 裁决
 
 | 仓库 | ★ | 活跃 | 许可 | 定位 | 可借性 |
 |---|---|---|---|---|---|
-| deepcharles/ruptures | 2,096 | 2026-10 活跃 | BSD-2 | 离线变点全家桶（PELT/KernelCPD/Binseg/…） | **直接用**（P3 离线标注+参数校准） |
+| deepcharles/ruptures | ~~2,096~~ | ~~2026-10 活跃~~ | BSD-2 | 离线变点全家桶（PELT/KernelCPD/Binseg/…） | **直接用**（P3 离线标注+参数校准）【更正 2026-10-13 总包核验车道：星数/活跃度原记失准——deepcharles/ruptures=1,689★ 且 2025-01 后停推，主仓已迁 centre-borelli/ruptures=2,486★、2026-03 活跃、BSD-2 不变；§15 链接同步改指新主仓】 |
 | Yizhan-Oliver-Shu/jump-models | 171 | 2025-01 | Apache-2.0 | JM/CJM/SJM，sklearn 风格（Nordea 系论文对应） | **重点候选**（状态引擎，自带持久态+灰度语义） |
 | sktime/sktime | 10,063 | 2026-10 极活跃 | BSD-3 | detection 模块（HMM/Binseg/ClaSP/CROPS/CAPA…）统一 fit/predict | **直接用**（多检测器横评集成层） |
 | hmmlearn/hmmlearn | 3,437 | 2024-10 | BSD-3 | HMM 基础库（官方声明 limited-maintenance） | 直接用（仓内已用）；注意停更风险 |
@@ -274,7 +274,7 @@ Yang (2025, Tilburg)：±20% 对 A 股"过于保守"（会漏 2013、2019 级中
 
 ## 开源（均经 GitHub API 2026-10-13 核实）
 
-- https://github.com/deepcharles/ruptures ｜ https://github.com/Yizhan-Oliver-Shu/jump-models ｜ https://github.com/sktime/sktime ｜ https://github.com/hmmlearn/hmmlearn ｜ https://github.com/facebookresearch/Kats ｜ https://github.com/kieranjwood/slow-momentum-fast-reversion ｜ https://github.com/stumpy-dev/stumpy ｜ https://github.com/LSEG-API-Samples/Article.RD.Python.MarketRegimeDetectionUsingStatisticalAndMLBasedApproaches ｜ https://github.com/tubakhxn/Market-Regime-Detection-System ｜ https://github.com/issaz/signature-regime-detection ｜ https://github.com/hudson-and-thames/mlfinlab ｜ https://github.com/mattjj/pyhsmm ｜ https://github.com/jamesross2/Bayesian-HMM ｜ https://github.com/vnpy/vnpy ｜ https://github.com/bbfamily/abu ｜ https://github.com/microsoft/qlib
+- https://github.com/centre-borelli/ruptures （主仓，2,486★ 2026-03 活跃；deepcharles/ruptures 为旧址 1,689★ 停推——2026-10-13 核验更正）｜ https://github.com/Yizhan-Oliver-Shu/jump-models ｜ https://github.com/sktime/sktime ｜ https://github.com/hmmlearn/hmmlearn ｜ https://github.com/facebookresearch/Kats ｜ https://github.com/kieranjwood/slow-momentum-fast-reversion ｜ https://github.com/stumpy-dev/stumpy ｜ https://github.com/LSEG-API-Samples/Article.RD.Python.MarketRegimeDetectionUsingStatisticalAndMLBasedApproaches ｜ https://github.com/tubakhxn/Market-Regime-Detection-System ｜ https://github.com/issaz/signature-regime-detection ｜ https://github.com/hudson-and-thames/mlfinlab ｜ https://github.com/mattjj/pyhsmm ｜ https://github.com/jamesross2/Bayesian-HMM ｜ https://github.com/vnpy/vnpy ｜ https://github.com/bbfamily/abu ｜ https://github.com/microsoft/qlib
 
 ## A股/中文
 
@@ -289,3 +289,4 @@ Yang (2025, Tilburg)：±20% 对 A 股"过于保守"（会漏 2013、2019 级中
 
 - 勘查车道：4 条并行研究线（学术/机构/开源/A股），全程"查不到明说"纪律；星数与活跃度经 GitHub API 当日核实。
 - 本册未做任何判据裁定；全部参数性"建议默认"均为文献主流的转述+仓内先例的映射，裁决权在 Owner（§13）。
+- **核验更正记录（2026-10-13 总包 P0②③ 核验车道，9 仓内断言＋5 外部抽检）**：①§7 ruptures 行星数/活跃度更正（见该行内注，GitHub API 双仓实读）；②bbdetection 参数补双源口径（CRAN PDF 手册 window=8/bull=15/bear=6/percent=20 与 R 源码示例 setpar_dating_alg(4,6,4,16,20)/(4,6,5,15,20) 两档并存，P2 引用时双引防单一二手源）；③其余 8 条仓内断言（regime 46 py 实数一致、#229/#230/#304 语义相符、SH-VOCAB-001、condition_package 逐字吻合、B1/B2、PIT_TAIL_LAG/recal 协议、41.9% 出处、D 族 21.09%）与 4 条外部锚点（jumpmodels 171★/v0.1.1/Apache-2.0、Pang & Lin 96.4%/96.8%、BOCPD、P-S DOI）全部坐实，零误差。

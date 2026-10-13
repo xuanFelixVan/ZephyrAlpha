@@ -137,7 +137,7 @@ completes_when: §6 七问经条件轴总包 P1 统一呈批包呈 Owner 裁决�
 
 ### 4.1 产业链本体（PG `ig_*` 十三表，production/evolving）
 
-- 真源：`scripts/industry_graph/apply_industry_graph_ddl.py`（PostgreSQL depgraph 图谱域）。表含 ig_chain（链+level）、ig_node（环节，11 节点已挂子链）、ig_edge（structure|supply）、ig_node_company（环节↔股票 PIT 三时间戳）、ig_company_edge、ig_fact（五元组事实）、ig_chunk（**E 盘语料 76,112 块**）、ig_io_edge（**国家统计局 2020 年 153 部门投入产出系数**）等。
+- 真源：`scripts/industry_graph/apply_industry_graph_ddl.py`（PostgreSQL depgraph 图谱域）。表含 ig_chain（链+level）、ig_node（环节，11 节点已挂子链）、ig_edge（structure|supply）、ig_node_company（环节↔股票 PIT 三时间戳）、ig_company_edge、ig_fact（五元组事实）、ig_chunk（E 盘语料 76,112 块【核验注 2026-10-13：76,112=E 盘语料块口径（DDL 头注:24）；ig_chunk 表 2026-09-17 实查 5,200 行，双口径差异已登记于 docs/_working/chain_piling_campaign/03_graph_registry.md:19】）、ig_io_edge（**国家统计局 2020 年 153 部门投入产出系数**）等【核验注：DDL 实际 14 个 CREATE TABLE（含头注未列的 ig_entity_code_map 等 6 表），"十三表"为头注列举口径】。
 - 规模：CKG2021 导入 4,654 上市公司 / 511 申万行业 / 95,559 产品 / 110,153 产品-产品边；chainmap 前端约 61 条链、47~48 簇（C01~C48）。
 - 维护族：`scripts/industry_graph/`（import_ckg_dataset、ths_import、websearch_ingest、io_ingest、p0~p3 语料抽取、merge_semiconductor_chains、normalize_global_edges、quality_*）；提交门 `industry_chain_map_gate.py`。
 
@@ -152,17 +152,17 @@ completes_when: §6 七问经条件轴总包 P1 统一呈批包呈 Owner 裁决�
 
 - production：`sector_analyzer`（板块情绪结构：涨停比/连板梯队/趋势，TDM-E-L2-01-1 与 02-2 双挂）、`sector_crowding_launch`（拥挤度启动，evolving）。
 - testing：`sector_divergence`（轮动序列）、`sector_leader`（龙头识别四档 leader/backbone/follower）、`sector_momentum_persistence`（生命周期）、`sector_state_aggregator`、`sector_volume_anomaly`、`sector_attribute_rules`。
-- design：`sector_strength_aggregator`（强度四路合分 [0,100]，前 15% 入候选池，TDM-E-L2-01）、`sector_ecology_judge`（板块级市场状态）、`sector_conduction`（板块→个股强度加权传导）。
+- design：`sector_strength_aggregator`（强度四路合分 [0,100]，前 15% 入候选池，TDM-E-L2-01）、`sector_ecology_judge`（板块级市场状态）、`sector_conduction`（板块→个股强度加权传导）【核验注 2026-10-13：此三件位于 `src/zephyr/signal_ashare/core/` 而非 `signal_ashare/sector/`，标题口径已收窄】。
 - new：`sector_momentum`（多周期动量）、`sector_breadth`（资金流聚合）、`sector_rrg`（RRG 轮动 JdK DualEma+象限确认）、`sector_rotation_state`（轮动五分类）、`sector_siphon`（虹吸态）、`sector_adjustment`（调整周期进度）、`sector_pullback`（回踩 ABC 质量）、`sector_gate`（三级放行/水温响应）。
 - 上层：`mainline_candidates`（MOD-SIG-061 主线候选 Top3-5）、`mainline_probability`（MOD-SIG-064 四因子主线概率，权重"初拍待实盘标定"）；`strength_ic_data_assembler`/`strength_ic_weight_calibrator`（短线强度 IC 校准——**仓内已有 IC 校准先例**）。
 
 ### 4.4 数据/事件/执行面
 
-- 资金流：板块**日度**资金流（东财 fflow，`sector_fund_flow_collector`，testing）；**板块分钟级资金流数据源不存在（实测留痕）**；北向**季度**快照（`northbound_hold_analysis`，production；日频 2024-08 停发）；个股 money_flow（c1_market）；`capital_flow_pattern_analyzer`（五类资金线形态，production/stable）。
+- 资金流：板块**日度**资金流（**同花顺即时资金流快照** ak.stock_fund_flow_industry/concept，`sector_fund_flow_collector`，testing）【更正 2026-10-13 总包核验车道：原文"东财 fflow"失准——东财 push2/push2his 端点本机持续 RemoteDisconnected 且分钟端点对板块 secid 返回空，采集器 docstring（sector_fund_flow_collector.py:4/:21-25）明载可用源=同花顺】；**板块分钟级资金流数据源不存在（实测留痕）**；北向**季度**快照（`northbound_hold_analysis`，production；日频 2024-08 停发）；个股 money_flow（c1_market）；`capital_flow_pattern_analyzer`（五类资金线形态，production/stable）。
 - 板块数据底座：`sector_state_pipeline`（kline_sector_880+涨停池+money_flow→c1_market.sector_state，T 日 15:10 收口，testing）、`sector_snapshot_collector`（880 实时→CH，production）、`sector_intraday_aggregator`（582 板块盘中聚合，production）、`sector_factor_manager`（86 板块因子，testing）、`sector_report_builder`（盘后全景报告，production）。
 - 涨停/情绪/执行：`limit_up/` 族（连板梯队+封板时间+断层+Granger 领导-跟随）、`youzi_relay_emotion_engine`（production/stable）、打板执行域 `ex_core/daban_*`（连板梯队×情绪周期前置门控+7 类动作，production/stable）、`sentiment/sentiment_cycle`（水温档真源，new）、`emotion_index_builder`（experimental，板块热度不回灌防循环）。
 - 事件因果：`intelligence/event_chain_causal_graph.py`（MOD-INT-EVENT-CHAIN，production/evolving）——事件节点词表+Granger 因果边+贝叶斯条件概率表；与 D-ALT-22 规则传导模板、causal_inference_engine 分工明确。
-- TDM：`config/trading_decision_map.yaml` 的 **TDM-E-L2 板块选择子树约 28 节点全部挂 module_ref**（L2-01 强度综合 … L2-09 催化剂[已挂 news_chain_node_linker/chain_impact_resolver]、L2-10 同源补涨比价 supply_chain_momentum）。
+- TDM：`config/trading_decision_map.yaml` 的 **TDM-E-L2 板块选择子树 29 节点（含根）/28 子节点全部挂 module_ref（核验实测 2026-10-13：区段 :714-1669，module_ref 恰 29 处无一空挂）**（L2-01 强度综合 … L2-09 催化剂[已挂 news_chain_node_linker/chain_impact_resolver]、L2-10 同源补涨比价 supply_chain_momentum）。
 
 ### 4.5 综合判定
 
@@ -214,3 +214,14 @@ completes_when: §6 七问经条件轴总包 P1 统一呈批包呈 Owner 裁决�
 ---
 
 *本稿为讨论稿。下一步等 Owner 对 §1.2 五件套与 §6 七项的裁决；五件套过审后按附录 A 起草验证班开班令。*
+
+---
+
+## 核验更正记录（2026-10-13 总包 P0②③ 核验车道）
+
+17 条核验（12 仓内＋5 外部）15 条完全坐实。实质更正 3 处＋加注 2 处（均已入正文内注）：
+1. **§4.4 资金流源归属更正**：东财 fflow → 同花顺即时资金流（sector_fund_flow_collector.py:4/:21-25 docstring 实证）。
+2. **§4.3 路径更正**：design 三件（strength_aggregator/ecology_judge/conduction）在 `signal_ashare/core/` 非 `sector/`。
+3. **§4.1 表数口径**：DDL 实际 14 表；ig_chunk 76,112 为语料块口径、表实查 5,200 行（03_graph_registry.md:19 双口径登记）。
+4. **§4.4 TDM-E-L2 计数精确化**：29 节点（含根）/28 子节点全挂 module_ref（实测 :714-1669）。
+5. 外部 5 条（Moskowitz-Grinblatt 1999 JOF 1249-1290、Cohen-Frazzini 2008 JOF 1977-2011 月 alpha≈1.5%、arXiv:2512.08000 摘要逐句命中、QuantsPlaybook、华泰崎岖之路 2026-03-13 原报告）全部核实为真。

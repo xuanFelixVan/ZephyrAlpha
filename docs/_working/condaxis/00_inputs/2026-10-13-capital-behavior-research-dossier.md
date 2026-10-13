@@ -83,7 +83,7 @@ completes_when: §10 六条经条件轴总包 P1 统一呈批包呈 Owner 裁决
 
 **资金流（主体归因+冲击）**：
 - Kyle (1985) λ；Amihud (2002) 非流动性；VPIN 流毒性（Easley-López de Prado-O'Hara 2012）；OFI 线性冲击（Cont-Kukanov-Stoikov 2014）及 [跨资产 OFI](https://www.tandfonline.com)（✅）、[MLOFI 多档位](https://www.semanticscholar.org)（✅）、[Kolm 等深度订单流失衡](https://ideas.repec.org)——**订单流特征训练显著优于订单簿状态直接训练**（✅）。
-- **2025 最新**：[Maitrier-Bouchaud et al.《The Subtle Interplay between Square-root Impact, Order Flow, and Price Diffusivity》(arXiv:2509.05065)](https://ideas.repec.org/p/arx/papers/2509.05065.html)——√冲击×价格扩散×传播子模型一致性新框架（✅）；[Double Square-Root Law (arXiv:2502.16246)](https://arxiv.org/html/2503.18199v1)（⭕）；[Generating realistic metaorders from public data (arXiv:2503.18199)](https://arxiv.org/html/2503.18199v1)——用公开数据生成 metaorder 复现冲击风格化事实（✅）；Durin et al. 2023 两个 √ 律（参与率角色，⭕）；[Bucci et al. 线性→√ 交叉实证（CFM）](https://www.cfm.com/wp-content/uploads/2022/12/120-Crossover-from-linear-to-square-root-market-impact.pdf)（✅）。
+- **2025 最新**：[Maitrier, Loeper & Bouchaud《The Subtle Interplay between Square-root Impact, Order Imbalance & Volatility II: An Artificial Market Generator》(arXiv:2509.05065)](https://export.arxiv.org/abs/2509.05065)——合成市场生成器验证 √冲击×相关性 metaorder 理论、可从匿名 tape 恢复冲击（✅）【更正 2026-10-13 总包核验车道：原册标题《…Impact, Order Flow, and Price Diffusivity》非该编号真实标题，系与系列前作主题拼接，已按 export.arxiv.org 实读更正】；[Double Square-Root Law (arXiv:2502.16246)](https://arxiv.org/html/2503.18199v1)（⭕）；[Generating realistic metaorders from public data (arXiv:2503.18199)](https://arxiv.org/html/2503.18199v1)——用公开数据生成 metaorder 复现冲击风格化事实（✅）；Durin et al. 2023 两个 √ 律（参与率角色，⭕）；[Bucci et al. 线性→√ 交叉实证（CFM）](https://www.cfm.com/wp-content/uploads/2022/12/120-Crossover-from-linear-to-square-root-market-impact.pdf)（✅）。
 - **成交方向判定（trade classification）**：美股因成交无方向标记需 Lee-Ready (1991)/tick test 推断，2024-25 趋势=ML 分类替代规则法（[ Lee-Ready primer](https://ml4trading.io/primer/trade-signing-and-the-lee-ready-algorithm/)（✅）、[公司债市场 ML 分类](https://www.researchgate.net/publication/378828001)（✅）、[Trade signing in fast markets](https://www.semanticscholar.org/paper/5896f9b1d16bdd52abc275ff42bcc9fa8f090f19)（✅）、[arXiv:2511.06177 push-response](https://arxiv.org/html/2511.06177)（⭕））。**A 股不同：L1/L2 快照自带内外盘方向标记，无需 Lee-Ready；但档位划分按单笔金额，拆单失真同样存在**——所以问题不是"判方向"而是"重定标"（§5 开源金工路线）。
 - 大宗交易：Seppi (1992, JFE) 知情交易者大宗折价理论、Frino et al. (2007) 大宗价格冲击（⭕）、[Peng-Liu 2024《Microstructure of the Chinese stock market》](https://www.sciencedirect.com)（⭕，A 股大宗定义与微观结构）。
 
@@ -119,7 +119,7 @@ completes_when: §10 六条经条件轴总包 P1 统一呈批包呈 Owner 裁决
 
 | 数据 | 表/通道 | 状态 |
 |---|---|---|
-| 大单五档资金流 | `c1_market.market_fund_flow_daily`（tushare pro.moneyflow 主源 5540 行/日，akshare fallback，tasks.yaml:184）；intraday 另有 `market_money_flow` 表 | ✅在产 |
+| 大单五档资金流 | `c1_market.money_flow`（tushare pro.moneyflow 主源 5540 行/日，akshare fallback，tasks.yaml:182-195）＋大盘聚合 `market_fund_flow_daily`（akshare stock_market_fund_flow 东财大盘口径，fallback_sources 显式置空，tasks.yaml:3687-3700） | ✅在产【更正 2026-10-13 总包核验车道：原文把 tushare 5540 行/日主源描述嫁接到 market_fund_flow_daily——两张表两口径，个股大单五档=money_flow（tushare 主源），大盘聚合=market_fund_flow_daily（akshare 唯一源）；原文"intraday 另有 market_money_flow 表"亦不符，market_money_flow 是 money_flow 的 registry 逻辑名（日频），盘中只有板块级 sector_fund_flow】 |
 | 两融 | `market_margin_trading`（akshare，akshare_provider.py:1941） | ✅在产 |
 | 大宗交易+折价率 | `market_block_trade`（折价率均值已在 cohort_daily_ledger 计算） | ✅在产 |
 | 龙虎榜 | dragon_tiger 落库 | ✅在产 |
@@ -134,7 +134,7 @@ completes_when: §10 六条经条件轴总包 P1 统一呈批包呈 Owner 裁决
 
 | 视角 | 模块 | 成熟度 |
 |---|---|---|
-| 量 | `factor/technical_indicators/volume.py` 17 指标（OBV/MFI/VR/AD/PVT/WVAD/VWMA/ADOSC/EOM/KVO/NVI/PVI/FORCE_INDEX/WAD/VO/MARKETFI，对齐通达信） | production |
+| 量 | `factor/technical_indicators/volume.py` 17 指标（OBV/MFI/**VWAP**/VR/AD/PVT/WVAD/VWMA/ADOSC/EOM/KVO/NVI/PVI/FORCE_INDEX/WAD/VO/MARKETFI，对齐通达信【核验注 2026-10-13：恰好 17 个，原册括号漏列 VWAP】） | production |
 | 量 | `wyckoff_engine.py`、`volume_regime_adaptive.py` | 在册 |
 | 量 | `auction_microstructure_analyzer.py`（MOD-SIG-089，竞价五族特征+抢筹/诱多/压价） | testing |
 | 筹码 | `factor/technical_indicators/chips.py`（CYQ 迭代衰减内核 compute_chip_metrics，IND-CHIPS-001 获利盘） | 在册 |
@@ -142,7 +142,7 @@ completes_when: §10 六条经条件轴总包 P1 统一呈批包呈 Owner 裁决
 | 资金流 | `capital_flow_pattern_analyzer.py`（MOD-SIG-022：四线五形态+散户狂热反向） | production |
 | 资金流 | `capital_behavior_orchestrator.py`（MOD-SIG-088：七类画像+六阶段推演+EMA 修正→CapitalConsensus） | testing（**strength 公式=MVP 初拍待标定**） |
 | 资金流 | `institutional_behavior_analyzer.py`（MOD-SIG-021 六阶段主链）、`banker_pattern_simulator.py` | 在册 |
-| 资金流 | `seat_pattern_analyzer/classifier.py`、`lhb_premium_analyzer.py`、`event_dragon_tiger.py`、`manipulation_avoidance_detector.py`、`sector_siphon/divergence.py` | 在册 |
+| 资金流 | `seat_pattern_analyzer.py`（limit_up/ 下单文件【核验更正：原册"seat_pattern_analyzer/classifier.py"子路径不存在】）、`lhb_premium_analyzer.py`、`event_dragon_tiger.py`、`manipulation_avoidance_detector.py`（risk/ 下）、`sector/sector_siphon.py`＋`sector/sector_divergence.py`（两个独立文件【核验更正：原册"sector_siphon/divergence.py"路径不符】） | 在册 |
 
 ### 7.3 三个病灶（P0 优先收口，先于任何新建）
 
@@ -165,13 +165,13 @@ completes_when: §10 六条经条件轴总包 P1 统一呈批包呈 Owner 裁决
 
 | 契约件 | 所需数据 | 仓内现状 | 缺口 |
 |---|---|---|---|
-| A1 获利盘 | kline_daily OHLCV+换手三源 | chips.py 内核+IND-CHIPS-001 在产（trial） | 消费端考试卡（转正） |
+| A1 获利盘 | kline_daily OHLCV+换手三源 | chips.py 内核+IND-CHIPS-001 在产（chips.py 头注 production【核验注：原册"trial"与头注口径不一，以文件头注为准；trial 的是 chip_distribution_engine（MOD-REGIME-005）】） | 消费端考试卡（转正） |
 | A2 阻力分位数 | 同上 | 内核可派生 | 指标未建+判据待冻结 |
 | A3 集中度形态 | 同上+流通股本 | blueprint 明示 D21 待"单峰密集度全语义" | 流通股本工程 |
 | A4 股东户数 | akshare 股东户数表 | ✅在产 | 因子构造待冻结 |
 | B1 量价性质 | kline_daily | volume.py 17 指标但无 LM 判定（🔍待复核） | LM 因子未建 |
 | B2 effort/result | kline_daily | wyckoff_engine 在册 | 判据待冻结 |
-| C1 大单五档 | market_fund_flow_daily | ✅在产（tushare 主源） | 重定标依赖逐笔委托（❌） |
+| C1 大单五档 | money_flow（个股，tushare 主源）＋market_fund_flow_daily（大盘聚合，akshare） | ✅在产（见 §7.1 更正注） | 重定标依赖逐笔委托（❌） |
 | C2 两融 | market_margin_trading | ✅在产 | 因子构造待冻结 |
 | C3 大宗折价 | market_block_trade | ✅在产（折价率已算） | 事件研究待做 |
 | C4 席位 | dragon_tiger | ✅落库+seat 模块 | 负结果在案：禁朴素跟随 |
@@ -196,3 +196,15 @@ completes_when: §10 六条经条件轴总包 P1 统一呈批包呈 Owner 裁决
 - 检索面：WebSearch 共 10 查（8 实效命中/2 失败），中英双语，含 GitHub topics 定向。
 - 证据等级：✅=检索直接命中原文链接；⭕=检索摘要转述（原文未开/闭库，如慧博研报）；🔍=模型知识库（非本次检索，经典文献为主）；📋=仓内在册可直接复核。
 - 已知检索盲区：券商金工研报原文多在慧博/迈博汇金闭库，仅拿到题录线索（§5 股东户数/两融/ETF 段）；ETF 资金流择时专项检索两次失败，该段为知识库级（🔍），呈批后可补定向检索。
+
+---
+
+## 核验更正记录（2026-10-13 总包 P0②③ 核验车道）
+
+17 条核验（12 仓内＋5 外部）10+4 条坐实。实质更正 5 处（均已入正文内注）：
+1. **§7.1 首行＋§9 C1（最重）**：大单五档（个股）数据源=tushare pro.moneyflow 主源 5540 行/日＋akshare fallback 属 `c1_market.money_flow`（tasks.yaml:182-195）；`market_fund_flow_daily` 是 akshare 东财大盘口径、fallback 显式置空（tasks.yaml:3687-3700）——原册把两者源描述嫁接错位。
+2. **§7.1 market_money_flow**：为 money_flow 的 registry 逻辑名（日频），非盘中表；盘中只有板块级 sector_fund_flow。
+3. **§7.2 路径两处**：seat_pattern_analyzer=limit_up/ 下单文件；sector_siphon 与 sector_divergence=两个独立文件。
+4. **§4 arXiv:2509.05065 标题**：更正为真实标题《…Order Imbalance & Volatility II: An Artificial Market Generator》（Maitrier, Loeper & Bouchaud）。
+5. **§9 A1 口径**：IND-CHIPS-001（chips.py）头注=production；trial 的是 MOD-REGIME-005 chip_distribution_engine（裁定 #257④）。banker_pattern_simulator 实际编号 MOD-SIG-113（production）。
+6. 坐实项抽查：margin_trading（akshare_provider.py:1941 逐字命中）、block_trade 折价率（cohort_daily_ledger.py:34-35/:354）、股东户数 09-18 切源（tasks.yaml:602-617）＋supply_sentinel 诞生背景（yaml:11-12）、hk_hold 季度（tasks.yaml:2209-2218）、tick 半断供（yaml:633-634 逐字）、volume.py 恰 17 指标、LM2002 仓内零实现（全 src grep 零命中）、ETF 申赎差分未立项、#257④ trial 转述逐点吻合、LMSW 2002 RFS 15(4):1005-1047、Grinblatt-Han 2005 JFE 78(2)、开源金工重定标研报、北向 2024-05-13 停盘中实时披露（港交所 2024-04-12 通告）。
