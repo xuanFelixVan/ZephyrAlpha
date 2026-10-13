@@ -28,6 +28,12 @@ batch_records:
     并留痕于此）；三进程 50252/25712/32284 已停，现场释放避免与 10-10 23:00 W1 窗叠跑。
   recorded_at: '2026-10-10T04:05:28+00:00'
   recorded_by: st-nightmine2-20261010
+- batch_id: examcard:TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调:2026-10-13
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-13T15:13:27+00:00'
+  recorded_by: st-mineloop-20261010
 - batch_id: examcard:TDM-E-L1-S0-1/calibration/02_新闻情绪时滞:2026-10-10
   n_trials: 1
   kind: exam_card

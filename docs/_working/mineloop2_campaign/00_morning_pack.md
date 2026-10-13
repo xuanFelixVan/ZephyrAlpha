@@ -2085,5 +2085,46 @@ D4=设计稿与代码本班出、**判据面变更汇总成一份变更单走 Ow
 故重放分母＝全部在册 66 行，不是 100——已把判据写进 `composite_zero_drift.py`（snapshot/compare 两态，
 三条判据：判官件未碰／前 N 行逐字不变且只增在尾／册格数不减）。
 
+### 33.9 23:0x–23:1x：批-A 校准出分（复合族首张真分）＋一条"移针不动树"的新滞后形态
+
+**先报一条自己差点签错的结论**：23:10 首跑出 `composite_card_face_rules_absent`，我第一反应写成
+"examunlock 的卡面镜像块没落地"。**这句被自己当场证伪**：`git show dev:<卡>` grep 命中 1，
+dev 上 13 张复合卡都含该块 ⇒ 块是落地的，缺的是**车道工作树的磁盘字节**。
+真因＝**`git reset --soft` 移针＋`reset` 复位索引都不动工作树**，而我这辆车道的盘面是重基期拼贴出来的，
+实测**171 件跟踪文件磁盘≠dev（含 34 张考试卡、38 件 src/scripts）**，HEAD 却已与 dev 同针。
+⇒ 新纪律：**"车道 HEAD==dev" 不等于 "车道可读面==落地面"**；凡要跑批/出分，必须先对**要读的件**做内容对拍。
+处置＝写 `align_lane_full_to_landed.py`：逐件算"磁盘独有行（去空白归一）"，
+**零独有行的 98 件取 dev 现值**，有独有行的 73 件一律保留不动并点名（不盲洗，避免重演整档快照抹他班面）。
+
+**批-A 校准卡 L1-AGG/02 首张复合分（真 CH 出分，读查询 2 次：state 腿＋基准腿各一）**：
+- 绑定凭据：`op=agg4_state_ordinal_series`、引句＝卡面原文"档序映射 r3→1、r2→2、r1→3、r4→4（先验冻结）"命中、
+  `ordinal_map_size=4`、**观测态名集合正好 = [r1,r2,r3,r4]**（零表外态、零丢档）；
+- 复合对齐凭据（R5 的实物）：state 腿 2,246 日→对齐后丢 **0**；bench_close 腿 5,286 行→对齐后丢 **3,040**，
+  `align=inner_on_keys`、`fill_policy=none`（缺日如实少行，不 ffill 不补零）——
+  顺带证伪了卡面 data_window_evidence 里"000300 实测 1,843 行"那条旧引用（现值 5,286 日），
+  **这条差异属他班案卷的引用陈旧，不是本班判据**，只登记不擅改；
+- **判决＝fail，而且是判据级红、不是 nan 结构性不可判**：
+  `mono_spearman 0.400 < 0.6`、`ic_mean 0.0014 < 0.02`；同时 `oos_ok=True`（oos_ic=+0.0687）、
+  `regime_ic` bull=−0.0208 / bear=−0.0250、`n=2245`、`ic_ir=None`。
+  即：这张卡要判的"四档风险轴单调"在实测面上**不成立**（这正是它 hypothesis 里预设的"状态轴=噪声"分支），
+  本班如实入册，不解释成"数据问题"也不挑 OOS 那条好的报。
+- 册面：分数册 72→73 行、试次册 +1 条（`examcard:TDM-E-L1-AGG/calibration/02…:2026-10-13`，n_trials=1）。
+- **R7 零漂移＝通过**（出分前 snapshot 72 行、出分后 compare：前 72 行逐字不变、新增只在尾部、
+  判官件 `calibration_exam.py` 对 dev 零差、册格 17→17 不变）⇒ "复合面产出日频 Series 即判官零改动"
+  这条设计主张第一次拿到实物证明（D5 的核心前提验真）。
+
+**新登记一条在册缺陷（本班发现、不擅改）**：`card_binding.run_one` 调 `run_card` 时把
+`recorded_by` 硬编码成 `"st-mineloop-20261010"`（旧班名），所以 23:13 这条试次的 `recorded_by` 记的是
+**矿考循环班而非本班**。归属字段写错人＝台账面的归属篡改风险，属"自己挖到的缺陷当班修"的范围，
+但改它要同时核对是否有尺按 recorded_by 分组——故本段先登记，修法（`recorded_by` 参数化、默认取调用方 sid）
+排在放量袋与 #18 同批，随 E 道对拍自证。
+
+**下一手**（不打断在飞袋）：#18 放量袋＝`emotion_index`（stage 粒度陷阱已查明：ORDER BY=(trade_date, stage)，
+卡面自声明 `stage='close_final'`、在册先例 `emotion_linkage_exam.py:25,79-80` 且该先例带 FINAL 唯一性断言
+:246-248 ⇒ 该腿不能用裸 anyLast，需加唯一性断言形）＋`kline_sector_880`（复用 :493/:97，
+map_table 先例=`c1_market.sector_code_name_map`＋families=[industry_l1, industry_ths]，在册 args 已在册）
+＋其余 7 卡合成算子；#19＝D8 一次性探针留 receipt。
+
+
 
 

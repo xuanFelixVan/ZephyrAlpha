@@ -3760,3 +3760,45 @@ rows:
     mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
   fails:
   - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  node_id: TDM-E-L1-AGG
+  run_id: mineloop-batchA02-02_四档风险轴前向收益单调
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    ic_mean: 0.0013758293279255397
+    mono_spearman: 0.39999999999999997
+    n: 2245
+    regime_ic:
+      bull: -0.02082522548057152
+      bear: -0.025029619293965476
+    oos_ic: 0.06865760461914329
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.1082
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - extreme_tier_gap
+    - ic_floor
+    - oos_hold
+    - regime_stability
+    - tier_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman 0.400 < 0.6
+  - ic_mean 0.0014 < 0.02
