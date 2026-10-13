@@ -1,0 +1,82 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-12-3/calibration/05_市场获利盘水位
+node_id: TDM-E-L3-12-3
+family: calibration
+title_zh: 筹码分布·市场获利盘水位（chips_winner 全市场截面中位数）校准卡·series 平行卡
+parallel_of: TDM-E-L3-12-3/calibration/02_获利盘占比
+hypothesis: 市场获利盘水位 M_t=全市场 chips_winner 截面中位数（存量供给读数）：M_t 高位=止盈供给积聚→次日 指数收益承压；M_t 低位=深套出清、抛压枯竭→次日收益偏强。即 M_t 与 000300 次日收益负相关；
+  反向读数 −M_t 分桶单调（−M_t 越高档次日收益越高）。与 02 卡（panel 逐票二维联合）同列不同问： 02 问个股截面上获利盘×集中度的选股面，本卡问市场级水位对指数次日收益的择时面（挖矿册 1_A_structure §3.1
+  首卡走 series 通道设计）。
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2026-09-30'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛；开考前机械复核：000300 段内累计 +72.08%）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊；开考前机械复核：000300 段内累计 -38.52%）
+  frozen_note: 窗口与判据看数前冻结（2026-10-13）；窗口由 c1_market.technical_indicator period='daily' 实测覆盖（2019-01-02..2026-10-12）唯一决定，IS/OOS/regime
+    段对齐 L3 车道既有冻结卡同窗 （02 获利盘 panel 卡与 P1-03 卡 IS 同界 2019-01-04..2023-12-31，OOS 端取最新在册惯例 2026-09-30）； regime 标签按 000300 段内累计收益符号机械判定（命令见
+    data_window_evidence），非预断言；事后挪门柱=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': −M_t（市场获利盘水位反向读数）十分位
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 反向读数 −M_t 十分位分桶，桶中位次日收益 Spearman 单调 rho>=0.6（等价于 M_t 越高档次日收益越低；IS 窗内）
+  ic_floor: 日频 IC（−M_t 对 000300 次日收益，时序 Spearman）均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径；series 路执行器 ic_ir 恒 None=未判柱如实披露，见
+    unjudged 面）
+  lag_profile: t+1..t+3 前向档位 IC 峰值与半衰期建档（筹码是慢变量；执行器现役为次日单面，多日前向面属另卡 target_forward_face 申报，不在本卡）
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
+  oos_stability: OOS 窗 IC 与 IS 同号（oos_same_sign 机判）
+  winner_source: '获利盘由 CYQ 迭代衰减口径供给（chips.py production 内核，2026-10-04 SW14 处方① 落地，chips_winner 列）；本卡=chip_distribution_engine（MOD-REGIME-005
+    trial）消费端证据面（裁定 #257④ 转正唯一通道）；#257④ 纪律：trial 期该维不进决策，本卡过考与否均只回写 confidence 读数面'
+  dedup_critical: technical_indicator 原始行多版本（实测 2026-10-08 行 15,895 vs uniq (日,标的) 5,562≈2.86 倍），读数必须 (日,标的) argMax(ingest_ts)
+    去重（与 02 卡冻结口径一致）
+  known_defect_FA1: 在册缺陷（正查命中 docs/_working/archive/2026-09/deep_review_full/p1_decision_chain/rpt_d06.md L29 F-A1）：一字板/停牌单日退化注入全网格均匀分布，单票
+    chips_winner 被摊薄失真——本卡为全市场截面中位数（日均 ~5.3-5.6k 标的），单票退化对中位数稳健；凭据面留截面宽度记录
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_index_return_volatility（次日波动，压力面，仅建档不作门柱）
+  note: 目标面与两融 07 卡先例同源（kline_index 000300），禁借外部指数冒充（SOP §8.5.3 e/r 位纪律）
+status: examined
+lineage:
+  card: null
+  run_id: condaxis-capital-condaxis-a1-05_市场获利盘水位
+  score_row: exam_scores_v1.yaml#rows[66]
+  confidence_writeback: TDM.nodes.TDM-E-L3-12-3.confidence
+preregistered_by: st-cdx-capital-20261013
+preregistered_at: '2026-10-13'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: series
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+executor: scripts/backtest/fexam/card_binding.py --mode run（绑定册驱动取数）→ fexam.calibration_exam.run_card series 面；判据键集=_CALIBRATION_JUDGED_KEYS
+  五键
+criteria_provenance: 判据预冻结推导链（看任何前向结果前定稿）：①量级照抄仓内冻结惯例——全卡册 pillars_numeric 实测分布 ic_mean_min=0.02（220 张）／mono_spearman_min=0.6（217
+  张）／ic_ir_min=0.3（219 张），即'机构对标地板'（月频 |IC|>=0.02 起评档文献口径同量级，日频在册惯例 0.02），本卡五键与两融 07 卡（同域资金面 series 先例）同集同值；②方向同构处理——本卡假设为负向（M_t
+  高→次日承压）而执行器校准判官的门柱是单侧下限（calibration_exam._judge_calibration_face 只判 ic/mono < min 记败），负阈值在 series 路必成方向倒置（仓内 4 张负阈值卡全为 panel/class
+  B 未开考），故绑定交付反向读数 −M_t 使负向假设与正向门柱在机判面同构（绑定算子 invert 声明＋卡面 derivation 双处留痕）；③min_obs_per_bucket=60 取长窗惯例（07 卡降至 40 系 505 交易日短窗的结构限制并已声明，本卡对齐样本
+  1,870+ 无此约束）；④窗口见 frozen_note。
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: chips_winner（全市场截面中位数）→ M_t → 反向读数 −M_t
+  signal_derivation: 全市场 chips_winner 截面中位数：先 (日,标的) argMax(ingest_ts) 去版本再按日 medianExact；市场获利盘水位 M_t=该中位数，绑定交付反向读数 −M_t（执行器门柱为单侧下限，负向假设经
+    −M_t 与正向门柱同构；分桶单调读 −M_t 分位，M_t 越高档次日收益越低）；period='daily' 过滤（该表 9 种 period 值混存，漏 WHERE 即污染）；chips_winner 值域 [0,1] 实测（2026-10-08
+    截面 min≈0/max=1/均值 0.299/中位 0.23）；原始 M_t 序列实测 1,883 个交易日（2019-01-02..2026-10-12）日中位数域 [0.0023,0.9751] 均值 0.3755
+  target_source: kline_index symbol='000300' close → next_day_return
+  data_window_evidence: 命令原文与实测（2026-10-13 20:4x，CH 只读）：`SELECT min(trade_date),max(trade_date),count(),countIf(isNotNull(chips_winner))
+    FROM c1_market.technical_indicator WHERE period='daily'` → 2019-01-02..2026-10-12 / 19,754,690 行 / 19,706,276 非空（99.75%）；去重实证：`SELECT
+    count(), uniqExact((symbol,trade_date)) ... WHERE period='daily' AND trade_date='2026-10-08'` → 15,895/5,562（≈2.86 倍）；同式
+    2024-06-03 → 12,799/5,366（≈2.38 倍）——一切读数必须 argMax 去重；period 值域实测 9 种（1min/5min/15min/30min/60min/120min/daily/weekly/monthly，daily=19,754,690
+    行）；目标面：`SELECT min(trade_date),max(trade_date),count(),uniqExact(trade_date) FROM c1_market.kline_index WHERE symbol='000300'`
+    → 2005-01-04..2026-10-13 / 5,286 行（信号窗全覆盖）；regime 机械复核：`SELECT first_value(close), last_value(close) FROM (SELECT close
+    FROM c1_market.kline_index WHERE symbol='000300' AND trade_date>=.. <=.. ORDER BY trade_date)` 段累计——bull 段 +72.08%、bear
+    段 -38.52%（标签成立）；M_t 原型序列（去重后 medianExact，绑定算子同式）：1,883 日 / 域 [0.0023,0.9751] / 均值 0.3755 / 首日 2019-01-02=0.335 / 末日 2026-10-12=0.275
