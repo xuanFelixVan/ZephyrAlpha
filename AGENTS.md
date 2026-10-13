@@ -51,21 +51,21 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 ## 2. 并发与提交（#ARCH-310 R1：队列是正门）
 
 1. **提交一律走 `scripts/git_commit.py`**：`--session <sid> --files <清单>`。
-2. **锁忙不要空转**：LOCK_TIMEOUT 自动改道入队（flag commit_queue_interactive）；
-   需要同步语义时 `--no-auto-enqueue` 显式退出。
-3. **失败重试带 `--adopt-prior-work`**（失败提交的 finally 释放 claim 但文件保持
-   staged，不带 adopt 的重新 claim 会把 staged 差异判外来——FOREIGN_CHANGE 恶性循环）。
+2. **锁忙不要空转**：LOCK_TIMEOUT 自动改道入队（flag commit_queue_interactive），需要同步语义时 `--no-auto-enqueue` 显式退出。
+3. **失败重试带 `--adopt-prior-work`**（失败提交的 finally 释放 claim 但文件保持 staged，不带 adopt 的重新 claim 会把 staged 差异判外来——FOREIGN_CHANGE 恶性循环）。
 4. **gate+自家测试同批是合法的**：COMMIT_SCOPE 误判时用 `--allow-multi-domain`（留痕）。
 5. **commit 后必做**：`git log -1 --name-only` 核实真实归属（暂存区可能吸收他会话内容）。
 6. **多会话并发窗口**：优先 `--enqueue` 走队列（serializer worktree 干净暂存区，
-   结构性免疫连坐）；直连与队列不要混抢。队列项 dead：读 dead_reason 修正后
-   `commit_queue.py requeue <qid>`（落地侧已容忍衍生漂移/跨域/永久区新文件）。
+   结构性免疫连坐）；直连与队列不要混抢。队列项 dead＝**当日四态分诊不隔夜**：判据一律
+   内容级（`dead-archive --content-level`，袋字节→git blob sha 对 dev 现值/全史比对，
+   禁按条数估），销账只走 mv 通道并留机生台账行（qid/verdict/证据 sha），requeue 前先
+   读 dead_reason 修因（落地侧已容忍衍生漂移/跨域/永久区新文件）。
 7. 死会话 stale claim 挡道：`gateway.release_files('<死sid>', files)` 精准释放后重 claim。
-8. 编辑"消失"先查 `.runtime/workspace_alerts/stash_notice.json`——是被 stash 保存了，
-   不是丢失（`git stash pop` 恢复）；勿误判为被覆盖而重做或清理。
-9. **会话收尾序列**：任务完成=merge 回主分支（放弃走 abort）→ release 自己全部 claim
-   （`git_commit.py --release-only`）→ staging 成果 promote 或确认 TTL →（多会话）写
-   handoff 交接包 → 向 Owner 汇报；细节=parallel_session_coordination_policy.md。
+8. 编辑"消失"先查 `.runtime/workspace_alerts/stash_notice.json`——是被 stash 保存了，不是丢失（`git stash pop` 恢复）；勿误判为被覆盖而重做或清理。
+9. **会话收尾序列＝收班即清**：任务完成=merge 回主分支（放弃走 abort）→ release 自己全部
+   claim（`git_commit.py --release-only`）→ staging 成果 promote 或确认 TTL →（多会话）写
+   handoff 交接包 → **车道/工棚/staging 就地清掉，不留给下一班收**（`session_worktree.py
+   archive --execute` 含会话壳与影子指令面）→ 向 Owner 汇报；细节=parallel_session_coordination_policy.md。
 
 ## 3. 作用域与连坐（#ARCH-310 R2）
 
@@ -122,9 +122,9 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 1. **数据库访问**：禁裸 `duckdb.connect`/裸 SQL 散落——一律 `DatabaseService`（`zephyr.infrastructure.database_service`）。
 2. **LLM 调用**：所有 LLM API 调用必经 `LSGSecurityGateway`（裸调被 GATE-20+运行时拦截器双捕）。
 3. **永久系统四要素**：自动触发/自动运行/自动维护/自动关闭；reconciler 必须**事件触发**，禁 cron/Timer/sleep-loop。
-4. **生命周期隔离**：禁向 `.runtime` 根直写——暂存走 `.runtime/sessions/<sid>/staging/`（24h TTL，成果须 promote 到 docs/_working/ 才算交付）；临时脚本/输出走 `.runtime/tmp/`；永久区（ttl: permanent）禁引临时区（docs/_working/、.runtime/）；**项目根目录零临时文件**。
+4. **生命周期隔离**：禁向 `.runtime` 根直写——暂存走 `.runtime/sessions/<sid>/staging/`（24h TTL，成果须 promote 到 docs/_working/ 才算交付）；临时脚本/输出走 `.runtime/tmp/`；永久区（ttl: permanent）禁引临时区（docs/_working/、.runtime/）；**项目根目录零临时文件**；收班即清同 §2 第 9 条（会话壳/staging/工棚车道面不清＝给下一班留第六态）；主区暂存区禁无主 staged 残留——巡检发现无主件按 HEAD 复位并留存证，防归属篡改。
 5. **静态清单禁手工维护**：凡"条目列表+计数"清单必须生成器产出，手工维护必然漂移。
-6. **测试隔离**：测试禁写生产路径（`data/` 业务目录），输出一律 `tmp_path` fixture。
+6. **测试隔离**：测试禁写生产路径（`data/` 业务目录），输出一律 `tmp_path` fixture；车道内跑队列/路径重定向类测试 MUST 带仓外 `--basetemp`——`commit_queue._strip_lane_prefix` 会把含 `.worktrees/` 的 tmp 路径截到主区同构面，实测两头不同根⇒测试集体假红且产物落主区 `.runtime/tmp/`。
 7. **.ps1 必须纯 ASCII**：PowerShell 5.1 无 BOM 按 GBK 解码，中文注释导致假语法错误。
 8. **提交工具红线**：`[GW:]` 标记不可伪造（POST-COMMIT-GUARD 会 reset 回滚）；禁 plumbing 命令绕过（read-tree/update-index/write-tree）；`emergency_commit` 仅注册表/锁不可用时可用且手写标记判 forged。
 9. **生成器输出 i18n**：中英文标签必经三层翻译 loader（terminology/domain/module），禁硬编码翻译字典。

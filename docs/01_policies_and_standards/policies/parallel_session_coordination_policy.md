@@ -102,6 +102,20 @@ registry.unregister(session_id)
 
 **异常清理**：进程崩溃未注销 → TTL 过期后自动清理（`list_active()` 时触发）。
 
+**收班即清（Owner 2026-10-13 派工令 v2 段二，宪法 §2 第 9 条的细则落点）**：注销不是收尾的终点——
+"收班留给下一班收"是死信、工棚车道、会话壳三重堆积的机制根。收班序列执行后，本班名下四类面
+必须就地处置，不得遗留给下一班：
+
+| 面 | 处置正门 | 判据 |
+|---|---|---|
+| worktree / `.aidrafts` 车道 | `session_worktree.py archive <车道绝对路径> --execute` | 死判与执行工具同源（`registry list_active`），活车道硬拒无逃生 |
+| `.runtime/sessions/<sid>` 会话壳 | 同上 archive 尾部 `_prune_session_shell` | 只认精确单目录；空壳或仅剩心跳/PID 机制件才拆，有实质件保留并点名 |
+| `.runtime/sessions/<sid>/staging/` | 有增量→promote 到 `docs/_working/`；无增量→随 TTL 清 | 成果未 promote 就删壳＝把未落地字节的第六态藏起来（在册红线：被清除面≠净收官） |
+| 名下死信袋 | `commit_queue.py dead-archive --content-level --session <sid>` | 内容级四态判定＋机生台账行（qid/verdict/证据 sha），当日不隔夜 |
+
+主区暂存区（git index）同批受规：无主 staged 残留一经发现即按 dev 现值复位并留存证——
+车道/主区 index 都是多会话混合池，裸复位他人面属归属篡改，只可复位**确认无主**的件。
+
 ---
 
 ## 3. held_files 协议
