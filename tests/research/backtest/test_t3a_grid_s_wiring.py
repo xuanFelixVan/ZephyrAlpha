@@ -5,7 +5,7 @@
 # [CONSUMERS] pytest
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 全合成数据零 CH 依赖（gate_limits=False 绕封板闸真库查询）; S1-S5 每件有红组（缺件即 fail）与绿组; 缺省参数路径零漂移可断言
+# [INVARIANTS] 全合成数据零 CH 依赖（gate_limits=False 绕封板闸真库查询）; S1-S5 每件有红组（缺件即 fail）与绿组; 缺省参数路径零漂移可断言; 千万格级名义面的展开测试一律经 `_narrow_compiler` 冻结窄批（维规格照抄真源册、非受测维冻结 baseline；谓词只读 ctx 故不改变激活判定），真源面另用 count_n_raw 零展开锚（维护七班 P1，接维护六班 §十.5 处方）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -957,12 +957,47 @@ def test_schema_x_dims_folded_below_phase3():
     assert all(d["active_if"] == "phase >= 3" for d in xdims.values())
 
 
-def test_grid_expansion_x_dims_phase_gating():
-    """绿组：phase=1/2 编译 X 维折叠（N_raw 不变+values 携 baseline 'off' 字符串）；
-    phase=3 展开（N_raw ×6，X 双腿字符串在册）。"""
+def _narrow_compiler(keep_dims: tuple[str, ...]):
+    """冻结窄批尺（维护七班 P1＝接维护六班 §十.5 处方，两选一取"冻结窄批"＋"零展开 count_n_raw"合体）。
+
+    病根实测：真源册 `config/position_recipe_grid_schema.yaml` 在 phase>=3 上下文下名义格点
+    **13,063,680**（phase=2 面 725,760），`GridCompiler.compile()` 会逐格 `PositionRecipe`
+    实体化（每格两次 `_canonical`→`json.dumps`＋两次 dict 拷贝），单格实测 14.3 µs ⇒
+    整批 187 秒，直接超在册 pytest-timeout（120s，Windows thread 法杀不掉工作线程，
+    实测表现为 Timeout 栈停在 `json/encoder.py:258 _iterencode`）。
+
+    本尺做法＝**维规格逐条照抄真源册**（`active_if` / `depends_on` / `cost_tier` /
+    `baseline` / 受测维的完整值集全部原样），只把**非受测维**的值集收到各自 baseline（＝1 值）。
+    判别力不降的根据（在册实证，非假设）：谓词求值面 `_evaluate_active` 的命名空间＝
+    `_SAFE_PREDICATE_BUILTINS + ctx`（只读 context 变量，不读其他维的取值），
+    故冻结非受测维**不改变任何维的激活/折叠判定**；受测维值集原样⇒"取值集合恰等于在册集"
+    这类断言仍是逐格实测，不是解析式改写。
+
+    与真源面的数量关系由调用侧用 `count_n_raw`（O(维数) 零展开）另钉，两把尺并报。
+    """
+    import yaml
+
     from zephyr.position.core.position_recipe_compiler import GridCompiler
 
-    compiler = GridCompiler.from_yaml(_REPO / "config" / "position_recipe_grid_schema.yaml")
+    data = yaml.safe_load((_REPO / "config" / "position_recipe_grid_schema.yaml").read_text(encoding="utf-8"))
+    specs = []
+    for s in data["dimensions"]:
+        vals = list(s["values"]) if s["id"] in keep_dims else [s["baseline"]]
+        specs.append({**s, "values": vals})
+    return GridCompiler.from_dimensions(specs)
+
+
+def test_grid_expansion_x_dims_phase_gating():
+    """绿组：phase=1/2 编译 X 维折叠（N_raw 不变+values 携 baseline 'off' 字符串）；
+    phase=3 展开（N_raw ×6，X 双腿字符串在册）。
+
+    展开面走 `_narrow_compiler`（冻结窄批，见其 docstring 的实测病根）；真源册面用
+    `count_n_raw` 零展开锚住"phase 闸确实放大格点面"，两把尺同钉防窄批与真源脱钩。
+    """
+    from zephyr.position.core.position_recipe_compiler import GridCompiler
+
+    real = GridCompiler.from_yaml(_REPO / "config" / "position_recipe_grid_schema.yaml")
+    compiler = _narrow_compiler(("X_stop", "X_breaker", "J_regime_switch"))
     base_ctx = {"strategy_pool": ["primary"], "phase": 2, "capital_ramp_enabled": False}
     e2 = compiler.compile(base_ctx)
     assert "X_stop" in e2.folded_dimensions and "X_breaker" in e2.folded_dimensions
@@ -975,6 +1010,13 @@ def test_grid_expansion_x_dims_phase_gating():
     assert e3.n_raw == e2.n_raw * 6
     # J 在 phase 3 保持展开（T3b 继承 T3a 空间）
     assert {r.values["J_regime_switch"] for r in e3.recipes} == {"on", "off"}
+    # 真源册锚（零展开）：phase 闸在真源面上确实放大格点面。注意**不能钉 ×6**——
+    # 实测真源 phase2→3 比值＝18（除 X_stop×X_breaker=6 外还有 X_sector 同闸 active_if
+    # "phase >= 3"），×6 只属窄批面（非受测维已冻结）。
+    n2 = real.count_n_raw(base_ctx)
+    n3 = real.count_n_raw({**base_ctx, "phase": 3})
+    assert n3 > n2, f"真源册 phase 闸未放大格点面: {n2} -> {n3}"
+    assert n3 > e3.n_raw, "窄批面应显著小于真源面（否则本尺没在冻结非受测维）"
 
 
 # ── T3b X 族接线（20261007 袋B：evaluate_recipe 序钉 J帽→stop→breaker；折叠 'off'=零漂移）──
@@ -1076,12 +1118,19 @@ def test_t3b_card_frozen_and_budget_clamps():
 
 
 def test_t3b_context_injection_phase3_activates_x():
-    """绿组：t3b 卡 context（phase=3）编译展开 X 双维——注入面与考卷面闭环。"""
+    """绿组：t3b 卡 context（phase=3）编译展开 X 双维——注入面与考卷面闭环。
+
+    展开面走 `_narrow_compiler`（该卡上下文在真源册下名义 13,063,680 格＝实测超闸）；
+    真源册面用 `count_n_raw` 零展开锚住"卡上下文确实触发展相"，两把尺同钉。
+    """
     from zephyr.position.core.position_recipe_compiler import GridCompiler
 
     card = mod._load_t3b_exam_card()
-    expansion = GridCompiler.from_yaml(_REPO / "config" / "position_recipe_grid_schema.yaml").compile(
-        card["exam_definition"]["context_overrides"]
-    )
+    ctx = card["exam_definition"]["context_overrides"]
+    expansion = _narrow_compiler(("X_stop", "X_breaker")).compile(ctx)
     assert {r.values["X_stop"] for r in expansion.recipes} == {"off", "atr3x", "trail20"}
     assert {r.values["X_breaker"] for r in expansion.recipes} == {"off", "dd20"}
+    real = GridCompiler.from_yaml(_REPO / "config" / "position_recipe_grid_schema.yaml")
+    n_real = real.count_n_raw(ctx)
+    assert n_real > expansion.n_raw, f"卡上下文在真源册上应是展开相（名义 {n_real} 格 > 窄批 {expansion.n_raw} 格）"
+    assert n_real > real.count_n_raw({**ctx, "phase": 2}), "卡上下文与 phase=2 相比未放大格点面"
