@@ -2760,15 +2760,20 @@ def session_worktree_start(
     health_check = run_startup_health_check(root)
 
     if health_check.get("status") != "ok":
-        failed_names = [c["name"] for c in health_check.get("checks", []) if not c.get("passed")]
-
+        failed = [c for c in health_check.get("checks", []) if not c.get("passed")]
+        failed_names = [c["name"] for c in failed]
+        # 明细必须随上报出口一起打：只打检查项名字时，读日志的人拿不到异常原文，事后既无法
+        # 复现也无法定性（2026-10-14 两班实测：该自检偶发 failed 而三处根面复跑全 ok，
+        # 正是缺 detail 把一次并发建车道的竞态误读成了"锚面 bug"）。
+        failed_detail = "; ".join(f"{c.get('name')}={c.get('detail') or '<无 detail>'}" for c in failed)
         logger.error(
             "[ESCALATION] session_worktree_start 健康度自检失败 (session=%s): %s. "
             "AI MUST 上报人类而非静默 workaround——对标 #ARCH-TOOL-HEALTH-V1. "
-            "失败项: %s",
+            "失败项: %s | 明细: %s",
             sid,
             health_check.get("status"),
             failed_names,
+            failed_detail,
         )
 
     else:

@@ -138,6 +138,39 @@ class TestStartReturnsHealthCheck:
 class TestHealthCheckNonBlocking:
     """健康检查失败不阻断 session 创建（warn-only 设计）。"""
 
+    def test_escalation_log_carries_failure_detail(self, tmp_path: Path, caplog):
+        """上报面必须自带异常原文：只打检查项名字＝事后无法定性（2026-10-14 两班实测教训）。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_start
+
+        _init_test_repo(tmp_path)
+        boom = "write test failed: PermissionError: 拒绝访问 lookup_audit"
+        failed_hc = {
+            "status": "failed",
+            "checks": [{"name": "lookup_audit dir writable", "passed": False, "detail": boom}],
+        }
+        with (
+            patch(
+                "zephyr.gov_enforcement.rule_bridge.session_worktree.run_startup_health_check",
+                return_value=failed_hc,
+            ),
+            caplog.at_level("ERROR"),
+        ):
+            session_worktree_start(
+                session_id="sess-hc-detail",
+                project_root=tmp_path,
+                allow_concurrent=True,
+            )
+        esc = [r.getMessage() for r in caplog.records if "[ESCALATION]" in r.getMessage()]
+        assert esc, f"未打 [ESCALATION] 行：{[r.getMessage()[:60] for r in caplog.records]}"
+        assert boom in esc[0], f"上报行只有名字没有 detail（事后不可定性）：{esc[0][:220]}"
+        assert "lookup_audit dir writable" in esc[0]
+        try:
+            from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_abort
+
+            session_worktree_abort("sess-hc-detail", project_root=tmp_path)
+        except Exception:
+            pass
+
     def test_start_succeeds_even_if_health_check_fails(self, tmp_path: Path):
         """即使健康检查失败，session 仍应创建（非阻断）。"""
         from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_start
