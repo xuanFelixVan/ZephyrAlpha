@@ -171,6 +171,21 @@ addopts = [
     # （文件锁定/内存压力），--max-worker-restart 允许崩溃后自动重启，
     # 确保所有测试有机会执行。100% AI 场景下不能容忍测试静默丢失。
     "--max-worker-restart=5",
+    # 甲案断源止血（统筹 2026-10-13 追加③）：下列六支按 node id 点名排除，名单真源=
+    # docs/_working/examrun_campaign/23_ch_writing_test_nodeids.md（考试班静态 AST 取得，
+    # 六支函数体皆走 plan_bridge/replay_one 写路）。病根＝案卷
+    # docs/_working/examrun_campaign/22_landing_test_isolation_dossier.md：测试轮一旦执行到
+    # 这些路，就往生产表 c1_backtest.sim_daily_report 插 synthetic=0 的历史日假读数
+    # （2026-10-12 实测三笔 + 10-13 复现一笔，run_id 前缀 simwire- 由写入时刻生成）。
+    # 双配置（本文件 / py.ini）名单等值由 compare_pytest_configs.py 看守项 E 拦截，禁单侧改。
+    # 退役条件＝丙 leg ch_write_guard 由 shadow 翻 enforce（写口抛而非落库）后按根宪法 §4
+    # 净零条款解除——本排除是过渡件，不是永久缩面。
+    "--deselect=tests/backtest/test_sim_daily_runner.py::test_plan_bridge_unclassified_is_pending",
+    "--deselect=tests/backtest/test_sim_daily_runner.py::test_plan_bridge_defense_state_translates_flat",
+    "--deselect=tests/backtest/test_sim_daily_runner.py::test_plan_bridge_attack_state_is_unexecutable",
+    "--deselect=tests/backtest/test_sim_daily_runner.py::test_plan_bridge_no_plan_no_write",
+    "--deselect=tests/backtest/test_sim_daily_runner.py::test_replay_one_entry_math_and_fresh_wallet_funding",
+    "--deselect=tests/backtest/test_sim_daily_runner.py::test_replay_one_flat_wallet_gets_notional_not_zero",
 ]
 # P1-4 复验留痕（2026-09-14 外审遗留批）：tests/backtest -n4 连续两轮全绿
 #（1171 passed / exit 0；第 1 轮走精简配置（彼时件名 pytest_min.ini，现寄根目录 py.ini
