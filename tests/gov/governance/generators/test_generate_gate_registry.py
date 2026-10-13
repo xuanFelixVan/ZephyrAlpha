@@ -416,3 +416,90 @@ def test_manual_tombstones_override_disk_shadowed_entries():
             assert entries[0].get("redirect_to") == mg["redirect_to"], (
                 f"{gid} redirect_to 漂移: {entries[0].get('redirect_to')}"
             )
+
+
+# ─── K8 姊妹台补登（一文件多工厂，st-libstale-20261013）═══════════════════════
+# 病根实证：POOL-REGRESSION-DIRECTION 在 in_process 名册 enabled:true 且
+# auto_register_gates 真装载（priority=161），但旧尺 `_RE_GATE_ID.search()` 每台只取
+# 首个 gate_id ⇒ 统一册每次重生把它蒸发 ⇒ 手工条目撑着机生册；GATE-21 又要求
+# commit_gates/*.py 变更时总册同步 ⇒ 谁装新门谁撞"不重生被拦／重生即净删他人行"死锁。
+
+_TEXT_TWO_FACTORIES = '''
+_GATE_ID = "DEMO-PRIMARY"
+_SECOND_GATE_ID = "DEMO-SIBLING"
+
+
+def make_demo_primary_gate() -> GateSpec:
+    """构造 DEMO-PRIMARY 门禁（priority=901）。"""
+    return GateSpec(
+        gate_id=_GATE_ID,
+        check=_check,
+        priority=901,
+    )
+
+
+def make_demo_sibling_gate() -> GateSpec:
+    """构造 DEMO-SIBLING 门禁（own-scope 观察型，priority=902）。"""
+    return GateSpec(gate_id=_SECOND_GATE_ID, check=_check2, priority=902)
+'''
+
+
+def test_gatespec_calls_collects_literal_and_variable_ids() -> None:
+    """两种在册写法都要收齐：字面 gate_id="X" 与常量绑定 gate_id=_X（POOL 即后者）。"""
+    from scripts.governance.generators.generate_gate_registry import _gatespec_calls
+
+    got = _gatespec_calls(_TEXT_TWO_FACTORIES)
+    assert [g[0] for g in got] == ["DEMO-PRIMARY", "DEMO-SIBLING"], got
+    assert [g[1] for g in got] == [901, 902], got
+    assert got[1][2] == "构造 DEMO-SIBLING 门禁（own-scope 观察型，priority=902）", got[1][2]
+
+
+def test_gatespec_calls_skips_unresolvable_binding() -> None:
+    """gate_id 绑到解析不出的名字时跳过而非崩（也不得凭空造一台门）。"""
+    from scripts.governance.generators.generate_gate_registry import _gatespec_calls
+
+    text = 'def make_x() -> GateSpec:\n    """构造 X。"""\n    return GateSpec(gate_id=UNKNOWN_CONST, check=c, priority=7)\n'
+    assert _gatespec_calls(text) == []
+
+
+def test_pool_regression_direction_is_now_derivable() -> None:
+    """真树回归：POOL 台次必须从代码导出，不再靠统一册手抄条目。"""
+    gates = {g["gate_id"]: g for g in extract_commit_gates()}
+    assert "POOL-REGRESSION-DIRECTION" in gates, "POOL 台次再次蒸发——姊妹台补登被回退"
+    row = gates["POOL-REGRESSION-DIRECTION"]
+    assert "priority=161" in row["name"], row["name"]
+    assert row["entry"] == "in-process (GitCommitGateway)"
+
+
+def test_ghost_row_tombstone_emitted_as_deprecated() -> None:
+    """无源行（策略卡生命周期图）以墓碑形式在册且 status=deprecated，不再伪装 active。"""
+    rows = [g for g in generate()["gates"] if g.get("gate_id") == "STRATEGY-CARD-LIFECYCLE-MAP"]
+    assert len(rows) == 1, f"墓碑行数异常: {len(rows)}"
+    assert rows[0]["status"] == "deprecated", rows[0]
+    assert str(rows[0]["entry"]).startswith("N/A"), rows[0]["entry"]
+
+
+def test_sibling_pass_never_reattributes_existing_rows(monkeypatch) -> None:
+    """只增不改契约：姊妹台一遍不得改动第一遍任何行的字节（含同名跨模块 id）。"""
+    from scripts.governance.generators import generate_gate_registry as gen
+
+    with_sibling = extract_commit_gates()
+    monkeypatch.setattr(gen, "_gatespec_calls", lambda text: [])
+    only_primary = extract_commit_gates()
+
+    primary_ids = {g["gate_id"] for g in only_primary}
+    sib_ids = {g["gate_id"] for g in with_sibling}
+    assert primary_ids <= sib_ids, f"补登反而丢行: {sorted(primary_ids - sib_ids)}"
+    by_sib = {g["gate_id"]: g for g in with_sibling}
+    drift = [g["gate_id"] for g in only_primary if by_sib[g["gate_id"]] != g]
+    assert drift == [], f"既有行被姊妹台改写归属/措辞: {drift}"
+    # MAP-ALIGNMENT 同名跨三模块＝归属最易被抢的一台，单点名复核
+    assert by_sib["MAP-ALIGNMENT"] == next(g for g in only_primary if g["gate_id"] == "MAP-ALIGNMENT")
+
+
+def test_generation_idempotent() -> None:
+    """幂等：连跑两次 generate() 必须逐字节相同（否则 total_gates 会自己漂）。"""
+    first, second = generate(), generate()
+    assert first["total_gates"] == second["total_gates"]
+    assert [g["gate_id"] for g in first["gates"]] == [g["gate_id"] for g in second["gates"]]
+    assert first["gates"] == second["gates"]

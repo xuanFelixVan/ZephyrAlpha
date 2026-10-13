@@ -127,6 +127,69 @@ def _roster_triggers() -> dict:
         return {}
 
 
+_RE_GATE_ID_CONST = re.compile(r'^(\w*GATE_ID\w*)\s*(?::[^=]+)?=\s*"([^"]+)"', re.M)
+_RE_FACTORY_DEF = re.compile(r"^def\s+\w+\(", re.M)
+
+
+def _balanced_args(text: str, open_end: int) -> str | None:
+    """从 `GateSpec(` 右括号后一位起，按括号深度截出该调用的实参串（失衡=None）。"""
+    depth = 1
+    for i in range(open_end, len(text)):
+        ch = text[i]
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+            if depth == 0:
+                return text[open_end:i]
+    return None
+
+
+def _enclosing_factory_doc(text: str, pos: int) -> str:
+    """取该 GateSpec 调用所属函数 docstring 首行（姊妹台的描述真源）；无则空串。"""
+    starts = [m.start() for m in _RE_FACTORY_DEF.finditer(text) if m.start() < pos]
+    if not starts:
+        return ""
+    body = text[starts[-1] :]
+    nxt = _RE_FACTORY_DEF.search(body[1:])
+    if nxt:
+        body = body[: nxt.start() + 1]
+    m = re.search(r'"""\s*([^\n]*)', body)
+    if not m:
+        return ""
+    return m.group(1).strip().rstrip('"').rstrip().rstrip("。")  # 尾随闭合引号与句号不入册
+
+
+def _gatespec_calls(text: str) -> list[tuple[str, int | None, str]]:
+    """逐个 `GateSpec(...)` 调用取 (gate_id, priority, 所属工厂 docstring 首行)。
+
+    治本对象=**一文件多工厂**（本仓实测 10 台模块带 ≥2 个字面 gate_id）：旧尺
+    `_RE_GATE_ID.search()` 只取文件首个匹配（多为 [MODIFY-GUARD] 头部行），姊妹台行
+    每次重生必蒸发。实证受害=POOL-REGRESSION-DIRECTION：in_process 名册 enabled:true
+    且 `auto_register_gates` 真装载（priority=161），统一册却靠手写条目维持——
+    即"机生禁手改"的册子被手抄条目撑着。gate_id 支持两种在册写法：
+    字面 `gate_id="X"` 与常量绑定 `gate_id=_X_GATE_ID`（后者经同文件 `\\w*GATE_ID\\w*`
+    常量表解析，先例=registry_mass_deletion_gate.py:474/583）。
+    """
+    consts = {m.group(1): m.group(2) for m in _RE_GATE_ID_CONST.finditer(text)}
+    found: list[tuple[str, int | None, str]] = []
+    for m in re.finditer(r"GateSpec\(", text):
+        args = _balanced_args(text, m.end())
+        if args is None:
+            continue
+        gm = re.search(r'gate_id\s*=\s*"([^"]+)"', args)
+        if gm:
+            gate_id = gm.group(1)
+        else:
+            vm = re.search(r"gate_id\s*=\s*([A-Za-z_]\w*)", args)
+            gate_id = consts.get(vm.group(1), "") if vm else ""
+        if not gate_id:
+            continue
+        pm = re.search(r"priority\s*=\s*(\d+)", args)
+        found.append((gate_id, int(pm.group(1)) if pm else None, _enclosing_factory_doc(text, m.start())))
+    return found
+
+
 def extract_commit_gates() -> list[dict]:
     """扫描 commit_gates/*.py，从 GateSpec 声明 + docstring 提取 CommitGate 元数据。
 
@@ -187,6 +250,37 @@ def extract_commit_gates() -> list[dict]:
         )
         # P5 条件触发贯通（st-gslim-20260923）：统一册 files_trigger 拉通自 in_process 名册
         gates[-1]["files_trigger"] = globals().setdefault("_TRIGGER_MAP", {}).get(gate_id, "")
+
+    # 姊妹台补登（K8 治本，st-libstale-20261013）：**第二遍**只登第一遍未认领的 id——
+    # 第一遍逐字节保持旧行为（122 台主台行的描述/own_scope/归属不变，含 MAP-ALIGNMENT
+    # 这类同名跨三模块的 id 归属），第二遍才把一文件多工厂漏掉的台次补进册。
+    for py in sorted(COMMIT_GATES_DIR.rglob("*.py")):
+        if py.name in ("__init__.py", "_diff_helpers.py"):
+            continue
+        text = py.read_text(encoding="utf-8", errors="replace")
+        own_scope = ("_build_own_scope" in text) or ("_split_own_foreign" in text)
+        m_pri = _RE_PRIORITY.search(text)
+        file_priority = int(m_pri.group(1)) if m_pri else 100
+        for sib_id, sib_priority, sib_doc in _gatespec_calls(text):
+            if sib_id in seen_gate_ids:
+                continue
+            seen_gate_ids.add(sib_id)
+            sib_desc = sib_doc or sib_id
+            sib_pri = sib_priority if sib_priority is not None else file_priority
+            gates.append(
+                {
+                    "gate_id": sib_id,
+                    "name": f"{sib_id}: {sib_desc}（CommitGate, priority={sib_pri}）",
+                    "entry": "in-process (GitCommitGateway)",
+                    "description": sib_desc,
+                    "files_trigger": globals().setdefault("_TRIGGER_MAP", {}).get(sib_id, ""),
+                    "always_run": False,
+                    "category": "commit_gate",
+                    "status": "active",
+                    "source": "commit-gate",
+                    "own_scope": own_scope,
+                }
+            )
     return gates
 
 
@@ -609,6 +703,28 @@ MANUAL_GATES: list[dict] = [
         "source": "manual",
         "enforcement_channel": "manual",
         "redirect_to": "gate_audit_report_v1.md#C1",
+    },
+    {
+        # 墓碑条目（K8 治本同批，st-libstale-20261013）：此行旧为统一册手抄条目，旧尺取不到它
+        # （gate_id 靠 .search() 首匹配）→ 每次重生必丢，丢=净删他人在册行，
+        # 是"今晚没人能干净装新门"死锁的另一半。
+        "gate_id": "STRATEGY-CARD-LIFECYCLE-MAP",
+        "name": "STRATEGY-CARD-LIFECYCLE-MAP: 策略卡生命周期图（图15）结构门禁（行入册于 2026-10-05，实现从未落位）",
+        "entry": "N/A (no implementation in any ref, see redirect_to)",
+        "description": "【墓碑·源缺位】本行入库笔=d314bb0d980（2026-10-05，st-fig1113reg-20261004 图族批次），"
+        "而 src/zephyr/gov_enforcement/commit_gates/ 下 strategy_card_lifecycle_map_gate.py 在 HEAD 树与全史"
+        "双向零命中（git ls-tree -r HEAD 与 git log --all --diff-filter=D 皆空=从未有实现，非删除遗留）；"
+        "同名测试 tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py 采集期即 ImportError。"
+        "status 由 active 如实改 deprecated（在册假闸判据：缺源禁装/0 占位禁）；"
+        "取证与判据=班账 K8（docs/_working/libghost_campaign/00_ledger.md）。"
+        "复活方式=实现落位后删本墓碑条目，生成器第二遍自动出行。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "docs/_working/libghost_campaign/00_ledger.md",
     },
     {
         "gate_id": "BLUEPRINT-FORMAT",
