@@ -1326,3 +1326,174 @@ CH 查询 0 次（含死机后复员，全程零取数）｜N 账本真源零写
   已写入案卷 §七/§八；判据脚本含反向自证（evil_mixed 红、good_same 绿，全仓 4036 文件扫、`src.` 面 34、混面 2）。
 - 队列：0040（§三十～卅四）processing、0041（案卷 25 初版）pending；
   案卷 §七/§八 与本班账 §卅五 将在 0041 落地后以新 dev sha **并成一袋**追加（同件不双袋）。
+
+# 卅六、04:00 晨间五步序列实测账（04:06–04:3x，dev＝4419b8ed2a）
+
+## 36.1 ① 污染键复测＝非零（1 行），本班照裁报重裁、不再自删
+
+- 删是真删成：`system.mutations` 里 `mutation_2798` `is_done=1`、`create_time=2026-10-12 16:40:13Z`
+  （本地 00:40:13），谓词 `DELETE WHERE judgment_id = 'SIMP-2026-09-21-plan_bridge-index000300.SH'`；
+  所以本次复现**不是**"异步删除没生效"。
+- 删后又来了两次写入：`INSERT INTO c1_backtest.sim_daily_report` 完成事件 16:49:23Z（本地 00:49）与
+  19:25:22Z（本地 03:25），各 written_rows=1。现存行 asof_ts=ingest_ts=2026-10-12 19:25:22.000、
+  run_id=`simwire-20261012192522`、synthetic=0、report_date=2026-09-21、物理行数 1
+  （表是 ReplacingMergeTree(ingest_ts)、ORDER BY (report_date, source, subject)，同键会折叠，
+  故"行数 1"不等于"只写过一次"——上面两条 INSERT 事件才是次数证据）。
+- 归因＝测试轮写入，非生产运行：report_date=2026-09-21 与 input_cutoff_ts=2026-09-21 07:00:00 是
+  测试夹具值，生产链路不会回填一个月前的判定行；时间窗与本班袋 0041（created 02:56:32、landed 04:05:50）
+  的排袋测试轮区间重合；旁证＝同窗 19:20–19:34Z 另有 19 起 INSERT 打向 macro_data／technical_indicator／
+  daily_valuation／news_data，是整套测试轮的面貌而非单次业务写。
+- 证据等级如实标：**强相关＋夹具反证，不是直接命名字据**——done 件 meta 实测只有
+  priority／depends_on／supersedes／worktree_root／registration_gate／preflight_face 六键，
+  队列侧不记测试轮命令与时刻，本班取不到"哪一袋的哪一轮"这一级指名。
+- 结构性结论：`写入测试沙箱化`（已裁，归考试解锁班修订令第 1 件）落地前，落地链每排一袋就把这行
+  再写回来一次；本班终局判据"生产面零污染"在本班这一侧**不可达**，且任何"删掉这行"的裁定都会
+  进入删了又长的循环。本班不自建删循环，改呈：要么先断源再清账，要么把该行按 synthetic=1 打标隔离。
+- 附带一条风险提示（请统筹留档，非本班新请求）：当时删除谓词按 judgment_id 等值，同键全部行一起删——
+  00:4x 快照的 3 行里有 2 行是落地链代他班写入的；共享生产表上按键删除会波及他班读数。
+
+## 36.2 ② 考尺复跑＝dev 净面 52 支全绿（令面写 48，实测 52，差 4 有因）
+
+- 净面做法：detached worktree @4419b8ed2a，PYTHONPATH 钉本面；实测 `zephyr.__file__` 指向
+  `wt_devface\src\zephyr\__init__.py`、pytest rootdir＝wt_devface（主区 src 面此刻是脏的：
+  `ch_writer.py`/`gpu_core.py` 均 MM，不在净面跑就又是假绿）。
+- `tests/backtest/test_calibration_exam.py` collected 52 → **52 passed in 5.35s**。
+- 48→52 的差 4＝矿考二班多段危机窗修复在 dev 新增的 `_span_pairs`／`_in_spans` 等判别力钉
+  （老纪律再现：先认新名再判有无，别拿旧名量新面）。
+- 安全验证次序照统筹已批的实施协议执行：跑前 20:15:21Z 近 120s 内 sim_daily_report=0、kline_daily=0；
+  跑后 20:16:26Z 两处仍=0 ⇒ 本班这次复跑**没有**新增生产写。尺的判别力不是自证的：同夜 19:25Z
+  同形查询量到过非零，所以 0 是有区分力的 0。
+
+## 36.3 ③ classify 复跑＝普查 A 仍 0；另抓到一把"普查与分数册零交集"的口径洞
+
+- 净面普查（不带 --force）：`card_total_preregistered=177`，tally A=0／A?=11／B=17／C=121／D=0／U=28。
+- 阻塞构成逐 reason 实测：118 `target_face_not_index_next_day`、17 `panel_deferred`、
+  13 `no_data_binding_section`、2 `needs_replay_engine`、1 `executor_horizon_mismatch:next_5d`、
+  11 支 A? 全部是 `table_not_in_recipe_book`（kline_sector_880 7／hl_funding_history 2／
+  research_report 1／macro_data 1），其余 U 为多表复合配方缺位。
+- 两次读数分开记：第一次在 scratch worktree 里 stderr 明报"CH 配置文件不存在……CH 连接将失败"
+  （`config/.env.clickhouse` 是 gitignore 的离库件），**属降级读数，不作结论**；第二次把 CLICKHOUSE_*
+  从主区真源文件注入 os.environ（不复制文件、不打印值）复测，tally 逐键相同 ⇒ 该 tally 不依赖 CH 面，
+  但降级那次照在册纪律仍标"不可用"。
+- ⚠ 新发现口径洞（本班不代修，请统筹路由）：dev 分数册 46 行、32 张唯一卡，与普查 177 张**交集为 0**。
+  代码读因＝`card_binding.py:1362` 枚举谓词是 `status ∈ {preregistered}`，只有 `--force` 才并 `examined`，
+  所以 32 张已考卡被普查天然排除。全册 status 实测分布：empty 186／preregistered 177／
+  blocked_on_impl 68／blocked_on_data 64／examined 32（527 枚，0 枚不可解析）。
+- 后果要说白：本班此前拿"普查 A=0"当终局"开考面"的尺，会**完全看不见已经发生的开考**。矿考二班
+  10-12 落在 dev 的两行正是 07 五态锚定双臂卡（run_id `mineloop-dualarm_off-…` 与 `mineloop-dualarm_mid-…`，
+  verdict 均 fail）。按分数册口径：今日开考面＝1 卡 2 跑（累计 32 卡 46 跑、0 张 PASS）；
+  按普查 A 口径＝0。以后两把尺必须同时带，只报一把就是失真。
+- 更正本班旧话：§25.8 的"07 卡 dev 能登记、暂不能考"——前半（卡已在盘）对，后半被分数册证伪，
+  该卡已在 dev 跑出双臂两行。
+
+## 36.4 ④ 前置两修＝判据级实测两条均未落，本班不动册
+
+- 修一 `src/zephyr/shared/io/file_utils.py`：dev blob 与本班入班基线**字节同一**
+  （20e1e00667→20e1e00667）⇒ `registry_mass_edit_guard` 仍是删除行比例闸，预算口径未落。
+- 修二 `scripts/backtest/factory_grid_executor.py`：dev blob **变了**（4090ffea48→390b5f42a5，
+  +104/−5），但变的是 GPU化三班 B2 设备驻留接线；判据行仍是
+  `return not smoke and not exploration_ledger` ⇒ 探索分册与 N 账本仍是互斥二选一，修二未落。
+  教训＝sha 变化只是存在性判据，开闸必须读到 return 行（这条在册记忆今晚又拦了一次）。
+- 故 §22.3 的 16 条正集继续待命（`backfill_worklist_16.json`，逐键带 run_id），本班不动册。
+
+## 36.5 ⑤ 本班工具层破口自报与本节投递规则
+
+- 0042（案卷 25 §七§八＋班账 §卅五）04:06 入队，截至本节写完仍 pending。其 commit message 被本班
+  工具动作伤到：讯息用 `printf '%s\n' "…"` 构造，串内含反引号 ⇒ bash 触发命令替换，若干带点
+  标识符被静默吃掉（班账／案卷**正文 blob 未受影响**，已按 blob sha 核过：
+  25a96156744a…／35ce0265fc41…）。
+- 处置＝**不重投同件双袋**（§25.11 自写禁忌＋今晚 0033/0034 违令在案）；讯息里被吃掉的标识符
+  在已落地案卷正文里逐字可查，不另开袋补讯息。工具纪律入账：讯息与正文一律用 Write 工具或
+  单引号 heredoc 构造，禁双引号 printf 里放反引号。
+- 本节只在车道追加、不并投新袋：0042 在飞＝同件（`00_ledger.md`）在途，本班不复制那次违令；
+  待 0042 落定后以当时 dev sha 为基底投本节（`ours==base` 取袋侧，一次即成）。
+- keepalive：上一张 grant 20:35:58Z（本地 04:35:58）到期，本节写完即复授并复核 daemon 存活
+  （读到的 grant 里 daemon_pid=2776，而当前 pythonw 是 10548/30984 ⇒ 旧 daemon 已换人，
+  按"判活三查"实测心跳龄后再决定要不要重注册，别拿 grant 里的旧 pid 当存活证据）。
+
+## 36.6 三条并窗发现（断源已落一半场、双臂读数口径未修、解锁班 177 矩阵与本班普查零差）
+
+- **断源半边已落 dev**：维护四班袋 `8035502074`（本地 03:57 落）把 `①丙 ch_writer 写口只读开关`
+  装上了，`config/flags.yaml` dev 面实测 `ch_write_guard.enabled: true`、`mode: "shadow"`、
+  `implementation_status: gated`；四个写入口（http_insert／query 非只读动词／ensure_database 的
+  CREATE／delete_where）进传输层前先问本旗，只咬测试进程，留痕面＝`.runtime/gate_audit/ch_write_guard.jsonl`。
+  本班 04:30 复看：**该审计件不存在**＝03:57 以来零留痕。两种解释（这一窗确实没有测试进程写库 ／
+  留痕腿没通）本班分不开，翻 enforce 的判据在册写的是"shadow 期读数只命中在册已知触库测试，且那些
+  测试的 CH 写口已 monkeypatch 化或已移出测试轮"——请维护四班用一次可控红证定性，本班不代裁。
+  时序要说清：03:25 那行复现**早于**开关落地 32 分钟，所以它不是"开关没拦住"，是"开关还没在盘上"。
+- **双臂读数口径的修复未落 dev**：`card_binding.py` dev 面 1212 行仍是无条件
+  `tgt = index_next_day_return()`，`if tgt is None:` 兜底未见（在册矿考二班修复袋号
+  `q-20261013-st-mineloop2-20261012-0021` 未落）。⇒ 本班 §36.3 引的那两张 10-12 双臂行
+  （07 卡 off/mid）按**择时面（敞口×CSI300 指数次日收益）**读，**不得**当作卡面命题（基线净值路径）的读数。
+  这条是既登记口径，不是本班新发现；本班的作用是把它与本夜读数对表。
+- **与解锁班 177 矩阵零差对拍**：`docs/_working/examunlock_campaign/18_handoff_matrix_177.yaml`
+  （袋 `e185cd8a8c`，本地 04:01 落）与本班净面普查 **card_id 集合对称差＝0**（各 177），
+  tally 逐键同（C 121／U 28／A? 11／B 17，A 0），histogram 逐 reason 同
+  （118 target_face／14 multi_table／13 no_data_binding／11 table_not_in_recipe_book／2 needs_replay_engine／
+  1 signal_column／1 executor_horizon_mismatch），其 `sum_check.equal: true`、
+  `ruler` 自述"在册 classify_card 现跑（零 CH），不另立第二把尺"——与本班的尺同源，
+  故两边的 A=0 是同一件事而不是两次巧合。其 `cards_with_unlock_side_wiring: 0`＝本班此前
+  按"目标面通道立项（执行面归解锁班修订令第 1 件）"路由的活，他们尚未接上。
+
+## 36.7 第二轮净自检与本班终句（04:2x）
+
+- 第二轮（判据驱动不是钟表驱动，与第一轮同面同尺）：`20:25:38Z` 写探针 sim_daily_report=0／kline_daily=0
+  → 同一文件再跑 **52 passed in 5.12s** → `20:25:50Z` 复探两处仍=0。两轮连绿、零生产写。
+  净面跑里 stderr 会打一行"CH 配置文件不存在（CH 连接将失败）"——这 52 支本就全 monkeypatch，
+  该提示是净面缺离库件的正常形态，不是新红；本班不拿"没报红"当"没触库"，触库判据用写探针（上面那对 0）。
+- 红对照不是自证的：本班 22:0x 在 dev 面量到 `tests/backtest` 10 红（§廿四），经 0029 袋修后转绿，
+  本次复跑仍 52/52——同一把尺先红后绿才算它有判别力。
+- 终句（按总令格式，但只写本班真达到的部分）：**本班考尺链与读数链已打通并经红蓝对抗（52 支两轮全绿、
+  写探针双侧归零、混面判据脚本 evil 红／good 绿、与解锁班 177 矩阵零差对拍），可交付面全绿；
+  但"无遗留、无待裁"本班不签**——开考面按普查口径仍为 0（118 支卡在目标面通道，执行面归解锁班修订令
+  第 1 件、尚未接上），生产面复现行已由统筹改判为"报重裁不自删"，16 条补账仍在等前置两修（判据级实测未落），
+  且本班 §卅六 一节因同件在途（0042）暂未投递。这四条都是已登记事项，不是本班私自新开的口子。
+
+# 卅七、统筹四裁随记＋0042 落地读回＋三条改变执行次序的新读数（11:1x 复测）
+
+## 37.1 四裁入账（不赋号，统筹通道原文）
+
+- ①生产污染行＝**不删**：断源 → 留痕定性 → 翻 enforce 后一次清账，删循环就此停。本班照办，不再自删。
+- ②开考面口径＝**统一双尺**：可考性普查＋已考性分数册同带，A=0 不再被读成"没人考过"。落实法见 §37.4。
+- ③16 条补账**维持待命**（前置两修未落，判据级实测见 §36.4）。
+- ④§卅六 等 0042 落地后**单袋投**＝照准（本节即与 §卅六 并成一袋投出）。
+- 终句写法"只签真达到的部分"被认可——本节之后本班所有呈报按此写法，不达就不写达。
+
+## 37.2 0042 落地读回（不等消息面，按字节）
+
+- 队列：created 04:07:20 → landed 06:20:09，commit `624cb3d1e3`（在 pending 里停了 2 小时 13 分）。
+- dev 面读回：案卷 `25_dual_module_identity_case.md`＝**114 行**（含 §七 0→2 更正与 §八 判据脚本）；
+  班账＝**1328 行**（含 §卅五）。与袋内两枚 blob 同形（25a96156744a…／35ce0265fc41…）。
+- 本班车道现面（加本节）对 dev 1328 行实测：HEAD 独有行＝0、前 1328 行逐行等＝严格尾追加，
+  故本袋按落地仲裁走 `ours==base → 取袋侧`，一次即成；讯息里**不含**反引号（§36.5 工具纪律已改正，
+  0042 那条讯息被 bash 命令替换吃掉若干标识符的教训入账）。
+
+## 37.3 三条新读数，都动到 ① 的执行次序
+
+1. **那行假读数已被生产结算腿加工过**（不是静止的脏行了）：dev 面复量该键现值＝
+   `run_id=settle-20261013004545`、`evaluated_by=sim_settler`、`eval_method=posture_check`、
+   `eval_score=1`、`realized_scenario=S1_attack`、`evaluated_at=ingest_ts=2026-10-13 00:45:45Z`（本地 08:45:45）。
+   ⇒ "一次清账"的谓词**不能**再是"按 judgment_id 删一行"：它已进结算面，`eval_score=1` 会被命中率类汇总吃掉。
+   清账要么连该日的结算重算一起算，要么由判定台账属主班重跑结算腿；本班不动手（①已裁不删），
+   只把这条前置呈给统筹——它会改变"最后一步清账"的工作量与归属。
+2. **影子开关出厂至今零命中样本**：query_log 全窗 19:57Z–00:44Z（本地 03:57–08:44）该表 INSERT＝**0 笔**；
+   08:44:41–08:45:45 的 15 笔逐行验身份全是生产腿（run_id 前缀 `simwire-`／`sim-observe-`／`settle-`，
+   report_date=2026-10-12 与 2026-10-09），**不是**测试夹具面（夹具面是 2026-09-21）。
+   ⇒ 在册翻 enforce 判据（"shadow 期读数只命中在册已知触库测试"）目前**无样本可评**；
+   `.runtime/gate_audit/ch_write_guard.jsonl` 至今仍不存在，但这**不能**读成"留痕腿没通"——
+   正确表述是"该留痕的事件从未发生过"。要定性只能由维护四班造一次可控红证（测试进程真调写口），
+   等自然样本等不来（本班 §卅七 这袋本身是 docs-only，多半也不触发测试轮）。
+3. **甲案（排袋点名排除 6 支 node id）实测未落**：`git grep test_plan_bridge_unclassified_is_pending`
+   在 dev 的 `scripts config pyproject.toml` 三处**零命中**（只搜到 sim_daily_report 的业务引用）。
+   ⇒ 03:57 后再没出现测试写的原因**未定**，不得记为"已断源"；断源仍是 ① 的第一步、仍开着。
+
+## 37.4 双尺口径（②）在本班的固定报法
+
+- 以后本班任何"开考面"读数一律两把尺同带，并写明谓词事实，不允许单报一把：
+  - **可考性尺**＝`card_binding.py --mode classify`（谓词 `status ∈ {preregistered}`，`--force` 才并 examined）
+    ＝dev 面 177 张，A 0／A? 11／B 17／C 121／D 0／U 28；
+  - **已考性尺**＝`docs/03_modules/_domain_backtest/exam_scores_v1.yaml`＝dev 面 46 行／32 张唯一卡／
+    verdict 全 fail（0 张 PASS），其中 10-12 两张是 07 卡双臂 off/mid（按在册 P0 口径读作**择时面**，
+    修复 `if tgt is None:` 实测未落 dev）。
+- 两把尺按现谓词**交集为 0**（examined 卡被普查天然排除），这是口径事实不是数据缺失；
+  是否把 `--force` 定为普查默认档属判官域，本班不改尺、只登记（§36.3）。
