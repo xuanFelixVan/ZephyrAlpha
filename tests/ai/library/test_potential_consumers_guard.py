@@ -44,7 +44,10 @@ def test_conflict_branch_references_raw_param_not_excluded() -> None:
     assert "potential_consumers = COALESCE(%s::text[], lib_assets.potential_consumers)" in conflict_clause
     # 本次事故的最小反证断言：EXCLUDED 形态=09-24~27 清零根因，禁回归
     assert "EXCLUDED.potential_consumers" not in conflict_clause
-    assert _SQL_UPSERT_ASSET.count("%s") == 15
+    # K9 同构扩列：status 也走裸参数重传（15→16 占位）
+    assert "status = COALESCE(%s, lib_assets.status)" in conflict_clause
+    assert "EXCLUDED.status" not in conflict_clause
+    assert _SQL_UPSERT_ASSET.count("%s") == 16
 
 
 # ── 参数层（零 DB，recording conn 数占位）────────────────────────────────────
@@ -77,19 +80,20 @@ class _RecordingConn:
 
 
 def test_act_passes_potential_consumers_at_both_positions() -> None:
-    """act 缺省=None 且 15 参：VALUES 位（10）与冲突位（14）都传字段本身。"""
+    """act 缺省=None 且 16 参：VALUES 位（10）与冲突位（15）都传字段本身；status 冲突位=14。"""
     conn = _RecordingConn()
     lib = Librarian(conn)  # type: ignore[arg-type]
     lib.act("register", "MOD:x.py", actor="t", fields={"kind": "module", "home": "src/x.py"})
     params = conn.cur.calls[-1][1][0]
-    assert len(params) == 15
-    assert params[10] is None and params[14] is None
+    assert len(params) == 16
+    assert params[10] is None and params[15] is None
+    assert params[14] is None  # 裸 status 缺省=保留在册处置态（K9）
     # 显式数组：两个位置一致
     lib.act(
         "register", "MOD:y.py", actor="t", fields={"kind": "module", "home": "src/y.py", "potential_consumers": ["A"]}
     )
     params2 = conn.cur.calls[-1][1][0]
-    assert params2[10] == ["A"] and params2[14] == ["A"]
+    assert params2[10] == ["A"] and params2[15] == ["A"]
 
 
 def test_register_batch_passes_missing_field_as_none_twice() -> None:
@@ -98,8 +102,9 @@ def test_register_batch_passes_missing_field_as_none_twice() -> None:
     lib = Librarian(conn)  # type: ignore[arg-type]
     ingest_all(lib, {"fs": [{"asset_id": "MOD:z.py", "kind": "module", "home": "src/z.py"}]}, actor="t")
     params = conn.cur.calls[-1][1][0]
-    assert len(params) == 15
-    assert params[10] is None and params[14] is None
+    assert len(params) == 16
+    assert params[10] is None and params[15] is None
+    assert params[5] is None and params[14] is None  # 采集面 VALUES 与冲突位双缺省（K9）
 
 
 # ── 守卫闸（零 DB，计数注入缝）───────────────────────────────────────────────

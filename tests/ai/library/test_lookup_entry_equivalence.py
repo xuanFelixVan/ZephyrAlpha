@@ -189,6 +189,34 @@ def test_feeds_leg_uses_pooled_connection(fake_pg, capsys) -> None:
     assert "feeds#1\ttable\tlookup" in out
 
 
+def test_feeds_zero_supply_state_is_disclosed(monkeypatch, fake_pg, capsys) -> None:
+    """K10 措辞①：整轴零供给时须点名"零供给≠无消费者"，不得只报 no assets feeding。"""
+
+    class _ZeroSupplyLibrarian:
+        def __init__(self, conn: object) -> None:
+            return None
+
+        def lookup_by_feeds(self, keyword: str, limit: int = 20) -> list[dict[str, object]]:
+            return []
+
+    monkeypatch.setattr(lookup_mod, "Librarian", _ZeroSupplyLibrarian)
+    assert lookup_mod._run_feeds_query("kline", 5) == 1
+    out = capsys.readouterr().out
+    assert "供数轴现面零供给" in out, out
+    assert "不等于" in out, out
+
+
+def test_feeds_miss_with_supply_on_axis_not_reported_as_empty_axis(fake_pg, capsys) -> None:
+    """K10 措辞②：轴上有供给而此词未命中→报"现有 N 行供给＋limit 截断"，禁误宣零供给。
+
+    判别力自证：把两态合并回单一 "(no assets feeding ...)" 文案，本支与上支同判红。
+    """
+    assert lookup_mod._run_feeds_query("nomatch-for-sure", 5) == 1
+    out = capsys.readouterr().out
+    assert "供数轴现有 3 行供给" in out, out
+    assert "零供给" not in out, out
+
+
 def test_commit_guide_leg_touches_no_database(monkeypatch, capsys) -> None:
     """组①：commit-guide: 腿本就不碰 PG——惰性化后仍不得取连接（少借=不变）。"""
 

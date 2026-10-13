@@ -111,6 +111,85 @@ def test_act_without_potential_consumers_passes_null() -> None:
     assert upsert_params[10] is None  # potential_consumers 位次：缺省=None
 
 
+class _RecorderCur:
+    """模块级录制光标（K9 两条测试共用；只记 SQL 与参数，不落任何库）。"""
+
+    def __init__(self) -> None:
+        self.calls: list[tuple] = []
+
+    def __enter__(self) -> _RecorderCur:
+        return self
+
+    def __exit__(self, *args: object) -> bool:
+        return False
+
+    def execute(self, sql: object, *args: object) -> None:
+        self.calls.append((sql, args))
+
+    def fetchone(self) -> tuple:
+        return (1,)
+
+
+class _RecorderConn:
+    def __init__(self) -> None:
+        self.cur = _RecorderCur()
+
+    def cursor(self) -> _RecorderCur:
+        return self.cur
+
+    def commit(self) -> None:
+        pass
+
+
+def _upsert_sql_and_params(conn: _RecorderConn) -> tuple[str, tuple]:
+    from zephyr.library.ledger_schema import _SQL_UPSERT_ASSET
+
+    params = conn.cur.calls[-1][1][0]
+    return _SQL_UPSERT_ASSET, params
+
+
+def test_upsert_protects_status_from_ingest_clobber() -> None:
+    """处置态保护（K9 一致性修复）：冲突分支 status 必须引用裸参数而非 EXCLUDED。
+
+    旧面 `status = EXCLUDED.status` 是本表唯一无 COALESCE 保护的写回，而 VALUES 已把
+    缺省预空成 'active' ⇒ EXCLUDED 恒非 NULL ⇒ 采集器每次全量入账都把已注销行
+    洗回 active（实测受害 46 行带 delete 事件仍 active）。修法同构 potential_consumers
+    裸参数重传（裁-07 先例）。
+    """
+    from zephyr.library.ledger_schema import _SQL_UPSERT_ASSET
+
+    conflict = _SQL_UPSERT_ASSET.split("ON CONFLICT", 1)[1]
+    assert "status = COALESCE(%s, lib_assets.status)" in conflict
+    assert "EXCLUDED.status" not in conflict, "改回引用 EXCLUDED=采集链复活注销行的原缺陷回归"
+
+
+def test_act_binds_status_twice_in_placeholder_order() -> None:
+    """位次与 arity 自证：裸参数重传顺序=status 在 potential_consumers 之前（SET 子句文字序），
+    且参数个数必须等于 SQL 占位符个数——多一少一都会炸在落地侧（在册先例=register_batch
+    未同步扩列导致 upsert 参数元组错位）。"""
+    from zephyr.library.ledger_schema import _SQL_UPSERT_ASSET
+
+    conn = _RecorderConn()
+    lib = Librarian(conn)  # type: ignore[arg-type]
+    lib.act("update", "FILE:src/x.py", actor="t", fields={"kind": "file", "status": "archived"})
+    sql, params = _upsert_sql_and_params(conn)
+    assert len(params) == sql.count("%s"), f"参数 {len(params)} ≠ 占位 {sql.count('%s')}"
+    assert params[14] == "archived", "裸 status 位次 14（第 15 占位）"
+    assert params[15] is None, "裸 potential_consumers 位次 15（第 16 占位）"
+    assert params[5] == "archived", "VALUES 侧 status 申报不变"
+
+
+def test_register_batch_never_declares_status() -> None:
+    """采集器批量入账必须两位都缺省（None）⇒ 在册处置态不被改写，新增行仍取 'active'。"""
+    conn = _RecorderConn()
+    lib = Librarian(conn)  # type: ignore[arg-type]
+    n = lib.register_batch([{"asset_id": "FILE:src/y.py", "kind": "file", "home": "src/y.py"}], actor="t")
+    sql, params = _upsert_sql_and_params(conn)
+    assert n == 1
+    assert len(params) == sql.count("%s")
+    assert params[5] is None and params[14] is None, "批量面申报 status=复活注销行的旁路"
+
+
 def test_lookup_by_feeds_filters_and_respects_limit() -> None:
     """供数反查（裁定#410 步骤⑤）：数组包含匹配+大小写无关+limit 截断。"""
 
@@ -236,3 +315,60 @@ def test_fs_collector_keeps_real_models_packages_skips_vendored(tmp_path) -> Non
     homes = {a["home"] for a in collect(str(tmp_path))}
     assert "src/zephyr/some_dom/models/__init__.py" in homes, homes
     assert not any(h.startswith("data/models") for h in homes), homes
+
+
+# ─── 散文轴 join（裁定③④，st-libstale-20261013）══════════════════════════════
+def _join_title(home: str, prose: dict[str, str], collector_title: str) -> object:
+    """跑一次 register_batch，回传 upsert 的 title 位次（第 9 位）供断言。"""
+    conn = _RecorderConn()
+    lib = Librarian(conn)  # type: ignore[arg-type]
+    lib._prose_title_map = lambda: prose  # 注入散文轴（零 DB）
+    lib.register_batch(
+        [{"asset_id": f"FILE:{home}", "kind": "file", "home": home, "title": collector_title}], actor="t"
+    )
+    return _upsert_sql_and_params(conn)[1][8]
+
+
+def test_register_batch_prefers_prose_title() -> None:
+    """在册 name_zh 存在 ⇒ title 装散文（借阅谓词含 title ILIKE＝中文可查的唯一支点）。"""
+    assert _join_title("src/x.py", {"src/x.py": "甲模块"}, "x.py") == "甲模块"
+
+
+def test_register_batch_keeps_collector_title_when_no_prose() -> None:
+    """无在册散文 ⇒ 沿用采集器文件名，不凭空造标题也不置空。"""
+    assert _join_title("src/y.py", {"src/x.py": "甲模块"}, "y.py") == "y.py"
+
+
+def test_prose_map_fail_soft_returns_empty_and_warns(caplog) -> None:
+    """账本不可达=本次入账退采集器面，但必须留警告（降级态不得伪装成正常）。"""
+    import logging as _logging
+
+    class _BoomCur:
+        def __enter__(self) -> _BoomCur:
+            return self
+
+        def __exit__(self, *args: object) -> bool:
+            return False
+
+        def execute(self, *args: object) -> None:
+            raise RuntimeError("registry_ledger unreachable")
+
+    class _BoomConn:
+        def cursor(self) -> _BoomCur:
+            return _BoomCur()
+
+        def commit(self) -> None:
+            pass
+
+    with caplog.at_level(_logging.WARNING):
+        assert Librarian(_BoomConn())._prose_title_map() == {}  # type: ignore[arg-type]
+    assert any("散文轴供数不可达" in r.message for r in caplog.records), "降级必须可见"
+
+
+def test_prose_sql_targets_translation_ledger_single_source() -> None:
+    """净零自证：散文轴只读既有翻译册 PG 账本，不立第二真源、不改总账列面。"""
+    from zephyr.library.ledger_schema import _SQL_TRANSLATION_PROSE, TRANSLATION_REGISTRY_ID
+
+    assert TRANSLATION_REGISTRY_ID == "REG-MODULE-TRANSLATION-001"
+    assert "registry_ledger.registry_entry" in _SQL_TRANSLATION_PROSE
+    assert "lib_assets" not in _SQL_TRANSLATION_PROSE
