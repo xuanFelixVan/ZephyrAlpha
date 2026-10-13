@@ -332,3 +332,16 @@ family_id: EXAMUNLOCK-20261013
    "入队口即应拒不可判 sha"的建议均在 §十.5 与 §十一.1，无需人工复现。
 4. **收工动作**：TTL 区清零（剩 0 面）；claim 全释放（held_files 0）；
    本班自起的 heartbeat 守护（pid 30068）按"禁留孤儿守护"复命撤销并停进程；车道就地归档，不留给下一班。
+
+5. **收工动作的一处未竟，按"清不掉就显式登记"处理（不清一半装作清了）**：
+   本班已做：TTL 清零、claim 全释放（`lock_files status`＝CLEAN）、心跳文件与保活授权撤销、注册条目注销（`list_active` 已无本班）。
+   未竟：**车道目录没能删掉**——`session_worktree.py archive --execute` 走到 step③ 删除时被 OPS-GUARD 拦停
+   （`in-process 裸删除命中保护区: .worktrees/st-examunlock-20261013/docs/_working/examunlock_campaign/09_...md`，
+   处方提示"治理代理改用 guard_* API 并在 ReconcilerSpec.file_ops 显式声明"）。
+   本班**不越闸自删**（越闸会洗掉删除可见性），后果与可恢复性如实登记：
+   - 车道已是 inert（无会话、无锁、无守护），不会被本班再动；
+   - 内容零丢失：本班 12 枚袋全在 dev（`done` 0001-0003/0005/0007/0009-0014/0016），
+     归档流程 step① 已把整面差异存证
+     `.runtime/quarantine/st-examunlock-20261013-retire-20261013T122241Z.patch`（1,391,027 B，三分类 substantive=77＝车道落后 dev 的旧面），
+     被 R-1 门卡住的两件源码另有一条独立复原路：dev 面 17 号件 §六 内嵌字节实测可复原（长度＋sha 双对）。
+   - **移交动作**：车道目录的删除需走维护线 guard 正门（施工 AI 无该 API 权限面），本班只登记不代做。
