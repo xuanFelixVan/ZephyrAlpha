@@ -1749,3 +1749,238 @@ def test_reset_panel_cache_clears_events_and_pins():
     fac.reset_panel_cache()
     assert not fac._DEV_PANEL_CACHE, "缓存未随批起点复位＝上一批的 id() 还在这本账上"
     assert not fac.panel_cache_events(), "事件跨批残留＝把上一批的现行犯算进本批头上"
+
+
+# ——— 九、A1 归一化批内共享缓存的纪律（st-gpux6-20261013 第二把刀，承五班 §十七·I P-1）———
+# 与 §八 同一判读纪律：命中三闸＋逐出＋复位各有独立计数，且"缺省档必须漏"那条反向对照
+# 是哨兵一切判别力的来源。被测面全合成、零 CH、零卡时——归一化是主机 pandas 腿，
+# 它的等价性由 §二·戊 族验收针在真批次上判，不由本节判。
+_NC_KEYS = ("nc_hit", "nc_put", "nc_identity_miss", "nc_dirty_hit", "nc_evict", "nc_verifier_off")
+
+
+def _nc_reset(verify: bool = False, strict: bool = False) -> None:
+    fac.set_panel_cache_verify(verify, strict)
+    fac.reset_panel_cache()
+    for k in _NC_KEYS:
+        fac._EVAL_GPU_STATS[k] = 0
+
+
+def _nc(**want: int) -> None:
+    got = {k: fac._EVAL_GPU_STATS[k] for k in want}
+    assert got == dict(want), f"归一化缓存计数不符：得到 {got}，期望 {dict(want)}"
+
+
+def _norm_frames(seed: int = 5, rows: int = 24, cols: int = 5):
+    """(宿主全帧, 列切片) —— 真批次里 `factors[n]` 是批级长寿命件，`f=factors[n][cols]` 每前缀新建。"""
+    rng = np.random.default_rng(seed)
+    idx = pd.bdate_range("2022-01-03", periods=rows)
+    names = [f"{600000 + i}" for i in range(cols)]
+    host = pd.DataFrame(rng.normal(1.0, 0.4, size=(rows, cols)), index=idx, columns=names)
+    return host, host[names[:cols]]
+
+
+def _counting_normalize(monkeypatch):
+    """把 `_normalize` 换成"记账＋转调原件"——重建几趟从调用数判读，不从叙述判读。"""
+    real = fac._normalize
+    seen = {"n": 0}
+
+    def spy(factor, mode, industry_map=None, mkt_cap_w=None):
+        seen["n"] += 1
+        return real(factor, mode, industry_map=industry_map, mkt_cap_w=mkt_cap_w)
+
+    monkeypatch.setattr(fac, "_normalize", spy)
+    return seen
+
+
+def test_norm_cache_exposes_all_six_exits():
+    """六出口各有键（零计数器与"未触发"同形是在册病型，先证读数面齐）。"""
+    for k in _NC_KEYS:
+        assert k in fac._EVAL_GPU_STATS, f"缺计数键 {k}＝该出口无从判读"
+
+
+def test_norm_cache_hit_reuses_frame_and_stops_recompute(monkeypatch):
+    """本刀的本体：同宿主同 mode 同列面＝第二趟必须复用，且 `_normalize` 只被调一次。
+
+    这条同时是"没复用的话上面全部白判"的存在性前置——8 个 A2 挂在一个 (G,A1) 组上，
+    复用不成＝定价 8.0 倍冗余一分未落。
+    """
+    _nc_reset()
+    seen = _counting_normalize(monkeypatch)
+    host, sl = _norm_frames(5)
+    v1, d1 = fac._normalize_cached(sl, "zscore", None, None, host, "f_mom20")
+    v2, d2 = fac._normalize_cached(sl, "zscore", None, None, host, "f_mom20")
+    assert v1 is v2, "同键同宿主没复用同一枚帧＝本刀白做"
+    assert (d1, d2) == (False, False)
+    _nc(nc_put=1, nc_hit=1, nc_verifier_off=1)
+    assert seen["n"] == 1, f"第二趟仍重算（{seen['n']} 趟）＝命中面没接到求值口"
+
+
+def test_norm_cache_equals_fresh_normalize_by_construction(monkeypatch):
+    """ "共享==逐格重算"的构造面：三档（zscore/rank/raw）＋降级档各复现直调结果。
+
+    raw 档另钉一条：`_normalize` 在 raw 下**返回入参本身**，所以它必须直传不进缓存
+    ——把瞬态切片塞进缓存＝无谓延长它的寿命，且零收益。
+    """
+    _nc_reset()
+    seen = _counting_normalize(monkeypatch)
+    for mode, expect_deg in (("zscore", False), ("rank", False), ("no_such_mode", True)):
+        host, sl = _norm_frames(seed=7, rows=20, cols=4)
+        before = seen["n"]
+        cached, deg = fac._normalize_cached(sl, mode, None, None, host, "f_lowvol20")
+        n_cached = seen["n"]
+        fresh, fdeg = fac._normalize(sl, mode, industry_map=None, mkt_cap_w=None)
+        assert n_cached == before + 1, f"{mode} 档缓存口没走到求值本体（本档 {n_cached - before} 趟）"
+        assert deg == fdeg == expect_deg, f"{mode} 档 degraded 标志与直调不符"
+        assert cached.shape == fresh.shape
+        assert np.array_equal(cached.to_numpy(), fresh.to_numpy(), equal_nan=True), (
+            f"{mode} 档缓存值与直调逐位不等＝同一函数体的构造论证塌了"
+        )
+    _nc_reset()
+    host, sl = _norm_frames(seed=9)
+    raw_out, raw_deg = fac._normalize_cached(sl, "raw", None, None, host, "f_ma_gap")
+    assert raw_out is sl and raw_deg is False, "raw 档必须直传原切片"
+    assert not fac._NORM_CACHE, "raw 档进了缓存＝瞬态切片被 pin 住"
+
+
+def test_norm_cache_rejects_same_key_different_host(monkeypatch):
+    """乙：键撞而宿主不是同一对象＝不命中并重建（id() 复用型脏命中的等价形，与 §八 同法）。
+
+    现实触发形态是"上一帧被 GC、新帧拿到同一个地址"，测试里不可靠，所以直接把
+    "该键位上的 pin 换成别的对象"喂进来——键由 id() 组成，两对象同址时键必等。
+    """
+    _nc_reset()
+    seen = _counting_normalize(monkeypatch)
+    host_a, sl_a = _norm_frames(11)
+    host_b, sl_b = _norm_frames(12, rows=25)
+    fac._normalize_cached(sl_a, "zscore", None, None, host_a, "f_mom20")
+    fac._normalize_cached(sl_b, "zscore", None, None, host_b, "f_mom20")
+    key_b = list(fac._NORM_CACHE)[-1]  # host_b 那一条的键位
+    stored_val = fac._NORM_CACHE[key_b][1]
+    fac._NORM_CACHE[key_b] = ((host_a, None, None), stored_val, False, None)  # 把 pin 换成外来宿主
+    before = seen["n"]
+    out, _ = fac._normalize_cached(sl_b, "zscore", None, None, host_b, "f_mom20")
+    _nc(nc_put=3, nc_identity_miss=1)
+    assert out is not stored_val, "身份不符却交回了外来宿主那枚＝pin 判定失守（脏命中）"
+    assert seen["n"] == before + 1, "身份不符后没重建＝缓存把这枚脏命中当成了本批的数"
+
+
+def test_norm_cache_sentinel_catches_in_place_mutation(monkeypatch):
+    """丙：同一宿主被就地改写（乙的 `is` 仍真）必须被内容指纹抓到并重建。
+
+    形态照真批次喂：批级宿主 `factors[n]` 长寿命、每前缀的切片 `f=factors[n][cols]` 是新副本，
+    所以"下一前缀的切片"是在改写之后才取的——若哨兵不放行重建，本批就会拿上一改写前的旧值出分。
+    """
+    _nc_reset(verify=True)
+    seen = _counting_normalize(monkeypatch)
+    host, _ = _norm_frames(21)
+    names = list(host.columns)
+    first, _ = fac._normalize_cached(host[names], "zscore", None, None, host, "f_mom20")
+    host.iloc[5, 2] = 9.995
+    second, _ = fac._normalize_cached(host[names], "zscore", None, None, host, "f_mom20")
+    _nc(nc_put=2, nc_dirty_hit=1)
+    assert not np.array_equal(first.to_numpy(), second.to_numpy()), "抓到脏命中却没重建＝哨兵只是摆设"
+    assert seen["n"] == 2
+
+
+def test_norm_cache_sentinel_strict_raises():
+    """丙的"不匹配即红"执行位：STRICT 档下同一场景直接抛，不静默重建。"""
+    _nc_reset(verify=True, strict=True)
+    host, sl = _norm_frames(31)
+    fac._normalize_cached(sl, "zscore", None, None, host, "f_mom20")
+    host.iloc[0, 0] = -1234.5
+    with pytest.raises(RuntimeError, match="内容指纹不符"):
+        fac._normalize_cached(sl, "zscore", None, None, host, "f_mom20")
+    _nc(nc_dirty_hit=1)
+
+
+def test_norm_cache_in_place_mutation_slips_through_when_sentinel_off(monkeypatch):
+    """反向对照（缺省档）：哨兵关着时同一改写**必须**仍判命中并返回旧值。
+
+    两档若同形，"丙抓到了"就不可证伪——这条是上一切的判别力来源（与 §八 同一条纪律）。
+    """
+    _nc_reset(verify=False)
+    seen = _counting_normalize(monkeypatch)
+    host, sl = _norm_frames(41)
+    first, _ = fac._normalize_cached(sl, "zscore", None, None, host, "f_mom20")
+    host.iloc[5, 2] = 9.995
+    second, _ = fac._normalize_cached(sl, "zscore", None, None, host, "f_mom20")
+    assert first is second, "缺省档不校验内容＝这枚命中本就该是旧值（改了说明哨兵在缺省面偷偷跑）"
+    _nc(nc_put=1, nc_hit=1, nc_dirty_hit=0, nc_verifier_off=1)
+    assert seen["n"] == 1
+
+
+def test_norm_cache_evicts_one_not_everything(monkeypatch):
+    """逐出＝FIFO 单枚＋字节预算，禁整清（整清把刚建好的一起丢掉＝缓存退化成每前缀重算）。"""
+    _nc_reset()
+    seen = _counting_normalize(monkeypatch)
+    monkeypatch.setattr(fac, "_NORM_CACHE_CAP", 2)
+    built = []
+    for i in range(3):
+        host, sl = _norm_frames(seed=50 + i, rows=12 + i, cols=3)
+        built.append(fac._normalize_cached(sl, "zscore", None, None, host, f"f_{i}")[0])
+    assert len(fac._NORM_CACHE) == 2, f"溢出后剩 {len(fac._NORM_CACHE)} 枚＝逐出策略不是单枚"
+    _nc(nc_put=3, nc_evict=1)
+    assert seen["n"] == 3
+    assert any(v[1] is built[2] for v in fac._NORM_CACHE.values()), "最新一枚被逐出＝FIFO 认错了人"
+    assert not any(v[1] is built[0] for v in fac._NORM_CACHE.values()), "最旧一枚没被逐出＝逐的不是该逐的那枚"
+
+
+def test_norm_cache_respects_byte_budget(monkeypatch):
+    """字节预算＝按 pandas 帧的 `memory_usage` 计（不是 `.nbytes`——2.3 版 DataFrame 无该属性，
+    照搬设备侧写法会恒得 0，预算就成了永不触发的装饰件）；超预算逐最旧，逐到落下来为止。"""
+    _nc_reset()
+    monkeypatch.setattr(fac, "_NORM_CACHE_CAP", 24)
+    h0 = _norm_frames(61, rows=16, cols=4)[0]
+    v0, _ = fac._normalize_cached(h0[list(h0.columns)[:2]], "zscore", None, None, h0, "g_0")
+    one = int(v0.memory_usage(deep=False).sum())
+    assert one > 0, "尺先瞎了：预算按 0 计的话，下面那条断言就是空判"
+    monkeypatch.setattr(fac, "_NORM_BYTE_CAP", one * 2 + 1)
+    for i in (1, 2):
+        h, s = _norm_frames(seed=70 + i, rows=16, cols=4)
+        fac._normalize_cached(s.iloc[:, :2], "zscore", None, None, h, f"g_{i}")
+    assert len(fac._NORM_CACHE) == 2, f"字节预算失守：仍留 {len(fac._NORM_CACHE)} 枚"
+    assert fac._norm_cache_bytes() <= one * 2 + 1
+    _nc(nc_put=3, nc_evict=1)
+
+
+def test_reset_panel_cache_clears_norm_cache(monkeypatch):
+    """复位腿：归一化缓存与面板缓存同批起点清空（键里带上一批宿主的 id()，留着＝脏命中温床；
+    乙 pin 住宿主，这里同时是唯一释放面）。"""
+    _nc_reset()
+    seen = _counting_normalize(monkeypatch)
+    host, sl = _norm_frames(81)
+    fac._normalize_cached(sl, "zscore", None, None, host, "f_mom20")
+    assert fac._NORM_CACHE, "先决条件不成立：没建进缓存，下面的复位断言是空转"
+    fac.reset_panel_cache()
+    assert not fac._NORM_CACHE, "归一化缓存跨批残留＝上一批的 id() 还在这本账上"
+    fac._normalize_cached(sl, "zscore", None, None, host, "f_mom20")
+    assert seen["n"] == 2, "复位后没重算＝缓存其实没被清（假清）"
+
+
+def test_normalize_host_site_is_closed_behind_the_cache():
+    """装配守卫：主机归一化站点只准经 `_normalize_cached`，禁再出现直调 `_normalize` 的站点。
+
+    成因是在册教训（检验道 §十七·K②）——漏接站点会被宽 `except` 吞成 fail-open：
+    格面照样出分、缓存计数全是零，看上去"绿"，实际那把刀一分未落。本节 §九 其余各条判的是
+    缓存自身，这一条判的是"站点确实接上了"。
+    """
+    import ast as _ast
+    import inspect as _inspect
+
+    src = _inspect.getsource(fac)
+    tree = _ast.parse(src)
+    ranges = {}
+    for n in _ast.walk(tree):
+        if isinstance(n, _ast.FunctionDef):
+            ranges[n.name] = (n.lineno, n.end_lineno or n.lineno)
+    direct, via = [], []
+    for node in _ast.walk(tree):
+        if isinstance(node, _ast.Call) and isinstance(node.func, _ast.Name):
+            if node.func.id == "_normalize":
+                direct.append(node.lineno)
+            if node.func.id == "_normalize_cached":
+                via.append(node.lineno)
+    lo, hi = ranges["_normalize_cached"]
+    callers = [ln for ln in direct if not (lo <= ln <= hi)]  # 缓存口内部那一趟是本体，不是站点
+    assert via, "找不到 `_normalize_cached` 的调用点＝第二把刀根本没接线"
+    assert not callers, f"仍有站点直调 `_normalize`（行 {callers}）＝该站点绕过缓存，静默性能回归"

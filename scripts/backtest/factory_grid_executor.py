@@ -180,6 +180,14 @@ _EVAL_GPU_STATS: dict[str, int] = {
     "pc_dirty_hit": 0,
     "pc_evict": 0,
     "pc_verifier_off": 0,
+    # A1 归一化批内共享缓存六出口（st-gpux6-20261013 第二把刀；与 pc_* 同一条纪律＝
+    # 逐出口独立计数，禁合成总数，否则"命中为 0 时两臂全等"是空转不是证据）
+    "nc_hit": 0,
+    "nc_put": 0,
+    "nc_identity_miss": 0,
+    "nc_dirty_hit": 0,
+    "nc_evict": 0,
+    "nc_verifier_off": 0,
     # B2 设备驻留三面出口（同样逐出口独立计数：驻留成／驻留后又物化回／根本没驻留，
     # 三态在墙钟上同形，只报总数就会把"一个都没省"读成"都省了"——静默降级家族）
     "cell_resident": 0,
@@ -1134,6 +1142,88 @@ def _dev_panel(key: tuple, build, xp, host: Any = None):
     return _dev_panel_dev(key, lambda: xp.asarray(build().to_numpy(dtype=np.float64)), host)
 
 
+#: A1 归一化的批内共享缓存（st-gpux6-20261013 第二把刀，承五班 §十七·I P-1 定价）：
+#: 键 → (宿主 pin 三元组, 归一化帧, degraded, 内容指纹或 None)。
+#: 动因＝实测冗余 8.0 倍：一批 144 个 (G,A1,A2) 前缀只落在 18 个 (G,A1) 组上（每组挂满 8 个 A2 模式），
+#: 而 `_normalize` 是 A2 无关的纯函数——不可上卡的两档（lasso/pc1）走主机路时把这一步重算 8 遍
+#: （cProfile `_normalize` cumtime 43.7s／总墙 148s＝单项最大头）。
+#: 安全前提＝`_normalize`／`_combine` 对归一化件零就地改写（`_combine` 入口只做 `reindex`＝返新件），
+#: 故按声明不变式处理，不加运行期扫描：每格再扫一张 38.6MB 面板会把省下的重算原样付回去。
+#: "共享 == 逐格重算"在这里由**同一函数体**构造成立，对拍只是复核不是唯一凭据（与刀二 `px_rets` 同形）。
+_NORM_CACHE: dict = {}
+_NORM_CACHE_CAP: int = 24
+_NORM_BYTE_CAP: int = 640 * 1024**2
+
+
+def _norm_cache_bytes() -> int:
+    # 本缓存的值是 pandas 帧，而 pandas 2.3 的 DataFrame **没有** `.nbytes`——照搬设备面板那套
+    # `getattr(v,"nbytes",0)` 会恒得 0，字节预算就成了永不触发的装饰件（本班实测出来的，非推演）。
+    return sum(int(v.memory_usage(deep=False).sum()) for (_p, v, _d, _f) in _NORM_CACHE.values())
+
+
+def _normalize_cached(factor_slice, mode, industry_map, mkt_cap_w, host_factor, name):
+    """`_normalize` 的记忆化口——同一函数体，只是把求值次数从 8 遍并成 1 遍。
+
+    三道闸同 `_dev_panel_dev`：键等 ∧ 宿主 pin 逐个 `is` 等（乙）∧（丙开时）因子面板内容指纹等。
+    `mode == "raw"` 直传不缓存——它零算式，且 `_normalize` 在 raw 下返回入参本身，
+    搬进缓存等于无谓延长一张瞬态切片的寿命。
+    """
+    if mode == "raw":
+        return factor_slice, False
+    pins = (host_factor, industry_map, mkt_cap_w)
+    cols = factor_slice.columns
+    key = (
+        "anorm",
+        name,
+        mode,
+        id(host_factor),
+        id(industry_map),
+        id(mkt_cap_w),
+        len(cols),
+        cols[0],
+        cols[-1],
+        len(factor_slice.index),
+    )
+    ent = _NORM_CACHE.get(key)
+    if ent is not None:
+        ent_pins, val, deg, ent_fp = ent
+        if not all(a is b for a, b in zip(ent_pins, pins, strict=True)):
+            _EVAL_GPU_STATS["nc_identity_miss"] += 1
+        elif _DEV_PANEL_VERIFY and host_factor is not None:
+            fp_now = _panel_fp(host_factor)
+            if ent_fp is None:
+                _NORM_CACHE[key] = (ent_pins, val, deg, fp_now)  # 中途开哨兵＝就地补指纹，不静默跳过
+                _EVAL_GPU_STATS["nc_hit"] += 1
+                return val, deg
+            if fp_now != ent_fp:
+                _EVAL_GPU_STATS["nc_dirty_hit"] += 1
+                _note_dirty_event(key, ent_fp, fp_now)
+                if _DEV_PANEL_VERIFY_STRICT:
+                    raise RuntimeError(f"归一化缓存内容指纹不符（丙哨兵 STRICT）: key={key[1]}×{key[2]}")
+            else:
+                _EVAL_GPU_STATS["nc_hit"] += 1
+                return val, deg
+        else:
+            _EVAL_GPU_STATS["nc_hit"] += 1
+            _EVAL_GPU_STATS["nc_verifier_off"] += 1  # 这枚命中没吃内容校验＝绿要归因到乙不是丙
+            return val, deg
+    val, deg = _normalize(factor_slice, mode, industry_map=industry_map, mkt_cap_w=mkt_cap_w)
+    _EVAL_GPU_STATS["nc_put"] += 1
+    _NORM_CACHE[key] = (
+        pins,
+        val,
+        deg,
+        _panel_fp(host_factor) if (_DEV_PANEL_VERIFY and host_factor is not None) else None,
+    )
+    while len(_NORM_CACHE) > _NORM_CACHE_CAP or _norm_cache_bytes() > _NORM_BYTE_CAP:
+        oldest = next(iter(_NORM_CACHE))
+        if oldest == key:
+            break  # 单枚就超预算时如实留着它，逐空自己＝立刻又重算，只会更慢
+        del _NORM_CACHE[oldest]
+        _EVAL_GPU_STATS["nc_evict"] += 1
+    return val, deg
+
+
 def reset_panel_cache() -> None:
     """批起点复位：清缓存＋清事件。（键里带的是**上一批**宿主对象的 `id()`，留着不清
     就是脏命中的温床——上一班宿主释放后新批次对象可以拿到同一个地址。）
@@ -1142,6 +1232,7 @@ def reset_panel_cache() -> None:
     宽面板（all_a 单枚 970×5,217 f64≈39MB）连同设备缓冲一起按住不放。
     """
     _DEV_PANEL_CACHE.clear()
+    _NORM_CACHE.clear()
     del _DEV_PANEL_EVENTS[:]
 
 
@@ -1531,7 +1622,7 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
             a1_deg = False
             for n in names:
                 f = factors[n][cols]
-                nf, deg = _normalize(f, v["A1_factor_normalize"], industry_map=industry_map, mkt_cap_w=mkt_cap_w)
+                nf, deg = _normalize_cached(f, v["A1_factor_normalize"], industry_map, mkt_cap_w, factors[n], n)
                 if deg:
                     a1_deg = True
                 normalized.append(nf)
