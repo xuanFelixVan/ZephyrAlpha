@@ -176,7 +176,27 @@ _CSV_HINTS = {
     "max_streak_height": "max_streak_height.csv",
     "net_breadth": "net_breadth.csv",
     "streak": "streak_distribution.csv",
+    # 聚合 8 卡（挖矿二班，物化件=scripts/audit/agg8_series_materialize.py，agg8-v1）：
+    # 信号侧 6 枚逐日市场面序列＋目标侧 2 枚前向序列，形制与上列在册 CSV 一致（trade_date,value）。
+    "lu_count": "lu_count.csv",
+    "lu_count_z20": "lu_count_z20.csv",
+    "lu_ratio": "lu_ratio.csv",
+    "lu_ratio_z20": "lu_ratio_z20.csv",
+    "avg_abs_ret": "avg_abs_ret.csv",
+    "avg_abs_ret_z20": "avg_abs_ret_z20.csv",
+    "mkt_fwd5": "mkt_fwd5.csv",
+    "mkt_fwd10": "mkt_fwd10.csv",
 }
+
+
+def load_named_series(name: str) -> pd.Series | None:
+    """按卡面申报的序列名取在册本地序列（class D 同一装载口；未申报/缺件=None 交调用方 fail-closed）。"""
+    key = str(name or "").strip()
+    if not key:
+        return None
+    return _load_csv_series(_CSV_HINTS.get(key, f"{key}.csv"))
+
+
 #: 目标面：执行器 _series_metrics 硬编码 shift(-1)=次日目标（在册缺口），故只允许次日指数收益
 #: 措辞变体（csi300/沪深300/000300/宽基）一律归一，防分类尺自造假阴（11 张实测被漏，2 张实为指数次日收益）
 _INDEX_TARGET_RE = re.compile(
@@ -198,6 +218,33 @@ _INDEX_SYMBOL = "000300"
 
 class BindingIntegrityError(RuntimeError):
     """出分前后卡面判据集被改动=挪门柱形态，整卡中止。"""
+
+
+def _declared_forward_face(card: dict) -> tuple[int | None, str | None]:
+    """卡面多日前向面申报的绑定侧校核（与 calibration_exam._forward_face 同一形态，零复制判据）。
+
+    返回 (horizon, err)：
+      (None, None)  = 未申报 ⇒ 现行"指数次日收益"单面门槛逐字照旧（既有 178 张卡零影响）；
+      (h, None)     = 成对申报且自洽 ⇒ 目标面这一环放行，**后续数据面门槛一概不放宽**
+                      （配方册/滚动窗/z-score/多表复合照拦）；
+      (None, err)   = 半申报/拼错/两处 horizon 不同值 ⇒ 照拦，reason 点名缺陷。
+    本函数不引入任何阈值，只消费卡面冻结值（裁定#501/G4-5：门柱在数据前钉死，事后挪=作废）。
+    """
+    face = str(card.get("target_forward_face") or "").strip()
+    hraw = card.get("target_horizon_days")
+    if face == "" and hraw is None:
+        return None, None
+    if face != "precomputed":
+        return None, f"declared_forward_face_bad_marker:{face[:24]}"
+    if isinstance(hraw, bool) or not isinstance(hraw, int) or not 2 <= hraw <= 252:
+        return None, f"declared_forward_face_bad_horizon:{str(hraw)[:12]}"
+    primary = str((card.get("target") or {}).get("primary") or "")
+    m = re.search(r"mkt_fwd(\d+)", primary)
+    if not m:
+        return None, "declared_forward_face_missing_mkt_fwd_tag"
+    if int(m.group(1)) != hraw:
+        return None, f"declared_forward_face_horizon_mismatch:{hraw}vs{m.group(1)}"
+    return int(hraw), None
 
 
 def _norm(df: pd.DataFrame, date_pos: int, val_pos: int) -> pd.Series:
@@ -256,10 +303,21 @@ def classify_card(card: dict) -> dict:
     arm_hit = bool(_MULTI_ARM_RE.search(blob))
     kind = card.get("signal_kind")
     tgt = str(b.get("target_source") or "")
-    horizon = _HORIZON_RE.search(str((card.get("target") or {}).get("primary") or ""))
-    if not _INDEX_TARGET_RE.search(tgt) and not _INDEX_TARGET_RE.search(
-        str((card.get("target") or {}).get("primary") or "")
-    ):
+    primary_txt = str((card.get("target") or {}).get("primary") or "")
+    fwd_h, fwd_err = _declared_forward_face(card)
+    if fwd_err:
+        return {
+            "cls": "C",
+            "reason": fwd_err,
+            "recipe": None,
+            "op": None,
+            "tables": tl,
+            "declared_horizon": card.get("target_horizon_days"),
+        }
+    # 已申报且自洽 ⇒ horizon 扫描先摘掉被申报的 mkt_fwd<h> 记号，其余多日措辞照拦（不弱化）。
+    horizon_src = primary_txt if fwd_h is None else re.sub(r"mkt_fwd\d+", " ", primary_txt)
+    horizon = _HORIZON_RE.search(horizon_src)
+    if fwd_h is None and not _INDEX_TARGET_RE.search(tgt) and not _INDEX_TARGET_RE.search(primary_txt):
         return {
             "cls": "C",
             "reason": "target_face_not_index_next_day",

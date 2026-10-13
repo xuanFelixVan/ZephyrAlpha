@@ -185,13 +185,28 @@ def _tsv_df(tsv: str, cols: list[str]):
     return pd.DataFrame(rows, columns=cols)
 
 
-def _snapshot_rows(start: str, end: str | None):
-    """宏观态日快照（regime_snapshot_history.dominant），end=None=取到最新可用日。"""
+#: run_id 形态闸（钉码本用）：只允许字母数字与 . _ -，长度 1..64。
+#: 不合规即拒——run_id 要拼进 SQL 的等值条件，禁把"读到的字符串"当标识符直接下库（注入面）。
+_RUN_ID_RE = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
+
+
+def _snapshot_rows(start: str, end: str | None, run_id: str | None = None):
+    """宏观态日快照（regime_snapshot_history.dominant），end=None=取到最新可用日。
+
+    run_id=None（缺省）＝现行"全表取数＋同日多行必须同值否则 fail-closed"口径，**逐字不变**。
+    run_id=<某轮>＝只取该轮重拟合的 dominant（把"同码本"从统计巧合变成结构约束）；
+    该轮内如仍有重复日，下面的分歧闸照旧生效（钉版不等于免检）。
+    """
     import pandas as pd
 
     from zephyr.data import ch_reader
 
     tail = f" AND trade_date <= toDate('{end}')" if end else ""
+    if run_id is not None:
+        rid = str(run_id).strip()
+        if not _RUN_ID_RE.fullmatch(rid):
+            raise ValueError(f"run_id 形态非法（须匹配 ^[A-Za-z0-9._-]{{1,64}}$）：{rid[:70]!r}")
+        tail += f" AND run_id = '{rid}'"
     tsv = ch_reader.query(_SQL_SNAPSHOT_DOMINANT.format(table=SNAPSHOT_TABLE, start=start, tail=tail))
     df = _tsv_df(tsv, ["td", "dom"])
     df["td"] = pd.to_datetime(df["td"])
@@ -281,16 +296,22 @@ def resolve_six_phase(dom, ov) -> pd.Series:
     return base.mask(dist, "distribution").mask(euph, "euphoria")
 
 
-def load_phase_panel(end: str | None = None, start: str = IS_WIN_START) -> pd.DataFrame:
+def load_phase_panel(end: str | None = None, start: str = IS_WIN_START, run_id: str | None = None) -> pd.DataFrame:
     """判定窗相位面板：列=dom（宏观腿）/euphoria/distribution（微观腿）/six（合成相位）。
 
     窗口=[start, 快照表最新可用日回退 PIT_TAIL_LAG 行]（SLE-3② 解冻：终点禁写死；
     PIT：尾日相位标签与行情证据未定稿，不入判定样本）。end/start 仅供复算/测试钉窗
     （start 下界=快照表首日，实测 2019-04-01；早于该日无宏观腿=六段不可判）。
+
+    run_id（2026-10-13 挖矿二班资格验收后续批，统筹署名）：缺省 None＝现行口径逐字不变；
+    给定则只取该轮重拟合的 dominant——把 D 族资格判据②"同一码本两次重放逐日一致"从
+    "全表恰零分歧"升级为结构约束（码本=一个 run_id，不再依赖多轮之间碰巧同值）。
     """
     import pandas as pd
 
-    snap = _snapshot_rows(start, end)
+    # 缺省路径保持旧调用形制（两位置参、不带 run_id kw）——既有测试与外部 stub 的
+    # `_snapshot_rows(s, e)` 签名不受影响；只有显式钉版才走三参形制。
+    snap = _snapshot_rows(start, end) if run_id is None else _snapshot_rows(start, end, run_id=run_id)
     # 快照表按日重复写入是既有事实（实测 2020+ 的 1,631 个 trade_date 中 1,624 个有 2 行）。
     # 不去重则本面板行/日计数翻倍——下游一切按日聚合（含 30 交易日样本地板、window_of
     # 判窗、intake 段样本数）双双虚高，这是**当下就在发生**的缺陷。
@@ -299,8 +320,9 @@ def load_phase_panel(end: str | None = None, start: str = IS_WIN_START) -> pd.Da
     # 属**结构性潜伏**而非既存泄漏（红蓝⑨纠正本包早先的过强表述，如实降级）。
     if snap.index.has_duplicates:
         # 无损前提=同日多行 dominant 全等（实测零分歧）。分歧一旦出现，first() 等于随机
-        # 选版——快照表是 plain MergeTree 且两条全历史 run 并存、本函数不钉 run_id，
-        # 故必须 fail-closed 而非静默取一版。
+        # 选版——快照表是 plain MergeTree 且两条全历史 run 并存；缺省口径下本函数不钉 run_id
+        # （2026-10-13 起可传 run_id 钉版，传了则本闸只在"该轮内部"查重），
+        # 故无论钉不钉都必须 fail-closed 而非静默取一版。
         _dis = snap.groupby(level=0)["dom"].nunique()
         if bool((_dis > 1).any()):
             _bad = [str(d.date()) for d in _dis[_dis > 1].index[:5]]

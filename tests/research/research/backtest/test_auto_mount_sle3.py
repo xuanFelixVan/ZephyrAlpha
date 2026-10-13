@@ -287,3 +287,69 @@ def test_r2six_drift_guard_vs_framework_composer():
     )
 
     assert R2SIX == REGIME_STATE_TO_ACTIVATION_PHASE
+
+
+# ---------- 2026-10-13 挖矿二班：D 族资格判据②的码本钉版（统筹批，缺省口径零改） ----------
+def _capture_query(monkeypatch, rows: str = "2024-01-01\tr4\n2024-01-02\tr4\n2024-01-03\tr3\n"):
+    from zephyr.data import ch_reader
+
+    seen: list[str] = []
+
+    def fake_query(sql, *a, **kw):
+        seen.append(sql)
+        return rows
+
+    monkeypatch.setattr(ch_reader, "query", fake_query)
+    return seen
+
+
+def test_snapshot_rows_default_sql_unchanged(monkeypatch):
+    """正对照：不传 run_id 时 SQL 与改前逐字同形（无 run_id 谓词）——既有全表口径零改。"""
+    seen = _capture_query(monkeypatch)
+    am._snapshot_rows("2019-01-01", None)
+    assert seen == [
+        "SELECT trade_date, dominant FROM c1_backtest.regime_snapshot_history "
+        "WHERE trade_date >= toDate('2019-01-01') ORDER BY trade_date"
+    ], seen
+    seen2 = _capture_query(monkeypatch)
+    am._snapshot_rows("2019-01-01", "2024-01-02")
+    assert "run_id" not in seen2[0] and "toDate('2024-01-02')" in seen2[0], seen2
+
+
+def test_snapshot_rows_pinned_run_id_adds_equality_filter(monkeypatch):
+    """申报口径：钉某轮重拟合 ⇒ 追加 run_id 等值谓词，码本从"统计巧合"变"结构约束"。"""
+    seen = _capture_query(monkeypatch)
+    am._snapshot_rows("2019-01-01", "2024-01-02", run_id="VAL-P0-20260916-230726")
+    assert seen[0].endswith("ORDER BY trade_date")
+    assert "AND run_id = 'VAL-P0-20260916-230726'" in seen[0], seen[0]
+    assert "AND trade_date <= toDate('2024-01-02')" in seen[0], seen[0]
+
+
+def test_snapshot_rows_rejects_unsafe_run_id_shape(monkeypatch):
+    """红证（方向性=fail-closed）：run_id 要拼进 SQL 等值条件，形态不合规必拒且零查询下发。"""
+    _capture_query(monkeypatch)
+    for bad in ["r4' OR '1'='1", "VAL P0", "", "x" * 65, "a;DROP TABLE t"]:
+        with pytest.raises(ValueError):
+            am._snapshot_rows("2019-01-01", None, run_id=bad)
+
+
+def test_load_phase_panel_passes_run_id_and_keeps_two_arg_default(monkeypatch):
+    """缺省调用仍以两位置参转调（既有 `_snapshot_rows(s, e)` 型 stub 不被打破）；钉版才带第三 kw。"""
+    calls: list[object] = []
+    dates = pd.bdate_range("2026-08-03", periods=20)
+
+    def _snap2(start, end):
+        calls.append((start, end))
+        return _snap_df(dates, "r4")
+
+    def _snap3(start, end, run_id=None):
+        calls.append((start, end, run_id))
+        return _snap_df(dates, "r4")
+
+    monkeypatch.setattr(am, "_snapshot_rows", _snap2)
+    monkeypatch.setattr(am, "_breadth_frame", lambda s, e: _flat_breadth(pd.date_range(s, e)))
+    load_phase_panel(start="2019-01-01")
+    assert calls[-1] == ("2019-01-01", None), calls
+    monkeypatch.setattr(am, "_snapshot_rows", _snap3)
+    load_phase_panel(start="2019-01-01", run_id="R-1")
+    assert calls[-1] == ("2019-01-01", None, "R-1"), calls

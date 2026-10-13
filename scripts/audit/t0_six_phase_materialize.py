@@ -51,9 +51,12 @@ PHASE_VERSION = "sixphase-v1"  # 本物化件口径版本（映射变更须升�
 SQL_FREE = True  # 本件零 SQL（数据装载全经 auto_mount 只读通道）
 
 
-def build_panel(start: str):
-    """物化六段相位面板（经 auto_mount 法定合成件，去重后逐日唯一）。"""
-    panel = am.load_phase_panel(start=start)
+def build_panel(start: str, run_id: str | None = None):
+    """物化六段相位面板（经 auto_mount 法定合成件，去重后逐日唯一）。
+
+    run_id 缺省 None＝现行全表口径；给定则钉该轮重拟合的 dominant（码本=单一 run_id）。
+    """
+    panel = am.load_phase_panel(start=start, run_id=run_id)
     if panel.index.has_duplicates:
         raise SystemExit("FAIL: 相位面板含重复 trade_date——双写会使按日计数翻倍，禁出件")
     if panel.empty:
@@ -90,7 +93,7 @@ def to_rows(panel) -> list[dict]:
     return rows
 
 
-def build_meta(rows: list[dict], start: str) -> dict:
+def build_meta(rows: list[dict], start: str, run_id: str | None = None) -> dict:
     from zephyr.shared.utils.time_utils import now_utc
 
     routed = [r for r in rows if r["routed"]]
@@ -100,7 +103,7 @@ def build_meta(rows: list[dict], start: str) -> dict:
     dist: dict[str, int] = {}
     for r in routed:
         dist[r["six_phase"]] = dist.get(r["six_phase"], 0) + 1
-    return {
+    meta = {
         "phase_version": PHASE_VERSION,
         "generated": now_utc().isoformat(timespec="seconds"),
         "sid": "st-t0-matrix-20260924",
@@ -142,19 +145,32 @@ def build_meta(rows: list[dict], start: str) -> dict:
             "多重检验：情绪门可用日数与段分布须如实登记（裁定#325 判档表述，禁全绿）",
         ],
     }
+    if run_id is not None:
+        # 仅钉版轮才落该键——缺省全表口径的 meta 字节逐字不变（纯追加配置，2026-10-13 立项批）。
+        meta["pinned_run_id"] = str(run_id)
+        meta["truth_source"]["macro_leg_note"] = (
+            "本件零自定阈值：六段↔HMM 态映射与亢奋/退潮判据全沿用 HEAD 法定件（有漂移守卫测试钉住）；"
+            f"本轮宏观腿钉 run_id={run_id}（单一码本重放，缺省口径=全表取数）"
+        )
+    return meta
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="TDM 六段情绪相位历史物化（做 T 双门前置）")
     ap.add_argument("--start", default="2019-01-01", help="下界（早于快照表首日 2019-04-01 自动受限）")
     ap.add_argument("--out-dir", default="docs/_working/t0_matrix")
+    ap.add_argument(
+        "--run-id",
+        default=None,
+        help="钉宏观腿码本（缺省=全表取数，现行口径）；给定则只取该 run_id 的 dominant，meta 落 pinned_run_id",
+    )
     args = ap.parse_args()
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    panel = build_panel(args.start)
+    panel = build_panel(args.start, run_id=args.run_id)
     rows = to_rows(panel)
-    meta = build_meta(rows, args.start)
+    meta = build_meta(rows, args.start, run_id=args.run_id)
 
     csv_path = out_dir / "six_phase_history_v1.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as fh:
