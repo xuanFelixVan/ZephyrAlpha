@@ -1796,3 +1796,1263 @@ rows:
   - '未支持判据键（机判面待扩）: [''maxdd_improvement_vs_no_hysteresis_min_pp'', ''missed_crisis_trigger_max'', ''whipsaw_roundtrip_ratio_max'']'
   - maxdd_improvement 1.64pp < 5.0
   - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-E-L1-S2/calibration/17_ind_volume009_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-17_ind_volume009_hig
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 0.9355750877628717
+    t_stat: 0.11073614092772907
+    n_event: 363
+    n_none: 1010
+    mean_event: 0.00018237342649243915
+    mean_none: 8.881591771615198e-05
+    is_gap_bp: -3.220153599894878
+    oos:
+      n_event: 105
+      n_none: 305
+      mean_event: 0.0015819429303050596
+      mean_none: 0.00044482790678620435
+      gap_bp: 11.371150235188551
+      t_stat: 0.7064497006373069
+    regime_gap:
+      bull:
+        n_event: 167
+        n_none: 187
+        mean_event: -7.183488835202351e-05
+        mean_none: 0.0014188764608034931
+        gap_bp: -14.907113491555165
+        t_stat: -0.9826761146402677
+      bear:
+        n_event: 91
+        n_none: 540
+        mean_event: -0.0009660003023130541
+        mean_none: -0.0006688309956296085
+        gap_bp: -2.971693066834456
+        t_stat: -0.23499700477699115
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.111 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 105 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/18_ind_trend007_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-18_ind_trend007_high
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 1.2815059499943982
+    t_stat: 0.1399474452419279
+    n_event: 289
+    n_none: 1008
+    mean_event: 0.0002346352268388268
+    mean_none: 0.00010648463183938697
+    is_gap_bp: -11.091587441434594
+    oos:
+      n_event: 124
+      n_none: 286
+      mean_event: 0.001938167800674349
+      mean_none: 0.0002148381537349801
+      gap_bp: 17.23329646939369
+      t_stat: 1.098667333913837
+    regime_gap:
+      bull:
+        n_event: 40
+        n_none: 238
+        mean_event: -0.002200949397052107
+        mean_none: 0.0015151760774706037
+        gap_bp: -37.16125474522711
+        t_stat: -1.1783226965976223
+      bear:
+        n_event: 125
+        n_none: 506
+        mean_event: -0.0006758820067609124
+        mean_none: -0.0007205326369671195
+        gap_bp: 0.44650630206207126
+        t_stat: 0.043779524260836186
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.140 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 124 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 40, ''n_none'': 238, ''mean_event'': -0.002200949397052107, ''mean_none'': 0.0015151760774706037,
+    ''gap_bp'': -37.16125474522711, ''t_stat'': -1.1783226965976223}, ''bear'': {''n_event'': 125, ''n_none'': 506, ''mean_event'': -0.0006758820067609124,
+    ''mean_none'': -0.0007205326369671195, ''gap_bp'': 0.44650630206207126, ''t_stat'': 0.043779524260836186}}'
+- card_id: TDM-E-L1-S2/calibration/19_ind_mom030_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-19_ind_mom030_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 14.005934405153862
+    t_stat: 1.782702762760765
+    n_event: 307
+    n_none: 921
+    mean_event: 0.0010191867914501002
+    mean_none: -0.0003814066490652861
+    is_gap_bp: 3.8609965158915993
+    oos:
+      n_event: 165
+      n_none: 245
+      mean_event: 0.0019795864678053697
+      mean_none: -0.00010144999157576498
+      gap_bp: 20.810364593811347
+      t_stat: 1.6973638653814949
+    regime_gap:
+      bull:
+        n_event: 44
+        n_none: 165
+        mean_event: 0.0012307736231435247
+        mean_none: 2.962801741293042e-05
+        gap_bp: 12.011456057305944
+        t_stat: 0.4784068063093889
+      bear:
+        n_event: 98
+        n_none: 533
+        mean_event: -0.0006928108329695953
+        mean_none: -0.0007151581679539516
+        gap_bp: 0.22347334984356262
+        t_stat: 0.021051463352326816
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 3.86bp > 0.0（负向命题要求更负）
+  - t_stat 1.783 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 165 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/20_ind_vol009_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-20_ind_vol009_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 5.35714519521234
+    t_stat: 0.5459400191221757
+    n_event: 239
+    n_none: 1058
+    mean_event: 0.0005720370478827976
+    mean_none: 3.63225283615637e-05
+    is_gap_bp: 1.3473553825163012
+    oos:
+      n_event: 135
+      n_none: 275
+      mean_event: 0.0010310712784687998
+      mean_none: 0.0005912068969401295
+      gap_bp: 4.398643815286703
+      t_stat: 0.32535870400620215
+    regime_gap:
+      bull:
+        n_event: 27
+        n_none: 251
+        mean_event: -0.0009595786744613921
+        mean_none: 0.0011891735249656454
+        gap_bp: -21.487521994270377
+        t_stat: -0.6606667633685807
+      bear:
+        n_event: 93
+        n_none: 538
+        mean_event: -1.736429428412992e-05
+        mean_none: -0.0008317098248737034
+        gap_bp: 8.143455305895735
+        t_stat: 0.5301008683549617
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 1.35bp > 0.0（负向命题要求更负）
+  - t_stat 0.546 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 135 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 27, ''n_none'': 251, ''mean_event'': -0.0009595786744613921, ''mean_none'': 0.0011891735249656454,
+    ''gap_bp'': -21.487521994270377, ''t_stat'': -0.6606667633685807}, ''bear'': {''n_event'': 93, ''n_none'': 538, ''mean_event'': -1.736429428412992e-05,
+    ''mean_none'': -0.0008317098248737034, ''gap_bp'': 8.143455305895735, ''t_stat'': 0.5301008683549617}}'
+- card_id: TDM-E-L1-S2/calibration/21_ind_vol008_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-21_ind_vol008_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 17.84148710756841
+    t_stat: 1.9773326947903629
+    n_event: 240
+    n_none: 1015
+    mean_event: 0.0015733571223879653
+    mean_none: -0.00021079158836887556
+    is_gap_bp: 17.30879035923294
+    oos:
+      n_event: 117
+      n_none: 293
+      mean_event: 0.0018444714127453512
+      mean_none: 0.0002934244503775341
+      gap_bp: 15.510469623678171
+      t_stat: 1.0918550517391523
+    regime_gap:
+      bull:
+        n_event: 18
+        n_none: 218
+        mean_event: -0.0004387483627780557
+        mean_none: 0.0012338420129087355
+        gap_bp: -16.72590375686791
+        t_stat: -0.4919999944287389
+      bear:
+        n_event: 113
+        n_none: 518
+        mean_event: 0.0015033769472878697
+        mean_none: -0.0011948964482509765
+        gap_bp: 26.98273395538846
+        t_stat: 2.2353203523437895
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 17.31bp > 0.0（负向命题要求更负）
+  - t_stat 1.977 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 117 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 18, ''n_none'': 218, ''mean_event'': -0.0004387483627780557, ''mean_none'': 0.0012338420129087355,
+    ''gap_bp'': -16.72590375686791, ''t_stat'': -0.4919999944287389}, ''bear'': {''n_event'': 113, ''n_none'': 518, ''mean_event'': 0.0015033769472878697,
+    ''mean_none'': -0.0011948964482509765, ''gap_bp'': 26.98273395538846, ''t_stat'': 2.2353203523437895}}'
+- card_id: TDM-E-L1-S2/calibration/22_ind_vol012_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-22_ind_vol012_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 11.676099332723737
+    t_stat: 1.365735569641606
+    n_event: 261
+    n_none: 1000
+    mean_event: 0.001068256344216884
+    mean_none: -9.935358905548974e-05
+    is_gap_bp: 21.423292760956272
+    oos:
+      n_event: 140
+      n_none: 270
+      mean_event: 0.0005274440105027787
+      mean_none: 0.0008442013251164243
+      gap_bp: -3.1675731461364554
+      t_stat: -0.24791392520473798
+    regime_gap:
+      bull:
+        n_event: 37
+        n_none: 205
+        mean_event: 0.0017391670247446367
+        mean_none: 0.0010367803803656675
+        gap_bp: 7.023866443789692
+        t_stat: 0.2935799280478218
+      bear:
+        n_event: 103
+        n_none: 528
+        mean_event: 0.001068267022981314
+        mean_none: -0.0010589133873438483
+        gap_bp: 21.271804103251622
+        t_stat: 1.6699026928379805
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 21.42bp > 0.0（负向命题要求更负）
+  - t_stat 1.366 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 140 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/23_ind_vol014_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-23_ind_vol014_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 11.903289858283602
+    t_stat: 1.299250593389856
+    n_event: 233
+    n_none: 1028
+    mean_event: 0.0011127038177769003
+    mean_none: -7.76251680514599e-05
+    is_gap_bp: 24.966721969531473
+    oos:
+      n_event: 114
+      n_none: 296
+      mean_event: 0.00018250601420001682
+      mean_none: 0.0009492257893007488
+      gap_bp: -7.66719775100732
+      t_stat: -0.5366124195665554
+    regime_gap:
+      bull:
+        n_event: 32
+        n_none: 210
+        mean_event: 0.0021750882606824153
+        mean_none: 0.0009870777788032194
+        gap_bp: 11.880104818791958
+        t_stat: 0.47243359193655327
+      bear:
+        n_event: 101
+        n_none: 530
+        mean_event: 0.0014796063102824406
+        mean_none: -0.0011292735896018926
+        gap_bp: 26.088798998843334
+        t_stat: 2.0351553566621274
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 24.97bp > 0.0（负向命题要求更负）
+  - t_stat 1.299 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 114 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/24_ind_vol013_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-24_ind_vol013_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 4.201277474833157
+    t_stat: 0.47908290166804596
+    n_event: 265
+    n_none: 996
+    mean_event: 0.0004741542849155427
+    mean_none: 5.402653743222709e-05
+    is_gap_bp: 8.862413516987393
+    oos:
+      n_event: 141
+      n_none: 269
+      mean_event: 0.00035171890638183097
+      mean_none: 0.0009374875593010611
+      gap_bp: -5.857686529192302
+      t_stat: -0.4600715719468502
+    regime_gap:
+      bull:
+        n_event: 36
+        n_none: 206
+        mean_event: 0.0015612084491280981
+        mean_none: 0.0010712895811742808
+        gap_bp: 4.899188679538173
+        t_stat: 0.20037553335816227
+      bear:
+        n_event: 109
+        n_none: 522
+        mean_event: -0.00022619674704543583
+        mean_none: -0.0008130638308860613
+        gap_bp: 5.8686708384062545
+        t_stat: 0.43566526856813637
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 8.86bp > 0.0（负向命题要求更负）
+  - t_stat 0.479 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 141 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/25_ind_vol015_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-25_ind_vol015_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 9.18732023324088
+    t_stat: 1.0665978108259557
+    n_event: 235
+    n_none: 1020
+    mean_event: 0.000877098733840058
+    mean_none: -4.163328948403006e-05
+    is_gap_bp: 14.66957034525514
+    oos:
+      n_event: 126
+      n_none: 284
+      mean_event: 0.0006719288587441047
+      mean_none: 0.0007644840952467126
+      gap_bp: -0.9255523650260788
+      t_stat: -0.06980657122027302
+    regime_gap:
+      bull:
+        n_event: 18
+        n_none: 218
+        mean_event: -0.0004387483627780557
+        mean_none: 0.0012338420129087355
+        gap_bp: -16.72590375686791
+        t_stat: -0.4919999944287389
+      bear:
+        n_event: 99
+        n_none: 532
+        mean_event: 0.0013084263354775773
+        mean_none: -0.0010876108503059337
+        gap_bp: 23.96037185783511
+        t_stat: 2.034970284606542
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 14.67bp > 0.0（负向命题要求更负）
+  - t_stat 1.067 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 126 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 18, ''n_none'': 218, ''mean_event'': -0.0004387483627780557, ''mean_none'': 0.0012338420129087355,
+    ''gap_bp'': -16.72590375686791, ''t_stat'': -0.4919999944287389}, ''bear'': {''n_event'': 99, ''n_none'': 532, ''mean_event'': 0.0013084263354775773,
+    ''mean_none'': -0.0010876108503059337, ''gap_bp'': 23.96037185783511, ''t_stat'': 2.034970284606542}}'
+- card_id: TDM-E-L1-S2/calibration/26_ind_mom038_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-26_ind_mom038_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 1.782088655348055
+    t_stat: 0.20958139992637081
+    n_event: 286
+    n_none: 1059
+    mean_event: 0.00023764872048242873
+    mean_none: 5.943985494762321e-05
+    is_gap_bp: -2.2173189630308996
+    oos:
+      n_event: 132
+      n_none: 278
+      mean_event: 0.000944182482385584
+      mean_none: 0.0006372101855285126
+      gap_bp: 3.0697229685707135
+      t_stat: 0.20770283130169254
+    regime_gap:
+      bull:
+        n_event: 9
+        n_none: 317
+        mean_event: -0.00015679309493251323
+        mean_none: 0.0007247738782564561
+        gap_bp: -8.815669731889693
+        t_stat: -0.10835410524108512
+      bear:
+        n_event: 145
+        n_none: 486
+        mean_event: -0.0003810580397415851
+        mean_none: -0.0008103319946254047
+        gap_bp: 4.292739548838195
+        t_stat: 0.46610254785372807
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.210 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 132 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 9, ''n_none'': 317, ''mean_event'': -0.00015679309493251323, ''mean_none'': 0.0007247738782564561,
+    ''gap_bp'': -8.815669731889693, ''t_stat'': -0.10835410524108512}, ''bear'': {''n_event'': 145, ''n_none'': 486, ''mean_event'': -0.0003810580397415851,
+    ''mean_none'': -0.0008103319946254047, ''gap_bp'': 4.292739548838195, ''t_stat'': 0.46610254785372807}}'
+- card_id: TDM-E-L1-S2/calibration/27_ind_mom037_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-27_ind_mom037_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 11.344132159698825
+    t_stat: 1.4124062213402715
+    n_event: 307
+    n_none: 1061
+    mean_event: 0.0009883854512699834
+    mean_none: -0.000146027764699899
+    is_gap_bp: 12.049191903529275
+    oos:
+      n_event: 135
+      n_none: 275
+      mean_event: 0.0011919771988485595
+      mean_none: 0.0005122167178446111
+      gap_bp: 6.797604810039483
+      t_stat: 0.4697818783442362
+    regime_gap:
+      bull:
+        n_event: 30
+        n_none: 319
+        mean_event: 0.0006954506642094367
+        mean_none: 0.0007055272613555026
+        gap_bp: -0.10076597146065915
+        t_stat: -0.0039018125927214654
+      bear:
+        n_event: 142
+        n_none: 489
+        mean_event: 0.00085671754766934
+        mean_none: -0.0011671342677290854
+        gap_bp: 20.238518153984256
+        t_stat: 2.216083682446343
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 12.05bp > 0.0（负向命题要求更负）
+  - t_stat 1.412 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 135 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 30, ''n_none'': 319, ''mean_event'': 0.0006954506642094367, ''mean_none'': 0.0007055272613555026,
+    ''gap_bp'': -0.10076597146065915, ''t_stat'': -0.0039018125927214654}, ''bear'': {''n_event'': 142, ''n_none'': 489, ''mean_event'': 0.00085671754766934,
+    ''mean_none'': -0.0011671342677290854, ''gap_bp'': 20.238518153984256, ''t_stat'': 2.216083682446343}}'
+- card_id: TDM-E-L1-S2/calibration/28_ind_mom015_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-28_ind_mom015_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 10.958762501906998
+    t_stat: 1.3308829971875
+    n_event: 318
+    n_none: 1050
+    mean_event: 0.0009496848961209991
+    mean_none: -0.0001461913540697006
+    is_gap_bp: 8.100420233270619
+    oos:
+      n_event: 131
+      n_none: 279
+      mean_event: 0.0016031275090886328
+      mean_none: 0.0003289133174237014
+      gap_bp: 12.742141916649315
+      t_stat: 0.8588785559097821
+    regime_gap:
+      bull:
+        n_event: 35
+        n_none: 314
+        mean_event: 0.0021615767509501195
+        mean_none: 0.000542266019157434
+        gap_bp: 16.193107317926856
+        t_stat: 0.5084158077941331
+      bear:
+        n_event: 152
+        n_none: 479
+        mean_event: 0.00010746649337245158
+        mean_none: -0.0009716277080231506
+        gap_bp: 10.790942013956021
+        t_stat: 1.2095938212815593
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 8.10bp > 0.0（负向命题要求更负）
+  - t_stat 1.331 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 131 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/29_ind_mom022_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-29_ind_mom022_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 2.2331955735833238
+    t_stat: 0.2532705863534227
+    n_event: 280
+    n_none: 1023
+    mean_event: 0.00034258048765596426
+    mean_none: 0.00011926093029763189
+    is_gap_bp: -3.3650912676484994
+    oos:
+      n_event: 111
+      n_none: 299
+      mean_event: 0.0014225093517069556
+      mean_none: 0.00048119726157977097
+      gap_bp: 9.413120901271848
+      t_stat: 0.5818697188011399
+    regime_gap:
+      bull:
+        n_event: 43
+        n_none: 241
+        mean_event: -0.000576267403980287
+        mean_none: 0.0014113436004759177
+        gap_bp: -19.876110044562047
+        t_stat: -0.764800367744147
+      bear:
+        n_event: 128
+        n_none: 503
+        mean_event: -0.0004334986798390098
+        mean_none: -0.0007824789942963881
+        gap_bp: 3.4898031445737834
+        t_stat: 0.34581561926682547
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.253 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 111 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 43, ''n_none'': 241, ''mean_event'': -0.000576267403980287, ''mean_none'': 0.0014113436004759177,
+    ''gap_bp'': -19.876110044562047, ''t_stat'': -0.764800367744147}, ''bear'': {''n_event'': 128, ''n_none'': 503, ''mean_event'': -0.0004334986798390098,
+    ''mean_none'': -0.0007824789942963881, ''gap_bp'': 3.4898031445737834, ''t_stat'': 0.34581561926682547}}'
+- card_id: TDM-E-L1-S2/calibration/30_ind_mom027_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-30_ind_mom027_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: -2.0309359891687286
+    t_stat: -0.22915728032773167
+    n_event: 307
+    n_none: 1066
+    mean_event: -4.4131205925213094e-05
+    mean_none: 0.0001589623929916598
+    is_gap_bp: -6.900391209012923
+    oos:
+      n_event: 106
+      n_none: 304
+      mean_event: 0.0011947807224028735
+      mean_none: 0.0005760847456484177
+      gap_bp: 6.186959767544558
+      t_stat: 0.3535909728301725
+    regime_gap:
+      bull:
+        n_event: 55
+        n_none: 299
+        mean_event: 0.0001469210448820333
+        mean_none: 0.0008202435262439914
+        gap_bp: -6.733224813619581
+        t_stat: -0.2550098191787034
+      bear:
+        n_event: 146
+        n_none: 485
+        mean_event: -0.001015586947001759
+        mean_none: -0.0006202042698726179
+        gap_bp: -3.953826771291412
+        t_stat: -0.42980084482071024
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat -0.229 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 106 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/31_ind_mom035_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-31_ind_mom035_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: -7.373382035778781
+    t_stat: -0.834400553819866
+    n_event: 265
+    n_none: 973
+    mean_event: -0.0005380063703614332
+    mean_none: 0.00019933183321644494
+    is_gap_bp: -6.41675704737218
+    oos:
+      n_event: 93
+      n_none: 317
+      mean_event: -3.34955492595123e-05
+      mean_none: 0.0009618031713973446
+      gap_bp: -9.952987206568569
+      t_stat: -0.6028688736585487
+    regime_gap:
+      bull:
+        n_event: 31
+        n_none: 188
+        mean_event: -0.0037892298037309254
+        mean_none: 0.0014163412265684903
+        gap_bp: -52.05571030299416
+        t_stat: -1.4764474845739592
+      bear:
+        n_event: 141
+        n_none: 490
+        mean_event: -0.00015596083793607425
+        mean_none: -0.0008716005857173266
+        gap_bp: 7.156397477812523
+        t_stat: 0.7260047179184952
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat -0.834 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 93 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 31, ''n_none'': 188, ''mean_event'': -0.0037892298037309254, ''mean_none'': 0.0014163412265684903,
+    ''gap_bp'': -52.05571030299416, ''t_stat'': -1.4764474845739592}, ''bear'': {''n_event'': 141, ''n_none'': 490, ''mean_event'': -0.00015596083793607425,
+    ''mean_none'': -0.0008716005857173266, ''gap_bp'': 7.156397477812523, ''t_stat'': 0.7260047179184952}}'
+- card_id: TDM-E-L1-S2/calibration/32_ind_mom020_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-32_ind_mom020_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 11.915873870238235
+    t_stat: 1.4401486947619426
+    n_event: 317
+    n_none: 1046
+    mean_event: 0.001043341860737914
+    mean_none: -0.00014824552628590938
+    is_gap_bp: 13.165680592032096
+    oos:
+      n_event: 123
+      n_none: 287
+      mean_event: 0.0012438173093490318
+      mean_none: 0.0005184215686477097
+      gap_bp: 7.253957407013221
+      t_stat: 0.4757722368416502
+    regime_gap:
+      bull:
+        n_event: 50
+        n_none: 294
+        mean_event: 0.004084355962597332
+        mean_none: 0.00023430133447070498
+        gap_bp: 38.50054628126627
+        t_stat: 1.5613896896166233
+      bear:
+        n_event: 144
+        n_none: 487
+        mean_event: -0.00018380525920749173
+        mean_none: -0.0008677757860874696
+        gap_bp: 6.839705268799779
+        t_stat: 0.7450895649862317
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 13.17bp > 0.0（负向命题要求更负）
+  - t_stat 1.440 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 123 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/33_ind_volume002_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-33_ind_volume002_hig
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: -4.558054007228458
+    t_stat: -0.48580780123118483
+    n_event: 273
+    n_none: 1024
+    mean_event: -0.0002248254748571096
+    mean_none: 0.00023097992586573626
+    is_gap_bp: -18.58982871436719
+    oos:
+      n_event: 109
+      n_none: 301
+      mean_event: 0.0019315597773888271
+      mean_none: 0.00030311130736359275
+      gap_bp: 16.284484700252346
+      t_stat: 0.9425560799165771
+    regime_gap:
+      bull:
+        n_event: 32
+        n_none: 246
+        mean_event: -0.004002928673649743
+        mean_none: 0.0016287302768809397
+        gap_bp: -56.31658950530683
+        t_stat: -1.745137966372567
+      bear:
+        n_event: 132
+        n_none: 499
+        mean_event: -0.0010895731273831918
+        mean_none: -0.0006117256760238381
+        gap_bp: -4.778474513593538
+        t_stat: -0.4594256250091076
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat -0.486 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 109 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/34_ind_mom009_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-34_ind_mom009_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: -0.8930604444343125
+    t_stat: -0.09577283735333547
+    n_event: 279
+    n_none: 1012
+    mean_event: 7.105621621716987e-05
+    mean_none: 0.00016036226066060112
+    is_gap_bp: -13.04948549881787
+    oos:
+      n_event: 109
+      n_none: 301
+      mean_event: 0.0020362366236007412
+      mean_none: 0.00026520507401775023
+      gap_bp: 17.71031549582991
+      t_stat: 1.0284833139093426
+    regime_gap:
+      bull:
+        n_event: 41
+        n_none: 231
+        mean_event: -0.0008365453942918744
+        mean_none: 0.0013586038717942942
+        gap_bp: -21.951492660861685
+        t_stat: -0.760178753796604
+      bear:
+        n_event: 129
+        n_none: 502
+        mean_event: -0.0013009825308676242
+        mean_none: -0.0005602550172680339
+        gap_bp: -7.407275135995903
+        t_stat: -0.7125377871511618
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat -0.096 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 109 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/35_ind_mom024_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-35_ind_mom024_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 5.412208666795448
+    t_stat: 0.5952537005274895
+    n_event: 290
+    n_none: 1001
+    mean_event: 0.000560707497799646
+    mean_none: 1.948663112010125e-05
+    is_gap_bp: -7.937408933880795
+    oos:
+      n_event: 112
+      n_none: 298
+      mean_event: 0.002674310260223214
+      mean_none: 7.562986935649644e-06
+      gap_bp: 26.667472732875645
+      t_stat: 1.6019971735489882
+    regime_gap:
+      bull:
+        n_event: 39
+        n_none: 233
+        mean_event: -0.0019389993467847017
+        mean_none: 0.0015242923079103797
+        gap_bp: -34.63291654695082
+        t_stat: -1.1292784032141228
+      bear:
+        n_event: 139
+        n_none: 492
+        mean_event: -0.0004409827356726565
+        mean_none: -0.0007881670018129619
+        gap_bp: 3.4718426614030538
+        t_stat: 0.34163851981675397
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.595 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 112 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 39, ''n_none'': 233, ''mean_event'': -0.0019389993467847017, ''mean_none'': 0.0015242923079103797,
+    ''gap_bp'': -34.63291654695082, ''t_stat'': -1.1292784032141228}, ''bear'': {''n_event'': 139, ''n_none'': 492, ''mean_event'': -0.0004409827356726565,
+    ''mean_none'': -0.0007881670018129619, ''gap_bp'': 3.4718426614030538, ''t_stat'': 0.34163851981675397}}'
+- card_id: TDM-E-L1-S2/calibration/36_ind_mom031_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-36_ind_mom031_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 4.2315558494977585
+    t_stat: 0.4904048632202745
+    n_event: 275
+    n_none: 948
+    mean_event: 0.0002866465460813338
+    mean_none: -0.00013650903886844207
+    is_gap_bp: -3.6863332740187738
+    oos:
+      n_event: 120
+      n_none: 290
+      mean_event: 0.00160208696423223
+      mean_none: 0.00037767615015157235
+      gap_bp: 12.244108140806578
+      t_stat: 0.7784342706146125
+    regime_gap:
+      bull:
+        n_event: 23
+        n_none: 181
+        mean_event: -0.002517912313941987
+        mean_none: 0.0005787682632659989
+        gap_bp: -30.96680577207986
+        t_stat: -1.0625242894180071
+      bear:
+        n_event: 132
+        n_none: 499
+        mean_event: -0.0004205352448093568
+        mean_none: -0.0007887056369451732
+        gap_bp: 3.6817039213581637
+        t_stat: 0.3816202544699988
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.490 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 120 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 23, ''n_none'': 181, ''mean_event'': -0.002517912313941987, ''mean_none'': 0.0005787682632659989,
+    ''gap_bp'': -30.96680577207986, ''t_stat'': -1.0625242894180071}, ''bear'': {''n_event'': 132, ''n_none'': 499, ''mean_event'': -0.0004205352448093568,
+    ''mean_none'': -0.0007887056369451732, ''gap_bp'': 3.6817039213581637, ''t_stat'': 0.3816202544699988}}'
