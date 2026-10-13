@@ -870,3 +870,100 @@ def test_retired_check_exempts_bag_payload_paths(
         assert out is None, "袋外引用缺失＝真实退役，必须仍被吸收（不得复活）"
         note = str((item.get("meta") or {}).get("noop_audit") or "")
         assert victim[0] in note and "退役" in note, f"零变化必须带合法退役吸收审计注，实得 {note!r}"
+
+
+# ---------------------------------------------------------------------------
+# ⑧ P1-2 字面量代际：活引用 base_head 不得当锚点（2026-10-13 st-maint6-20261013）
+# ---------------------------------------------------------------------------
+
+
+def test_live_ref_base_head_is_not_a_trusted_anchor(cql) -> None:
+    """分类尺：历史点位（7-40 位十六进制）可信；分支名/HEAD 类活引用与缺失一律不可当锚。"""
+    cases = (
+        ("dev", None, "live-ref"),
+        ("HEAD", None, "live-ref"),
+        ("refs/heads/dev", None, "live-ref"),
+        ("main", None, "live-ref"),
+        ("", None, "absent"),
+        (None, None, "absent"),
+        ("0a1b2c3", "0a1b2c3", "sha"),
+        ("a" * 40, "a" * 40, "sha"),
+    )
+    for raw, want_sha, want_kind in cases:
+        sha, kind = cql._trusted_base_head({"base_head": raw})
+        assert (sha, kind) == (want_sha, want_kind), f"base_head={raw!r} 应归 {want_kind}，实得 {(sha, kind)}"
+
+
+def test_live_ref_base_still_judged_by_time_anchor(cql, repo: Path, tmp_path: Path) -> None:
+    """§6.4 失明面复现并治：袋体 base_head='dev' 时他人已落同路径必须判红。
+
+    旧口径逐步逃逸（实据＝主根 done 23 枚＋dead 12 枚袋体 base_head='dev'）：非空⇒不走
+    存量兜底；'dev'≠40 位 sha⇒不早退；`cat-file -t dev` 回 commit⇒"非可判 commit"死信口
+    不触发；`merge-base(dev, dev)`＝dev 本身⇒`diff(dev, dev)` 恒空⇒恒不判冲突。
+    """
+    early = _commit(repo, "docs/shared.md", "v1\n", "seed")
+    landing = _landing(cql, repo, tmp_path, "queue-liveref")
+    _commit(repo, "docs/shared.md", "v2 by other\n", "[GW:other-session:q-20261013-x] land")
+    tip = _git(repo, "rev-parse", "refs/heads/dev")
+    item = {
+        "qid": "q-liveref",
+        "session_id": "probe-liveref",
+        "created_at": "2000-01-01T00:00:00+08:00",
+        "base_head": "dev",
+        "files": [{"path": "docs/shared.md"}],
+    }
+    # 失明机制见证：活引用解析到的就是被比较的那个点本身，拿它当锚必然差分为零
+    assert landing._merge_base("dev", tip) == tip, "活引用锚点必等于 dev 点位（恒空根源）"
+
+    reason = landing._conflict_reason(item, tip)
+    assert isinstance(reason, str) and "时间基底" in reason, f"活引用袋必须按证据判，实得 {reason!r}"
+    # 阴性①：dev 点位回指他人落地之前 ⇒ 放行（不因见推进即红）
+    assert landing._conflict_reason(item, early) is None
+    # 阴性②：同会话自己的推进 ⇒ 放行（防系统性假死信）
+    _commit(repo, "docs/own2.md", "v1\n", "seed own")
+    _commit(repo, "docs/own2.md", "v2\n", "[GW:probe-liveref:q-y] own progress")
+    own_now = _git(repo, "rev-parse", "refs/heads/dev")
+    assert (
+        landing._conflict_reason(
+            {
+                "qid": "q-liveref-own",
+                "session_id": "probe-liveref",
+                "created_at": "2000-01-01T00:00:00+08:00",
+                "base_head": "dev",
+                "files": [{"path": "docs/own2.md"}],
+            },
+            own_now,
+        )
+        is None
+    )
+
+
+def test_live_ref_base_forces_per_path_base_blob_in_merge(cql, repo: Path, tmp_path: Path) -> None:
+    """三方合并侧同判：活引用不得被解析成 dev 现值当基底（ours==base ⇒ 袋侧缺项＝"主动删除"）。"""
+    base = _commit(repo, GATE_BOOK_REL, _book_declared(["A", "B", "C"], 3), "C0 基底三条")
+    dev = _commit(repo, "docs/unrelated.md", "x\n", "C1 dev 另路推进（册面未动）")
+    landing = _landing(cql, repo, tmp_path, "queue-liveref-merge")
+    theirs = _book_declared(["A"], 1).encode("utf-8")  # 陈旧袋只含 A：B/C 非本袋主动删
+
+    # 无逐路径 base_blob ⇒ 基底不可知 ⇒ 显式死信回处方。同输入两面实测对照
+    # （.runtime/tmp/maint6_p12_twoside.py）：未修面在此落 noop——被「快进拒绝＋条目级
+    # 合并＋HEAD 面新鲜度复核」三道下游闸兜住，本构造未销毁条目；但它的基底是落地当时
+    # 被 git 再解析的活分支尖＝判定基准随分支移动。本改动只把这种不确定换成可处方化的
+    # 死信，不新增任何判据。
+    item = {"qid": "q-lm", "session_id": "probe-lm", "base_head": "dev", "files": [{"path": GATE_BOOK_REL}]}
+    with pytest.raises(RuntimeError, match="基底不可知"):
+        landing._merge_registry_file(item, GATE_BOOK_REL, theirs, dev)
+
+    # 带逐路径 base_blob ⇒ 基底可知，合并通道照旧执行（证明收窄没有把合法路径一并封死）
+    base_blob = _git(repo, "rev-parse", f"{base}:{GATE_BOOK_REL}")
+    item_ok = {
+        "qid": "q-lm-ok",
+        "session_id": "probe-lm",
+        "base_head": "dev",
+        "files": [{"path": GATE_BOOK_REL, "base_blob": base_blob}],
+    }
+    out = landing._merge_registry_file(
+        item_ok, GATE_BOOK_REL, _book_declared(["A", "B", "C", "D"], 4).encode("utf-8"), dev
+    )
+    assert out is not None and "gate_id: D" in out.decode("utf-8"), "base_blob 在位时新增条目须照常落地"
+    assert "基底不可知" not in str((item_ok.get("meta") or {}).get("noop_audit") or "")

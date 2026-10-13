@@ -178,6 +178,37 @@ _QUEUE_MARKER_RE = re.compile(r"\[GW:[^\]:\s]+:q-[^\]\s]+\]")
 # 故不能用上面的 _QUEUE_MARKER_RE（它强制 :q- 段，只用于假落地防线的标记核验）。
 _GW_OWNER_RE = re.compile(r"\[GW:([^:\]\s]+)")
 
+# 可信基底形态（P1-2 字面量代际，2026-10-13 st-maint6-20261013）：base_head 必须是
+# git 历史点位（40 位 sha）才可当 §6.4 快进判定的锚点。分支名/tag/HEAD 这类**活引用**
+# 在落地时会被 git 再解析成"当时"的分支尖 ⇒ anchor=merge-base(尖,dev)=尖 ⇒
+# diff(尖,dev) 恒空＝陈旧基底闸结构性失明（实据：主根 done 23 枚＋dead 12 枚袋体
+# base_head='dev'；st-maint5-0004 死信自证原文点名该形态＝在册 F-AUDITFIX-STALE-01）。
+# 刻意不在读侧把活引用 rev-parse 成 sha：那会把"入队时分支尖"当基底，正是
+# resolve_base_head 已废除的旧口径（基底比快照字节还新 ⇒ 同样恒空）。
+_RE_FULL_SHA = re.compile(r"\A[0-9a-fA-F]{7,40}\Z")
+
+
+def _trusted_base_head(item: dict) -> tuple[str | None, str]:
+    """袋内 base_head 三态归类：可信历史点位 / 缺失 / 活引用字面量（后者按无基底处理）。
+
+    接受 7-40 位十六进制（短 sha 与全 sha 同为不可变历史点位，cat-file/merge-base 两侧
+    均可解析）；纯十六进制命名的分支属极端边缘，届时 cat-file 判不通过仍落受控死信出口，
+    不会回到"恒不判冲突"。
+
+    Returns:
+        (sha 或 None, 标签)，标签∈{"sha","absent","live-ref"}；live-ref 时 sha=None，
+        调用方一律退到既有兜底路径（`_conflict_reason` 走时间基底
+        `_legacy_base_drift_reason`，`_merge_registry_file` 走逐路径 base_blob，
+        两者皆无则 fail-closed 死信）——只把"恒不判冲突"换成"按证据判"，不新增判据。
+    """
+    raw = str(item.get("base_head") or "").strip()
+    if not raw:
+        return None, "absent"
+    if _RE_FULL_SHA.match(raw):
+        return raw, "sha"
+    return None, "live-ref"
+
+
 # 派生计数标量 → 集合段（按册名）——**手工点名层**。与 GATE-21 selfcheck 的 pairs 同一份
 # 口径——检测器（判红）与落地侧自愈（改对）必须同源，否则"检测说 174、修补写 180"会变成
 # 新漂移源；两处一致性由 tests/governance/test_commit_queue_base_head.py 的口径同源尺断言。
@@ -1985,9 +2016,19 @@ class WorktreeLanding:
         dev 侧推进一律以 merge-base 为界度量：会话分支上有自有未并入提交时，
         直接 diff(base, dev) 会把"dev 从没改过、只是我没跟上"判成冲突（假红）。
         """
-        base = item.get("base_head")
+        base_raw = item.get("base_head")
+        base, base_kind = _trusted_base_head(item)
         paths = self._item_paths(item)
         mergeable = {p for p in paths if is_registry_mergeable(p)}
+        if base_kind == "live-ref":
+            logger.warning(
+                "[landing] qid=%s session=%s base_head=%r 非历史点位（活引用字面量）——§6.4 判定"
+                "按无基底处理（走时间基底兜底），防 anchor=merge-base(分支尖,dev)=分支尖 使 "
+                "diff 恒空的结构性失明",
+                item.get("qid"),
+                item.get("session_id"),
+                str(base_raw)[:24],
+            )
         if not base:
             # 存量项兜底（F-AUDIT-QUEUE-04 残面）：装表之前入袋的项仍无 base_head，
             # 光修正门救不了在飞的存量袋 ⇒ 用时间基底替代（见 _legacy_base_drift_reason）。
@@ -2424,7 +2465,17 @@ class WorktreeLanding:
                 meta["noop_audit"] = f"{prev}; {note}" if prev else note
                 return None
             return pg_text.encode("utf-8")
-        base_sha = item.get("base_head") or ""
+        base_sha, _base_kind = _trusted_base_head(item)
+        base_sha = base_sha or ""
+        if not base_sha and str(item.get("base_head") or "").strip():
+            logger.warning(
+                "[landing] qid=%s %s 基底为活引用字面量（%r）——改按逐路径 base_blob 取基底"
+                "（活引用会在落地当时被 git 再解析成当时的分支尖，基底随分支移动＝判定基准"
+                "不确定；在册 09-24 热册被吃案把这类动点位当基底的形态列在 F-AUDIT-QUEUE-04）",
+                item.get("qid"),
+                rel,
+                str(item.get("base_head"))[:24],
+            )
         base_text: str | None = None
         if base_sha and self._git_repo("cat-file", "-e", base_sha, check=False).returncode == 0:
             base_text = self._read_blob_text_opt(base_sha, rel)
