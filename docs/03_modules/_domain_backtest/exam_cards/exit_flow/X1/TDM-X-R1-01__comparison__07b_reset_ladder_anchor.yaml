@@ -55,7 +55,10 @@ pillars:
     本卡新增的唯一文字柱：复位后敞口**必须**走 RECOVERY 阶梯（25%/50%/75% 然后 NORMAL 100%），
     禁一次买回满仓。这条不是装饰——07 v1 的关臂就是"恢复即一次买回"，
     若开臂复位也直接回满，两臂在"解除形状"上就同构了，本卡只能判回撤阈值一条腿。
-    机判面＝`arm_level_cap_multiply` 乘子里 RECOVERY 档的 cap 严格递增且首档 <1.0（随 ③ 后扩展实现申报）。
+    机判面（2026-10-13 落地，不再"待申报"）＝绑定层 `card_binding._validate_recovery_ladder`：
+    **开臂**乘子表的 RECOVERY@0/1/2 三行必须①整表覆盖、②逐字等于本卡 level_to_cap_map 里某张已声明的表、
+    ③严格递增且首档 <1.0；三条任一不合即抛不出分（禁降级成观测行）。
+    只管开臂：关臂三行取 1.0 是它的声明角色（见 ladder_join_provenance），不是违柱。
 pillars_numeric:
   maxdd_improvement_min: 5.0
   maxdd_improvement_vs_no_hysteresis_min_pp: 1.0
@@ -105,6 +108,14 @@ reset_rule:
   after_reset_ladder: >-
     两档复位后的阶梯**同值同规**（0.25/0.50/0.75/1.0，晋升门槛与 min_hold/freeze 一律取上列在册值），
     括号之间**只许差在复位入口**——否则敏感性读的就不是"复位快慢"而是两套恢复纪律。
+    ⚑2026-10-13 接线实测的**结构发现**（在册件性质，非本卡缺陷，读数必须按此读）：
+    阶梯第 2 档→NORMAL 的晋升门槛是 recovered_pct ≥ 1.0-1e-6，而在册回补比例公式
+    （risk_layer_orchestrator.py:884-888）在 dd≥0 时返回 0.0，且 recovered=1.0 要求 nav 恰等于 peak
+    ⇔ dd=0 ⇒ **回升途中 recovered 严格 <1**，创新高当日又直接归 0 ⇒ 日频净值回放面上
+    `graduate_to_NORMAL` 那一行不可达：深回撤后的开臂会长期停在 RECOVERY@2（cap 0.75），
+    回 NORMAL 只剩"回撤加深退级/复位"一条路。由 tests/backtest/test_card_binding.py
+    ::test_recovered_pct_is_the_in_register_formula_and_saturates_below_one 钉住（max<1.0 断言）。
+    本卡不自拟替代门槛（比如把 1.0-1e-6 改 0.95＝改判据）；这条账转维护三班核"生产面同样不可达"是否有意。
   three_confirmation_faces_in_replay: >-
     holdings_verified_zero ⟺ 复位判定日敞口实测为 0（可自证）；
     orders_cancelled_verified ⟺ 日频装置无在途挂单概念，以"日频无在途"近似（不可判，随件披露）；
@@ -139,28 +150,50 @@ data_binding:
     five_state_native: {NORMAL: 1.0, WARN: 0.8, DANGER: 0.5, CRISIS: 0.3, KILL: 0.0}
     binary_full_clear: {NORMAL: 1.0, WARN: 1.0, DANGER: 1.0, CRISIS: 1.0, KILL: 0.0}
     recovery_ladder: {step_0: 0.25, step_1: 0.5, step_2: 0.75, graduate_to_NORMAL: 1.0}
+    five_state_native_with_ladder: {NORMAL: 1.0, WARN: 0.8, DANGER: 0.5, CRISIS: 0.3, KILL: 0.0, RECOVERY@0: 0.25, RECOVERY@1: 0.5, RECOVERY@2: 0.75}
+    binary_full_clear_with_ladder: {NORMAL: 1.0, WARN: 1.0, DANGER: 1.0, CRISIS: 1.0, KILL: 0.0, RECOVERY@0: 1.0, RECOVERY@1: 1.0, RECOVERY@2: 1.0}
     provenance: 前三表逐字取在册件 position_cap 的 return 行（:312-326）与 recovery_step_recovered（:162）；本卡不自拟任何档值
+    ladder_join_provenance: >-
+      ⑑2026-10-13 接线实测补的两张"拼好的表"，零新数值，只把上面三表拼成臂乘子表的合法形状：
+      `five_state_native_with_ladder` 的 RECOVERY@0/1/2 三行逐字＝`recovery_ladder` 的 step_0/1/2
+      （即在册 position_cap 0.25/0.50/0.75，:312-326）；
+      `binary_full_clear_with_ladder` 的三行=1.0 是**关臂的声明角色**——本卡 buckets.on 原文
+      "NORMAL/WARN/DANGER/CRISIS 一律 1.0，唯 KILL 0.0"，复位后的三档按同一条纪律取 1.0（＝一次买回）。
+      为什么必须在卡面写出来：级别序列一旦出现 RECOVERY@k，`arm_level_cap_multiply` 与判官 `_cap_series`
+      都按"映射没覆盖即抛"的红线走（有意的 fail-closed），三表没拼好的形态是**跑到阶梯那天当场红**；
+      而关臂的 1.0 若不写进卡面，绑定层就只能自己在册外拍数。上一版本只有三表，off 配对的关臂无处取值。
   arm_protocol: 三臂输入同一基线净值序列与同一成交口径；级别序列由在册判定件按臂档分别从同一基线回放产出（迟滞档/无迟滞档/复位档）
   device_ref: scripts/backtest/fexam/exit_sim/exit_simulator.py（净值与成交口径）+ src/zephyr/risk/core/drawdown_state_machine.py（判定真源）+ scripts/backtest/fexam/card_binding.py 的 replay_drawdown_levels（日频适配器）
   implementation_gap: >-
-    缺一不开考（本卡自钉，不预先声称可考）：
-    ①`replay_drawdown_levels` 现只有两档（levels_hysteresis / levels_no_hysteresis），
-    未产"复位＋RECOVERY 阶梯"档——需新增第三档 `levels_with_reset`：复位判定只算 recovered_pct 与
-    min_hold，**复位动作本身必须调在册件 `request_manual_reset`**（连带其三项确认与四守卫，
-    禁在适配器里自己写一套复位/冷却/锁定分支）；
-    ⑤路径 1 的生产件补丁（`graduation_face`）已在车道备好并通过 5 支契约测试
-    （缺省档逐步不晋升且零计数／absent 档晋升且计数／取值拼错即拒／其他守卫不放宽／
-    给足笔级数据时两档同结果），但**src/zephyr/risk/core 属生产风控件，
-    明晨 Owner 无否决才投**——补丁未落地前，本卡与 ① 一同保持 blocked_on_impl；
-    ②复位后的 RECOVERY 档要进 `level_to_cap_map` 乘子面，`arm_level_cap_multiply` 需认 RECOVERY 档名
-    （现按卡面映射表逐字换 cap，RECOVERY 不在两表内⇒会走 `_cap_series` 的"档未覆盖即抛"红线，这是有意的 fail-closed）；
-    ③两括号入口参数须由绑定册逐跑注入，禁硬编；
-    ④`_span_dates` 多段修的落地与 07 受影响 2 行的 only-append 重读（统筹裁定已下，盘点已出）。
-status: blocked_on_impl
+    ①–⑤ 逐件的落地态（2026-10-13 本班接线袋；原"缺一不开考"的自钉已兑现，逐件去向如下）：
+    ①【已落地】`replay_drawdown_levels` 新增复位档 `levels_with_reset`／`levels_no_hysteresis_with_reset`
+    （档位属性册 `DRAWDOWN_LEVEL_TIERS` 是档名唯一真源，`DRAWDOWN_LEVEL_SERIES_NAMES` 由它派生）。
+    复位动作**只调在册件** `request_manual_reset`（含三项确认与四守卫，守卫拒因原样计数进凭据面
+    `refusals_first8`，适配器零守卫分支）；`drawdown_level_series_pack` 改为按册格点名取档、
+    **无默认全集**（默认全产会让复位档悄悄进 07 的每一跑，两卡读数从此不可比）。
+    回补比例的峰/谷逐字镜像在册 drawdown_tracker.py:276-287（与真 DrawdownTracker 逐日对拍钉住），
+    比值**直调**在册 risk_layer_orchestrator.py:884-888（不重写公式）。
+    ②【已落地】RECOVERY 带步号档名 RECOVERY@0/1/2 进乘子面：卡面新增两张拼好的表（见
+    ladder_join_provenance），`_validate_recovery_ladder` 逐字对卡面校验，缺行/拍数/形状不合即抛不出分。
+    ③【已落地】两括号入口参数由绑定册 `arms_variants.<跑>.reset_trigger_recovered_pct` 逐跑注入，
+    适配器与判官都不硬编；错配四态各红一次（复位档缺参数／非复位档收参数／越界／没点复位档却给参数）。
+    ④【已落地】`_span_dates` 多段解析缺陷的修（统筹裁修）已随 0015 落地；07 受影响 2 行的
+    only-append 重读按新 run_id 执行、旧行保留（见 12_regime_multispan_impact_inventory.yaml）。
+    ⑤【已落地】路径 1 的 `graduation_face` 配置档（统筹署名批准＋Owner 否决窗，否决窗 2026-10-13 晨到期）
+    随本卡接线袋之前的独立袋落地；缺省 `required` 档旧行为逐字不变，复位档显式配 `absent` 并留痕
+    （凭据面 `graduation_face`／`graduation_face_skips`＋生产打点 DRAWDOWN_GRADUATION_FACE_ABSENT）。
+    ⚑本袋另修一处本班自造闸的误杀（同袋留痕，禁"已批之闸不许动"式放过）：
+    `arm_context_for_judge` 上一版把"两臂引用同一条级别序列"一律判非法，而 off 配对（开臂 vs 关臂）
+    按本卡 buckets.on 原文就是**同一序列×两张不同乘子表**——照旧闸 07 的 off 跑与 07b 的 off_A/off_B
+    三跑都开不出来。现按实质拆两面：同序列＋同乘子表（两臂逐字全等）仍红；同序列但基臂是**无迟滞**档
+    （迟滞对照跑两臂同形）仍红；同序列＋不同表且基臂为迟滞档＝合法放行。
+status: preregistered
 status_reason: >-
-  规则形状与参数已由统筹三裁定稿（甲案／两档都跑／B 档自拟值随卡披露），本件即"冻结稿呈批面"；
-  但 implementation_gap 四件未落地（尤其复位档适配器），故 status 只能是 blocked_on_impl。
-  本班不自翻状态——落地袋合并 ①②③ 后，才由该袋把本卡转 preregistered 并开考。
+  规则形状与参数由统筹三裁定稿（甲案／两档都跑／B 档自拟值随卡披露），implementation_gap ①–⑤
+  已随本接线袋全部落地并有判别力测试钉住（复位经在册出口、守卫真的会拒、括号参数逐跑注入、
+  阶梯乘子表逐字对卡面、07 两档读数面不漂）⇒ 依本卡自钉"落地袋合并 ①②③ 后才转 preregistered"，
+  本班在本袋内完成该状态转换（不是自翻：转换条件就是本袋的落地内容，逐件列在上面）。
+  开考四跑＝2 括号 × 2 配对档，CH 让路窗（01:00–04:00）后执行；试次 4 全入 n_trial_ledger。
 lineage:
   card: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
   run_id: null

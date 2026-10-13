@@ -334,3 +334,132 @@ entries:
           DANGER: 0.5
           CRISIS: 0.3
           KILL: 0.0
+- card_id: TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版
+  op: arms
+  status: approved
+  arm_base_source: exit_sim_baseline
+  reviewed_by: st-mineloop2-20261012（统筹裁定 2026-10-13：三裁甲案 absent／两档都跑／B 档自拟值照本班草案；路径 1 graduation_face 署名批准＋Owner 否决窗）
+  review_note: 四跑＝2 复位括号（A 宽 0.50／B 严 0.75）× 2 配对档（off／mid），由 arms_variants 显式指名，跑与跑之间禁动其他参数（裁定甲③）。两张 level_map 与 reset_trigger_recovered_pct
+    之外的所有数值逐字取 07b 卡面 data_binding.level_to_cap_map（five_state_native_with_ladder／binary_full_clear_with_ladder，其 RECOVERY 三行按卡面 ladder_join_provenance
+    声明），本册零自拟数值。off 配对的两臂按卡面原文共用同一条复位级别序列、只差乘子表（本班 2026-10-13 修掉误拦这一面的自造闸）；mid 配对基臂走无迟滞复位档。四跑引句均经 verify_face_pair_quotes/verify_arm_quote 机械校验。
+  arms_variants:
+    off_A:
+      e_face_quote: 三臂输入同一基线净值序列与同一成交口径
+      r_face_quote: 基线臂日净值（simulate(stop_enabled=True) 产出）
+      op_open: arm_level_cap_multiply
+      op_base: arm_level_cap_multiply
+      quote_open: 开臂=五态封顶锚定＋迟滞＋**复位阶梯（本卡新增）**
+      quote_base: 关臂=五态二值全清（NORMAL/WARN/DANGER/CRISIS 一律 1.0，唯 KILL 0.0）＋同一复位阶梯
+      reset_trigger_recovered_pct: 0.5
+      params_open:
+        levels: series:levels_with_reset
+        level_map:
+          NORMAL: 1.0
+          WARN: 0.8
+          DANGER: 0.5
+          CRISIS: 0.3
+          KILL: 0.0
+          RECOVERY@0: 0.25
+          RECOVERY@1: 0.5
+          RECOVERY@2: 0.75
+      params_base:
+        levels: series:levels_with_reset
+        level_map:
+          NORMAL: 1.0
+          WARN: 1.0
+          DANGER: 1.0
+          CRISIS: 1.0
+          KILL: 0.0
+          RECOVERY@0: 1.0
+          RECOVERY@1: 1.0
+          RECOVERY@2: 1.0
+    off_B:
+      e_face_quote: 三臂输入同一基线净值序列与同一成交口径
+      r_face_quote: 基线臂日净值（simulate(stop_enabled=True) 产出）
+      op_open: arm_level_cap_multiply
+      op_base: arm_level_cap_multiply
+      quote_open: 开臂=五态封顶锚定＋迟滞＋**复位阶梯（本卡新增）**
+      quote_base: 关臂=五态二值全清（NORMAL/WARN/DANGER/CRISIS 一律 1.0，唯 KILL 0.0）＋同一复位阶梯
+      reset_trigger_recovered_pct: 0.75
+      params_open:
+        levels: series:levels_with_reset
+        level_map:
+          NORMAL: 1.0
+          WARN: 0.8
+          DANGER: 0.5
+          CRISIS: 0.3
+          KILL: 0.0
+          RECOVERY@0: 0.25
+          RECOVERY@1: 0.5
+          RECOVERY@2: 0.75
+      params_base:
+        levels: series:levels_with_reset
+        level_map:
+          NORMAL: 1.0
+          WARN: 1.0
+          DANGER: 1.0
+          CRISIS: 1.0
+          KILL: 0.0
+          RECOVERY@0: 1.0
+          RECOVERY@1: 1.0
+          RECOVERY@2: 1.0
+    mid_A:
+      e_face_quote: 三臂输入同一基线净值序列与同一成交口径
+      r_face_quote: 基线臂日净值（simulate(stop_enabled=True) 产出）
+      op_open: arm_level_cap_multiply
+      op_base: arm_level_cap_multiply
+      quote_open: 开臂=五态封顶锚定＋迟滞＋**复位阶梯（本卡新增）**
+      quote_base: 中间臂=五态无迟滞构造档＋同一复位阶梯
+      reset_trigger_recovered_pct: 0.5
+      params_open:
+        levels: series:levels_with_reset
+        level_map:
+          NORMAL: 1.0
+          WARN: 0.8
+          DANGER: 0.5
+          CRISIS: 0.3
+          KILL: 0.0
+          RECOVERY@0: 0.25
+          RECOVERY@1: 0.5
+          RECOVERY@2: 0.75
+      params_base:
+        levels: series:levels_no_hysteresis_with_reset
+        level_map:
+          NORMAL: 1.0
+          WARN: 0.8
+          DANGER: 0.5
+          CRISIS: 0.3
+          KILL: 0.0
+          RECOVERY@0: 0.25
+          RECOVERY@1: 0.5
+          RECOVERY@2: 0.75
+    mid_B:
+      e_face_quote: 三臂输入同一基线净值序列与同一成交口径
+      r_face_quote: 基线臂日净值（simulate(stop_enabled=True) 产出）
+      op_open: arm_level_cap_multiply
+      op_base: arm_level_cap_multiply
+      quote_open: 开臂=五态封顶锚定＋迟滞＋**复位阶梯（本卡新增）**
+      quote_base: 中间臂=五态无迟滞构造档＋同一复位阶梯
+      reset_trigger_recovered_pct: 0.75
+      params_open:
+        levels: series:levels_with_reset
+        level_map:
+          NORMAL: 1.0
+          WARN: 0.8
+          DANGER: 0.5
+          CRISIS: 0.3
+          KILL: 0.0
+          RECOVERY@0: 0.25
+          RECOVERY@1: 0.5
+          RECOVERY@2: 0.75
+      params_base:
+        levels: series:levels_no_hysteresis_with_reset
+        level_map:
+          NORMAL: 1.0
+          WARN: 0.8
+          DANGER: 0.5
+          CRISIS: 0.3
+          KILL: 0.0
+          RECOVERY@0: 0.25
+          RECOVERY@1: 0.5
+          RECOVERY@2: 0.75

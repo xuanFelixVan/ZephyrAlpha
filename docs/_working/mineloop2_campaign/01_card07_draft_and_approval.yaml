@@ -4,7 +4,6 @@ title: 矿考二班·07 新版本卡草案（五态仓位锚定版）＋双臂/�
 created: '2026-10-12T02:10:00+08:00'
 sid: st-mineloop2-20261012
 family_id: MINELOOP-CAMPAIGN
----
 
 placement_note: >-
   本件是**草案**，落 docs/_working 非 exam_cards——照 06 先例（31_ 册 card_06_draft_20261011：
@@ -560,3 +559,50 @@ card07b_path1_received:
     request_manual_reset）、绑定册 07b 册格（两括号×off/mid）同批，缺一不开考；
     ②RECOVERY 档进乘子面所需 recovery_ladder 表已在卡面给出，扩面随同批；
     ③04:00 后 07 两行 only-append 重读照做（起跑前重取窗读数并申报，试次另记 2 条）。
+
+card07b_wiring_landed:
+  as_of: '2026-10-13T04:20:00+08:00'
+  bag: q-20261013-st-mineloop2-20261012-0018（07b 接线袋：复位档适配器＋判官申报位＋四跑册格＋卡面状态转换）
+  prior_claim_now_true: >-
+    本节写之前，本册与 07b 卡里关于 `graduation_face` 的叙述都是"已备好待批"的进行时；
+    0018 落地面是否含路径 1 生产件补丁，仍按本册既有约定核
+    `git show dev:src/zephyr/risk/core/drawdown_state_machine.py | grep -c graduation_face`，
+    别看本节措辞——0017 在本节写作时仍是 processing 态（写后自证：`python scripts/commit_queue.py status`）。
+  what_landed:
+    - "card_binding：档位属性册 DRAWDOWN_LEVEL_TIERS（四档，档名唯一真源）＋两枚复位档；复位只调在册件 request_manual_reset（含三项确认与四守卫，拒因逐条计数，适配器零守卫分支）；drawdown_level_series_pack 改为按册格点名取档、无默认全集；_validate_recovery_ladder 逐字对卡面校验阶梯乘子表；arm_context_for_judge 加 card 形参并申报 tier_flags/base_is_no_hysteresis/reset_trigger_recovered_pct"
+    - "calibration_exam：三柱的迟滞对照判读改读绑定层申报位，缺申报显式记败（禁按档名字符串猜档——levels_no_hysteresis_with_reset 用 == 匹配会被读成'非无迟滞档'＝三柱静默不判的假绿面）"
+    - "02_binding_book：追加 07b 格 arms_variants.{off_A,off_B,mid_A,mid_B}，复位入口 0.50/0.75 逐跑注入；纯追加自证 Counter 差集删除行=0（15→16 格，+129 行）"
+    - "07b 卡面：两张拼好的乘子表＋ladder_join_provenance＋implementation_gap ①–⑤ 去向＋status→preregistered"
+  self_caught_false_kills:
+    - rule: "arm_levels_same_source 曾把 off 配对整体拦死（卡面原文声明 off 配对＝同一级别序列×两张不同乘子表）"
+      evidence: "首批双臂出分 as_of=2026-10-12T23:04/23:05，而这道闸进 dev 的 commit=316a8bac16（10-13 00:58）＝闸晚于那两跑；不修则 07 的 off 重读与 07b 的 off_A/off_B 三跑全开不出"
+      fix: "按实质拆三面（同序列＋同表⇒红；同序列＋无迟滞档⇒红；同序列＋不同表＋迟滞档⇒放行），测试三面各钉一次"
+    - rule: "load_binding_book 曾要求全册每张双臂格都含被点名的档，两卡共用一本册时互相弹死"
+      fix: "改为全册并集判打字错（arms_variant_typo），某卡词表不含该档＝该卡不参与本跑；arms_variant_required（禁默认第一档）一字未松"
+  measured_readings: "设计路径（平顶 20→10 日到 0.65→60 日爬到 1.05，90 交易日）：括号 A(0.50) 放行 3/守卫拒 3/阶梯晋升 1/KILL 驻留 33；括号 B(0.75) 放行 1/拒 0/晋升 1/KILL 驻留 42；负对照（随机游走 700 日）四档全 0 放行、KILL 667 日 ⇒ 复位入口确为'回升到口才放'。守卫拒因原文含 [ZA-RK-0061] 距上次复位不足 3 日冷却期。"
+  structural_finding_for_maint3: >-
+    转维护三班：阶梯第 2 档→NORMAL 门槛 recovery_step_recovered[2]=1.0-1e-6 在任何日频净值回放面上不可达
+    （在册公式在 dd>=0 返回 0.0，而 recovered=1.0 要求 nav==peak 即 dd=0；创新高当日峰/谷同时重置比值归 0）
+    ⇒ 深回撤后开臂长期停在 RECOVERY@2（cap 0.75）。本班未自拟替代门槛（改门槛＝改判据，越权）。
+  still_open_after_this_bag:
+    - "07b 四跑开考（CH 让路窗已过）＋07 两行 only-append 重读，单进程驱动连跑 6 次；两档同号取合议结论"
+    - "落地后在主区码面复跑 tests/backtest 三件＋tests/gov/risk 一件（车道绿不等价落地面绿）"
+    - "散文 22 卡转换：引用解锁班配方件落地后的路径节号"
+owner_ruling_tou:
+  received_at: '2026-10-13T04:40:00+08:00'
+  channel: Owner 直接指令（发往『双臂卡面起草与适配器开发』=本班）
+  verbatim: 【Owner 裁定：「投」】路径 1 补丁否决窗就此关闭——graduation_face 档（+36/−2 纯追加、缺省逐字不变）现在投，走你备好的一键命令。落地后照既定链全速走：07b 起卡冻结（三件照裁）→ 绑定册接线 → CH 窗后 4 跑（off/mid
+    × 宽/严）→ 两档同号取合议——首张完整双臂判定就在这一串里。0016/重读监视器照自走。
+  what_it_closes: '统筹 2026-10-13 路径 1 批准时留的 Owner 否决窗（原判『备好而不投、明晨投/否决』）到此终结＝投。补丁本体未因该令改动一字：袋 q-20261013-st-mineloop2-20261012-0019 的快照就是否决窗前备好的那份字节（唯一新增是
+    0017 死信对症修那一行 `# noqa: any-abuse`＋在册理由，零行为改动）。'
+  not_numbered_here: 本条 Owner 裁定未带裁定号，故本班不自行往 ruling_registry 编号（RULE-RULING 的编号与登记须走同一单口，由统筹/Owner 定）；本节即战役内的 verbatim 留证位。
+  chain_state_at_receipt:
+    in_flight_bags:
+    - 0018
+    - 0019
+    - '0020'
+    - '0021'
+    - '0022'
+    - '0023'
+    queue_observation: 04:40 实测 dev 每几分钟前进一笔（03:35/03:39/03:57/04:01/04:05/04:36），13 只在途＋1 只 processing＝ convoy 而非楔死；本班不动 serializer 租约、不加急插队。
+    armed: 监视器 A（落地面就绪→跑六次）与 B（读数→交付袋）都已在跑，四条拒投判据含『分数册少任一旧行即拒』。
