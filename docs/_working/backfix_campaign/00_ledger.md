@@ -1348,3 +1348,55 @@ Test-CapacityGuardBreach : 无法将“Test-CapacityGuardBreach”项识别为 c
 - **登记**：st-maint6-20261013（令三 v2 第 14② 条：定性与验收读法入册；裁定归属＝统筹
   补充令 2026-10-13 22:1x）。本节为纯尾追加——写前 1291 行／9 个 `## ` 节，写后 10 节，
   前 1291 行字节零改动（改后按 `git show dev:` 前缀差分自证）。
+
+## dumps_exposure_min 验收读数入册（备份线 st-bakdr-20261013 P2·CH 真跑首轮）
+
+- **结论先给：达标**。`dumps_exposure_min = 0.23 分钟`（14 秒），验收线 ≤5 分钟。判别样本＝
+  `logs/backup_runlog_20261014_060003.log`（10-14 06:00:03 起跑，pid=41520 mode=all force=True，
+  07:13:00 收官 4053.2s）。令五的验收尾巴就此销。
+- **两个时间戳逐字原文**（沿用本册上方"验收读法"条的在册尺，未另立二套）：
+
+  ```
+  2026-10-14 06:02:43 | OK | SQLite dump: 2 databases                              ← dumps 产出（:12）
+  2026-10-14 06:02:57 | OK | DB dumps snapshot done: G:\backup\db_dumps\20261014   ← 落备份盘（:13）
+  ```
+
+  差值＝06:02:57 − 06:02:43＝**14 秒＝0.23 分钟**。
+- **chRan 判别位（这一发算数的唯一依据）**：:22
+  `2026-10-14 07:01:31 | OK | ClickHouse dump (incremental): ok (83.8 GiB, 934601 files, 231 tables, verified=True)`；
+  CH 腿头 :21＝06:03:22 ⇒ CH 腿实跑 **58 分 09 秒**；全文 `(< 24h cadence), stage skipped` **0 命中**。
+- **改后字节的结构签名（拿本轮日志自身腿序作证，不拿 commit 号作证）**：拷贝落账 :13（06:02:57）
+  **先于** CH 腿头 :21（06:03:22）。改前在册样本 `backup_runlog_20261013_003608.log` 是反的——
+  SQLite dump :12（00:36:51）→ CH ok :20（01:21:08）→ snapshot done :24（01:21:17），
+  exposure＝**44 分 26 秒（44.43 分）**＝与本册格③、白班"验收状态"段两处在册值同值
+  ⇒ 尺的正对照成立。收益 **44.43 → 0.23 分**，机制＝exposure 不再含 CH 腿时长。
+- **候选窗口 14 发全清点、逐发归档（非抽样；分母＝d640460050 落 dev（10-13 21:41:14）之后起跑的
+  runlog，含该支共 14 支）**：CH 真跑 **1**（即本样本）／节流跳过 **7**（221251、222133、223642、
+  225713、230854、000636、013511，各含 `(< 24h cadence), stage skipped`）／撞锁早退 **6**
+  （214020、215300、234727、235659、051553、054536，各 4 行且含 `LOCK_HELD`）⇒ 1+7+6=14 闭合。
+  被跳过的 7 发读数（实测 221251＝13 秒、013511＝27 秒）**不作达标证据**＝假绿陷阱（本册上方在册
+  纪律）。分母窗口与本册上方 10-13 全天档（`cadence skip 13 发`／`撞锁早退 4 发`）不同族，勿混引。
+- **本样本 skip 行的分诊（防"见 skipped 即杀"误伤真跑轮）**：:14
+  `DB dumps rotation skipped (state last_ch_backup_status=skipped -- oldest snapshot kept as insurance)`
+  是 dumps **轮转腿**读上一轮（01:35 那发）写下的 state 旧值＝轮转保险丝，非 CH 节流；
+  :30 share-locked（Stage 3 vault 面）／:35 bundle fresh（Stage 3b）同理都不是 CH 腿。
+  CH 腿真跑由 :21→:22 的 58 分 09 秒自证，不依赖 state 键。
+- **复核命令（从本节正文抽出，已在主区真值上原样跑通，期望值随注）**：
+
+  ```
+  # 1) chRan 判别位：全库命中 3 支（1011_194841／1013_003608／1014_060003），
+  #    其中 10-13 21:41 之后起跑的只有 backup_runlog_20261014_060003.log
+  grep -l "ClickHouse dump (incremental): ok" logs/backup_runlog_*.log
+  # 2) 两个时间戳：命中 3 行，前两行即上面逐字原文；末行即 chRan 判别位
+  grep -E "SQLite dump|DB dumps snapshot done|ClickHouse dump \(incremental\): ok" logs/backup_runlog_20261014_060003.log
+  ```
+
+- **零面声明**：本次全程只读取数——`scripts/backup/backup.ps1`、`scripts/backup/restore_drill.py`、
+  任何计划任务、`data/databases/backup_state.json`、`G:\backup`、`F:` 一律未改未删；
+  本册本节为本次唯一改动面，纯尾追加。
+- **登记**：st-bakdr-20261013（P2·读数入册，销令五的验收尾巴）。写前 1350 行／10 个 `## ` 节，
+  写后 11 节，前 1350 行字节零改动（写后按 `git show dev:` 行多重集差自证 deleted=0）。
+- **降级原因登记（worktree 申请制第 1 件，纯文档批类）**：本班按令卡指名的主区路径取数、
+  改动面＝本册单件纯尾追加（零代码/零判据/零计划任务），故走主区直改＋队列正门，
+  `[GW:st-bakdr-20261013:non-worktree]` 标记为自动留痕通道；会话面按在册配方注册活体
+  心跳过 SESSION-REQUIRED（不靠 `--allow-overlap` 消债）。
