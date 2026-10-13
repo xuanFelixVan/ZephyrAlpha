@@ -5,13 +5,13 @@
 # [CONSUMERS] scripts/governance/generators/generate_library_index.py; tests/library/test_library_smoke.py
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只读查询；查询入口统一（总口：API+CLI；T5 两轴过滤器 kind/owner_domain/tags/status/home 前缀组合筛选+回测产物查询面）；G15-① 别名轴=查询词先过词表归一（近似词→标准词→match_tokens 资产 token）再匹配，fail-open 词表不可用退原词；MCP server W+1 挂接；读侧接入世代缓存（lib_ram_campaign R1）：命中即零账本数据 SQL，水位翻代才重建，LIBRAM_DIRECT=1 逃生直查——供数反查面 --feeds 恒现读（未携 potential_consumers 列，禁跨代拼装）；连接借还成对（get→release，禁 close 弃池）
+# [INVARIANTS] 只读查询；查询入口统一（总口：API+CLI；T5 两轴过滤器 kind/owner_domain/tags/status/home 前缀组合筛选+回测产物查询面）；G15-① 别名轴=查询词先过词表归一（近似词→标准词→match_tokens 资产 token）再匹配，fail-open 词表不可用退原词；MCP server W+1 挂接；读侧接入世代缓存（lib_ram_campaign R1）：命中即零账本数据 SQL，水位翻代才重建，LIBRAM_DIRECT=1 逃生直查——供数反查面 --feeds 恒现读（未携 potential_consumers 列，禁跨代拼装）；连接借还成对（get→release，禁 close 弃池）；读侧存在性标注（st-libstale-20261013）：file/doc/module 三类的 home 现判盘上存在性，missing 只加尾标 [missing-on-disk]（--hide-missing 可剔除），命名空间型/含冒号 home 恒不判（宁缺毋滥），零账本写零 status 改口径
 # [MODIFY-GUARD] gate_id 不适用
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DB 异常原样上抛；CLI 无结果返回 1
-# [TESTS] tests/library/test_library_smoke.py; tests/library/test_lookup_alias.py; tests/library/test_ledger_cache.py
+# [TESTS] tests/ai/library/test_library_smoke.py; tests/ai/library/test_lookup_alias.py; tests/ai/library/test_ledger_cache.py; tests/ai/library/test_lookup_on_disk_marker.py
 # [A_module] module_id=MOD-LIB-003 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: 总目查询 CLI（python -m zephyr.library.lookup）人工按需调用是设计形态，非常驻系统
@@ -61,6 +61,17 @@ _BACKTEST_LOG_HINT: Final[str] = (
     "回测运行日志抽屉：logs/c1_repro/、logs/c1_real_*.log（族级入册=T10，明细见 registry_of_logs.yaml）"
 )
 _VOCAB_REL: Final[str] = "docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml"
+
+# ─── 读侧"盘上存在性"标注（st-libstale-20261013，纯视图面，零账本写）─────────────
+# 起因：lib_assets status='active' 的行里 11.7%（43,367 中 5,086）home 既不在盘上也不在
+# git HEAD——账本 INVARIANT"零删除零状态改写"决定了这类行只能人工死亡证明退账，而读侧
+# 一直在把它们当"在编资产"回给 agent（含防重复施工探针）。本面只在出口标注/剔除，
+# 不碰 status 口径（撤账属 Owner 终裁治理面）。
+_ON_DISK_JUDGED_KINDS: Final[frozenset[str]] = frozenset({"file", "doc", "module"})
+_MISSING_ON_DISK_MARKER: Final[str] = " [missing-on-disk]"
+_MISSING_ON_DISK_FOOTER: Final[str] = (
+    "# view-only: {n}/{t} 行 home 盘上不存在{hidden}（仅出口标注，账本 status 未改；剔除用 --hide-missing）"
+)
 
 # ─── state 子命令常量（F1 资产状态断言·三源模式，st-examchief-20261009）───────
 _STATE_WORKSHOP_REL: Final[str] = "docs/_working"
@@ -312,6 +323,50 @@ def _tombstone_tail(row: dict[str, Any]) -> str:
     return f"\t-> {_successor_display(row)}"
 
 
+def _on_disk_state(home: str | None, kind: str | None, root: Path) -> str:
+    """行级"盘上存在性"现判（纯视图，零账本写）：present / missing / unknown。
+
+    只判带仓内路径的三类 kind（_ON_DISK_JUDGED_KINDS）；命名空间型 home（含 ``:``
+    且非盘符，如 ``schtasks:\\...``/``TBL:ch:...``）恒 unknown——把"账本没这个概念"
+    误读成"资产已消失"比漏标更致命，故判据不确定时不判。
+    """
+    if kind not in _ON_DISK_JUDGED_KINDS:
+        return "unknown"
+    text = str(home or "").strip()
+    if not text:
+        return "unknown"
+    import os  # noqa: PLC0415 — 惰性 stdlib（保 import 计时面，R4 同法）
+
+    if len(text) >= 2 and text[1] == ":" and text[0].isalpha():  # 盘符绝对路径（仓外资产）
+        return "present" if os.path.exists(text) else "missing"
+    if ":" in text:
+        return "unknown"
+    return "present" if os.path.exists(root / text.replace("/", os.sep)) else "missing"
+
+
+def _on_disk_root() -> Path:
+    """存在性判定基准根（=本次运行的 checkout 根，非另一条车道的盘面）。"""
+    from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415 — 惰性（CLI 计时面）
+
+    return REPO_ROOT
+
+
+def _annotate_on_disk(
+    rows: list[dict[str, Any]], *, hide_missing: bool, root: Path | None = None
+) -> tuple[list[tuple[dict[str, Any], str]], int]:
+    """把行集按盘上存在性判读一遍，返回 (保留的 (row, state) 序, missing 计数)。
+
+    视图层唯一入口：不改 row 内容、不写账本、不动 status 口径——世代缓存里的行
+    因此永不被污染（污染会让"存在性"自身变成旧代）。
+    """
+    base = root if root is not None else _on_disk_root()
+    judged = [(row, _on_disk_state(row.get("home"), row.get("kind"), base)) for row in rows]
+    missing = sum(1 for _, state in judged if state == "missing")
+    if hide_missing:
+        judged = [pair for pair in judged if pair[1] != "missing"]
+    return judged, missing
+
+
 def _run_feeds_query(keyword: str, limit: int) -> int:
     """供数反查面（裁定#410）：potential_consumers 含关键词的资产清单。
 
@@ -369,13 +424,24 @@ def _run_main_query(args: argparse.Namespace, parser: argparse.ArgumentParser) -
     if not rows:
         print(f"(no results for {args.query!r})")
         return 1, []
-    for row in rows:
-        print(f"{row['asset_id']}\t{row['kind']}\t{row['status']}\t{row['home']}{_tombstone_tail(row)}")
+    judged, missing_n = _annotate_on_disk(rows, hide_missing=bool(getattr(args, "hide_missing", False)))
+    if not judged:
+        print(f"(no results for {args.query!r})")
+        return 1, []
+    for row, state in judged:
+        marker = _MISSING_ON_DISK_MARKER if state == "missing" else ""
+        print(f"{row['asset_id']}\t{row['kind']}\t{row['status']}\t{row['home']}{_tombstone_tail(row)}{marker}")
+    if missing_n:
+        hidden = len(rows) - len(judged)
+        print(
+            _MISSING_ON_DISK_FOOTER.format(n=missing_n, t=len(rows), hidden=f"｜已剔除 {hidden} 行" if hidden else "")
+        )
+    kept = [row for row, _ in judged]
     # 墓碑卡升级：全结果无 active 命中但有 deceased 命中=路径已迁移，报去向而非死账
-    if not any(r.get("status") == "active" for r in rows) and any(r.get("status") == "deceased" for r in rows):
-        dead = next(r for r in rows if r.get("status") == "deceased")
+    if not any(r.get("status") == "active" for r in kept) and any(r.get("status") == "deceased" for r in kept):
+        dead = next(r for r in kept if r.get("status") == "deceased")
         print(f"(moved: {dead['asset_id']} -> {_successor_display(dead)})")
-    return 0, rows
+    return 0, kept
 
 
 def _write_cli_audit(session_id: str, query_payload: dict[str, Any], result_count: int) -> None:
@@ -488,9 +554,12 @@ def _state_source_index(query: str) -> tuple[list[str], bool]:
                     break
     except Exception as exc:  # noqa: BLE001 — 源级隔离（单源故障不阻断三源证据包）
         return [f"(index source error: {exc})"], False
+    judged, _ = _annotate_on_disk(rows[:_STATE_INDEX_ROW_CAP], hide_missing=False)
+    # has 语义本批不变：missing 行仍是"账本声称它有"的证据，剔除/改判据属方案③
     lines = [
         f"{r.get('asset_id', '?')}\t{r.get('home', '?')}\t{_state_truncate(str(r.get('title') or ''), 80)}"
-        for r in rows[:_STATE_INDEX_ROW_CAP]
+        + (_MISSING_ON_DISK_MARKER if state == "missing" else "")
+        for r, state in judged
     ]
     return lines, bool(lines)
 
@@ -823,6 +892,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--tags", default=None, help="tags 过滤（逗号分隔多值 AND，如 ch,行情）")
     parser.add_argument("--status", default=None, help="status 精确过滤（active/stale/...）")
     parser.add_argument("--home-prefix", default=None, help="home 前缀过滤（如 TBL:ch:）")
+    parser.add_argument(
+        "--hide-missing",
+        action="store_true",
+        help="读侧视图：剔除 home 盘上不存在的行（默认只标注 [missing-on-disk]，不改账本 status）",
+    )
     parser.add_argument("--backtest", action="store_true", help="回测产物查询面（按策略/日期段列产物+日志抽屉提示）")
     parser.add_argument("--no-alias", action="store_true", help="关闭 G15-① 别名轴展开（原词直查）")
     parser.add_argument("--feeds", default=None, help="供数反查（裁定#410）：potential_consumers 含关键词的资产")
