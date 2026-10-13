@@ -1996,3 +1996,94 @@ D9 承 04_ 稿 D1-D4（逐臂净值面仍未批，16 支双臂卡与本面互不
 - **下一步（无需人盯）**：22:30 CH 让路窗一关，监视器 A 自动开六跑（round 9 实测"闸一 落地面逐字==dev OK（9 件）"
   已就绪，只等窗）；A 写 `run_six.done` 后 B 投递，随后补记器 `--apply` 进试次单口，合议按裁定②读。
 
+### 33.7 22:1x–22:2x 停车记录（统筹两令：先让六跑，复合面暂停）
+
+**为什么停**：D5 批准后本班在 `card_binding.py` 起批-A 施工（+177 行未落地），而六跑就绪闸的判据是
+"车道码面逐字节==dev"——被对拍的是 `run_six.py` 里的 **WATCHED 九件**：
+`card_binding.py`／`calibration_exam.py`／`arm_protocol_binding.py`／`drawdown_state_machine.py`／
+两张贴分卡 07 与 07b／`exam_scores_v1.yaml`／**`02_binding_book.yaml`**／`trial_ledger_registry.yaml`。
+**同一文件上"我在改"与"要和 dev 全等"直接顶牛**：26 轮起 REFUSED 从 arm_protocol 换成 card_binding 就是这个因。
+
+**处置（按统筹所令次序，22:21 已完成）**：
+1. 工作字节**先存证再复位**：`.runtime/tmp/mineloop2/evidence/composite_face_park_22x/` ＋ `park_manifest.txt`
+   （逐件 sha256 前缀：card_binding `4c77138e513f807d` 104,744B／test_card_binding `f2d3228dcb2aa46a` 80,661B／
+   02_binding_book `06abae1b04448605` 25,765B）；
+2. `git checkout dev --` 复位三件（**册也在 WATCHED 里**，不复位就挡住六跑——这一点是查清单才确认的，
+   不是猜的）；
+3. 复位后逐件 sha 对拍 dev：五件全 True（card_binding/calibration_exam/arm_protocol_binding/册/测试件）。
+
+**恢复路径（`run_six.done` 之后）**：按 `park_manifest.txt` 的 sha 从 evidence 取回三件，
+再跑一次"车道 vs 当刻 dev"差集确认接的是最新基——若六跑期间 dev 又前进，须**以新 dev 为基重放**，
+禁直接整片盖（同 `hot-registry-superset-delta-recipe` 那一族的回退弹形态）。
+本班监视器是**跑一次即退**设计（写完 done 就 break，不再重基车道），故恢复期不会被它洗面。
+
+**教训（升级为纪律）**：**六跑/落面对拍类自动器在等窗的时候，车道本身就是被对拍的对象**——
+任何 WATCHED 清单内的在途改动都会把就绪判据变成永久 FALSE。
+所以：**窗口开启前禁在 WATCHED 文件上开新任务，等待期只做只读勘查与文档面**（文档件不在 WATCHED，可正常写）。
+这条比"车道绿≠落地面绿"更前置一层：老话讲的是**读数可信度**，本条讲的是**会把别人的自动器饿死**。
+
+**施工面进度快照（恢复时不必重做，都已在存证字节里）**：`_TBL` 加 `backtest_regime_state_anchored`、
+`_REGISTERED_TABLES` 加该表三要素（全抄 DDL 真源 ORDER BY trade_date＋data_source DEFAULT 字面值＋
+卡面 data_window_evidence 4,488 行，零新 CH）、复合通道四函数
+（`_norm_text`／`_check_legs_keys_on_card_face`／`_load_composite_leg`／`assemble_composite_legs`）、
+算子 `agg4_state_ordinal_series`＋OPS 一格、`run_binding_book` 的 legs 分支、15 支用例
+（R1 腿集合／R2 键面／R3 未登记表／R5 丢行可见／R6 档值不进 Python／R8 分类器不扩权
+＋"String 列被 to_numeric 洗成假查无"防复发钉）、绑定册批-A 校准格（entries 16→17，前缀保真＋键集合差自证）。
+自检：MSG-STYLE AST 扫 raise 字面量（含 f-string 常量段）违规 0；ruff check/format 全绿。
+**未做**：pytest 实跑（复位前来不及）＋R7 100 笔零漂移重放＋真 CH 出分——恢复后按此序补。
+
+### 33.8 六跑终态＋两处自证失效自愈＋D1-D4 承接（22:32–22:5x）
+
+**六跑实际发生**：round 31 于 **22:32:03 READY**（窗 22:30 一过即放行），22:36:39 `rc=0` 收，
+B 投递器 22:37:11 写 `delivered_07b.done` 并代投 **0041**（files=5）。
+
+**合议（按裁定②两档同号读）**：
+- 括号 A `off=fail / mid=fail` 同号=True；括号 B `off=fail / mid=fail` 同号=True；跨括号结论集合=`['fail']`。
+- **6/6 的红项只有一条**：`oos_sign_flip ic_delta nan（配对 IC 面样本不足）`——即统筹 D1 那句决定性依据成立（实测频次 6/6，非转述）。
+- 但**必须回报一处精确化**（影响 D1 是否够用，不影响 D1 的方向）：分数行里**两臂的 `oos_ic` 自身就是 nan**
+  （`arm_open.oos_ic=nan`、`arm_base.oos_ic=nan`，`regime_ic.bear` 亦 nan），
+  ⇒ `ic_delta_oos=nan` 更像是**双臂 OOS 段 IC 面无读数**的下游结果，而不只是"配对样本量不足"这一条因。
+  IS 面数值全在（`ic_mean` 0.0306/0.0320、`mono_spearman` 0.497/0.377、nav 全套）。
+  本班**不据此翻 D1**，只把"要读一次判官 OOS 分窗口"列为 D1 甲的配套前置（读哪一段：`calibration_exam` 里
+  OOS 切分与 `oos_ic` 计算位；零判据改动，纯读）。
+- 净值面读数如实记但**不挑好的报**：开臂 `sharpe 0.2558 / maxdd 0.1562` vs 基臂 `0.1747 / 0.2715`
+  （`maxdd_improvement_pp=+11.53`、`sharpe_delta=+0.081`、`turnover_delta_annual_x=-0.98`）；
+  而 `arm_pillars_owned_by_other_run=[maxdd_improvement_vs_no_hysteresis_min_pp, whipsaw_roundtrip_ratio_max]`
+  两根在本 run 是 None（按在册分权读法归另一 run），照 §32 纪律不合并报、不拿它补绿。
+- 另记：六行 `metrics.n` 顶层为 None（读数在 `arm_open.n=2121`/`nav.n=2122` 里）——出分面的顶层 n 与臂内 n
+  不同名，普查尺若按顶层 `n` 取数会读成 None（在册 silent-degradation 同族，待接线时一并钉）。
+
+**⚑两处自证失效（都自愈，不装完）**：
+1. **0041 死于本班自己**：B 代投后我又在车道追加了 §33.7 ⇒ 同件跨袋，落地侧整文件三方真冲突
+   （dead_reason 点名 `00_morning_pack.md`）。教训＝**交付器在飞的袋，其 files 面在落地前一律禁再编辑**；
+   已按"自愈重基重投"处置（本段即重投内容）。
+2. **试次补记器读错面＝假绿**：`supplement_trial_six.py` 把根写死成主区 `D:/ZephyrAlpha`，而六跑跑在车道 ⇒
+   它看到"今日分数行=0"就报"无需补登 rc=0"。真相是 **6 跑只登了 2 试次**（在册 defect：`run_card` 的
+   `batch_id` 无跑次判别位，同卡同日幂等塌 1）。修法＝给脚本加 `--root=`，指向车道重算：
+   差额如实 `[07] +1 / [07b] +3`，经 `TrialLedger.record_run` 单口补登，
+   **写后复核＝今日 07/07b 族记录数 6**（与跑次相等），试次册对 dev 的键集合差
+   `dev-lane=0 / lane-dev=6`＝纯超集，可安全随袋。
+   这条与 [[same-ruling-two-shifts-withdraw-whole-file-bag]] 不同族，是**读数面与被读面异根**的新形态：
+   凡"跑在车道、验在主区"的自证器，根路径必须显式参数化并打点。
+
+**交付面处置（三件入袋，两件不入）**：
+- 入袋：`exam_scores_v1.yaml`（66→72 行，身份三元组集合差 `dev-lane=0/lane-dev=6`＝纯增）、
+  `trial_ledger_registry.yaml`（49→55，同上纯增）、本件班账。
+- **不入袋：07b 卡**。车道副本对 dev 是**双向发散**（94 行独有 vs 147 行缺失）——
+  八个特征 token（结构发现/graduation_criteria_face_declared_no_face/refusals_first8/
+  drawdown_level_series_pack/recovery_step_recovered/min_hold_recovery_step/毕业准则六件/复位阶梯）
+  **在 dev 与车道都命中**，差异是他班 22:30（`eaee950853`）与 22:35（`215e2da12b`）两袋对该 YAML 的重排
+  ＋ `run_card` 的 lineage 写回。⇒ 整片盖＝抹掉他班 147 行已落面，故车道副本 `git checkout dev --` 复位，
+  lineage 的写回留给他班面重放（分数册行本身已含 run_id/verdict，真源不丢）。07 卡与 dev 零差，无需动。
+
+**D1-D4 承接（统筹 22:4x 全裁，本班按此排）**：
+D1=甲（净值路径不产 ic 柱＋显式披露，whipsaw 换算法另案）｜D2=甲＋零漂移铁律（臂级参数进 `simulate`
+显式入参，同批重跑 E 道对拍；乙案违 SSOT 已否）｜D3=批（P2 四支日内卡先做一个只读班次核分钟窗与样本面）｜
+D4=设计稿与代码本班出、**判据面变更汇总成一份变更单走 Owner 批**，落地按 M-3 先例补签裁定号。
+排程照 04_ 稿 §6：P0 定稿 → 判官最小必改 17 行 → 零漂移重放 → 三红三正 → 呈复核。
+⚑**分母更正**：04_/05_ 稿写的"100 笔在册分数重放"今天只有 **66 行**在册（本班 R7 自证器实测数），
+故重放分母＝全部在册 66 行，不是 100——已把判据写进 `composite_zero_drift.py`（snapshot/compare 两态，
+三条判据：判官件未碰／前 N 行逐字不变且只增在尾／册格数不减）。
+
+
+

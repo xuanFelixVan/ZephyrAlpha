@@ -3056,3 +3056,707 @@ rows:
   - 'regime_gap 反号 {''bull'': {''n_event'': 23, ''n_none'': 181, ''mean_event'': -0.002517912313941987, ''mean_none'': 0.0005787682632659989,
     ''gap_bp'': -30.96680577207986, ''t_stat'': -1.0625242894180071}, ''bear'': {''n_event'': 132, ''n_none'': 499, ''mean_event'': -0.0004205352448093568,
     ''mean_none'': -0.0007887056369451732, ''gap_bp'': 3.6817039213581637, ''t_stat'': 0.3816202544699988}}'
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-reread07_off-07_熔断五级梯度减仓对照_五态仓位锚定
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.030550447040649378
+      mono_spearman: 0.49696992650327754
+      n: 2121
+      regime_ic:
+        bull: -0.020692825337465748
+        bear: .nan
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1621
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.1561940939539619
+        sharpe: 0.25581625270370073
+        turnover_annual_x: 1.720409361273135
+        ann_ret: 0.018992925241012773
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.03198697025409984
+      mono_spearman: 0.37690143708164003
+      n: 2121
+      regime_ic:
+        bull: -0.006551076760030402
+        bear: .nan
+        crisis: 0.2094409662385269
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1598
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.27152135510193554
+        sharpe: 0.17469141183126272
+        turnover_annual_x: 2.69856396711021
+        ann_ret: 0.020126485222387077
+        cost_bp: .nan
+    maxdd_improvement_pp: 11.532726114797365
+    sharpe_delta: 0.08112484087243801
+    turnover_delta_annual_x: -0.9781546058370751
+    open_sharpe_at_tier_bp: 0.16348451319529514
+    ic_delta_is: -0.0014365232134504642
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_hysteresis
+      open_roundtrips_30d: 7
+      open_downgrades: 10
+      base_roundtrips_30d: 0
+      base_downgrades: 1
+      n_days_open: 2123
+      base_is_no_hysteresis: false
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: null
+      whipsaw_roundtrip_ratio: null
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - whipsaw_roundtrip_ratio_max
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-reread07_mid-07_熔断五级梯度减仓对照_五态仓位锚定
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.030550447040649378
+      mono_spearman: 0.49696992650327754
+      n: 2121
+      regime_ic:
+        bull: -0.020692825337465748
+        bear: .nan
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1621
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.1561940939539619
+        sharpe: 0.25581625270370073
+        turnover_annual_x: 1.720409361273135
+        ann_ret: 0.018992925241012773
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.02925514614794887
+      mono_spearman: 0.46015733935488656
+      n: 2121
+      regime_ic:
+        bull: -0.029466981564347954
+        bear: .nan
+        crisis: 0.19337275604267906
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1701
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.21532329173325992
+        sharpe: 0.13656544614166602
+        turnover_annual_x: 3.3305380286766058
+        ann_ret: 0.012332157295782915
+        cost_bp: .nan
+    maxdd_improvement_pp: 5.912919777929804
+    sharpe_delta: 0.11925080656203471
+    turnover_delta_annual_x: -1.6101286674034707
+    open_sharpe_at_tier_bp: 0.16348451319529514
+    ic_delta_is: 0.0012953008927005065
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_no_hysteresis
+      open_roundtrips_30d: 7
+      open_downgrades: 10
+      base_roundtrips_30d: 59
+      base_downgrades: 42
+      n_days_open: 2123
+      base_is_no_hysteresis: true
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: 5.912919777929804
+      whipsaw_roundtrip_ratio: 0.16666666666666666
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run: []
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-07b_off_A-07b_熔断五级梯度减仓对照_复位阶梯锚
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.03024152191440751
+      mono_spearman: 0.26747843921922837
+      n: 2121
+      regime_ic:
+        bull: -0.037359217534677504
+        bear: 0.05090893920222041
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2502
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.17564261604408238
+        sharpe: 0.25524949738093844
+        turnover_annual_x: 2.2450857842735257
+        ann_ret: 0.01990940450455997
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.03247916397318586
+      mono_spearman: 0.3282689935872349
+      n: 2121
+      regime_ic:
+        bull: -0.028580646070163827
+        bear: 0.05329706035647116
+        crisis: 0.2094409662385269
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2474
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.33844727676099007
+        sharpe: 0.19655506076888893
+        turnover_annual_x: 4.521923008027748
+        ann_ret: 0.027333706057689814
+        cost_bp: .nan
+    maxdd_improvement_pp: 16.280466071690768
+    sharpe_delta: 0.05869443661204951
+    turnover_delta_annual_x: -2.2768372237542227
+    open_sharpe_at_tier_bp: 0.14039410262247634
+    ic_delta_is: -0.0022376420587783483
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_hysteresis
+      open_roundtrips_30d: 16
+      open_downgrades: 16
+      base_roundtrips_30d: 8
+      base_downgrades: 6
+      n_days_open: 2123
+      base_is_no_hysteresis: false
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: null
+      whipsaw_roundtrip_ratio: null
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - whipsaw_roundtrip_ratio_max
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - reset_not_full_reentry
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-07b_off_B-07b_熔断五级梯度减仓对照_复位阶梯锚
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.025669086438902044
+      mono_spearman: 0.1945297739776207
+      n: 2121
+      regime_ic:
+        bull: -0.039747592817760434
+        bear: 0.05090893920222041
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2375
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.19157730385200977
+        sharpe: 0.22272817025505845
+        turnover_annual_x: 2.0559209880453833
+        ann_ret: 0.017301816354802914
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.02693011656925867
+      mono_spearman: 0.3282689935872349
+      n: 2121
+      regime_ic:
+        bull: -0.041675849084714466
+        bear: 0.05329706035647116
+        crisis: 0.2094409662385269
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2347
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.38786643031914014
+        sharpe: 0.12413792478411252
+        turnover_annual_x: 3.7652638231151774
+        ann_ret: 0.016903353458661563
+        cost_bp: .nan
+    maxdd_improvement_pp: 19.628912646713037
+    sharpe_delta: 0.09859024547094593
+    turnover_delta_annual_x: -1.7093428350697941
+    open_sharpe_at_tier_bp: 0.11710143469382357
+    ic_delta_is: -0.0012610301303566246
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_hysteresis
+      open_roundtrips_30d: 9
+      open_downgrades: 13
+      base_roundtrips_30d: 1
+      base_downgrades: 3
+      n_days_open: 2123
+      base_is_no_hysteresis: false
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: null
+      whipsaw_roundtrip_ratio: null
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - whipsaw_roundtrip_ratio_max
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - reset_not_full_reentry
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-07b_mid_A-07b_熔断五级梯度减仓对照_复位阶梯锚
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.03024152191440751
+      mono_spearman: 0.26747843921922837
+      n: 2121
+      regime_ic:
+        bull: -0.037359217534677504
+        bear: 0.05090893920222041
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2502
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.17564261604408238
+        sharpe: 0.25524949738093844
+        turnover_annual_x: 2.2450857842735257
+        ann_ret: 0.01990940450455997
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.029173720507955508
+      mono_spearman: 0.40121765882884264
+      n: 2121
+      regime_ic:
+        bull: -0.044301886337759167
+        bear: 0.05090893920222041
+        crisis: 0.19337275604267906
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2582
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.23340897018725204
+        sharpe: 0.14182636222976994
+        turnover_annual_x: 3.855214451676996
+        ann_ret: 0.013248636559330115
+        cost_bp: .nan
+    maxdd_improvement_pp: 5.776635414316966
+    sharpe_delta: 0.1134231351511685
+    turnover_delta_annual_x: -1.6101286674034703
+    open_sharpe_at_tier_bp: 0.14039410262247634
+    ic_delta_is: 0.0010678014064520007
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_no_hysteresis
+      open_roundtrips_30d: 16
+      open_downgrades: 16
+      base_roundtrips_30d: 68
+      base_downgrades: 48
+      n_days_open: 2123
+      base_is_no_hysteresis: true
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: 5.776635414316966
+      whipsaw_roundtrip_ratio: 0.3333333333333333
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run: []
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - reset_not_full_reentry
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-07b_mid_B-07b_熔断五级梯度减仓对照_复位阶梯锚
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.025669086438902044
+      mono_spearman: 0.1945297739776207
+      n: 2121
+      regime_ic:
+        bull: -0.039747592817760434
+        bear: 0.05090893920222041
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2375
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.19157730385200977
+        sharpe: 0.22272817025505845
+        turnover_annual_x: 2.0559209880453833
+        ann_ret: 0.017301816354802914
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.024597394136805964
+      mono_spearman: 0.3282689935872349
+      n: 2121
+      regime_ic:
+        bull: -0.04659935869931035
+        bear: 0.05090893920222041
+        crisis: 0.19337275604267906
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2455
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.24822704420971664
+        sharpe: 0.11423808567816231
+        turnover_annual_x: 3.6660496554488535
+        ann_ret: 0.010641048409573056
+        cost_bp: .nan
+    maxdd_improvement_pp: 5.664974035770687
+    sharpe_delta: 0.10849008457689614
+    turnover_delta_annual_x: -1.6101286674034703
+    open_sharpe_at_tier_bp: 0.11710143469382357
+    ic_delta_is: 0.0010716923020960799
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_no_hysteresis
+      open_roundtrips_30d: 9
+      open_downgrades: 13
+      base_roundtrips_30d: 61
+      base_downgrades: 45
+      n_days_open: 2123
+      base_is_no_hysteresis: true
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: 5.664974035770687
+      whipsaw_roundtrip_ratio: 0.2
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run: []
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - reset_not_full_reentry
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）

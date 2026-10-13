@@ -256,6 +256,42 @@ batch_records:
   note: verdict=pass
   recorded_at: '2026-10-10T03:33:16+00:00'
   recorded_by: calibration_exam
+- batch_id: examcard:TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版:2026-10-13
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-13T14:32:54+00:00'
+  recorded_by: st-mineloop-20261010
+- batch_id: examcard:TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版:2026-10-13:mineloop-reread07_off-07_熔断五级梯度减仓对照_五态仓位锚定
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail；六跑判别位补记（run_card 的 batch_id 无跑次位，同卡同日幂等塌 1）
+  recorded_at: '2026-10-13T14:46:45+00:00'
+  recorded_by: st-mineloop2-20261012
+- batch_id: examcard:TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版:2026-10-13
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-13T14:34:24+00:00'
+  recorded_by: st-mineloop-20261010
+- batch_id: examcard:TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版:2026-10-13:mineloop-07b_mid_A-07b_熔断五级梯度减仓对照_复位阶梯锚
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail；六跑判别位补记（run_card 的 batch_id 无跑次位，同卡同日幂等塌 1）
+  recorded_at: '2026-10-13T14:46:45+00:00'
+  recorded_by: st-mineloop2-20261012
+- batch_id: examcard:TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版:2026-10-13:mineloop-07b_off_A-07b_熔断五级梯度减仓对照_复位阶梯锚
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail；六跑判别位补记（run_card 的 batch_id 无跑次位，同卡同日幂等塌 1）
+  recorded_at: '2026-10-13T14:46:45+00:00'
+  recorded_by: st-mineloop2-20261012
+- batch_id: examcard:TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版:2026-10-13:mineloop-07b_off_B-07b_熔断五级梯度减仓对照_复位阶梯锚
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail；六跑判别位补记（run_card 的 batch_id 无跑次位，同卡同日幂等塌 1）
+  recorded_at: '2026-10-13T14:46:45+00:00'
+  recorded_by: st-mineloop2-20261012
 - batch_id: fexam-strategies-20261006
   n_trials: 0
   kind: fexam_strategy_batch
