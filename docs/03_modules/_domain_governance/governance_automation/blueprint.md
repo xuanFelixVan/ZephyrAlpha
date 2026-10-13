@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.5.38
+version: 5.5.39
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
@@ -1458,6 +1458,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/data/dr/test_backup_lock_stale.py` | ✅ 已实现 | |
 | `tests/gov/governance/d3_metadata/test_batch_creation_tokens.py` | ✅ 已实现 | |
 | `tests/gov/governance/d3_metadata/test_check_naming_check_new.py` | ✅ 已实现 | |
 | `tests/gov/governance/d3_metadata/test_check_naming_display_dichotomy.py` | ✅ 已实现 | |
@@ -1468,6 +1469,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 | `tests/gov/governance/d3_metadata/test_pattern_code_fingerprint.py` | ✅ 已实现 | |
 | `tests/gov/governance/d5_architecture/__init__.py` | ⚠️ 骨架 | |
 | `tests/gov/governance/d5_architecture/test_check_vocab_domain_convergence.py` | ✅ 已实现 | |
+| `tests/gov/governance/governance_e2e/test_naming_e2e.py` | ✅ 已实现 | |
 | `tests/gov/governance/governance_e2e/test_validate_rule_frontmatter_red_blue.py` | ✅ 已实现 | |
 | `tests/gov/governance/lifecycle/test_validate_module_lifecycle.py` | ✅ 已实现 | |
 | `tests/gov/governance/test_redblue_governance.py` | ✅ 已实现 | |

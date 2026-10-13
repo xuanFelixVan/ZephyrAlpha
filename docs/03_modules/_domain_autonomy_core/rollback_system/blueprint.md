@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
 doc_type: blueprint
 status: Active
-version: 9.0.15
+version: 9.0.16
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: execution
@@ -1683,9 +1683,14 @@ STEP 3: 拆分后验证
 | `tests/ai/intent/test_intent_archiver.py` | ✅ 已实现 | |
 | `tests/ai/model/test_model_drift_detector.py` | ✅ 已实现 | |
 | `tests/ai/model/test_model_version_detector.py` | ✅ 已实现 | |
+| `tests/gov/governance/compliance/test_owner_absent.py` | ✅ 已实现 | |
+| `tests/gov/governance/compliance/test_right_to_be_forgotten.py` | ✅ 已实现 | |
 | `tests/gov/governance/data_layer/test_s3_snapshot_lifecycle.py` | ✅ 已实现 | |
 | `tests/gov/governance/data_layer/test_sqlite_dumper.py` | ✅ 已实现 | |
 | `tests/gov/governance/delegation/test_continuous_trust.py` | ✅ 已实现 | |
+| `tests/gov/governance/drift/test_governance_drift_fix.py` | ✅ 已实现 | |
+| `tests/gov/governance/escalation/test_alternative_path_blocker.py` | ✅ 已实现 | |
+| `tests/gov/governance/escalation/test_result_types.py` | ✅ 已实现 | |
 | `tests/gov/governance/governance_misc/test_governance_result_types.py` | ✅ 已实现 | |
 | `tests/gov/governance/integration/test_api_response_sanitizer.py` | ✅ 已实现 | |
 | `tests/gov/governance/integration/test_contract.py` | ✅ 已实现 | |

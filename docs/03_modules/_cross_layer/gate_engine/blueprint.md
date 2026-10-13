@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.52"
+version: "0.8.53"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1521,8 +1521,17 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `tests/gov/governance/audit/test_tdm_mount_coverage_reconciler.py` | ✅ 已实现 | |
 | `tests/gov/governance/commit_gates/map_family/test_dev_delivery_map_gate.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/map_family/test_trading_day_cycle_map_gate.py` | ✅ 已实现 | |
 | `tests/gov/governance/commit_gates/test_construction_workflow_map_gate.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/test_create_guard_pg_token_source.py` | ✅ 已实现 | |
 | `tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/test_syntax_validation_gate.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/test_test_residue_ssot_gate.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/test_tests_coverage_gate.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/test_translation_coverage_gate.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/test_undefined_name_gate.py` | ✅ 已实现 | |
+| `tests/gov/governance/commit_gates/test_worktree_required_gate.py` | ✅ 已实现 | |
+| `tests/governance/commit_gates/test_tdm_mount_coverage_gate.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

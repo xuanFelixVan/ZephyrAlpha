@@ -5,7 +5,7 @@ title: "灾备备份系统蓝图 v2.0 — robocopy代码镜像+VHDX虚拟硬盘C
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "2.0.9"
+version: "2.0.10"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -42,7 +42,7 @@ responsibility_domain:
 build_status: generated
 design_maturity: production
 ---
-> module_id: MOD-INF-043 | version: 2.0.9 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-043 | version: 2.0.10 | status: active | layer: L0_infrastructure
 > actual_disk_path: scripts/backup/ | generation: 2 | construction_progress: completed
 
 # 灾备备份系统蓝图 v2.0 — robocopy代码镜像+VHDX虚拟硬盘CH备份+DB dump+VM全量+校验+报告
@@ -646,6 +646,10 @@ robocopy /MIR 每次执行覆盖镜像——始终保留最新一份，无历史
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/data/backup/test_restore_drill.py` | ✅ 已实现 | |
+| `tests/data/dr/test_backup_copy_share.py` | ✅ 已实现 | |
+| `tests/data/dr/test_backup_lock_semantics.py` | ✅ 已实现 | |
+| `tests/data/dr/test_restore_from_backup.py` | ✅ 已实现 | |
 | `tests/meta/scripts/backup/test_backup_ch_vm_autocheck.py` | ✅ 已实现 | |
 | `tests/meta/scripts/backup/test_backup_mirror_deletion_cap.py` | ✅ 已实现 | |
 | `tests/meta/scripts/backup/test_vm_image_source_choice.py` | ✅ 已实现 | |

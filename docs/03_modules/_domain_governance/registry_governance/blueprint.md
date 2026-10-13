@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/registry_governance.py
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.16"
+version: "0.2.17"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -1198,7 +1198,13 @@ class OverlapResult:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/ai/ai_layer/redline/test_annual_review.py` | ✅ 已实现 | |
+| `tests/ai/ai_layer/redline/test_negative_list.py` | ✅ 已实现 | |
+| `tests/ai/ai_layer/redline/test_session_env_guard.py` | ✅ 已实现 | |
+| `tests/ai/ai_layer/redline/test_sev_router.py` | ✅ 已实现 | |
 | `tests/ai/ai_layer/test_c6_ai_layer_routes.py` | ✅ 已实现 | |
+| `tests/gov/governance/rule_bridge/test_session_worktree_merge_preflight.py` | ✅ 已实现 | |
+| `tests/gov/governance/test_registry_ledger_context_anchor.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

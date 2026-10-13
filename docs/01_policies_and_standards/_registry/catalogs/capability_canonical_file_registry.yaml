@@ -38395,6 +38395,11 @@ creation_tokens:
   capability: condaxis_p3_design
   created_by: st-condaxis-20261013
   merge_evaluation: "P3 端到端设计册（四腿组合口径+全绿预注册定义+执行序），替代无（战役终局设计首建），内收 w5_1 不并（设计底稿非规则数据）"
+- file: docs/_working/condaxis/03_p3_results.md
+  token: condaxis-p3-results-03-p3-results-20261013
+  capability: condaxis_p3_results
+  created_by: st-condaxis-20261013
+  merge_evaluation: "P3 端到端结果册（双尺锚点评估/四腿组合/分层回测/红蓝对抗/循环自检），替代无（战役终局结果首建），内收 w5_1 不并（结果底稿非规则数据）"
 - file: docs/_working/condaxis/capital/00_skeleton.md
   token: condaxis-mining-workbooks-00-skeleton-20261013
   capability: condaxis_mining_workbooks
@@ -38799,6 +38804,11 @@ creation_tokens:
   capability: deadclean
   created_by: st-deadclean-20261013
   merge_evaluation: "沿用 finalclean2_campaign 的 waveN/lanes 案卷惯例，不新建第二真源；立法全部并句入既有 AGENTS/政策册与既有脚本段，新增规则条目=0、新增 gate=0、新增脚本=0，测试为两支既有文件追加"
+- file: docs/_working/deadclean_campaign/99_delivery.md
+  token: deadclean-99-delivery-20261013
+  capability: deadclean
+  created_by: st-deadclean-20261013
+  merge_evaluation: "沿用波三/波四 waveN 案卷惯例（00_ledger＋99_delivery 两册同目录），不新建第二真源；本册为收班账非新规则载体"
 - file: docs/_working/deadcure_campaign/00_charter.md
   token: deadcure-campaign-deadcure-campaign-00-charte-20261009
   capability: deadcure-campaign
@@ -45691,11 +45701,21 @@ creation_tokens:
   capability: maint3_shift
   created_by: st-maint3-20261011
   merge_evaluation: "跨域不同对象→不并：维护三班四件各承一面（班账 00_／池面根因案卷 30_／T7 排班输入件 20_／跨车道知会 40_），零新门禁零新真源零判据阈值改动"
+- file: docs/_working/maint4_campaign/00_ledger.md
+  token: maint4-campaign-ledger-00-ledger-20261013
+  capability: maint4_campaign_ledger
+  created_by: st-maint6-20261013
+  merge_evaluation: "净零：代投既有战役台账入库（墓园存证字节回放），非新增能力面、非收编替代"
 - file: docs/_working/maint5_campaign/00_ledger.md
   token: maint5-shift-ledger-00-ledger-20261012
   capability: maint5_shift_ledger
   created_by: st-maint5-20261013
   merge_evaluation: "跨域不同对象→不并：本班班账与前班班账同格式不同属主与不同事实面，按留白规则不得写入他班册，无同真源可派生项"
+- file: docs/_working/maint6_campaign/00_ledger.md
+  token: maint6-campaign-ledger-00-ledger-20261013
+  capability: maint6_campaign_ledger
+  created_by: st-maint6-20261013
+  merge_evaluation: "净零：本班班账为机制内工作文档（战役台账），非新增能力面、非收编替代"
 - file: docs/_working/map_build/00_campaign_brief.md
   token: map-build-00-campaign-brief-20260924
   capability: map_build
@@ -52737,6 +52757,11 @@ creation_tokens:
   token: tdm20-expansion-index-20260922
   capability: tdm20_expansion
   created_by: st-tdm20-20260923
+- file: docs/_working/tdm_goal_structure_research_2026_10_13.md
+  token: tdm-goal-structure-tdm-goal-structure-research-2026-10-13-20261013
+  capability: tdm_goal_structure
+  created_by: st-goaldef-20261013
+  merge_evaluation: "纯新增调研档(task_bound一次性快照)；不替代旧条目——互引 condaxis 呈批包/fullflow 57缺口矩阵/f35一问一考/l9_readiness 在册真源，不重建第二真源（裁定#375 内收）"
 - file: docs/_working/tdm_mount/A_blueprint_id_unification.md
   token: tdm-mount-a-blueprint-id-unification-20261003
   capability: tdm_mount

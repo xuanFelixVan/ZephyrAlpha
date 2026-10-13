@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/escalation
 title: Escalation Protocol 蓝图
 doc_type: blueprint
 status: Active
-version: "2.1.16"
+version: "2.1.17"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1544,6 +1544,9 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/gov/governance/compliance/test_compliance_mapper.py` | ✅ 已实现 | |
+| `tests/gov/governance/compliance/test_human_factors.py` | ✅ 已实现 | |
+| `tests/gov/governance/context_governance/test_command_chain_length_gate.py` | ✅ 已实现 | |
 | `tests/gov/governance/delegation/test_delegation_engine.py` | ✅ 已实现 | |
 | `tests/gov/governance/governance_misc/test_bare_repo_scanner.py` | ✅ 已实现 | |
 | `tests/gov/governance/integration/test_slo_contract.py` | ✅ 已实现 | |

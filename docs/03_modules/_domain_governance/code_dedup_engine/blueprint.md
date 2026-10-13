@@ -5,7 +5,7 @@ submodule_path: src/zephyr/gov_code_quality/code_dedup
 title: "Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复"
 doc_type: blueprint
 status: Active
-version: 0.15.12
+version: 0.15.13
 layer: L0_infrastructure
 layer_note: "跨层模块——代码在基础设施域，但与治理域交互（Gate Engine+AiAuditLogger）"
 layer_name: infrastructure
@@ -1757,12 +1757,17 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/gov/governance/compliance/test_thematic_clusterer.py` | ✅ 已实现 | |
 | `tests/gov/governance/data_layer/test_dedup_cache_manager.py` | ✅ 已实现 | |
 | `tests/gov/governance/data_layer/test_symbol_index.py` | ✅ 已实现 | |
 | `tests/gov/governance/delegation/test_behavioral_sampler.py` | ✅ 已实现 | |
 | `tests/gov/governance/delegation/test_behavioral_trust_checker.py` | ✅ 已实现 | |
 | `tests/gov/governance/delegation/test_consequence_tracker.py` | ✅ 已实现 | |
 | `tests/gov/governance/delegation/test_shadow_trust_validator.py` | ✅ 已实现 | |
+| `tests/gov/governance/drift/test_dead_module_detector.py` | ✅ 已实现 | |
+| `tests/gov/governance/drift/test_diff_detector.py` | ✅ 已实现 | |
+| `tests/gov/governance/drift/test_micro_clone_detector.py` | ✅ 已实现 | |
+| `tests/gov/governance/drift/test_stale_shared_detector.py` | ✅ 已实现 | |
 | `tests/gov/governance/governance_misc/test_annotations.py` | ✅ 已实现 | |
 | `tests/gov/governance/governance_misc/test_mock_duplicate_generator.py` | ✅ 已实现 | |
 | `tests/gov/governance/governance_misc/test_question_tracker.py` | ✅ 已实现 | |

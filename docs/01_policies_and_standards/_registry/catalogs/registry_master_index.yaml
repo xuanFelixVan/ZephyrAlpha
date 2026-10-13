@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 817
+  entry_count: 819
   status: active
 - registry_id: REG-BTB-001
   name: Backtest Object Backlog
@@ -253,7 +253,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 190
+  entry_count: 191
   status: active
 - registry_id: CFG-governance-convergence-map
   name: governance_convergence_map
@@ -277,7 +277,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 106
+  entry_count: 107
   status: active
 - registry_id: CFG-infrastructure-registry
   name: 运行时基础设施登记表
@@ -317,7 +317,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 8096
+  entry_count: 8105
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -405,7 +405,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 308
+  entry_count: 306
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表
@@ -413,7 +413,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 324
+  entry_count: 325
   status: active
 - registry_id: REG-SEAT-001
   name: Seat Registry
