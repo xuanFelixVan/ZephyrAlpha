@@ -170,9 +170,47 @@ def _bucket_response(signal: pd.Series, target: pd.Series, n_buckets: int = 10) 
     }
 
 
+def _forward_face(card: dict) -> tuple[int, bool]:
+    """多日标的前向面申报位（挖矿二班 2026-10-13 立项，统筹署名批准）。
+
+    缺省（两键都不在卡面）＝`(1, False)`＝现行 shift(-1) 次日语义**逐字不变**；既有 178 张
+    preregistered 卡与全部已出分卡的读数面不受本函数影响。
+
+    申报形态（两键必须成对且与目标名自洽，缺一即拒，禁"半申报"静默走次日面）：
+      target_forward_face: precomputed
+      target_horizon_days: <2..252 的整数>
+      target.primary 内须写 `mkt_fwd<h>`（h 与 target_horizon_days 同值）
+    语义：注入的 target **已是 h 日前向读数**（前向聚合在数据侧完成，真源=卡面
+    data_binding.target_source 声明），故执行器不再二次位移；本函数零新增阈值、零新算法，
+    只把"位移几天"这一件事从硬编码改为按卡面冻结值消费。
+    """
+    face = str(card.get("target_forward_face") or "").strip()
+    hraw = card.get("target_horizon_days")
+    if face == "" and hraw is None:
+        return 1, False
+    if face != "precomputed":
+        raise _ToolError(
+            f"卡面 target_forward_face={face!r} 非在册形态（唯一允许值=precomputed）——"
+            "半申报或错拼一律拒，禁退化成次日面静默出分"
+        )
+    if isinstance(hraw, bool) or not isinstance(hraw, int) or not 2 <= hraw <= 252:
+        raise _ToolError(f"卡面 target_horizon_days={hraw!r} 非法（须为 2..252 的整数）——拒出分，禁默认回退次日面")
+    primary = str((card.get("target") or {}).get("primary") or "")
+    m = re.search(r"mkt_fwd(\d+)", primary)
+    if not m or int(m.group(1)) != hraw:
+        raise _ToolError(
+            f"卡面 horizon 自洽性不过，拒出分：target_horizon_days={hraw} 而 target.primary 里的 "
+            f"mkt_fwd{{h}} 读数={m.group(1) if m else '缺失'}——两处冻结值必须同值，禁回退次日面"
+        )
+    return int(hraw), True
+
+
 def _series_metrics(signal: pd.Series, target: pd.Series, card: dict) -> dict:
     sig = signal.sort_index()
-    tgt = target.sort_index().shift(-1)  # 次日目标（PIT：t 信号对 t+1 目标）
+    horizon, precomputed = _forward_face(card)
+    # 次日面（缺省）：t 信号对 t+1 目标，shift(-1) 语义一字未动。
+    # 前向面（卡面成对申报且自洽）：注入值已是第 horizon 日读数，禁二次位移。
+    tgt = target.sort_index() if precomputed else target.sort_index().shift(-1)
     aligned = pd.concat({"s": sig, "t": tgt}, axis=1).dropna()
     ic_ts = _spearman(aligned["s"].to_numpy(), aligned["t"].to_numpy())
     resp = _bucket_response(sig, tgt, _n_buckets_from_card(card))
@@ -836,6 +874,26 @@ def judge_event(card: dict, m: dict) -> tuple[str, list[str]]:
     return ("pass", []) if not fails else ("fail", fails)
 
 
+def _declared_local_faces(card: dict) -> tuple[object, object]:
+    """卡面申报的本地序列装载：data_binding.derived_series（信号侧，class D 同名）＋target_series（目标侧）。
+
+    两键都可缺省；只申报一侧则另一侧仍为 None，由调用方按既有口径 fail-closed。
+    装载口复用 card_binding.load_named_series（同一 SERIES_DIR 与同一列名规则），本函数零新读盘面。
+    """
+    # 导入次序＝先包内相对再包名绝对：本件被 `scripts.backtest.fexam.*` 与 `fexam.*` 两侧分别导入时，
+    # 相对导入总能拿到**调用方同一个** card_binding 模块对象（在册教训：同名两导＝类身份与
+    # monkeypatch 双面分裂，arm_protocol_binding 的 _arm_protocol_module 注释即此坑的既有案卷）。
+    try:
+        from .card_binding import load_named_series as _load
+    except ImportError:
+        try:
+            from fexam.card_binding import load_named_series as _load  # noqa: F401
+        except ImportError:
+            return None, None
+    b = card.get("data_binding") or {}
+    return (_load(b.get("derived_series")), _load(b.get("target_series")))
+
+
 def run_card(
     card_path: str | Path,
     *,
@@ -856,6 +914,12 @@ def run_card(
     kind = card.get("signal_kind")
     if kind not in ("panel", "series"):
         raise _ToolError("卡缺 signal_kind", {"card_id": card.get("card_id")})
+    if signal is None or target is None:
+        # 卡面申报了本地序列名（class D 同形制，物化件=scripts/audit/agg8_series_materialize.py）时按申报装载；
+        # 未申报或件不在＝照旧抛（缺省路径与既有考卷行为逐字不变，禁"装载不到就当作零"静默出分）。
+        sig2, tgt2 = _declared_local_faces(card)
+        signal = sig2 if signal is None else signal
+        target = tgt2 if target is None else target
     if signal is None or target is None:
         raise RuntimeError(
             "缺省 CH 取数面未接（signal_spec/target_spec 绑定属 W4 运行期配置）——"
