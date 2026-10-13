@@ -10,7 +10,7 @@
 #              _store_blob exists 检查失败→从 worktree 重落新 blob，零丢失仅一副本)/全程不持 SerializerLease；
 #              只归档不删除（归档=同卷 os.rename 原子；删除需 FORCE_ENV+Owner 门位另走裁定，本命令永久无删除域）；
 #              候选集恒=孤儿∧mtime 超宽限——A 活引用/B 仅 dead/hold 引用永不入候选（dead 永不清理=66 号 §8 不变量），
-#              C 类不动等 cleanup_done 自然消化，D 类仅归档引用本轮禁碰（phase2 挂起待裁定）；
+#              C 类不动等 cleanup_done 自然消化；D 类（仅归档史引用）默认仍禁碰，--phase 2 显式开＝Owner 2026-10-13 派工令 v2 面 7 已裁「随清袋走、当日不隔夜」，仍只归档不删，且竞态复扫的"仍引用"只数活引用面（不计 ARCHIVE，否则 D 类被自己的归档 JSON 判成在引⇒旗空转）；不开旗时行为逐字不变；
 #              归档史(dead_archive_*/dead_purged_*/dead_triage*.jsonl)只读计入引用集；动作必留 blobs_archive/manifest.jsonl
 #              审计（对齐 purge_audit 先例，相对路径锚定，还原=按 manifest 反向 rename）；测试全 tmp_path 隔离禁触生产队列
 # [MODIFY-GUARD] none（独立子系统，零改动 commit_queue/landing；候选口径变更须同步 QMine M4 簿 §2④ 与本头 INVARIANTS）
@@ -19,7 +19,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 队列根缺 blobs/ → exit 2 拒绝；--restore manifest 缺失 → exit 2；manifest 坏行跳过计数不中断；
 #                  单袋 JSON 损坏 → 跳过计入 skipped；archive 遇 dst 已存在 → 跳过留痕不覆盖
-# [TESTS] tests/governance/test_blob_gc.py
+# [TESTS] tests/meta/scripts/test_blob_gc_phase2.py（2026-10-13 st-deadclean-20261013 补配对；原声明的 tests/governance/test_blob_gc.py 全仓零命中＝在册工具长期无测试）
 # [A_module] module_id=MOD-QCURE-BLOBS | layer=script | stability=volatile | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """blob_gc.py — blobs 内容寻址存储的归档式 GC（QMine M4 承重件；默认 dry-run，归档不删除）。
@@ -198,8 +198,14 @@ def _bucket_of(ref_classes: set[str]) -> str:
     return "mixed"
 
 
-def build_report(queue_root: Path, *, now: datetime, grace_days: float = DEFAULT_GRACE_DAYS) -> dict:
-    """四态扫描+分桶报告（纯只读；孤儿候选=orphan∧mtime 超宽限期）。"""
+def build_report(queue_root: Path, *, now: datetime, grace_days: float = DEFAULT_GRACE_DAYS, phase: int = 1) -> dict:
+    """四态扫描+分桶报告（纯只读）。
+
+    phase=1（缺省，行为逐字不变）：候选=orphan∧mtime 超宽限期。
+    phase=2（Owner 2026-10-13 派工令 v2 面 7 裁定"随清袋走、当日不隔夜"）：候选再加
+    archive_only（D 类）∧超宽限——即"只被归档史引用"的 blob 随归档面一起搬进
+    blobs_archive/，仍**不删**（本命令永久无删除域）。
+    """
     refs, skipped = _scan_refs(queue_root)
     disk = _disk_blobs(queue_root)
     referenced: set[str] = set()
@@ -210,43 +216,58 @@ def build_report(queue_root: Path, *, now: datetime, grace_days: float = DEFAULT
     cutoff = (now - timedelta(days=grace_days)).timestamp()
     candidates: list[str] = []
     candidate_bytes = 0
+    candidate_class: dict[str, str] = {}
+    wanted = {"orphan"} | ({"archive_only"} if phase >= 2 else set())
     for sha, path in sorted(disk.items()):
         ref_classes = {cls for cls, shas in refs.items() if sha in shas}
         bucket = "orphan" if not ref_classes else _bucket_of(ref_classes)
         size = path.stat().st_size
         buckets[bucket]["count"] += 1
         buckets[bucket]["bytes"] += size
-        if bucket == "orphan" and path.stat().st_mtime < cutoff:
+        if bucket in wanted and path.stat().st_mtime < cutoff:
             candidates.append(sha)
             candidate_bytes += size
+            candidate_class[sha] = bucket
     return {
         "mode": "dry-run",
         "generated_at": now.isoformat(timespec="seconds"),
         "queue_root": str(queue_root),
         "grace_days": grace_days,
+        "phase": phase,
         "buckets": buckets,
         "orphan_candidates": {"count": len(candidates), "bytes": candidate_bytes, "shas": candidates},
+        "candidate_class": candidate_class,
         "phantom_refs": phantom,
         "scanned": {"blobs_on_disk": len(disk), "referenced_shas": len(referenced)},
         "skipped": skipped,
         "notes": [
             "删除不在本命令域：归档优于删除（矿簿裁定），删除需 FORCE_ENV+Owner 门位另走裁定",
-            "D 类（仅归档引用）phase2 挂起待裁定，本轮禁碰；B 类 dead 永不清理（66 号 §8 不变量）",
+            "D 类（仅归档引用）phase2 已裁（Owner 2026-10-13 派工令 v2）：--phase 2 随清袋走、"
+            "当日不隔夜，仍只归档不删；不开 phase2 时本轮禁碰＝旧行为",
+            "B 类 dead 永不清理（66 号 §8 不变量）；A 类活引用任何 phase 都禁碰",
             "四层竞态防护：mtime 宽限/动前二次重扫取交集/内容寻址自愈/不持 SerializerLease",
         ],
     }
 
 
-def run_archive(queue_root: Path, *, now: datetime, grace_days: float = DEFAULT_GRACE_DAYS) -> dict:
+def run_archive(queue_root: Path, *, now: datetime, grace_days: float = DEFAULT_GRACE_DAYS, phase: int = 1) -> dict:
     """执行归档：候选集 → 动前二次重扫取交集（竞态第 2 层）→ 同卷 os.rename → manifest 追加留痕。
 
     不做任何删除；blobs_archive/ 仅在确有搬迁时创建（无事发生=零落盘）。
+
+    ⚑ phase2 承重墙（统筹 2026-10-13 已记账）：竞态复扫的"仍引用"只数**活引用面**
+    （A 活引/B dead/C done），ARCHIVE 归档史不计——否则 D 类候选会被自己的归档 JSON
+    判成"仍被引用"而全数跳空，phase2 变成空转旗。Z 类零引用，同一谓词照旧通过；
+    入队竞态（扫描后袋刚进 pending）仍被 A 类抓住，防护层不减。
     """
-    plan = build_report(queue_root, now=now, grace_days=grace_days)
+    plan = build_report(queue_root, now=now, grace_days=grace_days, phase=phase)
     candidates = set(plan["orphan_candidates"]["shas"])
+    candidate_class = plan.get("candidate_class") or {}
     refs, _ = _scan_refs(queue_root)  # 二次重扫：关掉"扫描后袋刚入队"竞态窗
     still_referenced: set[str] = set()
-    for shas in refs.values():
+    for cls, shas in refs.items():
+        if phase >= 2 and cls == ARCHIVE:
+            continue  # 归档史不构成"活引用"，见上承重墙
         still_referenced |= shas
     race_skipped = sorted(candidates & still_referenced)
     to_move = sorted(candidates - still_referenced)
@@ -266,14 +287,16 @@ def run_archive(queue_root: Path, *, now: datetime, grace_days: float = DEFAULT_
                 continue
             stat = src.stat()
             os.rename(src, dst)  # 同分区原子改名，无拷贝窗口
+            cls = candidate_class.get(sha, "orphan")
             record = {
                 "action": "archive",
                 "run_id": run_id,
                 "sha": sha,
                 "size_bytes": stat.st_size,
                 "mtime": datetime.fromtimestamp(stat.st_mtime).astimezone().isoformat(timespec="seconds"),
-                "class": "orphan",
-                "src_verdict": f"orphan&mtime>{grace_days:g}d",
+                "class": cls,
+                "src_verdict": f"{cls}&mtime>{grace_days:g}d",
+                "phase": phase,
                 "grace_days": grace_days,
                 "src_path": f"{BLOBS_DIR}/{sha}",
                 "dst_path": f"{ARCHIVE_DIR}/{sha}",
@@ -402,10 +425,24 @@ def main(argv: list[str] | None = None, *, queue_root: str | os.PathLike | None 
         help=f"mtime 宽限天数（默认 {DEFAULT_GRACE_DAYS:g}=done TTL 同节奏）",
     )
     parser.add_argument("--restore", metavar="MANIFEST", help="按 manifest 反向 rename 逆向恢复（互斥于 --archive）")
+    parser.add_argument(
+        "--phase",
+        type=int,
+        choices=(1, 2),
+        default=1,
+        help="1=仅 Z 类孤儿（旧行为，逐字不变）；2=再加 D 类（仅归档史引用）随清袋走——"
+        "Owner 2026-10-13 派工令 v2 面 7 已裁「随清袋走、当日不隔夜」；两类均只归档不删",
+    )
     parser.add_argument("--json", action="store_true", help="机器 JSON 输出（stdout，永不落盘 .runtime）")
     args = parser.parse_args(argv)
     if args.grace_days < 0:
         parser.error("--grace-days 必须 >= 0")
+    if args.phase == 2 and not args.archive and not args.restore:
+        print(
+            "[blob-gc] 注：--phase 2 只影响 --archive 的候选集；"
+            "不带 --archive 时本报告仍按 phase 划分候选（dry-run 零写）",
+            file=sys.stderr,
+        )
     now = datetime.now().astimezone()
     try:
         if args.restore:
@@ -413,9 +450,9 @@ def main(argv: list[str] | None = None, *, queue_root: str | os.PathLike | None 
         else:
             root = Path(queue_root) if queue_root is not None else load_queue_resolver()(queue_root)
             report = (
-                run_archive(root, now=now, grace_days=args.grace_days)
+                run_archive(root, now=now, grace_days=args.grace_days, phase=args.phase)
                 if args.archive
-                else build_report(root, now=now, grace_days=args.grace_days)
+                else build_report(root, now=now, grace_days=args.grace_days, phase=args.phase)
             )
     except FileNotFoundError as exc:
         print(f"[blob-gc] {exc}", file=sys.stderr)
