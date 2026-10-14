@@ -1663,3 +1663,26 @@ Test-CapacityGuardBreach : 无法将“Test-CapacityGuardBreach”项识别为 c
   **本班不自选此路**：它把一个已获 Owner 四分法批复的动作（A 腿点火）改成交付半途形态，且动的是判据的**读取面**。按"执行者不自裁、把选择权交回"的在册纪律，摊给统筹**二选一**＝①**清面**（对 `st-infoaxis-20261013`／`st-cdx-sent-20261013` 做真接管，12 件整袋一次落地，A 腿随即点火）②**拆册**（8 件先落，裁定与 token 两册随清面后补投，A 腿延后到裁定行入册）。两条都给：本条上方"留给下一班的三条命令"仍逐字有效。
 - **本班终态一句话**：P2 读数与两份文档已在 dev（`6afe494afe`／`0feacd9eed`）；型A 一族字节在**两处**存活＝车道 index（13 件）＋袋快照（`dead/q-…-0008.json` 与其 blobs）；A 腿未点火；车道与 claim **有意保留不撤**（撤＝把唯一存活面交回无主区），待统筹按上述二选一改判后再收。
 - **署名**：adjudicator=st-bakdr-20261013（收口补账：docs 袋落地读回＋基底病根新证＋第五条路及其三条代价；不自选、不动判据读取面、不改已发布历史）。
+
+## 收口再补：claim 面更正＋车道脏面来源查清（st-bakdr-20261013，2026-10-14 13:4x-13:5x）
+
+- **先更正一处刚落地（`f4ac403cd`，13:44:24）文本里的事实错误，旧案留册不抹**：上一节与"收口班账"②.2 条写着"车道与 13 件 claim **有意保留不撤**"。13:4x 实测＝**该说法不成立**：`python scripts/lock_files.py list --session st-bakdr-20261013` → `CLEAN — 持有者 st-bakdr-20261013 无任何文件锁`（`release-all` 亦回"没有持有任何锁"），`session_registry.json` 本班条目 `held_files=[]`。成因＝`acquire` 缺省 TTL 30 分钟，本班最后一批锁（12:3x 随袋8 入队续租、13:2x 手工 acquire 两件）自然到期，**不是本班主动 release**——收班序列第 2 条（release 全部自家 claim）因此**达成，但达成方式是到期不是动作**，如实记，不占"我已收锁"的功。
+- **随之作废的是一条推理**：上一节把"保留 claim"说成"撤＝把唯一存活面交回无主区"。这句错了，当场承认：**claim 锁不保存字节**，只挡他班进场。字节存活面另在两处＝①车道工作树 ②袋快照 `dead/q-20261014-st-bakdr-20261013-0008.json` 的 `files[].blob_ref`。保留 claim 的真实代价反而是**挡住统筹派来的抢救班与热册他班**（本班三本热册的锁恰在 infoaxis/归档各族要用的路径上），本班不占这个便宜。
+- **车道脏面的来源已查清（原判"外来污染"是过度警觉，实测为已落地内容的同步回填）**：13:5x 实测 `git -C .worktrees/st-bakdr-20261013 status --porcelain` ＝ **22 行**，比本班交付面多出 9 行。分层核账（不按状态位整批处置，按 `lane-dirt-cleanup-must-whitelist-own-work` 在册纪律）：
+  - **本班面 13 行**＝首列非空者（12 件套＋已落地的 `00_ledger.md` 旧 staged 态）；
+  - **外来 8 行**＝`src/zephyr/gov_enforcement/commit_gates/` 四门件（`_diff_helpers.py`/`manual_only_permanent_gate.py`/`perm_trigger_gate.py`/`syntax_validation_gate.py`）＋`tests/gov/governance/commit_gates/` 四测件，车道 mtime 13:25:21，正对 dev 上 **`c7ef3e7e53`（维护七班·车道A 甲码面先行袋，13:25）**；抽 `_diff_helpers.py` 与 `test_perm_trigger_gate.py` 逐字节对拍：车道 `git hash-object` ＝ 主区同件 ＝ `4cd874647012`/`94f959e561fa` **同值**；
+  - **未跟踪 1 行**＝`docs/_working/infoaxis/`（2 件，车道 mtime 13:17:47），两件 `hash-object` 与 `dev:<路径>` rev-parse **全等**（`6f1df8643553`）。
+  ⇒ 结论＝这 9 行**全部是"已在 dev 的字节"被回填进本班车道**（车道 HEAD 仍停 `9ee25793bc`，故对车道呈"脏"），**不是**他班未落地工作被塞进我车道。真实残留风险只有一条形态性的：**谁若对本车道跑整树 `git add -A`／整树 merge，会把这 9 行按"本车道改动"计入**（内容因与 dev 同值不会造成语义损坏，但归属账面会脏）。故接手班取件必须**按文件名白名单取 12 件**，勿整树搬。
+- **车道保留判据（理由换承重，结论不变）**：留车道不是为保 claim（已无锁），而是 `session_worktree.py archive --execute` 会移除工作树＝**抹掉上面①面**，只剩②袋快照；而 blobs 面按在册机制可被死信放量流程搬迁（统筹 13:06 放量三班令自述"硬前置＝bakdr/infoaxis 两 sid 抢救名单保全"＝同向判断）。故本班**不执行 archive**，交回统筹在"清面／拆册"二选一后定：走清面＝车道留着等 12 件整袋复投；走拆册＝先从车道取 8 件再收车道。
+- **两面复量命令（本节正文抽出，13:5x 已在真值面跑通；先取字节再动车道）**：
+
+  ```
+  # 面①：车道工作树（期望＝22 行；本班交付面只看首列非空的 13 行）
+  git -C D:/ZephyrAlpha/.worktrees/st-bakdr-20261013 status --porcelain
+  # 面②：死袋 blob（期望＝12 项，逐项 blob_sha256 前缀如下，可逐件与车道字节对拍）
+  python -c "import json,pathlib;d=json.loads(pathlib.Path('.runtime/commit_queue/dead/q-20261014-st-bakdr-20261013-0008.json').read_text(encoding='utf-8'));print(len(d['files']));print(*[f['path']+' '+f['blob_sha256'][:12] for f in d['files']],sep=chr(10))"
+  ```
+
+  面②实测 12 项逐名读数（本机 13:5x 原样跑通）＝`dr_drill_plan.md 22bd10d68728`｜`scripts/backup/ch_vm_config_snapshot.py c6f9ffafd170`｜`scripts/backup/restore_drill.py 1851d17ee68a`｜`scripts/tasks/register/register_ch_vm_config_snapshot_task.ps1 9bcc961671e2`｜`tests/data/backup/test_ch_vm_config_snapshot.py 82b14d659c91`｜`tests/data/backup/test_restore_drill.py d3ab8c078e0f`｜`scripts/governance/generators/generate_resource_profile_registry.py b620a930a179`｜`config/resource_profile_registry.yaml d9f1a0baf976`｜`scripts/governance/script_manifest.yaml 4c5ae1a3d4e2`｜`capability_canonical_file_registry.yaml 6cf53e3e2713`｜`ruling_registry.yaml 437993e2f84f`｜`module_translation_registry.yaml 41a9037ebe01`。**注**：本册（`00_ledger.md`）**不在**袋8 的 12 项内——它随袋10/袋11 已落地 dev，勿按此清单找它。
+- **终态（与上一节同口径）**：dev 面已落＝`6afe494afe`（P2 读数）＋`0feacd9eed`（更正节＋收口班账＋方案册 217 行）＋`f4ac403cd`（收口补账）＋本节待落；**代码族 12 件仍未落地**，挡口＝跨班 TAKEOVER-PENDING 两条陈旧条目（他班面，本班零触碰、未 `--scan`）；A 腿未点火（其 P2 裁定门读 YAML 投影，裁定 517 行未入册）；本班 claim 锁面＝空（到期）；车道＝在，保留理由按本节改判据。
+- **署名**：adjudicator=st-bakdr-20261013（收口再补：claim 事实更正＋车道 22 行分层核账与来源查清＋两面复量命令实测读数；主动认错一处刚落地叙述与一条错误推理，不改已发布历史）。
