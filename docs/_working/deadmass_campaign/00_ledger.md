@@ -676,3 +676,29 @@ MUTABLE-CONST-WITHOUT-FINAL 2／PERMANENT-SYSTEM-TRIGGER 2／MSG-EXPOSURE 1／DE
 4. **23 枚 `HOLD_UNIQUE_NOT_TOMBSTORED`**（多数属抢救两族）：唯一面未入墓园即不放行，判据零放宽；需统筹先定两族归属再存证。
 5. 本班未建 `99_delivery_shift4.md`（派工令仅要求本账追加＋单袋）；未动 capability 册与 `docs/01/**`（L1）、`docs/03_modules/**` 与 `.gitignore`（L3）、CH 数据。
 6. 收班即清：本班心跳守护与保活腿按收班序列撤（车道壳未建，无工棚残留）；`.runtime/tmp/chiefdead4_*` 为一次性件，不入库。
+
+### 8. 交付袋与收班（20:1x–21:1x）
+
+| 项 | 读数 | 时刻 |
+|---|---|---|
+| 班账本册交付袋 | `q-20261014-st-chiefdead4-20261014-0002`（files=1，仅 `docs/_working/deadmass_campaign/00_ledger.md`）→ **state=done，`landed_id=9c47b668950ad13c5f500ff9d621630d930382d5`** | 入队 20:37:37／落地 21:1x 实测 |
+| 首投 `q-…0001` 死于自身 ghost | `ghost_session: 属主会话 st-chiefdead4-20261014 已死（heartbeat=exited / 注册表无在册），自动重投被存活闸拒绝（裁定#459；CLI 手动 requeue 不受闸限，人工可强制）` | 20:19:48 入队／20:2x 判死 |
+
+⚑ **本班自犯第二条（正撞派工令点名的今日头号死因，全账最该记的一条）**：
+班账首投袋 **死于我自己的会话被判幽灵** —— 我用 `nohup … &` 起的心跳守护被会话回收，
+注册分片随之被收割，于是"无心跳会话被判死"这条链完整落在自己身上，挡了自己的袋，制造 1 枚新死信。
+修因三步（实测读回）：①`register(sid, pid=0, logical=True)`（在册活会话 `st-condaxis-20261013` 同款 `logical=true`，
+非 logical 的分片会被快速收割）；②**先注册后起守护**（顺序颠倒则守护 3 秒内自退，实测两次）；
+③守护用 `python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <sid> . 30` 包模块入口。
+复活后 `heartbeat_last_status=alive` ＋ `list_active_readonly()` 命中 ⇒ 新袋 **0002 一次落地**。
+`requeue 0001 --from-bag` 被**复发熔断**拦（同签名窗内 493 次、距上次 ≤7 天衰减窗）——
+按在册语义"熔断拦盲重投不拦新袋"，改投新袋 0002，**未用 `--force`**。
+0001 的内容已随 0002 落地 ⇒ 判 (a) 已取代型，交归档腿等窗清理（本册收笔时仍在等窗，见下）。
+
+**⚑ 尺度教训（留给下一班）**：本仓"保活"是三本账——**心跳文件／注册分片／守护进程**——任一本断链即自变幽灵；
+只验 `heartbeat_last_status` 会假绿，必须同时验 `list_active_readonly()` 命中。
+
+**未竟（如实登记，不写成"已清"）**：`q-20261014-st-chiefdead4-20261014-0001` 归档腿在 21:19 起等 serializer 空窗，
+本册收笔时仍在等（holder_pid=40328 `drain-active` 连续复持）——按红线"租约闸不越"不抢不停带。
+该枚内容已由 0002 落地，零丢失风险，留下一班或自然空窗时按同一命令清理：
+`python scripts/commit_queue.py dead-archive --content-level --days 0 --session st-chiefdead4-20261014 --execute`。
