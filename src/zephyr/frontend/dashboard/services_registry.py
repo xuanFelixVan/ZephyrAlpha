@@ -143,6 +143,32 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
             "kill_patterns": [r"start_tick_subscriber\.ps1", r"zephyr\.data\.tick_subscriber"],
         },
     },
+    {
+        "id": "dashboard_api",
+        "group": "data",
+        "tier": "confirm",
+        "name": "仪表盘 API",
+        "desc": "面板数据后端（端口 8890）——2026-10-14 起开机自启常驻（Owner 裁定），桌面壳打开时自动复用不双起；关掉后面板进断线·演示态",
+        "detect": {
+            "type": "heartbeat",
+            "file": "dashboard_api.heartbeat",
+            "biz": "dashboard.heartbeat",
+            "task": "ZephyrAlpha_DashboardAPI",
+        },
+        "start": [
+            "powershell",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            "scripts/start_dashboard_api.ps1",
+        ],
+        "stop": {
+            "how": "heartbeat",
+            "task": "ZephyrAlpha_DashboardAPI",
+            "kill_patterns": [r"start_dashboard_api\.ps1", r"zephyr\.frontend\.dashboard\.api_server"],
+        },
+    },
     # 开关型软服务（非进程）：调度器内的 nightly_sentiment 时段（08:20 日频）标记文件闸——
     # 停=写 data/runtime/nightly_sentiment.disabled（下一次触发起跳过），启=删标记；调度器无需重启
     {

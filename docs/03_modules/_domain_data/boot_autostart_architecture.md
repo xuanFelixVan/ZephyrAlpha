@@ -8,7 +8,7 @@ layer_name: data_source
 functional_domain: data
 date: "2026-07-27"
 version: "1.0.0"
-last_updated: "2026-08-07"
+last_updated: "2026-10-14"
 ttl: permanent
 language: zh
 created_by: human_plus_agent
@@ -19,7 +19,7 @@ design_maturity: design
 
 # Boot Autostart Architecture
 
-> Module: D_DATA / scripts.start_scheduler / scripts.start_tick_subscriber / scripts.register_aux_tasks
+> Module: D_DATA / scripts.start_scheduler / scripts.start_tick_subscriber / scripts.start_dashboard_api / scripts.register_aux_tasks
 > Last updated: 2026-07-27
 > Status: production (legacy Startup folder entries removed 2026-07-27)
 
@@ -47,6 +47,7 @@ The architecture must meet seven constraints derived from first principles:
 |---|---|---|---|
 | Data Scheduler | `ZephyrAlpha_DataScheduler` | AtLogOn + PT5M heartbeat | scripts/start_scheduler.ps1 |
 | Tick Subscriber | `ZephyrAlpha_TickSubscriber` | AtLogOn + PT5M heartbeat | scripts/start_tick_subscriber.ps1 |
+| Dashboard API | `ZephyrAlpha_DashboardAPI` | AtLogOn + PT5M heartbeat | scripts/start_dashboard_api.ps1 |
 | RSSHub | `ZephyrAlpha_RSSHub` | AtLogOn | `pm2 resurrect` (hidden) |
 | Trae Cache Cleanup | `ZephyrAlpha_TraeCacheCleanup` | AtLogOn + PT30S delay | clean_trae_cache.ps1 |
 | Process Reaper | `ZephyrAlpha_ProcessReaper` | AtLogOn + PT10M (one-shot) | `pythonw -m zephyr.trading.process_reaper` |
@@ -63,7 +64,7 @@ ExecutionTimeLimit=10min 由 OS 回收挂死实例（dogfood：清理器自身�
 **Task Scheduler is the sole entry point for ZephyrAlpha services.** No Startup folder .bat/.lnk,
 no registry Run entries for ZA services.
 
-## 3. Watchdog Architecture (scheduler / tick_subscriber / ch_health_probe)
+## 3. Watchdog Architecture (scheduler / tick_subscriber / ch_health_probe / dashboard_api)
 
 ```
 Task Scheduler (OS-hosted, MultipleInstances=Parallel, survives user-mode kills)
@@ -379,7 +380,7 @@ finally {
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L00-004` 的 215 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-004` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L00-004` 的 171 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-004` |
 | 数据流图 (dataflow) | 5 个 Dataset / 6 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -390,7 +391,7 @@ finally {
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-L00-004 | MOD-L00-004 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | generated | N/A | — |
-| file_count | 215 文件 | N/A | — |
+| build_status | testing | N/A | — |
+| file_count | 171 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

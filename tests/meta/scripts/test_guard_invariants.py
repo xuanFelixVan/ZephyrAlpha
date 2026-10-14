@@ -27,12 +27,13 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS = REPO_ROOT / "scripts"
 
-# The three watchdog-tier guard scripts (AGENTS.md "watchdog 三服务").
+# The four watchdog-tier guard scripts (AGENTS.md "watchdog 三服务" + dashboard_api 2026-10-14).
 # 2026-10-14 路径对齐 a4b503a16 拆簇（installers→scripts 根；注册契约同批修正）
 GUARD_SCRIPTS = [
     SCRIPTS / "start_scheduler.ps1",
     SCRIPTS / "start_tick_subscriber.ps1",
     SCRIPTS / "start_ch_health_probe.ps1",
+    SCRIPTS / "start_dashboard_api.ps1",
 ]
 REGISTER_GUARD = SCRIPTS / "tasks" / "register" / "register_guard_tasks.ps1"
 REGISTER_AUX = SCRIPTS / "tasks" / "register" / "register_aux_tasks.ps1"

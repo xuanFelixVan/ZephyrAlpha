@@ -30,7 +30,7 @@
 # NEVER Unregister+Register an existing task - Unregister TERMINATES the running guard instance
 # (root cause of silent guard deaths 2026-07-22 23:30-00:48: re-registration killed guards
 # 42196/55188 mid-duty; watchdog revived them, but service needlessly bounced).
-# INT-03 (2026-08-22, 92 D3 ruling): 5th task ZephyrAlpha_TradingWatchdog is registered in
+# INT-03 (2026-08-22, 92 D3 ruling): 6th task ZephyrAlpha_TradingWatchdog is registered in
 # DISABLED state - verified no resident trading production process is running today, so an
 # enabled watchdog would auto-start a process that is not running (= production behavior
 # change). Disabled preserves one-click recovery; enabling is an Owner-window action.
@@ -49,7 +49,12 @@ $services = @(
     # Dead-man switch (#ARCH-BOOT-002 E): one-shot per fire (NOT a while-true guard, no PID lock,
     # no zombie risk). Reads 3 heartbeat files -> alerts if stale >10min. Independent of the 3
     # monitored services. MultipleInstances=Parallel harmless (exits in <1s).
-    @{ TaskName = "ZephyrAlpha_DeadmanSwitch"; Script = "deadman_switch.ps1" }
+    @{ TaskName = "ZephyrAlpha_DeadmanSwitch"; Script = "deadman_switch.ps1" },
+    # Dashboard API (2026-10-14 Owner ruling): panel backend boot-auto-start resident (previously
+    # spawned only when the desktop shell opens; shell closed = down). Shell ensureApi health-probe
+    # reuses the running instance, no double-spawn. Two heartbeat files: guard=dashboard_api.heartbeat,
+    # API process telemetry=dashboard.heartbeat (read by the deadman switch dashboard channel).
+    @{ TaskName = "ZephyrAlpha_DashboardAPI"; Script = "start_dashboard_api.ps1" }
 )
 
 # Settings: ExecutionTimeLimit=0 (unlimited; default 3 days would kill the guard every 3 days!)

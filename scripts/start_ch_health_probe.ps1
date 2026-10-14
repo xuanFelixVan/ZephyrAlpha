@@ -31,7 +31,7 @@
 #   This guard joins scheduler/tick_subscriber watchdog tier, auto-revived within 5min after death.
 #
 # DEPLOY (one-time, no admin): powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1
-#   register_guard_tasks.ps1 now registers all three tasks (scheduler + tick_subscriber + ch_health_probe).
+#   register_guard_tasks.ps1 now registers all four data-domain guard tasks (scheduler + tick_subscriber + ch_health_probe + dashboard_api).
 #
 # IMPORTANT for AI sessions: to (re)start service, use `schtasks /run /tn ZephyrAlpha_CHHealthProbe`
 #   (Task Scheduler detaches from IDE terminal job objects). NEVER Start-Process this guard from an
