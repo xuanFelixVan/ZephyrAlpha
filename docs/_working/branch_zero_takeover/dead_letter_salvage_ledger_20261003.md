@@ -297,3 +297,270 @@ stale claim 挡道（其 worktree dirty=35 有在途成果，本会话不越权�
 2. 文本误报门：源码根治（改 AST 判定）还是维持 noqa 绕行？
 3. 未完成 7 项是否现在开 `st-deadletter-closure-20261014` 车道一次做完？
 4. 本战役是否签封矿令、后续死信工作全转 `st-deadmass*`／`st-wkcure*` 常设班？
+
+
+---
+
+## 四十七·一键指令（新对话自含版，10-14）
+
+> 独立件：`docs/_working/deadletter_cure_20261003/00_skeleton/01_一键指令_死信战役收口_20261014.md`
+> 因 CREATE-GUARD 鸡生蛋（门读 HEAD 的 registry，token 须先行一批入 HEAD，而该批被他人死会话
+> `st-infoaxis-land-20261014` 的 stale claim 挡在热册上，不越权接管）暂未独立入 git，
+> 故先以本章全文追加保底。**新对话复制 BEGIN~END 之间整段即可冷启动。**
+
+# 死信战役收口 —— 一键指令（新对话自含版）
+
+> **用法**：新对话里把 `BEGIN` 与 `END` 之间整段复制粘贴进去即可冷启动。
+> 本文件自含：项目背景 / 上下文浓缩 / 必读文件全路径 / 已完成清单 / 遗留 7 项 /
+> 待裁定 4 条 / 环境坑 / 硬红线。**桌面副本会消失，仓库件才是真源。**
+
+---
+
+## BEGIN（以下整段复制）
+
+### §0 启动块
+
+你是接手 **ZephyrAlpha 仓库（D:\ZephyrAlpha，分支 dev）**「死信治理战役收口」的调查型施工 AI。
+**本轮任务定位：先调查核验，不施工、不改 src/。** 输出带证据指针的《现状核验表》，
+待 Owner 裁定后再动工。
+
+当前 dev HEAD：`81ee2e9c427222197cd3cbff3e0ef9d49ddf9412`（2026-10-14）
+Python 解释器（**必须用这个**）：`C:/Users/fanzi/AppData/Local/Programs/Python/Python312/python.exe`
+
+开工第一步：读下面 §5 的 A 级文件，然后**复验 §6 已完成清单里的每一条是否仍成立**（磁盘面 + HEAD 面双查，
+不凭本指令的文字断言）。发现与本文不符的，**以现读为准并更正本文**。
+
+---
+
+### §1 项目背景（30 秒版）
+
+ZephyrAlpha 是一个 **100% AI 开发**的量化交易 + 治理单体仓。仓库自带一整套"AI 自治治理体系"：
+提交要过几十道门禁（gate）、会话要注册、文件要登记 creation_token、死信要进队列复活。
+
+**死信队列** = `.runtime/commit_queue/`：提交失败时把"当时想提交的文件快照"打包成一只**袋（bag）**存起来，
+等修好问题再重投。2026-10-03 接手时积压 **1,235 只死袋 / 12,798 文件条目 / 2.81GB**，
+本战役（session `st-deadletter-cure-20261003`）的目标就是根治这条链路。
+
+**到 2026-10-14 的战果**：死袋 **1,235 → 98**、`done/` 795、`pending/`=0、`processing/`=0。
+但**这 1,137 袋的消化不是本对话亲手做的**，是 10-05~10-14 后续多支施工队
+（`st-cure-p0*` / `st-deadcure*` / `st-deadmass2,3,3b-20261014` / `st-wkcure*` / `st-deadclean-20261013`）
+接力清偿的 —— 他们把本战役建的**归因引擎**和 **doctor 通道**接过去用了。**结果达成，不冒领执行。**
+
+---
+
+### §2 上下文浓缩（14 条，读完即懂全貌）
+
+1. **bag/base/head 三元组**：`bag_content`=会话当时想提交的字节；`base_content`=建袋时的 HEAD（字段 `base_head`）；
+   `head_content`=今天的 HEAD。三者对拍才能判断这只袋到底"吸收了没有"。
+2. **八类史实归因**：`absorbed`(已吸收) / `migrated`(路径迁移) / `superseded`(被新版本取代) /
+   `newfile_diff`(新建文件内容不同) / `pristine_lost`(原字节丢失) / `never_landed`(从未落地) /
+   `no_base`(缺 base_head) / `no_fp`(缺指纹)。
+3. **不变量 SV（铁律）**：`pristine_lost` / `never_landed` / `newfile_diff` / `no_base` / `no_fp`
+   这五类**永远不许自动销账**（仓内无第二份就等于永久丢失）。
+4. **我 10-03 的误诊，已更正**：我初判"1232/1233 袋卡住是因为路径拆簇/搬迁"，全库归因后
+   `migrated` 仅 **1.9%**；真实大头是 `newfile_diff 23.2%` / `pristine_lost 19.9%` /
+   `superseded 19.7%` / `never_landed 11.6%`。**教训：判"口径不行"之前先排除实现缺陷。**
+5. **回魂（reanimation）病根在仓外**：一条仓外 bash 死循环 `while true; sleep 25; register`
+   不断重注册，把死会话"救活"。证据 `register_rate_guard.jsonl` 14,494 行、约 105 秒节奏。
+   **修法是机制层**（加 `reincarnation_count` 上限 + 存活时长上限），不必杀进程。
+6. **为什么用 `reincarnation_count` 当主判据而不是年龄**：因为 `start_time` 本身会被那个循环改写，
+   用年龄判断会循环论证（实测 c10 条目 `age=0.0h`）。
+7. **doctor 三道铁闸（设计红线，禁止弱化）**：①只动注册元数据，绝不碰业务字节；
+   ②绝不直接 requeue（处方末尾永远是命令，由人决定）；
+   ③同 (session, family) 只自愈一次（`dead_letter_doctor_state.json`）。
+8. **八连死标本**：同一批文件从入队到落地连死 8 次，每次不同门，其中**至少 4 次是"文本误报假门"**
+   而非真问题 → 证明**链路成本的大头不在真门**。
+9. **F 组四道假门（真身是 bug，只做字符串匹配）**：变量名含 `TOKEN` → 判硬编码密钥；
+   出现 `.wait(timeout=` → 判常驻轮询；noqa 理由 <10 字 → 判无效；测试头继承模块 module_id → 判冲突。
+   现状**全靠人工绕行**（改名 / 补 noqa / 改号），每遇一次付一次学费。
+10. **资产损失（本战役自己的坑）**：`docs/_working/deadletter_cure_20261003/` 五子册原稿
+    10-03 写出后**从未入 git**，在多次工作区重置 / AUTO-ENQUEUE stash 隔离中清出且无版本可恢复。
+    **纪律：文档产物写完当批即入 git，不留未跟踪过夜。**
+11. **判"资产不存在"的正确姿势**：本仓 100+ worktree，在途资产常以**未跟踪文件**躺在
+    `.worktrees/` `.aidrafts/` `.qoder/` 等**点开头目录**里。`Glob` 默认忽略点开头目录、
+    `git ls-files` 只列已跟踪 ⇒ **两者为"无" ≠ 资产不存在**。先 `git worktree list` 再跨区深扫。
+12. **堵点本更堵了**：10-03 TOP `GATE-PRECOMMIT-RUN ×50` / `QUEUE-LANDING ×36`
+    → 10-14 17:4x 实读近 24h **共 293 次**（`QUEUE-LANDING ×154`、`GATE-PRECOMMIT-RUN ×79`、`? ×19`）
+    → 10-14 18:0x 再读仍在涨（`QUEUE-LANDING ×155`、`GATE-PRECOMMIT-RUN ×107`、**`TAKEOVER-PENDING ×22`（P50 49s）**）。
+    **11 天翻约 3 倍，且 TAKEOVER-PENDING 已进 TOP3。** 这是最硬的负面结论，数字随时间变化，调查时自己重读。
+13. **AUTO-ENQUEUE 会 stash 工作区**（宪法 §2.8）：提交锁忙转队列后工作区编辑会消失，
+    属 stash 隔离而非丢失；死信 requeue 若工作区已还原会重建空差异 → 必再死信。
+    正确姿势＝重做改动后直连重提。
+14. **ReplacingMergeTree 读侧必须 FINAL**：`c1_market` 全系表日更重灌后双行可共存数日，
+    裸查会读到双份（假收益）。跨列时区比较禁 `Date+INTERVAL` 裸写法。
+
+---
+
+### §3 必读文件（A/B/C/D 四级，全路径）
+
+**A 级（必读，先读这 3 件）**
+- `D:\ZephyrAlpha\docs\_working\branch_zero_takeover\dead_letter_salvage_ledger_20261003.md`
+  ← **§四十六 10-14 收口审计**在这（已入 git，commit `5e2d831fc3`，最可靠的现状真源）
+- `D:\ZephyrAlpha\docs\_working\deadletter_cure_20261003\40_acceptance\20261014_closure_audit.md`
+  ← 收口审计**详版**（含 13 项待办逐项定级表、六道门实证；**未入 git，磁盘件**）
+- `D:\ZephyrAlpha\docs\_working\deadletter_cure_20261003\00_skeleton\README.md` ← 骨架册索引
+
+**B 级（战役设计/施工，要动工前必读）**
+- `D:\ZephyrAlpha\docs\_working\deadletter_cure_20261003\20_design\commit_map_and_slimming_plan.md`
+  ← 48 道提交环 → 7 组地图、F 组四道假门、三套瘦身方案
+- `D:\ZephyrAlpha\docs\_working\deadletter_cure_20261003\30_construction\20261003_construction_log.md`
+  ← 五笔提交施工账、85 新增测试、doctor 三铁闸、八连死标本
+- `D:\ZephyrAlpha\docs\_working\deadletter_cure_20261003\r5_exemption.md` ← 目录名数字后缀豁免标记
+
+**C 级（代码真源，改前必读）**
+- `D:\ZephyrAlpha\src\zephyr\security\access_control\session_concurrency.py`
+  ← 回魂根治本体（`reincarnation_count` / `_is_reanimation` / `_REINCARNATION_LIMIT=5` / `_MAX_SESSION_LIFETIME_SECONDS=6h`）
+- `D:\ZephyrAlpha\scripts\governance\session_takeover_ledger.py`
+  ← 史实归因引擎（`GitBlobReader` / `head_blob_index` / `classify_entry` / `triage_bag` / `sweep_with_attribution`）
+- `D:\ZephyrAlpha\scripts\governance\dead_letter_doctor.py` ← doctor 通道（MOD-GOV-048）
+- `D:\ZephyrAlpha\scripts\commit_queue.py` ← 队列（三次重试告警 / `backfill-base-head` 子命令）
+- `D:\ZephyrAlpha\scripts\governance\commit_queue_landing.py` ← 落地器（`_pool_seal_dead_letter`）
+
+**D 级（其他会话的交接包，与本战役互补，建议并读）**
+- `D:\ZephyrAlpha\docs\_working\external_review_20261014\01_一键指令_新对话自含版.md`（25.8KB，十节自含）
+- `D:\ZephyrAlpha\docs\_working\2026-10-14-HANDOFF-MASTER-PROMPT.md`（十一节，09-18 尽调线视角）
+
+---
+
+### §4 工作文件/数据全路径（调查要查的地方）
+
+**队列**
+- `D:\ZephyrAlpha\.runtime\commit_queue\dead\` （现 98 袋）
+- `D:\ZephyrAlpha\.runtime\commit_queue\done\` （795）
+- `D:\ZephyrAlpha\.runtime\commit_queue\pending\` （0）、`\processing\`（0）、`\dead_archive\`（0）
+- `D:\ZephyrAlpha\.runtime\commit_queue\blobs\` （5,819 个 blob）
+- `D:\ZephyrAlpha\.runtime\commit_queue\doctor_audit.jsonl` （223 条，doctor 实跑证据）
+- `D:\ZephyrAlpha\.runtime\commit_queue\dead_letter_doctor_state.json`（自愈一次的状态位）
+
+**会话/回魂审计**
+- `D:\ZephyrAlpha\.runtime\session_registry.json`
+- `D:\ZephyrAlpha\.runtime\session_registry_audit\register_reanimation.jsonl`（18,634 行）
+- `D:\ZephyrAlpha\.runtime\takeover\resolved\`（已接管条目）
+
+**堵点本**
+- `D:\ZephyrAlpha\.runtime\audit\commit_block_events.jsonl`
+- 溯源：`python scripts/governance/commit_perf_report.py --hours 24`
+
+**注册表（改前必查，多方争抢热册）**
+- `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\capability_canonical_file_registry.yaml`（creation_tokens）
+- `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml`（裁定册，**裁定#479** 在本战役加，含 `approved_paths` + `expires_at: 2026-11-03`）
+- `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\module_translation_registry.yaml`（翻译册）
+
+**测试（注意：目录已搬迁，不是 `tests/governance/`！）**
+- `D:\ZephyrAlpha\tests\gov\governance\test_session_reincarnation_guard.py`（17 例）
+- `D:\ZephyrAlpha\tests\gov\governance\test_dead_letter_attribution.py`（24 例）
+- `D:\ZephyrAlpha\tests\gov\governance\test_dead_letter_doctor.py`（21 例，MOD-GOV-048）
+- `D:\ZephyrAlpha\tests\gov\governance\test_commit_queue_backfill_lane.py`（14 例）
+- 池化封袋测试（MOD-GOV-047）：**文件名待核实**，10-03 时为 `tests/governance/test_pool_dead_letter_seal.py`，
+  现 `tests/governance/` 已不存在，疑似合并进 `tests/gov/governance/test_commit_queue_pool.py` —— **调查时先定位再断言**
+
+**记忆**
+- `D:\ZephyrAlpha\.workbuddy\memory\2026-10-14.md`（今日日志，含本战役收口记录）
+- `D:\ZephyrAlpha\.workbuddy\memory\MEMORY.md`（长期备忘）
+
+---
+
+### §5 已完成清单（14 项，含完成概述 + 复验命令）
+
+| # | 事项 | 状态 | 复验方式 |
+|---|---|---|---|
+| 1 | 五笔提交落地 | ✅ 全在 HEAD，revert 零命中 | `git cat-file -e <sha>^{commit}`；`git log --since=2026-10-03 --grep -i "revert\|回退\|回滚"` |
+| 2 | Layer2 回魂根治（`reincarnation_count` + `_is_reanimation`） | ✅ 在 HEAD | `git show HEAD:src/zephyr/security/access_control/session_concurrency.py \| grep -c reincarnation_count` → 应 **14** |
+| 3 | Layer1 史实归因引擎（八分类 + 迁移感知） | ✅ 在 HEAD | `git show HEAD:scripts/governance/session_takeover_ledger.py \| grep -c "_cat_spec\|classify_entry\|GitBlobReader"` → 应 **18** |
+| 4 | Layer3 doctor 通道（MOD-GOV-048，三铁闸） | ✅ 已投产，**实跑 223 条** | `wc -l .runtime/commit_queue/doctor_audit.jsonl` |
+| 5 | Layer4 三次重试告警 + 强制 base_head | ✅ 生效（袋 base_head 已是真 commit 值） | 抽查 `.runtime/commit_queue/dead/*.json` 的 `base_head` 字段 |
+| 6 | 车道 B 池化封袋补齐 `_pool_seal_dead_letter` | ✅ 随 `2b28c6fbf1` 入树 | `grep -n "_pool_seal_dead_letter" scripts/governance/commit_queue_landing.py` |
+| 7 | 车道 C `backfill-base-head` 子命令 | ✅ 在 `scripts/commit_queue.py` | `python scripts/commit_queue.py backfill-base-head --help` |
+| 8 | 85 项新增测试 | ✅ 4 个文件已入 git（第 5 个待定位） | `git ls-files tests/gov/governance/` |
+| 9 | 裁定#479 登记（含 approved_paths） | ✅ 入册 | `grep -n "479" docs/.../ruling_registry.yaml` |
+| 10 | 翻译册补 doctor 词条 | ✅ 先行批 `ced3a79a63` | — |
+| 11 | 165 孤儿 staged 认领 | ✅ **已被后续班消化**（现 staged 37 件全为他人产物，本战役零残留） | `git diff --cached --name-only` |
+| 12 | 死信 1235→98 | ✅ 达成（执行主体为后续班） | `ls .runtime/commit_queue/dead/*.json \| wc -l` |
+| 13 | 车道 tmp 清理 | ✅ 已清 | `ls .runtime/tmp/ \| grep -i "deadletter"` |
+| 14 | 10-14 收口审计入 git | ✅ `5e2d831fc3`（台账 §四十六，纯尾追加零删除自证） | `git show --stat 5e2d831fc3` |
+
+---
+
+### §6 遗留 7 项（未完成，待施工）
+
+| # | 事项 | 说明 | 入口 |
+|---|---|---|---|
+| E1 | **doctor 自愈升级** | 从"开处方"升级为"自动 apply + 自动 requeue 一次" | `scripts/governance/dead_letter_doctor.py` |
+| E2 | **登记合一 `register_new_module`** | 4 个工具并存 → 收敛为 1 个；预检查磁盘而非 HEAD | `src/zephyr/gov_enforcement/` 内搜索 4 个登记入口 |
+| E3 | **会话活性统一状态机** | A 组 7 个机制（pid/心跳/年龄/reincarnation/手持/看门狗/速率闸）→ 1 个 | `session_concurrency.py` |
+| E4 | **红蓝极限对抗** | 多并发提交 / 中途 kill / 同文件并发编辑。**本对话只做过降级版**（6 次冻结 + 70 测试 + 8 袋实播） | 需新车道 |
+| E5 | **记忆问题库清账** | 2026-10-02/03 记忆条目 + MEMORY.md 里记录的坑逐条销账 | `.workbuddy/memory/` |
+| E6 | **堵点本清账** | `QUEUE-LANDING ×154` / `GATE-PRECOMMIT-RUN ×79` | `.runtime/audit/commit_block_events.jsonl` |
+| E7 | **归因体系自修** | ①salvage_ledger 并发 `open("w")` 全量覆写 ②cat-file spec 注入面 ③cascade_diff 基线不稳 | `session_takeover_ledger.py` |
+
+**另有 2 项磁盘资产待随行入 git（有丢失风险，优先级高）**
+- `docs/_working/deadletter_cure_20261003/` 下 4 件（00/20/30/40）未入 git
+- `capability_canonical_file_registry.yaml` 上已登记的 5 条 creation_token（目录级 1 + 文件级 4）未入 HEAD
+
+---
+
+### §7 待 Owner 裁定 4 条（**你不许自批**）
+
+1. **减门授权**：是否授权弱化 TTL / R5 / VOCAB 三门（改 warn）？—— 弱化红线需人批。
+2. **文本误报门**：`commit_queue_landing.py` 的 `proc.wait(timeout=…)`（第 1622/1627 行）
+   是**源码根治**（改 AST 判定）还是**维持 noqa 绕行**（现状能活但要交学费）？
+3. **E1~E7 是否现在开 `st-deadletter-closure-20261014` 车道一次做完**？
+4. **本战役是否签封矿令**，后续死信工作全转 `st-deadmass*` / `st-wkcure*` 常设班？
+
+---
+
+### §8 环境坑（6 条，踩过）
+
+1. **Python 必须用** `C:/Users/fanzi/AppData/Local/Programs/Python/Python312/python.exe`
+   （managed 3.13 缺 `yaml` / `pydantic`，直接 `ModuleNotFoundError`）。
+2. **pytest 必须带 `--basetemp` 指向系统 TEMP**（如 `C:/Users/fanzi/AppData/Local/Temp/xxx`）：
+   仓内 `.runtime/tmp` 会触发安全删除批量守卫 → 假失败。且**不要**加 `-p no:cacheprovider`（会 INTERNALERROR）。
+3. **`allow_non_worktree` 只是 `GitCommitGateway.commit()` 的 kwarg**，
+   `scripts/commit_queue.py enqueue` **没有这个 CLI 参数**（预检 WORKTREE-REQUIRED 拦时只能用网关直调）。
+4. **CREATE-GUARD 鸡生蛋**：门读的是 **HEAD 的** registry，新文件 token 尚未入 HEAD ⇒
+   必须**两批法**（先单独提交 registry 让 token 入 HEAD，再提交新文件）。
+5. **TAKEOVER-PENDING 自循环**（本次最耗时）：每次网关运行留 claim，进程退出后该 sid 的 pid 即 dead，
+   而 `register` 受 **V5 频率护栏降级（活性锚冻结）** ⇒ **同 sid 重投必撞自身 stale claim**，逐次累积。
+   解法＝**每次重投换唯一 sid** + 提交前用 `session_takeover_ledger.py --resolve <sid> --by <新sid>`
+   清掉本前缀全部遗留 sid（脚本化一次做完）。
+6. **他人死 sid 挡道**：`st-infoaxis-land-20261014` 的 stale claim 命中热册 registry
+   （其 worktree dirty=35 有在途成果）⇒ **不越权接管**，走 `allow_overlap=True` 留痕；
+   本次仍被拦 ⇒ registry 批未成。
+
+---
+
+### §9 硬红线（8 条）
+
+1. **本轮只调查不施工**，不改 `src/`，不动他人文件。
+2. **严禁代提交、代清理**他人改动（主区 porcelain 660+，约 400 为当日他人改动）。
+3. **不变量 SV**：`pristine_lost` / `never_landed` / `newfile_diff` / `no_base` / `no_fp`
+   五类**永不自动销账**。
+4. **doctor 三铁闸**不得弱化（只动元数据 / 不直接 requeue / 同族只自愈一次）。
+5. **不越权接管他人会话**（worktree dirty 有在途成果者尤其）。
+6. **不自批 §7 的 4 条裁定**。
+7. **判"资产不存在"前**必须 `git worktree list` + 跨 `.worktrees/` `.aidrafts/` 点开头目录深扫。
+8. **文档产物写完当批即入 git**，不留未跟踪过夜（本战役已因此丢过 5 个子册）。
+
+---
+
+### §10 唯一合法停止点
+
+完成以下**全部**才可停止并向 Owner 交账：
+① §5 的 14 项逐项复验完毕并给出"仍成立 / 已漂移"结论（漂移项要给证据指针）；
+② §6 的 E1~E7 定位到具体文件与行号；
+③ 2 项磁盘资产（4 件文档 + 5 条 token）的入 git 阻塞原因查清并给出可执行处方；
+④ 输出《现状核验表》落盘到 `docs/_working/deadletter_cure_20261003/40_acceptance/` 并**当批入 git**。
+
+---
+
+## END（复制到此为止）
+
+---
+
+## 附：本指令的生成与校验
+
+- 生成时间 2026-10-14 18:0x，基于当场命令取证（不凭记忆断言）。
+- 文中所有路径**已逐条 `[ -f ]` / `git ls-files` 核验存在**，唯一标注"待核实"的是
+  MOD-GOV-047 池化封袋测试文件名（因 `tests/governance/` 已整体搬迁到 `tests/gov/governance/`）。
+- 与 `docs/_working/external_review_20261014/01_一键指令_新对话自含版.md` 是**不同会话、不同视角**，
+  两件互补，建议并读。
