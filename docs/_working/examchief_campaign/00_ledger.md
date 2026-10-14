@@ -488,3 +488,33 @@ print(r.iloc[0,0], r.iloc[-1,0])"
    两条均 `PYTHONNOUSERSITE=1`＋仓外 `--basetemp`（D:/tmp_qoder/bt_pe1、bt_pe3）。
 7. 完成判据（照 11 稿 frontmatter）：2026-10-21 观察期满且 §5 判据齐 ⇒ 议 enforce（须再批）；
    任一回退条件触发即 `git revert` 本 PE commit，不议不改。
+
+## §七辛-补（甲案对排结论，st-examdx2-20261014）
+
+**结论＝B：存在实质参数/口径差异（四项），非"纯爬坡窗+无 CENTRAL 档"所能解释。** 本班只读诊断：零判据/零卡面/零探针改动、零出分、零 CH 写；CH 只读 15 次（让路窗外、无 override），证据=`.runtime/tmp/examchief/evidence/d8_jia_duipai_evidence_st-examdx2-20261014.yaml`（本班全新实跑；前役 st-examdx-20261014 同题未落账件 `d8_jia_duipai_evidence_st-examdx-20261014.yaml`（14:17，额度中断）留作旁证，其输入侧读数与本班重合）。引用面自证：两造生成端六关键件（02b 卡/02 绑定册/card_binding.py/sector_rrg.py/sector_state_aggregator.py/sector_state_pipeline.py）自探针时点 dev=1f82fcb26206 至今 `git diff --stat` 空输出＋工作树对 HEAD 等值（02b 卡在树呈"staged 删除+未跟踪重建"半成品态、磁盘=HEAD 逐字节等值，归属他班在途，本班不代清）。
+
+逐参数对排（本方在册值＝主区文件:行号；theirs 实测＝CH 只读或其在册代码:行号）：
+
+| # | 参数 | 本方在册（D8 探针承接面） | theirs（sector_state 生成端） | 同/异 |
+|---|---|---|---|---|
+| 1 | 构造式 | RS=100×P_sec/P_bench、RS-Ratio=EMA(RS,10)/EMA(RS,26)×100、RS-Mom 二级同构（02b 卡 signal_derivation :145-148；sector_rrg.py:138-145） | 直调同册 `compute_rrg_series`（sector_state_aggregator.py:416，short/long 不传＝缺省） | 同 |
+| 2 | EMA 跨度/种子 | 10/26；alpha=2/(span+1)、种子=首值无预热（sector_rrg.py:47-48,93-101） | 同一函数同缺省 | 同 |
+| 3 | 中枢/分档边界 | 100 中枢四分、无带宽项（classify_quadrant sector_rrg.py:153-157；02b 卡:54"在册四分规则无带宽参数"；±5 只存在于探针诊断档与 02 卡已废止冻结注） | 同一 classify_quadrant；落库值域实测恰 4 值小写 improving/lagging/leading/weakening、无 CENTRAL（Q5） | 同（带宽两侧生产面皆无——四班 §五·补2 第 4 条归因成立） |
+| 4 | whipsaw 确认 | 无——探针逐日落 raw 象限（probe:104-105；卡面/册均无确认项） | `confirm_quadrant_series` 2 日连续确认后取末点小写（aggregator:417-419；sector_rrg.py:49 DEFAULT_CONFIRM_DAYS=2） | **异（实质）** |
+| 5 | 基准价 | 000300 收盘（c1_market.kline_index where symbol='000300'：card_binding.py:222,404-407；02 绑定册 bench leg :521-526＋审阅注 :546；02b 卡:34-36＝统筹 2026-10-14 增补裁定） | 880001.SH 收盘（c1_market.kline_sector_880：sector_state_pipeline.py:84-88 `_BENCH_SQL`；恰同 sector_rrg.py:120 docstring 缺省意图） | **异（实质，量级最大）**：两基准日收益在可比窗 6/6 日非零差、mean 0.19%/max 0.35%（Q9）；theirs 有效窗（2026-06-01..10-09）两基准比价系统性漂移 +5.738%（本班补测）⇒ RS=100×P/P_bench 水平位移，近 100 边界码大面积翻档 |
+| 6 | 历史窗长 | 全史族面板∩基准日轴＝1257 日（02 绑定册 panel leg 全量 kline880 族面板，装载 SQL card_binding.py:103-109；D8 回执 aligned_days=1257） | 75 交易日硬窗（pipeline:65 `_PANEL_LOOKBACK_DAYS=75`、:66-67 日历 115 日、:236 bench LIMIT 75、aggregator:416 尾切 n=min）⇒ 有效输入 62..75 点 | **异（实质）**：EMA 种子=首值 ⇒ 窗长直接进值；族码 kline880 全史在库（2021-08-02 起 189 码 236387 行，Q4）⇒ 75 日是**管线参数选择、非数据爬坡** |
+| 7 | 最小数据量 | 62 日＝long×2+short，函数自守 raise（sector_rrg.py:132-134；02b 卡:155） | 同源同值（RRG_MIN_LEN=62，aggregator:64-65,412） | 同 |
+| 8 | code_family 宇宙过滤 | families=[industry_l1,industry_ths] 经 sector_code_name_map＝189 码（02 绑定册:516-517；SQL :106-107） | 生成端**无族过滤**——写 kline880 全部面板码（rrg 非空全表 728 码）；族过滤只在读取侧套用 | 比较面同 189 码；生成端 theirs 写超集（结构差，不影响本次宇宙一致性） |
+| 9 | 复权/停牌处理 | 880 指数收盘原值无复权概念；(日,码) anyLast 去重（card_binding.py:104-105）；缺日＝per-code 与基准内连自然落（probe:102） | 同为 880 收盘原值无复权；FINAL+Python (code,date) 去重写胜（pipeline:198-217）；缺日＝尾切 n=min 逐元素 zip **无日期再对齐**（aggregator:416）——实测族码 1/189 在有效窗内日数≠基准（Q8），该码存在日期错配暴露 | 基本同（1 码错配，量级小非主因） |
+| 10 | 时区/日界 | toDate(trade_date)，无时区换算（SQL :104；probe:88） | 同源同式（pipeline 写 kline max(trade_date) 日期面），无换算 | 同 |
+| 11 | 写库时点/stage 语义 | 无落库——探针现算单面 | 双面：close_final ts=15:10 当日鲜算＋pre_open ts=09:15＝**次日贴昨日定格拷贝**（pipeline:425-449，骨架稿§6 设计；Q6 ts 实测吻合）；族码 8 个有值日期＝4 鲜算日（09-24/09-28/09-30/10-08）＋4 拷贝日（09-25/09-29/10-01/10-09，其中 09-25 与 10-01 两 kline 源皆无＝非交易日，Q1/Q7）；**D8 比较面 1134 格中 378 格（33.3%＝09-29、10-09 两日）theirs 值为前一交易日滞后值**（Q3b：探针原式 anyLast 无 stage 过滤 vs close_final-only 分歧 756/1512 格；每 (日,码) 恰一 stage、anyLast 无歧义，滞后是写库面结构性的） | **异（实质）** |
+
+（chief 清单"分位基准"项：两造象限链均无分位基准——RS 比价锚=100 中枢即上表#3；theirs 另有 P90 分位等辅助成分（aggregator:71 `_ROTATION_SPEED_P90`、momentum_pct 多 TF 分位）但**不进 rrg_quadrant 判定**，该项两造同无。）
+
+四项实质差的归口（本班只指格、不代裁改哪端）：
+1. **基准价**：卡面端 000300＝统筹 2026-10-14 增补裁定钉死（02b 卡:34-37，且 :37 已预留"RRG 基准唯一化再统一呈批"口）；管线端 880001.SH＝数据线 pipeline 代码。跨线基准确一化＝统筹/Owner 呈批项。
+2. **窗长 75 日**：数据线 sector_state_pipeline 参数（:65）。
+3. **确认平滑 2 日**：信号线 aggregator（:417-419）vs 考试线卡面承接（无确认项）；对拍基准面取 raw 还是 confirmed 须呈批点名。
+4. **双 stage 滞后格**：theirs 管线设计（盘前=昨日态）×探针读取未滤 stage（庚甲同款读取形态性质；一次性件，本班不代修、只量化）。
+
+对呈批菜单的含义：**乙案前提（两造同口径、分歧属爬坡）不成立**——窗长非数据稀缺（全史在库），基准/确认/写库时点三项不随时间消失，"等 theirs 攒长窗后同探针重跑"会复现 halt；丙案（统筹点名重跑 D8）的机械前置＝先裁四项归一或明示"以哪端为准"对拍，否则任何重跑双触发照旧。另实测对乙案不利的事实：theirs 鲜算面出勤＝8 个有值日仅 4 个 close_final（09-29、10-09 是交易日但只落 pre_open 未落盘后），按此出勤攒鲜算窗速度减半。
