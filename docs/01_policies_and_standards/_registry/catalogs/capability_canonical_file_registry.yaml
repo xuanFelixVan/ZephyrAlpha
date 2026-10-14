@@ -8067,11 +8067,21 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-RX
   merge_evaluation: "过夜总令复挖车道（RX-A/RX-B）新卡与补登记：归 exam_card 族只增不删"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__ablation__03b_quadrant_confirm_leg_10_26_caliber.yaml
+  token: examchief-d10jia-faces-tdm-e-l2-02-1--ablation--03b-quadrant-confirm-leg-10-26-caliber-20261013
+  capability: examchief_d10jia_faces
+  created_by: st-examchief-20261014
+  merge_evaluation: "G4-5 版本卡三枚（Owner 裁 D10 甲＝口径承在册 10/26 式）：不并母卡——母卡冻结面是不可替代的历史口径载体（跨域不同对象→不并）；零新建模块，算子与装载形均扩 card_binding 在册件一面；本班新卡与 L2-02-1/02b 之间同真源可派生的部分是引用关系不是复制（03b/02b 逐字锚 02b）"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__calibration__02_RRG象限迁移.yaml
   token: exam-card-tdm-e-l2-02-1--calibration--02-rrg-20261009
   capability: exam_card
   created_by: st-nightmine-20261010-L1
   merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__calibration__02b_rrg_quadrant_10_26_caliber.yaml
+  token: examchief-d10jia-faces-tdm-e-l2-02-1--calibration--02b-rrg-quadrant-10-26-caliber-20261013
+  capability: examchief_d10jia_faces
+  created_by: st-examchief-20261014
+  merge_evaluation: "G4-5 版本卡三枚（Owner 裁 D10 甲＝口径承在册 10/26 式）：不并母卡——母卡冻结面是不可替代的历史口径载体（跨域不同对象→不并）；零新建模块，算子与装载形均扩 card_binding 在册件一面；本班新卡与 L2-02-1/02b 之间同真源可派生的部分是引用关系不是复制（03b/02b 逐字锚 02b）"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__comparison.yaml
   token: exam-card-tdm-e-l2-02-1--comparison-20261009
   capability: exam_card
@@ -8172,6 +8182,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L1
   merge_evaluation: "过夜总令 L1 车道新卡（六向挖干产物，preregistered/blocked 态）：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__ablation__02b_signal_response_trio_10_26_caliber.yaml
+  token: examchief-d10jia-faces-tdm-e-l2-05-2--ablation--02b-signal-response-trio-10-26-caliber-20261013
+  capability: examchief_d10jia_faces
+  created_by: st-examchief-20261014
+  merge_evaluation: "G4-5 版本卡三枚（Owner 裁 D10 甲＝口径承在册 10/26 式）：不并母卡——母卡冻结面是不可替代的历史口径载体（跨域不同对象→不并）；零新建模块，算子与装载形均扩 card_binding 在册件一面；本班新卡与 L2-02-1/02b 之间同真源可派生的部分是引用关系不是复制（03b/02b 逐字锚 02b）"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__comparison.yaml
   token: exam-card-tdm-e-l2-05-2--comparison-20261009
   capability: exam_card
@@ -8587,6 +8602,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L2
   merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-1__calibration__03_竞价量比_现势窗.yaml
+  token: exam-l3-11-1-v2-auction-20261014
+  capability: intraday_t_features
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P2 做T首刀：一档盘口特征件＋L3-11 v2 现势窗考卡（v1 卡冻结纪律不动留史，v2=独立预注册）；净零=盘口特征唯一供给面"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-1__comparison.yaml
   token: exam-card-tdm-e-l3-11-1--comparison-20261009
   capability: exam_card
@@ -8597,6 +8617,11 @@ creation_tokens:
   capability: exam_card
   created_by: st-nightmine-20261010-L2
   merge_evaluation: "过夜总令 L2 车道个股层新卡：归 exam_card 族只增不删，与 empty 骨架件异对象"
+- file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-2__calibration__03_涨速异动_现势窗.yaml
+  token: exam-l3-11-2-v2-speed-20261014
+  capability: intraday_t_features
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P2 做T首刀：一档盘口特征件＋L3-11 v2 现势窗考卡（v1 卡冻结纪律不动留史，v2=独立预注册）；净零=盘口特征唯一供给面"
 - file: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-2__comparison.yaml
   token: exam-card-tdm-e-l3-11-2--comparison-20261009
   capability: exam_card
@@ -21827,6 +21852,11 @@ creation_tokens:
   token: index-navigation-03-modules-domain-red-blue-validator-20260919
   capability: index_navigation
   created_by: st-final3-20260919
+- file: docs/03_modules/_domain_regime/algo_flow/__init__.yaml
+  token: condaxis-formreg-algo-flow---init---20261013
+  capability: condaxis_formreg_algo_flow
+  created_by: st-condaxis-20261013
+  merge_evaluation: "formreg 五模块 ALGO_FLOW 外部真源卡（drafter+AI 校准），替代无（新卡），内收不并（algo_flow 描述面）"
 - file: docs/03_modules/_domain_regime/algo_flow/a1_sample_sufficiency.yaml
   token: btfix-p1p2-a1-sample-sufficiency-20260915
   capability: btfix_p1p2
@@ -21859,6 +21889,11 @@ creation_tokens:
   token: btfix-p1p2-b4-transition-accuracy-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_regime/algo_flow/bocpd_online.yaml
+  token: condaxis-formreg-algo-flow-bocpd-online-20261013
+  capability: condaxis_formreg_algo_flow
+  created_by: st-condaxis-20261013
+  merge_evaluation: "formreg 五模块 ALGO_FLOW 外部真源卡（drafter+AI 校准），替代无（新卡），内收不并（algo_flow 描述面）"
 - file: docs/03_modules/_domain_regime/algo_flow/chip_distribution_engine.yaml
   token: btfix-p1p2-chip-distribution-engine-20260915
   capability: btfix_p1p2
@@ -21875,6 +21910,11 @@ creation_tokens:
   token: btfix-p1p2-cross-sectional-features-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_regime/algo_flow/cusum_two_sided.yaml
+  token: condaxis-formreg-algo-flow-cusum-two-sided-20261013
+  capability: condaxis_formreg_algo_flow
+  created_by: st-condaxis-20261013
+  merge_evaluation: "formreg 五模块 ALGO_FLOW 外部真源卡（drafter+AI 校准），替代无（新卡），内收不并（algo_flow 描述面）"
 - file: docs/03_modules/_domain_regime/algo_flow/d1_confidence_grid.yaml
   token: btfix-p1p2-d1-confidence-grid-20260915
   capability: btfix_p1p2
@@ -21911,6 +21951,11 @@ creation_tokens:
   token: btfix-p1p2-institutional-regime-scorer-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_regime/algo_flow/jump_layer.yaml
+  token: condaxis-formreg-algo-flow-jump-layer-20261013
+  capability: condaxis_formreg_algo_flow
+  created_by: st-condaxis-20261013
+  merge_evaluation: "formreg 五模块 ALGO_FLOW 外部真源卡（drafter+AI 校准），替代无（新卡），内收不并（algo_flow 描述面）"
 - file: docs/03_modules/_domain_regime/algo_flow/lppl_detector.yaml
   token: btfix-p1p2-lppl-detector-20260915
   capability: btfix_p1p2
@@ -21943,6 +21988,11 @@ creation_tokens:
   token: btfix-p1p2-phase2-runner-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_regime/algo_flow/ps_chronology.yaml
+  token: condaxis-formreg-algo-flow-ps-chronology-20261013
+  capability: condaxis_formreg_algo_flow
+  created_by: st-condaxis-20261013
+  merge_evaluation: "formreg 五模块 ALGO_FLOW 外部真源卡（drafter+AI 校准），替代无（新卡），内收不并（algo_flow 描述面）"
 - file: docs/03_modules/_domain_regime/algo_flow/regime__init__.yaml
   token: btfix-p1p2-regime--init---20260915
   capability: btfix_p1p2
@@ -29398,6 +29448,16 @@ creation_tokens:
   token: working-archive-2026-09-11-commit-queue-dead-zero-closure-20260920
   capability: working_archive
   created_by: st-maxexec-20260920
+- file: docs/_working/archive/2026-09/c_class_scattered/2026-09-11-commit-queue-dead-zero-closure_danger-rows-20260910.md
+  token: working-archive-2026-09-11-commit-queue-dead-zero-closure-danger-rows-20260910-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "dead-zero-closure 拆写两附录（Owner 2026-10-14 裁定：上限 10 不调，逐字分册），替代=母册原位置留指针"
+- file: docs/_working/archive/2026-09/c_class_scattered/2026-09-11-commit-queue-dead-zero-closure_danger-rows-20260911.md
+  token: working-archive-2026-09-11-commit-queue-dead-zero-closure-danger-rows-20260911-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "dead-zero-closure 拆写两附录（Owner 2026-10-14 裁定：上限 10 不调，逐字分册），替代=母册原位置留指针"
 - file: docs/_working/archive/2026-09/c_class_scattered/2026-09-11-crypto-shadow-mvp.md
   token: working-archive-2026-09-11-crypto-shadow-mvp-20260920
   capability: working_archive
@@ -35377,6 +35437,56 @@ creation_tokens:
   capability: chief_fullchain_archive
   created_by: st-workingchief-20261006
   merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/root_sweep/2026-09-18-gate-identity-root-fix-plan.md
+  token: working-archive-2026-09-18-gate-identity-root-fix-plan-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "根面已结案文档收敛归档位（R5 数字后缀改名为 root_sweep），替代=根面原件退役"
+- file: docs/_working/archive/2026-10/root_sweep/2026-09-18-rule-audit-master-construction-plan.md
+  token: working-archive-2026-09-18-rule-audit-master-construction-plan-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "根面已结案文档收敛归档位（R5 数字后缀改名为 root_sweep），替代=根面原件退役"
+- file: docs/_working/archive/2026-10/root_sweep/2026-09-19-overnight-handover-max-shift.md
+  token: working-archive-2026-09-19-overnight-handover-max-shift-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "根面已结案文档收敛归档位（R5 数字后缀改名为 root_sweep），替代=根面原件退役"
+- file: docs/_working/archive/2026-10/root_sweep/2026-09-19-overnight-scope-lock-report.md
+  token: working-archive-2026-09-19-overnight-scope-lock-report-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "根面已结案文档收敛归档位（R5 数字后缀改名为 root_sweep），替代=根面原件退役"
+- file: docs/_working/archive/2026-10/root_sweep/qcure_commit_queue_plan.md
+  token: working-archive-qcure-commit-queue-plan-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "根面已结案文档收敛归档位（R5 数字后缀改名为 root_sweep），替代=根面原件退役"
+- file: docs/_working/archive/2026-10/root_sweep_20261014/2026-09-18-gate-identity-root-fix-plan.md
+  token: working-archive-2026-09-18-gate-identity-root-fix-plan-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "根面已结案文档收敛归档位，替代=根面原件退役，同真源可派生故并一"
+- file: docs/_working/archive/2026-10/root_sweep_20261014/2026-09-18-rule-audit-master-construction-plan.md
+  token: working-archive-2026-09-18-rule-audit-master-construction-plan-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "根面已结案文档收敛归档位，替代=根面原件退役，同真源可派生故并一"
+- file: docs/_working/archive/2026-10/root_sweep_20261014/2026-09-19-overnight-handover-max-shift.md
+  token: working-archive-2026-09-19-overnight-handover-max-shift-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "根面已结案文档收敛归档位，替代=根面原件退役，同真源可派生故并一"
+- file: docs/_working/archive/2026-10/root_sweep_20261014/2026-09-19-overnight-scope-lock-report.md
+  token: working-archive-2026-09-19-overnight-scope-lock-report-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "根面已结案文档收敛归档位，替代=根面原件退役，同真源可派生故并一"
+- file: docs/_working/archive/2026-10/root_sweep_20261014/qcure_commit_queue_plan.md
+  token: working-archive-qcure-commit-queue-plan-20261013
+  capability: working_archive
+  created_by: st-wkcure-chief-20261013
+  merge_evaluation: "根面已结案文档收敛归档位，替代=根面原件退役，同真源可派生故并一"
 - file: docs/_working/archive/2026-10/sector_line/MORNING_REPORT_st-secbuild_20260923.md
   token: chief-archive-202610-28396684
   capability: chief_fullchain_archive
@@ -38615,6 +38725,11 @@ creation_tokens:
   capability: condaxis_sentiment
   created_by: st-cdx-sent-20261013
   merge_evaluation: "情绪线作业簿家族追加第 7/8 册（深史源评估＋P2 施工台账）：无同真源可派生对象（深史源候选盘点与缺日回补留证皆本班新产出），跨域不同对象不并，task_bound 随 CONDAXIS-CAMPAIGN 归档"
+- file: docs/_working/condaxis/sentiment/9_c1c2_replay_consistency.md
+  token: condaxis-duipai-9-c1c2-replay-consistency-20261014
+  capability: condaxis_duipai
+  created_by: st-condaxis-20261013
+  merge_evaluation: "C1/C2 一致性对拍册（两径同尺结论+002264 漏行归因+A 卡防两把尺条款），替代无，内收不并（对拍结果底稿）"
 - file: docs/_working/constland_campaign/00_ledger.md
   token: constland-campaign-00-ledger-20261010
   capability: constland_campaign
@@ -38914,11 +39029,26 @@ creation_tokens:
   capability: deadmass
   created_by: st-deadmass-20261013
   merge_evaluation: "净零：沿用 deadclean/deadcure_campaign 的 00_ledger 案卷惯例，不新建第二真源；本班全部判定走在册 dead-archive 正门与既有墓园 INDEX，新增 gate=0 新增脚本=0"
+- file: docs/_working/deadmass_campaign/40_handoff_addendum.md
+  token: deadmass-40-handoff-addendum-20261013
+  capability: deadmass
+  created_by: st-deadmass-20261013
+  merge_evaluation: "净零：与 99_delivery 同战役同目录的裁定补册（基底时差所致的临时载体），下一班并回 99_delivery 后即作废，非新真源"
+- file: docs/_working/deadmass_campaign/45_incident_taskkill.md
+  token: deadmass-45-incident-taskkill-20261013
+  capability: deadmass
+  created_by: st-deadmass-20261013
+  merge_evaluation: "净零：与 00_/99_/40_ 同战役目录的事故专册（统筹 01:0x 裁定要求成册），非新真源，禁手条落法权在 Owner"
 - file: docs/_working/deadmass_campaign/99_delivery.md
   token: deadmass-99-delivery-20261013
   capability: deadmass
   created_by: st-deadmass-20261013
   merge_evaluation: "净零：沿用 deadclean/finalclean2_campaign 的 00_ledger＋99_delivery 两册同目录惯例，本册为收班账非新规则载体"
+- file: docs/_working/deadmass_campaign/99_delivery_shift2.md
+  token: deadmass2-closeout-99-delivery-shift2-20261013
+  capability: deadmass2_closeout
+  created_by: st-deadmass2-20261014
+  merge_evaluation: "净零：死信放量二班收班册，与同目录 99_delivery（一班册）/00_ledger §八（二班班账）同战役同目录惯例，非新真源"
 - file: docs/_working/decision_map_campaign/links/L05_t0/material_precapacity_sample20_stats.yaml
   token: decision-map-campaign-material-precapacity-sample20-stats-rename-20260925
   capability: decision_map_campaign
@@ -40223,6 +40353,41 @@ creation_tokens:
   capability: examcard_campaign
   created_by: st-examchief-20261009
   merge_evaluation: "战役作业簿族"
+- file: docs/_working/examchief_campaign/00_ledger.md
+  token: examchief-casefile-00-ledger-20261013
+  capability: examchief_casefile
+  created_by: st-examchief-20261014
+  merge_evaluation: "跨域不同对象→不并：变更单＝口径变更判据载体（G4-5 版本序列的依据书），班账＝施工账；两者与矿考二班 00_morning_pack.md 不同班次面，不复制其内容只引锚点；零常驻资产，探针与自证器留 .runtime/tmp（task_bound）"
+- file: docs/_working/examchief_campaign/06_d10jia_change_order.yaml
+  token: examchief-casefile-06-d10jia-change-order-20261013
+  capability: examchief_casefile
+  created_by: st-examchief-20261014
+  merge_evaluation: "跨域不同对象→不并：变更单＝口径变更判据载体（G4-5 版本序列的依据书），班账＝施工账；两者与矿考二班 00_morning_pack.md 不同班次面，不复制其内容只引锚点；零常驻资产，探针与自证器留 .runtime/tmp（task_bound）"
+- file: docs/_working/examchief_campaign/07_batchA_remainder_blocker_dossier.yaml
+  token: examchief-casefile-07-batcha-remainder-blocker-dossier-20261013
+  capability: examchief_casefile
+  created_by: st-examchief-20261014
+  merge_evaluation: "跨域不同对象→不并：07 阻塞案卷＝批-A 余量的可绑性实测面（缺件归口清单），与 06 变更单（口径变更判据载体）与 00 班账（施工账）三件互不派生；零新卡零新码"
+- file: docs/_working/examchief_campaign/08_handoff_next_runner.md
+  token: examchief-casefile-08-handoff-next-runner-20261013
+  capability: examchief_casefile
+  created_by: st-examchief-20261014
+  merge_evaluation: "跨域不同对象→不并：08＝续跑交接包（一次性收班指令面），与 00 施工账/07 阻塞案卷各不同对象；收班后即退场（task_bound）"
+- file: docs/_working/examchief_campaign/09_p0_arm_face_pack_for_approval.yaml
+  token: examchief-casefile-09-p0-arm-face-pack-for-approval-20261013
+  capability: examchief_casefile
+  created_by: st-examchief-20261014
+  merge_evaluation: "跨域不同对象→不并：09＝P0 并包呈批件（判据面变更汇总＋分母实测），10＝跨线连接件（考卷侧→情绪线的数据腿交接）；与 06 变更单/07 阻塞案卷/08 交接包/00 班账各不同对象，互引不复制"
+- file: docs/_working/examchief_campaign/10_crossline_daban_backfill_to_condaxis.yaml
+  token: examchief-casefile-10-crossline-daban-backfill-to-condaxis-20261013
+  capability: examchief_casefile
+  created_by: st-examchief-20261014
+  merge_evaluation: "跨域不同对象→不并：09＝P0 并包呈批件（判据面变更汇总＋分母实测），10＝跨线连接件（考卷侧→情绪线的数据腿交接）；与 06 变更单/07 阻塞案卷/08 交接包/00 班账各不同对象，互引不复制"
+- file: docs/_working/examchief_campaign/11_pe_shadow_plan.yaml
+  token: examchief-casefile-11-pe-shadow-plan-20261013
+  capability: examchief_casefile
+  created_by: st-examchief-20261014
+  merge_evaluation: "跨域不同对象→不并：11＝PE 止血闸实施规约（warn-only/shadow 与回退判据），是 09 包 W-4 条目的落地面，不重复 09 的判据变更表；零新建模块零新配置节"
 - file: docs/_working/examrun_campaign/00_ledger.md
   token: examrun-overnight-b-00-ledger-20261012
   capability: examrun_overnight_b
@@ -45074,6 +45239,51 @@ creation_tokens:
   capability: tdm_goal_structure
   created_by: st-goaldef-20261013
   merge_evaluation: "successor_of=file=docs/_working/tdm_goal_structure_research_2026_10_13.md|token=tdm-goal-structure-tdm-goal-structure-research-2026-10-13-20261013（同实体随迁，FOLDER-CAPACITY 治本）。纯新增调研档(task_bound一次性快照)；不替代旧条目——互引 condaxis 呈批包/fullflow 57缺口矩阵/f35一问一考/l9_readiness 在册真源，不重建第二真源（裁定#375 内收）。"
+- file: docs/_working/infoaxis/00_ledger.md
+  token: infoaxis-ledger-20261013
+  capability: infoaxis_campaign
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "信息轴战役件（campaign/task_bound TTL）；互引 fullflow F 号状态账与 condaxis 呈批包不重建；净零声明=战役台账 §5"
+- file: docs/_working/infoaxis/10_chain_workbook.md
+  token: infoaxis-chain-workbook-20261013
+  capability: infoaxis_campaign
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "信息轴战役件（campaign/task_bound TTL）；互引 fullflow F 号状态账与 condaxis 呈批包不重建；净零声明=战役台账 §5"
+- file: docs/_working/infoaxis/11_equity_workbook.md
+  token: infoaxis-equity-workbook-20261013
+  capability: infoaxis_campaign
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "信息轴战役作业簿（task_bound）六向台账＋自审闸；互引不重建；净零声明=infoaxis/00_ledger.md §5"
+- file: docs/_working/infoaxis/12_research_workbook.md
+  token: infoaxis-research-workbook-20261013
+  capability: infoaxis_campaign
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "信息轴战役作业簿（task_bound）六向台账＋自审闸；互引不重建；净零声明=infoaxis/00_ledger.md §5"
+- file: docs/_working/infoaxis/13_earnings_workbook.md
+  token: infoaxis-earnings-workbook-20261013
+  capability: infoaxis_campaign
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "信息轴战役作业簿（task_bound）六向台账＋自审闸；互引不重建；净零声明=infoaxis/00_ledger.md §5"
+- file: docs/_working/infoaxis/14_retail_ir_workbook.md
+  token: infoaxis-retail-ir-workbook-20261013
+  capability: infoaxis_campaign
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "信息轴战役作业簿（task_bound）六向台账＋自审闸；互引不重建；净零声明=infoaxis/00_ledger.md §5"
+- file: docs/_working/infoaxis/15_intraday_workbook.md
+  token: infoaxis-intraday-workbook-20261013
+  capability: infoaxis_campaign
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "信息轴战役作业簿（task_bound）六向台账＋自审闸；互引不重建；净零声明=infoaxis/00_ledger.md §5"
+- file: docs/_working/infoaxis/20_ruling_package.md
+  token: infoaxis-p1-ruling-package-20261014
+  capability: infoaxis_campaign
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P1 统一呈批包（task_bound）；呈批不空等纪律；净零声明=infoaxis/00_ledger.md §5"
+- file: docs/_working/infoaxis/99_delivery.md
+  token: infoaxis-99-delivery-20261014
+  capability: infoaxis_campaign
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "战役交付文档（task_bound 交接面）；净零声明=infoaxis/00_ledger.md §5"
 - file: docs/_working/infrastructure_pipelines_engines_construction_plan.md
   token: auto-infra-pipelines-engines-plan-20260806
   capability: infrastructure_construction_plan
@@ -45602,6 +45812,14 @@ creation_tokens:
   capability: library_ledger_cache
   created_by: st-fms-tc-20260927
   merge_evaluation: "图书馆内存缓存专项骨架与七簿（FMS §九 后续工作#6 挖矿面），零既有条目可合并"
+- file: docs/_working/libghost_campaign/00_ledger.md
+  token: libghost-ledger-00-ledger-20261013
+  capability: libghost_ledger
+  created_by: st-libstale-20261013
+- file: docs/_working/libghost_campaign/01_state_independence_design.md
+  token: libghost-ledger-01-state-independence-design-20261013
+  capability: libghost_ledger
+  created_by: st-libstale-20261013
 - file: docs/_working/live_readiness/admission_gate_design.md
   token: live-readiness-admission-gate-design-20260921
   capability: live_readiness
@@ -45756,6 +45974,20 @@ creation_tokens:
   capability: maint6_campaign_ledger
   created_by: st-maint6-20261013
   merge_evaluation: "净零：本班班账为机制内工作文档（战役台账），非新增能力面、非收编替代"
+- file: docs/_working/maint7_campaign/00_ledger.md
+  token: maint7-campaign-maint7-ledger-20261014
+  capability: maint7_campaign
+  created_by: st-maint7-20261014
+  merge_evaluation: "同域唯一：维护线一役一册班账体例，承接维护六班未竟账，不与他册重叠"
+- file: docs/_working/maint7_campaign/99_delivery.md
+  token: maint7-campaign-maint7-delivery-20261014
+  capability: maint7_campaign
+  created_by: st-maint7-20261014
+  merge_evaluation: "同域唯一：一役一册之收班终账，与 00_ledger 互补（册＝过程账，本件＝交付清单与交接口）"
+- file: docs/_working/maint7_campaign/lanes/lane_b_closeout.md
+  token: maint7-laneb-closeout-lane-b-closeout-20261013
+  capability: maint7_laneb_closeout
+  created_by: st-maint7-20261014
 - file: docs/_working/map_build/00_campaign_brief.md
   token: map-build-00-campaign-brief-20260924
   capability: map_build
@@ -54794,6 +55026,16 @@ creation_tokens:
   token: consensus-daily-repaired-consensus-daily-repaired-20260916
   capability: consensus_daily_repaired
   created_by: st-consrep-20260916
+- file: schemas/categories/fundamental/equity_link_signal.py
+  token: mod-sig-138e-equity-link-signal-20261014
+  capability: equity_link_signals
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P2 股权首刀：三信号族装配（牛散跨票/同持有人联动/质押链）；净零=股权关联信号唯一装配器"
+- file: schemas/categories/fundamental/expectation_revision_daily.py
+  token: mod-alt-012-expectation-revision-daily-20261014
+  capability: expectation_revision
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P2 研报首刀：预期修正面装配（评级变动事件流+修正三件套）；净零=consensus_daily 装配为信号面的唯一装配器"
 - file: schemas/categories/fundamental/financial_derived.py
   token: st-fingov-financial-derived-ddl-20260913
   capability: fund_financial_derived
@@ -54862,6 +55104,21 @@ creation_tokens:
   token: altdata-line-irm-interactive-qa-20260918
   capability: altdata_line
   created_by: st-datapack-20260918
+- file: schemas/categories/fundamental/pead_earnings_event.py
+  token: mod-sig-110a-pead-earnings-event-20261014
+  capability: pead_assembly
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "PEAD 装配事件表 DDL-as-Code（与装配模块同批）；净零=新表唯一真源"
+- file: schemas/categories/fundamental/rating_change_event.py
+  token: mod-alt-012-rating-change-event-20261014
+  capability: expectation_revision
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P2 研报首刀：预期修正面装配（评级变动事件流+修正三件套）；净零=consensus_daily 装配为信号面的唯一装配器"
+- file: schemas/categories/goal_readiness_daily.py
+  token: mod-data-goalagg-goal-readiness-daily-20261013
+  capability: tdm_goal_mechanism
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "Q6/Q7 目标机制件（裁定#516）；净零声明=infoaxis/00_ledger.md §5"
 - file: schemas/categories/intraday/__init__.py
   token: schemas-split-intraday-index-20260912
   capability: schemas_categories_intraday
@@ -54943,6 +55200,13 @@ creation_tokens:
   token: schemas-categories-market---init---20260914
   capability: schemas_categories_market
   created_by: st-datagov-fin-20260914
+- file: schemas/categories/market/alt_stock_comment_signal.py
+  token: mod-alt-013-alt-stock-comment-signal-20261014
+  capability: retail_comment_signals
+  created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L2-05
+  merge_evaluation: "P2 千股千评首刀：散户评论信号表 DDL-as-Code（attention_z 横截面 zscore/环比/反向代理）；净零=千股千评 88372 行连续量装配为信号面的唯一信号表"
 - file: schemas/categories/market/market_a50_futures_daily.py
   token: auto-market-a50-futures-daily-20260829
   capability: a50_futures_daily
@@ -57178,6 +57442,11 @@ creation_tokens:
   token: backfix-shadow-chain-20261010
   capability: backup_shadow_chain
   created_by: st-backfix-20261010
+- file: scripts/backup/ch_vm_config_snapshot.py
+  token: ch-vm-config-snapshot-ch-vm-config-snapshot-20261013
+  capability: ch_vm_config_snapshot
+  created_by: st-bakdr-20261013
+  merge_evaluation: "新增型A配置面快照通道=替代已密封零活读者的 backup_ch_vm.ps1 周频全量镜像腿（该腿 exit0 密封后 VM 侧零自动可回滚资产）；裁决外形沿用 PG 演练八键契约不新建第二把尺"
 - file: scripts/backup/ch_vm_ssh.py
   token: auction-backfill-ch-vm-ssh-20260916
   capability: auction_backfill
@@ -61777,6 +62046,11 @@ creation_tokens:
   token: factory-backend-register-c4-exam-task-20260914
   capability: factory_backend
   created_by: st-facbe-20260914
+- file: scripts/tasks/register/register_ch_vm_config_snapshot_task.ps1
+  token: ch-vm-config-snapshot-task-register-ch-vm-config-snapshot-task-20261013
+  capability: ch_vm_config_snapshot_task
+  created_by: st-bakdr-20261013
+  merge_evaluation: "新注册脚本=月频 one-shot 计划任务正门，替代已 Disabled 的 ZephyrAlpha-WeeklyVMBackup 触发腿（其执行体已密封 exit0），净增=0 触发面"
 - file: scripts/tasks/register/register_config_check_task.ps1
 - file: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1
   token: counter-trend-feeder-register-2026-09-15
@@ -62436,6 +62710,11 @@ creation_tokens:
   capability: emoreplay_revival_l02c01
   created_by: st-cmd-20260924
   merge_evaluation: "09-26 恢复轮补注册（队列恢复 v2）；emoreplay 复职批 L02-C01 配套"
+- file: src/zephyr/alt_data/expectation_revision_assembler.py
+  token: mod-alt-012-assembler-20261014
+  capability: expectation_revision
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P2 研报首刀：预期修正面装配（评级变动事件流+修正三件套）；净零=consensus_daily 装配为信号面的唯一装配器"
 - file: src/zephyr/alt_data/filing_nlp_engine.py
   token: auto-scaffold-filing_nlp_engine-20260825
   capability: filing_nlp_engine
@@ -62444,6 +62723,13 @@ creation_tokens:
   token: auto-scaffold-policy_theme_mapper-20260825
   capability: policy_theme_mapper
   created_by: scaffold.py
+- file: src/zephyr/alt_data/retail_comment_signals.py
+  token: mod-alt-013-retail-comment-signals-20261014
+  capability: retail_comment_signals
+  created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L2-05
+  merge_evaluation: "P2 千股千评首刀：散户评论信号装配器（attention_z 横截面 zscore+attention_chg 环比+retail_sentiment_proxy 反向代理）；净零=alt_stock_comment 纯装配禁新采集，Q8 出信号先行 60 天窗判据绑定"
 - file: src/zephyr/alt_data/sentiment_engine.py
   token: auto-scaffold-sentiment_engine-20260825
   capability: sentiment_engine
@@ -63053,6 +63339,11 @@ creation_tokens:
   token: auto-foreign-market-coverage-20260823
   capability: foreign_market_coverage
   created_by: AI-K3-GW-GAPP1B
+- file: src/zephyr/data/goal_readiness_aggregator.py
+  token: mod-data-goalagg-goal-readiness-aggregator-20261013
+  capability: tdm_goal_mechanism
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "Q6/Q7 目标机制件（裁定#516）；净零声明=infoaxis/00_ledger.md §5"
 - file: src/zephyr/data/implementations/__init__.py
   token: auto-data-impl-init-20260706
   capability: data_source_provider_abstraction
@@ -64298,6 +64589,16 @@ creation_tokens:
   token: auto-git-call-budget-gate-20260719
   capability: vocab_hardcode_detector
   created_by: sess-19148-20260719040733
+- file: src/zephyr/gov_enforcement/commit_gates/goal/__init__.py
+  token: mod-gov-goalgate-init-20261013
+  capability: tdm_goal_mechanism
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "Q6/Q7 目标机制件（裁定#516）；净零声明=infoaxis/00_ledger.md §5"
+- file: src/zephyr/gov_enforcement/commit_gates/goal/campaign_goal_block_gate.py
+  token: mod-gov-goalgate-campaign-goal-block-20261013
+  capability: tdm_goal_mechanism
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "Q7 开班令目标块硬前置门（裁定#516）；净零=新执法面无旧门可替代；goal/ 子目录=FOLDER-CAPACITY 治本先例沿用；消费方=GitCommitGateway+commit_queue serializer"
 - file: src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py
   token: auto-held-overlap-gate-20260630
   capability: held_overlap_gate
@@ -64326,6 +64627,11 @@ creation_tokens:
   token: ultimate-library-blood-flesh-gate-20260923
   capability: ultimate_library
   created_by: st-ulib3-20260922
+- file: src/zephyr/gov_enforcement/commit_gates/library/library_tri_consistency_gate.py
+  token: library-tri-gate-library-tri-consistency-gate-20261013
+  capability: library_tri_gate
+  created_by: st-libstale-20261013
+  no_mount_reason: pre-commit 观察门（执法面组件），非 TDM/algo 决策节点；其挂载关系由 in_process_gate_registry.yaml 名册行与 gate_registry.yaml 统一册承载
 - file: src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py
   token: ultimate-library-state-vocab-gate-20260923
   capability: ultimate_library
@@ -65263,6 +65569,11 @@ creation_tokens:
   capability: canonical-hash
   created_by: st-ailayer-p1-20260923
   merge_evaluation: "CloneGuard合并件：dual_run/criteria两处同构规范化哈希收敛为公共底座（净零=吸收两重复实现）"
+- file: src/zephyr/intelligence/chain_direction_semantics.py
+  token: mod-sig-125b-chain-direction-semantics-20261014
+  capability: chain_direction
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P2 传导链主施工面：方向语义件（W4 成本反号 known simplification 之闭合；S5 默认 A 规则词表先行）；净零=方向语义唯一真源表（六类×角色侧矩阵）"
 - file: src/zephyr/intelligence/chain_impact_resolver.py
   token: chain-impact-resolver-20260911
   capability: chain_impact_resolver
@@ -66755,6 +67066,11 @@ creation_tokens:
   token: auto-cross-market-conduction-sensor-20260823
   capability: cross_market_conduction
   created_by: AI-K3-GW-REGIME
+- file: src/zephyr/signal_ashare/equity_link_signals.py
+  token: mod-sig-138e-equity-link-signals-20261014
+  capability: equity_link_signals
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P2 股权首刀：三信号族装配（牛散跨票/同持有人联动/质押链）；净零=股权关联信号唯一装配器"
 - file: src/zephyr/signal_ashare/factor_result_bridge.py
   token: auto-scaffold-factor_result_bridge-20260825
   capability: factor_result_bridge
@@ -67246,6 +67562,11 @@ creation_tokens:
   token: gw-tdm-negveto-module-20260910
   capability: trading_decision_map
   created_by: gw-tdm-20260909
+- file: src/zephyr/signal_fundamental/pead_assembly.py
+  token: mod-sig-110a-pead-assembly-20261014
+  capability: pead_assembly
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P2 财报首刀：PEAD 装配批（MOD-SIG-110 [CONSUMERS] 头注缺口实件）；schema 件 token 已内联；净零=装配批替代零散手工注入面"
 - file: src/zephyr/signal_fundamental/router/__init__.py
   token: auto-sf-router-init-20260823
   capability: signal_router
@@ -67258,6 +67579,11 @@ creation_tokens:
   token: auto-signal-priority-router-20260823
   capability: signal_router
   created_by: AI-K3-GW-SIGNAL
+- file: src/zephyr/signal_intraday/orderflow_features.py
+  token: mod-sig-093b-orderflow-features-20261014
+  capability: intraday_t_features
+  created_by: st-infoaxis-20261013
+  merge_evaluation: "P2 做T首刀：一档盘口特征件＋L3-11 v2 现势窗考卡（v1 卡冻结纪律不动留史，v2=独立预注册）；净零=盘口特征唯一供给面"
 - file: src/zephyr/signal_quality/degradation_detector.py
   token: auto-scaffold-degradation_detector-20260825
   capability: degradation_detector

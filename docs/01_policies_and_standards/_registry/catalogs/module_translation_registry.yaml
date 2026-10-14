@@ -6705,6 +6705,17 @@ entries:
   plain_zh: 用大白话说：这份文件定义了一张新表的样子，专门存放从研报原件里找回来的历史预期数据，和那张被脏数据污染的老表分开摆，谁也不碰谁。
   domain_id: D_FACTOR
   responsibility_layer: business
+- module_path: schemas/categories/fundamental/equity_link_signal.py
+  name_en: Equity Link Signal Schema
+  name_zh: 股权三信号表定义
+  plain_zh: 定义存股权三类联动信号的数据库表结构，每行记录哪个信号族哪个主体关联哪些股票
+  domain_id: D_SIGNAL_ASHARE
+- module_path: schemas/categories/fundamental/expectation_revision_daily.py
+  name_en: Expectation Revision Schema
+  name_zh: 预期修正三件套表定义
+  plain_zh: 定义存分析师一致预期修正三指标（动量、宽度、离散度）每日读数的数据库表结构
+  domain_id: D_ALT_DATA
+  responsibility_layer: business
 - module_path: schemas/categories/fundamental/financial_derived.py
   desc_en: ""
   desc_zh: ""
@@ -6839,6 +6850,18 @@ entries:
   name_en: irm interactive qa DDL
   name_zh: 互动易问答原文表DDL
   plain_zh: 这张表存投资者在互动易上问公司的问题和公司的官方回答原文。每条记录都能反查当时网页的存档快照，防止以后源头删帖查不到。
+  domain_id: D_DATA
+  responsibility_layer: business
+- module_path: schemas/categories/fundamental/rating_change_event.py
+  name_en: Rating Change Event Schema
+  name_zh: 评级变动事件表定义
+  plain_zh: 定义存券商评级升降事件的数据库表结构，每行记录一只股票评级从什么档升或降到什么档
+  domain_id: D_ALT_DATA
+  responsibility_layer: business
+- module_path: schemas/categories/goal_readiness_daily.py
+  name_en: Goal Readiness Daily Schema
+  name_zh: 目标就绪度读数表定义
+  plain_zh: 定义存每个节点每天目标就绪度读数（绿黄红）的数据库表结构
   domain_id: D_DATA
   responsibility_layer: business
 - module_path: schemas/categories/intraday/market_auction.py
@@ -7224,6 +7247,11 @@ entries:
   name_zh: 宏观外贸宽表DDL
   plain_zh: 这张表记录中国每个月卖到国外的货和买进来的货值多少钱，出口强经济强、进口强内需强。单位统一成亿美元，历史全量自动更新。
   domain_id: D_DATA
+  responsibility_layer: business
+- module_path: schemas/categories/market/alt_stock_comment_signal.py
+  name_zh: 散户评论信号表结构
+  plain_zh: 定义散户评论信号表的字段结构：每天每只股票一行，存关注度的横截面标准分、环比变化、机构参与度和反向情绪代理
+  domain_id: D_ALT_DATA
   responsibility_layer: business
 - module_path: schemas/categories/market/market_adj_factor.py
   desc_en: ""
@@ -10485,6 +10513,14 @@ entries:
   plain_zh: 备份触发器影子版：开工前先查影子账本——被杀掉的备份其实已经干完的活（checkpoint）算数，不再从头重烧一遍；锁的主人都死了就接管别傻等；只写影子账本不碰生产账本
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
+- module_path: scripts/backup/ch_vm_config_snapshot.py
+  desc_en: Monthly capture of the zephyr-ch Hyper-V definition surface and guest /etc config tree, plus dual rollback proof
+  desc_zh: 每月采集 zephyr-ch 的 Hyper-V 定义面与客户机 /etc 配置树到 G:/backup/ch_vm_config，并跑回滚双证
+  name_en: CH VM config-surface monthly snapshot
+  name_zh: CH虚拟机配置面月快照
+  plain_zh: 给 ClickHouse 那台虚拟机每月拍一张'配置照片'：机器的设置单和操作系统的配置文件都存一份到备份盘，再当场验证这份照片能不能把机器原样描述回来；数据盘不拍，因为数据每天另备份
+  domain_id: D_INFRASTRUCTURE
+  responsibility_layer: infrastructure
 - module_path: scripts/backup/ch_vm_ssh.py
   desc_en: ""
   desc_zh: ""
@@ -16880,6 +16916,12 @@ entries:
   plain_zh: 治理的全景模块同步对账：定期比对全景模块的记录是否一致，发现对不上就报出来，防止治理悄悄漂移。
   domain_id: D_GOV_SCRIPTS
   responsibility_layer: governance
+- module_path: scripts/governance/tdm_goal_blocks.py
+  name_en: TDM Goal Block Injector
+  name_zh: TDM目标块注入器
+  plain_zh: 给交易决策地图的186个节点每个写上目标说明书（这个环节到底要产出什么、怎么验收、归哪个战役管），并带巡检查询功能
+  domain_id: D_GOV_ENFORCEMENT
+  responsibility_layer: governance
 - module_path: scripts/governance/test_remediation_progress_smoke.py
   desc_en: ""
   desc_zh: 测试修复进度smoke.1 治本进度 reconciler end-to-end smoke test。
@@ -18861,6 +18903,12 @@ entries:
   plain_zh: 把历史每一天的情绪温度按今天的冻结合法公式重新算一遍存进库，让回测能查到任何一天的情绪指数
   domain_id: D_ASHARE_SIGNAL
   responsibility_layer: business
+- module_path: src/zephyr/alt_data/expectation_revision_assembler.py
+  name_en: Expectation Revision Assembler
+  name_zh: 预期修正面装配器
+  plain_zh: 把券商研报评级变化和一致预期滚动数据配对，生成评级升降事件和预期修正三指标信号
+  domain_id: D_ALT_DATA
+  responsibility_layer: business
 - module_path: src/zephyr/alt_data/filing_nlp_engine.py
   desc_en: ""
   desc_zh: ""
@@ -18917,6 +18965,11 @@ entries:
   name_en: ""
   name_zh: 研报采集器
   plain_zh: 采集券商研报的标题、评级、目标价等信息，前后对比发现评级变动就发事件到总线，标的名称自动映射成标准代码。
+  domain_id: D_ALT_DATA
+  responsibility_layer: business
+- module_path: src/zephyr/alt_data/retail_comment_signals.py
+  name_zh: 散户评论信号装配器
+  plain_zh: 把千股千评的机构参与度和关注度数据加工成横截面标准化的散户情绪信号
   domain_id: D_ALT_DATA
   responsibility_layer: business
 - module_path: src/zephyr/alt_data/sentiment_engine.py
@@ -21293,6 +21346,12 @@ entries:
   name_en: Foreign Market Coverage Checker
   name_zh: 外盘标的覆盖核查器
   plain_zh: 外盘覆盖核查器。盘点道指纳指恒生等12个外盘标的哪些有数据哪些没有，缺的只留采集配置草案不动手抓。
+  domain_id: D_DATA
+  responsibility_layer: business
+- module_path: src/zephyr/data/goal_readiness_aggregator.py
+  name_en: Goal Readiness Aggregator
+  name_zh: 目标就绪度聚合器
+  plain_zh: 每天把交易地图上151个核心节点的目标、考卷、消费者、成绩单四样东西核对一遍，给每个节点打绿黄红读数灯
   domain_id: D_DATA
   responsibility_layer: business
 - module_path: src/zephyr/data/implementations/__init__.py
@@ -30385,6 +30444,18 @@ entries:
   plain_zh: 检测 staged .py 文件中 ``subprocess.run(["git", ...])`` 在 for/while 循环内直接调用
   domain_id: D_GOV_CODE_QUALITY
   responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/goal/__init__.py
+  name_en: Goal Gates Package Init
+  name_zh: 目标机制门包
+  plain_zh: 目标机制族门禁子包的包标识文件（目录治本用，无业务逻辑）
+  domain_id: D_GOV_ENFORCEMENT
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/goal/campaign_goal_block_gate.py
+  name_en: Campaign Goal Block Gate
+  name_zh: 开班令目标块门
+  plain_zh: 提交新开班令文件时检查它有没有写目标块（要干什么、怎么验收、归哪个战役），没写就拦下
+  domain_id: D_GOV_ENFORCEMENT
+  responsibility_layer: governance
 - module_path: src/zephyr/gov_enforcement/commit_gates/god_class_gate.py
   desc_en: ""
   desc_zh: 检测 staged .py 文件中**新增**类的方法数 > 20。
@@ -30471,6 +30542,11 @@ entries:
   name_en: ""
   name_zh: 血肉登记门
   plain_zh: 新增代码必须写清楚这个资产是干什么的、血肉登记（名称和一句大白话）缺了就拦，防新资产裸奔进仓库
+  domain_id: D_GOV_CODE_QUALITY
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/library/library_tri_consistency_gate.py
+  name_zh: 馆页三层一致性影子观察门
+  plain_zh: 每笔提交顺手核对图书馆账本、馆页和磁盘三者对不对得上，只记录不拦人，观察七天后由 Owner 决定要不要升成硬闸
   domain_id: D_GOV_CODE_QUALITY
   responsibility_layer: governance
 - module_path: src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py
@@ -37965,6 +38041,12 @@ entries:
   plain_zh: 把任意数据按固定规则排好序压成一行再算指纹：同样的数据永远得到同样的指纹，判据冻结和防篡改校验都靠它，是两处重复实现的合并件。
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
+- module_path: src/zephyr/intelligence/chain_direction_semantics.py
+  name_en: Chain Direction Semantics
+  name_zh: 链上事件方向语义
+  plain_zh: 判断一个产业链事件（涨价、断供等）对上游供应商和下游客户分别是利好还是利空的小型规则词典和符号表
+  domain_id: D_INTELLIGENCE
+  responsibility_layer: ai
 - module_path: src/zephyr/intelligence/chain_impact_resolver.py
   desc_en: ""
   desc_zh: ""
@@ -46548,6 +46630,11 @@ entries:
   plain_zh: 模拟北向、公募、游资、散户四类玩家的行为规律，推演他们合力往哪走、分歧有多大，盘后运行结果只作参考信号。
   domain_id: D_ASHARE_SIGNAL
   responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/equity_link_signals.py
+  name_en: Equity Link Signals Assembler
+  name_zh: 股权三信号族装配器
+  plain_zh: 从股权持仓关系里挖出三类联动信号：知名牛散一人持多股、同一老板控制多家公司、大股东质押比例过高有平仓风险
+  domain_id: D_SIGNAL_ASHARE
 - module_path: src/zephyr/signal_ashare/event_causal_reasoner.py
   desc_en: ""
   desc_zh: ""
@@ -47728,6 +47815,12 @@ entries:
   plain_zh: 候选池的负面清单一票否决：业绩暴雷、立案调查、大股东减持、解禁超 5% 流通盘、商誉减值风险、配股圈钱，撞上任何一条直接出池，打分再高也没用
   domain_id: D_FUNDAMENTAL_SIGNAL
   responsibility_layer: business
+- module_path: src/zephyr/signal_fundamental/pead_assembly.py
+  name_en: PEAD Assembly Batch
+  name_zh: PEAD装配批
+  plain_zh: 把财报实际业绩和分析师一致预期两份数据配对，算出每只股票的超预期程度并落库成事件表
+  domain_id: D_FUNDAMENTAL_SIGNAL
+  responsibility_layer: business
 - module_path: src/zephyr/signal_fundamental/pead_event_model.py
   desc_en: ""
   desc_zh: ""
@@ -47837,6 +47930,11 @@ entries:
   plain_zh: 信号合成引擎。把多个因子信号加权聚合成一个统一的合成交易信号，顺带归一化去噪、识别市场状态、检测信号退化，是信号合二为一的核心。
   domain_id: D_FUNDAMENTAL_SIGNAL
   responsibility_layer: business
+- module_path: src/zephyr/signal_intraday/orderflow_features.py
+  name_en: Orderflow Features
+  name_zh: 一档盘口特征件
+  plain_zh: 从买卖一档挂单量和价格变动算出订单流失衡、公允价偏移等短周期盘口特征，给做T策略当输入
+  domain_id: D_SIGNAL_INTRADAY
 - module_path: src/zephyr/signal_quality/__init__.py
   desc_en: ""
   desc_zh: ""
