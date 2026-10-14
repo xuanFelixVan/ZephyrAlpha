@@ -23,7 +23,7 @@ completes_when: 主役放量袋落窗清账（每降一枚有 manifest 行＋证
 | 根层散件 | **平铺未跟踪=0**（正对照＝同尺全仓报 168 条 `??`／未跟踪 550，非零命中尺） | `git ls-files --others --exclude-standard` 按 `'/' not in` 分层 |
 | gate_audit | 未删（删除属政策变更）；**一条前提被实测改判**：最大两段 120.3/65.3MB 是**已移位 .1 保留段**，同族 live 段实测仅 2.2/1.2MB | `.runtime/gate_audit/` 292 件／1,209.5 MB；维护七班 dev 面班账 `gate_audit` 零命中＝尚未定性 |
 | 统筹增补令 P2（claim 观察面） | **已落地**：`lock_files.py` 新增 `_remaining_life_face`，`status／check／guard-write／list` 四面同源报剩余寿命，`status` 头加三态计数；判定分支零改动。**前提回交**＝"34 条活 claim 无 expires_at"实测不成立（`.ailocks` 两面各 22 条**全带**该字段，缺 0；活 21／已过期仍挂册 1），故未在 `SessionRegistry.held_files` 落第二真源 | 同形双面（改前 1/4 面有读数→改后 4/4）`.runtime/tmp/deadmass2_redproof_claim_print.py`；配对测试 6 支追加在既有族册 §10，39 passed；袋 q-20261014-st-deadmass2-20261014-0005；账见 `00_ledger.md` §八-12 |
-| 主役放量（C/D 归档） | **已落 449 枚**：dead **1,638→1,236**（净降 402）；两批之和＝05:0x 批 424＋10:4x 批 25。逐行核账：qid 去重仍 449（零重复）、449/449 已离 `dead/` 且在归档目录实存、`verify` **449/449=on**（三闸全程未放宽）、每行 `bag_json_sha256`＋`blob_set_sha256`＋`content_evidence` 齐（缺行 0）、`n_no_home>0` 与 `n_evidence_tampered>0` 均 **0** | 台账 `.runtime/commit_queue/dead_archive_20261014/manifest.jsonl`（449 行）；两轮 stdout `.runtime/tmp/deadmass2_archive_log_final.txt` 与 `_pass3.txt`；核账尺见本册 §六-补-8 |
+| 主役放量（C/D 归档） | **已落 452 枚**：dead **1,638→1,242**（本班净清 452＝05:0x 批 424＋10:4x 批 25＋11:1x 批 3）。逐行核账：qid 去重仍 452（零重复）、452/452 已离 `dead/` 且在归档目录实存、`verify` **452/452=on**（三闸全程未放宽）、每行 `bag_json_sha256`＋`blob_set_sha256`＋`content_evidence` 齐（缺行 0）、`n_no_home>0` 与 `n_evidence_tampered>0` 均 **0** | 台账 `.runtime/commit_queue/dead_archive_20261014/manifest.jsonl`（452 行）；四轮 stdout `.runtime/tmp/deadmass2_archive_log{,_final,_pass3,_pass5}.txt`；核账尺已入本册 §六-补-8 |
 
 ## 二、⚑ 主役受阻的实测定性（不是"再等等"能解释的）
 
@@ -124,6 +124,20 @@ measure/preserve/archive 三件在册 TTL 驱动器（前任所造）加 `--pool
    `blobs_archive --restore` 逆向路径在册。
    本班立场＝**不代签**：该旗一开就是 1,205 枚的处置口径变更，属统筹/Owner 格；
    已把数取全（干跑 1,215／落地实测 25+1,205）供一拍。
+   ⚑ 11:1x 再证一次：单片全量跑（chunk 200）在空窗内 `unlanded=1,205` 与干跑数**完全对上**，
+   实动盘仅本班自家 3 枚——该闸的拦截面就是这个数。
+9. **⚑ 本班车道有意不退场（连带风险，命令留此）**：
+   `D:/ZephyrAlpha/.aidrafts/st-deadmass2-20261014`（分支 `session/st-deadmass2-20261014`，
+   ahead=0、脏 0，dry-run 判型 **zero_loss**）本班**未**执行 `archive --execute`——
+   该命令内部死判调 `list_active()`＝**变异式**（判死即写接管台账并收割心跳超 900s 的分片），
+   而动手前同分钟实测 `st-infoaxis-20261013` 心跳末行 `status=exited`、龄 22,449s
+   却**仍在 `list_active_readonly()` 内** ⇒ 一跑极可能顺手收走他班注册分片（其壳另有实质件）。
+   红线"他班条目不代解／不硬闯保护区"优先于本班壳的收班即清。
+   接手命令＝先同分钟复测全部活会话心跳龄，再
+   `python scripts/session_worktree.py archive "D:/ZephyrAlpha/.aidrafts/st-deadmass2-20261014" --execute`，
+   执行后按 `ts_epoch` 核 `.runtime/takeover_ledger.jsonl` 新增行（本班前一班车道退场时该窗为 0 新增）。
+   另：`exited 却在册活` 这一形态本身属维护线活性族新读数，建议并账。
+   本班其余面已清：会话壳 promote＋拆、归档器/量尺/存证器进程 0、reaper keep 行已撤（383 行，邻行完好）。
 
 ## 六、复核命令（正文抽出原样跑，期望值即本册所记）
 
@@ -177,14 +191,21 @@ python -m pytest tests/gov/git/test_lock_files_ttl_mutex.py tests/gov/git/test_l
 #                  且每条锁带 "剩余寿命:" 行；本班末次实测 22 条锁→22 行剩余寿命）
 python scripts/lock_files.py status | head -1
 # 8) 主役台账逐行核账（本班末次实测，期望值逐字如下）
-#    行= 449 qid去重= 449 重复= 0
-#    verify= {'on': 449}
+#    行= 452 qid去重= 452 重复= 0
+#    verify= {'on': 452}
 #    缺双sha或content_evidence的行= 0
-#    仍在 dead/ 的行= 0  归档目录实存= 449
+#    仍在 dead/ 的行= 0  归档目录实存= 452
 #    n_no_home>0= 0  n_tampered>0= 0
-#    存证枚次合计= 1806
+#    存证枚次合计= 1779
 python -u .runtime/tmp/deadmass2_audit_manifest.py
 ```
+
+⚑ **该尺的存证枚次列有未解释非单调（复用前请先复算）**：本班三次读数为
+1,751（424 行）→ 1,806（449 行）→ **1,779（452 行）**，行数只增不减而合计先升后降；
+台账是 append-only 且 qid 零重复，按该语义此列应单调不降。本班已排查"同一脚本/同一求和式/
+分 verdict 求和可复算"三向仍未定位来源，**末次以 1,779 为准**（本册 §六-补-8 原写 1806 已更正）。
+此项**不是红线判据**——红线＝每行 `bag_json_sha256`＋`blob_set_sha256`＋`content_evidence` 齐，
+该项 452/452 稳定成立，故不阻塞交付。详述见 `00_ledger.md` §八-14。
 
 ⚑ **键形警示（本班自犯一次，防下一班复用错尺）**：证据段真键是 `content_evidence`（嵌套）
 ＋`bag_json_sha256`＋`blob_set_sha256`，**不是**顶层 `evidence`／`session_id`。
