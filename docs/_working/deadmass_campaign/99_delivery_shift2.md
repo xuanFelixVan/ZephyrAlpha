@@ -23,7 +23,7 @@ completes_when: 主役放量袋落窗清账（每降一枚有 manifest 行＋证
 | 根层散件 | **平铺未跟踪=0**（正对照＝同尺全仓报 168 条 `??`／未跟踪 550，非零命中尺） | `git ls-files --others --exclude-standard` 按 `'/' not in` 分层 |
 | gate_audit | 未删（删除属政策变更）；**一条前提被实测改判**：最大两段 120.3/65.3MB 是**已移位 .1 保留段**，同族 live 段实测仅 2.2/1.2MB | `.runtime/gate_audit/` 292 件／1,209.5 MB；维护七班 dev 面班账 `gate_audit` 零命中＝尚未定性 |
 | 统筹增补令 P2（claim 观察面） | **已落地**：`lock_files.py` 新增 `_remaining_life_face`，`status／check／guard-write／list` 四面同源报剩余寿命，`status` 头加三态计数；判定分支零改动。**前提回交**＝"34 条活 claim 无 expires_at"实测不成立（`.ailocks` 两面各 22 条**全带**该字段，缺 0；活 21／已过期仍挂册 1），故未在 `SessionRegistry.held_files` 落第二真源 | 同形双面（改前 1/4 面有读数→改后 4/4）`.runtime/tmp/deadmass2_redproof_claim_print.py`；配对测试 6 支追加在既有族册 §10，39 passed；袋 q-20261014-st-deadmass2-20261014-0005；账见 `00_ledger.md` §八-12 |
-| 主役放量（C/D 归档） | **未落**：终版表 1,645 枚中**放行 1,625／不放行 20**（中途表读数 1,622 留档：02:5x 轮），10 片逐片抓窗在跑；本班实测**无空窗可抓**（下节） | 终表 stdout `.runtime/tmp/deadmass2_archive_log_final.txt`（中途轮 `.runtime/tmp/deadmass2_archive_log.txt` 未删）；`dead_archive_20261014/manifest.jsonl` 尚未生成 |
+| 主役放量（C/D 归档） | **已落 449 枚**：dead **1,638→1,236**（净降 402）；两批之和＝05:0x 批 424＋10:4x 批 25。逐行核账：qid 去重仍 449（零重复）、449/449 已离 `dead/` 且在归档目录实存、`verify` **449/449=on**（三闸全程未放宽）、每行 `bag_json_sha256`＋`blob_set_sha256`＋`content_evidence` 齐（缺行 0）、`n_no_home>0` 与 `n_evidence_tampered>0` 均 **0** | 台账 `.runtime/commit_queue/dead_archive_20261014/manifest.jsonl`（449 行）；两轮 stdout `.runtime/tmp/deadmass2_archive_log_final.txt` 与 `_pass3.txt`；核账尺见本册 §六-补-8 |
 
 ## 二、⚑ 主役受阻的实测定性（不是"再等等"能解释的）
 
@@ -34,6 +34,21 @@ completes_when: 主役放量袋落窗清账（每降一枚有 manifest 行＋证
    `reset` 快进加 `clean` 毁未 commit 新文件）；`dead_archive_letters:3855`＝官方通道**自身**以
    "租约存活"整体拒绝并行维护操作。⇒ 归档的前置条件是**队列空闲**，不是"租约抖一下"。
 4. 本班据此**未越闸、未停带、未改判据**（统筹令红线原样执行），把该片实测作为呈批依据交下（§四-1）。
+
+## 二·补、上节结论被实测改判（留旧案卷不抹，10:5x 重取）
+
+上节四条在 02:4–03:3 的窗内**当时为真**；此后跨日跑出两条新事实，据此改判：
+
+1. **空窗确实会来**：10:4x 实测 `pending=0`、`serializer.lease` 不存在（FREE）——
+   上节"带量吞吐下今晚无真空窗"的推断被否证，成因是夜间各班收班后队列自然排空。
+   ⇒ 归档器不需人推，按 15s 轮询自己抓到了窗（05:0x 批 424 枚、10:4x 批 25 枚）。
+2. **真瓶颈不是租约，是通道第三闸**：空窗内、内容级门全放行（C_TOMBSTORED 1,036 命中）的情况下，
+   10:4x 那轮 `kept.unlanded=1,205`、实动盘仅 25 枚。C 类按定义是"内容唯一**且未落**"，
+   第三闸（逐路径 dev 落地校验）与内容级归档**语义互斥**——不是判据松紧问题，是两把尺量不同对象。
+   双证同向：干跑（verify=off）会动盘 **1,215**／落地（verify=on）实动 **25**、留 **1,205**。
+   ⇒ 剩下的 1,205 枚**不是本班能自裁的格**，口径开关见 §五-8（未自拍、未 `--force`）。
+3. 顺带改判一条尺：blob_gc 第三 pass 只 moved **1** 枚（前两轮 4,710／940）＝
+   剩余 1,236 枚仍引用着那些 blob，blob 释放面与上同闸联动——口径不放开，blob 面也清不动。
 
 ## 三、净零申报
 
@@ -98,6 +113,17 @@ measure/preserve/archive 三件在册 TTL 驱动器（前任所造）加 `--pool
    全表 `.runtime/tmp/deadmass2_death_cause_census.json`，叙述与两条可读结论见 `00_ledger.md` §八-11。
    请维护线按此排序处置（GATE-PRECOMMIT-RUN 与在册族谱档案"修此门可消 222 袋"同量级）；
    本班未据普查改任何门判据。
+8. **⚑ 呈批件（口径面，本班未自拍）**：剩余 **1,205 枚** C 类死信的唯一挡手＝通道第三闸
+   （逐路径 dev 落地校验）。在册已有该开关：`dead-archive --no-verify-landed`（要求留 `verify=off` 痕，
+   语义＝"已取代型批量归档先例复用"）。**实质**＝一次清掉 1,205 枚（dead 1,236→约 31），
+   并释放 blob_gc 第三道面（当前 pass3 只 moved 1 枚即被这 1,236 枚的引用卡住）。
+   **代价与边界**＝第三闸对这批按定义恒不满足（C 类＝内容唯一且未落），关掉它之后
+   实际把关的是①年龄闸②revival 互斥闸④本班内容级门（要求逐枚唯一面已入墓园、`n_no_home==0`、
+   属主已死、tampered==0）——四道里三道仍开，且内容级门比路径闸强；
+   **可回退**＝全程 mv 非删，台账 449→约 1,654 行每行带双 sha，墓园 30 天复活窗＋rollback_cmd，
+   `blobs_archive --restore` 逆向路径在册。
+   本班立场＝**不代签**：该旗一开就是 1,205 枚的处置口径变更，属统筹/Owner 格；
+   已把数取全（干跑 1,215／落地实测 25+1,205）供一拍。
 
 ## 六、复核命令（正文抽出原样跑，期望值即本册所记）
 
@@ -150,14 +176,27 @@ python -m pytest tests/gov/git/test_lock_files_ttl_mutex.py tests/gov/git/test_l
 # 7) 真面读数（期望：头行 "LOCKED — N 个文件被锁定（活 a／已过期仍挂册 b／旧格式无 expires_at c）"
 #                  且每条锁带 "剩余寿命:" 行；本班末次实测 22 条锁→22 行剩余寿命）
 python scripts/lock_files.py status | head -1
+# 8) 主役台账逐行核账（本班末次实测，期望值逐字如下）
+#    行= 449 qid去重= 449 重复= 0
+#    verify= {'on': 449}
+#    缺双sha或content_evidence的行= 0
+#    仍在 dead/ 的行= 0  归档目录实存= 449
+#    n_no_home>0= 0  n_tampered>0= 0
+#    存证枚次合计= 1806
+python -u .runtime/tmp/deadmass2_audit_manifest.py
 ```
+
+⚑ **键形警示（本班自犯一次，防下一班复用错尺）**：证据段真键是 `content_evidence`（嵌套）
+＋`bag_json_sha256`＋`blob_set_sha256`，**不是**顶层 `evidence`／`session_id`。
+本班第一版核账按错键名查，报出"387 行无证据 sha"＝假事故，差点据此误报统筹红线被破；
+改对键形后同一把尺报缺行 0。判"缺字段"前先用一行真实样本打清键形。
 
 活体一例（新观察面首跑即抓到，`_is_stale` 与 `status` 同源一致）：`docs/_working/2026-08-24-aiarch-construction-list.md`
 的 claim 其 owner pid 已死、`expires_at` 过期 2.4 小时 ⇒ 门自己的尺判 `_is_stale=True`，
 但**持有者会话仍在册活**——"会话活"与"claim 活"两把尺不同源，正是本件要消灭的形态。
 本班**未代清理**（`cleanup` 带 R-10 遗物回收，会动到他人会话面，属属主/维护线，§3.4 不代修）。
 
-本班自证口径＝六-2/六-3/六-4 与六-补的 5/6/7 六条均已在当轮**原样抽出跑到本册所写值**
+本班自证口径＝六-2/六-3/六-4 与六-补的 5/6/7/8 七条均已在当轮**原样抽出跑到本册所写值**
 （139 行零失配／"尚无＝未落窗"＋dead 1,642 现值 1,647／samples=150 FREE=0／
 改前 1 面绿改后 4 面绿／39 passed／真面 22 条锁全带剩余寿命行）；六-1 的读数取自本班当轮两次真跑
 （02:2x 与 02:5x 均 agree=60 disagree=0，stdout 留存 `.runtime/tmp/deadmass2_measure_log.txt`），
