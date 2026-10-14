@@ -7,11 +7,11 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-10-11T16:25:21Z'
+generated_at: '2026-10-14T11:40:09Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器四源全量再生；条目禁手工增删）
-total_entities: 104
+total_entities: 109
 field_count: 18
 mem_ceiling_gb: 10.0
 mem_ceiling_source: src/zephyr/trading/process_reaper.py _DANGEROUS_MEM_GB（引用不收编）
@@ -564,6 +564,28 @@ entities:
   status: active
   notes_zh: 夜间财务层——财报/财务指标/十大股东/融资融券(T+1) 〔生成器·C-11 声明↔代码反查〕 纸面受管、裸奔执行（v2 C-11，lane_b 型）。修法=执行体开工前问 check_gate()，或如实改申报（trading_sensitive=false
     须给理由）
+- task_id: data_slot_nightly_news_score
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 2.0
+  est_duration_min: 30
+  exclusive_group: []
+  window_type: cron
+  window_expr: 50 8 * * *
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
+  samples_uri: .runtime/logs/resource_samples/data_slot_nightly_news_score.jsonl
+  status: active
+  notes_zh: 逐条新闻情绪分日更——news_data 当日增量打分入 news_sentiment_score（近30日缺口自愈，规则法口径单源）
 - task_id: data_slot_nightly_sentiment
   module_id: null
   map_node_id: null
@@ -979,7 +1001,7 @@ entities:
     peak_mem_gb: 0.2016
     p90_duration_min: 8
     samples: 8
-    last_at: '2026-10-10T21:41:42+00:00'
+    last_at: '2026-10-13T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_convert_gguf.jsonl
   status: planned
   notes_zh: GGUF 转换（GPU 手动）
@@ -1016,10 +1038,10 @@ entities:
   schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
-    peak_mem_gb: 9.0032
-    p90_duration_min: 968
-    samples: 7212
-    last_at: '2026-10-10T21:41:47+00:00'
+    peak_mem_gb: 16.9661
+    p90_duration_min: 941
+    samples: 7528
+    last_at: '2026-10-13T21:40:06+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_factory_grid_executor.jsonl
   status: planned
   notes_zh: 工厂网格执行器（单批最大算力实体，2万配方）；[P5-calib 2026-09-17 校正] dur 240→580（n=179 P90=573.1 低估，班次会压下一班）、mem 4.0→2.7（max×1.15=2.60
@@ -1060,9 +1082,9 @@ entities:
   trading_sensitive: true
   measured:
     peak_mem_gb: 0.1616
-    p90_duration_min: 3
-    samples: 8
-    last_at: '2026-10-10T21:41:47+00:00'
+    p90_duration_min: 10
+    samples: 18
+    last_at: '2026-10-13T21:40:06+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_kronos_adapter.jsonl
   status: planned
   notes_zh: Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）；[P5-calib 2026-09-17 校正] dur 60→5、mem 6.0→0.5（n=6 P90=3.1/0.162，取整留余量）
@@ -1122,10 +1144,10 @@ entities:
   schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
-    peak_mem_gb: 0.2014
-    p90_duration_min: 0
-    samples: 12
-    last_at: '2026-10-10T21:41:47+00:00'
+    peak_mem_gb: 0.6486
+    p90_duration_min: 1
+    samples: 13
+    last_at: '2026-10-13T21:40:06+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_lane_c_agentic_miner.jsonl
   status: planned
   notes_zh: Lane-C agentic 挖掘（llm_api_local+cpu，分钟-十几分钟）
@@ -1228,10 +1250,10 @@ entities:
   schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
-    peak_mem_gb: null
-    p90_duration_min: null
-    samples: 0
-    last_at: null
+    peak_mem_gb: 0.1257
+    p90_duration_min: 13
+    samples: 7
+    last_at: '2026-10-13T21:40:06+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_run_sft_train.jsonl
   status: planned
   notes_zh: SFT 手动重训（GPU 小时级）
@@ -1359,6 +1381,27 @@ entities:
   samples_uri: .runtime/logs/resource_samples/ops_ch_optimize_merge_weekly.jsonl
   status: planned
   notes_zh: CH 周度优化合并（实测周六 03:30；ch_bulk_write 族，与 weekend_calibration 03:00+180min 同窗——补注册后冲突闸首次可见）
+- task_id: ops_ch_vm_config_snapshot
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 30
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+    no_sample_reason_zh: null
+  samples_uri: .runtime/logs/resource_samples/ops_ch_vm_config_snapshot.jsonl
+  status: planned
+  notes_zh: CH VM 配置面月快照 ch_vm_config_snapshot.py（每月 5 日 10:00，one-shot 跑完即退）
 - task_id: ops_daily_backup
   module_id: null
   map_node_id: null
@@ -1537,7 +1580,7 @@ entities:
     peak_mem_gb: 0.5035
     p90_duration_min: 9
     samples: 16
-    last_at: '2026-10-10T21:41:47+00:00'
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_ail1_scan.jsonl
   status: active
   notes_zh: AIL1Scan
@@ -1579,7 +1622,7 @@ entities:
     peak_mem_gb: 0.3475
     p90_duration_min: 6
     samples: 24
-    last_at: '2026-10-10T21:41:48+00:00'
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_c4_exam.jsonl
   status: active
   notes_zh: C4Exam
@@ -1620,7 +1663,7 @@ entities:
     peak_mem_gb: 0.2637
     p90_duration_min: 19
     samples: 37
-    last_at: '2026-10-10T21:41:48+00:00'
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_commit_perf_report.jsonl
   status: active
   notes_zh: CommitPerfReport
@@ -1645,6 +1688,27 @@ entities:
   samples_uri: .runtime/logs/resource_samples/sch_config_check.jsonl
   status: active
   notes_zh: ConfigCheck
+- task_id: sch_dashboard_api
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.5
+  est_duration_min: 5
+  exclusive_group: []
+  window_type: cron
+  window_expr: null
+  schedule_truth_source: scripts/tasks/register/register_guard_tasks.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+    no_sample_reason_zh: null
+  samples_uri: .runtime/logs/resource_samples/sch_dashboard_api.jsonl
+  status: active
+  notes_zh: DashboardAPI
 - task_id: sch_data_scheduler
   module_id: null
   map_node_id: null
@@ -1703,7 +1767,7 @@ entities:
     peak_mem_gb: 0.1172
     p90_duration_min: 0
     samples: 1
-    last_at: '2026-10-10T21:41:48+00:00'
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_decision_chain_sentinel.jsonl
   status: active
   notes_zh: DecisionChainSentinel
@@ -1723,7 +1787,7 @@ entities:
     peak_mem_gb: 0.4291
     p90_duration_min: 874
     samples: 248
-    last_at: '2026-10-10T21:41:50+00:00'
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_f06_grid.jsonl
   status: active
   notes_zh: F06Grid
@@ -1742,9 +1806,9 @@ entities:
   trading_sensitive: true
   measured:
     peak_mem_gb: 0.394
-    p90_duration_min: 194
-    samples: 110
-    last_at: '2026-10-10T21:41:50+00:00'
+    p90_duration_min: 189
+    samples: 131
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_factory_lane_c.jsonl
   status: active
   notes_zh: FactoryLaneC；[P5-calib HOLD 2026-09-17] mem 0.08 系批次尖刺负载采样落在启动/空闲相位，待下个周六实跑窗样本再校
@@ -1764,7 +1828,7 @@ entities:
     peak_mem_gb: 0.3108
     p90_duration_min: 5
     samples: 117
-    last_at: '2026-10-10T21:41:50+00:00'
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_gate_full_tree_audit.jsonl
   status: active
   notes_zh: GateFullTreeAudit
@@ -1832,6 +1896,26 @@ entities:
   status: active
   notes_zh: IntradayFundFlow；[R-F] 盘中资金流扫描与行情车道组同窗（共享行情时钟），错峰将错过盘口时敏窗口；判据②预算余量充足。
   co_start_intent: true
+- task_id: sch_kronos_scoring
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.5
+  est_duration_min: 35
+  exclusive_group: []
+  window_type: cron
+  window_expr: 30 0 * * 0,1,2,3,4
+  schedule_truth_source: scripts/tasks/register/register_kronos_scoring_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: 0.3708
+    p90_duration_min: 1
+    samples: 13
+    last_at: '2026-10-13T21:40:07+00:00'
+  samples_uri: .runtime/logs/resource_samples/sch_kronos_scoring.jsonl
+  status: active
+  notes_zh: KronosScoring
 - task_id: sch_measure_calibration
   module_id: null
   map_node_id: null
@@ -1869,7 +1953,7 @@ entities:
     peak_mem_gb: 0.3081
     p90_duration_min: 1
     samples: 4
-    last_at: '2026-10-10T21:41:50+00:00'
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_metaq_audit_reconcile.jsonl
   status: active
   notes_zh: MetaqAuditReconcile
@@ -1915,6 +1999,27 @@ entities:
   samples_uri: .runtime/logs/resource_samples/sch_model_intel_scan.jsonl
   status: active
   notes_zh: ModelIntelScan
+- task_id: sch_night_mining
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.5
+  est_duration_min: 120
+  exclusive_group: []
+  window_type: cron
+  window_expr: 0 23 * * 0,1,2,3,4
+  schedule_truth_source: scripts/tasks/register/register_night_mining_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
+  samples_uri: .runtime/logs/resource_samples/sch_night_mining.jsonl
+  status: active
+  notes_zh: NightMining
 - task_id: sch_ollama_serve
   module_id: null
   map_node_id: null
@@ -1930,9 +2035,9 @@ entities:
   trading_sensitive: true
   measured:
     peak_mem_gb: 11.5975
-    p90_duration_min: 5764
-    samples: 3205
-    last_at: '2026-10-10T21:41:56+00:00'
+    p90_duration_min: 5649
+    samples: 3434
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_ollama_serve.jsonl
   status: active
   notes_zh: AtLogOn 常驻（est=0 表示常驻）；qwen3:8b 显存/内存驻留 〔生成器·C-11 声明↔代码反查〕 纸面受管、裸奔执行（v2 C-11，lane_b 型）。修法=执行体开工前问 check_gate()，或如实改申报（trading_sensitive=false
@@ -1953,7 +2058,7 @@ entities:
     peak_mem_gb: 0.4293
     p90_duration_min: 286
     samples: 948
-    last_at: '2026-10-10T21:42:00+00:00'
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_paper_session.jsonl
   status: active
   notes_zh: PaperSession；[R-F] 盘中会话主体，与行情车道组同窗是业务必需（撮合依赖行情流），内存账见审计 warn 留痕。
@@ -1995,7 +2100,7 @@ entities:
     peak_mem_gb: 0.5083
     p90_duration_min: 3
     samples: 60
-    last_at: '2026-10-10T21:42:01+00:00'
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_post_settlement.jsonl
   status: active
   notes_zh: PostSettlement；[P5-calib HOLD 2026-09-17] 样本=1 低置信，第二轮再校
@@ -2013,9 +2118,9 @@ entities:
   trading_sensitive: false
   measured:
     peak_mem_gb: 0.304
-    p90_duration_min: 2
-    samples: 3706
-    last_at: '2026-10-10T21:42:16+00:00'
+    p90_duration_min: 1
+    samples: 4133
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_process_reaper.jsonl
   status: active
   notes_zh: ProcessReaper；[P5-calib 2026-09-17 校正] dur 1→6（n=56 P90=5.2 低估）
@@ -2035,7 +2140,7 @@ entities:
     peak_mem_gb: 0.1613
     p90_duration_min: 0
     samples: 4
-    last_at: '2026-10-10T21:42:28+00:00'
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_resource_morning_report.jsonl
   status: active
   notes_zh: ResourceMorningReport
@@ -2158,11 +2263,10 @@ entities:
   schedule_truth_source: scripts/tasks/register/register_sft_train_window_task.ps1
   trading_sensitive: false
   measured:
-    peak_mem_gb: null
-    p90_duration_min: null
-    samples: 0
-    last_at: null
-    no_sample_reason_zh: null
+    peak_mem_gb: 0.3812
+    p90_duration_min: 3
+    samples: 6
+    last_at: '2026-10-13T21:40:07+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_sft_train_window.jsonl
   status: active
   notes_zh: SftTrainWindow
@@ -2263,9 +2367,9 @@ entities:
   trading_sensitive: false
   measured:
     peak_mem_gb: 15.7555
-    p90_duration_min: 4311
-    samples: 15768
-    last_at: '2026-10-10T21:42:52+00:00'
+    p90_duration_min: 4191
+    samples: 18350
+    last_at: '2026-10-13T21:40:10+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_worktree_drift_watchdog.jsonl
   status: active
   notes_zh: WorktreeDriftWatchdog；[P5-calib HOLD 2026-09-17] lifetime 口径失真：常驻循环进程寿命≠单次执行时长，需 sampler 分段口径修复后重测

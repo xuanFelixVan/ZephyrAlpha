@@ -591,6 +591,15 @@ MANUAL_ENTITY_SEED: list[dict] = [
         "wt": "manual",
     },
     {
+        "task_id": "ops_ch_vm_config_snapshot",
+        "cn": "CH VM 配置面月快照 ch_vm_config_snapshot.py（每月 5 日 10:00，one-shot 跑完即退）",
+        "class": "light",
+        "dmin": 30,
+        "mem": 1.0,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
         "task_id": "ops_io_check_monthly",
         "cn": "磁盘 IO 月检 io_check_task.bat（实测每月 13 日 09:00）",
         "class": "light",
@@ -1244,6 +1253,7 @@ OPS_TASK_ALIASES: dict[str, str] = {
     "ZephyrAlpha-WeeklyVMBackup": "ops_weekly_vm_backup",
     "ZephyrAlpha-CH-OptimizeMerge-Weekly": "ops_ch_optimize_merge_weekly",
     "ZephyrAlpha-IOCheck-Monthly": "ops_io_check_monthly",
+    "ZephyrAlpha-CHVMConfigSnapshot": "ops_ch_vm_config_snapshot",
     "ZephyrAlpha-AI-Wrapper-Inject": "ops_ai_wrapper_inject",
     "ZephyrAlpha_TTLRejudgeDaily": "ops_ttl_rejudge_daily",
     "ZephyrAlpha_QMTWatchdog": "ops_qmt_watchdog",
