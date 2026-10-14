@@ -123,3 +123,38 @@ cat .runtime/tmp/st-datalane2-20261012/seg2/retry_marker.json
 python -c "import sys;sys.path.insert(0,'scripts/governance');from _shared.module_translation_loader import get_module_translation as g;print(g('scripts/data/backfill_kline_daily_history.py'))"
 python scripts/commit_queue.py status --session st-datalane2-20261012
 ```
+## 七、收口回执（统筹全线收口令 2026-10-14 午，sid=st-datalane2-20261012）
+
+按序回执：**①无可推进项**——唯一在手前提"甲"（PERMANENT-SYSTEM-TRIGGER 的 m10 声明解析对称化）
+12:1x 实测未落地（门件 dev 末笔 `ec33643ea93`／2026-10-03；声明解析函数 grep=0；
+维护七班三袋 0010/0015/0018 全 pending；本班探针磁盘=HEAD 同面 `a598e78d2588`、三形态全拦、退出码 1）。
+不硬投、不加零收益声明，转 ③ 交接卡＝`00_ledger.md` §四十二（含触发通知的唯一有效形态、
+未落地两件的逐字 blob 存证与已实测抽回命令、甲落地后五步动作序、两处本班自纠）。
+
+**②收班序列实测量**：队列本班四态 pending 0／running 0／done 8／dead 3；dev 面账本 679 行／42 节、
+交付册本节前列数 6→7；`.runtime/locks` 137 条含本班 sid 0 条（无 claim 待 release）；
+命令行匹配 `datalane2` 的 python 进程 0 个（无守护待按 PID 停）；
+注册表 `get_session('st-datalane2-20261012')` 返回假（会话已在册外）。
+剩两步在本袋落地后执行：车道归档（撞保护区即停手留命令，禁硬闯）＋撤 reaper keep 本班两行
+（按 sid 谓词删、不按行号删；该件未跟踪 `.gitignore:344`，故属本地动作）。
+
+**本班交付面（一句话可核）**：段二价量 1,657,332 行／3,580 只（C1=0.9967）、
+basic 2019-2020 与 2017-2018 两批（1,831,872／1,561,578 行，rows==keys，全标 tushare）、
+写侧 `data_source` 四处随形改已落（`3422a5c2d6`，落地面 132 passed＋ruff 净）、
+④纠源 ALTER（akshare 错标 11,122→0）、10 月分区收版（2→1 版本、逐列校验和不变）、
+运行面重启（子 9548@21:32:47 晚于修复落地）、REG-IND-001 尺与立法对齐、
+PG 夹具 6 行经正道撤账留墓碑。
+
+**待他班/待 Owner（非本班可签）**：判据②＝今日 16:3x 首笔新写入 `data_source` 是否显 `tushare`（统筹代跑）；
+六件套在册化（等甲）；投影物化链与门解析器本体（门主车道）；2016 及更早 basic、周月线/后复权表族（另立工单）。
+全线交接真源＝各班班账＋队列 blobs，本对话记忆不作依据。
+
+**收口袋的第一次投递死了，死因与本册 §四十二/§四十三 同源，记档防重复**：袋
+`q-20261014-st-datalane2-20261012-0023` @12:24 入队（`git_commit.py --enqueue`，无 `--base-head` 旗）、
+12:37 落 dead，dead_reason＝`[landing] 非注册表族件双侧皆改真冲突（整文件三方）: 00_ledger.md`，
+`base_head` 记的是**车道 HEAD** `7599a6aff2d`（车道 HEAD 是 dev 祖先＝旧基底），而袋面按 dev 现值重建——
+基底与被比对象错开，于是"纯追加"被读成"双侧皆改"。修法不是弱化仲裁：改用
+`commit_queue.py enqueue --base-head <dev sha> --worktree-root <车道>` 把基底写回真值
+（本班已证袋面第 1..679 行与 dev 现值逐字等，是真前缀非事后拼贴）。
+上表的 claim=0／进程=0 是建袋前（12:1x）读数，本袋投递自身开了会话＋守护（pid 16140）＋claim 两件，
+落地后按 release→按 PID 停守护→unregister→归档车道 的序关掉（archive 的死判对活跃会话硬拒）。
