@@ -505,3 +505,44 @@ MANIFEST 行合计 203（85＋13 唯一 blob 面＋38 壳实质面＋13＋1＋1 
 ### 证据锚
 
 收班册 §五-8（呈批件全文）｜本账 §八-11（死因普查 147 类）｜§八-14（台账键形与自纠）｜§七（blob 三轮）。复核命令＝收班册 §六/§六-补 原文（注意 §六-1 重写判据表的禁并发注）。
+## 十、三班班账（st-deadmass3-20261014 执行＋st-deadmass3b-20261014 收尾）
+
+> 两段署名：**A 批执行主体＝st-deadmass3-20261014**（13:08 进场，14:14:29 干跑，14:16:27 `--execute` 落盘，14:17:57 blob_gc 第一轮，**14:28 因平台额度中断**（接手令转述；其残面最后产物 mtime=14:18），未及落账未收班）；**验证收尾＝st-deadmass3b-20261014**（14:48 接管进场，本节为其落账）。前任残面六件全数采纳：`deadmass3_plan.json`／`deadmass3_dryrun.json(+log)`／`deadmass3_execute_log.txt`／`deadmass3_archive_log.json`／`deadmass3_audit_manifest.py(+report)`／`deadmass3_blobgc_log.txt`（均在 `.runtime/tmp/`）；下文凡「前任」出自该面，凡「续班现测」＝本班亲手重测（14:48–14:58）。
+
+### 1. 闭合式四数（续班现测；禁按条数估，逐 qid 对拍）
+
+- **执行前基线 dead＝1,286**（前任 exec 日志 `dead_before`，14:16:29 落盘时值；在册三读数：统筹令 12:4x=1,267 → plan 13:22=1,277 → exec 14:16=1,286，死信缓涨三读皆在册）。
+- **本轮实动＝1,205**（`archived_total`；manifest 行 452→1,657，行差同值；白名单 144 sid／1 片；kept=other_session 77＋content_held 4；verify=off）。
+- **执行后新增死信＝8**（14:29–14:46 到场，逐条）：`q-20261014-st-condaxis-20261013-0113`（TAKEOVER-PENDING）｜`q-20261014-st-infoaxis-20261013-0030`（ALGO-NOTE-SYNC）｜`-0031`～`-0035`（CREATE-GUARD×5）｜`-0036`（TRANSLATION-COVERAGE）——8 枚中 7 枚属 st-infoaxis-20261013，**该会话至今仍在活跃重投连吃门禁**。
+- **终值 dead＝89＝1,286−1,205+8**，闭合式 **CLOSED**（续班现测 14:52 与 14:59 两读一致；前任 audit_report 时刻值 81+0=81 亦闭合，见其 closure 字段）。
+- ⚑ 接手令转述「1,268→87」与 exec 在册「1,286→81」不符，属转述时点差，**以在册原值为准**。
+
+### 2. 新行三段完整性（续班 14:51 复跑前任同族尺 `deadmass3_audit_manifest.py` 现测）
+
+- 新行 **1,205/1,205** verify=off；`bag_json_sha256`+`blob_set_sha256` 双段齐 1,205/1,205；`content_evidence` 真键形（嵌套 dict）1,205/1,205——顶层 `evidence`/`session_id` 错键形未复犯（§八-14 教训在册，尺先以一行真实样本打样）。
+- 双 sha 逐行复算 mismatch=0；n_no_home=0／n_evidence_tampered=0 全量断言过；manifest 新行 qid 集 ≡ exec `archived_qids`（foreign_rows=0）。
+- verdict 分布：C_TOMBSTORED 1,034／D_MIXED_TOMBSTORED 41／B_DEAD_OWNER_TOMBSTORED 99／A_LANDED 29／D_CONFIRMED_LOST 2（合计 1,205）。
+
+### 3. blob 面与「前任尺复跑 VIOLATION」定性（续班亲测）
+
+- 续班复跑前任尺报 `blob_missing=61,924` 引用（distinct sha 9,816）——**定性：非丢失**。系前任 14:17:57 已执行 `blob_gc --phase 2 --archive`（run.moved=**9,861 枚/0.844 GiB** 搬入 `blobs_archive/`），前任尺无 GC 搬移回退通道故误报。
+- 归档面回读（续班亲手，全量非抽样）：**9,861/9,861 sha256 全等**；尺 missing 9,816 distinct ⊆ moved 集（0 例外）；尺在位读回 37,740＋missing 61,924＝99,664＝前任 14:17 全量读数，引用面无增减，仅位置搬移。
+- **blob_gc 前后 face 读数**：续班 pass2（14:57:41）before blobs/=5,829（du 1,091,219 KB）／blobs_archive/=21,685 → after **5,807／21,708**（+23 精确吻合）；pass2 moved=23/23 sha 回读全等，skipped_race_refs=0、skipped_dst_exists=0。两轮（前任 9,861＋续班 23）累计归档 **9,884 枚**；前任 GC 扫描时 blobs_on_disk=15,683（二班收班 15,618 之后的自然增量含于其读数）。
+
+### 4. 抢救名单完整性复验（续班现测 14:52／14:59 两读一致）
+
+- 新 manifest 1,205 行 qid 含 `bakdr`／`infoaxis` 命中＝**0**。
+- dead/ 现值：**st-bakdr-20261013＝8 袋**、**st-infoaxis-20261013＝30 袋**（其中 7 袋＝上述 14:29–14:46 新增；均未入批，原位保留）。
+- `E:/_tomb_quarantine` bakdr/infoaxis 相关目录＝**0**（现存仅 st-deadclean-20261013／st-deadmass-20261013／st-deadmass2-20261014／st-finalclean2-20261010 四池＋INDEX＋README）。
+- 复活逆向通道在册：本批两池（st-deadmass-20261013 C_unique_20261013／st-deadmass2-20261014 C_unique_20261014）在 INDEX.jsonl 均带 rollback_cmd（robocopy 回主区形）。
+
+### 5. 抽验与键形定性
+
+- 抽验 20 行（seed=20261014 随机抽样）：墓园袋文件 sha256 回读 **20/20 全等**（另有全量 1,205 行 bag_json sha 复算 mismatch=0，双重覆盖）。
+- 键形定性：dead_archive manifest 行真键形**无** `rollback_cmd` 键（与 §八-14 键形同族，勿再误判）；rollback_cmd 的「在行」面＝`E:/_tomb_quarantine/INDEX.jsonl` 各墓池行（现 45 行全带非空 rollback_cmd）。
+
+### 6. 红线自查与未竟移交
+
+- `--force` 未用；门判据/阈值未改；B/D 类未动（kept 81 袋原位）；他班 open 条目零代解；本节全部数值实跑原文、零自拟。
+- 收班即清：前任 lane `.aidrafts/st-deadmass3-20261014`＋自家 lane 按 §2.9 接管通道 archive（archive 前同分钟复测活会话心跳龄，只动前任与自家）；reaper keep `deadmass3` 行随收班撤（该行登记明示「收班即撤」）。
+- **未竟移交统筹**：①收班册 `99_delivery_shift3.md` 未建（接手令提交清单仅本账，新建 CREATE-GUARD 正门未授权，留统筹裁定是否补）；②st-infoaxis-20261013 仍活跃重投（门禁连拦 7 连败），其抢救复投与门禁修因属其本班；③dead 终值 89 含 4 枚 content_held（HOLD_UNIQUE_NOT_TOMBSTORED）与 77 枚他班属主，四态分诊不隔夜原则下建议统筹明确下一手。
