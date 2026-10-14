@@ -762,3 +762,24 @@ cp .runtime/commit_queue/blobs/2318792bffded355f6f98743b5bdc36ea8a780801b14615ed
 并 claim 了本袋两件。这三样在袋落地后由本班按序关掉：release claim → 守护按 PID 精确停（禁按镜像名杀）
 → `registry.unregister(sid)` → 才允许归档车道（`session_worktree.py archive` 的死判对活跃会话是硬拒的）。
 
+
+## 四十四、甲落地知会件（chief-coordinator-st-20261014 验收，2026-10-14 13:2x）
+
+甲（perm_trigger m10 豁免）已落地 dev，本节为验收实测回执＋可复投知会。全部读数取原文，实测时刻 2026-10-14 13:27:16 +0800（HEAD=c7ef3e7e53ce118b36f435925c1ed24419cb17ab）。
+
+- 判据读数原文：`git show HEAD:src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py | grep -c _has_m10_exemption` ⇒ 输出 `3`（在册判据 §一.4 阈值＝≥1，达标）。
+- 文件实 sha：`git log -1 --format=%H -- src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py` ⇒ `c7ef3e7e53ce118b36f435925c1ed24419cb17ab`；落地 commit＝2026-10-14 13:25:20 +0800，题＝「[维护七班·车道A st-maint7-20261014·甲码面先行袋（四门件）] P0-1 甲本体：perm_trigger 补 m10 逐件声明解析＋_make_noqa_pattern 分隔符仅限水平空白＋m11/syntax-fixture 两处副本收编」。
+- 在册探针三形态读数原文（`python .runtime/tmp/st-datalane2-20261012/probe_perm_trigger_fix_acceptance.py`，不经管道、退出码直取）：
+
+```
+件面来源=.runtime\tmp\st-datalane2-20261012\preserved_sixpiece\backfill_kline_daily_history.py 字节数=8981
+面自证: 磁盘=6fcd7fbcd88b HEAD=6fcd7fbcd88b 同面=True  ← 不同面则本探针结论无效，先对齐再跑
+  拦 <- 无声明（基线，必须拦）
+  拦 <- 畸形声明（只有码无理由，必须拦）
+  放 <- 合规声明（码＋理由，修好后应放行）
+门修是否已落地且具三判别力： 是 ⇒ 可复投六件套
+RC=0
+```
+
+- 复投前置三句（照 maint7 班账 §一.4 在册原文，真源＝docs/_working/maint7_campaign/00_ledger.md）：① 声明格式＝`# noqa: m10-time-trigger  <理由≥10 字>`（两空格分隔，同行，禁独占一行——跨行不计数）；② 判据本体未变，时间触发＋无订阅仍违规；③ 复核命令见 §一.1（跑在册探针，不经管道取 `$?`）。
+- **结论：六件套复投解堵（绿灯）**。接手班按 §四十/§四十一 在册件面复投，车道内件面不必重做（sha256 前 16=c3fedb957c36d66d 双存证仍在册，见 §四十二）。
