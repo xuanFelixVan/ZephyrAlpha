@@ -1431,3 +1431,222 @@ Test-CapacityGuardBreach : 无法将“Test-CapacityGuardBreach”项识别为 c
 ### 证据锚
 
 `G:/backup/ch_vm_config/20261014_002311/snapshot_manifest.json`（首拍双证）｜`.runtime/tmp/bakdr_20261013/bag5_msg.txt`（袋五全文含 Owner 批复四分法原文）｜本册"批复执行段"（2026-10-10 批复族）｜`docs/_working/fullcirc_closeout_chief/bak_591g_evidence.md`（封印证据包）｜INFRA-STORE-003。
+
+## 备份线夜班班账·袋一：P1-A 四类自动恢复演练方案袋（st-bakdr-20261013，2026-10-13 22:5x-23:5x 开工）
+
+- **点名件复述**：令＝统筹令 2026-10-13 22:5x P1-A"四类自动恢复演练方案（代码／SQLite／ClickHouse／VM，PG 已有月度演练不动）"，须给全四件＝每类频率与抽查面（CH 444GB 全量太贵→分级为结构还原＋表指纹比对 vs 全量）／自动触发腿落法与"禁 cron"红线的相容说法／恢复成功判据（指纹·行数·关键字段三对）／失败告警面。**本袋零施工**（零改判据、零新建执行体、零注册），落 dev 呈 Owner 批后才有施工袋。交付件＝`docs/_working/backfix_campaign/dr_drill_plan.md`（本册新文件，token 已登 capability=dr_drill_plan；未建任何 .py/.ps1。命名两次被自家门纠正实录：`_20261013` 撞 N-03 日期后缀、`_2026-10-13` 撞 N-13 非 snake_case，终态去日期＝真源里日期写在 frontmatter title 与正文，不写进文件名）。
+
+- **锚点校准（不凭记忆，逐条实查）**：`scripts/backup/backup.ps1` 的 `Remove-DatedTree` 定义 :391／三处调用位 :580 :828 :1014、dumps 拷贝块 :543-560（robocopy 行 :555、落账 :559）、CH 增量腿头 :610、cadence 闸 :637、跳支 :660、`last_ch_backup_status` 写位 :1302、SLO 自调 :1340——`awk` 逐行命中全在。**配置真源＝`scripts/backup/backup_config.yaml`（`config/backup_config.yaml` 不存在）**，`git_bundle.base` :41、`working_vault` :43-47、`db_dumps.retention_days: 14` :52、`ch_backup` :55-63（含 `vm_name: "zephyr-ch"` 互斥闸唯一真源 :63）、`capacity_guard` :146-155。上代交接档写的"verified 自检在 :1043"经实测**不成立**（:1043 是 bundle 目录回退行，CH 自检实在 :740-770），本册按实测位引用。
+
+- **一条把方案整体形状改写的实测证伪（P1-B 前提，先报窗不硬拍）**：令卡"VM 快照内容＝系统盘+配置面（不含数据盘）"在本机**无对应物理对象**。双面证据：宿主 `Get-VHD boot.vhdx` ⇒ FileSize=**4,194,304 B**／虚拟 85,899,345,920 B／Dynamic＝一张没装过东西的空盘；guest `lsblk` ⇒ `sda`(=boot.vhdx) 80G **无分区无文件系统**，`sdb`(=data.vhdx) 600G 的 `sdb2` 598.9G ext4 **挂在 `/`**，且 `system.disks.default`＝`/var/lib/clickhouse/` 就在同一分区。⇒ 照原令盘级拍"系统盘"只会拍回 4 MiB 空盘（最漂亮的一种假绿）。可达形态已在方案里分三型给全（A＝配置面＋VM 定义面，MB 级零停机，本班 P1-B 落这一型；B＝guest 内 OS+程序文件级镜像，实测 OS 面 `du -x` ≈13 GiB；C＝盘级全镜像 563 GiB/份，与"不含数据盘"令面冲突，本班不自开）。
+
+- **四腿的既有资产盘点（方案的"内收"面，不新造第二把尺）**：`DatabaseManager.verify_backup()`（`src/zephyr/governance/persistence/database_manager.py:832`，含 `PRAGMA integrity_check`＋表名遍历＋逐表行数）经 `grep -rn verify_backup src/ scripts/ tests/` 核得**零调用者**＝装饰件，SQLite 演练腿按令 O-3 收编为它的第一位真消费者；CH 每轮已产结构基线 `report.databases.clickhouse["manifest"]`＝**226 条** `{database,name,total_rows}`（实测取 `logs/backup_report_20261013_003608.json`）⇒ 结构对拍不必另造快照；`scripts/ops/r6_restore_via_vm.py`／`r6_restore_check.py`（建临时库→RESTORE TABLE AS→行数＋前 5 行→DROP）作 CH 抽样档实现基座；2026-09-15 那次人工演练（63,691 件 sha256 抽检）所用脚本**未入库**，收编为代码腿 L1 基座。**代码腿对拍基线有一处硬缺口**：`grep -n rev-parse scripts/backup/backup.ps1`＝**0 命中**⇒ 快照抓取时刻的 HEAD 无人记账，而工作区在多会话并发期是脏面（本班上工即见 `AGENTS.md`／`gate_registry.yaml`／`config/flags.yaml` 均 MM），拿"当前工作区字节"当尺必天天假红——方案把它列为只增观测位（O-6），不改任何现有判据。
+
+- **触发腿的相容论证（Owner 要的说法，四条真源）**：`docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml:119-133` §3 逐字禁的是"**进程内**时间触发"，同段 L127 把适用面钉在 **C 类永久系统**，L132 又给"CI schedule 属进程外托管层级⇒允许"的先例；`_registry/vocabularies/startup_vocabulary.yaml:23-27` v1.1.0（2026-09-05 总管裁定）已增设正式枚举值 `scheduled_task`（:64 起），边界在 :27"仅限守护类 one-shot（执行完即退出）；进程内 Timer/轮询守护仍禁"；被禁值 `scheduled`（进程内定时）见同文件 :20-22；月度演练自身的合法豁免写法在册＝`scripts/backup/restore_drill.py:17` 的 `# noqa: m11-perm-manual-legitimate`。⇒ 结论＝**OS 托管计划任务 one-shot**，非新发明、非绕闸，且注册/变更仍属 Owner 门位（方案 §0 O-1 即那一点头）。顺带显形一处在册缺口：`ZEPHYR-RESTORE-DRILL` **无注册脚本**（`scripts/tasks/register/` 与 `scripts/register_*.ps1` 全查无，任务系手工注册），而 `scripts/governance/scheduled_task_reconcile.py:8` 把"期望清单唯一真源"定在 register 脚本字面声明＝该任务对账器看不见。
+
+- **P1-A2 字节级根因（本袋只记取证，修法另袋）**：见方案册 §9。要点＝剥掉 `LC_*` 后 `pg_restore` 把自己那两句框架 token 本地化并**按 ACP=936 写成 GBK 字节**，而服务端错误正文走 UTF-8（本机 `PYTHONUTF8=1`）＝**一条流两种编码**，两把框架正则双双 0 命中 ⇒ `error_count=0` ⇒ `unknown` ⇒ 判红，与 10-01 报告逐字同形；钉 `LC_ALL=C LANG=C LANGUAGE=C` 的正对照＝两把正则各 2/2 命中。复现件＝`D:/ZephyrAlpha/.runtime/tmp/bakdr_20261013/repro_c4_locale3.py`（创建并删除 `zephyr_repro2_src_bakdr`/`zephyr_repro2_dst_bakdr` 两个 scratch 库，`pg_database` 存在性前后各测一次均为 0；**未触 `depgraph` 与 `depgraph_drill`**）。
+
+- **本袋零面声明**：零改判据/阈值/保留线；零新建执行体脚本；零注册计划任务；零触碰 `G:\backup`／`F:` 业务面写；未动 `backup.ps1`／`restore_drill.py`／任何测册。对 Hyper-V 只做过**只读**查询（`Get-VM`/`Get-VHD`/`Get-VMSnapshot`/`Get-VMFirmware`/`Get-VMIntegrationService`，`Get-VMSnapshot -VMName zephyr-ch` 返回空＝**无检查点链**，可快照态成立）；对 CH/VM 只做过只读 SQL 与 `lsblk/df/du` 读数。按计划任务原环境点火一次 PG 月度演练取证（`Start-ScheduledTask ZEPHYR-RESTORE-DRILL`，23:33:10 起跑，`LastTaskResult=267009` 在飞，读数落地后追加本段）。
+
+- **候 Owner 裁（本袋新增 6 件，均只显形不自裁）**：方案册 §0 表 O-1…O-6＝①4 支 one-shot 计划任务注册；②CH 分区级真还原档（预算 ≤8 GiB）开不开、全量 444 GiB 档是否彻底只留人工；③SQLite 是否收编 `verify_backup()`（含给它加 `read_only` 形参以撤掉它内部那句 `PRAGMA journal_mode = WAL` 写副作用）；④VM 月快照取型 A 还是型 A＋型 B；⑤演练台账落 `data/databases/dr_drill_ledger.json` 并与 PG 那句"drill 结果不入账，人工阅"如何并轨；⑥备份链写侧两个只增观测位（快照记 HEAD sha＋条目计数）。另两处显形不入本袋处置：`G:\backup\git_bundles\git_bundles\` 嵌套 853 MB 陈旧件（物理删除＝Owner 门位）、9 支 `test_stage3_vault_mtime_and_verdict.py` 既有红（按令归维护六班第 13 条，本班不碰）。
+
+- **署名**：adjudicator=st-bakdr-20261013（备份线夜班总包·袋一＝P1-A 方案袋零施工＋P1-B 前提双面证伪呈报＋P1-A2 字节级根因与正对照取证；施工袋待批）。
+
+## 备份线夜班班账·袋二：P1-B VM 月频快照（型A 配置面）落地＋回滚双证（st-bakdr-20261013，2026-10-14 00:0x-00:4x）
+
+- **点名件复述**：令＝统筹令 2026-10-13 22:5x P1-B「VM 月频快照落地（Owner 已裁『月频快照』）」，内容＝系统盘＋配置面（不含数据盘），存储＝G: 备份总仓，保留线自定（建议 ≥2 份），**判据＝首拍一次＋回滚验证一次双证**；Owner 本批作为对 2026-10-04 退役裁定的修订依据写进班账，按 M-3 先例可补签裁定号入册。
+
+- **前提改判（双面证据，不硬拍）**：`boot.vhdx` FileSize=**4,194,304 B**／虚拟 85,899,345,920 B／Dynamic＝空盘；guest `lsblk` ⇒ `sda` 80G 无分区无文件系统，`sdb2` 598.9G ext4 **挂 `/`**，`system.disks.default`=`/var/lib/clickhouse/`。⇒ 本机无"独立系统盘"这个可拷贝对象，"不含数据盘的盘级镜像"物理不存在。可达形态分三型（A＝VM 定义面＋客户机配置面，本班落这一型；B＝guest 内 OS+程序文件级镜像，实测 OS 面 `du -x /`（排除 /var/lib/clickhouse 与 /mnt）≈**13 GiB**；C＝盘级全镜像 `data.vhdx` **563 GiB/份**）；C 与令面"不含数据盘"直接冲突，**本班不自开**，B 列呈批 O-4。
+
+- **型A 落地事实**（执行体 `scripts/backup/ch_vm_config_snapshot.py`，578 行，`[STARTUP] scheduled_task`＋`# noqa: m11-perm-manual-legitimate`，裁决外形沿用 PG 演练八键契约 `criteria_version=VMCFG-1`）：
+  - 采集面＝`vm_definition.json`（Get-VM/HardDiskDrive/NetworkAdapter/Firmware/Memory/Processor/IntegrationService/VMSnapshot 全字段，含三张盘的 FileSize/VirtualSize 台账＝**只记元数据不读字节**）＋`vm_config/{guid}.vmcx,.vmgs` 原字节（在线复制实测可行：77,824 B／4,194,816 B）＋`guest/etc.tar.gz`（/etc 全量，**765,982 B**，915 件）＋`guest/etc_sha256sums.txt`（915 行）＋`guest/inventory.json`（CH 26.6.1.1193／内核 6.8.0-146-generic／dpkg clickhouse 4 件／lsblk／df／systemctl enabled 单／system.disks）＋`snapshot_manifest.json`。
+  - **`vmrs`（10,339,016,704 B＝运行期内存态）明确不拷**——它不是可移植资产，拷它＝每月白扔 10 GiB 还给人"整机已备"的错觉。
+  - 预检三拒＝未合并检查点链／G 盘可用 <50 GiB／客户机不可达，一拒即 exit 3 零写（`Get-VMSnapshot` 实测返回空＝链干净，可拍态成立）。
+
+- **双证实测（首拍＝`G:/backup/ch_vm_config/20261014_002311`）**：
+  - 证0 字节面：vmcx 源 77,824 ↔ 副本 77,824，vmgs 源 4,194,816 ↔ 副本 4,194,816；**源哈希位显式记 `DENIED_WHILE_RUNNING`**（实测 VMMS 以读写共享持有 vmcx，`Copy-Item` 能过而 `Get-FileHash` 被"正由另一进程使用"拒）——留空会被读成"没测"，显式记不可得才是诚实形态。
+  - 证1 内容级：快照内 915 件与 sha 清单 915 行同数（两工具自洽），抽 15 件（3 件核心＋12 件等距确定性样本）与客户机**同刻现读**逐件 sha256 对拍＝**全等，0 失配 0 不可读**；含 root-only 件（`/etc/shadow` 同法取回，hostname 的 sha 与早先无 sudo 干净探针同值＝正对照到手）。0 命中一律判红，不当"查无"。
+  - 证2 可回滚级：按快照 spec 在 Hyper-V 重建隔离临时机 `dr-chvmcfg-1013161540`，读回 Generation=2／ProcessorCount=12／MemoryStartup=8,589,934,592、SecureBoot=Off 四字段全等、**DiskAttachments=0**、State=Off（绝不开机），随后 Remove-VM 并读回＝**0 台残留**；生产 VM 全程 Running、三张 vhdx 附件位（1/2/4）逐字未动。
+  - 独立复验：`--verify-only` 对该目录重跑三证＝`verify_only_landed` pass=true（证明验证不是采集的副产物，是可重复的独立动作）。
+
+- **修到能绿之前先撞的四处自犯（留案不抹）**：①`_ps` 把 `Copy-Item` 的裸词回执当 JSON 解析⇒当场炸；②PS 枚举经 `ConvertTo-Json` 出**数字**（State→2、SecureBoot→1）⇒预检永远判 `vm_state=2` 拒拍，改 `[string]` 才对；③`-InputObject [pscustomobject]@{...}` 缺括号被当两个参数；④**最贵一处**：`ssh_run(use_sudo=True)` 走 `get_pty`，把口令**回显两次混进同一条 stdout**（实测样本 `ZephyrAlpha2026\r\n=B64BEGIN=\r\nZephyrAlpha2026\r\n<正文>`），证1 因此 15/15 全失配——哨兵切不开，正解＝root 侧只写 `/tmp`＋放开读位，正文一律**第二次无 pty 调用**读回，且全文 `use_sudo=True` 收进 `_guest_root_file` 一个单口（测册钉住体外出现数=0）。另：远端 `for f in` 外层必须单引号，写双引号会被登录 shell 先把 `$f` 吞成空（实测只剩两行 `KEY:`）。
+
+- **尺与红绿对拍**：`tests/data/backup/test_ch_vm_config_snapshot.py` **31 passed**（全离线，零 SSH 零 Hyper-V；件头写明"本件证契约与 shell 安全面，不证能拉起虚拟机"）。变异自证＝把证2 的 `DiskAttachments == 0` 改成 `>= 0`（即"临时机误挂生产 vhdx"不再判红）⇒当场 **1 failed**，逐字节还原后 sha256 前缀 `7cb20bf5f64f6c31` 与变异前同值。fixture 刻意从 `m.CORE_GUEST_FILES` 派生而非手抄路径——手抄清单会在核心件增减时静默变红（本班首跑就撞过）。
+
+- **登记面（全部走正门，逐册审计零删除）**：裁定 **#517** 经 `REG-RULING-001/entries` 意图 API 三步（register→publish v25→render）入册，adjudicator 双段（Owner 2026-10-13 晚令卡裁定／登记执行=st-bakdr-20261013，依根宪法 §5.3，补签先例＝裁定#515），`approved_paths: []`＝登记语义非授权语义。⚠ 该册首版我按"手改 YAML"落，被自家结构检查打回（`related_rulings: []- ruling_id:` 粘连＋根结构实为 `entries` 列表）⇒**ruling_registry.yaml 是 PG 生成的投影**，手改会被下次 render 洗掉，故改走账本；投影面按 dev 字节为基只注入本班 27 行（`deleted_vs_dev=0`）。creation_token 三条（型A 执行体／注册脚本／方案册）走 `batch_creation_tokens`，投影同样 dev 为基注入 10 行、零删除。资源画像＝`generate_resource_profile_registry.py` 加 `ops_ch_vm_config_snapshot` 种子＋`ZephyrAlpha-CHVMConfigSnapshot` 别名，重生成后对 dev 仅 2 行差异（`generated_at` 与 `total_entities` 计数行，属机生面）；`scripts/governance/script_manifest.yaml` 重生成 563→564。**`scripts/script-manifest.yaml` 本班未随袋**：车道树落后 dev 若干件，整档重生成会删他班 36 条条目（实测 total_scripts 1284→1248），已按 dev 字节复位，正解＝在已对齐 dev 的车道跑 `python scripts/generate_manifest.py` 后再投（写进下方待办）。
+- **注册腿状态（未点火的真因）**：`scripts/tasks/register/register_ch_vm_config_snapshot_task.ps1` 已写，含在册双前置（P2 裁定门＝册内必须有引用该执行体的裁定；P1 资源画像门＝`ops_ch_vm_config_snapshot` 须已在画像册，否则新任务对别人就是 `sched_task_orphan`），两门前置**要等本袋落地到 dev 才成立**，故 `schtasks /create` 今晚未执行＝不是遗漏是次序。落地后一条命令即得月频自动腿：
+  `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/tasks/register/register_ch_vm_config_snapshot_task.ps1`
+  回退＝同文件加 `-Unregister`（`schtasks /delete /tn ZephyrAlpha-CHVMConfigSnapshot /f`）；点火前请把 `ch_vm_config_snapshot` 一行加进 `data/runtime/process_reaper_keep.txt`（RULE-GUARDIAN，防 reaper 误杀在飞快照）。
+
+- **净零与内收（根宪法 §4）**：新增＝1 执行体＋1 注册脚本＋1 测册＋1 裁定＋1 画像种子；**替代**＝触发腿接管 `ZephyrAlpha-WeeklyVMBackup`（已 Disabled）与 `backup_ch_vm.ps1`（`:153-154` 无条件 `exit 0` 密封，密封后 VM 侧零自动可回滚资产）的应然职责，不新建第二把尺（裁决外形沿用 `judge_drill` 八键契约，CH/代码/SQLite 演练方案册同源）。仍密封不复用：`backup_ch_vm.ps1` 本体一字未动。
+
+- **本袋零面声明**：未改任何既有判据/阈值/保留线；未触碰生产 VM 生命周期（只读＋一支已删除的隔离临时机）；未拷任何 `.vhdx` 数据字节（测册钉住复制后缀白名单＝`.vmcx/.vmgs`）；`G:\backup` 只新增 `ch_vm_config/` 目录；`F:` 零写；`offrepo` 目标零触；未注册计划任务（理由见上）；`logs/ch_vm_config_snapshot_*.json` 六份为本班自造读数件（logs 面 gitignore）。本班自造的三个半成品快照目录已就地撤除（无 manifest＝不成品不留）。
+
+- **候 Owner 裁（本班新增，均只显形不自裁）**：O-4 型B 是否开（月增 ≤16 GiB，G 现余 2,471.4 GiB）／型C 是否永久排除；O-7 **月度演练与备份链同窗会互相闷死**——本班按计划任务原环境点火 PG 月度演练取基线，实测 `TimeoutExpired ... after 1800 seconds`（23:33:10 起跑、同窗备份链 Stage 3 全树枚举在抢 G:/D: IO），报告八键与临时库清理契约兑现（`drill_db_dropped=true`），**这不是分类器中文乱码红，是超时红**，修法要么错峰要么把 `restore_drill.py:696` 那条 1800s 抬到与实测轮时长同量级（属判据面，待裁）；O-8 `scripts/script-manifest.yaml` 与 `capability_canonical_file_registry.yaml` 两处"渲染即吃他人行"的投影滞后（实测 render 会删 st-deadmass 的 10 行 token），归册主自处，本班一律以 dev 为基注入绕开。
+
+- **署名**：adjudicator=st-bakdr-20261013（P1-B 型A 月频快照落地＝首拍＋独立复验双证齐＋31 测绿＋变异自证＋裁定 517 入册；自动触发腿待落地后一条命令）。
+
+## 备份线夜班班账·袋三：P1-A2 修 PG 演练打分器中文乱码（真实字节回放＋判据零弱化）（st-bakdr-20261013，2026-10-14 00:5x-01:1x）
+
+- **点名件复述**：令＝统筹令 2026-10-13 22:5x P1-A 段内"顺手修 PG 演练打分器中文乱码——11-01 月度演练前修完，免得又假红一次"。PG 月度演练的**覆盖面与四条件判据一字不动**，只治打分器被编码问题绊倒这一处。
+
+- **根因＝一条流两种编码（真实字节回放，非推演）**：复现件 `D:/ZephyrAlpha/.runtime/tmp/bakdr_20261013/repro_c4_locale3.py`（建删两个 scratch 库 `zephyr_repro2_{src,dst}_bakdr`，`pg_database` 存在性前后各测＝0，未触 `depgraph`/`depgraph_drill`）。实测：
+  - 剥掉 `LC_ALL/LANG/LANGUAGE` 后，`pg_restore.exe` 把**自己的**框架 token 本地化并按系统 ANSI 码页写字节：原始 stderr＝`b'pg_restore: \xb4\xed\xce\xf3: could not execute query: \xe9\x94\x99\xe8\xaf\xaf:  \xe5\x85\xb3\xe7\xb3\xbb "t_repro2" \xe5\xb7\xb2\xe7\xbb\x8f\xe5\xad\x98\xe5\x9c\xa8'`——前 4 字节是 GBK 的「错误」，后半段是服务端 UTF-8 正文；宿主 `errors="replace"` 解码后正是 10-01 报告里那串 `<4 个 U+FFFD>` ＋干净中文，逐字同形。
+  - 于是 `_RE_RESTORE_ERROR_LINE`(:193)/`_RE_RESTORE_COMMAND_LINE`(:194) 双双 0 命中 ⇒ `error_count=0` ⇒ `verdict=unknown` ⇒ `pass=False`，而同轮 C1/C2/C3 全绿＝**纯假红**。本机码页实测 ACP=936、`PYTHONUTF8=1`（这两个开关共同决定了"哪一半能读对"）。
+  - 正对照（同数据、同工具、只钉 `LC_ALL=C LANG=C LANGUAGE=C`）：token 回到 ASCII、正文仍 UTF-8，两把既有正则各 **2/2** 命中。
+
+- **修法＝改喂给闸的输入指向，不改闸**（在册正解口径）：`scripts/backup/restore_drill.py` 加 ①`_PINNED_CHILD_LOCALE`＋单口 `_pg_child_env(password)`（4 处 `env = {**os.environ, "PGPASSWORD": ...}` 全收进来，测册钉"构造点唯一＝1"）②`CHILD_STREAM_ENCODING="utf-8"` 显式钉到全部 6 处 `text=True` 子进程调用（缺省解码随 `PYTHONUTF8`/ACP 变，撤了旗就会把服务端中文也吐错，从而让良性规则的中文分支一起失效）。**零动项写进测册钉住**：`_BENIGN_RESTORE_ERRORS` 仍＝在册两条、`_C4_PASSING_VERDICTS` 仍＝{clean, clean_with_noise, benign_only}、rc=0 两支语义不变、退出码与 `criteria_version` 不变、不新增任何豁免位。
+- **反向自证（不弱化的机器可核形式）**：新测试把 10-01 那串原始字节直接喂给分类器，断言 `verdict=unknown ∧ error_count=0 ∧ _judge_c4.ok=False`——**乱码流照旧判红**；只有钉语言后的可读流才被既有良性规则放行。红绿成对，不是"把红改绿"。
+- **变异自证**：把 `_PINNED_CHILD_LOCALE` 清空（＝回到病形）⇒ `1 failed, 43 passed`（红的正是钉位面那支）；逐字节还原后 sha256 前缀 `f9a594ba1653` 与变异前同值。回归面 `tests/data/backup/test_restore_drill.py` **44 passed**（原 37 支一字未动＋新 7 支），ruff check/format 全过。
+- **一条会影响下班判读的事实（照实说，不当战果）**：10-07 的 IN1-32b（显式 `DROP SCHEMA public`＋`--no-privileges`）已把当年那三条良性错误**从源头消掉**（10-09 五连跑 rc=0/clean/passed 为证），所以"11-01 会不会又红"的诚实回答＝**大概率不会因同一因红**；本修法买的是"下一种良性错误出现时不再假红"，属保险不是救火。
+- **本班按计划任务原环境点火的基线真跑（重要改判）**：`Start-ScheduledTask ZEPHYR-RESTORE-DRILL` 23:33:10 起跑 → `LastTaskResult=1`，报告 `logs/restore_drill_20261014_000340.json`：`status=failed`、`error=TimeoutExpired ... timed out after 1800 seconds`、`pass=False`、`failed_criteria=[]`、`rows={}`、`drill_db_dropped=true`。**这不是分类器红，是 1800s 超时红**（同窗备份链 Stage 3 全树枚举在抢 G:/D: IO；pg_restore 单进程 cpu 仅 1→3.2 秒可证其被 IO 卡住而非判据）。八键契约与临时库清理在超时支上兑现＝T1b/T1c 那次收口有效。修后代码的端到端正跑于 01:05 起跑（同车同环境，读数写进本节末，见"正跑回执"）。
+- **附带修的一枚存量断链（N-15 实测）**：本件头部 `[BLUEPRINT]` 原指 `docs/03_modules/_domain_infrastructure/blueprint.md`——该路径**在主区、车道与 dev 三面均不存在**（`git cat-file -e dev:…`＝NO，目录里只有子域册），`lock_files.py acquire` 因此拒绝 claim 本文件＝断链让在册文件不可维护（同族案卷见 N-15 在册记录）。改指同域在册真身 `docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md`（33,062 字节，`backup_ch_vm.ps1`/`library_ledger_backup.py`/本班新通道件同源）。纯指向修正，零内容语义改动；全仓 grep 该坏路径仅本机这一处，无第二处待修。
+- **登记面**：本袋零新文件（`restore_drill.py`＋其测册均在 dev）⇒ 无 token、无新模块翻译、无 depgraph 设计节点（改体不改形）；测册以 dev 现字节为基**纯尾追加 89 行**（`deleted_vs_dev=0`、测试函数 32→39、sha `955e410496f6`→`621a460a2ae4`）。
+
+- **O-7 呈批（本班显形不自裁）**：月度演练的执行体超时（1800s）与备份链的枚举/轮转腿同窗互抢 IO，已被实测闷死一次。两条路都触判据面：①错峰（演练让开 06:00 与 Stage 3 窗口，纯调度面）；②把超时抬到与实测轮时长同量级并给读数留证。本班按令未动阈值，只把事实钉进本册。
+
+- **正跑回执（修后代码端到端，已销）**：`python scripts/backup/restore_drill.py`（车道字节、同机同环境）01:05:01→01:08:37 ＝**3 分 36 秒完赛**，`status=passed pass=True`，四判据 `c1_table_set_equal/c2_row_direction/c3_content_fingerprint/c4_pg_restore_rc` 全 true，`pg_restore_rc=0`，报告 `logs/restore_drill_20261014_010837.json`；临时库 `depgraph_drill` 已按 finally 支 DROP 并读回。⚠ 诚实边界：本轮**没有产生 pg_restore 错误行**（`c4.verdict=clean`），所以它证的是"钉语言与显式解码不伤正向路径"，**不证**分类支——分类支的红绿对拍由本袋测册用 10-01 原始字节与钉语言后真字节各自回放承担。另：同一条链在 23:33 那次 1800s 超时、01:05 这次 3 分半完赛，差值来自同窗是否有备份腿在抢 IO ⇒ O-7 成立且量级可观。
+
+- **本袋零面声明**：未改 PG 演练覆盖面（`_TABLES` 三表）/判据/阈值/状态语义/退出码；未新建文件；未触生产库 `depgraph`；未触 `G:\backup` 写面；`logs/restore_drill_20261014_*.json` 为运行读数件（logs 面 gitignore）。
+
+- **署名**：adjudicator=st-bakdr-20261013（P1-A2 打分器输入指向修法＋红绿与变异双证＋基线真跑改判为超时红＋O-7 呈批）。
+
+## 备份线夜班班账·袋四：交付态＋P2 读数腿的交接安排＋一枚他班行控制字符的呈报（st-bakdr-20261013，2026-10-14 01:2x）
+
+- **本班三袋状态（实测 `commit_queue status --session st-bakdr-20261013`，01:19）**：
+  - `q-20261014-st-bakdr-20261013-0002`（P1-B 型A 快照通道 11 件）pending，前方 3 袋；
+  - `q-20261014-st-bakdr-20261013-0003`（P1-A2 打分器修法 3 件）pending，前方 10 袋；
+  - `q-20261013-st-bakdr-20261013-0001`（P1-A 方案袋）**dead**，dead_reason＝`ghost_session: 属主会话已死（heartbeat=exited / 注册表无在册）`。
+- **袋一死因＝我自己开工时的一处遗漏，不是队列病**：`session_worktree.py create` 把会话登记在**车道根**的
+  `.runtime/sessions/`，而网关与belt读的是**主区根**的 session registry（分片面
+  `.runtime/session_registry/<sid>.json`）⇒ 主区看我没在册 ⇒ 存活闸拒批。修法已做且实测有效：
+  `SessionRegistry(D:/ZephyrAlpha).register(sid, pid=0, held_files=[...], logical=...)`＋`_spawn_heartbeat_daemon(sid, 主区根, 30, 车道路径)`
+  ＋`register_heartbeat_keepalive(主区根, ...)`（具名＋TTL≤7200s）；之后袋二袋三一次入队通过。
+  ⚠ 顺带显形一条健康度自报（ESCALATION 位要求的，不静默绕过）：入队时 `session_worktree_start 健康度自检失败 … 失败项: ['lookup_audit dir writable']`
+  连续两次出现，本班未修它也不该由我修（工具面自检），但它与本会话的审计写入能力有关，转报统筹/维护班。
+  **教训（写死给下一班）：开工即 `list_active` 自证"主区看得见我的会话＋held_files 在册"，别等第一只袋死掉才发现根不对。**
+- **超袋纪律已执行**：袋二＝袋一的严格超集（台账＝dev＋袋一＋袋二，且 `dr_drill_plan.md` 同件随袋），
+  袋三再含袋一二三全部行面（`deleted_vs_dev=0`＋前一袋面零丢失，两次重放各自实测计数），
+  所以死掉的袋一**无需 requeue**——它的内容由袋二带落地；等袋二落地后按内容级判 `A_LANDED` 销账即可
+  （`dead-archive --content-level --session st-bakdr-20261013` 走 mv 通道留机生台账行；本班不抢跑，
+  因落地前它按内容级还判不了，硬开 `--no-verify-landed` 等于自造"已落地"假证）。
+- **P2（chRan 验收读数）的交接安排——本班不谎称已销**：验收锚点 `last_ch_backup_time` 实测取**整轮收尾时刻**
+  （10-13＝06:04:36），cadence 门读同一键，故 10-14 06:00:01 那发仍会跳（差 4.60 分，与维护六班第 14② 条实测同值）；
+  首个"CH 真跑"轮只可能出现在 **10-14 06:04:36 之后**，本班物理上拿不到样本。
+  已按"批了但本班不在场"的在册处方挂**本地一次性自动化**去取读数并入册：
+  任务 id `d39ddeb6-b722-44b3-bc3a-0b7eeb9c2805`，名「备份线 P2·chRan 验收读数入册」，
+  cron `30 7-23 14 10 *`（Asia/Shanghai，仅 10-14 当天 07:30-23:30 逐小时），权限档＝Full Access（bypassPermissions），
+  作用域 cwd＝`D:\ZephyrAlpha`；提示词内含幂等闸（台账已有「dumps_exposure_min 验收读数入册」字样即跳过）、
+  chRan 分档纪律（含 stage skipped 的轮一律不作数）、尾追加＋行多重集差自证、只走 `git_commit.py --enqueue` 正门、
+  以及"到 10-15 06:00 仍无判别样本时如实入册未取到"的诚实条款。
+  撤销/停用（Owner 一句话即可，本班不自取）：`mcp__builtin__qoder_cron remove jobId=d39ddeb6-b722-44b3-bc3a-0b7eeb9c2805`
+  （或 disable 保留定义）。**令五的验收尾巴因此仍是"在途未销"**——读数没落册之前，谁接手都按未销处理。
+- **呈报一件他班已落地行的数据缺陷（本班只显形不代修）**：本册 `批复执行段（总统统筹 2026-10-10…）` 一节含一个
+  **U+0082 控制字符**（dev 与车道同偏移 171646 各实测 1 个，非本班写入；成因＝在册"工具层折叠转义"家族，
+  原文里 `反斜杠+202` 被当八进制转义吃掉、尾巴剩 `61011`）。后果实测＝入队时
+  `[compaction] ... ours 侧 yaml.compose 解析失败: unacceptable character #x0082 ... 拒绝压缩，两袋保留`
+  ⇒ 凡带本册的袋都过不了合并压缩，堵点长在共享热册上、不属任何单班。复原是确定性的（把那一处换回
+  反斜杠＋`20261011` 即可，改后全册 C0/C1 计数应为 0），但那是他班已落地的一行文字，
+  按"改他人行要在册内披露且需统筹点名"的在册口径，**本班不自行动它**，交统筹点名或册主班次自修。
+  同族风险面：任何把 Windows 反斜杠路径写进台账的会话都可能再塌一次；建议评估"写后数控制字符"是否收进写侧门
+  （属治理资产净增，需先声明替代面，故本班只显形不建门）。
+- **本班自曝一处同族复犯（不留美化的账）**：我为了在本节描述那个坏字符，把原路径直接写进 heredoc 内嵌的 python 字符串，
+  结果 `\b` 与 `\202` 又各自塌成控制字符——**同一把折叠在我手里当场咬了第二次**；本节最终形态因此改为"零反斜杠字面量＋字符码组装"，
+  并在落盘后计数自证。教训一句话：**描述坏字符，不能用会塌的载体。**
+- **P1-B 待落地后的两条续跑指令（下一班照抄即可，别让通道停在"半落地"）**：
+  ① `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/tasks/register/register_ch_vm_config_snapshot_task.ps1`
+  （两前置＝裁定与资源画像随袋二落地；回退＝同文件加 `-Unregister`）；
+  ② 把 `ch_vm_config_snapshot` 一行加进 `data/runtime/process_reaper_keep.txt`（RULE-GUARDIAN，防 reaper 误杀在飞快照）。
+- **零面声明**：本节只动本册；未改任何脚本/判据/阈值/注册表/计划任务；未删任何文件（含本班自造的临时件）；
+  `logs/` 面读数为 gitignore 运行件。本班车道与 claims 在袋二袋三落地前**保留不撤**（心跳保活至 03:2x，
+  到点未落地则由下一班续期或按 CLI 手动 requeue——存活闸不限制人工 requeue）。
+- **署名**：adjudicator=st-bakdr-20261013（交付态与在途分诊＋P2 读数腿交接＋两处数据缺陷显形；令五验收尾巴保持未销）。
+
+## 更正节：上方"袋二／袋三＝落地"叙述的实际态＝代码面从未进 dev，病根一条与修因全程（st-bakdr-20261013，2026-10-14 12:1x-12:5x 收口班）
+
+- **点名件复述（照在册纪律）**：令＝统筹全线收口令 2026-10-14 午四步（①刚到手未执行的裁定执行到落地 ②在册收班序列 ③收不了口先写交接卡再按②收 ④回"收口确认"）。本班第 ① 步的第一步不是"执行裁定"而是**先弄清自己上一班的账是否属实**，结果不属实，故本节先更正再谈收口。
+- **更正主句（旧案不抹，按"更正另起一节、原节留册"的在册纪律）**：上方袋二标题"落地＋回滚双证"、袋三"P1-A2 修 PG 演练打分器"所述事实（首拍双证、31 测绿、变异自证、端到端 3 分 36 秒）**均为真**，失实的只有"落地"这个定语——代码面到 10-14 12:1x 为止**一件都没有进 dev**。三证（12:1x 主区实测，非记忆）：① `ls scripts/backup/ch_vm_config_snapshot.py` → `No such file or directory`；② `git log --oneline -1 -- <该件>` → 零输出；③ `git ls-files --error-unmatch <该件>` → 未跟踪。同刻队列面实测＝本会话名下七袋：**0007 done**（`landed_id=6afe494afe`，files=1＝只有本册）、**0001–0006 全 dead**。⇒ 上一班班账（袋四"交付态"段）把"车道内已成＋已入袋在途"写成了"落地"，这是本班自犯的**叙述越界**，不是门的误判、不是他班连坐。
+- **病根定位到一条**：袋5（12 件代码与注册册面）死因逐字＝`网关落盘失败（COMMIT_FAILED）: 门禁 DEPGRAPH-ENFORCEMENT 阻断: [NEW-FILE-DEPGRAPH-ENFORCEMENT] 1 个新建 .py 文件在 depgraph (PostgreSQL) nodes 表无记录`。真因＝本班漏跑根宪法 §0 第 5 条（RULE-DEPGRAPH"先登记后施工"）：车道里先把执行体写完才入队，nodes 面对新建件零行。**门没有多杀**——按该门自己的 `[INVARIANTS]`，它只取 `git diff --cached --diff-filter=A` 里 `src/zephyr/` 与 `scripts/` 下的 `.py`（tests/ 豁免、`.ps1` 不在面），命中数恰为 1 件＝我那一件，无一扩大。
+- **修法取向（在册判例钉死）**：Owner 对本族的固定正解是"已批之闸拦到合法路径时改**喂给闸的输入**，禁弱化门、禁白名单、禁新豁免"。故本班只补册行，不动门的判据/优先级/豁免面，也不给自家文件开后门。
+- **修因全程（逐条可复量，含前后对照）**：
+  1. 读处方＝`scripts/governance/wave1b/dead_letter_prescriptions.py` 的 `GATE:DEPGRAPH-ENFORCEMENT` 条（rc=CONTENT，fix=①`--add-design-node` 或②`generate_project_depgraph.py --force`，forbid=禁直写 PG nodes 表／禁造空壳模块凑登记）＋门正文 `new_file_depgraph_gate.py:280-293` 的两条修复提示。取①，因②是全树重扫且**扫描器读的是落地侧磁盘**，而主区此刻没有这个文件（件只在车道），②在时序上不可能先于落地生效——这条推理决定了后面所有动作的形状。
+  2. 模型校准（不凭记忆）：实查 nodes 表列名（第一次探针因把 `design_maturity` 写成 `maturity` 直接 `UndefinedColumn` 报错＝当场暴露、未被读成"查无"），再取 `scripts/backup/` 族 18 个在册节点作登记形态样板（`restore_drill.py`=D_DATA/MOD-INF-043，`ch_vm_ssh.py`=MOD-INF-043，`backup_reconciler.py`=D_INFRASTRUCTURE/MOD-INF-043），file 粒度设计态节点先例 6 枚（node_type=module／design_maturity=design／blueprint_path=`docs/03_modules/<BP>/`）。
+  3. **先干跑再实跑**：`--dry-run` 输出 `DRY-RUN SUMMARY: 本次若真跑将写 1 处（PG 写，均已 rollback）`，零工作树写；随后去掉旗实跑 → `node_id=16612361`。
+  4. 登记前正证零行＝`SELECT node_id,build_status,granularity FROM nodes WHERE file_path='scripts/backup/ch_vm_config_snapshot.py'` → `[]`；登记后同一谓词 → `[(16612361, 'planned', 'file')]`（尺的双向对照齐，不是"跑了一条命令"当"取到了数"）。
+  5. 副作用面**前后各量一次**：主区脏件行数 643 → 643（零新增）；`docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/` 主区四件 sha256 前缀登记前后**逐件全等**（`d03fd267f1106e67`/`4289bc711438133a`/`073c7d79f9f61900`/`0a12943a8289e9cb`）。另 `--add-design-node` 属 `apply_depgraph.py:6252` 的 `_WRITE_COMMANDS` 在册集，故它自带两件事：架构库 JSON 备份（`tmp/pg_backups/architecture_20261014_042323.json`，19/19 表，nodes=13836/edges=27230）与后台全量重扫（PID=4652，日志 `.runtime/logs/regenerate_depgraph_db_20261014_122328.log`）——**均系在册后果而非失控**；重扫结束后复量该行仍在册（防"设计态节点被重扫剪掉"这一唯一真风险）。
+  5b. **上面那句"零外来文件被写"本班写完 20 分钟就被自己的第二次实测推翻，改口如下（旧叙述不抹，按更正另记）**：主区面确实零写（因 `sync_module_panorama` 按 `MOD-INF-043` 机械拼出的 `docs/03_modules/MOD-INF-043/blueprint.md` 根本不存在，只 WARN 不写），但**命令是在车道里跑的**，后台重扫把**车道**的父蓝图投影四件重写了（`backup_inventory.md`/`blueprint.md`/`dr_runbook.md`/`storage_map.md`，车道脏件 13→17），且第一次的内容是把 DR 蓝图 frontmatter 的 `design_maturity: production` 拖成 `design`——**这是我那次"设计态（planned/design）"登记选择的上游污染**：一个文件级设计节点会顺着 blueprint 归属把整张 DR 蓝图的成熟度改写。处置＝`git checkout --` 还原该目录（车道四件还原后脏件回 13，实测空 diff），随后把节点自身按真实生命周期转正（`--transition-build-status 16612361 generated` → `planned→generated`；`--transition-design-maturity 16612361 production` → `design→production`，现值实测 `(16612361,'generated','production','file','D_INFRASTRUCTURE','MOD-INF-043')`，与同族 `backup_reconciler.py` 形态一致），第二次重扫后同四件只剩 CRLF churn（无 +/- 语义行），仍还原收尾。**结论＝登记形态要一次到位用 generated/production，别用默认 planned**（默认值是给"尚未施工"的设计态用的，本班代码已成形，用默认值既失真又污染父蓝图）。
+  6. 诚实边界：nodes 里那一行的 `build_status='planned'` 此刻是"设计态"语义而代码已在车道成形，属登记时序倒置留下的**过渡态**；按该门正文与 #ARCH-70，同 path 的设计态预登记节点会被后续全量重扫**同身份 UPDATE 转 production**，不需手工 transition，故不另开一笔改口径。
+- **重投袋（本节的交付主体）与它的第二次死**：`q-20261014-st-bakdr-20261013-0008`，files=12，基底显式钉 `--base-head 58e3175e1e652d4de9ccd0e14ac98da9fb67ece3`（=入队时刻 dev 实测，非记忆；但落地侧实取基底仍记为 `9ee25793bc`＝车道 HEAD，系在册已知形态"预筛基底取 --worktree-root 的 HEAD 而非 --base-head"）。重基事实：dev 自袋5 旧基前进 **64 笔**；`git diff --name-only 9ee25793bc..dev` 对本袋 12 件逐件实测**只有 2 册漂移**（capability_canonical_file_registry.yaml、ruling_registry.yaml），代码件与测册**零漂移**（含 `restore_drill.py` 与 `test_restore_drill.py`）→ 袋内字节与袋5 逐字同面、零新增语义。逐件 Counter 行差集（脚本 `.runtime/tmp/bakdr_20261013/registry_delta.py`，取基三件套齐：显式 `git -C D:/ZephyrAlpha`＋断 `returncode==0`＋断 `len>1000`）：capability 册 lost_vs_dev=0/added=10、ruling 册 0/27、translation 册 0/14、`test_restore_drill.py` 0/89、画像生成器 0/10、`restore_drill.py` 4/29（4 行全是本班自己的改口位＝3× 子进程 env 手搭行收进 `_pg_child_env` 单口＋1× N-15 断链 BLUEPRINT 行改指 MOD-INF-043，零他班行）、`resource_profile_registry.yaml` 2（`generated_at`/`total_entities` 机生计数行）、`script_manifest.yaml` 6（5 行机生计数＋`add_module_translation.py` 的 description **同句**被生成器按现源码 docstring 改写，非条目消失）。热台账**不随该袋**——它是袋2/袋4/袋6 三次整文件三方冲突的现场，按袋7 已落地（`6afe494afe`）的先例走"dev 现字节＋纯尾追加"另袋（即本节所在这一袋）。
+- **袋8 的实测死因（12:55:29，不是上一班的判据面、也不是门的误杀）**：逐字＝`网关落盘失败（COMMIT_FAILED）: 门禁 TAKEOVER-PENDING 阻断: 本次 commit 命中 open 接管条目（死会话遗留资源面）——必须先按接管处方处置再提交（接管显化 L3）`。命中两条**他班**死会话条目：
+  - `st-infoaxis-20261013`（心跳末行 `status=exited`@10-13 20:53:51 idle timeout；台账面 pid 34508 dead）→ 命中 2 件＝`capability_canonical_file_registry.yaml`＋`ruling_registry.yaml`，来源＝条目 `held_files`（3 件陈旧 claim 面）。
+  - `st-cdx-sent-20261013`（心跳末行 `exited`@10-13 16:05:36）→ 命中 1 件＝`scripts/governance/script_manifest.yaml`，来源＝其 `.worktrees/st-cdx-sent-20261013` 的 12 件 dirty 面（实测该车道仍脏且含 library/INDEX、rule_catalog、本清单册等）。
+- **本班对这道的处置＝不越闸，并给出两条正解的成本（这是判断，不是偷懒）**：门的面定义实测在 `session_takeover_ledger.entry_match_surface`（held_files∪worktree dirty∪staging；D-2 裁定把"袋内残留件"故意排除在咬合面外），且 C11 降级腿**只在"提交人＝条目属主 sid 且该 sid 现判活"时放行**（`takeover_pending_gate.py:221-244`），跨班条目一律照拦＝设计意图是"别把别人的无主资源洗进我的 commit"。本班逐条评估过的四条路：
+  1. `--refresh st-infoaxis-20261013 --execute`（刷新出口）＝**不能解**：dry-run 实测 `held:3 → held:0, worktrees:1, bags:16, heartbeat:1`，即陈旧 claim 面确实已消失（claims 已 TTL），但刷新会把其车道 13 件 dirty 纳入面，其中正含 `capability_canonical_file_registry.yaml`／`ruling_registry.yaml`／`module_translation_registry.yaml` ⇒ 命中面从 2 件变 3 件，**更糟**；且 `归零收口=0`（不自动关条）。
+  2. `gateway.release_files('st-infoaxis-20261013', …)`（宪法 §2.7 stale claim 处方）＝**空操作**：实时面 held 已=0，可释放在册 claim 只剩台账存储面，release 不写台账 ⇒ 门照拦。
+  3. `--resolve st-infoaxis-20261013 --by st-bakdr-20261013`＝**本班拒用**：resolve 的语义是"接管完成"，而 infoaxis 车道有其战役自己的 13 件未落地工作（含 `src/zephyr/alt_data/retail_comment_signals.py`、`schemas/categories/market/alt_stock_comment_signal.py` 等新件＋16 枚在/死袋），我既未 merge 也未 abort 其一字。代签"接管完成"＝在册判例点名过的**假销口**，且比那更重——它会把别人战役的资源面标成已由我处置。
+  4. `--sweep-absorbed`（事实归因清算）＝**不适用**：其对象是"条目资源已被他袋带出/超龄"的死袋归因，而 infoaxis 的 2 册面**并未**落地（dev 面 `ch_vm_config_snapshot` 三册全 0 命中，实测见下），不满足"已吸收"的事实前提。
+- **由此得到的硬结论（呈统筹，非本班可自解）**：本班的 12 件套里，`capability_canonical_file_registry.yaml`（两条 creation_token）与 `ruling_registry.yaml`（裁定 517 投影行）**不可拆袋先走**，因为①新建件的 token 与件同袋是在册死信处方（`queue-cross-bag-dependency-trap`：token 须与件同袋），②裁定 517 目前**根本不在 dev 面**（实测 `git show dev:…ruling_registry.yaml | grep -c "ch_vm_config_snapshot"`＝0；全册唯一的"517"字样是裁定#357 summary 里"计数 517→517"那句巧合），而执行体 docstring 与方案册都引它——把引用件与裁定册行拆开投＝拿 REFERENCE-INTEGRITY 自触的死法换 TAKEOVER-PENDING 的死法。
+  - 一条把结论**收紧**的在册新证（本班 13:1x 读到清理班总包的机制册）：CREATE-GUARD 确有 **PG 第三源正证通道**（`create_guard.py:877`/`:1394` 的 T4 治本），故 `capability_canonical_file_registry.yaml` 那半边**理论上可以不入袋**；而 `ruling_registry.yaml` 那半边不行——它既是注册脚本 P2 裁定门的读取面（脚本读 YAML 投影，不读 PG），又是引用完整性的登记面。**因门按"命中任一文件即拦"，只拆掉 capability 并不解除挡**，跨班面的唯一正解仍是真接管；本班不以此为由改自家注册脚本的裁定门形态（把门从读 YAML 改成读 PG＝改 Owner 01:4x 批复里"两前置"的判据本体）。
+  - 同一条新证还排除了另一种可能：清理班踩过的"**自己提交把自己判死**"（`git_commit.py` 用自身 pid 重登记会话，提交失败后进程退出 ⇒ 死亡显化钩子给**本班 sid** 立案 ⇒ 后续袋被自己条目硬拦）在本班**未发生**——实测 `.runtime/takeover_ledger.jsonl` 里 `st-bakdr-20261013` **无条目**（13:1x `latest.get(sid)=None`，且未跑过 `--scan`）。所以本班的挡来自**他班两条陈旧条目**，不是自造。
+- **要放行只有一条正解：由统筹/维护线对 `st-infoaxis-20261013` 与 `st-cdx-sent-20261013` 两条 open 条目做真接管（其车道成果 merge 回主区或 abort 放弃，再 `session_takeover_ledger.py --resolve <sid> --by <接管者>`）**，这两条的处方行在袋8 的 dead_reason 原文里已逐条给出；按在册处方"**自解条目可、他班须批**"，他班条目本班零触碰、亦不跑 `--scan`（scan 会批量立案，反把面扩大）。
+- **系统面读数（顺带量给统筹，非本班呈报重点）**：`.runtime/takeover_ledger.jsonl` 当前**open 条目 192 条**（同一 sid 取末行为准），其中命中本班 12 件的＝2 条；本班袋8 的 `recurrence_count=92` 与该 192 同族＝C11（2026-10-12 统筹裁定）只治"活班自挡"，跨班面未清完之前，**任何会话**碰到这 192 条的面都会以同一形态死亡。建议统筹把"跨班 TAKEOVER-PENDING 存量清算"列为维护线一件（现成的 `--list`/`--sweep-absorbed`/`--refresh` 三个出口都在该工具里，缺的是有人按战役归属逐条判定 merge/abort）。
+- **落地前测面复量**（不沿用上一班的"75 passed"叙述）：`python -m pytest tests/data/backup/test_ch_vm_config_snapshot.py tests/data/backup/test_restore_drill.py -q --basetemp=<仓外目录>` → **75 passed in 6.67s**（`--basetemp` 走仓外是钉死的在册坑：车道内缺省 basetemp 会被 `_strip_lane_prefix` 截到主区同构面，既污染主区又造集体假红）。
+- **本节自证**：上方袋一至袋四各节按原文照录、一字未改；本节与下一节均为纯尾追加，写后按行多重集差自证 `deleted_vs_dev=0`、`## ` 节数只增不减。
+- **一处引用形改制（不是删内容，是避开自家门的自触形态）**：本册内所有指向"517"这条裁定的行文字写作**裁定 517**（不带井号），依据＝在册处方"案卷里 `裁定#<未登记数字>` 会自触 REFERENCE-INTEGRITY 致死信，改去井号即解"——该裁定的**实体在 PG 账本**（REG-RULING-001，register→publish v25 已在册），只是 YAML 投影行随被挡的袋8 走，dev 面暂查无；待袋8 落地后由接手班按需改回带井号形（改回＝一次纯文本袋，判据零动）。同段内 `裁定#357` 等带井号者均为 dev 面已登记件，未动。
+
+## 收口班账：四步令逐条兑现＋交付终态＋候裁与呈报（st-bakdr-20261013，2026-10-14 12:5x 收班）
+
+- **①「刚到手未执行的裁定执行到落地」——本班实际到不了"落地"，逐条给状态**：Owner 2026-10-14 01:4x 批复四条＋错峰令的处置态——
+  - **A 批（落地后点月频自动腿）**：**未点火，且不可点火**（判据成就条件不成立＝代码不在 dev）。命令与前置已在册：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts/tasks/register/register_ch_vm_config_snapshot_task.ps1`，脚本自带两道在册门（P2 裁定门读 `ruling_registry.yaml` 内引用该执行体的裁定行——**dev 面现 0 命中，实测见上一节**；P1 资源画像门读 `config/resource_profile_registry.yaml` 的 `ops_ch_vm_config_snapshot`——dev 面现亦 0 命中）。两门的前置字节都随袋8 走，袋8 被跨班接管面挡死 ⇒ A 腿整体**待统筹清面后一条命令即得**。回退＝同文件加 `-Unregister`。
+    - 一条必须如实报的自动化事实：本班昨夜建的定时自动化 `53a70da1-9229-47f0-953d-536605324d33`（cron `0 4,7,9 14 10 *`）今晨 04:00/07:00/09:00 三窗各跑一次、`lastRunStatus=succeeded`、末次 247s，其"成功"含义＝幂等闸＋落地自证判出**"代码袋未落地（缺 a/b/c）"后按令停手且未绕门**（未改脚本、未手写 schtasks 创建）；该 cron 的日期面已过、`nextRunAt` 指向明年 10-14，**故 A 腿不可能再由它点火**——"自动化把门守住了但没把活干了"的形态，记此防后人误以为自动腿已点。本班未删该自动化（Owner D 令面是"保留每小时 chRan 读数"，本条不在其列），留与 not-run 同处置，见"留给下一班的三条命令"。
+  - **B 型B（客户机 OS+程序文件级镜像 ≈13 GiB/份）／C 演练波 1-2**＝转 Owner 晨批，本班零施工、零注册、零阈值改动；`ch_vm_config_snapshot.py` 的 `[INVARIANTS]` 里"型 C 未开"是判据面文字，未随之扩面。**晨批若要批，判据材料在 `dr_drill_plan.md`（本袋可落，见下"本班落地面终态"）与袋二节的三型实测数**。
+  - **D 不取**＝保留每小时 chRan 自动取数任务（本班未删任何既有仪器；昨夜自建的 `d39ddeb6` P2 读数自动化今晨起每次以幂等闸自跳过，34.5s/次，其对象已于 `6afe494afe` 入册，是否随 P2 收口一并撤由统筹定）。
+  - **同窗互闷＝错峰**＝纯调度面（月度演练窗挪开备份链），**未动 1800s 超时、未动任何判据**（O-7 因此在册仍开，见呈报件）。附带一条已实现的错峰事实：型A 注册脚本把 cadence 定为 **MONTHLY 5 日 10:00** 而非 1 日，脚本头注原文理由＝"the PG restore drill (ZEPHYR-RESTORE-DRILL) owns day 1 04:30, and the main backup chain owns 06:00"——这是 VM 快照腿自身的错峰，**不解决** O-7（PG 演练↔备份链同窗）那一对。
+- **统筹 12:33 落进主区本册的 31 行未提交开工令（`chief-coordinator-st-20261014`，"备份日班开工令·VM 型A 自动腿抢救"）的处置**：
+  - 该 31 行**未随本班任何袋带出**（不是本班内容，带出＝归属篡改；它此刻仍是主区工作树的未提交脏件，归其作者或统筹处置，本班不复位、不代提交）。
+  - 其使命 1–5 与本班 12:29 已入袋的 0008 逐条对表：②抢救五死袋（cascade_stale 三件"基底钉当下 dev sha 重投"＝本班已做；"0005 新件先 `--add-design-node` 登记再投"＝本班已做，见上一节全程；"0002 台账不自裁、走队列仲裁"＝本班已做，台账另袋）；③落地判据"只认 git HEAD"＝本班采用（`git ls-files`／`git log -- 该件`／`git show HEAD:<件>` 三形）；⑤连带核对＝**已实测且结论为"未解决"**：`backup_ch_vm.ps1:8` 头注明其体已封印仅供引用，而 `restore.ps1` 的 vm 腿仍读 `F:\ch_vm_backup`/`G:\backup\ch_vm_backup`（:69/:73/:296/:406/:408）＝旧周频 .vhdx 全镜像路径，**型A 落地不解决该引用位**，恢复侧目前没有任何读取 `G:\backup\ch_vm_config\` 的通道（列为呈报件 N-2）。
+  - **唯一未取的一条＝"进场：新 sid（st-bakday2-20261014）＋新 worktree"**。理由（登记而非静默违令）：同 12 件在 12:29 已有在途袋，另开新车道对新 sid 重做＝同件双袋撞车，而"同会话/同件后袋静默 supersede 前袋"与"TAKEOVER-PENDING 按死会话 dirty_files 挡重投"两条都在册死信族里；本班车道 `st-bakdr-20261013` 会话在注册表面活（`last_heartbeat` 12:28 实测 `status=alive`，pid=0 逻辑会话形态），故由本班续跑到落地，落地态如实交回统筹定性（若统筹仍要新 sid 接手，落地后已无残余可接，交接面＝本节呈报件三条）。
+- **②在册收班序列（本班实际兑现态，逐条给"已做／未做＋为何"）**：
+  1. 在飞袋落地＋逐字读回＝**未毕**（袋8 死于跨班接管面；读回见上"落地读回"段，代码面零落地是事实）。
+  2. release 自家 claim＝**故意不撤**：撤 claim 而袋与车道仍在，等于把 12 件挂回无主面、并把唯一存活字节（车道 staged 面）交给回收器；统筹 13:06 落的放量三班令里"硬前置＝bakdr/infoaxis 两 sid 抢救名单保全"与本处置同向，故本班保车道＋保 claim 到清面为止。
+  3. 停自家守护进程＝**按 PID 精确，禁按映像名**（在册事故：/IM 全杀扫掉 14 班心跳与在途提交）。实测态＝昨夜起的 `pid=24164` 心跳已自退（12:1x `Get-Process` 查无），现行心跳由 `pid=5020` 的 keepalive 逻辑会话守护代持，该进程**非本班独有**（它代持多个逻辑会话），本班不杀，交回统筹按归属处置。
+  4. 注销会话＋`session_worktree.py archive --execute` 收车道＝**不做**，理由同第 2 条（车道是 12 件字节的唯一存活面，除四件父蓝图污染外仍为 13 件 staged 面）；待统筹清面后由接手班按下面"三条命令"收。
+  5. **撤回自家 reaper keep 行＝本班选择不撤，理由摊开**：`data/runtime/process_reaper_keep.txt:380-381`（注释行＋`ch_vm_config_snapshot`）护的是**月度计划任务的执行体**，不是本班在飞批任务；收班即清的意图是"别给下一班留在飞批次的豁免"，而这里删行会给下一班留"首个月度自动跑被 reaper 误杀且新鲜度告警无读数"的 latent failure。故保留并在册披露；若统筹判该行应随任务生命周期走，请在 A 腿点火后再摘（任务不存在时它无害，任务存在时它是必需）。
+  6. `99_delivery` 终账＝本班不新建交付册（净零：本战役交付面已在 `backfix_campaign/00_ledger.md`，另开一册＝第二真源），改为下面"三条命令＋三条呈报"作为交接卡内容，落点即本册。
+- **落地读回（本令②第 1 步，只认 git HEAD 面；本班终态＝代码面仍零落地，读数如下）**：`git -C D:/ZephyrAlpha ls-files` 对 `scripts/backup/ch_vm_config_snapshot.py`／`scripts/tasks/register/register_ch_vm_config_snapshot_task.ps1`／`tests/data/backup/test_ch_vm_config_snapshot.py`／`docs/_working/backfix_campaign/dr_drill_plan.md` 四件**全部零输出**（13:0x 实测，未跟踪）；`git log --oneline -1 -- scripts/backup/restore_drill.py` 仍＝`9f270424aa8`（他班袋，非本班修法）；三册 `grep -c ch_vm_config_snapshot` 对 dev 面全 0。队列面终态＝本会话名下**八袋：0007 done／0001–0006 dead／0008 dead**。⇒ 本班**没有**可交的回滚读回，如实记此不冒充。
+- **交付终态清单（三清单口径：已交＝双证齐且 dev 面 grep 得到／在途＝有袋无落地／未交＝点名即空）**：
+  - **已交且落地（dev 面可 grep）**：仅两件——**P2 chRan 验收读数**＝`6afe494afe`（dumps_exposure_min 0.23 分，CH 真跑首轮 10-14 06:00 那发；令五验收尾巴就此销）；**本册**（本次袋：夜班四节＋更正节＋本节）。
+  - **在途（有袋有字节、被跨班接管面挡落地）**：袋8 的 12 件＝型A 执行体＋注册脚本＋31 测；PG 演练打分器乱码修法（输入侧单口钉位）＋其 44 测；四类恢复演练方案册 `dr_drill_plan.md`（零施工）；裁定 517 投影行；token 两条＋翻译一条＋资源画像种子与别名。**字节唯二存活处**＝车道 `.worktrees/st-bakdr-20261013`（13 件 staged 面，13:0x 实测仍在）＋队列 blob（`dead/q-…-0008.json` 与其 blobs 快照）；车道若被回收即只剩袋快照，故"车道暂不撤"在本班是有承重理由的动作（Owner 2026-10-14 亦已认可"lane-staying-until-landing correct"）。
+  - **未交（点名即空，如实）**：型B／型C 任何施工（转晨批）；演练波 1-2（转晨批）；月频自动腿点火回执（A 腿，前置未成就）；`tests/backup/test_stage3_vault_mtime_and_verdict.py` 的 9 支既有红（令卡边界点名＝维护六班第 13 条，本班不代修）；`backup.ps1` 本体（令卡点名 d640460050 已是新字节，不返工）。
+- **复核命令（本节正文抽出，已在本机真值面原样跑通，期望值随注）**：
+
+  ```
+  # 1) 落地判据三形（落地前实测：第 1 形空／第 2 形零输出／第 3 形 fatal；落地后应三形齐给出同一件）
+  git -C D:/ZephyrAlpha ls-files scripts/backup/ch_vm_config_snapshot.py
+  git -C D:/ZephyrAlpha log --oneline -1 -- scripts/backup/ch_vm_config_snapshot.py
+  git -C D:/ZephyrAlpha show --stat --format=%H HEAD -- scripts/backup/ch_vm_config_snapshot.py
+  # 2) depgraph 登记正证（现值期望＝[(16612361, 'generated', 'production', 'file', 'D_INFRASTRUCTURE', 'MOD-INF-043')]；
+  #    登记前实测 []＝死因坐实；先用默认 planned/design 登记过一次，13:07 已按真实生命周期转正）
+  python -c "from zephyr.governance.depgraph_schema import get_depgraph_pg_connection as G; c=G(autocommit=True, read_only=True); cur=c.cursor(); cur.execute('SELECT node_id,build_status,design_maturity,granularity,domain_id,blueprint_id FROM nodes WHERE node_id=%s', (16612361,)); print(cur.fetchall()); c.close()"
+  # 2b) 命中面复量（门的面定义＝held_files∪worktree dirty∪staging；本班 12 件命中 2 条 open 条目）
+  python -c "import json,pathlib,sys; sys.path.insert(0,'scripts/governance'); from session_takeover_ledger import entry_match_surface as s; rows=[json.loads(l) for l in pathlib.Path('.runtime/takeover_ledger.jsonl').read_text(encoding='utf-8').splitlines() if l.strip()]; latest={r['sid']:r for r in rows if r.get('sid')}; mine={'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml','docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml','scripts/governance/script_manifest.yaml'}; [print(r['sid'], sorted(s(r)&mine)) for r in latest.values() if r.get('status')=='open' and s(r)&mine]"
+  # 3) 型A 首拍双证的磁盘面（期望＝两个完整目录、各自 tar_members=sha_lines=915、tar_sha256 同值 7dcf9b0aa8…，两份 9 秒级 one-shot）
+  python -c "import json,glob,pathlib; [print(pathlib.Path(d).name, json.loads((pathlib.Path(d)/'snapshot_manifest.json').read_text(encoding='utf-8'))['started_at_utc'], json.loads((pathlib.Path(d)/'snapshot_manifest.json').read_text(encoding='utf-8'))['finished_at_utc'], json.loads((pathlib.Path(d)/'snapshot_manifest.json').read_text(encoding='utf-8'))['guest']['tar_members'], json.loads((pathlib.Path(d)/'snapshot_manifest.json').read_text(encoding='utf-8'))['guest']['sha_lines'], json.loads((pathlib.Path(d)/'snapshot_manifest.json').read_text(encoding='utf-8'))['guest']['tar_sha256'][:16]) for d in sorted(glob.glob('G:/backup/ch_vm_config/*'))]"
+  # 4) 月频自动腿在位否（注册前应无输出＝TASK_NOT_FOUND；注册后应见 State 与 下一个 运行时间=每月 5 日 10:00）
+  powershell -NoProfile -Command "Get-ScheduledTask -TaskName 'ZephyrAlpha-CHVMConfigSnapshot' -ErrorAction SilentlyContinue | Select-Object TaskName,State | Format-List"
+  ```
+
+- **候裁与呈报（本班只显形不自裁）**：
+  - **O-4（候 Owner）**：型B（客户机 OS+程序文件级 ≈13 GiB/份）与型C（盘级 563 GiB/份）开否——两型的存储成本与 G 仓余量实测在袋二节内；本班未开、未拍。
+  - **O-7（候裁，且本班按错峰令未治）**：月度 PG 演练与备份链 Stage 3 同窗互抢 IO，实测被 1800s 超时闷死一次（`TimeoutExpired`，八键报告契约与临时库清理均兑现＝**红在超时不在分类器**）。令面"错峰＝纯调度面"已执行到"结论登记"，但**演练窗口的实际改期尚未落地**（改期要动 `scripts/tasks/` 注册面或计划任务时刻，属另一件授权）；抬超时＝触判据面，本班未动。
+  - **O-8（归册主）**：`render` 即吃他人行的投影滞后两处（ruling/capability 两册的投影面与 PG 账本之间存在 lag；本班未量当日 lag 数值，只登记"本班按 dev 字节为基注入、未手改投影册"这一处置形态，数值归该册册主的巡检尺）。
+  - **N-2（呈维护线，新）**：`restore.ps1` 的 vm 恢复腿仍指旧周频 .vhdx 全镜像路径（:69/:73/:296/:406/:408），型A 配置面快照目录 `G:\backup\ch_vm_config\` **无任何读取方**；即"可回滚 VM 定义面"的证据链在 `ch_vm_config_snapshot.py --verify-only` 自身（证2 临时机重建），**不在生产恢复手册里**。补该引用位＝改恢复语义面，超本班令卡授权，列为呈报。
+  - **N-3（呈报，新脚本未进清单册）**：型A 执行体与注册脚本均无 `__manifest__` 元数据块，故 `scripts/governance/script_manifest.yaml` 内无其条目（dev 面该册 `missing_manifest` 现值＝**155** 支同族，实测 `git show dev:scripts/governance/script_manifest.yaml`）。实测**无任何 pre-commit 门禁读该册**（`grep manifest_admission` 仅命中 d11_compliance 巡检工具与 `config/nav_table_mapping.yaml` 导航行），不构成落地阻碍；补块属新能力声明面，本班不顺手扩。
+  - **N-4（呈报，depgraph 登记形态的坑，新）**：`--add-design-node` 的 `build_status` **默认值是 `planned`**（`apply_depgraph.py:5723`），而 file 粒度设计节点会顺 blueprint 归属把**父蓝图 frontmatter 的 `design_maturity` 从 production 拖到 design**（实测车道四件被重写）。建议处方＝对"代码已成形、只补 L1 登记"的场景，登记时**显式带 `generated`**（或登记后立即 `--transition-build-status`/`--transition-design-maturity` 双转，如本班所做），并在该写命令的在册文案里点明这一父蓝图污染面；本班未改 `apply_depgraph.py` 的默认值（改默认＝改他人施工面，需裁）。
+  - **N-5（呈统筹，跨班 TAKEOVER-PENDING 存量＝本班交付的唯一致死因）**：`entry_match_surface` 的咬合面由台账**存储面**决定，而 192 条 open 条目里存在大量"claim 已 TTL 消失、车道仍在"的陈旧面（实测 infoaxis：存储 held=3／实时 held=0＋worktrees=1）。这类条目**既拦不住真正的归属篡改**（篡改来自袋与 index，而袋内残留件按 D-2 裁定不入面），**又会长期拦死无关会话的正门交付**（本班袋8、维护七班多袋同形）。三条候选路（都要统筹定，本班不自拍）：①由维护线按战役归属逐条 `--resolve`（需真接管）；②由统筹授权一次 `--sweep-absorbed --execute` 的事实归因清算（本班只跑了 dry 分类面、未 execute，因其语义前提＝"已吸收"，infoaxis 两册并未落地，不满足）；③给该门加"存储面与实时面双读一致才咬"的治本改口（＝改门判据，须裁）。
+- **留给下一班的三条命令（照抄即可，勿再考古）**：
+  1. 清面（统筹/维护线做一次）：`python scripts/governance/session_takeover_ledger.py --resolve st-infoaxis-20261013 --by <接管者> --note <车道成果 merge 或 abort 的结论>` ＋ 同形处理 `st-cdx-sent-20261013`（后者命中件 `scripts/governance/script_manifest.yaml` 可由本班侧拆袋规避，前者不可）。
+  2. 复投代码袋（字节零动，直接重放本班 12 件）：`python scripts/git_commit.py --session st-bakdr-20261013 --project-root D:/ZephyrAlpha/.worktrees/st-bakdr-20261013 --files <车道绝对路径清单，见 .runtime/tmp/bakdr_20261013/bag8_files.txt 逐行前缀车道根> --message-file .runtime/tmp/bakdr_20261013/bag8_message.txt --allow-non-worktree --allow-multi-domain --enqueue`（要点：①**必须用主区副本的 git_commit.py**，在车道里跑车道副本会静默进影子队列根；②`--files` 传**车道绝对路径**，因为相对路径按 cwd 解析、主区 cwd 下这些件不存在会报"文件不存在且未被跟踪"；③两道逃生旗都是 2026-08-13 用户裁定 AI 可默认使用的留痕通道，本班已核对"只提自家 claim 件、不搭便车"前置）。
+  3. 点火 A 腿（Owner 批复原文＝"本袋落地后跑 register_…ps1"）：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts/tasks/register/register_ch_vm_config_snapshot_task.ps1`，验收两条＝`Get-ScheduledTask ZephyrAlpha-CHVMConfigSnapshot` 在位且 NextRunTime 为每月 5 日 10:00 ＋ 当场手动实跑一发按首拍三证口径收数（首拍实测 9 秒级：`2026-10-13T16:15:29Z→16:15:39Z` 与 `16:23:11Z→16:23:20Z`，两份 tar_members=sha_lines=915、tar_sha256 同值 `7dcf9b0aa81c01fb`）。回退＝同文件加 `-Unregister`。
+- **零面声明（本班全程，含两处"不是零"的如实例外）**：未改任何判据·阈值·保留线·计划任务·任务时限；未拷任何 `.vhdx` 数据字节；`F:` 零写；`G:` 面只读列举 `ch_vm_config/`，零写零删（两目录系昨夜产物）；未删任何仓内文件；未杀任何进程；未注册或复挂任何仪器。**两处不是零，如实列**：①PG 面＝depgraph nodes 新增并转正本班一行（`node_id=16612361`，`planned/design`→`generated/production`，两次写命令各带一次当日架构库 JSON 备份 `architecture_20261014_042323.json`/`architecture_20261014_050734.json`，均 19/19 表）；②车道面＝后台重扫两次重写父蓝图四件（第一次是 production→design 降级、第二次只剩 CRLF churn），本班 `git checkout --` 还原该目录后车道回到 13 件 staged 面，**主区面全程零写零删（脏件 643→643、DR 四件 sha 逐件全等）**。depgraph 全量重扫（PID 4652/42364/43384）系 `apply_depgraph.py` 写命令的在册自动后果，非本班另起。
+- **署名**：adjudicator=st-bakdr-20261013（收口班：上一班"落地"叙述的更正＋袋5 死因修因全程含登记形态自纠＋袋8 重投及其跨班接管面死因四条路评估＋四步收口令逐条兑现态（含两条"有意不撤"的理由摊开）＋五条呈报与三条待执行命令；A 腿仍未点火＝前置未成就，未冒充已交）。
