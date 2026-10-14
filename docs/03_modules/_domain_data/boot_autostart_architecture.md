@@ -47,10 +47,22 @@ The architecture must meet seven constraints derived from first principles:
 |---|---|---|---|
 | Data Scheduler | `ZephyrAlpha_DataScheduler` | AtLogOn + PT5M heartbeat | scripts/start_scheduler.ps1 |
 | Tick Subscriber | `ZephyrAlpha_TickSubscriber` | AtLogOn + PT5M heartbeat | scripts/start_tick_subscriber.ps1 |
+| CH Health Probe | `ZephyrAlpha_CHHealthProbe` | AtLogOn + PT5M heartbeat | scripts/start_ch_health_probe.ps1 |
 | Dashboard API | `ZephyrAlpha_DashboardAPI` | AtLogOn + PT5M heartbeat | scripts/start_dashboard_api.ps1 |
 | RSSHub | `ZephyrAlpha_RSSHub` | AtLogOn | `pm2 resurrect` (hidden) |
 | Trae Cache Cleanup | `ZephyrAlpha_TraeCacheCleanup` | AtLogOn + PT30S delay | clean_trae_cache.ps1 |
 | Process Reaper | `ZephyrAlpha_ProcessReaper` | AtLogOn + PT10M (one-shot) | `pythonw -m zephyr.trading.process_reaper` |
+| Dead-man Switch | `ZephyrAlpha_DeadmanSwitch` | PT5M (one-shot per fire) | scripts/deadman_switch.ps1 |
+
+**CH Health Probe（#ARCH-BOOT-001 治本批补录）**：while-true 守卫（单实例锁 + 15s 心跳，
+僵尸接管语义与 scheduler/tick_subscriber 一致）。§8.5 Phase 2 记录其心跳改造
+（接管 9132→23384 + 心跳 15s）。任务名此前散见于 §3/§8/register_guard_tasks.ps1，
+本表此前漏登记行——2026-10-14 补。
+
+**Dead-man Switch（#ARCH-BOOT-002 E）**：one-shot per fire（非常驻守卫——无 PID 锁、
+无僵尸风险；`MultipleInstances=Parallel` 无害，<1s 退出）。读取 3 个心跳文件，
+任一 stale >10min 即告警；独立于被监控服务本身（被监控者全挂时仍能报警）。任务名此前
+仅在 scripts/tasks/register/register_guard_tasks.ps1 与 §8 出现，本表此前漏登记行——2026-10-14 补。
 
 **Process Reaper（2026-08-28 裁定纳入，替代旧 ide_health_daemon 常驻守护模式）**：无状态
 one-shot 清理器（模式先例 deadman_switch.ps1 #ARCH-BOOT-002 E），scan→判定→kill→exit，
