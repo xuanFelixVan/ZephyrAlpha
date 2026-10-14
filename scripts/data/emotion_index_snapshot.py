@@ -3,8 +3,10 @@
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] stdlib（argparse/hashlib/json/gzip/os/pathlib/datetime）; zephyr.data.ch_reader（严格读通道，失败必抛）;
 #                zephyr.data.table_registry（表名真源）; zephyr.shared.utils.time_utils.now_utc
-# [CONSUMERS] 手工/日批 CLI（python scripts/data/emotion_index_snapshot.py）; 未来 PIT 读径（pit_state_path）
-# [STARTUP] manual
+# [CONSUMERS] 手工/日批 CLI（python scripts/data/emotion_index_snapshot.py）; 事件门自动产出者
+#              zephyr.strategy_pipeline.pipeline_events.maybe_snapshot_emotion_index（emotion_index_close_final
+#              SUCCESS 唤醒→子进程调本 CLI，5_self_sustaining 日批半施工 2026-10-13）; 未来 PIT 读径（pit_state_path）
+# [STARTUP] manual  # CLI 本体=manual；日批自动面=经 pipeline_events 事件门子进程驱动（同码零分叉）
 # [MATURITY] new
 # [INVARIANTS] append-only 铁律：快照文件一经落盘禁改写禁删除（文件名含秒级时戳，同名已存在=fail-visible 拒写）;
 #              manifest.jsonl 只追加; 全表镜像字节保真（components 保持 CH 原串不反序列化）; 零 DB 写
@@ -31,7 +33,9 @@ PIT 取证缺"当日表态"证据。本件每天对全表做一次全量镜像�
 台账：``<out-dir>/manifest.jsonl`` 只追加，每行 {file,sha256,rows,...}。
 
 PIT 读径：``pit_state_path(out_dir, asof)`` = created_at 日期 ≤ asof 的最新快照。
-约定：日批在每日收盘数据 ingest 之后跑一次（reaper 白名单登记由运维面负责）。
+约定：日批在每日收盘数据 ingest 之后跑一次（2026-10-13 起已挂事件门：emotion_index_close_final
+落表 SUCCESS → pipeline_events.maybe_snapshot_emotion_index 子进程调本 CLI；reaper 白名单登记
+由运维面负责——秒级短批常规免登；人工重跑不受事件门幂等闸约束）。
 
 # [ALGO_FLOW]
 # 层: 输入

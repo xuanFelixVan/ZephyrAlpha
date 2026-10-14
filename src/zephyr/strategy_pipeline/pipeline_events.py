@@ -1126,6 +1126,81 @@ def maybe_settle_judgment_ledger(task_id: object = None, success: bool = True, *
     return {"action": "settled", "trade_date": day, "brief": brief}
 
 
+# ---------- 情绪线日批快照件（5_self_sustaining 日批半施工，st-cdx-sent-20261013）----------
+EMOTION_SNAPSHOT_KIND = "emotion_index_snapshot_daily"
+EMOTION_SNAPSHOT_PREFIX = "[EMOTION-SNAPSHOT]"
+# 唤醒词=收盘定格态落表任务本体（非 daily_kline 词族）：emotion_index_close_final 在
+# DAG 后段跑（deps=daban/kline/margin 原料批），若挂 daily_kline 词族则在 kline 完成
+# 唤醒点快照会抢跑在落表之前——违反"快照的是落表后状态"（5_self §3.2 禁抢跑）。
+# pre_open（盘前批）刻意不入唤醒词：入列则 T 日 09:15 抢先落业务日记号，收盘态落表后
+# 反被幂等闸挡住=当日终态缺一张落表后快照。
+EMOTION_SNAPSHOT_WAKE_TASKS = ("emotion_index_close_final",)
+# 执行体=快照器 CLI 唯一本体（append-only 全表镜像+manifest 台账，PIT 证据面）；
+# 子进程隔离+有界超时（run_subprocess_hidden 无窗口款，c4/c2 屏先例同款）——重活不进
+# 调度器进程；--out-dir 钉死仓库根绝对路径（DEFAULT_OUT_DIR 相对路径防调度器 cwd 漂移）。
+EMOTION_SNAPSHOT_SCRIPT = "scripts/data/emotion_index_snapshot.py"
+EMOTION_SNAPSHOT_OUT_DIR = "data/emotion_index_snapshots"
+EMOTION_SNAPSHOT_TIMEOUT_S = 300
+
+
+def maybe_snapshot_emotion_index(task_id: object = None, success: bool = True, **_kwargs) -> dict[str, Any]:
+    """emotion_index 全表快照的唯一自动产出者（快照器从 manual 挂上事件门——薄接线）。
+
+    宪法 §9.3 合规（maybe_refresh_regime_snapshot 同款骨架）：不建 cron/Timer/sleep 循环，
+    节拍由调度器 task_completed 唤醒给——唤醒词=emotion_index_close_final SUCCESS（情绪
+    收盘定格态落表本体，与既有 daily_kline SUCCESS 门同一条 task_completed 订阅通道=零新
+    触发机制；t0 三步同门族只读本表不写本表，快照与其无写序耦合）。快照的是**落表后**
+    全表状态（write→emit_event 次序由 scheduler._try_source 保证）。
+    幂等闸=业务日级永久记号（_marker_seen，regime 同款）：键
+    emotion_index_snapshot_daily:<D>，D=行情最新入库日（resolve_pf_alloc_trade_date 共用
+    业务日真源，禁墙钟猜日）。**记号先落再动手**（regime 先例裁定）：失败若不留号=每次
+    落表任务重试都重起子进程；失败已 ERROR 出声，当日人工补跑走逃生口（快照器 CLI 直跑，
+    不受本闸约束——append-only 同日双快照仅台账多一行，PIT 读径取最新，无害）。
+    永不抛：快照失败绝不得反噬唤醒钩子链（含子进程超时/空表拒快照——空表=证据污染防护，
+    转 ERROR 出声）。reaper 白名单登记由运维面负责（快照秒级短批，常规免登）。
+    """
+    tid = str(task_id or "")
+    if not success or not any(k in tid for k in EMOTION_SNAPSHOT_WAKE_TASKS):
+        return {"action": "skipped_wake_point"}
+    day = ""
+    try:
+        day = resolve_pf_alloc_trade_date()
+        key = f"{EMOTION_SNAPSHOT_KIND}:{day}"
+        if _marker_seen(key):
+            return {"action": "already_snapshotted", "trade_date": day}
+        _touch_marker(key)  # 先落号再动手（防失败重跑风暴，regime 同款裁定）
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+        proc = run_subprocess_hidden(
+            [
+                sys.executable,
+                str(ROOT / EMOTION_SNAPSHOT_SCRIPT),
+                "--out-dir",
+                str(ROOT / EMOTION_SNAPSHOT_OUT_DIR),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=EMOTION_SNAPSHOT_TIMEOUT_S,
+            cwd=str(ROOT),
+            encoding="utf-8",
+        )
+        if proc.returncode != 0:
+            raise RuntimeError(f"rc={proc.returncode} stderr={(proc.stderr or '')[-200:]}")
+        stdout_lines = [ln for ln in (proc.stdout or "").splitlines() if ln.strip()]
+        brief = stdout_lines[-1] if stdout_lines else ""
+    except Exception as exc:  # noqa: BLE001 — 钩子永不反噬调度器，失败必须出声
+        msg = f"{EMOTION_SNAPSHOT_PREFIX} 快照未完成（trade_date={day or '未知'}）：{type(exc).__name__}: {exc}"
+        log.error(
+            f"{EMOTION_SNAPSHOT_PREFIX} 快照异常（人工逃生口=python scripts/data/emotion_index_snapshot.py）"
+            f"trade_date={day or '未知'}",
+            exc_info=True,
+        )
+        alert(msg[:300], level="ERROR")
+        return {"action": "error", "trade_date": day, "error": type(exc).__name__[:200]}
+    alert(f"{EMOTION_SNAPSHOT_PREFIX} 日批快照落盘 trade_date={day}: {brief[:200]}", level="INFO")
+    return {"action": "snapshotted", "trade_date": day, "brief": brief[:200]}
+
+
 # ---------- 丁线扩面钩子（2026-09-21 Owner 令：未进编排器件打通） ----------
 WARROOM_KIND = "warroom_pipeline"
 WARROOM_PREFIX = "[WARROOM-PIPELINE]"
@@ -1457,6 +1532,14 @@ def wire_data_scheduler(scheduler) -> None:
                 maybe_emit_l9_readiness(**_kwargs)
             except Exception:  # noqa: BLE001  导入级故障与模块内异常同待遇：出声不反噬
                 log.warning("[L9-AGG] 就绪度读数唤醒失败（不影响后续链）", exc_info=True)
+            # 情绪线日批快照件（5_self_sustaining 日批半施工，st-cdx-sent-20261013）：
+            # emotion_index 收盘定格态落表 SUCCESS=快照器自然唤醒（append-only PIT 证据面，
+            # 手工 CLI 挂上事件门的薄接线）。置于唤醒链最末（证据面不占分配/拍板时序；
+            # 唤醒词=落表任务本体、与 t0 三步无写序耦合，尾位=不抢任何在产棒）。
+            try:
+                maybe_snapshot_emotion_index(**_kwargs)
+            except Exception:  # noqa: BLE001  出声不反噬（快照件是增益不是依赖）
+                log.warning("[EMOTION-SNAPSHOT] 快照钩子唤醒失败（不影响唤醒链）", exc_info=True)
         except Exception:  # noqa: BLE001  钩子永不反噬调度器
             log.debug("pipeline 唤醒钩子异常", exc_info=True)
 
