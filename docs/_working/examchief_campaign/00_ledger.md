@@ -236,6 +236,37 @@ D8 的放行判据机械式：象限一致率 <0.90 或 日截面占比差最大
       保活授权 `revoke_heartbeat_keepalive` 已落 `keepalive.jsonl` 末条（`read_active_keepalive`→None）；
       `--release-only --files <七件>` 得 `released=7 denied=0`；车道归档前已扫**14 枚脏件对 dev 逐枚等值＝零独有残留**。
 
+## 五·补2：矿考四班 12:4x 实读与结局判定（本段由四班 st-examchief2-20261014 接班后补，零预写）
+
+**结局＝halt（庚甲菜单甲执行后，D8 首次拿到真 decision；判据机械式双触发）⇒ 按卡纪律不开考，三张 RRG 卡维持 0 出分。**
+
+1. 修读取形态只动三处（其余逐字节未碰）：①探针 `LANE` 指针改指当班车道 `.aidrafts/st-examchief2-20261014`
+   （旧车道已归档，环境指针非判据面）；②列集读取改按行读 `SELECT name FROM system.columns … ORDER BY position`
+   逐行取值（§七 庚项在册定性：groupArray 经 ch_query_df 返回 str、逐字符迭代恒自拒）；③回执 `sid` 改写本班 sid（归属如实）。
+   **判据常数 0.90/0.10、卡面引句、±5 带宽诊断档一字未动**；菜单乙（升常驻件）/丙（随 P0 排）未取。
+2. 重跑（12:49:19，CH 只读 2 次，让路窗外、无 override）关键读数逐字：`cells_compared = 1134`、`codes_compared = 189`、
+   `quadrant_agreement_in_register_10_26 = 0.5459`（<0.90 ⇒ 触发）、`quadrant_agreement_if_parent_band_pm5 = 0.0`、
+   `central_band_share_if_pm5 = 0.978`、`daily_spread_max_absdiff = 0.5556`（>0.10 ⇒ 触发）、
+   `daily_spread_mean_absdiff = 0.4859`、`daily_spread_corr = 0.8309`、
+   `decision = halt（差异超 10% 线＝先查口径再开考）`。
+3. 分母独立复核（本班 2 次 CH 只读，让路窗外）：`rrg_quadrant` 非空面在全表 2022-11-02..2026-10-09，
+   但**族宇宙恰 189 码**（sector_code_name_map.code_family IN (industry_l1, industry_ths)）在 sector_state
+   只有 **2026-09-24..2026-10-09 共 8 个交易日**有象限值（189 码/日齐）；与本班面板 1257 日轴的交集
+   ＝6 日 × 189 码＝1134 格。⇒ 本次一致率是**极短窗读数**，任何长程口径结论都超出样本。
+4. ±5 带宽诊断档的归因答案（呈批项见 §七 辛）：本班按在册 10/26 无带宽式与 theirs 一致 54.59%；
+   若按母卡 ±5 带宽四分，本班 97.8% 落 CENTRAL 而 theirs 值域只有
+   IMPROVING/LAGGING/LEADING/WEAKENING 四象限（无 CENTRAL）⇒ 带宽档一致率恰 0.0。
+   **差异不是带宽造成的**——恰相反，带宽是把本班读数压进 CENTRAL 的那一下。
+5. CH 配置警告验真：车道缺 config/.env.clickhouse 只触发 ch_config 的 warning
+   （已有 os.environ 不覆盖；load_ch_config 对缺 host fail-closed），2 次查询真实往返
+   （值域/行数非占位）＝警告是红鲱鱼，非软失败伪装。
+6. R7 基线（12:5x，车道 HEAD=dev=1f82fcb26206 后取）：内容面全绿——`scores_rows=73`、
+   `book_entries_without_legs=16`、`judge_diff_vs_dev=""`、分数册/试次册对 dev `lost=0 added=0`；
+   rc=1＝§五-补 第 3 条在册机械伪影（snapshot 返 dict）非判据破。
+   ⇒ 分数册/试次册/02b 卡 status 对 dev 逐字节等值＝三卡维持 0 出分有机证。
+7. PE 时序说明：08 包 §5.0/11 稿 §6 的硬时序对象是"首张 RRG 分＋其袋落地"；今日 halt 下该对象不存在，
+   本班把 halt 账先落（本节＋§七 辛），再动判官件（袋 B）＝"判官零改动"证据链无可自污对象。
+
 # 六、残余与转他班（不装完）
 
 1. 八格 categorical 无机判面（族级 5 枚卡）＝面板机判面缺口，属 04_ 稿 P0 门位族，非本班可自签；
@@ -319,6 +350,17 @@ D8 的放行判据机械式：象限一致率 <0.90 或 日截面占比差最大
   本班建议＝**甲**（最小面、当天能拿到真 decision），但**本班不自签**：08 包 §2 C 明令"勿改尺"，
   而这一行改的正是"是否允许开考"的读法，属跨班裁断；遵 Owner 在册正解＝改喂给闸的**输入指向**、不弱化判据、不白名单、不自修门。
   不点后果＝RRG 三卡在 P0 批下来之后**照样出不了分**（闸门自己先死），且 §五 这条"尺永拒"的形态会留给下一班重新踩。
+- 辛（**D8 首个真 decision＝halt 的口径差异呈批项**，四班 12:4x 实读，证据全在 §五·补2；本班不代裁"先查口径"的查法）：
+  机械事实＝在册 10/26 式本班自算象限与被测件列 c1_market.sector_state.rrg_quadrant 在可比窗（6 日×189 码＝1134 格）
+  一致率 0.5459<0.90、日截面占比差最大值 0.5556>0.10，双触发 ⇒ 卡面纪律 halt。
+  带宽归因（±5 诊断档）＝**差异非带宽造成**（带宽档一致率 0.0、本方 CENTRAL 占比 0.978、theirs 值域无 CENTRAL）。
+  分母事实＝theirs 对族宇宙 189 码仅覆盖 2026-09-24 起的 8 个交易日（爬坡期新面）。
+  呈批菜单（各带代价，本班不点）：
+  **甲**＝生成端参数对排：把 theirs 的生成端参数（EMA 跨度/中枢/基准价/写库时点）与在册 10/26 式逐项对表，
+  把 45.41 个百分点的分歧归因到项；
+  **乙**＝等 theirs 对族宇宙积累更长窗（现仅 8 个交易日）后用同探针重跑拿长窗一致率再裁——甲乙可并行不冲突；
+  **丙**＝若对排查判定 theirs 与在册式同口径、分歧属爬坡期噪声 ⇒ 由统筹点名重跑 D8，decision=proceed 才开考。
+  不点后果＝三张 RRG 卡继续 0 出分（卡面纪律 halt ⇒ 不开考，除非统筹/Owner 另裁）。
 
 # 八、Owner 2026-10-14 批复五件的本班执行账（01:44 令；本班当班办完乙/丙/丁/己四件，戊无可动作）
 
@@ -389,3 +431,60 @@ print(len(f(c,set())),'of',len(c))"
 渲染面里同时含 infoaxis 班尚未入库的条目，替他班落地=归属篡改；
 投影滞后形态由门本体 PG 第三源 `_pg_confirmed_token_files` 正证放行，非豁免）。
 
+## 四班追加复核命令（st-examchief2-20261014，每条都实跑过，期望值随命令）
+
+```
+cd /d/ZephyrAlpha/.aidrafts/st-examchief2-20261014 && PYTHONNOUSERSITE=1 \
+  python D:/ZephyrAlpha/.runtime/tmp/examchief/d8_rrg_crosscheck_probe.py
+```
+期望末段逐字：`WROTE D:\ZephyrAlpha\.runtime\tmp\examchief\evidence\d8_crosscheck.yaml ch_queries=2`
+＋`quadrant_agreement_in_register_10_26 = 0.5459`＋`daily_spread_max_absdiff = 0.5556`＋
+`decision = halt（差异超 10% 线＝先查口径再开考）`（探针只读无状态面，重跑应同值；
+让路窗 21:00-22:30/01:00-04:00 内自拒 rc=3＝在册让路面非故障）。
+
+```
+cd /d/ZephyrAlpha/.aidrafts/st-examchief2-20261014 && PYTHONNOUSERSITE=1 python -c "
+import sys; sys.path.insert(0,'src'); sys.path.insert(0,'scripts/backtest')
+from fexam.ch_data import ch_query_df
+codes_df = ch_query_df(\"SELECT DISTINCT sector_code FROM c1_market.sector_code_name_map WHERE code_family IN ('industry_l1','industry_ths')\")
+codes = sorted(codes_df.iloc[:,0].astype(str).tolist())
+print('family_universe_codes =', len(codes))
+inlist = ','.join(f\"'{c}'\" for c in codes)
+r = ch_query_df(f'SELECT toDate(trade_date) AS d, uniqExact(sector_code) AS codes FROM c1_market.sector_state WHERE sector_code IN ({inlist}) AND rrg_quadrant != \'\' GROUP BY d ORDER BY d')
+print('sector_state_days_for_family_codes =', len(r))
+print(r.iloc[0,0], r.iloc[-1,0])"
+```
+期望：`family_universe_codes = 189`、`sector_state_days_for_family_codes = 8`、`2026-09-24 2026-10-09`
+（§五·补2 第 3 条分母事实的真源查询；本班首跑曾把映射列误写成 family 吃 404，改 code_family 后通——留痕不抹）。
+
+
+# 十、矿考四班·PE 止血闸施工账（2026-10-14 午班，sid=st-examchief2-20261014；规约=11_pe_shadow_plan.yaml，统筹 2026-10-14 批）
+
+1. 时序前提：08 包 §5.0/11 稿 §6 的硬时序对象（"首张 RRG 分＋其袋落地先于动判官件"）在 halt 下无对象
+   （§五·补2 第 7 条），halt 账已随袋 A（3703046c）落地后再动 `calibration_exam.py`＝证据链无可自污对象。
+2. 施工面（唯一落点，warn-only/shadow）：`scripts/backtest/fexam/calibration_exam.py`——
+   ①新观测器 `_bucket_type_off_vocab`（规约 §2 条件①：buckets.type 声明且不在 `_BUCKET_TYPE_N`
+   词表且不匹配 `quantile_<n>` 形；无 buckets 声明＝没冻切法，不报）；②新披露装配 `_bucket_caliber_proxy`
+   （条件②＝信号唯一值数 > 实跑桶数＝真走分位分支；ordinal 按档值分桶不报＝钉住 §3 那 3 枚假阳；
+   mono 无面 None/NaN 不报＝披露只注解存在的数）；③`_unjudged_pillars` 加 keyword-only 形参
+   `signal_unique`（缺省 None＝既有调用面零破）并在返回面追加披露键
+   `numeric_keys_bucket_caliber_proxy`（载荷逐字照 11 稿 §2：buckets.type 原文名／n_buckets_used／
+   mono_spearman=按信号值分位分桶的代理读数（非卡面冻的格）／mode=warn_only）；
+   ④`run_card` 单点观测位：仅 series 路取 `int(signal.nunique())` 传入。
+3. 越权面零：不进 `fails`、不改 verdict、不改任何数值、不加阈值、不新建 gate/配置节/常驻清单
+   （shadow 旗＝件内常量与注释带规约路径；净零声明照 11 稿 §7）。
+4. 行形状面：metrics／unjudged 既有键零动——已出分行与未出分行的既有形状不变；新行仅在 unjudged
+   面可能多该披露键（＝11 稿 §7"观察期台账行由分数册自身承载"）。回退判据 R-a 的读法据此＝
+   在册 73 行的 outcome/数值列零变化（73 行是冻结字节，本施工不触碰任何已落地行）。
+5. scope 边界（如实登记）：披露只落 series 路顶层 metrics；dual_arm 路的嵌套臂面
+   （arm_open/arm_base 内的 mono）与 event 路不在 11 稿 §2 文字内（规约未指定双臂取哪臂信号），
+   本班不越权披露——若 enforce 议点要扩，属再批事项。信号唯一值数取注入序列 raw 面
+   （对齐丢行只在"整档值恰好全落目标 NaN 行"这一 exotic 形态下可能高报；R-c 观察窗正是钉这个）。
+6. 测试（同批合法，全绿实跑）：`tests/backtest/test_calibration_exam.py` **72 passed**（原 66＋新 6：
+   T1 改前/改后对拍 verdict/fails/metrics 逐位等值（NaN 感知比较——dict 相等把 nan!=nan 判假是
+   伪影非漂移，测试里留注释）＋unjudged 恰多一披露键｜T2 词表内不报｜T3 4 档离散信号不报（删条件②必红）｜
+   T4 连续信号必报且禁进 fails｜条件①词表边界（quantile_7/大小写/空 buckets）｜mono 无面不报）；
+   `tests/backtest/test_card_binding.py` **107 passed**＝零连带（run 面端到端行形状不被破坏）。
+   两条均 `PYTHONNOUSERSITE=1`＋仓外 `--basetemp`（D:/tmp_qoder/bt_pe1、bt_pe3）。
+7. 完成判据（照 11 稿 frontmatter）：2026-10-21 观察期满且 §5 判据齐 ⇒ 议 enforce（须再批）；
+   任一回退条件触发即 `git revert` 本 PE commit，不议不改。
