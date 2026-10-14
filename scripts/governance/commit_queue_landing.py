@@ -5,8 +5,10 @@
 # [CONSUMERS] 全部 AI session（drain_queue(landing=...) 真落盘注入点）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway._commit_auto（flag ON 时 reroute 目标，延迟 import）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / Windows 句柄占用致 reset --hard unlink 失败 / 全局提交锁 LOCK_TIMEOUT；特征串真源=_TRANSIENT_GIT_MARKERS）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；**热册三连（FOREIGN-CHANGE/HELD-OVERLAP/HOT-FILE-BASE-FRESHNESS 集中打 module_translation/capability_canonical 两热册，结构性并发非物品违规）→ 抛 HotRegistryContentionError 同走退 pending+B5 attempts 退避通道，绝不死信回人工（A3 任务1 st-circ-a3-20260930）**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）；worktree 环境备置（ensure_worktree 两出口经 scripts.session_worktree._provision_worktree_env 从主仓取 PG+CH 配置——门禁/reconciler 在 worktree 内与主区等价，不再 fail-open；备置失败仅 warning 不阻断落盘）；**k=4 通道池（st-k4-20260923）：投机并行验证+串行落地——drain_queue_pool 池级单 lease+单心跳线程，k 工各配独立 worktree/分支/gateway（_GlobalCommitLock 按 project_root 键控→门禁段真并行），路径锁同路径项门禁段前串行化（防跨 session claim 冲突+整文件互踩），dev ref CAS 唯一串行落地点，冲突→_pool_cas_replay 落地段重放不重跑门禁（注册表同册=条目级三向合并重放吸收零丢失；无重叠=commit-tree re-parent；非注册表同路径=死信零覆盖）；k=1（thresholds commit_queue_landing_pool_workers）=legacy 逐字节降级**；env 名册/import 同源（gateway roster_root=主仓根，三选一之③，q-0006/q-0007 死信治本）；快照写后读回自验（M5.1 rsync -c 语义：write_bytes 即读回 sha256 比对，注册表族基准=三向合并后字节、普通文件=袋内 blob_sha256，delete/noop 豁免）；gate 装载失败新鲜子进程判别（M5.2：fresh 同败=确定性册坏即死信，fresh 通过=daemon 纪元陈旧退 pending，配 env_retry 上限）；改道入队前锁外预检（M1.2：blocking 返回 COMMIT_FAILED 拒不降级直提，预检设施异常才放行+审计）
+# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / Windows 句柄占用致 reset --hard unlink 失败 / 全局提交锁 LOCK_TIMEOUT；特征串真源=_TRANSIENT_GIT_MARKERS）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；**热册三连（FOREIGN-CHANGE/HELD-OVERLAP/HOT-FILE-BASE-FRESHNESS 集中打 module_translation/capability_canonical 两热册，结构性并发非物品违规）→ 抛 HotRegistryContentionError 同走退 pending+B5 attempts 退避通道，绝不死信回人工（A3 任务1 st-circ-a3-20260930）**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）；worktree 环境备置（ensure_worktree 两出口经 scripts.session_worktree._provision_worktree_env 从主仓取 PG+CH 配置——门禁/reconciler 在 worktree 内与主区等价，不再 fail-open；备置失败仅 warning 不阻断落盘）；**k=4 通道池（st-k4-20260923）：投机并行验证+串行落地——drain_queue_pool 池级单 lease+单心跳线程，k 工各配独立 worktree/分支/gateway（_GlobalCommitLock 按 project_root 键控→门禁段真并行），路径锁同路径项门禁段前串行化（防跨 session claim 冲突+整文件互踩），dev ref CAS 唯一串行落地点，冲突→_pool_cas_replay 落地段重放不重跑门禁（注册表同册=条目级三向合并重放吸收零丢失；无重叠=commit-tree re-parent；非注册表同路径=死信零覆盖）；k=1（thresholds commit_queue_landing_pool_workers）=legacy 逐字节降级**；env 名册/import 同源（gateway roster_root=主仓根，三选一之③，q-0006/q-0007 死信治本）；快照写后读回自验（M5.1 rsync -c 语义：write_bytes 即读回 sha256 比对，注册表族基准=三向合并后字节、普通文件=袋内 blob_sha256，delete/noop 豁免）；gate 装载失败新鲜子进程判别（M5.2：fresh 同败=确定性册坏即死信，fresh 通过=daemon 纪元陈旧退 pending，配 env_retry 上限）；改道入队前锁外预检（M1.2：blocking 返回 COMMIT_FAILED 拒不降级直提，预检设施异常才放行+审计）；**码面指向作用域（st-maint7-20261014）：两处 gateway.commit 调用段内 ZEPHYR_ALPHA_ROOT=serializer worktree**——usercustomize（LSG 网引导）只认这一个开关才把 `<root>/src` 放进 sys.path[0]，不指则 pre-commit 钩子里的 pytest 子进程导入的 zephyr.* 全是**主区磁盘码面**而非本袋快照面（"码＋测同袋"的合法提交因新符号在子进程查无而收集报错，被迫拆册先行袋＋代码后继袋——深队列必崩，实证=docs/_working/lane_c_chain_night/e1_mine_repair.md §5.1）；出作用域必复原（调用者原值回填、原本没有则删），只改喂给子进程的指向，门禁判据/阈值/豁免面零动
 # [MODIFY-GUARD] 66 号备忘 §6.3 MVP 形态 + §8 幂等算法 + §9 边界；08 号文 §4.2 步骤 3/5；[GW:{sid}:{qid}] 标记格式（POST-COMMIT-GUARD / REFERENCE-TRANSACTION-GUARD 消费方）
+#   ；2026-10-14 st-maint7-20261014：新增 _code_face_env_scope 并包住两处 gateway.commit 调用段
+#   （只改喂给子进程的码面指向——判据/阈值/豁免面零动；配对测试同袋）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -93,6 +95,7 @@ flag OFF 灰度期已知过渡语义（如实记录，非缺陷）：队列落�
 
 from __future__ import annotations
 
+import contextlib
 import functools
 import hashlib
 import json
@@ -237,6 +240,8 @@ _GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"
 # Serializer 可信 git 调用 env（66 号 §4 裁定 7 plumbing 白名单 + worktree_pool fast-path 先例）
 _SERIALIZER_MODE_ENV = "ZEPHYR_SERIALIZER_MODE"
 _GIT_GUARD_FAST_PATH_ENV = "ZEPHYR_GIT_GUARD_FAST_PATH"
+# 码面指向 env（usercustomize/LSG 网引导唯一认的开关，见 _code_face_env_scope docstring）
+_ALPHA_ROOT_ENV = "ZEPHYR_ALPHA_ROOT"
 
 # 瞬态 git 环境失败特征串（大小写不敏感匹配）：全部是"外部进程/OS 一时占着文件"，
 # 与队列项内容无关——重放即可落地，死信是假失败。
@@ -1813,6 +1818,30 @@ class WorktreeLanding:
                 f"[landing] 专用 worktree toplevel 漂移（{top} != {self.worktree_path}），拒绝执行（防打穿主仓）"
             )
         return _run_git(self.worktree_path, list(args), check=check)
+
+    @contextlib.contextmanager
+    def _code_face_env_scope(self):
+        """落地作用域内把 ZEPHYR_ALPHA_ROOT 指向 serializer worktree＝码面与被落的面同源。
+
+        病根（车道C 班 `docs/_working/lane_c_chain_night/e1_mine_repair.md` §5.1 实证；
+        本班 2026-10-14 两钮复测）：`usercustomize.py`（LSG 运行时网引导）只在**该 env 存在时**
+        才把 `<root>/src` 放进 `sys.path[0]`，缺省硬编码主区根。于是 pre-commit 钩子里的
+        pytest **子进程**导入的 `zephyr.*` 全部命中主区磁盘码面，而不是本袋正要落的快照面——
+        "码＋测同袋"的合法提交因新符号在子进程里查无而收集报错，被迫拆成"册先行袋＋代码后继袋"
+        （深队列下必崩，已在册死因），一队今晚多只袋因它碎裂。
+        方向＝只改**喂给子进程的码面指向**（与在册正解同族：修输入指向，不弱化判据、
+        不加白名单、不开豁免）；门禁判据/阈值/豁免面零变化。
+        出作用域必复原（原值存在则回填、原本没有则删除），防污染后续步骤与其他消费者。
+        """
+        prev = os.environ.get(_ALPHA_ROOT_ENV)
+        os.environ[_ALPHA_ROOT_ENV] = str(self.worktree_path)
+        try:
+            yield
+        finally:
+            if prev is None:
+                os.environ.pop(_ALPHA_ROOT_ENV, None)
+            else:
+                os.environ[_ALPHA_ROOT_ENV] = prev
 
     def _dev_head(self) -> str:
         """_dev_head implementation."""
@@ -3445,33 +3474,34 @@ class WorktreeLanding:
                 os.environ[_GATEWAY_ENV] = "1"
                 _gates_t0 = time.monotonic()  # M5 矿①：gates 相位计时锚（单点累加在下方 finally）
                 try:
-                    result = gateway.commit(
-                        session_id,
-                        commit_files,
-                        full_message,
-                        allow_non_worktree=True,
-                        # B2（#ARCH-310，2026-09-12）：落地快照与 worktree 同步之间存在
-                        # 窗口，同族 reconciler 波次会重写自身衍生文件（script-manifest 等
-                        # ——q-0001 死信实证），快照内容本身受 CAS 保护，容忍窗口漂移。
-                        allow_tracked_drift=True,
-                        # B3（#ARCH-310，2026-09-12）：队列项=入队者已圈定的单任务文件集
-                        # （gate+自家测试是同一任务的合法组成——q-0007 死信实证），域拆分
-                        # 责任在入队侧，落地不再二次执法；gateway 自动追加 multi-domain 标记留痕。
-                        allow_multi_domain=True,
-                        # B3b（#ARCH-310，2026-09-12）：永久区新文件（注册表/登记表）经队
-                        # 列入队时，入队者的显式 --files 清单即 PROMOTION gate 要求的准入
-                        # 意思表示（q-0015 死信实证：REG-RISK-TIER-001 被拦）；allow_promote
-                        # 落地留痕审计不变。
-                        allow_promote=True,
-                        # 锁等待放宽（2026-09-16 q-…-0009/0010/0011 死信实证）：并发
-                        # 提交期撞全局锁是瞬态，排队等待即可落地，gateway 缺省 60s 太短。
-                        lock_wait_timeout=self._lock_wait_seconds,
-                        # 二层⑤（Owner 全批 2026-10-05）：袋即持锁——入队时已验过
-                        # claim（入队者显式 --files 清单=claim 意思表示），落地不再
-                        # 二次执法 CLAIM-REQUIRED（原 24 次/天白跑+13 袋死信实证）。
-                        # 直连提交照查不放松——本参数仅队列落地路径生效。
-                        allow_overlap=True,
-                    )
+                    with self._code_face_env_scope():
+                        result = gateway.commit(
+                            session_id,
+                            commit_files,
+                            full_message,
+                            allow_non_worktree=True,
+                            # B2（#ARCH-310，2026-09-12）：落地快照与 worktree 同步之间存在
+                            # 窗口，同族 reconciler 波次会重写自身衍生文件（script-manifest 等
+                            # ——q-0001 死信实证），快照内容本身受 CAS 保护，容忍窗口漂移。
+                            allow_tracked_drift=True,
+                            # B3（#ARCH-310，2026-09-12）：队列项=入队者已圈定的单任务文件集
+                            # （gate+自家测试是同一任务的合法组成——q-0007 死信实证），域拆分
+                            # 责任在入队侧，落地不再二次执法；gateway 自动追加 multi-domain 标记留痕。
+                            allow_multi_domain=True,
+                            # B3b（#ARCH-310，2026-09-12）：永久区新文件（注册表/登记表）经队
+                            # 列入队时，入队者的显式 --files 清单即 PROMOTION gate 要求的准入
+                            # 意思表示（q-0015 死信实证：REG-RISK-TIER-001 被拦）；allow_promote
+                            # 落地留痕审计不变。
+                            allow_promote=True,
+                            # 锁等待放宽（2026-09-16 q-…-0009/0010/0011 死信实证）：并发
+                            # 提交期撞全局锁是瞬态，排队等待即可落地，gateway 缺省 60s 太短。
+                            lock_wait_timeout=self._lock_wait_seconds,
+                            # 二层⑤（Owner 全批 2026-10-05）：袋即持锁——入队时已验过
+                            # claim（入队者显式 --files 清单=claim 意思表示），落地不再
+                            # 二次执法 CLAIM-REQUIRED（原 24 次/天白跑+13 袋死信实证）。
+                            # 直连提交照查不放松——本参数仅队列落地路径生效。
+                            allow_overlap=True,
+                        )
                     # Mode B 自愈（st-commitspeed-20260916 晚，st-resched-fix/st-auditfix
                     # pathspec 死信实证）：新文件在 prestage 已 staged，但 gateway commit
                     # 报 "did not match any file(s) known to git"=index 中 staging 丢失
@@ -3498,16 +3528,17 @@ class WorktreeLanding:
                             raise
                         self._prestage_snapshot(item, commit_files)
                         _diag = self._git_wt("status", "--porcelain", "--", *self._item_paths(item))
-                        result = gateway.commit(
-                            session_id,
-                            commit_files,
-                            full_message,
-                            allow_non_worktree=True,
-                            allow_tracked_drift=True,
-                            allow_multi_domain=True,
-                            allow_promote=True,
-                            lock_wait_timeout=self._lock_wait_seconds,
-                        )
+                        with self._code_face_env_scope():
+                            result = gateway.commit(
+                                session_id,
+                                commit_files,
+                                full_message,
+                                allow_non_worktree=True,
+                                allow_tracked_drift=True,
+                                allow_multi_domain=True,
+                                allow_promote=True,
+                                lock_wait_timeout=self._lock_wait_seconds,
+                            )
                         if result.status.name == "COMMIT_FAILED" and "did not match" in (result.message or ""):
                             result = CommitResult(
                                 status=result.status,

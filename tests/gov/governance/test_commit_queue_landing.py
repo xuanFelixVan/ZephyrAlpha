@@ -5,7 +5,7 @@
 # [CONSUMERS] pytest 自动发现
 # [STARTUP] python -m pytest tests/governance/test_commit_queue_landing.py
 # [MATURITY] testing
-# [INVARIANTS] 全 tmp 隔离（tmp git 仓 + tmp 队列根，绝不碰主仓 .runtime/commit_queue 与真实 dev/main）；GitCommitGateway 桩化注入——断言接线参数（session/files/message 标记/allow_non_worktree），git 语义（worktree/CAS/update-ref）走真 git
+# [INVARIANTS] 全 tmp 隔离（tmp git 仓 + tmp 队列根，绝不碰主仓 .runtime/commit_queue 与真实 dev/main）；GitCommitGateway 桩化注入——断言接线参数（session/files/message 标记/allow_non_worktree），git 语义（worktree/CAS/update-ref）走真 git；码面作用域三支用例＝同帧采样（helper 建了但调用点没接／原值被删／钮指主区 三向突变各自必红）
 # [MODIFY-GUARD] 66 号 §6.3 MVP 形态 + §6.4 冲突判定 + §8 幂等；08 号文 §4.2 步骤 3/5 验收行（P0-6④ B 段任务口径）
 # [STABILITY] volatile
 # [SAFETY] L
@@ -2459,3 +2459,68 @@ def test_main_workspace_convergence_restores_sid_on_exception(tmp_repo, queue_ro
     with pytest.raises(RuntimeError):
         landing._converge_main_workspace({"qid": "q-sig-4", "session_id": "st-bag-owner"}, "a", "b")
     assert "ZEPHYR_SESSION_ID" not in os.environ
+
+
+# ---------------------------------------------------------------------------
+# 码面指向作用域（维护七班 st-maint7-20261014：落地链导出 ZEPHYR_ALPHA_ROOT=serializer worktree）
+# 病根实证=docs/_working/lane_c_chain_night/e1_mine_repair.md §5.1（不设该 env 时子进程
+# 的 zephyr.* 全部命中主区旧码面，"码＋测同袋"的袋在钩子里收集报错）
+# ---------------------------------------------------------------------------
+
+
+class _CodeFaceSamplingGateway(_StubGateway):
+    """在 gateway.commit 被调用的**那一刻**采样 os.environ 的桩（取样点必须在同帧内）。
+
+    `allow_overlap` 在本件既有 `_StubGateway` 签名里没有（落地路径 2026-10-05 起的实参，
+    存量桩未追齐＝同件另 27 支既有失败的成因之一，已另行登记）；本桩就地吸收，
+    使本班这条端到端判别面不挂在那条存量红上。
+    """
+
+    def __init__(self, worktree_path: Path) -> None:
+        super().__init__(worktree_path)
+        self.env_at_commit: list[str | None] = []
+
+    def commit(self, *args, allow_overlap: bool = False, **kwargs):  # noqa: ANN002, ANN003
+        self.env_at_commit.append(os.environ.get("ZEPHYR_ALPHA_ROOT"))
+        return super().commit(*args, **kwargs)
+
+
+def test_code_face_env_scope_points_at_worktree_and_restores(tmp_repo, queue_root, monkeypatch) -> None:
+    """作用域内：进程 env 与 git 子进程 env 都指向 serializer worktree；出作用域必清除。"""
+    landing, _stub = _make_landing(tmp_repo, queue_root)
+    monkeypatch.delenv("ZEPHYR_ALPHA_ROOT", raising=False)
+    expected = str(landing.worktree_path)
+
+    with landing._code_face_env_scope():
+        in_proc = os.environ.get("ZEPHYR_ALPHA_ROOT")
+        in_child = cql._trusted_git_env().get("ZEPHYR_ALPHA_ROOT")
+
+    assert in_proc == expected, f"作用域内进程码面没指向 worktree: {in_proc!r}"
+    assert in_child == expected, f"钩子子进程继承的码面没指向 worktree: {in_child!r}"
+    assert "ZEPHYR_ALPHA_ROOT" not in os.environ, "出作用域未复原＝泄漏给后续消费者"
+
+
+def test_code_face_env_scope_restores_preexisting_value(tmp_repo, queue_root, monkeypatch) -> None:
+    """外来值回填支路：调用者本就设过该 env（池路径/外部驱动）时，出作用域要回到原值而非删掉。"""
+    landing, _stub = _make_landing(tmp_repo, queue_root)
+    monkeypatch.setenv("ZEPHYR_ALPHA_ROOT", "D:/caller-root")
+
+    with landing._code_face_env_scope():
+        assert os.environ["ZEPHYR_ALPHA_ROOT"] == str(landing.worktree_path)
+
+    assert os.environ.get("ZEPHYR_ALPHA_ROOT") == "D:/caller-root", "原值被删＝把别人的作用域洗成空"
+
+
+def test_gateway_commit_runs_inside_code_face_scope(tmp_repo, queue_root, monkeypatch) -> None:
+    """端到端判别面：真 drain 走到 gateway.commit 时码面已在位（只建 helper 不接线＝这支红）。"""
+    wt = (queue_root / "worktree").resolve()
+    stub = _CodeFaceSamplingGateway(wt)
+    landing = cql.WorktreeLanding(repo_root=tmp_repo, queue_root=queue_root, gateway=stub)
+    monkeypatch.delenv("ZEPHYR_ALPHA_ROOT", raising=False)
+    cq.enqueue_item("sess-code-face", "feat: 码面作用域端到端", [("docs/face.txt", b"x\n")], queue_root=queue_root)
+
+    stats = cq.drain_queue(queue_root, landing=landing)
+    assert stats["done"] == 1 and stats["dead"] == 0, f"drain 统计异常: {stats}"
+    assert stub.env_at_commit, "commit 没被跑到＝采样面是空的"
+    assert stub.env_at_commit == [str(wt)], f"commit 当时码面不是 worktree: {stub.env_at_commit}"
+    assert "ZEPHYR_ALPHA_ROOT" not in os.environ, "落地返回后码面指向必须收回（不污染下一个袋/其他通道）"
