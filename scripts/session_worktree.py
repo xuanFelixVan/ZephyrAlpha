@@ -1173,20 +1173,29 @@ def _archive_write_tomb_manifest(wt_path: Path, sid: str, patch_path: str | Path
     return {"manifest": str(out), "rows": len(rows), "verified": verified, "gaps": gaps}
 
 
-def _archive_rescue_phase(info: dict, sid: str, wt_path: Path, skip_rescue: bool) -> tuple[bool, str | None]:
-    """①patch 存证（fail-closed）+ ②？？rescue。返回 (是否失败, patch_path)。"""
+def _archive_rescue_phase(
+    info: dict, sid: str, wt_path: Path, skip_rescue: bool
+) -> tuple[bool, str | None, object | None]:
+    """①patch 存证（fail-closed）+ ②？？rescue。返回 (是否失败, patch_path, 存证核验上下文)。
+
+    第三个返回值是**未收栈**的 tomb_verification 上下文（无合格存证表＝None）。
+    它必须一路活到 ③remove：OPS-GUARD 真正拦的是"删整棵 .worktrees/<sid>"命中
+    `_judge_protected`（PROTECTED_PREFIXES 含 .worktrees/.aidrafts），而那一步发生在
+    rescue 之后——原先 ctx 在本函数末尾就 __exit__ 了，等于授权只覆盖搬文件、不覆盖删树，
+    死锁原样复现（死信班终报实证"缺的只是调用侧那一行接线"）。收栈由 _archive_one 负责。
+    """
     patch_path: str | None = None
     if not info["dirty"]:
-        return False, None
+        return False, None, None
     ev = _archive_generate_evidence(sid, wt_path)
     if not ev.get("generated"):
         if ev.get("reason") == "clean":
             print("  ① patch 存证: SKIP（status 已转干净）")
-            return False, None
+            return False, None, None
         err = ev.get("error", ev.get("reason", "unknown"))
         print(f"[ARCHIVE] fail-closed：存证失败，保留车道待人工: {err}", file=sys.stderr)
         _audit_abort(sid, "BLOCKED", f"lane-archive 存证失败: {err}", {"cert": "evidence"})
-        return True, None
+        return True, None, None
     patch_path = ev.get("patch_path")
     print(f"  ① patch 存证: {patch_path}（三分类={ev.get('counts')}）")
     if info["untracked"] and not skip_rescue:
@@ -1202,17 +1211,22 @@ def _archive_rescue_phase(info: dict, sid: str, wt_path: Path, skip_rescue: bool
                 + (f"，未覆盖 {len(man.get('gaps') or [])} 件仍走人工" if man.get("gaps") else "")
             )
         ctx = factory(man["manifest"], sid=sid) if (factory and man.get("manifest")) else None
+        if ctx is not None:
+            ctx.__enter__()
         try:
-            if ctx is not None:
-                ctx.__enter__()
             r_rescue = _rescue_untracked_files(wt_path, sid, info["untracked"])
-        finally:
+        except BaseException:
+            # rescue 自己炸了才就地收栈；正常返回时把 ctx 交出去覆盖 ③remove
             if ctx is not None:
-                ctx.__exit__(None, None, None)
+                ctx.__exit__(*sys.exc_info())
+            raise
         print(f"  ② ？？rescue: {r_rescue['moved']} 项 → {r_rescue['rescue_dir']}（mapping.json 台账）")
+        if ctx is not None:
+            print("  ②b 存证授权跨段：ctx 继续覆盖 ③remove（整棵保护区树被删时仍需 sha 覆盖）")
+        return False, patch_path, ctx
     elif info["untracked"]:
         print("  ② ？？rescue: SKIP（--skip-rescue）")
-    return False, patch_path
+    return False, patch_path, None
 
 
 def _archive_remove_and_verify(wt_path: Path) -> bool:
@@ -1284,10 +1298,18 @@ def _archive_one(entry: dict, *, execute: bool, base: str, skip_rescue: bool) ->
         print("  [DRY-RUN] 未做任何变更（--execute 才执行）")
         return 0
 
-    failed, patch_path = _archive_rescue_phase(info, sid, wt_path, skip_rescue)
+    failed, patch_path, tomb_ctx = _archive_rescue_phase(info, sid, wt_path, skip_rescue)
     if failed:
+        if tomb_ctx is not None:
+            tomb_ctx.__exit__(None, None, None)
         return 1
-    if not _archive_remove_and_verify(wt_path):
+    try:
+        removed = _archive_remove_and_verify(wt_path)
+    finally:
+        # 收栈点＝删除段之后（无论成败），不留悬挂授权
+        if tomb_ctx is not None:
+            tomb_ctx.__exit__(None, None, None)
+    if not removed:
         return 1
     _archive_branch_finish(sid, branch, info, patch_path)
     print(f"[ARCHIVE] 已归档: {sid}")

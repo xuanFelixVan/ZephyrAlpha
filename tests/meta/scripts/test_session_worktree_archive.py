@@ -4,7 +4,7 @@
 # [CONSUMERS] pytest
 # [STARTUP] manual
 # [MATURITY] evolving
-# [INVARIANTS] 全部 git 操作在 tmp 仓；活跃会话硬拒无逃生；真 ahead 分支禁 -D（保留+台账）；dry-run 默认零副作用
+# [INVARIANTS] 全部 git 操作在 tmp 仓；活跃会话硬拒无逃生；真 ahead 分支禁 -D（保留+台账）；dry-run 默认零副作用；存证授权必须覆盖 ③remove 且归档后必收栈、无存证表即零授权
 # [MODIFY-GUARD]
 # [STABILITY] volatile
 # [SAFETY] L
@@ -23,12 +23,15 @@
 - test_archive_dirty_lane_rescue_and_evidence: 脏车道 → patch 存证 + ？？入 rescue+mapping + 清理
 - test_archive_resolves_by_branch_name: 分支名反查 porcelain 注册表
 - test_archive_detached_lane: detached 车道（无分支）→ 清 worktree，跳过分支处置
+- test_archive_tomb_authorization_spans_remove_phase: 脏车道存证授权跨段覆盖 ③remove，归档后收栈
+- test_archive_without_evidence_carries_no_authorization: 无存证表 → remove 段零授权（fail-closed 反面）
 """
 
 from __future__ import annotations
 
 import argparse
 import importlib.util
+import inspect
 import json
 import os
 import subprocess
@@ -278,3 +281,87 @@ def test_archive_execute_prunes_session_shell(tmp_repo):
     rc = mod.cmd_archive(_ns(mod, [sid], execute=True))
     assert rc == 0
     assert not d.exists(), "archive 之后壳仍在＝收班留给下一班（本次立法要堵的口）"
+
+
+def _ops_guard_under_test(mod):
+    """取被测代码**实际使用**的那份 ops_guard 模块（contextvar 只在同一模块实例上可读）。
+
+    返回 None＝存证接线没有判别面，调用方按真红处理（禁 skip：环境性跳过会伪装成通过）。
+    """
+    factory = mod._tomb_ctx_factory()
+    assert factory is not None, "ops_guard 导入失败＝存证授权面整块失效，不是环境噪声"
+    return inspect.getmodule(factory)
+
+
+def _spy_remove_phase(mod, monkeypatch) -> dict:
+    """在 ③remove 的那一刻与紧随其后的 ⑤分支处置段各取一次样：授权读数 + 被删的是哪棵树。
+
+    取样点必须落在 `_archive_one` 的**同一帧内**：CPython 引用计数会在该帧返回时把未收栈的
+    context manager 关掉（生成器 GC 跑 finally），所以在测试末尾读到的永远是 None——"函数返回后
+    再读"这种写法对"忘收栈"零判别力（M2 变异实测 9 全绿，就是这么被瞒过去的）。
+    """
+    real_remove = mod._archive_remove_and_verify
+    real_branch = mod._archive_branch_finish
+    og = _ops_guard_under_test(mod)
+    seen: dict = {}
+
+    def _spy_remove(wt_path: Path):
+        seen["auth_during_remove"] = og.get_tomb_verification()
+        seen["target"] = str(wt_path).replace("\\", "/")
+        return real_remove(wt_path)
+
+    def _spy_branch(*args, **kwargs):
+        seen["auth_after_remove"] = og.get_tomb_verification()
+        return real_branch(*args, **kwargs)
+
+    monkeypatch.setattr(mod, "_archive_remove_and_verify", _spy_remove)
+    monkeypatch.setattr(mod, "_archive_branch_finish", _spy_branch)
+    return seen
+
+
+def test_archive_tomb_authorization_spans_remove_phase(tmp_repo, monkeypatch):
+    """脏车道：①b 存证表的授权必须一路覆盖 ③remove，归档完收栈。
+
+    OPS-GUARD 真正拦死的是"删整棵 .worktrees/<sid>"命中保护区判据（不是搬文件），
+    所以 ctx 在 rescue 末尾就 __exit__ ＝ 四棵卡死车道一条命令仍退不了场（维护七班 P1-6
+    调用侧接线；死信班终报实证"缺的只是那一行"）。
+    """
+    mod, repo = tmp_repo
+    sid = "st-span"
+    wt = _make_lane(repo, sid, dirty_file=True)
+    (wt / "base.txt").write_text("modified tracked content\n", encoding="utf-8")
+
+    og = _ops_guard_under_test(mod)
+    assert og.get_tomb_verification() is None, "基线：进测试前不得有残留授权"
+    seen = _spy_remove_phase(mod, monkeypatch)
+
+    rc = mod.cmd_archive(_ns(mod, [sid], execute=True))
+    assert rc == 0, "脏车道归档应成功"
+    auth = seen.get("auth_during_remove")
+    assert auth is not None, "③remove 时无存证授权＝接线断在 rescue 末尾（死锁原样复现）"
+    manifest_path, rows = auth
+    assert Path(manifest_path).exists(), f"授权指向的存证表不存在: {manifest_path}"
+    assert rows, "存证表零合格行＝授权无面，ops_guard 侧不会放行"
+    assert seen["target"].endswith(f".worktrees/{sid}"), f"取样点不在被删的车道树上: {seen}"
+    assert not wt.exists(), "车道树应已删除"
+    assert "auth_after_remove" in seen, "⑤分支处置段没被跑到＝收栈面是空的"
+    assert seen["auth_after_remove"] is None, "删除段之后仍带授权＝收栈点没落在 remove 之后（悬挂豁免）"
+    assert og.get_tomb_verification() is None, "整条归档返回后不得有残留授权（防泄漏到下一次删除）"
+
+
+def test_archive_without_evidence_carries_no_authorization(tmp_repo, monkeypatch):
+    """反面对照：干净壳车道没有存证表 → ③remove 段必须零授权（接线不得变成无条件放行）。"""
+    mod, repo = tmp_repo
+    sid = "st-noauth"
+    wt = _make_lane(repo, sid)
+
+    og = _ops_guard_under_test(mod)
+    seen = _spy_remove_phase(mod, monkeypatch)
+
+    rc = mod.cmd_archive(_ns(mod, [sid], execute=True))
+    assert rc == 0, "壳车道归档应成功"
+    assert "target" in seen, "remove 段没被跑到＝对照面是空的"
+    assert seen["auth_during_remove"] is None, "无存证表却有授权＝放宽了判据（应为 fail-closed）"
+    assert seen.get("auth_after_remove") is None
+    assert not wt.exists()
+    assert og.get_tomb_verification() is None
