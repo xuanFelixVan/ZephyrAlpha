@@ -205,6 +205,8 @@ def _patch_pg(monkeypatch, hits):
         return _FakeConn(hits)
 
     monkeypatch.setattr(dbs.DatabaseService, "get_depgraph_conn", _get, raising=False)
+    # 调用方 MUST 断言 calls["n"]>=1：车道进程 PG 不可达会走"全照拦"异常支，
+    # 漏装桩在车道里照样绿（10-14 落地面实测抓到一例假绿），只有计数能识破。
     return calls
 
 
@@ -225,8 +227,8 @@ def test_pg_retired_entry_no_longer_kills_innocent_bag(tmp_path, monkeypatch):
 
     calls = _patch_pg(monkeypatch, lambda sql, params: None)
     issue = _head_token_lag_issue(_lag_gateway(tmp_path, _HEAD_TWO), _CAP_REL, _STAGED_ONE, "")
+    assert calls["n"] == 1, "桩未生效或对账次数异常——本条读数无效，禁当通过读"
     assert issue is None, f"PG 已 retire 的残留不该判死: {issue}"
-    assert calls["n"] == 1, "对账必须只开一次连接"
     audit = tmp_path / ".runtime" / "gate_audit" / "registry_yaml_parse.jsonl"
     assert audit.exists(), "放行必须留审计痕（可见性不靠沉默）"
     rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
@@ -242,8 +244,9 @@ def test_pg_active_entry_still_blocks(tmp_path, monkeypatch):
     def hits(sql, params):
         return {"?column?": 1} if params[2] == _MISSING_KEY and "entry_key=%s" in sql else None
 
-    _patch_pg(monkeypatch, hits)
+    calls = _patch_pg(monkeypatch, hits)
     issue = _head_token_lag_issue(_lag_gateway(tmp_path, _HEAD_TWO), _CAP_REL, _STAGED_ONE, "")
+    assert calls["n"] >= 1, "桩未生效（真连被误用）——本条读数无效，禁当通过读"
     assert issue is not None and "相对 HEAD 少 1 条" in issue, issue
     assert "PG 对账：1 条 active 照拦" in issue, issue
 
@@ -254,9 +257,11 @@ def test_pg_key_drift_same_file_active_still_blocks(tmp_path, monkeypatch):
     def hits(sql, params):
         return {"?column?": 1} if "LIKE %s" in sql else None
 
+    calls = _patch_pg(monkeypatch, hits)
     from zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate import _head_token_lag_issue
 
     issue = _head_token_lag_issue(_lag_gateway(tmp_path, _HEAD_TWO), _CAP_REL, _STAGED_ONE, "")
+    assert calls["n"] >= 1, "桩未生效（真连被误用）——本条读数无效，禁当通过读"
     assert issue is not None and "相对 HEAD 少 1 条" in issue, issue
 
 

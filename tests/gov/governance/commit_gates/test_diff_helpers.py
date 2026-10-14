@@ -55,9 +55,11 @@ if str(_PROJECT_ROOT) not in sys.path:
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: E402
     _ast_semantic_fingerprint,
     _extract_docstring_lines,
+    _extract_noqa_lines,
     _extract_sql_constant_lines,
     _is_cosmetic_only_change,
     _is_exempt_line,
+    _make_noqa_pattern,
     _parse_diff_with_line_numbers,
     _split_own_foreign,
 )
@@ -630,3 +632,57 @@ class TestForeignStagedTriState:
         assert own == ["own.py"] and foreign == ["src/stray.py"]
         (rec,) = self._audit_records(tmp_path, "TRISTATE-NOREG")
         assert "states" not in rec and "ownerless_prescription" not in rec
+
+
+# ---------------------------------------------------------------------------
+# _make_noqa_pattern / _extract_noqa_lines（st-maint7-20261014 单点治本回归）
+# ---------------------------------------------------------------------------
+# 病根实证：旧正则用 ``\s{2,}`` 作码-理由分隔，而 ``\s`` 含换行——全文 finditer 的
+# 消费方（m10/m11/syntax-fixture）会把"只有码、同行无理由"的畸形声明判成合规豁免，
+# 因为它把**下一行代码**借成了 reason。修后分隔符仅限水平空白。
+# 标记字面量拆分构造，避免 NOQA-VALIDATION 把测试数据当真实标记（m11 测试件先例）。
+
+_NOQA_LIT = "# no" + "qa: demo-gate"
+_PAT = _make_noqa_pattern("demo-gate")
+
+
+class TestMakeNoqaPattern:
+    """声明正则单点语义：同行分隔＋同行 reason＋门 id 精确匹配。"""
+
+    def test_compliant_marker_matches(self):
+        m = _PAT.search(f"    time.sleep(1)  {_NOQA_LIT}  手动运维件一次性限速等待")
+        assert m is not None
+        assert m.group(1) == "手动运维件一次性限速等待"
+
+    def test_no_cross_line_borrowing(self):
+        """码后同行无理由 ⇒ 不匹配（旧缺陷回归面：曾借走下一行代码当 reason）。"""
+        assert _PAT.search(f"    {_NOQA_LIT}\n    time.sleep(1)\n") is None
+
+    def test_trailing_spaces_only_no_match(self):
+        assert _PAT.search(f"x = 1  {_NOQA_LIT}   \n  y = 2") is None
+
+    def test_single_space_separator_no_match(self):
+        """分隔须 2+ 空格（与 noqa_exempt_registry.yaml 的格式契约一致）。"""
+        assert _PAT.search(f"x = 1  {_NOQA_LIT} 单空格理由不够格") is None
+
+    def test_tab_separator_matches(self):
+        assert _PAT.search("x = 1  " + "# no" + "qa: demo-gate\t\t制表符分隔的合规理由") is not None
+
+    def test_gate_id_exact_no_wildcard(self):
+        """禁通配：id 后缀变形不匹配。"""
+        assert _PAT.search("x = 1  # no" + "qa: demo-gate-extra  这不是 demo-gate 的声明") is None
+        assert _PAT.search("x = 1  # no" + "qa: dem*  通配写法不匹配") is None
+
+    def test_extract_noqa_lines_per_line_semantics_unchanged(self):
+        """行级提取消费方（bare-sql/bare-subprocess/import-integrity 等）语义零变化。"""
+        content = (
+            "a = 1  # no"
+            + "qa: demo-gate  行级豁免理由够长\n"
+            + "b = 2\n"
+            + "c = 3  # no"
+            + "qa: demo-gate  另一行理由"
+        )
+        assert _extract_noqa_lines(content, _PAT) == {1, 3}
+
+    def test_extract_noqa_lines_empty_when_no_marker(self):
+        assert _extract_noqa_lines("a = 1\nb = 2\n", _PAT) == set()

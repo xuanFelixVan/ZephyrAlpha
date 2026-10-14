@@ -314,6 +314,21 @@ class TestHasM11Exemption:
         content = "# noqa: m11-perm-manual-legitimate  123456789"
         assert _has_m11_exemption(content) is False
 
+    def test_marker_alone_does_not_borrow_next_line(self):
+        """畸形声明（只有码、同行无理由）不得把下一行代码借成 reason。
+
+        st-maint7-20261014 单点治本回归：原内联正则与 _diff_helpers 同形，分隔符用
+        空白类通配（含换行），全文 finditer 下 "码独占一行 + 下一行是代码" 会被判成
+        合规豁免；现正则改由共享单点构造，分隔符仅限水平空白。
+        """
+        content = _M11_NOQA + "\n    def main():\n        return 1\n"
+        assert _has_m11_exemption(content) is False
+
+    def test_marker_with_trailing_spaces_only_returns_false(self):
+        """码后只有尾随空白＝畸形，不得跨行借理由。"""
+        content = _M11_NOQA + "   \n  parser = argparse.ArgumentParser()\n"
+        assert _has_m11_exemption(content) is False
+
 
 # ===========================================================================
 # TestGateM11ExemptionNew — _check_manual_only_permanent_new 新增文件场景

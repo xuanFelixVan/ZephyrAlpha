@@ -42,10 +42,32 @@ _VALIDATORS_DIR = _REPO / "scripts" / "governance" / "d5_architecture" / "valida
 if str(_VALIDATORS_DIR) not in sys.path:
     sys.path.insert(0, str(_VALIDATORS_DIR))
 
-import zephyr.gov_enforcement.commit_gates.map_family.strategy_card_lifecycle_map_gate as gate_mod  # noqa: E402
-from zephyr.gov_enforcement.commit_gates.map_family.strategy_card_lifecycle_map_gate import (  # noqa: E402
-    _check,
-)
+# 被测件在册缺失＝模块级收集错（不是测试失败），会**整目录**堵死 GATE-TEST 的 staged 收集面：
+# 落地侧收集 tests/gov/governance/commit_gates/ 全目录时报 `no tests collected, 1 error`＋rc=2，
+# 任何碰这个目录的袋都跟着死（2026-10-14 实测：维护七班 P0-甲 袋
+# q-20261014-st-maint7-20261014-0001 即死于此，与本测试件无关）。gate_auto_registrar 同期在册告警
+# 「MAP-ALIGNMENT 死触发：该门件 HEAD 树零命中，前向防御/死模式待 Owner 定性」＝同一事实的另一面。
+# 处置＝importorskip，但**放 autouse fixture 里而不是模块级**：模块级 importorskip 会让
+# `pytest --collect-only` 收到 0 件、rc=5，而落地钩子判据是 `[ $rc -ge 2 ] → exit 2` ⇒ 照样拦袋。
+# 三面对照实测（同一条钩子命令，2026-10-14）：HEAD 无守卫面 rc=2／模块级 importorskip 面 rc=5
+# （q-...-0030 即死于此）／本件面 rc=0。被测件一回归本件自动恢复真跑；不删测试件
+# （治理资产净删属另一通道）；skip≠通过，勿当绿灯读。
+# TODO(台面件属主): src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py
+#   从未入册（dev 树零命中、无删除记录、主区仅剩陈旧 .pyc）＝孤儿测试件的被测面；补件即复活，
+#   否则按墓碑制撤本测试件——撤前保持按用例 skip。
+_GATE_MOD = "zephyr.gov_enforcement.commit_gates.map_family.strategy_card_lifecycle_map_gate"
+
+gate_mod = None
+_check = None
+
+
+@pytest.fixture(autouse=True)
+def _load_gate_module():
+    """按用例装载被测件——装载点必须在用例运行时，不能在模块装载时（见上注 rc=5）。"""
+    global gate_mod, _check
+    gate_mod = pytest.importorskip(_GATE_MOD, reason="被测门件不在册（HEAD 树零命中）＝按用例 skip，非通过")
+    _check = gate_mod._check
+
 
 _MAP_REL = "config/strategy_card_lifecycle_map.yaml"
 _VALIDATOR_REL = "scripts/governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py"

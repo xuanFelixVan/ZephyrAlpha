@@ -43,9 +43,11 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.gov_enforcement.commit_gates.perm_trigger_gate import (  # noqa: E402
+    _check_permanent_trigger_new,
     _decorator_name,
     _detect_event_registration,
     _detect_time_trigger,
+    _has_m10_exemption,
     _has_permanent_ttl,
     make_perm_trigger_gate,
 )
@@ -58,9 +60,10 @@ class _MockResult:
     stdout: str = ""
 
 
-def _make_gateway(tmp_path, staged_files=None, added_files=None, diff_fails=False, diff_raises=False):
+def _make_gateway(tmp_path, staged_files=None, added_files=None, diff_fails=False, diff_raises=False, diff_stdout=""):
     """构造 mock gateway：--diff-filter=AM 返回文件列表；--diff-filter=A 返回新增集；
-    --show-toplevel 返回 tmp_path。added_files 默认与 staged_files 相同（全为新增）。"""
+    --show-toplevel 返回 tmp_path。added_files 默认与 staged_files 相同（全为新增）。
+    diff_stdout 供 --unified=0（修改面新增行）场景使用（st-maint7-20261014 m10 用例）。"""
     gw = MagicMock()
     gw.project_root = str(tmp_path)
 
@@ -78,6 +81,8 @@ def _make_gateway(tmp_path, staged_files=None, added_files=None, diff_fails=Fals
     def _run_git(cmd):
         if diff_fails and "--name-only" in cmd:
             return _MockResult(1, "")
+        if "--unified=0" in cmd:
+            return _MockResult(0, diff_stdout)
         if "--name-only" in cmd:
             if "--diff-filter=A" in cmd:
                 return _MockResult(0, "\n".join(added_files or []))
@@ -336,3 +341,143 @@ class TestOwnScope:
         passed, msg = make_perm_trigger_gate().check(gw, [own_py], session_id="sess-A")
         assert passed is False, "自身违规未被阻断（own-scope 不得放松保护语义）"
         assert own_py in msg
+
+
+# ===========================================================================
+# TestM10Exemption — m10-time-trigger 逐件声明解析（st-maint7-20261014 甲案）
+# ===========================================================================
+# 判据本体（时间触发＋无事件订阅＝违规）零松动，本组只验"门的输入识别"：
+#   无声明拦／畸形声明拦／合规声明放 三形态齐备，且禁通配（非该 id 的标记不生效）。
+# 标记字面量拆分构造——避免 NOQA-VALIDATION 把测试数据当真实 noqa 标记（m11 测试件先例）
+_M10_NOQA = "# no" + "qa: m10-time-trigger"
+_M11_NOQA_FOR_M10_TEST = "# no" + "qa: m11-perm-manual-legitimate"
+
+_M10_REASON_OK = "逐票节流等待（baostock 有 IP 拉黑前科），手动运维件一次性限速，非周期轮询常驻"
+
+_PERM_SLEEP_TEMPLATE = (
+    "# [TTL] permanent\n"
+    '"""一次性历史回填运维件：time.sleep 节流且无事件订阅（典型违规面）。"""\n'
+    "import time\n"
+    "\n"
+    "\n"
+    "def run(args):\n"
+    "    time.sleep(args.sleep)\n"
+)
+
+_SLEEP_STMT = "    time.sleep(args.sleep)"
+
+_PERM_SLEEP_WITH_M10 = _PERM_SLEEP_TEMPLATE.replace(_SLEEP_STMT, f"{_SLEEP_STMT}  {_M10_NOQA}  {_M10_REASON_OK}")
+_PERM_SLEEP_WITH_MALFORMED_M10 = _PERM_SLEEP_TEMPLATE.replace(_SLEEP_STMT, f"{_SLEEP_STMT}  {_M10_NOQA}")
+_PERM_SLEEP_WITH_SHORT_M10 = _PERM_SLEEP_TEMPLATE.replace(_SLEEP_STMT, f"{_SLEEP_STMT}  {_M10_NOQA}  短理由")
+_PERM_SLEEP_WITH_M11_ONLY = _PERM_SLEEP_TEMPLATE.replace(
+    _SLEEP_STMT, f"{_SLEEP_STMT}  {_M11_NOQA_FOR_M10_TEST}  {_M10_REASON_OK}"
+)
+# 标记独占一行、下一行才是触发代码：旧 ``\s{{2,}}`` 会把下一行借成 reason（缺陷回归面）
+_PERM_SLEEP_WITH_BORROWED_M10 = _PERM_SLEEP_TEMPLATE.replace(_SLEEP_STMT, f"    {_M10_NOQA}\n{_SLEEP_STMT}")
+
+
+class TestHasM10Exemption:
+    """_has_m10_exemption(content) 纯函数——合规判据＝同码＋同行 2+ 空格＋reason>=10 字。"""
+
+    def test_compliant_declaration_true(self):
+        assert _has_m10_exemption(_PERM_SLEEP_WITH_M10) is True
+
+    def test_code_only_no_reason_false(self):
+        """畸形声明（只有码无理由）不算豁免——通配豁免就是从这里漏开的。"""
+        assert _has_m10_exemption(_PERM_SLEEP_WITH_MALFORMED_M10) is False
+
+    def test_short_reason_false(self):
+        assert _has_m10_exemption(_PERM_SLEEP_WITH_SHORT_M10) is False
+
+    def test_no_declaration_false(self):
+        assert _has_m10_exemption(_PERM_SLEEP_TEMPLATE) is False
+
+    def test_other_marker_id_false(self):
+        """禁通配：m11 标记不豁免 m10（门 id 须精确匹配）。"""
+        assert _has_m10_exemption(_PERM_SLEEP_WITH_M11_ONLY) is False
+
+    def test_no_cross_line_reason_borrowing(self):
+        """标记独占一行时不得把下一行代码借成 reason（_make_noqa_pattern 单点修回归）。"""
+        assert _has_m10_exemption(_PERM_SLEEP_WITH_BORROWED_M10) is False
+
+    def test_reason_boundary_10_true_9_false(self):
+        assert _has_m10_exemption(f"{_M10_NOQA}  1234567890") is True
+        assert _has_m10_exemption(f"{_M10_NOQA}  123456789") is False
+
+    def test_trailing_spaces_only_false(self):
+        """码后只有尾随空白＝畸形，不许判成合规。"""
+        assert _has_m10_exemption(f"x = 1  {_M10_NOQA}   \n  y = 2") is False
+
+
+class TestGateM10ExemptionNew:
+    """_check_permanent_trigger_new 新增面三形态（True＝违规拦，False＝放行）。"""
+
+    def test_no_declaration_blocks(self, tmp_path):
+        abs_path = str(tmp_path / "scripts" / "m10_none.py")
+        assert _check_permanent_trigger_new(abs_path, _PERM_SLEEP_TEMPLATE) is True
+
+    def test_malformed_declaration_blocks(self, tmp_path):
+        abs_path = str(tmp_path / "scripts" / "m10_malformed.py")
+        assert _check_permanent_trigger_new(abs_path, _PERM_SLEEP_WITH_MALFORMED_M10) is True
+
+    def test_short_reason_declaration_blocks(self, tmp_path):
+        abs_path = str(tmp_path / "scripts" / "m10_short.py")
+        assert _check_permanent_trigger_new(abs_path, _PERM_SLEEP_WITH_SHORT_M10) is True
+
+    def test_borrowed_reason_declaration_blocks(self, tmp_path):
+        abs_path = str(tmp_path / "scripts" / "m10_borrow.py")
+        assert _check_permanent_trigger_new(abs_path, _PERM_SLEEP_WITH_BORROWED_M10) is True
+
+    def test_other_marker_blocks(self, tmp_path):
+        abs_path = str(tmp_path / "scripts" / "m10_other.py")
+        assert _check_permanent_trigger_new(abs_path, _PERM_SLEEP_WITH_M11_ONLY) is True
+
+    def test_compliant_declaration_passes(self, tmp_path):
+        abs_path = str(tmp_path / "scripts" / "m10_ok.py")
+        assert _check_permanent_trigger_new(abs_path, _PERM_SLEEP_WITH_M10) is False
+
+
+class TestGateM10EndToEnd:
+    """经 gate.check 走暂存面（新增/修改两路），验豁免不在聚合链路上失效。"""
+
+    def test_new_file_compliant_declaration_passes(self, tmp_path):
+        rel = _write_file(tmp_path, "scripts/data/e2e_m10_ok.py", _PERM_SLEEP_WITH_M10)
+        gw = _make_gateway(tmp_path, staged_files=[rel], added_files=[rel])
+        gw._registry = None
+        passed, msg = make_perm_trigger_gate().check(gw, [rel], session_id="sess-A")
+        assert passed is True, f"合规 m10 声明应放行: {msg}"
+
+    def test_new_file_no_declaration_blocks(self, tmp_path):
+        rel = _write_file(tmp_path, "scripts/data/e2e_m10_none.py", _PERM_SLEEP_TEMPLATE)
+        gw = _make_gateway(tmp_path, staged_files=[rel], added_files=[rel])
+        gw._registry = None
+        passed, msg = make_perm_trigger_gate().check(gw, [rel], session_id="sess-A")
+        assert passed is False, "无声明必须拦（豁免通道不得放松判据）"
+        assert rel in msg
+
+    def test_new_file_malformed_declaration_blocks(self, tmp_path):
+        rel = _write_file(tmp_path, "scripts/data/e2e_m10_malformed.py", _PERM_SLEEP_WITH_MALFORMED_M10)
+        gw = _make_gateway(tmp_path, staged_files=[rel], added_files=[rel])
+        gw._registry = None
+        passed, _msg = make_perm_trigger_gate().check(gw, [rel], session_id="sess-A")
+        assert passed is False, "畸形声明必须拦（否则＝通配豁免）"
+
+    def test_modified_file_compliant_declaration_passes(self, tmp_path):
+        rel = _write_file(tmp_path, "scripts/data/e2e_m10_mod_ok.py", _PERM_SLEEP_WITH_M10)
+        diff_stdout = (
+            f"diff --git a/{rel} b/{rel}\n--- a/{rel}\n+++ b/{rel}\n@@ -8,0 +9,1 @@\n+    time.sleep(args.sleep)\n"
+        )
+        gw = _make_gateway(tmp_path, staged_files=[rel], added_files=[], diff_stdout=diff_stdout)
+        gw._registry = None
+        passed, msg = make_perm_trigger_gate().check(gw, [rel], session_id="sess-A")
+        assert passed is True, f"修改面合规 m10 声明应放行（与新增面同口径）: {msg}"
+
+    def test_modified_file_without_declaration_blocks(self, tmp_path):
+        rel = _write_file(tmp_path, "scripts/data/e2e_m10_mod_none.py", _PERM_SLEEP_TEMPLATE)
+        diff_stdout = (
+            f"diff --git a/{rel} b/{rel}\n--- a/{rel}\n+++ b/{rel}\n@@ -8,0 +9,1 @@\n+    time.sleep(args.sleep)\n"
+        )
+        gw = _make_gateway(tmp_path, staged_files=[rel], added_files=[], diff_stdout=diff_stdout)
+        gw._registry = None
+        passed, _msg = make_perm_trigger_gate().check(gw, [rel], session_id="sess-A")
+        assert passed is False, "修改面无声明必须拦"
