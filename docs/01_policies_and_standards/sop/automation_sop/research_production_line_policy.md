@@ -3,28 +3,30 @@ doc_type: policy
 ttl: permanent
 title: 全自动研究生产线运营 SOP（九口出料·挖考判晋反馈闭环）
 status: active
-version: 1.0.0
-date: '2026-10-14'
+version: 1.3.0
+date: '2026-10-15'
 owner: ZephyrAlpha-Owner
 ---
 
 # 全自动研究生产线运营 SOP
 
-> **一句话定位**：从找数据到出成绩的整条业务线自动化流水线的岗位运营标准——13 个岗位各自的目标/输入口/输出口/工作流程/保底绩效/自检制。
+> **一句话定位**：从找数据到出成绩的整条业务线自动化流水线的岗位运营标准——岗位各自的目标/输入口/输出口/工作流程/保底绩效/自检制。
 > **机构对标命名**：Research Pipeline / Alpha Production Line（WorldQuant Alpha 平台流水线）/ Research-to-Production（MLOps 连续训练 CT）。本仓叫**全自动研究生产线**。
 > **分工矩阵**（防双真源）：挖矿方法论=`mining_sop/`（六向/封矿核验）｜考试回测方法论=`backtest_system_sop/`（四卷+exam_policy）｜数据生命周期=`data_ops_sop/`｜班底编制与切碎机制=`automation_sop/automation_crew_policy.md`｜**本册只写"生产线岗位怎么运转"：输入输出口、流程、绩效、自检**。
-> **净零声明**：本册收拢讨论册（docs/_working/cmd_ledger/automation_plan_discussion.md）与四域施工战报中的口头流程成文；不新增 gate/规则/注册表；handoff 新路径仅限 docs/_working/automation_campaign/ 下（ttl 面由 frontmatter 自带）。
+> **净零声明**：本册收拢讨论册（docs/_working/cmd_ledger/automation_plan_discussion.md）与四域施工战报中的口头流程成文；不新增 gate/规则/注册表；handoff 新路径仅限 docs/_working/automation_campaign/ 下。
 > **总原则**：只有考试口径的成绩算数（引擎直跑数字仅参考）；先冻结判据后跑数（裁定#518）；fail 不得升级 verified；负结果如实入册也是成绩。
+> **v1.1.0 变更**：岗位从 13 收敛为 **10 席最小编制**（推导判据=技能类型/写域/职责分离/吞吐量四条，见 §3 头注）；新增 §4 自我迭代回路节；改良检索并入④席、对照配对并入⑥席、判卷+归因+晋级合并为⑨成绩官、派单+监督+迭代审计+记账合并为⑩线长席。横向扩席规则见 §3 尾。
 
 ## 1. 主干传送带总图
 
-正向主流：**①数据源 → ②③挖矿 → ⑤实现 → ⑥制卡冻结 → ⑦考工 → ⑧判卷 → ⑪晋级/成绩**
-数据回流线：任何环缺数 → ①数据源席（全网找→建设→修复）→ 就位解锁；穷尽免费渠道才准断供登记（**必须附找过哪些渠道的证据链，没证据的登记监督员打回**）
-成绩回流线：⑧判卷出分 → ⑨成绩分析师归因 → 三联反馈单（挖矿方向单/算法修改单/Owner 呈批件）→ 回流上游 → 复考再考（**优化后再考必须走对照卡 A/B**）
-监督线：⑪监督员巡全线水位/断线/指令质量（可改指令面，禁碰判据门柱）
+正向主流：**①数据源（找源评估）→ ②数据建设（建表回补）→ ③④挖矿（库内六向/全网战法）→ ⑤实现 → ⑥制卡冻结 → ⑦⑧考工 → ⑨成绩官（判卷→归因→晋级）**
+数据回流线：任何环缺数 → ①（全网找≥3 渠道留痕）→ 就位给②建设 → 卡解锁；穷尽免费渠道才准断供登记（**必须附证据链，线长席抽查打回**）
+成绩回流线：⑨归因 → 三联反馈单（挖矿方向单→③④／算法修改单→⑤／判据呈批→Owner）→ 复考再考（**优化后再考必须走⑥制作的对照卡 A/B**）
+监督线：⑩线长席巡全线水位/断线/指令质量/迭代纪律（可改指令面，禁碰判据门柱）
 出料九口：见 §2——一条传送带，九个出料口，按卡族路由。
+终环：**⑪整装回测席**——每夜一次整装回测（真实成本+护栏口径），晨报直答「能不能赚钱/下浮率多少」；发现问题→⑨归因→修改单→⑤施工→⑥对照卡→⑦⑧环节考→verified→进装配→次夜整装复测。这是自我迭代的最高层闭环。
 
-既有机器层三件（对话席不重复其工作，只消费其产出）：`scripts/tasks/run/run_night_mining.ps1`（Task Scheduler 23:00 Sun-Thu，lane_b/lane_c3 候选）｜`scripts/tasks/run/run_c4_exam.ps1`（夜间考试批）｜`scripts/tasks/run/run_f06_grid.ps1`（周六 08:00-22:30 参数网格窗）。
+既有机器层三件（对话席不重复其工作，只消费其产出）：`scripts/tasks/run/run_night_mining.ps1`（Task Scheduler 23:00 Sun-Thu）｜`scripts/tasks/run/run_c4_exam.ps1`（夜间考试批）｜`scripts/tasks/run/run_f06_grid.ps1`（周六参数网格窗）。
 
 ## 2. 九类成绩出料口映射（哪些已入线、并行度）
 
@@ -35,154 +37,223 @@ owner: ZephyrAlpha-Owner
 | 3 | 指标考试批 | indicator 考试口 | TASC 指标挖矿 | ✅可并行 |
 | 4 | 因子重考 | factor 考试口 | 因子挖矿（八段） | ✅可并行 |
 | 5 | 分配器影子考 | allocator 考试口 | 分配器实现 | ✅可并行 |
-| 6 | 防守机制对照（ATR 型） | **对照卡** | 环节假设+对照卡制作 | ⛔阻塞：对照执行器缺位（OD-1） |
+| 6 | 防守机制对照（ATR 型） | **对照卡** | 环节假设+⑥席配对 | 🔧OD-1 已批，执行器施工中 |
 | 7 | 引擎直跑数字 | （参考值，不入成绩正册） | — | 不入线 |
 | 8 | 负结果 | 各口 fail 如实入册 | 全部 | ✅纪律面 |
 | 9 | 环节考试卡 | 校准/消融/影子/对照四族 | 六向挖矿（186 节点 7 车道） | ✅主战场 |
 
-并行度：2/3/4/5/9 五口同时开（考试通道互不抢）；1 口周六独占；6 口等 OD-1 立项。挖满一个矿脉→轮转下一个（§6）。
+> 路径注（2026-10-14）：第 3/4/5/6/8 类成绩册已随 _working 清理归档至 `docs/_archive/_working_20261014/fexam/`；第 9 类卡册/分数册住永久区 `docs/03_modules/_domain_backtest/`；**分数册新地址待 Owner 下发后本册全局替换**。九类归属：1/2/3/4/5/6/8/9 八类由本线喂料，第 7 类（引擎直跑）不入线仅参考。
 
-## 3. 岗位卡（13 席，每卡八段+真源挂点）
+并行度：2/3/4/5/9 五口同时开（考试通道互不抢）；1 口周六独占；6 口随 OD-1 执行器交付转正。挖满一个矿脉→轮转下一个（§5）。
 
-通用规则（适用于全部岗位）：开工冷启动三步；改前 claim 毕后 release；提交唯一正门 git_commit.py --enqueue；**完工自检两轮，连续两轮零问题该批产出才算交付**（第二轮才发现问题=第一轮漏检记缺陷行）；sid=`st-qoder-<岗>-<MMDD>-<NN>`。
+## 3. 岗位卡（10 席最小编制）
 
-### ⓪ 派单员
-- **目标**：全线不断料、不堆积、不重复挖。
-- **工作内容**：读全线水位与各车道台账，产出当日任务单；查重是硬职责。
-- **输入口**：`docs/_working/automation_campaign/pulse/queue_depths.md`（水位，自己维护）；`docs/_working/nightmine_campaign/00_lane_roster.yaml`（186 节点 7 车道）；`docs/_working/nightmine_campaign/L1..L7_ledger.md`（已挖/mined_out 名单）；`docs/03_modules/_domain_backtest/exam_cards/`（卡池状态）。
-- **输出口**：`docs/_working/automation_campaign/dispatch/daily_dispatch.md`（每席：对象+数量+优先级+出料口方向）。
-- **工作流程**：1 读水位与卡池统计 2 读各车道台账未挖名单 3 查重（对照已挖名单/mined_out/现有卡，逐条核对）4 按瓶颈定配额（哪个环断料加派哪个）5 写任务单 6 标注出料口 7 自检两轮 8 交付。
-- **保底绩效**：每日一单；覆盖全部在岗席；查重核对率 100%（漏查重=缺陷行）。
-- **自检要点**：任务单每条都有"未挖过"的台账反证。
-- **总包**：无需子代理。
+> **岗位数推导判据**（Owner 2026-10-14 定调：按实际流程给最少岗位）：一条流水线工序只有在（a）技能类型不同（b）写域不同（c）职责必须分离——冻结与运行分离/判卷独立于考工/审计独立于生产（d）吞吐量不足需横向扩席——四种情况下才设独立岗位。据此收敛为 10 席；横向扩席只允许扩⑦⑧考工与③④挖矿（吞吐型），判断席（⑥⑨⑩）永不拆分。
+> **v1.1.1 变更（E2E 实测修正，2026-10-14）**：数据绑定口径修正（528/531 卡用 lineage 字段）；empty 骨架卡现实（转正须具名子题卡，呈批件计入⑥席保底）；同族门柱多口径并存→呈批不擅挑；考工 panel 卡走 run_card API（CLI --target-csv 砍单列缺陷，修复前 panel 禁走 CLI）；裁定#518 定位=「先冻结后跑」方法先例非数值源；新增并发环境警戒（归档/清理必须先查 .ailocks）。
+> **v1.2.0 变更（2026-10-14 晚）**：新增⑪整装回测席（每夜一次，晨报直答「能不能赚钱/下浮率」）与整装→归因→施工→对照复测最高层闭环（§4）；考工 GPU 优先+安静窗纪律（§3⑦⑧）；班车时刻表（§3-B）与楼栋制进度图（§3-C）；§2 成绩册归档路径对齐（分数册新地址待 Owner 下发后全局替换）。
+> **v1.2.1 变更（2026-10-15）**：新增 §3-D 研究态排班表（现行，24 小时不停）与 §3-E 实盘态排班表（达标后切换）+切换闸门协议；机器层计划任务真相核实落册（2026-10-15 实测：NightMining/F06Grid 已 /enable 启用、TTLRejudgeDaily/C4Exam 就绪、reaper=运行时钩子非计划任务）。
+> **v1.3.0 变更（2026-10-15，TDM 挖矿并入令并入）**：车道台账/名册等战役资产已归档至 `docs/_archive/_working_20261014/nightmine_campaign/`（③席输入口路径同步）；产卡唯一出口=`scripts/backtest/generate_exam_card_skeleton.py` only-add 通道；念想引擎经 LSG qwen provider（**禁本地 Ollama 占 GPU**——GPU 纪律同理）；枯竭判据对齐 mining_sop **v1.9.1**（六向全查无新卡+无未挖长尾+挖后自审闸 §6，双噪音封矿）；现状锚定：186 节点全有卡 531 张、mined_out=0、六向在半山腰；边界=docs/04_research_records/ 基建中，挖矿产物任务期暂留 _working 面、落成后统一迁移，**禁两线同写一区**；挖矿不停，唯一叫停权=Owner。
+
+通用规则（适用于全部岗位）：开工冷启动三步（PATH 修 Python312→lock_files cleanup→process_reaper --status）；改前 claim 毕后 release；提交唯一正门 git_commit.py --enqueue；**完工自检两轮，连续两轮零问题该批产出才算交付**（第二轮才发现问题=第一轮漏检记缺陷行）；四件套=`docs/_working/automation_campaign/<岗>/`{instruction.md 恒定指令, scope.md 输入清单, checkpoint.md 游标, ledger.md 台账}；sid=`st-qoder-<岗>-<MMDD>-<NN>`。
 
 ### ① 数据源席
 - **目标**：数据就位率最大化；断供=穷尽免费渠道后的最后登记，不是逃避登记。
-- **工作内容**：全网搜源→评估→建设→修复→（实在找不到才）断供登记。缺数从最源头负责。
-- **输入口**：`src/zephyr/data/config/known_data_gaps.yaml`（断供/缺数登记册）；`docs/_working/automation_campaign/feedback/to_owner.md` 中的缺数申请；源线谱 `docs/_working/chain_piling_campaign/02_source_line_registry.md`（29 线现状）。
-- **输出口**：源线谱新增行（新源线 memo）；known_data_gaps.yaml 条目翻转（就位/断供+`searched_channels` 证据字段）；回补执行记录。
-- **工作流程**：1 读断供表与缺数申请 2 逐项全网搜索（官方免费 API/开放数据/GitHub 数据集/数据商目录，**每项≥3 渠道**，WebSearch 留链接）3 评估（成本/合规/PIT/许可证；花钱采购→出呈批件禁自购）4 可建设→走 `data_ops_sop/data_source_onboarding_sop.md`（报批→建表→接入→接通验收三查）5 坏数据→`data_ops_sop/data_ops_policy.md` 修复流程 6 免费渠道穷尽→断供登记（附渠道清单+失败原因）7 解锁对应卡（翻 known_data_gaps status）8 台账留痕 9 自检两轮。
+- **工作内容**：全网搜源→评估→（转②建设）→坏数据修复转办→断供登记。缺数从最源头负责。
+- **输入口**：`src/zephyr/data/config/known_data_gaps.yaml`（断供/缺数登记册）；`docs/_working/automation_campaign/feedback/to_datasource.md`（缺数申请）；源线谱 `docs/_working/chain_piling_campaign/02_source_line_registry.md`。
+- **输出口**：源线谱新增行（新源线 memo）；known_data_gaps.yaml 条目更新（附 `searched_channels` 证据字段）；就位 memo→②席建设单；采购呈批件。
+- **工作流程**：1 读断供表与缺数申请 2 逐项全网搜索（官方免费 API/开放数据/GitHub 数据集/数据商目录，**每项≥3 渠道**，WebSearch 留链接）3 评估（成本/合规/PIT/许可证；花钱采购→出呈批件禁自购）4 可免费建设→写建设单转②席 5 坏数据→转②席走 data_ops_policy 修复 6 免费渠道穷尽→断供登记（附渠道清单+失败原因）7 台账留痕 8 自检两轮。
 - **保底绩效**：每班处理≥3 个缺数项；每项≥3 渠道搜索留痕；断供登记 100% 带证据链。
 - **自检要点**：每个"断供"结论都能回答"找过哪三处、为什么不行"。
-- **真源挂点**：data_source_onboarding_sop（全生命周期）+ mining_sop（全网调研法）。
+- **真源挂点**：data_source_onboarding_sop＋mining_sop（全网调研法）。
 - **总包**：按缺数项并行搜索（读席并发不限，写登记串行 CAS）。
 
-### ②③ 挖矿席（两席按车道分片）
-- **目标**：六向候选持续产出且绝不重复挖。
-- **工作内容**：按车道对 186 节点做六向挖（①上游②下游③算法④后端⑤呈现⑥数据），听⑨的方向单调整重心。
-- **输入口**：daily_dispatch.md；`docs/_working/nightmine_campaign/01_mining_brief.md`（六向法）；本车道 `L*_ledger.md`（已挖名单+mined_out）；`docs/_working/automation_campaign/feedback/to_miners.md`（方向单）。
-- **输出口**：候选→`data/strategy_intake/lane_<x>_candidates.csv`；empty 卡骨架→`docs/03_modules/_domain_backtest/exam_cards/<族目录>/`（schema 照抄样例卡）；台账行追加。
-- **工作流程**：1 领车道 2 读台账排除已挖/mined_out 3 读方向单调整重心 4 逐节点六向挖 5 产候选入台账 6 登记 empty 卡骨架（门柱字段全 null，status=empty）7 台账追加 8 自检两轮。
-- **保底绩效**：每席每班≥5 个新候选或≥10 张 empty 卡骨架；mined_out 名单核对率 100%。
-- **自检要点**：抽 3 条产出反向核对台账确认未挖过。
-- **真源挂点**：mining_sop_policy（六向/防噪音四闸/封矿核验）。
-- **总包**：按节点并行（读并发不限；写台账/卡串行 CAS）。
+### ② 数据建设席
+- **目标**：把①席找到的源变成可考数据；存量回补清零。
+- **工作内容**：建表/接入/调度/回补/坏数据修复，全走数据族 SOP；不找源（那是①的事）。
+- **输入口**：①席建设单；`src/zephyr/data/config/known_data_gaps.yaml`（pending 回补项）；`data_ops_sop/data_source_onboarding_sop.md`＋`data_ops_policy.md`。
+- **输出口**：建表/接入/回补完成+接通验收三查记录；known_data_gaps 条目翻转 completed；解锁卡清单→`docs/_working/automation_campaign/feedback/unblocked.md`。
+- **工作流程**：1 领建设单 2 走 onboarding（报批→建表→接入→调度→验收三查）3 回补类走 data_ops_policy（幂等回补+FINAL 逐位验证）4 翻登记册状态 5 写解锁清单（哪些卡的 data_binding 由此满足）6 台账 7 自检两轮。
+- **保底绩效**：每班≥1 项建设或回补落地；验收三查 100% 留痕。
+- **总包**：按项目并行（写域=各自表/册）。
 
-### ④ 战法全网矿工
-- **目标**：外部战法持续进卡（喂 2/9 口）。
-- **输入口**：`backtest_system_sop/sop_c_strategy_library_intake.md` §9（渠道清单+合规铁律）；`docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml`（存量去重）。
-- **输出口**：战法卡（原文链接/许可证/逻辑描述/伪代码/数据源映射五必备）→`data/strategy_intake/` 战法卡区+候选行。
-- **工作流程**：渠道轮转扫描→许可证闸→存量去重闸→写战法卡→登记台账→自检两轮。
-- **保底绩效**：每班扫≥5 个渠道/仓库；产≥2 张战法卡。
-- **真源挂点**：sop_c 全漏斗（外部代码禁直接复制，只学思想走 C3 重实现）。
+### ③ 库内挖矿席
+- **目标**：六向候选持续产出且绝不重复挖。
+- **工作内容**：按车道对 186 节点六向挖（①上游②下游③算法④后端⑤呈现⑥数据），听⑨方向单调整重心。
+- **输入口**：`docs/_working/automation_campaign/dispatch/daily_dispatch.md`；`docs/_archive/_working_20261014/nightmine_campaign/01_mining_brief.md`（六向法）；同目录 `00_lane_roster.yaml`＋`L0d..L7_ledger.md`（已挖/mined_out，八本台账）；`docs/_working/automation_campaign/feedback/to_miners.md`。边界：04_research_records/ 基建中，产物暂留 _working 任务面，禁两线同写一区。
+- **输出口**：候选→`data/strategy_intake/lane_<x>_candidates.csv`；具名子题卡（含假设描述；裸骨架不可考不产）→一律经 `scripts/backtest/generate_exam_card_skeleton.py` only-add 通道进 `docs/03_modules/_domain_backtest/exam_cards/`；念想引擎经 LSG qwen provider（禁本地 Ollama 占 GPU）；台账行追加。
+- **工作流程**：1 领车道 2 读台账排除已挖/mined_out 3 读方向单调重心 4 逐节点六向挖 5 候选入台账 6 empty 卡骨架（门柱 null，status=empty）7 台账追加 8 自检两轮（抽 3 条反向核对未挖过）。
+- **保底绩效**：每班≥5 新候选或≥10 张 empty 卡骨架；mined_out 名单核对率 100%。
+- **真源挂点**：mining_sop_policy（六向/防噪音四闸/封矿核验）。
+- **总包**：按节点并行（读并发不限；写串行 CAS）。
+
+### ④ 全网战法矿工席
+- **目标**：外部战法与 SOTA 算法持续进线（喂 2/9 口+给⑤供改良弹药）。
+- **工作内容**：常规渠道轮转扫战法；**收到⑨方向单时定向检索 SOTA**（论文/GitHub/开源实现）出改良情报卡。
+- **输入口**：`backtest_system_sop/sop_c_strategy_library_intake.md` §9（渠道+合规）；`docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml`（去重）；`docs/_working/automation_campaign/feedback/to_miners.md`（定向检索单）。
+- **输出口**：战法卡（原文链接/许可证/逻辑描述/伪代码/数据源映射五必备）→`data/strategy_intake/`；改良情报卡→`docs/_working/automation_campaign/feedback/to_impl.md` 附依据。
+- **工作流程**：1 渠道轮转扫（或按定向单）2 许可证闸 3 存量去重闸 4 战法卡/改良情报卡 5 登记 6 自检两轮。
+- **保底绩效**：每班扫≥5 渠道/仓库；产≥2 张战法卡；定向单 100% 响应。
+- **真源挂点**：sop_c（外部代码禁直接复制，只学思想走 C3 重实现）。
 - **总包**：按渠道并行。
 
-### ⑤ 实现工
-- **目标**：未实现卡清零+按反馈单优化算法。
-- **输入口**：exam_cards 中 blocked(未实现)卡；`docs/_working/automation_campaign/feedback/to_impl.md`（算法修改单）；战法卡伪代码。
+### ⑤ 实现席
+- **目标**：未实现卡清零+按修改单优化算法。
+- **输入口**：exam_cards 中 blocked(未实现)卡；`docs/_working/automation_campaign/feedback/to_impl.md`（修改单+④改良情报）；战法卡伪代码。
 - **输出口**：码面+测试绿（tmp_path 隔离）→卡翻转 unblocked→移交⑥；修改单落地记录。
-- **工作流程**：1 领单 2 读卡需求/修改单 3 模板化实现（真源=construction_sop 15 步）4 测试绿 5 翻卡状态 6 台账 7 自检两轮。
+- **工作流程**：1 领单 2 读需求/修改单 3 模板化实现（真源=construction_sop 15 步）4 测试绿 5 翻卡状态 6 台账 7 自检两轮。
 - **保底绩效**：每班≥1 张卡实现或≥1 张修改单落地；测试必须绿。
-- **总包**：卡间并行（写域=各自模块不互斥）。
+- **总包**：卡间并行（写域=各自模块）。
 
-### ⑥ 制卡员（prereg 员）
-- **目标**：empty→preregistered；先冻结后跑。
-- **输入口**：exam_cards 中 empty 卡；在册冻结值（各域判据册/裁定#518 冻结口径）；呈批回执。
-- **输出口**：preregistered 卡（pillars_numeric/window/buckets/data_binding 齐）；语义参数缺→`docs/_working/nightmine_campaign/05_owner_decisions.yaml` 追加呈批项（**一个数不编**）。
-- **工作流程**：1 领 empty 卡 2 查在册冻结值（逐字沿用原册，禁自拟）3 有→填门柱 4 缺语义参数→呈批件 5 填齐翻 status=preregistered 6 台账 7 自检两轮（两轮都核对：门柱字段非空且与冻结值逐字一致）。
-- **保底绩效**：每班≥5 张或当班领用卡 100% 处置完（含呈批登记）。
-- **真源挂点**：backtest_system_sop/exam_policy（E4 口径）。
+### ⑥ 制卡席
+- **目标**：empty→preregistered；先冻结后跑；每次优化都有 A/B。
+- **工作内容**：填门柱判据（只抄在册冻结值）；**对照配对卡制作**（champion/challenger 单变量）。
+- **输入口**：exam_cards 中 empty 卡（现存 empty 多为 /01 裸骨架卡——转正须③④席先产具名子题卡）；在册冻结值真源=同族已冻结卡本体+各域判据册（裁定#518=「先冻结后跑」方法先例，非数值源）；⑨席对照申请单。同族门柱多口径并存（如实测 S2 族标准/事件研究两套五键并存）→不擅自挑，一律呈批。
+- **输出口**：preregistered 卡（pillars_numeric/window/buckets 齐，数据绑定按卡面 lineage 字段承载——531 卡中 528 张用 lineage，`data_binding` 仅 3 张，口径以 lineage 为准）；对照卡对（原版=champion，改良=challenger，**只改一个变量**）；语义参数缺→`docs/_working/nightmine_campaign/05_owner_decisions.yaml` 呈批（**一个数不编**）。
+- **工作流程**：1 领 empty 卡/对照申请 2 查在册冻结值（逐字沿用）3 有→填门柱 4 缺→呈批件 5 对照申请→配对制卡（clone 原卡改单变量）6 翻 status 7 自检两轮（两轮都核对：门柱非空且与冻结值逐字一致；对照卡 diff 恰一个变量）。
+- **保底绩效**：每班≥5 张或当班领用卡 100% 处置完（含呈批件；骨架卡时代呈批件计入保底）。
+- **真源挂点**：backtest_system_sop/exam_policy。
 - **总包**：按卡并行。
 
-### ⑦ 考工（两席，吞吐核心）
+### ⑦⑧ 考工 A/B（吞吐核心，可横向扩 C/D…）
 - **目标**：成绩产量——每日出分。
-- **输入口**：exam_cards 中 preregistered 队列。
+- **输入口**：exam_cards 中 preregistered 队列（两席按卡族分工互不抢卡）。
 - **输出口**：`docs/03_modules/_domain_backtest/exam_scores_v1.yaml` 追加行（**only-add**）；卡 status→examined。
-- **工作流程**：1 领卡（按卡族路由考试通道：run_fexam.py 的 factor/strategy/indicator/allocator 子命令或 calibration_exam.py --card）2 核对门柱已冻结 3 跑（CH 窗 01:00-04:00 避让）4 分数入库 5 翻状态 6 失败写堵点册即停 7 自检两轮（核对 only-add 与门柱一致）。
-- **保底绩效**：每席每班≥8 张出分，或跑满 4 小时（数量+时长双口径，以先到者计）。
-- **总包**：并发≤2（CPU 核限制），两席按卡族分工互不抢卡。
-- **真源挂点**：backtest_system_sop/exam_policy+run_fexam.py MOD-BT-FEXAM。
+- **工作流程**：1 领卡 2 核对门柱已冻结 3 选通道：series 卡走 CLI（calibration_exam.py --card/--signal-csv/--target-csv，实测约 2 分/卡）；panel 卡走 run_card API（CLI --target-csv 有砍单列缺陷，修复前 panel 禁走 CLI）；数据按卡绑定口径自物化（执行器不自助取数）；单卡>15min 即 kill 记 finding；**GPU 优先**：ic 类走 scripts/backtest/fexam/gpu_ic/gpu_rank_ic.py（3090+torch cu126 实测可用），启用前必过 parity_test 对拍、且须安静窗（VRAM 独占纪律：smoke_gpu 预检不过=改日，白天桌面进程占 GPU 硬闯禁止）；白天零星卡 CPU 兜底，不与主线抢 CPU4 跑（CH 窗 01:00-04:00 避让）5 分数入库 6 翻状态 7 失败写堵点册即停 8 自检两轮（only-add 与门柱一致）。
+- **保底绩效**：每席每班≥8 张出分，或跑满 4 小时（双口径先到者计）。
+- **真源挂点**：exam_policy＋run_fexam.py（MOD-BT-FEXAM）。
+- **总包**：并发≤2（CPU 核限制）。
 
-### ⑧ 判卷复核员
-- **目标**：成绩真实可信，负结果纪律落地。
-- **输入口**：当日 exam_scores_v1.yaml 增量行。
-- **输出口**：成绩日报（cmd_ledger 晨报附）+可疑复核单→`docs/_working/automation_campaign/feedback/`。
-- **工作流程**：逐行核对门柱一票否决→负结果如实入册核对→IS/OOS 符号观察记录→可疑列复核单→交⑨。
-- **保底绩效**：当日增量 100% 复核。
-
-### ⑨ 成绩分析师（闭环之魂）
-- **目标**：每条 fail 都变成改进动作，反馈回流。
-- **输入口**：成绩日报+fail 行+家族共线性历史（exam_scores 既有 fail 簇）。
-- **输出口**：三联单 `docs/_working/automation_campaign/feedback/to_miners.md`（方向单）/`to_impl.md`（修改单）/`to_owner.md`（判据呈批）+复考排程。
-- **工作流程**：1 读当日 fail 2 逐条归因四分诊：信号真无效（OOS 翻转）/实现或数据问题/判据问题/需对照验证 3 真无效→方向单（该家族收敛建议或 mined_out 申报建议）4 实现数据→修改单/缺数单给①⑤ 5 判据→呈批件 6 需对照→对照卡制作申请（挂 OD-1，**优化闭环的再考必须 A/B 对照**）7 复考排程 8 自检两轮。
-- **保底绩效**：fail 行 100% 分诊；每班≥1 条结构性观察（家族级规律，如共线性簇）。
+### ⑨ 成绩官
+- **目标**：成绩真实可信，且每条 fail 都变成改进动作。
+- **工作内容**：判卷复核（独立于考工）→归因四分诊→三联反馈单→晋级处置→迭代史记账。
+- **输入口**：当日 exam_scores_v1.yaml 增量行+家族共线性历史+晋级纪律（exam_policy）。
+- **输出口**：成绩日报（cmd_ledger 晨报附）；三联单 `feedback/{to_miners,to_impl,to_datasource}.md`；对照申请单→⑥；复考排程；pass 行→verified 升级+TDM 挂接（fail 永不升级）；迭代史行 `docs/_working/automation_campaign/iteration_history.md`。
+- **工作流程**：1 逐行判卷（门柱一票否决机械核对）2 负结果如实入册核对 3 IS/OOS 符号观察 4 归因四分诊：信号真无效→方向单（家族收敛或 mined_out 建议）／实现数据问题→修改单或缺数单／判据问题→呈批／需对照验证→对照申请单给⑥ 5 pass→核红线→升级+挂图 6 迭代史记账 7 自检两轮。
+- **保底绩效**：当日增量 100% 判卷；fail 行 100% 分诊；每班≥1 条结构性观察（家族级）。
 - **总包**：按家族并行分析（读）。
 
-### ⑩ 晋级/整装员
-- **目标**：pass 变 verified 并挂图。
-- **输入口**：pass 行+exam_policy 晋级纪律。
-- **输出口**：verified 升级行+TDM 挂接（trading_decision_map_sop S1-S9）+promote 建议（模拟盘）。
-- **工作流程**：领 pass→核红线（fail 永不升级；W5 confidence 回写待 OD-8 开闸）→挂 TDM→整装回测建议（backtest sop_a）→台账→自检两轮。
-- **保底绩效**：pass 行 100% 处置（当前 pass=0，先干存量接线：大盘腿 shadow 转正式等）。
+### ⑩ 线长席
+- **目标**：全线不断料不堆积不断线不自我欺骗。
+- **工作内容**：派单（查重+配额）+监督（水位/断线/指令质量）+**迭代纪律审计**（防过拟合）+晨报记账。
+- **输入口**：各席四件套 checkpoint；全线台账；exam_cards 状态统计；`docs/_working/automation_campaign/iteration_history.md`。
+- **输出口**：`docs/_working/automation_campaign/dispatch/daily_dispatch.md`；`docs/_working/automation_campaign/pulse/queue_depths.md`；指令面修订（仅四件套 instruction/checkpoint）；迭代预算处置单；晨报（cmd_ledger，08:45 前）。
+- **工作流程**：1 读全线水位与卡池统计 2 查重（逐条对照已挖名单/mined_out/现有卡）3 定各席当日配额（瓶颈环加派）4 写任务单 5 巡断线（游标停跳/日志停更→修复或修指令）6 巡交接格式（下游收不上→修上游 instruction）7 **迭代纪律审计**：每对象迭代轮次记账；同 holdout 被迭代消费超限→处置（强制 fresh holdout 呈批或封存）；判据改动嫌疑=挪门柱→呈批 8 断供登记无证据→打回① 9 晨报 10 自检两轮。
+- **保底绩效**：每日一单；每班≥2 轮全环巡检；迭代审计每周全量 1 轮；晨报不隔夜。
+- **权限红线**：只可改指令面（四件套），禁碰判据门柱与冻结值与分数册。
 
-### ⑪ 监督员
-- **目标**：全线不断线——水位平衡、断线自愈、指令质量。
-- **输入口**：各席四件套 `docs/_working/automation_campaign/<岗>/checkpoint.md`；queue_depths.md；机器层日志（.runtime/logs/night_mining.log、f06_grid.log）。
-- **输出口**：queue_depths.md 更新；**指令面修订**（各席 instruction/checkpoint，仅限四件套）；断线处置记录。
-- **工作流程**：1 巡水位（上堆积/下饥饿→查因→调配额报⓪）2 巡断线（游标停跳/日志停更→修复重启或修指令）3 巡交接格式（下游收不上→修上游 instruction）4 断供登记无证据→打回① 5 权限红线：**只可改指令面，禁碰判据门柱与冻结值** 6 每班≥2 轮 7 自检两轮。
-- **保底绩效**：每班 2 轮全环巡检；断线当班内响应。
+### ⑪ 整装回测席
+- **目标**：每夜一次整装回测，晨报直答两问——「现在这套能不能赚钱？下浮率多少？」
+- **工作内容**：装配状态盘点→触发/核对整装回测（backtest sop_a 全图编排，真实成本+护栏口径）→出分判读→问题清单分流。
+- **输入口**：装配状态册（config/strategy_production_map.yaml）＋verified 晋级件（exam_scores/registry）＋`backtest_system_sop/` 四卷。
+- **输出口**：整装成绩台账 `docs/_working/automation_campaign/p11_assembler/ledger.md`；问题清单（环节/数据/结构三类）→⑨归因→三联单；晨报整装结论段。
+- **工作流程**：1 冷启动 2 读装配状态（在产模块/challenger 待入）3 触发或核对整装回测 runner 4 出分判读（通过判据/下浮率/对比昨夜）5 成绩台账 6 问题清单分类转⑨ 7 晨报附结论 8 自检两轮。
+- **保底绩效**：每晚 1 次；晨报必含「能不能赚钱+下浮率」直答；问题清单 100% 分流。
+- **频率**：每夜 21:30（收盘数据落库后、23:00 夜挖前）；机器层跑数、本席判读记账。
+- **铁律**：新施工模块必须先经环节考试 verified 才准进装配——施工完成的模块经⑨晋级后自动入次夜整装清单，闭环到此闭合。
 
-### ⑫ 记账员
-- **目标**：日清日结可审计。
-- **输入口**：全部台账+分数册。
-- **输出口**：晨报（`docs/_working/cmd_ledger/`，08:45 前）+05_owner_decisions.yaml 汇总核对+成绩分布周记。
-- **工作流程**：汇总各席台账→晨报（真哈希/成绩增量/水位/呈批件清单）→挖干判定跟进（mined_out 复挖核验状态）→自检两轮。
-- **保底绩效**：日清；晨报不隔夜。
+## 3-A 横向扩席规则
 
-## 4. 两条回流线详则
+只扩吞吐席：考工（⑦⑧→C/D/E…按 preregistered 积压>50 张时每 50 张加一席）、挖矿（③④按下游断料频率）；判断席（⑥制卡/⑨成绩官/⑩线长）永不拆分——拆分即破坏冻结/运行分离与判卷独立性。
 
-- **数据回流**：缺数申请唯一入口=①席；①席全网找（每项≥3 渠道留痕）→建设/修复→解锁；穷尽才断供登记（证据链强制，⑪抽查打回权）。采购类永远呈批，禁自购。
-- **成绩回流**：⑧→⑨→三联单；复考纪律=新鲜窗月度+三取二裁定（exam_policy）；mined_out 自报必须邻车道 20% 抽样复挖核验方可封矿（mining_sop v1.8.0）。
+## 4. 两条回流线 + 自我迭代回路
+
+- **数据回流**：缺数唯一入口=①席（全网找≥3 渠道留痕）→②建设→解锁；穷尽才断供登记（证据链强制，⑩抽查打回）。采购类永远呈批。
+- **成绩回流**：⑨判卷→归因→三联单；复考纪律=新鲜窗月度+三取二裁定（exam_policy）；mined_out 自报须邻车道 20% 抽样复挖核验方可封矿（mining_sop **v1.9.1**：枯竭=六向全查无新卡＋无未挖长尾＋挖后自审闸 §6，双噪音封矿）。现状锚定 2026-10-15：186 节点全覆盖有卡（531 张），mined_out=0，六向挖掘在半山腰；挖矿继续不停，唯一叫停权=Owner。
+- **自我迭代回路（主循环）**：⑦⑧出成绩 → ⑨判卷归因（fail 四分诊）→ 改良三路：信号真无效→③④换方向挖（家族收敛/mined_out）｜可优化→④定向检索 SOTA 出改良情报→⑤落地→**⑥配对对照卡（只改一个变量）**→⑦⑧对照复考→⑨判卷→提升才晋级、持平/退化即封存改良并记账｜缺数据→①②供数→复考。全程⑩迭代纪律审计护航：迭代预算（同对象超限强制 fresh holdout 呈批或封存）、OOS 复用审计、门柱不可动（判据改动=挪门柱，只能呈批）。
+- **迭代纪律判据**（防"迭代式过拟合"）：同一对象对同一 holdout 的有效迭代消费≤3 轮/月；第 4 轮起必须换未消费样本段（呈批）或封存；迭代史不记账的复考成绩判无效。
 
 ## 5. 矿脉轮转制
 
-lane_roster 7 车道+RX_A/RX_B 复挖道；某车道挖满（mined_out 申报+复挖核验通过）→⓪派单员把②③席产能切到下一车道；九口并行度按 §2；单车道单节点六向挖尽=节点级挖满，卡 empty→preregistered 转化率是轮转前置读数。
+lane_roster 7 车道+RX_A/RX_B 复挖道；某车道挖满（mined_out 申报+复挖核验通过）→⑩线长把③席产能切到下一车道；单节点六向挖尽=节点级挖满；empty→preregistered 转化率是轮转前置读数。
 
-## 6. 附录A：对标顶尖机构盲点自查（2026-10-14 首轮）
+## 6. 附录A：对标顶尖机构盲点自查（2026-10-14，v1.1 更新）
 
 | 环节 | 顶尖实践 | 本线现状 | 缺口判定 |
 |---|---|---|---|
-| Idea→生产状态机 | WorldQuant BRAIN：idea→simulation→OS→submission 全状态机 | 卡 status 机 empty→preregistered→examined | ✅等价 |
-| 多样性去重 | WQ self/prod-correlation 闸 | C5 聚类+秩相关合并闸 | ✅等价；**环节层家族共线性聚类待建**（⑨席职责） |
-| Champion/Challenger | 在产策略挑战者对照 | 模拟盘 promote_paper | ⚠️缺口：晋级后在产监控台账未成文（⑩席扩展项） |
+| Idea→生产状态机 | WorldQuant BRAIN 全状态机 | 卡 status 机 empty→preregistered→examined | ✅等价 |
+| 多样性去重 | WQ self/prod-correlation 闸 | C5 聚类+秩相关合并闸 | ✅；环节层家族共线性聚类=⑨席结构性观察职责 |
+| Champion/Challenger | 挑战者对照 | ⑥席配对对照卡+模拟盘 promote | ✅（执行器随 OD-1 交付转正） |
 | 连续训练 CT | MLOps CI/CT/CD | 本传送带即 CT | ✅ |
 | 数据血缘/版本 | feature store+版本化 | PIT 快照+源线谱+断供证据链 | ✅ |
 | 漂移监控 | production drift | 新鲜窗月度复考 | ✅ |
-| 实验可复现 | run registry | backtest sop_d 档案命名 | ✅ |
-| 算力预算 | 利用率治理 | GPU 采样器（峰值 44%） | ✅算力富余，缺的是执行器吞吐 |
-| 质量红线 | fail 不上线 | test_no_upgrade_without_oos 实测生效 | ✅ |
-| A/B 对照纪律 | champion/challenger A/B | 对照卡族 182 张**无执行器**（OD-1） | ⛔最大缺口：不立项则优化闭环空转 |
-| 流水线 SLA | pipeline 健康看板 | queue_depths 水位表（⑪席） | 🆕本册新增 |
-| 岗位 SLA/绩效 | 运营 KPI | 保底绩效+双轮自检 | 🆕本册新增 |
+| 实验可复现 | run registry | backtest sop_d | ✅ |
+| 算力预算 | 利用率治理 | GPU 采样器（峰值 44%，富余） | ✅瓶颈在执行器吞吐与断供 |
+| 质量红线 | fail 不上线 | test_no_upgrade_without_oos | ✅ |
+| A/B 对照纪律 | champion/challenger A/B | ⑥席配对+执行器（OD-1 已批施工） | ✅落地中 |
+| **迭代预算/防迭代式过拟合** | holdout 纪律/Deflated Sharpe | 🆕v1.1 新增：⑩席迭代纪律审计+§4 判据 | ✅新增 |
+| 流水线 SLA | pipeline 健康看板 | queue_depths 水位表 | ✅新增 |
+| 岗位 SLA/绩效 | 运营 KPI | 保底绩效+双轮自检 | ✅新增 |
 
-## 7. 附录B：待 Owner 呈批（拍一个解锁一片）
+## 7. 附录B：Owner 呈批面（2026-10-14 状态）
 
-| 项 | 解锁 |
-|---|---|
-| OD-1 对照/消融执行器立项 | 98 张卡可考+优化闭环 A/B 转起来 |
-| OD-④⑨ 数据断供派单/当班补 | 52 张 blocked 主要部分 |
-| 情绪三判据命题与阈值 | 情绪腿接入 P3-R2 四腿端到端 |
-| OD-⑤ F06 批预算/撞窗 | 周六网格产能 |
-| OD-⑧ W5 confidence 补跑 | 晋级闸开测 |
-| OD-②③⑥⑦⑩ 其余 | 见 05_owner_decisions.yaml |
-| 采购三件（分析师预期/分钟流/L2） | 资金线与对应 blocked 卡 |
+| 项 | 状态 | 解锁 |
+|---|---|---|
+| OD-1 对照/消融执行器立项 | ✅已批，施工排期中 | 98 张卡可考+优化闭环 A/B 心脏 |
+| 数据断供派单 | ✅已批（免费渠道优先） | 52 张 blocked 主要部分 |
+| 情绪三判据 | ✅原则同意；⑥席出命题与阈值提案后终签 | 情绪腿接入 P3-R2 |
+| 采购三件（分析师预期/分钟流/L2） | 待批 | 资金线与对应 blocked 卡 |
+| OD-②③⑤⑥⑦⑩ | 见 05_owner_decisions.yaml | 各对应项 |
+| 并发环境警戒（E2E 实测） | 转办治理线+⑩线长席：实测他会话无 claim 整树归档 automation_campaign/、staged 删 13 张冻结卡——任何归档/清理必须先查 .ailocks；⑩席首班职责=按本册 v1.1.1 重建/同步全部四件套 |
+
+
+## 3-B 班车时刻表（Qoder 自动化发车节奏）
+
+设计法则：**班车间隔≈班次时长×1.3~1.5**（上一班快结束下一班才到，误差几分钟）；各岗错峰偏移防撞车；每张卡带防重入条款（检测到同岗上游班次仍持有游标/claim→本班立即短报退出）；平均并发≈Σ(时长/间隔)≈6.4，峰值≤9，留余量给 Owner 与机器层。
+
+| 岗 | 班时长(估) | 班车间隔 | 每日首班偏移 |
+|---|---|---|---|
+| ⑩线长 | ~15 分 | 30 分 | :00 |
+| ⑥制卡 | ~20 分 | 40 分 | :05 |
+| ⑨成绩官 | ~20 分 | 40 分 | :10 |
+| ①数据源 | ~20 分 | 40 分 | :15 |
+| ③库内挖矿 | ~30 分 | 45 分 | :20 |
+| ④战法矿工 | ~30 分 | 45 分 | :30 |
+| ⑦考工A | ~45 分 | 60 分 | :35 |
+| ⑧考工B | ~45 分 | 60 分 | :45 |
+| ②数据建设 | ~40 分 | 60 分 | :50 |
+| ⑤实现 | ~60 分 | 75 分 | :55 |
+| ⑪整装回测 | 机器跑+~30 分判读 | 每日 1 班 | 21:30 固定 |
+
+校准机制：每班在台账记实际耗时分钟数，⑩线长每日按实测调表（连续 3 天偏差>30% 即改间隔）。
+
+## 3-C 楼栋制进度图（防重复/可扫读）
+
+三层结构：**楼**=车道/家族/域（coverage_map 一行一楼，恒定≤几百行）→**户**=节点/卡（分户台账）→**证据**=台账行（追加式）。
+- `docs/_working/automation_campaign/pulse/coverage_map.md` 由**生成器**从各台账重算产出（⑤席首批施工单；静态清单禁手工维护铁律适用）：每楼一行`[楼号|状态:封楼/在挖/未开|已做/剩余计数|游标指针]`；封楼=mined_out 申报+邻道 20% 复挖核验通过。
+- 岗位读取纪律：**先读楼图→只进未封楼→楼内查户级台账→绝不全量扫描**——几万条明细 AI 永不直读，靠楼图收敛视野；写入进分户台账，楼图只由生成器重算。
+## 3-D 研究态排班表（现行，24 小时不停）
+
+研究态=当前生效态：生产线 24 小时不停，昼夜同节奏，研究班车与机器层并行。要点：
+
+- **①班车层（Qoder 10 席，昼夜同节奏）**：按 §3-B 时刻表 24h 发车——班车间隔=班时长×1.3~1.5（上一班快结束下一班才到），各岗错峰偏移防撞车；每张卡带**防重入条款**（检测到同岗上游班次仍持有游标/claim→本班立即短报退出，不排队等待）。
+- **②机器层计划任务（2026-10-15 实测核实）**：
+
+| 任务 | 时刻 | 状态（2026-10-15 实测） |
+|---|---|---|
+| ZephyrAlpha_NightMining | 每晚 23:00，Sun-Thu | ✅已启用（曾被禁用，已 /enable 恢复） |
+| ZephyrAlpha_F06Grid | 周六 08:00 | ✅已启用（曾被禁用，已 /enable 恢复） |
+| ZephyrAlpha_TTLRejudgeDaily | 每日 18:05 | 就绪 |
+| ZephyrAlpha_C4Exam | 夜间考试批 | 就绪（下次 10-17 14:00，时刻待核） |
+| process_reaper | — | 运行时钩子常开（非计划任务，不占 schtasks 位） |
+
+- **③CH 维护窗禁入**：01:00-04:00 ClickHouse 维护窗，重活禁入（考工/回补/整装等重计算一律避让，§3⑦⑧同款纪律）。
+- **④GPU 两档制**：小考试（单卡 ic 类）白天空闲显存≥8GB 即放行；大网格/F06 大件只在**夜间安静窗独占** VRAM 跑（白天桌面进程占卡硬闯禁止，smoke 预检不过=改日）。
+- **⑤整装回测（⑪席）每夜 21:30**：收盘数据落库后、23:00 夜挖前，机器跑数+⑪席判读记账，晨报直答「能不能赚钱/下浮率」。
+
+## 3-E 实盘态排班表（达标后切换）
+
+实盘态=切换闸门通过且 Owner 下令后的生效态：白天让路交易，研究整体挪夜间，**研究不停止**。
+
+| 时段 | 用途 | 纪律 |
+|---|---|---|
+| 08:00-09:15 | 盘前数据校验+风控快照 | 交易日必做；数据异常即报 Owner |
+| 09:15-15:00 | **交易保护区**（交易日） | GPU/CPU 优先实时信号计算；生产线白天班**降速=只读研究+写单，禁跑算力**（挖矿/考工/网格白天面全停） |
+| 15:30-19:30 | 盘后落库+复权校验+⑨成绩官主班绩效归因 | 盘后数据落地后才准恢复写算 |
+| 21:30 | 整装回测（⑪席保留） | 与研究态同款 |
+| 23:00-06:00 | 深夜研究窗全速 | 挖矿/F06/GPU 大件**整体挪夜间**；重载班车（③④⑤⑦⑧）挂夜间跑 |
+| 01:00-04:00 | CH 维护窗 | 照避，重活禁入 |
+
+**切换协议（研究态→实盘态）**：
+- 切换闸门=**整装口径 Sharpe≥2 及格（可切模拟盘态）/≥4 优秀（可小资金实盘）**；
+- 须**连续 10 个交易日滚动达标**（防单夜运气）；⑩线长席晨报持续报「距闸门差多少」；
+- 触发=Owner 一句「切实盘排班」→ 未来 AI 读本节执行换挡：白天班车降速（只读研究+写单不跑算力）、交易保护区生效、runner 挂夜间。
