@@ -1088,3 +1088,112 @@ def test_declared_local_faces_load_signal_and_target(tmp_path, monkeypatch):
     # 未申报（键全缺）＝零装载，由调用方按既有口径抛，缺省行为不被本档改变
     assert ce._declared_local_faces({}) == (None, None)
     assert ce._declared_local_faces({"data_binding": {"derived_series": "lu_count"}})[1] is None
+
+
+# ── PE 止血闸（warn-only/shadow，规约=docs/_working/examchief_campaign/11_pe_shadow_plan.yaml；
+#    统筹 2026-10-14 批；四班 st-examchief2-20261014 施工）──
+
+
+def _pe_card(tmp_path, bucket_type: str) -> str:
+    """series 卡＋卡面冻 buckets.type（词表外/内由入参定）。"""
+    return _card(tmp_path, buckets={"type": bucket_type, "on": "signal_x_time_cells"})
+
+
+def test_pe_t1_warn_only_does_not_change_verdict(tmp_path, monkeypatch):
+    """T1 warn-only 不改判：同一卡"改前（披露摘除）/改后"两跑，verdict、fails 与全部 metrics
+    逐位等值，unjudged 面仅多该披露键。红证形态：若有人把披露接进 fails/verdict（enforce 提前），
+    本证必红。对照跑＝monkeypatch 摘 _bucket_caliber_proxy（＝改前判官本体）。"""
+    p = _pe_card(tmp_path, "quadrant_migration_8cell")
+    sig, tgt = _synthetic(strength=60.0)
+    monkeypatch.setattr(ce, "_bucket_caliber_proxy", lambda *a, **k: None)
+    row_off = ce.run_card(
+        p,
+        signal=sig,
+        target=tgt,
+        scores_path=tmp_path / "off.yaml",
+        ledger_registry_path=tmp_path / "l1.yaml",
+        force=True,
+    )
+    assert "numeric_keys_bucket_caliber_proxy" not in row_off["unjudged"]
+    monkeypatch.undo()
+    row_on = ce.run_card(
+        p,
+        signal=sig,
+        target=tgt,
+        scores_path=tmp_path / "on.yaml",
+        ledger_registry_path=tmp_path / "l2.yaml",
+        force=True,
+    )
+
+    def _nan_free(x):
+        """NaN 感知比较（dict 相等把 nan!=nan 判假＝逐位等值读数的伪影，非真实漂移）。"""
+        if isinstance(x, float) and x != x:
+            return "<nan>"
+        if isinstance(x, dict):
+            return {k: _nan_free(v) for k, v in x.items()}
+        if isinstance(x, (list, tuple)):
+            return [_nan_free(v) for v in x]
+        return x
+
+    assert row_on["verdict"] == row_off["verdict"]
+    assert row_on["fails"] == row_off["fails"]
+    assert _nan_free(row_on["metrics"]) == _nan_free(row_off["metrics"]), "warn-only 零数值扰动"
+    assert set(row_on["unjudged"]) - set(row_off["unjudged"]) == {"numeric_keys_bucket_caliber_proxy"}
+    payload = row_on["unjudged"]["numeric_keys_bucket_caliber_proxy"]
+    assert payload["mode"] == "warn_only"
+    assert payload["buckets.type"] == "quadrant_migration_8cell"
+    assert payload["n_buckets_used"] == 10
+    assert payload["mono_spearman"] == ce._PE_PROXY_MONO_NOTE
+
+
+def test_pe_t2_in_vocab_bucket_type_not_flagged(tmp_path):
+    """T2 词表内卡不报：buckets.type=quantile_decile ⇒ 该键不出现。"""
+    p = _pe_card(tmp_path, "quantile_decile")
+    sig, tgt = _synthetic(strength=60.0)
+    row = ce.run_card(p, signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    assert "numeric_keys_bucket_caliber_proxy" not in row["unjudged"]
+
+
+def test_pe_t3_ordinal_branch_not_flagged(tmp_path):
+    """T3 ordinal 分支不报：桶型 off-vocab 但信号只有 4 个离散档值（模拟 L1-AGG/02 少数档卡）
+    ⇒ _bucket_response 走按档值分桶的 ordinal 路，读数本身落在卡面冻的档上，不是代理
+    ⇒ 该键不出现（钉住 11 稿 §3 那 3 枚 ordinal 假阳；有人删条件②本证必红）。"""
+    p = _pe_card(tmp_path, "event_flag_two_state_contrast")
+    sig, tgt = _synthetic(strength=60.0)
+    sig_disc = pd.Series(np.digitize(sig.to_numpy(), [-1.0, 0.0, 1.0]), index=sig.index)
+    assert int(sig_disc.nunique()) == 4
+    row = ce.run_card(p, signal=sig_disc, target=tgt, scores_path=tmp_path / "s.yaml")
+    assert "numeric_keys_bucket_caliber_proxy" not in row["unjudged"]
+
+
+def test_pe_t4_continuous_signal_proxy_flagged(tmp_path):
+    """T4 连续代理必报：桶型 off-vocab 且信号连续（模拟 RRG 02b 的占比差序列）
+    ⇒ 该键出现且 mode=warn_only。"""
+    p = _pe_card(tmp_path, "quadrant_migration_8cell")
+    sig, tgt = _synthetic(strength=1.0)
+    row = ce.run_card(p, signal=sig, target=tgt, scores_path=tmp_path / "s.yaml")
+    payload = row["unjudged"].get("numeric_keys_bucket_caliber_proxy")
+    assert payload is not None, "off-vocab＋连续信号＝代理读数，必须披露"
+    assert payload["mode"] == "warn_only"
+    assert "fails" in row and not any("bucket_caliber" in f for f in row["fails"]), "披露禁进 fails"
+
+
+def test_pe_condition1_vocab_boundaries():
+    """条件①边界（直测观测器）：quantile_<n> 数形式＝词表内形；空 buckets／无 type 不报。"""
+    assert ce._bucket_type_off_vocab({"buckets": {"type": "quantile_7"}}) == ""
+    assert ce._bucket_type_off_vocab({"buckets": {"type": "Quantile_Decile"}}) == ""
+    assert ce._bucket_type_off_vocab({"buckets": {"type": "octile_8"}}) == "octile_8"
+    assert ce._bucket_type_off_vocab({}) == ""
+    assert ce._bucket_type_off_vocab({"buckets": {}}) == ""
+
+
+def test_pe_mono_without_face_not_flagged():
+    """mono 无面（NaN）＝没有代理读数可注解 ⇒ 不报（披露只注解存在的数，不造数）。"""
+    card = {"buckets": {"type": "dim_pair"}}
+    m = {"n_buckets_used": 10, "mono_spearman": float("nan")}
+    assert ce._bucket_caliber_proxy(card, m, signal_unique=500) is None
+    m2 = {"n_buckets_used": 10, "mono_spearman": 0.4}
+    proxy = ce._bucket_caliber_proxy(card, m2, signal_unique=500)
+    assert proxy is not None and proxy["mode"] == "warn_only"
+    # 条件②不满足（信号唯一值数 ≤ 实跑桶数）＝ordinal 路，不报
+    assert ce._bucket_caliber_proxy(card, m2, signal_unique=10) is None
