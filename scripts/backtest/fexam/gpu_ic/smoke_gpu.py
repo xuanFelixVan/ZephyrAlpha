@@ -26,6 +26,10 @@
 #   2) nvidia-smi 无 compute 进程，且显存余量 >= 2GiB；
 #   3) CH（172.24.30.100:8123）可达（真实指标对拍用例需要）。
 #
+# 预检两档制（--tier，默认 exclusive=原行为零变化）：
+#   exclusive（默认/大网格）：vram 独占纪律——无 compute 进程且空闲显存 >= 2GiB；
+#   small（白天小考试 rank-IC）：只看空闲显存 >= 8GiB 即放行，否则照旧 ABORT。
+#
 # numpy 对照基线（2026-10-06 今晚实测，bench_numpy.py，5000tick x 485day x 20col）：
 #   rank_ic(numpy) best_total=19.508s  per_col=975.4ms（repeats 20.113/19.931/19.508s）
 #   fast_rank_ic(pandas 原版) per_col=880.3ms
@@ -34,12 +38,14 @@
 # 执行方式（Git Bash）：
 #   export PATH="/c/Users/fanzi/AppData/Local/Programs/Python/Python312:/c/Users/fanzi/AppData/Local/Programs/Python/Python312/Scripts:$PATH"
 #   export PYTHONPATH=/d/ZephyrAlpha/src
-#   python scripts/backtest/fexam/gpu_ic/smoke_gpu.py
+#   python scripts/backtest/fexam/gpu_ic/smoke_gpu.py               # 默认 exclusive（原行为）
+#   python scripts/backtest/fexam/gpu_ic/smoke_gpu.py --tier small  # 白天小考试（空闲>=8GiB 放行）
 # ============================================================================
-"""smoke_gpu — cupy 后端 GPU 冒烟：nvidia-smi 预检 + 同一套 parity 全用例（cupy）。"""
+"""smoke_gpu — cupy 后端 GPU 冒烟：nvidia-smi 两档预检 + 同一套 parity 全用例（cupy）。"""
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -51,20 +57,24 @@ for _p in (str(_ROOT / "src"), str(_ROOT / "scripts" / "backtest" / "fexam"), st
 
 from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: E402
 
-_FREE_MIB_MIN = 2048
+_FREE_MIB_MIN = 2048  # exclusive 档最低空闲显存
+_FREE_MIB_MIN_SMALL = 8192  # small 档最低空闲显存（白天小考试放行线）
 
 
-def gpu_status() -> tuple[bool, str]:
-    """(busy, reason)。有 compute 进程 / 显存余量不足 / 无 GPU 视为忙（vram 独占纪律）。"""
+def gpu_status(tier: str = "exclusive") -> tuple[bool, str]:
+    """(busy, reason)。预检两档：exclusive=无 compute 进程且空闲显存足够（vram 独占纪律）；
+    small=只看空闲显存 >= 8GiB 即放行（白天小考试）；无 GPU/查询异常一律按"忙"拒跑（fail-closed）。"""
+    free_min = _FREE_MIB_MIN_SMALL if tier == "small" else _FREE_MIB_MIN
     try:
-        apps = run_subprocess_hidden(
-            ["nvidia-smi", "--query-compute-apps=pid,process_name", "--format=csv,noheader"],
-            timeout=30,
-        )
-        if apps.returncode != 0:
-            return True, f"nvidia-smi 失败 rc={apps.returncode}: {apps.stderr.strip()[:120]}"
-        if apps.stdout.strip():
-            return True, f"GPU compute 进程占用: {apps.stdout.strip()[:160]}"
+        if tier != "small":
+            apps = run_subprocess_hidden(
+                ["nvidia-smi", "--query-compute-apps=pid,process_name", "--format=csv,noheader"],
+                timeout=30,
+            )
+            if apps.returncode != 0:
+                return True, f"nvidia-smi 失败 rc={apps.returncode}: {apps.stderr.strip()[:120]}"
+            if apps.stdout.strip():
+                return True, f"GPU compute 进程占用: {apps.stdout.strip()[:160]}"
         mem = run_subprocess_hidden(
             ["nvidia-smi", "--query-gpu=memory.free,memory.total,name", "--format=csv,noheader"],
             timeout=30,
@@ -72,8 +82,9 @@ def gpu_status() -> tuple[bool, str]:
         first = mem.stdout.strip().splitlines()[0]
         free_str, _total_str, name = (s.strip() for s in first.split(","))
         free_mib = int(free_str.split()[0])
-        if free_mib < _FREE_MIB_MIN:
-            return True, f"显存余量不足: free={free_mib}MiB < {_FREE_MIB_MIN}MiB"
+        if free_mib < free_min:
+            tag = "" if tier == "exclusive" else f" (tier={tier})"
+            return True, f"显存余量不足: free={free_mib}MiB < {free_min}MiB{tag}"
         return False, f"GPU 空闲（{name}, free={free_mib}MiB）"
     except FileNotFoundError:
         return True, "nvidia-smi 不存在（无 GPU/驱动）"
@@ -82,8 +93,16 @@ def gpu_status() -> tuple[bool, str]:
 
 
 def main() -> int:
-    busy, why = gpu_status()
-    print(f"[preflight] {why}")
+    parser = argparse.ArgumentParser(description="cupy 后端 GPU 冒烟（预检两档制）")
+    parser.add_argument(
+        "--tier",
+        choices=("small", "exclusive"),
+        default="exclusive",
+        help="small=空闲显存>=8GiB 即放行（白天小考试）；exclusive=vram 独占（默认，原行为）",
+    )
+    args = parser.parse_args()
+    busy, why = gpu_status(args.tier)
+    print(f"[preflight] tier={args.tier} {why}")
     if busy:
         print("SMOKE-ABORT: GPU 非空闲——维持 vram 独占纪律，改日 quiet 窗口重试")
         return 2
