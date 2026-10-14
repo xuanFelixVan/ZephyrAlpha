@@ -4862,3 +4862,114 @@ entries:
   approved_paths: []
   related_rulings:
   - 裁定#523
+- ruling_id: 裁定#525
+  date: "2026-10-14"
+  title: 资金实盘族门位查表与方向裁定——生产接线洞 11 项判 Owner 保留域呈报；拟建风控特性走 D4 预注册卡；执行域/因子闸族收敛到战役预注册
+  status: active
+  session: st-c8-adjudicate-20261014
+  summary: "Owner 2026-10-14 令按裁定 SOP 对 129 项 open/proposed 议题批量裁。本裁定管资金实盘族（E 族，议题册 open+proposed 中碰交易生产/风控/KillSwitch/执行/清算面约 20 项）。\n门位查表（禁自报分类）：按 risk_tier_registry 域查表+资金/实盘关键词面强制路由，以下 11 项判 Owner 保留域（生产流转/资金面），AI 不代裁、仅呈报并附证据包：#ARCH-100（风控全链路零接线，35 回撤/36 VaR-ES/37 流动性+KillSwitch+对账器模块写完测试全绿但生产零调用）、#ARCH-127（Kill Switch 清算链对全部持仓含当日买入 T+1 锁定份额发 MARKET SELL——外部基准：A 股 T+1 可用数量=持仓−当日买入−未成交挂单−冻结，多源一致；处置方向=清算按可用数量发单、锁定份额跳过并挂起次日、告警分化）、#ARCH-339（风控孤儿闸族产而不消：K03/K06 生产零调用需重分类）、#ARCH-340（K02 资金事故假处置+系统级开关纯内存）、#ARCH-341（K08 先报告后交易闸从未武装，report_gate 全仓零传参）、#ARCH-342（对账链双零接线+结算单缺失日绿灯）、#ARCH-346（验证链 embargo/purge 缺省归零=生产财务 PIT 实际零隔离）、#ARCH-355（X05 价格笼子形同虚设：文件桥不传基准价 CageStatus 恒 UNKNOWN——HKMA 机构先例 price collars 正名）、#ARCH-TRADING-IDEMPOTENCY-001（HO-4 订单提交幂等 broker ACK 持久化未实现，量化红线）、#ARCH-351（miniQMT 退役命中 24 任务无退路）。\n方向裁定（D4 路线）：拟建风控特性族 #ARCH-RISK-001/002/003、#ARCH-QUANT-001/005、#ARCH-EXT-CONTRACT-VERIFY-001 判\"预注册卡在册才开工\"，封顶尝试次数；其中 RISK-002/003 与 #ARCH-100 是同一风控链接线战役的不同层，收敛到一张战役预注册卡（禁各开各的卡造成第二真源）；#ARCH-356（轴 F 立卡清单：K02 持久化 crash-only/K05 VaR min_history）挂该卡。\n收敛裁定（G1 同域重复簇）：#ARCH-QUANT-004（pf_core/pf_alloc/ex_sor 三 stub）与 #ARCH-343（pf_alloc 整域接线/退役）、#ARCH-338（执行域孤儿族）同域——先裁 pf_alloc/执行域去留（一盏灯），三 stub 随之，禁分裁。\n量化质量族（#ARCH-347 策略管线三洞/349 信号域地雷/353 因子阶段闸/354 预测域 NaN/345 Wyckoff 旁路）路由 Gate A 算法域自动裁定快道：目标=夏普族+可回测+可补救+可对打+预算在册五判据核后 AI 自裁（考试面产物，不触生产）。\n外部基准（E3，语境适配声明）：HKMA《Sound risk management practices for algorithmic trading》（2020-03，机构级）：kill functionality 分级激活（system/algorithm/trader/client）+激活与再启用框架+独立监控职能+价格笼子+限额 80% 提前量告警+故障注入演练；适配=本项目单人+多 AI 会话无独立风控部，\"独立控制职能\"投影为独立于策略链的守护进程+门禁化判据（治本形态见裁定#528）。"
+  category: 架构
+  evidence: "E1 实测（议题册逐条 summary 原文；kill_switch 清算链/T+1 代码路径已由议题登记锚定）+ E2 先例（risk_tier_registry 域查表机制；宪法 §5 Owner 保留面；裁定#505 手段触碰保留面仍呈 Owner 判例）+ E3 外部（HKMA 2020-03 机构实践；A 股 T+1 可用数量规则多源一致 2026-03~08）"
+  adjudicator: st-c8-adjudicate-20261014（AI 代裁，Owner 2026-10-14 全批令触发；保留域项仅呈报不代裁，署名依宪法 §5.3）
+  superseded_by: null
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  approved_paths: []
+  related_rulings:
+  - 裁定#374
+  - 裁定#505
+- ruling_id: 裁定#526
+  date: "2026-10-14"
+  title: 桩实现族逐项处置裁定——窄补丁补实现/零消费墓碑/双真源修声明/同病灶议题收敛；量化红线幂等项升 Owner
+  status: active
+  session: st-c8-adjudicate-20261014
+  summary: "管桩实现族（A 族 13+1 项：声明已实现实为 pass 桩/存根/窄实现 vs 宽测试契约）。第一性原理：行业共识概念（访问控制/健康聚合/审计/退避/FSM 闸）的桩=实现级待优化（轨 A），禁概念级判死；自研非共识才轨 B。逐项：①补实现（窄补丁、规格已在册）：#ARCH-071 MemoryLock TTL 强释、#ARCH-081 FeedbackLoopScheduler 指数退避、#ARCH-076 behavioral_auditor 五子命令（薄 CLI 分派）、#ARCH-353 因子阶段闸（FSM=retired 回炉照常注册+三重门禁缺省 fail-open，收紧需灰度）、#ARCH-090 MCPError error_code 透出。②双真源修声明（蓝图声明已实现但实为桩——改声明或补实现二选一，禁并存）：#ARCH-073 ExternalToolCallAuditor（audit_trail 蓝图 §9）、#ARCH-074 AggregateHealth（与 services_registry 健康探测同域，先查重叠再定补/并，挂 #ARCH-352 观测面族）。③零消费验证后墓碑（G0-2：零触发零消费 AND 无价值主张 AND 无重启条件）：#ARCH-036（30 个 access_control ghost stub 文件）+ #ARCH-075（16 个 pending 模块）+ #ARCH-083（11 模块 125 项窄实现 vs 宽测试）同病灶合并处置——逐文件 E1 消费方扫描（地图 trigger_facts/consumers 通道+全仓 grep），有消费者补实现、零消费者走 deprecated 墓碑+30 天复活窗，12 个失配 TDD 测试随修。④同病灶议题收敛（G1）：#ARCH-079 与 #ARCH-111 同为 gov_drift.drift_detector.trigger_recovery 存根（return True）——合并为一条，补实现（drift 自愈链关键环，恢复编排契约在册）。⑤升级 Owner：#ARCH-TRADING-IDEMPOTENCY-001（订单幂等 broker ACK 持久化=实盘安全红线，碰生产流转）。\n执行纪律：每项落地前 E1 消费方实测留痕；墓碑件带回滚命令入册；复活窗内被引用自动触发复活评估（G4-1）。"
+  category: 治本
+  evidence: "E1 实测（议题册 summary 逐条；桩/存根识别关键字扫描）+ E2 先例（宪法 §4 内收四判据；裁定#373 主题七终裁两轨制先例；G4-1 墓碑制）+ E3 外部（桩处置业界实践：fail-fast/deprecation warning 路线——多源线索级，本项目取\"窄补丁补共识概念+墓碑处置零消费自研件\"混合路线）"
+  adjudicator: st-c8-adjudicate-20261014（AI 代裁；幂等项呈 Owner 不代裁）
+  superseded_by: null
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  approved_paths: []
+  related_rulings:
+  - 裁定#525
+- ruling_id: 裁定#527
+  date: "2026-10-14"
+  title: 测试隔离族治本裁定——conftest 级 tmp 隔离+tracked 区禁写门禁化（G3-4 流程治本），契约分歧以生产为准逐项修
+  status: active
+  session: st-c8-adjudicate-20261014
+  summary: "管测试隔离族（B 族 11 项）。病根：全量 pytest 改写宿主仓真实文件并混入 git index（#ARCH-072）+ tracked 区并发写入（#ARCH-084，GATE-TRACKED-DRIFT 实证）+ auto_telemetry 时序竞态（#ARCH-112）+ telemetry_facade 依赖治理域修复（#ARCH-113）。\n裁定一（治本形态=门禁化，G3-4）：根因在纪律/流程，治本不是逐测试修而是把\"测试禁写 tracked 区\"变成机器判据——①conftest 顶层 fixture 强制 tmp_path/monkeypatch 注入（新测试无隔离样板不merge）；②GATE-TRACKED-DRIFT 门禁扩展为测试侧探针（运行期快照比对）；③CI 跑 pytest 用 --basetemp 指向 tmp（禁落仓库）。\n裁定二（契约分歧以生产为准）：#ARCH-082 SagaCompensator 测试 list[str] 逆序 vs 生产 SagaContext——以生产状态机为准修测试（消费者是生产链，禁为迁就测试改生产契约）。\n裁定三（随退役）：#ARCH-110 测试锚定已退役 MOD-INF-023 API 面——随该模块超集退役一并 retire（轨道 A，墓碑）。\n裁定四（观测面补）：#ARCH-325 工作区清退无观测面（git status clean/worktree_ops_log 零条目=无声还原）——补清退审计事件，与 #ARCH-319 同族（在途工作被批量改写吞掉）合并施工。\n#ARCH-341/342/346 三项虽现于本族扫描，实为资金实盘族生产洞，归裁定#525 呈报，不重复裁。"
+  category: 治本
+  evidence: "E1 实测（议题册 summary；GATE-TRACKED-DRIFT 实证记录）+ E2 先例（宪法 G3-4 流程治本判据；#ARCH-084 门禁已存在待扩展）+ E3 外部（pytest 隔离业界实践：tmp_path/monkeypatch/chroot 级隔离——多源一致，语境适配=Windows+共享主工作区多会话并发，隔离必须含 git index 面）"
+  adjudicator: st-c8-adjudicate-20261014（AI 代裁）
+  superseded_by: null
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  approved_paths: []
+  related_rulings:
+  - 裁定#525
+- ruling_id: 裁定#528
+  date: "2026-10-14"
+  title: 治理工具族裁定——机械修/门禁化治本/安全系列标准协议优先三轨；AI 治理安全族按 OWASP Agentic Top 10 对齐预注册
+  status: active
+  session: st-c8-adjudicate-20261014
+  summary: "管治理工具族（C 族约 25 项：门禁误报/提交链/worktree/工具链/安全系列）。三轨分拣：\n轨一 机械修（真 bug，无设计分歧，直接修）：#ARCH-088 RB-SCEN-013 计数 53vs54 不自洽、#ARCH-089 SerializationError 重复定义遮蔽（后定义(Exception, ZA-SH-0035) 屏蔽前）、#ARCH-078 task_repo._make_sub_task 子卡 task_id 违 pattern、#ARCH-085 Stage4 wrapper 双绑 cls 13 处 6 文件、#ARCH-125 CancelRateGuard 日计数器纯内存（进程重启归零=1 万笔限频可被绕——升级为持久化，属安全相关优先）、#ARCH-109 gov_drift dash 路径硬编码、#ARCH-186 sklearn 隐式依赖显式化。\n轨二 门禁化治本（G3-4）：#ARCH-318 own_scope:false 全索引扫描门禁连坐无辜提交人——扩展 own-scope 机制覆盖结构扫描型门禁（裁定#279/#ARCH-316 只治内容扫描门的延续）；#ARCH-317 提交队列 serializer 单写者不变量无强制（lease TTL+双写者检测门禁化）；#ARCH-319 共享主区在途工作被批量改写吞掉+ #ARCH-329 enqueue blob 无 own-diff 过滤+ #ARCH-321 ALGO-FLOW-LINK 调不存在方法恒退磁盘——三案同根（own-diff/快照隔离缺失），收敛到一道\"blob  own-diff 过滤+ staged 读取存在性校验\"治本件；#ARCH-352 告警无推送通道（飞书 2026-09-15 裁撤后纯被动）与 #ARCH-074 健康聚合同域收敛（见 #526）。\n轨三 安全系列（G3-2 标准协议优先，禁最小自研面）：#ARCH-GIT-CVE-2026-44244/55607（git config 注入/worktree 沙箱逃逸）、#ARCH-GIT-TOCTOU（symlink/junction+TOCTOU）、#ARCH-GIT-DEOBFUSCATOR（反混淆归一化）、#ARCH-GIT-RISKCHAIN（session 级攻击链追踪）、#ARCH-GIT-VAR-COLLISION（PowerShell 自动变量碰撞）、#ARCH-AIGOV-002/003/008/010（secret 双层扫描/Library Hallucination/多层 Guardrails/OWASP Agentic Top 10）——按 OWASP Agentic Top 10 与既有 CVE 修复先例对齐，D4 预注册卡批次施工，禁各开各的。\n执行：轨一当轮修；轨二/三预注册卡在册才开工（G3-1 排队合法：有判据+有排期）。"
+  category: 治本
+  evidence: "E1 实测（议题册 summary 逐条；门禁机制现状）+ E2 先例（裁定#279/#ARCH-316 own-scope 延续；#ARCH-GATE-FP-001 门禁误报族先例）+ E3 外部（OWASP Agentic Top 10 安全框架；git CVE 修复上游补丁实践——机构/社区多源）"
+  adjudicator: st-c8-adjudicate-20261014（AI 代裁）
+  superseded_by: null
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  approved_paths: []
+  related_rulings:
+  - 裁定#526
+- ruling_id: 裁定#529
+  date: "2026-10-14"
+  title: 数据口径族裁定——RULE-SSOT 判方向+YAML 真源修 schema 契约；血缘/观测/文档缺口门禁化；裁定#9 维持 draft（条件即门柱）
+  status: active
+  session: st-c8-adjudicate-20261014
+  summary: "管数据口径族（D 族 9+ 项）+ 单项在册草案。\n裁定一（RULE-SSOT 方向）：#ARCH-077 task_events CHECK 约束与 Event Sourcing 事件类型契约正面冲突——规则数据真源在 YAML/DB 侧，判方向=修 CHECK 约束对齐代码契约（禁改代码迁就数据库约束），同 commit 原子。\n裁定二（门禁化缺口）：#ARCH-DATA-LINEAGE-001 数据血缘 runtime lineage_root 未强制（可追溯红线）——血缘字段+commit gate 双门禁化；#ARCH-208 boot watchdog 核销+冷启动 SLA breach——核销逻辑补实现（观测面，与 #ARCH-528 轨二同族施工）。\n裁定三（文档/数据资产）：#ARCH-300 63 号文批次 B/C 三表采集文档前置缺口——补文档（采集中，先立档再采）；#ARCH-314 数据工厂 dataflowgraph 业务阶段分层——D4 拟建立预注册卡（挂 battle_map 11 flow_stage 轴，地图已有定位禁另起炉灶）。\n裁定四（裁定#9 草案）：维持 draft，不激活。该草案（因子定义从代码硬编码迁移 YAML DSL，触发条件=因子数量>500）的激活条件本身即门柱——按 G0-8 无基线先立基线：迁移前须 E1 实测在册因子数并立测量点，未实测不激活；条件满足时走五门流水线正常立项（禁拿草案当既成事实）。\n附：CH 时区/ReplacingMergeTree FINAL 等既有口径坑继续有效（MEMORY.md 在册，不重裁）。"
+  category: 架构
+  evidence: "E1 实测（议题册 summary；RULE-SSOT 六分类判据）+ E2 先例（宪法 RULE-SSOT；裁定#9 原文条件；battle_map flow_stage 轴先例）+ E3 外部（Event Sourcing schema 契约实践——社区多源，语境适配=CH 单链+PG 治理账本双存储）"
+  adjudicator: st-c8-adjudicate-20261014（AI 代裁）
+  superseded_by: null
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  approved_paths: []
+  related_rulings:
+  - 裁定#9
+- ruling_id: 裁定#530
+  date: "2026-10-14"
+  title: 接管台账 215 open 条目分诊裁定——66 死袋瞬态类周扫 requeue/210 零袋残留机械清/5 袋大户优先；健康度指标入季报
+  status: active
+  session: st-c8-adjudicate-20261014
+  summary: "D6 事故冲突族（AI 恢复动作自治）。实测：215 open 条目中 210 条 bags=0（纯 claim/心跳残留，机械清：gateway.release_files 精准释放+.runtime/sessions/<sid>/ 残留清理）；5 条袋大户（bags=38/17/8/2/1）；66 个唯一死袋 qid。\n裁定一（死袋分诊）：按死因三分类先例（提交队列瞬态环境失败一律退回 pending 绝不死信——裁定先例在案）机检 dead_reason：瞬态环境类（LOCK_TIMEOUT/句柄占用/index.lock/CAS 耗尽前的插队）直接 requeue（物品无辜）；物品性失败（门禁内容违规/快照路径非法）保留死信读因后修因再 requeue；逐袋内容级判据（禁按条数估）。\n裁定二（清残）：210 零袋残留按处方机械清（release_files+清会话目录），周扫批执行。\n裁定三（节奏）：宪法 §2.6\"当日四态分诊不隔夜\"在大数面前失守（215 累积）——改周扫批（D6 恢复动作批量属性），每次扫批产机生台账行；\"不隔夜\"降级为\"袋大户当日响应\"。\n裁定四（健康度）：接管台账 open 计数入季度 health 报告三指标之外的第四观测项（目标=周扫批后 <50）。"
+  category: 流程
+  evidence: "E1 实测（session_takeover_ledger.py --list 全量：215 条/210 零袋/66 死袋/5 大户分布）+ E2 先例（提交队列瞬态环境失败退回 pending 裁定；宪法 §2.6 四态分诊+内容级判据）"
+  adjudicator: st-c8-adjudicate-20261014（AI 代裁，D6 恢复动作）
+  superseded_by: null
+  affected_files:
+  - scripts/governance/session_takeover_ledger.py
+  approved_paths: []
+  related_rulings: []
+- ruling_id: 裁定#531
+  date: "2026-10-14"
+  title: 裁定 SOP 反向升级机制——Gate 2 增 E1.5 地图实测证据位；§4 八类路由挂案例库（先例回流形式化）；财经 SOP 缺口路由章
+  status: active
+  session: st-c8-adjudicate-20261014
+  summary: "Owner 2026-10-14 令：用本批 129 议题裁定经验反向升级裁定 SOP 与财经 SOP。三件（全部走既有资产的增量丰富区，净零新册）：\n裁定一（E1.5 地图实测入证据阶梯）：本批验证\"看地图裁定\"的机械化入口=纵向地图的 trigger_facts/consumers 字段（内收对审步 7 的\"零触发零消费\"证据位）+ 覆盖账本三红（孤儿/抄写/未挂病历）。Gate 2 证据阶梯增设 E1.5：地图实测（trigger_facts 按任务节拍折算期望次数判零触发——v1.1.0 补丁口径；consumers 全仓 grep+地图指针双证）。判据冲突时 E1（代码实测）与 E1.5（地图实测）口径互校后再裁。\n裁定二（案例库入 §4）：adjudication_routing_policy §4 处置路径库（增量丰富区）挂案例库条目格式：case_id/情境一句/判据链（G0-G4 命中编号）/外部基准（E3 含语境适配声明）/地图会诊结果/裁定号。本批 #525-#530 即首批案例。每大家族群裁必须产案例条目（防经验只活在对话里——Owner 原话\"吸收大量经验：遇到什么情况该怎么裁最优\"）。\n裁定三（财经 SOP 缺口路由章）：回测体系 SOP 总纲增\"缺口与路由\"章——本批实测三个覆盖缺口：①风控/KillSwitch/T+1 清算无 SOP 章节（现由 #525 呈报+HKMA 基准承接，回测 SOP 的模拟盘对账章节指向 56 号方案，实盘风控另册）；②数据断供/回补无 SOP 章节（现由 data_ops_sop 承接，本批 10-13/14 回补即按 D7 判）；③桩实现/测试隔离无 SOP 章节（归治理域 #526/#527）。路由章声明：财经场景遇无 SOP 覆盖时，按本册案例库+裁定 SOP 五门裁，禁临时起意。\n生效：与 ruling_registry 同 commit 原子；两册版本号小步升（政策月度合并窗纪律——本轮 Owner 直令凌驾，登记在案）。"
+  category: 流程
+  evidence: "E1 实测（129 议题全量分级+地图 census 三红/内收四判据实跑记录+215 接管分诊）+ E2 先例（adjudication_routing_policy §6 自迭代回路先例回流条款；vertical_map_mounting_policy §5 步 7 内收对审）+ E3 外部（HKMA 风控机构实践；A 股 T+1 规则；OWASP Agentic Top 10；pytest 隔离实践——均带语境适配声明于各族裁定 evidence）"
+  adjudicator: st-c8-adjudicate-20261014（AI 代裁，Owner 2026-10-14 直令触发；两册 patch 随本裁定同 commit）
+  superseded_by: null
+  affected_files:
+  - docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
+  - docs/01_policies_and_standards/sop/backtest_system_sop/README.md
+  approved_paths: []
+  related_rulings:
+  - 裁定#525
+  - 裁定#526
+  - 裁定#527
+  - 裁定#528
+  - 裁定#529
+  - 裁定#530

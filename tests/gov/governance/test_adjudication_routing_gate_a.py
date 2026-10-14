@@ -62,7 +62,8 @@ def test_gate_a_owner_reserved_boundary_present(policy_text: str) -> None:
 
 
 def test_policy_version_and_switch_record(policy_text: str) -> None:
-    """v2.2.0 版本位+切换记录行在册（净零声明+测试声明随行）。"""
-    assert 'version: "2.2.0"' in policy_text
+    """v2.2.1 版本位+切换记录行在册（净零声明+测试声明随行）。"""
+    assert 'version: "2.2.1"' in policy_text
     assert "2026-10-10 v2.2.0（Owner 直令，凌驾月度窗）：新增 §2.5 Gate A" in policy_text
+    assert "2026-10-14 v2.2.1（Owner 直令，凌驾月度窗；裁定#531 同 commit）" in policy_text
     assert "零新册零新 gate" in policy_text
