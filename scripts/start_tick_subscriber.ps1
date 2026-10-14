@@ -60,6 +60,29 @@ $GuardLog = Join-Path $TmpDir "tick_subscriber_guard.log"
 # Note: bridge mode also honors TICK_BRIDGE_ENV (sim|real, default sim) for the
 # sandbox bridge file partition (E:\qmt_bridge_sim vs E:\qmt_bridge).
 $TickSource = if ($env:TICK_SOURCE) { $env:TICK_SOURCE } else { "xtdata" }
+# 2026-10-14 zombie-replay fix: bridge mode tail-reads the sandbox ticks3.csv. When that file
+# does not exist (QMT sandbox strategy not running), the old code kept replaying a stale file
+# and refreshed ingest_ts only, so every "data is fresh" check passed on wall-clock while the
+# business timestamps were days old. Fall back to xtdata (miniQMT push subscription) when the
+# bridge source file is missing. Task Scheduler caches env vars, so do not trust $env alone.
+if ($TickSource -eq "bridge") {
+    $BridgeRoot = if ($TickBridgeEnv -eq "real") { "E:\qmt_bridge" } else { "E:\qmt_bridge_sim" }
+    $BridgeFile = Join-Path $BridgeRoot "ticks3.csv"
+    # Existence is NOT enough: a stale file is worse than a missing one, because the tail-read
+    # keeps replaying old rows with fresh ingest_ts (zombie replay). Require mtime < 24h.
+    $BridgeAlive = $false
+    if (Test-Path $BridgeFile) {
+        $BridgeAge = (Get-Date) - (Get-Item $BridgeFile).LastWriteTime
+        if ($BridgeAge.TotalHours -lt 24) {
+            $BridgeAlive = $true
+        } else {
+            Write-GuardLog "bridge file STALE ($BridgeFile, age $([int]$BridgeAge.TotalHours)h) -> fallback to xtdata"
+        }
+    } else {
+        Write-GuardLog "bridge file MISSING ($BridgeFile) -> fallback to xtdata"
+    }
+    if (-not $BridgeAlive) { $TickSource = "xtdata" }
+}
 $TickBridgeEnv = if ($env:TICK_BRIDGE_ENV) { $env:TICK_BRIDGE_ENV } else { "sim" }
 
 if (-not (Test-Path $TmpDir)) {
