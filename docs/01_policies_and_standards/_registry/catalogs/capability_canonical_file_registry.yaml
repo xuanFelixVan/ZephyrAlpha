@@ -38705,6 +38705,11 @@ creation_tokens:
   capability: condaxis_mining_workbooks
   created_by: st-condaxis-20261013
   merge_evaluation: "条件轴四域挖矿作业簿（30 件：formreg 8/sector 8/sentiment 7/capital 7），替代无（施工前问题定义矿藏册首建），内收 w5_1 不并（挖矿台账非规则数据；产出面施工时按域收敛）；三态裁定（施工/挂起/封矿）随册"
+- file: docs/_working/condaxis/sentiment/10_prereg_three_criteria.md
+  token: condaxis-sentiment-criteria-freeze-10-prereg-three-criteria-20261014
+  capability: condaxis_sentiment_criteria_freeze
+  created_by: st-condaxis-verify-20261014
+  merge_evaluation: "情绪线三判据预冻结册：全网多方取证推导阈值并冻结，消 Owner 门挂起"
 - file: docs/_working/condaxis/sentiment/1_L1_thermometer.md
   token: condaxis-mining-workbooks-1-l1-thermometer-20261013
   capability: condaxis_mining_workbooks
@@ -52438,6 +52443,11 @@ creation_tokens:
   token: rule-audit-campaign-w1-f-judgment-book-20260919
   capability: rule_audit_campaign
   created_by: st-maxexec-20260920
+- file: docs/_working/rule_library_survey/01_调查报告.md
+  token: rule-library-survey-01--20261014
+  capability: rule_library_survey
+  created_by: knowledge-organizer-survey
+  merge_evaluation: "规则文档图书馆化翻新调查报告：不新增平行登记资产，纯讨论稿供 Owner 拍板"
 - file: docs/_working/sector_line/MORNING_REPORT_st-secbuild_20260923.md
   note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
   token: secbuild-MORNING-REPORT-st-secbuild-20260923-20260923
@@ -67397,6 +67407,8 @@ creation_tokens:
   token: condaxis-sector-panel-sector-panel-20261014
   capability: condaxis_sector_panel
   created_by: st-condaxis-verify-20261014
+  map_mounts:
+  - TDMAP-001:TDM-E-L2-05
   merge_evaluation: "条件轴板块腿数据面板装配：由板块日K现算RRG象限众数，把板块腿覆盖从733日提到997日，零采购"
 - file: src/zephyr/signal_ashare/sector/sector_state_aggregator.py
   note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
