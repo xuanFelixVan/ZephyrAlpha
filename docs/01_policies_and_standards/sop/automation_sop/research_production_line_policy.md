@@ -3,7 +3,7 @@ doc_type: policy
 ttl: permanent
 title: 全自动研究生产线运营 SOP（九口出料·挖考判晋反馈闭环）
 status: active
-version: 1.3.0
+version: 1.4.0
 date: '2026-10-15'
 owner: ZephyrAlpha-Owner
 ---
@@ -52,7 +52,7 @@ owner: ZephyrAlpha-Owner
 > **v1.1.1 变更（E2E 实测修正，2026-10-14）**：数据绑定口径修正（528/531 卡用 lineage 字段）；empty 骨架卡现实（转正须具名子题卡，呈批件计入⑥席保底）；同族门柱多口径并存→呈批不擅挑；考工 panel 卡走 run_card API（CLI --target-csv 砍单列缺陷，修复前 panel 禁走 CLI）；裁定#518 定位=「先冻结后跑」方法先例非数值源；新增并发环境警戒（归档/清理必须先查 .ailocks）。
 > **v1.2.0 变更（2026-10-14 晚）**：新增⑪整装回测席（每夜一次，晨报直答「能不能赚钱/下浮率」）与整装→归因→施工→对照复测最高层闭环（§4）；考工 GPU 优先+安静窗纪律（§3⑦⑧）；班车时刻表（§3-B）与楼栋制进度图（§3-C）；§2 成绩册归档路径对齐（分数册新地址待 Owner 下发后全局替换）。
 > **v1.2.1 变更（2026-10-15）**：新增 §3-D 研究态排班表（现行，24 小时不停）与 §3-E 实盘态排班表（达标后切换）+切换闸门协议；机器层计划任务真相核实落册（2026-10-15 实测：NightMining/F06Grid 已 /enable 启用、TTLRejudgeDaily/C4Exam 就绪、reaper=运行时钩子非计划任务）。
-> **v1.3.0 变更（2026-10-15，TDM 挖矿并入令并入）**：车道台账/名册等战役资产已归档至 `docs/_archive/_working_20261014/nightmine_campaign/`（③席输入口路径同步）；产卡唯一出口=`scripts/backtest/generate_exam_card_skeleton.py` only-add 通道；念想引擎经 LSG qwen provider（**禁本地 Ollama 占 GPU**——GPU 纪律同理）；枯竭判据对齐 mining_sop **v1.9.1**（六向全查无新卡+无未挖长尾+挖后自审闸 §6，双噪音封矿）；现状锚定：186 节点全有卡 531 张、mined_out=0、六向在半山腰；边界=docs/04_research_records/ 基建中，挖矿产物任务期暂留 _working 面、落成后统一迁移，**禁两线同写一区**；挖矿不停，唯一叫停权=Owner。
+> **v1.3.0 变更（2026-10-15，TDM 挖矿并入令并入）**：车道台账/名册等战役资产已归档至 `docs/_archive/_working_20261014/nightmine_campaign/`（③席输入口路径同步）；产卡唯一出口=`scripts/backtest/generate_exam_card_skeleton.py` only-add 通道；念想引擎双轨=本地引擎走 GPU 机会档（登记+让路，§3-F）或 LSG qwen provider（GPU 纪律同理）；枯竭判据对齐 mining_sop **v1.9.1**（六向全查无新卡+无未挖长尾+挖后自审闸 §6，双噪音封矿）；现状锚定：186 节点全有卡 531 张、mined_out=0、六向在半山腰；边界=docs/04_research_records/ 基建中，挖矿产物任务期暂留 _working 面、落成后统一迁移，**禁两线同写一区**；挖矿不停，唯一叫停权=Owner。
 
 通用规则（适用于全部岗位）：开工冷启动三步（PATH 修 Python312→lock_files cleanup→process_reaper --status）；改前 claim 毕后 release；提交唯一正门 git_commit.py --enqueue；**完工自检两轮，连续两轮零问题该批产出才算交付**（第二轮才发现问题=第一轮漏检记缺陷行）；四件套=`docs/_working/automation_campaign/<岗>/`{instruction.md 恒定指令, scope.md 输入清单, checkpoint.md 游标, ledger.md 台账}；sid=`st-qoder-<岗>-<MMDD>-<NN>`。
 
@@ -80,7 +80,7 @@ owner: ZephyrAlpha-Owner
 - **目标**：六向候选持续产出且绝不重复挖。
 - **工作内容**：按车道对 186 节点六向挖（①上游②下游③算法④后端⑤呈现⑥数据），听⑨方向单调整重心。
 - **输入口**：`docs/_working/automation_campaign/dispatch/daily_dispatch.md`；`docs/_archive/_working_20261014/nightmine_campaign/01_mining_brief.md`（六向法）；同目录 `00_lane_roster.yaml`＋`L0d..L7_ledger.md`（已挖/mined_out，八本台账）；`docs/_working/automation_campaign/feedback/to_miners.md`。边界：04_research_records/ 基建中，产物暂留 _working 任务面，禁两线同写一区。
-- **输出口**：候选→`data/strategy_intake/lane_<x>_candidates.csv`；具名子题卡（含假设描述；裸骨架不可考不产）→一律经 `scripts/backtest/generate_exam_card_skeleton.py` only-add 通道进 `docs/03_modules/_domain_backtest/exam_cards/`；念想引擎经 LSG qwen provider（禁本地 Ollama 占 GPU）；台账行追加。
+- **输出口**：候选→`data/strategy_intake/lane_<x>_candidates.csv`；具名子题卡（含假设描述；裸骨架不可考不产）→一律经 `scripts/backtest/generate_exam_card_skeleton.py` only-add 通道进 `docs/03_modules/_domain_backtest/exam_cards/`；念想引擎双轨=本地引擎走 GPU 机会档（登记+让路，§3-F）或 LSG qwen provider；台账行追加。
 - **工作流程**：1 领车道 2 读台账排除已挖/mined_out 3 读方向单调重心 4 逐节点六向挖 5 候选入台账 6 empty 卡骨架（门柱 null，status=empty）7 台账追加 8 自检两轮（抽 3 条反向核对未挖过）。
 - **保底绩效**：每班≥5 新候选或≥10 张 empty 卡骨架；mined_out 名单核对率 100%。
 - **真源挂点**：mining_sop_policy（六向/防噪音四闸/封矿核验）。
@@ -257,3 +257,22 @@ lane_roster 7 车道+RX_A/RX_B 复挖道；某车道挖满（mined_out 申报+�
 - 切换闸门=**整装口径 Sharpe≥2 及格（可切模拟盘态）/≥4 优秀（可小资金实盘）**；
 - 须**连续 10 个交易日滚动达标**（防单夜运气）；⑩线长席晨报持续报「距闸门差多少」；
 - 触发=Owner 一句「切实盘排班」→ 未来 AI 读本节执行换挡：白天班车降速（只读研究+写单不跑算力）、交易保护区生效、runner 挂夜间。
+
+
+## 3-F GPU 三档制与任务登记册（2026-10-15，Owner 定调：CPU 满载 GPU 闲置，机会档吃空闲）
+
+| 档 | 谁在用 | 规矩 |
+|---|---|---|
+| 独占窗 | F06 网格/整装大跑/其他大件 | 跑前 `gpu_watchman.py acquire <task> --exclusive`，跑完 release；独占期间机会档必须让路 |
+| 机会档 | 点子生成/小规模 rank-IC 等小件 | 空闲判据=空闲显存≥8GB 且 利用率<10% 且 登记册无独占任务；忙即让路 checkpoint（生成任务单条粒度，代价≈0） |
+| 禁入 | 无登记裸占 | 任何 GPU 使用先登记后使用；违规=⑩线长席处置 |
+
+基建：`scripts/gpu/gpu_watchman.py`（detect/acquire/release/status，登记册=`.runtime/gpu_registry/registry.jsonl`）。历史包袱修正：Ollama 非禁物，禁的是**无让路能力**——引擎已改 keep_alive=0+接看门人。
+
+## 3-G 正交挖矿制（裁定#535 同源，2026-10-15）
+
+**病根**：15 员池实际仅 4.4 个独立信号（FACT×5 corr=1.000 拷贝、RSRS×2 变体 0.97、2 员纯买入持有）——合成无分散增益，HOLDOUT 退化为买入持有。
+**新目标**：挖矿产出按"与现有独立信号的正交性"计量，不按数量。三件套：
+1. **正交准入闸**：新候选入台账前对独立信号库做 spearman 预检，`|corr|≤0.3` 才收（工具=scripts/backtest/fexam/signal_orthogonality.py gate 子命令）；不过闸记"重复"，喂 mined_out 判据。
+2. **独立信号清单**：⑨成绩官每日维护（pool-report 子命令产出相关矩阵+参与率），存 `docs/_working/automation_campaign/pulse/independent_signals.md`——③④席与点子引擎 prompt 的必读"占领区摘要"。
+3. **正交方向单**：⑨除 fail 分诊外每日给出空白轴地图（波动率/流动性/资金面/另类数据等未被占轴），③④优先去无人占的轴挖。

@@ -61,3 +61,7 @@ date: 2026-09-24
 | D21 | TDM 挖矿并入令并入 SOP v1.3.0（Owner 2026-10-15 交接书）：战役资产归档路径对齐（_archive/_working_20261014/nightmine_campaign，L0d~L7 八台账）、产卡唯一出口=generate_exam_card_skeleton.py only-add、念想引擎走 LSG qwen 禁 Ollama 占 GPU、枯竭判据对齐 mining_sop v1.9.1（交接书 v1.7.0 已过期一并修正）、mined_out=0 半山腰现状、04_research_records 基建期禁两线同写一区、唯一叫停权=Owner |
 
 - 2026-10-15 v9 v1.3.0：TDM 挖矿并入令（D21）
+
+| D22 | v1.4.0：Owner 定调 CPU 满载 GPU 闲置→GPU 三档制（独占窗/机会档/禁入+登记册 gpu_watchman.py）；正交挖矿制（4.4 独立信号病根→正交准入闸|corr|≤0.3+独立信号清单+正交方向单）；点子引擎双轨=本地机会档或 LSG qwen；三施工车道并发（GPU看门人/正交闸/lane_b改造） |
+
+- 2026-10-15 v10 v1.4.0：GPU 三档制+正交挖矿制（D22）
