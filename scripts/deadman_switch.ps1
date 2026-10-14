@@ -12,8 +12,8 @@
 # -> this script (one-shot: read heartbeats -> alert if stale -> exit, no while-true)
 #
 # Independence principle (first-principles, #ARCH-BOOT-002 E):
-# This monitor is NOT one of the 3 monitored services. It only READS heartbeat files
-# written by others. If all 3 services die, this task still fires (separate Task Scheduler
+# This monitor is NOT one of the 4 monitored services. It only READS heartbeat files
+# written by others. If all 4 services die, this task still fires (separate Task Scheduler
 # task) and alerts. Closes the "total layer failure, nobody knows" loop (08-06/08-07 outage:
 # 2-day stall discovered by a human, not the system).
 #
@@ -59,10 +59,13 @@ $StaleMin = 10
 if ($env:DEADMAN_STALE_MIN -match '^\d+$') { $StaleMin = [int]$env:DEADMAN_STALE_MIN }
 
 # Heartbeat files to monitor. Extend when adding new permanent services.
+# 2026-10-14 ruling #524: dashboard_api guard joined the permanent set (API boot-auto-start
+# resident per ruling #523; guard death = total service loss, must alert like the other three).
 $Heartbeats = @(
     @{ Service = "scheduler";       File = Join-Path $TmpDir "scheduler.heartbeat" },
     @{ Service = "tick_subscriber"; File = Join-Path $TmpDir "tick_subscriber.heartbeat" },
-    @{ Service = "ch_health_probe"; File = Join-Path $TmpDir "ch_health_probe.heartbeat" }
+    @{ Service = "ch_health_probe"; File = Join-Path $TmpDir "ch_health_probe.heartbeat" },
+    @{ Service = "dashboard_api";   File = Join-Path $TmpDir "dashboard_api.heartbeat" }
 )
 
 # ============== Logging ==============

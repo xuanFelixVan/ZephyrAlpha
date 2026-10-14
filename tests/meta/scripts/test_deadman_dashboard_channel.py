@@ -39,7 +39,12 @@ def _seed_heartbeats(tmp_path: Path, dash_content: str | None) -> None:
     tmpdir = tmp_path / "tmp"
     tmpdir.mkdir(exist_ok=True)
     now = datetime.now(timezone.utc).isoformat()
-    for name in ("scheduler.heartbeat", "tick_subscriber.heartbeat", "ch_health_probe.heartbeat"):
+    for name in (
+        "scheduler.heartbeat",
+        "tick_subscriber.heartbeat",
+        "ch_health_probe.heartbeat",
+        "dashboard_api.heartbeat",
+    ):
         (tmpdir / name).write_text(f"{now}|{os.getpid()}|{os.getpid()}\n", encoding="utf-8")
     biz = json.dumps({"is_trading_day": False, "ts": now})
     (tmpdir / "tick_subscriber_biz.heartbeat").write_text(biz, encoding="utf-8")

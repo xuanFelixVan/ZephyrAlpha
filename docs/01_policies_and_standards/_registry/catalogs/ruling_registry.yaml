@@ -4826,3 +4826,39 @@ entries:
   related_rulings:
   - 裁定#518
   - 裁定#519
+- ruling_id: 裁定#523
+  date: "2026-10-14"
+  title: 仪表盘 API 生命周期由壳托管升级为守卫托管（开机自启不依赖壳）；桌面壳 .lnk 自启维持裁定#374 方案 B 不变；docs_server 维持壳托管
+  status: active
+  session: st-c8-ruling-20261014
+  summary: "背景：裁定#374（2026-09-20 主题五自启=方案 B 壳托管）下 api_server 仅桌面壳打开时由 main.js ensureApi spawn（壳开=起、壳关=停）。Owner 2026-10-14 直令：API 开机即起、不依赖壳（无壳时面板/浏览器可用、壳开即秒载）。\n裁定一（G0 增量判立）：API 生命周期托管形态 壳托管→守卫托管。Δ=开机后无壳场景面板可用性（速度轴：壳开→API 就绪从约 20s spawn 等待降为 0s 复用；治理轴：API 死亡从无人知变为守卫 5s 自愈+双心跳可观测）。验收=ZephyrAlpha_DashboardAPI 任务 Running+8890 LISTENING+双心跳节拍，已实测兑现。\n裁定二（G1 内收）：不新造自启机制——并入既有 watchdog 四服务模板（#ARCH-BOOT-001/002：while-true/单实例锁/15s 心跳/僵尸接管/孤儿清理/finally-kill/防抖重启），任务计划程序唯一自启真源（C3）不变。\n裁定三（.lnk 去留，G4-4 互斥机检）：保留 Startup 文件夹 ZephyrAlpha Dashboard.lnk。E1 实证其目标=桌面壳 electron.exe，功能=logon 自动开壳，系裁定#374 方案 B「开机自启 Electron 壳」的既有实现（09-20 建、#374 追认）；与新 API 守卫职责不重叠（壳管壳、守卫管 API，main.js:144-146 探活复用不双起）。删除=回退已裁定行为，违可逆性不对称公理；保留=零成本共存。Coexistence 边界：壳自启形态归 #374 不变；API 生命周期归本裁定；docs_server 维持壳托管（#374 原文不动）。\n与 #374 关系：仅变更其「api 生命周期由壳内 ensureApi/ensureDocs 托管」子句的 api 部分（壳→守卫），docs 部分与壳自启部分不变——同域对象托管形态升级，非推翻。\n施工已落地：commit f292e33766（守卫脚本+任务注册+测试+架构文档+面板服务注册六件；52 测试绿；稳态实测 guard 30492+api 33728+8890 监听+health ok）。"
+  category: 架构
+  evidence: "E1 实测（.lnk 目标 electron.exe 字节级解析；main.js:144-146 ensureApi 复用分支；守卫稳态进程链/双心跳 15s+60s 节拍/health 端点 ok；首例瞬死后 5min 任务重触发自愈闭环）+ E2 先例（裁定#374 方案 B；boot_autostart_architecture.md C3 唯一自启真源；#ARCH-BOOT-001/002 守卫模板）"
+  adjudicator: st-c8-ruling-20261014（AI 代裁，Owner 2026-10-14 直令触发；署名依宪法 §5.3/L1 自治分级）
+  superseded_by: null
+  affected_files:
+  - scripts/start_dashboard_api.ps1
+  - scripts/tasks/register/register_guard_tasks.ps1
+  - docs/03_modules/_domain_data/boot_autostart_architecture.md
+  - src/zephyr/frontend/dashboard/services_registry.py
+  - tests/meta/scripts/test_guard_invariants.py
+  approved_paths: []
+  related_rulings:
+  - 裁定#374
+- ruling_id: 裁定#524
+  date: "2026-10-14"
+  title: 死信开关监控组新增 dashboard_api 守卫心跳（API 常驻化后的守卫死亡监控）；端口探测通道 manual 语义不变
+  status: active
+  session: st-c8-ruling-20261014
+  summary: "背景：裁定#523 后 api_server 为开机自启常驻服务；死信开关原 dashboard 通道（端口探测+dashboard.heartbeat，manual 语义：未监听=静默）无法感知「守卫死亡→API 整体下线」——守卫死则任务 5 分钟重触发前服务全无而端口通道静默=漏报（与 08-06/08-07 全层失效无人知同型的监控盲区）。\n裁定一（G1 内收）：不新造监控通道——按 deadman_switch.ps1 $Heartbeats 数组头注「Extend when adding new permanent services」的既定扩展路径，新增 dashboard_api 心跳项，与三服务同口径（stale>10min 告警，DEADMAN_STALE_MIN 阈值零修改，G4-5 禁挪门柱）。\n裁定二（端口通道去留）：语义不动。保留「未监听=静默」分支——壳托管残留形态与演示态下不假警；与新心跳 watch 构成纵深（guard 活/API 遥测活/socket 接受三层），非重复检测。\n施工：deadman_switch.ps1 $Heartbeats+1（头注 3→4 服务同步）；测试沙盒 seed 补第四路心跳；架构文档 §3 layer4 清单同步。"
+  category: 治理
+  evidence: "E1 实测（deadman_switch.ps1:61-65 数组及头注扩展路径明文；dashboard_api.heartbeat 实测 15s 节拍卖写；测试沙盒机制）+ E2 先例（#ARCH-BOOT-002 E 死信独立性设计；三服务同口径先例；裁定#523 常驻化前提）"
+  adjudicator: st-c8-ruling-20261014（AI 代裁；署名依宪法 §5.3）
+  superseded_by: null
+  affected_files:
+  - scripts/deadman_switch.ps1
+  - tests/meta/scripts/test_deadman_dashboard_channel.py
+  - docs/03_modules/_domain_data/boot_autostart_architecture.md
+  approved_paths: []
+  related_rulings:
+  - 裁定#523

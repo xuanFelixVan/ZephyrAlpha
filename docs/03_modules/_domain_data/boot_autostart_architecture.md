@@ -88,7 +88,7 @@ Four-layer defense (fix #ARCH-BOOT-001, verified 2026-08-07):
    business python from the dead guard (invariant: no guard => no business process). `finally`
    block kills child on guard exit.
 4. **Heartbeat health layer** (Phase 2 治本) — guard writes `tmp/{scheduler,tick_subscriber,
-   ch_health_probe}.heartbeat` every 15s (format `ISO8601|guard_pid|child_pid`). New guard
+   ch_health_probe,dashboard_api}.heartbeat` every 15s (format `ISO8601|guard_pid|child_pid`). New guard
    takeover logic: PID alive **and** heartbeat <5min fresh → "already running, exit"; PID alive
    but heartbeat stale/missing → zombie → `Stop-Process` zombie guard + clean lock/heartbeat +
    fall through to orphan cleanup. This is the recovery path for zombie guards (layer 2 failure).
