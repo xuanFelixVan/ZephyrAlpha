@@ -509,3 +509,59 @@ docs/_working/maint7_campaign/lanes/lane_b_closeout.md`——被同袋自带的�
 `apply_depgraph --transition-build-status` **未带 `ZEPHYR_SKIP_REGENERATE=1`** 所触发的后台重生有关
 （此后四跳均带该旗，见 §13/本报告）；1 支 config、1 支 tests/ai/library 早于/无关本班动作。
 与令卡数字差 323 枚，请维护线核对计数口径（是否只数工棚登记面）。本班对主区任一脏件**未做复位/未代修**。
+
+## §15 收班终账与交接卡（全线收口令 10-14 午：本班可闭项已闭，余项各带前提与一条命令）
+
+### 15.1 本班终态（只认 git，不认自报）
+
+| 项 | 终态 | 落地笔/证据 |
+|---|---|---|
+| ① 读侧存在性标注 | dev 在 | dd5eb99（前班）＋测试袋 44ce5df 系（本班） |
+| K8 生成器两遍法＋**本班 priority 认错人修** | dev 在 | 8e4c54e＋本班 -0002 同批（30 支测试；13 行不符→0） |
+| K9 处置态保护 | dev 在 | 4c41395 |
+| ③④ 散文轴 join | dev 在 | 1da5cc6（代投前班 -0012，死因对症后重建基底） |
+| K10 --feeds 两态披露 | dev 在 | f3e2cc3＋测试随测试袋 |
+| 班账 §8–§14 | dev 在 | 4dafa66／2722ddf（代投前班三袋＋本班两节） |
+| 账本一致性修复 42 行 | PG 在 | lib_events.detail batch=libstale2-20261014-k9wash-restore |
+| **② 影子门 LIBRARY-TRI-CONSISTENCY** | **未落** | 拦在他班前提，见 15.2 |
+| env 钮 | 已销项 | §14（0021=dead、钮全史 0 命中、三行对照三态读数在册） |
+| ④ 幽灵撤账 | 未开，等 Owner | §13.3 |
+
+### 15.2 ②影子门：最后一跳不在本线，处方一条（禁硬闯，故不执行）
+
+六跳死因链全部已对症并逐跳实测复算（§13/§14/各袋 message）。现拦点＝
+MAP-ALIGNMENT/DEV-DELIVERY-MAP **D11-D06**：图11 三处证据锚仍写
+`docs/_working/2026-09-11-commit-queue-dead-zero-closure.md`，而该件 10-14 已被拆写袋（5f8d11f518）
+搬入 `docs/_working/archive/2026-09/c_class_scattered/` 同名件；实测 12:13 复算
+`validate_dev_delivery_map.py` 仍 2 个结构违规，且 `generate_dev_delivery_map.py` 重跑**不吃它**
+（锚是该册内手写条目，非派生）。凡触碰 `src/zephyr/gov_enforcement/commit_gates/**.py` 或
+`_registry/catalogs/*.yaml` 的袋都会被连坐（本班一夜被它连死 1 袋）。
+**给下一班的命令（归属＝图11 册的主线，三处路径同步即可）**：
+`grep -n 2026-09-11-commit-queue-dead-zero-closure config/dev_delivery_map.yaml` 取行位（现 ≈1817/1826/1831），
+把三处旧路径改为归档位，再 `python scripts/governance/d5_architecture/validators/validate_dev_delivery_map.py`
+到 `PASSED`，随后按三投序走：
+①9 件袋（门本体＋`commit_gates/__init__.py`＋总册 192＋generator_registry＋两册机生追平＋
+生成器 priority 修法与其测试＋翻译册本班单条注入）——**前置：生产者车道的 in_process 名册须为 107**
+（落地链装载面读生产者车道名册，实测三方 主区107/dev107/本道108；§13/§14）；
+②名册行袋（107→108，本门行 files_trigger/priority=142）；③②测试袋（**唯一未入 blob 的改动**＝
+第 20 行按 §13.1-1 改为 `import zephyr.gov_enforcement.commit_gates.library.library_tri_consistency_gate as gate_mod  # noqa: E402`，
+其余字节＝袋 q-…-0007 内 blob 238c540e…，13 passed 已在本道实测）。
+
+### 15.3 等 Owner 批（不代签）
+
+④ 幽灵撤账：分族自尺复算 (a)4,088／(c)576／(b)114＋避让 5（前班 §4 独立复现一致）。
+不开批量的两条硬据＝图书馆面 Owner 授权真源经 裁定#492 勘误后只有 #398-七＋#399-四（内容=宪法挂图一行）；
+根宪法 §5 墓碑制的"引用即复活评估"腿在 lib_assets **无实现**（grep 只命中写侧 UPDATE 与 lookup 渲染侧）。
+批一件即走 `Librarian.act('delete', authority=<批件号>)` 单口，先快照后读回，抽查可回退。
+
+### 15.4 收班态与残留（照收班序列执行）
+
+- claims：本班全部 release（无在飞袋；终态 5 done／6 dead，pending=0）；
+- 守护/会话：心跳按 PID 精确停、SessionRegistry 注销；reaper keep 行本班未增（核 `process_reaper_keep.txt` 无本道条目）；
+- 车道：本班道 `st-libstale2-20261014` 归档（②三投件面恢复点＝队列 blobs：-0010 九件、-0009/-0007 测试件，
+  加 15.2 的那一行改动）；前班道 `st-libstale-20261013` 与其 `.aidrafts` 影子面**未替其归档**
+  （其 claims/守护不属本班 PID，按禁硬闯留命令：`python scripts/session_worktree.py archive --execute`
+  两道名一并交，先核其袋四态与未入库件）；
+- 主区脏件口径更正（对上一版报告）：12:13 实测跟踪面 **470**（令卡 147/153 差 323，请维护线核计数口径）；
+  本班对主区件未复位未代修；本班一次误清（整批 checkout 未列归属白名单）丢过 4 支未入库件，
+  恢复点与各件现况逐条见 §14 末与 15.2。
