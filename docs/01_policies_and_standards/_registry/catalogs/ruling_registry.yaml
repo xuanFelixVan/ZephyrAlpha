@@ -4716,6 +4716,87 @@ entries:
   - 裁定#230
   - 裁定#304
   - 裁定#400
+- ruling_id: 裁定#517
+  date: "2026-10-14"
+  title: 裁定#517 VM 月频快照落地＝型A（VM 定义面＋客户机配置面）；对 2026-10-04 ch_vm_backup 全量镜像退役令的范围修订
+  status: active
+  session: st-bakdr-20261013
+  summary: 依据＝统筹令 2026-10-13 22:5x 备份线夜班卡 P1「VM 月频快照落地（Owner 已裁『月频快照』）」。开工实测把令面前提交改判并如实报窗：boot.vhdx FileSize=4,194,304 B 为空盘（guest 内 sda 无分区无文件系统），OS 与 ClickHouse 程序及数据同在 data.vhdx 的 sdb2 挂 /（system.disks.default=/var/lib/clickhouse/）⇒ 本机无独立『系统盘』可拷贝对象，『不含数据盘的盘级月镜像』物理不存在，照字面执行只会拍回 4 MiB 空盘＝假绿。故本裁定把落地内容定为型A＝VM 定义面（Hyper-V 全字段＋vmcx/vmgs 原字节）＋客户机配置面（/etc 全量 tar＋逐件 sha256 清单＋版本/盘位台账），存储 G:/backup/ch_vm_config，保留线 keep>=2（硬下限），触发腿＝每月 5 日 10:00 OS 计划任务 one-shot（跑完即退；startup_vocabulary v1.1.0 的 scheduled_task 合法位，边界 L27；进程内 Timer 仍禁）。落地判据＝首拍＋回滚双证：证1 快照内逐件 sha256 与客户机同刻现读对拍（0 命中即红，不许读成『查无』）；证2 用快照 spec 在 Hyper-V 重建隔离临时机（0 磁盘附件、不开机）四字段对拍后 Remove-VM 读回复核。型B（guest 内 OS+程序文件级镜像，实测 OS 面 du 约 13 GiB）与型C（盘级全镜像 563 GiB/份）＝仍未开选项，待 Owner 另批；数据面仍由每日 CH 备份链（market.zip 299GB＋inc.zip 83GB）与 db_dumps 覆盖。登记语义而非授权语义：approved_paths 留空；M-3 补签先例＝裁定#515 同写法。
+  category: 灾备
+  evidence: docs/_working/backfix_campaign/00_ledger.md「备份线夜班班账·袋二」＋logs/ch_vm_config_snapshot_20261014_0023*.json（capture=landed_dual_proof ∧ verify_only=verify_only_landed）＋G:/backup/ch_vm_config/20261014_002311/
+  adjudicator: Owner（2026-10-13 晚统筹令卡「月频快照」，非本班会话亲笔数值）；登记执行=st-bakdr-20261013（备份线夜班总包代登记，AI 代登记署名依根宪法 §5.3；补签先例＝裁定#515）
+  superseded_by: ""
+  affected_files:
+  - scripts/backup/ch_vm_config_snapshot.py
+  - scripts/tasks/register/register_ch_vm_config_snapshot_task.ps1
+  - docs/_working/backfix_campaign/dr_drill_plan.md
+  approved_paths: []
+  related_rulings: []
+- ruling_id: 裁定#518
+  date: "2026-10-14"
+  title: 态层新增『形态向』职责（裁定#229/#230 扩界：形态向新增、风险分档并行保留；D 族接管与锚语义同批裁准）
+  status: active
+  summary: 大盘两态形态识别层（{单边↑/单边↓/横向/数据不可信}×灰度∈[0,1]＋拐点信号三元组：位置/方向/严重度）立为态层新职责轴，与在册#229 风险分档职责并行不互斥（7 维概率风险分档线照旧在产）。F8 接管声明同批生效：D 族冻结稿 §3.1 r1/r2 不路由（41.9%）与 §3.3 两源分歧（21.09%）由两态层『全标的覆盖＋唯一宏观轴』方案接管，冻结稿改挂两态层。方向判别归因子层边界（#230）在形态向线内继续有效（形态识别≠方向预测）。锚语义裁定：叙事年表尺为准（Owner 同批批语；平底三重底 argmin 尺敏感实证在册 03_p3_results §1，两态锚点打靶判 PASS 4/4 全中 0 月差）。条件包格子：X2=B『数据不可信』态不入格只标注（有效 15 格≤18 上限零改动）。解锁面：两态层 TDM 挂接/消费面接线/state_vocabulary_registry 词表登记/condition_package 大盘腿由 shadow 转正式切换。
+  category: 治理
+  evidence: docs/_working/condaxis/formreg/8_prereg_targeting.md（轮一 FAIL 存档＋轮二双尺并列）；docs/_working/condaxis/03_p3_results.md §1；docs/_working/2026-10-12-d-family-qualification-freeze-draft.md
+  adjudicator: Owner（2026-10-14 经统筹转批：F1=A 立新裁定/锚语义=叙事年表尺）；登记执行=st-condaxis-20261013
+  superseded_by: ""
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/condaxis/01_ruling_package.md
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: 裁定#229/#230（扩界对象）、裁定#517、裁定#304（锚定重排先例沿用）
+- ruling_id: 裁定#519
+  date: "2026-10-14"
+  title: 温度计与档位计分层并存（追认 2026-09-22 情绪线深夜自裁语义；#400 撞号修正补登）
+  status: active
+  summary: "市场级连续情绪读数（温度计：emotion_index 六成分 0-1 灰度族）与离散档位判定（档位计：TDM-E-L1-S5 五档／官方情绪六段相位）为两层不同对象，分层并存互映射，禁合并口径；D20 四层温度计架构（月 7 态/周六段/日 L1-S5 三支独立判定＋跨层合成两规则）依此语义追认。事实依据：ruling_registry 真身#400=定桩战役纪要存真（:3082-3100 实读），『温度计≠档位计』语面原无在册裁定——2026-09-22 情绪线自裁与定桩战役撞号/漏登，两处转引自证循环已破（条件轴总包 P0② 核验，commit 175a6e54）。消费面解锁：Q10 温度计归一按 A 分层（S5 管档/emotion_index 管灰度，互映射）。编号说明：#517 占号被并发登记挤占（VM 快照裁定先入册），按编号不回收铁律顺延 #519。"
+  category: 治理
+  evidence: docs/_working/condaxis/00_inputs/2026-10-13-sentiment-output-contract-research.md 核验更正记录；docs/_working/condaxis/01_ruling_package.md 附录草案（署名照草案原文）
+  adjudicator: Owner（2026-10-14 经统筹转批：X1=A 补登）；登记执行=st-condaxis-20261013
+  superseded_by: ""
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/condaxis/01_ruling_package.md
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: 裁定#400（撞号修正对象，非语义替代）、裁定#518（同批 X1/F1 裁准）
+- ruling_id: 裁定#520
+  date: "2026-10-14"
+  title: 矿考三班 D10-甲批落地：三张 RRG 考试卡构造式改承在册 10/26 双 EMA 式；基准保持 000300；旧卡面零改动走 G4-5 版本卡
+  status: active
+  session: st-examchief-20261014
+  summary: Owner 经统筹转呈批文（2026-10-14 晨）D10 裁甲之册面补签，三条定形：①受影响三张卡（TDM-E-L2-02-1/calibration/02、TDM-E-L2-02-1/ablation/03、TDM-E-L2-05-2/ablation/02）的 RRG 构造式改承在册 `sector_rrg.compute_rrg_series`（RS=100×P_sector/P_bench、RS-Ratio=EMA(RS,10)/EMA(RS,26)×100、RS-Momentum=EMA(RS-Ratio,10)/EMA(RS-Ratio,26)×100，short=10/long=26 取该件 :47-48 缺省）与 classify_quadrant :153-157 的 100 中枢严格四分；②同令增补裁：基准保持卡面 000300（命题声明的输入面不随甲批文自动切换；该件 :120 docstring 的 880001.SH 只是函数缺省参数说明，传参保留）；③改口径不原地改——三张母卡零字节改动、不撤不并不重审，按 G4-5 另号起三张版本卡（02b/03b/02b），变更单引 D10 对照包作依据。母卡 ±5 带宽项随锚点废止（在册四分规则无带宽项，非放宽）；快慢序由被承接函数的入参序固定（对照包第三分叉由此消解）。线值与判据数值零自拟：mono_spearman_min 0.6／ic_mean_min 0.02／ic_ir_min 0.3／regime_same_sign／oos_same_sign／八格 buckets／窗口三值全部逐字沿用母卡（机械等值自证见 06 变更单 §2）。登记语义而非授权语义：approved_paths 留空，本裁定不构成任何受保护路径写授权；执行器三公共缺件（ic_ir_min 在 series 路恒不被评估／min_obs_per_bucket 零读取方／net_fee 节缺失致净费 NaN 且双臂侧当 0 用）随本批入册为在册事实，本裁定不修尺。
+  category: 治理
+  evidence: 依据面（逐处实查非凭记忆）：docs/_working/mineloop2_campaign/00_morning_pack.md §33.10（两式数学＋4 板块×497 日实测：卡面式 share std=0.0/种数=1、在册式 std=0.5344/种数=9、RS 相关 0.30-0.50、象限一致率 0.40-0.50）＋同册 §33.11（Owner 裁甲与前任建议并存在册）＋docs/_working/mineloop2_campaign/15_d10_two_formula_probe_receipt.yaml（回执，矿考二班袋 0050）＋docs/_working/examchief_campaign/06_d10jia_change_order.yaml（变更单：逐卡废止面/保留面/机械等值表）＋docs/_working/examchief_campaign/00_ledger.md §二（本班 00:19 复现腿，同尺同参，6 次 CH 只读，两子树与前任回执整体等值）。口径真源位 src/zephyr/signal_ashare/sector/sector_rrg.py:19-22/:47-48/:153-157/:165-197；基准传参位同件 :120。
+  adjudicator: Owner 经统筹转呈批文 2026-10-14 晨（D10 裁甲＋基准保持 000300 增补裁定）；登记执行=st-examchief-20261014（矿考三班，AI 代登记署名依根宪法 §5.3；内容系批文转录，判据数值与口径零改动；Owner 亲笔面以统筹令为唯一在途通道，本班未见谈话原文，故本条不含新数值）
+  superseded_by: ""
+  affected_files:
+  - docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__calibration__02b_rrg_quadrant_10_26_caliber.yaml
+  - docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__ablation__03b_quadrant_confirm_leg_10_26_caliber.yaml
+  - docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__ablation__02b_signal_response_trio_10_26_caliber.yaml
+  - docs/_working/examchief_campaign/06_d10jia_change_order.yaml
+  - docs/_working/examchief_campaign/00_ledger.md
+  approved_paths: []
+  related_rulings: []
+- ruling_id: 裁定#521
+  date: "2026-10-14"
+  title: 统筹裁定：接管台账 P-9 甲案落地——孤儿/注册表两轨复开一律经「同指纹不复开」判据（真新增仍开＝防吞）
+  status: active
+  session: st-maint7-20261014
+  summary: 裁定归属＝统筹令（2026-10-14 晨，四选项裁毕之②）：P-9 采「先乙后甲」——乙＝死信线既有车道退场通道执行（不需新码，归放量班面），甲＝维护七班落码。本条为甲案的判据补签：接管台账 open 条目的复开须过 `settled_same_face`——指纹＝五面（held/worktree dirty/staging/bags/heartbeat）并集的确定性 sha256，同指纹即蕴含零面差（两面并集相等⇔互不包含差集皆空），故不叠第二把尺；真新增文件（面差非空）一律照开＝防吞；resolved 件损坏或无 resources 字段判不出来时一律按未收口处理＝只缩不扩；判据点只钉在唯一消费口 _cmd_scan（注册表轨与孤儿轨共用），禁止两处实现漂移。阈值与线值零自拟：本判据不含任何数值门（无时限、无计数门、无比例门）。登记语义而非授权语义：approved_paths 留空，本裁定不构成任何受保护路径写授权。
+  category: 治理
+  evidence: 案卷面（维护七班车道B §五，实测非推断）：.runtime/takeover_ledger.jsonl open 193 行（唯一 sid 193）／resolved 529 件（唯一 sid 253）／**38 个 sid 同时挂 open 与 resolved/**；同指纹复开实例 st-backup-cold-20260924（10-04 与 10-06 两次 resolve 的资源面均为 {held:0,wt:1,staging:0,bags:0,hb:1}，10-08 又 open 且面逐字节同形）、st-acure-r1（10-07 两次 resolve，10-08 再 open 同面）。判据实现与判别力：scripts/governance/session_takeover_ledger.py 的 _face_sets/_resources_fingerprint/_resolved_fingerprints/settled_same_face ＋ _cmd_scan 单一消费口挂钩；测试 tests/gov/governance/test_session_takeover_ledger.py::TestP9ReopenGuard 6 支（含端到端「resolve 后再全量 scan 不得复开」）；两向突变各红（恒不挡→2 failed；恒挡→4 failed），复原后 6 passed。
+  adjudicator: chief-coordinator-st-20261013
+  superseded_by: null
+  affected_files:
+  - scripts/governance/session_takeover_ledger.py
+  - tests/gov/governance/test_session_takeover_ledger.py
+  - docs/_working/branch_zero_takeover_20261002/t1_takeover_infra.md
+  approved_paths: []
+  related_rulings:
+  - 裁定#515
 - ruling_id: 裁定#6
   date: "2026-06-20"
   title: 路径SSoT（路径真源铁律）
