@@ -4973,3 +4973,53 @@ entries:
   - 裁定#528
   - 裁定#529
   - 裁定#530
+- ruling_id: 裁定#533
+  date: "2026-10-14"
+  title: Owner 全批 #525 保留域十项+#525 条文勘误（11→10）；#ARCH-127 销账（已实现已验证）；其余九项执行队列与施工纪律
+  status: active
+  session: st-c8-exec-20261014
+  summary: "Owner 2026-10-14 21:00 对 #525 保留域清单全批（\"全部同意\"）。\n一、勘误（声明与实存不符自纠）：#525 条文写\"11 项\"，清单实列 10 个 ID（#ARCH-100/127/339/340/341/342/346/355/TRADING-IDEMPOTENCY-001/351）——多写一个数，勘误为 10 项；清单以 ID 枚举为准，计数以枚举为准。本条为登记笔误勘误，不改任何判据（G4-5）。\n二、#ARCH-127 销账：E1 审计证明实现已由 commit 2188763b71（st-fullscore-20260930）落地——清算链 sold/t_plus_1_rejected 分桶+三级可卖量探针链（available_qty→get_available_qty→get_holdings，真桥 get_available_qty 形态防静默降级）+部分锁定/全锁定两态告警分化；tests/risk/test_kill_switch_t1_bucket.py 7 passed（2026-10-14 复验）；议题 open→resolved（fix_phase 带 commit+复验+本批准）。\n三、执行队列（其余 9 项按 #525 方向排队）：窄修类=#ARCH-355（价格笼子传基准价）/ #ARCH-346（PIT embargo 缺省归零 fail-closed）/ #ARCH-340（K02 持久化+真路由）/ #ARCH-341（K08 report_gate 武装）；接线类=#ARCH-342（对账链接线）/ #ARCH-339（孤儿闸重分类）；实现类=#ARCH-TRADING-IDEMPOTENCY-001（broker ACK 持久化）；数据班车道=#ARCH-351（24 任务退路）；战役类=#ARCH-100（风控全链路，先立预注册卡）。\n四、施工纪律（本轮实证立）：每项 E1 先行——先查\"已实现未销账\"再动手（#ARCH-127 即此类：议题挂 open 但码面 09-30 已落地，无 E1 直接施工=重复施工）；窄修逐项 commit 带测试；战役类预注册卡在册才开工（G3-1）。"
+  category: 治理
+  evidence: "E1 实测（stop_loss.py T+1 分桶码面+7 测试绿；其余 9 项代码扫描实证仍开：如 #ARCH-355 qmt_file_bridge_broker check_price_cage 三参调用疮据仍在）+ E2 先例（#525 保留域门位与方向；销账范式=fix_phase 带 commit 的 resolved 先例 #ARCH-005/006）"
+  adjudicator: st-c8-exec-20261014（Owner 2026-10-14 21:00 全批执行；AI 代裁署名依宪法 §5.3）
+  superseded_by: null
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  approved_paths: []
+  related_rulings:
+  - 裁定#525
+- ruling_id: 裁定#532
+  date: "2026-10-14"
+  title: 情绪线三判据命题与阈值冻结（Owner 授权自裁：全网多方取证后取论证值，非自拟）——校准用 BSS≥0.05 且 ECE≤0.10；区分度沿用仓内在册族 |IC|≥0.02/|ICIR|≥0.3/分档单调|Spearman|≥0.6/OOS 同号；事件命中率点估计≥0.60 且 Wilson95% 下界>0.50
+  status: active
+  session: st-condaxis-verify-20261014
+  summary: 情绪线三判据（`sentiment/4_validation.md:14,55` 挂起、`01_ruling_package.md:45` 标"数值冻结★P2 呈批"）**裁定并冻结**，不再挂起。裁定授权=Owner 2026-10-14 令（判据阈值可通过 SOP 自裁，须全网取证后取多方论证值）。**数值零发明**——每条只做"选用文献/业界哪一档"的选择并写明来源；凡仓内已有在册门柱者**一律沿用**（同域判据族一致性）。三条判据：①**校准**＝Brier Skill Score **BSS ≥ 0.05**（基准＝样本实际 base rate climatology `BS_ref=p̄(1-p̄)`，**非** 0.25 恒定基准——多方文献一致警告：恒说 50% 得 0.25 仅在 base rate=50% 成立，若事件发生率仅 10% 则恒说 10% 得 0.09，不看 base rate 的 0.25 门槛会把无技巧误判为有技巧）＋可靠性分量 **ECE ≤ 0.10**，样本下限 120 观测；②**区分度（分档单调）**＝**沿用仓内在册门柱**：|IC|≥0.02（裁定#489③ 与 Grinold"边际"档一致）、|ICIR|≥0.3（裁定#489③ 同族）、分档单调 |Spearman|≥0.6（考试卡 mono_spearman_min 在册值）、**OOS 必须同号**（沿用资金线 oos_same_sign）——口径声明：情绪为**市场级时序信号**（一市场一读数/日），|IC| 取时序 IC，**不可套用截面因子 >0.03 口径**，沿用 0.02 属同族取用非放松；③**事件命中率**＝点估计 **≥0.60** 且 **Wilson 95% CI 下界 >0.50**（随机基准 50%；业界 ≥55% 较好/≥60% 优秀；Wilson 法沿用板块 `8_prereg_validation.md` 先例防小样本侥幸），事件样本 **<30 次判"不可判定"**（不得粉饰为 PASS）。判读规则：三判据各自二值 PASS/FAIL（裁定#522③，禁"条件性通过"类中间态）；样本不足为唯一第三态"不可判定"；三判据全 PASS 情绪腿才具入统计判据资格，任一 FAIL 则维持观察位且按裁定#522①**不得计入"四域端到端通过"**；闭卷窗沿用 condition_package 在册 [2019-01-04, 2025-09-09]；与两态**同批冻结同批跑数**（原令铁律⑦①）。跑数后本轮禁调门柱（G4-5），结果不合如实报 FAIL。
+  category: 治理
+  evidence: 多方取证（全网搜索，2026-10-14）：①Brier (1950) 与 Murphy (1973) 三分解（BS=REL−RES+UNC），0.25＝恒说 50% 的无信息基准——JCLI3944.1（ECMWF 月/季预报实测 b_clim≈0.25）、QJRMS 海冰预报（BS<0.25 判有技巧）同口径；base-rate 警告见 Strasmore/BettorEdge 同题论述（"若事件只发生 10%，恒说 10% 得 0.09，低于 0.25 不是技巧证据"）⇒ 本裁定改用 BSS 相对基准。②Grinold (1989) 基本定律 IR≈IC·√N；Grinold & Kahn (1999) 分档 0.02 边际/0.04–0.06 真实/0.08–0.12 强/>0.15 可疑；国内 Barra 系（券商 Barra 专题报告四、量变学院口径）IC 均值 >3% 有效 >5% 优秀、日频 IC>2% 优秀、ICIR≥0.5 较好 ≥1.0 优秀、IC 胜率≥55% 较好 ≥60% 优秀。③仓内在册先例（沿用不自拟）：裁定#489③ 单序列首考三线 |IC|>0.02/|ICIR|>0.3/retain≥0.5；考试卡 `TDM-E-L3-12-3__calibration__05` 判据 mono_spearman_min=0.6、ic_mean_min=0.02、ic_ir_min=0.3、oos_same_sign（A1 实测 mono 0.127<0.6、ic 0.0138785<0.02、oos_ic −0.000158 反号 ⇒ verdict=fail）；`sector/8_prereg_validation.md` Wilson CI 先例；`formreg/3_grayscale.md:17` ECE 三档语义（该件 :29 明示"值不抄——轴不同"⇒ 本裁定只借分档语义、不搬其绑定对象）。全册＝docs/_working/condaxis/sentiment/10_prereg_three_criteria.md。
+  adjudicator: st-condaxis-verify-20261014（条件轴复核班；Owner 2026-10-14 授权自裁。数值零发明：全部取自文献/业界基准或仓内在册门柱，本裁定只裁定"选用哪一档"）
+  superseded_by: null
+  affected_files:
+  - docs/_working/condaxis/sentiment/10_prereg_three_criteria.md
+  - docs/_working/condaxis/sentiment/4_validation.md
+  approved_paths: []
+  related_rulings:
+  - 裁定#522
+  - 裁定#518
+- ruling_id: 裁定#534
+  date: "2026-10-14"
+  title: Sharpe>2 目标现实性裁定——现有框架（15 员 A 股日频整装）内不可达（零成本毛 Sharpe 上限 0.934）；目标分级 T1（过 C 门 Sharpe>0，可达）／T2（1.0-1.3，有难度）／T3（Sharpe>2，须换框架不在本包承诺）；成本模型校准须作 revertible 实验变量且 C 门仍以原保守口径判定
+  status: active
+  session: st-condaxis-verify-20261014
+  summary: Owner 目标为"整装回测跑起来并最终输出 Sharpe>2"。本裁定据实测给出量级账并分级，**不承诺数学上到不了的数**。①**不可达性实测**：15 员等权全窗**零成本毛 Sharpe=0.934**、全成本 W_HOLDOUT Sharpe=−1.389（`IBT-FINAL-DELIVERY.md` §2）、成本拖累 38.6%/年（≈0.16%/日）、年换手 33–39x；**即使换手降到 0（成本归零），Sharpe 上限仍只有 0.934** ⇒ "降换手"单杠杆天花板 0.93，距 2.0 差 2.1 倍；达 2.0 需毛 Sharpe 提升约 **2.6 倍**（Grinold IR≈IC·√N 等价 IC 提升 2.6 倍）。②**真瓶颈＝广度塌陷而非换手**：实测 15 员中 **5 员整窗仅 1 笔交易**，有效独立预测数 N 趋近零，√N 压死 IR ⇒ 优先级修正为 **修广度 > 修成本模型 > 降换手**（与"先降换手"的直觉相反）。③**成本口径校准（非绩效改善）**：实测评仓内引擎比协议/现实**保守 40–70%**——印花 10bp 双边 vs 现实 **5bp 仅卖出单边**、佣金 2.5bp/边 vs 协议 0.854bp/边、滑点 5bp/边 vs 协议 1.5bp/边；按协议费率重算 W_HOLDOUT Sharpe 由 −1.389 抬到约 −1.0~−1.1。裁定口径：属**成本模型校准不是策略改进**，必须做成 **revertible 实验变量**（可一键还原）、报告**同时给新旧两套数**、**C 门判定仍以原保守口径为准**（否则即另一种挪门柱，违反裁定#522 精神）。④**分级路线**：T1＝HOLDOUT **Sharpe>0**（过协议 C 门，**可达**：修广度＋成本口径校准＋换手降至 8x 内）；T2＝**1.0~1.3**（需 IC 提升 1.5–2 倍，有难度但可能）；T3＝**Sharpe>2**（**本框架不可达**，须跨市场/多资产或低频配置型新战役）。本包目标锁定 **T1**，T2 为 stretch，**T3 不予承诺**。⑤**关系澄清**：四域回答"什么时候可以出手"，`daily_decision_orchestrator.py:125` `GRADUATED_PACKAGES=frozenset()` ⇒ 毕业策略包空 ⇒ 结构性零仓位（安全态非 bug）；四域全绿只解除择时约束、不产生收益，资源优先级应从"再打磨方向盘"转向 T1 三件事。
+  category: 治理
+  evidence: 实测与真源：`docs/_working/integrated_backtest/IBT-FINAL-DELIVERY.md` §2（四窗绩效表：W_IS −12.1%/−0.12、W_OOS +11.9%/+0.34、W_HOLDOUT −12.2%/−1.39/DD16.5%、基准 000300 +2.8%；成本归因 IS 零成本 +26.5% vs 全成本 −12.1%，拖累 38.6pct/年；年换手 33–39x；盲窗 15 员仅 4 员微正全 <+4.1%）；同册 §3 红蓝（连续两轮 0）、§4 四门判定（A✅B✅C❌D✅）。零成本毛 Sharpe 0.934＝引擎成本敏感性零成本档实测。有效广度塌陷＝fills 实测分布（15 员中 5 员整窗仅 1 笔）。成本参数：引擎印花 10bp 双边／佣金 2.5bp 每边（双边 5bp）／滑点 5bp 每边 vs IBT-PROTOCOL-V1 协议佣金 0.854bp 每边、现实 A 股印花 5bp 仅卖出单边。Grinold (1989) 基本定律 IR≈IC·√N（裁定#532 evidence 已引）。全册＝`docs/_working/condaxis/07_sharpe2_reality_verdict.md`。
+  adjudicator: st-condaxis-verify-20261014（条件轴复核班；Owner 2026-10-14 令"最终目标 Sharpe>2"下的现实性自裁。数值全部实测或引自协议/公开费率，无一自拟；不迎合目标，据实测判定不可达）
+  superseded_by: null
+  affected_files:
+  - docs/_working/condaxis/07_sharpe2_reality_verdict.md
+  - docs/_working/integrated_backtest/IBT-FINAL-DELIVERY.md
+  approved_paths: []
+  related_rulings:
+  - 裁定#522
+  - 裁定#532
