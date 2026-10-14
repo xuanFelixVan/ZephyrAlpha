@@ -1,0 +1,70 @@
+# ALGO_FLOW 外部真源——universe_router（_domain_signal 域，真源 src/zephyr/signal_ashare/sector/universe_router.py）
+# 2026-10-13 条件轴板块线环节⓪首建（MOD-SIG-161）：docstring 内联块副本，
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.sector.universe_router
+source_of_truth: src/zephyr/signal_ashare/sector/universe_router.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: payload 参数
+    #   fields: 参数 payload，类型注解 Mapping[str, Any]（yaml safe_load 结果）
+    # - id: I2
+    #   name: code 参数
+    #   fields: 参数 code，类型注解 str（板块代码，可带 .SH/.SZ/.BJ 后缀）
+    # - id: I3
+    #   name: config 参数
+    #   fields: 参数 config，类型注解 SectorUniverseRouterConfig
+    # - id: I4
+    #   name: source_hint 参数
+    #   fields: 参数 source_hint，类型注解 str | None（6 位歧义码消歧 concept/stock）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① parse_sector_universe_config
+    #   name_en: parse_sector_universe_config
+    #   intro: 配置载荷 fail-closed 校验→只读路由配置。
+    #   desc: schema_version 白名单校验；decision/calibers/routing_rules 结构校验；regex 编译；family 引用闭环校验（未声明即 ValueError）。；源码 parse_sector_universe_config
+    #   inputs: payload
+    #   outputs: SectorUniverseRouterConfig
+    # - id: A2
+    #   name_zh: ② route_sector_code
+    #   name_en: route_sector_code
+    #   intro: 板块代码→口径族判别（routing_rules 自上而下首命中）。
+    #   desc: 交易所后缀剥离→逐规则 pattern.search；ambiguous 族须 source_hint 消歧（无 hint 判 unknown 不猜）；exclude action=市场统计指数剔除。；源码 route_sector_code
+    #   inputs: code config source_hint
+    #   outputs: RouteVerdict
+    # - id: A3
+    #   name_zh: ③ primary_universe
+    #   name_en: primary_universe
+    #   intro: 主口径宇宙解析（主口径+降级链+品类锚）。
+    #   inputs: config
+    #   outputs: UniverseSpec
+    # 层: 输出
+    # - id: O1
+    #   name_zh: SectorUniverseRouterConfig
+    #   name_en: SectorUniverseRouterConfig
+    #   intro: 只读路由配置（frozen dataclass）
+    #   downstream: 验证班面板装配件/板块线五件套信号件（口径声明引用）
+    # - id: O2
+    #   name_zh: RouteVerdict
+    #   name_en: RouteVerdict
+    #   intro: 单板块代码判定（family/role/action/match_via/note，JSON 可序列化）
+    #   downstream: 消费端口径过滤/市场统计指数剔除
+    # - id: O3
+    #   name_zh: UniverseSpec
+    #   name_en: UniverseSpec
+    #   intro: 主口径宇宙解析结果（primary+degradation+category_ids）
+    #   downstream: 面板装配件取数（TableRegistry.table(category_id) 解析）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A2
+    # I3 --> A2
+    # I4 --> A2
+    # I3 --> A3
+    # A1 --> O1
+    # A2 --> O2
+    # A3 --> O3
