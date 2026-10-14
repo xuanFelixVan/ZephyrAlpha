@@ -198,3 +198,16 @@ goal_block:
    TDM 与本册——疑似另一班在并行做 infoaxis 落地，需总指挥裁定归属、避免与本班成果互踩。
 5. **（未落地）** 车道 `20_ruling_package.md` 新版 7435 字节（较 HEAD 6373 新）与车道 `1x_*` 五件未跟踪件未落地；
    车道结构本班未动（红线），处置走裁定通道。
+
+### §接管节·补记（17:43 复测，同班 st-chiefiake-20261014）
+
+- **班账袋已落地**：`q-20261014-st-chiefiake-20261014-0003` → commit **f56c863901**（2026-10-14 17:41:06，dev）。
+  落地核验：`git show HEAD:docs/_working/infoaxis/00_ledger.md` = 17763 字节（＝本节追加后面），
+  `20_ruling_package.md` = 6373 字节；盘面与 HEAD 逐字节一致（`git diff HEAD -- docs/_working/infoaxis/` 空）。
+  残留读数：index 面仍有他班陈旧 staged 态（`--cached` 0/79、unstaged 79/0），内容面无误，不影响本节。
+- **成果袋仍未落地**（capability 46 行 + TDMAP）：q-0001 / q-0002 两袋 dead，本班已用完 2 次重投额度，停手待裁。
+- **K5 复测（17:43:23，HEAD=f56c863901）**：DEV capability=**71438** 行、主区=**71504** 行、车道=**71484** 行；
+  车道 vs DEV 独有 **46**、缺失 0；主区 vs DEV 独有 **66**、缺失 0；**车道 46 行在主区中不足条数 = 0**（全覆盖）。
+- **备份线解锁序第 1 步判定：未满足**（判据"独有行=0 为是"）——车道 46 行**仍未进入 dev**；
+  但主区盘面已具备内容条件（46 行全覆盖、相对 dev 纯追加缺失=0），只差过 TAKEOVER-PENDING 门禁入 dev。
+- 第 2 步 `write_takeover_entry(ROOT,'st-infoaxis-20261013')` 与第 3 步复投 12 件属备份班，本班**未执行**。
