@@ -38526,6 +38526,16 @@ creation_tokens:
   capability: condaxis_p3_results
   created_by: st-condaxis-20261013
   merge_evaluation: "P3 端到端结果册（双尺锚点评估/四腿组合/分层回测/红蓝对抗/循环自检），替代无（战役终局结果首建），内收 w5_1 不并（结果底稿非规则数据）"
+- file: docs/_working/condaxis/04_final_ledger.md
+  token: condaxis-final-ledger-04-final-ledger-20261014
+  capability: condaxis_final_ledger
+  created_by: st-condaxis-20261013
+  merge_evaluation: "战役终账收口册，替代=00_campaign_summary §4 交接段（升格为终态闭卷），内收不并（终账底稿）"
+- file: docs/_working/condaxis/05_closeout_verdict.md
+  token: condaxis-closeout-verification-05-closeout-verdict-20261014
+  capability: condaxis_closeout_verification
+  created_by: st-condaxis-verify-20261014
+  merge_evaluation: "条件轴终报闭卷声称的独立验收复核册：六条声称逐项对账＋裁定#522 验收口径六条＋重开施工面 R1-R6"
 - file: docs/_working/condaxis/capital/00_skeleton.md
   token: condaxis-mining-workbooks-00-skeleton-20261013
   capability: condaxis_mining_workbooks
@@ -38635,6 +38645,11 @@ creation_tokens:
   created_by: st-cdx-formreg-20261013
   no_mount_reason: 两态形态识别方法件非TDM计算节点（裁定#229未反转前禁一切TDM挂接/词表登记=冻结面，8_prereg §2在案）；消费经P3影子对照与后续反转裁定后的条件轴大盘腿间接发生
   merge_evaluation: "不并：预注册判据文书是 G4-5 先 commit 后跑数纪律的独立载体，与挖矿簿 0-7（状态=mining_workbook）对象不同；净零面=替代口头判据（零载体）"
+- file: docs/_working/condaxis/formreg/9_prereg_targeting_r2.md
+  token: condaxis-formreg-targeting-r2-9-prereg-targeting-r2-20261014
+  capability: condaxis_formreg_targeting_r2
+  created_by: st-condaxis-verify-20261014
+  merge_evaluation: "两态线裁定#518 锚语义追认后重立的预冻结打靶判据册＋跑数结果（PASS 0/1/1/1 月差）＋运行器源码内联可复现"
 - file: docs/_working/condaxis/sector/00_skeleton.md
   token: condaxis-mining-workbooks-00-skeleton-20261013
   capability: condaxis_mining_workbooks
@@ -39019,11 +39034,36 @@ creation_tokens:
   capability: deadcure2_campaign
   created_by: st-deadcure2-20261009
   merge_evaluation: "死信二期首册(Phase 0 执行面)：与一期 deadcure_campaign 裁定面/批文面不同轴，同真源不可派生(一期册只覆盖 1704 宇宙处置，本册覆盖 1428 宇宙二次裁定+家族内务+blobs 归档)"
+- file: docs/_working/deadletter_cure_20261003/00_skeleton/README.md
+  token: deadletter-cure-skeleton-index-20261014
+  capability: dead_letter_cure_campaign
+  created_by: st-deadletter-closure-20261014
+  merge_evaluation: "死信治理战役骨架册收口重建件（10-03 战役唯一档案册；原五子册未入 git 于工作区重置中丢失，本件为按现读事实重写，非第二真源）"
+- file: docs/_working/deadletter_cure_20261003/20_design/commit_map_and_slimming_plan.md
+  token: deadletter-cure-commit-map-slimming-20261014
+  capability: dead_letter_cure_campaign
+  created_by: st-deadletter-closure-20261014
+  merge_evaluation: "死信治理战役骨架册收口重建件（10-03 战役唯一档案册；原五子册未入 git 于工作区重置中丢失，本件为按现读事实重写，非第二真源）"
+- file: docs/_working/deadletter_cure_20261003/30_construction/20261003_construction_log.md
+  token: deadletter-cure-construction-log-20261014
+  capability: dead_letter_cure_campaign
+  created_by: st-deadletter-closure-20261014
+  merge_evaluation: "死信治理战役骨架册收口重建件（10-03 战役唯一档案册；原五子册未入 git 于工作区重置中丢失，本件为按现读事实重写，非第二真源）"
+- file: docs/_working/deadletter_cure_20261003/40_acceptance/20261014_closure_audit.md
+  token: deadletter-cure-closure-audit-20261014
+  capability: dead_letter_cure_campaign
+  created_by: st-deadletter-closure-20261014
+  merge_evaluation: "死信治理战役骨架册收口重建件（10-03 战役唯一档案册；原五子册未入 git 于工作区重置中丢失，本件为按现读事实重写，非第二真源）"
 - file: docs/_working/deadletter_cure_20261003/r5_exemption.md
   token: deadletter-r5-exemption-r5-exemption-20261004
   capability: deadletter_r5_exemption
   created_by: st-sJ-doctorb2-20261004
   merge_evaluation: "跨域不同对象不并——R5豁免标记文件属门禁机制数据产物，与战役骨架册内容件不同对象，无替代无退役"
+- file: docs/_working/deadletter_cure_20261003/
+  token: deadletter-cure-20261003-closure-rebuild-20261014
+  capability: dead_letter_cure_campaign
+  created_by: st-deadletter-closure-20261014
+  merge_evaluation: "死信治理战役骨架册（10-03 战役唯一档案册）；本 token 为 10-14 收口重建四件 文档登记——原五子册未入 git 于工作区重置中丢失，本批为按现读事实重写的收口重建版，非第二真源"
 - file: docs/_working/deadmass_campaign/00_ledger.md
   token: deadmass-00-ledger-20261013
   capability: deadmass
@@ -45238,6 +45278,7 @@ creation_tokens:
   token: tdm-goal-structure-infoaxis-00-20261013
   capability: tdm_goal_structure
   created_by: st-goaldef-20261013
+  no_mount_reason: 包标识/调研档件（目录治本与 task_bound 快照）无独立节点图语义，挂图在主件
   merge_evaluation: "successor_of=file=docs/_working/tdm_goal_structure_research_2026_10_13.md|token=tdm-goal-structure-tdm-goal-structure-research-2026-10-13-20261013（同实体随迁，FOLDER-CAPACITY 治本）。纯新增调研档(task_bound一次性快照)；不替代旧条目——互引 condaxis 呈批包/fullflow 57缺口矩阵/f35一问一考/l9_readiness 在册真源，不重建第二真源（裁定#375 内收）。"
 - file: docs/_working/infoaxis/00_ledger.md
   token: infoaxis-ledger-20261013
@@ -55030,11 +55071,15 @@ creation_tokens:
   token: mod-sig-138e-equity-link-signal-20261014
   capability: equity_link_signals
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-G3
   merge_evaluation: "P2 股权首刀：三信号族装配（牛散跨票/同持有人联动/质押链）；净零=股权关联信号唯一装配器"
 - file: schemas/categories/fundamental/expectation_revision_daily.py
   token: mod-alt-012-expectation-revision-daily-20261014
   capability: expectation_revision
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L3-02
   merge_evaluation: "P2 研报首刀：预期修正面装配（评级变动事件流+修正三件套）；净零=consensus_daily 装配为信号面的唯一装配器"
 - file: schemas/categories/fundamental/financial_derived.py
   token: st-fingov-financial-derived-ddl-20260913
@@ -55108,16 +55153,22 @@ creation_tokens:
   token: mod-sig-110a-pead-earnings-event-20261014
   capability: pead_assembly
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L3-04
   merge_evaluation: "PEAD 装配事件表 DDL-as-Code（与装配模块同批）；净零=新表唯一真源"
 - file: schemas/categories/fundamental/rating_change_event.py
   token: mod-alt-012-rating-change-event-20261014
   capability: expectation_revision
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L3-02
   merge_evaluation: "P2 研报首刀：预期修正面装配（评级变动事件流+修正三件套）；净零=consensus_daily 装配为信号面的唯一装配器"
 - file: schemas/categories/goal_readiness_daily.py
   token: mod-data-goalagg-goal-readiness-daily-20261013
   capability: tdm_goal_mechanism
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-AGG
   merge_evaluation: "Q6/Q7 目标机制件（裁定#516）；净零声明=infoaxis/00_ledger.md §5"
 - file: schemas/categories/intraday/__init__.py
   token: schemas-split-intraday-index-20260912
@@ -61346,6 +61397,8 @@ creation_tokens:
   token: tdm-goal-blocks-injector-20261013
   capability: tdm_goal_mechanism
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-AGG
   merge_evaluation: "Q5 目标机制三件之一：TDM goal 块注入器＋--check 漂移探针（151 核心节点四字段＋挂起显式标）；替代无（新执法/读数面），消费方=goal_readiness 生成器(Q6)+开班令 gate(Q7)＋对齐检查 align_all 族；净零声明=战役台账 §5"
 - file: scripts/governance/test_concurrent_safety.ps1
   token: auction-backfill-test-concurrent-safety-20260916
@@ -62004,6 +62057,11 @@ creation_tokens:
   capability: scripts_signals
   created_by: st-final-build-20260926
   merge_evaluation: "唯一归档位：本役波次案卷与生成器，不替代也不合并既有册条目（既有宿主无此观测面）"
+- file: scripts/start_dashboard_api.ps1
+  token: dashboard-api-guard-start-dashboard-api-20261014
+  capability: dashboard_api_guard
+  created_by: st-c8-dashapi-20261014
+  merge_evaluation: "跨域不同对象→不并：仪表盘 API 开机自启守卫为新增常驻服务，无同真源可派生旧条目，与三数据守卫同模板不同业务对象"
 - file: scripts/start_paper_session.py.tmp.35264.1789568904579
   token: auction-backfill-start-paper-sessionpytmp35264-20260916
   capability: auction_backfill
@@ -62714,6 +62772,8 @@ creation_tokens:
   token: mod-alt-012-assembler-20261014
   capability: expectation_revision
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L3-02
   merge_evaluation: "P2 研报首刀：预期修正面装配（评级变动事件流+修正三件套）；净零=consensus_daily 装配为信号面的唯一装配器"
 - file: src/zephyr/alt_data/filing_nlp_engine.py
   token: auto-scaffold-filing_nlp_engine-20260825
@@ -63343,6 +63403,8 @@ creation_tokens:
   token: mod-data-goalagg-goal-readiness-aggregator-20261013
   capability: tdm_goal_mechanism
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-AGG
   merge_evaluation: "Q6/Q7 目标机制件（裁定#516）；净零声明=infoaxis/00_ledger.md §5"
 - file: src/zephyr/data/implementations/__init__.py
   token: auto-data-impl-init-20260706
@@ -64593,11 +64655,14 @@ creation_tokens:
   token: mod-gov-goalgate-init-20261013
   capability: tdm_goal_mechanism
   created_by: st-infoaxis-20261013
+  no_mount_reason: 包标识/调研档件（目录治本与 task_bound 快照）无独立节点图语义，挂图在主件
   merge_evaluation: "Q6/Q7 目标机制件（裁定#516）；净零声明=infoaxis/00_ledger.md §5"
 - file: src/zephyr/gov_enforcement/commit_gates/goal/campaign_goal_block_gate.py
   token: mod-gov-goalgate-campaign-goal-block-20261013
   capability: tdm_goal_mechanism
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-AGG
   merge_evaluation: "Q7 开班令目标块硬前置门（裁定#516）；净零=新执法面无旧门可替代；goal/ 子目录=FOLDER-CAPACITY 治本先例沿用；消费方=GitCommitGateway+commit_queue serializer"
 - file: src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py
   token: auto-held-overlap-gate-20260630
@@ -65573,6 +65638,9 @@ creation_tokens:
   token: mod-sig-125b-chain-direction-semantics-20261014
   capability: chain_direction
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-G5
+  - TDMAP-001:TDM-E-L2-09-1
   merge_evaluation: "P2 传导链主施工面：方向语义件（W4 成本反号 known simplification 之闭合；S5 默认 A 规则词表先行）；净零=方向语义唯一真源表（六类×角色侧矩阵）"
 - file: src/zephyr/intelligence/chain_impact_resolver.py
   token: chain-impact-resolver-20260911
@@ -67070,6 +67138,8 @@ creation_tokens:
   token: mod-sig-138e-equity-link-signals-20261014
   capability: equity_link_signals
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-G3
   merge_evaluation: "P2 股权首刀：三信号族装配（牛散跨票/同持有人联动/质押链）；净零=股权关联信号唯一装配器"
 - file: src/zephyr/signal_ashare/factor_result_bridge.py
   token: auto-scaffold-factor_result_bridge-20260825
@@ -67566,6 +67636,9 @@ creation_tokens:
   token: mod-sig-110a-pead-assembly-20261014
   capability: pead_assembly
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-E-L3-04
+  - TDMAP-001:TDM-E-L3-02
   merge_evaluation: "P2 财报首刀：PEAD 装配批（MOD-SIG-110 [CONSUMERS] 头注缺口实件）；schema 件 token 已内联；净零=装配批替代零散手工注入面"
 - file: src/zephyr/signal_fundamental/router/__init__.py
   token: auto-sf-router-init-20260823
@@ -67583,6 +67656,9 @@ creation_tokens:
   token: mod-sig-093b-orderflow-features-20261014
   capability: intraday_t_features
   created_by: st-infoaxis-20261013
+  map_mounts:
+  - TDMAP-001:TDM-P-P2-02
+  - TDMAP-001:TDM-E-L3-11-2
   merge_evaluation: "P2 做T首刀：一档盘口特征件＋L3-11 v2 现势窗考卡（v1 卡冻结纪律不动留史，v2=独立预注册）；净零=盘口特征唯一供给面"
 - file: src/zephyr/signal_quality/degradation_detector.py
   token: auto-scaffold-degradation_detector-20260825
