@@ -25646,6 +25646,11 @@ creation_tokens:
   token: btfix-p1p2-sector-momentum-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_signal/algo_flow/sector_panel.yaml
+  token: condaxis-sector-panel-sector-panel-20261014
+  capability: condaxis_sector_panel
+  created_by: st-condaxis-verify-20261014
+  merge_evaluation: "板块面板件 ALGO_FLOW 外部真源卡片（extractor 经 external 锚加载）"
 - file: docs/03_modules/_domain_signal/algo_flow/sector_pullback.yaml
   token: btfix-p1p2-sector-pullback-20260915
   capability: btfix_p1p2
@@ -67388,6 +67393,11 @@ creation_tokens:
   token: auto-scaffold-sector_momentum_persistence-20260825
   capability: sector_momentum_persistence
   created_by: scaffold.py
+- file: src/zephyr/signal_ashare/sector/sector_panel.py
+  token: condaxis-sector-panel-sector-panel-20261014
+  capability: condaxis_sector_panel
+  created_by: st-condaxis-verify-20261014
+  merge_evaluation: "条件轴板块腿数据面板装配：由板块日K现算RRG象限众数，把板块腿覆盖从733日提到997日，零采购"
 - file: src/zephyr/signal_ashare/sector/sector_state_aggregator.py
   note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
   token: secbuild-sector-state-aggregator-20260923
