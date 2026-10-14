@@ -546,3 +546,133 @@ MANIFEST 行合计 203（85＋13 唯一 blob 面＋38 壳实质面＋13＋1＋1 
 - `--force` 未用；门判据/阈值未改；B/D 类未动（kept 81 袋原位）；他班 open 条目零代解；本节全部数值实跑原文、零自拟。
 - 收班即清：前任 lane `.aidrafts/st-deadmass3-20261014`＋自家 lane 按 §2.9 接管通道 archive（archive 前同分钟复测活会话心跳龄，只动前任与自家）；reaper keep `deadmass3` 行随收班撤（该行登记明示「收班即撤」）。
 - **未竟移交统筹**：①收班册 `99_delivery_shift3.md` 未建（接手令提交清单仅本账，新建 CREATE-GUARD 正门未授权，留统筹裁定是否补）；②st-infoaxis-20261013 仍活跃重投（门禁连拦 7 连败），其抢救复投与门禁修因属其本班；③dead 终值 89 含 4 枚 content_held（HOLD_UNIQUE_NOT_TOMBSTORED）与 77 枚他班属主，四态分诊不隔夜原则下建议统筹明确下一手。
+
+## 十一、L4 死信残余清账班账（st-chiefdead4-20261014，2026-10-14 19:0x → 20:1x）
+
+> 令据＝施工总包 chief-coordinator-st-20261014 派工令「L4 死信残余清账（101 枚四态分诊）」（Owner 已授全权并发）；
+> 接手处＝本账 §十（三班 A 批：dead 1,286→89，manifest 452→1,657）＋收班册 `99_delivery_shift2.md` §五-8 呈批件。
+> 车道＝**st-chiefdead4-20261014**（新 sid，禁复用他班 grant）；独占域＝`.runtime/commit_queue/**`、`docs/_working/deadmass_campaign/**`、`E:_tomb_quarantine\`。
+> 红线执行＝四态分诊**逐枚读 `dead_reason` 原文**（禁按条数估）＋在册内容级门；归档＝可回退（mv＋manifest，禁物理删除，
+> 墓园 30 天复活窗不缩短）；业务资产判死/真冲突/他班 open 条目→登记呈批不自行处置。
+
+### 1. F0 首件校准（19:00–19:09 实测，判据能红）
+
+| 项 | 读数 | 凭据 |
+|---|---|---|
+| 开工 `date` | `Wed Oct 14 19:00:35 2026` | 进程外读回 |
+| 真实 HEAD | `8bf3e34f64 [docs-only][INFOAXIS 真接管·成果袋 st-chiefiak2-20261014]`，分支 `dev` | `git log -1` |
+| 队列 counts（进场） | **pending=0／processing=0／done=780／dead=101**（total=881） | `python scripts/commit_queue.py status`，19:00:49 |
+| 死袋分母 | `dead/q-*.json`＝**101**（另 3 件非袋：`_recurrence_state.json`、`_root_cause`、`archive_flashbiz_superseded_20260918`） | 逐文件 glob |
+| 子命令可用性 | `dead-archive` 在册带 `--content-level`（内容级四态门）与 `--no-verify-landed`（已取代型批量归档先例，输出留 `verify=off` 痕） | `dead-archive --help` |
+| 会话注册 | `SessionRegistry().register('st-chiefdead4-20261014', pid=0)`，19:05:52 | 分片落 `.runtime/session_registry/` |
+| 心跳守护 | `python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon st-chiefdead4-20261014 . 30`（包模块入口，非 `scripts/heartbeat_daemon.py` 旧坑） | `heartbeat_last_status=alive` |
+| 保活 grant | `register_heartbeat_keepalive(ttl_seconds=7200, requested_by='chief-coordinator-st-20261014')`，19:09:09 | `expires_at=1791983352` |
+
+⚑ **本班自犯一条（登记不抹）**：19:31 实测 `.runtime/session_registry/st-chiefdead4-20261014.json`
+**被收割**（心跳文件仍新鲜、`heartbeat_last_status=alive`，但 `list_active_readonly()` 不命中）。
+当轮即复注册并核验：**接管台账本班条目＝0**（215 行内零命中）⇒ 未因"无心跳→自己变 open 接管条目"而挡自己的袋（派工令点名的今日头号死因）。
+教训＝**注册分片与心跳文件是两本账**，心跳新鲜≠分片在册；每轮动盘前须用门自己的尺 `list_active_readonly()` 自测，不能只信 `heartbeat_last_status`。
+
+### 2. F1 内容级四态分诊（101 枚逐枚，零抽样零估算）
+
+**两把尺互证**（非自证）：①逐枚读 `dead_reason` 原文（全 101 枚，一枚不落）；
+②刷新在册量尺 `.runtime/tmp/deadmass_c_measure.py --sample 60`（19:20:49→19:21:06）：
+**101 行**、正对照 `AGENTS.md` MATCH、负对照改一字节 DIFF(对)、与在册真门对表 **agree=60 disagree=0**；
+分态＝`C_UNIQUE_WOULD_REGRESS 50／A_LANDED 36／B_UNIQUE_REQUEUEABLE 15`，唯一 blob 面 109 枚／0.049 GiB（68 枚被多袋共享，覆盖 303 袋次）。
+叠加墓园归宿集后的判定表（19:23 与 20:05 两读一致）＝`C_TOMBSTORED 34／A_LANDED 36／B_DEAD_OWNER_TOMBSTORED 8／HOLD_UNIQUE_NOT_TOMBSTORED 23`。
+死因门名分布（按 `dead_reason` 本体取门）：ghost_session 16／CREATE-GUARD 15／ALGO-FLOW-LINK 13／TAKEOVER-PENDING 9／
+cascade_stale 7／GATE-PRECOMMIT-RUN 7／DEPGRAPH-ENFORCEMENT 5／CH-FINAL-GATE 5／TRANSLATION-COVERAGE 3／TEST-SOURCE-CONSISTENCY 3／
+MUTABLE-CONST-WITHOUT-FINAL 2／PERMANENT-SYSTEM-TRIGGER 2／MSG-EXPOSURE 1／DEPGRAPH-FRESHNESS 1／ALGO-NOTE-SYNC 1／SSOT-REDEFINITION 1／GATE-VOCAB 1／真冲突·dev 已删 9。
+
+**⚑ 分诊的第一条硬事实（它决定了本批量级）**：`st-condaxis-20261013`（48 枚，本批最大族）
+`heartbeat_last_status=alive`、**心跳龄 4s**；`st-bakdr-20261013` **心跳龄 6s** —— 两族属主**现刻真活**。
+族内 16 枚的 `dead_reason` 原文写着 `ghost_session: 属主会话 st-condaxis-20261013 已死（heartbeat=exited / 注册表无在册），自动重投被存活闸拒绝（裁定#459）`
+——那是**死亡当刻**的判词，现刻属主已复活在册 ⇒ 按 A 批在册纪律（§八-5「活属主留位不代投；代投字节会因本道后落地变回退弹」＋
+`commit_queue.py:2129/2396`）**整族留位**，不代投不归档。此为本账 §八-14 记过的"exited 却在册活"形态的**反面**：判死过、现刻真活。
+
+| 态 | 枚数 | 处置 | 代表 qid ＋ `dead_reason` 原文片段（逐枚见 `.runtime/tmp/chiefdead4_fourstate.json`） |
+|---|---:|---|---|
+| (a) 已取代型 | **6** | 归档 | `q-20261014-st-chiefiak2-20261014-0001`（C_TOMBSTORED）`网关落盘失败（COMMIT_FAILED）: 门禁 TAKEOVER-PENDING 阻断: …命中 open 接管条目（死会话遗留资源面）`；`q-20261014-st-chiefiake-20261014-0001/0002`（C_TOMBSTORED，同上族）；`q-20261014-st-datalane3-20261014-0001`（A_LANDED）`门禁 PERMANENT-SYSTEM-TRIGGER 阻断: [PERM-TRIGGER] 永久系统脚本使用时间触发模式但未注册事件订阅`；`q-20261014-st-maint7-20261014-0033`（C_TOMBSTORED）`门禁 GATE-PRECOMMIT-RUN 阻断: …hook=['gate-test']` |
+| (b) 可修复型 | **1** | 判 (b) 但**回态呈批**（见 §3） | `q-20261014-st-bakday2b-20261014-0001`（B_UNIQUE_REQUEUEABLE）`门禁 TAKEOVER-PENDING 阻断: …死会话 sid=st-maint6-20261013（判死证据：orphan_resources: .aidrafts/st-maint6-20261013 在盘而注册表无此会话）` |
+| (c) 待裁定型 | **2** | 登记呈批，不复投不归档 | `q-20261014-st-datalane2-20261012-0023`：`landing 异常: RuntimeError: [landing] 非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）: docs/_working/datalane_campaign/00_ledger.md`；`q-20261014-st-maint7-20261014-0025`：同族真冲突 `: tests/gov/governance/commit_gates/test_registry_yaml_parse_watch_extension.py` |
+| (d) 真死型 | **1** | 归档 | `q-20261014-st-maint7-20261014-0032`（重复重投）：`cascade_stale: 基底重校验不适用 ['docs/_working/maint7_campaign/lanes/lane_b_closeout.md']（stale_by=q-20261014-st-maint7-20261014-0026）` |
+| 活属主留位（非四态，纪律桶） | **48** | 原位，不代投不归档 | `st-condaxis-20261013` 全族（心跳龄 4s＝真活）；族内代表 `q-20261014-st-condaxis-20261013-0068`：`ghost_session: 属主会话 … 已死`（死亡当刻判词，现刻已复活） |
+| F4 抢救名单保留（非四态，红线桶） | **43** | 原位，零入墓园（见 §5） | bakdr 8＋infoaxis 35；代表 `q-20261014-st-infoaxis-20261013-0008`：`门禁 CREATE-GUARD 阻断: 新建 src/zephyr .py 未申报挂图面（MAP-MOUNTS 必填）: src/zephyr/intelligence/chain_direction_semantics.py` |
+
+合计 **6＋1＋2＋1＋48＋43＝101**（逐枚入桶，无重叠无遗漏）。
+
+### 3. F2 可复活者复投：**实复投 0 枚**（附逐条判据，不硬凑数）
+
+(b) 类共 **15 枚**（内容级判 `B_UNIQUE_REQUEUEABLE`＝唯一且可复投）：`st-infoaxis-20261013` 14 枚 ＋ `st-bakday2b-20261014` 1 枚。逐条判据：
+
+1. **infoaxis 14 枚＝F4 抢救名单**，派工令明令"禁止被扫进墓园（备份线/L1 抢救目标）"。
+   现刻实据＝HEAD `8bf3e34f64` 即 `[INFOAXIS 真接管·成果袋 st-chiefiak2-20261014] capability 册：infoaxis 车道 46 行登记并入 dev（解锁序第 1 步）`，
+   且 `st-chiefiak2-20261014` `heartbeat_last_status=alive` ⇒ **该族复投已在 L1 手里**，我班复投＝与他班双写手、必成回退弹（§八-5 在册条）。
+2. **bakday2b-0001（1 枚）**：死因＝**他班 open 接管条目**（`st-maint6-20261013` 遗留资源面），接管台账现 215 行全 open；
+   且该袋内容面＝`docs/_working/backfix_campaign/00_ledger.md`（**他班成果册**，非我班独占域 `deadmass_campaign/**`）。
+   修因＝解他班接管条目＋动他班成果册 ⇒ 两条都撞"他班条目不代解／不代修"红线。机械 `requeue` 必再死于同一门（派工令明禁），
+   故**回态 (c) 登记呈批**，不投不埋。
+3. 其余族的"有处方"袋（condaxis 的 ALGO-FLOW-LINK／TRANSLATION-COVERAGE／DEPGRAPH 等）经内容级判为 **A_LANDED 或 C_UNIQUE_WOULD_REGRESS**
+   （dev 已前进、盲重投即回退弹），且属主真活 ⇒ 按 (a) 归档或活属主留位，**不属 (b)**。
+
+⇒ **复投 landed_id 清单＝空**；本班未制造任何新死信（窗口内新增 1 枚 `q-20261014-st-condaxis-verify-20261014-0004`（CREATE-GUARD，属 `st-condaxis-verify-20261014`）**非我班所投**，实测留痕见 §4）。
+
+### 4. F3 (a)(d) 类归档：**7 枚**（走 A 批已验证路径，逐字沿用）
+
+**存证先行**（A 批纪律"判据零放宽、先存证后归档"；派工令 F3 要求含墓园与 manifest 双 sha）：
+
+- 量尺刷新：`python -u .runtime/tmp/deadmass_c_measure.py --sample 60`（101 行，对表 agree=60 disagree=0）。
+- 唯一面按 F4 红线**先过滤**：109 枚唯一 blob 中剔除 `sids ∩ {st-bakdr-20261013, st-infoaxis-20261013}` 的 82 枚
+  ⇒ 只存证 **27 枚／10,341,234 字节**（清单 `.runtime/tmp/chiefdead4_uniq_filtered.json`）。
+- `python -u .runtime/tmp/chiefdead4_preserve.py --execute --skip-pool <前两池>`（19:22:31→19:22:34）：
+  **新拷 15 枚／9.24 MiB，逐枚回读 mismatch=0 missing=0，跳已归宿 12**；新池
+  `E:/_tomb_quarantine/st-chiefdead4-20261014/C_unique_20261014/` **MANIFEST 15 行**；`INDEX.jsonl` 45→**46 行**（带 rollback_cmd＋30 天复活窗）。
+
+**归档落地**（驱动器＝A 批 `.runtime/tmp/deadmass3_archive_driver.py` 逐字复制为 `chiefdead4_archive_driver.py`，只改输出路径／署名／墓池，
+判据代码零改动；并**只收窄不放松**地加了一层呈批件硬排除 `HARD_EXCLUDE_QIDS`＝3 枚（maint7-0025、datalane2-0023 真冲突；bakday2b-0001 (b) 类）：
+
+`python -u .runtime/tmp/chiefdead4_archive_driver.py --phase execute --attempts 400 --sleep 8 --chunk 200`（19:47:41 起等窗，**20:10:47 抓到空窗落盘**）
+
+| 项 | 读数 |
+|---|---|
+| 白名单 sid | 6（bakday2b／chiefiak2／chiefiake／datalane2／datalane3／maint7；抢救两族与活属主 condaxis 均未入） |
+| 实动盘 **归档枚数** | **7**＝chiefiak2-0001／0002、chiefiake-0001／0002、datalane3-0001、maint7-0032（(d)）、maint7-0033 |
+| manifest 行数 | **1,658 → 1,665（＋7）**，行差＝归档枚数，闭合 |
+| dead | **101 → 95**（`archived=7`，窗口内他班新增 1 枚 `q-20261014-st-condaxis-verify-20261014-0004` ⇒ `dead_delta=6`，差一已回查并在册） |
+| `kept` | `other_session=92／content_held=3（＝3 枚呈批硬排除）／young=0／unlanded=0／revival_in_flight=0／corrupt=0` |
+| `verify` | **off**（7/7，统筹裁定批准的一次性 `--no-verify-landed`，痕在册） |
+| verdict 分布 | `C_TOMBSTORED 6／A_LANDED 1`；`gate_lookup={'HARD_EXCLUDE_ADJUDICATE':3,'C_TOMBSTORED':6,'A_LANDED':1}` |
+
+### 5. F4 抢救名单红线核验（硬前置，违者即停）
+
+| 族 | 死袋枚数 | 处置结论 | 实测凭据 |
+|---|---:|---|---|
+| `st-bakdr-20261013` | **8** | **保留原位**（备份线抢救目标）；且现刻 `heartbeat_last_status=alive`、心跳龄 6s＝**属主在册活** ⇒ 双理由不投不埋 | `dead/` 逐枚 glob；`INDEX.jsonl` 内 `bakdr` 命中＝**0** |
+| `st-infoaxis-20261013` | **35** | **已由 L1 接管**：HEAD `8bf3e34f64`＝`[INFOAXIS 真接管·成果袋 st-chiefiak2-20261014] … 46 行登记并入 dev（解锁序第 1 步）`；`st-chiefiak2-20261014` 心跳 alive。该族复投属 L1 本班，我班不双写手 | `dead/` 逐枚 glob；`INDEX.jsonl` 内 `infoaxis` 命中＝**0** |
+| 墓园面 | — | `E:/_tomb_quarantine` 池目录＝`st-chiefdead4-20261014`（本班新池）＋`st-deadclean-20261013`／`st-deadmass-20261013`／`st-deadmass2-20261014`／`st-finalclean2-20261010`，**两族零池零行**；本班新池 15 行已按 `sids` 剔除两族 | 目录枚举＋INDEX grep |
+| 归档 7 枚 qid 含两族 | **0** | 新 manifest 7 行 qid 对 `bakdr`/`infoaxis` 命中＝0 | 逐行比对 |
+
+### 6. F5 收尾读数（20:12:44 实测）
+
+- `python scripts/commit_queue.py status`：**pending=0／processing=0／done=776／dead=95**（total=871）。
+- **"每降一枚必有台账行双 sha"核验**（尺 `.runtime/tmp/chiefdead4_audit_manifest.py --qids-file`，对本班 7 枚**全量非抽样**）：
+  行=7／qid 去重=7（重复 0）／`verify={'off':7}`／**缺 `bag_json_sha256`＋`blob_set_sha256`＋`content_evidence` 的行=0**／
+  bag_json sha256 逐行复算 **mismatch=0**／**仍在 `dead/` 的行=0**／**归档目录实存 7/7**／`n_no_home>0=0`、`n_evidence_tampered>0=0`。
+- **blob 级抽验 ≥5 枚**（实做 7 袋／19 枚 blob）：`sha256` 回读 **mismatch=0**。
+  其中 4 枚"墓园无归宿"经核为 **IN_DEV_OTHER_REF** 件（字节在 git 其他 ref 面有归宿，非唯一件，无需墓园），
+  与台账 `n_no_home=0` 同向一致（判据源 `deadmass_c_archive.py:build_verdicts`：唯一件才要求墓园归宿）。
+
+⚑ **尺的自犯与自纠（不抹旧账）**：核账尺首版按 `dst` 键找归档袋 ⇒ `bag_json sha 复算 mismatch=7`＝**假事故**；
+打清键形后确认 manifest 行**无 `dst` 键**（与 §八-14 键形同族），归档袋＝`dead_archive_<日>/<qid>.json`，改后 mismatch=0。
+教训与在册一致：**判"缺字段/缺件"前先用一行真实样本打清键形**。
+
+### 7. 呈批与未竟移交（不自行处置）
+
+1. **(c) 类 3 枚**（datalane2-0023、maint7-0025 真冲突整文件三方；bakday2b-0001 他班 open 接管条目＋他班成果册）
+   ⇒ 交统筹裁定：真冲突需人工三方合并，接管条目属 `st-maint6-20261013` 遗留资源面，两条均越我班格。
+2. **抢救两族 43 枚的下一手**：infoaxis 35 枚已由 L1（`st-chiefiak2-20261014`）接管推进解锁序；
+   bakdr 8 枚属主真活（心跳龄 6s），建议由备份线按属主自复投，不需本战役代投。
+3. **活属主 condaxis 48 枚**：属主现刻真活（心跳龄 4s），按在册纪律留位；若其车道收班后仍未自清，下一班可复用本节判据重判。
+4. **23 枚 `HOLD_UNIQUE_NOT_TOMBSTORED`**（多数属抢救两族）：唯一面未入墓园即不放行，判据零放宽；需统筹先定两族归属再存证。
+5. 本班未建 `99_delivery_shift4.md`（派工令仅要求本账追加＋单袋）；未动 capability 册与 `docs/01/**`（L1）、`docs/03_modules/**` 与 `.gitignore`（L3）、CH 数据。
+6. 收班即清：本班心跳守护与保活腿按收班序列撤（车道壳未建，无工棚残留）；`.runtime/tmp/chiefdead4_*` 为一次性件，不入库。
