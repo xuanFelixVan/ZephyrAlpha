@@ -223,3 +223,77 @@ F_never_landed （目标文件从未建成）
 | 4 | Layer 3 doctor 通道（含三道铁闸 + 审计日志） | **高**（动治理链路） | **是** —— 走 worktree + 裁定登记 + 全量回归 |
 
 裁定已下，**待 Owner 一句话开 Layer 1+2。**
+
+
+---
+
+## 四十六·10-14 收口审计（Owner「对话能否关闭」之问的实读答复）
+
+> 全部结论来自 2026-10-14 当场命令取证，不凭记忆断言。
+> 详版四件：`docs/_working/deadletter_cure_20261003/{00_skeleton,20_design,30_construction,40_acceptance}/`
+> （10-14 重建；原五子册未入 git 于工作区重置中丢失，故本批先以本章入 git 保底，四件随后随行）。
+
+### 1. 五笔提交：全在，零回退
+
+`3514117725`（回魂根治+史实归因）／`cce0dcd2a4`（裁定#479 文档批）／`ced3a79a63`（翻译册先行批）／
+`2b28c6fbf1`（车道 BCD 合流）／`d254a52656`（测试改名补丁）——逐笔 `git cat-file -e` 核验对象存在，
+`git log --since=2026-10-03` 检索 revert/回退/回滚 **零命中**。
+代码面现读：`session_concurrency.py` 命中 `reincarnation_count` **14 处**、
+`session_takeover_ledger.py` 命中归因引擎符号 **18 处**，主改动仍在 HEAD 正身未被覆盖。
+
+### 2. 机制活着
+
+回魂拦截审计 `register_reanimation.jsonl` **18,634 行**（末次 10-14 14:57）；
+doctor 通道 `doctor_audit.jsonl` **223 条**（10-05 实跑，非纸面）；
+现存死信袋 `base_head` 已是真 commit 值而非 `dev` 占位 ⇒ Layer4 强制 base_head 生效。
+
+### 3. 战果：1235 → 98（但执行主体不是本对话）
+
+`dead/` 1,235→98、`done/` 795、`pending/`=0、`processing/`=0。
+**如实记明**：这 1,137 袋的消化由 10-05~10-14 后续多支施工队
+（`st-cure-p0*`／`st-deadcure*`／`st-deadmass2,3,3b-20261014`／`st-wkcure*`／`st-deadclean-20261013`）接力清偿，
+本对话建的归因引擎与 doctor 通道是被他们接过去用的工具。**结果达成，不冒领执行。**
+
+### 4. 资产损失（本战役自己的教训）
+
+`docs/_working/deadletter_cure_20261003/` 五个子册原稿 10-03 写出后**从未入 git**
+（`git log --all --name-only` 全窗仅 `r5_exemption.md` 一条），在多次工作区重置与
+AUTO-ENQUEUE stash 隔离中清出且无版本可恢复——**正是本战役自己写进记忆的那条教训**。
+纪律：文档产物写完当批即入 git，不留未跟踪过夜。
+
+### 5. 13 项待办真实状态
+
+完成/被消化 5 项（孤儿认领、sweep 沉降、doctor 生产、base_head 回填、本次审计）；
+部分 1 项（文本误报门：仍靠 noqa/改名绕行，源码未根治）；
+**未完成 7 项**：doctor 自愈升级、登记合一、会话活性状态机统一、**红蓝极限对抗**、
+记忆问题库清账、**堵点本清账**、归因体系自修（并发全量覆写/cat-file 注入面/cascade_diff 基线）。
+
+### 6. 堵点本：不是没清，是更堵了（本次实读）
+
+10-03 记录 TOP 为 `GATE-PRECOMMIT-RUN ×50`／`QUEUE-LANDING ×36`；
+10-14 实读 **近 24h 共 293 次：QUEUE-LANDING ×154、GATE-PRECOMMIT-RUN ×79**。
+**堵点计数 11 天翻了约 3 倍**——这是本次审计最硬的负面结论。
+
+### 7. 本次提交链的实证（与 10-03「八连死」完全同构）
+
+一次纯文档提交（4 件 .md + 1 件 registry）连撞：
+WORKTREE-REQUIRED → SESSION-REQUIRED → CREATE-GUARD（token 读 HEAD 的鸡生蛋）→
+TAKEOVER-PENDING ×N（**每次重投都留下新死 sid，register 受 V5 频率护栏降级致活性锚冻结，
+同 sid 重投必撞自身 stale claim，形成自循环**）→ 他人死 sid `st-infoaxis-land-20261014`
+stale claim 挡道（其 worktree dirty=35 有在途成果，本会话不越权接管，改走 `allow_overlap` 留痕）。
+
+**结论：11 天过去，提交链路的堵点没有减少，八连死的病灶仍在原处。**
+这也直接说明 §5 中「红蓝极限对抗 / 堵点本清账」两项未做，代价是持续的。
+
+### 8. 结论：本对话不能宣告零遗留关闭
+
+- 已收口：五笔提交零回退、核心代码在 HEAD、机制持续生效、车道 tmp 已清、
+  暂存区无本战役残留（现 staged 37 件全为他人产物）、1235→98。
+- 未收口：待办 7 项；文档资产有真实损失（已补救）；4 个裁定点待 Owner。
+
+### 9. 待 Owner 裁定（4 条，不自批）
+
+1. 是否授权弱化 TTL／R5／VOCAB 三门（改 warn）？
+2. 文本误报门：源码根治（改 AST 判定）还是维持 noqa 绕行？
+3. 未完成 7 项是否现在开 `st-deadletter-closure-20261014` 车道一次做完？
+4. 本战役是否签封矿令、后续死信工作全转 `st-deadmass*`／`st-wkcure*` 常设班？
