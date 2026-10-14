@@ -19,10 +19,11 @@ completes_when: 主役放量袋落窗清账（每降一枚有 manifest 行＋证
 | blob_gc phase2 首轮 | **moved 4,710 枚／984.3 MiB，竞态 skip=0**；blobs/ 21,209→16,501，blobs_archive/ 10,883 | `blobs_archive/manifest.jsonl`（`--restore` 可逆）＋stdout `.runtime/tmp/deadmass2_blobgc_archive.json` |
 | 前班车道退场 | 接线核查＝**已落** ⇒ 一条命令退场完成；四处读回全空；**执行窗内接管台账新增 0 行** | patch `.runtime/quarantine/st-deadmass-20261013-retire-20261013T185954Z.patch`（substantive=11，`+` 行 1,436）；`takeover_ledger.jsonl` 192→192 |
 | 前任未落地交接面 | dev 缺的 §五–§七 **4,418 字节已正门补投**（袋 q-20261014-st-deadmass2-20261014-0001） | 搬入判据＝dev 字节是车道字节的严格前缀（`new[:len(old)]==old` True，纯追加零删改） |
-| 会话壳 | **33 → 17**：13 壳 keepalive promote 入墓园后按在册谓词拆；3 壳取证改名件"已存证即放行"mv＋拆；3 壳真成果暂留（见 §三-2） | 墓园 `shell_keepalive_20261014/`（13 行）＋`shell_content_20261014/`（38 行＋mv 复记 3 行＝41 行）；墓园总回读 **139 行 mismatch=0**（六-2 实测读数） |
+| 会话壳 | **33 → 17**：13 壳 keepalive promote 入墓园后按在册谓词拆；3 壳取证改名件"已存证即放行"mv＋拆；3 壳真成果暂留（见 §五-2） | 墓园 `shell_keepalive_20261014/`（13 行）＋`shell_content_20261014/`（38 行＋mv 复记 3 行＝41 行）；墓园总回读 **139 行 mismatch=0**（六-2 实测读数） |
 | 根层散件 | **平铺未跟踪=0**（正对照＝同尺全仓报 168 条 `??`／未跟踪 550，非零命中尺） | `git ls-files --others --exclude-standard` 按 `'/' not in` 分层 |
 | gate_audit | 未删（删除属政策变更）；**一条前提被实测改判**：最大两段 120.3/65.3MB 是**已移位 .1 保留段**，同族 live 段实测仅 2.2/1.2MB | `.runtime/gate_audit/` 292 件／1,209.5 MB；维护七班 dev 面班账 `gate_audit` 零命中＝尚未定性 |
-| 主役放量（C/D 归档） | **未落**：1,622 枚放行表已就绪、10 片逐片抓窗在跑；本班实测**无空窗可抓**（下表） | 判定表 stdout `.runtime/tmp/deadmass2_archive_log.txt`；`dead_archive_20261014/manifest.jsonl` 尚未生成 |
+| 统筹增补令 P2（claim 观察面） | **已落地**：`lock_files.py` 新增 `_remaining_life_face`，`status／check／guard-write／list` 四面同源报剩余寿命，`status` 头加三态计数；判定分支零改动。**前提回交**＝"34 条活 claim 无 expires_at"实测不成立（`.ailocks` 两面各 22 条**全带**该字段，缺 0；活 21／已过期仍挂册 1），故未在 `SessionRegistry.held_files` 落第二真源 | 同形双面（改前 1/4 面有读数→改后 4/4）`.runtime/tmp/deadmass2_redproof_claim_print.py`；配对测试 6 支追加在既有族册 §10，39 passed；袋 q-20261014-st-deadmass2-20261014-0005；账见 `00_ledger.md` §八-12 |
+| 主役放量（C/D 归档） | **未落**：终版表 1,645 枚中**放行 1,625／不放行 20**（中途表读数 1,622 留档：02:5x 轮），10 片逐片抓窗在跑；本班实测**无空窗可抓**（下节） | 终表 stdout `.runtime/tmp/deadmass2_archive_log_final.txt`（中途轮 `.runtime/tmp/deadmass2_archive_log.txt` 未删）；`dead_archive_20261014/manifest.jsonl` 尚未生成 |
 
 ## 二、⚑ 主役受阻的实测定性（不是"再等等"能解释的）
 
@@ -65,14 +66,22 @@ measure/preserve/archive 三件在册 TTL 驱动器（前任所造）加 `--pool
    跑前先 `python -c "import json;d=json.load(open('.runtime/tmp/deadmass_c_archive_log.json',encoding='utf-8'));print(d['ts'],d['archived_qids'][:3])"`
    读回上一轮死因（该文件仅全程跑完才写＝缺文件即"未跑完"，不等于"没跑"）。
    ⚑ 呈批件（前任 §四-1 已预告此分支）＝Owner 令"暂停 belt N 分钟做大批清账"；本班未自拍。
-2. **3 壳真成果仓库侧 promote 前置未清**（勿盲投，拥堵队列里新增死信即反向）：
+2. **3 壳真成果仓库侧 promote 前置清单（本班实测，非猜测；勿盲投）**：
    复测证伪交接卡两处计数——gpuux3v 实质面 **17 枚非 3 枚**、maint3 是 **两个 plan 批共 17 枚**；
-   且 `v5_section_13_O.md` 签名行实测已在 dev 的 `gpufeed_campaign/03_gpux_final_report.md` ⇒
-   先清 CLONEGUARD 前置（acknowledged 对或散文去重），再 promote，**提升之后**才拆这 3 壳。
-   实质面已双证（壳在盘＋墓园 `shell_content_20261014/` 逐枚 sha），不促拆。
-   注：宪法引用的写前预查 API `check_before_write`/`resolve_finding` 全仓查无（在册案卷
+   待投面 = gpufeed 16 枚 .md ＋ maint3 两批账面 6 枚（plan.yaml/manifest.json/report.json）＋
+   nightmine2 1 枚 .json。四道前置按实测排：
+   ①**TTL-METADATA**＝16 枚 .md **全部无 frontmatter 围栏**（`handoff_*.md` 首行有 `ttl: task_bound`
+   但缺 `---` 包裹；其余 15 枚连 ttl 行都没有）⇒ 须逐件加信封（改的是他班字节的外壳，须在消息里留痕）；
+   ②**CLONEGUARD**＝`v5_section_13_O.md` 签名行实测已在 dev 的 `gpufeed_campaign/03_gpux_final_report.md`
+   ⇒ 先清 acknowledged 对或散文去重；且宪法引用的写前预查 API
+   `check_before_write`/`resolve_finding` **全仓查无**（在册案卷
    `fullflow_mining/m3_governance/06_f103_clone_guard_code_dedup.md` 已挂治理裁定），
-   故 promote 前无法预查，只能在 commit 面吃事后 staged 复检。
+   只能在 commit 面吃事后 staged 复检——**故必须开一条自己的车道迭代这道门，别在主区拥堵队列里试错**；
+   ③**DOC-REF-BROKEN**＝案卷内相对链接在 gpufeed_campaign/ 目标位是否实存，本班未逐一验；
+   ④**maint3 的 `orig/` 面不进仓库**（85KB/51KB 级已跟踪件前像＝第二真源，SSOT 方向判未过）——
+   已按本班八-8 走墓园，墓园行含 rollback_cmd。
+   ⚑ **提升之后**才拆这 3 壳（在册红线"被清除面≠净收官"）；本班暂不拆，内容另有双证
+   （壳在盘＋墓园 `shell_content_20261014/` 38 枚逐枚 sha 等值）。
 3. **maint3 的 `orig/` 面不进仓库**（85KB/51KB 级已跟踪件前像副本＝第二真源，且 .py 克隆尺不覆 .yaml）
    ——按本班八-8 只走墓园，墓园行含 rollback_cmd；如维护线要入库须先过 SSOT 方向判。
 4. **blob_gc phase2 第二 pass**：本班 C/D 归档落地后再跑一次同一命令
@@ -82,6 +91,13 @@ measure/preserve/archive 三件在册 TTL 驱动器（前任所造）加 `--pool
    live 面 2.2/1.2MB；请维护线据此重找"仍在涨的不过闸写侧"，别按原叙述删存量。
 6. **保活与活性面**：本班 grant/守护/心跳腿三件齐（`heartbeat.jsonl` 30s 一跳）；
    下一班若接手同一池子请另起 sid，勿复用 `st-deadmass2-20261014` 的 grant。
+7. **死因普查（预防面，只出案卷不出裁定）**：全 1,643 枚按 `dead_reason` **本体**正则取门名
+   （尺的更正＝measure 表 `dead_reason_head` 截 80 字符会把门名切掉，145 枚因此落 "other" 桶），
+   147 类，头部：landing 异常 369／**ghost_session 259**／GATE-PRECOMMIT-RUN 119／
+   DOC-HEADER-SUITE 117／CREATE-GUARD 102／TAKEOVER-PENDING 45／TRANSLATION-COVERAGE 40。
+   全表 `.runtime/tmp/deadmass2_death_cause_census.json`，叙述与两条可读结论见 `00_ledger.md` §八-11。
+   请维护线按此排序处置（GATE-PRECOMMIT-RUN 与在册族谱档案"修此门可消 222 袋"同量级）；
+   本班未据普查改任何门判据。
 
 ## 六、复核命令（正文抽出原样跑，期望值即本册所记）
 
@@ -121,8 +137,29 @@ for _ in range(150):
 print('samples=150 FREE=',free)"
 ```
 
-本班自证口径＝六-2/六-3/六-4 三条已在当轮**原样抽出跑到本册所写值**（139 行零失配／
-"尚无＝未落窗"＋dead 1,642／samples=150 FREE=0）；六-1 的读数取自本班当轮两次真跑
+### 六-补（P2 增补令面，同样已原样跑到期望值）
+
+```bash
+# 5) 四面同源双对照（同一把探针，改前必红才算数）
+#    期望＝改前：status=False／list=True／check=False／guard-write=False
+#          改后：四面全 True
+python -u .runtime/tmp/deadmass2_redproof_claim_print.py | grep 有剩余读数
+python -u .runtime/tmp/deadmass2_redproof_claim_print.py worktree | grep 有剩余读数
+# 6) 配对测试（期望：39 passed）
+python -m pytest tests/gov/git/test_lock_files_ttl_mutex.py tests/gov/git/test_lock_files_first_acquire_guide.py -q
+# 7) 真面读数（期望：头行 "LOCKED — N 个文件被锁定（活 a／已过期仍挂册 b／旧格式无 expires_at c）"
+#                  且每条锁带 "剩余寿命:" 行；本班末次实测 22 条锁→22 行剩余寿命）
+python scripts/lock_files.py status | head -1
+```
+
+活体一例（新观察面首跑即抓到，`_is_stale` 与 `status` 同源一致）：`docs/_working/2026-08-24-aiarch-construction-list.md`
+的 claim 其 owner pid 已死、`expires_at` 过期 2.4 小时 ⇒ 门自己的尺判 `_is_stale=True`，
+但**持有者会话仍在册活**——"会话活"与"claim 活"两把尺不同源，正是本件要消灭的形态。
+本班**未代清理**（`cleanup` 带 R-10 遗物回收，会动到他人会话面，属属主/维护线，§3.4 不代修）。
+
+本班自证口径＝六-2/六-3/六-4 与六-补的 5/6/7 六条均已在当轮**原样抽出跑到本册所写值**
+（139 行零失配／"尚无＝未落窗"＋dead 1,642 现值 1,647／samples=150 FREE=0／
+改前 1 面绿改后 4 面绿／39 passed／真面 22 条锁全带剩余寿命行）；六-1 的读数取自本班当轮两次真跑
 （02:2x 与 02:5x 均 agree=60 disagree=0，stdout 留存 `.runtime/tmp/deadmass2_measure_log.txt`），
 **末稿时未再跑一次**——因它会重写判据表而彼时归档器正在飞（故该条上方加了禁并发注）。
 凡未跑过的不写进本册；写进本册的每条都注明了读数来源。

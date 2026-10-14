@@ -309,7 +309,81 @@ INDEX 21→40 行，本班 20 行 expires=2026-11-13。备份覆盖面核实＝
    且 `v5_section_13_O.md` 签名行实测**已存在**于 dev 的 `gpufeed_campaign/03_gpux_final_report.md`
    ⇒ 前置（CLONEGUARD acknowledged 对／散文去重）未清，在 25 枚积压、8–9 min/枚的拥堵队列里
    盲投一个可能死信的袋＝给下一班新增死信，与本班"每降一枚有 manifest 行"的判据反向。
-   处方已命令化进二班收班册 §三，3 壳因此保留未拆（内容另有墓园双证）。
+   四道前置按实测排（详见收班册 §五-2）：**TTL-METADATA**＝16 枚 .md **全无 frontmatter 围栏**
+   （仅 `handoff_*.md` 首行有 ttl 行但缺 `---` 包裹）；**CLONEGUARD**＝上述 v5 重叠；
+   **DOC-REF-BROKEN**＝相对链接在目标位实存本班未逐一验；**SSOT 方向**＝maint3 的 `orig/` 面
+   是已跟踪件前像（85KB/51KB 级）属第二真源，不进仓库（已走墓园，行内含 rollback_cmd）。
+   ⇒ 该活须开自己车道迭代这道门，不在主区队列试错。
+   ⚑ 反向一条实测收获：`create_guard._pg_confirmed_token_files` 对本班三件（新册＋两既存册）
+   全数正证在册 ⇒ **"内容袋不随投影册"这条路实跑通**，非引用他班结论。
+   处方已命令化进二班收班册 §五-2，3 壳因此保留未拆（内容另有墓园双证）。
+
+### 八-11 死因普查（放量等窗期的预防面，只读零处置）
+
+全 1,643 枚在册死信按 `dead_reason` **本体**正则取门名（尺的更正：measure 表的
+`dead_reason_head` 截 80 字符会把门名切掉，145 枚因此落到 "other" 桶 ⇒ 普查必须读袋本体），
+147 个死因类，头部如下（表存 `.runtime/tmp/deadmass2_death_cause_census.json`）：
+
+| 死因 | 枚数 | 占比 |
+|---|---:|---:|
+| landing 异常（RuntimeError 级） | 369 | 22.5% |
+| ghost_session（属主会话已死） | 259 | 15.8% |
+| GATE-PRECOMMIT-RUN | 119 | 7.2% |
+| DOC-HEADER-SUITE | 117 | 7.1% |
+| CREATE-GUARD | 102 | 6.2% |
+| TAKEOVER-PENDING | 45 | 2.7% |
+| TRANSLATION-COVERAGE | 40 | 2.4% |
+| TEST-SOURCE-CONSISTENCY | 31 | 1.9% |
+| cascade_stale（基底重校验不适用，src/ 与 docs/ 两簇） | 50 | 3.0% |
+| ALGO-FLOW-LINK 27／GATE-VOCAB 26／R5-DIGIT-SUFFIX 22／CLAIM_REQUIRED 21 | 96 | 5.8% |
+
+两条可读结论（只出案卷不出裁定，处置属维护线/Owner 面）：
+①**ghost_session 259 枚＝15.8%**——2026-10-11 保活正门（grant）治的是"idle 自退使袋判幽灵"，
+本面是**存量**而非新伤；本班实测保活三件套（grant＋守护 30s 一跳＋`list_active_readonly` 命中）
+可复现，说明增量通道有效，存量只能靠本班这类放量清。
+②**GATE-PRECOMMIT-RUN 119 枚**与在册族谱档案"修此门可消 222 袋"同量级——该门仍是净增死信的头号
+门禁型来源，优先级排在 DOC-HEADER/CREATE-GUARD 之前（后两者多为新建件登记时序问题，
+本班 §八-4 与前任 §六 各复证一次"投影滞后假拦"形态）。
+本班**未**据此改任何门判据（红线：判据改动只认任务书与总筹通道）。
+
+### 八-12 统筹增补令（P2 加半件·claim 观察面）落地与一条前提回交
+
+令原文＝"接维护七班·车道B 定性——claim 观察不可复核（34 条活 claim 无 expires_at、惰性清理）
+＝你班 P2 加半件：给 claim 落 expires_at 字段＋巡检打印剩余寿命（只加观察面，不动锁语义）"。
+
+**先核出处**：维护七班车道B 收口册（`maint7_campaign/lanes/lane_b_closeout.md`，145 行）内
+`expires_at` 零命中；该定性实在其主账 `maint7_campaign/00_ledger.md:155-163`，原文口径是
+"**claim TTL 三处口径分叉**……⇒ 定性＝打印口径与实际过期点不同源，属可观测性缺口
+（打印面未反映 expires_at 被改写）"，且他们自记"本班只报不改（改打印面属会话/锁族判据面，
+需与 `--failed-claim-ttl` /env 口径同批定）"。⇒ 本袋即那次"同批定"后的落地件。
+
+**前提实测（交回判据，非代签）**：`.ailocks/registry.json` 22 条 locks 与 `.ailocks/*owner.json`
+22 条**全部带 `expires_at`（缺=0）**，写侧 `_write_owner` 自 v2.1.0 就在落该字段；
+现面＝活 21／已过期仍挂册 1／带 `renewed_at` 8／带 `retention` 0。
+⇒ "34 条活 claim 无 expires_at"在本刻不成立。真正无该字段的面是 `SessionRegistry.held_files`
+（现 7 条纯路径列表），**在那里补一份到期字段＝给同一事实造第二真源**（违 RULE-SSOT 与 §4 净零），
+故本班不落，改为让巡检把 `.ailocks` 这本正源的过期点显示出来——可复核性由本袋取得。
+
+**落地面（只观察，语义零改）**：`lock_files.py` 新增单一渲染函数 `_remaining_life_face`
+（def 数 69→70），`status／check／guard-write／list` 四面共用（调用点=4）；
+`status` 头行加三态计数"活 a／已过期仍挂册 b／旧格式无 expires_at c"，
+空册分支 "CLEAN — 当前无任何文件锁" 逐字未动（`config/construction_workflow_map.yaml:979` 等
+拿它当读数，改它会破他人读数）。判定分支 `_is_stale`/cleanup/acquire 零改动。
+
+**绿先证能红（同形双面，一把探针 `.runtime/tmp/deadmass2_redproof_claim_print.py`）**：
+改前（HEAD 字节）status=False／list=True／check=False／guard-write=False
+⇒ "四面同源"断言改前必红，非恒绿；改后（工作区字节）四面全 True。
+病态被复现成一句话：**改前跑 status 的人看不到任何过期信息，跑 list 的人才看得到——同一把锁两个答案**。
+
+**配对测试**：追加在既有族册 `tests/gov/git/test_lock_files_ttl_mutex.py` §10（六支，不新建测试件）；
+反向自证一条＝失败收窄 300s 那支除断言报 5m 级外，还断言"不得报 ~30m"（防打印面退回 acquire 口径而测试隐形）。
+实测 39 passed（本文件 34＋同族 first_acquire_guide 5）＋`ruff check` 干净；
+格式化由 `ruff format` 正门做（首投被 ruff-format 门拦下未成袋，零副作用；改后 diff 仍 171+/8-，
+证明未波及他人行）。落地袋＝q-20261014-st-deadmass2-20261014-0005。
+
+⚑ 破例自记：0004 袋讯息里我写过"本袋之后本班不再改这两件"，本节的 P2 账是**该承诺之后**因
+统筹增补令到达而追加的一次，非分投习惯复发；此后本班不再改这两件。
+
 
 
 
