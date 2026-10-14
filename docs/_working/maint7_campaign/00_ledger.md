@@ -222,3 +222,264 @@ python .runtime/tmp/st-maint7-20261014/survey_kill_window.py
 # GATE-SELFDOC 上限实测（v2 走门侧真入口＋正对照）
 python .runtime/tmp/st-maint7-20261014/measure_selfdoc_cap_v2.py
 ```
+
+## 九、已知红预警（统筹 02:xx 裁定：最小袋不批，改记此预警）
+
+**一句话**：本班 q-...-0004 随落地把一个**在落地面为红**的测试件带进了 HEAD；修复在 q-...-0018
+（排队中）。**任何袋若死于 GATE-TEST 且 dead_reason 点名下面这个 node id，属已知存量红，
+勿自行修它——待 0018 落地后原袋重投即愈。**
+
+| 项 | 值 |
+|---|---|
+| 受害件 | `tests/gov/governance/commit_gates/test_registry_yaml_parse_watch_extension.py` |
+| 受害 node id | `test_pg_key_drift_same_file_active_still_blocks` |
+| 落地面读数 | `1 failed, 17 passed`（主区码面跑该两支 P0-2 测试件，PG 可达） |
+| 车道面读数 | 同件此前 `11 passed`（**假绿**，见成因） |
+| 带入袋 / commit | q-20261014-st-maint7-20261014-0004 ／ HEAD=3f347db1cb |
+| 修复所在袋 | q-20261014-st-maint7-20261014-0018（15 件，02:30:26 入队） |
+
+**成因（自纠，如实入账）**：缺陷在**测试桩不在门**。该用例定义了假 PG 应答 `hits` 却漏装
+`_patch_pg` ⇒ 车道进程里真 PG 根本连不上（`REPO_ROOT` 随模块位置落到车道，车道无
+`config/.env.postgres`），门走"账本不可达 ⇒ 全条照拦"异常支，测试**因为错误的理由**通过；
+落地面 PG 可达，真查 `file=b.md|token=t-b` 查无 ⇒ 走"真源不背书"放行支 ⇒ 断言炸红。
+另写只读探针（`.runtime/tmp/st-maint7-20261014/probe_key_drift.py`）记录桩收到的每条 SQL，
+实测两条腿都走到（EXACT 未命中 → LIKE 同 file 前缀命中 → 照拦，
+note=`PG 对账：1 条 active 照拦／0 条真源不背书放行`）⇒ 门码行为正确，红的是量门的尺。
+
+**0018 内的修法**：补装桩；三条 PG 依赖用例（retired 放行／active 照拦／键形漂移照拦）
+各加硬断言 `calls["n"] >= 1`——"桩没生效却改用真连"这一整类假绿从此必红；
+`_patch_pg` docstring 写明该坑。**突变自证**：把桩再抽掉一次 ⇒ `1 failed / 10 passed`
+（同形态在修复前是车道绿）⇒ 断言有牙。复原后 `11 passed`，件字节哈希与备份全等。
+
+**为什么不插队（统筹裁定两条，记此存档）**：①FIFO 下新袋只会被排在 0018 之后，"抢在
+0018 前"在队列语义里不成立；②真正暴露在风险里的是排在 0018 之前的 B 的 0014/0016/0017，
+任何插队手段都救不了"修复袋排在受害袋之后"这个序；操纵队列顺序＝共享面干扰，
+不为几只可自愈的死信做。当晚死信走当日四态分诊（已自动化），代价可承受。
+
+**0018 落地后本班当班动作**（②）：在落地面复跑该两支测试件转绿并入账。**判据取
+`git show HEAD:<件>` 面**（不信盘上字节），命令分两种面各一条，且都**实测跑过**：
+
+```bash
+# 落地面（主区码＝真连 PG 可达的那一面）——0018 落地后期望：18 passed / 0 failed
+python -m pytest \
+  tests/gov/governance/commit_gates/test_registry_yaml_parse_watch_extension.py \
+  tests/gov/governance/commit_gates/test_create_guard_registry_cache.py \
+  --basetemp="$LOCALAPPDATA/Temp/land7"
+# 读数记账：两支共 18 node（11＋7）；18 passed 即转绿，若仍见
+#   test_pg_key_drift_same_file_active_still_blocks 红 ⇒ 0018 未落地或被回退，回报统筹
+# 注：在车道里复跑必须先绑车道码（见 §一.3 绑定坑），命令前置两枚环境变量：
+#   PYTHONPATH 指车道 src 且带 PYTHONNOUSERSITE=1；本表 18 passed 读数已在车道绑定面实测取得
+```
+
+**同向登记（已路由，本班不落码）**：序列化落地链导出 `ZEPHYR_ALPHA_ROOT=<worktree>` 这一行（图书馆班
+根因：`usercustomize.py:27-34` 只认此钮，未设则硬默认主区 ⇒ 落地进程内的门与钩子一直加载
+主区码；本班实测：设钮后 `import zephyr` 立刻解析到 worktree，且顶掉本班那套"清 sys.modules
+＋摘 DistutilsMetaFinder"的丑驱动）。
+**→ 路由指针（统筹 03:xx 更正，本班 03:1x 复核）**：此项**已派图书馆班**（其袋
+`q-20261014-st-libstale-20261013-0014`，实测在 pending），**本班不落码**——保留本班钮位实测
+证据做交叉参照，防双做。给该班的一行校正（统筹令把目录写错了，锚行全对）：改点真身是
+**`scripts/governance/commit_queue_landing.py`**（`src/zephyr/gov_enforcement/rule_bridge/` 下
+无此文件），主区副本实测总 4974 行——`_GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"` 定义 :236、
+置位 :3444-3445（`prev_env = os.environ.get(...)` → `os.environ[...] = "1"`）、finally 复原
+:3524-3527 ⇒ 正是一个 `prev→set→finally` 的 try/finally 对，一个 scope 盖两条落盘路径、六行，
+与本班上轮所报 belt `commit_belt_daemon.py:733-741` 同习语；钮名可与 `_GATEWAY_ENV` 在同一
+scope 内并列导出（同样禁全局设）。
+
+**→ 该行状态校正（12:1x 实测，覆盖统筹 03:xx 要我预填的措辞）**：令中要写“env 钮已由 0021
+落码”，但实测 **0021 已判 dead**、`git show HEAD:scripts/governance/commit_queue_landing.py`
+内 `ZEPHYR_ALPHA_ROOT` 计数＝**0** ⇒ 钮**未落地**，图书馆版补丁仍只是参照面。按在册
+“前提被证伪即停手上报”，此处不照抄未成立的说法；复投方（0021 那一班）接手时须自证
+**两面读数**——落地进程读到 worktree 码，且 GATE-TEST/pre-commit **钩子子进程**自身解析到的
+`zephyr` 也是 worktree 面（子进程继承 `os.environ`，设点在 `gateway.commit` 外层＝理论上
+先于钩子出生点，但“理论上”不算数）。`ZEPHYR_COMMIT_GATEWAY` 同族 scoped-env 的位点表
+（commit_queue_landing.py :236/:3444-3445/:3524-3527 与网关本体 git_commit_gateway.py
+:217/:340/:4478→:4525/:5215→:5237）见本节上方，供其择点。
+
+## 十、本班收口与交接卡（统筹 10-14 午收口令；新总指挥接手真源＝本册＋队列 blobs）
+
+**甲为何一只都没落：死法是机械连坐，不是门禁判据拦。** 实测三只大袋（0010/0015/0018，
+各 15 件）dead_reason 全为 `cascade_stale: 基底重校验不适用 [6 files]`，且
+`stale_by` 分别是 q-...-0004／0005／0008——**都是本班自己更早落地的小袋**。三袋同钉
+`base_head=9631a2e378cc`（建道时的 dev）；那 6 件先被小袋落进 dev 后，大袋的基底重校验
+即判不适用⇒**整袋连坐**，把袋内另外 9 件根本无人动过的增量一起带走。
+
+**处方（值得进死信分诊族谱，与在册“同会话两袋撞同件必以 dev 现值重基”同族）**：
+同会话内“小袋先落＋后袋仍钉旧 base”＝必整袋连坐。三条规避：①后袋**剔除已落地件**；
+②或大袋**早于**小袋投；③或在投后袋前先 `git log -1 -- <件>` 复核基底是否已被自身推进。
+本班最终形态＝一只 10 件袋（9 件代码/测试 + 本册），**刻意不带** create_guard.py／
+registry_yaml_parse_gate.py／projection_generator.py 及其测试（那六件已在 HEAD）。
+
+**重投前逐件三面差实测（12:1x，非沿用 04:05 旧读数）**：9 件中 8 件 `base==dev`＝8 小时
+无人动 ⇒ 干净快进；唯一 `dev 已推进` 的那支测试件，`base→dev` 的 153 行＝**本班 0004
+自身落地**（`3f347db1cb` 属我），`dev→lane` 仅 18 行＝**只我的桩修复**（4 条删行全是
+被改写的原行）⇒ 车道版本＝dev＋仅本班增量，无整档覆写他班面（归属篡改红线未触）。
+另：`test_syntax_validation_gate.py` 车道与 dev **全等** ⇒ 不带（少一件少一处连坐面）。
+
+**本班落地清单（收口时刻真值）**：done＝0003/0004/0005/0006/0007/0009/0011/0014；
+dead＝0001/0002/0008/0010/0012/0013/0015/0016/0017/0018/0019/0020/0021/0022/0023/0024。
+已在 HEAD 的：P0-2 两处读面加固（0004）＋双向投影一致性巡检（0005）＋班账 §一–§八（0009）。
+**仍未落地、由本册收口袋承接的**：P0-1 甲全部 4 个 src 件与 3 个测试件、守卫件（B 版字节）、
+测试桩修复、班账 §九/§十。落地判据（只认 git）：
+
+```bash
+git show HEAD:src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py | grep -c _has_m10_exemption   # 期望 1
+git show HEAD:tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py | grep -c importorskip   # 期望 ≥1（B 版文本）
+git show HEAD:tests/gov/governance/commit_gates/test_registry_yaml_parse_watch_extension.py | grep -c 桩未生效   # 期望 3（消除 §九 已知红）
+python -m pytest tests/gov/governance/commit_gates/test_registry_yaml_parse_watch_extension.py \
+  tests/gov/governance/commit_gates/test_create_guard_registry_cache.py --basetemp="$LOCALAPPDATA/Temp/land7"   # 期望 18 passed
+```
+
+**未闭合项（交下一班，均有前提缺口，非本班可自裁）**：
+①P1 两条 HEAD 级挂死地雷——属车道B（0003 已落，其后续袋 0016/0017 判死），本班按并发避让未双写；
+②P2「接管条目刷新出口」立法——取证三条在 §六（192 条 open 全未关账／立案含 idle 0.3s 级／
+  TAKEOVER-PENDING 咬活会话 19 次），判据本体跨班，需与 `session_concurrency.py`＋
+  `test_takeover_pid_false_positive.py`＋`session_takeover_ledger.py` 的 `death_evidence` 字段面同批；
+③P-9 定义本班不可得（六班册仅一次且无定义，全仓 6 处命中分属 5 战役），归 0021/B 面；
+④撕裂读**写侧**根因（热册被非 CAS 直改，§二.1）＝§1 第 13 条执法面，本班只做了门侧兜底；
+⑤`.aidrafts_pool/pool-20260919202729-c433` worktree 注册指向已消失目录（§四.1）需 prune；
+⑥无主 claim 1 枚（属主 st-wkcure-chief-20261013 已不在注册表）。
+
+## 十一、落地链"钮在 HEAD 不在进程"实锤＋守卫件三面对表（10-14 13:0x，均实测非推断）
+
+**本节起因**：0033（9 件，码＋测同袋，基底已换当刻 dev）仍 dead，dead_reason 原文＝
+`网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断 ... hook=['gate-test']`
+＋`collected 112 items / 1 error`。这条不是基底问题、不是内容问题，是**码面指向**问题。
+
+### 11.1 根因逐字取证
+
+同条件本地复跑（在袋面 scratch worktree 里跑钩子那条 `--collect-only` 命令）拿到确切报错：
+
+```text
+ImportError: cannot import name '_has_m10_exemption' from
+'zephyr.gov_enforcement.commit_gates.perm_trigger_gate'
+(D:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\perm_trigger_gate.py)
+```
+
+括号里是**主区磁盘码面**——钩子里的 pytest 子进程没读袋内快照，读的是主区旧码。
+机制与治本钮（`ZEPHYR_ALPHA_ROOT` 指向 serializer worktree，`usercustomize` 唯一认的开关）
+已由车道B 的 0021→0026 一系于 **12:34:16 落入 HEAD**（现值
+`git show HEAD:scripts/governance/commit_queue_landing.py | grep -c ZEPHYR_ALPHA_ROOT` ＝ 3，
+且其 `[INVARIANTS]` 自述里逐字写着本症状与"被迫拆册先行袋＋代码后继袋——深队列必崩"这一后果）。
+**但钮落进的是文件，不是执行体**：
+
+| 事实 | 实测读数 |
+|---|---|
+| 0026（钮袋）落地面时刻 | `landed_at 2026-10-14T12:34:29+08:00`（commit bb78050c3d 12:34:16） |
+| 0033 死亡时刻 | `dead_at 2026-10-14T13:02:37+08:00`（＝钮入 HEAD **之后** 28 分钟） |
+| 落地执行体进程 | `commit_belt_daemon` **PID 43080 起于 10/14 05:08:46** |
+
+⇒ 05:08 的进程不可能装载 12:34 才落盘的 landing 码：这是在册 P0 形态"HEAD 有修复而运行面读主区磁盘旧码"的**"钮已落而进程未换"变体**——磁盘/HEAD 都新，跑的那份是旧的，
+`git status` 全绿现场照样红。差别在于本次连"重启即愈"都不需要改任何文件。
+
+### 11.2 本班处置＝按既有正道拆袋，不碰共享执行体
+
+本班**不重启 belt daemon**（重启＝全队落盘链瞬时停摆，属新总指挥/Owner 门位，非施工班可自裁）。
+正道＝把"码＋测同袋"退回成两袋：
+
+1. **0034 码件先行袋**（4 件门件本体）：staged 面无 `tests/**.py` ⇒ 钩子
+   `[ -z "$files" ] → skip collect`（该旁路 2026-09-30 B1 处方在册）⇒ 收集面不参与；
+2. 前袋落地时主工作区受限收敛（landing 的既有不变量：文件与旧 HEAD 逐字节一致才快进写入）
+   ⇒ 主区磁盘获得新符号 ⇒ 后袋的收集子进程查得到；
+3. **后继袋**（自家测试 4 支＋守卫件 1 支）收集面 rc=0 可落。
+
+投后袋前的**准入判据**（不靠"应该已落"，先落地侧自证再按按钮）：
+`grep -c _has_m10_exemption src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py`（主区磁盘面）≥1。
+
+交下一班的正道一条命令（**本班不执行**）：`restart commit_belt_daemon`（PID 43080，05:08 纪元）后
+"码＋测同袋"恢复合法形态，本节的拆袋绕行即不再需要；重启前请务必确认无在飞袋正在门禁段。
+
+### 11.3 守卫件：同一枚钩子的第二种死法（rc=5，不是 rc=2）
+
+B 版字节（模块级 `pytest.importorskip`）随 0030 投出，dead_reason 原文含
+`collected 0 items / 1 skipped`＋`no tests collected in 0.39s`＋GATE-TEST `exit code: 2`。
+判据本体逐字可读（`.pre-commit-config.yaml` id=gate-test 的 entry）：
+
+```text
+python -m pytest --collect-only -q ... $files; rc1=$?; ...
+if [ $rc1 -ge 2 ] || [ $rc2 -ge 2 ]; then exit 2; fi
+```
+
+⇒ pytest 的 `NO_TESTS_COLLECTED=5` 与 `COLLECTION_ERROR=2` **同被 ≥2 拦**：把守卫做成模块级 skip
+只把 rc 从 2 换成 5，落地面照样死。三面对表（同一条钩子命令，实跑取 rc，**未经管道**——
+管道后 `$?` 量的是 tail）：
+
+| 面 | 内容 | rc | 钩子 |
+|---|---|---|---|
+| HEAD 现值 | 无守卫，模块级 import 缺失件 | 2（1 error during collection） | 拦 |
+| 0030 死袋面 | module-level importorskip | 5（no tests collected） | 拦 |
+| 换装载点面 | autouse fixture 内 importorskip | 0（20 tests collected，运行面 20 skipped） | 放 |
+
+处置＝装载点从模块级移进 `@pytest.fixture(autouse=True)`（收集期有件、运行期仍整件 skip，
+被测件一回归自动恢复真跑）；**不删测试件**（治理资产净删属另一通道）、**不动任何判据/阈值/豁免面**。
+件内旧注释原称"module-level＝TEST-SOURCE-CONSISTENCY 在册豁免形态"已被 0030 证伪，改成本节三面对表。
+
+**留档待定性（非本班处置面）**：被测门件
+`src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py`
+在 dev 树零命中、无 A/D 删除记录、主区磁盘仅剩 `map_family/__pycache__/*.pyc`（无源 .pyc 不可导入）
+＝**孤儿测试件**（测试先于门件存在，门件从未入册）；`gate_auto_registrar` 同期在册告警
+「MAP-ALIGNMENT 死触发：该门件 HEAD 树零命中，前向防御/死模式待 Owner 定性」＝同一事实的另一面。
+
+## 十二、落地逐字读回终账＋数据班就绪锚（10-14 13:3x，全部实测读数）
+
+### 12.1 甲已落地——数据车道二班的三步就绪条件成就（本节即转达锚）
+
+| 项 | 值（可直接复核） |
+|---|---|
+| 门件本体袋／commit | `q-20261014-st-maint7-20261014-0034` ／ `c7ef3e7e53ce118b36f435925c1ed24419cb17ab`（13:25:23） |
+| perm_trigger_gate.py 袋内 blob sha256 前 12 | `6fcd7fbcd88b` |
+| _diff_helpers.py（正则单点收紧） | `1e78e665b17a` |
+| manual_only_permanent_gate.py（m11 收编） | `f8fb2a85a612` |
+| syntax_validation_gate.py（syntax-fixture 收编） | `43f6c128712e` |
+| 自家测试袋／commit | `q-...-0035` ／ `97c5d6fc224d80fb19a5ff4a6366fcb5ae6f7766`（13:35:15） |
+| 声明格式（在册真源＝`docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml` 的 m10-time-trigger 条目：scope=per-file／reason_required=true／reason_min_length=10） | `# noqa: m10-time-trigger  M10豁免: <理由≥10 字>`——**同行两空格**、禁独占一行（跨行不计数）；`M10豁免:` 前缀是 reason_format 体例（与 m11 真实用法同形），解析面按"理由≥10 字"判定，不强制前缀 |
+| 验收探针（只读，跑它**别接管道**——管道后 `$?` 量的是 tail） | `python .runtime/tmp/st-datalane2-20261012/probe_perm_trigger_fix_acceptance.py` |
+| 落地面实测读数 | **RC=0**；三形态齐＝拦（无声明）／拦（畸形声明）／放（合规声明）；探针自带面自证行＝`磁盘=6fcd7fbcd88b HEAD=6fcd7fbcd88b 同面=True`；尾行原文＝`门修是否已落地且具三判别力： 是 ⇒ 可复投六件套` |
+| 判据本体是否被改动 | **未改**（时间触发＋无订阅仍违规；只是"合规声明"这一输入面开始被识别） |
+
+### 12.2 落地逐字读回（判据一律 `git show HEAD:<件>` 面，13:3x 实测）
+
+| # | 判据命令 | 落地期望 | **实测** |
+|---|---|---|---|
+| C1 | `git show HEAD:src/zephyr/gov_enforcement/commit_gates/create_guard.py \| grep -c _read_registry_head_text` | ≥3 | **3** |
+| C2 | `git show HEAD:src/zephyr/gov_enforcement/commit_gates/registry_yaml_parse_gate.py \| grep -c _pg_endorsed_token_ids` | ≥2 | **2** |
+| C3 | `git show HEAD:src/zephyr/governance/registry_projection/projection_generator.py \| grep -c token_two_way_diff` | ≥5 | **5** |
+| C4 | `git show HEAD:docs/_working/maint7_campaign/00_ledger.md` 存在 | OK | **OK** |
+| C5 | `git show HEAD:.../perm_trigger_gate.py \| grep -c _has_m10_exemption` | 1（**此期望值是我凭印象写的，见 12.4**） | **3** |
+| C6 | `git show HEAD:.../\_diff_helpers.py \| grep -cF 'noqa:[ \t]'` | ≥1 | **1** |
+| C7 | `git show HEAD:.../manual_only_permanent_gate.py \| grep -c _make_noqa_pattern` | ≥1 | **4** |
+| C8 | `git show HEAD:tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py \| grep -c importorskip` | ≥1 | **3** |
+| C9 | `git show HEAD:.../test_registry_yaml_parse_watch_extension.py \| grep -cF 桩未生效` | 3 | **3** |
+| C10 | `git show HEAD:.../00_ledger.md \| grep -cE '^## (九\|十)、'` | 2 | 本袋自身，读回见 §十三 |
+| C11 | `git show HEAD:scripts/governance/commit_queue_landing.py \| grep -c ZEPHYR_ALPHA_ROOT` | —（他班钮） | **3**（车道B 0026 已落，12:34:16） |
+| C12 | 落地面 §九 已知红闭合：`python -m pytest tests/gov/governance/commit_gates/test_registry_yaml_parse_watch_extension.py tests/gov/governance/commit_gates/test_create_guard_registry_cache.py --basetemp="$LOCALAPPDATA/Temp/land7"` | 18 passed | **18 passed / RC=0** |
+
+### 12.3 新坑（本班会把这条留给全队）：落地后主区磁盘/索引停在 `HEAD~1`＝"反向待回滚"态
+
+两次实测同形态（0034 后 4 件码面、0035 后 5 件测试面）：`git status --porcelain` 显示 `M `（**第一列 M＝索引相对 HEAD 有改动**），
+且 `磁盘==index==HEAD~1`、`HEAD==袋内容`。⇒ landing 的"主工作区受限收敛"（不变量：文件与旧 HEAD 逐字节一致才快进写入）
+**被无主 staged 残留挡住并 fail-open 跳过**（主区"agent 写文件即自动 git add"把落地前的旧字节钉进了索引）。
+两个后果都值得防：①钩子里的 pytest 子进程读的是主区磁盘 ⇒ 后继测试袋收集面查不到新符号（本班 0033 即死于此，见 §十一）；
+②任何后续提交若把这些索引条目带进去，就是**把我的已落地修复回滚掉**。
+
+处置（零唯一字节丢失，前后都做了谓词实测）：先证 `index == HEAD~1`（逐件 `git show :<f>` 对 `git show HEAD~1:<f>` 归一 EOL 比 sha，
+本班 9 件全 RESIDUE(==HEAD~1)），再 `git checkout HEAD -- <件>`（同时收敛索引与磁盘），复核 `git status` 该目录为空。
+**判据（每次落地后都该量，别信"落了就新了"）**：`grep -c _has_m10_exemption src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py`（磁盘面）≥1。
+本班未代修他班件的同类残留（只收敛自己名下 9 件）。
+
+### 12.4 本班自曝：交付期望值又是凭印象写的（同类第五次）
+
+交付册 §一 曾把甲的判据期望写成"＝1"（按"一个函数定义"脑估），实测 `git show HEAD` 面＝**3**（定义 1＋两条判定支各 1）。
+按在册红线"存在性≠内容判据／期望值必须抽出原样跑到实测"，本节把 C1–C12 全部改成实测列，
+并在 `99_delivery.md` 用同一张表替换旧值。根因不是命令写错，而是**我把"应该有几个"当成了"实测有几个"**——
+这类错只要不在交付前实跑就必然出门。
+
+### 12.5 本班袋账终数（四态目录 manifest 口径，非自报）
+
+- done 14 只：0003 0004 0005 0006 0007 0009 0011 0014 0026 0027 0028 0031 0034 0035
+- dead 21 只：0001 0002 0008 0010 0012 0013 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0029 0030 0032 0033
+- 在飞 0 只（pending/processing 均空），claim 待 release，车道待归档
+- 死因归类（供死信族谱）：`cascade_stale` 整袋连坐 3（0015/0018＋其连坐面）／基底钉旧致"双侧皆改真冲突" 5
+  （0020/0022/0023/0024/0025）／同件自撤让位 3（0012/0013/0032）／GATE-PRECOMMIT-RUN 内容面 1（0001 孤儿件收集错，已拆）
+  ／钩子 rc≥2 拦（0008/0030＝零收集 rc=5；0033＝码面指向主区 rc=2）／GATE-SCRIPT-Q hook 改文件 1（0029）／其余见各袋 dead_reason
+
+
