@@ -28,10 +28,11 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS = REPO_ROOT / "scripts"
 
 # The three watchdog-tier guard scripts (AGENTS.md "watchdog 三服务").
+# 2026-10-14 路径对齐 a4b503a16 拆簇（installers→scripts 根；注册契约同批修正）
 GUARD_SCRIPTS = [
-    SCRIPTS / "installers" / "start_scheduler.ps1",
-    SCRIPTS / "installers" / "start_tick_subscriber.ps1",
-    SCRIPTS / "installers" / "start_ch_health_probe.ps1",
+    SCRIPTS / "start_scheduler.ps1",
+    SCRIPTS / "start_tick_subscriber.ps1",
+    SCRIPTS / "start_ch_health_probe.ps1",
 ]
 REGISTER_GUARD = SCRIPTS / "tasks" / "register" / "register_guard_tasks.ps1"
 REGISTER_AUX = SCRIPTS / "tasks" / "register" / "register_aux_tasks.ps1"
@@ -135,7 +136,7 @@ class TestGuardsDefineHeartbeat:
             )
 
 
-DEADMAN_SWITCH = SCRIPTS / "installers" / "deadman_switch.ps1"
+DEADMAN_SWITCH = SCRIPTS / "deadman_switch.ps1"
 
 
 class TestDeadmanSwitchInvariants:
@@ -146,7 +147,7 @@ class TestDeadmanSwitchInvariants:
     it to the Python stack (which would die if Python is broken)."""
 
     def test_deadman_script_exists(self):
-        assert DEADMAN_SWITCH.exists(), "scripts/installers/deadman_switch.ps1 must exist (#ARCH-BOOT-002 E)"
+        assert DEADMAN_SWITCH.exists(), "scripts/deadman_switch.ps1 must exist (#ARCH-BOOT-002 E)"
 
     def test_not_a_guard_no_while_true(self):
         text = DEADMAN_SWITCH.read_text(encoding="utf-8")

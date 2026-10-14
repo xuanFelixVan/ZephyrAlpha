@@ -109,7 +109,7 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
             "-ExecutionPolicy",
             "Bypass",
             "-File",
-            "scripts/installers/start_scheduler.ps1",
+            "scripts/start_scheduler.ps1",
         ],
         "stop": {
             "how": "heartbeat",
@@ -135,7 +135,7 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
             "-ExecutionPolicy",
             "Bypass",
             "-File",
-            "scripts/installers/start_tick_subscriber.ps1",
+            "scripts/start_tick_subscriber.ps1",
         ],
         "stop": {
             "how": "heartbeat",

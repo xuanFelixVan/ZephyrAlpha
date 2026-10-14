@@ -64,7 +64,7 @@ $settings = New-ScheduledTaskSettingsSet `
 $principal = New-ScheduledTaskPrincipal -UserId $CurrentUser -LogonType Interactive -RunLevel Limited
 
 foreach ($svc in $services) {
-    $ps1Path = Join-Path $RepoRoot ("scripts\installers\" + $svc.Script)
+    $ps1Path = Join-Path $RepoRoot ("scripts\" + $svc.Script)
     if (-not (Test-Path $ps1Path)) { throw "Guard script not found: $ps1Path" }
 
     # No-flash launch (#ARCH-BOOT-WINDOW-FLASH, 2026-09-08): powershell.exe is console-subsystem;
@@ -111,7 +111,7 @@ foreach ($svc in $services) {
 # existing task is left completely untouched (never Unregister, never Set) so whatever state
 # the Owner has since chosen (including Enabled) is preserved.
 $tradingSvc = @{ TaskName = "ZephyrAlpha_TradingWatchdog"; Script = "start_trading.ps1" }
-$tradingPs1 = Join-Path $RepoRoot ("scripts\installers\" + $tradingSvc.Script)
+$tradingPs1 = Join-Path $RepoRoot ("scripts\" + $tradingSvc.Script)
 if (-not (Test-Path $tradingPs1)) { throw "Guard script not found: $tradingPs1" }
 
 if (Get-ScheduledTask -TaskName $tradingSvc.TaskName -ErrorAction SilentlyContinue) {

@@ -20,7 +20,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 _SCRIPTS = Path(__file__).resolve().parents[3] / "scripts"
-PS1 = _SCRIPTS / "installers" / "deadman_switch.ps1"
+PS1 = _SCRIPTS / "deadman_switch.ps1"  # 2026-10-14 路径对齐 a4b503a16 拆簇（installers→scripts 根）
 
 
 def _make_sandbox(tmp_path: Path) -> Path:
