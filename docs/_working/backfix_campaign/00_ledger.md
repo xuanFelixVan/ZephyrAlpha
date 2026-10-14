@@ -1400,3 +1400,34 @@ Test-CapacityGuardBreach : 无法将“Test-CapacityGuardBreach”项识别为 c
   改动面＝本册单件纯尾追加（零代码/零判据/零计划任务），故走主区直改＋队列正门，
   `[GW:st-bakdr-20261013:non-worktree]` 标记为自动留痕通道；会话面按在册配方注册活体
   心跳过 SESSION-REQUIRED（不靠 `--allow-overlap` 消债）。
+
+## 统筹令·备份日班开工令：VM 型A 自动腿抢救（chief-coordinator-st-20261014，2026-10-14 12:5x 发令）
+
+> 令据＝总统筹交接令 2026-10-14 12:00 P0④＋Owner 2026-10-14 01:4x 批复 A 批原文（"本袋落地后跑 register_ch_vm_config_snapshot_task.ps1 点月频自动腿"，两前置＝裁定门＋资源画像门）。
+>
+> **病根（统筹 12:3x 实测三证，发令时点状态）**：
+> ① 型A 通道袋＝`st-bakdr-20261013` 名下五件死信（`q-20261014-st-bakdr-20261013-0002..0006`：0002 非注册表族双侧皆改真冲突／0003 0004 0006 cascade_stale（基底＝本册）／0005 DEPGRAPH-ENFORCEMENT NEW-FILE），执行体 578 行＋注册脚本＋31 测＋裁定#517＋资源画像种子＝**从未落地 dev**（主树实测无 `register_ch_vm_config_snapshot_task.ps1`、scripts/src 面 grep `ch_vm_config` 产出者零命中）；
+> ② 计划任务 `ZephyrAlpha-CHVMConfigSnapshot` 不存在（Get-ScheduledTask 实测 TASK_NOT_FOUND；全部任务 action 面扫 `ch_vm` 零命中）；
+> ③ 首拍双证＝手动产物（`G:/backup/ch_vm_config/` 下 20261014_001529 与 20261014_002311 两目录，manifest 自记 started 2026-10-13T16:23:11Z 全程 9 秒＝配置面零停机实证）。
+> ⇒ 自动腿现状＝**无码可注册**（Owner 批的注册动作悬空），抢救对象＝五件死袋＋其落地链。
+
+### 使命（按序）
+
+1. **进场**：新 sid（st-bakday2-20261014 类同）＋worktree 车道＋冷启动七步。
+2. **抢救五死袋（逐件读 dead_reason 修因后单袋复投，禁同件连投多袋——二班自造 3 枚死信的在册教训）**：
+   - cascade_stale 三件（0003/0004/0006）：基底钉**当下 dev sha** 重投（`--base-head $(git rev-parse dev)` 在册正解）；
+   - 0005：新件先 `apply_depgraph.py --add-design-node` 登记再投；
+   - 0002：读袋内字节与现 dev 面差分定处置——本册若他侧已含等值内容则按已取代判 noop 复投，真增量则整文件三方走队列仲裁，**不自裁合并**。
+   - 袋字节在 `.runtime/commit_queue/dead/q-20261014-st-bakdr-20261013-000*.json`＋blobs 面；**仅若**已被死信 A 批（放量三班令）先行入墓园，走 `E:/_tomb_quarantine` rollback/复活通道取回（rollback_cmd 在 manifest 行）。
+3. **落地判据（只认 git HEAD）**：`git show HEAD:scripts/backup/<型A 执行体>` 存在＋31 测车道离线绿＋`register_ch_vm_config_snapshot_task.ps1` 在树；裁定#517 与资源画像种子 `ops_ch_vm_config_snapshot` 投影面核对（读面，禁手改投影册）。
+4. **注册自动腿（Owner 已批 A 批）**：跑 `register_ch_vm_config_snapshot_task.ps1`；验收＝①`Get-ScheduledTask ZephyrAlpha-CHVMConfigSnapshot` 存在且 NextRunTime 在册；②**当场手动触发一次实跑**（配置面零停机，首拍 9 秒实证）产新快照目录并按首拍三证口径验收（副本字节等值／全件 sha256 与现读全等／manifest 四字段重建全等）。实跑读数原文入账，禁占位符。
+5. **连带核对（只登记不代改）**：`backup_ch_vm.ps1` 头注明的 `restore.ps1` vm-leg 引用位 pending revision 是否被型A 落地顺带解决；未解决＝登记呈维护线。
+6. **收班即清**＋班账尾追加入本册（§序接现状）。
+
+### 禁做
+
+动 `backup_ch_vm.ps1`（2026-10-04 封印件：禁跑禁重注册 `ZephyrAlpha-WeeklyVMBackup`）｜碰 `data.vhdx`/`boot.vhdx`/`G:/backup` 既有内容（只许新增 ch_vm_config 快照目录）｜跑型B OS 镜像（约 13GiB/份）与演练波 1-2（Owner 晨批转呈件，未批前零施工）｜改判据/阈值/保留线｜动每小时 chRan 取数任务（Owner D 项裁定＝保留不动）。
+
+### 证据锚
+
+`G:/backup/ch_vm_config/20261014_002311/snapshot_manifest.json`（首拍双证）｜`.runtime/tmp/bakdr_20261013/bag5_msg.txt`（袋五全文含 Owner 批复四分法原文）｜本册"批复执行段"（2026-10-10 批复族）｜`docs/_working/fullcirc_closeout_chief/bak_591g_evidence.md`（封印证据包）｜INFRA-STORE-003。
