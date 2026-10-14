@@ -796,3 +796,123 @@ RC=0
 - **§四十三 剩两步现读（15:25:10）＝标的均已不在，判已闭合，不重复执行**：worktree 列表无 st-datalane2-20261012／st-datalane3-20261014 车道；`process_reaper_keep.txt` 现 381 行，datalane 仅剩 328 行 st-datalane-20261010 历史注释（datalane2/3/3b 三班行均零）；注册表两 sid `get_session` 均 ABSENT；队列四态 datalane3＝pending 0/processing 0/done 1（即 -0002）/dead 1（即 -0001）。归档判据"撞保护区即停手"无从触发——无标的。执行者未留名，按现读记档不代归因。
 - **插曲如实记（给后续接管班）**：15:25:10 复测发现本会话注册表读数 ABSENT。根因链＝首支 14:52:04 的 last_activity 锚在 15:14 复注册时被 rate guard 冻结（entry alive 降级，活性锚不续），心跳守护按 idle 1800s 判闲于 15:21:54 自退（末次心跳即该刻），90s 后会话判死（分片仍在、get_session 回假）；15:26:40 按在册语义死条目重注册＝合法重启复活（新守护 pid 17644，takeover 台账 skipped＝soft-expire idle 2076s）。教训：接管中断班次，复注册走降级时活性锚被冻结——长收尾流程中途应 claim 一次文件或按在册通道续锚，否则注册后约半小时守护自退、会话假死。
 - **本节落账与收班序**：本节＝纯追加（自证：追加后前 134,677 字节与追加前逐字节等，全文仍纯 LF），`git_commit.py --session st-datalane3b-20261014 --files docs/_working/datalane_campaign/00_ledger.md --message-file <UTF-8> --enqueue` 投袋；落地后 release（带 --files）→ 守护按 PID 精确停 → unregister → archive 前同分钟 `list_active_readonly()` 复测全活会话心跳龄（变异式 `list_active()` 判死写副作用坑在册，只读通道取数）→ `python scripts/session_worktree.py archive st-datalane3b-20261014 --execute`（撞保护区/死锁即停手留命令）；keep 文件本班行＝零，无可撤（已量）。
+
+## 四十六、10-13 basic 翻倍疑点追查账（st-chdataw-20261014）
+
+**班头**：车道 `st-chdataw-20261014`（总包 chief-coordinator-st-20261014 派工，L2 数据班）。开工 2026-10-14 19:00:34 +0800；主区 D:\ZephyrAlpha，分支 dev；读数时刻 19:09:4x–19:20:4x，HEAD=`8bf3e34f64`（19:20:46 取）。
+**红线自证**：①心跳守护已起（19:00:5x，`SessionRegistry.register('st-chdataw-20261014', pid=0)` ＋ detached heartbeat daemon **PID 35896**、30s 心跳；pid 文件 `.runtime/locks/heartbeat_st-chdataw-20261014.pid`；回读 `get_session` 为真）——本班开工首件即起，不等到收班；②本班全程只读，只发 SELECT／DESCRIBE，零 INSERT／DELETE／OPTIMIZE／ALTER；③独占域＝本账 ＋ CH 只读查询，未碰 `docs/03_modules/**`、`docs/01_policies_and_standards/_registry/catalogs/**`。
+**时区口径（先立，防下一班误读）**：CH 服务器 `timezone()`＝**Etc/UTC**，`ingest_ts` 列＝`DateTime64(3,'UTC')`。下文凡标 **UTC** 者＝CH 原样输出，**+8h** 才是北京时间。19:10:26 实测自证：`now()`＝`2026-10-14 11:10:26`／`toDateTime(now(),'Asia/Shanghai')`＝`2026-10-14 19:10:26`。
+
+### D0 首件校准（19:09:4x）—工具链可用，判据能红
+
+| 查询 | 读数 |
+|---|---|
+| `SELECT count() FROM c1_market.stock_daily_basic WHERE trade_date='2026-10-13'` | **11122** |
+| 同句加 `FINAL` | **5561** |
+
+裸查 11122 ÷ FINAL 5561 ＝ 2.0，差整整一倍 ⇒ 假设未证伪，继续下钻。（若两者相同本班须回报"假设证伪"，此处不同。）
+
+### D1 定性（19:09:4x–19:10:2x）—**同值重复行（整批重灌）**，非"同一 symbol 两个版本值分叉"
+
+| 判据 | 读数 | 含义 |
+|---|---|---|
+| `count()` 裸查 | 11122 | 翻倍 |
+| `countDistinct(symbol)` 裸查 | **5561** | 标的数未增，不是混入新 symbol |
+| 每 symbol 行数分布 | **2 行 × 5561**（全体，无一例外） | 整齐双份 |
+| `GROUP BY symbol HAVING count()>1 LIMIT 5` | 000001=2／000002=2／000006=2／000007=2／000008=2 | 重复样例 |
+| `FINAL` 后 `count()` | 5561 | 去重回正 |
+| `FINAL` 后 `countDistinct(symbol)` | 5561 | 一一对应 |
+| `FINAL` 后每 symbol 行数分布 | **1 行 × 5561** | 完整归一 |
+
+**值分叉核验**（区分"重复行"与"双版本"的关键）：抽样 `symbol='000001'` 两行全列——`turnover_rate=0.5127／float_share=1940568.4991／circ_mv=22452377.545／total_mv=22452647.3574`，两行**四业务列逐字相同**，仅 `ingest_ts` 不同。全量核验：5561 个 symbol 中 **5560 个两行四列业务值完全相同**，仅 **1 个（002134）值分叉**（`turnover_rate` 6.9125→6.8994，`circ_mv` 两版同值）。
+**结论**：语义上是**同值重复行（整批被写两遍）**；物理形态确是 ReplacingMergeTree 两 part 未合并（见 D2）。二者不矛盾——同值重复行正是 RMT 待合并双行的一种。因值相同，**FINAL 取哪一版结果都一样**（唯一分叉的 002134，实测 `FINAL` 取到 6.8994＝后写那批，符合 RMT 无 version 列时"保留最后写入行"语义）。
+
+### D2 写入时刻（19:09:4x–19:10:2x）
+
+**表结构实读**（`DESCRIBE TABLE c1_market.stock_daily_basic`，8 列，不猜列名）：`trade_date Date`／`symbol String`／`turnover_rate Nullable(Float64)`／`float_share Nullable(Float64)`／`circ_mv Nullable(Float64)`／`total_mv Nullable(Float64)`／`data_source LowCardinality(String) DEFAULT 'akshare'`／`ingest_ts DateTime64(3,'UTC') DEFAULT now()`。
+**引擎**（`system.tables`）：`ReplacingMergeTree`，`sorting_key=trade_date, symbol`，`primary_key=trade_date, symbol`，`partition_key=toYYYYMM(trade_date)`，**无 version 列**（即去重靠 sorting_key、保留最后写入行）。
+
+**两批写入时刻**（按 `ingest_ts` 分组，两批 `data_source` 均为 `tushare`）：
+
+| 批次 | `ingest_ts`（UTC） | 折北京(+8h) | 行数 | `data_source` |
+|---|---|---|---|---|
+| 批 A（首写） | `2026-10-13 08:31:21.000` | **2026-10-13 16:31:21** | 5561 | tushare |
+| 批 B（重灌） | `2026-10-14 08:31:08.000` | **2026-10-14 16:31:08** | 5561 | tushare |
+
+另：`countDistinct(ingest_ts)`＝2（确为两批，非同批内重复）。10-14 当日数据仅 1 批（`ingest_ts=2026-10-14 08:31:08`，5563 行），与批 B 同刻——**批 B 与 10-14 当日采集是同一次运行**。
+
+**part 层证据**（`system.parts`，partition 202610，含 active）：
+- `202610_2379_2379_1` rows=**11124**，modification=`2026-10-14 08:31:08` UTC，min_date=10-13 max_date=10-14，level=1 ⇒ 5561(10-13)+5563(10-14)
+- `202610_1396_2377_4_2378` rows=22238，modification=`2026-10-13 15:01:50` UTC，min_date=10-08 max_date=10-13，level=4 ⇒ 含 10-13 首写的那 5561 行
+
+**CH 自报写入行数**（`system.query_log.written_rows`）：批 A＝**11122**，批 B＝**11124**——**两批都不是 5561，而都≈两天量**（详见 D3，这是本班定性的转折点）。
+
+### D3 第二写者（19:11:0x–19:20:1x）—**已定位；且实测推翻"两个独立写手"的初始假设**
+
+**（1）CH 侧实证**（`system.query_log`，10-13 08:00 UTC 起该表仅两条 INSERT，`type=QueryFinish`，user=`zephyr_writer`，address=`::ffff:172.24.30.1`，interface=2=HTTP）：
+
+| event_time(UTC) | qlen | INSERT 语句 |
+|---|---|---|
+| 2026-10-13 08:31:21 | 178 | `INSERT INTO c1_market.stock_daily_basic (trade_date, symbol, turnover_rate, float_share, circ_mv, total_mv) SETTINGS async_insert=0, max_partitions_per_insert_block=0 FORMAT TSV`（**6 列，不含 data_source**） |
+| 2026-10-14 08:31:08 | **191** | `INSERT INTO c1_market.stock_daily_basic (trade_date, symbol, turnover_rate, float_share, circ_mv, total_mv, data_source) SETTINGS ...`（**7 列，多了 data_source**） |
+
+**（2）列清单变化的码面真源**：`src/zephyr/data/implementations/tushare_provider.py:1061-1069` `_STOCK_DAILY_BASIC_COLUMNS`（现为 7 列、末位 `data_source`）；同文件 `:1082-1083` docstring 原文：「2026-10-13 改：此前不产出 data_source，由表 DEFAULT 'akshare' 兜底——本 provider 写的行因此全表被标成 akshare（存量已经幂等 ALTER 改回），故改为显式带源，禁再靠 DEFAULT。」——**与实测"10-13 批 6 列／10-14 批 7 列"逐字对上**。
+**（3）落地 commit**：`3422a5c2d6`，2026-10-13 05:19:11，「[数据车道二班 st-datalane2-20261012·③写侧来源标签随形改（Owner 亲裁放行 human_only）]」；其 commit 原文预测「翻案预测随本袋生效：10-13 收盘后新行应显 tushare」——本班实测 10-14 批即显 tushare，预测兑现。（附带解释一处此前易误读的现象：全表历史行 `data_source` 均显 `tushare`，而 `DESCRIBE` 现 DEFAULT 为 `'akshare'`，即由该 commit 所述"存量已经幂等 ALTER 改回"造成，非本班新症。）
+**（4）写者归属（第一写者＝第二写者，同一腿）**：调度任务 `stock_daily_basic_incremental`，`src/zephyr/data/config/tasks.yaml:65-76`（`table=c1_market.stock_daily_basic`、`source=tushare`、`schedule=daily_kline`、`incremental=true`、`capability=stock_daily_basic`）；档期挂在 `config/trading_day_cycle_map.yaml:5057`（dloop 档）。实现＝`tushare_provider._fetch_stock_daily_basic`（`:1118-1170`，逐日 `while current <= end` 循环调 `pro.daily_basic(trade_date=...)`）。
+
+**（5）真因＝该腿取数窗口是 [T-1, T] 两天，每日把 T-1 整批重灌一遍**（本班实测，非推测）：
+
+| 批次日(UTC) | `written_rows` | 对照：当日 FINAL 行数 |
+|---|---|---|
+| 2026-10-08 | 11118 | 10-08＝5557 |
+| 2026-10-09 | 11116 | 10-09＝5559 |
+| 2026-10-11 | 5559 | 窗口只落 1 天（10-10/10-11 非交易日） |
+| 2026-10-12 | 11120 | 10-12＝5561 |
+| 2026-10-13 | **11122** | 10-13＝5561 |
+| 2026-10-14 | **11124** | 10-14＝5563 |
+
+每批 written_rows 都≈两倍日行数（11116–11124），**10-13 并非偶发事件，而是每日都在发生的常态**。
+
+**（6）为何唯独 10-13 此刻还翻倍**：10-12 及更早的重复行**已被 RMT 后台 merge 合并掉了**。实证：`trade_date='2026-10-12'` 现按 ingest_ts 分组**仅剩 1 批**＝`2026-10-13 08:31:21`（即后写那批胜出，先写那批已被吞）；逐日 `countDistinct(ingest_ts)`：10-08＝1／10-09＝1／10-12＝1／10-14＝1／**10-13＝2**。10-13 的"第二批"是 10-14 16:31 才写入的，至本班查数仅约 3 小时，后台 merge 尚未轮到。
+**⇒ 定性一句话**：不是"两个写手"，而是**一条腿每天写两天**；10-13 只是"尚未被后台 merge 收敛的当前窗口"，属可自愈的常态态，非数据损坏。
+
+**（7）排查过但未取得**：本地调度进程 10-13／10-14 的运行日志——`.runtime/` 下无 scheduler watermark/state/cursor 文件（find 无命中）；`schtasks /query` 无 zephyr 相关条目（无输出）；`logs/` 下无 daily_basic 采集日志；`grep -rn "stock_daily_basic_incremental"` 全仓仅命中 `tasks.yaml` 与 `trading_day_cycle_map.yaml` 两处配置，无进程运行留痕。故"窗口＝两天"这一结论是 **CH 侧 written_rows＋ingest_ts 反推**所得，**未取得**调度器侧 start/end 入参的落盘凭证；**未取得**"窗口为何设为两天"的代码行定位（`scheduler.py` 内 lookback/catchup 相关行未命中本腿）。此两点如实记为未取得，交下值班。
+
+### D4 影响面（19:12:3x–19:15:0x）—c1_market 29 张含 daily/indicator/basic 的表抽查，10-13／10-14 裸查 vs FINAL
+
+| 表 | 10-13 裸查 | 10-13 FINAL | 10-14 裸查 | 10-14 FINAL | 症状 |
+|---|---|---|---|---|---|
+| **stock_daily_basic** | **11122** | **5561** | 5563 | 5563 | **翻倍（本班主题）** |
+| **kline_daily** | **7823** | **5566** | 5568 | 5568 | 有症状（非整批翻倍） |
+| **daily_valuation** | **6916** | **5574** | 549 | 549 | 有症状（多批累积） |
+| kline_etf_daily | 1729 | 1694 | 1693 | 1693 | 轻微 |
+| kline_hk_daily | 5212 | 5212 | **5466** | **5214** | 10-14 侧有症状 |
+| a50_futures_daily | 2 | 1 | 1 | 1 | 轻微 |
+| macro_daily_gauge | 2 | 1 | 1 | 1 | 轻微 |
+| **kline_daily_hfq** | 5566 | 5566 | 5568 | 5568 | **无症状（对照通过）** |
+| **stock_indicator** | 3000 | 3000 | 2000 | 2000 | **无症状（对照通过）** |
+| stock_basic | 5573 | 5573 | 0 | 0 | 无症状 |
+| crypto_kline_daily | 51 | 51 | 0 | 0 | 无症状 |
+| technical_indicator | 24501 | 24501 | 0 | 0 | 无症状 |
+| kline_us_daily／index_valuation_daily／goal_readiness_daily／l9_readiness_daily 等 | — | — | — | — | 无症状 |
+
+（另 8 张表因无 `trade_date` 列，CH 报 404/500，非症状，不计。）
+
+**三表症状性质不同，须分开设处方**：
+- `stock_daily_basic`：5561＋5561 **整批同值重灌**，纯冗余、零信息增益。
+- `kline_daily`：10-13 每 symbol 行数分布＝**1 行×3309 ＋ 2 行×2257**；ingest_ts 分组显示 10-13 08:43–08:48 先落 **2257 行（不完整）**，10-14 08:30:32–08:49:06 又落 **约 5566 行（完整）** ⇒ 是 **T-1 补齐全量**，不是同值重复，**有信息增益**（FINAL 5566 ＞ 首写 2257）。
+- `daily_valuation`：ingest_ts 分组达 **22 批**（10-13 08:07 起至 10-14 10:08，每批 2–1000 行，`data_source=local_valuation`）⇒ 是**分批分页常态累积**，非单次双写。
+
+### D5 处方（建议，不执行；本班禁写业务数据、禁 OPTIMIZE）
+
+**主处方（立即可做，零风险）＝消费方 SQL 加 `FINAL`**。本仓已知老坑（c1_market 全系 ReplacingMergeTree、sorting_key 无 version 列）被本班再实证一次：裸查 11122／FINAL 5561，差一倍；`kline_daily` 7823／5566、`daily_valuation` 6916／5574 同理。凡对这类表做 `count()`／`sum()`／`avg()` 等行数敏感聚合的读方，一律 `FROM <表> FINAL`。**这一条不依赖任何写侧改动即可止血，且对三张表性质都成立。**
+
+**次处方（治本，需另立工单呈批，非本班可做）＝把 `stock_daily_basic_incremental` 的取数窗口从 [T-1, T] 收敛为 [T, T]**，消除每日整批重灌（每批 written_rows 11116–11124 中约一半是 T-1 的重复写）。改前须先确认该窗口是有意设计的"T-1 数据修正回补"（本班实测到 002134 的 `turnover_rate` 确由 6.9125 修正为 6.8994，说明 T-1 重灌**兼具修正功能**）——若属有意，则不该简单砍掉，而应改为"仅回补确有差异的行"或保持现状仅靠 FINAL 兜底。**本班不给结论，只提请注意这一权衡。**
+
+**不建议（并说明理由）**：
+- **不建议 `OPTIMIZE TABLE ... FINAL`**：①本症后台 merge 会自动收敛（10-12 已自愈为证），OPTIMIZE 属额外重算力且收益只是提前；②本班红线明禁 OPTIMIZE（重算力，未获授权）；③即使执行，下次日更仍会再产生一批重复行，**不治本**。若 Owner 仍要跑，须单批授权，且须避开 E0 算力闸的 light_only 窗（交易日 09:00–15:30），本班 19:20 后属 heavy_ok 窗——但本班不代申请。
+- **不建议删除重复批**：删数不可逆，须呈批，本班禁做；且重复行对 `FINAL` 读法无影响，删了只是省空间，风险远大于收益。
+
+**交接观察项**：不干预的情况下，10-13 应在下一次后台 merge 后自动回落至 5561（参照 10-12 自愈路径）。建议下值班以 `SELECT count() FROM c1_market.stock_daily_basic WHERE trade_date='2026-10-13'` 与 `... FINAL` 复测一次并记时刻；若届时仍为 11122，说明后台 merge 被卡（需查 `system.merges`／`system.part_log`），届时才值得考虑呈批 OPTIMIZE。
+
+**本班未闭合项（照实列，非请批）**：①调度器侧 start/end 入参凭证未取得（D3-7）；②"窗口为何是两天"的代码行未定位；③`kline_daily`／`daily_valuation` 的症状本班只做了形态定性（够写处方），未追其写者与窗口——若总包要一并治本，需另开班追这两张表的任务腿。
