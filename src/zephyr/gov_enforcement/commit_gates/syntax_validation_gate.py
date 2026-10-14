@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.syntax_validation_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.gov_enforcement.commit_gates._diff_helpers (_build_own_scope/_norm_rel/_audit_foreign_staged，own-scope 三件套)
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.gov_enforcement.commit_gates._diff_helpers (_build_own_scope/_norm_rel/_audit_foreign_staged，own-scope 三件套; _make_noqa_pattern，syntax-fixture 声明正则单点)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（经 in_process_gate_registry.yaml auto_registrar 注册）；zephyr.gov_enforcement.rule_bridge.session_worktree.session_worktree_commit（worktree 通道 check_all 全量 gate）
 # [STARTUP] imported
 # [MATURITY] production
@@ -66,11 +66,9 @@ from __future__ import annotations
 import ast
 import logging
 import os
-import re
-
 from typing import Final
 
-from zephyr.gov_enforcement.commit_gates._diff_helpers import _build_own_scope, _norm_rel
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _build_own_scope, _make_noqa_pattern, _norm_rel
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
@@ -78,11 +76,10 @@ logger = logging.getLogger(__name__)
 __all__: Final = ["make_syntax_validation_gate"]
 
 # syntax-fixture noqa 豁免标记正则（对标 m11-perm-manual-legitimate 模式）
-# 格式：`# noqa: syntax-fixture` + 2+ 空格 + reason（>= 10 字符，rstrip 后计数）
-_SYNTAX_FIXTURE_NOQA_PATTERN: Final = re.compile(
-    r"#\s*noqa:\s*syntax-fixture\s{2,}(\S.*)$",
-    re.MULTILINE,
-)
+# 格式：`# noqa: syntax-fixture` + 同行 2+ 空格 + reason（>= 10 字符，rstrip 后计数）
+# st-maint7-20261014 收编：正则改由共享单点 _make_noqa_pattern 构造（原内联副本的
+# ``\s{2,}`` 含换行，全文 finditer 会把下一行代码借成 reason ⇒ 畸形声明判成合规）
+_SYNTAX_FIXTURE_NOQA_PATTERN: Final = _make_noqa_pattern("syntax-fixture")
 
 # 单次阻断消息中最多展示的违规文件数（防日志爆炸，对标既有 gate 的 [:5] 截断）
 _MAX_VIOLATIONS_IN_DETAIL: Final[int] = 5

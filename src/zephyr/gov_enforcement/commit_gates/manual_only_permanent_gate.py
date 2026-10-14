@@ -61,6 +61,7 @@ import re
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _audit_foreign_staged,
     _build_own_scope,
+    _make_noqa_pattern,
     _norm_rel,
 )
 
@@ -84,12 +85,12 @@ _MANUAL_TRIGGER_IDENTIFIERS = frozenset(
 )
 
 # m11-perm-manual-legitimate noqa 标记正则（#ARCH-P3-FOLLOWUP-TODOS-001 裁定 B / C，P3-1.2 治本）
-# 格式：`# noqa: m11-perm-manual-legitimate` + 2+ 空格 + reason（>=10 字符）
+# 格式：`# noqa: m11-perm-manual-legitimate` + 同行 2+ 空格 + reason（>=10 字符）
 # reason 末尾的尾随空白会被 rstrip 去除后再计数
-_M11_NOQA_PATTERN = re.compile(
-    r"#\s*noqa:\s*m11-perm-manual-legitimate\s{2,}(\S.*)$",
-    re.MULTILINE,
-)
+# st-maint7-20261014 收编：正则改由共享单点 _make_noqa_pattern 构造（原内联副本与
+# _diff_helpers 同形，且 ``\s{2,}`` 含换行——全文 finditer 下"只有码无理由"的畸形声明
+# 会把下一行代码借成 reason，判成合规豁免；本文件正是该缺陷的受害面之一）
+_M11_NOQA_PATTERN = _make_noqa_pattern("m11-perm-manual-legitimate")
 
 # unified=0 hunk 头（取新文件起始行号）：@@ -12,3 +45,7 @@
 _HUNK_HEADER_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
@@ -311,7 +312,9 @@ def _has_m11_exemption(content: str) -> bool:
 
     合规条件（与 noqa_exempt_registry.yaml 的 m11 条目一致）：
       1. 含 ``m11-perm-manual-legitimate`` noqa 标记（``#`` 引导，``noqa:`` 前缀）
-      2. 标记后跟 2+ 空格分隔的 reason
+      2. 标记后跟同一行内 2+ 空格分隔的 reason（跨行不计——空白类通配符含换行，
+         会把下一行代码借成 reason，畸形声明因此被判成合规；单点修在
+         _make_noqa_pattern，已收敛为仅限水平空白）
       3. reason 长度 >= 10 字符（rstrip 后计数）
 
     用途：MANUAL-ONLY-PERMANENT gate 的合法豁免路径——

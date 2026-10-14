@@ -432,15 +432,22 @@ def _make_noqa_pattern(gate_id: str) -> re.Pattern:
     对标 bare-subprocess / import-integrity / consumers-accuracy 等门禁的
     noqa 模式，统一为单一真源，消除逐 gate 复制的正则克隆。
 
+    分隔符必须是**水平**空白（``[ \\t]``）而非 ``\\s``：``\\s`` 含换行，会让
+    "只有码、同行无理由"的畸形声明把**下一行代码**当理由借走（st-maint7-20261014
+    实测：``# noqa: m10-time-trigger\\n            next_line_code()`` 命中且
+    group(1)=``next_line_code()``）——按全文 finditer 的消费方（m10/m11/
+    syntax-fixture）因此把畸形声明判成合规豁免，通配豁免就是这样漏开的。
+    行级消费方（``_extract_noqa_lines`` 逐行 search）本就无此通道，收紧对其零影响。
+
     Args:
         gate_id: 门禁标识（如 ``"import-integrity"`` / ``"bare-subprocess"``）。
 
     Returns:
         编译后的正则 Pattern，匹配 ``# noqa: <gate_id>  <reason>`` 行
-       （gate_id 后需 2+ 空格 + reason >= 1 字符）。
+       （gate_id 后需同一行内 2+ 空格 + reason >= 1 字符）。
     """
     return re.compile(
-        rf"#\s*noqa:\s*{re.escape(gate_id)}\s{{2,}}(\S.*)$",
+        rf"#[ \t]*noqa:[ \t]*{re.escape(gate_id)}[ \t]{{2,}}(\S.*)$",
         re.MULTILINE,
     )
 

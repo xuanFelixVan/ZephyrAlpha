@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件含 [TTL] permanent 头标且使用时间触发模式（while True / time.sleep / schedule. / APScheduler）但未注册事件订阅时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；own-scope（宪法 §3.3，#ARCH-GATE-OWN-SCOPE-001 推广）：扫描集=staged∩本 session 范围（files∪held，_build_own_scope），外来 staged 剔除不阻断、降级 warn+_audit_foreign_staged 审计；own_scope=None 退化全量保守=旧行为
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件含 [TTL] permanent 头标且使用时间触发模式（while True / time.sleep / schedule. / APScheduler）但未注册事件订阅时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；own-scope（宪法 §3.3，#ARCH-GATE-OWN-SCOPE-001 推广）：扫描集=staged∩本 session 范围（files∪held，_build_own_scope），外来 staged 剔除不阻断、降级 warn+_audit_foreign_staged 审计；own_scope=None 退化全量保守=旧行为；m10-time-trigger 逐件声明通道（st-maint7-20261014 甲案，与姊妹子检查 m11 对称化）：正则复用共享单点 _diff_helpers._make_noqa_pattern（禁逐 gate 复制正则），合规判据=门 id 精确匹配＋标记后 2+ 空格＋reason>=10 字符（对齐 noqa_exempt_registry.yaml 的 m10 条目 scope=per-file／reason_min_length=10），new 与 modified 两路同口径；三形态齐备＝无声明拦／畸形声明（只有码无理由或 reason<10）拦／合规声明放，禁通配非该 id 的标记；判据本体（时间触发＋无订阅＝违规）零松动
 # [MODIFY-GUARD] gate_id="PERMANENT-SYSTEM-TRIGGER"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -41,6 +41,9 @@ perm_trigger_gate.py — 永久系统脚本时间触发模式无事件订阅阻�
   3. 事件订阅：``.subscribe(`` 调用 / ``@subscriber`` 装饰器 /
      ``@event_handler`` 装饰器 / ``register_handler(`` 调用 / ``event_bus.`` 属性访问
   4. 时间触发存在但事件订阅缺失 -> 违规
+  5. 违规前先看 m10 逐件声明：含合规 ``# noqa: m10-time-trigger  <reason>=10+字`` -> 放行
+     （st-maint7-20261014 甲案，与同聚合门姊妹子检查的 m11 通道对称；真源=
+     ``noqa_exempt_registry.yaml`` 的 m10 条目，scope=per-file）
 
 设计权衡
 --------
@@ -69,6 +72,7 @@ import os
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _audit_foreign_staged,
     _build_own_scope,
+    _make_noqa_pattern,
     _norm_rel,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
@@ -76,6 +80,13 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is
 logger = logging.getLogger(__name__)
 
 __all__ = ["make_perm_trigger_gate"]
+
+# m10-time-trigger 逐件声明解析（st-maint7-20261014 甲案：与姊妹子检查 m11 对称化）
+# 正则走共享单点 _make_noqa_pattern（禁逐 gate 复制正则——#ARCH-FORCE-MERGE-DEDUP-001）；
+# 合规判据与 manual_only_permanent_gate._has_m11_exemption 同构：码后 2+ 空格 + reason>=10 字。
+_M10_NOQA_PATTERN = _make_noqa_pattern("m10-time-trigger")
+# 与 noqa_exempt_registry.yaml 的 m10-time-trigger 条目 reason_min_length 同源
+_M10_REASON_MIN_LEN = 10
 
 # 时间触发模式标识符（APScheduler 类名 + 标识符）
 _TIME_TRIGGER_IDENTIFIERS = frozenset(
@@ -267,6 +278,36 @@ def _get_added_set(gateway) -> set[str]:
         return set()
 
 
+def _has_m10_exemption(content: str) -> bool:
+    """检测内容是否含合规的 m10-time-trigger 逐件声明（st-maint7-20261014 甲案）。
+
+    病根（数据班 st-datalane2-20261012 §四十一 实证）：同一聚合门下 m11 有逐件声明
+    通道、m10 没有，而 m10 标记在生态里已被普遍使用（在册 70+ 处）——写法既有、本门
+    不认，导致"限速等待型一次性运维件"无路可走。本节只补门的**输入识别**，判据本体
+    （时间触发＋无事件订阅＝违规）零松动。
+
+    合规条件（与 noqa_exempt_registry.yaml 的 m10-time-trigger 条目一致，
+    scope=per-file／reason_required=true／reason_min_length=10）：
+      1. 含 ``m10-time-trigger`` noqa 标记（``#`` 引导，``noqa:`` 前缀，门 id 精确匹配）
+      2. 标记后跟 2+ 空格分隔的 reason
+      3. reason 长度 >= 10 字符（rstrip 后计数）
+
+    禁通配：非该 id 的标记（m11/m02/其他）与只有码无理由的畸形声明均不生效。
+
+    Args:
+        content: 文件全文内容。
+
+    Returns:
+        True = 含合规 m10 逐件声明（gate 应放行）；
+        False = 无标记 / reason 不足 10 字符 / 其他标记。
+    """
+    for match in _M10_NOQA_PATTERN.finditer(content):
+        reason = match.group(1).rstrip()
+        if len(reason) >= _M10_REASON_MIN_LEN:
+            return True
+    return False
+
+
 def _check_permanent_trigger_new(abs_path: str, content: str) -> bool:
     """检测新增 permanent 文件是否含时间触发但无事件订阅。"""
     try:
@@ -281,11 +322,23 @@ def _check_permanent_trigger_new(abs_path: str, content: str) -> bool:
         return False
     has_trigger = _detect_time_trigger(tree)
     has_event = _detect_event_registration(tree)
-    return has_trigger and not has_event
+    if has_trigger and not has_event:
+        # m10 逐件声明豁免（与 m11 对称；判据本体不动，只补门的输入识别）
+        if _has_m10_exemption(content):
+            return False  # 合规声明，放行
+        return True  # 违规：时间触发 + 无事件订阅 + 无合规声明
+    return False
 
 
 def _check_permanent_trigger_modified(gateway, rel_path: str, abs_path: str, content: str) -> bool:
-    """检测修改文件的 staged 新增行是否含时间触发且全文件无事件订阅。"""
+    """检测修改文件的 staged 新增行是否含时间触发且全文件无事件订阅。
+
+    m10 逐件声明对修改面同样适用（与 ``_check_permanent_trigger_new`` 一致，对标
+    manual_only_permanent_gate 的 m11 修改面语义）：存量 permanent 件新增一次性限速
+    等待时，合规声明即放行，不因"全文件无订阅"被整文件误杀。
+    """
+    if _has_m10_exemption(content):
+        return False  # 合规声明，放行（与 new 路径同一豁免口径）
     try:
         diff_content = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path])
         if diff_content.returncode != 0:
