@@ -1686,3 +1686,23 @@ Test-CapacityGuardBreach : 无法将“Test-CapacityGuardBreach”项识别为 c
   面②实测 12 项逐名读数（本机 13:5x 原样跑通）＝`dr_drill_plan.md 22bd10d68728`｜`scripts/backup/ch_vm_config_snapshot.py c6f9ffafd170`｜`scripts/backup/restore_drill.py 1851d17ee68a`｜`scripts/tasks/register/register_ch_vm_config_snapshot_task.ps1 9bcc961671e2`｜`tests/data/backup/test_ch_vm_config_snapshot.py 82b14d659c91`｜`tests/data/backup/test_restore_drill.py d3ab8c078e0f`｜`scripts/governance/generators/generate_resource_profile_registry.py b620a930a179`｜`config/resource_profile_registry.yaml d9f1a0baf976`｜`scripts/governance/script_manifest.yaml 4c5ae1a3d4e2`｜`capability_canonical_file_registry.yaml 6cf53e3e2713`｜`ruling_registry.yaml 437993e2f84f`｜`module_translation_registry.yaml 41a9037ebe01`。**注**：本册（`00_ledger.md`）**不在**袋8 的 12 项内——它随袋10/袋11 已落地 dev，勿按此清单找它。
 - **终态（与上一节同口径）**：dev 面已落＝`6afe494afe`（P2 读数）＋`0feacd9eed`（更正节＋收口班账＋方案册 217 行）＋`f4ac403cd`（收口补账）＋本节待落；**代码族 12 件仍未落地**，挡口＝跨班 TAKEOVER-PENDING 两条陈旧条目（他班面，本班零触碰、未 `--scan`）；A 腿未点火（其 P2 裁定门读 YAML 投影，裁定 517 行未入册）；本班 claim 锁面＝空（到期）；车道＝在，保留理由按本节改判据。
 - **署名**：adjudicator=st-bakdr-20261013（收口再补：claim 事实更正＋车道 22 行分层核账与来源查清＋两面复量命令实测读数；主动认错一处刚落地叙述与一条错误推理，不改已发布历史）。
+
+## 收口末账：挡道两半的"可救性"分级实测＋三步解锁序（st-bakdr-20261013，2026-10-14 13:5x-14:0x）
+
+- **尺换成在册那把（不是 `git status`，是"独有行"）**：按 `takeover-pending-block-forensics-and-escalate` 的处置边界，文档件可救性判据＝`Counter(它道工作树面) − Counter(dev 面)` 的**独有行数**；独有行 **=0** ⇒ 它道对该件零未落地成果（逐行等或严格落后），属"可对齐"形；独有行 **>0** ⇒ 那是**他班未落地成果**，施工班**必须拒动**，交归属方或维护线。13:5x 对挡住本班两条 open 条目的命中件逐件实测（取基三件套齐：显式主区根＋`git show dev:<件>` 断 `rc==0`＋断基线字节下限；车道面按其自身工作树读）：
+
+  | 挡道件（所属 open 条目） | 车道行数 | dev 行数 | 独有行(multiset) | 盘==车道 HEAD | 分级 |
+  |---|---|---|---|---|---|
+  | `capability_canonical_file_registry.yaml`（st-infoaxis-20261013） | 71464 | 71438 | **31** | False | **拒动**（31 行系它道未落地 token 行） |
+  | `ruling_registry.yaml`（st-infoaxis-20261013） | 4729 | 4729 | **0** | False | 零成果面（在册授权形可对齐） |
+  | `scripts/governance/script_manifest.yaml`（st-cdx-sent-20261013） | 6946 | 6935 | **17** | False | **拒动**（本班侧本就不带该件，无需处置） |
+
+- **由此把前一节"唯一正解＝真接管"再收准一次（这次带数值）**：真接管只对** capability 那一半**必需；`ruling_registry.yaml` 那一半按在册授权形（`cp -n` 存证＋写 dev 字节＋`write_takeover_entry` 只刷该 sid，禁 `--resolve`／禁 `--scan`）**本可对齐**——但**同一条目的另一半不可对齐**，单刷一半后命中面仍含 capability ⇒ 对本班**无用时**。所以本班维持不动他班字节，并把这条"为什么对齐了也没用"写清，防止下一班去做半吊子刷新（那只会把 infoaxis 的账面刷新成"车道仍脏 12 件"，还动了一个可争议的写操作）。
+- **顺带查清的一条相邻事实（不是本班死因，但对 infoaxis 有用）**：infoaxis 名下在途袋 `q-20261014-st-infoaxis-20261013-0018` 13:5x 实测**已死**，死因逐字＝`网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 重跑后仍检测到 hook 修改了文件（裁定#341 方案②…）`，其袋内两件＝`20_ruling_package.md`／`00_ledger.md`（**不含**两本热册）。⇒ 它那 31 行 capability 独有行**不在任何在途袋里**，唯一存活处是它车道工作树；这提高了维护线处置该条目的紧迫度（车道一旦被回收，31 行无处可寻，而 `dead/` 里没有它的 blob）。本班不取、不代存证（那是它的归属面），只把"独有行 31＋无在途袋＋blob 无备份"三件一并报给统筹。
+- **本班全程袋账（13:5x 队列面实测清点；本节袋为第 13 枚）**：前 12 袋＝**4 落地／8 死**。落地＝`0007→6afe494afe`（P2 读数）、`0010→0feacd9eed`（更正节＋收口班账＋方案册）、`0011→f4ac403cd`（收口补账）、`0012→8321590c8d`（收口再补＝claim 更正＋车道 22 行分层核账），**第 4 枚即本节所在袋 0013，其 id 由 `git log` 读回**；死因分布＝自因 5（`0001` ghost_session 车道根注册、`0003`/`0004`/`0006` cascade_stale 基底取自车道 HEAD、`0005` NEW-FILE-DEPGRAPH 未登记）、共享面 3（`0002`/`0009` 热台账整文件三方冲突＝同一条基底病的两次显形，`0008` 跨班 TAKEOVER-PENDING），**他班面 1 袋＝本班交付当前唯一的堵点**。
+- **三步解锁序（交统筹/维护线按序执行；本班不自执行第 1 步，因其归属不在本班）**：
+  1. `st-infoaxis-20261013` 那 31 行 capability 独有行由其归属方落地或由其车道被真接管（merge 回主区／abort 放弃，二选一都要留独有行去向证据）；
+  2. 之后 `write_takeover_entry(ROOT, 'st-infoaxis-20261013')` 单口刷一次（**600s 节流窗**⇒一轮写面、超窗后复测，别看被节流那一轮的返回），复测 `entry_match_surface` 对本班 12 件**零命中**；
+  3. 复投本班 12 件整袋（命令＝"收口补账"节"留给下一班的三条命令"第 2 条，逐字有效），落地后跑 A 腿（第 3 条命令）并按其验收两条收数。
+- **上一节的落地读回（本节写作时已终态，故能给 id）**：`q-20261014-st-bakdr-20261013-0012` → `landed_id=8321590c8d1ea49634a706ad4cd7338523896087`，`landed_at=2026-10-14T13:52:33+08:00`（13:5x 队列 `done/` 面实测）。本节所在袋（0013）的 id 不在本节预判——按在册"落地只认 git 面"的口径，接手班用 `git -C D:/ZephyrAlpha log -1 --format=%H -- docs/_working/backfix_campaign/00_ledger.md` 取权威值即可。
+- **署名**：adjudicator=st-bakdr-20261013（收口末账：挡道两半分级实测 31/0/17＋"单刷一半无用时"的推理＋infoaxis 31 行无在途袋无 blob 备份的紧迫度呈报＋本班 12 袋 4 落 8 死清点＋三步解锁序）。
