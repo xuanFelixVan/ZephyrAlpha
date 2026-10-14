@@ -3174,6 +3174,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/backfill_kline_daily_history.py
+  path: data/backfill_kline_daily_history.py
+  description: 背景（2026-10-12 实测）：c1_market.kline_daily 在 2016-2018 是 240 票级 stub（2017=240/2018=237，
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/backfill_technical_indicator_dwm.py
   path: data/backfill_technical_indicator_dwm.py
   description: c1_market.technical_indicator 的 daily/weekly/monthly 数据起点=2026-08（调度闭环日），
