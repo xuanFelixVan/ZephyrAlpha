@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-043 | docs/03_modules/_domain_infrastructure/blueprint.md | §restore_drill
+# [BLUEPRINT] MOD-INF-043 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §restore_drill
 # [MODULE] scripts.backup.restore_drill
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.shared.infra.process_pool (run_subprocess_hidden); zephyr.shared.io.paths (REPO_ROOT)
@@ -104,6 +104,25 @@ _SQL_SAMPLE_RANGE_BOUND = (
     "SELECT min(_s.k)::text, max(_s.k)::text FROM "
     "(SELECT {order} AS k FROM {table} ORDER BY {order} DESC LIMIT {n} OFFSET {skip}) _s"
 )
+
+#: 子进程消息环境钉位面（P1-A2，2026-10-14 备份线夜班）。
+#: 实测：无 LC_ALL/LANG/LANGUAGE 时 pg_restore 把自己的框架 token 本地化并按系统 ANSI 码页
+#: （本机 ACP=936）写字节，而同一条 stderr 里服务端错误正文是 UTF-8（客户端编码）——一流两编码时
+#: `_RE_RESTORE_ERROR_LINE`/`_RE_RESTORE_COMMAND_LINE` 双双零命中 ⇒ error_count=0 ⇒ verdict=unknown
+#: ⇒ pass=False，与 logs/restore_drill_20261001_043535.json 逐字同形（C1/C2/C3 同轮全绿＝假红）。
+#: 钉成 C 后同一份数据吐 ASCII token＋UTF-8 正文，两把既有正则各 2/2 命中（正对照）。
+#: 本面只改"喂给判据的输入形态"，不扩良性错误集合、不动 _C4_PASSING_VERDICTS、不动退出码语义。
+_PINNED_CHILD_LOCALE = {"LC_ALL": "C", "LANG": "C", "LANGUAGE": "C"}
+#: pg_restore/psql 混编流的解码位：显式 utf-8（缺省解码随 PYTHONUTF8/ACP 变，被撤后即再次错切）
+CHILD_STREAM_ENCODING = "utf-8"
+
+
+def _pg_child_env(password: str) -> dict[str, str]:
+    """构造 PG 子进程环境：口令＋消息语言钉 C＋其余环境原样保留（唯一构造位，禁散落）。"""
+    env = {**os.environ, "PGPASSWORD": password}
+    env.update(_PINNED_CHILD_LOCALE)
+    return env
+
 
 #: 判据版本（可审计：09-25 及之前为 P-3R1「三表行数精确相等」恒红尺）
 _CRITERIA_VERSION = "P-3R2"
@@ -471,11 +490,12 @@ def _find_latest_dump(explicit: str | None) -> Path | None:
 
 
 def _count_rows(host: str, user: str, password: str, db: str, table: str, psql: str) -> int:
-    env = {**os.environ, "PGPASSWORD": password}
+    env = _pg_child_env(password)
     r = run_subprocess_hidden(
         [psql, "-h", host, "-U", user, "-d", db, "-t", "-A", "-c", _SQL_COUNT_ROWS.format(table)],
         capture_output=True,
         text=True,
+        encoding=CHILD_STREAM_ENCODING,
         env=env,
         timeout=120,
     )
@@ -486,11 +506,12 @@ def _count_rows(host: str, user: str, password: str, db: str, table: str, psql: 
 
 def _psql_rows(host: str, user: str, password: str, db: str, sql: str, psql: str) -> list[list[str]]:
     """跑一条只读 SQL，按 \\x01 分隔取回多列结果（C1/C3 取数面）。"""
-    env = {**os.environ, "PGPASSWORD": password}
+    env = _pg_child_env(password)
     r = run_subprocess_hidden(
         [psql, "-h", host, "-U", user, "-d", db, "-t", "-A", "-F", "\x01", "-c", sql],
         capture_output=True,
         text=True,
+        encoding=CHILD_STREAM_ENCODING,
         env=env,
         timeout=600,
     )
@@ -580,13 +601,14 @@ def _drop_drill_db(host: str, user: str, password: str, psql: str) -> dict:
     残留演练库会带着上一次的表与数据，本次恢复在其上叠加会造出 drill≈2×live 的假象
     （09-26 实测残留态 nodes 25338 vs live 12708）；只 DROP 本脚本自建的临时库。
     """
-    env = {**os.environ, "PGPASSWORD": password}
+    env = _pg_child_env(password)
     reading: dict = {"absent": False}
     for sql, tag in ((_SQL_DROP_DRILL_DB, "plain"), (_SQL_DROP_DRILL_DB_FORCE, "force")):
         rc = run_subprocess_hidden(
             [psql, "-h", host, "-U", user, "-d", "postgres", "-c", sql],
             capture_output=True,
             text=True,
+            encoding=CHILD_STREAM_ENCODING,
             env=env,
             timeout=120,
         ).returncode
@@ -649,7 +671,7 @@ def run_drill(
     if dump is None:
         report["error"] = "未找到 depgraph.dump（检查 G:/backup/db_dumps 或 --dump）"
         return report
-    env = {**os.environ, "PGPASSWORD": password}
+    env = _pg_child_env(password)
     try:
         report["drill_db_preflight"] = _drop_drill_db(host, user, password, psql)
         # H06：读活库实测 locale → template0 保真建库；读数失败回落实测缺省值（事实入报告）
@@ -675,6 +697,7 @@ def run_drill(
             ],
             capture_output=True,
             text=True,
+            encoding=CHILD_STREAM_ENCODING,
             env=env,
             timeout=120,
             check=True,
@@ -685,6 +708,7 @@ def run_drill(
             [psql, "-h", host, "-U", user, "-d", _DRILL_DB, "-c", _SQL_DROP_DRILL_PUBLIC_SCHEMA],
             capture_output=True,
             text=True,
+            encoding=CHILD_STREAM_ENCODING,
             env=env,
             timeout=120,
         )
@@ -697,6 +721,7 @@ def run_drill(
             [pg_restore, "-h", host, "-U", user, "-d", _DRILL_DB, "--no-owner", "--no-privileges", str(dump)],
             capture_output=True,
             text=True,
+            encoding=CHILD_STREAM_ENCODING,
             env=env,
             timeout=1800,
         )

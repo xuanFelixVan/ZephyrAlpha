@@ -907,3 +907,92 @@ def test_run_drill_h06_records_locale_fallback_when_live_reading_unusable(monkey
     creates = [sql for _db, sql in store.statements if sql.startswith("CREATE DATABASE")]
     assert len(creates) == 1 and "TEMPLATE template0" in creates[0]
     assert rep["pass"] is True, rep["failed_criteria"]
+
+
+# ==================== P1-A2（2026-10-14 备份线夜班）：混编流与子进程语言钉位面 ====================
+# 病因实据＝本班真实字节回放（同机、同 PG16.14、同一条 CREATE SCHEMA public 冲突）：剥掉
+# LC_ALL/LANG/LANGUAGE 后 pg_restore 把自己的框架 token 本地化并按系统 ANSI 码页（本机 ACP=936）
+# 写字节，而同一条 stderr 的服务端正文是 UTF-8 ⇒ 一流两编码；`_RE_RESTORE_ERROR_LINE`/
+# `_RE_RESTORE_COMMAND_LINE` 双双零命中 ⇒ error_count=0 ⇒ verdict=unknown ⇒ pass=False，
+# 与 logs/restore_drill_20261001_043535.json 逐字同形（同轮 C1/C2/C3 全绿＝纯假红）。
+
+#: 病形原始字节：客户端 token＝GBK（\xb4\xed\xce\xf3＝「错误」），服务端正文＝UTF-8
+_REAL_GBK_TOKEN_BYTES = (
+    b"pg_restore: \xb4\xed\xce\xf3: could not execute query: "
+    b'\xe9\x94\x99\xe8\xaf\xaf:  \xe6\xa8\xa1\xe5\xbc\x8f "public" '
+    b"\xe5\xb7\xb2\xe7\xbb\x8f\xe5\xad\x98\xe5\x9c\xa8\r\n"
+    b"\xd3\xef\xbe\xcd: CREATE SCHEMA public;\r\n"
+)
+#: 宿主侧拿到的形态（errors="replace" 解码，客户端 token 变一串 U+FFFD）
+_REAL_GBK_TOKEN_STREAM = _REAL_GBK_TOKEN_BYTES.decode("utf-8", errors="replace")
+#: 钉 LC_ALL=C 后同一份数据的形态：ASCII 框架 token＋UTF-8 服务端正文（本班正对照实测 2/2 命中）
+_REAL_PINNED_TOKEN_STREAM = (
+    'pg_restore: error: could not execute query: \u9519\u8bef:  \u6a21\u5f0f "public" '
+    "\u5df2\u7ecf\u5b58\u5728\nCommand was: CREATE SCHEMA public;\n"
+)
+
+
+def _mouth_source() -> str:
+    return inspect.getsource(rd._pg_child_env)
+
+
+def test_child_env_is_built_at_one_mouth_pinning_message_locale():
+    """口令与语言钉只准一个构造位：散落＝下次改动漏一处＝又一场假红。"""
+    assert rd._PINNED_CHILD_LOCALE == {"LC_ALL": "C", "LANG": "C", "LANGUAGE": "C"}
+    env = rd._pg_child_env("pw")
+    assert env["PGPASSWORD"] == "pw"
+    assert env["LC_ALL"] == env["LANG"] == env["LANGUAGE"] == "C"
+    assert '{**os.environ, "PGPASSWORD": password}' in _mouth_source()
+    src = Path(rd.__file__).read_text(encoding="utf-8")
+    assert src.count('{**os.environ, "PGPASSWORD": password}') == 1, "env 构造点必须唯一"
+
+
+def test_child_env_keeps_the_rest_of_the_environment():
+    """钉语言不得顺手清空 PATH 等——pg_restore 的兄弟工具与字符集线索都在环境里。"""
+    import os as _os
+
+    env = rd._pg_child_env("pw")
+    for key in ("PATH", "SYSTEMROOT", "COMSPEC"):
+        if key in _os.environ:
+            assert env.get(key) == _os.environ[key], key
+
+
+def test_stream_encoding_is_pinned_at_every_text_capture_site():
+    """缺省解码随 PYTHONUTF8/ACP 变（本机今天靠 PYTHONUTF8=1 才把中文吐对）⇒ 显式钉 utf-8。"""
+    assert rd.CHILD_STREAM_ENCODING == "utf-8"
+    src = Path(rd.__file__).read_text(encoding="utf-8")
+    pinned, sites = src.count("encoding=CHILD_STREAM_ENCODING"), src.count("text=True,")
+    assert pinned >= sites, f"有 {sites - pinned} 处 text=True 调用未显式钉解码"
+
+
+def test_unpinned_mixed_encoding_stream_stays_red():
+    """反向自证：乱码流照旧判红。修法只让"该看得见的看得见"，不放行任何不可判的东西。"""
+    verdict, detail = rd._classify_pg_restore_stderr(_REAL_GBK_TOKEN_STREAM, 1)
+    assert verdict == "unknown"
+    assert detail["error_count"] == 0, "乱码流被解析出错误行＝判据被放宽"
+    assert detail["unknown_errors"][0]["reason"] == "nonzero rc without parsable error lines"
+    assert rd._judge_c4(1, _REAL_GBK_TOKEN_STREAM)["ok"] is False
+
+
+def test_pinned_stream_makes_the_pre_existing_benign_rule_reachable():
+    """正对照：钉语言后同一条良性错误被**既有**规则命中——良性集合一字未扩。"""
+    verdict, detail = rd._classify_pg_restore_stderr(_REAL_PINNED_TOKEN_STREAM, 1)
+    assert verdict == "benign_only", (verdict, detail)
+    assert detail["error_count"] == 1
+    assert detail["benign_matched"].get("benign-schema-public-exists") == 1
+    assert detail["unknown_errors"] == []
+    assert rd._judge_c4(1, _REAL_PINNED_TOKEN_STREAM)["ok"] is True
+
+
+def test_benign_set_and_passing_verdicts_untouched_by_the_fix():
+    """本修法的边界声明：不扩良性集合、不动 _C4_PASSING_VERDICTS、不动退出码语义。"""
+    ids = [r["id"] for r in rd._BENIGN_RESTORE_ERRORS]
+    assert ids == ["benign-schema-public-exists", "benign-alter-default-privileges"], ids
+    assert set(rd._C4_PASSING_VERDICTS) == {"clean", "clean_with_noise", "benign_only"}
+
+
+def test_zero_rc_verdicts_unchanged():
+    """rc=0 两支（clean／clean_with_noise）语义零动，防"顺手改尺"。"""
+    assert rd._classify_pg_restore_stderr("", 0)[0] == "clean"
+    noisy = "pg_restore: error: could not execute query: \u9519\u8bef:  x\nCommand was: SELECT 1;\n"
+    assert rd._classify_pg_restore_stderr(noisy, 0)[0] == "clean_with_noise"
