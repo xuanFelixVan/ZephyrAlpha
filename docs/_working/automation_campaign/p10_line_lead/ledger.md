@@ -512,3 +512,16 @@ python -c "import glob,os,json,datetime;c=datetime.datetime(2026,10,15,18,12).ti
 - 本班问题登记（续 §14.4）：
   - `[BLOCKER]` 2026-10-16|⑩席1016-01|工具缺陷|本席按在册处方"入袋前后各复跑一次门尺"跑第二遍时漏做——改完 §14 未复量即投袋，同班连死两枚自家袋|证据：detect_git_dangerous 在 §14 写入前对 13 件复跑＝0 命中（有打印），§14 写入后未复跑即投・门打印 ledger.md:483 单点命中＋豁免 2 行同屏|要⑤席/工具班评估把"引用型字面串"改为门侧可识别的存证写法（如统一指向死信袋 qid），本席 meanwhile 自加一条＝投袋前对**本袋全部文件**再跑一次门尺并把读数写进台账|中
   - `[BLOCKER]` 2026-10-16|⑩席1016-01|流程问题|前置②终账＝本席自家新增死袋 2 枚（0001/0002，同签名 item 族），全线复牌判据因此比上班更远而非更近|证据：两枚 dead_at 02:04:34 与 02:19:43・family=item・meta.custody=True・盘与内存读数排除环境族|要 Owner 知悉并在裁"带工归口＋引用串口径"两件时把本席这两枚计入分母|高
+
+### §16 1016-02 班实测账（02:30:39 起手→02:48 落笔・例行 13 分＋闸前值守 4 分＝实耗 ≈17 分；分账口径＝起手到开闸为值守，开闸后落笔为例行）
+
+- [BLOCKER] 2026-10-16|⑩1016-02|工具缺陷|belt_daemon 心跳腿不写而带工在跑＝观测面与实况同形性丢失，上班据此误判"无常驻带工"|.runtime/commit_queue/belt_daemon.heartbeat(mtime 2026-10-15 20:02:02・pid 40328 psutil 不存在)・belt_daemon.lock(pid 24248 亦不存在・mtime 每分刷新)・schtasks ZephyrAlpha_BeltDaemon State=Running last 02:39:04 next 02:39:18|要运行班/维护班把心跳写腿接回 belt 主循环，并在 dispatch 归口定案|中
+- [BLOCKER] 2026-10-16|⑩1016-02|流程问题|POOL-REGRESSION-DIRECTION 同签名 14 枚/18 分（02:30→02:48:46）跨 ②③⑥⑨ 四席＝②4・③1・⑥1・⑨8＝各席把落后 HEAD 的整档快照投进闸，recurrence_fused 已熔断仍续投|逐只 qid＝st-qoder-p02-1015-02-0011、st-qoder-p02-1015-02-0012、st-qoder-p02-1015-02-0013、st-qoder-p02-1015-02-0014、st-qoder-p03-1015-04-0010、st-qoder-p06-1015-02-0003、st-qoder-p09-1015-02-0003、st-qoder-p09-1015-03-0005、st-qoder-p09-1015-03-0006、st-qoder-p09-1015-06-0005、st-qoder-p09-1015-06-0006、st-qoder-p09-1015-07-0007、st-qoder-p09-1015-07-0008、st-qoder-p09-1015-07-0009・dead_reason 面 HEAD 独有 60/82/33/6 行|②③⑥⑨ 按第十一单 §1 热册重基配方自修并停投；⑤席按 owner 制取一门侧基来源证据（禁动判据）|高
+- [BLOCKER] 2026-10-16|⑩1016-02|需Owner|托管正门落地后鬼闸对新袋实际零判别力＝pending+processing 172/172 全带 meta.custody，审计面落地后 149 条全 custody_excused・judged_dead 0|ghost_liveness.jsonl 出口分布 {'custody_excused': 149}・ghost 族落地后新增 0 枚・队头 71 分/pending 171|请 Owner 判：这是设计意图（回收只剩带工一条腿），还是要一条"托管但属主已终态且袋龄超 TTL"的回收腿（阈值由 Owner 定，本席不自拟）|高
+- [BLOCKER] 2026-10-16|⑩1016-02|判据缺失|卡面 examined 上班 79→本班 81（+2）而分数册三面 104/104・sha 21ce93c0 未变＝翻态与入册无对账口|在册尺输出 STATUS・docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml 三面同值|⑨席给"翻面必伴随入册或对账缺口行"的一条判据句；⑥席答 D-01/D-02 幽灵面是否即此族|中
+- [BLOCKER] 2026-10-16|⑩1016-02|流程问题|防重入闸不可精确计算＝上班 pulse 行时戳写成掩码"02:2x"，25 分闸只能靠文件 mtime 反推|pulse/queue_depths.md mtime 02:22:18⇒开闸 02:47:18・本席实测落笔 2026-10-16 02:48|通令已改：闸门时戳一律写全 `HH:MM:SS`，下班用 mtime 尺复核（第十一单 §9）|低
+
+本班读数（2026-10-16 02:48:42）＝pending 171／processing 1／done 824／dead 364・今日新死 109・本班窗新死 14・15 分落地 4/60 分 12・卡池 553＝prereg 167／empty 186／examined 81／blocked_on_data 71／blocked_on_impl 48／examining 0・ram 63.4%／commit 0.7%／盘 free 110G・ghost 落地后新增 0・⑦A 审计面今日 0 例。
+本班前置终值＝①成／②未成（窗内全线 14 枚，本席自家 0 枚）／③未成 ⇒ 不广播"可恢复"。
+
+- [BLOCKER] 2026-10-16|⑩1016-02|流程问题|⑨席本班并存四班（1015-02/03/06/07）同窗连死 8 枚＝同一家追加面被四个班各自重投、席内无互斥；本席四处计数已按 dead_at 窗（02:30→02:48:46＝14 枚）对齐，首版只列 7 只 qid 与计数不符＝本班自纠留卷|证据＝dead/ 逐只 dead_at・by session 计数 ②4/③1/⑥1/⑨8（尺＝dead_at 不是文件 mtime，mtime 面 15 分 46 枚系复发计数器刷新所致）|要⑨席自清在途多班（留一班收口）＋下班复量沿 dead_at 口径|中
