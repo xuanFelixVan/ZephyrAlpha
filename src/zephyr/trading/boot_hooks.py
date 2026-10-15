@@ -601,6 +601,41 @@ _KILLSWITCH_DISPATCHER: object | None = None
 #: BRK-064 熔断唯一权威入口的进程级持有位（策略层实例被 GC 即等于入口又变回不唯一）
 
 
+def _enable_kill_switch_persistence() -> None:
+    """Q3/#ARCH-340 · 系统级 KillSwitch 持久化启用（crash-only）— 装配层，幂等。
+
+    病因：系统级开关默认纯内存（无 env 无显式路径=合法默认）⇒ 进程/机器崩溃后
+    "已拉闸"这个事实蒸发（漏熔断方向）。
+
+    契约：``get_kill_switch(state_path=...)`` 的路径**仅在单例首次构造时生效**，
+    故本函数必须抢在任何无参 ``get_kill_switch()`` 调用者之前执行——
+    ``register_boot_hooks`` 首行调用即为此（tech_stack 自检 DD-12 也会无参构造）。
+    两处调用幂等：二次调用返回既有单例，参数被忽略。
+
+    非静默契约：若单例已被纯内存态抢先（持久化未生效），打 CRITICAL 留痕但
+    不阻断启动（熔断器本体仍可用，仅失去 crash-only）。
+
+    边界：不改 ``kill_switch.py`` 本体（该件 MODIFY-GUARD=Owner approval + 蓝图更新，
+    human_gated）——本处仅装配层启用；路径真源 = ``DEFAULT_STATE_RELATIVE``。
+    """
+    try:
+        from zephyr.security.access_control.kill_switch import (
+            DEFAULT_STATE_RELATIVE,
+            get_kill_switch,
+        )
+
+        _ks = get_kill_switch(state_path=REPO_ROOT / DEFAULT_STATE_RELATIVE)
+        if _ks.state_path is None:
+            logger.critical(
+                "KillSwitch 持久化未生效：单例已被纯内存态抢先构造（crash-only 未达成）——"
+                "排查先于 _enable_kill_switch_persistence 调用 get_kill_switch() 的路径"
+            )
+        else:
+            logger.info("KillSwitch 系统级持久化已启用: state_path=%s", _ks.state_path)
+    except Exception as exc:  # noqa: BLE001 — 持久化启用失败不阻断启动（降级回纯内存=现状）
+        logger.warning("KillSwitch 持久化启用失败（降级纯内存态）: %s", exc, exc_info=True)
+
+
 def _init_kill_switch_orchestrator() -> None:
     """A3 接线（裁定#254）：kill switch 五域编排器开机注册生效。
 
@@ -614,6 +649,10 @@ def _init_kill_switch_orchestrator() -> None:
     docs/_working/fullflow_campaign/lanes/wiresafe_BRK-064_construction_pack.md）。
     """
     try:
+        # Q3/#ARCH-340：系统级开关持久化——必须先于下方 tech_stack 自检（其 DD-12
+        # 会无参构造 get_kill_switch() 单例，抢先则持久化永不生效）。幂等，可重复调用。
+        _enable_kill_switch_persistence()
+
         from zephyr.autonomy_core.kill_switch_orchestrator import get_orchestrator
 
         orch = get_orchestrator()
@@ -826,6 +865,10 @@ def register_boot_hooks(
     task_repo: TaskRepositoryProtocol | None = None,
     budget_engine: BudgetEngineProtocol | None = None,
 ) -> None:
+    # Q3/#ARCH-340：系统级 KillSwitch 持久化启用——必须是本启动链**第一步**：
+    # tech_stack 自检（下一条）的 DD-12 会无参调用 get_kill_switch() 抢先构造
+    # 纯内存单例，其后任何 state_path 传参都会被忽略（首构造锁死语义）。幂等。
+    _enable_kill_switch_persistence()
     # 裁定#485：依赖面自检先行——先于全部订阅/重初始化逻辑，使后继初始化的成败可归因。
     # BLOCK 级 raise 不包裹（register_task_system_hooks 与 boot() 对本函数均无 try，
     # 直达 __main__ 非零退出——设计意图，见细案 §4.1）。
