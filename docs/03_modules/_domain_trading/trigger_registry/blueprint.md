@@ -81,8 +81,8 @@ summary: "41 §3.9 条件触发执行队列：买入/卖出/执行/风控触发�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-TRIG-001` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-TRIG-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-TRIG-001` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-TRIG-001` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -93,7 +93,7 @@ summary: "41 §3.9 条件触发执行队列：买入/卖出/执行/风控触发�
 | module_id | MOD-TRIG-001 | MOD-TRIG-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 2 文件 | 1 文件（§0.1） | ❌ |
+| file_count | 1 文件 | 1 文件（§0.1） | ✅ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
