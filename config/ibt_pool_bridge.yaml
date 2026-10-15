@@ -1,0 +1,23 @@
+# IBT-v2 池桥接清单（st-ibtclose-20261015 件1）——ibt_runner.py --pool-file 契约（协议 v1.1）。
+# 契约：_apply_pool_override 读本文件 members（sid -> 成员脚本文件名），原样并入 MEMBERS；
+#   文件名相对 scripts/backtest/translated/ 解析（ibt_runner.build_panels 固定拼接该目录）。
+# sid 真源 = scripts/backtest/ibt/ibt_runner.py 顶部 MEMBERS（15 员，IBT-PROTOCOL-V1 §7 冻结池，死刑 2 已剔除）。
+# 边界：本桥只改池成员，不改窗口/成本口径（协议冻结常量）；W_HOLDOUT 烧毁纪律不受影响。
+
+note: "v1 手工桥；verified 自动入池为后续工单"
+members:
+  FACT-4f749668: c4_fact_4f749668.py
+  FACT-4228020a: c4_fact_4228020a.py
+  FACT-e293e217: c4_fact_e293e217.py
+  FACT-e831084c: c4_fact_e831084c.py
+  FACT-4b200528: c4_fact_4b200528.py
+  CAND-8d000bf3ccc3: c4_8d000bf3ccc3_pb_poe.py
+  CAND-c4ec6332c07f: c4_c4ec6332c07f_trend_score.py
+  CAND-e3da6fa71af1: c4_e3da6fa71af1_panic_rebound.py
+  CAND-4440d07f973f: c4_4440d07f973f_ultrashort.py
+  CAND-eaddc3f9db4e: c4_eaddc3f9db4e_rsrs_r2.py
+  CAND-d06cab686cef: c4_d06cab686cef_rsrs_opt.py
+  CAND-29eb91dbaf60: c4_29eb91dbaf60_crash_dodge.py
+  CAND-a4543012b464: c4_a4543012b464_trend5.py
+  CAND-bd42540f86e4: c4_bd42540f86e4_pe_pb.py
+  CAND-6a6ec8869ddb: c4_6a6ec8869ddb_momentum62.py
