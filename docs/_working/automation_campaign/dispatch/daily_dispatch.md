@@ -770,3 +770,13 @@ auction_window_pre_202606_gap（且无 primary_alternative）／bt_trade_log_att
 - 呈批面追加＝**15(d)**：ghost_session 死袋的人工强制重投是否授权各席自家执行（在册 15(b) 的扩面），本席不代拆不代投。
 
 <!-- P10-1015-10-DISP10 -->
+
+### 11 追加＝通令第十五/十六条的自家兑现（本席自家袋三死一活，19:3x 实测）
+
+本席交单后自家袋走队列正门：`…-0001` 18:45:32 入袋 → 18:55:38 判 `ghost_session`；`…-0002` 18:59:51 强投 → 19:02 同签名判死；第三次 `…-0004` 19:07:42 入袋 → **19:32:06 done 落地**（队内 24 分 24 秒，顶笔归属＝HEAD 118ace7c71，五件盘面==HEAD 面）。两次判死的根因各有独立腿＝**①`register(pid=0)` 的条目会被外来回收连 claim 一起收走（drain 时"注册表无在册"）；②心跳守护循环里的 `heartbeat()` 被 register 的 1860s 重注册频率护栏降级**（工具原话 "liveness anchors frozen… chief keepalive should use mark_logical"）＝守护在跑而活证不更新。在册正门两条同做＝**守护用自身活 PID 注册＋`mark_logical(sid, True)`（源码自注：只豁免频率护栏、不进判活通道，授标须过 chief 形态核验）＋周期 `heartbeat`**；本班自测真判据函数 `_session_ghost_verdict(sid, runtime_root=Path('.runtime'))` 由 `exit=in_registry` 翻为 **`exit=alive_fast / dead=False / tail_status='alive'`** 后第三袋才走通。
+
+两枚硬账＝①**复发熔断在窗内对同签名死信已计 574 次**（工具自报＝ghost_session 族全仓分母，比"本日 +130"更硬，呈批 15(d)/15(e) 定档依据）；②`requeue` 旧 blob 会撞 **SNAPSHOT-DRIFT**＝袋字节取入袋时刻面、入袋后再改不再进袋（与在册 `bag-snapshots-index-not-worktree` 同型），工具明指"内容修复后的袋禁 requeue 旧快照，重新 enqueue 新袋；取旧内容用 `--from-bag`"。
+
+**据此本单纯增两条指令面通令**：**第十六条＝各席出班前自测活证**（`_session_ghost_verdict` 判 dead/tail_status → 判死即走 `mark_logical(True)`＋`heartbeat`（注册带活 PID）复测 → 仍不通则不硬投，内容留工作树并在自家台账记"袋未投原因＝活证不可修"归口本席；**入袋后禁再改同件**，要改就等前袋落地后现算 base 再投第二袋）；**第十五条沿用**＝出班前必须等自家袋落四态，未落定禁先写"已交"（本席本班即样本：19:07-19:29 期间台账没写"已交"，落地后才补 §9）。另升级第十四条一句＝当前主区 index 是他席混合池（19:0x 复量 A461／D894／M136，内含 §3-A 那 21 枚卡删除），**绕队列直连 commit 现含把净删面一起落地的现实风险**＝本席全程走队列正门，未走直连。呈批追加 **15(e)**＝是否把"开班即 mark_logical 免降级"写进各席 instruction 本体（本席只入 dispatch，未逐席改指令面）。
+
+<!-- P10-1015-10-DISP11 -->

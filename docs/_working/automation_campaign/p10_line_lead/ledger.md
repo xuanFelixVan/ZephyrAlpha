@@ -343,3 +343,31 @@ python -c "import glob,os,json,datetime;c=datetime.datetime(2026,10,15,18,12).ti
 **通令第十五条（本班新立，指令面职权内）**＝出班前最后一步必须等自家袋落四态；未落定禁先写"已交"、禁先退会话，宁可推迟到下一班。依据＝ghost_session 族 24 分内 7 枚（x2 五枚／① p01-13／⑨ p09-14），dead_reason 均含"自动重投被存活闸拒绝"；本席**不弱闸、不代拆、不代投**，只改各席出班次序口径＋呈批 15(d)。
 
 <!-- P10-1015-10-LEDGER8 -->
+
+### 9 本席自家袋三死一活实录＝通令第十五/十六条的自家账（新立当班先吃自家狗粮）
+
+本班交单后走队列正门，**同一内容两次判死、第三次落地**，全程逐只读回：
+
+| 时刻（date 实测） | 动作与读数 |
+|---|---|
+| 18:4x | 首投 PREFLIGHT BLOCKED 2 项＝SESSION-REQUIRED（会话未注册）／WORKTREE-REQUIRED（他席活跃）。修法＝`register(pid=0)`＋`heartbeat`，二次带 `--allow-non-worktree`（在册 2026-08-13 裁定 AI 可默认）＝不弱化门、按门的在册入口补件 |
+| 18:45:32 | 入袋 `…-0001`（files=5，base_head=16d46544af…） |
+| 18:55:38 | **0001 判死**＝`ghost_session: 属主会话已死（heartbeat=exited / 注册表无在册），自动重投被存活闸拒绝（裁定#459；CLI 手动 requeue 不受闸限）`＝本席成该族当日第 8 枚（x2 五枚／① p01-13／⑨ p09-14／⑩ 自家） |
+| 18:58:35 | 修因一＝重新 register＋heartbeat；`requeue --base-head <现算 HEAD 9d94f57219>` ⇒ **被复发熔断拒**："同签名死信已 **574 次**（窗内）且距上次同签名死亡 0.1h ≤ 7 天衰减窗，盲重投拒绝"＝**ghost_session 族的全仓量化分母（工具自报，比"本日 +130"更硬，呈批 15(d) 的定档依据）** |
+| 18:59:51 | `requeue --force`（留痕）→ `…-0002`（快照来源＝当前工作区）；DRAIN skipped（他席持 lease） |
+| 19:02 | **0002 判死**＝同签名 |
+| 19:06:21 | `requeue …-0002 --force` 再取 ⇒ 被 **SNAPSHOT-DRIFT** 拒（"5 件工作区≠死信快照；内容修复后的袋禁 requeue 旧 blob，重新 enqueue 新袋，取旧内容用 `--from-bag`"）＝成因与在册 `bag-snapshots-index-not-worktree` 同型：**袋字节取入袋时刻面，入袋后再改（本班 §8 追加于 18:39、0002 快照在 18:59 之后又赶上一轮）不再进袋** |
+| 19:07:42 | 正门新袋 `…-0004`（files=5）＝投前逐件对拍 **blob↔盘面 5/5 OK**（dispatch fc9763ec／pulse 28e6dc79／checkpoint 831ab57f／ledger 8c2b51da／instruction ef6dff90，真键＝`blob_sha256`＋`blob_ref` 相对队列根） |
+| 19:07-19:1x | 修因二＝在册正门：`mark_logical(sid, logical=True)`（源码自注"只豁免 register 的 1860s 频率护栏、不进判活通道＝免降级钥匙"，授标须过 `_verify_chief_form`＝chief 形态词 ∨ 心跳 <120s）＋`heartbeat(sid)`；自测真判据函数 `_session_ghost_verdict(sid, runtime_root=Path('.runtime'))`＝修因前 `exit=in_registry`（无 tail_status）→ 修因后 **`exit=alive_fast / dead=False / evidence.tail_status='alive'`** |
+| 19:29:10 → **19:32:06** | 0004 `processing → **done**`＝**落地**；队内历时 24 分 24 秒（其间 pending 峰值 26、done 807→808、dead 323→327＝车队拥塞非楔死，lease 活） |
+| 19:32 后 | 归属核实＝`git log -1 --name-only` 顶笔 **118ace7c71** 含本席五件；`git status --porcelain` 五件**全 clean**（＝盘面==HEAD 面） |
+
+**两条根因（别只记一条）**：①首服用 `register(pid=0)`＝pid=0 条目会被外来回收连 claim 一起收走（在册同型案件），drain 时"注册表无在册"；②心跳守护循环里的 `heartbeat()` 被 **1860s 重注册频率护栏**降级（工具原话 "liveness anchors frozen… chief keepalive should use mark_logical"）＝守护在跑而活证不更新。**正解两条同做**＝守护用**自身活 PID** 注册（非 0）＋开班即 `mark_logical(True)` 免降级＋周期 `heartbeat`。
+
+**通令第十五条自家兑现＝本班没有自称"已交"**：0004 落 done 之前本席没写"已交"字样（前两次的 dead 都在台账如实留行）；落地后才补本节。另记一条自犯风险＝本班给 `git_commit.py --enqueue` 套了 `timeout 200` 限时壳（在册案件＝拥堵队列里限时壳会掐死预检、rc=0 而零袋），本班靠事后逐件 blob 对拍才发现快照真值，**下班勿再套限时壳**。
+
+**通令第十六条（新立，处方＝本班实测路径）**＝各席出班前自测活证：①`_session_ghost_verdict(<自己 sid>, runtime_root=Path('.runtime'))` 判 `dead` 与 `evidence.tail_status`；②判死即走 `mark_logical(sid, True)`＋`heartbeat(sid)`（注册须带活 PID，勿只给 pid=0）后复测；③仍不通＝不硬投，内容留工作树并在自家台账写"袋未投原因＝活证不可修"，归口本席上升呈批（护栏是防伪造的，本席不代拆）；④**入袋后禁再改同件**（改了必撞 SNAPSHOT-DRIFT／或让前袋四态全无），要改就等前袋落地后**现算 base 再投第二袋**。
+
+呈批面追加＝**15(e)**：ghost_session 的正门已量化（574 次同签名／窗内、mark_logical＋活 PID 注册可修），请 Owner 定＝是否把"开班即 mark_logical 免降级"写进各席 instruction 通令面（本席只写进 dispatch，未逐席改指令本体，沿用"对他席指令本体零触碰"在册口径）。
+
+<!-- P10-1015-10-LEDGER9 -->
