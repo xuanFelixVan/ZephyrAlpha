@@ -1,0 +1,87 @@
+schema_version: '1.0'
+family: calibration
+card_id: TDM-E-L9-A02/calibration/13_crossday_minutepath_shape_corr
+node_id: TDM-E-L9-A02
+title_zh: 楼1分钟微结构·CAND-P0-MIDAYSHAPE-046 跨日分钟路径形延续（相邻两日十六档向量同位相关，个股×交易日 panel）
+origin: P0-楼1-分钟腿跨日多窗路径维（③席 20261015-p03-07 具名候选 CAND-P0-MIDAYSHAPE-046）|20261015-p03-07
+hypothesis: 跨日分钟路径形延续与日内相邻步路径记忆测的不是同一件事：同轴的 lag-1／lag-2（在册 A01/08 与 A02/12）量的是当日相邻 bar 的符号继承与隔步记忆，本卡量相邻两个交易日之间同一条日内路径向量的同位对齐复制（今日十六档向量对上一交易日十六档向量的十六点皮尔逊相关），归一掉波动量级、只测形状在日期间是否被重播。本卡检验该个股×交易日 panel 面对次日个股收益是否构成在册五键可判的关系。符号方向③席在册行未声明、本席不预设（example 读数 +0.008369 系③席过闸投影面的市场日均值，非卡面预期）。 ③席在册定义原文逐字（禁改写）：跨日分钟路径形延续＝按 symbol×trade_date 把当日分钟收益 r_i=ln(C_i/O_i)（trade_time 升序、nb 根）等分 16 档（档界=intDiv(k·nb,16)，档内和由 arrayCumSum 差分取，本班行内闭合实测 max|sum(b16)−arraySum(r)|=1.4e-17），再取同一 symbol「今日 16 档向量 b_t 与上一交易日 b_{t−1}」的 16 点皮尔逊相关；断日（新上市/停牌/跨月首两日）不出值。交付形态=横截面 panel（每股每日一值），本行 example 读数=全市场日均投影（仅供过闸，非交付口径）。与 033/039 的区别＝那两条量日内相邻步记忆（lag-1/lag-2），本列量相邻两日的同位对齐复制。TDM 归属＝载体 kline_1min→TDM-E-L9-A01 源线·日线/分钟行情（config/trading_decision_map.yaml:6042 dq＝价量趋势与动量能否预测N日收益？）／信息本体＝日内路径形→TDM-E-L9-A02 源线·Tick分笔（同件 :6077 dq＝日内微观结构能否预测次日方向与冲击成本？）；本班按 ⑥ 席 1015-10 归口请认对六条一律记「载体 A01／本体 A02」双标注（lag-3 起同轴不再分叉），归口待 ⑩ 认一次后由 ⑥ 席搬键，本席不改卡不自裁
+window:
+  in_sample:
+  - '2022-01-04'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2022-01-04..2022-06-30→无（数据起 2021-09，牛段样本不足，本卡 regime 仅用熊/震荡两段）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，本卡 IS 全落此段）
+    recovery: 2024-02-01..2025-09-09（修复段，作 regime 对侧）
+  frozen_note: 看数前冻结；右端截 2026-09-30 前先确认 1min 覆盖（实测至 2026-10-09）
+buckets:
+  type: quantile_decile
+  'on': 相邻两日十六档分钟路径向量同位相关系数的全市场截面十分位（逐交易日分层，个股×交易日 panel）
+  min_obs_per_bucket: 60
+signal_kind: panel
+pillars:
+  inherited_numeric_face: 五键数值面整块逐字抄 git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__12_intraday_return_autocorr_lag2.yaml -> pillars_numeric；本班另实测该五键与同表同交付形的 A01/08・A02/10・A02/11 三面 parsed 逐值同值（尺 .runtime/tmp/st-qoder-p06-1015-12/make_card13.py 内建断言），故数值面无择一问题
+  pillars_text_face: 文字面＝指针式继承（不改一柱、不删一柱、不加柱＝禁挪门柱），沿在册先例；本席不自拟柱文字
+  candidate_face: ③席在册定义即本卡信号对象（原文见 hypothesis 与 data_binding.signal_derivation）
+  orthogonal_gate_face: 闸在册读数逐字见 data_binding.orthogonal_gate_verdict；本席未跑闸、未复算相关性
+target:
+  primary: next_day_stock_return（个股次日 hfq 收盘收益）
+  secondary: next_day_return_reversal_of_intraday（日内偏度分组下的次日反转幅度）
+  note: A02 决策问题逐字（取母骨架 TDM-E-L9-A02__calibration.yaml 的 tdm.decision_question，本班按行抽取）＝『日内微观结构能否预测次日方向与冲击成本？』；本卡只答"次日方向"半问的 panel 面（冲击成本半问的对象非本卡信号）；与同轴 lag-1／lag-2 先例 A01/08・A02/12 的差异面＝测量区间从"日内相邻步"换为"相邻两日同位对齐"
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+status: blocked_on_impl
+status_reason: 判据面（window/pillars_numeric/buckets/target/signal_kind/discipline/oos_window_ref）已按在册冻结值整块填齐；唯一缺腿＝⑤实现面的物化算子与该轴 csv 载体。本班只读实测（面=git show HEAD:scripts/backtest/fexam/card_binding.py）：谓词 `middayshape|path_shape|shape_corr|跨日` 命中 0、`intDiv` 命中 0、`autocorr` 命中 0，同尺有效正对照 `kline` 命中 22、`corr` 命中 1、`limit_up_count` 命中 2（⇒尺未坏，零命中判得住）；在册物化通道＝card_binding.py:78 SERIES_DIR＋:195 _CSV_HINTS＋:202 load_named_series，该目录实测 35 枚 csv 而 shape/corr/day 类 0 命中（正对照 avg_abs_ret.csv 在册命中），即 lag-1／lag-2 同缝未补、跨日形延续更无算子与载体；另本卡开考分母在册未裁（见 gaps_no_source.universe_denominator_046）。按 SOP ⑤出口『码面+测试绿→卡翻转 unblocked→移交⑥』，本席不自宣可考。
+gaps_no_source:
+  sign_claim_absent: ③席在册行只给构造（十六档等分＋相邻两日十六点皮尔逊相关）与 example 读数（窗内市场日均=+0.008369，sd=0.087693，H1=+0.010417，H2=+0.006285，前后半段同向=是），无收益方向声明 ⇒ 卡面正/负向预期无在册来源，本席不代设
+  folding_caliber: ③席在册行自陈『交付形态=横截面 panel（每股每日一值），本行 example 读数=全市场日均投影（仅供过闸，非交付口径）』⇒ 本卡按 panel 交付面冻结；过闸用的日均折叠面与本卡开考面不同形，该折叠口径在册未裁（承 20261015-p03-03 呈批第 1 条与同轴 A01/08・A02/12 在册面，本班不重复立号）
+  universe_denominator_046: ③席在册行自陈另加采样闸 `cityHash64(symbol)%10=3` ⇒ 逐日分母 455-508 只（中位 495）vs 上班全宇宙 4894-4906，该行原文『分母不同宇宙，本班如实注明』；开考宇宙取采样面还是全宇宙面**在册无裁定** ⇒ 本卡开考分母无在册真源，本席不代拍；同一行另给采样噪声标定＝采样宇宙 vs 全宇宙日频对拍 f_ac1 max|diff|=0.0136／mean=0.0036、f_ac2 max=0.0144／mean=0.0035＝采样噪声可达在册日频 sd 的 1/6
+  attribution_dual_pending: ③席 p03-07 批六条一律改记双标注『载体 kline_1min→TDM-E-L9-A01／信息本体＝日内路径形→TDM-E-L9-A02』且原文声明『归口待 ⑩ 认一次后由 ⑥ 席搬键，本席不改卡不自裁』；本班遵③席在册明写把**信息本体**落 A02（与本卡 confidence_writeback 同节点），不自并、不改 A01/08・A02/12 他卡；⑩ 认一次后的搬键动作留待下班执行（本班零搬键）
+  non_duplication_note_047_051: ③席同批册内自查（供 ⑨ 席对拍，本席只转抄不重判）：047 vs 039 f_ac2=0.4168>0.3 判重复；048 vs 024 f_volshape=0.8030、vs 044 f_volcom=0.7052、vs 014 f_openv=0.6509 判重复；049 vs 024=0.7784、vs 026=0.7094、vs 036=0.6962 判重复（且 048↔049 互共线=0.514＝换阶仍同族）；050 vs 040 f_flip=0.4489、vs 036=0.4202、vs 026=0.4014 判重复（池面 0.2932 贴线距 0.0068，③席按保守口径不判过；与 046 互共线仅 0.045）；051 池面 reject 0.3196 rc=5 且册内 vs 040=0.6575 两面皆撞＝判重复 ⇒ 同批仅本条 046 双面未撞（max=0.2137≤0.3）
+  ruler_shape_face: ③席在册行随批重立尺双对照：池成员 avg_abs_ret.csv 原样自投=reject 1.0000 rc=5（尺能红）、同日轴随机高斯 ctrl_random.csv=pass 0.1043 rc=0（尺非恒拦）；本班未重跑该闸（本席禁跑运行面），池面真源＝该行原文所指 .runtime/tmp/st-qoder-p09-1015-04/pool6（6 序列面，非 ibt_runner MEMBERS 15 员面）
+prereg_provenance:
+  made_by: st-qoder-p06-1015-12
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__12_intraday_return_autocorr_lag2.yaml -> window 整块逐字（含 in_sample/oos/regimes/frozen_note 全字段与 &id001 锚）
+    pillars_numeric: 同源 -> pillars_numeric 整块（五键，零新增零放宽）
+    buckets_type_and_floor: 同源 -> buckets.type/min_obs_per_bucket（'on' 一行换本卡对象面，禁含数值）
+    discipline: 同源 -> discipline 行
+    signal_kind: 同源 -> signal_kind（panel，同表同交付形在册先例）
+    target_primary_secondary_target_source: 同源 -> target.primary/target.secondary・data_binding.target_source
+    oos_window_ref: 同源 -> oos_window_ref（与本卡 window.oos 同锚 *id001）
+    decision_question: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration.yaml -> tdm.decision_question（本班按行抽取，非手打）
+    candidate_row: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-MIDAYSHAPE-046 行逐字段原文（definition_zh/sample_window/example_value/orthogonal_gate_note/data_source_table）
+    dialect_portrait_row_052: 同源 -> CAND-P0-MIPORTRAIT3-052 行逐字段原文（八处方言口径画像行，整行入卡见 data_binding.dialect_caliber_precedent_052）
+  own_measurement: 本班只读实测四项：①冻结面 parsed 对拍（本卡 vs HEAD A02/12 六面全等，五键并与 A01/08・A02/10・A02/11 三面逐值同值）；②绑定层算子谓词 0 命中＋三个有效正对照；③在册序列目录 35 枚 csv、本轴类 0 命中；④卡池 552 件完整 walk＝具名 empty 0、骨架 empty 186。本班未跑考试、未跑正交闸、未跑 CH 探针
+  single_variable_note: 新造具名子题卡（非 champion/challenger 配对）；与同轴 A01/08（lag-1）・A02/12（lag-2）的差异面＝测量区间从日内相邻步换为相邻两日同位对齐，同为 panel・同表 kline_1min（本卡 signal_table 与源卡逐字同值，本班实测）・同窗同五键同 discipline；与 047/048/049/050/051 五条的差异面＝那五条③席在册判重复或池拦，不产卡
+lineage:
+  card: TDM-E-L9-A02/calibration/12_intraday_return_autocorr_lag2
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A02.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: kline_1min (CH c1_market)
+  signal_column: close / open（列名逐字取③席在册定义行的 r_i=ln(C_i/O_i) 两端列，本席未新增列名）
+  signal_derivation: 跨日分钟路径形延续＝按 symbol×trade_date 把当日分钟收益 r_i=ln(C_i/O_i)（trade_time 升序、nb 根）等分 16 档（档界=intDiv(k·nb,16)，档内和由 arrayCumSum 差分取，本班行内闭合实测 max|sum(b16)−arraySum(r)|=1.4e-17），再取同一 symbol「今日 16 档向量 b_t 与上一交易日 b_{t−1}」的 16 点皮尔逊相关；断日（新上市/停牌/跨月首两日）不出值。交付形态=横截面 panel（每股每日一值），本行 example 读数=全市场日均投影（仅供过闸，非交付口径）。与 033/039 的区别＝那两条量日内相邻步记忆（lag-1/lag-2），本列量相邻两日的同位对齐复制。TDM 归属＝载体 kline_1min→TDM-E-L9-A01 源线·日线/分钟行情（config/trading_decision_map.yaml:6042 dq＝价量趋势与动量能否预测N日收益？）／信息本体＝日内路径形→TDM-E-L9-A02 源线·Tick分笔（同件 :6077 dq＝日内微观结构能否预测次日方向与冲击成本？）；本班按 ⑥ 席 1015-10 归口请认对六条一律记「载体 A01／本体 A02」双标注（lag-3 起同轴不再分叉），归口待 ⑩ 认一次后由 ⑥ 席搬键，本席不改卡不自裁
+  target_source: kline_daily_hfq close→next_day_return（与 02 卡同 target，禁各自改口径）
+  universe_guard: 6 个散月共 116 交易日（2024-02/04/06/08/10/12，闭卷切点前；HOLDOUT/OOS 2025-09-09 后零接触）；守卫沿在册原文：本表无 market_type 列⇒前缀白名单 {0,3,6}／volume>0／HAVING nb>=200 AND sum(pow(log(close/open),2))>0 AND max(high)>min(low) AND t1>t0；本班另加采样闸 cityHash64(symbol)%10=3（只缩宇宙、不改在册病理件闸）⇒逐日分母 455-508 只（中位 495）vs 上班全宇宙 4894-4906＝分母不同宇宙，本班如实注明
+  example_value_from_candidate: 窗内市场日均=+0.008369，sd=0.087693，H1=+0.010417，H2=+0.006285（前后半段同向=是）
+  orthogonal_gate_verdict: 过闸（入过闸账）verdict=pass max|corr|=0.1215 most_similar=lu_ratio_z20 rc=0；册内自查（闸看不见这一面）：vs 040 f_flip=0.2137、vs 041 f_irrev=0.1844、vs 043 f_dwellent=0.1479（其余 9 腿皆低于次三 0.1479） ⇒ max=0.2137≤0.3＝池面与册内两面孔同判未撞⇒本班唯一轴净增；尺双对照本班同批重立：池成员 avg_abs_ret.csv 原样自投=reject 1.0000 rc=5（尺能红）；同日轴随机高斯 ctrl_random.csv=pass 0.1043 rc=0（尺非恒拦）；池面=⑨席 pool6 绕行面（.runtime/tmp/st-qoder-p09-1015-04/pool6，6 序列／非 ibt_runner MEMBERS 15 员面）；采样面可靠性本班另测：采样宇宙 vs 全宇宙日频对拍 f_ac1 max|diff|=0.0136／mean=0.0036、f_ac2 max=0.0144／mean=0.0035＝采样噪声可达在册日频 sd 的 1/6，故贴线读数一律按保守判重复
+  data_window_evidence: 逐字同本面 universe_guard（=③席 CAND-P0-MIDAYSHAPE-046 行 sample_window 原文：6 个散月共 116 交易日＋在册守卫＋本班不代拍开考宇宙），本卡不重复搬第二份
+  dialect_caliber_precedent_052:
+    definition_zh: 楼1 分钟腿方言与内存口径画像行（非信号，体例承 022/032/038 行）＝本班在 kline_1min＋CH 26.6.1.1193 上实投报错后定形的八处口径面：(a) arrayChunk **不存在**（Code 46）；(b) runningAccumulate 被 Code 721「deprecated error-prone」拦死，须显式 set allow_deprecated_error_prone_window_functions 才可用＝分档求和不可依赖它；(c) arrayMap(k -> arrayElement(<行内数组>, f(k)), range(N)) 形态＝CH 对行数组做 N 次 replicate，全宇宙（9.3 万行/月）实投顶爆服务端总内存 7.42 GiB（Code 241，单次申请 2 GiB）⇒本表分档腿只能配采样宇宙或 N≤16；(d) **arraySplit 双数组形态静默给错**：编译通过但 lambda 第二参数绑不到 pos 数组，六元素样例 arraySplit((v,i)->toUInt8(intDiv(i-1,2)+1), r, pos) 退化为每元素一组（[[-0.1],[0.2],...]）＝用它的任何分档/分块读数都是假的且不报错，本班首版 f_hurst 五档读数全等即由此来（当班自纠留案）；(e) arrayFilter 双数组形态可用＝arrayFilter((x,i)-> i%2=1, a, arrayEnumerate(a))=[1,3,5] 实测，是本方言唯一可用的分层形；(f) arrayMap 多数组入参不等长直接 Code 190 报错，**不会补 0**（与常见直觉相反）；(g) ch_reader.query_strict 契约拒 `FROM numbers(1)`（判为非只读语句），无表探针须写 `WITH [...] AS a SELECT ...`；(h) TCP 客户端在连续两次报错后进入冷却，回显 「client 不可用（配置缺失或处于冷却期）」，此时同进程重试必假失败＝须走 HTTP 面或等冷却，勿据此判「表不可读」。分母/采样面：本班 cityHash64(symbol)%10=3 ⇒逐日 455-508 只（中位 495）vs 上班全宇宙 4894-4906；两宇宙日频对拍 f_ac1 max|diff|=0.0136／mean 0.0036。
+    data_source_table: kline_1min (CH c1_market)＋CH 方言实投报错面＋system.processes 未用
+    sample_window: 探针窗＝202406 采样宇宙 9278 行／19 交易日；报错面全部为等值实投，非引用上班读数
+    example_value: 非信号行，无过闸义务（闸读数不适用）
+    gate_note_verbatim: 不适用（画像行）；本班对 ⑤⑥⑦ 席的用途＝data_binding 与查询写法门柱前置，尤其 (d) 条＝若制卡/考试器沿用 arraySplit 分档，会得到「看起来跑通、读数恒等」的假面
+  readiness: 数据腿：③席在册行给出 116 交易日采样面读数与守卫原文（本班未重扫全表）；缺⑤物化算子与 csv 载体（lag-1/lag-2 同缝，本班实测 shape/corr/day 类 0 命中）、开考宇宙在册未裁（采样面 vs 全宇宙）、过闸投影折叠口径在册未裁；本卡按 blocked_on_impl 停手不自宣可考
