@@ -110,3 +110,6 @@ date: 2026-09-24
 
 | D30 | v1.6.1：班中续 claim 规则入通用规则（TTL 30 分/重试后 5 分，重 acquire 即可勿进堵点）+治理裁定记录制度立法（分片登记+[BLOCKER] 含零问题行+⑩聚合晨报+每周 promote 04/governance/adjudication/，不建共写集中册）；A 席三面穷尽标未定性，第四面=Owner Automations 截图 |
 - 2026-10-15 v18 v1.6.1：续 claim 规则+裁定记录制度（D30）
+
+| D31 | v1.6.2：⑥席冻结校验清单加形状匹配立法（B 族 14 卡 ill-formed 教训：series/panel 形状错配禁冻结退回重出题）；执行器形状预检工单（blocked(shape_mismatch) 替代 TypeError 崩溃）车道已发；06 班裁定（收班+C 族探查+A/U 扩展全量形状账）持久化进 dispatch/p07 checkpoint |
+- 2026-10-15 v19 v1.6.2：形状校验立法+06班裁定持久化（D31）

@@ -3,7 +3,7 @@ doc_type: policy
 ttl: permanent
 title: 全自动研究生产线运营 SOP（九口出料·挖考判晋反馈闭环）
 status: active
-version: 1.6.1
+version: 1.6.2
 date: '2026-10-15'
 owner: ZephyrAlpha-Owner
 ---
@@ -108,7 +108,7 @@ owner: ZephyrAlpha-Owner
 ### ⑥ 制卡席
 - **目标**：empty→preregistered；先冻结后跑；每次优化都有 A/B。
 - **工作内容**：填门柱判据（只抄在册冻结值）；**对照配对卡制作**（champion/challenger 单变量）。
-- **输入口**：exam_cards 中 empty 卡（现存 empty 多为 /01 裸骨架卡——转正须③④席先产具名子题卡）；在册冻结值真源=同族已冻结卡本体+各域判据册（裁定#518=「先冻结后跑」方法先例，非数值源）；⑨席对照申请单。同族门柱多口径并存（如实测 S2 族标准/事件研究两套五键并存）→不擅自挑，一律呈批。**裸骨架卡（/01 无具名子题）一律退回③席按 TDM 图节点定义补具名子题（真源在图上，有据可依不属自拟），禁呈批 Owner；仅当节点定义本身无考题语义才上升呈批。**
+- **输入口**：exam_cards 中 empty 卡（现存 empty 多为 /01 裸骨架卡——转正须③④席先产具名子题卡）；在册冻结值真源=同族已冻结卡本体+各域判据册（裁定#518=「先冻结后跑」方法先例，非数值源）；⑨席对照申请单。同族门柱多口径并存（如实测 S2 族标准/事件研究两套五键并存）→不擅自挑，一律呈批。**裸骨架卡（/01 无具名子题）一律退回③席按 TDM 图节点定义补具名子题（真源在图上，有据可依不属自拟），禁呈批 Owner；仅当节点定义本身无考题语义才上升呈批。****冻结校验清单新增形状匹配（2026-10-15，B 族 14 卡 ill-formed 教训）：signal_kind 与 target 形状必须匹配（series 信号↔series 目标；panel 信号↔panel 目标或明确定义的聚合路径），不匹配卡禁冻结、退回重新出题；执行器侧由形状预检兜底（blocked(shape_mismatch) 诚实行）。**
 - **输出口**：preregistered 卡（pillars_numeric/window/buckets 齐，数据绑定按卡面 lineage 字段承载——531 卡中 528 张用 lineage，`data_binding` 仅 3 张，口径以 lineage 为准）；对照卡对（原版=champion，改良=challenger，**只改一个变量**）；语义参数缺→`docs/_working/nightmine_campaign/05_owner_decisions.yaml` 呈批（**一个数不编**）。
 - **工作流程**：1 领 empty 卡/对照申请 2 查在册冻结值（逐字沿用）3 有→填门柱 4 缺→呈批件 5 对照申请→配对制卡（clone 原卡改单变量）6 翻 status 7 自检两轮（两轮都核对：门柱非空且与冻结值逐字一致；对照卡 diff 恰一个变量）。
 - **保底绩效**：每班≥5 张或当班领用卡 100% 处置完（含呈批件；骨架卡时代呈批件计入保底）。
