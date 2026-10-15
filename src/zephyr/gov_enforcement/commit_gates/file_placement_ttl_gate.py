@@ -224,6 +224,7 @@ def _check_rule3_root_subdir_admission(rel, is_new_file, allowed_root_subdirs):
 # 模块级化供 DOC-HEADER-SUITE 聚合器同调（gslim P4 合并先例：吸收台闭包提级）。
 def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
     allow_promote = kwargs.get("allow_promote", False)
+    ctx = kwargs.get("_doc_suite_ctx")  # st-perfz2 P1-3：DOC-HEADER-SUITE 单趟共享（opt-in）
     project_root = gateway.project_root
 
     # 1. 动态加载真源（fail-closed：加载失败阻断）
@@ -271,7 +272,8 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 判断是否新增文件（未 git tracked = 新增；tracked = 修改）
         # 规则1/3 只对新增文件检查（永久区准入和根目录子目录准入是"新文件进入"约束）
         # 规则2 对所有文件检查（TTL↔zone 一致性是持续约束）
-        is_new_file = not gateway.is_git_tracked(rel)
+        # st-perfz2 P1-3：ctx 给定时 is_git_tracked 走共享 memo（同 rel 同返回，纯 memo）
+        is_new_file = not (ctx.is_git_tracked(gateway, rel) if ctx is not None else gateway.is_git_tracked(rel))
 
         # 规则1：永久区新文件准入（PROMOTION_BLOCKED）——只对新增文件
         v1 = _check_rule1_permanent_admission(rel, is_new_file, in_permanent, exempt_subdirs, allow_promote)

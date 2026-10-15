@@ -74,13 +74,20 @@ _RE_HEADER_MODULE_ID = re.compile(r"^#\s*\[A_\w+\]\s*module_id[:=]\s*(\S+)", re.
 _RE_BLUEPRINT_REF = re.compile(r"^#\s*\[BLUEPRINT\]\s*(\S+)", re.MULTILINE)
 
 
-def _is_tracked_in_head(gateway, rel: str) -> bool:
+def _is_tracked_in_head(gateway, rel: str, ctx=None) -> bool:
     """判断文件是否已存在于 HEAD（即 tracked/修改态 M，而非新增 A）。
 
     用于 cross-file 碰撞检查的历史豁免：HEAD 中已存在的文件属存量基线违规，
     按"门禁只检测staged新增文件（diff-filter=A）"约定不阻断。git 错误时 fail-open
     返回 True（假定已跟踪，避免误阻断）。
+
+    st-perfz2-20261015 P1-3：ctx（DOC-HEADER-SUITE 单趟共享上下文）给定时走
+    ``git ls-tree HEAD -- <rel>`` 共享 memo（与 EXEMPT-ZONE-FM 历史豁免同命令同
+    一次 subprocess；异常语义保持——TimeoutExpired/OSError→True，其余照原样上抛）。
     """
+    if ctx is not None:
+        status, stdout = ctx.head_ls_tree(gateway, rel)
+        return bool(stdout.strip()) if status is not None else True
     try:
         result = gateway.run_git(["git", "ls-tree", "HEAD", rel])
         return result.returncode == 0 and bool(result.stdout.strip())
@@ -190,7 +197,7 @@ def _candidate_same_blueprint(candidate_abs: str, bp_id: str | None) -> bool:
     return bool(m and m.group(1) == bp_id)
 
 
-def _check_cross_file_collision(gateway, files: list[str], project_root) -> list[str]:
+def _check_cross_file_collision(gateway, files: list[str], project_root, ctx=None) -> list[str]:
     """校验 staged .py 文件的 module_id 跨文件唯一性（git grep 全仓检测）。
 
     历史豁免：仅对 NEWLY ADDED（不在 HEAD）的文件生效；HEAD 中已存在的
@@ -203,13 +210,16 @@ def _check_cross_file_collision(gateway, files: list[str], project_root) -> list
     若引用**相同** ``[BLUEPRINT]`` id 则属同模块（如 MOD-GATE_ENGINE 下 20+ gate
     文件），共享 module_id 是预期行为，不算碰撞。仅引用**不同** ``[BLUEPRINT]``
     的候选才算真碰撞。
+
+    st-perfz2-20261015 P1-3：ctx 给定时 HEAD ls-tree 历史豁免走共享 memo
+    （与 EXEMPT-ZONE-FM 同命令同一次 subprocess；纯 memo 判据零变化）。
     """
     violations: list[str] = []
     for f in files:
         if not os.path.isfile(f) or not f.endswith(".py"):
             continue
         rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-        if _is_tracked_in_head(gateway, rel):
+        if _is_tracked_in_head(gateway, rel, ctx=ctx):
             continue
         try:
             content = Path(f).read_text(encoding="utf-8", errors="replace")
@@ -272,7 +282,7 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
             continue
         violations.extend(_check_track_consistency(rel, content))
         violations.extend(_check_count_derivation(rel, content))
-    violations.extend(_check_cross_file_collision(gateway, files, project_root))
+    violations.extend(_check_cross_file_collision(gateway, files, project_root, ctx=kwargs.get("_doc_suite_ctx")))
     if violations:
         return _format_module_id_violations(violations)
     return True, "module_id consistency check passed"

@@ -267,7 +267,7 @@ def _dedup_broken_targets(broken: list[str]) -> list[str]:
     return unique
 
 
-def _detect_md_file_violation(abs_path: str, wt_root: str, gateway=None) -> str | None:
+def _detect_md_file_violation(abs_path: str, wt_root: str, gateway=None, ctx=None) -> str | None:
     """检测单个 .md 文件的断裂引用。
 
     Args:
@@ -276,6 +276,9 @@ def _detect_md_file_violation(abs_path: str, wt_root: str, gateway=None) -> str 
         gateway: GitCommitGateway 实例；给定时内容读 staged blob（index，裁定#279——
             磁盘上可能尚未 checkout/已被他会话操作），存在性探测走 git 仓库态；
             None（兼容旧直调）保持纯磁盘口径。
+        ctx: DOC-HEADER-SUITE 单趟共享上下文（st-perfz2-20261015 P1-3）；给定时 staged
+            全文与链接存在性探测走共享 memo（同输入同返回，纯 memo 判据零变化）；
+            None（直调/单测）逐字走原路径。
 
     Returns:
         违规描述字符串；读取失败返回 None（跳过），无断链返回 None。
@@ -283,7 +286,8 @@ def _detect_md_file_violation(abs_path: str, wt_root: str, gateway=None) -> str 
     content: str | None = None
     if gateway is not None:
         rel = os.path.relpath(abs_path, wt_root).replace("\\", "/")
-        content = _read_staged_file(gateway, rel) or None  # 空 staged=读取失败语义→磁盘回退
+        staged = ctx.staged_text(gateway, rel) if ctx is not None else _read_staged_file(gateway, rel)
+        content = staged or None  # 空 staged=读取失败语义→磁盘回退
 
     def _probe(resolved: str) -> bool:
         if gateway is None:
@@ -291,6 +295,8 @@ def _detect_md_file_violation(abs_path: str, wt_root: str, gateway=None) -> str 
         rel_target = os.path.relpath(resolved, wt_root).replace("\\", "/")
         if rel_target.startswith(".."):
             return os.path.exists(resolved)  # 仓库外目标=磁盘语义
+        if ctx is not None:
+            return ctx.repo_state_has(gateway, rel_target)
         return _repo_state_has_file(gateway, rel_target)
 
     if content is None:
@@ -348,9 +354,17 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
     # 清偿 2026-09-17：内容读 staged blob、目标存在性走 index/HEAD——磁盘只作
     # 降级补充。基线差分豁免理由：本门只测 --diff-filter=A **新增** .md，文件
     # 内容整体属本次提交，违规必然由本次引入，HEAD 基线差分无增量信息）
+    # st-perfz2-20261015 P1-3：ctx 给定时 staged 全文/链接存在性走共享 memo，
+    # 熔断文件（单文件读入+解析累计 >5s）跳过不重扫。
+    ctx = kwargs.get("_doc_suite_ctx")
     all_violations: list[str] = []
     for abs_path in abs_files:
-        violation = _detect_md_file_violation(abs_path, wt_root, gateway=gateway)
+        if ctx is not None:
+            rel_check = os.path.relpath(abs_path, wt_root).replace("\\", "/")
+            if ctx.is_broken(rel_check):
+                ctx.note_skip(rel_check, "DOC-REF-BROKEN")
+                continue
+        violation = _detect_md_file_violation(abs_path, wt_root, gateway=gateway, ctx=ctx)
         if violation:
             all_violations.append(violation)
 

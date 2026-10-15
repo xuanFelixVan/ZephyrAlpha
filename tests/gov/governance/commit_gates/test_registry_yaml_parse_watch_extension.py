@@ -58,12 +58,15 @@ def test_watch_table_contains_p0_six():
     assert "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml" not in _WATCH_FILES
 
 
-def test_hot_registry_basic_duplicate_root_key_blocks():
-    """basic 档结构断言生效：双根键必拦（PyYAML 静默取后者盲区）。"""
+def test_hot_registry_basic_duplicate_root_key_warns(tmp_path):
+    """basic 档结构断言降级（st-perfz2-20261015 P0-1）：双根键=结构序问题降 warn 放行
+    （detail 带判据文案；审计落 warn_issues），不再阻断。语法错误仍 fail-closed。"""
+    import json as _json
+
     dup = _VALID_RULING + "\nentries2_dup: []\nentries:\n- ruling_id: x\n"
 
     class GW:
-        project_root = "."
+        project_root = str(tmp_path)
 
         def run_git(self, cmd):
             if cmd[:3] == ["git", "diff", "--cached"]:
@@ -74,7 +77,12 @@ def test_hot_registry_basic_duplicate_root_key_blocks():
 
     gate = make_registry_yaml_parse_gate()
     ok, msg = gate.check(GW(), [], session_id=None)
-    assert ok is False and "顶层根键重复" in msg
+    assert ok is True, f"结构序降 warn 应放行: {msg}"
+    assert "顶层根键重复" in msg and "warn" in msg
+    audit = tmp_path / ".runtime" / "gate_audit" / "registry_yaml_parse.jsonl"
+    rows = [_json.loads(x) for x in audit.read_text(encoding="utf-8").splitlines() if x.strip()]
+    assert rows and rows[-1]["action"] == "pass"
+    assert rows[-1].get("warn_issues"), "warn 必须入审计（warn_issues 字段）"
 
 
 def _state_gateway(tmp_path: Path, staged_text: str):

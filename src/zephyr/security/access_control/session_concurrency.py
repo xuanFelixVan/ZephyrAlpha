@@ -320,6 +320,12 @@ class SessionInfo:
 # （进程内集合，防 list_active 热路径重复刷屏；进程重启后重新留痕一次）。
 _LEDGER_SOFT_EXPIRE_AUDITED: set[str] = set()
 
+# 立案活性闸跳过留痕去重（st-perfz2-20261015 P0-2b）：钩子在 list_active 热路径上会对
+# 同一 expired sid 反复触发，alive-skip 的 JSONL 留痕按 sid 900s 去重（对标
+# _audit_alive_side_evidence 的 _REAP_GRACE_SECONDS 窗），防分叉窗口期审计洪峰。
+_LEDGER_ALIVE_SKIP_AUDITED: dict[str, float] = {}
+_LEDGER_ALIVE_SKIP_AUDIT_INTERVAL_SECONDS = 900
+
 
 # ---------------------------------------------------------------------------
 # 三证旁证（2026-10-10 sid=st-maint1-t3lane）：PID 亡＝必要非充分
@@ -682,6 +688,8 @@ def _salvage_takeover_ledger(
         try:
             from scripts.governance.session_takeover_ledger import (
                 DEATH_IDLE_SECONDS,
+                audit_case_skipped_alive,
+                registry_alive_blocks_case,
                 write_takeover_entry,
             )
         except ImportError:
@@ -692,11 +700,12 @@ def _salvage_takeover_ledger(
                 _sys.path.insert(0, root_str)
             from scripts.governance.session_takeover_ledger import (
                 DEATH_IDLE_SECONDS,
+                audit_case_skipped_alive,
+                registry_alive_blocks_case,
                 write_takeover_entry,
             )
         root = project_root if project_root is not None else Path.cwd()
-        for sid in expired_sids:
-            # R2-F1 治本（2026-10-02 第四夜红蓝审查）：判死口径与台账判据对齐。
+        for sid in expired_sids:  # R2-F1 治本（2026-10-02 第四夜红蓝审查）：判死口径与台账判据对齐。
             # list_active 的判死是"会话活性"判据（pid=0 逻辑会话心跳 90s 即判死），
             # 而接管台账是"资源需接管"判据（idle > 7200s 或注册表除名）。二者混用
             # 会把 idle 仅 4~100s 的活会话写进死亡台账（实测 st-c10-final3 idle=4s
@@ -740,6 +749,27 @@ def _salvage_takeover_ledger(
                             else "",
                         )
                     continue
+            # 立案前活性单口复核（st-perfz2-20261015 P0-2b 自指死锁治本，与
+            # session_takeover_ledger --scan 闸同批）：registry-alive 会话不立 open 条目。
+            # 病根实锤：claim 绑定短命提交 PID→立案→条目把提交人判死→TAKEOVER-PENDING
+            # 自拦（30 天 335 次）。闸只收窄"活班被立案"——verdict≠alive（degraded/dead/
+            # ghost/裁决不可达）一律照原判据立案，真死会话零漏网。
+            try:
+                _alive_skip, _alive_note = registry_alive_blocks_case(root, sid, now=now)
+            except Exception as _gate_exc:  # noqa: BLE001 — 闸设施缺席=退回原判据（fail-open 不改判死主流程）
+                _alive_skip, _alive_note = False, f"活性闸不可用（{type(_gate_exc).__name__}）"
+            if _alive_skip:
+                if sid not in _LEDGER_SOFT_EXPIRE_AUDITED:
+                    _LEDGER_SOFT_EXPIRE_AUDITED.add(sid)
+                    logger.warning("SessionRegistry: takeover ledger skipped sid=%s (%s)", sid, _alive_note)
+                _last = _LEDGER_ALIVE_SKIP_AUDITED.get(sid)
+                if _last is None or (now - _last) > _LEDGER_ALIVE_SKIP_AUDIT_INTERVAL_SECONDS:
+                    _LEDGER_ALIVE_SKIP_AUDITED[sid] = now
+                    try:
+                        audit_case_skipped_alive(root, sid, _alive_note)
+                    except Exception:  # noqa: BLE001 — 留痕失败不影响主流程
+                        pass
+                continue
             try:
                 write_takeover_entry(
                     root,

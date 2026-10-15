@@ -128,29 +128,39 @@ def _is_malformation(module_id: str) -> bool:
     return bool(_MALFORMATION_RE.match(module_id))
 
 
-def _check_amodule_format(gateway, py_files: list[str]) -> list[str]:
+def _check_amodule_format(gateway, py_files: list[str], ctx=None) -> list[str]:
     """校验 staged .py 文件 added 行的 [A_module] module_id 格式。
-
-
 
     使用 _MALFORMATION_RE 检测"层码后下划线+小写"格式错误。
 
-
-
     diff-based 检测：只检查 added 行中的 [A_module] 声明。新文件全行 added
-
     故 [A_module] 必被检查；modified 文件仅当 [A_module] 行被改动时才检查。
 
+    st-perfz2-20261015 P1-3（DOC-HEADER-SUITE 单趟化）：ctx 给定时 staged 全文/
+    added 行/docstring AST 走共享 memo（同输入同返回，纯 memo 判据零变化），熔断
+    文件跳过不重扫；ctx=None（直调/单测）逐字走原路径。
     """
 
     violations: list[str] = []
 
     for py_file in py_files:
-        file_content = _read_staged_file(gateway, py_file)
+        if ctx is not None and ctx.is_broken(py_file):
+            ctx.note_skip(py_file, "BLUEPRINT-AMODULE-CONSISTENCY")
+            continue
+        file_content = ctx.staged_text(gateway, py_file) if ctx is not None else _read_staged_file(gateway, py_file)
 
-        docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
+        docstring_lines = (
+            ctx.docstring_lines(py_file, file_content)
+            if ctx is not None
+            else (_extract_docstring_lines(file_content) if file_content else set())
+        )
 
-        for line_no, content in _get_added_lines(gateway, py_file, "BLUEPRINT-AMODULE-CONSISTENCY"):
+        added = (
+            ctx.added_lines(gateway, py_file, "BLUEPRINT-AMODULE-CONSISTENCY")
+            if ctx is not None
+            else _get_added_lines(gateway, py_file, "BLUEPRINT-AMODULE-CONSISTENCY")
+        )
+        for line_no, content in added:
             if line_no in docstring_lines:
                 continue
 
@@ -189,11 +199,21 @@ def _format_amodule_violations(violations: list[str]) -> tuple[bool, str]:
 
 
 def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-    """BLUEPRINT-AMODULE-CONSISTENCY 判定体（模块级——make_blueprint_header_gate 聚合器同调；磁盘垫片，gslim 在飞修复落地即覆盖）。"""
-    py_files = [f for f in _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CONSISTENCY") if not is_test_exempt(f)]
+    """BLUEPRINT-AMODULE-CONSISTENCY 判定体（模块级——make_blueprint_header_gate 聚合器同调；磁盘垫片，gslim 在飞修复落地即覆盖）。
+
+    st-perfz2-20261015 P1-3：kwarg _doc_suite_ctx 给定时 staged 清单走共享 memo
+    （DOC-HEADER-SUITE 单趟化，opt-in——直调/单测路径零变化）。
+    """
+    ctx = kwargs.get("_doc_suite_ctx")
+    staged = (
+        ctx.staged_py_files(gateway)
+        if ctx is not None
+        else _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CONSISTENCY")
+    )
+    py_files = [f for f in staged if not is_test_exempt(f)]
     if not py_files:
         return True, ""
-    violations = _check_amodule_format(gateway, py_files)
+    violations = _check_amodule_format(gateway, py_files, ctx=ctx)
     if violations:
         return _format_amodule_violations(violations)
     return True, ""

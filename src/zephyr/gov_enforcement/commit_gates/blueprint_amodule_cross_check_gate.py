@@ -125,22 +125,36 @@ def _extract_headers(content: str) -> tuple[str | None, str | None]:
     return blueprint_id, amodule_id
 
 
-def _check_cross_consistency(gateway, py_files: list[str]) -> list[str]:
+def _check_cross_consistency(gateway, py_files: list[str], ctx=None) -> list[str]:
     """校验 staged .py 文件的 [BLUEPRINT] vs [A_module] module_id 一致性。
 
     diff-based 检测：只检查有 added 行的文件。对每个待检文件读取完整内容，
     提取两头部 module_id，若 normalize 后相等则记录违规。
+
+    st-perfz2-20261015 P1-3（DOC-HEADER-SUITE 单趟化）：ctx 给定时 staged 全文/
+    docstring AST/added 行走共享 memo（同输入同返回，纯 memo 判据零变化），熔断
+    文件跳过不重扫；ctx=None（直调/单测）逐字走原路径。
     """
     violations: list[str] = []
     for py_file in py_files:
-        file_content = _read_staged_file(gateway, py_file)
+        if ctx is not None and ctx.is_broken(py_file):
+            ctx.note_skip(py_file, "BLUEPRINT-AMODULE-CROSS-CHECK")
+            continue
+        file_content = ctx.staged_text(gateway, py_file) if ctx is not None else _read_staged_file(gateway, py_file)
         if not file_content:
             continue
 
-        docstring_lines = _extract_docstring_lines(file_content)
+        docstring_lines = (
+            ctx.docstring_lines(py_file, file_content) if ctx is not None else _extract_docstring_lines(file_content)
+        )
 
         # 检查是否有 added 行含 noqa 逃生标记
-        added_lines = list(_get_added_lines(gateway, py_file, "BLUEPRINT-AMODULE-CROSS-CHECK"))
+        added_raw = (
+            ctx.added_lines(gateway, py_file, "BLUEPRINT-AMODULE-CROSS-CHECK")
+            if ctx is not None
+            else _get_added_lines(gateway, py_file, "BLUEPRINT-AMODULE-CROSS-CHECK")
+        )
+        added_lines = list(added_raw)
         if not added_lines:
             continue
 
@@ -203,12 +217,22 @@ def _format_violations(violations: list[str]) -> tuple[bool, str]:
 
 
 def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
-    py_files = [f for f in _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CROSS-CHECK") if not is_test_exempt(f)]
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。
+
+    st-perfz2-20261015 P1-3：kwarg _doc_suite_ctx 给定时 staged 清单走共享 memo
+    （DOC-HEADER-SUITE 单趟化，opt-in——直调/单测路径零变化）。
+    """
+    ctx = kwargs.get("_doc_suite_ctx")
+    staged = (
+        ctx.staged_py_files(gateway)
+        if ctx is not None
+        else _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CROSS-CHECK")
+    )
+    py_files = [f for f in staged if not is_test_exempt(f)]
     if not py_files:
         return True, ""
 
-    violations = _check_cross_consistency(gateway, py_files)
+    violations = _check_cross_consistency(gateway, py_files, ctx=ctx)
     if violations:
         logger.error(
             "BLUEPRINT-AMODULE-CROSS-CHECK gate block: %d violation(s)",

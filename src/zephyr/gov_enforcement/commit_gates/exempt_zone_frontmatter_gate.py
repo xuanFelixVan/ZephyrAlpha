@@ -86,6 +86,7 @@ def _extract_doc_type(content: str, is_markdown: bool) -> str:
 # 模块级化供 DOC-HEADER-SUITE 聚合器同调（gslim P4 合并先例：吸收台闭包提级）。
 def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
     project_root = gateway.project_root
+    ctx = kwargs.get("_doc_suite_ctx")  # st-perfz2 P1-3：DOC-HEADER-SUITE 单趟共享（opt-in）
     violations: list[str] = []
     historical: list[str] = []
 
@@ -104,15 +105,26 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
             continue
 
         # 历史违规豁免：git ls-tree HEAD 判断文件是否已存在
-        try:
-            result = run_subprocess_hidden(
-                ["git", "ls-tree", "HEAD", rel], capture_output=True, cwd=str(project_root), timeout=10, text=False
-            )
-            if result.stdout.strip():
+        # st-perfz2-20261015 P1-3：ctx（DOC-HEADER-SUITE 单趟共享上下文）给定时走共享
+        # memo（与 MODULE-ID 历史豁免同命令同一次 subprocess；异常语义对齐——
+        # TimeoutExpired/OSError=不豁免继续检查，其余照原样上抛）。
+        if ctx is not None:
+            status, stdout = ctx.head_ls_tree(gateway, rel)
+            if status is None:
+                pass  # git 失败时不豁免，继续检查（与原 except 分支同语义）
+            elif stdout.strip():
                 historical.append(rel)
                 continue
-        except (subprocess.TimeoutExpired, OSError):
-            pass  # git 失败时不豁免，继续检查
+        else:
+            try:
+                result = run_subprocess_hidden(
+                    ["git", "ls-tree", "HEAD", rel], capture_output=True, cwd=str(project_root), timeout=10, text=False
+                )
+                if result.stdout.strip():
+                    historical.append(rel)
+                    continue
+            except (subprocess.TimeoutExpired, OSError):
+                pass  # git 失败时不豁免，继续检查
 
         try:
             content = Path(f).read_text(encoding="utf-8", errors="replace")

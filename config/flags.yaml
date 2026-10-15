@@ -85,6 +85,20 @@ flags:
     description: "健康检查 (module_health 可用)"
     implementation_status: "beta"
 
+  takeover_autoreclaim:
+    enabled: true
+    description: >-
+      TAKEOVER-PENDING 门自动回收（st-perfz2-20261015 P0-2a，总包 st-diskp0-20261015）。
+      病根实锤：接管台账 259 条全 open 从不关闭，其中大量条目死亡证据链在门禁时刻已可
+      机判"死透"（PID dead＋idle>7200s＋立案旁证全空＋活性裁决表现判 dead）。flag ON 时
+      门命中此类条目即代跑接管处方第一行与终态：gateway.release_files(死sid, held_files)
+      ＋ledger.resolve_entry（by=takeover-autoreclaim），逐条审计
+      .runtime/session_registry_audit/takeover_autoreclaim.jsonl，条目从阻断面摘除——
+      人工接管只剩 pid 存活/证据链不全/回收失败场景。回收是代跑处方不是放行通道：
+      五要件缺一、verdict≠dead、release/resolve 任一步失败一律照旧阻断。读不到本键
+      ＝出厂 ON；回滚=本 enabled 置 false（一个 YAML 值，不动码）。
+    implementation_status: "gated"
+
   alerts:
     enabled: true
     description: "告警规则评估 (基础条件解析可用，Multi-Window 未实现)"

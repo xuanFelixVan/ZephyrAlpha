@@ -6,13 +6,13 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.gate_auto_registrar（in_process_gate_registry.yaml YAML 驱动注册）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——commit 文件（repo-relative posix）命中任一 open 接管条目命中面（held_files+worktree dirty_files+staging files）时阻断，detail 含死亡证据+接管处方+--resolve 指引（下一个 AI 想绕都绕不过，必须先按清单接管——00_orchestration.md §2.2 L3 门禁显化）；tests/ 豁免；台账缺失/损坏行/ledger 模块不可达 fail-open（logger.warning 检测器失效）；检出命中 fail-closed 阻断；C11 活性复核（统筹裁定 2026-10-12）——仅"提交人 sid＝条目属主 sid 且 liveness_verdict∈{alive,degraded}"降级 warn＋逐次留痕（.runtime/session_registry_audit/takeover_self_block.jsonl），死会话/他班条目一律照拦，verdict 不可达＝unreadable 保守照拦（读失败不当活证）
-# [MODIFY-GUARD] gate_id="TAKEOVER-PENDING"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；判据/命中面变更须与 scripts/governance/session_takeover_ledger.py 同批
+# [INVARIANTS] 硬阻断——commit 文件（repo-relative posix）命中任一 open 接管条目命中面（held_files+worktree dirty_files+staging files）时阻断，detail 含死亡证据+接管处方+--resolve 指引（下一个 AI 想绕都绕不过，必须先按清单接管——00_orchestration.md §2.2 L3 门禁显化）；tests/ 豁免；台账缺失/损坏行/ledger 模块不可达 fail-open（logger.warning 检测器失效）；检出命中 fail-closed 阻断；C11 活性复核（统筹裁定 2026-10-12）——仅"提交人 sid＝条目属主 sid 且 liveness_verdict∈{alive,degraded}"降级 warn＋逐次留痕（.runtime/session_registry_audit/takeover_self_block.jsonl），死会话/他班条目一律照拦，verdict 不可达＝unreadable 保守照拦（读失败不当活证）；自动回收（st-perfz2-20261015 P0-2a，flag flags.takeover_autoreclaim.enabled 出厂 ON）——命中条目死亡证据=PID dead 且证据链完整（pid>0+pid_alive=False+idle>阈值+旁证全空+liveness_verdict 现判 dead）时先于阻断执行 gateway.release_files(死sid, held_files)+ledger.resolve_entry（by=takeover-autoreclaim，逐条审计 .runtime/session_registry_audit/takeover_autoreclaim.jsonl），回收成功＝该条目从阻断面摘除（人工接管只剩 pid 存活/证据链不全场景）；release/resolve 任一步失败＝放弃回收照旧阻断（回收不是放行通道，是代跑处方第一行）
+# [MODIFY-GUARD] gate_id="TAKEOVER-PENDING"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；判据/命中面变更须与 scripts/governance/session_takeover_ledger.py 同批；2026-10-15 st-perfz2 P0-2 自动回收面（_try_autoreclaim 证据链判据+flags.takeover_autoreclaim）与 session_takeover_ledger.py --scan 立案活性闸同批落地（同 commit）；回收判据变更须与 tests/gov/governance/commit_gates/test_takeover_autoreclaim.py 同批
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——ledger 读取/import 异常降级为 fail-open（passed=True，logger.warning）；检出命中 fail-closed 阻断（passed=False）
-# [TESTS] tests/gov/governance/test_session_takeover_ledger.py
+# [TESTS] tests/gov/governance/test_session_takeover_ledger.py; tests/gov/governance/commit_gates/test_takeover_autoreclaim.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
@@ -43,6 +43,14 @@ commit 清单命中条目命中面（held_files / worktree dirty_files / staging
    死班形态长期硬拦（实测 10-12 当日 23 枚 TAKEOVER 死袋里 14 枚是自挡）。降级条件三重
    收窄：①只认"提交人＝条目属主 sid"；②只认在册单口 `liveness_verdict` 的 alive/degraded；
    ③每次降级必落一行留痕。他班条目与死会话条目**零放宽**（跨班保护面不缩一寸）。
+6. **自动回收代跑处方**（st-perfz2-20261015 P0-2a，flag takeover_autoreclaim 出厂 ON）：
+   病根实测——接管台账 259 条全 open 从不关闭（resolve 只靠人工），而其中大量条目的
+   立案证据链在门禁时刻已可机判为"死透了"（PID dead+idle 超阈值+旁证全空+活性裁决表
+   现判 dead）。命中这类条目时，处方第一行（release 死 sid 的 stale claim）与终态
+   （resolve 迁 resolved/）全部机器可执行——门直接代跑并逐条留痕，条目从阻断面摘除；
+   人工接管只剩 pid 存活/证据链不全/回收失败场景。证据链五要件缺一不回收（回收失败
+   或条件不满足一律照旧阻断——本机制是代跑处方，不是放行通道）。回滚=flags.yaml
+   takeover_autoreclaim.enabled 置 false（一个 YAML 值，不动码）。
 
 Usage::
 
@@ -120,6 +128,130 @@ def _import_ledger_module(root: Path):
         from scripts.governance import session_takeover_ledger as ledger
 
         return ledger
+
+
+# ── 自动回收（st-perfz2-20261015 P0-2a；flag flags.takeover_autoreclaim.enabled 出厂 ON）──
+
+_AUTORECLAIM_AUDIT_NAME = "takeover_autoreclaim.jsonl"
+_AUTORECLAIM_BY = "takeover-autoreclaim"
+
+
+def _autoreclaim_enabled(root: Path) -> bool:
+    """flag 读取（直读 YAML——嵌套子键不进 FlagRegistry，与 git_commit_gateway._immutable_tree_enabled 同款读法）。
+
+    出厂 ON：flags.yaml 缺失/键缺失/读取异常一律按 True（出厂态）；回滚=显式置 false
+    （一个 YAML 值，不动码）。
+    """
+    try:
+        import yaml
+
+        data = yaml.safe_load((Path(root) / "config" / "flags.yaml").read_text(encoding="utf-8")) or {}
+        grp = (data.get("flags") or {}).get("takeover_autoreclaim") or {}
+        return bool(grp.get("enabled", True))
+    except Exception:  # noqa: BLE001 — 读不到=出厂 ON（回滚走显式置 false）
+        return True
+
+
+def _evidence_chain_complete(entry: dict) -> tuple[bool, str]:
+    """死亡证据链五要件机判（全过才可自动回收；缺一即人工接管面）。
+
+    ①death_evidence 是字典 ②pid>0 ③pid_alive is False（PID 实证死亡——`is False`
+    精确判别：None=探测定不可得=证据不完整，绝不回收）④idle 超 threshold（立案后
+    长期无人认领——刚立案的短命 PID 误立案形态不在此列，等它超阈值或被刷新出口收口）
+    ⑤立案旁证全空（alive_side_evidence.any_alive_side 非 True——三证立法口径：
+    有存活旁证在场=不是死透，禁回收）。
+    """
+    ev = entry.get("death_evidence")
+    if not isinstance(ev, dict):
+        return False, "death_evidence 缺失/非字典"
+    try:
+        pid = int(ev.get("pid") or 0)
+    except (TypeError, ValueError):
+        return False, "pid 不可解析"
+    if pid <= 0:
+        return False, f"pid 缺失/非法（={pid}）"
+    if ev.get("pid_alive") is not False:
+        return False, "pid_alive 非 False（PID 未实证死亡）"
+    age = ev.get("last_activity_age_seconds")
+    threshold = ev.get("threshold_seconds")
+    if not isinstance(age, (int, float)) or not isinstance(threshold, (int, float)):
+        return False, "idle/threshold 缺失或非数值"
+    if age <= threshold:
+        return False, f"idle 未超阈值（age={age} <= threshold={threshold}）"
+    side = ev.get("alive_side_evidence")
+    if isinstance(side, dict) and side.get("any_alive_side"):
+        return False, "立案旁证在场（any_alive_side=True，非死透）"
+    return True, f"pid={pid} dead + idle {age}s>{threshold}s + 旁证全空"
+
+
+def _audit_autoreclaim(root: Path, record: dict) -> None:
+    """自动回收留痕（jsonl append；失败不阻断——留痕面不是裁决面）。"""
+    try:
+        import json as _json
+        import time as _time
+
+        from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
+
+        append_audit_jsonl(root / ".runtime" / "session_registry_audit", _AUTORECLAIM_AUDIT_NAME, record)
+    except Exception:  # noqa: BLE001 — 留痕失败不改变回收结论
+        logger.warning("TAKEOVER-PENDING gate: 自动回收留痕写入失败（non-blocking）", exc_info=True)
+
+
+def _try_autoreclaim(gateway, root: Path, ledger, entry: dict, matched: list[str]) -> tuple[bool, str]:
+    """对单条命中条目尝试自动回收。返回 (是否回收成功, 说明)。
+
+    序：证据链五要件 → liveness_verdict 现判 dead（在册单口复核，会话复活的条目绝不
+    回收）→ gateway.release_files(死sid, held_files)（处方第一行：stale claim 精准释放）
+    → ledger.resolve_entry（终态迁移）。任一步异常＝放弃回收照旧阻断（本机制是代跑
+    处方，不是放行通道）。resolve 的 LookupError＝条目已被他方收口（竞态赢家），按
+    回收成功计。
+    """
+    sid = str(entry.get("sid") or "")
+    ok, why = _evidence_chain_complete(entry)
+    if not ok:
+        return False, f"证据链不全：{why}"
+    state, signal = _self_block_verdict(sid)
+    if state != "dead":
+        return False, f"liveness_verdict 现判 {state}/{signal}（非 dead，会话可能复活，不回收）"
+    held = [str(f) for f in ((entry.get("resources") or {}).get("held_files") or [])]
+    released_n = 0
+    if held:
+        try:
+            gateway.release_files(sid, held)
+            released_n = len(held)
+        except Exception as exc:  # noqa: BLE001 — release 失败=放弃回收照旧阻断
+            return False, f"release_files 失败（{type(exc).__name__}: {exc}），照旧阻断"
+    note = f"自动回收（{_AUTORECLAIM_BY}）：{_evidence_chain_complete(entry)[1]}；release {released_n} 件 claim"
+    try:
+        ledger.resolve_entry(root, sid, by=_AUTORECLAIM_BY, note=note)
+    except LookupError:
+        note += "；resolve 时条目已不在（他方收口竞态，按回收成功计）"
+    except Exception as exc:  # noqa: BLE001 — resolve 失败=条目仍 open，照旧阻断
+        return False, f"resolve_entry 失败（{type(exc).__name__}: {exc}），条目仍 open 照旧阻断"
+    _audit_autoreclaim(
+        root,
+        {
+            "ts": _now_iso(),
+            "event": "takeover_autoreclaim",
+            "gate": "TAKEOVER-PENDING",
+            "sid": sid,
+            "evidence": _evidence_chain_complete(entry)[1],
+            "liveness_state": state,
+            "liveness_signal": signal,
+            "released_claims": released_n,
+            "hit_files": matched[:20],
+            "note": note,
+            "policy": "st-perfz2-20261015 P0-2a：证据链完整+现判 dead 条目代跑处方（release+resolve）；flag=flags.takeover_autoreclaim",
+        },
+    )
+    logger.warning("TAKEOVER-PENDING gate 自动回收 sid=%s：%s", sid, note)
+    return True, note
+
+
+def _now_iso() -> str:
+    from zephyr.shared.utils.time_utils import now_utc
+
+    return now_utc().isoformat()  # m46：时间戳唯一真源（fallback 禁 time.time，DATETIME-NOW-FORBIDDEN 硬规）
 
 
 def _format_block_detail(hits: list[tuple[dict, list[str]]]) -> str:
@@ -214,7 +346,23 @@ def make_takeover_pending_gate() -> GateSpec:
             if matched:
                 hits.append((entry, matched))
 
-        # 4. 硬阻断：命中即 fail-closed
+        # 4. 硬阻断前先走自动回收（st-perfz2-20261015 P0-2a；flag takeover_autoreclaim
+        #    出厂 ON）：死亡证据链完整（PID dead+idle 超阈值+旁证全空）且活性裁决表现判
+        #    dead 的命中条目，代跑处方（release 死 sid stale claim + resolve 条目）后从
+        #    阻断面摘除；人工接管只剩 pid 存活/证据链不全/回收失败场景。回收失败或条件
+        #    不满足一律留在 hits 里照旧走阻断。
+        if hits and _autoreclaim_enabled(root):
+            remaining: list[tuple[dict, list[str]]] = []
+            reclaimed: list[str] = []
+            for entry, matched in hits:
+                ok, note = _try_autoreclaim(gateway, root, ledger, entry, matched)
+                if ok:
+                    reclaimed.append(f"sid={entry.get('sid')}（{note}）")
+                else:
+                    remaining.append((entry, matched))
+            hits = remaining
+            if not hits:
+                return True, "TAKEOVER-PENDING 自动回收（st-perfz2 P0-2a）已代跑处方并解除阻断：" + "；".join(reclaimed)
         if not hits:
             return True, ""
 
