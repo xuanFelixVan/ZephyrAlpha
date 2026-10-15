@@ -583,3 +583,12 @@ python -c "import glob,os,json,datetime;c=datetime.datetime(2026,10,15,18,12).ti
 - 本班实际耗时：起手 04:05:14（reaper/lock 冷启动）→ 写面 04:22 → 出班另计；其中防重入值守 04:05:14→04:17:46＝12 分 32 秒（只读巡检占满，非空转）。撞车次数＝0。
 
 - 本班终账＝袋 `q-20261016-st-qoder-p10-1016-05-0001` 于 04:26:30 落地（landed_id `75d3d1d24b59ae9d9d3d8972df97f296a08d41d4`・commit 恰含本席写域 10 件・零外来件・numstat 十件全为 deleted=0 纯加行），盘=index=HEAD 三面全等；实耗＝起手 04:05:14 → 终账落笔 04:27:08＝**22 分**（内防重入值守 12′32″ 全程只读巡检非空转）；本袋 0002 只追加本终账一行。
+
+
+## §19 1016-05 班更正（另起留旧案・§18 各行不涂）
+
+- [BLOCKER] 2026-10-16|⑩1016-05|工具缺陷|唯一正门入队路径自带"会话存活保障"腿会**代建车道目录并拉起心跳守护**，与 Owner 10-16 禁建 worktree 令直接对冲＝任何按正门提交的席都自动留下一条"违规面"|`scripts/git_commit.py:990-992`（session_worktree_start 兜底）→ `src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:3058`→`worktree_manager.py:389`＋`_wt_path:254` 锚 `.aidrafts/<sid>`；面证＝`.aidrafts/st-qoder-p10-1016-05` ctime 04:24:32 落在本席 enqueue 窗 04:24:24→04:24:50 内・车道 status 0 行・HEAD 75d3d1d24b59＝本席首袋 landed_id・守护 PID 2960 cmdline 含本席 sid|要⑤席评估该腿加开关（不改判据不改门语义，只让"建面"变成可关），本席不自改|高
+- [BLOCKER] 2026-10-16|⑩1016-05|流程问题|工序 5 现判据"某席台账/盘面出现 worktree 创建痕迹＝违规记档"在正门路径下**必然全员触雷**，本席 1016-04 班据该判据把自家四条判成违规并撤回免检，属误判|见第十三单 §8 与上条面证；五班 ctime 全对齐当班 enqueue 窗（-01 02:02:56／-02 02:51:47／-03 02:59:49／-04 03:56:06／-05 04:24:32）|要 Owner 二选一（A 给该腿加禁建面开关／B 工序 5 判据改"是否在车道内施工或提交"）；本席不裁，下班起对 `.aidrafts/st-qoder-p10-1016-*` 只交清理专班不再记各席违规|高
+- [BLOCKER] 2026-10-16|⑩1016-05|流程问题|收班三件③"注销本会话心跳（删 `heartbeat_<sid>.pid`）"在守护在场时不保证生效：本席 04:30:48 删文件成功，同腿拉起的 `heartbeat_daemon`（PID 2960）届时仍在跑|`python` + psutil 实测 cmdline `-m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon st-qoder-p10-1016-05 D:\\ZephyrAlpha 30`；本席按 PID 精确停手（不 /IM 全杀）|要⑤席把"停守护"纳入收班序列或让守护在有袋终态后自退（C355 豁免已有袋在队不自退，无袋是否自退本班未观察到）|中
+
+- 更正落笔时刻＝date 实测 2026-10-16 04:33；本袋＝本席写域四件（dispatch §8 更正・pulse 更正行・本台账 §19・checkpoint 游标补），仍为纯加行零删行。

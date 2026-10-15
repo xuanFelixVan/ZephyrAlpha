@@ -965,3 +965,12 @@ auction_window_pre_202606_gap（且无 primary_alternative）／bt_trade_log_att
 
 ### 7 下班首查三件（st-qoder-p10-1016-06）
 ①`dead_at` 窗内"双侧皆改"是否仍新增，并核新增只是否带 `stale_by`／`snapshot_regressions_count>0`（＝旧袋重投判据，已可机判）；②§2 落后面（①②③⑥席台账）是否被任何新袋吃掉——一旦发现 landed 旧快照＝立即高严重度呈 Owner，本席不自纠他席面；③⑦A 定性材料是否到手＋ALGO-NOTE-SYNC 族是否已由⑤席接走（该族属治理图五族面，本席禁改）。
+
+
+### 8 更正（本席自犯，另起留旧案・§5 原文不涂）＝工序 5 归属改判：本线五班车道目录＝正门代建，非各席违规
+- 本席 §5 那句"自家四条记档不判无辜"与本席台账 §18 第八条的归属**判错了方向，本班改判并留旧案**。
+- 代码链（三跳，逐跳 file:line 实测）＝唯一正门命令 `python scripts/git_commit.py … --enqueue` 的入队路径在 `scripts/git_commit.py:990-992`（注释头＝"会话存活保障（2026-10-02 提交链治本·C9）"）调 `session_worktree_start(session_id=args.session, allow_workspace_drift=True)` → `src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:3058` `manager.create_session_worktree(sid)`（池 lease 空则 fall back 直建）→ `src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py:389` 以 `_wt_path`（同文件 :254，硬锚 `.aidrafts/<sid>`）建分支树。⇒ **任何席只要按在册正门提交，就会被工具代建一条车道目录**，与该席是否"申请降级直改主区"无关。
+- 面证（本席自家这一条，可复跑）＝`.aidrafts/st-qoder-p10-1016-05` ctime **04:24:32**，正落本席 `git_commit.py --enqueue` 运行窗 04:24:24→04:24:50 内；车道内 `status --porcelain` 行数 **0**、车道 HEAD＝`75d3d1d24b59…`（＝本席首袋 landed_id），主区 HEAD 已是其后一笔 ⇒ 车道零在途、无归属篡改风险。
+- 同形态五班 ctime＝-01 02:02:56／-02 02:51:47／-03 02:59:49／-04 03:56:06／-05 04:24:32，各自对齐当班 enqueue 窗 ⇒ ⑦A 无关；**1016-03 班台账自陈"未建 worktree"与其目录并存**这件事，按本链改判＝工具所建，不是上班定的"自陈与盘面无对账"。上班 §17 与该判语一并留档不涂，下班读本节即可，勿再按"各席违规"呈报。
+- 连带新红（同一条兜底腿）＝它同时拉起 `heartbeat_daemon`（实测 PID 2960・cmdline `-m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon st-qoder-p10-1016-05 <root> 30`）；本席按收班三件③于 04:30:48 删心跳文件，守护进程仍在跑 ⇒ **"注销心跳"这一步在守护在场时不保证生效**，收班序列须按 PID 精确停守护（本席不自创工具，只登记）。
+- 本席不动手＝不改这条兜底腿、不写白名单、不自删任何车道（含自家五条）；呈 Owner 二选一（A＝给该兜底腿加"禁建面"开关，使 TRAE-079 Phase 2 与正门自洽；B＝把工序 5 判据从"存在车道目录"改为"是否在车道内施工/提交"，工具代建不计违规），并交清理专班回收 `.aidrafts/st-qoder-p10-1016-01..-05` 五条（零在途证据已给）。
