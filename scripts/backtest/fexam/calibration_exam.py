@@ -55,7 +55,7 @@ sys.path.insert(0, str(REPO_ROOT / "scripts" / "backtest"))
 
 from fexam.ic_exam import fast_rank_ic, ic_stats, regime_ic_slice  # noqa: E402
 
-SCORES_PATH = REPO_ROOT / "docs" / "03_modules" / "_domain_backtest" / "exam_scores_v1.yaml"
+SCORES_PATH = REPO_ROOT / "docs" / "04_research_records" / "backtest" / "scores" / "2026" / "exam_scores_v1.yaml"
 
 
 class _ToolError(RuntimeError):
@@ -341,58 +341,13 @@ _CALIBRATION_JUDGED_KEYS = frozenset(
 )
 
 
-def _bucket_type_off_vocab(card: dict) -> str:
-    """PE 条件①观测（11 稿 §2）：卡面声明了 buckets.type 且不在词表/quantile_<n> 形 ⇒ 返回原文名，否则空串。
-
-    无 buckets 声明＝卡面没冻切法，无"被代理"对象，不报。"""
-    b = card.get("buckets")
-    if not isinstance(b, dict):
-        return ""
-    t = str(b.get("type") or "").strip().lower()
-    if not t or t in _BUCKET_TYPE_N or re.fullmatch(r"quantile_(\d{1,2})", t):
-        return ""
-    return t
-
-
-#: PE 影子披露载荷里 mono_spearman 的注解原文（11 稿 §2 载荷面，一字固定）。
-_PE_PROXY_MONO_NOTE = "按信号值分位分桶的代理读数（非卡面冻的格）"
-
-
-def _bucket_caliber_proxy(card: dict, m: dict, signal_unique: int | None) -> dict | None:
-    """PE 止血闸披露（warn-only/shadow，统筹 2026-10-14 批；规约=docs/_working/examchief_campaign/11_pe_shadow_plan.yaml）。
-
-    mono_spearman 是"按信号值分位切 n 段比大小"的代理读数；卡面冻的若不是分位切法（八格象限迁移/
-    两态对照等），这个数就不是卡面要考的东西——本披露只补这一句说明。触发两合（缺一不报）：
-    ①buckets.type 声明且不在词表/quantile_<n> 形；②真走了分位分支＝信号唯一值数 > 实跑桶数
-    （_bucket_response 的 ordinal 分支在 nunique<=n_buckets 时按卡面冻的档值分桶，那条路不是代理，
-    不该报——钉住 3 枚 ordinal 假阳，11 稿 §3）。mono 无面（None/NaN）＝没有代理读数可注解，亦不报。
-    硬约束：不进 fails、不改 verdict、零数值零阈值；观察期 7 天＋自动回退判据见规约 §5。"""
-    bt = _bucket_type_off_vocab(card)
-    if not bt:
-        return None
-    nu = m.get("n_buckets_used")
-    if nu is None or signal_unique is None or int(signal_unique) <= int(nu):
-        return None
-    mono = m.get("mono_spearman")
-    if mono is None or mono != mono:
-        return None
-    return {
-        "buckets.type": bt,
-        "n_buckets_used": int(nu),
-        "mono_spearman": _PE_PROXY_MONO_NOTE,
-        "mode": "warn_only",
-    }
-
-
-def _unjudged_pillars(card: dict, m: dict, judged: frozenset, *, signal_unique: int | None = None) -> dict:
+def _unjudged_pillars(card: dict, m: dict, judged: frozenset) -> dict:
     """未判柱清单（纯观测面，零否决权）：分数册行 MUST 自带"这一分只代表哪些键"。
 
     三面各自如实：①numeric_keys_not_read=卡面冻结了但当前判官根本没读的键（历史 pass 不等于这些键过）；
     ②numeric_keys_no_machine_face=读了该键但当前 metrics 面无从评估（如 panel 路 mono 恒 None、
     ic_ir 未接时 NaN、regime 有效段不足 2）；③pillars_prose_keys=卡面文字门柱原样列表——
-    prose↔numeric 的对应关系无在册真源，本件不代拍（该映射是"门柱词表立法"工单的对象，禁改键值）。
-    ④numeric_keys_bucket_caliber_proxy=PE 影子披露（warn-only，见 _bucket_caliber_proxy），与②同级＝
-    只可能披露不可能改判。"""
+    prose↔numeric 的对应关系无在册真源，本件不代拍（该映射是"门柱词表立法"工单的对象，禁改键值）。"""
     p = card.get("pillars_numeric") or {}
     no_face: dict[str, str] = {}
     if "mono_spearman_min" in p:
@@ -409,16 +364,12 @@ def _unjudged_pillars(card: dict, m: dict, judged: frozenset, *, signal_unique: 
     if "oos_same_sign" in p and m.get("oos_ic") != m.get("oos_ic"):
         no_face["oos_same_sign"] = "oos_ic NaN（judge 已同时记败，非静默跳过）"
     prose = card.get("pillars")
-    out = {
+    return {
         "numeric_keys_not_read": sorted(set(p) - set(judged)),
         "numeric_keys_no_machine_face": no_face,
         "pillars_prose_keys": sorted(prose) if isinstance(prose, dict) else ([] if prose is None else [str(prose)]),
         "mapping_note": "prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）",
     }
-    proxy = _bucket_caliber_proxy(card, m, signal_unique)
-    if proxy is not None:
-        out["numeric_keys_bucket_caliber_proxy"] = proxy
-    return out
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1030,13 +981,7 @@ def run_card(
         if pillars_route(card) == "event"
         else _CALIBRATION_JUDGED_KEYS
     )
-    # PE 止血闸观测位（warn-only/shadow，统筹 2026-10-14 批，规约=11_pe_shadow_plan.yaml）：
-    # 条件②观测（信号唯一值数）只对 series 路取——dual_arm/event 路不产该代理面
-    # （规约未指定双臂取哪臂信号，不越权披露；如需扩面走 enforce 议点再批）。
-    pe_signal_unique = (
-        int(signal.nunique()) if (not used_nav and pillars_route(card) != "event" and kind == "series") else None
-    )
-    unjudged = _unjudged_pillars(card, m, _vocab, signal_unique=pe_signal_unique)
+    unjudged = _unjudged_pillars(card, m, _vocab)
     row = {
         "card_id": card["card_id"],
         "node_id": card["node_id"],
@@ -1054,15 +999,23 @@ def run_card(
     # 分数册 only-add 追加
     sp = Path(scores_path)
     if sp.exists():
-        reg = yaml.safe_load(sp.read_text(encoding="utf-8")) or {}
+        # 双文档 register 兼容（裁定#536 迁移形态）：doc0=register 头，含 rows 的 doc 为账本本体
+        docs = [d for d in yaml.safe_load_all(sp.read_text(encoding="utf-8")) if isinstance(d, dict)] or [{}]
+        reg = next((d for d in docs if d.get("rows") is not None), docs[-1])
         rows = reg.get("rows") or []
     else:
         reg = {"schema_version": "1.0", "title": "考试卡分数册（成绩汇总面，方案 §6 D4）", "rows": []}
+        docs = [reg]
         rows = reg["rows"]
     rows.append(row)
     reg["rows"] = rows
     sp.parent.mkdir(parents=True, exist_ok=True)
-    sp.write_text(yaml.safe_dump(reg, allow_unicode=True, sort_keys=False, width=140), encoding="utf-8", newline="\n")
+    dump = (
+        yaml.safe_dump_all(docs, allow_unicode=True, sort_keys=False, width=140)
+        if len(docs) > 1
+        else yaml.safe_dump(reg, allow_unicode=True, sort_keys=False, width=140)
+    )
+    sp.write_text(dump, encoding="utf-8", newline="\n")
     # 卡面更新：status=examined + lineage 指针
     card["status"] = "examined"
     card.setdefault("lineage", {})

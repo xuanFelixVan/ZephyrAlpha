@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-242 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.backtest.writeback_exam_confidence
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] config/trading_decision_map.yaml; docs/03_modules/_domain_backtest/exam_scores_v1.yaml;
+# [DEPENDENCIES] config/trading_decision_map.yaml; docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml;
 #   zephyr.trading.decision_map; zephyr.shared.io.file_utils
 # [CONSUMERS] W4 校准战役出分后的 confidence 回写位（考试卡 lineage.confidence_writeback 指向本工具管辖面）;
 #   人工 CLI（分数册更新后重跑）
@@ -55,7 +55,7 @@ from zephyr.shared.io.file_utils import safe_write_text
 from zephyr.shared.io.paths import REPO_ROOT
 
 TDM_PATH = REPO_ROOT / "config" / "trading_decision_map.yaml"
-SCORES_PATH = REPO_ROOT / "docs" / "03_modules" / "_domain_backtest" / "exam_scores_v1.yaml"
+SCORES_PATH = REPO_ROOT / "docs" / "04_research_records" / "backtest" / "scores" / "2026" / "exam_scores_v1.yaml"
 
 _REGIMES_BULL_BEAR = {"bull", "bear"}
 
@@ -67,8 +67,8 @@ class _ToolError(RuntimeError):
 
 
 def load_score_rows(scores_path: Path = SCORES_PATH) -> list[dict]:
-    data = yaml.safe_load(Path(scores_path).read_text(encoding="utf-8"))
-    rows = (data or {}).get("rows") if isinstance(data, dict) else None
+    docs = [d for d in yaml.safe_load_all(Path(scores_path).read_text(encoding="utf-8")) if isinstance(d, dict)]
+    rows = next((d.get("rows") for d in docs if d.get("rows")), None)  # 双文档 register 兼容（裁定#536）
     if not rows:
         raise _ToolError("分数册无 rows 或为零行", {"path": str(scores_path)})
     required = {"card_id", "node_id", "run_id", "kind", "verdict"}
