@@ -9060,6 +9060,13 @@ entries:
   plain_zh: 这是考试车的油管：从行情数据库里只读地抽数据（不发任何写指令），把价格、因子值、市场状态装成考试能直接用的表格。数据库连不上就报警停考，绝不编造假数据。
   domain_id: D_BACKTEST
   responsibility_layer: business
+- module_path: scripts/backtest/fexam/comparison_exam.py
+  desc_zh: OD-1 族驱动器：对照/消融考试卡双腿装载后复用校准执行核出分
+  name_en: comparison exam executor
+  name_zh: 对照/消融卡考试执行器
+  plain_zh: 给98张对照类考卷一个统一考试机：两条腿的数据装不上就老实记'阻塞'，装得上就交给已有的判卷机打分记册
+  domain_id: D_BACKTEST
+  responsibility_layer: business
 - module_path: scripts/backtest/fexam/conditional_exam.py
   desc_en: ""
   desc_zh: 相位分层+层间HAC检验+Bonferroni校正的条件增益考试（预注册卡判据冻结实现）
@@ -9194,6 +9201,11 @@ entries:
   name_en: fexam CLI entry
   name_zh: fexam CLI单入口
   plain_zh: 这是整个考试系统的遥控器：一条命令选择点名、开考、出分、盘点或对账，考法和及格线只能读不能改，保证每晚自动跑都守同一套规则。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/signal_orthogonality.py
+  name_zh: 信号正交闸
+  plain_zh: 新信号进池前的验重员：拿候选信号和池里每个老信号按同日期对秩相关，和谁太像（|corr|超0.3）就拒收退出码5，还能数出一池信号里到底几个是真独立的，防止十五个成员其实是一根信号复制粘贴
   domain_id: D_BACKTEST
   responsibility_layer: business
 - module_path: scripts/backtest/fexam/strategy_exam.py
@@ -14516,6 +14528,18 @@ entries:
   plain_zh: 治理·D6 安全的vague terms检测器：自动扫描vague terms的异常迹象，一发现就标记报出，防止治理·D6 安全带病往下传。
   domain_id: D_GOV_SCRIPTS
   responsibility_layer: governance
+- module_path: scripts/governance/d6_security/price_cage/price_cage_supply_sampler.py
+  desc_zh: 裁定#535 观察窗供数侧：交易时段内三重判定（probe 新鲜/age_s≤10/quote.csv 尾行 timetag 差≤60s）追加证据 price_cage_supply.jsonl，非交易日/非时段零写
+  name_zh: 价格笼子供数新鲜度采样器
+  plain_zh: A股交易时段内给行情供数把脉：文件在不在、时间戳够不够新、行情最后一行是不是真刚写的，逐次记台账；五个交易日后判官拿这本台账决定供数够不够格翻『无基准价即拒单』的开关；节假日午休不干活。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
+- module_path: scripts/governance/d6_security/price_cage/price_cage_unknown_reject_judge.py
+  desc_zh: 裁定#535 翻旗机械评测：最近 5 交易日逐日逐窗核证（每窗采样≥30 且 fresh 率≥80%、判定日志≥4 条/日）+前提件三查（BF-6 实现/flags 两键/判定日志落点），输出 PASS/FAIL/FAIL-BLOCKED
+  name_zh: 价格笼子unknown_reject武装核证判官
+  plain_zh: 五天观察窗的阅卷人：收采样器的检查台账，逐日逐窗核对供数新鲜度和笼子判定日志条数，再三查翻开关的前提件齐不齐（实现件、旗标键、日志落点）。前提件缺了就报『被拦住，缺材料』，证据不足就报『不及格』，全绿才给及格单，够格呈 Owner 批翻旗。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: scripts/governance/d6_security/retire_tmp_artifacts.py
   desc_en: ""
   desc_zh: ""
@@ -15253,6 +15277,11 @@ entries:
   name_en: Generate Project Path Tree
   name_zh: 从磁盘扫描生成路径全景图的tree段
   plain_zh: 治理的项目路径树生成器：按规则自动产出项目路径树，代替手工编写，保证治理的格式统一、不漏项。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
+- module_path: scripts/governance/generate_research_index.py
+  name_zh: 研究记录区总索引生成器
+  plain_zh: 扫描docs/04研究记录区全部证据件，解析文件头元数据，机器生成三件：人读总目录INDEX.md、机器读index.yaml（每件带内容指纹sha256防篡改）、容量报表（每个文件夹超过100件预警、120件硬顶必须分家）。也提供check模式校验索引和盘面是否一致。人只跑生成器，禁手改索引
   domain_id: D_GOV_SCRIPTS
   responsibility_layer: governance
 - module_path: scripts/governance/generators/__init__.py
@@ -17122,6 +17151,11 @@ entries:
   plain_zh: 供recheck_empt使用：把本役实测口径固化为可复跑命令，产出机读证据供案卷引用
   domain_id: D_GOV_CODE_QUALITY
   responsibility_layer: governance
+- module_path: scripts/gpu/gpu_watchman.py
+  name_zh: GPU 看门人
+  plain_zh: 管显卡让路的登记员：先问 nvidia-smi 显卡还剩多少空、有没有人排队登记，批任务要来抢卡先看门人批条，没批到就退出码 7 等下一班，防止两个任务挤在同一张卡上打架
+  domain_id: D_INFRA_RUNTIME
+  responsibility_layer: infrastructure
 - module_path: scripts/hooks/auto_handoff_log.py
   desc_en: ""
   desc_zh: 执行 git 命令并返回 stdout（UTF-8 解码）。
@@ -17730,6 +17764,11 @@ entries:
   plain_zh: 训练执行脚本，加载训练数据跑 QLoRA 微调，算 F1 看效果，存模型适配器。
   domain_id: D_ML_TRAIN
   responsibility_layer: ai
+- module_path: scripts/ops/archive_sanitize.py
+  name_zh: 收班归档自动脱敏器
+  plain_zh: 归档文件搬进档案区之前自动改掉三类会被门禁拦下的内容：文档类型标签改名、任务级有效期改成永久、把实盘密钥名字替换成打码占位符。先试运行预览再落盘，防止收班归档整批被门禁挡回。
+  domain_id: D_INFRA_OPS
+  responsibility_layer: infrastructure
 - module_path: scripts/ops/ch_health_probe.py
   desc_en: ""
   desc_zh: ""
@@ -17808,6 +17847,11 @@ entries:
   plain_zh: 对标 trae_047 GOV-ENG-002：按扩展名路由到 SSoT 解析器，校验每种格式的必填字段。
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
+- module_path: scripts/ops/vhdx_floor_watch.py
+  name_zh: VHDX增长采样与D盘红线告警器
+  plain_zh: 每小时记录虚拟磁盘文件大小和D盘剩余空间到台账，一旦D盘剩余低于红线就写告警件提醒Owner来处理。它只看只报，绝不自动删任何东西，防止D盘再次被悄悄塞满。
+  domain_id: D_INFRA_RUNTIME
+  responsibility_layer: infrastructure
 - module_path: scripts/ops_guard.py
   desc_en: ""
   desc_zh: 全原语删除拦截（S1，wipe 事故治本）——拦截 PowerShell/CMD/Python/git clean 四类删除原语，保护区递归删除 fail-closed 阻断，白名单放行，审计 jsonl 留痕。
@@ -20502,6 +20546,11 @@ entries:
   name_en: Exam Cost Gate
   name_zh: 考尺成本门
   plain_zh: 这是给策略考试加的三道花钱相关关卡：第一道检查是不是成本越高收益越低（正常策略应该这样，反过来说明有作弊嫌疑）；第二道检查算上最贵的交易成本后还赚不赚钱（防纸面漂亮实际亏）；第三道检查一年换手多少次股票（换手太勤的手续费会吃光利润，上限八倍）。证据不够直接判不及格，绝不放水。
+  domain_id: D_BACKTEST
+  responsibility_layer: business
+- module_path: src/zephyr/backtest/regime_validation/ps_shadow.py
+  name_zh: 两态shadow接线
+  plain_zh: 把大盘两态引擎的牛熊判断作为影子信号挂到条件包旁边一起跑，只做记录和对照，不改变原来的大盘判断
   domain_id: D_BACKTEST
   responsibility_layer: business
 - module_path: src/zephyr/backtest/regime_validation/shrinkage_provider.py
@@ -45681,6 +45730,11 @@ entries:
   plain_zh: 共享基础·IO的路径：处理路径的具体事务，给共享基础·IO这条线打下手，保证日常运转不出岔子。
   domain_id: D_SHARED
   responsibility_layer: infrastructure
+- module_path: src/zephyr/shared/io/runtime_hygiene.py
+  name_zh: 运行时卫生函数库
+  plain_zh: 给审计日志和临时文件做保洁的函数工具包：超大的审计日志滚动归档并压缩最旧一份，超过两天没人碰的临时目录清掉但保留救援证据目录。它自己不跑循环，挂在现有收割任务的例行扫描里顺手执行。
+  domain_id: D_SHARED
+  responsibility_layer: infrastructure
 - module_path: src/zephyr/shared/io/serialization.py
   desc_en: ""
   desc_zh: ""
@@ -47266,6 +47320,11 @@ entries:
   plain_zh: 回答'这条主线还能火多久'：给一个板块最近一段日子的表现打分——上涨的日子占几成、主力资金是不是连续多天净流入、板块内最高连板的高度稳不稳、板块跟大盘指数是不是同涨同跌、上次大跌之后几天能涨回来，五项合成一个0到100的持续分；还能看全市场有多少板块动量为正，判断现在是主线生态还是投机生态。
   domain_id: D_ASHARE_SIGNAL
   responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/sector/sector_panel.py
+  name_zh: 板块面板装配
+  plain_zh: 把几百个板块每天的收盘价摆成一张大表，逐个算出它在轮动图上的象限，再看当天哪种象限最多，得出当天的板块整体状态
+  domain_id: D_SIGNAL
+  responsibility_layer: business
 - module_path: src/zephyr/signal_ashare/sector/sector_pullback.py
   desc_en: ""
   desc_zh: ""
@@ -47930,6 +47989,12 @@ entries:
   plain_zh: 信号合成引擎。把多个因子信号加权聚合成一个统一的合成交易信号，顺带归一化去噪、识别市场状态、检测信号退化，是信号合二为一的核心。
   domain_id: D_FUNDAMENTAL_SIGNAL
   responsibility_layer: business
+- module_path: src/zephyr/signal_intraday/__init__.py
+  desc_zh: 日内做T·Tick 信号域的包声明：界定域边界、登记子模块、固化 Tick 延迟口径（QMT 桥比 miniQMT 慢 3-5 秒，桥数据进回测必须显式计入该延迟，防前视红线）。
+  name_en: Intraday signal package init
+  name_zh: 日内信号域包声明
+  plain_zh: 这是「日内做T」这个新部门的大门牌。它只做两件事：一是告诉系统这里属于日内交易信号这块地盘，二是把一条重要的时间规矩写在门口——通过 QMT 桥拿到的行情数据比 miniQMT 慢 3 到 5 秒，以后任何人拿这份数据做回测，都必须把这 3-5 秒的延迟算进去，否则等于偷看了未来。
+  domain_id: D_SIGNAL_INTRADAY
 - module_path: src/zephyr/signal_intraday/orderflow_features.py
   name_en: Orderflow Features
   name_zh: 一档盘口特征件

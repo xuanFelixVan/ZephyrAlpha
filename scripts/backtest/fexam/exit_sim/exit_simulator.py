@@ -67,7 +67,11 @@ COL_CAP = 24
 COMMISSION = float(COMMISSION_RATE)
 INITIAL_CAPITAL = 1_000_000.0
 
-SCORES_YAML = RUN_ROOT / "docs" / "_working" / "fexam" / "indicator_exam_scores_v1.yaml"
+# 真源随 2026-10-14 资产搬迁波移入永久区（旧 docs/_working/fexam/ 整目录已删；同 card_binding.SERIES_DIR
+# 搬迁修指先例 st-qoder-p05-1015-03）。2026-10-15 OD-1 冒烟实测旧路径 FileNotFoundError 堵双臂底座。
+SCORES_YAML = (
+    RUN_ROOT / "docs" / "04_research_records" / "backtest" / "scores" / "2026" / "indicator_exam_scores_v1.yaml"
+)
 PREREG_PATH = _HERE / "prereg_frozen.yaml"
 CACHE_DIR = _HERE / "cache"
 OUT_YAML = RUN_ROOT / "docs" / "_working" / "fexam" / "exit_sim_report_v1.yaml"
@@ -76,8 +80,12 @@ OUT_MD = RUN_ROOT / "docs" / "_working" / "fexam" / "exit_sim_report_v1.md"
 
 # ---------- 确定性列提取（与 prereg 冻结清单核对） ----------
 def load_pass_columns(cap: int = COL_CAP) -> list[tuple[str, str]]:
-    """scores YAML 文档序取 verdict==pass 的 ch_backings 首列，去重 cap（确定性不挑）。"""
-    book = yaml.safe_load(SCORES_YAML.read_text(encoding="utf-8"))
+    """scores YAML 文档序取 verdict==pass 的 ch_backings 首列，去重 cap（确定性不挑）。
+
+    双文档 register 兼容（裁定#536 迁移形态，与 run_card 分数册同一取册式）：
+    doc0=register 头，含 results 的 doc 为分数本体。"""
+    docs = [d for d in yaml.safe_load_all(SCORES_YAML.read_text(encoding="utf-8")) if isinstance(d, dict)] or [{}]
+    book = next((d for d in docs if d.get("results") is not None), docs[-1])
     seen: set[str] = set()
     out: list[tuple[str, str]] = []
     for r in book["results"]:
@@ -511,7 +519,7 @@ def run_all() -> dict:
         "device_delta_note": "本仿真器与官方引擎装置差异：无 PIT/剔ST/滑点/冲击/参与率建模，佣金同源双边；"
         "对照双臂同口径故差分方向不受影响；正式化时如需引擎级保真另立工单",
         "provenance": {
-            "scores_yaml": "docs/_working/fexam/indicator_exam_scores_v1.yaml",
+            "scores_yaml": "docs/04_research_records/backtest/scores/2026/indicator_exam_scores_v1.yaml",
             "columns": [{"column": c, "provenance": oid} for c, oid in cols],
             "signal_functions": "scripts/backtest/fexam/strategy_exam.py（composite_signal/monthly_topn_signals/window_metrics 复用）",
             "module_tmp": ".runtime/tmp/st-matrix-20261006/exit_sim/exit_simulator.py",

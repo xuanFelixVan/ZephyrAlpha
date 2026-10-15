@@ -34,12 +34,24 @@ batch_records:
   note: verdict=fail
   recorded_at: '2026-10-13T15:13:27+00:00'
   recorded_by: st-mineloop-20261010
+- batch_id: examcard:TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T02:10:30+00:00'
+  recorded_by: st-qoder-p07-1015-03
 - batch_id: examcard:TDM-E-L1-S0-1/calibration/02_新闻情绪时滞:2026-10-10
   n_trials: 1
   kind: exam_card
   note: verdict=fail
   recorded_at: '2026-10-09T22:51:17+00:00'
   recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L1-S0-1/calibration/03_market_scope_sentiment_series:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T02:10:31+00:00'
+  recorded_by: st-qoder-p07-1015-03
 - batch_id: examcard:TDM-E-L1-S1/calibration/02_指数趋势位置:2026-10-10
   n_trials: 1
   kind: exam_card
@@ -244,12 +256,156 @@ batch_records:
   note: verdict=fail
   recorded_at: '2026-10-13T07:55:42+00:00'
   recorded_by: st-mineloop-20261010
+- batch_id: examcard:TDM-E-L1-S2/calibration/40_agg_lu_count_level_fwd10:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-14T23:17:10+00:00'
+  recorded_by: st-qoder-p07-1015-01
+- batch_id: examcard:TDM-E-L1-S2/calibration/41_agg_lu_count_z20_fwd10:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=pass
+  recorded_at: '2026-10-14T23:17:11+00:00'
+  recorded_by: st-qoder-p07-1015-01
+- batch_id: examcard:TDM-E-L1-S2/calibration/42_agg_lu_ratio_level_fwd10:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-14T23:17:12+00:00'
+  recorded_by: st-qoder-p07-1015-01
+- batch_id: examcard:TDM-E-L1-S2/calibration/43_agg_lu_ratio_z20_fwd10:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=pass
+  recorded_at: '2026-10-14T23:17:12+00:00'
+  recorded_by: st-qoder-p07-1015-01
+- batch_id: examcard:TDM-E-L1-S2/calibration/44_agg_avg_abs_ret_level_fwd5:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-14T23:17:13+00:00'
+  recorded_by: st-qoder-p07-1015-01
+- batch_id: examcard:TDM-E-L1-S2/calibration/45_agg_avg_abs_ret_level_fwd10:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-14T23:17:13+00:00'
+  recorded_by: st-qoder-p07-1015-01
+- batch_id: examcard:TDM-E-L1-S2/calibration/46_agg_avg_abs_ret_z20_fwd5:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-14T23:17:14+00:00'
+  recorded_by: st-qoder-p07-1015-01
+- batch_id: examcard:TDM-E-L1-S2/calibration/47_agg_avg_abs_ret_z20_fwd10:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-14T23:17:15+00:00'
+  recorded_by: st-qoder-p07-1015-01
+- batch_id: examcard:TDM-E-L1-S5/calibration/03_derived_signal_shock_panel:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T02:15:47+00:00'
+  recorded_by: st-qoder-p07-1015-03
+- batch_id: examcard:TDM-E-L2-02-1/calibration/02b_RRG象限迁移_在册10_26双EMA口径版:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T02:11:49+00:00'
+  recorded_by: st-qoder-p07-1015-03
+- batch_id: examcard:TDM-E-L2-04/comparison/02_主线合取与单腿双臂:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T07:56:37+00:00'
+  recorded_by: st-qoder-p07-1015-04
 - batch_id: examcard:TDM-E-L2-09/calibration/02_板块催化剂密度:2026-10-10
   n_trials: 1
   kind: exam_card
   note: verdict=fail
   recorded_at: '2026-10-09T23:49:28+00:00'
   recorded_by: st-nightmine-20261010
+- batch_id: examcard:TDM-E-L2-09/calibration/04_业绩预增催化剂腿:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T02:11:50+00:00'
+  recorded_by: st-qoder-p07-1015-03
+- batch_id: examcard:TDM-E-L2/ablation/02_板块候选池整体边际:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T02:11:49+00:00'
+  recorded_by: st-qoder-p07-1015-03
+- batch_id: examcard:TDM-E-L3-01/calibration/02_成交额下限剔除:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T11:26:12+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L3-03-1/calibration/02_涨停基因:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T11:20:27+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L3-07-1/ablation/02_烂板剔除步:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T11:15:12+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L3-07-3/calibration/02_二十日动量排名:2026-10-14
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-14T14:46:10+00:00'
+  recorded_by: st-e2e-test-p09
+- batch_id: examcard:TDM-E-L3-07-3/calibration/03_target_close_to_close_control:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T10:55:11+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L3-07-3/calibration/04_universe_no_filter_control:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T10:55:40+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L3-10/calibration/02_一字板不可成交:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T11:15:26+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L9-A01/calibration/02_日线动量截面:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-14T19:37:21+00:00'
+  recorded_by: st-probe-04mig-20261015
+- batch_id: examcard:TDM-E-L9-A01/calibration/04_universe_st_and_age_control:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T10:55:31+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L9-A01/calibration/05_target_t1o_to_t2c_control:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T10:55:50+00:00'
+  recorded_by: calibration_exam
+- batch_id: examcard:TDM-E-L9-A03/calibration/02_880板块相对强弱持续性:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T00:37:38+00:00'
+  recorded_by: st-qoder-p07-1015-02
 - batch_id: examcard:TDM-E-L9-A04/calibration/02_估值ERP分位日增量:2026-10-10
   n_trials: 1
   kind: exam_card
@@ -262,6 +418,18 @@ batch_records:
   note: verdict=pass
   recorded_at: '2026-10-10T03:33:16+00:00'
   recorded_by: calibration_exam
+- batch_id: examcard:TDM-P-P2-04/calibration/06_减仓参与率压力对次日价格路径:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T07:41:27+00:00'
+  recorded_by: st-qoder-p08-1015-04
+- batch_id: examcard:TDM-P-P2-04/calibration/07_冲高反弹幅度对次日收益与减半阈值落点:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T07:55:38+00:00'
+  recorded_by: st-qoder-p08-1015-04
 - batch_id: examcard:TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版:2026-10-13
   n_trials: 1
   kind: exam_card
@@ -274,6 +442,12 @@ batch_records:
   note: verdict=fail；六跑判别位补记（run_card 的 batch_id 无跑次位，同卡同日幂等塌 1）
   recorded_at: '2026-10-13T14:46:45+00:00'
   recorded_by: st-mineloop2-20261012
+- batch_id: examcard:TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版:2026-10-15
+  n_trials: 1
+  kind: exam_card
+  note: verdict=fail
+  recorded_at: '2026-10-15T07:13:49+00:00'
+  recorded_by: st-qoder-p05b-1015
 - batch_id: examcard:TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版:2026-10-13
   n_trials: 1
   kind: exam_card

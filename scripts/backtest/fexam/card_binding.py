@@ -1921,7 +1921,11 @@ def load_binding_book(path: Path, arms_variant: str | None = None) -> dict[str, 
     """
     if not path.exists():
         return {}
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    # 双文档 register 兼容（裁定#536 迁移形态，与 run_card 分数册同一取册式）：doc0=register 头，
+    # 含 entries 的 doc 为册本体——migration 波（2026-10-15 实测）把本册也转了 register 形，
+    # 单文档 safe_load 直接 ComposerError＝全部 book 通道开考被堵。
+    docs = [d for d in yaml.safe_load_all(path.read_text(encoding="utf-8")) if isinstance(d, dict)] or [{}]
+    data = next((d for d in docs if d.get("entries") is not None), docs[-1]) or {}
     entries = [e for e in (data.get("entries") or []) if isinstance(e, dict) and e.get("card_id")]
     variant_entries = [e for e in entries if e.get("arms_variants") is not None]
     if variant_entries and arms_variant is None:

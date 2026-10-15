@@ -336,6 +336,25 @@ def test_load_binding_book_variant_vocabularies_are_per_card(tmp_path):
         cb.load_binding_book(f)
 
 
+def test_load_binding_book_dual_doc_register_form(tmp_path):
+    """⚑2026-10-15 实测（OD-1 冒烟）：册被裁定#536 迁移波转成双文档 register（doc0=register 头，
+    含 entries 的 doc=册本体）后，单文档 safe_load 直接 ComposerError＝全部 book 通道开考被堵。
+    修法与 run_card 分数册同一取册式（safe_load_all 取含目标键的 doc）；单文档册行为逐字不变。"""
+    body = {
+        "entries": [{"card_id": "CID_A", "status": "approved", "op": "daily_agg_series"}],
+    }
+    header = {"doc_type": "register", "ttl": "permanent", "title_zh": "02_binding_book"}
+    f = tmp_path / "book_dual.yaml"
+    f.write_text(
+        yaml.safe_dump_all([header, body], allow_unicode=True, sort_keys=False), encoding="utf-8", newline="\n"
+    )
+    assert sorted(cb.load_binding_book(f)) == ["CID_A"]
+    # 单文档旧形态逐字不变（回归面）
+    f2 = tmp_path / "book_single.yaml"
+    f2.write_text(yaml.safe_dump(body, allow_unicode=True), encoding="utf-8")
+    assert sorted(cb.load_binding_book(f2)) == ["CID_A"]
+
+
 def test_named_series_tiers_and_bracket_injection_are_fail_closed():
     """红证组（07b ③＝参数由册逐跑给，禁硬编也禁"没用上就算了"）：五种错配各红一次。"""
     two = {
@@ -442,7 +461,12 @@ def test_real_book_carries_07_and_07b_variant_vocabularies():
     读的是**生产路径的在册字节**（只读，零写入），钉的是"册格与码面同形"这条不能靠记忆守的账：
     任何一档装配不出上下文、或括号值漂出 {0.50, 0.75}，本测试即红。
     """
-    book_path = Path(__file__).resolve().parents[2] / "docs/_working/mineloop_campaign/02_binding_book.yaml"
+    # 真源随 2026-10-14 资产搬迁波移入永久区（旧 docs/_working/mineloop_campaign/ 整目录已删，
+    # 同 SERIES_DIR 搬迁先例）：本路径修指后同形契约照钉生产在册字节
+    book_path = (
+        Path(__file__).resolve().parents[2]
+        / "docs/04_research_records/mining/ledgers/mineloop_campaign/02_binding_book.yaml"
+    )
     assert book_path.exists(), "绑定册不在册？同形契约无从可核"
     cid_07 = "TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版"
     cid_07b = "TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版"
