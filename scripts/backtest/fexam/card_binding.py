@@ -71,7 +71,11 @@ if str(RUN_ROOT / "scripts" / "backtest") not in sys.path:
     sys.path.insert(0, str(RUN_ROOT / "scripts" / "backtest"))
 
 CARDS_DIR = RUN_ROOT / "docs" / "03_modules" / "_domain_backtest" / "exam_cards"
-SERIES_DIR = RUN_ROOT / "docs" / "_working" / "nightmine_campaign" / "series"
+#: 本地派生序列根＝研究资产搬迁后的永久区真源（在册登记位 docs/04_research_records/_index/index.yaml
+#: 的 `dir: mining/ledgers/nightmine_20261010/series`）。旧路 `docs/_working/nightmine_campaign/series`
+#: 已随搬迁整目录删除，本件是 [TTL] permanent 件、禁引临时区（根宪法 §9.4），故不留候选位：
+#: 留旧路作 fallback＝给已废止的临时区留活口，且"读到哪一根目录"从此无从在凭据面复现。
+SERIES_DIR = RUN_ROOT / "docs" / "04_research_records" / "mining" / "ledgers" / "nightmine_20261010" / "series"
 
 #: 表名面唯一真源=TableRegistry（品类 id 派生全限定名；业务代码禁字面量表名——TABLE-NAME-REGISTRY 门约束）
 _TBL = {
@@ -361,9 +365,29 @@ def classify_card(card: dict) -> dict:
     col_raw = str(b.get("signal_column") or "").strip()
     declared = str(b.get("derived_series") or "").strip()
     for hint, fname in _CSV_HINTS.items():
-        if col_raw == hint or declared == hint or col_raw.startswith(hint + "_derived"):
+        exact = col_raw == hint or declared == hint
+        # 卡面申报 `<hint>_derived`（导生口径）而本仓只有母序列 CSV＝名称回落：
+        # 绑的是母序列、口径并未换。该事实以前只存在于代码分支里（卡面/册面/码面三面均无声明），
+        # 令平行卡与母卡读同一枚序列在分数册上读不出来（⑨席 08 班 修⑪）。本层不改变绑定结果，
+        # 只把它如实写进机判输出（观测面，非判据；不改 |corr| 阈值、不挪门柱、不禁绑）。
+        alias = (not exact) and col_raw.startswith(hint + "_derived")
+        if exact or alias:
             if (SERIES_DIR / fname).exists():
-                return {"cls": "D", "reason": None, "recipe": "local_series_csv", "op": f"file={fname}", "tables": tl}
+                out: dict[str, Any] = {
+                    "cls": "D",
+                    "reason": None,
+                    "recipe": "local_series_csv",
+                    "op": f"file={fname}",
+                    "tables": tl,
+                }
+                if alias:
+                    out["caliber_fallback"] = {
+                        "declared_signal_column": col_raw,
+                        "resolved_file": fname,
+                        "series_root": str(SERIES_DIR),
+                        "statement": "卡面申报 *_derived 口径，装载面命中同名母序列⇒口径未换（平行卡与母卡同一枚 CSV）",
+                    }
+                return out
             return {"cls": "U", "reason": f"series_csv_absent:{fname}", "recipe": None, "op": None, "tables": tl}
     # class A：单表单列 + 算子（表必须已在配方册，未登记者拒绑而非猜粒度）
     low = blob.lower()
@@ -450,7 +474,10 @@ def build_signal(card: dict, cls: dict) -> tuple[pd.Series | None, dict]:
     ev: dict = {"recipe": cls["recipe"], "op": cls["op"], "tables": cls["tables"]}
     if cls["recipe"] == "local_series_csv":
         fname = cls["op"].split("=", 1)[1]
-        ev.update(source="local_csv", file=str(SERIES_DIR / fname))
+        ev.update(source="local_csv", file=str(SERIES_DIR / fname), series_root=str(SERIES_DIR))
+        if cls.get("caliber_fallback"):
+            # 回落声明随出分凭据一起走（run 面 results 行与普查行同字段名，⑨席行级回核可 grep）
+            ev["caliber_fallback"] = cls["caliber_fallback"]
         return _load_csv_series(fname), ev
     face = _REGISTERED_TABLES[cls["tables"][0]]
     table = cls["tables"][0]

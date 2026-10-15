@@ -1984,3 +1984,102 @@ def test_run_one_records_trial_attribution_to_caller_sid(tmp_path, monkeypatch):
     cb.run_one(f, {cid}, tmp_path / "scores.yaml", "t", False, book, False)
     assert captured["recorded_by"] == "card_binding_unattributed", captured
     assert "st-mineloop-20261010" not in Path(cb.__file__).read_text(encoding="utf-8")
+
+
+# ---------- 2026-10-15 ⑤席班次 03：本地序列根搬迁真源 + `*_derived` 口径回落声明（修⑪ 观测腿） ----------
+# 判别力声明：本组含两条红证（缺件照拦／精确申报与回落申报的键集差），任何一条写成恒过即红。
+
+
+def _fake_series_root(tmp_path: Path, fname: str = "limit_up_count.csv", n: int = 3) -> Path:
+    root = tmp_path / "series"
+    root.mkdir()
+    idx = pd.to_datetime([f"2024-01-0{i + 1}" for i in range(n)])
+    pd.DataFrame({"value": [float(10 + i) for i in range(n)]}, index=idx).rename_axis("trade_date").to_csv(root / fname)
+    return root
+
+
+def _parallel_card(col: str = "limit_up_count_derived") -> dict:
+    """平行卡形制（卡面文本抄自在册 09 卡申报位）：导生宽表口径＋`<hint>_derived` 列名。"""
+    return _card(
+        card_id="TDM-E-TEST/calibration/90_parallel_probe",
+        data_binding=_binding(
+            signal_table="c1_market.kline_daily_hfq + c1_market.stk_limit（导生宽表，无单表可直接 SELECT）",
+            signal_column=col,
+            signal_derivation="涨停家数导生口径（卡面申报）",
+        ),
+    )
+
+
+def test_series_root_points_at_permanent_zone_not_working_area():
+    """搬迁缺陷现值（本班实测）：旧路 `docs/_working/nightmine_campaign/series` 整目录已删而装载口仍指它
+    ⇒ 15 枚 hint 全判 `series_csv_absent`、class D 通道整条死（真卡 09/41 实测 cls U）。
+    本用例只钉指针落点（纯字符串，零文件系统依赖＝在只含 HEAD 的基座上同样可判）；
+    数据面读数（15/15 可解、1622 行）不进断言——序列件当前是主区无主 staged 件，落点见台账移交⑩。"""
+    rel = cb.SERIES_DIR.relative_to(cb.RUN_ROOT).as_posix()
+    assert rel == "docs/04_research_records/mining/ledgers/nightmine_20261010/series", rel
+    assert "_working" not in rel, "本件 [TTL] permanent，禁引临时区（根宪法 §9.4）"
+
+
+def test_derived_alias_binds_parent_file_and_declares_caliber_fallback(tmp_path, monkeypatch):
+    root = _fake_series_root(tmp_path)
+    monkeypatch.setattr(cb, "SERIES_DIR", root)
+    r = cb.classify_card(_parallel_card())
+    assert r["cls"] == "D" and r["op"] == "file=limit_up_count.csv", r
+    fb = r["caliber_fallback"]
+    assert fb["declared_signal_column"] == "limit_up_count_derived", fb
+    assert fb["resolved_file"] == "limit_up_count.csv", fb
+    assert fb["series_root"] == str(root), fb
+
+
+def test_exact_declaration_adds_no_fallback_key(tmp_path, monkeypatch):
+    """对照（防"顺手放宽别的出口"）：精确申报与回落申报的机判结果只差 `caliber_fallback` 一个键。"""
+    monkeypatch.setattr(cb, "SERIES_DIR", _fake_series_root(tmp_path))
+    exact = cb.classify_card(_parallel_card(col="limit_up_count"))
+    alias = cb.classify_card(_parallel_card())
+    assert "caliber_fallback" not in exact, exact
+    assert set(alias) - set(exact) == {"caliber_fallback"}, (sorted(exact), sorted(alias))
+    shared = ("cls", "reason", "recipe", "op", "tables")
+    assert {k: exact[k] for k in shared} == {k: alias[k] for k in shared}
+
+
+def test_derived_alias_absent_file_keeps_the_old_reason_string(tmp_path, monkeypatch):
+    """红证＋契约不漂移：缺件时 cls U、reason 逐字符照旧（1413 行在册用例钉过这个字符串）。"""
+    root = tmp_path / "series"
+    root.mkdir()
+    monkeypatch.setattr(cb, "SERIES_DIR", root)
+    r = cb.classify_card(_parallel_card())
+    assert r["cls"] == "U" and r["reason"] == "series_csv_absent:limit_up_count.csv", r
+    assert "caliber_fallback" not in r
+
+
+def test_build_signal_attaches_fallback_and_root_to_evidence(tmp_path, monkeypatch):
+    """出分凭据面须自带归因输入：读的是哪一根目录、有没有口径回落（⑨席行级回核可 grep 的面）。"""
+    root = _fake_series_root(tmp_path)
+    monkeypatch.setattr(cb, "SERIES_DIR", root)
+    card = _parallel_card()
+    ser, ev = cb.build_signal(card, cb.classify_card(card))
+    assert ev["source"] == "local_csv" and ev["series_root"] == str(root), ev
+    assert ev["caliber_fallback"]["resolved_file"] == "limit_up_count.csv", ev
+    assert [float(x) for x in ser] == [10.0, 11.0, 12.0], list(ser)
+
+
+def test_real_parallel_card_face_declares_fallback(tmp_path, monkeypatch):
+    """内容级（读真卡字节，非本班合成卡面）：在册 09 卡申报导生口径，数据面只给母序列
+    ⇒ 结果必须是"绑到母文件＋如实声明回落"，禁把两回事洗成一根读不出差的 D。"""
+    card_path = cb.CARDS_DIR / "entry_flow" / "L1" / "TDM-E-L1-S2__calibration__09_limit_up_count_derived.yaml"
+    card = yaml.safe_load(card_path.read_text(encoding="utf-8"))
+    monkeypatch.setattr(cb, "SERIES_DIR", _fake_series_root(tmp_path))
+    r = cb.classify_card(card)
+    assert r["cls"] == "D" and r["op"] == "file=limit_up_count.csv", r
+    assert r["caliber_fallback"]["declared_signal_column"] == str(card["data_binding"]["signal_column"]), r
+
+
+def test_loader_refuses_when_root_absent_instead_of_binding_nothing(tmp_path, monkeypatch):
+    """fail-closed 契约（搬迁件未落地的世界也要成立）：根缺席⇒class U 点名缺哪枚 CSV、装载口返回 None，
+    禁"装载口空转照样出分"（在册形态：降级态与未触发同形＝假绿）。"""
+    missing = tmp_path / "not_there"
+    monkeypatch.setattr(cb, "SERIES_DIR", missing)
+    assert not missing.exists()
+    r = cb.classify_card(_parallel_card())
+    assert r["cls"] == "U" and r["reason"] == "series_csv_absent:limit_up_count.csv", r
+    assert cb.load_named_series("limit_up_count") is None
