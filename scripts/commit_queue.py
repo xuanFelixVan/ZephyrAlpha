@@ -1325,6 +1325,10 @@ def enqueue_item(
                     # Rx-5：队列优先级（int，缺省 0，越大越先出队；显式落 0=新件自描述，
                     # 读侧 _item_priority get 缺省兼容无键旧件）
                     "priority": _normalize_priority((meta_extra or {}).get("priority")),
+                    # 托管正门（2026-10-15 车道）：入袋即托管权转移——队列守护进程接管
+                    # 落地义务，属主会话退场不再连坐判死（ghost 闸 custody_excused 出口）；
+                    # 注销=结构性（袋进 done//dead/ 即出队）
+                    "custody": True,
                     "depends_on": list(depends_on or []),  # P1 级联标记依据（66 号 §6.4）
                     "supersedes": removed,  # compaction 覆盖全链（传递累积，审计可追溯）
                     # C1 合批判据键：同会话+同 worktree_root 才允许短窗并入（红线）；
@@ -1606,7 +1610,7 @@ def _recover_orphans(queue_root: Path) -> list[str]:
         # 重放，死袋无人认领无限复读。ghost=true 封印直落 dead/（死信封印唯一出口）。
         orphan_item = _read_item(orphan)
         orphan_sid = str((orphan_item or {}).get("session_id") or "")
-        if orphan_item is not None and _session_ghost_dead(orphan_sid, runtime_root=queue_root.parent):
+        if orphan_item is not None and _session_ghost_dead_for_item(orphan_item, runtime_root=queue_root.parent):
             try:
                 _mark_ghost_dead_fields(orphan_item, orphan_sid)
                 _seal_dead_letter(queue_root, orphan_item)
@@ -1968,10 +1972,14 @@ def _attempts_exhausted_reason(item: dict) -> str:
 # 留"判定基础设施缺席"一面：无心跳+无册→活、全损坏→活、册不可读→降级判死）。
 # 三条腿各自独立计数（ghost_gate_counts()）：excused 赦免／judged_dead 判死／
 # downgraded 降级，禁合并成单一 bool 读数（在册"翻转不得静默"）。
+# 托管豁免面（2026-10-15 车道，裁定#459 实现层正门豁免已报总包）：enqueue 即托管
+# （meta.custody=true），四调用点经 _session_ghost_dead_for_item 先问托管——托管中
+# 袋子属主名义存活直到末袋终态（custody_excused 出口）；终态注销=结构性（出队即归档）。
 # ---------------------------------------------------------------------------
 
 _GHOST_GATE_EXITS: tuple[str, ...] = (
     "alive_fast",  # 末行非 exited：活心跳快路放行，不问在册性（原语义逐字保留）
+    "custody_excused",  # 托管豁免腿：袋带 meta.custody 标（enqueue 即托管）→ 属主名义存活
     "excused",  # 赦免腿：exited 残留 + 注册表单一口径判活（裁定#507 事故形态复刻）
     "judged_dead",  # 判死腿：exited 残留 + 注册表单一口径判死/除名
     "downgraded",  # 降级腿：exited 残留 + 册设施不可用 → 退回原"残留→死"语义
@@ -2000,12 +2008,12 @@ def reset_ghost_gate_counts() -> None:
 def _ghost_liveness_audit(runtime_root: Path, verdict: dict) -> None:
     """裁决出口审计（在册"翻转不得静默"）：JSONL 追加，fail-open 不阻断排空。
 
-    只落**裁决面**（excused/judged_dead/downgraded/not_in_registry 四支）——
+    只落**裁决面**（custody_excused/excused/judged_dead/downgraded/not_in_registry 五支）——
     alive_fast/undecidable/no_registry_file 是热路径常态（每袋拾取都过），落盘
     等于给队列加一条无信息量的写放大源；那两面靠 ghost_gate_counts() 观测。
     体积闸复用 audit_jsonl_writer 同一真源（本文件 T14 口径，零新配置册）。
     """
-    if verdict.get("exit") not in ("excused", "judged_dead", "downgraded", "not_in_registry"):
+    if verdict.get("exit") not in ("custody_excused", "excused", "judged_dead", "downgraded", "not_in_registry"):
         return
     try:
         ledger = Path(runtime_root) / "audit" / "ghost_liveness.jsonl"
@@ -2027,7 +2035,7 @@ def _ghost_exit(runtime_root: Path, exit_name: str, dead: bool, sid: str, **evid
         _GHOST_GATE_COUNTS[exit_name] = _GHOST_GATE_COUNTS.get(exit_name, 0) + 1
     verdict = {"session_id": sid, "exit": exit_name, "dead": dead, "evidence": dict(evidence)}
     _ghost_liveness_audit(runtime_root, verdict)
-    if exit_name in ("excused", "downgraded"):
+    if exit_name in ("custody_excused", "excused", "downgraded"):
         logger.warning("[ghost-gate] sid=%s 出口=%s dead=%s evidence=%s", sid, exit_name, dead, evidence)
     else:
         logger.debug("[ghost-gate] sid=%s 出口=%s dead=%s", sid, exit_name, dead)
@@ -2149,6 +2157,34 @@ def _session_ghost_dead(session_id: str, *, runtime_root: Path) -> bool:
     return bool(_session_ghost_verdict(session_id, runtime_root=runtime_root)["dead"])
 
 
+def _item_under_custody(item: dict | None) -> bool:
+    """袋托管标读取（托管正门，2026-10-15 车道）：meta.custody is True 即托管中。
+
+    托管权在 enqueue_item 入袋口授予（唯一入袋口，四通道合流：交互正门/CLI 直投/
+    requeue 复投/网关改道）；注销是**结构性**的——袋进 done//dead/ 即出队，标随袋
+    归档，无在途登记面可漂移。无标=本正门前的历史袋/终态归档件，照旧走原判据。
+    """
+    meta = (item or {}).get("meta")
+    return isinstance(meta, dict) and meta.get("custody") is True
+
+
+def _session_ghost_dead_for_item(item: dict | None, *, runtime_root: Path) -> bool:
+    """属主已死判定·托管豁免面（裁定#459 实现层正门豁免，已报总包）。
+
+    托管中袋子（enqueue 即登记 meta.custody）豁免 ghost 判死——短命自动化会话
+    入袋即退场+异步落地是合法形态，属主名义存活直到末袋终态；豁免只覆盖 ghost
+    判死这一面，落地门禁/attempts 耗尽（B5）等其他闸零影响。无托管标的袋走
+    _session_ghost_dead 原判据逐字不变（裁定#507 同源口径不触碰）。出口
+    custody_excused 独立计数+裁决面审计（禁静默翻转，与本节头注同律）。
+    """
+    root = Path(runtime_root)
+    if _item_under_custody(item):
+        sid = str((item or {}).get("session_id") or "")
+        _ghost_exit(root, "custody_excused", False, sid, custody=True)
+        return False
+    return _session_ghost_dead(str((item or {}).get("session_id") or ""), runtime_root=root)
+
+
 def _mark_ghost_dead_fields(item: dict, session_id: str) -> None:
     """幽灵袋死信字段原地注入：dead_at / dead_reason / meta.ghost=true（裁定#459）。
 
@@ -2196,7 +2232,7 @@ def _drain_env_requeue(
     """
     if _attempts_backoff_enabled():
         _bump_retry_attempts(processing_path, item, f"{type(exc).__name__}: {exc}")
-    if _session_ghost_dead(str(item.get("session_id") or ""), runtime_root=root.parent):
+    if _session_ghost_dead_for_item(item, runtime_root=root.parent):
         # 幽灵会话存活闸（裁定#459）：属主已死的袋环境失败也不退回 pending——退回=
         # 下次自举复读，无人认领。ghost=true 死信封印直落 dead/（与 attempts 耗尽
         # 出口同链），本轮仍终止（环境失败对其余项同样致命，语义不变）。
@@ -2426,7 +2462,7 @@ def drain_queue(
             # processing 认领即判活——属主已死的袋不再白耗一次 landing（旧循环：死袋
             # 被拾取→落地失败→死信/退回→无人认领下轮复读）。ghost_session 直落
             # dead/（归 env 类，接管会话可 requeue）；判定不了 fail-open 放行。
-            if _session_ghost_dead(str(item.get("session_id") or ""), runtime_root=root.parent):
+            if _session_ghost_dead_for_item(item, runtime_root=root.parent):
                 _mark_ghost_dead_fields(item, str(item.get("session_id") or ""))
                 # 死信封印唯一出口（归属五件套+复发熔断+后继重建），与 attempts 耗尽
                 # 出口同链——拾取点死信不脱节 M3.3 口径。

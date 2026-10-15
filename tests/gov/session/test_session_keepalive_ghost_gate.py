@@ -702,5 +702,68 @@ def test_pristine_dev_line_anchor_of_the_short_circuit() -> None:
     assert def_lines and def_lines[0] < lineno < def_lines[0] + 40, f"短路支行号越界：{lineno}"
 
 
+# ---------------------------------------------------------------------------
+# 4) 托管正门（2026-10-15 车道，裁定#459 实现层正门豁免已报总包）：
+#    enqueue 即托管（meta.custody=true）→ 属主名义存活直到末袋终态
+# ---------------------------------------------------------------------------
+
+
+class TestCustodyExemptionFace:
+    """托管豁免面：meta.custody 袋不因属主死而判死；无标袋原判据逐字不变。"""
+
+    def _dead_owner_runtime(self, tmp_path: Path, sid: str) -> Path:
+        """最死形态现场：exited 残留 + 真册在场但 sid 除名（unregister 即终审）。"""
+        rt = _runtime_with_heartbeat(tmp_path / "rt", sid, ["alive", "exited"])
+        _real_registry_at(tmp_path)  # 真册构造在场，本 sid 不写条目
+        return rt
+
+    def test_custody_bag_exempt_even_fully_dead_owner(self, tmp_path: Path) -> None:
+        """托管袋在最死形态下豁免：custody_excused 出口+裁决面审计（禁静默翻转）。"""
+        sid = "sess-custody-live"
+        rt = self._dead_owner_runtime(tmp_path, sid)
+        cq.reset_ghost_gate_counts()
+        item = {"qid": "q-x-0001", "session_id": sid, "meta": {"custody": True}}
+        assert cq._session_ghost_dead_for_item(item, runtime_root=rt) is False
+        assert cq.ghost_gate_counts()["custody_excused"] == 1
+        assert cq.ghost_gate_counts()["judged_dead"] == 0
+        audit = (rt / "audit" / "ghost_liveness.jsonl").read_text(encoding="utf-8")
+        assert "custody_excused" in audit and sid in audit
+
+    def test_no_custody_marker_keeps_original_death(self, tmp_path: Path) -> None:
+        """反向钉桩（豁免不扩面）：同现场无托管标 → 原判死逐字（历史袋/终态件）。"""
+        sid = "sess-custody-legacy"
+        rt = self._dead_owner_runtime(tmp_path, sid)
+        cq.reset_ghost_gate_counts()
+        item = {"qid": "q-x-0002", "session_id": sid, "meta": {}}
+        assert cq._session_ghost_dead_for_item(item, runtime_root=rt) is True
+        assert cq.ghost_gate_counts()["judged_dead"] == 1
+        assert cq.ghost_gate_counts()["custody_excused"] == 0
+
+    def test_enqueue_grants_custody_marker(self, tmp_path: Path, monkeypatch) -> None:
+        """托管权在唯一入袋口授予：enqueue_item 落袋即带 meta.custody=true
+        （requeue 复投经 enqueue_item 自动继承；预检/登记门 mock=本用例只钉托管标）。"""
+        monkeypatch.setattr(cq, "_run_declared_preflight", lambda *a, **k: None)
+        monkeypatch.setattr(cq, "_run_registration_gate", lambda *a, **k: (0, [], {}))
+        item = cq.enqueue_item(
+            "sess-custody-enq",
+            "托管标随袋（mock 预检）",
+            [("docs/custody_probe.txt", b"x")],
+            queue_root=tmp_path / "q",
+        )
+        assert item["meta"]["custody"] is True, "入袋即托管（托管正门授予面）"
+
+    def test_all_gate_call_sites_route_through_custody_wrapper(self) -> None:
+        """四调用点（drain 拾取/_drain_env_requeue/_recover_orphans/pool 拾取）必须经
+        托管豁免面，禁绕过托管面直连 _session_ghost_dead（漏闸=整批判死复发）。"""
+        all_src = (
+            (_LANE_ROOT / _CQ_REL).read_text(encoding="utf-8")
+            + "\n"
+            + (_LANE_ROOT / "scripts/governance/commit_queue_landing.py").read_text(encoding="utf-8")
+        )
+        direct = re.findall(r"(?<!def )_session_ghost_dead\(", all_src)
+        # 合法直连仅一处：_session_ghost_dead_for_item 体内的委托（真源唯一出口）
+        assert len(direct) == 1, f"ghost 闸出现绕过托管面的直连调用 {len(direct)} 处"
+
+
 if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v", "--tb=short"])

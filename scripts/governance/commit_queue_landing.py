@@ -4468,7 +4468,7 @@ def _pool_process_item(
     # 袋不再烧工线程的 worktree 同步+全门禁段，直落 dead/（ghost_session，归 env 类
     # 处方可 requeue；CLI 手动 requeue 不受闸限）；判定不了 fail-open 放行。
     _ghost_sid = str(item.get("session_id") or "")
-    if cq._session_ghost_dead(_ghost_sid, runtime_root=root.parent):
+    if cq._session_ghost_dead_for_item(item, runtime_root=root.parent):
         cq._mark_ghost_dead_fields(item, _ghost_sid)
         # 死信封印唯一出口（2026-10-03 挖矿治本）：与串行 ghost 出口
         # （commit_queue.py drain 拾取点）同链——归属五件套+复发熔断+后继重建，
