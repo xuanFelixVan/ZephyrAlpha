@@ -145,3 +145,14 @@ title: 独立信号清单（⑨成绩官每日维护）
 - **首份"族×verdict"分账（④席生成端与正交闸必读，本班 `measure12.py` 直测、非派生）**：96 行按卡体 `pillars_numeric` 键集分族＝**校准 61／事件 23／对照 11／maxdd_min 变体 1**；交叉 verdict＝校准 `{fail 59, pass 2}`、事件 `{fail 23}`、对照 `{fail 9, blocked 2}`、变体 `{fail 1}`。⇒ **全册唯二 pass（rows[76]/[78]）全落校准族同一根 `lu_count_z20` 轴（corr=0.9998），事件族 23 行 0 pass、对照族 11 行 0 pass**：除校准这一根涨跌停广度轴外，生产线至今**没有任何族产出过一个通过对象**。此为家族级矿位成熟度信号；本班增量 0 ⇒ 零新开单，仅入分账供 ④ 席判"事件族是否近 mined_out"。
 - **15 员池 PR 缺席如实注明（未重烧）**：`c1_market.factor_signal`/`factor_feature_value` 各 0 行（三度同值，本班未第四次重烧）；`ART_ROOT=docs/_working/integrated_backtest/` 未复查；在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"（本席累计八班无产物可再现该数）。
 - 空白轴地图判读面限定沿用：按 card_id 命名语义归类，本班未逐卡读卡体（例外＝轮一抽的 rows[0]/[44]/[46] 三张回过卡体）。
+
+
+## 2026-10-15 ｜ st-qoder-p09-1015-13（⑨成绩官第十三班·每日维护行：增量 0 行＝零新轴入占；pool-report 复现＋**事件族 OOS 确认柱可达性首份账**）
+
+> 读面声明（本班正文原样跑，终报前重测）：磁盘面 sha256=d77773545f5b4cc7c8c64686a8aab8e2c672a540740e843da953f4e3186d0c9c／132248B／docs=2／rows=96／mtime `2026-10-15 16:28:53`＝与 12 班终报锚点**逐位同** ⇒ **本班增量 0 行**；index `git show :docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`＝`009c7bbcf87582c2…`／123768B／**90 行**（落后磁盘 6 行，自 11 班起未动）；HEAD 该馆 **0 件**。本班未动分数册任何字节、未动任何阈值与门柱。族口径＝卡体 `pillars_numeric` 键集（逐字复用 12 班在册 `measure12.py` 的 `family_of`），join＝卡内 `card_id`（96/96）。
+
+- **本班工具实跑**（非引用在册）＝`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6 --out .runtime/tmp/st-qoder-p09-1015-13/pool6_report_13.json` → `n_members=6 n_common_dates=1855 effective_n_signals(PR)=2.1272`（rc=0）；pool6 六枚 CSV mtime 皆 `07:30` 未变 ⇒ **PR 与 04/11/12 班逐位同＝同池同人同值复现确认，非新增读数**。
+- **占领区摘要**：本班增量 0 行 ⇒ **零新轴入占**；未占/稀薄轴维持 04/09 班在册方向（波动率期限结构、流动性与冲击成本、资金面分户、另类数据）。
+- ⚑ **给 ③④ 席与正交闸的新事实（原因层，本班直测、尺＝`python .runtime/tmp/st-qoder-p09-1015-13/measure13d.py`）**：**事件族 23 行的"OOS 同号确认"柱在当前冻结窗下数学不可达**＝卡面 OOS 窗逐字相同（23/23＝`2024-01-01..2025-09-09`，实测面总日数 **410**），而族内下限把"≥200 事件日"同时套在**被用来确认的那一窗**（`scripts/backtest/fexam/calibration_exam.py:843`、`:873-875`），⇒ 需要事件密度 **≥48.8%**；实测该族 OOS 事件日 79–165（密度 19.3%–40.2%）、IS 侧 239–363（**23/23 过线**）。⇒ 12 班在册"事件族 23 行 0 pass"的**原因不是信号弱，而是门槛×窗长的可达性**：同一枚 200 下限套在 IS 窗 1212 日只需 16.5% 密度、套在 OOS 窗 410 日需 48.8%。**对新卡的可执行含义**＝若沿用该 410 日 OOS 窗＋稀疏事件定义（<50% 覆盖），此柱必拦、该卡不可能 pass；本席不动门柱，题面已按呈批 **P-9** 交裁（选项与代价见 `to_impl.md` 本班节）。
+- **15 员池 PR 缺席如实注明（未重烧）**：`c1_market.factor_signal`/`factor_feature_value` 各 0 行（三度同值，本席未第四次重烧）；`ART_ROOT=docs/_working/integrated_backtest/` 未复查；在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"（本席累计九班无产物可再现该数）。
+- 空白轴地图判读面限定沿用：按 card_id 命名语义归类，本班未逐卡读卡体（例外＝轮一抽的 rows[48]/[55]/[60] 三张事件卡读过卡体 `pillars_numeric` 与 `window`）。
