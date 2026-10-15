@@ -1,0 +1,17 @@
+﻿件,检验格,窗口径,成本口径,读数,verdict,备注
+件①OFI,H2_当日累计OFI→次日开收IC_pooled,IS=2025-01..12/OOS=2026-01..09,毛口径（无成本）,n=415 t=-0.70 mean_IC=-0.0088,RED,无预测力；复权=日内比率免疫
+件①OFI,H2_IC_桶LOW,全窗 IS+OOS,毛口径,n=91 t=0.24 IC=0.0063,INSUFFICIENT,桶=vol_pct T-1 0.32/0.7040
+件①OFI,H2_IC_桶MID,全窗 IS+OOS,毛口径,n=193 t=-1.06 IC=-0.0189,RED,桶=vol_pct T-1 0.32/0.7040
+件①OFI,H2_IC_桶HIGH,全窗 IS+OOS,毛口径,n=131 t=-0.18 IC=-0.0044,RED,桶=vol_pct T-1 0.32/0.7040
+件①OFI,H1_slope_depth复现(辅助),全窗,毛口径,"ρ(β,lnADV)=-0.38(p=0.084) ρ(β,Amihud)=-0.53(p=0.0079)",MIXED,ADV 方向✓/Amihud 方向✗（Cont 2014 预期前者负后者正）；n=20 截面仅描述
+件②动量,H1_市场版开盘半小时→尾盘_Q5Q1价差,IS=2021-09..2024-12/OOS=2025-01..2026-09,毛口径（信号考试）,全窗 spread=+14.73bp/日 t=4.06 p=5.00e-05；IS=+19.88(t=4.12) OOS=+5.45(t=1.05 同号),PASS待考,BH q=0.0006；OOS 衰减如实披露；五分位边界 IS 冻结
+件②动量,H2_个股版_剩余段_Q5Q1价差_pooled,全窗 n=1224 日,毛口径,t=-3.05 spread=-6.06bp/日；IS t=-3.05/OOS t=-1.24,RED,|t|<3.29；负号=日内反转迹象（筛级线索，未过考级门）
+件②动量,H2_个股版_桶LOW,全窗,毛口径,n=417 t=-0.67 spread=-1.55bp/日,RED,IS mean=-0.26/OOS mean=-6.03bp
+件②动量,H2_个股版_桶MID,全窗,毛口径,n=450 t=-1.62 spread=-3.76bp/日,RED,IS mean=-7.31/OOS mean=0.96bp
+件②动量,H2_个股版_桶HIGH,全窗,毛口径,n=357 t=-2.59 spread=-14.23bp/日,RED,IS mean=-14.84/OOS mean=-13.17bp
+件③VWAP做T,588200_IS选k→OOS主门,IS=2025/OOS=2026-01..09-18,引擎现行（佣金0.854bp+地板¥5+滑点五分位Q档+个股印花万5）；Owner-001=1.5bp 对照,"IS三档k全负（1.0:-3.88, 1.5:-2.98, 2.0:-1.24）；OOS net=4.82bp/日 (plain t=0.87)",RED,预注册规则：IS 无合法 k→RED；req_cap(日振幅口径)=0.037 但净边际未过门
+件③VWAP做T,588200_OOS_k=1.5披露档,OOS,双口径,trips=31 net_eng=-3.04bp/日 gross=-1.90bp/日,RED,卡③ §3.2 fallback 披露档
+件③VWAP做T,513330_IS选k→OOS主门,IS=2025/OOS=2026-01..09-18,引擎现行（佣金0.854bp+地板¥5+滑点五分位Q档+个股印花万5）；Owner-001=1.5bp 对照,"IS三档k全负（1.0:-4.86, 1.5:-1.80, 2.0:-0.47）；OOS net=-2.05bp/日 (plain t=-1.01)",RED,预注册规则：IS 无合法 k→RED；req_cap(日振幅口径)=0.047 但净边际未过门
+件③VWAP做T,513330_OOS_k=1.5披露档,OOS,双口径,trips=35 net_eng=-0.88bp/日 gross=0.40bp/日,RED,卡③ §3.2 fallback 披露档
+件③VWAP做T,300561_IS选k→OOS主门,IS=2025/OOS=2026-01..09-18,引擎现行（佣金0.854bp+地板¥5+滑点五分位Q档+个股印花万5）；Owner-001=1.5bp 对照,"IS三档k全负（1.0:-15.66, 1.5:-6.28, 2.0:-3.67）；OOS net=-8.36bp/日 (plain t=-1.34)",RED,预注册规则：IS 无合法 k→RED；req_cap(日振幅口径)=0.046 但净边际未过门
+件③VWAP做T,300561_OOS_k=1.5披露档,OOS,双口径,trips=21 net_eng=-6.59bp/日 gross=-4.87bp/日,RED,卡③ §3.2 fallback 披露档

@@ -1,0 +1,3 @@
+wave_id,wave_date,track,wave_name,cells_design,cells_into_bh,highlights,highlight_survival_months,cumulative_cells_into_bh,notes
+tickm-baseline,2026-09-19,tick_etf_track,TICKM 基线轮（S1-S4×3聚合级×2执行×3标的，tick_matrix_protocol.md v1.0）,72,54,0,0,54,S4 族 18 格 n<10 未进 BH；亮点集=空（最小 p=0.166→q=1.0）；真源=tick_matrix_report.md §8
+algo-bounded-wave1,2026-09-19,algo_bounded_track,有界矩阵第一波 top3 格（OFI/开盘动量/VWAP，裁定#366）,12,12,1,0,66,亮点=H1 市场版开盘动量（BH q=0.0006，只产候选卡不出 PASS）；辅助检验不计 N；功效欠功位=①桶LOW(91日)/②H1 OOS腿(78-109日)；真源=bounded_matrix_wave1_report.md
