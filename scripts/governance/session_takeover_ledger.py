@@ -8,8 +8,7 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 接管台账（Takeover Ledger）L1/L2 显化真源——死亡判据=last_activity 距今>7200s 且非 logical；条目幂等（同 sid 已 open 只 refresh 资源数不重复生成，原子 tmp+os.replace）+ refresh 节流窗 600s（判死钩子在 list_active 热路径，窗内原样返回防 git status/staging 重 IO 风暴）；resolve 迁移 .runtime/takeover/resolved/ 改 status；**存量条目刷新出口 `--refresh [SID]`（维护七班 P2）＝逐条重取五类资源实测面并写回，默认 dry-run、`--execute` 才动盘，五类全零（held/worktrees/staging/bags/heartbeat）才走 resolve 同一通道收口，有任何残留（含死袋）一律留 open；写回经 force 旁路 600s 节流窗（该窗属判死钩子热路径 IO 防护，不约束显式人工刷新），判零口径与 L1 `collect_resources` 同源不另立二套；death_evidence 沿用立案原文不重写**；只读写 .runtime 运行态面（禁碰 git 元数据/生产数据）；PID/心跳为辅助证据（取不到=null 不阻断）；worktree dirty 经 git status --porcelain（非 git 目录=-1 记 git_status_unavailable）＋盘字节已等于落地面 _LANDING_REF 的**跟踪件**移出命中面并记 excluded_dev_identical=n（统筹 2026-10-13 批①：status 报的是对自家 HEAD 之差，车道指针落后 dev 时同字节件也报 M，会隔空挡死无辜袋；比对不可用/未跟踪件一律保留＝只缩不扩）；文件清单截断上限 200（DIRTY/STAGING 各自）防台账膨胀
-# [MODIFY-GUARD] 死亡判据阈值/资源收集面变更须与 takeover_pending_gate.py 及 docs/_working/branch_zero_takeover_20261002/t1_takeover_infra.md 同批
-# [MODIFY-GUARD] 2026-10-15 st-perfz2-20261015 P0-2 立案活性闸：registry_alive_blocks_case（--scan 与判死钩子共用的立案前活性单口复核，registry-alive 会话不立 open 条目）与 takeover_pending_gate.py 自动回收面同批落地（同 commit）；该 helper 改名/删改须与 src/zephyr/security/access_control/session_concurrency.py::_salvage_takeover_ledger 及 tests/gov/governance/test_session_takeover_ledger.py 同批
+# [MODIFY-GUARD] 死亡判据阈值/资源收集面变更须与 takeover_pending_gate.py 及 docs/_archive/_working_cleared/branch_zero_takeover_20261002/t1_takeover_infra.md 同批
 # [MODIFY-GUARD] 2026-10-14 维护七班 P2 刷新出口面：write_takeover_entry 新增 force 入参（显式 CLI 刷新越 600s 节流窗），改名/删该字段须与 refresh_open_entries 及 tests/gov/governance/test_session_takeover_ledger.py::test_refresh_bypasses_throttle_window_but_hook_path_still_throttled 同批；判死阈值与 L3 门禁命中面零改动
 # [MODIFY-GUARD] 2026-10-10 sid=st-maint1-t3lane 三证立法（PID 亡＝必要非充分）配套面：write_takeover_entry 新增 extra_death_evidence 入参（判死钩子把三证读数原文并入 death_evidence.alive_side_evidence），改名/删该字段须与 session_concurrency._salvage_takeover_ledger 及 tests/gov/session/test_takeover_pid_false_positive.py 同批；本件自身判据（DEATH_IDLE_SECONDS=7200 idle 轨）零改动
 # [STABILITY] evolving
@@ -69,8 +68,6 @@ __all__ = [
     "load_open_entries",
     "entry_match_surface",
     "resolve_entry",
-    "registry_alive_blocks_case",
-    "audit_case_skipped_alive",
     # 死信归因引擎（2026-10-03 Layer1+Layer2）
     "ATTR_ABSORBED",
     "ATTR_MIGRATED",
@@ -1126,45 +1123,6 @@ def load_open_entries(root: str | Path) -> list[dict]:
     return [r for r in _read_lines(Path(root) / _LEDGER_REL) if r.get("status") == "open"]
 
 
-def registry_alive_blocks_case(root: str | Path, sid: str, *, now: float | None = None) -> tuple[bool, str]:
-    """立案前活性闸（st-perfz2-20261015 P0-2b 自指死锁治本）。返回 (是否跳过立案, 说明)。
-
-    病根（今晚实锤）：claim 绑定短命提交 PID → 死亡显化钩子/`--scan` 立案 → 条目反过来
-    把提交人判死 → TAKEOVER-PENDING 自拦（30 天 335 次）。C11 门侧只治了"已立案后放行
-    自挡"一格，立案侧仍在批量生产这类条目。治本＝立案前先问在册活性裁决单口
-    ``liveness_verdict``（裁定#480 C-2 唯一尺，本函数禁另造判据）：**registry-alive
-    会话不立 open 条目**（活班在岗时它的任何"死班形态"都只是形态，不是事实）；其余
-    （degraded/dead/ghost/裁决不可达）一律按原判据继续立案——闸只收窄"活班被立案"，
-    不放任何真死会话漏网。liveness_verdict 不可达＝闸不可用＝不跳过（保守照原判据，
-    与门侧 C11"读失败不当活证"同向）。永不抛异常。
-    """
-    try:
-        from zephyr.security.access_control.session_concurrency import liveness_verdict
-
-        v = liveness_verdict(sid, now=now)
-        state = str(getattr(v, "state", "") or "")
-        signal = str(getattr(v, "authoritative_signal", "") or "")
-    except Exception as exc:  # noqa: BLE001 — 活性单口不可达=闸不可用，按原判据继续
-        return False, f"liveness_verdict 不可达（{type(exc).__name__}），按原判据继续立案"
-    if state == "alive":
-        return True, f"registry-alive（{signal}）：活性裁决表现判 alive，不立 open 条目（自指死锁治本 P0-2b）"
-    return False, f"liveness={state or 'unknown'}/{signal}"
-
-
-def audit_case_skipped_alive(root: str | Path, sid: str, note: str) -> None:
-    """立案跳过留痕（jsonl append；失败只 warn——留痕面不是裁决面）。"""
-    try:
-        from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
-
-        append_audit_jsonl(
-            Path(root) / ".runtime" / "session_registry_audit",
-            "takeover_case_skipped_registry_alive.jsonl",
-            {"ts": _utc_iso(time.time()), "event": "takeover_case_skipped_registry_alive", "sid": sid, "note": note},
-        )
-    except Exception as exc:  # noqa: BLE001 — 留痕失败不影响立案主流程
-        print(f"WARN: 立案跳过留痕写入失败 sid={sid}: {exc}", file=sys.stderr)
-
-
 def entry_match_surface(entry: dict) -> set[str]:
     """条目的文件命中面（repo-relative posix 集合）：held_files+worktree dirty+staging 文件。"""
     surface: set[str] = set()
@@ -1304,13 +1262,6 @@ def _cmd_scan(root: Path) -> int:
         # 旧形键（session_id/扁平资源）以保证历史/异形来源不炸整扫
         sid = d.get("sid") or d.get("session_id")
         if not sid:
-            continue
-        # 立案前活性闸（st-perfz2-20261015 P0-2b）：registry-alive 会话不立 open 条目
-        # （崩溃静默期批量扫描把在岗活班立案→TAKEOVER-PENDING 自拦的病根，立案侧治本）。
-        skip, alive_note = registry_alive_blocks_case(root, sid)
-        if skip:
-            audit_case_skipped_alive(root, sid, alive_note)
-            print(f"skip sid={sid}（{alive_note}）")
             continue
         resources = d.get("resources")
         if resources is None:
