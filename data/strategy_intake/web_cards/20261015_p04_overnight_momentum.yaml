@@ -1,0 +1,173 @@
+# creation_token: strategy-intake-20261015-p04-overnight-momentum-20261015 | created_by: st-qoder-p04-1015-08 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-18
+title_zh: 隔夜-日内收益分解的拉锯动量（Lou-Polk-Skouras 型）——时段结构轴，含「A股符号与美股相反且学界分歧、本席不预设方向只交构造」的诚实申报
+mining_tower: 时段结构/收益分解（本库 17 枚 web_cards 未占的一维——把日收益拆成隔夜 close→open 与日内 open→close 两段，与既有的价量趋势/动量/波动截面是不同构造对象）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-08
+birth_batch: 20261015-p04-08
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-15 真实 WebSearch 命中；未直连正文者逐条标核验面）
+source_links:
+  - role: 本卡基座出处（隔夜 vs 日内预期收益的拉锯，定义两段收益）
+    url: https://www.sciencedirect.com/science/article/abs/pii/S0304405X19300650
+    what_verified: >-
+      本班 WebSearch 命中（RePEc/IDEAS 与 ScienceDirect 双源同指一篇）：Lou, Dong & Polk, Christopher & Skouras, Spyros, 2019,
+      『A tug of war: Overnight versus intraday expected returns』, Journal of Financial Economics, vol. 134(1), pages 192-213。
+      ScienceDirect 检索页正文摘录：『overnight loser decile has a three-factor overnight alpha of 3.47% per month ...
+      intraday winner decile ... intraday alpha of 2.41%』且『persist even when we lag our intraday/overnight return signals by as much as 60 months』。
+      ⇒ 基座＝把月频动量按 close-to-open（隔夜）与 open-to-close（日内）两段分解，两段符号相反、且滞后 60 月仍持续。⚠ 出版商付费墙，本班未读全文＝检索命中级引用。
+  - role: 日内与隔夜横截面的第二处期刊锚（横截面上 alpha 主要 accrue 隔夜）
+    url: https://www.sciencedirect.com/science/article/abs/pii/S0304405X21000854
+    what_verified: >-
+      WebSearch 命中：Bogousslavsky, Vasiliki(相关系列), 『The cross-section of intraday and overnight returns』, Journal of Financial Economics（2021，卷号见期刊），
+      正文摘录『mispricing factor earns a positive average return overnight and in every half hour of the trading day except the last one』。
+      ⇒ 与上条构成『时段分解可预测横截面』的两处独立期刊命中。⚠ 同付费墙，未读全文。
+  - role: 学术面的『夜/日两世界』叙事（本卡为何把时段当作独立信息维，非重复动量）
+    url: https://ideas.repec.org/a/eee/jfinec/v138y2020i3p635-662.html
+    what_verified: >-
+      RePEc/IDEAS 命中：『Asset pricing: A tale of night and day』, Journal of Financial Economics, vol.138(3), 635-662（2020）。
+      本班只取该标题与其对『overnight vs intraday returns behave completely differently』这一命题的存在性佐证（同批命中的 Bouchaud 片段亦述此），未读全文＝标题级引用。
+  - role: A股符号与美股相反的关键旁证（本卡不预设方向的直接原因）
+    url: https://newetds.lib.tsinghua.edu.cn/qh/paper/summary?dbCode=ETDQH&sysId=302483
+    what_verified: >-
+      WebSearch 命中清华硕士论文（答辩 2025-05-14）『Impact Research of Short-Selling on the Overnight-Intraday Return Reversal Effect in A-Shares』，
+      英文摘要摘录：『the A-share market exhibits a unique overnight negative return and intraday positive return phenomenon, contrary to many developed markets』。
+      ⇒ 这是本卡在 logic 里把方向写为『待 ⑥ 预注册裁定、本席不代裁』的第一手依据：A股时段符号与 Lou-Polk-Skouras 的美股结论相反。
+  - role: 用 T+1 制度为时段分解正名的中文期刊论文（本卡机制假设的出处）
+    url: https://qks.sufe.edu.cn/J/CJYJ/Article/Details/A67fdee67-f823-44ad-8489-d42bcfae03ae
+    what_verified: >-
+      WebSearch 命中《财经研究》栏目页『On the Reason for "Weak Monthly Momentum Effect" in the Chinese ...』，正文摘录
+      『we rationalize the intraday and overnight return decomposition approach proposed by Lou, et al. (2019) with the unique T+1 trading rule in the A-share market』。
+      ⇒ 机制＝T+1＋涨跌停使隔夜跳空当日无法套利 ⇒ 隔夜段具有与美股不同的持续性。本卡据此把『时段结构』列为可挖维度，方向由该制度论证决定而非本席臆断。
+  - role: 博彩型异象的时段分解（与本卡相邻、本席判为不同本体的旁证）
+    url: https://www.cfrn.com.cn/lw/15245
+    what_verified: >-
+      WebSearch 命中中国金融研究网(CFRN)论文『Dissecting the Lottery-Like Anomaly: Evidence from China』（2023-07-06），摘要
+      『decomposing total stock returns into overnight and intraday returns ... negative overnight returns are concentrated among lottery-like stocks, and the lottery-like anomaly is mainly driven by the overnight returns component』。
+      ⇒ 与 20261015_p04_max_ret（如存在）/已裁『博彩型最大日收益』属近亲但非同一构造：该文明确走『时段分解』路径，本卡本体＝时段收益的滚动累计（动量），不含 max-ret 排序；相邻性归 ⑥/⑨ 并员评估，本席不自证清白。
+  - role: 社区/实务必克面（A股隔夜因子的经验口径，思想级、本席零转录）
+    url: https://m.blog.csdn.net/liliang199
+    what_verified: >-
+      WebSearch 命中 CSDN 专栏（2026-09-30），正文摘录『Lou-Polk-Skouras(2019)在美股发现：隔夜端反转，日内端动量 ... 在 A股、12个月窗口下：隔夜累计收益是正向预测的，即隔夜动量；日内累计收益几乎没有预测力；总 12 月价格动量几乎全部来自隔夜段』。
+      ⚠ 第三方自述、含 qlib 示例代码、无许可证声明 ⇒ 许可证闸判『只学思想不入码』；且其『A股隔夜正向』与上面清华论文『隔夜负向』直接冲突＝本席不采任何方向断言，只登记『符号存疑、须样本内检验』。
+  - role: GitHub 面命中实况（许可证闸样本，本班零取码）
+    url: https://github.com/hbyecoding/QuantLessMoneyMore
+    what_verified: >-
+      WebSearch 命中三枚可对照仓：hbyecoding/QuantLessMoneyMore（A股量化回测框架，README 尾注 MIT License，含 20日/60日价格动量因子）；
+      CurtisTong/stock-analyzer-skill（MIT License © curtis，其『quality 因子按 report_date+90 天披露延迟过滤』的 PIT 纪律与本席 07 班卡17 的『严格 PIT 腿缺披露时点』同型，可作 ⑤ 实现参考）；
+      cn-vhql/FactorHub（全流程因子分析平台，许可证本班未核）。⇒ 三筛实跑＝许可证面 2 枚明标 MIT＋1 枚未核；活跃度面均较新；star 面本班未取数（WebSearch 侧不给 star 精确值，禁凭记忆填）。
+      本卡伪代码全部由本席按本库 DESCRIBE 实测列名自拟，零行取自上述任何仓库。
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: >-
+    本轮 GitHub 命中：QuantLessMoneyMore＝MIT；stock-analyzer-skill＝MIT；FactorHub＝未核（README 未取到许可证行）；
+    学术期刊（JFE×2）、RePEc、清华论文、SUFE 期刊、CFRN、CSDN＝正文无代码许可证声明。GPL=0。
+  gate_verdict: 通过（零可复制代码：伪代码由本席按本库列名自拟；时段收益定义为公开会计口径，不构成代码著作权客体）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；实现走 C3 翻译适配重实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机＝把『动量』这一维从『日线 close-to-close 累计收益』升级为『按交易时段分解后的动量』。
+  Lou-Polk-Skouras (2019) 与 Bogousslavsky (2021) 在美股把月频动量/value 的 alpha 拆到隔夜段与日内段，发现两段符号相反（『tug of war』）且滞后 60 月仍持续。
+  本库既有卡族里，residual_momentum 走『残差动量』（剔除市场的 close-to-close 动量）、drift_gated_reversal 走『漂移门控反转』，
+  两者都用整段 close-to-close 收益；本卡本体的不同＝先把日收益切成 隔夜=close_{t-1}→open_t 与 日内=open_t→close_t 两条子序列，
+  再对『隔夜子序列』做滚动窗口累计（默认 126 交易日≈半年）形成个股截面排序键 ⇒ 这是时段结构轴，不是把同一 close-to-close 动量换个名字（构造对象不同：输入是拆分后的两段之一）。
+  ⚠ 方向本席不代裁：美股文献给『隔夜反转』，但本库检索到的 A股一手证据互相打架——清华 2025 论文称 A股『隔夜负收益/日内正收益』、
+  而 CSDN 实测笔记称 A股『隔夜累计收益正向（隔夜动量）』。二者符号相反，且都属他方读数而非本席检验。
+  因此本卡只交构造与时段拆分口径，方向留给 ⑥ 预注册（新 card_id、带独立外部先验），严格遵 ⑨ 席在册令『现禁据此反号重挖、禁在原卡上翻符号复跑』。
+  与相邻卡边界＝(1) residual_momentum：close-to-close 残差动量，本卡：拆分后的隔夜段累计，输入序列不同；
+  (2) 博彩型 max-ret 族：max-ret 用单期极端日收益，本卡用时段收益的滚动累计，非极端值排序；
+  (3) 楼1 盘口卡（ofi_l1/queue_imbalance/imbalance_microprice）用 tick 侧信息，本卡只用日线 OHLC。相邻性归 ⑥/⑨ 并员评估。
+  闸面缺席说明见 data_binding.orthogonal_gate_zh——本卡是横截面选股因子，其『可闸的市场级代理』是时段动量之差（overnight 段动量指数 − 日内段动量指数，拉锯形），
+  但本班高水位未物化，故只交构造不报 corr。
+
+# ── 必备④ 伪代码（本席自拟，零外部转录；列名均为本班 DESCRIBE 实测名）
+pseudocode: |
+  # 本体：隔夜收益的滚动累计动量，个股横截面排序键（供 ⑤ 物化成 panel；市场级拉锯形另出）
+  # 时段会计口径（Lou-Polk-Skouras 2019）：
+  #   r_overnight_t = open_t / close_{t-1} - 1     （隔夜：前收 → 今开）
+  #   r_intraday_t  = close_t / open_t  - 1         （日内：今开 → 今收）
+  #   r_total_t ≈ (1+r_overnight_t)(1+r_intraday_t) - 1
+  # ★复权硬约束：必须用后复权价面 c1_market.kline_daily_hfq（本班实测该表有 open/close/high/low/pct_change/lineage_version），
+  #   不可用 c1_market.kline_daily 裸 open/close——除权除息日会在隔夜段产生一根假跳；
+  #   kline_daily.adj_factor 系恒 1 死列（在册），不能用它自行复权。
+  START = '2019-01-01'          # 与池 common_dates≈1472 同量级起算；深史段宇宙稀疏（在册 stk_limit pre-2019 ~237 票）
+  W   = 126                      # 滚动窗≈半年，对齐文献月频累计；⑤实现须把 W 写进卡面参数（改 W=改读数）
+  sql = """
+    SELECT trade_date, symbol, open, close,
+           lagInFrame(close, 1) OVER w AS c1
+    FROM c1_market.kline_daily_hfq    -- 后复权面；引擎本班未实测，⑤ 前须 get_table_engine_strict 核并决定 FINAL
+    WHERE trade_date >= {START} AND open > 0 AND close > 0
+    WINDOW w AS (PARTITION BY symbol ORDER BY trade_date)
+  """
+  # 逐票：r_on = open/c1 - 1；滚动窗内累计 (Π(1+r_on))^(1) - 1（或 sum，⑤ 二选一并写死口径）→ on_mom_i
+  #        r_id = close/open - 1；同窗累计 → id_mom_i
+  # 截面键：横截面对 on_mom 排序（多头高 on_mom / 空头低，或反之，方向待 ⑥ 预注册）
+  # 市场级可闸代理（本席未物化）：market_on_id_spread_t = mean_i(on_mom_i) - mean_i(id_mom_i)  ——拉锯『差分形』
+  #   （依 07 班游标①：水平/均值形易被池内价格振荡成员吸收，差分/离散度形更可能过 |corr|≤0.3；本卡选差分形作闸面候选）
+  # 纪律：不自算的收益列禁换成现成 pct_change（在册 修⑪）；pct_change 是 close-to-close，不含时段拆分，不可作本卡输入直接替代
+
+# ── 必备⑤ 数据源映射
+data_binding:
+  primary_source: c1_market.kline_daily_hfq
+  sl_ref: SL-MARKET-KLINE-DAILY-HFQ（个股日线·后复权面；本卡只用 trade_date, symbol, open, close）
+  measured_face_zh: >-
+    本班实测（元数据面，TCP 只读，探针 .runtime/tmp/p04_08_probe/meta_probe2.py 可原样复跑）：
+    库清单=c0_meta/c1_backtest/c1_market/c3_fundamental/system；c1_market.kline_daily_hfq 列面 17 支=
+    trade_date(Date), symbol, open, close, high, low, volume, amount, amplitude, pct_change, change, turnover,
+    data_source, lineage_version(UInt16), ingest_ts(DateTime64 UTC), exchange, symbol_canonical；
+    min/max(trade_date)=1990-12-19 / 2026-10-15。对照面 c1_market.kline_daily 19 支含 adj_factor(Nullable Decimal)，
+    但该列系恒 1 死列（在册），本卡不用。表族内另有 kline_daily_hfq_recalc 与 __preeng_backup_20261007 备份件——
+    ⑤ 取数须锁定『哪一张是真源 hfq』，防重灌污染（在册 repolluting-incremental-leg 教训：增量腿仍写旧口径）。
+  face_gap_zh: >-
+    代理落差三处：(1) 本卡是横截面选股因子（panel 档），非天然市场级序列；市场级可闸代理=时段动量之差，
+    本班未物化 ⇒ 禁把『构造已交』读成『轴已证可过』；(2) 方向未定：A股文献符号互斥（清华负 / CSDN 正），
+    本席不预注册方向，须 ⑥ 带独立外部先验另立新 card_id 再考；(3) 复权口径风险：hfq 表族多张并生（真源/重算/备份），
+    ⑤ 若误取未复权面，除权跳会污染隔夜段 ⇒ 时段拆分在 A股比 close-to-close 更吃复权正确性。
+  orthogonal_gate_zh: >-
+    正交闸【本班缺席，如实申报，未编数】。已确证的池面：本班实跑 pool-report（尺=scripts/backtest/fexam/signal_orthogonality.py
+    pool-report --pool .runtime/tmp/p04_06_pool）＝n_members=32／n_common_dates=1472／effective_n_signals(PR)=5.3328，
+    与 06/07 班在册读数逐字同 ⇒ 池已物化、闸可用。缺席原因三条且均可 grep：
+    (a) 本卡候选序列需『个股时段收益的滚动累计』panel 物化，且必须复权正确（见上 face_gap），
+        不是单日横截面聚合可毕（07 班卡16 的 Amihud 截面离散度是同日聚合，本卡是多日滚动，量级更重）；
+    (b) 本班开班 reaper 报 commit_pct=87.14%（高水位），在册 ch-memory-wall-panel-load-500＝并发面板装载撞 7.14GiB⇒HTTP500/code241，
+        ⑩第八单/第九单在册『高水位禁起重型扫描』，⑥席-10(89.66%)与⑧B(94%)两席本窗均已全程零 CH 探针零闸；
+    (c) 市场级折叠形易撞池内涨跌停/波动成员（在册 money-flow-caliber-breaks：闸只吃 date,sig，市场级折叠必撞涨跌停族），
+        须在与池同宇宙/同日期基上物化才是公平闸，乱折叠=假测量。
+    ⇒ 交下班/⑤ 正解：⑤ 物化 market_on_id_spread.csv(date,sig) 到某目录后，本班/下一班直接跑
+       `python scripts/backtest/fexam/signal_orthogonality.py gate --candidate <该csv> --pool .runtime/tmp/p04_06_pool --gate 0.3`；
+       判据=reject(rc=5)记重复、pass(rc=0)记过闸。本席不自造 corr 数值。
+  dedupe_gate_zh: >-
+    去重闸（存量册 docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml，本班逐词全册扫 163 条目口径）：
+    『overnight』0 命中／『隔夜』0／『close-to-open』0／『open-to-close』0／『tug-of-war』0／『decomposition』0 ⇒ 时段分解本体在存量册零命中。
+    相邻谓词自证：『intraday』12 命中、『日内』5 命中、『gap』1 命中——逐条读过＝(i)entry_logic 里的做T战术散文（line 3469/3709『日内第一热点』『看次日溢价而非日内得失』），
+    (ii)vwap-reversion / intraday-surge-fall 两条 execution 策略（line 8827/8842/8902/8909/8925/8985-8995/9067-9150，其 alpha_source=FCT-INTRADAY-029/030 intraday_vwap/intraday_close），
+    (iii)line 12626/12630 日内熔断与 DABAN 短打高开的 relabel_note。⇒ 全部是『日内执行/日内单腿因子(intraday_close=open→close)/过滤配料』，
+    无一条以『隔夜×日内两段的滚动分解动量』为本体构造 ⇒ 判『存量册无同本体』通过。
+    ⚠ 边界申报：FCT-INTRADAY-030 intraday_close 是本卡拆分口径里『日内段』那一腿的因子（open→close），与本卡『隔夜段累计』是同一拆分式的孪生腿但反向；
+    该孪生相邻性属 ⑥/⑨ 并员评估，本席不自判为重复、也不自证清白。
+  pool_face_note_zh: 池为市场级 32 员（涨跌停/宽度/技术指标均值族）⇒ 本卡的闸面是『时段动量之差(市场级) vs 市场级』，与个股横截面面板档不同分母，引用者勿跨面读数
+
+self_flag:
+  - >-
+    方向未预注册＝本卡最大约束：A股时段符号一手证据互斥（清华 2025 负 / CSDN 正），本席遵 ⑨ 在册令不选边、不翻号；
+    该卡不能直接进考试，须 ⑥ 带独立外部先验另立新 card_id 定方向后方可开考。
+  - >-
+    正交闸缺席本班未编数：已给可 grep 的三条缺席理由＋下班可直接执行的 gate 命令；引用者勿把『池已物化』当『本卡已过闸』。
+  - >-
+    复权是命门：时段拆分对除权跳比整段收益更敏感，⑤ 必须锁真源 hfq 表族的一张且核引擎定 FINAL；误用未复权面=静默错。
+  - >-
+    本卡为横截面选股因子，其市场级代理是构造出来的派生序列（拉锯差分），非命题原形；面板档与代理档两条腿，勿混用。
+  - >-
+    GitHub star 面本班未取精确数（WebSearch 不给）⇒ 三筛里 star 筛本班未证伪亦未证实，如实留白，未凭记忆填。
+
+caliber_pitfall_zh: >-
+  (1) 隔夜收益定义依赖 close_{t-1}（票级 lag），停牌/退市使 c1 缺失或跨多日 ⇒ 须限定相邻交易日或声明 gap-fill 口径，⑤ 写死；
+  (2) kline_daily_hfq 引擎本班未实测（在册纪律：判 FINAL 前先 get_table_engine_strict）；kline_daily=ReplacingMergeTree 不自动迁移到 hfq 面；
+  (3) query_rows 会把 CTE 别名当表探引擎崩（07 班在册 engine_probe 空返回），⑤ 取数走 ch_writer.query_strict＋自加显式 FINAL；
+  (4) 除权除息假跳是时段拆分特有污染，close-to-close 卡（residual_momentum）不暴露此坑 ⇒ 本卡与旧动量卡即便高相关也可能是不同噪声；
+  (5) W（滚动窗）与『累计用 sum 还是 Π』两处口径任一改动即改读数，须写进卡面参数、不可在实现里默认。

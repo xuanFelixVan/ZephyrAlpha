@@ -1,0 +1,137 @@
+# creation_token: strategy-intake-20261015-p04-realized-skewness-20261015 | created_by: st-qoder-p04-1015-08 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-19
+title_zh: 已实现偏度（三阶矩截面预测子，Amaya et al. 型）——高阶矩形状轴，含「与波动二阶矩成员不同构造、A股符号与美股相反」的诚实申报
+mining_tower: 高阶矩/分布形状（本库 17 枚 web_cards 未占的一维——既有 idiosyncratic_vol 用二阶矩、avg_abs_ret/各实现波动用二阶矩，本卡用三阶矩偏度，是不同阶的分布形状）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-08
+birth_batch: 20261015-p04-08
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-15 真实 WebSearch 命中；未直连正文者逐条标核验面）
+source_links:
+  - role: 本卡基座出处（已实现偏度预测股票横截面收益，期刊定名）
+    url: https://www.cgl.org.cn/auto/db/search.aspx?wrd=+Peter+Fama
+    what_verified: >-
+      本班 WebSearch 命中（经出版商索引转述，非直连全文）：Amaya, Diego & Christoffersen, Peter & Jacobs, Kris & Vasquez, Aurelio, 2015,
+      『Does realized skewness predict the cross-section of equity returns?』, Journal of Financial Economics（刊名+年份+作者四元齐，见命中文献表行）。
+      ⇒ 基座＝用个股日收益序列算『已实现偏度』(realized skewness，三阶矩标准化)，横截面排序预测未来收益；美股主结论为显著负相关（高偏度→低未来收益）。
+      ⚠ 本班未读到 JF 正文公式，基座式按公开定义自拟（见 pseudocode），并注明『未能与原文逐式对表』于 self_flag。
+  - role: 同族工作论文版（口径与作者一致性交叉验证）
+    url: https://ideas.repec.org/p/arx/papers/2604.07870.html
+    what_verified: >-
+      RePEc/IDEAS 命中参考文献区列出：『Diego Amaya & Peter Christoffersen & Kris Jacobs & Aurelio Vasquez, 2013. "Does Realized Skewness Predict the Cross-Section of Equity Returns?",
+      CREATES Research Papers 2013-41』⇒ 与上条同作者同题名，2013 工作纸→2015 期刊正式发表，两独立命中互证题名作者非孤证。本班只登记命中，未读正文。
+  - role: 中国 A股已实现偏度直接实证（本卡为何不预设符号的核心依据）
+    url: http://dianda.cqvip.com/Qikan/Article/Detail?id=7111059670
+    what_verified: >-
+      WebSearch 命中《已实现波动、偏度和峰度与股票未来收益——来自中国A股市场的证据》(VIP 期刊收录)，英文摘要摘录：
+      『与美国市场中已实现偏度与截面股票未来收益显著负相关不同 ... negative correlation between realized kurtosis and future returns, which cannot be dispersed by other variables.
+      Compared with realized volatility and skewness ...』。⇒ 关键点：A股里偏度对截面收益的关系与美国『显著负』不同，且峰度(博彩型)那条另成立——
+      本席据此把方向交 ⑥ 预注册、不自拍；峰度作为『同族但不同阶』在 self_flag 与相邻边界中登记，本卡本体只取三阶矩偏度。
+  - role: 市场偏度预测 A股（时段之外的『偏度』第二处中文学术命中，本卡用作存在性佐证非本体）
+    url: https://sem.njust.edu.cn/eef/2f/0c/c14594a339724/page.htm
+    what_verified: >-
+      WebSearch 命中南京理工大学商学院新闻：冯雨晴等『Market Skewness and Stock Return Predictability: New Evidence from China』发表于《Emerging Markets Finance and Trade》(SSCI)，
+      摘要『We decompose market skewness into good and bad skewness ... good skewness can significantly predict stock market returns in- and out-of-sample』。
+      ⇒ 该文是『市场级总偏度』时序预测（择时面），与本卡『个股已实现偏度横截面』不同对象；本席仅作『偏度轴在 A股被独立研究过』的存在性旁证，未取本体。⚠ 本卡是横截面选股，勿与该择时面混读。
+  - role: 已实现偏度横截面的中文学位论文（方法口径旁证，本席零转录）
+    url: https://wap.cnki.net/lunwen-1019028321.nh.html
+    what_verified: >-
+      WebSearch 命中 CNKI 硕士论文『已实现偏度能够预测股票的横截面收益率吗？』(东北财经大学 2018)，关键词『已实现波动率;已实现偏度;已实现峰度;横截面收益率;Fama—MacBeth回归』。
+      ⇒ 佐证本卡在 A股有可复现的研究传统（Fama-MacBeth 横截面回归为检验范式，交 ⑦/⑧ 考工用）；含代码/数据非开源，思想级引用。
+  - role: GitHub 面命中实况（许可证闸样本，本班零取码）
+    url: https://github.com/topics/momentum?l=python
+    what_verified: >-
+      WebSearch 命中 GitHub topic 聚合页（『momentum』Python，按 updated 降序，140 public repos）与相邻 trading topic 页；
+      本卡需要的『已实现偏度』无高星成熟专仓命中（多为通用因子平台，如前卡所列 QuantLessMoneyMore=MIT、FactorHub=未核）。
+      ⇒ 三筛实跑＝本轮无『skewness 专仓』可对照，许可证面沿用 MIT 通用平台、star 面本班未取精确数（WebSearch 不给，禁凭记忆填）。
+      本卡伪代码由本席按本库 DESCRIBE 实测列名自拟，零行取自任何仓库。
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: >-
+    学术期刊（JFE 2015 / EMFT / RePEc 工作纸）、VIP/CNKI 中文论文＝正文无代码许可证声明；GitHub 侧本轮无 skewness 专仓命中，
+    相邻通用平台 QuantLessMoneyMore=MIT、FactorHub=未核。GPL=0。
+  gate_verdict: 通过（零可复制代码：伪代码由本席按本库列名自拟；偏度为公开统计量，不构成代码著作权客体）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；实现走 C3 翻译适配重实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机＝本库截面卡族集中在『一阶（收益方向：动量/反转）』与『二阶（波动：histvol/parkinson/garman_klass/rogers_satchell、idiosyncratic_vol、avg_abs_ret）』，
+  三阶矩『偏度』是一条未占的分布形状轴。Amaya et al.(2015) 在美股用个股日收益算已实现偏度做横截面排序，得显著负向预测（高偏度票未来收益低，
+  与『彩票型偏好』一致：散户追逐正偏长尾→价格被高估→未来收益低）。
+  本卡本体＝对每只票取滚动窗（默认 60 交易日）日收益的『样本偏度』（三阶中心矩除以二阶中心矩的 3/2 次方），横截面排序。
+  与既有二阶矩卡的构造差异＝输入用的是同一列日收益，但统计量是三阶矩而非二阶矩：波动读『离散幅度』，偏度读『不对称方向』，
+  两者可同日同票取不同值；正因如此本卡不是 idiosyncratic_vol 换名，但 ⑤ 物化后须过正交闸确认（见 data_binding，本班高水位未物化）。
+  ⚠ 方向本席不代裁：美股负向，但本库检索到的 A股一手（VIP《已实现波动、偏度和峰度…中国A股》摘要）明说 A股偏度关系『与美国显著负不同』。
+  ⇒ 遵 ⑨ 席在册令，方向留 ⑥ 预注册（新 card_id＋独立外部先验），本卡只交构造与『三阶矩 vs 二阶矩』的轴合法性诉求。
+  与相邻对象边界＝(1) idiosyncratic_vol/各实现波动＝二阶矩，本卡＝三阶矩，同输入不同统计量；
+  (2) 峰度(博彩/彩票 max-ret 族)＝四阶矩，与偏度同属高阶但不同阶，VIP 文里『负相关峰度』是另一条腿，本卡不自称覆盖峰度；
+  (3) 『市场偏度择时』(NJUST/EMFT 文)＝市场级总偏度时序，本卡＝个股偏度横截面，两对象不同面，勿混读。相邻性归 ⑥/⑨ 并员评估。
+
+# ── 必备④ 伪代码（本席自拟，零外部转录；列名均为本班 DESCRIBE 实测名）
+pseudocode: |
+  # 本体：个股滚动窗已实现偏度，横截面排序键（供 ⑤ 物化成 panel；市场级可闸代理另出）
+  # 日收益口径：r_i,t = close_t/close_{t-1} - 1（用后复权面），或直接用 c1_market.kline_daily_hfq.pct_change/100
+  #   —— 注意：本卡用『日收益序列』本身，不涉及时段拆分，故 pct_change 复权口径正确即可用；
+  #     但 kline_daily（未复权）的 pct_change 在除权日仍失真 ⇒ 统一取 kline_daily_hfq
+  START = '2019-01-01'
+  WIN = 60                        # 滚动窗（交易日），≈一季度；⑤ 须把 WIN 写进卡面参数（改窗=改读数）
+  # 逐票：取过去 WIN 日 r_i 序列 → 样本偏度 skew_i = (1/N)Σ((r-mu)/sigma)^3（Amaya 用日收益的已实现偏度标准化式）
+  #        mu, sigma 为该 WIN 窗内均值/标准差；sigma=0 或 N<WIN*0.6 记缺失（截面完整性门）
+  # 截面键：横截面对 skew_i 排序（多头低偏度/空头高偏度 或反之，方向待 ⑥ 预注册）
+  # 市场级可闸代理（本席未物化）：market_skew_disp_t = quantile_90(skew_i) - quantile_10(skew_i)（截面离散度形，
+  #   依 07 班游标①：水平/均值形易被池内波动成员吸收，离散度形更可能过 |corr|≤0.3）
+  # 纪律：本卡统计量是三阶矩，禁与二阶矩波动卡互换输入实现；sigma 估计与 skew 是否去均值两种口径须写死其一
+
+# ── 必备⑤ 数据源映射
+data_binding:
+  primary_source: c1_market.kline_daily_hfq
+  sl_ref: SL-MARKET-KLINE-DAILY-HFQ（个股日线·后复权面；本卡只用 trade_date, symbol, pct_change 或 open/close 自算日收益）
+  measured_face_zh: >-
+    本班实测（元数据面，TCP 只读，探针 .runtime/tmp/p04_08_probe/meta_probe2.py 可原样复跑）：
+    c1_market.kline_daily_hfq 17 支含 pct_change(Decimal18,4)（后复权日收益，close-to-close）与 close/open；
+    min/max(trade_date)=1990-12-19 / 2026-10-15。对照 c1_market.kline_daily 的 pct_change 虽同名但系未复权面，
+    除权日失真 ⇒ 本卡取 hfq 面。hfq 表族另有 _recalc 与 __preeng_backup_20261007 备份件，⑤ 锁真源一张防重灌。
+    ⚠ 偏度对截面小样本敏感：深史段（pre-2019）宇宙仅 ~237 票（在册 stk-limit-universe-stub-pre2019），
+      60 日窗 × 237 票仍可算但截面噪声大 ⇒ 本班建议 ⑤ 物化时加 HAVING 截面票数下限（如 ≥500）并与池 common_dates 对齐。
+  face_gap_zh: >-
+    代理落差三处：(1) 本卡是个股横截面选股因子，市场级可闸代理=偏度截面离散度（派生形），本班未物化 ⇒ 轴合法性未证；
+    (2) 方向未定：美股负、A股一手证据称与美不同，本席不预注册方向，须 ⑥ 另立 card_id；
+    (3) 与二阶矩波动卡是否共线未测：偏度与波动常正/负相关（暴跌伴随负偏+高波动），|corr| 是否 ≤0.3 只能靠物化后跑闸，本席不臆断。
+  orthogonal_gate_zh: >-
+    正交闸【本班缺席，如实申报，未编数】。池面本班实跑 pool-report＝n_members=32／n_common_dates=1472／PR=5.3328（与 06/07 班逐字同）⇒ 池已物化、闸可用。
+    缺席三条可 grep 理由：(a) 本卡候选=个股滚动 60 日三阶矩，需 panel 物化后折成市场级离散度序列，非单日聚合；
+    (b) 本班 reaper 报 commit_pct=87.14% 高水位，在册 ch-memory-wall-panel-load-500＝并发面板撞 7.14GiB⇒HTTP500，⑥席-10/⑧B 两席本窗全程零 CH 零闸，本席照此纪律不起重扫；
+    (c) 偏度截面离散度大概率与池内波动成员（ti_ew_histvol/parkinson/garman_klass/rogers_satchell、avg_abs_ret）近邻（三阶矩与二阶矩同源价格波动），
+        须在同宇宙同日期基上物化才是公平闸。⇒ 交 ⑤/下班：物化 market_skew_disp.csv(date,sig) 后直接跑
+        `python scripts/backtest/fexam/signal_orthogonality.py gate --candidate <该csv> --pool .runtime/tmp/p04_06_pool --gate 0.3`；
+        reject(rc=5)记重复、pass(rc=0)记过。本席不自造 corr 数值。
+  dedupe_gate_zh: >-
+    去重闸（存量册 docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml，本班逐词全册扫）：
+    『skew』0 命中／『skewness』0／『偏度』0 ⇒ 三阶矩偏度本体在存量册零命中＝完全空白本体。
+    ⚠ 谓词自证（防假扩）：本班未把『skew』的子串命中并入相邻概念，且核『峰度/kurtosis』亦未命中（本卡不覆盖峰度，留白如实）。
+    与二阶矩卡的边界已在 logic_zh 申报：存量里波动类（garman_klass/parkinson/rogers_satchell/histvol/natr 等实现波动指标）是二阶矩，
+    本卡是三阶矩，属不同统计量同输入——该相邻性由 ⑤ 物化后正交闸判定，本席不自判重复、亦不自证清白。
+  pool_face_note_zh: 池为市场级 32 员含多枚实现波动二阶矩成员 ⇒ 本卡的闸面『偏度截面离散度(市场级) vs 市场级』正是检验三阶矩是否被二阶矩吸收，与个股面板档不同分母，引用者勿跨面读数
+
+self_flag:
+  - >-
+    方向未预注册＝本卡最大约束：美股负、A股一手证据称与美不同，本席遵 ⑨ 令不选边不翻号；须 ⑥ 带独立外部先验另立 card_id 方可开考。
+  - >-
+    正交闸缺席本班未编数：已给三条可 grep 缺席理由＋下班可直接执行的 gate 命令；勿把『池已物化』当『本卡已过闸』。
+  - >-
+    未能与 Amaya 原文逐式对表：基座式为公开统计量定义自拟（样本三阶中心矩/二阶矩^{3/2}），是否用去均值/Bessel 修正与原文一致性未核，⑤ 实现前宜比对原文公式。
+  - >-
+    本卡与峰度(四阶矩/博彩 max-ret)同族不同阶：VIP A股文里峰度那条负相关更稳健，本席未把峰度并入本卡，留下一班或 ⑥ 另卡。
+  - >-
+    GitHub skewness 专仓零命中＋star 面未取精确数（WebSearch 不给）⇒ 无外部参考实现对照，伪代码正确性只靠 ⑤ 物化＋⑦/⑧ Fama-MacBeth 考工验证。
+
+caliber_pitfall_zh: >-
+  (1) 偏度对窗内 N 与 sigma 极敏感：sigma→0 会炸偏度，须加 sigma 下限与截面票数门（本卡建议 ≥500），否则静默出极端值；
+  (2) kline_daily_hfq 引擎本班未实测（在册纪律：定 FINAL 前先 get_table_engine_strict）；pct_change 若已含复权，close/close_{t-1} 自算须与之一致，两种收益口径不可混；
+  (3) query_rows 把 CTE 别名当表探引擎崩（07 班在册），⑤ 走 ch_writer.query_strict＋显式 FINAL；
+  (4) 横截面偏度的『市场级离散度』是派生代理，非命题原形（命题原形是个股偏度排序选股），勿把代理档读数当选股证据；
+  (5) 深史 pre-2019 宇宙稀疏（~237 票），60 日窗在早期票少的日子截面代表性差 ⇒ 与池 common_dates 对齐前先 HAVING 票数门。
