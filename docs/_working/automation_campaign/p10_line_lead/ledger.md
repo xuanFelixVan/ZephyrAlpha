@@ -237,3 +237,109 @@ date 实测 10:23:52 起手→13:47 写盘＝**204 分钟**（其中前 35 分�
 - 呈批面：1-15 沿用上班；本班**扩 15(c)**（空窗 3h57m 内 dead +130 ⇒ 是否把恒定班节拍与守护 1800s idle 闸硬性对齐，改排班面）＋**新增 16**（`commit_queue.py health` git 子进程 20s 超时不可用＝工具/落地链缺陷）。本席一律不自裁、不代修判据册。
 - 红线自证：本班未碰判据门柱／冻结值／分数册（exam_scores_v1.yaml 全程只 `grep -c`/`wc -c` 只读，零写）；十席 instruction.md 零触碰；X1/X2 断链批次本体零触碰；本席 checkpoint 只原地改顶部四行游标（删除集仅 cursor/last_run/last_batch/notes 四行，07/06 留档块未动），史文入本台账不塞游标。
 - 交付态声明（守在册"袋未出四态不得自称已交付"）：本班四件＝**盘面已写＋待入袋**；本班按"一逻辑改动只投一袋"仅投**一袋**、不预写终值袋数自述（在册教训：袋数随下一次投袋即失效）。四态回执取 `python scripts/commit_queue.py status --session st-qoder-p10-1015-09` 由下班复测，判落地只信 `git log -- <册>`。本班实耗＝date 实测 17:35:11 起手→**17:46:25 写盘**≈11 分钟（提交动作另占数分钟，不在本自述内重复计）。
+
+
+## 2026-10-15 第十班（st-qoder-p10-1015-10）｜第九单
+
+### 1 序时与耗时（date 实测，不背锅）
+
+| 动作 | 实测时刻 |
+|---|---|
+| 冷启动三步（python 3.12.8／lock cleanup／reaper --status） | 18:10:15 → 18:10:44 |
+| schtasks 核实计划任务在册（`\ZephyrAlpha_ProcessReaper`，下次 18:17:22，模式就绪） | 18:10-18:11 |
+| 防重入闸读（脉冲末行 17:44＋25 分＝18:09 已过） | 18:10:5x |
+| 队列/卡池/分数册/暂存池四组读数 | 18:11-18:20 |
+| reaper 水位复量（commit 86.96%／ram 71.3%／cpu 84.2%／degraded=False） | 18:20:59 |
+| 四件 claim acquire（dispatch／pulse／checkpoint／ledger，TTL 30 分） | 18:2x |
+| 第九单落盘（dispatch 676→762 行）／脉冲落盘（76→80 行，时戳 18:26，闸面 18:51） | 18:26 |
+
+**本班实耗＝起手 18:10:15 至交单入袋约 18:4x（写盘三件耗 16 分 45 秒＝18:10:15→18:26:40 实测）＝25 分钟内交可读单达标**（上班在册口径）。
+
+### 2 本班产出与证据等级
+
+| 产出 | 内容 | 证据等级 |
+|---|---|---|
+| 三首查回批 | ①dead 收敛（311，新死 4 枚且 3 枚属 X1/X2）②分数册 HEAD 0 件（坐实呈批 12）③④ 席专投袋已落（HEAD-ABSENT 10→0） | **实测**（命令正文可跑，见 §4） |
+| 有条件复牌令 | 判据＝16:00 后 done 27 袋覆盖九席的自然实验，推翻"停发挖矿"前提；复牌三腿写入 §6 表头 | 实测＋据此定的派单（推论标注） |
+| 红旗＝21 枚卡 staged deletion | 两面差 comm＝21；逐枚 `git hash-object` vs `git rev-parse HEAD:<path>`＝21/21 全等；`relocation_manifest_20261015.yaml` 对 exam_cards 0 命中＝排除归档波；清单落 `.runtime/tmp/p10_10/staged_del_cards.txt`（21 行） | 实测（三把独立尺同向）；**归因未证＝不写"谁删的"** |
+| ⑤ 席通道断线定策 | 处方＝拆袋成单域（绕 COMMIT-SCOPE 而非削弱闸）＋cwd 落车道＋`--project-root` 用主区在册面；并实测其 3 件已在主区 index A 态而 HEAD 查无 | 实测（`git diff --cached --diff-filter=A`）＋在册配方引用 |
+| 存放仲裁 | 进 04 件数 **0**；候选 1（① 席 ETF 案卷，证据链末腿＝② 落地读数未齐，故只登记不催 promote）；打回 0 | 本席判定（两问表入 dispatch §4） |
+| 通令第十四条 | 复位前一切提交走队列正门、禁从主区 index 直连提交 | 本席指令面职权内 |
+| 呈批面 | 12 由"未量"改"实测坐实"；15 补"值守在岗期未再现成片死"读数；**新立 17（21 枚卡复位归属）／18（ch_reader CTE 崩）** | 登记不代裁 |
+
+### 3 本席自犯与当场更正（旧句留卷，不涂改）
+
+1. **dead 计数尺两把混用风险**：本班 `ls dead | wc -l`＝**311**（与上班 305 同尺＝目录条目法，含 `_recurrence_state.json`/`_root_cause` 等非袋件）与 `glob q-*.json`＝**308**（纯袋法）两个读数并存。本班在 dispatch §1 把两值同列并标尺，避免下班把 +6 与 +3 当成矛盾；上班的 305 属条目法，可比的是 311。
+2. **`git status --porcelain` 循环打印格式自误**：首把尺用 `printf "%s "` 拼状态位，输出被空格切碎、无法判读 ⇒ 当场推翻，改逐行 `disk=Y/N status=[XY] path` 重测，才定出"21 枚全部 disk 在、index 无、blob 全等"。**若不重测极易把"索引删除"误读成"文件被删"**（后者会误派 ⑥ 席重做卡）。
+3. **对上班一句的更正（另起新案，旧句留卷）**＝上班（1015-09）在册句"分数册 90 行零回退且 **index 已追平**"：本班实测 `git show :<册>`＝**90 行**而盘面＝**96 行**（123768 B vs 132248 B）＝**index 已被盘面反超 6 行**，追平态只在上班时刻成立、本班不成立。此更正不改上班原文，只在此处记增量事实。
+4. **工序 6 未越权广播**：pending＝1（非 0）且 D6 245 件逐条核对未做＝两证不齐，本班按令"任一证不成立＝不广播只记堵点"执行，未写自放广播行。
+
+### 4 复核命令（正文原样，可整块跑；本班已逐条实跑）
+
+```bash
+cd /d/ZephyrAlpha
+# (1) 队列四态（目录条目法，与上班 305 同尺）
+for d in pending processing done dead; do printf "%s=%s\n" "$d" "$(ls .runtime/commit_queue/$d | wc -l)"; done
+# (2) 16:00 后落地袋数（复牌判据）
+python -c "import glob,os,datetime;c=datetime.datetime(2026,10,15,16,0).timestamp();print(len([p for p in glob.glob('.runtime/commit_queue/done/*.json') if os.path.getmtime(p)>c]))"
+# (3) 卡池三面（盘/index/HEAD）——首查③
+D=docs/03_modules/_domain_backtest/exam_cards; echo "disk=$(find $D -name '*.yaml' -type f | wc -l) index=$(git ls-files $D | grep -c '\.yaml$') HEAD=$(git ls-tree -r --name-only HEAD -- $D | grep -c '\.yaml$')"
+# (4) 21 枚 staged deletion 及其 blob 等值自证——红旗复核
+comm -23 <(git ls-tree -r --name-only HEAD -- $D | grep '\.yaml$' | sort) <(git ls-files $D | grep '\.yaml$' | sort) > /tmp/x.txt; wc -l < /tmp/x.txt
+while read f; do [ "$(git hash-object "$f")" = "$(git rev-parse "HEAD:$f")" ] || echo "DIFF $f"; done < /tmp/x.txt; echo "blob-diff-count=$(while read f; do [ "$(git hash-object "$f")" = "$(git rev-parse "HEAD:$f")" ] || echo x; done < /tmp/x.txt | wc -l)"
+# (5) 分数册三面对表——首查②
+P=docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml; echo "worktree_rows=$(grep -c card_id $P) index_rows=$(git show :$P | grep -c '^- ') HEAD_files_in_馆=$(git ls-tree -r --name-only HEAD -- docs/04_research_records/backtest/scores/2026/ | wc -l)"
+# (6) 主区暂存池三态计数
+for t in A D M; do printf "%s=%s\n" "$t" "$(git diff --cached --name-only --diff-filter=$t | wc -l)"; done
+```
+**读数分两类，落笔前先分类（在册教训＝追加型台账里的终值自述必假）**：
+- **活尺（随落地进行而变，复跑必不同）**＝16:00 后 done 袋数（本班 18:12 首跑＝**27**，18:3x 复跑＝**28**）、主区暂存池 A/M（首跑 **451/114**，复跑 **453/116**＝他班仍在 `git add`）、pending（18:12＝1，X2 在飞）。dispatch §1 与 §6 里引的 27／451／114 均系首跑时刻读数，下班复跑请勿当矛盾。
+- **稳尺（本班两时点同值，可作判据）**＝卡池 disk=552／index=531／HEAD=552；comm 两面差=**21** 且 blob-diff-count=**0**（18:1x 与 18:3x 两跑同值）；分数册 worktree=**96** 行（`grep -c card_id`）／index=**90** 行（`grep -c '^- '`，两把尺 96 与 90 各自互证）／该馆 HEAD 文件数=**0**；暂存池 D=**894**（两跑同值）；dead 目录条目=**311**、q-*.json=**308**。
+⚠ 第 (4) 条在 Git Bash 用 `/tmp`，与仓库分域，只作复核不作留证（留证件＝`.runtime/tmp/p10_10/staged_del_cards.txt`，21 行）。
+
+### 5 未完面（交下班，不谎称已做）
+
+- 本席自家 dead **17 枚内容级分诊未做**（本班只按 dead_reason 量到族别，未跑 `dead-archive --content-level`，无 mv 销账、无机生台账行）。
+- 工序 6 证二（D6 245 件与原令逐条核对）未做；AI 层台账新址已在册定位（`docs/_archive/_working_cleared/ai_layer_vision/`）但件数核对未起。
+- 断链战役剩余处数未复量（高水位 86.96% 期禁重扫）；X1/X2 三枚新死只登记族别，未代拆。
+- ⑥ 席"23 补键＋2 撤键"未复量（尺＝p10-07 在册 `census_cards_07b.py`）。
+- 呈批 17 的复位动作＝等 Owner/属主席定通道，本席不动他班暂存面。
+
+<!-- P10-1015-10-LEDGER -->
+
+### 6 追加节＝交单后当场发现并抢救（旧句留卷，不改 §1-§5）
+
+本班在写 checkpoint 前做一次三面 grep 自照（`第七单/第八单/第六单/第五单` × 盘／index／HEAD），量出**本席自家上一班（1015-09）把班次 08 的游标四行覆写丢失**：盘面 0 命中／HEAD 面 0 命中／**index 面 2 命中**＝旧游标只活在暂存面（正是指令卡所列"checkpoint 游标面被后班整文件覆写"形态，犯错者是本席自家而非他席）。处置三件，全部只增不删：①从 `git show :<file>` 逐字取回 08 游标四行，落 checkpoint 文末新节"抢救档＝班次 08 游标"（写前后用逐行 Counter 断言**删除集=0**，实测 0；行数 29→44、节数 2→4、`cursor: 全线水位` 命中 3→5、三面标记 08/09/10 齐）；②在**本席** instruction.md 追加"游标纪律"一条（搬回后必须三面 grep 对账、只认盘面命中、0 命中即从 index/队列 blobs 抢救）；③index 面快照已整档留证 `.runtime/tmp/p10_10/checkpoint_index_face.md`（防该面被他袋覆盖后无处可取）。**未做＝未去动 index 复位**（同 §3-A 红旗的处置口径：改他班/前班暂存面＝归属篡改红线）。
+
+另记一条通令落点选择：通令第十四条（禁从主区 index 直连提交）**只写进 dispatch，不写进他席 instruction.md**，沿用第七／八单在册口径"本席对他席指令本体零触碰"；若下班见各席仍直连提交，再议是否升级为逐席指令面条款。
+
+<!-- P10-1015-10-LEDGER2 -->
+
+### 7 写盘后复量与自我更正（旧句留卷，不改 §1-§6 与本节以上）
+
+同尺复跑（18:37，date 实测）＝dead 311→**319**、pending 1→**6**、processing 1→**2**、done 797→**800**、主区暂存池 A 451→**461**／M 114→**136**。新死 8 枚族别逐只读回＝`ghost_session` **7 枚**（x2-1015 五枚／p01-1015-13 一枚／p09-1015-14 一枚，dead_reason 均含"自动重投被存活闸拒绝"）＋`MAP-ALIGNMENT` 1 枚。
+
+**本班据此推翻自己 §0 的一半结论**：§0 与 dispatch §1 写的"雪崩收敛"只在**速率**维度成立（0.29/分 < 空窗期 0.57/分），在**族别**维度不成立——主死因已从"双侧皆改真冲突"换成"会话先退、袋后死、存活闸拒重投"，且正在打本线（①⑨ 两席刚中）。该形态在本班窗口（18:12-18:37）内出现 7 次＝不是个案，与本席 §2 对 ⑧ 席 06 班的判读同源。处置＝dispatch 追加 §10（新立通令第十五条＝出班前等袋四态；§9 的"15(c) 紧迫性下降"就地更正；呈批追加 15(d)）＋脉冲另起补量行（PULSE-B，不改已写行）。**未做＝不弱存活闸、不代拆代投**。
+
+复核（正文原样可跑，本班 18:37 实跑）：
+
+```bash
+cd /d/ZephyrAlpha
+for d in pending processing done dead; do printf "%s=%s " "$d" "$(ls .runtime/commit_queue/$d | wc -l)"; done; echo
+python -c "import glob,os,json,datetime;c=datetime.datetime(2026,10,15,18,12).timestamp();ps=[p for p in glob.glob('.runtime/commit_queue/dead/q-*.json') if os.path.getmtime(p)>c];print(len(ps));[print(datetime.datetime.fromtimestamp(os.path.getmtime(p)).strftime('%H:%M'),(json.load(open(p,encoding='utf-8')).get('dead_reason') or '')[:70]) for p in sorted(ps,key=os.path.getmtime)]"
+```
+期望＝四态计数随落地进行（活尺）；第二命令打印新死枚数与 dead_reason 前 70 字，族别应可读（本班读数＝ghost_session 7／MAP-ALIGNMENT 1）。
+
+<!-- P10-1015-10-LEDGER7 -->
+
+### 8 自检两轮读数＋本班自犯笔误就地更正（旧值留卷）
+
+**轮一＝结构计数自证**（全部现跑，不背数）：dispatch 总单数 9（首单＋第二…第九）／第九单内 `### ` 节数=**11**（§0-§10，§10 为写盘后追加）／三枚标记 `P10-1015-09-DISP`·`P10-1015-10-DISP`·`P10-1015-10-DISP10` 齐；pulse 83 行、本班两行（主行＋PULSE-B 补量行）；checkpoint 节数 2→**4**、`cursor: 全线水位` 3→**5**、三面 marker 08/09/10 齐、**"第七单"盘面命中 0→5**（＝抢救生效）；ledger 本班节 1-8 齐、代码围栏 4 枚（偶数＝配对）；instruction.md 17→19 行、"游标纪律"命中 1。
+
+**轮二＝引用与红线可 grep 自证**：①本班引用的每一把尺/路径都现查存在＝`.runtime/tmp/p10_07/census_cards_07b.py`（3805 B，09:42 在册）✓／`config/trading_decision_map.yaml` ✓／`docs/_archive/_working_cleared/ai_layer_vision`（**60 个文件**，工序 6 证二入口真实存在）✓／留证件 `staged_del_cards.txt`=21 行 ✓；②`commit_queue.py` 子命令实测存在 `dead-archive` 且带 `--content-level`（"袋字节→git blob sha 对 dev 现值/全史比对"，缺省 dry-run、`--execute` 才动盘）＝dispatch/台账里"分诊走该通道"不是空引，**并新见 `backfill-base-head` 子命令**（dead 存量袋 base_head 史证回填，缺省 dry-run）＝与呈批 15(d)"人工强制重投是否下放"直接相关，下班可试跑其 dry-run 面；③红线未碰＝分数册 `exam_scores_v1.yaml` 复量 mtime **16:28:53**／132248 B／sha 前 16 位 **d77773545f5b4cc7**（与 ⑨ 席 13 班终报锚点逐位相同＝本席全程零写）；他席 instruction/checkpoint 面本席零触碰（dirty 归各席自家会话）；X1/X2 断链批次本体未碰；主区 index 未复位未 add。
+
+**本班自犯一条笔误并当场改**＝§10 首句把 311→319 的差写成"（+7）"（应为 **+8**，与同句"新增 8 枚"自相矛盾）；另把"本线"误写成英文 `my line`。两处就地修正，旧值在此留卷可查。另记一条口径风险＝§6 表内各席"自家 dead N 枚"（① 9／② 9／③ 12／④ 13／⑤ 7／⑥ 9／⑦ 5／⑧ 7／⑨ 19／⑩ 17）系**本班 18:1x 活尺读数**，18:37 已实测 ①⑨ 各 +1（ghost_session），各席分诊前须现跑 §4 第 (1) 条重取，勿按本单数字估。
+
+**通令第十五条（本班新立，指令面职权内）**＝出班前最后一步必须等自家袋落四态；未落定禁先写"已交"、禁先退会话，宁可推迟到下一班。依据＝ghost_session 族 24 分内 7 枚（x2 五枚／① p01-13／⑨ p09-14），dead_reason 均含"自动重投被存活闸拒绝"；本席**不弱闸、不代拆、不代投**，只改各席出班次序口径＋呈批 15(d)。
+
+<!-- P10-1015-10-LEDGER8 -->
