@@ -324,3 +324,9 @@ C 正对齐（target=fwd.shift(1)）ic_mean = 1.0000   # 证明工具配对的�
   `python scripts/commit_queue.py status --session st-qoder-p08-1015-03`
   `git show HEAD:docs/_working/automation_campaign/p08_examiner_b/ledger.md | wc -c`（已落地读数=63363；盘面现值见下一行实跑）
   `python scripts/lock_files.py list 2>&1 | grep -A1 p08_examiner_b`
+## 14:11 · 班次 03 死信分诊收尾（本班四袋全态实测；-0004 与 -0001 同型死，内容零丢失）
+- 队列现测（`commit_queue.py status --session st-qoder-p08-1015-03`，14:11）：done=3（-0002→`34f6110d35`、-0003→`98caeca70d`、-0005→`1b3facb831`）／dead=2（-0001、-0004）／pending=processing=0。
+- 两件死袋 `dead_reason` **逐字同一条**：`[landing] 非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）: …/ledger.md`；基线分别为 `14f18f6271b0` 与 `34f6110d3503`＝**各被本席自己的后继袋落地推进过**（13:26 他袋落班次01 面、以及本席 -0003 落 98caeca70d）。
+- **超集双证**：`blob(-0001)` 58,433B 与 `blob(-0004)` 66,838B 均为现值 `blob(-0005)`/盘面 68,084B 的**严格前缀**（脚本 `startswith` 判 True）⇒ 两死袋内容已被落地袋完全覆盖 ⇒ 四态分诊判决＝**可销（superseded）**，无需 requeue；销账只走 mv 通道＋机生台账行，归 ⑩/维护班，本席不动队列件。
+- **口径句（本班自造的连坐根因，写给本岗也写给 ⑦A）**：同席对同一件**连投多袋**时，前袋的 base 会被自家后袋落地推过期，落地侧就判"双侧皆改"——这不是冲突，是**自撞**。正解＝一个值守**只投一袋**（把本节所有更正攒在最后一次写里），或投后立即读 status；多袋连投的"袋数"不是交付量，死袋率才是本班的真实成本（本班 4 袋死 2）。
+- 本席交班面：分数册与两张卡面**零写入**（`exam_scores_v1.yaml` sha16 仍 `009c7bbcf87582c2`＝13:05 读数；卡 06/07 现测 status 仍 preregistered 且 `oos_window_ref` 与冻结值逐字相等），开考配方与驱动器见游标 ①-⑦。
