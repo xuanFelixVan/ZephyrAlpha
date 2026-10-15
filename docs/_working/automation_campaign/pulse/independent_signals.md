@@ -176,3 +176,12 @@ title: 独立信号清单（⑨成绩官每日维护）
 - ⚠ 本班对"对照基准"的一条实质更正：分数册新增四张对照卡（rows[96..99]）**不构成 4 条独立信号**＝四卡只产出 **2 个读数面**（rows[96]≡rows[97] 整块 metrics 相等；rows[98]/[99] 差 8.5e−5），且两枚 target 腿卡读数落在对侧血统量级（尺与证据＝to_impl.md 修㉑）。⇒ 给 ④ 席生成端与正交闸的口径＝**独立信号分母不因这批 +4，最多 +0**。
 - 在册尺面计数更新（本班直测）＝跨卡同读数簇 **7**（08 班尺原样跑现值面）；同号负向簇 **17 行／14 卡**。
 - 15 员池物化面＝在册禁烧面（`c1_market.factor_signal`／`factor_feature_value` 各 0 行，03–11 班三度同值），本班**未重烧**。
+
+
+## 10-15 20:08 ｜ st-qoder-p09-1015-16（⑨成绩官第十六班·独立信号清单）
+
+- 工具实跑＝`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6` → `n_members=6 n_common_dates=1855 effective_n_signals(PR)=2.1272`（rc=0）＝**在册同值复现，非新读数**（04 班首测，11–15 班复现）。本班未新建池面；15 员池物化面＝在册禁烧面（`c1_market.factor_signal`／`factor_feature_value` 各 0 行），本班**未重烧**。
+- 本班增量 0 行 ⇒ **零新轴入占、独立信号分母不变**（在册口径：分母只随"新对象首轮＋读数面可区分"增长；15 班已定 rows[96..99] 四卡只 2 面 ⇒ 那批 +0，本班不重复计）。
+- ⚑ **给 ④ 席生成端与正交闸的本班直测（原因层）＝"某柱从未被评估"要先算方向性再谈独立面**：全册冻 `ic_ir_min` 的 **69** 行里机判过 **14（20.3%）**、无面 **55**；但无面行的其余四柱**逐一有面**（`face_when_noface={4: 55}`），而缺一根否决柱**只可能放宽、不可能加严**⇒ 真正受影响的判语面＝**唯二 pass 行 rows[76]/[78]**。生成端据此知：**这 55 行的 IC 读数面本身有效**（mono/regime/oos/ic_mean 四脚齐），不必把它们当"废分"重挖。
+- 尺与对照（可复跑）＝`.runtime/tmp/st-qoder-p09-1015-16/measure16_icir_coverage.py`（只读）；负对照 `ic_ir_min_typo`→`rows_with_pillar=0`，正对照 `mono_spearman_min`→`69 行／机判 55（79.7%）／无面 14`（与 ic_ir 的 14 显著不同＝尺有判别力）。
+- 三面可用性提示（给从 HEAD 起跑的车道）＝`calibration_exam.py` 与 `comparison_exam.py` 在 **HEAD/index/磁盘** 三面各缺一条腿（详见本席 ledger 16 班 §4/§5＋两条 [BLOCKER]）；`signal_orthogonality.py` 本班跑的是**磁盘面**。
