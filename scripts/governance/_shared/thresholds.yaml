@@ -275,7 +275,7 @@ git_operations:
   # run_gate_chain.py 门禁链 git status 副作用快照超时（原 _GIT_SNAPSHOT_TIMEOUT=15）
   gate_chain_snapshot_timeout_seconds: 15
   # commit_queue_landing.py 队列落盘 git 操作超时（原 _GIT_TIMEOUT_SECONDS=120，与 worktree_pool.run_git 同款）
-  commit_queue_git_timeout_seconds: 120
+  commit_queue_git_timeout_seconds: 300
   # evaporation_blackbox.py 蒸发黑匣子 git 快照超时（原 GIT_TIMEOUT_SEC=30 硬编码，st-cmd-20260924 落地班治 VOCAB-HARDCODE）
   evaporation_blackbox_git_timeout_seconds: 30
 

@@ -268,6 +268,7 @@ _TRANSIENT_GIT_MARKERS = (
     "being used by another process",
     "the process cannot access the file",
     "timeout after",
+    "timed out after",
     "winerror 233",
     "管道的另一端",
     "no process on the other end",
