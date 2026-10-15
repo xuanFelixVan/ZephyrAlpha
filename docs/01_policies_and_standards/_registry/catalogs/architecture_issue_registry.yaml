@@ -1251,14 +1251,14 @@ entries:
   impact:
   - src/zephyr/risk/stop_loss.py（execute_kill_switch_liquidation 可卖数量分化）
   - tests/risk/test_kill_switch_state_persistence.py（补 T+1 拒绝分桶用例）
-  status: resolved
+  status: open
   created: "2026-08-18"
   category: risk_liquidation_t_plus_1
   severity: P2中
-  fix_phase: "已完成（commit 2188763b71 st-fullscore-20260930：清算链 sold/t_plus_1_rejected 分桶+三级可卖量探针链 available_qty→get_available_qty→get_holdings，真桥 get_available_qty 形态防静默降级+部分/全锁定两态告警分化；E1 复验 2026-10-14：tests/risk/test_kill_switch_t1_bucket.py 7 passed；Owner 2026-10-14 21:00 全批 #525 放行）"
+  fix_phase: AI-R3 复审第二轮登记（2026-08-18）；随后续清算链修复批施工
   discovered: 2026-08-18 AI-R3 复审第一轮（子代理审查 2b3b68b5d2 批清算链）
   adjudication: "2026-08-18 AI-R3 复审第二轮自主裁定：\n【证据】stop_loss.py execute_kill_switch_liquidation 对 _resolve_live_positions 全部持仓发\nMARKET SELL，含当日买入的 T+1 锁定份额——A 股 T+1 规则下券商必拒（进 liquidation_errors，\nall_success=False），链路无识别/重试/告警分化。T+1 校验真源在 broker 层（miniqmt\n_check_t_plus_1 查 can_sell_volume），清算链未消费。\n【裁定】清算前按 available（可卖）数量发单：broker 提供 can_sell_volume/available_qty 时按\nmin(持仓, 可卖) 发单；或把 T+1 拒绝与普通失败分桶（liquidation_errors 区分 t_plus_1_rejected\nvs broker_rejected），T+1 拒绝不标记 all_success=False（次日自动解锁，非真实失败）。"
-  last_updated: "2026-10-14"
+  last_updated: "2026-08-18"
   related_rules: "#ARCH-QUANT-002; A 股 T+1 交易规则"
 - issue_id: "#ARCH-128"
   title: 依赖图/场内模块清单.csv 消亡登记——2434 行历史快照（67% 路径失效），全仓零活体消费方，不重生成
