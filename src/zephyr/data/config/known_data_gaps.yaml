@@ -389,6 +389,24 @@ gaps:
     created: "2026-09-10"
     last_updated: "2026-09-10"
 
+    p01_probe_20261015l: >-
+      ①数据源席 st-qoder-p01-1015-12 本机只读复测＋新判据（零写入、零采购，token 走
+      get_secret_or_default('TUSHARE_TOKEN') 正门，本席未新增/未改任何密钥）：
+      (1) hk_hold 按 exchange 分层实测＝20190104 {HK 564/SH 844/SZ 1130}、20240816
+      {HK 791/SH 1573/SZ 1764}、20240930 {SH 1703/SZ 1837/HK 0}、20260630
+      {HK 946/SH 2039/SZ 1215}、20260930 {HK 1014/SH+SZ 0}；单票直查
+      hk_hold(ts_code='600519.SH', 20260601..20261015) 仅 1 行（20260630, SH）
+      ⇒ **政策后同一 trade_date 混两种频率×两个方向**：平日只有南向 HK，北向 SH/SZ 仅季末；
+      取北向必须 exchange IN ('SH','SZ')，否则把南向当北向（判据写给②⑤，B-24）。
+      (2) 答④席 st-qoder-p04-1015-06 第4条"右端落后约 3.5 个月"＝**本库 northbound_hold_snapshot
+      右端 2026-06-30 与源同步、非欠采**：北向 2026-09-30 断面源侧尚未发布（该日 SH/SZ=0）；
+      本表 8 断面 3,540→4,440 行全为季末日、无一个非季末面（本班自测，非转述）。
+      官方锚＝上交所 上证发〔2024〕106号（2024-07-26 发布、2024-08-19 起实施：北向单只证券
+      合计持有数量改每季度第五个交易日公布上季度末数据），深交所同日同构。
+      (3) 日频北向腿唯一可行窗实测＝akshare stock_hsgt_individual_em 600519 = 1,683 行
+      2017-03-16..2024-08-16（按年 188/229/234/231/230/232/191/148），正对照 000001 = 1,723 行
+      同起止 ⇒ 右端正好停在政策生效前一交易日；2024-08-19 起日频结构性不可得，按 SOP §3①
+      该段标注=**一次性历史档案**，禁按常设信号源准入。本席 status 不翻转。
   # === 2026-09-10: hk_kline 深度=QMT 港股源上限（数据总览全库体检 P2）===
   - id: "hk_kline_source_depth_limit"
     table: "c1_market.hk_kline"
@@ -1974,6 +1992,22 @@ gaps:
     evidence: "严格读 query_rows（同进程 4 聚合＋SELECT 1 正对照 [(1,)]）：earnings_forecast min/max/uniq日/rows=1999-01-08/2026-07-03/5,676/125,582、countIf(announce_date>='2026-07-04')=0、2025-09-10 后 uniq 日=142、data_source 单腿 bdpan；express_report=2005-01-08/2026-07-02/2,539/28,708、countIf(>='2026-07-04')=0；research_report=2017-01-02/2026-10-14/3,140/147,033（FINAL 面；system.tables total_rows=294,066 属未合并件面，不作重复写入判据）；源侧真跑 ak.stock_yjyg_em(20260630)=4,922 行（公告日期非空 4,922/4,922、区间 2026-04-27..2026-08-19、预告类型 11 值分布 预增1,385/首亏660/增亏619/减亏561/预减509/扭亏493/略增349/续亏178/略减107/续盈51/不确定10）、ak.stock_yjkb_em(20260630)=63 行、ak.stock_yjyg_em(20190630)=2,367 行。探针件走 .runtime/tmp/p01_10_probe*.py（临时面）。"
     resolution_plan: "①席判＝可免费回补＋可常设（零现金），出建设单 B-19（含续供确认四问）。动作分两面：②施工面改挂 ak.stock_yjyg_em／ak.stock_yjkb_em 按报告期切片回补 2026-07-04 至今并常设 daily_event，落库前词表须先对齐（源 11 值含增亏/减亏、我库 10 值含'其他'而无增亏/减亏，不对齐则下游按类型过滤的卡静默丢类）；⑨成绩官面 rows[88] 分母由本席在 p01 台账申报（三表并集覆盖日历 1,622/1,622＝228 观测缺口非源断供）。历史深史 2019 前本席未实测，禁据 20190630 单点外推。"
     impact: "业绩预告／快报是 PEAD、业绩预增催化剂、一致预期修正族的近端腿；两表停在 2026-07-03＝以近端为 OOS 的考卷拿不到 2026-07-04 之后事件面，且无改判时下季（2027-01 年报预告）会再空转一次。"
+    created: "2026-10-15"
+    last_updated: "2026-10-15"
+
+  # === 2026-10-15 17:3x: ①数据源席 st-qoder-p01-1015-12 大宗交易两表（深史未回补 + 同物异单位分裂）===
+  - id: "block_trade_depth_and_unit_split"
+    table: "c1_market.block_trade"
+    gap_type: "date_range"
+    start_date: "2010-01-04"
+    end_date: "2026-08-06"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "open"
+    root_cause: "①席 p01-12 实测：本库两张大宗表按年只有 2026 年（block_trade 1,706 行／block_trade_detail 1,878 行，by-year 查询无更早年份），2010-01-04..2026-08-06 从未回补；而源侧免费可得（tushare pro.block_trade 既有 token 即可，官方 doc_id=161 载 300 积分可调、单次≤1000 条、可按日循环）。同批发现两表是**同物异单位**而非异源：block_trade=元/股（同票同日与 akshare stock_dzjy_mrmx 原值逐位同），block_trade_detail=万元/万股（与 tushare block_trade 原值逐位同），恰差 10^4；且 block_trade 逐笔、block_trade_detail 按票日聚合（000656 单行=源侧 6 笔之和，逐值可复）。"
+    evidence: "CH 严格读 query_rows 只读：block_trade 10-14 三票=(3.67,600000,2202000,ifind)/(7.27,1400000,10178000,ifind)/(1.03,5000000,5150000,ifind)；block_trade_detail 10-14 同三票=(60,220.2)/(140,1017.8)/(3550,3656.5)。源侧真跑 tushare pro.block_trade(trade_date=20261014)=93 行逐笔（000656.SZ 六笔 500/300/500/300/300/1650 万股＝3550、515/309/515/309/309/1699.5 万元＝3656.5）＝detail 聚合值逐值复现。深史四断面 20100111=23／20150105=65／20190104=209／20240815=120 行；akshare stock_dzjy_mrtj 2010 窗=109 行、2019 窗=562 行。全表内部一致性 block_trade 1706/1706、block_trade_detail 1683/1878（195 行=10.4% 聚合行 amount≠price×volume，本席不判因）。探针件 .runtime/tmp/p01_12_probe1.py／probe2.py。"
+    impact: "楼8 大宗折价轴与卡07/卡08 若按表名取 amount 直接比大小，会因 10^4 单位差把两表结论差四个数量级；④席 p04-06 第3条据此判“两表不同源”属可纠正的口径误读。深史缺失使大宗折价在 2019 考试窗内零样本（门槛⑤不可达）。"
+    resolution_plan: "①席判＝可免费回补＋可常设（零现金），出建设单 B-23（含续供确认四问）。②施工动作＝单位写进列注释与数据资产册、两表禁混算折价率、深史 2010-01-04 起按 data_source 分轨回补、detail 表 195 行不一致先定标。净零声明＝本条为新建，与在册 sector_fund_flow_depth_cap_no_free_backfill（板块资金流）／B-13 margin_trading／B-14 dragon_tiger 同属楼8 普查族但**对象各不同，按 AGENTS §4.1 跨域不同对象不并**；本席未翻任何旧条目 status，退役属 Owner 门（轨 B）。"
     created: "2026-10-15"
     last_updated: "2026-10-15"
 
