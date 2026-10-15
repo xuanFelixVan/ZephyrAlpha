@@ -794,3 +794,21 @@ title: ⑥制卡席·findings台账
 - **R1（门柱与冻结值逐字一致＋单变量核对）**：①收编卡 08＝**12 项门柱尺全 CLEAN**（对 `git show HEAD:A01/03` 逐面 parsed 全等：window 含 regimes/frozen_note 全字段・pillars_numeric 整块且键集相等・buckets.type+min_obs_per_bucket・discipline・signal_kind・target.primary/secondary・data_binding.target_source；自判项：`oos_window_ref==本卡 window.oos`・无 `generated`・`buckets.on` 不含数值）＋**10 项 verbatim 尺全等**（③席 CSV 行 definition_zh/sample_window/example_value/orthogonal_gate_note/data_source_table＋037 三面＋038 两面）；尺＝`.runtime/tmp/p06_1015_09/`（正文两列读数可原样复跑）。②23 张补键件逐件 difflib＝plus=1・minus=0・加行前缀 `+oos_window_ref:`（DIRTY=0）。③2 张撤键件＝plus=3・minus=1・九冻结面 parsed 全等・两枚被令键计数 0。④**对照卡 diff 项＝本班 N/A（如实记不记绿）**：领用面零新 [对照] 申请（⑨p09-09 §3 明书零新开），在册未销扩面 4 行承 06 班 OD-15 追加面不重复领，故无 champion/challenger 可 diff。⑤**零张裸骨架卡被本席自行填死**＝骨架 empty 面 186 件本班零写入（R2 卡池状态面反证）。
 - **R2（归属·净零·保底·进程外核实）**：①卡池件数 550→**550**（本班零新建文件，收编件由未跟踪转跟踪）；状态面 preregistered 177／empty 186／blocked_on_data 71／blocked_on_impl 45／examined 71（本班盘面读数，四态变动全为承接与翻态面：07b preregistered→examined 1・A17/02 blocked_on_data→preregistered 1，均为上班已写盘面、本班只落地）；②本班 commit 触及文件 46 件全部 `lock_files.py acquire-batch` 实测 **acquired=46 denied=0**（走 `--skip-naming-check` 在册逃生口，理由＝新卡名沿用同族 `TDM-E-*__calibration__NN_*` 体例供⑦⑧与⑨ card_id↔文件名互推消费）；③会话＝`SessionRegistry().register(st-qoder-p06-1015-09, pid=0, held_files=46)` 实测 `get_session` 转真，心跳守护 pid=49864（首跑 `_spawn_heartbeat_daemon` 传 str 报 `TypeError` ⇒ 按签名 `root: Path` 改传 Path 成）；④台账追加走 `safe_write_text` CAS＋**纯前缀断言**（删除集=空、写后进程外读回）；⑤热册照在册口径不随袋（投影册／生命周期图／ruling_registry 一字未动）；⑥净零＝零新 gate・零新规则册・零新注册表・零脚本入册（分诊与核验尺留 `.runtime/tmp/p06_1015_09/`）；呈批 2 件均为**新立**，OD-26/OD-15 只追加复测行不新开同义号；⑦保底＝领用面 **100% 处置**（③席 6/6・⑩三件三处置・⑨ [对照] 面 0 领＋P-6 未触条件不抢跑・②席 1 段登记・骨架 186 按在册停手・自家死信 8/8 内容级分诊），卡面动作 44 件（19 收编跟踪＋23 补键＋2 撤键翻态）。
 - **本班实际耗时**：开班 reaper 首读 15:30:57 → 本段落笔 `date` 实测 **16:17:33** ＝**46.6 分钟**（超 SOP 3-B 估 20 分一倍以上；主因两条如实入账＝自家死信 8 枚逐件三面对拍＋非在册键归口需先证"册不存在"才敢撤）。
+
+### 更正块（同班追加，旧案卷不删）· 16:41 · st-qoder-p06-1015-09
+
+**本节改一处本册自报为假的句子，不动任何判据面。** 上文「本班成袋＝46 件」与游标里的"整面推正门"字样按实跑结果更正如下（落笔时按"一袋 46 件"写的，实测被正门拒）：
+
+1. **拆袋实况（QueueReject 原文）**：首次 `--enqueue` 投 46 件，正门报 `单批 46 文件超上限 40（R2 大批硬顶）：请拆分为多个语义批次入队（失败早暴露不互相拖累）；确属原子大批用 --allow-oversize-batch`。本班**未加 `--allow-oversize-batch` 绕行**，按在册处方拆语义两袋、拆前实测件面零交集且 23+23=46 加总相等（尺 `.runtime/tmp/p06_1015_09/bagA.txt`／`bagB.txt`）：
+   - `q-20261015-st-qoder-p06-1015-09-0001`＝23 件＝19 张未跟踪具名卡收编＋2 张撤非在册键翻态件＋本台账＋游标；
+   - `q-20261015-st-qoder-p06-1015-09-0002`＝23 件＝补键件面。
+   两袋各 `ENQUEUED` 成功，`--adopt-prior-work --allow-non-worktree` 全程带（认领死班工作区面并留审计）。
+2. **同会话多袋的在册风险如实摊开**：本席指令卡与根宪法 §2第6条口径＝"一值守一袋"，本班成两袋的唯一因由是队列硬顶而非本班贪多；两袋件面零交集（脚本断言），故不触发"同件后袋吞前袋"形态，但**台账件在两袋中只属 0001**——本节即 0001 版的严格超集，由第三节袋 `0003` 承接（若下班见 0001/0003 撞面，按在册"后袋须为前袋严格超集"读，勿判本班自撞）。
+3. **骨架卡退回单本班未开**（工序 2 的落 `feedback/to_miners.md` 动作）：理由＝停手口径已在册生效（③席 p03-05 游标自报"033 待⑤席物化＋⑥席成卡，本席无新骨可产"，且本班实测具名 empty=0），再投退回单＝给同一事实派第二张工；⑩第七单 §6「⑥」行末栏亦明书"empty 186 全 generated 不再领"。
+4. **本班收尾前实测进程外面**：`python scripts/commit_queue.py status --session st-qoder-p06-1015-09` 实跑读数＝total 2・`-0001` **processing**（created_at 16:37:43）・`-0002` **pending**（created_at 16:38:39・position_ahead 0）・lease holder_pid=41936 alive=true；同分钟 `git ls-files --others` 复量＝19 张收编卡仍未跟踪（落地由传送带异步完成，本班不轮询等待、更不据此自宣落地）；锁面 46/46 已被 `ENQUEUE-RENEW` 续租 ttl=7200s；心跳守护 pid=49864 存活。
+
+### 收班补记 · 16:50 · st-qoder-p06-1015-09（三条终验读数，全部本班进程外实测）
+
+1. **本班实际耗时改终值**：开班 reaper 首读 15:30:57 → 收班 16:50（`date` 实测）＝**79 分钟**（上文 46.6 分只是首段落笔时刻，SOP 3-B 估 20 分＝偏差 +295%；三条增量如实入账＝自家 8 枚死信逐件三面对拍、非在册键归口须先证「册不存在」、46 件超硬顶后的拆袋与严格超集补投）。
+2. **袋字节↔盘面逐件对拍终验**：本班三袋共 48 件次，blob 与盘面字节**相等 46 件・不等 2 件**，且不等两件恰是 -0001 内的台账与游标（＝预更正版，由 -0003 以严格超集承接，非丢失）；-0001・-0002 均 state=processing・-0003 pending。本班不自宣落地，判据只认此对拍表。
+3. **骨架零填铁律的反证尺**：以 mtime>15:30 为谓词扫全卡池＝本班值守内被任何进程触及的卡 6 件，其 status 逐件实测为 preregistered/examined（**无一为 empty**），其中 2 件是本席撤键件（A17/02・07b），另 4 件（L2-04/02・L9-A01/02・P2-04/06・P2-04/07）属考工席值守内推进（与 OD-30 同链）⇒ 上文 R2「零张裸骨架卡被本席填死」由 mtime+status 双谓词独立成立，不靠本席自述。
