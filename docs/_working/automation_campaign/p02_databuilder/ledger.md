@@ -628,3 +628,97 @@ WHOLE [(21792, datetime.date(2005, 1, 4), datetime.date(2026, 10, 14))]
 ⚑**降级直改主区投袋原因登记（RULE-WORKTREE 显式申请制留痕）**：本班 DB 写与 CH 取证只能在宿主侧跑（CH 访问口与 akshare 频控额度都在宿主），且产物只有本席两件活文档；同型判例＝1015-01..07 七班同路。
 
 `P02-1015-08-ENDSTATE`（本班终态独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1015-08-ENDSTATE"`）
+
+---
+
+## 2026-10-15 19:3x · st-qoder-p02-1015-09 · **B-25 上交所官方 IV/Greeks 腿深史入库 256,434 行（`c1_market.option_iv_surface` 左端 2026-01-29 → 2019-01-02，表 FINAL 31,427 → 287,861）**＋A/M 两约一键塌缩新雷＋本班三枚自犯
+
+进场 `date` 实测 **18:50:18**，写账时 **19:3x**（下方逐件读数均为现测；本班耗时按"采集 22 分／入库与验收 3 分／取证与写账余量"分账，不拿体感当数——见件⑥自犯①）。
+
+### 建设单接收判定（工序 1）
+
+①席 1015-13 班（18:16）两张：**B-25**（期权 IV/Greeks，表 `c1_market.option_iv_surface`＋`option_greeks`）与 **B-26**（ETF 日线深史，表 `kline_etf_daily`）。两张**均带「续供确认」四问栏**⇒ 接收，不拒收。本班落 **B-25**，**B-26 本班不接**（承重证据＝B-26 施工动作 (a) 要求"回补 2019-01-04..2026-06 全宇宙"，其宇宙口径栏自陈 `pro.fund_basic(market_type='E')` 真跑 **15,000 行**、逐票调用规模 **约 1,696 次**，且 ①席自陈"本席只测 1 票，未估总耗时与 tushare 当日限频/单次上限"⇒ 规模未定标的长批不能压进 60 分硬窗；另 (b) 条 `volume` 单位定标是 B-23 同族前置，未定标即写＝把 10^4 型分裂再演一次）。本班据 B-26 判"排产须先做规模标定"，转单见末段。
+
+### 件①＝B-25 落地＝官方腿 `ak.option_risk_indicator_sse` 深史 256,434 行入 `c1_market.option_iv_surface`（本班保底，已写库并逐位验收）
+
+- **写集分两基**（同一 `data_source='sse_official'` 词表新轨，不与他轨混面）：
+  - **C 基**（`p02_b25_rows_c_1015_09.tsv.gz`，sha16 `61f908d7184a0059`，1,279,464 B）＝**2025 下半年整段＋四断面**：calls=136、keys=**77,214**、日=**130**（2025-07..12 共 126 日＋20190102／20210104／20230103／20240816）。空/错=6 日＝`20251001..20251008` 国庆中秋窗，形态＝akshare 抛 `KeyError "None of [Index(['TRADE_DATE','SECURITY_ID','CONTRACT_ID',..."`（＝①席"20261015 空帧"同形，非网络故障）。
+  - **B 基**（`p02_b25_rows_b_1015_09.tsv.gz`，sha16 `400b0fa83a9073c8`，2,982,189 B）＝**2019 与 2024 两个整年**：calls=523、源行求和 179,900、键去重后 rows=**179,900**、日=**486**（2019=244／2024=242＝与 `kline_daily` 该年 `uniqExact(trade_date)` 244/242 逐值相等⇒**采集完整度正对照成立**）、uniq symbol=3,308、`key_collisions`＝**740 行被键去重丢弃**（见件③）。空/错=37 日全为节假日（样例 20190101／20190204-08／20190405／20190501-03／20190607／20190913），同一 `KeyError` 形态。
+- **入库**＝`zephyr.data.ch_writer.write_tsv_outcome` 正门，按年切块（C 基 5 块／B 基 2 块），**7 块全 `disposition=ch_committed detail=http`**，每块分区 ≤12（2025＝6 个月分区、2019/2024＝12）。
+- **两道前置闸（写前实测，非推断）**：`P0 键互斥`＝写集日期窗 [2019-01-02, 2025-12-31] 内 `data_source != 'sse_official'` 既有行数＝**0**（两轨全在 2026 ⇒ 无版本列也不塌缩，谓词不满足即 `sys.exit(3)` 拒写）；`P0b 幂等`＝第二次提交时库内 `sse_official` 既有键 77,214，跳过 **680** 行＝154（2019-01-02）＋526（2024-08-16）两断面**逐值对得上**⇒ 幂等形制成立，实际写 179,220。
+- **逐位终验**（两基各自跑一次，判据＝9 列字符串同形对拍：symbol/iv/delta/gamma/theta/vega 全 `%.6f`、strike `%.4f`、日期 `YYYY-MM-DD`）：C 基 `base_keys=77,214 FINAL_after=77,214 missing=0 mismatch=0 extra=0 dup_raw=0`；B 基 `base_keys=179,220 missing=0 mismatch=0 dup_raw=0`（`extra_not_from_base=77,214`＝读回谓词取的是**全部** `sse_official` 行，含上一基，属预期非异常）。负对照＝移位配对失配 **77,213/77,213** 与 **179,219/179,219**（尺能红）。回退谓词 `data_source='sse_official' AND ingest_ts >= W0`：C 基 W0=UTC `2026-10-15 11:25:39` 写前 **0**／写后 **77,214**；B 基 W0=UTC `11:26:51` 写前 **0**／写后 **179,220**——**本班未执行回退**。
+- **表终态**（现读）：`raw 287,861 == FINAL 287,861 == uniqExact((underlying,trade_date,strike,expiry,option_type)) 287,861` ⇒ **全表零键塌缩**；`min(trade_date)` **2026-01-29 → 2019-01-02**（左端推深 7 年）、FINAL 总量 **31,427 → 287,861**；官方轨自身＝**5 个标的**（`510050/510300/510500/588000/588080`.SH）、5,530 个合约、**614 个交易日**、按年 2019=34,902／2021=242／2023=360／2024=144,998／2025=75,932。
+- **①席四条验收判据逐条交账**：①`delta=0` 占比按腿现读＝**sse_official 2,666/256,434＝1.04%**（对照 miniqmt 29,423/29,423＝100%、akshare_sina 667/2,004＝33.28%）⇒ "官方腿段应≈0" 达成；②四断面 CH 现读 **2019-01-02=154／2021-01-04=242／2023-01-03=360／2024-08-16=526**，与①席源侧实测 166/242/360/526 **三值逐位相等、一值差 12 行**（差额原因见件③，非漏采）；③**右端距开班日 ≤1 交易日＝本班未达且判不可由回补达成**（见件③，须先改表）；④`option_type=''` 官方轨＝**0**（对照 miniqmt 轨 24,811 行仍在，非本班对象）。
+
+### 件②＝键映射定标（官方腿不含四把键列，先证映射再做写集；正对照成立才放量）
+
+官方帧列面实测＝`TRADE_DATE/SECURITY_ID/CONTRACT_ID/CONTRACT_SYMBOL/DELTA_VALUE/THETA_VALUE/GAMMA_VALUE/VEGA_VALUE/RHO_VALUE/IMPLC_VOLATLTY`，**不含 `underlying/strike/expiry/option_type`**，而本表 `ORDER BY (underlying, trade_date, strike, expiry, option_type)` 恰好就这四列 ⇒ 必须先定映射。本班给的处方与证据：
+- `underlying`←`CONTRACT_ID` 前 6 位＋`.SH`；`option_type`←第 7 位 `C/P`；`expiry`←第 8-11 位 `YYMM` 的**第四个星期三**（SSE ETF 期权到期规则）；`symbol`←`SECURITY_ID`（8 位数字，与两轨现库 `symbol` 同一身份空间，实测 20261014 官方帧 `SECURITY_ID` 在库内可命中）；`exchange`='SHO'（与现库两轨同值）；`quality_flag`=1（**不新造语义**，见件⑤）。
+- **行权价有两把尺**：`CONTRACT_ID` 尾 5 位＝**原始**行权价，`CONTRACT_SYMBOL` 尾数字＝**调整后**行权价。实测：`adj='M'`（未调整）两把尺**逐值相等（0 处分歧）**；`adj='A'`（除权调整）两把尺不等 ⇒ 取符号名侧（真值）。
+- **正对照（决定性一条）**：拿 2026-10-14 官方帧 628 行与库内 `akshare_sina` 轨同日 100 行按 `SECURITY_ID=symbol` 求交＝**交集 100/100**，四把键列 `(underlying, strike, expiry, option_type)` **不一致行数=0**；库内 symbol 在官方帧缺失＝0 ⇒ 映射与在产腿同语义。
+- **单位定标（B-23 的 10^4 教训前置自查）**：官方 `IMPLC_VOLATLTY` 实测为**小数**（20150209 断面 0.285..0.396、近端 0.115..0.548），与库内 `iv` 同单位（sina 轨 0.003983..1.020906、miniqmt 轨 0.034957..2.237683）⇒ **无 10^4 型分裂，直接同列混存安全**。逐合约偏差：`iv` 中位绝对偏差 **0.001668**、`delta` **0.001662**，`iv` 偏差>0.02 仅 **4/100**（最大 0.108＝官方公布值与 sina 腿 BS 反解算法差，非单位差）。
+- **一列无处安放**：官方腿含 `RHO_VALUE` 而本表**无 rho 列**（`DESCRIBE TABLE` 现读 16 列，无 rho）⇒ 本班**丢弃该列不入库**，不擅自 ALTER 加列（改表属⑤/Owner 门，同件③）；官方腿非零覆盖实测 20261014 RHO 503/526。
+
+### 件③＝新雷（一键两约塌缩＋无版本列⇒判据③结构上不可由回补达成；改表属⑤/Owner 门，本席不重建表）
+
+`c1_market.option_iv_surface`＝`ENGINE=ReplacingMergeTree`（**括号内无版本列**）`ORDER BY (underlying, trade_date, strike, expiry, option_type)`。同一交易日内**除权调整合约（A）与被除权后新挂牌的原始合约（M）行权价会相等**⇒ 两笔**不同 `SECURITY_ID` 的真实合约落进同一排序键**，FINAL 只留一笔。单例可复现（本班源侧现测）：
+- 2025-01-06：`10008481 / 510050C2501A02500 / 50ETF购1月2450A`（原始 2.500→调整后 2.450）与 `10008673 / 510050C2501M02450 / 50ETF购1月2450`（原始即 2.450）同键；同日同类共 6 组。
+- 2019-03-15：`10001419`（A，2.500→2.450）与 `10001583`（M，2.450）同键，当日 8/188 行塌缩（4.3%）。
+- **面积计量（本班写集按"键唯一保留"处置，丢弃数逐基在册）**：B 基 `key_collisions=740` 行；C 基仅 20190102 一日出现 12 行（该日源侧 166→入库 154，与件①判据②差额**逐值互证**）。⇒ **本班入库面 256,434 行之外，源侧另有约 752 行因键形制装不下而未入库（申报为缺测，非漏采）**。
+- **连带判定＝①席验收判据③（右端距开班日 ≤1 交易日）本班不可达成**：2026-09-17..10-14 段现库由 `akshare_sina` 轨占据（该窗现读 1,291 行／14 日／236 合约，`miniqmt` 轨右端冻在 2026-09-16），而本表无版本列⇒官方腿若写该窗＝与在产腿**同键互吃**（08 班 B-23 逐笔面"先⑤改表再回补"同型判例，非新裁）。⇒ 本班写集右界停在 **2025-12-31**，把"改键含合约身份＋加版本列"转⑤。
+- 顺带复证一条在册形态（不新裁，只补样本）：`quality_flag` 官方轨亦恒 1（表列 `DEFAULT 1`），全表现读仍**唯一值 1**＝在册"死列"族新增一枚样本；本班**不擅自写 0** 来"区分"（判据变更属⑥/⑤面）。
+
+### 件④＝①席"三列恒 0 属落库缺陷"定性给到机制级（本班读码＋现读双证，不改码）
+
+`src/zephyr/data/implementations/miniqmt_provider.py:8` 的 `[INVARIANTS]` 原文载明：`option_iv_surface` 的 columns 清单 **MUST 声明 delta/gamma/theta/vega（未声明=被 BufferedWriter 列过滤丢弃→恒为 DDL DEFAULT 0 的静默零，SVX-1-P0）**。与本班现读同向：`miniqmt` 轨 `delta/gamma/theta/vega` **四列 0 值行数＝29,423＝该轨 100%**，而同终端在姊妹表 `option_greeks` 的 miniqmt 轨 `delta=0` 仅 7/3,721（①席读数，本班按腿复量同向）⇒ **源算得出、列没落**＝落库缺陷成立；本班官方腿 1.04% 给出第三向证据（同一列位、换写者即有值）。**处置边界**：修写者列声明/回填该轨属⑤，退役该三列属 Owner 门（轨 B），本班只做"读数＋定性＋转单"。
+
+### 件⑤＝B-15 冷归档挂回四道前置复量（本班仍不起批）
+
+①`commit_pct`＝进场（18:50:53 实测）**94.5**／复测（19:05:30）**91.94**，两测均 ≥70 且 `degraded=True`＋`breached=['ALERT-SYS-001','ALERT-SYS-003']`＋`cpu_pct` 99.3 ⇒ **不起批**（05→09 五班＝92.07→94.03→87.31→93.17→91.94，同档未缓解）；②队列＝`pending 20 / processing 2 / done 806 / dead 320`（本班 19:05 现读，head=`q-20261015-st-autoplan-20261015-0016`）；③分块铁律＝本班第三次实操验证（2019/2024 各 12 分区、2025 单块 6 分区全 `ch_committed`）够用；④归档器并发闸＝`F:/zephyr_cold/50_archive/by_project/zephyralpha/archive_manifest.jsonl` mtime **2026-10-15 12:31:06**／789,332 B，本班 19:05 复量＝**394.3 分钟无追加**（08 班 5h22m→本班 6h34m，闸仍解除）。tick 腿 201 GiB 超盘余仍属 Owner 门，本班不代裁。
+
+### 件⑥＝本班三枚自犯（另起留旧案，不改写上文结论）
+
+1. **体感钟再前移（在册形态第 N 次）**：本班 19:05 时心里已估"约 19:30、窗口将尽"，`date` 现测＝**19:05:30**，实际只过 15 分钟 ⇒ 一切"耗时/超窗"叙述落笔前现测，本段即为处方第二次自证。
+2. **热册非 CAS 整档重写（自犯，且比 08 班更重）**：给 `data/runtime/process_reaper_keep.txt` 追加第二枚令牌时，本班用了 `write_text("\n".join(非空行))` ⇒ **删掉了 3 个空行**（407→405）。后果面：解析器 `_load_keep_patterns()` 本就 `if line and not line.startswith("#")` 跳空行（`src/zephyr/trading/process_reaper.py:296-297` 现读），**内容面零损失**；但整档重写＝并发窗口内可静默蒸发他班行（在册热册蒸发判例同族）。⇒ **第二枚起本班改纯追加 `open('a')`，并自证 `lines_before == lines_after[:len(lines_before)]` 前缀相等**；另本班如实申报：本班**无法自证**首读快照（404/407 行）里 `st-qoder-p08-1015-06` 是否已不存在（本班现读该令牌查无，首读快照未留字节副本），故不据此判任何班。
+3. **采集脚本"末尾才落基"＝一次 13 万行全损**：首基（2025 全年＋四断面，日志末读 calls=240／rows=129,370）在 ~19:10-19:12 之间**静默消失**——日志无 traceback、无 DONE 行、基底文件未生成、`psutil` 查无该进程 ⇒ 属**被外部终止**而非崩溃；本机当时 `commit_pct 91.94／cpu 99.3／degraded=True` 且本班刻意并行两基，**死因未定**（reaper 与提交内存耗尽两条候选本班都拿不出直接证据，`lock_files.py cleanup` 与 `process_reaper --status` 均 dry-run，故不指认）。⇒ 处方落成机制而非口号：**采集必须按月落盘＋可续传**（第三基 `p02_b25_collect_c_1015_09.py` 即按此重写，跑完 136 调用 224 秒、六次 FLUSH 各带 sha16），第二基（分离进程）反而活着跑完＝**"分离后台"不是安全形态，"分段落盘"才是**；起批规模前先读 CommitAvail（在册 `qwen7b-merge-save-ram-ceiling-20261012` 同款判据）。
+
+### 交付复核命令（正文原样可跑；"本班实跑读数"＝19:2x 字面输出非脑估）
+
+| # | 命令（在 `D:\ZephyrAlpha`，先按宪法 §RULE-ENV 置 PATH） | 本班实跑读数 |
+|---|---|---|
+| 1 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.infrastructure.database_service import DatabaseService as D;c=D().get_clickhouse_conn();T='c1_market.option_iv_surface';print(c.execute(f'SELECT count() FROM {T}')[0][0],c.execute(f'SELECT count() FROM {T} FINAL')[0][0],c.execute(f'SELECT uniqExact((underlying,trade_date,strike,expiry,option_type)) FROM {T}')[0][0])"` | `287861 287861 287861`（三值相等＝全表零塌缩） |
+| 2 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.infrastructure.database_service import DatabaseService as D;c=D().get_clickhouse_conn();print(c.execute(\"SELECT data_source,count(),uniqExact(trade_date),min(trade_date),max(trade_date) FROM c1_market.option_iv_surface FINAL GROUP BY data_source ORDER BY data_source\"))"` | `[('akshare_sina',2004,29,Date(2026,8,14),Date(2026,10,14)),('miniqmt',29423,133,Date(2026,1,29),Date(2026,9,16)),('sse_official',256434,614,Date(2019,1,2),Date(2025,12,31))]` |
+| 3 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.infrastructure.database_service import DatabaseService as D;c=D().get_clickhouse_conn();print(c.execute(\"SELECT data_source,count(),countIf(delta=0),round(100*countIf(delta=0)/count(),2) FROM c1_market.option_iv_surface FINAL GROUP BY data_source ORDER BY data_source\"))"` | `[('akshare_sina',2004,667,33.28),('miniqmt',29423,29423,100.0),('sse_official',256434,2666,1.04)]`（判据①） |
+| 4 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.infrastructure.database_service import DatabaseService as D;c=D().get_clickhouse_conn();print(c.execute(\"SELECT trade_date,count() FROM c1_market.option_iv_surface FINAL WHERE data_source='sse_official' AND trade_date IN ('2019-01-02','2021-01-04','2023-01-03','2024-08-16') GROUP BY trade_date ORDER BY trade_date\"))"` | `[(2019-01-02,154),(2021-01-04,242),(2023-01-03,360),(2024-08-16,526)]`（判据②；2019 差 12＝件③键塌缩） |
+| 5 | `python -c "import sys,gzip;rows=[l.split('\\t') for l in gzip.open('.runtime/tmp/p02_b25_rows_c_1015_09.tsv.gz','rt',encoding='utf-8')];print(len(rows),len({(r[2],r[0],r[3],r[4],r[5]) for r in rows}))"` | `77214 77214`（基底行数＝键数，写集自身无塌缩） |
+| 6 | `python .runtime/tmp/p02_b25_commit_1015_09.py`（**不带 `P02_COMMIT`＝干跑**） | 末行 `DRY-RUN（未写库）rows= ... distinct 日= ...`；重复执行现读 `IDEMPOTENT-NOOP: 本基全部键已在库，零写入退出`（幂等自证） |
+| 7 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.infrastructure.database_service import DatabaseService as D;c=D().get_clickhouse_conn();print(c.execute(\"SELECT count() FROM c1_market.option_iv_surface WHERE data_source='sse_official' AND ingest_ts >= '2026-10-15 11:25:39'\")[0][0], c.execute(\"SELECT count() FROM c1_market.option_iv_surface WHERE data_source='sse_official' AND ingest_ts >= '2026-10-15 11:26:51'\")[0][0])"` | `77214 179220`（两道回退谓词命中面，**本班未执行回退**） |
+| 8 | `grep -n "INVARIANTS" src/zephyr/data/implementations/miniqmt_provider.py | head -2` | 命中 `:8`，原文含"未声明=被 BufferedWriter 列过滤丢弃→恒为 DDL DEFAULT 0 的静默零，SVX-1-P0"（件④读码位） |
+
+⚑ 本表 #8 是**管道**命令：若前置命令零命中则后段 `head` 收空而非报错，读数为空须先单独跑 `grep -c` 判"尺没命中"还是"命令坏了"（在册 `&&`/管道假无源形态）。#1–#7 本班逐字实跑。
+
+### 完工自检（两轮）
+
+- **第一轮（结构）**：本文件 `##/###` 标题计数写账前 **75**、写账后现读 **87**（本班新增 1 个 `##` 段＋11 个 `###` 子段＝12，加总自证）；`P02-1015-09` 在本文件出现 2 次（段标题＋ENDSTATE），`P02-1015-08-ENDSTATE` 行仍在（上班游标行未被吃）；`git diff --numstat HEAD` 现读 **94 insertions / 0 deletions＝纯追加**。⚑**本班自犯第 4 枚（同段抓出，不另起班）**：本行首版写的是"75→83（1 个 ##＋7 个 ###）"＝**我又先写数后量数**，量得 87 后改正；另本班进场时 HEAD 尚是 `16d46544af`，写账期间 08 班第二袋 `9d94f57219`（纯修正件）落地⇒上班"删除集"基线已变，本班 `deletions=0` 是对**新 HEAD** 现读，勿与 08 班那句"对 1015-07 袋单调超集"混读。
+- **第二轮（数值互证）**：①件①"跳过 680"＝件②断面 154＋526 逐值相加 ✓；②件①表 FINAL 287,861＝2,004＋29,423＋256,434 ✓；③件③"约 752 行未入库"＝B 基 740＋C 基 12 ✓；④件①判据② 2019 差 12 与 C 基日志"20190102 键塌缩丢弃 12/166" ✓；⑤件⑤四闸读数全部带现测时间戳（18:50:53／19:05:30／19:05 清单 mtime 差 394.3 分）。零处用上班数值当代测。
+- **两处如实留白**：①官方腿 `uniqExact(underlying)=5` 是**全窗 614 日合并值**，本班未逐年分面（2019 段实测标的数少于近端，见 20230103 三标的样例）；②本班未测 `2015-02-09..2018-12-31` 段（①席只给断面），不据其外推"左端可到 2015"。
+
+### 本班排产与下班待办（修订 1015-08 §下一班待办序）
+
+1. **B-25 续深＝只差调用规模，不需再定标**：写集形制/映射/单位/幂等全部本班落定，下一手补 `2020／2021(除 01-04)／2022／2023(除 01-03)／2024 已全／2025-H1` 五段，约 1,200 日×1.5 秒＝**30 分钟采集**（须按月落盘＋`P02_BASES` 多基分次提交，P0b 幂等闸已备）；同形制顺手写姊妹表 `option_greeks`（现读仅 `akshare_sina 2,218`／`miniqmt 3,721`，2026-08 起，同属 2019 前空窗）。
+2. **B-26 先做规模标定再排产**（本班不接的理由见"建设单接收判定"）。
+3. **B-19 词表分叉仍待①/Owner 一字裁**（折"其他" vs 新增增亏/减亏两枚举），本班未重测、不自决。
+4. **B-16** 跨日后方可再投 `pro.report_rc`（10 次/日额度，05 班用尽）。**B-15** 第一闸仍挡道（件⑤）。**B-1/B-2/B-9** 仍等 Owner"建腿 vs 退役"裁。**B-20/B-21**＝⑩派⑤施工面。
+5. **本班不翻任何 status、不写 `unblocked.md`**：`known_data_gaps.yaml` 工作区面 ` M`（①席在写）；在册条目 `option_iv_greeks_leg_stale_and_official_sse_source` 现值 `status: "open"`（本班只读该条，未改）。第四查**不过**＝官方腿 `ak.option_risk_indicator_sse` **无在册调度**（`tasks.yaml:971 option_iv_surface_incremental` 仍挂 `source: miniqmt / schedule: intraday_realtime`，本班现读该行未改），按 SOP"该源采集调度在册且常设才准翻 completed"⇒ 须⑤把腿改挂官方源并登记调度，本班回补只算一次性深史。
+
+### 转单（本席全文，交⑩汇总到 `feedback/unblocked.md`）
+
+- **→⑤（三件，含一行码与一次改表）**：(a) `tasks.yaml:971` 期权 IV 腿的 `source: miniqmt` 改挂 `ak.option_risk_indicator_sse(date=)`、按 `data_source` 分轨（现 `miniqmt`／`akshare_sina`／`sse_official` 三轨禁混面）＋每日行数下限（近端量级 614-694，<30% 报红，禁 0 行 SUCCESS）；(b) `c1_market.option_iv_surface` 改表＝**排序键加合约身份（`symbol` 或 `deal_no`）＋加版本列**，否则 A/M 两约静默塌一手、且右端窗永远进不去（件③）；(c) miniqmt 轨 `delta/gamma/theta/vega` 恒 0 的列声明缺失按 `miniqmt_provider.py:8` INVARIANTS 自查回填或退役该四列（件④）。
+- **→⑨/⑥（判据面）**：官方腿覆盖＝**沪市 5 只 ETF 期权、5,530 合约、2019-01-02..2025-12-31 共 614 日**，深市与中金所无官方 IV/Greeks 接口（①席 dir() 穷举 65 名）⇒ 楼8 隐含轴可用面按此申报，禁按"全史 2015 起"声称；`option_type=''` 24,811 行与 `quality_flag` 恒 1 属旧轨，卡面若按 quality_flag 过滤会整片失灵。
+- **→④（单位与列形制）**：官方腿 `iv/delta/gamma/theta/vega` 为**三位小数公布值**（非 BS 反解），与库内 6 位列形制兼容但**末位不可比**；`RHO` 无处存放（表无该列）。
+- **→⑩（红线面，本席无权限动作）**：本班未动 `to_builder.md`／`unblocked.md`／`known_data_gaps.yaml`／治理图五族任何跨席共写面；新建件仅 `.runtime/tmp/` 临时脚本（`[TTL] task_bound`，24h 自清）。
+
+**[BLOCKER] 2026-10-15 19:3x｜②数据建设席 1015-09｜工具/进程｜`psutil` 查无 `p02_b25_collect_1015_09.py`（129,370 行基底未生成、日志无 traceback）；对照证据＝同机分离进程 `p02_b25_collect_b_1015_09.py` 于 19:21 正常 DONE｜要谁做什么＝请⑤/统筹判一条"长批分离进程被静默终止"的可查面（reaper 执法日志或提交内存 OOM 出口），本席已改用按月落盘绕行｜严重度＝中（不挡本班交付，挡后续 1,200 日规模批）**
+
+`P02-1015-09-ENDSTATE`（本班终态独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1015-09-ENDSTATE"`）
+
