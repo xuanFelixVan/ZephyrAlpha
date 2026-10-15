@@ -389,3 +389,126 @@ python -c "import glob,os,json,datetime;c=datetime.datetime(2026,10,15,18,12).ti
 另两枚终态硬读数：④**分数册三面＝盘 104 行／index 97 行／HEAD 该馆 0 件**（mtime 19:26:44）＝呈批第 12 项不但仍开还在恶化（盘-册差 7 行、整馆自始未进过 HEAD）；⑤队列终态＝pending 24／processing 3／done 812／dead 334（目录条目法）＝本班值守内 done 797→812（＋15 袋落地）、dead 311→334，其中本班自家四袋沿革＝0001/0002 死、0004/0005 **done**（后者 19:52:34 落地，五件盘面==HEAD 面逐件 MATCH）。
 
 <!-- P10-1015-10-LEDGER10 -->
+
+### 11 本班实耗终账（对 §1 那句"18:10→18:4x"的补正，旧句留卷）
+
+§1 表内只记到"写盘三件耗 16 分 45 秒（18:10:15→18:26:40）＝25 分钟内交可读单达标"——那半句成立且不变（第九单正文 18:26 已可读可派）。**本班全程实耗＝18:10:15 起手 → 20:1x 收班 ≈ 120 分钟**，超出部分的分账如下（date 实测锚点）：**可读单后追加的账＝写盘后复量与改判 4 枚节（§7/§8/§10/§11）**；**自家袋三死一活的账＝18:43 首投被拦→18:55 死→18:58 熔断拒→18:59 强投→19:02 再死→19:06 SNAPSHOT-DRIFT 拒→19:07 三投→19:32 done（0004 在队 24 分 24 秒）**；**二袋 0005 19:40:47 入队→19:52:34 done（11 分 47 秒）**；**三袋 0006 20:05:07 入队→20:11:46 done（6 分 39 秒）**。三段队列等待合计 ≈ 42 分，其余 ≈ 45 分是本班的取证与修因动作（含 mark_logical/活 PID 守护/blob 逐件对拍/stash 面拆解）＝**班长跑成 2 小时的原因不是线长空转，是"值守期内自己当了 ghost_session 族的样本＋队列拥塞期排队"**，据此起班时通令第十五条"未落四态禁先交班"与"省下的等待可换下一班"之间存在真实张力，本席不自裁，列入呈批 15(f)＝恒定班节拍是否应随队列深度自适应（例如 pending>20 时只交可读单、把落地确认交给下一班巡）。
+
+**本班未完面终态**＝①自家 dead 现 19 枚（原 17＋0001＋0002）内容级 mv 销账**仍未做**，本班实跑被拒＝`dead-archive --content-level --session st-qoder-p10-1015-10` 报 "serializer 租约存活（pid=46440），拒绝并行维护操作——等排空结束再跑"（在册案件＝dead-archive 与 belt 租约互斥只能抓窗，本班值守内 pending 峰值 30，无窗）；②D6 245 件原令逐条核对未做；③断链战役剩余处数未复量（高水位）；④⑥ 席缺键面值未复量。四项全部交下班，不谎称已做。
+
+**收班残留自查＝零**：五件 `git status --porcelain` 三面全 clean（worktree==index==HEAD），claim 已 release，会话已 unregister（`unregister=True`），心跳守护两支进程自然结束、无遗留。落地面顶笔＝0004→118ace7c71、0005→20476809ba、0006→7266bb6162，逐件 `git log -1 --name-only` 归属核实为本席。
+
+<!-- P10-1015-10-LEDGER11 -->
+
+**⚠ §11 本节自身的落地状态＝未落地（诚实标注，别当成已入库）**：本班第七袋 `q-20261015-st-qoder-p10-1015-10-0007`（files=1，只装本台账，base 7266bb6162，20:16:46 入队）**20:21:33 判死**，死因**不是** ghost_session 也不是双侧皆改，而是落地链环境族＝`landing 异常: RuntimeError: git reset --hard refs/heads/dev -> rc=128: Updating files: 2% (543/21107)…`（ serializer 工作树在 21107 件 checkout 的 2% 处崩，同窗 reaper 复量＝ram 76%／commit_total 109.4G／pending 峰值 39、dead 352→359 五分钟＋7＝本机内存/提交压力下 git 大面积失败形态，与在册 `mem-commit-limit-incident` 同族新样本）。**本席据此停投（高水位禁加压，非绕行）**：本节字节现存两处＝①主区工作树盘面（本文件，sha256 前缀见 `sha256sum` 现值）②死信袋 blob（`dead/q-…-0007.json` 的 `blob_ref`）。下班收口配方＝**待 commit_pct 落回安全区后"新入队一袋"**（勿 `requeue` 旧 blob＝必撞 SNAPSHOT-DRIFT；取旧内容才用 `--from-bag`），投前按通令第十六条自测活证（本班实测 `exit=alive_fast／dead=False` 与 `exit=excused`（logical 旗在、tail 为 exited 但 registry_alive）两种放行为等价）。交接件＝`.runtime/tmp/p10_10/HANDOFF_p10_10.md`。**补一句防误读＝§11 那句"收班残留自查＝零"只对前六袋成立；第七袋判死后本台账自身变成一处未落地改动（`git status --porcelain`＝` M`；HEAD 面＝§10 版＝`git show HEAD:<路径> | sha256sum` 前 8 位 **34f496b5**，盘现值请现读 `sha256sum <路径> | cut -c1-8`，本行不写死以免自证失败），以本段为准。** `[GATE-SELFDOC:GIT-DANGEROUS]`
+
+### 12 本班七袋终态表＋一处自犯归因错（旧句留卷）
+
+收班前把自家七枚袋一次数清（尺＝逐枚 `ls .runtime/commit_queue/{pending,processing,done,dead}/q-…-<NNNN>.json`）＝**4 枚 done、3 枚 dead**：
+
+| 袋 | 终态 | 时刻／死因 |
+|---|---|---|
+| 0001 | dead | 18:45:32 入袋→18:55:38 `ghost_session` |
+| 0002 | dead | 18:59:51（`--force`）→19:02 `ghost_session` |
+| **0003** | **done** | 19:06:21 那次 `requeue --force` 被报 **SNAPSHOT-DRIFT 拒绝**，但**实际已建新袋**并随后落地＝**本席 §9 里"未生成 qid／第三投才是 0004"这句归因错**，正解＝SNAPSHOT-DRIFT 拒的是"复用旧 blob"，新袋仍入队 |
+| 0004 | done | 19:07:42→**19:32:06** |
+| 0005 | done | 19:40:47→**19:52:34** |
+| 0006 | done | 20:05:07→**20:11:46** |
+| 0007 | dead | 20:16:46→20:21:33 `landing 异常 git reset --hard … rc=128`（落地链环境族） | `[GATE-SELFDOC:GIT-DANGEROUS]`
+
+**这条更正的实际意义＝别把"被拒"读成"没发生"**：工具报错行与副作用可以不同向（本席因此少算一枚已落地袋，若据此判断"0003 内容不存在"就会把 §10 版当成 §11 版）。判"袋存不存在"只认四态目录逐枚 ls，判"内容落没落"只认 `git show HEAD:<路径>` 逐字节对拍。
+
+**停投理由（收班 20:27 实测）**＝队列 pending **43**／processing **8**／done 814／dead **360**（本班值守内 dead 311→360＝＋49），且第七枚死在高压区＝**继续投＝给正在自杀的落地链加压**，与"高水位禁起新负载"的在册红线同源；故 §11-§12 两节留盘等下班一袋收口（配方见 §11 与本席 `.runtime/tmp/p10_10/HANDOFF_p10_10.md` 第 2 节）。会话已 `unregister=True`、claim 已 release、除本台账外其余四件三面全 clean（`git status --porcelain` 只余 ledger.md 一支 ` M`）。
+
+<!-- P10-1015-10-LEDGER12 -->
+
+
+<!-- P10-1016-01-LEDGER13 -->
+## 13 本班（st-qoder-p10-1016-01，今日第 01 班）＝恢复前置验收实测＋上班三回批＋三条自犯留卷
+
+**起手实测**＝date 01:35:11／python 3.12.8／`lock_files.py cleanup` 收 3 枚死锁＋salvage 死会话 st-qoder-b4b-1016 遗物／reaper `source=live`（水位 ram 59.6%・commit 55.93%・cpu 47.1%・degraded=False）。防重入＝`pulse/queue_depths.md` 末行 10-15 19:58 → 本班 01:35 起，间隔 5h37m > 25 分闸 ⇒ 可开工。本席**未建 worktree**（TRAE-079 Phase 2）。
+
+### 13.1 工序 8b 三前置逐条（本班头号职责）
+
+- **①leg A（修法已落 HEAD）＝未成**。尺＝`git show HEAD:scripts/commit_queue.py` 对「托管正门 / custody_excused / meta.custody」**零命中**；disk blob `a7778ff451f8` ≠ HEAD `79ffd2ae0268`；该件在主区 **index 暂存面** +42/-6，盘 mtime 01:39（＝本班值守期内他班仍在改写，归因到事件不到席）。按指令卡"只在落地面 grep 得到才认，不认车道路径与口头自报"⇒ **不认**。
+- **①leg B（落地后下一轮清扫零误杀）＝字面未成、实质已达**。运行时铁证＝`.runtime/audit/ghost_liveness.jsonl`（356 行）出口分布 `judged_dead 167 / not_in_registry 71 / custody_excused 68 / excused 50`；`custody_excused` 在 10-16 **01 时 33 例**（最新 01:43:32）＝豁免腿确在触发；**带托管标且被判 ghost_session 的袋，`dead_at` 最晚只到 2026-10-16T00:12:20，此后零例**＝短命自动化会话不再被摘。但 Owner 给的口径字面是"dead/ 里 reason 含 ghost_session 的**新增袋数=0**"，而本班窗内 dead/ 里 ghost_session 文件 mtime 落今日者 64 枚（00 时 52／01 时 8），逐只读 `created_at` 定性＝**全部是无托管标的 10-15 历史袋**（02:0x–04:3x 入袋），按 `_item_under_custody` 那句"无标=本正门前的历史袋，照旧走原判据"＝设计行为非误杀 ⇒ 该字面口径与实现层互斥，列 [BLOCKER] 行 1 请 Owner 定"新增"到底算不算历史无标袋。
+- **②本席验收一班零新死袋＝本班自投（qid 见 §14 回批，禁预写）**。本机压力面已解除：`df -h /d`＝**Avail 111G／Use 85%**（10-15 20:2x 那笔"732G 写满・free 8M"的 ENOSPC 族由 st-diskp0-20261015 班解掉，落地面 8552c1e622）。
+- **③⑦A 席死因定性材料＝未到手**。尺＝存活闸审计面按 sid 过滤，`st-qoder-p07*` 仅 3 例且全是 **⑦C**（10-15 19:46 `not_in_registry` → 20:05/20:15 `judged_dead {tail_status: exited, registry_alive: False}`）；**⑦A 席（st-qoder-p07-1015-06）在审计面零命中**，App 截图本席无通道可取。⇒ 现有日志只能证"心跳末行自报 exited＋注册表无条目"，**分不清"会话没起来"与"跑中途被摘"**＝前置③不成立。
+- **本班结论＝三件不齐（①未成・②待自投回执・③未成）⇒ 不广播"可恢复"、未 enable 任何席位**，只记档呈 Owner。
+
+### 13.2 上班（1015-10）交班首查三件回批
+
+1. **冻结 stash＝仍在栈**（本班差点误判，见 §13.4 自犯 b）：`git stash list` 全量 **29 枚**，其中 `stash@{28} base=9d94f57219`＝19:00:01 那枚仍在；顶三枚建于 **10-16 01:11**（＝st-diskp0 班 Bag4 自述的"watchdog 卸载路线：stash+工作树双保险"产物）。卡池三面现值＝**盘 553／index 553／HEAD 553**（`.yaml` 谓词）⇒ 那 21 枚暂存删除现势仍 0 命中，但呈批 **17′（该枚 stash 由谁经哪条通道处置）继续挂开**；本席不 pop／不 drop／不动栈。
+2. **分数册三面＝收敛**：`docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml` 盘 104 行／index 104／HEAD 104，三面 sha256 前 8 位同为 `21ce93c0`（上班记的是 盘104／index97／HEAD 馆 0 件）⇒ **呈批 12 可销**，销账归 ⑨ 席自家台账（本席不代改判据行）。
+3. **⑤ 席拆袋＝未落地**：`q-20261015-st-qoder-p05-1015-06-0001` 同时活在 `dead/` 与 `pending/.stale/` 两面；`git cat-file -e HEAD:scripts/backtest/fexam/signal_orthogonality.py` ⇒ rc=128 查无；盘面 216 行＝⑤ 席自己案卷点名的"死会话旧面（缺第 24 行 m11 声明）"。⇒ 复投属该席写域，本席不代投他面；盘 free 已解除，其"等 ⑩ 定磁盘策"的等待条款前提已成就，本班在派单里把这一条交回 ⑤ 席。
+
+### 13.3 其余工序实测
+
+- **工序 2 积压分母**（卡池真源 `docs/03_modules/_domain_backtest/exam_cards`，谓词 `*.yaml`＋is_file，**553 件**）＝`preregistered 167`（上班 10-15 18:20 实测 175）／`empty 186`／`examined 79`／`blocked_on_data 71`／`blocked_on_impl 47`／无 status 段 3。**全线仍停发生产配额**（Owner 令，恢复前置未齐）。
+- **工序 4 僵卡回收＝无**：磁盘面 `status: examining` **0 枚**（同谓词正对照＝preregistered 167 命中，尺不空），故"两证不齐则不翻"条款无需启用。
+- **工序 5 worktree 巡检**＝`.worktrees/` 遗留 3 枚车道（`st-opsv-20261015` head 10-15 23:53／`st-perfz1-20261015` 10-16 00:28／`st-prevw-20261015` 10-15 22:58）；`git worktree list` 全量 **18 行**，含 `.aidrafts/` 在册 6 枚（其中 **10-16 新会话 st-custody2-1016・head da498de0c6・01:23**＝令后仍在树内活动）与队列 serializer 根 `w2/w3`。另＝本班 shell 曾从 `.worktrees/st-p5-chart` 恢复 cwd，而复量时该目录已不存在＝**令后仍有建树动作的弱信号，采集面不牢，交下一班按 `git worktree list` 全集复量**。本席只记档、不自清、交清理专班。
+- **工序 6 存放仲裁**＝本班进 04 件数 **0**。候选一件＝⑦A 席交班存证 `.runtime/sessions/st-qoder-p07-1015-06/staging/p07a06_{ledger,checkpoint}.md`（sha16 a50691d50ead57a4／f0c0a9fb3922b836，自述与盘面同哈希）＝属 24h TTL 暂存面，证据链不全（该席袋未落地）⇒ **打回该席随落地 promote**，本席不代搬。
+- **工序 7 断链战役**＝分母取验收面 `working_ref_sweep_20261015/sweep_summary.yaml` 现值：broken 2490（B 永久区 370+11+59＝440／C 归档区 1813／D 模糊 39／**E 彻底消失 196＝Owner 呈批面，勿动**／F 动态 2；live 63）。本班**未复量剩余处数**＝重跑生成器会改写 X1/X2 在施件面（红线"禁碰在施批次件"），如实记高水位交下班。
+- **工序 8 D6 畅通广播＝不发**：`commit_queue.py health` 实测（01:52）pending **33**≠0 ⇒ 两证不齐；且 dead 本班窗内 317→337（＋20，托管复投班放量）。
+- **工序 10 修复打标巡检＝无可核面**：⑤⑨ 两席 21 行 [BLOCKER] 里 `已修复` 打标行 **0 条**（全为"待修/口径待补"），故"无证据打标"缺陷本班未遇；该面自 10-16 00:53 起才有内容（如实记，不写成"通过"）。
+- **工序 9 收班硬核验**＝12 席 [BLOCKER] 逐席按字节实测：⑤ 席 8／⑨ 席 13／其余 **9 席 0 行**（p01・p02・p03・p04・p06・p07a・p07c・p08・p11；负对照＝同尺在 ⑤⑨ 命中，且这些席正文 2108–160499 字节内连 `BLOCKER` 子串都无 ⇒ 真未收班非谓词伪空）。连续两班 0 行（00:53 班同读数）⇒ 本席依授权对 9 个 `checkpoint.md` **追加**强制收班提醒，写后自证＝旧文逐字前缀保留＋`cursor:` 行数不变＋每席 +5 行。
+- **本席自家亦 0 行**：本席 ledger 在 10-15 各班从未写过 `[BLOCKER]` 字面行（旧班只写散文），§13.5 是本席首批发。
+
+### 13.4 三条自犯留卷（追加更正，旧案不删）
+
+- **(a) 谓词错致"磁盘零文件"假空**：本班首跑用 `glob('*.md')` 量卡池，得"磁盘 0 文件／HEAD 553 件"的惊人差，实为卡件真扩展名 `.yaml`（`git ls-tree -r HEAD` 全 553 皆 yaml）。教训＝判"目录空"必须先按 `is_file()` 分层数扩展名（在册同名坑第三次）。
+- **(b) 截断计数面险致"冻结 stash 查无"假结论**：`git stash list | head -8` 只见顶 8 枚（base 全非 9d94f57219），据此几乎上报"那枚 stash 已被他席处置"；全量 `wc -l`＋逐枚 `%p` 比对才见 **29 枚中 stash@{28} 正是它**。教训＝任何"查无"结论前先把采集面摊全（在册 `counting-face-must-not-shrink` 复证）。
+- **(c) 判据字符串误读**：见 `repr(True)` 打成 `'True'` 便写下"meta.custody 存的是字符串、`is True` 恒假空转"，实为 Python 布尔 True（JSON `true`）——`_item_under_custody` 判据成立。教训＝值级判据要先看类型再看字面，别拿打印形态当存储形态。
+- **(d) 附一条工具观察（不算缺陷）**：`safe_write_text` 返回值里读不到 `.ok`（打印 `ok=None`），本班改以"旧文前缀保留＋标记命中＋游标计数等值"三面独立自证；若该属性确不存在请工具班点明正式字段名。
+
+### 13.5 本班问题登记（§8-A-2，追加制）
+
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|需Owner|恢复前置①判据"dead/ 里 ghost_session 新增袋数=0"与实现层互斥：无托管标历史袋按在册原判据照死，该字面除非白袋清空永不为零|证据：.runtime/audit/ghost_liveness.jsonl（custody_excused 68 例・01 时 33 例・最新 01:43:32）＋dead/ 内托管标袋 ghost 判死止于 dead_at 2026-10-16T00:12:20＋今日 mtime 的 64 枚 ghost 袋 created_at 全为 10-15|要 Owner 明确"新增"口径（只算带托管标／本班新入袋，还是含历史无标袋）|高
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|流程问题|托管正门修法未落 HEAD＝恢复前置①leg A 未成，运行时生效而落地面查无（"跑得起但取不到"静默形态）|证据：git show HEAD:scripts/commit_queue.py 对「托管正门/custody_excused/meta.custody」零命中；disk blob a7778ff451f8 vs HEAD 79ffd2ae0268；主区 index +42/-6；件 mtime 10-16 01:39 仍被他班改|要总包/托管班（st-custody2-1016 面）把该件与自家门测试同袋落 HEAD，落地后本席复量 grep|高
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|工具缺陷|lock_files.py acquire 对 pid=0 注册的短命会话所写 .lock 在随后 check 时被当死锁自动回收，主区形态下"改前 claim"只剩注册表 held_files 一腿可依赖|证据：本班 14 件两次 acquire 后 check 全报 FREE；同窗 SessionRegistry.get_session 读到 held_files=14・heartbeat 末行 status=alive・ghost verdict=alive_fast|要⑤席/工具班定口径：held_files 是否即正解（并把口径写进各席指令卡），或让 .lock 存活判定读 sid 心跳而非调用进程 pid|中
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|判据缺失|SOP §3⑩ 工序 2 只给分母数字未给卡池真源与扩展名谓词，致首跑量出"磁盘零文件"假空|证据：docs/03_modules/_domain_backtest/exam_cards 下 553 件全为 .yaml，`*.md` 谓词 0 命中|要本席自家在下版 SOP 工序 2 补"路径＋*.yaml＋is_file"三要素（净零＝替换原散文数字，不加条）|中
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|数据问题|主区 stash 栈 29 枚且顶三枚建于 10-16 01:11（watchdog 卸载产物），其中 stash@{28} base 9d94f57219＝19:00 冻结面仍在栈，任何 pop/apply 会把旧索引面灌回今日 dev|证据：git stash list --pretty=%p 全量比对（29 枚）＋落地面 8552c1e622 自述 Bag4 走 stash 卸载路线|要 Owner/归属班定处置通道（物理不可逆＋归属面＝Owner 保留），本席不 pop／不 drop／不动栈|高
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|流程问题|9 席 ledger [BLOCKER] 连续两班 0 行＝收班三件被整批跳过|证据：逐席按字节数（0 行名单见 §13.3），负对照＝⑤8・⑨13 同尺命中且这些席正文最大 160499 字节|要各席下班首件补收班三件；本席已按工序 9 对 9 个 checkpoint.md 追加强制提醒（纯追加・旧文前缀保留自证）|中
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|流程问题|TRAE-079 Phase 2 禁建 worktree 后仍有在册 worktree 活动与遗留树未清|证据：git worktree list 全量 18 行，含 10-16 会话 st-custody2-1016（head da498de0c6・01:23）；.worktrees/ 遗留 3 枚（opsv・perfz1・prevw）；另 shell 曾从已消失的 .worktrees/st-p5-chart 恢复 cwd|要清理专班接手；本席不自删他人产物，只记档并交下班按全集复量|中
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|数据问题|⑤席 06 班袋未落地而盘面代码件是他班死会话旧面（216 行 vs 该席权威 217 行），主区 auto-stage 会把旧面吸进下一笔提交|证据：find 命中 dead/ 与 pending/.stale/ 两面＋git cat-file -e HEAD:scripts/backtest/fexam/signal_orthogonality.py rc=128|要⑤席按自家 notes 第⑨步复投并落地后复位盘面（本席不代投）|高
+
+
+<!-- P10-1016-01-LEDGER14 -->
+## 14 本班终态＝自家袋一死一投＋落地链带工停摆实锤＋一处行级标留痕
+
+### 14.1 自家第一袋＝判死（前置②本班实测答案＝未成，逐只点名）
+
+- 袋 `q-20261016-st-qoder-p10-1016-01-0001`（files=14，base_head `6824d1fe74`，01:5x 入队）**02:04:34 判 dead**，`dead_letter_family=item`，`meta.custody=True`（＝托管正门确给本席袋打了标，鬼族与本席无关）。
+- 死因原文＝`网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（hook=['gate-detect-git-dangerous']）`，`recurrence_window_count=70`・`recurrence_fused=True`。
+- **归因实测（不是链病，是本席写域里的旧行）**：本席用门侧同一把尺复跑 `scripts/governance/d6_security/detect_git_dangerous.py` 逐文件点名＝**3 处命中**：① `p10_line_lead/ledger.md:403` 与 ② `:417`＝**上班（1015-10）未落地的 §11/§12 里逐字引用死信原文的那两处 `该串（落地链崩在 checkout 半途那条命令，原文只在死信袋与 :403/:417 两处存证行内）`**（HEAD 面至今没有这两节＝它们从未落地，随本袋第一次上正门就被自己的门拦）；③ `p07_examiner_a/checkpoint.md:95`＝⑦A 席自家游标里的同一串（**他席写域，本席不代改**）。本席本班新写的五面字节 **0 命中**（同尺复跑为证）。
+- 处置＝按 Owner 在册正解"改喂给闸的输入，禁弱化闸／禁白名单／禁新豁免"：对①②两处**自家未落地稿行**加 AGENTS §1 已立法的行级标 `` `[GATE-SELFDOC:GIT-DANGEROUS]` ``（2 行 ≤10 上限・门 id 精确匹配非通配・.md-only 通道），写后自证＝**行数 473→473 不变・仅行内追加・标记计数 2**；已落地案卷零触碰。③该席文件**从第二袋剔除**并转 ⑦A 席（派单第 3 条补一句），本班对该席的强制收班提醒留在盘面待该席自携落地。
+- **新形态登记（本席判为"门吃自家案卷"）**：案卷为存证必须逐字引用死信原文，而该原文自带危险命令串 ⇒ 任何"引用型案卷"首次上正门必被同门拦死，且**只要那两行不落地就永久挡后续每一袋本席 ledger**。行级标是在册唯一合法通道，但"谁有权给旧行加标"无明文（已落地旧行加标＝改旧行 vs 不加标＝门永拦）＝**判据缺失**，见 §14.4 行 9。
+
+### 14.2 落地链带工（belt）停摆实锤＝本班最重运行读数
+
+尺与读数（02:03–02:09 实测）＝`status` 报 `daemon.online=false`；`belt_daemon.heartbeat` 内容 `{"pid": 40328, "wall_ts": 1792065722.38}`＝**10-15 20:02:02**（6 小时未更新）；`belt_daemon.lock` 内容 `{"pid": 25088, "ts": 19230.859}`・mtime 02:06/02:07/02:08 连续被刷；**psutil 逐 PID 核实 25088 与 40328 均已不存在**（NoSuchProcess）。同窗队列＝pending 33→**80**（10 分钟 +47）・processing 恒 1・dead 337→341・队头 `q-20261015-st-chiefdead5-20261015-0002` 已等 1675 秒。
+⇒ 定性＝**无常驻带工，落地由他班人工 drain/复投瞬时驱动**（"lock 面在动而 heartbeat 停更"＝lock 持有与心跳写手是两个已死 PID，活着的是别的进程在反复触锁）。这不是本席能起的动作（起带工＝改系统态＋此刻 80 袋含他班在途面＝归属风险），本班只记档并呈批。
+⇒ **对恢复前置的直接影响**＝②"验收一班零新死袋"在带工停摆＋鬼清扫由人工触发的形态下不可判定；本席据此**维持不广播"可恢复"**。
+
+### 14.3 本班第二袋与节拍
+
+第二袋＝13 件（同上清单去掉 `p07_examiner_a/checkpoint.md`），四态终值＝**待本机带工恢复后由下班复量**；本席不空转抢锁、不套限时壳（在册教训）。防重入＝本班全程未与他班 p10 班相撞（今日首班）。本席实耗＝01:35:11 起手 → 02:1x 写终态 ≈ 40 分钟（含 4 分钟袋态值守），未超恒定班节拍预算的余量全部花在 14.1/14.2 取证上＝如实分账。
+
+### 14.4 本班问题登记（续 §13.5，追加制）
+
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|工具缺陷|自家第一袋被自家门拦死，病根＝上班未落地稿行逐字引用死信原文（含 reset --hard 串），而该门扫整档快照＝"引用型案卷首次上正门必被同门拦，且不落地就永久挡本席 ledger 每一袋"|证据：detect_git_dangerous.py 同尺复跑 ledger.md:403 与 :417・p07_examiner_a/checkpoint.md:95＋本袋 dead_reason 原文＋行数 473 不变自证仅加行级标 2 处|要 Owner 定"谁有权给旧行加 GATE-SELFDOC 标"（已落地旧行加标＝改旧行；不加＝门永拦），并把该口径写进 AGENTS §1 GATE-SELFDOC 条|高
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|数据问题|落地链带工停摆＝daemon online false・heartbeat 停更 6 小时・lock 与 heartbeat 记的两个 PID psutil 实测皆不存在・pending 10 分钟内 33→80 而队头等 1675 秒|证据：.runtime/commit_queue/belt_daemon.{heartbeat,lock} 原文＋psutil.NoSuchProcess 两条＋commit_queue status 读数|要运行班/维护班定带工归口（谁起、崩了谁重拉、心跳为何停），恢复前置②在此之前不可判定|高
+- `[BLOCKER]` 2026-10-16|⑩席1016-01|流程问题|⑦A 席 checkpoint 游标含 reset --hard 串＝该席下一次任何提交都会被同一门连坐（本席已把自己的强制收班提醒追加进该文件，但无法随袋落地）|证据：detect_git_dangerous.py p07_examiner_a/checkpoint.md:95 命中・本席对该文件纯追加的提醒块停在盘面|要⑦A 席自家给自己的行加标或改写非字面串后自携落地；本席不代改他席游标|中
+
+
+<!-- P10-1016-01-LEDGER15 -->
+## 15 本班第二袋判死＝同型二次，病根在**本席新写的引用行**（旧句留卷，追加更正）
+
+- 袋 `q-20261016-st-qoder-p10-1016-01-0002`（files=13，02:1x 入队）**02:19:43 判 dead**，`family=item`・`meta.custody=True`，死因同签名＝`GATE-PRECOMMIT-RUN`/`gate-detect-git-dangerous`。
+- **两件事同时被这次证伪与证实**：①§14.1 那次对旧行的行级标**确实生效**——门自己打印 `[GATE-SELFDOC:GIT-DANGEROUS] audit: ledger.md 豁免 2 行`，403/417 两处不再计入；②拦死本袋的是**本席 §14 归因段自己写的字面串**（`ledger.md:483`）＝本席一边登记"引用型案卷与同门互斥"，一边在同一节里把那条命令逐字写出来。**这是同班第二袋的真实代价，不解释成门的问题就能自证：本席复跑同一把尺时点为 §14 写完之前的 0 命中，写完不再复跑＝通令第十六条"入袋后禁改同件"之外的一条自家缺口＝改完必复量。**
+- 处置（三选一里取最小面）＝**改写自家新行为非字面指称**（不新增行级标、不白名单、不动门），字面存证只保留在 ①403/417 两处已标行 ②死信袋 JSON 原文；写后自证＝该行字面计数 1→0・另两行各仍为 1・总行数与标记计数不动。
+- **前置②终账（逐只点名）**＝本席本班新增死袋 **2 枚**：`q-20261016-st-qoder-p10-1016-01-0001`（02:04:34）＋`q-20261016-st-qoder-p10-1016-01-0002`（02:19:43），两枚同签名、均属 item 族、均非鬼族（custody 标在）、均非环境族（盘 111G／ram 59.6%）⇒ **前置②＝未成**，且未成的因由是本席自家文案而非落地链——这一条对"全线何时复牌"的判断是收紧不是放松。
+- 队列本班终窗读数（02:20）＝pending **124**・processing 1・done 819（本班内 812→819＝确有袋在落地）・dead 345；`belt_daemon.heartbeat` 仍停在 10-15 20:02＝带工心跳未归位，落地靠瞬时驱动方，**§14.2 那条归口问题不因 819 而撤销**。
+- 本班问题登记（续 §14.4）：
+  - `[BLOCKER]` 2026-10-16|⑩席1016-01|工具缺陷|本席按在册处方"入袋前后各复跑一次门尺"跑第二遍时漏做——改完 §14 未复量即投袋，同班连死两枚自家袋|证据：detect_git_dangerous 在 §14 写入前对 13 件复跑＝0 命中（有打印），§14 写入后未复跑即投・门打印 ledger.md:483 单点命中＋豁免 2 行同屏|要⑤席/工具班评估把"引用型字面串"改为门侧可识别的存证写法（如统一指向死信袋 qid），本席 meanwhile 自加一条＝投袋前对**本袋全部文件**再跑一次门尺并把读数写进台账|中
+  - `[BLOCKER]` 2026-10-16|⑩席1016-01|流程问题|前置②终账＝本席自家新增死袋 2 枚（0001/0002，同签名 item 族），全线复牌判据因此比上班更远而非更近|证据：两枚 dead_at 02:04:34 与 02:19:43・family=item・meta.custody=True・盘与内存读数排除环境族|要 Owner 知悉并在裁"带工归口＋引用串口径"两件时把本席这两枚计入分母|高

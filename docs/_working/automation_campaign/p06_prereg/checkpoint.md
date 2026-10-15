@@ -6,7 +6,12 @@ title: ⑥制卡席·游标
 
 # 游标
 
-cursor: 本班已收尾（⑥席 1015-12 班＝③席 20261015-p03-07 批 7 行 100% 处置：新卡 1 张 `TDM-E-L9-A02/calibration/13_crossday_minutepath_shape_corr`（承 CAND-P0-MIDAYSHAPE-046＝同批唯一池面与册内两面孔同判未撞的一条，blocked_on_impl，冻结面整块逐字取 git show HEAD:A02/12＋③席 046/052 行十面 verbatim，建卡即断言 31 项全 CLEAN）＋不立卡裁定 5 条（047/048/049/050 册内自查判重复・051 池面 reject rc=5 两面皆撞，逐字承③席不利侧、本班零重算）＋方言画像行 052 整行入卡 1 处；⑧考工B 点名⑥三件全处置＝并名件新立呈批 OD-31（三证：两枚词面在三张在册路由词表命中 0＝并名机判后果为零、执行核 docstring 原文『prose↔numeric 无在册真源・禁改键值・词表立法另属工单』、涉 examined 面改名破分数行对拍）・X-R1-01/ablation/03 三处臂参数停手（该卡面自陈『预算面属 C1 流 跨流禁代裁』且全池 trend_down 绑数值 11 处命中全落 F 族 frozen_note 散文面＝无在册可抄数；另登记在册尺 arm_protocol_binding.py:631 关键词邻值判据把散文当参数的假阳性面）・implementation_gap 陈旧自述判『不原地改』（⑧所引凭据本班实测在 HEAD 面即成立，但按在册体例改陈述须另起版本卡，三张卡面未见号位授权⇒待 ⑩/Owner）；⑨席 13 班 P-9 选项 B（由⑥ prereg 更长 OOS 窗/更密事件定义）＝属判据面、待裁未动作；10 班 [对照] 已成卡 07c 复测承接（HEAD==盘面 18007B，len(m)/std()/驻留 三面在 HEAD 命中 True）⇒ 本班零重复制卡；全池新量＝13 张 preregistered 具名卡缺 data_binding（在册 classify_card 13/13 实证 cls=U・reason=no_data_binding_section），按⑨席 P-5 未裁停手＋归口呈请；骨架 empty 186 第十二班复证＝具名 empty 0（四格 186/0/0/366 加总 552 互斥自证）；零新裸骨架卡被本席填死、零判据与阈值改动、未跑考试/正交闸/CH 探针）
-last_run: 2026-10-15 19:33
-last_batch: st-qoder-p06-1015-12（3 件一袋＝1 张新卡面＋本台账＋游标；base 取最新 HEAD、单一逻辑改动一袋、等四态再投下袋；本班不随袋＝28 件值守内 HEAD≠盘面在途卡面（19:00:53 同秒批量触及 92 件，其中 8 张 preregistered→examined 属考工席跑批，本班两时点面＝开班 175/186/73/71/47・收班 167/186/81/71/48，本班净贡献只 blocked_on_impl +1）＋令牌投影册（实跑回 OK: 已登记 1 条・publish_snapshot v868・token 尾 -20261015=UTC）＋`feedback/to_impl.md`（⑤席 06 班在册：其 index 比 HEAD 少 292 行）；D-05＝自家 dead 9 枚零新增、正门 dead-archive 第三次被 serializer 租约拒（原文 pid=46440，09 班 23976／11 班 53820 同型）⇒ 本班零 mv 零 requeue；上班 11 班交下的落地复量腿已交清＝`^oos_window_ref:` HEAD 363 文件/363 次・盘面 363 逐值同（其袋现 done），本班收班面 364＝恰本班新建 1 件；本班不预填 qid、不自宣落地，落地判据＝下班用 `git show HEAD:<新卡件>` 复量＋该件 blob↔盘面对拍）
+cursor: 本班已收尾（⑥席 1015-11 班＝⑩第八单 §6 本席三件全处置：自家 9 枚 dead／44 件次内容级分诊＝真搁浅 0（正门 dead-archive 被 serializer 租约 pid=53820 拒＝09 班同型第二证，本班零 requeue 零 mv）＋缺键基线口径改判（在册"2 张"＝点名子集；全池同谓词实测 21 张＝20 可补＋1 挡道）＋本班补 20 张（逐件 plus=1/minus=0・八冻结面 parsed 对 HEAD 全等・值取本卡 window.oos 同锚）＋两枚非在册键复测 HEAD=0；零新卡、零翻态（五态 175/186/47/71/73 逐值同）、零判据改动；OD-26/OD-30 各追加复测；09 班撤键两块证据自 tmp 承接进台账正文；新立呈批 0 件、基线口径归口呈请随台账寄存）
+last_run: 2026-10-15 18:16
+last_batch: st-qoder-p06-1015-11（22 件一袋＝20 张补键卡面＋本台账＋游标；base 取最新 HEAD、单一逻辑改动一袋、等四态再投下一袋；本班未跑考试/正交闸/CH 探针；卡池 552 不变、带 oos_window_ref 面 343→363、全池缺键 21→1（残余＝P1-03/03 挡道件）；班中自家 cleanup 二次跑摘除 claim 后已重注册＋重 claim＋重起守护 pid=61168；本班不预填 qid、不自宣落地，落地判据＝下班用 `git show HEAD:<件>` 复量＋逐件 blob↔盘面对拍）
 notes: 游标由本岗每批推进；监督员(⑩)可代修。
+
+<!-- P10-1016-01-FORCE-CLOSEOUT -->
+> **⑩线长席强制收班提醒（2026-10-16 01:5x 实测追加，指令面-only，未改任何判据）**
+> 本席 `ledger.md` 里 `[BLOCKER]` 行数实测 **0**（同尺负对照＝⑤席 8 行／⑨席 13 行命中；本席 ledger 正文 216718 字节内连 `BLOCKER` 子串都零命中⇒不是谓词伪空，是真未收班）；10-16 00:53 班同读数＝**连续两班 0 行** ⇒ 依 SOP §3⑩ 工序 9 追记本提醒。
+> 下班收班三件（缺一＝本班不算收班）＝①ledger.md 追加至少一行 `[BLOCKER] <YYYY-MM-DD>|<席+班号>|<工具缺陷|判据缺失|数据问题|流程问题|需Owner>|<一句话>|<file:line 或路径>|<要谁做什么>|<高|中|低>`（零问题必写 `[BLOCKER] <date>|<席+班号>|无`）；②提交只走 `python scripts/commit_queue.py` 上游的 `git_commit.py --session <sid> --files <自家清单> --enqueue`（禁裸 git commit／禁从主区 index 直连）；③release 自家 claim＋注销心跳＋台账记实耗分钟。

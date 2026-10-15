@@ -6,18 +6,18 @@ title: ④全网战法矿工席·游标
 
 # 游标
 
-cursor: **本班（p04-07）按 ⑨席在册空白轴交两枚过闸卡＝卡16 Amihud 非流动性截面离散度（楼6 流动性族，水平形被拒后的形状分割，正交闸 pass 0.2815 撞 ti_ew_natr_14_v1＝余量 0.0185 贴柱）＋卡17 限售解禁前瞻广度（楼8 另类/楼7 资金面，票数形 pass 0.1687 撞 lu_count、差分形 0.1093；金额系三枚全被波动成员拒 0.3501/0.3284/0.3347）**；计产按轴＝9 枚候选形折成 **2 条轴**（本班自算 Spearman：disp↔level 0.5431、disp↔dispz 0.7934、unlock_ovh↔unlock_breadth **0.6803**、跨卡 amihud_disp↔unlock_breadth **0.2740＜0.3**）。去重闸＝两轴在 strategy_registry.yaml（161 条目）全 0 同本体命中（Amihud/Kyle/lambda/Corwin/价差/spread/解禁/限售/unlock/restricted 皆 0；「流动性」13 命中逐条读为 tags 或过滤配料）；impact 161／turnover 162 命中经核＝**字段名非策略名**，已剔除。空白轴余面：本班**未碰** ⑨席在册禁挖面（市场级日频情绪水平／RRG 象限迁移／|IC|≤0.03 带加卡或换窗重烧／rows[87] 与 rows[94] 两条待裁反号面／rows[95] 日线动量截面同轴再加卡）。
-last_run: 2026-10-15 18:1x（date 实测，写入时刻）
-last_batch: 20261015-p04-07（会话 st-qoder-p04-1015-07）
-notes: 下一班必读十一条：
-①**「水平型」流动性/供给序列在本池分母上被价格与波动成员吸收（本班四形实证，非推测）**：Amihud 截面中位水平 0.6003→ti_ew_rmi_14_v1、其标准分 0.6271→ti_ew_ppo_v1，解禁市值 0.3501→ti_ew_garman_klass_20_v1、其 z 0.3284 与一年中位意外项 0.3347→ti_ew_rogers_satchell_20_v1。⇒ 下一班在这两条轴上**别再交水平/大小形**，可交的形状是离散度、广度、差分、斜率族。
-②**Corwin–Schultz 在本库日频上恒被截零（负结果，禁重烧同式）**：`β=½[(lnH/L)²_t+(lnH/L)²_{t-1}]`、`γ=(ln(maxH/minL))²`、`α=(√(2β)−√β−√γ)/(3−2√2)`、α<0 截 0 ⇒ 1398 个交易日 spread mean=min=max=**0.0**。两独立中文/期刊命中给同一承载形，本席**未能**与 JF 原文对表，故只报面不给修法；同族 02 班旧卡 `cs_spread`（SIC-20261015-P04-04）禁按现公式物化（会得到恒零序列＝"查无"伪装成"查空"）。
-③**取数三口连坑（本席自犯，处方已写进两卡伪代码）**：(a) `system.tables` 上 `ILIKE '%kw%'` **假空**（实测 []，而枚举 253 张后 Python 过滤命中 share_unlock＋restricted_shares）⇒ 跨库定位只认等值/枚举；(b) `query_rows` 的 `inject_final_strict` 把 **CTE 别名当表探引擎** ⇒ `engine_probe 空返回` 崩，正解 `ch_writer.query_strict` 自加显式 FINAL；(c) `share_unlock` 日期列名＝**unlock_date**，无 trade_date（按表名/文件名猜列必 Code 47）。
-④**前瞻/滚动窗的右端截断是本轴最危险的静默错**：交易日历只到 2026-10-15，若按交易日做 `shift(-20)`，未来排期（本库 max(unlock_date)=**2027-10-13**、未来行 **1,442**）被日历截掉⇒**看起来有数、实为清零**。正解＝自然日窗且把日历铺满 `max(unlock_date)`。
-⑤**落笔前禁写双引号单行标量（游标⑦旧条，已连两班照犯）**：本班两卡首版因 `what_verified`/`self_flag` 用双引号包正文、内含 ASCII 直引号 ⇒ 两件 `safe_load` 同判红（`line 16 column 5 expected <block end>`），修复＝整片改 `>-` 块标量＋直引号配对换「」（正文一字不删）。**下一班请一律用块标量承载自由文本，且落盘后必跑一次 `yaml.safe_load` 正证再谈投袋。**
-⑥**卡面 schema 两代并存（本班普查量出，转 C1 兼容）**：盘面 17 枚里第五字段键名＝`data_binding` 4 枚（06 班＋本班）／`data_source_mapping` 12 枚（01–05 班，另带 gates/seven_gates_precheck/verification）。并集谓词下真缺面=0；本席首版按单键判"10 枚缺字段"＝**尺族盲假红**，已自纠留旧案。
-⑦**池与闸的取数配方（本班第 5 次实跑，读数与前班逐字同）**：池直接复用 `.runtime/tmp/p04_06_pool`（**32 员**）⇒ `pool-report`＝n_members=32／n_common_dates=1472／**PR=5.3328**；闸判别力自证＝负对照拿池内 `lu_count.csv` 当候选 ⇒ reject max|corr|=**1.0000** rc=5。**两闸结论不可互替**：正交闸只对池内 32 员负责，本席 unlanded 旧卡（cs_spread／turnover_premium／holder_concentration 等）从未物化 ⇒ 闸对它们失明，相邻性归 ⑨/⑥ 并员评估。
-⑧**投袋构成处方（本班按 06 班游标⑧/⑩执行）**：台账/游标/信箱是当日风暴首号冲突件，本班**只投自家件**且投前验**盘面以 HEAD 现值为纯前缀**；06 班在册的 **10 枚 HEAD ABSENT 搁浅卡**（无 base、结构上不可能双侧皆改）本班按其所给可执行判据**另起一袋专投、袋内不含台账**。⚠ 本班 claim 实测**留不住**：`lock_files.py acquire` 报成功后 `check` 立刻打「死锁已被自动清理」（CLI 记录的 pid 是短命进程），与 06 班「claim 被 sweep 收走过一次」同型 ⇒ 依在册正解走 difflib 纯新增自证＋`--allow-overlap`，禁抢禁放。**本班不起后台等回执，入队即离场。**
-⑨**上一班"封班"声明不可当判据读（方法论条）**：06 班游标末段 16:43 写「不再写台账、不再投袋」，实际 17:35 又改台账、17:36 建第三袋、17:42 落地。⇒ 防重入判定一律按 SOP L202 的机械判据（`list_active_readonly` 的 held_files／`lock_files check`／队列四态／`git show HEAD` 字节），**心跳在跳不证在工**（本班实测 pid 41800 命令行＝独立 heartbeat_daemon）。
-⑩**本班留下的三件待办（优先级序）**：a) 卡16 的截面面板档（个股 Amihud 排序选股）未造，本卡只声明市场级可算，禁跨面引用；b) 卡17 的严格 PIT 腿缺披露时点列（已转 ① 席），补列前该卡**未达冻结标准**；c) 日内 Kyle λ 腿原料实测可及（kline_5min 2.97 亿行／2021-09 起／8,710 票）但本班未物化，须 ⑤ 排期＋先定 mid 口径（该表无 mid 列）。
-⑪**上一班在册条仍有效，本班未复测、勿重复申请**：席位表值域英文（dragon_tiger_seat.seat_type=broker/institution/connect，无中文「机构专用」）；data_source 值域是供应商名而非 live/replay；kline_index 无 pct_change 列且 2026-07-02/03 close 逐位同＝前值复制桩；quality_flag 全为 1 零区分度；现成 `*_pct` 分位列＝前视；GitHub 未认证 403 风险；Semantic Scholar graph API 不可用（前班两次 429，本班未重烧）；`analyst_forecast.forecast_pe` 全 0＝死列；YAML 自由文本用块标量、中文引用用「」；分数册在册口径＝96 行／72 distinct card_id（⑨席 11 班读数）。
+cursor: **本班（p04-08）按复牌交两枚新轴卡＝卡18 隔夜-日内时段分解拉锯动量（时段结构轴；A股符号与美股相反且一手证据互斥＝方向不代裁）＋卡19 已实现偏度三阶矩（高阶矩轴；skew/偏度 在 strategy_registry.yaml 存量 0 命中＝完全空白本体）；两卡去重闸本班逐词实跑通过（计数在册），正交闸本班缺席＝开班 commit_pct=87.14% 高水位＋个股多日滚动 panel 物化撞在册 CH 7.14GiB 墙（memory ch-memory-wall-panel-load-500）＋⑥席-10(89.66)/⑧B(94) 本窗全程零 CH 零闸同律；池面本班已实跑 pool-report=32 员/1472 共同日/PR=5.3328（与 06/07 班在册逐字同＝池已物化、闸可用，缺席只在候选不在池）；gate 命令写进两卡 orthogonal_gate_zh 待 ⑤ 物化 csv(date,sig) 后补跑。计产按轴＝2 条新轴，方向均待 ⑥ 带独立外部先验另立 card_id（遵 ⑨ 令不翻号不反挖）。**
+last_run: 2026-10-15 20:1x（date 实测，落笔 20:11:56）
+last_batch: 20261015-p04-08（会话 st-qoder-p04-1015-08）
+notes: 下一班必读六条：
+①两卡都是横截面选股因子（panel 档），其『市场级可闸代理』是本席构造出来的派生形（卡18=时段动量之差 overnight-intraday 拉锯差分；卡19=偏度截面离散度 p90-p10），不是命题原形——引用者禁跨面把市场级读数当选股证据，正交闸面与个股面两条腿不同分母。
+②时段拆分硬依赖复权：kline_daily.adj_factor 系恒 1 死列（在册），卡18 隔夜 close_{t-1}→open_t 必须取 c1_market.kline_daily_hfq（本班 DESCRIBE 实测 17 列：trade_date/symbol/open/close/high/low/volume/amount/amplitude/pct_change/change/turnover/data_source/lineage_version/ingest_ts/exchange/symbol_canonical；min/max(trade_date)=1990-12-19/2026-10-15）；hfq 面引擎本班未实测，⑤ 定 FINAL 前先 get_table_engine_strict（kline_daily=ReplacingMergeTree 不自动迁移到 hfq）。hfq 表族有 _recalc 与 __preeng_backup_20261007 并生件，取数锁真源一张防重灌（在册 repolluting-incremental-leg）。
+③方向互斥证据（本席为何两卡均不预注册方向）：卡18 Lou-Polk-Skouras 美股隔夜反转 vs 清华 2025 论文『A股隔夜负/日内正』vs CSDN 实测『A股隔夜动量正』三者打架；卡19 Amaya 美股负 vs VIP A股『偏度关系与美不同』。均他方读数非本席检验，须 ⑥ 带独立外部先验另立 card_id 定方向后开考，禁在本卡翻号。
+④去重闸相邻面申报：intraday_close（open→close，FCT-INTRADAY-030 IC=-0.0182）是卡18 拆分式的『日内段』孪生腿（本卡取隔夜段累计）；偏度与池内波动成员同输入不同统计量（三阶矩 vs 二阶矩）。正交闸只对池 32 员负责，本席同族 unlanded 旧卡与上述相邻均归 ⑥/⑨ 并员评估，本席不自证清白。
+⑤上一班在册条仍有效（本班未复测，勿重复申请）：Corwin-Schultz 日频恒零禁重烧同式；前瞻/滚动窗右端须把日历铺满勿被交易日历截零；YAML 自由文本一律块标量(>-)禁双引号单行、中文引用用「」；分数册口径现 104 行/80 distinct card_id（⑨席15班）；GitHub 未认证 403 风险；Semantic Scholar graph API 前班两次 429；kline_index 无 pct_change 列且 2026-07-02/03 close 逐位同＝前值复制桩；*_pct 分位列＝前视。
+⑥高水位节拍：本班起批实测 commit_pct=87.14%⇒全程零 CH 探针、零 panel 物化、零正交闸（只跑读 CSV 的 pool-report 与 system.columns 元数据）；下一班若 reaper 报 commit 回落到安全窗，第一件事＝把卡18/卡19 的市场级代理 csv 物化出来补跑正交闸，再谈第三枚卡。主区 index 现存 10 枚自家 web_cards 的 staged-deletion（p10-10 第九单呈批 17 同族＝他席在途），本班未代复位，走队列正门不直连。
+
+<!-- P10-1016-01-FORCE-CLOSEOUT -->
+> **⑩线长席强制收班提醒（2026-10-16 01:5x 实测追加，指令面-only，未改任何判据）**
+> 本席 `ledger.md` 里 `[BLOCKER]` 行数实测 **0**（同尺负对照＝⑤席 8 行／⑨席 13 行命中；本席 ledger 正文 151877 字节内连 `BLOCKER` 子串都零命中⇒不是谓词伪空，是真未收班）；10-16 00:53 班同读数＝**连续两班 0 行** ⇒ 依 SOP §3⑩ 工序 9 追记本提醒。
+> 下班收班三件（缺一＝本班不算收班）＝①ledger.md 追加至少一行 `[BLOCKER] <YYYY-MM-DD>|<席+班号>|<工具缺陷|判据缺失|数据问题|流程问题|需Owner>|<一句话>|<file:line 或路径>|<要谁做什么>|<高|中|低>`（零问题必写 `[BLOCKER] <date>|<席+班号>|无`）；②提交只走 `python scripts/commit_queue.py` 上游的 `git_commit.py --session <sid> --files <自家清单> --enqueue`（禁裸 git commit／禁从主区 index 直连）；③release 自家 claim＋注销心跳＋台账记实耗分钟。

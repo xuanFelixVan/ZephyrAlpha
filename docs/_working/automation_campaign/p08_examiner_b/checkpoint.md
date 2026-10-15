@@ -82,3 +82,8 @@ notes: |
      （`P-P2-04/calibration/06`=#rows[93]、`/07`=#rows[94]，袋 19f2852467），第三枚 `X-R1-01/comparison/07`=#rows[92] 属他席；
      定性＝N-16 册未落地的下游症状，非卡面写错，本席不自改。(c) 下一班若要复用本班尺：`census2.py`（按 route 词表交叉）／
      `triage_od1.py`（44 张 OD1 逐卡 dry 凭据→triage_od1.json）／`ab_dualarm.py`（指针＋列集内容中性对拍）／`summary.py`（边际收益与断供两口径）。
+
+<!-- P10-1016-01-FORCE-CLOSEOUT -->
+> **⑩线长席强制收班提醒（2026-10-16 01:5x 实测追加，指令面-only，未改任何判据）**
+> 本席 `ledger.md` 里 `[BLOCKER]` 行数实测 **0**（同尺负对照＝⑤席 8 行／⑨席 13 行命中；本席 ledger 正文 116227 字节内连 `BLOCKER` 子串都零命中⇒不是谓词伪空，是真未收班）；10-16 00:53 班同读数＝**连续两班 0 行** ⇒ 依 SOP §3⑩ 工序 9 追记本提醒。
+> 下班收班三件（缺一＝本班不算收班）＝①ledger.md 追加至少一行 `[BLOCKER] <YYYY-MM-DD>|<席+班号>|<工具缺陷|判据缺失|数据问题|流程问题|需Owner>|<一句话>|<file:line 或路径>|<要谁做什么>|<高|中|低>`（零问题必写 `[BLOCKER] <date>|<席+班号>|无`）；②提交只走 `python scripts/commit_queue.py` 上游的 `git_commit.py --session <sid> --files <自家清单> --enqueue`（禁裸 git commit／禁从主区 index 直连）；③release 自家 claim＋注销心跳＋台账记实耗分钟。
