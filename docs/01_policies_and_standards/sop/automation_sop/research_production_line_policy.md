@@ -3,7 +3,7 @@ doc_type: policy
 ttl: permanent
 title: 全自动研究生产线运营 SOP（九口出料·挖考判晋反馈闭环）
 status: active
-version: 1.5.2
+version: 1.6.1
 date: '2026-10-15'
 owner: ZephyrAlpha-Owner
 ---
@@ -42,7 +42,7 @@ owner: ZephyrAlpha-Owner
 | 8 | 负结果 | 各口 fail 如实入册 | 全部 | ✅纪律面 |
 | 9 | 环节考试卡 | 校准/消融/影子/对照四族 | 六向挖矿（186 节点 7 车道） | ✅主战场 |
 
-> 路径注（2026-10-14）：第 3/4/5/6/8 类成绩册已随 _working 清理归档至 `docs/_archive/_working_20261014/fexam/`；第 9 类卡册/分数册住永久区 `docs/03_modules/_domain_backtest/`；**分数册已物理迁 `docs/04_research_records/backtest/scores/<YYYY>/`（裁定#536，原 03 行作废）**。九类归属：1/2/3/4/5/6/8/9 八类由本线喂料，第 7 类（引擎直跑）不入线仅参考。
+> 路径注（2026-10-14）：第 3/4/5/6/8 类成绩册已随 _working 清理归档至 `docs/_archive/_working_20261014/fexam/`；第 3/4/5/6/8 类成绩册已二次迁 `docs/04_research_records/backtest/scores/2026/`（30 本在册，归档区无研究资产残留）；第 9 类卡册仍住 `docs/03_modules/_domain_backtest/exam_cards/`（不变），分数册同 04；原 **分数册已物理迁 `docs/04_research_records/backtest/scores/<YYYY>/`（裁定#536，原 03 行作废）**。九类归属：1/2/3/4/5/6/8/9 八类由本线喂料，第 7 类（引擎直跑）不入线仅参考。
 
 并行度：2/3/4/5/9 五口同时开（考试通道互不抢）；1 口周六独占；6 口随 OD-1 执行器交付转正。挖满一个矿脉→轮转下一个（§5）。
 
@@ -52,9 +52,10 @@ owner: ZephyrAlpha-Owner
 > **v1.1.1 变更（E2E 实测修正，2026-10-14）**：数据绑定口径修正（528/531 卡用 lineage 字段）；empty 骨架卡现实（转正须具名子题卡，呈批件计入⑥席保底）；同族门柱多口径并存→呈批不擅挑；考工 panel 卡走 run_card API（CLI --target-csv 砍单列缺陷，修复前 panel 禁走 CLI）；裁定#518 定位=「先冻结后跑」方法先例非数值源；新增并发环境警戒（归档/清理必须先查 .ailocks）。
 > **v1.2.0 变更（2026-10-14 晚）**：新增⑪整装回测席（每夜一次，晨报直答「能不能赚钱/下浮率」）与整装→归因→施工→对照复测最高层闭环（§4）；考工 GPU 优先+安静窗纪律（§3⑦⑧）；班车时刻表（§3-B）与楼栋制进度图（§3-C）；§2 成绩册归档路径对齐（分数册新地址待 Owner 下发后全局替换）。
 > **v1.2.1 变更（2026-10-15）**：新增 §3-D 研究态排班表（现行，24 小时不停）与 §3-E 实盘态排班表（达标后切换）+切换闸门协议；机器层计划任务真相核实落册（2026-10-15 实测：NightMining/F06Grid 已 /enable 启用、TTLRejudgeDaily/C4Exam 就绪、reaper=运行时钩子非计划任务）。
+> **v1.6.0 变更（2026-10-15）**：§2 路径注二次核验（30 本成绩册入 04/backtest/scores/2026，归档区无残留）；GPU 接线升⑤席 P0 首件（考试执行器未接 GPU=一直没转根因）；§8 命名词表真源指针 domain_naming_rules.yaml。
 > **v1.3.0 变更（2026-10-15，TDM 挖矿并入令并入）**：车道台账/名册等战役资产已归档至 `docs/_archive/_working_20261014/nightmine_campaign/`（③席输入口路径同步）；产卡唯一出口=`scripts/backtest/generate_exam_card_skeleton.py` only-add 通道；念想引擎双轨=本地引擎走 GPU 机会档（登记+让路，§3-F）或 LSG qwen provider（GPU 纪律同理）；枯竭判据对齐 mining_sop **v1.9.1**（六向全查无新卡+无未挖长尾+挖后自审闸 §6，双噪音封矿）；现状锚定：186 节点全有卡 531 张、mined_out=0、六向在半山腰；边界=docs/04_research_records/ 基建中，挖矿产物任务期暂留 _working 面、落成后统一迁移，**禁两线同写一区**；挖矿不停，唯一叫停权=Owner。
 
-通用规则（适用于全部岗位）：开工冷启动三步（PATH 修 Python312→lock_files cleanup→process_reaper --status）；改前 claim 毕后 release；提交唯一正门 git_commit.py --enqueue；**完工自检两轮，连续两轮零问题该批产出才算交付**（第二轮才发现问题=第一轮漏检记缺陷行）；四件套=`docs/_working/automation_campaign/<岗>/`{instruction.md 恒定指令, scope.md 输入清单, checkpoint.md 游标, ledger.md 台账}；sid=`st-qoder-<岗>-<MMDD>-<NN>`。
+通用规则（适用于全部岗位）：开工冷启动三步（PATH 修 Python312→lock_files cleanup→process_reaper --status）；改前 claim 毕后 release；**班中 claim 过期（TTL 30 分、失败重试后 5 分）→重新 acquire 即可（文件未变则无冲突），CAS 拒写非事故勿进堵点**；提交唯一正门 git_commit.py --enqueue；**完工自检两轮，连续两轮零问题该批产出才算交付**（第二轮才发现问题=第一轮漏检记缺陷行）；四件套=`docs/_working/automation_campaign/<岗>/`{instruction.md 恒定指令, scope.md 输入清单, checkpoint.md 游标, ledger.md 台账}；sid=`st-qoder-<岗>-<MMDD>-<NN>`。
 
 ### ① 数据源席
 - **目标**：数据就位率最大化；断供=穷尽免费渠道后的最后登记，不是逃避登记。
@@ -80,7 +81,7 @@ owner: ZephyrAlpha-Owner
 - **目标**：六向候选持续产出且绝不重复挖。
 - **工作内容**：按车道对 186 节点六向挖（①上游②下游③算法④后端⑤呈现⑥数据），听⑨方向单调整重心。
 - **输入口**：`docs/_working/automation_campaign/dispatch/daily_dispatch.md`；`docs/04_research_records/mining/ledgers/nightmine_20261010/01_mining_brief.md`（六向法）；同目录 `00_lane_roster.yaml`＋`L0d..L7_ledger.md`（已挖/mined_out，八本台账；2026-10-15 起资产住 04 区）；`docs/_working/automation_campaign/feedback/to_miners.md`。边界：04_research_records/ 基建中，产物暂留 _working 任务面，禁两线同写一区。
-- **输出口**：候选→`data/strategy_intake/lane_<x>_candidates.csv`；具名子题卡（含假设描述；裸骨架不可考不产）→一律经 `scripts/backtest/generate_exam_card_skeleton.py` only-add 通道进 `docs/03_modules/_domain_backtest/exam_cards/`；念想引擎双轨=本地引擎走 GPU 机会档（登记+让路，§3-F）或 LSG qwen provider；台账行追加。
+- **输出口**：候选→`data/strategy_intake/lane_<x>_candidates.csv`；具名子题卡（含假设描述，**按 TDM 图节点定义生成——真源=config/trading_decision_map.yaml，有据可依非自拟**；裸骨架不可考不产）→一律经 `scripts/backtest/generate_exam_card_skeleton.py` only-add 通道进 `docs/03_modules/_domain_backtest/exam_cards/`；念想引擎双轨=本地引擎走 GPU 机会档（登记+让路，§3-F）或 LSG qwen provider；台账行追加。
 - **工作流程**：1 领车道 2 读台账排除已挖/mined_out 3 读方向单调重心 4 逐节点六向挖 5 候选入台账 6 empty 卡骨架（门柱 null，status=empty）7 台账追加 8 自检两轮（抽 3 条反向核对未挖过）；枯竭判定书（mined_out 申报+六向查证+交叉复挖结论，逐节点一册）→`docs/04_research_records/mining/exhaustion/<YYYY>/`（裁定#536）。
 - **保底绩效**：每班≥5 新候选或≥10 张 empty 卡骨架；mined_out 名单核对率 100%。
 - **真源挂点**：mining_sop_policy（六向/防噪音四闸/封矿核验）。
@@ -107,7 +108,7 @@ owner: ZephyrAlpha-Owner
 ### ⑥ 制卡席
 - **目标**：empty→preregistered；先冻结后跑；每次优化都有 A/B。
 - **工作内容**：填门柱判据（只抄在册冻结值）；**对照配对卡制作**（champion/challenger 单变量）。
-- **输入口**：exam_cards 中 empty 卡（现存 empty 多为 /01 裸骨架卡——转正须③④席先产具名子题卡）；在册冻结值真源=同族已冻结卡本体+各域判据册（裁定#518=「先冻结后跑」方法先例，非数值源）；⑨席对照申请单。同族门柱多口径并存（如实测 S2 族标准/事件研究两套五键并存）→不擅自挑，一律呈批。
+- **输入口**：exam_cards 中 empty 卡（现存 empty 多为 /01 裸骨架卡——转正须③④席先产具名子题卡）；在册冻结值真源=同族已冻结卡本体+各域判据册（裁定#518=「先冻结后跑」方法先例，非数值源）；⑨席对照申请单。同族门柱多口径并存（如实测 S2 族标准/事件研究两套五键并存）→不擅自挑，一律呈批。**裸骨架卡（/01 无具名子题）一律退回③席按 TDM 图节点定义补具名子题（真源在图上，有据可依不属自拟），禁呈批 Owner；仅当节点定义本身无考题语义才上升呈批。**
 - **输出口**：preregistered 卡（pillars_numeric/window/buckets 齐，数据绑定按卡面 lineage 字段承载——531 卡中 528 张用 lineage，`data_binding` 仅 3 张，口径以 lineage 为准）；对照卡对（原版=champion，改良=challenger，**只改一个变量**）；语义参数缺→`docs/_working/nightmine_campaign/05_owner_decisions.yaml` 呈批（**一个数不编**）。
 - **工作流程**：1 领 empty 卡/对照申请 2 查在册冻结值（逐字沿用）3 有→填门柱 4 缺→呈批件 5 对照申请→配对制卡（clone 原卡改单变量）6 翻 status 7 自检两轮（两轮都核对：门柱非空且与冻结值逐字一致；对照卡 diff 恰一个变量）。
 - **保底绩效**：每班≥5 张或当班领用卡 100% 处置完（含呈批件；骨架卡时代呈批件计入保底）。
@@ -118,7 +119,7 @@ owner: ZephyrAlpha-Owner
 - **目标**：成绩产量——每日出分。
 - **输入口**：exam_cards 中 preregistered 队列（两席按卡族分工互不抢卡）。
 - **输出口**：`docs/04_research_records/backtest/scores/<YYYY>/exam_scores_v1.yaml` 追加行（**only-add**；已物理迁此，裁定#536）；卡 status→examined。
-- **工作流程**：1 领卡 2 核对门柱已冻结 3 选通道：series 卡走 CLI（calibration_exam.py --card/--signal-csv/--target-csv，实测约 2 分/卡）；panel 卡走 run_card API（CLI --target-csv 有砍单列缺陷，修复前 panel 禁走 CLI）；数据按卡绑定口径自物化（执行器不自助取数）；单卡>15min 即 kill 记 finding；**GPU 优先**：ic 类走 scripts/backtest/fexam/gpu_ic/gpu_rank_ic.py（3090+torch cu126 实测可用），启用前必过 parity_test 对拍、且须安静窗（VRAM 独占纪律：smoke_gpu 预检不过=改日，白天桌面进程占 GPU 硬闯禁止）；白天零星卡 CPU 兜底，不与主线抢 CPU4 跑（CH 窗 01:00-04:00 避让）5 分数入库 6 翻状态 7 失败写堵点册即停 8 自检两轮（only-add 与门柱一致）。
+- **工作流程**：1 领卡 2 核对门柱已冻结 3 选通道：series 卡走 CLI（calibration_exam.py --card/--signal-csv/--target-csv，实测约 2 分/卡）；panel 卡走 run_card API（CLI --target-csv 有砍单列缺陷，修复前 panel 禁走 CLI）；数据按卡绑定口径自物化（执行器不自助取数）；单卡>15min 即 kill 记 finding；**GPU 优先**：ic 类走 scripts/backtest/fexam/gpu_ic/gpu_rank_ic.py（3090+torch cu126 实测可用），启用前必过 parity_test 对拍、且须安静窗（VRAM 独占纪律：smoke_gpu 预检不过=改日，白天桌面进程占 GPU 硬闯禁止）；白天零星卡 CPU 兜底，不与主线抢 CPU。4 跑（CH 窗 01:00-04:00 避让）5 分数入库 6 翻状态 7 失败写堵点册即停 8 自检两轮（only-add 与门柱一致）。
 - **保底绩效**：每席每班≥8 张出分，或跑满 4 小时（双口径先到者计）。
 - **真源挂点**：exam_policy＋run_fexam.py（MOD-BT-FEXAM）。
 - **总包**：并发≤2（CPU 核限制）。
@@ -290,14 +291,19 @@ lane_roster 7 车道+RX_A/RX_B 复挖道；某车道挖满（mined_out 申报+�
 | C4Exam 考试夜批 | 增量分数行 | docs/04_research_records/backtest/scores/<YYYY>/（经 only-add 通道） | 结论层 |
 | C4Exam/TTL | 运行日志 | .runtime/logs/ | 非资产 |
 
+### 8-A-2 治理裁定记录制度（2026-10-15 Owner 采认）
+
+**分片登记+⑩聚合，不建共写集中册**（共写面=双侧皆改死袋头号件面教训）：各席每班在自己 ledger.md 追加 `[BLOCKER] 日期|席+班号|类型|证据锚点|要谁做什么|严重度` 行，**零问题也须写 `[BLOCKER] 无`**（沉默≠没问题）；⑩每班扫各席 [BLOCKER] 汇总进晨报（全量+严重度列，粒度不收窄）；每周一⑩将上周全集定稿 promote 至 `docs/04_research_records/governance/adjudication/<周册>/`（promote 三步）。修复方就地翻状态必须附修复证据（commit 哈希或文件路径）。历史统一入口（99_owner_gate.md 等）已在归档区，不复活。
+
 机器层通用规矩：产出的数字/文件=**原料**，只有经⑨成绩官判卷入分数册的才算成绩；叙事终稿进 04 走 promote 三步；日志永远 .runtime 非资产；四闹钟 runner 脚本头部的产物路径注记由⑤席/维护班下一班对齐本表（脚本行为不变，只补注释）。
 
 
 ## 8. 研究态资产存放规范 v2 对齐（裁定#536，2026-10-15 生效；制度页=automation_sop/research_asset_storage_spec.md 禁另造副本）
 
 四层分流：结论层→分数册（04/backtest/scores/）｜数值层→CH c1_backtest.*｜过程层→run_archive+n_trial_ledger（可重建）｜叙事层→04 区各栏。
+**Owner 判定总则（2026-10-15）**：①用完即删的→_working（ttl 任务期，如派单/水位快照/班间交接/游标）；②永久需要存放的→04。**04 准入资格=可复验**：所存必须是研究数据与研究结果，且内容足以支持恢复与复验（SQL/参数/file:line 锚点/相关性证据随件，只存结论不留证据链=不合格）。班台账类活文档任务期住 _working，收官定稿携全量证据链 promote 进 04。
 本线资产落点（v2 对照）：运行面（派单/反馈/水位/四件套/班间交接）=docs/_working/automation_campaign/ 不变（带 ttl+游标，**禁入 04**）｜分数册=04/backtest/scores/<YYYY>/ only-add｜挖矿台账收官终稿 promote→04/mining/ledgers/<campaign_id>/｜**矿脉枯竭判定书**（mined_out 申报+六向查证+交叉复挖结论）→04/mining/exhaustion/<YYYY>/ 逐节点一册｜战役总报→04/backtest/campaigns/<id>/ 或 cross_domain/<id>/｜复盘案卷→04/backtest/postmortems/<YYYY>/｜耗尽预注册卡存档→04/backtest/prereg_archive/<YYYY>/｜新考试卡=03 卡册不变（生成器 only-add）。
-四规矩：命名 `YYYYMMDD_<域码>_<类型码>_<slug>_v<N>`（域码 bt/mining/data/gov；类型码 score/exam/report/postmortem/card/ledger；ASCII ≤60）｜表头九必填（doc_type/ttl:permanent/schema_version/created/sid/family_id/domain/title_zh/status）｜叶子夹 120 硬顶 100 预警｜写完新件跑 scripts/governance/generate_research_index.py（机生禁手改）。
+四规矩：命名 `YYYYMMDD_<域码>_<类型码>_<slug>_v<N>`（域码 bt/mining/data/gov；类型码 score/exam/report/postmortem/card/ledger；ASCII ≤60；词表真源=docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml）｜表头九必填（doc_type/ttl:permanent/schema_version/created/sid/family_id/domain/title_zh/status）｜叶子夹 120 硬顶 100 预警｜写完新件跑 scripts/governance/generate_research_index.py（机生禁手改）。
 **promote 三步**：ttl task_bound→permanent＋落 04 对应栏＋跑索引生成器。
 
 ## 9. 新信号挖掘线作战规程（条件轴复核班交接，2026-10-15；十方向=③④席**持久作业菜单**（楼图子册=docs/_working/automation_campaign/pulse/mining_directions.md，逐楼状态+游标轮转，封矿即切楼——非一次性任务书；技术细节参考=桌面 condaxis_tmp/mining_lanes/new_signal_mission_brief.md））
