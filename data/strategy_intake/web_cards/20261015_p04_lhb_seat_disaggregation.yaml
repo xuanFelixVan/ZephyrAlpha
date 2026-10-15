@@ -12,28 +12,36 @@ intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
 source_links:
   - role: 席位分户口径的实务叙述（游资席位／量化席位／机构专用席位三分）
     url: https://news.futunn.com/post/61920943/data-observation-intense-competition-among-multiple-funds-in-battery-stocks
-    what_verified: "WebSearch 命中正文：『the activity level of institutional investors on the Dragon and Tiger list has significantly increased……for over 121 million by one first-tier speculative fund seat……Additionally, two quantitative seats purchased Zhejiang Rongtai』＝市场实务把龙虎榜席位分成**机构专用／游资营业部／量化席位**三类并据此读资金意图；财经资讯＝非同行评议，仅作口径参照，其涨跌叙事禁当证据"
+    what_verified: >-
+      WebSearch 命中正文：『the activity level of institutional investors on the Dragon and Tiger list has significantly increased……for over 121 million by one first-tier speculative fund seat……Additionally, two quantitative seats purchased Zhejiang Rongtai』＝市场实务把龙虎榜席位分成**机构专用／游资营业部／量化席位**三类并据此读资金意图；财经资讯＝非同行评议，仅作口径参照，其涨跌叙事禁当证据
   - role: 同一口径的第二独立命中（用于自证引用可回查，禁凭记忆写法）
     url: https://news.futunn.com/post/61227964/dragon-and-tiger-list-shenzhen-stock-connect-and-stock-trading
-    what_verified: "WebSearch 命中正文：『深股通、炒股養家合力搶籌……Among the stocks involving institutional dedicated seats on the Dragon and Tiger List, the top three net buy amounts for the day are……net sell amounts……』＝同一数据面把"机构专用席位"与"深股通席位"分开列示 ⇒ 本卡三臂（institution/connect/broker）的分法在披露口径上真实存在，不是本席臆造"
+    what_verified: >-
+      WebSearch 命中正文：『深股通、炒股養家合力搶籌……Among the stocks involving institutional dedicated seats on the Dragon and Tiger List, the top three net buy amounts for the day are……net sell amounts……』＝同一数据面把"机构专用席位"与"深股通席位"分开列示 ⇒ 本卡三臂（institution/connect/broker）的分法在披露口径上真实存在，不是本席臆造
   - role: 国内私募研究口径（散户情绪因子＝龙虎榜＋论坛情绪）
     url: https://www.gankinterview.cn/blog/a-shares-vs-us-stocks-interviewing-at-top-domestic-private-funds-high-flyerjiuku
-    what_verified: "WebSearch 命中两小节标题与正文：『Retail Sentiment Factors: Dragon and Tiger List & Forum Sentiment』、『Dragon and Tiger List Data Mining: \\"Smart Money\\" and \\"Leek Orders\\" Behind the Seats』＋『If the buying seats on the Dragon and Tiger List are dominated by the \\"Lhasa Legion\\", it usually implies that chips are loosening and the main force is……』＝业内把**席位构成**（谁在买）而非**净买金额**（买多少）读为主信息；本卡据此设『份额臂』与本卡『净买率臂』分考。⚠ 培训机构博客＝非同行评议，只取口径不取结论"
+    what_verified: >-
+      WebSearch 命中两小节标题与正文：『Retail Sentiment Factors: Dragon and Tiger List & Forum Sentiment』、『Dragon and Tiger List Data Mining: \\"Smart Money\\" and \\"Leek Orders\\" Behind the Seats』＋『If the buying seats on the Dragon and Tiger List are dominated by the \\"Lhasa Legion\\", it usually implies that chips are loosening and the main force is……』＝业内把**席位构成**（谁在买）而非**净买金额**（买多少）读为主信息；本卡据此设『份额臂』与本卡『净买率臂』分考。⚠ 培训机构博客＝非同行评议，只取口径不取结论
   - role: 数据面产品目录（同一披露的分户字段存在性佐证）
     url: https://asharehub.com/en/
-    what_verified: "WebSearch 命中条目：『Tiger — Institutional disclosures』与『Shareholders Count & insider trades』『Northbound Holdings — Foreign investor detail』＝机构专用席位/北向持仓在数据供给侧是**两张贴不同表**的披露，与本库实测一致（seat 表有 connect 臂、northbound_hold_snapshot 只有 8 个快照日）；仅作供数面参照，未读其文档"
+    what_verified: >-
+      WebSearch 命中条目：『Tiger — Institutional disclosures』与『Shareholders Count & insider trades』『Northbound Holdings — Foreign investor detail』＝机构专用席位/北向持仓在数据供给侧是**两张贴不同表**的披露，与本库实测一致（seat 表有 connect 臂、northbound_hold_snapshot 只有 8 个快照日）；仅作供数面参照，未读其文档
   - role: GitHub 面命中（许可证闸样本；思想级，本席未取码）
     url: https://github.com/simonlin1212/a-stock-data
-    what_verified: "gh api search/repositories（查询词『A股 龙虎榜 in:name,description,readme』）命中：stars=10875、pushed_at=2026-10-11（活跃）、license.spdx_id=Apache-2.0，描述含『行情K线·当日逐笔·研报·信号·资金面·新闻·财务·公告·打板·ETF期权·舆情·宏观利率·期货大宗……15层·87端点·34数据源』＝资金面/席位数据端点的现成活仓；Apache-2.0 ⇒ 许可证闸放行"读结构"，但**禁复制入库**（Owner 定性），实现一律走 C3 重实现"
+    what_verified: >-
+      gh api search/repositories（查询词『A股 龙虎榜 in:name,description,readme』）命中：stars=10875、pushed_at=2026-10-11（活跃）、license.spdx_id=Apache-2.0，描述含『行情K线·当日逐笔·研报·信号·资金面·新闻·财务·公告·打板·ETF期权·舆情·宏观利率·期货大宗……15层·87端点·34数据源』＝资金面/席位数据端点的现成活仓；Apache-2.0 ⇒ 许可证闸放行"读结构"，但**禁复制入库**（Owner 定性），实现一律走 C3 重实现
   - role: 同一仓的 README/SKILL 面（东财披露表与字段名的第二手登记）
     url: https://github.com/ljh15039080965-prog/a-stock-data/blob/main/SKILL.md
-    what_verified: "WebSearch 命中代码片段，逐字可见其龙虎榜聚合走东财 datacenter 报表名 RPT_DAILYBILLBOARD_DETAILSNEW（字段 TRADEDATE/SECURITYCODE/BILLBOARDNETAMT/TURNOVERRATE/EXPLANATION）与买卖席位拆分 RPT_BILLBOARD_DAILYDETAILSBUY ⇒ 本库 seat 表 data_source=akshare，与本条源不同，**字段对表须由 ① 席判**，本席不代裁；⚠ 该仓未标注许可证（本席未核实其 license 字段）⇒ 按无许可证处理＝只学思想"
+    what_verified: >-
+      WebSearch 命中代码片段，逐字可见其龙虎榜聚合走东财 datacenter 报表名 RPT_DAILYBILLBOARD_DETAILSNEW（字段 TRADEDATE/SECURITYCODE/BILLBOARDNETAMT/TURNOVERRATE/EXPLANATION）与买卖席位拆分 RPT_BILLBOARD_DAILYDETAILSBUY ⇒ 本库 seat 表 data_source=akshare，与本条源不同，**字段对表须由 ① 席判**，本席不代裁；⚠ 该仓未标注许可证（本席未核实其 license 字段）⇒ 按无许可证处理＝只学思想
   - role: 含"游资席位＋北向＋机构"多源因子输入的开源框架线索（经 awesome 清单转述）
     url: https://github.com/wilsonfreitas/awesome-quant
-    what_verified: "WebSearch 命中列表条目原文：『Reinforcement learning stock-selection framework for the China A-share market with multi-source factor input (alpha101 + main-force flow + hot-money seats + northbound + institutional + fundamentals), board-aware price limits, and ONNX CPU inference. aurumq-rl』＝'hot-money seats' 在国内因子体系里已被当作独立输入族对待；本席**未直连该仓**（awesome-quant 为 MIT 清单，条目本身＝转述引证），⑥ 若要用其口径须自行回查 aurumq-rl 原仓许可证"
+    what_verified: >-
+      WebSearch 命中列表条目原文：『Reinforcement learning stock-selection framework for the China A-share market with multi-source factor input (alpha101 + main-force flow + hot-money seats + northbound + institutional + fundamentals), board-aware price limits, and ONNX CPU inference. aurumq-rl』＝'hot-money seats' 在国内因子体系里已被当作独立输入族对待；本席**未直连该仓**（awesome-quant 为 MIT 清单，条目本身＝转述引证），⑥ 若要用其口径须自行回查 aurumq-rl 原仓许可证
   - role: 学术面命中实况（如实登记稀疏＝非通道故障）
     url: http://arxiv.org/abs/2610.00173v1
-    what_verified: "arXiv API 三式查询：all:%22variance risk premium%22 AND cat:q-fin.ST → 2 条；abs:%22block trade%22 → 4 条（含本条 Price Discovery at the Boundary of Contractual Decidability，2026-09-16）；all:%22dragon tiger%22 OR all:%22limit-up china stocks%22 → **entries=0**。同批正对照 cat:q-fin.PM=3 条、负对照 all:zzzqqxxnotaword=0＋原文 No matches found ⇒ 通道可用；**龙虎榜/席位分户在 arXiv 面查无=真**，Semantic Scholar 面本班两次均 HTTP=429（原文 Too Many Requests）⇒ 该通道读数 0 属**通道不可用**，与『无文献』不同源，⑥ 排期时须换通道再试一次"
+    what_verified: >-
+      arXiv API 三式查询：all:%22variance risk premium%22 AND cat:q-fin.ST → 2 条；abs:%22block trade%22 → 4 条（含本条 Price Discovery at the Boundary of Contractual Decidability，2026-09-16）；all:%22dragon tiger%22 OR all:%22limit-up china stocks%22 → **entries=0**。同批正对照 cat:q-fin.PM=3 条、负对照 all:zzzqqxxnotaword=0＋原文 No matches found ⇒ 通道可用；**龙虎榜/席位分户在 arXiv 面查无=真**，Semantic Scholar 面本班两次均 HTTP=429（原文 Too Many Requests）⇒ 该通道读数 0 属**通道不可用**，与『无文献』不同源，⑥ 排期时须换通道再试一次
 
 # ── 必备② 许可证闸
 license:
