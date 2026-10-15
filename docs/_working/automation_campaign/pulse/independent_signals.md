@@ -114,3 +114,23 @@ title: 独立信号清单（⑨成绩官每日维护）
 - **15 员池 PR（参与率/相关矩阵）**：**维持"仍未获得"**。本班按 07/08 班在册禁烧面条款**未复测** `factor_signal`/`factor_feature_value`（三度同值＝各 0 行）与 `ART_ROOT`；正交闸列名契约适配面与 PR 复跑配方仍在册（04 班 `to_impl.md` 修⑤ 正解改写＋`.runtime/tmp/st-qoder-p09-1015-04/pool6/`）。
 - **本席位的新对照基准（④席生成端必读）**：分数册现值第一次出现**净/成本口径行**——rows[84..89] 六行的 `net_bucket_medians` 全负、`round_trip_cost_bp=25.0`，而**全册 90 行无任何一桶为正**（has_pos=0，尺＝`.runtime/tmp/st-qoder-p09-1015-09/probe9_net_and_rerun.py`）。⇒ 正交闸若开始用"扣费后可实现性"作筛选，现值面是**六行样本**、不是全册；存量 84 行是毛口径（NaN 净面）。跨代比较必须分账（详见 `to_impl.md` 修⑨ 追加面）。
 - **镜像簇点名（呈批 P-6 的人工替代面）**：`mono_spearman ≤ −0.6 且 regime/oos 同号` 在全册命中 **1 行＝rows[87]**。若 P-6 裁"不加列"，此清单即每班唯一检索面。
+
+
+## 2026-10-15 日更 ｜ st-qoder-p09-1015-10（⑨成绩官第十班：**对照基准新面＝comparison 族 OOS 配对面 10/10 无读数**；独立命题分母 64→65；零新轴入占）
+
+> **读面声明（本班正文原样跑）**：判卷锚点＝快照 `.runtime/tmp/st-qoder-p09-1015-10/score_snapshot.yaml`（磁盘面 sha256 `d8a6fd8d52f749cecf73c8f02e931d936df020702bfc548bfb97778476cbf949`／129267B／docs=2／doc1 rows=**93**／mtime `2026-10-15 15:13:49`，较 09 班终报锚点 `009c7bbcf87582c2…`／123768B／90 行＝增量 3 行 rows[90..92]）。**本班写作期间册又长**：现值 `b0c9a370fcfc5b080c0b4171…`／130320B／rows=**94**／mtime `15:41:28`（第二快照 `score_snapshot_1542.yaml`）⇒ 本班追加判 rows[93]，**实判 4 行**。index 面 `git show :docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`＝`009c7bbcf87582c2…`／rows=**90**（09 班磁盘终面已被吸收入 index）；HEAD 面该馆 `git ls-tree -r --name-only HEAD -- docs/04_research_records/backtest/scores/`＝**0 件**。本班未动分数册任何字节、未动任何阈值与门柱。
+
+- **占领区摘要（本班 4 行）**：rows[90]/[91]/[92] 全落**同一张已占卡**（五级熔断状态机 vs 二值全清＝风控阶梯轴，09 班在册已计）；rows[93]＝减仓参与率对次日价格路径＝已占价量/成交压力轴 ⇒ **零新轴入占**。未占/稀薄轴维持在册方向＝波动率期限结构、流动性与冲击成本、资金面分户、另类数据。
+- **产量口径**：`94 行＝71 distinct card_id＝65 个独立经济命题`（扣在册 6 对逐字节同读数平行卡）。⚠ 09 班在册 64＝90 行面（70−6）、本班 65＝94 行面（71−6），差＝rows[93] 一个真新对象，两数皆真、引用者勿混面。
+- **④席生成端与正交闸必读的新对照基准（本班首份账）**：分数册**对照/消融族的 OOS 侧从未有过读数**——10 行双臂行（rows[17]/[44]/[45]/[66]/[67]/[68]/[69]/[70]/[71]/[92]）`ic_delta_oos` **10/10 全 NaN**，7 行的唯一败根即此。⇒ 任何"该风控命题 OOS 已验/OOS 不稳"的叙述都**无册面依据**；正交闸若按"OOS 通过"筛轴，comparison 族贡献应为 **0 根已验轴**，不是 12 行。尺＝`python .runtime/tmp/st-qoder-p09-1015-10/replay10_dualarm.py 0 92`（PROBLEMS 0）。
+- **15 员池 PR（参与率/相关矩阵）**：**维持"仍未获得"**。本班按 07/08/09 班在册禁烧面条款**未复测** `factor_signal`/`factor_feature_value`（三度同值＝各 0 行）与 `ART_ROOT`；04 班列名契约适配面与 PR 复跑配方仍在册。
+- **在册叙述值 4.4**（`research_production_line_policy.md:274`）继续标"**未复现**"（本席累计七班无任何产物可再现该数）。
+- **镜像簇点名（P-6 人工替代面续条）**：本班新行无镜像形（rows[93] `mono_spearman` 无面），全册命中仍＝**1 行 rows[87]**。
+- 空白轴地图判读面限定沿用：按 card_id 命名语义归类，本席未逐卡读卡体（本班例外＝卡 07 与 02_dualwindow 两张读过卡体全文）。
+
+## 2026-10-15 16:5x ｜ st-qoder-p09-1015-11（⑨成绩官第十一班·每日维护行）
+
+- **本班工具实跑**（非引用在册）＝`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6 --out .runtime/tmp/st-qoder-p09-1015-11/pool6_report_11.json` → `n_members=6 n_common_dates=1855 effective_n_signals(PR)=2.1272`，rc=0。⇒ **PR 与 04 班在册逐位同＝同池同人同值的复现确认，不是新增读数**；本班未新建池面。相关矩阵已落 `.runtime/tmp/st-qoder-p09-1015-11/pool6_report_11.json`（键面：`correlation_matrix`/`effective_n_signals`/`eigenvalues`/`kind`/`members`/`n_common_dates`/`n_members`）。
+- **正交闸准入基准沿用**：`|corr|<=0.3`（工具契约在册）。本班从 `pool6_report_11.json` 直读一例：`avg_abs_ret` ↔ `avg_abs_ret_z20` corr=**0.7399**（>0.3 ⇒ 同轴变体不占独立名额）；`avg_abs_ret` ↔ `lu_count_z20` corr=**0.1331**（<=0.3 ⇒ 可视为独立候选）。⚠ 这仍是**6 员适配池**，不是 ①②班派单所指的 **15 员池**。
+- **15 员池缺席如实注明（未重烧）**：`c1_market.factor_signal`/`factor_feature_value` 各 **0 行**（三度同值禁烧面，本班未测第四次）；`ART_ROOT=docs/_working/integrated_backtest/` 按 05 班在册为不存在目录，本班未复查。⇒ 本表对 ④ 席生成端的对照基准**仍只能覆盖 6 员适配池面**，15 员池 PR 无源；在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"。
+- **本班新增对照事实（供 ④ 席，属分面非池面）**：分数册新行 rows[94] 所在节点 `TDM-P-P2-04`（盘口/仓位族）与 rows[95] 所在 `TDM-E-L9-A01`（动量截面轴）**均不在 `pool6` 六员之内** ⇒ 正交闸对本班两行对象**无从对照**，如实报"闸对该两对象未开"，勿把"未触发"读成"已判独立"。

@@ -108,3 +108,9 @@ title: 缺数申请（致①数据源席）
 7. **margin_trading**：2024-09-02→2026-10-14、509 日、2,113,034 行、4934 票；`margin_balance` 零值 **123** 行（可用）、`short_balance` 零值 **794,979** 行（37.6%，融券臂稀疏）、`data_source` tushare 1881468＋ifind 231566 两源 ⇒ 杠杆资金轴可考但史长 <2 年，IS/OOS 分割受限。
 8. **期权隐含腿原料面破**：`option_iv_surface` 仅 159 个不同日期（2026-01-29→10-14）、31427 行；`option_type` 空字符串 ''＝**24811 行（79.0%）**、`iv=0` 4127 行、`delta=0` 与 `gamma=0` 各 **30090 行（95.7%）**；`quality_flag` 唯一值 1（31427/31427＝零区分度）；姊妹表 `option_greeks` 更短（46 日、5939 行）。⇒ 本席卡14 因此只绑**已实现**方差、不绑隐含（落差已写进卡面 face_gap_zh）。
 9. **kline_index 指数日线多源接缝含「前值复制桩」**（本席亲测，非派卷）：000300 的 data_source 分段＝bdpan 5219 行（止 2026-07-02）→ ifind 1 行（2026-07-03）→ miniqmt 57 行（2026-07-06 起）＋ akshare 9 行／tushare 1 行零散插入；**2026-07-02 close=4812.30 与 2026-07-03 close=4812.30 逐位同**＝跨源接缝处一根 0 收益桩，会压低接缝附近任意窗的已实现波动。另该表**无 pct_change 列**（实打 Code 47 原文『Unknown expression identifier `pct_change` … Maybe you meant: ['exchange']』）⇒ 指数派生序列须自算 log 差分并对接缝日标缺测。
+
+## 2026-10-15 16:5x ｜ st-qoder-p09-1015-11（⑨成绩官第十一班：当日增量＝2 行 ⇒ **本班零新开缺数单**）
+
+- **零新开理由（口径）**＝rows[94]/[95] 五面（`ic_mean`/`ic_ir`/`oos_ic`/`regime_ic`/`n`）皆实数，无"源缺致考不了"形态；两行的"无面"只落在 `mono_spearman_min`，其因在**码面生产腿**（`calibration_exam.py:268` 字面 None）而非数据源 ⇒ 归 `to_impl.md` **修⑭**，不属本信箱。
+- **未重烧的在册面**（三度同值，禁第四次）＝`c1_market.factor_signal` 与 `factor_feature_value` 各 **0 行**；在册缺②（`c1_market.suspend` 考试窗内零行，影响 panel 路可成交性口径）本班**未复测**（本班两行卡面 `data_binding` 无 `exclusions` 键，与该单对象无交集）。
+- **本班新增取数侧事实（登记，不开单）**＝为定 修⑮ 的窗口径，本席直读 `c1_market.kline_daily_hfq` 的交易日数：IS `2019-01-04..2023-12-31`=**1212**、OOS `2024-01-01..2026-09-30`=**666**、并集=**1878**（正对照 `SELECT 1`→`[(1,)]`，连接＝`DatabaseService().get_clickhouse_conn()`）。⇒ 该表**窗内不缺日**，rows[94] 的 `n=1859` 与并集 1878 之差属逐票 NaN 对齐所致，非缺采。若下一班要谈"panel 路样本代表性"，请用这三个数做分母，勿再重算窗。

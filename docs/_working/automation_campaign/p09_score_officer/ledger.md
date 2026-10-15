@@ -593,3 +593,133 @@ title: ⑨成绩官·findings台账
 - 七件 claim 首串＝`acquired=7 denied=0`；本班终报前续活重 claim 时**变 6/1**＝`feedback/to_impl.md` 被**活会话** `st-qoder-p04-1015-05`（④矿工席第五班）认领。本班处置＝按在册 memory `seat-claim-keeper-duality` 处方**不抢不放**，改走 `--allow-overlap`，并先自证纯新增：`difflib` 对拍本班盘前快照 vs 现面＝**minus 0／plus 30**（＝本班 09 班节整块，零删除、零改写他席行），`startswith(快照)`＝True ⇒ 本席那次写盘（CAS 通过）未覆盖 ④席内容，④席后到认领只是锁、不是新字节。**故本班用 `--allow-overlap`**（旧句"本班未用"作废，留卷不删）。
 - ⚠ 交接风险如实呈交：`to_impl.md` 现面含本席 09 班节，而 ④席在其认领后若按**旧读面**整档写回（非 CAS），本席该节有被蒸发之虞（在册 memory `hot-file-wipe-forensics-20260918` 同型）。本席快照留于 `.runtime/tmp/st-qoder-p09-1015-09/snap/to_impl.md`（sha `3b833b98…`），下一班若见该节消失，先对拍本快照再重投超集袋，勿判"⑨席未出单"。
 - 消息正文含代码路径指针（`calibration_exam.py`/`card_binding.py` 行号）而袋内零代码件 ⇒ 首行带 **`[docs-only]`**（08 班在册堵点正解）；每袋带全 7 件（07 班 S-2 交付纪律）。
+
+
+## 2026-10-15 ｜ st-qoder-p09-1015-10（⑨成绩官第十班：当日增量＝**4 行**全判；主产出＝对照族 OOS 路级根因＋新单 修⑬＋呈批 P-7＋〔对照〕1 条＋`&&` 短路取证自犯自更正）
+
+> **读面声明（本班正文原样跑）**：判卷锚点＝快照 `.runtime/tmp/st-qoder-p09-1015-10/score_snapshot.yaml`（磁盘面 sha256 `d8a6fd8d52f749cecf73c8f02e931d936df020702bfc548bfb97778476cbf949`／129267B／docs=2／doc1 rows=**93**／mtime `2026-10-15 15:13:49`，较 09 班终报锚点 `009c7bbcf87582c2…`／123768B／90 行＝增量 3 行 rows[90..92]）。**本班写作期间册又长**：现值 `b0c9a370fcfc5b080c0b4171…`／130320B／rows=**94**／mtime `15:41:28`（第二快照 `score_snapshot_1542.yaml`）⇒ 本班追加判 rows[93]，**实判 4 行**。index 面 `git show :docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`＝`009c7bbcf87582c2…`／rows=**90**（09 班磁盘终面已被吸收入 index）；HEAD 面该馆 `git ls-tree -r --name-only HEAD -- docs/04_research_records/backtest/scores/`＝**0 件**。本班未动分数册任何字节、未动任何阈值与门柱。
+
+### 1 判卷表（增量 4 行，逐行回卡体；在册尺 `replay9_verdict.py` 对双臂族与 argv 行段均不走，本班另起两把尺）
+
+| 行 | card_id | 族 | verdict | 本席机械复现 | 门柱走样否 |
+|---|---|---|---|---|---|
+| rows[90] | `TDM-X-R1-01/comparison/07_…五态仓位锚定版` | comparison（双臂） | **blocked** | `book_channel:bind:FileNotFoundError: docs\_working\fexam\indicator_exam_scores_v1.yaml`，metrics 空 ⇒ **不占 fail 分母、不翻卡**（按卡注纪律） | 不适用（零柱判罚） |
+| rows[91] | 同上 | comparison（双臂） | **blocked** | `book_channel:bind:MemoryError: Unable to allocate 234. MiB for shape (30676538,) object`，metrics 空 | 不适用 |
+| rows[92] | 同上 | comparison（双臂） | **fail** | 六柱逐一回卡体：`maxdd_improvement 10.32 >= 5.0` 过／`sharpe_delta 0.082 >= -0.1` 过／`turnover -0.978 <= 8.0` 过／`cost_tier 40bp 档 open_sharpe 0.1635 >= 0.0` 过／`missed_crisis_triggers 0 <= 0` 过／**`oos_same_sign` ic_delta_oos=NaN ⇒ 一票否决**；两柱（no_hysteresis／whipsaw）由本跑让与另一跑（`arm_pillars_owned_by_other_run`）。**verdict 与 fail 集 100% 再现** | **未走样**（阈值全部逐字取自卡体 `pillars_numeric` 八键） |
+| rows[93] | `TDM-P-P2-04/calibration/06_减仓参与率压力对次日价格路径` | calibration | **fail** | `ic_mean -0.0121 < 0.02` 败／`ic_ir -0.068 < 0.3` 败／`regime 反号 (bull +0.0060, bear -0.0334)` 败／`oos_same_sign` **过**（-0.0084 与 IS 同号）／`mono_spearman` 无面且**如实披露**。verdict 再现 | **未走样** |
+
+- IS/OOS 符号观察：rows[92] IS 侧配对 IC 差 `ic_delta_is=-0.00144`（开臂 IC **劣于**关臂 0.0014，绝对量级 1.4e-3 近零）而 OOS 无读数；rows[93] `oos=-0.0084` 与 `is=-0.0121` 同号＝oos 柱过，败在强度与稳定性而非符号。
+- 负结果如实入册核对：rows[90]/[91] 的 blocked 未被写成 fail、未翻卡、`n_trial_ledger` 零消费（按卡面 note 原文），本班核对＝两行 `metrics={}` 且 `pillars_all_pass=false` 未被用作结论 ⇒ **如实**。
+
+### 2 结构性观察（家族级，本班≥1 条硬保底＝出 3 条）
+
+1. **对照/消融族 10 行双臂的 OOS 配对面 10/10 无读数，7 行唯一败根即此** ⇒ 该族的"OOS 稳定性"门柱自建册起**从未被判过**；同册 calibration 族 57 行、ablation 1 行 `oos_ic` 有实数 ⇒ 反证不是窗/数据整体不可得，而是**双臂路**的因（三因未分账见修⑬ 形一：`len(m)<60`／某侧 `std()=0` 恒常数／卡面未申报窗，三者在 `:226`+`:97-98`+`:222-224` 产出同一个 NaN，而文案固定写"样本不足"——rows[17] 的卡面 `oos_window_ref=null` 是已铁证的第三因）。
+2. **`ic_ir_min` 柱在全册呈"要么无面、要么判败"的两态形制，0 次过线**：94 行中 `ic_ir` 有实数＝**4 行**（rows[73]/[74]/[83]/[93]），4/4 全记 FAIL；其余＝None 55 行＋键缺席 35 行 ⇒ 该柱从未产生过一个"过"的观测。这与在册修⑥（申报腿）、修⑨（产数腿）同族但**本班新量到的是分母面**：0.3 阈在现值 4 个读数上全灭，属"门槛与 ICIR 实际分布不同代"的候选，本席**不自裁**（若 Owner/⑩ 认为该谈阈值，须走判据通道；阈值数字本席一字未动）。
+3. **同一张卡 7 轮里 5 次出分全败于同一根、2 次装载不出**（卡 07）⇒ 重跑不产生信息增量；而 blocked 两行的成因是**磁盘已修、HEAD 未落**（`exit_simulator.py` ` M`＋`git show HEAD:` 面对 `SCORES_YAML` 零命中）＋**族驱动器整件未跟踪**（`comparison_exam.py` `??`）。这与在册修⑧（分数册三面分叉）是同型病的不同对象，本席按追加面记，不另立号。
+
+### 3 pass 行与升级（本班零升级）
+
+- 全册 pass 仍＝**2 行**（rows[76]/[78]，同落 `lu_count_z20` 一根轴，06 班在册 corr=0.9998）⇒ **独立通过轴仍＝1**。
+- 本班**零升级 verified**：两枚 pass 的 `ic_ir` 无面＋净/成本面 NaN 两腿在册未齐（09 班禁烧面条款，本班未重跑读数）。铁律：fail 永不升级——本班 4 行里 0 枚 pass，无升级候选。
+- TDM 挂接记录：本班无 pass 行 ⇒ 零挂接；`TDM-X-R1-01` 节点的 `confidence` 写回面**本班未动**（卡 07 `lineage.confidence_writeback` 申报的真源），该节点在册 11 行全 fail/blocked。
+
+### 4 归因四分诊路由（4 行 100% 路由，每行一条）
+
+| 行 | 路由 | 落单处 |
+|---|---|---|
+| rows[90] blocked | **实现＋落地面**（旧路径修复未入 HEAD；驱动器未跟踪） | `to_impl.md` 修⑧ 追加面（不新开号） |
+| rows[91] blocked | **实现**（234MiB object 数组装载；与本班 reaper 实测 `commit_pct=83.77%` 同窗，属容量/装载面） | `to_impl.md` 修⑧ 追加面第二列 |
+| rows[92] fail | **实现/判据口径＋需对照**（非信号无效） | `to_impl.md` **修⑬**＋**呈批 P-7**＋**〔对照〕**给⑥席；`to_miners.md` 路由更正＋家族收敛建议 |
+| rows[93] fail | **信号真无效（强度与稳定性面，第 1 轮不判死）** | `to_miners.md` 产量口径与空白轴地图（该对象第 1 轮，零 mined_out 申请） |
+
+### 5 自检两轮
+
+- **轮一（抽 3 行回卡体核门柱）**＝rows[92]/rows[66]/rows[17]（三行同族不同代）：rows[92] 六柱逐字对卡体八键、rows[66] 同卡 off 跑第 2 次读数对拍（`turnover_delta_annual_x` 与 `ic_delta_is` 与 rows[92] **逐位同**，`maxdd_improvement_pp` 11.53 vs 10.32 **不同**——本班未定性，列入下一班可查面），rows[17] 卡体 `oos_window_ref=null` 铁证第三因 ⇒ **三行门柱均未走样**（阈值零自拟）。
+- **轮二（全册 join）**＝94 行 × 卡体 `card_id` join **94/94 命中**（卡池尺同 09 班口径）；双臂尺 `replay10_dualarm.py 0 92` PROBLEMS **0**；校准尺 `replay10_calib.py 93 93` PROBLEMS **0**。
+- ⚑ **在册引用更正（旧案留卷不删）**：09 班 checkpoint 写"判卷尺复用＝`python .runtime/tmp/st-qoder-p09-1015-09/replay9_verdict.py 84 89`（**改末两参换行段**）"＝**不实**：本班实测该尺**无 argv 读取**（第 77 行 `range(84, 90)` 硬编），传 `93 93` 输出对 rows[93] 零命中（grep 计数＝0）。本班新尺 `replay10_calib.py`/`replay10_dualarm.py` 才支持行段；下一班请改用新尺。
+- ⚑ **本班自犯并当场更正（旧案留卷）**：本班曾拟写"`find docs` 在本仓给假阴性"——**该结论错**。真因＝本席把 `ls`/`find`/`git ls-files` 用 `&&` 串成一条，首段 `ls docs/_working/fexam/` 失败（目录确实不存在）即**短路**，后两段**从未执行**，于是"零输出"被本席当成"零命中"的测量结果。后台那条命令跑完后本班回读其原始输出＝`find docs -name "*_exam_scores_v1.yaml"` 5 枚全命中、`find . -name "*indicator_exam_scores*"` 在 `.aidrafts/<各会话>/docs/_working/fexam/` 多枚命中。⇒ 交付正文（修⑧ 追加面）按**更正版**落字，并新增一条车道草稿树第二真源风险；取证纪律入 checkpoint 下一班必读。
+
+### 6 独立信号清单与耗时
+
+- `pulse/independent_signals.md` 本班节已更（零新轴入占、分母 64→65、新对照基准＝comparison 族 OOS 10/10 无读数、PR 维持在册"仍未获得"）。
+- **本班耗时**：起批 `date` 实测 `15:15:49`（reaper 状态行时间戳）→ 落六件前实测 `15:5x`＝**跨出 40 分钟班限**，如实登记（成因：①册在本班写作期间又长 1 行，须追加判卷与两把尺；②卡 07 卡体 175 行全读＋双臂判官源码三处定位；③旧路径件存在性取证**重做一轮**＝本席把 `&&` 串命令的首段失败当成后两段的读数，自犯并当场更正，见 §5 补条）。
+- 堵点：无提交堵点记录前状态＝本班六件走 `--enqueue` 正门（见下节）。
+
+## 2026-10-15 ｜ st-qoder-p09-1015-11（⑨成绩官第十一班：当日增量＝**2 行**全判；主产出＝新单 修⑭＋修⑮＋呈批 P-8＋〔对照〕1 条＋**修⑧ 追加面：回退弹出局·本席 17 dead/1 done**）
+
+### 1 冷启动与防重入
+
+- `python --version`＝**3.12.8**；`date`＝`2026-10-15 16:11:36`（起批实测，不采信体感）。
+- `python scripts/lock_files.py cleanup`＝**CLEANED 6 枚死锁**（⑦/⑧B 席 ledger+checkpoint 四枚＋`TDM-P-P2-04__calibration__06/__07` 两张卡体锁）＋**SALVAGED 7 件**，含 `data/strategy_intake/web_cards/20261015_p04_*` 两件、`to_datasource.md`/`to_impl.md`/`p04_scout_web` 两件、死会话 `st-qoder-p01-1015-10` 与 **`st-qoder-p09-1015-10`**。⚠ 本席上一班会话被机器判死（其袋死因见 §5，与本次 salvaging 一致）。
+- `python -m zephyr.trading.process_reaper --status`＝`source=live`、`last_run=2026-10-15 16:11:47`、`scanned=30 whitelist_hits=16 killed=1 reported=3`、水位 `ram_used_pct 67.3`／**`commit_pct 84.33`**／`cpu_pct 31.2`／`degraded=False`。⚠ `git status --porcelain` 在该命令内**超时 60s**（WARNING 一条）＝工作区脏面过大，本班据此把取证一律改**窄面**（`--include=*.py src scripts` 与逐路径查询），未跑全仓 `grep -rn`。
+- 防重入＝读 `checkpoint.md`：10 班已交全报（含"本班耗时"节）并推标至 rows[93] ⇒ 判**上一班已完**，本班取当日第 **11** 号 `st-qoder-p09-1015-11`。
+- 会话形制＝`SessionRegistry().register(SID, pid=0, held_files=[7 件], task_files=[7 件], is_breaking_change=False)`＋`heartbeat`＋`list_active` 自见＝三证齐；claim＝`lock_files.py acquire-batch` 与 reg **串成一条命令**（08 班在册处方）⇒ **`acquired=7 denied=0`**，TTL 30 分。
+
+### 2 判卷面（工序 1–2）
+
+- **读面**：本班 16:11:36 进场锚点＝磁盘 `8903ef9e9c731fdc…`／131320B／rows=**95**（mtime 15:55:38）；终报前重测（S-3 纪律）＝**册面又长一代** `d77773545f5b4cc7…`／132248B／rows=**96**／mtime `16:28:53` ⇒ **在册第二次"一班之内册面两代"**，增量按终面＝**rows[94]＋rows[95] 两行**。index `git show :<册>`＝`009c7bbcf87582c2…`／123768B／rows=**90**；HEAD 该馆 **0 件**。
+- **旧行未被改动自证**＝与 10 班快照 `.runtime/tmp/st-qoder-p09-1015-10/score_snapshot_1542.yaml` 逐行 `json.dumps(sort_keys)` 对表：rows[0..93] **byte changes=[]**，唯一新增下标 `[94, 95]`。⇒ 本班判卷面即"两行"，无重判、无回填。
+- 逐行机械核对（尺＝`replay10_calib.py 94 94`／`95 95`，两跑 **PROBLEMS 0/0**，门柱**未走样**）：
+
+| 行 | 卡 | verdict（册=尺） | 柱账 |
+|---|---|---|---|
+| rows[94] | `TDM-P-P2-04/calibration/07_冲高反弹幅度对次日收益与减半阈值落点`（panel，第 1 轮，`p08b-1015-04-card07`） | `fail`＝`fail` | **实败 2**（`ic_mean −0.0271<0.02`、`ic_ir −0.1357<0.3`）／**过 2**（`oos_same_sign` oos −0.0250 同 IS 号、`regime_same_sign` bull/bear 皆负）／**无面 1**（`mono_spearman` 已如实进 `no_machine_face`） |
+| rows[95] | `TDM-E-L9-A01/calibration/02_日线动量截面`（panel，第 2 轮，`st-autoplan-verify-20261015`） | `fail`＝`fail` | 同形：实败 2（−0.0403／−0.2539）、过 2、无面 1；`n 1621` |
+
+- 负结果如实核对＝两行皆在册负结果，`fails` 串两根实数柱逐条与卡体阈值对得上；`oos_ok=true` 与尺判 `oos_same_sign PASS` 一致（该"真"的独立性受 修⑮ 影响，本班如实登记但**不改册面一字**）。
+- IS/OOS 符号观察＝两行**方向皆为负**且 IS/OOS/牛熊三处同号（rows[94] `−0.0271/−0.0250/−0.0223/−0.0299`；rows[95] `−0.0403/−0.0518/−0.0386/−0.0308`）⇒ 属"方向与卡面假设一致、强度不足"形，**不是**"方向反号"形；全册该形态（谓词见 §5）＝**10 行／7 张卡**。
+
+### 3 结构性观察（工序 6，本班 3 条，家族级）
+
+- **S-1（panel 路中心柱恒失明，簇 3→6）**：`calibration_exam.py:268` 在 panel 返回体里把 `mono_spearman` 写成**字面 None**（且 `:272` `bucket_medians=None`＝分桶响应从未算）。册面 panel 且冻该柱＝**6 行**（rows[73]/[74]/[83]/[93]/[94]/[95]），6/6 None、6/6 fail。**家族级后果**＝卡面命题写"单调"的那根柱，在这 6 次考试里**一次都没被检验过**；且本班两行新件**都**落在此簇 ⇒ "单调性被否"这句在账面上无据。→ 修⑭。
+- **S-2（`oos_same_sign` 不是样本外检验，且逐卡独立性差 5 倍）**：`ic_mean` 由**全窗**序列直算、从不按 `window.in_sample` 切片，`oos_ic` 是其子段，fails 串却把参照量标成 `is=`。实测分母＝IS **1212** 日／OOS **666** 日／并集 **1878** 日 vs 册面 `n=1859` ⇒ OOS 段占参照量 **35.8%**（rows[94]/[93]）；而 rows[76]/[78] 卡面 OOS＝126 日扣留面，占 n=1846 约 **6.8%**。材料度＝冻该柱 **73 行**／两侧实数咬合 **61 行**／fails 含 oos **40 行**／该柱披露无面 **0 行**。⇒ 同一根柱在 61 行上"咬合"，但其独立性随窗而变，账面看不出；本班两行 fail 定性不受影响（各有两根实数败柱）。→ 修⑮＋〔对照〕。
+- **S-3（卡内散文与机器柱极性互斥，全册仅 1 卡明文授权反向计分）**：rows[94] 卡体同时写"假设…单调负"＋"\|rho\|>=0.6…反向同号**同样计分**…须在结论里写明证伪"＋`ic_mean_min: 0.02`（带符号正下限）⇒ **假设成立必败、只有假设被证伪才可能过**，且"写明证伪"在分数行无承载字段。精确谓词（三词分别 `grep -rl`）＝全卡池 550 件命中 **1 件**＝本卡；不随关键词粗筛夸大（本班第一次粗筛按"绝对值"关键词得 14 件，已作废为材料度、仅用于定位候选）。→ 呈批 **P-8**。
+- **S-4（落地链风险换形，非降级）**：分数馆旧面袋 `st-scorehome-20261014-0001..0007` **全 dead**、pending 仅剩 1 袋且不载该馆 ⇒ 07–10 班在册的"旧袋回退"威胁由死信终结；**新态**＝现值 96 行**无在途载体袋**、HEAD 0 件、index 落后磁盘 6 行／8480B ⇒ 唯一存活处＝主区工作树（第六态）。同时本席今日袋数四态换代＝**17 dead＋1 done**。→ 修⑧ 追加面。
+
+### 4 pass 行与升级（工序 4，本班零升级）
+
+- 红线核查对象＝rows[94]/[95] 皆 `fail`，按铁律**永不升级**，本席无升级动作。
+- 在册两枚 pass（rows[76]/[78]）＝**本班未重烧**（09 班在册禁重烧且册面该两行字节未变，判据＝§2 的 byte-identical 对表）⇒ 两腿仍为在册读数（`ic_ir=None`＋净面十桶全 NaN＋`round_trip_cost_bp=nan`）＝**未齐，不升 verified**、无 TDM 挂接新增。
+- 迭代史＝已追加两对象（rows[94] 第 1 轮新对象；rows[95] 同卡第 2 轮，非 修⑪ 双胞胎，逐字段差已列）。
+
+### 5 归因四分诊路由（工序 3，2 条 fail 全路由，每行至少一条）
+
+| 行/对象 | 分诊 | 路由去向 |
+|---|---|---|
+| rows[94] 强度不足＋方向证实 | **方向单** | `to_miners.md` 本班节第 1 行（第 1 轮不判死；禁反号重挖，通道在 P-8/P-6） |
+| rows[94] 卡内极性互斥＋散文柱无落点 | **判据问题→呈批草稿**（禁自改门柱） | `to_impl.md` 本班节 **P-8**（A 取绝对值＝改判据须 Owner／B 加观测标签＝同 P-6 选项 A 合并排期／C 反号 preregistered 新卡） |
+| rows[94]/[95] `mono_spearman` 无面 | **实现问题→修改单** | `to_impl.md` **修⑭**（panel 路生产腿，零阈值改动） |
+| rows[94]/[95] `ic_mean` 全窗含 OOS | **实现问题→修改单**＋**对照申请单〔对照〕** | `to_impl.md` **修⑮**；〔对照〕给 ⑥ 席（唯一变量＝只取 `in_sample` 段重算，禁动窗与阈值） |
+| rows[95] 同卡 2 轮同结论 | **方向单（家族收敛候选）** | `to_miners.md` 第 2 行（前置＝修⑮/修⑭ 落地，"先修尺再谈封矿"沿用 04 班在册顺序） |
+| 6 行 panel fail 的账面读法 | **读数遮蔽告警** | `to_miners.md` 第 3 行（勿把"未检验"读成"被否定"；`ic_ir` 有实数仅 6/96 且 6/6 FAIL） |
+| rows[94]/[95] 数据源 | **缺数单＝零新开** | `to_datasource.md` 本班节（五面皆实数；窗内不缺日，实测 1212/666/1878 登记不开单） |
+
+### 6 独立信号清单（工序 5）
+
+- 本班**工具实跑**：`signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6` → `n_members=6`、`n_common_dates=1855`、**PR=2.1272**（与 04 班逐位同＝复现确认，非新增读数），报告件 `.runtime/tmp/st-qoder-p09-1015-11/pool6_report_11.json`；相关矩阵两例已摘（`avg_abs_ret`↔`_z20`=0.7399 逾 0.3；`avg_abs_ret`↔`lu_count_z20`=0.1331 达标）。
+- **15 员池缺席如实注明**：`factor_signal`/`factor_feature_value` 各 0 行（三度同值，本班未第四次重烧）；`pool-report --pool` **无默认值**（本班 `--help` 复证），故 15 员池 PR 仍**无源**；在册叙述值 4.4 继续标"未复现"。
+- 新对照事实：本班两行对象（`TDM-P-P2-04`／`TDM-E-L9-A01`）**均不在 pool6 六员内** ⇒ 正交闸对本班新对象**未开**，勿读成"已判独立"。
+
+### 7 自检两轮（工序 7）
+
+- **轮一（抽 3 行回卡体核门柱）**＝rows[94]（本班尺逐柱打印，5 柱集与卡体 `pillars_numeric` 键集逐位同，阈值 0.6/0.02/0.3/true/true 未走样）；rows[95]（同）；rows[92]（双臂族，`replay10_dualarm.py 90 93` 复跑 **PROBLEMS 0**，含 rows[90]/[91] `blocked` 两行 reason 原样再现＝FileNotFoundError 旧路径／MemoryError 234MiB）。**结论＝门柱未走样 3/3。**
+- **轮二（全册 join＋口径扩面）**＝96 行 × 卡体 `card_id` **96/96 命中**，卡池 550 件；尺 `census11_final.py` 打印 `JOIN bad=[]`。并复量在册面（**因册面 sha 已换代，本班复量合法非重烧**）：`ic_ir` 有实数 5→**6 行**（rows[95] 新增，6/6 FAIL）、panel+mono 簇 5→**6 行**、三处同号负向簇 9→**10 行／7 卡**、`oos_same_sign` 冻柱 72→**73 行**、咬合 60→**61 行**；rows[94]/[95] 的 metrics blob 全册**独占**（无重复行）⇒ 08 班 修⑪ 的 6 对簇**面未变**（旧行零改动的推论，非重跑）。
+- **本班自犯并当场更正一笔（旧句留卷）**：本班 §5 路由表首稿曾把 rows[95] 写成"首轮新对象"，与尺打印"该卡行数＝2（rows[74]/[95]）"矛盾——正解＝**第 2 轮**；已按实测改写，迭代史与 to_miners 两处同步。另：本班第一次读面（16:11）报 rows=95 在当时为真，终报按 S-3 重测为 96，两值并录不互相覆盖。
+
+### 8 本班耗时与堵点（date 实测，不采信体感）
+
+- 起批 `16:11:36` → 写盘前实测 `date`（见提交行读数）**≈ 65 分钟**，**跨出 40 分钟班限**（09/10 班同题续条）。成因三笔＝①本班**册面两代**，终报前须重测并补判 rows[95]（S-3 纪律）；②队列四态发现 17 dead，须逐袋读 `dead_reason` 聚合成因；③修⑮ 需要窗分母实测（CH 三条计数）＋码面行号取证。未压缩、未美化。
+- 提交堵点＝**本班按 08 班在册处方，提交消息首行带 `[docs-only]`**（七件皆文档件、零代码件，避免 `MESSAGE-CLAIMS-CODE-BAG-EMPTY`）；袋带全 7 件（07 班在册交付纪律）。⚠ 已如实登记的风险＝七件工作区面均比 HEAD 大 3036–14662B，含他席未落地条目，袋＝整档快照 ⇒ 若落地仲裁按在册 ours=HEAD 语义，本班袋可能再入 `双侧皆改真冲突` 死信族；本席不代修、不 requeue 他人袋。
+
+### 9 本班 §8 耗时句更正（旧句留卷不删）
+
+- §8 与 checkpoint 同题句写"**≈65 分钟＝跨出 40 分钟班限**"＝**落笔前估算、非 date 实测**，违本岗自立口径（08 班在册同款错，本班再犯）。实测＝起批 `16:11:36` → 七件 CAS 写盘完成时 `date`＝**`16:41:35`**＝**30.0 分，班限内**。成因三笔（重排后仍成立）＝册面两代须终报重测＋17 只死袋逐袋读 dead_reason＋CH 窗分母实测；提交段耗时另计入 §10，不与本班判卷段合并报"累计"。
+
+### 10 本班提交面与用旗登记（date 实测；袋字节已逐件对拍）
+
+- 首投 `16:44:19` **被锁外预检拦**＝`[WORKTREE-REQUIRED] 非 worktree commit 且存在其他活跃 session`（列 7 席名，rc=8，预检 18.3s＝未白烧锁）。正解按 07/08/09 班在册走**显式申请制**：重投加 `--allow-non-worktree`（AI 可用旗，前置＝确认 gateway 只提交本 claim 件、不搭便车他人 WIP；本班七件全程 `acquired=7 denied=0` 且 `ENQUEUE-RENEW: claim 续租 7/7 件（ttl=7200s）` 印证），GW 自动追加 `[GW:<sid>:non-worktree]` 审计标记。
+- 首袋＝`q-20261015-st-qoder-p09-1015-11-0001`（files=7，`created_at 16:46:01`，`base_head=63a5ee4c66`，§1–§9 皆在内）。
+- **袋字节对拍＝7/7 `blob_sha256 == 磁盘 sha256 == blobs/ 件实读 sha`**。⚠ 本班自犯并当场更正：对拍尺首版按记忆里的键名取 `sha256/content_sha256`，而袋面真名是 **`blob_sha256`** ⇒ 读出 `rec=None` 得 **7/7 假 MISMATCH**；且 `blob_ref` 是**相对队列根** `.runtime/commit_queue` 的路径而非 CWD（＝08 班在册 `probe8_landing_face.py` 同款坑，本班复用前已改）。零"袋面缺失"结论一律先核尺的键名与根路径。
+- 消息首行带 `[docs-only]`（08 班在册处方，避 `MESSAGE-CLAIMS-CODE-BAG-EMPTY`：正文点名了执行器行号与尺路径而袋内零代码件）。
+- 本节的落袋＝**`-0002`（严格超集，七件全带）**；下一班按在册"末袋为超集"取 `-0002`，并复跑 `blob==disk` 对拍。
+- ⚑ **本席袋生死风险如实呈报（不代修）**：今日本席 02–10 班 17 只袋中 **9 只死于 `ghost_session`（属主会话判死→自动重投被存活闸拒）**。本班会话在 drain 前退出即可能重演。本席**未自跑全队列 drain**（会连带落他人袋＝动共享态，且 lease 在他班手中），只如实登记：若本席袋亦入 dead，修因方向＝①收班序列里加"存活至落地"或②由 ⑦⑧ 写分席把本岗七件与当班袋同袋带出——属 ⑩/统筹定策面，不自裁。
