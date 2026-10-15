@@ -5,7 +5,7 @@ module_name: alt_data_privacy_protector
 domain: D_ALT_DATA
 doc_type: blueprint
 ttl: permanent
-design_maturity: production
+design_maturity: design
 stability: evolving
 safety_level: M
 ai_autonomy: human_gated

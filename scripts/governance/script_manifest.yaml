@@ -1,13 +1,13 @@
-# 自动生成于 2026-10-10T00:50:47Z
+# 自动生成于 2026-10-15T16:37:07Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-10-10T00:50:47Z'
+generated_at: '2026-10-15T16:37:07Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 563
+total_scripts: 564
 with_manifest: 408
-missing_manifest: 155
+missing_manifest: 156
 categories:
   governance:_sync: 3
   governance:_tasks: 4
@@ -27,7 +27,7 @@ categories:
   governance:data_quality: 2
   governance:data_supply: 8
   governance:fullflow: 1
-  governance:generators: 24
+  governance:generators: 25
   governance:git_hooks: 1
   governance:meta: 45
   governance:meta_question: 55
@@ -1230,7 +1230,8 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: add_module_translation.py — 模块翻译条目合规写入工具（TRANSLATION-COVERAGE 配套）。
+  description: add_module_translation.py — 模块翻译条目合规登记工具（意图 API 薄壳，TRANSLATION-COVERAGE
+    配套）。
   tags:
   - Quick
 - name: d3_metadata/auto_generate_index.py
@@ -4651,6 +4652,16 @@ scripts:
   tags:
   - Disruptive
   - Quick
+- name: generators/generate_collection_shard_manifest.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generators/generate_commit_guide.py
   owner: governance:generators
   dimensions: []

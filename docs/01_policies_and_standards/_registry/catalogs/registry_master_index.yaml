@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 819
+  entry_count: 820
   status: active
 - registry_id: REG-BTB-001
   name: Backtest Object Backlog
@@ -317,7 +317,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 8105
+  entry_count: 8135
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -413,7 +413,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 325
+  entry_count: 351
   status: active
 - registry_id: REG-SEAT-001
   name: Seat Registry

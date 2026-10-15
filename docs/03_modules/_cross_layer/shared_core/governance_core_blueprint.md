@@ -30,7 +30,7 @@ depends_on:
   - {target: "MOD-INF-016-CONTRACTS", at: "全篇", why: "Contracts — 原 core/models.py 继承 shared/schemas.py（2026-09-05 注：Task SSoT 已迁 task_types，shared/foundation/models.py 为再导出 shim，shared/schema/schemas.py 为现址）"}
   - {target: "MOD-INF-016-SHARED", at: "全篇", why: "Shared Infra — core/ 消费 event_bus/lifecycle/observer 等共享组件"}
 responsibility_domain: 
-design_maturity: production
+design_maturity: design
 build_status: generated
 ---
 
