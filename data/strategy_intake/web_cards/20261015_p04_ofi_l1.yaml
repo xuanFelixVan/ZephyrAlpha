@@ -1,0 +1,93 @@
+# creation_token: st-qoder-p04-1015-01-strategy-intake | created_by: st-qoder-p04-1015-01 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-01
+title_zh: L1 订单流失衡（OFI）事件累积因子——快照差分口径下的短期方向预测
+mining_tower: 楼1 盘口微结构族（P0，docs/_working/automation_campaign/pulse/mining_directions.md 表行1）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-01
+birth_batch: 20261015-p04-01
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（本班真实搜到并直读核实，禁凭记忆；核实时刻见 verification 段）
+source_links:
+  - role: 公式与实现语义锚
+    url: https://github.com/twowaymind/orderflow-metrics
+    what_verified: WebFetch 直读 README，取到 L1-OFI 逐字公式与"需 L1 报价事件或 L2 快照"的输入口径
+  - role: 理论原刊锚（本席经二次文献核实，未直连原刊 PDF）
+    doi: 10.2139/ssrn.1712822
+    citation: Cont R., Kukanov A., Stoikov S. "The Price Impact of Order Book Events", Journal of Financial Econometrics 12(1):47-88, 2014
+    what_verified: WebSearch 命中百度学术条目摘要（OFI 定义=最优买卖价供需失衡；OFI 与价格变化近线性，斜率与市场深度成反比）＋聚宽社区引文同卷页
+  - role: 跨频率衰减警示（社区技术站，非同行评议，仅作风险参照）
+    url: https://techwhims.com/tradesys/theory/hft-lessons/
+    what_verified: WebSearch 命中片段：tick 级 R²≈0.15 级，聚合到 1-5 分钟条衰减至 R²≈0.04-0.08（Cont&de Larrard 2013 / Xu et al. 2019 转述）
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: MIT
+  gate_verdict: 通过（MIT 允许思想与接口语义参考）
+  iron_rule_note: 仍按根宪法与 sop_c §9 铁律执行"外部代码禁直接复制入库"——本卡只出伪代码，实现须走 C3 翻译适配重实现
+  paper_license: 原刊无随附代码许可证 → 只学思想不入码
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  对相邻两次盘口快照，只在"报价档位未劣化"的前提下计入量变化，得到单边净供给变化 e_n：
+  买一档价格不降则当前买量全额视为新增供给、前态买档价格不升则前态买量全额视为撤出（卖一镜像反向）。
+  OFI_t = Σ_{n=t-W+1..t} e_n（W 为聚合窗）。经济含义=最优买卖档的瞬时供需失衡，
+  短时窗内价格变化主要由 OFI 驱动且近似线性，斜率≈1/市场深度，故信号构造应为 OFI×(1/depth)
+  或与价差/深度交互，而非裸 OFI 水平值。方向用法=OFI 归正押注 mid 上移（顺势），
+  与做市成交概率反向的证据见同批改良情报卡（to_impl.md 20261015-p04-01 第 1 条）。
+
+# ── 必备④ 伪代码（本席自拟，零外部代码复制）
+pseudocode: |
+  # 输入：某 symbol 单一交易日内按 timestamp 升序的 L1 序列 (P_b, Q_b, P_a, Q_a)
+  for n in 2..T:
+      e_bid = Q_b[n]  if P_b[n] >= P_b[n-1] else -Q_b[n-1]  if P_b[n] <  P_b[n-1] else 0
+      e_ask = -Q_a[n] if P_a[n] <= P_a[n-1] else  Q_a[n-1]  if P_a[n] >  P_a[n-1] else 0
+      # 注：档位价格不变时"量增部分"与"量减部分"不可同时取，上式即标准 L1 定义（同价档取差项）
+      ofi[n] = ofi[n-1] + e_bid + e_ask        # 或直接滚动窗求和 Σ_{n-W+1..n}
+  depth[n]  = Q_b[n] + Q_a[n]
+  signal[n] = zscore( ofi_window[n] / (depth[n] + eps) )   # 深度归一，防流动性分层污染
+  # PIT：signal[n] 仅用 t<=n 信息；标签用 n+1..n+H 的 mid 变化，禁未来函数
+  # 缺测处理：bid/ask 任一非正 ⇒ 该笔丢弃并计数上报覆盖率，禁前向填充冒充事件
+
+# ── 必备⑤ 数据源映射（对齐源线谱 SL-*，真源=docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md）
+data_source_mapping:
+  source_line: SL-A02 Tick 分笔线（A 档=内有；U1 信号词表含"逐笔净额/买卖队列失衡"）
+  primary_table: c1_market.tick_data（bid_price/bid_volume/ask_price/ask_volume 四列存在）
+  secondary_table: c1_market.tick_depth_5（仅 L1 需要，本卡不需要 2-5 档）
+  measured_reachability:   # 本席 2026-10-15 CH 实跑读数（zephyr.data.ch_reader.query_rows，只读）
+    - "tick_data 日期普查：min=2026-01-05 max=2026-10-14 uniqExact(trade_date)=185 uniqExact(symbol)=11846"
+    - "tick_data 2026-10-14 单列非零率：count=8027，bid_price>0=7338，bid_volume>0=7338，ask_price>0=7309，ask_volume>0=7309（≈91.4%）"
+    - "近 5 交易日量级：10-08=20,203,768 / 10-09=6,708,423 / 10-12=357,130 / 10-13=无分组行（0 行）/ 10-14=8,027"
+  caliber_pitfall_zh: >-
+    致命口径坑（本席实测，实现前必读）：本表在 2026-06 前后是两种采集口径——
+    2026-01..2026-05 有主动方向标注（词表六值：买盘/卖盘/买入/卖出/中性盘/空串，且"买盘 vs 买入"同义未归一），
+    2026-06 起 direction 腿退化（2026-08-03=14,063,495 笔全为"中性盘"；2026-09-15=21,669,608"中性盘"+56,187"none"；
+    2026-10-09=6,708,423 笔 direction 全为空串；2026-10-12/10-14 全为"中性盘"），
+    根因=百度云回填与 QMT 增量走 3 秒快照（get_full_tick），快照口径本就无成交 aggressor。
+    ⇒ 本卡**刻意不依赖 direction**，OFI 只用 L1 价格-量两对列，属口径无关构造；
+    任何依赖 direction 的族（主买净额/成交签名/毒性）在 2026-06 后不可算，须走 to_datasource.md 分段登记。
+
+# ── 三闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml（161 条策略条目，grep -c 实测）
+    existing_microstructure_entries: 仅 1 条 = strategy_id 024 号段"盘口失衡反转做 T"（aliases=[orderbook-imbalance]，entry=5 档全量失衡水平值 entry_threshold=0.5，exit=失衡归零，做T 日内闭环）
+    verdict: 非重复
+    differentiation_zh: 存量条目用的是失衡**水平值 + 反转**；本卡是失衡**事件差分累积(OFI) + 顺势短窗方向**，构造对象与符号方向均不同；差异不可由存量条目参数扫描派生（水平值≠差分累积）
+  license_gate: 通过（见 license 段）
+  orthogonality_gate:
+    verdict: 闸缺席（判"缺席"非"未过"，不入过闸账）
+    measured: "python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool scripts/backtest/translated → RC=2，原文 '[SIGNAL-ORTHOGONALITY] ERROR: --pool 未命中任何信号 CSV'；SOP §9 门槛① 基准文件 condaxis_tmp/corr_15members.csv 桌面目录实测查无；pulse/independent_signals.md 仍空册"
+    handoff: 待⑥/⑨把 15 员池物化为 date,sig CSV 后由本闸复判（⑨席已在 to_impl.md 修改单修⑤登记同一缺口）
+
+# ── 七门槛可达性预判（判据真源=SOP §9，禁自拟数值）
+seven_gates_precheck:
+  gate5_signal_days: "可达候选——以 tick_data 计 185 交易日 ≥120；但可用样本须截断在 2026-10-08 断供前（详见 measured_reachability），有效评估窗上限日=2026-09-30 或 10-09，待①回血后定"
+  gate6_sample_size: "单票日内快照数足以支撑观测数下限；横截面全 A 池需 ⑤实现时按日聚合"
+  not_judged: 门槛②③④⑤(笔数口径)⑦ 一律留给⑥预注册冻结＋⑦⑧考工，本席不代裁数值
+
+verification:
+  seat: st-qoder-p04-1015-01
+  channel_hits: GitHub 检索（order book imbalance / OFI-queue imbalance 两轮共 20 仓）＋ GitHub README 直读 ＋ arXiv API×2 ＋ 检索站/社区站
+  verified_at_local: 2026-10-15 06:3x-06:5x（Asia/Shanghai，本席内网直连 WebFetch/WebSearch 与 CH 只读查询）

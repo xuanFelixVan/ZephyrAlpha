@@ -1,0 +1,82 @@
+# creation_token: st-qoder-p04-1015-01-strategy-intake | created_by: st-qoder-p04-1015-01 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；本卡是"方向卡＋供数前置"：数据腿未到位，不可直接进⑤实现
+card_id: SIC-20261015-P04-02
+title_zh: 队列失衡（Queue Imbalance，按委托笔数而非挂单量）一档前一跳预测因子
+mining_tower: 楼1 盘口微结构族（P0）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-01
+birth_batch: 20261015-p04-01
+intake_stage: C1 盘点归一（**阻塞在数据腿**，见 data_source_mapping.blocked_on）
+
+# ── 必备① 原文链接
+source_links:
+  - role: 主锚（本席经 arXiv API 标题检索直读核实条目）
+    url: https://arxiv.org/abs/1512.03492
+    citation: Gould M. D., Bonart J. "Queue Imbalance as a One-Tick-Ahead Price Predictor in a Limit Order Book"（arXiv 提交日 2015-12-11）
+    what_verified: "export.arxiv.org API ti:\"queue imbalance\" 查询返回该条目之标题/abs 链接/日期/作者三项"
+  - role: 同题期刊版（**转述引证，本席未直连原刊，禁当作已核实**）
+    citation: Cont R., Cucuringu M., Zhang C. (2023) 同题文，Journal of Financial Econometrics 2(02):1650006
+    how_it_appeared: WebSearch 命中 arXiv:2504.15908v1 页面参考文献列表片段；如需入库引用请以⑥制卡席直连原刊后再定稿
+  - role: 概念综述锚（非同行评议）
+    url: https://www.emergentmind.com/topics/order-flow-imbalance
+    what_verified: WebSearch 命中片段：OFI 记忆性与预测力随市场状态（regime）变化；log-OFI 处理非平稳失衡（Su et al., 2021 转述）
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: 无（本卡未取外部实现代码）
+  paper_license: arXiv 预印本，无随附代码许可证
+  gate_verdict: 只学思想不入码（外部代码禁直接复制入库铁律＋GPL/无许可证档处置）
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  与失衡"量"版本相对：QI 用最优买档与最优卖档上的**委托笔数**（队列长度 NQ）构造
+  QI = (NQ_bid − NQ_ask) / (NQ_bid + NQ_ask)，预测下一跳 mid 的位移方向。
+  机理差异=同样 100 手的买一可能由 1 笔大单或 50 笔小单构成，前者的撤单/成交动力学与
+  后者截然不同（小单队列更易被连续吃掉⇒同款"量失衡"下真实剩余供给不同），
+  故笔数版与量版在信息内容上不可互推。文献宣称其在计入成本后仍有预测力，
+  但同一批文献警告预测力随市场状态漂移，不可当利润保证。
+
+# ── 必备④ 伪代码（本席自拟）
+pseudocode: |
+  # 需要的原始字段：best bid / best ask 两个价格档上的"当前挂单笔数" nq_bid, nq_ask
+  nq_bid[t], nq_ask[t] = snapshot.order_counts[level=1]      # ← 本仓无此列，见 blocked_on
+  qi[t] = (nq_bid[t] - nq_ask[t]) / (nq_bid[t] + nq_ask[t] + eps)
+  # 事件驱动版（更贴原论文）：仅在 (P_b,P_a) 不变而队列变化时采样，跳档时重置队列计数
+  signal[t] = sign(qi[t]) * 1{|qi[t]| >= theta}              # theta 由⑥预注册冻结，本席不拍数值
+  label[t..t+H] = mid[t+H] - mid[t]                          # 一阶检验=跳下一跳方向命中率/AUC
+  # 禁用代理：用"量/均价"反推笔数在 A 股快照口径下会把大单拆单污染成笔数噪声，须显式标注为弱代理并单列一臂，不得顶替真值
+
+# ── 必备⑤ 数据源映射
+data_source_mapping:
+  source_line: SL-A02 Tick 分笔线（A 档；其 U1 信号词表已含"买卖队列失衡"，本卡正是该词的字面实现）
+  required_fields: 最优买/卖档委托笔数（order count per level），且需与量对齐到同一快照
+  measured_absence:   # 本席 2026-10-15 实跑读数（CH system.columns 只读普查）
+    - "c1_market.tick_depth_5 列数=33：仅 bid_price1..5/ask_price1..5 + bid_volume1..5/ask_volume1..5 + price/volume/amount/timestamp/trade_date/symbol*/quality_flag/ingest_ts/exchange —— 无任何 *_order_num/*_count/笔数列"
+    - "c1_market.tick_data 列数=18：price/volume/amount/direction + L1 四列（bid_price/ask_price/bid_volume/ask_volume）—— 同样无笔数列"
+    - "c1_market.l2_tick 列数=18 且 count()=0（system.tables total_rows=0）；该表零行属**已在册**已知缺口（src/zephyr/data/config/known_data_gaps.yaml 条目 l2_tick_permission_required：需付费 L2 权限，primary_alternative 指向 tick_data），本席不重复申请"
+  blocked_on: >-
+    数据腿缺：需 QMT/miniQMT 快照协议里的档位委托笔数字段（get_full_tick 类接口在部分源含
+    bid_order_nums/ask_order_nums 数组）能否采到→已按 SOP §4"缺数据→①②供数"写入
+    docs/_working/automation_campaign/feedback/to_datasource.md（本席 20261015-p04-01 单）。
+    若上游确证不可采，本卡应转"思想留档、判 mined_out 候选"，不由本席自裁。
+
+# ── 三闸判定
+gates:
+  dedup_gate:
+    registry: strategy_registry.yaml（161 条）
+    grep_hits: "'盘口|microstructure|imbalance|OBI|order_book|深度|五档' 全库检索→策略条目仅命中 024 号段'盘口失衡反转做 T'（量版失衡）＋一条多因子 entry_logic 内提及 money_flow 五档拆解"
+    verdict: 非重复（笔数失衡 vs 量失衡为不同信息对象；但**在数据腿到位前不得入库**，以免与量版做同池对照时产生无法定性的伪差异）
+  license_gate: 通过（只学思想）
+  orthogonality_gate:
+    verdict: 闸缺席（同批 SIC-20261015-P04-01 记录之 RC=2 实测，本席不复用他班转述）
+    handoff: 待池物化后复判
+
+seven_gates_precheck:
+  gate5_signal_days: "当前不可达——本卡拟用 tick_depth_5，而该表实测窗仅 2026-07-24..2026-10-14、uniqExact(trade_date)=24 <120（本席自量，与③席 p03 台账同值）"
+  gate6_sample_size: "不可判（字段不存在）"
+  not_judged: 其余门槛一律留⑥/⑦⑧，本席不代裁
+
+verification:
+  seat: st-qoder-p04-1015-01
+  channels: GitHub 检索×2（20 仓）＋ GitHub README ＋ arXiv API×2 ＋ 检索站/社区站
+  verified_at_local: 2026-10-15 06:3x-06:5x（date 实测本班起点 06:30）

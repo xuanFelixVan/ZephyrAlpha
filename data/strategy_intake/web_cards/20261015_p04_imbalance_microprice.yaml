@@ -1,0 +1,89 @@
+# creation_token: st-qoder-p04-1015-01-strategy-intake | created_by: st-qoder-p04-1015-01 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1→⑤实现→⑥制卡
+card_id: SIC-20261015-P04-03
+title_zh: 失衡驱动公允价（微观价格族）偏离信号——用买卖量不平衡重构参考价再做偏离押注
+mining_tower: 楼1 盘口微结构族（P0）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-01
+birth_batch: 20261015-p04-01
+intake_stage: C1 盘点归一（可进⑤实现：所需字段本仓全有）
+
+# ── 必备① 原文链接
+source_links:
+  - role: 主锚（本席经 arXiv API 直读条目：标题/链接/日期/摘要三项取到）
+    url: http://arxiv.org/abs/2507.09734
+    citation: "Boltzmann Price: Toward Understanding the Fair Price in High-Frequency Markets（q-fin.TR，提交日 2025-07-13）"
+    what_verified: "摘要原文要点：由最大熵原理导出参数化价格族，约束=盘口最优档买卖量不平衡；参数取特定值时逼近 mid-price 与 weighted mid-price；模型中漂移与波动**均由量不平衡驱动**，可产出高峰度重尾；漂移作为失衡的内生后果自然出现；作者用模拟＋历史股票数据验证"
+  - role: 概念近亲（本席经 arXiv API 标题检索 ti:"micro-price" 直读条目）
+    url: https://arxiv.org/abs/2309.04216
+    citation: Liquidity Dynamics in RFQ Markets and Impact on Pricing（2023-09-08）
+    what_verified: 摘要原文要点：把限价簿文献中"micro-price"概念扩展到 RFQ 场外市场，并提出 Fair Transfer Price；用于流动性差/单边市场的公允估值
+  - role: 文献出处提示（**转述，本席未直连 Stoikov 原始 micro-price 论文，入库引用须由⑥直连后定稿**）
+    note: 上述两文均以"micro-price（订单簿失衡加权价）"为已确立概念引用，本席仅据此确认概念在学界的连续在场性
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: 无（本卡不取代码）
+  paper_license: arXiv 预印本，无随附代码许可证 → 只学思想不入码
+  gate_verdict: 通过（按 GPL/无许可证档处置=只学思想，实现走 C3 重实现）
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  不用 mid=(P_b+P_a)/2，而用一个由最优档买卖量不平衡决定的公允价 P*：
+  买量占优时 P* 上移、卖量占优时下移（最大熵/微观价格族都是这条直觉的不同参数化）。
+  两类可用信号，须分开考、不可混为一卡：
+  (a) 偏离方向=以 P* 为锚对 last/mid 做均值回归押注（last 显著低于 P* 则买入），
+      与"高失衡追势"是相反用法，二者谁在 A 股五档口径下成立必须由考试判，本席不预设；
+  (b) 漂移强度=|P* − mid| 作为即时位移幅度预测/波动代理（论文明确称漂移与波动皆由失衡驱动）。
+  该族的工程价值还在于给做T/执行类策略一个比 mid 更诚实的成交基准价（滑点归因用）。
+
+# ── 必备④ 伪代码（本席自拟，非论文代码移植）
+pseudocode: |
+  # 输入 L1 四列：P_b, Q_b, P_a, Q_a（本仓 tick_data / tick_depth_5 均有）
+  w[t]      = Q_b[t] / (Q_b[t] + Q_a[t] + eps)           # 买侧权重∈(0,1)
+  micro[t]  = P_a[t] * w[t] + P_b[t] * (1 - w[t])        # 微观价格（失衡加权，先取文献通用形，参数族交⑥扫）
+  mid[t]    = (P_b[t] + P_a[t]) / 2
+  spread[t] = P_a[t] - P_b[t]
+  dev[t]    = (micro[t] - last_or_mid[t]) / (spread[t] + eps)   # 归一偏离，防不同流动性票横向不可比
+  signal_a[t] = -sign(dev[t]) * 1{|dev[t]| >= delta}     # 用法(a)：均值回归臂
+  signal_b[t] = abs(dev[t])                              # 用法(b)：位移/波动代理臂
+  # 参数 delta 与窗 H 一律由⑥制卡席预注册冻结；涨跌停/集合竞价时段 spread=0 或单边无对手⇒该笔剔除并计数
+  # PIT：只用 t 及之前快照；标签用 t+H 的 mid/last 变化
+
+# ── 必备⑤ 数据源映射
+data_source_mapping:
+  source_line: SL-A02 Tick 分笔线（A 档）
+  primary_table: c1_market.tick_data（bid_price/ask_price/bid_volume/ask_volume 四列，本卡只需 L1）
+  fallback_table: c1_market.tick_depth_5（同四列存在，但历史窗过短，见下）
+  measured_reachability:   # 本席 2026-10-15 实跑读数
+    - "tick_data：uniqExact(trade_date)=185（2026-01-05..2026-10-14）≥ 门槛⑤ 的 120 日"
+    - "tick_data 2026-10-14 L1 四列非零率≈91.4%（7338/8027 与 7309/8027）"
+    - "tick_depth_5：uniqExact(trade_date)=24（2026-07-24..2026-10-14）⇒ 门槛⑤ 判不可达"
+    - "近端断供：10-08=20,203,768 行 / 10-09=6,708,423 / 10-12=357,130 / 10-13=0 行（GROUP BY 无该日）/ 10-14=8,027 ⇒ 评估窗右端须停在 2026-10-07 之前"
+  caliber_pitfall_zh: >-
+    本卡不依赖 direction（该腿 2026-06 起退化，详见 SIC-20261015-P04-01 的同名段实测），
+    仅依赖"快照时点的 L1 价与量"，而 3 秒快照口径对微观价格族是可接受的（论文本身以快照/事件序列为输入），
+    但**跳档期间的量重置**在快照口径下不可见⇒Q_b/Q_a 的差分含撤单与成交混合噪声，须在⑤实现时把该偏差写成显式假设。
+
+# ── 三闸判定
+gates:
+  dedup_gate:
+    registry: strategy_registry.yaml ＋ factor_registry.yaml 双查
+    measured: "grep -E 'micro.?price|微观价格|Boltzmann|fair_price' 于 strategy_registry.yaml → 0 命中；同 grep 于 factor_registry.yaml → 0 命中；尺判别力正对照：同文件 grep 'imbalance|失衡' 有命中（024 号段等）⇒ 非零尺误判"
+    nearest_existing: 024 号段"盘口失衡反转做 T"（失衡**水平值**过阈触发反转，exit=失衡归零）
+    verdict: 非重复——本卡对象是**价格锚的构造**（用失衡重算参考价）再取其偏离，存量条目对象是失衡水平值本身；两者不可由参数扫描互推
+  license_gate: 通过（只学思想不入码）
+  orthogonality_gate:
+    verdict: 闸缺席（判"缺席"非"未过"）
+    measured: "本席自跑 signal_orthogonality.py pool-report --pool scripts/backtest/translated → RC=2 + 'ERROR: --pool 未命中任何信号 CSV'；SOP §9 门槛① 基准 condaxis_tmp/corr_15members.csv 实测不存在（桌面该目录列出 33 项无此文件）；pulse/independent_signals.md 空册"
+    handoff: 待⑨把 15 员池物化后复判；与 024 号段是否高相关属**待判**，本席不预判（注意 SOP §9 门槛① 的正是与池内 15 员的相关）
+
+seven_gates_precheck:
+  gate5_signal_days: 可达（tick_data 185 日，须截右端至 2026-10-07）
+  gate6_sample_size: 可达（快照级观测数远超 120）
+  not_judged: 门槛②③④⑦ 与全部阈值留⑥预注册＋⑦⑧考工
+
+verification:
+  seat: st-qoder-p04-1015-01
+  channels: GitHub 检索×2（20 仓）＋ GitHub README 直读 ＋ arXiv API×2（q-fin.TR OBI / ti 检索） ＋ 检索站社区站
+  verified_at_local: 2026-10-15 06:30 起本班
