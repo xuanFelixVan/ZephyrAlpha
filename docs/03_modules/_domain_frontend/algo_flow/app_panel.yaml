@@ -1,0 +1,78 @@
+# ALGO_FLOW 外部真源——app_panel（_domain_frontend 域，真源 src/zephyr/frontend/dashboard/app_panel.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.frontend.dashboard.app_panel
+source_of_truth: src/zephyr/frontend/dashboard/app_panel.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 任务仓库 task_repo
+    #   fields: TaskRepository（SQLite 任务进度真源），可后置注入
+    #   code: create_dashboard(task_repo) (app_panel.py)
+    # - id: I2
+    #   name: OLAP 引擎 olap_engine
+    #   fields: OLAPEngine 可选注入；缺席=门禁统计/OLAP 趋势 Tab 空态
+    #   code: create_dashboard(olap_engine) (app_panel.py)
+    # - id: I3
+    #   name: 回测结果 backtest_result
+    #   fields: BacktestResultData 可选注入；缺席=演示数据 demo_backtest_data
+    #   code: create_dashboard(backtest_result) (app_panel.py)
+    # - id: I4
+    #   name: QMT 桥装配参数
+    #   fields: qmt_assembly（显式装配件）+ qmt_auto_assemble（自动装配开关，仅模拟环境）
+    #   code: create_dashboard(qmt_assembly, qmt_auto_assemble) (app_panel.py)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 状态装配
+    #   name_en: dashboard_state_init
+    #   intro: DashboardState 持 task_repo/olap_engine/backtest_result 三数据源（property 惰性暴露）
+    #   inputs: I1,I2,I3
+    #   outputs: state
+    #   code: DashboardState.__init__ (app_panel.py)
+    # - id: A2
+    #   name_zh: 15 Tab 构建
+    #   name_en: build_tabs
+    #   intro: 按 v3.5.0 布局组装 15 个 Tab（作战室+治理 6+交易/回测 8），依赖缺席渲染空态卡片
+    #   inputs: state
+    #   outputs: tabs
+    #   code: DashboardState.build_tabs 与 _tab_* 族 (app_panel.py)
+    # - id: A3
+    #   name_zh: QMT 桥自动装配
+    #   name_en: qmt_auto_assemble
+    #   intro: qmt_assembly 缺省且开关开时自动装配 QMT 文件桥（enable_real=False 仅模拟）；失败降级"未装配"空态
+    #   inputs: I4
+    #   outputs: assembly
+    #   code: create_dashboard qmt_auto_assemble 段 (app_panel.py)
+    # - id: A4
+    #   name_zh: 报告闸注入（Q4/#ARCH-341）
+    #   name_en: report_gate_injection
+    #   intro: OrderManager(report_gate=ReportGate())——下单路径先过合规报告闸，未确认必报项 fail-closed 拒单
+    #   inputs: A3
+    #   outputs: order_manager
+    #   is_break: true
+    #   code: create_dashboard OrderManager 构造段 (app_panel.py)
+    # - id: A5
+    #   name_zh: 模板组装与服务入口
+    #   name_en: template_serve
+    #   intro: Panel template 汇总 tabs 输出；main() 供 panel serve/python 直跑两用
+    #   inputs: A2,A4
+    #   outputs: O1
+    #   code: create_dashboard 尾段与 main (app_panel.py)
+    # 层: 输出
+    # - id: O1
+    #   name: Panel 仪表盘应用
+    #   fields: DashboardMetricsTemplate（15 Tab）+ 装配态 QMT 桥引用
+    #   code: create_dashboard 返回值 (app_panel.py)
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A3
+    # A1 --> A2
+    # A2 --> A5
+    # A3 -.-> A4
+        # A5 --> O1
+    # [/ALGO_FLOW]

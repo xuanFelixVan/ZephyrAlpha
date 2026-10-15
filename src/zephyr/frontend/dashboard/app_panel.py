@@ -63,6 +63,8 @@ v3.5.0（45号作战手册 P1）: 新增「作战室」Tab（实盘组首位，�
     - callback仅编排: 各 Tab 仅调用 fetch_xxx + render_xxx, 不含业务逻辑
     - 依赖注入: 数据源通过构造函数传入, 禁止直接 import 业务层
     - 可选依赖: panel/holoviews/plotly 通过 try/except 导入
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_frontend/algo_flow/app_panel.yaml
 """
 
 from __future__ import annotations
@@ -531,12 +533,18 @@ def create_dashboard(
     # 默认自动装配 QMT 文件桥（仅模拟环境；失败降级为"未装配"空态卡片）
     if qmt_assembly is None and qmt_auto_assemble:
         try:
+            from zephyr.compliance.compliance_report_registry import ReportGate
             from zephyr.ex_core.adapters.qmt_file_bridge_integration import (
                 QmtFileBridgeAssembly,
             )
             from zephyr.ex_core.order_manager import OrderManager
 
-            _order_manager = OrderManager()
+            # Q4/#ARCH-341：补注 C-002「先报告后交易」闸（此前裸构造=仪表盘下单路径
+            # 在监管红线上零闸）。安全前提：登记表 6 项必报全 broker_ack=true
+            # （Owner 2026-09-27 回填），ReportGate.check() 现返回 PASS ⇒ 零砖化；
+            # 若未来出现未确认必报项，本路径 fail-closed 拒单=正确行为。
+            # 注：不引 scripts/ 正门（src→scripts 反向依赖=架构违规），就地补闸。
+            _order_manager = OrderManager(report_gate=ReportGate())
             _assembly = QmtFileBridgeAssembly(
                 _order_manager,
                 enable_real=False,
