@@ -445,3 +445,139 @@ title: ⑦考工A·findings台账
 - 本班实测耗时＝**70 分钟**（15:15:31 起手核查 → 16:25 收班即清完成）。分段账：接手三证核查 ≈19 分／普查与逐张人读 ≈22 分／实跑与对拍 ≈8 分／交班写册 ≈3 分／提交返工 ≈15 分（其中 argparse 前败一次、预检 WORKTREE-REQUIRED 一次、被后台化误判"提交未发生"而多投一袋——该袋 0002 已由传送带判 `noop@c7890e531c7e` 销账，未成死信）。
 - 终态机读凭据（本行落袋后自证，非叙述）：HEAD=c7890e531c（本班 0001 袋，只含 ledger.md＋checkpoint.md 两件）；队列本席 pending=0；claim released=2 denied=0；本席暂存面 staging 已删（被否决的那一行不留给他班误当主册）；分数册主册本班零字节改动（落地 commit 的 --stat 面可复核）。
 - 保底终报：本班 **0 张入册**（未达 ≥8），耗时 70 分钟（未跑满 4 小时）；四闸下 0 张可考的逐张凭据在 §三 §四，dual_arm 面试投已判死，勿重复派单。
+
+
+# ⑦考工A 班次 05（起手 2026-10-15 17:13:12 之前，实测锚：首条命令 date=10-15 16:32:46；写册时点 date 实测 10-15 17:1x）
+
+## 一、防重入（两址同读＋三实测，在册处方）
+
+- 旧址 `docs/_working/automation_campaign/p07_examiner_a/checkpoint.md`：cursor last_run 16:09＝班次 04 已交班；
+  其两件袋 c7890e531c（16:18）＋终态补记袋 4f4ac32914（16:36:07）均已落 HEAD；本班开工前（16:37:51 实测钟）
+  该班心跳仍 fresh＝在册"带守护交班"形态，非在途施工。
+- 新址 `docs/04_research_records/cross_domain/automation_campaign/p07_examiner_a/checkpoint.md`：
+  frontmatter 已是 permanent（st-docconsol-20261014 搬迁件），游标正文＝"未开始/last_run —"＝滞后镜像；
+  本班取较新旧址（旧址）为活游标，与 ⑥席 1015-09 班同法。
+- 取号：台账已交班段＝班次 01/02/03/04 四节（grep "^# ⑦考工A 班次" 实数）⇒ 本班取 **05**。
+
+## 二、冷启动三步与分母（两时点实测，活分母勿照抄）
+
+1. RULE-ENV：python 3.12.8 实测通过。
+2. `lock_files.py cleanup`：CLEANED 3 枚死锁（分数册主册＋②席 ledger/checkpoint 两件）；
+   SALVAGED 死会话 st-qoder-p04-1015-06 遗物（merge=skipped，释放 claim=0）。
+   同串判活旁证：st-qoder-p05-gpu-1015-01 PID 亡而心跳＋在途袋俱在 ⇒ 判活（三证立法）。
+3. `process_reaper --status`：source=live・scanned=38・killed=0・reported=3・whitelist_hits=25・
+   worktree_changes=5454>50（并行漂移告警在册）。
+- 分母（16:41 实测 entry_flow 全树 400 件按 status 分层）：preregistered **103**／empty 133／
+  blocked_on_data 69／blocked_on_impl 27／examined 68。16:5x 复测**同值**，但成员已变＝禁当同面：
+  本班值守内改名两件——L9-A17/02（⑥席 p06-1015-09，卡面 mtime 16:09:43）blocked_on_data→preregistered；
+  L9-A01/02（run_id `st-autoplan-verify-20261015`，mtime 16:28:53，**非本席**）preregistered→examined
+  并向分数册追加 1 行（95→**96**，本班 16:5x 实测 sha256 前缀 d77773545f5b4cc7c8c6，git 面 `AM`＝在途）。
+
+## 三、开考结果：0 张入册（三把尺同框互证，含正/负对照）
+
+- **尺一（执行器路由真源 `pillars_route`，非本班自造）**：103 张 prereg 路由面＝series 判官 55／panel 判官 41／
+  dual_arm 7（series 3＋panel 4）／event 0；data_binding 段有 91／无 12。
+- **尺二（本班轻-重底座尺，首版即自犯并当场自纠）**：本班第一版把"重底座"谓词写成只认全限定名
+  `c\d_...\.kline_daily_hfq`，而 52 张 L3/L9 系卡的 target_source 面写的是裸名 `kline_daily_hfq` ⇒
+  正则漏前缀，**16 张 panel 被误判"轻底座"**，与前任"panel 面无轻底座"结论相抵。逐张人读证伪本班尺后自纠：
+  panel 面真轻底座＝L2-07 族 5 张＋L9-V3 1 张（合计 6），且全部另有闸（见下）。在册"谓词过宽即假扩"复证。
+- **尺三（真源普查件 `card_binding.py --mode classify`，零 CH 零写分数册）**：A **2**／A? **7**／B **16**／
+  C **52**／D **0**／U **26**，加总=103（互斥分母自证）。两张 class A＝L2-01-2/02 与 L2-01-3/02，
+  逐张即前任堵点③第一、二条（series 折标量无一句／t 日读数含 t+1 收益而执行器 target 面再 shift(-1)＝双重前视）；
+  D=0＝class D 本地序列面已被班次 01 烧尽（SERIES_DIR 在册 12 件本班复用其一做正对照）。
+  另：classify 首跑崩 `ValueError: ... is not in the subpath of D:\\ZephyrAlpha`（件内 `p.relative_to(RUN_ROOT)`
+  直吃 `--cards-dir` 原样串，传**绝对路径**才通）＝⑤席写域一枚小缺陷，本班只登记不代修。
+- **本班开考面＝0**：dual_arm 7 张不重试（前任逐张判死：4 张 `_series_metrics` 拒权重矩阵／2 张双臂共用 target／
+  1 张门槛 997 日 0 次成就，凭据在册）；尺二/尺三正向筛出的 12 张"次日线干净"series 卡逐张人读全部撞在册口径闸
+  （查表值与入账主臂无数／"或"字二选一未钉／RSI 命中阈值缺／需重放引擎）；panel 轻底座 6 张中 L9-V3 撞散文 regime
+  （`bull_note` 串内无成对日期 ⇒ `_span_pairs` 退回整串单点 ⇒ `pd.Timestamp` 抛，与前任 L9-A15/03 同因属 ⑤），
+  其余 5 张＝L2-07/07-1 族撞双臂面或缺路处置律未钉。
+- **正/负对照（防"0 是尺瞎"）**：本班零 CH 零写盘，直调执行器 `_series_metrics`＋`judge` 喂已烧的 class D 卡
+  L1-S2/40（三件齐申报：`target_forward_face: precomputed`＋`target_horizon_days: 10`＋primary 内 mkt_fwd10）
+  ＋本地序列 lu_count×mkt_fwd10（n=1860/1850）⇒ **verdict=fail**，读数 ic_mean **0.096118**／mono_spearman
+  **0.818182**／n **1850**／oos_ic **−0.110150**／regime_ic bull 0.002357・bear 0.163279，
+  fails=['oos_sign_flip oos=-0.1102 is=0.0961']。负对照＝信号取反 ⇒ fails 变 3 条
+  （mono −0.794<0.6／ic_mean −0.0961<0.02／oos 翻正）＝**尺有判别力，能红也能绿**。
+  卡面 sha256 前缀起=止（7d522cfc23ea764c）＝真面未动（在册"判官重写卡面"坑靠喂副本规避）。
+  ⇒ 本班结论"entry 族现器可考面=0"是**面结论**，非管道失明。
+
+## 四、堵点与移交（不改判据、不挪门柱，只登记；本班三枚新查明的结构性事实）
+
+- **堵点①（纠尺，转⑩与后续各班）＝断供闸谓词口径错配**：前任把"绑定文本出现某表名"直接等同断供。本班按在册
+  status 词表实测（83 条：open 27／accepted 19／resolved 13／completed 7／no_source 7／monitoring 5／
+  mitigated 4／retired_quarantine 1）＝103 张 prereg 中表名级命中 **61** 张，而其中真落 open|no_source 两态的
+  **38** 张 ⇒ **23 张被 accepted/completed/mitigated/monitoring 这类非断供态多挡**。
+  本班**不据此开考任何一张**（这 23 张逐张另有尺三的 B/C/U 闸，翻案不产出可考卡），只纠口径：
+  断供闸应当＝表绑定 ∩ status∈{open,no_source} ∩ 卡窗 ∩ 该卡所需列；照现行走法派单分母长期虚高约六成。
+  实例：L9-A08/02 的 alt_shipping_index 两条 accepted 逐条写的是"国际集装箱租船指数止于 2011-08-23／
+  灵便型船运价指数全史 1 行"，与本卡过滤 `index_code='BDI'` 无交集＝该卡真闸在下条（多日面无申报位），不在断供。
+- **堵点②（翻案实测，转①席）**＝断供册 `c3_fundamental.research_report` 行已过期：册内 id=research_report_hot_value_rating_change_empty・
+  gap_type=empty_column・status=**open**・last_updated=2026-09-21・文字仍写"rating_change 列仍在且维持空列"。
+  本班 CH 直读实测＝表存在（system.tables 命中）、全表 **294,066** 行、`countIf(rating_change!='')`=**267,835**（91.08%）、
+  取值面 维持 184,383／上调 39,480／下调 39,056／首次 4,916、非空面 publish_date 跨 2017-01-02..2026-10-14；
+  负对照＝`countIf(rating_change='')`=**26,231**（空串谓词能命中真空值，非尺瞎）；
+  反向自证＝本班首版探针把 `hot_value` 写进 SQL 直接 HTTP 404＝该列确实不存在，与册 verification_20260921 逐字吻合。
+  ⇒ ⑥席 16:09 据②席回填证据把 A17/02 翻 preregistered 一事本班独立复算支持；**但册为真源且仍 open**，
+  本班按工序"避开断供域"照旧不开考挂它的三张（L9-A17/02・L9-A17/03・L2-09/03），请①席当班复测后改该行。
+- **堵点③（新面 6 张，转⑥；前任移交清单未覆盖）**＝**多日前向标的缺 `_forward_face` 三件齐申报位**：
+  执行器只认 `target_forward_face: precomputed`＋`target_horizon_days`（2..252 整数）＋`target.primary` 内
+  `mkt_fwd{h}` 同值记号，缺一即拒且禁半申报退化；实测全库申报者仅 **8** 张＝班次 01 烧的 class D 八张（现全 examined）。
+  preregistered 面 target.primary 逐字命名多日标的而三件不齐＝**6** 张（尺＝`.runtime/tmp/p07/shift05_findings.yaml` M1 节）：
+  L9-A08/02（next_20day_sector_return）・L9-A11/02（next_5day）・L9-A12/02（car_0_to_5_elec_sector）・
+  L9-A13/02（car_0_to_20）・L9-A17/02（car_0_to_5_stock）・L9-A17/03（next_20day_return）。
+  这 6 张在尺三里被归 C（target_face_not_index_next_day），故前任"等⑥补 series 收口句"那条工单读不到它们＝新面。
+  两条修法均不属本席写域：⑥按在册申报形态补三件齐（须同时把 target.primary 记号改成 mkt_fwd{h}＝动到冻结目标面
+  命名＝呈批面，本席不代拍）；或⑤给 sector/panel 面接 h 日前向聚合。
+- 堵点④（承接在册未闭）＝散文 regime 串使装载崩：本班实测 entry prereg 内该形态 **5** 张
+  （L9-A06/02・L9-A11/02・L9-A15/02・L9-A15/03・L9-V3/ablation/02，键名 bull_note/unavailable），属⑤。
+- 堵点⑤（算力窗，门槛条件）＝本班三次 date 配对实测 commit_pct：**89.13**（16:33:23，cpu 61.3，degraded False）／
+  **94.98**（16:34:52）／**89.52**（16:59:06，cpu 71.8，degraded False）⇒ 门槛 <80% 全程未成就，
+  个股 hfq panel 面 15 张不开（前任探针读数 7,590,928 行／5,642 票／重复单元 0 在册，本班未重跑同签名事实）。
+- 堵点⑥（副作用面复测，转⑩/⑨）＝`docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml`
+  工作树面仍 ` M`（末次提交 eb02e513f6 10-13 23:35；本班实测含班次 04 的 1 条＋班次 03 的 6 条命中）
+  ＝前任"不随袋"的副作用面至今未落地也未复位；本班**零 run_card 实跑**，未新增行。
+
+## 五、本批不做（自带承重证据）
+
+- 不重投 dual_arm 7 张（前任三类凭据在册）；不开 23 张"非断供态"卡（逐张另有 classify B/C/U 闸，本班已量）。
+- 不改断供册（①席写域）、不补卡面申报位（⑥席写域且动冻结目标面命名须呈批）、不修 classify 相对路径崩与
+  `_in_spans` 散文崩（⑤席写域）＝只交实测凭据与精确锚点。
+- 不搬个股 hfq panel 面（三次 commit_pct 89.13/94.98/89.52 均≥80%，且高 commit_pct 起长批在册崩面为 git add 0xC0000142）。
+- 不做 run_card 实跑（实跑＝翻牌＋写分数册＋记试次台账三件同起），正对照改走判官直调，零写盘。
+- 不代拍 6 张多日面该走"改记号"还是"执行器扩面"＝两路代价不同（前者动冻结命名，后者动 ⑤ 码面），摊给⑥/⑩。
+
+## 六、自检两轮
+
+- 第一轮（only-add 未动旧行）：分数册主册本班**零字节**（起 16:5x 与止 17:1x 同 sha256 前缀 d77773545f5b4cc7c8c6，
+  96 行／pass 2 行／TDM-E 面 82 行，末行 card_id=TDM-E-L9-A01/calibration/02・run_id=st-autoplan-verify-20261015
+  ＝他席本班值守内追加，非本席）；卡面零翻牌（正对照喂的卡面 sha 起=止 7d522cfc23ea764c）；
+  台账走 safe_write_text 且断言 `new.startswith(old)`（删除集=空）；游标超集式＝前言＋班次 04 整块＋班次 03/02/01
+  留档段三块逐字在新字节内（脚本内断言，非叙述）。
+- 第二轮（分数与门柱一致）：本班无入册行 ⇒ 做反向自证——正对照读数逐条对门柱：卡面冻 `ic_mean_min=0.02`・
+  `mono_spearman_min=0.6`・`oos_same_sign=true`，读数 ic 0.096118 与 mono 0.818182 皆过线而 oos −0.110150 对
+  is +0.096118 反号 ⇒ 唯一触发柱即 `oos_sign_flip`，与在册行号 rows[75] 同一形态＝尺确实受门柱约束；
+  负对照取反后柱集换人（mono/ic 转违、oos 转符）＝判据随数值动而非随卡片动。
+  断供翻案读数亦同法自证：空串谓词负对照命中 26,231・`hot_value` 列 404 反证。
+
+## 七、保底条款如实呈报
+
+- 本班 **0 张入册**（未达每班 ≥8 张），未跑满 4 小时（起手 16:32:46 至写册 17:1x＝实测约 45 分钟，按 date 两点对账）。
+- 与班次 04 的差别（禁再复制"四闸下 0 张"当交付）：本班产出的是**三把尺同框互证**（含执行器路由真源与
+  真源 classify 普查件首次同场）＋**两把断供尺的量化差 23 张**＋**1 枚 CH 实测翻案（research_report 列面）**＋
+  **6 张新面精确锚点（多日标的缺申报位）**＋**正/负对照证"0 非尺瞎"**＋**本班自犯一枚假轻底座尺当场自纠留痕**。
+- 请 ⑩/总筹定夺：本席连续三班（03/04/05）四闸下 0 出分，而真源尺已给出 103 张的完整归宿
+  （A2／A?7／B16／C52／D0／U26＝现器可考面为 0 且非本班一把尺的说法）。建议按在册停手口径把本席节拍降档或并席，
+  把上下文与算力让给可出分分片；exit/portfolio/position_flow 族属 ⑧B 席，本席不代裁、不越片。
+
+### 八、旗债与袋面（入袋前写定，禁袋后再改盘面）
+
+- 旗债①＝`--allow-non-worktree` 使用一次：本班首投锁外预检判 `[WORKTREE-REQUIRED]`（活跃他会话实测 4 枚
+  st-qoder-p01-1015-12／p02-1015-07／p03-1015-06／p06-1015-10，预检耗时 12.8s 未落袋），依门自列逃生通道加旗重投；
+  袋 JSON 的 meta 面不记旗标（班次 03/04 实测），故旗债只在本台账留痕，审计侧按袋面找旗会查无＝在册形态。
+- 一值守一袋＝本班只投一袋（两件：ledger.md＋checkpoint.md），本班零分数册行、零卡面、零热册随袋；
+  分数册主册现 `AM`（他席在途）＝绝不随袋（袋=整档快照＝归属篡改）。
+- 会话活性锚＝本班值守内两次被外来回收（16:58:02 与 17:05:08 心跳末行自证 `session not in registry`），
+  两次同串重注册＋独立后台重启守护；第二次重注册携 `logical=True` 被门降级为 False（chief-form verification failed，
+  fail-open 照常注册）＝恒定班想要逻辑长会话锚的通道对本席不可用，如实登记待 ⑩ 定性。
+- 主区 `.git/index.lock` 检疫读数＝mtime 15:27:38・长度 0・存活 git 进程StartTime 全在 17:05/17:19＝无主陈旧锁；
+  本班**不删**（共享态且属 ⑩/运行班处置面），改走队列正门（在册：主区 index.lock 不挡入袋只挡直连落地）。
