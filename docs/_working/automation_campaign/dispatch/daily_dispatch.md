@@ -987,3 +987,16 @@ auction_window_pre_202606_gap（且无 primary_alternative）／bt_trade_log_att
 5. **给清理专班（不自删项移交）**：`.aidrafts/st-qoder-p10-1016-01..-06`（六条，均为唯一正门"会话存活保障腿" `scripts/git_commit.py:990-992` 代建，非各席违规，见 1016-05 班 §19/§21 改判）＋`.worktrees/st-opsv-20261015`／`st-perfz1-20261015`／`st-prevw-20261015`（mtime 10-15 23:54／10-16 00:31／00:55）。本席与各班不动他人产物。
 6. **断链战役（调度读数，不改 X1/X2 在施件）**：批次1/2/3 现值沿用（occurrence 尺 B440／C1813／D39；E 196 枚／123 目标＝Owner 呈批面勿动）；X1 袋 1/2 落 b5d3573348、X2 注释批 1/9 落 6221849b05（剩余处数未复量，本席不重跑生成器）；**X2 侧新事实**＝22 只 pending 袋（0053–0074，建 02:41–02:49）`base_head` 落后现 HEAD 25–26 笔且全带 `meta.custody=True`＝不会被存活闸提前判死，只会等排空到达按"双侧皆改"判死。
 7. **防重入与班期**：下一班 st-qoder-p10-1016-07 按"脉冲末行＋25 分"起班；首查五件＝①四族未落地是否已由属主班走正门（尺见本单第 1 条）②②③席旧袋是否再被 requeue ③主区在册件是否再被 stash apply 回灌（谓词 `+0/-N`）④⑦A 材料与前置② ⑤health 点名是否仍不可复现。
+## 2026-10-16 停发续令 · 第 07 单（班 st-qoder-p10-1016-07｜05:58 date 实测｜配额＝全线生产 0 张，直至落地链验收一班健康度）
+
+本班不派发任何挖矿/考试配额（Owner 停发令在案）。以下＝**落地与修闸指令**，全部只读判据＋正门入队，禁碰判据门柱：
+
+- ⑤实现席（三件，按此序）：①**把 `_shape_preflight` 实现件与已落 HEAD 的测试件同袋重基落地**——HEAD 现面测试第 17 行 import・178-180 行调用，而 HEAD 模块 0 命中＝跑即 `AttributeError`；尺＝落地后 `git show HEAD:scripts/backtest/fexam/calibration_exam.py | grep -c _shape_preflight` ≥1 且袋件面同时含实现与测试（`git show --name-only <新袋>` 可复验）。②**修 prestage 的输入指向**＝对"已被 git 跟踪"的路径不得再按 `--no-index` 判禁（②席 `scripts/data/bdpan_tick_watch.py` tracked=True/inHEAD=True 被误杀，全史 4 只袋）；禁弱闸、禁白名单、禁新豁免，若走 `.gitignore:617-623` 逐件 negation 先例须由⑤席提案。③`takeover_pending_gate.py` 三面各异（上班在册）请定真源。
+- ②数据构建席：`bdpan_tick_watch.py` 的 144 行面在⑤席闸修好前**别再入队**（再投必同死）；改指先做"已跟踪件更新"的最小袋冒烟并留 `dead_reason` 读数。
+- ①数据源席／③挖矿席：本班 W2 窗你席席位继续判死（③席 1 只、⑤席 6 只；W1 窗 ②4・③9・①3），首件＝逐只读 `dead_reason` 修因后**全新入队**，禁 requeue 已死旧袋；pending 现值里你席 0 只＝本班遵守到位，继续。
+- gpuwatch／orthogate 两班：你席功能体＋测试四路径 `git cat-file -e HEAD:` 仍查无（盘=袋、零蒸发、blob 暂不蒸发）＝唯一存活面在你席磁盘，**当班重基落地**，勿再等排空。
+- ⑨成绩官：分数册双本待你对账——`docs/04_research_records/backtest/scores/2026/indicator_exam_scores_v1.yaml`（9447 行・ttl:permanent・**tracked=False/inHEAD=False**・代码 3 处已指向）对 `exam_scores_v1.yaml`（5132 行・在 HEAD・权威）；出"哪本唯一权威＋永久区册必须入 git"的案卷呈 Owner，**本席不代定真源、不代搬册、禁任何席写分数册判据面**。
+- X1／X2 断链班：现 `broken_records.yaml` 是 10-15 时点快照（本席现量＝旧 target 又在盘 1817／仍查无 583），**不能用作"清零"验收尺**；请补一把可复现尺＝逐条"旧路径全文 grep=0 且新路径在盘"机生台账。批次4 E196＝Owner 呈批面，勿动勿代裁。
+- ⑥出题席：卡池 75 分钟零流动（prereg 167 与上班逐位同值）＝停发期预期，只按在册 TDM 补具名、不派发。
+- 全线：**恢复前置三件现为 ①成／②未成（本班窗 9 枚）／③未成**，禁任何席自行 enable、禁广播"可恢复"；⑦A 席死因材料（App 截图／运行日志）仍未到手＝请运行班补。
+
