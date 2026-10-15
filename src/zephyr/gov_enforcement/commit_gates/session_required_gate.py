@@ -78,8 +78,10 @@ def make_session_required_gate() -> GateSpec:
         if session_id in _RESERVED_SESSION_IDS:
             return False, (
                 f"commit 必须提供有效 session_id（当前='{session_id}'，属保留词）。"
-                f"AI 对话启动第一步：MUST 调 session_worktree_start() 注册 session。"
-                f"逃生通道：commit(allow_overlap=True)。"
+                f"注册（二选一，门只查注册存在性、不要求 worktree/心跳）："
+                f"①免 worktree 直注册 python -c \"from zephyr.security.access_control.session_concurrency import SessionRegistry; SessionRegistry().register('<你的sid>')\"；"
+                f"②建隔离 worktree（自动注册+心跳）python scripts/session_worktree.py create <sid> <lane>。"
+                f"逃生通道：commit(allow_overlap=True)（治标勿依赖——未注册会话的 claim 无活性保护）。"
             )
 
         # 第二道：session_id 非空但未注册 -> 阻断
@@ -96,8 +98,11 @@ def make_session_required_gate() -> GateSpec:
         if info is None:
             return False, (
                 f"session '{session_id}' 未注册。"
-                f"AI 对话启动第一步：MUST 调 session_worktree_start(session_id='{session_id}') 注册 session。"
-                f"逃生通道：commit(allow_overlap=True)。"
+                f"注册（二选一，门只查注册存在性、不要求 worktree/心跳）："
+                f"①免 worktree 直注册 python -c \"from zephyr.security.access_control.session_concurrency import SessionRegistry; SessionRegistry().register('{session_id}')\"；"
+                f"②建隔离 worktree（自动注册+心跳）python scripts/session_worktree.py create {session_id} <lane>。"
+                f"长任务再起心跳 daemon：python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon {session_id} <repo根> 30。"
+                f"逃生通道：commit(allow_overlap=True)（治标勿依赖——未注册会话的 claim 无活性保护）。"
             )
 
         return True, ""
