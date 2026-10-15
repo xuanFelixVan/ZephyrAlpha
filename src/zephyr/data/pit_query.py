@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.core.data_handler; zephyr.backtest.core.pit_manager
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] PIT三公理对齐(as_of_join/embargo/survivorship); announce_date<=query_time; LIMIT 1 BY取查询时点可见最新版本; 仅查白名单财务表; 哨兵守卫=锚列<=1970-01-02不可见(D1裁定2026-09-12,宁缺毋错防前视)
+# [INVARIANTS] PIT三公理对齐(as_of_join/embargo/survivorship); announce_date<=query_time-embargo(缺省7自然日 fail-closed 对齐回测层5交易日, Q2/#ARCH-346); LIMIT 1 BY取查询时点可见最新版本; 仅查白名单财务表; 哨兵守卫=锚列<=1970-01-02不可见(D1裁定2026-09-12,宁缺毋错防前视)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -57,6 +57,7 @@ __all__ = [
     "PITQueryError",
     "FinancialPITQuery",
     "FINANCIAL_PIT_TABLES",
+    "DEFAULT_EMBARGO_DAYS",
     "tsv_to_records",
     "tsv_to_dataframe",
 ]
@@ -119,6 +120,7 @@ def _anchor_col(table: str) -> str:
     """返回表的时间锚列名（默认 announce_date，research_report=publish_date）。"""
     return _PIT_ANCHOR_COL_OVERRIDES.get(table, _PIT_DEFAULT_ANCHOR_COL)
 
+
 # 解析为全限定表名（真源：business_data_categories.yaml via table_registry）
 FINANCIAL_PIT_TABLES: dict[str, str] = {
     name: get_registry().table(cat_id) for name, (cat_id, _period) in _FINANCIAL_PIT_TABLES.items()
@@ -134,17 +136,29 @@ class PITQueryError(Exception):
     error_code = "ZA-DATA-PIT-001"
 
 
+# ── Embargo 缺省口径（Q2/#ARCH-346 fail-closed，2026-10-14）─────────────────
+# 病历：缺省 embargo_days=0 且全仓零传参 ⇒ 财报 PIT 隔离在生产链路上从未生效，
+# 修正公告可经 announce_date 前视泄漏进决策。修法=缺省 fail-closed（宁缺毋错）。
+#
+# 数值推导（不做独立发明，对齐既有权威）：
+#   - 回测层权威 = pit_manager.DEFAULT_EMBARGO_DAYS = 5 **交易日**（§5.1 PIT 铁律）；
+#   - 数据层 INTERVAL 口径是**自然日**（SQL 模板 `- INTERVAL n DAY` 不改形状），
+#     1 交易周 ≈ 7 自然日 ⇒ 取 7 使数据层隔离窗口不小于回测层（保守序不反转）。
+# 显式传 embargo_days=0 仍可关闭隔离——但必须由调用方明说，不再由缺省静默提供。
+DEFAULT_EMBARGO_DAYS = 7
+
+
 @dataclass(frozen=True)
 class PITQueryConfig:
     """PIT 查询配置（frozen，对齐 pit_manager.PITConfig）。
 
     Attributes:
-        embargo_days: 公告截止回退交易日数（防修正公告泄漏，默认 0 即不回退）；
-            对齐 pit_manager.PITConfig.embargo_days 语义——在数据层将 announce_date
-            截止时点前推 embargo_days 个自然日，避免使用临近查询时点的新公告。
+        embargo_days: 公告截止回退日数（防修正公告泄漏）。**缺省=7（fail-closed）**，
+            推导见 DEFAULT_EMBARGO_DAYS；显式传 0 = 关闭隔离（调用方自担前视风险，
+            需在调用点写明理由）。数值口径=自然日（与 INTERVAL 模板一致）。
     """
 
-    embargo_days: int = 0
+    embargo_days: int = DEFAULT_EMBARGO_DAYS
 
 
 def fmt_query_time(query_time: datetime | date | str) -> str:

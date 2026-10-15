@@ -30,6 +30,7 @@ import pytest
 
 from zephyr.data import pit_query
 from zephyr.data.pit_query import (
+    DEFAULT_EMBARGO_DAYS,
     FINANCIAL_PIT_TABLES,
     FinancialPITQuery,
     PITQueryConfig,
@@ -143,13 +144,16 @@ class TestBuildAsOfSql:
         self.pit = FinancialPITQuery()
 
     def test_single_symbol_basic(self):
-        sql = self.pit.build_as_of_sql("balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True)
+        # 本案主题=SQL 基本结构（不含 embargo 子句）——显式零隔离把 embargo 面隔离掉，
+        # 缺省 fail-closed 值另有 test_default_config_reaches_sql 专项覆盖
+        pit = FinancialPITQuery(PITQueryConfig(embargo_days=0))
+        sql = pit.build_as_of_sql("balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True)
         assert "FROM " + FINANCIAL_PIT_TABLES["balance_sheet"] in sql
         assert "symbol = '000001.SZ'" in sql
         assert "announce_date <= toDate('2026-06-01')" in sql
         assert "ORDER BY announce_date DESC" in sql
         assert "LIMIT 1 BY symbol, report_period" in sql
-        # 无 embargo
+        # 显式零隔离 ⇒ 无 embargo 子句
         assert "INTERVAL" not in sql
 
     def test_panel_symbols(self):
@@ -319,9 +323,29 @@ class TestTsvParsing:
 # 9. 配置 & 常量
 # ============================================================================
 class TestConfig:
-    def test_default_no_embargo(self):
+    def test_default_embargo_fail_closed(self):
+        """缺省 fail-closed（Q2/#ARCH-346）：不传参=7 自然日隔离，而非零隔离。
+
+        旧契约断言 embargo_days==0（零隔离）——那正是本案要修的病（缺省静默
+        让生产链路上的 PIT 隔离从未生效）。数值 7 的推导=回测层权威 5 交易日
+        按 1 交易周≈7 自然日换算，保证数据层保守度不低于回测层。
+        """
         cfg = PITQueryConfig()
+        assert cfg.embargo_days == DEFAULT_EMBARGO_DAYS == 7
+
+    def test_explicit_zero_disables_embargo(self):
+        """显式 0 仍可关闭隔离（保留逃生口，须由调用方明说而非缺省提供）。"""
+        cfg = PITQueryConfig(embargo_days=0)
         assert cfg.embargo_days == 0
+        pit = FinancialPITQuery(cfg)
+        sql = pit.build_as_of_sql("balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True)
+        assert "INTERVAL" not in sql
+
+    def test_default_config_reaches_sql(self):
+        """缺省值必须真正咬合到 SQL：默认构造的查询带 7 日隔离子句。"""
+        pit = FinancialPITQuery()
+        sql = pit.build_as_of_sql("balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True)
+        assert "INTERVAL 7 DAY" in sql
 
     def test_frozen(self):
         cfg = PITQueryConfig(embargo_days=3)
