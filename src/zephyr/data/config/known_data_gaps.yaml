@@ -219,6 +219,13 @@ gaps:
     resolution_plan: "用户开通 L2 行情权限后移除 disabled 标记启用任务。
       当前 tick_data 表已有五档快照数据作为替代。"
     primary_alternative: "c1_market.tick_data（miniQMT get_full_tick 五档快照，已正常运行）"
+    p01_probe_20261015c:
+      verdict: "每档委托笔数（Queue Imbalance 笔数版所需 bid_order_nums/ask_order_nums）现有免费/L1 渠道穷尽后不可采，判死；须付费 L2 方解锁。④席据此把 SIC-20261015-P04-02 转『思想留档+mined_out 候选』处置正当，非本席可建腿。status 未翻转＝断供登记非结案。"
+      searched_channels:
+        - "akshare stock_bid_ask_em（东财实时五档）：本机实测 ConnectionError(RemoteDisconnected) 复证东财匿名退役，且其 schema 仅价+量、本无每档笔数列"
+        - "tushare L2 族（tick/queue 类）：现有 token 积分档无权限（同门 stock_st 实测报『您没有接口访问权限』），逐笔委托队列属付费档"
+        - "miniQMT get_full_tick 五档快照（现 tick_depth_5 33 列 / tick_data 18 列）：④席实测列名清单无 bid_order_nums/ask_order_nums，L1 快照协议本不含每档笔数"
+        - "付费 L2 vendor（Wind/东财 Level2/逐笔委托队列授权）：可采但属花钱，转 Owner 门，本席不自购"
     created: "2026-07-24"
     last_updated: "2026-07-24"
 
@@ -291,6 +298,8 @@ gaps:
     primary_alternative: "CAPE 分位主轴单独运行（已实证 2024 事件 valuation 0→60/80 有效）"
     created: "2026-08-30"
     last_updated: "2026-08-30"
+    p01_probe_20261015g: >-
+      ①数据源班 st-qoder-p01-1015-09 找源实测（承接④席 p04-05「死列三条」申请，零采购，本机真跑到内容层）：①pb_mrq 日频回填源＝本仓既有 tushare token 直取 pro.index_dailybasic，真跑两片——000905.SH 20140611..20261014 得 3,000 行（恰触单次返回上限，须按片轮转），000300.SH 与 000905.SH 各 20100104..20140610 得 1,072 行，两片合计 4,072 行恰盖住本表在册 4,071 交易日（CH 只读实测：000300／000905 各 4,071 行、2010-01-04..2026-10-13、countIf(pb_mrq IS NOT NULL)=0，正对照 SELECT 1=[(1,)]）；pb／pe_ttm／turnover_rate／total_mv 非空率 100%，右端 2026-10-14＝开班昨日⇒源在日更续供。dividend_yield 请求返回「列不存在」⇒ 股息率不在此接口，禁按本通道承诺。键面映射须显式：本表 symbol＝裸 6 位（000300），tushare 侧＝带后缀（000300.SH），混键即静默空 JOIN（④席同型实测在册）。②broken_net_ratio 源＝akshare stock_a_below_net_asset_statistics（乐咕乐股），真跑三档右端全部到 2026-10-14：全部A股 5,275 行自 2005-01-05／沪深300 5,219 行自 2005-04-08（total_company=300）／中证500 4,797 行自 2007-01-15（total_company=500），列＝date／below_net_asset／total_company／below_net_asset_ratio。口径＝PB∈(0,1) 家数占成分股总数比、PB<0 不纳入（乐咕页自述），非市值加权⇒ 与指数市净率不同物，落列须在列注释写死口径，禁与 pb_mrq 互推。③buffett_ratio 源＝akshare stock_buffett_index_lg（legulegu.com/stockdata/marketcap-gdp），真跑 5,224 行 2005-04-08..2026-10-14，列＝日期／收盘价／总市值／GDP（2026-10-14 读数 1,221,001.06÷1,401,879.0）；语义警示＝这是全市场口径而本表是按指数行，把同一市场级指标填进 000300 与 000905 两行＝伪装成两个指数属性，落位方式（改市场级表／列，或仅 000300 行＋注释声明全市场口径）归②席与 Owner，本席不代裁。④不达通道三条实测留痕：乐咕指数级 stock_index_pb_lg(中证500) 仅 238 行（2007-01-31..2026-10-14，约月频）⇒ 日频表不可用，插值即造伪精度；中证官网估值表直链 oss-ch.csindex.com.cn/.../000905indicator.xls 与 000300indicator.xls 本机 curl 实测均 http_code=404（2025 年社区报 405 的同一通道现已死链）；理杏仁／Wind 等付费档＝花钱，本席不自购。⑤本条 status 未翻转（仍 resolved），二期预留叙述维持原状，建设单=B-18。
 
   # === 2026-08-30: index_valuation_daily 同键双行 + 399006 无数据 ===
   - id: "index_valuation_daily_duplicate_rows"
@@ -360,6 +369,23 @@ gaps:
     resolution_plan: "登记退役。日频语义由 northbound_hold_snapshot（tushare hk_hold 季度持仓，
       memo 19）承接；tasks.yaml hk_connect_flow_incremental 描述已载明有效范围。"
     primary_alternative: "c1_market.northbound_hold_snapshot（季度频率）"
+    p01_probe_20261015d: >-
+      ①数据源席 st-qoder-p01-1015-06 本机只读复测（零写入）：CH count()=4,052、min=2014-11-17、
+      max=2024-08-16、uniqExact(trade_date)=2,264、uniqExact(channel)=2，与在册 root_cause 的
+      “4052 行／止于 2024-08-16”逐值相符 ⇒ 本条继续生效，④席 st-qoder-p04-1015-03 楼8 普查里
+      “未测跨度而留给后班的 hk_connect_flow 4052 行”已本班测清（结论=已在册退役，勿再挖）。
+      替代面源侧实测（tushare pro.hk_hold，token 走 get_required_secret 正门、本席未新增密钥）：
+      trade_date=20240816 返 4,128 行／20240820 返 792 行／20260630 返 4,200 行／20261014 返
+      1,018 行 ⇒ 季末断面约 4 千行、平日仅约 1 千行，与“2024-08-19 起沪深交易所停止每日披露
+      北向买卖额、每季度第五个交易日公布上季度末单只证券持有数量、改按月/年度汇总成交额”的
+      披露机制调整一致（沪深交易所 2024-07-26 公告，多家财经媒体当日报道留痕）。
+      ⚑PIT 判据（写给④⑤席，防未来函数）：c1_market.northbound_hold_snapshot 本班实测
+      count()=30,949、uniqExact(trade_date)=8（2024-09-30/12-31、2025-03-31/06-30/09-30/12-31、
+      2026-03-31/06-30，逐日 3,540→4,440 行），即 trade_date=季末日而**可得时点=季后第五个
+      交易日**；任何按 trade_date 直接对齐当日特征的用法都含最长约 1 个月的前视，用作因子/
+      门控须显式加发布滞后。另注：④席报本表 57,458 行与本席 FINAL 读 30,949 行不同值，
+      差在是否带 FINAL（ReplacingMergeTree 重复面），他班复测请先写明 FINAL 口径。
+      status 本席不翻转。
     created: "2026-09-10"
     last_updated: "2026-09-10"
 
@@ -466,6 +492,19 @@ gaps:
     primary_alternative: "无（QMT 9/18 退役后历史下载通道一并消失，窗口=9/17 前）"
     created: "2026-09-10"
     last_updated: "2026-09-10"
+    p01_probe_20261015b: >-
+      ①数据源班 st-qoder-p01-1015-04 只读复测（本席无权翻转 status，结案归②/⑩复核）：
+      CH 按日 group by 现读——07-03=15,008,525 / 07-06=15,133,460 / 07-07=14,607,352 /
+      07-08=13,923,697 / 07-09=14,785,740 / 08-05=14,700,958 / 08-06=14,838,474 行，
+      全部 data_source='bdpan'；07-03 与 08-06 的 market_type 现读=stock 单一品种。
+      ⇒ 本条终态叙述"其余 6 交易日（07-03、07-06~09、08-06）全渠道确认不存在/不可恢复"已被
+      盘上现值证伪（合计 1.03 亿行入库，非本席所写），建议按"已实质闭合"复核销账。
+      旁证=云端 /apps/bdpan/A股数据_分笔数据/分笔成交_按月归档_沪深/2026-08 实测 21 个日包、
+      mtime 2026-09-17，亦证"归档源 2026-07-03 16:24 起停止更新"对现值不再成立。
+      ②看门狗在册注释过时：schtasks 实测 ZephyrAlpha_BdpanTickWatch state=Ready（本册 §通道B 注释
+      "2026-09-24 实证无此任务"已翻篇），但 scripts/data/bdpan_tick_watch.py 的 BDPAN_BASE
+      常量仍指迁移前旧路径⇒真跑时 _check_remote 恒返回 {}（静默降级，与"未触发"同形），
+      永不报缺口。修指向不放宽判据，见建设单 B-10。
 
   # === 2026-09-10: news_sentiment_window 写入器无调度接线（数据总览全库体检 P7）===
   - id: "news_sentiment_window_no_scheduler_wiring"
@@ -487,6 +526,33 @@ gaps:
     primary_alternative: "无"
     created: "2026-09-10"
     last_updated: "2026-09-18"
+    p01_probe_20261015g: >-
+      ①数据源班 st-qoder-p01-1015-09 复核④席 p04-05「news_sentiment_window 三段互不连续」申请（DatabaseService().get_clickhouse_conn 只读实跑，正对照 SELECT 1=[(1,)]）：按 (scope, window_type) 分层 GROUP BY 读数＝market/1d 2,421 行 2019-01-04..2025-09-09；market/night 206 行 2026-02-24..2026-10-14；symbol/night 19,635 行 2026-02-24..2026-08-20。判定＝本条 completed 的闭合证据（run_nightly_sentiment.py 第 41-42 行＋schedule.yaml 槽位 nightly_sentiment）只对 market/night 粒度成立——该腿右端＝本班开班日，续供未断；而 market/1d 右端停在 2025-09-09（比在册回填叙述 2026-09-09 早整一年，谓词差异请②席核是窗口年标错还是真停一年）、symbol/night 右端停在 2026-08-20（滞后 55 日），这两条腿在接线批之后仍无产出⇒ 结构性缺口只闭了三分之一，且非源断供（源与调度在跑）。转②席动作＝查夜间批落库粒度谓词为何只覆盖 market/night、1d 与 symbol 两腿是调度未含还是含而不写；本席不改 status（该判据属②/⑩面）。历史面可用性提示＝market/1d 2019-01-04..2025-09-09 属只进历史不续供的一次性档案，按本席存放判定总则禁作常设信号源准入，回测可用但卡面须标档案属性。同批登记④席另两点（本席只路由不裁）：sentiment_panel 59 行含 source=alternative.me（美股恐惧贪婪）与 cb_conversion_premium_median（转债），跨市场禁绑 A 股信号，请②/⑤在线谱与列注释显式标注；index_valuation_daily.erp_pct 前视一条已在 to_impl.md:239 立案卷（④席三尺证伪配方），本班只补一条本席面实测＝tasks.yaml 与 schedule.yaml grep overlay_signals_builder／regime_data_loader 均零命中⇒ 这两个消费口未被任务面直接点名，是否经 import 链进生产特征须②/维护班按调用链判，存在性零命中不等于不在产，本席不代裁。
+
+  - id: "market_china_bond_yield_short_history_260d"
+    table: "c1_market.market_china_bond_yield"
+    gap_type: "date_range"
+    start_date: "2025-09-23"
+    end_date: "2026-10-14"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "open"
+    root_cause: >-
+      ④席 p04-05 短腿申请＋本班复核：本表现存 260 个估值日（6,240 行＝3 曲线×8 期限点，10Y 780 行零 NULL），右端正常而左端封在 2025-09-23。根因非采集退化＝源端滚动窗口：akshare bond_china_yield（中国货币网 chinamoney 中债估值口径）只回近约一年，已在册实测（2026-09-18 探针：start 距今 365d 得 744 行、383d 起整窗返空，边界 365~383d 之间），tasks.yaml 第 2178 行注释与 akshare_provider.py:3113 头注同述。⇒ 自建 ERP＝1/PE−10Y 在本库最多回溯到 2025-09-23，16 年史只能用 index_valuation_daily 现成 erp。
+    impact: >-
+      凡需 10Y 国债收益率长史的构造（erp 的 10Y 腿、ERP 时序分位、利率动量与期限利差类信号）在 2025-09-23 之前无源；楼3 估值族自建 ERP 腿的可用窗被源侧封顶，非本库管道故障。
+    resolution_plan: >-
+      可免费回补通道已本机实测（建设单 B-17，零采购）：akshare bond_zh_us_rate（源＝东方财富 data.eastmoney.com/cjsj/zmgzsyl.html）真跑 start_date=20050101 得 5,808 行、2005-01-03..2026-10-14（右端＝开班昨日，日更续供在跑），列含中国国债收益率2年/5年/10年/30年/10年-2年＋中国GDP年增率＋美国同结构。与现表期限面交集＝5Y/10Y/30Y 三点（TENOR_MAP 实测3M/6M/1Y/3Y/5Y/7Y/10Y/30Y 八点），2Y 属新增期限点须②席扩列，3M/6M/1Y/3Y/7Y 五点该通道无值⇒ 只覆盖部分期限，禁宣称整曲线补齐。口径分轨为强制项：东财列与中债估值口径不同物，落库须按 data_source 分轨打标，禁与 chinamoney 估值序列混算／插值／互相覆盖（ReplacingMergeTree 同键去重会静默吃掉一轨）。本仓另已存在同接口腿 akshare_provider.py:1382-1390（start=today-30，深度被采集器参数而非源封顶），扩窗即可，不必新建 provider。
+    primary_alternative: >-
+      深史原文通道＝中国债券信息网 indices.chinabond.com.cn /cbweb-pbc-web/pbc/historyQuery（startDate/endDate 参数，本班 WebFetch 实测 startDate=2014-06-22 窗口可取、页面含日期选择器无登录验证码，样例 2015-06-19 中债国债收益率曲线 3月 1.8492）；hibor 转引该源起止自 20020104⇒ 官方深史确在，但需自建 HTML 解析腿且无批量导出许可说明，作原文核对通道另案处理。
+    searched_channels:
+      - "akshare bond_china_yield（现腿）：真跑可用，源端滚动约一年窗，深史不可得"
+      - "akshare bond_zh_us_rate（东方财富）：真跑 5,808 行自 2005-01-03，可免费建设→B-17"
+      - "chinamoney 收盘曲线下载页：页面自述只提供最新日期数据、更多需外汇交易中心数据授权＝付费"
+      - "tushare yc_cb（官方 doc_id=201，单次 2,000 行总量不限）：自述属单独权限接口须联系管理员＝权限墙，本席未申请未实测"
+      - "indices.chinabond.com.cn historyQuery：WebFetch 实测 2014 窗可取、无登录，需解析腿，暂作原文核对"
+    created: "2026-10-15"
+    last_updated: "2026-10-15"
 
   # === 2026-09-10: index_list 错宇宙垃圾 PIT 关死（数据总览全库体检 P8）===
   - id: "index_list_wrong_universe"
@@ -659,6 +725,23 @@ gaps:
 
   # === 2026-09-12: 电影票房源断供（另类数据第 1 批 D7，akshare 艺恩 endata 权限墙）===
   - id: "alt_movie_boxoffice_source_dead"
+    p01_probe_20261015: |-
+      probed_by: st-qoder-p01-1015-03  # ①数据源席第03班本机真跑（akshare 1.18.75，逐腿实调非目测）
+      verdict: 改判=部分可采（影片级月/年粒度免费可得）；日/周/影院粒度维持断供。原 root_cause 的"全家桶均无权限"与实测不符，旧叙述按留旧案卷原则不改写。
+      channels_tested_live:
+        - ak.movie_boxoffice_monthly(date=...) → OK 192行(20261013) / 379行(20240315) / 406行(20231231)
+        - ak.movie_boxoffice_yearly(date=...) → OK 1447行(2024) / 1449行(2023) / 1253行(2022) / 1603行(2021)
+        - ak.movie_boxoffice_yearly_first_week() → OK 1389行
+        - ak.movie_boxoffice_realtime() → OK 107行（仅当前时刻，无历史）
+        - ak.movie_boxoffice_daily(date=20261010) → ERR APIError 没有权限 (Status code: -1)
+        - ak.movie_boxoffice_weekly() → ERR 上游艺恩公开周榜接口当前需要权限或直接返回系统错误 (Status code: -1)
+        - ak.movie_boxoffice_cinema_daily() → ERR 没有权限 (Status code: -1)
+      channels_other:
+        - 付费/注册数据商=聚合 juhe api id=44（注册购买）、极数本源 v1.apizero.cn/api/movie-box（需 Key）→ 属采购呈批面，本席不自购
+        - 猫眼专业版/灯塔专业版=signed 接口非免注册直连（在册负证据复证）
+        - 中国电影数据信息网 zgdypw.cn=仅周报文章无结构化 API（在册负证据）
+      pit: 月/年榜是期内结束后发布的终值，且影片累计票房会被回溯修正；因子引用须锚 period_end+发布滞后并逐版本存快照，禁把年度榜用于年内任意交易日（未来函数）
+      disposition: 可免费建设→建设单 B-6（转②席）；表 c1_market.alt_movie_boxoffice 现不存在，建表走 data_source_onboarding_sop；status 维持 open（日/周/影院粒度仍断供）
     table: "c1_market.alt_movie_boxoffice"   # 未建表——源断供，第 1 批施工范围收束为千股千评+运价
     gap_type: "permission_required"
     start_date: "2026-09-12"
@@ -849,6 +932,21 @@ gaps:
 
   # === 2026-09-15: 8803/8804 行业板块无成分映射（合成覆盖 580/727） ===
   - id: "sector_constituent_8803_8804_missing"
+    p01_probe_20261015: |-
+      probed_by: st-qoder-p01-1015-03  # ①数据源席第03班本机实跑
+      verdict: 可免费建设（成分侧源实测成立，非缺源）。本班停在可得性结论，入库与四坐标系归属属 Owner 门位（F06 先例）。
+      channels_tested_live:
+        - 本机通达信行业分类文件 E:/tdx/T0002/hq_cache/tdxhy.cfg（市场|代码|通达信新行业T码|...，GBK）150,600B，mtime 2026-10-14 11:03（客户端日更）；5,669 行、112 distinct T码
+        - 与在册主数据 src/zephyr/data/implementations/sector_code_bridge.py:136 TDX_INDUSTRY_BOARDS(132条).t_code 对撞：等值匹配=110板/5,587对；改 T码前缀汇总 rollup=132/132板、8,487成分对、零板缺配（一级板 T0101 须吞 T010101/T010102 子码，等值匹配会静默漏 22 个一级行业板）
+        - 与 09-25 在册记忆"132板 8,473对"数值一致（差14对=两日成分自然变动），本班复核复现成功
+      channels_other:
+        - 通达信PC客户端免费"34→板块成份导出→行业板块.txt"（人工一键、GBK；CSDN 教程 2026-02-26 在册）
+        - TdxQuant/tq get_stock_list_in_sector()（教程 2026-03-05；本仓 tqcenter_provider 在册=大QMT插件通道，内容未实测）
+        - tushare ths_index/ths_member=六次全报"没有接口访问权限"（2026-09-25 在册负证据，勿再试）
+        - mootdx client.block 板块接口被 capability_semantic_gate.py:94 明令拒收（"防 INDUSTRY-CLASS 重演"）
+      pit: cfg 是当前快照、不含历史成分。只能"今起每日快照版本化"，禁把今日成分回灌为 2024 年成分（未来函数）；历史段 8803/8804 成分仍不可回溯
+      boundary: 本通道只供 sector_constituent / sector_constituent_snapshot 语义；禁冒充申万行业分类（cfg 第4列虽有申万码，capability_semantic_gate 已立此案）
+      disposition: 可免费建设→建设单 B-5（转②席）
     table: "c1_market.sector_constituent"
     gap_type: "universe_missing"
     start_date: ""
@@ -1034,6 +1132,26 @@ gaps:
 
   # === ① consensus_daily 值类列 PIT 已坏（平推快照；F 车道另类探针实测）===
   - id: "consensus_daily_value_cols_pit_broken"
+    p01_probe_20261015f: |-
+      probed_by: st-qoder-p01-1015-08  # ①数据源席第08班本机只读实测（CH query_rows ＋ tushare 真调用）
+      verdict: 03 班 p01_probe_20261015 的第④渠道（tushare pro.report_rc 逐报告 eps/pe 2010 起）本班**由"未实测"改判为"实测可用"**——既有 token 真跑四窗皆返数据，零现金成本；该条"值类断供=免费渠道穷尽"的定性自本班起不再成立（旧案卷原文保留不改写）。
+      readings: pro.report_rc(start=20201001,end=20201015)=134 行；(20240101..20240131)=5,000 行；(20220601..20220630)=5,000 行；(20240115..20240119)=2,134 行/412 只/5 个 report_date 齐；21 列含 report_date/quarter（预测报告期，如 2023Q4、2025Q4）/eps/pe/np/rd/roe/rating/max_price/min_price/org_name。
+      hard_constraint: 月窗两次恰 5,000 行＝触单次返回上限被静默截断（五天窗 2,134 行≈427 行/日 ⇒ 安全切片 ≤10 交易日）；频控实测报错原文「频率超限(1次/分钟)」；官方 doc_id=292＝数据 2010 起、2000 积分试用 10 次/天、8000 积分 10 万次/天。本席未实测本仓当日剩余额度，且仓内积分档仅为注释自陈（src/zephyr/data/implementations/tushare_provider.py:392「2000 积分限制 200 次/分钟」）⇒ 回补时长测算按 10 次/天给约 35 个自然日，属推算非实测。
+      pit: report_date＝发布日，as-of 聚合只取 report_date<=评估日 的行；quarter 须显式映射 forecast_year，禁把 2025Q4 预测当 2024 年预期。
+      owner_gate_revised: 03 班台账采购呈批草稿 OD-b（tushare report_rc 8000 积分档年费）的立法前提「唯一可突破值类断供的非爬虫通道、需付费」自本班起改判为**可选加速项**（正式档把约 35 日轮转压到数小时）；是否花钱仍属 Owner 门，本席不自购。
+      anti_false_green: 禁用 c3_fundamental.research_report 老行派生历史一致预期——该表 eps_fy0 非空率 2017=72.9%..2024=97.2% 看似可用，但 fy0_year 逐年分组全部 ∈{0,2026}（uniqExact=2），600519 的 2019-01-02 报告行 eps_fy0=69.83 且 fy0_year=2026＝当前值回填非发布时值，属未来函数。plain 表值类禁用裁定本席未动。
+      disposition: 值类断供段由"断"改判"可免费回补"，status 维持 open（可得性结论非结案）；建设单 B-16
+    p01_probe_20261015: |-
+      probed_by: st-qoder-p01-1015-03  # ①数据源席第03班本机真跑（akshare 1.18.75 + requests 实测）
+      verdict: 分流两判。值类列 2022-01..2025-12 回补=免费渠道穷尽后受阻→断供登记（searched_channels 见下）；评级/研报计数腿=可免费建设（走 B-3 研报族 + 巨潮评级变化腿，见 B-7）
+      searched_channels:
+        - 渠道① ak.stock_research_report_em(symbol='000001')：227行、日期跨 2017-03-07..2026-08-25、逐年 2022=25/2023=27，列含 东财评级/机构/报告PDF链接（评级腿免费可得）。但盈利预测列名恒为当前年模板（2026/2027/2028-收益/市盈率），发布日≤2022 的 175 行在这些列全 NaN（非空计数 17/8/4 全落在近端报告）⇒ 值类历史不可从该免费接口取
+        - 渠道② 老报告 PDF 直取=反爬堵死：https://pdf.dfcfw.com/pdf/H3_AP202310261604019504_1.pdf（2023-10-26 那篇）实测 HTTP 200 但正文 985 字节、magic='<scrip'（JS 混淆）；补 Referer=https://data.eastmoney.com/ 再试仍 985 字节同形态⇒匿名 HTTP 拿不到 PDF 正文，值类只能靠渲染抓取（第3批 web_scraper_engine + 合规评估前置）
+        - 渠道③ ak.stock_profit_forecast_ths('600519','预测年报净利润')：返回仅3个年度（前向序列，无历史预测轨迹）；ak.stock_rank_forecast_cninfo()：391行且含 投资评级/是否首次评级/评级变化/前一次投资评级，但发布日期最早 2023-08-17（近端窗、无 EPS 值）⇒ 均不能补 2022-2025 值类
+        - 渠道④（未实测如实标注）tushare pro.report_rc 逐报告 eps/pe 2010起=8000积分正式档 / 2000积分试用10次日；本席不烧额度、不自购
+      owner_gate_paths: 突破值类断供只有两条且均属 Owner 门位——①付费档采购（tushare 8000 积分 / 朝阳永续 / Wind-Choice，呈批草稿记本班台账）②研报PDF全文渲染抓取（爬虫批+合规评估）
+      anti_false_green: 任何"回补成功"必须先自证 2022 报告日的 eps 与该报告原文一致（抽 20 行读回正文源），禁拿当前年模板列的非空率当覆盖；plain 表值类禁用裁定继续生效
+      disposition: 值类断供登记（status 维持 open）＋评级/计数腿建设单 B-7
     table: "c3_fundamental.consensus_daily"
     gap_type: "upstream_data_corruption"
     start_date: "2019-01-01"
@@ -1122,6 +1240,34 @@ gaps:
     primary_alternative: "1min/5min K 线族全史完整，K 线级回测不受影响；tick 级仅 2025+ 深样本可用"
     evidence: "docs/_working/archive/2026-09/bizmine_night/tick_t0/（tick_inventory.md+tick_t0_results.md）+ docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_report.md（勘误之勘误）"
     created: "2026-09-19"
+    p01_probe_20261015b: >-
+      ①数据源班 st-qoder-p01-1015-04 只读实测（本机，零写入）：冷库
+      F:/zephyr_cold/50_archive/by_project/zephyralpha/c1_market/tick_data = 48 个月度 parquet，
+      202201..202512，逐件 pyarrow metadata num_rows 求和 = 11,929,066,998 行。逐件遍历全行组
+      market_type 列块统计（非抽样）得品种并集：202201..202308 共 20 件 types_union 仅 index
+      （合计 935,907,338 行、bid/ask 全 NULL）；202309..202512 共 28 件含 stock/stock_bj/etf/
+      lof/cb/sector/mkt_index（合计 10,993,159,660 行）。⇒ 本条"2022-2024 全段不在库"须改判：
+      个股与 ETF tick 在 2023-09-01..2024-12-31 段已在冷库（属挂回，不属缺源），真残余外源缺口
+      收窄为 2022-01-01..2023-08-31 个股/ETF/转债 tick；2025 段亦已在冷库而热库无。热库现读
+      min(trade_date)=2026-01-05（tick_minmax），故 2022-2025 全段属冷库面。
+      ②云档渠道（免费·既有 Owner 网盘账号）：BaiduPCS-Go 4.0.1 登录态实测 uid=227866102；
+      在册常量 /apps/bdpan/量化交易数据/A股数据_分笔数据/分笔成交_按月归档 现值报
+      31062 file name is invalid=路径已迁移；真值路径=/apps/bdpan/A股数据_分笔数据/
+      {分笔成交_按月归档_沪深,分笔成交_按月归档_京市,分笔成交_大单统计}，沪深族实测 318 个
+      月度目录、覆盖 2000-06..2026-09；2026-08 月包实测 21 个日 zip 共 1.51GB（含 20260805/
+      20260806），文件 mtime 2026-09-17 00:16:29。
+      ③负证据与口径限制：akshare 1.18.75 全量 dir() 仅 stock_zh_a_tick_tx_js 一分笔接口，
+      真跑得 4,433 行、无日期参数=只供当日；五档深史任何渠道不存在（在册
+      tick_depth_backfill.py:24），冷库 2022 段 bid/ask 全 NULL 复证。ETF 2026-06-01..07-09
+      空窗复证：CH count() WHERE market_type='etf' AND 该窗 = 0 行。
+      ④判定=可免费建设（零现金采购）：近端走冷库挂回、远端走云档 zip+既有幂等导入器
+      scripts/data/import_bdpan_tick_zip.py。PIT=历史分笔属事后不可改写事实，安全；但 bdpan
+      为 3 秒快照非逐笔、无五档，须保留 data_source='bdpan' 分源标记，禁与 miniqmt 逐笔混窗
+      做同口径回放。入库量级按 2023-09..2025-12 月均 3.93 亿行外推 20 个月 ≈ 7.9 亿行上限
+      （2022 标的数少，实际偏低；外推法在此注明，非实测）。status 本席不翻转。
+      云档源出处=淘宝店铺"赛博空间2077"采集包（盘内自述"盗版无售后"），许可证=无正式授权、
+      禁再分发，研究自用；分页风险在册（包内自述"按月归档文件夹可能显示不完整，需翻页"），
+      本班 318 目录单次 ls 未见截断征兆。
 
   # === ⑤ hl_liquidation_raw 空表（币圈清算链不可考；cry 车道实测）===
   - id: "hl_liquidation_raw_empty"
@@ -1138,6 +1284,20 @@ gaps:
     resolution_plan: "数据线核查 Hyperliquid 清算流 WebSocket 采集链（hyperliquid_provider
       → c1_market.hl_liquidation_raw）为何零业务行：任务未挂调度/连接失败/字段过滤过严三选一排查后修复。"
     primary_alternative: "无（清算流为交易所 WebSocket 独有推送，无 REST 历史回补接口等价物）"
+    searched_channels:  # ①席 st-qoder-p01-1015-02 断供证据链（历史段；前向采集另出建设单 B-4，不属本断供面）
+      - channel: "官方文档 Hyperliquid info endpoint（gitbook）"
+        outcome: "无清算检索接口——页面仅列 order book/trades/funding/positions/historical orders，唯一命中文案是错误码 'Canceled due to liquidation'，REST 与 WS 均未提供按时间窗检索清算事件的接口"
+        evidence: "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint"
+        failed_at: "2026-10-15 本机 WebFetch 核实"
+      - channel: "REST recentLiquidations + WS allLiquidation/liquidation/webData2 订阅名试投"
+        outcome: "REST 返回 422 端点不存在；三种 WS 订阅名均被服务端拒绝——前向只能靠 trades 流 users 字段匹配清算账本专用地址 0xffff…ff 标记（仓内既有实现）"
+        evidence: "src/zephyr/data/implementations/hyperliquid_provider.py:36-37（在册实测注记）"
+        failed_at: "2026-09 币圈车道实测，2026-10-15 复核仍在册"
+      - channel: "第三方清算聚合 CoinGlass aggregated liquidation history"
+        outcome: "仅多交易所聚合 USD 金额、无逐笔清算明细，且 interval 按套餐限流（Hobbyist≥4h）；是否覆盖 Hyperliquid 单所=未核实，境外站需 API key，未核实不得入库作主源"
+        evidence: "https://docs.coinglass.com/reference/aggregated-liquidation-history"
+        failed_at: "2026-10-15 WebSearch 取证，判为不可作逐笔历史源"
+    searched_conclusion: "历史段免费渠道穷尽＝断供维持；前向可采（trades 流标记法）已转②席建设单 B-4——断供≠整条线死，只封回溯段"
     evidence: "docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_results.md §7+crypto_probe_summary.csv"
     created: "2026-09-19"
 
@@ -1183,6 +1343,12 @@ gaps:
 
   # === ⑦ F:/zephyr_cold/50_archive/by_project/zephyralpha 分钟线冷归档待挂回（原 E 盘，2026-09-20 迁 F；总包 E 盘盘点 06:0x）===
   - id: "cold_archive_minute_kline_e_drive"
+    p01_probe_20261015f: |-
+      probed_by: st-qoder-p01-1015-08  # ①数据源席第08班本机只读实测（CH query_rows ＋ tushare 真调用）
+      verdict: 按 07 班游标 next_up②补测「在线侧容量与磁盘水位」——本案唯一硬约束是**在线 CH 落地面剩余**，不是冷库侧。
+      readings: system.disks default(/var/lib/clickhouse/) free=0.2TB／total=0.6TB；backups(/mnt/chbackup_local/) 0.6/1.1TB；backups2 0.6/1.1TB。在线现面字节 system.tables total_bytes：tick_data 71.53GB／kline_1min 37.55GB／kline_5min 6.57GB／tick_depth_5 6.16GB／kline_etf_1min 4.76GB／kline_60min 0.81GB。宿主盘（Win32_LogicalDisk）F: free 1,477.8GB／G: 2,358.5GB／D:（项目盘）仅 23.2GB／C: 20.3GB。
+      projection: 在线 tick 单位字节 71.53GB ÷ 39.51 亿行 ≈ 18.1 B/行 ⇒ 冷归档 tick 119.3 亿行入库投影约 **216GB**；分钟线 24.4 亿行按同尺外推约 44GB（该值借 tick 尺外推、分钟表列数不同，只作量级不作判据）；合计 ≈ 260GB vs 在线剩余约 200GB ⇒ 全量挂回会吃满 default 盘。
+      disposition: 请②席在①只挂子集/分段②不入库改冷库外表直查③呈 Owner 扩容（花钱门位）中择一并自证；本席不施工不代裁。坑留痕：Git Bash 下 shutil.disk_usage('F:/') 的 total 报 385GB 与 CIM 1,863GB 不符（free 两尺相等），盘容量类读数一律取 CIM/system.disks，勿用 shutil total。
     table: "c1_market.kline_1min（挂回目标，同族 5/15/30/60min+kline_etf_*min+technical_indicator/news_data）"
     gap_type: "date_range"
     start_date: "2000-06-01"
@@ -1198,6 +1364,27 @@ gaps:
       禁裸写）；miniQMT 2026-09-18 退役后该归档=唯一已知历史分钟源，优先级高。"
     primary_alternative: "无（E 盘归档为唯一已知批量历史分钟源）"
     evidence: "docs/_working/archive/2026-09/bizmine_night/bizmine_campaign_ledger.md 06:0x 行（E 盘数据资产盘点）"
+    p01_probe_20261015e: |
+      ①席第 07 班（st-qoder-p01-1015-07，10-15 09:15-09:39 date 实测）冷归档内容级只读实测（未挂回、未建表、未花钱）。
+      清单面：archive_manifest.jsonl 共 2,533 行，逐行 verified=true 且 dropped=true；2,533 个 parquet_path 本机
+      os.path.exists 全在（缺 0）。盘上文件数与各表 manifest 分区集合相等：kline_etf_1min manifest 201 行 vs 盘上
+      198 个文件的差额＝202006/202007/202008 三条重复 partition 行（重复行实测），非缺件。
+      行数与跨度＝逐文件 parquet 页脚统计求和（全集非抽样）：
+        kline_1min 255 文件 2,441,876,588 行 2000-06-09..2021-08-31（27,011 MB，13 列含 ingest_ts）
+        kline_60min 255 文件 40,529,072 行 2000-06-09..2021-08-31
+        kline_etf_1min 198 文件 79,254,199 行 2005-02-23..2021-07-30
+        tick_data 48 文件 11,929,066,998 行 2022-01-04..2025-12-31（98,569 MB，16 列，含 direction 与
+          bid_price/ask_price/bid_volume/ask_volume＝一档买卖盘，非五档，故本归档不解 tick_depth_5 深史）
+      在线面对拍（zephyr.data.ch_reader.query_rows 只读实跑）：c1_market.tick_data min/max=2026-01-05..2026-10-15
+      3,951,052,664 行且 toYear 分组只有 2026 ⇒ 冷 2022..2025 与在线零重叠，且因 dropped=true 该四年在今日盘上
+      仅此一处存活；kline_1min 在线 2021-09-01..2026-10-15 1,493,020,128 行 ⇒ 与冷末 2021-08-31 可无缝接缝；
+      kline_etf_1min 在线 2021-08-02 起（08-01 实测周日，非断日）。symbol 形态＝裸 6 位（页脚统计 min 000001／
+      max 399635 与 603108），与在册「个股跨表 JOIN 用裸 symbol」口径一致。
+      可得性判定＝可免费建设（零现金成本、本机自有归档、无外发、许可证无新增）；建设单 B-15 已出至
+      feedback/to_builder.md（含接缝/幂等/列面对齐验收判据）。本条目 status 保持 open 不翻转——挂回是②席施工面，
+      不属本席可得性判据。
+      ⚠在册叙述过时一句（另起留痕，未改写 root_cause 原文）：原文写「无 tick」与「tick 唯二＝tick_data 2025-01 起
+      21 个月」，本班实测＝冷归档含 tick_data 48 个月（2022-01..2025-12），在线只剩 2026 一年。
     created: "2026-09-19"
 
   # === X-7: top10_shareholders 增量管线静默饿死（断供 2026-05-16→2026-09-19，终极令钦定 P0）===
@@ -1391,6 +1578,13 @@ gaps:
 
   # === 2026-09-21: 1970 假日期治本三步收口（分包6 车道，②b 改令）===
   - id: "fake_date_1970_root_cure_p6"
+    p01_probe_20261015f: |-
+      probed_by: st-qoder-p01-1015-08  # ①数据源席第08班本机只读实测（CH query_rows ＋ tushare 真调用）
+      verdict: financial_indicator 的「(symbol,report_period) 重复 32,623 组（④席报）与 1970 哨兵」经本席结构计数判明＝**同一病的两个症状**，修一处两者皆消。
+      readings: FINAL 386,559 行／uniq(symbol)=5,901；announce_date=1970-01-01 共 32,908 行（④席 8.51% 复现）；report_period=1970-01-01 共 313 行（④席复现）；uniq(symbol,report_period)=353,904 ⇒ 行差 32,655；重复组结构（GROUP BY symbol,report_period HAVING count()>1）=组数 32,639／其中 >2 行的仅 **16** 组／含 2 个及以上真实披露日的仅 **60** 组／全哨兵组 **0**。600519 样本五期全部呈「一行 1970 + 一行真日期」成对。
+      consequence: ④席要的「首披 vs 修正判别列」在现盘面无信息可派（真日期成双的组只有 60/386,559）；正解是把哨兵按组内真日期补齐或直接剔哨兵行，剔后键基本唯一。真做重述轨迹须另找外源，本席未实测故不入结论。
+      dead_column: 本表 quality_flag 恒 1（GROUP BY quality_flag 单组 1×386,559）＝与 c3_fundamental.shareholder_count.quality_flag 同型死列（先例另见 kline_daily.adj_factor 恒 1、kline_daily/hfq.turnover 恒 0）。
+      disposition: status 维持 open（④席登记诉求，非结案）；补齐/剔除处方与质量谓词归②data_ops＋⑤实现面，本席不代修。
     table: "c3_fundamental.restricted_shares|financial_indicator|disclosure_plan|dividend|equity_pledge_detail|audit_opinion|shareholder_count|rights_issue + c1_market.index_list|convertible_bond_list|etf_list|stock_list|rate_decision_calendar"
     gap_type: "sentinel_zero_date"
     start_date: "2026-09-21"   # 治本执行日（病灶自建库起累积）
@@ -1522,6 +1716,28 @@ gaps:
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（F06 卷 W1 后半步）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
     created: "2026-09-29"
     last_updated: "2026-09-29"
+    p01_probe_20261015b: >-
+      ①数据源班 st-qoder-p01-1015-04 找源=三项渠道全部本机真跑取内容（零采购）：
+      (a) tushare pro.daily_basic（token 走 zephyr.shared.security.secrets
+      get_secret_or_default('TUSHARE_TOKEN') 正门，本席未新增/未改任何密钥）：
+      trade_date=20241231 返 5,370 行、20221230 返 5,061 行，字段
+      pe/pe_ttm/pb/ps/ps_ttm/dv_ratio/dv_yield/total_mv/circ_mv ⇒ 表列映射 pe←pe_ttm(或 pe)、
+      pb←pb、ps←ps、dividend_yield←dv_yield 四列有直接源，且 2022 段有数=非仅近端；
+      (b) ak.stock_value_em('600519') 实测 2,128 行、2018-01-02..2026-10-14，13 列含
+      当日收盘价/总市值/流通市值/总股本/流通股本/PE(TTM)/PE(静)/市净率/PEG值/市现率/市销率
+      ⇒ pcf←市现率 仅此腿有（tushare 侧无 pcf），逐标的拉取形；
+      (c) ak.stock_zh_valuation_baidu 单指标 date/value 两列：period=近五年=913 行日频
+      （2021-10-16..2026-10-14）、period=全部=612 行月频（2001-09-10..2026-10-14）⇒ 长史但降频。
+      (d) 辅证：ak.stock_a_ttm_lyr / stock_a_all_pb 市场级分位（月度 262 行，2005-01-31 起）
+      只可作市场对拍，非逐股。
+      ②判定=可免费建设（建设单 B-9），零采购；本条"schema 在册而采集腿未建"属实——
+      tasks.yaml grep 实测零 stock_valuation 任务。建腿 vs 退役的终裁仍属 Owner 门
+      （F06 W1 先例），本席不改该判据、不翻转 status。
+      ③两处在册叙述与实测冲突，留②席复核：akshare 无 stock_a_indicator_lg（1.18.75 dir()
+      实测 NOT_PRESENT，社区常引该名已失效）；tushare_provider.py:8 不变量"历史数据截止
+      2024-08"与本班 20241231/20221230 真跑有数冲突。PIT：daily_basic/stock_value_em 均为
+      EOD 按 trade_date 快照，当日收盘可知⇒PIT 安全；但复权无关列须与股价表同窗对齐，
+      禁把长史月频腿(c)插值成日频冒充当日可知。
 
   - id: "stock_candidate_pool_empty_table_no_leg"
     table: "c1_market.stock_candidate_pool"
@@ -1537,6 +1753,19 @@ gaps:
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（F06 卷 W1 后半步）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
     created: "2026-09-29"
     last_updated: "2026-09-29"
+    p01_probe_20261015b: >-
+      ①数据源班 st-qoder-p01-1015-04 判定=**非外源缺口，本席不立项找源**。列面
+      （stage/sleeve/sleeves/rank_score/source_rank/pool_rank/vetoed/veto_reasons/tier_slot/
+      conduction_adj/score_components/snapshot_meta/version）为研究管线内部派生态，语义上
+      不存在任何外部数据源可对号。CH count_strict=0 行（确证真空，非读失败）。
+      ②仓内已有写方：src/zephyr/signal_ashare/core/candidate_pool_snapshot.py、
+      src/zephyr/signal_ashare/tradability_preflight.py、
+      src/zephyr/strategy_pipeline/daily_gate_snapshot.py；tasks.yaml grep 实测零该表任务
+      ⇒ 残余问题="派生表有写方、无调度接线"，转②席接线或⑩席按退役通道判，不属①席面。
+      ③外源存在性三渠道检索留痕（结论=不存在亦不需要）：akshare 1.18.75 全量 dir() 无
+      candidate/池类接口；东财/同花顺"选股器"属网页交互式筛选、无免注册批量 API；
+      GitHub 无 A 股"候选池"权威数据集（候选池按定义为策略私有产物，公开集顶多是其
+      历史快照而非可复用源）。status 本席不翻转。
 
   - id: "market_index_meta_empty_table_no_leg"
     table: "c1_market.market_index_meta"
@@ -1611,6 +1840,21 @@ gaps:
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（同 6 张先例通道）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
     created: "2026-10-07"
     last_updated: "2026-10-07"
+    p01_probe_20261015b: >-
+      ①数据源班 st-qoder-p01-1015-04 严格读复测（count_strict，与 recheck_empty_tables.py 同
+      读数层，"读失败"与"真空"分态）：c1_market.realtime_snapshot = 33,444 行（非 0）；
+      max(snapshot_time)=2026-10-14 11:45:23（Asia/Shanghai），countDistinct(toDate(snapshot_time))=1
+      ⇒ 单日快照，历史仅 1 个交易日。列面 12 列（snapshot_time/symbol/OHLC/volume/amount/
+      data_source/ingest_ts/exchange/symbol_canonical）。
+      ②本条"采集腿未建"叙述已被证伪：tasks.yaml:1054 realtime_snapshot_incremental 在册，
+      schedule=intraday_realtime（盘中每 5 分钟），source=akshare，实现
+      akshare_provider.py:5857 _fetch_realtime_snapshot（腾讯 qt.gtimg.cn 直连 80 只/批，
+      2026-09-29 换源）。⇒ 改判=非缺源、非缺腿，残余问题=调度产出仅 1 日，转②席核是否刚上线
+      或盘中 gate 挡跑。
+      ③源侧渠道实测（三项，供换源备用）：腾讯 qt=已在产；ak.stock_zh_a_spot_em 本机真跑
+      =ConnectionError(RemoteDisconnected)（复证在册"东财 TCP RST 退役"）；新浪 stock_zh_a_spot
+      在册 403 反爬前科；akshare 另有 fund_etf_spot_em/fund_lof_spot_em/index_global_spot_em
+      等快照族可作 ETF/指数扩面（本席未实测内容）。status 本席不翻转。
 
   # === 2026-10-04: macro_data 源侧拉取 SSL EOF 失败族（eastmoney datacenter 翻页网络层，IN1-34）===
   # 图12/TDM 收官·车道D 登记（st-vm12final-20261007-laneD，2026-10-07）：只登记处方不施工，代码批归数据班。
@@ -1628,4 +1872,88 @@ gaps:
     created: "2026-10-07"
     last_updated: "2026-10-07"
 
+  # === 2026-10-15: 板块资金流历史深度=30 日自累积，深史免费渠道穷尽（①席本班登记断供）===
+  - id: "sector_fund_flow_depth_cap_no_free_backfill"
+    table: "c1_market.sector_fund_flow"
+    gap_type: "date_range"
+    start_date: null
+    end_date: "2026-09-14"
+    date_column: "trade_date"
+    detection_threshold: 120
+    status: "no_source"
+    root_cause: "本班 CH 只读实测=12,468 行／uniqExact(trade_date)=30／窗 2026-09-15..2026-10-14／
+      sector_type 分行业与概念两族。该序列是 sector_fund_flow_collector 逐日抓同花顺“即时”截面
+      自累积出来的（其文件头注释自陈：东财 push2his fflow/daykline 端点对板块不可用且本机持续
+      RemoteDisconnected，故改同花顺即时腿），不是回补而来。板块口径本身=数据商自定义分类
+      （东财/同花顺各成一套），不存在交易所官方历史面，故“回补到 2019 起”无官方通道。
+      ④席 st-qoder-p04-1015-03 楼8 普查据此申请回补，本席判=免费渠道穷尽、登记断供。"
+    searched_channels:
+      - channel: "akshare stock_sector_fund_flow_hist（东方财富网-数据中心-行业历史资金流）"
+        outcome: "本机两次真跑均失败：ConnectionError('Connection aborted.', RemoteDisconnected)（与在册 macro_data_eastmoney_ssl_eof_chronic 东财匿名退役同族）；且该接口官方文档限量条目明示“单次获取指定行业的历史资金流、深度近 100 个交易日”⇒ 即便网络恢复也拿不到 2019 起深史，双重不可得"
+        evidence: "https://akshare.akfamily.xyz/data/stock/stock.html（行业历史资金流条目）"
+        failed_at: "2026-10-15 08:5x 本机实测（两次）"
+      - channel: "tushare pro.moneyflow_ind_dc（东财概念及行业板块资金流向 DC，每日盘后更新）"
+        outcome: "现有 token 积分档无权限：trade_date=20261014 与 20240104 两次实测均报『抱歉，您没有接口(moneyflow_ind_dc)访问权限，权限的具体详情访问 https://tushare.pro/document/1?doc_id=108』⇒ 属积分/付费墙，本席不自购不烧额度"
+        evidence: "https://www.tushare.pro/document/2?doc_id=344"
+        failed_at: "2026-10-15 08:4x 本机实测"
+      - channel: "同花顺端点 ak.stock_fund_flow_industry / ak.stock_fund_flow_concept（本仓现腿所依）"
+        outcome: "入参 symbol 仅 {即时, 3日排行, 5日排行, 10日排行, 20日排行} 五个截面档，结构上无日序列历史 ⇒ 只能继续做每日快照自累积，不能回补既有深史"
+        evidence: "https://akshare-hh.readthedocs.io/en/latest/data/stock/stock.html（同花顺行业资金流条目）"
+        failed_at: "2026-10-15 文档核 + 仓内 sector_fund_flow_collector.py:22-26 注释在册"
+      - channel: "聚宽 get_money_flow_pro（2015 至今，日/分钟资金流）"
+        outcome: "文档明示分钟级为聚宽特色数据、需单独采购；且其口径是个股资金流非板块面 ⇒ 属花钱项，转 Owner 门，本席不自购"
+        evidence: "https://www.joinquant.com/help/api/doc?id=10665&name=JQDatadoc"
+        failed_at: "2026-10-15 检索定性（本席未申请试用额度）"
+    impact: "④席楼8／卡09 板块资金流腿：门槛⑤（信号天数≥120）在 2026-09-15 起点下不可达；若只做每日快照自累积，约需再 90 个交易日（≈2027-01 前后）自然达标。替代判据（非等价，须④自判）：板块收益面可用已在册的 kline_sector_880 族，但那是价格不是资金流语义。"
+    resolution_plan: "本席判=登记断供（status:no_source），不出回补建设单。②席若接手只做两件事：①确认每日快照腿在产并对断日告警（防 30 日窗退化）；②在本册留“深度上限=自 2026-09-15 起自累积、外部深史无免费通道”一句，免他席每班重测。付费档（tushare 积分墙／聚宽）属 Owner 门，本席只登记不自购。"
+    created: "2026-10-15"
+    last_updated: "2026-10-15"
+
+  # === ①席第 07 班 2026-10-15：④/⑤席两轮「登记一句免每班重测」诉求的登记面（只登记可得性，不改判据） ===
+  - id: "shareholder_count_quality_flag_dead_column"
+    table: "c3_fundamental.shareholder_count"
+    gap_type: "empty_column"
+    status: "open"
+    root_cause: "quality_flag 恒 1＝零判别力死列（不是「质量全优」）：任何按 quality_flag 过滤的条款静默退化为全通过。"
+    evidence: "本席 10-15 自测（严格读 zephyr.data.ch_reader.query_rows，真库=c3_fundamental 而非 c1_market）：GROUP BY quality_flag 单组 (1, 515280)＝100%；countIf(announce_date<end_date)=3,904；FINAL 515,280 行；announce_date 跨度 1993-01-12..2026-10-14。谓词写明＝本席窗计数用 announce_date 落 2019-01-04..2025-09-09 得 265,392，②席 09:1x 班报 261,802，差额属日期列取法不同（本席未复算他列，不判谁错）。三方独立复证：④席申报→②席同名严格通道复现→本席复现。"
+    resolution_plan: "本席判＝登记死列＋真实质量谓词缺失（非找源面）。⑤/⑥实现面在拿到真实质量谓词前不得依赖 quality_flag 做剔除；④席卡 SIC-20261015-P04-09 的按质量位过滤条款应改判为不可用。逻辑异常 3,904 行（announce<end）的剔除口径归②/data_ops 面。"
+    impact: "静默假绿灯形态：列存在且有值，但恒 1 使过滤条款恒真（同族先例＝kline_daily.adj_factor 恒 1 死列、kline_daily/hfq.turnover 恒 0）。"
+    created: "2026-10-15"
+    last_updated: "2026-10-15"
+
+  - id: "factor_signal_zero_rows_writer_never_ran"
+    table: "c1_market.factor_signal"
+    gap_type: "empty_table"
+    status: "open"
+    root_cause: "表结构在而零行，且写者代码在库（非「源无此数据」）＝生产腿从未在实测窗跑过或被跳过。"
+    evidence: "⑨席 02 班与⑤席 05 班两轮同值 0；本席 10-15 不重测内容（同值簇＝测量伪影红旗），以两班已复证读数为登记依据：SELECT count() FROM c1_market.factor_signal=0、c1_market.factor_feature_value=0。写者在册：src/zephyr/factor/core/batch_output/buffer.py 头注 [DEPENDENCIES] zephyr.data.ch_writer; zephyr.shared.contracts.factor_signal，同族 factor/core/ctr002_producer/converter.py、factor/factor_availability_monitor.py。排除项（⑤席在册，防他班误当池源）：alt_regime_signal 24,590／alt_stock_comment_signal 88,372／market_signal_history 329 行均无 factor_id×日序列语义，喂不进 signal_orthogonality.py 的 15 员池。"
+    resolution_plan: "本席判＝外部源不存在亦不需要（内部派生态表），故不属找源面、不出采购单、不出建设单。定位责任在「生产腿触发链」：哪条事件触发 batch_output、为何零产出——归②/⑤。本条作用仅＝登记一句，免第七班再测一遍（⑤席 10-15 08:4x 明确请求）。"
+    impact: "正交闸 15 员池物化的第二条腿空；每班重测两次＝观测成本。"
+    created: "2026-10-15"
+    last_updated: "2026-10-15"
+
+  - id: "pead_sue_cumulative_eps_over_annual_consensus"
+    table: "c3_fundamental.pead_earnings_event"
+    gap_type: "upstream_data_corruption"
+    status: "open"
+    root_cause: "sue 列不是缺数据而是跨期口径错配：分子＝c3_fundamental.income_statement.eps_basic（累计口径），分母＝c3_fundamental.consensus_daily.eps_consensus（年度一致预期）且 as-of 取数未按 forecast_year 对齐 ⇒ 中报季天然约 −0.75~−0.86，与业绩好坏无关。"
+    evidence: "本席 10-15 只读实测（严格读 query_rows）：表 2,824 行、uniqExact(symbol)=2,824、全部 trade_date=2026-10-14、uniqExact(toDate(produced_at))=1（单刻 03:59:31）＝非面板；sue_band negative 2,428／neutral 288／strong_negative 78／positive 24／strong_positive 6（④席逐值复现）；avg(actual_eps)=0.447 vs avg(consensus_eps)=1.8248（比值 0.245）；按 announce 月分组＝7 月 18 行 avg sue −0.815（负占比 100.0%）、8 月 2,806 行 −0.860（负占比 98.4%）；分子累计性实证＝income_statement.eps_basic 按 report_period 月分组均值 3月0.1084／6月0.2395／9月0.3543／12月0.4803（≈1/4·1/2·3/4·全年阶梯）；分母多档并存实证＝consensus_daily forecast_year 2026/2027/2028 = 2,558,858/2,391,837/1,905,477 行，而取数 SQL src/zephyr/signal_fundamental/pead_assembly.py:82-87 为 ORDER BY trade_date DESC LIMIT 1 且无 forecast_year 条件 ⇒ 同 (symbol,trade_date) 三档平票、取到哪年不确定；公式 src/zephyr/signal_fundamental/pead_event_model.py:158-172 (actual-cons)/|cons|。"
+    resolution_plan: "本席判＝不属找源面（零新源、零采购，两表均已在库且深度足够）。处方转⑤实现席：①分子单季化（本期累计−上期累计，Q1 直接用累计）；②分母按 forecast_year=报告期年份对齐后再 as-of；③表须改成按 announce_date 的逐日面板（现单刻快照不可考事件窗）。修前本表 sue 禁作因子使用——④席卡 SIC 不开 SUE 腿的判断成立。"
+    impact: "96% 样本偏负且偏负方向由披露月决定；任何 PEAD／业绩惊喜族拿此列当信号＝拿「几月开的会」当 alpha；若已有下游用该表出分，修后须重跑。"
+    created: "2026-10-15"
+    last_updated: "2026-10-15"
+
+  - id: "analyst_forecast_depth_cap_report_rc_free_backfill"
+    table: "c3_fundamental.analyst_forecast"
+    gap_type: "date_range"
+    start_date: "2026-07-22"
+    end_date: "2026-10-14"
+    date_column: "report_date"
+    status: "open"
+    root_cause: "analyst_forecast 只有 2026-07-22 起 55 个断面日（申请方＝④席 st-qoder-p04-1015-04，P1），历史一致预期从未回补；但「免费渠道穷尽」这一旧定性被本班实测推翻——tushare pro.report_rc 在本仓既有 token 下可直接调用，属可免费回补而非断供。"
+    evidence: "CH 面：131,081 行／2,817 只／report_date 2026-07-22..2026-10-14／55 个日期／data_source 全 akshare 单腿。源侧真跑（token 走 get_required_secret 正门，未新增密钥未自购）：report_rc(20201001..20201015)=134 行、(20240101..20240131)=5,000、(20220601..20220630)=5,000、(20240115..20240119)=2,134（412 只／5 日齐）；列面 21 含 quarter（预测报告期）/eps/pe/np/rd/roe/rating/org_name。渠道二 akshare 同花顺一致预期＝只回 3 个前向年度（03 班 p01_probe_20261015 在册复证）＝无历史轨迹。渠道三 research_report 老行派生＝本班实测证伪为未来函数（fy0_year 逐年恒 ∈{0,2026}，600519 的 2019 报告行 eps_fy0=69.83 挂 2026 年）。渠道四 通联/聚源/朝阳永续/BigQuant/RiceQuant 一致预期＝均为付费或注册配额档，本席未实测且一律不自购。频控与配额：实测「频率超限(1次/分钟)」；官方 doc_id=292＝2010 起、2000 积分试用 10 次/天、8000 积分 10 万次/天；本仓实际积分档未实测（pro.user 报「请指定正确的接口名」），仅取仓内注释自陈 2000 积分。"
+    resolution_plan: "本席判＝可免费建设（零现金），出建设单 B-16：按 ≤10 交易日切片逐片行数对账回补 analyst_forecast 深史，并以 report_date 为 PIT 锚、quarter→forecast_year 显式映射聚合；同腿解锁 03 班 consensus_daily 值类段。时间账（推算非实测）：按 10 次/天 × 每次约 11.7 交易日 ⇒ 2010..2026 约 35 个自然日；8000 积分正式档属加速项而非必需 ⇒ 03 班采购呈批 OD-b 前提自本班改判，是否花钱归 Owner 门。"
+    impact: "④席 ERM（上调减下调占比）／预期变动幅度／预期离散度三指标在回补前过不了门槛⑤（≥120 日），该族候选现阶段不可考；下游若已用 analyst_forecast 3 个月面出分须标注窗右端受限。"
+    created: "2026-10-15"
+    last_updated: "2026-10-15"
 last_updated: "2026-10-07"
