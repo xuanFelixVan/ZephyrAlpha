@@ -10,3 +10,107 @@ title: 独立信号清单（⑨成绩官每日维护）
 用途=③④席与点子引擎 prompt 的必读"占领区摘要"（SOP §3-G 三件套之二）；新候选正交准入闸基准（|corr|<=0.3）。
 
 （空册待首班 pool-report 产出后填入：成员表/相关矩阵/独立信号有效数）
+## 2026-10-15 首版 ｜ st-qoder-p09-1015-02（⑨成绩官首班·实判非占位）
+
+### 1 pool-report 实测三态：工具可跑、入参无源、池物化面缺位 ⇒ 本班**未能**产出相关矩阵，如实报"闸未开"
+
+- 工具＝可执行：`python scripts/backtest/fexam/signal_orthogonality.py pool-report --help` → rc=0（实测 2026-10-15）。①②班派单把根因从"工具未落地"改判"有工具未跑"；本席复核后**再改判**为"**池物化面缺位**"——工具确可跑，但 `--pool` 在全仓找不到合法入参。
+- 入参契约＝目录内 `*.csv`，每档首行须 `date,sig` 两列（signal_orthogonality.py:59-80）。
+- 三条独立实测（先立正对照：`SELECT 1`→`[(1,)]`、`SHOW DATABASES`→5 库，读路可用，故空集非读路故障）：
+  1. 全仓 `*.csv` 中首行恰为 `date,sig` 者 **0 个**（Grep 正则 `^date,sig$`＋glob `*.csv` → No files found）；
+  2. IBT 产物根 `docs/_working/integrated_backtest/`（＝ibt_runner.py:45-47 `ART_ROOT`）**目录不存在**；`.runtime/tmp/ibt_panels/` 仅 `W_POSTD.pkl` 一枚（面板，非信号序列）；
+  3. CH 侧候选序列表面在而**零行**：`c1_market.factor_signal`（14 列，含 factor_id/as_of_date/rank_pct/normalized_value）与 `c1_market.factor_feature_value`（9 列，含 factor_id/trade_date/value）的 `SELECT DISTINCT factor_id LIMIT 30` 均返回空集。
+- 15 员池真源形制＝**代码不是数据**：`scripts/backtest/ibt/ibt_runner.py:58-74` `MEMBERS`＝15 个 sid → `scripts/backtest/translated/c4_*.py`（5×FACT＋10×CAND）。要出相关矩阵须先执行 15 个信号模块物化 `date,sig`＝跑考试，属 ⑤/⑦⑧席写域，本席不代做（铁律：不改码、不跑考试）。→ 已开单：feedback/to_impl.md 修⑤、feedback/to_datasource.md 缺②。
+
+### 2 成员表（逐字抄自 ibt_runner.py:58-74；"命名面轴"仅按文件名判读，未经内容复核）
+
+| # | sid | 文件名 | 命名面轴 |
+|---|---|---|---|
+| 1 | FACT-4f749668 | c4_fact_4f749668.py | FACT 编号名，轴不可从文件名判读 |
+| 2 | FACT-4228020a | c4_fact_4228020a.py | 同上 |
+| 3 | FACT-e293e217 | c4_fact_e293e217.py | 同上 |
+| 4 | FACT-e831084c | c4_fact_e831084c.py | 同上 |
+| 5 | FACT-4b200528 | c4_fact_4b200528.py | 同上 |
+| 6 | CAND-8d000bf3ccc3 | c4_8d000bf3ccc3_pb_poe.py | 估值/基本面（PB·ROE） |
+| 7 | CAND-c4ec6332c07f | c4_c4ec6332c07f_trend_score.py | 趋势 |
+| 8 | CAND-e3da6fa71af1 | c4_e3da6fa71af1_panic_rebound.py | 反转（恐慌反弹） |
+| 9 | CAND-4440d07f973f | c4_4440d07f973f_ultrashort.py | 超短 |
+| 10 | CAND-eaddc3f9db4e | c4_eaddc3f9db4e_rsrs_r2.py | 市场状态（RSRS） |
+| 11 | CAND-d06cab686cef | c4_d06cab686cef_rsrs_opt.py | 市场状态（RSRS 变体） |
+| 12 | CAND-29eb91dbaf60 | c4_29eb91dbaf60_crash_dodge.py | 风控/择时 |
+| 13 | CAND-a4543012b464 | c4_a4543012b464_trend5.py | 趋势 |
+| 14 | CAND-bd42540f86e4 | c4_bd42540f86e4_pe_pb.py | 估值 |
+| 15 | CAND-6a6ec8869ddb | c4_6a6ec8869ddb_momentum62.py | 动量 |
+
+命名面即见重复：趋势×2、RSRS×2、估值×2，与 SOP"成员互为拷贝"叙述方向一致；但**方向一致不等于实测**。
+
+### 3 独立信号有效数
+
+- 实测值＝**未获得**（§1 三条实测）。
+- 在册叙述值＝4.4，出处 `research_production_line_policy.md:274`（原文："15 员池实际仅 4.4 个独立信号（FACT×5 corr=1.000 拷贝、RSRS×2 变体 0.97、2 员纯买入持有）"）与 `:305`。本席 find 全仓**无任何 pool-report 产物**可复现该数 ⇒ 本表标 `4.4＝在册叙述，未复现`，禁当实测引用（防下一班把叙述抄成读数）。
+- 旁证（分数册面，独立于池）：卡考 75 行按族实排＝calibration 66＋comparison 9；按节点前缀，单节点 `TDM-E-L1-S2` 占 34 行（45.3%）、`TDM-X-R1-01` 占 8 行（10.7%）⇒ **出分面本身高度集中**。
+
+### 4 占领区摘要（分数册 75 行 card_id 实测口径，供 ③④席与点子引擎防重入）
+
+| 矿楼（pulse/mining_directions.md 楼号） | 分数册 75 行覆盖实测（card_id 语义面） | 对 ③④席的含义 |
+|---|---|---|
+| 楼4 动量反转 | 已 2 次出分且同判负：rows[73]、rows[74]（20 日动量正向溢价） | 正向动量轴已被双次独立物化否决；反转/残差动量子轴零出分＝空白 |
+| 楼5 波动率 | 零"以波动率为信号本体"的出分行；波动率名只作事件触发条件出现在 `TDM-E-L1-S2/calibration/*_ind_vol*_high_event` | 本体空白；把波动率当**条件**的用法已密集占位（34 行） |
+| 楼1 盘口 / 楼2 基本面 / 楼3 估值 / 楼6 流动性 / 楼7 资金流 / 楼8 另类 / 楼10 情绪重建 | 分数册 75 行 card_id 无对应本体出分行 | 空白轴；优先按 SOP §3-G 过闸 |
+| 楼9 市场状态 | 卡考面无独立出分行；RSRS 两员在池（§2）而未进卡考 | 待开 |
+
+判读面限定：以上按 **card_id 命名语义**归类，本席未逐卡读卡体内容；反证请直接指认行号，本班记为待改判。
+## 2026-10-15 日更 ｜ st-qoder-p09-1015-03（⑨成绩官第三班，v1.5.1 每日维护条）
+
+- 复测命令（本班正文原样跑过）：
+  - `python scripts/backtest/fexam/signal_orthogonality.py --help` → 子命令 `{gate,pool-report}` 在册，工具**可执行**（三态之"可跑"）。
+  - `python scripts/backtest/fexam/signal_orthogonality.py pool-report --help` → `--pool POOL 信号池：glob 或目录（*.csv）`，`--pool` **无默认值**。
+  - `python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool 'data/**/*.csv'` → `[SIGNAL-ORTHOGONALITY] ERROR: 信号 CSV 须含 date,sig 两列: …limit_up_down_weekend_rows_20260916_pre_ghostclean.csv 实有 ['trade_date','symbol','name','close',…]`。
+  - 全仓 `date,sig` 池实测＝0（`*sig*pool*.csv`／`data/**/signals/*.csv` 候选面皆空）。
+- 结论：**有效独立信号数（PR）与相关矩阵今日仍不可产出**，阻塞点与 02 班一致＝15 员池的 `date,sig` CSV 物化腿缺位（在册单＝to_impl.md 修⑤；本席不代做物化，属⑤席写域）。④席/③席在闸未开期间按 02 班口径：候选只入 lane CSV，**不入"过闸"账**。
+- 参与率（PR）面本班零读数；占领区摘要无变化（楼4 动量双卡 fail、空白轴六条）。
+## 2026-10-15 日更 ｜ st-qoder-p09-1015-04（⑨成绩官第四班：PR 与相关矩阵**首次有机读产出**，占位"零读数"作废）
+
+- 本班把 02/03 班"闸未开、PR 零读数"的结论**改判为可开**：阻塞只是列名契约（工具要 `date,sig`，采集面产 `trade_date,value`）。本班在仓外临时面改名适配后跑通工具（工具与采集面**一字未改**，绕行件＝`.runtime/tmp/st-qoder-p09-1015-04/pool_datesig/`、`pool6/`；正解与附带症状见 to_impl.md「修⑤ 正解改写」）。
+- 实测读数（`signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6`，报告件 `pool6_report.json`）：
+  - 池＝agg8 批 6 个序列本体×变换：`lu_count, lu_count_z20, lu_ratio, lu_ratio_z20, avg_abs_ret, avg_abs_ret_z20`；`n_members=6`，`n_common_dates=1855`（2019-02-18..2026-10-12），**`effective_n_signals(PR)=2.1272`**，特征值 `[3.7676, 1.5442, 0.5776, 0.1053, 0.0051, 0.0002]`。
+  - 相关矩阵极值（Spearman，逐对全列在 `pool6_report.json`）：`lu_count_z20↔lu_ratio_z20=0.9998`；`lu_count↔lu_ratio=0.9949`；level↔自身 z20＝`lu_count 0.7738／lu_ratio 0.7743／avg_abs_ret 0.7399`；跨本体最低＝`avg_abs_ret_z20↔lu_count_z20=0.2198`（**唯一低于在册 0.3 门的组**）。
+- **占领区摘要（当日增量，供③④席 prompt）**：agg8 批名义 8 卡、实占 **2 轴**——涨跌停广度轴（`lu_count`＝`lu_ratio`，两变换共 4 卡）＋已实现绝对收益轴（`avg_abs_ret` 4 卡）。凡新候选落这两轴者按重复件计量，不计入产量。
+- 空白轴地图**维持**（02 班六条：波动率/流动性/资金面/基本面/估值/盘口 本体零出分；本班 8 行 card_id 语义未落入六轴任一本体）。判读面限定沿用 02 班声明：按 card_id 命名语义归类，未逐卡读卡体。
+- 15 员池（CONDAXIS 整装）PR 面本班**未产出**：整池 `date,sig` 物化仍缺（⑤席写域），且 13 员直跑触发"共同日期不足 0<3"（见修⑤附带症状）。
+## 2026-10-15 日更 ｜ st-qoder-p09-1015-05（⑨成绩官第五班：15 员池 PR 复测＝仍无源，根因收窄为"有写者零行"）
+
+- 复跑命令与读数（本班正文原样跑）：
+  - `DatabaseService().get_clickhouse_conn()` → `SELECT count() FROM c1_market.factor_signal`＝`[(0,)]`；`c1_market.factor_feature_value`＝`[(0,)]`（同批非读路故障：同连接 `system.tables` 查询正常返回）。
+  - 池物化腿另一支：`ls docs/_working/integrated_backtest/` → **No such file or directory**（`ART_ROOT` 定义在 `scripts/backtest/ibt/ibt_runner.py:45-47`）。
+  - 15 员成员表＝`ibt_runner.py:58-74` `MEMBERS`（FACT×5＋CAND×10，本班逐字复读，与 02 班 §2 表一致，无增删）。
+- **有效独立信号数（PR）今日状态**：15 员池＝**仍未获得**（物化属⑤席写域，本席不跑考试）；在册唯一机读产出＝agg8 六员池 **PR=2.1272**（04 班，`.runtime/tmp/st-qoder-p09-1015-04/pool6_report.json`），本班**未推翻、未新增**。
+- 在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"——本席累计五班无任何 pool-report 产物可再现该数，禁当实测引用。
+- 占领区摘要**维持** 04 班面（涨跌停广度轴＋已实现绝对收益轴；空白轴六条）。本班增量 0 行考试 ⇒ 无新轴入占。
+- 空白轴地图判读面限定沿用：按 card_id 命名语义归类，本席未逐卡读卡体。
+
+## 2026-10-15 日更 ｜ st-qoder-p09-1015-06（⑨成绩官第六班：**全册"独立通过轴"首份账**＋15 员池 PR 第三度复测同值）
+
+- **独立通过轴数＝1（不是 2）**：磁盘面 83 行中 `verdict: pass` 仅 **2 行**＝rows[76] `TDM-E-L1-S2/calibration/41_agg_lu_count_z20_fwd10` 与 rows[78] `…43_agg_lu_ratio_z20_fwd10`，而 04 班正交实测（`pool6_report.json`）给出 `lu_count_z20↔lu_ratio_z20=0.9998` ⇒ 两 pass 落**同一根轴**。按 SOP v1.4.0"产量按轴计量"，本生产线至今**出分 83 次／64 个对象／独立通过轴 1 根**，且该轴尚未升 verified（两腿未过：`ic_ir_min` 柱无面＋净/成本全 NaN，见 04 班 §3 与在册修⑥/修⑨）。⚠ 引用本册时禁把"2 个 pass"叙述成"2 个独立信号"。
+- 15 员池（CONDAXIS 整装）PR：本班**第三度**复测，读数与 02/05 班逐位同——`DatabaseService().get_clickhouse_conn()` → `SELECT count() FROM c1_market.factor_signal`＝`[(0,)]`、`c1_market.factor_feature_value`＝`[(0,)]`；`docs/_working/integrated_backtest/` 目录本班实测仍不存在。**状态维持"仍未获得"**，根因仍为 05 班在册的"有写者、零行＝生产腿未跑"。本班未再烧物化腿（⑤席写域），亦未第三次开缺数单（该题 02 班 :17 已在册，①席"在册注明以免每班重复报"的欠账仍在）。
+- 占领区摘要**无变化**（本班增量 0 行考试 ⇒ 无新轴入占）：涨跌停广度轴（`lu_count`≡`lu_ratio`）＋已实现绝对收益轴，两 pass 同落第一轴。
+- 在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"（本席累计六班无任何产物可再现该数）。
+- 空白轴地图判读面限定沿用：按 card_id 命名语义归类，本席未逐卡读卡体。
+## 2026-10-15 日更 ｜ st-qoder-p09-1015-08（⑨成绩官第八班：**独立命题分母首份更正＝59，非 65**）
+
+- 本班增量 0 行（磁盘面 sha `4f986ec7143a690f…`／84 行／mtime 09:38:34，与 07 班终报锚点逐位同）⇒ **占领区摘要无新轴入占**；15 员池 PR 状态**维持 05/06 班在册"仍未获得"**，本班按 07 班在册禁烧面条款**未复测** `factor_signal`／`factor_feature_value`（三度同值）与 `ART_ROOT`。
+- ⚑ **本班新面（对照基准更新，④席生成端与正交闸必读）**：分数册 84 行＝**65 个 distinct card_id**，其中 **6 对（12 行）是"母卡 ↔ `*_derived` 平行卡"逐字节同读数**——`rows[2,10]`（涨停家数）、`rows[3,11]`（跌停家数）、`rows[4,12]`（炸板率）、`rows[5,13]`（封板率）、`rows[6,14]`（连板最高高度）、`rows[7,16]`（净广度），全部挂在 `TDM-E-L1-S2` 一个节点上。机制＝`scripts/backtest/fexam/card_binding.py:364` 的 `*_derived` 回落分支把平行卡送回母卡同一枚本地 CSV ⇒ **相关系数 1.0 由码面构造保证，不是实测巧合**。
+- ⇒ 独立信号清单分母更正：**独立经济命题＝65 − 6＝59**；在册 04 班"agg8 批 8 卡实占 2.13 轴"与本条**不可混用**（前者是不同卡之间的高相关，本条是同一枚序列被两卡读取）。按轴计量时，L1-S2 节点的涨跌停/广度族在"母卡＋平行卡＋level＋z20"四层里能提供的独立轴仍是 04 班在册的那 2.13 个，不因平行卡而增加。
+- 在册 pass 面维持 06 班读数（全册 pass 仅 rows[76]/[78]，同落一根 `lu_count_z20` 轴，`corr=0.9998`）⇒ **独立通过轴仍＝1**，本班未升级任何行（铁律：fail 不升级；pass 两腿未过，见 04 班 §3 与在册修⑥/修⑨）。
+- 空白轴地图判读面限定沿用：按 card_id 命名语义归类，本席未逐卡读卡体。
+- 复跑尺＝`python .runtime/tmp/st-qoder-p09-1015-08/dup8_metrics_identity.py`（正对照 rows[2]≡rows[10]、负对照 rows[83] 独占；并把 06 班在册"同卡复跑"5 组单列为 `修④` 形，不与本条混计）。
+
+## 2026-10-15 日更 ｜ st-qoder-p09-1015-09（⑨成绩官第九班：**独立命题分母 59→64；新 6 行零新轴入占；镜像簇首份点名 1 行**）
+
+> 读面声明（本班正文原样跑）：分数册磁盘面 sha256=`009c7bbcf87582c2…`／123768B／docs=2／doc1 rows=**90**／mtime `2026-10-15 10:31:26`＝较 08 班终报锚点（`4f986ec7…`／84 行）**当日增量 6 行 rows[84..89]**（批 `p07a-sector6-20261015`）；index 面 `git show :docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`＝`c7e5b1f8bfb9…`／105598B／75 行（与 06/07/08 班在册面逐位同）；HEAD 面该馆 `git ls-tree -r --name-only HEAD -- docs/04_research_records/backtest/scores/`＝**0 件**。族口径＝卡体 `pillars_numeric` 键集，卡体 join＝卡内 `card_id`（90/90 命中）。本班未动分数册字节、未动任何阈值与门柱。
+
+- **占领区摘要（本班新 6 行）**：市场级日频情绪指数（rows[85]）、RRG 象限迁移（rows[86]）、板块候选池边际/ablation（rows[87]）、业绩预增催化剂（rows[88]）、合成 z 分数 shock 面板（rows[89]）、四档风险分层（rows[84]）⇒ **全部落在已占轴，零新轴入占**。未占/稀薄轴维持 04 班在册方向（波动率期限结构、流动性/冲击成本、资金面分户、另类数据）——正交闸与 ③④ 席请优先去无人占的轴。
+- **产量口径**：`90 行＝70 distinct card_id＝64 个独立经济命题`（扣 08 班在册 6 对逐字节同读数平行卡）。⚠ 08 班在册 59＝84 行面（65−6），本班 64＝90 行面（70−6），两数皆真、差＝本班 5 个新对象，引用者勿混面。
+- **15 员池 PR（参与率/相关矩阵）**：**维持"仍未获得"**。本班按 07/08 班在册禁烧面条款**未复测** `factor_signal`/`factor_feature_value`（三度同值＝各 0 行）与 `ART_ROOT`；正交闸列名契约适配面与 PR 复跑配方仍在册（04 班 `to_impl.md` 修⑤ 正解改写＋`.runtime/tmp/st-qoder-p09-1015-04/pool6/`）。
+- **本席位的新对照基准（④席生成端必读）**：分数册现值第一次出现**净/成本口径行**——rows[84..89] 六行的 `net_bucket_medians` 全负、`round_trip_cost_bp=25.0`，而**全册 90 行无任何一桶为正**（has_pos=0，尺＝`.runtime/tmp/st-qoder-p09-1015-09/probe9_net_and_rerun.py`）。⇒ 正交闸若开始用"扣费后可实现性"作筛选，现值面是**六行样本**、不是全册；存量 84 行是毛口径（NaN 净面）。跨代比较必须分账（详见 `to_impl.md` 修⑨ 追加面）。
+- **镜像簇点名（呈批 P-6 的人工替代面）**：`mono_spearman ≤ −0.6 且 regime/oos 同号` 在全册命中 **1 行＝rows[87]**。若 P-6 裁"不加列"，此清单即每班唯一检索面。
