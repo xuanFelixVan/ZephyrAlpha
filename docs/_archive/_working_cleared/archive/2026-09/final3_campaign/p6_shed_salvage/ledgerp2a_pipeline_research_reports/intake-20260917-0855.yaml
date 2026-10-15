@@ -1,0 +1,25 @@
+{
+ "trigger_batch": "C1",
+ "passed": 1,
+ "fdr_keep": [
+  "CAND-z@c4_z.py"
+ ],
+ "cluster_heads": [
+  "CAND-z@c4_z.py"
+ ],
+ "redundant": {},
+ "created_sids": [
+  "STR-AUTO-001"
+ ],
+ "sim_promoted": {
+  "STR-AUTO-001": "CAND-z@c4_z.py: 预授权三条件全过，自动进 sim"
+ },
+ "skipped": {},
+ "dry_run": false,
+ "mount": {
+  "error": "safe_write_text 未确认写入",
+  "self_heal": {
+   "error": "[Errno 2] No such file or directory: 'D:\\\\ZephyrAlpha\\\\.worktrees\\\\st-ledgerp2a-20260916\\\\.runtime\\\\tmp\\\\pytest_9024\\\\test_6_cas_conflict_fails_clos0\\\\map.yaml'"
+  }
+ }
+}
