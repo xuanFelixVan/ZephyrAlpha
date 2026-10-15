@@ -1957,3 +1957,36 @@ objects:
   testable: true
   confidence: untested
   plan_note: 战役设计书同目录；依赖 BT-P1-032 勘测+tick_depth_5 积累；考试纪律=预注册分批（单因子基线→共振增量→三重旗舰）+敞口匹配对照（#304 教训）+全参数搜索披露（#293 教训）；共振触发引擎复用 MOD-PLAN-031 白名单 AST 求值器
+- object_id: BT-P0-RISKCAMP-001
+  node_ids:
+  - TDM-P-FLOW
+  node_type: aggregation
+  layer: L0节点
+  map_layer: LROOT
+  flow: position_flow
+  market: cn_a
+  module_ref: MOD-L06-001
+  testable: true
+  confidence: untested
+  plan:
+    validation_method: risk_chain_production_wiring
+    min_samples: 非统计卡——接线断言+故障注入演练判据，无样本量语义
+    thresholds:
+      risk_chain_sim_combo_wired: risk_layer_orchestrator 在 sim 链组合级实例化且 evaluate_intraday 逐日留 audit 痕迹（收口条件=#ARCH-100
+        fix_phase「sim 链组合级风控接线」）
+      kill_functionality_graded: kill 分级激活面可测——HKMA 分级激活（system/algorithm/trader/client）投影为本项目五级旗，语义采认
+        KILL_SWITCHES.action 既有定义（裁定#535 立卡件，开工=Owner 门）
+      independent_monitor: 独立于策略链的守护进程+门禁化判据在役（HKMA「独立监控职能」的单人+多AI语境投影，治本形态=裁定#528）
+      limit_early_warning: 限额 80% 提前量告警可测（先例形态=declaration_guard 5000/10000 两线）
+      fault_injection_drill: 故障注入演练一轮全绿（trip→重启仍 TRIPPED→release→NORMAL；crash-only 先例=#ARCH-340 持久化实证）
+    verdict_mapping: 全部判据在 sim 链实测 PASS→valid（呈 Owner 批实盘面）；任一 FAIL→invalid 并留故障档案
+    threshold_status: draft
+    source: 裁定#525 E3 外部基准 HKMA《Sound risk management practices for algorithmic trading》(2020-03) 语境适配+裁定#528
+      治本形态+#ARCH-100 fix_phase 收口条件；数值/判据为 AI 提案待 Owner 冻结
+    frozen_by: null
+    frozen_at: null
+    freeze_ruling: 开工=Owner 门（裁定#535「Q9 仅立卡禁施工」）：threshold_status 冻结须 Owner 批次决策点确认后方可；冻结前禁任何接线施工；冻结后只许批次决策点公开修订并留痕
+    caliber_note: '边界——①sim 链先行，实盘接线=Owner 保留域；②观察面（持仓体检/对账）与闸单面（KillSwitch/五级旗）分档验收；③价格笼子（#ARCH-355 已
+      resolved）与订单幂等（#ARCH-TRADING-IDEMPOTENCY-001 st-maint9-20261015 施工入队）为已落地前置件不重复验收；④#ARCH-RISK-002/003
+      与 #ARCH-356 并入本卡（裁定#525 收敛令，禁各开各的卡=第二真源）；⑤本卡为战役卡（非地图派生节点），regen 保留义务同既有 plan/confidence/object_id
+      规则'
