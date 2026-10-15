@@ -666,7 +666,10 @@ gaps:
     primary_alternative: "c1_market.kline_sector（mootdx 通道，count=100 回看近 100 日）"
     created: "2026-09-11"
     last_updated: "2026-09-11"
+    verification_20261015: "①席 p01-10 只读复测（日期轴续证＋新增代码轴普查，勿再把'零缺日'读成'六年半可用'）：①日期轴维持成立——窗 2021-08-02..2025-09-09 内 kline_daily 日历 997 交易日、kline_sector_880 命中 997/997、缺日清单为空（源面零缺日；全表仅 period='1d' 一个值）；②代码轴覆盖率是分数——按年 uniq(sector_code)＝2020:2／2021:267／2022:635／2023:677／2024:710／2025:723／2026:729，逐月跳变点两处＝2021-08 从 7 码跳到 266 码（2021-07 仅 7 码 145 行）、2022-08 从 267 跳到 624；2020-03..2020-10 每月只有 1 个码（月 11-23 行＝名义有史实为空壳）。⇒ 本条 status=completed 只对'2021-08-02 起'成立，早于该日板块族在代码轴不可回测，2022-08 前仅约 1/3 宇宙。③成分腿现状（与 sector_constituent_8803_8804_missing 交叉）：sector_constituent 列面为区间式（update_date/valid_from/valid_to），但 min(update_date)=2026-07-22、max=2026-10-01、uniq(update_date) 仅 6、rows=106,625／727 板块／6,229 只＝盘上只有近三个月 6 个断面、无历史成分，凡按今日成分回看 2021-2025 的板块构造天生前视，须按 valid_from/valid_to 区间化消费。④tdx K 线族本席独立撞见同签名：mootdx 0.11.7 正对照 600000 日线在 _RELIABLE_SERVERS 六台全部回 0 根＝尺瞎非无史，与本条 verification_20260929 的'服务端对 pytdx 系协议层拒答'同型，本班不重判、不新建条。"
 
+    p01_channel_probe_20261015k: >-
+      ①数据源席 st-qoder-p01-1015-11 通道定性（承接 10 班游标⑤『880 深史 TCP 通道本班未定性（正对照全 0＝尺瞎）、免费渠道未穷尽故未判断供』）。本班把尺修活：tqcenter 在位（E:/tdx/PYPlugins/user/tqcenter.py 实测存在，通达信客户端 tdxw.exe PID 8516 在跑），tq.get_market_data(stock_list=[code], period='1d', count=-1) 的真实返回形状＝{字段名: DataFrame(index=日期, columns=[代码])}，不是 {代码: DataFrame}；时间参数须 YYYYMMDD（带横杠直接 ValueError: 时间格式不正确）。⇒10 班『正对照全 0』的两个可能根因（键取错＋格式错）本班各中一次，登记为后继班读该通道的前置坑，非上游缺陷。修尺后实测：880001.SH=3,638 根起 2011-10-19；880301.SH 与 880472.SH 各 1,259 根起 2021-08-02；个股正对照 600000.SH 亦只 1,259 根起 2021-08-02；get_sector_list()=587 板块、get_stock_list_in_sector('880301.SH')=32 成分。判据（限幅不外推）：同尺下 880001 类统计指数可取到 2011、8803xx/8804xx 行业板块号段取不到 2021-08 前，与本表代码轴普查（2021-08 从 7 码跳到 266 码）及在册『881/8803 深史真实上限 2021-08-02』相互印证；但个股正对照同截在 2021-08-02⇒返回深度按码类型分档、可能受本地缓存约束，故『通达信服务端是否存有更早行业板块史』本班仍未定性——定性须 tq.download_file() 触发终端下载（对通达信客户端的写动作，本席不自走，属②/Owner 门位）。免费渠道穷尽面（各留因）：tushare tdx_daily(doc_id=378，6000 积分)/tdx_index/tdx_member(377)=本班既有 token 实测全报『您没有接口…访问权限』＝权限墙（花钱，已记本席台账采购呈批草稿 OD-c，禁自购）；akshare 东财两腿 stock_board_industry_hist_em/stock_board_concept_hist_em 及 cons_em=本机 ConnectionError: RemoteDisconnected⇒本机网络层不可达，未判源无数据（与 macro_data_eastmoney_ssl_eof_chronic 同族形态）；mootdx/pytdx=在册 kline_sector_intraday_tdx_dead 协议层拒答（本机 pytdx 未安装 ModuleNotFoundError、mootdx 0.11.7 在库）。⇒本班不登记 880 深史断供，只登记『原生面待终端下载复测＋换口径四腿已通』。换口径深史四腿（本班真跑、可免费建设，细节=建设单 B-21）：ak.index_hist_sw('801010')=6,471 行 1999-12-30..2026-10-14；ak.index_hist_cni('399001')=7,706 行 1995-01-03..2026-10-14（无效码 399971 返 ValueError: Length mismatch: Expected axis has 0 elements＝空返即崩，禁据单次空返判族死）；ak.stock_board_industry_index_ths('半导体')=1,885 行 2019-01-02..2026-10-14；ak.stock_zh_index_hist_csindex('H30374')=4,376 行 2010-01-01..2026-10-14（请求起点＝返回起点，更早未测）。续供：四腿均日更（实测右端＝开班昨日 2026-10-14）；自动化待②施工（akshare_provider 现 index 族腿未含这四条，本席按 grep 结果陈述未查全量）；断供风险＝akshare 接口名随版本变更，施工须在门面前加『接口存在性＋rows>0』双探针，禁把空返/崩当『族无史』；通达信原生腿需终端在跑（requires_process 通道）。
   # === 2026-09-11: index_constituent 日快照散缺+08-31 部分行（数据总览二批 B3）===
   - id: "index_constituent_snapshot_gaps"
     table: "c1_market.index_constituent"
@@ -964,6 +967,8 @@ gaps:
     created: "2026-09-15"
     last_updated: "2026-09-15"
 
+    p01_probe_20261015k: >-
+      ①数据源席 st-qoder-p01-1015-11 历史成分（PIT 断面）通道实测（承接 10 班游标⑨『sector_constituent 盘上仅 6 个断面（2026-07-22..10-01）＝板块族按今日成分回看天生前视』）。本班实测：tushare pro.index_member(index_code=<801xxx.SI>)（既有 token、零采购）对 SW2021 一级 31 行业全跑、0 错误，合计 7,740 行区间记录，列=index_code/con_code/in_date/out_date/is_new；in_date 最早 1990-12-10、最晚 2026-08-27；is_new=Y 5,211/N 2,529；与考试窗 2019-01-04..2025-09-09 相交的区间行 6,492。逐行业样例：801010.SI 184 行（min_in 1993-09-17/min_out 2005-05-16/窗内相交 134）、801080.SI 644 行（min_in 1990-12-19/窗内 560）。⇒本仓第一条能把行业成分还原到 2019 之前的免费通道；细节=建设单 B-20。边界（负对照齐备，防误扩）：同接口对中证/国证宽基码全返 0 行（实测 000300.SH/000905.SH/000986.CSI/000001.SH 均 0）⇒index_member 只覆盖申万系；宽基历史成分须走 pro.index_weight 月度断面（000300.SH 实测 2019-01 单月 300 行、2010 窗 900 行/3 断面、2006-2009 各 600 行/2 断面、2005 窗 0 行⇒左界在 2005-04..2006-01 之间，本席未逐年二分）；申万码在 index_weight 返 0（两接口不同物，禁混用补位）。次选通道＝国证 ak.index_detail_hist_adjust_cni（区间式：开始日期/结束日期/调整类型 OLD/+/-/备选）实测 399005=1,181 行 11 个调样期、399006=1,328 行 12 期，但开始日期仅到 2021-12-13⇒覆盖不了 2019 窗；ak.index_detail_hist_cni('399001') 返 500 行且日期单值 2026-09-30＝只给最新断面不是逐期全史；399975 报 IndexError＝接口对无档案码直接崩。申万 ak.index_component_sw('801010') 只带『计入日期』，103 行里 85 行集中在 2021-12-13（=SW2021 体系切换日）⇒能知加入事件、不能还原 2019-2021 断面。通达信原生成分面（本表原对象）：tqcenter get_stock_list_in_sector 实测可得当前断面（880301.SH=32 只），但历史成分无任何免费通道（tushare tdx_member=6000 积分权限墙本班实测拒；ths_member 在册 2026-09-25 六次权限拒；tdxhy.cfg=当前快照无历史，03 班在册）⇒该轴历史段属不可回补，禁按今日成分回看，须按 valid_from/valid_to 区间化消费。施工前置门（本席只登记内容、未实测执法）：src/zephyr/data/capability_semantic_gate.py:91-95 capability_id=industry_class 的 allowed_apis={'THS_*','ifind.*'}，rationale 明写『mootdx client.block 不在此列→拒（防 INDUSTRY-CLASS 重演）』⇒tushare/akshare 系行业成分通道落在此 capability 下可能被同门拒；若确拦属『门需 Owner 裁定扩容』，②不得自行绕门或加白名单。本席不翻本条 status（8803/8804 号段成分侧仍未解，本班只解了申万轴）。
   # === 2026-09-15: kline_sector 概念板块日K 逐日递减（tqcenter 宇宙缩水）===
   - id: "kline_sector_concept_shrinking"
     table: "c1_market.kline_sector"
@@ -1872,6 +1877,8 @@ gaps:
     created: "2026-10-07"
     last_updated: "2026-10-07"
 
+    p01_probe_20261015k: >-
+      ①数据源席 st-qoder-p01-1015-11 复跑定性（本条 resolution_plan 点名『施工前先人工复跑一次确认可复现性再定方案』）。三族只读真跑＋CH 严格读只读：①Shibor/银行间利率族 ak.rate_interbank(market='上海银行同业拆借市场', symbol='Shibor人民币', indicator='隔夜')=4,999 行 2006-10-08..2026-10-15（右端＝开班当日）⇒源在供；4,999 接近 5,000 整数⇒疑单次限量，而在册失败件正是『利率族第 4 页』（reportName=RPT_IMP_INTRESTRATEN，akshare interest_rate/interbank_rate_em.py:73）⇒翻页＝取全史必经，慢性 SSL EOF 属长跑工程缺陷非源断供。另：旧签名 mark= 在 akshare 1.18.75 直接 TypeError（实测『rate_interbank() got an unexpected keyword argument mark』；现签名 (market, symbol, indicator)）。②国债收益率族（B-17 同源）ak.bond_zh_us_rate(start_date='20050101')=5,808 行 2005-01-03..2026-10-14，另 20250101 起窗=473 行/1.4 秒⇒今日可达、B-17 未死；但『全列非空行』仅 13/5,808＝列级稀疏（早年部分期限无值），验收须按列判空，禁『行数达标即闭环』。③央行资产负债表族：源侧 ak.macro_china_central_bank_balance()=357 行、统计时间 1993.12..2026.9（月度，右端＝上月）⇒源活且深史 33 年；而本库 c1_market.macro_data 的 央行_* 族实测仅 12 行、1993-03-31..1995-12-31（GROUP BY indicator_name 只读）⇒差 345 行＝非源断供、属采集/入库面缺陷（转②）。坑给⑤：源列 统计时间 形如 1993.12／2026.9（月份非零填充），直接 to_datetime 会错解，须按『年.月』拆分校验。④WB_ 世界银行族：直连 api.worldbank.org/v2/country/CHN/indicator/NY.GDP.MKTP.CD?date=2015:2024=HTTP 200 且年度点连到 2024（10 值连续）⇒源侧健康逐年更新；本库 WB_* 实测每国 1-5 行、右端散在 2016-2020⇒采集面只落首轮部分，转②（写者 src/zephyr/data/implementations/fred_provider.py:436-461）。另注 akshare 属性名漂移实测：macro_china_interest_rate 与 macro_china_centeral_bank（旧拼写）在本机 1.18.75 均已无该属性（AttributeError／dir 零命中），现名分别为 rate_interbank 与 macro_china_central_bank_balance。本席不改 status、不新建条目（净增 0 条）。
   # === 2026-10-15: 板块资金流历史深度=30 日自累积，深史免费渠道穷尽（①席本班登记断供）===
   - id: "sector_fund_flow_depth_cap_no_free_backfill"
     table: "c1_market.sector_fund_flow"
@@ -1956,4 +1963,18 @@ gaps:
     impact: "④席 ERM（上调减下调占比）／预期变动幅度／预期离散度三指标在回补前过不了门槛⑤（≥120 日），该族候选现阶段不可考；下游若已用 analyst_forecast 3 个月面出分须标注窗右端受限。"
     created: "2026-10-15"
     last_updated: "2026-10-15"
+  - id: "earnings_forecast_express_report_supply_break_since_20260704"
+    table: "c3_fundamental.earnings_forecast"
+    gap_type: "source_discontinued"
+    start_date: "2026-07-04"
+    end_date: ""
+    date_column: "announce_date"
+    status: "open"
+    root_cause: "①席 p01-10 自挖：earnings_forecast 与 express_report 两表 2026-07-04 起零新增（各止 2026-07-03／2026-07-02，开班日 2026-10-15 计滞后 104 日），而在册 tasks.yaml 两条 incremental 任务写 source=miniqmt、存量行 data_source 全为 bdpan＝在册任务并非这些行的写者、该腿空转。季节性伪因已实测打掉：同披露季 research_report 活到 2026-10-14（99 个事件日），且东财 stock_yjyg_em(20260630) 公告日期右端=2026-08-19（我库断点之后仍有一段公告存在）。"
+    evidence: "严格读 query_rows（同进程 4 聚合＋SELECT 1 正对照 [(1,)]）：earnings_forecast min/max/uniq日/rows=1999-01-08/2026-07-03/5,676/125,582、countIf(announce_date>='2026-07-04')=0、2025-09-10 后 uniq 日=142、data_source 单腿 bdpan；express_report=2005-01-08/2026-07-02/2,539/28,708、countIf(>='2026-07-04')=0；research_report=2017-01-02/2026-10-14/3,140/147,033（FINAL 面；system.tables total_rows=294,066 属未合并件面，不作重复写入判据）；源侧真跑 ak.stock_yjyg_em(20260630)=4,922 行（公告日期非空 4,922/4,922、区间 2026-04-27..2026-08-19、预告类型 11 值分布 预增1,385/首亏660/增亏619/减亏561/预减509/扭亏493/略增349/续亏178/略减107/续盈51/不确定10）、ak.stock_yjkb_em(20260630)=63 行、ak.stock_yjyg_em(20190630)=2,367 行。探针件走 .runtime/tmp/p01_10_probe*.py（临时面）。"
+    resolution_plan: "①席判＝可免费回补＋可常设（零现金），出建设单 B-19（含续供确认四问）。动作分两面：②施工面改挂 ak.stock_yjyg_em／ak.stock_yjkb_em 按报告期切片回补 2026-07-04 至今并常设 daily_event，落库前词表须先对齐（源 11 值含增亏/减亏、我库 10 值含'其他'而无增亏/减亏，不对齐则下游按类型过滤的卡静默丢类）；⑨成绩官面 rows[88] 分母由本席在 p01 台账申报（三表并集覆盖日历 1,622/1,622＝228 观测缺口非源断供）。历史深史 2019 前本席未实测，禁据 20190630 单点外推。"
+    impact: "业绩预告／快报是 PEAD、业绩预增催化剂、一致预期修正族的近端腿；两表停在 2026-07-03＝以近端为 OOS 的考卷拿不到 2026-07-04 之后事件面，且无改判时下季（2027-01 年报预告）会再空转一次。"
+    created: "2026-10-15"
+    last_updated: "2026-10-15"
+
 last_updated: "2026-10-07"
