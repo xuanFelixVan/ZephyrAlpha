@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SIG-161 | docs/_working/condaxis/sector/1_universe_router.md §2-§4（施工裁定·P1 边界 2026-10-13）
+# [BLUEPRINT] MOD-SIG-161 | docs/04_research_records/cross_domain/condaxis/sector/1_universe_router.md §2-§4（施工裁定·P1 边界 2026-10-13）
 # [MODULE] zephyr.signal_ashare.sector.universe_router
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] config/sector_universe_router.yaml（B_yaml 声明态规则真源，路径可注入）；stdlib only（re/dataclasses/pathlib/yaml 解析经传入 payload 时零依赖）
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] new
 # [INVARIANTS] 纯函数零副作用零 I/O（除显式 load_sector_universe_router 读盘）；判别式真源=YAML routing_rules（自上而下首命中），代码零硬编码板块码；880001-880009 市场统计指数 action=exclude 防大盘双计；6 位数字与个股码同形→无 source_hint 判 unknown 不猜（fail-loud）；申万身份=(industry_level, industry_sw) 无数码判别；schema_version 不识别→ValueError（fail-closed）；frozen dataclass JSON 可序列化；禁 datetime.now()/time.time()
-# [MODIFY-GUARD] docs/_working/condaxis/sector/1_universe_router.md（挖矿裁定：施工）；config/sector_universe_router.yaml（判别式变更须同批改 YAML+测试）
+# [MODIFY-GUARD] docs/04_research_records/cross_domain/condaxis/sector/1_universe_router.md（挖矿裁定：施工）；config/sector_universe_router.yaml（判别式变更须同批改 YAML+测试）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
