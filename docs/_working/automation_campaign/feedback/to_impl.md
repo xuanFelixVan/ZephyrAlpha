@@ -373,3 +373,56 @@ rows[94]/[95] 两行的 `ic_mean`/`ic_ir`/`oos_ic`/`regime_ic`/`n` 五面皆实�
 ### 2 本班零新开方向单／缺数单／对照单（口径声明）
 
 - 增量 0 行 ⇒ 无新 fail 可四分诊；S-1 属**判据可达性**（P-9）与**披露腿**（修⑯），不在 ③④ 席或 ① 席写域，本班**不据此判事件族 mined_out**（判死须 ④ 席＋连续负读数，沿 07/12 班口径）。15 员池两表各 0 行、rows[76]/[78] 两腿、`ic_ir` 有实数 6 行、双臂 10 行 OOS 无面＝**在册禁烧面，本班全部未重烧**（双臂面为册面直读复现，非重跑考试）。
+
+
+## 2026-10-15 ｜ st-qoder-p04-1015-07（④全网战法矿工席第七班：改良情报 6 条，全部带实跑读数）
+
+| 日期 | 类型 | 对象 | 依据（本班可 grep 证据） | 建议动作（本席不出裁定） |
+|---|---|---|---|---|
+| 2026-10-15 | **负结果（公式版本未定，禁据此开卡）** | Corwin–Schultz 高低价隐含价差（本席 02 班旧卡 SIC-20261015-P04-04 `cs_spread` 同族公式） | 尺=`.runtime/tmp/p04_07_probe/build3.py`（绕注入器＋显式 FINAL，可原样复跑）：按业界流通写法 `β=½[(ln H/L)²_t+(ln H/L)²_{t−1}]`、`γ=(ln(maxH/minL))²`、`α=(√(2β)−√β−√γ)/(3−2√2)`、`α<0 截 0`、`S=2(e^α−1)/(1+e^α)` 在 `c1_market.kline_daily FINAL`（2021-01-05..2026-10-15，HAVING n≥500，**1398 个交易日**）逐日截面均值 ⇒ `spread mean=min=max=**0.0**`＝**全段被截零**。两独立命中（blog.csdn 152387417 与 tandfonline 2024）给的是同一承载形，故不是单源抄错；旁证＝CNKI《基于日高低价的有效价差新矩估计》（系统科学与工程 2019(6)）明文『五个新矩估计在理想与非理想条件下均优于 Corwin and Schultz 的估计器』⇒ 该族确有已知退化面。**本席未能与 JF 原文对表 β 取均值还是和／截零规则，故不给修法** | ⑤/⑥：`cs_spread` 那张 02 班旧卡**禁按现公式物化**（会得到恒零序列＝"查无"伪装成"查空"）；若仍要这条腿，请先取 JF 原文式(5)–(7) 逐字对表，或直接改用 CNKI 那篇的新矩估计／Roll 修正版（Goyenko et al. 2009，本席 frds 面已核到定义域陷阱） |
+| 2026-10-15 | **原料可及性实测（解禁一条在册"未做卡"的堵点已解）** | `c3_fundamental.share_unlock` 长史解禁轴＋日内冲击成本腿 | 本班探针实测：share_unlock＝30,304 行／2010-01-04..**2027-10-13**／5,533 票／countIf(ratio>0)=29,839／countIf(amount>0)=30,133／engine=ReplacingMergeTree；未来解禁 countIf(unlock_date>today)=**1,442**（与 06 班在册逐字同）；DESCRIBE 9 列**不含**①席 12 班点名的"解禁后 20 日涨跌幅"后视列 ⇒ 该 PIT 雷在**本库物化面不存在**，只剩 as-of 截断义务。日内腿另有 `c1_market.kline_5min`＝**296,690,486 行／2021-09-01 09:35..2026-10-15 15:00／8,710 票**，12 列（trade_time,symbol,OHLC,volume,amount,data_source,ingest_ts,exchange,symbol_canonical） | ③/⑤：06 班游标⑨b「解禁须先解 as-of 截断口径」的堵点**已可由本库面自证**（本席已出卡17）；Kyle λ（frds 口径 S=Σsign(v)·√\|v\| 的 5 分钟回归）原料史长已够 5 年，本班**未物化**（算力窗），请 ⑤ 排期；kline_5min 无 mid 列 ⇒ 日内口径须先定 (H+L)/2 还是买一卖一 |
+| 2026-10-15 | **工具口结构缺陷（采集面通用坑，非本席个案）** | `zephyr.data.ch_reader.query_rows` 的 `inject_final_strict` | 任何带 `WITH ... AS` 的只读 SQL 都会崩：注入器对 FROM/CTE 后每个 token 调 `get_table_engine_strict`，别名 `b/s/e/sp/x/i` 探不到引擎 ⇒ `ClickHouseQueryError: engine_probe: 空返回（未知引擎）`，且 GATE-P0-ENGINE-PROBE 同步打警『空返回与"表不存在"不可分』。本班两枚候选首次因此中断（build2.py 崩在 [B]，[C] 未跑） | ⑩/工具班：建议 query_rows 支持 CTE 名单跳过（或 `--allow-cte` 旗／只对白名单 schema 限定名探引擎）。**本席未改工具**，处方是绕道 `ch_writer.query_strict` 自加 FINAL，已写进两卡伪代码；该绕道要求调用方自己记得 FINAL，属易错面 |
+| 2026-10-15 | **在册判定再复证＋新计数** | `system.tables` 的 LIKE/ILIKE 假空 | 首查 `WHERE name ILIKE '%unlock%'` ⇒ `[]`（零命中）；同进程枚举 `database NOT IN ('system','INFORMATION_SCHEMA','information_schema')` 得 253 张后在 Python 侧过滤 ⇒ 命中 `c3_fundamental.share_unlock` 与 `c3_fundamental.restricted_shares` 两枚。⇒ 假空形态在本库**可稳定复现**，非一次性 | ⑩/文档班：把"跨库定位只认等值／禁 LIKE 于 system.tables"升为采集 SOP 硬条目（本席已在卡面 caliber_pitfall 写死） |
+| 2026-10-15 | **下游归一器兼容性缺陷（本班普查量出）** | `data/strategy_intake/web_cards/` 卡面 schema | 盘面 17 枚逐件 `safe_load`＋键名普查：第五必备字段（数据源映射）**两代键名并存**＝`data_binding` **4 枚**（06 班卡14/15＋本班卡16/17）与 `data_source_mapping` **12 枚**（01–05 班），旧代另带 `gates/seven_gates_precheck/verification` 三段、新代把闸写进 `data_binding.*_gate_zh`。并集谓词下真缺面=0（本班首版按单键判"10 枚缺第五字段"＝尺族盲假红，已自纠并留旧案） | ⑤/C1：归一与索引生成器须**双键兼容**，否则只认 `data_binding` 会静默漏 12 枚（漏采形态＝看起来无源）；键名收敛由 ⑥/⑩ 定，本席不自并 |
+| 2026-10-15 | **供数缺陷新发（转 ① 席，非重开单）** | `c3_fundamental.share_unlock` 缺"披露时点"列 | DESCRIBE 实测 9 列只有 `unlock_date`（事件日）与 `ingest_ts`（入库时间），**无公告/披露时点列** ⇒ 严格 PIT（as-of 只见当时已披露的排期）在本表不可自证；EY 2026-06 报告与 akshare `stock_restricted_release_queue_em` 面表明"排期事前披露"是制度事实，但本库无该字段⇒卡17 的 `face_gap 第(2)条`已把该卡标为"尚未达可冻结标准" | ①席：若可补 `disclosure_date`／公告日腿，卡17 才能进冻结；本席**未**用 ingest_ts 冒充披露时点（那是把入库当可知，属前视的另一形态）。另：大宗 `block_trade` 只有 2026 年（本班复测 1,706 行／2026-08-07..2026-10-14／641 票）＝①席 12 班 B-23/B-24 已覆盖，**本席不重开单** |
+
+
+## 2026-10-15 18:1x ｜ st-qoder-p09-1015-14（⑨成绩官第十四班：当日增量＝**0 行**；主产出＝新单 **修⑰**＋**修⑱**＋**修⑲**＋blocked 两行分诊；零方向单／零缺数单／零对照单／零呈批）
+
+> 沿 ⑩ 线长席 1015-09 在册令（全线停发新挖矿配额）：本班**零新挖矿请求、零方向单**。本班未动分数册与任何判据字节。
+
+### 1 修⑰（新开）＝10-14 资产搬迁在**码面是半迁移**，在册 304 行只覆盖了读侧
+
+| 项 | 本班实测（全部只读、可原样复跑） |
+|---|---|
+| 在册已覆盖面 | to_impl.md:304 已立"产分侧代码件未入库＝blocked 真成因"：comparison_exam.py **`??` 未跟踪**、exit_simulator.py **磁盘面 `:70-74` 已把 SCORES_YAML 改指 04 永久区而 HEAD 面零命中**。本单**不重开该定性**，只补三处它没覆盖的。 |
+| (1) 未修姊妹件 | `scripts/backtest/fexam/campaign_report.py:46` `FEXAM_DIR = RUN_ROOT / "docs" / "_working" / "fexam"` ⇒ `:54-57` `BOOKS` 四册（factor/indicator/strategy/allocator）全指**已删目录**；`:47 FULLCIRC`、`:48 METAQ_SNAP` 两目录实测也已删（`docs/_working/fullcirc_closeout_chief`、`docs/_working/chain_piling_campaign/snapshots` exists=False）。该件 **tracked 且 `git status` clean＝磁盘面即 HEAD 面，至今无人修**。四册同名件在 `docs/04_research_records/backtest/scores/2026/` **实测全部 exists=True**（本班逐件判存）。 |
+| (2) 写侧未修 | `scripts/backtest/fexam/exit_sim/exit_simulator.py:77-78`（OUT_YAML／OUT_MD）仍指已删的 `docs/_working/fexam/`，而在途补丁只改了读侧 `:72-76`。危害形制＝**不报红**：`safe_write_text` 透传 `atomic_write`（`src/zephyr/shared/io/file_utils.py:208` 定义、`:242` `target.parent.mkdir(parents=True, exist_ok=True)`）⇒ 落盘会**静默重建已退役目录**并把产物写回禁区，制造第二真源（比 FileNotFoundError 更难发现）。 |
+| (3) 双臂真链条锚点 | rows[90] blocked 的实际读取路＝`card_binding.py:1761` `from fexam.exit_sim.exit_simulator import (… load_indicator …)` → `exit_simulator.py:122 def load_indicator` → `SCORES_YAML(:72-76)`。⇒ **改 campaign_report 不解 rows[90]**（本班先按该假设查、再实测排除，特此留痕免下一班误修）；而只改磁盘面不落 HEAD，则任何从 HEAD 起跑的车道再撞一次。 |
+| 建议动作（本席不出裁定、不改码） | ① 逐件按 `docs/04_research_records/governance/working_ref_sweep_20261015/broken_records.json` 的 `suggest` 改指，**禁自创新路径**（本席令卡条款）；② 读侧＋写侧＋campaign_report 三处须**同批**落 HEAD（分袋即"改一半"再现）；③ 谁落地请与 304 行的"驱动器未跟踪"并单处置，否则 OD-1 执行器本体仍在 git 外。 |
+
+### 2 修⑱（新开，对象＝⑥ 制卡席；属卡面可复验性，**非执行阻断**，请勿据此撤卡）
+
+- 面积尺（只读）＝`python .runtime/tmp/st-qoder-p09-1015-14/measure14b_cards.py`（输出留档 `measure14b.out`）：552 张卡中 **84 张（15.2%）** 卡体文本含指向已删 `docs/_working/**` 的路径；这 84 张的 card_id 覆盖分数册 **39/96 行（40.6%）**。分面＝entry_flow 58／exit_flow 18／position_flow 8。
+- 键级分面尺＝`python .runtime/tmp/st-qoder-p09-1015-14/measure14c_keyface.py`（留档 `measure14c.out`）：断链引用落在 **status_reason 60／mother_score_row 28／data_window_evidence 18／same_family_precedent 18／basis_casefile 16／paper_trail 10／sources 3**；按"机器字段 vs 散文/证据字段"分＝**机器字段命中仅 3 卡**（均为 `sources` 键指 `docs/_working/mineloop2_campaign/00_morning_pack.md`），**仅散文/证据字段 81 卡**。
+- ⚑ 本班对本单的范围自限：`sources` 是否被执行器当输入读取，本席**未证明**（谓词只按顶键名子串 binding/source/series/path 归类）；反向经验证据＝这 39 行**照常出了 metrics 读数**（含事件族 23 行 OOS 嵌套面有值），说明这些引用未被当输入消费。⇒ 危害定性＝**判卷无法回溯证据（可复验性断裂）**，执行阻断面全册仍只有 rows[90] 一行。
+- 测量伪影披露（勿计入死文件）：`docs/_working/nightmine_campaign/series/ti_ew_` 出现 20 次系**通配/动态模板**（`exists` 对 glob 恒 False＝伪影），本班已在尺内单列剔除。
+- 对照三件（防零命中假阴／判存函数失真）：PAT 在 `prereg_frozen.yaml`（grep 在册已知旧址）命中 3（>=1 通过）；判存函数在 04 永久区实存件＝True；在已删旧址＝False。
+
+### 3 修⑲（新开，对象＝⑩/工具班，扫描器漏扫**单点实例**，本席只出案卷不出裁定）
+
+- 案卷：`broken_records.json`（2490 条，字段 file/line/target/comment/dynamic/batch/suggest/note）内 `scripts/backtest/fexam/campaign_report.py` **仅 2 条**（line 1、line 16），且两条 `comment=true`；`:46` 的 pathlib **分段拼接常量**（`RUN_ROOT / "docs" / "_working" / "fexam"`）**查无命中**。册内 `F_动态模板(前缀仍活)` 仅 2 条，`.py` 条目 1147 条／612 文件。
+- 同窗对照读数：本班按三形态 grep（`_working" / "fexam"`／`_working/fexam`／`_working\\fexam`，`--include=*.py,*.yaml`，面＝scripts＋src＋docs/03_modules）实测**码面＋卡面＋manifest 共 47 处** `docs/_working/fexam` 旧址引用仍活。
+- 本席判读边界＝该实例可证"至少一类漏扫"（按整串字面量匹配的扫描器抓不到分段拼接常量）；**是否系统性、以及是否重算断链分母（在册 B440/C1813/D39/E196）属扫描器写域，请 ⑩/工具班判**，本席不自裁、不代改工具。
+
+### 4 blocked 两行分诊（工序 3；按本版对照族说明，blocked 只记因、**不作 fail 升降级**）
+
+| 分数行 | 卡 | blocked.reason | 路由 |
+|---|---|---|---|
+| rows[90] | TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版 | `book_channel:bind:FileNotFoundError: docs\\_working\\fexam\\indicator_exam_scores_v1.yaml`（`family=comparison route=dual_arm binding_class=C binding_reason=target_face_not_index_next_day`） | **实现问题**→修⑰（链条见上表 (3)）＋沿 304 行在册"驱动器未跟踪/HEAD 落后"。**不判信号无效**。 |
+| rows[91] | 同上（同卡第 2 枚 blocked） | `book_channel:bind:MemoryError: Unable to allocate 234. MiB for an array with shape (30676538,) and data type object` | **资源面**，沿 11 班在册"同窗登记不定因果"；本班冷启动 reaper 复量 `commit_pct=94.68`、`degraded=True`、越闸 ALERT-SYS-003＝同型高压窗仍在。⇒ 请 ⑩/统筹处置排产窗，本席**不重复开单、不据此判该卡有效性**。 |
+
+### 5 本班未做与理由（防下一班重烧）
+
+- 未重跑 rows[76]/[78] 升级两腿（册面 sha256 与 13 班终报锚点逐位同＝在册"sha 未变不重测"）；未重烧 15 员池 `factor_signal`/`factor_feature_value`（第四次）、`ART_ROOT`、pool6 PR（同池同人同值＝复现非新读数）、双臂 `ic_delta_oos`、`ic_ir` 6 行。
+- 未改任何判据/门柱/阈值；未碰分数册字节；未跑全仓 `git status`（内存高压窗内，取证一律窄面）。

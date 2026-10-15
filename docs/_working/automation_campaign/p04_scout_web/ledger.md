@@ -572,3 +572,118 @@ title: ④全网战法矿工席·findings台账
 - 与在册先例同型且不矛盾：`strict-superset-still-dies-under-three-way-file-gate`（前袋先落，同件超集袋仍判双侧皆改而死）＋`p09-hotfile-landing-death-and-bag-ruler-keys`（唯一起效变量＝末袋取最新 HEAD）。⇒ 本班按该处方**另起新袋（非 requeue）**，base 取当下 HEAD，袋内**只放两件**：修正后卡15＋台账——两册信箱件（to_impl／to_datasource）已由袋一落地，**故意不再放入本袋**（他席在同两册上仍在推进，带上即重演 base 滞后死亡模式）；游标件袋一已带且本席未再改，同样不放。
 - 死信分诊结论留给下一班执行（本班未跑归档，避免与 serializer 租约相撞）：`dead-archive --session st-qoder-p04-1015-06 --content-level` 的判据已具备——袋二卡15 字节＝盘面纯前缀的**旧版**（破损版），袋二 ledger 字节⊂盘面 ⇒ 袋三落地后袋二可销；⚠ 复发熔断在册 499 次同签名在先，**禁 --force、禁 requeue 袋二**。
 - 本班耗时追加账（如实，不复用旧数）：15:31:0x 开班 → 17:34:38 写本段＝**123 分钟**（名义 45 分）。分段＝施工与检索 22 分／供数面派卷 25 分（与施工并行）／预检三拦与 token 10 分／自尺伪读数与 YAML 破损修复 9 分／封班后回看队列结果并补第三袋 57 分。**最后 57 分钟全是"落袋之后才知道袋的命运"这一项**——这条要给 ⑩/生产线定性：恒定班的投袋—验袋节拍与队列时长天然冲突，在册 批2（台账不随每袋必含件）之外，还差一条"末袋取最新 HEAD"的成文处方（现只在记忆册里，SOP 未载）。
+
+
+## 2026-10-15 18:1x · p04-07 班（st-qoder-p04-1015-07）· 两枚过闸卡＝Amihud 截面离散度＋解禁前瞻广度；本班计产 2 轴（候选 9 形）
+
+### 一、防重入：对上一班游标声明的实测改判（不改判据，只报面值）
+
+游标末段（16:43:50）写「本班到此封班：不再写台账、不再投袋」。**本班实测该声明在其后 52 分钟内被同一会话自己推翻**：
+台账盘面 mtime 17:35:21、`.runtime/commit_queue/processing/` 于 17:36:23 新增
+`q-20261015-st-qoder-p04-1015-06-0003.json`、`heartbeat.jsonl` 末行 ts 持续在跳。⇒ 本班开工判定按 SOP L202
+的机械判据（**同岗上游是否仍持有游标/claim**）而非按游标自述，逐项实测＝
+①claim：ledger／checkpoint／卡15 三件 `lock_files.py check` 全 FREE；②会话：
+`SessionRegistry.list_active_readonly()` 里 st-qoder-p04-1015-06 的 **held_files=[]、pid=0**；
+③队列：该会话 counts=pending 0／processing 0／done 2／dead 1（0001 done、0002 dead、0003 done）；
+④落地面：`git show HEAD:...ledger.md` sha256 前 12＝`f0ec9406b49f` **逐字节等于**盘面同件 sha256 前 12。
+⇒ 四证齐＝上一班已收口，本班放行开工。⚠ 心跳 41800 到 17:43 仍在跳，但 `Win32_Process` 查得该 pid 命令行＝
+`python.exe -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon st-qoder-p04-1015-06 D:\ZephyrAlpha 30 ...`
+＝**独立守护进程残响，不证会话在工**（在册「心跳在跳不证在工／停更不证停手」双向复证）。
+
+### 二、本班开工前先替上一班把缺陷查到并核其自修（零越片）
+
+`git show HEAD:` 取的卡15 面 `yaml.safe_load` **判红**（`line 16 column 5 expected <block end>`，sha 前 12=`586610ac3898`
+＝袋一破损版字节），而盘面为 `827235dbe6e5` 可解析版 ⇒ 当时读作「破损件已入库、修正袋 0002 判死」的真事故。
+本班**未立即定性**，改等 processing 中的 0003 落定（约 90 秒后）⇒ 复测 HEAD 卡15＝`827235dbe6e5`、
+`PARSE=OK links=8 card_id=SIC-20261015-P04-15`。⇒ **事故不成立，是上一班 0003 自修已完成**；
+本班把首读登记为**过程性假红**（在「dry-run/中间态读数不可当被执行面定罪」在册纪律内），未动队列、未 requeue、未代裁。
+
+### 三、渠道轮转（6 类真实命中，全部本班亲手搜到；链接逐条落进卡面 source_links）
+
+GitHub（`gh api search/repositories`，q=corwin-schultz spread，total_count=5，逐件读 stars/pushed_at/license.spdx_id
+＝MIT 2／无声明 3，**star 面全员 ≤3 ⇒ 无一过"高星成熟仓"筛**）／度量参考站 frds.io（Kyle λ 口径＋Kyle1985/Hasbrouck2009/
+GHT2009 三条文献）／中文量化社区（quant67 两页、quantfull 本班 WebFetch 直连取到 `Amihud ILLIQ = mean(|r|/Volume)`、
+CSDN 三页）／学术库（tandfonline 2024 全文、CNKI《基于日高低价的有效价差新矩估计》、ResearchGate、国内学位论文 1 篇）／
+arXiv API（`all:illiquidity` entries=3 首条 2609.00943；`all:"lockup expiration"` entries=0＝真零命中，
+**通道坏形态另有其形**：http 端点返回 301／bytes=0，本班首跑即栽在该 301 上，改 https＋`-L` 后才拿到 200）／
+财经与行业报告（EY 2026-06 PDF、sina、itiger、163、chinadaily、360doc）。
+SSRN 与 TASC 专栏本轮**零检索动作**（时间窗取舍，如实记，不充数）；Semantic Scholar 沿用在册不可用判定（前班两次 429），本班未重烧。
+
+### 四、双闸实跑（9 枚候选形；门柱 0.3 为在册冻结值，本席未动）
+
+**尺的判别力两对照先做**：`pool-report --pool .runtime/tmp/p04_06_pool` 复现
+`n_members=32 n_common_dates=1472 effective_n_signals(PR)=5.3328`（与 06 班在册读数**逐字同**）；
+负对照＝把池内成员 `lu_count.csv` 当候选喂进闸 ⇒ `verdict=reject max|corr|=1.0000 rc=5`（能判出"自己撞自己"）。
+逐形读数（rc 每条单独 echo 取得，未套管道）：
+
+| 形 | 判定 | max\|corr\| | most_similar |
+|---|---|---|---|
+| amihud_med（截面中位水平） | reject | 0.6003 | ti_ew_rmi_14_v1 |
+| amihud_medz（250 日标准分） | reject | 0.6271 | ti_ew_ppo_v1 |
+| **amihud_disp（截面离散度）** | **pass** | **0.2815** | ti_ew_natr_14_v1（余量仅 0.0185＝贴柱） |
+| amihud_dispz | reject | 0.3018 | ti_ew_histvol_20_v1（超柱 0.0018） |
+| unlock_ovh（未来 30 日解禁市值/日均额） | reject | 0.3501 | ti_ew_garman_klass_20_v1 |
+| unlock_z | reject | 0.3284 | ti_ew_rogers_satchell_20_v1 |
+| unlock_surp（对一年中位意外项） | reject | 0.3347 | ti_ew_rogers_satchell_20_v1 |
+| **unlock_breadth（票数广度）** | **pass** | **0.1687** | lu_count |
+| **unlock_breadth_d（广度 5 日差分）** | **pass** | **0.1093** | ti_ew_wt1_v1 |
+
+**按轴不按序列**（本班自算 Spearman，1131 共同日）：amihud_disp↔amihud_level=0.5431、
+amihud_disp↔amihud_dispz=0.7934 ⇒ 卡16 四形＝**1 轴**；unlock_ovh↔unlock_breadth=**0.6803** ⇒ 解禁金额形与票数形
+是同一轴两写法 ⇒ 卡17 五形＝**1 轴**；跨卡 amihud_disp↔unlock_breadth=**0.2740＜0.3** ⇒ 本班**净增 2 条轴**。
+机理读数（本班的实质发现）＝**日频"水平型"流动性/供给序列在本池分母上被价格与波动成员吸收**
+（Amihud 水平撞 RMI/PPO 两个价格振荡指标，解禁金额撞 Garman-Klass/Rogers-Satchell 两个波动指标），
+可过的形都是"形状/广度"类而非"大小/水平"类。
+
+去重闸（strategy_registry.yaml 387,739B／161 条目，逐词全册扫）：Amihud/amihud/非流动性/Kyle/lambda/Corwin/价差/spread/
+解禁/限售/unlock/restricted **全 0 命中**；「流动性」13 命中（line 12、1934、2508、2574、3134、3949、4015、4029、4095、
+5791、5857、11329、11395）逐条读＝全为 tags 或"日成交<2 亿剔除"类过滤配料，无一本体构造；「冲击」3 命中
+（line 97 schema 注释、12127/12128 事件冲击评分＝异对象）。⚠ 谓词白名单自纠：「impact」161 与「turnover」162 命中
+经逐行核＝**字段名**（line 97 `market_impact_model`、line 105 `turnover: float`）非策略名，已从命中面剔除。
+
+许可证闸：本轮 GitHub 5 枚＝MIT 2／无许可证 3，GPL 0；其余素材为新闻/学位论文/EY 报告/度量手册＝全部思想级；
+两卡伪代码由本席按本库 DESCRIBE 实测列名自拟，**零行外部转录**。
+
+### 五、本班交付面
+
+`data/strategy_intake/web_cards/20261015_p04_amihud_dispersion.yaml`（卡16，19,227B，links=9，SIC-20261015-P04-16）
+`data/strategy_intake/web_cards/20261015_p04_unlock_breadth.yaml`（卡17，20,653B 级，links=8，SIC-20261015-P04-17）
+两卡 `yaml.safe_load` **均过**、五必备字段并集谓词下齐；改良情报 6 条转 `feedback/to_impl.md` 本班节。
+
+### 六、本班自犯与自纠（六条，逐条留旧案）
+
+1. **`system.tables` 的 ILIKE 假空**（首读把 `share_unlock` 判成"表不存在"）：`WHERE name ILIKE '%unlock%'` 返回 []，
+   而 Python 侧枚举 253 张表过滤命中 `('c3_fundamental','share_unlock')`＋`('c3_fundamental','restricted_shares')`。
+   ＝在册"跨库定位只认等值（LIKE 于 system.tables 实测假空）"的**再复证**，本席读到该条仍在首跑踩上。
+2. **CTE 别名被 FINAL 注入器当表探测**：`query_rows` 对 `WITH b/s/e/sp/x/i` 逐 token 调
+   `get_table_engine_strict` ⇒ `ClickHouseQueryError: engine_probe: 空返回（未知引擎）`，GATE-P0-ENGINE-PROBE 同时打警
+   "空返回与'表不存在'不可分"。正解＝`ch_writer.query_strict` 自加显式 FINAL（两卡伪代码已写死该处方）。
+3. **`astype(float)` 连日期列一起转**：崩 `Cannot cast DatetimeArray to dtype float64`，同型错误本班连犯两次
+   （build3 与 build5），第二次才改用逐列转换。登记为尺自身缺陷而非数据缺陷。
+4. **前瞻窗右端被交易日历截断（最危险的一枚）**：首版用交易日序列做 `rolling(20).sum().shift(-20)`，
+   而交易日历只到 2026-10-15 ⇒ 未来排期（本库 right-end 到 **2027-10-13**）被日历截掉，右端供给面**看起来有数、实为静默清零**。
+   改为自然日窗并把日历铺满 `max(unlock_date)`。此坑与「静默降级与'未触发'同形」同族，靠把日历铺满才暴露。
+5. **YAML 双引号嵌套（游标⑦点名过的同一坑，本席读过仍照犯）**：两卡首版均把 `what_verified` 与 `self_flag` 写成
+   双引号单行标量，正文里的 ASCII 直引号把标量提前终止 ⇒ 两件同判红（`line 16 column 5 expected <block end>`）。
+   修复＝承载形整片改 `>-` 块标量、ASCII 直引号按配对换「」（脚本 `.runtime/tmp/p04_07_probe/fix_yaml.py`，
+   正文一字未删），改后各改写 6 处、两件 `safe_load` 全过。**本席与上一班同坑连两班，建议游标把该条升为"落笔前禁写双引号单行"级闸门。**
+6. **五必备字段普查的尺族盲假红**：本班普查 16 枚卡时按单键 `data_binding` 判"10 枚搁浅卡全缺第五字段"，
+   逐件读键名后证伪＝旧卡用 `data_source_mapping`（另有 gates/seven_gates_precheck/verification），
+   新卡（06 班起）用 `data_binding`。并集谓词复跑 ⇒ **真缺面=0**，同时量出**同目录两代 schema 并存**
+   （data_binding 4 枚／data_source_mapping 12 枚）＝C1 归一器只认单键会漏 12 枚，已转 to_impl 第(5)条。
+
+### 七、搁浅面普查（当日四态分诊的本班份）
+
+`data/strategy_intake/web_cards/` 盘面 17 枚（含本班 2 枚）vs HEAD 7 枚 ⇒ **10 枚为 HEAD ABSENT**
+（p04-02/03/04/05 四班产物，逐件 `git cat-file -e HEAD:` 判在册性，非按条数估）。四态分账：
+01 班 done1/dead1、02 班 dead2、03 班 dead2、04 班 dead3、05 班 dead4、06 班 done2/dead1 ⇒ 本席当日
+**dead 13 袋／done 3 袋／pending 0／processing 0**。dead_reason 同一签名（ledger 双侧皆改）。
+本班按 06 班游标⑩给的**可执行判据**处置（那 10 枚均为 ABSENT 新文件、无 base、结构上不可能双侧皆改，
+可另起一袋专投且**袋内不含台账**），把 10 枚与本班自家件**分两袋**投出，不并他人会话的台账条目（防归属篡改）。
+
+### 八、耗时与节拍（date 实测，非体感）
+
+开班 17:33:56（冷启动首条 date）→ 本段落笔 18:1x（现测见末行）＝**约 45 分钟，名义节拍内**。
+⚠ 本席体感读数曾估"约 90 分钟"，与 date 实测差约一倍＝在册「体感钟快约一倍」再次自证，故本班把节拍判据
+只建立在 date 实测上。返工分账：CH 取数三口（LIKE 假空／CTE 注入器崩／astype 崩两次）＋右端截断自纠
+＋YAML 承载形两班同坑＝**约 18 分钟**，全部出自本班产物或既有工具口，无一分钟耗在外部渠道等待。

@@ -1,0 +1,188 @@
+# creation_token: st-qoder-p04-1015-07-strategy-intake | created_by: st-qoder-p04-1015-07 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-17
+title_zh: 限售解禁前瞻供给广度（未来 30 自然日涉及票数÷当日在册票数）——供给冲击轴，含「金额形与票数形共线 0.68 故按一轴计、且本库表面无后视列」的双自证
+mining_tower: 楼8 另类数据／楼7 资金面族 ＋ ⑨席在册空白轴「资金面分户未占段」与 06 班游标⑨点名未做卡的 share_unlock 长史解禁轴
+birth_seat: ④
+birth_session: st-qoder-p04-1015-07
+birth_batch: 20261015-p04-07
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-15 真实检索命中；未直连正文者逐条标核验面）
+source_links:
+  - role: 解禁供给压力的机制陈述（"新增可流通量对价格施压"的直白出处）
+    url: http://www.360doc.cn/article/363711_376675229.html
+    what_verified: >-
+      WebSearch 命中正文：『A rise in newly unlocked shares will put some downward pressure on the market as it means an increase in stock supply』＋『Under China's market rules, major shareholders of non-tradable stocks are subject to a lock-up period of one or two years』＝本卡方向先验（负向）与锁定期规则（1–2 年）的可回查出处；通讯社转稿＝非同行评议，仅作机制参照
+  - role: 同一机制的第二独立命中（英文官方媒体面）
+    url: http://www.chinadaily.com.cn/kindle/2019-02/19/content_37438251.htm
+    what_verified: >-
+      WebSearch 命中正文：『Shares to be unlocked on the Shanghai and Shenzhen stock exchanges from Monday to Friday will come in at 3.88 billion, down by more than 70 percent from a week ago. Of the 25 companies unlocking shares this week, ... releasing the most, with nearly 3 billion shares becoming tradable』＝该面把「周度解禁**票数**与公司家数」当作主叙事口径 ⇒ 本卡取广度（票数/家数）而非金额的口径依据；⚠ 这是新闻口径非学术定义，本卡把「票数占比」当作本席自拟构造并在伪代码写死
+  - role: 解禁规模之巨与"悬剑"叙事（市场级脆弱度的宏观面证据）
+    url: https://m.163.com/dy/article/FTD6987S0517WPVF.html
+    what_verified: >-
+      WebSearch 命中正文：『在中国，受限制股票的锁定期通常在上市日期后的 6 个月到 3 年之间』＋『一个跟踪科创板的指标在 7 月份该股成立一周年后的三个交易日内下跌了 8.2%，当时公司内部人士抓住了首次抛出股票的机会。这使得中国基准的沪深300指数在同一时期下跌了 4%』＋『根据兴业证券...明年第二季度和第三季度将出现大量解锁事件』＝事件窗读法（解禁周年后 3 个交易日）与季节性的可回查实例；⚠ 该文为 2020-12-09 旧文，数字属历史叙事，本班只作机制与窗型参照，禁当效果证据
+  - role: 解禁≠必跌的反方证据（本卡方向申报必须带的对冲陈述）
+    url: https://cj.sina.cn/articles/view/1651428902/v626ece2602001kemw
+    what_verified: >-
+      WebSearch 命中正文：『尽管限售股解禁在短期内会给个股带来一定的流通盘扩容压力，但并不必然导致股价下跌，最终走势仍取决于公司基本面成色、解禁股东的减持意愿以及整体市场环境等多重因素』＋标题读数『10月A股解禁规模超3100亿元，5股解禁比例超70%』（published 2026-10-04）＝本卡在 self_flag 里把「减持意愿是不可观测的混杂」写死的直接依据；财经专栏＝非同行评议
+  - role: 学术侧方法锚（解禁事件研究的标准计法）
+    url: https://m.zhangqiaokeyan.com/academic-degree-domestic_mphd_thesis/020314092779.html
+    what_verified: >-
+      WebSearch 命中论文目录级正文，逐条取到方法词：『Market impact around expiration of IPO lockup in China』／『Market impact around unlock of Non-tradable share in China』／『Daily Abnormal Return』／『Cumulative abnormal return (CAR)』／『Abnormal Volume』／『Regression analysis of CAR』＋数据面『Daily closing price and daily trading volume』＝国内解禁事件研究的因变量口径（CAR＋异常量）出处。⚠ 学位论文＝非顶刊；本席只取到方法清单未取到系数与样本区间＝方法级引用，⑥制卡时须回查原文
+  - role: 制度侧最新证据（解禁冲击已被披露规则改造，本卡的时变风险）
+    url: https://www.ey.com/content/dam/ey-unified-site/ey-com/en-cn/newsroom/2026/6/documents/ey-chinese-mainland-and-hong-kong-ipo-report-en.pdf
+    what_verified: >-
+      WebSearch 命中 PDF 正文：『tightening lock-up constraints on controlling shareholders and cornerstone investors, optimizing placement structures, and continuously refining share reduction disclosure rules to encourage shareholders to disclose their reduction plans in advance』＋『While nominal over HK$1 trillion lock-up expiries are at record levels ... core stakeholders such as controlling shareholders, local governments, state-owned asset platforms and long-term technology investors make up the vast majority』＋『early disclosure of reduction plans may prematurely trigger negative sentiment and amplify near-term effects, it also provides the market with time to price in expectations』（EY，2026-06-19）＝两义：(a) 解禁排期**事前已披露**⇒本卡用「未来 30 日排期」作前瞻面在制度上站得住；(b) 该效果随披露制度演进**非时不变**⇒本卡在 face_gap 登记时变风险。⚠ 报告口径含港股，A 股外推须 ①/⑥ 复核
+  - role: 机构持仓结构与解禁冲击强度的旁证
+    url: https://www.itiger.com/hans/news/1136921240
+    what_verified: >-
+      WebSearch 命中正文：『Over HKD 7 Billion Lock-up Shares to Be Released』＋『SANHUA's 18 cornerstone investors, holding 47.22% of the IPO (196 million shares), face lockup expiration on December 23』＋『selling pressure in SANHUA's already illiquid H-share market, further weighing on the stock』＋小标题『Lockup Expiry: A Liquidity Test』＝「解禁＝流动性测试」的读法，且给出「按基石投资者占比计量」的结构口径 ⇒ 本卡登记为下一枚卡（按解禁**持有人结构**分层）的方向，本班未做
+  - role: 日内冲击成本轴的度量与文献锚（本卡姊妹腿，本班未取本体）
+    url: https://frds.io/measures/kyle_lambda/
+    what_verified: >-
+      同批检索命中，正文含『S = Σ sign(v)·sqrt(|v|)』的 5 分钟签名平方根成交额口径与 Kyle 1985／Hasbrouck 2009／Goyenko-Holden-Trzcinka 2009 三条文献。本卡与卡16 均**未**使用：该腿原料本班已实测可及（见 data_binding.measured_face_zh 第(3)段），物化代价属 ⑤/算力窗议题，已转 to_impl 本批段
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: >-
+    本卡本体不来自任何仓：素材＝3 条新闻/专栏＋1 篇学位论文目录面＋1 份 EY 报告 PDF＋1 条券商资讯页，均无代码许可证声明（全部思想级引用）；本轮 GitHub 命中的 5 枚流动性仓归卡16 的许可证样本面
+  gate_verdict: 通过（零可复制代码；伪代码由本席按本库 DESCRIBE 实测列名自拟）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；实现走 C3 翻译适配重实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机＝⑨席在册空白轴「资金面分户未占段」，而 06 班游标⑨点名 share_unlock 是"原料齐备但无人做卡"
+  的三枚之一（当时卡在"右端 1442 行未来解禁"的 as-of 口径上）。本班开工前读到 ①席 12 班实测
+  （记忆面：akshare 三腿未来窗 summary=66／detail=460／queue=4 行 ⇒ 那 1442 行是**正常前瞻排期面**，
+  非一次性导入；且 PIT 雷在源侧 stock_restricted_release_queue_em 的"解禁后 20 日涨跌幅"列，入库须剔列、
+  消费须按 解禁时间≤as-of 截断）。本班据此先在本库物化面复测该风险：DESCRIBE
+  c3_fundamental.share_unlock 共 9 列（symbol, unlock_date, shares, ratio, amount, data_source,
+  ingest_ts, exchange, symbol_canonical）⇒ **后视列在本库不存在**，该雷在消费面已不存在，
+  只剩 as-of 截断义务（本卡伪代码以"未来窗"直接表达该截断）。
+  本体＝未来 30 个自然日内有解禁排期的票数（重复计数）÷ 当日在册票数。
+  为什么用**广度**而不是**金额**：本班把两形都造了并各自过闸——金额形（未来 30 日解禁市值 ÷
+  20 日均市场成交额）max|corr|=0.3501，撞的是波动成员 **ti_ew_garman_klass_20_v1** ⇒ 被拒；
+  其 250 日标准分形仍 0.3284 被拒、
+  对一年中位的意外项形 0.3347 被拒；而票数形 0.1687 过闸（撞 lu_count）。
+  本班进一步自算两形 Spearman＝**0.6803 ＞ 0.3** ⇒ "解禁金额"与"解禁票数"在本库日频上是
+  **同一条轴的两种写法**（大市值票解禁时金额与票数同时抬升，聚合后共线），
+  所以本卡**只按 1 轴计产**，并把票数形选为本体（闸余量 0.1313，远大于金额形）。
+  经济命题（待 ⑥ 预注册冻结方向，本席不代裁）＝解禁广度抬升＝未来一段流通盘扩容的**确定性供给**
+  抬升 ⇒ 对后续市场级收益负向；且该负向应集中在广度**边际抬升**（5 日差分形）而非水平，
+  理由＝水平值含制度性季节（每年 1/4/7/10 月的周年峰），市场可提前定价，而增量不可。
+  方向只作申报：本班**未做前向收益检验**，5 日差分形虽过闸（0.1093）但与水平形同族同对象，
+  计产不另计。
+
+# ── 必备④ 伪代码（本席自拟，零外部转录；列名均为本班 DESCRIBE 实测名）
+pseudocode: |
+  # 本体：解禁前瞻广度 = 未来 30 自然日"有解禁排期的票数（重复计数）" ÷ 当日在册票数
+  # 坑1：本库表无 trade_date，日期列名是 unlock_date（首版误按 trade_date 查 ⇒ Code 47 原文已记）
+  # 坑2：CTE 别名会被 inject_final_strict 当表探引擎 ⇒ 走 ch_writer.query_strict + 自加显式 FINAL
+  START = '2021-01-01'
+  u = query_strict("""
+    SELECT unlock_date AS d, uniqExact(symbol) AS ns, sum(amount) AS amt, sum(shares) AS sh
+    FROM c3_fundamental.share_unlock FINAL GROUP BY d ORDER BY d""")
+  t = query_strict("""
+    SELECT trade_date AS d, uniqExact(symbol) AS n, sum(amount) AS amt
+    FROM c1_market.kline_daily FINAL WHERE trade_date >= {START} GROUP BY d ORDER BY d""")
+  full = date_range(min(u.date.min(), t.date.min()), u.date.max(), freq='D')   # 关键：日历必须铺到
+  #   max(unlock_date)=2027-10-13，否则右端未来排期被交易日历（只到今天）截掉＝供给面被静默清零
+  ua  = u.set_index(date)[['ns','amt']].groupby(level=0).sum().reindex(full, fill_value=0)
+  f_ns  = ua['ns'].rolling(30).sum().shift(-30)     # 未来 30 自然日涉及票数（重复计数＝广度代理）
+  f_amt = ua['amt'].rolling(30).sum().shift(-30)    # 姊妹形：未来 30 日解禁市值（本班实测与之共线 0.68）
+  mkt20 = t.set_index(date)['amt'].rolling(20).mean()
+  sig_breadth  = reindex(f_ns,  by=t.date) / t.n              # 本体（过闸 0.1687）
+  sig_overhang = reindex(f_amt, by=t.date) / mkt20            # 金额形（被拒 0.3501，留作同轴对照）
+  sig_breadth_d = sig_breadth.diff(5)                          # 边际形（过闸 0.1093，同对象不另计）
+  sig_surp      = sig_overhang - sig_overhang.rolling(250).median()   # 意外项（被拒 0.3347）
+  # PIT 纪律：as-of 日只允许用 unlock_date 已在当日以前披露的排期；上式 shift(-30) 表达"前瞻窗"，
+  #           ⑤实现须另加"披露时点 ≤ as-of"的截断腿（本库无披露时点列 ⇒ 该腿当前不可验，见 face_gap）
+  # 前向收益/IC 检验不在本席写域：本席只交 (date, sig)
+
+# ── 必备⑤ 数据源映射
+data_binding:
+  primary_source: c3_fundamental.share_unlock
+  sl_ref: SL-FUNDAMENTAL-SHARE-UNLOCK（限售解禁日历；本卡用 unlock_date 与 symbol 两列，amount 仅用于姊妹形）
+  auxiliary_source: c1_market.kline_daily（当日在册票数分母＋20 日均成交额）
+  measured_face_zh: >-
+    本班实测（TCP 面，新进程只读，探针 .runtime/tmp/p04_07_probe/build5.py 可原样复跑）：
+    (1) c3_fundamental.share_unlock → count=30,304、min(unlock_date)=2010-01-04、
+    max=2027-10-13、uniqExact(symbol)=5,533；countIf(ratio>0)=29,839／countIf(amount>0)=30,133
+    （分母 30,304）⇒ ratio 与 amount 各有一小片零/缺面，本卡广度形只用 symbol 计数，
+    **不依赖 amount/ratio**，故不受该缺面影响（这是本班选票数形的一条附带好处）；
+    get_table_engine_strict=**ReplacingMergeTree** ⇒ 读数必带 FINAL。
+    (2) 右端未来解禁行数 countIf(unlock_date > today()) = **1,442**（与 06 班在册读数逐字同），
+    ①席 12 班已把该面定性为正常前瞻排期（akshare 三腿未来窗实测 66/460/4 行），非一次性导入。
+    (3) 姊妹腿原料本班一并实测：c1_market.kline_5min → count=296,690,486、
+    min(trade_time)=2021-09-01 09:35、max=2026-10-15 15:00、uniqExact(symbol)=8,710，
+    列面 12 支（trade_time, symbol, open, high, low, close, volume, amount, data_source,
+    ingest_ts, exchange, symbol_canonical）⇒ 日内冲击成本（Kyle λ）轴在本库**原料可及且史长足够**，
+    本班未物化（算力窗），转 to_impl。
+    序列读数：广度形 n=1380／span 2021-01-29..2026-10-15；breadth 分位 p10=0.02274／
+    p50=0.03752／p90=0.05241 ⇒ 常态约 2–5% 在册票在未来 30 日有解禁排期，分布很窄；
+    金额形 overhang 分位 p50=0.2646／p90=0.4467／p99=0.8999（单位＝"未来 30 日解禁市值 ÷ 一个日均成交额"）；
+    差分形 breadth_d n=1375；意外项 surp n=1131。
+  face_gap_zh: >-
+    代理落差四处：(1) 命题原义是"解禁带来的**减持**供给"，本卡用的是"**解禁排期**广度"，
+    排期≠减持（sina 那条反方证据正是此点），中间隔着股东减持意愿这一不可观测混杂；
+    (2) **披露时点无列**：本库 share_unlock 只有 unlock_date，没有"该排期何时被披露/入库"，
+    ingest_ts 是入库时间而非公告时间 ⇒ 严格 PIT（as-of 只见已披露者）在本表**不可自证**，
+    须 ① 席补 disclosure_date 腿或 ⑤ 实现时以 ingest_ts 下界近似并如实声明；
+    (3) "涉及票数（重复计数）"是广度近似：同一票在 30 日窗内多次解禁会被计多次，
+    真广度应为 uniqExact(symbol in window)（CH 侧窗口去重代价高，本班未做，⑤须定夺）；
+    (4) 制度时变：EY 2026-06 报告明示锁定期约束与减持披露规则正在收紧 ⇒ 该轴的系数不该跨期恒定，
+    ⑥/⑦ 考工若做 regime 腿须按披露规则改期分段。
+  orthogonal_gate_zh: >-
+    正交闸实跑（本班，门柱 0.3 为在册冻结值，本席未动；尺＝signal_orthogonality.py gate，
+    池＝.runtime/tmp/p04_06_pool 32 枚；闸可用性对照见卡16 同段：pool-report 复现 PR=5.3328、
+    负对照自撞 max|corr|=1.0000）：
+    unlock_ovh（金额形）→ verdict=reject max|corr|=0.3501（ti_ew_garman_klass_20_v1）；
+    unlock_z（金额形 250 日标准分）→ verdict=reject max|corr|=0.3284（ti_ew_rogers_satchell_20_v1）；
+    unlock_surp（金额形对一年中位的意外项）→ verdict=reject max|corr|=0.3347（ti_ew_rogers_satchell_20_v1）；
+    **unlock_breadth（票数广度形）→ verdict=pass max|corr|=0.1687（lu_count）rc=0**；
+    **unlock_breadth_d（广度 5 日差分形）→ verdict=pass max|corr|=0.1093（ti_ew_wt1_v1）rc=0**。
+    三枚金额系全部被**波动成员**吸走（garman_klass／rogers_satchell）＝本班对该轴的实质读数：
+    解禁市值日频序列在本库与"当天波动多大"高度共线，金额形不宜作本体的市场级代理。
+    本班自算 Spearman 互校（1131 共同日）：unlock_ovh ↔ unlock_breadth = **0.6803 ＞ 0.3** ⇒
+    金额与票数两形同轴；unlock_breadth ↔ unlock_breadth_d = 0.1501（同一对象的差分，非新对象）；
+    unlock_breadth ↔ unlock_surp = 0.1804。跨卡：amihud_disp ↔ unlock_breadth = **0.2740 ＜ 0.3**
+    ⇒ 卡16 与卡17 是**两条不同轴**，本班计产 2 轴（候选序列共 9 枚）。
+  dedupe_gate_zh: >-
+    去重闸（strategy_registry.yaml，387,739 字节／161 条目，本班逐词全册扫）：
+    「解禁」0 命中／「限售」0／「unlock」0／「restricted」0 ⇒ **存量册零同本体**（这是本班
+    对"空白轴"判定的最强命中面证据：三个词在全册正文/标签里都不出现）。
+    相邻面申报：06 班游标⑨在册的 share_unlock 是"原料齐备未做卡"，非"已有卡"；
+    本席 03 班 unlanded 卡 holder_concentration（股东户数集中度）与 top10 系列用的是
+    c3_fundamental.shareholder_count / top10_shareholders 两表，与本卡 share_unlock 不同对象、
+    不同时间语义（前者是季度存量断面，后者是前瞻流量排期）⇒ 判"相邻但不同构造"。
+    ⚠ 两闸结论不可互替（沿用 06 班游标④）：holder_concentration 从未物化 ⇒ 不在池里 ⇒ 正交闸对它失明，
+    该相邻性须 ⑨/⑥ 并员评估，本席不自证清白。
+  pool_face_note_zh: 池为市场级 32 员；本卡过闸面是"市场级前瞻广度 vs 市场级"；个股层解禁事件研究（CAR/异常量，学位论文口径）需 panel 档，本班未造，禁跨面引用
+
+self_flag:
+  - >-
+    本班首版探针按 trade_date 查本表 ⇒ Code 47（『Unknown expression ... `trade_date`』原文已取），真列名 unlock_date；该坑与在册『schema 文件名带前缀/CH 实名去前缀』同族，属本席自犯，已当场改列名复跑
+  - >-
+    本班首版右端截断自犯：曾用交易日历（只到 2026-10-15）做交易日 shift(-20) ⇒ 未来排期被日历截掉，右端供给面会被静默清零；已改为自然日窗并铺日历到 max(unlock_date)=2027-10-13（在册「静默降级与'未触发'同形」同族，此处靠把日历铺满才暴露）
+  - >-
+    金额形三枚全被拒且拒因同为波动成员 ⇒ 本卡的『过』依赖「用票数不用金额」这一选择；若 ⑥ 认为经济上必须用市值，须承认它在本池分母上是波动代理，不得既换分子口径又引用本卡的过闸结论
+  - >-
+    PIT 不可自证：本库无披露时点列，伪代码的前瞻窗只表达'解禁日在未来'，未表达'当时已被披露'（见 face_gap 第(2)条）。若按「当时未披露即不可知」的严格判据，本卡现形**尚未达可冻结标准**，须 ① 席补列或 ⑤ 用 ingest_ts 下界近似并声明
+  - >-
+    重复计数近似：广度用 rolling(30) 的日级 uniqExact(symbol) 之和，同票多笔解禁计多次；真去重版未做
+  - >-
+    方向未验：本班未做前向收益/IC 检验，logic_zh 的负向先验与'边际形强于水平形'的猜测均属申报非结论
+
+caliber_pitfall_zh: >-
+  (1) 本表日期列＝**unlock_date**（Date），无 trade_date；按文件/表名猜列必崩 Code 47；
+  (2) ReplacingMergeTree ⇒ 必 FINAL，本班 countIf/uniqExact 全部带 FINAL 跑；
+  (3) **CTE 别名会被 inject_final_strict 当表探引擎**（实测 engine_probe 空返回崩）⇒
+      走 ch_writer.query_strict 自加 FINAL，与卡16 同处方；
+  (4) 前瞻窗计算必须把自然日历铺到 max(unlock_date)，否则 shift(-30) 的右端不是 NaN 而是被截断的
+      真数值零（最危险形态＝看起来有数）；
+  (5) 分母"当日在册票数"用 kline_daily 的 uniqExact(symbol)（非流通股本口径），
+      改该分母＝改广度定义＝改读数，⑤实现须写进卡面参数；
+  (6) amount/ratio 各有约 465／1,465 行的零或缺面（30,304−29,839／30,304−30,133），
+      金额形受其影响、票数形不受；两形共线 0.6803 的这一半解释（缺面方向）未分离，⑤须查。

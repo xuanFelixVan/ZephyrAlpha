@@ -1,0 +1,188 @@
+# creation_token: st-qoder-p04-1015-07-strategy-intake | created_by: st-qoder-p04-1015-07 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-16
+title_zh: Amihud 非流动性截面离散度（高低价差之外的"流动性分层"形状）——市场级流动性结构轴，含「水平形被价格振荡成员吸收故本体取离散度」的自证分割
+mining_tower: 楼6 流动性族 ＋ ⑨席 04/09/10/11/12 班连续在册空白轴「流动性与冲击成本」（pulse/independent_signals.md 12 班节：未占/稀薄轴四条之一）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-07
+birth_batch: 20261015-p04-07
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-15 真实检索命中；未直连正文者逐条标核验面）
+source_links:
+  - role: Amihud 非流动性定义（本卡基座式的直接出处，中文业界手册）
+    url: https://www.quantfull.com/blog/liquidity-theory-and-metrics-guide
+    what_verified: >-
+      本班 WebFetch 直连正文（2026-10-15 实测，非凭记忆）取到两处字面：『Amihud ILLIQ = mean(|r|/Volume)』与文献表行『Corwin & Schultz (2012) JF｜单日与双日高低价比率联立求解价差｜仅需日 OHLC 序列即可估计有效价差。单日大涨大跌日会有向上偏误』。该页另给『流动性共同性（Chordia et al., 2000）＝各行业指数成交额同步变化率＋涨跌家数比』＝本卡为什么不走『市场级流动性水平』而改走『分层形状』的旁证。⚠ 该页无许可证声明＝思想级引用
+  - role: Amihud 比的经济学含义（英文二次源，用于交叉验证定义不是孤证）
+    url: https://medium.com/@simomenaldo/market-liquidity-c66bd2c8ca5a
+    what_verified: >-
+      WebSearch 命中正文：『The Amihud illiquidity ratio, proposed by Yakov Amihud (2002) ... defined as the absolute daily return per dollar of daily trading volume. The intuition is that in an illiquid market, even a small trading volume can cause a large price movement』＝与上一源的 mean(|r|/Volume) 逐义相符⇒本卡基座式经两处独立命中；同页亦给 Roll 度量『正协方差时该度量无定义』＝本卡在 self_flag 里登记「高低价差类估计量有定义域陷阱」的同类先例
+  - role: 代码形对照（中文实务站给的落地写法，本卡零转录）
+    url: https://blog.csdn.net/CodeVibe/article/details/155975347
+    what_verified: >-
+      WebSearch 命中正文：『Amihud比率定义为绝对收益率与成交金额的比值均值 ... df[ illiquidity ] = df[return_col]. abs () / df[ dollar_volume ]』＋『适用场景：日频或分钟级』。⚠ 该文含 R/Python 代码块＝CSDN 站无许可证声明 ⇒ 许可证闸判『只学思想不入码』，本卡伪代码由本席按本库列名自拟，零行取自该文
+  - role: 冲击成本侧的姊妹度量（本卡未取本体，仅作相邻轴登记与下一班的日内腿锚）
+    url: https://frds.io/measures/kyle_lambda/
+    what_verified: >-
+      WebSearch 命中正文：『estimate Kyle's Lambda for stock (i) as the slope coefficient in the following regression model where for the n-th five-minute period, r is the percentage stock return and S is the signed square-root dollar volume, i.e. S = Σ sign(v)·sqrt(|v|)』＋参考文献三条（Kyle 1985 Econometrica 53(6) 1315–1335／Hasbrouck 2009 JF 64(3) 1445–1477／Goyenko-Holden-Trzcinka 2009 JFE 92(2)）。＝冲击成本轴的口径与文献锚齐备，本卡未用（日内腿见 to_impl 本批段，原料本班已实测可及）
+  - role: 冲击成本工程口径（平方根律与 Kyle 线性在不同尺度成立，本卡的"为何不取金额形"旁证）
+    url: https://quant67.com/post/quant/18-execution-cost/18-execution-cost.html
+    what_verified: >-
+      WebSearch 命中正文：『极短时间（秒级以内）Kyle 线性是合理近似；中等时间（分钟到小时）平方根律是更好的拟合，因为限价簿深度被翻新，冲击的边际成本随累计量减小；长时间（日级别以上）永久冲击近似线性』＋『Hasbrouck (1991) VAR 框架：把签名量与 mid 收益拟合二变量 VAR，永久部分对累计签名量的偏导即 λ』⇒ 本卡据此把「日频金额比」读成永久冲击近似线性代理，并在 caliber_pitfall 里声明窗长敏感
+  - role: 订单簿/微结构族的度量选型总表（本卡定位用，非本体出处）
+    url: https://quant67.com/post/quant/03-microstructure/03-microstructure.html
+    what_verified: >-
+      WebSearch 命中正文含桶化 Kyle λ 的 polars 写法与价差/流动性/冲击分节。⚠ 同许可证闸判『不入码』；本席只取该文的分节口径确认『价差／冲击／深度』是三条可分腿，用于本卡与楼1 既有卡的边界申报
+  - role: arXiv 面真实命中（本班 API 直查，正/负对照齐）
+    url: http://arxiv.org/abs/2609.00943v1
+    what_verified: >-
+      arXiv API（https export 端点，注意 http 返回 301 须跟转）查询 all:illiquidity、sortBy=submittedDate 降序 ⇒ entries=3，首条即本篇『Illiquidity at Risk』（published 2026-09-01T09:04:42Z）。同批正对照＝该查询本身有 3 条命中；负对照＝all:%22lockup+expiration%22 返回 http=200 且 entries=0（真零命中，非通道坏，通道坏形态是 301／bytes=0）。本席只登记命中事实，未读全文＝标题级引用
+  - role: 同一 arXiv 查询的第二/第三条命中（非流动资产定价侧，本卡未取）
+    url: http://arxiv.org/abs/2607.19030v1
+    what_verified: >-
+      同批查询第 3 条：『Pricing options on illiquid assets using liquid market benchmarks: an application to energy markets』（published 2026-07-21T12:17:59Z）；第 2 条 2608.10711v1 为 SOFR 衍生品定价，与本轴无关故不列为依据。本席未读全文＝标题级引用
+  - role: GitHub 面命中实况（许可证闸样本，本班零取码）
+    url: https://github.com/mariasfondrini/etf-liquidity-lab
+    what_verified: >-
+      gh api search/repositories（q=corwin-schultz spread，per_page=8）total_count=5，五条逐件读数＝本篇 MIT／pushed_at=2026-08-10／stars=0；jaimecrz3/daily-ohlc-spread-estimators license=null(NONE)／pushed_at=2026-10-13／stars=0；francescopionatale/slippage-predictor MIT／2026-06-02／stars=0；ioannisrpt/Corwin_Schultz_2012 null／2022-12-09／stars=3；PatelRudrani/Liquidity-Measures-Volatility-Prediction-Project null／2026-08-18／stars=1。⇒ 三筛实跑＝活跃度面两枚 2026 年内有 push、许可证面 2 MIT＋3 无声明、**star 面全员 ≤3 ⇒ 无一通过「高星成熟仓」筛**，本班如实记该轮 GitHub 面只有思想级素材，无可用参考实现
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: >-
+    本轮 GitHub 5 枚命中＝MIT 2／无许可证声明 3（NOASSERTION 或 null）；无 GPL；另有 Medium／CSDN／quantfull／quant67 四类中文与英文站点，全部无代码许可证声明
+  gate_verdict: 通过（零可复制代码：伪代码由本席按本库列名自拟；基座式 mean(|r|/Volume) 属公开数学定义，不构成代码著作权客体）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；实现走 C3 翻译适配重实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机＝⑨席连续五班在册空白轴「流动性与冲击成本」在本库零出分。本班先按最直读的做法造了两枚市场级
+  水平序列（全体个股 |r|/成交额 的截面均值、截面中位），**正交闸实测双双被拒**（0.6003 撞
+  ti_ew_rmi_14_v1、0.6271 撞 ti_ew_ppo_v1，两者都是价格振荡类指标），这个结果本身就是读数：
+  **日频"流动性水平"在池内分母上被"价格动了多少"吸走了**，因为 Amihud 的分子 |r| 就是价格变动，
+  市场级取均值后主要剩下"当天大家跌/涨多少"，与 RMI／PPO 高度共线（本班自算
+  amihud_level ↔ amihud_disp = 0.5431 ＞ 0.3，两形同轴）。
+  本卡的本体因此**不是流动性松紧的水平，而是流动性的分层形状**：
+  同日截面上 p90(illiq) 与 p10(illiq) 之差除以 p5(illiq) 中位（记 disp=(P90−P10)/P50），
+  读的是"这个市场里最差的一档股票相对中位档，把一块钱成交打成多大价格"的**倍数**。
+  经济命题（待 ⑥ 预注册冻结方向，本席不代裁）＝ 流动性分层扩散（disp 走高）＝
+  同质性破裂、弱势票开始靠自身极薄的成交额定价 ⇒ 对后续市场级收益是**负向**（脆弱期），
+  而 disp 收敛＝流动性结构齐整 ⇒ 中性偏正。方向之所以只作申报不作结论：本班**未做前向收益检验**，
+  只做了轴合法性（正交）与可复现性（供数面）两段。
+  与相邻卡的边界＝楼1 卡族（ofi_l1／queue_imbalance／imbalance_microprice）用的是盘口挂单侧信息，
+  本卡只用日线 OHLC＋成交额（无需盘口）；本席 03 班 unlanded 卡 cs_spread 走"价差"、
+  turnover_premium 走"换手"，与本卡"非流动性截面的离散度"是不同构造对象——
+  但**该两条同席旧卡从未物化进池，正交闸对它们失明**，故相邻性只能由 ⑨/⑥ 并员评估，本席不自证清白。
+
+# ── 必备④ 伪代码（本席自拟，零外部转录；列名均为本班 DESCRIBE 实测名）
+pseudocode: |
+  # 本体：Amihud 非流动性的"截面离散度"，市场级日频序列（date, sig）
+  # 关键坑：query_rows 会跑 inject_final_strict，把 CTE 别名当表去探引擎 ⇒ 崩
+  #         （实测 engine_probe: 空返回）；正解＝ch_writer.query_strict + 自加显式 FINAL
+  START = '2021-01-01'          # 算力窗：与池内 n_common_dates=1472 同量级，不整档拉 2019 起
+  sql = """
+    WITH b AS (
+      SELECT trade_date, symbol, close, amount,
+             lagInFrame(close, 1) OVER w AS c1
+      FROM c1_market.kline_daily FINAL            -- ReplacingMergeTree，FINAL 必显式
+      WHERE trade_date >= {START} AND amount > 0 AND close > 0
+      WINDOW w AS (PARTITION BY symbol ORDER BY trade_date)
+    ), x AS (                                     -- 逐票日非流动性（成交额单位=元，故乘 1e-8 定标）
+      SELECT trade_date, abs(ln(close / c1)) / (amount * 1e-8) AS illiq
+      FROM b
+      WHERE c1 > 0 AND isFinite(abs(ln(close / c1)) / (amount * 1e-8)) = 1
+    )
+    SELECT trade_date AS date,
+           quantile(0.9)(illiq) AS p90, quantile(0.5)(illiq) AS p50,
+           quantile(0.1)(illiq) AS p10, count() AS n
+    FROM x GROUP BY trade_date HAVING n >= 500 ORDER BY trade_date
+  """
+  d = query_strict(sql)
+  sig = (p90 - p10) / p50                          # 本体＝离散度（倍数），非水平
+  # 派生形（同轴，计产不另计）：z250 标准分、mom20 动量、med 水平中位
+  # 前向检验不在本席写域：交给 ⑤ 实现＋⑥ 制卡冻结＋⑦ 考工；本席只交 (date, sig)
+  # 纪律：禁用 pct_change 现成列替代 ln(close/c1)（在册 修⑪／①席死列单在案），
+  #       禁用 amount 的聚合口径（在册 RULE-DATA-OPS：判重与分母用逐票面，不聚合先）
+
+# ── 必备⑤ 数据源映射
+data_binding:
+  primary_source: c1_market.kline_daily
+  sl_ref: SL-MARKET-KLINE-DAILY（个股日线，非后复权面；本卡只需 high/low 之外列＝trade_date, symbol, close, amount）
+  measured_face_zh: >-
+    本班实测（TCP 面，新进程只读，探针 .runtime/tmp/p04_07_probe/build4.py 可原样复跑）：
+    c1_market.kline_daily → count=11,697,670、min(trade_date)=1990-12-19、max=2026-10-15、
+    uniqExact(symbol)=5922；DESCRIBE 列面 19 支＝trade_date, symbol, open, high, low, close, volume,
+    amount, amplitude, pct_change, change, turnover, adj_factor, market_type, data_source,
+    quality_flag, ingest_ts, exchange, symbol_canonical；get_table_engine_strict=**ReplacingMergeTree**
+    ⇒ 读数必带 FINAL。同批对照 c1_market.kline_daily_hfq → 10,128,069 行／5919 票（本卡未用，
+    因离散度是截面比值，复权口径不改变截面排序，故走未复权原表面，代价见 caliber_pitfall 第(2)条）。
+    离散度序列本班物化 n=1398（2021-01-05..2026-10-15）；disp 分位 p10=3.7654 p50=4.5114 p90=5.4216
+    ⇒ 分布**很窄**（p90/p10=1.44），与水平形的极端重尾形成对照（下表）。
+    对照读数（同一段 CH 聚合，同一 HAVING n>=500）：
+    截面均值形 mean p10=0.0169／p50=0.0714／p90=20.0849 ⇒ p90/p50=**281 倍**＝离群主导，
+    该形即使过闸也是"少数极薄成交额票的乘积"，本班据此**主动弃用均值形**（在册
+    「边际均值构成不平衡伪影」同族红旗）；截面中位形 med p10=0.00804／p50=0.01542／p90=0.02989
+    ⇒ p90/p50=1.94，稳健但被闸拒（0.6003）。
+  face_gap_zh: >-
+    代理落差三处：(1) 命题原义是"流动性"，本卡用的是 Amihud 的**价格冲击截面离散度**，
+    属"实测冲击"代理，不含订单簿深度／价差的直接信息（楼1 三卡才碰那些面）；
+    (2) 本卡是**市场级聚合**，而 Amihud 的原始用法是个股横截面排序选股——本卡只声明该轴在
+    市场级可算、闸可过，个股面板档（panel）需 ⑤/⑥ 另物化，禁把市场级读数当截面证据引用；
+    (3) 未复权 close 在有分红／送股的除权日会产生一根假 |r| 跳（amount 同步跳），
+    该噪声进入 illiq 的分母与分子，方向未知，须由 ⑤ 实现时换 hfq 面做一次同底对照。
+  orthogonal_gate_zh: >-
+    正交闸实跑（本班，门柱 0.3 为在册冻结值，本席未动；尺＝scripts/backtest/fexam/signal_orthogonality.py
+    gate，池＝.runtime/tmp/p04_06_pool 32 枚）：
+    闸可用性两对照＝pool-report 复现 n_members=32／n_common_dates=1472／effective_n_signals(PR)=5.3328
+    （与 06 班在册读数**逐字同**）；负对照＝拿池内成员 lu_count.csv 当候选喂进闸 ⇒
+    verdict=reject max|corr|=1.0000 rc=5 ⇒ 该闸能判出"自己撞自己"，非恒绿瞎尺。
+    四形实跑读数（全部 rc 逐条 echo 取得，未套管道）：
+    amihud_med（截面中位水平形）→ verdict=reject max|corr|=0.6003（most_similar=ti_ew_rmi_14_v1）；
+    amihud_medz（250 日标准分形）→ verdict=reject max|corr|=0.6271（ti_ew_ppo_v1）；
+    amihud_level（截面均值水平形，离群主导）→ 未单跑闸，本班先在面判弃用；
+    **amihud_disp（截面离散度形）→ verdict=pass max|corr|=0.2815（ti_ew_natr_14_v1）rc=0**；
+    amihud_dispz（离散度标准分形）→ verdict=reject max|corr|=0.3018（ti_ew_histvol_20_v1，超柱 0.0018）。
+    本班自算 Spearman 互校（1131 共同日）：amihud_disp ↔ amihud_level = 0.5431 ＞ 0.3 ⇒
+    水平与离散度两形**不是**两条轴；amihud_disp ↔ amihud_dispz = 0.7934 ＞ 0.3 ⇒ 同一读数的标准化，
+    **计产按 1 轴**（SOP v1.4.0 正交计量制：按轴不按序列）。
+  dedupe_gate_zh: >-
+    去重闸（存量册 docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml，
+    387,739 字节／161 条目，本班逐词全册扫）：
+    「Amihud」0 命中／「amihud」0／「非流动性」0／「Kyle」0／「lambda」0／「Corwin」0／
+    「价差」0／「spread」0／「换手」12 命中（line 4029、4095、8432、8498、8752、8818 …全部为
+    tags 或 entry_logic 里的配料项）／「流动性」13 命中（line 12 词表行、1934、2508、2574、3134、
+    3949、4015、4029、4095、5791、5857、11329、11395）⇒ 逐条读过：全部是 tags 或"日成交<2亿剔除"
+    "流动性过滤"这类**过滤条件/配料表点名**，无一条以流动性测度为本体构造 ⇒ 判「**存量册无同本体**」。
+    ⚠ 谓词白名单自证：「impact」161 命中与「turnover」162 命中经逐行核对＝字段名
+    （line 97 market_impact_model: str 的 schema 注释行按条目重复出现；line 105 turnover: float 同），
+    **不是策略名命中**，本班按在册纪律把该两词从命中面剔除（谓词过宽＝假扩，计数须全路径相等）。
+    ⚠ 两闸结论不可互替（沿用 06 班游标④）：正交闸只对池内 32 员负责，本席同族 unlanded 旧卡
+    cs_spread／turnover_premium 从未物化 ⇒ 不在池里 ⇒ 正交闸对它们失明；相邻性评估归 ⑨/⑥。
+  pool_face_note_zh: 池为市场级 32 员（涨跌停/宽度/技术指标均值族，均源自 nightmine_20261010/series 重建）⇒ 本卡过闸面是"市场级 vs 市场级"，与个股横截面面板档不同分母，引用者勿跨面读数
+
+self_flag:
+  - >-
+    贴柱：0.2815 距门柱 0.3 仅余量 0.0185（比 06 班 slope_5_60 的 0.0229 更窄）⇒ ⑥ 制卡前须换窗/换面复核一次，禁按『已过闸』直接进考试
+  - >-
+    同一族内 dispz 仅超柱 0.0018 即被拒 ⇒ 本卡的『过』是窗长与聚合口径敏感的结果，不是命题强度；0.0018 这种量级差按在册纪律属测量伪影红旗
+  - >-
+    方向未验：本班只跑正交闸与供数面，**未做任何前向收益/IC 检验**；logic_zh 里的负向预期是先验申报，禁被读成已证
+  - >-
+    个股截面面板档（panel）本班未造 ⇒ 本卡只声明市场级可算；把它当选股信号引用属越面
+  - >-
+    均值形 p90/p50=281 倍是本班自算面，弃用理由写在面里而非闸里；若下一班要复活均值形，须先解离群（如 winsorize）再闸
+  - >-
+    GitHub 三筛本轮无一枚过 star 筛（全员 ≤3 星）⇒ 本卡无外部参考实现可对照，伪代码正确性只由本班的 CH 读数自证
+
+caliber_pitfall_zh: >-
+  (1) **CTE 别名会被 FINAL 注入器当表探测**：query_rows 内部 inject_final_strict 对 FROM 后每个
+  token 调 get_table_engine_strict，本班 WITH ... AS (b/s/e/sp/x/i) 直接崩
+  『engine_probe: 空返回（未知引擎）』（GATE-P0-ENGINE-PROBE 亦打警"空返回与'表不存在'不可分"）。
+  正解＝zephyr.data.ch_writer.query_strict(自写 FINAL)，本卡伪代码已按该形写死；
+  (2) kline_daily 是 ReplacingMergeTree ⇒ 不带 FINAL 的 count/分位数会虚高（在册判据），
+  但带 FINAL 后聚合代价上升，本班把窗口收到 2021-01-01 起以换算力；
+  (3) amount 单位＝元，illiq 原始量级 1e-9 ⇒ 定标乘 1e8/1e-8 只影响可读性不影响 Spearman 闸；
+  (4) abs(ln(close/c1)) 自算收益**不可**换成现成 pct_change 列（在册 修⑪／①席死列单）；
+  (5) HAVING n>=500 是本班自选的最小截面门，改该门＝改截面宇宙＝改读数，⑤实现须把该门写进卡面参数；
+  (6) 未复权 close 的除权跳与 amount 同步跳会进 illiq 两头，方向未量，换 hfq 面的同底对照属本班遗留欠账。
