@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.backfill_checker; zephyr.backtest.core.data_handler
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 对 ReplacingMergeTree 表自动注入 FINAL 关键字（引擎未知时：inject_final 保守不注入但必发 GATE-P0-ENGINE-PROBE 告警；inject_final_strict/query_rows/count_strict 则直接抛，2026-10-09 治本）; 不执行写入操作; 纯读取层; 严格读通道（query_rows/count_strict/inject_final_strict）失败必抛且仅允许只读语句
+# [INVARIANTS] 对 ReplacingMergeTree 表自动注入 FINAL 关键字（引擎未知时：inject_final 保守不注入但必发 GATE-P0-ENGINE-PROBE 告警；inject_final_strict/query_rows/count_strict 则直接抛，2026-10-09 治本）; FROM 位的 CTE 别名（`<name> AS (` 形）永不送引擎探测——否则合法只读 WITH 查询在严格面必抛、legacy 面刷假未知计数（2026-10-15 ⑤席治本）; 不执行写入操作; 纯读取层; 严格读通道（query_rows/count_strict/inject_final_strict）失败必抛且仅允许只读语句
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -61,10 +61,23 @@ log = logging.getLogger(__name__)
 # FROM 子句表名匹配模式
 # 支持: FROM table, FROM db.table, FROM `table`, FROM `db`.`table`
 _FROM_PATTERN = re.compile(r"\bFROM\s+`?(?P<table>\w+(?:\.\w+)?)`?", re.IGNORECASE)
+# CTE 定义名形如 `<name> AS (`：它出现在 FROM 位时是查询内的临时结果集，不是物理表。
+_CTE_ALIAS_PATTERN = re.compile(r"\b([A-Za-z_]\w*)\s+AS\s*\(", re.IGNORECASE)
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
 _SQL_COUNT = "SELECT count() FROM {table}{final}"
 _SQL_SELECT = "SELECT {columns} FROM {table}{final}"
+
+
+def _cte_aliases(sql: str) -> set[str]:
+    """查询内 CTE 名集合（小写）。
+
+    病根（⑤席 2026-10-15 治本，⑩派单 §3-C）：`_FROM_PATTERN` 只看 FROM 位，把
+    `WITH px AS (SELECT … FROM t) SELECT … FROM px` 的 `px` 当表去探引擎 ⇒
+    `inject_final_strict`/`query_rows` 对**合法只读 SQL** 必抛 engine_probe，
+    而 legacy `inject_final` 会给不存在的表刷 `GATE-P0-ENGINE-PROBE` 假未知计数。
+    """
+    return {m.group(1).lower() for m in _CTE_ALIAS_PATTERN.finditer(sql)}
 
 
 def inject_final(sql: str) -> str:
@@ -89,10 +102,15 @@ def inject_final(sql: str) -> str:
     if re.search(r"\bFINAL\b", sql, re.IGNORECASE):
         return sql
 
+    aliases = _cte_aliases(sql)
+
     def _replace(match: re.Match) -> str:
         table = match.group("table")
         # 跳过 system.* 表
         if table.startswith("system."):
+            return match.group(0)
+        # 跳过 CTE 别名（非物理表，探它＝刷假未知计数）
+        if table.lower() in aliases:
             return match.group(0)
         try:
             engine = ch_writer.get_table_engine(table)
@@ -259,13 +277,20 @@ def _final_suffix_strict(table: str) -> str:
 
 
 def inject_final_strict(sql: str) -> str:
-    """`inject_final` 的严格版：引擎探测失败 ⇒ raise，而不是静默降级为非 FINAL 查询。"""
+    """`inject_final` 的严格版：引擎探测失败 ⇒ raise，而不是静默降级为非 FINAL 查询。
+
+    CTE 别名不参与引擎探测（否则合法只读 `WITH … AS ( … )` 必抛 engine_probe）。
+    """
     if re.search(r"\bFINAL\b", sql, re.IGNORECASE):
         return sql
+
+    aliases = _cte_aliases(sql)
 
     def _replace(match: re.Match) -> str:
         table = match.group("table")
         if table.startswith("system."):
+            return match.group(0)
+        if table.lower() in aliases:
             return match.group(0)
         if _final_suffix_strict(table):
             return f"FROM {table} FINAL"

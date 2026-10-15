@@ -11,6 +11,8 @@
 #   2. 双链路全失败必抛 ClickHouseQueryError（attempts 逐路径可溯源），"查询失败"与"真 0 行"两态可分；
 #   3. count_strict：形状异常/非整数必抛，[(0,)]＝确证空表返回 0；引擎探测失败必抛；
 #   4. 存量静默契约不回退：ch_reader.query()/count() 失败仍返回 ""/0（存量 12+ 消费者零迁移）。
+#   5. FROM 位的 CTE 别名（`<name> AS (` 形）不送引擎探测：严格面对合法只读 WITH 查询必抛＝缺陷，
+#      legacy 面给不存在的表刷 GATE-P0-ENGINE-PROBE 假未知计数＝同一缺陷的另一面（2026-10-15 ⑤席治本）。
 """W-180.1 CH 严格读通道契约测试（query_strict/count_strict/inject_final_strict/query_rows）。"""
 
 from __future__ import annotations
@@ -394,3 +396,73 @@ class TestLegacyCountLoudWarning:
         assert " FINAL" in seen[0]
         assert not [r for r in caplog.records if "GATE-P0-ENGINE-PROBE" in r.getMessage()]
         assert self._T not in ch_writer.engine_probe_failures
+
+
+# ============== FROM 位的 CTE 别名不是物理表（⑤席 2026-10-15 治本） ==============
+
+
+class TestCteAliasNotProbed:
+    """`WITH px AS (…) SELECT … FROM px` 里的 `px` 是查询内结果集，不是表。
+
+    缺陷形制（改前主区真 CH 实测复现）：`_FROM_PATTERN` 只看 FROM 位，对 `px` 也发引擎探测
+    ⇒ 严格面（`inject_final_strict`/`query_rows`）对**合法只读 SQL** 必抛 `engine_probe`，
+    legacy 面（`inject_final`）不抛但给不存在的表刷 GATE-P0-ENGINE-PROBE 假未知计数。
+    本组全 fake，零网络/零真实 CH。
+    """
+
+    _CTE_ONE = "WITH px AS (SELECT symbol FROM c1_market.kline_daily) SELECT count() FROM px"
+    _CTE_CHAIN = "WITH a AS (SELECT 1 AS x FROM c1_market.kline_daily), b AS (SELECT x FROM a) SELECT count() FROM b"
+
+    @staticmethod
+    def _probe_real_tables_only(table: str) -> str:
+        """模拟真 CH：库限定的物理表给引擎；裸别名（CTE/子查询名）探测为空＝未知。"""
+        return "" if "." not in table else "ReplacingMergeTree"
+
+    def test_strict_cte_block_does_not_raise(self, monkeypatch):
+        monkeypatch.setattr(ch_writer, "get_table_engine", self._probe_real_tables_only)
+        out = ch_reader.inject_final_strict(self._CTE_ONE)
+        assert out.endswith("SELECT count() FROM px"), "给 CTE 别名注入 FINAL ⇒ 生成的 SQL 必报错"
+        assert "FROM c1_market.kline_daily FINAL" in out, "CTE 体内的真表仍须注入 FINAL"
+
+    def test_strict_multi_cte_chain_does_not_raise(self, monkeypatch):
+        """链式 CTE：第二个 CTE 读第一个的别名，同样不是表。"""
+        monkeypatch.setattr(ch_writer, "get_table_engine", self._probe_real_tables_only)
+        out = ch_reader.inject_final_strict(self._CTE_CHAIN)
+        assert "FROM c1_market.kline_daily FINAL" in out
+        assert "SELECT x FROM a" in out and "FROM a FINAL" not in out
+        assert out.endswith("SELECT count() FROM b") and "FROM b FINAL" not in out
+
+    def test_alias_never_reaches_engine_probe(self, monkeypatch):
+        """采集面断言（防"过度跳过"与"漏治"两向）：只有物理表被探一次。"""
+        probed: list[str] = []
+
+        def spy(table: str) -> str:
+            probed.append(table)
+            return self._probe_real_tables_only(table)
+
+        monkeypatch.setattr(ch_writer, "get_table_engine", spy)
+        ch_reader.inject_final_strict(self._CTE_CHAIN)
+        assert probed == ["c1_market.kline_daily"], f"探针采集面失真：{probed}"
+
+    def test_legacy_inject_final_stops_bogus_alarm_but_keeps_real_one(self, monkeypatch, caplog):
+        """legacy 返回值语义零改动（别名照旧不注入），但假未知告警必须停、真表告警不许一起哑掉。"""
+        monkeypatch.setattr(ch_writer, "get_table_engine", lambda table: "")
+        caplog.set_level("WARNING", logger="zephyr.data.ch_reader")
+        out = ch_reader.inject_final(self._CTE_ONE)
+        assert " FROM px FINAL" not in out
+        alarms = [r.getMessage() for r in caplog.records if "GATE-P0-ENGINE-PROBE" in r.getMessage()]
+        assert not [m for m in alarms if "px" in m], "别名被当真表报警＝假未知计数面未治"
+        assert any("c1_market.kline_daily" in m for m in alarms), "真表引擎未知必须仍响亮"
+
+    def test_query_rows_consumer_accepts_cte(self, monkeypatch):
+        """消费者腿（④/③席 mining 侧真用路）：query_rows 不再对 WITH…AS 抛。"""
+        monkeypatch.setattr(ch_writer, "get_table_engine", self._probe_real_tables_only)
+        seen: dict[str, str] = {}
+
+        def fake_query_strict(sql, timeout=600):
+            seen["sql"] = sql
+            return [("1",)]
+
+        monkeypatch.setattr(ch_writer, "query_strict", fake_query_strict)
+        assert ch_reader.query_rows(self._CTE_ONE) == [("1",)]
+        assert "FROM c1_market.kline_daily FINAL" in seen["sql"]
