@@ -548,3 +548,81 @@ WHOLE [(21792, datetime.date(2005, 1, 4), datetime.date(2026, 10, 14))]
 ⚑**降级直改主区投袋原因登记（RULE-WORKTREE 显式申请制留痕）**：本班 DB 写与 CH 取证只能在宿主侧跑（CH 访问口在宿主），且产物只有本席两件活文档；同型判例＝1015-01..06 六班同路。
 
 `P02-1015-07-ENDSTATE`（本班终态独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1015-07-ENDSTATE"`）
+
+---
+
+## 2026-10-15 18:1x · st-qoder-p02-1015-08 · **B-23 `block_trade_detail` 深史回补 174,834 行（左端 2026-08-03 → 2010-01-04）**＋逐笔面键塌缩新雷＋`*_full_refresh` 族月初闸根因定位
+
+### 建设单接收判定（工序 1）
+
+`to_builder.md` 本班实测 **351 行、工作区面 clean**（①席 1015-12 批已落地）。新到两张 **B-23／B-24** 均带「续供确认」四问栏 ⇒ **不拒收**。旧 B-1..B-16 缺栏事实沿用 1015-06 判定（不追溯拒收）。
+
+### 件①＝B-23 落地：`c1_market.block_trade_detail` 深史 174,834 行（本班保底件，已写库并逐位验收）
+
+选路证据（三闸同班量清后才动手）：
+
+- **通道＝在产腿同一条**：`ak.stock_dzjy_mrtj(start_date,end_date)`，在册 `tasks.yaml:1739 block_trade_detail_incremental`（`source: akshare`／`schedule: daily_capital`／`incremental: true`／`date_col: trade_date`）＋`tasks.yaml:2589 block_trade_detail_full_refresh`。CH 侧真跑证据＝`data_source='akshare'` 的 `max(ingest_ts)=2026-10-15 10:00:24 UTC＝本地 18:00 槽位`，且**本班会话期间该表 raw 1,959→2,047 行在涨**＝腿正跑（1015-06/07 立的那把尺，第四次生效）。
+- **不洗地判据**＝表是 `ReplacingMergeTree ORDER BY (trade_date, symbol)`，去重只按键；本班写集右界 **2026-07-31**、现表左界 **2026-08-03**（中间只隔一个周末：08-01=周六、08-02=周日、08-03=周一，已 `strftime('%A')` 实测）⇒ **键重叠实测 0**，腿与本班永不见面。与 B-18「compute 腿日频全史重灌⇒必被更高 `ingest_ts` 的 None 行洗掉」是判据的两侧，勿套用。另 `_cleanup_for_idempotency`（`scheduler.py:2366`）对 Replacing 引擎直接 return ⇒ 不存在幂等 DELETE 误删。
+- **解析单一真源**＝本班不自写映射，直接 import 在产腿的 `AkshareIngestProvider._parse_block_trade_detail_row`（`akshare_provider.py:6573`），列清单一字照抄腿的 7 列，`data_source` 显式写 `'akshare'`（＝表列 DEFAULT 同值，不新造词表），`ingest_ts` 交 DEFAULT `now()` 让回退谓词量到真实写时。`exchange`／`symbol_canonical` 系 MATERIALIZED（TRAE-082）＝本班不写、不越权。
+
+采集与入库实跑读数：
+
+- 源侧 **202 次调用／250.5 秒／cap_hit=0／同键异值冲突=0**。自适应尺＝**恰 5,000 即二分重取**（B-16 在册处方）；本班按月切片 200 窗全部 <5,000（对照＝整年窗 2015／2019 实测**恰 5,000＝已截断**，全年真值 7,002／9,030 行由月窗取回）⇒ **月窗对该源够用，但年窗会静默少给，勿改回**。
+- 采集面 **174,834 唯一键／5,127 只票／`trade_date` 空值 0／`price`·`volume`·`amount` None 0**。基底件 `.runtime/tmp/p02_b23_rows_1015_08.tsv.gz`（未压缩 6,380,669 B，**sha16 `6e0ea3fec9992ab0`**）＝唯一对拍基底。
+- 写集 TSV 7,779,341 B，**sha16 `8e093716bc3aac47`**；**17 个按年块**全 `disposition=ch_committed detail=http`（最大块 2022＝19,634 行／≤12 分区，在册 `Too many partitions >100` 死因规避）。W0(UTC)=`2026-10-15T10:10:53`。
+- **回退谓词** `ALTER TABLE c1_market.block_trade_detail DELETE WHERE trade_date <= '2026-07-31' AND ingest_ts >= '2026-10-15 10:10:53'`：写前实测 **0 行**、写后**恰 174,834 行**＝精确等本班插入集（**未执行**）。
+- 终验：**missing=0／dup 键组=0／value-mismatch=0**（`volume` 逐位等=True、`price` 4dp 截断逐位等=True）。表 FINAL 1,925 → **176,759**，span `2010-01-04 .. 2026-10-15`，`uniqExact(symbol)` **5,157**。按年＝2010:1,441／2013:5,870／2015:7,002／2019:9,030／2021:18,393／2022:19,634／2023:19,419／2026(至07-31):7,931。
+- 正／负对照：负对照＝键移位配对 174,830/174,833 判失配（尺能分辨）；正对照＝把右界从 `2026-07-31` 放宽到 `2026-10-15` 读数由 174,834→176,759（尺不是常量）。
+- 左界探针（只登记可得性，不扩范围，按工序 5）：`2000 窗=1 行(2000-08-29)／2005 窗=43 行／2008 窗=881 行`⇒ 源侧 2000 起即在但极稀，卡面目标 2010-01-04 已达成；更深属下班可选扩面，本班不自扩。
+
+### 件②＝B-23 两笔定标（①席转②的两项，本班给出机制级结论）
+
+**(a) 同物异单位 10^4＝本班独立放大样本复现，不再依赖三票抽样。** 重叠段（`trade_date>='2026-08-03'`）两表键级对拍：`block_trade` FINAL 1,753 键／`block_trade_detail` FINAL 1,925 键／交集 **1,753**（逐笔面的键全部被聚合面覆盖，`bt_only=0`）；按 `detail × 10^4` 折算后 **等值 1,154 键**（容差 0.5 元）、`bt` 少记 **585 键**、`bt` 多记 14 键。金额合计 bt=28,159,801,040 元 vs detail 折元 55,932,468,500（比值 **1.9863**），成交量合计比值 **2.0593**。样例复现①席那笔并独立扩样：000656 在 2026-10-14 bt=(1.03 元, 300 万股, 309 万元) vs detail=(3,550 万股, 3,656.5 万元)＝源侧 6 笔只剩 1 笔；001255 在 2026-10-13 bt=(24.39, 9 万股, 219.51 万元) vs detail=(18 万股, 439.02 万元)＝正好 2 笔。⇒ **①席"同物异单位 10^4"判据在 1,753 键样本上成立**，④席"两表不同源"确属口径误读。
+**(b) 195 行 `amount ≠ price × volume` 的因＝`akshare_provider.py:6577` 的 `int(vol)` 把万股直接截断（非四舍五入），<1 万股归零。** 证据链：源侧 `成交总量` 单位＝万股且带小数（样例 27,265.53／234.0329），列类型 `UInt64` 存不下小数；回补前现表 1,925 FINAL 行中 `abs(amount − price×volume) > 0.01` 的有 **1,004 行（52.2%）**、`volume=0` 的 **17 行**；源侧 `成交总额` 有 >2 位小数的行 14,134 行，而 CH 对 `Decimal(18,2)` 入列实测**做截断（ROUND_DOWN）而非四舍五入**（`6557.185346→6557.18`、`628.918195→628.91`、`1871.1186→1871.11`）。回补后全表 176,759 行：>0.01 元档 **77,319（43.7%）**／相对 >5% 档 **10,243（5.8%）**／`volume=0` **622 行**。⇒ **定标结论＝`amount` 与 `price` 都是源侧原值，只有 `volume` 被降精度；下游禁再用 `price × volume` 反推金额，要直取 `amount`**（楼8 折价轴若用反推值会系统性偏大）。列注释/数据资产册的写入属⑤/册面，本席不改他人册。
+**⚑本班自犯一枚（留上不改）**：首版验收尺拿 Python `round(x, 2)`（半偶舍入）对 CH 的 ROUND_DOWN 截断 ⇒ 报出 `mismatch=7,068` 假失配。正解＝比对两列都按**列精度同向截断**，改尺后 `mismatch=0`。处方写进 §坑：**Decimal 列的逐位对拍必须显式指定舍入方向并与服务端一致，`round()` 不是中性尺。**
+
+### 件③＝新发缺陷（键级，修法＝改表 ⇒ 属⑤/Owner 门，本席不重建表、不落 B-23 的逐笔面）
+
+`c1_market.block_trade` = **`ReplacingMergeTree`（无版本列）`ORDER BY (trade_date, symbol)`**，而该表语义是**逐笔**（含买方/卖方营业部）。同票同日多笔 ⇒ **排序键把 N 笔静默塌成 1 笔**。盘面三把尺同向：①回补前实测 raw 1,738 vs FINAL 1,706（32 键组已塌），本班会话中 raw 涨到 1,826；②件②(a) 的聚合面对照——585/1,753 键（33.4%）逐笔面金额**小于**聚合面，金额合计只有聚合面的 **50.4%**；③两笔可复现单例（000656 六笔剩一笔、001255 两笔剩一笔）。后果＝**B-23 卡的"逐笔面深史回补"在现表形制下做了也是白做**（回进去照样塌），故本班只落聚合面并在此登记前置。处方给⑤：`block_trade` 加笔次身份（如 `deal_no`／营业部码入键，或换 `ORDER BY (trade_date, symbol, buyer, seller)`＋版本列）后，逐笔深史走 `ak.stock_dzjy_mrmx` 或 tushare `pro.block_trade` 按日循环；**改表属 Owner 门（数据表结构＋历史洗换）**，本席不代裁。
+附带一条在册形态复证：该表存量行 `data_source` 全 = **`ifind`**，而在册 `tasks.yaml:118 block_trade_incremental` 写的是 `source: akshare`（`stock_dzjy_mrmx`）⇒ **"调度在册"不等于"该腿是写者"**，与 B-19 的 miniqmt-vs-bdpan 同型；①席"现表写者＝ifind"那句对 `block_trade` 成立，但对 `block_trade_detail` 不成立（该表写者就是 akshare 腿，本班实测）。
+
+### 件④＝新发缺陷（一行码，波及整个 `*_full_refresh` 族；修法属⑤）
+
+`scheduler.py:2320 _compute_start_date`：`if incremental and last_key: return last_key` 之后**无条件 `return today.replace(day=1)`** ⇒ 凡 `incremental: false` 的全量任务起点恒等于**本月 1 号**。这正是 `block_trade_detail_full_refresh`（tasks.yaml:2589，description 自陈"5 年历史回补"）跑不出深史的根因——腿天天在跑、永远够不着月初以前（与 B-22 央行族 `akshare_provider.py:1556 df.tail(12)` 打在倒序帧上＝"活着但不续深史"同型盲区，只是这一处在**调度层**不是 provider 层）。同类受害者按 tasks.yaml 实测至少含 `limit_up_down_full_refresh:2601`／`etf_nav_full_refresh:2612`／`technical_indicator_full_refresh` 等全部 `weekend_calibration` 条目。处方给⑤（勿扩面）：全量分支须给左界（照 `akshare_provider.py:11277-11288` 已在册的回填口径先例＝`incremental=False` 时 `start_date` 固定 2010-01-01，或按表内 `min(date_col)` 推断），并在 `tasks.yaml` description 与真实窗口对账。**本班不擅自改调度语义**（会一次唤醒整族任务）。
+
+### 件⑤＝B-15 冷归档挂回四道前置复量（本班仍不起批）
+
+①`commit_pct=**93.17**`（进场 17:50:43 `process_reaper --status` 实测，`degraded=True`、breached=`ALERT-SYS-003`、ram_used 71.2%、cpu 76.7%）≥70 ⇒ **不起批**（1015-05 92.07→06 94.03→07 87.31→本班 93.17，四班同档未缓解）。②队列：head=`q-20261015-st-qoder-p09-1015-13-0001` 等待 **6.9 秒**、daemon online ⇒ 已疏通。③分块铁律＝本班 B-23 再次实操验证（17 年块≤12 分区）可直接复用。④**归档器并发闸＝本班实测已解除**：清单真路径 `F:/zephyr_cold/50_archive/by_project/zephyralpha/archive_manifest.jsonl`（⚠令面没给全路径，本班 `os.walk` 定位；1015-05 只报文件名），mtime **2026-10-15 12:31:06**、size 789,332 B，本班 17:52:55 复量＝**5 小时 22 分无追加**。⇒ 四闸只剩①一条挡道。tick 腿 201 GiB 超盘余仍属 Owner 门，勿代裁。
+
+### 交付复核命令（正文原样可跑；本班每条都已实跑，"本班实跑读数"＝字面输出非脑估）
+
+| # | 命令 | 本班实跑读数 |
+|---|---|---|
+| 1 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.infrastructure.database_service import DatabaseService as D;c=D().get_clickhouse_conn();print(c.execute(\"SELECT count(), min(trade_date), max(trade_date), uniqExact(symbol) FROM c1_market.block_trade_detail FINAL\"))"` | `[(176759, datetime.date(2010,1,4), datetime.date(2026,10,15), 5157)]` |
+| 2 | 同上换 `WHERE trade_date<='2026-07-31'` | `[(174834, ...)]`＝恰等本班写集 |
+| 3 | `... WHERE trade_date<='2026-07-31' AND ingest_ts>='2026-10-15 10:10:53'` | `[(174834,)]`＝回退谓词精确圈进（未执行） |
+| 4 | `... SELECT count()-uniqExact((trade_date,symbol)) FROM c1_market.block_trade_detail WHERE trade_date<='2026-07-31'` | `[(0,)]`＝本班段零重复键组 |
+| 5 | `... SELECT data_source,count(),max(ingest_ts) FROM c1_market.block_trade_detail GROUP BY data_source` | `[('akshare', 2047, 2026-10-15 10:00:24 UTC)]`＝单轨＋腿在产 |
+| 6 | `python - <<PY` 键移位负对照（件①末段配方） | `174830/174833` 判失配（尺能红） |
+| 7 | `grep -n "return today.replace(day=1)" src/zephyr/data/scheduler.py` | `2336`＝件④那一行 |
+| 8 | `grep -n "int(vol)" src/zephyr/data/implementations/akshare_provider.py` | `6577`（detail）与 `2052`（mrmx 逐笔）两处＝件②(b) 因 |
+| 9 | `stat -c %y F:/zephyr_cold/50_archive/by_project/zephyralpha/archive_manifest.jsonl` | `2026-10-15 12:31:06`＝第四闸解除 |
+
+### 完工自检（两轮）
+
+**第一轮（结构与归属）**：ledger **550 → 628 行，`git diff --numstat HEAD` 实测 78 insertions / 0 deletions＝纯追加的铁证**（比标题计数硬）；`P02-1015-06/07-ENDSTATE` 两旧标记各仍 2 次＝既有标题与旧标记零吞吃；本节以 1015-07 的 ENDSTATE 行为锚**纯追加**；`P02-1015-07-ENDSTATE`／`P02-1015-06-ENDSTATE` 两标记仍各 1 次。DB 面＝一次纯新增 INSERT，无 UPDATE/DELETE/ALTER 执行；`known_data_gaps.yaml`／`to_builder.md`／`unblocked.md` 等他人册**本班一字未改**。**第二轮（判据与口径）**：件①三闸（键互斥／不洗地／解析单一真源）各有 CH 或 file:line 实据；件②两条定标各带放大样本与单例；件③/件④只登记不越界（改表与改调度语义均非本席权限）；件⑤四闸逐条现测。本班唯一翻案动作＝把 1015-06 写下的"①席'现表写者＝ifind'按两表通用"缩窄为**只对 `block_trade` 成立**（`block_trade_detail` 写者＝akshare，实测 data_source 分组），旧文留上不抹。
+
+### 本班排产与下班待办（修订 1015-06 §下一班待办序）
+
+1. **B-23 聚合面已闭合**，逐笔面**卡在件③表结构**⇒ 排产顺序＝先⑤改 `block_trade` 键／笔次身份（Owner 门），再②回补 `stock_dzjy_mrmx` 逐笔深史；照搬"先补 pb_mrq 再回填"那条 B-18 判例的同型处方。
+2. **B-19** 两表近端断供（`earnings_forecast`/`express_report`，`max(announce_date)=2026-07-03/07-02` 而源侧到 2026-08-19）＝本班未开工。起手前两把闸：①`forecast_type` 词表分叉＝源侧 11 值含 **增亏/减亏**，我库 10 值含 **"其他"** 而无此二类 ⇒ 这是**口径分叉不是回补**，按在册"新设计分叉先讨论"须先请 Owner/①定映射（折进"其他"＝丢信息；新增两枚举＝改词表），本席不自决；②`earnings_forecast` 表 `ORDER BY (symbol, report_period, announce_date)` 不含 `data_source`、版本列 `ingest_ts`，而在册 miniqmt 腿实测自 2026-07-23 起零产出 ⇒ 换 akshare 腿前须先定"旧腿复活会不会洗"。**本班实测 `express_report` 已有双轨（bdpan 28,588＋akshare 120）＝同表换腿先例在盘面存在**。
+3. **B-16** 仍待**跨日**（10 次/天档 1015-05 已用尽）；**B-20/B-21** 新建采集腿＝⑩派⑤施工面（B-20 另撞 `capability_semantic_gate.py:91-95` 的 `allowed_apis={"THS_*","ifind.*"}`，本班未跑该门执法）；**B-24** 属判据并条、无本席落地面（北向日频段按 SOP 系一次性历史档案，季频腿在册 JOB-083）；**B-1/B-2/B-9** 仍等 Owner 一字裁。
+4. **件④（`*_full_refresh` 月初闸）**建议⑩优先派⑤：它一次挡住整族深史，是本席连续四班"源侧明明可得、库里就是没有"的共同上游。
+
+⚑**本班坑（下班照抄避坑）**：①`ak.stock_dzjy_mrtj` **对空返回直接抛 `TypeError: 'NoneType' object is not subscriptable`**（本班撞在 2026-08-01..02 周末窗），禁据此判"该窗无史"，改判须先看是否非交易日；②该源**单次 5,000 行硬截断**且**返回序＝按 `成交总额/流通市值` 降序、不是日期序**⇒ 截掉的是"比率最大的一头"而非最新一天，按月窗切才安全；③`system.columns` 在本机 CH 面**返回空**（`DESCRIBE TABLE` 正常）⇒ 取列形制只认 `DESCRIBE`；④CH `INNER JOIN ... USING` 配 `countIf` 本班实测**自相矛盾**（common=585 < bt_less=1154），两表键级对拍改走 Python 侧取数比对；⑤Decimal 列逐位对拍必须显式与服务端同向舍入（件②末段自犯）。
+⚑**本班临时件**（`.runtime/tmp/`，`[TTL] task_bound` 24h，明日 18:1x 前自清或复跑重造）：`p02_boot_1015_08.py`（注册＋`daemon_pid=32860`）／`p02_probe_1015_08.py`／`p02_b23_src_1015_08.py`／`p02_b23_collect_1015_08.py`＋`.log`／`p02_b23_commit_1015_08.py`＋`.log`／`p02_b23_rows_1015_08.tsv.gz`（**唯一对拍基底**）。另本班在 `data/runtime/process_reaper_keep.txt` 追加一行 `p02_b23_collect_1015_08`（防长批被误杀；⚑该册 397→399 行，收班前应摘除本班令牌，本班袋在飞故先留）。
+⚑**本班袋面（刻意排除）**：files＝**2**（`ledger.md`／`checkpoint.md`）；**排除** `known_data_gaps.yaml`（实测工作区面 `M`、`git diff HEAD` 3 insertions/3 deletions 未落地＝①席在写，且本班件**不满足**该 gap 条目的对象——条目 `table: c1_market.block_trade` 是逐笔面，本班只补了 `block_trade_detail` ⇒ 无翻 status 依据）、`to_builder.md`／`to_datasource.md`／`to_impl.md`／`to_miners.md`／`unblocked.md`／`process_reaper_keep.txt`（他席在册或在途件，随袋＝归属篡改）。本班**不 promote 进 04**：结案报告须等件③逐笔面与件④调度左界两条前置齐，现阶段留 `_working`。写法＝两件全程 **Edit 追加**（checkpoint 另原地改写顶部 `cursor/last_run/last_batch` 三行），对 1015-07 袋是单调超集；袋在飞不放锁不停守护。
+
+⚑**降级直改主区投袋原因登记（RULE-WORKTREE 显式申请制留痕）**：本班 DB 写与 CH 取证只能在宿主侧跑（CH 访问口与 akshare 频控额度都在宿主），且产物只有本席两件活文档；同型判例＝1015-01..07 七班同路。
+
+`P02-1015-08-ENDSTATE`（本班终态独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1015-08-ENDSTATE"`）
