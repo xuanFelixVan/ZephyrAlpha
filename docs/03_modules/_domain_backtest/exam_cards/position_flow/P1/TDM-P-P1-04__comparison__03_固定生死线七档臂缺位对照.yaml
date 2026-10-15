@@ -83,3 +83,4 @@ data_binding:
     daily_halt_days 1 / weekly 2 / monthly 3 / auction_discount_threshold 0.02 /
     intraday_vwap_break_threshold 0.01 / sector_momentum_threshold -0.02，本卡不消费但同族考位可引）
     CH 覆盖实测：kline_daily_hfq 1990-12-19..2026-09-30 共 10,098,785 行
+oos_window_ref: *id001

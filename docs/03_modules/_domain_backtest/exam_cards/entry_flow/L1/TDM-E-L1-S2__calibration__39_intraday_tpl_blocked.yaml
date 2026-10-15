@@ -40,3 +40,4 @@ status_reason: blocked_on_WO-A2：个股分钟面数据闸未解锁（15_work_or
 data_binding:
   signal_table: 待 WO-A2 解锁后登记（5 分钟切片面）
   note: 出生四件于解锁批补齐；本卡仅占位声明方向与依赖
+oos_window_ref: ['2026-04-03', '2026-10-12']

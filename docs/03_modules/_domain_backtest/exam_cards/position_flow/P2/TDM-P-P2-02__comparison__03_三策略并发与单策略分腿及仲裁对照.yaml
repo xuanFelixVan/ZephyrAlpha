@@ -83,3 +83,4 @@ data_binding:
     单次做T量≤底仓 30%”）
   ds_ref: factor_refs=['FCT-INTRADAY-029','FCT-INTRADAY-030','FCT-INTRADAY-017','FCT-INTRADAY-021']、
     algo_refs=['EXA-VWAP-001','EXA-TWAP-001']；日频伪造禁令承 st_p_daytrade_mining.md §2（H9 §4.2）
+oos_window_ref: *id001

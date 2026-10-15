@@ -99,3 +99,4 @@ data_binding:
 non_duplication_note: 净新增考法，不替代任何既有卡。与 TDM-P-FLOW/ablation/02 的区别=
   02 考"整链有无+三条叠层单腿定位"（维度=overlay 开关），本卡考"三段子环的图上证成与 P1 腿占比"
   （对象=子环腿并入完备性 + 边表缺口治理产出），判据面与结论出口均不同，属跨对象不并。
+oos_window_ref: *id001

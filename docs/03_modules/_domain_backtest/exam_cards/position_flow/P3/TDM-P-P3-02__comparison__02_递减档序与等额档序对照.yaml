@@ -83,3 +83,4 @@ data_binding:
     TDM 原文=config/trading_decision_map.yaml 本节点 algo_note_zh“递减…阶梯（较上次买价涨幅≥2.5-3%）…
     限次（最多 3 次）…跌破上次加仓价=停止后续计划”
     ——“跌破上次加仓价停止计划”在引擎由 cummax 持久化实现（不降档但不新增），口径近似须随卷披露
+oos_window_ref: *id001

@@ -99,3 +99,4 @@ data_binding:
 non_duplication_note: 净新增考法，不替代任何既有卡。与前役 TDM-P-P1-01/comparison/02（复权口径失真）
   的区别=02 考"价格序列口径"，本卡考"成交入账口径（回执 vs 本地终态）+ fallback 陈旧"，
   事件集与门柱均不同对象，故不并。
+oos_window_ref: *id001

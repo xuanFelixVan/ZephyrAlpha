@@ -72,3 +72,4 @@ data_binding:
     :1034 定义 _apply_thesis_survival_overlay 且文件内 grep 无调用点；
     config/position_recipe_grid_schema.yaml:71-87（X_stop/X_breaker active_if "phase >= 3"），无 thesis/M5 维
     TDM 本节点原文=“汇总五路体检…任一子项异常=该持仓置‘人工确认’默认态”（人工确认面属 live 运维，不在回测平面）
+oos_window_ref: *id001

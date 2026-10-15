@@ -54,3 +54,4 @@ data_binding:
   birth_batch: screen-minedig-20261012
 status: blocked_on_data
 status_reason: 月度样本 n=85 或 IC/t 未过预登记月度闸（agg_monthly），不开考
+oos_window_ref: ['2026-04-03', '2026-10-12']

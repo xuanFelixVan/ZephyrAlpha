@@ -72,3 +72,4 @@ data_binding:
     `python -m zephyr.library.lookup state "财报 解禁 日历"`（输出摘录进台账 §三 探针账）+
     data_asset_registry.yaml grep（财报/解禁相关 DS 条目待补行号）
   ds_ref: DS-107=event.news_sentiment_window（registry L4661，事件衰减面属 P1-03 而非本卡的日历禁区）
+oos_window_ref: *id001

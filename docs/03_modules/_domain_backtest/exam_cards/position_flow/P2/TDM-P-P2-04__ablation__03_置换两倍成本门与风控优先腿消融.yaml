@@ -77,3 +77,4 @@ data_binding:
     划不划算=减仓改善>2×交易成本才动。风控减仓优先级高于做T（冲突时丢做T保减仓）”），
     battle_map_refs=['BM-POS-09']，module_ref=src/zephyr/position/core/rebalance_engine.py
     成本真源=zephyr.backtest.core.matching_logic.COMMISSION_RATE（万0.854，与引擎同源）
+oos_window_ref: *id001

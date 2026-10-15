@@ -76,3 +76,4 @@ data_binding:
     （注释"rpt_e05 P1：价格已跌破止损线=最大险情，旧码 abs 对称化把它当普通距离判 MONITOR"+ 前置支
     `if current <= stop_loss_price: return TriageLevel.WATCH`）
   ds_ref: DS-150=c1_market.kline_daily（registry L6459）；IND-VOL-001=ATR 族
+oos_window_ref: *id001

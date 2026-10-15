@@ -83,3 +83,4 @@ data_binding:
     ⇒ 本节点“与券商记录逐笔核对”的真对账面在回测平面不可达（st_p_daytrade_mining.md §1 判 D 类
     “账务运维，天然不进回测”），本卡取其唯一可回测化的口径失真面，非宣称考了台账本体
   ds_ref: data_refs=['DS-009','DS-067']（两者皆非 CH，失真面已披露）
+oos_window_ref: *id001

@@ -86,3 +86,4 @@ data_binding:
     “| 7 | 金字塔加仓（资格门+递减）| C9+C10 | 4105b58e / MOD-POS-027 | 禁补亏损仓 在码”）
   ds_ref: factor_refs=['FCT-MOM-022']；④熔断禁加腿的日亏 4% 与 X_breaker 帽带（WARN0.75/DANGER0.50/
     CRISIS0.25/KILL0）不同层，本卡不混判
+oos_window_ref: *id001

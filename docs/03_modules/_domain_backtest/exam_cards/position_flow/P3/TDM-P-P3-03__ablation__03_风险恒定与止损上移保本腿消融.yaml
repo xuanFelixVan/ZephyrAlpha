@@ -82,3 +82,4 @@ data_binding:
     首仓风险预算（止损等比上移实现）。加仓完成后全部止损上移保本”；
     在册常数参考 position_sizing_engine.py:168-182（vol_sigma_multiplier/var/cvar/participation/exit_days）
   ds_ref: module_ref=src/zephyr/position/core/position_sizing_engine.py（live 件，本卡考其纪律的回测等价物）
+oos_window_ref: *id001

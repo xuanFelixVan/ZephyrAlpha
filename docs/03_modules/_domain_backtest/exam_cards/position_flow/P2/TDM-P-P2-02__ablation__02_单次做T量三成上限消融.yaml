@@ -74,3 +74,4 @@ data_binding:
     tick_depth_5 覆盖仅 2026-07-24..2026-09-30，130,146,982 行 ⇒ 盘口失衡腿的策略级对照另卡且受料限
   ds_ref: TDM 本节点 factor_refs=['FCT-INTRADAY-029','FCT-INTRADAY-030','FCT-INTRADAY-017','FCT-INTRADAY-021']、
     algo_refs=['EXA-VWAP-001','EXA-TWAP-001']、module_mounts=['MOD-AU-011']
+oos_window_ref: *id001

@@ -87,3 +87,4 @@ data_binding:
   ds_ref: 本节点无 data_refs；DS-009/DS-067 为本地账务件非 CH（前役 L4 已披露，本卡沿用仿真权重面）
 non_duplication_note: 净新增考法，不替代任何既有卡。与前役 TDM-P-FLOW/ablation/02 的区别=
   02 考 overlay 维（止损/熔断/爬坡）整链有无，本卡考 strategy_mounts 腿集合有无（对象不同，跨域不并）
+oos_window_ref: *id001
