@@ -1,0 +1,31 @@
+segment_id,segment_name,entry_file_line,state,data_landing,action_to_energize
+A1,沙箱行情dump(tick/quote),E:\qmt_bridge_sim\ TICKDUMP3_v19+QUOTE_V17(93备忘§11/§14;沙箱侧不入repo),通电(0249仍写),E:\qmt_bridge_sim\ticks3.csv+quote.csv(29列5档),无需
+A2,桥尾读采集,tick_subscriber.py:1453 BridgeTickSource/:1785 start_bridge/:366 _on_backup_tick,通电,TICK_SOURCE=bridge复跑退役日SOP→wal→CH c1_market.tick_data+tick_depth_5,9/18复跑schtasks确认(台账§5)
+A3,桥数据源Provider(能力注册),qmt_bridge_provider.py:202 connect/:223 health_check/:261 probe,通电,tick=no-op;kline合成ch_tick_kline(c1_market.kline_1min~60min);auction派生ch_auction_derive,无需
+A4,旧miniqmt行情通道,miniqmt_provider.py(xtquant),今日退役,历史囤货c1_market.tick_data,按退役日SOP;tasks.yaml仍64个source:miniqmt靠fallback自动failover(如实记档)
+B1,信号生产者(打板负载),daban_load_producer.py(盘后批产事件驱动),通电,c1_market.market_daban_engine_load,无需
+B2,判决账本链,judgment_ledger.py:81-89+pipeline_events.py:747-786/:835-851,通电,c1_market.judgment_daily_plan/intraday_market_state/next_day_forecast,无需
+B3,日度编排器(decision_daily),蓝图trading_vision/2026-09-16-daily-orchestrator-blueprint.md(BT-P1-031 S1-S7),断电(蓝图草案未施工),c1_backtest.decision_daily(表不存在),按蓝图过审施工;S7成文首版不驱动执行单=只出声不出手
+B4,L4组合层,pf_alloc+pipeline_events maybe_emit_pf_alloc_daily,半成品(有件未全面接电),c1_backtest.alloc_budget_daily,裁定#257②触发条件满足后接电
+B5,只出声不出手安全态,蓝图S7分发面=播报前缀+仪表盘+留痕,成文设计(非事故),播报/告警面,保持至执行面通电裁定
+C1,会话一键装配,qmt_trading_session.py:56 _VALID_ENVS(real/sim),半成品(draft;消费=construction脚本),—,B3施工时定对接形态(长尾M-E2E-3)
+C2,装配件双实例隔离,qmt_file_bridge_integration.py:46(enable_real默认False),通电,—,无需
+C3,订单管理器,order_manager.py:131/:229 create/:285 submit/:381 cancel/:493 _on_fill,通电,内存聚合+Fill回调,无需
+C4,文件桥Broker(唯一真单通道),qmt_file_bridge_broker.py:319/ENV_CONFIG:338-351/connect:405/submit:456/_append_instruction:605/_http_post_order:619,通电(HTTP 18901实测32ms;文件兜底5.7s),E:\qmt_bridge_sim\orders_sim.csv+ack_sim.csv+Stock\*.csv,无需(0918实测活)
+C5,柜台全量镜像,qmt_file_bridge_broker.py:115 CounterStateMirror,通电,内存镜像←Stock\Order/PositionStatics/Account/Deal.csv(GBK),无需
+C6,旧miniqmt下单通道,miniqmt_broker.py:149(order_stock:417),今日退役(dormant保留禁真连),—,已裁定封存(93备忘);代码作契约参照
+C7,通道状态机FailClosed,miniqmt_channel_manager.py:66(RETIRED_DATE:72-75),dormant(接口保留),—,保留作桥重连参照实现
+C8,模拟/实盘模式门,live_simulation_switcher.py(MOD-EX-035;构造即SIMULATION;sim→live需Owner令牌FailClosed),通电,SwitchRecord留痕(sha256指纹),无需
+C9,执行引擎(TWAP/VWAP/SOR),execution_engine.py+ex_sor,半成品(件在无生产接线),—,随B3通电自然接通
+C10,订单Saga补偿,order_execution_saga.py:115/:136,件在无生产接线,—,随B3通电自然接通
+D1,交易侧五级熔断,trading_contracts/risk/trading_kill_switch.py:52/:119 trigger,通电,交易资金安全真源,无需;冒烟断言用此件
+D2,Agent行为熔断,security/access_control/kill_switch.py(MOD-INF-018),通电,纯进程内存态与资金无关,勿用于交易断言(头注P1-2)
+D3,下单前校验链,board_lot.py+price_cage.py+pre_execution_checker(broker内置),通电,整手/笼子夹边/涨跌停,无需;桥无盘口笼子降级UNKNOWN
+D4,盘中风控编排,ex_core/risk_layer_orchestrator.py,件在,回撤级联/VaR,执行面通电时挂接
+E1,回报双源,沙箱EXEC v16.4写ack+官方导出Stock\Deal.csv,通电,ack_sim.csv+Deal.csv,无需
+E2,成交回调→订单聚合,register_fill_callback→order_manager._on_fill:493→fill_handler.py(fill_id幂等),通电(进程内),fills_dir JSONL(G3)非CH,补CH持久化(与E4同批)
+E3,盘后成交兜底,miniqmt_broker.query_trades_today:580(旧);桥=CounterStateMirror._deals,通电,当日成交流水,无需;40号戒律禁回调内同步查询
+E4,执行报告CH表,表schemas/categories/intraday/market_execution_report.py:91+builder ex_core/execution_report.py:65,半成品(零生产调用方),c1_market.execution_report(空转),接线build_execution_report到回报聚合点(1会话级)
+F1,日终对账runner,recon_runner.py:125 ReconBrokerSource+eod_reconciliation+position_reconciler,件在(runner就绪),对账结果/归因,执行面通电后挂日终批
+F2,模拟盘虚拟钱包账本(独立于券商桥),sim_paper_ledger.py+pipeline_events:69-70/:114-118,通电,c1_backtest.sim_trade_log/sim_pocket_daily/sim_platform_journal,无需;勿与券商模拟账户混淆
+F3,决策快照表,蓝图§四.1 schema草案,不存在,c1_backtest.decision_daily,随B3施工建表

@@ -1,0 +1,11 @@
+表名,库,引擎,行数复验_20260918,总字节,层①真安全,层②真无人用,层③真无价值,引用面,判决
+kline_15min_tzbak2_20260914,c1_market,ReplacingMergeTree,0,0,是-无调度无活链路;DDL快照已留存可秒回滚,是-26个根目录rg零活消费;双真源yaml(schemas/data_asset_registry)零登记,是-count()=0复验与基线一致,审计文档+data_inventory.md(机生),可删
+kline_15min_tzbak_20260914,c1_market,ReplacingMergeTree,0,0,是-同上;引用方finish_p0_1.py为manual一次性修复件(2026-09-14批；PLAN:46-49)非调度链,是-同上,是-count()=0复验,finish_p0_1.py(历史修复)+审计+data_inventory.md(机生),可删
+kline_1min_tzbak2_20260914,c1_market,ReplacingMergeTree,0,0,是-无调度无活链路,是-零活消费+双真源零登记,是-count()=0复验,审计文档+data_inventory.md(机生),可删
+kline_30min_tzbak2_20260914,c1_market,ReplacingMergeTree,0,0,是-无调度无活链路,是-零活消费+双真源零登记,是-count()=0复验,审计文档+data_inventory.md(机生),可删
+kline_30min_tzbak_20260914,c1_market,ReplacingMergeTree,0,0,是-同15min;finish_p0_1.py PLAN:50 历史修复件,是-同上,是-count()=0复验,finish_p0_1.py(历史修复)+审计+data_inventory.md(机生),可删
+kline_5min_tzbak3_20260914,c1_market,ReplacingMergeTree,0,0,是-同15min;finish_p0_1.py PLAN:55 历史修复件,是-同上,是-count()=0复验,finish_p0_1.py(历史修复)+审计+data_inventory.md(机生),可删
+kline_5min_tzbak4_20260914,c1_market,ReplacingMergeTree,0,0,是-无调度无活链路,是-零活消费+双真源零登记,是-count()=0复验,审计文档+data_inventory.md(机生),可删
+kline_60min_tzbak2_20260914,c1_market,ReplacingMergeTree,0,0,是-无调度无活链路,是-零活消费+双真源零登记,是-count()=0复验,审计文档+data_inventory.md(机生),可删
+kline_60min_tzbak_20260914,c1_market,ReplacingMergeTree,0,0,是-同15min;finish_p0_1.py PLAN:51-54 历史修复件,是-同上,是-count()=0复验,finish_p0_1.py(历史修复)+审计+data_inventory.md(机生),可删
+crypto_kline_daily_bak_okxshell,c1_market,ReplacingMergeTree,0,0,是-无调度无活链路;主表crypto_kline_daily健康(22589行/09-16),是-零活消费;data_asset_registry仅登记主表;空表退役有先例(crypto_shadow_gate_c_l1),是-count()=0复验,审计文档+data_inventory.md(机生),可删

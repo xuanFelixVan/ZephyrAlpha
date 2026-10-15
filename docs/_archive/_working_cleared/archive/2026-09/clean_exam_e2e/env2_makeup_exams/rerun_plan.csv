@@ -1,0 +1,17 @@
+strategy_id,source_file,blocking_cause,unblock_action,est_seconds,batch,note
+CAND-12286499cb19,scripts/backtest/translated/c4_12286499cb19_rsrs_60m.py,provider全局校验连坐(真源缺注册),无需(9322ce6710已闭环),3,tonight-smoke,冒烟已ok oos_h2=0.9506
+CAND-dc5b80aa3614,scripts/backtest/translated/c4_dc5b80aa3614_tsmall100.py,同上,无需,600-1600,tonight,tsmall100病态慢族(实际1359.9s)verdict=存疑
+CAND-fd47fa0e6401,scripts/backtest/translated/c4_fd47fa0e6401_macd_resonance.py,同上,无需,10-120,tonight,
+CAND-5efe26d1992e,scripts/backtest/translated/c4_5efe26d1992e_rsrs_60m.py,同上,无需,10-120,tonight,实际1.5s ok oos_h2=0.8624 verdict=不通过
+CAND-7f7e5f935dfc,scripts/backtest/translated/c4_7f7e5f935dfc_rsrs_60m.py,同上,无需,10-600,tonight,实际0.9s ok oos_h2=0.6968 verdict=不通过
+CAND-9ce75aa27ce5,scripts/backtest/translated/c4_9ce75aa27ce5_rsrs_60m.py,同上,无需,10-600,tonight,实际83.2s ok oos_h2=0.5685 verdict=不通过
+CAND-c72318f2da1c,scripts/backtest/translated/c4_c72318f2da1c_rsrs_60m.py,同上,无需,10-600,tonight,实际93.6s ok oos_h2=0.08 verdict=不通过
+CAND-6485e4cd0844,scripts/backtest/translated/c4_6485e4cd0844_rsrs_60m.py,同上,无需,10-600,tonight,实际2.1s ok oos_h2=0.3803 verdict=不通过
+CAND-f284270f0ef0,scripts/backtest/translated/c4_f284270f0ef0_rsrs_60m.py,同上,无需,10-600,tonight,实际0.3s ok oos_h2=0.5234 verdict=不通过
+CAND-311220235636,scripts/backtest/translated/c4_311220235636_rsrs_60m.py,同上,无需,10-600,tonight,
+CAND-8664521af1a0,scripts/backtest/translated/c4_8664521af1a0_rsrs_60m.py,同上,无需,10-600,tonight,
+CAND-c7a8ddbab748,scripts/backtest/translated/c4_c7a8ddbab748_rsrs_60m.py,同上,无需,10-600,tonight,
+CAND-06d4cf3d7dcc,scripts/backtest/translated/c4_06d4cf3d7dcc_rsrs_60m.py,同上,无需,10-600,tonight,
+CAND-ea8b60272c03,scripts/backtest/translated/c4_ea8b60272c03_rsrs_60m.py,同上,无需,10-600,tonight,
+CAND-b37f550ba2af,scripts/backtest/translated/c4_b37f550ba2af_rsrs_60m.py,同上,无需,10-600,tonight,
+CAND-5301c5d9d7c8,scripts/backtest/translated/c4_5301c5d9d7c8_rsrs_60m.py,同上,无需,10-600,tonight,
