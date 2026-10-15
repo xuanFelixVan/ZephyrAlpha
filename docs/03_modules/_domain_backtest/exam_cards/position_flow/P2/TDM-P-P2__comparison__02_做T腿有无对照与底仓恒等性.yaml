@@ -67,6 +67,7 @@ lineage:
 preregistered_by: st-nightmine-20261010-L4
 preregistered_at: '2026-10-10'
 discipline: 冻结后开考；事后挪门柱=作废（G4-5）；禁全绿（裁定#325）；判据成组禁单指标
+oos_window_ref: *id001
 data_binding:
   signal_table: data/backtest_artifacts/bt-*.json（做T 日内成交材料，M-1 粒度硬门）+
     c1_market.kline_1min（日内价复核：2021-09-01..2026-10-09，1,493,285,247 行）

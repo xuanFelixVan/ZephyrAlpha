@@ -67,6 +67,7 @@ lineage:
 preregistered_by: st-nightmine-20261010-L4
 preregistered_at: '2026-10-10'
 discipline: 冻结后开考；事后挪门柱=作废（G4-5）；胞级禁挑优（承件 INVARIANTS）
+oos_window_ref: *id001
 data_binding:
   signal_table: grid run 产物（net_returns 宽表，index=trade_date）+ 条件包（date/cell_id/cell_eligible）
   signal_column: K_capital_ramp 两臂的逐日净收益

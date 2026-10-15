@@ -77,6 +77,7 @@ lineage:
 preregistered_by: st-nightmine-20261010-RXA
 preregistered_at: '2026-10-10'
 discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
 pillars_numeric:
   ban_value_gap_max: -0.002
   battlefield_gap_threshold_abs: 0.002

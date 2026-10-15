@@ -55,6 +55,7 @@ lineage:
 preregistered_by: st-nightmine-20261010-L4
 preregistered_at: '2026-10-10'
 discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq（volume/turnover/low/close 在册列实测）
   signal_column: 派生两列——vol_ratio_20 = volume / MA20(volume)、support_buffer = low − MIN(low, 前20日)

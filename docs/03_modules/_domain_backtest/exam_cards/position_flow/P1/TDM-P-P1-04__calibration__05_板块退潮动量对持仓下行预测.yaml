@@ -56,6 +56,7 @@ lineage:
 preregistered_by: st-nightmine-20261010-L4
 preregistered_at: '2026-10-10'
 discipline: 冻结后开考；事后挪门柱=作废（G4-5）
+oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_sector_880（板块指数日线，列 trade_date/code/open/high/low/close/volume/amount）
   signal_column: 派生 20 日动量 = close/close.shift(20) - 1

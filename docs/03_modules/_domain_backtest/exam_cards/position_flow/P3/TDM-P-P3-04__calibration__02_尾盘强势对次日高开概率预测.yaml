@@ -60,6 +60,7 @@ lineage:
 preregistered_by: st-nightmine-20261010-L4
 preregistered_at: '2026-10-10'
 discipline: 冻结后开考；事后挪门柱=作废（G4-5）；负结果与“承诺失实”都是合格产出
+oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_1min（列 trade_time/symbol/open/high/low/close/volume/amount/exchange）
     + c1_market.kline_daily_hfq（当日 open/high/low/close 供区间位置与次日开盘）

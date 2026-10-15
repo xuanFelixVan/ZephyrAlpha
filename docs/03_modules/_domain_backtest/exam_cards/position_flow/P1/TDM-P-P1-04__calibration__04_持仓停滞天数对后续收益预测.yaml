@@ -54,6 +54,7 @@ lineage:
 preregistered_by: st-nightmine-20261010-L4
 preregistered_at: '2026-10-10'
 discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq
   signal_column: 派生停滞天数——盈利腿=count(距段内收盘运行峰值的交易日数)，
