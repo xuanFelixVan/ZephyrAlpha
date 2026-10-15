@@ -1,3 +1,8 @@
+# [ARTIFACTS] outputs per SOP automation_sop/research_production_line_policy.md #8-A (2026-10-15):
+# [TTL] permanent
+# [COMPLETES_WHEN] n/a - permanent runner; retire only via ruling + deregistration
+#   candidates -> data/strategy_intake/lane_b_candidates.csv + lane_c3_candidates.csv (process layer, append-only)
+#   run log    -> .runtime/logs/night_mining.log (non-asset)
 # [BLUEPRINT] MOD-SCRIPT-run_night_mining | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.run_night_mining
 # [DOMAIN] D_BACKTEST

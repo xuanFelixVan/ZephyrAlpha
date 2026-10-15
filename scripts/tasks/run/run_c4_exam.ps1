@@ -1,3 +1,8 @@
+# [ARTIFACTS] outputs per SOP automation_sop/research_production_line_policy.md #8-A (2026-10-15):
+# [TTL] permanent
+# [COMPLETES_WHEN] n/a - permanent runner; retire only via ruling + deregistration
+#   incremental score rows -> docs/04_research_records/backtest/scores/<YYYY>/ (conclusion layer, only-add via normal channel; no bypass)
+#   run log -> .runtime/logs/ (non-asset)
 # [BLUEPRINT] MOD-SCRIPT-run_c4_exam | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.run_c4_exam
 # [DOMAIN] D_BACKTEST

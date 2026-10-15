@@ -1,3 +1,8 @@
+# [ARTIFACTS] outputs per SOP automation_sop/research_production_line_policy.md #8-A (2026-10-15):
+# [TTL] permanent
+# [COMPLETES_WHEN] n/a - permanent runner; retire only via ruling + deregistration
+#   trigger/execution log -> .runtime/logs/ (non-asset)
+#   reexam scores -> normal channel only (examiners/score-officer into scores ledger); no bypass
 # run_ttl_rejudge_daily.ps1 - hidden-launch target for scheduled task ZephyrAlpha_TTLRejudgeDaily
 # 2026-09-08 no-flash sweep (#ARCH-BOOT-WINDOW-FLASH): the old task action was an inline
 # `powershell.exe -Command <blob>` which cannot be passed through launch_hidden.vbs (it

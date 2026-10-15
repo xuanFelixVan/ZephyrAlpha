@@ -1,3 +1,9 @@
+# [ARTIFACTS] outputs per SOP automation_sop/research_production_line_policy.md #8-A (2026-10-15):
+# [TTL] permanent
+# [COMPLETES_WHEN] n/a - permanent runner; retire only via ruling + deregistration
+#   window artifacts -> data/strategy_intake/grid_<ts>/ (process layer, rebuildable) + data/backtest_artifacts/
+#   survivors ledger -> data/strategy_intake/f06_survivors.csv (conclusion layer, append-only)
+#   window summary (narrative) -> docs/04_research_records/backtest/campaigns/f06_<window_date>/ via promote 3-step
 # [BLUEPRINT] MOD-SCRIPT-run_f06_grid | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.run_f06_grid
 # [DOMAIN] D_BACKTEST
