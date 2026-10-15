@@ -419,6 +419,43 @@ _PRECOMMIT_SLOW_TAIL_HOOKS: tuple[str, ...] = (
     # 属确定性子集（秒级），Phase-A 先行；与 dispatch 确定性 7 hooks 口径对齐。
 )
 
+#: G3 慢尾并行（st-maint9-20261015，Owner 2026-10-15 批）：两台 pytest 系 hook 永不同组
+#: （.pytest_cache/__pycache__ 同工作目录并发写=Windows 文件锁敏感），其余按组数轮转均分。
+_PRECOMMIT_SLOWTAIL_PYTEST_HOOKS: tuple[str, ...] = ("gate-test", "gate-errcode-consistency")
+
+
+def _precommit_under_pytest() -> bool:
+    """pytest 环境探测（独立函数：单测可 monkeypatch——pytest 每测会重写该 env 变量）。"""
+    return bool(os.environ.get("PYTEST_CURRENT_TEST"))
+
+
+def _precommit_slowtail_parallel_groups() -> list[tuple[str, ...]] | None:
+    """慢尾并行分组（G3）。返回 None=串行（并行禁用）。
+
+    pytest 环境自动 OFF（对齐 _precommit_fast_subset_enabled 的套件时长预算保护）；
+    env ZEPHYR_PRECOMMIT_SLOWTAIL_PARALLEL：0/1=串行（CR-16 机器饱和回退手柄），
+    >=2=并行组数（缺省 2）。分组确定性：同一清单永远得到同一分组（重启/重放安全）。
+    """
+    if _precommit_under_pytest():
+        return None
+    raw = os.environ.get("ZEPHYR_PRECOMMIT_SLOWTAIL_PARALLEL", "2").strip().lower()
+    if raw in ("off", "false", "no", "serial"):
+        return None
+    try:
+        n = int(raw)
+    except ValueError:
+        n = 2
+    if n < 2:
+        return None
+    pytest_hooks = [h for h in _PRECOMMIT_SLOW_TAIL_HOOKS if h in _PRECOMMIT_SLOWTAIL_PYTEST_HOOKS]
+    rest = [h for h in _PRECOMMIT_SLOW_TAIL_HOOKS if h not in _PRECOMMIT_SLOWTAIL_PYTEST_HOOKS]
+    groups: list[list[str]] = [[] for _ in range(min(n, max(len(_PRECOMMIT_SLOW_TAIL_HOOKS), 1)))]
+    for i, h in enumerate(pytest_hooks):
+        groups[i % len(groups)].append(h)
+    for i, h in enumerate(rest):
+        groups[(i + len(pytest_hooks)) % len(groups)].append(h)
+    return [tuple(g) for g in groups if g]
+
 
 def _precommit_fast_subset_enabled() -> bool:
     """快败子集开关（默认 ON；env ZEPHYR_PRECOMMIT_FAST_SUBSET=0 一键停用——运维手柄）。
@@ -3723,6 +3760,96 @@ class GitCommitGateway:
             break
         return output, rc, mutation, infra_error
 
+    def _precommit_execute_auto(
+        self,
+        env: dict,
+        chunks: list[list[str]],
+        groups: list[tuple[str, ...]] | None,
+        extra_skip: str = "",
+    ) -> tuple[str, int, bool, str]:
+        """G3 慢尾执行入口：groups=None 或 <2 组 → 串行原通道；否则组级并行。
+
+        并行只改墙钟结构：pre_commit 位置参数选 hook 组、线程池（外部子进程等待
+        =纯 IO，GIL 无关）、组间并行组内串行；判定输入逐字节等价串行——合并输出
+        （_precommit_failed_segments 按 "- hook id:" 行扫描，段序无关）、rc=max、
+        变异侦测/重跑消解同口径。组子进程 infra 不可用（pre_commit 缺失等）→ 整体
+        回退串行原通道（正确性永不依赖并行，E4/Rx-4 同款回退哲学）；超时不可回退
+        （子进程可能仍在跑），照串行口径报 infra_error。
+        """
+        if not groups or len(groups) < 2:
+            return self._precommit_execute(env, chunks, extra_skip=extra_skip)
+        from concurrent.futures import ThreadPoolExecutor  # noqa: PLC0415 通道并行执行依赖
+
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415 通道执行依赖
+
+        merged_skip = (env.get("SKIP", "") + "," + extra_skip).strip(",") if extra_skip else env.get("SKIP", "")
+        base_env = {**env, "SKIP": merged_skip}
+        output = ""
+        rc = 0
+        mutation = False
+        infra_error = ""
+        attempts = 2
+        for attempt in range(1, attempts + 1):
+            outs: list[str] = []
+            rcs: list[int] = []
+            metas: list[tuple[int, dict]] = []
+            try:
+                for chunk in chunks:
+                    chunk_outs: list[str] = [""] * len(groups)
+                    chunk_rcs: list[int] = [0] * len(groups)
+                    chunk_metas: list[tuple[int, dict]] = []
+
+                    def _run_group(i: int, group: tuple[str, ...]) -> None:
+                        meta: dict = {}  # S4-F 捕证出参（pid/create_time，缺席=None）
+                        proc = run_subprocess_hidden(
+                            [sys.executable, "-m", "pre_commit", "run", *group, "--files", *chunk],
+                            capture_output=True,
+                            text=True,
+                            encoding="utf-8",
+                            errors="replace",
+                            cwd=str(self.project_root),
+                            env=base_env,
+                            timeout=_PRECOMMIT_RUN_TIMEOUT_S,
+                            meta_out=meta,
+                        )
+                        chunk_outs[i] = (proc.stdout or "") + "\n" + (proc.stderr or "")
+                        chunk_rcs[i] = proc.returncode
+                        chunk_metas.append((proc.returncode, dict(meta)))
+
+                    with ThreadPoolExecutor(max_workers=len(groups)) as pool:
+                        futures = [pool.submit(_run_group, i, g) for i, g in enumerate(groups)]
+                        for fu in futures:
+                            fu.result()
+                    outs.extend(chunk_outs)
+                    rcs.extend(chunk_rcs)
+                    metas.extend(chunk_metas)
+            except FileNotFoundError as e:
+                logger.warning("GitCommitGateway: 慢尾并行通道不可用（%s），回退串行原通道", e)
+                return self._precommit_execute(env, chunks, extra_skip=extra_skip)
+            except subprocess.TimeoutExpired:
+                return (
+                    output,
+                    max(rcs) if rcs else -1,
+                    mutation,
+                    f"pre-commit run timeout after {_PRECOMMIT_RUN_TIMEOUT_S}s (parallel slow-tail)",
+                )
+            output = "\n".join(outs)
+            rc = max(rcs) if rcs else 0
+            mutation = "files were modified by this hook" in output
+            if rc != 0 and metas:
+                # 捕证归因：被判定进程=失败组（rc 最大者）的 spawn 元数据
+                self._pc_proc_meta = max(metas, key=lambda t: t[0])[1]
+            elif metas:
+                self._pc_proc_meta = metas[-1][1]
+            if mutation and attempt < attempts:
+                logger.warning(
+                    "GitCommitGateway: 慢尾并行第 %d 次运行报 hook 变异，重跑消解并发写入假阳",
+                    attempt,
+                )
+                continue
+            break
+        return output, rc, mutation, infra_error
+
     @staticmethod
     def _precommit_failed_segments(output: str) -> list[dict]:
         """解析 per-hook 失败段：段=「- hook id: X」行起至下一 hook id 行前（含其上方 header 行）。"""
@@ -4101,7 +4228,13 @@ class GitCommitGateway:
                     fast_ids = _precommit_config_hook_ids(str(self.project_root))
                     pb_extra_skip = ",".join(hid for hid in fast_ids if hid not in _PRECOMMIT_SLOW_TAIL_HOOKS)
                 with _c157_timed_phase("GATE-PRECOMMIT-RUN", "hooks_run_slow_tail"):
-                    output, rc, mutation, infra_error = self._precommit_execute(env, chunks, extra_skip=pb_extra_skip)
+                    # G3（st-maint9-20261015，Owner 2026-10-15 批）：慢尾组级并行——
+                    # 计时只在 join 点包一层（并行后 Σ子进程时长>墙钟，口径必须保墙钟）；
+                    # 组拆分/回退语义见 _precommit_execute_auto。
+                    st_groups = _precommit_slowtail_parallel_groups()
+                    output, rc, mutation, infra_error = self._precommit_execute_auto(
+                        env, chunks, st_groups, extra_skip=pb_extra_skip
+                    )
                 if pb_extra_skip and fa_output:
                     output = fa_output + "\n" + output  # 归因面合并：快段（绿）段并入判定输入
         finally:
