@@ -11,7 +11,7 @@
 #   （scan_skeleton_axes / scan_module_id_index / scan_gate_ids / load_verifiability_values /
 #   _policy_step_heads —— 真源扫描与判据逻辑单一真源在校验器，本生成器禁复制判据）；
 #   docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md
-#   （机读锚块宿主，未来态）；docs/_working/map_build/fig14_construction/
+#   （机读锚块宿主，未来态）；docs/_archive/_working_cleared/map_build/fig14_construction/
 #   91_step_anchor_block_proposal.yaml（锚块回落来源，现态）
 # [CONSUMERS] config/construction_workflow_map.yaml（唯一产出物）；
 #   tests/governance/d5_architecture/test_construction_workflow_map_adversarial.py
@@ -21,7 +21,7 @@
 # [INVARIANTS] 真源方向=锚块（政策内嵌块 ∨ 91 号提案件）→ 图 YAML 单向派生，禁手改图后不回生成；
 #   casebooks/casebooks_note_zh/casebooks_legend_zh 为人工语义层保留键（重生成原样搬回，
 #   缺席=不新增键零输出变化，挂载值人工批填）；
-# [MODIFY-GUARD] 环节契约/段分层/回边台账改动前先回写 docs/_working/map_build/fig14_construction/
+# [MODIFY-GUARD] 环节契约/段分层/回边台账改动前先回写 docs/_archive/_working_cleared/map_build/fig14_construction/
 #   00_skeleton.md 与政策锚块；产出图禁手改后不回生成
 # [STABILITY] evolving
 # [SAFETY] L
@@ -47,7 +47,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 读不到实载集合必抛，禁降级为'无冲突'
 # [TESTS] 见同批 tests/ 下 canary 件
-#   docs/_working/map_build/fig14_construction/00_skeleton.md（本图唯一收敛基准）与政策锚块；
+#   docs/_archive/_working_cleared/map_build/fig14_construction/00_skeleton.md（本图唯一收敛基准）与政策锚块；
 #   产出物 config/construction_workflow_map.yaml 禁手改后不回生成（counts 一致性校验判红）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -128,8 +128,8 @@ from validate_construction_steps import (  # noqa: E402  # noqa: import-integrit
 )
 
 OUTPUT_PATH = _REPO_ROOT / "config" / "construction_workflow_map.yaml"
-_PROPOSAL_REL = "docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml"
-_SKELETON_REL = "docs/_working/map_build/fig14_construction/00_skeleton.md"
+_PROPOSAL_REL = "docs/_archive/_working_cleared/map_build/fig14_construction/91_step_anchor_block_proposal.yaml"
+_SKELETON_REL = "docs/_archive/_working_cleared/map_build/fig14_construction/00_skeleton.md"
 _MARK_BEGIN = "# <<<CONSTRUCTION_STEP_ANCHORS>>>"
 _MARK_END = "# >>>CONSTRUCTION_STEP_ANCHORS<<<"
 # 幽灵脚本引用面重扫的声明口径（写进 machine_facts，读数与口径同件可复核）

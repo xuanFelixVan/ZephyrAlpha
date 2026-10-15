@@ -49,7 +49,7 @@
 # [TTL] permanent
 """generate_data_supply_chain_map.py — 图12 数据供给链图（DSC 22 环节 + 缺口显性化）骨架生成器。
 
-战役=全景图六图战役 图12（骨架与作业簿真源=``docs/_working/map_build/fig12_datachain/``）。
+战役=全景图六图战役 图12（骨架与作业簿真源=``docs/_archive/_working_cleared/map_build/fig12_datachain/``）。
 本批=L-REGEN12（批次4 落地）：18→**22 环节**（D12-10 拆 a/b、新立 D19 探测器/D20 任务级对账/
 D21 任务表外进程内派生），并按六图终局卷（``03_final_blueprint_and_schema.md``）做三件事——
 ①L0/L1 字段统一名（note_zh/fallback/source_anchors/doc_refs，旧别名残留即 CV-L0 红）；
@@ -116,9 +116,9 @@ TASKS_YAML_REL = "src/zephyr/data/config/tasks.yaml"
 SCHEDULE_YAML_REL = "src/zephyr/data/config/schedule.yaml"
 SCHEDULER_PY_REL = "src/zephyr/data/scheduler.py"
 ASSET_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml"
-SKELETON_REL = "docs/_working/map_build/fig12_datachain/00_skeleton.md"
+SKELETON_REL = "docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md"
 PATH_OWNERSHIP_REL = "docs/03_modules/path_ownership_map.yaml"
-BOOK_DIR = "docs/_working/map_build/fig12_datachain"
+BOOK_DIR = "docs/_archive/_working_cleared/map_build/fig12_datachain"
 
 # ── 契约：22 环节（骨架 §1 正身，批次4 落地）────────────────────────────────
 # 值=骨架行号（D12-*），键=图内 node_id。拆行后 D12-10a/10b 分别对应 DSC-10A/DSC-10B。
@@ -330,7 +330,7 @@ _BOOK_OF: dict[str, str] = {
     "DSC-GAP-RECDIFF": "11_消费端需求反查.md",
 }
 
-_BLUEPRINT_REL = "docs/_working/map_build/03_final_blueprint_and_schema.md"
+_BLUEPRINT_REL = "docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md"
 
 
 def _docs(node_id: str) -> list[str]:
@@ -2596,7 +2596,7 @@ _NODES: list[dict[str, Any]] = [
         ],
         evidence=[
             f"{BOOK_DIR}/05_对账修复六环.md §2.3（四条可复跑证据链：grep/特殊槽全集/注册表/SOP）",
-            "留档退役批复：in1z_escalations.md IN1-E7——Owner 2026-10-04 裁留档退役（docs/_working/vmap12_intake/）",
+            "留档退役批复：in1z_escalations.md IN1-E7——Owner 2026-10-04 裁留档退役（docs/_archive/_working_cleared/vmap12_intake/）",
         ],
     ),
     _n(
@@ -3614,7 +3614,7 @@ def render(doc: dict[str, Any]) -> str:
         "# 图12 数据供给链图（data_supply_chain_map）真源——机生层＋人工语义层双层\n"
         "# 由 scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py 生成/刷新\n"
         "# 人工语义层（nodes/edges/laws/segments/boundary）existing-wins；machine/counts 每次重建\n"
-        "# 血肉源：docs/_working/map_build/fig12_datachain/{00_skeleton.md,01~05 作业簿,11/12 两卷}（实测结论已作节点字段）\n"
+        "# 血肉源：docs/_archive/_working_cleared/map_build/fig12_datachain/{00_skeleton.md,01~05 作业簿,11/12 两卷}（实测结论已作节点字段）\n"
         "# 纪律：INV-1 只存标识符与指针｜挂槽≠在跑｜空串≠无数据｜production 必带 freshness_evidence｜"
         "缺口不冒充 built｜双轴与骨架 §1 同源（production 数==✅ 数）\n"
         "# 图例注记（IN1-E1·Owner 批选②·2026-10-07 落图）：fresh_check/ledger_readable=字段级语义不入标签轴"

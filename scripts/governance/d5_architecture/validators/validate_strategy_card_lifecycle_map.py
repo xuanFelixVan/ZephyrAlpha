@@ -15,7 +15,7 @@
 #   （原值 permanent——CLI 校验器非永久常驻系统，PERM-TRIGGER 手动模式铁律归 task_bound）
 # create-guard-not-dup: 死车道抢救的卡片生命周期校验器（字节代投非新能力），校验词表卡必然读写yaml/词表术语，与canonical词汇装载器无职责重叠
 
-# [DEPENDENCIES] yaml；docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+# [DEPENDENCIES] yaml；docs/_archive/_working_cleared/map_build/fig15_cardlife/91_registry_host_proposal.yaml
 #   （proposal 期回落装载点：词表 + 实例种子 + 复活授权 + 语料口径/别名规则/分裂面；
 #   宿主落地后（anchor_source=registry）只继续提供非状态类口径，词表与实例面禁回读=禁双源）；
 #   docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
@@ -23,7 +23,7 @@
 #   docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
 #   （registry 期实例真源=CARD-* 契约条目，schema 2.2）；
 #   docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml（凭证在册性 CV-09）；
-#   docs/_working/map_build/fig15_cardlife/00_skeleton.md（§1 机可读列 / §2.1 实查列 /
+#   docs/_archive/_working_cleared/map_build/fig15_cardlife/00_skeleton.md（§1 机可读列 / §2.1 实查列 /
 #   §2.2 禁边实查列——双轴与覆盖度同源，禁在校验器写死状态集）；
 #   docs/03_modules/path_ownership_map.yaml 与 zephyr.governance.depgraph_schema（CV-BUS 在册面）；
 #   docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md 与
@@ -63,8 +63,8 @@ DEFAULT_MAP = Path("config/strategy_card_lifecycle_map.yaml")
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 # depgraph PG 在册性探测（F821 治理补缺：常量段佚失，MOD 号经 nodes.blueprint_id 列承载；{} 由调用方 % 填充占位符）
 _SQL_MODULE_ID_LIST = "SELECT blueprint_id FROM nodes WHERE blueprint_id IN ({})"
-_SKELETON_REL = "docs/_working/map_build/fig15_cardlife/00_skeleton.md"
-_PROPOSAL_REL = "docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml"
+_SKELETON_REL = "docs/_archive/_working_cleared/map_build/fig15_cardlife/00_skeleton.md"
+_PROPOSAL_REL = "docs/_archive/_working_cleared/map_build/fig15_cardlife/91_registry_host_proposal.yaml"
 _REGISTRY_VOCAB_REL = "docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml"
 _REGISTRY_HOST_REL = "docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml"
 _RULING_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml"

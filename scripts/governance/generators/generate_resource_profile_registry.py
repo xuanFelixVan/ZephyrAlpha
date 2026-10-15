@@ -268,9 +268,9 @@ PS1_GLOB = "register_*.ps1"
 # 拆簇 a4b503a1630（2026-10-02）把 register_*×32 搬进 scripts/tasks/register/，本扫描面当时
 # 只被文本级改对了册内路径字符串、采集面从未跟上——单目录非递归 glob 看不见搬家件，10-10 那次
 # 再生据此把 33 枚活班次标成 orphaned_source"待 Owner 裁定删除"（伪告警，案卷见
-# docs/_working/maint3_campaign/00_ledger.md §一）。缺目录=跳过并告警，不静默降面。
+# docs/_archive/_working_cleared/maint3_campaign/00_ledger.md §一）。缺目录=跳过并告警，不静默降面。
 PS1_REL_DIRS = ("scripts", "scripts/tasks/register")
-PLAN_DOC_REL = "docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md"
+PLAN_DOC_REL = "docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md"
 
 # ── 排产链自检探针（2026-09-17 P0：C-5 闸缺席 / C-10 视图新鲜度）───────────────
 GATE_MODULE_RELPATH = "src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py"
@@ -1274,7 +1274,7 @@ SCHED_TASK_EXEMPTIONS: dict[str, dict] = {
     "ZephyrAlpha_C4Exam_Full0916": {
         "reason_code": REASON_TASK_ORPHAN,
         "reason_zh": "2026-09-16 全量重跑实验遗留（每日 17:30 调 run_c4_exam.ps1 全量），"
-        "禁用/删除/转正=Owner 门位（docs/_working/automation/"
+        "禁用/删除/转正=Owner 门位（docs/04_research_records/cross_domain/automation/"
         "20260917_automation_linkage_plan_v1.md §待裁-4）",
     },
     "ZephyrAlpha_C4Exam_OneShot0915": {

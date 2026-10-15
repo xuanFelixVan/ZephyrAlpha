@@ -22,9 +22,9 @@
 #   与 blueprint/capability 生成器无职责重叠
 #   （load_anchor_block / scan_skeleton_axes / state_values / terminal_values——装载与实扫判据
 #   单一真源，禁在生成器复制第二套）；
-#   docs/_working/map_build/fig15_cardlife/00_skeleton.md（§1 状态全集 + §2.1 合法边 +
+#   docs/_archive/_working_cleared/map_build/fig15_cardlife/00_skeleton.md（§1 状态全集 + §2.1 合法边 +
 #   §2.2 禁止边 = 语义真源，本生成器只做机读镜像不做二次创作）；
-#   docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml（语料口径 / 卡头别名
+#   docs/_archive/_working_cleared/map_build/fig15_cardlife/91_registry_host_proposal.yaml（语料口径 / 卡头别名
 #   规则 / 六处分裂面 / 复活授权 = 施工口径档案；其 §2 词表与 §7 实例种子自 2026-09-26 起
 #   改由宿主面装载——card_state_vocabulary.yaml + experiment_registry.yaml CARD-* 契约条目，
 #   装载点唯一真源在校验器 load_anchor_block，本件禁另立第二套）；
@@ -98,8 +98,8 @@ _CASEBOOKS_KEYS = ("casebooks", "casebooks_note_zh", "casebooks_legend_zh")
 _PROPOSAL_REL = V._PROPOSAL_REL
 _SKELETON_REL = V._SKELETON_REL
 _CSV_VERDICT_FACES = (
-    "docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/pattern_narrow_results.csv",
-    "docs/_working/archive/2026-09/bizmine_night/volume_family_l1/exam_results.csv",
+    "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/pattern_narrow_exam/pattern_narrow_results.csv",
+    "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/volume_family_l1/exam_results.csv",
 )
 # 禁止边 → 判定入口（实现绑定，非语义二次创作：禁令本体逐字取骨架 §2.2 列，
 # 这里只登记"本图校验器的哪一条腿负责看见它"；无状态对偶的四条另标 pattern_kind）
@@ -429,7 +429,9 @@ def build_gaps(faces: list[dict[str, Any]], corpus: dict[str, Any], ledger: dict
                 "verified_scope": "structure",
                 "build_status": "pending",
                 "machine_readable": "partial",
-                "source_anchors": ["docs/_working/map_build/fig15_cardlife/03_三处分裂对账与外部对标.md"],
+                "source_anchors": [
+                    "docs/_archive/_working_cleared/map_build/fig15_cardlife/03_三处分裂对账与外部对标.md"
+                ],
                 "doc_refs": [_PROPOSAL_REL],
                 "module_id": None,
                 "module_ref": None,
@@ -613,12 +615,12 @@ def scan_ledger(
     key_hits = sum(1 for s in stems if s in host_txt)
     ledger_rows = 0
     for rel in (
-        "docs/_working/archive/2026-09/final3_campaign/w9_triage_ledger.md",
-        "docs/_working/archive/2026-09/kimi_audit/experiments_ledger.md",
-        "docs/_working/archive/2026-09/tdchain_mine/a0_master_ledger.md",
-        "docs/_working/archive/2026-09/bizmine_night/bizmine_campaign_ledger.md",
-        "docs/_working/fullflow_campaign/COORDINATION_LEDGER.md",
-        "docs/_working/integrated_backtest/IBT-CAMPAIGN-LEDGER.md",
+        "docs/_archive/_working_cleared/archive/2026-09/final3_campaign/w9_triage_ledger.md",
+        "docs/_archive/_working_cleared/archive/2026-09/kimi_audit/experiments_ledger.md",
+        "docs/_archive/_working_cleared/archive/2026-09/tdchain_mine/a0_master_ledger.md",
+        "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/bizmine_campaign_ledger.md",
+        "docs/_archive/_working_cleared/fullflow_campaign/COORDINATION_LEDGER.md",
+        "docs/04_research_records/cross_domain/integrated_backtest/IBT-CAMPAIGN-LEDGER.md",
     ):
         p = root / rel
         if p.exists():

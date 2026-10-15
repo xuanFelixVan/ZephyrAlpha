@@ -9,7 +9,7 @@
 #   scripts.governance._shared.module_translation_loader（get_module_translation）；
 #   zephyr.shared.io.file_utils（safe_write_text，热写通道复用）；git（只读 show 取 HEAD 提交时间派生时间戳）；
 #   docs/03_modules/path_ownership_map.yaml（depgraph 派生在册投影 claim_type=depgraph_node，
-#   路径→MOD-* 总线号只读面，禁自造号）；docs/_working/map_build/fig13_daycycle/00_skeleton.md
+#   路径→MOD-* 总线号只读面，禁自造号）；docs/_archive/_working_cleared/map_build/fig13_daycycle/00_skeleton.md
 #   （§2 四张环节表状态列，verified_scope 双轴唯一同源口径）
 # [CONSUMERS] config/trading_day_cycle_map.yaml（唯一产出物）；
 #   scripts/governance/d5_architecture/validators/validate_trading_day_cycle_map.py（在册实存对照本生成器
@@ -18,7 +18,7 @@
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 双层结构（GOMAP/图11 先例）：machine_facts 层每次全量重扫可执行真相源
-# [MODIFY-GUARD] 环节契约全集/边/反馈环改动前先回写 docs/_working/map_build/fig13_daycycle/
+# [MODIFY-GUARD] 环节契约全集/边/反馈环改动前先回写 docs/_archive/_working_cleared/map_build/fig13_daycycle/
 #   00_skeleton.md（44 环节），gap 节点增删须同步校验器 NODE_UNIVERSE 与本件 NODE_ORDER；
 #   产出 config/trading_day_cycle_map.yaml 禁手改后不回生成
 # [STABILITY] evolving
@@ -50,7 +50,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 读不到实载集合必抛，禁降级为'无冲突'
 # [TESTS] 见同批 tests/ 下 canary 件
-#   docs/_working/map_build/fig13_daycycle/00_skeleton.md（本图唯一收敛基准，44 环节）；
+#   docs/_archive/_working_cleared/map_build/fig13_daycycle/00_skeleton.md（本图唯一收敛基准，44 环节）；
 #   gap 节点（D13-G01..）是骨架外显性化缺口件，增删须同步校验器 NODE_UNIVERSE 与本件 NODE_ORDER；
 #   产出物 config/trading_day_cycle_map.yaml 禁手改后不回生成（counts 一致性校验判红）
 # [STABILITY] evolving
@@ -82,7 +82,7 @@
      - **TDM 节点号在册面**（config/trading_decision_map.yaml 的 node_id 全集，tdm_refs 逐条实存判定）
   2. 人工语义层：环节名/decision_question/note_zh（L0 统一名，废止三个同义异名注解字段与两个
      doc 指针别名）/laws/boundary/边/反馈环——逐条取自
-     docs/_working/map_build/fig13_daycycle/00_skeleton.md §0/§1/§2 与十本作业簿（簿 10=外部对标三扫：
+     docs/_archive/_working_cleared/map_build/fig13_daycycle/00_skeleton.md §0/§1/§2 与十本作业簿（簿 10=外部对标三扫：
      表A 七条逐条落 L1/L2 字段或 gap 节点、表C 五条判据分歧只以 gap_refs 记入不自裁），状态口径
      ✅/🔨/⬜ 照用骨架 §2 状态列（判据不擅改；作业簿复判差异另记 mining_status 字段）。
 
@@ -127,8 +127,8 @@ from d5_architecture.generators._common import (  # noqa: E402  # noqa: import-i
 _tbl = tbl_name  # 表名取数单源化（_common.tbl_name，CR-15 同批收内）
 
 OUTPUT_PATH = _REPO_ROOT / "config" / "trading_day_cycle_map.yaml"
-_SKELETON = "docs/_working/map_build/fig13_daycycle/00_skeleton.md"
-_BOOK_DIR = "docs/_working/map_build/fig13_daycycle"
+_SKELETON = "docs/_archive/_working_cleared/map_build/fig13_daycycle/00_skeleton.md"
+_BOOK_DIR = "docs/_archive/_working_cleared/map_build/fig13_daycycle"
 
 # 真源坐标（全部只读）
 _SCHEDULE_REL = "src/zephyr/data/config/schedule.yaml"
@@ -234,11 +234,14 @@ NODE_ORDER: tuple[str, ...] = tuple(f"D13-{i:02d}" for i in range(1, 49)) + GAP_
 _GAP_DOC = {
     "D13-G01": (_EXT_BOOK, "六图终局卷 §4 图13 判据①（空转槽与落空对象全可查）"),
     "D13-G02": (
-        "docs/_working/map_build/fig12_datachain/11_消费端需求反查.md",
+        "docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md",
         f"{_BOOK_DIR}/05_盘中资金流与决策层.md",
     ),
-    "D13-G03": (f"{_BOOK_DIR}/06_盘后结算与三账.md", "docs/_working/map_build/fig12_datachain/11_消费端需求反查.md"),
-    "D13-G04": ("docs/_working/map_build/fig12_datachain/11_消费端需求反查.md", _EXT_BOOK),
+    "D13-G03": (
+        f"{_BOOK_DIR}/06_盘后结算与三账.md",
+        "docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md",
+    ),
+    "D13-G04": ("docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md", _EXT_BOOK),
 }
 
 # ---------------------------------------------------------------------------
@@ -1617,7 +1620,10 @@ N: dict[str, dict[str, Any]] = {
         fb="none:桥面无料⇒三账 L1 基准腿今日无原料",
         ref=None,
         anc=["src/zephyr/ex_core/position_reconciler.py", "src/zephyr/trading/three_way_reconciliation.py"],
-        doc=[f"{_BOOK_DIR}/05_盘中资金流与决策层.md", "docs/_working/map_build/fig12_datachain/11_消费端需求反查.md"],
+        doc=[
+            f"{_BOOK_DIR}/05_盘中资金流与决策层.md",
+            "docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md",
+        ],
         ev=[
             "图 12 簿 11 §1-C（消费方在等未产表 5 条之一，生产端实况逐条实测在册）",
             "簿 05 下向：本表全表 1 行、当日 0 行；盘后侧独立同证（结算留痕 fills=0 records=0 symbols=0）",
@@ -1670,7 +1676,7 @@ N: dict[str, dict[str, Any]] = {
         fb="none:错名订阅恒空返，与真表新鲜同形",
         ref=None,
         anc=["src/zephyr/data/scheduler.py:491", _SCHEDULE_REL],
-        doc=["docs/_working/map_build/fig12_datachain/11_消费端需求反查.md", _EXT_BOOK],
+        doc=["docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md", _EXT_BOOK],
         ev=[
             "图 12 簿 11 §1-D 幽灵引用（system.tables 逐名核对 exists:false；全库同名仅一表）",
             "簿 04 §D13-17 生产者腿三证齐（当日本槽千余次执行、真表当日 FINAL 千行级）"
@@ -1929,7 +1935,7 @@ FAILURE_VISIBILITY: dict[str, str] = {
 
 # L1 gap_refs 手工腿（表C 判据分歧留裁 + 表A 未接线处方 + 跨图缺口交叉引用；
 # 落空对象台账那半边由 node_gap_refs 机械分派，两半并集即完整缺口面）
-_BENCH = "docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md"
+_BENCH = "docs/_archive/_working_cleared/map_build/fig13_daycycle/10_外部对标三扫.md"
 GAPREF: dict[str, list[str]] = {
     "D13-09": [
         "benchmark:A1-拒准入出边清单见顶层 admission_edges（本门唯一带拒准入语义的出边集）",
@@ -2456,7 +2462,7 @@ def scan_registered_schtasks(root: Path, *, skip: bool = False) -> dict[str, Any
     return {"available": True, "reason": "", "task_names": names}
 
 
-# ── trigger_facts 实数化（st-fig13-followup-20261006 线C；口径真源=docs/_working/fig13_followup/c1_trigger_facts_realdata_plan.md 封矿簿）──
+# ── trigger_facts 实数化（st-fig13-followup-20261006 线C；口径真源=docs/_archive/_working_cleared/fig13_followup/c1_trigger_facts_realdata_plan.md 封矿簿）──
 _TRIGGER_DB_REL = "data/integrator_progress.db"
 _TRIGGER_WINDOW_DAYS = 30
 # B 类节拍窗：240h=8 天长假（国庆/春节）+2 天缓冲（红队⑤探针实证 96h 在长假尾假零；
@@ -3272,7 +3278,7 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
             "note_zh": "资源容量/互斥窗/三表一致性归排班族工具（裁定#482 互挂引用：数据层同源三表、视图层正交不并）",
         },
         "ssot_note_zh": (
-            "环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（48 环节四段）+ 十本作业簿"
+            "环节契约真源=docs/_archive/_working_cleared/map_build/fig13_daycycle/00_skeleton.md §2（48 环节四段）+ 十本作业簿"
             "（簿 10=外部对标三扫：表A 七条逐条落 L1/L2 字段或 gap 节点、表C 五条判据分歧只以 gap_refs 记入"
             "不自裁）；machine_facts/trigger_surfaces 层每次全量重扫可执行真相源（排班槽面/任务挂载 join/"
             "特殊槽分支面/PHASE_STAGES 实扫/日历守卫面/计划任务只读查询面/服务总闸实存面/骨架状态列实扫/"
@@ -3373,7 +3379,7 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
             # 图 12 侧发现的"消费方在等未产表 5 + 幽灵引用 1"归属分派（涉及本图者已落环节/gap 节点，
             # 其余三条环节面归图 12，本图只交叉引用不建其节点）
             "cross_map_gap_inventory": {
-                "source": "docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C/§1-D",
+                "source": "docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C/§1-D",
                 "in_this_map": [
                     {
                         "artifact": _tbl("market_execution_report"),
@@ -3468,7 +3474,7 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
 _MAP_HEADER = (
     "# 交易日循环全景图（trading_day_cycle_map，图 13）——由 generate_trading_day_cycle_map.py 机生。\n"
     "# 本文件禁手改后不回生成（counts 一致性校验判红）；环节契约真源="
-    "docs/_working/map_build/fig13_daycycle/00_skeleton.md。\n"
+    "docs/_archive/_working_cleared/map_build/fig13_daycycle/00_skeleton.md。\n"
     "# 三条硬让渡进 laws/boundary：时刻值不搬家（cron 字面量零复制）、决策内容不进图"
     "（判据走 tdm_refs）、管线内部不重画；machine_facts 层重扫即刷新。\n"
 )
