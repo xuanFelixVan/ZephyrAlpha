@@ -162,3 +162,18 @@ date: 2026-09-24
   - **恢复前置三件＝①成／②未成／③未成 ⇒ 不广播"可恢复"、零席 enable、全线继续停发配额**。①翻"成"是本班最硬一条：修法笔 511b8e22c7（01:54・is-ancestor rc=0）已落 HEAD，`git show HEAD:scripts/commit_queue.py` 现面「托管正门」2／`custody_excused` 8／`meta.custody` 4，落地后审计面 149 条全 `custody_excused`、带托管标判死 0。**改判一条**＝上班"没有常驻带工、落地靠瞬时人工 drain"不成立：`ZephyrAlpha_BeltDaemon` State=Running（last 02:39:04／next 02:39:18・14 秒级），真形态＝带工在跑而 `belt_daemon.heartbeat` 停更（mtime 10-15 20:02:02・pid 40328 与 lock pid 24248 psutil 实测皆不存在）＝**观测面降级不是停摆**。**新呈批一条**＝现 pending+processing 172/172 全带 custody ⇒ 鬼闸对新袋实际零判别力。
   - 内存水位＝ram 63.4%／commit 0.7%／盘 free 110G（degraded=False・reaper 计划任务在位＝本班冷启动 --status 实跑通过・写操作前提成立）。
   - 本席自纠留卷＝本班首版自造采数尺（读文件头 1200 字符取 `status:`）量出 examined 17／prereg 20＝与在册尺 81／167 差一个量级，**作废**并改用在册 `.runtime/tmp/p10_07/census_cards_07b.py`；教训＝采数前先确认在册尺存在，别自造族盲尺。
+
+
+## 轮次 st-qoder-p10-1016-04（2026-10-16 03:35:09 起手／03:52:30 落笔，实耗 ≈17 分）
+
+- **成绩增量**：分数册盘 5132 行／HEAD 5132 行・字节全等・sha256 前 8=21ce93c0（与上班同值）＝本班零增量、本席零写。
+- **各席台账实际耗时**：仅⑤⑨两席今日在写（今日 [BLOCKER] 各 1 行），其台账自述本班耗时未见新值；⑦A 游标停 2026-10-15 20:0x。其余九席今日 0 行。
+- **防重入撞车次数＝0**：开闸两证＝pulse 末行 02:48+25=03:13 已过・前任心跳 pid 22568 psutil 实测不存在・1016-03 已短报退班并入 HEAD（d38f557f29）。
+- **[BLOCKER] 全量与分类（本席本班追加 8 行，含 1 行"无"）**：高＝4（主区 stash 覆盖污染／死袋口径缺尺／landing 双侧皆改成串判死／前置②③未成需 Owner）・中＝3（工序 9 与停发令互斥／卡池 status 谓词不统一／本席自家三条车道违反 TRAE-079 Phase 2）・低＝1（零动作项点名）。类型分布＝数据问题 1・判据缺失 1・流程问题 3・需Owner 1・工具缺陷 2。
+- **未收班席点名（0 行清单）**：①②③④⑥⑦A⑦C⑧⑪ 共九席＝连续三班 0 行。本班**不再重复追加**强制收班提醒（提醒已 1016-02 落 9 面，grep 命中 p01/p11 各 1），理由＝停发配额期该工序无可收之班，已作为中严重度呈 Owner 二选一（免执行／仍开空班收一次）。
+- **存放仲裁进 04 件数＝0**（本班）；今日 04 区被提交触及 2 件，归属他线、非本席仲裁产出。
+- **断链战役进度**：分母册现值（mtime 10-15 18:22）＝occurrences 2553／live 63／broken 2490／唯一目标 902；批次 B440（370+59+11）／C1813／D39／E196／F2。X1・X2 在施件与 E 批（Owner 呈批面）不碰；剩余处数未复量。
+- **队列四态与死信增量（分族）**：03:51:44＝pending 143／processing 1／done 835／dead 393（上班 02:48＝171/1/824/364；本班 12 分 done+5・dead+19・pending-24）。今日死信按 dead_at＝135 枚，分族＝ghost 53・landing 双侧皆改 35・R5-DIGIT-SUFFIX 17・POOL-REGRESSION-DIRECTION 15・GATE-PRECOMMIT-RUN 5・DOC-HEADER-SUITE 2・其余各 1。
+- **恢复前置三件成未成**：①**成**（leg A 三面 grep 2/8/4・is-ancestor rc=0・主区 commit_queue.py mtime 01:43:35 未被覆盖；leg B 内容级 ghost 新增 0・审计 185 条全 custody_excused・dead 0）／②**未成**（全线窗内 29 枚新死，自家 0）／③**未成**（⑦A 定性材料未到手）⇒ 不广播"可恢复"、零席 enable。
+- **内存水位**：ram 52.4%（30.39G avail／63.85G total）／commit 50.0%（47.92／95.85G）／cpu 31.9%／degraded False・reaper 报 worktree_changes 1558・stash_count 29（>5 ⇒ 跳过自动清理）。
+- **本班头号事件（呈 Owner）**：主区 03:22:07／03:22:10 被 `git stash apply stash@{27}`（10-15 23:58:42 "On dev: st-perfz2-probe"，相对 base 3642 件）覆盖 1583 个文件，13 件净落后落地面（含三张本席信箱与他席三本台账）；本席只复位自家面，全仓污染面与 29 条 stash 栈的处置＝Owner／清理专班面，本席不自裁、不自 drop。

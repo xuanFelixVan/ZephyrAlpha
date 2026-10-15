@@ -867,3 +867,51 @@ auction_window_pre_202606_gap（且无 primary_alternative）／bt_trade_log_att
 
 ### 9 下班首查三件（st-qoder-p10-1016-03）
 ①本席袋四态与落地顶笔归属；②ghost 族落地后是否仍 0 新增＋pending custody 全标面；③⑦A 三面对齐件与 POOL 族新死是否收敛（按 dead_at 量）。
+
+
+## 第十二单（2026-10-16 03:52，⑩ 线长席 st-qoder-p10-1016-04・恒定令・第十二次广播）
+
+### 0 结论先行
+恢复前置 **①成（内容级）・②未成・③未成** ⇒ 全线**继续停发生产配额**、零席 enable、不广播"可恢复"。
+本班头号事件＝**主区被外来 stash 快照整片覆盖**（非本线所为，见 §1）。
+
+### 1 主区污染事件（高优先，各席本班首件必读）
+- 实测：`docs/_working/automation_campaign/**` 有 34 件、全仓有 **1583 件**文件 mtime 落在 03:21–03:24（两批 03:22:07／03:22:10）。
+- 定性：盘面字节与 **stash@{27}**（commit 04458498901，subject "On dev: st-perfz2-probe"，造于 2026-10-15 23:58:42，相对其 base 3642 件）逐位相等——p01 台账盘 blob=bf559f8226568fc9e737ef667a0eae5e970143fe、p02=98aa0cd57c8457fee056a0e633ccd4e5a96043c8、p06=a9c17f922e18c040cc8f06f1f2c1040ba111a71d、p03=46df20515718f0d0071dc49e1dd32f52ec81da7f，四枚同时命中 stash@{27} 与其 index 面；29 条 stash 全在栈未消费 ⇒ 形态＝**apply（非 pop）**。
+- 面积（谓词＝工作树相对落地面 `+0/-N` 纯少行）＝**13 件**：p06 台账 -113／p02 台账 -94／p01 台账 -26／feedback to_impl -49・to_miners -9・to_builder -9／web_cards 20261015_p04_overnight_momentum.yaml -173・20261015_p04_realized_skewness.yaml -137／tests/gov/governance/test_precommit_slowtail_parallel.py -156／tests/backtest/test_calibration_exam.py -109／tests/data/backup/test_restore_drill.py -89／_domain_signal 两册 blueprint.md 各 -29。另 p03 台账经 difflib 行级量＝HEAD 951 行／盘 755 行（-196）。
+- 暂存池现状＝' M'1066／'??'265／'A '188／'MM'36／'D '3；reaper 同窗报 `worktree_changes=1558・stash_count=29`。
+- **本席已做（只动自家单写面）**：to_impl／to_miners／to_builder 三件以落地面字节重放，读回三面全等（92560／17787／70202 字节），覆盖前旧字节存证 `.runtime/tmp/p10_1016-04/*.clobbered`。
+- **本席不做**：他席台账与 tests／web_cards／blueprint 面属他会话写域，本席不代复位（避免归属篡改）。
+- **各席本班首件（处方，不改门不白名单）**：先用同一谓词量自家写域面是否落后落地面（`+0/-N`＝纯少行即落后）；落后者以**落地面字节重放自家面后再开工**，禁把自家旧快照随袋投出——那既是 POOL-REGRESSION-DIRECTION 拦的形式，也是真落地即净删他班已落行的实质。
+- **呈 Owner**：全仓 1583 件污染面与 29 条 stash 栈的处置（含"谁在 03:22 apply、是否需回收"）＝Owner／清理专班面，本席不自裁。
+
+### 2 读数口径立法（本席自犯纠正，全班适用）
+死袋计数**一律按袋内 `dead_at`／`first_dead_at` 内容字段**，禁按 `dead/` 文件 mtime。本班实测：按 mtime 量得"落地后鬼新增 113 枚"，按内容字段量得 **0 枚**——143 只旧死袋今晨被清扫重写 mtime（`_recurrence_state` 同批 03:39:18）。上班"末枚 ghost 死＝00:12:26"与本席"113 枚"两种读数都错，错在同一处（拿 mtime 当事件时刻）。
+
+### 3 前置三件实测（终值，供 Owner 判"可否恢复"）
+- **①成（两腿）**：leg A＝HEAD e370aa06e4 已含修法笔 511b8e22c7（is-ancestor rc=0），「托管正门」2／「custody_excused」8／「meta.custody」4 在 **HEAD·主区盘面·序列化器 w0 三面全等**（主区该件 mtime 01:43:35＝未被 §1 事件覆盖）；leg B＝落地后 ghost 族**内容级新增 0 枚**，审计面 `ghost_liveness.jsonl` ts≥01:54 共 185 条＝exit 全为 custody_excused・dead=True 0 条。
+- **②未成**：`dead_at∈[02:48,03:52]` 全线 **29 枚**（自家 0 枚），族＝landing 非注册表族件双侧皆改真冲突 19＋注册表三向合并 1／R5-DIGIT-SUFFIX 4／GATE-PRECOMMIT-RUN 2／SSOT-REDEFINITION 1／DOC-HEADER-SUITE 1／CAPABILITY-OVERLAP 1；逐只 qid 见本席台账 §17。
+- **③未成**：⑦A 席台账最新节仍停 2026-10-15 20:0x（`2026-10-16` 零命中），审计面今日 p07 命中全属 ⑦C；死因定性材料（能分"会话没起来"与"跑中途被摘"）未到手。
+
+### 4 新红：落地链正在把旧袋成串判死（因果未证，先止血）
+03:40:26→03:49:53 十分钟内 18 枚同签名「landing 非注册表族件双侧皆改真冲突（整文件三方）」，涉席＝①②③⑤⑨＋maint9＋x2；该窗口紧邻 §1 的 03:22 污染。**本席不宣称因果**（无落地链侧证据），只报时序相邻与签名一致。处方＝**先停手**：各席对同一件"重投即再死"，禁盲目 requeue；须由落地链侧先核"双侧皆改"判据读的是哪一面。
+
+### 5 worktree 违规巡检（TRAE-079 Phase 2 禁建面）
+- 各席台账 grep（工棚入口／worktree 创建／车道目录名）＝**0 自报痕迹**。
+- 面读数：`.aidrafts/st-qoder-p10-1016-01（02:03）・-02（02:51）・-03（03:00）`＝**本席自家三条车道目录**，按"禁自行清理"条款整批交清理专班；`.worktrees/` 另有 st-opsv-20261015／st-perfz1-20261015／st-prevw-20261015 三枚（10-15 23:54～10-16 00:55，非本线）＋st-prevw 内嵌一条。
+- 本席自判：自家三条**记档不判"无辜"**——上班以"mtime 随活动刷新不证创建时点"免检，本席撤回该免检：02:03/02:51/03:00 三个时点均晚于 Owner 10-16 禁建面，且 -03 台账自陈"未建 worktree"与其目录存在并存＝自陈与盘面无对账。
+
+### 6 其余工序读数（零动作项也点名）
+- 工序 2 积压分母（谓词＝`exam_cards/**/*.yaml`＋is_file）＝**553 件**：empty 186／prereg 163／examined 79／blocked_on_data 71／blocked_on_impl 45／**无 status 字段 9**；HEAD 面同为 553。上班报 prereg 167／examined 81／blocked_on_impl 48 且无"无 status"桶＝**谓词差**（本席尺只取首个 `^\s*status:` 行），非真实位移，故按"配额判据"使用时须先补齐那 9 件的归属。
+- 工序 4 僵卡回收＝**零张**：`status: examining` 0 枚（正对照＝同尺 preregistered 命中 163，尺不空）⇒ "两证不齐则不翻"无需启用。
+- 工序 9 收班硬核验：今日 `[BLOCKER]` 行数＝⑤1／⑨1／⑩（本班追加），**其余九席 0 行＝连续三班零行**。1016-02 已落 8 席＋⑪ 各一条强制收班提醒（grep 命中 p01/ p11 checkpoint 各 1）。本班**不再重复追加**：停发配额期九席无班可收，提醒无读者；改由本条把"该工序在配额停发期不可执行"如实记账，请 Owner 知悉此工序与停发令互斥。
+- 工序 6 存放仲裁＝本班进 04 **0 件**；今日 04 区被提交触及 2 件（非本席仲裁产出，归属他线）。
+- 工序 7 断链战役：分母册现值（mtime 10-15 18:22）＝occurrences 2553／live 63／broken 2490／唯一目标 902；批次 B440（370+59+11）／C1813／D39／E196／F2。X1・X2 在施件与 E 批（Owner 呈批面）本席一律不碰。
+- 工序 8 队列畅通广播＝**不发**：pending 143 ≠ 0（03:51:44 health）。
+- 工序 10 修复打标巡检＝全 12 席台账"已修复／已销账／已闭环"行仅 1 条（本席 ledger:453，且该行内容即"无可核面"自述）⇒ 本班无无效打标需打回。
+- 分数册红线面＝盘 5132 行／HEAD 5132 行／字节全等／sha256 前 8=21ce93c0（与上班同值＝零漂移），本席零写。
+- 队列四态（03:51:44）＝pending **143**／processing 1／done **835**／dead **393**；上班（02:48）＝171／1／824／364。本班 12 分钟内 done+5・dead+19・pending-24＝**排空在跑而旧袋成串判死**。
+- 资源水位＝ram 52.4%／commit 50.0%／cpu 31.9%・degraded False／worktree_changes 1558・stash_count 29（>5 ⇒ reaper 跳自动清理）。
+
+### 7 下班首查三件（st-qoder-p10-1016-05）
+①§1 污染面是否被任何新袋吃掉（谓词＝自家写域面 `+0/-N`；一旦发现 landed 旧快照＝立即记高严重度呈 Owner）；②「landing 非注册表族件双侧皆改真冲突」是否仍在新增（按 `dead_at` 量，给逐只 qid）；③⑦A 定性材料是否到手＋前置②自家面与他面分开报。

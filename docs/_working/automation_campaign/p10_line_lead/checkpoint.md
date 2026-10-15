@@ -53,3 +53,10 @@ cursor: 1016-02 班终态＝**前置①改判为"成"（两腿实测）・②未
 last_run: 2026-10-16 02:30:39 起手／02:48 落笔（实耗 ≈17 分＝闸前值守 4 分＋例行 13 分；袋态终值待下班复量，本席不预写）
 last_batch: st-qoder-p10-1016-02（今日第 02 班；本袋 5 件＝本席写域全清单，自家五件对 HEAD 漂移 ledger.md=HEAD独有0/盘独有0｜checkpoint.md=HEAD独有0/盘独有0｜queue_depths.md=HEAD独有0/盘独有0｜daily_dispatch.md=HEAD独有0/盘独有0｜automation_plan_discussion.md=HEAD独有0/盘独有0；0 枚自家死袋＝前置②自家面达标）
 notes: 下班首查**三件**＝①本席袋四态与落地顶笔归属（`git log -1 --name-only`）②ghost 族落地后是否仍 0 新增＋pending custody 全标面有无变化（尺＝ghost_liveness.jsonl 按 ts≥01:54 分段）③⑦A 三面对齐件是否到手；另沿用两条自加纪律＝改完必用门侧同一把尺对本袋全部文件复跑再投・闸门时戳写全 HH:MM:SS。红线沿用＝禁建 worktree・只走队列正门・出班前自测活证・入袋后禁改同件・共写面单写在本席。
+
+
+<!-- P10-1016-04-CURSOR -->
+cursor: 1016-04 班终态＝**前置①成（内容级两腿）・②未成（全线 29 枚新死・自家 0）・③未成（⑦A 材料未到）**⇒ 维持不广播『可恢复』、零席 enable、全线停发配额。本班头号事件＝**主区 03:22 被外来 `stash@{27}`（10-15 23:58 "On dev: st-perfz2-probe"）apply 覆盖 1583 件**，13 件净落后落地面（谓词＝工作树对 HEAD `+0/-N`）；本席只复位自家三张信箱（读回 92560/17787/70202 字节全等，旧字节存 `.runtime/tmp/p10_1016-04/*.clobbered`），他席面不代复位。自犯纠正＝**死袋计数改按袋内 dead_at/first_dead_at，禁按 dead/ mtime**（旧读数 113 枚＝mtime 伪影，正读 0 枚）。新红＝03:40–03:49 十分钟 18 枚同签名「landing 非注册表族件双侧皆改真冲突」成串判死，因果未证、处方＝各席勿盲目 requeue。工序 4＝examining 0 枚（正对照 prereg 163）；工序 9＝九席连续三班 0 行・本班不再重复追加（停发期无读者，已呈 Owner）；工序 6＝进 04 0 件；工序 8＝不发（pending 143）；工序 10＝零打回；卡池 553＝empty186/prereg163/examined79/bod71/boi45/无status 9。worktree 巡检＝撤回上班对自家 `.aidrafts/st-qoder-p10-1016-01/-02/-03` 三条的免检判，整批交清理专班。队列终读（03:51:44）＝pending 143／processing 1／done 835／dead 393・水位 ram 52.4%/commit 50.0%/盘 worktree_changes 1558・stash 29。本件游标＝追加块，上方 1016-02/03 块为历史留卷。
+last_run: 2026-10-16 03:35:09 起手／03:52 落笔（date 实测，实耗 ≈17 分＝量测 14 分＋写盘 3 分）
+last_batch: st-qoder-p10-1016-04（今日第 04 班；本袋＝本席写域五件（ledger/checkpoint/daily_dispatch/queue_depths/automation_plan_discussion）＋自家三张信箱复位件；自家 0 枚死袋＝前置②自家面达标）
+notes: 下班首查**三件**＝①§17.1 污染面是否被任何新袋吃掉（自家写域先量 `+0/-N`）②「landing 双侧皆改」是否仍新增（按 dead_at 逐只 qid）③⑦A 定性材料＋前置②自家／全线分报。红线沿用＝禁建 worktree・只走队列正门・出班前自测活证・入袋后禁改同件・共写面单写・分数册与判据门柱零写。
