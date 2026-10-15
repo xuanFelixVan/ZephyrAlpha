@@ -3,7 +3,7 @@ doc_type: policy
 ttl: permanent
 title: 全自动研究生产线运营 SOP（九口出料·挖考判晋反馈闭环）
 status: active
-version: 1.6.3
+version: 1.6.4
 date: '2026-10-15'
 owner: ZephyrAlpha-Owner
 ---
@@ -55,7 +55,7 @@ owner: ZephyrAlpha-Owner
 > **v1.6.0 变更（2026-10-15）**：§2 路径注二次核验（30 本成绩册入 04/backtest/scores/2026，归档区无残留）；GPU 接线升⑤席 P0 首件（考试执行器未接 GPU=一直没转根因）；§8 命名词表真源指针 domain_naming_rules.yaml。
 > **v1.3.0 变更（2026-10-15，TDM 挖矿并入令并入）**：车道台账/名册等战役资产已归档至 `docs/_archive/_working_20261014/nightmine_campaign/`（③席输入口路径同步）；产卡唯一出口=`scripts/backtest/generate_exam_card_skeleton.py` only-add 通道；念想引擎双轨=本地引擎走 GPU 机会档（登记+让路，§3-F）或 LSG qwen provider（GPU 纪律同理）；枯竭判据对齐 mining_sop **v1.9.1**（六向全查无新卡+无未挖长尾+挖后自审闸 §6，双噪音封矿）；现状锚定：186 节点全有卡 531 张、mined_out=0、六向在半山腰；边界=docs/04_research_records/ 基建中，挖矿产物任务期暂留 _working 面、落成后统一迁移，**禁两线同写一区**；挖矿不停，唯一叫停权=Owner。
 
-通用规则（适用于全部岗位）：开工冷启动三步（PATH 修 Python312→lock_files cleanup→process_reaper --status）；改前 claim 毕后 release；**班中 claim 过期（TTL 30 分、失败重试后 5 分）→重新 acquire 即可（文件未变则无冲突），CAS 拒写非事故勿进堵点**；提交唯一正门 git_commit.py --enqueue；**升级三问（升级给⑩/他席/Owner 前必答，自解决优先）：在我的写域内吗？有在册处方吗？零判据风险吗？——三问皆"是"→当班自修+记录，不升级不等待；任一"否"→升级并落 [BLOCKER]。****完工自检两轮，连续两轮零问题该批产出才算交付**（第二轮才发现问题=第一轮漏检记缺陷行）；四件套=`docs/_working/automation_campaign/<岗>/`{instruction.md 恒定指令, scope.md 输入清单, checkpoint.md 游标, ledger.md 台账}；sid=`st-qoder-<岗>-<MMDD>-<NN>`。
+通用规则（适用于全部岗位）：开工冷启动三步（PATH 修 Python312→lock_files cleanup→process_reaper --status）；改前 claim 毕后 release；**班中 claim 过期（TTL 30 分、失败重试后 5 分）→重新 acquire 即可（文件未变则无冲突），CAS 拒写非事故勿进堵点**；提交唯一正门 git_commit.py --enqueue；**升级三问（升级给⑩/他席/Owner 前必答，自解决优先）：在我的写域内吗？有在册处方吗？零判据风险吗？——三问皆"是"→当班自修+记录，不升级不等待；任一"否"→升级并落 [BLOCKER]。****完工自检两轮，连续两轮零问题该批产出才算交付**（第二轮才发现问题=第一轮漏检记缺陷行）；四件套=`docs/_working/automation_campaign/<岗>/`{instruction.md 恒定指令, scope.md 输入清单, checkpoint.md 游标, ledger.md 台账}；sid=`st-qoder-<岗>-<MMDD>-<NN>`。**收班五件（缺一不算收班，2026-10-16 Owner 立）**：①release 全部 claim ②注销心跳 ③记实际耗时 ④[BLOCKER] 行（含"无"）⑤自清收口——本班在 .runtime/tmp/ 创建的临时件全部删除、_working 本席四件套外的散落件删除或归位四件套、该提交的已全部提交（--files 清单核对）、无未竟待办残留。
 
 ### ① 数据源席
 - **目标**：数据就位率最大化；断供=穷尽免费渠道后的最后登记，不是逃避登记。
