@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-10-04T16:56:37Z'
+generated_at: '2026-10-14T09:16:55Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -319,9 +319,9 @@ gates:
   name: 'GATE-TEST: 测试门禁合并（GATE-18 staged收集 + GATE-19 结构）'
   entry: bash -c "files=$(git diff --cached --name-only --diff-filter=AMR -- tests/
     | grep '\.py$' | tr '\n' ' '); if [ -z \"$files\" ]; then echo '[gate-test] no
-    staged test files, skip collect (B1 2026-09-30)'; rc1=0; else pytest --collect-only
-    -q --tb=line -p no:asyncio --import-mode=importlib -m 'not slow and not e2e' $files;
-    rc1=$?; fi; python scripts/governance/d11_compliance/check_test_structure.py;
+    staged test files, skip collect (B1 2026-09-30)'; rc1=0; else ZEPHYR_TEST_PG=1
+    python -m pytest --collect-only -q --tb=line -p no:asyncio --import-mode=importlib
+    -m 'not slow and not e2e' $files; rc1=$?; fi; python scripts/governance/d11_compliance/check_test_structure.py;
     rc2=$?; if [ $rc1 -ge 2 ] || [ $rc2 -ge 2 ]; then exit 2; fi; if [ $rc1 -ne 0
     ] || [ $rc2 -ne 0 ]; then exit 1; fi; exit 0"
   description: 测试门禁合并——GATE-18 收集域 2026-09-30 按 9/24 报告 B1 处方收窄：全树 pytest --collect-only(3967
@@ -348,8 +348,8 @@ gates:
   enforcement_channel: pre-commit
 - gate_id: GATE-ERRCODE
   name: 'GATE-ERRCODE: error_code 注册表↔代码双向对账（#ARCH-ERRCODE-001）'
-  entry: python -m pytest tests/governance/test_error_code_consistency.py -q --tb=line
-    -p no:asyncio --import-mode=importlib
+  entry: bash -c "ZEPHYR_TEST_PG=1 python -m pytest tests/governance/test_error_code_consistency.py
+    -q --tb=line -p no:asyncio --import-mode=importlib"
   description: error_code 一致性门禁——代码定义点全量登记 + active 条目存活锚定 + 重码白名单外零容忍 + 前缀声明（真源 tests/governance/test_error_code_consistency.py）
   files_trigger: ^(src/zephyr/.*\.py|architecture_model/contracts/error_code_registry\.yaml)$
   always_run: false
@@ -771,7 +771,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: BLUEPRINT-NODE-ID-HARDCODE
   name: 'BLUEPRINT-NODE-ID-HARDCODE: BLUEPRINT-NODE-ID-HARDCODE（CommitGate, priority=57）'
@@ -902,22 +902,6 @@ gates:
   name: 'CREATE-GUARD: CREATE-GUARD（CommitGate, priority=60）'
   entry: in-process (GitCommitGateway)
   description: CREATE-GUARD
-  # C304（st-mastertc-l2 2026-10-07）触发面补登记：staged 新增 .py（tests/ 豁免）+
-  # 非 rules/ .yaml 才有判责面（create_guard.py INVARIANTS）——他类文件零判责不触发
-  files_trigger:
-  - '*.py'
-  - '*.yaml'
-  always_run: false
-  category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: true
-  enforcement_channel: commit-gate
-- gate_id: POOL-REGRESSION-DIRECTION
-  name: 'POOL-REGRESSION-DIRECTION: 池面回退方向门禁（POOL-REGRESSION-DIRECTION，批令二 L3 提交层）（CommitGate,
-    priority=161）'
-  entry: in-process (GitCommitGateway)
-  description: 池面回退方向门禁（POOL-REGRESSION-DIRECTION，批令二 L3 提交层）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1123,10 +1107,10 @@ gates:
   entry: in-process (GitCommitGateway)
   description: FILE-COPY
   files_trigger:
-  - src/*.py
-  - scripts/*.py
-  - schemas/*.py
-  - sitecustomize.py
+  - added:src/*.py
+  - added:scripts/*.py
+  - added:schemas/*.py
+  - added:sitecustomize.py
   always_run: false
   category: commit_gate
   status: active
@@ -1209,10 +1193,10 @@ gates:
   entry: in-process (GitCommitGateway)
   description: FUNCTION-DUP
   files_trigger:
-  - src/*.py
-  - scripts/*.py
-  - schemas/*.py
-  - sitecustomize.py
+  - added:src/*.py
+  - added:scripts/*.py
+  - added:schemas/*.py
+  - added:sitecustomize.py
   always_run: false
   category: commit_gate
   status: active
@@ -1438,11 +1422,11 @@ gates:
   source: commit-gate
   own_scope: true
   enforcement_channel: commit-gate
-- gate_id: STRATEGY-CARD-LIFECYCLE-MAP
-  name: 'STRATEGY-CARD-LIFECYCLE-MAP: 策略卡生命周期图（图15）结构门禁（STRATEGY-CARD-LIFECYCLE-MAP）（CommitGate,
+- gate_id: GOVERNANCE-LEGISLATION-MAP
+  name: 'GOVERNANCE-LEGISLATION-MAP: 治理立法流图（图16）结构门禁（GOVERNANCE-LEGISLATION-MAP）。（CommitGate,
     priority=100）'
   entry: in-process (GitCommitGateway)
-  description: 策略卡生命周期图（图15）结构门禁（STRATEGY-CARD-LIFECYCLE-MAP）
+  description: 治理立法流图（图16）结构门禁（GOVERNANCE-LEGISLATION-MAP）。
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1620,6 +1604,11 @@ gates:
   - scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
   - scripts/governance/d5_architecture/validators/validate_dev_delivery_map.py
   - docs/_working/map_build/fig11_delivery/00_skeleton.md
+  - config/governance_legislation_map.yaml
+  - scripts/governance/d5_architecture/generators/generate_governance_legislation_map.py
+  - scripts/governance/d5_architecture/validators/validate_governance_legislation_map.py
+  - docs/_working/map_build/fig16_legislation/00_skeleton.md
+  - src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
   - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
   - config/flags.yaml
@@ -1749,7 +1738,7 @@ gates:
   own_scope: true
   enforcement_channel: commit-gate
 - gate_id: REGISTRY-MASS-DELETION
-  name: 'REGISTRY-MASS-DELETION: REGISTRY-MASS-DELETION（CommitGate, priority=140）'
+  name: 'REGISTRY-MASS-DELETION: REGISTRY-MASS-DELETION（CommitGate, priority=161）'
   entry: in-process (GitCommitGateway)
   description: REGISTRY-MASS-DELETION
   files_trigger: ''
@@ -2135,68 +2124,6 @@ gates:
   source: commit-gate
   own_scope: true
   enforcement_channel: commit-gate
-- gate_id: DANGLING-REFERENCE
-  name: 'DANGLING-REFERENCE: AGENTS §X.Y 悬空引用检测（已合并至 REFERENCE-INTEGRITY，st-gslim-20260923
-    P4）'
-  entry: N/A (merged into REFERENCE-INTEGRITY, see redirect_to)
-  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
-    gate_id 供历史引用可追溯，实际执行入口见 REFERENCE-INTEGRITY。
-  files_trigger: ''
-  always_run: false
-  category: commit_gate
-  status: deprecated
-  source: manual
-  enforcement_channel: manual
-  redirect_to: REFERENCE-INTEGRITY
-- gate_id: PERM-TRIGGER
-  name: 'PERM-TRIGGER: 时间触发无订阅检测（已合并至 PERMANENT-SYSTEM-TRIGGER，st-gslim-20260923 P4）'
-  entry: N/A (merged into PERMANENT-SYSTEM-TRIGGER, see redirect_to)
-  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
-    gate_id 供历史引用可追溯，实际执行入口见 PERMANENT-SYSTEM-TRIGGER。
-  files_trigger: ''
-  always_run: false
-  category: commit_gate
-  status: deprecated
-  source: manual
-  enforcement_channel: manual
-  redirect_to: PERMANENT-SYSTEM-TRIGGER
-- gate_id: VOCAB-HARDCODE
-  name: 'VOCAB-HARDCODE: 新 py 词表硬编码检测（已合并至 GATE-VOCAB，st-gslim-20260923 P4）'
-  entry: N/A (merged into GATE-VOCAB, see redirect_to)
-  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
-    gate_id 供历史引用可追溯，实际执行入口见 GATE-VOCAB。
-  files_trigger: ''
-  always_run: false
-  category: commit_gate
-  status: deprecated
-  source: manual
-  enforcement_channel: manual
-  redirect_to: GATE-VOCAB
-- gate_id: DEPGRAPH-PRE-REGISTRATION
-  name: 'DEPGRAPH-PRE-REGISTRATION: depgraph planned→production（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923
-    P4）'
-  entry: N/A (merged into DEPGRAPH-ENFORCEMENT, see redirect_to)
-  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
-    gate_id 供历史引用可追溯，实际执行入口见 DEPGRAPH-ENFORCEMENT。
-  files_trigger: ''
-  always_run: false
-  category: commit_gate
-  status: deprecated
-  source: manual
-  enforcement_channel: manual
-  redirect_to: DEPGRAPH-ENFORCEMENT
-- gate_id: GATE-PANORAMA-ALIGNMENT
-  name: 'GATE-PANORAMA-ALIGNMENT: 三图模块对齐（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）'
-  entry: N/A (merged into MAP-ALIGNMENT, see redirect_to)
-  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
-    gate_id 供历史引用可追溯，实际执行入口见 MAP-ALIGNMENT。
-  files_trigger: ''
-  always_run: false
-  category: commit_gate
-  status: deprecated
-  source: manual
-  enforcement_channel: manual
-  redirect_to: MAP-ALIGNMENT
 - gate_id: BLUEPRINT-AMODULE-CONSISTENCY
   name: 'BLUEPRINT-AMODULE-CONSISTENCY: A_module 头格式一致（已合并至 BLUEPRINT-HEADER，st-gslim-20260923
     P4）'
@@ -2210,6 +2137,45 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: BLUEPRINT-HEADER
+- gate_id: BLUEPRINT-FORMAT
+  name: 'BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式检测（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
+    T8簇2）'
+  entry: N/A (merged into DOC-HEADER-SUITE, see redirect_to)
+  description: 【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。本条目为重定向锚点保留 gate_id
+    供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: DOC-HEADER-SUITE
+- gate_id: DANGLING-REFERENCE
+  name: 'DANGLING-REFERENCE: AGENTS §X.Y 悬空引用检测（已合并至 REFERENCE-INTEGRITY，st-gslim-20260923
+    P4）'
+  entry: N/A (merged into REFERENCE-INTEGRITY, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 REFERENCE-INTEGRITY。
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: REFERENCE-INTEGRITY
+- gate_id: DEPGRAPH-PRE-REGISTRATION
+  name: 'DEPGRAPH-PRE-REGISTRATION: depgraph planned→production（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923
+    P4）'
+  entry: N/A (merged into DEPGRAPH-ENFORCEMENT, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 DEPGRAPH-ENFORCEMENT。
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: DEPGRAPH-ENFORCEMENT
 - gate_id: NO-HIGH-COMPLEXITY
   name: 'NO-HIGH-COMPLEXITY: 高循环复杂度检测（已合并至 COMPLEXITY-GUARD，st-gslim-20260923 P4）'
   entry: N/A (merged into COMPLEXITY-GUARD, see redirect_to)
@@ -2222,6 +2188,54 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: COMPLEXITY-GUARD
+- gate_id: GATE-PANORAMA-ALIGNMENT
+  name: 'GATE-PANORAMA-ALIGNMENT: 三图模块对齐（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）'
+  entry: N/A (merged into MAP-ALIGNMENT, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 MAP-ALIGNMENT。
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: MAP-ALIGNMENT
+- gate_id: PERM-TRIGGER
+  name: 'PERM-TRIGGER: 时间触发无订阅检测（已合并至 PERMANENT-SYSTEM-TRIGGER，st-gslim-20260923 P4）'
+  entry: N/A (merged into PERMANENT-SYSTEM-TRIGGER, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 PERMANENT-SYSTEM-TRIGGER。
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: PERMANENT-SYSTEM-TRIGGER
+- gate_id: POOL-REGRESSION-DIRECTION
+  name: 'POOL-REGRESSION-DIRECTION: 构造池面回退方向 GateSpec（own-scope 硬阻断型，priority=161＝治理簇尾
+    160 之后空段）（CommitGate, priority=161）'
+  entry: in-process (GitCommitGateway)
+  description: 构造池面回退方向 GateSpec（own-scope 硬阻断型，priority=161＝治理簇尾 160 之后空段）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
+  enforcement_channel: commit-gate
+- gate_id: VOCAB-HARDCODE
+  name: 'VOCAB-HARDCODE: 新 py 词表硬编码检测（已合并至 GATE-VOCAB，st-gslim-20260923 P4）'
+  entry: N/A (merged into GATE-VOCAB, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 GATE-VOCAB。
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: GATE-VOCAB
 - gate_id: COMMIT-CRITICAL-SECTION-LOCK
   name: 'COMMIT-CRITICAL-SECTION-LOCK: commit 临界区全局文件锁（裁定#347 实名登记）'
   entry: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_GlobalCommitLock（in-process
@@ -2304,19 +2318,21 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: gate_audit_report_v1.md#C1
-- gate_id: BLUEPRINT-FORMAT
-  name: 'BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式检测（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
-    T8簇2）'
-  entry: N/A (merged into DOC-HEADER-SUITE, see redirect_to)
-  description: 【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。本条目为重定向锚点保留 gate_id
-    供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。
+- gate_id: STRATEGY-CARD-LIFECYCLE-MAP
+  name: 'STRATEGY-CARD-LIFECYCLE-MAP: 策略卡生命周期图（图15）结构门禁（行入册于 2026-10-05，实现从未落位）'
+  entry: N/A (no implementation in any ref, see redirect_to)
+  description: 【墓碑·源缺位】本行入库笔=d314bb0d980（2026-10-05，st-fig1113reg-20261004 图族批次），而
+    src/zephyr/gov_enforcement/commit_gates/ 下 strategy_card_lifecycle_map_gate.py
+    在 HEAD 树与全史双向零命中（git ls-tree -r HEAD 与 git log --all --diff-filter=D 皆空=从未有实现，非删除遗留）；同名测试
+    tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py 采集期即
+    ImportError。status 由 active 如实改 deprecated（在册假闸判据：缺源禁装/0 占位禁）；取证与判据=班账 K8（docs/_working/libghost_campaign/00_ledger.md）。复活方式=实现落位后删本墓碑条目，生成器第二遍自动出行。
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: deprecated
   source: manual
   enforcement_channel: manual
-  redirect_to: DOC-HEADER-SUITE
+  redirect_to: docs/_working/libghost_campaign/00_ledger.md
 - gate_id: GATE-DETECT-GIT-DANGEROUS
   name: 检测危险 git 命令（65 号 §7.13，ABS-26/27/28）
   entry: python scripts/governance/d6_security/detect_git_dangerous.py
@@ -2349,15 +2365,3 @@ gates:
   status: active
   source: pre-commit
   enforcement_channel: pre-commit
-- gate_id: GOVERNANCE-LEGISLATION-MAP
-  name: 'GOVERNANCE-LEGISLATION-MAP: 图16（治理立法流图）结构校验门（GOVERNANCE-LEGISLATION-MAP，经 MAP-ALIGNMENT
-    聚合台）（CommitGate, priority=141）'
-  entry: in-process (GitCommitGateway)
-  description: 图16（治理立法流图）结构校验门（GOVERNANCE-LEGISLATION-MAP，经 MAP-ALIGNMENT 聚合台）
-  files_trigger: ''
-  always_run: false
-  category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: true
-  enforcement_channel: commit-gate

@@ -664,7 +664,7 @@ MANUAL_GATES: list[dict] = [
         "entry": "N/A (retired, see redirect_to)",
         "description": "【已退役】warn-only 零触发零消费（窗口期 0 拦截 0 运行触发，src/scripts 外零引用）——"
         "w5_1 条2 退役判据直接命中。门文件+测试+in_process 条目+token 同批删除；tasks.yaml 内三处历史"
-        "warn 提示注释为历史事实留档。退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md §C1/§E。",
+        "warn 提示注释为历史事实留档。退役依据：docs/_archive/_working_cleared/registry_incident_20260922/gate_audit_report_v1.md §C1/§E。",
         "files_trigger": "",
         "always_run": False,
         "category": "commit_gate",
@@ -679,7 +679,7 @@ MANUAL_GATES: list[dict] = [
         "entry": "N/A (retired, see redirect_to)",
         "description": "【已退役】warn-only；计时数据中从未出现（连执行都没有）；零消费方（0 处引用）——"
         "w5_1 条2 退役判据直接命中。门文件+测试+in_process 条目+token+外锚同批删除。"
-        "退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md §C1/§E。",
+        "退役依据：docs/_archive/_working_cleared/registry_incident_20260922/gate_audit_report_v1.md §C1/§E。",
         "files_trigger": "",
         "always_run": False,
         "category": "commit_gate",
@@ -695,7 +695,7 @@ MANUAL_GATES: list[dict] = [
         "description": "【已退役】warn-only 自述观察闸；0 拦截 0 触发；零消费方（0 处引用）——w5_1 条2 退役"
         "判据直接命中。门文件+测试+in_process 条目+token+外锚+fail_open 行同批删除；_has_call_number 纯函数"
         "迁 zephyr.library.ledger_schema（测试改挂 7 passed）。"
-        "退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md §C1/§E。",
+        "退役依据：docs/_archive/_working_cleared/registry_incident_20260922/gate_audit_report_v1.md §C1/§E。",
         "files_trigger": "",
         "always_run": False,
         "category": "commit_gate",
@@ -716,7 +716,7 @@ MANUAL_GATES: list[dict] = [
         "双向零命中（git ls-tree -r HEAD 与 git log --all --diff-filter=D 皆空=从未有实现，非删除遗留）；"
         "同名测试 tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py 采集期即 ImportError。"
         "status 由 active 如实改 deprecated（在册假闸判据：缺源禁装/0 占位禁）；"
-        "取证与判据=班账 K8（docs/_working/libghost_campaign/00_ledger.md）。"
+        "取证与判据=班账 K8（docs/_archive/_working_cleared/libghost_campaign/00_ledger.md）。"
         "复活方式=实现落位后删本墓碑条目，生成器第二遍自动出行。",
         "files_trigger": "",
         "always_run": False,
@@ -724,7 +724,7 @@ MANUAL_GATES: list[dict] = [
         "status": "deprecated",
         "source": "manual",
         "enforcement_channel": "manual",
-        "redirect_to": "docs/_working/libghost_campaign/00_ledger.md",
+        "redirect_to": "docs/_archive/_working_cleared/libghost_campaign/00_ledger.md",
     },
     {
         "gate_id": "BLUEPRINT-FORMAT",
