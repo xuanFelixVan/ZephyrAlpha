@@ -1,10 +1,10 @@
-generated: '2026-09-24T00:15:15+00:00'
+generated: '2026-10-15T09:24:35+00:00'
 sid: st-t0-matrix-20260924
 pack_version: grid_t0_conditional_v1
-rows: 1816
+rows: 1826
 date_span:
 - '2019-04-01'
-- '2026-09-21'
+- '2026-10-13'
 axes:
   condition_gate:
   - t1_six_phase
@@ -40,10 +40,9 @@ band_definitions:
 gpu_budget:
   device: RTX 3090 24GB
   window_hours: 59
-  pack_rows: 1816
-  pack_bytes_note: 本项=包内各件字数之和，不含本 meta 自身（meta 最后写盘）
-  pack_bytes_on_disk: 160721
-  vram_note: 输入包为逐日单表（1,816 日 × 18 列），显存零压力；每配置查表按 trade_date 索引 O(1)，预算瓶颈在回测前向次数不在此包
+  pack_rows: 1826
+  pack_bytes_on_disk: 161545
+  vram_note: 输入包为逐日单表（数千行×16 列），显存零压力；每配置查表按 trade_date 索引 O(1)，预算瓶颈在回测前向次数不在此包
   closed_book:
     start: '2019-01-04'
     cutoff: '2025-09-09'

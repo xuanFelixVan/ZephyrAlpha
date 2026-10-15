@@ -1815,3 +1815,13 @@ trade_date,emotion_index,band5,band3_emotion,ok_n,emotion_source,formula_version
 2026-09-17,0.506801,mild,mid,3,live,v0.1.0,r3,0.004,L,expansion,1,147.78,A2,1,1,1,0
 2026-09-18,0.608331,warming,mid,3,live,v0.1.0,r3,0.008,L,expansion,1,93.91,A1,1,1,1,0
 2026-09-21,0.664895,warming,mid,3,live,v0.1.0,r3,0.052,L,expansion,1,94.62,A1,1,1,1,0
+2026-09-22,0.482319,mild,mid,3,live,v0.1.0,r3,0.028,L,expansion,1,62.78,A1,1,1,1,0
+2026-09-23,0.456886,mild,mid,4,live,v0.1.0,r3,0.024,L,expansion,1,101.42,A1,1,1,1,0
+2026-09-24,0.409955,mild,mid,4,live,v0.1.0,r3,0.004,L,expansion,1,75.3,A1,1,1,1,0
+2026-09-28,0.313172,cooling,low,4,live,v0.1.0,r3,0.076,L,expansion,1,135.69,A2,1,1,1,0
+2026-09-29,0.452472,mild,mid,4,live,v0.1.0,r3,0.2,L,expansion,1,226.61,A3,1,1,1,0
+2026-09-30,0.5274,mild,mid,4,live,v0.1.0,r3,0.192,L,expansion,1,80.2,A1,1,1,1,0
+2026-10-08,0.2739,cooling,low,4,live,v0.1.0,,,,,0,,,,,0,0
+2026-10-09,0.3192,cooling,low,4,live,v0.1.0,r3,0.188,L,accumulation,1,215.33,A3,1,0,0,0
+2026-10-12,0.4422,mild,mid,4,live,v0.1.0,r3,0.192,L,accumulation,1,211.77,A3,1,0,0,0
+2026-10-13,0.5413,mild,mid,4,live,v0.1.0,r3,0.196,L,accumulation,1,126.77,A2,1,0,0,0
