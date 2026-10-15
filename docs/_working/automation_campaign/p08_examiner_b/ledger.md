@@ -306,3 +306,9 @@ C 正对齐（target=fwd.shift(1)）ic_mean = 1.0000   # 证明工具配对的�
 ### 六、自检两轮（本节）
 - **第一轮（only-add 与归属）**：本节仍为 `safe_write_text` 纯追加，脚本断言"上班末袋字节＝新面严格前缀"并给 difflib 删行数；游标只动 cursor/last_run/last_batch/notes，frontmatter 断言保留 True；分数册/两张卡面零写入（sha 现场读数见 §三）；袋内件面＝本席自家 2 件，外来路径零纳入；改前两件均持 claim。
 - **第二轮（读数与真源一致）**：本节每条数值为 `date`/`tasklist`/`lock_files list`/袋 JSON blob/`hashlib`/`yaml.safe_load_all` 的当场读数；§一 的 DENIED 与 takeover-skipped 两条判据为工具原文输出，非本席转述；无一条取自本席上文或上班叙述。
+## 10-15 13:42 · 班次 03 一条更正（首袋判死；上文旧句留卷不删）
+- 上文 §三 写"首袋 `q-20261015-st-qoder-p08-1015-03-0001`（files=2，base_head=`14f18f6271b0`）；袋字节逐件==工作区字节 …" ⇒ **该结论现被实测推翻**：13:36 `commit_queue.py status --session st-qoder-p08-1015-03` 读数 state=**dead**，dead_reason 原文"`[landing] 非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）: docs/_working/automation_campaign/p08_examiner_b/ledger.md`"。
+- 死因链（三面实测，非推断）：本袋 11:24:55 建、基线取 `14f18f6271b0`；期间 **13:26 有袋落 HEAD**（`076210c23f [st-qoder-p08-1015-01][⑧考工B 班次01] 本族74张preregistered逐张普查…`）把同件 ledger 推进到 74 行面 ⇒ 落地侧对本袋判"双侧皆改"→死信回退人工。与本岗在册死因族同型（基线取旧 HEAD＋袋=整档快照），**非本席内容错**。
+- **内容零丢失三面对拍**：盘面 ledger 63,363B/sha16 `3c8d4eafb52274eb` **==二袋 blob**；`HEAD(74 行) is_strict_prefix_of(盘面)=True`、`minus=0 / plus=234` ⇒ 二袋落地不洗任何人（含 13:26 刚落地的班次01 面）；一袋 ledger blob（58,433B）系二袋 blob 严格前缀（投二袋前自证 `minus=0/plus=29`），一袋 checkpoint blob 与二袋之间是游标固有的整档指针重写（被替换的 2 行＝本席自家 last_run/last_batch，无他人行）。
+- ⇒ 一袋**无需 requeue**（内容被二袋严格覆盖）；四态分诊判决＝**可销（superseded by -0002）**。本席不擅自 mv 队列件（销账只走 mv 通道＋机生台账行，归 ⑩/维护班），只在此留判决与双证。
+- 本班锁终态（与在册"带锁交班"相反，如实记）：13:34 enqueue 输出 `ENQUEUE-RENEW: claim 续租 **0/2** 件` ⇒ 本席两件 claim 在入袋前已被外来回收（本班第 4 次：10:2x／12:51（本席自跑 cleanup 收走自家）／13:2x／13:34），故交班**不留锁**——非本席放锁，是 pid=0 守护 30 分钟寿命持不住 2 小时软窗。
