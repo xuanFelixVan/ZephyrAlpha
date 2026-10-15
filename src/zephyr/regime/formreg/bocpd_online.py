@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-REGIME-017 | 待统筹登记（CONDAXIS-CAMPAIGN 两态线 formreg 包；挖矿真源 docs/_working/condaxis/formreg/4_turning_signal.md）
+# [BLUEPRINT] MOD-REGIME-017 | 待统筹登记（CONDAXIS-CAMPAIGN 两态线 formreg 包；挖矿真源 docs/04_research_records/cross_domain/condaxis/formreg/4_turning_signal.md）
 # [MODULE] zephyr.regime.formreg.bocpd_online
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; pandas; scipy
-# [CONSUMERS] （隔离打靶：docs/_working/condaxis/formreg/8_prereg_targeting.md 冒烟；拐点灰度 p(r_t=0) 消费面接线冻结——裁定#229 未裁）
+# [CONSUMERS] （隔离打靶：docs/04_research_records/cross_domain/condaxis/formreg/8_prereg_targeting.md 冒烟；拐点灰度 p(r_t=0) 消费面接线冻结——裁定#229 未裁）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] Adams-MacKay 2007 在线贝叶斯变点检测：run-length 后验消息传递全程 log 空间

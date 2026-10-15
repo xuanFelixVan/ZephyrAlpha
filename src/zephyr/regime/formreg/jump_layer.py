@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-REGIME-017 | 待统筹登记（CONDAXIS-CAMPAIGN 两态线 formreg 包；挖矿真源 docs/_working/condaxis/formreg/2_state_machine.md）
+# [BLUEPRINT] MOD-REGIME-017 | 待统筹登记（CONDAXIS-CAMPAIGN 两态线 formreg 包；挖矿真源 docs/04_research_records/cross_domain/condaxis/formreg/2_state_machine.md）
 # [MODULE] zephyr.regime.formreg.jump_layer
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; pandas; scikit-learn; jumpmodels（Apache-2.0 外部依赖，研究册 §7 已核）
-# [CONSUMERS] （隔离打靶：docs/_working/condaxis/formreg/8_prereg_targeting.md 冒烟；裁定#229 反转落地后接 [3] 灰度主轨——冻结面禁接线）
+# [CONSUMERS] （隔离打靶：docs/04_research_records/cross_domain/condaxis/formreg/8_prereg_targeting.md 冒烟；裁定#229 反转落地后接 [3] 灰度主轨——冻结面禁接线）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 两态槽位语义固定（slot0=down/slot1=up，锚定重排照裁定#304 先例：fit 后按
@@ -34,7 +34,7 @@
     文献常用对数网格 = {0.1, 1, 10, 100}（Nystrup 系 jump model 系列论文及
     jumpmodels 官方示例的标准标定网格）；默认值取该网格对数中位 = √(1×10) ≈ 3.16。
     连续特征（cont=True）+ 标准化输入下量纲成立；A 股正式标定（网格搜索+λ* 报告）
-    = P2 呈批项，见 docs/_working/condaxis/formreg/8_prereg_targeting.md。
+    = P2 呈批项，见 docs/04_research_records/cross_domain/condaxis/formreg/8_prereg_targeting.md。
 
 PIT 纪律：标准化 scaler 与模型均 fit 于调用方给定的训练窗（walk-forward 场景
 调用方切窗；detect 语义=对任意特征帧用冻结模型打分，不重拟合）。

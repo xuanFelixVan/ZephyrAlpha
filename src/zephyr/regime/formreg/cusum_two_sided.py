@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-REGIME-017 | 待统筹登记（CONDAXIS-CAMPAIGN 两态线 formreg 包；挖矿真源 docs/_working/condaxis/formreg/4_turning_signal.md）
+# [BLUEPRINT] MOD-REGIME-017 | 待统筹登记（CONDAXIS-CAMPAIGN 两态线 formreg 包；挖矿真源 docs/04_research_records/cross_domain/condaxis/formreg/4_turning_signal.md）
 # [MODULE] zephyr.regime.formreg.cusum_two_sided
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] pandas; numpy
-# [CONSUMERS] （隔离打靶：docs/_working/condaxis/formreg/8_prereg_targeting.md 冒烟；ARL 预算标定后接拐点信号流——冻结面禁接线）
+# [CONSUMERS] （隔离打靶：docs/04_research_records/cross_domain/condaxis/formreg/8_prereg_targeting.md 冒烟；ARL 预算标定后接拐点信号流——冻结面禁接线）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 双边对称（S⁺ 上行/S⁻ 下行，参 correlation_drift_monitor.py:152 单边先例扩双边）；
@@ -31,7 +31,7 @@ cusum_upper_alarm()（S⁺ₜ=max(0, S⁺ₜ₋₁+(ρₜ−ρ₀)−k)，S⁺>h
 
 参数纪律：k=0.5σ/h=4σ 是仓内相关漂移经验起点值（correlation_drift_monitor.py:60-61），
 照搬为结构起点；正式阈值须按 ARL 虚报率预算反推标定（研究册 §13-5 呈批项，
-预算公式与所需数据=docs/_working/condaxis/formreg/8_prereg_targeting.md §3）。
+预算公式与所需数据=docs/04_research_records/cross_domain/condaxis/formreg/8_prereg_targeting.md §3）。
 
 输出三元组契约（位置/方向/严重度）：
     events DataFrame 列=[date, position, direction('up'/'down'), severity(CU 累积量),

@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-REGIME-017 | 待统筹登记（CONDAXIS-CAMPAIGN 两态线 formreg 包；挖矿真源 docs/_working/condaxis/formreg/2_state_machine.md / 7_validation.md）
+# [BLUEPRINT] MOD-REGIME-017 | 待统筹登记（CONDAXIS-CAMPAIGN 两态线 formreg 包；挖矿真源 docs/04_research_records/cross_domain/condaxis/formreg/2_state_machine.md / 7_validation.md）
 # [MODULE] zephyr.regime.formreg.ps_chronology
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] pandas; numpy
-# [CONSUMERS] （隔离打靶：docs/_working/condaxis/formreg/8_prereg_targeting.md；裁定#229 反转落地后接 [7] 标定集真值段——冻结面禁接线）
+# [CONSUMERS] （隔离打靶：docs/04_research_records/cross_domain/condaxis/formreg/8_prereg_targeting.md；裁定#229 反转落地后接 [7] 标定集真值段——冻结面禁接线）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯函数核零 IO 零随机（同输入永远同输出）；峰谷交替强制（同类相邻留更极端者）；
@@ -40,7 +40,7 @@ st-cdx-formreg-20261013）。定位＝**离线定"历史真值段"**——供给
 参数纪律（挖矿簿 2_state_machine.md §3.1 结构常数纪律同款）：
     默认值=文献美股月频值（±8 月窗/15/6/16 月/20%/30%）。A 股重标定＝P2 呈批项
     **禁自拟**——重标定换值=语义复核留痕事件，不是随手调参；换算呈批面见
-    docs/_working/condaxis/formreg/8_prereg_targeting.md §2（周层换算说明）。
+    docs/04_research_records/cross_domain/condaxis/formreg/8_prereg_targeting.md §2（周层换算说明）。
 
 用法：
     to_monthly(close_daily) -> pd.Series（月频收盘，ME 重采样）
