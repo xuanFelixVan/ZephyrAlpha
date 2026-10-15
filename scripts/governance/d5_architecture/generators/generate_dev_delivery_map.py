@@ -33,7 +33,7 @@
 #   字段名一律 L0 统一名（note_zh/doc_refs，废止 mech_note_zh/design_refs 别名）；
 #   verified_scope 与骨架 §1 三态列同源（✅→production、🔨→structure），生成器不擅改判据口径
 # [MODIFY-GUARD] 环节契约全集/边/反馈环改动前必须先回写
-#   docs/_working/map_build/fig11_delivery/00_skeleton.md（本图唯一收敛基准）；
+#   docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md（本图唯一收敛基准）；
 #   产出物 config/dev_delivery_map.yaml 禁手改后不回生成（counts 一致性校验会判红）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -67,7 +67,7 @@
        无 .runtime 面=exists:false，属输入差异不属非幂等）
   2. 人工语义层：环节名/decision_question/note_zh（L0 统一名，废止 mech_note_zh 别名）/
      laws/boundary/边/反馈环/L2 退出码矩阵的处方列——逐条取自
-     docs/_working/map_build/fig11_delivery/00_skeleton.md（§0 四道门、§1 环节表、§2 车道交接）
+     docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md（§0 四道门、§1 环节表、§2 车道交接）
      与八本作业簿（§末-3 实查命令=exec_evidence 口径真源）；
      状态/置信度口径照用骨架 ✅/🔨：✅→built+verified+production、🔨→partial+verified+structure，
      本生成器不擅改任何判据（production 数恒等骨架 ✅ 数，多了算谎少了算欠）。
@@ -114,8 +114,8 @@ from d5_architecture.validators.validate_dev_delivery_map import (  # noqa: E402
 )
 
 OUTPUT_PATH = _REPO_ROOT / "config" / "dev_delivery_map.yaml"
-_SKELETON = "docs/_working/map_build/fig11_delivery/00_skeleton.md"
-_BOOK_DIR = "docs/_working/map_build/fig11_delivery"
+_SKELETON = "docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md"
+_BOOK_DIR = "docs/_archive/_working_cleared/map_build/fig11_delivery"
 # depgraph 派生投影（claim_type=depgraph_node 的 路径→MOD-* 在册面；生成器只读）
 _PATH_OWNERSHIP = "docs/03_modules/path_ownership_map.yaml"
 # 两个 gap 节点的作业簿出处（骨架外显性化缺口件，禁指骨架§1——骨架无此行）
@@ -162,7 +162,7 @@ _INPROC_REG = "docs/01_policies_and_standards/_registry/catalogs/in_process_gate
 _SHELL_REG = "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"
 # 挂血肉四字段输入件（挂图SOP vertical_map_mounting_policy §4：purpose_tag/casebooks/trigger_facts/consumers）
 # F5 机生四件（零判定装配）+ 总筹 addendum（判定件）；缺任一件=硬失败（血肉层不可静默降级）
-_CURE_DIR = "docs/_working/commitmap_cure"
+_CURE_DIR = "docs/_archive/_working_cleared/commitmap_cure"
 _F5_PURPOSE = f"{_CURE_DIR}/f5_purpose_tags.yaml"
 _F5_CASEBOOKS = f"{_CURE_DIR}/f5_casebooks_mount.yaml"
 _F5_TRIGGER = f"{_CURE_DIR}/f5_trigger_facts.yaml"
@@ -768,14 +768,14 @@ N: dict[str, dict[str, Any]] = {
         anc=[f"{_CQ}:56"],
         run=[".runtime/commit_queue/（dead_archive_*/dead_purged_* 轮换袋，袋名以实扫为准）"],
         data=[
-            "docs/_working/2026-09-11-commit-queue-dead-zero-closure.md",
-            "docs/_working/archive/2026-09/final3_campaign/p12_queue_terminal_record.md",
+            "docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/2026-09-11-commit-queue-dead-zero-closure.md",
+            "docs/_archive/_working_cleared/archive/2026-09/final3_campaign/p12_queue_terminal_record.md",
         ],
         ev=["队列根轮换袋目录只读实查（骨架 §1 D06 行）", "两篇战役记录在盘"],
         stores=[
             dict(
                 artifact="死信轮换归档袋",
-                location=".runtime/commit_queue/ + docs/_working/2026-09-11-commit-queue-dead-zero-closure.md",
+                location=".runtime/commit_queue/ + docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/2026-09-11-commit-queue-dead-zero-closure.md",
                 key="袋名×qid",
                 retention="dead 永不自动清理；战役记录永久",
             )
@@ -988,7 +988,7 @@ EXEC: dict[str, list[str]] = {
     ],
     "D11-D06": [
         "主区只读 ls -d .runtime/commit_queue/{dead_archive*,dead_purged*,hold_*} → 11 袋（2026-09-25）",
-        "两篇战役记录在盘（docs/_working/2026-09-11-commit-queue-dead-zero-closure.md 与 final3 p12 终态记录）",
+        "两篇战役记录在盘（docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/2026-09-11-commit-queue-dead-zero-closure.md 与 final3 p12 终态记录）",
     ],
     "D11-G01": [
         "复跑（簿04 §末-3 命令 2/4）：SSOT_VIOLATION/STASH_CONFLICT 全仓仅命中枚举定义+分发表+task_repo 消费支路，"
@@ -1566,7 +1566,7 @@ def build_semantic_layers(
                 {
                     f"{_SKELETON} §6 封顶声明（骨架外 gap 件）",
                     f"{_BOOK_DIR}/{_GAP_BOOK_OF[nid]}",
-                    "docs/_working/map_build/03_final_blueprint_and_schema.md §4 图11 判据②",
+                    "docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md §4 图11 判据②",
                 }
             )
         else:
@@ -1671,7 +1671,7 @@ def build_document(as_of: str, root: Path) -> dict[str, Any]:
         "generated_at": as_of,
         "ssot_note_zh": (
             "骨架人工语义层（环节名/decision_question/laws/boundary/边/反馈环/L2 退出码处方列）契约真源="
-            "docs/_working/map_build/fig11_delivery/00_skeleton.md（§6 封顶 28 环节）+ 八本作业簿（exec_evidence "
+            "docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md（§6 封顶 28 环节）+ 八本作业簿（exec_evidence "
             "口径真源=各簿 §末-3 实查命令）；machine_facts 层每次全量重扫可执行真相源（门禁册/reconciler 登记面/"
             "四脚本 AST 面/队列四态目录只读计数/退出码分发表与生产者构造/骨架三态列/depgraph 在册 module_id 投影面），"
             "禁手工维护。节点只存稳定标识符与指针，禁复制条目正文（INV-1）。\n"
@@ -1798,7 +1798,7 @@ def build_document(as_of: str, root: Path) -> dict[str, Any]:
 _MAP_HEADER = (
     "# 交付流水线全景图（dev_delivery_map，图 11）——由 generate_dev_delivery_map.py 机生。\n"
     "# 本文件禁手改后不回生成（counts 一致性校验判红）；环节契约真源="
-    "docs/_working/map_build/fig11_delivery/00_skeleton.md。\n"
+    "docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md。\n"
     "# 节点只存稳定标识符与指针（INV-1）；machine_facts 层重扫即刷新，人工语义层改动须先回写骨架。\n"
 )
 

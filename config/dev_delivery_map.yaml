@@ -1,5 +1,5 @@
 # 交付流水线全景图（dev_delivery_map，图 11）——由 generate_dev_delivery_map.py 机生。
-# 本文件禁手改后不回生成（counts 一致性校验判红）；环节契约真源=docs/_working/map_build/fig11_delivery/00_skeleton.md。
+# 本文件禁手改后不回生成（counts 一致性校验判红）；环节契约真源=docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md。
 # 节点只存稳定标识符与指针（INV-1）；machine_facts 层重扫即刷新，人工语义层改动须先回写骨架。
 schema_version: '0.3'
 map_id: dev_delivery_map
@@ -9,8 +9,8 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
-generated_at: '2026-10-09T07:48:19+08:00'
-ssot_note_zh: '骨架人工语义层（环节名/decision_question/laws/boundary/边/反馈环/L2 退出码处方列）契约真源=docs/_working/map_build/fig11_delivery/00_skeleton.md（§6
+generated_at: '2026-10-15T18:22:02+08:00'
+ssot_note_zh: '骨架人工语义层（环节名/decision_question/laws/boundary/边/反馈环/L2 退出码处方列）契约真源=docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md（§6
   封顶 28 环节）+ 八本作业簿（exec_evidence 口径真源=各簿 §末-3 实查命令）；machine_facts 层每次全量重扫可执行真相源（门禁册/reconciler 登记面/四脚本 AST 面/队列四态目录只读计数/退出码分发表与生产者构造/骨架三态列/depgraph
   在册 module_id 投影面），禁手工维护。节点只存稳定标识符与指针，禁复制条目正文（INV-1）。
 
@@ -48,7 +48,7 @@ layers:
   handoff_zh: D04 回 C08 入队（新 qid）；D03 出域到 task_board（任务治理域，引用不吸收）
 purpose_labels:
   law_zh: 目的标签=挂图SOP §2 横切轴：11 条=00_design_basis §1 冻结表（Owner 终审），12 号「别把钥匙留在门口」=裁定#480 批准增设；冻结后机贴不改名
-  machine_input: docs/_working/commitmap_cure/f5_purpose_tags.yaml
+  machine_input: docs/_archive/_working_cleared/commitmap_cure/f5_purpose_tags.yaml
   mount_rule_zh: 标签贴在机制上：门禁级 gate→标签/环节映射=叶层（f5_purpose_tags.yaml+chief_purpose_addendum.yaml，INV-1 不进图本体）；图内渲染=节点
     purpose_tags 直方图——同标签多钉=重复簇显影位（内收对审入口）
   legend:
@@ -90,7 +90,7 @@ purpose_labels:
     one_liner: 密钥不裸奔/SQL 不散落/LLM 必经安检
 casebooks_index:
   law_zh: 病历挂载=挂图SOP §3：只挂本（册码#章码指针）不挂病例；完备性铁律=每本永久病历本 ≥1 环节
-  machine_input: docs/_working/commitmap_cure/f5_casebooks_mount.yaml
+  machine_input: docs/_archive/_working_cleared/commitmap_cure/f5_casebooks_mount.yaml
   books:
   - AP
   - DCS
@@ -204,20 +204,20 @@ exit_codes:
 gate_cluster:
   in_process:
     registry: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
-    total_gates_field: 106
-    entries_scanned: 106
+    total_gates_field: 107
+    entries_scanned: 107
     files_trigger_entries: 25
     note_zh: priority 真源在代码 GateSpec、own_scope 册面无此字段（作业簿 05 溢出 O-C12）
   shell:
     registry: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
-    total_gates_field: 190
-    entries_scanned: 190
+    total_gates_field: 191
+    entries_scanned: 191
     by_enforcement_channel: &id004
       commit-gate: 100
       commit-gateway: 2
-      manual: 39
+      manual: 40
       pre-commit: 49
-    own_scope_true_entries: 61
+    own_scope_true_entries: 63
     generated_by: scripts/governance/generators/generate_gate_registry.py
     note_zh: 字段值与条目实数双口径并列（total_gates 落后于列表=册内漂移，由生成器 --check 管）
   two_channel_overlap_note_zh: in-process ∩ pre-commit 实测=1 台（GATE-VOCAB 双执行），生成器注释「交集 0」已过期（作业簿 05 溢出 O-C10）
@@ -276,8 +276,8 @@ nodes:
     key: session_id
     retention: 注销即移除
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S01
-  - docs/_working/map_build/fig11_delivery/01_会话启动与worktree池.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-S01
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/01_会话启动与worktree池.md
   wiring_status: wired
   module_label_bilingual: ZephyrAlpha 施工阶段门控引擎. / Phase Manager
   purpose_tags: {}
@@ -334,8 +334,8 @@ nodes:
     key: session_id
     retention: merge 后主仓吸收 / abort 自删
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S02
-  - docs/_working/map_build/fig11_delivery/01_会话启动与worktree池.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-S02
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/01_会话启动与worktree池.md
   wiring_status: wired
   module_label_bilingual: 会话Worktree / Session Worktree
   purpose_tags: {}
@@ -382,8 +382,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S03
-  - docs/_working/map_build/fig11_delivery/01_会话启动与worktree池.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-S03
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/01_会话启动与worktree池.md
   wiring_status: wired
   module_label_bilingual: session heartbeat 独立进程 / Heartbeat Daemon
   purpose_tags: {}
@@ -434,8 +434,8 @@ nodes:
     key: 文件路径×session_id
     retention: commit 结算即释放
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S04
-  - docs/_working/map_build/fig11_delivery/02_claim协议与暂存晋升.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-S04
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/02_claim协议与暂存晋升.md
   wiring_status: wired
   module_label_bilingual: 锁files / lock_files
   purpose_tags: {}
@@ -490,8 +490,8 @@ nodes:
     key: session_id×产物文件
     retention: 24h TTL，promote 到 docs/_working/ 才算交付
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S05
-  - docs/_working/map_build/fig11_delivery/02_claim协议与暂存晋升.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-S05
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/02_claim协议与暂存晋升.md
   wiring_status: unwired_no_caller
   red_reason: unwired
   module_label_bilingual: 对账注册表 / reconciliation_registry
@@ -540,8 +540,8 @@ nodes:
   - WORKTREE-REQUIRED
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S06
-  - docs/_working/map_build/fig11_delivery/02_claim协议与暂存晋升.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-S06
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/02_claim协议与暂存晋升.md
   wiring_status: wired
   gate_cluster: worktree_compatible_subset
   module_label_bilingual: 会话Worktree / Session Worktree
@@ -596,8 +596,8 @@ nodes:
   - WORKTREE-REQUIRED
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S07
-  - docs/_working/map_build/fig11_delivery/03_merge回主区与收尾.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-S07
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/03_merge回主区与收尾.md
   wiring_status: partial
   red_reason: unwired
   gate_cluster: pre_merge_topo_check
@@ -649,8 +649,8 @@ nodes:
     key: 时间戳×session_id
     retention: 永久留痕
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S08
-  - docs/_working/map_build/fig11_delivery/03_merge回主区与收尾.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-S08
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/03_merge回主区与收尾.md
   wiring_status: wired
   module_label_bilingual: 锁files / lock_files
   purpose_tags: {}
@@ -701,8 +701,8 @@ nodes:
     key: session_id
     retention: 留档
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S09
-  - docs/_working/map_build/fig11_delivery/03_merge回主区与收尾.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-S09
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/03_merge回主区与收尾.md
   wiring_status: wired
   module_label_bilingual: Session 级并发协调模块 / Session Concurrency
   purpose_tags: {}
@@ -749,8 +749,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C01
-  - docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C01
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/04_提交正门与全局锁.md
   wiring_status: wired
   exit_codes:
   - 0
@@ -826,8 +826,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C02
-  - docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C02
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/04_提交正门与全局锁.md
   wiring_status: partial
   red_reason: unwired
   module_label_bilingual: Git提交 / git_commit
@@ -874,8 +874,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C03
-  - docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C03
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/04_提交正门与全局锁.md
   wiring_status: wired
   exit_codes:
   - 1
@@ -929,8 +929,8 @@ nodes:
     key: 单锁
     retention: TTL 超时自解
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C04
-  - docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C04
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/04_提交正门与全局锁.md
   wiring_status: wired
   exit_codes:
   - 2
@@ -990,8 +990,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C05
-  - docs/_working/map_build/fig11_delivery/05_门禁链与precommit通道.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C05
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/05_门禁链与precommit通道.md
   wiring_status: wired
   exit_codes:
   - 3
@@ -1005,11 +1005,11 @@ nodes:
     gate_registry_facts: &id006
       registry: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
       exists: true
-      total_gates_field: 106
-      entries_scanned: 106
+      total_gates_field: 107
+      entries_scanned: 107
       generated_by: null
       cluster_by_channel:
-        unspecified: 106
+        unspecified: 107
       own_scope_true_entries: 0
       files_trigger_entries: 25
   purpose_tags:
@@ -1082,8 +1082,8 @@ nodes:
   - FORGED-GW-MARKER
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C06
-  - docs/_working/map_build/fig11_delivery/05_门禁链与precommit通道.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C06
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/05_门禁链与precommit通道.md
   wiring_status: wired
   exit_codes:
   - 1
@@ -1144,8 +1144,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C07
-  - docs/_working/map_build/fig11_delivery/05_门禁链与precommit通道.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C07
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/05_门禁链与precommit通道.md
   wiring_status: wired
   exit_codes:
   - 1
@@ -1155,17 +1155,17 @@ nodes:
     gate_registry_facts: &id007
       registry: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
       exists: true
-      total_gates_field: 190
-      entries_scanned: 190
+      total_gates_field: 191
+      entries_scanned: 191
       generated_by: scripts/governance/generators/generate_gate_registry.py
       cluster_by_channel: *id004
-      own_scope_true_entries: 61
-      files_trigger_entries: 68
+      own_scope_true_entries: 63
+      files_trigger_entries: 67
   purpose_tags:
     「宁可留错不可删错」: 5
     「文件在谁手里」: 1
     「新文件上户口」: 7
-    「账本必须对得上」: 25
+    「账本必须对得上」: 22
     「代码的底线体面」: 11
     「别拿假地址骗我」: 2
     「别把钥匙留在门口」: 2
@@ -1177,14 +1177,14 @@ nodes:
   - MEM#3
   - RV1#缺口(F6)
   trigger_facts:
-    gates: 56
+    gates: 53
     total_triggers_30d: 2162
     zero_trigger_gates:
     - GATE-DETECT-GIT-DANGEROUS
     - GATE-DETECT-SHELL-DANGEROUS
     - GATE-DETECT-PERMANENT-DELETION
   consumers:
-    gates: 56
+    gates: 53
     gates_with_consumers: 48
     sample_consumers:
     - .pre-commit-config.yaml
@@ -1231,8 +1231,8 @@ nodes:
     key: qid / blob sha
     retention: pending 同键 compact；排空转 processing
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C08
-  - docs/_working/map_build/fig11_delivery/06_入队排空与真落盘.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C08
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/06_入队排空与真落盘.md
   wiring_status: wired
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
   machine_facts:
@@ -1240,6 +1240,7 @@ nodes:
       path: scripts/commit_queue.py
       exists: true
       public_functions:
+      - audit_landed_id_integrity
       - backfill_base_heads
       - channel_key_for_files
       - check_dead_burst
@@ -1251,11 +1252,14 @@ nodes:
       - drain_queue
       - emit_dead_backlog_alert
       - enqueue_item
+      - ghost_gate_counts
       - main
+      - make_dead_letter_content_gate
       - mark_cascade_stale_batch
       - queue_health
       - queue_status
       - requeue_dead_item
+      - reset_ghost_gate_counts
       - resolve_queue_root
       - try_bootstrap_drain
       main_exit_codes: []
@@ -1307,8 +1311,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C09
-  - docs/_working/map_build/fig11_delivery/06_入队排空与真落盘.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C09
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/06_入队排空与真落盘.md
   wiring_status: partial
   red_reason: unwired
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
@@ -1358,8 +1362,8 @@ nodes:
     key: qid→landed_id
     retention: done TTL 定期清理（见 C13）
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C10
-  - docs/_working/map_build/fig11_delivery/06_入队排空与真落盘.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C10
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/06_入队排空与真落盘.md
   wiring_status: partial
   red_reason: broken_supply
   deadletter_class:
@@ -1412,8 +1416,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C11
-  - docs/_working/map_build/fig11_delivery/07_对账观测与紧急车道.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C11
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/07_对账观测与紧急车道.md
   wiring_status: wired
   module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
   machine_facts:
@@ -1463,8 +1467,8 @@ nodes:
   - FORGED-GW-MARKER
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C12
-  - docs/_working/map_build/fig11_delivery/07_对账观测与紧急车道.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C12
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/07_对账观测与紧急车道.md
   wiring_status: wired
   module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
   purpose_tags: {}
@@ -1515,8 +1519,8 @@ nodes:
     key: 时间戳×qid
     retention: 追加
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C13
-  - docs/_working/map_build/fig11_delivery/07_对账观测与紧急车道.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-C13
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/07_对账观测与紧急车道.md
   wiring_status: wired
   deadletter_class:
   - env
@@ -1527,16 +1531,16 @@ nodes:
     queue_state_dirs: &id008
       pending:
         exists: true
-        item_count: 7
+        item_count: 3
       processing:
         exists: true
-        item_count: 4
+        item_count: 2
       done:
         exists: true
-        item_count: 584
+        item_count: 798
       dead:
         exists: true
-        item_count: 1363
+        item_count: 318
   purpose_tags: {}
   casebooks:
   - AP#域三
@@ -1583,8 +1587,8 @@ nodes:
     key: qid
     retention: 永不自动清理
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D01
-  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-D01
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/08_死信全链.md
   wiring_status: wired
   deadletter_class:
   - item
@@ -1634,8 +1638,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D02
-  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-D02
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/08_死信全链.md
   wiring_status: wired
   deadletter_class:
   - env
@@ -1684,8 +1688,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D03
-  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-D03
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/08_死信全链.md
   wiring_status: wired
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
   purpose_tags: {}
@@ -1730,8 +1734,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D04
-  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-D04
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/08_死信全链.md
   wiring_status: wired
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
   purpose_tags: {}
@@ -1774,8 +1778,8 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D05
-  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-D05
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/08_死信全链.md
   wiring_status: unwired_slot_hollow
   red_reason: unwired
   deadletter_class:
@@ -1810,7 +1814,8 @@ nodes:
   - 两篇战役记录在盘
   - 队列根轮换袋目录只读实查（骨架 §1 D06 行）
   exec_evidence:
-  - 两篇战役记录在盘（docs/_working/2026-09-11-commit-queue-dead-zero-closure.md 与 final3 p12 终态记录）
+  - 两篇战役记录在盘（docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/2026-09-11-commit-queue-dead-zero-closure.md
+    与 final3 p12 终态记录）
   - 主区只读 ls -d .runtime/commit_queue/{dead_archive*,dead_purged*,hold_*} → 11 袋（2026-09-25）
   module_id: MOD-GOV-046
   module_ref: scripts/commit_queue.py:56
@@ -1819,17 +1824,17 @@ nodes:
   runtime_refs:
   - .runtime/commit_queue/（dead_archive_*/dead_purged_* 轮换袋，袋名以实扫为准）
   data_refs:
-  - docs/_working/2026-09-11-commit-queue-dead-zero-closure.md
-  - docs/_working/archive/2026-09/final3_campaign/p12_queue_terminal_record.md
+  - docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/2026-09-11-commit-queue-dead-zero-closure.md
+  - docs/_archive/_working_cleared/archive/2026-09/final3_campaign/p12_queue_terminal_record.md
   gate_refs: []
   store_refs:
   - artifact: 死信轮换归档袋
-    location: .runtime/commit_queue/ + docs/_working/2026-09-11-commit-queue-dead-zero-closure.md
+    location: .runtime/commit_queue/ + docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/2026-09-11-commit-queue-dead-zero-closure.md
     key: 袋名×qid
     retention: dead 永不自动清理；战役记录永久
   doc_refs:
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D06
-  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §1 D11-D06
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/08_死信全链.md
   wiring_status: wired
   deadletter_class:
   - superseded
@@ -1882,9 +1887,9 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md §4 图11 判据②
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §6 封顶声明（骨架外 gap 件）
-  - docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md §4 图11 判据②
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §6 封顶声明（骨架外 gap 件）
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/04_提交正门与全局锁.md
   wiring_status: unwired_no_caller
   red_reason: unwired
   exit_codes:
@@ -1929,9 +1934,9 @@ nodes:
   gate_refs: []
   store_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md §4 图11 判据②
-  - docs/_working/map_build/fig11_delivery/00_skeleton.md §6 封顶声明（骨架外 gap 件）
-  - docs/_working/map_build/fig11_delivery/05_门禁链与precommit通道.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md §4 图11 判据②
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §6 封顶声明（骨架外 gap 件）
+  - docs/_archive/_working_cleared/map_build/fig11_delivery/05_门禁链与precommit通道.md
   wiring_status: unwired_slot_hollow
   red_reason: ghost_ref
   machine_facts:
@@ -1940,7 +1945,7 @@ nodes:
       registered: true
       in_roster: true
       default_on: true
-      roster_keys_scanned: 19
+      roster_keys_scanned: 20
   purpose_tags: null
   casebooks: null
   trigger_facts: null
@@ -2038,17 +2043,17 @@ counts:
     wired: 22
   blood:
     purpose_labels: 12
-    gates_mounted: 193
-    addendum_gates: 11
+    gates_mounted: 190
+    addendum_gates: 8
     zero_trigger_candidate_gates: 10
     casebooks_books: 6
     nodes_with_casebooks: 28
     sources:
-    - docs/_working/commitmap_cure/f5_purpose_tags.yaml
-    - docs/_working/commitmap_cure/f5_casebooks_mount.yaml
-    - docs/_working/commitmap_cure/f5_trigger_facts.yaml
-    - docs/_working/commitmap_cure/f5_consumers_agg.yaml
-    - docs/_working/commitmap_cure/chief_purpose_addendum.yaml
+    - docs/_archive/_working_cleared/commitmap_cure/f5_purpose_tags.yaml
+    - docs/_archive/_working_cleared/commitmap_cure/f5_casebooks_mount.yaml
+    - docs/_archive/_working_cleared/commitmap_cure/f5_trigger_facts.yaml
+    - docs/_archive/_working_cleared/commitmap_cure/f5_consumers_agg.yaml
+    - docs/_archive/_working_cleared/commitmap_cure/chief_purpose_addendum.yaml
   machine:
     reconciler_register_calls: 58
     in_process_gate_facts: *id006
@@ -2056,7 +2061,7 @@ counts:
     queue_state_dirs: *id008
     deadletter_marker_counts: *id005
     skeleton_status_scan:
-      source: docs/_working/map_build/fig11_delivery/00_skeleton.md
+      source: docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md
       nodes_scanned: 28
       by_symbol:
         ✅: 26
