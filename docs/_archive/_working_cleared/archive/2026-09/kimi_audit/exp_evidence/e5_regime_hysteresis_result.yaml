@@ -1,0 +1,281 @@
+# E5 regime 迟滞四臂实验产物（晋升自 .runtime/tmp/exp/e5/e5_result.json，DCR-008 转 YAML）
+# 实验: regime 切换 raw vs 3日迟滞(hyst3) × 成本开关，三套 framework 方案
+# 窗口: 2024-01-01..2025-08-31 | universe: 5131 symbols (HS300 SCD-2 窗口并集)
+# 机判判据(启动前写死): STD-SWITCH-001 证据线（bootstrap 日差 CI95 不含零 + W2 反窗同向）
+# 哨兵: e5.done 2026-09-17T21:43 | 脚本: .runtime/tmp/exp/e5/exp_e5_regime_hysteresis_4arm.py
+# 判读: 三方案 verdict 全 false——迟滞方向确认(净增益 +4.1~+5.5pp)但 bootstrap CI 全含零，
+#       STD-SWITCH-001 证据线全不达；窗内收益全负(-29%~-68%)。S13 F-1"regime_overrides
+#       不得作上线依据"获实证加固。
+window:
+- '2024-01-01'
+- '2025-08-31'
+plans:
+- fw-defensive
+- fw-balanced
+- fw-aggressive
+universe:
+  n: 5131
+  source: fw_backtest.resolve_symbols(HS300 SCD-2 窗口并集)
+  detail_keys:
+  - str_columns_n
+  - str_members
+  - total
+  - universe_disclosure
+confirm_days: 3
+regime_series:
+  n_days: 403
+  switches_raw: 33
+  switches_hyst3: 24
+  freshness:
+    max_trade_date: '2026-09-15'
+    rows: 3621
+    stale_days: 2
+    checked_at: '2026-09-17T20:33:19'
+arms:
+  fw-defensive:
+    raw×cost_on:
+      ok: true
+      total_return: -0.3674975179399913
+      max_drawdown: 0.5581894310097824
+      trades: 2480
+      turnover_one_side_est: 32.35770339091323
+      w2_window_return: 0.0663251178808395
+      equity_points: 403
+      regime_day_counts:
+        __base__: 230
+        r10: 60
+        r3: 99
+        r4: 10
+        r12: 4
+    raw×cost_off:
+      ok: true
+      total_return: -0.35792149266840445
+      max_drawdown: 0.5531765471010497
+      trades: 2471
+      turnover_one_side_est: 32.569712105809266
+      w2_window_return: 0.06822634655949478
+      equity_points: 403
+      regime_day_counts:
+        __base__: 230
+        r10: 60
+        r3: 99
+        r4: 10
+        r12: 4
+    hyst3×cost_on:
+      ok: true
+      total_return: -0.31204764822955267
+      max_drawdown: 0.5156630475175811
+      trades: 2529
+      turnover_one_side_est: 32.75399880116314
+      w2_window_return: 0.06877100427218252
+      equity_points: 403
+      regime_day_counts:
+        __base__: 234
+        r10: 58
+        r3: 99
+        r4: 8
+        r12: 4
+    hyst3×cost_off:
+      ok: true
+      total_return: -0.2909341477155569
+      max_drawdown: 0.5062907723673061
+      trades: 2542
+      turnover_one_side_est: 33.12465980308777
+      w2_window_return: 0.07054257095118932
+      equity_points: 403
+      regime_day_counts:
+        __base__: 234
+        r10: 58
+        r3: 99
+        r4: 8
+        r12: 4
+    _skipped:
+    - - intraday-surge-fall
+      - tick-only（向量化整装回测跳过，权重显式再归一化）
+    - - orderbook-imbalance
+      - tick-only（向量化整装回测跳过，权重显式再归一化）
+    - - vwap-reversion
+      - tick-only（向量化整装回测跳过，权重显式再归一化）
+  fw-balanced:
+    raw×cost_on:
+      ok: true
+      total_return: -0.596934248414219
+      max_drawdown: 0.7269156475837524
+      trades: 2238
+      turnover_one_side_est: 39.48325386716585
+      w2_window_return: 0.053846836698229206
+      equity_points: 403
+      regime_day_counts:
+        __base__: 230
+        r10: 60
+        r3: 99
+        r4: 10
+        r12: 4
+    raw×cost_off:
+      ok: true
+      total_return: -0.5773740006889859
+      max_drawdown: 0.7158979270687305
+      trades: 2247
+      turnover_one_side_est: 40.235176049622616
+      w2_window_return: 0.05285356833319166
+      equity_points: 403
+      regime_day_counts:
+        __base__: 230
+        r10: 60
+        r3: 99
+        r4: 10
+        r12: 4
+    hyst3×cost_on:
+      ok: true
+      total_return: -0.5465572699179317
+      max_drawdown: 0.696062437341786
+      trades: 2254
+      turnover_one_side_est: 40.20228528046662
+      w2_window_return: 0.05420548637567113
+      equity_points: 403
+      regime_day_counts:
+        __base__: 234
+        r10: 58
+        r3: 99
+        r4: 8
+        r12: 4
+    hyst3×cost_off:
+      ok: true
+      total_return: -0.5308215464028734
+      max_drawdown: 0.6875315413419487
+      trades: 2237
+      turnover_one_side_est: 40.868924643991875
+      w2_window_return: 0.05484531270323867
+      equity_points: 403
+      regime_day_counts:
+        __base__: 234
+        r10: 58
+        r3: 99
+        r4: 8
+        r12: 4
+    _skipped:
+    - - intraday-surge-fall
+      - tick-only（向量化整装回测跳过，权重显式再归一化）
+    - - orderbook-imbalance
+      - tick-only（向量化整装回测跳过，权重显式再归一化）
+    - - vwap-reversion
+      - tick-only（向量化整装回测跳过，权重显式再归一化）
+  fw-aggressive:
+    raw×cost_on:
+      ok: true
+      total_return: -0.6842261822484941
+      max_drawdown: 0.7898130403228175
+      trades: 1986
+      turnover_one_side_est: 42.39341074917122
+      w2_window_return: 0.04553182792603283
+      equity_points: 403
+      regime_day_counts:
+        __base__: 230
+        r10: 60
+        r3: 99
+        r4: 10
+        r12: 4
+    raw×cost_off:
+      ok: true
+      total_return: -0.6779008484971178
+      max_drawdown: 0.7869765783754756
+      trades: 1979
+      turnover_one_side_est: 42.96239429063354
+      w2_window_return: 0.04550337007902949
+      equity_points: 403
+      regime_day_counts:
+        __base__: 230
+        r10: 60
+        r3: 99
+        r4: 10
+        r12: 4
+    hyst3×cost_on:
+      ok: true
+      total_return: -0.6428651495441114
+      max_drawdown: 0.7646289351744375
+      trades: 1996
+      turnover_one_side_est: 42.78504480302094
+      w2_window_return: 0.04662130970826661
+      equity_points: 403
+      regime_day_counts:
+        __base__: 234
+        r10: 58
+        r3: 99
+        r4: 8
+        r12: 4
+    hyst3×cost_off:
+      ok: true
+      total_return: -0.6336428307879546
+      max_drawdown: 0.76033878342327
+      trades: 1996
+      turnover_one_side_est: 43.4589032450155
+      w2_window_return: 0.04785324782735523
+      equity_points: 403
+      regime_day_counts:
+        __base__: 234
+        r10: 58
+        r3: 99
+        r4: 8
+        r12: 4
+    _skipped:
+    - - intraday-surge-fall
+      - tick-only（向量化整装回测跳过，权重显式再归一化）
+    - - orderbook-imbalance
+      - tick-only（向量化整装回测跳过，权重显式再归一化）
+    - - vwap-reversion
+      - tick-only（向量化整装回测跳过，权重显式再归一化）
+verdicts:
+  fw-defensive:
+    ok: true
+    hyst_gain_net_of_cost: 0.05545
+    hyst_gain_gross: 0.066987
+    turnover_diff_one_side: 0.3963
+    bootstrap_daily_diff:
+      mean_daily_diff: 0.0002134491038288473
+      ci95:
+      - -8.42259781856905e-05
+      - 0.0005668902088109545
+      contains_zero: true
+      n_days: 402
+    w2_counter_window:
+      raw×cost_on: 0.0663251178808395
+      hyst3×cost_on: 0.06877100427218252
+      raw×cost_off: 0.06822634655949478
+      hyst3×cost_off: 0.07054257095118932
+    std_switch_001_evidence: false
+  fw-balanced:
+    ok: true
+    hyst_gain_net_of_cost: 0.050377
+    hyst_gain_gross: 0.046552
+    turnover_diff_one_side: 0.719
+    bootstrap_daily_diff:
+      mean_daily_diff: 0.00029727219890548346
+      ci95:
+      - -4.559867393924044e-05
+      - 0.0007085243163546782
+      contains_zero: true
+      n_days: 402
+    w2_counter_window:
+      raw×cost_on: 0.053846836698229206
+      hyst3×cost_on: 0.05420548637567113
+      raw×cost_off: 0.05285356833319166
+      hyst3×cost_off: 0.05484531270323867
+    std_switch_001_evidence: false
+  fw-aggressive:
+    ok: true
+    hyst_gain_net_of_cost: 0.041361
+    hyst_gain_gross: 0.044258
+    turnover_diff_one_side: 0.3916
+    bootstrap_daily_diff:
+      mean_daily_diff: 0.0003112392025750321
+      ci95:
+      - -0.00011518735817737362
+      - 0.0008176937595846014
+      contains_zero: true
+      n_days: 402
+    w2_counter_window:
+      raw×cost_on: 0.04553182792603283
+      hyst3×cost_on: 0.04662130970826661
+      raw×cost_off: 0.04550337007902949
+      hyst3×cost_off: 0.04785324782735523
+    std_switch_001_evidence: false

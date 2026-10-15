@@ -1,0 +1,21 @@
+# sharpe2 差距三笔账（由 gap_accounts.json 机械转换，内容零改动，转换原因=docs/_working 目录契约 DCR-005/008 禁 .json）
+coverage_ok: 62
+coverage_timeout: 3
+coverage_error: 16
+pool_total: 81
+survivors_strict_pos: 17
+gate_pass: 0
+gate_review: 3
+gate_fail: 59
+pool_combo_sharpe_net_h2: 0.307
+pool_combo_sharpe_gross: 1.204
+cost_drag_sharpe: 0.897
+pool_combo_cost_bps_day: 2.7
+alpha_gap_from_gross_to_2: 0.796
+best_teaming_sharpe: 1.541
+structure_gap_net_to_best: 1.234
+total_gap_net_to_2: 1.693
+worst_12m_window: '2025-04-30'
+worst_12m_return: -0.038
+pool_combo_ann_return: 0.02
+old_sharpe_pos: 15

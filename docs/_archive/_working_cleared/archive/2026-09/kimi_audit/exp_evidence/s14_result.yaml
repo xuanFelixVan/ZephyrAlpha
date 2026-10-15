@@ -1,0 +1,167 @@
+compare:
+  C_equals_B_byte: true
+  sharpe_A: null
+  sharpe_B: null
+  sharpe_C: null
+runs:
+  A_pit1:
+    cmd:
+    - C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe
+    - scripts/run_backtest.py
+    - --strategy
+    - topn-momentum
+    - --symbols
+    - 600519.SH,000858.SZ,601318.SH,600036.SH,000001.SZ,601899.SH,600900.SH,000333.SZ,002415.SZ,600276.SH
+    - --start
+    - '2024-01-01'
+    - --end
+    - '2025-08-31'
+    - --rebalance
+    - W-FRI
+    - --top-n
+    - '5'
+    - --capital
+    - '1000000'
+    - --mode
+    - vectorized
+    - --pit-shift
+    - '1'
+    elapsed_s: 8.0
+    equity_head_tail:
+    - equity: 1000000.0
+      timestamp: '2024-01-02'
+    - equity: 1262696.8506662229
+      timestamp: '2025-08-29'
+    metrics:
+      annual_return: 0.15660899532565753
+      max_drawdown: 0.14305241741017055
+      win_rate: 0.48883374689826303
+    new_artifacts:
+    - bt-9f781ea5.json
+    rc: 3
+    stderr_tail: "D:\\ZephyrAlpha\\src\\zephyr\\factor\\factor_base.py:265: UserWarning:\
+      \ autodiscover_factors: 加载 zephyr.factor.feature_store_writer 失败：No module named\
+      \ 'schemas.categories'\n  warnings.warn(f\"autodiscover_factors: 加载 {full_name}\
+      \ 失败：{exc}\")\n[cost_attribution] COST-FLOOR-DOMINANT(P0): 179/396 笔成交顶佣金下限（45.2%），中位名义\
+      \ ¥161,928，需合并至 ≥¥8,541 才能把地板拖累压进 5bp——策略碎片化未受约束\n[cost_attribution] COST-DOMINATES-RESULT(P0):\
+      \ 交易成本 ¥997,200 占结果绝对值 379.6%（该 run 实际计费口径 ¥28,013 = 10.7%），其中佣金 ¥16,928（地板溢价\
+      \ ¥808）——收益归因前必须先做成本归因\n[cost_attribution] TURNOVER-BREAKS-SLIPPAGE-PREMISE(P1):\
+      \ 年化单边换手 15.1× > 旧固定滑点立论上限 12×——「日频低换手」前提已被证伪，滑点必须按流动性分层计费\n[cost_attribution]\
+      \ IMPACT-TERMS-UNIDENTIFIED(P1): 成交价对决策价偏离 中位 2.3400bp / 标准差 0.000000bp（n=396）——执行成本是决策价的仿射函数，冲击项实际恒零，Almgren-Chriss\
+      \ 参数未经标定（DEFAULT_PARAMS 静默旁路）\nWARN: signal sink failed: No module named 'schemas.categories'\n"
+    stdout_tail: 'BTRUN: strategy=topn-momentum symbols=10 2024-01-01~2025-08-31
+
+      OK run_id=bt-9f781ea5 equity_points=403 trades=396 signals=0 total_return=0.2627
+      sharpe=0.90 max_dd=0.1431
+
+      '
+    tag: A_pit1
+  B_pit0:
+    cmd:
+    - C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe
+    - scripts/run_backtest.py
+    - --strategy
+    - topn-momentum
+    - --symbols
+    - 600519.SH,000858.SZ,601318.SH,600036.SH,000001.SZ,601899.SH,600900.SH,000333.SZ,002415.SZ,600276.SH
+    - --start
+    - '2024-01-01'
+    - --end
+    - '2025-08-31'
+    - --rebalance
+    - W-FRI
+    - --top-n
+    - '5'
+    - --capital
+    - '1000000'
+    - --mode
+    - vectorized
+    - --pit-shift
+    - '0'
+    elapsed_s: 7.4
+    equity_head_tail:
+    - equity: 1000000.0
+      timestamp: '2024-01-02'
+    - equity: 1342705.6071669026
+      timestamp: '2025-08-29'
+    metrics:
+      annual_return: 0.20179283238230683
+      max_drawdown: 0.1472418966522639
+      win_rate: 0.49627791563275436
+    new_artifacts:
+    - bt-b5efc0c8.json
+    rc: 3
+    stderr_tail: "D:\\ZephyrAlpha\\src\\zephyr\\factor\\factor_base.py:265: UserWarning:\
+      \ autodiscover_factors: 加载 zephyr.factor.feature_store_writer 失败：No module named\
+      \ 'schemas.categories'\n  warnings.warn(f\"autodiscover_factors: 加载 {full_name}\
+      \ 失败：{exc}\")\n[cost_attribution] COST-FLOOR-DOMINANT(P0): 182/367 笔成交顶佣金下限（49.6%），中位名义\
+      \ ¥139,912，需合并至 ≥¥8,541 才能把地板拖累压进 5bp——策略碎片化未受约束\n[cost_attribution] COST-DOMINATES-RESULT(P0):\
+      \ 交易成本 ¥872,227 占结果绝对值 254.5%（该 run 实际计费口径 ¥24,579 = 7.2%），其中佣金 ¥14,885（地板溢价\
+      \ ¥818）——收益归因前必须先做成本归因\n[cost_attribution] TURNOVER-BREAKS-SLIPPAGE-PREMISE(P1):\
+      \ 年化单边换手 13.3× > 旧固定滑点立论上限 12×——「日频低换手」前提已被证伪，滑点必须按流动性分层计费\n[cost_attribution]\
+      \ IMPACT-TERMS-UNIDENTIFIED(P1): 成交价对决策价偏离 中位 2.3400bp / 标准差 0.000000bp（n=367）——执行成本是决策价的仿射函数，冲击项实际恒零，Almgren-Chriss\
+      \ 参数未经标定（DEFAULT_PARAMS 静默旁路）\nWARN: signal sink failed: No module named 'schemas.categories'\n"
+    stdout_tail: 'BTRUN: strategy=topn-momentum symbols=10 2024-01-01~2025-08-31
+
+      OK run_id=bt-b5efc0c8 equity_points=403 trades=367 signals=0 total_return=0.3427
+      sharpe=1.11 max_dd=0.1472
+
+      '
+    tag: B_pit0
+  C_pit_minus1:
+    cmd:
+    - C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe
+    - scripts/run_backtest.py
+    - --strategy
+    - topn-momentum
+    - --symbols
+    - 600519.SH,000858.SZ,601318.SH,600036.SH,000001.SZ,601899.SH,600900.SH,000333.SZ,002415.SZ,600276.SH
+    - --start
+    - '2024-01-01'
+    - --end
+    - '2025-08-31'
+    - --rebalance
+    - W-FRI
+    - --top-n
+    - '5'
+    - --capital
+    - '1000000'
+    - --mode
+    - vectorized
+    - --pit-shift
+    - '-1'
+    elapsed_s: 7.4
+    equity_head_tail:
+    - equity: 1000000.0
+      timestamp: '2024-01-02'
+    - equity: 1342705.6071669026
+      timestamp: '2025-08-29'
+    metrics:
+      annual_return: 0.20179283238230683
+      max_drawdown: 0.1472418966522639
+      win_rate: 0.49627791563275436
+    new_artifacts:
+    - bt-9fb87bbe.json
+    rc: 3
+    stderr_tail: "D:\\ZephyrAlpha\\src\\zephyr\\factor\\factor_base.py:265: UserWarning:\
+      \ autodiscover_factors: 加载 zephyr.factor.feature_store_writer 失败：No module named\
+      \ 'schemas.categories'\n  warnings.warn(f\"autodiscover_factors: 加载 {full_name}\
+      \ 失败：{exc}\")\n[cost_attribution] COST-FLOOR-DOMINANT(P0): 182/367 笔成交顶佣金下限（49.6%），中位名义\
+      \ ¥139,912，需合并至 ≥¥8,541 才能把地板拖累压进 5bp——策略碎片化未受约束\n[cost_attribution] COST-DOMINATES-RESULT(P0):\
+      \ 交易成本 ¥872,227 占结果绝对值 254.5%（该 run 实际计费口径 ¥24,579 = 7.2%），其中佣金 ¥14,885（地板溢价\
+      \ ¥818）——收益归因前必须先做成本归因\n[cost_attribution] TURNOVER-BREAKS-SLIPPAGE-PREMISE(P1):\
+      \ 年化单边换手 13.3× > 旧固定滑点立论上限 12×——「日频低换手」前提已被证伪，滑点必须按流动性分层计费\n[cost_attribution]\
+      \ IMPACT-TERMS-UNIDENTIFIED(P1): 成交价对决策价偏离 中位 2.3400bp / 标准差 0.000000bp（n=367）——执行成本是决策价的仿射函数，冲击项实际恒零，Almgren-Chriss\
+      \ 参数未经标定（DEFAULT_PARAMS 静默旁路）\nWARN: signal sink failed: No module named 'schemas.categories'\n"
+    stdout_tail: 'BTRUN: strategy=topn-momentum symbols=10 2024-01-01~2025-08-31
+
+      OK run_id=bt-9fb87bbe equity_points=403 trades=367 signals=0 total_return=0.3427
+      sharpe=1.11 max_dd=0.1472
+
+      '
+    tag: C_pit_minus1
+strategy: topn-momentum
+symbols: 600519.SH,000858.SZ,601318.SH,600036.SH,000001.SZ,601899.SH,600900.SH,000333.SZ,002415.SZ,600276.SH
+window:
+- '2024-01-01'
+- '2025-08-31'

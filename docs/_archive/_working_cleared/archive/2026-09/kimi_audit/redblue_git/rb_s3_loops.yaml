@@ -1,0 +1,65 @@
+scenario: S3_self_excited_loops
+verdict: GREEN
+passed: 13
+total: 13
+criteria:
+  A1: 稳态零受保护变更 → integrity 独立 commit=0（R-01 主判据）
+  A2: 受保护变更未登记 → --check 报 TAMPERED（反例真报）
+  A3: 受保护变更后 → 恰好 1 笔治愈 commit + 台账归属留痕
+  B1: 零漂移 30 连扫审计增量 ≤1 行（心跳）（R-05 日写入<1000 外推）
+  B2: 零变化连扫 state.json 内容不变
+  B3: 真漂移当轮告警落盘（反例红线）
+  B4: 同漂移 20 连扫新增告警=0（重复率 0%<5%）
+  B5: 零变化窗口 git commit 数=0
+  C1: 同档位 30min 告警 ≤1（R-06 主判据）
+  C2: 冷却过后同档位重报=1
+  C3: 冷却期内档位翻转立即出声（红线）
+checks:
+- id: A1
+  pass: true
+  detail: 稳态 3 轮 integrity 独立 commit=0（基线同步 1 笔除外）
+- id: A2
+  pass: true
+  detail: --check rc=2 TAMPERED 检出=True out=''
+- id: A3
+  pass: true
+  detail: 治愈 commit=1 台账留痕=True
+- id: B1
+  pass: true
+  detail: 零漂移 30 连扫审计行数=1（heartbeat=1）；外推 8640 扫/日 ≤ 1 行/日 <<1000
+- id: B2
+  pass: true
+  detail: state.json 内容字节不变=True
+- id: B3
+  pass: true
+  detail: alerted=1 告警落盘行=1（真漂移未被吃掉）
+- id: B4
+  pass: true
+  detail: 同漂移 20 连扫重复告警行=0（零变化重复率 0% <5%）
+- id: B5
+  pass: true
+  detail: 窗口内 commit 数增量=0
+- id: B6
+  pass: true
+  detail: 漂移消解后 healed=1 落盘=1（状态变化正常出声）
+- id: C1
+  pass: true
+  detail: 同档位 30min 窗内告警数=1（首报 1）
+- id: C2
+  pass: true
+  detail: 冷却过后重报总数=2
+- id: C3
+  pass: true
+  detail: 翻转后告警总数=3（冷却期内翻转立即报）
+- id: C4
+  pass: true
+  detail: 回落后无新增告警（total=3）且档位清零 level=''
+findings:
+- id: F-1
+  severity: P2
+  status: confirmed
+  title: watchdog quarantine_tamper 自激误报：快照文件路径按目录检测
+  evidence: sandbox/s3_watchdog/.runtime/audit/worktree_drift_watchdog.jsonl 第3行；worktree_drift_watchdog.py:441
+    _snapshot 返回文件路径 vs :1088 is_dir() 判目录
+  impact: 每次真漂移告警附带 1 条假 tamper 告警（自清除）——稀释真篡改告警信用，与 R-05/R-06 同族的自激噪声；不阻断、不扩散。
+duration_s: null

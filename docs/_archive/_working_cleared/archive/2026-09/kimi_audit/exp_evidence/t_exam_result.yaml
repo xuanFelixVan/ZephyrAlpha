@@ -1,0 +1,99 @@
+control:
+  fill_rate: 0.9027149321266968
+  margins:
+    max_bp: 397.279
+    mean_bp: 0.8716766917293233
+    mean_net_of_8p4bp_bp: -7.528323308270677
+    median_bp: -2.314
+    min_bp: -363.073
+    n: 798
+    p25_bp: -35.508
+    p75_bp: 32.19525
+    std_bp: 61.434441558802256
+    win_rate: 0.4799498746867168
+  n_days_signals: 884
+  n_filled: 798
+diagnostics:
+  confirm_symbol:
+    after_dedupe: 15068
+    rows: 15404
+    tz_shifted: 14752
+  leg123_pass: 33
+  leg12_pass: 38
+  leg1_candidates: 300
+  main_symbol:
+    after_dedupe: 15069
+    rows: 15405
+    tz_shifted: 14752
+  skip_leg2: 262
+  skip_leg3_missing_confirm_bar: 0
+  skip_monthly_cap: 0
+  skip_open_position: 18
+experiment: lane T 单假设窄考试：510300 15min 三重共振极值点 maker 出手
+frozen_params:
+  dsr_gate: 0.5
+  fill_rate_gate: 0.3
+  hold_bars: 8
+  leg1_newlow_n: 20
+  leg1_rsi_max: 20.0
+  leg1_volr_min: 2.0
+  leg2_daily_rsi_max: 35.0
+  leg3_confirm_rsi_max: 35.0
+  margin_gate_bp: 12.0
+  monthly_cap: 8
+  rsi_n: 14
+  tick: 0.001
+gates:
+  dsr_n1_gt_0p5: true
+  fill_rate_ge_30pct: true
+  margin_gt_12bp: false
+  n_trades_ge_4: true
+  welch_p_lt_0p05: false
+preregister_card: docs/_working/kimi_audit/lane_reports/T_preregister.md
+red_reasons:
+- 毛边际均值 0.88bp ≤ 12.0bp
+- 对照组比较不显著（Welch 单侧 p=0.499742432672376）
+resonance:
+  dsr_n1:
+    decidable: true
+    dsr: 0.5267232043460934
+    excess_kurtosis: -0.9068102896339085
+    expected_max_z: 0.0
+    expected_max_z_check: 0.0
+    n: 14
+    sharpe_per_trade: 0.01853283253598689
+    skew: 0.34939821818283057
+    var_sr: 0.07643219459046222
+  dsr_n4562_ref:
+    decidable: true
+    dsr: 0.00016080209896746078
+    excess_kurtosis: -0.9068102896339085
+    expected_max_z: 3.6642813905622136
+    expected_max_z_check: 3.6642813905622136
+    n: 14
+    sharpe_per_trade: 0.01853283253598689
+    skew: 0.34939821818283057
+    var_sr: 0.07643219459046222
+  fill_rate: 0.9333333333333333
+  margins:
+    max_bp: 88.244
+    mean_bp: 0.8801428571428566
+    mean_net_of_8p4bp_bp: -7.519857142857144
+    median_bp: -1.428
+    min_bp: -62.383
+    n: 14
+    p25_bp: -40.72375
+    p75_bp: 25.755499999999998
+    std_bp: 47.49100578305027
+    win_rate: 0.35714285714285715
+  n_filled: 14
+  n_signals_orders: 15
+run_ts: '2026-09-17T11:53:13.726174+00:00'
+sample_window:
+  data_to: '2026-09-16'
+  signal_from: '2023-01-03'
+verdict: RED
+welch_resonance_vs_control:
+  decidable: true
+  p_one_sided: 0.499742432672376
+  t_stat: 0.0006574400867381711

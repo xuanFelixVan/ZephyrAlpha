@@ -1,0 +1,5 @@
+﻿scheme,n_members,members,mean_abs_pairwise_corr,member_sharpe_range,combo_sharpe_realized,combo_mdd,combo_sharpe_approx
+A_r<=0.30_top5,4,FACT-4db4c41e|CAND-e3da6fa71af1|CAND-4440d07f973f|CAND-e2e7f033d97c,0.167,0.37..1.88,1.541,-0.1301,1.707
+B_r<=0.50_top8,6,FACT-4db4c41e|CAND-c4ec6332c07f|CAND-e3da6fa71af1|CAND-4440d07f973f|CAND-a4543012b464|CAND-e2e7f033d97c,0.188,0.37..1.88,1.473,-0.1259,1.714
+C_byDSR_r<=0.40_top5,4,FACT-4db4c41e|CAND-e3da6fa71af1|CAND-4440d07f973f|CAND-e2e7f033d97c,0.167,0.37..1.88,1.541,-0.1301,1.707
+D_all_survivors_equal,17,FACT-4db4c41e|CAND-8d000bf3ccc3|FACT-4f749668|FACT-4228020a|FACT-e831084c|FACT-e293e217|FACT-4b200528|CAND-c4ec6332c07f|CAND-e3da6fa71af1|CAND-eaddc3f9db4e|CAND-4440d07f973f|CAND-d06cab686cef|CAND-29eb91dbaf60|CAND-a4543012b464|CAND-e2e7f033d97c|CAND-bd42540f86e4|CAND-6a6ec8869ddb,0.457,0.15..1.88,1.393,-0.1361,1.495

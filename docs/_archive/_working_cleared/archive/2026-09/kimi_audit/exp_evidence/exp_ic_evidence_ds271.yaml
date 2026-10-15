@@ -1,0 +1,103 @@
+# WO-⑤-12 EXP 族 IC 出证（裁定 #338④ 口径执行端；统计核/SQL 全量复用
+# scripts/backtest/eval_exp_expectations.py——评估器=口径真源，本件零复制判据）
+evidence_id: exp_ic_evidence_ds271
+run_ts: '2026-09-18T04:47:05+00:00'
+work_order: WO-⑤-12
+ruling: 裁定#338④（commit 08e09187a2）
+caliber:
+  ruling_338_4_verbatim: |
+    ④DS-271（DS-275 consensus_daily_repaired）EXP 复评三口径预注册：IS 窗=A 案（2019-2021 共 36 月窗缩先行出证+显著标注窗缩，2022+ 修复证据补齐后全窗复跑）；mid 不入聚合（守 high-only 铁律，mid/low 留档作诊断与反向核验）；切换规则=switch_gate=Owner 不变，机器侧双轨并跑（DS-229 消费方零改动）累计不少于 4 周对数后提请 Owner 验收切换。本条解阻 WO-⑤-12 EXP 族出证。
+  window_shrink_marker: 窗缩   # ← 显著标注（裁定原文用词）
+  is_window: [2019-01-01, 2021-12-31]
+  is_window_note: 窗缩——主协议 IS 2019-2023 共 60 月在修复源上仅 36 月真覆盖；2022+ 缺证据不复跑，全窗复跑待修复证据补齐（裁定 #338④ A 案）
+  oos_window: null   # OOS' 结构不存在 → 全部因子显式 not_evaluable（禁写成 0）
+  protocol: exp_r36
+  significance_rule: "|t|>3.0（t p<0.05 收紧；SE 放大 1.291 倍=sqrt(60/36)）"
+  ic_min: 0.02   # 效应量地板不动
+  coverage_rule: '月覆盖率 coverage_ratio=n_months/36>=0.60（coverage_mean=月均截面股票数计数，禁与百分比门直比）'
+  ic_definition: Spearman 截面秩相关（评估器 build_ic_table 口径）→ IC=秩IC 同值（rank_ic_mean 双标零漂移）
+  aggregation: high-only（exp_grade 即 pdf_forecast_extracted.confidence；mid/low 只出诊断计数不入主统计）
+  promotion_authority: none   # preliminary-coverage-limited，永不产出晋级/否决结论
+probe:
+  consensus_daily_repaired: {table: c3_fundamental.consensus_daily_repaired, rows: 1563996, span: ['2017-01-03', '2026-09-15'], symbols: 3253}
+  pdf_forecast_extracted: {table: c3_fundamental.pdf_forecast_extracted, rows: 192365}
+  exp_grade_counts:   # high/mid/low 三档计数（mid/low=诊断留档，不入主统计）
+    high: 39101   # ← 入聚合档
+    mid: 153263    # ← 诊断计数
+    low: 1     # ← 诊断计数（重建聚合铁律本就不入）
+  is_months_total: 36
+  months_observed: 36
+factors:
+  exp01_consensus_ep:
+    verdict: RED
+    n_months: 36
+    rank_ic_mean: 0.0094   # =ic_mean（Spearman 秩相关）
+    t_stat: 0.2877
+    t_p: 0.77527
+    coverage_mean: 371.0   # 月均截面股票数（计数）
+    coverage_ratio: 1.0   # 月覆盖率（分母 36）
+    mom_ic_mean: -0.1238
+    oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）
+    red_reasons:
+      - "|IC|=0.0094 < 0.02（效应量地板不动）"
+      - "|t|=0.2877 未超 3.0（Harvey-Liu-Zhu 收紧门槛）"
+    promotion_authority: none
+  exp02_revision_momentum:
+    status: NOT_EVALUABLE
+    reason: "DS-275 的 eps_std 结构性不可得（A 段=窗口聚合值不经原始离散度、B 段=源快照本身是聚合值），表内恒 0；exp02 分歧归一项分母为 0 ⇒ 因子退化（评估器eval_exp_expectations.py 已 fail-closed 钉死，0 不是零分歧）"
+    promotion_authority: none
+  exp03_revision_breadth:
+    verdict: RED
+    n_months: 36
+    rank_ic_mean: 0.011   # =ic_mean（Spearman 秩相关）
+    t_stat: 1.1898
+    t_p: 0.24215
+    coverage_mean: 1244.0   # 月均截面股票数（计数）
+    coverage_ratio: 1.0   # 月覆盖率（分母 36）
+    mom_ic_mean: 0.0105
+    oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）
+    red_reasons:
+      - "|IC|=0.0110 < 0.02（效应量地板不动）"
+      - "|t|=1.1898 未超 3.0（Harvey-Liu-Zhu 收紧门槛）"
+    promotion_authority: none
+  exp04_anomaly_coverage:
+    verdict: RED
+    n_months: 33
+    rank_ic_mean: 0.0363   # =ic_mean（Spearman 秩相关）
+    t_stat: 2.351
+    t_p: 0.02505
+    coverage_mean: 920.0   # 月均截面股票数（计数）
+    coverage_ratio: 0.9167   # 月覆盖率（分母 36）
+    mom_ic_mean: -0.0055
+    oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）
+    red_reasons:
+      - "|t|=2.3510 未超 3.0（Harvey-Liu-Zhu 收紧门槛）"
+    promotion_authority: none
+  exp05_dispersion:
+    status: NOT_EVALUABLE
+    reason: "同 exp02 根因：exp05_dispersion=eps_std/|eps_mean|，修复源 eps_std 恒 0 ⇒ 因子全市场恒 0 零方差，截面 Spearman 无定义（跑出一个常数因子的 IC 是对不存在数据的断言）"
+    promotion_authority: none
+  exp06_rating_momentum:
+    verdict: RED
+    n_months: 36
+    rank_ic_mean: -0.0191   # =ic_mean（Spearman 秩相关）
+    t_stat: -1.3242
+    t_p: 0.19403
+    coverage_mean: 190.0   # 月均截面股票数（计数）
+    coverage_ratio: 1.0   # 月覆盖率（分母 36）
+    mom_ic_mean: -0.0122
+    oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）
+    red_reasons:
+      - "|IC|=0.0191 < 0.02（效应量地板不动）"
+      - "|t|=1.3242 未超 3.0（Harvey-Liu-Zhu 收紧门槛）"
+    promotion_authority: none
+comparison_with_legacy:   # 旧口径既有出证对照（只读引用，不改旧件）
+  exp02: {run: EXP-FACTOR-EVAL-004（logs/experiment_tracking_fallback/exp02_eval_run1_r36_20260916.json）, result: not_evaluable（DS-275 eps_std 结构性不可得，分歧归一分母恒 0）}
+  exp04: {run: exp04_eval_run1_r36_20260916.json, result: IS' n_months=33 ic_mean=0.0363 t_p=0.02505（未达 |t|>3.0）}
+  exp06: {run: exp06_eval_run1_r36_20260916.json, result: IS' n_months=36 ic_mean=-0.0191 t_p=0.19403（未达 |t|>3.0）}
+  note: 旧件一律不改；本件同协议（exp_r36@DS-275）重跑应与旧数在统计核路径上一致，差异只可能来自数据增量（修复表重建批次）或本件新增的 exp01/exp03 腿。
+verdict_summary:
+  evaluable_factors: ['exp01_consensus_ep', 'exp03_revision_breadth', 'exp04_anomaly_coverage', 'exp06_rating_momentum']
+  green: 无
+  not_evaluable: ['exp02_revision_momentum', 'exp05_dispersion']
+  overall: RED/NOT_EVALUABLE（初筛无达标信号或结构不可判；promotion_authority=none，本件不构成晋级/否决结论）

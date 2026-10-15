@@ -1,0 +1,565 @@
+﻿library,entry_id,name,class,status,verdict,reason_or_gap,exam_window,signalization,readiness,independence,bonus,priority_score
+indicator,IND-TREND-017,MCGINLEY,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=1); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-018,BBI,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=24); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-019,ALLIGATOR,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=34); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-020,GMMA,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=60); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-021,GANN_HILO,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=10); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-001,MA,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=60); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-002,EMA,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=26); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-003,WMA,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=10); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-004,DEMA,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=24); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-005,MACD,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=35); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-006,ADX,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=28); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-007,DMI,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=15); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-008,CCI,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=14); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-009,SAR,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=2); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-010,TRIX,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=48); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-011,DKX,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=29); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-012,HMA,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=24); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-013,ZLEMA,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=31); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-014,KAMA,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=11); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-015,VORTEX,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=15); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-TREND-016,SUPERTREND,trend,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=10); 与C4-v1同源预检:MA20乖离","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","趋势族: 均线/通道乖离截面排名多头, 与 f_ma_gap 同源预检",3,1,0,11
+indicator,IND-MOM-015,TSI,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=38); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-016,SMI,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=16); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-017,FISHER,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=9); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-018,KST,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=45); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-019,CONNORSRSI,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=103); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-020,QQE,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=38); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-021,STC,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=63); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-022,RVGI,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=14); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-023,STOCH,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=9); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-024,AROON,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=14); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-025,AROONOSC,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=14); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-026,BOP,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=16); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-027,PPO,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=26); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-028,APO,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=26); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-029,DX,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=14); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-030,BRAR,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=26); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-031,CR,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=26); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-032,AC,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=38); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-033,FRACTALS,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=2); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-034,ELDER,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=13); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-035,COPPOCK,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=23); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-036,SQUEEZE,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-037,WAVETREND,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=31); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-001,KDJ,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=9); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-002,RSI,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=24); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-003,WR,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=14); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-004,ROC,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=12); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-005,MTM,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=18); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-006,CMF,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-007,UOS,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=28); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-008,AO,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=34); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-009,CMO,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=15); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-010,StochRSI,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=27); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-011,BIAS,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=24); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-012,PSY,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=17); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-MOM-013,LWR,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=15); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-VOL-011,MASSI,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=25); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-012,PARKINSON,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-013,GARMAN_KLASS,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-014,ROGERS_SATCHELL,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-015,YANG_ZHANG,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=21); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-001,ATR,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=15); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-002,BOLL,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-003,Keltner,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-004,Donchian,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-005,STDDEV,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-006,BandWidth,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-007,PercentB,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-008,HistVol,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=21); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOLUME-008,VWMA,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-009,ADOSC,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=10); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-010,EOM,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=14); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-011,KVO,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=55); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-012,NVI,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=1); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-013,PVI,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=1); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-014,FORCE_INDEX,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=13); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-001,OBV,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=2); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-002,MFI,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=15); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-003,VWAP,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=1); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-004,VR,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=27); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-005,AD,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=1); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-006,PVT,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=2); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOLUME-007,WVAD,volume,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=24); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","量能族: 量价确认截面因子(OBV/AD 等), 新信息面=成交量结构",3,2,2,15
+indicator,IND-VOL-009,NATR,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=14); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-VOL-010,TRANGE,volatility,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=1); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","波动族: 指标截面排名(低波多头或波动挤压事件), 与 f_lowvol20 增量预检",3,2,0,13
+indicator,IND-REV-001,CandlestickPattern,reversal,deprecated,必死,已退役条目,,,0,0,0,
+indicator,IND-REV-002,RSIDivergence,reversal,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=32); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","反转族: 超买超卖截面 rank 反向, 与动量负相关预检",3,1,0,11
+indicator,IND-REV-003,MACDDivergence,reversal,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=55); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","反转族: 超买超卖截面 rank 反向, 与动量负相关预检",3,1,0,11
+indicator,IND-REV-004,BOLLBreakout,reversal,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","反转族: 超买超卖截面 rank 反向, 与动量负相关预检",3,1,0,11
+indicator,IND-REV-005,VolumePriceDivergence,reversal,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=11); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","反转族: 超买超卖截面 rank 反向, 与动量负相关预检",3,1,0,11
+indicator,IND-MOM-014,DPO,momentum,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=31); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","动量族: 因子=指标值截面 rank → top_n 多头, 与 f_mom20 增量 IC 预检后再考",3,1,0,11
+indicator,IND-STAT-001,CORREL,statistics,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=30); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",统计族: 线性回归/斜率类截面因子,3,2,2,15
+indicator,IND-STAT-002,BETA,statistics,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=30); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",统计族: 线性回归/斜率类截面因子,3,2,2,15
+indicator,IND-STAT-003,LINEARREG,statistics,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=14); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",统计族: 线性回归/斜率类截面因子,3,2,2,15
+indicator,IND-STAT-004,ROLLVAR,statistics,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=20); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",统计族: 线性回归/斜率类截面因子,3,2,2,15
+indicator,IND-CYC-001,HT_DCPERIOD,cycle,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=63); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",周期族: 循环指标事件窗检验(金叉/死叉日历),3,1,0,11
+indicator,IND-CYC-002,HT_DCPHASE,cycle,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=63); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",周期族: 循环指标事件窗检验(金叉/死叉日历),3,1,0,11
+indicator,IND-CYC-003,HT_PHASOR,cycle,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=63); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",周期族: 循环指标事件窗检验(金叉/死叉日历),3,1,0,11
+indicator,IND-CYC-004,HT_SINE,cycle,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=63); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",周期族: 循环指标事件窗检验(金叉/死叉日历),3,1,0,11
+indicator,IND-CYC-005,HT_TRENDMODE,cycle,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=63); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",周期族: 循环指标事件窗检验(金叉/死叉日历),3,1,0,11
+indicator,IND-COMP-001,Ichimoku Kinko Hyo,composite,active,值得考,"OHLCV 日频全可算(technical_indicator 表 2019-01 起, warmup=78); 增量IC对基座预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",复合族: 多信号合成截面排名,3,1,0,11
+pattern,PAT-CANDLE-001,Hammer,candlestick_pattern,active,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-002,Bullish Engulfing,candlestick_pattern,active,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-003,Bearish Engulfing,candlestick_pattern,active,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-004,Morning Star,candlestick_pattern,active,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-005,Evening Star,candlestick_pattern,active,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-006,Doji,candlestick_pattern,active,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-007,Inverted Hammer,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-008,Hanging Man,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-009,Shooting Star,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-010,Gravestone Doji,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-011,Dragonfly Doji,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-012,Long-legged Doji,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-013,Spinning Top,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-014,Marubozu,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-015,Closing Marubozu,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-016,High-Wave,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-017,Rickshaw Man,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-018,Takuri,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-019,Belt Hold,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-020,Harami,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-021,Harami Cross,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-022,Morning Doji Star,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-023,Evening Doji Star,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-024,Doji Star,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-025,Piercing Pattern,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-026,Dark Cloud Cover,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-027,Kicking,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-028,Kicking by Length,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-029,Three White Soldiers,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-030,Three Black Crows,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-031,Identical Three Crows,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-032,Three Inside Up/Down,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-033,Three Outside Up/Down,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-034,Three-Line Strike,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-035,Three Stars in the South,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-036,Unique Three River,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-037,Ladder Bottom,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-038,Stick Sandwich,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-039,Tristar,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-040,Abandoned Baby,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-041,Concealing Baby Swallow,candlestick_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CANDLE-042,Advance Block,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-043,Stalled Pattern,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-044,Upside Gap Two Crows,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-045,Two Crows,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-046,Homing Pigeon,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-047,Matching Low,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-048,In Neck,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-049,On Neck,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-050,Thrusting,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-051,Counterattack,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-052,Separating Lines,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-053,Side-by-side White Lines,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-054,Rising/Falling Three Methods,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-055,Mat Hold,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-056,Breakaway,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-057,Upside/Downside Gap Three Methods,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-058,Tasuki Gap,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-059,Hikkake,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-060,Hikkake Modified,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-061,Long Line,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-062,Short Line,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-063,A-Share Limit-Up Flat,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-064,A-Share Limit-Down Flat,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-065,Rubbing Lines (Cuoxian),candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-066,Sky-to-Limit-Down,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-067,Ground-to-Limit-Up (Ditian),candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-068,Single Yang Threading MAs,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-069,Tweezer Bottom,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-070,Tweezer Top,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-071,Narrow Range Day NR7/NR4,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-072,Key Reversal (Outside Reversal),candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-073,Wide Range Bar (WRB),candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-074,Oops Pattern,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-075,Three Gaps (Sanku),candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-076,Tower Top,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-077,Tower Bottom,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-078,Inside Days,candlestick_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CANDLE-079,Weekly Reversals,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-080,Open-Close Reversal,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-081,Hook Reversal,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-082,Pivot Point Reversal,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CANDLE-083,Shark-32,candlestick_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-001,Double Top,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-002,Head and Shoulders Top,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-003,Wedge Breakdown,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-004,Double Bottom,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-005,Ascending Triangle,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-006,Descending Triangle,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-007,Symmetrical Triangle,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-008,Rising Wedge,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-009,Falling Wedge,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-010,Bull Flag,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-011,Bear Flag,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-012,Pennant,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-013,Cup and Handle,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-014,Inverse Cup and Handle,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-015,Rectangle,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-016,Head and Shoulders Bottom,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-017,Triple Top,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-018,Triple Bottom,chart_pattern,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CHART-019,Rounding Top,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-020,Rounding Bottom,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-021,Broadening Formation,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-022,Diamond,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-023,V-Top,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-024,V-Bottom,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-025,Island Reversal,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-026,Dead Cat Bounce,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-027,Limit-Up Reversal Engulfing (Fanbao),chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-028,Double Cannon N-Shape,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-029,Golden Pit,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-030,Fragmented Yang Accumulation,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-031,Low Box Consolidation,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-032,First Board Probe,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-033,Consecutive Limit-Up Ladder,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-034,Mild Board Break,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-035,Broken Board Re-Seal,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-036,Late-Day Sneak Board,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-037,TD Sequential Buy Setup,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-038,TD Sequential Sell Setup,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-039,Wolfe Wave,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-040,Quasimodo,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-041,Ascending Scallop,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-042,Descending Scallop,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-043,Horn Top,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-044,Horn Bottom,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-045,Pipe Top,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-046,Pipe Bottom,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-047,Bump-and-Run Reversal Top,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-048,Bump-and-Run Reversal Bottom,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-049,Volatility Contraction Pattern,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-050,1-2-3 Reversal,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-051,Ross Hook,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-052,Old Duck Head,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-053,Mid-air Refueling,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-054,Three Peaks and a Domed House,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-055,Three Rising Valleys,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-056,Three Falling Peaks,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-057,Big W,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-058,Big M,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-059,Gap Classification,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-060,Complex Head and Shoulders,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-061,High Tight Flag,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-062,Brooks H2/L2 Two-Legged Pullback,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-063,Measured Move Up,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-064,Measured Move Down,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-065,Broadening Formation Right-Angled Ascending,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-066,Broadening Formation Right-Angled Descending,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-067,Broadening Wedge Ascending,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-068,Broadening Wedge Descending,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-069,Adam & Eve Double Bottoms,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-070,Adam & Eve Double Tops,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-071,Ugly Double Bottom,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-072,Inverted Dead Cat Bounce,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-073,Earnings Flag,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-074,Roof,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-075,Inverted Roof,chart_pattern,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CHART-076,2B False Breakout Reversal,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-077,Flat Base,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-078,Busted Pattern,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-079,Extended V-Tops/Bottoms,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-080,Ascending and Inverted Scallop,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CHART-081,Inverted and Descending Scallop,chart_pattern,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-TREND-001,MA Death Cross,trendline_channel,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-TREND-002,Uptrend Line,trendline_channel,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-TREND-003,Downtrend Line,trendline_channel,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-TREND-004,Ascending Channel,trendline_channel,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-TREND-005,Descending Channel,trendline_channel,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-TREND-006,Horizontal Channel,trendline_channel,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-TREND-007,Golden Cross,trendline_channel,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-TREND-008,Andrew's Pitchfork,trendline_channel,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-TREND-009,Gann Angle 1x1 (45°),trendline_channel,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-TREND-010,Gann Square of Nine,trendline_channel,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-TREND-011,Speed Resistance Lines,trendline_channel,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-TREND-012,Gann Swing Chart,trendline_channel,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-TREND-013,MA Alignment State Classification,trendline_channel,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-SR-001,Breakout Failure Detection,support_resistance,active,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-SR-002,Intraday Breakout/Breakdown,support_resistance,active,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-SR-003,Intraday Stop-Loss Break,support_resistance,active,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-SR-004,Pivot Points (Classic),support_resistance,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-SR-005,Pivot Points (Fibonacci),support_resistance,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-SR-006,Volume Profile Support/Resistance,support_resistance,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-SR-007,Previous Day High/Low,support_resistance,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-SR-008,Murrey Math Levels,support_resistance,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-SR-009,Camarilla Pivots,support_resistance,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-SR-010,Support Resistance Polarity Shift,support_resistance,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-FIB-001,Fibonacci Retracement,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-002,Fibonacci Extension,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-003,Fibonacci Fan,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-004,Fibonacci Arc,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-005,Fibonacci Time Zone,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-006,Fibonacci Cluster,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-007,ABCD Harmonic,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-008,Gartley,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-009,Bat,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-010,Alternate Bat,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-011,Butterfly,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-012,Crab,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-013,Deep Crab,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-014,Shark,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-015,Cypher,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-016,Three Drives,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-017,Harmonic 5-0,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-FIB-018,Nen Star,fibonacci,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-STRUCT-001,Wyckoff Spring,structure,active,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-CLL-001,Chanlun Top Fractal,chanlun,candidate,缺数据,缠论笔/段/中枢算法未接线物化(JOB-108 未覆盖),,,0,0,0,
+pattern,PAT-CLL-002,Chanlun Bottom Fractal,chanlun,candidate,缺数据,缠论笔/段/中枢算法未接线物化(JOB-108 未覆盖),,,0,0,0,
+pattern,PAT-CLL-003,Chanlun Upward Bi,chanlun,candidate,缺数据,缠论笔/段/中枢算法未接线物化(JOB-108 未覆盖),,,0,0,0,
+pattern,PAT-CLL-004,Chanlun Downward Bi,chanlun,candidate,缺数据,缠论笔/段/中枢算法未接线物化(JOB-108 未覆盖),,,0,0,0,
+pattern,PAT-CLL-005,Chanlun Line Segment,chanlun,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CLL-006,Chanlun Zhongshu (Central Hub),chanlun,candidate,值得考,已物化(market_pattern_event 2021-09 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)","事件日→条件超额检验: 事件股 T+1..T+5 超额/板块映射, 物化事件直接可考",2,2,2,12
+pattern,PAT-CLL-007,Chanlun First Buy Point,chanlun,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CLL-008,Chanlun Second Buy Point,chanlun,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CLL-009,Chanlun Third Buy Point,chanlun,candidate,缺数据,缠论笔/段/中枢算法未接线物化(JOB-108 未覆盖),,,0,0,0,
+pattern,PAT-CLL-010,Chanlun First Sell Point,chanlun,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CLL-011,Chanlun Second Sell Point,chanlun,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-CLL-012,Chanlun Third Sell Point,chanlun,candidate,缺数据,缠论笔/段/中枢算法未接线物化(JOB-108 未覆盖),,,0,0,0,
+pattern,PAT-CLL-013,Chanlun Trend Divergence,chanlun,candidate,缺数据,缠论笔/段/中枢算法未接线物化(JOB-108 未覆盖),,,0,0,0,
+pattern,PAT-CLL-014,Chanlun Consolidation Divergence,chanlun,candidate,缺数据,缠论笔/段/中枢算法未接线物化(JOB-108 未覆盖),,,0,0,0,
+pattern,PAT-CLL-015,Chanlun Nested Interval (Qujian Tao),chanlun,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-ELW-001,Impulse Wave,elliott_wave,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-ELW-002,Zigzag Correction,elliott_wave,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-ELW-003,Flat Correction,elliott_wave,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-ELW-004,Triangle Correction,elliott_wave,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-ELW-005,Double Three Combination,elliott_wave,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-ELW-006,Wave Extension,elliott_wave,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-ELW-007,Leading Diagonal,elliott_wave,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-ELW-008,Ending Diagonal,elliott_wave,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-STRUCT-002,Wyckoff Accumulation,structure,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-STRUCT-003,Wyckoff Distribution,structure,candidate,必死,"主观图形(人工画线/波浪计数), 无机械识别口径不可信号化",,,0,0,0,
+pattern,PAT-STRUCT-004,Wyckoff Upthrust,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-005,Wyckoff Sign of Strength (SOS),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-006,Wyckoff Sign of Weakness (SOW),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-007,Wyckoff Last Point of Support (LPS),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-008,Wyckoff Last Point of Supply (LPSY),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-009,SMC Break of Structure (BOS),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-010,SMC Change of Character (CHoCH),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-011,SMC Fair Value Gap (FVG),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-012,SMC Order Block (OB),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-013,SMC Liquidity Grab,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-014,SMC Equal Highs (EQH),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-015,SMC Equal Lows (EQL),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-016,SMC Premium/Discount Zone,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-017,Time Series Motif Discovery,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-STRUCT-018,Semantic Segmentation (FLUSS),structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-001,YOLOv8 Chart Pattern Detector,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-002,Swin Transformer TADA-AW Classifier,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-003,ViT-Tiny + MAE Self-supervised Pattern Learner,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-004,Multimodal LLM Pattern Analyst,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-005,Kronos K-line Foundation Model,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-006,Mamba State-Space Sequence Model,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-STRUCT-019,VSA Selling Climax,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-020,VSA Buying Climax,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-021,VSA No Supply,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-022,VSA No Demand,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-023,VSA Stopping Volume,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-024,VSA Test Bar,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-025,VSA Pseudo Upthrust,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-DL-007,Diffusion Generative Chart Forecaster,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-STRUCT-026,Intraday Ladder Push,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-027,Intraday Box Shrinking Consolidation,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-028,Intraday Double Bottom,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-029,Intraday VWAP Hold,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-030,Intraday Pulse Probe,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-031,Intraday Sawtooth Narrow,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-032,Intraday Sell Order Freeze,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-033,Intraday Trap Pull,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-034,Intraday Wash Lift,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-035,Order Flow Imbalance (OFI/TFI),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-036,Footprint Point of Control (POC),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-037,Opening Range Breakout,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-038,Supply/Demand Zone (Seiden),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-039,ICT Power of Three (AMD),structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-040,Iceberg Order Detection,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-041,Spoofing/Layering Detection,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-043,Golden Volume Pillar,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-042,Market Profile Structure,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-044,Order Flow Absorption,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-045,Cumulative Volume Delta Divergence,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-STRUCT-046,Concave Mouth Gold Panning,structure,candidate,缺数据,"market_pattern_event 未物化该类型, 待 JOB-108 接线回补",,,0,0,0,
+pattern,PAT-DL-008,Chart-RVR GRPO Chart Reasoner,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-009,Multi-Scale VLM Candlestick Benchmark,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-010,AC-Seq2Net Math-Guided Geometric DL,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-011,ElliottAgents Multi-Agent Wave Counter,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-012,wave-alpha Deterministic Wave Engine,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+pattern,PAT-DL-013,GAF-CNN Visual Encoding Pipeline,structure,candidate,缺数据,"DL 模型训练集未建(dl_training_dataset 空), 无监督标签来源",,,0,0,0,
+factor,FCT-INTRADAY-015,急跌必有急反,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-016,蜻蜓点水跌破,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-017,分时量价背离,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-018,分时均线压制,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-019,黄白线分离度,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-020,分时顶背离,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-021,探底回升分时,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-022,放量跌破 vs 缩量跌破均线,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-023,首 30 分钟成交占比,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-024,竞价验证,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-025,VWAP 位置,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-026,温和放量连续红,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-027,竞价微结构信号,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-INTRADAY-028,开盘位置 vs 支撑压力预判当日走势,intraday,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-TECH-055,20 日均线趋势判定,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-056,放量突破 20 日线,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-057,红多绿少/红肥绿瘦,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-058,月线 20 日均线支撑,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-059,历史天量,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-060,下跌斜率放缓,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-061,均线排列状态全分类,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-062,日线乖离率极端阈值 ±15%,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-063,KDJ 钝化,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-064,ATR14 日均真实波幅,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-065,整数关口关键位,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-066,RSI 极端超卖,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-067,MACD 零轴位置,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-068,区间位置百分位,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-069,缩量阳线规则族,risk_rule,candidate,必死,"风控规则(止损/仓位约束), 非收益信号, 无 E4 考纲语义",,,0,0,0,
+factor,FCT-TECH-070,量比五分位标准,technical_indicator,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 指标衍生因子, 直接可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-071,波段浪型量化标准,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-072,布林带收口量化标准,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-073,缺口 ATR 标准化分级与回补概率,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-024,底部量能节奏,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-025,地量,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-026,半日量占 5 日全天均量比例,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-027,ETF 折溢价,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-028,ETF 申赎资金流向,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-029,天量换手筹码出尽卖出信号,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-030,换手率分位,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-031,立桩量,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-032,量能体制×板块资金流映射,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-033,量能×体制策略矩阵,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-074,大级别底部突破,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-075,上方套牢盘压力位,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-076,高位振幅加大,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-077,加速见顶,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-078,下方缺口不回补信号,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-079,主力筹码状态四分类,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-080,筹码临界值,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-081,Wyckoff 吸筹五事件量化,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-082,Wyckoff 派发五阶段+CVD 背离,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-083,假突破统计参数,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-084,日内量能结构三指标,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-TECH-085,背离程度量化与多级别级联,technical,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 技术形态族, technical_indicator 表可算","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-001,跷跷板效应,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-002,半导体带指数,knowledge_only,candidate,必死,"知识性条目(经验/纪律记录), 非可考收益因子",,,0,0,0,
+factor,FCT-MOM-003,龙头/中军/后排三分法,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-004,锚定法,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-005,板块轮动位置判定,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-006,全 A 等权 vs 加权,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-007,板块涨跌覆盖率,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-008,历史新高因子,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-009,区间相对强弱 RS,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-010,综合 RS 评分,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-011,板块四维质量评估,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-012,子板块等权指数构造,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-013,概念重合度量化,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-CRYPTO-MOM-001,BTC Trend Following,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-CRYPTO-MOM-002,ETH Trend Following,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-CRYPTO-VOL-001,BTC Volatility Regime,volatility,candidate,值得考,价量日频可算(kline_daily_hfq 全史); 波动族截面因子,"2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-014,混沌期三特征与触发,momentum,candidate,必死,"与已消费 regime 信号同源(F23 已在 alt_regime_signal), 挖矿排除令",,,0,0,0,
+factor,FCT-MOM-015,连板高度周期律,sentiment,candidate,必死,"与已消费 regime 信号同源(F23 已在 alt_regime_signal), 挖矿排除令",,,0,0,0,
+factor,FCT-MOM-016,龙头三特质,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-017,中位股断板吹哨,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-018,板块-指数共振回调,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-019,领导-跟随关系量化,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-020,动量广度与板块持续性,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-021,板块间资金迁移检测,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-022,主线评分与切换确认,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-023,板块拥挤度与启动条件,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-024,亏钱效应扩散量化,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-025,龙头股成交额占板块比例,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-026,机构研报覆盖密度,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-027,牛熊三阶段特征量化,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-028,行业因子构造与行业轮动模型,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-EVENT-001,议息会议事件,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-002,量化监管政策,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-003,催化分级,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-004,警惕掺水,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-005,央行公开市场操作,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-006,利率与汇率三指标,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-007,IPO 抽血预判,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-008,黄金避险因子,knowledge_only,candidate,必死,"知识性条目(经验/纪律记录), 非可考收益因子",,,0,0,0,
+factor,FCT-EVENT-009,年报股东信息空窗期与庄股操作四步法,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-010,股指期货交割日规则,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-011,消息面板块错位=诱多,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-012,隔夜全球传导量化,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-013,供应链动量,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-EVENT-014,PEAD 财报漂移,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-015,衍生品到期 Pinning 效应,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-016,利好落地变利空判定,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-EVENT-017,事件因果图与贝叶斯网络推断,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-SENT-006,一致看多见顶,sentiment,candidate,缺数据,"情绪数据积累不足(alt_stock_comment 4 个交易日/人气榜 13 天, 截面因子需 ≥20-60 日)",,,0,0,0,
+factor,FCT-SENT-007,炸板率+连板高度+涨停回封时间,sentiment,candidate,必死,"与已消费 regime 信号同源(F23 已在 alt_regime_signal), 挖矿排除令",,,0,0,0,
+factor,FCT-SENT-008,市场宽度,sentiment,candidate,缺数据,"情绪数据积累不足(alt_stock_comment 4 个交易日/人气榜 13 天, 截面因子需 ≥20-60 日)",,,0,0,0,
+factor,FCT-SENT-009,恐慌指数代理,sentiment,candidate,缺数据,"情绪数据积累不足(alt_stock_comment 4 个交易日/人气榜 13 天, 截面因子需 ≥20-60 日)",,,0,0,0,
+factor,FCT-SENT-010,情绪温度体系,sentiment,candidate,缺数据,"情绪数据积累不足(alt_stock_comment 4 个交易日/人气榜 13 天, 截面因子需 ≥20-60 日)",,,0,0,0,
+factor,FCT-SENT-011,双冰点信号,sentiment,candidate,缺数据,"情绪数据积累不足(alt_stock_comment 4 个交易日/人气榜 13 天, 截面因子需 ≥20-60 日)",,,0,0,0,
+factor,FCT-SENT-012,涨停板情绪量化体系,sentiment,candidate,缺数据,"情绪数据积累不足(alt_stock_comment 4 个交易日/人气榜 13 天, 截面因子需 ≥20-60 日)",,,0,0,0,
+factor,FCT-SENT-013,情绪-价格背离指数,sentiment,candidate,缺数据,"情绪数据积累不足(alt_stock_comment 4 个交易日/人气榜 13 天, 截面因子需 ≥20-60 日)",,,0,0,0,
+factor,FCT-SENT-014,逼空检测量化,sentiment,candidate,缺数据,"情绪数据积累不足(alt_stock_comment 4 个交易日/人气榜 13 天, 截面因子需 ≥20-60 日)",,,0,0,0,
+factor,FCT-SENT-015,新闻情感与另类数据因子体系,sentiment,candidate,缺数据,"情绪数据积累不足(alt_stock_comment 4 个交易日/人气榜 13 天, 截面因子需 ≥20-60 日)",,,0,0,0,
+factor,FCT-LIQ-034,融资余额到前低附近,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-035,资金抱团方向,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-036,股东增持信号,event,candidate,值得考,事件面数据在库(market_pattern_event 2021-09 起/calendar_event/typhoon_track 2004 起),"2021-10..2025-08 (物化起点后, WFA 折法 18m/6m)",事件窗 T+1 可用仓: 事件日历→条件持有窗,2,3,2,14
+factor,FCT-LIQ-037,跟跌不跟涨,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-038,money_flow 五档拆解,data_asset,candidate,必死,"数据资产登记条目, 非因子",,,0,0,0,
+factor,FCT-LIQ-039,tick 级大单拆解,liquidity,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-LIQ-040,5 日/10 日累计净流入,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-041,ETF 成交异动,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-042,资金性质五分类,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-043,口径矛盾处理铁律,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-044,大票大单降权 50%,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-045,上涨时小单逆势降权,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-046,IRCF 因子,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-047,3 秒级 Tick 逆势资金流识别,liquidity,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-LIQ-048,大盘下跌状态分级,liquidity,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-LIQ-049,逆势强度比,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-050,北向资金,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-051,游资快钱 vs 机构建仓区分,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-052,两融余额变化,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-053,大资金炒大票量化逻辑,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-054,尾盘偷袭识别,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-055,断层领先因子,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-056,资金流行为三分法与体制,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-057,逆势强度比公式修订,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-058,融资盘平仓潮信号,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-059,协同交易监管级检测阈值,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-060,Spoofing 检测指标,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-061,假动作模式库,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-LIQ-062,异质参与者博弈量化,liquidity,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 流动性族: 换手/ Amihud 截面因子, 量价新信息面","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-QUAL-001,业绩维因子,quality,candidate,值得考,financial_indicator 38.9 万行含 announce_date(PIT 对齐),"2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",质量因子截面 rank 多头; 财报公告日滞后对齐禁未来函数,3,2,1,14
+factor,FCT-SENT-016,期指基差率,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-017,期指基差变化率,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-018,期权成交量PCR,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-019,300ETF隐含波动率IV_Rank分位,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-020,涨跌家数速度breadth_vel,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-021,涨停净增速率lu_net_rate,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-022,边际炸板率break_rate,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-023,护盘背离度guard_ratio,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-024,量能外推比volume_ratio,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-025,大幅回撤个股数drawdown_count,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-026,电风扇速度计rotation_velocity,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-027,个股分歧度divergence_stock,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-SENT-028,涨跌家数二阶加速度breadth_acc,sentiment,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-MOM-029,Momentum 20d (code-anchored),momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-MOM-030,4 分钟涨速资金异动,momentum,candidate,必死,"日内微观结构频率, E4 日频考纲不可回测表达(执行/仓位无法日频化)",,,0,0,0,
+factor,FCT-QUAL-002,Value Factor (code-anchored),value,candidate,缺数据,日频估值历史未回补(daily_valuation 仅 2026-08 起 1.5 个月; stock_valuation 空表),,,0,0,0,
+factor,FCT-INTRADAY-029,Intraday VWAP (code-anchored),intraday,candidate,值得考,价量日频可算(kline_daily_hfq 全史); 截面因子,"2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-INTRADAY-030,Intraday Close (code-anchored),intraday,candidate,值得考,价量日频可算(kline_daily_hfq 全史); 截面因子,"2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-FQ-001,应计因子（Sloan）,quality,experimental,值得考,financial_indicator 38.9 万行含 announce_date(PIT 对齐),"2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",质量因子截面 rank 多头; 财报公告日滞后对齐禁未来函数,3,2,1,14
+factor,FCT-FQ-002,现金流实现率,quality,experimental,值得考,financial_indicator 38.9 万行含 announce_date(PIT 对齐),"2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",质量因子截面 rank 多头; 财报公告日滞后对齐禁未来函数,3,2,1,14
+factor,FCT-FQ-003,GPOA 毛利率资产比,quality,deprecated,必死,已退役条目,,,0,0,0,
+factor,FCT-FQ-004,单季盈利变化 ΔROEq,quality,experimental,值得考,financial_indicator 38.9 万行含 announce_date(PIT 对齐),"2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",质量因子截面 rank 多头; 财报公告日滞后对齐禁未来函数,3,2,1,14
+factor,FCT-GR-001,单季营收同比,momentum,experimental,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-GR-002,盈利加速度,momentum,candidate,值得考,"价量日频可算(kline_daily_hfq 全史); 动量族截面因子, 与 f_mom20 增量预检","2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)","截面 rank → top_n 多头, 增量 IC 对基座预检",3,1,0,11
+factor,FCT-FQ-005,信息质量代理,quality,candidate,值得考,financial_indicator 38.9 万行含 announce_date(PIT 对齐),"2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",质量因子截面 rank 多头; 财报公告日滞后对齐禁未来函数,3,2,1,14
+factor,FCT-FQ-006,Piotroski F-Score,quality,candidate,值得考,financial_indicator 38.9 万行含 announce_date(PIT 对齐),"2020-01..2025-08 (WFA8折 24m/6m, OOS=2024-01+, IS=2020-2023)",质量因子截面 rank 多头; 财报公告日滞后对齐禁未来函数,3,2,1,14
+factor,FCT-EXP-001,一致预期EP,expectations,candidate,值得考,consensus_daily_repaired 1.66M 行(2017-01..2026-09) 日频可得,"2017-07..2025-08 (consensus 2017-01 起, 预热后)",一致预期变化/预期差截面 rank 多头; PIT 用 last_report_date 滞后对齐,3,3,2,17
+factor,FCT-EXP-002,修正动量,expectations,candidate,值得考,consensus_daily_repaired 1.66M 行(2017-01..2026-09) 日频可得,"2017-07..2025-08 (consensus 2017-01 起, 预热后)",一致预期变化/预期差截面 rank 多头; PIT 用 last_report_date 滞后对齐,3,3,2,17
+factor,FCT-EXP-003,修正广度,expectations,candidate,值得考,consensus_daily_repaired 1.66M 行(2017-01..2026-09) 日频可得,"2017-07..2025-08 (consensus 2017-01 起, 预热后)",一致预期变化/预期差截面 rank 多头; PIT 用 last_report_date 滞后对齐,3,3,2,17
+factor,FCT-EXP-004,异常覆盖,expectations,candidate,值得考,consensus_daily_repaired 1.66M 行(2017-01..2026-09) 日频可得,"2017-07..2025-08 (consensus 2017-01 起, 预热后)",一致预期变化/预期差截面 rank 多头; PIT 用 last_report_date 滞后对齐,3,3,2,17
+factor,FCT-EXP-005,分歧度,expectations,candidate,值得考,consensus_daily_repaired 1.66M 行(2017-01..2026-09) 日频可得,"2017-07..2025-08 (consensus 2017-01 起, 预热后)",一致预期变化/预期差截面 rank 多头; PIT 用 last_report_date 滞后对齐,3,3,2,17
+factor,FCT-EXP-006,评级动量,expectations,candidate,值得考,consensus_daily_repaired 1.66M 行(2017-01..2026-09) 日频可得,"2017-07..2025-08 (consensus 2017-01 起, 预热后)",一致预期变化/预期差截面 rank 多头; PIT 用 last_report_date 滞后对齐,3,3,2,17
