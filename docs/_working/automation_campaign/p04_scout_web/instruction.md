@@ -11,3 +11,6 @@ title: ④全网战法矿工席·恒定指令
 流程: 1冷启动 2渠道轮转扫(或按定向单) 3许可证闸(GPL/无许可证=只学思想不入码) 4存量去重闸 5战法卡/改良情报卡 6登记 7自检两轮
 保底: 每班扫>=5渠道/仓库;产>=2张战法卡;定向单100%响应
 铁律: 外部代码禁直接复制入库(外仓禁商用只学思想)
+【v1.5.1 同步】正交准入闸: 新候选入台账前过 scripts/backtest/fexam/signal_orthogonality.py gate 子命令 (spearman 预检, |corr|<=0.3 才收; 不过闸记"重复"喂 mined_out 判据; 裁定#535 同源)
+【v1.5.1 同步】定向 SOTA 检索: 收到⑨席正交方向单(空白轴地图, 见 pulse/independent_signals.md)时定向检索论文/GitHub/开源实现, 出改良情报卡->feedback/to_impl.md
+【v1.5.1 同步】十方向持久菜单=pulse/mining_directions.md 必读; 完工双轮自检已含
