@@ -3803,7 +3803,9 @@ entries:
   severity: P0高
   fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
   adjudication: 裁定选项：五级旗接入下单路径 + 开关状态持久化（crash-only 对标 Nautilus）。锚点：rpt_k02.md
-  last_updated: "2026-09-18"
+  last_updated: "2026-10-15"
+  construction_log:
+  - 2026-10-14 st-totpkg-20261014 / q-20261015-st-totpkg-20261014-0004：系统级开关持久化完成（crash-only）——boot_hooks 装配层 register_boot_hooks 首行 _enable_kill_switch_persistence()（关键时序：抢在 tech_stack 自检 DD-12 无参构造之前；非静默 CRITICAL 契约；失败降级纯内存不炸启动链）。crash-only 端到端实证：trip→重启仍 TRIPPED→release→NORMAL；kill switch 五套 71 passed/2xf + boot_hooks/守卫不变式 23 passed。kill_switch.py 本体零改（human_gated）。余项：五级旗接入下单路径（交易核心域语义设计=哪级禁何种动作）按裁定#356 立卡待 Owner 批。
   final_adjudication: 裁定#376=五级旗接入下单路径+开关持久化；backlog 排期
   related_adjudication: "#317"
 - issue_id: "#ARCH-341"
@@ -3813,7 +3815,9 @@ entries:
   severity: P0高
   fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
   adjudication: 武装前置=券商 ack 数据流（0 ack 下武装=C-002 全拒单砖化交易）；需 Owner 定武装时点与 ack 数据源。锚点：rpt_k08.md
-  last_updated: "2026-09-18"
+  last_updated: "2026-10-15"
+  construction_log:
+  - 2026-10-14 st-totpkg-20261014 / q-20261015-st-totpkg-20261014-0005：E1 勘正——病历「零传参」已过时：3 处生产路径（qmt_trading_session/sim_saga_assembly/start_paper_session）已真注入 ReportGate()，且登记表 6 项必报全 broker_ack=true（Owner 2026-09-27 回填）⇒ 闸已真武装且零砖化（实测 PASS/missing=()）。本袋补唯一真实漏点：app_panel 仪表盘自动装配路径裸 OrderManager() → 补注 report_gate=ReportGate()（41 passed）。余项：ack 数据流自动化采集+武装判据可测实现——属增强，按裁定#376 backlog。
   final_adjudication: 裁定#376=ack 源=QMT 桥成交回报；武装判据=连续 5 交易日 ack 非空后武装；backlog
   related_adjudication: "#309"
 - issue_id: "#ARCH-342"
@@ -3863,7 +3867,9 @@ entries:
   severity: P1高
   fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
   adjudication: embargo/purge 默认值与消费方统一裁定（LdP 语义）。锚点：rpt_b05/b08/b09.md
-  last_updated: "2026-09-18"
+  last_updated: "2026-10-15"
+  construction_log:
+  - 2026-10-14 st-totpkg-20261014 / q-20261015-st-totpkg-20261014-0002：B05 完成——pit_query 缺省 embargo 0→7 自然日（fail-closed，对齐回测层 5 交易日按 1 交易周≈7 自然日换算），显式 0 仍可关闭；测试契约同步升级，64+52 passed。B08/B09（CPCV 缺省 t1=None/embargo=0 与三模式切分无 purge/embargo 能力）未在本袋——保持 open。
   final_adjudication: 裁定#376=LdP 语义统一默认值（embargo 缺省按事件窗非 0）；backlog
   related_adjudication: "#306"
 - issue_id: "#ARCH-347"
@@ -3948,12 +3954,14 @@ entries:
   related_adjudication: "#309"
 - issue_id: "#ARCH-355"
   title: X05 价格笼子实盘路径形同虚设：文件桥调 check_price_cage 不传基准价→CageStatus 恒 UNKNOWN 原价通过（官方 ±2%+0.1 元规则实现本身与交易所细则一致）
-  status: open
+  status: resolved
   created: "2026-09-18"
   severity: P2中
   fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
   adjudication: 券商层 quote 源接入设计。锚点：rpt_x05.md
   last_updated: "2026-09-18"
+  construction_log:
+  - 2026-10-14 st-totpkg-20261014 / q-20261014-st-totpkg-20261014-0001（已入队待落地，以 git log 为准）：价格笼子供数+UNKNOWN拒单双能力落地。price_cage 新增 CageBaseQuote/coerce_cage_quote（吃既有 QuoteSnapshot.ask_prices/last_close，零新建取数通道）+统一入口 decide_cage_for_limit_order；双旗标 opt-in 出厂 OFF（ex_core.price_cage.base_supply / unknown_reject）；两腿接线（file-bridge 夹边只改写出的指令行不改 order / miniqmt 原地改价），装配点惰性闭包挂既有 quote Provider（旗标 OFF 时保健零行为变更）。红测 test_price_cage_bf6_wiring 16 枚 skip 解除全绿，ex_core 全域 1464 passed/1 xfailed。
   final_adjudication: 裁定#376=券商层 quote 源接入设计；backlog
   related_adjudication: "#309"
 - issue_id: "#ARCH-356"
