@@ -394,3 +394,7 @@ acknowledged:
   note: 删除操作存量同构对（按 id SELECT 存在性→dry-run 打印→DELETE→返回 op 名，anchor/edge 各自字面 SQL 防拼接），
     MODIFY-GUARD 对标 apply_decisiongraph.py 同形对（跨文件既定惯例），本批未触碰两函数实现，仅因文件随批改动暴露
     （轴归一手术批1 仅加 tdm_node_id 白名单+校验）；合并=参数化泛型需动两文件对标面，超出本批边界（st-tclose-bmsurg-20261004）
+- id: cg-cq-recurrence-lockmerge-20261016
+  verdict: intentional
+  stable_key: scripts/commit_queue.py:_recurrence_state_path||scripts/lock_files.py:_main_merge_head_path
+  note: HEAD 存量 2 行路径构造器同构对（_recurrence_state_path=dead/_recurrence_state.json 落点/_main_merge_head_path=.git/MERGE_HEAD 落点——语义对象不同非逻辑克隆），本批未触碰其实现，仅因 commit_queue.py 随托管正门批修改而暴露（st-custody2-1016）；合并需跨模块提升公共路径helper，超出本批最小侵入边界，按宪法 RULE-CLONEGUARD 合理重复通道登记 acknowledged
