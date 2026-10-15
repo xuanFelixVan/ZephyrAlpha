@@ -142,3 +142,31 @@ title: 迭代史（⑨成绩官记账，⑩线长席审计）
 - ⚠ **命名撞车提示（下一班必读）**：10 班在册的"**卡 07** 已达 7 轮、本席不再排复考"指的是 `TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版`（rows[90]/[91]/[92]）；本班 rows[94] 是 `TDM-P-P2-04/calibration/**07**_冲高反弹…`，是该节点**第 1 轮新对象**。两个"07"不同卡不同族，**勿并读、勿把 7 轮上限扣到本卡头上**。
 - **pass 行与升级（本班零升级）**＝在册两枚 pass（rows[76]/[78]）本班**未重跑**，改用在册更省的判据＝与 10 班快照逐行 JSON 对表，两行 `byte-identical-to-snapshot=True` ⇒ 两腿现值仍是 09/10 班在册读数（`ic_ir=None`＋`net_bucket_medians` 十桶全 NaN＋`round_trip_cost_bp=nan`）＝**未齐，不升 verified**；红线核查对象（fail 永不升级）＝rows[94]/[95] 两行皆 fail，本无升级面。TDM 挂接：本班无新增 verified 对象，故不写挂接行。
 - **复考排程（本席职权内，只排不考）**：①`rows[76]/[78]` 仍列最高优先，待 修⑨ 消费腿全量落地后由 ⑦⑧ 席重跑（新行 only-add）；②`TDM-E-L9-A01/calibration/02` **本班撤排**——该卡 2 轮同结论，下一动作在 修⑮（窗口径）与 修⑭（mono 腿）落地，不在同窗第三次复跑；③`TDM-P-P2-04/calibration/07` 第 1 轮不排，等 ③④ 席按方向单处置与 P-8 表态；④卡 `TDM-X-R1-01/comparison/07` 沿 10 班在册**继续撤排**。
+
+
+## 10-15 19:30 ｜ st-qoder-p09-1015-15（⑨成绩官第十五班·轮次账）
+
+> **读面声明**：分数册磁盘面 sha256=`21ce93c0a55c450e969ac177d6378329f4275e887c5e93b63f0bcd3a08928f23`／139777B／docs=2／rows=**104**／mtime `2026-10-15 19:26:44`；index 面 `70c71e7b139780f9…`＝**97 行**；HEAD 该馆 **0 件**。本班值守内册面**三代**＝进场 18:52＝96 行 `d7777354…` → 19:04 整馆被一枚全域 `git stash`（5688 件）从磁盘扫走 → 19:07 回灌并继续推进到 104 行（证据与呈批见 to_impl.md 修⑳）。
+
+| 分数行 | card_id | verdict | run_id | 册面 fails |
+|---|---|---|---|---|
+| rows[96] | `TDM-E-L3-07-3/calibration/03_target_close_to_close_control` | fail | st-qoder-p07-1015-06 | fails=['ic_mean -0.0417 < 0.02', 'ic_ir -0.255 < 0.3'] |
+| rows[97] | `TDM-E-L9-A01/calibration/04_universe_st_and_age_control` | fail | st-qoder-p07-1015-06 | fails=['ic_mean -0.0417 < 0.02', 'ic_ir -0.255 < 0.3'] |
+| rows[98] | `TDM-E-L3-07-3/calibration/04_universe_no_filter_control` | fail | st-qoder-p07-1015-06 | fails=['ic_mean -0.0266 < 0.02', 'ic_ir -0.174 < 0.3'] |
+| rows[99] | `TDM-E-L9-A01/calibration/05_target_t1o_to_t2c_control` | fail | st-qoder-p07-1015-06 | fails=['ic_mean -0.0265 < 0.02', 'ic_ir -0.174 < 0.3'] |
+| rows[100] | `TDM-E-L3-07-1/ablation/02_烂板剔除步` | fail | st-qoder-p07-1015-06 | fails=['ic_mean -0.0208 < 0.02', 'ic_ir -0.482 < 0.3'] |
+| rows[101] | `TDM-E-L3-10/calibration/02_一字板不可成交` | fail | st-qoder-p07-1015-06 | fails=['ic_mean 0.0099 < 0.02'] |
+| rows[102] | `TDM-E-L3-03-1/calibration/02_涨停基因` | fail | st-qoder-p07-1015-06 | fails=['ic_mean -0.0239 < 0.02', 'ic_ir -0.230 < 0.3'] |
+| rows[103] | `TDM-E-L3-01/calibration/02_成交额下限剔除` | fail | st-qoder-p07-1015-06 | fails=['ic_mean -0.0433 < 0.02', 'ic_ir -0.294 < 0.3'] |
+
+- 全册 104 行＝**80 个 distinct card_id**；轮次直方图 `{1: 66, 2: 9, 3: 3, 4: 1, 7: 1}`；verdict 分布 `{'fail': 100, 'pass': 2, 'blocked': 2}`（尺＝`census11_final.py`；join **104/104**）。
+- **四张对照卡（rows[96..99]）本班判语**＝全部 fail 于两根实数柱（`ic_mean_min`／`ic_ir_min`），`mono_spearman_min` 记 NO_FACE（沿 修⑭）；但**本席不判"信号无效"**：rows[96] 与 rows[97] 整块 metrics 相等、四卡只有 2 面（修㉑）。
+- **pass 行与升级（本班零升级）**＝在册两枚 rows[76]/[78] 未重跑，两腿仍缺（`ic_ir_min` 从未检验＋净/成本面 NaN，沿 09/10/11/14 班在册）。
+- **复考排程（本席职权内，只排不考）**＝rows[96..99] **本班不排复考**：须待 修㉑ 的臂身份披露腿＋⑥ 席串位复核先行，否则复跑只会再产同面读数＝试次虚增（在册 P-5 待裁面）。rows[100..103] 三枚为新对象首轮，按 SOP 不排复考（单行证据不判死，沿 07 班口径）。
+
+## 10-15 补条 ｜ 本班补条（写盘后 19:31 实测，旧句留卷不改）
+
+- §3 那句"rows[100]/[101]/[102] 三行"与迭代史"rows[100..103] 三枚"系**写盘脚本启动瞬间**的口径（那时 NR=104 已被采用，但这两句是我手打的旧行段）＝**手打数字与现测脱钩**，正解＝非对照的四枚新行＝**rows[100]/[101]/[102]/[103]**（`run_id` 全＝`st-qoder-p07-1015-06`）。旧句在此留痕，不改写。
+- 四枚逐行取证（`replay10_calib.py 96 103` 本班 19:31 **原样实跑**，末行 `PROBLEMS 0`，故 §2/§7 的 PROBLEMS 句由"推算"升为"实测"）＝rows[100] `TDM-E-L3-07-1/**ablation**/02_烂板剔除步`（`ic_mean −0.0433`… 实测串 `["ic_mean -0.0208 < 0.02","ic_ir -0.482 < 0.3"]`，见尺打印）、rows[101] `TDM-E-L3-10/calibration/02_一字板不可成交`（唯一**正号不过地板**＝`ic_mean 0.0099 < 0.02`，而 `ic_ir 0.385` 已 PASS）、rows[102] `TDM-E-L3-03-1/calibration/02_涨停基因`、rows[103] `TDM-E-L3-01/calibration/02_成交额下限剔除`（`ic_mean −0.0433`／`ic_ir −0.294`／`oos −0.0444`，`regime` 两段皆负）。
+- ⚠ **族口径提示（给下一班与 ⑧ 考工席）**：rows[100] 是 **`ablation` 族**卡（卡 id 路径段 `/ablation/`），而本岗在册 03/06/12 班的族尺只分过 calibration／high_event／comparison 三路；本班用校准尺跑它 **UNKNOWN_KEY 为空**（五柱键全在本尺词表）⇒ 该族走的是同一套 `pillars_numeric` 词表，**不需另立尺**。下一班勿把 `/ablation/` 路径段当"族盲"预防性改判。
+- 补条时点册面＝sha `21ce93c0a55c450e…`／rows=**104**（`19:31`）＝与写盘时点（`21ce93c0a55c450e…`／104）相比**未再增长**；本班判卷对象仍是 rows[96..103] 八行。

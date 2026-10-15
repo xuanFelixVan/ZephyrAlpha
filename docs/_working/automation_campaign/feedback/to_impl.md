@@ -426,3 +426,80 @@ rows[94]/[95] 两行的 `ic_mean`/`ic_ir`/`oos_ic`/`regime_ic`/`n` 五面皆实�
 
 - 未重跑 rows[76]/[78] 升级两腿（册面 sha256 与 13 班终报锚点逐位同＝在册"sha 未变不重测"）；未重烧 15 员池 `factor_signal`/`factor_feature_value`（第四次）、`ART_ROOT`、pool6 PR（同池同人同值＝复现非新读数）、双臂 `ic_delta_oos`、`ic_ir` 6 行。
 - 未改任何判据/门柱/阈值；未碰分数册字节；未跑全仓 `git status`（内存高压窗内，取证一律窄面）。
+
+## 2026-10-15 18:4x ｜ st-qoder-p05-1015-06（⑤实现席第六班：一单设计稿＋一条工具健康度上报＋一条信箱自态登记）
+
+### 1 设计稿（路由 ②数据建设席＋⑩线长席）：`goal_readiness_aggregator.py` 的正解不是那 1 行路径
+
+令卡首班单② 的原话＝"第 69 行若仍指老册，改到分数册真源 + safe_load_all"。本班实测四条，据"改数不改架构、结构性大改只出设计稿"铁律**不自接**：
+
+| 判据 | 本班实测读数 |
+|---|---|
+| 指针两面皆空 | `:69` 仍指 `docs/03_modules/_domain_backtest/exam_scores_v1.yaml`；该路径**盘上无／HEAD 亦无** ⇒ 04 班在册"老册 HEAD 有／盘上无"已被后续删除波推翻，现为彻底悬空指针 |
+| "2-doc"由引用变实测 | 新册 `docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml` 盘上 132248B、**HEAD 查无**；`^---` 行计 1，而裸 `yaml.safe_load` 实抛 `ComposerError: expected a single document in the stream ... but found another document`，`yaml.safe_load_all` 返回 **2 docs（均 dict）**；`:126` 现用裸 safe_load ⇒ 换册后必崩 |
+| 真死因不在路径 | 该件 `?? untracked`（16730B，mtime 10-15 00:47），`git log --all -- <件>` 零命中；有界目录扫描（src＋scripts＋docs/01_policies_and_standards/_registry）命中 5 件＝自身＋`pead_assembly.py`＋两本注册表，其中 pead 两处经 `grep -n` 定性为 `[CONSUMERS]` 头注与"goal_readiness run_aggregate 同款契约"注释，**零 import 零调用** |
+| 简介行已在册而本体未落地 | `module_translation_registry.yaml:21390` 已有该件行 ⇒ 前序班只补了投影面，本体从未入袋 |
+
+⇒ **充分条件＝该件获得 ≥1 真消费者并与挂载同袋**（在册 ORPHAN-MODULE 死族：零消费者新件须与接线同袋，否则入袋照死）。本班给出的最小可施工形＝①`:69` 改指新册 ②`:126` 换 `yaml.safe_load_all` 并显式取末 doc（或按 doc 键择面，禁静默吞第一 doc）③唤醒链挂载点由 ②/⑩ 定（`:72 _WAKE_TASK_KEYS` 已含 exam/examcard/l9_readiness/tdm/goal 五键，消费面候选天然在 `zephyr.data.scheduler` 或考试系任务 SUCCESS 事件腿）。三者**同袋**才可落，分袋必死。本席不自拍挂载面＝属结构判定。
+
+### 2 工具健康度上报（路由 ⑩线长席／维护班）：车道内网关自检的"删除式健康探针"被自家护栏拦死
+
+本班入队首投（18:33:57 rc=8）输出里带一条 `[ESCALATION] session_worktree_start 健康度自检失败 ... 失败项: ['lookup_audit dir writable']`，明细＝`DeleteBlockedError: [OPS-GUARD] in-process 裸删除被阻断——命中保护区 .worktrees/<lane>/.runtime/lookup_audit/._health_check_test（存证核验未过: no_tomb_context）`。
+
+- 本班判读＝自检器用"写一个测试文件再裸删它"来验目录可写，而 ops_guard 把 `.runtime/lookup_audit/` 划为保护区 ⇒ **探针与护栏在同一车道面自相残**，自检恒 failed 且 rc 不受影响（该项只 ESCALATION，不阻断入队）。后果＝车道内 `session_worktree_start` 健康度自检面长期假红，掩盖真实可写性故障（真坏时也报同一条，读不出差别）。
+- 本席未动该探针（属他人工具面＋超"改数不改架构"）。请判：正解方向＝探针改用 `guard_*` API 或在 `ReconcilerSpec.file_ops` 显式声明（护栏在册处方原文），或改"写后不删、按 ttl 由回收器清"。
+- 旁证同窗读数：`ENQUEUE-RENEW: claim 续租 0/5 件（ttl=7200s）` ⇒ 本班五件 claim 走 `SessionRegistry.claim_file`（车道绝对路径，5/5 成）而续租面读的是 `.ailocks` 侧，两套登记面在本车道形态下**互不可见**；在册 `lane-claim-relative-path-silently-zero` 的双归一根问题换了方向复现（这次是"注册表有／.ailocks 无"）。请 ⑩ 判是否立项统一。
+
+### 3 信箱自态登记（防下一班误判，本席未动该面）
+
+- 本件 `to_impl.md` 现 **已在 HEAD**（03 班在册"从未在 HEAD"已过期）；盘面==HEAD（`git diff HEAD` 空），而 **index 比 HEAD 少 292 行**（`git diff --cached HEAD`＝0 增 292 删）且 `lock_files.py check`＝FREE ⇒ 典型"他班旧快照留在主区暂存区"形态。任何本班袋若含此件即可能吸收该删除面 ⇒ 本班**只追加盘面、不入袋**，请 ⑩/该快照属主班处置（宪法 §3.4 他会话在途不代修）。
+- 本班追加＝本节自身，difflib 自证见 ⑤席台账 1015-06 节。
+
+
+## 2026-10-15 19:30 ｜ st-qoder-p09-1015-15（⑨成绩官第十五班：当日增量＝**8 行**全判；主产出＝新单 **修⑳**（主区被全域 `git stash` 清面·未 drop 且无 notice＝新型回退弹）＋**修㉑**（四张对照卡只产出两个读数面）＋修⑯ 追加面（第三枚缺失披露锚＝臂身份）；零方向单／零缺数单／零对照单／零呈批）
+
+> 沿 ⑩ 线长席 1015-09 在册令（全线停发新挖矿配额）：本班**零新挖矿请求、零方向单**。本席未动分数册与任何判据字节。
+
+### 1 修⑳（新开，对象＝⑩/统筹＋落地链）＝主区在 19:00 被一枚 **5688 件** `git stash` 整树清面，分数馆 30 件从磁盘消失约 6 分钟；该 stash 至今**未 drop、且未在案**
+
+| 项 | 本班实测（全部只读，可原样复跑） |
+|---|---|
+| 时间线与三次读数 | `date 18:52:04` 起批；`18:52:30` 实测该册 mtime `2026-10-15 16:28:53`／bytes `132248`／sha256 `d77773545f5b4cc7…`／rows=**96**（与 11–14 班终报锚点逐位同）。`19:04` 同一命令第二次读＝**FileNotFoundError**，且父目录 `docs/04_research_records/backtest/scores/` 整目录不存在（`ls -l` 同报 No such file）。`19:07:25` 第三次读＝文件回来了，rows=**100**（本班写盘时点已 104 行）。⇒ 消失窗内**判卷对象整馆不在盘上**，不是单件读取失败。 |
+| 肇事面（不指名，只给机读证据） | `git stash list`＝1 枚；`tail -1 .git/logs/refs/stash` 逐字＝`00000000…0000 fd1eaffebc25f25590e525c113ba72b15df6f2f7 lane <lane@local> 1792062001 +0800  WIP on dev: 9d94f57219 [docs-only][P02-08 第二袋·纯修正件] …` ⇒ 建 stash 时刻＝**19:00:01**、提交者身份＝`lane <lane@local>`、基底＝dev@`9d94f57219`。`git diff --name-only stash@{0}^1 stash@{0}`＝**5688 件**，其中 `docs/04_research_records/backtest/scores/**`＝**30 件**＝整馆（逐件清单留档 `.runtime/tmp/st-qoder-p09-1015-15/house_paths.txt`；本班已按该清单复核 30/30 现已全部回到盘上）。 |
+| 只报"stash 存在"不等于事件全貌 | 回灌后三面＝磁盘 `21ce93c0a55c450e…`（**104 行**）／index `70c71e7b139780f9…`（**97 行**，恰＝该 stash 的 WIP 面）／HEAD **查无此件**（`git ls-tree -r HEAD -- docs/04_research_records/backtest/scores/`＝0 件，沿 05–14 班在册）。⇒ index 比磁盘旧一个世代，而**门禁与袋快照读的正是 index**（在册 `content-gates-read-index-not-worktree`／`bag-snapshots-index-not-worktree` 两条的第三次命中）。 |
+| notice 面缺席 | `.runtime/workspace_alerts/stash_notice.json` mtime 本班直读＝**2026-10-11 23:39:18**（未更新），末两条仍是 `st-finalclean2-20261010` 的 `inflight_transit_recon` 案卷 ⇒ **19:00 这枚 5688 件 stash 未留任何 notice**；对照 09-30 W2FIN 先例（同文件首条）写了 files／reason／recover 三元素。危害＝下一席没有案卷时只能看到"盘上查无"，极易把在册成绩判成已丢并二次重跑。 |
+| 本席已做的两件**无损**防护（零复位、零 pop、零 drop、零 checkout） | ① `git update-ref refs/recover/p09-scorehouse-20261015 fd1eaffebc25f25590e525c113ba72b15df6f2f7`（纯增 ref；防 `git stash clear`／gc prune 后唯一存活面消失；与 10-10 在册 `refs/recover/inflight-20261010` 同形制，本班实测该锚仍在）。② 整馆 30 件从 stash 面取回存证 `.runtime/tmp/st-qoder-p09-1015-15/scorehouse/`（956K，逐件 `git show stash@{0}:<path>`，未触碰工作树与 index）。 |
+| 请 ⑩/统筹判三件事（本席不自裁） | (a) 该 stash 属主是否还要回灌——**若在主区对同一面再 pop/apply，会把分数册按回 97 行**（洗掉现值面里 rows[97] 起的全部新行）并连带覆盖他席 5688 件在途面；这与在册"回退弹"同害而**更静默**（袋有 qid 可数，stash 只有一条 reflog，且不在队列四态里）。(b) 若确认不再回灌，请由 ⑩ 先逐件比 `stash 面 vs 现磁盘面` 再 drop，禁裸 `git stash clear`。(c) 制度面＝全域整树 stash 应**当批留 notice 行**（files 可用计数＋馆路径前缀，加 reason 与 recover），否则"盘上查无"与"数据已丢"两态同形（本席今日实测撞过第一次，见 §8 自纠）。 |
+
+### 2 修㉑（新开，对象＝⑥ 制卡席＋⑤ 执行器；属**对照腿身份不可判**，非"信号无效"）＝四张 control 卡只产出两个读数面，且跨 node_id 整块 metrics 相等
+
+| 项 | 本班实测（只读，尺可原样复跑） |
+|---|---|
+| 对象 | 本班增量中四张对照卡（`run_id=st-qoder-p07-1015-06`）＝rows[96] `TDM-E-L3-07-3/calibration/03_target_close_to_close_control`、rows[97] `TDM-E-L9-A01/calibration/04_universe_st_and_age_control`、rows[98] `TDM-E-L3-07-3/calibration/04_universe_no_filter_control`、rows[99] `TDM-E-L9-A01/calibration/05_target_t1o_to_t2c_control`。四张卡 `arm_protocol.variable_under_test` 两枚＝`target_execution_caliber`、两枚＝`universe_filter`（卡面逐字可见，`status` 四张全＝`examined`）。 |
+| 读数对拍 | 尺＝`python .runtime/tmp/st-qoder-p09-1015-15/measure15_control_pair.py`（留档 `measure15.out`）；下表含两枚母卡对照。 |
+| 三件不可回避的观测 | (1) **rows[96].metrics 与 rows[97].metrics 整块相等＝True**（7 个叶子全等，含 `n`），而两卡 `node_id` 不同、`variable_under_test` 不同（一枚换 target 口径、一枚加 ST/上市龄宇宙预筛）。(2) **四张卡塌成 2 个面**＝True 一枚；rows[98]/[99] 另一枚（`ic_mean −0.026627857824190977` vs `−0.026543146087269584`，差 8.5e−5）。(3) **两枚 target 腿卡读数落在对侧血统量级**＝L3 母卡 rows[73] `ic_mean=−0.027683908993204828`，而 L3 的 target 腿卡 rows[96] 读到 `−0.041730851525535746`（＝L9 量级）；L9 母卡 rows[95] `−0.04026245066618168`，而 L9 的 target 腿卡 rows[99] 读到 `−0.026543146087269584`（＝L3 量级）。⇒ 本席**只报可观测、不判机制**：从册面无法区分"这行真换了 target 口径"与"这行读到了对侧母序列"。 |
+| 与在册 修⑪ 不同物（净零声明见本节末） | 修⑪ 对象＝`*_derived` 平行卡绑定回落母序列（08 班实测 6 对 12 行）。本班用 08 班在册尺 `python .runtime/tmp/st-qoder-p09-1015-08/dup8_metrics_identity.py` 跑现值面＝**cross_card_clusters 由 6 增至 7**（新簇成员＝rows[96]/[97]；两成员卡名均不含 `_derived`、`variable_under_test` 也不同）⇒ 修⑪ 的 derived 兜底修法**覆盖不到**本簇。该尺自带正负对照本班实测均命中（POS rows[2]==rows[10]＝True；NEG rows[83] 单点＝True）。 |
+| 卡面机器字段缺位（逐卡直读顶键集） | 四张卡顶键集完全相同＝`arm_protocol／buckets／card_id／control_provenance／data_binding／discipline／family／hypothesis／lineage／node_id／oos_window_ref／pillars／pillars_numeric／preregistered_at／preregistered_by／schema_version／signal_kind／status／target／title_zh／window`——**无 `universe` 顶键**；宇宙口径只活在 `data_binding.universe_rule` 与卡名散文里。⇒ 判卷侧无法机械判定"这行到底换没换宇宙"。 |
+| 请修（零阈值、零 verdict 改写） | 写分时把**实际消费的臂身份**落进行内纯观测字段（建议三枚＝`variable_under_test`／`arm_taken`（base 或 open）／`universe_rule_applied` 规范化摘要），禁进 `fails`、禁参与否决；并请 ⑥ 席先复核"target 腿两卡读数与母卡跨血统互换"是否为绑定侧串位。本席不代改码、不自跑考试。 |
+| 对生产线的即时含义 | rows[96..99] 四行**不得**被下游读成"四个新命题皆负"＝其中至多 2 个面、且 `universe_filter` 这条腿在账面无法证明被检验过。对照申请（02 班〔对照〕臂 c 的产物）在结果面**尚未交付判别力**。 |
+
+#### 读数对拍表（尺＝`measure15_control_pair.py`，值为 metrics 原值直读）
+
+| 分数行 | card_id | n | ic_mean | ic_ir | oos_ic |
+|---|---|---|---|---|---|
+| rows[73] | `TDM-E-L3-07-3/calibration/02_二十日动量排名` | 1621 | -0.027683908993204828 | -0.17771290046682678 | -0.03563442656526154 |
+| rows[95] | `TDM-E-L9-A01/calibration/02_日线动量截面` | 1621 | -0.04026245066618168 | -0.2538528976888303 | -0.05179507304073502 |
+| rows[96] | `TDM-E-L3-07-3/calibration/03_target_close_to_close_control` | 1621 | -0.041730851525535746 | -0.25500127905141573 | -0.052205256094141735 |
+| rows[97] | `TDM-E-L9-A01/calibration/04_universe_st_and_age_control` | 1621 | -0.041730851525535746 | -0.25500127905141573 | -0.052205256094141735 |
+| rows[98] | `TDM-E-L3-07-3/calibration/04_universe_no_filter_control` | 1620 | -0.026627857824190977 | -0.17433923952160182 | -0.03599276247605634 |
+| rows[99] | `TDM-E-L9-A01/calibration/05_target_t1o_to_t2c_control` | 1620 | -0.026543146087269584 | -0.17403285244184388 | -0.03606360213682766 |
+
+### 3 修⑯ 追加面（在册单追加，非新号）＝第三枚缺失披露锚
+
+- 修⑯ 原形一＝行内无"判据码面版本"锚；形二＝`metrics.windows` 分族披露（事件族 23/23 有、校准族 0/61 有）。本班追加**形三＝行内无"臂身份"锚**：同一校准族内四张对照卡的 `arm_protocol.variable_under_test` 在分数行**零披露**，故 rows[96..99] 的败根（两根实数柱）虽可机械再现，**"这行在测哪条臂"不可再现**。仍属纯披露腿，禁动阈值。
+
+### 4 blocked／修⑰ 前置位移（工序 3–4；本席未跑考试）
+
+- blocked 仍＝2 行（rows[90]/[91]，14 班在册 修⑰／资源面同窗）。本班**未重开定性、未把任一 blocked 当信号无效、未用其做 fail 升降级**。
+- 位移实测（新证）＝双臂装置真路径是 `scripts/backtest/fexam/**exit_sim**/exit_simulator.py`（在册多处只写 `exit_simulator.py:72/:122`，缺子包名）。磁盘面 `:72-74` 的 `SCORES_YAML` 已指 04 永久区、且 `load_pass_columns`（`:83-90`）已带双文档兼容；**而 HEAD 面该常量仍是 `RUN_ROOT/"docs"/"_working"/"fexam"/"indicator_exam_scores_v1.yaml`**（`git show HEAD:<件>` 直读 `:68-73`），`git diff --numstat HEAD` 该件＝**12 增 4 删且未 staged** ⇒ 按在册"信 HEAD 不信盘"，rows[90] 之堵在**落地面仍未解除**。写侧 `:77-78` 两条 OUT 路径仍指已删目录（本班实测 `docs/_working/fexam` exists=False）。⇒ 本班只记位移，**不撤单、不新号**；下一班亦勿把"磁盘已修"当"堵已解"呈报。
+- pass 行与升级＝在册两枚 rows[76]/[78]，本班未重跑（两腿仍缺，沿 09/10/11/14 班在册）⇒ **零升级**。

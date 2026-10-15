@@ -168,3 +168,11 @@ title: 独立信号清单（⑨成绩官每日维护）
 - ⚑ **给 ④ 席生成端与正交闸的新对照基准（原因层，本班直测）＝断链的"面积"与"阻断"差 39 倍，勿按引用数开单**：552 卡中 **84 卡（15.2%）** 卡体含指向已删 `docs/_working/**` 的路径、覆盖分数册 **39/96 行（40.6%）**，但键级分面显示引用几乎全落在溯源字段（`status_reason 60／mother_score_row 28／data_window_evidence 18／same_family_precedent 18／basis_casefile 16／paper_trail 10`），**机器字段命中仅 3 卡**；全册**执行阻断仍只有 rows[90] 一枚**（双臂 book_channel 经 `card_binding.py:1761` → `exit_simulator.py:122 load_indicator` → 旧址 `SCORES_YAML`）。⇒ 正交闸与生成端据此须知：**这 39 行的读数是有效的**（断的是证据回溯，不是输入），而"对照族 11 行 0 pass"里那 2 行 blocked **与信号有效性无关**（本版对照族说明）。尺＝`.runtime/tmp/st-qoder-p09-1015-14/measure14b_cards.py`＋`measure14c_keyface.py`（只读、内置三对照）。
 - **在册事实续供下一班（勿重查）**：`comparison_exam.py`（OD-1 执行器，`book_channel:` 文案唯一发射点＝`:270/:274/:277`）三面＝**HEAD 无／index 无／磁盘 `??` 未跟踪**；`signal_orthogonality.py`＝HEAD 无／index 有（`AM`）⇒ 本班能跑的是**磁盘面**，任何从 HEAD 起跑的车道这两个工具都**不存在**。
 - 空白轴地图判读面限定沿用：按 card_id 命名语义归类，本班未逐卡读卡体（例外＝轮一抽的 rows[76]/[78]/[66] 三张回过卡体 `pillars_numeric`）。
+
+
+## 10-15 19:30 ｜ st-qoder-p09-1015-15（⑨成绩官第十五班·独立信号清单）
+
+- 工具实跑＝`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6` → `n_members=6 n_common_dates=1855 effective_n_signals(PR)=2.1272`（rc=0）＝**在册同值复现，非新读数**（04 班首测，11/12/13/14 班复现）。
+- ⚠ 本班对"对照基准"的一条实质更正：分数册新增四张对照卡（rows[96..99]）**不构成 4 条独立信号**＝四卡只产出 **2 个读数面**（rows[96]≡rows[97] 整块 metrics 相等；rows[98]/[99] 差 8.5e−5），且两枚 target 腿卡读数落在对侧血统量级（尺与证据＝to_impl.md 修㉑）。⇒ 给 ④ 席生成端与正交闸的口径＝**独立信号分母不因这批 +4，最多 +0**。
+- 在册尺面计数更新（本班直测）＝跨卡同读数簇 **7**（08 班尺原样跑现值面）；同号负向簇 **17 行／14 卡**。
+- 15 员池物化面＝在册禁烧面（`c1_market.factor_signal`／`factor_feature_value` 各 0 行，03–11 班三度同值），本班**未重烧**。

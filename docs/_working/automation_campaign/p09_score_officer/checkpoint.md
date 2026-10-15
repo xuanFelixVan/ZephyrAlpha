@@ -6,9 +6,9 @@ title: ⑨成绩官·游标
 
 # 游标
 
-cursor: exam_scores_v1.yaml#rows[95]
+cursor: exam_scores_v1.yaml#rows[103]
 last_run: 2026-10-15
-last_batch: 当日增量 0 行（14 班复量：磁盘 d77773545f5b4cc7…／96 行与 13 班终报锚点逐位同）；rows[96] 起待判；14 班在册
+last_batch: 当日增量 8 行（15 班：rows[96..103] 全判 8 fail；磁盘 21ce93c0a55c450e…／139777B／104 行；rows[104] 起待判；15 班在册）
 notes: 游标由本岗每批推进；监督员(⑩)可代修。
 
 ## 游标推进记录 ｜ st-qoder-p09-1015-02
@@ -214,3 +214,23 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。
   7. **禁烧面续条**（本班均未重烧）：15 员池 `factor_signal`/`factor_feature_value` 各 0 行（三度同值）；rows[76]/[78] 两腿（册面 sha 未变）；pool6 **PR=2.1272**（本班实跑＝复现，非新读数）；双臂 `ic_delta_oos` 0/10；`ic_ir` 有实数 6 行；`ART_ROOT`。
 - 本班判卷面：增量 0 行；轮一＝rows[76]/[78]/[66] 回卡体（门柱未走样 3/3，含发射点 file:line 直查）；轮二＝96 行 join **96/96**＋卡池 552。本班**零升级**，新开＝**修⑰＋修⑱＋修⑲**，方向单／缺数单／对照单／呈批**皆零新开**，未动分数册与判据字节。
 - 本班耗时：起批 `date 18:00:09`／reaper 锚点 `18:00:18`；终值见台账 §9 与提交面补条（落笔前现测，不写预估）。
+
+
+## 游标推进记录 ｜ st-qoder-p09-1015-15
+
+- cursor: `exam_scores_v1.yaml#rows[103]`（**推进 8 行**；磁盘现值面 104 行全判）
+- last_run: 2026-10-15
+- last_batch: 当日增量 **8 行**（rows[96..103]，`run_id=st-qoder-p07-1015-06`）＝**8 fail／0 pass**，100% 判卷、`replay10_calib.py 96 103` **PROBLEMS 0**、门柱未走样；本班**零升级**
+- 四证（本班终报）：mtime `2026-10-15 19:26:44`／bytes `139777`／sha256 `21ce93c0a55c450e969ac177d6378329f4275e887c5e93b63f0bcd3a08928f23`／`safe_load_all` docs=2、doc1 rows=**104**
+- ⚑ 下一班必读事实（勿重查）：
+  1. **本班值守内册面三代**＝进场 18:52:30 `d77773545f5b4cc7…`（96 行）→ **19:04 整馆目录从磁盘消失**（FileNotFoundError＋父目录不存在）→ 19:07:25 回灌 `21ce93c0a55c450e…`（104 行）。根因＝19:00:01 一枚 **5688 件 `git stash`**（身份 `lane <lane@local>`，基底 dev@`9d94f57219`，commit `fd1eaffebc`）扫走 30 件分数馆；**该 stash 至今未 drop、`stash_notice.json` 未更新（mtime 仍是 10-11 23:39）**。本席两件无损防护＝`refs/recover/p09-scorehouse-20261015 → fd1eaffebc` ＋ 整馆 30 件快照 `.runtime/tmp/st-qoder-p09-1015-15/scorehouse/`（956K）。⇒ 下一班**判"件查无"前先 `git stash list`**（在册三面尺在该窗内全给绿灯）。
+  2. **三面读数**＝磁盘 `21ce93c0a55c450e…`（104 行）／index `70c71e7b139780f9…`＝**97 行**（恰＝stash WIP 面，落后磁盘 7 行）／HEAD 该馆 **0 件**。下一班锚点＝`21ce93c0a55c450e…` 之后，只判 rows[104] 起新行；终报前重测一次（S-3）。⚠ 若有人在主区 pop 该 stash，册面会**按回 97 行**＝新型回退弹，已呈 ⑩（修⑳）。
+  3. **本班新开**＝修改单 **修⑳**（全域 stash 清面·未 drop 无 notice）＋**修㉑**（四张对照卡只产出 2 个读数面：rows[96]≡rows[97] 整块 metrics 相等；两枚 target 腿卡读数落在对侧血统量级；四卡顶键集**无 `universe` 顶键**）＋**修⑯ 追加面**（形三＝行内无臂身份锚）。零方向单／零缺数单／零对照单／零呈批。在册单号现止于 **修㉑／P-9**；`修⑩` 仍悬空（引用 1 次无定义，本席未补写）；comparison 族 rows[66..71] 真源锚仍＝P-1＋修③。
+  4. **在册尺面更新（本班直测，禁重烧）**＝`cross_card_clusters` **6→7**（尺＝`.runtime/tmp/st-qoder-p09-1015-08/dup8_metrics_identity.py` 跑现值面，正/负对照均命中）；`ic_ir` 有实数 **14 行** [73, 74, 83, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103]；panel 且冻 `mono_spearman_min` **14 行**（同行集，mono 全 None，沿 修⑭）；同号负向簇 **17 行／14 卡**；全册 verdict `{'fail': 100, 'pass': 2, 'blocked': 2}`；104 行＝80 distinct card_id，hist `{1: 66, 2: 9, 3: 3, 4: 1, 7: 1}`；卡池 553；join 104/104。
+  5. **在册引用路径更正**＝双臂装置真路径 `scripts/backtest/fexam/**exit_sim**/exit_simulator.py`（在册多处只写 `exit_simulator.py:72/:122`，缺子包名）。修⑰ 前置位移实测＝磁盘面 `:72-74` 已指 04 永久区＋`load_pass_columns` 已带双文档兼容，**HEAD 面仍指 10-14 已删旧址**（`git diff --numstat HEAD`＝12 增 4 删、未 staged）；写侧 `:77-78` 未修（`docs/_working/fexam` exists=False 本班直读）。⇒ rows[90] 之堵在**落地面仍未解除**，下一班勿按"已修"呈报。
+  6. **禁烧面续条**（本班均未重烧）：15 员池 `factor_signal`/`factor_feature_value` 各 0 行（三度同值）；rows[76]/[78] 两腿（未重跑）；pool6 **PR=2.1272**（本班实跑＝复现，非新读数）；双臂 `ic_delta_oos` 0/10；`ART_ROOT`。
+- 本班判卷面：增量 8 行 100% 判卷；轮一＝rows[96]/[98]/[92] 回卡体（校准尺＋双臂尺各原样跑，PROBLEMS 0／0）；轮二＝104 行 × `card_id` join **104/104**＋跨卡簇尺复跑（6→7）。本班**零升级**，新开＝**修⑳＋修㉑**＋修⑯ 追加面，方向单／缺数单／对照单／呈批**皆零新开**。
+- ⚠ 本席纪律声明：未动分数册与任何判据字节；本席**唯一 git 写动作＝新增 `refs/recover/p09-scorehouse-20261015`**（纯增 ref，可 `git update-ref -d` 撤销），未 pop／未 drop／未 checkout／未复位任何面。
+- 本班耗时：起批 `18:52:04` → 写盘 `date 19:30`（终值见台账 §9 与提交面补条）。
+
+- ⚑ **本班补条（19:31 实测，旧句留卷）**：§3 与迭代史的"rows[100]/[101]/[102] 三行／三枚"系手打旧行段，正解＝**非对照四枚＝rows[100..103]**；`replay10_calib.py 96 103` 本班已**原样实跑**＝`PROBLEMS 0`（八行 verdict 全再现）。rows[100] 是 **`ablation` 族**卡（路径段 `/ablation/`），校准尺对其 `UNKNOWN_KEY` 为空＝**同词表，下一班勿另立尺、勿按族盲改判**。补条时点册面 sha `21ce93c0a55c450e…`／rows=**104**（未再增长）；本班游标锚点仍是 `rows[103]`，下一班只判 rows[104] 起。
