@@ -418,3 +418,84 @@ C 正对齐（target=fwd.shift(1)）ic_mean = 1.0000   # 证明工具配对的�
   - `git status --porcelain -- docs/03_modules/_domain_backtest/exam_scores_v1.yaml`
   - `git cat-file -e HEAD:docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`（预期 fatal，rc=128＝未落地）
 
+
+## 17:29 · 班次 05：本族 0 出分＝四台在册机器逐卡判定同向＋截面地板悬崖由本席自己复做（29↔30 有崖、空序列被写成 0.0 而非 nan）；上班两条结论被本班实测改判；落地面新证据＝旧址冻在 73 行而 20/72 张卡的 lineage 位置指针在 HEAD 悬空；本班另交一张"只差批准"的出分配方
+
+### 一、开班实测与水位（现测命令＋时刻，非终值）
+
+- 冷启动三步：`python --version` = 3.12.8；`lock_files.py cleanup` = 清 4 个死锁（含 p01 两件与本岗 feedback 两册）＋回收死会话 `worker-c7890e53-37600` 遗物；`python -m zephyr.trading.process_reaper --status` = `source=live`（写操作前提成立，`scanned=45 killed=0 reported=4`）。
+- 水位（16:57 开班读）：`commit_pct=93.07`、`ram_avail_gb=20.5`、`degraded=True`、`breached=['ALERT-SYS-003']`、`worktree_changes=5472`。**上一班游标 §24 记"ALERT-SYS-003 未触发"，本班 16:57 已触发** ⇒ 在册事故形态＝提交内存耗尽崩在 `git add`（0xC0000142），本班据此全程只投两件文本、零大 add；开场即把 `shift05_probe`／`st-qoder-p08-1015-05` 两行登记进 `data/runtime/process_reaper_keep.txt`（收班按精确谓词撤除并读回与开班存证 `keep_before.txt` 逐字节相等）。
+- 队列（`python scripts/commit_queue.py status` 解析）：total=1091，done=786／dead=299／pending=3／processing=3；本岗 `st-qoder-p08-1015-04` 两袋＝`-0001 dead`（N-16）／`-0002 done`；`lock_files.py list` 内 p08 零持有 ⇒ 防重入判定＝上一班已交账（游标 cursor 亦自证"班次 04 已交账"），本班可开工。
+
+### 二、本班分母＝四台在册机器各自逐卡判定（全部只读、零写业务资产、零翻态）
+
+| 尺 | 命令（正文原样可跑） | 本班读数 |
+|---|---|---|
+| 柱闸＋路由 | `python .runtime/tmp/st-qoder-p08-1015-05/census.py` | 本族 yaml 文件 150、可解 150、解析失败 0、preregistered **72**；series 43／dual_arm 29／event 0；两闸全过＝**4**、越表键＝39、需双臂＝29（加总自证 72==72） |
+| 取数绑定层 | `python scripts/backtest/fexam/card_binding.py --mode classify --cards-dir D:/ZephyrAlpha/docs/03_modules/_domain_backtest/exam_cards/<族目录> --out <tmp>.yaml` | 72 张＝class **C 70／B 1／U 1**，class A＋D（可绑）＝**0**；拒因 top＝`target_face_not_index_next_day` 68 |
+| 双臂三态分箱 | `python scripts/backtest/fexam/arm_protocol_binding.py --cards-dir <绝对路径> --out <tmp>.json` | `feasible_now` ∩ preregistered = **3**、`needs_matching_engine` 14、无臂面 55 |
+| 持锁面 | `python scripts/lock_files.py list` | 本族 6 张 position_flow 卡由 `st-qoder-p06-1015-09`（⑥制卡席 09 班）持有，含上面 4 张可卡中的 3 张；本班唯一自由可考卡＝`TDM-P-P1-02/calibration/04` |
+
+- ⚠ `--cards-dir` 必须给**绝对路径**：相对路径下 `card_binding.py` 与 `arm_protocol_binding.py` 在 `Path.relative_to()` 崩（本班实测 `ValueError: 'docs\\...yaml' is not in the subpath of 'D:\\ZephyrAlpha'`，三目录各崩一次才定性）。属 ⑤ 面（在册件对 cwd 敏感），本席不改他人件。
+
+### 三、为何本班 0 出分＝本席自己复做的证据（不把上班游标当事实）
+
+截面 A/B 探针（`.runtime/tmp/st-qoder-p08-1015-05/probe_face.py`，只调纯函数 `_panel_metrics`（`calibration_exam.py:249`）＋`judge`（`:734`），**零分数册写、零翻卡**；同种子 seed=7、420 日、唯一变量＝截面列数）：
+
+| 截面列数 | ic_mean | ic_ir | n | judge 落文 |
+|---|---|---|---|---|
+| 564（正对照） | −0.0017407 | −0.0407876 | 419 | `ic_mean -0.0017 < 0.02`（真读数） |
+| 30 | 0.0054545 | 0.029 | 419 | `ic_mean 0.0055 < 0.02`（真读数） |
+| **29** | **0.0** | **0.0** | **0** | `ic_mean 0.0000 < 0.02`／`ic_ir 0.000 < 0.3`／`oos_ic nan（OOS 窗样本不足）` |
+| **20** | **0.0** | **0.0** | **0** | 同 29 列 |
+| 空序列直喂 `ic_stats`（`ic_exam.py:100`） | 0.0 | 0.0 | n_obs=0 | — |
+
+- 机理钉在 `scripts/backtest/fexam/ic_exam.py:96` `ic[valid < 30] = np.nan`：截面 <30 只/日 ⇒ 每日全 nan ⇒ `.dropna()` 空序列 ⇒ `ic_stats(空)` 交回 **0.0 而不是 nan** ⇒ 机判文把"截面不足"写成"信号零信息"。悬崖精确在 **29↔30**。
+- 本族两闸全过的 4 张，卡面冻结持仓面＝月频 `top_n=20`（`TDM-P-P1-02/calibration/04` 的 `data_binding.signal_derivation` 原文 `composite_signal → monthly_topn_signals(top_n=20)`；`TDM-P-P3-04/calibration/04` 同族）⇒ **每跑一张就往永久分数册写一条假陈述**。本席不开考、不翻卡、不改 `ic_stats`/`_panel_metrics`、不挪门柱（修法属 ⑤ T3 实现面＝空序列应进 `unjudged` 而非 0.0）。
+
+### 四、上班两条结论被本班实测改判（另起留旧案，不改写已提交文本）
+
+1. **"top20 因子集真源已断⇒列集当前不可复验"＝过强。** 实测 `scripts/backtest/fexam/exit_sim/prereg_frozen.yaml` 的 `device.columns_cap24` = **24 列、逐列带 `provenance`**（macd_dif/pdi_14/cci_14/trix/vip_14/tsi…），断的只是 `signal_source` 那句"从 `docs/_working/fexam/indicator_exam_scores_v1.yaml` 的 verdict==pass ch_backings 推得"的**推导指针**（本席复测＝该件 `ls` 查无、`git ls-files docs/_working/fexam/` 零命中，与上班同读数）。⇒ 列集可复验、来源不可复算；正解＝⑤ 把 `signal_source` 指到永久区真源（与 ⑤-1015-03 修的 `SERIES_DIR` 同族），**不是** ⑥ 重冻列集。
+2. **"29 张 dual_arm 全缺 NAV 接线（signal_b）"＝过宽，且三张卡的卡面自述已过期。** 实测 `arm_protocol_binding.py` 三态：feasible_now∩preregistered = 3 张（`X-R1-01/ablation/03`、`X-R1-01/comparison/02`、`X-R1/shadow/02`）。三张卡面 `data_binding.implementation_gap` 均自述 `blocked_on_impl: scripts/backtest 下 drawdown_state_machine 零引用`——**该句对本班基座不成立**：`card_binding.py:1455`（`ResetConfirmation`）、`:1509`（`RefuseResetError`）、`:1573`（`DrawdownStateMachineConfig`）与 `sim_daily_runner.py:1364/:1403`（`DrawdownStateMachine`/`DrawdownState`）都在引用 ⇒ 适配器本体已在册，卡面 10-10 冻结的陈旧自述没跟上（属"卡面陈述 vs 落地码面"漂移，呈 ⑥ 判是否补正卡面）。
+   - 真缺的是**逐卡臂册格**：在册绑定册已 promote 到 `docs/04_research_records/mining/ledgers/mineloop_campaign/02_binding_book.yaml`，本席读出 `entries` 18 格，其中 `op=arms` 只覆盖 `X-R1-01/comparison/07`（variants off/mid）与 `07b`（off_A/off_B/mid_A），而这两张卡 `status` 实测均 = **examined** ⇒ 本班没有"已批准且未考"的臂格可跑。考工自制册格＝自批，违在册甲案③（逐跑交参数、禁默认取第一档），本席不自造。
+
+### 五、成绩落地面＝给 ⑩ 的核心新证据（本席不代裁、不代落他人 staged 件、不投含册袋）
+
+- **严格超集已由本席量出**：旧址 HEAD 册 73 行 vs 新址盘面册 96 行（17:29 复测仍 96），`only_old=0`、shared=73 且**内容零漂移**，并**逐位同序**（断言"旧址 73 行 == 新址前 73 行的 (card_id, run_id) 全等"＝True）。⇒ 新址落回不丢旧址任何一行＝上一班 §三 处方 1 缺的前置判据补齐，可派活。
+- **旧址是陈旧副本**：`git log --oneline -6 -- docs/03_modules/_domain_backtest/exam_scores_v1.yaml` 末笔＝`eb02e513f6`（2026-10-13 23:35，早于裁定#536 搬家），10-14/10-15 无人再往旧址落分 ⇒ **全线成绩落地面自搬家起零落地**；盘面滞留 23 行 date 分布＝10-14 一行、10-15 二十二行。
+- **23 行滞留归属**（run_id 前缀实测）：`p07a-agg8-*` 8＋`p07a-sector6-*` 6＋`p07a-880rs-*` 1＝**15 行属 ⑦A**；`p08b-1015-04-card06/07` **2 行属本席**；`examcard-2026-10-15` 2＋`mineloop-od1-capexam-1015-*` 1 属 exit 族他席；`st-e2e-test-p09-*`／`st-probe-04mig15-*`／`st-autoplan-verify-20261015` **3 行来源名带 test/probe/plan**——本席不判性质（案卷只给命名与数值形态：三行 verdict 均 fail、ic_mean 分别 −0.0277／−0.0406／−0.0403，后两行同卡 `TDM-E-L9-A01/calibration/02`），呈 ⑨/⑩ 判是否触根宪法 §9.6 测试隔离。
+- **连带损害（本班首量，不在上班案卷）**：全库 `exam_cards` 551 件中 **72 张卡**的 `lineage.score_row` 用 `exam_scores_v1.yaml#rows[N]` **位置指针**，N 值域 0..95；落地面旧址只有 73 行 ⇒ **20/72＝27.8% 的指针在 HEAD 悬空**（盘面解得到、落地面解不到，17:29 复测同值）。位置指针本身也脆：册只加不改，后续追加会挪动未来越界索引的语义 ⇒ 呈 ⑤/⑨ 考虑改 run_id 键。
+- **归属与门位**：旧址删除腿自 10-14 起以 `RM`（rename＋modified）形态挂在主区 index，本席实测 `lock_files.py list` 对**两个地址均无持有者**＝无主 staged 残留。根宪法 §9.4 对无主 staged 给的处方是"按 HEAD 复位并留存证"，与本席需要的"把删除腿落地"**方向相反** ⇒ 本班遵上一班 §26 口径：旧址未退役则不投含册袋、不动他人 staged 面、不为自己的出分去弱化 N-16。
+
+### 六、本班交付面的另一件：一张"只差批准"的出分配方（给 ⑥/统筹批准面，非本席自批）
+
+用 `arm_protocol_binding` 自家 `verify_arm_quote`／`pending_numeric_params`／`FACE_ID_KEYWORDS` 逐卡机械预检（本席不写盘、不改卡、不代批）：
+
+| 卡 | ARM_OPS 引句在卡面命中 | 待冻数值参数 | 越表柱 | r 位身份词（`基线臂日净值`/`日收益序列`） |
+|---|---|---|---|---|
+| `X-R1-01/comparison/02` | `arm_identity`＋`arm_level_cap_multiply` | **无** | **无** | **两词均命中** |
+| `X-R1-01/ablation/03` | `arm_identity`＋`arm_gate_multiply` | 趋势门／降风险／预算 三处"无相邻数值" | decomposition_abs_error_max_pp／orthogonal_maxdd_increment_min_pp／regime_same_sign | 未命中 |
+| `X-R1/shadow/02` | `arm_constant` | 无 | false_trigger_rate_max／forgone_gain_max_pp／loss_avoided_min_pp | 未命中 |
+
+- ⇒ **`X-R1-01/comparison/02` 是本族唯一"卡面全冻结、只差一格已批准臂册格"的卡**：开臂＝`arm_level_cap_multiply`（档位整表已在卡面 `arm_protocol` 原文 `L1 100%/L2 100% 禁新开/L3 梯度 80/60/40%/L4 0%`）、基臂＝`arm_identity`（同原文 `三臂输入同一基线净值序列与同一成交口径`）、r 位＝`exit_sim_baseline_nav`（`data_binding.signal_column` 原文）。批准到手本席下一班即可直接跑，**不需要再判一次可行性**。
+- 另两张各缺一件：ablation/03 缺 ⑥ 给三个臂参数冻数（一个数不编）；shadow/02 缺 ⑤ 给三根越表柱机器面＋r 位身份声明。
+
+### 七、本班自犯与一次差点写错（另起留旧案）
+
+1. **首版行集差分把册当"顶层列表"解析**，输出 `only_old=0／only_new=0／score_rows=0`，与同批 `grep -c "^- card_id:"` 的 73/96 直接矛盾才被抓出——正解＝册是 `{schema_version, title, rows:[…]}`，行在 `rows:` 键下（新址另带一段 register frontmatter）。教训＝计数前先拿两把独立尺对一次，单尺绿不构成结论。
+2. **dossier 首版用 `subprocess(..., text=True)` 读 `lock_files.py list`**，Windows 下按 GBK 解码 ⇒ holders 只解出 0/2 条，一度让本班即将写下"本族零持锁"的假读数（与 §一 现测 6 张互斥）。正解＝`stdout=PIPE`＋显式 `.decode('utf-8')`。
+3. **差点把一条已被他席修掉的缺陷当开项交出去**：17:2x 扫全库 551 张卡时 `entry_flow/L9/TDM-E-L9-A02__calibration__12_intraday_return_autocorr_lag2.yaml` 报 `yaml.safe_load_all` ParserError（line 23 `'on':` 块），本班 17:27:27 该件 mtime 被他席整件重写、17:29 复扫＝**解析失败 0**。⇒ 该条**不入交清单**，只留时间线；教训＝落笔前对每条引用重跑一次"该缺陷现在还在吗"，尤其在生产线路还在动的窗口里。
+4. **heredoc 折叠反斜杠在册坑复现**：一段 `python - <<EOF` 里 `replace('\\','/')` 被折成语法错。正解＝`Path.as_posix()`。
+5. **本席体感钟再次快约一倍**：草稿曾写"18:0x 落笔"，`date` 实测 17:28（开班 16:57）。凡时间戳一律取 `date` 现测，本节内所有时刻均如此。
+
+### 八、保底、耗时与本班袋面（诚实）
+
+- 出分 **0/8 未达**；本班 16:57 开班、本节 17:29 落笔，实际耗时约 **32 分钟**，未跑满 4 小时即交账。
+- 承重证据＝§二 四台机器逐卡判定（分母 72 全数归属、加总自证）＋§三 本席自做的截面 A/B（564/30 正对照、空序列负对照、悬崖钉在 29↔30）＋§四.2 "已批准且未考臂格＝0"实测＋§五 落地面判据。本席**不**拿普查、对照、探针、案卷充抵考试口径。
+- 本班袋面＝两件：`docs/_working/automation_campaign/p08_examiner_b/ledger.md`（本节）＋同址 `checkpoint.md`（游标推进）。**不含分数册**（旧址未退役，含则必死同因，遵上一班 §26）；**不含卡件**（本班零翻态、零考卷写）。
+- 复核命令（正文原样可跑，读数由命令自己给；本席只在明确标注处给本班时刻读数）：
+  - `python .runtime/tmp/st-qoder-p08-1015-05/census.py` → 本班 17:1x 读数 preregistered=72、`两闸全过（可考）` 4
+  - `python scripts/backtest/fexam/card_binding.py --mode classify --cards-dir D:/ZephyrAlpha/docs/03_modules/_domain_backtest/exam_cards/position_flow --out .runtime/tmp/st-qoder-p08-1015-05/bind_position_flow.yaml` → 本班 17:1x 读数 `{"tally": {"A": 0, "A?": 0, "B": 0, "C": 25, "D": 0, "U": 0}}`
+  - `python .runtime/tmp/st-qoder-p08-1015-05/probe_face.py` → 本班 17:2x 读数：`synthetic_cols_29`/`synthetic_cols_20` 的 `ic_mean`=0.0 且 `n`=0，`synthetic_cols_564` 的 `n`=419
+  - `git show HEAD:docs/03_modules/_domain_backtest/exam_scores_v1.yaml | grep -c "^- card_id:"` → 73（HEAD 面，值守内不变）
+  - `grep -c "^- card_id:" docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml` → 本班 17:29 读数 96（他席会继续推进，勿当终值）
