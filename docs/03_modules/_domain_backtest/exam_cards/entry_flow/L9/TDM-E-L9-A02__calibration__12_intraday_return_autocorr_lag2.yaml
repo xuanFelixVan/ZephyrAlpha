@@ -1,0 +1,85 @@
+schema_version: '1.0'
+family: calibration
+card_id: TDM-E-L9-A02/calibration/12_intraday_return_autocorr_lag2
+node_id: TDM-E-L9-A02
+title_zh: 楼1分钟微结构·CAND-P0-MIAC2-039 日内分钟收益二阶自相关（跨两步路径记忆维，个股×交易日 panel）
+origin: P0-楼1-分钟腿时序排布维（③席 20261015-p03-06 具名候选 CAND-P0-MIAC2-039）|20261015-p03-06
+hypothesis: 日内分钟收益的二阶自相关（跨两步的路径记忆维）与一阶自相关测的不是同一件事：一阶看相邻 bar 的符号继承，本卡看隔一步的记忆（同向延续／均值回复在滞后 2 上的强度），归一掉波动量级、只测时序排布。本卡检验该个股×交易日 panel 面对次日个股收益是否构成在册五键可判的关系。符号方向③席在册行未声明、本席不预设（example 读数 −0.003690 系③席过闸投影面的市场日均值，非卡面预期）。 ③席在册定义原文逐字（禁改写）：日内分钟收益二阶自相关（跨两步的路径记忆维）＝按 symbol×trade_date 取分钟 r_i=ln(C_i/O_i) 按 trade_time 升序排数组，a=r[1..n-2]、b=r[3..n]，手写皮尔逊闭式 rho=(m·Σab−Σa·Σb)/sqrt((m·Σa²−(Σa)²)(m·Σb²−(Σb)²))，m=n−2；交付形态=横截面 panel（每股每日一值），本行 example 读数=全市场日均（仅供过闸投影，非交付口径）。TDM 归属＝TDM-E-L9-A02 源线·Tick分笔（节点 dq＝日内微观结构能否预测次日方向与冲击成本）；非 TDM-E-L4-02 买入时序（该节点 dq＝今天什么窗口下单，属执行选型面不属预测子面）
+window:
+  in_sample:
+  - '2022-01-04'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2022-01-04..2022-06-30→无（数据起 2021-09，牛段样本不足，本卡 regime 仅用熊/震荡两段）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，本卡 IS 全落此段）
+    recovery: 2024-02-01..2025-09-09（修复段，作 regime 对侧）
+  frozen_note: 看数前冻结；右端截 2026-09-30 前先确认 1min 覆盖（实测至 2026-10-09）
+buckets:
+  type: quantile_decile
+  'on': 当日个股分钟收益二阶自相关 rho 的全市场截面十分位（逐交易日分层，个股×交易日 panel）
+  min_obs_per_bucket: 60
+signal_kind: panel
+pillars:
+  inherited_numeric_face: 五键数值面整块逐字抄 git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__08_intraday_return_autocorr_lag1.yaml -> pillars_numeric；该五键在同表同形的 A01/03・A02/10・A02/11 四面实测逐值同值（本班 parsed 对拍，尺见台账 R1），故数值面无择一问题
+  pillars_text_face: 文字面＝指针式继承（不改一柱、不删一柱、不加柱＝禁挪门柱），沿在册先例；本席不自拟柱文字
+  candidate_face: ③席在册定义即本卡信号对象（原文见 hypothesis 与 data_binding.signal_derivation）
+  orthogonal_gate_face: 闸在册读数逐字见 data_binding.orthogonal_gate_verdict；本席未跑闸、未复算相关性
+target:
+  primary: next_day_stock_return（个股次日 hfq 收盘收益）
+  secondary: next_day_return_reversal_of_intraday（日内偏度分组下的次日反转幅度）
+  note: A02 决策问题逐字（取母骨架 TDM-E-L9-A02__calibration.yaml 第 28 行 tdm.decision_question）＝『日内微观结构能否预测次日方向与冲击成本？』；本卡只答"次日方向"半问的 panel 面（冲击成本半问的对象非本卡信号）；与同轴 lag-1 先例 A01/08 的差异面＝滞后阶（1 阶 vs 2 阶）
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+status: blocked_on_impl
+status_reason: 判据面（window/pillars_numeric/buckets/target/signal_kind/discipline/oos_window_ref）已按在册冻结值整块填齐；唯一缺腿＝⑤实现面的物化算子。本班只读实测：谓词 `autocorr|自相关|pearson|皮尔逊|dotProduct` 在 scripts/backtest/fexam/card_binding.py 命中 0 行（本班 grep -ci 实测，同尺正对照 `argMax|kurt` 命中 1 行⇒尺未坏），即 lag-1 那半腿（同轴先例 A01/08 在册 status_reason 同读数）至今未补，lag-2 更无算子；另 60min 档本构造实测不可产（见 data_binding.band_caliber_precedent_045 结论①）与过闸投影面折叠口径在册未裁（见 gaps_no_source.folding_caliber）。按 SOP ⑤出口『码面+测试绿→卡翻转 unblocked→移交⑥』，本席不自宣可考。
+gaps_no_source:
+  sign_claim_absent: ③席在册行只给构造（rho=(m·Σab−Σa·Σb)/sqrt((m·Σa²−(Σa)²)(m·Σb²−(Σb)²))，m=n−2）与 example 读数，无收益方向声明 ⇒ 卡面正/负向预期无在册来源，本席不代设
+  folding_caliber: ③席在册行自陈『交付形态=横截面 panel（每股每日一值），本行 example 读数=全市场日均（仅供过闸投影，非交付口径）』⇒ 本卡按 panel 交付面冻结；过闸用的日均折叠面与本卡开考面不同形，该折叠口径在册未裁（承 20261015-p03-03 呈批第 1 条与同轴 lag-1 卡 A01/08 在册面，本班不重复立号）
+  same_axis_two_nodes_lag1_lag2: 同轴滞后阶两卡在测归属上分属两节点＝lag-1 在 TDM-E-L9-A01/08（③席 p03-05 行未写 TDM 归属，上班按载体落 A01），lag-2（本卡）的③席 p03-06 行明写『TDM 归属＝TDM-E-L9-A02 源线·Tick分笔』⇒ 本卡遵③席在册明写落 A02，不自并、不改他卡；该一轴两节点归口已落 feedback/to_miners.md 本班级方向单，由 ③/⑩ 席认一次
+  non_duplication_note_040_041: ③席同批在册自查：本构造 vs 033（lag-1）＝0.1197、vs 013＝0.0482、vs 014＝0.1281、vs 024＝0.1067、vs 026＝0.0571、vs 036＝0.0910（全部 ≤0.13）⇒ 二阶记忆与一阶记忆在③席账上判为两个对象；同批 040（方向切换频率 vs 033＝0.6995）与 041（时间不可逆 vs 033＝0.3543）因与 lag-1 共线被③席判重复不产卡，本席只转抄、不重判
+prereg_provenance:
+  made_by: st-qoder-p06-1015-10
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__08_intraday_return_autocorr_lag1.yaml -> window 整块逐字（含 in_sample/oos/regimes/frozen_note 全字段；该块与 A01/03・A02/10・A02/11 四面 parsed 全等，本班实测）
+    pillars_numeric: 同源 -> pillars_numeric 整块（五键，零新增零放宽）
+    buckets_type_and_floor: 同源 -> buckets.type/min_obs_per_bucket
+    discipline: 同源 -> discipline 行
+    signal_kind: 同源 -> signal_kind（panel，同表同交付形在册先例）
+    target_primary_secondary_target_source: 同源 -> target.primary/target.secondary・data_binding.target_source
+    oos_window_ref: 同源 -> oos_window_ref（与本卡 window.oos 同锚 *id001）
+    decision_question: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration.yaml:28 -> tdm.decision_question
+    candidate_row: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-MIAC2-039 行逐字段原文（definition_zh/sample_window/example_value/orthogonal_gate_note/data_source_table）
+    band_contrast_row_045: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-MI60CONTRAST3-045 行逐字段原文（档位对照前置）
+    node_attribution: ③席 CAND-P0-MIAC2-039 行 definition_zh 内明写『TDM 归属＝TDM-E-L9-A02』，与 config/trading_decision_map.yaml 节点 dq 逐字对拍本班实测一致
+  own_measurement: 本班只读实测三项：①冻结面 parsed 对拍（A01/08 vs A01/03 vs A02/10 vs A02/11 的 window/pillars_numeric/buckets.type/min_obs_per_bucket/discipline/oos_window_ref 六面逐值同值）；②绑定层算子谓词 0 命中（正对照 1 命中）；③卡池 550 件具名 empty=0、骨架 empty=186（本班完整 walk）。本班未跑考试、未跑正交闸、未跑 CH 探针
+  single_variable_note: 新造具名子题卡（非 champion/challenger 配对）；与同轴 lag-1 卡 A01/08 的唯一差异面＝滞后阶（m=n−1 vs m=n−2 的隔步记忆），同为 panel・同表 kline_1min・同窗同五键同 discipline；与 040/041/042/043/044 的差异面＝那五条③席在册判重复/拦，不产卡
+lineage:
+  card: TDM-E-L9-A01/calibration/08_intraday_return_autocorr_lag1
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A02.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: kline_1min (CH c1_market)
+  signal_column: close / open（列名逐字取③席在册定义行的 r_i=ln(C_i/O_i) 两端列，本席未新增列名）
+  signal_derivation: 日内分钟收益二阶自相关（跨两步的路径记忆维）＝按 symbol×trade_date 取分钟 r_i=ln(C_i/O_i) 按 trade_time 升序排数组，a=r[1..n-2]、b=r[3..n]，手写皮尔逊闭式 rho=(m·Σab−Σa·Σb)/sqrt((m·Σa²−(Σa)²)(m·Σb²−(Σb)²))，m=n−2；交付形态=横截面 panel（每股每日一值），本行 example 读数=全市场日均（仅供过闸投影，非交付口径）。TDM 归属＝TDM-E-L9-A02 源线·Tick分笔（节点 dq＝日内微观结构能否预测次日方向与冲击成本）；非 TDM-E-L4-02 买入时序（该节点 dq＝今天什么窗口下单，属执行选型面不属预测子面）
+  target_source: kline_daily_hfq close→next_day_return（与 02 卡同 target，禁各自改口径）
+  universe_guard: FY2024 全段 242 交易日（2024-01-02..2024-12-31，闭卷切点前；HOLDOUT/OOS 2025-09-09 后零接触）；守卫沿在册：本表无 market_type 列⇒前缀白名单 {0,3,6}／volume>0／HAVING nb>=200 AND rv_sum>0 AND hi_max>lo_min AND t1>t0（后三条＝上班在册病理件闸，本班对齐以同分母）
+  example_value_from_candidate: FY2024 市场日均=−0.003690，sd=0.021656，H1=−0.003346，H2=−0.004034（前后半段同向=是）
+  orthogonal_gate_verdict: 过闸（入过闸账）verdict=pass max|corr|=0.2396 most_similar=avg_abs_ret_z20 rc=0；册内自查（闸看不见这一面，承上班 036 盲区处方）：vs 上班 033 一阶自相关=0.1197、vs 013 尾盘量占比=0.0482、vs 014 开盘量占比=0.1281、vs 024 时段方差=0.1067、vs 026 跳跃占比=0.0571、vs 036 峰度=0.0910 ⇒ 全部 ≤0.13＝二阶记忆与一阶记忆确是两个对象（非同轴改名）；池面=⑨席 pool6 绕行面（.runtime/tmp/st-qoder-p09-1015-04/pool6，6 序列／3 独立轴，非 ibt_runner MEMBERS 15 员面；本班实测该会话私面仍在 24h TTL 内）；尺双对照本班同批重立：池成员 avg_abs_ret.csv 原样自投=reject 1.0000 rc=5（尺能红）；同日轴随机高斯 ctrl_random.csv=pass 0.1414 rc=0（尺非恒拦）；本班轴净增=1
+  data_window_evidence: 逐字同本面 universe_guard（=③席 CAND-P0-MIAC2-039 行 sample_window 原文：FY2024 全段 242 交易日＋在册守卫），本卡不重复搬第二份
+  band_caliber_precedent_045:
+    definition_zh: 60 分钟档第三批对照行（非信号）＝承 031/037 行体例，把本班新出的 039(f_ac2)/042(f_udrun)/044(f_volcom) 三构造在 kline_60min 上同式重算（守卫同在册，唯 HAVING nb>=4 因该档每股每日仅 4 根），并同式重算在册 014 作档位无源探针。
+    example_value: 跨档日频相关 corr(1min,60min)：f_ac2=−0.0422、f_udrun=+0.7755、f_volcom=+0.4087；60min 档 sd：f_ac2=0.292006（vs 1min 面 0.021656，膨胀 13.5 倍）、f_udrun=1.013448、f_volcom=0.096980；60min 档 f_openv（=014 同式）FY 日均=0.000000（该档 bar 时刻为 1030/1130/1400/1500，定义条件 h<1000 无 bar 命中）；逐日分母 2024-06-03＝1min 4894 vs 60min 5040
+    downstream_meaning: 非信号行，自身不入过闸账。60min 面闸实投（同一 pool6 绕行面，真 rc）：f_ac2=pass 0.0659 rc=0、f_volcom=pass 0.0707 rc=0、f_udrun=reject 0.5350（most_similar=lu_count）rc=5。结论三条供 ⑤⑥⑦ data_binding：①时序差型构造（f_ac2）跨档 corr≈−0.04＝换档即换对象，且 sd 膨胀 13.5 倍把上班呈批第 5 条「该档自由度不足」从断言转为读数（4 根 bar 下 m=nb−2=2）；②时段重心型（f_volcom）跨档 +0.4087＝半同一对象，改绑须重新过闸；③开盘 30 分钟量占比（014）在 60min 档构造无源（恒 0 是定义条件无 bar，不是「读数为零」），禁改绑
+  dialect_cost_precedent_ref: 承同轴 lag-1 卡 A01/08 面 data_binding.dialect_cost_precedent_038（CH 方言皮尔逊须手写 dotProduct、ch_reader 自动注入 FINAL、数组腿成本单月 2.2s）——本卡构造同为手写闭式数组腿，该三面前置对本卡同样成立；整块真源在那张卡，本卡按净零只指不搬
+  readiness: 数据腿可达（承③席在册 20261015-p03-06 行 FY2024 全段 242 交易日读数，本班未重扫全表）；缺⑤物化算子（lag-1/lag-2 同缝）、过闸投影折叠口径在册未裁，且 60min 档本构造实测自由度不足（m=nb−2=2）
