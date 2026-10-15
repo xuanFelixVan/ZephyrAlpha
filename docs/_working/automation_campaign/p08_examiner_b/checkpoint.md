@@ -6,8 +6,8 @@ title: ⑧考工B·游标
 # 游标
 
 cursor: 10-15 班次 06 已交账（**0 出分／保底双口径未达**，承重证据见 ledger §五与§八：本族 preregistered 72 张按执行核真源分词表复量＝OD1 族 44/calibration 14/shadow 14，两尺合闸（`comparison_exam._route_vocab` 三闸＋`arm_protocol_binding.triage_card` 三态）后真只差 ⑥ 一格者仍仅 `X-R1-01/comparison/02`；4 张过柱闸的校准卡照撞 `ic_exam.py:96 ic[valid < 30] = np.nan` 截面地板；双臂底座断链指针已由 ⑤ 落地且本班实测内容中性（load_pass_columns()==columns_cap24 逐列逐序），本班零开考零入册零翻态）
-last_run: 17:57（`date` 实测；开班 17:40:48，本节写于 17:57:34，出分 0 张；本班耗时以两时戳差为准，不在此写终值）
-last_batch: p08-1015-06 台账追加节＋本游标（两件套；不含分数册＝旧址改名腿未落 HEAD 遵 04 班 §26，不含卡件＝本班零翻态）
+last_run: 18:2x（`date` 实测见 commit 前一行打印；本班＝班次 06 两袋，出分 0 张；耗时按开班 17:40:48 与收班 date 差计，不在此写终值）
+last_batch: p08-1015-06 第二袋＝台账 §九追加节＋本游标（严格超集补投，基线取首袋落地后的新 HEAD；仍不含分数册、不含卡件）
 notes: |
   游标由本岗每批推进；监督员(⑩)可代修。
   **下一班开考规格（班次 04 实跑核对，覆盖班次 03 的 ①-⑦）**：
@@ -75,3 +75,10 @@ notes: |
      逐卡分诊凭据＝`.runtime/tmp/st-qoder-p08-1015-06/triage_od1.json`（binding_class 全 C 除 dualwindow=U；oos 齐 43/44）。
   ㉔ 落地面本班现测（禁当终值引用）：`git status --porcelain` 对两址册读 `RM docs/03_modules/_domain_backtest/exam_scores_v1.yaml -> docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`
      ＝旧址已出 index 而改名腿未落 HEAD（`git cat-file -e HEAD:<新址>` rc=128）⇒ N-16 仍挡含册袋；本班仍只投两件文本、不动他人 staged 面。
+  ㉕ **本班追加节要点（第二袋在册，给下一班三条硬事实）**：(a) 截面地板判据加强＝与信号质量无关——`_panel_metrics` 的 `n` 由
+     `ic_exam.py:96 ic[valid < 30] = np.nan` 掩码直接决定，本班同进程读数 20/29 列 `n=0`、30/120 列 `n=419`，且 `ic_stats(空序列)` 回
+     `{'ic_mean': 0.0, 'icir': 0.0, 'n_obs': 0}`（0.0 非 nan）⇒ 任何 20 列面只能产出 0 读数，"跑一张即写一条假陈述"不依赖信号好坏；本席另把自造 `A_perfect_signal_*` 探针命名证伪（iid 噪声 shift(-1) 本身无自相关，见 ledger §九）。
+     (b) 本族 `#rows[N]` 指针分账＝151 个卡件中 5 张用位置指针，HEAD 旧址册 rows=73 ⇒ 悬空 3 张，其中 **本席 04 班亲笔 2 枚**
+     （`P-P2-04/calibration/06`=#rows[93]、`/07`=#rows[94]，袋 19f2852467），第三枚 `X-R1-01/comparison/07`=#rows[92] 属他席；
+     定性＝N-16 册未落地的下游症状，非卡面写错，本席不自改。(c) 下一班若要复用本班尺：`census2.py`（按 route 词表交叉）／
+     `triage_od1.py`（44 张 OD1 逐卡 dry 凭据→triage_od1.json）／`ab_dualarm.py`（指针＋列集内容中性对拍）／`summary.py`（边际收益与断供两口径）。
