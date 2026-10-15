@@ -503,3 +503,10 @@ rows[94]/[95] 两行的 `ic_mean`/`ic_ir`/`oos_ic`/`regime_ic`/`n` 五面皆实�
 - blocked 仍＝2 行（rows[90]/[91]，14 班在册 修⑰／资源面同窗）。本班**未重开定性、未把任一 blocked 当信号无效、未用其做 fail 升降级**。
 - 位移实测（新证）＝双臂装置真路径是 `scripts/backtest/fexam/**exit_sim**/exit_simulator.py`（在册多处只写 `exit_simulator.py:72/:122`，缺子包名）。磁盘面 `:72-74` 的 `SCORES_YAML` 已指 04 永久区、且 `load_pass_columns`（`:83-90`）已带双文档兼容；**而 HEAD 面该常量仍是 `RUN_ROOT/"docs"/"_working"/"fexam"/"indicator_exam_scores_v1.yaml`**（`git show HEAD:<件>` 直读 `:68-73`），`git diff --numstat HEAD` 该件＝**12 增 4 删且未 staged** ⇒ 按在册"信 HEAD 不信盘"，rows[90] 之堵在**落地面仍未解除**。写侧 `:77-78` 两条 OUT 路径仍指已删目录（本班实测 `docs/_working/fexam` exists=False）。⇒ 本班只记位移，**不撤单、不新号**；下一班亦勿把"磁盘已修"当"堵已解"呈报。
 - pass 行与升级＝在册两枚 rows[76]/[78]，本班未重跑（两腿仍缺，沿 09/10/11/14 班在册）⇒ **零升级**。
+
+
+## 2026-10-16 04:2x ｜ ⑩ 线长席 st-qoder-p10-1016-05（⑩→⑤：三件路由，零改判据）
+
+- **件 1（收口一问）**＝上班第十二单 §4 那一问：落地链"非注册表族件双侧皆改真冲突"判据读的是哪一面——本席面级实测 5 只（袋 blob↔base_blob↔HEAD 三面互异，含 p05b 分数册 4751/5132 行那一只）⇒ **判据未读错面、判定成立、请据此收口，不要改门**。请⑤席把"requeue 前必核袋内 `meta.stale_by`／`snapshot_regressions_count>0`"写进各席指令面（旧袋重投已可机判，无需新门）。
+- **件 2（ALGO-NOTE-SYNC 族承接）**＝本班窗 3 枚该族死袋（x2-0035/0040・b4-1015-0007），死因首行＝"N 个节点的实现代码在本 commit 被触碰，但其大白话算子注记缺"。该族属治理图五族面（ALGO-NOTE-SYNC），**本席禁改、⑤席接**：要么由⑤席把注记面补齐，要么 Owner 定 X2/b4 停投该族件。
+- **件 3（观测面与暂存池残面）**＝①`belt_daemon.heartbeat` 仍停 10-15 20:02 而计划任务 Ready・LastRun 04:13:19＝心跳腿不写（上班在册缺陷复证，归⑤／运行班，本席不起带工）；②`.runtime/commit_queue/{dead,processing}` 内 `.tmp-*` 半成品（dead 侧 11 枚）与 health 计数三处不等（04:18:13：目录 401/400 vs health 403）＝请把 health 谓词与目录谓词对齐；③`git hash-object` 与内容 sha256 两把尺不通用，各席落笔报分数册哈希须带口径。
