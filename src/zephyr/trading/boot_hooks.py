@@ -646,7 +646,7 @@ def _init_kill_switch_orchestrator() -> None:
     （killswitch_response_levels），使"谁决定拉哪套开关"在运行时确有唯一权威入口——
     策略层（裁决该停什么）→ 路由层（本编排器）→ 执行机构层（5 套开关本体）。
     仅注册不代调用：本批生产侧对 respond() 的调用点仍为 0（如实记黄，见
-    docs/_working/fullflow_campaign/lanes/wiresafe_BRK-064_construction_pack.md）。
+    docs/_archive/_working_cleared/fullflow_campaign/lanes/wiresafe_BRK-064_construction_pack.md）。
     """
     try:
         # Q3/#ARCH-340：系统级开关持久化——必须先于下方 tech_stack 自检（其 DD-12
