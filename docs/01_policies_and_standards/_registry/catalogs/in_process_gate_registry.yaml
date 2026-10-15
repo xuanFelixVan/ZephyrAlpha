@@ -27,7 +27,7 @@ tier: tier_1_governance
 status: active
 version: 1.0.0
 created: '2026-07-21'
-last_updated: '2026-10-01'
+last_updated: '2026-10-15'
 unique_key: gate_id
 entry_schema:
   gate_id: string (required, unique) — gate 标识，与 GateSpec.gate_id 一致
@@ -37,6 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
+  files_trigger: list[str] (optional) — 条件触发面（缺省/空 list=always-fire；目录前缀/精确/fnmatch/子串四路 OR ＋ added:前缀=本笔新增 A 态；校验真源=gate_auto_registrar._validate_files_trigger，超宽 warn 阈值=HEAD 命中 ≥1000）
 total_gates: 107
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
@@ -147,11 +148,13 @@ gates:
   register_line: 423
   enabled: true
 - gate_id: TRANSLATION-COVERAGE
+  files_trigger: ["added:src/*.py", "added:scripts/*.py"]  # P1-2 条件触发扩面(st-perfy-20261015/总包 st-diskp0-20261015)=台内真面镜像：_get_staged_new_py_files --diff-filter=A + startswith src/zephyr/|scripts/（纯修改批零触发，新增批行为逐字节不变）
   module_path: zephyr.gov_enforcement.commit_gates.translation_coverage_gate
   factory_function: make_translation_coverage_gate
   source: in_process
   enabled: true
 - gate_id: TDM-MOUNT-COVERAGE
+  files_trigger: ["added:docs/03_modules/*.md", "added:src/*.py", "added:scripts/*.py", "config/*.yaml"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内三真面镜像：新增 blueprint.md(docs/03_modules/**)+新增 .py(src/zephyr/|scripts/，--diff-filter=A)+幽灵挂载拦腿的 config/*.yaml staged 面(HEAD 实测 108 命中)；added: 前缀=本笔 A 态(C98-c 第五路)
   module_path: zephyr.gov_enforcement.commit_gates.tdm_mount_coverage_gate
   factory_function: make_tdm_mount_coverage_gate
   source: in_process
@@ -206,12 +209,14 @@ gates:
   register_line: 433
   enabled: true
 - gate_id: GATE-VOCAB
+  files_trigger: ["added:*.py"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面镜像：只检测新增 .py(--diff-filter=A，check_vocab_hardcode thin wrapper)，修改文件本就不检——纯修改批零触发，新增批行为逐字节不变
   module_path: zephyr.gov_enforcement.commit_gates.vocab_hardcode_gate
   factory_function: make_gate_vocab_gate
   source: in_process
   register_line: 434
   enabled: true  # Owner 2026-09-30 批复翻回（裁定#431 第①项；恢复前置"187 件落地"已达成）
 - gate_id: SNAPSHOT-DRIFT
+  files_trigger: ["data/runtime_violation_snapshot/latest.json"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面精确镜像：门体首个短路即 staged 含本文件否则放行（_is_snapshot_in_staged），HEAD 实测命中 1
   module_path: zephyr.gov_enforcement.commit_gates.snapshot_drift_gate
   factory_function: make_snapshot_drift_gate
   source: in_process
@@ -244,6 +249,7 @@ gates:
   register_line: 441
   enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: PERMANENT-SYSTEM-TRIGGER
+  files_trigger: ["added:*.py"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面镜像：只检测新增 .py(--diff-filter=A，[TTL] permanent 头扫描)，修改文件本就不检——纯修改批零触发，新增批行为逐字节不变
   module_path: zephyr.gov_enforcement.commit_gates.perm_trigger_gate
   factory_function: make_permanent_system_trigger_gate
   source: in_process
@@ -256,12 +262,14 @@ gates:
   register_line: 445
   enabled: true
 - gate_id: EMPTY-HANDLER
+  files_trigger: ["added:*.py"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面镜像：只检测新增 .py(--diff-filter=A，空壳 handler AST 扫描)，修改文件本就不检——纯修改批零触发，新增批行为逐字节不变
   module_path: zephyr.gov_enforcement.commit_gates.empty_handler_gate
   factory_function: make_empty_handler_gate
   source: in_process
   register_line: 446
   enabled: true
 - gate_id: ORPHAN-MODULE
+  files_trigger: ["added:src/*.py"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面镜像：只检测 src/ 路径新增 .py(diff-filter=A + startswith src/)，非 src 新增与纯修改批零触发，src 新增批行为逐字节不变
   module_path: zephyr.gov_enforcement.commit_gates.orphan_module_gate
   factory_function: make_orphan_module_gate
   source: in_process
@@ -294,6 +302,7 @@ gates:
   register_line: 451
   enabled: true
 - gate_id: NO-UPWARD-IMPORT
+  files_trigger: ["src/zephyr/shared/*.py"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面镜像：staged AM .py 过滤到 src/zephyr/shared/（shared 层分层判据域），HEAD 实测 283 命中<1000；共享层外 .py 提交零触发，共享层批行为逐字节不变
   module_path: zephyr.gov_enforcement.commit_gates.import_direction_gate
   factory_function: make_import_direction_gate
   source: in_process
@@ -388,6 +397,7 @@ gates:
   register_line: 466
   enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: CAP-CONSISTENCY
+  files_trigger: ["*_provider.py"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面镜像：只检 staged *_provider.py（fetch 路由能力集 vs meta.capabilities），HEAD 实测 53 命中<1000
   module_path: zephyr.gov_enforcement.commit_gates.capability_consistency_gate
   factory_function: make_capability_consistency_gate
   source: in_process
@@ -471,6 +481,7 @@ gates:
   register_line: 481
   enabled: true
 - gate_id: DERIVATION-ANNOTATION
+  files_trigger: ["added:*.py", "added:*.yaml", "added:*.yml"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面镜像：_collect_staged_new_files --diff-filter=A + _TRIGGER_EXTENSIONS(.py/.yaml/.yml)——纯修改批零触发，新增批行为逐字节不变
   module_path: zephyr.gov_enforcement.commit_gates.derivation_annotation_gate
   factory_function: make_derivation_annotation_gate
   source: in_process
@@ -505,6 +516,7 @@ gates:
   register_line: 0
   enabled: true
 - gate_id: MUTABLE-CONST-WITHOUT-FINAL
+  files_trigger: ["added:src/*.py"]  # P1-2 条件触发扩面(st-perfy-20261015/总包批令，与 FILE-COPY 同式 C98-c 第五路)=仅本笔新增(A 态)src/*.py 匹配；台内扫 src/zephyr/ 全量代码 added 行——新增批行为不变，纯修改批触发面归零（既有文件存量违规本就 grandfathered 只检新增行，残留放宽面=纯修改批内新添可变常量暂免检，由 own-diff 内容判定通道常态覆盖）
   module_path: zephyr.gov_enforcement.commit_gates.mutable_const_without_final_gate
   factory_function: make_mutable_const_without_final_gate
   source: in_process
@@ -546,6 +558,7 @@ gates:
 # P3 三源→单源治本 2026-08-04：原内联正则已移除，对标 pure_shim_gate.py 模式改为 subprocess thin wrapper）。
 # priority=57（HELD-OVERLAP 50 之后、NEW-FILE-DEPGRAPH 58 之前）
 - gate_id: BLUEPRINT-NODE-ID-HARDCODE
+  files_trigger: ["blueprint.md"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面镜像：只检 staged blueprint.md(--diff-filter=AM thin wrapper)，子串四路匹配 HEAD 实测 599 命中<1000
   module_path: zephyr.gov_enforcement.commit_gates.blueprint_node_id_hardcode_gate
   factory_function: make_blueprint_node_id_hardcode_gate
   source: in_process
@@ -578,6 +591,7 @@ gates:
 # 检测 staged .env.example 或 config/secret_registry.yaml 变更时，比较两者 KEY 一致性。
 # priority=127（80-126 段已满，127 是 MCP-VERSION-FIELD=126 之后首个空位）。
 - gate_id: SECRET-REGISTRY-CONSISTENCY
+  files_trigger: [".env.example", "config/secret_registry.yaml"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面精确镜像：门体首个短路即 staged 含两文件之一否则放行（HEAD 双双在册命中 1+1）
   module_path: zephyr.gov_enforcement.commit_gates.secret_registry_consistency_gate
   factory_function: make_secret_registry_consistency_gate
   source: in_process
@@ -643,6 +657,7 @@ gates:
   register_line: 0  # priority=131；2026-08-21 AI-RESIDUAL-001（裁定书 errorcode-stability：ERRCODE 门禁从外部 pre-commit 链移植 in-process 主通道，堵 gateway --no-verify 结构洞）
   enabled: true
 - gate_id: HOT-FILE-BASE-FRESHNESS
+  files_trigger: ["AGENTS.md", "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml", "docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml", "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml", "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml", "docs/_archive/_working_cleared/archive/2026-09/design_memos/construction_progress_tracker.md", "docs/_archive/_working_cleared/archive/2026-09/design_memos/00_index_trading_decision.md", "docs/_archive/_working_cleared/archive/2026-09/design_memos/94_crypto_quant_expansion.md"]  # P1-2 条件触发扩面(st-perfy-20261015)=file_utils.DEFAULT_HOT_FILES 八热文件精确镜像（8/8 HEAD 在册实测），门体 is_hot_file 过滤同源——非热文件提交零触发，热文件批行为逐字节不变；热册扩列须同批同步本清单（MODIFY-GUARD 真源=file_utils.DEFAULT_HOT_FILES）
   module_path: zephyr.gov_enforcement.commit_gates.hot_file_base_freshness_gate
   factory_function: make_hot_file_base_freshness_gate
   source: in_process
@@ -670,24 +685,28 @@ gates:
   register_line: 0  # priority=133；2026-09-22 新资产登记必填血肉门（ulib3 T8，st-ulib3-20260922，观察期 warn-only——staged 新增 .py 翻译条目缺 name_zh/翻译册新增条目缺 name_zh+plain_zh 则 WARN+审计放行；loader 不可达 fail-open；BLOOD_FLESH_GATE_MODE 翻 "block" 升硬）
   enabled: true
 - gate_id: FRONTEND-TRUTH-SOURCE
+  files_trigger: ["src/zephyr/frontend/dashboard/web/*.js"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面镜像：只检 dashboard web/ 下 staged .js（内联数据启发式），HEAD 实测 84 命中<1000
   module_path: zephyr.gov_enforcement.commit_gates.frontend_truth_source_gate
   factory_function: make_frontend_truth_source_gate
   source: in_process
   register_line: 0  # priority=136；2026-09-04 前端真源接通铁律配套（TRAE-086 v1.2.0 §truth_source_wiring，Owner 2026-09-04 裁定：前端不许自建数据世界，施工前后端盘点四步；warn 起步收集误报率，_HARD_BLOCK=True 一行升硬）
   enabled: true
 - gate_id: BUSINESS-REGISTRY
+  files_trigger: ["docs/01_policies_and_standards/_registry/", "architecture_model/data/data_sources_registry.yaml"]  # P1-2 条件触发扩面(st-perfy-20261015)=登记表语义域前缀(150 命中<1000；门体按 REGISTRY_SPECS 再过滤，非业务册 staged 零判据空转放行)+catalogs 外孤例 data_sources_registry（base_dir=architecture_model/data，spec_path 真源 registry_alignment.REGISTRY_SPECS）
   module_path: zephyr.gov_enforcement.commit_gates.business_registry_gate
   factory_function: make_business_registry_gate
   source: in_process
   register_line: 0  # priority=139；2026-09-05 业务资产库入库门禁（#ARCH-BUSINESS-REG-GATE-001：6 库条目 id 唯一+module_id 强制+depgraph 存在性 fail-open；alignment_checklist §4.1"待建"转正式）
   enabled: true
 - gate_id: REGISTRY-MASS-DELETION
+  files_trigger: ["docs/01_policies_and_standards/_registry/"]  # P1-2 条件触发扩面(st-perfy-20261015/总包批令)=登记表语义域前缀（HEAD 实测 150 命中<1000）；门体 _is_watch_file（/_registry/catalogs/ *.yaml+registry_of_registries/script_manifest 精确面）在域内再过滤，域内非登记册 staged 零判据空转放行=纯提速收窄
   module_path: zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate
   factory_function: make_registry_mass_deletion_gate
   source: in_process
   register_line: 0  # priority=140；2026-09-09 登记表 mass-deletion 门禁（2026-09-09 夜 4703 行蒸发治本第二道保险：净删行/条目数减少阻断，message 标记 [allow-mass-deletion:reason>=10字] 白名单放行+审计；配套 scripts/governance/registry_batch_edit.py 纯插入工具为第一道保险；测试 tests/governance/commit_gates/test_registry_batch_edit_and_mass_deletion_gate.py）；2026-09-23 迁 registry_family/ 后 k4 池化批撤案回 flat 原位（本行 2026-09-24 st-gpu-final 工棚对齐：HEAD 名册残留旧路径致工棚网关 fail-closed）
   enabled: true
 - gate_id: REGISTRY-YAML-PARSE
+  files_trigger: ["docs/01_policies_and_standards/_registry/"]  # P1-2 条件触发扩面(st-perfy-20261015/总包批令)=登记表语义域前缀（150 命中<1000）；门体 _WATCH_FILES（capability_canonical/data_asset 两精确档）在域内再过滤，域内非档案册 staged 零判据空转放行=纯提速收窄
   module_path: zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate
   factory_function: make_registry_yaml_parse_gate
   source: in_process
@@ -725,12 +744,14 @@ gates:
   register_line: 0  # priority=150；2026-09-24 OBJ_S S2 挂载：同会话 own-diff 施工产物×任务书互斥（NL-5）；测试 tests/ai_layer/redline/test_negative_list_gates.py；二次重插
   enabled: true # 09-26 st-ddup 翻回（W4 看守项）：AI 层 245/678 件批已落 HEAD（30505c93f6），negative_list_gates 三工厂实测可导入，解封条件成立
 - gate_id: CONSTITUTION-LINE-LIMIT
+  files_trigger: ["AGENTS.md"]  # P1-2 条件触发扩面(st-perfy-20261015)=台内真面精确镜像：只检 AGENTS.md ≤300 行（CONSTITUTION_FILE 唯一判据对象），非宪法提交零触发
   module_path: zephyr.ai_layer.redline.negative_list_gates
   factory_function: make_constitution_line_limit_gate
   source: in_process
   register_line: 0  # priority=151；2026-09-24 OBJ_S S2 挂载：AGENTS.md ≤300 行硬上限断言（NL-3 判据②，宪法 §6）；测试 tests/ai_layer/redline/test_negative_list_gates.py；二次重插
   enabled: true # 09-26 st-ddup 翻回（W4 看守项）：AI 层 245/678 件批已落 HEAD（30505c93f6），negative_list_gates 三工厂实测可导入，解封条件成立
 - gate_id: DOC-HEADER-SUITE
+  files_trigger: ["docs/01_policies_and_standards/", "docs/02_enterprise_architecture/", "blueprint.md"]  # P1-2 条件触发扩面(st-perfy-20261015/总包批令)=正式文档域两前缀（HEAD 实测 315+56 命中，禁全 docs/）；docs/03_modules/ 整目录 5474 命中≥1000 超宽硬约束不可注册，改以该域台内真锚 blueprint.md 子串腿（全树 599 命中<1000，AMODULE 一致性/交叉核对的判据锚文件）承载 03 域挂接；03 域非 blueprint 的 md 长尾（1463 件，超宽不可注册） lone-doc 提交暂免七判据，由 FMS-HYGIENE（always-fire）DEADREF-NEW 棘轮兜底
   module_path: zephyr.gov_enforcement.commit_gates.blueprint_format_gate
   factory_function: make_doc_header_suite_gate
   source: in_process

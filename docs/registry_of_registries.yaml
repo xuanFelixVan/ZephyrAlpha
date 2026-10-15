@@ -573,7 +573,7 @@ tiers:
         format: yaml
         tier_1_governance: true
         maintenance: pg_ledger（2026-10-04 cutover；裁定#NNN 同 commit 原子纪律不变）
-        entry_count: 308
+        entry_count: 353
         counting_rule: rulings 条目数
         status: active
         description: 裁定唯一真源（RULE-RULING 纪律）；文件=YAML 只读投影
@@ -632,10 +632,10 @@ tiers:
         format: yaml
         tier_1_governance: true
         maintenance: auto （scripts/governance/generate_governance_map.py）
-        entry_count: 450
+        entry_count: 429
         counting_rule: counts.total_modules（生成器字段；七族 L0_lifecycle~L6_audit）
         status: active
-        description: 治理运行地图——七族全模块挂载（suspect_orphans=94 为已知账务缺口）；families 层生成器全量重建禁手工编辑（schema 0.3）
+        description: 治理运行地图——七族全模块挂载（suspect_orphans=64 为已知账务缺口）；families 层生成器全量重建禁手工编辑（schema 0.3）
         owned_by: governance
 
       - registry_id: REG-MAP-CWF-001
