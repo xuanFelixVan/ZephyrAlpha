@@ -15,7 +15,7 @@
 # [TTL] task_bound
 """t0_conditional_e4_exam.py — 条件化做T E4 考试执行件（T0-CONDITIONAL 卡 §6，frozen 判据）
 
-判据真源：docs/_working/t0_revival/t0_conditional_prereg_card.md（frozen）。本脚本只是卡的机械执行：
+判据真源：docs/_archive/_working_cleared/archive/2026-10/t0_revival/t0_conditional_prereg_card.md（frozen）。本脚本只是卡的机械执行：
 - 材料：bt-*.json trade_log，D=2026-09-09 后成交；配对=cost_trio 同规则。
 - 宏观门（PIT=T-1 交易日，asof ≤7 自然日容差）：vol_pct>0.700 或 dominant∈{r3,r12}。
 - 情绪门：丁线六段历史标签不存在（sentiment_panel 仅 fear_greed_index，异轴禁顶替）→ 单宏观门模式，
@@ -80,7 +80,9 @@ def emotion_gate_availability() -> tuple[bool, str]:
 
     # 锚定仓根（红蓝⑥：原为 CWD 相对路径，非仓根 cwd 下静默失查=fail-open，
     # 会让 v1 在"情绪门已可评"时又出单门 verdict，正是本守卫要防的事）
-    six_phase_truth = Path(__file__).resolve().parents[2] / "docs/_working/t0_matrix/six_phase_history_v1.csv"
+    six_phase_truth = (
+        Path(__file__).resolve().parents[2] / "docs/04_research_records/data/t0_matrix/six_phase_history_v1.csv"
+    )
     if six_phase_truth.exists():
         with six_phase_truth.open(encoding="utf-8") as fh:
             routed = sum(1 for r in csv.DictReader(fh) if r.get("routed") == "1")

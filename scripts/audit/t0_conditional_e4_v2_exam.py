@@ -1,11 +1,11 @@
-# [BLUEPRINT] SH-SCRIPT-001 | docs/_working/t0_matrix/t0_conditional_v2_prereg_card.md | §2 双门+§4 材料+§5 判据
+# [BLUEPRINT] SH-SCRIPT-001 | docs/04_research_records/data/t0_matrix/t0_conditional_v2_prereg_card.md | §2 双门+§4 材料+§5 判据
 # [MODULE] t0_conditional_e4_v2_exam（scripts 判据脚本；T0-CONDITIONAL-V2 预注册卡 §6 执行件）
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] scripts/audit/cost_trio_exam.py（配对判据 build_pairs 唯一真源，import 复用）；scripts/audit/t0_conditional_e4_exam.py（宏观门 t1_state/load_regime_states + 五态判定 _verdict_for，import 复用）；docs/_working/t0_matrix/six_phase_history_v1.csv（情绪门六段真源）；data/backtest_artifacts/bt-*.json（材料，绝对路径可指主区）
-# [CONSUMERS] Owner 复查窗；docs/_working/t0_matrix/t0_conditional_e4_v2_verdict.md（verdict 留档）；红蓝 PIT 断言
+# [DEPENDENCIES] scripts/audit/cost_trio_exam.py（配对判据 build_pairs 唯一真源，import 复用）；scripts/audit/t0_conditional_e4_exam.py（宏观门 t1_state/load_regime_states + 五态判定 _verdict_for，import 复用）；docs/04_research_records/data/t0_matrix/six_phase_history_v1.csv（情绪门六段真源）；data/backtest_artifacts/bt-*.json（材料，绝对路径可指主区）
+# [CONSUMERS] Owner 复查窗；docs/04_research_records/data/t0_matrix/t0_conditional_e4_v2_verdict.md（verdict 留档）；红蓝 PIT 断言
 # [STARTUP] manual（python scripts/audit/t0_conditional_e4_v2_exam.py --artifacts-dir <主区材料目录>）
 # [MATURITY] production（考试执行件，卡先行纪律：t0_conditional_v2_prereg_card.md frozen 先于本脚本取数）
-# [INVARIANTS] 判据全部来自 frozen 卡且**全部 import 自既有判据件**（配对/宏观门/五态判定零重写，禁克隆）；本件唯一新逻辑=材料合格性过滤（卡 §4.1 机械判据：str(timestamp)>10 才入样）与情绪门按日三态查表（allow/deny/unevaluable_day）；卡 §2.3 主考=双门均可评且均允许，unevaluable_day 配对单独入副考**禁并入主考**，禁当禁做段入对照；fail-closed：样本不足/门零命中落卡 §5 五态枚举，禁硬出；禁写 summary.json 到 data/strategy_intake（会污染 DSR 分母）；查库只读；产物只写 docs/_working/t0_matrix/（.yaml/.csv，禁 .json）；零状态变更
+# [INVARIANTS] 判据全部来自 frozen 卡且**全部 import 自既有判据件**（配对/宏观门/五态判定零重写，禁克隆）；本件唯一新逻辑=材料合格性过滤（卡 §4.1 机械判据：str(timestamp)>10 才入样）与情绪门按日三态查表（allow/deny/unevaluable_day）；卡 §2.3 主考=双门均可评且均允许，unevaluable_day 配对单独入副考**禁并入主考**，禁当禁做段入对照；fail-closed：样本不足/门零命中落卡 §5 五态枚举，禁硬出；禁写 summary.json 到 data/strategy_intake（会污染 DSR 分母）；查库只读；产物只写 docs/04_research_records/data/t0_matrix/（.yaml/.csv，禁 .json）；零状态变更
 # [MODIFY-GUARD] 本脚本改动=考试判据变更，须先改卡并作废重开（卡 frozen 纪律）
 # [STABILITY] stable
 # [SAFETY] L
@@ -15,7 +15,7 @@
 # [TTL] task_bound
 """t0_conditional_e4_v2_exam.py — 条件化做T E4 双门考试 V2（T0-CONDITIONAL-V2 卡 §6，frozen 判据）
 
-判据真源：docs/_working/t0_matrix/t0_conditional_v2_prereg_card.md（frozen）。
+判据真源：docs/04_research_records/data/t0_matrix/t0_conditional_v2_prereg_card.md（frozen）。
 与 v1 的唯一差异=材料窗（卡 §0 三条实测事实决定必须另立一卡）；假设、宏观门、情绪门词表、
 成本口径、四条土规全部逐字继承，且**函数级复用** v1/cost_trio 判据件，零重写。
 
@@ -42,7 +42,7 @@ import t0_conditional_e4_exam as v1  # 宏观门 + 五态判定复用（禁克�
 
 EXAM_START = "2026-06-01"  # 卡 §4.2 frozen（第三方 frozen 卡 t0_regime §3 考试段起点，非本卡新定）
 EMOTION_ALLOW = {"ignition", "expansion", "euphoria"}  # 卡 §2.2 frozen 允许集
-EMOTION_TRUTH = Path("docs/_working/t0_matrix/six_phase_history_v1.csv")
+EMOTION_TRUTH = Path("docs/04_research_records/data/t0_matrix/six_phase_history_v1.csv")
 
 
 def load_intraday_fills(artifacts_dir: Path) -> tuple[list[dict], dict]:
@@ -187,7 +187,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="条件化做T E4 双门考试 V2（T0-CONDITIONAL-V2 frozen 判据）")
     ap.add_argument("--artifacts-dir", default="data/backtest_artifacts")
     ap.add_argument("--emotion-truth", default=str(EMOTION_TRUTH))
-    ap.add_argument("--out-dir", default="docs/_working/t0_matrix")
+    ap.add_argument("--out-dir", default="docs/04_research_records/data/t0_matrix")
     args = ap.parse_args()
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -203,7 +203,7 @@ def main() -> int:
 
     verdict = v1._verdict_for(primary, True)  # 五态判定复用；主考=双门均可评 ⇒ emotion_ok=True 口径
     result = {
-        "card": "docs/_working/t0_matrix/t0_conditional_v2_prereg_card.md (frozen)",
+        "card": "docs/04_research_records/data/t0_matrix/t0_conditional_v2_prereg_card.md (frozen)",
         "mode": "dual_gate",
         "emotion_gate": {
             "available": True,

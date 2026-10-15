@@ -15,11 +15,11 @@
 # [TTL] permanent
 """D_BACKTEST — G-D 逐格统计引擎（共振矩阵每格四件套：样本／夏普／c*／DSR）。
 
-判据唯一真源=docs/_working/total_command_closeout/10_wave_plan.md 10.G-D 行
+判据唯一真源=docs/_archive/_working_cleared/total_command_closeout/10_wave_plan.md 10.G-D 行
 （★READY_NOT_FIRED：引擎+prereg 冻结+日频小样本冒烟通过即出口；不点火、结果
 不入账本、不作策略结论，正式跑推迟到波 12）。规格细读=ext_01_revised_construction_plan.md
 G-D.2/G-D.3 行。多重检验与滚动重考的学术口径采纳自案卷
-docs/_working/total_command_closeout/final_review_chartlib/dossier_academic_papers.md §四。
+docs/_archive/_working_cleared/total_command_closeout/final_review_chartlib/dossier_academic_papers.md §四。
 
 四件套口径（每格）：
 1. 样本数 n —— <30 判 INSUFFICIENT-N（单列，不作通过/拒绝判定）。

@@ -1,11 +1,11 @@
-# [BLUEPRINT] SH-SCRIPT-001 | docs/_working/t0_matrix/t0_conditional_v2_prereg_card.md | §2.2 情绪门数据源真源物化件
+# [BLUEPRINT] SH-SCRIPT-001 | docs/04_research_records/data/t0_matrix/t0_conditional_v2_prereg_card.md | §2.2 情绪门数据源真源物化件
 # [MODULE] t0_six_phase_materialize（scripts 判据轴物化件，非 src 包模块）
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] scripts/backtest/auto_mount.py（load_phase_panel/R2SIX/PHASE_PREEMPT，唯一相位真源，只导入禁复制）；c1_backtest.regime_snapshot_history（宏观腿，经 auto_mount._snapshot_rows 只读）；广度指数 399106 + EQW_ALLA 补位（微观腿，经 auto_mount._breadth_frame 只读）
 # [CONSUMERS] scripts/audit/t0_conditional_e4_v2_exam.py（E4 双门重考的情绪门）；data/strategy_intake/grid_t0_conditional_v1/（GPU 条件维输入包六段轴）；红蓝 PIT 断言
 # [STARTUP] manual（python scripts/audit/t0_six_phase_materialize.py）
 # [MATURITY] production（做 T 考试族的情绪轴真源件；本件零自定阈值——六段↔状态映射全部沿用 HEAD 内 auto_mount 法定件）
-# [INVARIANTS] 禁自造六段映射（唯一真源=auto_mount.R2SIX 宏观腿 + phase_overlay 微观腿 + resolve_six_phase 合成，本件只物化不重新定义）；查库只读零状态变更（不动 verdict/can_deploy/台账）；产物只写 --out-dir（默认 docs/_working/t0_matrix/，目录契约禁 .json）；输出必带 closed_book_ok 切点标记（2025-09-09，禁切点后数据参与判据选择）；PIT 尾日由 load_phase_panel 的 PIT_TAIL_LAG 剔除，本件禁再补值；routed=0 日（宏观态未映射 r1/r2 且无微观相位）six_phase 留空串，禁硬塞最近邻相位
+# [INVARIANTS] 禁自造六段映射（唯一真源=auto_mount.R2SIX 宏观腿 + phase_overlay 微观腿 + resolve_six_phase 合成，本件只物化不重新定义）；查库只读零状态变更（不动 verdict/can_deploy/台账）；产物只写 --out-dir（默认 docs/04_research_records/data/t0_matrix/，目录契约禁 .json）；输出必带 closed_book_ok 切点标记（2025-09-09，禁切点后数据参与判据选择）；PIT 尾日由 load_phase_panel 的 PIT_TAIL_LAG 剔除，本件禁再补值；routed=0 日（宏观态未映射 r1/r2 且无微观相位）six_phase 留空串，禁硬塞最近邻相位
 # [MODIFY-GUARD] 改动=考试情绪轴变更，须先改预注册卡并作废重开（卡 frozen 纪律）
 # [STABILITY] stable
 # [SAFETY] L
@@ -27,7 +27,7 @@
   （亢奋/退潮微观腿，全 trailing 窗无前视）+ resolve_six_phase（合成，PHASE_PREEMPT 优先）。
   本件即把该法定合成相位**物化为可复查的持久历史**，不新增任何阈值。
 
-用法：python scripts/audit/t0_six_phase_materialize.py [--start 2019-01-01] [--out-dir docs/_working/t0_matrix]
+用法：python scripts/audit/t0_six_phase_materialize.py [--start 2019-01-01] [--out-dir docs/04_research_records/data/t0_matrix]
 产物：six_phase_history_v1.csv（逐日）+ six_phase_history_v1.meta.yaml（provenance/覆盖/纪律）
 """
 
@@ -158,7 +158,7 @@ def build_meta(rows: list[dict], start: str, run_id: str | None = None) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser(description="TDM 六段情绪相位历史物化（做 T 双门前置）")
     ap.add_argument("--start", default="2019-01-01", help="下界（早于快照表首日 2019-04-01 自动受限）")
-    ap.add_argument("--out-dir", default="docs/_working/t0_matrix")
+    ap.add_argument("--out-dir", default="docs/04_research_records/data/t0_matrix")
     ap.add_argument(
         "--run-id",
         default=None,

@@ -1,11 +1,11 @@
-# [BLUEPRINT] SH-SCRIPT-001 | docs/_working/t0_matrix/t0_ceiling_prereg_card.md | §1 口径 + §2 判据（单向）
+# [BLUEPRINT] SH-SCRIPT-001 | docs/04_research_records/data/t0_matrix/t0_ceiling_prereg_card.md | §1 口径 + §2 判据（单向）
 # [MODULE] t0_ceiling_capacity_exam（scripts 判据脚本；T0-CEILING 预注册卡 §0-§2 执行件）
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] c1_market.kline_1min（价差上界，只读）；backtest_regime_state_anchored(逻辑品类)（T-1 波动/状态，只读）；docs/_working/t0_matrix/six_phase_history_v1.csv（T-1 六段，只读）
-# [CONSUMERS] docs/_working/t0_matrix/T0_SCHEME_MATRIX.md（R1③ 优先级排序）；周五 GPU 矩阵做T 维度取舍；Owner 复查窗
+# [DEPENDENCIES] c1_market.kline_1min（价差上界，只读）；backtest_regime_state_anchored(逻辑品类)（T-1 波动/状态，只读）；docs/04_research_records/data/t0_matrix/six_phase_history_v1.csv（T-1 六段，只读）
+# [CONSUMERS] docs/04_research_records/data/t0_matrix/T0_SCHEME_MATRIX.md（R1③ 优先级排序）；周五 GPU 矩阵做T 维度取舍；Owner 复查窗
 # [STARTUP] manual（python scripts/audit/t0_ceiling_capacity_exam.py）
 # [MATURITY] production（容量上界考试件，卡先行纪律：t0_ceiling_prereg_card.md frozen 先于本脚本取数）
-# [INVARIANTS] **单向判读**：上界<成本 ⇒ 该组内先买后卖族整族判死；上界≥成本 ⇒ 不证明任何方法可用，禁写成 PASS/通过（卡 §0 是本卡唯一允许的推断方向）；判线 31.2/61.2bp 全继承 CST-T0-001 与 frozen 卡，本件零自定阈值；状态轴一律 PIT=T-1（禁同日，7 自然日容差），不可评日单独成组禁并入允许组；kline_1min 是 ReplacingMergeTree 且未 FINAL 时约 1.74× 重复 ⇒ bar 计数必用 uniqExact(trade_time) 禁 count()（否则把不可交易日误判为可交易）；不修正涨跌停可成交性（不修正使上界更大=偏向不杀=与单向判读一致）；查库只读零状态变更；产物只写 docs/_working/t0_matrix/（.yaml/.csv 禁 .json）
+# [INVARIANTS] **单向判读**：上界<成本 ⇒ 该组内先买后卖族整族判死；上界≥成本 ⇒ 不证明任何方法可用，禁写成 PASS/通过（卡 §0 是本卡唯一允许的推断方向）；判线 31.2/61.2bp 全继承 CST-T0-001 与 frozen 卡，本件零自定阈值；状态轴一律 PIT=T-1（禁同日，7 自然日容差），不可评日单独成组禁并入允许组；kline_1min 是 ReplacingMergeTree 且未 FINAL 时约 1.74× 重复 ⇒ bar 计数必用 uniqExact(trade_time) 禁 count()（否则把不可交易日误判为可交易）；不修正涨跌停可成交性（不修正使上界更大=偏向不杀=与单向判读一致）；查库只读零状态变更；产物只写 docs/04_research_records/data/t0_matrix/（.yaml/.csv 禁 .json）
 # [MODIFY-GUARD] 本脚本改动=容量考试判据变更，须先改卡并作废重开（卡 frozen 纪律）
 # [STABILITY] stable
 # [SAFETY] L
@@ -37,7 +37,7 @@ import t0_gpu_condition_pack as gp  # vol 三桶边界唯一真源（VOL_B3，�
 EMOTION_ALLOW = {"ignition", "expansion", "euphoria"}  # T0-CONDITIONAL 卡 §2.2 frozen 允许集（引用）
 
 REPO = Path(__file__).resolve().parents[2]
-SIX_TRUTH = REPO / "docs/_working/t0_matrix/six_phase_history_v1.csv"
+SIX_TRUTH = REPO / "docs/04_research_records/data/t0_matrix/six_phase_history_v1.csv"
 CEILING_START = "2021-09-01"  # 分钟腿起点（卡 §1，禁扩）
 CLOSED_BOOK_START = "2019-01-04"  # 与 GPU 包同闭卷窗，用于两包互验
 CLOSED_BOOK_CUTOFF = "2025-09-09"
@@ -224,7 +224,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="做T 日内价差上界容量考试（T0-CEILING frozen）")
     ap.add_argument("--start", default=CEILING_START)
     ap.add_argument("--end", default="2026-09-23")
-    ap.add_argument("--out-dir", default="docs/_working/t0_matrix")
+    ap.add_argument("--out-dir", default="docs/04_research_records/data/t0_matrix")
     args = ap.parse_args()
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -243,7 +243,7 @@ def main() -> int:
     groups = build_groups(enriched)
 
     result = {
-        "card": "docs/_working/t0_matrix/t0_ceiling_prereg_card.md (frozen)",
+        "card": "docs/04_research_records/data/t0_matrix/t0_ceiling_prereg_card.md (frozen)",
         "reading_rule": "单向：上界<成本 ⇒ 该组先买后卖族整族判死；上界≥成本 ⇒ 不证明任何方法可用（禁读成通过）",
         "cost_lines": {
             "L1_cover_cost_bp": L1_BP,

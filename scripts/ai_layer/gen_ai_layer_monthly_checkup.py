@@ -19,7 +19,7 @@
 #              考尺（定调 11）：每条 proposal 必答进化两问 better_than/labor_killed，缺一拒收;
 #              数据诚实：PG 不可达/数据源未集中登记→显式 null+注记（不虚构精度）;
 #              产出落 checkups/YYYY-MM.md+同名 .json（docs 双轨人读+机读），测试传 tmp_path 注入
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/L1_perceive/DESIGN.md §2.6（建议书 schema）
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/L1_perceive/DESIGN.md §2.6（建议书 schema）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -31,7 +31,7 @@
 #         markdown 渲染含 Owner 一键确认段/落盘 md+json 双件/PG 不可达 kpi=None 注记）
 """gen_ai_layer_monthly_checkup — AI 层骨架月度建议书生成器（施工项 8，DESIGN §2.6）。
 
-设计真源：``docs/_working/ai_layer_vision/L1_perceive/DESIGN.md`` §2.6。
+设计真源：``docs/_archive/_working_cleared/ai_layer_vision/L1_perceive/DESIGN.md`` §2.6。
 产出四段：kpi_summary（V3 入考率+配额+任务单受阻）/ vein_coverage（矿脉清单读数）/
 detector_digest（五通道月度聚合）/ proposals[]（血肉/骨架分流+进化两问+骨架级 Owner 一键确认）。
 
@@ -90,9 +90,7 @@ def validate_proposal(raw: dict[str, Any], index: int) -> None:
     if level not in PROPOSAL_LEVELS:
         raise ValueError(f"proposals[{index}] level 非法: {level}（白名单={sorted(PROPOSAL_LEVELS)}）")
     if level == "skeleton" and not (raw.get("options") or []):
-        raise ValueError(
-            f"proposals[{index}] 骨架级必须附现成 options（Owner 一键确认接口，§2.6）"
-        )
+        raise ValueError(f"proposals[{index}] 骨架级必须附现成 options（Owner 一键确认接口，§2.6）")
     if "auto_executable" in raw and not isinstance(raw["auto_executable"], bool):
         raise ValueError(f"proposals[{index}] auto_executable 必须为 bool")
 
@@ -243,16 +241,16 @@ def collect_kpi_summary(
             from zephyr.infrastructure.database_service import get_depgraph_pg_connection
 
             conn = get_depgraph_pg_connection(read_only=True)
-        except Exception:  # noqa: BLE001——体检 fail-open，PG 缺席不炸
+        except Exception:  # noqa: BLE001  体检 fail-open，PG 缺席不炸
             conn = None
     if conn is not None:
         try:
             with conn.cursor() as cur:
                 cur.execute(f"SELECT * FROM {schema}.ai_intake_kpi_weekly ORDER BY week_start DESC LIMIT 60")  # noqa: bare-sql  bare-sql豁免: P1存量伪新增,域内SQL集中通道,§5.160.2专项另列
                 columns = [d[0] for d in cur.description]
-                weekly_rows = [_json_safe_row(dict(zip(columns, row))) for row in cur.fetchall()]
+                weekly_rows = [_json_safe_row(dict(zip(columns, row))) for row in cur.fetchall()]  # noqa: B905  存量代码行零语义过门（X2断链改指车道）
             kpi_note = "V3 ai_intake_kpi_weekly 最近 60 行"
-        except Exception as exc:  # noqa: BLE001——视图缺席/权限问题不炸体检
+        except Exception as exc:  # noqa: BLE001  视图缺席/权限问题不炸体检
             kpi_note = f"V3 读取失败（{type(exc).__name__}），如实留空"
     stats = collect_order_stats(journal or SearchOrderJournal(ORDERS_DIR))
     return {
@@ -329,9 +327,15 @@ def write_outputs(report: dict[str, Any], out_dir: Path) -> tuple[Path, Path]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="AI 层骨架月度建议书生成器（人工点火）")
     parser.add_argument("--period", required=True, help="体检期（YYYY-MM）")
-    parser.add_argument("--out-dir", default=None, help="产出目录（默认 docs/_working/ai_layer_vision/L1_perceive/checkups）")
+    parser.add_argument(
+        "--out-dir",
+        default=None,
+        help="产出目录（默认 docs/_archive/_working_cleared/ai_layer_vision/L1_perceive/checkups）",
+    )
     parser.add_argument("--veins", default=None, help="矿脉清单路径（默认 config/ai_search_veins.yaml）")
-    parser.add_argument("--commit-events", default=None, help="堵点本路径（默认 .runtime/audit/commit_block_events.jsonl）")
+    parser.add_argument(
+        "--commit-events", default=None, help="堵点本路径（默认 .runtime/audit/commit_block_events.jsonl）"
+    )
     parser.add_argument("--registry", default=None, help="源注册表路径（默认 config/ai_source_registry.yaml）")
     parser.add_argument("--proposal", action="append", default=[], help="proposal JSON 文件路径（可多次）")
     parser.add_argument("--dry-run", action="store_true", help="只打印路由不落盘")
@@ -342,9 +346,7 @@ def main(argv: list[str] | None = None) -> int:
         for path in args.proposal:
             proposals.extend(json.loads(Path(path).read_text(encoding="utf-8")))
         veins_path = Path(args.veins) if args.veins else REPO_VEINS_PATH
-        commit_path = (
-            Path(args.commit_events) if args.commit_events else REPO_COMMIT_EVENTS_PATH
-        )
+        commit_path = Path(args.commit_events) if args.commit_events else REPO_COMMIT_EVENTS_PATH
         report = build_report(
             args.period,
             proposals=proposals,
@@ -362,7 +364,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"机读副本: {json_path}")
         print(json.dumps(report["routing"], ensure_ascii=False, indent=1))
         return EXIT_OK
-    except Exception as exc:  # noqa: BLE001——CLI 边界统一 fail-closed 退出码 2
+    except Exception as exc:  # noqa: BLE001  CLI 边界统一 fail-closed 退出码 2
         print(f"ERROR {type(exc).__name__}: {exc}", file=sys.stderr)
         return EXIT_ERROR
 

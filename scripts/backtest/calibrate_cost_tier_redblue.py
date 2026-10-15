@@ -2,7 +2,7 @@
 # [MODULE] scripts.backtest.calibrate_cost_tier_redblue
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] scripts.backtest.factory_grid_executor; scripts.backtest.translated._c4_engine; zephyr.backtest.regime_validation.exam_cost_gate
-# [CONSUMERS] docs/_working/decision_map_campaign_20260924/03_gpu_campaign.md §三.4（GPU 空窗由总指挥人工触发）；单测钉扎=tests/backtest/test_factory_grid_stage_cost_tiers.py
+# [CONSUMERS] docs/_archive/_working_cleared/decision_map_campaign_20260924/03_gpu_campaign.md §三.4（GPU 空窗由总指挥人工触发）；单测钉扎=tests/backtest/test_factory_grid_stage_cost_tiers.py
 # [STARTUP] manual
 # [MATURITY] experimental
 # [INVARIANTS] 纯标定报告零门禁判定（本件禁当闸用——门=exam_cost_gate 三门）；全档真源=config/exam_scale_cost_gate.yaml（禁双头硬编码）；同格对拍=参考 run manifest 逐格复算，轻/全档指标由同一次五档扫描派生（档位扫描引擎口径唯一=daily_net_returns slippage_bp kwarg，禁二次回测）；零写操作（报告只落 .runtime/tmp/，禁触 data/ 生产路径）
@@ -16,7 +16,7 @@
 # [A_module] module_id=MOD-BT-196-RB | layer=script | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 """红蓝对拍标定脚本——T1 轻档两档 vs 全档五档成本粗筛排名一致性（方案①两轮制）。
 
-背景: docs/_working/decision_map_campaign_20260924/03_gpu_campaign.md §三.4——方案①
+背景: docs/_archive/_working_cleared/decision_map_campaign_20260924/03_gpu_campaign.md §三.4——方案①
 （裁定#413 下一窗口升级案，Owner 2026-09-24 原则批准）以 T1=[0,5] 两档轻档粗筛、
 T2 全五档终审，容量 4640→9600。历史基准: 轻/全档排名 Spearman≈1.0、top50 重合
 50/50（信息近零损失）。本脚本在同一批格点上复算两套指标，输出:

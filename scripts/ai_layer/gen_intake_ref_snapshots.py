@@ -10,7 +10,7 @@
 #              统计排除 worktree 副本(.aidrafts/ .worktrees/)与 __pycache__，否则计数放大约 33 倍;
 #              L7 面不在本生成器职责内（L7 落地后由其自有生成器写 ref_family='L7'）;
 #              禁读 ai_intake 以外库表，禁写产线注册表（生熟分离）
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md §2.2 T4 / §2.3 比对面
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/L2_intake_library/DESIGN.md §2.2 T4 / §2.3 比对面
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -21,7 +21,7 @@
 # [TTL] permanent
 """gen_intake_ref_snapshots — L2 比对面快照生成器（T4 `ai_intake_ref_snapshot`）。
 
-设计真源：``docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md`` §2.2 T4 / §2.3 比对面。
+设计真源：``docs/_archive/_working_cleared/ai_layer_vision/L2_intake_library/DESIGN.md`` §2.2 T4 / §2.3 比对面。
 
 三个面（第 5 面 L7 由 L7 段自有生成器负责，本器不越权）::
 
@@ -133,11 +133,7 @@ def collect_indicator() -> list[tuple[str, str]]:
 
 def iter_source_files() -> list[Path]:
     """列 src 下全部 .py（排除 worktree 副本与缓存目录）。"""
-    return sorted(
-        p
-        for p in SRC_ROOT.rglob("*.py")
-        if not (EXCLUDED_PARTS & set(p.parts))
-    )
+    return sorted(p for p in SRC_ROOT.rglob("*.py") if not (EXCLUDED_PARTS & set(p.parts)))
 
 
 def collect_algo_flow(limit: int = 0) -> list[tuple[str, str]]:
@@ -177,8 +173,9 @@ def build_family(family: str, limit: int = 0) -> tuple[list[tuple[str, str]], in
     return rows, 0
 
 
-def refresh(families: tuple[str, ...], *, schema: str = "ai_intake", dry_run: bool = False,
-            limit: int = 0) -> dict[str, Any]:
+def refresh(
+    families: tuple[str, ...], *, schema: str = "ai_intake", dry_run: bool = False, limit: int = 0
+) -> dict[str, Any]:
     """刷新指定面（幂等 upsert）。dry_run=True 时只算指纹零写入。"""
     dedup = IntakeDedup(schema=schema)
     summary: dict[str, Any] = {"dry_run": dry_run, "schema": schema, "families": {}}
@@ -211,7 +208,7 @@ def main(argv: list[str] | None = None) -> int:
     except (FileNotFoundError, ValueError) as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)
         return 2
-    except Exception as exc:  # noqa: BLE001——CLI 边界统一转退出码 2
+    except Exception as exc:  # noqa: BLE001  CLI 边界统一转退出码 2
         print(f"GEN FAILED: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
     print("SNAPSHOT SUMMARY:", summary)

@@ -20,7 +20,7 @@
   A. 表级覆盖矩阵: 协议窗口族 × 核心表 (kline_daily_hfq/kline_index/stock_indicator/
      stk_limit/index_constituent/regime_snapshot_history/financial_derived)
   B. 策略级面板冒烟: E4 存活 17 条 c4 翻译件 build(start,end) 逐窗口实测
-输出: docs/_working/integrated_backtest/ibt_data_matrix.yaml (+stdout md 表)
+输出: docs/04_research_records/cross_domain/integrated_backtest/ibt_data_matrix.yaml (+stdout md 表)
 用法: python scripts/backtest/ibt/ibt_mining_matrix.py
 """
 

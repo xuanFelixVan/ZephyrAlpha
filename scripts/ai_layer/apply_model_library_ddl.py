@@ -6,7 +6,7 @@
 #             M2 写入方（模型入库器/评分回写器/牌价时序写入=后续批）；tests/ai_layer/test_model_library_ddl.py
 # [STARTUP] manual
 # [MATURITY] new
-# [INVARIANTS] DDL-as-Code: ai_layer_model 三表 DDL 真源即本文件（设计真源=docs/_working/ai_layer_vision/OBJ_M_models/DESIGN.md §3.1-§3.2）;
+# [INVARIANTS] DDL-as-Code: ai_layer_model 三表 DDL 真源即本文件（设计真源=docs/_archive/_working_cleared/ai_layer_vision/OBJ_M_models/DESIGN.md §3.1-§3.2）;
 #              全部幂等(CREATE SCHEMA/TABLE/INDEX IF NOT EXISTS); 时间戳一律 TIMESTAMPTZ(RULE-SCHEMA-TZ 同义执行);
 #              生熟分离=未过四闸的情报禁入 model_registry（写入方责任，DB 层不做闸判定）;
 #              provider 前缀须在 model_routing_policy.yaml 词表内（写入方责任，DB 层不硬编码词表）;
@@ -14,7 +14,7 @@
 #              牌价数值真源=config/model_pricing.yaml, model_registry.input_price 等列只是缓存视图(D-M2-01 SSOT 分界);
 #              schema 名必须匹配 ^ai_layer_model(_test_[a-z0-9_]+)?$ (fail-closed, 防 DROP/CREATE 打偏);
 #              DROP 仅在 --drop-test-schema 且 schema 以 ai_layer_model_test_ 前缀时允许(测试残留清理专用)
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/OBJ_M_models/DESIGN.md §3.2（改表结构先改设计稿）
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/OBJ_M_models/DESIGN.md §3.2（改表结构先改设计稿）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -24,7 +24,7 @@
 # [TTL] permanent
 """AI 层 OBJ_M M2——模型库三表 DDL 部署器（PostgreSQL depgraph 同实例，schema `ai_layer_model`）。
 
-设计真源：``docs/_working/ai_layer_vision/OBJ_M_models/DESIGN.md`` §3.1-§3.3（三表+双轴打分口径）。
+设计真源：``docs/_archive/_working_cleared/ai_layer_vision/OBJ_M_models/DESIGN.md`` §3.1-§3.3（三表+双轴打分口径）。
 照 ``scripts/ai_layer/apply_ai_intake_ddl.py`` 模式实现（admin 通道 + 幂等 + 角色分级 GRANT）。
 
 表清单::
@@ -152,9 +152,7 @@ _SQL_GRANT_WRITER_SEQ_PROMO: Final[str] = (
     "GRANT USAGE, SELECT ON SEQUENCE {s}.model_promo_history_id_seq TO depgraph_writer"
 )
 _SQL_GRANT_READER_TABLE: Final[str] = "GRANT SELECT ON {s}.{t} TO depgraph_reader"
-_SQL_GRANT_WRITER_TABLE: Final[str] = (
-    "GRANT SELECT, INSERT, UPDATE, DELETE ON {s}.{t} TO depgraph_writer"
-)
+_SQL_GRANT_WRITER_TABLE: Final[str] = "GRANT SELECT, INSERT, UPDATE, DELETE ON {s}.{t} TO depgraph_writer"
 
 
 def _ddl_statements(schema: str) -> list[str]:
@@ -220,7 +218,7 @@ def deploy(schema: str = DEFAULT_SCHEMA, *, conn: Any | None = None) -> dict[str
                 cur.execute(stmt)
                 counts["grant"] += 1
                 cur.execute("RELEASE SAVEPOINT sp_grant")
-            except Exception as exc:  # noqa: BLE001——授权失败不阻断 DDL 主体，warning 留痕
+            except Exception as exc:  # noqa: BLE001  授权失败不阻断 DDL 主体，warning 留痕
                 log.warning("GRANT 跳过：%s", exc)
                 cur.execute("ROLLBACK TO SAVEPOINT sp_grant")
         conn.commit()
@@ -253,9 +251,7 @@ SQL_VERIFY_TABLES = (
 SQL_VERIFY_INDEXES = "SELECT indexname FROM pg_indexes WHERE schemaname = %s ORDER BY indexname"
 # 序列核对走 pg_sequences（目录表全量可见）；information_schema.sequences 只显示当前角色
 # 持权的序列，只读连接角色对序列无授权时会假报缺失。
-SQL_VERIFY_SEQUENCES = (
-    "SELECT sequencename FROM pg_sequences WHERE schemaname = %s ORDER BY sequencename"
-)
+SQL_VERIFY_SEQUENCES = "SELECT sequencename FROM pg_sequences WHERE schemaname = %s ORDER BY sequencename"
 
 
 def verify(schema: str = DEFAULT_SCHEMA) -> tuple[bool, list[str]]:
@@ -319,7 +315,7 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)
         return 2
-    except Exception as exc:  # noqa: BLE001——CLI 边界统一转退出码 2（PG 不可达/权限不足等）
+    except Exception as exc:  # noqa: BLE001  CLI 边界统一转退出码 2（PG 不可达/权限不足等）
         print(f"DDL FAILED: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
 

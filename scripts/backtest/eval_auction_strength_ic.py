@@ -29,7 +29,7 @@
 
     python scripts/backtest/eval_auction_strength_ic.py \
         --start 2026-07-21 --end 2026-09-26 \
-        --out-dir docs/_working/night_sweep/sw14_auction_ic_evidence
+        --out-dir docs/_archive/_working_cleared/night_sweep/sw14_auction_ic_evidence
 """
 
 from __future__ import annotations
@@ -138,7 +138,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="竞价强度因子 IC 取证（CNS-11 验收面）")
     ap.add_argument("--start", required=True, help="窗口起（显式传参，禁内建时钟）")
     ap.add_argument("--end", required=True, help="窗口止")
-    ap.add_argument("--out-dir", default="docs/_working/night_sweep/sw14_auction_ic_evidence")
+    ap.add_argument("--out-dir", default="docs/_archive/_working_cleared/night_sweep/sw14_auction_ic_evidence")
     ap.add_argument("--min-cross-section", type=int, default=None)
     args = ap.parse_args(argv)
     global _MIN_CROSS_SECTION  # noqa: PLW0603 — CLI 覆盖证尺阈值（取证披露位，非判据变更）

@@ -6,14 +6,14 @@
 #             tests/ai_layer/heritage/test_heritage_ddl.py（临时 schema 部署）
 # [STARTUP] manual
 # [MATURITY] new
-# [INVARIANTS] DDL-as-Code: ai_heritage 四表五视图 DDL 真源即本文件（设计真源=docs/_working/ai_layer_vision/L7_heredity/DESIGN.md §2.3）;
+# [INVARIANTS] DDL-as-Code: ai_heritage 四表五视图 DDL 真源即本文件（设计真源=docs/_archive/_working_cleared/ai_layer_vision/L7_heredity/DESIGN.md §2.3）;
 #              全部幂等(CREATE SCHEMA/TABLE/INDEX IF NOT EXISTS + CREATE OR REPLACE VIEW); 时间戳一律 TIMESTAMPTZ(RULE-SCHEMA-TZ 同义执行);
 #              生熟分界再分内外：ai_intake=生食库/ai_heritage=自家经验库，schema 级隔离独立演进(DESIGN §2.2 ④);
 #              零物理删除语义：本件无 DROP TABLE/DROP COLUMN，唯 DROP TEST SCHEMA 限 ai_heritage_test_ 前缀(DESIGN §2.8 删除红线);
 #              CHECK 值域与 DESIGN §2.3/§2.5 一致：entry_kind 三类/source_kind 八通道/status 四态/surface 五族/
 #              venue 五考场/机制族 8 族(词表锚=L2 apply_ai_intake_ddl MECHANISM_FAMILIES 同值);
 #              schema 名必须匹配 ^ai_heritage(_test_[a-z0-9_]+)?$（fail-closed, 防 DDL/DROP 打偏）
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/L7_heredity/DESIGN.md §2.3（改表结构先改设计稿）
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/L7_heredity/DESIGN.md §2.3（改表结构先改设计稿）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -23,7 +23,7 @@
 # [TTL] permanent
 """AI 层 L7 传承段——传承库 DDL 部署器（PostgreSQL depgraph 同实例，schema `ai_heritage`）。
 
-设计真源：``docs/_working/ai_layer_vision/L7_heredity/DESIGN.md`` §2.3（四表五视图，三类条目统一登记）。
+设计真源：``docs/_archive/_working_cleared/ai_layer_vision/L7_heredity/DESIGN.md`` §2.3（四表五视图，三类条目统一登记）。
 照 ``scripts/ai_layer/apply_ai_intake_ddl.py`` 模式实现（幂等 + 角色分级 GRANT + 白名单 schema）。
 
 表/视图清单::
@@ -59,7 +59,7 @@ from typing import Any, Final
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402,I001
 from zephyr.governance.depgraph_schema import (  # noqa: E402
     deploy_schema as _deploy_schema_engine,
     drop_test_schema as _drop_test_schema_engine,
@@ -279,8 +279,7 @@ def check_schema_name(schema: str) -> str:
     """schema 名白名单校验（fail-closed：不合规直接 ValueError，绝不静默改名）。"""
     if not SCHEMA_RE.match(schema or ""):
         raise ValueError(
-            f"schema 名不合规：{schema!r}（只许 ai_heritage 或 ai_heritage_test_<后缀>，"
-            "防 DDL/DROP 打偏到他人 schema）"
+            f"schema 名不合规：{schema!r}（只许 ai_heritage 或 ai_heritage_test_<后缀>，防 DDL/DROP 打偏到他人 schema）"
         )
     return schema
 
@@ -306,13 +305,15 @@ def _ddl_statements(schema: str) -> list[str]:
         _SQL_DEFECT.format(**fmt),
     ]
     out.extend(tpl.format(**fmt) for tpl in _SQL_INDEXES)
-    out.extend([
-        _SQL_VIEW_ELITES_ACTIVE.format(**fmt),
-        _SQL_VIEW_DEFECT_HOT.format(**fmt),
-        _SQL_VIEW_L1_PRIOR.format(**fmt),
-        _SQL_VIEW_L1_EXCLUSION.format(**fmt),
-        _SQL_VIEW_KPI.format(**fmt),
-    ])
+    out.extend(
+        [
+            _SQL_VIEW_ELITES_ACTIVE.format(**fmt),
+            _SQL_VIEW_DEFECT_HOT.format(**fmt),
+            _SQL_VIEW_L1_PRIOR.format(**fmt),
+            _SQL_VIEW_L1_EXCLUSION.format(**fmt),
+            _SQL_VIEW_KPI.format(**fmt),
+        ]
+    )
     return out
 
 
@@ -336,9 +337,7 @@ def _grant_statements(schema: str) -> list[str]:
         f"GRANT USAGE ON SCHEMA {schema} TO depgraph_writer",
     ]
     out.extend(f"GRANT SELECT ON {schema}.{t} TO depgraph_reader" for t in tables + views)
-    out.extend(
-        f"GRANT SELECT, INSERT, UPDATE, DELETE ON {schema}.{t} TO depgraph_writer" for t in tables
-    )
+    out.extend(f"GRANT SELECT, INSERT, UPDATE, DELETE ON {schema}.{t} TO depgraph_writer" for t in tables)
     return out
 
 
@@ -356,8 +355,7 @@ EXPECTED_VIEWS: Final[tuple[str, ...]] = (
     "ai_heritage_kpi",
 )
 SQL_VERIFY_RELATIONS = (
-    "SELECT table_name, table_type FROM information_schema.tables "
-    "WHERE table_schema = %s ORDER BY table_name"
+    "SELECT table_name, table_type FROM information_schema.tables WHERE table_schema = %s ORDER BY table_name"
 )
 
 
@@ -409,7 +407,7 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)
         return 2
-    except Exception as exc:  # noqa: BLE001——CLI 边界统一转退出码 2（PG 不可达/权限不足等）
+    except Exception as exc:  # noqa: BLE001  CLI 边界统一转退出码 2（PG 不可达/权限不足等）
         print(f"DDL FAILED: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
 

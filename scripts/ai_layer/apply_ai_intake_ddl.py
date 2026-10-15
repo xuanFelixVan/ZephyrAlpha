@@ -5,12 +5,12 @@
 # [CONSUMERS] CLI python scripts/ai_layer/apply_ai_intake_ddl.py [--schema ai_intake] [--verify]; ★ 测试侧消费者 test_card_store.py 未建（在册缺口，见 lanes/aibase_relay.md §6）
 # [STARTUP] manual
 # [MATURITY] evolving
-# [INVARIANTS] DDL-as-Code: ai_intake 五表三视图 DDL 真源即本文件（设计真源=docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md §2.2）;
+# [INVARIANTS] DDL-as-Code: ai_intake 五表三视图 DDL 真源即本文件（设计真源=docs/_archive/_working_cleared/ai_layer_vision/L2_intake_library/DESIGN.md §2.2）;
 #              全部幂等(CREATE SCHEMA/TABLE/INDEX IF NOT EXISTS + CREATE OR REPLACE VIEW); 时间戳一律 TIMESTAMPTZ(RULE-SCHEMA-TZ 同义执行);
 #              生熟分离物理边界=schema 级隔离(ai_intake.* 是生食库, 产线代码禁读);
 #              schema 名必须匹配 ^[a-z_][a-z0-9_]*$ 且以 ai_intake 开头(fail-closed, 防 DROP/CREATE 打偏);
 #              DROP 仅在 --drop-test-schema 且 schema 以 ai_intake_test_ 前缀时允许(测试残留清理专用)
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md §2.2（改表结构先改设计稿）
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/L2_intake_library/DESIGN.md §2.2（改表结构先改设计稿）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -19,7 +19,7 @@
 # [TTL] permanent
 """AI 层 L2 收集段——原材料库 DDL 部署器（PostgreSQL depgraph 同实例，schema `ai_intake`）。
 
-设计真源：``docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md`` §2.2（五表三视图）。
+设计真源：``docs/_archive/_working_cleared/ai_layer_vision/L2_intake_library/DESIGN.md`` §2.2（五表三视图）。
 照 ``scripts/industry_graph/apply_industry_graph_ddl.py`` 模式实现（admin 通道 + 幂等 + 角色分级 GRANT）。
 
 表清单::
@@ -55,10 +55,14 @@ from typing import Any, Final
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 from zephyr.governance.depgraph_schema import (  # noqa: E402
     deploy_schema as _deploy_schema_engine,
+)
+from zephyr.governance.depgraph_schema import (
     drop_test_schema as _drop_test_schema_engine,
+)
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
+from zephyr.governance.depgraph_schema import (
     q_list as _q_list,
 )
 
@@ -303,8 +307,7 @@ GROUP BY 1, 2
 
 # 域字典 v0 种子（T1 数据；{s} 由 check_schema_name 白名单校验后渲染）
 SQL_SEED_DOMAIN = (
-    "INSERT INTO {s}.ai_intake_domain (domain_id, name_zh, note) "
-    "VALUES (%s, %s, %s) ON CONFLICT (domain_id) DO NOTHING"
+    "INSERT INTO {s}.ai_intake_domain (domain_id, name_zh, note) VALUES (%s, %s, %s) ON CONFLICT (domain_id) DO NOTHING"
 )
 
 
@@ -328,11 +331,13 @@ def _ddl_statements(schema: str) -> list[str]:
     out.append(_SQL_CLEANING_SPEC.format(**fmt))
     out.extend(tpl.format(**fmt) for tpl in _SQL_INDEXES)
     out.extend(tpl.format(**fmt) for tpl in _SQL_CLEANING_INDEXES)
-    out.extend([
-        _SQL_VIEW_ELITES.format(**fmt),
-        _SQL_VIEW_NEGATIVE.format(**fmt),
-        _SQL_VIEW_KPI.format(**fmt),
-    ])
+    out.extend(
+        [
+            _SQL_VIEW_ELITES.format(**fmt),
+            _SQL_VIEW_NEGATIVE.format(**fmt),
+            _SQL_VIEW_KPI.format(**fmt),
+        ]
+    )
     return out
 
 
@@ -363,9 +368,7 @@ def _grant_statements(schema: str) -> list[str]:
         f"GRANT USAGE, SELECT ON SEQUENCE {schema}.ai_intake_ref_snapshot_snapshot_id_seq TO depgraph_writer",
     ]
     out.extend(f"GRANT SELECT ON {schema}.{t} TO depgraph_reader" for t in tables + views)
-    out.extend(
-        f"GRANT SELECT, INSERT, UPDATE, DELETE ON {schema}.{t} TO depgraph_writer" for t in tables
-    )
+    out.extend(f"GRANT SELECT, INSERT, UPDATE, DELETE ON {schema}.{t} TO depgraph_writer" for t in tables)
     return out
 
 
@@ -373,8 +376,7 @@ def check_schema_name(schema: str) -> str:
     """schema 名白名单校验（fail-closed：不合规直接 ValueError，绝不静默改名）。"""
     if not SCHEMA_RE.match(schema or ""):
         raise ValueError(
-            f"schema 名不合规：{schema!r}（只许 ai_intake 或 ai_intake_test_<后缀>，"
-            "防 DDL/DROP 打偏到他人 schema）"
+            f"schema 名不合规：{schema!r}（只许 ai_intake 或 ai_intake_test_<后缀>，防 DDL/DROP 打偏到他人 schema）"
         )
     return schema
 
@@ -397,8 +399,7 @@ EXPECTED_VIEWS: Final[tuple[str, ...]] = (
     "ai_intake_kpi_weekly",
 )
 SQL_VERIFY_RELATIONS = (
-    "SELECT table_name, table_type FROM information_schema.tables "
-    "WHERE table_schema = %s ORDER BY table_name"
+    "SELECT table_name, table_type FROM information_schema.tables WHERE table_schema = %s ORDER BY table_name"
 )
 SQL_VERIFY_GENERATED_COL = (
     "SELECT column_name, is_generated FROM information_schema.columns "
@@ -457,7 +458,7 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)
         return 2
-    except Exception as exc:  # noqa: BLE001——CLI 边界统一转退出码 2（PG 不可达/权限不足等）
+    except Exception as exc:  # noqa: BLE001  CLI 边界统一转退出码 2（PG 不可达/权限不足等）
         print(f"DDL FAILED: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
 

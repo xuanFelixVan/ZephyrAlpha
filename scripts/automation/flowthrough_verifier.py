@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-AUTO-L3-003 | docs/_working/fullflow_campaign/FLOWTHROUGH_ACCEPTANCE_SPEC.md | §1-§4
+# [BLUEPRINT] MOD-AUTO-L3-003 | docs/_archive/_working_cleared/fullflow_campaign/FLOWTHROUGH_ACCEPTANCE_SPEC.md | §1-§4
 # [MODULE] scripts.automation.flowthrough_verifier
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.utils.time_utils; zephyr.data.ch_reader（惰性）;
@@ -28,7 +28,7 @@
 #   scripts/automation/source_card_drafter.py 撞号（ARCH-034 唯一性），本批改取号；docs/03_modules 解冻后按注册表重编
 """flowthrough_verifier — 全流通验收仪（把"通了没有"变成可机检命题）。
 
-判据真源 = docs/_working/fullflow_campaign/FLOWTHROUGH_ACCEPTANCE_SPEC.md：
+判据真源 = docs/_archive/_working_cleared/fullflow_campaign/FLOWTHROUGH_ACCEPTANCE_SPEC.md：
   §1 六向台账（①入口有料 ②转化能跑 ③出口有货 ④下游能取 ⑤哨兵在岗 ⑥失败会响）
   §2 自审闸三态（绿/黄/红 + 黄-门位）→ 本件只出**建议**，裁定权在总包
   §3.4 灌水试验的"能红"证明 → --prove-red
@@ -56,6 +56,7 @@ R-024 修复批（verifier2 接力）三件核心变化：
 一并误删（13 个未定义名、8 件测试红）——本批按 commit_queue 死件 blob 原样回填该块，
 保留其 ROOR 反查改造。故 ①ROOR 反查=verifier2 所写，②被误删常量块=verifier3 回填。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -65,7 +66,7 @@ import json
 import re
 import sys
 import time
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Final
 
@@ -150,24 +151,30 @@ SINK_HINT_RE: Final[re.Pattern[str]] = re.compile(r"(insert|write|save|dump|upse
 CONSUMER_HEADER_RE: Final[re.Pattern[str]] = re.compile(r"^#\s*\[CONSUMERS\]\s*(.*)$")
 SKIP_RUN_RE: Final[re.Pattern[str]] = re.compile(
     r"(place_order|submit_order|cancel_order|qmt|broker|production|live_trade|hedge|kill_?switch"
-    r"|requests\.|urllib|socket\.|ollama|uvicorn|streamlit|duckdb)", re.I)
+    r"|requests\.|urllib|socket\.|ollama|uvicorn|streamlit|duckdb)",
+    re.I,
+)
 DATE_COL_RE: Final[re.Pattern[str]] = re.compile(r"\b(trade_date|dt|date|announce_date|as_of_date)\b")
 
 SQL_DEPGRAPH_SIZE = (
     "SELECT (SELECT count(*) FROM nodes) AS nodes, (SELECT count(*) FROM edges) AS edges,"
     " (SELECT count(*) FROM domains) AS domains, (SELECT count(*) FROM dataflow_runs) AS runs,"
     " (SELECT count(*) FROM dataflow_jobs) AS jobs, (SELECT count(*) FROM dataflow_datasets) AS datasets,"
-    " (SELECT count(*) FROM battle_map_steps) AS steps, (SELECT max(updated_at) FROM domains) AS sync_at")
+    " (SELECT count(*) FROM battle_map_steps) AS steps, (SELECT max(updated_at) FROM domains) AS sync_at"
+)
 SQL_DEPGRAPH_DOMAINS = (
-    "SELECT domain_id, domain_name, layer_id, production_nodes, ssot_path FROM domains ORDER BY domain_id")
+    "SELECT domain_id, domain_name, layer_id, production_nodes, ssot_path FROM domains ORDER BY domain_id"
+)
 SQL_STAGE_CONSUMERS = (
     "SELECT DISTINCT src.path AS consumer, dst.path AS callee, e.dep_type AS dep_type"
     " FROM edges e JOIN nodes dst ON dst.node_id = e.to_node_id"
-    " JOIN nodes src ON src.node_id = e.from_node_id WHERE dst.path LIKE %s")
+    " JOIN nodes src ON src.node_id = e.from_node_id WHERE dst.path LIKE %s"
+)
 SQL_MODULE_CONSUMERS = (
     "SELECT DISTINCT src.path AS consumer FROM edges e"
     " JOIN nodes dst ON dst.node_id = e.to_node_id JOIN nodes src ON src.node_id = e.from_node_id"
-    " WHERE dst.path = %s")
+    " WHERE dst.path = %s"
+)
 
 
 @dataclass
@@ -193,9 +200,15 @@ def _load_yaml(tag: str) -> tuple[Any, dict[str, Any]]:
     """按 tag 读真源 YAML，附实测规模与龄期（禁缓存快照当真值）。"""
     rel, found_by = _source_rel_path(tag)
     path = REPO_ROOT / rel if rel else Path("")
-    meta: dict[str, Any] = {"source": tag, "path": rel, "found_by": found_by,
-                            "exists": path.is_file(), "age_days": None,
-                            "sha256": None, "missing": not path.is_file()}
+    meta: dict[str, Any] = {
+        "source": tag,
+        "path": rel,
+        "found_by": found_by,
+        "exists": path.is_file(),
+        "age_days": None,
+        "sha256": None,
+        "missing": not path.is_file(),
+    }
     if not meta["exists"]:
         return None, meta
     raw = path.read_text(encoding="utf-8")
@@ -314,15 +327,21 @@ def derive_source_E() -> tuple[set[str], dict[str, Any]]:
     tl = (tasks or {}).get("tasks", []) or []
     schedules = (sched or {}).get("schedules", {}) or {}
     tables = {t.get("table") for t in tl if isinstance(t, dict) and t.get("table")}
-    meta = {"source": "E_tasks+schedule", "paths": [SRC_YAML["E_data_tasks"], SRC_YAML["E_schedule"]],
-            "exists": tmeta.get("exists") and smeta.get("exists"),
-            "missing": not (tmeta.get("exists") and smeta.get("exists")),
-            "age_days": max([a for a in (tmeta.get("age_days"), smeta.get("age_days")) if a is not None] or [0]),
-            "sha256": f"{tmeta.get('sha256')}/{smeta.get('sha256')}",
-            "count": len(tl), "tables": sorted(tables), "table_count": len(tables),
-            "schedule_count": len(schedules), "schedules": sorted(schedules),
-            "no_deps": sum(1 for t in tl if not (t.get("dependencies") or [])),
-            "vocabulary": "task_id（运行视角）+ 落点表"}
+    meta = {
+        "source": "E_tasks+schedule",
+        "paths": [SRC_YAML["E_data_tasks"], SRC_YAML["E_schedule"]],
+        "exists": tmeta.get("exists") and smeta.get("exists"),
+        "missing": not (tmeta.get("exists") and smeta.get("exists")),
+        "age_days": max([a for a in (tmeta.get("age_days"), smeta.get("age_days")) if a is not None] or [0]),
+        "sha256": f"{tmeta.get('sha256')}/{smeta.get('sha256')}",
+        "count": len(tl),
+        "tables": sorted(tables),
+        "table_count": len(tables),
+        "schedule_count": len(schedules),
+        "schedules": sorted(schedules),
+        "no_deps": sum(1 for t in tl if not (t.get("dependencies") or [])),
+        "vocabulary": "task_id（运行视角）+ 落点表",
+    }
     meta["objects"] = sorted({str(t.get("task_id")) for t in tl if t.get("task_id")})
     return set(meta["objects"]), meta
 
@@ -333,12 +352,19 @@ def derive_source_F() -> tuple[set[str], dict[str, Any]]:
     doms: set[str] = set()
     for d in dirs:
         md_count += len([f for f in d.rglob("*.md")])
-        doms.add("D_" + re.sub(r"[^0-9A-Z]+", "_", d.name[len("_domain_"):].upper()).strip("_"))
+        doms.add("D_" + re.sub(r"[^0-9A-Z]+", "_", d.name[len("_domain_") :].upper()).strip("_"))
     empty = sorted(d.name for d in dirs if not list(d.rglob("*.md")))
-    meta = {"source": "F_docs_03_modules", "path": "docs/03_modules/_domain_*/",
-            "exists": DOC_MODULES_DIR.is_dir(), "missing": not DOC_MODULES_DIR.is_dir(),
-            "age_days": None, "count": len(dirs), "md_files": md_count, "empty_dirs": empty,
-            "vocabulary": "_domain_* 目录名→D_* 归一"}
+    meta = {
+        "source": "F_docs_03_modules",
+        "path": "docs/03_modules/_domain_*/",
+        "exists": DOC_MODULES_DIR.is_dir(),
+        "missing": not DOC_MODULES_DIR.is_dir(),
+        "age_days": None,
+        "count": len(dirs),
+        "md_files": md_count,
+        "empty_dirs": empty,
+        "vocabulary": "_domain_* 目录名→D_* 归一",
+    }
     return doms, meta
 
 
@@ -356,8 +382,13 @@ def _depgraph_rows(sql: str, params: tuple[Any, ...] = ()) -> list[dict[str, Any
 
 def derive_source_G() -> tuple[set[str], dict[str, Any]]:
     """depgraph 运行时真源（PG）：域表 + 图规模 + 同步龄 + dataflow_runs 行数。"""
-    meta: dict[str, Any] = {"source": "G_depgraph_pg", "path": "depgraph PG nodes/edges/domains",
-                            "exists": False, "missing": False, "vocabulary": "D_* 域（代码视角）"}
+    meta: dict[str, Any] = {
+        "source": "G_depgraph_pg",
+        "path": "depgraph PG nodes/edges/domains",
+        "exists": False,
+        "missing": False,
+        "vocabulary": "D_* 域（代码视角）",
+    }
     try:
         rows = _depgraph_rows(SQL_DEPGRAPH_SIZE)[0]
         doms_rows = _depgraph_rows(SQL_DEPGRAPH_DOMAINS)
@@ -365,12 +396,22 @@ def derive_source_G() -> tuple[set[str], dict[str, Any]]:
         meta["error"] = str(exc)[:200]
         meta["missing"] = True
         return set(), meta
-    meta.update({"exists": True, "nodes": rows["nodes"], "edges": rows["edges"],
-                 "domains": rows["domains"], "dataflow_runs": rows["runs"],
-                 "dataflow_jobs": rows["jobs"], "dataflow_datasets": rows["datasets"],
-                 "battle_map_steps": rows["steps"], "count": len(doms_rows),
-                 "domain_rows": {d["domain_id"]: d for d in doms_rows},
-                 "sync_at": str(rows.get("sync_at")), "sha256": "n/a(实时查询)"})
+    meta.update(
+        {
+            "exists": True,
+            "nodes": rows["nodes"],
+            "edges": rows["edges"],
+            "domains": rows["domains"],
+            "dataflow_runs": rows["runs"],
+            "dataflow_jobs": rows["jobs"],
+            "dataflow_datasets": rows["datasets"],
+            "battle_map_steps": rows["steps"],
+            "count": len(doms_rows),
+            "domain_rows": {d["domain_id"]: d for d in doms_rows},
+            "sync_at": str(rows.get("sync_at")),
+            "sha256": "n/a(实时查询)",
+        }
+    )
     sync = str(rows.get("sync_at") or "")
     if len(sync) >= 10:
         try:
@@ -390,9 +431,13 @@ ALL_SOURCE_DERIVERS: Final[dict[str, Callable[[], tuple[set[str], dict[str, Any]
     "F_docs_03_modules_dirs": derive_source_F,
     "G_depgraph_runtime": derive_source_G,
 }
-DOMAIN_VOCAB_SOURCES: Final[tuple[str, ...]] = ("A_arch_model", "B_functional_domain_registry",
-                                                "C_battle_map_domain_policy", "F_docs_03_modules_dirs",
-                                                "G_depgraph_runtime")
+DOMAIN_VOCAB_SOURCES: Final[tuple[str, ...]] = (
+    "A_arch_model",
+    "B_functional_domain_registry",
+    "C_battle_map_domain_policy",
+    "F_docs_03_modules_dirs",
+    "G_depgraph_runtime",
+)
 
 
 def collect_sources(tags: tuple[str, ...] = ()) -> dict[str, tuple[set[str], dict[str, Any]]]:
@@ -406,8 +451,9 @@ def collect_sources(tags: tuple[str, ...] = ()) -> dict[str, tuple[set[str], dic
 def derive_stage_model(sources: dict[str, tuple[set[str], dict[str, Any]]]) -> dict[str, Any]:
     """环节清单自动推导：脊柱=C 的 11 flow_stage；余域按 depgraph layer_id/group 机械归口。"""
     policy = sources["C_battle_map_domain_policy"][1].get("stages", {}) or {}
-    domain2stage = {d: f"FF-{i + 2:02d}:{s}" for i, (s, allowed) in enumerate(sorted(policy.items()))
-                    for d in (allowed or [])}
+    domain2stage = {
+        d: f"FF-{i + 2:02d}:{s}" for i, (s, allowed) in enumerate(sorted(policy.items())) for d in (allowed or [])
+    }
     gmeta = sources["G_depgraph_runtime"][1]
     union_c = sources["C_battle_map_domain_policy"][0]
     universe = set().union(*[v[0] for v in sources.values() if v[0]]) if sources else set()
@@ -416,19 +462,38 @@ def derive_stage_model(sources: dict[str, tuple[set[str], dict[str, Any]]]) -> d
     cross_stages: dict[str, list[str]] = {}
     for dom in residual:
         bucket = "X_UNCLASSIFIED"
-        if dom.startswith(("D_GOV", "D_ARCH", "D_CODE", "D_COMPLIANCE", "D_DATA_SCRIPTS", "D_META",
-                           "D_SEC_SCRIPTS", "D_STRUCT", "D_ARCHIVE", "D_TEST", "D_AUDIT", "D_CONTRACTS")):
+        if dom.startswith(
+            (
+                "D_GOV",
+                "D_ARCH",
+                "D_CODE",
+                "D_COMPLIANCE",
+                "D_DATA_SCRIPTS",
+                "D_META",
+                "D_SEC_SCRIPTS",
+                "D_STRUCT",
+                "D_ARCHIVE",
+                "D_TEST",
+                "D_AUDIT",
+                "D_CONTRACTS",
+            )
+        ):
             bucket = "X_GOV_SUBSTRATE"
-        elif dom.startswith(("D_AUTONOMY", "D_ORCHESTRATOR", "D_INFRA_A2A", "D_SECURITY_LLM",
-                             "D_INTEGRATION_GATEWAY")):
+        elif dom.startswith(("D_AUTONOMY", "D_ORCHESTRATOR", "D_INFRA_A2A", "D_SECURITY_LLM", "D_INTEGRATION_GATEWAY")):
             bucket = "X_AI_RUNTIME"
         elif dom.startswith(("D_FRONTEND", "D_SHARED", "D_INFRA_TELEMETRY", "D_INFRA_RUNTIME")):
             bucket = "X_DELIVERY"
         cross_stages.setdefault(bucket, []).append(dom)
-    return {"spine": sorted(policy), "domain2stage": domain2stage, "cross_stages": cross_stages,
-            "residual_domains": residual, "union_policy_domains": sorted(union_c),
-            "universe_domains": sorted(universe), "depgraph_domains": sorted(depgraph_universe),
-            "depgraph_meta": gmeta}
+    return {
+        "spine": sorted(policy),
+        "domain2stage": domain2stage,
+        "cross_stages": cross_stages,
+        "residual_domains": residual,
+        "union_policy_domains": sorted(union_c),
+        "universe_domains": sorted(universe),
+        "depgraph_domains": sorted(depgraph_universe),
+        "depgraph_meta": gmeta,
+    }
 
 
 def parse_skeleton_stages() -> dict[str, dict[str, Any]]:
@@ -441,9 +506,13 @@ def parse_skeleton_stages() -> dict[str, dict[str, Any]]:
         m = re.match(r"^\|\s*(FF-\d{2})\s*\|(.+?)\|(.+?)\|(.+?)\|(.+?)\|\s*(\d+)\s*\|", line)
         if not m:
             continue
-        out[m.group(1)] = {"name": m.group(2).strip(), "upstream": m.group(3).strip(),
-                           "downstream": m.group(4).strip(), "packages": m.group(5).strip(),
-                           "nodes": int(m.group(6))}
+        out[m.group(1)] = {
+            "name": m.group(2).strip(),
+            "upstream": m.group(3).strip(),
+            "downstream": m.group(4).strip(),
+            "packages": m.group(5).strip(),
+            "nodes": int(m.group(6)),
+        }
     return out
 
 
@@ -472,16 +541,38 @@ def pairwise_domain_diffs(sources: dict[str, tuple[set[str], dict[str, Any]]]) -
     rows: list[dict[str, Any]] = []
     tags = [t for t in DOMAIN_VOCAB_SOURCES if sources.get(t)]
     for i, left in enumerate(tags):
-        for right in tags[i + 1:]:
+        for right in tags[i + 1 :]:
             ls, rs = sources[left][0], sources[right][0]
             if not ls or not rs:
-                rows.append({"left": left, "right": right, "direction": "n/a", "count": "n/a",
-                             "items": [], "note": "一侧无对象（真源不可用），差集不可判"})
+                rows.append(
+                    {
+                        "left": left,
+                        "right": right,
+                        "direction": "n/a",
+                        "count": "n/a",
+                        "items": [],
+                        "note": "一侧无对象（真源不可用），差集不可判",
+                    }
+                )
                 continue
-            rows.append({"left": left, "right": right, "direction": f"仅在 {left}",
-                         "count": len(ls - rs), "items": sorted(ls - rs)})
-            rows.append({"left": left, "right": right, "direction": f"仅在 {right}",
-                         "count": len(rs - ls), "items": sorted(rs - ls)})
+            rows.append(
+                {
+                    "left": left,
+                    "right": right,
+                    "direction": f"仅在 {left}",
+                    "count": len(ls - rs),
+                    "items": sorted(ls - rs),
+                }
+            )
+            rows.append(
+                {
+                    "left": left,
+                    "right": right,
+                    "direction": f"仅在 {right}",
+                    "count": len(rs - ls),
+                    "items": sorted(rs - ls),
+                }
+            )
     return rows
 
 
@@ -498,21 +589,31 @@ def unassigned_objects(model: dict[str, Any], sources: dict[str, tuple[set[str],
         raw_missing = sorted(objs - covered)
         resolved = {m: _resolve_alias(m, aliases) for m in raw_missing}
         still = sorted(m for m, r in resolved.items() if not r)
-        report[tag] = {"objects": len(objs), "raw_unmatched": len(raw_missing),
-                       "aliased": {m: r for m, r in resolved.items() if r},
-                       "unassigned": len(still), "items": still}
+        report[tag] = {
+            "objects": len(objs),
+            "raw_unmatched": len(raw_missing),
+            "aliased": {m: r for m, r in resolved.items() if r},
+            "unassigned": len(still),
+            "items": still,
+        }
     tasks = sources.get("E_data_tasks_and_schedule", (set(), {}))[1]
     report["E_data_tasks_and_schedule"] = {
-        "objects": tasks.get("count", 0), "unassigned": 0,
-        "note": (f"task_id={tasks.get('count')} 落点表={tasks.get('table_count')} "
-                 f"档期={tasks.get('schedule_count')} 无 dependencies 声明={tasks.get('no_deps')}"
-                 f"——全部为 FF-01 内部节拍（异词汇：任务不是域）")}
+        "objects": tasks.get("count", 0),
+        "unassigned": 0,
+        "note": (
+            f"task_id={tasks.get('count')} 落点表={tasks.get('table_count')} "
+            f"档期={tasks.get('schedule_count')} 无 dependencies 声明={tasks.get('no_deps')}"
+            f"——全部为 FF-01 内部节拍（异词汇：任务不是域）"
+        ),
+    }
     tdm = sources.get("D_trading_decision_map", (set(), {}))[1]
     report["D_trading_decision_map"] = {
-        "objects": tdm.get("count", 0), "unassigned": 0,
+        "objects": tdm.get("count", 0),
+        "unassigned": 0,
         "note": f"异词汇：{tdm.get('count')} 节点 / {len(tdm.get('flows', []))} 流 / "
-                f"{len(tdm.get('layers', []))} layer 码 / {tdm.get('edges')} 边——决策点级颗粒，"
-                f"归 FF-06..FF-12 子索引，不上升为环节"}
+        f"{len(tdm.get('layers', []))} layer 码 / {tdm.get('edges')} 边——决策点级颗粒，"
+        f"归 FF-06..FF-12 子索引，不上升为环节",
+    }
     return report
 
 
@@ -521,8 +622,12 @@ def _alias_index(dom_rows: dict[str, Any]) -> dict[str, str]:
     index: dict[str, str] = {}
     for dom, info in (dom_rows or {}).items():
         leaf = str(info.get("ssot_path", "")).rstrip("/").split("/")[-1]
-        for key in {dom, dom[2:] if dom.startswith("D_") else dom, leaf.upper(),
-                    re.sub(r"[^0-9A-Z]+", "_", leaf.upper())}:
+        for key in {
+            dom,
+            dom[2:] if dom.startswith("D_") else dom,
+            leaf.upper(),
+            re.sub(r"[^0-9A-Z]+", "_", leaf.upper()),
+        }:
             index.setdefault(key, dom)
     return index
 
@@ -533,8 +638,11 @@ def _resolve_alias(name: str, aliases: dict[str, str]) -> str:
     if not toks:
         return ""
     hits = {canon for key, canon in aliases.items() if _tokens(key) and _tokens(key) <= toks}
-    hits |= {canon for key, canon in aliases.items()
-             if any(t.startswith(k) or k.startswith(t) for t in toks for k in _tokens(key) if len(k) > 2)}
+    hits |= {
+        canon
+        for key, canon in aliases.items()
+        if any(t.startswith(k) or k.startswith(t) for t in toks for k in _tokens(key) if len(k) > 2)
+    }
     return hits.pop() if len(hits) == 1 else ""
 
 
@@ -546,8 +654,7 @@ def cmd_crosscheck(args: argparse.Namespace) -> dict[str, Any]:
     result = {
         "generated_at": now_utc_str(),
         "resmon": {"proceed": ok, "detail": why},
-        "sources": {t: {k: v for k, v in meta.items() if k != "ssot_paths"}
-                    for t, (_, meta) in sources.items()},
+        "sources": {t: {k: v for k, v in meta.items() if k != "ssot_paths"} for t, (_, meta) in sources.items()},
         "source_freshness": {t: _source_age_warning(sources[t][1]) for t in sources},
         "pairwise_diffs": pairwise_domain_diffs(sources),
         "unassigned": unassigned_objects(model, sources),
@@ -555,47 +662,78 @@ def cmd_crosscheck(args: argparse.Namespace) -> dict[str, Any]:
         "skeleton_stages": skeleton,
         "skeleton_vs_derived": skeleton_vs_derived(model, skeleton),
     }
-    result["universe"] = universe_declaration(sources, build_stage_catalog(model, sources),
-                                              "环节/域词汇的跨真源交叉对账（对象=域与环节，非模块子孙穷举）",
-                                              tuple(model["residual_domains"]))
+    result["universe"] = universe_declaration(
+        sources,
+        build_stage_catalog(model, sources),
+        "环节/域词汇的跨真源交叉对账（对象=域与环节，非模块子孙穷举）",
+        tuple(model["residual_domains"]),
+    )
     _write_crosscheck_md(result)
     return result
 
 
 def _write_crosscheck_md(r: dict[str, Any]) -> None:
-    lines = ["---", "ttl: task_bound",
-             "completes_when: 全流通战役收官且验收仪 --crosscheck 可重跑复现", "---", "",
-             "# 环节层面遗漏自检（验收仪 `--crosscheck` 实测产出，勿手改）", "",
-             f"生成时间：{r['generated_at']}（生成件=`scripts/automation/flowthrough_verifier.py`）", "",
-                     f"资源自守：{r['resmon']['detail']}", "", "## 1. 真源实测规模与新鲜度", "",
-             "| 真源 | 路径 | 实测对象数 | 词汇 | 真源龄 | sha256 |", "|---|---|---|---|---|---|"]
+    lines = [
+        "---",
+        "ttl: task_bound",
+        "completes_when: 全流通战役收官且验收仪 --crosscheck 可重跑复现",
+        "---",
+        "",
+        "# 环节层面遗漏自检（验收仪 `--crosscheck` 实测产出，勿手改）",
+        "",
+        f"生成时间：{r['generated_at']}（生成件=`scripts/automation/flowthrough_verifier.py`）",
+        "",
+        f"资源自守：{r['resmon']['detail']}",
+        "",
+        "## 1. 真源实测规模与新鲜度",
+        "",
+        "| 真源 | 路径 | 实测对象数 | 词汇 | 真源龄 | sha256 |",
+        "|---|---|---|---|---|---|",
+    ]
     for tag, meta in r["sources"].items():
         path = meta.get("path") or ",".join(meta.get("paths", []))
         extra = _meta_extra(tag, meta)
-        lines.append(f"| {tag} | `{path}` | **{meta.get('count')}** | {meta.get('vocabulary', '')} "
-                     f"| {r['source_freshness'][tag]} | `{str(meta.get('sha256'))[:16]}` |")
+        lines.append(
+            f"| {tag} | `{path}` | **{meta.get('count')}** | {meta.get('vocabulary', '')} "
+            f"| {r['source_freshness'][tag]} | `{str(meta.get('sha256'))[:16]}` |"
+        )
         if extra:
             lines.append(f"| | ↳ {extra} | | | | |")
-    lines += ["", "## 2. 两两差集（域词汇真源，逐条列非零项）", "",
-              "| 左真源 | 右真源 | 方向 | 非零项数 | 逐条清单 |", "|---|---|---|---|---|"]
+    lines += [
+        "",
+        "## 2. 两两差集（域词汇真源，逐条列非零项）",
+        "",
+        "| 左真源 | 右真源 | 方向 | 非零项数 | 逐条清单 |",
+        "|---|---|---|---|---|",
+    ]
     for row in r["pairwise_diffs"]:
         items = ", ".join(f"`{i}`" for i in row.get("items", [])) or row.get("note", "0")
-        lines.append(f"| {row['left']} | {row['right']} | {row['direction']} "
-                     f"| **{row['count']}** | {items} |")
-    lines += ["", "## 3. 未归入任何环节的对象数（§4.1 判据：应为 0）", "",
-              "| 真源 | 对象数 | 字面未匹配 | 异名机械归一 | 归一后仍未归属 | 逐条 / 说明 |",
-              "|---|---|---|---|---|---|"]
+        lines.append(f"| {row['left']} | {row['right']} | {row['direction']} | **{row['count']}** | {items} |")
+    lines += [
+        "",
+        "## 3. 未归入任何环节的对象数（§4.1 判据：应为 0）",
+        "",
+        "| 真源 | 对象数 | 字面未匹配 | 异名机械归一 | 归一后仍未归属 | 逐条 / 说明 |",
+        "|---|---|---|---|---|---|",
+    ]
     for tag, row in r["unassigned"].items():
         alias = "; ".join(f"`{k}`→`{v}`" for k, v in sorted(row.get("aliased", {}).items())) or "—"
         items = ", ".join(f"`{i}`" for i in row.get("items", []))[:1200] or row.get("note", "—")
-        lines.append(f"| {tag} | {row['objects']} | {row.get('raw_unmatched', 0)} | {alias[:700]} "
-                     f"| **{row['unassigned']}** | {items} |")
-    lines += ["", "## 4. 环节清单：推导 vs 骨架对照（不静默采信任何一方）", "",
-              f"- 机械推导脊柱（源 C 的 flow_stage）：{len(r['derived_model']['spine'])} 段 "
-              f"= {', '.join(r['derived_model']['spine'])}",
-              f"- 未被任何 flow_stage 允许的 depgraph 域：**{len(r['derived_model']['residual_domains'])}** "
-              f"→ 按域名前缀机械归口为 {len(r['derived_model']['cross_stages'])} 个横切环节",
-              f"- 骨架声称环节数：{len(r['skeleton_stages'])}", ""]
+        lines.append(
+            f"| {tag} | {row['objects']} | {row.get('raw_unmatched', 0)} | {alias[:700]} "
+            f"| **{row['unassigned']}** | {items} |"
+        )
+    lines += [
+        "",
+        "## 4. 环节清单：推导 vs 骨架对照（不静默采信任何一方）",
+        "",
+        f"- 机械推导脊柱（源 C 的 flow_stage）：{len(r['derived_model']['spine'])} 段 "
+        f"= {', '.join(r['derived_model']['spine'])}",
+        f"- 未被任何 flow_stage 允许的 depgraph 域：**{len(r['derived_model']['residual_domains'])}** "
+        f"→ 按域名前缀机械归口为 {len(r['derived_model']['cross_stages'])} 个横切环节",
+        f"- 骨架声称环节数：{len(r['skeleton_stages'])}",
+        "",
+    ]
     for d in r["skeleton_vs_derived"]:
         lines.append(f"- 差异 `{d['kind']}`：{_diff_row_preview(d)}")
     for bucket, doms in sorted(r["derived_model"]["cross_stages"].items()):
@@ -615,20 +753,22 @@ def _diff_row_preview(d: dict[str, Any]) -> str:
 
 def _meta_extra(tag: str, meta: dict[str, Any]) -> str:
     if "trading_decision_map" in tag:
-        return (f"layer 码 {len(meta.get('layers', []))} / 流 {len(meta.get('flows', []))} "
-                f"/ 边 {meta.get('edges')}")
+        return f"layer 码 {len(meta.get('layers', []))} / 流 {len(meta.get('flows', []))} / 边 {meta.get('edges')}"
     if "battle_map" in tag:
         return f"flow_stage 数 {meta.get('stage_count')}"
     if "tasks" in tag:
-        return (f"task {meta.get('count')} / 表 {meta.get('table_count')} / 档期 "
-                f"{meta.get('schedule_count')} / 无依赖声明 {meta.get('no_deps')}")
+        return (
+            f"task {meta.get('count')} / 表 {meta.get('table_count')} / 档期 "
+            f"{meta.get('schedule_count')} / 无依赖声明 {meta.get('no_deps')}"
+        )
     if "modules" in tag:
-        return (f"_domain_ 目录 {meta.get('count')} / .md {meta.get('md_files')} / 空目录 "
-                f"{meta.get('empty_dirs')}")
+        return f"_domain_ 目录 {meta.get('count')} / .md {meta.get('md_files')} / 空目录 {meta.get('empty_dirs')}"
     if "depgraph" in tag:
-        return (f"nodes {meta.get('nodes')} / edges {meta.get('edges')} / dataflow_runs "
-                f"{meta.get('dataflow_runs')} / jobs {meta.get('dataflow_jobs')} / steps "
-                f"{meta.get('battle_map_steps')} / 最后同步 {meta.get('sync_at')}")
+        return (
+            f"nodes {meta.get('nodes')} / edges {meta.get('edges')} / dataflow_runs "
+            f"{meta.get('dataflow_runs')} / jobs {meta.get('dataflow_jobs')} / steps "
+            f"{meta.get('battle_map_steps')} / 最后同步 {meta.get('sync_at')}"
+        )
     if "functional_domain_registry" in tag:
         return f"entries {meta.get('entries')}"
     return ""
@@ -637,8 +777,9 @@ def _meta_extra(tag: str, meta: dict[str, Any]) -> str:
 # --------------------------------------------------------------------------
 # 环节 → 域 → 代码路径（机械映射，禁写死）
 # --------------------------------------------------------------------------
-BATTLE_MAP_DIR: Final[Path] = (REPO_ROOT / "docs" / "02_enterprise_architecture"
-                               / "07_trading_decision_architecture" / "battle_map")
+BATTLE_MAP_DIR: Final[Path] = (
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture" / "battle_map"
+)
 BATTLE_MAP_FILE_RE: Final[re.Pattern[str]] = re.compile(r"^battle_map_(\d{2})_([a-z_]+)\.md$")
 
 
@@ -654,44 +795,66 @@ def battle_map_doc_order() -> dict[str, int]:
     return order
 
 
-def build_stage_catalog(model: dict[str, Any], sources: dict[str, tuple[set[str], dict[str, Any]]]
-                        ) -> dict[str, dict[str, Any]]:
+def build_stage_catalog(
+    model: dict[str, Any], sources: dict[str, tuple[set[str], dict[str, Any]]]
+) -> dict[str, dict[str, Any]]:
     """推导环节清单：FF-01=数据供给（源 E）；FF-(n+1)=battle_map 文档编号；余域按前缀归横切环节。"""
     doc_order = battle_map_doc_order()
     policy = sources["C_battle_map_domain_policy"][1].get("stages", {}) or {}
     dom_meta = sources["G_depgraph_runtime"][1].get("domain_rows", {})
     catalog: dict[str, dict[str, Any]] = {}
     e_meta = sources["E_data_tasks_and_schedule"][1]
-    catalog["FF-01"] = {"name": "数据供给链（源 E：tasks+schedule）", "kind": "supply",
-                        "domains": _data_domains(dom_meta), "objects": e_meta.get("count", 0)}
+    catalog["FF-01"] = {
+        "name": "数据供给链（源 E：tasks+schedule）",
+        "kind": "supply",
+        "domains": _data_domains(dom_meta),
+        "objects": e_meta.get("count", 0),
+    }
     for stage, num in sorted(doc_order.items(), key=lambda kv: kv[1]):
         if stage == "cross_cutting":
             continue
         ff = f"FF-{num + 1:02d}"
-        catalog[ff] = {"name": stage, "kind": "pipeline", "stage_key": stage,
-                       "domains": sorted(policy.get(stage, []))}
+        catalog[ff] = {"name": stage, "kind": "pipeline", "stage_key": stage, "domains": sorted(policy.get(stage, []))}
     if "cross_cutting" in doc_order:
         cc = _cross_cutting_mechanisms()
         catalog[f"FF-{doc_order['cross_cutting'] + 1:02d}"] = {
-            "name": "横切机制层", "kind": "cross_cutting", "domains": [], "mechanisms": cc}
+            "name": "横切机制层",
+            "kind": "cross_cutting",
+            "domains": [],
+            "mechanisms": cc,
+        }
     nxt = max(int(k[3:]) for k in catalog) + 1
     for bucket, doms in sorted(model["cross_stages"].items()):
         catalog[f"FF-{nxt:02d}"] = {"name": bucket, "kind": "residual", "domains": sorted(doms)}
         nxt += 1
     for ff, spec in catalog.items():
-        spec["paths"] = sorted({str((dom_meta.get(d, {}) or {}).get("ssot_path") or "")
-                                for d in spec["domains"] if (dom_meta.get(d, {}) or {})})
+        spec["paths"] = sorted(
+            {
+                str((dom_meta.get(d, {}) or {}).get("ssot_path") or "")
+                for d in spec["domains"]
+                if (dom_meta.get(d, {}) or {})
+            }
+        )
         spec["code_paths"] = [REPO_ROOT / p for p in spec["paths"] if p]
     return catalog
 
 
 def _data_domains(dom_meta: dict[str, Any]) -> list[str]:
-    return sorted(d for d, info in dom_meta.items()
-                  if str(info.get("ssot_path", "")).startswith(("src/zephyr/data", "src/zephyr/market_data",
-                                                                "src/zephyr/alt_data", "src/zephyr/data_eng",
-                                                                "src/zephyr/data_governance",
-                                                                "src/zephyr/data_security",
-                                                                "src/zephyr/integration")))
+    return sorted(
+        d
+        for d, info in dom_meta.items()
+        if str(info.get("ssot_path", "")).startswith(
+            (
+                "src/zephyr/data",
+                "src/zephyr/market_data",
+                "src/zephyr/alt_data",
+                "src/zephyr/data_eng",
+                "src/zephyr/data_governance",
+                "src/zephyr/data_security",
+                "src/zephyr/integration",
+            )
+        )
+    )
 
 
 def _cross_cutting_mechanisms() -> list[str]:
@@ -707,8 +870,7 @@ def _cross_cutting_mechanisms() -> list[str]:
 SQL_CH_LIVENESS = "SELECT version()"
 SQL_CH_DATABASES = "SELECT name FROM system.databases"
 SQL_CH_TABLE_NAMES = "SELECT database, name FROM system.tables"
-SQL_PARTS_ROWS_TMPL = ("SELECT sum(rows) FROM system.parts WHERE database='%s' AND table='%s'"
-                                   " AND active")
+SQL_PARTS_ROWS_TMPL = "SELECT sum(rows) FROM system.parts WHERE database='%s' AND table='%s' AND active"
 TABLE_IDENT_RE: Final[re.Pattern[str]] = re.compile(r"^([a-z]\d*_[a-z0-9_]*)\.([a-z][a-z0-9_]*)$")
 FF_ROWS_UNREACHABLE: Final[int] = -1
 FF_ROWS_UNMEASURABLE: Final[int] = -2
@@ -734,8 +896,20 @@ def ch_channel_alive() -> bool:
 
 
 _DB_CACHE: dict[str, set[str]] = {}
-NOT_A_TABLE_SUFFIX: Final[tuple[str, ...]] = (".yaml", ".yml", ".json", ".md", ".csv", ".py", ".txt",
-                                              ".html", ".parquet", ".db", ".j2", ".tmpl")
+NOT_A_TABLE_SUFFIX: Final[tuple[str, ...]] = (
+    ".yaml",
+    ".yml",
+    ".json",
+    ".md",
+    ".csv",
+    ".py",
+    ".txt",
+    ".html",
+    ".parquet",
+    ".db",
+    ".j2",
+    ".tmpl",
+)
 
 
 def ch_databases() -> set[str]:
@@ -747,8 +921,9 @@ def ch_databases() -> set[str]:
         try:
             from zephyr.data import ch_reader
 
-            dbs = {ln.strip() for ln in (ch_reader.query(SQL_CH_DATABASES, timeout=20) or "").splitlines()
-                   if ln.strip()}
+            dbs = {
+                ln.strip() for ln in (ch_reader.query(SQL_CH_DATABASES, timeout=20) or "").splitlines() if ln.strip()
+            }
         except Exception as exc:  # noqa: BLE001 — 取不到库名=退回模式判定
             log_line(f"  [通道] 库名清单失败：{str(exc)[:80]}")
     _DB_CACHE["dbs"] = dbs
@@ -875,19 +1050,31 @@ def scan_stage_tables(paths: list[Path], cap_files: int = 900) -> dict[str, Any]
     return {"files_scanned": len(files), "read_tables": sorted(sources), "write_tables": sorted(sinks)}
 
 
-def _probe_feed_rows(tables: list[str], date_cols: dict[str, str], ctx: FlowthroughProbeContext,
-                     row_counter: Callable[[str], int], stage_tolerance_days: int) -> tuple[list[dict[str, Any]], list[str]]:
+def _probe_feed_rows(
+    tables: list[str],
+    date_cols: dict[str, str],
+    ctx: FlowthroughProbeContext,
+    row_counter: Callable[[str], int],
+    stage_tolerance_days: int,
+) -> tuple[list[dict[str, Any]], list[str]]:
     """逐表实测行数/最新戳/滞后/新鲜度；返回（实测明细, 限流未测清单）。"""
     rows: list[dict[str, Any]] = []
-    unmeasured = [t for t in tables[ctx.limit_tables:]]
+    unmeasured = [t for t in tables[ctx.limit_tables :]]
     for table in tables[: max(0, ctx.limit_tables)]:
         cnt = row_counter(table)
         col = date_cols.get(table, "")
         stamp = _latest_stamp(table, col) if col and cnt != -1 else ""
         lag = _lag_days(stamp)
-        rows.append({"table": table, "rows": cnt, "date_col": col, "latest": stamp,
-                     "lag_days": lag,
-                     "fresh": bool(lag is not None and lag <= stage_tolerance_days)})
+        rows.append(
+            {
+                "table": table,
+                "rows": cnt,
+                "date_col": col,
+                "latest": stamp,
+                "lag_days": lag,
+                "fresh": bool(lag is not None and lag <= stage_tolerance_days),
+            }
+        )
     return rows, unmeasured
 
 
@@ -895,11 +1082,13 @@ def _probe_feed_buckets(rows: list[dict[str, Any]]) -> dict[str, Any]:
     """分桶：measured=实测≥0 / broken=名册无表(-1，真断链) / channel_down=不可测(-2) /
     empty=空表(0) / stale=有戳但超容差。-1 与 0 不混桶、-1 与 -2 不混桶。"""
     measured = [r for r in rows if r["rows"] >= 0]
-    return {"measured": measured,
-            "broken": [r["table"] for r in rows if r["rows"] == -1],
-            "channel_down": [r["table"] for r in rows if r["rows"] == -2],
-            "empty": [r["table"] for r in rows if r["rows"] == 0],
-            "stale": [r["table"] for r in measured if r["latest"] and not r["fresh"]]}
+    return {
+        "measured": measured,
+        "broken": [r["table"] for r in rows if r["rows"] == -1],
+        "channel_down": [r["table"] for r in rows if r["rows"] == -2],
+        "empty": [r["table"] for r in rows if r["rows"] == 0],
+        "stale": [r["table"] for r in measured if r["latest"] and not r["fresh"]],
+    }
 
 
 def _probe_feed_verdict(buckets: dict[str, Any], unmeasured: list[str]) -> str:
@@ -914,24 +1103,36 @@ def _probe_feed_verdict(buckets: dict[str, Any], unmeasured: list[str]) -> str:
     return "不可测"
 
 
-def _probe_feed_evidence(rows: list[dict[str, Any]], broken: list[str], stale: list[str],
-                         unmeasured: list[str]) -> str:
-    return (_feed_evidence(rows) + (f" || 断链={broken}" if broken else "")
-            + (f" || 过期未落容差={stale}" if stale else "")
-            + (f" || 限流未测 {len(unmeasured)} 表（绿不外推）" if unmeasured else ""))
+def _probe_feed_evidence(rows: list[dict[str, Any]], broken: list[str], stale: list[str], unmeasured: list[str]) -> str:
+    return (
+        _feed_evidence(rows)
+        + (f" || 断链={broken}" if broken else "")
+        + (f" || 过期未落容差={stale}" if stale else "")
+        + (f" || 限流未测 {len(unmeasured)} 表（绿不外推）" if unmeasured else "")
+    )
 
 
-def probe_feed(tables: list[str], date_cols: dict[str, str], ctx: FlowthroughProbeContext,
-               row_counter: Callable[[str], int] = _row_count,
-               stage_tolerance_days: int = 7) -> dict[str, Any]:
+def probe_feed(
+    tables: list[str],
+    date_cols: dict[str, str],
+    ctx: FlowthroughProbeContext,
+    row_counter: Callable[[str], int] = _row_count,
+    stage_tolerance_days: int = 7,
+) -> dict[str, Any]:
     """①入口有料：逐表实测行数 + 最新时间戳 + 新鲜度（真跑查询，非声明）。"""
     rows, unmeasured = _probe_feed_rows(tables, date_cols, ctx, row_counter, stage_tolerance_days)
     buckets = _probe_feed_buckets(rows)
-    return {"verdict": _probe_feed_verdict(buckets, unmeasured), "detail": rows,
-            "broken_hop": buckets["broken"], "empty_tables": buckets["empty"],
-            "channel_down": buckets["channel_down"], "unmeasured_tables": unmeasured[:30],
-            "stale_tables": buckets["stale"], "tolerance_days": stage_tolerance_days,
-            "evidence": _probe_feed_evidence(rows, buckets["broken"], buckets["stale"], unmeasured)}
+    return {
+        "verdict": _probe_feed_verdict(buckets, unmeasured),
+        "detail": rows,
+        "broken_hop": buckets["broken"],
+        "empty_tables": buckets["empty"],
+        "channel_down": buckets["channel_down"],
+        "unmeasured_tables": unmeasured[:30],
+        "stale_tables": buckets["stale"],
+        "tolerance_days": stage_tolerance_days,
+        "evidence": _probe_feed_evidence(rows, buckets["broken"], buckets["stale"], unmeasured),
+    }
 
 
 def _lag_days(stamp: str) -> float | None:
@@ -948,8 +1149,7 @@ def _lag_days(stamp: str) -> float | None:
 def _feed_evidence(rows: list[dict[str, Any]]) -> str:
     if not rows:
         return "无读源表字面量（该环节可能为纯编排/无表输入）"
-    parts = [f"{r['table']}={r['rows']}行" + (f"@{r['latest']}({r['lag_days']}d)" if r["latest"] else "")
-             for r in rows]
+    parts = [f"{r['table']}={r['rows']}行" + (f"@{r['latest']}({r['lag_days']}d)" if r["latest"] else "") for r in rows]
     return "; ".join(parts)
 
 
@@ -966,8 +1166,7 @@ def discover_entries(paths: list[Path], cap: int = 500) -> list[dict[str, Any]]:
         if has_main and guard:
             text = p.read_text(encoding="utf-8", errors="ignore")
             reason = _skip_reason(text)
-            found.append({"path": str(p.relative_to(REPO_ROOT)), "needs_gate": bool(reason),
-                          "skip_reason": reason})
+            found.append({"path": str(p.relative_to(REPO_ROOT)), "needs_gate": bool(reason), "skip_reason": reason})
     return found
 
 
@@ -985,8 +1184,7 @@ def _exec_one_run(entry: dict[str, Any], run_timeout_s: int) -> dict[str, Any]:
     """真跑一个入口，记 rc + 耗时（禁假装跑过）。"""
     started = time.monotonic()
     rc, err = _exec_entry(entry["path"], run_timeout_s)
-    return {"entry": entry["path"], "rc": rc, "stderr_tail": err,
-            "elapsed_s": round(time.monotonic() - started, 2)}
+    return {"entry": entry["path"], "rc": rc, "stderr_tail": err, "elapsed_s": round(time.monotonic() - started, 2)}
 
 
 def _annotate_rc2_usage(ran: list[dict[str, Any]]) -> None:
@@ -1005,9 +1203,14 @@ def _runs_verdict(ran: list[dict[str, Any]], blocked_total: int, runnable_total:
 
 
 def _runs_evidence(ran: list[dict[str, Any]], blocked_total: int) -> str:
-    return ("; ".join(f"{r['entry']} rc={r['rc']} {r['elapsed_s']}s"
-                       + (f" 报错={r['stderr_tail']}" if r.get("stderr_tail") else "") for r in ran)
-            or f"无可真跑入口（{blocked_total} 件需门位）")
+    return (
+        "; ".join(
+            f"{r['entry']} rc={r['rc']} {r['elapsed_s']}s"
+            + (f" 报错={r['stderr_tail']}" if r.get("stderr_tail") else "")
+            for r in ran
+        )
+        or f"无可真跑入口（{blocked_total} 件需门位）"
+    )
 
 
 def probe_runs(entries: list[dict[str, Any]], ctx: FlowthroughProbeContext) -> dict[str, Any]:
@@ -1016,22 +1219,31 @@ def probe_runs(entries: list[dict[str, Any]], ctx: FlowthroughProbeContext) -> d
     candidates = [e for e in entries if not e["needs_gate"]][: max(0, ctx.limit_runs)]
     ran = [_exec_one_run(e, ctx.run_timeout_s) for e in candidates]
     _annotate_rc2_usage(ran)
-    return {"verdict": _runs_verdict(ran, len(blocked), len(candidates)), "ran": ran,
-            "skipped_need_gate": [{"entry": e["path"], "reason": e["skip_reason"]} for e in blocked[:20]],
-            "blocked_total": len(blocked), "evidence": _runs_evidence(ran, len(blocked))}
+    return {
+        "verdict": _runs_verdict(ran, len(blocked), len(candidates)),
+        "ran": ran,
+        "skipped_need_gate": [{"entry": e["path"], "reason": e["skip_reason"]} for e in blocked[:20]],
+        "blocked_total": len(blocked),
+        "evidence": _runs_evidence(ran, len(blocked)),
+    }
 
 
 def _exec_entry(rel_path: str, timeout_s: int) -> tuple[int, str]:
     """真跑一次生产入口：返回 (rc, stderr 末行)。超时/崩溃如实记非零 rc。"""
-    from zephyr.shared.infra.process_pool import run_subprocess_hidden
-
     import os
+
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
     env = dict(os.environ, PYTHONPATH=str(REPO_ROOT / "src"))
     try:
-        proc = run_subprocess_hidden([sys.executable, str(REPO_ROOT / rel_path)],
-                                     capture_output=True, text=True, timeout=timeout_s,
-                                     cwd=str(REPO_ROOT), env=env)
+        proc = run_subprocess_hidden(
+            [sys.executable, str(REPO_ROOT / rel_path)],
+            capture_output=True,
+            text=True,
+            timeout=timeout_s,
+            cwd=str(REPO_ROOT),
+            env=env,
+        )
         err = _stderr_tail(getattr(proc, "stderr", "") or "")
         return int(getattr(proc, "returncode", -9)), err
     except Exception as exc:  # noqa: BLE001 — 超时/崩溃即红，须如实记录
@@ -1044,8 +1256,9 @@ def _stderr_tail(stderr: str) -> str:
     return lines[-1][:180] if lines else ""
 
 
-def probe_lands(sinks: list[str], paths: list[Path], ctx: FlowthroughProbeContext,
-                row_counter: Callable[[str], int] = _row_count) -> dict[str, Any]:
+def probe_lands(
+    sinks: list[str], paths: list[Path], ctx: FlowthroughProbeContext, row_counter: Callable[[str], int] = _row_count
+) -> dict[str, Any]:
     """③出口有货：读盘/读表取实测行数与字节数（只断返回值=没验）。"""
     tables = [{"table": t, "rows": row_counter(t)} for t in sinks[: max(0, ctx.limit_tables)]]
     files = scan_artifact_files(paths)
@@ -1057,15 +1270,20 @@ def probe_lands(sinks: list[str], paths: list[Path], ctx: FlowthroughProbeContex
         verdict = "红"
     else:
         verdict = "不可测"
-    return {"verdict": verdict, "tables": tables, "files": files[:15],
-            "evidence": "; ".join(f"{t['table']}={t['rows']}行" for t in tables)
-            + (" | " if tables and files else "")
-            + "; ".join(f"{f['path']}={f['bytes']}B/{f['lines']}行" for f in files[:5])
-            or "声明 sink 为空（需蓝图/注册表补）"}
+    return {
+        "verdict": verdict,
+        "tables": tables,
+        "files": files[:15],
+        "evidence": "; ".join(f"{t['table']}={t['rows']}行" for t in tables)
+        + (" | " if tables and files else "")
+        + "; ".join(f"{f['path']}={f['bytes']}B/{f['lines']}行" for f in files[:5])
+        or "声明 sink 为空（需蓝图/注册表补）",
+    }
 
 
 ARTIFACT_LITERAL_RE: Final[re.Pattern[str]] = re.compile(
-    r"[\"'](data/[A-Za-z0-9_./-]+\.(?:json|csv|parquet|db|duckdb))[\"']")
+    r"[\"'](data/[A-Za-z0-9_./-]+\.(?:json|csv|parquet|db|duckdb))[\"']"
+)
 
 
 def scan_artifact_files(paths: list[Path], cap: int = 60) -> list[dict[str, Any]]:
@@ -1091,22 +1309,27 @@ def probe_consumers(spec: dict[str, Any], ctx: FlowthroughProbeContext) -> dict[
     declared = collect_declared_consumers(spec["code_paths"])
     mismatch = crosscheck_declarations(declared, real, _global_consumers if not error else None)
     src_consumers = {a["consumer"] for a in real}
-    callees = sorted({e["callee"] for e in edges if e.get("callee") and not e["callee"].endswith(
-        "__init__.py")})
-    zero_in = [c for c in callees if not any(
-        e["callee"] == c and e["consumer"].startswith("src/") for e in edges)]
+    callees = sorted({e["callee"] for e in edges if e.get("callee") and not e["callee"].endswith("__init__.py")})
+    zero_in = [c for c in callees if not any(e["callee"] == c and e["consumer"].startswith("src/") for e in edges)]
     dyn = dynamic_registration_hits(zero_in)
     orphan_modules = [m["module"] for m in zero_in_dynamic(zero_in, dyn)][:10]
     suggestions = suggest_consumers(orphan_modules, spec)
     verdict = "绿" if real else ("不可测" if error else ("黄" if dyn else "红"))
-    return {"verdict": verdict, "real_consumers": real[:30], "scripts_only": scripts_only[:20],
-            "tests_only": tests_only[:20], "consumer_count_src": len(real),
-            "src_consumers": sorted(src_consumers)[:20],
-            "dynamic_registration": dyn[:10], "declared_vs_actual": mismatch,
-            "semantic_suggestions": suggestions, "orphan_modules": orphan_modules,
-            "error": error,
-            "evidence": f"src 真消费者 {len(real)} / scripts-only {len(scripts_only)} / "
-                        f"tests-only {len(tests_only)} / 动态注册面 {len(dyn)}"}
+    return {
+        "verdict": verdict,
+        "real_consumers": real[:30],
+        "scripts_only": scripts_only[:20],
+        "tests_only": tests_only[:20],
+        "consumer_count_src": len(real),
+        "src_consumers": sorted(src_consumers)[:20],
+        "dynamic_registration": dyn[:10],
+        "declared_vs_actual": mismatch,
+        "semantic_suggestions": suggestions,
+        "orphan_modules": orphan_modules,
+        "error": error,
+        "evidence": f"src 真消费者 {len(real)} / scripts-only {len(scripts_only)} / "
+        f"tests-only {len(tests_only)} / 动态注册面 {len(dyn)}",
+    }
 
 
 def zero_in_dynamic(zero_in: list[str], dyn: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -1125,8 +1348,11 @@ def _bucket_consumers(edges: list[dict[str, Any]]) -> tuple[list[dict[str, Any]]
     tests_only: list[dict[str, Any]] = []
     for row in edges:
         consumer = str(row.get("consumer") or "")
-        item = {"consumer": consumer, "callee": str(row.get("callee") or ""),
-                "dep_type": str(row.get("dep_type") or "")}
+        item = {
+            "consumer": consumer,
+            "callee": str(row.get("callee") or ""),
+            "dep_type": str(row.get("dep_type") or ""),
+        }
         if consumer.startswith("tests/"):
             tests_only.append(item)
         elif consumer.startswith("scripts/"):
@@ -1149,8 +1375,9 @@ def collect_declared_consumers(paths: list[Path], cap: int = 300) -> list[dict[s
     return out
 
 
-def crosscheck_declarations(declared: list[dict[str, Any]], actual: list[dict[str, Any]],
-                            lookup: Callable[[str], list[str]] | None = None) -> dict[str, Any]:
+def crosscheck_declarations(
+    declared: list[dict[str, Any]], actual: list[dict[str, Any]], lookup: Callable[[str], list[str]] | None = None
+) -> dict[str, Any]:
     """蓝图声明 vs 实际 import 双向核对——抓"蓝图说谎"与"接错对象"（R-013 机器防线）。"""
     actual_paths = {a["consumer"] for a in actual}
     callee_by_token: dict[str, set[str]] = {}
@@ -1159,28 +1386,38 @@ def crosscheck_declarations(declared: list[dict[str, Any]], actual: list[dict[st
     liars: list[dict[str, Any]] = []
     for item in declared:
         pool = actual_paths | set(lookup(item["module"]) if lookup else [])
-        dead = [tok for tok in item["declared"]
-                if not any(tok.lower().strip("`") in path.lower() for path in pool)]
+        dead = [tok for tok in item["declared"] if not any(tok.lower().strip("`") in path.lower() for path in pool)]
         if dead and len(item["declared"]) <= 6:
-            liars.append({"module": item["module"], "declared_but_no_import": dead[:6],
-                          "actual_src_consumers": sorted(pool)[:5]})
+            liars.append(
+                {"module": item["module"], "declared_but_no_import": dead[:6], "actual_src_consumers": sorted(pool)[:5]}
+            )
     undeclared: list[dict[str, Any]] = []
     declared_mods = {d["module"] for d in declared}
     for callee, consumers in sorted(callee_by_token.items()):
         if callee not in declared_mods:
             continue
         spec = next(d for d in declared if d["module"] == callee)
-        undeclared += [{"module": callee, "imported_by_unlisted": c} for c in sorted(consumers)
-                       if not any(tok.lower() in c.lower() for tok in spec["declared"])]
-    return {"blueprint_lying_candidates": liars[:20], "unlisted_consumers": undeclared[:20],
-            "declared_modules_scanned": len(declared), "liar_count": len(liars),
-            "note": "声明有、实际不 import=蓝图说谎候选（假闭环防线）；实际 import 但声明未列=登记欠账"}
+        undeclared += [
+            {"module": callee, "imported_by_unlisted": c}
+            for c in sorted(consumers)
+            if not any(tok.lower() in c.lower() for tok in spec["declared"])
+        ]
+    return {
+        "blueprint_lying_candidates": liars[:20],
+        "unlisted_consumers": undeclared[:20],
+        "declared_modules_scanned": len(declared),
+        "liar_count": len(liars),
+        "note": "声明有、实际不 import=蓝图说谎候选（假闭环防线）；实际 import 但声明未列=登记欠账",
+    }
 
 
 def _global_consumers(rel_path: str) -> list[str]:
     try:
-        return [r["consumer"] for r in _depgraph_rows(SQL_MODULE_CONSUMERS, (rel_path,))
-                if str(r.get("consumer", "")).startswith("src/")]
+        return [
+            r["consumer"]
+            for r in _depgraph_rows(SQL_MODULE_CONSUMERS, (rel_path,))
+            if str(r.get("consumer", "")).startswith("src/")
+        ]
     except Exception:  # noqa: BLE001 — 单件查询失败不阻断双向核对
         return []
 
@@ -1192,11 +1429,21 @@ def suggest_consumers(orphan_modules: list[str], spec: dict[str, Any]) -> list[d
     for mod in orphan_modules[:6]:
         stem = Path(mod).stem
         toks = _tokens(stem)
-        scored = sorted(((len(toks & _tokens(Path(p).stem)) / max(1, len(toks | _tokens(Path(p).stem))),
-                          p) for p in pool if p != mod), reverse=True)[:3]
-        out.append({"orphan": mod, "candidates": [{"consumer": p, "lexical_match": round(s, 2)}
-                                                  for s, p in scored if s > 0],
-                    "advisory": "匹配度=词法信号，接给谁须人/总包裁定（R-013）"})
+        scored = sorted(
+            (
+                (len(toks & _tokens(Path(p).stem)) / max(1, len(toks | _tokens(Path(p).stem))), p)
+                for p in pool
+                if p != mod
+            ),
+            reverse=True,
+        )[:3]
+        out.append(
+            {
+                "orphan": mod,
+                "candidates": [{"consumer": p, "lexical_match": round(s, 2)} for s, p in scored if s > 0],
+                "advisory": "匹配度=词法信号，接给谁须人/总包裁定（R-013）",
+            }
+        )
     return out
 
 
@@ -1212,8 +1459,7 @@ def dynamic_registration_hits(modules: list[str], cap: int = 40) -> list[dict[st
         stem = Path(mod).stem
         where = sorted(index.get(stem, set()))[:4]
         if where:
-            hits.append({"module": mod, "registered_in": where,
-                         "note": "由注册表动态发现，不计为孤儿"})
+            hits.append({"module": mod, "registered_in": where, "note": "由注册表动态发现，不计为孤儿"})
     return hits
 
 
@@ -1261,31 +1507,59 @@ def probe_sentinel(tables: list[str], ctx: FlowthroughProbeContext) -> dict[str,
     for t in tables:
         cfg = rows.get(t) or qrows.get(t)
         if not cfg:
-            unwatched.append({"table": t, "in_supply_sentinel": False, "in_quality_sentinel": False,
-                              "max_lag_days": None, "allow_empty": False,
-                              "note": "两册皆无阈值行=该表哨兵盲区"})
+            unwatched.append(
+                {
+                    "table": t,
+                    "in_supply_sentinel": False,
+                    "in_quality_sentinel": False,
+                    "max_lag_days": None,
+                    "allow_empty": False,
+                    "note": "两册皆无阈值行=该表哨兵盲区",
+                }
+            )
             continue
-        row = {"table": t, "in_supply_sentinel": t in rows, "in_quality_sentinel": t in qrows,
-               "max_lag_days": cfg.get("max_lag_days"), "allow_empty": bool(cfg.get("allow_empty"))}
+        row = {
+            "table": t,
+            "in_supply_sentinel": t in rows,
+            "in_quality_sentinel": t in qrows,
+            "max_lag_days": cfg.get("max_lag_days"),
+            "allow_empty": bool(cfg.get("allow_empty")),
+        }
         if row["allow_empty"]:
-            row.update({"豁免中": True, "rationale_zh": str(cfg.get("rationale_zh", ""))[:180],
-                        "reviewed_at": cfg.get("reviewed_at"), "reviewed_by": cfg.get("reviewed_by"),
-                        "判据": "allow_empty 白名单=该向自动失明，不许判绿"})
+            row.update(
+                {
+                    "豁免中": True,
+                    "rationale_zh": str(cfg.get("rationale_zh", ""))[:180],
+                    "reviewed_at": cfg.get("reviewed_at"),
+                    "reviewed_by": cfg.get("reviewed_by"),
+                    "判据": "allow_empty 白名单=该向自动失明，不许判绿",
+                }
+            )
             blind.append(row)
         else:
             armed.append(row)
     breaches = run_sentinel_live(sorted({r["table"] for r in armed} | {t for t in tables if t in qrows}))
     verdict, why = sentinel_verdict(tables, armed, blind, unwatched, breaches)
-    return {"verdict": verdict, "armed": armed[:20], "allow_empty_blind": blind[:20],
-            "unwatched_tables": unwatched[:20], "breach_run": breaches,
-            "verdict_reason": why,
-            "evidence": f"有阈值行且未豁免 {len(armed)} 表 / allow_empty 白名单 {len(blind)} 表（判黄不判绿）"
-                        f" / 两册无行 {len(unwatched)} 表 / breach 实跑={breaches.get('ran')}"
-                        f" 违规={breaches.get('breaches')}｜{why}"}
+    return {
+        "verdict": verdict,
+        "armed": armed[:20],
+        "allow_empty_blind": blind[:20],
+        "unwatched_tables": unwatched[:20],
+        "breach_run": breaches,
+        "verdict_reason": why,
+        "evidence": f"有阈值行且未豁免 {len(armed)} 表 / allow_empty 白名单 {len(blind)} 表（判黄不判绿）"
+        f" / 两册无行 {len(unwatched)} 表 / breach 实跑={breaches.get('ran')}"
+        f" 违规={breaches.get('breaches')}｜{why}",
+    }
 
 
-def sentinel_verdict(tables: list[str], armed: list[dict[str, Any]], blind: list[dict[str, Any]],
-                     unwatched: list[dict[str, Any]], breaches: dict[str, Any]) -> tuple[str, str]:
+def sentinel_verdict(
+    tables: list[str],
+    armed: list[dict[str, Any]],
+    blind: list[dict[str, Any]],
+    unwatched: list[dict[str, Any]],
+    breaches: dict[str, Any],
+) -> tuple[str, str]:
     """⑤ 向三态：全裸=红；有豁免/盲区/实跑失败=黄或红；只有真在岗且 breach=0 才绿。"""
     if not tables:
         return "不可测", "该环节无声明落点表，⑤向无从谈起"
@@ -1316,11 +1590,14 @@ def run_sentinel_live(tables: list[str]) -> dict[str, Any]:
         specs = qs.load_specs(tables=tables)
         res = qs.run_sentinel(specs, output=qs.SentinelOutput(report_dir=None, notify=False))
         findings = res.get("findings") if isinstance(res, dict) else None
-        return {"ran": True, "specs": len(specs), "breaches": len(findings or []),
-                "failed": bool(isinstance(res, dict) and res.get("errors")),
-                "finding_tables": sorted({str(f.get("table")) for f in (findings or [])
-                                          if isinstance(f, dict)})[:10],
-                "result_keys": sorted(res)[:8] if isinstance(res, dict) else str(type(res))}
+        return {
+            "ran": True,
+            "specs": len(specs),
+            "breaches": len(findings or []),
+            "failed": bool(isinstance(res, dict) and res.get("errors")),
+            "finding_tables": sorted({str(f.get("table")) for f in (findings or []) if isinstance(f, dict)})[:10],
+            "result_keys": sorted(res)[:8] if isinstance(res, dict) else str(type(res)),
+        }
     except Exception as exc:  # noqa: BLE001 — 实跑失败必须报，不改判绿
         return {"ran": False, "error": str(exc)[:200]}
 
@@ -1359,16 +1636,24 @@ def probe_failclose(paths: list[Path]) -> dict[str, Any]:
         hits = _silent_excepts(tree)
         silent += [f"{p.relative_to(REPO_ROOT)}:{ln}" for ln in hits]
     verdict, why = failclose_verdict(silent, by_pattern, alarm_wiring, files_scanned)
-    return {"verdict": verdict, "mode": "⑥=静态推演（STATIC，非动态注入；注入须写生产表故按 R-024 降级为只读）",
-            "dynamic_injection": False, "silent_except_count": len(silent), "silent_sites": silent[:20],
-            "pattern_counts": by_pattern, "alarm_wired_files": alarm_wiring,
-            "files_scanned": files_scanned, "verdict_reason": why,
-            "evidence": f"AST 静默 except {len(silent)} 处 / 模式命中 {by_pattern} / "
-                        f"告警接线文件 {alarm_wiring} 件（扫描面 {files_scanned} 件）｜{why}"}
+    return {
+        "verdict": verdict,
+        "mode": "⑥=静态推演（STATIC，非动态注入；注入须写生产表故按 R-024 降级为只读）",
+        "dynamic_injection": False,
+        "silent_except_count": len(silent),
+        "silent_sites": silent[:20],
+        "pattern_counts": by_pattern,
+        "alarm_wired_files": alarm_wiring,
+        "files_scanned": files_scanned,
+        "verdict_reason": why,
+        "evidence": f"AST 静默 except {len(silent)} 处 / 模式命中 {by_pattern} / "
+        f"告警接线文件 {alarm_wiring} 件（扫描面 {files_scanned} 件）｜{why}",
+    }
 
 
-def failclose_verdict(silent: list[str], by_pattern: dict[str, int], alarm_wiring: int,
-                      files_scanned: int) -> tuple[str, str]:
+def failclose_verdict(
+    silent: list[str], by_pattern: dict[str, int], alarm_wiring: int, files_scanned: int
+) -> tuple[str, str]:
     """⑥ 向三态（静态推演口径）：无静默点且有告警接线才黄绿分界，绿=需要动态注入证据。"""
     total = sum(by_pattern.values())
     if not files_scanned:
@@ -1388,8 +1673,10 @@ def _silent_excepts(tree: ast.AST) -> list[int]:
             continue
         body = node.body
         only_pass = all(isinstance(s, ast.Pass) for s in body)
-        only_log = all(isinstance(s, ast.Expr) and isinstance(s.value, ast.Call)
-                       and "log" in ast.dump(s.value.func).lower() for s in body)
+        only_log = all(
+            isinstance(s, ast.Expr) and isinstance(s.value, ast.Call) and "log" in ast.dump(s.value.func).lower()
+            for s in body
+        )
         if only_pass or (only_log and not _raises(body)):
             out.append(node.lineno)
     return out
@@ -1411,8 +1698,12 @@ def stage_tolerance_days(spec: dict[str, Any], schedule: dict[str, Any]) -> int:
     return 7
 
 
-def verify_stage(ff_id: str, catalog: dict[str, Any], ctx: FlowthroughProbeContext,
-                 sources: dict[str, tuple[set[str], dict[str, Any]]]) -> dict[str, Any]:
+def verify_stage(
+    ff_id: str,
+    catalog: dict[str, Any],
+    ctx: FlowthroughProbeContext,
+    sources: dict[str, tuple[set[str], dict[str, Any]]],
+) -> dict[str, Any]:
     spec = dict(catalog[ff_id])
     scan = scan_stage_tables(spec["code_paths"])
     e_meta = sources["E_data_tasks_and_schedule"][1]
@@ -1420,28 +1711,52 @@ def verify_stage(ff_id: str, catalog: dict[str, Any], ctx: FlowthroughProbeConte
     tables = scan["read_tables"] or scan["write_tables"]
     tol = stage_tolerance_days(spec, set(e_meta.get("schedules", []) or []))
     feed = probe_feed(tables, date_cols, ctx, stage_tolerance_days=tol)
-    runs = (probe_runs(discover_entries(spec["code_paths"]), ctx) if ctx.limit_runs else
-            {"verdict": "不可测", "ran": [], "skipped_need_gate": [], "blocked_total": 0,
-             "evidence": "--limit-runs 0=关闭真跑（仅静态，未证转化）"})
+    runs = (
+        probe_runs(discover_entries(spec["code_paths"]), ctx)
+        if ctx.limit_runs
+        else {
+            "verdict": "不可测",
+            "ran": [],
+            "skipped_need_gate": [],
+            "blocked_total": 0,
+            "evidence": "--limit-runs 0=关闭真跑（仅静态，未证转化）",
+        }
+    )
     lands = probe_lands(scan["write_tables"], spec["code_paths"], ctx)
     consumers = probe_consumers(_with_edges(spec, ctx), ctx)
     sentinel = probe_sentinel(sorted(set(scan["read_tables"]) | set(scan["write_tables"])), ctx)
     failclose = probe_failclose(spec["code_paths"])
-    record = {"stage_id": ff_id, "name": spec.get("name"), "kind": spec.get("kind"),
-              "domains": spec.get("domains"), "paths": spec.get("paths"),
-              "files_scanned": scan["files_scanned"], "tolerance_days": tol,
-              "mechanisms": spec.get("mechanisms", []),
-              "read_tables": scan["read_tables"][:40], "write_tables": scan["write_tables"][:40],
-              "sixway": {"①入口有料": feed, "②转化能跑": runs, "③出口有货": lands,
-                         "④下游能取": consumers, "⑤哨兵在岗": sentinel, "⑥失败会响": failclose}}
+    record = {
+        "stage_id": ff_id,
+        "name": spec.get("name"),
+        "kind": spec.get("kind"),
+        "domains": spec.get("domains"),
+        "paths": spec.get("paths"),
+        "files_scanned": scan["files_scanned"],
+        "tolerance_days": tol,
+        "mechanisms": spec.get("mechanisms", []),
+        "read_tables": scan["read_tables"][:40],
+        "write_tables": scan["write_tables"][:40],
+        "sixway": {
+            "①入口有料": feed,
+            "②转化能跑": runs,
+            "③出口有货": lands,
+            "④下游能取": consumers,
+            "⑤哨兵在岗": sentinel,
+            "⑥失败会响": failclose,
+        },
+    }
     record["verdict_suggested"] = suggest_verdict(record)
     return record
 
 
 def _date_col_map(sources: dict[str, tuple[set[str], dict[str, Any]]]) -> dict[str, str]:
     tasks, _ = _load_yaml("E_data_tasks")
-    return {t["table"]: t.get("date_col", "") for t in (tasks or {}).get("tasks", []) or []
-            if isinstance(t, dict) and t.get("table")}
+    return {
+        t["table"]: t.get("date_col", "")
+        for t in (tasks or {}).get("tasks", []) or []
+        if isinstance(t, dict) and t.get("table")
+    }
 
 
 def _with_edges(spec: dict[str, Any], ctx: FlowthroughProbeContext) -> dict[str, Any]:
@@ -1463,8 +1778,12 @@ def _with_edges(spec: dict[str, Any], ctx: FlowthroughProbeContext) -> dict[str,
 def suggest_verdict(record: dict[str, Any]) -> str:
     """规范 §2 三态建议（裁定权在总包）。"""
     six = record["sixway"]
-    core = [six["①入口有料"]["verdict"], six["②转化能跑"]["verdict"],
-            six["③出口有货"]["verdict"], six["④下游能取"]["verdict"]]
+    core = [
+        six["①入口有料"]["verdict"],
+        six["②转化能跑"]["verdict"],
+        six["③出口有货"]["verdict"],
+        six["④下游能取"]["verdict"],
+    ]
     if any(v == "红" for v in core):
         return "红"
     if all(v in ("绿", "黄-门位") for v in core):
@@ -1475,16 +1794,17 @@ def suggest_verdict(record: dict[str, Any]) -> str:
     return "黄"
 
 
-
 def _crosscheck_verdict_text(r: dict[str, Any]) -> str:
     bad = {t: row for t, row in r["unassigned"].items() if row["unassigned"]}
     if not bad:
-        return ("**印证**：7 个真源逐源复核，未归属对象数全部为 0（任务/TDM 两个异词汇源按子索引归口）。")
+        return "**印证**：7 个真源逐源复核，未归属对象数全部为 0（任务/TDM 两个异词汇源按子索引归口）。"
     parts = ["**推翻/补强**：以下真源存在未归属对象，骨架『未归属=0』不成立（或依赖人工裁定兜底）："]
     for tag, row in bad.items():
         parts.append(f"- `{tag}` 未归属 {row['unassigned']} 项：{', '.join(f'`{x}`' for x in row['items'])}")
-    parts.append("- 骨架 §5.1 表第 3/4 行已自记 19 域未被 policy 分类、FDR 与 depgraph 互缺，"
-                 "本轮实测复现（见 §2 差集行），故骨架的 0 是**人工兜底后的 0**，非机械派生的 0。")
+    parts.append(
+        "- 骨架 §5.1 表第 3/4 行已自记 19 域未被 policy 分类、FDR 与 depgraph 互缺，"
+        "本轮实测复现（见 §2 差集行），故骨架的 0 是**人工兜底后的 0**，非机械派生的 0。"
+    )
     return "\n".join(parts)
 
 
@@ -1496,9 +1816,13 @@ LEDGER_YAML: Final[Path] = OUT_DIR / "04_sixway_machine_ledger.yaml"
 
 
 def cmd_stage(args: argparse.Namespace) -> list[dict[str, Any]]:
-    ctx = FlowthroughProbeContext(limit_tables=args.limit_tables, limit_runs=args.limit_runs,
-                                  run_timeout_s=args.timeout, trade_date=args.trade_date,
-                                  use_db=not args.no_db)
+    ctx = FlowthroughProbeContext(
+        limit_tables=args.limit_tables,
+        limit_runs=args.limit_runs,
+        run_timeout_s=args.timeout,
+        trade_date=args.trade_date,
+        use_db=not args.no_db,
+    )
     ok, why = resmon_headroom()
     if not ok and not args.force:
         log_line(f"[资源自守] {why} —— 加 --force 才继续（全仓扫描会压宿主）")
@@ -1510,59 +1834,84 @@ def cmd_stage(args: argparse.Namespace) -> list[dict[str, Any]]:
     records = [verify_stage(i, catalog, ctx, sources) for i in ids if i in catalog]
     if args.all:
         records.append(_stage_coverage_diff(catalog, sources, model))
-    universe = universe_declaration(sources, catalog,
-                                    "本台账所覆盖环节的六向实测（环节集由 7 真源机械推导）",
-                                    tuple(model["residual_domains"]))
+    universe = universe_declaration(
+        sources, catalog, "本台账所覆盖环节的六向实测（环节集由 7 真源机械推导）", tuple(model["residual_domains"])
+    )
     _write_ledger(records, sources, catalog, universe)
     return records
 
 
-def _stage_coverage_diff(catalog: dict[str, Any], sources: dict[str, tuple[set[str], dict[str, Any]]],
-                         model: dict[str, Any]) -> dict[str, Any]:
+def _stage_coverage_diff(
+    catalog: dict[str, Any], sources: dict[str, tuple[set[str], dict[str, Any]]], model: dict[str, Any]
+) -> dict[str, Any]:
     """环节清单对照：推导 vs 骨架（不静默采信任何一方）。"""
     skeleton = parse_skeleton_stages()
     derived = sorted(catalog)
     only_skel = sorted(set(skeleton) - set(derived))
     only_derived = sorted(set(derived) - set(skeleton))
-    return {"stage_id": "COVERAGE-DIFF", "name": "推导环节 vs 骨架环节", "kind": "meta",
-            "derived_stages": derived, "skeleton_stages": sorted(skeleton),
-            "only_in_skeleton": only_skel, "only_in_derived": only_derived,
-            "residual_domains": model["residual_domains"],
-            "verdict_suggested": "绿" if not only_skel and not only_derived else "黄"}
+    return {
+        "stage_id": "COVERAGE-DIFF",
+        "name": "推导环节 vs 骨架环节",
+        "kind": "meta",
+        "derived_stages": derived,
+        "skeleton_stages": sorted(skeleton),
+        "only_in_skeleton": only_skel,
+        "only_in_derived": only_derived,
+        "residual_domains": model["residual_domains"],
+        "verdict_suggested": "绿" if not only_skel and not only_derived else "黄",
+    }
 
 
-def _write_ledger(records: list[dict[str, Any]], sources: dict[str, tuple[set[str], dict[str, Any]]],
-                  catalog: dict[str, Any], universe: dict[str, Any] | None = None) -> None:
+def _write_ledger(
+    records: list[dict[str, Any]],
+    sources: dict[str, tuple[set[str], dict[str, Any]]],
+    catalog: dict[str, Any],
+    universe: dict[str, Any] | None = None,
+) -> None:
     import yaml
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     universe = universe or universe_declaration(sources, catalog, "六向台账（未显式传入论域=按台账自身口径）")
-    payload = {"generated_at": now_utc_str(),
-               "generator": "scripts/automation/flowthrough_verifier.py",
-               "universe": universe,
-               "source_freshness": {t: _source_age_warning(m) for t, (_, m) in sources.items()},
-               "source_sizes": {t: m.get("count") for t, (_, m) in sources.items()},
-               "stages": records}
+    payload = {
+        "generated_at": now_utc_str(),
+        "generator": "scripts/automation/flowthrough_verifier.py",
+        "universe": universe,
+        "source_freshness": {t: _source_age_warning(m) for t, (_, m) in sources.items()},
+        "source_sizes": {t: m.get("count") for t, (_, m) in sources.items()},
+        "stages": records,
+    }
     universe_guard_payload(universe)  # 机读件同受 R-024 论域禁令，口径换成字段级断言
     LEDGER_YAML.write_text(yaml.safe_dump(payload, allow_unicode=True, sort_keys=False), encoding="utf-8")
-    lines = ["---", "ttl: task_bound", "completes_when: 全流通战役收官且六向台账连续两轮红件=0", "---", "",
-             "# 六向台账（验收仪实测产出，勿手改；生成件=`scripts/automation/flowthrough_verifier.py`）", "",
-             f"生成时间：{payload['generated_at']} · 裁定权：总包（本表仅出**建议**，规范 §2）", "",
-             "真源新鲜度：" + "; ".join(f"{k}={v}" for k, v in payload["source_freshness"].items()), ""]
+    lines = [
+        "---",
+        "ttl: task_bound",
+        "completes_when: 全流通战役收官且六向台账连续两轮红件=0",
+        "---",
+        "",
+        "# 六向台账（验收仪实测产出，勿手改；生成件=`scripts/automation/flowthrough_verifier.py`）",
+        "",
+        f"生成时间：{payload['generated_at']} · 裁定权：总包（本表仅出**建议**，规范 §2）",
+        "",
+        "真源新鲜度：" + "; ".join(f"{k}={v}" for k, v in payload["source_freshness"].items()),
+        "",
+    ]
     lines += render_universe_lines(universe)
-    lines += ["", "## 三态建议分布", "", "| 环节 | ① | ② | ③ | ④ | ⑤ | ⑥ | 建议 |",
-              "|---|---|---|---|---|---|---|---|"]
+    lines += ["", "## 三态建议分布", "", "| 环节 | ① | ② | ③ | ④ | ⑤ | ⑥ | 建议 |", "|---|---|---|---|---|---|---|---|"]
     for rec in records:
         six = rec.get("sixway", {})
-        cells = [six.get(k, {}).get("verdict", "—") for k in
-                 ("①入口有料", "②转化能跑", "③出口有货", "④下游能取", "⑤哨兵在岗", "⑥失败会响")]
-        lines.append(f"| {rec['stage_id']} {rec.get('name', '')} | " + " | ".join(cells)
-                     + f" | **{rec.get('verdict_suggested')}** |")
+        cells = [
+            six.get(k, {}).get("verdict", "—")
+            for k in ("①入口有料", "②转化能跑", "③出口有货", "④下游能取", "⑤哨兵在岗", "⑥失败会响")
+        ]
+        lines.append(
+            f"| {rec['stage_id']} {rec.get('name', '')} | "
+            + " | ".join(cells)
+            + f" | **{rec.get('verdict_suggested')}** |"
+        )
     dist: dict[str, int] = {}
     for rec in records:
         dist[rec.get("verdict_suggested", "?")] = dist.get(rec.get("verdict_suggested", "?"), 0) + 1
-    lines += ["", "分布：" + ", ".join(f"{k}={v}" for k, v in sorted(dist.items())), "",
-              "## 逐环节六向明细", ""]
+    lines += ["", "分布：" + ", ".join(f"{k}={v}" for k, v in sorted(dist.items())), "", "## 逐环节六向明细", ""]
     for rec in records:
         lines += _render_stage_md(rec)
     text = "\n".join(lines) + "\n"
@@ -1579,25 +1928,39 @@ def shutil_copy(src: Path, dst: Path) -> None:
 
 def _render_stage_md(rec: dict[str, Any]) -> list[str]:
     if "derived_stages" in rec:
-        return [f"### {rec['stage_id']} {rec['name']}", "",
-                f"- 推导环节（{len(rec['derived_stages'])}）：{', '.join(rec['derived_stages'])}",
-                f"- 骨架环节（{len(rec['skeleton_stages'])}）：{', '.join(rec['skeleton_stages'])}",
-                f"- 仅在骨架：{rec['only_in_skeleton'] or '无'}；仅在推导：{rec['only_in_derived'] or '无'}",
-                f"- 未被 flow_stage 机械归口的 depgraph 域：{len(rec['residual_domains'])} 个", ""]
-    out = [f"### {rec['stage_id']} {rec.get('name')} · 建议裁定 **{rec.get('verdict_suggested')}**", "",
-           f"- 域：{', '.join(f'`{d}`' for d in rec.get('domains', []))}",
-           f"- 代码路径：{', '.join(f'`{p}`' for p in rec.get('paths', []))}",
-           f"- 扫描文件数（实测）：{rec.get('files_scanned')}", "",
-           "| 向 | 判定 | 实测证据 |", "|---|---|---|"]
+        return [
+            f"### {rec['stage_id']} {rec['name']}",
+            "",
+            f"- 推导环节（{len(rec['derived_stages'])}）：{', '.join(rec['derived_stages'])}",
+            f"- 骨架环节（{len(rec['skeleton_stages'])}）：{', '.join(rec['skeleton_stages'])}",
+            f"- 仅在骨架：{rec['only_in_skeleton'] or '无'}；仅在推导：{rec['only_in_derived'] or '无'}",
+            f"- 未被 flow_stage 机械归口的 depgraph 域：{len(rec['residual_domains'])} 个",
+            "",
+        ]
+    out = [
+        f"### {rec['stage_id']} {rec.get('name')} · 建议裁定 **{rec.get('verdict_suggested')}**",
+        "",
+        f"- 域：{', '.join(f'`{d}`' for d in rec.get('domains', []))}",
+        f"- 代码路径：{', '.join(f'`{p}`' for p in rec.get('paths', []))}",
+        f"- 扫描文件数（实测）：{rec.get('files_scanned')}",
+        "",
+        "| 向 | 判定 | 实测证据 |",
+        "|---|---|---|",
+    ]
     for key, block in rec.get("sixway", {}).items():
         out.append(f"| {key} | {block.get('verdict')} | {block.get('evidence', '')[:900]} |")
     four = rec.get("sixway", {}).get("④下游能取", {})
     liars = four.get("declared_vs_actual", {}).get("blueprint_lying_candidates", [])
     if liars:
-        out += ["", f"- **蓝图说谎候选（声明的消费方实际不 import，共 "
-                    f"{four.get('declared_vs_actual', {}).get('liar_count')} 件）**："]
-        out += [f"  - `{l['module']}` 声明但无 import：{', '.join(f'`{t}`' for t in l['declared_but_no_import'][:4])}"
-                for l in liars[:8]]
+        out += [
+            "",
+            f"- **蓝图说谎候选（声明的消费方实际不 import，共 "
+            f"{four.get('declared_vs_actual', {}).get('liar_count')} 件）**：",
+        ]
+        out += [
+            f"  - `{l['module']}` 声明但无 import：{', '.join(f'`{t}`' for t in l['declared_but_no_import'][:4])}"
+            for l in liars[:8]
+        ]
     unlisted = four.get("declared_vs_actual", {}).get("unlisted_consumers", [])
     if unlisted:
         out += ["", f"- 实际引用但蓝图未登记的消费者（欠账 {len(unlisted)} 条，截 8 条）："]
@@ -1610,8 +1973,11 @@ def _render_stage_md(rec: dict[str, Any]) -> list[str]:
             out.append(f"  - 孤儿候选 `{s['orphan']}` → {cands}")
     dyn = four.get("dynamic_registration", [])
     if dyn:
-        out += ["", f"- 动态注册面（BRK-009，不判孤儿）{len(dyn)} 件："
-                    + "; ".join(f"`{Path(d['module']).name}`∈{d['registered_in'][:2]}" for d in dyn[:6])]
+        out += [
+            "",
+            f"- 动态注册面（BRK-009，不判孤儿）{len(dyn)} 件："
+            + "; ".join(f"`{Path(d['module']).name}`∈{d['registered_in'][:2]}" for d in dyn[:6]),
+        ]
     return out + [""]
 
 
@@ -1624,19 +1990,27 @@ def cmd_verdict(args: argparse.Namespace) -> dict[str, Any]:
     rows = []
     for rec in data.get("stages", []):
         six = rec.get("sixway", {})
-        rows.append({"stage": rec.get("stage_id"), "name": rec.get("name"),
-                     "suggested": rec.get("verdict_suggested"),
-                     "red_directions": [k for k, b in six.items() if b.get("verdict") == "红"],
-                     "yellow_directions": [k for k, b in six.items() if b.get("verdict") != "绿"
-                                           and k in ("⑤哨兵在岗", "⑥失败会响")]})
+        rows.append(
+            {
+                "stage": rec.get("stage_id"),
+                "name": rec.get("name"),
+                "suggested": rec.get("verdict_suggested"),
+                "red_directions": [k for k, b in six.items() if b.get("verdict") == "红"],
+                "yellow_directions": [
+                    k for k, b in six.items() if b.get("verdict") != "绿" and k in ("⑤哨兵在岗", "⑥失败会响")
+                ],
+            }
+        )
     dist: dict[str, int] = {}
     for r in rows:
         dist[r["suggested"]] = dist.get(r["suggested"], 0) + 1
     log_line("[verdict] 三态建议分布：" + ", ".join(f"{k}={v}" for k, v in sorted(dist.items())))
     for r in rows:
-        log_line(f"  {r['stage']} {str(r['name'])[:28]:30s} 建议={r['suggested']} "
-                 f"红向={r['red_directions'] or '—'} 待补向={r['yellow_directions'] or '—'}")
-    log_line("[verdict] 提示：本表是**建议**，裁定权在总包；永不说\"全绿\"（裁定#325）")
+        log_line(
+            f"  {r['stage']} {str(r['name'])[:28]:30s} 建议={r['suggested']} "
+            f"红向={r['red_directions'] or '—'} 待补向={r['yellow_directions'] or '—'}"
+        )
+    log_line('[verdict] 提示：本表是**建议**，裁定权在总包；永不说"全绿"（裁定#325）')
     return {"distribution": dist, "rows": rows}
 
 
@@ -1647,16 +2021,20 @@ def _poisoned_table(real: str) -> str:
     return real + FF_PROBE_POISON_SUFFIX
 
 
-def prove_red_chain_hop(tables: list[str], ctx: FlowthroughProbeContext,
-                        broken_index: int = 0) -> dict[str, Any]:
+def prove_red_chain_hop(tables: list[str], ctx: FlowthroughProbeContext, broken_index: int = 0) -> dict[str, Any]:
     """断掉主链一跳（把某上游表指向不存在的表），走**同一条判定路径**重跑。"""
     poison = _poisoned_table(tables[broken_index])
     mutated = list(tables)
     mutated[broken_index] = poison
     date_cols = _date_col_map({})
     hit = probe_feed(mutated, date_cols, ctx)
-    return {"injected_hop": tables[broken_index], "poisoned_to": poison, "verdict": hit["verdict"],
-            "named_broken_hop": hit.get("broken_hop", []), "detail": hit["detail"]}
+    return {
+        "injected_hop": tables[broken_index],
+        "poisoned_to": poison,
+        "verdict": hit["verdict"],
+        "named_broken_hop": hit.get("broken_hop", []),
+        "detail": hit["detail"],
+    }
 
 
 def prove_red_tasks_source(tag: str, ctx: FlowthroughProbeContext) -> dict[str, Any]:
@@ -1679,13 +2057,18 @@ def prove_red_tasks_source(tag: str, ctx: FlowthroughProbeContext) -> dict[str, 
     probe = TMP_DIR / "probe_tasks.yaml"
     probe.parent.mkdir(parents=True, exist_ok=True)
     probe.write_bytes(dirty.encode("utf-8"))
-    tables = re.findall(r"^\s*table:\s*([a-z0-9_]+\.[a-z0-9_]+)\s*$",
-                        probe.read_text(encoding="utf-8"), re.M)
+    tables = re.findall(r"^\s*table:\s*([a-z0-9_]+\.[a-z0-9_]+)\s*$", probe.read_text(encoding="utf-8"), re.M)
     hit = probe_feed(tables[:1], _date_col_map({}), ctx)
     after_sha = _sha256_of((REPO_ROOT / rel).read_bytes())
-    return {"victim_table": victim, "poisoned_to": tables[0], "probe_copy": str(probe),
-            "verdict": hit["verdict"], "named_broken_hop": hit.get("broken_hop", []),
-            "production_untouched": base_sha == after_sha, "sha256": base_sha}
+    return {
+        "victim_table": victim,
+        "poisoned_to": tables[0],
+        "probe_copy": str(probe),
+        "verdict": hit["verdict"],
+        "named_broken_hop": hit.get("broken_hop", []),
+        "production_untouched": base_sha == after_sha,
+        "sha256": base_sha,
+    }
 
 
 def _sha256_of(raw: bytes) -> str:
@@ -1707,23 +2090,39 @@ def cmd_prove_red(args: argparse.Namespace) -> dict[str, Any]:
     src_probe = prove_red_tasks_source("E_data_tasks", ctx)
     hopset = prove_red_hop_injections(args.hop_count)
     control_ok = control["verdict"] in ("绿", "黄")
-    red_ok = (control_ok and chain["verdict"] == "红" and chain["named_broken_hop"]
-              and src_probe["verdict"] == "红" and src_probe.get("named_broken_hop")
-              and src_probe.get("production_untouched") and hopset["pass"])
+    red_ok = (
+        control_ok
+        and chain["verdict"] == "红"
+        and chain["named_broken_hop"]
+        and src_probe["verdict"] == "红"
+        and src_probe.get("named_broken_hop")
+        and src_probe.get("production_untouched")
+        and hopset["pass"]
+    )
     if not control_ok:
         log_line("[prove-red] 对照未通过（证据通道故障或未注入即已红）→ 红证无意义，判 FAIL")
-    result = {"generated_at": now_utc_str(), "control_verdict": control["verdict"],
-              "chain_hop_break": chain, "hop_injections": hopset, "source_byte_break": src_probe,
-              "assertion": (f"PASS=注入 {hopset['injected']}/{hopset['attempted']} 跳全部逐跳精确指名"
-                            f"且无误指" if red_ok else "FAIL=尺子不会红或指错地方，本件判红"),
-              "mock_free": "未 patch 本件任何判定函数：红路由真实 ClickHouse 查询失败/0 行产生"}
+    result = {
+        "generated_at": now_utc_str(),
+        "control_verdict": control["verdict"],
+        "chain_hop_break": chain,
+        "hop_injections": hopset,
+        "source_byte_break": src_probe,
+        "assertion": (
+            f"PASS=注入 {hopset['injected']}/{hopset['attempted']} 跳全部逐跳精确指名且无误指"
+            if red_ok
+            else "FAIL=尺子不会红或指错地方，本件判红"
+        ),
+        "mock_free": "未 patch 本件任何判定函数：红路由真实 ClickHouse 查询失败/0 行产生",
+    }
     if not red_ok:
         raise RuntimeError(f"prove-red 失败：{json.dumps(result, ensure_ascii=False, default=str)[:900]}")
-    log_line(f"[prove-red] {result['assertion']} | 对照(未注入)={control['verdict']} "
-             f"| 注入链跳→{chain['verdict']} 指名={chain['named_broken_hop']} "
-             f"| 逐跳注入 {hopset['injected']}/{hopset['attempted']} 精确指名+无误指"
-             f"| 注入真源→{src_probe['verdict']} 指名={src_probe.get('named_broken_hop')} "
-             f"| 生产文件未触碰={src_probe.get('production_untouched')}")
+    log_line(
+        f"[prove-red] {result['assertion']} | 对照(未注入)={control['verdict']} "
+        f"| 注入链跳→{chain['verdict']} 指名={chain['named_broken_hop']} "
+        f"| 逐跳注入 {hopset['injected']}/{hopset['attempted']} 精确指名+无误指"
+        f"| 注入真源→{src_probe['verdict']} 指名={src_probe.get('named_broken_hop')} "
+        f"| 生产文件未触碰={src_probe.get('production_untouched')}"
+    )
     _dump_json("prove_red_result.json", result)
     return result
 
@@ -1745,32 +2144,43 @@ def prove_red_hop_injections(want: int = 12) -> dict[str, Any]:
     eligible.sort(key=lambda h: (h.hop_id not in FF_KNOWN_MISSED_PAIRS, h.hop_id))
     need = max(FF_PROVE_RED_MIN_HOPS, want)
     if len(eligible) < need:
-        log_line(f"[prove-red] 合格注入靶仅 {len(eligible)} 条（需求 {need}，"
-                 f"基线断供跳 {len(pre_cuts)} 条已如实排除）——不足即判 FAIL，禁降级断言凑数")
+        log_line(
+            f"[prove-red] 合格注入靶仅 {len(eligible)} 条（需求 {need}，"
+            f"基线断供跳 {len(pre_cuts)} 条已如实排除）——不足即判 FAIL，禁降级断言凑数"
+        )
     results = [_inject_one_hop(h, hops, pre_cuts, counter, victims) for h in eligible[:need]]
     for r in results:
-        log_line(f"[prove-red/A] {r['hop_id']} 注入断供={r.get('victim_table', '—')} "
-                 f"→ {r.get('verdict_after', r.get('skipped'))} "
-                 f"| 新增断供跳={r.get('newly_cut_hops')} | 误指={r.get('misattributed_to') or '无'}")
+        log_line(
+            f"[prove-red/A] {r['hop_id']} 注入断供={r.get('victim_table', '—')} "
+            f"→ {r.get('verdict_after', r.get('skipped'))} "
+            f"| 新增断供跳={r.get('newly_cut_hops')} | 误指={r.get('misattributed_to') or '无'}"
+        )
     a_pass = all(r["named_exact"] for r in results) and len(results) >= FF_PROVE_RED_MIN_HOPS
-    b = _inject_global_supply_cut(hops, {k: v for k, v in victims.items() if k not in pre_cuts},
-                                  counter, pre_cuts)
+    b = _inject_global_supply_cut(hops, {k: v for k, v in victims.items() if k not in pre_cuts}, counter, pre_cuts)
     for run in b.get("runs", []):
-        log_line(f"[prove-red/B] 断供 {run['victim_table']}（供 {run['user_hops']} 跳）"
-                 f"→ 应指 {len(run['expected_hops'])} 跳 / 实指 {len(run['named_hops'])} 跳 "
-                 f"| 漏={run['missed'] or '无'} 误指={run['wrongly_named'] or '无'}")
+        log_line(
+            f"[prove-red/B] 断供 {run['victim_table']}（供 {run['user_hops']} 跳）"
+            f"→ 应指 {len(run['expected_hops'])} 跳 / 实指 {len(run['named_hops'])} 跳 "
+            f"| 漏={run['missed'] or '无'} 误指={run['wrongly_named'] or '无'}"
+        )
     known = _mandated_pair_check(results, hops, baseline)
-    return {"pass": bool(a_pass and b["pass"] and known["pass"]), "attempted": len(results),
-            "injected": sum(1 for r in results if r["named_exact"]),
-            "min_required": FF_PROVE_RED_MIN_HOPS, "family_A_per_hop": results,
-            "family_B_global_table_cut": b, "known_missed_pairs": known,
-            "all_broken_hops_baseline": sorted({k for k, v in baseline.items() if v}),
-            "baseline_supply_cuts_excluded_as_targets": sorted(pre_cuts),
-            "baseline_note": "基线=未注入时已存在的真断点（非本轮造假），注入判据看的是**新增**红跳集合"}
+    return {
+        "pass": bool(a_pass and b["pass"] and known["pass"]),
+        "attempted": len(results),
+        "injected": sum(1 for r in results if r["named_exact"]),
+        "min_required": FF_PROVE_RED_MIN_HOPS,
+        "family_A_per_hop": results,
+        "family_B_global_table_cut": b,
+        "known_missed_pairs": known,
+        "all_broken_hops_baseline": sorted({k for k, v in baseline.items() if v}),
+        "baseline_supply_cuts_excluded_as_targets": sorted(pre_cuts),
+        "baseline_note": "基线=未注入时已存在的真断点（非本轮造假），注入判据看的是**新增**红跳集合",
+    }
 
 
-def _mandated_pair_check(results: list[dict[str, Any]], hops: list[FlowthroughHopSpec],
-                         baseline: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
+def _mandated_pair_check(
+    results: list[dict[str, Any]], hops: list[FlowthroughHopSpec], baseline: dict[str, list[dict[str, Any]]]
+) -> dict[str, Any]:
     """R-024 点名的两条漏检跳必须**分别**过关——这是"修好了"的最低证据。
 
     两种过关形态，按该跳是否可注入分：
@@ -1785,23 +2195,45 @@ def _mandated_pair_check(results: list[dict[str, Any]], hops: list[FlowthroughHo
     for pair in FF_KNOWN_MISSED_PAIRS:
         got = by_hop.get(pair)
         if got:
-            rows.append({"pair": pair, "mode": "动态注入读侧断供", "pass": bool(got["named_exact"]),
-                         "detail": got.get("evidence") or got.get("skipped", "")})
+            rows.append(
+                {
+                    "pair": pair,
+                    "mode": "动态注入读侧断供",
+                    "pass": bool(got["named_exact"]),
+                    "detail": got.get("evidence") or got.get("skipped", ""),
+                }
+            )
             continue
-        own = [b for b in baseline.get(pair, [])
-               if b["reason"] in ("upstream_table_absent", "upstream_landed_zero")
-               and b["table"] in (spec[pair].handoff if pair in spec else ())]
-        rows.append({"pair": pair, "mode": "基线归因核验（该跳上游落点本就不可用，不可再注入）",
-                     "pass": bool(own), "own_breaks": own[:4],
-                     "detail": (f"该跳交接表 {len(spec.get(pair).handoff) if pair in spec else 0} 张，"
-                                f"其中 {own[0]['table']} 实测={own[0]['rows']}→已按本跳记账"
-                                if own else "该跳无任何归属自己的断点=归因缺失")})
-    return {"pass": all(r["pass"] for r in rows), "pairs": rows,
-            "note": "R-024 记录的 2/6 漏检跳（FF-01→FF-07 完全未报 / FF-12→FF-02 误归因）"}
+        own = [
+            b
+            for b in baseline.get(pair, [])
+            if b["reason"] in ("upstream_table_absent", "upstream_landed_zero")
+            and b["table"] in (spec[pair].handoff if pair in spec else ())
+        ]
+        rows.append(
+            {
+                "pair": pair,
+                "mode": "基线归因核验（该跳上游落点本就不可用，不可再注入）",
+                "pass": bool(own),
+                "own_breaks": own[:4],
+                "detail": (
+                    f"该跳交接表 {len(spec.get(pair).handoff) if pair in spec else 0} 张，"
+                    f"其中 {own[0]['table']} 实测={own[0]['rows']}→已按本跳记账"
+                    if own
+                    else "该跳无任何归属自己的断点=归因缺失"
+                ),
+            }
+        )
+    return {
+        "pass": all(r["pass"] for r in rows),
+        "pairs": rows,
+        "note": "R-024 记录的 2/6 漏检跳（FF-01→FF-07 完全未报 / FF-12→FF-02 误归因）",
+    }
 
 
-def _hop_universe_for_probe(counter: Callable[[str], int] | None = None
-                            ) -> tuple[list[FlowthroughHopSpec], dict[str, list[dict[str, Any]]]]:
+def _hop_universe_for_probe(
+    counter: Callable[[str], int] | None = None,
+) -> tuple[list[FlowthroughHopSpec], dict[str, list[dict[str, Any]]]]:
     """跑一遍真实逐跳断言，拿 (跳清单, 每跳基线断点)。基线非空不影响注入判据（按增量算）。
 
     counter 由调用方注入且**全run共用一个**：同一张表在一次实测里只查一次仓，
@@ -1818,14 +2250,14 @@ def _hop_universe_for_probe(counter: Callable[[str], int] | None = None
     return hops, base
 
 
-def _hop_injectable(hop: FlowthroughHopSpec,
-                    counter: Callable[[str], int] = _row_count) -> list[str]:
+def _hop_injectable(hop: FlowthroughHopSpec, counter: Callable[[str], int] = _row_count) -> list[str]:
     """可注入的交接表 = 该跳里"上游确有货"的表（断一张本就空/不可达的表证明不了任何事）。"""
     return [t for t in hop.handoff if counter(t) > 0]
 
 
-def _injectable_hops(hops: list[FlowthroughHopSpec], counter: Callable[[str], int]
-                     ) -> tuple[list[FlowthroughHopSpec], dict[str, list[str]]]:
+def _injectable_hops(
+    hops: list[FlowthroughHopSpec], counter: Callable[[str], int]
+) -> tuple[list[FlowthroughHopSpec], dict[str, list[str]]]:
     """一次实测得到"可注入跳清单 + 每跳有货交接表"（供 A/B 两族共用，避免重复打仓）。"""
     injectable: list[FlowthroughHopSpec] = []
     victims: dict[str, list[str]] = {}
@@ -1846,37 +2278,47 @@ def cut_hops(breaks: list[dict[str, Any]]) -> set[str]:
     return {b["hop_id"] for b in breaks if b.get("reason") == "supply_cut_at_read"}
 
 
-def _inject_one_hop(hop: FlowthroughHopSpec, all_hops: list[FlowthroughHopSpec],
-                    pre_cuts: set[str], counter: Callable[[str], int],
-                    victims: dict[str, list[str]]) -> dict[str, Any]:
+def _inject_one_hop(
+    hop: FlowthroughHopSpec,
+    all_hops: list[FlowthroughHopSpec],
+    pre_cuts: set[str],
+    counter: Callable[[str], int],
+    victims: dict[str, list[str]],
+) -> dict[str, Any]:
     """在该跳的读侧注入断供，重跑**全链**逐跳断言，判"新增断供跳集合是否恰好=这一跳"。
 
     判据按**增量**算且只看注入对应的原因：基线里其它真断点不参与归因判定。
     """
     avail = victims.get(hop.hop_id) or []
     if not avail:
-        return {"hop_id": hop.hop_id, "skipped": "无有货交接表可注入", "named_exact": False,
-                "verdict_after": "跳过"}
+        return {"hop_id": hop.hop_id, "skipped": "无有货交接表可注入", "named_exact": False, "verdict_after": "跳过"}
     table = avail[0]
     poison = {f"{hop.hop_id}|{table}": _poisoned_table(table)}
     after = evaluate_hops(all_hops, counter, read_poison=poison)
     newly = sorted(cut_hops(after["broken_detail"]) - pre_cuts)
-    hit = [b for b in after["broken_detail"]
-           if b.get("reason") == "supply_cut_at_read" and b["hop_id"] == hop.hop_id]
-    return {"hop_id": hop.hop_id, "kind": hop.kind, "victim_table": table,
-            "poisoned_to": _poisoned_table(table),
-            "verdict_after": "精确指名" if newly == [hop.hop_id] else
-                             ("漏检（未报出该跳）" if hop.hop_id not in newly else "误导归因"),
-            "named_this_hop": hop.hop_id in newly, "named_exact": newly == [hop.hop_id],
-            "newly_cut_hops": newly,
-            "missed": [] if hop.hop_id in newly else [hop.hop_id],
-            "misattributed_to": sorted(set(newly) - {hop.hop_id}),
-            "evidence": f"{hop.hop_id} supply_cut_at_read 表={hit[0]['table']}"
-                        f" 读到={hit[0]['rows']}" if hit else f"{hop.hop_id} 注入后无断供断点=漏检"}
+    hit = [b for b in after["broken_detail"] if b.get("reason") == "supply_cut_at_read" and b["hop_id"] == hop.hop_id]
+    return {
+        "hop_id": hop.hop_id,
+        "kind": hop.kind,
+        "victim_table": table,
+        "poisoned_to": _poisoned_table(table),
+        "verdict_after": "精确指名"
+        if newly == [hop.hop_id]
+        else ("漏检（未报出该跳）" if hop.hop_id not in newly else "误导归因"),
+        "named_this_hop": hop.hop_id in newly,
+        "named_exact": newly == [hop.hop_id],
+        "newly_cut_hops": newly,
+        "missed": [] if hop.hop_id in newly else [hop.hop_id],
+        "misattributed_to": sorted(set(newly) - {hop.hop_id}),
+        "evidence": f"{hop.hop_id} supply_cut_at_read 表={hit[0]['table']} 读到={hit[0]['rows']}"
+        if hit
+        else f"{hop.hop_id} 注入后无断供断点=漏检",
+    }
 
 
-def _inject_global_supply_cut(hops: list[FlowthroughHopSpec], victims: dict[str, list[str]],
-                              counter: Callable[[str], int], pre_cuts: set[str]) -> dict[str, Any]:
+def _inject_global_supply_cut(
+    hops: list[FlowthroughHopSpec], victims: dict[str, list[str]], counter: Callable[[str], int], pre_cuts: set[str]
+) -> dict[str, Any]:
     """B 族：一张表被多跳共用时断供，期望**所有**用它的跳报红、**其余**跳不得新增红。
 
     这是聚合层漏检的照妖镜：只在链末端比总数必然看不见（旧版 FF-01→FF-07 就是这么丢的）。
@@ -1894,18 +2336,28 @@ def _inject_global_supply_cut(hops: list[FlowthroughHopSpec], victims: dict[str,
         poison = {f"{hop_id}|{table}": _poisoned_table(table) for hop_id in expect}
         after = evaluate_hops(hops, counter, read_poison=poison)
         newly = cut_hops(after["broken_detail"]) - pre_cuts
-        runs.append({"victim_table": table, "poisoned_to": _poisoned_table(table),
-                     "user_hops": len(expect), "expected_hops": expect, "named_hops": sorted(newly),
-                     "missed": sorted(set(expect) - newly), "wrongly_named": sorted(newly - set(expect)),
-                     "pass": newly == set(expect)})
-    return {"pass": all(r["pass"] for r in runs), "runs": runs,
-            "note": "同一张表供多跳：逐跳断言必须把每一跳都点名，且不得点到没用它跳"}
+        runs.append(
+            {
+                "victim_table": table,
+                "poisoned_to": _poisoned_table(table),
+                "user_hops": len(expect),
+                "expected_hops": expect,
+                "named_hops": sorted(newly),
+                "missed": sorted(set(expect) - newly),
+                "wrongly_named": sorted(newly - set(expect)),
+                "pass": newly == set(expect),
+            }
+        )
+    return {
+        "pass": all(r["pass"] for r in runs),
+        "runs": runs,
+        "note": "同一张表供多跳：逐跳断言必须把每一跳都点名，且不得点到没用它跳",
+    }
 
 
 def _dump_json(name: str, payload: dict[str, Any]) -> None:
     TMP_DIR.mkdir(parents=True, exist_ok=True)
-    (TMP_DIR / name).write_text(json.dumps(payload, ensure_ascii=False, indent=1, default=str),
-                                encoding="utf-8")
+    (TMP_DIR / name).write_text(json.dumps(payload, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
 
 
 def _clean_control_tables(ctx: FlowthroughProbeContext, candidates: int = 14) -> list[str]:
@@ -1936,19 +2388,27 @@ def _e2e_hop(src: str, dst: str, scans: dict[str, Any], ctx: FlowthroughProbeCon
     现每跳逐表实测，四数字按表记账。
     """
     hop = FlowthroughHopSpec(
-        src=src, dst=dst, handoff=hop_handoff_tables(src, dst, scans),
-        produced=tuple(sorted(scans[dst]["write_tables"])[:FF_HOP_TABLE_CAP]))
+        src=src,
+        dst=dst,
+        handoff=hop_handoff_tables(src, dst, scans),
+        produced=tuple(sorted(scans[dst]["write_tables"])[:FF_HOP_TABLE_CAP]),
+    )
     ev = measure_hop(hop, _memo_counter(_row_count), cap=ctx.limit_tables or FF_HOP_TABLE_CAP)
     rows_up = {t: ev["upstream_landed"][t]["rows"] for t in ev["upstream_landed"]}
     rows_prod = {t: ev["this_stage_produced"][t]["rows"] for t in ev["this_stage_produced"]}
-    return {"from": src, "to": dst, "shared_tables": list(hop.handoff),
-            "upstream_landed": rows_up,
-            "this_stage_read": {t: v["rows"] for t, v in ev["this_stage_read"].items()},
-            "this_stage_produced": rows_prod,
-            "downstream_readable": len(ev["downstream_readable"]),
-            "break": bool(ev["breaks"]), "breaks": ev["breaks"],
-            "unmeasured": ev["unmeasured"],
-            "note": ev["note"]}
+    return {
+        "from": src,
+        "to": dst,
+        "shared_tables": list(hop.handoff),
+        "upstream_landed": rows_up,
+        "this_stage_read": {t: v["rows"] for t, v in ev["this_stage_read"].items()},
+        "this_stage_produced": rows_prod,
+        "downstream_readable": len(ev["downstream_readable"]),
+        "break": bool(ev["breaks"]),
+        "breaks": ev["breaks"],
+        "unmeasured": ev["unmeasured"],
+        "note": ev["note"],
+    }
 
 
 # --------------------------------------------------------------------------
@@ -1969,8 +2429,7 @@ class FlowthroughHopSpec:
         return f"{self.src}{FF_HOP_SEP}{self.dst}"
 
 
-def declared_stage_edges(catalog: dict[str, Any], skeleton: dict[str, dict[str, Any]]
-                         ) -> list[tuple[str, str]]:
+def declared_stage_edges(catalog: dict[str, Any], skeleton: dict[str, dict[str, Any]]) -> list[tuple[str, str]]:
     """声明边 = 骨架 upstream/downstream 列 ∪ 链上相邻。机械取，禁写死跳清单。"""
     edges: list[tuple[str, str]] = []
     order = sorted(k for k, v in catalog.items() if v.get("kind") in ("supply", "pipeline"))
@@ -1984,8 +2443,9 @@ def declared_stage_edges(catalog: dict[str, Any], skeleton: dict[str, dict[str, 
     return sorted({e for e in edges if e[0] in catalog and e[1] in catalog and e[0] != e[1]})
 
 
-def enumerate_hops(catalog: dict[str, Any], scans: dict[str, Any],
-                   skeleton: dict[str, dict[str, Any]]) -> list[FlowthroughHopSpec]:
+def enumerate_hops(
+    catalog: dict[str, Any], scans: dict[str, Any], skeleton: dict[str, dict[str, Any]]
+) -> list[FlowthroughHopSpec]:
     """一跳一跳地列出待断言对象：声明边 + 其二阶传递边（FF-01→FF-07 型远端跳）。"""
     hops: list[FlowthroughHopSpec] = []
     seen: set[str] = set()
@@ -1994,9 +2454,13 @@ def enumerate_hops(catalog: dict[str, Any], scans: dict[str, Any],
     def _spec(src: str, dst: str, kind: str) -> FlowthroughHopSpec | None:
         if src not in scans or dst not in scans or src == dst:
             return None
-        hop = FlowthroughHopSpec(src=src, dst=dst, kind=kind,
-                                 handoff=hop_handoff_tables(src, dst, scans),
-                                 produced=tuple(sorted(scans[dst]["write_tables"])[:FF_HOP_TABLE_CAP]))
+        hop = FlowthroughHopSpec(
+            src=src,
+            dst=dst,
+            kind=kind,
+            handoff=hop_handoff_tables(src, dst, scans),
+            produced=tuple(sorted(scans[dst]["write_tables"])[:FF_HOP_TABLE_CAP]),
+        )
         if hop.hop_id in seen:
             return None
         seen.add(hop.hop_id)
@@ -2038,8 +2502,12 @@ def _memo_counter(base: Callable[[str], int]) -> Callable[[str], int]:
     return counter
 
 
-def measure_hop(hop: FlowthroughHopSpec, row_counter: Callable[[str], int], cap: int = FF_HOP_TABLE_CAP,
-                read_poison: dict[str, str] | None = None) -> dict[str, Any]:
+def measure_hop(
+    hop: FlowthroughHopSpec,
+    row_counter: Callable[[str], int],
+    cap: int = FF_HOP_TABLE_CAP,
+    read_poison: dict[str, str] | None = None,
+) -> dict[str, Any]:
     """一跳四数字**逐表**实测 + 逐表自洽校验（这就是"不聚合"的那把尺）。
 
     read_poison: 注入用——把"本环节对某交接表的读取"改指到不存在的表（模拟该跳断供）。
@@ -2059,24 +2527,45 @@ def measure_hop(hop: FlowthroughHopSpec, row_counter: Callable[[str], int], cap:
             cell["injection"] = "hop_read_supply_cut"
         read[table] = cell
     produced = {t: _cell(t, row_counter(t)) for t in hop.produced[: max(1, cap)]}
-    unmeasurable = sorted([t for t, c in up.items() if c["rows"] == FF_ROWS_UNMEASURABLE]
-                          + [t for t, c in produced.items() if c["rows"] == FF_ROWS_UNMEASURABLE])
+    unmeasurable = sorted(
+        [t for t, c in up.items() if c["rows"] == FF_ROWS_UNMEASURABLE]
+        + [t for t, c in produced.items() if c["rows"] == FF_ROWS_UNMEASURABLE]
+    )
     breaks = hop_breaks(hop, up, read, produced, unmeasured)
-    return {"hop_id": hop.hop_id, "src": hop.src, "dst": hop.dst, "kind": hop.kind,
-            "upstream_landed": up, "this_stage_read": read, "this_stage_produced": produced,
-            "downstream_readable": {t: 0 for t in handoff}, "unmeasured": unmeasured,
-            "unmeasurable_tables": unmeasurable, "breaks": breaks,
-            "note": hop_note(hop, up, read, produced, breaks)}
+    return {
+        "hop_id": hop.hop_id,
+        "src": hop.src,
+        "dst": hop.dst,
+        "kind": hop.kind,
+        "upstream_landed": up,
+        "this_stage_read": read,
+        "this_stage_produced": produced,
+        "downstream_readable": {t: 0 for t in handoff},
+        "unmeasured": unmeasured,
+        "unmeasurable_tables": unmeasurable,
+        "breaks": breaks,
+        "note": hop_note(hop, up, read, produced, breaks),
+    }
 
 
 def _cell(table: str, rows: int) -> dict[str, Any]:
-    return {"table": table, "rows": rows, "measurable": rows >= 0 or rows == FF_ROWS_UNMEASURABLE,
-            "reachable": rows != FF_ROWS_UNREACHABLE, "nonempty": rows > 0,
-            "basis": _ROW_BASIS.get(table, "")}
+    return {
+        "table": table,
+        "rows": rows,
+        "measurable": rows >= 0 or rows == FF_ROWS_UNMEASURABLE,
+        "reachable": rows != FF_ROWS_UNREACHABLE,
+        "nonempty": rows > 0,
+        "basis": _ROW_BASIS.get(table, ""),
+    }
 
 
-def hop_breaks(hop: FlowthroughHopSpec, up: dict[str, dict[str, Any]], read: dict[str, dict[str, Any]],
-               produced: dict[str, dict[str, Any]], unmeasured: list[str]) -> list[dict[str, Any]]:
+def hop_breaks(
+    hop: FlowthroughHopSpec,
+    up: dict[str, dict[str, Any]],
+    read: dict[str, dict[str, Any]],
+    produced: dict[str, dict[str, Any]],
+    unmeasured: list[str],
+) -> list[dict[str, Any]]:
     """逐跳逐表的自洽断言——每处违背都是一条带 hop_id 的断点（绝不合并成一个总数）。
 
     -2（不可测）**不是**断点：把"查不动"报成"断供"就是造假红，与把"断供"藏进总数同样有害；
@@ -2104,12 +2593,16 @@ def hop_breaks(hop: FlowthroughHopSpec, up: dict[str, dict[str, Any]], read: dic
 
 
 def _break(hop: FlowthroughHopSpec, reason: str, table: str, rows: Any) -> dict[str, Any]:
-    return {"hop_id": hop.hop_id, "src": hop.src, "dst": hop.dst, "reason": reason,
-            "table": table, "rows": rows}
+    return {"hop_id": hop.hop_id, "src": hop.src, "dst": hop.dst, "reason": reason, "table": table, "rows": rows}
 
 
-def hop_note(hop: FlowthroughHopSpec, up: dict[str, dict[str, Any]], read: dict[str, dict[str, Any]],
-             produced: dict[str, dict[str, Any]], breaks: list[dict[str, Any]]) -> str:
+def hop_note(
+    hop: FlowthroughHopSpec,
+    up: dict[str, dict[str, Any]],
+    read: dict[str, dict[str, Any]],
+    produced: dict[str, dict[str, Any]],
+    breaks: list[dict[str, Any]],
+) -> str:
     if not hop.handoff:
         return "上游无声明落点（该跳交接面不可判）"
     shared = [t for t in up if read.get(t, {}).get("injected_from")]
@@ -2118,20 +2611,23 @@ def hop_note(hop: FlowthroughHopSpec, up: dict[str, dict[str, Any]], read: dict[
     return f"交接表 {len(up)} 张 / 产出表 {len(produced)} 张 / 断 {len(breaks)} 处"
 
 
-def evaluate_hops(hops: list[FlowthroughHopSpec], row_counter: Callable[[str], int],
-                  read_poison: dict[str, str] | None = None, cap: int = FF_HOP_TABLE_CAP
-                  ) -> dict[str, Any]:
+def evaluate_hops(
+    hops: list[FlowthroughHopSpec],
+    row_counter: Callable[[str], int],
+    read_poison: dict[str, str] | None = None,
+    cap: int = FF_HOP_TABLE_CAP,
+) -> dict[str, Any]:
     """全跳一遍逐跳断言 → 报红的跳集合（每条都指名 src→dst）。"""
     evid = [measure_hop(h, row_counter, cap=cap, read_poison=read_poison) for h in hops]
     broken = sorted({e["hop_id"] for e in evid if e["breaks"]})
-    return {"hops": evid, "broken_hops": broken, "broken_detail": [
-        b for e in evid for b in e["breaks"]]}
+    return {"hops": evid, "broken_hops": broken, "broken_detail": [b for e in evid for b in e["breaks"]]}
 
 
 def cmd_e2e(args: argparse.Namespace) -> dict[str, Any]:
     """主链灌水：逐跳四数字（规范 §3.1）+ 论域声明（R-024 硬约束）。"""
-    ctx = FlowthroughProbeContext(limit_tables=args.limit_tables, limit_runs=0, use_db=not args.no_db,
-                                  trade_date=args.trade_date)
+    ctx = FlowthroughProbeContext(
+        limit_tables=args.limit_tables, limit_runs=0, use_db=not args.no_db, trade_date=args.trade_date
+    )
     sources = collect_sources()
     model = derive_stage_model(sources)
     catalog = build_stage_catalog(model, sources)
@@ -2140,14 +2636,22 @@ def cmd_e2e(args: argparse.Namespace) -> dict[str, Any]:
     hops = enumerate_hops(catalog, scans, parse_skeleton_stages())
     counter = _memo_counter(_row_count)
     result = evaluate_hops(hops, counter)
-    result.update({"generated_at": now_utc_str(), "trade_date": args.trade_date, "chain_order": order,
-                   "verdict": "绿" if not result["broken_hops"] else "红"})
+    result.update(
+        {
+            "generated_at": now_utc_str(),
+            "trade_date": args.trade_date,
+            "chain_order": order,
+            "verdict": "绿" if not result["broken_hops"] else "红",
+        }
+    )
     result["universe"] = universe_declaration(sources, catalog, "FF-01..末端主链灌水")
     for h in result["hops"]:
-        log_line(f"[e2e] {h['hop_id']}({h['kind']}) 上游落点={_cells_brief(h['upstream_landed'])} "
-                 f"本环节读取={_cells_brief(h['this_stage_read'])} "
-                 f"本环节产出={_cells_brief(h['this_stage_produced'])} "
-                 f"断={len(h['breaks'])} {h['note'][:70]}")
+        log_line(
+            f"[e2e] {h['hop_id']}({h['kind']}) 上游落点={_cells_brief(h['upstream_landed'])} "
+            f"本环节读取={_cells_brief(h['this_stage_read'])} "
+            f"本环节产出={_cells_brief(h['this_stage_produced'])} "
+            f"断={len(h['breaks'])} {h['note'][:70]}"
+        )
         for b in h["breaks"][:4]:
             log_line(f"        └─断点 {b['hop_id']} {b['reason']} 表={b['table']} 行数={b['rows']}")
     log_line(f"[e2e] 判断跳：{result['broken_hops'] or '无'}（共 {len(hops)} 跳逐跳断言）")
@@ -2158,7 +2662,6 @@ def cmd_e2e(args: argparse.Namespace) -> dict[str, Any]:
 
 def _cells_brief(cells: dict[str, dict[str, Any]]) -> str:
     return ", ".join(f"{t}={v['rows']}" for t, v in sorted(cells.items())[:4]) or "—"
-
 
 
 # --------------------------------------------------------------------------
@@ -2184,8 +2687,12 @@ class UniverseDeclarationError(RuntimeError):
     """报表缺论域声明=该报表作废（R-024 的代码化硬约束，不是文档劝告）。"""
 
 
-def universe_declaration(sources: dict[str, tuple[set[str], dict[str, Any]]], catalog: dict[str, Any],
-                         scope: str, residual_domains: tuple[str, ...] = ()) -> dict[str, Any]:
+def universe_declaration(
+    sources: dict[str, tuple[set[str], dict[str, Any]]],
+    catalog: dict[str, Any],
+    scope: str,
+    residual_domains: tuple[str, ...] = (),
+) -> dict[str, Any]:
     """现算论域：在册无实体 / 有实体无册 / 已覆盖环节 / 报告外环节 / 扫描排除面 / 截断上限。"""
     vocab = {t: sources.get(t, (set(), {}))[0] for t in DOMAIN_VOCAB_SOURCES}
     entity = vocab.get("G_depgraph_runtime") or set()
@@ -2202,26 +2709,34 @@ def universe_declaration(sources: dict[str, tuple[set[str], dict[str, Any]]], ca
         "scan_exclusions": list(SCAN_EXCLUDES),
         "caps": list(_code_scan_caps_notes()),
         "sources_missing": sorted(t for t, (_, m) in sources.items() if m.get("missing") or m.get("error")),
-        "counts": {"universe_domains": len(entity), "registered_domains": len(registered),
-                   "在册无实体": len(registered - entity), "有实体无册": len(entity - registered),
-                   "环节覆盖": len(catalog)},
+        "counts": {
+            "universe_domains": len(entity),
+            "registered_domains": len(registered),
+            "在册无实体": len(registered - entity),
+            "有实体无册": len(entity - registered),
+            "环节覆盖": len(catalog),
+        },
     }
 
 
 def _code_scan_caps_notes() -> tuple[str, ...]:
     """把"看不见的地方"如实列出来——静态扫描的文件数上限就是论域上限（禁只说扫了多少）。"""
-    return ("每环节代码扫描文件上限 900（scan_stage_tables cap_files）；产物读盘上限 400 文件 / 60 件",
-             "①③ 每环节实测表数上限=FlowthroughProbeContext.limit_tables（超出必须列入 unmeasured）",
-             f"逐跳交接表上限 {FF_HOP_TABLE_CAP} 张/跳"
-             "（超出=handoff_truncated_not_measured 断点，禁静默截断）",
-             f"排除面 {', '.join(SCAN_EXCLUDES)}（统计口径，防 .aidrafts/.worktrees 造成 33 倍放大）",
-             "② 真跑入口上限=limit_runs；敏感符号命中者一律 SKIP-需门位，不判绿",
-             "静态扫描看不见 getattr/注册表驱动的运行时接线：孤儿结论须过 --orphan-audit 动态注册面口径")
+    return (
+        "每环节代码扫描文件上限 900（scan_stage_tables cap_files）；产物读盘上限 400 文件 / 60 件",
+        "①③ 每环节实测表数上限=FlowthroughProbeContext.limit_tables（超出必须列入 unmeasured）",
+        f"逐跳交接表上限 {FF_HOP_TABLE_CAP} 张/跳（超出=handoff_truncated_not_measured 断点，禁静默截断）",
+        f"排除面 {', '.join(SCAN_EXCLUDES)}（统计口径，防 .aidrafts/.worktrees 造成 33 倍放大）",
+        "② 真跑入口上限=limit_runs；敏感符号命中者一律 SKIP-需门位，不判绿",
+        "静态扫描看不见 getattr/注册表驱动的运行时接线：孤儿结论须过 --orphan-audit 动态注册面口径",
+    )
 
 
 def render_universe_lines(u: dict[str, Any]) -> list[str]:
     """论域声明的**唯一**渲染口径（markdown / stdout 共用，防两处说法不一）。"""
-    return ["## 论域声明（本结论的边界，缺此块=报表作废）", "",
+    return (
+        [
+            "## 论域声明（本结论的边界，缺此块=报表作废）",
+            "",
             f"- **本结论论域** = {u['scope']}",
             f"- 论域内域数（depgraph 有实体）：**{len(u['domains_in_universe'])}**",
             f"- **论域外有册无实体的域 = {len(u['registered_without_entity'])} 个**："
@@ -2234,24 +2749,34 @@ def render_universe_lines(u: dict[str, Any]) -> list[str]:
             f"{', '.join(u['stages_covered'])}；骨架有而本报告未出环节："
             f"{', '.join(u['stages_outside_report']) or '无'}",
             f"- 真源不可用/缺件：{', '.join(u['sources_missing']) or '无'}",
-            "- 扫描/限流造成的**检出面缺口**（这些面内的问题本尺子看不见）："] \
-        + [f"  - {c}" for c in u["caps"]] \
-        + ["- 表述纪律（裁定#325）：本件永不说\"全绿\"，只说\"该轮检出 N 件且已被证明能红\"。"]
+            "- 扫描/限流造成的**检出面缺口**（这些面内的问题本尺子看不见）：",
+        ]
+        + [f"  - {c}" for c in u["caps"]]
+        + ['- 表述纪律（裁定#325）：本件永不说"全绿"，只说"该轮检出 N 件且已被证明能红"。']
+    )
 
 
 def universe_guard(text: str) -> None:
     """写盘前自检：正文没有论域声明块 → 抛错（代码级硬约束，不靠人自觉）。"""
     if "## 论域声明" not in text or "本结论论域" not in text:
-        raise UniverseDeclarationError(
-            "报表缺『论域声明』块——R-024：未声明论域的结论会被下游当成全域完备证明使用")
+        raise UniverseDeclarationError("报表缺『论域声明』块——R-024：未声明论域的结论会被下游当成全域完备证明使用")
 
 
 # 机器读件（04_sixway_machine_ledger.yaml）的论域块必备字段——下游是按字段读的，
 # 故这里的断言口径必须比 markdown 版更强：不能只查"有没有这段字"，要查每个判据字段都在且非伪空。
 FF_UNIVERSE_REQUIRED_KEYS: tuple[str, ...] = (
-    "scope", "domains_in_universe", "registered_without_entity", "entity_without_registration",
-    "stages_covered", "stages_outside_report", "residual_domains_no_flow_stage",
-    "scan_exclusions", "caps", "sources_missing", "counts")
+    "scope",
+    "domains_in_universe",
+    "registered_without_entity",
+    "entity_without_registration",
+    "stages_covered",
+    "stages_outside_report",
+    "residual_domains_no_flow_stage",
+    "scan_exclusions",
+    "caps",
+    "sources_missing",
+    "counts",
+)
 
 
 def universe_guard_payload(u: dict[str, Any]) -> None:
@@ -2280,11 +2805,13 @@ def _render_universe(u: dict[str, Any]) -> None:
 SQL_DOMAIN_MODULES = (
     "SELECT n.path AS path, count(*) AS in_deg, min(n.name) AS callee_name"
     " FROM nodes n LEFT JOIN edges e ON e.to_node_id = n.node_id"
-    " WHERE n.domain_id = %s AND n.path IS NOT NULL GROUP BY n.path ORDER BY in_deg ASC LIMIT 200")
+    " WHERE n.domain_id = %s AND n.path IS NOT NULL GROUP BY n.path ORDER BY in_deg ASC LIMIT 200"
+)
 SQL_MODULE_SRC_CONSUMERS = (
     "SELECT DISTINCT s.path AS consumer FROM edges e JOIN nodes src ON src.node_id = e.from_node_id"
     " JOIN nodes s ON s.node_id = e.to_node_id"
-    " WHERE src.path = %s AND s.path LIKE 'src/%' LIMIT 12")
+    " WHERE src.path = %s AND s.path LIKE 'src/%' LIMIT 12"
+)
 
 
 def audit_domain_orphans(domains: tuple[str, ...] = ("D_AI_LAYER",), cap: int = 60) -> dict[str, Any]:
@@ -2299,8 +2826,15 @@ def audit_domain_orphans(domains: tuple[str, ...] = ("D_AI_LAYER",), cap: int = 
         for m in mods[:cap]:
             path = str(m.get("path") or "")
             verdict, evidence = orphan_verdict(path, str(m.get("callee_name") or Path(path).stem))
-            out["rows"].append({"domain": dom, "module": path, "static_in_degree": m.get("in_deg"),
-                                "verdict": verdict, "evidence": evidence})
+            out["rows"].append(
+                {
+                    "domain": dom,
+                    "module": path,
+                    "static_in_degree": m.get("in_deg"),
+                    "verdict": verdict,
+                    "evidence": evidence,
+                }
+            )
     return out
 
 
@@ -2341,15 +2875,18 @@ def _cmd_orphan_audit(args: argparse.Namespace) -> int:
     sources = collect_sources(DOMAIN_VOCAB_SOURCES)
     model = derive_stage_model(sources)
     catalog = build_stage_catalog(model, sources)
-    audit["universe"] = universe_declaration(sources, catalog, f"域 {'/'.join(domains)} 的模块消费面",
-                                             tuple(model["residual_domains"]))
+    audit["universe"] = universe_declaration(
+        sources, catalog, f"域 {'/'.join(domains)} 的模块消费面", tuple(model["residual_domains"])
+    )
     _render_universe(audit["universe"])
     buckets: dict[str, int] = {}
     for row in audit["rows"]:
         key = str(row.get("verdict", "不可判"))
         buckets[key] = buckets.get(key, 0) + 1
-        log_line(f"[orphan] {row.get('module')} 静态入度={row.get('static_in_degree')} → {key}"
-                 f"｜{str(row.get('evidence'))[:90]}")
+        log_line(
+            f"[orphan] {row.get('module')} 静态入度={row.get('static_in_degree')} → {key}"
+            f"｜{str(row.get('evidence'))[:90]}"
+        )
     log_line(f"[orphan] 分桶：{json.dumps(buckets, ensure_ascii=False)}")
     _dump_json("orphan_audit.json", audit)
     return 0
@@ -2364,23 +2901,17 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--stage", help="单环节六向实测，如 FF-01")
     ap.add_argument("--all", action="store_true", help="全部推导环节跑六向")
     ap.add_argument("--verdict", action="store_true", help="读台账出三态建议汇总")
-    ap.add_argument("--prove-red", action="store_true",
-                    help="规范 §3.4：证明本尺子能红（≥10 跳逐跳精确指名+无误指）")
+    ap.add_argument("--prove-red", action="store_true", help="规范 §3.4：证明本尺子能红（≥10 跳逐跳精确指名+无误指）")
     ap.add_argument("--e2e", action="store_true", help="规范 §3.1：主链灌水逐跳四数字")
-    ap.add_argument("--orphan-audit", action="store_true",
-                    help="R-023 同法复核零入度孤儿（动态注册面口径）")
+    ap.add_argument("--orphan-audit", action="store_true", help="R-023 同法复核零入度孤儿（动态注册面口径）")
     ap.add_argument("--domain", action="append", default=[], help="--orphan-audit 指定域，可重复")
     ap.add_argument("--hop", type=int, default=0, help="--prove-red 注入第几跳（默认 0）")
-    ap.add_argument("--hop-count", dest="hop_count", type=int, default=12,
-                    help="--prove-red 逐跳注入跳数（下限 10）")
-    ap.add_argument("--limit-tables", dest="limit_tables", type=int, default=6,
-                    help="①③ 每环节实测表数上限（限流）")
-    ap.add_argument("--limit-runs", dest="limit_runs", type=int, default=2,
-                    help="② 每环节真跑入口数上限（0=关真跑）")
+    ap.add_argument("--hop-count", dest="hop_count", type=int, default=12, help="--prove-red 逐跳注入跳数（下限 10）")
+    ap.add_argument("--limit-tables", dest="limit_tables", type=int, default=6, help="①③ 每环节实测表数上限（限流）")
+    ap.add_argument("--limit-runs", dest="limit_runs", type=int, default=2, help="② 每环节真跑入口数上限（0=关真跑）")
     ap.add_argument("--timeout", type=int, default=90, help="② 单次真跑超时秒")
     ap.add_argument("--trade-date", dest="trade_date", default="", help="--e2e 选定的真实交易日")
-    ap.add_argument("--no-db", dest="no_db", action="store_true",
-                    help="不连 DB（①③④降级为不可测，用于离线自检）")
+    ap.add_argument("--no-db", dest="no_db", action="store_true", help="不连 DB（①③④降级为不可测，用于离线自检）")
     ap.add_argument("--force", action="store_true", help="忽略资源自守闸")
     return ap
 

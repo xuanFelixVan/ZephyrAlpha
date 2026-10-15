@@ -17,11 +17,12 @@
 # [A_module] module_id=MOD-BT-IBT-ATTRIB | layer=script | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 """归因分析正式版（批A 工具正门化，源自 st-integrated-bt-20260922 原稿）——读 artifacts 离线计算，不重跑引擎.
 
-产出: docs/_working/integrated_backtest/IBT-ATTRIBUTION.md 的数字底稿 yaml
+产出: docs/04_research_records/cross_domain/integrated_backtest/IBT-ATTRIBUTION.md 的数字底稿 yaml
   组合层指标汇总 / 成本归因 / 换手 / 成员贡献 / B-A regime 节流增量
 用法: python scripts/backtest/ibt/ibt_attrib.py
-产物: docs/_working/integrated_backtest/ibt_attribution.yaml（机读=.yaml 批H③口径）
+产物: docs/04_research_records/cross_domain/integrated_backtest/ibt_attribution.yaml（机读=.yaml 批H③口径）
 """
+
 from __future__ import annotations
 
 import sys
@@ -44,7 +45,7 @@ def nav_stats(csv: Path) -> dict:
         "days": int(len(nav)),
         "total_return": float(nav.iloc[-1] / nav.iloc[0] - 1),
         "ann_return": float(ann),
-        "sharpe_daily": float(ret.mean() / ret.std() * (252 ** 0.5)) if ret.std() > 0 else 0.0,
+        "sharpe_daily": float(ret.mean() / ret.std() * (252**0.5)) if ret.std() > 0 else 0.0,
         "max_dd": float(dd),
         "daily_vol": float(ret.std()),
     }
@@ -85,7 +86,24 @@ def main() -> None:
         if not rs.exists():
             continue
         art = yaml.safe_load(rs.read_text(encoding="utf-8"))
-        block: dict = {"variants": art.get("variants", {}), "members": art.get("members", {}), "benchmark": art.get("benchmark", {}), "meta": {k: art["meta"].get(k) for k in ("window", "members", "skipped_members", "rescale_factor", "alpha_total", "compose_notes", "regime", "data")}}
+        block: dict = {
+            "variants": art.get("variants", {}),
+            "members": art.get("members", {}),
+            "benchmark": art.get("benchmark", {}),
+            "meta": {
+                k: art["meta"].get(k)
+                for k in (
+                    "window",
+                    "members",
+                    "skipped_members",
+                    "rescale_factor",
+                    "alpha_total",
+                    "compose_notes",
+                    "regime",
+                    "data",
+                )
+            },
+        }
         for vid in ("IBT-A", "IBT-B"):
             nav_csv = wdir / f"nav_{vid}.csv"
             tr_csv = wdir / f"trades_{vid}.csv"
@@ -104,8 +122,10 @@ def main() -> None:
     for w, b in out.items():
         a = b.get("IBT-A_nav_stats", {})
         c = b.get("IBT-A_cost", {})
-        print(f"{w}: A ret={a.get('total_return')} sharpe={a.get('sharpe_daily')} dd={a.get('max_dd')} "
-              f"turnover={c.get('annual_turnover_x')}x cost={c.get('cost_total')}")
+        print(
+            f"{w}: A ret={a.get('total_return')} sharpe={a.get('sharpe_daily')} dd={a.get('max_dd')} "
+            f"turnover={c.get('annual_turnover_x')}x cost={c.get('cost_total')}"
+        )
 
 
 if __name__ == "__main__":

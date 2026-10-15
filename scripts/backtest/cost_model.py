@@ -18,7 +18,7 @@
 
 事故与重建声明: 本文件被 _c4_engine._cost_model_adapter 按文件路径硬引用（引擎
 INVARIANTS 写明"缺省/legacy→None=冻结土规 verbatim 路径"），但原字节遗失——git 全
-历史零提交、全部 80+ 会话 worktree 与悬空 blob 均无、仅 docs/_working/fullscore_night/
+历史零提交、全部 80+ 会话 worktree 与悬空 blob 均无、仅 docs/04_research_records/backtest/campaigns/fullscore_night
 03_integrated_backtest/prereg_v2.md §附录A 残留指纹 sha256[:16]=daebf3bed4c0fdd6
 （2026-10-01 实测，现盘面 engine 指纹亦已漂移=该 prereg 快照整体失效，已在其域内留证）。
 本重建=接口面最小恢复：legacy 缺席路径零行为（返回 None 走引擎冻结土规逐位原式）；

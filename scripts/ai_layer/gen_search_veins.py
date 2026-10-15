@@ -12,12 +12,12 @@
 # [MATURITY] new
 # [INVARIANTS] 静态清单禁手工维护（宪法 §9.5）：矿脉清单全部由本生成器派生，重跑幂等（输入不变=逐字节不变，
 #              产物零墙钟时间戳）; 三输入=config/strategy_production_map.yaml 节点（主）+ AI 层段卡清单
-#              （docs/_working/ai_layer_vision/{L*,OBJ_*}/DESIGN.md）+ 功能域注册表（TDM 域辅助轴索引，
+#              （docs/_archive/_working_cleared/ai_layer_vision/{L*,OBJ_*}/DESIGN.md）+ 功能域注册表（TDM 域辅助轴索引，
 #              不派生独立矿脉防 63 域噪音——偏离已留痕报告）; vein_id=VEIN-{node_id} 派生、vein_family=stage
 #              （§2.5.1）、关键词种子=decision_question; 墓碑不删除：节点退役→status=archived 保留行，
 #              archived 粘滞（再生不自动复活——封矿=结构判据须治理动作才恢复）;
 #              产物 CAS 写（safe_write_text），手改必被再生覆盖
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/L1_perceive/DESIGN.md §2.5（骨架即地图机制）
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/L1_perceive/DESIGN.md §2.5（骨架即地图机制）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -29,7 +29,7 @@
 #         TDM 域辅助轴非矿脉/dry-run 零写）
 """gen_search_veins — "骨架即地图"矿脉清单生成器（施工项 3，DESIGN §2.5.1）。
 
-设计真源：``docs/_working/ai_layer_vision/L1_perceive/DESIGN.md`` §2.5。
+设计真源：``docs/_archive/_working_cleared/ai_layer_vision/L1_perceive/DESIGN.md`` §2.5。
 原则（定调 4）：矿脉清单=各层骨架本身——本器把骨架三真源机器派生成搜索矿脉清单，
 骨架长一节搜索网密一层，骨架变更后再生即增/墓碑/重指向。
 
@@ -114,7 +114,7 @@ def derive_map_veins(map_raw: dict[str, Any]) -> list[dict[str, Any]]:
 def _is_segment_card_dir(path: Path) -> bool:
     """段卡目录判定：L1-L7（L+数字）或 OBJ_*（对象线）；V0/V1/V2 挖矿报告不派生矿脉。"""
     name = path.name
-    return path.is_dir() and (name[:1] == "L" and name[1:2].isdigit() or name.startswith("OBJ_"))
+    return path.is_dir() and ((name[:1] == "L" and name[1:2].isdigit()) or name.startswith("OBJ_"))
 
 
 def derive_card_veins(cards_root: Path) -> list[dict[str, Any]]:
@@ -171,16 +171,10 @@ def derive_domain_axis(domains_raw: dict[str, Any]) -> list[dict[str, str]]:
 
 def _collect_previous_veins(previous: dict[str, Any] | None) -> dict[str, dict[str, Any]]:
     """carry_tombstones 内联逻辑搬移：上一轮矿脉行按 vein_id 索引（非 dict 行忽略）。"""
-    return {
-        str(v.get("vein_id")): dict(v)
-        for v in ((previous or {}).get("veins") or [])
-        if isinstance(v, dict)
-    }
+    return {str(v.get("vein_id")): dict(v) for v in ((previous or {}).get("veins") or []) if isinstance(v, dict)}
 
 
-def _apply_archived_stickiness(
-    fresh_veins: list[dict[str, Any]], previous_veins: dict[str, dict[str, Any]]
-) -> None:
+def _apply_archived_stickiness(fresh_veins: list[dict[str, Any]], previous_veins: dict[str, dict[str, Any]]) -> None:
     """carry_tombstones 内联逻辑搬移：已 archived 粘滞（封矿=结构判据，恢复须治理动作）。"""
     for vein in fresh_veins:
         prior = previous_veins.get(vein["vein_id"])
@@ -217,9 +211,7 @@ def _append_absent_tombstones(
         fresh_veins.append(_tombstone_row(vein_id, prior))
 
 
-def carry_tombstones(
-    fresh_veins: list[dict[str, Any]], previous: dict[str, Any] | None
-) -> list[dict[str, Any]]:
+def carry_tombstones(fresh_veins: list[dict[str, Any]], previous: dict[str, Any] | None) -> list[dict[str, Any]]:
     """墓碑语义：本轮派生缺行的矿脉标 archived 保留；已 archived 粘滞（再生不自动复活）。"""
     fresh_ids = {v["vein_id"] for v in fresh_veins}
     previous_veins = _collect_previous_veins(previous)
@@ -256,7 +248,7 @@ def build_artifact(
         "registry_id": "REG-AIVEIN-001",
         "title": "AI 层 L1 搜索矿脉清单（骨架即地图派生，生成器产出禁手改）",
         "status": "active",
-        "truth_source": "docs/_working/ai_layer_vision/L1_perceive/DESIGN.md §2.5",
+        "truth_source": "docs/_archive/_working_cleared/ai_layer_vision/L1_perceive/DESIGN.md §2.5",
         "derived_from": {
             "map": f"{map_path.relative_to(REPO_ROOT)} (schema {map_raw.get('schema_version')})",
             "segment_cards": str(cards_root.relative_to(REPO_ROOT)) + "/{L*,OBJ_*}/DESIGN.md",
@@ -286,7 +278,9 @@ def write_artifact(artifact: dict[str, Any], out_path: Path) -> str:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="骨架即地图：搜索矿脉清单生成器（幂等）")
     parser.add_argument("--map", default=None, help="策略生产全景图路径（默认 config/strategy_production_map.yaml）")
-    parser.add_argument("--cards-root", default=None, help="AI 层段卡根目录（默认 docs/_working/ai_layer_vision）")
+    parser.add_argument(
+        "--cards-root", default=None, help="AI 层段卡根目录（默认 docs/_archive/_working_cleared/ai_layer_vision）"
+    )
     parser.add_argument("--domains", default=None, help="功能域注册表路径（TDM 域辅助轴）")
     parser.add_argument("--out", default=None, help="产物路径（默认 config/ai_search_veins.yaml）")
     parser.add_argument("--dry-run", action="store_true", help="只打印派生计数，零写入")
@@ -309,7 +303,7 @@ def main(argv: list[str] | None = None) -> int:
         written = write_artifact(artifact, Path(args.out) if args.out else DEFAULT_OUT_PATH)
         print(f"产物落盘: {args.out or DEFAULT_OUT_PATH}（{written} 字节）")
         return EXIT_OK
-    except Exception as exc:  # noqa: BLE001——CLI 边界统一 fail-closed 退出码 2
+    except Exception as exc:  # noqa: BLE001  CLI 边界统一 fail-closed 退出码 2
         print(f"ERROR {type(exc).__name__}: {exc}", file=sys.stderr)
         return EXIT_ERROR
 

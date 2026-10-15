@@ -1,11 +1,11 @@
-# [BLUEPRINT] SH-SCRIPT-001 | docs/_working/t0_matrix/t0_conditional_v3_prereg_card.md | §4 材料资格 M-1..M-4 + §2 双门 + §5 判据
+# [BLUEPRINT] SH-SCRIPT-001 | docs/04_research_records/data/t0_matrix/t0_conditional_v3_prereg_card.md | §4 材料资格 M-1..M-4 + §2 双门 + §5 判据
 # [MODULE] t0_conditional_e4_v3_exam（scripts 判据脚本；T0-CONDITIONAL-V3 预注册卡 §6 执行件）
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] scripts/audit/cost_trio_exam.py（build_pairs 配对判据唯一真源）；scripts/audit/t0_conditional_e4_exam.py（宏观门 t1_state/load_regime_states/常数 + 五态判定 _verdict_for）；scripts/audit/t0_conditional_e4_v2_exam.py（情绪门三态 emotion_state_for + 分组统计 stats_of，二者口径 V3 未改故复用）；docs/_working/t0_matrix/six_phase_history_v1.csv（六段真源）；data/backtest_artifacts/bt-*.json（材料）
-# [CONSUMERS] Owner 复查窗；docs/_working/t0_matrix/t0_conditional_e4_v3_verdict.md；周五 GPU 矩阵做T 条件维验收；红蓝 PIT 断言
+# [DEPENDENCIES] scripts/audit/cost_trio_exam.py（build_pairs 配对判据唯一真源）；scripts/audit/t0_conditional_e4_exam.py（宏观门 t1_state/load_regime_states/常数 + 五态判定 _verdict_for）；scripts/audit/t0_conditional_e4_v2_exam.py（情绪门三态 emotion_state_for + 分组统计 stats_of，二者口径 V3 未改故复用）；docs/04_research_records/data/t0_matrix/six_phase_history_v1.csv（六段真源）；data/backtest_artifacts/bt-*.json（材料）
+# [CONSUMERS] Owner 复查窗；docs/04_research_records/data/t0_matrix/t0_conditional_e4_v3_verdict.md；周五 GPU 矩阵做T 条件维验收；红蓝 PIT 断言
 # [STARTUP] manual（python scripts/audit/t0_conditional_e4_v3_exam.py --artifacts-dir <主区材料目录>）
 # [MATURITY] production（考试执行件，卡先行：t0_conditional_v3_prereg_card.md frozen 先于本脚本取数）
-# [INVARIANTS] 判据数值零改动（成本 31.2bp/前置 30bp/前置率 0.30/土规 30 对/双门门规则全部 import 复用既有判据件，禁重写禁改常数）；本件唯一新逻辑=卡 §4 材料资格四判据 M-1 日内粒度、M-2 往返同体（逐 run 单独 build_pairs 禁跨 run 合并）、M-3 trade_log 哈希去重、M-4 涨跌停可行性硬门（阈值=交易所公开规则算术推论）；剔除必按原因计数入 material_audit，禁静默丢料；情绪门 unevaluable_day 走副考禁并入主考；fail-closed 五态枚举禁硬出；禁为过土规新增/延长材料（卡 §8.3 自禁线）；查库只读；产物只写 docs/_working/t0_matrix/（.yaml/.csv 禁 .json）；零状态变更
+# [INVARIANTS] 判据数值零改动（成本 31.2bp/前置 30bp/前置率 0.30/土规 30 对/双门门规则全部 import 复用既有判据件，禁重写禁改常数）；本件唯一新逻辑=卡 §4 材料资格四判据 M-1 日内粒度、M-2 往返同体（逐 run 单独 build_pairs 禁跨 run 合并）、M-3 trade_log 哈希去重、M-4 涨跌停可行性硬门（阈值=交易所公开规则算术推论）；剔除必按原因计数入 material_audit，禁静默丢料；情绪门 unevaluable_day 走副考禁并入主考；fail-closed 五态枚举禁硬出；禁为过土规新增/延长材料（卡 §8.3 自禁线）；查库只读；产物只写 docs/04_research_records/data/t0_matrix/（.yaml/.csv 禁 .json）；零状态变更
 # [MODIFY-GUARD] 本脚本改动=考试判据变更，须先改卡并作废重开（卡 frozen 纪律）
 # [STABILITY] stable
 # [SAFETY] L
@@ -232,7 +232,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="条件化做T E4 双门考试 V3（T0-CONDITIONAL-V3 frozen 判据）")
     ap.add_argument("--artifacts-dir", default="data/backtest_artifacts")
     ap.add_argument("--emotion-truth", default=str(v2.EMOTION_TRUTH))
-    ap.add_argument("--out-dir", default="docs/_working/t0_matrix")
+    ap.add_argument("--out-dir", default="docs/04_research_records/data/t0_matrix")
     args = ap.parse_args()
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -255,7 +255,7 @@ def main() -> int:
     verdict = v1._verdict_for(primary, True)  # 五态判定复用；主考=双门均可评口径
     diag = gate_diagnostics(primary, secondary, control, regime, phases)
     result = {
-        "card": "docs/_working/t0_matrix/t0_conditional_v3_prereg_card.md (frozen)",
+        "card": "docs/04_research_records/data/t0_matrix/t0_conditional_v3_prereg_card.md (frozen)",
         "supersedes": "T0-CONDITIONAL-V2（作废，卡 §0.2；其产物标 VOID 原样保留）",
         "mode": "dual_gate_within_run",
         "verdict_wording_note": (

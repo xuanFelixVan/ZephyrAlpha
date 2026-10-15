@@ -1,11 +1,11 @@
-# [BLUEPRINT] SH-SCRIPT-001 | docs/_working/kimi_audit/lane_reports/cost_trio_reexam_report.md | §1 判据真源
+# [BLUEPRINT] SH-SCRIPT-001 | docs/_archive/_working_cleared/kimi_audit/lane_reports/cost_trio_reexam_report.md | §1 判据真源
 # [MODULE] cost_trio_exam（scripts 判据脚本，非 src 包模块；TC-06 R4 卡 A 选项重建件，落 docs/scripts 禁 tmp）
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] data/backtest_artifacts/bt-*.json（材料真源）；cost_model_registry.yaml CST-T0-001（成本真源，只读）
 # [CONSUMERS] 分包2 t0_conditional_e4_exam.py（条件化做T E4 考试复用本判据）；Owner 复查窗
 # [STARTUP] manual（python cost_trio_exam.py）
 # [MATURITY] production（判据件，落 docs 禁 tmp——判据灭失病根免疫，裁定#399 二）
-# [INVARIANTS] 只读材料零副作用（产物只写 out-dir=docs/_working/kimi_audit/lane_reports/，禁 .runtime/tmp）；配对数<30 强制 insufficient_samples 禁硬出结论（REG-VALM-001 轻量土规）；零状态变更（不动 verdict/can_deploy）；成本口径唯一真源=CST-T0-001（佣金双边 6bp+印花 5bp+过户双边 0.2bp+滑点 2×10bp=31.2bp rt）；判据与 P6.md F02 交接包口径逐位对齐（≥30 土规/30bp 前置/净成本为正）；docs/_working 目录契约禁 .py/.json，故本脚本住 scripts/audit/、机读产物为 .yaml+.csv
+# [INVARIANTS] 只读材料零副作用（产物只写 out-dir=docs/_archive/_working_cleared/kimi_audit/lane_reports/，禁 .runtime/tmp）；配对数<30 强制 insufficient_samples 禁硬出结论（REG-VALM-001 轻量土规）；零状态变更（不动 verdict/can_deploy）；成本口径唯一真源=CST-T0-001（佣金双边 6bp+印花 5bp+过户双边 0.2bp+滑点 2×10bp=31.2bp rt）；判据与 P6.md F02 交接包口径逐位对齐（≥30 土规/30bp 前置/净成本为正）；docs/_working 目录契约禁 .py/.json，故本脚本住 scripts/audit/、机读产物为 .yaml+.csv
 # [MODIFY-GUARD] 本脚本改动=判据变更，须先改预注册披露节并留变更记录（防判据漂移重演）
 # [STABILITY] stable
 # [SAFETY] L
@@ -35,7 +35,7 @@ biz2_t0_pairs_disclosure.md + archive/2026-09/kimi_audit/lane_reports/P6.md 重�
 - 结论判据（样本足时，F02 口径）：开仓前置命中=edge_ge_30bp 占比；净期望=净价差 mean>0。
 - 全部结果全量披露（含 RED），禁事后挑样；产物只写 out-dir（docs 判据区，禁 tmp），机读=.yaml+.csv。
 
-用法：python scripts/audit/cost_trio_exam.py [--artifacts-dir data/backtest_artifacts] [--out-dir docs/_working/kimi_audit/lane_reports]
+用法：python scripts/audit/cost_trio_exam.py [--artifacts-dir data/backtest_artifacts] [--out-dir docs/_archive/_working_cleared/kimi_audit/lane_reports]
 """
 
 from __future__ import annotations
@@ -129,7 +129,7 @@ def build_pairs(fills: list[dict]) -> list[dict]:
 def main() -> int:
     ap = argparse.ArgumentParser(description="做T 配对成本三件套判据（重建版）")
     ap.add_argument("--artifacts-dir", default="data/backtest_artifacts")
-    ap.add_argument("--out-dir", default="docs/_working/kimi_audit/lane_reports")
+    ap.add_argument("--out-dir", default="docs/_archive/_working_cleared/kimi_audit/lane_reports")
     args = ap.parse_args()
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -148,8 +148,8 @@ def main() -> int:
             "window": f">{D_ANCHOR}",
             "pairing_rule": "symbol×day 双边配对，全侧 VWAP 近似（重建版预注册披露见脚本 docstring）",
             "rebuild_provenance": [
-                "docs/_working/archive/2026-09/flash_biz/biz2_t0_pairs_disclosure.md",
-                "docs/_working/archive/2026-09/kimi_audit/lane_reports/P6.md",
+                "docs/_archive/_working_cleared/archive/2026-09/flash_biz/biz2_t0_pairs_disclosure.md",
+                "docs/_archive/_working_cleared/archive/2026-09/kimi_audit/lane_reports/P6.md",
             ],
         },
         "measured": {

@@ -20,7 +20,7 @@
   build(start,end) 权重+价格 → _c4_engine 冻结土规回测（换手/天数）
   → 五档滑点扫描（exam_cost_gate.run_cost_tier_scan）
   → 三道门判定（单调性+全成本档存活+E7 换手≤8x 预注册档）
-产出: docs/_working/integrated_backtest/cost_qualified_list.yaml
+产出: docs/04_research_records/cross_domain/integrated_backtest/cost_qualified_list.yaml
       （逐条判定+成本合格名单；照妖镜判据=4440 必拦）
 用法:
   python scripts/backtest/exam_cost_reexam.py --window 2020-01-01 2025-08-31
@@ -168,7 +168,7 @@ def main() -> int:
 
     # 死刑参照件（death_row_ref）一律不入名单——INVARIANTS 第 6 条"仅记录不参与名单"此前
     # 只有文字没有代码：FACT-4db4c41e（dr=True，turnover 0.1x 恰过成本门）实测漏进
-    # docs/_working/integrated_backtest/cost_qualified_list.yaml 的 7 条名单（2026-09-23 复现）。
+    # docs/04_research_records/cross_domain/integrated_backtest/cost_qualified_list.yaml 的 7 条名单（2026-09-23 复现）。
     qualified = [r["strategy_id"] for r in rows if r.get("verdict") == "COST_PASS" and not r.get("death_row_ref")]
     mirror = next((r for r in rows if "4440" in r["strategy_id"]), None)
     ledger_status = "skipped" if args.no_ledger else _record_ledger(args.tag, start, end, len(rows))

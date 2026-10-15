@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-SCRIPT-001 | docs/_working/t0_matrix/t0_conditional_v2_prereg_card.md | §2 双门×价轴网格（周五 GPU 矩阵输入包）
 # [MODULE] t0_gpu_condition_pack（scripts 输入包生成件）
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] docs/_working/t0_matrix/six_phase_history_v1.csv（六段相位真源）；market_emotion_index(逻辑品类)（温度计+六成分，只读）；backtest_regime_state_anchored(逻辑品类)（vol_pct/dominant，只读）；c1_market.kline_index 000300（价轴振幅，只读）；scripts/backtest/auto_mount.py 无依赖（相位已在物化件里定形）
+# [DEPENDENCIES] docs/04_research_records/data/t0_matrix/six_phase_history_v1.csv（六段相位真源）；market_emotion_index(逻辑品类)（温度计+六成分，只读）；backtest_regime_state_anchored(逻辑品类)（vol_pct/dominant，只读）；c1_market.kline_index 000300（价轴振幅，只读）；scripts/backtest/auto_mount.py 无依赖（相位已在物化件里定形）
 # [CONSUMERS] 周五 GPU 矩阵开跑前输入包验收（w3_w5_precheck §2.4·甲/§二·五同口径）；scripts/backtest/factory_grid_executor.py 侧条件维分层键（本包为 T0 条件维输入，非 run 产物）；Owner 复查窗
 # [STARTUP] manual（python scripts/audit/t0_gpu_condition_pack.py）
 # [MATURITY] production（GPU 点火前输入包，判据引用不自定）
@@ -16,7 +16,7 @@
 # [TTL] task_bound
 """t0_gpu_condition_pack.py — 做T 条件维度 GPU 矩阵输入包（六段双门 × 价轴，预注册闭卷口径）
 
-格式仿 docs/_working/emotion_line/gpu_emotion_condition_matrix_v1（emoreplay 班情绪包）：
+格式仿 docs/04_research_records/data/emotion_line/gpu_emotion_condition_matrix_v1（emoreplay 班情绪包）：
 逐日矩阵 .csv + .meta.yaml（provenance/闭卷/纪律），外加 negatives.csv（不达地板胞如实入册）。
 落位 data/strategy_intake/grid_t0_conditional_v1/。
 
@@ -37,9 +37,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backtest"))
 
 REPO = Path(__file__).resolve().parents[2]
-SIX_PHASE_TRUTH = REPO / "docs/_working/t0_matrix/six_phase_history_v1.csv"
+SIX_PHASE_TRUTH = REPO / "docs/04_research_records/data/t0_matrix/six_phase_history_v1.csv"
 
-CLOSED_BOOK_START = "2019-01-04"  # 闭卷窗起点=universe 诚实下限（真源 docs/_working/e2e_integration/w3_w5_precheck_20260923.md，已提交）
+CLOSED_BOOK_START = "2019-01-04"  # 闭卷窗起点=universe 诚实下限（真源 docs/_archive/_working_cleared/e2e_integration/w3_w5_precheck_20260923.md，已提交）
 CLOSED_BOOK_CUTOFF = "2025-09-09"  # 切点后禁参与阈值选择/调参/定档（同上已提交真源 §闭卷纪律）
 AMP_DERIV_END = CLOSED_BOOK_CUTOFF  # 振幅档界唯一允许的推导窗终点
 
@@ -49,7 +49,7 @@ EMOTION_B5_EDGES = (
     0.4,
     0.6,
     0.8,
-)  # 引用：docs/_working/emotion_line/emotion_index_skeleton_v0.md:60（已提交，"仅展示层约定非门禁"）
+)  # 引用：docs/04_research_records/data/emotion_line/emotion_index_skeleton_v0.md:60（已提交，"仅展示层约定非门禁"）
 EMOTION_B5_LABELS = (
     "ice",
     "cooling",
@@ -413,13 +413,13 @@ def build_meta(rows, cells, negatives, amp_edges, amp_deriv_n, out_dir: Path, de
             "macro": ["t1_dominant", "t1_vol_pct", "t1_vol_bucket3"],
         },
         "truth_sources": {
-            "six_phase": "docs/_working/t0_matrix/six_phase_history_v1.csv（映射真源=scripts/backtest/auto_mount.py R2SIX+phase_overlay+resolve_six_phase，零自定阈值）",
+            "six_phase": "docs/04_research_records/data/t0_matrix/six_phase_history_v1.csv（映射真源=scripts/backtest/auto_mount.py R2SIX+phase_overlay+resolve_six_phase，零自定阈值）",
             "emotion_thermometer": f"{tn['emotion']}（stage=close_final；同键多版取 argMax(ingest_ts)）",
             "macro_state": tn["state"],
             "price_axis": f"{tn['index_k']} symbol={PRICE_SYMBOL}（GROUP BY trade_date 去重，振幅=(high-low)/open）",
         },
         "band_definitions": {
-            "band5": "引用 docs/_working/emotion_line/emotion_index_skeleton_v0.md:60 展示层五档（≤0.2 冰点/≤0.4 降温/≤0.6 温和/≤0.8 升温/>0.8 沸点，该文档自记'仅展示层约定非门禁'）；英写标签与在途消费件 condition_package._BAND_LABELS 同值",
+            "band5": "引用 docs/04_research_records/data/emotion_line/emotion_index_skeleton_v0.md:60 展示层五档（≤0.2 冰点/≤0.4 降温/≤0.6 温和/≤0.8 升温/>0.8 沸点，该文档自记'仅展示层约定非门禁'）；英写标签与在途消费件 condition_package._BAND_LABELS 同值",
             "band3_emotion": "引用 sector_state_aggregator 消费口径 low<0.40≤mid<0.70≤high",
             "t1_vol_bucket3": f"引用 t0_regime 卡 §3 frozen 边界 {VOL_B3}（L≤0.328<M≤0.700<H）",
             "t1_amp_bucket3": f"本包新轴，三桶边界={([round(x, 2) for x in amp_edges])} bp，"

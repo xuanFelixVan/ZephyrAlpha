@@ -16,7 +16,7 @@
 #              刷新时点=传承条目登记/降级后（snapshot_dirty 标记）+月度兜底；完成发 intake_heritage_baseline
 #              轻事件到本段 outbox（只发 elite|pattern 两 kind+count、不收阴性——红蓝 R1-B5 契约）;
 #              生熟分离：只读 ai_heritage、只写 ai_intake T4 的 L7 family 行
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/L7_heredity/DESIGN.md §2.4（快照时点与快照面裁定）
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/L7_heredity/DESIGN.md §2.4（快照时点与快照面裁定）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -26,7 +26,7 @@
 #         baseline outbox 只发 elite|pattern/dry-run 零写入）
 """gen_heritage_dedup_snapshot — L2 比对面第 5 族快照生成器（T4 `ref_family='L7'`）。
 
-设计真源：``docs/_working/ai_layer_vision/L7_heredity/DESIGN.md`` §2.4（回流接线：L2 查重基线）。
+设计真源：``docs/_archive/_working_cleared/ai_layer_vision/L7_heredity/DESIGN.md`` §2.4（回流接线：L2 查重基线）。
 chart/indicator/algo_flow 三族由 ``gen_intake_ref_snapshots.py`` 管（其头注明 L7 面不在其职责内），
 本器只写 ``ref_family='L7'`` 族——写入权按 ref_family 划分，防双头登记。
 
@@ -101,9 +101,7 @@ def refresh(
             for row in face_rows:
                 intake_dedup.upsert_snapshot(HERITAGE_FAMILY, row["ref_key"], row["text_norm"])
         baseline_dir = state_dir or DEFAULT_STATE_DIR
-        summary["baseline_events"] = _write_baseline_outbox(
-            baseline_dir / BASELINE_OUTBOX_NAME, faces
-        )
+        summary["baseline_events"] = _write_baseline_outbox(baseline_dir / BASELINE_OUTBOX_NAME, faces)
         heritage_store.clear_dirty_marker()
     for name, rows in faces.items():
         summary["faces"][name] = len(rows)
@@ -129,7 +127,7 @@ def main(argv: list[str] | None = None) -> int:
         summary = refresh(store, dedup, dry_run=args.dry_run)
         print("SNAPSHOT SUMMARY:", summary)
         return 0
-    except Exception as exc:  # noqa: BLE001——CLI 边界统一转退出码 2（schema 缺件/不可达等）
+    except Exception as exc:  # noqa: BLE001  CLI 边界统一转退出码 2（schema 缺件/不可达等）
         print(f"GEN FAILED: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
 

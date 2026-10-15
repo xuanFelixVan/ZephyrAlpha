@@ -10,7 +10,7 @@
 # [INVARIANTS] 只读采集零改写：本生成器绝不写 src/、绝不改判据值；计数恒为字段
 #              （total_* / counts），散文里不得复制数字（宪法 §9.5 静态清单禁手工维护）；
 #              判定阈值名启发式集中在此一处（改口径=改本件+重跑，不散落）
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/OBJ_R_rules_standards/DESIGN.md §⑥-S3
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/OBJ_R_rules_standards/DESIGN.md §⑥-S3
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -20,7 +20,7 @@
 # [TTL] permanent
 """gen_obj_r_s3_threshold_census — OBJ_R 施工项 S3「阈值外置化」机械普查生成器。
 
-真源：docs/_working/ai_layer_vision/OBJ_R_rules_standards/DESIGN.md §⑥-S3
+真源：docs/_archive/_working_cleared/ai_layer_vision/OBJ_R_rules_standards/DESIGN.md §⑥-S3
       （验收标准：外置化提案清单覆盖全部硬编码常量且逐条标真源行号）
 母版：同卡 §②-R3 = alert_threshold_registry.yaml（REG-ATH-001）+
       src/zephyr/shared/alerts/threshold_loader.py fail-closed 统读改造（AI-THD-001）。
@@ -113,7 +113,7 @@ ALGORITHMIC_MAGIC_TOKENS: Final[tuple[str, ...]] = (
 PROPOSED_REGISTRY_ID: Final[str] = "REG-GTH-001"
 PROPOSED_REGISTRY_PATH: Final[str] = "docs/01_policies_and_standards/_registry/catalogs/gate_threshold_registry.yaml"
 DEFAULT_OUT: Final[str] = (
-    "docs/_working/ai_layer_vision/OBJ_R_rules_standards/s3_threshold_externalization_proposal_v0.yaml"
+    "docs/_archive/_working_cleared/ai_layer_vision/OBJ_R_rules_standards/s3_threshold_externalization_proposal_v0.yaml"
 )
 
 GATE_REGISTRY_PATH: Final[str] = "docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml"
@@ -372,12 +372,12 @@ def build_payload(findings: list[Finding], stats: dict[str, Any], as_of: date) -
             "status": "filed_proposal_only",
             "generated_by": "scripts/ai_layer/gen_obj_r_s3_threshold_census.py",
             "as_of": as_of.isoformat(),
-            "design_source": "docs/_working/ai_layer_vision/OBJ_R_rules_standards/DESIGN.md §⑥-S3"
+            "design_source": "docs/_archive/_working_cleared/ai_layer_vision/OBJ_R_rules_standards/DESIGN.md §⑥-S3"
             "（验收：覆盖全部硬编码常量且逐条标真源行号）",
             "master_template": "REG-ATH-001（alert_threshold_registry.yaml）+ threshold_loader.py"
             " fail-closed 统读（AI-THD-001，存量 9 模块码内硬编码已清零）",
             "approval_ref": "Owner 2026-09-26 已批项 #10，见"
-            " docs/_working/ai_layer_vision/HANDOFF_st_ailayer_final.md §一",
+            " docs/_archive/_working_cleared/ai_layer_vision/HANDOFF_st_ailayer_final.md §一",
             "net_zero_note": "本件只出提案不新增生产配置；下一波施工时**优先并入 REG-ATH-001"
             " 既有注册表或新建单册二选一**（内收判据：同域重复簇→收敛唯一），"
             "禁第三套阈值真源",

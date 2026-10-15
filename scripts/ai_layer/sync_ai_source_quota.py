@@ -15,8 +15,8 @@
 #              墓碑不删除：T5 中真源已不存在的行不 DELETE，只由 --verify 报 t5_extra drift（人工裁决）;
 #              降级修订（贫矿减半/quota=1）改真源 YAML 后经本器落地，本器不做降级计算（RULE-SSOT）;
 #              全部读写经 DatabaseService/depgraph 通道，禁裸连接
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/L1_perceive/DESIGN.md §2.1（配额治理三闸）;
-#                docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md §2.2 T5（只读缓存裁定）
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/L1_perceive/DESIGN.md §2.1（配额治理三闸）;
+#                docs/_archive/_working_cleared/ai_layer_vision/L2_intake_library/DESIGN.md §2.2 T5（只读缓存裁定）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -28,8 +28,8 @@
 #         verify 一致零漂移/篡改 T5 后 verify 报 drift/T5 多余行报 t5_extra）
 """sync_ai_source_quota — 配额缓存同步器：源注册表 YAML → L2 T5 `ai_intake_source_quota`（施工项 2）。
 
-设计真源：``docs/_working/ai_layer_vision/L1_perceive/DESIGN.md`` §2.1（配额真源三闸）+
-``docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md`` §2.2 T5（过渡件降级只读缓存裁定）。
+设计真源：``docs/_archive/_working_cleared/ai_layer_vision/L1_perceive/DESIGN.md`` §2.1（配额真源三闸）+
+``docs/_archive/_working_cleared/ai_layer_vision/L2_intake_library/DESIGN.md`` §2.2 T5（过渡件降级只读缓存裁定）。
 
 方向只有一个：YAML → T5。T5 的直接写路径自本器落地起关闭——写配额改
 ``config/ai_source_registry.yaml``，再跑本器同步；旁路写入会被 ``--verify`` 判 drift（退出码 3）。
@@ -170,7 +170,7 @@ def main(argv: list[str] | None = None) -> int:
         result = sync(args.schema, args.registry)
         print(f"同步完成: {result}")
         return EXIT_OK
-    except Exception as exc:  # noqa: BLE001——CLI 边界统一 fail-closed 退出码 2
+    except Exception as exc:  # noqa: BLE001  CLI 边界统一 fail-closed 退出码 2
         print(f"ERROR {type(exc).__name__}: {exc}", file=sys.stderr)
         return EXIT_ERROR
 

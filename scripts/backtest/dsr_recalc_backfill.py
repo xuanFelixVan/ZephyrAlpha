@@ -62,8 +62,7 @@ _AUDIT_N_SQL = (
     f" FROM {_TABLE} GROUP BY run_id"
 )
 _KLINE_DAY_SQL_TPL = (
-    "SELECT count() FROM {table}"
-    " WHERE symbol = '000001' AND trade_date >= '{start}' AND trade_date <= '{end}'"
+    "SELECT count() FROM {table} WHERE symbol = '000001' AND trade_date >= '{start}' AND trade_date <= '{end}'"  # noqa: bare-sql  存量SQL模板行，本改仅ruff format合并致伪新增（X2断链改指车道）
 )
 _WINDOW_RE = re.compile(r"window=([\d-]+)/([\d-]+); kind=(\w+)")
 
@@ -121,9 +120,7 @@ def audit_batch_n(rows: list[dict[str, Any]], audit_n: dict[str, int]) -> dict[s
     锚失配 fail-closed。"""
     for run_id, expect in _AUDIT_ANCHORS.items():
         if run_id in audit_n and int(audit_n[run_id]) != expect:
-            raise RuntimeError(
-                f"考证锚失配: {run_id} 考证 N={audit_n[run_id]} 预期 {expect}"
-            )
+            raise RuntimeError(f"考证锚失配: {run_id} 考证 N={audit_n[run_id]} 预期 {expect}")
     stored: dict[str, int] = {}
     for r in rows:
         if r["num_trials"] is not None:
@@ -140,15 +137,15 @@ def trading_days(conn: Any, start: str, end: str, _cache: dict[tuple[str, str], 
     if key not in cache:
         from zephyr.data.table_registry import get_registry
 
-        sql = _KLINE_DAY_SQL_TPL.format(
-            table=get_registry().table("market_index_kline"), start=start, end=end)
+        sql = _KLINE_DAY_SQL_TPL.format(table=get_registry().table("market_index_kline"), start=start, end=end)
         rows = conn.execute(sql)
         cache[key] = int(rows[0][0])
     return cache[key]
 
 
-def recalc_plan(rows: list[dict[str, Any]], batch_n: dict[str, int], n_cum: int,
-                conn: Any) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+def recalc_plan(
+    rows: list[dict[str, Any]], batch_n: dict[str, int], n_cum: int, conn: Any
+) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
     """生成逐行重算计划。返回 (plan, skipped)。"""
     plan: list[dict[str, Any]] = []
     skipped: list[dict[str, str]] = []
@@ -163,8 +160,9 @@ def recalc_plan(rows: list[dict[str, Any]], batch_n: dict[str, int], n_cum: int,
         else:
             win = parse_window(r["notes"])
             if win is None:
-                skipped.append({"run_id": run_id, "strategy_id": sid,
-                                "reason": "no_window_evidence(verdict=%s)" % r["verdict"]})
+                skipped.append(
+                    {"run_id": run_id, "strategy_id": sid, "reason": "no_window_evidence(verdict=%s)" % r["verdict"]}
+                )
                 continue
             try:
                 days = trading_days(conn, win[0], win[1])
@@ -173,17 +171,24 @@ def recalc_plan(rows: list[dict[str, Any]], batch_n: dict[str, int], n_cum: int,
             except ValueError as exc:
                 skipped.append({"run_id": run_id, "strategy_id": sid, "reason": str(exc)})
                 continue
-        plan.append({
-            "run_id": run_id, "screen_batch": r["screen_batch"], "strategy_id": sid,
-            "verdict": r["verdict"], "is_sharpe": r["is_sharpe"],
-            "dsr_old": dsr_old, "n_old": n_old, "n_cum": n_cum,
-            "dsr_new": round(float(dsr_new), 4), "method": method,
-        })
+        plan.append(
+            {
+                "run_id": run_id,
+                "screen_batch": r["screen_batch"],
+                "strategy_id": sid,
+                "verdict": r["verdict"],
+                "is_sharpe": r["is_sharpe"],
+                "dsr_old": dsr_old,
+                "n_old": n_old,
+                "n_cum": n_cum,
+                "dsr_new": round(float(dsr_new), 4),
+                "method": method,
+            }
+        )
     return plan, skipped
 
 
-def apply_backfill(conn: Any, plan: list[dict[str, Any]],
-                   runs_to_fill: dict[str, int]) -> None:
+def apply_backfill(conn: Any, plan: list[dict[str, Any]], runs_to_fill: dict[str, int]) -> None:
     """落库：A2 num_trials 逐 run 回填 + A3 deflated_sharpe 逐行回填（mutations_sync）。
 
     conn 必须是 admin 角色（RBAC #ARCH-CH-027：reader 只读、writer 仅 INSERT；
@@ -204,8 +209,7 @@ def apply_backfill(conn: Any, plan: list[dict[str, Any]],
         )
 
 
-def write_report(path: str, meta: dict[str, Any], plan: list[dict[str, Any]],
-                 skipped: list[dict[str, str]]) -> None:
+def write_report(path: str, meta: dict[str, Any], plan: list[dict[str, Any]], skipped: list[dict[str, str]]) -> None:
     import yaml
 
     from zephyr.shared.io.file_utils import safe_write_text
@@ -216,15 +220,17 @@ def write_report(path: str, meta: dict[str, Any], plan: list[dict[str, Any]],
         "skipped_rows": skipped,
     }
     # 见 73f2e54339 先例：目标受 .gitattributes eol=lf 钉定，缺省 newline=None 在 Windows 会把 \n 翻成 CRLF（safe_write_text 回读校验走 universal-newlines 看不见）
-    safe_write_text(path, yaml.safe_dump(report, allow_unicode=True, sort_keys=False),
-                    encoding="utf-8", newline="\n")
+    safe_write_text(path, yaml.safe_dump(report, allow_unicode=True, sort_keys=False), encoding="utf-8", newline="\n")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="DSR 存量重算回填（A2 N 回填 + A3 累计口径重折减）")
     parser.add_argument("--commit", action="store_true", help="真回填（默认 dry-run 只打印计划）")
-    parser.add_argument("--report", default="docs/_working/dsr-recalc/2026-09-15-dsr-recalc-rows.yaml",
-                        help="逐行重算明细 YAML 输出路径")
+    parser.add_argument(
+        "--report",
+        default="docs/_archive/_working_cleared/dsr-recalc/2026-09-15-dsr-recalc-rows.yaml",
+        help="逐行重算明细 YAML 输出路径",
+    )
     args = parser.parse_args()
 
     from zephyr.backtest.core.n_trial_ledger import TrialLedger
@@ -232,8 +238,21 @@ def main() -> None:
 
     conn = DatabaseService().get_clickhouse_conn()
     rows = [
-        dict(zip(("run_id", "screen_batch", "strategy_id", "verdict", "is_sharpe",
-                  "deflated_sharpe", "num_trials", "notes"), r))
+        dict(
+            zip(  # noqa: B905  存量代码行零语义过门（X2断链改指车道）
+                (
+                    "run_id",
+                    "screen_batch",
+                    "strategy_id",
+                    "verdict",
+                    "is_sharpe",
+                    "deflated_sharpe",
+                    "num_trials",
+                    "notes",
+                ),
+                r,
+            )
+        )
         for r in conn.execute(_ROW_SQL)
     ]
     audit_n = {str(r[0]): int(r[1]) for r in conn.execute(_AUDIT_N_SQL)}
@@ -245,16 +264,20 @@ def main() -> None:
 
     plan, skipped = recalc_plan(rows, batch_n, n_cum, conn)
     runs_to_fill = {
-        rid: n for rid, n in batch_n.items()
-        if any(str(r["run_id"]) == rid and r["num_trials"] is None for r in rows)
+        rid: n for rid, n in batch_n.items() if any(str(r["run_id"]) == rid and r["num_trials"] is None for r in rows)
     }
 
-    anchor = next((p for p in plan if p["strategy_id"] == "CAND-e3da6fa71af1"
-                   and p["run_id"] == "SCR-C4-20260913-232609"), None)
+    anchor = next(
+        (p for p in plan if p["strategy_id"] == "CAND-e3da6fa71af1" and p["run_id"] == "SCR-C4-20260913-232609"), None
+    )
     summary = {
         "mode": "commit" if args.commit else "dry-run",
-        "rows_total": len(rows), "recalc": len(plan), "skipped": len(skipped),
-        "n_cum": n_cum, "ledger_sync": sync, "runs_num_trials_backfilled": len(runs_to_fill),
+        "rows_total": len(rows),
+        "recalc": len(plan),
+        "skipped": len(skipped),
+        "n_cum": n_cum,
+        "ledger_sync": sync,
+        "runs_num_trials_backfilled": len(runs_to_fill),
         "anchor_overturned": anchor["dsr_new"] if anchor else None,
     }
     print(json.dumps(summary, ensure_ascii=False, indent=1, default=str))

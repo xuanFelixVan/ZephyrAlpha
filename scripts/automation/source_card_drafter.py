@@ -4,7 +4,7 @@
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.backtest.lane_g_stomach_intake (parse_inbox_entries 委托复用);
 #   zephyr.integration.local_model.ollama_chat（内嵌 LSG）; zephyr.shared.io.file_utils.safe_write_text; yaml
-# [CONSUMERS] docs/_working/automation/inbox/intel-*.md（上游=本工段①收件箱）;
+# [CONSUMERS] docs/04_research_records/cross_domain/automation/inbox/intel-*.md（上游=本工段①收件箱）;
 #   config/source_cards/drafts/<source_id>_draft.yaml（下游=工段③ onboard_source 流水线的人工确认料）;
 #   docs/_working/automation/campaign/mining/01_数据源发现/工段作业簿.md §5-6 / §10 WO-①-05
 # [STARTUP] manual
@@ -28,7 +28,7 @@
 # noqa: m11-perm-manual-legitimate  M11豁免: 操作员/会话按需调用的草案转化工具（人工确认门前置件），非进程内常驻服务
 """source_card_drafter — 源发现→源卡片草案转化器（WO-①-05，打通工段①→③产线轴）。
 
-收件箱（docs/_working/automation/inbox/intel-*.md，人读 markdown）→ 条目解析（委托车道 G
+收件箱（docs/04_research_records/cross_domain/automation/inbox/intel-*.md，人读 markdown）→ 条目解析（委托车道 G
 解析器）→ 本地 LLM 抽取候选数据源特征（名称/URL/频次/类别假设）→ 渲染源卡片【草案】YAML 到
 config/source_cards/drafts/<source_id>_draft.yaml（schema 对齐真卡 config/source_cards/fx_ecb.yaml
 的 11 字段结构）。草案文件头恒带红线注释：生效必须人工确认后移入正式目录并走 onboard_source
@@ -39,6 +39,7 @@ config/source_cards/drafts/<source_id>_draft.yaml（schema 对齐真卡 config/s
     python scripts/automation/source_card_drafter.py run --dry-run      # 只回看不写盘
     python scripts/automation/source_card_drafter.py run --limit 5      # 本班最多消化条目数
 """
+
 from __future__ import annotations
 
 import argparse
@@ -66,9 +67,7 @@ _DRAFTS_DIR = _CARDS_DIR / "drafts"  # 草案唯一出口；正式目录 _CARDS_
 
 MODEL = "qwen3:8b"
 DRAFT_SUFFIX = "_draft.yaml"
-DRAFT_BANNER = (
-    "draft=仅供参考，生效必须人工确认后移入正式目录并走 onboard_source 流水线"
-)
+DRAFT_BANNER = "draft=仅供参考，生效必须人工确认后移入正式目录并走 onboard_source 流水线"
 
 EXTRACTION_SYSTEM = (
     "你是数据源候选特征抽取器。输入是一篇研究情报（标题/链接/命中词/摘要）。"
@@ -94,7 +93,7 @@ def build_extraction_prompt(entry: dict) -> str:
         '输出 JSON 对象：{"is_data_source": 布尔, "source_name": "数据源名称", '
         '"source_url": "数据访问 URL（http/https）", "frequency": "daily|weekly|monthly|unknown", '
         '"category": "类别假设如 宏观汇率/新闻情绪/另类数据", "notes": "合规或接入备注（≤80字）"}；'
-        "不是数据源则输出 {\"is_data_source\": false, 其余字段留空}。"
+        '不是数据源则输出 {"is_data_source": false, 其余字段留空}。'
     )
 
 
@@ -195,8 +194,7 @@ def _render_schedule_block(freq: str, sched_plan: dict) -> list[str]:
     return lines
 
 
-def _render_llm_body(sid: str, task_name: str, url: str, notes: str,
-                     freq: str, sched_plan: dict) -> list[str]:
+def _render_llm_body(sid: str, task_name: str, url: str, notes: str, freq: str, sched_plan: dict) -> list[str]:
     """LLM 特征卡正文（TODO=人工确认位显式留痕）。"""
     lines = [
         'schema_module: ""  # TODO(人工确认): 对齐 schemas/categories/market/ 下 DDL 模块真源',
@@ -246,8 +244,7 @@ def render_draft_card(features: dict, entry: dict, *, mode: str, model: str) -> 
     category = str(features.get("category") or "").strip()
     header, sid, task_name, url, notes = _card_header(features, entry, mode=mode, model=model)
     if mode == "llm":
-        body = _render_llm_body(sid, task_name, url, notes, freq,
-                                dict(_FREQ_SCHEDULE.get(freq, {})))
+        body = _render_llm_body(sid, task_name, url, notes, freq, dict(_FREQ_SCHEDULE.get(freq, {})))
     else:
         body = _render_template_body(url, category, entry.get("keywords") or [], notes)
     return "\n".join(header + body + [""])
@@ -268,6 +265,7 @@ def _build_chat(chat, model: str) -> tuple[object, bool]:
         return chat, True
     try:
         from zephyr.integration.local_model.ollama_chat import OllamaChat
+
         return OllamaChat(model=model, timeout_s=120.0), True
     except Exception as exc:  # noqa: BLE001 — LLM 不可达降级（班不炸）
         print(f"WARN: Ollama 不可达，全部条目降级模板卡（{exc}）")
@@ -295,12 +293,10 @@ def _decide_features(entry: dict, chat) -> tuple[dict, str]:
     ask 失败/回包损坏→template（降级留痕不硬凑）；is_data_source=false→skip（诚实无货）。
     """
     try:
-        raw = chat.ask(build_extraction_prompt(entry), system=EXTRACTION_SYSTEM,
-                       temperature=0.3)
+        raw = chat.ask(build_extraction_prompt(entry), system=EXTRACTION_SYSTEM, temperature=0.3)
         obj = _parse_source_json(raw)
     except Exception as exc:  # noqa: BLE001 — 单条目 LLM 失败→模板卡不炸
-        print(f"WARN 特征抽取失败 {entry['url']}: {type(exc).__name__}: {exc}",
-              file=sys.stderr)
+        print(f"WARN 特征抽取失败 {entry['url']}: {type(exc).__name__}: {exc}", file=sys.stderr)
         obj = None
     if obj is None:
         return {}, "template"
@@ -317,17 +313,23 @@ def _persist_draft(text: str, out: Path, item: dict, dry_run: bool) -> int:
         if not dry_run:
             out.parent.mkdir(parents=True, exist_ok=True)
             safe_write_text(out, text, encoding="utf-8")
-        item["drafted"].append({"source_id": item["source_id"], "file": str(out),
-                                "mode": item["mode"], "url": item["url"]})
+        item["drafted"].append(
+            {"source_id": item["source_id"], "file": str(out), "mode": item["mode"], "url": item["url"]}
+        )
     except Exception as exc:  # noqa: BLE001 — 写盘失败记档继续
         item["failed"].append(item["url"])
         print(f"WARN 草案写盘失败 {out}: {exc}", file=sys.stderr)
     return 0
 
 
-def run_drafter(limit: int | None = None, dry_run: bool = False,
-                chat=None, model: str | None = None,
-                inbox_dir: Path | None = None, drafts_dir: Path | None = None) -> dict:
+def run_drafter(
+    limit: int | None = None,
+    dry_run: bool = False,
+    chat=None,
+    model: str | None = None,
+    inbox_dir: Path | None = None,
+    drafts_dir: Path | None = None,
+) -> dict:
     """主流程：收件箱条目（url 去重）→ LLM 抽取 → 草案 YAML（幂等重跑）。
 
     chat 参数为测试注入位（缺省现场构造 OllamaChat，经 LSG）；
@@ -357,14 +359,19 @@ def run_drafter(limit: int | None = None, dry_run: bool = False,
         if mode == "skip":
             no_source += 1
             continue  # 诚实无货：非数据源条目不出卡
-        features["_source_id"] = derive_source_id(
-            features.get("source_name") or entry["title"], entry["url"], taken)
+        features["_source_id"] = derive_source_id(features.get("source_name") or entry["title"], entry["url"], taken)
         taken.add(features["_source_id"])
-        text = render_draft_card(features, entry, mode=mode,
-                                 model=model or MODEL if mode == "llm" else "template(降级)")
+        text = render_draft_card(
+            features, entry, mode=mode, model=model or MODEL if mode == "llm" else "template(降级)"
+        )
         out = _draft_path(features["_source_id"], drafts_dir)
-        item = {"source_id": features["_source_id"], "mode": mode,
-                "url": entry["url"], "drafted": drafted, "failed": failed}
+        item = {
+            "source_id": features["_source_id"],
+            "mode": mode,
+            "url": entry["url"],
+            "drafted": drafted,
+            "failed": failed,
+        }
         unchanged += _persist_draft(text, out, item, dry_run)
 
     record = {
@@ -381,7 +388,8 @@ def run_drafter(limit: int | None = None, dry_run: bool = False,
 
 def main() -> int:
     ap = argparse.ArgumentParser(
-        description="源发现→源卡片草案转化器（WO-①-05）：收件箱→source_cards 草案（只产草案不生效）")
+        description="源发现→源卡片草案转化器（WO-①-05）：收件箱→source_cards 草案（只产草案不生效）"
+    )
     sub = ap.add_subparsers(dest="cmd", required=True)
     g = sub.add_parser("run", help="消化收件箱条目并产出源卡片草案（仅 drafts/ 目录）")
     g.add_argument("--limit", type=int, default=None, help="本班最多消化条目数")

@@ -4,7 +4,7 @@
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] scripts.backtest.eval_exp_expectations; zephyr.factor.expectations;
 #                zephyr.data.ch_reader; zephyr.data.table_registry; scipy; pyyaml
-# [CONSUMERS] docs/_working/kimi_audit/exp_evidence/exp_ic_evidence_ds271.yaml（WO-⑤-12 出证件）；
+# [CONSUMERS] docs/_archive/_working_cleared/kimi_audit/exp_evidence/exp_ic_evidence_ds271.yaml（WO-⑤-12 出证件）；
 #             裁定#338④ DS-271 三口径预注册的执行端；factor_registry FCT-EXP 族证据引用
 # [STARTUP] manual
 # [MATURITY] design
@@ -32,7 +32,7 @@
 
 数据源=c3_fundamental.consensus_daily_repaired（DS-275 双轨修复表）+ pdf_forecast_extracted
 （C4 PDF 发布时点提取，exp03 修正广度的研报级 EPS 直接源）。产出 YAML 证据件落
-docs/_working/kimi_audit/exp_evidence/exp_ic_evidence_ds271.yaml，含：
+docs/_archive/_working_cleared/kimi_audit/exp_evidence/exp_ic_evidence_ds271.yaml，含：
   caliber 段（裁定 #338④ 逐字引用+窗缩显著标注+high/mid/low 三档计数）
   probe  段（表存在性/行数/置信档分布）
   factors段（exp01~exp06 各自 IS' 段 IC（=秩IC）/覆盖度/t 检验/判读）
@@ -44,8 +44,9 @@ import 复用，保证与既有 exp_r36 出证逐键可比。
 
 用法::
 
-    python scripts/backtest/exp_ic_evidence.py --out docs/_working/kimi_audit/exp_evidence/exp_ic_evidence_ds271.yaml
+    python scripts/backtest/exp_ic_evidence.py --out docs/_archive/_working_cleared/kimi_audit/exp_evidence/exp_ic_evidence_ds271.yaml
 """
+
 from __future__ import annotations
 
 import argparse
@@ -89,7 +90,8 @@ RULING_338_4_VERBATIM = (
     "（2019-2021 共 36 月窗缩先行出证+显著标注窗缩，2022+ 修复证据补齐后全窗复跑）；"
     "mid 不入聚合（守 high-only 铁律，mid/low 留档作诊断与反向核验）；切换规则="
     "switch_gate=Owner 不变，机器侧双轨并跑（DS-229 消费方零改动）累计不少于 4 周对数后"
-    "提请 Owner 验收切换。本条解阻 WO-⑤-12 EXP 族出证。")
+    "提请 Owner 验收切换。本条解阻 WO-⑤-12 EXP 族出证。"
+)
 WINDOW_SHRINK_MARKER = "窗缩"  # 显著标注（裁定原文用词，禁替换为"截断/缩短"等近义词）
 
 # 旧口径既有出证对照（只读引用，不改旧件；真源=logs/experiment_tracking_fallback/*.json
@@ -108,7 +110,7 @@ LEGACY_COMPARISON = {
         "result": "IS' n_months=36 ic_mean=-0.0191 t_p=0.19403（未达 |t|>3.0）",
     },
     "note": "旧件一律不改；本件同协议（exp_r36@DS-275）重跑应与旧数在统计核路径上一致，"
-            "差异只可能来自数据增量（修复表重建批次）或本件新增的 exp01/exp03 腿。",
+    "差异只可能来自数据增量（修复表重建批次）或本件新增的 exp01/exp03 腿。",
 }
 
 QueryFn = Callable[..., str]
@@ -132,14 +134,11 @@ _SQL_PDF_HIGH = (
     "FROM {table} FINAL "
     "WHERE confidence = 'high' AND eps IS NOT NULL "
     "AND publish_date >= toDate('{lo}') AND publish_date <= toDate('{hi}') "
-    "FORMAT TSV")
-_SQL_PDF_GRADES = (
-    "SELECT confidence, count() FROM {table} FINAL "
-    "GROUP BY confidence ORDER BY confidence FORMAT TSV")
+    "FORMAT TSV"
+)
+_SQL_PDF_GRADES = "SELECT confidence, count() FROM {table} FINAL GROUP BY confidence ORDER BY confidence FORMAT TSV"
 _SQL_COUNT = "SELECT count() FROM {table} FINAL FORMAT TSV"
-_SQL_SPAN = (
-    "SELECT min(trade_date), max(trade_date), uniqExact(symbol) "
-    "FROM {table} FINAL FORMAT TSV")
+_SQL_SPAN = "SELECT min(trade_date), max(trade_date), uniqExact(symbol) FROM {table} FINAL FORMAT TSV"
 
 
 def _tsv_rows(tsv: str) -> list[list[str]]:
@@ -157,12 +156,14 @@ def probe_tables(query: QueryFn = _ch_query) -> dict:
     pdf_rows = int(query(_SQL_COUNT.format(table=_TBL_PDF)).strip())
     return {
         "consensus_daily_repaired": {
-            "table": _TBL_REPAIRED, "rows": repaired_rows,
+            "table": _TBL_REPAIRED,
+            "rows": repaired_rows,
             "span": [span[0][0], span[0][1]] if span else None,
             "symbols": int(span[0][2]) if span else None,
         },
         "pdf_forecast_extracted": {
-            "table": _TBL_PDF, "rows": pdf_rows,
+            "table": _TBL_PDF,
+            "rows": pdf_rows,
             "confidence_counts": {k: grades.get(k, 0) for k in ("high", "mid", "low")},
         },
     }
@@ -177,13 +178,24 @@ def load_consensus_fy1(query: QueryFn = _ch_query) -> pd.DataFrame:
     ym = _CONS_YM_LO
     while ym <= _CONS_YM_HI:
         y, m = ym
-        last_day = [31, 29 if y % 4 == 0 and (y % 100 != 0 or y % 400 == 0) else 28,
-                    31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1]
+        last_day = [
+            31,
+            29 if y % 4 == 0 and (y % 100 != 0 or y % 400 == 0) else 28,
+            31,
+            30,
+            31,
+            30,
+            31,
+            31,
+            30,
+            31,
+            30,
+            31,
+        ][m - 1]
         q = ev._SQL_CONSENSUS_MONTH.format(table=_TBL_REPAIRED, y=y, m=m, last_day=last_day)
         rows = _tsv_rows(query(q, timeout=300))
         if rows:
-            frames.append(pd.DataFrame(rows, columns=["symbol", "td", "fy", "eps_consensus",
-                                                      "eps_std", "rating_mean"]))
+            frames.append(pd.DataFrame(rows, columns=["symbol", "td", "fy", "eps_consensus", "eps_std", "rating_mean"]))
         ym = (y + 1, 1) if m == 12 else (y, m + 1)
     if not frames:
         raise RuntimeError(f"{_TBL_REPAIRED} fy1 快照为空")
@@ -207,7 +219,7 @@ def load_prices(needed_dates: list[str], query: QueryFn = _ch_query) -> pd.DataF
     """需要日期全A收盘（ev._SQL_PRICES_DATES 同款，日期分块防 URL 超长）。"""
     frames = []
     for i in range(0, len(needed_dates), 50):
-        chunk = needed_dates[i:i + 50]
+        chunk = needed_dates[i : i + 50]
         quoted = ",".join(f"'{d}'" for d in chunk)
         rows = _tsv_rows(query(ev._SQL_PRICES_DATES.format(quoted=quoted), timeout=300))
         if rows:
@@ -239,8 +251,7 @@ def load_report_coverage(mes: list[str], query: QueryFn = _ch_query) -> pd.DataF
                 continue
             org_slice = orgs[lf:rt]
             n_orgs = pd.unique(org_slice[org_slice != ""]).size
-            out.append({"td": pd.Timestamp(t), "symbol": sym,
-                        "n_reports": rt - lf, "n_orgs": int(n_orgs)})
+            out.append({"td": pd.Timestamp(t), "symbol": sym, "n_reports": rt - lf, "n_orgs": int(n_orgs)})
     if not out:
         return pd.DataFrame(columns=["td", "symbol", "n_reports", "n_orgs"])
     return pd.DataFrame(out)
@@ -250,7 +261,7 @@ def load_circ_mv_volume(needed_dates: list[str], query: QueryFn = _ch_query) -> 
     """circ_mv（stock_indicator）与 volume（kline_daily）长表（ev 同款 SQL）。"""
     mv_frames, vol_frames = [], []
     for i in range(0, len(needed_dates), 50):
-        chunk = needed_dates[i:i + 50]
+        chunk = needed_dates[i : i + 50]
         quoted = ",".join(f"'{d}'" for d in chunk)
         rows = _tsv_rows(query(ev._SQL_MV_DATES.format(quoted=quoted), timeout=300))
         if rows:
@@ -271,8 +282,7 @@ def load_circ_mv_volume(needed_dates: list[str], query: QueryFn = _ch_query) -> 
 
 def load_pdf_high_rows(query: QueryFn = _ch_query) -> pd.DataFrame:
     """pdf_forecast_extracted 置信档=high 的研报级 EPS（exp03 直接源；mid/low 不入聚合）。"""
-    rows = _tsv_rows(query(_SQL_PDF_HIGH.format(table=_TBL_PDF, lo=_PDF_FROM,
-                                                hi=ev._PROTOCOLS["exp_r36"]["is"][1])))
+    rows = _tsv_rows(query(_SQL_PDF_HIGH.format(table=_TBL_PDF, lo=_PDF_FROM, hi=ev._PROTOCOLS["exp_r36"]["is"][1])))
     if not rows:
         raise RuntimeError(f"{_TBL_PDF} high 置信行为空")
     df = pd.DataFrame(rows, columns=["symbol", "publish_date", "forecast_year", "eps"])
@@ -282,13 +292,13 @@ def load_pdf_high_rows(query: QueryFn = _ch_query) -> pd.DataFrame:
     return df.dropna(subset=["eps"])
 
 
-def factor_panel_exp01(cons_fy1: pd.DataFrame, px_close: pd.DataFrame,
-                       cal: list[str], mes: list[str]) -> pd.DataFrame:
+def factor_panel_exp01(cons_fy1: pd.DataFrame, px_close: pd.DataFrame, cal: list[str], mes: list[str]) -> pd.DataFrame:
     """EXP-01 一致预期 EP：fy1 eps_consensus / close（月末截面，exp01_consensus_ep 口径）。"""
     from zephyr.factor.expectations import exp01_consensus_ep
 
-    eps_wide = cons_fy1.pivot(index="td", columns="symbol", values="eps_consensus").reindex(
-        pd.to_datetime(cal)).sort_index()
+    eps_wide = (
+        cons_fy1.pivot(index="td", columns="symbol", values="eps_consensus").reindex(pd.to_datetime(cal)).sort_index()
+    )
     out = []
     for t in mes:
         ts = pd.Timestamp(t)
@@ -301,8 +311,7 @@ def factor_panel_exp01(cons_fy1: pd.DataFrame, px_close: pd.DataFrame,
     return pd.concat(out, ignore_index=True).dropna()
 
 
-def factor_panel_exp03(pdf_high: pd.DataFrame, cons_fy1: pd.DataFrame,
-                       cal: list[str], mes: list[str]) -> pd.DataFrame:
+def factor_panel_exp03(pdf_high: pd.DataFrame, cons_fy1: pd.DataFrame, cal: list[str], mes: list[str]) -> pd.DataFrame:
     """EXP-03 修正广度：逐标的 exp03_revision_breadth（研报级 high EPS × 修复源 fy1 一致预期
     as-of 对齐），事件网格 → 月末"最后事件值≤t"快照（PIT：t 日只见发布日≤t 的研报）。
 
@@ -312,15 +321,15 @@ def factor_panel_exp03(pdf_high: pd.DataFrame, cons_fy1: pd.DataFrame,
     from zephyr.factor.expectations import exp03_revision_breadth
 
     cal_idx = pd.to_datetime(cal)
-    cons_by_sym = {s: g.set_index("td")["eps_consensus"].sort_index().rename_axis(None)
-                   for s, g in cons_fy1.groupby("symbol")}
+    cons_by_sym = {
+        s: g.set_index("td")["eps_consensus"].sort_index().rename_axis(None) for s, g in cons_fy1.groupby("symbol")
+    }
     out = []
     for sym, g in pdf_high.groupby("symbol"):
         cons = cons_by_sym.get(sym)
         if cons is None or cons.empty:
             continue
-        breadth = exp03_revision_breadth(
-            g[["publish_date", "forecast_year", "eps"]], cons, window_days=63)
+        breadth = exp03_revision_breadth(g[["publish_date", "forecast_year", "eps"]], cons, window_days=63)
         if breadth.empty:
             continue
         # 同标的同发布日多份研报 → 事件网格重复标签；rolling("63D") 对同日各行的
@@ -362,8 +371,7 @@ def judge(seg: dict) -> tuple[str, list[str]]:
     if abs(seg["ic_mean"]) < proto["ic_min"]:
         reasons.append(f"|IC|={abs(seg['ic_mean']):.4f} < {proto['ic_min']}（效应量地板不动）")
     if not seg.get("sig_rule_met"):
-        reasons.append(f"|t|={abs(seg.get('t_stat') or 0):.4f} 未超 3.0"
-                       "（Harvey-Liu-Zhu 收紧门槛）")
+        reasons.append(f"|t|={abs(seg.get('t_stat') or 0):.4f} 未超 3.0（Harvey-Liu-Zhu 收紧门槛）")
     cov = seg.get("coverage_ratio")
     if cov is None or cov < proto["coverage_min"]:
         reasons.append(f"月覆盖率={cov} < {proto['coverage_min']:.0%}（分母=IS' 36 月）")
@@ -373,19 +381,23 @@ def judge(seg: dict) -> tuple[str, list[str]]:
 def not_evaluable_entry(factor: str, reason: str) -> dict:
     """exp02/exp05 结构性不可判出证（评估器 :50-52 判据引用，禁跑出假 IC）。"""
     proto = ev._PROTOCOLS["exp_r36"]
-    return {"status": VERDICT_NOT_EVALUABLE, "reason": reason,
-            "evidence_class": proto["evidence_class"],
-            "promotion_authority": proto["promotion_authority"],
-            "is_window": list(proto["is"]), "oos_window": None}
+    return {
+        "status": VERDICT_NOT_EVALUABLE,
+        "reason": reason,
+        "evidence_class": proto["evidence_class"],
+        "promotion_authority": proto["promotion_authority"],
+        "is_window": list(proto["is"]),
+        "oos_window": None,
+    }
 
 
 _NOT_EVALUABLE_REASONS = {
     "exp02": "DS-275 的 eps_std 结构性不可得（A 段=窗口聚合值不经原始离散度、B 段=源快照"
-             "本身是聚合值），表内恒 0；exp02 分歧归一项分母为 0 ⇒ 因子退化（评估器"
-             "eval_exp_expectations.py 已 fail-closed 钉死，0 不是零分歧）",
+    "本身是聚合值），表内恒 0；exp02 分歧归一项分母为 0 ⇒ 因子退化（评估器"
+    "eval_exp_expectations.py 已 fail-closed 钉死，0 不是零分歧）",
     "exp05": "同 exp02 根因：exp05_dispersion=eps_std/|eps_mean|，修复源 eps_std 恒 0 ⇒ "
-             "因子全市场恒 0 零方差，截面 Spearman 无定义（跑出一个常数因子的 IC 是对"
-             "不存在数据的断言）",
+    "因子全市场恒 0 零方差，截面 Spearman 无定义（跑出一个常数因子的 IC 是对"
+    "不存在数据的断言）",
 }
 
 
@@ -399,8 +411,7 @@ def build_evidence(query: QueryFn = _ch_query) -> tuple[dict, list[str], int]:
     mes = ev.month_ends(cal, is_lo, proto["panel_hi"])
     is_total = len(mes)  # exp_r36 覆盖率分母=IS' 月数（评估器同款口径）
     cal_pos = {d: i for i, d in enumerate(cal)}
-    fwd_map = {d: (cal[cal_pos[d] + ev._FWD] if cal_pos[d] + ev._FWD < len(cal) else None)
-               for d in mes}
+    fwd_map = {d: (cal[cal_pos[d] + ev._FWD] if cal_pos[d] + ev._FWD < len(cal) else None) for d in mes}
     needed = set(mes) | {fwd_map[t] for t in mes if fwd_map[t]}
     for t in mes:
         j = cal_pos[t]
@@ -412,63 +423,76 @@ def build_evidence(query: QueryFn = _ch_query) -> tuple[dict, list[str], int]:
             if jj >= 0:
                 needed.add(cal[jj])
     px = load_prices(sorted(needed), query)
-    px_close = px.pivot(index="td", columns="symbol", values="close").reindex(
-        pd.to_datetime(cal)).sort_index()
+    px_close = px.pivot(index="td", columns="symbol", values="close").reindex(pd.to_datetime(cal)).sort_index()
 
     # exp01：一致预期 EP
     fac1 = factor_panel_exp01(cons, px_close, cal, mes)
-    ic1 = ev.build_ic_table(fac1.pivot(index="td", columns="symbol", values="f").sort_index(),
-                            px_close, mes, fwd_map, k=20)
+    ic1 = ev.build_ic_table(
+        fac1.pivot(index="td", columns="symbol", values="f").sort_index(), px_close, mes, fwd_map, k=20
+    )
     seg1 = seg_with_t(ic1, is_hi, is_total)
     v, rs = judge(seg1)
 
     # exp03：修正广度（pdf high 研报级 EPS）
     pdf_high = load_pdf_high_rows(query)
     fac3 = factor_panel_exp03(pdf_high, cons, cal, mes)
-    ic3 = ev.build_ic_table(fac3.pivot(index="td", columns="symbol", values="f").sort_index(),
-                            px_close, mes, fwd_map, k=20)
+    ic3 = ev.build_ic_table(
+        fac3.pivot(index="td", columns="symbol", values="f").sort_index(), px_close, mes, fwd_map, k=20
+    )
     seg3 = seg_with_t(ic3, is_hi, is_total)
     v3, rs3 = judge(seg3)
 
     # exp04：异常覆盖（研报计数类，评估器纯核复用）
     cov = load_report_coverage(mes, query)
     mv, vol = load_circ_mv_volume(sorted(needed), query)
-    mv_wide = mv.pivot(index="td", columns="symbol", values="circ_mv").reindex(
-        pd.to_datetime(cal)).sort_index()
-    vol_wide = vol.pivot(index="td", columns="symbol", values="volume").reindex(
-        pd.to_datetime(cal)).sort_index()
+    mv_wide = mv.pivot(index="td", columns="symbol", values="circ_mv").reindex(pd.to_datetime(cal)).sort_index()
+    vol_wide = vol.pivot(index="td", columns="symbol", values="volume").reindex(pd.to_datetime(cal)).sort_index()
     chars = ev.build_char_panel(mes, px_close, mv_wide, vol_wide)
     fac4 = ev.compute_factor_exp04(cov, chars)
-    ic4 = ev.build_ic_table(fac4.pivot(index="td", columns="symbol", values="f").sort_index(),
-                            px_close, mes, fwd_map, k=20)
+    ic4 = ev.build_ic_table(
+        fac4.pivot(index="td", columns="symbol", values="f").sort_index(), px_close, mes, fwd_map, k=20
+    )
     seg4 = seg_with_t(ic4, is_hi, is_total)
     v4, rs4 = judge(seg4)
 
     # exp06：评级动量（k=60 单配置，评估器同款）
     fac6 = ev.compute_factor_exp06(cons, k=60)
-    ic6 = ev.build_ic_table(fac6.pivot(index="td", columns="symbol", values="f").sort_index(),
-                            px_close, mes, fwd_map, k=20)
+    ic6 = ev.build_ic_table(
+        fac6.pivot(index="td", columns="symbol", values="f").sort_index(), px_close, mes, fwd_map, k=20
+    )
     seg6 = seg_with_t(ic6, is_hi, is_total)
     v6, rs6 = judge(seg6)
 
     factors = {
-        "exp01_consensus_ep": {**seg1, "verdict": v, "red_reasons": rs,
-                               "oos": {"status": "not_evaluable",
-                                       "reason": "协议无 OOS 窗（exp_r36 结构性）"}},
+        "exp01_consensus_ep": {
+            **seg1,
+            "verdict": v,
+            "red_reasons": rs,
+            "oos": {"status": "not_evaluable", "reason": "协议无 OOS 窗（exp_r36 结构性）"},
+        },
         "exp02_revision_momentum": not_evaluable_entry("exp02", _NOT_EVALUABLE_REASONS["exp02"]),
-        "exp03_revision_breadth": {**seg3, "verdict": v3, "red_reasons": rs3,
-                                   "oos": {"status": "not_evaluable",
-                                           "reason": "协议无 OOS 窗（exp_r36 结构性）"},
-                                   "input_note": "pdf_forecast_extracted confidence='high' 研报级"
-                                                 "EPS 直接源（mid/low 不入聚合）；月末快照=事件"
-                                                 "网格最后事件值≤t"},
-        "exp04_anomaly_coverage": {**seg4, "verdict": v4, "red_reasons": rs4,
-                                   "oos": {"status": "not_evaluable",
-                                           "reason": "协议无 OOS 窗（exp_r36 结构性）"}},
+        "exp03_revision_breadth": {
+            **seg3,
+            "verdict": v3,
+            "red_reasons": rs3,
+            "oos": {"status": "not_evaluable", "reason": "协议无 OOS 窗（exp_r36 结构性）"},
+            "input_note": "pdf_forecast_extracted confidence='high' 研报级"
+            "EPS 直接源（mid/low 不入聚合）；月末快照=事件"
+            "网格最后事件值≤t",
+        },
+        "exp04_anomaly_coverage": {
+            **seg4,
+            "verdict": v4,
+            "red_reasons": rs4,
+            "oos": {"status": "not_evaluable", "reason": "协议无 OOS 窗（exp_r36 结构性）"},
+        },
         "exp05_dispersion": not_evaluable_entry("exp05", _NOT_EVALUABLE_REASONS["exp05"]),
-        "exp06_rating_momentum": {**seg6, "verdict": v6, "red_reasons": rs6,
-                                  "oos": {"status": "not_evaluable",
-                                          "reason": "协议无 OOS 窗（exp_r36 结构性）"}},
+        "exp06_rating_momentum": {
+            **seg6,
+            "verdict": v6,
+            "red_reasons": rs6,
+            "oos": {"status": "not_evaluable", "reason": "协议无 OOS 窗（exp_r36 结构性）"},
+        },
     }
     return factors, mes, is_total
 
@@ -494,17 +518,15 @@ def render_yaml(probe: dict, factors: dict, mes: list[str], is_total: int) -> st
         f"  is_window: [{proto['is'][0]}, {proto['is'][1]}]",
         "  is_window_note: 窗缩——主协议 IS 2019-2023 共 60 月在修复源上仅 36 月真覆盖；"
         "2022+ 缺证据不复跑，全窗复跑待修复证据补齐（裁定 #338④ A 案）",
-        f"  oos_window: null   # OOS' 结构不存在 → 全部因子显式 not_evaluable（禁写成 0）",
-        f"  protocol: exp_r36",
-        f"  significance_rule: \"{proto['sig_rule']}（t p<0.05 收紧；SE 放大 "
-        f"{proto['se_inflation_vs_primary']} 倍=sqrt(60/36)）\"",
+        "  oos_window: null   # OOS' 结构不存在 → 全部因子显式 not_evaluable（禁写成 0）",
+        "  protocol: exp_r36",
+        f'  significance_rule: "{proto["sig_rule"]}（t p<0.05 收紧；SE 放大 '
+        f'{proto["se_inflation_vs_primary"]} 倍=sqrt(60/36)）"',
         f"  ic_min: {proto['ic_min']}   # 效应量地板不动",
         "  coverage_rule: '月覆盖率 coverage_ratio=n_months/36>=0.60（coverage_mean=月均截面"
         "股票数计数，禁与百分比门直比）'",
-        "  ic_definition: Spearman 截面秩相关（评估器 build_ic_table 口径）→ IC=秩IC 同值"
-        "（rank_ic_mean 双标零漂移）",
-        "  aggregation: high-only（exp_grade 即 pdf_forecast_extracted.confidence；mid/low "
-        "只出诊断计数不入主统计）",
+        "  ic_definition: Spearman 截面秩相关（评估器 build_ic_table 口径）→ IC=秩IC 同值（rank_ic_mean 双标零漂移）",
+        "  aggregation: high-only（exp_grade 即 pdf_forecast_extracted.confidence；mid/low 只出诊断计数不入主统计）",
         "  promotion_authority: none   # preliminary-coverage-limited，永不产出晋级/否决结论",
         "probe:",
         f"  consensus_daily_repaired: {{table: {probe['consensus_daily_repaired']['table']}, "
@@ -533,13 +555,15 @@ def render_yaml(probe: dict, factors: dict, mes: list[str], is_total: int) -> st
             lines.append(f"    coverage_ratio: {v.get('coverage_ratio')}   # 月覆盖率（分母 36）")
             lines.append(f"    mom_ic_mean: {v.get('mom_ic_mean')}")
             if "oos" in v:
-                lines.append(f"    oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）")
+                lines.append("    oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）")
             if v.get("red_reasons"):
                 lines.append("    red_reasons:")
-                lines += [f"      - \"{r}\"" for r in v["red_reasons"]]  # 引号壳防 | 开头（同 reason）
+                lines += [f'      - "{r}"' for r in v["red_reasons"]]  # 引号壳防 | 开头（同 reason）
         else:
             lines.append(f"    status: {v['status']}")
-            lines.append(f"    reason: \"{v['reason']}\"")  # 双引号壳（reason 可能以 | 开头=YAML 块标量指示符，首跑件实证）
+            lines.append(
+                f'    reason: "{v["reason"]}"'
+            )  # 双引号壳（reason 可能以 | 开头=YAML 块标量指示符，首跑件实证）
         lines.append(f"    promotion_authority: {v.get('promotion_authority', 'none')}")
     lines += [
         "comparison_with_legacy:   # 旧口径既有出证对照（只读引用，不改旧件）",
@@ -555,9 +579,11 @@ def render_yaml(probe: dict, factors: dict, mes: list[str], is_total: int) -> st
         f"  green: {greens if greens else '无'}",
         f"  not_evaluable: {sorted(k for k, v in factors.items() if 'verdict' not in v)}",
         "  overall: "
-        + ("GREEN（预注册判据全过；仍无晋级权=evidence_class 限制）" if greens
-           else "RED/NOT_EVALUABLE（初筛无达标信号或结构不可判；promotion_authority=none，"
-                "本件不构成晋级/否决结论）"),
+        + (
+            "GREEN（预注册判据全过；仍无晋级权=evidence_class 限制）"
+            if greens
+            else "RED/NOT_EVALUABLE（初筛无达标信号或结构不可判；promotion_authority=none，本件不构成晋级/否决结论）"
+        ),
     ]
     return "\n".join(lines) + "\n"
 
@@ -597,15 +623,16 @@ def _fail_reason(prefix: str, exc: BaseException) -> str:
     tb = traceback.extract_tb(exc.__traceback__)
     last = tb[-1] if tb else None
     loc = f"{Path(last.filename).name}:{last.lineno} {last.name}" if last else "?"
-    return (f"{prefix}（{type(exc).__name__}: {str(exc)[:200]} @ {loc}）——"
-            "数据不可考，零造数；修复后重跑本件即可")
+    return f"{prefix}（{type(exc).__name__}: {str(exc)[:200]} @ {loc}）——数据不可考，零造数；修复后重跑本件即可"
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="EXP 六因子 IC 出证（WO-⑤-12，裁定 #338④ 口径）")
-    ap.add_argument("--out", default=str(ROOT / "docs" / "_working" / "kimi_audit"
-                                         / "exp_evidence" / "exp_ic_evidence_ds271.yaml"),
-                    help="YAML 出证路径（缺省=工单指定真源路径）")
+    ap.add_argument(
+        "--out",
+        default=str(ROOT / "docs" / "_working" / "kimi_audit" / "exp_evidence" / "exp_ic_evidence_ds271.yaml"),
+        help="YAML 出证路径（缺省=工单指定真源路径）",
+    )
     args = ap.parse_args()
 
     try:

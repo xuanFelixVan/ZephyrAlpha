@@ -13,7 +13,7 @@
 #              order_states 同表驱动）; audit_log 追加only（触发器前缀校验：可追加禁改禁删）;
 #              schema 名白名单 ^ai_scheduling(_test_...)?$ fail-closed（防 DDL/DROP 打偏）;
 #              DROP 仅 ai_scheduling_test_ 前缀允许
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/L5_schedule_gate/DESIGN.md §2.7（状态机变更先改设计稿）
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/L5_schedule_gate/DESIGN.md §2.7（状态机变更先改设计稿）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -24,7 +24,7 @@
 # [TTL] permanent
 """AI 层 L5 排产段——工单库 DDL 部署器（PG depgraph 同实例，独立 schema `ai_scheduling`）。
 
-设计真源：``docs/_working/ai_layer_vision/L5_schedule_gate/DESIGN.md`` §2 C2（B9 修复：独立
+设计真源：``docs/_archive/_working_cleared/ai_layer_vision/L5_schedule_gate/DESIGN.md`` §2 C2（B9 修复：独立
 schema 与 L2 ai_intake 隔离）。照 ``scripts/ai_layer/apply_ai_intake_ddl.py`` 母版同模式实现
 （admin 通道 + 幂等 + 角色分级 GRANT）。
 
@@ -50,10 +50,14 @@ from typing import Any, Final
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 from zephyr.governance.depgraph_schema import (  # noqa: E402
     deploy_schema as _deploy_schema_engine,
+)
+from zephyr.governance.depgraph_schema import (
     drop_test_schema as _drop_test_schema_engine,
+)
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
+from zephyr.governance.depgraph_schema import (
     q_list as _q_list,
 )
 
@@ -169,9 +173,7 @@ def _grant_statements(schema: str) -> list[str]:
         f"GRANT USAGE ON SCHEMA {schema} TO depgraph_writer",
     ]
     out.append(f"GRANT SELECT ON {schema}.ai_work_order TO depgraph_reader")
-    out.append(
-        f"GRANT SELECT, INSERT, UPDATE, DELETE ON {schema}.ai_work_order TO depgraph_writer"
-    )
+    out.append(f"GRANT SELECT, INSERT, UPDATE, DELETE ON {schema}.ai_work_order TO depgraph_writer")
     return out
 
 
@@ -187,8 +189,7 @@ def check_schema_name(schema: str) -> str:
 
 EXPECTED_TABLES: Final[tuple[str, ...]] = ("ai_work_order",)
 SQL_VERIFY_RELATIONS = (
-    "SELECT table_name, table_type FROM information_schema.tables "
-    "WHERE table_schema = %s ORDER BY table_name"
+    "SELECT table_name, table_type FROM information_schema.tables WHERE table_schema = %s ORDER BY table_name"
 )
 SQL_VERIFY_CHECK_STATES = (
     "SELECT pg_get_constraintdef(c.oid) FROM pg_constraint c "
@@ -261,7 +262,7 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)
         return 2
-    except Exception as exc:  # noqa: BLE001——CLI 边界统一转退出码 2（PG 不可达/权限不足等）
+    except Exception as exc:  # noqa: BLE001  CLI 边界统一转退出码 2（PG 不可达/权限不足等）
         print(f"DDL FAILED: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
 
