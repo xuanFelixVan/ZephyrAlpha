@@ -1895,7 +1895,8 @@ def test_rx5_legacy_bag_without_key_and_foreign_values(queue_root: Path) -> None
 
 def test_rx5_enqueue_writes_priority_default_zero_and_explicit(queue_root: Path) -> None:
     """写侧：enqueue 缺省显式落 0（自描述）；meta_extra["priority"]=7 原样入袋可读回。"""
-    plain = _enqueue(queue_root, "AI-RX5", "m1", [("docs/rx5_a.md", b"1")])
+    # 样本袋须非 docs-only（G6 docs-only 轻袋缺省打标 1，见 TestDocsOnlyFastLane）
+    plain = _enqueue(queue_root, "AI-RX5", "m1", [("src/rx5_a.py", b"1")])
     assert plain["meta"]["priority"] == 0, "缺省未显式落 priority=0"
     boosted = cq.enqueue_item(
         "AI-RX5",
@@ -2258,3 +2259,86 @@ class TestRecurrenceDecayWindow:
         hot, probe = cq._recurrence_fuse_hot(queue_root, {"dead_signature": "item:NOT-IN-STATE"}, now_ts=time.time())
         assert hot is True, "判不了时刻＝保守当热（宁误挡一次，不放开盲重投）"
         assert probe["source"] == "unreadable->conservative_hot"
+
+
+# ---------------------------------------------------------------------------
+# G6 docs-only 轻袋快车道（入队侧打标，零 pick 改动——复用 Rx-5 priority 主键）
+# ---------------------------------------------------------------------------
+
+
+class TestDocsOnlyFastLane:
+    """G6：纯文档袋（files+deletes 全 docs/ 且无 /_registry/）入队侧打标 meta.priority=1。
+
+    判据真源=commit_queue._is_docs_only_fast_lane_bag；显式非 0 priority 优先不打标
+    （CLI --priority 缺省恒注 0，故判归一值而非键存在）。队列根全走 tmp_path fixture，
+    禁触生产 .runtime/commit_queue。
+    """
+
+    def test_docs_only_bag_jumps_code_bag_in_pick_head(self, queue_root: Path) -> None:
+        """①全 docs 袋 vs 纯码袋：docs 袋后到仍先出队（_pick_head 同键生效）。"""
+        code_bag = _enqueue(queue_root, "AI-G6A", "code first", [("src/mod_g6.py", b"c")])
+        docs_bag = _enqueue(queue_root, "AI-G6B", "docs later", [("docs/g6_notes.md", b"d")])
+        assert docs_bag["meta"]["priority"] == 1, "docs-only 袋未打标 priority=1"
+        assert code_bag["meta"]["priority"] == 0, "纯码袋被误打标"
+        # 读侧经同一 resolve_queue_root（车道内 basetemp 会被 _strip_lane_prefix 截到
+        # 主区同构面——写读两侧必须同源，AGENTS §9.6 两头不同根假红教训）
+        resolved = cq.resolve_queue_root(queue_root)
+        picked, lane = cq._pick_head(sorted((resolved / "pending").glob("q-*.json")))
+        assert lane == "interactive"
+        assert picked is not None and picked.name == f"{docs_bag['qid']}.json", "快车道失效：docs 袋未越过先到的码袋"
+
+    def test_mixed_bag_with_src_path_not_marked(self, queue_root: Path) -> None:
+        """②混合袋（docs+src 各一）：不打标（快车道只给纯文档袋）。"""
+        mixed = _enqueue(queue_root, "AI-G6C", "mixed", [("docs/g6_a.md", b"d"), ("src/mod_g6.py", b"c")])
+        assert mixed["meta"]["priority"] == 0, "含 src 路径的混合袋被打标"
+
+    def test_hot_registry_path_not_marked(self, queue_root: Path) -> None:
+        """③热册排除：docs 下 /_registry/ 路径不打标（退避袋不该被推队首）。"""
+        hot = _enqueue(
+            queue_root,
+            "AI-G6D",
+            "hot registry",
+            [("docs/01_policies_and_standards/_registry/catalogs/x.yaml", b"h")],
+        )
+        assert hot["meta"]["priority"] == 0, "热册袋被打标（应留队中吃退避）"
+
+    def test_explicit_priority_beats_fast_lane(self, queue_root: Path) -> None:
+        """④显式 priority 优先：--priority=5 形态（meta_extra 注 5）docs 袋保持 5。"""
+        boosted = cq.enqueue_item(
+            "AI-G6E",
+            "boosted docs",
+            [("docs/g6_b.md", b"d")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(meta_extra={"priority": 5}),
+        )
+        assert boosted["meta"]["priority"] == 5, "显式 priority 被快车道改写"
+
+    def test_cli_default_priority_zero_shape_still_marked(self, queue_root: Path) -> None:
+        """④补：CLI 缺省形态（--priority 缺省恒注 meta_extra={"priority": 0}）docs 袋仍打标 1。"""
+        cli_default = cq.enqueue_item(
+            "AI-G6F",
+            "cli default docs",
+            [("docs/g6_c.md", b"d")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(meta_extra={"priority": 0}),
+        )
+        assert cli_default["meta"]["priority"] == 1, "CLI 缺省 0 形态未获快车道（主入口失效）"
+
+    def test_docs_only_deletes_bag_marked(self, queue_root: Path) -> None:
+        """⑤deletes 全 docs 也算 docs-only（纯删除轻袋同样打标；混非 docs 删除不打标）。"""
+        del_bag = cq.enqueue_item(
+            "AI-G6G",
+            "docs deletions",
+            [],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(deletes=["docs/g6_old.md"]),
+        )
+        assert del_bag["meta"]["priority"] == 1, "docs 纯删除袋未打标"
+        mixed_del = cq.enqueue_item(
+            "AI-G6G",
+            "mixed deletions",
+            [],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(deletes=["src/gone_g6.py"]),
+        )
+        assert mixed_del["meta"]["priority"] == 0, "含非 docs 删除路径的袋被打标"

@@ -5,7 +5,7 @@
 # [CONSUMERS] 全部 AI session（提交入队唯一入口）；B 段 Serializer 落盘执行体（专用 worktree 真落盘）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 单写者（serializer.lease 唯一持有者排空）；纯 FIFO（qid 单调序，无优先级插队）；快照入袋即安全（blob 落盘即完成）；死信不卡队；同键 (session_id,path) pending 内仅留最新（注册表族共享路径例外：顶替前身份集纯加法合并前递，不可信合并拒绝压缩两袋保留——W-CASE st-zcloseout-20260928 lost-update 治本）；C1 同会话短窗合批仅同 session+同 worktree-root（文件集并集不变，absorbed qid 不落状态目录）；永不改主工作区文件；**队列完整性两把新尺（2026-10-12 维护三班·通宵令）**=①audit_landed_id_integrity 只读探针（done 项按袋内 blob 逐件比 landed_id 与该 commit/dev 现面，零命中且 dev 也无面→foreign_zero_match_not_in_dev 点名；账本族册判"无从核"不冒认；预算截断显影 truncated；health 键 landed_id_integrity 恒在，告警旁路以 landed_probe=False 省 git 预算）②_renew_claims_inflight 入袋口统一续租（交互正门/CLI 直投/requeue/网关改道四通道合流，ttl 沿用 ZEPHYR_ENQUEUE_CLAIM_TTL_S 缺省 7200s，fail-open 不阻断入队；renew_claim 只动本持有者名下已存在条目＝不造锁）
+# [INVARIANTS] 单写者（serializer.lease 唯一持有者排空）；纯 FIFO（qid 单调序；不变量修订序：Rx-5 priority=出队全局主键，G6 docs-only 轻袋入队侧打标 priority=1 插队且显式 priority 优先，_pick_head 同键排序零新机制）；快照入袋即安全（blob 落盘即完成）；死信不卡队；同键 (session_id,path) pending 内仅留最新（注册表族共享路径例外：顶替前身份集纯加法合并前递，不可信合并拒绝压缩两袋保留——W-CASE st-zcloseout-20260928 lost-update 治本）；C1 同会话短窗合批仅同 session+同 worktree-root（文件集并集不变，absorbed qid 不落状态目录）；永不改主工作区文件；**队列完整性两把新尺（2026-10-12 维护三班·通宵令）**=①audit_landed_id_integrity 只读探针（done 项按袋内 blob 逐件比 landed_id 与该 commit/dev 现面，零命中且 dev 也无面→foreign_zero_match_not_in_dev 点名；账本族册判"无从核"不冒认；预算截断显影 truncated；health 键 landed_id_integrity 恒在，告警旁路以 landed_probe=False 省 git 预算）②_renew_claims_inflight 入袋口统一续租（交互正门/CLI 直投/requeue/网关改道四通道合流，ttl 沿用 ZEPHYR_ENQUEUE_CLAIM_TTL_S 缺省 7200s，fail-open 不阻断入队；renew_claim 只动本持有者名下已存在条目＝不造锁）
 # [MODIFY-GUARD] 66 号备忘 §6 协议/schema 真源；08 号文 §4.2 Phase 0；CLI 子命令面（enqueue/status/drain）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -1128,6 +1128,29 @@ def _renew_claims_inflight(session_id: str, rel_files: list[str]) -> dict:
     return {"renewed": n, "requested": len(rel_files), "ttl_s": ttl_s}
 
 
+# G6 docs-only 轻袋快车道（Owner 已批准）：纯文档袋入队侧打标 priority，出队零新机制
+# （复用 Rx-5 既有 priority 主键，_pick_head/_rank 语义零变更）。
+_DOCS_FAST_LANE_PRIORITY = 1  # 轻推一级越过缺省 0（勿加大：文档不该压过显式高优业务件）
+_DOCS_FAST_LANE_PREFIX = "docs/"  # 袋内全部路径（files+deletes）须在此前缀下（"docsx/"不算）
+_DOCS_FAST_LANE_EXCLUDE = "/_registry/"  # 热册排除：热册袋撞 HotRegistryContention 退避不应被推队首
+
+
+def _is_docs_only_fast_lane_bag(entries: list[dict]) -> bool:
+    """docs-only 轻袋判定：袋非空且全部路径在 docs/ 下，且无任何路径含 /_registry/。
+
+    袋=files+deletes 两通道合一后的 blob_entries（delete 条目同样按 path 判——docs 下
+    纯删除同样是轻袋）。路径已经 _validate_relpath 归一（正斜杠、无穿越段），前缀/子串
+    判定可靠。
+    """
+    if not entries:
+        return False
+    return all(
+        str(e.get("path") or "").startswith(_DOCS_FAST_LANE_PREFIX)
+        and _DOCS_FAST_LANE_EXCLUDE not in str(e.get("path") or "")
+        for e in entries
+    )
+
+
 def enqueue_item(
     session_id: str,
     message: str,
@@ -1234,6 +1257,14 @@ def enqueue_item(
                 "action": "delete",
             }
         )
+
+    # G6 docs-only 轻袋快车道（入队侧打标，零 pick 改动）：打标只走 meta_extra 通道——
+    # 与 C1 合批判据同源（_c1_target_meta_ok 优先级不混闸），快车道袋不并入缺省（0）
+    # 在途件被静默降速，反向亦然。显式 priority 优先：CLI --priority 缺省也注入
+    # {"priority": 0}（键恒在），故判「归一值非 0」而非「键存在」——显式非 0（含负数）
+    # 不打标；显式 0 与缺省不可分辨，按未给处理（G6 语义）。
+    if _is_docs_only_fast_lane_bag(blob_entries) and _normalize_priority((meta_extra or {}).get("priority")) == 0:
+        meta_extra = {**(meta_extra or {}), "priority": _DOCS_FAST_LANE_PRIORITY}
 
     # 2) 会话内串行段：compaction → seq 分配 → O_EXCL 落 pending（同一会话锁内完成，
     #    66 号 §6.2「compaction 序列需在 session seq 锁内完成」）。
