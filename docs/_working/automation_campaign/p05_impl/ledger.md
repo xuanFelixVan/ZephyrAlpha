@@ -164,3 +164,177 @@ title: ⑤实现席·findings台账
 - **交付面读数更正**：`ruff format` 手改一处折行后，`test_card_binding.py` 的 `git --no-pager diff --numstat`＝**99 增 0 删**（上节记的 101/0 是格式化前真值，留旧不删），盘面 sha256 前缀＝`d2da7528ca5fafc3`（上节 `eebbd68d4f804b43` 作废，`card_binding.py` 仍是 `4e9fabc8694840ed` 未变）。格式化后复跑交付命令＝**7 passed in 9.37s**；`ruff format --check` 两件均 "2 files already formatted"。快照已同步刷新到 `.runtime/tmp/st-qoder-p05-1015-03/snapshot/`。
 - **未变事项**：判据、阈值、门柱键集、`U:series_csv_absent` reason 字符串、袋清单四件（未增 `to_impl.md`）——全部同上节读数。
 
+
+
+## 10-15 15:47 · 班次 04（st-qoder-p05-1015-04）领单＝总筹令卡 ⑤席"次件"：骨架卡生成器人填冻结五键保留集补全
+
+### 1 案卷（改前实测，非引用）
+
+- 对象件 `scripts/backtest/generate_exam_card_skeleton.py` 盘上归属＝**CLEAN**（`git status --porcelain` 空），测试件 `tests/backtest/test_generate_exam_card_skeleton.py` 同 **CLEAN**；`[MODIFY-GUARD]`/`[TESTS]` 双指针均指该测试件 ⇒ 本席 acquire 两件后开工。
+- 缺陷实尺：`_load_human_fields` 返回体保留集实测 **7 键**（hypothesis/window/buckets/pillars/target/status/lineage），令卡点名的 `pillars_numeric`/`signal_kind`/`preregistered_by`/`discipline`/`numeric_face_mapping_note` **五键全缺** ⇒ 重渲染即整块静默消失而 YAML 照 parse 绿。
+- 现损面 vs 潜伏面（关键分家，防夸大）：全池 `generated: true` 卡 **186 张**，键频实测＝14 个机生键（每键 186/186），其中带 `pillars_numeric` 者 **0 张** ⇒ 本班修的是**尚未引爆的静默抹除态**，不是已发生的丢数事故，台账不写"已丢失 N 张"。
+
+### 2 修复（改数不改架构，零判据面）
+
+- 新增模块常量 `FROZEN_HUMAN_KEYS`＝五键逐字取令卡点名面（不自行扩面：`arms`/`oos_window_ref`/`data_binding` 等人填键本班**不纳**，理由见 §5 呈批件）。
+- `_load_human_fields`：`human.update({k: data[k] for k in FROZEN_HUMAN_KEYS if k in data})`——**存在才收**。
+- `render_card`：`**{k: human[k] for k in FROZEN_HUMAN_KEYS if k in human}` 插在 `target` 与 `status` 之间——**存在才写**，缺席不写 null 占位（占位会让 186 张真卡凭空漂移）。
+
+### 3 测试与能红自证
+
+- 新用例 2 枚：正＝TDM 漂移触发 sync 后五键逐键等值存活＋再跑 `identical==1`（键序稳定）；负＝未填五键的骨架卡 sync 后不得出现任何冻结键。
+- 本文件实测 **12 passed**（10 存量 + 2 新增），14.79s／14.90s 两轮。
+- 突变态能红：把 `human.update(...)` 一行改 `pass  # MUTATION-SELFPROOF` ⇒ 实测 **1 failed**（`test_sync_preserves_frozen_numeric_gateposts`，AssertionError: pillar…），撤改后 sha 复原 `ffce5eb54154b06f…` 且 `grep -c MUTATION`＝0、重跑 12 passed。
+- 全池负对照（HEAD 基线 vs 本班字节面，经 importlib 载 HEAD 副本 `gen.run(check=True)` 实跑，未触本席工作件）：两面读数**逐位同**＝`tdm_nodes=186 drift=6 missing=0 identical=180 protected_manual=0` ⇒ 本班改动对真卡池零新增漂移；在册 6 枚 drift 属存量非本席。
+
+### 4 常规施工单四件核账（每件先实测后判定）
+
+| 件 | 实测 | 判定 |
+|---|---|---|
+| ① signal_orthogonality gate 合成冒烟 rc=1 | GPU 接线**未落地**：`ic_exam.py` HEAD 面 gpu 命中仅 2 处且均为"无 GPU 核"降级台账（`:30`、`:374`）；`gpu_watchman.py` 不在 HEAD（`git ls-tree -r HEAD` 零命中）；该件盘上 `AM`，⑩游标在册双袋 `st-orthogate-0001`/`st-ibtclose-0003` 认领面 | **不排不抢**（第 0 步：总包在办；GPU 未落地⇒本件仍挂） |
+| ② goal_readiness_aggregator.py 分数册路径 | 仍指老册（`:69` 老面、`:126` 裸 `yaml.safe_load` 吃 2-doc 册）；老册 **HEAD 有／盘上无**（搬迁已删）；新册盘上 129267B、HEAD **0 件**；该件 `?? untracked`＋`git log --all -- <件>` **零命中**（全分支无此件）＋12 只 dead 袋（st-infoaxis-20261013 十一只＋st-chfinalw2 今日 2 只）**pending/processing 零**＋全仓消费者**零**（仅 `pead_assembly.py` 注释提及） | **不接**——改路径属补缺，落地即死因（零消费者＝ORPHAN-MODULE）不在路径；结构性（须与接线同袋）⇒ 出设计稿呈批见 §5 |
+| ③ 四闹钟 runner [ARTIFACTS] | 四件 `run_night_mining/run_f06_grid/run_ttl_rejudge_daily/run_c4_exam.ps1` 实测各 `ARTIFACTS=1` 命中，c4 块头已含 SOP §8-A 指针与增量分数行→`docs/04_research_records/backtest/scores/<YYYY>/` 去向 | **核销**（01 班已核，本班独立复尺同结论；四件均 `MM` 在途，本席零动） |
+| ④ p11_assembler pool 桥接 yaml | 消费端 `signal_orthogonality.py`＝`AM` 在途、`scripts/tasks/run/run_assembler_nightly.ps1`＝`?? `、⑨席修⑤ 列名契约（闸吃 `date,sig`／采集产 `trade_date,value`）落点 `ibt_runner.py`＝`M` | **挂起**（与①同件面，不撞） |
+
+### 5 信箱面归属实测（本班防抢单尺）
+
+`card_binding.py`＝**MM**：index 面是本席 03 班落地内容的**回退弹**（对 HEAD `35 增删/其中 -130` 侧、`test_card_binding.py -99`＝恰为本席上批 7 用例字节），worktree 面又叠 `+41/+125` 新行＝他会话在途写手在场；`calibration_exam.py`/`factory_grid_executor.py`/`writeback_exam_confidence.py`/`ibt_runner.py`＝`M`，`ic_exam.py`＝`M `（已 staged），`comparison_exam.py`＝`??`（HEAD 无此件）。⇒ 修①②③④⑤⑥⑨⑪⑫ 的落点**全部被占面**，本席一律不撞；blocked_on_impl 卡点名最多的 `factory_grid_executor.py`（8 张）亦在 `M` 态。
+
+### 6 呈批与移交
+
+- →⑥席：骨架卡现可携带 `pillars_numeric`/`signal_kind`/`preregistered_by`/`discipline`/`numeric_face_mapping_note` 五键，重渲染不再抹；复核命令见 §7。
+- →⑩/总筹：本席按令卡"五键"执行未扩面；**同类病仍在**——`arms`/`oos_window_ref`/`data_binding`/`gaps_no_source`/`prereg_provenance` 等人填键同样不在保留集（现测 186 张 generated 卡零携带＝零现损，但 ⑥席 一旦写入即被抹）。扩面属结构判定（谁的人填面算冻结面），本席不自拍，请裁。
+- →②席/⑩：`goal_readiness_aggregator.py` 设计稿口径＝"改 1 行路径＋`yaml.safe_load_all` 双 doc 消费"必要但**不充分**，充分条件是该件获得 ≥1 真消费者（唤醒链挂载）并与挂载**同袋**；本席不自接的理由＝12 只 dead 袋零 live＋全仓零消费者，孤件入袋大概率照死，且会吸走他班未落地条目。
+
+### 7 复核命令（正文原样可跑）
+
+```
+python -m pytest tests/backtest/test_generate_exam_card_skeleton.py --basetemp=/d/tmp_pt/p0504   # 期望 12 passed
+grep -c "FROZEN_HUMAN_KEYS" scripts/backtest/generate_exam_card_skeleton.py                       # 期望 3（常量/收/写）
+python -c "from scripts.backtest import generate_exam_card_skeleton as gen; print(gen.run(check=True))"  # 期望 drift=6 identical=180（与 HEAD 基线同）
+```
+
+### 8 本班耗时（date 实测，非体感）
+
+起 15:20:13（冷启动首命令）→ 落笔 15:47:01＝**26.8 分钟**。分项机时：pytest 三轮 14.79s/15.32s(实为 basetemp 缺失报错轮)/14.90s；全池 check 两轮各约 15–20s；余为读档与归属实测。⚑本席落笔前把体感钟记成"16:47"，`date` 实测 15:47:01＝**又快手约一小时**（在册病第 N 次复发，按 [[my-elapsed-time-sense-runs-2x-fast-date-before-time-gates]] 先测后写）。
+
+## 10-15 17:28 · 班次 05（st-qoder-p05-1015-05）领单＝GPU 落地后首件 signal_orthogonality 准入门；本班零落地（三投全 DENIED 在入队口），字节与堵点全量移交
+
+### 1 冷启动与防重入（实测）
+
+- `python --version`=3.12.8；`lock_files.py cleanup`＝CLEANED 9 死锁＋SALVAGED 3 个死会话遗物（st-maint9b-20261015／st-qoder-p04-1015-06／st-qoder-p09-1015-11）；`process_reaper --status`＝source=live 可写，但水位 degraded（`commit_pct`=91.56、`cpu_pct`=98.5、breached=ALERT-SYS-001/003，`worktree_changes`=5454）⇒ 本班不起并发。
+- 游标读单点＝checkpoint（04 班"已交付"）⇒ 本班取 05。车道 `D:/ZephyrAlpha/.worktrees/st-qoder-p05-1015-05`（分支 `ai/st-qoder-p05-1015-05/p05-impl`，心跳 daemon PID 41368）；主区 `SessionRegistry.list_active_readonly()` 实测 12 员含 `st-qoder-p05-1015-05`＝在册自证过（防 ghost_session 族）。
+
+### 2 领单前置判定：GPU 接线是否落地（不信 done 目录，只信 HEAD 面）
+
+- 队列面：`done/q-20261015-st-qoder-p05-gpu-1015-01-0002.json` 状态 done 但 `landed_commit`=None（在册"假 done"形态）；其前袋 0001 死于 ghost_session。
+- 真判据：`git log -- scripts/backtest/fexam/ic_exam.py` 顶笔＝**63a5ee4c66**，`git show HEAD:…ic_exam.py` 已含 GPU 设备分派面（`_GPU_STATE`/`IC_DEVICE=auto|cpu|gpu`/看门人机会档 6.0G·30%），且盘==HEAD（`git status --porcelain` 该件空）⇒ **GPU 接线已落地**，本席按令转入常规首件。
+- 注：`gpu_watchman.py` 仍不在 HEAD（04 班在册项，属看门人腿未随袋，与本席首件无阻断关系）。
+
+### 3 首件现状＝修复字节只活在主区工作树，两只认领袋全死
+
+- `signal_orthogonality.py`＝`AM`、`test_signal_orthogonality.py`＝`AM`（HEAD 无此二件）。全根扫队列（pending/processing/done/dead/dead_archive*）命中该件的袋**恰两只且均 dead**：`st-orthogate-20261015-0001`（ghost_session）、`st-ibtclose-20261015-0003`（门拦＝PERMANENT-SYSTEM-TRIGGER 的 [MANUAL-ONLY-PERMANENT] 子检查）。
+- index 面 vs 盘面差＝死会话的最后一笔：`+10/-2`（`spearman_corr` 同名塌缩防撞 `#self`）与 `+24/0`（回归用例）。⇒ 令卡前提"缺陷未修"只对 **index/HEAD 面**成立；盘面已修，但无人会落。
+
+### 4 缺陷两面实测（同一合成输入，非引用）
+
+- 输入：20 个交易日 `date,sig` 的 `candidate.csv` 放在池目录内（被 glob 吸入产生自比）。
+- **修复前**（`git show :scripts/backtest/fexam/signal_orthogonality.py` 抽出的 index 字节）：`rc=1`，正文 `IndexError: single positional indexer is out-of-bounds`（同名 Series 做 DataFrame 同键塌缩成单列）。
+- **修复后**（车道字节）：自比 `rc=5`（reject 专用码）／`--pool` 指不存在目录 `rc=2`（入参错）／`pool-report` `rc=0`。四出口全落在头标 [INVARIANTS] 声明契约内。
+- 主区面测试实跑＝**8 passed**（`--basetemp=/d/tmp_pt/p0505` 仓外，89.09s）。
+- ⚑我自犯并当场更正：首轮 rc 对拍写成 `… | tail -4; echo $?`，管道把退出码换成 `tail` 的 0（两面都显示 rc=0），去管道重跑才得 1/5/2/0——在册形态第 N 次复发（管道后 `$?` 量的是末段）。
+
+### 5 死因对症（直调拦截函数，非引用门文案）
+
+- `manual_only_permanent_gate._check_manual_only_permanent_new(当前字节)`＝**True（判死）**；AST 实证 `_detect_manual_trigger`=True（argparse）＋`_detect_event_or_auto_trigger`=False。
+- 处方走**该门在册的逐件声明通道**（真源=`noqa_exempt_registry.yaml` m11 条目：permanent 脚本被人工/CI 按需触发、非常驻服务，reason_required＋min_length=10＋per-file）：补 `# noqa: m11-perm-manual-legitimate  M11豁免: …无常驻进程/无定时器/不注册订阅…` 一行后同函数复量＝**blocks=False**、`_has_m11_exemption=True`；`perm_trigger_gate._check_permanent_trigger_new`=False；14 字段在 30 行窗内齐全（docstring 起于第 25 行，未越窗）。判据本体零松动，未加白名单未改门。
+
+### 6 归属尺（本班最贵的一条，防连坐）
+
+- token：`create_guard._pg_confirmed_token_files(['scripts/backtest/fexam/signal_orthogonality.py'], set())` 实测**命中**＝PG 正证在册（token `sig-orthogonality-signal-orthogonality-20261014`，created_by=st-orthogate-20261015）⇒ **不把 `capability_canonical_file_registry.yaml` 随袋**——该册 HEAD→index 面含他班 **+24846/0** 未落地条目，随袋即归属篡改。
+- depgraph：`SELECT 1 FROM nodes WHERE file_path=…` 实测**命中**（NEW-FILE-DEPGRAPH-ENFORCEMENT 放行，无需本席再登记）。
+- 简介行：TRANSLATION-COVERAGE 门走 `zephyr.shared.io.paths.REPO_ROOT` 读 **YAML 投影**（无 PG 第三源），落地沙箱读的是落地面＝dev HEAD 无行⇒**须与件同袋**。正解取车道面：车道册＝HEAD 面，按 HEAD 基做**纯插入 +5/-0**（Counter 多重集断言＋行数 68381→68386＋写后独立哈希读回 hits=1）。⚠避开整册 render 的诱因：车道内 `--audit-projection-vs-ledger` 实测＝快照有而投影无 **9 条**（render 会把另 8 条他班行一起吃进本席袋）。
+- 三道 claim 全部本席实名持有（`scripts/backtest/fexam/signal_orthogonality.py`／`tests/backtest/fexam/test_signal_orthogonality.py`／两本热册），TTL 30 分钟，未过期未转手。
+
+### 7 堵点＝三道闸互斥，本班零落地（三投均 DENIED 于锁外预检，未占队列锁、未生袋）
+
+| 投 | 通道 | 读数 | 拦点 |
+|---|---|---|---|
+| 1 | `commit_queue.py enqueue --worktree-root <车道> --base-head dev`（cwd=主区） | 预检 76.8s DENIED rc=2 | **WORKTREE-REQUIRED**：判据取 cwd/网关根，`--worktree-root` 不足以过 |
+| 2 | 同命令但 cwd=车道内 | 预检 56.8s DENIED rc=2 | WORKTREE 已过 → **COMMIT-SCOPE**：代码域＋注册表域＝2 域；本通道 CLI **无 `--allow-multi-domain` 旗**（grep `scripts/commit_queue.py` 零 multi_domain 管道） |
+| 3 | `git_commit.py --enqueue --allow-multi-domain --project-root <车道>`（cwd=车道） | 预检 82.7s DENIED rc=8 | **SESSION-REQUIRED**：网关按 project_root 侧查注册，本席在主区 registry 在册而该面查无（与 [[lane-session-registers-in-lane-root-gate-reads-main-root]] 同族反形） |
+
+- 排除项（判过不走）：①把 m11 行同步到主区面后走主区正门＝主区 `module_translation_registry.yaml` 面含他班 `+31` 与 `+22/-3` 未落地行，随袋即归属篡改，禁；②拆"册先行袋＋代码后继袋"＝在册死族（深队列下必崩，token/plain_zh 须与件同袋），禁自造；③`--skip-preflight` 类绕行，禁。
+- 下一班处方候选（择一实测后再投）：**A**＝先按门文案处方①在车道根侧补一次 `SessionRegistry().register`（或车道内起心跳）令 `git_commit.py --project-root <车道> --enqueue --allow-multi-domain` 三态齐，再投；**B**＝向 ⑩/总筹申请给 `commit_queue.py enqueue` 装 `--allow-multi-domain` 管道（治本面＝队列通道缺旗，非本席件的问题）。本席不自拍改队列脚本（超"改数不改架构"授权面）。
+
+### 8 本班产物（保全移交，未落地）
+
+- 车道三件已 staged 且与 HEAD 基对拍＝`+217/0`（代码，含 m11 声明 1 行）／`+164/0`（测试，含回归用例）／`+5/0`（翻译投影纯插入）。命令消息件 `D:/tmp_p0505/msg_a.txt`（1360B）在位。
+- 车道与 claim 均保留（不放行、不清道），下一班可直接续投；主区工作树面本席**一字未动**。
+
+### 9 呈批与移交
+
+- →⑥席：`signal_orthogonality.py` 一旦落地即提供 `gate`（准入判定，reject=5）与 `pool-report`（PR=有效独立信号数）两子命令，可绑 blocked_on_impl 卡；本班实测卡面分母＝`status: blocked_on_impl` **45 张**（ablation 19／calibration 14／comparison 12，全册 550 张，谓词＝卡内 `^status:` 行精确等值）。
+- →⑩/总筹：车道内 `--audit-projection-vs-ledger` 读到的"快照有而投影无 9 条"属投影滞后面（含本席 1 条），整册 render 属跨会话动作，请路由定性由谁补。
+- →⑨席：本席在入队口实测到 `commit_queue` 通道无 multi-domain 旗而网关通道要求车道侧注册（§7 三态表），请判是否立项。
+
+### 10 复核命令（正文原样可跑；本班实跑读数已附）
+
+```
+python -c "import ast,sys;sys.path.insert(0,'src');import zephyr.gov_enforcement.commit_gates.manual_only_permanent_gate as mo;p=open('scripts/backtest/fexam/signal_orthogonality.py',encoding='utf-8').read();print(mo._has_m11_exemption(p), mo._check_manual_only_permanent_new('x',p))"
+# 主区面期望 False True（本席未改主区面）；车道面期望 True False
+cd /d/ZephyrAlpha/.worktrees/st-qoder-p05-1015-05 && git --no-pager diff --cached --numstat HEAD -- scripts/backtest/fexam/signal_orthogonality.py tests/backtest/fexam/test_signal_orthogonality.py docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+# 期望 217/0、164/0、5/0（三件全纯新增，零删除）
+```
+
+### 11 本班耗时（date 实测）
+
+起 16:35:16（冷启动首命令）→ 落笔 17:28:40＝**53.4 分钟**。分项机时：pytest 89.09s；三轮预检 76.8/56.8/82.7s；车道 create 2 分 38 秒（16:41:43→16:44:21）；PG 正证与 depgraph 反查约 2 分。⚑本班落笔前自报体感"17:58"，`date` 实读 **17:28:40**＝快手病再复发（差约半小时，非整小时），先测后写按在册处方执行。
+
+## 10-15 18:46 · 班次 06 落笔即时更正（首投死因＋keeper 正门实测＋卡面归零，留上节旧读数不删）
+
+上节 §6 写"落袋前三查实测"时尚未投，本班随后**首投真被拦**，故另起此节记真账（旧节一字不改）。
+
+### 1 首投死因＝自家守护 idle 自退，撞在册同款（rc=8、零袋、预检 251.3s）
+
+- 18:29:32→18:33:57 首投 `git_commit.py --project-root <车道> --enqueue --allow-multi-domain` ⇒ **rc=8 PREFLIGHT BLOCKED [SESSION-REQUIRED] session 未注册**。
+- 现测根因两条：①`.runtime/sessions/st-qoder-p05-1015-06/heartbeat.jsonl` 无该期条目、`Get-Process -Id 36188` 查无＝车道 create 起的守护已退；②主区 `session_registry/st-qoder-p05-1015-06.json` **文件本身已被收走**（FileNotFoundError）。
+- 时间账对得上：车道 17:58:48 建，`last_activity` 由 18:00 前后 claim 定格，`_ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s` ⇒ 守护约 18:28–18:29 自退，首投恰落在自退后 30–60 秒内（pid=0 条目按 90s 心跳新鲜度判死）。
+- ⚑**关键更正（且推翻本班自己上一节的处方依据）**：`lock_files.py acquire-batch` 返回 acquired=5 **不刷** `last_activity`——只有 `register / claim_file / register_dependency` 刷（③席 p03-1015-05 班在册增量原文）。上节 §2 因此把"claim 已持有 90 分"当作活性依据，属误用：租约 TTL 与活性锚是两面，前者长、后者短。
+- 上节 §1 的处方结论（"注册表恒锚主仓 ⇒ SESSION-REQUIRED 与 project_root 无关"）**仍成立且被首投反证**：首投用的正是 `--project-root <车道>`，失败原因不是根不对，而是条目不存在。前任 05 班归因的"车道侧未注册"依旧判否。
+
+### 2 keeper 正门四步（本班实跑，逐步读回，不看 rc）
+
+脚本面 `.runtime/tmp/st-qoder-p05-1015-06/keeper.py`（`PYTHONPATH=仓根;仓根/src`，遵 ③席 p03-04 班的 `scripts.ops_guard` 裸导入教训）：
+
+| 步 | 调用 | 读回实测 |
+|---|---|---|
+| 1 | `SessionRegistry(MAIN).register(sid, pid=0, held_files=[车道绝对路径×5])` | pid=0／logical=False，`get_session` 命中 |
+| 2 | `claim_file(sid, 车道绝对路径)` ×5 | **5/5 True**（相对路径形成本册在 10-12 判过"静默 0 命中"，本班直接取绝对面） |
+| 3 | `session_worktree._spawn_heartbeat_daemon(sid, MAIN, 30, worktree_path=车道)` | daemon_pid **29936**；`heartbeat.jsonl` 末两行 `started`(10:37:05Z)→`alive`(10:37:06Z)；进程表按 `Name='python.exe'` 过滤后 cmdline 命中 sid |
+| 4 | `register_heartbeat_keepalive(MAIN, sid, reason=具名, requested_by=sid, ttl_seconds=7200)` | `read_active_keepalive` 读到未过期 grant（在册"长班唯一显式续命入口"，缺名目/缺请求方即 ValueError） |
+| — | `last_activity` | 18:37:03（＝当刻，刷新成立） |
+
+- 重投（18:37:23→18:40:28，同一条命令加 `--adopt-prior-work`）⇒ **rc=0，ENQUEUED `q-20261015-st-qoder-p05-1015-06-0001` (files=5)**。
+- 重投输出里两条在册旁证：`re-register downgraded by rate guard ... window=1860s elapsed=142.7s — state rebuilt but liveness anchors frozen`（＝CLI 自身重注册不延锚，与 §1 同一判据的反面复证）；`会话存活保障未确认: {'registered': True, 'created': False, 'worktree_path': ''}`（registered 真、worktree_path 空＝该自检读的是 session/<sid> 分支名而本车道分支是 ai/<sid>/p05-impl，属探针面而非执法面）。
+
+### 3 袋面取证（落地面只认 `git show HEAD:`）
+
+- 主区队列根命中（无车道影子根）：`.runtime/commit_queue/pending/q-20261015-st-qoder-p05-1015-06-0001.json`，`find .worktrees/<车道>/.runtime -maxdepth 2 -name pending`＝**零命中**。
+- `base_head`＝**abed58d814**（＝车道基）；入队时 dev 已走到 16d46544af，但本班五路径 `git diff --numstat abed58d814 16d46544af`＝**全空**（零上游漂移）⇒ 单侧改，三方合并无 ours/theirs 双改面。
+- 袋内 blob sha 与本班实测量逐件对上：代码 `8c27ccb4e778976c…`、测试 `2031842c4f9c3a79…`、热册 `ad5842ac2322fd60…`（base_blob `9b88dddbaa…`＝05 班 diff 头里的同一原 blob）、台账 `b33266d46e…`、游标 `bd422cf2dc…`；`ENQUEUE-RENEW: claim 续租 0/5 件（ttl=7200s）`＝`.ailocks` 面与 SessionRegistry 面在车道形态下互不可见（已随设计稿上报 ⑩，见信箱 18:4x 节 §2）。
+
+### 4 卡面归零（本席工序第 3 步"卡翻 unblocked"本班无可翻项）
+
+- `grep -rl "signal_orthogonality" docs/03_modules/_domain_backtest/exam_cards/`＝**0 命中**。尺先自证：同谓词 `grep -rl "blocked_on_impl"` 同目录＝**137 命中**，`grep -rli "orthogonal"`＝**22 命中** ⇒ 零命中不是尺坏，是**卡面不携带执行器路径**。
+- 结论＝本班不翻任何卡（无锚可翻，硬翻＝凭空造绑定），移交 ⑥席：该件落地后 `gate`（reject=5）与 `pool-report`（PR＝有效独立信号数）两子命令可绑，需由 ⑥席在卡面新增载体键或按 `impl_gap` 在册形制改绑。
+- 顺带记一条谓词差异（防两班读数互搏）：05 班在册 `blocked_on_impl`＝45 张用的谓词是"卡内 `^status:` 行精确等值"，本班 137 用的是"文件内含该字符串"（含 `impl_gap`/正文提法），**两数不可对拍**，勿据此判对方错。
+
+### 5 信箱件（另 3 条，全部只落盘面不入袋）
+
+- `docs/_working/automation_campaign/feedback/to_impl.md` 现**已在 HEAD**（03 班在册"从未在 HEAD"过期）；本班追加设计稿＋工具健康度上报＋自态登记共一节，difflib 实测对 HEAD＝**+28/-0 纯插入**（结构自证：追加后 `^## ` 节数 23，按 plus/minus 反证追加前 22）。
+- 同件异态如实登记：盘面==HEAD（`git diff HEAD` 空）而 **index 比 HEAD 少 292 行**（`git diff --cached HEAD`＝0 增 292 删）且 `lock_files.py check`＝FREE ⇒ 主区暂存区存着他班旧快照；本班**不入袋、不代修**（宪法 §3.4），请 ⑩/该快照属主班处置。
+- 车道内网关自检探针 `lookup_audit dir writable` 恒假红（写测试文件后裸删被 OPS-GUARD 划为保护区拦死，`no_tomb_context`）＝探针与护栏同面自相残，真坏时报同一条读不出差别；已上报，本席不改他人工具面。
+- `[BLOCKER]` 2026-10-15|p05（种子预填·Owner 裁）|工具缺陷|signal_orthogonality.py gate 合成冒烟 rc=1 而契约应 rc=5（退出码契约违反）|证据：scripts/backtest/fexam/signal_orthogonality.py gate 子命令；⑤台账 L19 记修复字节在他班在途袋 q-20261015-st-ibtclose-20261015-0003（未落 HEAD）|要⑤席待该袋落地后复测 rc 三态并就地翻状态|高|状态：待修
+- `[BLOCKER]` 2026-10-15|p05（种子预填·Owner 裁）|工具缺陷|gpu_watchman 在 Git Bash 会话 detect 返回 unknown（nvidia-smi 解析/环境差异）|证据实测：scripts/gpu/gpu_watchman.py（盘上 19:06 版 14310B）**CLI 只有 acquire/release/status 三子命令，无 detect**⇒复现口径待点名（疑指 ic_exam 内部 detect 面）；该件不在 HEAD（⑤台账 L194 已记 git ls-tree 零命中）|要⑤席先复现取真实调用面再修，勿按令文字面修|中|状态：待修(现象口径待补)
+[BLOCKER] 2026-10-15|⑤席种子|工具缺陷|signal_orthogonality.py gate 合成冒烟 rc=1 应=5（退出码契约违反；repro=tmp 合成 twin/pool 场景）|scripts/backtest/fexam/signal_orthogonality.py|⑤席下一班修复+补退出码测试|高
