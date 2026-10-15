@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RESCHED-APPLY | docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md | §4-P2-b
+# [BLUEPRINT] MOD-RESCHED-APPLY | docs/_archive/_working_cleared/resource_schedule/resource_schedule_v2_construction_plan.md | §4-P2-b
 # [MODULE] scripts.governance.apply_resource_plan
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] yaml; scripts/governance/generators/generate_resource_profile_registry.py（三源解析/

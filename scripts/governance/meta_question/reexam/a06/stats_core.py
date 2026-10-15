@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-REEXAM-A06 | docs/_working/meta_question_answers/gaps/A06_MONEYFLOW_BACKFILL_workbook.md §3
+# [BLUEPRINT] MOD-METAQ-REEXAM-A06 | docs/_archive/_working_cleared/meta_question_answers/gaps/A06_MONEYFLOW_BACKFILL_workbook.md §3
 # [MODULE] scripts.governance.meta_question.reexam.a06.stats_core
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] numpy; pandas; scipy.stats

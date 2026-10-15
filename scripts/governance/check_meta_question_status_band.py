@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/chain_piling_campaign/snapshots/question_batch_w6.yaml | PQ-0099 exam_plan.threshold（L2461）+ docs/_working/meta_question_answers/gaps/PQ-0099_workbook.md §4
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/04_research_records/data/chain_piling_campaign/snapshots/question_batch_w6.yaml | PQ-0099 exam_plan.threshold（L2461）+ docs/_archive/_working_cleared/meta_question_answers/gaps/PQ-0099_workbook.md §4
 # [MODULE] scripts.governance.check_meta_question_status_band
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] src/zephyr/governance/depgraph_schema.py（get_depgraph_pg_connection，read_only=True 只读，惰性导入使 --selftest 零 PG 依赖）; src/zephyr/shared/io/yaml_utils.py（load_vocabulary_values 词表 SSoT）
-# [CONSUMERS] docs/_working/chain_piling_campaign/04_construction_map.md #24（月度机检）; PQ-0099 工作簿 §4 regime 裁定项（数值留 Owner 门位）; L5 执行验证层 / L0 元问题层 / Owner
+# [CONSUMERS] docs/04_research_records/data/chain_piling_campaign/04_construction_map.md #24（月度机检）; PQ-0099 工作簿 §4 regime 裁定项（数值留 Owner 门位）; L5 执行验证层 / L0 元问题层 / Owner
 # [STARTUP] manual
 # [MATURITY] new
 # [INVARIANTS] 全程零写（PG read_only 连接，无 DML/DDL 代码路径）; 状态枚举唯一真源=meta_question_statuses_vocabulary.yaml 经 load_vocabulary_values 加载（禁字面量集合复制合法值、禁 yaml.safe_load 直读——GATE-VOCAB 检测5）; PG 出词表外状态/空表=异常 fail-closed exit 2（不静默归入分布、不出判档）; 判档纯函数 _evaluate_band 无 IO，边界可函数级验证; 边界语义=inclusive（answered∈[带下限,带上限] 在带、任一状态≤80% 在帽，帽含 answered 自身、双 regime 共用不放宽）; campaign 带仅放宽 answered 上限（CAMPAIGN_ANSWERED_MAX_PCT=95.0 即裁定值，经 Owner 2026-09-24 战役施工批六裁定之六 转正、非占位；持续入题机制上线后可改常态带 70 并另登裁定——WO-003② intake_batch 即为该前置）; 健康带判据不接入 thresholds.yaml（判据真源=题面 exam_plan.threshold 原文，非脚本治理阈值），常量命名避开 THRESHOLD/LIMIT 词根防 GATE-VOCAB 检测8 误报
-# [MODIFY-GUARD] docs/_working/chain_piling_campaign/snapshots/question_batch_w6.yaml（PQ-0099 exam_plan.threshold 原文，改带先改题面）+ docs/_working/meta_question_answers/gaps/PQ-0099_workbook.md §4（campaign regime 已由 Owner 2026-09-24 战役施工批六裁定之六 裁 95 并落地本件，再改带须新裁定同步本行与出处注释）
+# [MODIFY-GUARD] docs/04_research_records/data/chain_piling_campaign/snapshots/question_batch_w6.yaml（PQ-0099 exam_plan.threshold 原文，改带先改题面）+ docs/_archive/_working_cleared/meta_question_answers/gaps/PQ-0099_workbook.md §4（campaign regime 已由 Owner 2026-09-24 战役施工批六裁定之六 裁 95 并落地本件，再改带须新裁定同步本行与出处注释）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -86,8 +86,8 @@ ANSWERED_STATUS = "answered"
 
 # ── 健康带阈值（语义命名常量+判据出处）────────────────────────────────
 # 判据出处：PQ-0099 题面 exam_plan.threshold="answered 30-70% 且单状态≤80%"，
-#   快照真源=docs/_working/chain_piling_campaign/snapshots/question_batch_w6.yaml L2461，
-#   台账=docs/_working/chain_piling_campaign/04_construction_map.md #24（monthly）。
+#   快照真源=docs/04_research_records/data/chain_piling_campaign/snapshots/question_batch_w6.yaml L2461，
+#   台账=docs/04_research_records/data/chain_piling_campaign/04_construction_map.md #24（monthly）。
 #   为稳态注册表设计的判据；不接入 thresholds.yaml（该 SSoT 面向脚本治理超时/配额类阈值，
 #   本判据真源是题面原文）。
 # campaign 带数值出处：PQ-0099 工作簿 §4 二选一（(a) 豁免窗 / (b) 双 regime 双带）——

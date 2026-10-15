@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.git_commit_gateway (GitCommitGateway)；
 #   zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)；stdlib（argparse/json/sys/time/traceback）
 # [CONSUMERS] 全流通/规则审计战役各施工车道（入队前标准一步，见
-#   docs/_working/fullflow_campaign/CONSTRUCTION_DISCIPLINE.md §2）；
+#   docs/_archive/_working_cleared/fullflow_campaign/CONSTRUCTION_DISCIPLINE.md §2）；
 #   tests/governance/test_gate_prerun.py
 # [STARTUP] manual
 # [MATURITY] testing

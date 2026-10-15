@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-DS | docs/_working/total_command_closeout/10_wave_plan.md | 波 3.2/3.3/W-102
+# [BLUEPRINT] MOD-GOV-DS | docs/_archive/_working_cleared/total_command_closeout/10_wave_plan.md | 波 3.2/3.3/W-102
 # [MODULE] scripts.governance.data_supply.supply_sources
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.data.progress_store, pyyaml

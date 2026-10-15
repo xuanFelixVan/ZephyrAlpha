@@ -653,7 +653,7 @@ def _preflight_skip_set(args) -> frozenset[str]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# R-04 治本①（lane G1，2026-09-18；真源 docs/_working/kimi_audit/S18_提交链路根因表.md
+# R-04 治本①（lane G1，2026-09-18；真源 docs/_archive/_working_cleared/kimi_audit/S18_提交链路根因表.md
 # R-04 行）：claim 生命周期与提交事务对齐。
 # 病灶：旧语义「finally 无条件释放 claim + 文件保持 staged」→ 重试不 reclaim →
 # CLAIM-REQUIRED ×50/24h。治本：成功（OK/NOTHING_TO_COMMIT）才释放；失败保留

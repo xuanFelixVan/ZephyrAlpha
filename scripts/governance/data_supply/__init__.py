@@ -1,5 +1,5 @@
 # create-guard-not-dup: 包入口docstring描述供数链交叉核对动作，非第二真源（canonical 各checker职责不同域）
-# [BLUEPRINT] MOD-GOV-DS | docs/_working/total_command_closeout/10_wave_plan.md | 波 3.2/3.3/W-102
+# [BLUEPRINT] MOD-GOV-DS | docs/_archive/_working_cleared/total_command_closeout/10_wave_plan.md | 波 3.2/3.3/W-102
 # [MODULE] scripts.governance.data_supply
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # [TTL] task_bound
 # [STARTUP] on_demand: 人工/施工队/审计员命令行调用（python scripts/governance/data_supply/ch_probe.py --sql "..."），无常驻调度
-# [CONSUMERS] docs/_working/total_command_closeout/wave1a/dead_store_triage.md §5（W-34 复测配方）; 波 3 空壳表复测; 任何判据类 CH 读数; W-180 落地批 st-nightsweep-sw4-20260929（aidrafts st-final-build-20260926 移植；卡面指定 scripts/data/ 系 gitignore 路径(.gitignore:604 scripts/data/*)无法入库，按 aidrafts 原位落 scripts/governance/data_supply/）
+# [CONSUMERS] docs/_archive/_working_cleared/total_command_closeout/wave1a/dead_store_triage.md §5（W-34 复测配方）; 波 3 空壳表复测; 任何判据类 CH 读数; W-180 落地批 st-nightsweep-sw4-20260929（aidrafts st-final-build-20260926 移植；卡面指定 scripts/data/ 系 gitignore 路径(.gitignore:604 scripts/data/*)无法入库，按 aidrafts 原位落 scripts/governance/data_supply/）
 # [MODULE] module_id=MOD-GOV-wave1a-ch_probe | layer=script | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [DOMAIN] D_GOV_CODE_QUALITY

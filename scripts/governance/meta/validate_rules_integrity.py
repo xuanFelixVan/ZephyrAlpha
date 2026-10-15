@@ -169,7 +169,7 @@ _STATIC_MANIFEST: list[dict] = [
 # 治本（战役 P3 预研发现，2026-09-24，MQ-3）：本目录随 governance→gov_enforcement 迁移失效，
 # glob 静默返回空 ⇒ _DYNAMIC_GATE_ENTRIES=0 ⇒ RULES_MANIFEST 只剩 17 条静态项，
 # 119 台 pre-commit gate 实现整体脱离 C 层 golden hash 保护（卷宗
-# docs/_working/commit_speedup_campaign/30_gate_census/p3_integrity_head_derivative_prep.md §2.4）。
+# docs/_archive/_working_cleared/commit_speedup_campaign/30_gate_census/p3_integrity_head_derivative_prep.md §2.4）。
 # glob 型清单"漏登"与"目录改名"不可分辨，故补非空自证（A3b）与 check() 阈值红（MQ-3）。
 _GATES_DIR = _REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
 _DYNAMIC_GATE_ENTRIES: list[dict] = [

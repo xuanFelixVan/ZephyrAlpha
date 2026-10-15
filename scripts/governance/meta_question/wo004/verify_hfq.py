@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-WO004-HFQ-VERIFY | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-004
+# [BLUEPRINT] MOD-WO004-HFQ-VERIFY | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-004
 # [MODULE] scripts.governance.meta_question.wo004.verify_hfq
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.meta_question.wo004.recalc_hfq（表名/因子口径常量唯一真源）;

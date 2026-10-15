@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-DS | docs/_working/total_command_closeout/10_wave_plan.md | 波 3.2（W-31 / Z-16）
+# [BLUEPRINT] MOD-GOV-DS | docs/_archive/_working_cleared/total_command_closeout/10_wave_plan.md | 波 3.2（W-31 / Z-16）
 # [MODULE] scripts.governance.data_supply.false_green_crosscheck
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.data_supply.supply_sources, scripts.governance.data_supply.strict_truth_reader

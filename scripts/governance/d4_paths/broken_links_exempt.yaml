@@ -8,7 +8,7 @@
 # [DOMAIN] D_GOV_SCRIPTS
 # --- 治理锚定结束 ---
 # 断链检测器豁免面登记（归档/历史面）
-# 依据：裁定#360(a)（2026-09-19，真源=docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+# 依据：裁定#360(a)（2026-09-19，真源=docs/_archive/_working_cleared/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
 #       §四；登记册=ruling_registry.yaml '裁定#360'）：归档/审计轨迹面「改归=改历史，禁修正文」，
 #       其断链不修原文，登记豁免。落点=D4 路径检测器 exempt 配置（非 rules/）。
 # 消费方：scripts/governance/d5_architecture/validators/validate_cross_references.py

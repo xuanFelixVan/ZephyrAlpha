@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-DS | docs/_working/total_command_closeout/00_master_skeleton.md | W-102 第 1 把尺
+# [BLUEPRINT] MOD-GOV-DS | docs/_archive/_working_cleared/total_command_closeout/00_master_skeleton.md | W-102 第 1 把尺
 # [MODULE] scripts.governance.data_supply.no_cache_endorsement
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.data_supply.strict_truth_reader, ast

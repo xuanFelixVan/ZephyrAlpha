@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md
 # [MODULE] scripts.governance.meta_question.apply_pending_patch
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] yaml; subprocess(git apply / git apply --check); 读 *.pending_patch.yaml 的 diff 字段

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-094 | docs/_working/fullflow_chief_closeout/s52_dynamic_lanes_v1.md | §shadow-mode plan
+# [BLUEPRINT] MOD-INF-094 | docs/_archive/_working_cleared/fullflow_chief_closeout/s52_dynamic_lanes_v1.md | §shadow-mode plan
 # [MODULE] scripts.governance.lane_leases_gate
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.lane_leases；scripts.governance._shared.encoding

@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-GOV-DS | docs/_working/total_command_closeout/wave3/supply_ledger_report.md | §7
+# [BLUEPRINT] MOD-GOV-DS | docs/_archive/_working_cleared/total_command_closeout/wave3/supply_ledger_report.md | §7
 # [MODULE] scripts.governance.data_supply.gen_registration_needs
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.data_supply.supply_sources
-# [CONSUMERS] 人工/CI 重跑出 docs/_working/total_command_closeout/wave3/registration_needs.yaml; 无生产消费方
+# [CONSUMERS] 人工/CI 重跑出 docs/_archive/_working_cleared/total_command_closeout/wave3/registration_needs.yaml; 无生产消费方
 # [STARTUP] manual
 # [MATURITY] testing
 # create-guard-not-dup: 死车道抢救件（字节代投非新能力），与canonical同名能力无职责重叠，逐词误报批量豁免（st-chief7-20260928 第12+轮实测均为关键词巧合命中）

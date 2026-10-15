@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-INF-093 | docs/_working/fullflow_chief_closeout/s52_dynamic_lanes_v1.md | §lease model
+# [BLUEPRINT] MOD-INF-093 | docs/_archive/_working_cleared/fullflow_chief_closeout/s52_dynamic_lanes_v1.md | §lease model
 # [MODULE] scripts.governance.lane_leases
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.encoding；zephyr.shared.utils.time_utils；zephyr.shared.io.file_utils；zephyr.shared.io.paths
-# [CONSUMERS] scripts.governance.lane_leases_gate；docs/_working/fullflow_chief_closeout/s52_dynamic_lanes_v1.md（S5② 动态车道 v1 影子期）
+# [CONSUMERS] scripts.governance.lane_leases_gate；docs/_archive/_working_cleared/fullflow_chief_closeout/s52_dynamic_lanes_v1.md（S5② 动态车道 v1 影子期）
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 路径租约登记+分配器（S5② 动态车道 v1 影子模式，2026-09-28）：租约=sid→路径前缀集，

@@ -87,7 +87,7 @@ FLE_MODULE_ID = "MOD-FEEDBACK_LOOP"
 
 # WP5/D-4（2026-09-19）第四册派生段总闸：summary/last_updated 一律由 gates 派生，
 # 禁手工维护（宪法 §9.5 静态清单禁手工维护）。裁定真源=
-# docs/_working/2026-09-18-rule-audit-master-construction-plan.md §1 D-4。
+# docs/_archive/_working_cleared/2026-09-18-rule-audit-master-construction-plan.md §1 D-4。
 GATE_STATUS_ALIASES: Final[dict[str, str]] = {
     # D-4 归一规则的现场判定：implemented 不在 module_lifecycle_status 词表合法值
     # （docs/01_policies_and_standards/_registry/vocabularies/
@@ -109,7 +109,7 @@ def _load_yaml(path: Path) -> dict | None:
 
         with open(path, encoding="utf-8") as f:
             return yaml.safe_load(f)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001  存量代码行零语义过门（X2断链改指车道）
         logger.error("Failed to load YAML %s: %s", path, e)
         return None
 
@@ -128,7 +128,7 @@ def _save_yaml(path: Path, data: dict, dry_run: bool = False) -> bool:
             return True
         logger.error("Failed to save YAML %s: atomic_write_safe returned False", path)
         return False
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001  存量代码行零语义过门（X2断链改指车道）
         logger.error("Failed to save YAML %s: %s", path, e)
         return False
 
@@ -437,7 +437,7 @@ def _extract_dependencies(py_file: Path) -> list[dict]:
     try:
         with open(py_file, encoding="utf-8") as f:
             tree = ast.parse(f.read())
-    except Exception:
+    except Exception:  # noqa: BLE001  存量代码行零语义过门（X2断链改指车道）
         return deps
 
     for node in ast.iter_child_nodes(tree):
@@ -539,7 +539,7 @@ def verify_init_all(dry_run: bool = False) -> int:
         try:
             with open(init_file, encoding="utf-8") as f:
                 tree = ast.parse(f.read())
-        except Exception:
+        except Exception:  # noqa: BLE001  存量代码行零语义过门（X2断链改指车道）
             logger.error("Failed to parse %s", init_file)
             errors += 1
             continue

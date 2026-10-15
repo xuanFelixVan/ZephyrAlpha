@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-DS | docs/_working/total_command_closeout/10_wave_plan.md | 波 3.2/3.3
+# [BLUEPRINT] MOD-GOV-DS | docs/_archive/_working_cleared/total_command_closeout/10_wave_plan.md | 波 3.2/3.3
 # [MODULE] scripts.governance.data_supply.strict_truth_reader
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.data.ch_reader (严格读通道 query_rows/count_strict)

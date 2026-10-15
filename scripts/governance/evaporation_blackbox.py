@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_SCRIPTS | docs/_working/decision_map_campaign_20260924/15_evaporation_cure_plan.md | 治本施工项 EV-01 行（取证依据=10 号文）
+# [BLUEPRINT] MOD-GOV_SCRIPTS | docs/_archive/_working_cleared/decision_map_campaign_20260924/15_evaporation_cure_plan.md | 治本施工项 EV-01 行（取证依据=10 号文）
 # [MODULE] scripts.governance.evaporation_blackbox
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.constants, scripts.governance._shared.encoding

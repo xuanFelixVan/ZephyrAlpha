@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV | docs/_working/decision_map_campaign/links/L09_review/SKEL.md §四（沿用账本=13 号文 TRD-A01）
+# [BLUEPRINT] MOD-GOV | docs/_archive/_working_cleared/decision_map_campaign/links/L09_review/SKEL.md §四（沿用账本=13 号文 TRD-A01）
 # [MODULE] scripts.governance.decision_chain_sentinel
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.database_service(懒加载); zephyr.shared.utils.time_utils; zephyr.data.table_registry; zephyr.data.trading_calendar(懒加载, 交易日闸); schemas.categories.decision_daily(表名真源)
@@ -8,7 +8,7 @@
 # [INVARIANTS] 只读检测禁修数: CH 访问唯一入口=DatabaseService.get_clickhouse_conn(reader)禁裸连接(宪法§9.1), 本件禁任何 DB 写;
 #   参照 quality_sentinel 先例(滞后尺与污染尺两把尺禁合并, 本件只管滞后尺); 当前时间唯一入口 now_utc()(RULE-SCHEMA-TZ);
 #   表名三真源零硬编码(decision_daily=DDL-as-Code TABLE_NAME, trade_calendar/kline_index=TableRegistry 品类 market_trade_calendar/market_index_kline, 同 backfill_checker 先例);
-#   判定口径(★2026-09-25 治尺 DAY §②, 案卷=docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/DAY_daily_loop_skip.md):
+#   判定口径(★2026-09-25 治尺 DAY §②, 案卷=docs/_archive/_working_cleared/decision_map_campaign_20260924/cmd_successor_20260925/DAY_daily_loop_skip.md):
 #     期望日 E=交易日历中 >= 运行日的**首个开市日**(=本应产出的最新一日); 实评日=max(trade_date WHERE trade_date<=E);
 #     E 缺行即告警("缺即告警"), lag=日历口径 (实评日, E] 开市日数。旧尺 max(trade_date) 无上界 ⇒ 任一超前于当日的行
 #     (如 09-25 晨批产出 target=09-28)把 max 顶到参照日之后 ⇒ lag 恒 0 ⇒ 尾部/中间整日缺失被完全掩盖=哑火尺。

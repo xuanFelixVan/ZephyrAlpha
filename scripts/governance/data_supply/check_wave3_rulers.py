@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-DS | docs/_working/total_command_closeout/00_master_skeleton.md | W-102（三把尺常设化）
+# [BLUEPRINT] MOD-GOV-DS | docs/_archive/_working_cleared/total_command_closeout/00_master_skeleton.md | W-102（三把尺常设化）
 # [MODULE] scripts.governance.data_supply.check_wave3_rulers
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.data_supply.{supply_sources,strict_truth_reader,false_green_crosscheck,supply_conservation,no_cache_endorsement}, scripts.governance._shared.constants

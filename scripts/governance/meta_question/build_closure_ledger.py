@@ -1,9 +1,9 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md
 # [MODULE] scripts.governance.meta_question.build_closure_ledger
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection, 只读); PyYAML; 读
-#                docs/_working/meta_question_answers/{results,gaps}/ 与 build/REEXAM*/WO-*.yaml 为盘侧证据源
-# [CONSUMERS] 战役收官报告（docs/_working/meta_question_answers/04_closure_ledger.yaml）；Owner 验收面
+#                docs/_archive/_working_cleared/meta_question_answers/{results,gaps}/ 与 build/REEXAM*/WO-*.yaml 为盘侧证据源
+# [CONSUMERS] 战役收官报告（docs/_archive/_working_cleared/meta_question_answers/04_closure_ledger.yaml）；Owner 验收面
 # [STARTUP] manual
 # [MATURITY] experimental
 # [INVARIANTS] 纯派生件：三态计数与 fail 分型只从 PG meta_question 表读，禁在任何散文/常量里写死数字；

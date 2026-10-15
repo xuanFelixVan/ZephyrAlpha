@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-DS | docs/_working/total_command_closeout/10_wave_plan.md | 波 3.3（W-32 / EV-03 家族）
+# [BLUEPRINT] MOD-GOV-DS | docs/_archive/_working_cleared/total_command_closeout/10_wave_plan.md | 波 3.3（W-32 / EV-03 家族）
 # [MODULE] scripts.governance.data_supply.supply_conservation
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.data_supply.supply_sources, scripts.governance.data_supply.strict_truth_reader

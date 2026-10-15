@@ -1,10 +1,10 @@
-# [BLUEPRINT] MOD-GOV-CSHARD-001 | docs/_working/t12_import_sharding/collection_shard_manifest.yaml | §manifest
+# [BLUEPRINT] MOD-GOV-CSHARD-001 | docs/04_research_records/data/t12_import_sharding/collection_shard_manifest.yaml | §manifest
 # [MODULE] scripts.governance.generators.generate_collection_shard_manifest
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib(argparse/json/os/re/sys/time/pathlib)；yaml；
 #   无 zephyr 运行时耦合（纯子进程调 pytest + 解析文本，import 面零扩大）
 # [CONSUMERS] 夜班错峰采集窗口（人工/AI 调 --shard 每目录一片自成一窗）；
-#   机生册 docs/_working/t12_import_sharding/collection_shard_manifest.yaml 唯一写者；
+#   机生册 docs/04_research_records/data/t12_import_sharding/collection_shard_manifest.yaml 唯一写者；
 #   反向钉桩 tests/gov/governance/generators/test_collection_shard_manifest_redpin.py
 # [STARTUP] manual
 # [MATURITY] testing

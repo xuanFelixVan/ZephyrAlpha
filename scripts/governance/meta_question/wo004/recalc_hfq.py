@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-WO004-HFQ-RECALC | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-004
+# [BLUEPRINT] MOD-WO004-HFQ-RECALC | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-004
 # [MODULE] scripts.governance.meta_question.wo004.recalc_hfq
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.infrastructure.database_service (reader 探针/对拍复核); zephyr.data.ch_writer (writer 通道 get_client); zephyr.data.table_registry (表名品类真源 #ARCH-CH-024)
