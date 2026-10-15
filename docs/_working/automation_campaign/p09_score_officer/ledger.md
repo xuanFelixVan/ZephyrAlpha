@@ -723,3 +723,47 @@ title: ⑨成绩官·findings台账
 - 消息首行带 `[docs-only]`（08 班在册处方，避 `MESSAGE-CLAIMS-CODE-BAG-EMPTY`：正文点名了执行器行号与尺路径而袋内零代码件）。
 - 本节的落袋＝**`-0002`（严格超集，七件全带）**；下一班按在册"末袋为超集"取 `-0002`，并复跑 `blob==disk` 对拍。
 - ⚑ **本席袋生死风险如实呈报（不代修）**：今日本席 02–10 班 17 只袋中 **9 只死于 `ghost_session`（属主会话判死→自动重投被存活闸拒）**。本班会话在 drain 前退出即可能重演。本席**未自跑全队列 drain**（会连带落他人袋＝动共享态，且 lease 在他班手中），只如实登记：若本席袋亦入 dead，修因方向＝①收班序列里加"存活至落地"或②由 ⑦⑧ 写分席把本岗七件与当班袋同袋带出——属 ⑩/统筹定策面，不自裁。
+
+### 11 本班 `-0001` 落地段死亡实录（§10 落笔时未知，旧句留卷不删）
+
+- `-0001`（created 16:46:01，`base_head=63a5ee4c66`）于 **16:49 前已移入 dead**，`dead_reason`＝`landing 异常: RuntimeError: [landing] 非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）: docs/_working/automation_campaign/feedback/to_impl.md`。
+- **机制本班直证（非推断）**＝本班建袋后、落地前，④席袋 `429b9327e8` 落地面**同时携带** `feedback/to_impl.md` 与 `feedback/to_datasource.md`（`git log -2 --name-only` 实测）⇒ 本班袋的 base 取的是 `63a5ee4c66`（早于该落地），于是"袋侧改了 to_impl、dev 侧也改了 to_impl"＝双侧皆改真冲突。**同一件被两席并发追加＝在册 08 班"非注册表族件双侧皆改"死因的活体复现，本班为第 9 只**。
+- **本班处方（已照此投末袋）**＝`-0002`（created 16:49:18）的 `base_head=429b9327e8`＝落地后的新 HEAD，袋侧字节＝现磁盘面（已含 ④席 16:4x 落地块）⇒ 属"仅袋改"，结构上不再双侧皆改。**残余风险如实登记**＝若 drain 前再有他席落地改到同七件，`-0002`/`-0003` 会以同一签名再死；根治方向不在本席写域（＝热件追加须"取基=落地后 HEAD"或按件分席串行，请 ⑩/统筹定性，本席不 requeue 自家死袋 `-0001`，其内容与 `-0002` 同面、无抢救缺口）。
+- 自检＝`-0002` 七件 `blob_sha256 == 磁盘 == blobs/ 实读`**7/7 通过**（尺同 §10 更正后谓词）。
+
+
+## 2026-10-15 ｜ st-qoder-p09-1015-12（⑨成绩官第十二班：当日增量＝**0 行**；主产出＝首份"族×verdict"分账＋顶部游标头尾分叉修复＋提交面纪律收窄）
+
+### 1 冷启动与防重入
+
+- `python --version`＝**3.12.8**；冷启动 reaper `--status` 给出 `source=live`／`last_run=2026-10-15 16:57:37`（本班起批锚点，不采信体感）。⚠ 水位红旗：`commit_pct=94.79`、`ram_used_pct 68.6`、`degraded=True`、越闸 `ALERT-SYS-003`；`worktree_changes=5472>50` ⇒ 本班据此**把全部取证改窄面**（逐路径查询＋`--include`），未跑全仓 `grep -rn`／全量 `git status`；提交段仅在 `--enqueue`（不整树 `git add`）层面操作，如实登记内存压力。
+- `python scripts/lock_files.py cleanup`＝**CLEAN — 无死锁需要清理**（另有 3 枚他会话 shard 报 `[Errno 13] Permission denied`：`st-autoplan-20261015`／`st-qoder-p01-1015-11`／legacy `session_registry.json`，非本席件，未处置）。
+- 防重入＝读 `checkpoint.md`：11 班已交全报（含"本班提交面"终报补条与 `-0001` 落地段死亡实录）⇒ 判**上一班已完**；本班取当日第 **12** 号。
+- 会话形制＝`reg12.py` `register(pid=0, held_files=3, task_files=3)`＋`heartbeat`＋`list_active` 自见＝三证齐（`logical=False` 未降级）；claim＝注册与 `lock_files.py acquire-batch` **串成一条命令**（08/11 班在册）⇒ **`acquired=3 denied=0`**，TTL 30 分。
+
+### 2 判卷面（工序 1–2，增量 0 行＝不重判）
+
+- **四证（进场＋终报前各测一次，逐位同 11 班终报锚点）**：磁盘 sha256 `d77773545f5b4cc7c8c64686a8aab8e2c672a540740e843da953f4e3186d0c9c`／132248B／mtime `2026-10-15 16:28:53`／`safe_load_all` docs=2、doc1 rows=**96** ⇒ 册面自 11 班终报后**未长**，本班**增量 0 行**，严守禁烧面未重判任何在册行。三面读数：index `009c7bbcf87582c2…`／90 行（落后磁盘 6 行）／HEAD 该馆 **0 件**。
+
+### 3 结构性观察（工序 5，本班 1 条家族级、尺直测）
+
+- **S-1 首份"族×verdict"分账**：尺＝`python .runtime/tmp/st-qoder-p09-1015-12/measure12.py`（只读，按卡体 `pillars_numeric` 键集分族）。96 行＝校准 61／事件 23／对照 11／maxdd_min 变体 1；交叉 verdict＝校准 `{fail 59, pass 2}`／事件 `{fail 23}`／对照 `{fail 9, blocked 2}`／变体 `{fail 1}`。**家族级规律**＝全册唯一 2 枚 pass 全在校准族同一根 `lu_count_z20` 轴（rows[76]/[78]，corr=0.9998），**事件族 23 行、对照族 11 行均 0 pass**；即除校准涨跌停广度一轴外无任何族产出过通过对象。本班增量 0 ⇒ 仅入分账、零新开单（不据此下 mined_out，判死须 ④ 席＋连续负读数）。
+
+### 4 pass 行与升级（工序 4，本班零升级）
+
+- 增量 0 行 ⇒ 无新 pass 候选；在册两枚 pass（rows[76]/[78]）**本班未重烧**（册面 sha 未变，两腿读数 byte-identical 于 11 班，判据＝§2 逐位同）。铁律 fail 永不升级。零 TDM 挂接新增。
+
+### 5 归因四分诊路由（工序 3，增量 0 ⇒ 零新开单）
+
+- 本班无新 fail 行 ⇒ **零方向单／零修改单／零缺数单／零呈批／零对照单**。在册单号现止于 `修⑮／P-8`。
+- ⚑ **提交面纪律收窄（本班新立，据 memory `queue-attribution-when-hot-registry-dirty`）**：08/11 班在册"每袋带全 7 件"仅适用于**有新单的班**；本班增量 0、零新开 ⇒ 只投本班会改的三件（ledger／checkpoint／independent_signals）。归属自证＝三件盘面对 HEAD 皆**纯增**（`git diff --numstat HEAD`：ledger `7/0`、checkpoint `2/0`、independent_signals 空＝已全入 HEAD）；而 `to_impl/to_miners/to_datasource` 盘面＝`MM`、含 ④席经 commit `429b9327e8` 已落的 to_impl+to_datasource 块与本席旧未落块 ⇒ 随袋＝整档快照＝**归属篡改**，本班拒投。`iteration_history` 零 pass 无追加必要 ⇒ 不投。
+
+### 6 独立信号清单与耗时（工序 5/6）
+
+- `pulse/independent_signals.md` 本班节已更：零新轴入占、pool-report PR=2.1272 复现、首份族×verdict 分账、15 员池 PR 维持"仍未获得"。
+- **本班耗时**：起批 reaper 锚点 `16:57:37` → 写盘脚本内 `datetime.now()`＝`START date` 行读数（见下），登记班限内外。成因＝本班增量 0，主耗时在"尺族盲 25 条须坐实为假红（非门柱走样）"＋三件归属自证，非判卷。
+- 自检：轮一＝rows[0]/[44]/[46] 回卡体核门柱未走样 3/3；轮二＝census11 join 96/96＋calib 仅跑校准族 61 行 PROBLEMS **0**（对照 calib 跑全 0..95 报 25＝尺族盲假红，23 行落事件族、2 行落对照/maxdd 变体）。
+
+### 7 顶部游标头尾分叉修复（本班自证并纠正 11 班遗留）
+
+- 本席 `checkpoint.md` 顶部 `cursor` 段自 10 班写死 `rows[93]／10 班在册`，11 班详情节已推进到 `rows[95]`（96 行全判）却未回写顶部＝**游标头尾分叉**（头＝rows[93]、尾节＝rows[95]）。本班按 SOP"游标由本岗每批推进"把顶部对齐真实锚点 `rows[95]／rows[96] 起待判／12 班在册`，旧句在此留痕不删。

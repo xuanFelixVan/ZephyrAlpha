@@ -134,3 +134,14 @@ title: 独立信号清单（⑨成绩官每日维护）
 - **正交闸准入基准沿用**：`|corr|<=0.3`（工具契约在册）。本班从 `pool6_report_11.json` 直读一例：`avg_abs_ret` ↔ `avg_abs_ret_z20` corr=**0.7399**（>0.3 ⇒ 同轴变体不占独立名额）；`avg_abs_ret` ↔ `lu_count_z20` corr=**0.1331**（<=0.3 ⇒ 可视为独立候选）。⚠ 这仍是**6 员适配池**，不是 ①②班派单所指的 **15 员池**。
 - **15 员池缺席如实注明（未重烧）**：`c1_market.factor_signal`/`factor_feature_value` 各 **0 行**（三度同值禁烧面，本班未测第四次）；`ART_ROOT=docs/_working/integrated_backtest/` 按 05 班在册为不存在目录，本班未复查。⇒ 本表对 ④ 席生成端的对照基准**仍只能覆盖 6 员适配池面**，15 员池 PR 无源；在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"。
 - **本班新增对照事实（供 ④ 席，属分面非池面）**：分数册新行 rows[94] 所在节点 `TDM-P-P2-04`（盘口/仓位族）与 rows[95] 所在 `TDM-E-L9-A01`（动量截面轴）**均不在 `pool6` 六员之内** ⇒ 正交闸对本班两行对象**无从对照**，如实报"闸对该两对象未开"，勿把"未触发"读成"已判独立"。
+
+
+## 2026-10-15 ｜ st-qoder-p09-1015-12（⑨成绩官第十二班·每日维护行：增量 0 行＝零新轴入占；pool-report 复现＋首份"族×verdict"分账）
+
+> 读面声明（本班正文原样跑）：磁盘面 sha256 `d77773545f5b4cc7c8c64686a8aab8e2c672a540740e843da953f4e3186d0c9c`／132248B／docs=2／doc1 rows=**96**／mtime `2026-10-15 16:28:53`＝与 11 班终报锚点**逐位同** ⇒ **本班增量 0 行**；index `git show :docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`＝`009c7bbcf87582c2…`／123768B／**90 行**（落后磁盘 6 行／8480B，自 11 班起未动）；HEAD 该馆 **0 件**。本班未动分数册任何字节、未动任何阈值与门柱。族口径＝卡体 `pillars_numeric` 键集，join＝卡内 `card_id`（96/96）。
+
+- **本班工具实跑**（非引用在册）＝`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6` → `n_members=6 n_common_dates=1855 effective_n_signals(PR)=2.1272`（rc=0），落 `.runtime/tmp/st-qoder-p09-1015-12/pool6_report_12.json`。pool6 六枚 CSV mtime 皆 `07:30` 未变 ⇒ **PR 与 04/11 班逐位同＝同池同人同值复现确认，非新增读数**；本班未新建池面。
+- **占领区摘要**：本班增量 0 行 ⇒ **零新轴入占**；未占/稀薄轴维持 04/09 班在册方向（波动率期限结构、流动性与冲击成本、资金面分户、另类数据）。
+- **首份"族×verdict"分账（④席生成端与正交闸必读，本班 `measure12.py` 直测、非派生）**：96 行按卡体 `pillars_numeric` 键集分族＝**校准 61／事件 23／对照 11／maxdd_min 变体 1**；交叉 verdict＝校准 `{fail 59, pass 2}`、事件 `{fail 23}`、对照 `{fail 9, blocked 2}`、变体 `{fail 1}`。⇒ **全册唯二 pass（rows[76]/[78]）全落校准族同一根 `lu_count_z20` 轴（corr=0.9998），事件族 23 行 0 pass、对照族 11 行 0 pass**：除校准这一根涨跌停广度轴外，生产线至今**没有任何族产出过一个通过对象**。此为家族级矿位成熟度信号；本班增量 0 ⇒ 零新开单，仅入分账供 ④ 席判"事件族是否近 mined_out"。
+- **15 员池 PR 缺席如实注明（未重烧）**：`c1_market.factor_signal`/`factor_feature_value` 各 0 行（三度同值，本班未第四次重烧）；`ART_ROOT=docs/_working/integrated_backtest/` 未复查；在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"（本席累计八班无产物可再现该数）。
+- 空白轴地图判读面限定沿用：按 card_id 命名语义归类，本班未逐卡读卡体（例外＝轮一抽的 rows[0]/[44]/[46] 三张回过卡体）。
