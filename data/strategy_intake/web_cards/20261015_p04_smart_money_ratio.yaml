@@ -1,0 +1,123 @@
+# creation_token: st-qoder-p04-1015-03-strategy-intake | created_by: st-qoder-p04-1015-03 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-07
+title_zh: 大单净流入强度因子——净流入除以流通市值＋按日截面去均值（资金面空白轴）
+mining_tower: 楼7 资金流族（docs/_working/automation_campaign/pulse/mining_directions.md 表行7）＋⑨席正交空白轴地图"资金面"
+birth_seat: ④
+birth_session: st-qoder-p04-1015-03
+birth_batch: 20261015-p04-03
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班真实命中；未取到正文的一律标转述引证）
+source_links:
+  - role: 分档口径锚（大/中/小单阈值定义，本库 tushare 五档须与之对表）
+    url: https://profile.10jqka.com.cn/002729/funds/
+    what_verified: WebSearch 命中片段逐字取到——大单=大于等于6万股或30万元；中单=大于等于1万股小于6万股或5万至30万元；小单=小于1万股或5万元
+  - role: 归一分母实证（占市值版优于占成交额版）
+    url: https://zhidao.baidu.com/question/630758611652493812.html
+    what_verified: WebSearch 命中全文摘要，取到 lmf_per_cap_5 与 lmf_per_cap_20（大单净额占流通市值比例的5日与20日均值）在分层与IC两面上优于"占成交额"版本，且因子在中证500 优于沪深300、2021 年累计IC 为负、近一年无进一步增长
+  - role: 非线性分组证据（同族两因子的分组单调性对照）
+    url: https://xueqiu.com/4482602938/386081946
+    what_verified: WebSearch 命中——大单净流入额（绝对额）全持有期 Spearman p 值 0.090 至 0.489 全部不显著，分组收益呈倒U，中段分组6至7为跨周期稳定超额来源，两端为对称陷阱
+  - role: 短窗显著性与生命周期证据
+    url: https://xueqiu.com/4482602938/386898071
+    what_verified: WebSearch 命中——大单净流入占比（东方财富口径）5 日 Spearman 为正的 0.648 且 p=0.043 通过，10/20/60/120 日 p=0.090/0.074/0.310/0.425 不显著，250 日 0.987 等同随机
+  - role: 共线与反转先验警示（社区非同行评议，仅作风险参照，禁当判据来源）
+    url: https://blog.csdn.net/leisoo8097/article/details/163556400
+    what_verified: WebSearch 命中——自陈主力净流入比率与换手率相关性达 0.68；昨日净流入前10%分组的票次日平均跑输 0.3%；把主力定义收紧到单笔500万以上＋5日累计＋行业中性化后自报IC由0.045升至0.082
+  - role: 聪明钱概念锚（美股口径，非本库可用腿）
+    url: https://github.com/codennomad/smart-money-tracker
+    what_verified: curl 直读 raw README（master 分支，main 分支取回空）＋api.github.com/repos/.../license 二次确认 MIT；其聪明钱定义=Form 4 内部人＋国会议员披露＋异常期权流＋暗池成交流＋13F，与本卡的大单口径不同物
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: MIT（codennomad/smart-money-tracker，1 星，pushed 2026-05-19）；同批另 3 仓 license=null 或 NOASSERTION（bastiandata/quant-ict-simulator、reihandio/RC-SmartPredict、m-kunta/TradingVIew-Pine-Scripts）
+  gate_verdict: 通过（MIT 档可参考思想与概念口径；null 与 NOASSERTION 档按无许可证处置＝只学思想不入码）
+  gpl_hits_this_round: 0
+  web_content_license: 同花顺/雪球/CSDN/百度知道页面均无随附代码许可证——只取口径与实证线索，不取码、不取判据
+  iron_rule_note: 外部代码禁直接复制入库（sop_c §9 铁律）——本卡伪代码为自拟，实现须走 C3 翻译适配重实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机=大单净流入是最便宜的"知情交易"代理，但绝对金额被市值污染，跨市值不可比。
+  构造=先取个股当日大单（或超大单＋大单，两档须分臂，理由见 caliber_pitfall_zh）净流入额，
+  除以当日流通市值得到无量纲强度，再按交易日做截面去均值（③席已实测五档占比之和为非零和，
+  中位约负6至负11个点，不去均值＝把市场整体流出误读成个股信号），最后对窗内 W 日求均值或累计。
+  用法上禁线性全域排序——外部两组独立回测均报"全域不单调、中段分组稳定超额、两端对称陷阱"，
+  且短期（5 日）显著而中长期失效，故本卡定位为**短窗分组过滤候选**而非全域打分因子。
+  方向性存在两派证据未收敛：资金流入顺势派（强度越高越好）与短期反转派（大额净流入次日跑输0.3%），
+  本席不代裁，要求⑥预注册时分"顺势臂"与"反转臂"两臂同考，两臂不得合并报数。
+
+# ── 必备④ 伪代码（本席自拟，零外部代码复制）
+pseudocode: |
+  # 输入：c1_market.money_flow（裸6位 symbol）＋ c1_market.stock_daily_basic（裸6位 symbol，取 circ_mv）
+  # 跨表 JOIN 只用裸 symbol——本班实测 money_flow.symbol_canonical 对 stock_daily_basic.symbol 得 0 行（静默空 JOIN）
+  for d in 交易日:
+      s = Σ( 当日大单净流入 )  或分臂取 s_xl = 超大单净流入, s_l = 大单净流入   # 两臂分开，勿默认 main = super + large
+      mv = circ_mv[d]                       # 单位对表：本库 circ_mv 中位读数 493741.644，须与净流入额单位核对后再定标度
+      raw[d] = s / (mv + eps)
+      cs[d]  = raw[d] - median_cs(raw[d])   # 按日截面去中位数（非零和校正；⑤实现时中位数与前两章的均值臂分考）
+      sig[d] = mean( cs[d-W+1 .. d] )        # W 留⑥冻结；外部证据只支持短窗，长窗须单独证
+      # 归一化后一律取截面 rank 或分组，禁裸阈值
+      # 标签：forward return 用 c1_market.kline_daily.pct_change（money_flow.pct_change 全段恒 0，禁作标签腿）
+      # PIT：sig[d] 为盘后统计口径，最早可用时刻=d 收盘，禁与 d 日盘中决策混用
+      # 覆盖率：净流入腿非零率约 98.6%（本班实测 5479/5574 于 2026-10-14），缺口须计数上报，禁前向填充
+
+# ── 必备⑤ 数据源映射
+data_source_mapping:
+  source_line: SL-A04 日线资金流与估值线（楼7 楼内要点=sector_fund_flow/主力净流入/大单净额×五档互证，本卡走个股腿）
+  primary_table: c1_market.money_flow（main/super_large/large/medium/small 五档净流入额与占比各一列，另有 close、pct_change）
+  secondary_table: c1_market.stock_daily_basic（circ_mv 作归一分母）
+  label_table: c1_market.kline_daily.pct_change（涨幅腿）
+  measured_reachability:   # 本班 2026-10-15 CH 只读实跑（zephyr.data.ch_reader.query_rows）
+    - "money_flow 跨度=2021-01-04..2026-10-14，uniqExact(trade_date)=1228，uniqExact(symbol)=5783，data_source 单值=tushare（2026-09 起窗口 144513 行全量）"
+    - "近端单日：10-08=5572 行 / 10-09=5573 / 10-12=5573 / 10-13=5574 / 10-14=5574，其中 main_net_inflow!=0 分别 5496/5508/5489/5492/5479"
+    - "历史单日覆盖：2021-01-04=4120 只，2022-06-15=4716 行/4716 只，2023-01-04=4901 只 ⇒ 宇宙逐年扩张，早期截面薄"
+    - "占比腿分布：main_net_inflow_pct 中位=-5.2215，P90=18.302；边界读数 min=-100 max=+100 恰为满量程，countIf(abs>=99.999)=1384 正＋1409 负（2026-09 窗内 144513 行，约 1.93%），全表 68256/5998905=1.14%"
+    - "金额腿量级：main_net_inflow 中位=-104.78，P90=1086.62（单位与 circ_mv 对表前禁直除）"
+    - "stock_daily_basic circ_mv 于 2026-10-14：5563/5563 行 >0，中位 493741.644"
+    - "JOIN 实测：money_flow 裸 symbol × stock_daily_basic 裸 symbol 于 2026-10-14 = 5563 行；× kline_daily 裸 symbol = 5563 行；改用车间后缀键 symbol_canonical 对 stock_daily_basic.symbol = 0 行"
+  caliber_pitfall_zh: >-
+    四条致命口径（本班实测＋③席在册实测合并，实现前必读）：
+    ① money_flow.close 与 money_flow.pct_change 在 2026-09 窗内 144513/144513 全为 0，与③席五年全段读数一致——
+      标签腿必须外接 kline_daily.pct_change（同表名列名相同而一表有值一表恒 0，是本族最易踩的静默坑：
+      用它做残差化的话就是对常数回归的空操作，报错都不会报）。
+    ② main_net_inflow 不等于 super_large＋large：③席在册读数仅 909479/1233202 行成立（占比版仅 343818）——
+      故 main 与超大＋大是两个信号，本卡伪代码按两臂分写，禁当同物两形。
+    ③ 在册先例更正（另起留旧案）：strategy_registry.yaml 第 2508 行自陈"money_flow 每 symbol 每日 2 行去重、剔除周末幻影行"，
+      本班逐年实测 rows 与 uniq(symbol,trade_date) 全等（2021=1058846、2022=1146266、2023=1209660、2024=1233202、2025=861547、2026=489384）
+      且 toDayOfWeek in (6,7) 行数=0 ⇒ 该去重条款在现盘面上是空操作。⑤实现禁把它当"已处理"依赖，另须防历史批次口径变更。
+    ④ 占比腿存在满量程堆积（±100 恰为边界，约 1.14% 全表）——分位化或 winsorize 必须显式声明边界归属，
+      否则极端组会被截断噪声主导。
+
+# ── 三闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml（grep -c strategy_id=162 条，本班实测）
+    ruler_readings: 主力=12／净流入=6／资金流=11／换手=12／股东=1／户数=0／筹码=3／集中度=4；正对照同尺 盘口=7／动量=14／反转=10（尺有判别力，户数 0 命中判真无源）
+    nearest_existing_entries:
+      - 第 2748 行：逆势资金流入（下跌日中主力净流入为正）作双策略共振打分的一项
+      - 第 2828 行：三维打分资金维含 money_flow 五档拆解与 5 日累计净流入
+      - 第 2508 行：剔除规则含主力出货结构（超大单大额流出）
+      - 第 6751 行：回封时大单净流入大于1000万 的打板阈值
+      - 第 4989 行：机构净流入大于1亿 的触发器示例
+    verdict: 非重复（但列 5 条邻近存量，请⑥配对防重复计量）
+    differentiation_zh: 上述存量全部是**离散阈值或打分项**（大于1亿、大于1000万、为正即加分），无一条把净流入做成除以流通市值的连续强度、无一条做按日截面去均值、无一条主张"全域排序无效、只走分组过滤"。本卡的对象是构造后的连续截面因子本体与其非线性用法，差异不可由存量条目调参派生。
+  license_gate: 通过（见 license 段）
+  orthogonality_gate:
+    verdict: 闸缺席（判"缺席"非"未过"，不入过闸账）
+    measured: "scripts/backtest/translated 下 *.csv 实测 0 个（本班 ls 计数），SOP 门槛① 的 15 员基准池仍未物化⇒照游标指示不复跑；在册可用面=⑨席私有池 .runtime/tmp/st-qoder-p09-1015-04/pool6（6 序列／共同日 1855，③席已用其跑通 gate 并立双对照）"
+    self_flag_zh: 外部社区自报"主力净流入比率与换手率相关性 0.68"——若本卡与同批卡 SIC-20261015-P04-08（换手率本体）同池，两者**极可能超在册门柱 0.3**；该数字系非同行评议读数，不得当作已过闸证据，只能当作排闸优先级提示。请⑥⑨把这两张卡排在同一道闸上先测。
+    handoff: 个股横截面因子须先由⑥定"截面折叠口径"再喂闸（③席在册结论：闸契约只吃 date,sig 单列日频，市场级折叠形态 3 条全 reject 于涨跌停族，禁把折叠读数当信号无效下判）
+
+# ── 七门槛可达性预判（判据真源=SOP §9，禁自拟数值）
+seven_gates_precheck:
+  gate5_signal_days: 可达——money_flow 1228 个交易日 ≥120，且日线腿不依赖已断供的 tick（窗右端可用到 2026-10-14）
+  gate6_sample_size: 可达候选——单日截面 5574 只、近端日均非零约 5480 只；早期（2021-01-04=4120 只）截面偏薄，宇宙过滤口径留⑥
+  gate7_not_judged: 门槛②③④⑦ 与窗长 W、分组数、边界 winsorize 量、顺势/反转两臂取舍一律留⑥预注册＋⑦⑧考工，本席不代裁数值
+  unit_risk_zh: 阻断项预判=净流入额与 circ_mv 的单位对表（前者中位 -104.78 疑似万元，后者中位 493741.644 疑似万元）。单位不一致会让强度因子整体缩放，截面 rank 面不受影响、但分组阈值面全错——⑤开工第一步必须先对表再算。
+
+verification:
+  seat: st-qoder-p04-1015-03
+  channel_hits: GitHub API×6 成功查询（另 4 式撞 api.github.com 403 rate limit，如实登记）＋ GitHub raw README 直读×1 ＋ arXiv API×2（正对照通过）＋ WebSearch×3 组（命中约 30 条中外页面）＋ CH 只读实跑×7 脚本
+  verified_at_local: 2026-10-15 08:00-08:2x（Asia/Shanghai，date 实测见台账耗时段）

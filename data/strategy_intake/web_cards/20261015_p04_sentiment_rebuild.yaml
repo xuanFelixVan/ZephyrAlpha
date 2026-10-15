@@ -1,0 +1,278 @@
+# creation_token: st-qoder-p04-1015-05-strategy-intake | created_by: st-qoder-p04-1015-05 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-13
+title_zh: 情绪重建——库内两枚现成情绪序列双双撞在宽度/量能腿上（实测 0.8087 与 0.4583 两个 reject），情绪轴要成立只剩「非宽度成分＋口径分层」这一条腿
+mining_tower: 楼10 情绪族（游标在册「剩余未挖轴＝情绪重建（楼10）」）＋⑨席正交空白轴地图「情绪本体零出分」
+birth_seat: ④
+birth_session: st-qoder-p04-1015-05
+birth_batch: 20261015-p04-05
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（本班真实命中；未直连正文者逐条标「转述引证，禁当已核实」）
+source_links:
+  - role: 机构侧 A 股市场情绪风向标——本卡最有用的构造情报（八指标＋百分位打分＋等权＋分档）
+    url: https://emcreative.eastmoney.com/app_fortune/article/index.html?artCode=20261012155041876813160
+    what_verified: >-
+      WebSearch 命中正文（发布 2026-10-12）：其构造为八个指标——市场换手率、次新股相对强弱指数、昨日涨停个股相对强弱指数、
+      市场上涨家数占比、ETF 场内净申购金额、陆股通资金净流入、股指期货近远月基差、看涨/看跌期权持仓量之比；
+      每个指标取其**历史上所占百分位数**打分，等权加总，总分区间 0-100；分档为 <40 很低、40-50 较低、50-60 中性、
+      60-70 较高、>70 很高；并自陈「统计关系基于自 2018 年以来情绪分值与市场未来 5 日/90 日涨跌，样本量有限可能有统计偏差」。
+      ⇒ 对本卡有三条可直接落地：(1) 情绪指数＝**成分打分制**而非单列；(2) 打分用分位（与本卡 pitfall ② 对分位窗的追问同源）；
+      (3) 八腿里多数在 A 股可自算，本席逐腿对表本库供数面（见 data_source_mapping）。该文自带免责声明＝非同行评议，只作构造参照禁作判据。
+  - role: 短线情绪周期的阶段判据表（词表/事件档参照，数值禁作判据）
+    url: https://caifuhao.eastmoney.com/news/20260314004710025961900
+    what_verified: >-
+      WebSearch 命中《A股情绪周期判断体系（具体实操版）》：涨停家数 >60 家=强、30-60 中性、<30 弱；
+      连板高度 2-3 板=启动期、≥5 板=主升期、高度断板回落=分歧期、连板几乎消失=退潮期；
+      跌停家数 <10 安全、10-30 分歧加剧、>30 且大票大跌=退潮确认；并强调「不看指数涨跌，只看赚钱效应/资金行为/板块联动」。
+      同文在 sina 转载页与头条页重复命中（本班另两处：见下条），本班按「同文多命中只算一处构造来源、不算独立复证」处理。
+  - role: 同一实操体系的第二处独立页面（用于证明该分档在圈层内是共识写法，而非孤例）
+    url: https://3g.sina.com.cn/news/detail/5276130011519216.html
+    what_verified: >-
+      WebSearch 命中，正文与上一条同文（标题「A股情绪周期判断体系（具体实操版）」）。本条只登记「多平台同文流传」这一事实；
+      两页均无样本、无回测、无显著性 ⇒ 数值一律不进卡面判据。
+  - role: 炸板率的口径定义（本卡把它列为可算但未测的候选腿）
+    url: https://www.legulegu.com/stockdata/stock-day-limit
+    what_verified: >-
+      WebSearch 命中该统计页正文：炸板率（广度口径）＝炸板家数 ÷（涨停家数＋炸板家数），分母是当日曾涨停的全部股票，
+      即回答「有多少票封不住」；并给出解读惯例「涨停多、连板高、炸板率低＝短线攻击意愿强＝情绪亢奋」。
+      该页自述依据每日行情逐日统计（本班实测读数示例：2026-09-29 涨停 57 家、连板总数 10 家）。
+      非同行评议＝指标定义参照；定义本身对本卡有用（因为它与库内 blast_ratio/seal_ratio 精确负一的在册发现直接对得上）。
+  - role: 涨停判定与连板回溯的实现坑（施工级情报，思想级不抄码）
+    url: https://cloud.tencent.com/developer/article/2730583
+    what_verified: >-
+      WebSearch 命中《我用 Python 解析通达信二进制日线数据，写了一个 A 股 sentiment cycle 自动筛选引擎》正文要点：
+      涨停幅度按板块不同（主板 10%、创业板/科创板 20%、北交所 30%）；**涨停价必须按前收盘价计算，除权除息日尤其注意**；
+      比较时留 0.001 容差（涨停价四舍五入到分，浮点直接相等会漏判）；连板天数从最后一根 K 线向前回溯至断板为止；
+      并以「涨停家数＋最高连板高度」两维查表定阶段。⇒ 本班把这三条写进本卡伪代码的层 0，因为它们是本库一字板塌零问题（卡10 在册）的近亲。
+  - role: 情绪与收益因果方向的近期实证（学术面，只读元数据）
+    url: http://arxiv.org/abs/2510.15915
+    what_verified: >-
+      arXiv API 查询 all:"investor sentiment" AND all:market timing 返回 5 条真实条目，本条为 2025-09-27
+      『Investor Sentiment and Market Movements: A Granger Causality Perspective』。本席只读 API 元数据与标题，未下载 PDF。
+      它对应的正是本卡的核心未决问题：**情绪是先行指标还是同步/滞后指标**（Granger 方向检验），故列为⑥的命题形态参照。
+  - role: 情绪预测力的时间 horizon 随个股特征变化（对本卡「分臂」写法最有用的一条）
+    url: http://arxiv.org/abs/1803.02962
+    what_verified: >-
+      同批 arXiv 命中 2018-03-08『Does the time horizon of the return predictive effect of investor sentiment vary
+      with stock characteristics?』。⇒ 学术面承认「情绪→收益」的预测窗口不是常数而随标的特征异质，
+      本卡因此反对「单一全局情绪列打全场」，主张按宽度型/文本型两臂分列喂闸与分档。
+  - role: 中国投资者情绪与流动性/波动率的时变关系（本卡臂间关系的学术同族）
+    url: http://arxiv.org/abs/2205.05719
+    what_verified: >-
+      同批命中 2022-05-11『A time-varying study of Chinese investor sentiment, stock market liquidity and
+      volatility: Based on deep ...』。对本卡有用处＝它把 A 股情绪与**流动性、波动率**放在同一时变框架里，
+      与本班实测结果一致：库内情绪序列与池内量能/摆动类指标高相关（reject），说明这三者在市场级面上本就缠绕，
+      分臂不是形式问题而是计量真伪问题。
+  - role: 新闻文本情绪的可用性与失效面（综述）
+    url: http://arxiv.org/abs/1807.06824
+    what_verified: >-
+      arXiv API 查询 all:"news sentiment" AND all:"stock returns" 命中 2018-07-18『News-based trading strategies』。
+      只读元数据。列此是为了给本卡「新闻腿只能作条件而不能作长史信号」的判断一个学术同族位置（本库新闻面实测见下）。
+  - role: 新闻主题如何驱动股票波动的近期框架（2025-10 新文）
+    url: http://arxiv.org/abs/2510.06864
+    what_verified: >-
+      同批第二条命中 2025-10-08『A Framework for Measuring How News Topics Drive Stock Movement』。
+      本席未下载 PDF，只登记该题目存在 ⇒ 文本情绪的研究前沿在**主题级**而非单一极性分，
+      与本库 news_sentiment_window 只存 avg_polarity/sentiment_index 与 top_events_json 的现状相比是更细的一层。
+  - role: GitHub 命中——A 股情绪指标工作台的接口形态（MIT，只读思想）
+    url: https://github.com/Conquerer-yinn/Kakaaaa-quant
+    what_verified: >-
+      GitHub API 查询 q=A股 情绪 指标（total_count=19）第一条：43 星、license=MIT、2026-08-25 推送，
+      仓库自述「面向 A 股研究工作流的轻量量化研究工作台 · 情绪指标 / Excel 历史主表 / 飞书卡片 / FastAPI / React」。
+      本席只读 API 返回的元数据与自述，未逐文件读码 ⇒ 只取「情绪指标可作为独立工作台模块维护」这一形态，零代码复制。
+  - role: GitHub 命中——免后端情绪指标看板（MIT）与 NOASSERTION 仓的许可证对照
+    url: https://github.com/5777-wq/openfinlens
+    what_verified: >-
+      同批命中：openfinlens（MIT，4 星，2026-10-15 推送，自述含「情绪指标」）；
+      另有 jangviktor-web/NiuCap（license=NOASSERTION，11 星）与 Theflowyears/FundAI（license=null）。
+      本班把它们记入许可证闸样本面：NOASSERTION 与 null 一律按「无标准许可证＝只学思想不入码」处理。
+
+# ── 必备② 许可证
+license:
+  github_repo_license: >-
+    GitHub API 3 式合计命中 6 仓：MIT 2（Kakaaaa-quant 43 星、openfinlens）、Apache-2.0 1（LightGBM_Alpha300）、
+    NOASSERTION 1（NiuCap）、license=null 2（ApexTicker、FundAI）。**GPL 命中 0**。
+    题材面：情绪指标工作台/看板 3 仓与本题相关，其余为行情或选股面板。未从任何仓复制代码；伪代码全自拟。
+  gate_verdict: 通过（MIT/Apache-2.0 只读思想与接口语义；NOASSERTION 与 null 只学思想；机构情绪风向标与社区实操帖＝思想级且逐条降级标注）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库。八指标打分制、炸板率定义、涨停按前收盘判定与容差、连板回溯规则均只取思想，由⑤按本库列重写。
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  【一句话】把「市场情绪」当成一个**必须由多成分拼装、且必须先剔掉宽度/量能共因**的状态变量来重建：
+  长史只用两臂（涨跌宽度＋量能）并按可得成分数分层，短史才允许加入杠杆与文本腿；进闸前先对宽度臂做正交化。
+
+  【本班实测的三枚现成件，以及为什么它们都不等于「情绪轴已被挖过」】
+  (1) emotion_index（市场级，8622 行 close_final，1991-06-10 至 2026-10-15）——本班按 components 里
+      「status": "ok」出现次数逐日统计达标成分数，得四层口径：
+      n_ok=1 共 119 日（2005-01-05 至 2005-07-06）；n_ok=2 共 **8133 日**（1991-06-10 至 2025-04-02）；
+      n_ok=3 共 325 日（2025-04-03 至 2026-09-22）；n_ok=4 共 **45 日**（2026-07-14 至 2026-10-14）。
+      权重字段随层变化（早期 C3/C4 各 0.5，现期四臂各 0.25，C1/C2 长期 weight=0.0 且 status=insufficient、obs=24），
+      ⇒ **94.3% 的历史是「宽度＋量能」两臂指数**，四臂完整面只有 45 天。
+      本班另验 stage 谓词不可省：close_final 8622／pre_open 30／auction 17，且 17 个交易日一天出 3 行、9 天出 2 行。
+      version/source 面：v0.1.0 replay 8596 行、live 73 行（live 只 30 个日期）⇒ 该列绝大部分是**回放产物**。
+  (2) news_sentiment_window（22262 行、2627 日、4858 只）——本班按 scope×window_type 分组实测出三段，且三段互不连续：
+      market/1d 2421 行（2019-01-04 至 **2025-09-09 止**）；market/night 206 行（2026-02-24 至 2026-10-14）；
+      symbol/night 19635 行、4857 只，但只覆盖 **2026-02-24 至 2026-08-20**（右端滞后 55 天）。
+      ⇒ 市场级文本情绪可用长段 2421 日＋续段 206 日，**中间空 5.5 个月**；个股级不足 7 个月，截面情绪无法回测。
+      sentiment_index 分布（1/50/99 分位）＝-0.22／0.00／0.48，total_count 均值 213.75、最大 7982。
+  (3) sentiment_panel（仅 59 行）——两个 metric：cb_conversion_premium_median 15 行（2026-09-16 至 10-14）与
+      fear_greed_index 44 行（2026-09-01 至 10-14，source=**alternative.me**）。
+      ⇒ 后者是美股口径的情绪指数，本班**明确反对外推**：把它当 A 股情绪绑定会产生「跨市场情绪」的伪信号；
+      且 6 周长度对任何门槛都不够。
+  【第四闸实跑给出的关键判决】把 (1)(2) 落成 date,sig 单列喂闸（池=夜挖序列面剔标签后 32 员，门柱 0.3 未动）：
+      emotion_index（close_final 全 8622 日）verdict=**reject max|corr|=0.8087，most_similar=net_breadth**；
+      news 市场级合并序列 verdict=**reject max|corr|=0.4583，most_similar=ti_ew_adosc_v1**。
+      ⇒ 现成情绪面与既有池**不是新轴**：前者几乎就是净宽度（0.81），后者与等权 ADOSC（量能摆动）0.46。
+      这正是本班主张「非宽度成分」的原因：如果照抄现成列去建卡，等于给库里的宽度族再记一员（重复计量）。
+  【因此本卡主张的构造（三条腿，按本库可达性排序）】
+      腿 A（长史可用，但必须声明它是宽度/量能两臂而非完整情绪）：直接以 emotion_index 的 n_ok=2 段作**状态变量**用，
+        并按本班实测的分层结果把 2025-04-03 与 2026-07-14 两个断点写进卡面，禁止跨层拼接成一个数；
+        该腿过闸预期为 reject，用途只能是**门控条件**（与卡12 门控同层），不得计为新信号员。
+      腿 B（真正可能出新的臂）＝「剔掉宽度与量能之后的情绪残差」：把候选成分先对 net_breadth 与量能摆动序列回归取残差再进闸；
+        候选成分按本库实测优先级＝①换手率横截面离散度（stock_daily_basic.turnover_rate，2017-01-03 起 2372 日、5904 只，
+        本班近端实测 turnover_rate=0 计数 0/144389＝该列干净）；②昨涨停/次新股相对强弱（可自算，依赖 kline_daily 涨停判定）；
+        ③文本情绪（2421 日长段＋206 日续段）；④两融杠杆（在册 margin_trading 507 日＝门槛⑤不可达）；
+        ⑤ETF 份额/净申购（market_etf_share_snapshot 表存在，本班**未测**跨度与口径）；⑥期货基差与期权 PCR（本班未测，只登记为待测腿）。
+      腿 C（口径治理，不是信号）＝把库内三处「情绪」命名与能力册对齐：本班按「情绪」「情绪周期」「market_sentiment」三词反查
+        均只回 news_sentiment_analyzer 一条（maturity=design），而代码面 zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
+        确实存在（被 tests/trade/plan_engine/ 两处导入）——该缺口与在册 L02-C09（docs/_working/master_backlog/_raw/04_数据供给链.md:5362
+        「capability_lookup sentiment 族索引重建」）同题，本班读数只证明**该单至今未生效**，不另开新单。
+  【与卡10/卡12 的分工】卡10=波动率（价格离散性本体）、卡12=估值赔率（跨资产比价本体）、本卡=情绪（参与者行为强度本体）。
+      本班实测：三者两两并非天然正交（情绪 vs 宽度 0.81、情绪 vs 量能摆动 0.46、ERP 分位 vs 涨跌停热度 0.30 贴柱），
+      所以三张卡**禁按三员计产**，须⑥在闸面上定「谁占哪一员」。
+
+# ── 必备④ 伪代码（全自拟，禁外部逐行搬运）
+pseudocode: |
+  # 层 0：情绪成分的原子度量（全部由本库列自算；涨停判定三条硬规则来自外部施工级情报）
+  limit_price = round(prev_close * (1 + board_limit(board)), 2)   # 主板 0.10／创业板·科创板 0.20／北交所 0.30
+  is_limit_up = abs(close - limit_price) <= 0.001                 # 必须带容差；必须用**前收盘**基准（除权日尤甚）
+  streak      = backtrack_consecutive(is_limit_up)                # 从当日向前回溯到断板为止
+  炸板率       = 炸板家数 / (涨停家数 + 炸板家数)                    # 分母=当日曾涨停的全部票（外部口径定义）
+
+  # 层 1：成分 → 打分（照机构侧构造骨架自拟，窗长与分档由⑥冻结）
+  comp_raw   = {breadth: 上涨家数占比, volume: 等权量能, turnover_disp: 截面换手离散度(横截面std),
+                hot: 涨停家数 + 最高连板高度, blast: 炸板率, text: 市场级新闻 sentiment_index,
+                lev: 两融余额变化}
+  comp_score = {k: pct_within_window(v, WINDOW) for k, v in comp_raw.items()}   # 分位窗禁全样本（卡12 本班实测同型教训）
+  missing_component_rule = drop_and_renormalize_weights(...)   # 危险点：动态重归一会让同一列名跨期变成不同量
+
+  # 层 2：本卡的核心处方——先剔共因，再谈情绪
+  X = [net_breadth_series, adosc_or_volume_sweep_series]        # 池内已被占位的两列（本班实测 most_similar）
+  for c in comp_score:
+      resid_c = c - OLS_fit(c ~ X).predict(X)                   # 残差化＝把宽度/量能买走的信息扣掉
+  sentiment_orth = weighted_mean(resid_c on 达标成分)            # 只在 n_ok 同层内加权
+
+  # 层 3：口径分层谓词（本班实测断点，禁跨层）
+  regime_layer = where(date < 2025-04-03, '2臂', where(date < 2026-07-14, '3臂', '4臂'))
+  # 断点证据＝n_ok 分布 (1:119 日, 2:8133 日, 3:325 日, 4:45 日)；C1/C2 长期 status=insufficient、weight=0
+  assert stage == 'close_final'          # 否则同日出 2-3 行
+  assert source_layer 同质               # replay 8596 行 vs live 73 行禁混作「同一口径现算」
+
+  # 层 4：进闸（本席实跑过的单位＝市场级单列 date,sig）
+  #   直接喂 emotion_index → reject 0.8087（net_breadth）；直接喂 news → reject 0.4583（ti_ew_adosc_v1）
+  #   ⇒ 下游只准喂「残差面」，且报数必须写明是残差面还是原始面；两面禁同池计员
+
+  # 层 5：文本腿的 PIT 与断供处理
+  news_mask = (scope=='market' & window_type=='1d') | (scope=='market' & window_type=='night')
+  gap_flag  = dates_in_gap(2025-09-10, 2026-02-23)              # 本班实测空档 5.5 个月：该段禁插值、禁跨段滚动统计
+  # 个股文本面（scope=='symbol'）只 2026-02-24 至 08-20 ⇒ 截面情绪回测在现库不可开工
+
+  # 层 6：命题形态（留给⑥预注册，本席不定方向判据）
+  #   文献承认两件事：方向可为负（高情绪→低未来收益，反转臂）也可为正（趋势臂），且预测 horizon 随标的特征异质
+  #   ⇒ 双臂并列预注册＋Granger 式方向检验优先于单臂点估计
+
+# ── 必备⑤ 数据源映射（对齐源线谱 SL-*，真源=docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md）
+data_source_mapping:
+  source_line: SL-A09 财经快讯情绪线（A 档；源线谱第 32 行，锚 DS-CLS/DS-EASTMONEY_NEWS/DS-RSS，§SL-A09 U1 原句即「快讯流密度与情感极性能否量化市场情绪并预测次日」，U5 更自认是「L3 情绪变量（纪要§8.1 定桩『情绪』变量的正源）」）＋SL-A01 日线行情线（宽度/换手/涨停成分腿）＋SL-A06 资金流线（ETF/陆股通腿候选）
+  primary_table: c1_market.emotion_index（市场级现算列，components 为 JSON 字符串）；c1_market.news_sentiment_window
+  secondary_table: c1_market.stock_daily_basic（换手率真源，在册卡面已定源，本班补跨度）；c1_market.kline_daily（涨停/连板/炸板成分）；c1_market.sentiment_panel（本班判不可用）；c1_market.margin_trading／market_etf_share_snapshot／hk_connect_flow（候选腿，前二者本班未测跨度）
+  measured_reachability:
+    - emotion_index：8669 行、uniqExact(trade_date)=8626、1991-06-10 至 2026-10-15（右端含当日 pre_open 行）；stage 分布 close_final 8622／pre_open 30／auction 17；同日出 3 行 17 天、2 行 9 天；emotion_index 分位（1/50/99）=0.079／0.5356／0.965，countIf(=0)=0
+    - emotion_index 成分达标分层（本班 countMatches 实跑）：n_ok=1 119 日（2005-01-05 至 2005-07-06）／n_ok=2 8133 日（1991-06-10 至 2025-04-02）／n_ok=3 325 日（2025-04-03 至 2026-09-22）／n_ok=4 45 日（2026-07-14 至 2026-10-14）；首个 n_ok≥3 日＝2025-04-03
+    - news_sentiment_window：22262 行、2627 日、4858 只；三段＝market/1d 2421 行（2019-01-04 至 2025-09-09）、market/night 206 行（2026-02-24 至 2026-10-14）、symbol/night 19635 行/4857 只（2026-02-24 至 2026-08-20）
+    - sentiment_panel：59 行＝cb_conversion_premium_median 15 行（2026-09-16 至 10-14，source=akshare_alt.bond_cb_jsl）＋fear_greed_index 44 行（2026-09-01 至 10-14，source=**alternative.me**）＋其 Extreme Greed/Neutral 分类行；本班判不可用
+    - stock_daily_basic：2017-01-03 至 2026-10-14、2372 交易日、5904 只、10517539 行；近端（trade_date≥2026-09-01）countIf(turnover_rate=0)＝0/144389 ⇒ 该列无零值污染（对在册「换手真源=SDB.turnover_rate」的跨度与质量补测）
+    - IPO 热度腿：ipo_calendar 的 list_date 只 2023-08-21 至 2026-10-15、421 只 ⇒ 情绪代理里的 IPO/新发热度**不可长史重建**（本班实测负结论）
+    - 分红溢价腿：dividend_tax_node 的 ex_date 1991-04-03 至 2026-07-10、5402 只 ⇒ 长史存在但右端滞后约 3 个月；本班未测 node_type 口径
+    - 闸实跑面：emotion 全序列与 news 合并序列各 1 次 gate；五枚本班候选（含卡12 两枚）pool-report n_members=5、n_common_dates=1776、PR=2.2664
+  caliber_pitfall_zh: >-
+    ① 现成 emotion_index 不是「一个量」而是「四个量」：达标成分数从 2 变 3 再变 4，权重同时被重归一（0.5/0.5 → 0.25×4）。
+      把 8622 行当一个口径序列送进任何长史回测，等于让定义漂移穿过被测对象。本班只登记分层证据，不判该件对错（属①写域）。
+    ② C1_limitup_temp／C2_promotion 长期 weight=0.0 且 status=insufficient、obs=24 ⇒ 打板族情绪在现件里**从未真正参与过打分**；
+      若下游以为「情绪指数已含涨停热度」，那是错的（本班实测 components 右端逐条读数）。
+    ③ 分位窗：外部构造用「历史上所占百分位数」，与本卡 pitfall 同源风险——若实现成全样本排名即前视（卡12 本班已实测出一例）。
+    ④ 两枚现成件撞同一根柱子：宽度与量能。残差化是本卡的必要条件而非可选项；不残差化就直接建卡＝给既有池重复计员。
+    ⑤ 文本腿的两段之间空 5.5 个月，且个股段只 6 个月 ⇒ 「A 档文本情绪已可用」这句在册表述（SL-A09 标称分钟级/已运营）
+      在**历史连续性**上与本库面不符，本班只登记读数供①判。
+    ⑥ fear_greed_index 是跨市场件（source=alternative.me），6 周长度＋错误市场＝双重不可用；本卡不开该腿。
+    ⑦ 本卡单位＝市场级单列序列；「情绪高→下周低配」这类截面主张不在本卡范围内，须由⑤另出截面卡并先解决降维列口径（卡10 在册问题）。
+
+# ── 四闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
+    strategy_id_count: 163（本班 grep -c 实测；本班未改册）
+    ruler_readings: >-
+      情绪=13（命中面全部为「情绪作条件/组件」而非情绪本体：第 979 行消息→情绪→资金传导层级文字；第 1045 行与 1126 行 tags；
+      第 1052-1059 行「情绪回暖干超跌」；第 4589 行 7 因子含「情绪分位」；第 6911 行五维信号含「情绪≤22% 分位」；
+      第 7071 行动态门槛含「情绪>60°」；第 11970 行「游资情绪6因子」）；
+      涨停=18、连板=12（厚存量，多属打板/龙头族）；广度=0、sentiment=0、breadth=0。
+      本班不主张「情绪=0」，主张的是：**在册 13 处没有一处把市场级情绪指数当信号本体出分**（与⑨席空白轴地图一致）。
+    positive_controls: 动量=14／波动=11／换手=12／估值=4（同尺同文件；上一班在册 波动=11 与本班逐字相同＝尺未坏）。
+    nearest_existing:
+      - 第 4589 行 7 因子卡（连板高度/封单强度/板块动量/筹码集中度/龙虎榜/量能配合/情绪分位，各需 IC>0.03 且 ICIR>0.5）——本卡若成立，其情绪腿与该行的「情绪分位」是**同一成分的两种供数**，请⑥配对，禁各计一员
+      - 第 11970 行 游资情绪6因子＋量化强度6维双引擎（BM-SEL-22/23/24/25 链）——个股打板决策层，与本卡的市场级状态变量不同单位，但共享涨停族原料
+      - 第 6911 行 五维共振（RSI/量缩/Smart Money/情绪≤22%分位/Wyckoff Spring）——情绪在那里是**门控分量**，与本卡腿 A 用途相同 ⇒ 请⑥判「门控条件」这一族是否需要合并成一条线
+      - 代码面能力：src/zephyr/intelligence/news_sentiment_analyzer.py（capability 册 maturity=design）与
+        zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py（文件存在，被 tests/trade/plan_engine/ 两处导入，未进能力反查面）
+    verdict: 非重复（但邻近存量厚，且本班实测两枚现成序列 reject ⇒ 判「本卡价值在残差构造与口径分层，不在又一根情绪列」）
+    differentiation_zh: 存量把情绪当门控分量或打板决策因子；本卡给出 (a) 现成件的逐层达标成分实测、(b) 残差化必要性（0.8087/0.4583 两个 reject 读数）、(c) 八腿在本库的逐腿可达性——三者均不在存量里。
+  license_gate: 通过（MIT 2／Apache-2.0 1 只读思想；NOASSERTION 1／license=null 2 只学思想；GPL 命中 0；机构风向标与社区实操帖逐条降级为非判据；零代码复制）
+  orthogonality_gate:
+    verdict: 已开并实跑——**两枚现成情绪面双双 reject**，本卡因此不申领「新轴」，只申领「残差面」这条尚未测过的腿
+    measured: >-
+      工具与门柱同卡12（signal_orthogonality.py，|spearman|≤0.3，未动柱）。
+      适配＝CH 严格读通道落 date,sig 单列到仓外 .runtime/tmp/p04_05_pool/；池＝夜挖序列面剔 mkt_fwd5/mkt_fwd10 后 32 员。
+      读数：gate emotion_index（close_final 全史）verdict=**reject max|corr|=0.8087 most_similar=net_breadth**；
+      gate news 市场级合并序列 verdict=**reject max|corr|=0.4583 most_similar=ti_ew_adosc_v1**；
+      五枚本班候选自池 pool-report n_members=5 n_common_dates=1776 PR=**2.2664**。
+      与卡12 合并计量：本班五序列共 2.27 个独立轴，其中情绪两枚均被判与既有宽度/量能族同物 ⇒ **情绪面当前实占增量轴≈0**，
+      除非⑤实现残差化后另测（本席未造残差序列，因残差化的自变量选择属⑤/⑥写域，本席不代造）。
+    measurement_note: >-
+      如实降权两条：(1) 本班喂进闸的 emotion 序列取了 close_final 全史单层拼接，**这恰是 pitfall ① 警告的跨层拼接**，
+      所以 0.8087 这个数的含义是「现成列整体与净宽度高度同物」，不是「情绪与宽度无关地被否」；
+      残差面或分层面的读数本班未产生，不下结论。(2) 0.4583 那一对的相关对象是技术摆动指标（ADOSC 族），
+      若⑤改剔不同共因，reject 值可能变化——这是构造依赖，不是门柱问题。
+  implementation_gate: 未开（本席不实现）；⑤开工前置三件＝残差化的自变量清单定案、n_ok 分层断点写进取数谓词、涨停判定按前收盘＋0.001 容差
+
+seven_gates_precheck:
+  gate5_signal_days: 分层可达——腿 A（两臂面）1991 至 2025-04 共 8133 日远超门槛；腿 B 的文本长段 2421 日（2019-01-04 至 2025-09-09）可达但右端断供；四臂完整面 45 日＝门槛⑤不可达
+  gate6_sample_size: 可达（腿 A/B 均为日频市场级）；截面情绪腿不可达（个股文本仅 2026-02-24 至 08-20，6 个月）
+  gate7_not_judged: 门槛②③④⑦ 与成分清单、打分窗长、分档阈值（40/50/60/70 这类外部数值本班**不作判据带入**）、残差化自变量、方向双臂命题一律留⑥预注册＋⑦⑧考工
+  not_reachable_note: 不含 IPO/新发热度腿（list_date 只 3.2 年）；不含 fear&greed 腿（美股口径＋6 周）；不含个股截面情绪腿（文本 6 个月）；ETF 份额/期货基差/期权 PCR 三腿本班未测，只登记为待测
+
+verification:
+  seat: st-qoder-p04-1015-05
+  channel_hits: >-
+    ①WebSearch 中文两组（ERP 择时 1 组＋情绪指标构造 1 组），入册 6 处社区/机构正文命中；
+    ②arXiv API 3 式（https 端点）：news sentiment×stock returns 命中 2 条、investor sentiment×market timing 命中 5 条、
+      equity risk premium 命中 5 条；每条只读 API 元数据，未下载 PDF；
+    ③GitHub API 3 式（total_count 1／0／19，命中 6 仓，逐仓读 license 字段）；
+    ④CH 只读探针 4 批（表发现 system.tables 198 枚、system.columns 结构、跨度与 NULL 率、components 达标分层 countMatches）；
+    ⑤闸实跑 gate×5＋pool-report×2；⑥本仓代码/能力面直读（CapabilityLookup 七词、tests 导入面、master_backlog L02-C09 在册条目）
+  capability_note: >-
+    RULE-CAPABILITY-LOOKUP 本班实跑（session_id=st-qoder-p04-1015-05）：「情绪」n=1＝news_sentiment_analyzer
+    （canonical src/zephyr/intelligence/news_sentiment_analyzer.py，module_id MOD-INT-AISA，maturity=design，status=alive）；
+    「情绪周期」n=1 与「market_sentiment」n=1 **同回这一条**；「分位」「股债」「估值」「风险溢价」四词 n=0（同次实跑）。
+    含义两条：(1) 情绪族能力在册只有一条且仍是 design 成熟度，本卡禁在此之外新造舆情聚合层（check_file_canonical 会拦）；
+    (2) 该条自述里点名的正交姊妹 market_sentiment_analyzer 不在反查命中面内，而该文件真实存在（tests 两处导入）——
+    与在册 L02-C09「capability_lookup sentiment 族索引重建」同题，本班读数只证该单未生效，不另开新单。
+  residual_uncertainty: >-
+    ①本班未测：market_etf_share_snapshot／hk_connect_flow／期货基差／期权 PCR 四腿的跨度与非零率（在册已判 hk_connect_flow 43 日不可达，本班不复测）。
+    ②n_ok 分层是用 components 字符串里 status 出现次数量的，未读生成器代码 ⇒ 若同一层内还有其它权重差异，本班尺看不见。
+    ③news 合并序列把 market/1d 与 market/night 两段直接拼接（跨空档），这本身是本卡 pitfall ⑤ 反对的做法，
+      本班用它只为得到「文本腿与量能摆动是否共线」这一个读数，**不构成对该序列可用性的背书**。
+    ④dividend_tax_node 的 node_type 口径未读，分红溢价腿只验存在。
+    ⑤本班未造残差序列，因此「残差化后能否过闸」是本卡的待验主张，不是本班结论。

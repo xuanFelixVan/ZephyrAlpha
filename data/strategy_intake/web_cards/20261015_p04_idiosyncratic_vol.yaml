@@ -1,0 +1,263 @@
+# creation_token: st-qoder-p04-1015-04-strategy-intake | created_by: st-qoder-p04-1015-04 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-10
+title_zh: 低波动溢价的双臂试金——极差族与收盘族在标准化面同柱贴线，真正交只剩「系统/特质分解」一条腿
+mining_tower: 楼5 波动率族（docs/_working/automation_campaign/pulse/mining_directions.md 表行5）＋⑨席正交空白轴地图「波动率本体零出分」
+birth_seat: ④
+birth_session: st-qoder-p04-1015-04
+birth_batch: 20261015-p04-04
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（本班真实命中；未直连正文者逐条标「转述引证，禁当已核实」）
+source_links:
+  - role: arXiv API 直读命中——极差波动率估计量用于市场压力监测（近期实证，非股票截面）
+    url: http://arxiv.org/abs/2603.02898
+    what_verified: >-
+      arXiv API 查询 all:range-based volatility 返回 4 条真实条目，本条为 2026-03-03 / q-fin.ST
+      『Range-Based Volatility Estimators for Monitoring Market Stress: Evidence from Local Food Price …』。
+      本班只读 API 元数据与摘要标题，未下载 PDF。它证明该估计量族在 2026 年仍被用作「状态监测」而非「截面选股」。
+  - role: arXiv API 直读命中——极差估计量序列的可预测性（机器学习面）
+    url: http://arxiv.org/abs/1803.07152
+    what_verified: >-
+      同批查询命中 q-fin.CP 2018-03-19『Exploring the predictability of range-based volatility estimators
+      using RNNs』⇒ 极差估计量的文献主流信息在「预测下一期波动」而非「预测下一期收益」，
+      与本卡只把方向先验列为待考、不列为结论的写法一致。
+  - role: arXiv API 直读命中——极差波动建模与预测的应用集
+    url: http://arxiv.org/abs/1702.02268
+    what_verified: >-
+      同批查询命中 stat.AP 2017-02-08『Efficient Modelling & Forecasting with range based volatility
+      models and application』。
+  - role: arXiv API 直读命中——已实现波动＋EGARCH 预测改进（指数级）
+    url: http://arxiv.org/abs/2502.02695
+    what_verified: >-
+      同批查询命中 econ.EM 2025-02-04『Improving volatility forecasts of the Nikkei 225 stock index
+      using a realized EGARCH model …』⇒ 条件波动率／期限结构路线的近期同族工作（本卡不含该腿，见 dedup_gate）。
+  - role: A 股低波动异象的「本体在哪一层」实证（本班最有用的构造情报）
+    url: https://mall.cnki.net/magazine/article/CDMD/1020059260.htm
+    what_verified: >-
+      WebSearch 命中知网期刊条目《低波动率异象实质》摘要页（A股 2003-01 至 2018-12 月度数据）。摘要原文结论三条：
+      (1) 系统波动率越高回报越高；(2) 特质波动率越高回报越低；(3) 特质波动率异象更为显著，两种效应叠加才使
+      总波动率呈低波动率异象。另报成因侧「彩票效应解释能力更强」（相对异质信念），且对 Fama-French 三因子与
+      CAPM 两种特质波动率算法均成立。本席未取全文＝摘要页直读，结论按摘要文字书写。
+  - role: A 股低风险异象的 Beta 与波动率之争（双变量排序）
+    url: https://d.wanfangdata.com.cn/thesis/D03552923
+    what_verified: >-
+      WebSearch 命中学位论文页《低风险异象之「谜」：来自A股市场的证据》摘要：单变量排序下 Beta 异象与波动率异象
+      均显著，经 CAPM/三因子/五因子风险调整后不消失；双变量排序下，控制波动率后按 Beta 排序则 Beta 异象消失，
+      控制 Beta 后按波动率排序则波动率异象仍在⇒ 波动率是本体、Beta 是表象。
+      同篇另有 max.book118.com 预览页作第二命中（预览正文不可达，只登记重复命中这一事实）。
+  - role: 极差估计量效率谱与适用前提（社区指标页，非同行评议，只作风险参照）
+    url: https://ar.tradingview.com/scripts/yangzhang/
+    what_verified: >-
+      WebSearch 命中该指标页正文：相对收盘-收盘估计量，Parkinson 约 5×、Garman-Klass 约 7.4×、Yang-Zhang 最高约
+      14× 的效率优势；Rogers-Satchell 为漂移无关（趋势行情更优）；Garman-Klass 假定无跳空，Yang-Zhang 同时处理
+      漂移与隔夜跳空。页面并列出四条原始文献卷期（Parkinson 1980 Journal of Business 53(1) 61-65；
+      Garman-Klass 1980 同刊 67-78；Rogers-Satchell 1991 Annals of Applied Probability 1(4) 504-512；
+      Yang-Zhang 2000 Journal of Business 73(3) 477-491）。卷期系该页文字，本席未直连原刊＝转述引证。
+  - role: 同一效率谱的中文复述（独立第二命中，降级标注）
+    url: https://mguba.eastmoney.com/mguba/article/0/189140076/
+    what_verified: >-
+      WebSearch 命中正文：标准差是各调整方法的基础；Parkinson 用最高/最低价极差、收敛更快；
+      Garman-Klass 加入开/收盘作无偏修正但无法解决跳空开盘；Yang-Zhang 本质是各估计量的加权平均、适用于跳空。
+      东方财富股吧文章＝非同行评议，只作口径参照，不得作为任何判据来源。
+  - role: 竞争性文献线索（期刊目录机翻页，正文不可达，禁当已核实）
+    url: https://m.zhangqiaokeyan.com/journal-foreign-215/20102/?page=1
+    what_verified: >-
+      WebSearch 命中《The journal of financial research》2010 年第 2 期目录页（机翻），两条与本卡直接同名题：
+      Chua/Goh/Zhang『EXPECTED VOLATILITY, UNEXPECTED VOLATILITY, AND THE CROSS-SECTION OF STOCK RETURNS』；
+      Akay/Griffiths/Winters『ON THE ROBUSTNESS OF RANGE-BASED VOLATILITY ESTIMATORS』。
+      目录命中≠正文，本席未取到页码与结论数值，下游引用须先自查原文。
+  - role: 本班直读失败登记（不可达面，禁据此判「无文献」）
+    url: http://m.zhangqiaokeyan.com/academic-journal-foreign-pmc_plos-clinical-trials_thesis/040002100867.html
+    what_verified: >-
+      WebFetch 直连该页（机翻题名《基于范围的波动率，预期的股票收益率和低波动率异常》，
+      对应英文 Range-based volatility, expected stock returns, and the low volatility anomaly）
+      返回的是验证码脚本正文，原文标题/作者/期刊/数值均不可核。本班只保留「检索命中一条同题文献存在」这一事实，
+      不引用其任何数值——低波动溢价的方向先验取自上面两条可达的 A 股实证摘要。
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: >-
+    本班 GitHub API 3 式（PEAD+china+stock／low+volatility+factor+china／volatility+estimator+parkinson+python）
+    命中面极窄，total_count 分别为 0、1、2。可用仓仅 3 个：yashvaishnav-iitd/Option-volatility-suite（MIT，
+    2026-09-13 推送）、sumedh-ranjane/ICICI-Options-Volatility-Pricing-Analysis（license=null）、
+    iciciprumf/Volatility-creates-opportunity-in-Indian-equities（license=null，3 星，2015-04-29 停更）。
+    三仓均属期权定价/印度市场评论题材，与横截面波动率因子无直接可借实现。
+  gate_verdict: 通过（MIT 1 仓只读思想与接口语义，license=null 2 仓只学思想；本卡零代码参考，伪代码全自拟）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库。Parkinson/Garman-Klass/Rogers-Satchell/Yang-Zhang 四条公式只取思想，实现由⑤按本库 OHLC 列重写。
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机＝楼5 在分数册是「本体空白、条件占位」（⑨席在册读数：波动率名只作事件触发条件出现在
+  TDM-E-L1-S2/calibration/*_ind_vol*_high_event，34 行占位，零「以波动率为信号本体」的出分行），
+  而 avg_abs_ret 本体 4 卡全 fail、level 面禁再加卡（⑨席 04 班方向单第 2 条）。
+  本班不干「换一个新估计量再赌一次」的事，而是先把 ⑨席那句「换构造且不与其共线」当**可测命题测一遍**，
+  再决定这张卡的主腿放哪。测完的结论与直觉相反，所以把结论写在最前面。
+
+  测得结论一（极差族不是六个信号，是一个）：把已物化的 6 枚波动率序列
+  （Parkinson／Garman-Klass／Rogers-Satchell／Yang-Zhang／histvol／natr，等权市场级，20 或 14 日窗）喂 pool-report，
+  得 n_members=6、共同日 1504、**有效独立信号数 PR=1.0529**，两两相关全在 0.9438（histvol↔natr）至
+  0.9981（parkinson↔garman_klass）之间。⇒ 沿「多找几个极差变体」这条线加 6 张卡＝同一轴重复计量 6 次，
+  按 SOP v1.4.0 正交挖矿制只能计 1.05 员。
+
+  测得结论二（真正交不是「换估计量」买来的，是「标准化」买来的，而且只买到贴柱）：
+  以 parkinson 为候选喂准入闸——**水平面 vs avg_abs_ret＝0.3881，判 reject**；换成 20 日 z 面后
+  parkinson_z20＝0.2977、garman_klass_z20＝0.2763、**而收盘族的 histvol_z20＝0.2999**，三者同判 pass。
+  关键在 histvol：它与 avg_abs_ret 同属收盘-收盘家族，却在 z 面一样降到 0.2999，
+  说明把相关压到 0.3 以下的功劳在 z 化（减自身滚动均值、除滚动标准差），不在极差构造本身；
+  且三根读数全部紧贴 0.3 这根柱，最小余量只有 0.0001（histvol_z20）。
+  ⇒ 本卡禁止把「极差构造」登记为正交性来源，只允许登记为「同一波动率轴上的更低噪声测量」。
+
+  因此主腿改走**信息源分解**：按上列两篇 A 股实证（知网《低波动率异象实质》、万方《低风险异象之「谜」》）
+  的同向结论，低波动溢价的载体是**特质波动率**（对市场回归取残差波动），而**系统波动率符号相反（正相关）**；
+  总波动率之所以看起来呈「低波动溢价」，是两股符号相反的力叠加后的净余。据此立**双臂＋一审计列**，
+  三列分别喂闸、禁折叠成一列只测一次：
+  臂A（特质波动，方向先验＝低特质波动押正超额）＝个股收益对市场收益回归的残差波动；
+    极差估计量在此只作残差/波动的低噪声前置，不作新信息；
+  臂B（系统波动＝beta × 市场波动那一成分，方向先验＝正）＝与臂A 做双变量排序互控。
+    依万方文结论「控制波动率后 Beta 异象消失」，beta 面应作**对照**而不是第三个成员；
+  审计列（总波动 ≈ 系统项＋特质项的方差分解）只用于核对分解是否算错，禁当信号进卡考。
+
+  与在册存量的两条关系（防重复计量）：其一，「RV_5d/RV_20d 压缩→变盘预警」这条**波动率期限结构**腿已在
+  strategy_registry 第 10919-10926 行『波动率体制转换预警』量化在册，本卡**不含**该腿，下游若想加须先过那条存量卡的去重；
+  其二，第 11480 行起『Barra 风格因子 A 股适配』把 VOL=252 日收益波动率倒数当作十大风格因子之一并「依次正交化」，
+  本卡与它的差别是截面单变量双臂＋日频 PIT＋符号由分解层决定而非取倒数。该差异是否足以构成新轴由⑥排闸判，本席不代裁。
+
+# ── 必备④ 伪代码（本席自拟，零外部代码转写）
+pseudocode: |
+  # 输入 c1_market.kline_daily(trade_date, symbol, open, high, low, close, pct_change, symbol_canonical)
+  # 市场基准收益 r_mkt[d] 的三条候选通道见 data_source_mapping，本席不代选
+  for d in 交易日:
+      r = 个股对数收益 或 pct_change[d]            # 与标签同源；两种口径须择一写死进卡面假设
+
+      # ── 测量精度层（极差族；本班实测＝同一轴，禁按 6 员计）
+      pk = 0.5 * ln(high/low)^2                    # Parkinson；high=low 时恒为 0（见 pitfall ①）
+      gk = 0.5*ln(high/low)^2 - (2*ln2-1)*ln(close/open)^2    # Garman-Klass（假定无隔夜跳空）
+      yz = 加权组合(开盘跳空项, 收盘项, rogers_satchell项)     # 权重与漂移假设留⑥冻结
+      rs = ln(high/close)*ln(close/open) + ln(low/close)*ln(close/open)   # 漂移无关项
+
+      # ── 滚动窗总波动（窗长 W0/W1 留⑥预注册，本席不拍数值）
+      s_range = sqrt( rolling_mean_20( pk 或 gk 或 yz ) )
+      s_cc    = rolling_std_20( r )                # 与在册被判负的 avg_abs_ret 同族，须单独喂闸
+
+      # ── 主腿：系统/特质分解（本卡的信息源所在）
+      beta_i, alpha_i = rolling_OLS_60( r_i ~ r_mkt )     # 估计窗/winsorize/停牌日处理 = ⑥须声明
+      sys_i  = beta_i * r_mkt[d]
+      resid_i = r_i - (alpha_i + sys_i)                  # alpha 是否一并吸收须声明（影响残差方差水平）
+      s_idio = rolling_std_20(resid_i)                   # 臂A：特质波动（先验负向）
+      s_sys  = rolling_std_20(sys_i)                     # 臂B：系统波动（先验正向）
+      s_total_check = rolling_var_20(r_i) - (s_sys^2 + s_idio^2)   # 审计列，禁进卡考
+
+      # ── 进信号前的强制一步（本班实测：省掉这步会被闸拒）
+      z_idio = (s_idio - rolling_mean_20(s_idio)) / rolling_std_20(s_idio)
+      z_sys  = (s_sys  - rolling_mean_20(s_sys )) / rolling_std_20(s_sys )
+      # 注：水平面 vs avg_abs_ret = 0.3881 判 reject；z 面 0.2977 判 pass 且余量 0.0023。
+      #     两问两答，故 z 化是「必需项」而非「可选项」，且过闸结论不稳健（贴柱）。
+
+      sig_A = rank_cs( z_idio ) 按行业×市值分组去规模    # 分组数与降维列口径留⑥
+      sig_B = rank_cs( z_sys )
+
+      # ── 宇宙
+      剔除 金融（银行/券商/保险）——理由见 pitfall ④，与卡11 共用证据链
+      剔除 ST、停牌、上市龄 < 估计窗
+      一字板日 high=low ⇒ 极差项 = 0 属缺测而非零波动，按 pitfall ① 的方案处理
+
+      # ── 标签
+      y = 未来 n 日累计收益（kline_daily.pct_change 口径）；n、折叠方式、多空对称性全留⑥预注册
+
+# ── 必备⑤ 数据源映射
+data_source_mapping:
+  source_line: SL-A01 日线行情线（kline_daily 族）。本卡只用行情线；SL-A04 估值面被在册「daily_valuation 47 日」整体阻塞，不取。
+  primary_table: c1_market.kline_daily
+  secondary_table: c1_market.kline_index 与 c1_market.index_quote 与 c1_market.index_constituent（市场基准收益三候选，择一权在⑤）
+  measured_reachability:
+    - kline_daily 跨度 1990-12-19 至 2026-10-14；uniqExact(trade_date)=8741；uniqExact(symbol)=5922
+    - OHLC 四列满值率（2026-09-01 起窗 144576 行）：countIf(high>0)=countIf(low>0)=countIf(open>0)=countIf(close>0)=144576/144576，即 100%
+    - 同窗 countIf(high>low)=144305/144576＝99.81%；high=low（一字/无波动日）占比实测 0.0042313（2025-01-01 起全样本）＝极差族约 0.42% 样本天生塌零
+    - 本班 pool-report 实跑面：6 枚波动率序列共同日 1504（序列面 2019-01/02 起、2025-09-09 止），PR=1.0529
+    - 本班 gate 实跑面：候选 parkinson 水平面与三枚 20 日 z 面（parkinson/garman_klass/histvol）对池 {avg_abs_ret, avg_abs_ret_z20}，n_overlap 1485 至 1507
+    - 市场基准三通道只验存在未验口径：system.tables 命中 kline_index、kline_index_calc、index_quote、index_constituent、index_weight、market_index_meta；其收益列非零率与指数形态归一本班未测（在册已知 kline_index 双形态分裂、000300 全程单裸形态）
+  caliber_pitfall_zh: >-
+    ① 一字板与无波动日 high=low ⇒ Parkinson/GK 的极差项恒等于 0。这个 0 是缺测不是低波动，
+      直接进滚动均值会把 0.42% 样本变成向下偏置（且涨跌停日往往正是高波动日，偏置方向与直觉相反）。
+      处理三选一（剔除／前值替代／与收盘项取大）须由⑥冻结并写进卡面假设。
+    ② 极差估计量的经典效率优势（约 5×/7.4×/14×）指的是**同期波动率估计的方差**更小，
+      不等于对**未来收益**预测力更强。本班 arXiv 三条命中全是「预测下一期波动」或「监测压力」用途，
+      无一条支持「极差水平预测下一期横截面收益」。下游禁把「估计更准」转写成「信号更强」。
+    ③ 本卡所有闸读数是在**市场级（等权指数）单列序列**之间测的，而本卡主张的是**个股截面**因子。
+      单位不同：聚合序列相关只证「市场层波动率水平信息」重复，不证截面特质波动与既有池正交。
+      这是本班对闸面的一条观测（不是判据改动）：现契约 --candidate/--pool 只吃 date,sig 单列，
+      截面候选须先约定一个降维列（例如多空价差序列或截面均值序列）才能进闸，否则「过闸」的含义不明。降维口径归⑥。
+    ④ 特质波动的估计窗与停牌/涨跌停处理直接改变符号读数（残差被截断即压低特质面）。
+      在册已有的 34 行 *_ind_vol*_high_event 用的是事件触发口径，与本卡的截面排序口径禁互相引用为同一量。
+    ⑤ 跨表 JOIN 用裸 6 位 symbol（在册卡07 实测：money_flow.symbol_canonical ↔ stock_daily_basic.symbol＝0 行静默空集）；
+      kline_daily 同时有 symbol 与 symbol_canonical 两列，⑤实现须先断言行数非零再接下一跳。
+
+# ── 四闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
+    strategy_id_count: 163（本班 grep -c 实测；上一班在册 162，本班未改册，增 1 属他班在途）
+    ruler_readings: >-
+      极差=0／Parkinson=0／特质=0（这三个零命中以同尺正对照「波动=11」证明尺有判别力）；
+      低波=1（唯一命中＝第 10446 行把「低波动=价值投资/50-70%」写进体制-风格配比的 entry_logic 文字，非独立信号卡）；
+      波动=11（含第 145 行仓位层「波动率目标化 K=target_vol/σ」、第 10919-10926 行『波动率体制转换预警』、
+      第 11489 行 Barra VOL=252 日收益波动率倒数、第 12800 行 C4 多因子合成含波动、第 11890 行为散文噪声命中）。
+    positive_controls: 盘口=7／动量=14／换手=12／资金流=11（同尺同文件，尺有判别力）。本班不采信英文子串计数（防上一班在册的 turnover=162 类伪影）。
+    nearest_existing:
+      - 第 10919-10926 行『波动率体制转换预警』：RV_5d/RV_20d<0.5 加 HMM 后验概率>0.6 加 GARCH 预测/当前已实现>1.5——期限结构与体制切换腿，本卡明确不含
+      - 第 11480 行起『Barra 风格因子 A 股适配』（STR-MULTIFACTOR-093）：VOL=252 日收益波动率倒数作十大风格之一并依次正交化——本卡是单变量截面双臂，符号由分解层决定而非取倒数
+      - 第 10446 行 体制-风格配比：低波动只作为仓位与风格选择的条件，非选股信号本体
+    verdict: 非重复（但邻近存量厚，须⑥配对防重复计量）
+    differentiation_zh: 存量把波动率用作条件、仓位或风格权重，或用作期限结构预警；本卡把波动率拆成系统与特质两层，主张二者符号相反且以特质层为选股本体。该差异是否构成新轴由⑥排闸判。
+  license_gate: 通过（MIT 1 仓只读思想＋license=null 2 仓只学思想＋期刊与社区页＝思想级；GPL 命中 0；零代码复制）
+  orthogonality_gate:
+    verdict: 闸**已开并实跑**（本班对在册「闸缺席」作范围改判，见 measurement_note）
+    measured: >-
+      工具＝scripts/backtest/fexam/signal_orthogonality.py，gate 与 pool-report 两子命令本班均真跑通。
+      入参适配＝在仓外临时面 .runtime/tmp/p04_04_probe/pool_datesig/ 把采集面的 trade_date,value 两列改名为 date,sig，
+      共 34 枚序列（第 35 枚 streak_distribution.csv 列集为 trade_date,bucket,value，不合闸契约，本班跳过并如实登记）。
+      本席未改工具、未改采集面、未动 |corr|<=0.3 门柱（这是 ⑨席在册「修⑤ 正解改写＝改喂给闸的输入指向」那条正解的复跑）。
+      读数四条：pool-report（6 波动率序列）n_members=6 n_common_dates=1504 PR=1.0529；
+      gate parkinson 水平面 verdict=reject max|corr|=0.3881 most_similar=avg_abs_ret（n_overlap=1507）；
+      gate parkinson_z20 pass 0.2977（对 avg_abs_ret_z20 为 0.1763）；
+      gate garman_klass_z20 pass 0.2763（0.1569）；gate histvol_z20 pass 0.2999（0.1936，n_overlap=1485）。
+    measurement_note: >-
+      上一班（p04-03）判「闸缺席」的尺挂在 scripts/backtest/translated/*.csv，实测 0 个；本班把尺挂到
+      docs/04_research_records/mining/ledgers/nightmine_20261010/series/ 实测 35 枚序列（其中 34 枚可喂）。
+      ⇒ 池物化腿在「夜挖序列」这一面本来就存在，缺的只是列名契约（与 ⑨席 04 班在册结论互证为真）。
+      官方 15 员池那条腿本席**未**动也未物化（其真源仍是 ibt_runner.py:58-74 的代码面，在册未修）。
+      故本席只登记「闸对夜挖序列面可用」，供⑩把「闸整体缺席」改判为「两池之中一面可用」，不代裁全仓口径。
+    self_flag_zh: 三条须优先排闸。臂A（特质波动）与在册被判负的 avg_abs_ret 本体——本班只在市场级测过，截面面未测；臂B（系统波动）与『波动率体制转换预警』的 RV 期限结构列；极差测量层与卡08 的 Amihud 交叉臂分子同属「收益绝对值/量」族系，⑥禁把三处读数当三根独立轴。
+    handoff: 请⑥把 z_idio 与 z_sys 作两列分别喂闸；水平面与 z 面不得混报（本班实测同一候选两问两答：reject 0.3881 与 pass 0.2977）。
+# ── 七门槛可达性预判
+seven_gates_precheck:
+  gate5_signal_days: 可达——kline_daily 8741 个交易日，右端 2026-10-14；波动率腿不吃 tick，也不吃已断供的估值表
+  gate6_sample_size: 可达——近端 5922 只票池，去 ST/金融/上市龄后仍为厚截面
+  gate7_not_judged: 门槛②③④⑦ 与 W0/W1/估计窗长、beta 是否 winsorize、极差塌零处理方式、截面降维列口径、双臂符号冻结一律留⑥预注册＋⑦⑧考工，本席不代裁数值
+  not_reachable_note: 本卡不含波动率期限结构腿（在册已量化），不含期权隐含波动率腿（本库无期权链日线，本班未测）
+
+verification:
+  seat: st-qoder-p04-1015-04
+  channel_hits: >-
+    ①闸与序列面实跑＝signal_orthogonality.py pool-report×1＋gate×4（报告落 .runtime/tmp/p04_04_probe/*.json，收班删）；
+    ②arXiv API 走 **HTTPS**（http 端点本班三次返回空体 len=0，改 https://export.arxiv.org 后 HTTP=200 size=5810 恢复）：
+      all range-based volatility 命中 4 条；正对照 all earnings announcement 命中 6 条；
+      证明通道可用后，另两式（post-earnings announcement drift AND China／low volatility AND cross-section）
+      零命中判为**真稀疏**而非通道故障；
+    ③GitHub API 3 式（total_count 0/1/2，逐仓许可证见 license 段）；
+    ④WebSearch 两组（英文学名词 1 组＋中文异象词 1 组，合计约 30 条命中，入册 9 条）；
+    ⑤WebFetch 直读 1 次失败（验证码页，已登记为不可达）；
+    ⑥知网/万方/机翻目录页 4 处（均摘要页，正文未取）；
+    ⑦CH 只读实跑 4 批探针（zephyr.data.ch_reader.query_rows 严格读通道）；
+    ⑧能力反查真跑（见 capability_note，本班取到非空 stdout）
+  capability_note: >-
+    RULE-CAPABILITY-LOOKUP 本班同步实跑（CapabilityLookup().find，session_id=st-qoder-p04-1015-04）：
+    「波动率估计」n=3 命中（15.2s）＝c1_runner／fhs_var_es_engine／shrinkage_provider；
+    「应计」n=0、「特质波动」n=0、「财报 因子」n=0（各 0.1-0.9s，以「波动率估计」三条为同尺正对照，尺有判别力）。
+    三条命中读数含义＝本库既有波动率能力全在**风控与 regime 供给**层：c1_runner 的 build_volatility_schedule
+    自述「从 OHLCV 算市场等权实现波动率（年化）」、fhs_var_es_engine 为 GARCH(1,1)＋FHS 产出 VaR/ES、
+    shrinkage_provider 为波动率 4 档 mock 与 Schedule 供给。
+    ⇒ ⑤实现本卡时**禁新造市场级波动率函数**（口径可与 c1_runner 对齐复用），但「截面个股特质波动率」本库零能力＝须新写。
+  verified_at_local: 2026-10-15 08:46 至 09:2x（Asia/Shanghai；date 实测锚点见台账耗时段）

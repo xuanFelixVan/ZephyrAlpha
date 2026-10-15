@@ -1,0 +1,114 @@
+# creation_token: st-qoder-p04-1015-03-strategy-intake | created_by: st-qoder-p04-1015-03 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-08
+title_zh: 换手率流动性溢价双臂——水平值（溢价臂）与换手异动（不确定度臂）
+mining_tower: 楼6 流动性族（docs/_working/automation_campaign/pulse/mining_directions.md 表行6）＋⑨席正交空白轴地图"流动性"
+birth_seat: ④
+birth_session: st-qoder-p04-1015-03
+birth_batch: 20261015-p04-03
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（本班真实命中；未直连正文者已标转述引证）
+source_links:
+  - role: 换手率作为流动性代理的经典实证（思想级）
+    url: http://www.scielo.org.pe/scielo.php?script=sci_arttext&pid=S2077-18862017000200005
+    what_verified: "WebSearch 命中正文参考文献表，逐字取到 Datar/Naik/Radcliffe(1998) Liquidity and stock returns — an alternative test, Journal of Financial Markets 1: 203-219（本席未直连原刊 PDF＝转述引证）"
+  - role: 同一条文献的第二与第三独立命中（用于自证引用可回查，禁凭记忆写法）
+    url: http://vip.hnadl.cn/article/detail.aspx?id=20146837
+    what_verified: "WebSearch 命中引文行 Datar V T, Naik N Y, Radcliffe. Liquidity and stock returns — an alternative test, Journal of Financial Markets 1998,1:203-219；同页并列给出 Amihud(2002) 与 Chen/Roll/Ross(1988)——注意作者第三名是 Radcliffe 而非 Radwan，本班首轮检索词写错已用此命中改正"
+  - role: 换手率与预期收益负相关的综述（非同行评议，仅作口径参照）
+    url: https://baike.eastmoney.com/item/%E8%82%A8%E7%A5%A8%E6%B5%81%E5%8A%A8%E6%80%A7%E6%BA%A2%E4%BB%B7%E7%90%86%E8%AE%BA
+    what_verified: WebSearch 命中——Haugen 与 Baker(1996) 报 Russell 3000 成分股 1979-1993 预期收益与换手率显著负相关，英法德日类似；Hu(1997) 东京 1976-1993 高换手预期收益低；并声明换手率比价差更能代表流动性（同时含价格与成交量因素）
+  - role: 竞争性解释（换手率高可能是不确定度而非流动性）
+    url: https://qks.shufe.edu.cn/J/CDXB/Article/Details/A0136942e3-4ab3-4dff-a60f-99e23aec1b58
+    what_verified: "WebSearch 命中条目页『Turnover — Liquidity or Uncertainty』，摘要含 换手率与预期收益负相关被视为流动性溢价存在之证据 ＋ 样本期内中国市场竞争机制发生重大变化"
+  - role: 交易量与活动度的定价实证（付费墙，未直连正文）
+    url: https://www.sciencedirect.com/science/article/abs/pii/S0304405X00000805
+    what_verified: "WebSearch 命中摘要页——以美元成交额与股票换手率两度量代理流动性，讨论 Brennan/Chordia/Subrahmanyam(1998) 的流动性波动率方法与换手率同持有期的关系"
+  - role: arXiv 面命中实况（如实登记稀疏，非通道故障）
+    url: http://arxiv.org/abs/physics/0203006
+    what_verified: "arXiv API 查询 liquidity AND turnover AND cat:q-fin.ST 仅命中该条（Quantum Finance, 2002-03-04）；同批正对照 order book imbalance 查询返回 3 条真实结果证明通道可用 ⇒ 判 arXiv 在该资产定价实证主题上命中稀疏 为真，禁据此改判无文献"
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: 本轮无新增可参考仓（中式因子词与英文学名共 8 式 GitHub API 检索，命中仓仅 4 个且均属他族：MIT 1／null 2／NOASSERTION 1）
+  gate_verdict: 通过（本卡全部外部锚为期刊条目与网页综述＝思想级，零代码参考）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；伪代码自拟，实现走 C3 翻译适配重实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机=楼6 在本库是空白轴（⑨席正交地图：无一条以流动性度量为信号本体出分），
+  而本库唯一健康的换手率腿在 stock_daily_basic.turnover_rate（本班实测 2017-01-03 起 2372 个交易日、
+  2026-09 窗内 144389/144389 行全为正值、中位 1.7877、P90 6.3214）——同域的 kline_daily.turnover 与
+  kline_daily_hfq.turnover 两列恒 0（在册未修，本班复证），故本卡明确绑 turnover_rate 而非 kline 侧 turnover。
+  两臂分考、禁合并报数：
+  臂A（流动性溢价）=低换手押正超额，水平值按行业与市值分组取截面分位；依据是 Haugen-Baker/Hu/Datar-Naik-Radcliffe 一脉的负相关证据。
+  臂B（不确定度）=换手**异动**（对自身滚动分布的 z 或相对行业中位）押反向，依据是"Turnover: Liquidity or Uncertainty"的竞争性解释——
+  高换手可能对应高不确定度因而高要求收益，也可能是情绪过热因而后续回落，两派在同一列上给出相反符号，必须由考试判定而非由本席择一。
+  与卡04（Corwin-Schultz 高低价隐含价差，同属楼6 但本体不同）关系：价差腿测的是价格成本，本腿测的是交易活跃度，
+  二者在 A 股日线上相关性未测——已挂 self_flag 请⑥排闸。
+
+# ── 必备④ 伪代码（本席自拟）
+pseudocode: |
+  # 输入：c1_market.stock_daily_basic(turnover_rate, circ_mv, symbol 裸6位)
+  #       c1_market.kline_daily(amount, pct_change) 仅用于对照臂与标签，勿用其 turnover 列（恒 0）
+  for d in 交易日:
+      tr  = turnover_rate[d]                      # 已是比率口径（百分数），单位对表见 caliber_pitfall_zh
+      # 臂A：水平值截面分位（先按行业×市值分组去规模）
+      lvl[d] = zscore_within(industry, size_bucket)(log(1 + tr))
+      # 臂B：异动度（对自身滚动窗的偏离，窗长与是否取绝对值留⑥冻结）
+      mov[d] = (tr - median(tr[d-W0+1 .. d])) / (mad(tr[d-W0+1 .. d]) + eps)
+      # 交叉验证构造（可选第三臂，须单独考）：Amihud 非流动性 = mean(|pct_change| / amount)
+      #   ——注意其分子与被⑨席判负的 avg_abs_ret 本体同源，禁与 avg_abs_ret 混读为两轴（在册：4 卡全 fail）
+      # 停牌与零成交日：tr=0 或该日无行 ⇒ 记缺测，禁填充；覆盖率须随因子一并上报
+      # 标签：kline_daily.pct_change 的 n 日前瞻累加，宇宙过滤口径（ST/上市龄/涨跌停）留⑥预注册
+      # PIT：turnover_rate 为当日收盘后统计，仅可用于 d+1 起决策
+
+# ── 必备⑤ 数据源映射
+data_source_mapping:
+  source_line: SL-A04 日线资金流与估值线（楼6 楼内要点=Amihud/换手异动/量价背离，本卡取换手腿）
+  primary_table: c1_market.stock_daily_basic
+  secondary_table: c1_market.kline_daily（amount 与 pct_change，供 Amihud 交叉臂与标签）
+  measured_reachability:
+    - "stock_daily_basic 跨度=2017-01-03..2026-10-14，uniqExact(trade_date)=2372，uniqExact(symbol)=5904"
+    - "2026 年单年 uniqExact(trade_date)=186 ⇒ 交易日历全覆盖"
+    - "turnover_rate 非零率=144389/144389（2026-09-01 起窗口，100%），中位 1.7877，P90 6.3214"
+    - "逐年覆盖（uniqExact(symbol)）：2017=3468／2019=3768／2021=4702／2023=5381／2025=5500／2026=5594"
+    - "circ_mv 于 2026-10-14：5563/5563 >0，中位 493741.644（本表列集=trade_date,symbol,turnover_rate,float_share,circ_mv,total_mv,data_source,ingest_ts，无 PE/PB 列）"
+    - "对照（在册未修，本班复证）：kline_daily countIf(turnover>0)=0/144576 而 countIf(amount>0)=144438；kline_daily_hfq 同形 0/144590 与 144452 ⇒ kline 侧 turnover 是死列，正对照同表 amount 有值"
+    - "标签腿正对照：kline_daily.pct_change countIf(!=0)=141155/144576（2026-09-01 起），max(trade_date)=2026-10-14"
+  caliber_pitfall_zh: >-
+    ① 同名两表两套命：换手率真源在 stock_daily_basic.turnover_rate（有值），kline_daily.turnover 恒 0（死列）——
+      绑错表会得到全零因子且不报错。
+    ② turnover_rate 的百分数与小数口径未在本库任何注释中声明（本班读数中位 1.7877、P90 6.3214，
+      若为百分数则中位换手 1.79% 合理；若为小数则中位 178% 换手不合理⇒判定为百分数口径）；
+      ⑤实现仍须以 float_share 与 kline_daily.volume 反算一日样本互证后才可写死标度。
+    ③ 逐年覆盖从 3468 只（2017）涨到 5594 只（2026），横截面分位与分组阈值禁跨宇宙直接对齐（在册密度先例：日线密集宇宙起点 2017-01-03）。
+
+# ── 三闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml（grep -c strategy_id=162，本班实测）
+    ruler_readings: "换手=12（命中标签与打板分歧阈值文字，例如第 4095 行 tags 含 换手/缩量、第 4029 行把换手小于8% 当作一致分歧打分档）；流动性=13（上一班在册读数，本班复测未见以流动性度量为信号本体的条目）；turnover=162 系子串伪影不作数（本班核对 grep -c 口径为整档行命中，英文 turnover 散落在他字段，属大小写不敏感子串伪影，禁当存量命中数使用）"
+    positive_controls: 盘口=7／动量=14／反转=10（同尺同文件，尺有判别力）
+    verdict: 非重复
+    differentiation_zh: "存量把换手当打板分歧的人工阈值（离散分档），本卡把换手率做成横截面连续因子且首次引入 水平值臂 vs 异动臂 双方向对照；差异不可由存量阈值调参派生。"
+  license_gate: 通过（期刊与网页＝思想级，零代码）
+  orthogonality_gate:
+    verdict: 闸缺席（判"缺席"非"未过"）
+    measured: 同卡07——官方 15 员池未物化（scripts/backtest/translated 实测 0 个 CSV），不复跑
+    self_flag_zh: 三条共线先验须优先排闸：①与本批卡07 的净流入强度（社区自报相关性 0.68）；②与卡04 的 Corwin-Schultz 高低价价差（同楼不同本体，相关性未测）；③与在册被判负的 avg_abs_ret 已实现波动本体（Amihud 交叉臂分子同源，⑨席在册结论：该本体 4 卡全 fail，禁算新轴）。
+    handoff: 请⑥把"换手水平臂"与"换手异动臂"作为两列分别喂闸，勿折叠成一列后只测一次
+
+# ── 七门槛可达性预判
+seven_gates_precheck:
+  gate5_signal_days: 可达——2372 个交易日 ≫120，右端可用到 2026-10-14，不吃已断供的 tick
+  gate6_sample_size: 可达——近端单日 5563 至 5594 只，2026 年 186 个交易日
+  gate7_not_judged: 门槛②③④⑦ 与 W0 窗长、行业与市值分组数、异动是否取绝对值、两臂符号 一律留⑥预注册＋⑦⑧考工
+  not_reachable_note: 楼6 的 Amihud 腿在本库可行（amount 有值）但分子与被判负本体同源，故本卡只作可选第三臂，不作主构造
+
+verification:
+  seat: st-qoder-p04-1015-03
+  channel_hits: WebSearch×1 组（命中 10 条页面）＋ arXiv API×2（含正对照）＋ GitHub API×2 式（本轮该主题零可用仓）＋ CH 只读实跑
+  verified_at_local: 2026-10-15 08:0x-08:2x（Asia/Shanghai，date 实测见台账耗时段）

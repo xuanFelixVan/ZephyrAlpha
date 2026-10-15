@@ -1,0 +1,264 @@
+# creation_token: st-qoder-p04-1015-05-strategy-intake | created_by: st-qoder-p04-1015-05 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-12
+title_zh: 估值轴的市场级腿可达 16 年，但表内「分位」列实测是全样本分位＝前视；可抄的只有水平面＋自算扩展窗分位
+mining_tower: 楼3 估值族（docs/_working/automation_campaign/pulse/mining_directions.md）＋⑨席正交空白轴地图「估值本体零出分」；本卡把游标在册「楼3 被 daily_valuation 47 日阻塞」的范围改判为「只有个股截面面被阻塞，市场级面未被阻塞」
+birth_seat: ④
+birth_session: st-qoder-p04-1015-05
+birth_batch: 20261015-p04-05
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（本班真实命中；未直连正文者逐条标「转述引证，禁当已核实」）
+source_links:
+  - role: 卖方宏观研报·股债性价比择时的实际打分形态（本班看到的口径差异就在这里）
+    url: https://stock.finance.sina.com.cn/stock/go.php/vReport_Show/kind/search/rptid/839268705404/index.phtml
+    what_verified: >-
+      WebSearch 命中《大类资产配置月度展望：两轮单边后的再平衡》正文片段：其择时腿写作
+      「三维信号边际改善＋估值偏离度处于五年均值以下 ⇒ 得分为 +2，下月持有 100% 万得全A 仓位」，
+      并另给一条口径「10年期国债利率-股息率」的股债性价比，读数用 2015 年以来分位与滚动三年标准差双表达。
+      本席取两点构造情报：(1) 该族实践是**门控/打分**而非截面选股；(2) 同名「股债性价比」在不同机构笔下分母不同
+      （E/P 与 股息率 两种），故本卡把「用哪个分母」写成必须由⑥冻结的参数而非默认值。未取全篇＝正文片段，转述引证。
+  - role: 卖方宏观·ERP 绝对值与分位并用的另一手证据（美股侧倒挂示例）
+    url: https://www.shmet.com/news/newsDetail-2-915845.html
+    what_verified: >-
+      WebSearch 命中【广发宏观陈礼清】文内读数：美股 ERP 降至 -1.03 并注「处于2000年以来93%分位（全样本74%分位）」，
+      A 股侧给「10年期国债利率-股息率」处于 2015 年以来 58.8% 分位、滚动三年 +0.79 倍标准差。
+      对本卡有用的不是结论而是**口径自述**：同一机构同时报「全样本分位」与「滚动窗分位」两种分位，
+      说明该族分位的窗长是敏感参数；本席据此把「分位窗长」列为⑥冻结项，并在实测中专门检验本库存货分位到底是哪一种。
+  - role: 中文社区对 ERP 判读带的常用分档（非同行评议，只作词表参照，禁当判据）
+    url: https://m.toutiao.com/c/user/token/CifUa6Tl35YYZd9To0osFiD6Kr2vTQv0JFmFBl3dLAmymsRvi8fwaHMaSQo8AAAAAAAAAAAAAE9mhbVZPx1Na7gOZtsUo5hZDoE7g5YgifS4x8INeIJzUqlX-F3VHqmSds_QoeCcr-VkEJHC-g0Yw8WD6gQiAQOrPF_T/
+    what_verified: >-
+      WebSearch 命中正文：ERP=盈利收益率（1/PE）−10年期国债收益率；给「>6% 极度低估／4-6% 合理／<3% 高估」三档，
+      并明确警告「市场利率会变化，单纯看绝对值容易误判（低利率时代 ERP 会被动抬高），须结合历史分位」；
+      同时自陈局限「仅适合判断大盘宽基指数整体估值，无法用于单一行业或个股」。
+      这三条与本卡结构一致（门控而非选股、分位优于绝对值），但该页无样本无回测＝转述引证，禁作判据来源。
+  - role: 同一逻辑的第二处独立命中（慢变量属性与极值对大底的经验关系）
+    url: https://m.sohu.com/a/1087669197_122014422/
+    what_verified: >-
+      WebSearch 命中（发布 2026-10-14）：作者自建 A 股看板计算 ERP，公式同上；结论为
+      「ERP 越高股票相对债券越便宜；每次 ERP 冲到历史极值往往是 A 股大底区域，压到历史低位往往是牛市后半段；
+      它是慢变量，不会每天上蹿下跳」。本席只取「慢变量」这一属性用于卡面的换仓频率与成本假设；非同行评议，转述引证。
+  - role: 双核确认法（估值分位＋股债利差同极值才开仓）——本卡门控形态的外部同族
+    url: https://ag.yueniuzq.com/fund/stock-bond-spread-scientific-timing-for-index-dca/
+    what_verified: >-
+      WebSearch 命中正文：主张股债利差具「极强的均值回归特性」，进阶用法为「估值分位与股债利差双核底部确认法」，
+      并要求「导出每日 PE 与十年国债收益率相减，再计算其在过去数年中的排名百分位」。
+      注意该句把分位定义为**过去数年滚动窗内排名**，与本库现成列（本班实测为全样本排名）不是同一物，这正是本卡 pitfall ① 的来源。
+  - role: 指数维度把 ERP 归入「跨资产比价/资金弹药」层的架构文本（说明它在本库体系里的位置）
+    url: https://xueqiu.com/6157293070/404201698
+    what_verified: >-
+      WebSearch 命中《股指期货完整分析架构》：估值端＝PE-TTM/PB/历史百分位；资金面＝北向、两融、ERP；
+      「ERP 处于历史高位代表股市性价比高」。同文把「技术＋情绪」单列为择时层，与本卡（估值赔率层）和卡13（情绪层）的分工一致。
+      雪球个人帖＝非同行评议，只作分层参照。
+  - role: arXiv API 直读命中——股权溢价预测与长期非对称摆动
+    url: http://arxiv.org/abs/2509.10483
+    what_verified: >-
+      arXiv API 查询 all:"equity risk premium" 返回 5 条真实条目，本条为 2025-08-29
+      『Equity Premium Prediction: Taking into Account the Role of Long, even Asymmetric, Swings in Stock Market ...』。
+      本席只读 API 元数据与标题，未下载 PDF。它证明「估值/溢价类变量做收益预测」在 2025 年后仍是活跃题目，
+      且题目关注点是**长周期摆动与不对称性**（与本卡「慢变量＋门控」形态同向）。
+  - role: arXiv API 直读命中——期权隐含 ERP（本库不可达的路线，只登记存在）
+    url: http://arxiv.org/abs/1910.14522
+    what_verified: >-
+      同批查询命中 2019-10-31『Option-based Equity Risk Premiums』。本卡刻意**不含**该腿：本库是否有期权链日线本班未测，
+      登记该路线只为了让⑤/⑥知道「同一个溢价变量存在实现口径（E/P−国债）与隐含口径（期权反推）两个族」，禁混用。
+  - role: arXiv API 直读命中——ERP  puzzles 的理论侧（思想级）
+    url: http://arxiv.org/abs/1604.04872
+    what_verified: >-
+      同批查询命中『Solving the Equity Risk Premium Puzzle and Inching Towards a Theory of Everything』
+      （v7，2016-04-17 首发）。只取思想级：ERP 作为**风险补偿的时变量**而非恒定常数，是使用它做门控的先验来源。
+
+# ── 必备② 许可证
+license:
+  github_repo_license: >-
+    本班 GitHub API 3 式：q=market breadth sentiment indicator（total_count=1，sidequest-code/ApexTicker，
+    license=null、0 星、2026-09-05 推送）；q=equity risk premium timing（**total_count=0**）；
+    q=A股 情绪 指标（total_count=19，取前 5 仓）。后者许可证分布＝
+    Conquerer-yinn/Kakaaaa-quant（MIT，43 星，2026-08-25 推送，自述含情绪指标工作台）、
+    openfinlens（MIT，4 星，2026-10-15 推送，自述含情绪指标）、
+    jangviktor-web/NiuCap（NOASSERTION＝非标准许可证，按无许可证处理）、
+    FundAI-AI-Powered-A-Share-Fund-Decision-System（license=null）、
+    qusong0627/LightGBM_Alpha300（Apache-2.0，其描述为 2016 至今 A 股数据集）。
+    **GPL 命中 0**。ERP/股债性价比题材在 GitHub 面 total_count=0＝真稀疏（同配额内前后两式均正常返回计数，非限流）。
+  gate_verdict: 通过（MIT 2 仓＋Apache-2.0 1 仓只读思想与接口语义；NOASSERTION 与 license=null 只学思想；研报/社区/arXiv 全为思想级；本卡零代码参考，伪代码全自拟）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库。ERP 定义式（E/P − 无风险利率）与分位/门控写法只取思想，实现由⑤按本库列名与 PIT 规则重写。
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  【一句话】把「股票相对债券的赔率」做成一个市场级慢变量门控：用沪深300（及中证500）的时变股权风险溢价
+  及其**过去窗内**分位，决定权益风险预算的高/低两档（或三档），而不是用来给个股排序选股。
+
+  【为什么本卡现在可开工，而三班前的在册结论说估值轴不可达】本席实测两条相反面：
+  (1) 个股截面面**确实被阻塞**——daily_valuation 全表只有 255431 行、47 个交易日（2026-08-03 至 2026-10-14），
+      且最后一日只 1553 只（其余日 5208-5574 只）＝右端未跑完；stock_valuation 表存在但**行数 0**（空壳）。
+      所以「用 PE/PB 做横截面价值因子」在现库无法回测，这条在册判据本班予以复证。
+  (2) 市场级面**未被阻塞**——index_valuation_daily 8142 行＝4071 个交易日 × 2 个指数（000300、000905），
+      跨度 2010-01-04 至 2026-10-13（≈16.7 年，覆盖 2010-2014 熊、2015 牛熊转换、2018 熊、2021-2024 熊、2024/2025 反弹多段体制）。
+      其中 erp 列在 000300 上有 3647 个非空日（缺 424 日），pe_ttm 满值，cape_5y_pct 有 2898 日。
+      ⇒ 游标在册「楼3 估值仍被 daily_valuation 47 日阻塞」应改判为：**只有截面腿阻塞，市场级腿可达**。
+      本卡只主张市场级腿。
+
+  【本班最硬的一条实测：现成的「分位」列不能直接用】schema 注释（真源
+  schemas/categories/market/market_index_valuation_daily.py 第 49-50 行）自述 cape_5y_pct/pe_pct/pb_pct
+  「为全历史扩展窗分位（expanding percentile）」，erp_pct 为「其全历史分位」。本班对 000300 的 erp 与 erp_pct 两列做了三问：
+  (a) 把 erp 水平按 4 位小数分组，只留组内≥10 个观测的组（共 124 组）：组内 erp_pct 的中位标准差＝**0.000887**，
+      最大组内极差＝**0.0055**。例：erp=0.0596 这一水平在样本里出现 22 个不同交易日，其存储分位全落在 0.6848-0.6900。
+      ⇒ 存储分位几乎是「水平的函数」，与日期/窗无关。
+  (b) 与「全样本 rank(pct=True)」相关：Pearson＝Spearman＝**0.999996**；与扩展窗假设相反的直接反例：
+      2012-07-30 存储 erp_pct=0.6823，而按截至当日扩展窗重算＝**1.0000**（2024-02-02 存储 0.8916 vs 重算 0.9943）。
+      ⇒ 「扩展窗（只用 t 及以前样本）」这一假设被证伪。
+  (c) 全样本分位与存储值仍非逐点相等（最大绝对偏差 0.1042，集中在早年）⇒ 本班只判「**实面是全样本/固定窗排名，非扩展窗**」，
+      不指认生产器具体实现；差异可能来自其分母基数或早期样本处理，须⑤/①读生产码定性。
+  ⇒ 结论与后果：**若把 erp_pct（或同族 cape_5y_pct/pe_pct）直接当作 t 日特征送进考试，就等价于把全样本分布信息放进当日，属前视泄漏**；
+  且该泄漏不会报错——列名、类型、范围（0~1）都正常。本卡因此把可用面限定为「erp 水平面＋⑤自算扩展窗分位」，并把现成 pct 列列为禁项。
+
+  【门控形态的要点（思想级，具体阈值一律不由本席定）】外部三处独立文本共同指向同一构造骨架：
+  先取 E/P（或股息率）与 10 年期国债收益率之差，再取该差值在**过去窗**内的排名分位，分位极高＝权益赔率高→加仓档，分位极低→减仓档；
+  同时反复警告「绝对值不可跨利率时代比较」（低利率时代 ERP 被动抬高）。本库右端读数与之一致：
+  2026-10-13 000300 erp=0.0596／erp_pct=0.689，000905 erp=0.0249／erp_pct=0.6597——同一日两只指数的水平差 3.5 个百分点而分位接近，
+  这正是「水平不可比、分位可比」的实例，也说明**分位必须按指数各算各的**（本库两指数各 4071 日，天然分层）。
+
+  【为什么这是「改良」而非「新造」】本班实测本库已有两处在用该表：
+  src/zephyr/regime/features/regime_data_loader.py 第 605 行起直读该 8 列并声明消费语义；
+  src/zephyr/regime/overlay_signals_builder.py 第 573-594 行已把 cape_5y_pct 与 erp_pct 组装进体制层特征。
+  ⇒ 本卡不与它们竞争「谁先想到用估值」，而是把两件事交给下游：一是**门控信号本体**（赔率→风险预算档位）尚未作为战法卡在册；
+  二是**现成分位列的前视问题落在这两处存量上**（属①/维护写域，本席不代修，见 verification 与 to_datasource 移交）。
+
+# ── 必备④ 伪代码（全自拟，禁外部逐行搬运）
+pseudocode: |
+  # 层 0：取数（严格读通道，两指数分开取，禁 concat 后混算分位）
+  for idx in [000300, 000905]:
+      raw = CH_read(
+          "SELECT trade_date, erp, pe_ttm FROM index_valuation_daily "
+          "WHERE symbol = idx AND trade_date <= asof",            # PIT：只用 asof 及以前
+          db="c1_market")
+      # 禁则：不 SELECT erp_pct / cape_5y_pct / pe_pct / pb_pct 作为特征列
+
+  # 层 1：缺测处理（本班实测 erp 有 848/8142 空值，000300 侧 424 日）
+  s = raw.erp.dropna_or_flag_asof_carry()      # 剔 or 前值替代：由⑥冻结，两种处理禁混用
+  assert not all_values_zero(s)                # 空值若被填 0，会把「极贵」伪装成「极高溢价」方向反
+
+  # 层 2：分位＝过去窗内排名（扩展 or 滚动由⑥选一，禁全样本）
+  pct_expanding = s.expanding(min_periods=W0).apply(lambda w: (w <= w[-1]).mean())
+  pct_rolling   = s.rolling(LOOKBACK, min_periods=W1).apply(lambda w: (w <= w[-1]).mean())
+  # 自检（本班实跑过的同一条，⑤必须跑通才算对齐现成列）：
+  #   把现成 erp_pct 按 erp 水平分组，组内标准差若≈0 ⇒ 证实它是水平的固定函数，禁当扩展窗用
+
+  # 层 3：门控（档位数量与阈值全部留⑥预注册，本卡不写数值）
+  state = bucket(pct, edges=B)                 # B=2 或 3；edges 与是否含「中性持平」带由⑥定
+  target_risk_budget = map(state -> [low, mid, high])
+
+  # 层 4：双臂并列（同一变量的水平面与分位面禁各计一员）
+  candidate_level  = zscore(s, ROLLING_MEAN_WINDOW)     # 水平面：跨利率时代不可比，只作参照
+  candidate_pct    = pct_expanding                       # 分位面：主候选
+  # 本班实测：Spearman(level, pct) = 0.999996 ⇒ 二者信息同物，进闸只准进一根
+
+  # 层 5：正交与计量（本席已跑的面与单位）
+  #   候选喂闸＝市场级单列 date,sig；池＝夜挖序列面剔标签后 32 员
+  #   读数：level pass 0.2693；pct 单独对池 pass 0.2692，但对「池+level」reject 1.0000
+  #   ⇒ 池谓词禁同时收 level 与 pct（同物两形），只计一员
+
+  # 层 6：回测卫生
+  #   慢变量 ⇒ 换仓节拍与交易成本假设须与「日频分位」脱钩（外部多源称「每月看一次」）
+  #   右端滞后：本表 max(trade_date)=2026-10-13（同日 000905/000300 均有值），禁假设当日可得
+
+# ── 必备⑤ 数据源映射（对齐源线谱 SL-*，真源=docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md）
+data_source_mapping:
+  source_line: SL-A04 估值线（A 档；源线谱第 27 行与 §SL-A04 锚为 DS-AKSHARE/daily_valuation，U5 明确含「L3 大盘（全 A 估值中位数分位）」这一市场级用法）；市场级指数估值本卡另用 index_valuation_daily，其在源线谱的归属本班未指认（见下 caliber_pitfall ⑤）
+  primary_table: c1_market.index_valuation_daily（列 erp／erp_pct／cape_5y／cape_5y_pct／pe_ttm／pe_pct／pb_mrq／broken_net_ratio／buffett_ratio）
+  secondary_table: c1_market.market_china_bond_yield（10Y 用于自算 ERP 的近端对表，非历史腿）；c1_market.daily_valuation 与 c1_market.stock_valuation（本班判为截面面不可用，列此只为止损）
+  measured_reachability:
+    - index_valuation_daily：8142 行；uniqExact(trade_date)=4071；2010-01-04 至 2026-10-13；两指数各 4071 日（000300、000905），按月 uniqExact(trade_date)＝4-23 日（近 15 个月；除当月 202610 只 4 日、本班读数截至 10-13 外为 14-23 日）⇒ 本班**未**与交易日历逐日对表，故不称完整日历
+    - 列级死列三条（全表 NULL）：pb_mrq 8142/8142、broken_net_ratio 8142/8142、buffett_ratio 8142/8142 ⇒ 破净率与巴菲特比率路线在本库**无源**，本卡不开该腿
+    - 列级可用：erp 非空 7294/8142（000300 侧 3647 日）、pe_ttm 满值、cape_5y 非空 5796/8142（cape_5y_pct 2898 日）
+    - market_china_bond_yield：6240 行、260 个交易日、2025-09-23 至 2026-10-14；3 条曲线 × 8 tenor；10Y 780 行、ytm 零 NULL ⇒ **只有 260 日，不能用于自建长史 ERP**（自建只到 2025-09-23）
+    - daily_valuation（截面面，判不可用）：255431 行、47 日（2026-08-03 至 2026-10-14）、5579 只；pe_ttm=0 1697 行、pb_mrq=0 1752 行、close=0 1626 行、pct_change=0 7581 行、turnover=0 **249392/255431＝97.63%**；2026-10-14 仅 1553 只（其余日 5208-5574）
+    - stock_valuation：列集含 pe/ps/pcf/dividend_yield 六列，但 **count()=0**＝空壳表，不可绑
+    - 本班闸实跑面：候选=erp（3647 日）与 erp_pct（4071 日）与 cape_5y_pct（2898 日）；池=夜挖序列面剔 mkt_fwd5/mkt_fwd10 两枚标签后 32 员；五枚候选自身 pool-report n_members=5、n_common_dates=1776、PR=2.2664
+  caliber_pitfall_zh: >-
+    ① 现成 *_pct 列＝前视（本班实测，判据见 logic_zh 第三段三条）。这是本卡最该被下游读到的一句：
+      用列名前缀看不出问题，用范围（0~1）看不出问题，只有按水平分组才能看出来。
+    ② erp 的单位与符号：表内 000300 右端 0.0596、000905 右端 0.0249，schema 自述「百分数口径」但值域像小数（0.02-0.09），
+      与外部文本写的「5.96%」是同一数不同单位。**⑤实现前必须先定单位**，否则阈值（如「>6%」）会被当成 0.06 或 6 两种读法。
+    ③ 缺测不是随机的：erp 空值 424 日在 000300 侧，若用前值替代会平滑掉利率停更期；若剔则样本集变化，
+      两指数侧不可再用同一掩码（本班实测两列非空日不同：erp 3647 vs erp_pct 4071）。
+    ④ 慢变量与日频分位冲突：外部三处都写「每月/低频」，但表是日更且分位逐日变。
+      若⑤按日频喂进 IC 检验，会制造「有读数但无换手经济意义」的伪信号；节拍与成本假设须由⑥写进卡面假设并让⑦⑧按该节拍考。
+    ⑤ 本表在源线谱里的归属本班不指认：SL-A04 的 DS 锚写的是 daily_valuation（akshare），而 index_valuation_daily
+      更像指数侧独立供给线；源线谱另有 SL-A03 板块/概念指数与 SL-A10 国际宏观（锚 DS-FRED 含美债 10Y，未列中债曲线）。
+      ⇒ 请⑩/源线班定一行归属，本卡只写「用表＋实测」，不替源线谱发明编号。
+    ⑥ 在册卡面的源线编号有一处笔误需更正（另起留旧案卷，不改他班原文）：本班之前的一张卡把估值腿写作
+      「SL-A05 每日估值线」，而源线谱第 27-28 行为 SL-A04=估值线、SL-A05=财务线。请⑥制卡冻结时按真源改标。
+    ⑦ 截面腿与本体腿禁混报：本卡的一切读数单位是**市场级单列序列**（每个交易日一个数），
+      与卡10/卡11 主张的个股截面因子不同单位；过闸结论不可跨面引用。
+
+# ── 四闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
+    strategy_id_count: 163（本班 grep -c 实测，与上一班在册同值；本班未改册）
+    ruler_readings: >-
+      估值=4（四处命中逐条归位：第 12 行=词表噪声、第 2261/2262/2268 行=「估值分不适用于周期股」经验条目非信号卡）；
+      市盈率=0／风险溢价=0／股债=0／ERP=0／股息=1（第 10446 行体制-风格配比文字）／分红=0；
+      英文面 sentiment=0／breadth=0／risk premium=0／valuation=0／accrual=0（本班不采信英文子串计数当判据，只登记零命中这一事实，
+      因上一班在册已记「catalog 册 167/191 字符串型 files_trigger 休眠方言雷」类英文匹配伪影风险）。
+    positive_controls: 动量=14／波动=11／换手=12／涨停=18／连板=12（同尺同文件，尺有判别力；波动=11 与上一班在册读数逐字相同＝尺未坏）。
+    nearest_existing:
+      - 第 2261-2268 行「估值分不适用于周期股」：把估值分当**不可用**的经验告诫，非信号本体，与本卡不冲突
+      - 第 10446 行 体制-风格配比：估值只在风格选择文字里出现（价值/成长随体制切换），非独立估值信号
+      - 代码面存量两处（非 registry 面）：src/zephyr/regime/features/regime_data_loader.py:605 与
+        src/zephyr/regime/overlay_signals_builder.py:573-594 已在体制层消费 erp_pct/cape_5y_pct——本卡主张的是**赔率门控战法**，
+        与存量「体制特征供给」是否构成两员由⑥判；本卡另把存量的分位口径问题单独移交
+    verdict: 非重复（估值族在策略册里从未作为信号本体出现，但代码面已有消费路径，须⑥配对确认不与 regime 层重复计量）
+    differentiation_zh: 存量把估值当风格切换条件或一句反例告诫；本卡把时变股债溢价作为市场级风险预算门控，并给出「现成分位列禁用」的硬判据。
+  license_gate: 通过（MIT 2＋Apache-2.0 1 只读思想；NOASSERTION 1／license=null 2 只学思想；GPL 命中 0；ERP 择时题 GitHub total_count=0＝真稀疏；零代码复制）
+  orthogonality_gate:
+    verdict: 已开并实跑——erp 水平面**过闸但贴柱**（余量 0.0307）；分位面单独过闸，然而与水平面同物（reject 1.0000）
+    measured: >-
+      工具＝scripts/backtest/fexam/signal_orthogonality.py（gate 子命令自述判据为 |spearman|≤0.3，门柱未动）。
+      入参适配＝把候选从 CH 严格读通道落成仓外 .runtime/tmp/p04_05_pool/ 的 date,sig 两列；
+      池＝docs/04_research_records/mining/ledgers/nightmine_20261010/series/ 按 ⑨席在册正解改名后的 32 员
+      （本班在上一班 34 员面上**主动剔掉 mkt_fwd5/mkt_fwd10 两枚标签序列**，并把列集不合的 streak_distribution.csv 记为跳过——
+      上一班在册已警告留标签会污染判定，本班按该警告执行）。
+      读数四条：gate erp verdict=pass max|corr|=0.2693 most_similar=max_streak_height；
+      gate erp_pct verdict=pass 0.2692（同 most_similar）；
+      gate erp_pct vs（32 员池＋erp）verdict=reject max|corr|=1.0000 most_similar=z_e_erp ⇒ 同物两形；
+      gate cape_5y_pct verdict=reject 0.3016 most_similar=lu_ratio（**贴柱 0.0016**）；
+      pool-report 五枚候选面 n_members=5 n_common_dates=1776 PR=2.2664。
+    measurement_note: >-
+      本班对「贴柱」这条要如实降权：cape_5y_pct 的 0.3016 只比门柱大 0.0016，且 most_similar 是涨跌停比率族——
+      估值分位与涨跌停热度的秩相关接近门柱这一事实本身，说明该族与楼1 情绪/涨停族并非天然正交。
+      本席据此不判 cape_5y 死刑（判据归⑥），但**禁止**下游把它当作「与既有池无关的干净新轴」。
+  implementation_gate: 未开（本席不实现）；⑤开工前置三件＝分位窗长定案、禁用现成 *_pct 列、erp 单位（0.06 vs 6）定案
+
+seven_gates_precheck:
+  gate5_signal_days: 可达（市场级腿）——4071 交易日、跨 2010 至 2026-10-13，覆盖多段牛熊；erp 非空 3647 日仍是厚样本；截面腿不可达（47 日）
+  gate6_sample_size: 待定性——择时类候选只有一个横截面单元（指数本身），「样本量」该按交易日还是按独立周期数计，本班不代裁（与在册楼8「截面日 vs 披露事件数」同族口径分叉，请⑩一并定）
+  gate7_not_judged: 门槛②③④⑦ 与分位窗长 W0/LOOKBACK、档数 B 与阈值、是否两指数并列、缺测处理、换仓节拍一律留⑥预注册＋⑦⑧考工
+  not_reachable_note: 不含破净率/巴菲特比率腿（三列全 NULL）；不含自建长史 ERP（国债收益率仅 260 日）；不含个股截面价值腿（daily_valuation 47 日＋stock_valuation 空表）；不含期权隐含 ERP 腿（本库期权链未测）
+
+verification:
+  seat: st-qoder-p04-1015-05
+  channel_hits: >-
+    ①外部 WebSearch 两组（中文 ERP 择时 1 组＋中文情绪 1 组）与社区/研报正文命中 6 处（新浪研报、广发宏观转载、
+    头条 ERP 判读带、搜狐看板帖、雪球架构帖、股债利差双核法页），全部只取构造与口径警告；
+    ②arXiv API 2 式（https://export.arxiv.org，all:"equity risk premium" 5 条＋all:"investor sentiment" AND market timing 5 条，
+      另有 all:"news sentiment" AND stock returns 2 条），HTTP 200 且有非空条目；
+    ③GitHub API 3 式（total_count 1／0／19，逐仓读 license 字段）；
+    ④CH 只读探针 4 批（zephyr.data.ch_reader.query_rows 严格读通道，表结构走 system.columns，跨度与 NULL 率逐表实跑）；
+    ⑤闸实跑 gate×5＋pool-report×2（报告落 .runtime/tmp/p04_05_probe/*.json，收班删）；
+    ⑥本仓代码/schema 直读 3 处（market_index_valuation_daily.py 注释、regime_data_loader.py、overlay_signals_builder.py）
+  capability_note: >-
+    RULE-CAPABILITY-LOOKUP 本班实跑（CapabilityLookup().find，session_id=st-qoder-p04-1015-05）：
+    「估值」n=0、「风险溢价」n=0、「分位」n=0、「股债」n=0；以同次实跑的「情绪」n=1（news_sentiment_analyzer，
+    maturity=design、status=alive）作同尺正对照 ⇒ 四条零命中判为**能力册里确无估值类能力条目**，而非尺坏。
+    尺有判别力的独立证据＝本班 grep 到代码面确有 erp_pct 消费者（regime_data_loader.py:605、overlay_signals_builder.py:573-594）
+    而能力册查无 ⇒ 该族「有实现无册」，禁新造之前先请治理班补册（本席不代改册）。
+  residual_uncertainty: >-
+    ①前视判定只测了 erp↔erp_pct 这一对（000300 侧，3647 个共同日）；cape_5y_pct/pe_pct 未测，
+      只按同一生成器路径列为待复核，不外推为已证；pb_pct 全 NULL 无意义。
+    ②未读生产器代码，因此「存储分位与全样本 rank 最大偏差 0.1042」的成因未定，只证伪扩展窗假设。
+    ③erp 列的百分数/小数单位由 schema 注释与值域推断，未与外部数据源逐点对表。
+    ④000905 侧本班只取了右端读数，未跑其分位与前视检验。
+    ⑤月密度读数（4-23 日）只覆盖最近 15 个月，更早年份缺日分布未测；且本班未与交易日历对表，「4071 交易日」这一说法是**表内 uniq 日数**而非与官方日历的相等证明。

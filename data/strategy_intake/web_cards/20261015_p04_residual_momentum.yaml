@@ -1,0 +1,111 @@
+# creation_token: st-qoder-p04-1015-02-strategy-intake | created_by: st-qoder-p04-1015-02 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-05
+title_zh: 标准化残差动量——把动量对市场/行业因子回归后的残差再累计（⑨席定向单：正向动量已判负，本卡改挖残差腿）
+mining_tower: 楼4 动量反转族（⑨席 2026-10-15 02 班方向单第 1/5 行"把'正向动量溢价'当反向先验用；同楼改挖残差动量／反转／过热掉头"＋03 班"同族继续加卡边际收益极低，改挖空白轴"）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-02
+birth_batch: 20261015-p04-02
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（本班真实搜到并核实，禁凭记忆）
+source_links:
+  - role: 主刊锚（本席经期刊检索条目核实摘要，未直连 PDF）
+    citation: Blitz H., Huij J., Martens M. "Residual momentum", Journal of Empirical Finance 18(3):506-521, 2011
+    what_verified: WebSearch 命中期刊界(alljournals.cn)条目页含刊名/卷期/页码与摘要原文："传统动量策略对 Fama-French 因子存在大幅**时变暴露**；用残差收益而非总收益排序可压低这些暴露，风险调整收益约为总收益动量的 2 倍、时序更稳、且不那么集中在横截面两端"
+  - role: 复现面与 A 股适配（无许可证档，只学思想）
+    url: https://github.com/dexin-peng/Blitz-et-al.-2011-Residual-Momentum-toy-reproduce
+    what_verified: GitHub API 检索命中（star=5、license=null、pushed=2022-07-07、description="with FF5 factor and China stock market data"）⇒ 该族在中国市场可用 FF5 作因子集的复现存在；本席未取仓库内容（license=null ⇒ 无许可证档，不读码不引码）
+  - role: 中文卖方改进版（**非同行评议，数字不得作判据**）
+    url: https://cj.sina.com.cn/articles/view/5953466437/162dab0450670a7tl0
+    what_verified: WebSearch 命中正文片段：残差动量=行业动量剔除市场因子与风格因子暴露；因子由全球股/债/商 100 月滚动 PCA 第一主成分（市场）与其余主成分（风格）构成；**回归不带常数项**；最近 12 个月残差之和＝残差动量；改进版＝12 个月中"日波动最高月"的残差乘 −1 再求和；引述其《行业残差动量定价能力初探》(2024-02-05)；自报 2017-01-01..2026-02-28 年化超额 12.90%，且 2024Q3-2025Q2 出现大幅持续超额回撤后快速修复
+  - role: 方法论质疑（本席认为必须与主刊同权重读的一条）
+    url: https://blog.csdn.net/weixin_39624332/article/details/112527941
+    what_verified: WebSearch 命中全文片段，三点（非同行评议）：①含截距 OLS 的 36 个残差**严格零均值**，为何取其中 T−12..T−2 这 11 个之和能预测未来收益，原文未证；②截距 α_i 被主刊**排除**在残差动量之外（理由=控制模型设定偏误）——但 α_i 同样属于"因子解释不了的部分"，此为口径自由度的关键分歧；③Blitz, Huij & Martens (2011) 只用文字描述算法、**未给显式公式**，显式式子见 Blitz, Hanauer & Vidojevic (2018)，其分母与常见方差式差 1/11 系数（不改变排序单调性，故等价于"残差总收益÷残差波动"）；④该文另指 A 股月频版表现"好得可疑"（FRL 期刊）故自行深度复测
+  - role: 口径自由度清单（同一"残差动量"名下并存多套因子集）
+    url: https://juejin.cn/post/7591360623469871114
+    what_verified: WebSearch 命中 factors.directory 因子清单，其中同时列 "CAPM残差动量因子 (residual-momentum-capm)" 与 "Fama-French三因子模型残差动量 (residual-momentum-ff3)" ⇒ 单因子/三因子/五因子是**三个不同信号**，不是参数扫描可派生
+  - role: 综述定位（该族在动量文献中的位置）
+    doi: 10.1007/s11408-022-00417-8
+    citation: "Momentum: what do we know 30 years after Jegadeesh and Titman's seminal paper? — Financial Markets and Portfolio Management, 2022"
+    what_verified: WebSearch 命中 Springer 页面摘要句："improvements and alternatives such as time-series momentum, **residual momentum**"＋"Blitz et al. (2011) find that adjusting raw returns by their risk factor exposure enhances momentum profits"
+  - role: A 股有效性二手转述（降级引证）
+    url: https://zhuanlan.zhihu.com/p/459019458
+    what_verified: WebSearch 命中正文片段：转述 Lin (2020) 称残差动量在 A 股同样有效，并同段列 Hühn & Scholz (2018) 阿尔法动量、Chen & Yu (2014) 加速度动量、52 周最高价距离指标⇒本席仅作"同楼还有哪几族可挖"的方向线索，**未直查原刊，禁当已核实**
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: dexin-peng/…Residual-Momentum-toy-reproduce=null；SunRunAI/Residual-momentum-calc=null；Septimmius/residual-momentum-strategy=null；itischenspeaking/Equity-Factor-Research=MIT
+  license_distribution_zh: 该式检索 total_count=53，前 8 命中里含 2 个机器人/碰撞检测同名噪声（lapocarrieri、andrealo2020 属机械臂残差观测，非金融）⇒ 检索面本身有同名污染，本席只采信金融语境条目
+  gate_verdict: 通过（全部只学思想；license=null 与论文/卖方研究一律不入码）
+  iron_rule_note: 伪代码为本席按主刊文字描述自拟；华泰"波动最高月残差×−1"只作为**可选对照臂**登记，不写成实现要求
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  传统总收益动量的收益里混着对市场/规模/价值等因子的**时变敞口**（这正是动量崩溃与因子暴露的来路）。
+  残差动量的做法：先用一段历史把每只票的收益率对因子集做时序回归（主刊用 FF3，窗口 36 个月），
+  取逐期残差 ε_{i,t}＝"因子解释不了的部分"，再把最近若干期（主刊 T−12..T−2，跳过最近 1 月以避短期反转）的残差**累加**，
+  最后除以同一段残差的波动率做标准化（＝风险调整后的残差动量），按该值横截面排序做多高组做空低组。
+  为什么可能与本库已判负的"20 日正向动量横截面溢价"不同：⑨席实测两卡（rows[73] ic_mean=−0.0277／rows[74] ic_mean=−0.0406）
+  否的是**总收益动量**的溢价方向；本族把因子敞口从动量里剥掉后再排序，构造对象不是同一个量。
+  本席**不预设**残差动量在 A 股为正——⑨席的反向先验对"总收益动量"仍生效，且 CSDN 质疑文指出该构造在 A 股月频版"好得可疑"。
+  因此本卡交付形态＝带三处口径自由度声明的候选，须⑥预注册冻结＋⑨按"与既有动量卡是否同轴"复判。
+
+# ── 必备④ 伪代码（本席自拟，零外部代码复制）
+pseudocode: |
+  # 输入：个股日/月收益 r_{i,t}（用后复权 close 计算）＋因子集 F_t（候选见 data_source_mapping，须⑥择一冻结）
+  # 主刊口径（日频本库可照搬结构，窗长按⑥）
+  for i in universe:
+      W = 最近 L 个观测的 (r_i, F)                    # L：主刊 36 个月；日频版须⑥重定标，本席不给数
+      (alpha_i, beta_i), resid = OLS(r_i = alpha_i + beta_i' F + eps)   # 含截距；alpha_i **不计入**信号（主刊口径）
+      S1 = sum(resid[j] for j in window_skip_recent_1)                 # 残差累计（跳过最近 1 期以避短期反转）
+      S2 = std(resid[ same window ])                                   # 残差波动（分母系数差异不改排序，见 source_links 质疑③）
+      signal_i = S1 / (S2 + eps)
+  signal_t = cross_sectional_rank(signal)              # 截面标准化，禁裸值跨票比
+  # PIT：回归窗与求和窗都只到 t；标签取 t+1..t+H；严禁用未来收益重估 beta 后再回填历史
+  # 可选对照臂（非要求）：改进残差动量＝求和前把"窗内日波动最高子期"的残差乘 −1（卖方口径，非同行评议）
+  # 退化处理：因子里某列当期缺失 ⇒ 整行残差不出（禁前向填充冒充回归）；上市不足 L 期 ⇒ 缺失而非 0
+
+# ── 必备⑤ 数据源映射
+data_source_mapping:
+  source_line: SL-A01 日线行情线 ＋ SL-A03 指数/行业线（因子腿）
+  primary_table: c1_market.kline_daily_hfq（收益基准：后复权 close；本班实测 1990-12-19..2026-10-14、8741 日、5919 票、10,126,612 行，lineage_version 分布=100:10,123,764 行／1:2,848 行(2015-01-05..2026-09-18)⇒ 混合血统窗须由⑥按 lineage_version 切）
+  secondary_table: c1_market.kline_index（市场因子腿）；行业因子腿=c1_market.kline_sector／kline_sector_880
+  measured_reachability:
+    - "kline_index 覆盖：min=1990-12-19 max=2026-10-14 uniqExact(symbol)=1097 rows=3,105,945 ⇒ 市场因子长史存在"
+    - "★本班新发硬发现：宽基指数 symbol **双形态分裂**且 canonical 未归一——'000985.CSI' 4619 行（2005-01-04..2026-07-03，symbol_canonical='000985.CSI'）／'000985' 61 行（2026-07-06..2026-10-14，symbol_canonical='000985.SH'）；两形态在 kline_index 内**互不为同一键**⇒ 任何把指数当因子腿的构造必须显式拼接两种形态，且 2026-07-06 起 kline_index 单日行数由 953 骤降到 595（同日面少 358 只指数）"
+    - "衔接性核实：2026-07-03=周五、07-04=周六、07-05=周日、07-06=周一（python date 实测）⇒ 07-03→07-06 之间无缺失交易日，分裂是**形态切换＋覆盖收缩**，不是断日"
+    - "日线密集宇宙自 2017-01-03（uniqExact(symbol)/年：2016=234→2017=3475，见同批卡 04）⇒ 回归窗左端不得早于 2017-01-03，否则因子腿与个股宇宙断层"
+  caliber_pitfall_zh: >-
+    ① "残差"两字在本库已有假朋友：strategy_registry 里 STR-MULTIFACTOR-097 的公式是
+      rank_cs((ret_20d − ts_zscore_20(ret_20d)) × (turnover/vol_20d))——那是**自身标准化的总收益**，不是因子模型残差；
+      实现者若照抄该式当残差动量，等于把⑨席已判负的总收益动量换个名字重投（本席点名防_this 混淆）。
+    ② 因子集选择（CAPM/FF3/FF5/行业/PCA）＝不同信号，不是参数；华泰改进版另含"回归不带常数项＋用 PCA 主成分作因子"两处与主刊相左的口径，
+      择一即换对象，须⑥逐条冻结并写明"本卡这一臂来自哪个口径"。
+    ③ 月频窗不能直接当日频窗用：主刊 L=36 月、求和窗 11 月；日频重标定时"跳过最近 1 期"对应几天是**判据自由度**，本席不给数（留⑥）。
+    ④ lineage_version 混合血统（100 vs 1）意味着后复权基准本身有两代，跨代拼接的收益序列可能不自洽；⑤实现前须按 lineage_version 分层验一次收益序列连续性。
+
+# ── 三闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml（161 条）
+    measured尺读数: '"residual"=0 命中（大小写不敏感）／"残差"=3 命中且全部落在同一条 STR-MULTIFACTOR-097（name／name_zh／tags 各一次）⇒ 因子模型残差动量在本库**零存量**'
+    positive_control: 同文件 "动量"=14、"reversal"=29、"盘口"=7 命中 ⇒ 尺有判别力
+    verdict: 非重复（但同楼同轴，须⑨正交复判）
+    differentiation_zh: 与 STR-MULTIFACTOR-097 的区别=回归对象（因子模型 ε vs 自身 20 日 zscore）与是否含换手/波动乘积项；与⑨席判负的 rows[73]/[74] 卡区别=排序所用的量已剥离市场/行业敞口。本席如实标注张力：若剥离后与总收益动量截面相关仍高（A 股行业暴露本就解释大量动量），本卡会被⑨席判"同轴同向"，该判定权在⑨不在本席
+  license_gate: 通过（见 license 段）
+  orthogonality_gate:
+    verdict: 闸缺席（判"缺席"非"未过"，不入过闸账）
+    measured: "同上批卡 04 口径：本席未重跑（游标明示池未物化则记缺席）；⑨席 02 班第 5 行已在册'闸未开期间候选只入 lane CSV、不入过闸账'"
+    self_flag_zh: 本卡与既有动量族共线的**先验概率高**（同属楼4），交付时须由⑥在卡面挂"与总收益动量对照臂"配对，让"残差腿是否带来增量"成为单独一根柱，而不是默认它有用
+
+seven_gates_precheck:
+  gate5_signal_days: "可达——日线 2017-01-03..2026-10-14 共 2372 交易日（uniqExact 实测），回归窗与累计窗均有足够长度；右端不受 tick 断供影响"
+  gate6_sample_size: "逐日截面 ~5,560 票（实测），横截面回归观测数充足"
+  not_judged: 门槛②③④⑦、因子集择一、窗长与"跳近期"天数一律留⑥预注册＋⑦⑧考工，本席不代裁数值
+
+verification:
+  seat: st-qoder-p04-1015-02
+  channel_hits: GitHub API 检索（residual+momentum，total_count=53）＋ 期刊条目（alljournals.cn）＋ Springer 综述页 ＋ 中文卖方研究正文（新浪转载）＋ CSDN 方法论质疑全文 ＋ juejin/factors.directory 因子清单 ＋ CH 只读实跑（含 kline_index 双形态取证）
+  self_test_two_rounds: 见 ledger 20261015-p04-02 段
+  verified_at_local: 2026-10-15 07:2x-07:4x（Asia/Shanghai，date 实测）

@@ -1,0 +1,116 @@
+# creation_token: st-qoder-p04-1015-03-strategy-intake | created_by: st-qoder-p04-1015-03 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-09
+title_zh: 股东户数环比变化与价格方向交互——公告日 PIT 的筹码集中度代理
+mining_tower: 楼8 另类数据族（docs/_working/automation_campaign/pulse/mining_directions.md 表行8，楼内要点含股东户数）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-03
+birth_batch: 20261015-p04-03
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号；本卡为**半构造**——见 seven_gates_precheck 的门槛⑥ 风险）
+
+# ── 必备① 原文链接（本班真实命中；社区实证一律标非同行评议）
+source_links:
+  - role: 方向反证（流传教条被数据推翻的那一半）
+    url: http://cj.sina.cn/articles/view/1261340881/4b2e88d100101myws
+    what_verified: WebSearch 命中正文——股东户数环比增长股整体表现优于户数下降股；降幅居前个股（中粮科技-18.20%、保龄宝-15.85%）本期均为下跌，且三者在上期出现过"户数大幅增加伴随股价上涨"；作者给出机制区分＝跌着集中是割肉离场、涨着集中才是主力吸筹（非同行评议，仅作假设来源）
+  - role: 数据源实证与两条必修工序（PIT 与次新剔除）
+    url: https://www.yyqyx.com/s/000017.SZ
+    what_verified: WebSearch 命中页面自陈实证方法——按 2022 年以来 17.9 万份股东户数公告的环比变化分档，看**公告日之后 20 个交易日**相对全市场的超额，明确声明用公告日而非报告期末（公告平均比报告期末晚 27 天，用报告期末等于用未来数据）；并声明必须剔除上市不满一年的次新股（该类样本仅 617 个但平均超额达 +81 个百分点，不剔除则"户数暴增"档被单独拉高、结论反向）——本班的 announce lag 中位 25 天读数与此独立互证
+  - role: 分档非线性证据（同一变量的两段反向）
+    url: https://m.toutiao.com/article/7686275273276293683/
+    what_verified: WebSearch 命中——用全市场 5559 只最新户数，按前一年股东户数变化率分十档看未来 15 个月：P1（年变化中位 -29.1%）未来收益中位 +10.5%、亏损比例 40.0%，P21（-11.1%）收益中位 -6.9%、亏损比例 70.0%，P41（-0.3%）-3.5%；同文另报"户数越少越像庄股"组暴跌概率 81.0% 对 42.9%、收益中位 -26.5% 对 -9.2%（非同行评议）
+  - role: 披露节奏与月度快照可行性
+    url: https://stcn.com/article/detail/4080301.html
+    what_verified: WebSearch 命中——除定期报告外可在交易所互动平台按每月10日/20日/月末获取部分公司户数；该文统计 605 只公布 8 月 10 日户数、其中 214 只环比下降；并给"上期筹码集中股 71% 跑赢沪指"的媒体回测（非同行评议，禁当判据）
+  - role: 同期媒体横截面读数（用于识别口径噪声）
+    url: https://www.egsea.com/news/detail/2347233.html
+    what_verified: WebSearch 命中——户数降幅超10% 分组在 9 月平均涨跌幅为负，增幅超10% 分组平均涨幅近 8% 至 10%；另有个股连降 19 期累计降幅 40.58% 的案例面
+  - role: 开源实现面实况（如实登记零命中）
+    url: https://api.github.com/search/repositories?q=shareholder+number+concentration+china
+    what_verified: 本班 GitHub API 实跑 total_count=0（同族另三式 chip distribution factor a-share、money flow factor stock selection、institutional fund flow momentum 分别 0/0/1）⇒ 判"该轴在 GitHub 无成熟开源实现"，本卡无外部代码参考锚，伪代码全自拟
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: 无（该轴 GitHub 命中数=0，见上条）
+  gate_verdict: 通过（无代码可复制＝天然合规；全部外部锚为媒体与社区页面＝思想级假设来源）
+  web_content_license: 新浪/证券时报/每经/头条/社区页面均无许可证声明——只学思想不入码，且均非同行评议，禁止作为判据或阈值来源
+  iron_rule_note: 外部代码禁直接复制入库；本卡伪代码自拟
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机=户数是本库唯一能追到 1992 年的持股结构变量，直接刻画"筹码在多少人手里"。
+  流传教条（户数减少＝筹码集中＝看涨）被三处独立页面同时反证：真正有区分度的是
+  **户数变化与同期价格方向的交互**——涨着集中多为吸筹，跌着集中多为割肉离场；
+  同时分档证据显示极端减少档（前一年 -29%）未来收益反而最好、而中位小幅减少档最差，
+  即关系非线性、单调排序大概率高估其效。
+  构造=以公告日为事件时点（PIT 硬约束），取本期末户数除以上期末户数减一，
+  与"披露间隔内已实现收益符号"做交互，产出三分类或两列（环比变化、变化×收益符号交互项），
+  并在截面上剔除上市不满一年次新与期间发生增发/解禁/转债转股的机械变更样本（这三类会让户数机械变化而与筹码意愿无关）。
+  本席不预设符号方向——顺势臂与反向臂须分考。
+
+# ── 必备④ 伪代码（本席自拟）
+pseudocode: |
+  # 输入：c3_fundamental.shareholder_count(symbol 裸6位, end_date, announce_date, holder_count)
+  #       c1_market.kline_daily.pct_change（区间收益腿，裸 symbol JOIN）
+  for r in 按 (symbol, announce_date) 升序的披露记录:
+      prev = 同一 symbol 上一条 end_date < r.end_date 的记录
+      if prev is None or 上市龄 < 365天: skip 并计数          # 次新必剔，外部证据：不剔会把结论做反
+      if 区间内发生 增发/解禁/转债转股: skip 并计数             # 机械变更，非意愿集中
+      hc_chg = r.holder_count / prev.holder_count - 1
+      ret_window = Σ pct_change over (prev.announce_date, r.announce_date]   # 用公告日窗，禁报告期末窗
+      # 两列分别入池，禁折叠成一列后只测一次
+      sig_chg   = zscore_cs(hc_chg)                                   # 环比变化本身
+      sig_inter = sign_of(ret_window) * zscore_cs(hc_chg)             # 变化×价格方向交互
+      # PIT：信号可用时刻 = announce_date（不是 end_date）；同日公告的样本只能用于 announce_date+1 起
+      # 缺测/稀疏：最新报告期覆盖不足时须整体右移到上一完整期，禁把"当期未披露"当 0
+      # 非单调：默认走分档（十档或五档，档数留⑥冻结），禁全域线性排序
+
+# ── 必备⑤ 数据源映射
+data_source_mapping:
+  source_line: SL-C02 基本面与股东结构线（楼8 楼内要点=两融余额/股东户数/限售解禁/大宗折溢价/龙虎榜）
+  primary_table: c3_fundamental.shareholder_count
+  secondary_table: c1_market.kline_daily（区间收益与解禁事件剔除腿用 c3_fundamental.share_unlock）
+  measured_reachability:
+    - "shareholder_count 跨度=1992-12-31..2026-10-13(end_date)，announce_date 跨度=1993-01-12..2026-10-14，uniqExact(end_date)=3260，uniqExact(symbol)=5907"
+    - "年报季面板厚度（uniqExact(symbol)）：2025-03-31=5412／2025-06-30=5433／2025-09-30=5441／2025-12-31=5485／2026-03-31=5503／2026-06-30=5406／**2026-09-30 仅 640**"
+    - "逐年：2023=231 个 end_date/5495 只/44266 行；2024=190/5485/49439；2025=231/5528/52467；2026=175/5584/35491"
+    - "PIT 实测：countIf(announce_date>end_date)=509418、=(end_date)=1911、<(end_date)=3904（总 515280）⇒ 98.86% 方向正确，0.76% 异常行必剔"
+    - "披露滞后分布：dateDiff('day', end_date, announce_date) 中位=25，P95=113（与外部页面自陈'平均晚27天'互证）"
+    - "quality_flag 全表恒为 1（515280/515280）⇒ 该列无判别力，禁把它当过滤条件用（尺子自检：同尺正对照同表 symbol 非零）"
+    - "邻表可达性：share_unlock 的 unlock_date 跨度=2010-01-04..**2027-10-13**（含未来排期），uniqExact(symbol)=5533，逐年行数 2024=2627/2025=1784/2026=1697/2027=1046；margin_trading=2024-09-02..2026-10-12 共 507 个日期、4933 只；sector_fund_flow 仅 30 个日期（2026-09-15 起）；dragon_tiger 仅 43 个日期（2026-08-07 起）"
+    - "JOIN：shareholder_count.symbol 为裸 6 位，与 kline_daily.symbol（裸）同形，与 stock_daily_basic.symbol 同形；money_flow/stock_daily_basic 裸对裸于 2026-10-14 实测 5563 行"
+  caliber_pitfall_zh: >-
+    ① 事件时点必须是 announce_date：中位滞后 25 天、P95 达 113 天，用 end_date 对齐未来收益＝直接引入 25 至 113 天的未来信息，
+      这是本轴唯一能致命造假的地方（外部页面独立给出"平均晚 27 天"并有"用报告期末等于用未来数据"的自陈）。
+    ② 最新一期（2026-09-30）仅 640 只披露，与年报季 5400 至 5500 只的量级差 8 倍——把"未披露"当缺失值 0 或当无变化，
+      会把右端样本窗造成系统性幸存者偏置；本卡评估窗右端建议停在**最后一个披露率高于阈值的期末**，阈值由⑥定。
+    ③ 户数机械变化：增发/限售解禁/可转债转股都会改变户数，与本卡想测的"意愿集中"无关（外部页面自陈此点，本班实测 share_unlock 有前瞻排期可用作剔除腿）。
+    ④ quality_flag 恒 1＝死列（本班实测），任何"按质量位过滤"的实现条款都会退化成全通过，须改用 0.76% 的 announce<end 异常谓词做剔除。
+
+# ── 三闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml（grep -c strategy_id=162，本班实测）
+    ruler_readings: 户数=0／股东=1／筹码=3／集中度=4；正对照同尺 盘口=7／动量=14／反转=10
+    nearest_existing_entries:
+      - 第 4509 行（唯一"股东"命中）：庄股四标准之防范规则"股东人数骤减且股价已涨高=出货陷阱"——与本卡交互项思想同源，但为人工定性四标准，无环比构造、无公告日 PIT、无截面分档
+      - 第 4589 行：七因子含"筹码集中度"且要求 IC>0.03 与 ICIR>0.5——是打分体系里的一个**命名位**，其集中度定义与数据来源在册未指定
+    verdict: 非重复（并显式登记上述 2 条邻近存量供⑥配对；"筹码集中度"命名位若已在他处实现，本卡与之的关系须由⑥判定占位还是并存）
+    differentiation_zh: 本卡给出可计算的连续构造（环比变化率）＋交互构造（变化×区间收益符号）＋两条必修工序（公告日 PIT、次新与机械变更剔除），存量三者皆无。
+  license_gate: 通过（该轴零代码锚，全部思想级；非同行评议来源已逐条降级标注）
+  orthogonality_gate:
+    verdict: 闸缺席（判"缺席"非"未过"）
+    measured: 官方 15 员池未物化（scripts/backtest/translated 实测 0 CSV），照游标指示不复跑
+    self_flag_zh: 三条共线先验——①低频（季/月披露）信号与日频因子池的**共同日对齐**会大幅缩减有效样本，⑨席在册正交计量按 2.13 个独立轴计产的教训在本卡上表现为"一季一值若前向填充成日频，其自相关结构会让相关性读数虚高"；②"户数下降且股价涨"与卡07 的大单净流入强度可能同测一件事（吸筹），须同池测；③与卡08 的换手异动在机制上互补（换手＝流量面，户数＝存量面），但也可能高相关。
+    handoff: 本卡信号序列须以 announce_date 为键的**事件日频**列喂闸（禁前向填充到全日历后再算 corr），折叠与对齐口径由⑥预注册冻结
+# ── 七门槛可达性预判
+seven_gates_precheck:
+  gate5_signal_days: 部分可达——历史深度充足（1992 年起 3260 个期末），但**信号节拍是披露驱动而非日频**，按事件日计的独立观测数远小于日历日数；窗右端须停在披露率达标期末
+  gate6_sample_size: 风险项——年报季单期约 5400 至 5500 只、稀疏期仅数百只（本班实测 2026-09-30=640），门槛⑥ 的笔数口径能否达标取决于⑥选"全期池"还是"季末池"，本席不代裁
+  gate7_not_judged: 门槛②③④⑦、分档数、剔除谓词阈值、交互项是否入模 一律留⑥预注册＋⑦⑧考工
+  half_construct_note: 本卡交付为**半构造**：构造与 PIT 谓词可写死，但"区间收益窗与披露间隔不等长"带来的标签偏置（短间隔与长间隔混池）在册无解法，须⑥给出等化口径（如按持有日历天数归一或分层考）
+
+verification:
+  seat: st-qoder-p04-1015-03
+  channel_hits: WebSearch×1 组（命中 10 条页面，5 条入卡）＋ GitHub API×4 式（该轴 0 命中，如实登记）＋ CH 只读实跑×6 类谓词（含 announce/end 滞后分布与逐期覆盖）
+  verified_at_local: 2026-10-15 08:0x-08:3x（Asia/Shanghai，date 实测见台账耗时段）

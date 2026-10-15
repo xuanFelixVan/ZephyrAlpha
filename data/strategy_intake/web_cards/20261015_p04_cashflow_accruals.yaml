@@ -1,0 +1,243 @@
+# creation_token: st-qoder-p04-1015-04-strategy-intake | created_by: st-qoder-p04-1015-04 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-11
+title_zh: 现金流应计异象（Sloan 腿）——本库唯一干净 PIT 源是 financial_derived，但金融股必须剔、首披行必须挑
+mining_tower: 楼2 基本面族（⑨席正交空白轴地图「无一条以基本面为信号本体出分」；楼2 行在册=未开）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-04
+birth_batch: 20261015-p04-04
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（本班真实命中；未直连正文者逐条标「转述引证，禁当已核实」）
+source_links:
+  - role: 应计异象的开创性实证与效应量（原始文献，本席未直连原刊＝转述引证）
+    url: https://baike.baidu.com/item/%E5%BA%94%E8%AE%A1%E5%BC%82%E8%B1%A1
+    what_verified: >-
+      WebSearch 命中词条正文：应计异象由 Sloan 于 1996 年系统提出，机制是「应计项目的持续性显著低于经营性现金流，
+      而投资者只看总盈余不拆构成」，做多低应计／做空高应计可得**约 10% 的经风险调整超额回报**。
+      同一数值在三处独立命中互证（baike.quark.cn 词条、xueshu.baidu.com《应计异象:存在性与成因》、
+      max.book118.com 学位论文《百分比应计法下的中国股市应计异象研究》），本席据此记「约 10%」为原刊效应量，
+      但**原刊卷期页码未直连**＝转述引证。
+  - role: 中国 A 股应计异象的可用性与行业分布（本席最有用的可执行情报，社区研报＝非同行评议）
+    url: https://bigquant.com/square/paper/915d7a4f-545c-430e-b6d9-a049e5faa80e
+    what_verified: >-
+      WebSearch 命中 BigQuant《财务应计异象及其在选股中的应用》正文要点四条：
+      (1) 全市场回测 2016-2022，**最低应计组年化收益 3.15%，多空对冲年化 6.76%**；
+      (2) **剔除亏损公司后分组超额收益结构更为单调**，多空对冲收益更明显；
+      (3) 三种标准化（总资产标准化／净利润标准化／对应收账款另行标准化）**均展示相似分组收益特征**；
+      (4) 应计因子在**除金融外 27 个行业**表现出超额收益，对煤炭、农林牧渔、家电最有效。
+      非同行评议研报，数值不得当判据；但第 (4) 条与本席对 000001 的实测同向（见 caliber_pitfall ④），
+      故本卡把「剔金融」写成硬约束而不是可选项。
+  - role: 中国样本结论不统一的直接登记（防本席把方向先验写成结论）
+    url: https://max.book118.com/html/2025/0516/8037141115007065.shtm
+    what_verified: >-
+      WebSearch 命中学位论文《百分比应计法下的中国股市应计异象研究》摘要正文：Sloan 用十分位分组做多最小应计／做空最大应计，
+      美国市场约 10% 显著回报；此后加拿大、澳大利亚、英国、日本陆续验证存在，**但德国、韩国未检测到**；
+      「自 2000 年后，我国也有部分学者相继应用 Sloan 的方法去检验应计异象的存在性，**但得出的结论并不统一**，
+      一部分学者认为我国存在应计异象，而另一部分则认为我国……」（预览页正文在此截断，本席未取到后半句）。
+      ⇒ 本卡方向先验只写「待考的负相关假说」，不写「已证」。
+  - role: A 股机构利用该策略的实际获利性（揭示成本后持续性不稳）
+    url: https://www.asc.net.cn/News/NewsContent.aspx?NewsID=FD34775D-40AD-4D92-9B3B-29E70E478338&PageCode=MENU_AF_AB_AD
+    what_verified: >-
+      WebSearch 命中中国会计学会页面（2009 杨纪琬会计学奖优秀硕士论文介绍，刘辉）：
+      确认 A 股存在应计异象；开放式股票型基金**扣除实际交易成本后**虽可利用异常应计获取超额，
+      但**依异常应计交易的持续性不一致**——最积极使用低应计策略的基金两年后明显分化、趋于不再继续持有低应计股票，
+      且组合集中度相对更高、回报波动性相对更高。⇒ 本卡把「右端失效与拥挤度」列为⑦⑧考工须设的观测项。
+  - role: 应计异象的成因侧（情绪调节，供⑥设计条件列时参考）
+    url: https://baike.quark.cn/baike?id=b26400f05db54b009e41b529e846fe1d
+    what_verified: >-
+      WebSearch 命中词条正文：情绪高涨期（其引的样本为 2007-2011）错误定价更显著；关键审计事项披露（尤其资产折旧相关）
+      **加剧**异象程度；机构长期持股有助于缓解情绪驱动的定价偏差。百科类页面＝三级来源，只作机制参照，禁作判据。
+  - role: arXiv API 直读命中——PEAD 动力学的建模（与本卡同信息源的另一族）
+    url: http://arxiv.org/abs/2009.03094
+    what_verified: >-
+      arXiv API（HTTPS）查询 all:PEAD 命中 5 条，本条为 2020-09-07『Capturing dynamics of
+      post-earnings-announcement drift using genetic algorithm-optimised simulation』。
+      同式另两条为无关缩写命中（视网膜疾病筛查、强化学习装配），本班如实登记不引用。
+  - role: arXiv API 直读命中——公告后跳动的微观结构（近期，2026-01）
+    url: http://arxiv.org/abs/2601.08962
+    what_verified: >-
+      同批 all:earnings announcement 查询（6 条命中）之一，2026-01-13『Warp speed price moves:
+      Jumps after earnings announcements』⇒ 公告日反应集中在极短窗口，与本卡「事件日 PIT 而非日历日更新」的写法一致。
+  - role: arXiv API 直读命中——散户持有期与公告反应（近期，2025-11）
+    url: http://arxiv.org/abs/2512.00280
+    what_verified: >-
+      同批查询 2025-11-29『Retail Investor Horizon and Earnings Announcements』。A 股散户占比高，
+      该文的「持有期错配」机制是应计/盈余信息定价慢的一种候选解释，供⑥设计条件列时参考（本席未读全文）。
+  - role: arXiv API 直读命中——从新闻稿结构预测公告收益
+    url: http://arxiv.org/abs/2509.24254
+    what_verified: >-
+      同批查询 2025-09-29『Extracting the Structure of Press Releases for Predicting Earnings
+      Announcement Returns』⇒ 盈余之外的披露文本面。本卡不含文本腿（本库 NLP 事件链在册未闭环，见 dedup 邻近存量）。
+  - role: A 股 PEAD 与预期修正的社区参数面（非同行评议，只作口径参照）
+    url: https://tool.lu/en_US/skill/s/dXU
+    what_verified: >-
+      WebSearch 命中正文：PEAD 漂移可持续 30-60 个交易日；常见参数 holding_period=40、sue_threshold=1.5、
+      max_positions=10、在业绩公告日调仓；A 股做空受限故通常只做多头；业绩预告（1 月底／7 月中旬）早于正式报告、
+      会抢先反应；年报 4/30 截止造成 4 月信息拥挤。另给分析师预期修正三指标（上调减下调家数占比 ERM、
+      一致预期变动幅度、预期离散度 std/mean）。**这些数值一律不作本卡判据**，只用于说明⑥冻结时的常用档。
+  - role: 效应量与衰减的外部参照（技术长文，非同行评议）
+    url: https://techwhims.com/tradesys/theory/emh-boundaries/
+    what_verified: >-
+      WebSearch 命中异象表：PEAD 年化 4-6%、t 大于 2.5；低波动异常 2-3%、t 约 2.0；应计异常 2-3%、t 约 2.0，
+      并记「需要财务分析能力，非定量投资者难以利用」；PEAD 规模面引用 Bernard-Thomas 1989（最高 vs 最低十分位
+      60 日累积异常收益约 6-8%）、持续性面引用其 1974-1985 48 个季度中 41 季显著、集中度面引用 Bernard-Thomas 1990
+      （约 25-30% 的漂移集中在后续三次财报公告的三日窗口，而该窗口仅占约 5% 交易日）。
+      个人技术站＝非同行评议，引用的是其转述的原刊，本席未直连原刊。
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: >-
+    本班 GitHub API 对本公司检索 PEAD+china+stock 返回 total_count=0（零仓，非限流：同批另两式同配额内正常返回
+    total_count=1 与 2）⇒ 判「该主题 GitHub 无成熟开源实现」为真实读数。本轮零代码仓参考。
+  gate_verdict: 通过（本卡全部外部锚为百科/学位论文摘要页/社区研报/arXiv 条目，思想级；未读任何外部源码）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；应计定义（Sloan 现金流法与资产负债表法）只取思想，由⑤按本库列名重写。
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机＝楼2 基本面是 ⑨席在册空白轴（分数册 75 行无一条以基本面度量为信号本体出分），
+  而本库基本面库 c3_fundamental 有 10 余张表、其中一张（financial_derived）是本席实测到的**唯一干净 PIT 面板**。
+  本卡选「现金流应计」作为该轴的第一个本体，理由三条，全部来自本班实测而非文献：
+  (a) 它是**慢因子**——季度更新、公告日生效，与现有全部日频量价候选的时间尺度错开，天然不容易共线；
+  (b) 它的原材料在本库齐备：np_q、ocf_q、total_assets 三列 2024 年起窗内可用组合数实测 54392 行，
+      total_assets 零缺值、np_q 缺 8.89%、ocf_q 缺 9.34%；
+  (c) 它在本库注册表**零存量**（应计=0、accrual=0），不像估值/质量族已经有人在做。
+
+  构造主腿＝ 应计_i,t = ( np_q − ocf_q ) / total_assets，其中 q 为单季增量口径（本班对 000001 逐期核验
+  np_q／ocf_q 与 *_cum 的差分关系成立，见 data_source_mapping 第 5 项）。方向先验＝**负**：高应计押未来低超额收益。
+  外部证据强度登记清楚：原刊效应量约 10%（三处独立命中互证）、A 股社区研报 2016-2022 多空 6.76%、
+  但**中国学术结论不统一**（学位摘要原文承认），故本卡只交假说不交结论。
+
+  本卡另立一条**对照腿**（禁与主腿合并报数）＝资产负债表法应计＝ 营运资本变动（应收账款变动＋存货变动）
+  与 total_assets 之比——financial_derived 备有 accounts_receivable、inventory、goodwill 列，两法可比。
+  Sloan 原文即用两法互证；BigQuant 页面亦称三种标准化「展示相似的分组收益特征」，
+  故本库若两法读数背离，第一嫌疑是实现口径而非市场结构。
+
+  三条硬约束写进卡面假设，缺一条读数即失真：
+  ① **必须剔金融**。本席对 000001（银行）实测：单季 ocf_q 在 −738 亿至 +2441 亿之间摆动，
+     同期 np_q 只有 43-149 亿——银行的「经营现金流」由存贷款流向主导，应计列对它无意义。
+     这与 BigQuant「除金融外 27 个行业有效」同向，两证齐，故写成硬约束。
+  ② **必须挑首次披露行，且把修正行当新事件**。financial_derived 的 (symbol, report_period) 重复极少
+     （2 行仅 240 组），但同族 financial_indicator 重复 32623 组（约 9.2%）——若⑤实现改绑 FI，
+     取「最新行」会把未来修正值回填进历史，构成前视污染；取「最早 announce_date 行」才是 PIT 正解。
+  ③ **必须处理披露节拍不等长**。本因子只在公告日刷新，一年四个报告期加修正，
+     非公告日靠上一次披露延续（前向填充）。填充规则（自然日延续到下期／固定 N 日失效）归⑥冻结，
+     本席不拍。卡09（股东户数）在册同类瑕疵即此，勿重犯。
+
+  与在册存量的两条关系：其一，第 12370 行起『低 PB 与高 ROE（POE）双因子交叉选股』已明确
+  「财报按 announce_date 严格 PIT」——本卡继承这条 PIT 纪律但本体不同（它测水平估值，本卡测盈余构成质量）；
+  其二，第 12126 行起 STR-EVENT-001『事件驱动 sleeve 组装策略』的 entry_logic 自述已包含
+  「业绩类 SUE＋EAR＋ORJ 三/双因子」评分，且自述依赖 event_score=design 态、事件链 NLP 管道未闭环。
+  ⇒ 本卡与它的边界＝它是**公告事件的短持有期 sleeve**（2-3 天收敛、urgency=next_open），
+  本卡是**截面慢因子**（季度刷新、以月计持有）。二者可同源不可同卡，⑥配对时禁合并计员。
+
+# ── 必备④ 伪代码（本席自拟，零外部代码转写）
+pseudocode: |
+  # 输入 c3_fundamental.financial_derived(symbol 裸6位, report_period, announce_date,
+  #       np_q, ocf_q, total_assets, accounts_receivable, inventory, goodwill, quality_flag, ingest_ts)
+  # 标签 c1_market.kline_daily.pct_change（在册：kline_daily.pct_change 非零率 141155/144576，右端 2026-10-14）
+
+  step1 首披行:
+      for (symbol, report_period) in financial_derived:
+          取 announce_date 最小且 announce_date > toDate('1990-01-01') 的那一行   # 本表实测无 1970 哨兵，仍加此谓词防他表复用
+          修正行（同 (symbol,report_period) 的后续 announce_date 行）不覆盖历史值，另记为「新事件」时间戳
+          # 对照（勿照抄到 financial_indicator）：该表 1970-01-01 哨兵 32908/386559＝8.51%，
+          #   且 (symbol,report_period) 重复 32623 组；用FI 必须显式剔哨兵并选首披行，否则静默错
+  step2 主腿:
+      accrual_cf = (np_q - ocf_q) / total_assets            # total_assets<=0 记缺测，禁填充
+  step3 对照腿:
+      d_ar  = 本期 accounts_receivable - 上年同期 accounts_receivable   # 同比还是环比、缺失年如何处理 = ⑥须声明
+      d_inv = 本期 inventory           - 上年同期 inventory
+      accrual_bs = (d_ar + d_inv) / total_assets            # 与主腿分列分别喂闸，禁平均成一个因子
+  step4 宇宙与截面:
+      剔除 金融（银行/证券/保险，行业口径归⑤定表）——理由见 caliber_pitfall ④，两证齐
+      剔除 亏损（BigQuant 报「剔除亏损公司后分组超额更单调」；本卡另立含亏损的对照臂，两臂分考）
+      剔除 ST／停牌／上市龄 < 1 个完整报告期
+      截面分位 rank_cs(accrual_cf) 按行业×市值分组去规模（分组数留⑥）
+  step5 时间对齐（PIT 核心，做错即前视）:
+      as_of(d) = 在 d 日已披露（announce_date <= d）且仍未被下一期披露覆盖的最新 report_period 值
+      生效延迟 d_shift >= 1 交易日（公告多为盘后披露，当日不可得；具体档留⑥）
+      前向填充上限（自然延续 or 固定 N 日失效）＝⑥冻结项
+  step6 标签:
+      y = 未来 n 日累计收益（n 与折叠口径留⑥；建议同时考 20/60/120 日三档，
+          因外部证据显示漂移在 30-60 交易日量级＝社区页面口径，非判据）
+
+# ── 必备⑤ 数据源映射
+data_source_mapping:
+  source_line: SL-F01 基本面财报线（c3_fundamental 库；本卡主用 financial_derived，对照用 financial_indicator 与三张事件表）
+  primary_table: c3_fundamental.financial_derived
+  secondary_table: c1_market.kline_daily（标签）；c3_fundamental.express_report 与 c3_fundamental.earnings_forecast（更早的披露层，见 reachability 末两项）
+  measured_reachability:
+    - financial_derived 规模＝count 301752 行、uniqExact(symbol) 5869；report_period 2002-12-31 至 2026-06-30；announce_date 2004-07-01 至 2026-09-02
+    - PIT 质量＝countIf(announce_date=1970-01-01)=0/301752；countIf(announce_date<report_period)=0；滞后分布 quantile(0.5)=50 日、quantile(0.95)=417 日
+    - 重复行＝按 (symbol,report_period) 分组，1 行 301221 组／2 行 240 组／3 行 9 组／4 行 6 组（修正极少，与同族 FI 形成强对比）
+    - 列缺值率＝np_q 空 8.89%、ocf_q 空 9.34%、total_assets 空 0.00%（2024-01-01 起窗）；三列齐且 total_assets>0 的组合行数 54392
+    - 单季口径核验（000001 逐期读回）＝np_q 与 ocf_q 等于本期 *_cum 减上期 *_cum，例 2024-06-30 行 ocf_cum 113722000000 减 2024-03-31 行 ocf_cum(-21382000000) 得 ocf_q 135104000000 成立；2024-03-31 行 np_cum 与 np_q 同为 14932000000 亦成立 ⇒ q 列确为单季增量
+    - 覆盖逐年＝2018 年 5332 只／2020 年 5494／2022 年 5628／2024 年 5700／2025 年 5695（22402 行）／2026 年 5574（10767 行，年内不完整）
+    - 对照表 financial_indicator＝386559 行、5901 只、165 个 report_period、**1970 哨兵 32908 行（8.51%）**、(symbol,report_period) 重复 32623 组；剔哨兵后滞后 quantile(0.5)=53／quantile(0.95)=473；关键列空值率 roe 2.85%、eps_yoy 23.67%、net_profit_yoy 8.47%、revenue_yoy 6.88%、ocfps 6.06%、bps 4.00%
+    - pead_earnings_event＝**不可用作面板**：2824 行全部 trade_date=2026-10-14，uniqExact(toDate(produced_at))=1（单一时刻 03:59:31）；sue_band 分布 negative 2428／neutral 288／strong_negative 78／positive 24／strong_positive 6；actual_eps 与 consensus_eps 同为正时 consensus>actual 占 2332/2364；sue 极值 −60 与 +74.81；actual_eps<0 计 458 行、consensus_eps<0 计 25 行 ⇒ 口径疑病，已单列移交①②与⑤（见 caliber_pitfall ②）
+    - analyst_forecast＝**深度不可达**：report_date 仅 2026-07-22 至 2026-10-14（131081 行、2817 只）⇒ 预期修正动量（ERM/离散度）轴现阶段无法过门槛⑤，本卡不开该腿
+    - express_report＝28708 行、4395 只，report_period 2004-12-31 至 2026-03-31，announce_date 2005-01-08 至 2026-07-02 ⇒ 快报是介于预告与正式报告之间的更早一层
+    - earnings_forecast＝125582 行、5707 只，report_period 1998-12-31 至 2027-12-31（其中晚于 2026-06-30 者仅 6 行：2026-12-31 五行、2027-12-31 一行），announce_date 1999-01-08 至 2026-07-03
+  caliber_pitfall_zh: >-
+    ① 本库基本面有三层披露（预告 earnings_forecast → 快报 express_report → 正式 financial_derived/indicator），
+      越早在前的层数值是区间或估计。**混层即前视**：把正式报告的精确值填进预告日，等于用未来信息。
+      本卡只绑 financial_derived 的 announce_date 一层，其余两层列为下游可选扩展且须另立卡另测 PIT。
+    ② pead_earnings_event.sue 疑为「半年度实际 ÷ 年度一致预期」之类的跨期错配（符号面 96% 为负、|sue| 达 60 至 75），
+      且只有 2026-10-14 一个生产时刻。本席判其**既非面板也不可信**，禁下游把它当 SUE 因子现成物化使用；
+      若要用 SUE 思路，用 financial_indicator 的 eps_yoy 序列自算「相对自身滚动分布的意外」，或等①②把口径修清。
+    ③ 财务列的**单位与量纲本席未对表**（本行读到的 ocf_q/total_assets 为元级大数，非万元），
+      比值口径成立但禁裸阈值；截面 rank 面可用，绝对值面禁用（与卡07 同类瑕疵同型，勿重复申请）。
+    ④ 银行/券商/保险的 ocf_q 由存贷款与同业往来主导：000001 实测单季 ocf_q 从 −73822000000 摆到 +244075000000，
+      同期 np_q 4294000000 至 14523000000 ⇒ 应计列对金融股是被噪声主导的伪量。剔金融＝硬约束（外部 BigQuant 同向）。
+    ⑤ 跨年可比性：2024-12-31 之后 financial_indicator 的 (symbol,report_period) 覆盖从 ~5700 涨到 10000+ 行/期，
+      说明出现大量同票多行（修正/重述）。本卡主表 FD 无此现象（240 组），但一旦⑤改绑 FI 必须重做 step1。
+
+# ── 四闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
+    strategy_id_count: 163（本班 grep -c 实测，与卡10 同批读数）
+    ruler_readings: >-
+      应计=0／accrual=0／盈余=0／意外=0／公告=0（本卡本体在注册表**零存量**）；
+      邻近非零＝财报=3（其中第 12202 行 tags 属第 12126 行 STR-EVENT-001 事件驱动 sleeve；第 12379 行是 POE 卡的 PIT 表述）、
+      ROE=4、基本面=1（第 3949 行的主观打分权重「目标价空间 40%+基本面质量 30%…」）、加速=11（全为「启动前不加速」一类形态散文噪声，非因子）；
+      质量族在册有一条 DS-230 三正质量门（第 12299 行：PB>0、ROE>0、经营现金流/营收>0）——它是**布尔门槛**不是连续应计因子。
+    positive_controls: 盘口=7／动量=14／换手=12／资金流=11（同尺同文件，尺有判别力）
+    nearest_existing:
+      - 第 12126 行 STR-EVENT-001『事件驱动 sleeve 组装策略』——其业绩类评分自述含 SUE＋EAR＋ORJ，短持有期（2-3 天收敛）且依赖 event_score=design 态、事件链 NLP 管道未闭环；本卡为截面慢因子，同源不同物
+      - 第 12370 行起『低 PB 与高 ROE（POE）双因子交叉选股』——已立「财报按 announce_date 严格 PIT」纪律，但本体是估值×盈利水平；本卡本体是盈余构成（应计 vs 现金流）
+      - 第 12299 行 DS-230 三正质量门——现金流/营收作布尔过滤条件，非连续因子，不可与本卡折叠计员
+    verdict: 非重复（基本面本体轴首次入册）
+    differentiation_zh: 存量把财务数据当**门槛条件**或**水平估值打分**，从未把「盈余的现金支撑比例」做成截面连续因子；本卡的可执行差异是 (np_q−ocf_q)/total_assets 这条列级构造＋首披行 PIT 规则，二者均不可由存量条目调参派生。
+  license_gate: 通过（百科/学位论文摘要/社区研报/arXiv 条目＝思想级；GitHub 本公司零命中；GPL 命中 0；零代码复制）
+  orthogonality_gate:
+    verdict: 闸**已开但本候选未测**（判「未测」非「已过」）
+    measured: >-
+      本班已把闸跑通（方法、序列面与四条读数见卡10 的 orthogonality_gate.measured，同批同工具，不重复复跑）。
+      但应计是**个股截面**因子，docs/04_research_records/mining/ledgers/nightmine_20261010/series/ 的 34 枚可喂序列全是
+      市场级单列（涨跌停数、情绪聚合、等权技术指标），**没有任何一枚是应计或财务度量**
+      （本班逐档列名核过：agg8 族 9 枚＋mkt_fwd 2 枚＋streak_distribution 1 枚（列集不合契约）＋ti_ew 技术指标 22 枚）。
+      ⇒ 本席不自造截面序列喂闸（造序列属⑤实现写域），只登记「闸可用、本候选待⑤物化降维列后再过」。
+    self_flag_zh: 三条共线先验须优先排闸。①应计与「经营现金流/营收」质量门（第 12299 行）同用 ocf 列，符号层须对齐；②应计与本批卡07 净流入强度、卡08 换手率同被 ⑨席判为空白轴，若三者在截面 rank 面上共线则只算一员；③「盈余加速」（eps_yoy 的二阶差分）与应计是同一份财报的两种读法，⑥禁当两轴——本卡**不含**加速腿，正是为此。
+    handoff: 请⑤先物化一条截面降维列（建议＝最高应计十分位减最低十分位的日度多空价差序列，或应计截面 rank 均值），再喂 gate；口径与命名由⑥预注册，本席不代定。
+# ── 七门槛可达性预判
+seven_gates_precheck:
+  gate5_signal_days: 条件可达——公告日分布到日（financial_derived 主表 301752 行跨 2004 至 2026-09，日度非零），但因子本身一年只刷新约四次＋修正；门槛⑤以「截面日」还是「披露事件数」计量属⑩/⑥口径问题，本席不裁（卡09 已挂同类问题在册）
+  gate6_sample_size: 可达——2024 年单期 5700 只、2025 年 5695 只，去金融/亏损/ST 后仍为厚截面
+  gate7_not_judged: 门槛②③④⑦ 与 持有窗 n、行业×市值分组数、亏损臂是否并考、BS 法同比基期、前向填充上限、生效延迟档 一律留⑥预注册＋⑦⑧考工，本席不代裁数值
+  not_reachable_note: 本卡不开预期修正（ERM/离散度）腿——analyst_forecast 实测仅 2026-07-22 起（约 3 个月），门槛⑤不可达；不开 SUE 腿——pead_earnings_event 判不可信且非面板（见 caliber_pitfall ②）
+verification:
+  seat: st-qoder-p04-1015-04
+  channel_hits: >-
+    ①CH 只读实跑 4 批探针（query_rows 严格读通道，含 000001 逐期列值读回）；
+    ②arXiv API（HTTPS）2 式 all:PEAD（5 条命中，本卡取 2009.03094／2601.08962／2512.00280／2509.24254）＋正对照面同批见卡10；
+    ③GitHub API 1 式（total_count=0，同配额内有正常返回，非限流）；
+    ④WebSearch 1 组（中文应计/异象词，约 30 条命中入册 8 条）；
+    ⑤百科/学会/研报页直读 6 处（其中 max.book118 预览正文截断处已如实标注，未补全）；
+    ⑥闸实跑读数复用卡10（同班同工具，不重复消耗）
+  capability_note: >-
+    本班同步实跑 CapabilityLookup().find：「应计」n=0、「财报 因子」n=0，以同尺「波动率估计」n=3 为正对照证明尺可用。
+    ⇒ 本库无既有应计计算能力，⑤实现为新建；但 fhs_var_es_engine 与 c1_runner 的存在提醒「勿把风控层波动率工具误当截面因子工具」，与卡10 同一告警。
+  verified_at_local: 2026-10-15 08:46 至 09:3x（Asia/Shanghai；date 实测锚点见台账耗时段）

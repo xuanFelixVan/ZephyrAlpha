@@ -1,0 +1,100 @@
+# creation_token: st-qoder-p04-1015-02-strategy-intake | created_by: st-qoder-p04-1015-02 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-06
+title_zh: 个股漂移状态门控的短期反转——只在"单边阴跌/单边缓涨"状态里激活反转打分（价值腿本班判不可达）
+mining_tower: 楼4 动量反转族（⑨席定向单"同楼改挖…反转／过热掉头"）＋ 楼9 市场状态族（表行9，注意与 F4/P-S 相关门）＋ 楼3 估值族空白轴（本卡价值腿受阻）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-02
+birth_batch: 20261015-p04-02
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接
+source_links:
+  - role: 构造锚（本班 arXiv API 直取摘要全文，未直连 PDF）
+    url: https://arxiv.org/abs/2511.12490
+    citation: "Discovery of a 13-Sharpe OOS Factor: Drift Regimes Unlock Hidden Cross-Sectional Predictability（submitted 2025-11-16，cs.CE/q-fin 预印本）"
+    what_verified: arXiv API id_list 直读摘要原文，取到三要素：①状态定义="个股过去 63 日窗口内正收益日占比 >60%"（**个股层面**，非市场层面）；②激活对象=把 value 与 short-term reversal **只在满足该状态的样本上**组合打分；③自报口径=walk-forward 20 年 S&P500（2004-2024）、OOS Sharpe >13、年化 158.6%、波动 12.0%、maxDD −11.9%
+  - role: 反向红旗（本席自加的读数纪律，非外部来源）
+    what_verified: 本席判读：Sharpe>13／年化 158.6% 这一量级在任何市场任何因子都属**异常绩效**，预印本＋无同行评议＋无公开复现⇒ 该文数字一律不得作为本库先验、阈值或晋级依据；本卡只取"状态条件激活"这一构造思想，且要求⑥把它当**待证伪假设**而非改进
+  - role: 同楼对照锚（反转与状态交互的学术语境，本班检索命中但未直连原刊）
+    citation: "Deconstructing the Low-Vol Anomaly（arXiv 1510.01679，2015-10-06 v2）"
+    what_verified: arXiv API 查询 cat:q-fin.PM AND all:"short-term reversal" 的返回条目之一（该式共 4 条命中：2511.12490／2404.05101／2401.00001／1510.01679）；本席只登记其存在与查询命中面，未取正文⇒ 不作本卡逻辑依据
+  - role: 过热掉头方向的同族线索（降级引证，禁当已核实）
+    url: https://zhuanlan.zhihu.com/p/459019458
+    what_verified: WebSearch 命中正文片段列 Chen & Yu (2014) 加速度动量（对期数与期数平方回归取平方项系数，声称在原始动量与 52 周最高价距离之上带来增量）⇒ 本席据此把"过热度量"登记为楼4 的另一可选腿，**未直查原刊**
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: 本卡无 GitHub 依赖（arXiv 预印本＋自拟伪代码）
+  license_distribution_zh: arXiv 条目随附许可证多为 CC 或无声明⇒按"只学思想不入码"档处置
+  gate_verdict: 通过（思想级）
+  iron_rule_note: 伪代码本席自拟；预印本未随附可核实代码，本席也未获取任何外部实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  短期反转（近期跌者未来反弹）在全样本上常常被两类票稀释：一是**仍在单边推进**的票（下跌由持续信息流驱动，
+  反转只会接飞刀），二是随机噪声主导的横盘票。该文的处理是给反转加一根"个股状态门"：
+  只用过去 63 日"正收益日占比"刻画该票处于缓涨漂移（>60%）还是非漂移状态，
+  然后**只在门开的那些票-日**上对"价值＋短期反转"打分并构建组合，其余样本置为不持仓/无信号。
+  与本库在册反转存量的根本差别=对象与层次：①存量 4 条反转族（STR-VREV-004 超短尾盘套利买点、STR-E-TIMING-001 恐慌反弹分布预测、
+  STR-VREV-025 恐慌反弹/危机 alpha、STR-MULTIFACTOR-040 老题材反抽不追）都是**事件/择时型**（何时买入的触发），
+  本卡是**横截面打分×个股自身状态过滤**（买谁的截面排序）；②在册两条状态类条目（STR-VREV-021 市场状态-策略-仓位动态映射、
+  STR-MULTIFACTOR-086 波动率体制转换预警）的 regime 定义在**市场/板块层面**，本卡 regime 定义在**单只票自身序列**上，
+  二者不可互推。方向先验：⑨席已把"正向动量溢价"判为反向先验（rows[73]/[74] 两次独立物化同判负号），
+  而"缓涨漂移"这根门与动量高度同源⇒本卡存在"门本身是动量换皮"的实质风险，必须让⑥把"门开/门关"做成**分档对照柱**，
+  否则等于给已判负的动量轴再交一张卡。本席不预设该门有效。
+
+# ── 必备④ 伪代码（本席自拟）
+pseudocode: |
+  # 输入：个股日收益 r_{i,t}（后复权 close 计算）；可选价值列 V_{i,t}（本班判不可达，见 data_source_mapping）
+  up_ratio[i,t] = mean_{s=t-D+1..t}( 1{ r[i,s] > 0 } )        # D=漂移回看窗（原文 63 日；值留⑥冻结，本席不代裁）
+  drift_regime[i,t] = 1 if up_ratio[i,t] > theta else 0        # theta=原文 60%，同属判据自由度，留⑥
+  rev[i,t]  = − rank_cs( cum_ret(i, t-k+1 .. t) )              # 短期反转腿：k 日累计收益取反再截面 rank
+  # 原文组合腿（价值）在本库暂不可得，登记为 val[i,t] = rank_cs(1/PB 或 E/P)——本班实测不可达
+  score[i,t] = rev[i,t]  (半构造交付：价值腿缺席时**不得**用规模或换手偷顶)
+  signal[i,t] = score[i,t] * drift_regime[i,t]                 # 门不开⇒该票该日无信号（缺失，不是 0 分）
+  # PIT：up_ratio/rev 只用 ≤t 信息；标签 t+1..t+H；禁"先按全样本筛出高绩效子集再回填历史"（该文自报 OOS 极端值正是此类风险的红旗）
+  # 缺失处理：up_ratio 需 D 日全量，不足则整行缺失；停牌日（本库 suspend 表不可用，见供数单）须用日线缺行反推并计数上报覆盖率
+
+# ── 必备⑤ 数据源映射
+data_source_mapping:
+  source_line: SL-A01 日线行情线（反转腿与状态腿）；估值腿=SL-A05 每日估值线（本班判不可达）
+  primary_table: c1_market.kline_daily_hfq（反转腿/状态腿收益基准，实测 1990-12-19..2026-10-14、8741 日、5919 票）
+  attempted_table: c1_market.daily_valuation（pe_ttm/pb_mrq/ps_ttm/pcf_ncf_ttm/is_st 列**存在**）
+  measured_reachability:
+    - "★本班新发硬发现（价值腿判据）：daily_valuation 全表实测 min=2026-08-03 max=2026-10-14 uniqExact(trade_date)=**47** rows=255,431 uniqExact(symbol)=5579；逐日行数 2026-08-03=5535／08-04=5536／10-09=5208／10-14=**1553**（前一日 10-13 为 5574）⇒ 短史 47 日直接撞门槛⑤（≥120 日）不可达，且末日采集塌陷"
+    - "★同表 is_st 列全表 sum(is_st)=**0**（255,431 行、47 日，同期 A 股存在 ST 板块）⇒ ST 标记列无信息，ST 剔除不得声称由该列完成；本席另见同表 pe_ttm>0 占比仅约七成（10-14 日 1553 行中 pe_ttm>0=959）"
+    - "反转腿/状态腿可达：kline_daily.pct_change 存在（列清单实测），日线密集宇宙自 2017-01-03（2016 年仅 234 票）；近端未断供（2026-09-25..10-14 逐日 5562..5568 行）⇒ 63 日窗与 k 日反转窗均足够长，右端可用 2026-10-14"
+    - "规模替代腿（**仅供对照，禁偷顶价值**）：c1_market.stock_daily_basic 实测 2017-01-03..2026-10-14、2372 日、5904 票、10,517,539 行，turnover_rate>0 占比 116,588/116,588（2026-09 全月）⇒ 换手/流通市值腿健康"
+  caliber_pitfall_zh: >-
+    ①**价值腿禁止用规模或流动性顶替**：本库 PB/PE 只有 47 日，若实现方为凑齐三腿改用 circ_mv 或 turnover_rate 充当"价值"，
+      卡面语义即被篡改（⑨席空白轴地图会把"估值"记成已出分＝账面造假）。本班交付形态明确为**半构造**（反转×个股状态门）。
+    ②日线两张表的 turnover 列是死列：本席实测 kline_daily 与 kline_daily_hfq 在 2026-09 全月 sum(turnover>0)=0
+      （116,749 行与 116,763 行，同表正对照 amount>0=116,641 行），换手真源只在 stock_daily_basic.turnover_rate⇒ 任何换手腿必须换表。
+    ③"正收益日占比"对 0 收益日的归属敏感（涨停一字/停牌日 pct_change=0 计入分子与否会变阈值读数）⇒ ⑥须在卡面登记 0 收益日归属规则。
+    ④suspend 表在册不可用（本席复核：全表 36 行、2026-09-04..09-23、来源标 derived_kline_gap，考试窗内 0 行，与⑤席在案件同源）⇒ 停牌剔除只能用日线缺行反推。
+
+# ── 三闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml（161 条）
+    measured尺读数: '按 name_zh+tags 解析 161 条后筛"反转/状态/波动"命中 23 条候选并逐条读：状态类=STR-VREV-021（市场状态→策略/仓位映射）、STR-MULTIFACTOR-086（波动率体制转换预警）；反转类=STR-E-TIMING-001／STR-VREV-004／STR-VREV-025／STR-MULTIFACTOR-040；无一条把 regime 定义在**个股自身 63 日正收益日占比**上'
+    positive_control: '"残差"3 命中、"盘口"7 命中、"动量"14 命中（同尺同文件）⇒ 尺有判别力；本次"个股漂移状态"零命中为真无源'
+    verdict: 非重复（对象层次不同：个股级 regime vs 市场级 regime；截面打分 vs 事件触发）
+    differentiation_zh: 与 STR-VREV-021 的差别不是参数而是**状态变量的宿主**（一列在指数上，一列在个股自身序列上）；与已判负的正向动量族（rows[73]/[74]）的差别=本卡主腿是反转（取负号），门控变量与动量同源但角色是过滤而非打分。如实标注：该差别是否足以躲过⑨席"同轴同向禁再挖"，判定权在⑨，本席不自证
+  license_gate: 通过（思想级）
+  orthogonality_gate:
+    verdict: 闸缺席（判"缺席"非"未过"，不入过闸账）
+    measured: "同上批卡 04/05 口径；⑨席 02 班第 5 行在册'闸未开期间候选只入 lane CSV、不入过闸账'"
+    self_flag_zh: 本卡与楼9 市场状态族、楼4 动量族两处可能同时共线（门控变量=正收益日占比，与动量本质同源），闸开时须同时与两者对拍，|corr|≤0.3 门柱（在册冻结值，本席不动）由⑥⑨执行
+
+seven_gates_precheck:
+  gate5_signal_days: "反转腿与状态腿可达（2017-01-03..2026-10-14=2372 交易日，右端 2026-10-14）；**价值腿不可达**（daily_valuation 仅 47 交易日，实测）⇒ 三腿合卡在门槛⑤ 直接判不可达，本班只交半构造并向①提供数单"
+  gate6_sample_days: "逐日截面 ~5,560 票；门开后有效样本按原文占比会显著缩小（本席未测占比，禁止用'全样本观测数'冒充'门内观测数'）⇒ 门内观测数下限须⑥单独设柱"
+  not_judged: 门槛②③④⑦、D 窗长、theta 阈值、k 日反转窗、价值腿回补后的合卡时点，全部留⑥预注册＋⑦⑧考工＋①供数，本席不代裁数值
+
+verification:
+  seat: st-qoder-p04-1015-02
+  channel_hits: arXiv API（cat:q-fin.PM AND "short-term reversal"＝4 条；id_list 直取 2511.12490 摘要全文）＋ 中文综述线索（zhihu 转述，已降级）＋ CH 只读实跑（daily_valuation／stock_daily_basic／kline_daily 族）
+  self_test_two_rounds: 见 ledger 20261015-p04-02 段
+  verified_at_local: 2026-10-15 07:2x-07:4x（Asia/Shanghai，date 实测）

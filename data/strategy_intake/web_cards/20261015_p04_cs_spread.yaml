@@ -1,0 +1,126 @@
+# creation_token: st-qoder-p04-1015-02-strategy-intake | created_by: st-qoder-p04-1015-02 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-04
+title_zh: 高低价隐含有效价差（Corwin-Schultz 族）——只需日线 OHLC 的流动性刻度，但水平值在本库不可信
+mining_tower: 楼1 盘口微结构族（P0）之"spread/价差"未饱和子方向 ＋ ⑨席正交空白轴"流动性"（docs/_working/automation_campaign/pulse/mining_directions.md 表行1 ＋ feedback/to_miners.md 2026-10-15 09 席 02 班第 3 行）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-02
+birth_batch: 20261015-p04-02
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（本班真实搜到并直读核实，禁凭记忆；核实时刻见 verification 段）
+source_links:
+  - role: 估计量分组口径与"必须用不复权价"的实现语义锚（本席直读源码 docstring）
+    url: https://github.com/mariasfondrini/etf-liquidity-lab
+    license_spdx: MIT
+    what_verified: curl 直读 src/spreads.py 的 corwin_schultz() docstring——取到 β/γ/α/S 四式的**括号归属**（γ 项分母是 √(3−2√2)）与参数 clip_negative/overnight_adjust 两项开关；另取到其 README 的关键失效证据"日线 CS 无法分辨现代 ETF 价差水平，SPY 读数 24.8bps 而真实报价价差不足 1bp；估计量与日波动 R²=0.83、与成交额 R²=0.02"
+  - role: 同族多估计量对照（Corwin-Schultz／Abdi-Ranaldo／EDGE 三选一的项目面）
+    url: https://github.com/jaimecrz3/daily-ohlc-spread-estimators
+    what_verified: GitHub API 检索命中（license=null、pushed=2026-10-13、description 点名三估计量对比）；README 直取返回 404（默认分支非 master/main），故**只登记存在性与选题面，未取到内容**
+  - role: 理论原刊锚（本席经二次文献核实，未直连原刊 PDF）
+    citation: Corwin S.A. & Schultz P. "A Simple Way to Estimate Bid-Ask Spreads from Daily High and Low Prices", Journal of Finance, 2012（量化文献手册列 67(2):719-759）
+    what_verified: WebSearch 命中①百度学术条目（ROLL R./CORWIN S SCHULTZ P 条目，含"日高低比率分离波动率与价差成分"）②quantfull 流动性度量手册的选型表（"单日与双日高低价比率联立求解价差；仅需日 OHLC；单边大涨大跌日有向上偏误"）③CSDN 微观结构讲义给出四式与"α<0 建议置 0"
+  - role: 反方证据（必须与主刊同权重读）
+    citation: "Liquidity premium and the Corwin-Schultz bid-ask spread estimate"
+    what_verified: WebSearch 命中百度学术条目摘要，原文结论面为"Corwin-Schultz 价差在 1963 年前后两段都**缺乏显著预测收益的能力**"（本席未直连原刊，登记为转述引证）
+  - role: 三估计量渐近比较（何时该换估计量）
+    url: https://ir.pku.edu.cn/handle/20.500.11897/547105
+    what_verified: WebSearch 命中摘要：Roll(1984) 协方差／Corwin-Schultz HL／Abdi-Ranaldo CHL 三估计量比较，结论含"**当波动相对价差较小**时 CHL 优于 HL"（即 HL 法的适用前提是波动≫价差）
+  - role: 学界最新改进（同题五矩估计量，声称优于 CS 且含中国市场应用）
+    citation: 高扬/王明进/王耀俊 "New Moment Estimators of the Effective Spread Based on Daily High and Low Prices"（CNKI 条目 XTYW201906012）
+    what_verified: WebSearch 命中 CNKI 摘要页：基于 Roll 与 CS 另提 5 个简单矩估计量，理论与仿真显示新 HL 估计量在理想与非理想条件下均优于 CS，并给出中美市场示例应用（本席未取全文 PDF，只作"CS 非终点"的选型证据）
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: mariasfondrini/etf-liquidity-lab=MIT；jaimecrz3/daily-ohlc-spread-estimators=null；ioannisrpt/Corwin_Schultz_2012=null；PatelRudrani/Liquidity-Measures-Volatility-Prediction-Project=null；francescopionatale/slippage-predictor=MIT；nirajneupane17/Order-Book-Microstructure-Market-Impact=MIT；raldisk/psx-equity-analytics=MIT；Krish-1717/market-microstructure-lab=null
+  license_distribution_zh: 本班三式 GitHub 检索合计 21 仓，**GPL 命中=0**，license=null=8 仓（按无许可证档处置＝只学思想），MIT=5 仓，NOASSERTION=1 仓，其余为无关命中
+  gate_verdict: 通过（MIT 允许思想/接口语义参考；null 档只学思想）
+  iron_rule_note: 仍按根宪法与 sop_c §9 铁律执行"外部代码禁直接复制入库"——本卡伪代码为**本席自拟**（其括号归属经 MIT 仓 docstring 语义校正，非搬运其代码）；论文与 CNKI/学术条目一律只学思想不入码
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  日内最高价几乎总由买方成交、最低价几乎总由卖方成交，故单日对数高低价差=基本面波动＋价差；
+  双日（相邻两日合并）高低价差里的波动成分随时长增长，而价差只被支付一次、不随时长累积。
+  用"两单日高低价差平方和 β"与"双日高低价差平方 γ"联立，即可把价差从波动里解出来：
+  价差随 β−γ 单调增，β≤γ 时无价差证据（估计置 0）。
+  经济含义=低频数据下的交易成本/流动性刻度，属⑨席在册空白轴"流动性"与楼1"spread"子方向，
+  与本库已挖的失衡/OFI/微观价格族构造对象不同，且**完全不依赖 tick 表**，
+  因此不受本班实测的 tick 近端断供（SIC-...-01/03 被迫把评估窗右端停在 2026-10-07）影响，日线腿可一直用到 2026-10-14。
+  方向用法有两条**须分考**的臂：(a) 流动性溢价臂——高隐含价差票押注未来超额收益（学界主流方向）；
+  (b) 成本/拥挤反指臂——高隐含价差作为可交易性惩罚项进选股打分。本席不预设谁成立；
+  且本班实测给出更硬的约束：本库日线面上该估计量的**水平值几乎不可信**（见 measured_readings），
+   usable 面是"横截面相对排序"或"α>0 占比"这类无量纲统计量，而非 bps 刻度。
+
+# ── 必备④ 伪代码（本席自拟，零外部代码复制；括号归属=本班合成实测校正过的版本）
+pseudocode: |
+  # 输入：单只票按交易日升序的**不复权** high/low（禁用后复权序列做双日 max/min，见 caliber_pitfall_zh）
+  hl[t]   = ln(high[t] / low[t])                          # 单日对数极差
+  beta[t] = hl[t]^2 + hl[t-1]^2                           # 两单日平方和（t=1 起，首行缺测置 NaN）
+  H2[t]   = max(high[t], high[t-1]); L2[t] = min(low[t], low[t-1])
+  gamma[t]= ln(H2[t] / L2[t])^2                           # 双日平方极差
+  # ——平滑必须先作用在矩上，再解 α（本席实测：不先平滑时正负号噪声主导）——
+  B[t] = rolling_mean(beta,  W)   G[t] = rolling_mean(gamma, W)      # W=聚合窗，值留⑥冻结
+  K  = 1/(sqrt(2)-1)                                                  # = 1/sqrt(3-2*sqrt(2)) = 2.41421356
+  alpha[t] = K * ( sqrt(max(B[t],0)) - sqrt(max(G[t],0)) )           # 关键：γ 项分母是 sqrt(3-2√2)
+  alpha[t] = max(alpha[t], 0)                                       # α<0 ⇒ 无价差证据，置 0（不是负数）
+  S[t]     = 2*(exp(alpha[t]) - 1) / (1 + exp(alpha[t]))             # 有效价差（价格百分比）
+  # 因子面（无量纲优先）：f_raw = 横截面 rank(S)；f_alt = 横截面 rank( mean_{t in W}( 1{alpha_t>0} ) )
+  # PIT：S[t] 只用 ≤t 的 high/low；标签用 t+1..t+H 的收益；禁未来窗
+  # 退化日处置（A 股特有，必做）：high=low（一字板/全天无波动，本班实测占比 0.2%）与停牌日 ⇒ 该日 hl 置 NaN，
+  #   并要求"β/γ 窗内有效样本数≥W_min"，否则该行输出缺失而非 0（缺失≠零价差，见 measured_readings 的底噪证据）
+  # 自检（本席踩过、必须让实现方复现）：造合成序列（日内 48 步布朗＋已知半点差 s_true），
+  #   正对照＝复原单调性；若整式同除 (3-2*sqrt(2)) 则 α 恒负、输出全零＝静默退化
+
+# ── 必备⑤ 数据源映射（对齐源线谱 SL-*，真源=docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md）
+data_source_mapping:
+  source_line: SL-A01 日线行情线（K 线族）＋SL-A02 Tick 线（本卡刻意不用，见下）
+  primary_table: c1_market.kline_daily（high/low/amount/pct_change；**不复权**口径）
+  secondary_table: c1_market.stock_daily_basic（turnover_rate/circ_mv——本卡若加换手或规模控制必须用它，禁用 kline_daily.turnover）
+  rejected_table: c1_market.kline_daily_hfq（γ 腿跨日取 max/min 会混两套复权尺度；见 caliber_pitfall_zh）
+  measured_readings:   # 本班 07:2x（Asia/Shanghai）CH 只读实跑，zephyr.data.ch_reader.query_rows
+    - "kline_daily 覆盖：min=1990-12-19 max=2026-10-14 uniqExact(trade_date)=8741 uniqExact(symbol)=5922 rows=11,695,555"
+    - "宇宙密度（uniqExact(symbol)/年）：2016=234／2017=3475／2018=3575／2019=3771／2020=4366／2022=5183／2024=5436／2025=5500／2026=5600（截至 186 个已采日）⇒ 密集宇宙自 2017-01-03 起，2016 及以前是 ~234 只的稀疏遗留面"
+    - "日线近端未断供：kline_daily 2026-09-25..10-14 逐日 5562..5568 行（对照 tick 族 10-13=0 行／10-14=8,027 行）⇒ 本卡评估窗右端=2026-10-14"
+    - "退化日（不复权表 2026-09 全月）：rows=116,749；high=low 共 228 日票（0.20%）；high<=0 或 low<=0=0；负对照 high<low=0 行；avg ln(H/L)=0.0380"
+    - "合成正对照（本席自造，日内 48 步布朗、日波动 1.2%、2000 日、W=21）：s_true=0/30/60/150bps ⇒ meanS=5.2/20.7/44.2/127.1bps，α>0 占比=0.306/0.729/0.961/1.000 ⇒ 估计量单调可用但**零价差就有 5.2bps 底噪**，且读数向上有衰减/向下有地板"
+    - "本库真实读数（10 只票、2025-06-01..2026-09-30、W=21、不复权）：n=3060，α>0 占比=0.277，S 中位数=0.0bps、均值=7.9bps、P90=25.0bps ⇒ **均值只比合成零价差底噪高 2.7bps**，水平值不可当刻度用"
+    - "相关性实测（同上面 10 票合并面）：corr(S, 21 日 Parkinson 波动)=0.167；corr(S, ln 成交额)=-0.131"
+    - "口径对照（同 10 票同窗，不复权 vs 后复权）：meanS 7.9bps vs 8.2bps，pearson=0.986、spearman=0.965 ⇒ 本样本两口径高度一致，但差异机制集中在除权除息日，本席**未逐日隔离除权日**，不得据 0.986 判'复权无所谓'"
+  caliber_pitfall_zh: >-
+    四条必读口径坑（本班实测／源码语义，非转述）：
+    ① **括号归属决定生死**：α=(√(2β)−√β)/（3−2√2）−√γ/√(3−2√2)＝K(√β−√γ)；若误写成 (√(2β)−√β−√γ)/(3−2√2)（把 γ 也除 0.1716），
+      数学上恒负（因 γ≥β/2>0.1716β）⇒ 输出**全零**且门面无告警。本席先踩后校：错版在真实 A 股 10 票上 α>0 占比=0.000，
+      在合成"真价差 150bps"上也=0.000（＝尺子无判别力），改版才复原单调性。
+    ② **水平值不可比**：零价差合成底噪 5.2bps vs 本库均值 7.9bps ⇒ 只能用横截面 rank／α>0 占比这类无量纲统计量，禁裸 bps 阈值进卡面。
+    ③ **矩必须先平滑**：不先对 β/γ 做窗均值而"逐日算 S 再平均"，本席实测零价差情形 meanS 虚高到 41.6bps（α>0 占比 0.557）＝噪声冒充价差。
+    ④ **复权与 HL 法不相容**：γ 取两日 max/min，跨除权日会把两套价格尺度混进一个比率；源实现（MIT 仓）明确要求用不复权极值。
+      本库若无"除权除息日标记"列可用，须按 pct_change 与 preclose 反查跳变日并剔除（⑥须登记该处理是否可算）。
+    ⑤ 附带在册冲突提示：⑨席空白轴地图把"流动性"列为零出分轴，但同一 to_miners 单把 23 行"情绪/量能/动量高事件开关族"判全线 fail；
+      本卡构造对象是**横截面价差刻度**（非事件开关），非同一族——此判断由本席作出，须⑥配对＋⑨正交复判，本席不自证有效。
+
+# ── 三闸判定
+gates:
+  dedup_gate:
+    registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml（161 条策略条目，grep "^  - strategy_id:" 实测=161）
+    measured尺读数: '"价差"=0 命中／"spread"=0（大小写不敏感）／"Amihud"=0／"非流动"=0／"高低价"=0／"流动性"=13 命中但全部只是 tags 或过滤条款（如"日成交<2 亿（流动性）"剔除规则、"信号过滤机制——流动性过滤"）⇒ 无一条以价差/流动性度量本身为信号本体'
+    positive_control: 同文件正对照 "盘口"=7 命中、"动量"=14、"反转"=10 ⇒ 尺有判别力，0 命中判真无源非空尺
+    verdict: 非重复
+    differentiation_zh: 存量条目无任何"由价格极值反解交易成本"的构造；最近邻是"板块容量/可交易池剔除规则"这类**过滤件**（不做打分），本卡是打分因子；与同批卡 01/03（OFI 事件差分、微观价格偏离）在数据腿与构造对象两方面均不相交
+  license_gate: 通过（见 license 段；GPL=0，null 档只学思想）
+  orthogonality_gate:
+    verdict: 闸缺席（判"缺席"非"未过"，不入过闸账）
+    measured: "本席未重跑 signal_orthogonality.py（上一班 20261015-p04-01 已实跑并留 RC=2 原文'--pool 未命中任何信号 CSV'，游标明确指示'池未物化则记缺席勿重复自跑消耗时间'）；pulse/independent_signals.md 在册实测仍为空面"
+    self_flag_zh: 本卡自带一条正交风险预告——按 10 票合并面 corr(S, Parkinson 波动)=0.167（本席实测），若⑥改用单票时序面或极端票池，与波动率族的相关可能显著抬升（ETF 仓单资产时序面 R²=0.83 即为此形态）；闸开时本卡须与波动率族**对拍后再定排名口径**，不得默认低相关
+  seven_gates_note: 见 seven_gates_precheck
+
+seven_gates_precheck:
+  gate5_signal_days: "可达——日线密集宇宙自 2017-01-03 起有 2372 个交易日（uniqExact 实测），远超门槛⑤ 名义下限；且右端可用到 2026-10-14（tick 族断供不影响本卡）"
+  gate6_sample_size: "横截面全 A 池逐日 ~5,560 只票（实测 2026-09-25..10-14 行数 5562..5568）⇒ 观测数充足；退化日 0.20% 可剔"
+  data_leg_advantage_zh: "本卡是楼1 楼内**唯一不依赖 tick 族**的子方向，故是断供期间楼1 唯一能出分的候选（对上一班 SIC-...-01/02/03 构成互补）"
+  not_judged: 门槛②③④⑦ 与全部窗参数（W、聚合频率、持有期 H、是否用 f_alt）一律留⑥预注册冻结＋⑦⑧考工，本席不代裁数值
+
+verification:
+  seat: st-qoder-p04-1015-02
+  channel_hits: GitHub API 检索×3 式（corwin+schultz+spread／amihud+illiquidity／residual+momentum，合计 21 仓）＋ GitHub 源码 docstring 直读×1（MIT 仓）＋ GitHub README 直读×1（同仓）＋ arXiv API×6 查询＋ WebSearch×3（学术条目/讲义/综述）＋ 中文量化社区条目（quantfull 手册、CSDN 讲义、TradingView 脚本册）＋ 本席合成仿真＋ CH 只读实跑
+  self_test_two_rounds: 见 docs/_working/automation_campaign/p04_scout_web/ledger.md 20261015-p04-02 段"自检两轮"
+  verified_at_local: 2026-10-15 07:1x-07:4x（Asia/Shanghai，date 实测；WebFetch/curl 直连＋CH 只读）
