@@ -156,3 +156,15 @@ title: 独立信号清单（⑨成绩官每日维护）
 - ⚑ **给 ③④ 席与正交闸的新事实（原因层，本班直测、尺＝`python .runtime/tmp/st-qoder-p09-1015-13/measure13d.py`）**：**事件族 23 行的"OOS 同号确认"柱在当前冻结窗下数学不可达**＝卡面 OOS 窗逐字相同（23/23＝`2024-01-01..2025-09-09`，实测面总日数 **410**），而族内下限把"≥200 事件日"同时套在**被用来确认的那一窗**（`scripts/backtest/fexam/calibration_exam.py:843`、`:873-875`），⇒ 需要事件密度 **≥48.8%**；实测该族 OOS 事件日 79–165（密度 19.3%–40.2%）、IS 侧 239–363（**23/23 过线**）。⇒ 12 班在册"事件族 23 行 0 pass"的**原因不是信号弱，而是门槛×窗长的可达性**：同一枚 200 下限套在 IS 窗 1212 日只需 16.5% 密度、套在 OOS 窗 410 日需 48.8%。**对新卡的可执行含义**＝若沿用该 410 日 OOS 窗＋稀疏事件定义（<50% 覆盖），此柱必拦、该卡不可能 pass；本席不动门柱，题面已按呈批 **P-9** 交裁（选项与代价见 `to_impl.md` 本班节）。
 - **15 员池 PR 缺席如实注明（未重烧）**：`c1_market.factor_signal`/`factor_feature_value` 各 0 行（三度同值，本席未第四次重烧）；`ART_ROOT=docs/_working/integrated_backtest/` 未复查；在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"（本席累计九班无产物可再现该数）。
 - 空白轴地图判读面限定沿用：按 card_id 命名语义归类，本班未逐卡读卡体（例外＝轮一抽的 rows[48]/[55]/[60] 三张事件卡读过卡体 `pillars_numeric` 与 `window`）。
+
+
+## 2026-10-15 ｜ st-qoder-p09-1015-14（⑨成绩官第十四班·每日维护行：增量 0 行＝零新轴入占；pool-report 复现＋**断链"面积 vs 阻断"分面首份账**）
+
+> 读面声明（本班正文原样跑，终报前重测）：磁盘面 sha256 `d77773545f5b4cc7c8c64686a8aab8e2c672a540740e843da953f4e3186d0c9c`／132248B／docs=2／doc1 rows=**96**／mtime `2026-10-15 16:28:53`＝与 13 班终报锚点**逐位同** ⇒ **本班增量 0 行**；卡池按卡内 `card_id` 字段 join＝**552**（=卡文件数 552），96 行 join **96/96** 零缺失；index 面 `git show :docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml` 与 HEAD 该馆面沿 13 班在册（本班未复查，避免与他席在途袋对撞）。本班未动分数册任何字节、未动任何阈值与门柱。
+
+- **本班工具实跑**（非引用在册）＝`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6 --out .runtime/tmp/st-qoder-p09-1015-14/pool6_report_14.json` → `n_members=6 n_common_dates=1855 effective_n_signals(PR)=2.1272`（rc=0）；pool6 六枚 CSV mtime 皆 `2026-10-15 07:30` 未变（本班 `stat` 直读）⇒ **PR 与 04/11/12/13 班逐位同＝同池同人同值复现确认，非新增读数**；本班未新建池面。
+- **占领区摘要**：本班增量 0 行 ⇒ **零新轴入占**；未占/稀薄轴维持 04/09 班在册方向（波动率期限结构、流动性与冲击成本、资金面分户、另类数据）。
+- **15 员池 PR 缺席如实注明（未重烧）**：`c1_market.factor_signal`/`factor_feature_value` 各 0 行（三度同值，本席未第四次重烧）；`ART_ROOT` 未复查；在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"（本席累计十班无产物可再现该数）。
+- ⚑ **给 ④ 席生成端与正交闸的新对照基准（原因层，本班直测）＝断链的"面积"与"阻断"差 39 倍，勿按引用数开单**：552 卡中 **84 卡（15.2%）** 卡体含指向已删 `docs/_working/**` 的路径、覆盖分数册 **39/96 行（40.6%）**，但键级分面显示引用几乎全落在溯源字段（`status_reason 60／mother_score_row 28／data_window_evidence 18／same_family_precedent 18／basis_casefile 16／paper_trail 10`），**机器字段命中仅 3 卡**；全册**执行阻断仍只有 rows[90] 一枚**（双臂 book_channel 经 `card_binding.py:1761` → `exit_simulator.py:122 load_indicator` → 旧址 `SCORES_YAML`）。⇒ 正交闸与生成端据此须知：**这 39 行的读数是有效的**（断的是证据回溯，不是输入），而"对照族 11 行 0 pass"里那 2 行 blocked **与信号有效性无关**（本版对照族说明）。尺＝`.runtime/tmp/st-qoder-p09-1015-14/measure14b_cards.py`＋`measure14c_keyface.py`（只读、内置三对照）。
+- **在册事实续供下一班（勿重查）**：`comparison_exam.py`（OD-1 执行器，`book_channel:` 文案唯一发射点＝`:270/:274/:277`）三面＝**HEAD 无／index 无／磁盘 `??` 未跟踪**；`signal_orthogonality.py`＝HEAD 无／index 有（`AM`）⇒ 本班能跑的是**磁盘面**，任何从 HEAD 起跑的车道这两个工具都**不存在**。
+- 空白轴地图判读面限定沿用：按 card_id 命名语义归类，本班未逐卡读卡体（例外＝轮一抽的 rows[76]/[78]/[66] 三张回过卡体 `pillars_numeric`）。

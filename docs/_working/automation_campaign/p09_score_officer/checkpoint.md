@@ -8,7 +8,7 @@ title: ⑨成绩官·游标
 
 cursor: exam_scores_v1.yaml#rows[95]
 last_run: 2026-10-15
-last_batch: 当日增量 0 行（13 班复量：磁盘 d77773545f5b4cc7…／96 行与 12 班终报锚点逐位同）；rows[96] 起待判；13 班在册
+last_batch: 当日增量 0 行（14 班复量：磁盘 d77773545f5b4cc7…／96 行与 13 班终报锚点逐位同）；rows[96] 起待判；14 班在册
 notes: 游标由本岗每批推进；监督员(⑩)可代修。
 
 ## 游标推进记录 ｜ st-qoder-p09-1015-02
@@ -197,3 +197,20 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。
   6. **禁烧面续条**（本班均未重烧）：15 员池 `factor_signal`/`factor_feature_value` 各 0 行（三度同值）；rows[76]/[78] 两腿（册面 sha 未变）；pool6 **PR=2.1272**（本班实跑＝复现，非新读数）；双臂行 `ic_delta_oos` 0/10 实数（复现 10 班在册）；`ic_ir` 有实数 6 行。
 - 本班判卷面：增量 0 行；轮一＝rows[48]/[55]/[60] 回卡体（`spot12.py` 在册尺原样跑，门柱未走样 3/3）；轮二＝96 行 join **96/96**＋校准族 cross-tab 61/61 咬合＋双臂 0/10 复现。本班**零升级、零方向单、零缺数单、零对照单**，新开＝**修⑯＋呈批 P-9＋修⑫ 追加面**，未动分数册与判据字节。
 - 本班耗时：起批 reaper 锚点 `17:35:49` → 写盘/提交段实测见台账 §9 与提交补条（按在册纪律以落笔前现测 `date` 为准）。
+
+
+## 游标推进记录 ｜ st-qoder-p09-1015-14
+
+- cursor: `exam_scores_v1.yaml#rows[95]`（**不变**，磁盘现值面 96 行全判；本班增量 0 行）
+- last_run: 2026-10-15
+- last_batch: 当日增量 **0 行**。四证（进场 18:00＋终报前各测一次，逐位同 13 班终报锚点）：mtime `2026-10-15 16:28:53`／bytes `132248`／sha256 `d77773545f5b4cc7c8c64686a8aab8e2c672a540740e843da953f4e3186d0c9c`／`safe_load_all` docs=2、doc1 rows=**96**
+- ⚑ 下一班必读事实（勿重查）：
+  1. **在册单号现止于 修⑲／P-9**（本班新开 修⑰＋修⑱＋修⑲；`修⑩` 仍悬空＝引用 1 次无定义，本席未补写；P 系列本班零新开）。
+  2. **blocked 两行的根因已量到链条级**＝rows[90] 走 `card_binding.py:1761` → `exit_simulator.py:122 load_indicator` → 旧址 `SCORES_YAML`；rows[91] 属资源面同窗（本班复量 `commit_pct=94.68`）。**两行均禁按"信号无效"分诊、禁作 fail 升降级**（本版对照族说明）。
+  3. **断链分面已出账（修⑱/修⑲）**＝84/552 卡含已删 `docs/_working/**` 引用、覆盖 39/96 行，但**机器字段命中仅 3 卡、执行阻断仅 1 行**；引用集中在 `status_reason/mother_score_row/data_window_evidence/same_family_precedent/basis_casefile/paper_trail`。下一班**勿把 40% 册行判成废**，也勿重烧该尺。
+  4. **在册尺新增（全只读、内置三对照）**＝`python .runtime/tmp/st-qoder-p09-1015-14/measure14.py`（A join／B 轮一回卡体／C 册内旧址引用判存）＋`measure14b_cards.py`（卡面断链面积）＋`measure14c_keyface.py`（键级分面）。
+  5. **门柱走样核查的正解形制（本班实测出）**＝fail 串文案名 ≠ 卡体声明键名，须查到**发射点守卫的键**才可判"未走样"：`calibration_exam.py:623 if p.get("oos_same_sign")` → `:626/:628` 发 `oos_sign_flip`。沿 06 班"两族 fail 串柱名与卡体键不同名"在册，但**不接受它当结论**（否则抽一行就误判门柱走样）。
+  6. **OD-1 执行器三面分叉复证**＝`comparison_exam.py` HEAD 无／index 无／磁盘 `??`（`book_channel:` 唯一发射点 `:270/:274/:277`）；`signal_orthogonality.py`＝index 有／HEAD 无（`AM`）。⇒ 从 HEAD 起跑两者皆不存在；本班跑的是磁盘面。
+  7. **禁烧面续条**（本班均未重烧）：15 员池 `factor_signal`/`factor_feature_value` 各 0 行（三度同值）；rows[76]/[78] 两腿（册面 sha 未变）；pool6 **PR=2.1272**（本班实跑＝复现，非新读数）；双臂 `ic_delta_oos` 0/10；`ic_ir` 有实数 6 行；`ART_ROOT`。
+- 本班判卷面：增量 0 行；轮一＝rows[76]/[78]/[66] 回卡体（门柱未走样 3/3，含发射点 file:line 直查）；轮二＝96 行 join **96/96**＋卡池 552。本班**零升级**，新开＝**修⑰＋修⑱＋修⑲**，方向单／缺数单／对照单／呈批**皆零新开**，未动分数册与判据字节。
+- 本班耗时：起批 `date 18:00:09`／reaper 锚点 `18:00:18`；终值见台账 §9 与提交面补条（落笔前现测，不写预估）。

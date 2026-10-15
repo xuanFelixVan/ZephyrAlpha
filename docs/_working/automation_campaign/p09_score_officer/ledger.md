@@ -824,3 +824,67 @@ title: ⑨成绩官·findings台账
 ### 9 本班耗时
 
 - 起批 reaper 锚点 `17:35:49`；写盘脚本 START/END 打 `datetime.now()`，终值见本班提交段（按在册纪律：耗时以落笔前现测 `date` 为准，不采信体感）。本班增量 0，主耗时在"事件族可达性取证链＋自犯假红推翻重测"，非判卷。
+
+
+## 2026-10-15 ｜ st-qoder-p09-1015-14（⑨成绩官第十四班：当日增量＝**0 行**；主产出＝新单 修⑰/修⑱/修⑲＋blocked 两行分诊＋断链"面积 vs 阻断"分面首份账）
+
+### 1 冷启动与防重入
+
+- `python --version`＝**3.12.8**（PATH 修正后现测）；起批 `date`＝`2026-10-15 18:00:09`。
+- `python scripts/lock_files.py cleanup` 实读末行＝`SALVAGED — 死会话 st-qoder-p09-1015-12 遗物已回收（merge=skipped, stash=0件, 释放claim=0+.ailocks/0.registry）` ⇒ **本席第十二班的车道壳被判死并回收**（释放 claim=0、stash=0 件＝无遗物丢失），本班据此登记"12 班会话壳已死、其台账与袋已另面落地"这一事实，不推测死因（⑩ 席在册 ghost_session 族在册）。
+- `python -m zephyr.trading.process_reaper --status`＝`source=live`／`last_run=2026-10-15 18:00:18`／`scanned=40 whitelist_hits=26 killed=0 reported=4` ⇒ **写在岗**。⚠ 水位红旗：`commit_pct=94.68`、`ram_used_pct=71.4`、`degraded=True`、`breached=['ALERT-SYS-003']`、`worktree_changes=5701>50` ⇒ 本班全部取证走窄面（逐路径 grep＋`--include`），**两次全仓检索撞超时被本机转后台**（`find`＋`grep -rn` 各一次），随即改用索引工具重取；未跑全量 `git status`。
+- 防重入＝读 `checkpoint.md`：13 班游标推进记录完整（含耗时行）⇒ 判**上一班已完**；本班取当日第 **14** 号。
+- claim＝`lock_files.py acquire` 逐件四枚（`to_impl.md`／`pulse/independent_signals.md`／`p09_score_officer/ledger.md`／`p09_score_officer/checkpoint.md`），`list` 复验＝四枚持有者皆 `st-qoder-p09-1015-14`、剩余 29.7–29.8 分。
+- 作用域形制＝沿用本岗当日在册**降级直改主区**（10/11/12/13 班在册理由：本岗件系 `_working` 活文档、非施工件、不改判据面；提交段带 `--allow-non-worktree` 显式申请制留痕）。
+
+### 2 判卷面（工序 1–2，增量 0 行＝不重判）
+
+- 四证（进场 18:00 ＋ 终报前重测）逐位同 13 班终报锚点：mtime `2026-10-15 16:28:53`／bytes `132248`／sha256 `d77773545f5b4cc7c8c64686a8aab8e2c672a540740e843da953f4e3186d0c9c`／`safe_load_all` docs=2、doc1 rows=**96**。⇒ **当日增量 0 行**，游标维持 `rows[95]`。
+- 全册 verdict 分布复量＝`fail 92／pass 2／blocked 2`（与 11/12/13 班在册同）。
+- 对照族说明（本版新增）适用面实测：blocked 2 行＝rows[90]/[91]，`family=comparison`、`route=dual_arm`、`binding_class=C`、`binding_reason=target_face_not_index_next_day`；本班**未把任一 blocked 归因成"信号真无效"，也未用它做 fail 升级/降级**。
+
+### 3 归因四分诊（工序 3）
+
+- rows[90]（FileNotFoundError）→ **实现问题 → 修改单 修⑰**（链条三段实测：`card_binding.py:1761` import → `exit_simulator.py:122 load_indicator` → `SCORES_YAML`；旧址目录 `docs/_working/fexam/` exists=False，04 永久区同名件 exists=True）。
+- rows[91]（MemoryError）→ **资源面同窗**，沿 11 班在册"登记同窗、不定因果"，本班复量 `commit_pct=94.68` 支撑"高压窗仍在"；不重复开单。
+- 断链引用面积（84 卡/39 行）→ **可复验性问题 → 修改单 修⑱（对象 ⑥ 制卡席）**，并明确标注"非执行阻断、勿据此撤卡"。
+- 扫描器漏扫实例（`campaign_report.py:46` 查无命中）→ **工具面 → 修⑲（对象 ⑩/工具班）**，只出案卷不出裁定、不自改工具。
+- 判据面：本班**零新呈批**（P 系列无新开；在册 P-9 仍待裁，本班未代签）。方向单/缺数单/对照单**零新开**（增量 0 ＋ ⑩ 席 1015-09"全线停发新挖矿配额"在册）。
+
+### 4 pass 行与升级（工序 4，本班零升级）
+
+- 在册两枚 pass＝rows[76]/[78]（`TDM-E-L1-S2/calibration/41`、`/43`）。册面 sha256 与 13 班逐位同＝两腿现值未变（`ic_ir_min` 从未检验＋净/成本面全 NaN，09/10/11 班在册），按在册"sha 未变不重测"⇒ **不升 verified**，TDM 挂接记录零新增。
+- 红线核查（fail 永不升级）：本班无新行、无升级动作，红线未触碰；`修⑯`/P-9 在册事件族 23 行仍**未**被本班改判。
+
+### 5 结构性观察（工序 5，家族级规律，本班主产出）
+
+- **S-1＝"断链的面积"与"断链的阻断"不可互推，本册实测差 39 倍**：按引用数看 84/552 卡（15.2%）、39/96 行（40.6%）"坏了"；按键级分面看，机器字段命中仅 3 卡、执行阻断仅 1 行；按反向经验看，这 39 行**照常出了 metrics**（含事件族 23 行 OOS 嵌套面有值）⇒ 引用悬空的真实危害是**判卷回溯不能**，不是产分不能。⇒ 对生产线的可执行含义＝断链类工单一律**先分"是否被执行器读取"再定量**，否则会把 40% 的在册成绩判成废（同族在册教训＝存在性≠内容判据／零命中须正对照）。
+- **S-2＝同一搬迁波在码面留下三种形态，只修一种会再撞**：读侧已修但**未落 HEAD**（exit_simulator `:72-76`，磁盘 vs HEAD 分叉，304 行在册）／写侧**整片未修**（`:77-78`，且 `atomic_write` 的 `mkdir(parents=True)` 使其**静默重建退役目录**、零红）／同族消费者**tracked 且 clean 无人碰**（`campaign_report.py:46-48`，消费者含 `run_fexam.py`／`roster.py`／`paper_pool_gate.py`／`tests/backtest/fexam/test_campaign_report.py`）。⇒ 三态须同批落，分袋即再现"改一半"。
+- **S-3＝OD-1 执行器本体在 git 外**：`comparison_exam.py` 三面＝HEAD 无／index 无／磁盘 `??`，而它是 blocked 文案（`:270/:274/:277`）的唯一发射点＝**产分侧代码件未入库**的第二次复证（沿 304 在册，本班补"index 也无"这一面）。`signal_orthogonality.py`＝index 有／HEAD 无（`AM`）⇒ 本岗每日维护所用的正交尺同样不在 HEAD。
+
+### 6 工序 5 工具实跑
+
+见 `pulse/independent_signals.md` 本班节：`pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6` → `n_members=6`／`n_common_dates=1855`／**PR=2.1272**（rc=0，落 `pool6_report_14.json`）＝在册同值复现，非新增读数。
+
+### 7 自检两轮（工序 6）
+
+- **轮一（抽 3 行回卡体核门柱）＝rows[76]/[78]/[66]**（12 班抽 0/44/46、13 班抽 48/55/60 ⇒ 本班换面）：尺＝`python .runtime/tmp/st-qoder-p09-1015-14/measure14.py`（留档 `measure14.out`，只读）。
+  - rows[76]/[78]＝`verdict=pass`、`fails=[]`、声明柱五枚 `['ic_ir_min','ic_mean_min','mono_spearman_min','oos_same_sign','regime_same_sign']` ⇒ pass 与"零败柱"自洽。
+  - rows[66]＝`verdict=fail`、`fails=['oos_sign_flip ic_delta nan（配对 IC 面样本不足）']`，而卡体声明键名是 `oos_same_sign` ⇒ 本班按 06 班在册"两族 fail 串柱名与卡体键不同名"起疑，**未接受为在册结论**，直查发射点＝`scripts/backtest/fexam/calibration_exam.py:623 if p.get("oos_same_sign"):` 守卫的正是 `:626/:628` 两条 `oos_sign_flip` 文案（`:628` 逐字即本行 fail 串）⇒ **同一柱、文案名≠键名，门柱未走样**（三行 3/3）。附注：该文件注释（`:630-632`）已自陈"对照卡上 `oos_same_sign` 的冻结语义＝配对 IC 差 OOS 与 IS 同号，禁按单信号语义再评一遍"，与本班实测一致。
+- **轮二＝96 行 × 卡内 `card_id` join＝96/96**，卡池 552（＝卡文件 552，与 ⑩ 席 1015-09 在册"卡池 552"相合）；verdict 分布复量＝`fail 92/pass 2/blocked 2`。
+- 游标纪律：写后核 13 班游标推进记录仍在（结构计数见本班写盘脚本 `STRUCT` 行）。
+
+### 8 本班自犯与当场纠正（旧句留卷）
+
+1. **heredoc 折叠反斜杠**：`measure14b` 首版经 `python - <<'PY'` 传入，正则字符集 `[/\\]` 被折成非法式 ⇒ `re.error: unterminated character set`（在册坑 `windows-gitbash-python-path-domains` 第四次命中本席）。正解＝尺体一律落 `.runtime/tmp/<sid>/*.py` 文件再跑，正则内反斜杠用 `chr(92)` 构造。
+2. **`Path.read_bytes("utf-8")` API 误用**：首版 `measure14.py` 给无参方法传编码 ⇒ 会 TypeError；本班在跑前自查改为 `read_bytes()`。
+3. **谓词先于结论的自纠**：本班一度把"卡面含旧址引用"直读为"卡面绑定断了"，若不补键级分面（`measure14c`），会给 ⑥ 席开出"84 卡绑定断＝族级阻断"的**过头单**；实测后改为"仅散文/证据字段 81 卡、机器字段 3 卡、阻断 1 行"的分级表述。
+4. **通配引用计伪影**：`nightmine_campaign/series/ti_ew_`（20 次）是 glob 前缀，`exists` 恒 False＝测量伪影，本班从死文件计数剔除并在修⑱ 披露。
+
+### 9 本班耗时
+
+- 起批 reaper 锚点 `18:00:18`／`date` 进场 `18:00:09`；写盘与提交段耗时见本节末"提交面补条"（按在册纪律：以落笔前现测 `date` 为准，不采信体感，不写预估值）。
+
+### 10 提交面（落笔后补）
+
+- 待补：袋号／files／base_head／blob↔磁盘对拍／四态。
