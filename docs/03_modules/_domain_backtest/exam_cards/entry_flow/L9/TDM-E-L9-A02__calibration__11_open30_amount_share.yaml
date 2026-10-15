@@ -1,0 +1,117 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A02/calibration/11_open30_amount_share
+node_id: TDM-E-L9-A02
+family: calibration
+title_zh: 楼1分钟微结构·CAND-P0-MIOPENV-014 开盘30分钟成交额时段占比（全市场日频序列）
+origin: P0-楼1-分钟微结构腿（③席 20261015-p03-03 具名候选 CAND-P0-MIOPENV-014）|20261015-p03-03
+hypothesis: >-
+    开盘连续竞价首档（09:30-10:00）成交额时段占比是日内量能在开盘半小时的聚集度，方向无关；本卡检验该日频序列对次日指数收益是否构成在册五键可判的关系。符号方向③席在册行未声明、本席不预设（见 gaps_no_source.sign_claim_absent），判据只在在册五键面上判。 ③席在册定义原文逐字（禁改写）：开盘 30 分钟成交额占比＝sumIf(amount,09:30-10:00)/sum(amount) 按 symbol×trade_date 聚合取全市场日均值（连续竞价首档，非集合竞价）
+window:
+  in_sample:
+  - '2022-01-04'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2022-01-04..2022-06-30→无（数据起 2021-09，牛段样本不足，本卡 regime 仅用熊/震荡两段）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，本卡 IS 全落此段）
+    recovery: 2024-02-01..2025-09-09（修复段，作 regime 对侧）
+  frozen_note: 看数前冻结；右端截 2026-09-30 前先确认 1min 覆盖（实测至 2026-10-09）
+buckets:
+  type: quantile_decile
+  'on': 当日全市场开盘 30 分钟成交额占比均值（symbol×trade_date 聚合后取日均值，序列面）
+  min_obs_per_bucket: 60
+signal_kind: series
+pillars:
+  inherited_numeric_face: 五键数值面整块逐字抄同 flow 同层同 family 的在册冻结卡 git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml
+    -> pillars_numeric（mono_spearman_min/ic_mean_min/ic_ir_min/regime_same_sign/oos_same_sign）；
+    该五键与同层市场级序列先例 git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A04__calibration__02_估值ERP分位日增量.yaml・git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A09__calibration__02_快讯情感日均值.yaml 的 pillars_numeric 同值（本班 parsed 对拍全等），
+    故数值面无择一问题；择一问题只在 window（见 gaps_no_source.kline_1min_window_caliber）
+  pillars_text_face: 文字面＝指针式继承（不改一柱、不删一柱、不加柱＝禁挪门柱），沿在册先例
+    TDM-E-L9-A02/calibration/09 的 inherited_family_pillars 同法；本席不自拟柱文字
+  candidate_face: ③席在册定义即本卡信号对象（原文见 hypothesis 与 data_binding.signal_derivation）
+  orthogonal_gate_face: 闸在册读数逐字见 data_binding.orthogonal_gate_verdict；本席未跑闸、未复算相关性
+target:
+  primary: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  secondary: next_20day_index_return（慢变量真目标口径，登记为辅轴，series 执行器不自动判）
+  note: A02 决策问题逐字（取母骨架 tdm.decision_question）＝『日内微观结构能否预测次日方向与冲击成本』；
+    本卡只答"次日方向"半问的序列面；冲击成本半问的对象非本卡信号，故不搬母卡 A02/02 的 impact_curve target 列名
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+status: blocked_on_impl
+status_reason: 判据面（window/pillars_numeric/buckets/target/signal_kind/discipline）已按在册冻结值整块填齐，
+  本班 CH 只读实测证明可算性；唯一缺腿＝⑤实现面的物化算子（本班实测 scripts/backtest/fexam/card_binding.py
+  的 op_* 配方面含 op_daily_agg/op_sector_top_n_amount_share/op_index_amount_sum_pctile 等，
+  无"日内时段聚合÷全日聚合"占比算子）；另时段端点归属与市场级折叠口径两处在册未裁（见 gaps_no_source）。
+  按 SOP ⑤出口『码面+测试绿→卡翻转 unblocked→移交⑥』翻转，本席不自宣可考。
+gaps_no_source:
+  kline_1min_window_caliber: 本班实测 data_binding.signal_table 含 kline_1min 的在册卡=11 张（含本班这 2 张；全文提及该表者=15 件），
+    其 window 去重后并存 5 套＝IS 2022-01-04..2023-12-29／OOS 2024-01-02..2025-09-09（3 张＝在册源
+    TDM-E-L9-A01/calibration/03＋本班 10・11 号卡）、IS 2021-09-01..2023-12-29／OOS 2024-01-02..2025-09-09（1 张
+    TDM-X-S1-04/comparison/05）、IS 2021-09-01..2025-09-30／OOS 2025-10-09..2026-09-30（1 张 TDM-X-S2-04/comparison/02）、
+    IS 2026-06-01..2026-08-31／OOS 2026-09-01..2026-10-09（4 张＝P2 做T族）、IS 2021-09-01..2024-12-31／OOS
+    2025-01-01..2026-09-30（2 张＝TDM-P-P3-04）；而本 node 唯一在册冻结面 A02/02 的窗是 tick 短窗预演
+    （IS 2026-01-05..2026-06-30／OOS 2026-07-01..2026-09-30，其 frozen_note 自陈"不作分布性结论"）。本席按"同 flow
+    同层同 family＋同表＋status=preregistered＋OOS 末端对齐③席在册切点 2025-09-09"择 A01/03 整块逐字继承，
+    不擅改任一日期；多口径并存一律呈批＝OD-22
+  band_edge_inclusion: ③席定义写 14:30-15:00／09:30-10:00 未写端点归属（首根 14:30 与 15:00 那根含否会变占比读数）；
+    卡池与判据册零该常数 ⇒ 一个数不编；本班探针用 [14:30,15:01) 仅作可达性证明，不作口径声明
+  sign_claim_absent: 同 10 号卡——③席在册行只给构造且自陈『连续竞价首档，非集合竞价』，无收益方向声明，本席不代设；与 10 号卡（尾盘带）是同一表同一算法的两个不相交时段带，与母卡 A02/02 的集合竞价腿（09:15-09:25）时段不重叠＝③席在册查重原文
+  nonzero_sum_and_folding: ③席在册行自陈『折叠口径=本席临时全市场日均值（在册横截面折叠口径仍未裁＝呈批第1条承
+    20261015-p03-02）』；本卡对象即"市场级日频序列"（定义本体），故 OD-19 那条"个股横截面折叠口径零源"不阻断本卡，
+    但若 Owner 判本族应改做个股横截面＝换题面，须另立候选
+prereg_provenance:
+  made_by: st-qoder-p06-1015-06
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml -> window 整块
+    pillars_numeric: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml -> pillars_numeric 整块
+    buckets_type_and_floor: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml -> buckets.type/min_obs_per_bucket
+    discipline_and_oos_window_ref: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml -> discipline 行・oos_window_ref 锚（与 window.oos 同锚）
+    signal_kind: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A09__calibration__02_快讯情感日均值.yaml -> signal_kind（series，市场级日频序列在册先例）
+    target_primary_secondary_target_source: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A04__calibration__02_估值ERP分位日增量.yaml -> target.primary/target.secondary・data_binding.target_source
+    candidate_row: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-MIOPENV-014 行逐字段原文
+    caliber_precedent_row: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-MINFPORTRAIT-022 行逐字段原文
+  own_measurement: 本班 CH 只读实跑（非转述）：system.parts active 面 partition 数=62・首末=202109..202610・
+    sum(rows)=1,496,671,246；单日探针 2024-06-03（toYYYYMM=202406）tail 带 [14:30,15:01)=156,922 行・
+    open 带 [09:30,10:01)=156,922 行・全日=1,219,942 行・uniqExact(symbol)=5,062
+    ⇒ 两带行数相等且=5062×31（每分钟一根全覆盖）＝本卡分子分母两端可算；
+    与③席在册 n_sym=5045 的差＝③席走前缀白名单宇宙守卫（见 data_binding.kline_1min_caliber_precedent），
+    本班探针未加前缀过滤，两读数各自如实入册、本席不折中
+  single_variable_note: 新造具名子题卡（非 champion/challenger 配对）；与母卡 A02/02 差异面＝信号对象
+    （分钟层成交额时段占比·方向无关 vs 集合竞价失衡＋尾盘主动买占比），五键整块同值；window 继承源跨到同层
+    A01/03 的理由与三并存口径见 gaps_no_source.kline_1min_window_caliber（OD-22）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A02.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: >-
+    kline_1min (CH c1_market)
+  signal_column: amount（列名逐字取③席在册定义行的求和列，本席未新增列名）
+  signal_derivation: >-
+    开盘 30 分钟成交额占比＝sumIf(amount,09:30-10:00)/sum(amount) 按 symbol×trade_date 聚合取全市场日均值（连续竞价首档，非集合竞价）
+  target_source: kline_index 000300 close→next_day_return
+  universe_guard: 前缀白名单（③席 CAND-P0-MINFPORTRAIT-022 在册改判行逐字见 kline_1min_caliber_precedent）
+  kline_1min_caliber_precedent:
+    definition_zh: >-
+      kline_1min 口径画像行（非信号，⑤⑥⑦席 data_binding 与查询写法的门柱前置）：(a) volume 单位实为手而列注释自陈股；(b) 分区键=toYYYYMM(trade_time)，按 trade_date 过滤不剪枝；(c) 本表无 market_type 列，宇宙守卫须用前缀白名单；(d) kline_5min 无 trade_date 列；(e) 日内根数无年度退化；(f) 附带 trade_calendar.exchange 唯一值='SSE'
+    example_value: >-
+      非因子值行。实测读数：(a) amount/(volume×100) 落当日 low-high 内且与 kline_daily 同日均价一致——000001=10.9753∈[10.91,11.12]、300750=200.7786∈[195.8,203.57]、600519=1640.9329∈[1635.11,1650.88]，而原始 amount/volume=1097.53/20077.86/164093.29 恒为价的 100 倍；(b) 同一 10 日窗按 trade_date 过滤时 system.processes 实测 elapsed=310.7s 且 read_rows=1496519175（未剪枝、未跑完），改 trade_time 区间后单月 17.2s（冷缓存）／2.2-7.0s（热缓存）；(c) 2024-06-03..07 前缀分布=0 段 1478 只／3 段 1336 只／6 段 2248 只 共 5062 只，无 5/1 基金段；(d) kline_1min/15min/30min/60min 同时有 trade_date+trade_time 而 kline_5min 仅 trade_time；(e) 600519/000001/300750 在 2021-10、2022-06、2023-06、2024-06 各月 min=max=avg=241 根/日；(f) trade_calendar GROUP BY exchange 只返回 'SSE'（13809 行）
+    downstream_meaning: >-
+      非信号行无闸（判据面行）。含义五条供下游：①任何用 kline_1min volume×price 与 amount 互证的卡面都会错 100 倍（与 2026-09-22 kline_daily 量纲治本同源但本表未被那批修覆盖）；②矿规'覆盖窗按股内查询'在本表应写成 trade_time 区间，否则全表扫；③本表无 market_type 列 ⇒ 矿规'symbol 无后缀须配 market_type=stock'对本表改判为前缀白名单{0,3,6}（同 20261015-p03-02 对 money_flow 的改判形）；④卡面 data_binding 若照抄 trade_date 到 5min 表会直接 UNKNOWN_IDENTIFIER；⑤按 exchange='SH' 过滤 trade_calendar 得 count=0＝假无源，本班因此改走表内 uniqExact(trade_date) 直读
+  example_value_from_candidate: >-
+    2024-06-03 全市场日均值=0.275712；FY2024 min=0.173022/max=0.382459/mean=0.277837/std=0.031718（中性基准 30/241=0.1245，实测系统性偏高＝开盘聚集为真而非定义伪影）
+  orthogonal_gate_verdict: >-
+    过闸（入过闸账）verdict=pass max|corr|=0.1207（most_similar=avg_abs_ret_z20）rc=0；池=⑨席 pool6（6 序列／3 独立轴／共同日 1855）；尺双对照同批实测：池成员 avg_abs_ret 自投=reject 1.0000、同日轴随机高斯=pass 0.0655；查重实测：531 卡 grep '开盘30分钟' 与 '开盘.{0,4}量占比' 皆 0 命中（同批正对照 尾盘=24 卡／成交额=39 卡／集中度=20 卡 证尺通）；与 L9-A02/02 的集合竞价腿（09:15-09:25）时段不同＝不重叠对象
+  data_window_evidence: >-
+    ③席登记面逐字（sample_window 列）：闸测窗 2024-01-02..2024-12-31（242 交易日 全在切点前）；表内切点前全段实测=1145777646 行／974 交易日（2021-09-01..2025-09-08）
+  readiness: 数据腿可达（本班实测 partition 202109..202610・两时段带全覆盖）；缺⑤物化算子与两处端点/折叠口径裁定

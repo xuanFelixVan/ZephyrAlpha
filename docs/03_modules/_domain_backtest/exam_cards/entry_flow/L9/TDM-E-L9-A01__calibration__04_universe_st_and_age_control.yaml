@@ -1,0 +1,84 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A01/calibration/04_universe_st_and_age_control
+node_id: TDM-E-L9-A01
+family: calibration
+title_zh: 日线动量截面·加 ST 与上市龄宇宙预筛对照卡（challenger）
+hypothesis: 个股 20 日收益动量在横截面上对次日收益有正预测力（IC>0）；过热档（动量分位>90%）
+  因 A 股 T+1+涨跌停下的散户追高而反向，故响应曲线在高档应掉头——本卡主判单调性下限与 IC 地板，
+  高尾反转另设 secondary 读数面不作一票否决。
+arm_protocol:
+  variable_under_test: universe_filter（宇宙预筛口径）
+  arm_base: champion：无 universe_rule，宇宙不预筛，仅 exclusions（停牌日与一字涨停/跌停不可成交样本）
+  arm_open: challenger：加入 data_binding.universe_rule（ST/上市满 60 交易日/停牌代理/退市四件套，宇宙写死），exclusions 原样保留
+  paired: 同 node_id、同 hypothesis 逐字、同 target 两键、同 signal_derivation、同 window（含 right_edge_note 与 frozen_note 逐字）、同 buckets、同 pillars 五键、同 pillars_numeric 五键、同 signal_kind=panel、同 exclusions、同 data_window_evidence、同 readiness——只加宇宙预筛这一个变量
+  keys_touched:
+  - data_binding.universe_rule（新增）
+  single_variable_note: universe_rule 取值逐字抄自对照源卡在册冻结值；本席未自拟过滤条件与阈值
+control_provenance:
+  request: docs/_working/automation_campaign/feedback/to_impl.md｜2026-10-15｜st-qoder-p09-1015-02｜[对照]申请单 臂 c（宇宙过滤敏感性，互为对照的反向腿）
+  value_source: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-3__calibration__02_二十日动量排名.yaml（status=preregistered 在册冻结件 HEAD 版）data_binding.universe_rule 逐字
+  champion: TDM-E-L9-A01/calibration/02_日线动量截面（exam_scores_v1.yaml#rows[74] verdict=fail，ic_mean=-0.0406/ic_ir=-0.256）
+  discipline: 判据与阈值一律沿用 champion 冻结值；新卡新行 only-add；事后挪门柱=作废（G4-5）
+
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  right_edge_note: kline_daily_hfq 实测右端=2026-09-30，比 kline_index(2026-10-09) 滞后 7 交易日
+    （复权因子链未追平）——面板右端一律截 2026-09-30，禁让末端静默 NaN 冒充样本
+  frozen_note: 看数前冻结（裁定#501 纪律）；窗口取自共用作业簿 §2 与 L1 同族先例卡同期口径
+buckets:
+  type: quantile_decile
+  'on': 当日个股 20 日动量横截面值
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: 分桶中位前向收益 Spearman 单调 rho>=0.6（IS 窗内）
+  ic_floor: 日频横截面 RankIC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板）
+  lag_profile: t+1..t+3 至少一档 |IC| 达峰值且半衰期 >= 1 交易日（时滞曲线建档）
+  regime_stability: 牛/熊两段 IC 同号且均过 ic_floor（条件稳定性）
+  tail_reversal: 动量分位>90% 档的中位前向收益应低于 80-90% 档（过热反转，辅读数，不否决主判）
+target:
+  primary: next_day_stock_return（个股次日收益，hfq 收盘价口径，与 A 股面板考尺同源）
+  secondary: next_3day_stock_return（t+1..t+3 累计，用时滞曲线）
+  note: A01 决策问题=「价量趋势与动量能否预测N日收益」，本卡答"N=1 与 N=3 落在哪档"
+status: preregistered
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A01.confidence
+preregistered_by: st-qoder-p06-1015-03
+preregistered_at: '2026-10-15'
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: close
+  signal_derivation: 20 日动量 = close_t / close_{t-20} - 1（后复权；同 symbol 内按 trade_date
+    升序取第 20 个前值，不足 20 日剔除）；逐日横截面 rank_pct 归一
+  target_source: kline_daily_hfq close 同表 t+1 收益 = close_{t+1}/close_t - 1（面板 target 宽表）
+  exclusions: 停牌日（c1_market.suspend）与一字涨停/跌停不可成交样本剔出前向收益计算（闸3 A 股适配）
+  universe_rule: 宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。
+  data_window_evidence: |
+    命令原文（fexam 只读层，禁裸 duckdb）：
+      python -c "
+      import sys; sys.path.insert(0,'scripts/backtest')
+      from fexam.ch_data import ch_query_df
+      r=ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.kline_daily_hfq\")"
+    实测：trade_date 1990-12-19..2026-09-30 rows=10098785 days=8736
+    对照：c1_market.kline_index trade_date 1990-12-19..2026-10-09 rows=3104162 days=8907
+    （⇒ 复权面板右端落后 7 个交易日，已写进 window.right_edge_note）
+  readiness: 覆盖 IS 2019-2023 与 OOS 2024-2025-09 双段，样本充分

@@ -1,0 +1,116 @@
+schema_version: '1.0'
+card_id: TDM-E-L1-S2/calibration/48_cross_sectional_return_skew
+node_id: TDM-E-L1-S2
+family: calibration
+title_zh: 市场内部结构·CAND-P0-SENTSKEW-029 全市场截面收益偏度（情绪不对称代理，日频序列）
+origin: P0-楼1/楼10（③席 20261015-p03-04 具名候选 CAND-P0-SENTSKEW-029）|20261015-p03-04
+hypothesis: 全市场个股日收益的截面偏度是市场级情绪不对称代理（③席在册定义自陈『与个股日内路径偏度不同对象』）；本卡检验该日频序列对次日指数收益是否构成在册五键可判的关系。符号方向③席在册行未声明、本席不预设。 ③席在册定义原文逐字（禁改写）：截面收益偏度（市场级分布形状，情绪不对称代理）＝逐交易日
+  skewPop(pct_change/100) 在全市场个股日收益上的总体值；与"个股日内路径偏度"不同对象
+window:
+  in_sample:
+  - '2019-01-04'
+  - '2023-12-31'
+  oos: &id001
+  - '2024-01-01'
+  - '2025-09-09'
+  regimes:
+    bull: 2019-01-04..2021-06-30（流动性牛）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
+  frozen_note: 窗口继承母卡 02；子集 7 项清单与合成方式（等权 z 均值）先验冻结；|z|>2 阈值取母卡同值不放宽；事后挪门柱=作废（G4-5）
+buckets:
+  type: quantile_decile
+  'on': 当日全市场个股日收益截面偏度（总体三阶矩，逐交易日单值，序列面）
+  min_obs_per_bucket: 60
+signal_kind: series
+pillars:
+  inherited_numeric_face: 五键数值面整块逐字抄同层市场级序列在册冻结卡 git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+    -> pillars_numeric；该五键与 git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml・git
+    show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A04__calibration__02_估值ERP分位日增量.yaml・git
+    show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A09__calibration__02_快讯情感日均值.yaml 的 pillars_numeric
+    同值（本班 parsed 对拍全等），故数值面无择一问题；择一问题只在 window（见 gaps_no_source）
+  pillars_text_face: 文字面＝指针式继承（不改一柱、不删一柱、不加柱＝禁挪门柱），沿在册先例；本席不自拟柱文字
+  candidate_face: ③席在册定义即本卡信号对象（原文见 hypothesis 与 data_binding.signal_derivation）
+  orthogonal_gate_face: 闸在册读数逐字见 data_binding.orthogonal_gate_verdict；本席未跑闸、未复算相关性
+target:
+  primary: next_day_index_return（CSI300 000300 次日收益）
+  secondary: next_day_emotion_index_delta（c1_market.emotion_index stage='close_final' 次日差分）
+  note: L1-S2 决策问题逐字（取母骨架 tdm.decision_question）＝『涨停/跌停/炸板/连板梯队显示的参与度如何（广度面）』；本卡答该问题内『分布形状（三阶矩不对称）』一面的序列面，不复判涨跌停计数面（在册 S2
+    已 examined 族）
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+status: blocked_on_impl
+status_reason: 判据面（window/pillars_numeric/buckets/target/signal_kind/discipline）已按在册冻结值整块填齐；唯一缺腿＝⑤实现面的物化算子。本班只读实测：scripts/backtest/fexam/card_binding.py
+  的 op_* 配方面本班 grep 实测清单＝op_agg4_state_ordinal_series/op_base/op_campaign/op_daily_agg/op_downside_dev_pctile/op_event_flag_rolling_pctile/op_evidence/op_index_amount_sum_pctile/op_limit_up_premium_close_mean/op_macro_scissors/op_margin_balance_5d/op_n/op_n_amount_share/op_not_in_ops_book/op_open/op_promotion_rate/op_rrg_quadrant_series/op_sector_adjustment_progress/op_sector_relay_retreat_ratio/op_sector_top_n_amount_share；谓词
+  `skew|时段|timeband|intraday_band` 在该文件命中 0 行（grep -c 实测） ⇒ 无截面三阶矩算子；另须带③席在册方言前置（本库 ClickHouse 无 skewnessPop/skewness，只有
+  skewPop/skewSamp）与横截面折叠口径未裁（见 gaps_no_source）。按 SOP ⑤出口翻转，本席不自宣可考。
+gaps_no_source:
+  daily_market_series_window_caliber: 本班窗整块逐字抄 TDM-E-L1-S5/calibration/03（status=preregistered・signal_kind=series・同 flow・同层市场级日频序列＋target=next_day_index_return
+    同形）；同族并存第二套窗＝IS 2019-02-11..2026-04-02／OOS 2026-04-03..2026-10-12（本班字段级实测：L1-S2 绑日线族 series 件窗去重=2 套），多口径并存一律呈批＝本班新立
+    OD-25
+  sign_claim_absent: ③席在册行只给构造 skewPop(pc/100) ⇒ 卡面正/负向预期无在册来源，本席不代设
+  churn_vs_intraday_path_skew: ③席在册行点名『须 ⑥ 席对拍勿各计一员』：本席对拍读面＝TDM-E-L9-A01/calibration/03 的『日内偏度』腿系个股 240 根分钟收益的路径矩（panel・个股横截面），本卡系一股一收益的截面分布矩（series・市场级）＝同词不同对象；本班按在册『同物两形禁各计一员』只在卡面与台账双登记对象差，成员计量属⑨席对拍
+  ch_dialect_skewpop: ③席在册方言前置（本班转抄未复跑）＝本库 ClickHouse 26.6.1.1193 无 skewnessPop/skewness（Code 46 UNKNOWN_FUNCTION），只有 skewPop/skewSamp/kurtPop/kurtSamp
+    ⇒ 卡面 SQL 生成器照抄通用名会整条死
+prereg_provenance:
+  made_by: st-qoder-p06-1015-07
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+      -> window 整块（含 in_sample/oos/regimes/frozen_note 全字段）
+    pillars_numeric: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+      -> pillars_numeric 整块
+    buckets_type_and_floor: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+      -> buckets.type/min_obs_per_bucket
+    discipline: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+      -> discipline 行
+    signal_kind: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A09__calibration__02_快讯情感日均值.yaml
+      -> signal_kind（series 在册先例）
+    target_primary_secondary_target_source: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S5__calibration__03_derived_signal_shock_panel.yaml
+      -> target.primary/target.secondary・data_binding.target_source
+    candidate_row: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-SENTSKEW-029 行逐字段原文
+    caliber_precedent_row: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-SENTPORTRAIT-032 行逐字段原文（日线族口径画像前置）
+  own_measurement: scripts/backtest/fexam/card_binding.py 的 op_* 配方面本班 grep 实测清单＝op_agg4_state_ordinal_series/op_base/op_campaign/op_daily_agg/op_downside_dev_pctile/op_event_flag_rolling_pctile/op_evidence/op_index_amount_sum_pctile/op_limit_up_premium_close_mean/op_macro_scissors/op_margin_balance_5d/op_n/op_n_amount_share/op_not_in_ops_book/op_open/op_promotion_rate/op_rrg_quadrant_series/op_sector_adjustment_progress/op_sector_relay_retreat_ratio/op_sector_top_n_amount_share；谓词
+    `skew|时段|timeband|intraday_band` 在该文件命中 0 行（grep -c 实测）（本班只读实测，非转述）
+  single_variable_note: 新造具名子题卡（非 champion/challenger 配对）；与在册 S2 涨跌停族件差异面＝测度阶数（一阶计数/二阶绝对收益 vs 本卡三阶矩），与 L9-A01/03 差异面＝对象层（截面
+    vs 日内路径）；五键整块同值，窗择由见 gaps_no_source（OD-25）
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L1-S2.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: kline_daily (CH c1_market)
+  signal_column: pct_change（列名逐字取③席在册定义行的 pc=pct_change/100 列，本席未新增列名）
+  signal_derivation: 截面收益偏度（市场级分布形状，情绪不对称代理）＝逐交易日 skewPop(pct_change/100) 在全市场个股日收益上的总体值；与"个股日内路径偏度"不同对象
+  target_source: kline_index symbol='000300' close → next_day_return；辅轴 emotion_index 次日差分
+  universe_guard: market_type='A_share'＋前缀{0,3,6}＋volume>0＋trade_date>'1990-01-01'（逐字取③席 CAND-P0-SENTADV-027 在册过滤式，与本班 032
+    画像行的 kline_daily 口径前置互证；本席未新增谓词）
+  kline_daily_caliber_precedent:
+    definition_zh: 情绪重建腿口径画像行（非信号）＝本班在 kline_daily 上实测的五处口径面＋一处对本席开班先验的正证伪，交 ⑤⑥⑦ 席作 data_binding 门柱前置（体例承 20261015-p03-03
+      的 022 行）
+    example_value: 非因子值行。实测五处：①**market_type 唯一值='A_share'（全表 11695555 行）**，矿规"symbol 无后缀须配 market_type='stock'"在本表命中 0
+      行＝假无源（本班首跑三查询全空，改 'A_share' 后有值，正对照已立）；②adj_factor uniqExact=1、min=max=1.0（2024-01..03 段 310282 行）＝该列不提供复权信息（复证 2026-09-22
+      kline 后复权族在册结论）；close 链与 pct 链是否同基另见本行推论③；③turnover 零值 110107/117537 行=93.68%（2024-01 段），max=81.5637 ⇒ 与 ⑩第五单 §2"kline
+      turnover 死列"同向；④pct_change 语义=收盘对**前收**且**截断到 2 位小数**（600519 2024-06-04..07 四日实测：列值 0.84/-0.55/-0.25/-1.25，对前收复算 0.8424/-0.5565/-0.2549/-1.2581
+      逐日同号同量级；对开盘复算 0.7742/-0.4843/-0.2342/-1.6372 明显不等）⇒ 与分钟腿 r_i=log(C_i/O_i) 语义不同，跨表构造禁直接混用；⑤volume=0 停牌行 405/101948（2024-06
+      段），trade_date<'1990-01-01' 脏行=0 行
+    downstream_meaning: 非信号行无闸。四条推论（本席登记不裁）：①矿规第 3 条（market_type='stock'）在 kline_1min（无该列，上班实测）与 kline_daily（值域为 A_share，本班实测）两表皆不可执行＝全库性方言而非个别表，请
+      ①②⑤ 席把"前缀白名单{0,3,6}＋market_type='A_share'"定为日线族标准过滤式；②偏度函数名方言（skewPop 而非 skewnessPop）已写入 029 行；③**本席开班先验被实测正证伪留痕**＝本席原拟登记"本表裸
+      close 含除权跳变故不能算创新高"，实测 2024 年 1231400 个 symbol-day（prev_c>0 面）上 close 环比与 pct_change 分歧>0.02pp 者仅 12 行／11 只（>0.5pp
+      者 7 行／7 只，最大 1.438886pp）＝污染率 0.00097%，本表 close 链与 pct 链内部自洽；该先验撤案，残留 12 行个案本班不定性、请 ② 席按 symbol 复核；④本行各处读数须被 ⑥⑦ 席消费后方可回收
+  example_value_from_candidate: FY2024 mean=0.8573755346／min=-10.1462196628（2024-06-05）／max=+2.9410635991（2024-08-14）；正偏常态（A
+    股左尾被跌停板截断、右尾由涨停板拉长）⇒ 读数方向与机制自洽
+  orthogonal_gate_verdict: 过闸（入过闸账）FY verdict=pass max|corr|=0.1965（most_similar=avg_abs_ret_z20）rc=0；H1 verdict=pass max|corr|=0.1859（most_similar=lu_ratio）rc=0
+    ⇒ 两窗一致过；池=⑨席 pool6 绕行面（6 序列／3 独立轴／共同日 1855，非 ibt_runner MEMBERS 15 员面）；本班双对照同批实测：池成员 avg_abs_ret.csv 原样自投=reject 1.0000
+    rc=5（尺能红）、同日轴随机高斯=pass 0.0441 rc=0（尺非恒拦）；查重实测：'截面偏度'/'截面收益偏度'/'cross_sectional_skew' 三面 0 命中；'偏度' 唯一卡面命中=TDM-E-L9-A01/calibration/03_分钟已实现波动（个股
+    240 根分钟收益的路径偏度）⇒ 同词不同对象（本候选一股一收益的截面分布矩，非日内路径矩），须 ⑥ 席对拍勿各计一员；方言前置（本席实测）＝本库 ClickHouse 26.6.1.1193 无 skewnessPop/skewness（Code
+    46 UNKNOWN_FUNCTION），只有 skewPop/skewSamp/kurtPop/kurtSamp ⇒ 卡面 SQL 生成器照抄通用名会整条死
+  data_window_evidence: 闸测窗 2024-01-02..2024-12-31（241 交易日，全在切点前）；kline_daily 2024 段切点前=2200391 行（本班实测）；252 日回看腿另起 2022-11-01
+    取数
+  readiness: 数据腿可达（③席在册 kline_daily 2024 段切点前 2,200,391 行＋逐日宇宙 4837-5384 只，本班未重扫）；缺⑤物化算子与折叠口径裁定

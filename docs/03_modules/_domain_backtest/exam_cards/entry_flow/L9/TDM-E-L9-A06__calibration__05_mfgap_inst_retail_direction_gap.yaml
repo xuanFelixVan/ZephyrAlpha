@@ -1,0 +1,96 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A06/calibration/05_mfgap_inst_retail_direction_gap
+node_id: TDM-E-L9-A06
+family: calibration
+title_zh: 楼1资金流·CAND-P0-MFGAP-008 机构-散户方向差（超大单净占比−小单净占比·个股横截面）
+origin: P0-楼1-money_flow替代腿（⑩第三单 §6 指路）|20261015-p03-02
+hypothesis: 机构-散户方向差是"档位间相对取向"而非"档位水平"：在册母卡 A06/02 的水平截面只量主力净流入占比本身，本卡量超大单与小单净占比之差（去均值后），假设=机构与散户方向背离越大，次月……不，次日方向越偏向机构一侧。③席在册定义原文逐字（禁改写）：『机构-散户方向差（超大单净占比
+  − 小单净占比）：money_flow 逐股逐日 super_large_net_inflow_pct − small_net_inflow_pct，先按 trade_date 截面去均值再排序；须显式声明非零和修正（见 CAND-P0-MFCAL-011
+  (b)）』。本卡答节点决策问题『主力/大单净流向能否预测短期方向』（A06 决策问题，逐字取母卡 target.note）。非零和修正与恒 0 列两处前置事实见 data_binding。
+window:
+  in_sample:
+  - '2021-01-04'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，IS 内熊段）
+    recovery: 2024-02-01..2025-09-09（修复段，OOS 内对侧 regime）
+    bull_note: 2019-2021H1 牛段 money_flow 无数据（起 2021-01-04）⇒ 本卡 regime 用熊/修复两段替代， 已如实声明不冒用统一牛熊串
+  frozen_note: 看数前冻结（裁定#501 纪律）；IS 起点因数据起点内缩至 2021-01-04
+buckets:
+  type: quantile_decile
+  'on': 当日机构-散户方向差（super_large_net_inflow_pct − small_net_inflow_pct，先按 trade_date 截面去均值再排序，横截面残差）
+  min_obs_per_bucket: 60
+signal_kind: panel
+pillars:
+  orthogonalization: 信号必须先对当日 pct_change 与 20 日动量做横截面回归取残差； 主判据只在残差序列上算（否则与本车道 A01 动量卡重复计分）
+  response_monotonicity: 残差分桶中位前向收益 Spearman 单调 rho>=0.6
+  raw_vs_resid_gap: 原始信号 IC 与残差信号 IC 之差登记入台账（差值大=资金流口径污染动量，是数据质量结论）
+  resid_pillar_inherited_from: 残差化三柱逐字抄同节点 preregistered 母卡 TDM-E-L9-A06/calibration/02 （orthogonalization/response_monotonicity/raw_vs_resid_gap）；五键与窗/target/buckets
+    地板同源
+  cross_section_first: ③席在册定义前置腿逐字：『先按 trade_date 截面去均值再排序』——去均值是定义的一部分，不是可选预处理（其理由见 data_binding.nonzero_sum_correction）
+  orthogonal_gate_face: 闸在册读数逐字见 data_binding.orthogonal_gate_verdict；本席未跑闸、未复算相关性
+target:
+  primary: next_day_stock_return（个股次日 hfq 收益）
+  secondary: next_day_limit_up_probability（次日涨停概率，情绪极端面）
+  note: A06 决策问题=「主力/大单净流向能否预测短期方向」
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+status: blocked_on_impl
+status_reason: 判据面已按在册冻结值填齐，两处不可开考且皆不属本席裁量：①信号物化腿缺位——money_flow 两列差分＋按 trade_date 截面去均值尚未由⑤实现（⑤在册出口=码面+测试绿→卡翻转 unblocked→移交⑥）；②正交准入闸对"个股横截面"对象无在册折叠口径——③席在册行原文『个股横截面版未被计量（闸契约只吃
+  date,sig 单列，横截面候选无在册折叠口径＝呈批第 1 条）』，而其已计量的市场级折叠版 verdict=reject；准入与物化一裁/一落地即翻 preregistered。本席不自裁准入、不代⑤出题。
+gaps_no_source:
+  cross_sectional_orthogonality_caliber: 横截面候选过正交闸的折叠口径全仓零源（③席呈批第 1 条在册）⇒ OD-19；禁把市场级 reject 读数当作本卡对象的判决，也禁当作豁免
+  residualization_column_reality: 母卡 orthogonalization 柱要求"对当日 pct_change 与 20 日动量做横截面回归"，而本席实测 c1_market.money_flow 的 pct_change
+    与 close 两列在切点前 5,504,375/5,504,375 行 100% 恒 0（正对照同表 main_net_inflow_pct 非零 5,490,259 行）⇒ 柱若读本表列即空操作；改判跨表 JOIN 涨幅源=挪门柱=Owner
+    面 ⇒ OD-18
+  materialization_owner: 信号物化属⑤实现面，本席只冻判据与降级条款
+prereg_provenance:
+  made_by: st-qoder-p06-1015-05
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      -> window 整块
+    pillars_numeric: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      -> pillars_numeric 整块
+    target: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      -> target 块
+    buckets_type_and_floor: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      -> buckets.type/min_obs_per_bucket
+    signal_kind_and_discipline: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      -> signal_kind/discipline
+    candidate_row: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-MFGAP-008 行逐字段原文
+  own_measurement: 本席 CH 只读实测（非转述）：money_flow trade_date<'2025-09-09' 面 count=5,504,375、uniq 日=1,136；countIf(pct_change=0)=5,504,375
+    与 countIf(close=0)=5,504,375（=100%）；正对照三列非零行数 5,490,259 / 4,124,403 / 5,504,234 证明尺未坏
+  single_variable_note: 新造具名子题卡（非 champion/challenger 配对卡）；与母卡 A06/02 差异面＝信号对象本身（档位差值 vs 主力净流入水平），判据柱与五键逐字同值
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A06.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: c1_market.money_flow
+  signal_column: super_large_net_inflow_pct − small_net_inflow_pct（列名逐字取③席在册定义行）
+  signal_derivation: 机构-散户方向差（超大单净占比 − 小单净占比）：money_flow 逐股逐日 super_large_net_inflow_pct − small_net_inflow_pct，先按 trade_date
+    截面去均值再排序；须显式声明非零和修正（见 CAND-P0-MFCAL-011 (b)）
+  nonzero_sum_correction: ③席在册 CAND-P0-MFCAL-011 行逐字：『money_flow 口径画像行（非信号，卡面 data_binding 门柱前置）：(a) 本表 close 与 pct_change
+    两列切点前全段 100% 恒 0；(b) 五档净占比之和非零和；(c) main==super_large+large 恒等式不成立；(d) symbol 实为裸 6 位而列注释称带 sh/sz 前缀，跨表 JOIN 须用 symbol_canonical』
+  example_value_from_candidate: 非个股 IC 行（本班只算市场级折叠序列供正交闸实测，横截面判据值未算、不编）：折叠序列两端实测 2021-01-04=-4.0249、2025-09-08=-5.9981（pct，全市场中位）
+  orthogonal_gate_verdict: 正交闸本班实跑（池=⑨席 pool6 六序列/共同日 1855，系 3 个独立轴而非在册 15 员全池）：市场级折叠版 gate verdict=reject 退出码=5 max|corr|=0.4429
+    most_similar=lu_ratio_z20 ⇒ 与市场热度公因子共线，判'重复'不入过闸账；个股横截面版未被计量（闸契约只吃 date,sig 单列，横截面候选无在册折叠口径＝呈批第 1 条）；查重差异面实测：A06/02
+    卡 §59 已把 super_large_net_inflow_pct/large_net_inflow_pct 写为'备用列各单跑一版'（超大单**单列水平**已占位），而 small_net_inflow* 在全 531 卡 grep
+    命中=0 文件 ⇒ 本候选只主张'超大单−小单'档差且须带 CAND-P0-MFCAL-011(b) 非零和修正；L3-12-1 §55 消费 main_pct+super_large_pct+large_net 亦全为正向档、不含散户档
+  data_window_evidence: ③席登记面逐字（sample_window 列）：『窗内可算实测=2021-01-04..2025-09-08/1136 交易日/5,504,375 行（切点前段），全表 5,998,905
+    行/5783 符号；本候选不依赖 tick，故不受楼 1 主腿 24 日阻断』。本席实测（同口径命令，只读）：SELECT count(), countIf(pct_change=0), countIf(close=0), uniqExact(toString(trade_date))
+    FROM c1_market.money_flow WHERE trade_date<'2025-09-09' => 5504375 / 5504375 / 5504375 / 1136；正对照 countIf(main_net_inflow_pct!=0)=5490259、countIf(super_large_net_inflow_pct!=0)=4124403、countIf(small_net_inflow_pct!=0)=5504234
+    ⇒ 表非全局死，唯 close/pct_change 两列恒 0；1136 交易日 ⇒ 七门槛⑤（≥120 信号日）与门槛⑥（≥120 观测）可达
+  readiness: BLOCKED——物化腿（⑤）与横截面正交计量口径（呈批 OD-19）未齐；另残差化柱的 pct_change 取表待裁（OD-18）
+# [st-qoder-p06-1015-05 2026-10-15] 门柱块由程序直读 git show HEAD 注入，本席零自拟数值

@@ -1,0 +1,93 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A02/calibration/03_obi_l1_imbalance
+node_id: TDM-E-L9-A02
+family: calibration
+title_zh: 楼1盘口微结构·CAND-P0-OBI-001（tick_depth_5 定义级具名子题卡·数据面 blocked_on_data）
+origin: P0-microchain-probe|20261015-obi-probe
+hypothesis: OBI 买一档买卖失衡=(bid_volume1-ask_volume1)/(bid_volume1+ask_volume1)；tick_depth_5 3秒快照逐条计算(quality_flag=1、买卖一量非空且和>0)后按
+  symbol×trade_date 取日均值（③席 CAND-P0-OBI-001 定义原文逐字引，真源=data/strategy_intake/lane_p0_obi_candidates.csv，birth_batch=20261015-obi-probe）。本卡答节点决策问题「日内微观结构能否预测次日方向与冲击成本？」。区分面：与母卡
+  TDM-E-L9-A02/calibration/02 区分＝母卡对象是 9:15-9:25 集合竞价失衡＋尾盘主动买入占比，本卡对象是连续竞价全日一档量失衡；与 CAND-P0-CLOSEBAND-007 区分＝本卡用全日均值、后者用时段差（14:30-15:00
+  − 全日）；与 CAND-P0-SLOPE-003 区分＝本卡仅第 1 档、后者全 5 档加权（③席在册禁双计声明）。条款：④席改良情报 3 在册约束两条写入假设：①OFI-价格关系线性斜率与市场深度成反比⇒失衡须除以深度再进信号，裸水平值在流动性分层的全
+  A 池不可横向比；②预测力随聚合频率衰减⇒本卡明登记『考的是 tick_depth_5 表原生 3 秒快照聚合到日均』这一频率，禁拿分钟级读数冒充 tick 级预测力
+window:
+  in_sample:
+  - '2026-01-05'
+  - '2026-06-30'
+  oos: &id001
+  - '2026-07-01'
+  - '2026-09-30'
+  regimes:
+    unavailable: 牛/熊两段均无 tick 历史（数据起 2026-01-05），regime_stability 本卡无法执行—— 解锁前该支柱视为未验证而非通过
+  frozen_note: 看数前冻结；窗口按现有 tick 覆盖切，属"短窗预演"不作分布性结论，正式考试须待历史补齐后重冻
+buckets:
+  type: quantile_decile
+  'on': 当日 OBI 一档买卖失衡度（symbol×trade_date 日均值，横截面）
+  min_obs_per_bucket: 60
+signal_kind: panel
+pillars:
+  inherited_family_pillars: 逐字面见母卡 TDM-E-L9-A02/calibration/02 的 pillars 五柱（response_monotonicity/ic_floor/lag_profile/impact_curve/regime_stability），本卡不改其一柱文字、不删一柱、不加柱（禁挪门柱）
+  primary_face_from_candidate: OBI 买一档买卖失衡=(bid_volume1-ask_volume1)/(bid_volume1+ask_volume1)；tick_depth_5 3秒快照逐条计算(quality_flag=1、买卖一量非空且和>0)后按
+    symbol×trade_date 取日均值
+  orthogonal_gate: 与正交闸关系：池信号未物化，正交闸本次缺席（如实注明）；本候选为盘口原始因子冒烟计算，未做池内正交化，gate 关系待⑥正式班池通道就绪后回填
+  sample_window_from_candidate: 冒烟窗：000001.SZ+600519.SH 各自最近5个交易日 2026-09-24..2026-10-14（贯通冒烟样本，非HOLDOUT/OOS评估窗，禁用于判据定稿）
+target:
+  primary: 次日收益（③席微缩链 02:53 节在册候选方向原文：『OBI 均值对次日收益的预测力』）
+  note: target 面只引③席在册原文所载对象；机读列名与位移由⑤席绑定时定，本席不自拟列名/常数
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: true
+  impact_curve_min_ratio: 2.0
+status: blocked_on_data
+status_reason: 数据面结构不可达（非判据问题）：本班自测（zephyr.data.ch_reader.query_rows，2026-10-15 08:0x 本地实测）：SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniqExact(trade_date),uniqExact(symbol)
+  FROM c1_market.tick_depth_5 → 2026-07-24/2026-10-14/130283635 行/24 交易日/8763 符号；SELECT count() WHERE trade_date<'2025-09-09'
+  → 0 行；SELECT uniqExact(trade_date) WHERE trade_date BETWEEN '2026-07-24' AND '2026-10-14' → 24。与③席 20261015-p03-01
+  台账§一表读数逐项同值（双证）⇒ 闭卷切点前整段无采集，本卡母窗 IS 2026-01-05..2026-06-30 在本表零行＝结构不可考，非本席口径选择。母卡 window.frozen_note 原文＝『看数前冻结；窗口按现有
+  tick 覆盖切，属"短窗预演"不作分布性结论，正式考试须待历史补齐后重冻』，本卡继承同窗故同判 blocked。⑦⑧开考普查只枚举 preregistered，本卡不进供题面，不构成对下游的假料。另 3 处语义面在册无源、本席一字不编：见
+  gaps 三键与⑥席 1015-04 班台账呈批 OD-15/16/17。
+gaps_no_source:
+  oos_subsegment_caliber: ⑨席 1015-04 班 [对照] 申请要求的『OOS 切 IS 同号段/反号段』口径在卡池无机读源（本班实测 535 卡 window.oos 多段形=0 张，pillars_numeric
+    键集无分段面）⇒ OD-15
+  residualization_pillar: SPREAD-005/LARGEFLOW-004 被⑩席令写『残差化与降级条款门柱』，但 money_flow 族在册 7 卡的 pillars 零残差柱（本班实测）⇒ 那两条本班不制卡，走
+    OD-16
+  regime_fivekey_applicability: IC 五键是否适用盘口类＝③席微缩链在册待裁项（原文『是否适用盘口类待裁定』），本卡只按同族唯一母卡逐字继承，不宣称已裁
+prereg_provenance:
+  made_by: st-qoder-p06-1015-04
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      → window 整块
+    pillars_numeric: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      → pillars_numeric 整块（同族唯一在册冻结件）
+    buckets_type_and_floor: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      → buckets.type/min_obs_per_bucket
+    decision_question: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration.yaml
+      → tdm.decision_question
+    definition_and_notes: data/strategy_intake/lane_p0_obi_candidates.csv → CAND-P0-OBI-001 行逐字段
+  own_measurement: 本班自测（zephyr.data.ch_reader.query_rows，2026-10-15 08:0x 本地实测）：SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniqExact(trade_date),uniqExact(symbol)
+    FROM c1_market.tick_depth_5 → 2026-07-24/2026-10-14/130283635 行/24 交易日/8763 符号；SELECT count() WHERE trade_date<'2025-09-09'
+    → 0 行；SELECT uniqExact(trade_date) WHERE trade_date BETWEEN '2026-07-24' AND '2026-10-14' → 24。与③席 20261015-p03-01
+    台账§一表读数逐项同值（双证）⇒ 闭卷切点前整段无采集，本卡母窗 IS 2026-01-05..2026-06-30 在本表零行＝结构不可考，非本席口径选择
+  single_variable_note: 本卡非对照卡（无 champion/challenger 配对），是新造具名子题卡；与母卡差异面＝信号对象本身，判据五键与窗逐字同值
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A02.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: tick_depth_5 (CH c1_market@172.24.30.100:8123)
+  signal_column: 见 hypothesis 内定义原文所列列名（③席在册，本席不另列）
+  signal_derivation: OBI 买一档买卖失衡=(bid_volume1-ask_volume1)/(bid_volume1+ask_volume1)；tick_depth_5 3秒快照逐条计算(quality_flag=1、买卖一量非空且和>0)后按
+    symbol×trade_date 取日均值
+  example_value_from_candidate: 2026-09-24 日均OBI：000001.SZ=+0.112011(3094快照)；600519.SH=+0.001604(3033快照)
+  data_window_evidence: 本班自测（zephyr.data.ch_reader.query_rows，2026-10-15 08:0x 本地实测）：SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniqExact(trade_date),uniqExact(symbol)
+    FROM c1_market.tick_depth_5 → 2026-07-24/2026-10-14/130283635 行/24 交易日/8763 符号；SELECT count() WHERE trade_date<'2025-09-09'
+    → 0 行；SELECT uniqExact(trade_date) WHERE trade_date BETWEEN '2026-07-24' AND '2026-10-14' → 24。与③席 20261015-p03-01
+    台账§一表读数逐项同值（双证）⇒ 闭卷切点前整段无采集，本卡母窗 IS 2026-01-05..2026-06-30 在本表零行＝结构不可考，非本席口径选择；③席登记面：冒烟窗：000001.SZ+600519.SH
+    各自最近5个交易日 2026-09-24..2026-10-14（贯通冒烟样本，非HOLDOUT/OOS评估窗，禁用于判据定稿）
+  readiness: BLOCKED——解锁条件逐字继承母卡 data_binding.readiness 与③席§六.1：补齐 ≥2019-01-04 起盘口历史包（外部采购＝Owner 花钱门位），或立法盘口族专走滚动前哨（W_POSTD＋新样本）并接受其不进
+    IS/OOS/HOLDOUT 主线

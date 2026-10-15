@@ -36,7 +36,7 @@ target:
   primary: car_0_to_5_stock（个股相对 000300 的 5 日累计异常收益，按评级变动分组）
   secondary: car_0_to_20_stock（漂移面）
   note: A17 决策问题=「评级调整与目标价变化里哪些信息领先股价」——本卡答"评级调整"，目标价面见 04 卡
-status: blocked_on_data
+status: preregistered
 lineage:
   card: null
   run_id: null
@@ -107,3 +107,5 @@ data_binding:
       192365 行反推评级迁移），且回填后 rating_change 非空率 >=60%、看空类样本 >=300 条；
       齐备后把 status 改回 preregistered 重冻开考。
   readiness: BLOCKED——事件列 100% 空 + 目标价字段不存在（两套判据皆不可算）
+
+# [st-qoder-p06-1015-09 2026-10-15] 本件顶层键 `unblocked_20261015` 已由本席撤出卡面（非在册顶层键，零判据面改动）。撤因＝卡面字段册不存在（图15 骨架 L-5 明列『不含卡内单张卡的全部字段』）＋⑩第七单 §3 归口令；翻态与解锁实测凭据整块移至 docs/_working/automation_campaign/p06_prereg/ledger.md 10-15 16:0x 节（1015-05 班翻态面由本席 1015-09 班承接落地）

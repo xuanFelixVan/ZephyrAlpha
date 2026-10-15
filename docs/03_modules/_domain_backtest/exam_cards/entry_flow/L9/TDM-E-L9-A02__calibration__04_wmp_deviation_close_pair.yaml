@@ -1,0 +1,95 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A02/calibration/04_wmp_deviation_close_pair
+node_id: TDM-E-L9-A02
+family: calibration
+title_zh: 楼1盘口微结构·CAND-P0-WMP-002（tick_depth_5（bid_price1..5/ask_price1..5/bid_volume1..5/ask_volume1..5）＋tick_data
+  定义级具名子题卡·数据面 blocked_on_data）
+origin: P0-楼1-六向①上游＋⑥数据画像|20261015-p03-01
+hypothesis: WMP 偏离=ln(加权市场中间价/最新成交价)；WMP 取五档双向加权（权重=各档量的平方根以抑制远档巨量摊平）覆盖 bid_price1..5/ask_price1..5；主判据面=日内均值与收盘前
+  30 分钟档之差（③席 CAND-P0-WMP-002 定义原文逐字引，真源=data/strategy_intake/lane_p0_obi_candidates.csv，birth_batch=20261015-p03-01）。本卡答节点决策问题「日内微观结构能否预测次日方向与冲击成本？」。区分面：⑩席
+  2026-10-15 第三单 §3 判＝纯新腿（全文 WMP/中间价/microprice 命中 0），本席复测同尺零命中（正对照：tick_depth 在 exam_cards 命中 10 件、竞价失衡命中 1 件）⇒
+  可直转，无需区分面。条款：本班未计算任何因子值（数据全在闭卷切点后，跑数即污染唯一无污染前哨窗＝③席在册铁律）；主判据面与 target 的机读列名待⑤席绑定，本席不自拟列名
+window:
+  in_sample:
+  - '2026-01-05'
+  - '2026-06-30'
+  oos: &id001
+  - '2026-07-01'
+  - '2026-09-30'
+  regimes:
+    unavailable: 牛/熊两段均无 tick 历史（数据起 2026-01-05），regime_stability 本卡无法执行—— 解锁前该支柱视为未验证而非通过
+  frozen_note: 看数前冻结；窗口按现有 tick 覆盖切，属"短窗预演"不作分布性结论，正式考试须待历史补齐后重冻
+buckets:
+  type: quantile_decile
+  'on': 当日 WMP 偏离日内均值与收盘前 30 分钟档之差（横截面）
+  min_obs_per_bucket: 60
+signal_kind: panel
+pillars:
+  inherited_family_pillars: 逐字面见母卡 TDM-E-L9-A02/calibration/02 的 pillars 五柱（response_monotonicity/ic_floor/lag_profile/impact_curve/regime_stability），本卡不改其一柱文字、不删一柱、不加柱（禁挪门柱）
+  primary_face_from_candidate: WMP 偏离=ln(加权市场中间价/最新成交价)；WMP 取五档双向加权（权重=各档量的平方根以抑制远档巨量摊平）覆盖 bid_price1..5/ask_price1..5；主判据面=日内均值与收盘前
+    30 分钟档之差
+  orthogonal_gate: 闸未开（同上 退出码=2 缺席）；共线风险声明：与 CAND-P0-SPREAD-005 同源同表 入池前须先对拍
+  sample_window_from_candidate: 可达窗同楼=2026-07-24..2026-10-14（24 交易日）；切点前 0 行 ⇒ 判 blocked_on_data（缺 2019-01-04..2025-09-08
+    全段）
+target:
+  primary: null
+  note: target.primary=null＝该候选行未声明对象（在册无源），本席不自拟；解锁前禁翻 preregistered
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: true
+  impact_curve_min_ratio: 2.0
+status: blocked_on_data
+status_reason: 数据面结构不可达（非判据问题）：本班自测（zephyr.data.ch_reader.query_rows，2026-10-15 08:0x 本地实测）：SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniqExact(trade_date),uniqExact(symbol)
+  FROM c1_market.tick_depth_5 → 2026-07-24/2026-10-14/130283635 行/24 交易日/8763 符号；SELECT count() WHERE trade_date<'2025-09-09'
+  → 0 行；SELECT uniqExact(trade_date) WHERE trade_date BETWEEN '2026-07-24' AND '2026-10-14' → 24。与③席 20261015-p03-01
+  台账§一表读数逐项同值（双证）⇒ 闭卷切点前整段无采集，本卡母窗 IS 2026-01-05..2026-06-30 在本表零行＝结构不可考，非本席口径选择。母卡 window.frozen_note 原文＝『看数前冻结；窗口按现有
+  tick 覆盖切，属"短窗预演"不作分布性结论，正式考试须待历史补齐后重冻』，本卡继承同窗故同判 blocked。⑦⑧开考普查只枚举 preregistered，本卡不进供题面，不构成对下游的假料。另 3 处语义面在册无源、本席一字不编：见
+  gaps 三键与⑥席 1015-04 班台账呈批 OD-15/16/17。
+gaps_no_source:
+  oos_subsegment_caliber: ⑨席 1015-04 班 [对照] 申请要求的『OOS 切 IS 同号段/反号段』口径在卡池无机读源（本班实测 535 卡 window.oos 多段形=0 张，pillars_numeric
+    键集无分段面）⇒ OD-15
+  residualization_pillar: SPREAD-005/LARGEFLOW-004 被⑩席令写『残差化与降级条款门柱』，但 money_flow 族在册 7 卡的 pillars 零残差柱（本班实测）⇒ 那两条本班不制卡，走
+    OD-16
+  regime_fivekey_applicability: IC 五键是否适用盘口类＝③席微缩链在册待裁项（原文『是否适用盘口类待裁定』），本卡只按同族唯一母卡逐字继承，不宣称已裁
+prereg_provenance:
+  made_by: st-qoder-p06-1015-04
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      → window 整块
+    pillars_numeric: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      → pillars_numeric 整块（同族唯一在册冻结件）
+    buckets_type_and_floor: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      → buckets.type/min_obs_per_bucket
+    decision_question: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration.yaml
+      → tdm.decision_question
+    definition_and_notes: data/strategy_intake/lane_p0_obi_candidates.csv → CAND-P0-WMP-002 行逐字段
+  own_measurement: 本班自测（zephyr.data.ch_reader.query_rows，2026-10-15 08:0x 本地实测）：SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniqExact(trade_date),uniqExact(symbol)
+    FROM c1_market.tick_depth_5 → 2026-07-24/2026-10-14/130283635 行/24 交易日/8763 符号；SELECT count() WHERE trade_date<'2025-09-09'
+    → 0 行；SELECT uniqExact(trade_date) WHERE trade_date BETWEEN '2026-07-24' AND '2026-10-14' → 24。与③席 20261015-p03-01
+    台账§一表读数逐项同值（双证）⇒ 闭卷切点前整段无采集，本卡母窗 IS 2026-01-05..2026-06-30 在本表零行＝结构不可考，非本席口径选择
+  single_variable_note: 本卡非对照卡（无 champion/challenger 配对），是新造具名子题卡；与母卡差异面＝信号对象本身，判据五键与窗逐字同值
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A02.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: tick_depth_5（bid_price1..5/ask_price1..5/bid_volume1..5/ask_volume1..5）＋tick_data price（同日同符号最新成交价）
+  signal_column: 见 hypothesis 内定义原文所列列名（③席在册，本席不另列）
+  signal_derivation: WMP 偏离=ln(加权市场中间价/最新成交价)；WMP 取五档双向加权（权重=各档量的平方根以抑制远档巨量摊平）覆盖 bid_price1..5/ask_price1..5；主判据面=日内均值与收盘前
+    30 分钟档之差
+  example_value_from_candidate: 本班未计算（数据全在闭卷切点后 跑数即污染唯一无污染前哨窗）；可得性实测=depth 表 2026-09-15 的 bid_price1/ask_price1/bid_volume5
+    缺失率均为 0.0
+  data_window_evidence: 本班自测（zephyr.data.ch_reader.query_rows，2026-10-15 08:0x 本地实测）：SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniqExact(trade_date),uniqExact(symbol)
+    FROM c1_market.tick_depth_5 → 2026-07-24/2026-10-14/130283635 行/24 交易日/8763 符号；SELECT count() WHERE trade_date<'2025-09-09'
+    → 0 行；SELECT uniqExact(trade_date) WHERE trade_date BETWEEN '2026-07-24' AND '2026-10-14' → 24。与③席 20261015-p03-01
+    台账§一表读数逐项同值（双证）⇒ 闭卷切点前整段无采集，本卡母窗 IS 2026-01-05..2026-06-30 在本表零行＝结构不可考，非本席口径选择；③席登记面：可达窗同楼=2026-07-24..2026-10-14（24
+    交易日）；切点前 0 行 ⇒ 判 blocked_on_data（缺 2019-01-04..2025-09-08 全段）
+  readiness: BLOCKED——解锁条件逐字继承母卡 data_binding.readiness 与③席§六.1：补齐 ≥2019-01-04 起盘口历史包（外部采购＝Owner 花钱门位），或立法盘口族专走滚动前哨（W_POSTD＋新样本）并接受其不进
+    IS/OOS/HOLDOUT 主线

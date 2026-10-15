@@ -1,0 +1,110 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A01/calibration/07_single_minute_max_variance_share
+node_id: TDM-E-L9-A01
+family: calibration
+title_zh: 楼1分钟微结构·CAND-P0-MIJUMP-026 单分钟最大方差占比（跳跃/连续分解集中度，全市场日频序列）
+origin: P0-楼1/楼10（③席 20261015-p03-04 具名候选 CAND-P0-MIJUMP-026）|20261015-p03-04
+hypothesis: 单日方差由几根 bar 决定＝跳跃集中度，归一掉波动量级（③席在册定义自陈『归一掉波动量级，只留单日方差由几根 bar 决定』）；本卡检验该日频序列对次日指数收益是否构成在册五键可判的关系。符号方向③席在册行未声明、本席不预设（见
+  gaps_no_source.sign_claim_absent）。 ③席在册定义原文逐字（禁改写）：单分钟最大方差占比（跳跃/连续分解集中度）＝按 symbol×trade_date max(r_i^2)/sum(r_i^2)，r_i=log(C_i/O_i)，取全市场日均值；归一掉波动量级，只留"单日方差由几根
+  bar 决定"
+window:
+  in_sample:
+  - '2022-01-04'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bull: 2022-01-04..2022-06-30→无（数据起 2021-09，牛段样本不足，本卡 regime 仅用熊/震荡两段）
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，本卡 IS 全落此段）
+    recovery: 2024-02-01..2025-09-09（修复段，作 regime 对侧）
+  frozen_note: 看数前冻结；右端截 2026-09-30 前先确认 1min 覆盖（实测至 2026-10-09）
+buckets:
+  type: quantile_decile
+  'on': 当日全市场单分钟最大方差占比均值（symbol×trade_date 聚合后取日均值，序列面）
+  min_obs_per_bucket: 60
+signal_kind: series
+pillars:
+  inherited_numeric_face: 五键数值面整块逐字抄同 node 同表在册冻结卡 git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml
+    -> pillars_numeric；该五键与同层市场级序列先例 git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A04__calibration__02_估值ERP分位日增量.yaml・git
+    show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A09__calibration__02_快讯情感日均值.yaml 的 pillars_numeric
+    同值（本班 parsed 对拍全等），故数值面无择一问题；择一问题只在 window（见 gaps_no_source）
+  pillars_text_face: 文字面＝指针式继承（不改一柱、不删一柱、不加柱＝禁挪门柱），沿在册先例；本席不自拟柱文字
+  candidate_face: ③席在册定义即本卡信号对象（原文见 hypothesis 与 data_binding.signal_derivation）
+  orthogonal_gate_face: 闸在册读数逐字见 data_binding.orthogonal_gate_verdict；本席未跑闸、未复算相关性
+target:
+  primary: next_day_index_return（CSI300 次日收益，G0-4 主轴）
+  secondary: next_20day_index_return（慢变量真目标口径，登记为辅轴，series 执行器不自动判）
+  note: A01 决策问题逐字（取母骨架 tdm.decision_question）＝『价量趋势与动量能否预测N日收益？』；本卡只答分钟方差面的序列面
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+status: blocked_on_impl
+status_reason: 判据面（window/pillars_numeric/buckets/target/signal_kind/discipline）已按在册冻结值整块填齐；唯一缺腿＝⑤实现面的物化算子。本班只读实测：scripts/backtest/fexam/card_binding.py
+  的 op_* 配方面本班 grep 实测清单＝op_agg4_state_ordinal_series/op_base/op_campaign/op_daily_agg/op_downside_dev_pctile/op_event_flag_rolling_pctile/op_evidence/op_index_amount_sum_pctile/op_limit_up_premium_close_mean/op_macro_scissors/op_margin_balance_5d/op_n/op_n_amount_share/op_not_in_ops_book/op_open/op_promotion_rate/op_rrg_quadrant_series/op_sector_adjustment_progress/op_sector_relay_retreat_ratio/op_sector_top_n_amount_share；谓词
+  `skew|时段|timeband|intraday_band` 在该文件命中 0 行（grep -c 实测） ⇒ 无『日内时段聚合÷全日聚合』与『单分钟极值÷全日』两类算子；另时段端点归属与横截面折叠口径两处在册未裁（见 gaps_no_source）。按
+  SOP ⑤出口『码面+测试绿→卡翻转 unblocked→移交⑥』翻转，本席不自宣可考。
+gaps_no_source:
+  kline_1min_window_caliber: 同 flow 同表在册卡窗并存多套且本 node 无冻结面 ⇒ 承在册呈批 OD-22（本班不重复立号）；本班窗整块逐字抄 TDM-E-L9-A01/calibration/03（status=preregistered・同表
+    kline_1min・同 node・IS 2022-01-04..2023-12-29／OOS 2024-01-02..2025-09-09・含 regimes 三键全字段对拍），与上班 1015-06 两张 A02/10・11 号卡同块同值
+    ⇒ 同族新卡不另起窗（防同族读数不可比）
+  nonzero_sum_and_folding: ③席在册行自陈『折叠口径=本席临时全市场日均值（在册横截面折叠口径仍未裁＝呈批第 1 条承 20261015-p03-03）』；本卡对象即市场级日频序列（定义本体），故折叠未裁不阻断本卡面冻结，但开考前的口径须由
+    Owner/⑨ 定
+  sign_claim_absent: ③席在册行 definition_zh 只给构造（sumIf(r^2)/sum(r^2) 与 max(r^2)/sum(r^2)），无收益方向声明 ⇒ 卡面正向/负向预期无在册来源，本席不代设
+  extreme_vs_subset_molecule: ③席在册行把本候选与 020（下行 RV 占比）分列＝分子不同（极值 vs 负收益子集和），闸读数可辨（020 reject 0.5398／本候选 pass 0.1798）；本席只转抄，不重判
+prereg_provenance:
+  made_by: st-qoder-p06-1015-07
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml
+      -> window 整块（含 in_sample/oos/regimes/frozen_note 全字段）
+    pillars_numeric: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml
+      -> pillars_numeric 整块
+    buckets_type_and_floor: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml
+      -> buckets.type/min_obs_per_bucket
+    discipline_and_oos_window_ref: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml
+      -> discipline 行・oos_window_ref（值同 window.oos，锚按本班卡面自有锚重排）
+    signal_kind: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A09__calibration__02_快讯情感日均值.yaml
+      -> signal_kind（series，市场级日频序列在册先例）
+    target_primary_secondary_target_source: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A04__calibration__02_估值ERP分位日增量.yaml
+      -> target.primary/target.secondary・data_binding.target_source
+    candidate_row: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-MIJUMP-026 行逐字段原文
+    contrast_row_031: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-MI60CONTRAST-031 行逐字段原文（档位对照前置）
+  own_measurement: scripts/backtest/fexam/card_binding.py 的 op_* 配方面本班 grep 实测清单＝op_agg4_state_ordinal_series/op_base/op_campaign/op_daily_agg/op_downside_dev_pctile/op_event_flag_rolling_pctile/op_evidence/op_index_amount_sum_pctile/op_limit_up_premium_close_mean/op_macro_scissors/op_margin_balance_5d/op_n/op_n_amount_share/op_not_in_ops_book/op_open/op_promotion_rate/op_rrg_quadrant_series/op_sector_adjustment_progress/op_sector_relay_retreat_ratio/op_sector_top_n_amount_share；谓词
+    `skew|时段|timeband|intraday_band` 在该文件命中 0 行（grep -c 实测）（本班只读实测，非转述）
+  single_variable_note: 新造具名子题卡（非 champion/challenger 配对）；与同 node 的 A01/03 差异面＝信号对象（A01/03=RV 水平与日内路径偏度・panel・个股横截面；本卡=归一化时段/极值构成・series・市场级），五键与窗整块同值；与上班
+    A02/10・11（量维成交额占比）不同测度维（③席在册行自陈），与 A02/02 母卡不同层不同表，本班未移用其 tick 短窗预演面
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A01.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: kline_1min (CH c1_market)
+  signal_column: close / open（列名逐字取③席在册定义行的 r_i=log(C_i/O_i) 列，本席未新增列名）
+  signal_derivation: 单分钟最大方差占比（跳跃/连续分解集中度）＝按 symbol×trade_date max(r_i^2)/sum(r_i^2)，r_i=log(C_i/O_i)，取全市场日均值；归一掉波动量级，只留"单日方差由几根
+    bar 决定"
+  target_source: kline_index 000300 close→next_day_return
+  universe_guard: 前缀白名单{0,3,6}（③席 CAND-P0-MINFPORTRAIT-022 在册改判行逐字见 20261015-p03-03 面；本表无 market_type 列 ⇒ 宇宙守卫须用前缀白名单）
+  band_caliber_precedent_031:
+    definition_zh: 60 分钟档对照行（非信号）＝承 20261015-p03-03 游标下一班可挖面②，把 024/025/026 三构造在 kline_60min 上同式重算，量"同名构造换采样档是否仍是同一对象"
+    example_value: 非因子值行。实测读数（242 共日）：corr(1min,60min) f_volshape=-0.0120／f_gkeff=-0.1002／f_jump=+0.2511；均值 1min→60min：0.438997→0.358500／0.832054→1.242800／0.129021→0.674900；n_sym
+      均值 4822（1min，HAVING nb≥200）vs 5049（60min，HAVING nb≥3）；60min 档三构造各自过闸=f_volshape pass 0.0962(lu_count_z20)／f_gkeff
+      reject 0.5103(avg_abs_ret_z20)／f_jump pass 0.0818(avg_abs_ret_z20)
+    downstream_meaning: 非信号行无闸（本行自身不入过闸账）。结论三条（本席只登记读数，不改他人判据）：①同名构造在两档表上的日频时间序列相关近零（-0.01~-0.10，最大 0.25）＝**改绑 kline_60min
+      不等于复算分钟腿**，卡面 data_binding 换档必须重新过闸并显式标档位；②60min 档成本极低（0.6s/全 FY）但不可当 1min 代理；③两档 n_sym 差 227 只＝档位宇宙不同（1min 受 nb≥200
+      门），跨档对拍分母须先对齐
+  example_value_from_candidate: FY2024 日频截面均值 mean=0.1290208871／min=0.0942252943／max=0.2323055912（n=242）；2024-01-02=0.1271627798（n_sym=4888）；同式在
+    kline_60min 档=0.6749（均值）⇒ 档位机械位移，见 031 对照行，禁跨档混用
+  orthogonal_gate_verdict: 过闸（入过闸账）FY verdict=pass max|corr|=0.1798（most_similar=lu_count）rc=0；H1 verdict=pass max|corr|=0.1969（most_similar=lu_ratio_z20）rc=0
+    ⇒ 两窗一致过；池=⑨席 pool6 绕行面（6 序列／3 独立轴／共同日 1855，非 ibt_runner MEMBERS 15 员面）；本班双对照同批实测：池成员 avg_abs_ret.csv 原样自投=reject 1.0000
+    rc=5（尺能红）、同日轴随机高斯=pass 0.0441 rc=0（尺非恒拦）；查重实测：'跳跃' 命中面经逐条读＝本册 020 行（下行 RV 占比）之假设句用词，非独立候选；与 019 成交额集中度 HHI×N（额维、N 倍化）不同测度序列；与
+    020（负收益子集和／总方差）分子不同（极值 vs 子集），闸读数可辨＝020 reject 0.5398 而 026 pass 0.1798；折叠口径同呈批第 1 条
+  data_window_evidence: 闸测窗 2024-01-02..2024-12-31（242 交易日，全在切点前）；kline_1min 切点前全段=1145777646 行／974 交易日（承 20261015-p03-03
+    在册读数，本班未重扫全表）
+  readiness: 数据腿可达（承 20261015-p03-03 在册 kline_1min 切点前 1,145,777,646 行／974 交易日，本班未重扫全表）；缺⑤物化算子与端点/折叠口径裁定

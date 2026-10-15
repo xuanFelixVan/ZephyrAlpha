@@ -1,0 +1,98 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A02/calibration/09_seal_instant_orderflow
+node_id: TDM-E-L9-A02
+family: calibration
+title_zh: 楼1盘口·CAND-P0-SEAL-012 封板瞬间订单流（承接 L7_ledger:231 在册长尾名单·非新造题）
+origin: P0-楼1-在册长尾承接（L7_ledger:231）|20261015-p03-02
+hypothesis: 封板瞬间的订单流（撤单率与新增挂单率）是"封板质量"的时点条件面，与在册 L4-05/02 打板三式的"进场执行方式"不同对象：那里封板瞬间是**执行臂**，本卡把它当**预测子**。③席在册定义原文逐字（禁改写）：『封板瞬间订单流（承接
+  L7_ledger L9-A02 在册长尾名单'封板瞬间订单流'，非新造题）：以 stk_limit 涨停价判定进入封板事件，取 tick_depth_5 首次买一量≥维持阈值时点为锚，测其后 N 秒买一撤单率与新增挂单率（订单流失衡的时点条件版）』。本卡答
+  A02 节点决策问题（两问各占一个 target，禁合并，母卡 target.note 逐字继承）。锚定口径共用③席在册声明：『与本班 CAND-P0-MFCAL-011 无耦合；查重差异面实测：闸未开（无 date,sig 序列可算，铁律禁在
+  HOLDOUT/OOS 窗跑数）⇒ 不入过闸账；与本班 CAND-P0-MFCAL-011 无耦合；查重差异面实测：L4-05/02 打板三式卡确含'扫板（封板瞬间市价扫入）'字样，但那是**进场执行方式对照**（target=次日溢价分布），本候选把封板瞬间订单流当**预测子**（target=开板概率/次日方向）⇒
+  不同对象，共用其 first_touch_time/open_board_count 锚定口径以免二次定义』。
+window:
+  in_sample:
+  - '2026-01-05'
+  - '2026-06-30'
+  oos: &id001
+  - '2026-07-01'
+  - '2026-09-30'
+  regimes:
+    unavailable: 牛/熊两段均无 tick 历史（数据起 2026-01-05），regime_stability 本卡无法执行—— 解锁前该支柱视为未验证而非通过
+  frozen_note: 看数前冻结；窗口按现有 tick 覆盖切，属"短窗预演"不作分布性结论，正式考试须待历史补齐后重冻
+buckets:
+  type: quantile_decile
+  'on': 封板瞬间订单流（买一撤单率与新增挂单率，横截面，锚定后 N 秒窗——阈值与 N 见 gaps_no_source）
+  min_obs_per_bucket: 60
+signal_kind: panel
+pillars:
+  inherited_family_pillars: 逐字面见母卡 TDM-E-L9-A02/calibration/02 的 pillars 五柱（response_monotonicity/ic_floor/lag_profile/impact_curve/regime_stability），本卡不改其一柱文字、不删一柱、不加柱（禁挪门柱）；五柱之数值面即本卡
+    pillars_numeric 整块（已逐字继承）
+  primary_face_from_candidate: 封板瞬间订单流（承接 L7_ledger L9-A02 在册长尾名单'封板瞬间订单流'，非新造题）：以 stk_limit 涨停价判定进入封板事件，取 tick_depth_5
+    首次买一量≥维持阈值时点为锚，测其后 N 秒买一撤单率与新增挂单率（订单流失衡的时点条件版）
+  orthogonal_gate: 闸未开（③席在册原文逐字：『闸未开（无 date,sig 序列可算，铁律禁在 HOLDOUT/OOS 窗跑数）⇒ 不入过闸账』）；本席未跑闸、未复算相关性，只把在册读数搬进卡面
+  anchoring_shared: 事件锚定口径共用③席在册声明：『共用其 first_touch_time/open_board_count 锚定口径以免二次定义』（所指=在册 TDM-E-L4-05/comparison/02，本席核实该件
+    status=preregistered、buckets.on=『三臂 × 封单质量（seal_ratio 三分位）』、窗由 daban_board_event/limit_up_pool 实测覆盖唯一决定 ⇒ 共用只到"不二次定义锚名"，不含其阈值数值，也不借其窗）
+target:
+  primary: 开板概率／次日方向——③席 CAND-P0-SEAL-012 在册行 orthogonal_gate_note 逐字：『本候选把封板瞬间订单流当**预测子**（target=开板概率/次日方向）』，本席不自拟列名
+  secondary: （③席在册行未声明第二 target ⇒ 本席置空不编，见 gaps_no_source）
+  note: 母卡 L9-A02/02 target.note 逐字＝『A02 决策问题两问（预测次日方向 / 冲击成本）各占一个 target，禁合并成单值』⇒ 本卡只取"预测次日方向"半问＋③席声明的开板概率；冲击成本半问的对象不是本卡信号，故不搬母卡
+    secondary 列名。pillars_numeric 第 6 键 impact_curve_min_ratio=2.0 随窗整块继承（保守只紧不松，同 OD-17 在册议题），本席不删该键（删=loosening）也不据此认为冲击柱已被本卡
+    target 覆盖
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: true
+  impact_curve_min_ratio: 2.0
+status: blocked_on_data
+status_reason: 度量腿不可达（本席 CH 实测，与上一班 st-qoder-p06-1015-04 同值＝双证）：c1_market.tick_depth_5 uniqExact(trade_date)=24、rows=130,309,431、覆盖
+  2026-07-24..2026-10-14，且 WHERE trade_date<'2025-09-09' count()=0 行 ⇒ 母卡 IS 2026-01-05..2026-06-30 在本表结构零行，七门槛⑤（信号天数≥120）结构性不可达（24<120）。锚定腿
+  stk_limit 侧③席实测 2,598 交易日可达但真实宇宙自 2019-01 起（2015 仅 239 符号、2018 仅 237 符号）；两腿窗不同源，齐备前不可开考。
+gaps_no_source:
+  seal_hold_threshold_no_source: ③席定义中的"维持阈值"（买一量≥阈值）无在册数值：卡池与判据册零命中 ⇒ 一个数不编 ⇒ OD-21
+  post_anchor_window_N_seconds_no_source: 定义中的"其后 N 秒"无在册 N 值（母卡与 L4-05/02 皆无秒级窗常数）⇒ OD-21
+  regime_unavailable_inherited: 母卡 window.regimes 原文＝『牛/熊两段均无 tick 历史（数据起 2026-01-05），regime_stability 本卡无法执行——解锁前该支柱视为未验证而非通过』，本卡逐字继承该窗，故同受此声明
+  pillar_source_status: 继承源 L9-A02/02 本身 status=blocked_on_data（族内唯一冻结面），非 preregistered ⇒ 与 OD-17 同题
+prereg_provenance:
+  made_by: st-qoder-p06-1015-05
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      -> window 整块
+    pillars_numeric: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      -> pillars_numeric 整块
+    target: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      -> target 块
+    buckets_type_and_floor: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      -> buckets.type/min_obs_per_bucket
+    signal_kind_and_discipline: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      -> signal_kind/discipline
+    candidate_row: data/strategy_intake/lane_p0_obi_candidates.csv -> CAND-P0-SEAL-012 行逐字段原文
+  own_measurement: 本席 CH 只读实测：tick_depth_5 uniqExact(trade_date)=24、rows=130,309,431、max=2026-10-14、trade_date<'2025-09-09'
+    行数=0（与上一班 08:1x 实测 rows=130,283,635 同形态，差值为本班窗口内新增行，uniq 日与零行结论恒等）
+  single_variable_note: 新造具名子题卡（非配对卡）；与母卡 L9-A02/02 差异面＝信号对象（封板瞬间订单流 vs 开盘竞价失衡），窗/五键/buckets 地板/target 逐字同值；与在册 L4-05/02
+    打板三式差异面＝封板瞬间是预测子而非执行臂
+  pillars_text_face: pillars 文字面＝指针式继承（inherited_family_pillars 键声明"不改一柱、不删一柱、不加柱"），数值面 pillars_numeric 才是整块逐字复制；此不对称是刻意的——母卡五柱文字写的是"竞价失衡/冲击曲线"对象，把它们改名贴到封板瞬间卡上＝自拟判据，故按上一班
+    st-qoder-p06-1015-04 在册 L9-A02/03 同族先例做指针式继承
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A02.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: tick_depth_5＋stk_limit (CH c1_market)
+  signal_column: tick_depth_5 买一量/买一价/卖一价/成交价（列面逐字取③席在册行所指表；本席未新增列名）
+  signal_derivation: 封板瞬间订单流（承接 L7_ledger L9-A02 在册长尾名单'封板瞬间订单流'，非新造题）：以 stk_limit 涨停价判定进入封板事件，取 tick_depth_5 首次买一量≥维持阈值时点为锚，测其后
+    N 秒买一撤单率与新增挂单率（订单流失衡的时点条件版）
+  example_value_from_candidate: blocked_on_data 定义级行（本班未在切点后计算任何订单值）；可达性读数：锚定腿 2598 日可用但深度门 2019 起，度量腿 0 日可用
+  orthogonal_gate_verdict: 闸未开（无 date,sig 序列可算，铁律禁在 HOLDOUT/OOS 窗跑数）⇒ 不入过闸账；与本班 CAND-P0-MFCAL-011 无耦合；查重差异面实测：L4-05/02 打板三式卡确含'扫板（封板瞬间市价扫入）'字样，但那是**进场执行方式对照**（target=次日溢价分布），本候选把封板瞬间订单流当**预测子**（target=开板概率/次日方向）⇒
+    不同对象，共用其 first_touch_time/open_board_count 锚定口径以免二次定义
+  data_window_evidence: ③席登记面逐字（sample_window 列）：『事件锚定面可达=stk_limit 9,254,308 行/2015-01-05..2026-10-14/切点前 2598 交易日/5834
+    符号；但按年实测宇宙深度=2015 仅 239 符号、2018 仅 237 符号、2019 起 3770 符号⇒真实可用段自 2019-01 起；订单面 blocked=tick_depth_5 uniqExact(trade_date)=24
+    且切点前 0 行（承 20261015-p03-01 实测）』。本席实测（只读）：SELECT uniqExact(trade_date),count(),min(toString(trade_date)),max(toString(trade_date))
+    FROM c1_market.tick_depth_5 => 24 / 130309431 / 2026-07-24 / 2026-10-14；count() WHERE trade_date<'2025-09-09' => 0
+  readiness: BLOCKED——度量腿（tick_depth_5）仅 24 交易日且切点前零行；解锁＝盘口深史补采（③席§六.2 在册新断供登记，①②席供数面）
+# [st-qoder-p06-1015-05 2026-10-15] 门柱块由程序直读 git show HEAD 注入，本席零自拟数值

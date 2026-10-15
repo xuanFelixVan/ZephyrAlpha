@@ -1,0 +1,103 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A06/calibration/04_tick_rule_largeflow
+node_id: TDM-E-L9-A06
+family: calibration
+title_zh: 楼1盘口微结构·CAND-P0-LARGEFLOW-004 tick 级大单净流向（tick rule 重建主腿·替代腿 money_flow 在册·数据面 blocked_on_data）
+origin: P0-楼1-派单点名"大单流向"＋六向③同族对照|20261015-p03-01
+hypothesis: tick 级大单净流向=Σ（主动方向×单笔成交额｜单笔额≥分档阈值）/当日总成交额；主动方向须以 tick rule 重建（成交价对买一卖一与前一笔的比较判主动买卖 等价记 0）——因 direction
+  列在现行采集源不可用；分档阈值禁自拟 须沿用在册 money_flow 分档口径或解锁窗内实测分位（③席 CAND-P0-LARGEFLOW-004 定义原文逐字引，真源=data/strategy_intake/lane_p0_obi_candidates.csv，birth_batch=20261015-p03-01）。本卡答节点决策问题「主力/大单净流向能否预测短期方向？」。同假设新口径关系逐字承接③席在册行：『与在册卡关系＝同假设新口径（L7-A06
+  与 L3-12-1 已用 money_flow 表列外部分档）；须按 L7-A06 门柱教训「残差化后才算主判据」防与当日涨幅机械共线』⇒ 本卡残差化三柱逐字抄同节点 preregistered 母卡 A06/02，并如实记一处引用面核实结果：本席全池
+  node_id walk 命中 TDM-E-L7-A06 的卡=0 张（该门柱教训活在 L7_ledger 台账面），在册卡面等价源＝TDM-E-L9-A06/calibration/02。
+window:
+  in_sample:
+  - '2021-01-04'
+  - '2023-12-29'
+  oos: &id001
+  - '2024-01-02'
+  - '2025-09-09'
+  regimes:
+    bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊，IS 内熊段）
+    recovery: 2024-02-01..2025-09-09（修复段，OOS 内对侧 regime）
+    bull_note: 2019-2021H1 牛段 money_flow 无数据（起 2021-01-04）⇒ 本卡 regime 用熊/修复两段替代， 已如实声明不冒用统一牛熊串
+  frozen_note: 看数前冻结（裁定#501 纪律）；IS 起点因数据起点内缩至 2021-01-04
+buckets:
+  type: quantile_decile
+  'on': 当日 tick 级大单净流向占当日总成交额比（横截面，残差化后）
+  min_obs_per_bucket: 60
+signal_kind: panel
+pillars:
+  orthogonalization: 信号必须先对当日 pct_change 与 20 日动量做横截面回归取残差； 主判据只在残差序列上算（否则与本车道 A01 动量卡重复计分）
+  response_monotonicity: 残差分桶中位前向收益 Spearman 单调 rho>=0.6
+  raw_vs_resid_gap: 原始信号 IC 与残差信号 IC 之差登记入台账（差值大=资金流口径污染动量，是数据质量结论）
+  resid_pillar_inherited_from: 逐字抄同节点 TDM-E-L9-A06/calibration/02（preregistered）的 orthogonalization/response_monotonicity/raw_vs_resid_gap
+    三柱
+  sample_window_from_candidate: 主腿实测 2026-01-05..2026-10-14（185 交易日/3950846328 行/11846 符号）全段在闭卷切点后 ⇒ blocked；替代腿
+    money_flow 实测 symbol='000001' 2021-01-04..2026-10-14 共 1228 交易日；trade_date<'2025-09-09' 实测 1136 交易日/5504375
+    行 ⇒ 门槛⑤（≥120 信号日）与门槛⑥（≥120 观测）可达＝楼内唯一窗内可算腿
+  orthogonal_gate: 闸未开（退出码=2）；与在册卡关系＝同假设新口径（L7-A06 与 L3-12-1 已用 money_flow 表列外部分档）；须按 L7-A06 门柱教训"残差化后才算主判据"防与当日涨幅机械共线
+  degradation_clause: 方向重建降级条款逐字取③席在册实测：『direction 列在现行采集源不可用』（2026-09-01..09-10 miniqmt 192,476,719 行全为『中性盘』另 498,415
+    行『none』；qmt_bridge 976,982 行全『中性盘』；已停 bdpan 内部混词表）⇒ 主腿必须 tick rule 重建；『bid_price/ask_price 非空率实测 miniqmt=0.8997/0.8939、qmt_bridge=0.9331/0.9246』⇒
+    重建面有约 7-10% 缺口，读数须带此缺口声明，禁当无缺失口径引用
+target:
+  primary: next_day_stock_return（个股次日 hfq 收益）
+  secondary: next_day_limit_up_probability（次日涨停概率，情绪极端面）
+  note: target 三面逐字继承同节点 preregistered 母卡 A06/02；本席不自拟列名与常数
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+status: blocked_on_data
+status_reason: 主腿不可达（③席在册实测、本席未复测 tick_data）：『主腿实测 2026-01-05..2026-10-14（185 交易日/3,950,846,328 行/11,846 符号）全段在闭卷切点后
+  ⇒ blocked』；替代腿 money_flow 侧『trade_date<2025-09-09 实测 1,136 交易日/5,504,375 行 ⇒ 门槛⑤⑥ 可达』但在册母卡 A06/02 已声明该腿缺 2019-01-04..2020-12-31
+  段（其 window.frozen_note＝『看数前冻结（裁定#501 纪律）；IS 起点因数据起点内缩至 2021-01-04』）。⇒ 本卡按主腿定义立题、数据面如实 blocked；残余无源项＝单笔额分档阈值（③席『禁自拟
+  须沿用在册 money_flow 分档口径或解锁窗内实测分位』，而在册只有列级分档 main/large/super_large，无单笔额阈值）→ OD-16。
+gaps_no_source:
+  single_order_amount_threshold: 主腿『单笔额≥分档阈值』的阈值数值全仓零源；在册列级分档口径已记入 data_binding（A06/02 备用列），但列级≠单笔额级 ⇒ OD-16
+  tick_rule_implementation_owner: tick rule 重建属⑤实现面（③席在册判'落地权在⑤'），本卡只冻结判据与降级条款，不代⑤出题
+  regime_fivekey_applicability: 同 OD-17；另本卡与母卡 A06/02 的关系＝同节点异信号源（tick 重建主腿 vs money_flow 列），是否并档待⑨席按复制账判
+prereg_provenance:
+  made_by: st-qoder-p06-1015-04
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      → window 整块（含 IS 内缩至 2021-01-04 的 frozen_note 与熊/修复两段替代声明）
+    pillars_numeric: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      → pillars_numeric 整块（preregistered 五键）
+    residualization_pillars: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      → 残差化三柱整块
+    target: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      → target 块
+    buckets_type_and_floor: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      → buckets.type/min_obs_per_bucket
+    definition_and_notes: data/strategy_intake/lane_p0_obi_candidates.csv → CAND-P0-LARGEFLOW-004 行逐字段
+  own_measurement: 替代腿数据面逐字引自 TDM-E-L9-A06/calibration/02 的 data_binding（preregistered 在册件）：signal_table=c1_market.money_flow，signal_column=main_net_inflow_pct，在册列级分档口径=备用列
+    super_large_net_inflow_pct / large_net_inflow_pct 各单跑一版；该卡 window.frozen_note 原文=『看数前冻结（裁定#501 纪律）；IS 起点因数据起点内缩至
+    2021-01-04』
+  single_variable_note: 新造具名子题卡（非对照配对卡）；与母卡 A06/02 差异面＝信号来源（tick rule 重建 vs money_flow 列），判据柱与五键逐字同值
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A06.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: 主腿 tick_data（price/volume/amount/direction/bid_price/ask_price）；替代腿 money_flow（main_net_inflow/super_large_net_inflow/large_net_inflow
+    及 _pct 列）
+  signal_column: 主腿 price/volume/amount/direction/bid_price/ask_price；替代腿 main_net_inflow/super_large_net_inflow/large_net_inflow
+    及 _pct 列（列名逐字取③席在册行）
+  signal_derivation: tick 级大单净流向=Σ（主动方向×单笔成交额｜单笔额≥分档阈值）/当日总成交额；主动方向须以 tick rule 重建（成交价对买一卖一与前一笔的比较判主动买卖 等价记 0）——因
+    direction 列在现行采集源不可用；分档阈值禁自拟 须沿用在册 money_flow 分档口径或解锁窗内实测分位
+  example_value_from_candidate: 非因子值行；方向标签画像实测：2026-09-01..09-10 miniqmt 192476719 行全为"中性盘"另有 498415 行"none"；qmt_bridge
+    976982 行全"中性盘"；已停 bdpan（至 2026-08-06）内部混词表 卖盘38141098/买盘35590292/空串26841831/买入6726345/卖出5866344/中性盘5349058 ⇒
+    主动方向跨源不可用 须重建；bid_price/ask_price 非空率实测 miniqmt=0.8997/0.8939 qmt_bridge=0.9331/0.9246 ⇒ tick rule 重建有约 7-10%
+    缺口须写进卡面降级条款
+  registered_banding: 替代腿数据面逐字引自 TDM-E-L9-A06/calibration/02 的 data_binding（preregistered 在册件）：signal_table=c1_market.money_flow，signal_column=main_net_inflow_pct，在册列级分档口径=备用列
+    super_large_net_inflow_pct / large_net_inflow_pct 各单跑一版；该卡 window.frozen_note 原文=『看数前冻结（裁定#501 纪律）；IS 起点因数据起点内缩至
+    2021-01-04』
+  data_window_evidence: ③席登记面：主腿实测 2026-01-05..2026-10-14（185 交易日/3950846328 行/11846 符号）全段在闭卷切点后 ⇒ blocked；替代腿 money_flow
+    实测 symbol='000001' 2021-01-04..2026-10-14 共 1228 交易日；trade_date<'2025-09-09' 实测 1136 交易日/5504375 行 ⇒ 门槛⑤（≥120
+    信号日）与门槛⑥（≥120 观测）可达＝楼内唯一窗内可算腿
+  readiness: BLOCKED——主腿全段在闭卷切点后；替代腿缺 2019-01-04..2020-12-31 段（在册母卡已声明）；解锁＝补史或专走滚动前哨（Owner 门位）

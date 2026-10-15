@@ -1,0 +1,93 @@
+schema_version: '1.0'
+card_id: TDM-E-L9-A02/calibration/08_effective_relative_spread
+node_id: TDM-E-L9-A02
+family: calibration
+title_zh: 楼1盘口微结构·CAND-P0-SPREAD-005 有效相对价差＋一档深度联合档（tick_depth_5 定义级具名子题卡·数据面 blocked_on_data）
+origin: P0-楼1-楼内要点"spread"补全|20261015-p03-01
+hypothesis: 有效相对价差=（ask_price1−bid_price1）/（（ask_price1+bid_price1）/2）取日中位数；配深度联合档=（bid_volume1+ask_volume1）/当日成交额；用途=盘口流动性状态预测次日冲击成本与反转（③席
+  CAND-P0-SPREAD-005 定义原文逐字引，真源=data/strategy_intake/lane_p0_obi_candidates.csv，birth_batch=20261015-p03-01）。本卡答节点决策问题「日内微观结构能否预测次日方向与冲击成本？」——价差与深度联合档对应其中『冲击成本』一问。跨楼共线声明逐字承接③席在册行：『与
+  6 楼流动性族 Amihud 属不同对象（逐笔盘口 vs 日线额量）入池须双楼对拍』。④席改良情报 3 频率登记：本卡所考频率＝tick_depth_5 表原生 3 秒快照取日中位数，禁拿分钟级读数冒充 tick 级预测力。
+window:
+  in_sample:
+  - '2026-01-05'
+  - '2026-06-30'
+  oos: &id001
+  - '2026-07-01'
+  - '2026-09-30'
+  regimes:
+    unavailable: 牛/熊两段均无 tick 历史（数据起 2026-01-05），regime_stability 本卡无法执行—— 解锁前该支柱视为未验证而非通过
+  frozen_note: 看数前冻结；窗口按现有 tick 覆盖切，属"短窗预演"不作分布性结论，正式考试须待历史补齐后重冻
+buckets:
+  type: quantile_decile
+  'on': 当日有效相对价差与一档深度联合档（横截面）
+  min_obs_per_bucket: 60
+signal_kind: panel
+pillars:
+  orthogonalization: 信号必须先对当日 pct_change 与 20 日动量做横截面回归取残差； 主判据只在残差序列上算（否则与本车道 A01 动量卡重复计分）
+  response_monotonicity: 残差分桶中位前向收益 Spearman 单调 rho>=0.6
+  raw_vs_resid_gap: 原始信号 IC 与残差信号 IC 之差登记入台账（差值大=资金流口径污染动量，是数据质量结论）
+  resid_pillar_inherited_from: 逐字抄自 TDM-E-L9-A06/calibration/02（preregistered 同族残差化柱三件），本席不改一柱文字
+  sample_window_from_candidate: 同楼 24 交易日；切点前 0 行 ⇒ blocked_on_data；l2_tick 实测 count()=0（min/max 返回 1970-01-01 哨兵）⇒
+    更细逐笔委托价差不可得
+  orthogonal_gate: 闸未开（退出码=2）；跨楼共线声明：与 6 楼流动性族 Amihud 属不同对象（逐笔盘口 vs 日线额量）入池须双楼对拍
+  degradation_clause: 降级条款两条逐字取③席在册行：①『l2_tick 实测 count()=0（min/max 返回 1970-01-01 哨兵）⇒ 更细逐笔委托价差不可得』；②『本表无 quality_flag
+    判别信息（恒 1）』⇒ quality_flag=1 过滤为空操作，禁当质量门引用
+target:
+  primary: next_day_stock_return（个股次日 hfq 收益）
+  secondary: next_day_limit_up_probability（次日涨停概率，情绪极端面）
+  note: target 三面逐字继承同域在册 preregistered 件 TDM-E-L9-A06/calibration/02 的 target 块；本席不自拟列名与常数
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: true
+  oos_same_sign: true
+status: blocked_on_data
+status_reason: 信号表 tick_depth_5 在闭卷切点前零行（本班自测（zephyr.data.ch_reader.query_rows，2026-10-15 08:0x）：tick_depth_5 覆盖
+  2026-07-24..2026-10-14／130,283,635 行／24 交易日／8,763 符号；trade_date<'2025-09-09' 命中 0 行（与③席 20261015-p03-01 台账读数逐项同值＝双证）），而本卡机判窗继承同族母卡
+  L9-A02/02（IS 2026-01-05..2026-06-30 在本表亦零行）⇒ 结构不可考，非判据问题；⑩席第三单 §6 派给本卡的『残差化与降级条款门柱』本班已落面（残差三柱逐字抄 A06/02、降级两条款逐字抄③席行），残余无源项＝价差档的截面分位阈值（③席自陈分档阈值禁自拟）→
+  见⑥席 1015-04 班台账 OD-16。
+gaps_no_source:
+  spread_bucket_threshold: 有效相对价差的档位阈值在卡池与判据册零源（③席在册原文『分档阈值禁自拟』）⇒ OD-16
+  oos_subsegment_caliber: 同 OD-15（⑨席对照申请的 OOS 分段口径全池零机读源）
+  regime_fivekey_applicability: 同 OD-17（盘口族是否适用 IC 五键＝③席在册待裁项）
+prereg_provenance:
+  made_by: st-qoder-p06-1015-04
+  made_at: '2026-10-15'
+  copied_verbatim_from:
+    window: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      → window 整块
+    pillars_numeric: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      → pillars_numeric 整块（preregistered 同域在册冻结件）
+    residualization_pillars: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      → pillars 的 orthogonalization/response_monotonicity/raw_vs_resid_gap 三柱
+    target: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml
+      → target 块
+    buckets_type_and_floor: git show HEAD:docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A02__calibration__02_竞价失衡与尾盘冲击.yaml
+      → buckets.type/min_obs_per_bucket
+    definition_and_notes: data/strategy_intake/lane_p0_obi_candidates.csv → CAND-P0-SPREAD-005 行逐字段
+  own_measurement: 本班自测（zephyr.data.ch_reader.query_rows，2026-10-15 08:0x）：tick_depth_5 覆盖 2026-07-24..2026-10-14／130,283,635
+    行／24 交易日／8,763 符号；trade_date<'2025-09-09' 命中 0 行（与③席 20261015-p03-01 台账读数逐项同值＝双证）；替代腿数据面逐字引自 TDM-E-L9-A06/calibration/02
+    的 data_binding（preregistered 在册件）：signal_table=c1_market.money_flow，signal_column=main_net_inflow_pct，在册列级分档口径=备用列
+    super_large_net_inflow_pct / large_net_inflow_pct 各单跑一版；该卡 window.frozen_note 原文=『看数前冻结（裁定#501 纪律）；IS 起点因数据起点内缩至
+    2021-01-04』
+  single_variable_note: 本卡是新造具名子题卡（非对照配对卡）；与母卡差异面＝信号对象（价差×深度联合档 vs 竞价/尾盘失衡），判据五键与窗逐字同值
+lineage:
+  card: null
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L9-A02.confidence
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
+data_binding:
+  signal_table: tick_depth_5
+  signal_column: ask_price1/bid_price1/ask_volume1/bid_volume1 ＋ 当日成交额（列名逐字取③席定义原文，本席不另列）
+  signal_derivation: 有效相对价差=（ask_price1−bid_price1）/（（ask_price1+bid_price1）/2）取日中位数；配深度联合档=（bid_volume1+ask_volume1）/当日成交额；用途=盘口流动性状态预测次日冲击成本与反转
+  example_value_from_candidate: 本班未计算；画像：depth 表 price/volume/amount 三列非空且为快照成交额可用；本表无 quality_flag 判别信息（恒 1）
+  data_window_evidence: 本班自测（zephyr.data.ch_reader.query_rows，2026-10-15 08:0x）：tick_depth_5 覆盖 2026-07-24..2026-10-14／130,283,635
+    行／24 交易日／8,763 符号；trade_date<'2025-09-09' 命中 0 行（与③席 20261015-p03-01 台账读数逐项同值＝双证）；③席登记面：同楼 24 交易日；切点前 0 行 ⇒
+    blocked_on_data；l2_tick 实测 count()=0（min/max 返回 1970-01-01 哨兵）⇒ 更细逐笔委托价差不可得；替代腿数据面逐字引自 TDM-E-L9-A06/calibration/02
+    的 data_binding（preregistered 在册件）：signal_table=c1_market.money_flow，signal_column=main_net_inflow_pct，在册列级分档口径=备用列
+    super_large_net_inflow_pct / large_net_inflow_pct 各单跑一版；该卡 window.frozen_note 原文=『看数前冻结（裁定#501 纪律）；IS 起点因数据起点内缩至
+    2021-01-04』
+  readiness: BLOCKED——解锁条件逐字继承母卡与③席§六.2（补盘口深史=Owner 花钱门位；或立法盘口族专走滚动前哨）
