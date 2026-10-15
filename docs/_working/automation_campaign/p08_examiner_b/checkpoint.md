@@ -5,33 +5,20 @@ title: ⑧考工B·游标
 ---
 # 游标
 
-cursor: 10-15 班次 03 已交账（首袋 dead＝双侧皆改，判决=可销 superseded by -0002；内容三面对拍零丢失，盘面==二袋 blob）（出分 0/8 未达；**前置在本班值守内成就**＝⑥-07 已给卡 06/07 补 `oos_window_ref` 且值与冻结 `window.oos` 逐字相等，另 3 张多日卡未被补＝D3 建议被采纳；本席把上班游标④的 target 注入口径**判废**＝注 close 是价格水平机械伪影，纯噪声也得 IC 0.107）
-last_run: 2026-10-15 13:05（`date` 实测；开班 09:35→收班 13:05≈3.5 小时墙钟，出分仍 0/8，本班不拿时长抵成绩）
-last_batch: p08-1015-03 案卷＋收班班（正门未开：卡 06/07 锁由 ⑥-07 以 ttl=90m 持有，12:50 过期 35min 后 acquire 仍 DENIED（"会话仍活跃<30min⇒过期+静默才可回收"），与 takeover soft-expire<=7200s 同族＝**pid=0 席的可考窗口≈TTL＋7200s**；另本席 12:51 自跑 cleanup 把自家两件 claim 收了（三任守护 50080/54536/32128 皆亡）⇒ 写-入袋之间禁穿插 cleanup。案卷班（75 张逐张归属 75=30+39+5+1 加总闭合；卡 06 预跑 verdict=fail ic_mean −0.0121/ic_ir −0.0685/oos_ic −0.00835/n 1859，**未入册非成绩**；成绩册在册性＝新址 HEAD 三面查无＋5 个在途袋 base=None＋74/75 行旧快照 vs 主册现值 90 行）
+cursor: 10-15 班次 04 已交账（**本岗今日首两张真分出册＝2/8**：TDM-P-P2-04/calibration/06 与 /07 均 verdict=fail 真判决，卡面已翻 examined，分数册 only-add +2 行 minus=0 自证通过）；上班"卡 07 须 ≥5,000 只"的反推被本班实测改判（卡面原文"每桶票-日 >= 500 且覆盖 >= 30 只票"，hs300 PIT 实跑＝池化十分位每桶票-日最小 55,849／每桶覆盖票数最小 500／每日每桶票-日中位 28.0，前一读法达标）
+last_run: 2026-10-15 16:0x（`date` 实测；开班 15:30:29，出分 2 张）
+last_batch: p08-1015-04 两卡出分＋游标＋台账（本班一袋，含分数册 2 行 only-add、卡 06/07 面、ledger、checkpoint；卡面携带 ⑥-07 未落地的 `oos_window_ref` 补键，归属已在 message 署名）
 notes: |
   游标由本岗每批推进；监督员(⑩)可代修。
-  **下一班开考规格（覆盖上一版④，本席实跑核对，禁再猜）**：
-  ① target **必须**注 `close/close.shift(1)-1`（禁注 close 本体；禁 `pct_change()` 默认 pad＝停牌旧价被读成 0 收益）。
-     判据面＝`_panel_metrics:250` 配对的是 signal[t] 与 target[t+1]，故 target 须是"当日已实现收益"面；
-     正/负对照三读数（60 列随机游走噪声）：注 close=0.1069（假信号）／注 pct=−0.0015（正确零）／正对齐=1.0000（配对证明）。
-  ② 卡 06（hs300）走 run_card API（panel 禁 CLI）；宇宙下推谓词 `index_code='000300.SH'` ＋ `splitByChar('.',symbol)[1]`
-     （两表 symbol 格式不同域，直 JOIN 返回 0 行＝伪装成"无数据"）；成员面按月末快照 ffill（2016-2025 每年 12 快照×300 只）。
-     实测保留 IC 日 1,860/1,940，**首个有效日 2019-01-30 比冻结 IS 起点晚 18 交易日**（hfq 2019 前是 232-238 只 stub 面；
-     hs300∩2018 有额者仅 11 只）⇒ 属披露项，勿写成"信号无信息"。
-  ③ 卡 07 **仍无 `universe_note`**（本班实测两谓词零命中）；其卡面 `min_obs_per_bucket=每桶≥500`×10 桶反推宇宙须 ≥5,000 只
-     ⇒ 只能全 A 面＝9,019,977 行/5,818 只，须先离开 ALERT-SYS-003（`config/alert_rules.yaml:53-59`，>90 critical，
-     自述"提交流程/pytest 会静默崩"）再拉；或先请 ⑥ 冻宇宙。本班据此未拉全 A（外溢打在在飞提交与队列 drain 上）。
-  ④ 卡 06/07 锁面现值＝持有者 `st-qoder-p06-1015-07`，来源=入队续期、ttl=90m（10:45 实测剩余 89.9m）。
-     `run_card` 必整档重写卡面（`calibration_exam.py:1019-1024`）⇒ **他班持活锁期间本席不可开考**；不抢锁不绕行。
-  ⑤ 分数册 promote 前置＝**当场重拷主册＋difflib 证 minus=0**（本班 09:5x 见 84 行/116,029B/sha 4f986ec7，
-     10:48 见 90 行/123,768B/sha 009c7bbc＝面值在值守内被上游推进）。册在 HEAD **查无**（`git log --all -- <路径>` 零行、
-     `git ls-tree HEAD -- .../scores/2026/` 空），旧址 `docs/03_modules/_domain_backtest/exam_scores_v1.yaml` 仍在 HEAD；
-     指新址的非 done 袋 5 个 base_blob 全 None（含 scorehome 两袋 74/75 行旧快照）⇒ 今日成绩有整档覆写路径，
-     本席只寄存自家台账，落地后再投。
-  ⑥ pid=0 恒定班的 claim **本班 21 分钟内被外来 cleanup 收走两次**（守护 50080→54536 皆亡、session 仍在但锁面查无）⇒
-     全部写动作须"重注册＋重 claim＋立即写＋立即入袋"一气完成，勿在 claim 空窗内留稿。
-  ⑦ 正门驱动器已就绪可一命令跑完（含三重自证）：`python .runtime/tmp/st-qoder-p08-1015-03/shift03_land06.py`
-     ＝卡锁须本席 ACQUIRED→当场重拷主册记 CAS 基线→run_card→difflib minus=0 硬闸→safe_write_text CAS promote→读回比 sha。
-     13:05 现场读数：分数册 90 行/123,768B/sha16 009c7bbcf87582c2（自 10:48 未变）；卡 06/07 status 仍 preregistered、oos_window_ref 与冻结值逐字相等。
-  防重入两址并存期须两址同读（旧址 docs/_working、新址 docs/04_research_records/cross_domain；新址现值仍＝10-14 搬迁空壳"未开始"）。
-  本班水位：commit_pct 93.13%（09:35）→92.09%（10:18），degraded=True、ALERT-SYS-003 全程未解除；分数册零改动（本席未写主册）。
+  **下一班开考规格（班次 04 实跑核对，覆盖班次 03 的 ①-⑦）**：
+  ① 注入面不变：target=`close/close.shift(1)-1`（禁注 close 本体、禁 `pct_change()` 默认 pad）；工具 `_panel_metrics:251` 配对 signal[t]×target[t+1]。
+  ② **正门已开**：卡 06/07 的 ⑥-07 ttl=90m 活锁于 15:34 前自然解除（`lock_files.py list` 零命中）；本席已把两张出分入册并翻 examined ⇒ **本族可考面从 6 张缩到 4 张**。
+  ③ **余下 4 张（P1-02/02、P1-02/04、P1-04/04、P3-04/04）本席判"不可开"，勿尝试**：卡面冻结持仓池=多因子 top20（20 只/日），撞 `ic_exam.py:96 ic[valid<30]=nan` 地板；本席同帧双对照（seed=7）实测 20 列面 ⇒ `_panel_metrics` 回 `ic_mean=0.0000`（空序列被读成 0）+ judge `fails=['ic_mean 0.0000 < 0.02', ...]`＝把"截面不足"写成"信号无信息"的假红。开一张即造一条假成绩。
+  ④ **且其因子集真源已断**：`scripts/backtest/fexam/exit_sim/prereg_frozen.yaml:23` 的 signal_source 指 `docs/_working/fexam/indicator_exam_scores_v1.yaml`——盘面查无＋`git ls-files docs/_working/fexam/` 零命中 ⇒ top20 列集当前不可复验。转 ⑥ 冻列集／⑤ 修指针（与 ⑤-1015-03 修的 SERIES_DIR 同族）。
+  ⑤ **双臂 29 张的册面闸已解**（`card_binding.py:1927` 现值 `safe_load_all`，本班实测双文档 2 doc 无 ComposerError）；仍缺 NAV 接线（signal_b），属 ⑤/⑪ 产出面，本席不物化。
+  ⑥ 分数册面值现测口径（禁引本游标当事实）：`python -c "import hashlib,pathlib;p=pathlib.Path('docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml');b=p.read_bytes();print(len(b),hashlib.sha256(b).hexdigest()[:16])"`；本班 16:0x 读数 131,320B/95 行（本席 +2）。promote 前置仍＝当场重拷＋difflib minus=0 硬闸＋`safe_write_text` CAS（本席两次 promote 均 written=True/equals_staging=True）。
+  ⑦ **驱动已可复用**：`.runtime/tmp/st-qoder-p08-1015-04/shift04_land.py <runner> <卡面相对路径>` ＝ open_session＋心跳＋卡锁/册锁须本席＋当场重拷＋minus=0 硬闸＋CAS promote。runner 形态见 `shift04_run06.py`/`shift04_run07.py`（hs300 PIT 下推，向量化无逐日循环）。**必带 `sys.path.insert(0, ROOT)`**，否则 `_spawn_heartbeat_daemon` 报 `No module named 'scripts.ops_guard'` 而静默无守护（本席首版踩过）。
+  ⑧ 卡面归属：卡 06/07 盘面含 ⑥-07 的 `oos_window_ref` 补键（`git show HEAD:<卡>` grep 命中 0＝未落地），本席袋=整档快照必然带出，已在 commit message 署名 ⑥-07；下一班若见该键已在 HEAD＝前置已由他席落地，勿再声明。
+  ⑨ 门误报一条（给 ⑤/⑩）：`scripts/lock_files.py:585-597` 命名门仅在 `not tracked` 时跑；本席 15:5x acquire 卡 06 首报 `NAMING VIOLATION [N-01][N-13]`、立即重试即 ACQUIRED，同进程直调 `_is_git_tracked()` 实测 True ⇒ git 探针瞬时失败会把存量卡降级成"未跟踪新件"并报错误导。
+  防重入两址并存期须两址同读（旧址 docs/_working、新址 docs/04_research_records/cross_domain；新址现值仍＝10-14 搬迁空壳 `cursor: 未开始`，本班 15:59 实测）。
+  本班水位（现测命令＋时刻，非终值）：15:31 `commit_pct=88.79`、15:59 `88.7`、degraded=False、breached=ALERT-SYS-001；ALERT-SYS-003 未触发＝本席仍未拉全 A 与水位无关（见 ③④）。

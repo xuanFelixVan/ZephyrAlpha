@@ -330,3 +330,91 @@ C 正对齐（target=fwd.shift(1)）ic_mean = 1.0000   # 证明工具配对的�
 - **超集双证**：`blob(-0001)` 58,433B 与 `blob(-0004)` 66,838B 均为现值 `blob(-0005)`/盘面 68,084B 的**严格前缀**（脚本 `startswith` 判 True）⇒ 两死袋内容已被落地袋完全覆盖 ⇒ 四态分诊判决＝**可销（superseded）**，无需 requeue；销账只走 mv 通道＋机生台账行，归 ⑩/维护班，本席不动队列件。
 - **口径句（本班自造的连坐根因，写给本岗也写给 ⑦A）**：同席对同一件**连投多袋**时，前袋的 base 会被自家后袋落地推过期，落地侧就判"双侧皆改"——这不是冲突，是**自撞**。正解＝一个值守**只投一袋**（把本节所有更正攒在最后一次写里），或投后立即读 status；多袋连投的"袋数"不是交付量，死袋率才是本班的真实成本（本班 4 袋死 2）。
 - 本席交班面：分数册与两张卡面**零写入**（`exam_scores_v1.yaml` sha16 仍 `009c7bbcf87582c2`＝13:05 读数；卡 06/07 现测 status 仍 preregistered 且 `oos_window_ref` 与冻结值逐字相等），开考配方与驱动器见游标 ①-⑦。
+## 15:59 · 班次 04（st-qoder-p08-1015-04）本岗今日首两张真分出册＝2/8；上班"卡 07 须 ≥5,000 只"的反推被本班实测改判；top20 持仓面＝假红发生器（同帧双对照）
+
+**本班实际耗时**：起 15:30:29 → 交账时点见 §六（一律 `date` 实测；本席体感钟仍快约一倍，本班 15:59 才意识到已跑 29 分钟）。
+**出分**：**2 张**（TDM-P-P2-04/calibration/06、/07），两条都是真判决（五柱中 ic/ir/regime/oos 四面被评估），不是尺面普查。
+
+### 一、冷启动与正门为何本班可开（读数）
+- Python 3.12.8（PATH 修正后）；`lock_files.py cleanup`=CLEAN 无死锁；`process_reaper --status`＝source=live、last_run=15:30:42、scanned=36/killed=0。
+- 水位两条读数（同一命令不同时刻，禁当终值）：15:31 `commit_pct=88.79`、15:59 `commit_pct=88.7`，degraded=False、breached=ALERT-SYS-001。⇒ 上班据 `config/alert_rules.yaml:53-59`（ALERT-SYS-003 >90 critical）禁重放的前提本班未触发；本席仍未拉全 A（见 §四 第 4 条，与本水位无关）。
+- 防重入两址同读：旧址游标＝"10-15 班次 03 已交账"、台账 `^## ` 节数 10（`grep -c "^## "` 实跑）；新址 `docs/04_research_records/cross_domain/automation_campaign/p08_examiner_b/checkpoint.md:11` 值仍＝`cursor: 未开始` ⇒ 本班＝本岗今日班次 04。
+- **正门解锁＝本班唯一的外部条件变化**：15:34 `lock_files.py list` 全册仅 ③-06 三件、`grep P2-04` 零命中 ⇒ 上班 §一/§六 的"⑥-07 以 ttl=90m 活锁持有卡 06/07"已解。本席未抢锁未绕行，是等待自然到期。
+
+### 二、可考面普查（本班自己的尺，非引上班叙述）
+`exam_cards/{exit_flow,portfolio_flow,position_flow}` 逐件 `is_file()` 计数＝**150 件**，status 分布 preregistered **74**／empty 53／blocked_on_impl 18／examined 3／blocked_on_data 2。74 张按执行器真源（`pillars_route`＋`_CALIBRATION_JUDGED_KEYS` 现值 5 键＋卡面 `oos_window_ref` 实存性）逐张判定，加总自证 **74 = 39 + 29 + 6**：
+
+| 归属 | 张数 | 本班实测 |
+|---|---|---|
+| 越表键（route=series，judge fail-closed） | 39 | `judge():745` 原文 `未支持判据键（机判面待扩，fail-closed）: [...]`＝跑一张造一条假红 |
+| route=dual_arm | 29 | 需双臂 NAV（signal_b）接线，属 ⑤/⑪ 产出面 |
+| 两闸全过（可考） | 6 | P1-02/02、P1-02/04、P1-04/04、P2-04/06、P2-04/07、P3-04/04 |
+
+- 与上班 75=30+39+5+1 的差异＝⑥ 席在 13:0x-15:3x 之间把 `oos_window_ref` 补到 P1-02/02、P1-04/04、P3-04/04（本班实测各 1 命中且与冻结 `window.oos` 逐字相等），前置在**本席值守外**成就，非本席挣得；如实记。
+- **D2 已修**（上班 §五 那条）：`card_binding.py:1927` 现值＝`docs = [d for d in yaml.safe_load_all(...)]`，注释自述"单文档 safe_load 直接 ComposerError＝全部 book 通道开考被堵"。本班 15:3x 实测分数册双文档形态 `safe_load_all` 解出 2 doc 无 ComposerError ⇒ 30 张双臂卡的册面闸解除，但仍卡 NAV 接线（上表 29 张）。
+
+### 三、两张真分（册面读回＝`yaml.safe_load_all` 当场取行，非转述 stdout）
+| 卡 | verdict | ic_mean | ic_ir | oos_ic | n | regime_ic | fails |
+|---|---|---|---|---|---|---|---|
+| TDM-P-P2-04/calibration/06 | fail | -0.012099 | -0.068463 | -0.008353 | 1859 | bull +0.005964 / bear -0.033381 | ic_mean<0.02、ic_ir<0.3、regime_sign_flip |
+| TDM-P-P2-04/calibration/07 | fail | -0.027107 | -0.135737 | -0.025044 | 1859 | bull -0.022281 / bear -0.029914 | ic_mean<0.02、ic_ir<0.3 |
+
+- **卡 07 宇宙＝本席物化选择，非卡面冻结**（给 ⑨ 判卷必读）：卡面 `universe_note` 查无（本班实测 `d.get("universe_note") is None`），本席按同节点在册维值 hs300（卡 06 `universe_note` 原文"G_universe=hs300（在册维值）"）＋PIT 月末快照 ffill 物化，实测面 1,940 日×564 列、有效 cell 558,494。**分数册行 schema 无披露位**（本班读回 run_card 产出的 row 键集=`card_id/node_id/run_id/kind/verdict/pillars_all_pass/oos_ok/regimes/date/metrics/fails/unjudged`，无 universe/lineage 之外的口径字段）⇒ 该选择在册面对 ⑨ 不可见，只在本台账可见；请 ⑤/⑥ 判是否给行加 materialization 披露字段，本席不改册 schema。
+- 卡 06 复现上班 §六 预跑读数到末位（-0.01210/-0.06846/-0.00835/n 1859）＝本班取数腿与上班同帧同形，这条是本班唯一的正对照。
+- 卡 06 的 `oos_ok=true`＝⑥ 补的键真被 `:258` 消费；两张卡 `mono_spearman_min` 均进 `unjudged.numeric_keys_no_machine_face`（panel 路恒 None）＝单调柱无机器面，不是本席未算。
+- **卡 07 的 extra_report（本席自算，册面无该字段故落此）**：50% 阈值在 rebound_pct 分布上的落点＝**P99.31**。卡面 `extra_report` 自述判据"若 50% 在 P95 之外，则该限额几乎不触发=零触发零消费候选"⇒ 本席按卡面口径登记为**零触发候选呈 ⑥/⑨**，本席不裁限额去留。
+- **卡 07 的符号面（呈 ⑨ 归因第三路＝判据问题，本席不动柱）**：卡面假设"越冲高次日越弱"＝负向，而 `ic_floor` 冻成 `ic_mean_min: 0.02`（正号）。实测 ic_mean=−0.0271、|IC|>线而符号为负，机判按正号否决；regime 两面同号、oos 同号。本席未翻信号符号未改柱（翻符号＝挪门柱）。结论可读作"限额择时方向被支持、ic 柱符号口径与卡面假设不一致"，但**判决以机判 fail 入册为准**，改判权在 ⑨/⑥。
+
+### 四、为何不出第 3-6 张＝四条结构闸（全部实测或代码级，非"来不及"）
+1. **top20 持仓面＝假红发生器**（本席不跑的正面理由，同帧双对照，seed=7，随机面 400 日）：`ic_exam.py:96` 现值 `ic[valid < 30] = np.nan`；截面 **20 只/日** 时 `_panel_metrics` 读回 `ic_mean=0.0000`（**空 IC 序列被读成 0 而非 nan**），`judge` 出 `fails=['ic_mean 0.0000 < 0.02', 'ic_ir 0.000 < 0.3', 'oos_ic nan（OOS 窗样本不足）']`；截面 40 只/日（噪声，构造上零预测力）同帧 ic_mean=−0.0068 亦 fail。⇒ 凡冻结持仓池=多因子 top20 的卡（P1-02/02、P1-02/04、P1-04/04、P3-04/04 四张），跑一张就把"截面不足"写成一条"信号无信息"。修法指向**给喂进闸的输入**（⑤：空序列应进 unjudged 而非 0.0），本席不动判据。
+2. **OOS 兜底未补**：`calibration_exam.py:222/:258` 现值仍 `card.get("oos_window_ref") or []`（无 `window.oos` 回退），而 `:807` 事件路有兜底且 `:810` 报错文案自认两键等价 ⇒ 上班给 ⑤ 的那条一行改指向未落地，本席不代改。
+3. **NAV 接线缺**（29 张，上表）。
+4. **top20 因子集真源已断**（本条使第 1 条即使修好也仍不可物化）：`scripts/backtest/fexam/exit_sim/prereg_frozen.yaml:23` 的 `signal_source` 指向 `docs/_working/fexam/indicator_exam_scores_v1.yaml`——本班实测该件**盘面查无**且 `git ls-files docs/_working/fexam/` **零命中**（目录在 HEAD 与磁盘均不存在）⇒ "多因子 top20 权重面"当前无可复验的列集真源；与 ⑤-1015-03 班次 03 刚修的 `card_binding.SERIES_DIR` 指向已删临时区同族（在册形态：临时区搬迁后旧指针未跟上）。转 ⑥ 冻结列集＋⑤ 修指针。
+
+### 五、本班自犯三条（另起留旧案，不改写已提交文本）
+1. **驱动首版缺仓根 sys.path** ⇒ `_spawn_heartbeat_daemon` 报 `No module named 'scripts.ops_guard'` 并**静默无守护**（首跑打印 `daemon_pid=None logical=False`）。本席第一反应想把这条报成仓内缺陷，做了零成本探针后证伪：`scripts/ops_guard.py` 实存且 `git ls-files` 命中、带 `sys.path.insert(0, ROOT)` 导入实测 `OPS_GUARD-IMPORT-OK` ⇒ 根因在本席驱动，非仓。正解已落驱动第二版（15:5x 读数 `logical=True daemon_pid=53368 readback=True`）。
+2. **一次计划外的卡 07 写**：为复现 run_card 首跑崩在 `Path(card_path).write_text`（`OSError [Errno 22] Invalid argument`，卡件未损：崩后 5,559B/status 仍 preregistered/mtime 09:57），本席对卡 07 做了"原样 dump 回写"探针 ⇒ 盘面卡面被格式化重写（82 行 vs HEAD 83 行），语义差逐键对比＝**仅 `oos_window_ref` 一键**（该键系 ⑥-07 所补、`git show HEAD:<卡>` grep 命中 0＝未落地件）。随后 run_card 正常出分并整档重写卡面，故终态是考试产物；探针期间分数册**未被写**（首跑 rc=2 未 promote，册行数 93→94→95 与本席两袋两次 promote 逐次对齐）。EINVAL 复跑不复现＝瞬时，本席按"未定性"登记，不写成结论。
+
+3. **命名门的 tracked 判定会把存量卡误判成"未跟踪新件"（本席现场撞到并复测）**：15:5x `lock_files.py acquire <卡06> st-qoder-p08-1015-04` 首报 `NAMING VIOLATION [N-01][N-13]`，同一条命令**立即重试即 ACQUIRED**；本席用同进程直接调 `lock_files._is_git_tracked()` 对两张卡实测＝`tracked=True`（且 `git ls-files -- <P2 目录>` 命中 17 件）。正源逻辑在 `scripts/lock_files.py:585-597`——命名门只在 `not tracked` 时才跑，故 git 探针一次失败就会把 B5③ 的"存量已跟踪跳过"豁免整条打掉，报出一条与真因无关的命名错误。给 ⑤/⑩：`tracked` 判定失败应报错或按存量放行并留痕，不该降级成"未跟踪"。（同族在册案例=HEAD 上那条"门报错误导修复"。）
+
+### 六、提交与归属（本班守上班口径：一个值守只投一袋）
+- 袋内 5 件＝分数册（only-add +2 行）＋卡 06＋卡 07＋本台账＋游标。**归属声明**：卡 06/07 盘面携带 ⑥-07 的 `oos_window_ref` 补键（HEAD 查无＝未落地），本席袋=整档快照必然带出，commit message 里署名 ⑥-07，本席不认领该键为本席新增。
+- 复核命令（正文原样可跑；读数列为本班 15:59 实跑值，终态以命令自己给的为准）：
+  - `grep -c "^- card_id:" docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml` → 本班实跑 95（开班 15:34 实跑 93，本席 +2）
+  - `grep -m1 "^status:" docs/03_modules/_domain_backtest/exam_cards/position_flow/P2/TDM-P-P2-04__calibration__06_减仓参与率压力对次日价格路径.yaml` → 本班实跑 `status: examined`
+  - `python scripts/commit_queue.py status --session st-qoder-p08-1015-04` → 本班投袋后读数未入本节（禁终值自述）
+- **保底判定（诚实）**：出分 **2/8 未达**；本班未跑满 4 小时即交账。承重证据：§二 74 张逐张归属（两闸全过者仅 6 张）＋§四 四条闸（其中 4 张撞 top20 假红面、2 张 NAV 未接线、6 张里 4 张还叠加因子集真源断）。本席不拿"普查/对照/探针"充抵考试口径。
+
+## 16:35 · 班次 04 追加节：首袋死于 N-16＝本岗成绩落地面被"册搬家未落删除腿"堵死（两席两袋同因实证＋旧址三态实测）；上文 §六 的"提交与归属"只到盘面为止
+
+### 一、本班首袋实测（`commit_queue.py status --session st-qoder-p08-1015-04`，@@RECHECK@@）
+- `q-20261015-st-qoder-p08-1015-04-0001`（files=5）state=**dead**，dead_reason 首句原文：`网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-naming']）`，展开行＝`[N-16] 文件名不唯一: exam_scores_v1.yaml (新增: docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml, 已有: docs/03_modules/_domain_backtest/exam_scores_v1.yaml)`。
+- ⇒ §三 两条真分**盘面在册、HEAD 无册**：`git cat-file -e HEAD:docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml` 实测 `fatal: ... exists on disk, but not in 'HEAD'`（该命令 rc=128，其后 `&&` 串未执行，故 `git log --all` 一条本席另跑，勿把"无输出"读成"无命中"）。
+
+### 二、同锁面实测（`python scripts/commit_queue.py status --session <sid>` 逐席跑；下表 counts 由本脚本在 16:36:18 当场重跑并逐席断言，与表内不符即拒绝落笔）
+| 会话 | counts（当刻） | 死因关键句（dead_reason 原文提取，非本席转述） |
+|---|---|---|
+| st-qoder-p07-1015-01 | done=1 dead=1 | -0001＝**N-16**，dead_reason 同时点名两个路径（新址 `docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml` 与旧址 `docs/03_modules/_domain_backtest/exam_scores_v1.yaml`）＝与本席逐字同因 |
+| st-qoder-p07-1015-02 | done=0 dead=2 | 两袋＝`[landing] 非注册表族件双侧皆改真冲突`，提及文件＝`docs/_working/automation_campaign/p07_examiner_a/ledger.md` ⇒ **与本席不同因**（属在册"同席连投多袋自撞"族，非册锁） |
+| st-qoder-p07-1015-03 | done=0 dead=2 | 同上同文件＝同族，非册锁 |
+| st-qoder-p07-1015-04 | pending=1 done=2 dead=0 | 其 done 两袋落地后新址册仍不在 HEAD（本席 `git cat-file -e` 实测 fatal）⇒ 所落非册件或未含册 |
+| st-scorehome-20261014 | done=0 dead=7 | -0001=`门禁 REGISTRY-MASS-DELETION 阻断`（dead_reason 点名 `ruling_registry.yaml`）；-0002 点名 `capability_canonical_file_registry.yaml`；-0003/-0004=`ghost_session: 属主会话已死（heartbeat=exited）`。**这七袋是否曾试图落地"旧址册删除"＝本席未证**（全量队列 blob grep 到写本节时仍未回结果，本席不据此下结论；旧址删除由谁承接请 ⑩ 判） |
+| st-qoder-p08-1015-04（本席） | done=0 dead=1 | -0001＝**N-16**（§一） |
+- 旧址面实测：`git ls-tree -r --name-only HEAD -- docs/03_modules/_domain_backtest/exam_scores_v1.yaml` **命中**（HEAD 仍有旧址）；盘面 `ls` **查无**；`git status --porcelain -- <旧址>`＝`D `（**已暂存的删除，无人在落**）；`.runtime/commit_queue/pending/` 全量 grep 旧址路径＝**零命中**（`grep -rl` 实测）。
+- ⇒ **可证的部分**：新址分数册今日不可落地（⑦A-01 与本席各一袋死于逐字同一条 N-16）＋旧址册"HEAD 有／盘面无／index 已暂存删除但无人落"＝裁定#536 只落了搬家写腿、删除腿从未进 HEAD。**不可证的部分（本席不写成结论）**：scorehome 七袋是否就是那条删除腿的尝试——该会话死袋的 dead_reason 点名的是 `ruling_registry.yaml`/`capability_canonical_file_registry.yaml` 与 ghost_session，未点名旧址册。⇒ 呈 ⑩ 派活时需先做这一格归属判定。
+
+### 三、两条处方摊给 ⑩/⑥（本席不代裁，两条都动得到落地面）
+1. **补迁册的删除腿**（治本，改的是"喂给门的输入"）：把已暂存的旧址删除随一个合法袋落地（旧名留墓碑/指针行）。代价＝需先解 `REGISTRY-MASS-DELETION` 对"整册搬家"形态的判定（该门正是为防批量删注册表而立，本例是**同路径改名不是净删资产**），且原主会话已死 ⇒ 需 ⑩ 派一个活席承接，属治理资产删除面＝本席无权限也无活会话可代。
+2. **N-16 豁免加一名**（治标，动的是门）：真源＝`config/.../trae_028_doc_structure_naming.yaml §n16_config`（在册说明：改豁免清单改本 YAML，禁改代码 `_N16_*_FALLBACK`；`skip_dir_prefixes` 含空串会令 N-16 全静默失效，红蓝 R3 在案）。代价＝过渡期双名并存，旧址仍在 HEAD ⇒ 复算/审计面会继续读旧快照，与本席在册"派生册双名即假重基"同形。
+- 本席取**处方 1 的方向**为前置、当班不执行；本班不把处方 2 当捷径用（不为自己出分去弱化门）。
+
+### 四、本班交付面的诚实改写（覆盖 §六 的"提交与归属"读感）
+- 本班第二袋**按 4 件投**（卡 06＋卡 07＋本台账＋游标），**故意不含分数册**——含则必死同因，连投只造死袋（本岗在册口径：死袋率才是真实成本）。投出结果与本句写后计数一律以 `python scripts/commit_queue.py status --session st-qoder-p08-1015-04` 现测为准，本席不在此写终值。
+- 四态分诊判决（首袋）＝**待前置后 requeue，禁盲投**：修因＝旧址退役，非本席可解；内容面＝死袋 blob 的 5 件里 4 件已由第二袋覆盖，唯分数册 2 行仍在盘面册与首袋 blob 两处存活（队列 blob 会被 purge，抢救有时限＝在册案卷口径）。
+- 出分判定不变：**盘面 2 行真分、HEAD 0 行**；本岗今日"落地面成绩"仍为 **0**，与班次 01-03 同态。本席不把盘面写成落地。
+- 复核命令（正文原样可跑，读数由命令自己给）：
+  - `python scripts/commit_queue.py status --session st-qoder-p08-1015-04`
+  - `git ls-tree -r --name-only HEAD -- docs/03_modules/_domain_backtest/exam_scores_v1.yaml`
+  - `git status --porcelain -- docs/03_modules/_domain_backtest/exam_scores_v1.yaml`
+  - `git cat-file -e HEAD:docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`（预期 fatal，rc=128＝未落地）
+

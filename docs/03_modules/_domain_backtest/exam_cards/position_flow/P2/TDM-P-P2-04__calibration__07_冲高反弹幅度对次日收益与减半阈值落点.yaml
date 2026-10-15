@@ -3,14 +3,9 @@ card_id: TDM-P-P2-04/calibration/07_冲高反弹幅度对次日收益与减半�
 node_id: TDM-P-P2-04
 family: calibration
 title_zh: 减仓与再平衡·校准卡：RLM-POSITION-011"反弹冲高减半"的择时面与 50% 经验拍定阈值落点
-hypothesis: >-
-  本节点在册唯一风险限额 risk_limit_refs=[RLM-POSITION-011]（前役六向完全未取此面）：
-  name_zh"反弹冲高减半转进攻仓"，threshold_value=50.0、unit=%、param_origin=经验拍定、
-  breach_action=warn、module_id=MOD-L04-001、doc_ref=29_factor_strategy_extraction.md §S14.18，
-  consumption_tracking"弱beta压舱石反弹冲高减半，转入主线进攻仓"。
-  该限额由两个可分离的断言组成：①**择时**——"冲到高点"是可判状态，且该状态后个股走弱；
-  ②**比例**——减半=50%（自认经验拍定）。本卡只考①：定义反弹冲高度=close/T-20..T-1 最低价 - 1，
-  假设其对次日收益单调负（越冲高越弱）；若单调不成立，则该限额的触发状态无预测内容
+hypothesis: 本节点在册唯一风险限额 risk_limit_refs=[RLM-POSITION-011]（前役六向完全未取此面）： name_zh"反弹冲高减半转进攻仓"，threshold_value=50.0、unit=%、param_origin=经验拍定、
+  breach_action=warn、module_id=MOD-L04-001、doc_ref=29_factor_strategy_extraction.md §S14.18， consumption_tracking"弱beta压舱石反弹冲高减半，转入主线进攻仓"。
+  该限额由两个可分离的断言组成：①**择时**——"冲到高点"是可判状态，且该状态后个股走弱； ②**比例**——减半=50%（自认经验拍定）。本卡只考①：定义反弹冲高度=close/T-20..T-1 最低价 - 1， 假设其对次日收益单调负（越冲高越弱）；若单调不成立，则该限额的触发状态无预测内容
   （warn-only 限额沦为噪声源，提请重定或降级为观察项）。比例面（50%）须另立双臂卡，本卡不代拍。
 window:
   in_sample:
@@ -22,28 +17,23 @@ window:
   regimes:
     bull: 2019-01-04..2021-06-30（流动性牛）
     bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
-  frozen_note: 看数前冻结；冲高度回看窗 20 交易日、目标=次日（t+1 close-to-close，现器 shift(-1) 面）写死；
-    50% 减半比例在本卡中**不作为判据**（不得用本卡结果反推比例有效），事后不得改窗（G4-5）
+  frozen_note: 看数前冻结；冲高度回看窗 20 交易日、目标=次日（t+1 close-to-close，现器 shift(-1) 面）写死； 50% 减半比例在本卡中**不作为判据**（不得用本卡结果反推比例有效），事后不得改窗（G4-5）
 buckets:
   type: quantile_decile
   'on': 冲高度=close/rolling_min(low,20)-1 的截面十分位
   min_obs_per_bucket: 每桶票-日 >= 500 且覆盖 >= 30 只票
-  extra_report: 把在册阈值 threshold_value=50.0% 标在分布上，报其落在第几分位
-    （"经验拍定"的诚实体检：若 50% 在 P95 之外，则该限额几乎不触发=零触发零消费候选）
+  extra_report: 把在册阈值 threshold_value=50.0% 标在分布上，报其落在第几分位 （"经验拍定"的诚实体检：若 50% 在 P95 之外，则该限额几乎不触发=零触发零消费候选）
 pillars:
-  response_monotonicity: 分桶中位次日收益对冲高度单调（|Spearman rho| >= 0.6；符号约定=冲高越强次日越弱，
-    反向同号同样计分但须在结论里写明"限额方向被证伪"）
+  response_monotonicity: 分桶中位次日收益对冲高度单调（|Spearman rho| >= 0.6；符号约定=冲高越强次日越弱， 反向同号同样计分但须在结论里写明"限额方向被证伪"）
   ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
-  threshold_placement_gate: 50% 阈值的分位落点须与 breach_action=warn 的强度相称
-    （落点>P99=限额形同虚设，提请重定；落点<P50=天天报警，warn 会造成告警膨胀）
-  ballast_subgroup_gate: 分层稳定性=在低波动组（ATR% 三分位下档）与高波动组分别重算，
-    两组符号须一致；不一致则"压舱石反弹冲高减半"的适用对象须按波动分组重写
+  threshold_placement_gate: 50% 阈值的分位落点须与 breach_action=warn 的强度相称 （落点>P99=限额形同虚设，提请重定；落点<P50=天天报警，warn 会造成告警膨胀）
+  ballast_subgroup_gate: 分层稳定性=在低波动组（ATR% 三分位下档）与高波动组分别重算， 两组符号须一致；不一致则"压舱石反弹冲高减半"的适用对象须按波动分组重写
   regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
   negative_honesty: 无单调=如实判该限额择时面无信息，禁事后换回看窗救 IC（G4-5）
 target:
   primary: next_day_stock_return（t+1 close-to-close）
   secondary: null
-status: preregistered
+status: examined
 signal_kind: panel
 pillars_numeric:
   mono_spearman_min: 0.6
@@ -54,30 +44,39 @@ pillars_numeric:
 executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（正门）
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: p08b-1015-04-card07
+  score_row: exam_scores_v1.yaml#rows[94]
   confidence_writeback: TDM.nodes.TDM-P-P2-04.confidence
 preregistered_by: st-mineloop-20261010-L13
 preregistered_at: '2026-10-10'
 discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq（high/low/close 三列，同表算冲高度与次日收益）
   signal_column: 派生列 rebound_pct = close/rolling_min(low, 20)-1
-  signal_derivation: 逐票取 T-1 及以前 20 个交易日 low 的最小值 L20；rebound_pct=close_t/L20-1；
-    截面按 rebound_pct 排十分位；50% 阈值在同一分布上定位分位
+  signal_derivation: 逐票取 T-1 及以前 20 个交易日 low 的最小值 L20；rebound_pct=close_t/L20-1； 截面按 rebound_pct 排十分位；50% 阈值在同一分布上定位分位
   target_source: c1_market.kline_daily_hfq close → next_day_return（shift(-1)）
-  data_window_evidence: |
-    在册原文引用：config/trading_decision_map.yaml 节点 TDM-P-P2-04 块 risk_limit_refs=['RLM-POSITION-011']
+  data_window_evidence: '在册原文引用：config/trading_decision_map.yaml 节点 TDM-P-P2-04 块 risk_limit_refs=[''RLM-POSITION-011'']
+
     （L3461）；docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml L777-793
+
     （L779 name_zh"反弹冲高减半转进攻仓"、L783-785 threshold_value 50.0/param_origin 经验拍定/
+
     threshold_unit %、L788 consumption_tracking"弱beta压舱石反弹冲高减半，转入主线进攻仓"、
+
     L791 breach_action warn、L792 module_id MOD-L04-001、L793 doc_ref 29_factor_strategy_extraction.md §S14.18）；
+
     同族叙述锚=docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml L9561-9566
+
     （"压舱石+进攻"分仓，波段压舱石 50-70%+短趋势进攻 30-50%）——本卡据此把"弱 beta 压舱石"限定为
+
     低波动分组分层检验，非凭记忆。
+
     价格面在册实测：c1_market.kline_daily_hfq 1990-12-19..2026-09-30 / 10,098,785 行，
+
     列含 open/high/low/close/volume/amount/amplitude/pct_change/turnover（L4_ledger.md §一实测表）。
+
     本卡未跑 CH 新查询（21:00–22:30 禁重查询），全部数字取自上述在册条目。
-non_duplication_note: 净新增考法，不替代任何既有卡。前役在本节点的两张卡考
-  "多久减（频率×λ）"与"要不要减（门槛/优先权）"；本卡考"冲高才减的择时面与限额阈值落点"，
-  真源对象=风险限额册（前役未触及），判据不重叠。
+
+    '
+non_duplication_note: 净新增考法，不替代任何既有卡。前役在本节点的两张卡考 "多久减（频率×λ）"与"要不要减（门槛/优先权）"；本卡考"冲高才减的择时面与限额阈值落点"， 真源对象=风险限额册（前役未触及），判据不重叠。

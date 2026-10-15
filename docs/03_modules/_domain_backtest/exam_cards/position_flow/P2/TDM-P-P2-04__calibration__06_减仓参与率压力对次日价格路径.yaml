@@ -3,20 +3,13 @@ card_id: TDM-P-P2-04/calibration/06_减仓参与率压力对次日价格路径
 node_id: TDM-P-P2-04
 family: calibration
 title_zh: 减仓与再平衡·校准卡：减仓规模/20 日均额（参与率压力）对次日个股收益的单调预测力
-hypothesis: >-
-  本节点说"减多少=回到目标权重"，但其**在册下游** TDM-X-S2-01（edges L6293 P2-04→X-S2-01）
-  对"减多少"设了可行性上界："卖出前三查：单笔<=买一档挂单量、日量×10% 参与率、
-  持仓市值/20 日均额>1% 禁市价"。⇒ "回到目标权重"不是无约束指令，减得越集中（参与率压力越大）
-  执行越难。本卡考该上界的信息量：定义压力代理 signal=-ln(单票拟减金额/该股 20 日均额)
-  （越易减=值越大），假设其与次日个股收益正单调；且落在三查红线（参与率>10%）的桶
-  次日收益显著更低。若不单调，则"日量×10%/20 日均额>1%"两条三查只是行政约束而无预测内容
-  （净零提请）。
-signal_definition_frozen: 组合规模假设=1.0 亿元人民币（写死的仿真假设，不看数后改）；
-  单票目标持仓=规模×等权 top20 权重（5%）；单票拟减金额=该目标持仓全额（最坏口径=全减）；
-  20 日均额=amount 列 20 交易日滚动均值（T-1 及以前，禁前视）
-universe_note: 票池=G_universe=hs300（在册维值）。**禁扩全 A**：stock_basic 宇宙口径雷——
-    窗内 2026-08-14 起才有创业板、2026-09-15 起才有北交所（任务书 §3 在册事实），
-    扩全 A 会使分桶家数在 OOS 末段结构性跳变
+hypothesis: 本节点说"减多少=回到目标权重"，但其**在册下游** TDM-X-S2-01（edges L6293 P2-04→X-S2-01） 对"减多少"设了可行性上界："卖出前三查：单笔<=买一档挂单量、日量×10% 参与率、
+  持仓市值/20 日均额>1% 禁市价"。⇒ "回到目标权重"不是无约束指令，减得越集中（参与率压力越大） 执行越难。本卡考该上界的信息量：定义压力代理 signal=-ln(单票拟减金额/该股 20 日均额) （越易减=值越大），假设其与次日个股收益正单调；且落在三查红线（参与率>10%）的桶
+  次日收益显著更低。若不单调，则"日量×10%/20 日均额>1%"两条三查只是行政约束而无预测内容 （净零提请）。
+signal_definition_frozen: 组合规模假设=1.0 亿元人民币（写死的仿真假设，不看数后改）； 单票目标持仓=规模×等权 top20 权重（5%）；单票拟减金额=该目标持仓全额（最坏口径=全减）； 20 日均额=amount
+  列 20 交易日滚动均值（T-1 及以前，禁前视）
+universe_note: 票池=G_universe=hs300（在册维值）。**禁扩全 A**：stock_basic 宇宙口径雷—— 窗内 2026-08-14 起才有创业板、2026-09-15 起才有北交所（任务书 §3 在册事实），
+  扩全 A 会使分桶家数在 OOS 末段结构性跳变
 window:
   in_sample:
   - '2019-01-04'
@@ -27,9 +20,8 @@ window:
   regimes:
     bull: 2019-01-04..2021-06-30（流动性牛）
     bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
-  frozen_note: 看数前冻结；1 亿规模、5% 等权、20 日均额窗口、三查红线 10% 与 1% 四条口径全部写死；
-    primary 只用次日（t+1 close-to-close）目标——现器 calibration `_series_metrics` 硬编码 shift(-1)，
-    多日执行失真面须另立双臂卡，本卡不偷加
+  frozen_note: 看数前冻结；1 亿规模、5% 等权、20 日均额窗口、三查红线 10% 与 1% 四条口径全部写死； primary 只用次日（t+1 close-to-close）目标——现器 calibration `_series_metrics`
+    硬编码 shift(-1)， 多日执行失真面须另立双臂卡，本卡不偷加
 buckets:
   type: quantile_decile
   'on': signal=-ln(拟减金额/20 日均额) 的截面十分位；另单列两桶"参与率>10%"与"持仓/20 日均额>1%"
@@ -37,17 +29,14 @@ buckets:
 pillars:
   response_monotonicity: 分桶中位次日收益对 signal 序单调（Spearman rho >= 0.6，符号=易减者不劣）
   ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3
-  redline_gate: 三查红线两桶的次日收益中位数须与其余桶分层可分（差 >= 0.3pp），
-    否则"日量 10%/市值 1%"两条阈值判为行政口径而非信息口径
-  confound_gate: 条件稳定性=在同一 20 日均额分位内再分层（大/小流动性两组）符号须一致，
-    防"小票既有流动性又有 size 效应"的混淆假绿
-  proxy_honesty: 本卡只考"参与率压力→次日价格路径"这一代理面；
-    日线 close-to-close 不可观测冲击成本本身，禁把本卡结论写成"考了滑点"
+  redline_gate: 三查红线两桶的次日收益中位数须与其余桶分层可分（差 >= 0.3pp）， 否则"日量 10%/市值 1%"两条阈值判为行政口径而非信息口径
+  confound_gate: 条件稳定性=在同一 20 日均额分位内再分层（大/小流动性两组）符号须一致， 防"小票既有流动性又有 size 效应"的混淆假绿
+  proxy_honesty: 本卡只考"参与率压力→次日价格路径"这一代理面； 日线 close-to-close 不可观测冲击成本本身，禁把本卡结论写成"考了滑点"
   regime_stability: 牛/熊两段 IC 同号且均过 ic_floor
 target:
   primary: next_day_stock_return（t+1 close-to-close）
   secondary: null
-status: preregistered
+status: examined
 signal_kind: panel
 pillars_numeric:
   mono_spearman_min: 0.6
@@ -55,34 +44,41 @@ pillars_numeric:
   ic_ir_min: 0.3
   regime_same_sign: true
   oos_same_sign: true
-executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（正门，硬读
-  status==preregistered/signal_kind==panel/pillars_numeric）
+executor: D:/ZephyrAlpha/scripts/backtest/fexam/calibration_exam.py:run_card（正门，硬读 status==preregistered/signal_kind==panel/pillars_numeric）
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: p08b-1015-04-card06
+  score_row: exam_scores_v1.yaml#rows[93]
   confidence_writeback: TDM.nodes.TDM-P-P2-04.confidence
 preregistered_by: st-mineloop-20261010-L13
 preregistered_at: '2026-10-10'
 discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
+oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_daily_hfq（amount=成交额、close；20 日均额与次日收益同表可算）
   signal_column: 由 amount 派生的 -ln(拟减金额/20 日均额)，单列，截面逐日
-  signal_derivation: 逐票取 T-1 及以前 20 个交易日 amount 均值 MA20_amount；
-    signal = -ln(5,000,000 / MA20_amount)（5e6=1 亿规模×5% 等权目标持仓）；
+  signal_derivation: 逐票取 T-1 及以前 20 个交易日 amount 均值 MA20_amount； signal = -ln(5,000,000 / MA20_amount)（5e6=1 亿规模×5% 等权目标持仓）；
     参与率=5,000,000/MA20_amount，三查红线桶分别取 参与率>0.10 与 目标持仓/MA20_amount>0.01
   target_source: c1_market.kline_daily_hfq close → next_day_return（shift(-1)，与现器一致）
-  data_window_evidence: |
-    在册原文引用：TDM edges L6293 `- {from_node: TDM-P-P2-04, to_node: TDM-X-S2-01, edge_type: feed,
+  data_window_evidence: '在册原文引用：TDM edges L6293 `- {from_node: TDM-P-P2-04, to_node: TDM-X-S2-01, edge_type: feed,
+
     payload_type: signal, frequency: intraday, lag: "0d"}`；节点 TDM-X-S2-01 algo_note_zh
+
     "路由表：紧迫度>0.8 或小仓（<2%）→一次性市价；中等紧迫+大仓→分批（3 批，每批 1/3，间隔 5 分钟）；
+
     不急+流动性差→尾盘集中；隔夜风险单→竞价挂跌停价逃命。卖出前三查：单笔<=买一档挂单量、
-    日量×10% 参与率、持仓市值/20 日均额>1% 禁市价"，cost_model_refs=['CST-ASTOCK-001']、
+
+    日量×10% 参与率、持仓市值/20 日均额>1% 禁市价"，cost_model_refs=[''CST-ASTOCK-001'']、
+
     module_ref=src/zephyr/sell_decision/core/sell_execution_planner.py、materiality=critical。
+
     价格面在册实测：c1_market.kline_daily_hfq 1990-12-19..2026-09-30 / 10,098,785 行，
+
     列含 open/high/low/close/volume/amount/amplitude/pct_change/turnover
+
     （docs/_working/nightmine_campaign/L4_ledger.md §一 CH 实测覆盖表）——amount 列实存在册，本卡不新增数字。
+
     宇宙口径雷=任务书 §3 在册事实（stock_basic 窗内 2026-08-14 起才有创业板、2026-09-15 起才有北交所）。
-non_duplication_note: 净新增考法，不替代任何既有卡。与前役 TDM-P-P2-04/comparison/02
-  （频率×换手惩罚六臂）的区别=02 考"多久减一次/惩罚系数"的时间面，
-  本卡考"一次减得动减不动"的流动性面（不同轴，无重叠判据）。
+
+    '
+non_duplication_note: 净新增考法，不替代任何既有卡。与前役 TDM-P-P2-04/comparison/02 （频率×换手惩罚六臂）的区别=02 考"多久减一次/惩罚系数"的时间面， 本卡考"一次减得动减不动"的流动性面（不同轴，无重叠判据）。
