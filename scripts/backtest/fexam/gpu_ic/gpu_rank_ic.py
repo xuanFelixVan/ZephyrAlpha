@@ -100,7 +100,8 @@ def rank_ic(panel: pd.DataFrame, ret: pd.DataFrame, xp: str = "numpy", min_obs: 
     denom_r = _row_norm(xpm, zr)
     ic = xpm.nansum(zf * zr, axis=1) / (denom_f * denom_r)
     ic = xpm.where(n_dev >= min_obs, ic, xpm.nan)
-    ic_host = np.asarray(ic, dtype=np.float64)  # cupy 路经 __array__ 拉回 host
+    # cupy 禁隐式 __array__ 转换（TypeError），显式 asnumpy 拉回；numpy 通道仍走 np.asarray
+    ic_host = xpm.asnumpy(ic) if hasattr(xpm, "asnumpy") else np.asarray(ic, dtype=np.float64)
     return pd.Series(ic_host, index=common_idx, name="ic").dropna()
 
 

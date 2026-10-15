@@ -152,6 +152,99 @@ def test_run_exam_checkpoint_resume(tmp_path, monkeypatch):
     assert sum(1 for r in book2["results"] if r["verdict"] == "pass") == 1
 
 
+class TestDeviceDispatch:
+    """GPU 接线设备分派：IC_DEVICE=cpu|gpu|auto（默认 auto）。全 mock 零真 GPU 依赖。
+
+    语义：auto=先试 GPU（任何异常/无 GPU/看门人拒绝→静默回退 CPU）；
+    gpu=强制（不可用即抛，fail-closed）；cpu=强制 CPU 零 GPU 触碰。
+    """
+
+    @pytest.fixture(autouse=True)
+    def _reset_device_state(self, monkeypatch):
+        import ic_exam
+
+        monkeypatch.setattr(ic_exam, "_GPU_STATE", {"device": "", "mode": "", "note": ""})
+        monkeypatch.delenv("IC_DEVICE", raising=False)
+
+    @staticmethod
+    def _no_cupy(_name):
+        raise ImportError("No module named 'cupy' (mock)")
+
+    def test_cpu_forced_skips_gpu_entirely(self, monkeypatch):
+        """IC_DEVICE=cpu 强制 CPU：cupy 解析入口零触碰。"""
+        import gpu_ic.gpu_rank_ic as gri
+        import ic_exam
+
+        monkeypatch.setenv("IC_DEVICE", "cpu")
+        monkeypatch.setattr(gri, "_resolve_xp", self._no_cupy)
+        assert ic_exam._resolve_device() == "cpu"
+        assert ic_exam._GPU_STATE["note"] == ""
+
+    def test_auto_silent_fallback_when_gpu_unavailable(self, monkeypatch):
+        """GPU 不可用（cupy 缺席 mock）→ auto 静默回退 CPU，回退原因入台账。"""
+        import gpu_ic.gpu_rank_ic as gri
+        import ic_exam
+
+        monkeypatch.setattr(gri, "_resolve_xp", self._no_cupy)
+        assert ic_exam._resolve_device() == "cpu"
+        assert ic_exam._GPU_STATE["note"].startswith("ImportError")
+
+    def test_forced_gpu_fails_closed_when_unavailable(self, monkeypatch):
+        """IC_DEVICE=gpu 且 GPU 不可用 → 抛错（fail-closed，禁静默降级冒充 GPU 跑分）。"""
+        import gpu_ic.gpu_rank_ic as gri
+        import ic_exam
+
+        monkeypatch.setenv("IC_DEVICE", "gpu")
+        monkeypatch.setattr(gri, "_resolve_xp", self._no_cupy)
+        with pytest.raises(ImportError):
+            ic_exam._resolve_device()
+
+    def test_auto_falls_back_when_watchman_refuses(self, monkeypatch):
+        """看门人拒绝（机会档让路/超时）→ auto 静默回退 CPU。"""
+        import gpu_ic.gpu_rank_ic as gri
+        import gpu_watchman
+        import ic_exam
+
+        monkeypatch.setattr(gri, "_resolve_xp", lambda _name: np)  # 探测 mock 成 numpy 形状
+        monkeypatch.setattr(gpu_watchman, "acquire", lambda *a, **k: False)
+        assert ic_exam._resolve_device() == "cpu"
+        assert "watchman" in ic_exam._GPU_STATE["note"]
+
+    def test_gpu_runtime_error_falls_back_to_identical_cpu_result(self, monkeypatch):
+        """auto 下 GPU 内核运行期异常 → 本列即静默回退 CPU，结果与 fast_rank_ic 逐位一致。"""
+        import gpu_ic.gpu_rank_ic as gri
+        import ic_exam
+
+        ic_exam._GPU_STATE.update({"device": "gpu", "mode": "auto", "note": ""})  # 预置已获准态
+
+        def _boom(*_a, **_k):
+            raise RuntimeError("mock kernel crash")
+
+        monkeypatch.setattr(gri, "rank_ic", _boom)
+        panel, fwd = _panels()
+        out = ic_exam._ic_series_for_panel(panel, fwd, panel.index)
+        assert out.equals(fast_rank_ic(panel, fwd.reindex(columns=panel.columns)))
+        assert ic_exam._GPU_STATE["device"] == "cpu" and "RuntimeError" in ic_exam._GPU_STATE["note"]
+
+    def test_gpu_path_dispatched_when_granted(self, monkeypatch):
+        """auto+GPU 获准（预置态）→ dispatch 走 gpu_rank_ic/cupy 且返回其结果。"""
+        import gpu_ic.gpu_rank_ic as gri
+        import ic_exam
+
+        ic_exam._GPU_STATE.update({"device": "gpu", "mode": "auto", "note": ""})
+        seen = {}
+
+        def fake_rank_ic(panel, ret, xp="cupy", **_k):
+            seen["xp"] = xp
+            return fast_rank_ic(panel, ret)  # mock 内核：返回同构结果面
+
+        monkeypatch.setattr(gri, "rank_ic", fake_rank_ic)
+        panel, fwd = _panels()
+        out = ic_exam._ic_series_for_panel(panel, fwd, panel.index)
+        assert seen["xp"] == "cupy"
+        assert out.equals(fast_rank_ic(panel, fwd.reindex(columns=panel.columns)))
+
+
 class TestChDataPanelLatestIngest:
     """③-a：load_panel 同键多版本须取"最新入库"版，而非行序末位（总统筹批复 2026-10-09）。"""
 

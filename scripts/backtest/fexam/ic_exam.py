@@ -2,7 +2,9 @@
 # [MODULE] scripts.backtest.fexam.ic_exam
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.factor.core.evaluation.metrics（compute_ic_series 内核复用，禁重造）;
-#                scripts.backtest.fexam.ch_data; scripts.backtest.fexam.roster
+#                scripts.backtest.fexam.ch_data; scripts.backtest.fexam.roster;
+#                scripts.backtest.fexam.gpu_ic.gpu_rank_ic（rank-IC GPU 内核，parity 锁定）;
+#                scripts.gpu.gpu_watchman（机会档看门人，acquire/release 进程内 API）
 # [CONSUMERS] run_fexam.py
 # [STARTUP] imported
 # [MATURITY] new
@@ -27,12 +29,16 @@
 - 换手率代理：HOLDOUT 内月末截面秩相关→1-ρ 月度均值
 - 分体制 IC：HOLDOUT 内按 regime 态分组（regime_snapshot_history 真源，<2019 SMA fallback）
 - OOS 衰减：retain = |IC_h(HOLDOUT)| / |IC_h(IS_REF)|，判据 retain>=0.5
-- device：CPU pandas（spearman 秩相关无 GPU 核——degrade 台账逐条可解释）
+- device：rank-IC 走 GPU/cupy 内核（IC_DEVICE=auto 默认，先试 gpu_rank_ic，任何异常/无
+  GPU/看门人拒绝静默回退 CPU；parity_test 5 用例锁 max|dIC|<1e-9 逐位可比）；
+  IC_DEVICE=cpu|gpu 强制指定（gpu 不可用即抛，fail-closed）
 """
 
 from __future__ import annotations
 
+import atexit
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -43,7 +49,7 @@ import yaml
 
 RUN_ROOT = Path(__file__).resolve().parents[3]
 _SRC = RUN_ROOT / "src"
-for _p in (str(RUN_ROOT / "scripts" / "backtest" / "fexam"), str(_SRC)):
+for _p in (str(RUN_ROOT / "scripts" / "backtest" / "fexam"), str(_SRC), str(RUN_ROOT / "scripts" / "gpu")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -192,10 +198,81 @@ def judge(
 
 # ---------- 批执行 ----------
 
+# ---------- 设备分派（rank-IC GPU 接线；逐位对拍锁定=gpu_ic/parity_test.py；禁碰判据面） ----------
+
+#: 设备解析进程内缓存（device=gpu|cpu|""未解析；mode=请求档；note=回退原因入册）
+_GPU_STATE: dict[str, str] = {"device": "", "mode": "", "note": ""}
+#: 看门人机会档（与 parity_gpu 同档参数：机会档让路、GPU 空闲才拿）
+_GPU_TASK = "ic_exam"
+_GPU_MIN_FREE_GB = 6.0
+_GPU_MAX_UTIL = 30.0
+_GPU_WAIT_TIMEOUT = 120.0
+
+
+def _resolve_device() -> str:
+    """设备分派（进程内一次性解析+缓存）：IC_DEVICE=cpu|gpu|auto，默认 auto。
+
+    auto=cupy 真实可用（懒加载触探）且看门人获准才走 GPU；任何异常/无 GPU/看门人拒绝
+    →静默回退 CPU（rank-IC 与 CPU 逐位可比，parity 锁 max|dIC|<1e-9，结果才有意义）；
+    gpu=强制 GPU，不可用即抛（fail-closed 禁静默降级）；cpu=强制 CPU 零 GPU 触碰。
+    """
+    if _GPU_STATE["device"]:
+        return _GPU_STATE["device"]
+    mode = os.environ.get("IC_DEVICE", "auto").strip().lower()
+    if mode not in ("cpu", "gpu", "auto"):
+        mode = "auto"
+    _GPU_STATE["mode"] = mode
+    if mode == "cpu":
+        _GPU_STATE["device"] = "cpu"
+        return "cpu"
+    try:
+        import gpu_watchman  # scripts/gpu 已入模块头 path 引导
+        from gpu_ic.gpu_rank_ic import _resolve_xp  # cupy 懒加载唯一入口
+
+        xpm = _resolve_xp("cupy")  # cupy 缺席/驱动坏→异常，走回退
+        _ = float((xpm.arange(4, dtype=xpm.float64) + 1).sum())  # 设备触探：上下文真实可用
+        if not gpu_watchman.acquire(
+            _GPU_TASK, min_free_gb=_GPU_MIN_FREE_GB, max_util=_GPU_MAX_UTIL, wait_timeout=_GPU_WAIT_TIMEOUT
+        ):
+            raise RuntimeError("watchman 未获准（机会档让路/等待超时）")
+        atexit.register(gpu_watchman.release, _GPU_TASK)  # 进程退出即还牌（release 幂等）
+        _GPU_STATE["device"] = "gpu"
+    except Exception as exc:
+        if mode == "gpu":
+            raise
+        _GPU_STATE["device"] = "cpu"
+        _GPU_STATE["note"] = f"{type(exc).__name__}: {exc}"[:160]
+    return _GPU_STATE["device"]
+
+
+def _device_reason() -> str:
+    """device_ledger 台账行（如实反映本次实际用芯与回退原因，禁写成硬编码常量）。"""
+    dev = _GPU_STATE["device"]
+    if dev == "gpu":
+        return "gpu_rank_ic/cupy 内核（parity_test 5用例锁 max|dIC|<1e-9，与CPU逐位可比）；watchman机会档 task=ic_exam"
+    if not dev:
+        return "未触设备分派（全批无 rank-IC 列计算）；CPU 路径待命"
+    return "cpu fast_rank_ic" + (f"（gpu回退：{_GPU_STATE['note']}）" if _GPU_STATE["note"] else "")
+
 
 def _ic_series_for_panel(panel: pd.DataFrame, ret: pd.DataFrame, headline_dates: pd.DatetimeIndex) -> pd.Series:
-    """列级 IC 序列（快路径，与内核同构——见 fast_rank_ic docstring）。"""
-    return fast_rank_ic(panel, ret.reindex(columns=panel.columns))
+    """列级 IC 序列（快路径，与内核同构——见 fast_rank_ic docstring）。
+
+    设备分派：auto（默认）优先 GPU 内核（gpu_rank_ic.rank_ic/cupy），运行期任何异常
+    →静默回退 CPU 并降档（后续列直走 CPU）；IC_DEVICE=gpu 强制档异常即抛。
+    """
+    ret = ret.reindex(columns=panel.columns)
+    if _resolve_device() == "gpu":
+        try:
+            from gpu_ic.gpu_rank_ic import rank_ic
+
+            return rank_ic(panel, ret, xp="cupy")
+        except Exception as exc:
+            if _GPU_STATE["mode"] == "gpu":  # 显式强制档：fail-closed 不静默降级
+                raise
+            _GPU_STATE["device"] = "cpu"
+            _GPU_STATE["note"] = f"{type(exc).__name__}: {exc}"[:160]
+    return fast_rank_ic(panel, ret)
 
 
 def _empty_result(obj: dict[str, Any], kind: str, verdict: str, reason: str) -> dict[str, Any]:
@@ -370,8 +447,8 @@ def run_exam(
         "device_ledger": [
             {
                 "object": f"{kind}_exam",
-                "device": "cpu",
-                "reason": "spearman秩相关(pandas)无GPU核；rank_ic非矩阵乘法密集型，GPU无收益",
+                "device": _GPU_STATE["device"] or "cpu",
+                "reason": _device_reason(),
             }
         ],
         "regime_source": regime_source,
