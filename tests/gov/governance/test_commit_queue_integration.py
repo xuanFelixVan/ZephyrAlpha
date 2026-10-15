@@ -945,8 +945,19 @@ class TestGhostGatePickupAndBootstrap:
     def _stub_landing_ok(item: dict, root: Path) -> cq.LandingResult:
         return cq.LandingResult(ok=True, landed_id="stub0" * 6)
 
+    @staticmethod
+    def _strip_custody(queue_root: Path, qid: str) -> None:
+        """剥托管标=历史袋形态（托管正门部署前入队）：原 ghost 判据逐字可测。"""
+        bag_path = queue_root / "pending" / f"{qid}.json"
+        bag = json.loads(bag_path.read_text(encoding="utf-8"))
+        bag["meta"].pop("custody", None)
+        bag_path.write_text(json.dumps(bag, ensure_ascii=False), encoding="utf-8")
+
     def test_pickup_of_dead_session_item_deadletters_before_landing(self, tmp_path: Path) -> None:
-        """drain 拾取点：死会话 pending 袋拾取即判活，直落 dead/ 绝不进 landing。"""
+        """drain 拾取点：死会话 pending 袋拾取即判活，直落 dead/ 绝不进 landing。
+
+        袋取历史形态（_strip_custody 剥托管标）——托管正门后 enqueue 即托管豁免。
+        """
         queue_root = tmp_path / "queue"
         item = cq.enqueue_item(
             "ghost-sess",
@@ -955,6 +966,7 @@ class TestGhostGatePickupAndBootstrap:
             queue_root=queue_root,
             options=cq.EnqueueOptions(worktree_root=str(tmp_path / "wt")),
         )
+        self._strip_custody(queue_root, item["qid"])
         self._write_heartbeat(queue_root.parent, "ghost-sess", "exited")
         landed: list[str] = []
 
@@ -987,6 +999,24 @@ class TestGhostGatePickupAndBootstrap:
         stats = cq.drain_queue(queue_root, landing=self._stub_landing_ok)
         assert stats["done"] == 1 and stats["dead"] == 0
 
+    def test_pickup_of_custody_bag_dead_owner_still_lands(self, tmp_path: Path) -> None:
+        """托管正门：短命自动化会话入袋即退场+袋异步落地=合法形态（托管袋属主死不判死）。
+
+        事故面正钉：2026-10-15 13:26-13:30 sweep 整批判死 93 只托管袋由此闸根治。
+        """
+        queue_root = tmp_path / "queue"
+        item = cq.enqueue_item(
+            "ghost-sess",
+            "short-lived automation bag",
+            [("a.txt", b"v")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(worktree_root=str(tmp_path / "wt")),
+        )
+        assert item["meta"]["custody"] is True, "入袋即托管（授予面）"
+        self._write_heartbeat(queue_root.parent, "ghost-sess", "exited")
+        stats = cq.drain_queue(queue_root, landing=self._stub_landing_ok)
+        assert stats["done"] == 1 and stats["dead"] == 0, "托管袋属主死仍落地（豁免不判死）"
+
     def test_enqueue_bootstrap_drain_gates_dead_owner_item(self, tmp_path: Path, caplog) -> None:
         """enqueue 自举（try_bootstrap_drain）：入队后自举排空经同一拾取闸——
         死会话历史 pending 袋被自举改道 dead/，不入 done 不留 pending。"""
@@ -998,6 +1028,7 @@ class TestGhostGatePickupAndBootstrap:
             queue_root=queue_root,
             options=cq.EnqueueOptions(worktree_root=str(tmp_path / "wt")),
         )
+        self._strip_custody(queue_root, stale_item["qid"])  # 历史袋形态：原判据逐字
         self._write_heartbeat(queue_root.parent, "ghost-sess", "exited")
         result = cq.try_bootstrap_drain(queue_root, landing=self._stub_landing_ok)
         assert result.get("skipped") is not True

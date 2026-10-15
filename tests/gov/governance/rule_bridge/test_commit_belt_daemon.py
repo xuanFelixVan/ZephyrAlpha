@@ -512,6 +512,13 @@ class TestPoolDrainSurvivalGate:
         return dst
 
     @staticmethod
+    def _strip_custody(processing_path: Path) -> None:
+        """剥托管标=历史袋形态（托管正门前入队）：原 ghost 判据逐字可测，不扩面。"""
+        bag = json.loads(processing_path.read_text(encoding="utf-8"))
+        bag["meta"].pop("custody", None)
+        processing_path.write_text(json.dumps(bag, ensure_ascii=False), encoding="utf-8")
+
+    @staticmethod
     def _pool_stats() -> tuple[dict, dict, threading.Lock]:
         return (
             {
@@ -528,7 +535,10 @@ class TestPoolDrainSurvivalGate:
         )
 
     def test_pool_item_of_dead_session_deadletters_as_ghost_never_touches_landing(self, tmp_path) -> None:
-        """belt drain 拾取闸：死会话袋认领即判活直落 dead/，landing（工段）零消耗。"""
+        """belt drain 拾取闸：死会话袋认领即判活直落 dead/，landing（工段）零消耗。
+
+        袋取历史形态（_strip_custody 剥托管标）——托管正门后 enqueue 即托管豁免。
+        """
         import os
 
         import scripts.commit_queue as cq
@@ -543,6 +553,7 @@ class TestPoolDrainSurvivalGate:
             options=cq.EnqueueOptions(worktree_root=str(tmp_path / "wt")),
         )
         processing_path = self._to_processing(queue_root, item)
+        self._strip_custody(processing_path)
         self._write_heartbeat(queue_root.parent, "ghost-sess", "exited")
 
         class _Sentinel:
