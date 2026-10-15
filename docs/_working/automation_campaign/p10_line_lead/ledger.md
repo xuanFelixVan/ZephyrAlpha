@@ -592,3 +592,6 @@ python -c "import glob,os,json,datetime;c=datetime.datetime(2026,10,15,18,12).ti
 - [BLOCKER] 2026-10-16|⑩1016-05|流程问题|收班三件③"注销本会话心跳（删 `heartbeat_<sid>.pid`）"在守护在场时不保证生效：本席 04:30:48 删文件成功，同腿拉起的 `heartbeat_daemon`（PID 2960）届时仍在跑|`python` + psutil 实测 cmdline `-m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon st-qoder-p10-1016-05 D:\\ZephyrAlpha 30`；本席按 PID 精确停手（不 /IM 全杀）|要⑤席把"停守护"纳入收班序列或让守护在有袋终态后自退（C355 豁免已有袋在队不自退，无袋是否自退本班未观察到）|中
 
 - 更正落笔时刻＝date 实测 2026-10-16 04:33；本袋＝本席写域四件（dispatch §8 更正・pulse 更正行・本台账 §19・checkpoint 游标补），仍为纯加行零删行。
+
+- [BLOCKER] 2026-10-16|⑩1016-05|流程问题|X2 断链修复车道 44 分内独占 16 枚死袋＝旧袋重投死亡螺旋，且其占位使队列排空读数失真（部分 pending 下降是判死而非落地）|窗 [03:52:30,04:36:24] 终值 22 枚＝按席 x2 16／autoplan 3／b4 1／custody-1015 1／p03-1015-08 1，按族 双侧皆改 14／ALGO-NOTE-SYNC 4／CAPABILITY-OVERLAP 2／GATE-PRECOMMIT-RUN 1／DOC-HEADER-SUITE 1；四态 04:36:41＝104/1/856/415；本席起手行"9 枚"是 04:18:13 截面非全集|要 Owner／总包令 X2 停盲目 requeue 并逐件对现 HEAD 重基（第十三单 §1 处方），断链批次 1/2 未完成部分另派⑤席承接|高
+- 出班＝date 实测 2026-10-16 04:38；本班实耗由 §18 那句"22 分"改终值＝**33 分**（起手 04:05:14→04:38，含三袋在飞等待；§18 原行不涂，此行为终账）。
