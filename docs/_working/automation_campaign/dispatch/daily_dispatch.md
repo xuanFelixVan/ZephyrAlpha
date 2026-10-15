@@ -974,3 +974,16 @@ auction_window_pre_202606_gap（且无 primary_alternative）／bt_trade_log_att
 - 同形态五班 ctime＝-01 02:02:56／-02 02:51:47／-03 02:59:49／-04 03:56:06／-05 04:24:32，各自对齐当班 enqueue 窗 ⇒ ⑦A 无关；**1016-03 班台账自陈"未建 worktree"与其目录并存**这件事，按本链改判＝工具所建，不是上班定的"自陈与盘面无对账"。上班 §17 与该判语一并留档不涂，下班读本节即可，勿再按"各席违规"呈报。
 - 连带新红（同一条兜底腿）＝它同时拉起 `heartbeat_daemon`（实测 PID 2960・cmdline `-m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon st-qoder-p10-1016-05 <root> 30`）；本席按收班三件③于 04:30:48 删心跳文件，守护进程仍在跑 ⇒ **"注销心跳"这一步在守护在场时不保证生效**，收班序列须按 PID 精确停守护（本席不自创工具，只登记）。
 - 本席不动手＝不改这条兜底腿、不写白名单、不自删任何车道（含自家五条）；呈 Owner 二选一（A＝给该兜底腿加"禁建面"开关，使 TRAE-079 Phase 2 与正门自洽；B＝把工序 5 判据从"存在车道目录"改为"是否在车道内施工/提交"，工具代建不计违规），并交清理专班回收 `.aidrafts/st-qoder-p10-1016-01..-05` 五条（零在途证据已给）。
+
+
+## 2026-10-16 停发续令 · 第 06 单（班 st-qoder-p10-1016-06｜05:10 date 实测｜配额＝全线生产 0 张，直至落地链验收一班健康度）
+
+**结论行**＝恢复前置 ①成／②未成／③未成 ⇒ 全线停发生产配额续、零席 enable、不广播"可恢复"（Owner 点头后方逐席恢复）。本单只下**指令面与转办件**，不含挖矿/出卡/判分配额。
+
+1. **给全线（口径件，非配额）**：判定"我的东西落地了没有"一律用两把尺＝①逐件 `git hash-object <袋 blob>` 对 `git rev-parse <landed_id>:<path>` 与 `HEAD:<path>` 三面比对；②`git log -1 -- <件>` 看归属顶笔。**禁认四态**：今日 `done` 中 noop 占比实测 39.1%（25/64），noop 不声明幂等或可疑；`commit_queue.py health` 的 `partial_absent_qids` 亦不可复现（本席 05:02 对 04:57 点名的 x2-1015-0041 逐件复量 28/28 全等）。旧袋带 `stale_by`／`snapshot_regressions_count>0`／`requeue_count>=2` 者**停盲目 requeue**，逐件对现 HEAD 重基再投（本班 ②③席六只即此死法，十秒连死）。
+2. **给②席／③席（转办，本席不代做）**：你两席 10-16 05:02 阵亡的六只袋中，`scripts/data/bdpan_tick_watch.py`（52 行实测更正段，末笔停 2026-09-17）与 `scripts/backtest/fexam/calibration_exam.py` 的 `_shape_preflight`（75 行）两族内容**从未进 HEAD**，唯一存活面＝主区盘/暂存面＋已死袋 blob；下一班开工首件＝把这两族逐件重基走正门落地，禁再走"整档快照重投"。
+3. **给⑤席／运行班（工具缺陷三件转办，判据门柱本席不碰）**：①`commit_queue.py health` 的 fail-open 把 git 异常折成"内容缺失"，请加 `git_rc`/`timeout` 分档留痕；②`done` 台账把 noop 分 `noop_idempotent`／`noop_suspect` 两档；③`belt_daemon.lock` 持死 PID（21724＝NoSuchProcess）不失效、`belt_daemon.heartbeat` 停更 9 小时而排空在跑（schtasks Running・14s 节拍），请给锁加 PID 存活校验＋心跳回写。另：`.runtime/commit_queue/processing/` 有 17 枚 10-15 20:04–20:37 零字节 `.json.tmp-*` 残留（使 raw ls 读数 18 而真值 1），是否归清理专班请⑤席定，本席与各班不自行删。
+4. **给⑦A 席（解除等待）**：你 10-15 20:2x 留"claim 不放…等 ⑩ 定磁盘策后重投"，其前提已消灭＝D 盘 free **106.8G**（05:02 psutil 实测）；`.runtime/locks/*.lock` 现 0 枚。本班书面解除该等待：**自决重投或放锁，无需等本席**。你的死因定性材料（App 截图／运行日志，须能区分"会话没起来"与"跑中途被摘"）仍是恢复前置③，未到手＝③持续未成。
+5. **给清理专班（不自删项移交）**：`.aidrafts/st-qoder-p10-1016-01..-06`（六条，均为唯一正门"会话存活保障腿" `scripts/git_commit.py:990-992` 代建，非各席违规，见 1016-05 班 §19/§21 改判）＋`.worktrees/st-opsv-20261015`／`st-perfz1-20261015`／`st-prevw-20261015`（mtime 10-15 23:54／10-16 00:31／00:55）。本席与各班不动他人产物。
+6. **断链战役（调度读数，不改 X1/X2 在施件）**：批次1/2/3 现值沿用（occurrence 尺 B440／C1813／D39；E 196 枚／123 目标＝Owner 呈批面勿动）；X1 袋 1/2 落 b5d3573348、X2 注释批 1/9 落 6221849b05（剩余处数未复量，本席不重跑生成器）；**X2 侧新事实**＝22 只 pending 袋（0053–0074，建 02:41–02:49）`base_head` 落后现 HEAD 25–26 笔且全带 `meta.custody=True`＝不会被存活闸提前判死，只会等排空到达按"双侧皆改"判死。
+7. **防重入与班期**：下一班 st-qoder-p10-1016-07 按"脉冲末行＋25 分"起班；首查五件＝①四族未落地是否已由属主班走正门（尺见本单第 1 条）②②③席旧袋是否再被 requeue ③主区在册件是否再被 stash apply 回灌（谓词 `+0/-N`）④⑦A 材料与前置② ⑤health 点名是否仍不可复现。
