@@ -317,6 +317,25 @@ SQL_CREATE_RECONCILE_EXECUTION_LOG = """CREATE TABLE IF NOT EXISTS reconcile_exe
 
 )"""
 
+# G1 提交门 RECONCILER-HEALTH 慢查治本（perf 方案 §2.6，Owner 已批准）：
+# 门 always-fire，每笔 commit 经 check_recent_blocks/check_recent_critical_warns
+# 按 (action, logged_at) 过滤+ORDER BY logged_at；critical_warn 的 NOT EXISTS
+# 自联另一侧按 (gate_id, action, logged_at) 探测。生产 governance.db 无索引=
+# 每笔 commit 全表扫描（实测单门 28.2s）。索引与建表同一执行路径幂等创建
+# （CREATE INDEX IF NOT EXISTS，老库下次初始化自动补建）；只加速查询，零门语义改动。
+SQL_CREATE_INDEX_RECONCILE_LOG_ACTION_LOGGED_AT = (
+    "CREATE INDEX IF NOT EXISTS idx_reconcile_execution_log_action_logged_at "
+    "ON reconcile_execution_log(action, logged_at)"
+)
+
+# critical_warn 活跃查询的 NOT EXISTS 自联另一侧（c.gate_id = w.gate_id AND
+# c.action = 'clean' AND c.logged_at > w.logged_at）探测索引，消除每条候选
+# warn 触发的内层全表扫描。
+SQL_CREATE_INDEX_RECONCILE_LOG_GATE_ACTION_LOGGED_AT = (
+    "CREATE INDEX IF NOT EXISTS idx_reconcile_execution_log_gate_action_logged_at "
+    "ON reconcile_execution_log(gate_id, action, logged_at)"
+)
+
 # 治本（test_critical_warn_ack SSoT）：SQL_INSERT_RECONCILE_LOG 只插入 8 字段
 
 # （不含 commit_message）——老库（无 commit_message 列）也能正常 INSERT。
@@ -1101,6 +1120,20 @@ def _ensure_error_pattern_id_column(conn: object) -> None:
         conn.execute(SQL_ALTER_RECONCILE_LOG_ADD_ERROR_PATTERN_ID)
 
 
+def _ensure_reconcile_log_indexes(conn: object) -> None:
+    """G1 perf 治本：reconcile_execution_log 查询索引幂等创建（perf 方案 §2.6）。
+
+    RECONCILER-HEALTH 门 always-fire，生产库无索引时每笔 commit 全表扫描
+    （246MB 库实测单门 28.2s）。CREATE INDEX IF NOT EXISTS 与建表同一执行
+    路径幂等执行，已存在的老库下次初始化自动补建；只加速查询，门语义零改动。
+    所有建表路径统一调用（与 _ensure_*_column 同一惯例）。
+    """
+
+    conn.execute(SQL_CREATE_INDEX_RECONCILE_LOG_ACTION_LOGGED_AT)
+
+    conn.execute(SQL_CREATE_INDEX_RECONCILE_LOG_GATE_ACTION_LOGGED_AT)
+
+
 def _downgrade_auto_committed_on_flush_failure(
     results: list[ReconcileResult],
     flush_result: object | None,
@@ -1232,6 +1265,8 @@ def _log_reconcile_results(
 
         try:
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
+
+            _ensure_reconcile_log_indexes(conn)  # G1 perf：查询索引幂等补建（老库自动补建，零门语义改动）
 
             _ensure_ack_column(conn)  # 老库补 ack 列（幂等）
 
@@ -1375,6 +1410,8 @@ def log_gate_failure(
         try:
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
 
+            _ensure_reconcile_log_indexes(conn)  # G1 perf：查询索引幂等补建（老库自动补建，零门语义改动）
+
             _ensure_ack_column(conn)
 
             _ensure_commit_message_column(conn)
@@ -1474,6 +1511,8 @@ def log_emergency_commit(
 
         try:
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
+
+            _ensure_reconcile_log_indexes(conn)  # G1 perf：查询索引幂等补建（老库自动补建，零门语义改动）
 
             _ensure_ack_column(conn)
 
@@ -1594,6 +1633,8 @@ def _check_recent_critical_warns(project_root: object, hours: int = 24) -> list[
 
         try:
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
+
+            _ensure_reconcile_log_indexes(conn)  # G1 perf：查询索引幂等补建（老库自动补建，零门语义改动）
 
             _ensure_ack_column(conn)  # 老库补 ack 列（幂等，否则查询报 no such column）
 
@@ -1890,6 +1931,8 @@ def acknowledge_critical_warns(project_root: object, gate_id: str | None = None,
         try:
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
 
+            _ensure_reconcile_log_indexes(conn)  # G1 perf：查询索引幂等补建（老库自动补建，零门语义改动）
+
             _ensure_ack_column(conn)  # 老库补列（幂等）
 
             if gate_id is None:
@@ -1946,6 +1989,8 @@ def backfill_auto_ack_healed(project_root: object) -> dict:
         conn = sqlite3.connect(db_path, timeout=30.0)
         try:
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
+
+            _ensure_reconcile_log_indexes(conn)  # G1 perf：查询索引幂等补建（老库自动补建，零门语义改动）
             _ensure_ack_column(conn)  # 老库补列（幂等）
             cur = conn.execute(SQL_AUTO_ACK_HEALED_ALL, (now_utc(),))
             acked = cur.rowcount

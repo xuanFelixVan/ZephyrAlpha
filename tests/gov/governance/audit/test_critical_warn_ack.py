@@ -369,5 +369,56 @@ class TestCleanupReconcileLog:
         assert result["error"] is None
 
 
+class TestReconcileLogIndexes:
+    """G1 perf 治本：reconcile_execution_log 查询索引幂等创建（零门语义改动）。
+
+    RECONCILER-HEALTH 门 always-fire，check_recent_blocks /
+    check_recent_critical_warns 按 (action, logged_at) 过滤排序，
+    critical_warn 自联另一侧按 (gate_id, action, logged_at) 探测。
+    索引与建表同一执行路径幂等创建——老库（无索引）下次初始化自动补建。
+    """
+
+    _EXPECTED_INDEXES = {
+        "idx_reconcile_execution_log_action_logged_at",
+        "idx_reconcile_execution_log_gate_action_logged_at",
+    }
+
+    def _index_names(self, db: Path) -> set[str]:
+        conn = sqlite3.connect(str(db))
+        try:
+            rows = conn.execute(
+                "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='reconcile_execution_log'"
+            ).fetchall()
+        finally:
+            conn.close()
+        return {r[0] for r in rows}
+
+    def test_indexes_created_on_init(self, tmp_path: Path) -> None:
+        """初始化路径（空库 CREATE 兜底建表）同时建出两条查询索引。"""
+        result = acknowledge_critical_warns(tmp_path)
+        assert result["error"] is None
+        assert self._index_names(_db_path(tmp_path)) >= self._EXPECTED_INDEXES
+
+    def test_indexes_idempotent_on_reinit(self, tmp_path: Path) -> None:
+        """重复初始化（跑两遍）不炸且索引集合不变（不重复创建）。"""
+        assert acknowledge_critical_warns(tmp_path)["error"] is None
+        first = self._index_names(_db_path(tmp_path))
+        assert first >= self._EXPECTED_INDEXES
+        assert acknowledge_critical_warns(tmp_path)["error"] is None
+        assert self._index_names(_db_path(tmp_path)) == first
+
+    def test_old_db_without_indexes_gets_backfilled(self, tmp_path: Path) -> None:
+        """老库（有表无索引）经初始化路径自动补建索引，查询语义不变。"""
+        _init_db(tmp_path)  # 模拟老库：只有表，无任何索引
+        assert not (self._EXPECTED_INDEXES & self._index_names(_db_path(tmp_path)))
+        _insert(tmp_path, "GATE-IDX", "critical_warn", _iso(timedelta(hours=-1)), "rc-idx-1")
+        result = acknowledge_critical_warns(tmp_path)
+        assert result["error"] is None
+        assert self._index_names(_db_path(tmp_path)) >= self._EXPECTED_INDEXES
+        # 索引补建后查询语义不变：ack 消音 rc-idx-1 后再插一条 warn 仍可查到
+        _insert(tmp_path, "GATE-IDX", "critical_warn", _str_ts(timedelta(hours=-1)), "rc-idx-2")
+        assert len(_check_recent_critical_warns(tmp_path, hours=24)) == 1
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
