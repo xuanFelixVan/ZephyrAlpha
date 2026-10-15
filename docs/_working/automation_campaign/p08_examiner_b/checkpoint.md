@@ -5,9 +5,9 @@ title: ⑧考工B·游标
 ---
 # 游标
 
-cursor: 10-15 班次 05 已交账（**0 出分／保底未达**，承重证据见 ledger §三与§八：本族 preregistered 72 张经四台在册机器逐卡判定＝两闸全过仅 4 张且全部冻结持仓面=月频 top20，撞 `ic_exam.py:96 ic[valid<30]=nan` 的截面地板——本席自做A/B 实测悬崖精确在 **29↔30**，空 IC 序列被 `ic_stats` 交回 0.0 而非 nan，跑一张即往永久册写一条"信号零信息"的假陈述，故不开考、不挪门柱）
-last_run: 17:29（`date` 实测；开班 16:57，本班耗时约 32 分，出分 0 张）
-last_batch: p08-1015-05 台账追加节＋本游标（两件套；不含分数册＝旧址未退役遵 04 班 §26，不含卡件＝本班零翻态）
+cursor: 10-15 班次 06 已交账（**0 出分／保底双口径未达**，承重证据见 ledger §五与§八：本族 preregistered 72 张按执行核真源分词表复量＝OD1 族 44/calibration 14/shadow 14，两尺合闸（`comparison_exam._route_vocab` 三闸＋`arm_protocol_binding.triage_card` 三态）后真只差 ⑥ 一格者仍仅 `X-R1-01/comparison/02`；4 张过柱闸的校准卡照撞 `ic_exam.py:96 ic[valid < 30] = np.nan` 截面地板；双臂底座断链指针已由 ⑤ 落地且本班实测内容中性（load_pass_columns()==columns_cap24 逐列逐序），本班零开考零入册零翻态）
+last_run: 17:57（`date` 实测；开班 17:40:48，本节写于 17:57:34，出分 0 张；本班耗时以两时戳差为准，不在此写终值）
+last_batch: p08-1015-06 台账追加节＋本游标（两件套；不含分数册＝旧址改名腿未落 HEAD 遵 04 班 §26，不含卡件＝本班零翻态）
 notes: |
   游标由本岗每批推进；监督员(⑩)可代修。
   **下一班开考规格（班次 04 实跑核对，覆盖班次 03 的 ①-⑦）**：
@@ -47,3 +47,31 @@ notes: |
   ⑰ 工具坑（给下一班省一轮）：`card_binding.py`/`arm_protocol_binding.py` 的 `--cards-dir` **必须绝对路径**，
      相对路径在 `Path.relative_to()` 崩；读 `lock_files.py list` 须 `stdout=PIPE`＋`.decode('utf-8')`（Windows `text=True` 按 GBK 吞）。
      在册尺口径：`card_binding --mode classify` 的 class A/D=0 是"绑定层不覆盖"，**不等于**考工跑不了（04 班两张真分就是自物化跑的）。
+  ⑱ **双臂底座通道现状（本班实测，纠正上班游标 ⑮(a)＝处方已成就）**：`scripts/backtest/fexam/exit_sim/exit_simulator.py:72` 的
+     `SCORES_YAML` 现指永久区 `docs/04_research_records/backtest/scores/2026/indicator_exam_scores_v1.yaml`（该件 exists=True，
+     results 143 行/pass 78 行）；本班 `load_pass_columns()` 返回 **24 列且与 prereg_frozen.device.columns_cap24 逐列逐序相等**
+     ＝内容中性（脚本 `.runtime/tmp/st-qoder-p08-1015-06/ab_dualarm.py`，零 CH 零写）。`prereg_frozen.yaml:23` 的 `signal_source`
+     散文行仍写旧 `_working` 路径但**非消费面**，勿再当堵点呈报。新缺陷转 ⑤：同件 `:77-78` 的 `OUT_YAML`/`OUT_MD` 仍指
+     `docs/_working/fexam/`（实测父目录 exists=False）＝10-14 搬迁波漏改的第二根指针；本席只读实测未触写者。
+     断链册对拍：`broken_records.json` 对该条给 `batch=D_同名模糊命中／note=需人工确认`，而本岗指令只授 B/C 两批改指权⇒本席未自创路径未改件。
+  ⑲ **下一班开考判据＝两尺合闸（本席自纠在册）**：本班三闸尺（柱全在本 route 词表＋oos 齐＋臂册格）单独用给出 3 张"只差⑥格"，
+     叠 `arm_protocol_binding.triage_card` 三态尺后：`X-R1-01/comparison/02`＝`state=feasible_now`（arm_count=3/numeric_frozen=True/pending=[]/越表=[]）真只差格；
+     `X-S1-01/comparison/02`＝`needs_matching_engine`（凭据：panel 横截面回放缺件，执行核 comparison 分支对两臂恒走日频标量面）；
+     `X-S1-03/comparison/02_dualwindow`＝`has_arm_face=False`（卡面无臂协议声明，属 ⑥ 非 ⑤）。⇒ 上班游标 ⑭ 的"唯一"经复量成立。
+  ⑳ **给 ⑤ 的补柱面边际收益（只算柱闸，不担保其余闸与格；本族 preregistered 72）**：现状柱全过闸 7/72；累加 `maxdd_delta_max`→7、
+     `sharpe_vs_baseline_min`→8、`turnover_cost_gate`→11、`tracking_diff_max`→**19**、`turnover_or_cost_gate`→23、top8 仍 23（饱和）。
+     无机器柱 distinct=107 根／卡次 179／只差一根柱的卡 13 张。词面分裂转 ⑥ 并名：`turnover_cost_gate`(11 卡) vs `turnover_or_cost_gate`(10 卡)。
+     谓词双对照已留卷（正：`ic_mean_min` py 命中 1、`whipsaw_roundtrip_ratio_max` 2；负：`maxdd_delta_max` py=0 而卡面命中 15 件）。
+  ㉑ **断供闸本族两口径**：册现值 `known_data_gaps.yaml` gaps=84 条／distinct 表 66／按在册词表 `open|no_source` 断供表 34；本族 72 张的
+     lineage/data_binding 表名级命中 9 张 vs status 词表命中 **1** 张（`TDM-X-R1-03/calibration/02_宽基ETF天量与护盘滞后结构`）＝按表名级避让会白挡 8 张
+     （与 ⑦ 班 repo 级 61vs38 同一纠偏形态，本族数字另立）。
+  ㉒ 工具坑（给下一班省一轮）：`card_binding.load_binding_book(02_binding_book.yaml)` **裸调即在 `card_binding.py:1933` 抛**
+     `arms_variant_required:[…07…, …07b…]`（这两格带 arms_variants，须显式 `--arms-variant`，禁默认第一档）；册面卡级集合=18 格，
+     其中双臂格仅 07/07b 两格 `status=approved` 而两卡现均 `examined`⇒本族 preregistered 双臂卡在册格命中=0。另：`comparison_exam --dry-run`
+     不传 `--binding-book` 时零写且 `book_entry` 恒 False（分诊面够用，别把它当成“册无此卡”的反证）。
+  ㉓ 尺纠偏（给 ⑩/⑨）：04/05 班普查件 `.runtime/tmp/st-qoder-p08-1015-0{4,5}/census.py` 拿单一 `_CALIBRATION_JUDGED_KEYS` 量全部 72 张，
+     对 `family∈{comparison,ablation}` 属**族盲**（真源按 route 分词表＝`comparison_exam.py:86`）；"两闸全过仅 4 张"只对 series 校准面成立，
+     非本族可考面全貌。本班复量构成＝OD1 44／calibration 14／shadow 14（加总 72）。44 张 OD1 首次经自家执行器 `run_card_comparison(dry=True)`
+     逐卡分诊凭据＝`.runtime/tmp/st-qoder-p08-1015-06/triage_od1.json`（binding_class 全 C 除 dualwindow=U；oos 齐 43/44）。
+  ㉔ 落地面本班现测（禁当终值引用）：`git status --porcelain` 对两址册读 `RM docs/03_modules/_domain_backtest/exam_scores_v1.yaml -> docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`
+     ＝旧址已出 index 而改名腿未落 HEAD（`git cat-file -e HEAD:<新址>` rc=128）⇒ N-16 仍挡含册袋；本班仍只投两件文本、不动他人 staged 面。

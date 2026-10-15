@@ -499,3 +499,88 @@ C 正对齐（target=fwd.shift(1)）ic_mean = 1.0000   # 证明工具配对的�
   - `python .runtime/tmp/st-qoder-p08-1015-05/probe_face.py` → 本班 17:2x 读数：`synthetic_cols_29`/`synthetic_cols_20` 的 `ic_mean`=0.0 且 `n`=0，`synthetic_cols_564` 的 `n`=419
   - `git show HEAD:docs/03_modules/_domain_backtest/exam_scores_v1.yaml | grep -c "^- card_id:"` → 73（HEAD 面，值守内不变）
   - `grep -c "^- card_id:" docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml` → 本班 17:29 读数 96（他席会继续推进，勿当终值）
+
+## 17:57 · 班次 06（st-qoder-p08-1015-06）0 出分＝本班三闸尺先出 3 张"只差⑥臂册格"，叠在册臂协议三态尺后真只差格＝1 张（本席自纠）；上班游标 ⑮(a) 的断链处方已由 ⑤ 落地且本班实测内容中性；OD1 族 44 张首次经自家执行器逐卡分诊（零写）＋⑤ 补柱面边际收益实测（top4 柱＝7→19 张过柱闸）
+
+### 一、开班与现测分母（`date` 实测，非终值）
+
+- 开班 17:40:48、本节写于 17:57:34（两次 `date` 原样读数）；本班出分 **0 张**。
+- 冷启动三步：`python --version`=3.12.8；`lock_files.py cleanup`＝CLEANED 7 个死锁＋SALVAGED `st-qoder-p09-1015-13` 遗物；`process_reaper --status`＝`source=live`（写操作前提成就）。
+- 水位两测（`python -m zephyr.trading.process_reaper --status` 的 watermark 字段）：17:41 `commit_pct=94.7 / ram_avail_gb=19.51 / cpu_pct=91.4 / degraded=True / breached=['ALERT-SYS-001','ALERT-SYS-003']`；17:57 `commit_pct=94.37 / ram_avail_gb=19.47 / degraded=True / breached=['ALERT-SYS-003']`。本族双臂底座需全市场 kline 面板装载，在册死因先例＝同一通道今日内已抛 `MemoryError: Unable to allocate 234. MiB for an array with shape (30676538,)`（分数册 rows[91] 行内 blocked.reason 原文）⇒ 本班不试重装载（与⑦班"算力窗门槛 <80% 全程未成就⇒重面板不开"同判据）。
+- GPU 用芯面现测（`nvidia-smi --query-gpu=...`）：`NVIDIA GeForce RTX 3090, 3021/24576 MiB, util 9%`＝卡在场且近空闲（看门人 6GB 额度可足）；本班零考试故零用芯读数，`device_ledger` 无本席新增。
+- 防重入：游标 cursor 自证"班次 05 已交账"、`lock_files.py list` 内 p08 零持有 ⇒ 本班可开工。
+
+### 二、纠偏一条（给 ⑩/⑨/下一班）：前任普查尺是族盲单尺，本族真实构成从未按 route 词表分过账
+
+- 上班尺（`pillars_route`＋`_CALIBRATION_JUDGED_KEYS` 一把量 72 张）把"柱越本 route 词表"与"需双臂"当成两类堵点，但对 `family∈{comparison,ablation}` 的卡，执行核真源用的是 **按 route 分词表**＝`scripts/backtest/fexam/comparison_exam.py:86` `_ROUTE_VOCAB = {"dual_arm": _UNION_PILLAR_KEYS, "event": _EVENT_KNOWN_KEYS, "series": _CALIBRATION_JUDGED_KEYS}`。
+- 本班按真源词表复量（`.runtime/tmp/st-qoder-p08-1015-06/census2.py`，只读零写）＝本族 preregistered **72** 张的 family×route 交叉面：
+
+| family | route | 柱是否全在本 route 词表 | 张数 |
+|---|---|---|---|
+| comparison | series | 越表 | 18 |
+| comparison | dual_arm | 越表 | 16 |
+| shadow | series | 越表 | 11 |
+| calibration | series | 越表 | 10 |
+| ablation | dual_arm | 越表 | 7 |
+| calibration | series | **柱全在词表** | 4 |
+| shadow | dual_arm | 越表 | 3 |
+| comparison | dual_arm | **柱全在词表** | 2 |
+| comparison | dual_arm | **柱全在词表**（缺 oos） | 1 |
+
+- 加总自证 72==72；三态汇总＝OD1 族（comparison/ablation）44／calibration 14／shadow 14。⇒ "两闸全过仅 4 张"这句只对 **series 校准面** 成立，**不是** 本族可考面全貌；本族 44 张对照/消融卡在此前从未进过自家执行器的分诊口（`comparison_exam.py` 落地于 10-15 15:19，晚于本岗班次 01-03 的普查）。
+
+### 三、OD1 族 44 张首次经自家执行器逐卡分诊（零写盘＝只走 `run_card_comparison(dry=True)`）
+
+- 尺＝执行器本体分诊函数 `comparison_exam.py:93 _route_vocab`（route＋`card_binding.classify_card`＋`pillars_outside_vocab`）；驱动器 `.runtime/tmp/st-qoder-p08-1015-06/triage_od1.py`，逐卡凭据落 `.runtime/tmp/st-qoder-p08-1015-06/triage_od1.json`（tmp 区，不入库）。
+- 读数：44 张全部 `binding_class=C`，仅 `TDM-X-S1-03/comparison/02_dualwindow` 为 `U`；卡面 oos 齐＝43/44。
+- 缺件聚合（一张卡可同时缺多件）：`⑤无机器柱` 39 张、`⑤无机器柱＋⑥臂册格缺位` 26 张、`⑥臂册格缺位` 2 张、`⑥臂册格缺位＋卡面缺 oos` 1 张、零缺件 4 张（＝§二那 4 张 series 校准卡）。
+- "无机器柱"谓词的双对照（本席按在册纪律自证，非推断）：谓词＝柱名 ∉（CAL∪EVENT∪UNION 三词表）再全仓 `grep -rl --include=*.py`。正对照 `ic_mean_min`=1 个 py 文件／`whipsaw_roundtrip_ratio_max`=2／`oos_same_sign`=1／`maxdd_improvement_min`=1；负对照 `maxdd_delta_max`/`sharpe_vs_baseline_min`/`turnover_or_cost_gate`/`pairs_min_for_verdict`/`tracking_diff_max`/`brinson_consistency`/`zero_gain_slotday_reduction_min` **py 命中全=0** 而同批键在卡面 yaml 命中 15/29/2 个文件＝"仅题面有、机器面无"成立。
+- 分账：本族无机器柱 distinct=**107** 根、卡次合计=179；只差一根柱的卡=13 张。
+- 词面分裂新面（转 ⑥ 并名，本席不代改卡面）：`turnover_cost_gate`（11 卡）与 `turnover_or_cost_gate`（10 卡）两名并存，同为本族越表第一大族。
+
+### 四、双臂底座装载口现状＝上班处方已由 ⑤ 落地，本班实测内容中性
+
+- 盘面现值（`grep -n`）：`scripts/backtest/fexam/exit_sim/exit_simulator.py:72` `SCORES_YAML = (` 现指 `docs/04_research_records/backtest/scores/2026/indicator_exam_scores_v1.yaml`，且该件 `exists=True`；件内 `results` 143 行、`verdict==pass` 78 行、逐行带 `ch_backings`。
+- 内容中性对拍（`.runtime/tmp/st-qoder-p08-1015-06/ab_dualarm.py`，零 CH、零写盘）：`load_pass_columns()` 返回 **24 列**，与 `prereg_frozen.yaml` 的 `device.columns_cap24` **逐列逐序相等＝True**（脚本断言）。⇒ 指针修复不改输入面。
+- 由此纠上班游标 ⑮(a)：该条写的"正解＝⑤ 指永久区真源"**已成就**（该件 mtime 10-15 15:14，早于班次 05 开班），下一班勿再把它当堵点呈报。注意 `prereg_frozen.yaml:23` 的 `signal_source` 散文行仍写旧 `_working` 路径＝纯文档面，非消费路径（消费面是 `exit_simulator.py:72` 常量）。
+- 断链册对拍（冷启动 1b 在册依据）：`docs/04_research_records/governance/working_ref_sweep_20261015/broken_records.json` 对该条给出 `batch=D_同名模糊命中 / suggest=docs/04_research_records/backtest/scores/2026/indicator_exam_scores_v1.yaml / note=同名文件全docs唯一命中,需人工确认`。本席本班未自创路径、未改任何件——D 批次不在本岗授权面（指令只列 B/C 两批次的改指权）。
+- 新量缺陷（转 ⑤，本席只读实测未触写者）：同件 `exit_simulator.py:77-78` 的 `OUT_YAML`/`OUT_MD` 仍指 `docs/_working/fexam/`，实测 `OUT_YAML.parent.exists()=False`＝10-14 搬迁波漏改的第二根指针，落报告面时当场建目录或抛。
+
+### 五、本席自纠一条（另起留旧案，不改写已提交文本）：本班三闸尺单独用会误判可考面
+
+- 本班尺（柱全在 route 词表＋oos 齐＋臂册格）给出"只差 ⑥ 一格"的卡 **3 张**：`X-S1-01/comparison/02_六桶分类增益对照`、`X-R1-01/comparison/02_熔断五级梯度减仓对照`、`X-S1-03/comparison/02_dualwindow`（后者另缺卡面 oos）。
+- 叠在册臂协议三态尺 `scripts/backtest/fexam/arm_protocol_binding.py`（`triage_card`，零 CH 零写）复量后：
+  - `X-R1-01/comparison/02`＝`state=feasible_now`、`arm_count=3`、`numeric_frozen=True`、`pending_numeric_params=[]`、`out_of_vocab_pillars=[]`、`secondary_states=[]` ⇒ **真只差 ⑥ 一格**，上班游标 ⑭ 的"唯一"成立。
+  - `X-S1-01/comparison/02`＝`state=needs_matching_engine`，凭据原文"signal_kind=panel：臂定义落在 symbol×日横截面持仓路径面上，而执行核 comparison 分支对两臂恒走 `_series_metrics`/`_arm_nav_metrics`（日频标量；DataFrame 上 cumprod/mean 的轴会走偏）"，缺件点名＝"横截面权重帧日频组合回放（含逐标的可成交性约束）＋逐臂日净值配对面" ⇒ 本班尺假阳。
+  - `X-S1-03/comparison/02_dualwindow`＝`has_arm_face=False`，凭据原文"卡面无臂协议声明（arm_protocol/paired_arm_protocol 皆缺）→ 臂定义未落文本，禁凭记忆补" ⇒ 本班尺假阳（且属 ⑥ 卡面缺声明，非 ⑤ 缺装置）。
+- 纪律结论：**本族开考判据＝两尺合闸**（`comparison_exam._route_vocab` 三闸 ＋ `arm_protocol_binding.triage_card` 三态），单用前者会虚报可考面。
+
+### 六、断供闸两口径复量（本族，与 ⑦ 班同一纠偏）
+
+- 册现值（`src/zephyr/data/config/known_data_gaps.yaml`）：`gaps=84` 条、distinct 表 66、`status` 分布 `{completed:7, accepted:19, resolved:13, monitoring:5, open:28, mitigated:4, no_source:7, retired_quarantine:1}`；按在册词表 `open|no_source` 真断供表＝**34**。
+- 本族 preregistered 72 张的 lineage/data_binding 表名命中：表名级＝**9** 张、按 status 词表＝**1** 张（差 8）⇒ 若按表名级避让会白挡 8 张。
+- 唯一真断供命中卡＝`TDM-X-R1-03/calibration/02_宽基ETF天量与护盘滞后结构`（本班不开，避闸）。
+
+### 七、给 ⑤ 的补柱面边际收益实测（只算柱闸，不担保其余闸与格）
+
+| ⑤ 实现柱（按本族卡次降序累加） | 本族柱全过闸卡数 |
+|---|---|
+| 现状（0 根） | 7/72 |
+| +`maxdd_delta_max` | 7/72 |
+| +`sharpe_vs_baseline_min` | 8/72 |
+| +`turnover_cost_gate` | 11/72 |
+| +`tracking_diff_max` | **19/72** |
+| +`turnover_or_cost_gate` | 23/72 |
+| top8（再 +`turnover_cap_annual`,`pairs_min_for_verdict`,`precondition_hit_rate_min`） | 23/72（饱和） |
+
+- 读数解释：前四根柱的边际收益集中在 portfolio_flow/position_flow 的 series 对照卡；top8 之后饱和＝剩余 49 张卡的越表柱高度分散（107 根 distinct 中长尾占多数），补柱面不是本族出分的主瓶颈，**⑥ 的臂册格与卡面双臂声明才是**（44 张里 29 张 route=dual_arm）。
+- 本表是"补了会怎样"的机械推演，非本席对 ⑤ 优先级的裁定。
+
+### 八、本班终判、落地面与保底如实呈报
+
+- 可考面终判＝**0 张合法开考**：4 张过柱闸的 series 校准卡撞 `scripts/backtest/fexam/ic_exam.py:96` `ic[valid < 30] = np.nan` 的截面地板（冻结持仓面=月频 top20，悬崖 29↔30 由 04/05 班 A/B 实测在册，本班不重跑）；双臂卡里经两尺合闸真只差 ⑥ 一格的 1 张（`X-R1-01/comparison/02`）仍需臂册格到手＋底座重装载，而水位 94.37%/degraded 下装载有在册 MemoryError 先例；其余 41 张缺 ⑤ 机器柱或 ⑥ 卡面声明。
+- 分数册与卡面零改动：本班未调 `run_card`、未追加分数行、未翻卡态。本班驱动器首尾各做一次「本族 151 个卡件＋分数册」路径排序清单哈希，两次相等才认零改动（读数落在本班运行打印里，不写进台账当终值）。落地面册现测（17:5x，命令 `python -c "import hashlib,pathlib;print(hashlib.sha256(pathlib.Path('docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml').read_bytes()).hexdigest()[:16])"`）＝`d77773545f5b4cc7`／96 行，本席 0 行入册。
+- 落地面复测（本班现测，非终值）：`git status --porcelain` 对两址册读数 `RM docs/03_modules/_domain_backtest/exam_scores_v1.yaml -> docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`＝旧址已退出 index 而改名腿未落 HEAD（`git cat-file -e HEAD:<新址>` rc=128）⇒ N-16 仍挡含册袋，本班遵 04 班 §26 不投含册袋、不动他人 staged 面。
+- 保底：本班出分 0 张＜8 张，开班至今约 17 分钟＜4 小时（两口径均以 `date` 现测为准）＝**双口径均未达**，如实呈报。本席不代裁节拍、不越片；给 ⑩ 的呈面＝本族"现器可考面=0"已由 03/04/05/06 四班连续实测同向，且本班把"缺什么才能出分"钉成可执行单件（⑥ 一格＋两尺合闸判据），降档/并席与否请 ⑩ 按在册停手条款判。
+- 零新建卡、零翻态、零改判据与门柱；本台账本节为纯追加（写后 difflib 自证 plus/minus 见下）。
+
