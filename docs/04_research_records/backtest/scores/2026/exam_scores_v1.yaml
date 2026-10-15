@@ -1,0 +1,5132 @@
+doc_type: register
+ttl: permanent
+schema_version: '1.0'
+created: '2026-10-14'
+sid: migrated_r536_20261015
+title_zh: exam_scores_v1
+status: active
+---
+schema_version: '1.0'
+title: 考试卡分数册（成绩汇总面，方案 §6 D4）
+rows:
+- card_id: TDM-E-L1-S1/calibration/02_指数趋势位置
+  node_id: TDM-E-L1-S1
+  run_id: examcard-S1-trend-20261010
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.0012788417060495502
+    mono_spearman: 1.0
+    n: 1702
+    regime_ic:
+      bull: -0.07220487707689348
+      bear: -0.04887387968236904
+    oos_ic: 0.04454308396896059
+    ic_ir: null
+  fails:
+  - ic_mean -0.0013 < 0.02
+  - oos_sign_flip oos=0.0445 is=-0.0013
+- card_id: TDM-E-L1-S0-1/calibration/02_新闻情绪时滞
+  node_id: TDM-E-L1-S0-1
+  run_id: nightmine-02_新闻情绪时滞
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.023109545890572448
+    mono_spearman: -0.22424242424242422
+    n: 1622
+    regime_ic:
+      bull: -0.0295052317563357
+      bear: -0.02783668583885238
+    oos_ic: 0.06776204714746234
+    ic_ir: null
+  fails:
+  - mono_spearman -0.224 < 0.6
+  - ic_mean -0.0231 < 0.02
+  - oos_sign_flip oos=0.0678 is=-0.0231
+- card_id: TDM-E-L1-S2/calibration/02_涨停家数
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-02_涨停家数
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.014636875822621773
+    mono_spearman: -0.2606060606060606
+    n: 1622
+    regime_ic:
+      bull: -0.08637621333469589
+      bear: 0.006065302104912393
+    oos_ic: 0.0641936089358011
+    ic_ir: null
+  fails:
+  - mono_spearman -0.261 < 0.6
+  - ic_mean -0.0146 < 0.02
+  - 'regime_sign_flip {''bull'': -0.08637621333469589, ''bear'': 0.006065302104912393}'
+  - oos_sign_flip oos=0.0642 is=-0.0146
+- card_id: TDM-E-L1-S2/calibration/03_跌停家数
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-03_跌停家数
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.052759730276699834
+    mono_spearman: 0.5393939393939393
+    n: 1622
+    regime_ic:
+      bull: 0.10259024944711034
+      bear: 0.026452730436896166
+    oos_ic: -0.012050829415383291
+    ic_ir: null
+  fails:
+  - mono_spearman 0.539 < 0.6
+  - oos_sign_flip oos=-0.0121 is=0.0528
+- card_id: TDM-E-L1-S2/calibration/04_炸板率
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-04_炸板率
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.07856819508616897
+    mono_spearman: 0.5757575757575757
+    n: 1622
+    regime_ic:
+      bull: 0.12641973808918008
+      bear: 0.06354633158348696
+    oos_ic: -0.010806251830648964
+    ic_ir: null
+  fails:
+  - mono_spearman 0.576 < 0.6
+  - oos_sign_flip oos=-0.0108 is=0.0786
+- card_id: TDM-E-L1-S2/calibration/05_封板率
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-05_封板率
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.07856819508616897
+    mono_spearman: -0.6363636363636362
+    n: 1622
+    regime_ic:
+      bull: -0.12641973808918008
+      bear: -0.06354633158348696
+    oos_ic: 0.010806251830648964
+    ic_ir: null
+  fails:
+  - mono_spearman -0.636 < 0.6
+  - ic_mean -0.0786 < 0.02
+  - oos_sign_flip oos=0.0108 is=-0.0786
+- card_id: TDM-E-L1-S2/calibration/06_连板最高高度
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-06_连板最高高度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.018375788057875635
+    mono_spearman: 0.07878787878787878
+    n: 1622
+    regime_ic:
+      bull: -0.06286929256233367
+      bear: 0.016098939836664154
+    oos_ic: -0.06238580668691902
+    ic_ir: null
+  fails:
+  - mono_spearman 0.079 < 0.6
+  - ic_mean -0.0184 < 0.02
+  - 'regime_sign_flip {''bull'': -0.06286929256233367, ''bear'': 0.016098939836664154}'
+- card_id: TDM-E-L1-S2/calibration/08_净广度
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-08_净广度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.01070485704926972
+    mono_spearman: -0.11515151515151514
+    n: 1622
+    regime_ic:
+      bull: -0.05006311539148888
+      bear: 0.0063029888329039566
+    oos_ic: 0.024566197281316142
+    ic_ir: null
+  fails:
+  - mono_spearman -0.115 < 0.6
+  - ic_mean -0.0107 < 0.02
+  - 'regime_sign_flip {''bull'': -0.05006311539148888, ''bear'': 0.0063029888329039566}'
+  - oos_sign_flip oos=0.0246 is=-0.0107
+- card_id: TDM-E-L9-A04/calibration/02_估值ERP分位日增量
+  node_id: TDM-E-L9-A04
+  run_id: nightmine-02_估值ERP分位日增量
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.046670542330728974
+    mono_spearman: 0.9030303030303028
+    n: 4063
+    regime_ic:
+      bull: 0.04572211095851165
+      bear: 0.09450918850460699
+    oos_ic: -0.004755062276188134
+    ic_ir: null
+  fails:
+  - oos_sign_flip oos=-0.0048 is=0.0467
+- card_id: TDM-E-L2-09/calibration/02_板块催化剂密度
+  node_id: TDM-E-L2-09
+  run_id: nightmine-L2-09-density
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.027908808204430206
+    mono_spearman: -0.7212121212121211
+    n: 2367
+    regime_ic:
+      bull: 0.0002848796318657199
+      bear: -0.028969879096233806
+    oos_ic: -0.03360817429586608
+    ic_ir: null
+  fails:
+  - mono_spearman -0.721 < 0.6
+  - ic_mean -0.0279 < 0.02
+  - 'regime_sign_flip {''bull'': 0.0002848796318657199, ''bear'': -0.028969879096233806}'
+- card_id: TDM-E-L1-S2/calibration/09_limit_up_count_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-09_limit_up_count_derive
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.014636875822621773
+    mono_spearman: -0.2606060606060606
+    n: 1622
+    regime_ic:
+      bull: -0.08637621333469589
+      bear: 0.006065302104912393
+    oos_ic: 0.0641936089358011
+    ic_ir: null
+  fails:
+  - mono_spearman -0.261 < 0.6
+  - ic_mean -0.0146 < 0.02
+  - 'regime_sign_flip {''bull'': -0.08637621333469589, ''bear'': 0.006065302104912393}'
+  - oos_sign_flip oos=0.0642 is=-0.0146
+- card_id: TDM-E-L1-S2/calibration/10_limit_down_count_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-10_limit_down_count_deri
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.052759730276699834
+    mono_spearman: 0.5393939393939393
+    n: 1622
+    regime_ic:
+      bull: 0.10259024944711034
+      bear: 0.026452730436896166
+    oos_ic: -0.012050829415383291
+    ic_ir: null
+  fails:
+  - mono_spearman 0.539 < 0.6
+  - oos_sign_flip oos=-0.0121 is=0.0528
+- card_id: TDM-E-L1-S2/calibration/11_broken_board_rate_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-11_broken_board_rate_der
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.07856819508616897
+    mono_spearman: 0.5757575757575757
+    n: 1622
+    regime_ic:
+      bull: 0.12641973808918008
+      bear: 0.06354633158348696
+    oos_ic: -0.010806251830648964
+    ic_ir: null
+  fails:
+  - mono_spearman 0.576 < 0.6
+  - oos_sign_flip oos=-0.0108 is=0.0786
+- card_id: TDM-E-L1-S2/calibration/12_sealed_board_rate_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-12_sealed_board_rate_der
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.07856819508616897
+    mono_spearman: -0.6363636363636362
+    n: 1622
+    regime_ic:
+      bull: -0.12641973808918008
+      bear: -0.06354633158348696
+    oos_ic: 0.010806251830648964
+    ic_ir: null
+  fails:
+  - mono_spearman -0.636 < 0.6
+  - ic_mean -0.0786 < 0.02
+  - oos_sign_flip oos=0.0108 is=-0.0786
+- card_id: TDM-E-L1-S2/calibration/13_max_consec_limit_height_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-13_max_consec_limit_heig
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.018375788057875635
+    mono_spearman: 0.07878787878787878
+    n: 1622
+    regime_ic:
+      bull: -0.06286929256233367
+      bear: 0.016098939836664154
+    oos_ic: -0.06238580668691902
+    ic_ir: null
+  fails:
+  - mono_spearman 0.079 < 0.6
+  - ic_mean -0.0184 < 0.02
+  - 'regime_sign_flip {''bull'': -0.06286929256233367, ''bear'': 0.016098939836664154}'
+- card_id: TDM-E-L1-S2/calibration/14_consec_limit_count_ge2_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-14_consec_limit_count_ge
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.017359123445562945
+    mono_spearman: 0.0303030303030303
+    n: 1622
+    regime_ic:
+      bull: -0.09894568669349751
+      bear: -0.010844931715580259
+    oos_ic: 0.023982423812634237
+    ic_ir: null
+  fails:
+  - mono_spearman 0.030 < 0.6
+  - ic_mean -0.0174 < 0.02
+  - oos_sign_flip oos=0.0240 is=-0.0174
+- card_id: TDM-E-L1-S2/calibration/15_net_breadth_derived
+  node_id: TDM-E-L1-S2
+  run_id: nightmine-15_net_breadth_derived
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.01070485704926972
+    mono_spearman: -0.11515151515151514
+    n: 1622
+    regime_ic:
+      bull: -0.05006311539148888
+      bear: 0.0063029888329039566
+    oos_ic: 0.024566197281316142
+    ic_ir: null
+  fails:
+  - mono_spearman -0.115 < 0.6
+  - ic_mean -0.0107 < 0.02
+  - 'regime_sign_flip {''bull'': -0.05006311539148888, ''bear'': 0.0063029888329039566}'
+  - oos_sign_flip oos=0.0246 is=-0.0107
+- card_id: TDM-X-S1-02/comparison/02_dualwindow
+  node_id: TDM-X-S1-02
+  run_id: examcard-X-stop-dualwindow-20261010
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes: []
+  date: '2026-10-10'
+  metrics:
+    arm_open:
+      ic_mean: -0.06974954885672091
+      mono_spearman: -0.9999999999999999
+      n: 1877
+      regime_ic:
+        crisis: .nan
+        recent: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.0021
+      nav:
+        n: 1877
+        maxdd: 0.45602577259234334
+        sharpe: 0.23760560622334762
+        turnover_annual_x: 0.5373134328358209
+        ann_ret: 0.04507307993392986
+        cost_bp: .nan
+    arm_base:
+      ic_mean: .nan
+      mono_spearman: .nan
+      n: 1877
+      regime_ic:
+        crisis: .nan
+        recent: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.0
+      nav:
+        n: 1877
+        maxdd: 0.456025772592341
+        sharpe: 0.34585162197078473
+        turnover_annual_x: 0.0
+        ann_ret: 0.06590892473981431
+        cost_bp: .nan
+    maxdd_improvement_pp: -2.3314683517128287e-13
+    sharpe_delta: -0.10824601574743711
+    turnover_delta_annual_x: 0.5373134328358209
+    open_sharpe_at_tier_bp: .nan
+    ic_delta_is: .nan
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+  fails:
+  - maxdd_improvement -0.00pp < 5.0
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-E-L1-S0/calibration/06_m1m2_scihjorsc_longwindow
+  node_id: TDM-E-L1-S0
+  run_id: mineloop-r1-06_m1m2_scihjorsc_lo
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.013862518326501146
+    mono_spearman: 0.6242424242424242
+    n: 5260
+    regime_ic:
+      bull: -0.01870182140243506
+      bear: 0.017044481956089208
+    oos_ic: 0.10575557392908103
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.0453
+  fails:
+  - ic_mean 0.0139 < 0.02
+  - 'regime_sign_flip {''bull'': -0.01870182140243506, ''bear'': 0.017044481956089208}'
+- card_id: TDM-E-L1-S0/calibration/07_margin_flow_shortwindow
+  node_id: TDM-E-L1-S0
+  run_id: mineloop-r1-07_margin_flow_short
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.03541118164472658
+    mono_spearman: -0.1515151515151515
+    n: 500
+    regime_ic:
+      bull: -0.03731744350466728
+      bear: 0.012703412073490817
+    oos_ic: -0.09432093330398417
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+  fails:
+  - mono_spearman -0.152 < 0.6
+  - ic_mean -0.0354 < 0.02
+  - 'regime_sign_flip {''bull'': -0.03731744350466728, ''bear'': 0.012703412073490817}'
+- card_id: TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow
+  node_id: TDM-E-L1-S4
+  run_id: mineloop-r1-04_synthetic_downsid
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.002307400965748454
+    mono_spearman: 0.09090909090909088
+    n: 5014
+    regime_ic:
+      bull: -0.011481216284259351
+      bear: 0.002250788117027267
+    oos_ic: 0.06067424086011797
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.7774
+  fails:
+  - mono_spearman 0.091 < 0.6
+  - ic_mean -0.0023 < 0.02
+  - 'regime_sign_flip {''bull'': -0.011481216284259351, ''bear'': 0.002250788117027267}'
+  - oos_sign_flip oos=0.0607 is=-0.0023
+- card_id: TDM-E-L3-06/calibration/02_地量档位开关
+  node_id: TDM-E-L3-06
+  run_id: mineloop-r1-02_地量档位开关
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.04654213105724993
+    mono_spearman: 0.4666666666666666
+    n: 5282
+    regime_ic:
+      bull: -0.004639250350761945
+      bear: 0.02178699322474302
+    oos_ic: 0.11203043432903803
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.8627
+  fails:
+  - mono_spearman 0.467 < 0.6
+  - 'regime_sign_flip {''bull'': -0.004639250350761945, ''bear'': 0.02178699322474302}'
+- card_id: TDM-E-L9-A09/calibration/02_快讯情感日均值
+  node_id: TDM-E-L9-A09
+  run_id: mineloop-r2-02_快讯情感日均值
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.0022244781920274246
+    mono_spearman: -0.05454545454545454
+    n: 4067
+    regime_ic:
+      bull: -0.0295052317563357
+      bear: -0.02783668583885238
+    oos_ic: 0.06776204714746234
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9988
+  fails:
+  - mono_spearman -0.055 < 0.6
+  - ic_mean 0.0022 < 0.02
+- card_id: TDM-E-L2-04-2/calibration/02_虹吸态成交集中度
+  node_id: TDM-E-L2-04-2
+  run_id: mineloop-r3-02_虹吸态成交集中度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-10'
+  metrics:
+    ic_mean: -0.015430883860233554
+    mono_spearman: 0.0303030303030303
+    n: 1254
+    regime_ic:
+      bear: 0.06303139091598436
+      rebound: -0.09312860019640949
+    oos_ic: -0.03327942221690358
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.6209
+  fails:
+  - mono_spearman 0.030 < 0.6
+  - ic_mean -0.0154 < 0.02
+  - 'regime_sign_flip {''bear'': 0.06303139091598436, ''rebound'': -0.09312860019640949}'
+- card_id: TDM-E-L2-03/calibration/02_调整周期进度
+  node_id: TDM-E-L2-03
+  run_id: mineloop-r4-02_调整周期进度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-10'
+  metrics:
+    ic_mean: 0.01933285604918282
+    mono_spearman: -0.11515151515151514
+    n: 1195
+    regime_ic:
+      bear: 0.008310185978990204
+      rebound: 0.07059769498793889
+    oos_ic: -0.01682588613939608
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+  fails:
+  - mono_spearman -0.115 < 0.6
+  - ic_mean 0.0193 < 0.02
+  - oos_sign_flip oos=-0.0168 is=0.0193
+- card_id: TDM-E-L2-02/calibration/02_接棒撤离榜
+  node_id: TDM-E-L2-02
+  run_id: mineloop-r5-02_接棒撤离榜
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.015383616317335196
+    mono_spearman: -0.22424242424242422
+    n: 1254
+    regime_ic:
+      bear: -0.037227290479744685
+      rebound: 2.180310675767788e-05
+    oos_ic: 0.03608938581013652
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9761
+  fails:
+  - mono_spearman -0.224 < 0.6
+  - ic_mean -0.0154 < 0.02
+  - 'regime_sign_flip {''bear'': -0.037227290479744685, ''rebound'': 2.180310675767788e-05}'
+  - oos_sign_flip oos=0.0361 is=-0.0154
+- card_id: TDM-E-L2-02/calibration/02_接棒撤离榜
+  node_id: TDM-E-L2-02
+  run_id: mineloop-recast-02_接棒撤离榜
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.015383616317335196
+    mono_spearman: -0.6
+    n: 1254
+    regime_ic:
+      bear: -0.037227290479744685
+      rebound: 2.180310675767788e-05
+    oos_ic: 0.03608938581013652
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9761
+    n_buckets_used: 5
+  fails:
+  - mono_spearman -0.600 < 0.6
+  - ic_mean -0.0154 < 0.02
+  - 'regime_sign_flip {''bear'': -0.037227290479744685, ''rebound'': 2.180310675767788e-05}'
+  - oos_sign_flip oos=0.0361 is=-0.0154
+- card_id: TDM-E-L2-03/calibration/02_调整周期进度
+  node_id: TDM-E-L2-03
+  run_id: mineloop-recast-02_调整周期进度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-11'
+  metrics:
+    ic_mean: 0.01933285604918282
+    mono_spearman: -0.19999999999999998
+    n: 1195
+    regime_ic:
+      bear: 0.008310185978990204
+      rebound: 0.07059769498793889
+    oos_ic: -0.01682588613939608
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+    n_buckets_used: 5
+  fails:
+  - mono_spearman -0.200 < 0.6
+  - ic_mean 0.0193 < 0.02
+  - oos_sign_flip oos=-0.0168 is=0.0193
+- card_id: TDM-E-L2-04-2/calibration/02_虹吸态成交集中度
+  node_id: TDM-E-L2-04-2
+  run_id: mineloop-recast-02_虹吸态成交集中度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.015430883860233554
+    mono_spearman: -0.09999999999999999
+    n: 1254
+    regime_ic:
+      bear: 0.06303139091598436
+      rebound: -0.09312860019640949
+    oos_ic: -0.03327942221690358
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.6209
+    n_buckets_used: 5
+  fails:
+  - mono_spearman -0.100 < 0.6
+  - ic_mean -0.0154 < 0.02
+  - 'regime_sign_flip {''bear'': 0.06303139091598436, ''rebound'': -0.09312860019640949}'
+- card_id: TDM-E-L1-S3/calibration/05_limit_up_premium_derived
+  node_id: TDM-E-L1-S3
+  run_id: mineloop-lu-05_limit_up_premium_
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.05154480920427792
+    mono_spearman: -0.2121212121212121
+    n: 1619
+    regime_ic:
+      bull: -0.08460297478481232
+      bear: -0.03867747558465549
+    oos_ic: -0.002536745550204953
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+    n_buckets_used: 10
+  fails:
+  - mono_spearman -0.212 < 0.6
+  - ic_mean -0.0515 < 0.02
+- card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+  node_id: TDM-E-L1-S3
+  run_id: mineloop-lu-06_promotion_rate_de
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.06355515867668221
+    mono_spearman: -0.4787878787878787
+    n: 1619
+    regime_ic:
+      bull: -0.09725005828746959
+      bear: -0.05553789360325285
+    oos_ic: -0.07004138030988162
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9988
+    n_buckets_used: 10
+  fails:
+  - mono_spearman -0.479 < 0.6
+  - ic_mean -0.0636 < 0.02
+- card_id: TDM-E-L1-S0/calibration/06_m1m2_scihjorsc_longwindow
+  node_id: TDM-E-L1-S0
+  run_id: mineloop-route-audit-06_m1m2_scihjorsc_lo
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    ic_mean: 0.013862518326501146
+    mono_spearman: 0.6242424242424242
+    n: 5260
+    regime_ic:
+      bull: -0.01870182140243506
+      bear: 0.017044481956089208
+    oos_ic: 0.10575557392908103
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.0453
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: series 路 ic_ir 恒 None（现器无 IC_IR 面）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - monthly_duplication
+    - pit_lag_audit
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean 0.0139 < 0.02
+  - 'regime_sign_flip {''bull'': -0.01870182140243506, ''bear'': 0.017044481956089208}'
+- card_id: TDM-E-L1-S0/calibration/07_margin_flow_shortwindow
+  node_id: TDM-E-L1-S0
+  run_id: mineloop-route-audit-07_margin_flow_short
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.03541118164472658
+    mono_spearman: -0.1515151515151515
+    n: 500
+    regime_ic:
+      bull: -0.03731744350466728
+      bear: 0.012703412073490817
+    oos_ic: -0.09432093330398417
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: series 路 ic_ir 恒 None（现器无 IC_IR 面）
+    pillars_prose_keys:
+    - acceleration_tail
+    - breadth_of_cause
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.152 < 0.6
+  - ic_mean -0.0354 < 0.02
+  - 'regime_sign_flip {''bull'': -0.03731744350466728, ''bear'': 0.012703412073490817}'
+- card_id: TDM-E-L1-S3/calibration/05_limit_up_premium_derived
+  node_id: TDM-E-L1-S3
+  run_id: mineloop-route-audit-05_limit_up_premium_
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.05154480920427792
+    mono_spearman: -0.2121212121212121
+    n: 1619
+    regime_ic:
+      bull: -0.08460297478481232
+      bear: -0.03867747558465549
+    oos_ic: -0.002536745550204953
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: series 路 ic_ir 恒 None（现器无 IC_IR 面）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - two_form_spread
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.212 < 0.6
+  - ic_mean -0.0515 < 0.02
+- card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+  node_id: TDM-E-L1-S3
+  run_id: mineloop-route-audit-06_promotion_rate_de
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.06355515867668221
+    mono_spearman: -0.4787878787878787
+    n: 1619
+    regime_ic:
+      bull: -0.09725005828746959
+      bear: -0.05553789360325285
+    oos_ic: -0.07004138030988162
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9988
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: series 路 ic_ir 恒 None（现器无 IC_IR 面）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - promotion_ladder
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.479 < 0.6
+  - ic_mean -0.0636 < 0.02
+- card_id: TDM-E-L1-S4/calibration/04_synthetic_downside_deviation_longwindow
+  node_id: TDM-E-L1-S4
+  run_id: mineloop-route-audit-04_synthetic_downsid
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.002307400965748454
+    mono_spearman: 0.09090909090909088
+    n: 5014
+    regime_ic:
+      bull: -0.011481216284259351
+      bear: 0.002250788117027267
+    oos_ic: 0.06067424086011797
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.7774
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: series 路 ic_ir 恒 None（现器无 IC_IR 面）
+    pillars_prose_keys:
+    - fallback_activation
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - two_sided_note
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman 0.091 < 0.6
+  - ic_mean -0.0023 < 0.02
+  - 'regime_sign_flip {''bull'': -0.011481216284259351, ''bear'': 0.002250788117027267}'
+  - oos_sign_flip oos=0.0607 is=-0.0023
+- card_id: TDM-E-L2-02/calibration/02_接棒撤离榜
+  node_id: TDM-E-L2-02
+  run_id: mineloop-route-audit-02_接棒撤离榜
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.015383616317335196
+    mono_spearman: -0.6
+    n: 1254
+    regime_ic:
+      bear: -0.037227290479744685
+      rebound: 2.180310675767788e-05
+    oos_ic: 0.03608938581013652
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9761
+    n_buckets_used: 5
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: series 路 ic_ir 恒 None（现器无 IC_IR 面）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - spread_test
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.600 < 0.6
+  - ic_mean -0.0154 < 0.02
+  - 'regime_sign_flip {''bear'': -0.037227290479744685, ''rebound'': 2.180310675767788e-05}'
+  - oos_sign_flip oos=0.0361 is=-0.0154
+- card_id: TDM-E-L2-03/calibration/02_调整周期进度
+  node_id: TDM-E-L2-03
+  run_id: mineloop-route-audit-02_调整周期进度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-11'
+  metrics:
+    ic_mean: 0.01933285604918282
+    mono_spearman: -0.19999999999999998
+    n: 1195
+    regime_ic:
+      bear: 0.008310185978990204
+      rebound: 0.07059769498793889
+    oos_ic: -0.01682588613939608
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+    n_buckets_used: 5
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: series 路 ic_ir 恒 None（现器无 IC_IR 面）
+    pillars_prose_keys:
+    - gate_relevance
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.200 < 0.6
+  - ic_mean 0.0193 < 0.02
+  - oos_sign_flip oos=-0.0168 is=0.0193
+- card_id: TDM-E-L2-04-2/calibration/02_虹吸态成交集中度
+  node_id: TDM-E-L2-04-2
+  run_id: mineloop-route-audit-02_虹吸态成交集中度
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-11'
+  metrics:
+    ic_mean: -0.015430883860233554
+    mono_spearman: -0.09999999999999999
+    n: 1254
+    regime_ic:
+      bear: 0.06303139091598436
+      rebound: -0.09312860019640949
+    oos_ic: -0.03327942221690358
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.6209
+    n_buckets_used: 5
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: series 路 ic_ir 恒 None（现器无 IC_IR 面）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - two_leg_test
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.100 < 0.6
+  - ic_mean -0.0154 < 0.02
+  - 'regime_sign_flip {''bear'': 0.06303139091598436, ''rebound'': -0.09312860019640949}'
+- card_id: TDM-E-L3-06/calibration/02_地量档位开关
+  node_id: TDM-E-L3-06
+  run_id: mineloop-route-audit-02_地量档位开关
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    ic_mean: 0.04654213105724993
+    mono_spearman: 0.4666666666666666
+    n: 5282
+    regime_ic:
+      bull: -0.004639250350761945
+      bear: 0.02178699322474302
+    oos_ic: 0.11203043432903803
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.8627
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: series 路 ic_ir 恒 None（现器无 IC_IR 面）
+    pillars_prose_keys:
+    - absolute_line_check
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - switch_table
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman 0.467 < 0.6
+  - 'regime_sign_flip {''bull'': -0.004639250350761945, ''bear'': 0.02178699322474302}'
+- card_id: TDM-E-L9-A09/calibration/02_快讯情感日均值
+  node_id: TDM-E-L9-A09
+  run_id: mineloop-route-audit-02_快讯情感日均值
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    ic_mean: 0.0022244781920274246
+    mono_spearman: -0.05454545454545454
+    n: 4067
+    regime_ic:
+      bull: -0.0295052317563357
+      bear: -0.02783668583885238
+    oos_ic: 0.06776204714746234
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9988
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: series 路 ic_ir 恒 None（现器无 IC_IR 面）
+    pillars_prose_keys:
+    - caliber_honesty
+    - density_increment
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.055 < 0.6
+  - ic_mean 0.0022 < 0.02
+- card_id: TDM-E-L1-S2/calibration/16_max_streak_high_event_v2
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-evt-16_max_streak_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    gap_bp: 1.5411217238273969
+    t_stat: 0.17406761474267682
+    n_event: 295
+    n_none: 1078
+    mean_event: 0.00023455102151395652
+    mean_none: 8.043884913121683e-05
+    is_gap_bp: -1.3965410492391448
+    oos:
+      n_event: 104
+      n_none: 306
+      mean_event: 0.0011491137844227626
+      mean_none: 0.0005956492995812297
+      gap_bp: 5.534644848415329
+      t_stat: 0.32036679754511505
+    regime_gap:
+      bull:
+        n_event: 90
+        n_none: 264
+        mean_event: 0.0003861510821663811
+        mean_none: 0.000827954069774587
+        gap_bp: -4.418029876082059
+        t_stat: -0.26061030215138486
+      bear:
+        n_event: 109
+        n_none: 522
+        mean_event: -0.0007664412633485331
+        mean_none: -0.0007002541521944184
+        gap_bp: -0.6618711115411466
+        t_stat: -0.05885061922230227
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.174 > -2.0（负向命题要求更显著）
+  - oos_gap 反号 oos=5.53bp is=-1.40bp
+- card_id: TDM-E-L1-S3/calibration/07_promotion_rate_high_event_v2
+  node_id: TDM-E-L1-S3
+  run_id: mineloop-evt-07_promotion_rate_hi
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    gap_bp: -9.483236781862548
+    t_stat: -0.9847825733328756
+    n_event: 270
+    n_none: 1100
+    mean_event: -0.0006609649146367225
+    mean_none: 0.0002873587635495323
+    is_gap_bp: -17.617934678638814
+    oos:
+      n_event: 81
+      n_none: 329
+      mean_event: 0.0014972684061262515
+      mean_none: 0.0005486254661264353
+      gap_bp: 9.486429399998162
+      t_stat: 0.4693969621059845
+    regime_gap:
+      bull:
+        n_event: 72
+        n_none: 282
+        mean_event: -0.00016761657832549713
+        mean_none: 0.0009356736233307012
+        gap_bp: -11.032902016561984
+        t_stat: -0.5368235438868465
+      bear:
+        n_event: 125
+        n_none: 503
+        mean_event: -0.001959305971746721
+        mean_none: -0.0004391473812405398
+        gap_bp: -15.201585905061812
+        t_stat: -1.3366848434679721
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    - walk_forward_confirmation
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat -0.985 > -2.0（负向命题要求更显著）
+  - oos_gap 反号 oos=9.49bp is=-17.62bp
+- card_id: TDM-E-L1-S3/calibration/08_limit_up_premium_high_event_v2
+  node_id: TDM-E-L1-S3
+  run_id: mineloop-evt-08_limit_up_premium_
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-11'
+  metrics:
+    gap_bp: -0.08065624148023803
+    t_stat: -0.008866652374559357
+    n_event: 276
+    n_none: 1094
+    mean_event: 9.402213148513314e-05
+    mean_none: 0.00010208775563315694
+    is_gap_bp: -9.296040539144238
+    oos:
+      n_event: 79
+      n_none: 331
+      mean_event: 0.0025972820799997983
+      mean_none: 0.00029181641973365416
+      gap_bp: 23.054656602661442
+      t_stat: 1.092285708980894
+    regime_gap:
+      bull:
+        n_event: 67
+        n_none: 287
+        mean_event: 0.0012947549262275532
+        mean_none: 0.000575062676245909
+        gap_bp: 7.196922499816442
+        t_stat: 0.36122452275214245
+      bear:
+        n_event: 133
+        n_none: 495
+        mean_event: -0.0017642477113940054
+        mean_none: -0.0004669887547816746
+        gap_bp: -12.972589566123307
+        t_stat: -1.3113017199352706
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat -0.009 > -2.0（负向命题要求更显著）
+  - oos_gap 反号 oos=23.05bp is=-9.30bp
+  - 'regime_gap 反号 {''bull'': {''n_event'': 67, ''n_none'': 287, ''mean_event'': 0.0012947549262275532, ''mean_none'': 0.000575062676245909, ''gap_bp'':
+    7.196922499816442, ''t_stat'': 0.36122452275214245}, ''bear'': {''n_event'': 133, ''n_none'': 495, ''mean_event'': -0.0017642477113940054,
+    ''mean_none'': -0.0004669887547816746, ''gap_bp'': -12.972589566123307, ''t_stat'': -1.3113017199352706}}'
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-dualarm_off-07_熔断五级梯度减仓对照_五态仓位锚定
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  date: '2026-10-12'
+  metrics:
+    arm_open:
+      ic_mean: 0.05545440150671299
+      mono_spearman: 0.6727272727272726
+      n: 2123
+      regime_ic:
+        bull: -0.0002064137339524222
+        bear: .nan
+        crisis: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1621
+      n_buckets_used: 10
+      nav:
+        n: 2123
+        maxdd: 0.07974454598093661
+        sharpe: 0.6702246613603534
+        turnover_annual_x: 1.719598612281018
+        ann_ret: 0.03637493831260426
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.05573258854543597
+      mono_spearman: 0.6727272727272726
+      n: 2123
+      regime_ic:
+        bull: 0.0029461434440656714
+        bear: .nan
+        crisis: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1598
+      n_buckets_used: 10
+      nav:
+        n: 2123
+        maxdd: 0.11795538506548231
+        sharpe: 0.665077365533868
+        turnover_annual_x: 2.6972922593029005
+        ann_ret: 0.05460205997084579
+        cost_bp: .nan
+    maxdd_improvement_pp: 3.82108390845457
+    sharpe_delta: 0.005147295826485432
+    turnover_delta_annual_x: -0.9776936470218824
+    open_sharpe_at_tier_bp: 0.5466703200803625
+    ic_delta_is: -0.0002781870387229754
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+  unjudged:
+    numeric_keys_not_read:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - missed_crisis_trigger_max
+    - whipsaw_roundtrip_ratio_max
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - '未支持判据键（机判面待扩）: [''maxdd_improvement_vs_no_hysteresis_min_pp'', ''missed_crisis_trigger_max'', ''whipsaw_roundtrip_ratio_max'']'
+  - maxdd_improvement 3.82pp < 5.0
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-dualarm_mid-07_熔断五级梯度减仓对照_五态仓位锚定
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  date: '2026-10-12'
+  metrics:
+    arm_open:
+      ic_mean: 0.05545440150671299
+      mono_spearman: 0.6727272727272726
+      n: 2123
+      regime_ic:
+        bull: -0.0002064137339524222
+        bear: .nan
+        crisis: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1621
+      n_buckets_used: 10
+      nav:
+        n: 2123
+        maxdd: 0.07974454598093661
+        sharpe: 0.6702246613603534
+        turnover_annual_x: 1.719598612281018
+        ann_ret: 0.03637493831260426
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.05523399050941251
+      mono_spearman: 0.6727272727272726
+      n: 2123
+      regime_ic:
+        bull: -0.001229014422001825
+        bear: .nan
+        crisis: .nan
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1701
+      n_buckets_used: 10
+      nav:
+        n: 2123
+        maxdd: 0.09610509763596431
+        sharpe: 0.5811823720397776
+        turnover_annual_x: 3.3289685008591334
+        ann_ret: 0.03814596619201148
+        cost_bp: .nan
+    maxdd_improvement_pp: 1.63605516550277
+    sharpe_delta: 0.08904228932057578
+    turnover_delta_annual_x: -1.6093698885781154
+    open_sharpe_at_tier_bp: 0.5466703200803625
+    ic_delta_is: 0.00022041099730048253
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+  unjudged:
+    numeric_keys_not_read:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - missed_crisis_trigger_max
+    - whipsaw_roundtrip_ratio_max
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - '未支持判据键（机判面待扩）: [''maxdd_improvement_vs_no_hysteresis_min_pp'', ''missed_crisis_trigger_max'', ''whipsaw_roundtrip_ratio_max'']'
+  - maxdd_improvement 1.64pp < 5.0
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-E-L1-S2/calibration/17_ind_volume009_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-17_ind_volume009_hig
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 0.9355750877628717
+    t_stat: 0.11073614092772907
+    n_event: 363
+    n_none: 1010
+    mean_event: 0.00018237342649243915
+    mean_none: 8.881591771615198e-05
+    is_gap_bp: -3.220153599894878
+    oos:
+      n_event: 105
+      n_none: 305
+      mean_event: 0.0015819429303050596
+      mean_none: 0.00044482790678620435
+      gap_bp: 11.371150235188551
+      t_stat: 0.7064497006373069
+    regime_gap:
+      bull:
+        n_event: 167
+        n_none: 187
+        mean_event: -7.183488835202351e-05
+        mean_none: 0.0014188764608034931
+        gap_bp: -14.907113491555165
+        t_stat: -0.9826761146402677
+      bear:
+        n_event: 91
+        n_none: 540
+        mean_event: -0.0009660003023130541
+        mean_none: -0.0006688309956296085
+        gap_bp: -2.971693066834456
+        t_stat: -0.23499700477699115
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.111 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 105 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/18_ind_trend007_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-18_ind_trend007_high
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 1.2815059499943982
+    t_stat: 0.1399474452419279
+    n_event: 289
+    n_none: 1008
+    mean_event: 0.0002346352268388268
+    mean_none: 0.00010648463183938697
+    is_gap_bp: -11.091587441434594
+    oos:
+      n_event: 124
+      n_none: 286
+      mean_event: 0.001938167800674349
+      mean_none: 0.0002148381537349801
+      gap_bp: 17.23329646939369
+      t_stat: 1.098667333913837
+    regime_gap:
+      bull:
+        n_event: 40
+        n_none: 238
+        mean_event: -0.002200949397052107
+        mean_none: 0.0015151760774706037
+        gap_bp: -37.16125474522711
+        t_stat: -1.1783226965976223
+      bear:
+        n_event: 125
+        n_none: 506
+        mean_event: -0.0006758820067609124
+        mean_none: -0.0007205326369671195
+        gap_bp: 0.44650630206207126
+        t_stat: 0.043779524260836186
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.140 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 124 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 40, ''n_none'': 238, ''mean_event'': -0.002200949397052107, ''mean_none'': 0.0015151760774706037,
+    ''gap_bp'': -37.16125474522711, ''t_stat'': -1.1783226965976223}, ''bear'': {''n_event'': 125, ''n_none'': 506, ''mean_event'': -0.0006758820067609124,
+    ''mean_none'': -0.0007205326369671195, ''gap_bp'': 0.44650630206207126, ''t_stat'': 0.043779524260836186}}'
+- card_id: TDM-E-L1-S2/calibration/19_ind_mom030_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-19_ind_mom030_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 14.005934405153862
+    t_stat: 1.782702762760765
+    n_event: 307
+    n_none: 921
+    mean_event: 0.0010191867914501002
+    mean_none: -0.0003814066490652861
+    is_gap_bp: 3.8609965158915993
+    oos:
+      n_event: 165
+      n_none: 245
+      mean_event: 0.0019795864678053697
+      mean_none: -0.00010144999157576498
+      gap_bp: 20.810364593811347
+      t_stat: 1.6973638653814949
+    regime_gap:
+      bull:
+        n_event: 44
+        n_none: 165
+        mean_event: 0.0012307736231435247
+        mean_none: 2.962801741293042e-05
+        gap_bp: 12.011456057305944
+        t_stat: 0.4784068063093889
+      bear:
+        n_event: 98
+        n_none: 533
+        mean_event: -0.0006928108329695953
+        mean_none: -0.0007151581679539516
+        gap_bp: 0.22347334984356262
+        t_stat: 0.021051463352326816
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 3.86bp > 0.0（负向命题要求更负）
+  - t_stat 1.783 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 165 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/20_ind_vol009_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-20_ind_vol009_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 5.35714519521234
+    t_stat: 0.5459400191221757
+    n_event: 239
+    n_none: 1058
+    mean_event: 0.0005720370478827976
+    mean_none: 3.63225283615637e-05
+    is_gap_bp: 1.3473553825163012
+    oos:
+      n_event: 135
+      n_none: 275
+      mean_event: 0.0010310712784687998
+      mean_none: 0.0005912068969401295
+      gap_bp: 4.398643815286703
+      t_stat: 0.32535870400620215
+    regime_gap:
+      bull:
+        n_event: 27
+        n_none: 251
+        mean_event: -0.0009595786744613921
+        mean_none: 0.0011891735249656454
+        gap_bp: -21.487521994270377
+        t_stat: -0.6606667633685807
+      bear:
+        n_event: 93
+        n_none: 538
+        mean_event: -1.736429428412992e-05
+        mean_none: -0.0008317098248737034
+        gap_bp: 8.143455305895735
+        t_stat: 0.5301008683549617
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 1.35bp > 0.0（负向命题要求更负）
+  - t_stat 0.546 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 135 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 27, ''n_none'': 251, ''mean_event'': -0.0009595786744613921, ''mean_none'': 0.0011891735249656454,
+    ''gap_bp'': -21.487521994270377, ''t_stat'': -0.6606667633685807}, ''bear'': {''n_event'': 93, ''n_none'': 538, ''mean_event'': -1.736429428412992e-05,
+    ''mean_none'': -0.0008317098248737034, ''gap_bp'': 8.143455305895735, ''t_stat'': 0.5301008683549617}}'
+- card_id: TDM-E-L1-S2/calibration/21_ind_vol008_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-21_ind_vol008_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 17.84148710756841
+    t_stat: 1.9773326947903629
+    n_event: 240
+    n_none: 1015
+    mean_event: 0.0015733571223879653
+    mean_none: -0.00021079158836887556
+    is_gap_bp: 17.30879035923294
+    oos:
+      n_event: 117
+      n_none: 293
+      mean_event: 0.0018444714127453512
+      mean_none: 0.0002934244503775341
+      gap_bp: 15.510469623678171
+      t_stat: 1.0918550517391523
+    regime_gap:
+      bull:
+        n_event: 18
+        n_none: 218
+        mean_event: -0.0004387483627780557
+        mean_none: 0.0012338420129087355
+        gap_bp: -16.72590375686791
+        t_stat: -0.4919999944287389
+      bear:
+        n_event: 113
+        n_none: 518
+        mean_event: 0.0015033769472878697
+        mean_none: -0.0011948964482509765
+        gap_bp: 26.98273395538846
+        t_stat: 2.2353203523437895
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 17.31bp > 0.0（负向命题要求更负）
+  - t_stat 1.977 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 117 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 18, ''n_none'': 218, ''mean_event'': -0.0004387483627780557, ''mean_none'': 0.0012338420129087355,
+    ''gap_bp'': -16.72590375686791, ''t_stat'': -0.4919999944287389}, ''bear'': {''n_event'': 113, ''n_none'': 518, ''mean_event'': 0.0015033769472878697,
+    ''mean_none'': -0.0011948964482509765, ''gap_bp'': 26.98273395538846, ''t_stat'': 2.2353203523437895}}'
+- card_id: TDM-E-L1-S2/calibration/22_ind_vol012_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-22_ind_vol012_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 11.676099332723737
+    t_stat: 1.365735569641606
+    n_event: 261
+    n_none: 1000
+    mean_event: 0.001068256344216884
+    mean_none: -9.935358905548974e-05
+    is_gap_bp: 21.423292760956272
+    oos:
+      n_event: 140
+      n_none: 270
+      mean_event: 0.0005274440105027787
+      mean_none: 0.0008442013251164243
+      gap_bp: -3.1675731461364554
+      t_stat: -0.24791392520473798
+    regime_gap:
+      bull:
+        n_event: 37
+        n_none: 205
+        mean_event: 0.0017391670247446367
+        mean_none: 0.0010367803803656675
+        gap_bp: 7.023866443789692
+        t_stat: 0.2935799280478218
+      bear:
+        n_event: 103
+        n_none: 528
+        mean_event: 0.001068267022981314
+        mean_none: -0.0010589133873438483
+        gap_bp: 21.271804103251622
+        t_stat: 1.6699026928379805
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 21.42bp > 0.0（负向命题要求更负）
+  - t_stat 1.366 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 140 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/23_ind_vol014_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-23_ind_vol014_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 11.903289858283602
+    t_stat: 1.299250593389856
+    n_event: 233
+    n_none: 1028
+    mean_event: 0.0011127038177769003
+    mean_none: -7.76251680514599e-05
+    is_gap_bp: 24.966721969531473
+    oos:
+      n_event: 114
+      n_none: 296
+      mean_event: 0.00018250601420001682
+      mean_none: 0.0009492257893007488
+      gap_bp: -7.66719775100732
+      t_stat: -0.5366124195665554
+    regime_gap:
+      bull:
+        n_event: 32
+        n_none: 210
+        mean_event: 0.0021750882606824153
+        mean_none: 0.0009870777788032194
+        gap_bp: 11.880104818791958
+        t_stat: 0.47243359193655327
+      bear:
+        n_event: 101
+        n_none: 530
+        mean_event: 0.0014796063102824406
+        mean_none: -0.0011292735896018926
+        gap_bp: 26.088798998843334
+        t_stat: 2.0351553566621274
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 24.97bp > 0.0（负向命题要求更负）
+  - t_stat 1.299 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 114 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/24_ind_vol013_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-24_ind_vol013_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 4.201277474833157
+    t_stat: 0.47908290166804596
+    n_event: 265
+    n_none: 996
+    mean_event: 0.0004741542849155427
+    mean_none: 5.402653743222709e-05
+    is_gap_bp: 8.862413516987393
+    oos:
+      n_event: 141
+      n_none: 269
+      mean_event: 0.00035171890638183097
+      mean_none: 0.0009374875593010611
+      gap_bp: -5.857686529192302
+      t_stat: -0.4600715719468502
+    regime_gap:
+      bull:
+        n_event: 36
+        n_none: 206
+        mean_event: 0.0015612084491280981
+        mean_none: 0.0010712895811742808
+        gap_bp: 4.899188679538173
+        t_stat: 0.20037553335816227
+      bear:
+        n_event: 109
+        n_none: 522
+        mean_event: -0.00022619674704543583
+        mean_none: -0.0008130638308860613
+        gap_bp: 5.8686708384062545
+        t_stat: 0.43566526856813637
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 8.86bp > 0.0（负向命题要求更负）
+  - t_stat 0.479 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 141 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/25_ind_vol015_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-25_ind_vol015_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 9.18732023324088
+    t_stat: 1.0665978108259557
+    n_event: 235
+    n_none: 1020
+    mean_event: 0.000877098733840058
+    mean_none: -4.163328948403006e-05
+    is_gap_bp: 14.66957034525514
+    oos:
+      n_event: 126
+      n_none: 284
+      mean_event: 0.0006719288587441047
+      mean_none: 0.0007644840952467126
+      gap_bp: -0.9255523650260788
+      t_stat: -0.06980657122027302
+    regime_gap:
+      bull:
+        n_event: 18
+        n_none: 218
+        mean_event: -0.0004387483627780557
+        mean_none: 0.0012338420129087355
+        gap_bp: -16.72590375686791
+        t_stat: -0.4919999944287389
+      bear:
+        n_event: 99
+        n_none: 532
+        mean_event: 0.0013084263354775773
+        mean_none: -0.0010876108503059337
+        gap_bp: 23.96037185783511
+        t_stat: 2.034970284606542
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 14.67bp > 0.0（负向命题要求更负）
+  - t_stat 1.067 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 126 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 18, ''n_none'': 218, ''mean_event'': -0.0004387483627780557, ''mean_none'': 0.0012338420129087355,
+    ''gap_bp'': -16.72590375686791, ''t_stat'': -0.4919999944287389}, ''bear'': {''n_event'': 99, ''n_none'': 532, ''mean_event'': 0.0013084263354775773,
+    ''mean_none'': -0.0010876108503059337, ''gap_bp'': 23.96037185783511, ''t_stat'': 2.034970284606542}}'
+- card_id: TDM-E-L1-S2/calibration/26_ind_mom038_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-26_ind_mom038_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 1.782088655348055
+    t_stat: 0.20958139992637081
+    n_event: 286
+    n_none: 1059
+    mean_event: 0.00023764872048242873
+    mean_none: 5.943985494762321e-05
+    is_gap_bp: -2.2173189630308996
+    oos:
+      n_event: 132
+      n_none: 278
+      mean_event: 0.000944182482385584
+      mean_none: 0.0006372101855285126
+      gap_bp: 3.0697229685707135
+      t_stat: 0.20770283130169254
+    regime_gap:
+      bull:
+        n_event: 9
+        n_none: 317
+        mean_event: -0.00015679309493251323
+        mean_none: 0.0007247738782564561
+        gap_bp: -8.815669731889693
+        t_stat: -0.10835410524108512
+      bear:
+        n_event: 145
+        n_none: 486
+        mean_event: -0.0003810580397415851
+        mean_none: -0.0008103319946254047
+        gap_bp: 4.292739548838195
+        t_stat: 0.46610254785372807
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.210 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 132 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 9, ''n_none'': 317, ''mean_event'': -0.00015679309493251323, ''mean_none'': 0.0007247738782564561,
+    ''gap_bp'': -8.815669731889693, ''t_stat'': -0.10835410524108512}, ''bear'': {''n_event'': 145, ''n_none'': 486, ''mean_event'': -0.0003810580397415851,
+    ''mean_none'': -0.0008103319946254047, ''gap_bp'': 4.292739548838195, ''t_stat'': 0.46610254785372807}}'
+- card_id: TDM-E-L1-S2/calibration/27_ind_mom037_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-27_ind_mom037_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 11.344132159698825
+    t_stat: 1.4124062213402715
+    n_event: 307
+    n_none: 1061
+    mean_event: 0.0009883854512699834
+    mean_none: -0.000146027764699899
+    is_gap_bp: 12.049191903529275
+    oos:
+      n_event: 135
+      n_none: 275
+      mean_event: 0.0011919771988485595
+      mean_none: 0.0005122167178446111
+      gap_bp: 6.797604810039483
+      t_stat: 0.4697818783442362
+    regime_gap:
+      bull:
+        n_event: 30
+        n_none: 319
+        mean_event: 0.0006954506642094367
+        mean_none: 0.0007055272613555026
+        gap_bp: -0.10076597146065915
+        t_stat: -0.0039018125927214654
+      bear:
+        n_event: 142
+        n_none: 489
+        mean_event: 0.00085671754766934
+        mean_none: -0.0011671342677290854
+        gap_bp: 20.238518153984256
+        t_stat: 2.216083682446343
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 12.05bp > 0.0（负向命题要求更负）
+  - t_stat 1.412 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 135 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 30, ''n_none'': 319, ''mean_event'': 0.0006954506642094367, ''mean_none'': 0.0007055272613555026,
+    ''gap_bp'': -0.10076597146065915, ''t_stat'': -0.0039018125927214654}, ''bear'': {''n_event'': 142, ''n_none'': 489, ''mean_event'': 0.00085671754766934,
+    ''mean_none'': -0.0011671342677290854, ''gap_bp'': 20.238518153984256, ''t_stat'': 2.216083682446343}}'
+- card_id: TDM-E-L1-S2/calibration/28_ind_mom015_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-28_ind_mom015_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 10.958762501906998
+    t_stat: 1.3308829971875
+    n_event: 318
+    n_none: 1050
+    mean_event: 0.0009496848961209991
+    mean_none: -0.0001461913540697006
+    is_gap_bp: 8.100420233270619
+    oos:
+      n_event: 131
+      n_none: 279
+      mean_event: 0.0016031275090886328
+      mean_none: 0.0003289133174237014
+      gap_bp: 12.742141916649315
+      t_stat: 0.8588785559097821
+    regime_gap:
+      bull:
+        n_event: 35
+        n_none: 314
+        mean_event: 0.0021615767509501195
+        mean_none: 0.000542266019157434
+        gap_bp: 16.193107317926856
+        t_stat: 0.5084158077941331
+      bear:
+        n_event: 152
+        n_none: 479
+        mean_event: 0.00010746649337245158
+        mean_none: -0.0009716277080231506
+        gap_bp: 10.790942013956021
+        t_stat: 1.2095938212815593
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 8.10bp > 0.0（负向命题要求更负）
+  - t_stat 1.331 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 131 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/29_ind_mom022_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-29_ind_mom022_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 2.2331955735833238
+    t_stat: 0.2532705863534227
+    n_event: 280
+    n_none: 1023
+    mean_event: 0.00034258048765596426
+    mean_none: 0.00011926093029763189
+    is_gap_bp: -3.3650912676484994
+    oos:
+      n_event: 111
+      n_none: 299
+      mean_event: 0.0014225093517069556
+      mean_none: 0.00048119726157977097
+      gap_bp: 9.413120901271848
+      t_stat: 0.5818697188011399
+    regime_gap:
+      bull:
+        n_event: 43
+        n_none: 241
+        mean_event: -0.000576267403980287
+        mean_none: 0.0014113436004759177
+        gap_bp: -19.876110044562047
+        t_stat: -0.764800367744147
+      bear:
+        n_event: 128
+        n_none: 503
+        mean_event: -0.0004334986798390098
+        mean_none: -0.0007824789942963881
+        gap_bp: 3.4898031445737834
+        t_stat: 0.34581561926682547
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.253 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 111 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 43, ''n_none'': 241, ''mean_event'': -0.000576267403980287, ''mean_none'': 0.0014113436004759177,
+    ''gap_bp'': -19.876110044562047, ''t_stat'': -0.764800367744147}, ''bear'': {''n_event'': 128, ''n_none'': 503, ''mean_event'': -0.0004334986798390098,
+    ''mean_none'': -0.0007824789942963881, ''gap_bp'': 3.4898031445737834, ''t_stat'': 0.34581561926682547}}'
+- card_id: TDM-E-L1-S2/calibration/30_ind_mom027_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-30_ind_mom027_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: -2.0309359891687286
+    t_stat: -0.22915728032773167
+    n_event: 307
+    n_none: 1066
+    mean_event: -4.4131205925213094e-05
+    mean_none: 0.0001589623929916598
+    is_gap_bp: -6.900391209012923
+    oos:
+      n_event: 106
+      n_none: 304
+      mean_event: 0.0011947807224028735
+      mean_none: 0.0005760847456484177
+      gap_bp: 6.186959767544558
+      t_stat: 0.3535909728301725
+    regime_gap:
+      bull:
+        n_event: 55
+        n_none: 299
+        mean_event: 0.0001469210448820333
+        mean_none: 0.0008202435262439914
+        gap_bp: -6.733224813619581
+        t_stat: -0.2550098191787034
+      bear:
+        n_event: 146
+        n_none: 485
+        mean_event: -0.001015586947001759
+        mean_none: -0.0006202042698726179
+        gap_bp: -3.953826771291412
+        t_stat: -0.42980084482071024
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat -0.229 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 106 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/31_ind_mom035_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-31_ind_mom035_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: -7.373382035778781
+    t_stat: -0.834400553819866
+    n_event: 265
+    n_none: 973
+    mean_event: -0.0005380063703614332
+    mean_none: 0.00019933183321644494
+    is_gap_bp: -6.41675704737218
+    oos:
+      n_event: 93
+      n_none: 317
+      mean_event: -3.34955492595123e-05
+      mean_none: 0.0009618031713973446
+      gap_bp: -9.952987206568569
+      t_stat: -0.6028688736585487
+    regime_gap:
+      bull:
+        n_event: 31
+        n_none: 188
+        mean_event: -0.0037892298037309254
+        mean_none: 0.0014163412265684903
+        gap_bp: -52.05571030299416
+        t_stat: -1.4764474845739592
+      bear:
+        n_event: 141
+        n_none: 490
+        mean_event: -0.00015596083793607425
+        mean_none: -0.0008716005857173266
+        gap_bp: 7.156397477812523
+        t_stat: 0.7260047179184952
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat -0.834 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 93 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 31, ''n_none'': 188, ''mean_event'': -0.0037892298037309254, ''mean_none'': 0.0014163412265684903,
+    ''gap_bp'': -52.05571030299416, ''t_stat'': -1.4764474845739592}, ''bear'': {''n_event'': 141, ''n_none'': 490, ''mean_event'': -0.00015596083793607425,
+    ''mean_none'': -0.0008716005857173266, ''gap_bp'': 7.156397477812523, ''t_stat'': 0.7260047179184952}}'
+- card_id: TDM-E-L1-S2/calibration/32_ind_mom020_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-32_ind_mom020_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 11.915873870238235
+    t_stat: 1.4401486947619426
+    n_event: 317
+    n_none: 1046
+    mean_event: 0.001043341860737914
+    mean_none: -0.00014824552628590938
+    is_gap_bp: 13.165680592032096
+    oos:
+      n_event: 123
+      n_none: 287
+      mean_event: 0.0012438173093490318
+      mean_none: 0.0005184215686477097
+      gap_bp: 7.253957407013221
+      t_stat: 0.4757722368416502
+    regime_gap:
+      bull:
+        n_event: 50
+        n_none: 294
+        mean_event: 0.004084355962597332
+        mean_none: 0.00023430133447070498
+        gap_bp: 38.50054628126627
+        t_stat: 1.5613896896166233
+      bear:
+        n_event: 144
+        n_none: 487
+        mean_event: -0.00018380525920749173
+        mean_none: -0.0008677757860874696
+        gap_bp: 6.839705268799779
+        t_stat: 0.7450895649862317
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - is_gap_bp 13.17bp > 0.0（负向命题要求更负）
+  - t_stat 1.440 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 123 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/33_ind_volume002_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-33_ind_volume002_hig
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: -4.558054007228458
+    t_stat: -0.48580780123118483
+    n_event: 273
+    n_none: 1024
+    mean_event: -0.0002248254748571096
+    mean_none: 0.00023097992586573626
+    is_gap_bp: -18.58982871436719
+    oos:
+      n_event: 109
+      n_none: 301
+      mean_event: 0.0019315597773888271
+      mean_none: 0.00030311130736359275
+      gap_bp: 16.284484700252346
+      t_stat: 0.9425560799165771
+    regime_gap:
+      bull:
+        n_event: 32
+        n_none: 246
+        mean_event: -0.004002928673649743
+        mean_none: 0.0016287302768809397
+        gap_bp: -56.31658950530683
+        t_stat: -1.745137966372567
+      bear:
+        n_event: 132
+        n_none: 499
+        mean_event: -0.0010895731273831918
+        mean_none: -0.0006117256760238381
+        gap_bp: -4.778474513593538
+        t_stat: -0.4594256250091076
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat -0.486 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 109 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/34_ind_mom009_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-34_ind_mom009_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: -0.8930604444343125
+    t_stat: -0.09577283735333547
+    n_event: 279
+    n_none: 1012
+    mean_event: 7.105621621716987e-05
+    mean_none: 0.00016036226066060112
+    is_gap_bp: -13.04948549881787
+    oos:
+      n_event: 109
+      n_none: 301
+      mean_event: 0.0020362366236007412
+      mean_none: 0.00026520507401775023
+      gap_bp: 17.71031549582991
+      t_stat: 1.0284833139093426
+    regime_gap:
+      bull:
+        n_event: 41
+        n_none: 231
+        mean_event: -0.0008365453942918744
+        mean_none: 0.0013586038717942942
+        gap_bp: -21.951492660861685
+        t_stat: -0.760178753796604
+      bear:
+        n_event: 129
+        n_none: 502
+        mean_event: -0.0013009825308676242
+        mean_none: -0.0005602550172680339
+        gap_bp: -7.407275135995903
+        t_stat: -0.7125377871511618
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat -0.096 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 109 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+- card_id: TDM-E-L1-S2/calibration/35_ind_mom024_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-35_ind_mom024_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 5.412208666795448
+    t_stat: 0.5952537005274895
+    n_event: 290
+    n_none: 1001
+    mean_event: 0.000560707497799646
+    mean_none: 1.948663112010125e-05
+    is_gap_bp: -7.937408933880795
+    oos:
+      n_event: 112
+      n_none: 298
+      mean_event: 0.002674310260223214
+      mean_none: 7.562986935649644e-06
+      gap_bp: 26.667472732875645
+      t_stat: 1.6019971735489882
+    regime_gap:
+      bull:
+        n_event: 39
+        n_none: 233
+        mean_event: -0.0019389993467847017
+        mean_none: 0.0015242923079103797
+        gap_bp: -34.63291654695082
+        t_stat: -1.1292784032141228
+      bear:
+        n_event: 139
+        n_none: 492
+        mean_event: -0.0004409827356726565
+        mean_none: -0.0007881670018129619
+        gap_bp: 3.4718426614030538
+        t_stat: 0.34163851981675397
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.595 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 112 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 39, ''n_none'': 233, ''mean_event'': -0.0019389993467847017, ''mean_none'': 0.0015242923079103797,
+    ''gap_bp'': -34.63291654695082, ''t_stat'': -1.1292784032141228}, ''bear'': {''n_event'': 139, ''n_none'': 492, ''mean_event'': -0.0004409827356726565,
+    ''mean_none'': -0.0007881670018129619, ''gap_bp'': 3.4718426614030538, ''t_stat'': 0.34163851981675397}}'
+- card_id: TDM-E-L1-S2/calibration/36_ind_mom031_high_event
+  node_id: TDM-E-L1-S2
+  run_id: mineloop-1556-36_ind_mom031_high_e
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    gap_bp: 4.2315558494977585
+    t_stat: 0.4904048632202745
+    n_event: 275
+    n_none: 948
+    mean_event: 0.0002866465460813338
+    mean_none: -0.00013650903886844207
+    is_gap_bp: -3.6863332740187738
+    oos:
+      n_event: 120
+      n_none: 290
+      mean_event: 0.00160208696423223
+      mean_none: 0.00037767615015157235
+      gap_bp: 12.244108140806578
+      t_stat: 0.7784342706146125
+    regime_gap:
+      bull:
+        n_event: 23
+        n_none: 181
+        mean_event: -0.002517912313941987
+        mean_none: 0.0005787682632659989
+        gap_bp: -30.96680577207986
+        t_stat: -1.0625242894180071
+      bear:
+        n_event: 132
+        n_none: 499
+        mean_event: -0.0004205352448093568
+        mean_none: -0.0007887056369451732
+        gap_bp: 3.6817039213581637
+        t_stat: 0.3816202544699988
+    windows:
+      is:
+      - '2019-01-04'
+      - '2023-12-31'
+      oos:
+      - '2024-01-01'
+      - '2025-09-09'
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - event_days_floor
+    - event_gap_direction
+    - event_gap_significance
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - t_stat 0.490 > -2.0（负向命题要求更显著）
+  - oos 窗事件日 120 < 门槛 200（确认窗同样受族内下限约束，禁小窗冒确认）
+  - 'regime_gap 反号 {''bull'': {''n_event'': 23, ''n_none'': 181, ''mean_event'': -0.002517912313941987, ''mean_none'': 0.0005787682632659989,
+    ''gap_bp'': -30.96680577207986, ''t_stat'': -1.0625242894180071}, ''bear'': {''n_event'': 132, ''n_none'': 499, ''mean_event'': -0.0004205352448093568,
+    ''mean_none'': -0.0007887056369451732, ''gap_bp'': 3.6817039213581637, ''t_stat'': 0.3816202544699988}}'
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-reread07_off-07_熔断五级梯度减仓对照_五态仓位锚定
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.030550447040649378
+      mono_spearman: 0.49696992650327754
+      n: 2121
+      regime_ic:
+        bull: -0.020692825337465748
+        bear: .nan
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1621
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.1561940939539619
+        sharpe: 0.25581625270370073
+        turnover_annual_x: 1.720409361273135
+        ann_ret: 0.018992925241012773
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.03198697025409984
+      mono_spearman: 0.37690143708164003
+      n: 2121
+      regime_ic:
+        bull: -0.006551076760030402
+        bear: .nan
+        crisis: 0.2094409662385269
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1598
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.27152135510193554
+        sharpe: 0.17469141183126272
+        turnover_annual_x: 2.69856396711021
+        ann_ret: 0.020126485222387077
+        cost_bp: .nan
+    maxdd_improvement_pp: 11.532726114797365
+    sharpe_delta: 0.08112484087243801
+    turnover_delta_annual_x: -0.9781546058370751
+    open_sharpe_at_tier_bp: 0.16348451319529514
+    ic_delta_is: -0.0014365232134504642
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_hysteresis
+      open_roundtrips_30d: 7
+      open_downgrades: 10
+      base_roundtrips_30d: 0
+      base_downgrades: 1
+      n_days_open: 2123
+      base_is_no_hysteresis: false
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: null
+      whipsaw_roundtrip_ratio: null
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - whipsaw_roundtrip_ratio_max
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-reread07_mid-07_熔断五级梯度减仓对照_五态仓位锚定
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.030550447040649378
+      mono_spearman: 0.49696992650327754
+      n: 2121
+      regime_ic:
+        bull: -0.020692825337465748
+        bear: .nan
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1621
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.1561940939539619
+        sharpe: 0.25581625270370073
+        turnover_annual_x: 1.720409361273135
+        ann_ret: 0.018992925241012773
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.02925514614794887
+      mono_spearman: 0.46015733935488656
+      n: 2121
+      regime_ic:
+        bull: -0.029466981564347954
+        bear: .nan
+        crisis: 0.19337275604267906
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.1701
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.21532329173325992
+        sharpe: 0.13656544614166602
+        turnover_annual_x: 3.3305380286766058
+        ann_ret: 0.012332157295782915
+        cost_bp: .nan
+    maxdd_improvement_pp: 5.912919777929804
+    sharpe_delta: 0.11925080656203471
+    turnover_delta_annual_x: -1.6101286674034707
+    open_sharpe_at_tier_bp: 0.16348451319529514
+    ic_delta_is: 0.0012953008927005065
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_no_hysteresis
+      open_roundtrips_30d: 7
+      open_downgrades: 10
+      base_roundtrips_30d: 59
+      base_downgrades: 42
+      n_days_open: 2123
+      base_is_no_hysteresis: true
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: 5.912919777929804
+      whipsaw_roundtrip_ratio: 0.16666666666666666
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run: []
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-07b_off_A-07b_熔断五级梯度减仓对照_复位阶梯锚
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.03024152191440751
+      mono_spearman: 0.26747843921922837
+      n: 2121
+      regime_ic:
+        bull: -0.037359217534677504
+        bear: 0.05090893920222041
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2502
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.17564261604408238
+        sharpe: 0.25524949738093844
+        turnover_annual_x: 2.2450857842735257
+        ann_ret: 0.01990940450455997
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.03247916397318586
+      mono_spearman: 0.3282689935872349
+      n: 2121
+      regime_ic:
+        bull: -0.028580646070163827
+        bear: 0.05329706035647116
+        crisis: 0.2094409662385269
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2474
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.33844727676099007
+        sharpe: 0.19655506076888893
+        turnover_annual_x: 4.521923008027748
+        ann_ret: 0.027333706057689814
+        cost_bp: .nan
+    maxdd_improvement_pp: 16.280466071690768
+    sharpe_delta: 0.05869443661204951
+    turnover_delta_annual_x: -2.2768372237542227
+    open_sharpe_at_tier_bp: 0.14039410262247634
+    ic_delta_is: -0.0022376420587783483
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_hysteresis
+      open_roundtrips_30d: 16
+      open_downgrades: 16
+      base_roundtrips_30d: 8
+      base_downgrades: 6
+      n_days_open: 2123
+      base_is_no_hysteresis: false
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: null
+      whipsaw_roundtrip_ratio: null
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - whipsaw_roundtrip_ratio_max
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - reset_not_full_reentry
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-07b_off_B-07b_熔断五级梯度减仓对照_复位阶梯锚
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.025669086438902044
+      mono_spearman: 0.1945297739776207
+      n: 2121
+      regime_ic:
+        bull: -0.039747592817760434
+        bear: 0.05090893920222041
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2375
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.19157730385200977
+        sharpe: 0.22272817025505845
+        turnover_annual_x: 2.0559209880453833
+        ann_ret: 0.017301816354802914
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.02693011656925867
+      mono_spearman: 0.3282689935872349
+      n: 2121
+      regime_ic:
+        bull: -0.041675849084714466
+        bear: 0.05329706035647116
+        crisis: 0.2094409662385269
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2347
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.38786643031914014
+        sharpe: 0.12413792478411252
+        turnover_annual_x: 3.7652638231151774
+        ann_ret: 0.016903353458661563
+        cost_bp: .nan
+    maxdd_improvement_pp: 19.628912646713037
+    sharpe_delta: 0.09859024547094593
+    turnover_delta_annual_x: -1.7093428350697941
+    open_sharpe_at_tier_bp: 0.11710143469382357
+    ic_delta_is: -0.0012610301303566246
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_hysteresis
+      open_roundtrips_30d: 9
+      open_downgrades: 13
+      base_roundtrips_30d: 1
+      base_downgrades: 3
+      n_days_open: 2123
+      base_is_no_hysteresis: false
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: null
+      whipsaw_roundtrip_ratio: null
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - whipsaw_roundtrip_ratio_max
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - reset_not_full_reentry
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-07b_mid_A-07b_熔断五级梯度减仓对照_复位阶梯锚
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.03024152191440751
+      mono_spearman: 0.26747843921922837
+      n: 2121
+      regime_ic:
+        bull: -0.037359217534677504
+        bear: 0.05090893920222041
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2502
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.17564261604408238
+        sharpe: 0.25524949738093844
+        turnover_annual_x: 2.2450857842735257
+        ann_ret: 0.01990940450455997
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.029173720507955508
+      mono_spearman: 0.40121765882884264
+      n: 2121
+      regime_ic:
+        bull: -0.044301886337759167
+        bear: 0.05090893920222041
+        crisis: 0.19337275604267906
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2582
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.23340897018725204
+        sharpe: 0.14182636222976994
+        turnover_annual_x: 3.855214451676996
+        ann_ret: 0.013248636559330115
+        cost_bp: .nan
+    maxdd_improvement_pp: 5.776635414316966
+    sharpe_delta: 0.1134231351511685
+    turnover_delta_annual_x: -1.6101286674034703
+    open_sharpe_at_tier_bp: 0.14039410262247634
+    ic_delta_is: 0.0010678014064520007
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_no_hysteresis
+      open_roundtrips_30d: 16
+      open_downgrades: 16
+      base_roundtrips_30d: 68
+      base_downgrades: 48
+      n_days_open: 2123
+      base_is_no_hysteresis: true
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: 5.776635414316966
+      whipsaw_roundtrip_ratio: 0.3333333333333333
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run: []
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - reset_not_full_reentry
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-07b_mid_B-07b_熔断五级梯度减仓对照_复位阶梯锚
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  - crisis
+  date: '2026-10-13'
+  metrics:
+    arm_open:
+      ic_mean: 0.025669086438902044
+      mono_spearman: 0.1945297739776207
+      n: 2121
+      regime_ic:
+        bull: -0.039747592817760434
+        bear: 0.05090893920222041
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2375
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.19157730385200977
+        sharpe: 0.22272817025505845
+        turnover_annual_x: 2.0559209880453833
+        ann_ret: 0.017301816354802914
+        cost_bp: .nan
+    arm_base:
+      ic_mean: 0.024597394136805964
+      mono_spearman: 0.3282689935872349
+      n: 2121
+      regime_ic:
+        bull: -0.04659935869931035
+        bear: 0.05090893920222041
+        crisis: 0.19337275604267906
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      - .nan
+      round_trip_cost_bp: .nan
+      signal_turnover_daily: 0.2455
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.24822704420971664
+        sharpe: 0.11423808567816231
+        turnover_annual_x: 3.6660496554488535
+        ann_ret: 0.010641048409573056
+        cost_bp: .nan
+    maxdd_improvement_pp: 5.664974035770687
+    sharpe_delta: 0.10849008457689614
+    turnover_delta_annual_x: -1.6101286674034703
+    open_sharpe_at_tier_bp: 0.11710143469382357
+    ic_delta_is: 0.0010716923020960799
+    ic_delta_oos: .nan
+    round_trip_cost_bp: .nan
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_no_hysteresis
+      open_roundtrips_30d: 9
+      open_downgrades: 13
+      base_roundtrips_30d: 61
+      base_downgrades: 45
+      n_days_open: 2123
+      base_is_no_hysteresis: true
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: 5.664974035770687
+      whipsaw_roundtrip_ratio: 0.2
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run: []
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - reset_not_full_reentry
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  node_id: TDM-E-L1-AGG
+  run_id: mineloop-batchA02-02_四档风险轴前向收益单调
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-13'
+  metrics:
+    ic_mean: 0.0013758293279255397
+    mono_spearman: 0.39999999999999997
+    n: 2245
+    regime_ic:
+      bull: -0.02082522548057152
+      bear: -0.025029619293965476
+    oos_ic: 0.06865760461914329
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.1082
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - extreme_tier_gap
+    - ic_floor
+    - oos_hold
+    - regime_stability
+    - tier_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman 0.400 < 0.6
+  - ic_mean 0.0014 < 0.02
+- card_id: TDM-E-L3-07-3/calibration/02_二十日动量排名
+  node_id: TDM-E-L3-07-3
+  run_id: st-e2e-test-p09-02_二十日动量排名
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-14'
+  metrics:
+    ic_mean: -0.027683908993204828
+    ic_ir: -0.17771290046682678
+    mono_spearman: null
+    regime_ic:
+      bull: -0.025077261101781104
+      bear: -0.018836319598065955
+    oos_ic: -0.03563442656526154
+    n: 1621
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - cost_sanity
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - verified_node_discipline
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0277 < 0.02
+  - ic_ir -0.178 < 0.3
+- card_id: TDM-E-L9-A01/calibration/02_日线动量截面
+  node_id: TDM-E-L9-A01
+  run_id: st-probe-04mig15-02_日线动量截面
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.040641157971004885
+    ic_ir: -0.2558771425127853
+    mono_spearman: null
+    regime_ic:
+      bull: -0.039573482635411945
+      bear: -0.03079542627329561
+    oos_ic: -0.051794922643421414
+    n: 1601
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - tail_reversal
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0406 < 0.02
+  - ic_ir -0.256 < 0.3
+- card_id: TDM-E-L1-S2/calibration/40_agg_lu_count_level_fwd10
+  node_id: TDM-E-L1-S2
+  run_id: p07a-agg8-20261015-40_agg_lu_count_level_fwd10
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.09611838671351815
+    mono_spearman: 0.8181818181818182
+    n: 1850
+    regime_ic:
+      bull: 0.0023566516797193576
+      bear: 0.1632790346498678
+    oos_ic: -0.1101502214941298
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9424
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_ir_machine_face
+    - ic_level
+    - monotonicity
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip oos=-0.1102 is=0.0961
+- card_id: TDM-E-L1-S2/calibration/41_agg_lu_count_z20_fwd10
+  node_id: TDM-E-L1-S2
+  run_id: p07a-agg8-20261015-41_agg_lu_count_z20_fwd10
+  kind: exam
+  verdict: pass
+  pillars_all_pass: true
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.10374138796383135
+    mono_spearman: 0.7333333333333332
+    n: 1846
+    regime_ic:
+      bull: 0.10279207456096648
+      bear: 0.07671834138125067
+    oos_ic: 0.09967324030292546
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9962
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_ir_machine_face
+    - ic_level
+    - monotonicity
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails: []
+- card_id: TDM-E-L1-S2/calibration/42_agg_lu_ratio_level_fwd10
+  node_id: TDM-E-L1-S2
+  run_id: p07a-agg8-20261015-42_agg_lu_ratio_level_fwd10
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.10226405026690474
+    mono_spearman: 0.8424242424242423
+    n: 1849
+    regime_ic:
+      bull: 0.006225708336979807
+      bear: 0.17107987471206693
+    oos_ic: -0.09794024480545353
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9516
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_ir_machine_face
+    - ic_level
+    - monotonicity
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip oos=-0.0979 is=0.1023
+- card_id: TDM-E-L1-S2/calibration/43_agg_lu_ratio_z20_fwd10
+  node_id: TDM-E-L1-S2
+  run_id: p07a-agg8-20261015-43_agg_lu_ratio_z20_fwd10
+  kind: exam
+  verdict: pass
+  pillars_all_pass: true
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.10215472586080257
+    mono_spearman: 0.7454545454545454
+    n: 1845
+    regime_ic:
+      bull: 0.0979888667670147
+      bear: 0.07662583860401267
+    oos_ic: 0.10161842155845155
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 0.9995
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_ir_machine_face
+    - ic_level
+    - monotonicity
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails: []
+- card_id: TDM-E-L1-S2/calibration/44_agg_avg_abs_ret_level_fwd5
+  node_id: TDM-E-L1-S2
+  run_id: p07a-agg8-20261015-44_agg_avg_abs_ret_level_fwd5
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.0827510994684094
+    mono_spearman: 0.7212121212121211
+    n: 1854
+    regime_ic:
+      bull: 0.011431740878500544
+      bear: 0.16703339322850244
+    oos_ic: -0.06434087522015985
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_ir_machine_face
+    - ic_level
+    - monotonicity
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip oos=-0.0643 is=0.0828
+- card_id: TDM-E-L1-S2/calibration/45_agg_avg_abs_ret_level_fwd10
+  node_id: TDM-E-L1-S2
+  run_id: p07a-agg8-20261015-45_agg_avg_abs_ret_level_fwd10
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.0825858778644068
+    mono_spearman: 0.8545454545454544
+    n: 1849
+    regime_ic:
+      bull: -0.01997897639004548
+      bear: 0.19582567926566805
+    oos_ic: -0.09538307769192328
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_ir_machine_face
+    - ic_level
+    - monotonicity
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - 'regime_sign_flip {''bull'': -0.01997897639004548, ''bear'': 0.19582567926566805}'
+  - oos_sign_flip oos=-0.0954 is=0.0826
+- card_id: TDM-E-L1-S2/calibration/46_agg_avg_abs_ret_z20_fwd5
+  node_id: TDM-E-L1-S2
+  run_id: p07a-agg8-20261015-46_agg_avg_abs_ret_z20_fwd5
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.10278266703222855
+    mono_spearman: 0.9272727272727272
+    n: 1850
+    regime_ic:
+      bull: 0.12811082609208432
+      bear: 0.12723271900186184
+    oos_ic: -0.0324481777536919
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_ir_machine_face
+    - ic_level
+    - monotonicity
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip oos=-0.0324 is=0.1028
+- card_id: TDM-E-L1-S2/calibration/47_agg_avg_abs_ret_z20_fwd10
+  node_id: TDM-E-L1-S2
+  run_id: p07a-agg8-20261015-47_agg_avg_abs_ret_z20_fwd10
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.11324990992487535
+    mono_spearman: 0.9151515151515152
+    n: 1845
+    regime_ic:
+      bull: 0.16627761819377562
+      bear: 0.11832223792042444
+    oos_ic: -0.10799984623073079
+    ic_ir: null
+    net_bucket_medians:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    round_trip_cost_bp: .nan
+    signal_turnover_daily: 1.0
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_ir_machine_face
+    - ic_level
+    - monotonicity
+    - oos_confirmation
+    - regime_split
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip oos=-0.1080 is=0.1132
+- card_id: TDM-E-L9-A03/calibration/02_880板块相对强弱持续性
+  node_id: TDM-E-L9-A03
+  run_id: p07a-880rs-20261015-02_880板块相对强弱持续性
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.011144649732004165
+    ic_ir: 0.03739671235242707
+    mono_spearman: null
+    regime_ic:
+      bull: .nan
+      bear: 0.011856730761481728
+    oos_ic: 0.02096984614447392
+    n: 976
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+      regime_same_sign: regime_ic 有效段 1 <2（牛/熊同号不可判）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean 0.0111 < 0.02
+  - ic_ir 0.037 < 0.3
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  node_id: TDM-E-L1-AGG
+  run_id: p07a-sector6-20261015-02_四档风险轴前向收益单调
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.006884874680524641
+    mono_spearman: 0.39999999999999997
+    n: 1621
+    regime_ic:
+      bull: -0.02082522548057152
+      bear: -0.025029619293965476
+    oos_ic: 0.06817660652206026
+    ic_ir: null
+    net_bucket_medians:
+    - -0.002289
+    - -0.002912
+    - -0.002492
+    - -0.001916
+    round_trip_cost_bp: 25.0
+    signal_turnover_daily: 0.1129
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - extreme_tier_gap
+    - ic_floor
+    - oos_hold
+    - regime_stability
+    - tier_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman 0.400 < 0.6
+  - ic_mean 0.0069 < 0.02
+- card_id: TDM-E-L1-S0-1/calibration/03_market_scope_sentiment_series
+  node_id: TDM-E-L1-S0-1
+  run_id: p07a-sector6-20261015-03_market_scope_sentiment_series
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.02342712201947887
+    mono_spearman: -0.22424242424242422
+    n: 1621
+    regime_ic:
+      bull: -0.0295052317563357
+      bear: -0.02783668583885238
+    oos_ic: 0.0670065828375051
+    ic_ir: null
+    net_bucket_medians:
+    - -0.002122
+    - -0.003233
+    - -0.000666
+    - -0.002005
+    - -0.002423
+    - -0.001236
+    - -0.003988
+    - -0.003049
+    - -0.004144
+    - -0.001604
+    round_trip_cost_bp: 25.0
+    signal_turnover_daily: 0.9994
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - calendar_coverage_guard
+    - dispersion_increment
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.224 < 0.6
+  - ic_mean -0.0234 < 0.02
+  - oos_sign_flip oos=0.0670 is=-0.0234
+- card_id: TDM-E-L2-02-1/calibration/02b_RRG象限迁移_在册10_26双EMA口径版
+  node_id: TDM-E-L2-02-1
+  run_id: p07a-sector6-20261015-02b_rrg_quadrant_10_26_caliber
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.016508530114719144
+    mono_spearman: -0.10303030303030303
+    n: 996
+    regime_ic:
+      bear: 0.013516335137379144
+      rebound: -0.07678648787654536
+    oos_ic: 0.01863053439416563
+    ic_ir: null
+    net_bucket_medians:
+    - -0.001958
+    - -0.003287
+    - -0.004877
+    - -0.002959
+    - -0.001788
+    - -0.002304
+    - -0.001506
+    - -0.003997
+    - -0.002634
+    - -0.004415
+    round_trip_cost_bp: 25.0
+    signal_turnover_daily: 0.9759
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - transition_matrix
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.103 < 0.6
+  - ic_mean -0.0165 < 0.02
+  - 'regime_sign_flip {''bear'': 0.013516335137379144, ''rebound'': -0.07678648787654536}'
+  - oos_sign_flip oos=0.0186 is=-0.0165
+- card_id: TDM-E-L2/ablation/02_板块候选池整体边际
+  node_id: TDM-E-L2
+  run_id: p07a-sector6-20261015-02_板块候选池整体边际
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.06052208748140043
+    mono_spearman: -0.7575757575757575
+    n: 976
+    regime_ic:
+      bear: -0.046627090765656284
+      rebound: -0.04887671904654434
+    oos_ic: -0.07395863250757205
+    ic_ir: null
+    net_bucket_medians:
+    - -0.002262
+    - -0.001224
+    - -0.002066
+    - -0.001804
+    - -0.002946
+    - -0.004449
+    - -0.002405
+    - -0.003509
+    - -0.003943
+    - -0.00368
+    round_trip_cost_bp: 25.0
+    signal_turnover_daily: 1.0
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ablation_marginal
+    - ic_floor
+    - lag_profile
+    - level_isolation
+    - regime_stability
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.758 < 0.6
+  - ic_mean -0.0605 < 0.02
+- card_id: TDM-E-L2-09/calibration/04_业绩预增催化剂腿
+  node_id: TDM-E-L2-09
+  run_id: p07a-sector6-20261015-04_业绩预增催化剂腿
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.027718063820938055
+    mono_spearman: -0.09999999999999999
+    n: 1393
+    regime_ic:
+      bull: -0.04029559928353187
+      bear: -0.0251516146568193
+    oos_ic: -0.0030551964373752172
+    ic_ir: null
+    net_bucket_medians:
+    - -0.000842
+    - -0.003008
+    - -0.003164
+    - -0.002771
+    - -0.00215
+    round_trip_cost_bp: 25.0
+    signal_turnover_daily: 0.8263
+    n_buckets_used: 5
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - express_confirmation
+    - ic_floor
+    - lag_profile
+    - leader_vs_breadth_split
+    - oos_same_sign
+    - orthogonality_to_02
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman -0.100 < 0.6
+  - ic_mean -0.0277 < 0.02
+- card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+  node_id: TDM-E-L1-S5
+  run_id: p07a-sector6-20261015-03_derived_signal_shock_panel
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.016579210778115264
+    mono_spearman: 0.309090909090909
+    n: 1621
+    regime_ic:
+      bull: 0.012872919510607398
+      bear: 0.01632148134986707
+    oos_ic: 0.057564202853304235
+    ic_ir: null
+    net_bucket_medians:
+    - -0.004047
+    - -0.001601
+    - -0.00279
+    - -0.001616
+    - -0.001256
+    - -0.00287
+    - -0.003374
+    - -0.002324
+    - -0.001615
+    - -0.001387
+    round_trip_cost_bp: 25.0
+    signal_turnover_daily: 1.0
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - shock_event_count
+    - subset_coverage
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - mono_spearman 0.309 < 0.6
+  - ic_mean 0.0166 < 0.02
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: examcard-2026-10-15
+  kind: exam
+  verdict: blocked
+  pillars_all_pass: false
+  oos_ok: false
+  regimes: []
+  date: '2026-10-15'
+  metrics: {}
+  blocked:
+    reason: 'book_channel:bind:FileNotFoundError:[Errno 2] No such file or directory: ''D:\\ZephyrAlpha\\docs\\_working\\fexam\\indicator_exam_scores_v1.yaml'''
+    family: comparison
+    route: dual_arm
+    binding_class: C
+    binding_reason: target_face_not_index_next_day
+    note: 双腿装载不出=如实记 blocked（禁编造指标）；卡面不翻 examined；试次零消费不记账
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - 'blocked: book_channel:bind:FileNotFoundError:[Errno 2] No such file or directory: ''D:\\ZephyrAlpha\\docs\\_working\\fexam\\indicator_exam_scores_v1.yaml'''
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: examcard-2026-10-15
+  kind: exam
+  verdict: blocked
+  pillars_all_pass: false
+  oos_ok: false
+  regimes: []
+  date: '2026-10-15'
+  metrics: {}
+  blocked:
+    reason: book_channel:bind:MemoryError:Unable to allocate 234. MiB for an array with shape (30676538,) and data type object
+    family: comparison
+    route: dual_arm
+    binding_class: C
+    binding_reason: target_face_not_index_next_day
+    note: 双腿装载不出=如实记 blocked（禁编造指标）；卡面不翻 examined；试次零消费不记账
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - 'blocked: book_channel:bind:MemoryError:Unable to allocate 234. MiB for an array with shape (30676538,) and data type object'
+- card_id: TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版
+  node_id: TDM-X-R1-01
+  run_id: mineloop-od1-capexam-1015-07_熔断五级梯度减仓对照_五态仓位锚定
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: false
+  regimes:
+  - bull
+  - crisis
+  date: '2026-10-15'
+  metrics:
+    arm_open:
+      ic_mean: 0.030550447040649378
+      mono_spearman: 0.49696992650327754
+      n: 2121
+      regime_ic:
+        bull: -0.020692825337465748
+        bear: .nan
+        crisis: 0.14404291051096826
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - -0.0025
+      - -0.0025
+      - -0.003561
+      - -0.003222
+      - -0.005196
+      - -0.004261
+      - -0.001166
+      - -0.0025
+      - -0.002463
+      - -0.00021
+      round_trip_cost_bp: 25.0
+      signal_turnover_daily: 0.1621
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.18101112171159428
+        sharpe: 0.19818553883782694
+        turnover_annual_x: 1.720409361273135
+        ann_ret: 0.014691901837829929
+        cost_bp: 25.0
+    arm_base:
+      ic_mean: 0.03198697025409984
+      mono_spearman: 0.37690143708164003
+      n: 2121
+      regime_ic:
+        bull: -0.006551076760030402
+        bear: .nan
+        crisis: 0.2094409662385269
+      oos_ic: .nan
+      ic_ir: null
+      net_bucket_medians:
+      - -0.0025
+      - -0.0025
+      - -0.003561
+      - -0.003222
+      - -0.005196
+      - -0.004261
+      - -0.001166
+      - -0.001565
+      - -0.003029
+      - -0.000933
+      round_trip_cost_bp: 25.0
+      signal_turnover_daily: 0.1598
+      n_buckets_used: 10
+      nav:
+        n: 2122
+        maxdd: 0.28421083843503725
+        sharpe: 0.11624428114540457
+        turnover_annual_x: 2.69856396711021
+        ann_ret: 0.01338007530461155
+        cost_bp: 25.0
+    maxdd_improvement_pp: 10.319971672344296
+    sharpe_delta: 0.08194125769242237
+    turnover_delta_annual_x: -0.9781546058370751
+    open_sharpe_at_tier_bp: 0.16348451319529514
+    ic_delta_is: -0.0014365232134504642
+    ic_delta_oos: .nan
+    round_trip_cost_bp: 25.0
+    arm_face_readings:
+      arm_context_present: true
+      base_arm_cfg: levels_hysteresis
+      open_roundtrips_30d: 7
+      open_downgrades: 10
+      base_roundtrips_30d: 0
+      base_downgrades: 1
+      n_days_open: 2123
+      base_is_no_hysteresis: false
+      open_is_no_hysteresis: false
+      maxdd_improvement_vs_no_hysteresis_pp: null
+      whipsaw_roundtrip_ratio: null
+      crisis_spans:
+      - span: 2020-02-01..2020-03-23
+        n: 36
+        triggered: true
+      - span: 2024-01-02..2024-02-08
+        n: 28
+        triggered: true
+      missed_crisis_triggers: 0
+    arm_pillars_owned_by_other_run:
+    - maxdd_improvement_vs_no_hysteresis_min_pp
+    - whipsaw_roundtrip_ratio_max
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face: {}
+    pillars_prose_keys:
+    - drawdown_floor
+    - oos_stability
+    - paired_arm_protocol
+    - sharpe_floor
+    - turnover_cost_gate
+    - whipsaw_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - oos_sign_flip ic_delta nan（配对 IC 面样本不足）
+- card_id: TDM-P-P2-04/calibration/06_减仓参与率压力对次日价格路径
+  node_id: TDM-P-P2-04
+  run_id: p08b-1015-04-card06
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.012099402280067362
+    ic_ir: -0.06846319944870466
+    mono_spearman: null
+    regime_ic:
+      bull: 0.005964039332779978
+      bear: -0.03338050198412378
+    oos_ic: -0.008352508375388411
+    n: 1859
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - confound_gate
+    - ic_floor
+    - proxy_honesty
+    - redline_gate
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0121 < 0.02
+  - ic_ir -0.068 < 0.3
+  - 'regime_sign_flip {''bull'': 0.005964039332779978, ''bear'': -0.03338050198412378}'
+- card_id: TDM-P-P2-04/calibration/07_冲高反弹幅度对次日收益与减半阈值落点
+  node_id: TDM-P-P2-04
+  run_id: p08b-1015-04-card07
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.027106849405020804
+    ic_ir: -0.13573746420653873
+    mono_spearman: null
+    regime_ic:
+      bull: -0.02228113037566769
+      bear: -0.029914352343778892
+    oos_ic: -0.02504382564166929
+    n: 1859
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - ballast_subgroup_gate
+    - ic_floor
+    - negative_honesty
+    - regime_stability
+    - response_monotonicity
+    - threshold_placement_gate
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0271 < 0.02
+  - ic_ir -0.136 < 0.3
+- card_id: TDM-E-L9-A01/calibration/02_日线动量截面
+  node_id: TDM-E-L9-A01
+  run_id: st-autoplan-verify-20261015
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.04026245066618168
+    ic_ir: -0.2538528976888303
+    mono_spearman: null
+    regime_ic:
+      bull: -0.03859069459481938
+      bear: -0.030795463406437955
+    oos_ic: -0.05179507304073502
+    n: 1621
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - tail_reversal
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0403 < 0.02
+  - ic_ir -0.254 < 0.3
+- card_id: TDM-E-L3-07-3/calibration/03_target_close_to_close_control
+  node_id: TDM-E-L3-07-3
+  run_id: st-qoder-p07-1015-06
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.041730851525535746
+    ic_ir: -0.25500127905141573
+    mono_spearman: null
+    regime_ic:
+      bull: -0.04088842801557338
+      bear: -0.031102461914509563
+    oos_ic: -0.052205256094141735
+    n: 1621
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - cost_sanity
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - verified_node_discipline
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0417 < 0.02
+  - ic_ir -0.255 < 0.3
+- card_id: TDM-E-L9-A01/calibration/04_universe_st_and_age_control
+  node_id: TDM-E-L9-A01
+  run_id: st-qoder-p07-1015-06
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.041730851525535746
+    ic_ir: -0.25500127905141573
+    mono_spearman: null
+    regime_ic:
+      bull: -0.04088842801557338
+      bear: -0.031102461914509563
+    oos_ic: -0.052205256094141735
+    n: 1621
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - tail_reversal
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0417 < 0.02
+  - ic_ir -0.255 < 0.3
+- card_id: TDM-E-L3-07-3/calibration/04_universe_no_filter_control
+  node_id: TDM-E-L3-07-3
+  run_id: st-qoder-p07-1015-06
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.026627857824190977
+    ic_ir: -0.17433923952160182
+    mono_spearman: null
+    regime_ic:
+      bull: -0.023584402135261702
+      bear: -0.018712456585047107
+    oos_ic: -0.03599276247605634
+    n: 1620
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - cost_sanity
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - verified_node_discipline
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0266 < 0.02
+  - ic_ir -0.174 < 0.3
+- card_id: TDM-E-L9-A01/calibration/05_target_t1o_to_t2c_control
+  node_id: TDM-E-L9-A01
+  run_id: st-qoder-p07-1015-06
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.026543146087269584
+    ic_ir: -0.17403285244184388
+    mono_spearman: null
+    regime_ic:
+      bull: -0.02343418595931632
+      bear: -0.018615521401213576
+    oos_ic: -0.03606360213682766
+    n: 1620
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    - tail_reversal
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0265 < 0.02
+  - ic_ir -0.174 < 0.3
+- card_id: TDM-E-L3-07-1/ablation/02_烂板剔除步
+  node_id: TDM-E-L3-07-1
+  run_id: st-qoder-p07-1015-06
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.02081657736952234
+    ic_ir: -0.48213330858406755
+    mono_spearman: null
+    regime_ic:
+      bull: -0.02404477201184024
+      bear: -0.01612189359827323
+    oos_ic: -0.023224275255530096
+    n: 1620
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - one_word_exclusion
+    - proxied_criterion
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0208 < 0.02
+  - ic_ir -0.482 < 0.3
+- card_id: TDM-E-L3-10/calibration/02_一字板不可成交
+  node_id: TDM-E-L3-10
+  run_id: st-qoder-p07-1015-06
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: 0.009870424514809526
+    ic_ir: 0.38502259649845294
+    mono_spearman: null
+    regime_ic:
+      bull: 0.012076948093104802
+      bear: 0.006449088293802944
+    oos_ic: 0.011096301662463975
+    n: 1524
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - one_word_def
+    - paper_vs_real
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean 0.0099 < 0.02
+- card_id: TDM-E-L3-03-1/calibration/02_涨停基因
+  node_id: TDM-E-L3-03-1
+  run_id: st-qoder-p07-1015-06
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.023940958475789188
+    ic_ir: -0.2300658844993045
+    mono_spearman: null
+    regime_ic:
+      bull: -0.027707938613040897
+      bear: -0.021751172094068728
+    oos_ic: -0.023210717446075318
+    n: 1605
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - min_limit_events
+    - one_word_exclusion
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0239 < 0.02
+  - ic_ir -0.230 < 0.3
+- card_id: TDM-E-L3-01/calibration/02_成交额下限剔除
+  node_id: TDM-E-L3-01
+  run_id: st-qoder-p07-1015-06
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-15'
+  metrics:
+    ic_mean: -0.04326354947003124
+    ic_ir: -0.2942658386595791
+    mono_spearman: null
+    regime_ic:
+      bull: -0.03636101404215605
+      bear: -0.044048577622521956
+    oos_ic: -0.04440405934941715
+    n: 1620
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - fillability_floor
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0433 < 0.02
+  - ic_ir -0.294 < 0.3
