@@ -338,3 +338,100 @@ cd /d/ZephyrAlpha/.worktrees/st-qoder-p05-1015-05 && git --no-pager diff --cache
 - `[BLOCKER]` 2026-10-15|p05（种子预填·Owner 裁）|工具缺陷|signal_orthogonality.py gate 合成冒烟 rc=1 而契约应 rc=5（退出码契约违反）|证据：scripts/backtest/fexam/signal_orthogonality.py gate 子命令；⑤台账 L19 记修复字节在他班在途袋 q-20261015-st-ibtclose-20261015-0003（未落 HEAD）|要⑤席待该袋落地后复测 rc 三态并就地翻状态|高|状态：待修
 - `[BLOCKER]` 2026-10-15|p05（种子预填·Owner 裁）|工具缺陷|gpu_watchman 在 Git Bash 会话 detect 返回 unknown（nvidia-smi 解析/环境差异）|证据实测：scripts/gpu/gpu_watchman.py（盘上 19:06 版 14310B）**CLI 只有 acquire/release/status 三子命令，无 detect**⇒复现口径待点名（疑指 ic_exam 内部 detect 面）；该件不在 HEAD（⑤台账 L194 已记 git ls-tree 零命中）|要⑤席先复现取真实调用面再修，勿按令文字面修|中|状态：待修(现象口径待补)
 [BLOCKER] 2026-10-15|⑤席种子|工具缺陷|signal_orthogonality.py gate 合成冒烟 rc=1 应=5（退出码契约违反；repro=tmp 合成 twin/pool 场景）|scripts/backtest/fexam/signal_orthogonality.py|⑤席下一班修复+补退出码测试|高
+
+## 10-15 20:1x · 班次 07（st-qoder-p05-1015-07）领单＝⑩派单 §3-C `ch_reader.inject_final_strict` 崩只读 CTE 治本；本班交付 1 件；附车道物理不可建（D 盘 ENOSPC）降级登记＋06 班袋阵亡分诊
+
+### 0 冷启动与水位（date 实测，非体感）
+
+- 19:39:42 首命令＝Python 3.12.8 ✓；19:40:50 reaper `source=live` ✓（killed=0 reported=3，whitelist_hits=21）；`lock_files.py cleanup` 回收三班死会话遗物（p03-1015-08／p07c-1015-01／x2-1015）。
+- 进场水位＝commit_pct 89.82／cpu_pct 83.0／degraded=False／worktree_changes 5016／breached=['ALERT-SYS-001'] ⇒ 本班零并发、零子代理（沿 ⑩ 派单"高水位禁自造并发"）。
+- 防重入判读＝06 班游标自述"未完（袋在飞）"，本班按在册三证判其**已停手**：①该 sid 队列仅 1 袋（18:40:10 建，无新袋）②车道 18:45 后零新写（`-newermt` 实测空集）③dev 无该 sid commit 尾标；其 keeper PID 29936 心跳 `status:"alive"`＝按 06 在册令**有意留活**（袋在飞禁放锁/禁停守护），非"前任仍在写"。⇒ 本班按 06 游标"下一班领单序列"接手。
+
+### 1 首件单归属三件核账
+
+| 件 | 本班实测 | 判定 |
+|---|---|---|
+| ① `signal_orthogonality.py` gate 子命令 | 06 班已实现并入袋 `q-20261015-st-qoder-p05-1015-06-0001`；本班 `find .runtime/commit_queue -name "*p05-1015-06-0001*"` 命中＝**dead/ ＋ pending/.stale/ 两份**；`git show HEAD:scripts/backtest/fexam/signal_orthogonality.py` grep `_cte…` 无关，该件 HEAD 面仍查无 | **核销**（勿重做＝让位 06 字节面），但见 §3 阵亡分诊：字节现只活在队列 blobs |
+| ② `goal_readiness_aggregator.py:69` 老册指针 | 06 班出设计稿判"挂起不动手"（三条实测钉死＋充分条件＝与接线同袋属结构判定）；本班未复量、不自接 | **挂起**（沿 06 在册，等 ②/⑩ 定挂载点） |
+| ③ 承接 ⑩ 断链战役批次 | 派单原文＝"可派 ⑤ 席承接未完成批次，但须 commit_pct 落回安全区再起"；本班实测 commit_pct 89.82 未落安全区 **且 D 盘已满** | **不起批**（双判据均不成就，非选择性拖延） |
+
+⇒ 本班改领 ⑩ 派单 §3-C／新增 18＝`ch_reader.inject_final_strict` 对任何带 `WITH … AS` 的只读 SQL 崩（在册挂 ⑤ 席"领单候选第 2 位"）。
+
+### 2 本班交付＝CTE 别名不再送引擎探测（`src/zephyr/data/ch_reader.py`＋自家测试）
+
+**开工前核实现状**＝该件盘==HEAD（`git diff --numstat HEAD` 空、`--cached` 空）⇒ 无他班在途写手；测试件 `tests/data/data/data/test_ch_reader_strict.py` 既存在册（全 fake、零网络）⇒ 追加不新建，零 creation_token。
+
+**缺陷机理（真 CH 实测复现，改前）**＝`_FROM_PATTERN`（`:63`）只看 FROM 位，把 CTE 定义名当物理表送 `_final_suffix_strict` → `get_table_engine_strict` 空返回＝未知＝抛：
+
+| SQL 形态 | 改前（主区真 CH） | 改后（同一进程外复跑） |
+|---|---|---|
+| `WITH px AS (… FROM c1_market.kline_daily) SELECT … FROM px` | RAISE ClickHouseQueryError `SQL=<engine-probe px>` | OK，真表处注入 `FROM c1_market.kline_daily FINAL`，别名原样 |
+| `WITH a AS (…), b AS (SELECT x FROM a) SELECT … FROM b` | RAISE `SQL=<engine-probe a>` | OK，链上两名皆不探 |
+| `WITH (SELECT …) AS cnt`／`FROM numbers(10)`／`FROM (SELECT …)`／裸真表 | 四形皆 OK | OK（零回退） |
+| legacy `inject_final` 同一 CTE | 不抛但为 `px` 连刷 2 条 GATE-P0-ENGINE-PROBE，`engine_probe_failures['px']` 累到 2＝**假未知计数面** | 别名零告警；真表未知仍照响（不过度哑化） |
+
+**改法**＝新增模块级 `_cte_aliases()`（谓词 `\b([A-Za-z_]\w*)\s+AS\s*\(`，小写集合），`inject_final` 与 `inject_final_strict` 两处 `_replace` 同用一次算好的集合；真表探测与 FINAL 注入决策零改动＝legacy 返回值字节语义不变。头部 `[INVARIANTS]` 补一条别名单口（本件契约真源）。
+
+**测试与自证**＝`TestCteAliasNotProbed` 5 枚（strict 单 CTE 不抛／链式多 CTE 不抛／探针采集面 `probed == ['c1_market.kline_daily']` 双向防"漏治＋过度跳过"／legacy 假告警停而真告警仍响／`query_rows` 消费者腿）：
+
+- 整文件＝**36 passed in 90.61s**（原 31 ＋ 新 5，零回归）。
+- 突变自证＝把 `_cte_aliases` 打回空集（＝缺陷面）⇒ **5 failed, 31 deselected in 5.36s**，红形恰为 `engine_probe px`；撤改后 sha256[:16] 回 `ce9a8640ced3a9e2`（MATCH=True）＋文件内 `MUTATION` 计数=0 ＋ 备份件字节相同并已删（`.runtime/tmp` 零残留）。
+- 复跑＝5 passed 4.83s；`ruff check` All checks passed；`ruff format --check` 首量"1 file would be reformatted"（仅我新块的 `_CTE_CHAIN` 折行）⇒ 格式化后两面 clean，再复跑 5 passed 7.52s。
+- 临时面＝测试一律 `--basetemp` 指仓外 C: 盘；`-p no:cacheprovider` 会与本仓 `cache_dir` 配置对撞致 pytest INTERNALERROR（非用例红），本班已按实测剔除该旗。
+
+**落地面**＝袋 `q-20261015-st-qoder-p05-1015-07-0001`（见 §4 终态），files=2（代码＋自家测试，**不含台账/游标**＝06 在册令"本袋未落地前禁投第二张含 ledger.md 的袋"的直接遵从）；staged 面实测 `ch_reader.py +27/−2`、`test_ch_reader_strict.py +72/−0`。
+
+### 3 06 班袋阵亡分诊（当日四态分诊不隔夜，内容级）
+
+- 四态落点＝`dead/` 有袋、`pending/.stale/` 同名残影；`dead_reason` 逐字＝`landing 异常: RuntimeError: [landing] 非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）: docs/_working/automation_campaign/p05_impl/ledger.md`。
+- 判读＝**死因不在代码面**：袋内 5 件里唯一冲突件是共享追加型台账本身（06 的 blob 基＝16d46544af 之前，dev 已到 ef9d447dc1，期间他席对同文件有写）。代码件 `signal_orthogonality.py` blob `8c27ccb4e7…`／测试件 blob `2031842c4f…`／简介行在 `dead/` 袋的 blobs 内**逐字节仍可取回**（在册"未落地件唯一存活处＝队列 blobs，袋会被 purge 故抢救有时限"）。
+- 本班**不 requeue 原袋**（原样重投＝再吃同一条 ledger 三方冲突）；正解处方交 08 班（见 §5）。
+
+### 4 施工通道降级登记（GW 计数面，必填）
+
+- **改哪面**＝未开物理隔离车道，直接在主区工作树施工＋`--allow-non-worktree` 入队。**为何**＝`session_worktree.py create st-qoder-p05-1015-07 p05-impl` 实测失败：checkout 途中成片 `No space left on device`（末行 `fatal: cannot create directory at 'docs/01_policies_and_standards/sop/data_audit_sop'`），`.worktrees/st-qoder-p05-1015-07` 未生成、`git worktree list` 无该条 ⇒ 隔离施工在物理上不可行，非选择性规避。
+- **分母实测**（三次，单调下行）＝`df` 读数 D: 732G 用满、avail 54M → 50.5MiB → 29.9MiB（`shutil.disk_usage`，20:08:40 末量）。C: 余 16.75GiB（本班 `--basetemp` 与消息件均走 C: 面）。
+- **回退命令**＝若本班袋落地后需撤销，按 dev 现值取该两件 HEAD 面的**上一版**重放（`git revert` 本班落地提交即可，单袋两件、无跨件依赖）；主区盘面在他席推进后勿裸 checkout 复位（在册回退弹族）。
+- 正门四步实测（首投 rc=8 SESSION-REQUIRED 后补做，非加旗旁路）＝`register(sid, pid=0, held_files=主区绝对路径×2)` → `claim_file` 2/2 True → `_spawn_heartbeat_daemon` PID **27476** → `register_heartbeat_keepalive(ttl=7200s)` 具名 grant 可读回（granted_at/expires_at 落账）。`lock_files.py acquire-batch` 实测 acquired=2 denied=0（ttl=40 分）。
+
+### 5 转单段（移交 ⑥/⑧/⑩ 与下一班）
+
+1. **→08 班首件**＝抢救 06 班代码字节：从 `dead/q-20261015-st-qoder-p05-1015-06-0001.json` 的 blobs 取 `signal_orthogonality.py`（blob `8c27ccb4e7…`）＋`test_signal_orthogonality.py`（blob `2031842c4f…`）＋`module_translation_registry.yaml` 那 5 行纯插入，**拆袋重投**（代码＋测试＋简介行同袋，**禁再放 ledger.md/checkpoint.md**）；投前先 `git show HEAD:` 两面复量该代码件仍查无，投后按 §2第5条核真实归属。
+2. **→08 班**＝本席台账现含 07 节（盘面）**未入袋**，落地链由 08 班决定；06 游标必做那一步（重贴 `.runtime/tmp/st-qoder-p05-1015-06/ledger_section_06b.md` 45 行）在 06 袋死后**改为**从 dead 袋 blob 取 06 主节 71 行，两者皆为纯追加件、勿与 07 节互相覆盖。
+3. **→⑥ 席**＝06 班在册"卡面不携带执行器路径，绑定属 ⑥ 席载体面"未变；本班新落的 `_cte_aliases` 不改卡面语义。
+4. **→⑩/统筹（最高优先）**＝D 盘 free 已到 29.9MiB 且在下行：**全线任何 `session_worktree create`、任何 `git gc`、任何车道收班都会静默半成功**（本班实测 create 报 error 却把分支建出来、`git worktree list` 无条目）。减压属物理不可逆删除＝Owner 保留面，本席不自删；请 ⑩ 立即起呈批面并把"高水位"判据从内存扩到磁盘。
+5. **→⑩**＝在册"令牌热册勿随袋投／主区暂存区他班旧快照"两态本班复证：`docs/_working/automation_campaign/feedback/to_impl.md` index 仍比 HEAD 少 292 行（06 在册值，本班未复位）。
+
+### 6 [BLOCKER] 行
+
+- `[BLOCKER]` 2026-10-15|⑤席1015-07|环境（磁盘）|D 盘 732G 用满，free 54M→50.5MiB→29.9MiB（20:08:40 末量），`session_worktree create` 实测 `No space left on device` 半成功（分支建出／worktree 无条目／`.worktrees/st-qoder-p05-1015-07` 不存在）|证据＝本班 create 末行 fatal 串＋`shutil.disk_usage('D:/')[2]`|要⑩立即呈批 Owner 起磁盘减压（物理不可逆删除＝Owner 保留面，本席不自删），并把全线开工前置加"盘 free"一维|**极高（阻断隔离施工＋随时使落地链半成功）**
+- `[BLOCKER]` 2026-10-15|⑤席1015-07|落地链（他袋阵亡连坐）|06 班袋 `q-20261015-st-qoder-p05-1015-06-0001` 进 `dead/`，dead_reason＝`[landing] 非注册表族件双侧皆改真冲突（整文件三方）: …/p05_impl/ledger.md`——死因是共享追加型台账，代码字节仍完整活在 dead 袋 blobs|见 §3/§5-1|要08 班按"拆袋重投、禁再含 ledger.md"处方抢救，勿原样 requeue、勿盲目 purge|高
+- `[BLOCKER]` 2026-10-15|⑤席1015-07|工具缺陷（他人面，本席不改）|`pytest -p no:cacheprovider` 与本仓 `cache_dir` 配置对撞 ⇒ INTERNALERROR "Unknown config option: cache_dir"，形态像"零测试跑"而非配置错|证据＝本班两次跑对比（带旗 no tests ran 1.81s／去旗 36 passed 90.61s）|要⑩路由给工具班在 py.ini 侧治本或把该旗列入禁用清单；各席短报＝勿套该旗|中
+
+### 7 收班三件与本班耗时（实测，非体感）
+
+- **袋终态（20:17:21 现测）**＝`pending/q-20261015-st-qoder-p05-1015-07-0001.json` 在册；`git show HEAD:src/zephyr/data/ch_reader.py | grep -c _cte_aliases`＝**0**、dev HEAD＝`7266bb6162` ⇒ **本班零落地**（判据只认 HEAD 面，与"已入袋"是两态，勿混报）。队列 20:14 时点 pending=37、daemon online。
+- **班毕三件执行态**＝①release＝**本班有意不放**（袋在飞，在册"袋在飞禁放锁"＋421 幽灵死信族；claim ttl=40 分自会到期，08 班核完四态再 `--release-only`）；②心跳守护注销＝**有意不停**（PID 27476＋具名 grant 至约 22:09，正是为了让本袋熬过 drain；08 班若判本袋已死须连同守护一起收，勿留第七班撞 ghost_session）；③耗时＝**首命令 19:39:42 → 游标 CAS 写完 20:16:57＝37.2 分**（现测两时点相减，非估算），收班本节另加约 1 分。
+- **磁盘这条线本班二次复测**＝20:12:10 free **1.2MiB**（历史最低）→ 20:14:01 弹回 38.9MiB → 20:17:21 又跌到 **10.3MiB**＝**振荡下行**，非稳定态。本班全程未起任何重扫/重生成器（沿 ⑩"高水位不起重扫"），临时面只落 `.runtime/tmp/`（消息件成功后未随删，本班手清；两次预检 stdout 留作 08 班取证）。
+- 一处自纠（留旧读数不删）：本班把首投 rc=8 的成因先按"未注册会话"处置前，曾按 06 在册猜"车道守护面"——本班**无车道**，真因就是 ⑤ 席主区首投未走正门四步（`register(pid=0)`→`claim_file`→daemon→grant）；补做后同一条命令带 `--adopt-prior-work` 即 rc=0。05 班在册"三投均 DENIED 于锁外预检"与本型不同物，勿并案。
+
+### 8 两条新情报（只测量不改码，路由 ⑩/⑨/④——本班未扩权施工）
+
+**(a) 该缺陷为何长期不被撞见＝在册绕行配方恰好遮住了它。** 实测尺＝同进程两跑对拍（fake 引擎，零网络）：
+
+| SQL 形态 | 探针采集面 | 严格面结果 |
+|---|---|---|
+| `WITH px AS (… FROM c1_market.kline_daily) … FROM px`（无人工 FINAL） | 修复前＝真表＋`px`；修复后＝**仅真表** | 修复前 RAISE／修复后 OK 且真表注入 FINAL |
+| `WITH px AS (… FROM c1_market.kline_daily **FINAL**) … FROM px`（③席在册绕行配方"CTE 显式 FINAL"） | **空集**（`inject_final_strict` 首行"已含 FINAL 则短路"） | OK，**根本没走到探测** |
+
+⇒ 结论：撞崩的唯一条件是"CTE 查询里一处人工 FINAL 都没写"。各席按绕行配方手工补 FINAL 后**从未触发探测**＝缺陷被旁路遮住，这解释了它为何活到今天；也正因如此，(b) 才是更该呈的一条。
+
+**(b) 同一条短路是"漏注入"面（本班判属结构改动，不自接，请 ⑩/⑨ 判是否单独立项）。** 实测：
+
+- 输入＝`WITH px AS (SELECT symbol FROM c1_market.kline_daily FINAL) SELECT count() FROM px WHERE symbol IN (SELECT symbol FROM c2_market.stock_limit)`；
+- 读数＝探针采集面＝`[]`（零探测）、输出串里 `c2_market.stock_limit` **无 FINAL**；
+- 含义＝只要 SQL 任意位置手写了一处 FINAL，同一条 SQL 里**其余 Replacing 真表全部静默不注入** ⇒ 恰是本模块存在的理由（防读数含未合并重复版本）被这条短路绕过；另注意 `_FROM_PATTERN` 只匹 FROM 位，JOIN 位的真表本就不在注入面（同族第二缺口，本班未量其消费者面积）。
+- 本席不自修的理由＝改短路＝改所有手写 FINAL 查询的行为面（存量 12+ 消费者＋各席绕行件），属"改架构逻辑"，按铁律须先有真源裁定与普查，不在本班"改数不改架构"配额内。
+
+
+

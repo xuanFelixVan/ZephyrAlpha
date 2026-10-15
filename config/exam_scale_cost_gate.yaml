@@ -105,3 +105,46 @@ cost_gate_active:
   launch_gate_scope: [p1_median_bp_min, p2_p10_bp_min]
   wired_by: st-nightsweep2-t2-20260930
   wired: '2026-09-30'
+
+# ---------------------------------------------------------------------------
+# G1 净费参数面（追加块，形制沿用裁定#435/#446 先例：上方 cost_gate/scale_gate/
+# turnover_gate/search_objective/breakeven_cost_gate/cost_gate_active 六块一字未动）。
+# 授权=裁定#506（2026-10-10，status=active）原文："费率模型内收=复用引擎冻结土规
+# （佣金 2.5bp 双边+印花 10bp 卖+滑点 5bp），仅补 A 股最低佣金 5 元修正项（引擎未含，
+# 参数入 exam_scale_cost_gate.yaml net_fee 节唯一参数面，禁硬编码，名义额 20 万阈值起咬合）；
+# 实施=calibration_exam 出分附 net_bucket_medians"。
+# 落地班=st-qoder-p05-1015-02（⑤实现席 10-15 班次 02）。本节缺席期间（2026-10-10 裁定→
+# 2026-10-15 实测）消费腿 calibration_exam._round_trip_cost_bp() 走 except→nan 分支，
+# 净费读数恒 NaN＝静默失效，在册留痕见 docs/04_research_records/mining/ledgers/
+# nightmine_20261010/L5_ledger.md 与 ⑨席 04 班修改单修⑨。
+net_fee:
+  ruling: 裁定#506
+  landed_by: st-qoder-p05-1015-02
+  landed: '2026-10-15'
+  # 数值唯一来源=引擎冻结土规常量（scripts/backtest/translated/_c4_engine.py
+  # COMMISSION_BP/STAMP_BP/SLIPPAGE_BP 与其 cost 式 cost=turnover*(COMMISSION_BP*2
+  # +STAMP_BP+slip*2)/1e4）；本节的 round_trip_cost_bp 是该式的常数解
+  # 2.5*2+10.0+5.0*2=25.0，零自创口径；两面值由 tests/backtest/test_net_fee_param_face.py 对拍钉死。
+  source_of_numbers: scripts/backtest/translated/_c4_engine.py（禁双头硬编码）
+  commission_bp_per_side: 2.5
+  stamp_tax_bp_sell_only: 10.0
+  slippage_bp_per_side: 5.0
+  # 消费键=calibration_exam._round_trip_cost_bp() 唯一读取位（data["net_fee"]["round_trip_cost_bp"]）
+  round_trip_cost_bp: 25.0
+  # ⚠ 口径差异登记（本席不改消费腿——该件 10-15 有两只在途袋）：引擎土规按 turnover 缩放成本
+  # （cost=turnover×标量），而消费腿 _series_metrics 是"每桶中位收益减固定往返费"（不乘换手）。
+  # ⇒ 本节的 25.0 在消费腿上是"满换手单边全额"档，比引擎口径保守；两者何时统一属呈批面。
+  caliber_note: 消费腿为固定扣费口径（不乘换手），与引擎 turnover 缩放口径不同，已登记未修
+  # A 股最低佣金修正项（裁定#506 点名"引擎未含，参数入本节"）：5 元/笔，名义额 ≥20 万时
+  # 5/200000=0.25bp 低于 2.5bp 单边佣金⇒不咬合，故 20 万以上标量 25.0 即真值。
+  # ⚠ 代码腿未接：_round_trip_cost_bp() 无名义额形参⇒下面两键今天是登记面非计算面，
+  #   接线须动 calibration_exam.py（在途袋防撞），设计稿见 docs/_working/automation_campaign/
+  #   feedback/to_impl.md 2026-10-15 ⑤席 02 班条。
+  min_commission_cny: 5.0
+  min_commission_bite_below_notional_cny: 200000
+  # 判罚面：本节只进 metrics（net_bucket_medians/round_trip_cost_bp），不进 judge()
+  # ⇒ 存量与在途 verdict 零影响。依据=docs/04_research_records/mining/ledgers/
+  # nightmine_20261010/05_owner_decisions.yaml 在册注"影响面=每卡 net_bucket_medians 字段（不进 judge()）"。
+  judge_face: metrics_only
+  # 追溯面：裁定#506 明文"存量已冻结卡不追溯（G4-5）"⇒本只改此后新出分行的净费读数
+  backfill_existing_rows: forbidden_by_ruling
