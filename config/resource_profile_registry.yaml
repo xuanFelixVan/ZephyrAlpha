@@ -7,7 +7,7 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-10-14T11:40:09Z'
+generated_at: '2026-10-15T09:47:23Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器四源全量再生；条目禁手工增删）
@@ -47,7 +47,7 @@ extraction_warnings:
 cron_convention: 标准 cron（0=周日，croniter 口径）；schedule.yaml 的 APScheduler dow（0=周一）由生成器归一——生成器=映射层
 e0_mapping_note: resource_class←E0 compute_class 映射层在本生成器（local→light，local_gpu/mixed→heavy，api→llm_api_*）；E0 真源 scripts/backtest/compute_window_gate.py
   不动
-plan_ref: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+plan_ref: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
 entities:
 - task_id: data_slot_auction_highfreq
   module_id: null
@@ -867,7 +867,7 @@ entities:
   - tick_drain
   window_type: dynamic
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -887,7 +887,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -907,7 +907,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -952,7 +952,7 @@ entities:
   - ch_bulk_write
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -974,7 +974,7 @@ entities:
   - ch_bulk_write
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -995,13 +995,13 @@ entities:
   - gpu_default
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: 0.2016
     p90_duration_min: 8
     samples: 8
-    last_at: '2026-10-13T21:40:05+00:00'
+    last_at: '2026-10-14T21:40:04+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_convert_gguf.jsonl
   status: planned
   notes_zh: GGUF 转换（GPU 手动）
@@ -1015,7 +1015,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1035,13 +1035,13 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: 16.9661
     p90_duration_min: 941
     samples: 7528
-    last_at: '2026-10-13T21:40:06+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_factory_grid_executor.jsonl
   status: planned
   notes_zh: 工厂网格执行器（单批最大算力实体，2万配方）；[P5-calib 2026-09-17 校正] dur 240→580（n=179 P90=573.1 低估，班次会压下一班）、mem 4.0→2.7（max×1.15=2.60
@@ -1057,7 +1057,7 @@ entities:
   - llm_local
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -1078,13 +1078,13 @@ entities:
   - gpu_default
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: 0.1616
     p90_duration_min: 10
     samples: 18
-    last_at: '2026-10-13T21:40:06+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_kronos_adapter.jsonl
   status: planned
   notes_zh: Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）；[P5-calib 2026-09-17 校正] dur 60→5、mem 6.0→0.5（n=6 P90=3.1/0.162，取整留余量）
@@ -1099,7 +1099,7 @@ entities:
   - gpu_default
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -1120,7 +1120,7 @@ entities:
   - llm_local
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -1141,13 +1141,13 @@ entities:
   - llm_local
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: 0.6486
     p90_duration_min: 1
     samples: 13
-    last_at: '2026-10-13T21:40:06+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_lane_c_agentic_miner.jsonl
   status: planned
   notes_zh: Lane-C agentic 挖掘（llm_api_local+cpu，分钟-十几分钟）
@@ -1162,7 +1162,7 @@ entities:
   - tick_drain
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1183,7 +1183,7 @@ entities:
   - llm_local
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -1205,7 +1205,7 @@ entities:
   - ch_bulk_write
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -1226,7 +1226,7 @@ entities:
   - llm_local
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -1247,13 +1247,13 @@ entities:
   - gpu_default
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: 0.1257
     p90_duration_min: 13
     samples: 7
-    last_at: '2026-10-13T21:40:06+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_run_sft_train.jsonl
   status: planned
   notes_zh: SFT 手动重训（GPU 小时级）
@@ -1268,7 +1268,7 @@ entities:
   - tick_drain
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1289,7 +1289,7 @@ entities:
   - tick_drain
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1309,7 +1309,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1350,7 +1350,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1371,7 +1371,7 @@ entities:
   - ch_bulk_write
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -1391,7 +1391,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1412,7 +1412,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1432,7 +1432,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1452,7 +1452,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1472,7 +1472,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1492,7 +1492,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -1512,7 +1512,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1533,7 +1533,7 @@ entities:
   - machine_blackout
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1554,7 +1554,7 @@ entities:
   exclusive_group: []
   window_type: manual
   window_expr: null
-  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  schedule_truth_source: docs/_archive/_working_cleared/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1580,7 +1580,7 @@ entities:
     peak_mem_gb: 0.5035
     p90_duration_min: 9
     samples: 16
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_ail1_scan.jsonl
   status: active
   notes_zh: AIL1Scan
@@ -1622,7 +1622,7 @@ entities:
     peak_mem_gb: 0.3475
     p90_duration_min: 6
     samples: 24
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_c4_exam.jsonl
   status: active
   notes_zh: C4Exam
@@ -1663,7 +1663,7 @@ entities:
     peak_mem_gb: 0.2637
     p90_duration_min: 19
     samples: 37
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_commit_perf_report.jsonl
   status: active
   notes_zh: CommitPerfReport
@@ -1705,7 +1705,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
-    no_sample_reason_zh: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_dashboard_api.jsonl
   status: active
   notes_zh: DashboardAPI
@@ -1767,7 +1767,7 @@ entities:
     peak_mem_gb: 0.1172
     p90_duration_min: 0
     samples: 1
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_decision_chain_sentinel.jsonl
   status: active
   notes_zh: DecisionChainSentinel
@@ -1787,7 +1787,7 @@ entities:
     peak_mem_gb: 0.4291
     p90_duration_min: 874
     samples: 248
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_f06_grid.jsonl
   status: active
   notes_zh: F06Grid
@@ -1808,7 +1808,7 @@ entities:
     peak_mem_gb: 0.394
     p90_duration_min: 189
     samples: 131
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_factory_lane_c.jsonl
   status: active
   notes_zh: FactoryLaneC；[P5-calib HOLD 2026-09-17] mem 0.08 系批次尖刺负载采样落在启动/空闲相位，待下个周六实跑窗样本再校
@@ -1828,7 +1828,7 @@ entities:
     peak_mem_gb: 0.3108
     p90_duration_min: 5
     samples: 117
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_gate_full_tree_audit.jsonl
   status: active
   notes_zh: GateFullTreeAudit
@@ -1910,9 +1910,9 @@ entities:
   trading_sensitive: false
   measured:
     peak_mem_gb: 0.3708
-    p90_duration_min: 1
-    samples: 13
-    last_at: '2026-10-13T21:40:07+00:00'
+    p90_duration_min: 2
+    samples: 15
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_kronos_scoring.jsonl
   status: active
   notes_zh: KronosScoring
@@ -1953,7 +1953,7 @@ entities:
     peak_mem_gb: 0.3081
     p90_duration_min: 1
     samples: 4
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_metaq_audit_reconcile.jsonl
   status: active
   notes_zh: MetaqAuditReconcile
@@ -2035,9 +2035,9 @@ entities:
   trading_sensitive: true
   measured:
     peak_mem_gb: 11.5975
-    p90_duration_min: 5649
-    samples: 3434
-    last_at: '2026-10-13T21:40:07+00:00'
+    p90_duration_min: 5586
+    samples: 3562
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_ollama_serve.jsonl
   status: active
   notes_zh: AtLogOn 常驻（est=0 表示常驻）；qwen3:8b 显存/内存驻留 〔生成器·C-11 声明↔代码反查〕 纸面受管、裸奔执行（v2 C-11，lane_b 型）。修法=执行体开工前问 check_gate()，或如实改申报（trading_sensitive=false
@@ -2058,7 +2058,7 @@ entities:
     peak_mem_gb: 0.4293
     p90_duration_min: 286
     samples: 948
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_paper_session.jsonl
   status: active
   notes_zh: PaperSession；[R-F] 盘中会话主体，与行情车道组同窗是业务必需（撮合依赖行情流），内存账见审计 warn 留痕。
@@ -2100,7 +2100,7 @@ entities:
     peak_mem_gb: 0.5083
     p90_duration_min: 3
     samples: 60
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_post_settlement.jsonl
   status: active
   notes_zh: PostSettlement；[P5-calib HOLD 2026-09-17] 样本=1 低置信，第二轮再校
@@ -2119,8 +2119,8 @@ entities:
   measured:
     peak_mem_gb: 0.304
     p90_duration_min: 1
-    samples: 4133
-    last_at: '2026-10-13T21:40:07+00:00'
+    samples: 4282
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_process_reaper.jsonl
   status: active
   notes_zh: ProcessReaper；[P5-calib 2026-09-17 校正] dur 1→6（n=56 P90=5.2 低估）
@@ -2140,7 +2140,7 @@ entities:
     peak_mem_gb: 0.1613
     p90_duration_min: 0
     samples: 4
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_resource_morning_report.jsonl
   status: active
   notes_zh: ResourceMorningReport
@@ -2266,7 +2266,7 @@ entities:
     peak_mem_gb: 0.3812
     p90_duration_min: 3
     samples: 6
-    last_at: '2026-10-13T21:40:07+00:00'
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_sft_train_window.jsonl
   status: active
   notes_zh: SftTrainWindow
@@ -2367,9 +2367,9 @@ entities:
   trading_sensitive: false
   measured:
     peak_mem_gb: 15.7555
-    p90_duration_min: 4191
-    samples: 18350
-    last_at: '2026-10-13T21:40:10+00:00'
+    p90_duration_min: 4090
+    samples: 19360
+    last_at: '2026-10-14T21:40:05+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_worktree_drift_watchdog.jsonl
   status: active
   notes_zh: WorktreeDriftWatchdog；[P5-calib HOLD 2026-09-17] lifetime 口径失真：常驻循环进程寿命≠单次执行时长，需 sampler 分段口径修复后重测

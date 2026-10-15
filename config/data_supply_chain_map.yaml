@@ -1,7 +1,7 @@
 # 图12 数据供给链图（data_supply_chain_map）真源——机生层＋人工语义层双层
 # 由 scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py 生成/刷新
 # 人工语义层（nodes/edges/laws/segments/boundary）existing-wins；machine/counts 每次重建
-# 血肉源：docs/_working/map_build/fig12_datachain/{00_skeleton.md,01~05 作业簿,11/12 两卷}（实测结论已作节点字段）
+# 血肉源：docs/_archive/_working_cleared/map_build/fig12_datachain/{00_skeleton.md,01~05 作业簿,11/12 两卷}（实测结论已作节点字段）
 # 纪律：INV-1 只存标识符与指针｜挂槽≠在跑｜空串≠无数据｜production 必带 freshness_evidence｜缺口不冒充 built｜双轴与骨架 §1 同源（production 数==✅ 数）
 # 图例注记（IN1-E1·Owner 批选②·2026-10-07 落图）：fresh_check/ledger_readable=字段级语义不入标签轴——语义分别由 freshness_evidence 字段与 DSC-20 审计面承载（零格面改动零重贴）
 schema_version: '0.3'
@@ -98,7 +98,7 @@ boundary:
     c1_market.reconciliation_differences: DSC-GAP-RECDIFF
   ghost_ref_gaps:
     c1_market.news_data: DSC-GAP-NEWSGHOST
-  skeleton_contract: docs/_working/map_build/fig12_datachain/00_skeleton.md §1（22 环节契约全集）+ §6.3（批次4 封顶重宣）
+  skeleton_contract: docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1（22 环节契约全集）+ §6.3（批次4 封顶重宣）
 segments:
 - segment_id: S1_collect
   order: 1
@@ -154,16 +154,16 @@ nodes:
     retention: 随码版本化
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md
   gap_refs: []
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §1 内-1（实测 2026-09-24）
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §7-B 逐源计数（可复跑）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §1 内-1（实测 2026-09-24）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §7-B 逐源计数（可复跑）
   freshness_evidence: []
   task_family: null
   facets: []
@@ -171,12 +171,12 @@ nodes:
   - anchor: source:akshare_alt
     symptom: attribution_moved
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §3 ★归属误置
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §3 ★归属误置
     note_zh: 36 个 akshare_alt 任务实测全部落盘后档期，event_driven 槽 0 个——D12-03 归属已移正 D12-01
   - anchor: source:pause_cli
     symptom: nominal_switch
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §1 内-2
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §1 内-2
     note_zh: CLI pause 三处断链坐实（真源无 enabled 键/热重载复位/跨进程零效力），可用停摆开关实为 schedule:disabled / extra.disabled / *.disabled 三类
   machine:
     executors:
@@ -186,10 +186,10 @@ nodes:
     executors_missing: []
   purpose_tag: lineage
   casebooks:
-  - CASEBOOK-001#alert  # 源熔断/连接失败告警族（circuit_breaker 163 件+providerconnectifind 391 件，生成器 source_circuit_breaker.py 实锚）
+  - CASEBOOK-001#alert
   consumers:
   - pass-through:23源/271任务全分母
-  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§0
+  - ref:docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md§0
   trigger_facts:
     as_of: '2026-10-04'
     evidence: 熔断留痕旁证=data/failures/_circuit_breaker_fred族163件(ls 2026-10-03)；sla_tracker已退役(E-3)禁挂
@@ -239,17 +239,17 @@ nodes:
     retention: Hot 层无 TTL（INV-RET-003）
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-01
-  - docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-01
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md
   gap_refs:
   - DSC-GAP-NEWSGHOST
   red_reason: null
   confidence: verified
   verified_scope: production
   evidence:
-  - docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §1（末写小时直方四簇＝盘后按档期在跑）
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2（task_runs 秒合见证）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §1（末写小时直方四簇＝盘后按档期在跑）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2（task_runs 秒合见证）
   - 本图 machine 层（tasks/schedule/scheduler 分派面实测，走生成器可复跑）
   freshness_evidence:
   - table: c1_market.kline_daily
@@ -266,17 +266,17 @@ nodes:
   - anchor: slot:monthly_static
     symptom: unprovable_slot
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §1 判定
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §1 判定
     note_zh: 该槽 20 表中仅 4 表两日内有写，与每月 1 日 09:16 档期不吻合——月度子族档期级执行不可证（行级 ✅ 的限定面）
   - anchor: slot:weekend_calibration
     symptom: dow_semantics_conflict
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §4 溢-2
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §4 溢-2
     note_zh: 同文件对 crontab dow 给两种口径（0=周日 vs APScheduler 0=周一），实测写入簇支持后者
   - anchor: task:cohort_ledger_daily
     symptom: duplicate_task_id
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §4 溢-4
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §4 溢-4
     note_zh: 全仓唯一重复 task_id（双槽两条），与一任务只属一槽律正冲突＝同日两跑同表
   machine:
     slots:
@@ -290,7 +290,7 @@ nodes:
         special_dispatch: false
       daily_kline:
         in_schedule: true
-        task_count: 38
+        task_count: 37
         special_dispatch: true
       monthly_static:
         in_schedule: true
@@ -315,14 +315,14 @@ nodes:
     executors_missing: []
   purpose_tag: lineage
   casebooks:
-  - CASEBOOK-001#alert  # 盘后族任务失败告警（kline_daily 377/hk_daily 359/futures_term_structure 235 件实测）
-  - CASEBOOK-007  # 采集打卡账本=应跑对打卡分母（trigger_facts 961/480 对账证据面）
+  - CASEBOOK-001#alert
+  - CASEBOOK-007
   consumers:
   - TDM:DS-150等16表/约64点
   - SPM:276/56
   - code:backtest/core/matching_engine.py:1171
   - code:factor/fundamentals.py:24
-  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
+  - ref:docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md§1A
   trigger_facts:
     as_of: '2026-10-04'
     evidence: 机数integrator_progress.db task_runs(ro-uri)：7日窗480笔/6槽(daily_event119/daily_capital118/daily_kline93/weekend_calibration69/monthly_static60/nightly_financial21)；期望=任务级961(36×7+42×7+43×7+10×7+44×1+21×0月腿窗内0发)；freshness
@@ -372,18 +372,18 @@ nodes:
     retention: Hot 层无 TTL，超线走 DSC-10A/10B 归档
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-02
-  - docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-02
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md
   gap_refs:
   - DSC-GAP-L2TICK
   red_reason: null
   confidence: verified
   verified_scope: production
   evidence:
-  - docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §2（逐表新鲜度实测）
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §2
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2（本车道复跑读数）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §2（逐表新鲜度实测）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §2
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2（本车道复跑读数）
   freshness_evidence:
   - table: c1_market.tick_data
     date_col: trade_date
@@ -399,17 +399,17 @@ nodes:
   - anchor: c1_market.l2_tick
     symptom: zero_rows
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §2 内表
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §2 内表
     note_zh: 坐实断供：表在、任务在、0 行（本车道 09-25 复跑仍 0）——L2 行情权限缺失（💰-4）＋降级腿 09-09 被清＝静默空转
   - anchor: c1_market.suspend
     symptom: zero_rows
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §2 内表
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §2 内表
     note_zh: 三个任务写同一表、0 行（复跑仍 0）——停复牌面从未产数
   - anchor: c1_market.realtime_snapshot
     symptom: written_but_stale
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-B
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-B
     note_zh: 供数形态疑点：11 卷实测盘中段零供给；本车道复跑 09-01 后计数 0 且 max(snapshot_time)=1970 哨兵——E8 期望未定，待裁不武断标红（N4）
   - anchor: slot:post_auction
     symptom: unprovable_slot
@@ -454,14 +454,14 @@ nodes:
     executors_missing: []
   purpose_tag: lineage
   casebooks:
-  - CASEBOOK-001#alert  # 盘中族告警（tickdatasnapshot 229/tickfreshness 189/realtimesnapshotincremental 114 件实测）
-  - CASEBOOK-007  # 采集打卡账本（task_runs 7 日窗 879 笔）
+  - CASEBOOK-001#alert
+  - CASEBOOK-007
   consumers:
   - TDM:DS-170等6表/15点
   - code:owner_band_t/data_loader.py:21/79
   - code:backtest/implementations/ch_tick_replay.py:20
   - code:backtest/core/cost_model_calibration.py:120/159
-  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A/B
+  - ref:docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md§1A/B
   trigger_facts:
     as_of: '2026-10-04'
     evidence: 机数integrator_progress.db task_runs(ro-uri)：7日窗879笔(auction_highfreq290/intraday_minute280/intraday_realtime274/pre_market35)；盘中循环节拍无静态档期→期望腿不设；tick_data
@@ -511,9 +511,9 @@ nodes:
     retention: Hot 层无 TTL，超线走冷备段
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-03
-  - docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-03
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md
   gap_refs:
   - DSC-GAP-NEWSGHOST
   - DSC-GAP-MACRO
@@ -522,8 +522,8 @@ nodes:
   confidence: verified
   verified_scope: production
   evidence:
-  - docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §3（五族新鲜度实测，🔨→✅ 转判）
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2/§5-2
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §3（五族新鲜度实测，🔨→✅ 转判）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2/§5-2
   freshness_evidence:
   - table: c3_fundamental.news_data
     date_col: publish_time(+08 列)
@@ -557,12 +557,12 @@ nodes:
   - anchor: c3_fundamental.news_data
     symptom: future_value_polluted_max
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §3 内表
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §3 内表
     note_zh: max(publish_time) 超前 now()（脏值少量）——第三型假读：既非空串也非 1970，裸 max 不可当新鲜度
   - anchor: c1_market.road_freight_index
     symptom: source_side_lag
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §3 内表
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §3 内表
     note_zh: 源侧现实滞后（disabled_reason 在册），非本仓断链，勿误判为管线停摆
   machine:
     slots:
@@ -601,11 +601,11 @@ nodes:
     executors_missing: []
   purpose_tag: lineage
   casebooks:
-  - CASEBOOK-001#alert  # news/宏观族高失败案卷（failures news 族约 3400 件在册）
-  - CASEBOOK-007  # 采集打卡账本（task_runs 7 日窗 20247 笔）
+  - CASEBOOK-001#alert
+  - CASEBOOK-007
   consumers:
   - TDM:DS-104/DS-107×5
-  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
+  - ref:docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md§1A
   trigger_facts:
     as_of: '2026-10-04'
     evidence: 机数integrator_progress.db task_runs(ro-uri)：7日窗20247笔(event_driven20100/news_slow88/daily_crypto47/research_nightly7/daily_alt_fx5)；task_progress
@@ -635,21 +635,21 @@ nodes:
   - c3_fundamental.news_data
   store_refs:
   - artifact: 幽灵引用登记
-    location: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-D
+    location: docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-D
     key: ref_string
     retention: 改册落地后本节点退役
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md
   gap_refs: []
   red_reason: ghost_ref
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-D
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §5-2
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-D
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §5-2
   freshness_evidence: []
   task_family: null
   facets: []
@@ -660,8 +660,8 @@ nodes:
     pointer: config/strategy_production_map.yaml:76（FAC-E1 进货）＋本车道直查复跑
     note_zh: Code 60 不存在；真身=c3_fundamental.news_data。存在性判据用直查抛错，不依赖 system.tables 枚举面（本役纪律）
   machine: {}
-  purpose_tag: lineage  # 幽灵引用=血缘指向真伪（2026-10-08 逐环挖矿补，dscm_data_supply/hops.yaml）
-  casebooks: []  # 无八册案卷：幽灵引用登记=图内 store_refs+SPM 改册件（11 卷 §1-D）
+  purpose_tag: lineage
+  casebooks: []
   consumers:
   - SPM:76(FAC-E1)
   trigger_facts:
@@ -693,20 +693,20 @@ nodes:
   - c1_market.macro_data
   store_refs:
   - artifact: 事故案卷
-    location: docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md 卷首红条/§5-2
+    location: docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md 卷首红条/§5-2
     key: table+probe_ts
     retention: 扩口径施工落地＋周期抽检转正后本节点退役
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md
   gap_refs: []
   red_reason: broken_supply
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md 卷首红条
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md 卷首红条
   - 本车道 09-25T15:2xZ fail-visible 复跑（直查可读）
   freshness_evidence: []
   task_family: null
@@ -715,7 +715,7 @@ nodes:
   - anchor: c1_market.macro_data
     symptom: probe_failed
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §3 新证（红）
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §3 新证（红）
     note_zh: 探测器只查 CHECKSUM_DOESNT_MATCH，抓不到装载期 0-byte parts；且事故同时瘫痪其依赖面之外的 parts 枚举——在册环节无一拦住本次事故
   - anchor: task:macro_data_incremental
     symptom: source_side_lag
@@ -723,7 +723,7 @@ nodes:
     pointer: data/failures/20260925_macro_data_incremental_145625.json（本车道实读）
     note_zh: 当日该任务仍失败（源侧 SSL EOF，非部件问题）——两码事，禁混判
   machine: {}
-  purpose_tag: break_detect  # 0 字节部件事故=检测口径缺口登记（2026-10-08 逐环挖矿补）
+  purpose_tag: break_detect
   casebooks:
   - CASEBOOK-001#outage
   consumers:
@@ -769,16 +769,16 @@ nodes:
     retention: 回灌成功即 unlink（失败保留待重试）
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-04
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-04
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md
   gap_refs:
   - DSC-GAP-REPLAY
   red_reason: null
   confidence: verified
   verified_scope: production
   evidence:
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §1（每级触发/恢复判据逐行号实测）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §1（每级触发/恢复判据逐行号实测）
   freshness_evidence:
   - table: c1_market.kline_daily
     date_col: trade_date
@@ -794,7 +794,7 @@ nodes:
   - anchor: task:dynamic_local_replay
     symptom: unregistered_running
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §1 下
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §1 下
     note_zh: 回灌排水在册 resource_profile_registry（planned/dynamic），samples 落点本 worktree 不可见→回灌真排空过没有仍不可证
   machine:
     executors:
@@ -813,10 +813,10 @@ nodes:
     executors_missing: []
   purpose_tag: no_double_write
   casebooks:
-  - CASEBOOK-001#alert  # 写链路故障告警族（wsl_unavailable_noautoshutdown 89 件=退役 WSL 写通道病史残响）
+  - CASEBOOK-001#alert
   consumers:
   - pass-through:40表全集经其写通道
-  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§0
+  - ref:docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md§0
   trigger_facts:
     as_of: '2026-10-04'
     evidence: 写随采集无独立任务面(计数腿=产物侧)：kline_daily freshness lag=0(09-25探针)；二级降级+local_fallback在产(quarantine 20261001/20261003两区ls)
@@ -853,16 +853,16 @@ nodes:
     retention: drain 成功即删，容量阈值 2 GiB
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-05
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-05
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md
   gap_refs:
   - DSC-GAP-REPLAY
   red_reason: null
   confidence: verified
   verified_scope: production
   evidence:
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §2（阈值/背压/drain 退避逐行号＋写入见证）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §2（阈值/背压/drain 退避逐行号＋写入见证）
   freshness_evidence:
   - table: c1_market.tick_data
     date_col: trade_date
@@ -878,7 +878,7 @@ nodes:
   - anchor: file:src/zephyr/data/wal_writer.py
     symptom: unprovable_slot
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §2 判定欠项
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §2 判定欠项
     note_zh: warning/critical 档历史上是否真触发过无 metrics 落盘可证（🌑-5）
   machine:
     executors:
@@ -891,11 +891,11 @@ nodes:
     executors_missing: []
   purpose_tag: source_fallback
   casebooks:
-  - CASEBOOK-005  # 记忆教训：tick 兜底回灌停摆三层根因 2026-09-16（A4a 容量缓存/A4b 溢出旁路=本环节容量背压腿治本史；005 图12 章系未建=裸册号）
+  - CASEBOOK-005
   consumers:
   - code:ch_tick_replay.py:20
   - code:cost_model_calibration.py:120/159
-  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
+  - ref:docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md§1A
   trigger_facts:
     as_of: '2026-10-04'
     evidence: WAL双表tick_data/tick_depth_5 max=2026-09-24 lag=0(09-25探针)；缓冲任务32笔带buffer(机生)
@@ -925,16 +925,16 @@ nodes:
     retention: append（成功 unlink 对应 TSV）
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md
   gap_refs:
   - DSC-GAP-REPLAY
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §4 溢-3
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §4 溢-3
   - file:src/zephyr/data/scheduler.py:1128-1165 _start_local_replay 守护线程在岗实读（启动即检+30min 周期+超阈值追平 replay_catchup）
   freshness_evidence: []
   task_family: null
@@ -948,7 +948,7 @@ nodes:
     executors_missing: []
   purpose_tag: source_fallback
   casebooks:
-  - CASEBOOK-005  # 记忆教训：tick 兜底回灌停摆三层根因 2026-09-16（387b7ce5 replay 键治本=本汇聚节点核心病历；裸册号同上）
+  - CASEBOOK-005
   consumers:
   - code:src/zephyr/data/scheduler.py:1128-1165
   trigger_facts:
@@ -986,16 +986,16 @@ nodes:
     retention: 无（案卷不入库＝审计缺口）
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-06
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-06
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md
   gap_refs:
   - DSC-GAP-DUPGUARD
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §3（引擎/排序键/分区键实测＋Code 42 复现）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §3（引擎/排序键/分区键实测＋Code 42 复现）
   freshness_evidence: []
   task_family: 引擎幂等 + 判重正门
   facets: []
@@ -1003,7 +1003,7 @@ nodes:
   - anchor: file:scripts/governance/data_quality/check_tick_duplication.py
     symptom: tool_broken
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §3 内-5
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §3 内-5
     note_zh: 见 DSC-GAP-DUPGUARD——聚合对照腿一跑必红且红被吞成 0
   machine:
     executors:
@@ -1015,7 +1015,7 @@ nodes:
       label: ch读取器 / ch_reader
     executors_missing: []
   purpose_tag: no_double_write
-  casebooks: []  # 无八册案卷：判重报告无落库台账（store_refs 自记审计缺口）；07-16 误删事故案卷先于八册建库无宿主（呈 chief）
+  casebooks: []
   consumers:
   - pass-through:全部入库幂等声明
   trigger_facts:
@@ -1043,20 +1043,20 @@ nodes:
   - c1_market.tick_data
   store_refs:
   - artifact: 缺陷登记
-    location: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §4 溢-5
+    location: docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §4 溢-5
     key: script+line
     retention: 施工期改后本节点应退役
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md
   gap_refs: []
   red_reason: broken_supply
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §3 内-5（Code 42 原样复跑复现＋行号级因果链）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §3 内-5（Code 42 原样复跑复现＋行号级因果链）
   freshness_evidence: []
   task_family: null
   facets: []
@@ -1064,16 +1064,16 @@ nodes:
   - anchor: file:scripts/governance/data_quality/check_tick_duplication.py:230
     symptom: false_success
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §3 内-5
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §3 内-5
     note_zh: _SQL_TOTAL_ROW 平铺 14 列 × tick_data 4 个 Nullable 列 → Code 42 恒抛 → 空串 → 解析成 0 行 → 报告印总行数 0/去重 0/差 0，exit 码只由真重复腿决定＝半假绿
   - anchor: file:scripts/governance/data_quality/check_tick_duplication.py:125
     symptom: hardcoded_main_repo
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §4 溢-5(b)
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §4 溢-5(b)
     note_zh: 脚本硬编码主区 src 并插 sys.path → 在 worktree 里跑会加载主区代码，判重结论与被审仓不同源
   machine: {}
-  purpose_tag: no_double_write  # 判重准入闸自身缺陷（2026-10-08 逐环挖矿补）
-  casebooks: []  # 无八册案卷：缺陷登记=02 卷 §3 内-5+图内 gaps（Code 42 行号级因果链），非病历册形态
+  purpose_tag: no_double_write
+  casebooks: []
   consumers:
   - pass-through:全部入库幂等声明
   trigger_facts:
@@ -1119,15 +1119,15 @@ nodes:
     retention: Hot 层无 TTL
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-07
-  - docs/_working/map_build/fig12_datachain/03_衍生加工三族.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-07
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md
   gap_refs: []
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §1（指标腿三证＋档期不可证限定；重采样 5 实现逐条 manifest）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §1（指标腿三证＋档期不可证限定；重采样 5 实现逐条 manifest）
   freshness_evidence: []
   task_family: internal 指标族 + 重采样五实现簇
   facets:
@@ -1147,17 +1147,17 @@ nodes:
   - anchor: c1_market.kline_sector_intraday
     symptom: stale_as_of
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §1 内-3
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §1 内-3
     note_zh: 板块分钟线 5 个 period 全写同一表，停在 09-22 15:00＝跨两交易日零写入；根因二选一（tdx 源静默跳过 vs 串行超时）CH 侧不可判
   - anchor: c1_market.kline_weekly
     symptom: stale_as_of
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §1 内-2 表 c
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §1 内-2 表 c
     note_zh: 周/月线（miniqmt pandas resample 路径）停 9 日
   - anchor: file:src/zephyr/data/kline_resampler.py
     symptom: parallel_impl_cluster
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §4 溢-2
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §4 溢-2
     note_zh: 重采样 5 处并行实现同域重复簇→内收判据要求收敛唯一正门（叶层收簇项，不增枝）
   machine:
     executors:
@@ -1189,6 +1189,7 @@ nodes:
     - index_adjustment_derive
     - index_valuation_daily_compute_after_ingest
     - index_valuation_daily_compute_daily
+    - kline_daily_hfq_incremental
     - kline_index_calc_refresh
     - limit_up_pool_incremental
     - pattern_event_incremental
@@ -1197,6 +1198,7 @@ nodes:
     - pattern_win_rate_materialize
     - technical_indicator_full_refresh
     - technical_indicator_incremental
+    - trade_calendar_refresh
     - trading_lifecycle_weekly
     process_in_product_tables: &id002
       tables:
@@ -1213,7 +1215,7 @@ nodes:
   consumers:
   - code:factor/indicator_reader.py:20/45
   - registry:TI册:26
-  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
+  - ref:docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md§1A
   trigger_facts:
     as_of: '2026-10-04'
     evidence: 指标腿产物新鲜(max=09-24)但末写11:41不落任何档期(WB12-10)=节拍盲区显影位；kline_sector_intraday自09-11断供案→CASEBOOK-001#outage段
@@ -1253,17 +1255,17 @@ nodes:
     retention: Hot 层无 TTL
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-08
-  - docs/_working/map_build/fig12_datachain/03_衍生加工三族.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-08
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md
   gap_refs:
   - DSC-GAP-CONSENSUSCHAIN
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §2（上游三表 max 与派生 max 严格相等判据）
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2（D12-08 分面下调）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §2（上游三表 max 与派生 max 严格相等判据）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2（D12-08 分面下调）
   freshness_evidence: []
   task_family: internal 财务/预期两腿
   facets:
@@ -1289,7 +1291,7 @@ nodes:
   - anchor: file:src/zephyr/data/financial_parser.py
     symptom: path_ghost
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §4 溢-7
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §4 溢-7
     note_zh: 骨架原列真源，其 CONSUMERS 自证接线尚未发生——不在产数路径，真源映射已改挂两个 compute 实现件
   - anchor: task:research_report_detail_incremental
     symptom: stale_slot_run
@@ -1315,7 +1317,7 @@ nodes:
   - code:factor/fundamentals.py:24
   - code:factor/expectations.py:19
   - registry:factor_registry:277/12394/12433
-  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A/B
+  - ref:docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md§1A/B
   trigger_facts:
     as_of: '2026-10-07'
     evidence: 链复活：consensus_daily max(trade_date)=2026-09-30（6,829,376行 reader 直查）与 research_report max(publish_date)=09-30
@@ -1365,15 +1367,15 @@ nodes:
     retention: Hot 层无 TTL
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-09
-  - docs/_working/map_build/fig12_datachain/03_衍生加工三族.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-09
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md
   gap_refs: []
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §3（逐表新鲜度＋stage 分组实测）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §3（逐表新鲜度＋stage 分组实测）
   freshness_evidence: []
   task_family: internal 形态/情绪/打板 + 特殊槽板块族
   facets:
@@ -1407,12 +1409,12 @@ nodes:
   - anchor: c1_market.sector_state
     symptom: inversion
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §3 内表
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §3 内表
     note_zh: 两 stage 的 trade_date 关系按定义 pre_open 只能复制已存在的 close_final；批次4 倒挂消除、本车道复跑 pre_open 又落后 1 日＝产物一致性仍无校验
   - anchor: file:src/zephyr/data/transformations/renko.py
     symptom: path_ghost
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §4 溢-12
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §4 溢-12
     note_zh: 骨架与注册表 DS-077/078/079 三处同指不存在的 transformations/ 目录（真身 series_transform）
   machine:
     slots:
@@ -1436,10 +1438,10 @@ nodes:
     internal_task_ids: *id001
     process_in_product_tables: *id002
   purpose_tag: schedule_complete
-  casebooks: []  # 无八册案卷：板块/形态缺陷在图 gaps+03 卷；板块采集侧告警族（kline_sector_min 168 件）归 DSC-02#alert
+  casebooks: []
   consumers:
   - code:backtest/regime_validation/condition_package.py:52/53
-  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
+  - ref:docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md§1A
   trigger_facts:
     as_of: '2026-10-04'
     evidence: sector_pre_open/close_final=调度器特殊槽(task_runs零行=计数腿未接)；emotion max=09-24新鲜/板块腿两缺陷(WB12-12:trade_date倒挂+sector_preference全表1行)
@@ -1476,9 +1478,9 @@ nodes:
     retention: Hot 层无 TTL
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-21
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-21
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md
   gap_refs:
   - DSC-GAP-NAV
   - DSC-GAP-EXECEP
@@ -1489,8 +1491,8 @@ nodes:
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-A/§1-C/§4-N1
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.4（三问裁定+反方理由）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-A/§1-C/§4-N1
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.4（三问裁定+反方理由）
   freshness_evidence: []
   task_family: 任务表外进程内写手（六表起步）
   facets: []
@@ -1498,12 +1500,12 @@ nodes:
   - anchor: table:regime_snapshot_history
     symptom: no_task_row
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.4
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.4
     note_zh: 六表名在 tasks.yaml 命中数全部 0（本车道复跑）；表在产（regime 3,629 行 max=09-24 / screen 1,341 行 max=09-24）但两腿缺位
   - anchor: file:src/zephyr/position/live_nav_recorder.py
     symptom: unwired
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C
     note_zh: account_nav_daily 写器全仓零调用方（含 scripts）⇒见 DSC-GAP-NAV
   machine:
     executors:
@@ -1526,12 +1528,12 @@ nodes:
     internal_task_ids: *id001
     process_in_product_tables: *id002
   purpose_tag: schedule_complete
-  casebooks: []  # 无八册案卷：六表两腿缺位实证=11 卷反查案卷；进程内产线不走 tasks/schedule=无打卡面无案卷（结构性）
+  casebooks: []
   consumers:
   - code:regime_snapshot_history×6消费文件
   - code:backtest/core/n_trial_ledger.py:411
   - SPM:314
-  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A/§4-N1
+  - ref:docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md§1A/§4-N1
   trigger_facts:
     as_of: '2026-10-04'
     evidence: 任务表外进程内生产(不走tasks/schedule=打卡集合照不到)；产物读数regime_snapshot 09-24/strategy_screen 09-22；C态5表中4表栽此域(11卷§4-N1)
@@ -1560,21 +1562,21 @@ nodes:
   - c3_fundamental.consensus_daily
   store_refs:
   - artifact: 断链登记
-    location: docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §2 内-4
+    location: docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §2 内-4
     key: table+probe_ts
     retention: 重跑通＋新鲜度回正后本节点退役
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/03_衍生加工三族.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md
   gap_refs: []
   red_reason: broken_supply
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §2
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §5-2
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md §2
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §5-2
   freshness_evidence: []
   task_family: null
   facets: []
@@ -1582,10 +1584,10 @@ nodes:
   - anchor: c3_fundamental.consensus_daily
     symptom: stale_as_of
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-B
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-B
     note_zh: max=09-14（停 10 日）；消费侧受损=因子族食旧（expectations.py/factor_registry 在册锚）
   machine: {}
-  purpose_tag: break_detect  # 断链发现/复活留痕（2026-10-08 逐环挖矿补）
+  purpose_tag: break_detect
   casebooks:
   - CASEBOOK-001#outage
   consumers:
@@ -1624,16 +1626,16 @@ nodes:
     retention: 接线后按 Hot 层；现 0 行
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md
   gap_refs: []
   red_reason: unwired
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §5-2
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §5-2
   freshness_evidence: []
   task_family: null
   facets: []
@@ -1641,11 +1643,11 @@ nodes:
   - anchor: c1_market.account_nav_daily
     symptom: zero_rows
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C（本车道复跑同值）
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C（本车道复跑同值）
     note_zh: 本车道 fail-visible 复跑：max(trade_date)=1970-01-01、count=0＝哨兵值而非数据
   machine: {}
-  purpose_tag: schedule_complete  # 等未产表=该来的数据没来（2026-10-08 逐环挖矿补）
-  casebooks: []  # 无八册案卷：等未产表（0 行/1970 哨兵）无案卷史；消费方在等证据=11 卷 §1-C
+  purpose_tag: schedule_complete
+  casebooks: []
   consumers:
   - SPM:357(FAC-E8)
   - SPM:380(FAC-E9)
@@ -1684,15 +1686,15 @@ nodes:
     retention: 随 CH 表
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md
   gap_refs: []
   red_reason: unwired
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C
   freshness_evidence: []
   task_family: null
   facets: []
@@ -1700,11 +1702,11 @@ nodes:
   - anchor: c1_market.execution_report
     symptom: near_empty
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C（本车道复跑）
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C（本车道复跑）
     note_zh: count=1、max(toDate(ingest_ts))=2026-09-18＝sim 链路偶发、实盘链路零供给
   machine: {}
-  purpose_tag: schedule_complete  # 等未产表=实盘链未接（2026-10-08 逐环挖矿补）
-  casebooks: []  # 无八册案卷：仅 sim 桥偶发 1 行（09-18）无案卷史
+  purpose_tag: schedule_complete
+  casebooks: []
   consumers:
   - SPM:334
   - SPM:380
@@ -1742,15 +1744,15 @@ nodes:
     retention: apply 后转 DSC-21 在产面，本节点退役
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md
   gap_refs: []
   red_reason: unwired
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C
   - 本车道 09-25 fail-visible 直查复跑（Code 60）
   freshness_evidence: []
   task_family: null
@@ -1759,11 +1761,11 @@ nodes:
   - anchor: table:c1_market.factor_feature_value
     symptom: table_missing
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C
     note_zh: 工厂在线面整体悬空；子类=DDL 未 apply（与 factor_signal 同因不同件）
   machine: {}
-  purpose_tag: schedule_complete  # 等未产表=DDL 未 apply（2026-10-08 逐环挖矿补）
-  casebooks: []  # 无八册案卷：表不存在（Code 60）建表待 Owner 窗口，无案卷史
+  purpose_tag: schedule_complete
+  casebooks: []
   consumers:
   - code:factor/feature_store_writer.py:125
   - code:factor/offline_store.py:25
@@ -1801,15 +1803,15 @@ nodes:
     retention: 规则真源 Python 契约
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md
   gap_refs: []
   red_reason: unwired
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C
   - 本车道 09-25 fail-visible 直查复跑（Code 60）
   freshness_evidence: []
   task_family: null
@@ -1818,11 +1820,11 @@ nodes:
   - anchor: table:c1_market.factor_signal
     symptom: table_missing
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C
     note_zh: 未建表＋默认落点悬空
   machine: {}
-  purpose_tag: schedule_complete  # 等未产表=默认落点未建表（2026-10-08 逐环挖矿补）
-  casebooks: []  # 无八册案卷：表不存在（Code 60），与 FFVAL 同族独立挂账，无案卷史
+  purpose_tag: schedule_complete
+  casebooks: []
   consumers:
   - code:factor/core/batch_output/buffer.py:25/78/87
   trigger_facts:
@@ -1837,8 +1839,6 @@ nodes:
   node_type: handoff
   decision_question: 数据供给链在哪个点上把资产交给消费端、交完之后还归本图管吗？
   note_zh: 出图12 域边界点：原始/派生表就绪后交因子族、图9 工厂与图13 消费；本图不再管下游
-  handoff_out_targets: [trading_decision_map（TDM-E-L1-S1 传感器 data_refs 消费 DS-150 等派生资产）, strategy_production_map, trading_day_cycle_map]
-  handoff_out_basis: 码通图未记处方A-12（2026-10-08）——供料链代码证据链见 handoff_gap_prescriptions.md §1.1；consumers 注记 TDM:DS-* 四处为半记升格其品质判定，但保留交叉锚（DS-*/JOB-* 与 module_id）。消费端 174 点的分布即从此点外溢（11 卷分母）。
   build_status: partial
   wiring_status: wired_import
   slot_source: none
@@ -1862,9 +1862,9 @@ nodes:
     retention: 随注册表版本化
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/03_衍生加工三族.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/03_衍生加工三族.md
   gap_refs:
   - DSC-GAP-NAV
   - DSC-GAP-EXECEP
@@ -1875,15 +1875,21 @@ nodes:
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §2 交接 A
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §0 分母
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §2 交接 A
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §0 分母
   freshness_evidence: []
   task_family: null
   facets: []
   gaps: []
+  handoff_out_targets:
+  - trading_decision_map（TDM-E-L1-S1 传感器 data_refs 消费 DS-150 等派生资产）
+  - strategy_production_map
+  - trading_day_cycle_map
+  handoff_out_basis: 码通图未记处方A-12（2026-10-08）——供料链代码证据链见 handoff_gap_prescriptions.md §1.1；consumers 注记 TDM:DS-* 四处为半记升格其品质判定，但保留交叉锚（DS-*/JOB-*
+    与 module_id）。消费端 174 点的分布即从此点外溢（11 卷分母）。
   machine: {}
   purpose_tag: lineage
-  casebooks: []  # 无八册案卷：交接格 pass-through，消费证据=两侧环节（11 卷 §0 分母）
+  casebooks: []
   consumers:
   - pass-through:派生表经ch_reader出图→TDM/工厂/图13
   trigger_facts:
@@ -1922,16 +1928,16 @@ nodes:
     retention: append-only 永久
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-10a
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-10a
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md
   gap_refs:
   - DSC-GAP-ARCHIVE-AUDIT
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §1.2/§1.3（verify 判据行号＋manifest 条数读数）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §1.2/§1.3（verify 判据行号＋manifest 条数读数）
   freshness_evidence: []
   task_family: archiver 五子命令
   facets: []
@@ -1939,7 +1945,7 @@ nodes:
   - anchor: file:scripts/ch/archiver.py
     symptom: no_periodic_audit
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §末B P-2
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §末B P-2
     note_zh: 冷档案完好性无周期抽检；归档件从未被端到端 restore 验证覆盖（批量史 08-10/11/16 三日留痕后再无）
   machine:
     executors:
@@ -1949,7 +1955,7 @@ nodes:
     executors_missing: []
   purpose_tag: can_rollback
   casebooks:
-  - CASEBOOK-008  # 2026-10-08 挂载：registry 挂载建议面闭合（归档清单）；宿主 data/archive_manifest.jsonl 缺席（主区/W 均无）=挂载+注记，初始化状态待核
+  - CASEBOOK-008
   consumers:
   - flow:冷库侧archive_manifest记账
   trigger_facts:
@@ -1994,9 +2000,9 @@ nodes:
     retention: 覆盖写（无历史）
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-10b
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-10b
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md
   gap_refs:
   - DSC-GAP-ARCHIVE-AUDIT
   - DSC-GAP-MIRROR
@@ -2004,8 +2010,8 @@ nodes:
   confidence: verified
   verified_scope: production
   evidence:
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §1.2/§1.3
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.1/§2（manifest 2,515 行末条读数）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §1.2/§1.3
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.1/§2（manifest 2,515 行末条读数）
   freshness_evidence:
   - table: archive_manifest.jsonl
     date_col: archived_at
@@ -2031,13 +2037,13 @@ nodes:
   - anchor: file:data/databases/rolling_archive_state.json
     symptom: ledger_conflict
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §1.3 待补矛盾（P-1）
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §1.3 待补矛盾（P-1）
     note_zh: 本车道复跑：state mtime=2026-09-21T07:37Z 而 manifest 末条 2026-09-24T02:07:50Z、consecutive_failures=1——谁在动 drop 仍不可判；✅
       带此限定
   - anchor: file:scripts/ch/rolling_archive_reconciler.py
     symptom: skip_silent
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.1（🌑-6）
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.1（🌑-6）
     note_zh: 4b stdout 仅 Write-Host 不落档、audit-trail 无 rolling 件⇒施工项：给 4b 加独立 jsonl 留痕
   machine:
     executors:
@@ -2050,7 +2056,7 @@ nodes:
     executors_missing: []
   purpose_tag: can_rollback
   casebooks:
-  - CASEBOOK-008  # 2026-10-08 挂载：registry 挂载建议面闭合（归档清单）；宿主 data/archive_manifest.jsonl 缺席（主区/W 均无）=挂载+注记，初始化状态待核
+  - CASEBOOK-008
   consumers:
   - flow:审计面(terminal_provable实锚)
   trigger_facts:
@@ -2078,20 +2084,20 @@ nodes:
   data_refs: []
   store_refs:
   - artifact: 缺口登记
-    location: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §末B P-2
+    location: docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §末B P-2
     key: obs_id
     retention: 抽检常态化＋端到端 restore 通过后退役
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md
   gap_refs: []
   red_reason: terminal
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §1.7/§2.5
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §1.7/§2.5
   freshness_evidence: []
   task_family: null
   facets: []
@@ -2099,11 +2105,11 @@ nodes:
   - anchor: slot:ZEPHYR-RESTORE-DRILL
     symptom: never_run
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §2.5
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §2.5
     note_zh: 本车道实跑 Get-ScheduledTaskInfo：LastRun 为空、LastTaskResult=267011（从未运行）
   machine: {}
-  purpose_tag: can_rollback  # 回滚能力验证缺口（2026-10-08 逐环挖矿补）
-  casebooks: []  # 无八册案卷：零抽检零演练=缺口本体；人工案卷 logs/dr_drill_*.json 非册
+  purpose_tag: can_rollback
+  casebooks: []
   consumers:
   - flow:恢复侧演练面(DSC-HC/restore_drill)
   trigger_facts:
@@ -2149,9 +2155,9 @@ nodes:
     retention: 服务端保留
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-11
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-11
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md
   gap_refs:
   - DSC-GAP-MIRROR
   - DSC-GAP-CODEBACKUP
@@ -2159,7 +2165,7 @@ nodes:
   confidence: verified
   verified_scope: production
   evidence:
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §2.2（四源互证）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §2.2（四源互证）
   - 本车道 09-25 复跑 schtasks + system.backup_log + 当日报告
   freshness_evidence:
   - table: system.backup_log
@@ -2185,7 +2191,7 @@ nodes:
   - anchor: file:scripts/backup/backup_config.yaml
     symptom: guard_revived
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §2.3
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §2.3
     note_zh: P0：g_mirror 的 ch_vm_backup 目标摘除只在登记册与一个被后续提交反向恢复的 commit 里成立；F 侧原件已瘦，下一次 /MIR 会删掉 G 侧唯一全量镜像且报告零红字（Owner 门位，不由本图代答）
   - anchor: task:ZephyrAlpha-DailyBackup
     symptom: nonterminal_result
@@ -2206,7 +2212,7 @@ nodes:
     executors_missing: []
   purpose_tag: can_rollback
   casebooks:
-  - CASEBOOK-005  # 记忆教训：备份冷储总包 2026-09-24（vault 自愈+0600 实战 11/11+/MIR 瘦身）+mirror 两证删除 2026-09-24（裸册号，005 图12 章系未建）
+  - CASEBOOK-005
   consumers:
   - flow:恢复侧restore.ps1/restore_drill.py
   trigger_facts:
@@ -2243,9 +2249,9 @@ nodes:
     retention: 14 天滚动
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md
   gap_refs: []
   red_reason: broken_supply
   confidence: verified
@@ -2269,8 +2275,8 @@ nodes:
     pointer: backup_report_20261007_094445~113707 九连份实读（error_sample=活锁文件 tilib_nightly_run.log）
     note_zh: 10-07 上午瞬时失败窗（robocopy 扫描撞活锁文件，与 09-25 同类竞争非结构性）——13:40 起同日自愈 ok（134059/143807/154200 实读），留痕防再发
   machine: {}
-  purpose_tag: can_rollback  # 代码快照腿=回退窗口保全（2026-10-08 逐环挖矿补）
-  casebooks: []  # 无八册案卷：案卷=logs/backup_report_*.json 件级实读（三时点复核链在图内 evidence），件级日志非册
+  purpose_tag: can_rollback
+  casebooks: []
   consumers:
   - flow:灾备回退窗口(G:/backup working_vault 恢复侧)
   trigger_facts:
@@ -2308,15 +2314,15 @@ nodes:
     retention: 同归档清单
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-12
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-12
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md
   gap_refs: []
   red_reason: contract_sourced
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §3（真源换挂逐件实测）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §3（真源换挂逐件实测）
   freshness_evidence: []
   task_family: null
   facets: []
@@ -2324,12 +2330,12 @@ nodes:
   - anchor: file:src/zephyr/data/storage_tiering.py
     symptom: retired_not_removed
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §3.1
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §3.1
     note_zh: 裁定#383 判退役、物理摘除归后续批次⇒图12 不得再当活件画
   - anchor: file:src/zephyr/data/data_compression_archiver.py
     symptom: unwired
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §3.1
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §3.1
     note_zh: 头注 CONSUMERS 是期望消费者，全仓 grep 零调用方＝建好未接线
   machine:
     executors:
@@ -2338,7 +2344,7 @@ nodes:
       label: ''
     executors_missing: []
   purpose_tag: can_rollback
-  casebooks: []  # 无八册案卷：契约决策件无运行面（IN1-E1 裁决策 vs 执行）——结构性留空非欠账
+  casebooks: []
   consumers:
   - flow:rolling_archive_reconciler读契约限量
   trigger_facts:
@@ -2372,22 +2378,22 @@ nodes:
     retention: 规则真源 YAML
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md
   gap_refs: []
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §1.5/§3.2
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §1.5/§3.2
   freshness_evidence: []
   task_family: null
   facets: []
   gaps: []
   machine: {}
   purpose_tag: can_rollback
-  casebooks: []  # 无八册案卷：交接格 pass-through（分层线在契约、产出侧在 10A/10B/11）
+  casebooks: []
   consumers:
   - flow:DSC-10B/11产出侧
   trigger_facts:
@@ -2420,16 +2426,16 @@ nodes:
     retention: 人工班次留档
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md
   gap_refs:
   - DSC-GAP-ARCHIVE-AUDIT
   red_reason: terminal
   confidence: proposed
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §1.7/§2.5
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §1.7/§2.5
   freshness_evidence: []
   task_family: null
   facets: []
@@ -2437,11 +2443,11 @@ nodes:
   - anchor: file:logs/dr_drill_20260915.json
     symptom: manual_only
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §1.7/§2.5
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §1.7/§2.5
     note_zh: 归档件从未被端到端 restore 验证覆盖；VM 导入演练因盘容量留档跳过
   machine: {}
   purpose_tag: can_rollback
-  casebooks: []  # 无八册案卷：交接格；演练案卷 logs/dr_drill_*.json 人工班次留档非册
+  casebooks: []
   consumers:
   - flow:灾时恢复+演练
   trigger_facts:
@@ -2473,21 +2479,21 @@ nodes:
   - c1_market.suspend
   store_refs:
   - artifact: 断供登记
-    location: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §2 内表
+    location: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §2 内表
     key: table
     retention: 权限到位并产数后本节点退役
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md
   gap_refs: []
   red_reason: broken_supply
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §2
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §5-2
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §2
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §5-2
   freshness_evidence: []
   task_family: null
   facets: []
@@ -2495,15 +2501,15 @@ nodes:
   - anchor: c1_market.l2_tick
     symptom: zero_rows
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §2
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §2
     note_zh: 本车道复跑仍 0 行
   - anchor: c1_market.suspend
     symptom: zero_rows
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §2
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/01_采集三段与源熔断.md §2
     note_zh: 三任务同写一表、0 行＝从未产数
   machine: {}
-  purpose_tag: break_detect  # 静默断供发现缺口（2026-10-08 逐环挖矿补）
+  purpose_tag: break_detect
   casebooks:
   - CASEBOOK-001#outage
   consumers:
@@ -2539,15 +2545,15 @@ nodes:
     retention: 待接测量腿
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md
   gap_refs: []
   red_reason: unwired
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §1
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §1
   freshness_evidence: []
   task_family: null
   facets: []
@@ -2555,12 +2561,12 @@ nodes:
   - anchor: task:dynamic_local_replay
     symptom: unregistered_running
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §1 下
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/02_入库单通道与幂等判重.md §1 下
     note_zh: 登记侧滞后＋测量样本零落点＝排空与否无读据（残余 🌑-1 两点之一）
   machine: {}
-  purpose_tag: source_fallback  # 降级落盘回灌保全（2026-10-08 逐环挖矿补）
+  purpose_tag: source_fallback
   casebooks:
-  - CASEBOOK-005  # 记忆教训：tick 兜底回灌停摆三层根因 2026-09-16+local_replay 5510 件滞留实录（本缺口历史案型；裸册号）
+  - CASEBOOK-005
   consumers:
   - flow:回灌排空读数需求方(DSC-04/05/FB 三边)
   trigger_facts:
@@ -2593,15 +2599,15 @@ nodes:
     retention: 配置真源
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md
   gap_refs: []
   red_reason: broken_supply
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §2.3（全证据链 git log -p 实见）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §2.3（全证据链 git log -p 实见）
   freshness_evidence: []
   task_family: null
   facets: []
@@ -2609,17 +2615,18 @@ nodes:
   - anchor: file:scripts/backup/backup_config.yaml
     symptom: guard_revived
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §2.3（99_pending_owner.md 已在报）
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/04_冷备灾备与分层.md §2.3（99_pending_owner.md 已在报）
     note_zh: WB12-44 P0；本车道 09-25 报告实读 g_mirror.targets 只余 zephyr_cold 一项且 robocopy_exit=1/status=ok
   machine: {}
-  purpose_tag: can_rollback  # 唯一全量镜像保全缺口（2026-10-08 逐环挖矿补）
+  purpose_tag: can_rollback
   casebooks:
-  - CASEBOOK-005  # 记忆教训：mirror 两证删除收官 2026-09-24（撕裂尾法证独有=∅ 才敢删=G 盘镜像保全同族判定方法论；裸册号）
+  - CASEBOOK-005
   consumers:
   - flow:G盘全量镜像恢复能力(唯一副本保全,Owner 门位)
   trigger_facts:
     as_of: '2026-10-04'
-    evidence: g_mirror ch_vm_backup目标防护已落地 HEAD（backup.ps1 g_mirror 段 L1057-1164+失败不掩蔽 L1164；chiefc 备份五件批 44e4fc50/48bcbd2f/a96c303c）——原 P0 验证腿已落地，2026-10-10 顺清
+    evidence: g_mirror ch_vm_backup目标防护已落地 HEAD（backup.ps1 g_mirror 段 L1057-1164+失败不掩蔽 L1164；chiefc 备份五件批 44e4fc50/48bcbd2f/a96c303c）——原
+      P0 验证腿已落地，2026-10-10 顺清
     zero_trigger_verdict: insufficient_window
 - node_id: DSC-13
   name_zh: 完整性巡检 + 新鲜度哨兵（四检核器，只检测不回补）
@@ -2665,9 +2672,9 @@ nodes:
     retention: 常驻
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-13
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-13
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md
   gap_refs:
   - DSC-GAP-RECDIFF
   - DSC-GAP-MACRO
@@ -2675,8 +2682,8 @@ nodes:
   confidence: verified
   verified_scope: production
   evidence:
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md §1.2（台账 last_run/status/rows＋按日告警计数实测）
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2（D12-13 🔨→✅ 三证）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §1.2（台账 last_run/status/rows＋按日告警计数实测）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2（D12-13 🔨→✅ 三证）
   freshness_evidence:
   - table: integrator_progress.db:task_progress[integrity_check_daily]
     date_col: last_run_at
@@ -2693,7 +2700,7 @@ nodes:
   - anchor: slot:integrity_check
     symptom: detection_no_repair
     measured_on: '2026-09-23'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §1.2
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §1.2
     note_zh: 案卷坐实 20 个衍生/财务任务漏跑＋19 失败，含 consensus_daily_build/financial_derived_build——检出来了但无自动补跑通道
   - anchor: slot:integrity_check
     symptom: slot_run_missing
@@ -2731,7 +2738,7 @@ nodes:
     executors_missing: []
   purpose_tag: break_detect
   casebooks:
-  - CASEBOOK-001#alert  # 2026-10-08 判读补章（新章：巡检告警案卷主体族 YYYYMMDD_<check>_HHMMSS.json；主体族有章+特族 #outage 有章对偶完整；章码枚举真源缺位随批呈批登记）
+  - CASEBOOK-001#alert
   consumers:
   - flow:catchup_guard对账基准
   - flow:CLI status
@@ -2785,16 +2792,16 @@ nodes:
     retention: 规则真源 YAML
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-14
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-14
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md
   gap_refs:
   - DSC-GAP-RECDIFF
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md §2.1/§2.2（三通道分派行号＋台账读数）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §2.1/§2.2（三通道分派行号＋台账读数）
   freshness_evidence: []
   task_family: 三活通道 + 一死通道
   facets:
@@ -2823,12 +2830,12 @@ nodes:
   - anchor: slot:catchup_guard
     symptom: stale_slot_run
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §2.2 ＋ 本车道复跑
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §2.2 ＋ 本车道复跑
     note_zh: 末次打卡 09:24 非 05:30 档；schedule.yaml 自述该槽被当成周末校准槽的过渡补丁——③ 兜 ① 的前提今天不成立
   - anchor: status:open
     symptom: unresolved_gaps
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §4.2
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §4.2
     note_zh: known_data_gaps 仍有 open/monitoring 未了账，与漏跑清单交叉才是缺口 vs 坏数据判据分界
   machine:
     slots:
@@ -2855,7 +2862,7 @@ nodes:
     executors_missing: []
   purpose_tag: break_repair
   casebooks:
-  - CASEBOOK-006  # 2026-10-08 挂载：registry 挂载建议面闭合（known_data_gaps 台账，建议 vs 实挂差消解）
+  - CASEBOOK-006
   consumers:
   - flow:补跑动作(经DSC-20留痕)
   trigger_facts:
@@ -2893,16 +2900,16 @@ nodes:
     retention: 注册表在册
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md
   gap_refs: []
   red_reason: unwired
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md §2.3（四条可复跑证据链：grep/特殊槽全集/注册表/SOP）
-  - 留档退役批复：in1z_escalations.md IN1-E7——Owner 2026-10-04 裁留档退役（docs/_working/vmap12_intake/）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §2.3（四条可复跑证据链：grep/特殊槽全集/注册表/SOP）
+  - 留档退役批复：in1z_escalations.md IN1-E7——Owner 2026-10-04 裁留档退役（docs/_archive/_working_cleared/vmap12_intake/）
   freshness_evidence: []
   task_family: null
   facets: []
@@ -2910,17 +2917,17 @@ nodes:
   - anchor: file:src/zephyr/data/auto_backfiller.py
     symptom: unwired
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §2.3
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §2.3
     note_zh: 死结论：零生产实例化（AutoBackfiller( 只出现在测试）＋特殊槽全集无此分支＋schedule.yaml 无对应槽
   - anchor: file:docs/01_policies_and_standards/_registry/catalogs/wiring_registry.yaml
     symptom: gate_bypassed
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §2.3 第 3 条
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §2.3 第 3 条
     note_zh: 以 pure_library/exempt 分类合法绕过接线门＝建好未接线长期隐身的机制因
   - anchor: file:docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md
     symptom: doc_contradiction
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §2.3 第 4 条
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §2.3 第 4 条
     note_zh: SOP 把它写成常态在岗，与代码/注册表三说不一＝文档矛盾=事故型，禁按文档标 ✅
   machine:
     executors:
@@ -2929,7 +2936,7 @@ nodes:
       label: 自动回填器
     executors_missing: []
   purpose_tag: break_repair
-  casebooks: []  # 无八册案卷：退役批复=IN1-E7④（Owner 2026-10-04）+豁免登记 wiring_registry CAND-DAT-014，批复件非册
+  casebooks: []
   consumers:
   - flow:事件回填语义已归 DSC-16 手动通道(退役留档)
   trigger_facts:
@@ -2974,9 +2981,9 @@ nodes:
     retention: 永久（实测 0 行）
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-15
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-15
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md
   gap_refs:
   - DSC-GAP-TERMINUS
   - DSC-GAP-RECDIFF
@@ -2984,7 +2991,7 @@ nodes:
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md §3.3（零调用方＋无分派分支＋0 行三项实测）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §3.3（零调用方＋无分派分支＋0 行三项实测）
   - 本图 machine.scheduler_dispatch.slots_hollow（槽在、零任务、无分派分支，机械可判）
   freshness_evidence: []
   task_family: 三账 diff（未接线）
@@ -2993,12 +3000,12 @@ nodes:
   - anchor: slot:eod_reconciliation
     symptom: unwired
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §3.3
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §3.3
     note_zh: 运行台账在结构上不存在（只有差异表、没有跑了几次/哪次全绿的 run 表）⇒不是拿不到日志，是无从取证
   - anchor: table:reconcile_execution_log
     symptom: false_green_trap
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §3.3 第 4 条
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §3.3 第 4 条
     note_zh: 近亲名、本车道复跑 89,115 行且当天仍在写，但属图11 提交自愈环台账——按名字相似认领证据必假绿（列名集双向核对已入骨架 ★坑7）
   machine:
     slots:
@@ -3016,7 +3023,7 @@ nodes:
       label: 盘后全量对账器 / EOD Reconciler
     executors_missing: []
   purpose_tag: break_detect
-  casebooks: []  # 无八册案卷：未接线零运行（差异台账 0 行）无案可翻；接线后账本=reconciliation_differences(governance.db) 非 001——registry#001「break_detect 族」建议行在本格暂无案不硬凑
+  casebooks: []
   consumers:
   - registry:backtest_backlog.yaml:1222(按空表降级)
   trigger_facts:
@@ -3050,21 +3057,21 @@ nodes:
   data_refs: []
   store_refs:
   - artifact: 终点判据缺口登记
-    location: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §末A OBS-WF-8
+    location: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §末A OBS-WF-8
     key: obs_id
     retention: 接线＋运行留痕补齐后本节点退役
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md
   gap_refs: []
   red_reason: terminal
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md §末A OBS-WF-8（P0 上报）
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §5-1（终点改写条款）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §末A OBS-WF-8（P0 上报）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §5-1（终点改写条款）
   freshness_evidence: []
   task_family: null
   facets: []
@@ -3072,11 +3079,11 @@ nodes:
   - anchor: node:DSC-15
     symptom: terminal_unprovable
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §末A OBS-WF-8
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §末A OBS-WF-8
     note_zh: 图级问题非环节级问题：挂槽≠在跑须进封矿判据，否则图13 的 15:40 槽会以同形态被误标
   machine: {}
-  purpose_tag: schedule_complete  # 终点=达标面证明（2026-10-08 逐环挖矿补）
-  casebooks: []  # 无八册案卷：图级终点判据缺口（05 卷 OBS-WF-8）；实锚=DSC-10B/20 案卷他格在挂
+  purpose_tag: schedule_complete
+  casebooks: []
   consumers:
   - flow:图级可证终点声明(boundary terminal 双实锚 DSC-10B/DSC-20)
   trigger_facts:
@@ -3110,15 +3117,15 @@ nodes:
     retention: 永久（实测 0 行）
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 （辅助/缺口节点，见 §6）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md
   gap_refs: []
   red_reason: unwired
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C（N5 加证）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C（N5 加证）
   - 本车道 09-25 治理库只读复跑
   freshness_evidence: []
   task_family: null
@@ -3127,11 +3134,11 @@ nodes:
   - anchor: table:reconciliation_differences
     symptom: zero_rows
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C/§4-N5
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §1-C/§4-N5
     note_zh: 本车道经 DatabaseService 治理库只读复跑 count=0；0 行不可读成全对，等价于从未跑过
   machine: {}
-  purpose_tag: ledger_readable  # 0 行账本被当可信输入=账本翻不了（2026-10-08 逐环挖矿补）
-  casebooks: []  # 无八册案卷：0 行表无案卷史；消费降级判据=backtest_backlog:1222（11 卷 N5）
+  purpose_tag: ledger_readable
+  casebooks: []
   consumers:
   - registry:backtest_backlog.yaml:1222
   trigger_facts:
@@ -3173,15 +3180,15 @@ nodes:
     retention: 规则真源 YAML（三渠道实证不可恢复→转 accepted）
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-16
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-16
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md
   gap_refs: []
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md §4（逐个纳管态实测＋缺口台账 status 分布）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §4（逐个纳管态实测＋缺口台账 status 分布）
   freshness_evidence: []
   task_family: 政策 §3 回补器七件 + 修复两件
   facets: []
@@ -3189,12 +3196,12 @@ nodes:
   - anchor: file:scripts/data/backfill_tick_depth5.py
     symptom: untracked
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §4.1
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §4.1
     note_zh: 政策点名的 7 个回补器中 4 个不在 VCS（仅主区磁盘）⇒任何 worktree/新克隆 ls 不到；未纳管即无 INVARIANTS/无 gate/无测试，改数据行为不可审
   - anchor: file:scripts/ch/c4_history_repair.py
     symptom: path_ghost
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §末A OBS-WF-12
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §末A OBS-WF-12
     note_zh: 骨架原路径写错，真身在 src/zephyr/data/（本图已按真身挂锚）
   machine:
     executors:
@@ -3207,7 +3214,7 @@ nodes:
     executors_missing: []
   purpose_tag: break_repair
   casebooks:
-  - CASEBOOK-006  # 2026-10-08 挂载：registry 挂载建议面闭合（known_data_gaps 台账，建议 vs 实挂差消解）
+  - CASEBOOK-006
   consumers:
   - flow:修复需求方(手动)
   trigger_facts:
@@ -3246,17 +3253,17 @@ nodes:
     retention: 随 CH 表
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-17
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-17
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md
   gap_refs:
   - DSC-GAP-CONSENSUSCHAIN
   red_reason: null
   confidence: verified
   verified_scope: production
   evidence:
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md §5.1（列名实测＋行集读数）
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2（三验复跑）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §5.1（列名实测＋行集读数）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §2（三验复跑）
   freshness_evidence:
   - table: c1_market.cross_validation_log
     date_col: check_date
@@ -3273,12 +3280,12 @@ nodes:
   - anchor: c1_market.cross_validation_log
     symptom: epoch_sentinel_column
     measured_on: '2026-09-21'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §5.3
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §5.3
     note_zh: check_time 自 09-21 起恒为 epoch⇒用 max(check_time) 判新鲜必误报停更；新鲜度口径必须钉在 check_date
   - anchor: slot:consensus_crosscheck
     symptom: coverage_shrink
     measured_on: '2026-09-23'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §5.3 / §末B P-7
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §5.3 / §末B P-7
     note_zh: 按日行量从 ~27 项缩到 4 项，是有意收窄还是配置漂移实测不可判；与 DSC-08 预期腿停更交叉是本图最有价值的待查线索
   machine:
     slots:
@@ -3294,7 +3301,7 @@ nodes:
     executors_missing: []
   purpose_tag: break_detect
   casebooks:
-  - CASEBOOK-001#alert  # 互验告警案卷：data/failures consensus_crosscheck 族 14 件（20260914..20261001 在产）——registry#001「break_detect 族环节」建议行闭合
+  - CASEBOOK-001#alert
   consumers:
   - flow:互验台账cross_validation_log(一致预期质量旁证,DSC-08 交叉)
   - flow:告警件data/failures(consensus_crosscheck 案卷)
@@ -3338,16 +3345,16 @@ nodes:
     retention: 追加式日志
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-18
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-18
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md
   gap_refs:
   - DSC-GAP-REPLAY
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md §6.2/§6.3
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §6.2/§6.3
   - 本车道 09-25 独立复跑 schtasks
   freshness_evidence: []
   task_family: 周度维护（OS 侧）
@@ -3356,13 +3363,13 @@ nodes:
   - anchor: task:ops_ch_optimize_merge_weekly
     symptom: unregistered_running
     measured_on: '2026-09-20'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §6.2
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §6.2
     note_zh: 开工了但没登记：本车道独立复跑 schtasks LastRun=09-20 03:30:00 Result=0 NextRun=09-27 03:30，登记册仍 planned/manual/samples=0（samples
       零是测量腿未接，不是没跑）
   - anchor: file:scripts/ch/optimize_merge.py:138
     symptom: false_success
     measured_on: '2026-09-20'
-    pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §6.3
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §6.3
     note_zh: 失败 0 不可信：唯一可信效果证据=合并前后逐位比对或 system.parts 冗余率复测；周批 659 分区不足以覆盖事故分区
   machine:
     executors:
@@ -3375,7 +3382,7 @@ nodes:
     executors_missing: []
   purpose_tag: no_double_write
   casebooks:
-  - CASEBOOK-001#alert  # parts 健康告警族：chdatapartsexplosion 508 件（生成器 ch_parts_monitor.py 实锚=合并维护压力史）
+  - CASEBOOK-001#alert
   consumers:
   - flow:CH引擎合并维护(ReplacingMergeTree幂等前提)
   trigger_facts:
@@ -3413,17 +3420,17 @@ nodes:
     retention: append（本车道复跑：文件不存在）
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-19
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-19
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md
   gap_refs:
   - DSC-GAP-MACRO
   red_reason: null
   confidence: verified
   verified_scope: structure
   evidence:
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.2/§5-2
-  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §2-2（双锚 grep 实证）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.2/§5-2
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/11_消费端需求反查.md §2-2（双锚 grep 实证）
   freshness_evidence: []
   task_family: 常驻探测器（零档期）
   facets: []
@@ -3431,7 +3438,7 @@ nodes:
   - anchor: file:src/zephyr/data/scheduler.py:1081
     symptom: detector_scope_gap
     measured_on: '2026-09-25'
-    pointer: docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.2
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.2
     note_zh: 现役事故不在其检测口径内；且事故同时打掉它判新鲜度所依赖之外的 parts 面——零触发不等于零风险
   - anchor: file:data/local_fallback/corrupted_parts_audit.jsonl
     symptom: zero_fire_no_audit
@@ -3446,7 +3453,7 @@ nodes:
     executors_missing: []
   purpose_tag: break_detect
   casebooks:
-  - CASEBOOK-001#outage  # 2026-10-08 判读补章（破损 part 事故=供给断伤族，E-8 断供事故语义覆盖 part 级破损，归既有章不新造）
+  - CASEBOOK-001#outage
   consumers:
   - pass-through:全部CH读消费者(读路径可用性前提)
   trigger_facts:
@@ -3488,17 +3495,17 @@ nodes:
     retention: 常驻
   runtime_refs: []
   doc_refs:
-  - docs/_working/map_build/03_final_blueprint_and_schema.md
-  - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-20
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md
+  - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md §1 D12-20
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md
   gap_refs:
   - DSC-GAP-RECDIFF
   red_reason: null
   confidence: verified
   verified_scope: production
   evidence:
-  - docs/_working/map_build/fig12_datachain/05_对账修复六环.md §1.2/§末 OBS-WF-13
-  - docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.3（三问裁定）
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/05_对账修复六环.md §1.2/§末 OBS-WF-13
+  - docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.3（三问裁定）
   - 本车道 09-25 只读复跑：案卷四件齐 + task_runs 188,702 行
   freshness_evidence:
   - table: integrator_progress.db:task_runs
@@ -3529,7 +3536,7 @@ nodes:
   - anchor: task:consensus_daily_build
     symptom: detection_no_repair
     measured_on: '2026-09-24'
-    pointer: docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.3（09-24 件读数 183/149/19/15）
+    pointer: docs/_archive/_working_cleared/map_build/fig12_datachain/12_扩行提案与封顶重宣.md §1.3（09-24 件读数 183/149/19/15）
     note_zh: 漏跑清单含 consensus_daily_build/financial_derived_build/kline_sector_*——本行正是这些改判的下修依据，无此行则改判无处引证
   machine:
     executors:
@@ -3542,8 +3549,8 @@ nodes:
     executors_missing: []
   purpose_tag: schedule_complete
   casebooks:
-  - CASEBOOK-001#task_reconcile  # 2026-10-08 判读补章（新章：task_reconcile 族案卷=本节点唯一生产者；章码枚举真源缺位随批呈批登记）
-  - CASEBOOK-007  # 2026-10-08 增挂：registry 挂载建议闭合（采集打卡账本=档期对账分母真源；宿主 data/integrator_progress.db 主区在位、W 内为运行时件未随树）
+  - CASEBOOK-001#task_reconcile
+  - CASEBOOK-007
   consumers:
   - flow:catchup_guard基准+CLI+告警三族
   trigger_facts:
@@ -3857,36 +3864,35 @@ counts:
   nodes_with_module_id: 25
   gap_ref_edges: 17
 machine:
-  as_of: '2026-10-07'
+  as_of: null
   sources:
     tasks_yaml:
       path: src/zephyr/data/config/tasks.yaml
-      tasks_total: 276
+      tasks_total: 275
       unique_task_ids: 275
-      duplicate_task_ids:
-      - cohort_ledger_daily
+      duplicate_task_ids: []
       distinct_sources: 23
       distinct_target_tables: 197
-      incremental_true: 165
-      fallback_nonempty: 39
+      incremental_true: 164
+      fallback_nonempty: 38
       schedule_disabled: 4
-      with_date_col: 203
+      with_date_col: 202
       tasks_with_buffer: 32
-      dep_edges: 66
-      tasks_with_deps: 43
-      dep_edges_cross_slot: 26
+      dep_edges: 63
+      tasks_with_deps: 42
+      dep_edges_cross_slot: 25
       per_source_task_counts:
         akshare: 100
-        miniqmt: 56
+        miniqmt: 55
         akshare_alt: 38
-        internal: 27
+        internal: 28
         tushare: 13
         tdx: 5
         tqcenter: 5
         hyperliquid: 4
         tickflow: 4
-        baostock: 3
         fred: 3
+        baostock: 2
         crypto_binance: 2
         eia: 2
         irm: 2
@@ -3903,7 +3909,7 @@ machine:
         daily_capital: 45
         weekend_calibration: 44
         daily_event: 42
-        daily_kline: 38
+        daily_kline: 37
         monthly_static: 21
         intraday_minute: 16
         intraday_realtime: 16
@@ -3921,7 +3927,7 @@ machine:
         weekend_backfill: 1
     schedule_yaml:
       path: src/zephyr/data/config/schedule.yaml
-      slots_total: 32
+      slots_total: 33
       slots:
       - auction_highfreq
       - calendar_coverage_check
@@ -3946,6 +3952,7 @@ machine:
       - monthly_static
       - news_slow
       - nightly_financial
+      - nightly_news_score
       - nightly_sentiment
       - pf_alloc_rebalance_check
       - post_auction
@@ -3956,7 +3963,7 @@ machine:
       - weekend_backfill
       - weekend_calibration
       executors:
-        default: 23
+        default: 24
         heavy: 5
         realtime: 2
         intraday_minute: 1
@@ -3971,6 +3978,7 @@ machine:
       - dloop_post
       - integrity_check
       - lane_g_intake_sweep
+      - nightly_news_score
       - nightly_sentiment
       - pf_alloc_rebalance_check
       - post_auction
@@ -3998,6 +4006,7 @@ machine:
       - sector_pre_open
       - weekend_backfill
       slots_hollow:
+      - nightly_news_score
       - post_auction
     asset_registry:
       path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
@@ -4012,7 +4021,7 @@ machine:
       drift:
         datasets: 2
     skeleton_status:
-      path: docs/_working/map_build/fig12_datachain/00_skeleton.md
+      path: docs/_archive/_working_cleared/map_build/fig12_datachain/00_skeleton.md
       rows_scanned: 22
       by_symbol:
         ✅: 10
@@ -4032,7 +4041,7 @@ machine:
       - DSC-20
     module_id_projection:
       path: docs/03_modules/path_ownership_map.yaml
-      claims_scanned: 8063
+      claims_scanned: 7813
       nodes_with_module_id: 25
       nodes_with_module_ref: 25
       nodes_null_module_id: 18
@@ -4047,8 +4056,8 @@ machine:
     tqcenter: 通达信tqcenter
     hyperliquid: ''
     tickflow: TickFlow
-    baostock: BaoStock
     fred: ''
+    baostock: BaoStock
     crypto_binance: ''
     eia: ''
     irm: ''

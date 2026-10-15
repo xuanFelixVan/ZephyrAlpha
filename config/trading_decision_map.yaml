@@ -2,7 +2,7 @@
 # [A_config] module_id=MOD-TRADING-015 | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ============================================================================
 # 交易决策地图真源（Trading Decision Map SSOT）— schema 文件级版本见下方 schema_version 字段（散文不复制版本号，防漂移）；节点规范演进由解析器承载
-# 设计真源: docs/_working/archive/2026-09/design_memos/69_trading_decision_map.md
+# 设计真源: docs/_archive/_working_cleared/archive/2026-09/design_memos/69_trading_decision_map.md
 # 蓝图: docs/03_modules/_domain_trading/decision_map/blueprint.md
 # 裁定: Owner 2026-09-04 D1-D6（讨论备忘录 docs/_working/2026-09-04-trading-decision-map-discussion.md）
 #
@@ -67,7 +67,7 @@ purpose_tags:
 # 环节级 casebooks 章系图例（2026-10-08 环节病历挂载批 st-fc-tdm-20261008）：正典指针=册号#章，
 #   册族唯一反查册=docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml；
 #   挂载判据=vertical_map_mounting_policy §3 四机规+「该环节失败/漂移时确有翻账语义」，无语义留空不硬凑
-#   （逐环节判读留痕=docs/_working/fullcirculation_campaign/10_hop_mining/tdm_decision/hops.yaml）；
+#   （逐环节判读留痕=docs/_archive/_working_cleared/fullcirculation_campaign/10_hop_mining/tdm_decision/hops.yaml）；
 #   CASEBOOK-003 抢救台账/004 审查发现两卷在本图无翻账语义环节故零挂（003 完备性由图11 D 族主挂、
 #   004 由图11 C11/C13 主挂满足；004 两卷内容域=战役治理审查发现，非交易域病历——与 SP 图同口径查证结论）；
 #   CASEBOOK-009 回测覆盖总册=册号授自 Owner H11 发车裁定（registry 物理入册待上户口批）；
@@ -133,6 +133,13 @@ nodes:
   confidence: untested
   purpose_tag: PT-04
   battle_map_refs: [BM-BUY-02, BM-BUY-02-A, BM-BUY-03]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-FLOW__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-P-FLOW
   casebooks: []
@@ -164,6 +171,13 @@ nodes:
   confidence: untested
   purpose_tag: PT-06
   battle_map_refs: [BM-BUY-03]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-FLOW__*（4 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-FLOW
   casebooks: []
@@ -192,6 +206,13 @@ nodes:
   confidence: untested
   purpose_tag: PT-07
   battle_map_refs: [BM-BUY-03]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-FLOW__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-F-FLOW
   casebooks: []
@@ -225,6 +246,14 @@ nodes:
 
   # ── E-L0 盘前作战计划（Owner 2026-09-09 B-1 裁定甲-2：父+三子；定界=L0 产计划、L1 唯一开闸）──
   # 真源=plan_engine 包（D_PLAN），作战室前端已消费（今日交易计划卡/W2/W5 格）；"只挂引用不重建"承诺自本节点组兑现
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-FLOW__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-E-L0
   casebooks: []
   name_zh: 盘前作战计划
@@ -254,6 +283,14 @@ nodes:
   confidence: proposed
   purpose_tag: PT-09
   battle_map_refs: [BM-PLAN-02, BM-PLAN-03, BM-SELL-07]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F15_L0作战计划
+    goal_statement: "全流总装：每天一纸计划"
+    output_contract: "总仓位档＋禁做清单＋分批预案＋应急线（计划-执行一致率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L0__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-E-L0-01
   casebooks: []
   name_zh: 计划生成
@@ -284,6 +321,14 @@ nodes:
   confidence: proposed
   purpose_tag: PT-09
   battle_map_refs: [BM-BUY-01]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F15_L0作战计划
+    goal_statement: "全流总装：每天一纸计划"
+    output_contract: "总仓位档＋禁做清单＋分批预案＋应急线（计划-执行一致率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L0-01__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-E-L0-02
   casebooks: []
   note_confirmed: 2026-09-16  # grp3p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
@@ -313,6 +358,14 @@ nodes:
   module_mounts: [MOD-PLAN-006]
   confidence: proposed
   purpose_tag: PT-09
+  goal:
+    family: F15_L0作战计划
+    goal_statement: "全流总装：每天一纸计划"
+    output_contract: "总仓位档＋禁做清单＋分批预案＋应急线（计划-执行一致率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L0-02__*（4 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-E-L0-03
   casebooks: [CASEBOOK-005#实盘衰减与归因]
   name_zh: 收盘复盘与明日边界
@@ -347,6 +400,14 @@ nodes:
   confidence: proposed
   purpose_tag: PT-09
   battle_map_refs: [BM-PLAN-01]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F15_L0作战计划
+    goal_statement: "全流总装：每天一纸计划"
+    output_contract: "总仓位档＋禁做清单＋分批预案＋应急线（计划-执行一致率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L0-03__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-E-L0-04
   casebooks: [CASEBOOK-001#outage]
   note_confirmed: 2026-09-13
@@ -385,6 +446,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-09
   battle_map_refs: [BM-BUY-02-A-1-c, BM-SEL-04]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F02_情绪线
+    goal_statement: "快变量温度计＋事件源——L1 温度/L2 相位/L3 事件/L4 预测"
+    output_contract: "温度计档位＋相位＋情绪事件流＋滚动预测（三判据：校准/区分度/事件命中）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L0-04__*（4 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L1
   casebooks: [CASEBOOK-009#红证, CASEBOOK-005#实盘衰减与归因]
@@ -450,6 +518,14 @@ nodes:
   # 因子层缺口说明：情绪类因子在 REG-FCT-001 仅到 family 级（family_id=sentiment），
   #   尚无 FCT-* 级条目（涨停家数/炸板率/晋级率等）——factor_refs 留空=地图缺口节点，
   #   补登因子后回填引用（缺口检测语义）
+  goal:
+    family: F01_大盘两态
+    goal_statement: "定「什么时候信什么信号」——形态三分类＋灰度＋拐点信号集"
+    output_contract: "形态三分类＋灰度值＋拐点信号集（condaxis P2 契约为准）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L1__*（7 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L1-S1
   casebooks: [CASEBOOK-001#outage]
   name_zh: 大盘指数传感器
@@ -479,6 +555,13 @@ nodes:
   module_mounts_influence: {MOD-MKT-001: 行情时延/连续性/质量；编制在图12数据链（伸手供给全传感器族）, MOD-MKT-002: 行情时延/连续性/质量；编制在图12数据链（伸手供给全传感器族）, MOD-MKT-003: 行情时延/连续性/质量；编制在图12数据链（伸手供给全传感器族）, MOD-MKT-004: 行情时延/连续性/质量；编制在图12数据链（伸手供给全传感器族）, MOD-MKT-005: 行情时延/连续性/质量；编制在图12数据链（伸手供给全传感器族）, MOD-MKT-006: 行情时延/连续性/质量；编制在图12数据链（伸手供给全传感器族）, MOD-MKT-007: 行情时延/连续性/质量；编制在图12数据链（伸手供给全传感器族）}
   confidence: proposed
   purpose_tag: PT-01
+  goal:
+    family: F01_大盘两态
+    goal_statement: "定「什么时候信什么信号」——形态三分类＋灰度＋拐点信号集"
+    output_contract: "形态三分类＋灰度值＋拐点信号集（condaxis P2 契约为准）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L1-S1__*（3 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L1-S2
   casebooks: [CASEBOOK-001#outage]
@@ -508,6 +591,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-01
   battle_map_refs: [BM-SEL-03-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F01_大盘两态
+    goal_statement: "定「什么时候信什么信号」——形态三分类＋灰度＋拐点信号集"
+    output_contract: "形态三分类＋灰度值＋拐点信号集（condaxis P2 契约为准）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L1-S2__*（46 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L1-S3
   casebooks: [CASEBOOK-001#outage]
@@ -535,6 +625,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-01
   battle_map_refs: [BM-SEL-23, BM-SEL-23-A, BM-SEL-23-A-1, BM-SEL-23-A-2, BM-SEL-23-A-3, BM-SEL-23-A-4, BM-SEL-23-A-5, BM-SEL-23-A-6, BM-SEL-23-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F01_大盘两态
+    goal_statement: "定「什么时候信什么信号」——形态三分类＋灰度＋拐点信号集"
+    output_contract: "形态三分类＋灰度值＋拐点信号集（condaxis P2 契约为准）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L1-S3__*（8 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L1-S4
   casebooks: [CASEBOOK-001#outage, CASEBOOK-001#alert]
@@ -587,6 +684,14 @@ nodes:
   #     传统"货币→信贷→盈利"链失效，新链=产业政策→产业预期→股市，"M1 定买卖"失效）
   #   方法论=复用周级三步法（滚动分位→加权合成→天气分 0-100），输出喂月级谨慎度修正
   #   A股范式权重修正：政策/产业因子权重↑、总量因子权重↓
+  goal:
+    family: F01_大盘两态
+    goal_statement: "定「什么时候信什么信号」——形态三分类＋灰度＋拐点信号集"
+    output_contract: "形态三分类＋灰度值＋拐点信号集（condaxis P2 契约为准）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L1-S4__*（4 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L1-S0
   casebooks: [CASEBOOK-001#outage, CASEBOOK-001#alert]
   note_confirmed: 2026-09-16  # grp6p1s1 出仓复核：机器块搬 yaml，算法口径逐字未变
@@ -616,6 +721,14 @@ nodes:
   purpose_tag: PT-01
 
   # ── S0-1 新闻情绪语义分析（Owner 2026-09-09：本地模型情绪打分入图；新闻→决策链的理解层）──
+  goal:
+    family: F10_宏观S0
+    goal_statement: "宏观支撑/压制入总闸（归属=P0 挖矿后出建议，非保留面）"
+    output_contract: "宏观分＋政策事件流（对总闸档位的增量解释力验收）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L1-S0__*（7 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L1-S0-1
   casebooks: [CASEBOOK-001#outage]
   name_zh: 新闻情绪语义分析
@@ -647,6 +760,14 @@ nodes:
   module_mounts_influence: {MOD-INT-AISA: 源线数据供给（判据输入）}
   confidence: proposed
   purpose_tag: PT-01
+  goal:
+    family: F02_情绪线
+    goal_statement: "快变量温度计＋事件源——L1 温度/L2 相位/L3 事件/L4 预测"
+    output_contract: "温度计档位＋相位＋情绪事件流＋滚动预测（三判据：校准/区分度/事件命中）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L1-S0-1__*（3 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L1-S5
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
@@ -671,6 +792,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-01
+  goal:
+    family: F01_大盘两态
+    goal_statement: "定「什么时候信什么信号」——形态三分类＋灰度＋拐点信号集"
+    output_contract: "形态三分类＋灰度值＋拐点信号集（condaxis P2 契约为准）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L1-S5__*（3 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L1-AGG
   casebooks: [CASEBOOK-005#实盘衰减与归因]
@@ -710,6 +838,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-01
   battle_map_refs: [BM-BUY-02-A-1, BM-BUY-02-A-1-a, BM-BUY-02-A-1-b, BM-BUY-02-A-1-d, BM-SEL-03, BM-SEL-03-B, BM-SEL-07]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F01_大盘两态
+    goal_statement: "定「什么时候信什么信号」——形态三分类＋灰度＋拐点信号集"
+    output_contract: "形态三分类＋灰度值＋拐点信号集（condaxis P2 契约为准）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L1-AGG__*（7 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2
   casebooks: []
@@ -734,13 +869,21 @@ nodes:
     #   锚 BM-SEL-25-C-3 跟风决策）——通道②由作战地图/预案引擎承载，地图只声明语义不建第二真源
     # 水温解挂（D20）：四层架构定稿——日级温度计（L1-S5，11 信号）独立判定 5 档，
     #   月/周层封顶约束+三层对齐加成；05-1 消费 S5 当日读数（主判）+L1-AGG 双轴（封顶）
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md"
 
   # ── 树枝01 板块强度综合（22号 §3.1①⑧⑨）────────────────────────
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-02
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-01
   casebooks: [CASEBOOK-001#alert]
   name_zh: 板块强度综合
@@ -765,7 +908,7 @@ nodes:
 
   red_reason: structural
   algo_refs: [DAL-SECTOR-DIST]
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.2-板块强度综合"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.2-板块强度综合"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -777,6 +920,13 @@ nodes:
   confidence: untested
   purpose_tag: PT-02
   battle_map_refs: [BM-SEL-08-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-01__*（5 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-01-1
   casebooks: [CASEBOOK-001#alert]
@@ -799,7 +949,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_analyzer.py
   module_id: MOD-SIG-026
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1①"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1①"
   activation: postmarket
   invalidation: 板块内封板率<70%时结构分×0.8（情绪虚高），以封板率终值复核
   ai_autonomy: auto
@@ -812,6 +962,14 @@ nodes:
   module_mounts: [MOD-SIG-058, MOD-SIG-095, MOD-SIG-097, MOD-SIG-100, MOD-SIG-101, MOD-SIG-120]
   confidence: proposed
   purpose_tag: PT-02
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-01-1__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-01-2
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
@@ -833,7 +991,7 @@ nodes:
   module_ref: src/zephyr/data/sector_ranking_engine.py
   module_id: MOD-L00-004
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1①"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1①"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -844,6 +1002,13 @@ nodes:
   module_mounts_influence: {MOD-L00-004: 盘前预案数据供给}
   confidence: proposed
   purpose_tag: PT-02
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-01-2__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-01-3
   casebooks: [CASEBOOK-001#alert]
@@ -866,7 +1031,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_momentum.py
   module_id: MOD-SIG-026
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑧"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑧"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -876,6 +1041,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-02
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-01-3__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-01-4
   casebooks: [CASEBOOK-001#alert]
@@ -898,7 +1070,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_breadth.py
   module_id: MOD-SIG-026
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑥"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑥"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -911,6 +1083,14 @@ nodes:
   module_mounts: [MOD-SIG-088]
   confidence: proposed
   purpose_tag: PT-02
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-01-4__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-01-5
   casebooks: []
   note_confirmed: 2026-09-15
@@ -932,7 +1112,7 @@ nodes:
   module_ref: src/zephyr/regime/market_forecast_fusion.py
   module_id: MOD-REGIME-012
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑨"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑨"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -945,6 +1125,14 @@ nodes:
   purpose_tag: PT-02
 
   # ── 树枝02 轮动序列追踪（BM-SEL-08）────────────────────────
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-01-5__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-02
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
@@ -966,7 +1154,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_divergence.py
   module_id: MOD-SIG-060
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1④"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1④"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -978,6 +1166,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-02
   battle_map_refs: [BM-SEL-08]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-02__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-02-1
   casebooks: [CASEBOOK-001#alert]
@@ -1000,7 +1195,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_rrg.py
   module_id: MOD-SIG-026
   algo_refs: [DAL-RRG-SEQ]
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1④"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1④"
   activation: postmarket
   invalidation: 象限转移须连续 2-3 日确认，单日跳变不采信；transition 概率<10% 异常路径加 1 日确认
   ai_autonomy: auto
@@ -1010,6 +1205,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-02
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-02-1__*（5 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-02-2
   casebooks: [CASEBOOK-001#alert]
@@ -1032,7 +1234,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_analyzer.py
   module_id: MOD-SIG-026
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1④"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1④"
   activation: intraday
   invalidation:
   ai_autonomy: auto
@@ -1045,6 +1247,14 @@ nodes:
   purpose_tag: PT-02
 
   # ── 树枝03 调整周期进度（BM-SEL-09）────────────────────────
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-02-2__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-03
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
@@ -1065,7 +1275,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_adjustment.py
   module_id: MOD-SIG-040
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1③"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1③"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -1076,6 +1286,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-02
   battle_map_refs: [BM-SEL-09]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-03__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-03-1
   casebooks: [CASEBOOK-001#alert]
@@ -1100,7 +1317,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/adjustment_cycle_tracker.py
   module_id: MOD-SIG-040
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1③"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1③"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -1112,6 +1329,14 @@ nodes:
   purpose_tag: PT-02
 
   # ── 树枝04 板块级市场状态 ────────────────────────
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-03-1__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-04
   casebooks: []
   name_zh: 板块级市场状态
@@ -1133,7 +1358,7 @@ nodes:
 
   red_reason: structural
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑨⑤"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑨⑤"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -1144,6 +1369,13 @@ nodes:
   module_mounts: [MOD-SIG-061]
   confidence: untested
   purpose_tag: PT-02
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-04__*（4 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-04-1
   casebooks: []
@@ -1165,7 +1397,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_rotation_state.py
   module_id: MOD-SIG-026
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑨"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑨"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -1175,6 +1407,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-02
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-04-1__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-04-2
   casebooks: []
@@ -1197,7 +1436,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_siphon.py
   module_id: MOD-SIG-026
   algo_refs: [DAL-SIPHON-ID]
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑤"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑤"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -1210,6 +1449,14 @@ nodes:
   purpose_tag: PT-02
 
   # ── 树枝05 水温响应（D19 挂起：待 L1 温度计时间周期定稿）──────────
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-04-2__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-05
   casebooks: []
   name_zh: 水温响应
@@ -1228,7 +1475,7 @@ nodes:
   module_ref:
   red_reason: pending_gate
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑪"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑪"
   activation: premarket
   invalidation:
   ai_autonomy: auto
@@ -1238,6 +1485,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-02
+  goal:
+    family: F02_情绪线
+    goal_statement: "快变量温度计＋事件源——L1 温度/L2 相位/L3 事件/L4 预测"
+    output_contract: "温度计档位＋相位＋情绪事件流＋滚动预测（三判据：校准/区分度/事件命中）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-05__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-05-1
   casebooks: [CASEBOOK-001#alert]
@@ -1259,7 +1513,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sentiment/sentiment_cycle.py
   module_id: MOD-SIG-140
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑪"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑪"
   activation: premarket
   invalidation:
   ai_autonomy: auto
@@ -1270,6 +1524,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-02
+  goal:
+    family: F02_情绪线
+    goal_statement: "快变量温度计＋事件源——L1 温度/L2 相位/L3 事件/L4 预测"
+    output_contract: "温度计档位＋相位＋情绪事件流＋滚动预测（三判据：校准/区分度/事件命中）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-05-1__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-05-2
   casebooks: []
@@ -1292,7 +1553,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_gate.py
   module_id: MOD-SIG-026
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑪"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑪"
   activation: premarket
   invalidation:
   ai_autonomy: auto
@@ -1305,6 +1566,14 @@ nodes:
   purpose_tag: PT-02
 
   # ── 树枝06 板块→个股传导 ────────────────────────
+  goal:
+    family: F02_情绪线
+    goal_statement: "快变量温度计＋事件源——L1 温度/L2 相位/L3 事件/L4 预测"
+    output_contract: "温度计档位＋相位＋情绪事件流＋滚动预测（三判据：校准/区分度/事件命中）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-05-2__*（3 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-06
   casebooks: []
   note_confirmed: 2026-09-13
@@ -1325,7 +1594,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/core/sector_conduction.py
   module_id: MOD-SIG-136
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑦⑩"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑦⑩"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -1335,6 +1604,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-03
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-06__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-06-1
   casebooks: []
@@ -1357,7 +1633,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_gate.py
   module_id: MOD-SIG-026
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑩"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑩"
   activation: intraday
   invalidation:
   ai_autonomy: auto
@@ -1368,6 +1644,13 @@ nodes:
   module_mounts: [MOD-SIG-104]
   confidence: proposed
   purpose_tag: PT-04
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-06-1__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-06-2
   casebooks: []
@@ -1390,7 +1673,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_leader.py
   module_id: MOD-SIG-062
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑦"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑦"
   activation: intraday
   invalidation: 封单不稳/率先掉队→定位实时降级（中位股=禁区禁触）
   ai_autonomy: auto
@@ -1401,6 +1684,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-03
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-06-2__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-06-3
   casebooks: [CASEBOOK-001#alert]
@@ -1423,7 +1713,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/core/sector_conduction.py
   module_id: MOD-SIG-136
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑦"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1⑦"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -1435,6 +1725,14 @@ nodes:
   purpose_tag: PT-03
 
   # ── 树枝07 回踩质量分级（BM-BUY-04 消费）───────────────────
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-06-3__*（3 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-07
   casebooks: []
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
@@ -1457,7 +1755,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_pullback.py
   module_id: MOD-SIG-026
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1②"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1②"
   activation: intraday
   invalidation:
   ai_autonomy: auto
@@ -1468,6 +1766,13 @@ nodes:
   module_mounts: [MOD-SIG-116]
   confidence: proposed
   purpose_tag: PT-04
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-07__*（4 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L2-07-1
   casebooks: []
@@ -1490,7 +1795,7 @@ nodes:
   module_ref: src/zephyr/signal_ashare/sector/sector_pullback.py
   module_id: MOD-SIG-026
   algo_refs: [DAL-PULLBACK-ABC]
-  doc_ref: "docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1②"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/22_sector_rotation_spec.md#§3.1②"
   activation: intraday
   invalidation: 回踩>15 交易日转横盘失效；<2 日属盘中洗盘不入级；>78.6% 趋势结构破坏
   ai_autonomy: auto
@@ -1504,6 +1809,14 @@ nodes:
   # ── 树枝08-10 板块层三补缺（D27：策略库有钱图上没挂的三样）─────────
   # 08 板块个体生命周期——STR-MOMTREND-003 启动/熄火条件库（科技熄火四信号/机器人启动三要素/
   #   消费启动三条件）上挂；与 02 RRG（板块间时序）分工：08 管单板块自身走到哪一段
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-07-1__*（4 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-08
   casebooks: []
   note_confirmed: 2026-09-13
@@ -1537,6 +1850,14 @@ nodes:
   confidence: proposed
   purpose_tag: PT-02
   battle_map_refs: [BM-SEL-10]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-08__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-09
   casebooks: []
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
@@ -1572,6 +1893,14 @@ nodes:
 
   # ── 09 事件链（Owner 2026-09-09 落盘：新闻/产业链/供应链→盘中决策；接线 W3/W4 于 2026-09-11 交付，规格卡=docs/_working/2026-09-11-news-chain-wiring-spec-cards.md，两节点同日回填）──
   battle_map_refs: [BM-SEL-19]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-09__*（7 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-09-1
   casebooks: [CASEBOOK-001#outage]
   name_zh: 事件图谱传导
@@ -1604,6 +1933,14 @@ nodes:
   module_mounts_influence: {MOD-INT-NEWS-CHAIN: 源线数据供给（判据输入）}
   confidence: proposed
   purpose_tag: PT-02
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-09-1__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-09-2
   casebooks: [CASEBOOK-001#outage]
   name_zh: 冲击标的生成
@@ -1636,6 +1973,14 @@ nodes:
   module_mounts_influence: {MOD-INT-CHAIN-IMPACT: 源线数据供给（判据输入）}
   confidence: proposed
   purpose_tag: PT-03
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-09-2__*（3 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L2-10
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
@@ -1666,6 +2011,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-03
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L2-10__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L3
   casebooks: []
@@ -1700,6 +2052,14 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-03
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-E-L3-01
   casebooks: [CASEBOOK-001#outage]
   note_confirmed: 2026-09-16
@@ -1737,6 +2097,14 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-16]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-01__*（4 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-E-L3-02
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
@@ -1769,6 +2137,14 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-17]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F08_财报
+    goal_statement: "业绩事件＋健康分进选票"
+    output_contract: "超预期/恶化事件流＋财务健康分（PEAD 式事件研究验收）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-02__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L3-03
   casebooks: []
   name_zh: 双池评分
@@ -1798,6 +2174,13 @@ nodes:
   confidence: untested
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-02-K, BM-SEL-18, BM-SEL-20]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-03__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-E-L3-03-1
   casebooks: [CASEBOOK-001#alert]
@@ -1832,6 +2215,14 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-24, BM-SEL-24-A, BM-SEL-24-A-1, BM-SEL-24-A-2, BM-SEL-24-A-3, BM-SEL-24-A-4, BM-SEL-24-A-5, BM-SEL-24-A-6, BM-SEL-24-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-03-1__*（3 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-E-L3-03-2
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
@@ -1865,6 +2256,14 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-03
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-03-2__*（4 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-E-L3-03-3
   casebooks: []
   note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
@@ -1899,6 +2298,14 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-20-A, BM-SEL-25, BM-SEL-25-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-03-3__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-E-L3-04
   casebooks: []
   name_zh: 负面否决器
@@ -1939,6 +2346,14 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-03
+  goal:
+    family: F08_财报
+    goal_statement: "业绩事件＋健康分进选票"
+    output_contract: "超预期/恶化事件流＋财务健康分（PEAD 式事件研究验收）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-04__*（4 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L3-05
   casebooks: []
   note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
@@ -1958,7 +2373,7 @@ nodes:
   module_ref: src/zephyr/signal_fundamental/selection_confidence.py
   module_id: MOD-SIG-141
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/69_trading_decision_map.md#§2.16"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/69_trading_decision_map.md#§2.16"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -1969,6 +2384,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-25-C, BM-SEL-25-C-1, BM-SEL-25-C-2, BM-SEL-25-C-3, BM-SEL-25-C-4, BM-SEL-25-C-5, BM-SEL-25-C-6]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-05__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-E-L3-06
   casebooks: []
@@ -2001,6 +2423,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-01
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-06__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-E-L3-07
   casebooks: []
@@ -2030,6 +2459,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-03
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-07__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-E-L3-07-1
   casebooks: [CASEBOOK-001#alert]
@@ -2056,7 +2492,7 @@ nodes:
   module_id: MOD-L05-001
   algo_refs: []
   model_refs: [ML-CLS-001]
-  doc_ref: "docs/_working/archive/2026-09/design_memos/24_daban_strategy_detail.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/24_daban_strategy_detail.md"
   activation: intraday
   invalidation:
   ai_autonomy: auto
@@ -2070,6 +2506,14 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-22, BM-SEL-22-C, BM-SEL-22-C-1, BM-SEL-22-C-2, BM-SEL-22-C-3, BM-SEL-22-C-4, BM-SEL-22-C-5, BM-SEL-22-C-6, BM-SEL-22-C-7, BM-SEL-22-D]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-07-1__*（3 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-E-L3-07-2
   casebooks: [CASEBOOK-001#alert, CASEBOOK-005#过拟合与前视]
   note_confirmed: 2026-09-15
@@ -2091,7 +2535,7 @@ nodes:
   module_id: MOD-L02-011
   algo_refs: []
   model_refs: [ML-RANK-001]
-  doc_ref: "docs/_working/archive/2026-09/design_memos/25_multifactor_strategy_detail.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/25_multifactor_strategy_detail.md"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -2103,6 +2547,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-BUY-02-A-2, BM-SEL-02, BM-SEL-02-H]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-07-2__*（3 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-E-L3-07-3
   casebooks: [CASEBOOK-009#红证, CASEBOOK-001#alert]
@@ -2146,6 +2597,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: verified
   purpose_tag: PT-03
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-07-3__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-E-L3-08
   casebooks: []
@@ -2182,6 +2640,14 @@ nodes:
   # ── D29 补缺：漏斗是"日算"的，池是"持久"的——L3 缺池生命周期与可交易性预检 ──
   # 09 股票池分层维护（业界三层就绪度池：Tier1 活跃 5-10/Tier2 培育 10-20/Tier3 雷达 20-50；
   #   每日升降级+陈旧剔除；与 03 双池正交——双池按风格、Tier 按就绪度）；STR-MULTIFACTOR-033 上挂
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-08__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-E-L3-09
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-11
@@ -2219,6 +2685,14 @@ nodes:
   module_mounts: [MOD-SIG-126]
   confidence: proposed
   purpose_tag: PT-03
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-09__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-E-L3-10
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-27
@@ -2258,6 +2732,14 @@ nodes:
 
   # ── D31 L3 补缺：日内动态选股（竞价/盘中）+ 个股多维验证（资金/龙虎榜/筹码/形态）──
   # Owner 判定成立：L3 粒度欠账——候选大头来自盘中扫描（涨速异动）与竞价（9:26-9:28），原结构全盘后
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-10__*（3 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-E-L3-11
   casebooks: []
   name_zh: 日内动态选股
@@ -2288,6 +2770,13 @@ nodes:
   confidence: untested
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-27]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F13T_日内做T
+    goal_statement: "持有中增效——做T资格门＋做T信号集＋增厚读数"
+    output_contract: "做T资格判定＋信号集＋逐笔期望增益跟踪读数（增厚判据=逐笔期望增益口径）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-11__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L3-11-1
   casebooks: [CASEBOOK-001#outage]
@@ -2317,6 +2806,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-03
+  goal:
+    family: F13T_日内做T
+    goal_statement: "持有中增效——做T资格门＋做T信号集＋增厚读数"
+    output_contract: "做T资格判定＋信号集＋逐笔期望增益跟踪读数（增厚判据=逐笔期望增益口径）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-11-1__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L3-11-2
   casebooks: [CASEBOOK-001#alert]
@@ -2351,6 +2847,14 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-05-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F13T_日内做T
+    goal_statement: "持有中增效——做T资格门＋做T信号集＋增厚读数"
+    output_contract: "做T资格判定＋信号集＋逐笔期望增益跟踪读数（增厚判据=逐笔期望增益口径）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-11-2__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L3-12
   casebooks: []
   name_zh: 个股多维验证
@@ -2380,6 +2884,13 @@ nodes:
   module_mounts: [MOD-SIG-092, MOD-SIG-096, MOD-SIG-103, MOD-SIG-127]
   confidence: untested
   purpose_tag: PT-03
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-12__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-E-L3-12-1
   casebooks: [CASEBOOK-001#alert]
@@ -2412,6 +2923,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-05, BM-SEL-05-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F04_资金行为
+    goal_statement: "定「谁在做、还剩谁没卖」——筹码结构/流量性质/主体画像/合成状态"
+    output_contract: "资金四件套＋合成状态变量（事件研究协议＋增量检验）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-12-1__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L3-12-2
   casebooks: []
@@ -2448,6 +2966,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-05-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F04_资金行为
+    goal_statement: "定「谁在做、还剩谁没卖」——筹码结构/流量性质/主体画像/合成状态"
+    output_contract: "资金四件套＋合成状态变量（事件研究协议＋增量检验）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-12-2__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L3-12-3
   casebooks: [CASEBOOK-001#alert]
@@ -2490,6 +3015,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-05]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F04_资金行为
+    goal_statement: "定「谁在做、还剩谁没卖」——筹码结构/流量性质/主体画像/合成状态"
+    output_contract: "资金四件套＋合成状态变量（事件研究协议＋增量检验）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-12-3__*（5 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
 
 - node_id: TDM-E-L3-12-4
   casebooks: [CASEBOOK-005#过拟合与前视]
@@ -2522,6 +3054,13 @@ nodes:
   module_mounts: [MOD-SIG-091, MOD-SIG-115, MOD-SIG-145, MOD-SIG-146, MOD-SIG-148, MOD-SIG-149]
   confidence: proposed
   purpose_tag: PT-03
+  goal:
+    family: F11_选股主链L3
+    goal_statement: "出「买什么」——候选池＋每股置信度＋适用域"
+    output_contract: "漏斗各级压缩率＋终池样本外 IC（九阶段链完整接通）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L3-12-4__*（3 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-E-L4
   casebooks: []
@@ -2552,6 +3091,14 @@ nodes:
   module_mounts: [MOD-EX-049, MOD-EX-050, MOD-EX-055, MOD-EXE-AGENTS, MOD-TRIG-001]
   confidence: untested
   purpose_tag: PT-04
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
+
 - node_id: TDM-E-L4-01
   casebooks: []
   note_confirmed: 2026-09-15
@@ -2572,7 +3119,7 @@ nodes:
   module_ref: src/zephyr/ex_core/order_splitter.py
   module_id: MOD-EX-014
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/41_buy_flow.md#§3.2"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/41_buy_flow.md#§3.2"
   activation: intraday
   invalidation:
   ai_autonomy: auto
@@ -2583,6 +3130,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-04
   battle_map_refs: [BM-BUY-04]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-01__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-02
   casebooks: []
@@ -2604,7 +3158,7 @@ nodes:
   module_ref: src/zephyr/plan_engine/closing_session_decision.py
   module_id: MOD-PLAN-003
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/41_buy_flow.md#§3.4"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/41_buy_flow.md#§3.4"
   activation: intraday
   invalidation: 9:15-9:20 时段禁止决策（假单密集）
   ai_autonomy: auto
@@ -2617,6 +3171,14 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-04
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-02__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
+
 - node_id: TDM-E-L4-03
   casebooks: []
   note_confirmed: 2026-09-15
@@ -2637,7 +3199,7 @@ nodes:
   module_ref: src/zephyr/ex_core/pricing_policy.py
   module_id: MOD-L06-001
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/41_buy_flow.md#§3.5"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/41_buy_flow.md#§3.5"
   activation: intraday
   invalidation:
   ai_autonomy: auto
@@ -2647,6 +3209,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-05
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-03__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-04
   casebooks: []
@@ -2666,7 +3235,7 @@ nodes:
   module_ref: src/zephyr/signal_fundamental/capital/capital_allocator.py
   module_id: MOD-L03-001
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/41_buy_flow.md#§3.6"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/41_buy_flow.md#§3.6"
   activation: intraday
   invalidation:
   ai_autonomy: auto
@@ -2676,6 +3245,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-08
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-04__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-05
   casebooks: [CASEBOOK-001#alert]
@@ -2697,7 +3273,7 @@ nodes:
   module_ref: src/zephyr/ex_core/daban_execution.py
   module_id: MOD-EX-001
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/41_buy_flow.md#§3.9"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/41_buy_flow.md#§3.9"
   activation: intraday
   invalidation: 封单被快速大额吃掉且无同力度补单→撤单；大盘突发跳水→无论封单多稳先撤（系统性风险优先）；QMT 约束=handlebar 
     主线程下单+隔 1-2 秒查委托回执，查不到标记疑似丢单
@@ -2708,6 +3284,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-05
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-05__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-06
   casebooks: []
@@ -2745,6 +3328,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-05
   battle_map_refs: [BM-EXE-05]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-06__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-07
   casebooks: [CASEBOOK-002#域三]
@@ -2765,7 +3355,7 @@ nodes:
   module_ref: src/zephyr/ex_core/local_order_queue.py
   module_id: MOD-L06-001
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/41_buy_flow.md#§3.9"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/41_buy_flow.md#§3.9"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -2777,6 +3367,13 @@ nodes:
   module_mounts: [MOD-RK-41]
   confidence: proposed
   purpose_tag: PT-05
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-07__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-08
   casebooks: []
@@ -2798,7 +3395,7 @@ nodes:
   module_ref: src/zephyr/sell_decision/core/breakout_failure_detector.py
   module_id: MOD-SELL-003
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/41_buy_flow.md#§3.3"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/41_buy_flow.md#§3.3"
   activation: intraday
   invalidation:
   ai_autonomy: auto
@@ -2808,6 +3405,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-07
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-08__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-09
   casebooks: [CASEBOOK-005#成本证伪]
@@ -2829,7 +3433,7 @@ nodes:
   module_ref: src/zephyr/ex_core/price_cage.py
   module_id: MOD-L06-001
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/41_buy_flow.md#§3.7"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/41_buy_flow.md#§3.7"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -2842,6 +3446,14 @@ nodes:
 
   # ── D31 L4 补缺：订单生命周期状态机/部分成交处理/订单级预检/执行容灾对账（OMS 标准件）──
   battle_map_refs: [BM-EXE-04, BM-RC-02-D]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-09__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
+
 - node_id: TDM-E-L4-10
   casebooks: []
   note_confirmed: 2026-09-28
@@ -2874,6 +3486,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-05
   battle_map_refs: [BM-EXE-02]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-10__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-11
   casebooks: []
@@ -2905,6 +3524,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-05
   battle_map_refs: [BM-EXE-06]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-11__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-12
   casebooks: []
@@ -2939,6 +3565,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-05
   battle_map_refs: [BM-EXE-01, BM-RC-02]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-12__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-13
   casebooks: [CASEBOOK-001#task_reconcile]
@@ -2972,6 +3605,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-05
   battle_map_refs: [BM-REC-01, BM-REC-01-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-13__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-E-L4-14
   casebooks: [CASEBOOK-005#成本证伪]
@@ -3011,6 +3651,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-05
   battle_map_refs: [BM-EXE-03, BM-REC-02-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F16_L4执行
+    goal_statement: "成本最小化成交"
+    output_contract: "滑点/冲击读数＋执行选型回写（执行成本对比基线）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L4-14__*（2 张）"
+    campaign_ref: "fullflow 在案（F041/F058 处方）"
+    status: active
 
 - node_id: TDM-P-P1
   casebooks: []
@@ -3038,6 +3685,13 @@ nodes:
   confidence: untested
   purpose_tag: PT-06
   battle_map_refs: [BM-RC-04-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P1__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-P-P2
   casebooks: []
@@ -3069,6 +3723,14 @@ nodes:
   confidence: untested
   purpose_tag: PT-06
   battle_map_refs: [BM-SELL-08]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F13T_日内做T
+    goal_statement: "持有中增效——做T资格门＋做T信号集＋增厚读数"
+    output_contract: "做T资格判定＋信号集＋逐笔期望增益跟踪读数（增厚判据=逐笔期望增益口径）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P2__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-P-P3
   casebooks: []
   name_zh: 加仓决策
@@ -3097,6 +3759,14 @@ nodes:
   #   三处空白新写血肉=P1 体检汇总编排（P1-06 红节点）/P2 做T统一调度（MOD-SELL-018 planned）/
   #   P3 金字塔加仓规则（P3-02 红节点，69 号 §2.26 为真源）
   # P1 树枝：体检链=对账→{分级/逻辑/风险/组合}→结论动作清单（WealthBee 五步 checklist 同构）
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P3__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-P-P1-01
   casebooks: [CASEBOOK-001#task_reconcile]
   note_confirmed: 2026-09-16  # grp5p1s4 出仓复核：机器块搬 yaml，算法口径逐字未变
@@ -3116,7 +3786,7 @@ nodes:
   module_ref: src/zephyr/position/core/position_state_machine.py
   module_id: MOD-POS-002
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/93_qmt_file_bridge_playbook.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/93_qmt_file_bridge_playbook.md"
   activation: premarket
   invalidation:
   ai_autonomy: auto
@@ -3133,6 +3803,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-06
   battle_map_refs: [BM-EXE-06, BM-POS-03, BM-RC-08-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P1-01__*（4 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-P-P1-02
   casebooks: []
@@ -3173,6 +3850,13 @@ nodes:
   module_mounts: [MOD-POS-007]
   confidence: proposed
   purpose_tag: PT-06
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P1-02__*（4 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-P-P1-03
   casebooks: [CASEBOOK-005#实盘衰减与归因]
@@ -3194,7 +3878,7 @@ nodes:
   module_id: MOD-PLAN-024
   note_confirmed: "2026-09-10"
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/28_sentiment_cycle_trading.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/28_sentiment_cycle_trading.md"
   activation: premarket
   invalidation:
   ai_autonomy: auto
@@ -3206,6 +3890,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-06
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P1-03__*（3 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-P-P1-04
   casebooks: []
@@ -3242,6 +3933,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-06
   battle_map_refs: [BM-RC-10, BM-RC-10-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P1-04__*（6 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-P-P1-05
   casebooks: []
@@ -3279,6 +3977,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-06
   battle_map_refs: [BM-RC-04, BM-RC-04-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P1-05__*（5 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-P-P1-06
   casebooks: []
@@ -3316,6 +4021,14 @@ nodes:
 
   # P2 树枝：资格门→调度→闭环，减仓/再平衡并行（冲突规则：风控减仓 > 做T收口 > 做T新开，收口 BM-SELL-06 废弃语义；
   #   conflict_priority 字段为 schema v1.8 候选，当前以注释承载）
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P1-06__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-P-P2-01
   casebooks: [CASEBOOK-005#成本证伪]
   note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
@@ -3337,7 +4050,7 @@ nodes:
   module_ref: src/zephyr/position/core/t1_sellable.py
   module_id: MOD-POS-028
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/90_methodology_open_questions.md#§5"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/90_methodology_open_questions.md#§5"
   activation: premarket
   invalidation: 盘中转单边（跌停潮/板块崩塌）→当日做T资格全部作废
   ai_autonomy: auto
@@ -3356,6 +4069,13 @@ nodes:
   module_mounts: [MOD-SIG-132]
   confidence: proposed
   purpose_tag: PT-06
+  goal:
+    family: F13T_日内做T
+    goal_statement: "持有中增效——做T资格门＋做T信号集＋增厚读数"
+    output_contract: "做T资格判定＋信号集＋逐笔期望增益跟踪读数（增厚判据=逐笔期望增益口径）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P2-01__*（3 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
 
 - node_id: TDM-P-P2-02
   casebooks: []
@@ -3402,6 +4122,14 @@ nodes:
   module_mounts: [MOD-AU-011]
   confidence: proposed
   purpose_tag: PT-06
+  goal:
+    family: F13T_日内做T
+    goal_statement: "持有中增效——做T资格门＋做T信号集＋增厚读数"
+    output_contract: "做T资格判定＋信号集＋逐笔期望增益跟踪读数（增厚判据=逐笔期望增益口径）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P2-02__*（3 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-P-P2-03
   casebooks: []
 
@@ -3441,6 +4169,13 @@ nodes:
   decay_scan_frequency: monthly
   confidence: proposed
   purpose_tag: PT-06
+  goal:
+    family: F13T_日内做T
+    goal_statement: "持有中增效——做T资格门＋做T信号集＋增厚读数"
+    output_contract: "做T资格判定＋信号集＋逐笔期望增益跟踪读数（增厚判据=逐笔期望增益口径）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P2-03__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
 
 - node_id: TDM-P-P2-04
   casebooks: []
@@ -3483,6 +4218,14 @@ nodes:
 
   # P3 树枝：资格门→金字塔规则→量级风险核算→时点执行（流水线）；euphoria 段无加仓权限（只卖不买，取严）
   battle_map_refs: [BM-POS-09]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F13T_日内做T
+    goal_statement: "持有中增效——做T资格门＋做T信号集＋增厚读数"
+    output_contract: "做T资格判定＋信号集＋逐笔期望增益跟踪读数（增厚判据=逐笔期望增益口径）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P2-04__*（7 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-P-P3-01
   casebooks: []
   name_zh: 加仓资格门
@@ -3506,7 +4249,7 @@ nodes:
   module_id: MOD-POS-027
   note_confirmed: "2026-09-10"
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/28_sentiment_cycle_trading.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/28_sentiment_cycle_trading.md"
   activation: premarket
   invalidation: 熔断或回撤协议触发→全部加仓资格即时作废
   ai_autonomy: auto
@@ -3519,6 +4262,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-04
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P3-01__*（4 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-P-P3-02
   casebooks: []
@@ -3542,7 +4292,7 @@ nodes:
   module_id: MOD-POS-027
   note_confirmed: "2026-09-10"
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/69_trading_decision_map.md#§2.26"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/69_trading_decision_map.md#§2.26"
   activation: on_demand
   invalidation: 跌破上次加仓点→停止后续加仓计划
   ai_autonomy: auto
@@ -3560,6 +4310,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-04
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P3-02__*（3 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-P-P3-03
   casebooks: []
@@ -3591,6 +4348,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-04
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P3-03__*（3 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-P-P3-04
   casebooks: []
@@ -3625,6 +4389,14 @@ nodes:
   purpose_tag: PT-04
 
   # ── 离场流 exit_flow（cn_a）──────────────────────────────────────────────
+  goal:
+    family: F13_持仓流P
+    goal_statement: "持仓活着（体检结论＋动作清单）"
+    output_contract: "体检结论与动作清单（逻辑存活判定的兑现率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-P-P3-04__*（4 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-X-S1
   casebooks: []
   name_zh: 卖出信号收集评分
@@ -3652,6 +4424,13 @@ nodes:
   confidence: untested
   purpose_tag: PT-07
   battle_map_refs: [BM-SELL-03]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S1__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S2
   casebooks: []
@@ -3677,6 +4456,14 @@ nodes:
   purpose_tag: PT-07
 
   # ── 风控横切（非第四条流，任何环节可触发）────────────────────────────────
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S2__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-X-R1
   casebooks: []
   note_confirmed: 2026-09-28  # F61 持久化同 commit 同步本节 algo_note_zh（ALGO-NOTE-SYNC）；判定轴/阈值/升级分叉零改动；前次确认 2026-09-20=UP-5 尾部对冲信号接线（algo_note_zh 同步增补，口径未变）
@@ -3723,6 +4510,14 @@ nodes:
   # M-36 收口：熔断从模糊词变等级表（判定=R1-01 离散状态机，D108 设计原则）；梯度减仓=R1-02；
   # 护盘资产定向加仓窄门=R1-03（proposed 假说，回测验证前不生效）
   battle_map_refs: [BM-BUY-02-D, BM-RC-06, BM-RC-06-A, BM-RC-12]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-R1__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-X-R1-01
   casebooks: []
   note_confirmed: 2026-09-16  # db06 机器块搬 yaml 口径未变；本轮再确认=仅 [CONSUMERS] 头据实回填（消费方 AST 实测零在网），五级判定轴/阈值/迟滞逐字未动
@@ -3753,7 +4548,7 @@ nodes:
   module_ref: src/zephyr/risk/core/drawdown_state_machine.py
   module_id: MOD-RK-049
   algo_refs: [DAL-CIRCUIT-5]
-  doc_ref: "docs/_working/archive/2026-09/design_memos/69_trading_decision_map.md#§2.34"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/69_trading_decision_map.md#§2.34"
   activation: continuous
   invalidation: L4 触发后仅 Owner 人工解除可回 L0（fail-closed）
   ai_autonomy: auto
@@ -3767,6 +4562,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-07
   battle_map_refs: [BM-RC-06-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-R1-01__*（6 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-R1-02
   casebooks: []
@@ -3789,7 +4591,7 @@ nodes:
   module_ref: src/zephyr/risk/core/drawdown_liquidation_guard.py
   module_id: MOD-RK-050
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/69_trading_decision_map.md#§2.34"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/69_trading_decision_map.md#§2.34"
   activation: intraday
   invalidation:
   ai_autonomy: paper
@@ -3801,6 +4603,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-07
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-R1-02__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-R1-03
   casebooks: []
@@ -3823,7 +4632,7 @@ nodes:
   module_ref: src/zephyr/position/core/defensive_asset_whitelist.py
   module_id: MOD-POS-026
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/69_trading_decision_map.md#§2.34"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/69_trading_decision_map.md#§2.34"
   activation: intraday
   invalidation: 白名单买入后窄门条件消失（信号失效/状态升 L4）→停止后续加仓批次，存量按 X 流信号管理
   ai_autonomy: paper
@@ -3844,6 +4653,14 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-07
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-R1-03__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-X-S1-01
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
@@ -3863,7 +4680,7 @@ nodes:
   module_ref: src/zephyr/sell_decision/core/sell_signal_collector.py
   module_id: MOD-SELL-001
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/42_sell_flow.md#§3.1"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/42_sell_flow.md#§3.1"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -3875,6 +4692,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-07
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S1-01__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S1-02
   casebooks: []
@@ -3903,7 +4727,7 @@ nodes:
   module_ref: src/zephyr/sell_decision/core/stop_loss_strategy.py
   module_id: MOD-SELL-005
   algo_refs: [IND-VOL-001, DAL-FWD-STOP]
-  doc_ref: "docs/_working/archive/2026-09/design_memos/42_sell_flow.md#§3.3"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/42_sell_flow.md#§3.3"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -3920,6 +4744,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-07
   battle_map_refs: [BM-RC-05, BM-RC-05-A, BM-RC-05-B, BM-SELL-04, BM-SELL-04-B, BM-SELL-04-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S1-02__*（3 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S1-03
   casebooks: []
@@ -3939,7 +4770,7 @@ nodes:
   module_ref: src/zephyr/sell_decision/core/take_profit_strategy.py
   module_id: MOD-SELL-004
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/42_sell_flow.md#§3.4"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/42_sell_flow.md#§3.4"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -3952,6 +4783,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-07
   battle_map_refs: [BM-SELL-04, BM-SELL-04-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S1-03__*（3 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S1-04
   casebooks: [CASEBOOK-001#alert]
@@ -3973,7 +4811,7 @@ nodes:
   module_ref: src/zephyr/sell_decision/core/breakout_failure_detector.py
   module_id: MOD-SELL-003
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/42_sell_flow.md#§3.5"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/42_sell_flow.md#§3.5"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -3992,6 +4830,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-07
   battle_map_refs: [BM-SELL-01]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S1-04__*（6 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S1-05
   casebooks: []
@@ -4013,7 +4858,7 @@ nodes:
   module_ref: src/zephyr/sell_decision/core/sell_signal_fusion_engine.py
   module_id: MOD-SELL-007
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/42_sell_flow.md#§3.1"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/42_sell_flow.md#§3.1"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -4031,6 +4876,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-07
   battle_map_refs: [BM-SELL-02]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S1-05__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S1-06
   casebooks: []
@@ -4054,7 +4906,7 @@ nodes:
   module_ref: src/zephyr/trading/strategy_abnormal_exit_orchestrator.py
   module_id: MOD-TRADING-008
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/42_sell_flow.md#§3.2"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/42_sell_flow.md#§3.2"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -4072,6 +4924,14 @@ nodes:
 
   # S2 树枝：路由→{涨跌停约束/时段路由/条件单/分批}→闭环退出效率；paper×4 实盘执行
   battle_map_refs: [BM-RC-05-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S1-06__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-X-S2-01
   casebooks: []
   note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
@@ -4092,7 +4952,7 @@ nodes:
   module_ref: src/zephyr/sell_decision/core/sell_execution_planner.py
   module_id: MOD-SELL-019
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/42_sell_flow.md#§3.7"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/42_sell_flow.md#§3.7"
   activation: intraday
   invalidation:
   ai_autonomy: paper
@@ -4115,6 +4975,13 @@ nodes:
   decay_scan_frequency: monthly
   confidence: proposed
   purpose_tag: PT-07
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S2-01__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S2-02
   casebooks: []
@@ -4136,7 +5003,7 @@ nodes:
   module_ref: src/zephyr/position/core/t1_sellable.py
   module_id: MOD-POS-028
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/42_sell_flow.md#§3.8"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/42_sell_flow.md#§3.8"
   activation: intraday
   invalidation:
   ai_autonomy: paper
@@ -4156,6 +5023,13 @@ nodes:
   module_mounts: [MOD-TRADING-014]
   confidence: proposed
   purpose_tag: PT-07
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S2-02__*（4 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S2-03
   casebooks: []
@@ -4199,6 +5073,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-07
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S2-03__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S2-04
   casebooks: []
@@ -4236,6 +5117,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-07
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S2-04__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S2-05
   casebooks: []
@@ -4257,7 +5145,7 @@ nodes:
   module_ref: src/zephyr/sell_decision/core/scaling_out.py
   module_id: MOD-SELL-017
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/42_sell_flow.md#§3.7"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/42_sell_flow.md#§3.7"
   activation: intraday
   invalidation:
   ai_autonomy: paper
@@ -4271,6 +5159,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-07
   battle_map_refs: [BM-SELL-04-E]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S2-05__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
 
 - node_id: TDM-X-S2-06
   casebooks: []
@@ -4291,7 +5186,7 @@ nodes:
   module_ref: src/zephyr/sell_decision/core/sell_execution_quality_tracker.py
   module_id: MOD-SELL-012
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/42_sell_flow.md#§3.11"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/42_sell_flow.md#§3.11"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -4319,6 +5214,14 @@ nodes:
   # ── 组合资金流 portfolio_flow（cn_a，v1.1 新增：整装仿真系统核心骨架）────
   # 地图终极定位（Owner 2026-09-05 拍板）：整装仿真策略组合的蓝图——本流=资金切分→组合聚合→归因反馈闭环
   battle_map_refs: [BM-SELL-09]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F12_卖出离场X
+    goal_statement: "接条件轴的扳机"
+    output_contract: "六桶信号集＋紧迫度分＋出场效率读数（回撤保护率/假信号率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-X-S2-06__*（2 张）"
+    campaign_ref: "三批待开班（裁定#516 Q4：信息轴后）"
+    status: active
+
 - node_id: TDM-F-C1
   casebooks: []
   note_confirmed: 2026-09-20  # UP-3 前瞻风险预算接线（algo_note_zh 同步增补）
@@ -4356,6 +5259,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-08
   battle_map_refs: [BM-POS-01, BM-POS-02, BM-POS-05, BM-POS-06, BM-RC-07, BM-RC-07-B, BM-SEL-20-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C1__*（3 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
 
 - node_id: TDM-F-C1-01
   casebooks: []
@@ -4380,6 +5290,14 @@ nodes:
   purpose_tag: PT-08
   module_mounts: ['MOD-PA-015', 'MOD-SIG-129', 'MOD-SIG-130']
   tags: ['tdm-chief-20261006', 'D125', 'router']
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C1-01__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-F-C1-02
   casebooks: []
   name_zh: 权重分配
@@ -4403,6 +5321,14 @@ nodes:
   purpose_tag: PT-08
   module_mounts: ['MOD-RK-08', 'MOD-PF-008', 'MOD-SIG-131']
   tags: ['tdm-chief-20261006', 'D125', 'allocator', 'champion-challenger']
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C1-02__*（3 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-F-C1-03
   casebooks: []
   name_zh: 灰度切换管理
@@ -4426,6 +5352,14 @@ nodes:
   purpose_tag: PT-09
   module_mounts: ['MOD-SIG-131', 'MOD-PA-015']
   tags: ['tdm-chief-20261006', 'D125', 'gray-switch']
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C1-03__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-F-C2
   casebooks: []
   name_zh: 组合聚合
@@ -4451,6 +5385,13 @@ nodes:
   confidence: untested
   purpose_tag: PT-08
   battle_map_refs: [BM-SEL-21, BM-SEL-21-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C2__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
 
 - node_id: TDM-F-C3
   casebooks: []
@@ -4486,6 +5427,14 @@ nodes:
   # +MOD-PF-007 已落码 Brinson 引擎）；三空白=C2-01 执行侧 netting/C3-04 校准闭环编排/C3-05 可靠度加权
   # C2 树枝：净额轧平→约束栈→相关性 cluster；budget 变动并行（F-C1 预算变动喂三级升级）
   battle_map_refs: [BM-REC-02, BM-RES-07, BM-RES-07-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C3__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-F-C2-01
   casebooks: []
   note_confirmed: 2026-09-16  # grp5p1s4 出仓复核：机器块搬 yaml，算法口径逐字未变
@@ -4506,7 +5455,7 @@ nodes:
   module_ref: src/zephyr/position/core/firm_risk_aggregator.py
   module_id: MOD-POS-021
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/32_firm_risk_aggregator.md#§2.7"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/32_firm_risk_aggregator.md#§2.7"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -4528,6 +5477,13 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-08
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C2-01__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
 
 - node_id: TDM-F-C2-02
   casebooks: []
@@ -4550,7 +5506,7 @@ nodes:
   module_ref: src/zephyr/position/core/firm_risk_aggregator.py
   module_id: MOD-POS-021
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/32_firm_risk_aggregator.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/32_firm_risk_aggregator.md"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -4569,6 +5525,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-08
   battle_map_refs: [BM-POS-04, BM-RC-02-A, BM-RC-02-B, BM-SEL-21-D]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C2-02__*（4 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
 
 - node_id: TDM-F-C2-03
   casebooks: []
@@ -4590,7 +5553,7 @@ nodes:
   module_ref: src/zephyr/position/core/correlation_regime_monitor.py
   module_id: MOD-POS-012
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/32_firm_risk_aggregator.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/32_firm_risk_aggregator.md"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -4605,6 +5568,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-08
   battle_map_refs: [BM-SEL-20-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C2-03__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
 
 - node_id: TDM-F-C2-04
   casebooks: [DCS#审批]
@@ -4626,7 +5596,7 @@ nodes:
   module_ref: src/zephyr/position/core/budget_change_handler.py
   module_id: MOD-POS-022
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/33_budget_change_handler.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/33_budget_change_handler.md"
   activation: continuous
   invalidation:
   ai_autonomy: auto
@@ -4642,6 +5612,14 @@ nodes:
   purpose_tag: PT-08
 
   # C3 树枝：多维归因→{升降级评审/权重调权/参数校准/可靠度养成}（结论分发四路）
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C2-04__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-F-C3-01
   casebooks: [CASEBOOK-005#实盘衰减与归因]
   note_confirmed: 2026-09-16  # grp4p1s1 出仓复核：机器块搬 yaml，算法口径逐字未变
@@ -4663,7 +5641,7 @@ nodes:
   module_ref: src/zephyr/pf_core/core/performance_attribution_engine.py
   module_id: MOD-PF-007
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/54_reconciliation_attribution.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/54_reconciliation_attribution.md"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -4685,6 +5663,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-11
   battle_map_refs: [BM-RC-08-B, BM-REC-02-B, BM-SEL-21-E]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C3-01__*（3 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
 
 - node_id: TDM-F-C3-02
   casebooks: [CASEBOOK-009#红证, CASEBOOK-005#考试纪律]
@@ -4711,7 +5696,7 @@ nodes:
   module_ref: src/zephyr/factor/governance/lifecycle_state_machine.py
   module_id: MOD-L02-013
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/55_monitoring_review.md#§3.5"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/55_monitoring_review.md#§3.5"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -4738,6 +5723,13 @@ nodes:
   module_mounts: [MOD-PF-001, MOD-PF-008, MOD-SIG-150]
   confidence: proposed
   purpose_tag: PT-10
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C3-02__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
 
 - node_id: TDM-F-C3-03
   casebooks: []
@@ -4766,7 +5758,7 @@ nodes:
   module_ref: src/zephyr/pf_alloc/core/regime_meta_allocator.py
   module_id: MOD-PA-007
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/54_reconciliation_attribution.md"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/54_reconciliation_attribution.md"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -4790,6 +5782,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-10
   battle_map_refs: [BM-POS-07, BM-RC-07-C, BM-SEL-21-C, BM-SELL-05]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C3-03__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
 
 - node_id: TDM-F-C3-04
   casebooks: [CASEBOOK-005#过拟合与前视, CASEBOOK-009#N试次]
@@ -4817,7 +5816,7 @@ nodes:
   module_ref: src/zephyr/backtest/core/walk_forward.py
   module_id: MOD-BT-001
   algo_refs: []
-  doc_ref: "docs/_working/archive/2026-09/design_memos/54_reconciliation_attribution.md#§3.9"
+  doc_ref: "docs/_archive/_working_cleared/archive/2026-09/design_memos/54_reconciliation_attribution.md#§3.9"
   activation: postmarket
   invalidation:
   ai_autonomy: auto
@@ -4844,6 +5843,13 @@ nodes:
   confidence: proposed
   purpose_tag: PT-10
   battle_map_refs: [BM-REC-03]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C3-04__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
 
 - node_id: TDM-F-C3-05
   casebooks: [CASEBOOK-005#实盘衰减与归因]
@@ -4892,6 +5898,14 @@ nodes:
 
   # ── 币圈实例（骨架空壳，L2 弱化为赛道层）─────────────────────────────────
   battle_map_refs: [BM-REC-03, BM-REC-03-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F14_组合反馈C3
+    goal_statement: "考试-反馈闭环底座（归因报告→L0/L3 回写）"
+    output_contract: "归因报告＋升降级管线（归因解释力＋升降级命中率）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-F-C3-05__*（2 张）"
+    campaign_ref: "四批待开班（组合反馈＋L0 总装）"
+    status: active
+
 - node_id: TDM-C-L1
   casebooks: []
   name_zh: 币圈大盘总闸
@@ -4914,6 +5928,14 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-01
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-C-L1__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "币圈骨架挂起（Q2 不进分母）"
 
 - node_id: TDM-C-L2
   casebooks: []
@@ -4936,6 +5958,14 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-02
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-C-L2__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "币圈骨架挂起（Q2 不进分母）"
 
 - node_id: TDM-C-L3
   casebooks: []
@@ -4958,6 +5988,14 @@ nodes:
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-03
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-C-L3__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "币圈骨架挂起（Q2 不进分母）"
 
 - node_id: TDM-C-L4
   casebooks: []
@@ -4983,6 +6021,15 @@ nodes:
 
   # ══ TDM 2.0 知识供给层（layer=L9，st-tdm20-20260923 扩容：吸收 chainpile 定桩 283 问施工面）══
   # 设计真源=docs/_working/tdm20_campaign/01_node_expansion_list.md；时间分层铁律见各 V 节点注记
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-C-L4__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "币圈骨架挂起（Q2 不进分母）"
+
 - node_id: TDM-E-L9-A01
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5002,13 +6049,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: critical
   decay_scan_frequency: monthly
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A01", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A01__*（3 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A02
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5028,7 +6084,7 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: critical
   decay_scan_frequency: monthly
@@ -5036,6 +6092,15 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A02", "A档"]
   latency_budget: "realtime-seconds"
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A02__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A03
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5055,13 +6120,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: critical
   decay_scan_frequency: monthly
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A03", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A03__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A04
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5081,13 +6155,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A04", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A04__*（3 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A05
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5107,13 +6190,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A05", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A05__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A06
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5133,13 +6225,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: critical
   decay_scan_frequency: monthly
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A06", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A06__*（3 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A07
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5159,13 +6260,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A07", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A07__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A08
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5185,13 +6295,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A08", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A08__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A09
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5211,7 +6330,7 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: critical
   decay_scan_frequency: monthly
@@ -5219,6 +6338,15 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A09", "A档"]
   latency_budget: "realtime-minutes"
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A09__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A10
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5238,13 +6366,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A10", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A10__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A11
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5264,13 +6401,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A11", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A11__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A12
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5290,7 +6436,7 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -5298,6 +6444,15 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A12", "A档"]
   latency_budget: "near-realtime"
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A12__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A13
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5317,13 +6472,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A13", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A13__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A14
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5343,7 +6507,7 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -5351,6 +6515,15 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A14", "A档"]
   latency_budget: "near-realtime"
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A14__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A15
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5370,7 +6543,7 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -5378,6 +6551,15 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A15", "A档"]
   latency_budget: "realtime-seconds"
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A15__*（4 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A16
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5397,13 +6579,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: by_ref_design
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A16", "A档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A16__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-A17
   casebooks: []
   name_zh: 源线·卖方研报
@@ -5426,6 +6617,15 @@ nodes:
   confidence: untested
   purpose_tag: PT-11
   tags: ['tdm-chief-20261006', 'source-line', 'SL-A17']
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-A17__*（3 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended_reference
+    suspension_basis: "A 档源线在产（引用型不进分母）"
+
 - node_id: TDM-E-L9-B01
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5445,13 +6645,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B01", "B档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-B01__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "B 档源线显式挂起（f31 在册）"
+
 - node_id: TDM-E-L9-B02
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5471,13 +6680,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B02", "B档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-B02__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "B 档源线显式挂起（f31 在册）"
+
 - node_id: TDM-E-L9-B03
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5497,13 +6715,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B03", "B档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-B03__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "B 档源线显式挂起（f31 在册）"
+
 - node_id: TDM-E-L9-B04
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5523,13 +6750,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B04", "B档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-B04__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "B 档源线显式挂起（f31 在册）"
+
 - node_id: TDM-E-L9-B05
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5549,13 +6785,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B05", "B档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-B05__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "B 档源线显式挂起（f31 在册）"
+
 - node_id: TDM-E-L9-B06
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5575,13 +6820,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B06", "B档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-B06__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "B 档源线显式挂起（f31 在册）"
+
 - node_id: TDM-E-L9-B07
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5601,13 +6855,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B07", "B档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-B07__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "B 档源线显式挂起（f31 在册）"
+
 - node_id: TDM-E-L9-B08
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5627,13 +6890,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B08", "B档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-B08__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "B 档源线显式挂起（f31 在册）"
+
 - node_id: TDM-E-L9-B09
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5653,13 +6925,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B09", "B档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-B09__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "B 档源线显式挂起（f31 在册）"
+
 - node_id: TDM-E-L9-B10
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5679,13 +6960,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B10", "B档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-B10__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "B 档源线显式挂起（f31 在册）"
+
 - node_id: TDM-E-L9-C01
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5705,13 +6995,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-C01", "C档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-C01__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "C 档源线显式挂起（f31 在册；C4 L2 逐笔委托不开采集=裁定#516 Q10）"
+
 - node_id: TDM-E-L9-C02
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5731,13 +7030,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-C02", "C档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-C02__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "C 档源线显式挂起（f31 在册；C4 L2 逐笔委托不开采集=裁定#516 Q10）"
+
 - node_id: TDM-E-L9-C03
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5757,13 +7065,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-C03", "C档"]
+  goal:
+    family: F18_挂起源线
+    goal_statement: "挂起有据，不进应通分母（Owner 门位）"
+    output_contract: "—（挂起登记：B/C 档 13 线/币圈/V2 快照，f31/f33 在册）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-C03__*（2 张）"
+    campaign_ref: "Owner 门位（裁定#516 Q2）"
+    status: suspended
+    suspension_basis: "C 档源线显式挂起（f31 在册；C4 L2 逐笔委托不开采集=裁定#516 Q10）"
+
 - node_id: TDM-E-L9-G1
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5785,7 +7102,7 @@ nodes:
   chain_refs: ["CH-985a1b1852e5", "CH-c4902e175ffb", "CH-dccc45c14a88", "CH-6a82b10e0891", "CH-74af4f035d18", "CH-fc21cde2542f", "CH-cb6c39f34f26", "CH-f9d3d490a8c5"]
   module_ref: null
   red_reason: structural
-  doc_ref: docs/_working/chain_piling_campaign/03_graph_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/03_graph_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -5794,6 +7111,14 @@ nodes:
   tags: ["tdm20", "graph", "G1"]
   latency_budget: "T-1"
   battle_map_refs: [BM-SEL-11]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F05_传导链
+    goal_statement: "事件发生后算出「谁受益、多强、多久」"
+    output_contract: "受益标的集＋方向＋强度＋时滞四元组（chain_event_impact 事件流）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-G1__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-G2
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5813,7 +7138,7 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: structural
-  doc_ref: docs/_working/chain_piling_campaign/03_graph_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/03_graph_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -5821,6 +7146,14 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "graph", "G2"]
   latency_budget: "static"
+  goal:
+    family: F05_传导链
+    goal_statement: "事件发生后算出「谁受益、多强、多久」"
+    output_contract: "受益标的集＋方向＋强度＋时滞四元组（chain_event_impact 事件流）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-G2__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-G3
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5840,7 +7173,7 @@ nodes:
   algo_refs: []
   module_ref: scripts/entity_graph/equity_penetration.py
   module_id: MOD-ENTITY-GRAPH
-  doc_ref: docs/_working/chain_piling_campaign/03_graph_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/03_graph_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -5849,6 +7182,14 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "graph", "G3"]
   latency_budget: "T-1"
+  goal:
+    family: F06_股权穿透
+    goal_statement: "把关联网络变成联动信号"
+    output_contract: "同实控人/牛散跨票/质押链信号集（关联事件命中率验收）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-G3__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-G4
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5868,7 +7209,7 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: structural
-  doc_ref: docs/_working/chain_piling_campaign/03_graph_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/03_graph_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -5876,6 +7217,14 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "graph", "G4"]
   latency_budget: "static"
+  goal:
+    family: F03_板块线
+    goal_statement: "定「信哪个板块的什么信号」——主线梯队/生命周期/拐点/传导标的/闸门"
+    output_contract: "板块生命周期五态＋梯队＋拐点信号＋传导标的闸门"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-G4__*（2 张）"
+    campaign_ref: "st-condaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-G5
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5895,7 +7244,7 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/03_graph_registry.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/03_graph_registry.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -5903,6 +7252,14 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "graph", "G5"]
   latency_budget: "static"
+  goal:
+    family: F05_传导链
+    goal_statement: "事件发生后算出「谁受益、多强、多久」"
+    output_contract: "受益标的集＋方向＋强度＋时滞四元组（chain_event_impact 事件流）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-G5__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-V1
   casebooks: [CASEBOOK-001#task_reconcile]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5922,13 +7279,21 @@ nodes:
   algo_refs: []
   module_ref: src/zephyr/plan_engine/judgment_ledger.py
   module_id: MOD-PLAN-026
-  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: monthly
   confidence: proposed
   purpose_tag: PT-11
   tags: ["tdm20", "state-var", "V1"]
+  goal:
+    family: F17_L9汇聚
+    goal_statement: "供给健康可见——逐源线/逐节点就绪度读数"
+    output_contract: "l9_readiness_daily＋goal_readiness_daily 机生读数（AGG 汇总非红）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-V1__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-V2
   casebooks: [CASEBOOK-001#task_reconcile]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5948,13 +7313,22 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: not_built
-  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: monthly
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "state-var", "V2"]
+  goal:
+    family: F17_L9汇聚
+    goal_statement: "供给健康可见——逐源线/逐节点就绪度读数"
+    output_contract: "l9_readiness_daily＋goal_readiness_daily 机生读数（AGG 汇总非红）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-V2__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: suspended
+    suspension_basis: "V2 快照定案挂起（f33 在册）"
+
 - node_id: TDM-E-L9-V3
   casebooks: [CASEBOOK-001#task_reconcile]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -5974,16 +7348,24 @@ nodes:
   algo_refs: []
   module_ref: src/zephyr/plan_engine/judgment_ledger.py
   module_id: MOD-PLAN-026
-  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: monthly
   confidence: proposed
   purpose_tag: PT-11
   tags: ["tdm20", "state-var", "V3"]
+  goal:
+    family: F17_L9汇聚
+    goal_statement: "供给健康可见——逐源线/逐节点就绪度读数"
+    output_contract: "l9_readiness_daily＋goal_readiness_daily 机生读数（AGG 汇总非红）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-V3__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-AGG
   casebooks: [CASEBOOK-001#task_reconcile]
-  note_confirmed: 2026-09-28  # st-c8-l9：G3 换源同批确认（ig_equity_edge→entity_graph 六表 edge_holding，退役第一步）；前次 2026-09-26 st-chief4x-know-20260927 实件化确认
+  note_confirmed: 2026-10-14  # st-infoaxis：A02 源线口径引用式更正同批确认（裁定#516 Q10）
   name_zh: 知识供给汇聚
   market: cn_a
   flow: entry_flow
@@ -5999,7 +7381,7 @@ nodes:
   algo_refs: []
   module_ref: src/zephyr/data/l9_readiness_aggregator.py  # st-chief4x-know-20260927 回填：f34 册 P0 最小件（就绪度读数生产者，纯读取聚合零采集）
   module_id: MOD-DATA-L9AGG
-  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -6009,6 +7391,14 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "agg"]
   latency_budget: "T-1 08:00"
+  goal:
+    family: F17_L9汇聚
+    goal_statement: "供给健康可见——逐源线/逐节点就绪度读数"
+    output_contract: "l9_readiness_daily＋goal_readiness_daily 机生读数（AGG 汇总非红）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-AGG__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-D1
   casebooks: [CASEBOOK-009#N试次, CASEBOOK-005#过拟合与前视]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -6027,7 +7417,7 @@ nodes:
   algo_refs: []
   module_ref: scripts/backtest/mcts_expression_search.py
   module_id: MOD-BT-202
-  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -6035,6 +7425,14 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "decision"]
   battle_map_refs: [BM-BUY-02-B, BM-MT-04]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
+  goal:
+    family: F17_L9汇聚
+    goal_statement: "供给健康可见——逐源线/逐节点就绪度读数"
+    output_contract: "l9_readiness_daily＋goal_readiness_daily 机生读数（AGG 汇总非红）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-D1__*（3 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-D2
   casebooks: [CASEBOOK-005#考试纪律]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -6053,7 +7451,7 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: structural
-  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -6061,6 +7459,14 @@ nodes:
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "decision"]
+  goal:
+    family: F17_L9汇聚
+    goal_statement: "供给健康可见——逐源线/逐节点就绪度读数"
+    output_contract: "l9_readiness_daily＋goal_readiness_daily 机生读数（AGG 汇总非红）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-D2__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-E1
   casebooks: [CASEBOOK-005#考试纪律, CASEBOOK-009#红证]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -6079,13 +7485,21 @@ nodes:
   algo_refs: []
   module_ref: src/zephyr/trading/validation/runner.py
   module_id: MOD-TDMVAL-001
-  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: proposed
   purpose_tag: PT-11
   tags: ["tdm20", "exam"]
+  goal:
+    family: F17_L9汇聚
+    goal_statement: "供给健康可见——逐源线/逐节点就绪度读数"
+    output_contract: "l9_readiness_daily＋goal_readiness_daily 机生读数（AGG 汇总非红）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-E1__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-E2
   casebooks: [CASEBOOK-005#考试纪律]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -6104,13 +7518,21 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: pending_gate
-  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "exam"]
+  goal:
+    family: F17_L9汇聚
+    goal_statement: "供给健康可见——逐源线/逐节点就绪度读数"
+    output_contract: "l9_readiness_daily＋goal_readiness_daily 机生读数（AGG 汇总非红）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-E2__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-Z1
   casebooks: [DCS#结构, DCS#手续]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -6129,7 +7551,7 @@ nodes:
   algo_refs: []
   module_ref: null
   red_reason: structural
-  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -6137,6 +7559,14 @@ nodes:
   purpose_tag: PT-12
   tags: ["tdm20", "governance"]
   latency_budget: "continuous"
+  goal:
+    family: F17_L9汇聚
+    goal_statement: "供给健康可见——逐源线/逐节点就绪度读数"
+    output_contract: "l9_readiness_daily＋goal_readiness_daily 机生读数（AGG 汇总非红）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-Z1__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 - node_id: TDM-E-L9-Z2
   casebooks: [DCS#真源, DCS#结构]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
@@ -6155,7 +7585,7 @@ nodes:
   algo_refs: []
   module_ref: scripts/governance/reconcile_chain_refs.py
   module_id: MOD-GOV-CHAINRECON
-  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  doc_ref: docs/04_research_records/data/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -6164,6 +7594,14 @@ nodes:
   purpose_tag: PT-12
   tags: ["tdm20", "governance"]
   latency_budget: "weekly"
+  goal:
+    family: F17_L9汇聚
+    goal_statement: "供给健康可见——逐源线/逐节点就绪度读数"
+    output_contract: "l9_readiness_daily＋goal_readiness_daily 机生读数（AGG 汇总非红）"
+    exam_ref: "docs/03_modules/_domain_backtest/exam_cards/**/TDM-E-L9-Z2__*（2 张）"
+    campaign_ref: "st-infoaxis-20261013"
+    status: active
+
 edges:
   # 传感器 → 聚合（feed）
 - {from_node: TDM-E-L1-S1, to_node: TDM-E-L1-AGG, edge_type: feed, payload_type: data, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
@@ -6485,7 +7923,7 @@ state_matrix:
       mounted_reason: pending-owner-adoption 亢奋段无挂载且无可挂的防御档：PP-001 sleeves 
       里不存在防御型 sleeve，是否新设属 Owner 资金分配决策（风险登记 R2SIX 同源欠账）；
       C5 禁用标记 2026-09-30：T1 定稿 Top-12 候选全为长仓轮动（无防御 sleeve，方案件 
-      docs/_working/night_sweep/c_exam/state_matrix_fill_plan_v1.md §1-§2），本态对在册候选全部禁用（只标记不删除）}
+      docs/_archive/_working_cleared/night_sweep/c_exam/state_matrix_fill_plan_v1.md §1-§2），本态对在册候选全部禁用（只标记不删除）}
   - {node_id: TDM-E-L1, state: distribution, mounted: [], confidence: proposed, 
       mounted_reason: pending-owner-adoption 派发段无挂载且无可挂的防御档：同上（PP-001 无防御型 
       sleeve）；该段预算带 0%=禁新开仓、存量由 X 流信号驱动离场（见 portfolio_plan 注记 D98）；
