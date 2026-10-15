@@ -3,7 +3,7 @@ doc_type: policy
 ttl: permanent
 title: 全自动研究生产线运营 SOP（九口出料·挖考判晋反馈闭环）
 status: active
-version: 1.4.0
+version: 1.5.2
 date: '2026-10-15'
 owner: ZephyrAlpha-Owner
 ---
@@ -42,7 +42,7 @@ owner: ZephyrAlpha-Owner
 | 8 | 负结果 | 各口 fail 如实入册 | 全部 | ✅纪律面 |
 | 9 | 环节考试卡 | 校准/消融/影子/对照四族 | 六向挖矿（186 节点 7 车道） | ✅主战场 |
 
-> 路径注（2026-10-14）：第 3/4/5/6/8 类成绩册已随 _working 清理归档至 `docs/_archive/_working_20261014/fexam/`；第 9 类卡册/分数册住永久区 `docs/03_modules/_domain_backtest/`；**分数册新地址待 Owner 下发后本册全局替换**。九类归属：1/2/3/4/5/6/8/9 八类由本线喂料，第 7 类（引擎直跑）不入线仅参考。
+> 路径注（2026-10-14）：第 3/4/5/6/8 类成绩册已随 _working 清理归档至 `docs/_archive/_working_20261014/fexam/`；第 9 类卡册/分数册住永久区 `docs/03_modules/_domain_backtest/`；**分数册已物理迁 `docs/04_research_records/backtest/scores/<YYYY>/`（裁定#536，原 03 行作废）**。九类归属：1/2/3/4/5/6/8/9 八类由本线喂料，第 7 类（引擎直跑）不入线仅参考。
 
 并行度：2/3/4/5/9 五口同时开（考试通道互不抢）；1 口周六独占；6 口随 OD-1 执行器交付转正。挖满一个矿脉→轮转下一个（§5）。
 
@@ -59,9 +59,9 @@ owner: ZephyrAlpha-Owner
 ### ① 数据源席
 - **目标**：数据就位率最大化；断供=穷尽免费渠道后的最后登记，不是逃避登记。
 - **工作内容**：全网搜源→评估→（转②建设）→坏数据修复转办→断供登记。缺数从最源头负责。
-- **输入口**：`src/zephyr/data/config/known_data_gaps.yaml`（断供/缺数登记册）；`docs/_working/automation_campaign/feedback/to_datasource.md`（缺数申请）；源线谱 `docs/_working/chain_piling_campaign/02_source_line_registry.md`。
+- **输入口**：`src/zephyr/data/config/known_data_gaps.yaml`（断供/缺数登记册）；`docs/_working/automation_campaign/feedback/to_datasource.md`（缺数申请）；源线谱 `docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md`（2026-10-15 迁 04）。
 - **输出口**：源线谱新增行（新源线 memo）；known_data_gaps.yaml 条目更新（附 `searched_channels` 证据字段）；就位 memo→②席建设单；采购呈批件。
-- **工作流程**：1 读断供表与缺数申请 2 逐项全网搜索（官方免费 API/开放数据/GitHub 数据集/数据商目录，**每项≥3 渠道**，WebSearch 留链接）3 评估（成本/合规/PIT/许可证；花钱采购→出呈批件禁自购）4 可免费建设→写建设单转②席 5 坏数据→转②席走 data_ops_policy 修复 6 免费渠道穷尽→断供登记（附渠道清单+失败原因）7 台账留痕 8 自检两轮。
+- **工作流程**：1 读断供表与缺数申请 2 逐项全网搜索（官方免费 API/开放数据/GitHub 数据集/数据商目录，**每项≥3 渠道**，WebSearch 留链接）3 评估五门（成本/合规/PIT/许可证/**续供**——后续能否持续获取：采集通道+更新频率+自动化程度+断供风险四问，只进历史不续供的源标注「一次性历史档案」禁作常设信号源准入，历史回补另案；花钱采购→出呈批件禁自购）4 可免费建设→写建设单转②席 5 坏数据→转②席走 data_ops_policy 修复 6 免费渠道穷尽→断供登记（附渠道清单+失败原因）7 台账留痕 8 自检两轮。
 - **保底绩效**：每班处理≥3 个缺数项；每项≥3 渠道搜索留痕；断供登记 100% 带证据链。
 - **自检要点**：每个"断供"结论都能回答"找过哪三处、为什么不行"。
 - **真源挂点**：data_source_onboarding_sop＋mining_sop（全网调研法）。
@@ -79,9 +79,9 @@ owner: ZephyrAlpha-Owner
 ### ③ 库内挖矿席
 - **目标**：六向候选持续产出且绝不重复挖。
 - **工作内容**：按车道对 186 节点六向挖（①上游②下游③算法④后端⑤呈现⑥数据），听⑨方向单调整重心。
-- **输入口**：`docs/_working/automation_campaign/dispatch/daily_dispatch.md`；`docs/_archive/_working_20261014/nightmine_campaign/01_mining_brief.md`（六向法）；同目录 `00_lane_roster.yaml`＋`L0d..L7_ledger.md`（已挖/mined_out，八本台账）；`docs/_working/automation_campaign/feedback/to_miners.md`。边界：04_research_records/ 基建中，产物暂留 _working 任务面，禁两线同写一区。
+- **输入口**：`docs/_working/automation_campaign/dispatch/daily_dispatch.md`；`docs/04_research_records/mining/ledgers/nightmine_20261010/01_mining_brief.md`（六向法）；同目录 `00_lane_roster.yaml`＋`L0d..L7_ledger.md`（已挖/mined_out，八本台账；2026-10-15 起资产住 04 区）；`docs/_working/automation_campaign/feedback/to_miners.md`。边界：04_research_records/ 基建中，产物暂留 _working 任务面，禁两线同写一区。
 - **输出口**：候选→`data/strategy_intake/lane_<x>_candidates.csv`；具名子题卡（含假设描述；裸骨架不可考不产）→一律经 `scripts/backtest/generate_exam_card_skeleton.py` only-add 通道进 `docs/03_modules/_domain_backtest/exam_cards/`；念想引擎双轨=本地引擎走 GPU 机会档（登记+让路，§3-F）或 LSG qwen provider；台账行追加。
-- **工作流程**：1 领车道 2 读台账排除已挖/mined_out 3 读方向单调重心 4 逐节点六向挖 5 候选入台账 6 empty 卡骨架（门柱 null，status=empty）7 台账追加 8 自检两轮（抽 3 条反向核对未挖过）。
+- **工作流程**：1 领车道 2 读台账排除已挖/mined_out 3 读方向单调重心 4 逐节点六向挖 5 候选入台账 6 empty 卡骨架（门柱 null，status=empty）7 台账追加 8 自检两轮（抽 3 条反向核对未挖过）；枯竭判定书（mined_out 申报+六向查证+交叉复挖结论，逐节点一册）→`docs/04_research_records/mining/exhaustion/<YYYY>/`（裁定#536）。
 - **保底绩效**：每班≥5 新候选或≥10 张 empty 卡骨架；mined_out 名单核对率 100%。
 - **真源挂点**：mining_sop_policy（六向/防噪音四闸/封矿核验）。
 - **总包**：按节点并行（读并发不限；写串行 CAS）。
@@ -117,7 +117,7 @@ owner: ZephyrAlpha-Owner
 ### ⑦⑧ 考工 A/B（吞吐核心，可横向扩 C/D…）
 - **目标**：成绩产量——每日出分。
 - **输入口**：exam_cards 中 preregistered 队列（两席按卡族分工互不抢卡）。
-- **输出口**：`docs/03_modules/_domain_backtest/exam_scores_v1.yaml` 追加行（**only-add**）；卡 status→examined。
+- **输出口**：`docs/04_research_records/backtest/scores/<YYYY>/exam_scores_v1.yaml` 追加行（**only-add**；已物理迁此，裁定#536）；卡 status→examined。
 - **工作流程**：1 领卡 2 核对门柱已冻结 3 选通道：series 卡走 CLI（calibration_exam.py --card/--signal-csv/--target-csv，实测约 2 分/卡）；panel 卡走 run_card API（CLI --target-csv 有砍单列缺陷，修复前 panel 禁走 CLI）；数据按卡绑定口径自物化（执行器不自助取数）；单卡>15min 即 kill 记 finding；**GPU 优先**：ic 类走 scripts/backtest/fexam/gpu_ic/gpu_rank_ic.py（3090+torch cu126 实测可用），启用前必过 parity_test 对拍、且须安静窗（VRAM 独占纪律：smoke_gpu 预检不过=改日，白天桌面进程占 GPU 硬闯禁止）；白天零星卡 CPU 兜底，不与主线抢 CPU4 跑（CH 窗 01:00-04:00 避让）5 分数入库 6 翻状态 7 失败写堵点册即停 8 自检两轮（only-add 与门柱一致）。
 - **保底绩效**：每席每班≥8 张出分，或跑满 4 小时（双口径先到者计）。
 - **真源挂点**：exam_policy＋run_fexam.py（MOD-BT-FEXAM）。
@@ -276,3 +276,36 @@ lane_roster 7 车道+RX_A/RX_B 复挖道；某车道挖满（mined_out 申报+�
 1. **正交准入闸**：新候选入台账前对独立信号库做 spearman 预检，`|corr|≤0.3` 才收（工具=scripts/backtest/fexam/signal_orthogonality.py gate 子命令）；不过闸记"重复"，喂 mined_out 判据。
 2. **独立信号清单**：⑨成绩官每日维护（pool-report 子命令产出相关矩阵+参与率），存 `docs/_working/automation_campaign/pulse/independent_signals.md`——③④席与点子引擎 prompt 的必读"占领区摘要"。
 3. **正交方向单**：⑨除 fail 分诊外每日给出空白轴地图（波动率/流动性/资金面/另类数据等未被占轴），③④优先去无人占的轴挖。
+
+### 8-A 机器层四闹钟产物存放表（与 10 岗同规范，2026-10-15 补全）
+
+| 闹钟 | 产物 | 存放处 | 层 |
+|---|---|---|---|
+| NightMining 夜挖 | lane_b/lane_c3 候选种子 CSV | data/strategy_intake/lane_b,c3_candidates.csv | 过程层（进货台账，只增） |
+| NightMining 夜挖 | 运行日志 | .runtime/logs/night_mining.log | 非资产（随清理） |
+| F06Grid 网格窗 | 窗产物（manifest.csv/summary.json/网格工件） | data/strategy_intake/grid_*/＋data/backtest_artifacts/ | 过程层（可重建，归档可清） |
+| F06Grid 网格窗 | 幸存者台账 | data/strategy_intake/f06_survivors.csv | 结论层（进货侧，only-add） |
+| F06Grid 网格窗 | 收窗总结（叙事终稿） | docs/04_research_records/backtest/campaigns/f06_<窗日期>/ | 叙事层（promote 三步） |
+| TTLRejudgeDaily | 触发/执行日志 | .runtime/logs/ | 非资产；复考成绩一律走⑦⑧⑨通道入分数册，禁旁路 |
+| C4Exam 考试夜批 | 增量分数行 | docs/04_research_records/backtest/scores/<YYYY>/（经 only-add 通道） | 结论层 |
+| C4Exam/TTL | 运行日志 | .runtime/logs/ | 非资产 |
+
+机器层通用规矩：产出的数字/文件=**原料**，只有经⑨成绩官判卷入分数册的才算成绩；叙事终稿进 04 走 promote 三步；日志永远 .runtime 非资产；四闹钟 runner 脚本头部的产物路径注记由⑤席/维护班下一班对齐本表（脚本行为不变，只补注释）。
+
+
+## 8. 研究态资产存放规范 v2 对齐（裁定#536，2026-10-15 生效；制度页=automation_sop/research_asset_storage_spec.md 禁另造副本）
+
+四层分流：结论层→分数册（04/backtest/scores/）｜数值层→CH c1_backtest.*｜过程层→run_archive+n_trial_ledger（可重建）｜叙事层→04 区各栏。
+本线资产落点（v2 对照）：运行面（派单/反馈/水位/四件套/班间交接）=docs/_working/automation_campaign/ 不变（带 ttl+游标，**禁入 04**）｜分数册=04/backtest/scores/<YYYY>/ only-add｜挖矿台账收官终稿 promote→04/mining/ledgers/<campaign_id>/｜**矿脉枯竭判定书**（mined_out 申报+六向查证+交叉复挖结论）→04/mining/exhaustion/<YYYY>/ 逐节点一册｜战役总报→04/backtest/campaigns/<id>/ 或 cross_domain/<id>/｜复盘案卷→04/backtest/postmortems/<YYYY>/｜耗尽预注册卡存档→04/backtest/prereg_archive/<YYYY>/｜新考试卡=03 卡册不变（生成器 only-add）。
+四规矩：命名 `YYYYMMDD_<域码>_<类型码>_<slug>_v<N>`（域码 bt/mining/data/gov；类型码 score/exam/report/postmortem/card/ledger；ASCII ≤60）｜表头九必填（doc_type/ttl:permanent/schema_version/created/sid/family_id/domain/title_zh/status）｜叶子夹 120 硬顶 100 预警｜写完新件跑 scripts/governance/generate_research_index.py（机生禁手改）。
+**promote 三步**：ttl task_bound→permanent＋落 04 对应栏＋跑索引生成器。
+
+## 9. 新信号挖掘线作战规程（条件轴复核班交接，2026-10-15；十方向=③④席**持久作业菜单**（楼图子册=docs/_working/automation_campaign/pulse/mining_directions.md，逐楼状态+游标轮转，封矿即切楼——非一次性任务书；技术细节参考=桌面 condaxis_tmp/mining_lanes/new_signal_mission_brief.md））
+
+**使命**：挖有预测力的新 alpha，过在册考试入池，把整装 HOLDOUT 净 Sharpe 从 −0.569 拉过 0 冲 ≥2。旧池 15 员已判死（有效独立信号仅 4.4，毛 −0.425）。
+**七门槛（禁自拟数值）**：①相关性门与 15 员日净敞口 |corr|≤0.3（基准=condaxis_tmp/corr_15members.csv）②毛 Sharpe 新鲜样本>0 底线/≥0.5 推荐入库线 ③净 Sharpe（含 dampen）C 门>0、冲刺≥2 ④换手≤8x（Σ|Δw|/2×244，exam_scale_cost_gate.yaml E7 门）⑤独立预测≥60 笔或信号天数≥120 日 ⑥样本≥120 观测/事件≥30 次（裁定#532 同源）⑦MaxDD 如实记录暂不设门。量化结论：单信号毛 0.5~1.0×3~5 个独立信号即可达标。
+**十方向（P0=盘口微结构族：39.5 亿行 tick_data+1.3 亿行 tick_depth_5，盘口因子消费量=0，完全未开发）**：盘口（OBI/5 档压力/WMP 偏离/大单流向/spread）｜财务基本面｜估值｜动量反转（残差动量优先）｜波动率｜流动性 Amihud｜资金流（sector_fund_flow）｜另类（两融/股东户数/解禁/大宗/龙虎榜）｜市场状态｜情绪重建（emotion_index C1/C2/C5/C6 缺失重建即是新信号）。
+**七步流程**：W_IS（2019-04..2023-12）开发初筛→W_OOS 复验（只淘汰不录取，与池选择窗重叠）→相关性门→预注册冻结（先冻结后跑）→**HOLDOUT 单次烧毁**（每配置唯一一次，烧完禁改参重跑）→合成验证（旧池非冗余成员+dampen tau60）→滚动前哨（W_POSTD+新样本，唯一无污染窗）。
+**资源路径**：引擎=scripts/backtest/ibt/ibt_runner.py（四窗定义+15 员 MEMBERS+build_panels/run_engine）｜成员样板=scripts/backtest/translated/c4_fact_4f749668.py 等 15 个｜dampen 参考实现=桌面 condaxis_tmp/turnover_pilot.py｜成本门=scripts/backtest/ibt/exam_cost_gate.py+config/exam_scale_cost_gate.yaml｜行情=zephyr.factor.core.evaluation.backtest.load_history｜CH=zephyr.data.ch_reader（**判据读数用 query_rows()，禁 query() 串 TSV、禁 count() 假 0**；库 c1_market@172.24.30.100:8123）。
+**纪律**：严禁 HOLDOUT/OOS 调参后宣称成绩（自证窗教训=虚高 1.63 Sharpe）｜判据全沿用上表禁放宽｜临时件放桌面 condaxis_tmp 自建子夹、**禁写 docs/_working**（TTL 归档中）｜禁 git commit（总包统一提交）｜如实报告，缺一项视为未完成；每候选必报：定义/数据源/与 15 员相关性/三窗毛净 Sharpe/换手/独立观测数。
+**岗位接线**：③④席按十方向开挖（P0 盘口）｜⑤实现席产信号代码｜⑥制卡席预注册冻结｜⑦⑧考工出分｜⑨成绩官判卷+维护独立信号清单（§3-G）｜过门者回传总包做合成与终局验证。
