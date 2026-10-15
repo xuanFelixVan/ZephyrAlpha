@@ -277,7 +277,7 @@ gaps:
 
   # === 2026-08-30: index_valuation_daily ERP 列全空（S2 收尾勘探实证，roadmap A1 残余）===
   # 勘探背景：S2 校准专项 2015/2020 valuation 仍 0 的归因勘探（批次报告
-  #   docs/_working/reports/2026-08-30-s2-closure-report.md）。结论：2015/2020 的 0 分是
+  #   docs/_archive/_working_cleared/archive/2026-09/reports/2026-08-30-s2-closure-report.md）。结论：2015/2020 的 0 分是
   #   正确信号（事件日 cape_5y_pct=0.34/0.448，非深度低估），非数据缺口；但 ERP 列从未产出。
   - id: "index_valuation_daily_erp_not_computed"
     table: "c1_market.index_valuation_daily"
@@ -444,7 +444,7 @@ gaps:
       将唯一性灭失 3774 对日K，故判不删。"
     resolution_plan: "登记缺口，hk_kline 连同 tasks.yaml 双任务（hk_kline_incremental/
       hk_kline_full_refresh）一并维持现状；后续 kline_hk_daily 若补齐该 3774 对（复检 SQL=
-      canonical+trade_date NOT EXISTS 对拍，见 docs/_working/fullflow_mine/wiring/
+      canonical+trade_date NOT EXISTS 对拍，见 docs/04_research_records/mining/ledgers/fullflow_mine/wiring
       D1_deletion_exec.md）可重启净删预检。"
     primary_alternative: "无（kline_hk_daily 深度与行级覆盖皆不足）"
     created: "2026-10-04"
@@ -1012,7 +1012,7 @@ gaps:
     end_date: "2026-05-31"
     date_column: "trade_date"
     status: "no_source"
-    root_cause: "竞价窗口(9:15-9:25)数据仅 live 采集产生：miniqmt 时代只有'采集链 09:15 前活着'的日期有货（2026-06 起共 40 密集日；盘后回补通道不含盘前时段=结构性缺口）。查历史竞价数据从这些口子走：①空窗日回灌 scripts/backfill_auction_snapshot_history.py（防覆盖闸，源=tick_data 竞价窗口）；②竞价'末态价'=kline_1min 首 bar open（2021-09 起精确，量=混合口径需 40 真值日标定，未立卡）；③2015-2021 用日线 open 代理。**竞价'过程'数据（9:15-9:25 挂撤单序列）任何渠道都不存在，只能自 2026-09-18 桥流（tick_depth_5）起逐日积累**。详见 docs/_working/auction_bridge_switch_mining_2026_09_17.md §8"
+    root_cause: "竞价窗口(9:15-9:25)数据仅 live 采集产生：miniqmt 时代只有'采集链 09:15 前活着'的日期有货（2026-06 起共 40 密集日；盘后回补通道不含盘前时段=结构性缺口）。查历史竞价数据从这些口子走：①空窗日回灌 scripts/backfill_auction_snapshot_history.py（防覆盖闸，源=tick_data 竞价窗口）；②竞价'末态价'=kline_1min 首 bar open（2021-09 起精确，量=混合口径需 40 真值日标定，未立卡）；③2015-2021 用日线 open 代理。**竞价'过程'数据（9:15-9:25 挂撤单序列）任何渠道都不存在，只能自 2026-09-18 桥流（tick_depth_5）起逐日积累**。详见 docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/auction_bridge_switch_mining_2026_09_17.md §8"
     resolution_plan: "空窗日已全部回灌；1min 首 bar 标定研究立卡后置（40 真值日=2026-06 起密集日）；9/15 及 7/8 月缺采日永久缺失（任何渠道不可回）"
     resolution_actual: "2026-09-17 桥接切换施工批（commit 92812a31a0）：回补 32 空窗日 16.6 万行零失败，5 日已有原产被闸跳过；auction_book/auction_snapshot 此后由 qmt_bridge 派生持续累积"
     verification_20260918: "st-ff-datagap 2026-09-18 复跑：FINAL 251,598 行 / 47 个密集日（2026-06-01~2026-09-16；普查记 40 日已增至 47）→ 逐日累积中，历史仍不可回补（9:15-9:25 挂撤单序列任何渠道都不存在）。样本充分性说明：若 FF-06 竞价信号按 REG-VALM-001 同线判据（桶内 n>=30 且滑点均值 <=20bp→valid / <=40bp→pending / >40bp→noise），按每因子每日一观测口径需 >=30 个交易日（现 47 日已达门槛），缺的是 2026-06 前的历史深度而非天数；按标的乘日口径样本充足。判据请 FF-06 侧立卡后回填"
@@ -1028,7 +1028,7 @@ gaps:
     detection_threshold: 500   # 当日全族覆盖 <500 只 = 断档日
     expected_daily_avg: 1600   # 2026-09 全族 ~1,663 只×4 bar
     actual_daily_avg: 31       # 07 月窗实测（07-20 恢复 1,603）
-    status: "monitoring"   # 工单=docs/_working/datavein/2026-09-17-etf60min-depth-workorder.md，通道评估与执行序见 §三/§六
+    status: "monitoring"   # 工单=docs/04_research_records/data/datavein/2026-09-17-etf60min-depth-workorder.md，通道评估与执行序见 §三/§六
     root_cause: "四段结构缺口：①2023-06-05 全族零行（全历史唯一零行交易日，当周家族 758-762 只）；②2026-07-01~07-17（13 交易日）只剩 31 只考试子集（S-OWNER 考试期采集收窄；同窗 5min=438-447 只、15/30min=463-472 只同族受害，1min 反而满覆盖 1,575-1,601 只/日）；③2026-07-28 半日断（545/1,607 只）；④2021-02-08 159915 孤立散格。另 2026-09-16 EOD 五任务全 FAILED（ClickHouse 写入失败 15:36-16:15）留半根（1,663 只仅早市 bar）——属运维瞬断，重跑增量任务即愈，不另立条目。2026-09-17 全链停采同因（采集消费进程未运行），催数据线当日处置。"
     resolution_plan: "首选通道 C=CH 内 kline_etf_1min（缺口窗满覆盖）合成回补：仿 backfill_lof_minute_history.py 先例把 ch_tick_kline 合成路径 ETF 参数化（零覆盖白名单过滤+BufferedWriter 正道+dry-run 默认+复验清零），覆盖 ~95% 缺格；兜底通道 D=大QMT 沙箱 ContextInfo download_history_data（9/18 后仍可用，服务器保留 ~1 个月）救 2021-02-08 及合成源不覆盖格子。量级：全表约 9.0 万 bar 可回补。"
     primary_alternative: "60min 缺格日消费方可临时用 30min 两根聚合或 1min 重采样；S-OWNER 考试 OOS 段（09-16 止）不受影响。"
@@ -1151,7 +1151,7 @@ gaps:
     created: "2026-09-18"
     last_updated: "2026-09-21"
 
-  # === 2026-09-19 批：bizmine 通宵夜战七项数据缺口批量登记（st-bizmine-co-20260919，各证据=docs/_working/archive/2026-09/bizmine_night/ 实测报告）===
+  # === 2026-09-19 批：bizmine 通宵夜战七项数据缺口批量登记（st-bizmine-co-20260919，各证据=docs/_archive/_working_cleared/archive/2026-09/bizmine_night/ 实测报告）===
 
   # === ① consensus_daily 值类列 PIT 已坏（平推快照；F 车道另类探针实测）===
   - id: "consensus_daily_value_cols_pit_broken"
@@ -1190,7 +1190,7 @@ gaps:
     resolution_plan: "值类消费一律改走 consensus_daily_repaired 净段；repaired 2022+ 断供段
       待换源/重灌回补（归数据线工单）；plain 表值类列禁用登记在案，计数类列不受本判定约束。"
     primary_alternative: "c3_fundamental.consensus_daily_repaired（净段 FINAL 1,563,996 行 [亲验 09-21]：2017-2021 五年+2026 近窗；2022-2025 仍断）"
-    evidence: "docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/altdata_probe_report.md 发现 1-2"
+    evidence: "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/factor_sop_screen/altdata_probe_report.md 发现 1-2"
     verification_20260921: "部分回填口径更新（st-data-fix-20260921 [亲验] FINAL）：repaired 表
       合计 1,563,996 行——2017=300,566 / 2018=349,219 / 2019=311,934 / 2020=260,490 /
       2021=250,420 / 2026=91,367（max trade_date=2026-09-15）；2022-2025 仍 0 行=断供段未回。
@@ -1216,7 +1216,7 @@ gaps:
       见 cold_archive_minute_kline_e_drive 条目；QMT 历史下载已随 miniQMT 2026-09-18 退役关闭）。
       回补前消费方一律走 kline_etf_1min 聚合口径。"
     primary_alternative: "c1_market.kline_etf_1min 聚合日线（argMin/argMax/max/min/sum+全行 DISTINCT）"
-    evidence: "docs/_working/archive/2026-09/bizmine_night/etf_family/etf_lane_report.md 数据源节"
+    evidence: "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/etf_family/etf_lane_report.md 数据源节"
     created: "2026-09-19"
 
   # === ③ technical_indicator 日频重复 (date,symbol) 行待 ingest_ts 去重（IND 三切片实测）===
@@ -1234,7 +1234,7 @@ gaps:
     resolution_plan: "治本=数据线正门工单重灌清理（备份后按 ingest_ts 最新版去重重写，禁裸
       ALTER DELETE 聚合数判重）；治理前消费方一律 argMax(ingest_ts)/drop_duplicates(keep=last) 口径。"
     primary_alternative: "消费侧 ingest_ts 去重（IND-A/B/C 三切片已实证该口径下结论稳定）"
-    evidence: "docs/_working/archive/2026-09/bizmine_night/indicators_sweep_b/screen_report.md 诚实条款 §1（429 万重复/总 1756 万行）"
+    evidence: "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/indicators_sweep_b/screen_report.md 诚实条款 §1（429 万重复/总 1756 万行）"
     verification_20260921: "monitoring 维持（st-data-fix-20260921）：dwm 分片重跑 09-21 凌晨在飞
       （CH 轻查询窗口避让，本批未重扫重复计数）——回填期重复行将进一步累积属预期，消费方
       argMax(ingest_ts) 口径在回填完成前加倍必须；回填完成后按 resolution_plan 评估治本重灌
@@ -1261,7 +1261,7 @@ gaps:
       归档源深度待核实）；ETF tick 空窗与深度缺口随 F:/zephyr_cold/50_archive/by_project/zephyralpha 挂回工单一并评估；
       消费方注意两 variant 时间戳/单位口径差（tick_matrix_protocol.md 已固化修复配方）。"
     primary_alternative: "1min/5min K 线族全史完整，K 线级回测不受影响；tick 级仅 2025+ 深样本可用"
-    evidence: "docs/_working/archive/2026-09/bizmine_night/tick_t0/（tick_inventory.md+tick_t0_results.md）+ docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_report.md（勘误之勘误）"
+    evidence: "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/tick_t0/（tick_inventory.md+tick_t0_results.md）+ docs/_archive/_working_cleared/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_report.md（勘误之勘误）"
     created: "2026-09-19"
     p01_probe_20261015b: >-
       ①数据源班 st-qoder-p01-1015-04 只读实测（本机，零写入）：冷库
@@ -1321,7 +1321,7 @@ gaps:
         evidence: "https://docs.coinglass.com/reference/aggregated-liquidation-history"
         failed_at: "2026-10-15 WebSearch 取证，判为不可作逐笔历史源"
     searched_conclusion: "历史段免费渠道穷尽＝断供维持；前向可采（trades 流标记法）已转②席建设单 B-4——断供≠整条线死，只封回溯段"
-    evidence: "docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_results.md §7+crypto_probe_summary.csv"
+    evidence: "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/crypto_probe/funding_carry_results.md §7+crypto_probe_summary.csv"
     created: "2026-09-19"
 
   # === ⑥a weather_data 深度过浅（31 记录日；ALT-B 车道实测）===
@@ -1338,7 +1338,7 @@ gaps:
     resolution_plan: "不施工（逐日积累型，QWeather 每日采集自然累积）；年季基准距平类信号
       需多年积累后重评（alt_regime_signals.py 数据成熟度注记同口径）。"
     primary_alternative: "无（气象历史深度无免费批量回补源）"
-    evidence: "docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_report.md §缺口登记"
+    evidence: "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_report.md §缺口登记"
     created: "2026-09-19"
 
   # === ⑥b research_report hot_value/rating_change 全空列（ALT-B 车道实测）===
@@ -1355,7 +1355,7 @@ gaps:
     resolution_plan: "数据线核查 akshare 研报详情接口是否供该两字段（不供则换源或标记列退役
       走净删门位）；全文搬运属独立数据工程项（20GB 级，挂账不阻塞）。"
     primary_alternative: "hot_rank（每日 top100 rank 值，29 天）可作热度代理；评级调向暂无替代"
-    evidence: "docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_report.md §缺口登记"
+    evidence: "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_report.md §缺口登记"
     verification_20260921: "schema 口径更新（st-data-fix-20260921 [亲验] system.columns）：
       hot_value 列已不存在（09-19 测得全空串 146,669 行的载体随 schema 变更移除，本条对该列的
       登记随之了结，热度代理按 primary_alternative 走 hot_rank）；rating_change 列仍在且维持
@@ -1378,7 +1378,7 @@ gaps:
     end_date: "2021-08-31"
     date_column: "trade_date"
     detection_threshold: 1
-    status: "open"  # 归档实体在 F:/zephyr_cold/50_archive/by_project/zephyralpha（原 E 盘 2026-09-20 迁 F）待数据线正门工单挂回；今晚只登记不接入；工单已立（2026-09-19，裁定#367）→ docs/_working/archive/2026-09/bizmine_night/e_drive_cold_archive_task.md
+    status: "open"  # 归档实体在 F:/zephyr_cold/50_archive/by_project/zephyralpha（原 E 盘 2026-09-20 迁 F）待数据线正门工单挂回；今晚只登记不接入；工单已立（2026-09-19，裁定#367）→ docs/_archive/_working_cleared/archive/2026-09/bizmine_night/e_drive_cold_archive_task.md
     root_cause: "F:/zephyr_cold/50_archive/by_project/zephyralpha=分钟线冷归档（1min 2000-06..2021-08 共 255 月、
       ETF 1min 2005-02..2018-12、5/15/30/60min、technical_indicator、news_data；无 tick）——
       库内对应历史深度缺失（库内分钟约 4.7 年起；tick 唯二=tick_data 2025-01 起 21 个月
@@ -1386,7 +1386,7 @@ gaps:
     resolution_plan: "数据线正门工单：归档挂回（provider/BufferedWriter 正道+幂等回补+复验，
       禁裸写）；miniQMT 2026-09-18 退役后该归档=唯一已知历史分钟源，优先级高。"
     primary_alternative: "无（E 盘归档为唯一已知批量历史分钟源）"
-    evidence: "docs/_working/archive/2026-09/bizmine_night/bizmine_campaign_ledger.md 06:0x 行（E 盘数据资产盘点）"
+    evidence: "docs/_archive/_working_cleared/archive/2026-09/bizmine_night/bizmine_campaign_ledger.md 06:0x 行（E 盘数据资产盘点）"
     p01_probe_20261015e: |
       ①席第 07 班（st-qoder-p01-1015-07，10-15 09:15-09:39 date 实测）冷归档内容级只读实测（未挂回、未建表、未花钱）。
       清单面：archive_manifest.jsonl 共 2,533 行，逐行 verified=true 且 dropped=true；2,533 个 parquet_path 本机
@@ -1448,7 +1448,7 @@ gaps:
 
   # === 2026-09-20: 估值双表数据正确性事故（总包甲·数据正确性线 WO-1·P0，st-data-fix-20260921）===
   # ★ 消费禁用声明（2026-09-20 深夜已解除——两条 status 均 resolved，验收数字见
-  #   docs/_working/data_fix_campaign/p1_valuation_repair_report.md 及下列条目内
+  #   docs/04_research_records/data/data_fix_campaignp1_valuation_repair_report.md 及下列条目内
   #   verification_20260920 段。禁用期间为 2026-09-20 22:00~23:59 施工窗口）。
 
   # --- 病-1：index_valuation_daily 派生列被无 version 合并仲裁抹零 ---
@@ -1472,7 +1472,7 @@ gaps:
       读算全量幂等回写（修 _compute_start_date 非增量任务返回月初致 expanding 分位在
       2.5 周窗口上计算的结构缺陷）；③tasks.yaml 增日频 compute 必跑腿（工作日增量落库
       当日重算，不再等周末）。"
-    resolution_actual: "2026-09-20 全部落地并验收（报告 docs/_working/data_fix_campaign/
+    resolution_actual: "2026-09-20 全部落地并验收（报告 docs/04_research_records/data/data_fix_campaign
       p1_valuation_repair_report.md）：①表重建+原子换名（旧表整体冷备
       index_valuation_daily_quar_20260920，8125 行；非交易日 7 行先导出
       F:/db_dumps/zephyr_quarantine/20260920_valuation_repair/ 后剔除；
@@ -1547,7 +1547,7 @@ gaps:
     resolution_plan: "模拟盘客户端（E:/国金QMT交易端模拟，sim env，config/qmt_environments.yaml）xtdata 下载回补：复用 scripts/data/p0_tick_backfill.py 配方（done 断点+ReplacingMergeTree 同键幂等+分片 insert≤5000）；宇宙从 tick_data 09-16 DISTINCT(symbol,market_type) 反推 QMT 码单 8073 只（模拟盘 get_stock_list_in_sector 板块残缺，板块法不可用）；五档按 backfill_tick_depth5 配方同步回补"
     resolution_actual: "2026-09-21 落地（st-data-fix-20260921）：tick_data 09-17 = 0 → 28,327,322 行 / 7,799 标的（超邻日 09-16 的 23,908,666 行）；stock 2038 万/etf 394 万/index 274 万/stock_bj 56 万/cb 53 万/lof 17 万；futures 域外未处理。五档 dry-run 5/5 类别可下，全市场回补同批执行。长尾 180 只源缺 0 行（退市/停牌/模拟环境未收录，如实保留缺口）"
     verification_20260921: "countIf(trade_date='2026-09-17')=28,327,322 ≥2000 万门槛 [亲验]；跨源抽验 000001.SZ tick 15:00 末价 11.61 = kline_daily 收盘 11.61 逐位相等，600519 差 0.03%（收盘竞价口径）[亲验]；同键重复 20,427 组为 resume 重灌未合并版本（同值幂等）"
-    channel_note: "模拟盘 tick 服务器保留≈1 个月（09-01 可下/08-18 已失效实测），30 天内缺口均可按本配方回补；分钟/日线族深度数年不受清退影响。评估详见 docs/_working/data_fix_campaign/p0_sim_as_source_assessment.md"
+    channel_note: "模拟盘 tick 服务器保留≈1 个月（09-01 可下/08-18 已失效实测），30 天内缺口均可按本配方回补；分钟/日线族深度数年不受清退影响。评估详见 docs/04_research_records/data/data_fix_campaign/p0_sim_as_source_assessment.md"
     created: "2026-09-21"
     last_updated: "2026-09-21"
 
@@ -1635,7 +1635,7 @@ gaps:
       A 族 398,740 格 UPDATE→NULL（restricted_shares.announce 343,298 分 3 批）+空壳行
       10,927 可逆删除（五业务列零载荷实证，全行快照先行导出）；修后两轮哨兵观察 STABLE
       （A 族全 0，B 族稳定无新增）。修前/修后逐列数字与 bak 参照原料核对记录（零误清零价值）
-      见 docs/_working/data_fix_campaign/p6_1970_root_cure_report.md；可逆导出
+      见 docs/04_research_records/data/data_fix_campaign/p6_1970_root_cure_report.md；可逆导出
       E:/{c1_market,c3_fundamental}/p6_1970_export/。"
     primary_alternative: "消费侧已有 1970 排除兜底（pit_query 锚列>1970-01-02 哨兵守卫、api_server 零值排除）。"
     created: "2026-09-21"
@@ -1705,7 +1705,7 @@ gaps:
     status: "open"
     root_cause: "F06 卷空壳表 9 张新账（2026-09 wiring §2.3-2+census 补齐复核）：schema 在册（category_id=market_ipo_schedule；品类册：新股申购+上市日程（采集链暂缓——17号 §6.6-3））而 CH 热库实测 0 行——采集腿未建/暂缓的预留表，非管道故障。本条为防误判缺失的前置补登记（W1 前置半步）。"
     impact: "c1_market 表 ipo_schedule 无数据可读；下游若按表名接线将读空集，普查/对齐侧会误判缺件或假绿。"
-    evidence: "docs/_working/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
+    evidence: "docs/_archive/_working_cleared/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（F06 卷 W1 后半步）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
     created: "2026-09-29"
     last_updated: "2026-09-29"
@@ -1720,7 +1720,7 @@ gaps:
     status: "open"
     root_cause: "F06 卷空壳表 9 张新账（2026-09 wiring §2.3-2+census 补齐复核）：schema 在册（category_id=market_msci_adjustment；品类册：MSCI/富时调整（预留，MVP 不需要——17号 §6.2 定稿裁定））而 CH 热库实测 0 行——采集腿未建/暂缓的预留表，非管道故障。本条为防误判缺失的前置补登记（W1 前置半步）。"
     impact: "c1_market 表 msci_adjustment 无数据可读；下游若按表名接线将读空集，普查/对齐侧会误判缺件或假绿。"
-    evidence: "docs/_working/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
+    evidence: "docs/_archive/_working_cleared/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（F06 卷 W1 后半步）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
     created: "2026-09-29"
     last_updated: "2026-09-29"
@@ -1735,7 +1735,7 @@ gaps:
     status: "open"
     root_cause: "F06 卷空壳表 9 张新账（2026-09 wiring §2.3-2+census 补齐复核）：schema 在册（品类册无此 category（F06 卷\"六表均不在册且不在 tasks.yaml\"复证一致））而 CH 热库实测 0 行——采集腿未建/暂缓的预留表，非管道故障。本条为防误判缺失的前置补登记（W1 前置半步）。"
     impact: "c1_market 表 stock_valuation 无数据可读；下游若按表名接线将读空集，普查/对齐侧会误判缺件或假绿。"
-    evidence: "docs/_working/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
+    evidence: "docs/_archive/_working_cleared/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（F06 卷 W1 后半步）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
     created: "2026-09-29"
     last_updated: "2026-09-29"
@@ -1772,7 +1772,7 @@ gaps:
     status: "open"
     root_cause: "F06 卷空壳表 9 张新账（2026-09 wiring §2.3-2+census 补齐复核）：schema 在册（品类册无此 category（F06 卷\"六表均不在册且不在 tasks.yaml\"复证一致））而 CH 热库实测 0 行——采集腿未建/暂缓的预留表，非管道故障。本条为防误判缺失的前置补登记（W1 前置半步）。"
     impact: "c1_market 表 stock_candidate_pool 无数据可读；下游若按表名接线将读空集，普查/对齐侧会误判缺件或假绿。"
-    evidence: "docs/_working/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
+    evidence: "docs/_archive/_working_cleared/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（F06 卷 W1 后半步）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
     created: "2026-09-29"
     last_updated: "2026-09-29"
@@ -1800,7 +1800,7 @@ gaps:
     status: "open"
     root_cause: "F06 卷空壳表 9 张新账（2026-09 wiring §2.3-2+census 补齐复核）：schema 在册（category_id=market_index_meta；品类册：市场宏观指数元数据（总市值/流通市值/平均股价等，enabled=true））而 CH 热库实测 0 行——采集腿未建/暂缓的预留表，非管道故障。本条为防误判缺失的前置补登记（W1 前置半步）。"
     impact: "c1_market 表 market_index_meta 无数据可读；下游若按表名接线将读空集，普查/对齐侧会误判缺件或假绿。"
-    evidence: "docs/_working/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
+    evidence: "docs/_archive/_working_cleared/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（F06 卷 W1 后半步）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
     created: "2026-09-29"
     last_updated: "2026-09-29"
@@ -1815,7 +1815,7 @@ gaps:
     status: "open"
     root_cause: "F06 卷空壳表 9 张新账（2026-09 wiring §2.3-2+census 补齐复核）：schema 在册（category_id=market_margin_target_adjustment；品类册：两融标的调整（采集链暂缓——17号 §6.6-3））而 CH 热库实测 0 行——采集腿未建/暂缓的预留表，非管道故障。本条为防误判缺失的前置补登记（W1 前置半步）。"
     impact: "c1_market 表 margin_target_adjustment 无数据可读；下游若按表名接线将读空集，普查/对齐侧会误判缺件或假绿。"
-    evidence: "docs/_working/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
+    evidence: "docs/_archive/_working_cleared/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（F06 卷 W1 后半步）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
     created: "2026-09-29"
     last_updated: "2026-09-29"
@@ -1845,7 +1845,7 @@ gaps:
     detection_threshold: 1
     status: "open"
     root_cause: "在册病根（00 册 W-36/02 册 X-40，src/zephyr/data/dual_source_guard.py:28 实锚）：DuckDB governance.db 与 c1_market.reconciliation_differences 两库皆空，对账差异双真源零落地面（2026-09-30 CH 实读 0 行复核）。F06 卷九张清单未列本表，B15 复核补挂"
-    resolution_plan: "先裁对账差异真源唯一归属（DuckDB vs CH，一盘一责）再建写入腿；禁双真源并行。2026-10-07 C299 对齐方案已出（docs/_working/master_tc_20261006/lanes/L5_data/c299_r5_truth_alignment.md）：真源=trades 日历为主+schedule.yaml 班面唯一表达，三步收敛（判据走日历/班面 dow 语义统一=调度域移交/连续 5 交易日无假绿验收）；本行挂账面更新，配置与写入腿施工另批"
+    resolution_plan: "先裁对账差异真源唯一归属（DuckDB vs CH，一盘一责）再建写入腿；禁双真源并行。2026-10-07 C299 对齐方案已出（docs/_archive/_working_cleared/master_tc_night/lanes/L5_data/c299_r5_truth_alignment.md）：真源=trades 日历为主+schedule.yaml 班面唯一表达，三步收敛（判据走日历/班面 dow 语义统一=调度域移交/连续 5 交易日无假绿验收）；本行挂账面更新，配置与写入腿施工另批"
     created: "2026-09-30"
     last_updated: "2026-10-07"
 
@@ -1859,7 +1859,7 @@ gaps:
     status: "open"
     root_cause: "C120 空壳表逐表复核补登（st-mastertc-l5，2026-10-07）：wave3 empty_tables_recheck（2026-09-26 探针）13 张 vacuum 名单之一，master_tc 复核时发现其余 12 张均已在册（l2_tick 走 l2_tick_permission_required/edb_data 走 ifind_quota/ipo_schedule 等 6 张走 *_empty_table_no_leg/reconciliation_differences 走 dual_empty_disease/account_nav_daily 走 writer_zero_caller），唯本表漏登；10-07 复测仍 0 行。预留表语义同 6 张先例：schema 在册而采集腿未建，非管道故障。"
     impact: "c1_market.realtime_snapshot 无数据可读；下游若按表名接线将读空集，普查/对齐侧会误判缺件或假绿。"
-    evidence: "docs/_working/total_command_closeout/wave3/empty_tables_recheck.yaml（2026-09-26 probe，strict_rows=0）；st-mastertc-l5 2026-10-07 DatabaseService 只读复测 count()=0"
+    evidence: "docs/_archive/_working_cleared/total_command_closeout/wave3/empty_tables_recheck.yaml（2026-09-26 probe，strict_rows=0）；st-mastertc-l5 2026-10-07 DatabaseService 只读复测 count()=0"
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（同 6 张先例通道）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
     created: "2026-10-07"
     last_updated: "2026-10-07"
@@ -2008,6 +2008,22 @@ gaps:
     evidence: "CH 严格读 query_rows 只读：block_trade 10-14 三票=(3.67,600000,2202000,ifind)/(7.27,1400000,10178000,ifind)/(1.03,5000000,5150000,ifind)；block_trade_detail 10-14 同三票=(60,220.2)/(140,1017.8)/(3550,3656.5)。源侧真跑 tushare pro.block_trade(trade_date=20261014)=93 行逐笔（000656.SZ 六笔 500/300/500/300/300/1650 万股＝3550、515/309/515/309/309/1699.5 万元＝3656.5）＝detail 聚合值逐值复现。深史四断面 20100111=23／20150105=65／20190104=209／20240815=120 行；akshare stock_dzjy_mrtj 2010 窗=109 行、2019 窗=562 行。全表内部一致性 block_trade 1706/1706、block_trade_detail 1683/1878（195 行=10.4% 聚合行 amount≠price×volume，本席不判因）。探针件 .runtime/tmp/p01_12_probe1.py／probe2.py。"
     impact: "楼8 大宗折价轴与卡07/卡08 若按表名取 amount 直接比大小，会因 10^4 单位差把两表结论差四个数量级；④席 p04-06 第3条据此判“两表不同源”属可纠正的口径误读。深史缺失使大宗折价在 2019 考试窗内零样本（门槛⑤不可达）。"
     resolution_plan: "①席判＝可免费回补＋可常设（零现金），出建设单 B-23（含续供确认四问）。②施工动作＝单位写进列注释与数据资产册、两表禁混算折价率、深史 2010-01-04 起按 data_source 分轨回补、detail 表 195 行不一致先定标。净零声明＝本条为新建，与在册 sector_fund_flow_depth_cap_no_free_backfill（板块资金流）／B-13 margin_trading／B-14 dragon_tiger 同属楼8 普查族但**对象各不同，按 AGENTS §4.1 跨域不同对象不并**；本席未翻任何旧条目 status，退役属 Owner 门（轨 B）。"
+    created: "2026-10-15"
+    last_updated: "2026-10-15"
+
+  # === 2026-10-15 18:1x: ①数据源席 st-qoder-p01-1015-13 期权 IV/Greeks 腿（主腿静默断供 + 三列恒0属落库缺陷 + 官方腿可免费常设）===
+  - id: "option_iv_greeks_leg_stale_and_official_sse_source"
+    table: "c1_market.option_iv_surface"
+    gap_type: "source_stale"
+    start_date: "2026-01-29"
+    end_date: "2026-09-16"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "open"
+    root_cause: "①席 p01-13 按 data_source 分层复量：④席 p04-06 第8条报的三组面破数字全部落在 miniqmt 单腿（29,423 行，2026-01-29..2026-09-16，133 日，9 标的）＝option_type 空 24,811（84.3%）、iv=0 4,010、delta/gamma/vega 三列恒 0（100%）；akshare_sina 腿 2,004 行（2026-08-14..2026-10-14，29 日，2 标的）option_type 空 0、iv=0 117、delta=0 667。两腿相加与④席全表读数逐值吻合（4,010+117=4,127；29,423+667=30,090）。同源反证＝同 data_source 在 option_greeks 表 delta=0 仅 7/3,721、gamma=0 仅 8/3,721 ⇒ IV 表三列恒 0 是落库缺陷、非源无值。主腿右端 2026-09-16 后静默零产出＝与 tasks.yaml:1765 在册先例「QMT模拟账户无期权权限,miniqmt静默返回0行SUCCESS不触发fallback」同型复发；option_iv_surface_incremental(:971)／option_greeks_incremental(:1779) 至今仍挂 miniqmt 未改。该任务描述「akshare 无现成曲面聚合 API（仅逐合约隐含波动率）」的后半句被本班实测证伪（本表列形制为合约级，不需聚合）。"
+    evidence: "CH 严格读 query_rows 只读（FINAL）：iv 表 min/max/uniq日/rows=(2026-01-29,2026-10-14,159,31427)；分层 (miniqmt 29423/空type 24811/iv0 4010/d0 29423/g0 29423/vega0 29423/133日/9标的)、(akshare_sina 2004/空0/iv0 117/d0 667/29日/2标的)；quality_flag 唯一值 1（31,427/31,427）；greeks 表 (miniqmt 3721,d0 7,g0 8,2026-08-03..09-16,20日)、(akshare_sina 2218,d0 38,g0 62,08-14..10-14,29日)；option_kline 单腿 akshare_sina 9,525 行 2026-07-30..2026-10-15/50日/310 合约；convertible_bond_iv 单腿 miniqmt 13,337 行 2026-08-07..2026-10-15（可转债权限在产、期权权限断，互证权限说）。源侧真跑 akshare 1.18.75：option_risk_indicator_sse(20261014)=628 行，列含 DELTA/THETA/GAMMA/VEGA/RHO/IMPLC_VOLATLTY，标的 {510050:94,510300:110,510500:134,588000:146,588080:144}，iv!=0 覆盖 606/628；九断面 20150209=40／20160104=100／20180102=132／20190102=166／20210104=242／20230103=360／20240816=526／20260916=694／20260917=694；20261015 实测空帧（右端=T-1）。东财腿 option_value_analysis_em／option_risk_analysis_em／fund_etf_hist_em×2／stock_zh_index_daily_em 全报 ConnectionError(RemoteDisconnected)。option_current_day_szse()=508 行仅合约目录无 IV；option_daily_stats_sse(20261014)=5 行标的级统计。探针件 .runtime/tmp/p01_13_probe1..5.py。"
+    impact: "④席卡14 据此判「只绑已实现方差不绑隐含」——本席判该结论在 miniqmt 段（2026-01-29..09-16）成立（三列恒 0 不可消费），但 akshare_sina 段与 2015-02-09 起的官方段有真值，隐含轴不必整体放弃。深市 ETF 期权与中金所指数期权的 IV 缺口仍在（本席据 akshare 65 个 option 接口名穷举判深市无官方接口；中金所族未实测，不作存在性结论）。"
+    resolution_plan: "①席判＝可免费常设＋深史可回补至 2015-02-09（零现金），出建设单 B-25（含续供确认四问）。②施工动作＝主腿改挂 ak.option_risk_indicator_sse 并按 data_source 分轨、IV 表三列恒 0 定性修复或退役该三列、静默零产出自检下限（低于近端量级 30% 报红）、深市/中金所若须补只能自算 BS 且禁与官方腿同列混存。净零声明＝本条为新建（本缺口册全文 grep option 于 id/table 0 命中＝期权 IV 面从未入册），与 kline_sector_880_resample_false_success／B-22「源活在、入库缺陷」同判据族但对象不同，按 AGENTS §4.1 跨域不同对象不并；本席未翻任何旧条 status，退役属 Owner 门（轨 B）。"
     created: "2026-10-15"
     last_updated: "2026-10-15"
 
