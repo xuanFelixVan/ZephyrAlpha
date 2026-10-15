@@ -426,3 +426,72 @@ print(len(rows), sum(1 for r in rows if r.get('verified') and r.get('dropped')),
 - **给下班的硬约束**：**明日之前 report_rc 已无剩余调用**（当日 10 次触顶）⇒ 下班**不要再投 `pro.report_rc`**，要投先 `date` 跨日；本班交付命令 (3) 在今日复跑的读数是**报错行**而非 `723 268 20261005 20261009`，两时点都在册。
 
 `P02-1015-05-ENDSTATE`（本班终态独有标记，落地面核验用；核验命令＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1015-05-ENDSTATE"`）
+
+## 2026-10-15 16:5x · st-qoder-p02-1015-06 · **B-17 国债收益率深史落地 15,552 行（左端 2025-09-23→2005-01-04）**＋一处①席前提被实测改判＋三查两闭一开
+
+**本班实际耗时**：约 63 分钟（超 60 分硬窗，超因＝写库前多花一轮全精度接缝测量与负对照，如实记）。
+**进场态**：Python 3.12.8 ✓／`lock_files.py cleanup` 回收 8 个死会话遗物（含本席 p01/p09 族）／reaper `source=live` 在岗 ✓；⚠`commit_pct=94.03 degraded=True ALERT-SYS-001+003`、`cpu_pct=97.7`、`worktree_changes=5447`（比 1015-05 进场的 92.07 **更差**）；队列 pending=2／processing=2／done=773／dead=289（1015-05 记的 138 pending 已疏通）。
+**防重入**：游标 `cursor: 已收口`、`last_batch=st-qoder-p02-1015-05` 且本班实测该袋**已在 HEAD**（`git merge-base --is-ancestor 609f5a99acd HEAD` 返回真）⇒ 开工合法。
+**班号**：ledger 今日已有 01/02/03/04/05 五段 ⇒ 本班取 **1015-06**。
+**会话与锁**：起手即 `SessionRegistry().register(sid, pid=0, held_files=[两件])` ＋ `_spawn_heartbeat_daemon(sid, Path('D:/ZephyrAlpha'), 30)`（daemon_pid=52964），随后 `lock_files.py acquire` 两件均报"持有者: st-qoder-p02-1015-06"——1015-04 给的处方照抄生效，本班未再被外来 cleanup 收走。
+
+### 建设单接收判定（工序 1）
+`to_builder.md` 读到 ①席 1015-09 班新增 **B-17／B-18／B-19** 三张，三张**均带「续供确认」四问栏**⇒ 不拒收（1015-05 记的"B-1..B-16 全体缺栏"对本三张不成立，①席已在「本席合规自纠」段自陈并请求 Owner/⑩ 定是否回补旧十六栏，本席不代裁）。`known_data_gaps.yaml` 本班实测工作区面 **15 insertions / 0 deletions 未落地**（1015-04 量 253、1015-05 量 299，本班量 15 ⇒ ①席大批 hunks 已落地、仍有小批在飞）⇒ **本班整档不碰该册**（随袋＝归属篡改），翻 status 的动作交净态落地后的班次。
+
+### 件①｜B-17 落地＝东财腿深史 15,552 行，左端从 2025-09-23 推到 **2005-01-04**
+- 键面先判：`SHOW CREATE TABLE c1_market.market_china_bond_yield` 实读＝`ENGINE=ReplacingMergeTree（无版本列）PARTITION BY toYYYYMM(trade_date) ORDER BY (curve_name, tenor, trade_date)`——**sorting key 不含 `data_source`** ⇒ ①席硬约束②"禁让同键去重静默吃掉一轨"成立路径＝回补窗**必须与现轨零键重叠**，本班据 ①席划窗取 `trade_date ≤ 2025-09-22`（现表左端 2025-09-23 的前一日）。
+- 分区死因规避：2005-01..2025-09 跨 **248 个月分区**，单 INSERT 必撞在册死因 `Too many partitions for single INSERT block (>100)` ⇒ **按年切 21 块**（每块 ≤12 分区、最大 756 行），逐块 `disposition=ch_committed detail=http`，全部 21 块无降级本地落盘。
+- 源面：`ak.bond_zh_us_rate(start_date="20050101")` 真跑 **5,808 行 2005-01-03..2026-10-14**（逐值复现①席读数），三列 `中国国债收益率5年/10年/30年` 各非空 5,444/5,808；划窗内 5,526 个日期、剔除三列全 NULL 的 342 日（含 2005-01-03 元旦）⇒ **落 5,184 个估值日 × 3 期限点 = 15,552 行**，`quality_flag=1`，`ingest_ts` 走 DDL `DEFAULT now()`（服务端 UTC，本班不注入 `datetime.now()`，符合本宪法第 10 条时区纪律）。
+- 打标：`data_source='akshare_eastmoney_bond_zh_us_rate'`（写前实测该值在表内 **0 行**＝唯一可回滚谓词）。
+- **⚑①席"两口径不同物"前提被本班实测改判**（这是本班第二个交付，也是本班没有另立曲线名的原因）：拿源侧 `>=2025-09-23` 的东财值逐日对库内 `curve_name='中债国债收益率曲线'` 的 chinamoney 估值，**780 对（3 期限点×260 日）mean|Δ|=max|Δ|=0.00000000pp，`>1e-6` 计数＝0**；按在册"零命中须负对照"铁律同尺跑错位配对＝`src10Y vs db5Y` 得 **mean|Δ|=0.2610pp、260/260 全非零**⇒ 尺能分辨，零是真零。结论＝**东方财富该页是中国货币网中债估值的转挂，同一条序列**，①席"禁混算"所防的那种口径断裂在本通道不存在，故本班按 ①席"落库须按 data_source 打标分轨"的字面执行、**沿用同一 `curve_name`**（另立曲线名会把一条真实序列无据撕裂，且今日零消费者，代价不可见但真实）。`ytm` 列注释自称"中债估值口径"与本判定一致，未失真。
+- 落地验收（三查，逐条本机实跑）：**①表有数且右端新鲜＝通过**——全表 FINAL 21,792 行 = 现轨 6,240 + 新轨 15,552（**逐位守恒，净增恰等于本班写入量**），`min(trade_date)` 2025-09-23→**2005-01-04**，右端仍 2026-10-14（未被本班稀释）。**②调度真跑＝通过**——①席"中债腿在 tasks.yaml/schedule 面零调度命中"是按**中文标签** grep 得的，本班按表名/能力名复量即命中 `tasks.yaml:2174 china_bond_yield_refresh`（`source=akshare`、`schedule=daily_capital`、`incremental=false`）与 `schedule.yaml:85 daily_capital` 槽位；更硬的执行证据＝直读 `ingest_ts`：现轨末次入库 **2026-10-14 10:00:39 UTC（＝本地 18:00 槽位时刻）**、2026-09-18 起共 9 个 ingest 日 ⇒ 任务在跑，非"在册而空挂"（shareholder_incremental 反例形态不成立）。**③消费者查得到数＝不可执行（本班如实报）**——按表名 grep `src/ scripts/` 的 `.py` 面正对照 6 命中、扣掉写侧（akshare_provider 2＋apply_market_tables_ddl 3＋registry 1）后**查询侧零命中**，楼3 自建 ERP 属⑤/④的未来接线，本班没有消费口可查，故本查**不判绿**。
+- **⚑本班不翻 `market_china_bond_yield_short_history_260d` 的 status**，三条独立理由：(a) 三查③未闭；(b) 第四查——本班落的东财腿**无常设调度**（源滚动全史、一次取尽），按 SOP"只有历史一次性数据的不准当常设源"，本表续供主体仍是 chinamoney 腿；(c) 深度只补了 **3 曲线×8 期限点里的 1×3**，`3M/6M/1Y/3Y/7Y` 五点与商行债/中票两条曲线仍封在 2025-09-23 ⇒ ①席"禁宣称整曲线补齐"照抄有效。本班把净态与证据写进本节，翻转动作留给净态落地后的班次（`known_data_gaps.yaml` 本班不碰，见上）。
+
+### 件②｜B-15 四道前置复量（本班不起批，判据在案）
+①`commit_pct=94.03` ＞ 阈值 70（1015-05 拍的班间判据）且 `degraded=True` ⇒ **未解除**，本班不投 24 亿行读—写批；④归档器并发＝**已解除**（`archive_manifest.jsonl` mtime 12:31:06，本班 15:5x 复量已 3h25m 无追加）；②队列 pending 已从 138 降到 2＝**解除**；③分块铁律本班在 B-17 上首次实操验证（21 年块逐批行数对账，零撞分区上限）⇒ 下班起 B-15 时可直接复用该配方。
+
+### 件③｜新发现一处"日频"自陈与实面不符（只登记不修）
+现轨 9 个 ingest 日 / 26 个自然日、且 `trade_date` 右端=开班昨日＝数据没缺，但 `_fetch_china_bond_yield` 头注与 tasks.yaml 均自陈"日更不断供即无缺口"——**续供判据应盯 `max(trade_date)` 而非任务执行频次**（本班实测频次≈隔日）。该叙述属⑤/治理面，本席不改码；对楼3 的实际含义＝只要右端跟得上，深史与近端连续。
+
+### 交付复核命令（正文原样可跑；本班 16:5x 已整段跑过，"本班实跑读数"＝字面输出非脑估）
+```bash
+cd /d/ZephyrAlpha && export PATH="/c/Users/fanzi/AppData/Local/Programs/Python/Python312:/c/Users/fanzi/AppData/Local/Programs/Python/Python312/Scripts:$PATH"
+timeout 180 python -c "
+import sys; sys.path.insert(0,'D:/ZephyrAlpha'); sys.path.insert(0,'D:/ZephyrAlpha/src')
+from zephyr.infrastructure.database_service import DatabaseService
+c=DatabaseService().get_clickhouse_conn()
+T='akshare_eastmoney_bond_zh_us_rate'
+print('NEWTRACK', c.execute(\"SELECT count(), min(trade_date), max(trade_date), uniqExact(trade_date) FROM c1_market.market_china_bond_yield FINAL WHERE data_source='\"+T+\"'\"))
+print('Y2005_RAW', c.execute(\"SELECT count() FROM c1_market.market_china_bond_yield WHERE data_source='\"+T+\"' AND toYear(trade_date)=2005\"), 'Y2005_FINAL', c.execute(\"SELECT count() FROM c1_market.market_china_bond_yield FINAL WHERE data_source='\"+T+\"' AND toYear(trade_date)=2005\"))
+print('KEYOVERLAP', c.execute(\"SELECT count() FROM (SELECT curve_name, tenor, trade_date FROM c1_market.market_china_bond_yield FINAL WHERE data_source='\"+T+\"') a ANY JOIN (SELECT curve_name, tenor, trade_date FROM c1_market.market_china_bond_yield FINAL WHERE data_source='akshare_chinamoney') b USING (curve_name, tenor, trade_date)\"))
+print('OLDTRACK', c.execute(\"SELECT count(), min(trade_date), max(trade_date) FROM c1_market.market_china_bond_yield FINAL WHERE data_source='akshare_chinamoney'\"))
+print('WHOLE', c.execute('SELECT count(), min(trade_date), max(trade_date) FROM c1_market.market_china_bond_yield FINAL'))
+" 2>&1 | tail -6
+```
+本班字面实跑读数（五行，逐行对应上面五个 print）：
+```
+NEWTRACK [(15552, datetime.date(2005, 1, 4), datetime.date(2025, 9, 22), 5184)]
+Y2005_RAW [(1506,)] Y2005_FINAL [(753,)]
+KEYOVERLAP [(0,)]
+OLDTRACK [(6240, datetime.date(2025, 9, 23), datetime.date(2026, 10, 14))]
+WHOLE [(21792, datetime.date(2005, 1, 4), datetime.date(2026, 10, 14))]
+```
+判据：`NEWTRACK` 行数＝本班 prepared 15,552（守恒）；`Y2005_RAW=2×Y2005_FINAL`＝幂等自然实验（2005 年块因本班脚本打印崩掉被写过两次，FINAL 不增行）；`KEYOVERLAP=0`＝两轨零键重叠（ReplacingMergeTree 无版本列，重叠即吃轨）；`OLDTRACK` 与写前逐值相同＝现轨未受损；`WHOLE = 6,240 + 15,552 = 21,792`＝全表净增恰等于本班写入量。
+回滚命令（唯一谓词，本班未执行）：`ALTER TABLE c1_market.market_china_bond_yield DELETE WHERE data_source='akshare_eastmoney_bond_zh_us_rate'`——谓词写前实测在表内 0 行，故删除集恰等于本班插入集。
+
+### 完工自检（两轮）
+- 第一轮（同尺对账）：15,552 = 源侧划窗 5,526 日 − 342 全 NULL 日 = 5,184 日 × 3 期限点，与 `UNIQ(trade_date)=5,184`、三期限点各 5,184 行、全表 FINAL 净增 15,552 **四路同值闭合**；对拍基底 `.runtime/tmp/p02_b17_rows_1015_06.tsv.gz`（sha16 `3d72a2706332596f`，1,400,861 B）与库内 FINAL 键集合**双向差 0**、`tenor_years/ytm` 逐位失配 **0**、`ytm IS NULL` 行数 **0**；发现并如实登记一处自犯：首版脚本拿 `oc.elapsed_sec` 打印（`WriteOutcome` 实测只有 `disposition/detail`）⇒ **AttributeError 崩在 print，而该 print 在 INSERT 之后**，2005 年块已提交——本班没有回滚重跑掩盖，而是把它转成幂等自然实验（raw 1,506→FINAL 753）当作证据用；另登记本班按 `is_file()` 与 `parquet_path` 之类"猜键名"坑未犯（1015-05 在册处方照抄）。
+- 第二轮（换尺＋反向自证）：本班"同一曲线名"这一改判若为假，应能在同尺错位配对里也得零——实测 `src10Y vs db5Y` 260/260 非零（mean 0.2610pp），尺有判别力 ⇒ 零差只能来自"两源同值"；"回补窗零键重叠"若为假，(3) 号查询应报非零——实测 0；"现轨仍日更"若为假，`max(ingest_ts)` 应远早于开班——实测 2026-10-14 10:00:39 UTC 且时刻正对 `daily_capital` 18:00 槽。**未闭环如实报**：三查③（消费者）不可执行、`known_data_gaps.yaml` 未翻、B-16 因 report_rc 10 次/天额度今日耗尽禁投（1015-05 在册）、B-15 因内存态未解除不起批、B-18/B-19 本班未开工。
+
+### 下一班待办序（本班修订）
+1. **B-18 pb_mrq 回填是本席下一手**（①席实测最干净：tushare `index_dailybasic` 4,072 行整窗可平替，现表 `countIf(pb_mrq IS NOT NULL)=0`）；开工前必读两把闸：(a) 该表是 **akshare 原始列＋internal_compute 计算列双写者**，①席在册先例＝2026-09-13 全史重采把计算列抹 NULL 一次 ⇒ 回填形态若走"重插整行"必须先把重采语义量清；(b) buffett_ratio **落位三择一①席留给本席裁**，那是设计分叉，按在册口径应先与 Owner 讨论再动，不属回补动作。tushare 频控与单次 3,000 行上限须切片＋逐片行数对账（B-16 同款"恰 5,000 即截断"判据这里换成恰 3,000）。
+2. **B-19 业绩预告/快报近端 104 日断供回补**＝源侧真跑可取（`ak.stock_yjyg_em(date='20260630')` ①席实测 4,922 行、公告日右端 2026-08-19），但落库前先做**词表对齐**（源 11 值 vs 我库 10 值含"其他"、缺增亏/减亏），且 `tasks.yaml` 在册 `source: miniqmt` 那两条不是现网写者（存量 `data_source` 全是 bdpan）＝"调度在册≠该腿在产"，本班在 B-17 上已用 `ingest_ts` 把这条判据坐实，下班照用。
+3. **B-15 起批三闸复量**：`commit_pct<70`（本班 **94.03**）／清单 mtime 近 10 分钟无追加（本班已解除）／分块按年≤12 分区（本班 B-17 已实操验证该配方够用）。tick 腿 201 GiB 仍超盘余，属 Owner 门，勿代裁。
+4. `known_data_gaps.yaml` 净态落地后翻 **B-17 的三条待翻理由**（见件①末段），别只按"左端已推"就记 completed。
+5. B-16 明日跨日后方可再投 `pro.report_rc`。
+
+⚑**本班临时件**（`.runtime/tmp/`，`[TTL] task_bound` 24h，明日 16:2x 前自清或复跑重造）：`p02_b17_register_1015_06.py`／`p02_b17_probe_1015_06.py`＋`.log`／`p02_b17_probe2_1015_06.py`／`p02_b17_backfill_1015_06.py`＋`p02_b17_dry_1015_06.log`／`p02_b17_dry2_1015_06.log`／`p02_b17_commit_1015_06.log`（崩轮）／`p02_b17_commit2_1015_06.log`（落地轮，21 块 ch_committed）／`p02_b17_verify_1015_06.py`＋`.log`／**`p02_b17_rows_1015_06.tsv.gz`（落笔前快照，sha16 `3d72a2706332596f`＝唯一对拍基底）**。
+⚑**本班袋面（刻意排除）**：files＝**2**（`ledger.md`／`checkpoint.md`）；**排除** `known_data_gaps.yaml`（①席 15 insertions 未落地）、`to_builder.md`／`unblocked.md`（他席在途件）；本班未写 `unblocked.md`＝本班没有销卡（三查③未闭，翻解锁无据）。本班**不 promote 进 04**：结案报告须等 B-17 三查③与⑤腿接线齐、证据链含消费侧读数才算"可复验定稿"，现阶段留 `_working`。
+⚑**降级直改主区投袋原因登记（RULE-WORKTREE 显式申请制留痕）**：本班产物＝本席两件跨班接续热文件的整档快照＋CH 侧数据写（不入库），另开车道会把上一班在途袋基线替换掉；同型判例＝1015-01..05 五班同路。
+
+`P02-1015-06-ENDSTATE`（本班终态独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1015-06-ENDSTATE"`）
