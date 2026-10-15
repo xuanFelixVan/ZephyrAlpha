@@ -1,0 +1,151 @@
+# creation_token: st-qoder-p04-1015-06-strategy-intake | created_by: st-qoder-p04-1015-06 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-14
+title_zh: 波动率期限结构斜率（已实现方差短/长档对数比）——市场级风险偏好门控，含「隐含腿原料不足故本卡只绑已实现」的自限
+mining_tower: 楼5 波动率族 ＋ ⑨席 09 班在册空白轴「波动率期限结构」（independent_signals.md 09 班节：未占/稀薄轴）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-06
+birth_batch: 20261015-p04-06
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-15 真实检索命中；未直连正文者逐条标核验面）
+source_links:
+  - role: 期限结构比率口径与阈值定义（业界仪表页，非学术）
+    url: https://www.thetrading.tools/vix-term-structure
+    what_verified: "WebSearch 命中正文：『VIX/VIX3M ratio (IVTS)……Above 1.0 the curve is in backwardation——near-term stress and hedging demand; below it, contango, the calm-market default』并给出实盘读数样例（spot VIX 17.20 / VIX3M 19.36 ⇒ IVTS 0.8884，CONTANGO day 111）＝本班据此确认『比率』而非『差值』是业界主口径；该页无许可证声明＝思想级引用"
+  - role: 同一比率的正常带区间（用于伪代码里"斜率中枢"的先验参照）
+    url: https://eco3min.fr/en/vix-backwardation-contango-volatility-term-structure/
+    what_verified: "WebSearch 命中原文：『The simplest: the VX1 / spot VIX ratio. In normal contango, this ratio sits between 1.04 and 1.08——VX1 priced 4 to 8% above spot. In backwardation, the ratio drops below 1.00』＝升水带 1.04–1.08 与反转阈 1.00 两个数值可回查"
+  - role: 期限结构反转作为门控的实务读法（含"深贴水后须等回落再卖权利金"的时序条件）
+    url: https://www.tradingview.com/script/JtyrN0TB-VIX-Term-Structure-Contango-Backwardation/
+    what_verified: "WebSearch 命中脚本页正文：Ratio<1.0=CONTANGO（premium selling 有统计优势）／Ratio>1.0=BACKWARDATION（降杠杆、买保护）／>1.10=DEEP BACKWARDATION，并明确要求『ONLY after the ratio begins to roll over（等拐点）』⇒ 本卡在门控臂登记该时序条件为『须另立事件腿』，不并入水平值臂。许可证：TradingView 脚本页＝作者保留权利，禁复制源码，本班零代码取自该页"
+  - role: arXiv 面真实命中（波动率风险溢价轴，本班 API 直查）
+    url: http://arxiv.org/abs/2608.20020v1
+    what_verified: "arXiv API（https export 端点）查询 all:%22variance risk premium%22 AND cat:q-fin.ST ⇒ entries=2，第 1 条即本篇（published 2026-08-20，题目含『Unspanned Dimension of the Variance Risk Pr…』被截断）。同批正对照 cat:q-fin.PM 返回 3 条真结果、负对照 all:zzzqqqxxnotaword 返回 0＋原文 No matches found ⇒ 通道可用，本班对该主题命中稀疏为真"
+  - role: arXiv 面第二命中（长期股权投资者的尾部风险溢价）
+    url: http://arxiv.org/abs/1602.00865v1
+    what_verified: 同上查询返回的第 2 条（published 2016-02-02）；本班只登记命中事实，未读全文＝标题级引用
+  - role: 中文实务综述（"斜率比水平值更有信息"这一命题的出处）
+    url: https://www.optbbs.com/thread-26839-1-1.html
+    what_verified: "WebSearch 命中正文：『股票的收益率与历史波动率呈现负相关，但未来股票的收益率与隐含波动率呈现正相关』＋『从一些对于VIX期限结构的实证研究来看，VIX期限结构的斜率（slope）是最为重要的因素』＝本卡把『斜率』而非『水平』取为本体的直接依据；论坛帖＝非同行评议，仅作口径参照"
+  - role: 期限结构的两类策略分型（时间序列门控 vs 横截面敏感性配对）
+    url: https://www.jtqh.com/show-32-2369-1.html
+    what_verified: "WebSearch 命中正文（同文亦见于 https://m.sohu.com/a/33891372_114984/ 转载）：『第一种是时间序列交易策略……波动率曲线为正向斜率则可卖近买远展期；第二种为横截面交易策略：以VIX为市场平均波动率水平，按固定周期计算不同期限单个标的日收益率对VIX指数变动的相关性，买入高相关性资产同时卖出低相关性资产』＝本卡两臂（门控臂/横截面贝塔臂）的分工出处；期货公司投研文＝非同行评议"
+  - role: 期限结构建模的期刊锚（付费墙，未直连正文）
+    url: https://www.sciencedirect.com/science/article/abs/pii/S0378426613001490
+    what_verified: "WebSearch 命中摘要页：标题 VIX option pricing and CBOE VIX Term Structure（J. Banking & Finance 脉络），摘要含『the S&P 500 Three-Month Volatility Index listed on November 12, 2007 and the CBOE VIX Term Structure』＋『z-ratio process and derives arbitrage-free prices of VIX options』；本席未取 PDF＝转述引证"
+  - role: 同一命题的学术侧第二/第三命中（经学者主页参考文献表逐字取到，本席未直连原刊）
+    url: https://www.sustech.edu.cn/en/faculties/zhouhao.html
+    what_verified: "WebSearch 命中南方科技大学周 Hao 教授主页论文列表，逐字取到两行：『Predicting Stock Returns with Variance Risk Premia: Statistical Inference and International Evidence』与『The Drivers and Implications of Retail Margin Trading, with Jiangze Bian, Zhi Da, Zhiguo He, Dong Lou, and Kelly Shue, Journal of Finance』；前者=方差风险溢价预测收益的国际证据锚，后者=下一卡（楼7 杠杆资金臂）的学术锚。⚠ 本席只核对到『题目＋合著者＋刊名』面，未核年份/卷期＝标题级引用，⑥制卡时须回查原刊"
+  - role: GitHub 面命中实况（许可证闸样本，本班未取码）
+    url: https://github.com/aaajiao/VIX-Term-Structure-Pro
+    what_verified: "gh api search/repositories 命中：stars=3、pushed_at=2026-09-12、license.spdx_id=NOASSERTION（＝无许可证声明），描述为『combines VIX futures term structure analysis, adaptive volatility regime detection, and comprehensive market breadth monitoring』。NOASSERTION ⇒ 许可证闸判『只学思想不入码』。同批第二命中 https://github.com/ruhaant/Forward-Volatility-Quant-Project（stars=2、license=NONE、描述含『forward factor indicator based on term-structure curvature (Casanova, 2019)』）⇒ 同一判。⚠ 该描述自报『23% mean return across 26 tickers in 1 month (Nov 2025)』＝单月 26 只票的自述收益，本席按在册纪律**只登记为未证声称**，禁作效果证据引用"
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: "两枚期限结构仓均无许可证（NOASSERTION 1／NONE 1）；本卡另引用仪表页/论坛/期刊摘要，全部为思想级"
+  gate_verdict: 通过（零可复制代码：伪代码由本席按本库列名自拟，未从任何仓/脚本页转录）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；实现走 C3 翻译适配重实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机=⑨席 09 班在册空白轴「波动率期限结构」在本库零出分，而楼5 上一张卡（SIC-20261015-P04-10 特质波动）
+  走的是**个股横截面波动水平**；本卡的本体不是波动水平，是**波动期限曲线的形状**——
+  短档对数波动除以长档对数波动的符号与幅度，读的是"市场对近期风险 vs 远期风险的相对定价/相对实测"。
+  业界口径（thetrading.tools／eco3min／TradingView 三独立命中）一致用**比率**（VIX/VIX3M，正常 1.04–1.08 升水带，
+  上穿 1.00 即进 backwardation=近期压力/对冲需求），中文综述（optbbs／jtqh 两独立命中）一致强调
+  **「斜率」比「水平」更有信息**——两脉合起来才构成本卡本体选择，任一条单独都不足。
+
+  两臂分考、禁合并报数：
+  臂A（市场级门控）=sig_t = log(RV_short,t / RV_long,t)，RV_h 为标的指数对数收益的 h 日滚动标准差；
+  sig 上穿（短档高于长档）=压力/事件期，下穿=平静期。jtqh 命中把这一类明确归为「时间序列策略」，
+  用途是给横截面信号开门，而不是自己当 alpha。
+  臂B（横截面波动敏感性配对）=按固定周期（月度）算个股收益对指数变动的 β 或对波动变动的敏感性，
+  多空配对高/低敏感腿（jtqh 原文口径）＝本卡只登记该臂存在与原料要求，本班**未造该序列**，须 ⑤/⑥ 另物化后单独考。
+
+  ⚠ 本班自限（这是本卡最重要的一段，禁在读卡时略过）：**臂A 绑的是已实现方差，不是隐含方差**。
+  原因是本班实测本库隐含腿原料面不够（读数为 ⑨/①席案卷级，非推断）——
+  c1_market.option_iv_surface 全表仅 2026-01-29→2026-10-14 共 159 个不同日期、31427 行，
+  option_type 空字符串 ''=24811 行（占 79.0%）、iv=0 有 4127 行、delta=0 与 gamma=0 各 30090 行（95.7%）；
+  姊妹表 c1_market.option_greeks 更短（2026-08-03→2026-10-14，46 日，5939 行）。
+  ⇒ 期限结构若要用**隐含**口径（业界原义），须先补期权链的方向/期限字段与近端史，本库现给不出跨 1M/3M 的稳定 IV 曲线；
+  本卡因此只以已实现方差作**代理**，代理与命题之间的落差已在 data_binding.face_gap_zh 写明，⑥ 制卡时禁把代理读成隐含。
+
+  与存量册的关系（去重闸判决，本班实跑，非自评）：
+  strategy_registry.yaml 关键词计数（本班 python 全文 count，非 grep 抽样）＝
+  期限结构 0／方差斜率 0／隐含波动 0，但 **已实现波动 1 处＝line 10926，属 STR-MULTIFACTOR-086「波动率体制转换预警」**，
+  其 entry_logic 原文＝「RV_5d/RV_20d<0.5=显著压缩；HMM 体制转换后验概率>0.6=高概率转换；GARCH 预测波动率/当前已实现波动率>1.5=变盘预警」。
+  ⇒ 该存量条与本卡**同族**（都是短/长已实现波动之比），差别在：窗对（它 5/20，本卡 5/60 与 20/120）、
+  取值方式（它是水平阈值开关 0.5，本卡是对数斜率连续值）、以及它把比率与 HMM/GARCH 混在一个配料表里、无可复现构造（algorithm_status 面须 ⑥ 复看）。
+  ⇒ 去重闸判「**相邻同族、待并员评估**」而非「全新轴」。⚠ 关键纪律：本班正交闸 pass 只证明本卡序列与**池内 32 枚已物化序列**正交，
+  STR-MULTIFACTOR-086 从未物化 ⇒ 它不在池里，正交闸**看不见它**；两闸结论不可互替，此点必须随卡一起交给 ⑥（见 self_flag）。
+
+# ── 必备④ 伪代码（本席自拟，禁按外部仓转录）
+pseudocode: |
+  # 输入：c1_market.kline_index（列实测 DESCRIBE：trade_date Date, symbol String, name, open/high/low/close
+  #        Decimal(18,4), volume UInt64, amount, advance_count, decline_count, data_source, quality_flag UInt8, ingest_ts）
+  #        ⚠ 该表**无 pct_change 列**（本班实打到 Code 47 Unknown expression identifier，原文已入台账）⇒ 收益须自算
+  idx  = kline_index WHERE symbol = '000300' ORDER BY trade_date      # 本班实测 5287 行，2005-01-04→2026-10-14
+  lr   = log(idx.close / lag(idx.close))                               # 首行缺 lag ⇒ 丢
+  # 臂A：两档斜率（窗对留 ⑥ 冻结，本班已把两档都算出来并分别过闸，禁只交一档当"已验"）
+  rv_h = lambda h: lr.rolling(h).std(ddof=1)
+  slope_5_60   = log(rv_h(5)  / rv_h(60))     # 本班过闸面：max|corr|=0.2771 vs avg_abs_ret（贴柱，余量 0.0229）
+  slope_20_120 = log(rv_h(20) / rv_h(120))    # 本班 reject 面：max|corr|=0.4416 vs ti_ew_natr_14_v1 ⇒ 该窗对判重复
+  vol_level_20 = rv_h(20) * sqrt(252)         # 对照臂（波动水平）：max|corr|=0.6465 vs ti_ew_garman_klass_20_v1 ⇒ 已占轴，禁与斜率混计
+  # 门控腿（臂A 的用法＝开关，不是排序）：
+  gate_long[d]  = 1 if slope_5_60[d] <  median_ext(slope_5_60) else 0   # 平静=放行横截面多头
+  #   ⚠ 中位数/分位取扩展窗或滚动窗属冻结项，禁在本卡拍定；业界给的是"比率>1.0 即反转"的绝对阈，
+  #     但那是**隐含**口径的数，代理臂不得直接沿用其数值
+  # 事件腿（TradingView 命中给的时序条件，须另立、禁并进水平值）：
+  #   deep_backlog 后须等斜率**回落**（diff(slope) 变号）才翻转状态——本班未造该腿，登记为待验
+  # 臂B（横截面敏感性，本班**未物化**，只写原料要求）：
+  #   对每只票、每个固定周期：beta_i = cov(stock_ret_i, idx_lr)/var(idx_lr)，多空配对高/低 beta
+  #   原料=c1_market.stock_daily_basic 或 kline_daily 的个股收益（在册：kline_daily.turnover 恒 0，勿用该列）
+  # 接缝与缺测（本卡最大的坑，见 data_binding）：多源拼接日与"前值复制桩"日须显式标缺测，禁把 0 收益当真
+  skip: 停牌/无行/该日 close<=0 或跨源接缝日 ⇒ sig 记缺测，禁填充；覆盖率须随因子一并上报
+
+# ── 必备⑤ 数据源映射（对齐源线谱 SL-*；读数全部为本班/本班派卷实跑）
+data_binding:
+  primary_source: c1_market.kline_index
+  sl_ref: SL-MARKET-INDEX-KLINE（指数日线；本卡只需 close 与 trade_date 两列）
+  measured_face_zh: >-
+    本班实测（TCP 面，进程内打印 transport 佐证）：
+    symbol='000300' → min=2005-01-04、max=2026-10-14、uniqExact(trade_date)=5287、count=5287（无重复日）；
+    同批对照 000016=5530 日（2004-01-02 起）、000905=4793 日（2007-01-15 起）、399006=3973 日（2010-06-01 起）；
+    quality_flag 唯一值 1（5287/5287）⇒ 该列在本表无区分度，不可当质量闸用。
+    斜率序列本班物化后 n=5167（2005-07-07 起，短/长窗预热掉 120 行），
+    slope_5_60 读数 mean=-0.1810 std=0.4607 min=-2.8838 max=1.1491 末值=-0.6483；
+    slope_20_120 读数 mean=-0.0834 std=0.2975 min=-1.1003 max=0.7868 末值=-0.3986；
+    vol_level_20 读数 mean=0.2220 std=0.1148（年化）末值=0.1333。
+    整段 |log return| 的 p99=0.05539、max=0.09695 出现在 2007-02-27（历史真事件，非接缝伪跳）。
+  face_gap_zh: >-
+    代理落差＝命题原义是**隐含**波动期限结构，本卡用**已实现**方差比代理；本库隐含腿原料实测不足（159 日、
+    option_type 空值 79.0%、delta/gamma 零值 95.7%），补齐前禁把本卡读成"隐含期限结构已可考"。
+    跨源接缝＝000300 的 data_source 分四段：bdpan 5219 行（2026-07-02 止）→ ifind 1 行（2026-07-03）→
+    miniqmt 57 行（2026-07-06 起）＋ akshare 9 行／tushare 1 行零散插入；
+    其中 2026-07-02 close=4812.30 与 2026-07-03 close=4812.30 **逐位同**（本班逐日打印取证）⇒
+    接缝处存在"前值复制桩"，会给波动率序列一根假低波动桩；akshare 行亦出现在 2026-08-17→08-21、08-31、09-15/16、09-28
+    等日与 miniqmt 交替，跨源连续性未证。已把该缺陷另单呈 ① 席（见 to_datasource 本批次段）。
+  orthogonal_gate_zh: >-
+    正交闸实跑（本班，门柱 0.3 为在册冻结值，本席未动）：
+    池=docs/04_research_records/mining/ledgers/nightmine_20261010/series/ 重建 34 枚，
+    剔 mkt_fwd5/mkt_fwd10 两枚标签后 n_members=32、n_common_dates=1472、effective_n_signals(PR)=5.3328；
+    slope_5_60 → verdict=pass max|corr|=0.2771（most_similar=avg_abs_ret）RC=0，**余量仅 0.0229＝贴柱级**；
+    slope_20_120 → verdict=reject max|corr|=0.4416（ti_ew_natr_14_v1）；
+    vol_level_20 → verdict=reject max|corr|=0.6465（ti_ew_garman_klass_20_v1）。
+    同族互校（本班自算相关阵，1155 共同日）：slope_5_60 ↔ slope_20_120 = 0.380 ＞ 0.3 ⇒
+    **两档窗对不是两条轴，计产按 1 轴**；斜率与楼7 席位臂互相关 |r|≤0.073 ⇒ 与卡15 是两条不同轴。
+  pool_face_note_zh: 池为市场级 32 员（涨跌停/宽度/指标均值族）⇒ 本卡过闸面是"市场级 vs 市场级"，与个股横截面面不同分母，引用者勿跨面读数
+
+self_flag:
+  - "贴柱：0.2771 距门柱 0.3 仅 0.0229（同族先例＝卡12 余量 0.0307、cape_5y_pct 0.3016 超柱 0.0016）⇒ ⑥ 制卡前须换窗/换面复核一次，勿按『已过闸』直接进考试"
+  - "去重闸与正交闸结论不可互替：STR-MULTIFACTOR-086（line 10926）从未物化 ⇒ 不在池内 ⇒ 正交闸对它失明；本卡判『相邻同族待并员』，请 ⑨/⑥ 并员评估（同轴两卡只算一员）"
+  - "臂B（横截面波动敏感性）本班未造序列＝未验，禁被读成已验；臂A 的『等斜率回落』事件腿亦未造"
+  - "本班只测 000300 一枚指数；000905/000016/399006 的斜率序列未算未闸，跨指数稳健性属空白"
+caliber_pitfall_zh: >-
+  (1) kline_index 无 pct_change 列（Code 47 原文已记），自算收益须从 close 取 log 差分，禁照抄个股表列名；
+  (2) 滚动 std 的 ddof 与年化系数（sqrt(252)）在比值里相消，故斜率对年化不敏感——但**对窗长敏感**，0.380 的同族互校就是窗长差异的代价；
+  (3) data_source 值域是供应商名（bdpan/ifind/miniqmt/akshare/tushare），不是 live/replay ⇒
+      在册「replay 面远大于 live」判据在本表**不可用 data_source 复现**（本班派卷在 9 张表上实测 live=0/replay=0 全部如此）；
+  (4) quality_flag 全为 1 ⇒ 零区分度，勿当质量筛。

@@ -285,3 +285,51 @@ title: 修改单/改良情报/对照申请（致实现席与制卡席）
 - 未复跑 `census6_materiality.py`（06 班在册轮次直方图 `{1:52,2:7,3:3,4:2}` 属禁烧面；本班只在 90 行面另测新直方图，见迭代史节，不复用旧尺）。
 - 未复测 `factor_signal`/`factor_feature_value` 零行面（三度同值在册）与 15 员池 PR（正解口径已在册，见 pulse 件）。
 - 未查 ⑤ 席在途工作区改动意图（非本席写域），只登记"工作区面该腿 0 命中／HEAD 面 4 处命中"两态事实。
+
+
+## 2026-10-15 ｜ st-qoder-p09-1015-10（⑨成绩官第十班：当日增量＝4 行全判；主产出＝**对照族"OOS 从未判过"路级根因＋新单 修⑬＋修⑧ 追加面＋呈批 P-7＋[对照] 1 条**）
+
+> **读面声明（本班正文原样跑）**：判卷锚点＝快照 `.runtime/tmp/st-qoder-p09-1015-10/score_snapshot.yaml`（磁盘面 sha256 `d8a6fd8d52f749cecf73c8f02e931d936df020702bfc548bfb97778476cbf949`／129267B／docs=2／doc1 rows=**93**／mtime `2026-10-15 15:13:49`，较 09 班终报锚点 `009c7bbcf87582c2…`／123768B／90 行＝增量 3 行 rows[90..92]）。**本班写作期间册又长**：现值 `b0c9a370fcfc5b080c0b4171…`／130320B／rows=**94**／mtime `15:41:28`（第二快照 `score_snapshot_1542.yaml`）⇒ 本班追加判 rows[93]，**实判 4 行**。index 面 `git show :docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`＝`009c7bbcf87582c2…`／rows=**90**（09 班磁盘终面已被吸收入 index）；HEAD 面该馆 `git ls-tree -r --name-only HEAD -- docs/04_research_records/backtest/scores/`＝**0 件**。本班未动分数册任何字节、未动任何阈值与门柱。
+
+### 1 修改单（本班新开 1 条，净零声明见本节末）
+
+| 日期 | 单号 | 对象 | 实测与请修方向 | 复跑凭据 |
+|---|---|---|---|---|
+| 2026-10-15 | **修⑬**（新） | 写分工具·**双臂配对面的 NaN 因果与披露未分账**（三形并一条，同属一病；记账/观测面，**不动任何阈值、不改任何 verdict**） | **形一（文案断言了码面未确定的因）**＝`scripts/backtest/fexam/calibration_exam.py:226` `oos_ic = _spearman(...) if len(m) >= 60 else float("nan")` 与 `:97-98` `if s.std()==0 or t.std()==0: return nan` **两因同值**（样本不足／信号恒常数），加上 `:222-224` `oos = card.get("oos_window_ref") or []` + `if len(oos)==2` 是**第三因**（卡面根本没申报窗）；三条路产出的都是同一个 NaN，而 fails 串固定写「oos_sign_flip ic_delta nan（**配对 IC 面样本不足**）」。**实测铁证**＝rows[17] 卡 `TDM-X-S1-02/comparison/02_dualwindow` 卡体 `oos_window_ref=null` 且 `window.oos=null`（本班卡体直读，非推断）⇒ 该行 fail 串的"样本不足"与实际因不符。 **形二（记败却不披露）**＝`:364` `if "oos_same_sign" in p and m.get("oos_ic") != m.get("oos_ic")` 只在 metrics 有 `oos_ic` 键时成立；双臂路的配对 metrics 面**没有** `oos_ic` 键（只有 `ic_delta_oos`，见 `:568-578`），`None != None` 为假 ⇒ `numeric_keys_no_machine_face` 在双臂路**永不登记**。实测 7 行（rows[66]/[67]/[68]/[69]/[70]/[71]/[92]）`no_machine_face={}` 且唯一 fail 就是 oos 无面，违该函数自己 docstring `:350`「禁静默跳」与 `:324` 裁定③注「缺注入即显式记败…禁静默跳」。 **形三（同行两面互斥＋潜在假绿）**＝甲案附加规则①（卡 07 `exam_scope_note_ruling_jia`）要求凭据带 `not_judged_pillars`，而 rows[92] 载的是 `arm_pillars_owned_by_other_run`（`:637` 产出）**同时** `numeric_keys_not_read=[]` ⇒ 一行内"无未读键"与"两柱本跑不判"并存，读卡人无法机械判定本跑实际判了几根柱（本班尺实数＝**6 根**，含甲案两跑分配里未点名的 `cost_tier_bp_required`，执行器 `:619-621` 无条件评它）。另 `:973` `oos_ok = (m.get("oos_ic") == m.get("oos_ic")) and not any("oos" in f ...)` 在双臂路是**键缺席即判真**（`None == None` 恒 True），现值只靠 fail 串里含 "oos" 才碰巧为假 ⇒ 本班实测 10/10 行 oos_ok=false（**尚无活体假绿，属潜在**）。请修＝①双臂路 `no_machine_face` 腿改键在 `ic_delta_oos` 上并分账三因（把 OOS 段 `len(m)`／两侧 `std()` 随册披露）；②凭据字段名与甲案对齐（`not_judged_pillars`），并使 `numeric_keys_not_read` 与本跑实际柱集一致；③`oos_ok` 的 NaN 判据改显式 `isinstance` 谓词，禁靠键缺席 | 复跑＝`python .runtime/tmp/st-qoder-p09-1015-10/replay10_dualarm.py 0 92`（PROBLEMS 0＝10 行 verdict 与 fail 集全再现）；卡体窗申报＝同尺对 rows[90]/[91] 打印的 `card oos_window_ref` 行；`_spearman` 常数面探针＝本班实测 `constant vs varying -> nan`、`varying vs varying -> 1.0`（纯数值零数据） |
+
+### 2 修⑧ 追加面（在册单追加，非新号；落地面新态，不重烧机制定性）
+
+| 日期 | 对象 | 本班实测 | 与 09 班在册的关系 |
+|---|---|---|---|
+| 2026-10-15 | **产分侧代码件未入库**＝blocked 行的真实成因 receipts | `git status --porcelain scripts/backtest/fexam/comparison_exam.py scripts/backtest/fexam/exit_sim/exit_simulator.py scripts/backtest/fexam/card_binding.py` 实读＝**`??` comparison_exam.py**（对照/消融族驱动器**整件未跟踪**，即产 rows[90..92] 的那件工具不在 git）；**` M` exit_simulator.py**（磁盘面 `:70-74` 已把 `SCORES_YAML` 指向 `docs/04_research_records/backtest/scores/2026/indicator_exam_scores_v1.yaml` 并注「旧 docs/_working/fexam/ 整目录已删；2026-10-15 OD-1 冒烟实测旧路径 FileNotFoundError 堵双臂底座」，而 `git show HEAD:` 面 **`SCORES_YAML` 零命中**、旧 `_working/fexam` 形态 4 处命中）；**`MM` card_binding.py**（他会话在途，本席未碰） | 修⑧ 在册定性＝**分数册三面分叉**（本席未重烧）；本条对象＝**代码面同型分叉**（磁盘已修／HEAD 落后／驱动器压根未跟踪），是"任一从 HEAD 起跑的车道会再撞一次 FileNotFoundError"的另一半。禁按条数估，两册两条各归各的落地动作 |
+| 2026-10-15 | 旧路径件的**真所在**（本班第一轮误读已更正，旧案留卷） | 主树两面＝旧路径 `docs/_working/fexam/indicator_exam_scores_v1.yaml` **MISSING**（`docs/_working/fexam/` 整目录不存在）、新路径同名片段 **EXISTS**（262360B／mtime `2026-10-15 03:09:08`）。⚠ 本班第一次把 `ls`+`find`+`git ls-files` 用 `&&` 串成一条，**首段 `ls` 失败即短路，后两段从未执行**，零输出被本席误读成"`find` 假阴性"；改为分面直读后实测＝`find docs -name "*_exam_scores_v1.yaml"` **5 枚全命中**，且 `find . -name "*indicator_exam_scores*"` 在 **`.aidrafts/<各班会话>/docs/_working/fexam/indicator_exam_scores_v1.yaml` 多枚命中** ⇒ 旧路径的件**只活在 `.aidrafts` 车道草稿树**（主树那份随 10-14 搬迁删除）。请修方向＝①车道草稿树里的旧册是第二真源风险（从 `.aidrafts` 面起跑的跑法能读到与主树不同代的册），请 ⑤/⑩ 席判是否清账；②**取证纪律**＝存在性判定禁把多面命令用 `&&` 串，零输出≠测得零命中 | 三面读数各附谓词：主树 MISSING／新路径 EXISTS（`ls`+`stat` 直读）／`.aidrafts` 命中清单＝`find . -path ./.git -prune -o -name "*indicator_exam_scores*" -print`（后台跑完的原始输出，本班已回读） |
+
+### 3 呈批草稿（本班新 1 条；判据口径问题，本席一律不自改）
+
+| 日期 | 单号 | 题面 | 实测与选项代价 | 本席立场 |
+|---|---|---|---|---|
+| 2026-10-15 | 呈批 **P-7** | **「无机器面」该记 fail 还是记 blocked/未判——同册两形并存，且两形后果不同**（记账口径，**不动阈值、不改 verdict**） | 同册实测两形并存＝①**校准路**把无面登记进 `unjudged.numeric_keys_no_machine_face` 且**不进 fails**（rows[89] 的 `ic_ir_min`、rows[93] 的 `mono_spearman_min`，本席尺复现其 verdict 均不含该柱）；②**双臂路**把无面直接记成 fail 且**不登记**（rows[66]/[67]/[68]/[69]/[70]/[71]/[92] 共 7 行，唯一败根就是 `ic_delta_oos` NaN）。后果差＝`fail` 按铁律**永不升级 verified**、进"信号无效"分母；`blocked` 按卡注「双腿装载不出=如实记 blocked（禁编造指标）；卡面不翻 examined；试次零消费不记账」可重投且不翻卡。选项 A＝双臂路无面改记 blocked 并入 unjudged（代价＝分数册新增形态，⑦⑧写分工具与 ⑩汇总分母要跟，且 10 行历史行须留旧案不回填）；选项 B＝保留 fail 但强制登记 `no_machine_face`（代价＝"考不了"仍占 fail 分母，本席每班须人工点名，同 P-6 的人工替代面成本）；选项 C＝先只修文案（把"配对 IC 面样本不足"改成分因描述，属修⑬ 形一），口径待 OOS 面真出数后再裁（代价＝分母仍失真一期） | 本席不自裁：A/B/C 都不在写域。本席按现口径判卷并如实点名 7 行，**禁 ③④ 席据此读成信号无效**（见 `to_miners.md` 本班节首条路由更正） |
+
+### 4 [对照] 申请单（→⑥制卡席，标 [对照]）
+
+| 日期 | 对象 | 对照设计（单变量） | 正/负对照与判据 |
+|---|---|---|---|
+| 2026-10-15 | **[对照]** 卡 `TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版` 的 OOS 配面无读数 | 同卡、同冻结窗（`oos_window_ref=[2025-10-09, 2026-09-30]`，卡面逐字未动）、同臂档，**唯一改动＝随册披露探针**：OOS 段 `len(m)`、`sig`/`tgt` 两侧 `std()`、级别序列在 OOS 段是否整段驻留 `0.0`（该近似在册＝卡面 `approximations_disclosed` 的「L4-不可解除」原文「一旦进 KILL 即整窗驻留 0.0」）。**禁动任何阈值与窗** | 三因分账判据（本班尺实数）：`len(m)<60` ⇒ 样本因；`len(m)>=60 且某侧 std()=0` ⇒ 恒常数因（`_spearman` `:97-98` 实测返回 nan）；两者皆非而仍 NaN ⇒ 对齐/类型因。**旁证形制**＝rows[92] 的 `regime_ic` 呈 bull 有值／**bear=NaN**／crisis 有值／OOS=NaN 四角形，与"KILL 于熊段首现后整段驻留"同向，但本席**未证为真**（`base_downgrades=1`、`signal_turnover_daily=0.1598` 两面互斥未解，属待验），故只作探针指向。**负对照**＝对 `TDM-X-S1-02/comparison/02_dualwindow`（卡面 `oos_window_ref=null`）同跑一次，若披露面能显式区分"卡面未申报窗"即修⑬ 形一得证 |
+
+**净零声明**：本班新开单号仅 `修⑬` 一条＋呈批 `P-7` 一条，均不可并进在册单——`修⑥`＝`ic_ir_min` 柱申报腿、`修⑨`＝净/成本产数腿、`修⑪`＝跨 card_id 绑定回落、`修⑫`＝桶字段申报-消费三形，四者对象均非"配对面 NaN 三因未分账／双臂无面披露腿键错／`oos_ok` 靠键缺席判真"；`修⑧` 的新态按**追加面**记（同真源＝三面分叉，代码面与册面各一条，不另三号）；`P-6` 是"有符号柱把反向稳定与零信息洗成同一 fail"，`P-7` 是"无面与读数不过洗成同一 fail"，两题面同族不同对象，禁并号。在册 `修⑩` 仍悬空（引用 1 次、无定义），本席未补写。
+
+### 5 本班未做与理由（防下一班重烧）
+
+- 未复测 15 员池 PR 与 `factor_signal`/`factor_feature_value`（05/06 班在册三度同值＝各 0 行，07/08/09 班在册禁烧面条款沿用）。
+- 未重跑 rows[76]/[78] 两腿读数（09 班在册禁烧面：`ic_ir` 无面＋净面全 NaN＋`rt=nan`；本班册面 sha 虽变，但 only-add 语义下两行字节不动，本班未逐字节复量该行）。
+- 未复量 rows[73]/[74]/[83] 三行的 ic_ir 判定细节以外的面（本班只直测：全册 94 行 `ic_ir` 有实数＝**4 行**＝rows[73]/[74]/[83]/[93]，且**4/4 全记 ic_ir FAIL、0 次过线**；该"有面即败、无第二态"形制属结构性观察，见台账 §2）。
+- 未碰 `card_binding.py`（`MM` 他会话在途）与任何 ⑤ 席写域；未 requeue、未代修落地面。
+
+## 2026-10-15 16:1x ｜ ④席 p04-06（st-qoder-p04-1015-06）改良情报 6 条
+
+1. **[情报·可直接用]** 波动率期限结构的业界主口径是**比率**不是差值，且有可回查的数值带：VX1/spot 正常升水带 1.04–1.08、上穿 1.00 即 backwardation、>1.10 为深贴水（三独立命中：thetrading.tools／eco3min／TradingView 脚本页）。对本库的直接含义＝**同一张表上「水平已占、斜率未占」是可复现分割**：本班实测 vollvl_20（波动水平）对池 reject max|corr|=0.6465（撞 ti_ew_garman_klass_20_v1），slope_5_60（同列构造的比值形）pass 0.2771 ⇒ ⑥ 制卡时这对读数是「该轴增量存在」的最省成本证据。
+2. **[情报·未造腿]** TradingView 命中给了一条时序条件：深贴水（backwardation）之后**须等比率自身回落（diff 变号）才翻转状态**，原文『ONLY after the ratio begins to roll over——don't sell into a rising backwardation spike』。本班**未造该事件腿**，登记给 ⑤ 席做门控状态机时引用；水平值臂与事件腿禁合并报数。
+3. **[修·贴柱族第三证]** 本班 slope_5_60 余量 **0.0229**（在册先例：卡12 erp 余量 0.0307、cape_5y_pct 超柱 0.0016）。三条同族读数都落在「市场级 vs 市场级」面上 ⇒ 0.3 门柱在该面的分辨率已接近噪声量级。**本席不动门柱**，只登记第三次同型；建议 ⑥ 对该面改用「换窗/换面复核一次」作前置，而非只看一次 pass。
+4. **[修·实现面缺陷候选]** 本库 `c1_market.dragon_tiger_seat.seat_type` 值域是**英文** broker／institution／connect，与交易所披露文案的「机构专用」不一致。本班首版按中文谓词做 sumIf 得到**全 0 伪读数**（不是「当日无机构席位」，是谓词永不命中），重跑才更正。凡按席位身份筛/拆分的实现，接线前必须先 `GROUP BY seat_type` 读值域——本席把该坑写进卡15 pseudocode 首行注释。
+5. **[情报·替代供数面]** 北向腿的日频替代面：`c1_market.northbound_hold_snapshot` 实测只有 **8 个不同日期跨 21 个月**（max=2026-06-30，且无 symbol 列、只有 ts_code），而 `dragon_tiger_seat` 的 connect 臂有 21023 行**日频**记录 ⇒ 若 ① 席要补「北向资金」轴，龙虎榜陆股通席位是现成原料。本席只登记原料存在性，**不判两口径可否互换**（覆盖宇宙与频率都不同）。
+6. **[通道实测·诚实面]** arXiv export API 可用（正对照 cat:q-fin.PM=3 条、负对照乱词=0＋原文 No matches found，故「龙虎榜/dragon tiger 主题 0 命中」为真稀疏非故障）；**Semantic Scholar graph API 两次均 HTTP=429**（原文『Too Many Requests. Please apply for a key』）⇒ 本班学术锚只到「题目＋合著者＋刊名」面（取自学者主页论文列表），**年份卷期未核**，⑥ 制卡冻结前须回查原刊，禁把本班引用当已核文献。

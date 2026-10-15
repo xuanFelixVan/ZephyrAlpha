@@ -1,0 +1,142 @@
+# creation_token: st-qoder-p04-1015-06-strategy-intake | created_by: st-qoder-p04-1015-06 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261015-P04-15
+title_zh: 龙虎榜席位分户净买率——机构/营业部/陆股通三类席位的市场级资金面轴（含"seat_type 是英文值域，中文谓词得伪零"的自证坑）
+mining_tower: 楼7 资金面族 ＋ ⑨席 09 班在册空白轴「资金面分户」（independent_signals.md 09 班节）
+birth_seat: ④
+birth_session: st-qoder-p04-1015-06
+birth_batch: 20261015-p04-06
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-15 真实检索命中；未直连正文者逐条标核验面）
+source_links:
+  - role: 席位分户口径的实务叙述（游资席位／量化席位／机构专用席位三分）
+    url: https://news.futunn.com/post/61920943/data-observation-intense-competition-among-multiple-funds-in-battery-stocks
+    what_verified: "WebSearch 命中正文：『the activity level of institutional investors on the Dragon and Tiger list has significantly increased……for over 121 million by one first-tier speculative fund seat……Additionally, two quantitative seats purchased Zhejiang Rongtai』＝市场实务把龙虎榜席位分成**机构专用／游资营业部／量化席位**三类并据此读资金意图；财经资讯＝非同行评议，仅作口径参照，其涨跌叙事禁当证据"
+  - role: 同一口径的第二独立命中（用于自证引用可回查，禁凭记忆写法）
+    url: https://news.futunn.com/post/61227964/dragon-and-tiger-list-shenzhen-stock-connect-and-stock-trading
+    what_verified: "WebSearch 命中正文：『深股通、炒股養家合力搶籌……Among the stocks involving institutional dedicated seats on the Dragon and Tiger List, the top three net buy amounts for the day are……net sell amounts……』＝同一数据面把"机构专用席位"与"深股通席位"分开列示 ⇒ 本卡三臂（institution/connect/broker）的分法在披露口径上真实存在，不是本席臆造"
+  - role: 国内私募研究口径（散户情绪因子＝龙虎榜＋论坛情绪）
+    url: https://www.gankinterview.cn/blog/a-shares-vs-us-stocks-interviewing-at-top-domestic-private-funds-high-flyerjiuku
+    what_verified: "WebSearch 命中两小节标题与正文：『Retail Sentiment Factors: Dragon and Tiger List & Forum Sentiment』、『Dragon and Tiger List Data Mining: \\"Smart Money\\" and \\"Leek Orders\\" Behind the Seats』＋『If the buying seats on the Dragon and Tiger List are dominated by the \\"Lhasa Legion\\", it usually implies that chips are loosening and the main force is……』＝业内把**席位构成**（谁在买）而非**净买金额**（买多少）读为主信息；本卡据此设『份额臂』与本卡『净买率臂』分考。⚠ 培训机构博客＝非同行评议，只取口径不取结论"
+  - role: 数据面产品目录（同一披露的分户字段存在性佐证）
+    url: https://asharehub.com/en/
+    what_verified: "WebSearch 命中条目：『Tiger — Institutional disclosures』与『Shareholders Count & insider trades』『Northbound Holdings — Foreign investor detail』＝机构专用席位/北向持仓在数据供给侧是**两张贴不同表**的披露，与本库实测一致（seat 表有 connect 臂、northbound_hold_snapshot 只有 8 个快照日）；仅作供数面参照，未读其文档"
+  - role: GitHub 面命中（许可证闸样本；思想级，本席未取码）
+    url: https://github.com/simonlin1212/a-stock-data
+    what_verified: "gh api search/repositories（查询词『A股 龙虎榜 in:name,description,readme』）命中：stars=10875、pushed_at=2026-10-11（活跃）、license.spdx_id=Apache-2.0，描述含『行情K线·当日逐笔·研报·信号·资金面·新闻·财务·公告·打板·ETF期权·舆情·宏观利率·期货大宗……15层·87端点·34数据源』＝资金面/席位数据端点的现成活仓；Apache-2.0 ⇒ 许可证闸放行"读结构"，但**禁复制入库**（Owner 定性），实现一律走 C3 重实现"
+  - role: 同一仓的 README/SKILL 面（东财披露表与字段名的第二手登记）
+    url: https://github.com/ljh15039080965-prog/a-stock-data/blob/main/SKILL.md
+    what_verified: "WebSearch 命中代码片段，逐字可见其龙虎榜聚合走东财 datacenter 报表名 RPT_DAILYBILLBOARD_DETAILSNEW（字段 TRADEDATE/SECURITYCODE/BILLBOARDNETAMT/TURNOVERRATE/EXPLANATION）与买卖席位拆分 RPT_BILLBOARD_DAILYDETAILSBUY ⇒ 本库 seat 表 data_source=akshare，与本条源不同，**字段对表须由 ① 席判**，本席不代裁；⚠ 该仓未标注许可证（本席未核实其 license 字段）⇒ 按无许可证处理＝只学思想"
+  - role: 含"游资席位＋北向＋机构"多源因子输入的开源框架线索（经 awesome 清单转述）
+    url: https://github.com/wilsonfreitas/awesome-quant
+    what_verified: "WebSearch 命中列表条目原文：『Reinforcement learning stock-selection framework for the China A-share market with multi-source factor input (alpha101 + main-force flow + hot-money seats + northbound + institutional + fundamentals), board-aware price limits, and ONNX CPU inference. aurumq-rl』＝'hot-money seats' 在国内因子体系里已被当作独立输入族对待；本席**未直连该仓**（awesome-quant 为 MIT 清单，条目本身＝转述引证），⑥ 若要用其口径须自行回查 aurumq-rl 原仓许可证"
+  - role: 学术面命中实况（如实登记稀疏＝非通道故障）
+    url: http://arxiv.org/abs/2610.00173v1
+    what_verified: "arXiv API 三式查询：all:%22variance risk premium%22 AND cat:q-fin.ST → 2 条；abs:%22block trade%22 → 4 条（含本条 Price Discovery at the Boundary of Contractual Decidability，2026-09-16）；all:%22dragon tiger%22 OR all:%22limit-up china stocks%22 → **entries=0**。同批正对照 cat:q-fin.PM=3 条、负对照 all:zzzqqxxnotaword=0＋原文 No matches found ⇒ 通道可用；**龙虎榜/席位分户在 arXiv 面查无=真**，Semantic Scholar 面本班两次均 HTTP=429（原文 Too Many Requests）⇒ 该通道读数 0 属**通道不可用**，与『无文献』不同源，⑥ 排期时须换通道再试一次"
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: "simonlin1212/a-stock-data=Apache-2.0（放行读结构）｜同族镜像仓 SKILL.md 未核许可证（按无许可证处理）｜awesome-quant=MIT 清单（条目转述，未直连 aurumq-rl）"
+  gate_verdict: 通过（本卡零行外部代码：伪代码按本库列名与值域自拟；财经资讯/博客仅取口径叙述）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；实现走 C3 翻译适配重实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机=⑨席 09 班在册空白轴「资金面分户」。**分户（by participant type）是本卡的本体**，
+  不是"资金净流入"：本库已有的资金面卡 SIC-20261015-P04-06「smart_money_ratio」走的是
+  逐笔/大单口径的主力-散户拆分（tick 级），而本卡走**披露级席位身份**拆分（谁在龙虎榜上买），
+  两者原料、频率、可解释性都不同（互相关未测，已挂 self_flag 请 ⑥ 排闸）。
+  三臂分考、禁合并报数：
+  臂1 institution（机构专用席位）＝净买额 / 该臂买卖均额；
+  臂2 broker（营业部，含游资与量化分仓）＝同式；
+  臂3 connect（陆股通专用席位）＝同式＝北向在龙虎榜上的显性脚印。
+  份额臂＝各臂买卖均额占全表买卖均额之比（业内把"谁在买"读作主信息的口径，见 gankinterview 命中）。
+  为什么用比率而不是绝对净额（这条是本卡与直觉相反处，必须写明）：
+  本班实测 net_amount 的**全表均值是负数**（avg=-11,865,915.00 元／近端月 avg=-4,486,914.98）⇒
+  上榜席位整体结构性净卖出（减持与兑现为主），所以"净额>0"是稀缺事件而非可线性化的强度，
+  绝对净额会被当日上榜家数与成交额直接放大 ⇒ 一律除以该臂自身买卖均额作相对化，
+  份额臂则再除以全表，消除"今天上榜 63 只 vs 71 只"的规模差（本班实测近端中位 63 只／日）。
+  方向先验（两派并存，禁本席择一，须由考试判）：
+  一派读"机构席位净买＝知情买盘→正超额"（futunn 命中把机构席位活跃度上升与抢筹并列）；
+  另一派读"游资/散户席位聚集＝筹码松动→负超额"（gankinterview 命中的拉萨团叙述）＋
+  净额结构性为负这一实测事实暗示上榜本身即减持事件。两派在同一列上给相反符号 ⇒ 双臂并列呈 ⑥。
+  ⚠ 本卡只主张"该轴原料存在且与池内 32 员正交"，**不主张**其有可交易 alpha。
+
+# ── 必备④ 伪代码（本席自拟，禁按外部仓转录）
+pseudocode: |
+  # 输入：c1_market.dragon_tiger_seat（DESCRIBE 实测 14 列：trade_date Date, symbol String, seat_name String,
+  #        buy_amount Dec(18,2), sell_amount Dec(18,2), net_amount Dec(18,2), buy_rank Nullable(UInt8),
+  #        sell_rank Nullable(UInt8), seat_type LowCardinality(String), reason String, data_source LC(String), ingest_ts,
+  #        exchange LC(String), symbol_canonical String）
+  # ⚠⚠ 值域坑（本班自证）：seat_type 实际取值 = 'broker' / 'institution' / 'connect'（英文），
+  #     **不是**中文「机构专用」。本席首版用 sumIf(net_amount, seat_type='机构专用') 得到全 0＝**伪零**，
+  #     已重跑更正；凡按席位身份筛选一律先 GROUP BY seat_type 读值域，禁照抄披露文案的中文标签。
+  SEAT = {'inst':'institution', 'brk':'broker', 'conn':'connect'}
+  for d in 交易日:
+      g_arm  = sumIf(buy_amount+sell_amount, seat_type=arm) / 2      # 该臂买卖均额（作分母）
+      net_arm= sumIf(net_amount,            seat_type=arm)
+      r[arm, d] = net_arm / g_arm                                   # 净买率∈[-1, +1]
+      share[arm, d] = (2*g_arm) / sumIf(buy_amount+sell_amount, 全部臂)   # 份额臂
+      # 缺测谓词（禁 0 填充）：g_arm==0 ⇒ r[arm,d] := NA
+      #   本班实测：connect 臂 g_arm=0 的交易日 **11 天**（1155 天中）；institution 臂 g_arm=0 天数 **0**
+      #   不写该谓词时，0/0 会被实现层写成 0 ⇒ 把"当日无该臂"伪装成"当日中性"，且 r_conn 实测会撞到 ±1 边界
+      n_sym = countDistinct(symbol)          # 规模协变量：近端中位 63 只/日（须随因子一并上报，勿静默丢）
+  # 面板→横截面（本班**未物化**，只登记构造，臂1–3 均为市场级日频序列）：
+  #   sig_i[d] = net_amount 按 symbol 聚合（同票多席位先求和）/ 该股当日成交额  ⇒ 个股层须与市值/行业正交化后再考
+  # 事件腿（业内叙述的主要用法，须另立）：
+  #   上榜次日/次5日收益，条件 = 机构席位是否净买 且 营业部席位是否净卖（两臂符号相反＝分歧最大处）
+  # 停牌与右端：本表为盘后披露 ⇒ 信号可用时点 = d 日收盘后（禁与 d 日盘中价配对，前视风险）
+
+# ── 必备⑤ 数据源映射（对齐源线谱 SL-*；读数全部为本班派卷实跑，TCP 面逐条打印 transport 佐证）
+data_binding:
+  primary_source: c1_market.dragon_tiger_seat
+  sl_ref: SL-MARKET-DRAGON-TIGER-SEAT（龙虎榜席位明细）
+  secondary_ref: c1_market.dragon_tiger（上榜主表，含 reason 上榜原因）
+  measured_face_zh: >-
+    本班派卷实测（12 份原始 stdout 落 .runtime/tmp/p04_06_probe/raw_*.txt）：
+    seat 表跨度 2022-01-04→2026-10-14，uniqExact(trade_date)=1155，count=622805（ReplacingMergeTree+FINAL 去重后口径），
+    uniqExact(symbol)=6000；seat_type 分布 broker 562476 行/5995 票、institution 39306 行/5407 票、connect 21023 行/3271 票；
+    全表零值 buy_amount 196507、sell_amount 154603、net_amount 492；avg net_amount=-11,865,915.00；
+    近端月（trade_date>=2026-10-01）2434 行＝全表 0.3908%，avg net_amount=-4,486,914.98；
+    口径列 data_source=akshare 唯一值（622805/622805）；表内**无 stage/is_complete 列**。
+    本班聚合读数（1155 个共同交易日）：r_inst mean=-0.21077 std=0.21217 min=-0.8354 max=0.5555 末值=-0.1277；
+    r_brk mean=-0.08268 std=0.17450 min=-0.9402 max=0.1555；r_conn mean=-0.17529 std=0.22985 min=-1.0000 max=1.0000；
+    spread(r_inst-r_brk) mean=-0.12809 std=0.29429；inst_share mean=0.05827 std=0.02840 min=0.0020 max=0.1755 末值=0.0955；
+    全表买卖均额中位 81.233 亿元，上榜家数中位 63 只/日。
+    主表 dragon_tiger **仅 43 个交易日**（2026-08-07→2026-10-14、2666 行、1044 票、data_source=ifind）⇒
+    与 seat 表覆盖**不同步（1155 日 vs 43 日）**，禁以主表 inner join 收窄宇宙（会把 4.75 年样本砍成 43 天）。
+  face_gap_zh: >-
+    (1) 史长只有 2022-01 起：本库楼7 若需 2019 年前的资金面，该轴给不出；
+    (2) 近端月密度 0.3908% 是**行数占比**、不是"数据断供"，绝对行数 2434 行/月仍在披露节奏上——本卡按纪律只报密度数字不下"稀疏"形容词；
+    (3) 机构席位占比小（行占比 6.3%＝39306/622805；份额臂均值 5.83%）⇒ 臂1 的日频截面有效样本薄，
+        个股层须先测"当日有机构席位的票数量分布"再谈横截面；
+    (4) 主表 reason（上榜原因）未读数（本席未采），而事件腿必须按 reason 区分"涨幅偏离/换手率/振幅"等触发条件，
+        否则会把"因跌上榜"和"因涨上榜"混成一桶 ⇒ 列为 ⑤/⑥ 施工前置。
+
+  orthogonal_gate_zh: >-
+    正交闸实跑（本班，门柱 0.3＝在册冻结值，本席未动）：
+    池与卡14 同一份（n_members=32、n_common_dates=1472、PR=5.3328；本班重建，剔两枚标签件）；
+    lhb_r_inst → verdict=pass max|corr|=0.1859（most_similar=lu_count）RC=0；
+    lhb_r_brk → verdict=pass max|corr|=0.1748（avg_abs_ret）RC=0；
+    lhb_r_conn → verdict=pass max|corr|=0.1479（ti_ew_natr_14_v1）RC=0；
+    lhb_spread_ib → verdict=pass max|corr|=0.2239（lu_count）RC=0；
+    lhb_inst_share → verdict=pass max|corr|=0.2125（max_streak_height）RC=0。
+    ⚠ 五臂全过≠五条轴（本班自算相关阵，1155 共同日）：spread↔r_inst=0.810、spread↔r_brk=-0.701 ⇒
+    **spread 是两臂的派生量**，不得计第三员；r_inst↔r_brk=-0.150、r_conn 与两臂 |r|≤0.185 ⇒
+    本班按「资金面分户＝1 条轴（三臂＋一份额派生）」计量，不按 5 卡计产。
+    与卡14（波动率期限结构）互相关 |r|≤0.073 ⇒ 两卡是两条不同轴。
+    闸未覆盖面：池内 32 员**不含**本席上一班的 smart_money_ratio（该卡未物化序列）⇒
+    "与楼7 同域另一卡的相邻性"本班**测不到**，须 ⑥ 另排。
+
+self_flag:
+  - "本卡序列为本席为过闸而造的市场级聚合，**不是**可提交的生产口径；实现层须按 ⑤ 席重算并核 reason 列"
+  - "五臂 pass 的计产口径已在 orthogonal_gate_zh 自限为 1 轴；若 ⑨ 席并员后判更细，以 ⑨ 为准"
+  - "r_conn 的 ±1 边界与 11 个零分母日＝同一根坑的两面：实现层若不做 NA 谓词，会把'无北向席位'写成'中性'"
+  - "net_amount 结构性均值为负这一实测是本卡'禁读绝对净额'的唯一依据，不是效果证据"
+caliber_pitfall_zh: >-
+  (1) seat_type 值域英文（broker/institution/connect），中文文案谓词得伪零（本班踩过并已更正，原文进台账）；
+  (2) 该表 data_source 只有 akshare，**无 live/replay 口径面** ⇒ 在册「replay 8596 行/live 73 行禁混」判据在此不可复用（本席派卷在 9 张表上实测 live=replay=0）；
+  (3) buy_rank/sell_rank 是 Nullable(UInt8)：同一席位可同侧多次上榜，聚合金额前须决定是否按 rank 去重（本卡未去重，读数含多次上榜）；
+  (4) symbol 是裸 6 位＋另有 symbol_canonical（在册 JOIN 键纪律适用）；主表 dragon_tiger 的标的列同为 symbol，北向表则只有 ts_code（无 symbol）⇒ 跨表 JOIN 键不统一，须 ① 席对表。

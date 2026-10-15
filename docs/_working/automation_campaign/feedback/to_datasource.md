@@ -94,3 +94,17 @@ title: 缺数申请（致①数据源席）
 | 2026-10-15 | 缺数单·待核 | rows[87] `TDM-E-L2/ablation/02_板块候选池整体边际`（绑 `c1_market.kline_sector_880`） | 与同窗 rows[86]（窗 2021-08-02..2023-12-31／oos 2024-01-01..2025-09-09）比，`metrics.n`＝**976 vs 996** ⇒ 差 **20 个观测**；两卡 regime 面都是 bear/rebound 两段且都同号 ⇒ 不是段缺失，是行数缺失 | `kline_sector_880` 在该窗的日历分母＝？20 日缺口是池掩码日（无 Top15% 候选）还是源表缺日？若属前者，请申报"池空日"口径，本席好把它与真缺数分开（在册 memory：881/8803 深史真实上限 2021-08-02，本批两卡窗与该上限一致） |
 
 - 本班**不新开**的：`limit_up_down` 交易日数（属他卡申报面，本席未复量，禁转述当实测）；`factor_signal`/`factor_feature_value` 零行面（三度同值，按在册禁烧面条款未复测）。
+
+## 2026-10-15 16:1x ｜ ④席 p04-06 供数面实测 9 条（④→①，含 1 条对在册判据适用范围的否定性读数）
+
+> 本班派卷＝9 张主表＋2 张姊妹表全部走 TCP 面（每条语句打印 transport，无一条降级），12 份原始 stdout 落 `.runtime/tmp/p04_06_probe/raw_*.txt`；行数均为 ReplacingMergeTree＋FINAL **去重后口径**。
+
+1. **表名真源面（本席自己差点误判成「表不存在」）**：按 schema 文件名直查 `system.tables WHERE name IN ('market_dragon_tiger', …)` → **0 rows**；CH 实名＝**去前缀**（`c1_market.dragon_tiger`、`c3_fundamental.consensus_daily` 等），全库用户表 253 张。⇒ 提醒每班：表名要过一次 system.tables，禁凭 `schemas/categories/*` 文件名直连。
+2. **口径列适用范围更正（对在册判据的否定性读数，非推翻其结论）**：这批 9 张表**均无 `stage`/`is_complete` 列**，唯一口径列 `data_source` 的值域是**供应商名**（ifind／akshare／tushare／miniqmt／akshare_sina／research_report），不是 live/replay；逐表 `countIf(data_source='live')` 与 `='replay'` 实测 **9/9 张表都是 0／0** ⇒ 在册「replay 面远大于 live、混面出假结论」判据**无法从 data_source 复现**，混面判据须另找口径列（本席不裁该判据是否作废，只登记不可复现）。
+3. **block_trade 与 block_trade_detail 列同名但不同源**：跨度 43 日（2026-08-07→10-14，1706 行/641 票）vs 47 日（2026-08-03→10-14，1878 行/681 票）；`avg(amount)`＝**16,018,570.19** vs **2,915.49**（差 3–4 个数量级）、`avg(volume)`＝843,638.48 vs 158.81。⇒ 两表 amount/volume **单位或口径不同**，须对表后再谈大宗折价轴；且两表跨度都 <2 个月 ⇒ 本班判「大宗折价当前**不可考**」（只登记跨度，不判「数据断供」）。
+4. **northbound_hold_snapshot**：8 个日期跨 21 个月、max=2026-06-30（同批其它表 max 为 2026-10-14/15）⇒ 右端落后约 3.5 个月；无 `symbol`/`symbol_canonical`，只有 `ts_code` ⇒ 跨表 JOIN 键不统一。
+5. **share_unlock 带未来预登记行（前视风险，右端必须 as-of 截断）**：`unlock_date` max=**2027-10-13**；`unlock_date > 2026-10-15`（今日）＝**1442 行**，`<= 今日`＝28862 行；跨度 2010-01-04 起、30304 行/5533 票，`ratio` NULL 465 行。⇒ 解禁供给冲击轴原料齐备且长史，本席**未做卡**（留给下一班），但该右端坑须先入册。
+6. **consensus_daily 可用而 analyst_forecast.forecast_pe 是死列**：consensus_daily 2017-01-03→2026-10-15、2373 日、6,856,196 行、3079 票，`eps_std` NULL 0/零 0、`n_reports` 全表均值 3.31 而近端月仅 2.08、近端月 26820 行=0.3912%、近端 uniqExact(symbol)=1505 ⇒ 分析师分歧轴原料在，但**近端覆盖窄**，宇宙定义须先测。姊妹表 `c3_fundamental.analyst_forecast` 的 `forecast_pe`＝**131081/131081 全为 0（avg 0.0）** ⇒ 死列，禁绑定（与在册 `kline_daily.adj_factor` 恒 1 死列同族新样本）。
+7. **margin_trading**：2024-09-02→2026-10-14、509 日、2,113,034 行、4934 票；`margin_balance` 零值 **123** 行（可用）、`short_balance` 零值 **794,979** 行（37.6%，融券臂稀疏）、`data_source` tushare 1881468＋ifind 231566 两源 ⇒ 杠杆资金轴可考但史长 <2 年，IS/OOS 分割受限。
+8. **期权隐含腿原料面破**：`option_iv_surface` 仅 159 个不同日期（2026-01-29→10-14）、31427 行；`option_type` 空字符串 ''＝**24811 行（79.0%）**、`iv=0` 4127 行、`delta=0` 与 `gamma=0` 各 **30090 行（95.7%）**；`quality_flag` 唯一值 1（31427/31427＝零区分度）；姊妹表 `option_greeks` 更短（46 日、5939 行）。⇒ 本席卡14 因此只绑**已实现**方差、不绑隐含（落差已写进卡面 face_gap_zh）。
+9. **kline_index 指数日线多源接缝含「前值复制桩」**（本席亲测，非派卷）：000300 的 data_source 分段＝bdpan 5219 行（止 2026-07-02）→ ifind 1 行（2026-07-03）→ miniqmt 57 行（2026-07-06 起）＋ akshare 9 行／tushare 1 行零散插入；**2026-07-02 close=4812.30 与 2026-07-03 close=4812.30 逐位同**＝跨源接缝处一根 0 收益桩，会压低接缝附近任意窗的已实现波动。另该表**无 pct_change 列**（实打 Code 47 原文『Unknown expression identifier `pct_change` … Maybe you meant: ['exchange']』）⇒ 指数派生序列须自算 log 差分并对接缝日标缺测。
