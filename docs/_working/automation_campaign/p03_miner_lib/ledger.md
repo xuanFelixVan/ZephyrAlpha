@@ -509,3 +509,13 @@ SEAL-012 锚定腿可达性实测：`stk_limit` 9,254,308 行/2015-01-05..2026-1
   3. `python scripts/backtest/fexam/signal_orthogonality.py gate --candidate .runtime/tmp/p03_06/gate/gate_f_ac2.csv --pool .runtime/tmp/st-qoder-p09-1015-04/pool6 --gate 0.3` → 实跑=pass 0.2396 rc=0（限 24h TTL 内可复跑）
   4. `python .runtime/tmp/p03_06/analyze.py` → 实跑=三枚正对照全 MATCH（f_ac1 −0.035894／f_kurt 10.682670／f_jump 0.129021）＋共线矩阵
 - 证据等级：读数=CH 实跑（daily.json/daily60.json 为原始件）＋闸实跑（gate_rc.log 为原始件）；对表=逐位数值比对（19/19 六月交易日 n_sym/f_jump/f_kurt/f_ac1 全等）；无一项估算，无一项引用他班账面当实测。
+
+
+### 本班落地回执（2026-10-15 16:34:05 实测；另起一节，上文「落地面三测」那行系入袋前读数，已被本节推翻，旧案留档不删）
+
+- 袋＝**q-20261015-st-qoder-p03-1015-06-0001**，`commit_queue status --session` 四态实跑=pending 0／processing 0／**done 1**／dead 0，landed_id=**b383a1f2f34cf45617efbb66208b3b681e454c9b**（commit 时刻 16:25:07，袋创建 16:23:09⇒**本班从入袋到落地 1 分 58 秒**；对上班同席位「9.5 小时队头」＝本席这一袋赶在 convoy 疏开后落地，不据此判链路已治好，⑩ 呈批第 5/10/14 项仍开）。
+- 真实归属核（AGENTS §2 第 5 条，逐件读回袋内清单）：`git show --name-only b383a1f2f3` = ['data/strategy_intake/lane_p0_obi_candidates.csv', 'docs/_working/automation_campaign/p03_miner_lib/checkpoint.md', 'docs/_working/automation_campaign/p03_miner_lib/ledger.md'] ⇒ **恰本席三件，零搭便车件**（虽然本班用了 `--allow-non-worktree`，落地内容未含任何其他 session 的 WIP；该旗留 `[GW:<sid>:non-worktree]` 审计标记）。
+- 袋内容容核验：候选册袋内 data 行=**46**（=现盘 46，末三行 id 043/044/045）；台账袋内 `20261015-p03-06` 命中=**2**（节标题＋收尾回执各一次，即上班那两节均随袋）；`git rev-parse --short HEAD`=b383a1f2f3。
+- 本班堵点 1 条（对症后通，未绕行）：首投 `git_commit.py ... --enqueue`（不带旗）rc=8，预检报 **WORKTREE-REQUIRED**（判据=非 worktree commit 且活跃 session 列表非空，本班实测列出 8 个他席 sid）。处方按 gate 自述在册通道＝加 `--allow-non-worktree`（help 明写 2026-08-13 用户裁定 AI 可默认使用，前置=gateway 只提交本 session 声称的文件，本班已按上行核属实）＋把原因记入本节（RULE-WORKTREE §3 降级直改主区＝显式申请登记制）。**本班未用** `--skip-preflight`／`--no-verify` 类绕行，未改任何判据。
+- 本班自犯第四条留痕（工序层面）：首投前未读 gate 的在册通道说明就按指令面原文跑⇒白烧 19.2s 预检。本班随后两条取证须分开写清：①`grep -o "allow-non-worktree" .runtime/tmp/st-qoder-p03-1015-05/enqueue*.log`=**0 命中**（该三份工作日志不回显命令行⇒"抄上一班旗面"这条路并不存在，勿把留档当成处方源）；②真源只有两处＝本 gate `--help` 与预检自述文本点名 `--allow-non-worktree` 系 2026-08-13 用户裁定 AI 可默认使用，且 `git log --grep=non-worktree` 命中他席在册先例（⑦ 席 p07-1015-01 收班段"GW 旗债 --allow-non-worktree 留痕"）。⇒ 工序补一条：恒定班遇闸先读 gate 自述的「逃生通道」行＋`git log --grep` 查同族旗债留痕，别按指令面原文直撞。（本条系对本班初稿"上一班留档 grep 一条命令即可看到处方"的当场更正——该句实测 0 命中，属未落笔即自证的假引用，初稿未落盘故无旧案卷。）
+- 收班次序（AGENTS §2 第 9 条）＝本回执随第二袋落地后由下一班核；本班 release 自己三件 claim，`.runtime/tmp/p03_06/`（含 daily.json/daily60.json/gate/*.csv 原始件）按 24h TTL 留予下班复跑，不占永久区。
