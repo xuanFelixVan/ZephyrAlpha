@@ -6,9 +6,9 @@ title: ②数据建设席·游标
 
 # 游标
 
-cursor: 已收口（本班无在途 DB 写；回补件已落地并通过三查，非"跑一半交班"）
-last_run: 2026-10-15 10:4x
-last_batch: st-qoder-p02-1015-04
+cursor: 已收口（本班 DB 写已提交并逐位验收，无在途批；回退谓词在册未执行）
+last_run: 2026-10-15 17:3x
+last_batch: st-qoder-p02-1015-07
 notes: 游标由本岗每批推进；监督员(⑩)可代修。旧案全文在 `ledger.md`（09:12／09:47／10:3x 三段），本游标只承载"下一班要执行什么"。
 
   **本班（1015-04）四件交付**：①**结案 1015-03 唯一硬件**——consensus_daily 10-08/10-09 未推进的真因＝
@@ -113,3 +113,19 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。旧案全文在 `
 
 ⚑**本班自犯并转成正证据一枚**：首版回补脚本拿 `oc.elapsed_sec` 打印，而 `WriteOutcome` 实测只有 `disposition/detail` ⇒ **AttributeError 崩在 INSERT 之后**，2005 年块已提交；本班不回滚掩盖，改判为幂等自然实验（该块 raw 1,506 → FINAL 753＝重复插不增 FINAL），并把它升格为验收第 (2) 号复核项。处方：**用 `ch_writer.write_tsv_outcome` 时打印字段只认 `disposition/detail`，且写后必做 raw-vs-FINAL 双读**。
 ⚑**会话与锁（照抄 1015-04 处方即生效）**：起手 `SessionRegistry().register(sid, pid=0, held_files=[两件])` ＋**立刻** `_spawn_heartbeat_daemon(sid, Path('D:/ZephyrAlpha'), 30)`（本班 daemon_pid=52964），再 `lock_files.py acquire` 两件；本班全程未被外来 cleanup 收走。`git_commit.py --enqueue` 外层禁套 `timeout`。CH 侧：TCP 面走 `DatabaseService().get_clickhouse_conn()`，聚合分批＋`SELECT 1` 正对照（本班实测 [(1,)]）；`grep -rl .runtime/` 会超时（目录巨大），扫调度证据改窄路径或直接读 `ingest_ts`。
+
+---
+
+## 游标覆盖式更新 · st-qoder-p02-1015-07（10-15 17:3x）——**下一班只读本节即够**
+
+`cursor: 已收口`（本班 DB 写已提交并逐位验收，无在途批）｜`last_batch: st-qoder-p02-1015-07`｜耗时 **27 分 51 秒**（`date` 实测 17:07:42 进场 → 17:35:33 写账，**未超 60 硬窗**；本班写账时一度误记为"约 65 分钟／超窗"＝体感钟前移在册自犯形态，`date` 现测后改回，留痕见 ledger 同段）。全文＝`ledger.md` 段「2026-10-15 17:0x · st-qoder-p02-1015-07」，终态标记 `P02-1015-07-ENDSTATE`。
+
+1. **B-22 央行族数据侧已落地＝本班保底达成**：`c1_market.macro_data` 的 `央行_*` 族新增 **2,341 行**（8 指标 × 335 个新月份），族 `FINAL` **96 → 2,437**、`months` 12 → **347**、span 1993-03-31..**2026-09-30**（＝源右端，开班上月）；31 个按年块全 `disposition=ch_committed detail=http`，逐位对拍 `missing=0／value-mismatch=0／重复键组=0／NULL=0`，回退谓词 `startsWith(indicator_name,'央行_') AND ingest_ts >= '2026-10-15 09:27:34'` 写前 0 行／写后恰 2,341（**未执行**）。写集基底＝`.runtime/tmp/p02_b22_rows_1015_07.tsv.gz`（sha16 `4810a9ce9349ac00`）。
+2. **⚑该族 status 本班未翻、`unblocked.md` 本班未写＝第四查未过**，根因是一行码：`akshare_provider.py:1556` `_transform_cb_balance` 的 `df = df.tail(12)`，而源帧**倒序**（head=2026.9／tail=1993.3）⇒ 常设腿天天只重灌**最旧 12 个月**（该族 `max(ingest_ts)` 今天 17:13:44＝腿活着，右端却冻在 1995-12-31）。**处方给⑤（一行，勿扩面）**：截断前按 `统计时间` 排序再取近 12，或直接去掉截断（源全窗仅 357 行）。⑤改完下班复跑本班脚本即闭环——写者形制是"只写新键、重叠键交还腿"，天然幂等。
+3. **⚑B-18 判死，且死在写侧不是源侧（下一班别再试第三种形态）**：`index_valuation_daily`＝`ReplacingMergeTree(ingest_ts) ORDER BY (symbol, trade_date)`，**`data_source` 不在键**；`index_valuation_compute.py:289/:295/:297` 把 `pb_mrq`／`broken_net_ratio`／`buffett_ratio` **硬编码 None** 且全列重灌、无 preserve；`tasks.yaml:3822 index_valuation_daily_compute_daily`＝`schedule: daily_kline`／`incremental: false`。CH 实测该轨 `max(ingest_ts)=2026-10-15 09:07:40 UTC＝本地 17:07:40`＝**本班开班那一分钟它刚全史重灌过 16,286 raw／8,144 FINAL 行**。⇒ 任何回填最迟下一次日频重算即被更高 `ingest_ts` 的 None 行洗掉；换 `data_source` 打标**不幸免**（与 B-17"两轨键重叠 0"能成立的条件＝日期互斥不同，勿套用）。**排产顺序＝MUST 先⑤给 compute 腿补"读库携带"（`_INDEX_VALUATION_PRESERVED_COLS:768-781` 的对称另一半），再②回填**；本班据此不落 B-18。`buffett_ratio` 三择一仍是 Owner 讨论项，本班未动。
+4. **可复用的节拍尺（第三次生效，写进规程）**：判"某腿今天真跑了吗"用 `SELECT data_source, count(), max(ingest_ts) FROM <表> GROUP BY data_source`——比 grep 中文标签／比 tasks.yaml 硬，本班两条定性（央行族"在跑但不续深史"、compute 腿"日频洗地"）都由它给出。
+5. **B-15 三闸复量**：`commit_pct=87.31`（1015-05 是 92.07、1015-06 是 94.03）仍 ≥70 ⇒ **不起批**；第④闸（归档器清单 mtime 近 10 分钟是否仍在追加）**本班没测**，下班起手先测再谈排产；队列 pending 138→2→**1**（head=`q-20261015-st-qoder-p03-1015-06-0008`，151.7s）已疏通。tick 腿 201 GiB 超盘余＝Owner 门，勿代裁。
+6. **照旧不动的册**：`known_data_gaps.yaml` 本班工作区面 `MM`（①席 1015-11 在写）⇒ 整档不碰、不翻任何 status；`to_builder.md`／`to_impl.md`／`to_miners.md`／`to_datasource.md`／`unblocked.md` 全部他席在途件，随袋＝归属篡改。B-20/B-21＝新建采集腿施工面（B-20 另撞 `capability_semantic_gate.py:91-95` 的 `allowed_apis={"THS_*","ifind.*"}`，门执法本班**没跑**，属⑤/Owner 扩容），归⑩派⑤；B-16 跨日后方可再投 `pro.report_rc`；B-1/B-2/B-9 仍等 Owner"建腿 vs 退役"一字裁。
+7. **⚑本班坑（下班照抄避抄）**：①ClickHouse `LIKE '央行_%'` 的 `_` 是**单字符通配**，判族前缀一律 `startsWith()`；②`macro_data` 是**无 version 列**的 ReplacingMergeTree ⇒ 回退只能靠 `ingest_ts` 划窗，写集必须"纯新增不碰重叠键"，否则谓词圈不进精确集合；③照抄在产腿的 `field_map`/`frequency` 常量保住词表唯一，但会把腿的**季频误标**一起继承（1993–2001 段源侧实为季频，本班如实登记不擅自改标）；④`df.tail(12)` 在倒序帧上取最旧 12 行——凡"取近 N 期"先看排序向，别信 docstring。
+8. **本班临时件**（`.runtime/tmp/`，`[TTL] task_bound` 24h，明日 17:3x 前自清或复跑重造）：`p02_boot_1015_07.py`（注册＋`daemon_pid=33108`）／`p02_b18_probe_1015_07.py`＋`.log`／`p02_b22_probe_1015_07.py`／`p02_b22_src_1015_07.py`＋`.log`／`p02_b22_backfill_1015_07.py`＋`p02_b22_dry_1015_07.log`＋`p02_b22_commit_1015_07.log`／`p02_b22_verify_1015_07.py`＋`.log`／`p02_b22_rows_1015_07.tsv.gz`（**唯一对拍基底**）。
+9. **本班袋面与锁**：files＝**2**（`ledger.md`／`checkpoint.md`），两件全程 **Edit 追加**（checkpoint 另原地改写顶部 `cursor/last_run/last_batch` 三行＝删除集仅这 3 行，键集合差自证过）⇒ 对 1015-06 袋是单调超集；袋在飞照在册**不放锁不停守护**，`lock_files.py acquire` 的 30 分钟 TTL 若到期，投袋前复 acquire。落地面只认 `git show HEAD:…ledger.md | grep -c "P02-1015-07-ENDSTATE"`。

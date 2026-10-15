@@ -495,3 +495,56 @@ WHOLE [(21792, datetime.date(2005, 1, 4), datetime.date(2026, 10, 14))]
 ⚑**降级直改主区投袋原因登记（RULE-WORKTREE 显式申请制留痕）**：本班产物＝本席两件跨班接续热文件的整档快照＋CH 侧数据写（不入库），另开车道会把上一班在途袋基线替换掉；同型判例＝1015-01..05 五班同路。
 
 `P02-1015-06-ENDSTATE`（本班终态独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1015-06-ENDSTATE"`）
+
+---
+
+## 2026-10-15 17:0x · st-qoder-p02-1015-07 · B-22 央行资产负债表族深史回补 2,341 行（FINAL 96→2,437）＋B-18 写侧语义判死（回填必被日频重算洗掉，故本班不落）
+
+进场读数（`date` 实测 2026-10-15 17:07:42 本地）：`process_reaper --status`＝`source=live`／`commit_pct=87.31`／`ram_used_pct=69.4`／`cpu 80.1`／`degraded=False`／`breached=['ALERT-SYS-001']`、`killed=0 reported=3`、`worktree_changes=5473`。⇒ **B-15 四道前置第①闸未开（<70 才起批）**，本班不起批、因此也不复量归档器清单 mtime（第④闸本班没测，如实写明不补叙述）。`lock_files.py status`＝进场 CLEAN，`cleanup` 回收三班遗物（p04-06/p07-05/p09-11，merge=skipped、释放 0）。队列 pending=1、head=`q-20261015-st-qoder-p03-1015-06-0008` waiting 151.7s（`total=1095` 含历史态）；死信面在册 `TAKEOVER-PENDING` 点名三个 2026-10-13 死会话（st-maint6／st-cdx-sent／st-infoaxis），命中件均非本席件，本班不动。
+
+### 件①＝B-22 央行资产负债表族深史回补（表 `c1_market.macro_data`，`indicator_name` 前缀 `央行_`）——本班保落地件，已写库并逐位验收
+
+**病灶定位（本班键级实测，非转述）**：`src/zephyr/data/implementations/akshare_provider.py:1556` `_transform_cb_balance` 首行 `df = df.tail(12)`，其 docstring 自述"只取最近 12 个月"；而源帧是**倒序**（本班实测 `ak.macro_china_central_bank_balance()` shape=(357, 28)，`head 统计时间=['2026.9','2026.8','2026.7']`／`tail=[…,'1993.12','1993.9','1993.6','1993.3']`，`uniq=357`、可解析 357/357＝0 失败）⇒ `tail(12)` 取到的恰是**最旧 12 个月**，与 docstring 意图相反。库内实证＝写库前 `FINAL` 面 8 个 indicator_name × 12 行 = **96 行**，`min=1993-03-31 / max=1995-12-31`（右端冻 30 年），而该族 `max(ingest_ts)=2026-10-15 09:13:44 UTC＝本地 17:13:44`＝**腿今天仍在跑、天天重写同一批最旧月**。⇒ 定性＝在册 B-22 的"非源断供、采集/入库面缺陷"，根因是这一行 `tail(12)`。
+**对①席读数的一处更正（另起留旧案，不改 B-22 原文）**：游标条 3 句"实测仅 12 行"＝`GROUP BY indicator_name` 后**每组 12 行**的读数，族合计实为 **96 行**（8 指标）；"差 345 行"在**月数**维成立（357−12=345 月），行维（cell 级）本班实测应补 **2,341 行**。两套口径请下班别混用。
+
+**施工口径（与在产腿同形制，不另立词表）**：field_map 逐键照抄 `akshare_provider.py:1556-1564` 八字段映射（外汇/对其他存款性公司债权/储备货币/政府存款/发行货币/非金融性公司存款/总资产/总负债 → `央行_外汇占款`…`央行_总负债`），月末口径照抄 `_yyyy_dot_m_to_date`（按 `年.月` 拆分＋`calendar.monthrange` 取月末，月份非零填充容错＝①席点名的坑），`unit='亿元'`／`frequency='monthly'`／`data_source='akshare'`（与腿的 DEFAULT 同值，消费侧无需新增过滤）。
+**纯新增铁律（本班自设，非①席要求）**：预写对拍＝源 2,401 键 vs 库 96 键 ⇒ 重叠 **60 键值失配 0**（逐位等值，双证：`abs(Δ)>1e-9` 计数为 0；60＝12 月×5 个早年有值的字段），本班**只写新键 2,341**、重叠 60 键交还给在产腿（避免 `ReplacingMergeTree` 无 version 列下的仲裁纠缠，也让回退谓词单义）。另有 **36 个 db-only 键**（总资产/总负债/对银行债权 × 1993–1995 段）在当前源已为 NULL（非空仅 297/357，起点 2002-01）⇒ 本班不触碰、不删（物理删＝Owner 门），它们是旧接口年代残留、也是当前唯一记录。
+
+**落地面读数**（`.runtime/tmp/p02_b22_commit_1015_07.log`／`p02_b22_verify_1015_07.log`，正对照 `SELECT 1=[(1,)]`）：
+- 31 个按年块，max 96 行/块、max 12 月/块（规避在册 `Too many partitions for single INSERT block (>100)` 死因；`PARTITION BY toYYYYMM(report_date)`），**全块 `disposition=ch_committed detail=http`**；分块行数 20/20/20/20/60/50/96×6/84×18/63，逐块相加＝`WRITTEN total 2,341`✓。
+- 族 `FINAL` 96 → **2,437**（精确守恒 96＋2,341），`months` 12 → **347**，span **1993-03-31..2026-09-30**；逐指标 347/347/309/309/309/347/347/122（合计 2,437✓）。
+- 逐位对账：`missing=0`、`value-mismatch=0`（cache＝`p02_b22_rows_1015_07.tsv.gz` sha16 **`4810a9ce9349ac00`**，147,322 字节＝写集权威基底）、`重复键组=0`、`NULL/空值行=0`。
+- 回滚谓词（写前实测 0 行 ⇒ 写后 raw=2,341／FINAL=2,341 恰等本班插入集，**未执行**）：`ALTER TABLE c1_market.macro_data DELETE WHERE startsWith(indicator_name,'央行_') AND ingest_ts >= '2026-10-15 09:27:34'`。
+- 表整体 raw `count=53,753`、`max(report_date)=2026-10-15`（他族在产，本班未伤）。
+
+**验收三查＋第四查＝一闭两开一未过 ⇒ 本班不翻 status、不写 `unblocked.md`**：①表有数且右端新鲜＝**闭**（族右端 2026-09-30＝源右端＝开班上月，`①席"月度、右端=上月"`复现）；②调度真跑＝**半开**（腿确实天天在跑，但 `tail(12)` 使其永不覆盖新月份，"在跑"不等于"在续供深史"）；③消费者查得数＝**开/不可执行**（`grep -rl "央行_总资产|央行_储备货币" --include=*.py src/zephyr/` 唯一命中＝写者自身 `akshare_provider.py`，消费侧 0 命中；正对照取"写侧本身命中"非零，故尺能响）；④**续供第四查＝未过**（SOP §3②"只有历史一次性数据的不准当常设源"：本班这批＝一次性全窗档案，常设腿修活前不得记 completed）。
+**随批如实登记两处口径继承缺陷（本班照抄腿形制的代价，非新增缺陷）**：(a) `frequency` 列沿用腿的常量 `'monthly'`，而源侧 1993–2001 段实测为**季频**（`1993.3/1993.6/1993.9/1993.12`…），早年行的 frequency 语义不真——修法属⑤（要么按间隔推定 frequency，要么把整族改标），本席不自改以免与既有 96 行两套口径；(b) 列级稀疏如实保留（`央行_非金融存款` 右端 2007-12-31＝源侧停发该列，`总资产/总负债/对银行债权` 起 2002-01），按 B-22 "禁行数达标即闭环"口径登记。
+
+### 件②＝B-18 门（a）量清并判死"回填"这条路（本班不落，附承重证据）
+
+上一班游标条 6 令本班开工前量两道闸，本班量完，结论是**回填动作本身会造假完成**：
+- 表 DDL（`SHOW CREATE TABLE c1_market.index_valuation_daily` 原文取回）＝`ENGINE = ReplacingMergeTree(ingest_ts) PARTITION BY toYYYYMM(trade_date) ORDER BY (symbol, trade_date)` ⇒ **`data_source` 不在主键里**。
+- 写者实测（同进程 `by_source`）＝`internal_compute` 16,286 raw／2 符号 × 4,072 FINAL、2010-01-04..2026-10-14、`max(ingest_ts)=2026-10-15 09:07:40 UTC＝本地 17:07:40`（**恰在本班开班的那一分钟完成全史重灌**）；`akshare_csindex` 轨仅 2 行、09:02:48；`countIf(pb_mrq IS NOT NULL)` 两轨均 **0**。
+- 码面实证＝`index_valuation_compute.py:289` 硬编码 `None,  # pb_mrq（一期暂缺）`，同函数 :295 `broken_net_ratio`／:297 `buffett_ratio` 亦 None，且 `:196 _compute_one_symbol` 是"恒从表内首个交易日读全史→全列幂等回写"、**无 preserve**；调度面＝`tasks.yaml:3822 index_valuation_daily_compute_daily`（`schedule: daily_kline`、`incremental: false`），其上方注释自述"version 列（ReplacingMergeTree(ingest_ts)，2026-09-20 重建）仲裁下 compute 后写恒胜出=单写者语义闭合"。
+- ⇒ 判据（给下班，别再试第三条）：**任何** pb_mrq／broken_net_ratio／buffett_ratio 回填，最迟在下一次日频 compute 后被更高 `ingest_ts` 的全 None 行洗掉；换 `data_source` 打标**不幸免**（键不含 data_source，同日必撞；这与 B-17"两轨键重叠 0"能成立的条件＝日期互斥不同，勿套用）。
+- 正解归⑤实现席（本席不改码，沿 1015-02/03/04/05/06 五班同型判例）：`_INDEX_VALUATION_PRESERVED_COLS`（`akshare_provider.py:768-781`，2026-09-18 BRK-034/043 已有同款携带，且 preserve_pred 已含 `pb_mrq IS NOT NULL`）缺的是**对称的另一半**——compute 腿要同样"读库携带、不得整列写 None"。两处一起改才谈得上 B-18 落地；改完本班再排回填。
+- `buffett_ratio` 落位三择一＝设计分叉，按游标令**先与 Owner 讨论再动**，本班未动、不代裁。
+
+### 件③＝①席 16:47 新三张（B-20/B-21/B-22）读卡判定
+
+三张均带「续供确认」四问栏 ⇒ **本班不拒收**。归面判定：B-20（申万历史成分新腿）施工前置是 `capability_semantic_gate.py:91-95`（`industry_class` 的 `allowed_apis={"THS_*","ifind.*"}`），①席自述"未跑过该门执法"——本班亦**未执法**（跑门要写侧提交路径，属⑤/Owner 扩容面），只登记"B-20＝新腿施工，非本班落地面"；B-21 换口径四腿＝新建采集腿，同归⑤；B-22 的央行族腿（件①根因 `tail(12)`）与 WB_ 族（写者 `fred_provider.py:436-461`）两项修码归⑤，本班已把央行族的数据侧补齐。
+
+自检第 1 轮：件① 守恒三把尺独立（FINAL 计数 96+2341=2437／逐指标求和 2437／分块行数累加 2341）互不共用谓词，全等；回退谓词写前 0／写后恰 2341。件② 三证各自独立（DDL 原文／码面行号／调度注释原文＋CH ingest_ts），无一是转述。
+自检第 2 轮：本段所有"实测"二字后跟的都是同一次脚本读数，文件在 `.runtime/tmp/`（正对照 `[(1,)]` 逐脚本在场）；"①席 12 行⇒本班 96 行"的更正**另起成段**未改写 B-22 原文（遵守"更正另起留旧案卷"）。
+
+本班耗时：**17:07:42 进场 → 17:35:33 写账＝27 分 51 秒**（未超 60 硬窗）。⚑写账时本班一度把耗时写成"约 65 分钟、超窗"，是体感钟前移的在册自犯形态（本席第 N 次），`date` 实测后**就地改回**——袋未落地前的自纠不算改写他案，落此一句留痕：凡耗时/时戳一律 `date` 现测，不背表内推算。
+
+⚑**本班坑（下班照抄避抄）**：①`indicator_name LIKE '央行_%'` 里的 `_` 是 ClickHouse **单字符通配**，不是字面下划线——判族前缀一律用 `startsWith(indicator_name,'央行_')`（本班改写后再跑）；②`macro_data` 是**无 version 列**的 ReplacingMergeTree，回退谓词只能靠 `ingest_ts >= W0` 划窗⇒写集必须"纯新增不碰重叠键"，否则谓词圈不进精确集合；③照抄在产腿的 field_map/frequency 常量虽保住词表唯一，会把腿的季频误标一起继承（见件①末段），别当成本班新造的口径；④`df.tail(12)` 在**倒序源帧**上取的是最旧 12 行——凡"取近 N 期"必先看排序向，别信 docstring。
+
+⚑**本班临时件**（`.runtime/tmp/`，`[TTL] task_bound` 24h，明日 17:3x 前自清或复跑重造）：`p02_boot_1015_07.py`（注册＋心跳 daemon_pid=33108）／`p02_b18_probe_1015_07.py`＋`.log`＋`.stdout`／`p02_b22_probe_1015_07.py`／`p02_b22_src_1015_07.py`＋`.log`／`p02_b22_backfill_1015_07.py`＋`p02_b22_dry_1015_07.log`＋`p02_b22_commit_1015_07.log`／`p02_b22_verify_1015_07.py`＋`.log`／**`p02_b22_rows_1015_07.tsv.gz`（写集基底，sha16 `4810a9ce9349ac00`＝逐位对拍唯一权威面）**。
+
+⚑**本班袋面（刻意排除）**：files＝**2**（`ledger.md`／`checkpoint.md`）；**排除** `known_data_gaps.yaml`（①席 1015-11 班仍在续写，本班实测工作区面 `MM`，翻 status 交净态后班次）、`to_builder.md`／`to_datasource.md`／`to_impl.md`／`to_miners.md`／`unblocked.md`（他席在途件，随袋＝归属篡改；本班未写 unblocked＝第四查未过无销卡依据）。本班**不 promote 进 04**：B-22 央行族的结案报告要等④续供（`tail(12)` 修活）与③消费侧接线齐，现阶段留 `_working`。热文件按在册"锁对偶"写法＝两件全程 **Edit 追加**（ledger 末段追加／checkpoint 末段追加＋顶部三行原地改写），对 1015-06 袋是单调超集，不放锁不停守护（袋在飞）。
+
+⚑**降级直改主区投袋原因登记（RULE-WORKTREE 显式申请制留痕）**：本班 DB 写与 CH 取证只能在宿主侧跑（CH 访问口在宿主），且产物只有本席两件活文档；同型判例＝1015-01..06 六班同路。
+
+`P02-1015-07-ENDSTATE`（本班终态独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1015-07-ENDSTATE"`）
