@@ -711,3 +711,12 @@ title: ①数据源席·findings台账
 - ②件续测＝⚑**本班全程实杀三枚、非两枚**：38280（本席 00:27 自起）＋23900（首袋/收班袋网关调用窗内代起，00:34:52 枚举）＋**45788（第三袋 00:39:27 入队后代起，00:40:48 枚举命中）**；`taskkill //PID 45788 //F` 回 `成功: 已终止 PID 为 45788 的进程`（00:42:16 同行 date），此后按同一双谓词（`Name='python.exe'`＋cmdline 含本 sid）复测本席面**零命中**，正对照＝同尺数得全仓 heartbeat_daemon **17 枚**（尺有效前提下判无复活）。⇒ 定性补一句给⑩/⑤：**每一次网关调用各代起一枚守护**（本班三袋→三代起），故在册「末次网关动作之后才能杀」这条处方要把"末次"定义为**最后一枚袋入队之后**，且杀后必须再等≥70 秒复量一次；本班据此把收班②的完成判据从「杀一次＋复核」改记为「杀三枚＋两次间隔复量零命中」，未涂改第三袋原句（其「两枚」在其落笔时点为真）。
 - 残余观测＝`.runtime/locks/heartbeat_st-qoder-p01-1017-01.pid` pid 文件仍存（与 1016-02/03/04 三班同名件并存共四枚），本班不手删（属⑫卫生席面），随上一袋同句在册。
 - 袋面＝本班四袋全部由 `python scripts/commit_queue.py status --session st-qoder-p01-1017-01` 三态可查；末袋 qid 不预写，下班按该命令实读。本班零 requeue、零代投他席袋、零碰缺口册与裁定册。
+
+### 追加 · st-qoder-p01-1017-01（第五袋＝本班四态分诊结案，当日不隔夜；非重投）
+
+- 四态实测＝`commit_queue.py status --session st-qoder-p01-1017-01` 00:48:46 读数：`-0001` **done**／`-0002` **dead**／`-0003` **dead**／`-0004` **done**（落地 commit `46a1e71bbc`，本席 ledger 末次提交行）；`state=drain-active`。
+- 死因（各袋 dead_reason 原文，先读因再动手）＝两袋同因＝`landing 异常: RuntimeError: [landing] 非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）: docs/.../p01_datasource/ledger.md`（-0002 first_dead_at=00:41:29、-0003=00:45:05，base_head 分别 929409bc6e／d7dd962c6a）＝**在册「前袋先落地后，同文件超集袋仍判双侧皆改而死」形态本席第五度复现**（非本班新死法，本席不据此开新单）。
+- 内容级分诊（禁按条数估，按袋 blob 字节对 HEAD 现值做前缀判定）＝`-0002` ledger payload 698 行／307,286 B：`IS_PREFIX_OF_HEAD=True`、逐行集合差 `MISSING_LINES_FROM_HEAD=0`；`-0003` ledger payload 707 行／311,455 B：同 `True`／同 `0` ⇒ **两袋 ledger 面零丢失、可销账**（其内容全部被已落地的 -0004 覆盖，落地面 713 行与盘侧 `git diff HEAD` **空返回**逐字节一致）；`-0002` checkpoint payload 37 行／13,779 B：`IS_PREFIX_OF_HEAD=False`、差 **1 行**＝`cursor_qid` 终值行（本班袋面实测）未进 HEAD，盘侧该行为 M 态（`git diff HEAD --numstat` checkpoint=1 加/1 减）⇒ **该行不可销账，本班以本第五袋（base=现 HEAD）重投**，纯改游标行不碰他席字节。
+- 落地面双文件复核＝`git show HEAD:<ledger>` 行数 **713**＝盘侧行数、严格行首谓词 `grep -c "^\[BLOCKER\] 2026-10-17|①席st-qoder-p01-1017-01|"`＝**6**（本班开单数与账面相等，未含查询自匹配虚增枚）；`git show HEAD:<checkpoint>` 第 9 行起首＝`cursor: 本班第 20 班（1017 第 1 班，sid=st-qoder-p01`＝游标归属本席未被回退（1016-04 与 1016-02 面未吸收）。
+- 销账动作＝本班**不手删死袋**（AGENTS §2 第 6 条：销账只走 mv 通道并留机生台账行，属⑩/⑫职责面），本班只交该条内容级判定与其证据（blob 字节数＋前缀布尔＋集合差计数），死袋 qid 与 dead_reason 留队列供其核。
+- 程序性偏离复记（不掩饰）＝本班第三、第四袋的 ledger 写入发生在 00:35:08 release 之后（已在第四袋提交消息自纠）；本第五袋改回正序＝**同行内先 `acquire-batch` 再写盘再入袋再 `--release-only`**，实跑读数记本节末行与本袋提交消息。
