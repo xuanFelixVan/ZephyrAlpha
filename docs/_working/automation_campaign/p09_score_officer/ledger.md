@@ -1441,3 +1441,90 @@ title: ⑨成绩官·findings台账
 - **本班未动面申明**＝分数册字节零改动（只读）；`calibration_exam.py`／`comparison_exam.py`／`signal_orthogonality.py`／`ch_data.py` 零改动；`feedback/to_impl.md`／`to_miners.md`／`to_datasource.md` 零写入（⑩ 单写共写面）；治理图与流程五族面零改动；未复位 index（106 vs 110 的落差本席只记不修）；未 pop/drop/clean 任何 stash（reaper 现读 `stash_count=27`）；未 requeue 任何死袋；未 release 他会话 claim；未 mv 销账任何 dead 袋。
 - **dead 袋销账本班仍未执行（沿 1016-03 在册，本班只复量）**＝`process_reaper --status` 现读 `dead_archive: ok=False rc=1`；`.runtime/commit_queue/serializer.lease` 现读 `pid=47508`、mtime 距本班起批 47.7 秒（＝仍在刷新）⇒ 租约继续未空闲，本席不绕不手搬；分诊结论沿用前任"零抢救缺口"，**本席代分诊不代销账**，请 ⑩ 在租约空闲窗走正门 `dead-archive --content-level`。
 - **本班自犯并当场纠正两处（旧行为留卷）**＝①首版分数册尺 `yaml.safe_load`→ComposerError（12.1）；②卡池目录凭记忆→0 命中（12.1，违根宪法"路径禁凭记忆"），改 basename 定位后 2/2 命中。两处均为只读量测，无写副作用。
+
+
+### 12.10 收班终核（本段落笔 `2026-10-17 01:18:45` 现测 date；起批锚 `00:50:14`）
+
+- **本班耗时（实测非自报）**＝`00:50:14` → 本段落笔 `01:18:45`＝**约 28.5 分**，在班限 40 分内。分账＝例行工序约七成（三面量测＋复核＋落面）／返工约三成（本班两次自犯纠正＝分数册两段流尺形制、卡池路径凭记忆；详见 12.1，皆只读、无写副作用）。
+- **落袋面终态（实测）**＝`q-20261017-st-qoder-p09-1017-01-0001` state=**pending**、`base_head=3ba12dfb36aa`、`created=2026-10-17T01:15:44+08:00`、files=3；**三件逐件对拍＝袋内 blob sha256 与磁盘归一（CRLF→LF）sha256 逐字等值 True×3**（ledger `545fe084af4a64db`／checkpoint `ae35af593c9e6b1d`／pulse `526d3f31b441defc`）；`commit_queue status --session` 现读 counts＝pending 1／processing 0／done 0／**dead 0**。⚑ **本班不投第二袋**＝在册形态"每投一袋网关代起一枚心跳⇒为记读数再补袋＝递归无出口"，故本节与上一班 §11.10/§11.11 同通道＝**由下一班超集袋收养**（非重投、非补袋）。
+- **收班②⑧ 现测（禁沿前任申报值）**＝心跳 pid 文件 `.runtime/locks/heartbeat_st-qoder-p09-1017-01.pid` 读数=**7624**、mtime **01:14:52**＝本班首次调用 `git_commit.py` 的同一分钟（本席全程未调用任何守护/工棚/工作树启动入口）；`git worktree list` 按本席号段命中＝**0**、`.aidrafts/st-qoder-p09-1017-01` **不存在**、`.worktrees/st-qoder-p09-1017-01` **不存在**。⚑ **与在册 1016-03 结论的差异＝本班实测工具链只代起守护、未代建 399M `.aidrafts` 整树壳**⇒ 请 ⑩/⑫ 把该形态记为**条件化**（勿把任何一班的申报值当常量），本席收班⑧ 申报值取"席位零调用＋盘面实测无 worktree"。
+- **收班①② 的处置序与"不预写"申明**＝本节写完（本次为**最后一次非网关写盘**）之后，本班按序执行：(a) `git_commit.py --release-only` 释放三面 claim（沿在册更正"入队不代释"）；(b) **末次网关动作之后**才按 pid 7624 核活并精确终止（禁按镜像名，见 10-17 在册"cmdline 子串匹配会命中携带自家脚本正文的父壳"教训），随后等 ≥60 秒双读进程表＋pid 文件复测防复活；(c) 删除自家陈旧 pid 文件。⇒ **这三步的回执不写入本节**（写时读数尚未发生，预写即违在册"禁预写未发生读数"铁律），由本班收班口头呈 Owner 并落进 commit 消息面。
+- **收班⑤自清收口次序申明**＝本班 `.runtime/tmp/st-qoder-p09-1017-01/` 件（`reg17.py`／`faces.txt`／`faces3.txt`／`m17b.py`／`m17c.py`／`selfcheck17b.py`／`write17.py`／`fix17.py`／`measure17_close.py`／`write17_close.py`／三个 blk 件／`msg17.txt`／`head_scores.yaml`／`head_ledger.md`／pool 两件）在投袋＋release＋心跳处置**全部完成后**整目录删除，**排在末件**（沿在册"清 tmp 断自家脚本依赖"教训：本班无跨班消费者，上一班 frag_* 属十七班面、本席不碰不删）；四件套外零散落、项目根零临时件。
+- **收班④[BLOCKER]＝本班 4 条**（§12.8，行首 `- [BLOCKER] 2026-10-17|⑨成绩官 st-qoder-p09-1017-01|<类型>|`，`grep -n "\[BLOCKER\]"` 可命中；类型＝流程 2／工具 1／判据缺失 1，严重度＝高 1／中 2／低 1）。
+- **收班⑥⑦**＝GPU 未 acquire 看门人⇒无牌可还；零 spawn 子代理⇒零孤儿。
+- **下一班（1017-02）接手面**＝①本班袋 pending（base_head `3ba12dfb36aa`，三件 blob==disk 已验）；②盘面 ledger 现含本节（未随该袋入 HEAD，由下一班超集袋收养）＋**须一并收养＝若本班 §12.10 之后 §12 面无新增则勿重烧**；③游标 `rows[109]`、判卷取数面＝HEAD、卡体 join 谓词＝卡面 `lineage.score_row`（勿按 card_id 首命中，S-15）；④10 枚死袋分诊结论已出（零抢救缺口），只在租约空闲窗走正门 `dead-archive --content-level`，本班复量＝`dead_archive ok=False rc=1`、serializer 租约 `pid=47508` 至 01:16 仍 `drain-active`（`renewed_age_s` 十一秒级＝整晚未空闲）；⑤修㉒′／修㉕／修㉖ 三单本班均未兑现，勿当作已办。
+
+
+## §13 · 1017-02 班（⑨成绩官·10-17 第二班：起批 `2026-10-17 01:50:12` → 落笔现测见 13.8；当日增量＝**0 行**；本班主产出＝**首份"卡面归属锚"全池账（85/110 有锚＋518 枚键在值空＋1 枚跨卡错锚）**＋**判卷取数面换代：04 馆 20 册里 19 册从未落 HEAD ⇒ 落地面执行器读不到自己的输入（修㉘）**＋**独立信号清单首份真实参与率读数（四池，在册"池未物化即缺席"自本班起不成立）**）
+
+### 13.1 判卷对象＝空集（三面读数，写盘前复测一次＝S-3）
+
+- **取数面沿用上一班在册换代＝HEAD**，谓词文字化＝`git show HEAD:docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml` → `yaml.safe_load_all` 取含 `rows` 的 doc。本班读数＝rows **110**／145458B／归一 sha16 `a9532fceb0899c94`；磁盘同值（mtime `2026-10-16 22:45:20`）；index 面 sha16 `05bc7ce014f204a0`＝**106 行**，`git status` 该册＝`MM` ⇒ 在册"正门每落地一次主区 index 停在落地前一版"**第四次复证**，本席不复位。
+- 已判最高行仍＝`rows[109]` ⇒ **当日（10-17 起批至 02:0x）增量 0 行、判卷对象空集**；零升级、零新路由、零新排。全册 verdict 复量＝`{'fail': 106, 'pass': 2, 'blocked': 2}`，distinct card_id **86**，轮次直方图 `{1:72, 2:9, 3:3, 4:1, 7:1}`（同面 sha 未变＝**复现**非新读数）。
+- 冷启动守卫在岗：`process_reaper --status` 现读 `source=live`／`last_run=2026-10-17 01:50:26`；水位 `commit_pct=92.07`／`ram_used_pct=82.7`／`degraded=True`（breached=ALERT-SYS-003/004）；`drift.stash_count=27`；`dead_archive: ok=False rc=1`（沿 1016-03/1017-01 在册，本班只复量不手搬、不 mv 销账）。
+
+### 13.2 本班主产出（一）＝首份"册行卡面归属锚"账＋全池写回覆盖率（S-16／S-17）
+
+上一班在册把 join 谓词换代成"卡面 `lineage.score_row` 优先、`card_id` 首命中禁用"（S-15）。本班按该谓词做首份全量账，**结论＝该谓词单独不安全，须加双侧一致闸**：
+
+- **谓词形制实测**＝`lineage.score_row` 的值是字符串 `exam_scores_v1.yaml#rows[N]`（**不是整数**）。本班第一版尺按 `int(v)` 解析⇒ 85/85 全报 `BADVAL`＝**类型盲假红**（同族在册＝事件族 `oos` 嵌套 dict 按标量判无面，13 班在册）。正解谓词＝`^exam_scores_v1\.yaml#rows\[(\d+)\]$` 反解 N。
+- **在册 86 枚卡的回指账**＝有指针并解出 N 者 **85/85 双侧一致**（`rows[N].card_id == 该卡 card_id`）；`run_id` 成对自账＝卡面 `lineage.run_id` 与 `rows[N].run_id` **85/85 相等、0 分叉**；无两卡同指一行（去重行数＝85）。
+- **25/110 册行无卡面归属锚，分两形**＝形一＝同卡早轮、卡面恒只留末轮身份（21 行，属预期形制⇒ **跨轮归因只能靠册**，与在册 修⑯ 形三"行内无臂身份锚"同族）；形二＝**4 行（rows[68]/[69]/[70]/[71]）整卡无指针**，其卡＝`TDM-X-R1-01/comparison/07b_熔断五级梯度减仓对照_复位阶梯锚定版`，`lineage` dict 存在且**含 `score_row` 键但值为空**，而 rows[71] 已是该卡最新行 ⇒ 不是"被后轮覆盖"而是**该卡写回从未落值**。
+- **全池写回覆盖率（S-16，谓词＝`docs/03_modules/_domain_backtest/exam_cards/**/*.yaml` 按 `is_file()` 分层数）**＝卡面件 **609**（本班起批实测 599→值守内 609＝**他班正在并发写卡池**，故本班所有卡面读数一律按时点申报；`git ls-files` 该目录＝555）、distinct `card_id` 609、**重复 card_id 文件＝0**。`score_row` 三态＝**键在值空 518**／键在值有 86／无 `lineage` dict 5／键缺失 0／行号越界 0。⇒ ⚑ **判"卡面写回是否执行"禁按"键在否"，必按"值非空否"**（按键存在判会假绿 518 次）。
+- **1017-01 S-15 谓词的唯一反例（S-17，可 grep）**＝卡 `TDM-E-L3-12-3/calibration/05_市场获利盘水位`（文件 `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__calibration__05_市场获利盘水位.yaml`）的 `lineage.score_row` 指 **rows[66]**，而该行 `card_id` 属 `TDM-X-R1-01/comparison/07_熔断五级梯度减仓对照_五态仓位锚定版`，且该卡自身**不在册**⇒ 跨卡错锚。后果＝任何班照 S-15"指针优先"单侧谓词做归因，这一枚会把别人的分数行当成自己的成绩。**正解谓词＝指针解出的行号须回指到本卡 `card_id`（双侧一致），不一致即弃用并回退到册面 `run_id`**。已开 修㉚（转 ⑤）。
+
+### 13.3 本班主产出（二）＝判卷取数面换代：04 馆 19/20 册在 HEAD 查无（修㉘，严重度＝高）
+
+在册 1017-01 的交接判据是"判卷取数按 HEAD 面"。本班顺该判据把**整个永久区分数馆**做了三态表，抓到一处结构性洞：
+
+- **三态表（谓词＝`docs/04_research_records/backtest/scores/2026/*.yaml` 顶层，逐件 `git rev-parse -q --verify HEAD:<path>`）**＝**20 册中 19 册 HEAD 查无**（`git status` 皆 `A `＝只在 index＋磁盘，`git log --oneline -1 -- <件>` 空＝从未有任何提交碰过），唯一在 HEAD 的册＝主册 `exam_scores_v1.yaml`（`MM`）。
+- **这不是纸面问题，落地面执行器的读路正好落在洞上**＝`scripts/backtest/fexam/exit_sim/exit_simulator.py:72-73`（HEAD 面，作者面＝⑤席车道B `f3af35ec4c2`）已把 `SCORES_YAML` 修指 `docs/04_research_records/backtest/scores/2026/indicator_exam_scores_v1.yaml`——**而该目标在 HEAD 查无**。⇒ **修⑰ 复判＝改判为"码面已修、对象未落地"**：从 HEAD 起跑的进程（工棚/队列落地后复跑/任何 clean checkout）仍在同一处 `FileNotFoundError`，只是报错路径从旧址换成新址；主区磁盘面此刻能读到该件（262360B 存在）故**只在落地面显形**。⚑ 上一班在册"修㉓/㉗ 已闭合、㉒ 未闭合"的四单复量**未含 修⑰**，本班补齐＝**修⑰ 未闭合**。
+- **旧址并未从 HEAD 消失（10-14 搬迁＝复制非移动的第 N 枚复证，见归位不新卖）**＝`docs/_working/fexam/` 现测 **31 件／769909B／`git ls-files` 全 31 件已跟踪／`git status` 干净**（旧 `indicator_exam_scores_v1.yaml` 在 HEAD 存在，blob `3d708e3ae1fd`）。而 10-14 之后在册多班按"旧 docs/_working/fexam 整目录已删"开单（14 班 修⑱/⑲、15 班在册）。⇒ 断链"面积"结论须按面重读：**该目录在 HEAD 面从未断链，只在 10-15 某次清扫后的磁盘面上短暂消失过、10-15 19:00:55 又被放回**（本班实测该件 mtime；与 15 班在册"19:00:01 一枚全域 stash 扫走整馆"同窗）。家族锚＝在册记忆"09 归档批复制非搬⇒107 对同名双份"（`working-zone-archive-was-copy-not-move-20261014`），本席 14 班断链面积账同题。
+- **同名双份内容级分账（谓词＝`docs/_working/fexam/*.yaml` 顶层 ∩ 04 馆同名，difflib 行级）＝19 对**＝**18 对纯增**（旧址为新址真子集，minus=0，差集是 04 面新加的 `doc_type: register`＋`ttl: permanent` 十行 frontmatter）＋**1 对真改写**（`paper_pool_v1.yaml`，+11/−2）。⇒ ⚑ 本班**不报**"29 对全不等＝数据分叉"（那是字节级读数，内容级证伪）；不等的主因是登记头，不是数据。
+- **那 1 对真改写里藏一条新的机器字段断链（修㉙）**＝04 面 `paper_pool_v1.yaml` 把 `source_book` 从 `docs/_working/fexam/indicator_exam_scores_v1.yaml` 改指 **`docs/_archive/_working_20261014/fexam/indicator_exam_scores_v1.yaml`**，而本班实测＝**该目标 exists=False、其归档根 `docs/_archive/_working_20261014` 整体 exists=False、该路径在 HEAD 亦查无**。两个候选真源（本席不自改）＝04 馆同名件（磁盘有／HEAD 无）或旧址同名件（磁盘有／HEAD 有）。按冷启动 1b 断链总则"禁自创新路径"，本席只登记不代修。
+
+### 13.4 本班主产出（三）＝独立信号清单首份**真实**参与率读数（四池）＋"池面全在 24h-TTL"申报
+
+在册从 1015-02 起到 1017-01 逐班写的是"池未物化⇒缺席"。本班按上一班首查判据②扫"⑤/⑥ 是否新建池面"时，实测到**在册判据已过期**：全仓存在合法 `date,sig` 池面，只是**一枚都不在永久区**。
+
+- **全仓普查（尺＝`Path('.').rglob('*.csv')` 按 `is_file()` 谓词、排除 `.git`，逐件读首行）**＝扫 **21351** 件，首行恰为 `date,sig` 者 **130** 件；扣本班为跑分自建的 51 件副本⇒真实 **79** 件，**分布全部在 `.runtime/tmp/**`**（③席 `p03_1016_03` 20 员／`p03_1016` 7 员、④席 `p04_01` 5 员、panel_fix_bt2/3/4 测试夹具各 3 员）。`docs/_working/**` 与 `docs/04_research_records/**` 命中 **0**。（⚠ 该尺全仓跑 300s 超窗转后台才出，定向面复跑得同一集合＝19 班"两尺互斥先当自己尺错"处方照做。）
+- **在册"ART_ROOT 不存在"作废**＝`docs/_working/integrated_backtest/` 现测存在、55 件（最新 mtime `2026-10-15 19:00`＝15 班在册那次 stash/回灌同窗）。但**其中 `date,sig` 池面＝0**（全是 `nav_*/trades_*` 形制）⇒ 池物化腿仍未通，只是"根不存在"这句不再成立。
+- **四池真实读数（工具＝`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool <目录> --out <本班件>`，全部 rc=0 且 `--out` 件生成）**＝
+
+  | 池面（本班副本目录） | 成员数 | 公共日 | PR（有效独立信号数） | 最大\|corr\| | \|corr\|≥0.3 对数 |
+  |---|---|---|---|---|---|
+  | p20（③席 `p03_1016_03` 全量，含 `ctrl_random`） | 20 | 109 | **14.2148** | 0.8329 | 8 |
+  | p19（同上剔除 `ctrl_random`） | 19 | 109 | **13.4678** | 0.8329 | 8 |
+  | p03a（③席 `p03_1016`） | 7 | 110 | **4.2437** | 0.8959 | 3 |
+  | p04（④席 `p04_01`） | 5 | 43 | **2.8593** | **1.0000** | 2 |
+
+- **读数判读（本席不下"信号无效"结论，只报形态）**＝①p04 里 `block_disc_amtwt` 与 `block_disc_eq` **相关恰为 1.0000**，且本班逐字抽读两件首末行数值**逐日恒等**（`2026-08-07,4.385217` / `2026-10-16,4.291463` 两件同值）⇒ 其中一路**零独立信息**（不是"弱"，是"同一路"）；②p04 公共日仅 43 天，PR 在此窗上判别力低，勿当池级结论；③p19/p20 的 8 对高相关里最强一对 `gate_f_peakrep_lag1 × gate_r_abs_lag1 = 0.8329` 远超 SOP §3-G 的 \|corr\|≤0.3 准入线⇒ 按闸口径这两路应判互为吸收。
+- **缺席申报的正确措辞换代**＝自本班起，本席"池未物化即缺席"这句作废，改为"**池物化面存在但全部寄身 24h-TTL 他席 tmp，永久区/已跟踪面 0 枚**⇒ 正交准入闸的基准无持久可比面"。已开 修㉛（转 ⑤/⑫）。
+- **复量在册 修㉗（不重烧，只复现）**＝空壳池入参现测 **rc=2**、stderr 逐字 `ERROR: --pool 未命中任何信号 CSV`、**`--out` 件仍不生成**⇒ 与 1017-01 在册两条半处方逐字同；锚 `signal_orthogonality.py:53 ERROR_EXIT_CODE = 2`。本班所有 rc 一律**不经管道**直取（在册"管道后 `$?` 量的是 grep"教训；本班首跑确实被 `| tail -5` 吞过一次 rc，当场改法）。
+
+### 13.5 归因四分诊与转单全文（本席只写自家台账，共写面零字节，由 ⑩ 汇总）
+
+本班**零新 fail**（增量 0 行）⇒ 四分诊无新行需路由；以下四条是结构性发现的转单，编号续在册（在册定义现止于 修㉗；`修⑩` 仍悬空＝引用 1 次无定义，本席沿 14–16 班与 1017-01 未补写）：
+
+- **修㉘（实现或数据问题 ⇒ 转 ⑤，并告 ⑦⑧ 考工两席）**＝04 永久区分数馆 20 册中 **19 册从未落 HEAD**（逐件 `git rev-parse -q --verify HEAD:<path>` 本班实跑；`git status` 全为 `A `；`git log -- <件>` 空）。后果三条＝①落地面执行器读不到自己的输入（`exit_simulator.py:72-73` 的目标件即属该 19 册之一，故 修⑰ 未闭合）；②在册"判卷取数按 HEAD 面"只对各册里唯一入库的主册成立，任何班若要读别的册**只能读磁盘面且须声明**；③该 19 册的存活完全依赖主区 index 不被外来复位（在册"热册蒸发"家族）。处方方向＝该馆走正门入库（禁整档快照、纯增），**本席不代做也不代投**。反向自证＝改前本班已量 `HEAD:04/indicator_exam_scores_v1.yaml` 查无，改后应 rc=0 且 20/20 在册。
+- **修㉙（数据/实现 ⇒ 转 ⑤）**＝04 面 `paper_pool_v1.yaml` 的机器字段 `source_book` 指向不存在路径（`docs/_archive/_working_20261014/**` 整根 exists=False、HEAD 亦无）；这是 14 班 修⑱/⑲ 断链面积账里**分数馆自身**的新例，且落在机器字段而非散文。本席不代改指向（两候选真源见 13.3）。
+- **修㉚（工具缺陷 ⇒ 转 ⑤；交接判据措辞 ⇒ 转 ⑩）**＝卡面写回腿三处不可信＝(a) 全池 518/609 枚 `lineage.score_row` 是**键在值空**（判"写回已执行"禁按键存在）；(b) `TDM-X-R1-01/comparison/07b_*` 整卡无值且最新行也无（rows[68..71]）；(c) 1 枚跨卡错锚（`TDM-E-L3-12-3/calibration/05_市场获利盘水位`→rows[66] 属他卡）。请 ⑤ 在写回处加"值非空＋回指 card_id 等于本卡 card_id"双闸；请 ⑩ 把 1017-01 S-15 那句"卡面 `lineage.score_row` 优先"补成"**仅当双侧一致时**优先，否则回退册面 `run_id` 并声明"。
+- **修㉛（判据缺失 ⇒ 转 ⑤/⑫）**＝正交准入闸基准面不持久：79 枚 `date,sig` 池件 100% 在 `.runtime/tmp/**`（24h TTL），永久区 0 枚；本席禁跑考试故不能自行物化。请 ⑤/⑥ 定池物化落 `docs/_working/**` 或 04 的口径与消费者申报位；请 ⑫ 给 TTL 清扫加"被在册清单引用的池面"白名单（同 1017-01 对 frag_* 案卷的处方同族）。
+- **方向单（⇒ 转 ③④）**＝首份真实 PR 读数已入 `pulse/independent_signals.md`（③席 19 员池 PR=13.4678／109 日窗；④席 5 员池 PR=2.8593 且含一对逐日恒等双路）。请 ④ 席复核 `block_disc_amtwt` 与 `block_disc_eq` 是否同一公式两写；本席**不判死、不改判任何分数行**。
+- **对照单＝零新开**；**呈批草稿＝零新开**（本班无判据改动诉求；P-10/P-11 在册未裁事项本席继续按"未裁"处理，不代签）。
+
+### 13.6 自检两轮（抽 3 行回卡体核对门柱未走样＋交付命令原样回放）
+
+- **轮一（交付命令正文原样实跑）**＝①`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6 --out <本班件>`→ **rc=2**、`--out` 件不存在（复现在册 修㉗ 两半处方）；②`git rev-parse -q --verify HEAD:docs/04_research_records/backtest/scores/2026/indicator_exam_scores_v1.yaml`→ **rc≠0（查无）**，正对照＝同尺打主册 `exam_scores_v1.yaml` **rc=0**（⇒ 19/20 不是尺坏，是对象确实不在 HEAD）；③`git show HEAD:scripts/backtest/fexam/exit_sim/exit_simulator.py` 第 72-73 行→ **04 路径**（负对照＝`git log --oneline -3 -- <该件>` 首条 `f3af35ec4c2` 消息自述"旧 docs/_working/fexam/ 已删、修指 04"，故码面改动为真；本班的洞在对象侧不在码面）；④旧址同名件 `git rev-parse -q --verify HEAD:docs/_working/fexam/indicator_exam_scores_v1.yaml`→ **rc=0**（blob `3d708e3ae1fd`）＝与"整目录已删"在册叙述直接互斥，本班按实测呈报。
+- **轮二（抽 3 行回卡体，柱名与阈值全部现读卡面 `pillars_numeric`，不背数）**＝
+  - **rows[76]**（pass 行）＝mono_spearman **0.7333** ≥0.6 PASS／ic_mean **0.10374** ≥0.02 PASS／**ic_ir=None（无面）**／regime bull 0.10279 与 bear 0.07672 同号 PASS／oos_ic 0.09967 与 ic_mean 同号 PASS ⇒ **pass 判定方向与册面一致、门柱未走样**，但 5 根声明柱里 `ic_ir_min` 仍无面⇒ 在册"两腿未齐、pass 不升 verified"复现（本班**零升级**，未重跑考试）。
+  - **rows[109]**（fail 行）＝mono None／ic_mean **−0.0007341** FAIL／ic_ir **−0.0099008** FAIL／regime bull −0.0030878 与 bear +0.0041259 **异号** FAIL／oos −0.0041892 同号 PASS／`gap_k3_vs_k0_5d`=None（未读）⇒ 复算**三腿实质 FAIL** 而册面 `fails` 只有 `未支持判据键（机判面待扩，fail-closed）: ['gap_k3_vs_k0_5d_max']` 一条＝**在册 coverage-only fail 形态第四次复现**（13 班 P-11 底座／16 班复证／1017-01 第三次／本班第四次），判定方向仍一致（皆 fail、`pillars_all_pass=False`），本席不动判据字节。
+  - **rows[90]**（blocked 行）＝`fails` 逐字＝`blocked: book_channel:bind:FileNotFoundError:...indicator_exam_scores_v1.yaml`；按 13.3 复量⇒ **该 blocked 的根因在磁盘面已消失（旧址与新址两件都在盘上）、在落地面仍以另一条形消失（码面改指新址而新址无件）**。⚑ 本席**不据"路径存在"判复跑必成**（在册铁律：干跑/存在性信号≠被执行门），只把两条面事实交给 ⑦⑧ 席自行复跑定夺；blocked 仍**不归因"信号无效"、不作 fail 升降级**（本版对照族说明沿用在册）。
+  - 三行 verdict 无一被本班改判；pass 集合仍＝{76, 78}。
+
+### 13.7 问题登记（本班 [BLOCKER]，共 4 条；类型分布＝流程 1／工具 1／判据缺失 1／数据问题 1；严重度＝高 1／中 2／低 1）
+
+- [BLOCKER] 2026-10-17|⑨成绩官 st-qoder-p09-1017-02|流程问题|**04 永久区分数馆 20 册中 19 册从未落 HEAD（只活在主区 index＋磁盘，`git status` 全为 `A `），而落地面执行器的读路恰好指在其中一册上**＝`exit_simulator.py:72-73`（HEAD 面，作者 `f3af35ec4c2`）已修指 `docs/04_research_records/backtest/scores/2026/indicator_exam_scores_v1.yaml`，该目标 `git rev-parse -q --verify HEAD:<path>` 实测 rc≠0；主区磁盘面该件存在（262360B，mtime 10-16 00:00:33）⇒ 缺陷只在落地面/工棚/clean checkout 显形，在册 1017-01 四单复量未含 修⑰，本班改判 修⑰ 未闭合（码面已修、对象未落地）|证据=本班 20 册三态表（19 件 HEAD 查无／正对照＝主册 rc=0）；台账 13.3；`git log --oneline -3 -- scripts/backtest/fexam/exit_sim/exit_simulator.py`|要 ⑤ 接 **修㉘** 把该馆 19 册走正门入库（纯增、禁整档快照），要 ⑦⑧ 两席在复跑 blocked/双臂前先用同一把尺核自己的目标件在 HEAD 是否存在|高
+- [BLOCKER] 2026-10-17|⑨成绩官 st-qoder-p09-1017-02|工具缺陷|首份"卡面归属锚"全池账抓到三处不可信＝全池 609 枚卡 **`lineage.score_row` 键在值空 518 枚**（判"写回已执行"若按键存在必假绿 518 次）／`TDM-X-R1-01/comparison/07b_*` 整卡无值且其最新行 rows[71] 也无锚（rows[68..71] 四行无卡面归属）／**1 枚跨卡错锚**＝`TDM-E-L3-12-3/calibration/05_市场获利盘水位` 的指针指 rows[66] 而该行属 `TDM-X-R1-01/comparison/07_*`|证据=台账 13.2（谓词与三态计数逐条写明；错锚件路径逐字）；在册 1017-01 S-15 谓词原文|要 ⑤ 接 **修㉚** 在卡面写回处加"值非空＋回指 card_id 等于本卡 card_id"双闸；要 ⑩ 把 S-15"指针优先"补成"仅双侧一致时优先"|中
+- [BLOCKER] 2026-10-17|⑨成绩官 st-qoder-p09-1017-02|判据缺失|正交准入闸的基准面不持久＝全仓 `date,sig` 池件 79 枚 100% 寄身 `.runtime/tmp/**`（24h TTL，③席 20/7 员、④席 5 员、panel_fix 测试夹具），`docs/_working/**` 与 `docs/04_research_records/**` 命中 0；本班据此已拿到首份真实 PR 读数（p19=13.4678／p04=2.8593）但**下 1–3 班该面必物理消失**（在册 S-12 同族）；另"ART_ROOT 目录不存在"这句在册作废＝`docs/_working/integrated_backtest/` 现存在 55 件，只是其中池面 0 枚|证据=台账 13.4 普查读数（扫 21351 件／命中 130 扣自建 51）；`ls docs/_working/integrated_backtest`|要 ⑤/⑥ 定池物化落永久区的口径与 [CONSUMERS] 申报位（修㉛），要 ⑫ 给 TTL 清扫加"被在册清单引用的池面"白名单|中
+- [BLOCKER] 2026-10-17|⑨成绩官 st-qoder-p09-1017-02|数据问题|④席池里 `block_disc_amtwt` 与 `block_disc_eq` 相关恰 **1.0000** 且首末读数逐日恒等（`2026-08-07,4.385217`／`2026-10-16,4.291463` 两件同值）＝两路成员只携带一份信息，按 SOP §3-G 准入线 \|corr\|≤0.3 应判互为吸收；本席不判死、不改任何分数行|证据=台账 13.4 表＋`.runtime/tmp/p04_01/*.csv` 首末行直读；`pr_p04.yaml` 相关矩阵|要 ④ 席复核两路是否同一公式两写并按结论择一退役或改轴|低
