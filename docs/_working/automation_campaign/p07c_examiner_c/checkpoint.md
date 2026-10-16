@@ -130,3 +130,44 @@ cursor: 班次 01（st-qoder-p07c-1015-01，18:50:19 开班→19:25 交账≈35 
 - **水位与资源（本班读数，勿沿用）**：reaper 起手实测 source=live・commit_pct **74.98**・ram_used 67.6%・cpu 71.1%・degraded False；
   本班全程未起 GPU（未 acquire 看门人⇒收班⑥免执行）；D 盘余量本班未复量。
 - **本班未做（如实）**：未 requeue 任何死袋・未 release 他会话 claim・未动其它席指令面・未动门柱/冻结值/判据・未建 worktree・未 spawn 子代理。
+
+---
+
+## 游标补充（⑦c 1016-02 班尾 22:32 现测追加，上文本班游标节逐字不涂）
+
+- **本班袋① `q-20261016-st-qoder-p07c-1016-02-0001` 22:32 仍 pending**（5 件＝台账・游标・分数册・两枚已翻卡；
+  队列 head 为他班 300 件件袋，`daemon.online=false`）。**本席 keeper 留岗未销＝pid 22976**
+  （在册序＝全袋落地→release→最后 unregister，先注销会被 SESSION-REQUIRED 挡尾袋；
+  本席 10-15 首班 ghost_session 袋死实证＋keep 名册第 43 行"袋落地期间 keeper 必须在岗"）。
+  ⇒ **下班第一动作＝先查本班袋终态**：`python scripts/commit_queue.py status --session st-qoder-p07c-1016-02`；
+  已 done→按 PID 22976 核活终止＋复证 pid 不存在＋心跳末行 exited；仍 pending→续留 keeper，勿代杀、勿 requeue、勿自 drain。
+- **袋死预案（禁盲重投）**：袋①快照含"双划 force 旗"字面原文三处（message 已固化不可改），
+  而 `gate-detect-git-dangerous` 对本类引用型字面串有在册袋死先例（⑩席 1016-01 班自家两枚，同签名）＝本班已把盘上面改为指称
+  （盘现测＝本席台账内该字面串命中 0，谓词与缘由见本班台账 §九；严式 BLOCKER 行数＝5）。若袋①判死，读 `dead_reason` 后以指称版重投即可，无需回滚。
+- **worktree 面如实更正（勿自删）**：本席未调用任何工棚/工作树入口（`.worktrees/` 内 p07c 命中 0＝本班零自建），
+  但实测会话一注册即由工具自动生成 `.aidrafts/st-qoder-p07c-1016-02` 整树影子壳（同壳另有 1016-01 一枚），
+  与"禁建 worktree"令面属既存在册冲突面 ⇒ 本席不自删，交 ⑩/清理专班定性（在册先例＝`auto-spawned-aidrafts-worktree-shell`）。
+- **本班剩余面复量结论（下班勿再逐卡烧窗）**：注入路"卡面可算式＋供数已在册＋执行器可吃"三条件净剩余 **0**；
+  下一步收益不在考工席而在 ⑥/⑤ 各补一条面＝⑥ 修 14 枚 prereg 卡的 regimes 散文条目（本席已供两面缓存，修后即考零拉数）・
+  ⑤ 判 G5 收编与 panel 路 mono_spearman 补面（三班连续未动）。
+
+---
+
+## 游标补充二（⑦c 1016-02 班尾 22:42・袋② 归属风险一行，上文补充节逐字不涂）
+
+- **下班勿盲目 requeue**：实测袋② 分数册 blob＝盘现值 109 行（含 ⑦A 席未落地 rows[108]，HEAD 面 0 命中），
+  袋① 册 blob＝108 行（仅本席两行）⇒ 详版与本席自犯定性在 ledger §十一；
+  处置权在 ⑩/运行班（本席不删他席字节、不自行摘队列件）。下班领面先 `git show HEAD:分数册` 复量行数与
+  `commit_queue.py status --session st-qoder-p07c-1016-02` 三袋终态，再决定是否需按盘现字节另投（＝在册正解"读 dead_reason 修因后重投"）。
+- 本班尾巴面（§十・§十一 与本节）系袋② 快照之后所写，由袋③（只含本席两件 _working 件，不含分数册）承接落地。
+## 游标（⑦c 1017-01 班末 01:1x 追加，上文 1016-02 各节逐字不涂）
+
+- **本班终值＝出分 0 张・零翻卡・零改判据/门柱/冻结值・分数册字节零动作**（CH 禁跑窗 01:00–04:00 与 90 分班限整段重叠，两条零 CH 出分路实测均无面＝缓存目标面板 0 枚＋162 枚 prereg 零本地序列申报）。本班产出＝**执行器面案卷**，非考试读数。
+- **分母（本班两时点同尺，值守内未动）**：prereg 磁盘面 **162**（00:52 与 01:01/01:03 三次 survey 同值）＝entry 91／exit 25／portfolio 21／position 25；四族文件总数 589；六态加总 438＋51＋37＋63＝589 ✓。分数册 disk 110＝HEAD 110・index 106（在册「落地一次 index 停在落地前一版」形态复现，本席不复位）。上班 1016-02 袋① done（landed e9089e6cfc）・袋②③ dead（同一条 ledger.md 双侧皆改）⇒ **上班尾巴面 §十—§十四 与游标补充二至今未落地**，本席不 requeue（同字节必同死）、不自 drain。
+- **下班领面全集＝162 减 41 枚点名＝121 枚**（不必重跑预演；预演尺全程 13.5 秒/8 枚、满批 <3 分，零 CH、三面隔离已实测自证）。分层：entry panel 25／series 55・exit panel 3／series 6・portfolio panel 4／series 17・position panel 10／series 1。route 面 series 126／dual_arm 36／**event 0**（积压面里根本没有事件路卡，上班游标担心的事件路 OOS 地板柱不在本面积）。
+- **41 枚避让（＝两张转单面，具名在本席台账 §五）**：(a) 28 枚 route=dual_arm 且 kind=panel ⇒ 崩在 `calibration_exam.py:561 _comparison_metrics`→`:217 _series_metrics`→`:97 pd.Series(2D)`，**对照族驱动器 comparison_exam 同根**（dry=False 实测同帧崩），换入口救不了；(b) 13 枚 regimes 散文条目（`_span_pairs` 退回整串→`_in_spans` pd.Timestamp 抛），其中 **2 枚系 ⑥ 10-16 22:15 新出**（L3-11-1/03・L3-11-2/03 现势窗）＝1016-02 班转单后该形制仍在新增。
+- **下班首查四件**：① 先查本席本班袋终态（`commit_queue.py status --session st-qoder-p07c-1017-01`）与本行是否落地，只认 `git log -1 --name-only` 与 blob 内容级；② ⑤ 是否修 (a) 那条腿（修后 28 枚即并入领面，其中 12 枚 position/exit 族 10-15 19:00 起积压最久）；③ ⑥ 是否把 13 枚 regimes 改回 span 形制（修后即考，MF 一枚供数两面仍缓存于 `.runtime/tmp/p07c_1016_02/`＝零拉数）；④ 孤儿 examining 卡 `entry_flow/L3/TDM-E-L3-03-2__calibration__03_温和放量`（盘=examining／HEAD=preregistered／run_id null／18:38:44 翻面未开考，⑦A 1016-03 面）——**复位归 ⑦A/⑩，本席与下班皆不代翻**（状态闸只认 preregistered，卡对全席不可考）。
+- **给 ⑩/⑨/⑤ 的一条现象（本席不裁）**：白噪声两面（真 IC≈0）在 121 枚 ran 里出 **2 枚 pass 且 fails 空**——其一 `TDM-P-P1-04/calibration/04` 实读 ic_mean +0.00321 对卡面冻的 `ic_mean_min: -0.015` 负地板（方向柱缺位）；其二 `TDM-E-L2-01/comparison/02` 双臂路 ic_mean=None／n=None 而 unjudged 三面全空。＝**「冻负地板」与「数值面无」两形态下判官不会判 fail**（calibration_exam.py:267-269 在册注释自述「NaN 跳过加败＝只可能放行不可能记败」的同族第二、三例）。
+- **纪律与自纠（另起留旧案卷）**：本班一处**本席脚本自犯**＝keep 名册追加件首版把结果面写成 `res.ok`（SafeWriteResult 真字段＝written/before_sha256/after_sha256）⇒ AttributeError 于写后的打印行，**实质追加已成功且不重复**（复量＝422 行、本席三行在位、前缀 intact），本班已就地改为幂等版（已在位则零动作）并按该形态给复核命令；本班未起 GPU（IC_DEVICE=cpu 全程）⇒ 收班⑥免执行；本班未建 worktree、未 spawn 子代理、未 release 他会话 claim、未 requeue 死袋。
+- **水位与资源（本班读数，勿沿用）**：reaper 00:50:46 source=live・commit_pct 81.46・ram_used 73.3%・cpu 87.2%・degraded False・stash_count 27・worktree_changes 1456・dead_archive ok=False rc=1（serializer 租约 pid=47508 存活）；D 盘余量本班未量。
+- **心跳交接**：本席 keeper pid **39796**（01:01:33 registered present=True entry_pid=39796）。本班收班按 PID 精确终止并在末次网关动作之后复量（在册更正＝调网关即被代起守护，杀须排最后＋等 ≥70 秒双谓词读）；keep 名册本席两行（421–422 行）与注释行 420 留岗（属白名单面，非本班临时件）。
