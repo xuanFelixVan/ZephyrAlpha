@@ -435,3 +435,128 @@ cd /d/ZephyrAlpha/.worktrees/st-qoder-p05-1015-05 && git --no-pager diff --cache
 
 
 
+- `[BLOCKER]` 2026-10-16|p05（更正行·Owner/总包裁定三）|工具缺陷|**撤原 10-15 种子行的接口名**：`gpu_watchman` 并无 detect 子命令（实测 CLI 仅 acquire/release/status），现象本身真实（status 面报 gpu: unknown），真因＝该环境下 nvidia-smi 解析差异待查|证据锚点：`python scripts/gpu/gpu_watchman.py detect` → invalid choice 报错原文；本台账 grep「种子预填」命中行即被更正的原行（原行保留不删，追加制）|要⑤席查清真实调用面后再定是否单独立缺陷（当前标“口径待补”）|中
+
+
+## 10-16 17:3x · 班次 01（st-qoder-p05-1016-01）领单＝本班 P0 首件＝blob store 反捞断链批次件（X2 全池三态分诊全量读数）；附带坐实 prestage 误杀真凶位（不在⑩所指文件）
+
+### 0 冷启动·防重入·时间账（date 实测，非体感）
+
+- 15:12:44 首命令＝Python 3.12.8 ✓；`lock_files.py cleanup`＝CLEAN 无死锁；reaper `source=live` ✓（scanned=20 whitelist_hits=15 killed=0，watermark commit_pct 72.11／cpu 30.2／degraded=False／ram_used 81.0%，breached=[]）⇒ 允许写；水位非 degraded 但 ram 81%＋worktree_changes=1350 ⇒ 本班零子代理、零并发施工。
+- **防重入三证**（在册：光读游标行会漏短报班）＝①游标行写"10-15 班次 06 未完（袋在飞）"系**陈旧面**，其袋 `q-20261015-st-qoder-p05-1015-06-0001` 实测在 `dead/`（07 班已分诊）；②前任 07 班袋 `q-20261015-st-qoder-p05-1015-07-0001` 在 `done/` 且**内容级已落地**＝`git show HEAD:src/zephyr/data/ch_reader.py | grep -c _cte_aliases`＝3＋该件全史首笔 627f726e7d；③p05 系心跳面：06 末行 `status:"exited"`、`.runtime/locks/heartbeat_st-qoder-p05*.pid` 零命中、`.runtime/sessions/` 无 p05 目录 ⇒ 无在途 ⑤ 写手，本班接手。
+- **零 worktree**（TRAE-079 Phase 2）＝本班未调用任何工棚/工作树入口，全程主区工作＋`--allow-non-worktree` 入队；D 盘 free 实测 **100.349 GiB**（07 班那条 1.2MiB 阻断线已解除，如实改判）。
+- 会话租约＝正门四步一次到位（15:20:26 实测）＝`register(sid,pid=0,held_files=×4)` → `claim_file` 4/4 True → `_spawn_heartbeat_daemon` PID **40740** → `register_heartbeat_keepalive(ttl=7200s)` 具名 grant 可读回（granted_at 1792140026／expires_at 1792147226）。写域四件＝本席 ledger／checkpoint＋calibration_exam.py＋test_calibration_shape_preflight.py。
+- ⚑**耗时这条本班如实报坏账**＝首命令 15:12:44 → 落笔本节 17:3x＝**约 140 分**，超 75 分班窗近一倍。成因不是施工而是**在册催办件在班中被他人落地**（见 §1）＋主区盘面中途翻转一次（见 §4）使本班两次改道。按在册律"追加型终值自述落笔即假"，本节不称末袋，收班次数字以袋落地时间为准另记。
+
+### 1 落地面复量＝治理面与运行面仍脱钩（本席不自裁，只如实报差额）
+
+| 面 | 本班实测（17:2x 现测，HEAD=3c13513c71 17:00:31） | 判定 |
+|---|---|---|
+| 裁定 #537/#538/#539 | `git show HEAD:docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml \| grep -c "^- ruling_id: 裁定#53[789]"`＝**0**；同册盘 5119 行 对 HEAD 5025 行＝+94/−0 | **仍未落地**＝原卡停发令在治理面有效；热册 +94 行只在盘与 chief 两枚死信 blobs 内＝蒸发风险照在（0 命中谓词本席已跑两次同值） |
+| #538 六件孤儿交付 | `signal_orthogonality.py`／`gpu_watchman.py`／`comparison_exam.py` 三件 `git cat-file -e HEAD:` 全 **IN_HEAD**，承载提交 `23e28b2cb7`（15:47:33）且 `git merge-base --is-ancestor`＝IS_ANCESTOR | **已由 chief 拆袋 -0007 收口**＝本席 06/07 在册处方"拆袋重投"不再需要，本班不重做 |
+| 6 班催办 `_shape_preflight` | HEAD 面 1163 行／`grep -c _shape_preflight`＝**3**；`git diff --numstat HEAD` 该件＝空（盘==HEAD，blob 91937c098a…）；承载提交 `8caf2743b9`（16:48:00，作者 st-qoder-chief-1016-01，标题＝"calibration_exam 补齐半落地交付"）；在册测试本班实跑＝**7 passed in 1.51s**（`--basetemp` 指仓外 C:） | **已闭环（非本席交付）**＝⑩1016-06/07/08/11/12 五续单与 12 班催办的收工判据（HEAD grep 得 3）现值达成；测试件三面全等（盘＝袋 blob `62a09e58…`＝HEAD，9758B 逐字节）⇒ 三枚 p05-shape 袋从未携带实现体，半落地缺口现已补 |
+
+⇒ 本席结论一句：**本班零落地交付不代表本班零产出**，两件在册催办在班中被 chief 席收口，本席据宪法"判落地一律 git log 与 blob"改领 P0 首件（下节）。不据此推"停发可解除"，该判据归⑩与 Owner。
+
+### 2 P0 首件＝X2 断链池 blob 反捞分诊（全量读数，只读零删除）
+
+口径＝遍历四态目录 ∪ `dead_archive_20261015/16` 内 `session_id` 含 `x2` 的袋，逐件取袋内 `blob_ref` 字节 ↔ 盘面字节 ↔ `git show HEAD:<rel>` 字节，原字节式与 LF 归一式两式匹配（在册：EOL 归一不做直比会造假不一致）。产物＝`.runtime/tmp/st-qoder-p05-1016-01/blob_triage.py`（TTL，一次性只读）＋ `triage.jsonl`（1970 行逐件判决）。
+
+- 面积＝**85 袋／1970 件次／452 唯一路径**；**BLOB_ABSENT＝0**（复证 ⑩1016-09"袋 blob 缺件 0"⇒ blobs 面仍是完好存放处）。
+- 分类计数（件次）＝`DISK_EQ_BAG_HEAD_DIFF` **1433**｜`ALL_EQUAL` 248｜`THREE_WAY_DIFF` **229**｜`HEAD_EQ_BAG_DISK_MOVED` 25｜`DISK_EQ_BAG_EOL_HEAD_DIFF` 21｜`HEAD_ABSENT_DISK_EQ_BAG` 12｜`ALL_EQUAL_EOL` 2。
+- **需 blob 重基的唯一路径去重＝72**（顶层分布＝scripts 33／src 35／tests 1／docs 3），与 ⑩1016-09 的"208 件次／71 路径"同量级；差额（本班 85 袋 vs 该席 74 袋、452 vs 447 路径）系本班口径并入两枚 `dead_archive_2026MMDD`，非计数矛盾。
+- 反捞优先级判据（本席只出判据不出裁定）＝①`DISK_EQ_BAG_HEAD_DIFF` 1433 件次**不需要 blob**（盘面即意图面，直接对现 HEAD 重基即可）；②`THREE_WAY_DIFF` 72 路径**唯一存活处＝blobs**，且按 qid 取最新袋（同路径多袋者以最新 created_at 为准，实测 `scripts/commit_queue.py` 一路径涉 13 袋）；③`HEAD_ABSENT_DISK_EQ_BAG` 12 件次＝HEAD 查无该路径而盘==袋，属新增面，重基＝直接 add；④`HEAD_EQ_BAG_DISK_MOVED` 25 件次＝**袋意图已落地而盘面随后被他席改动**，属"已销口"面，禁再捞（捞了就是覆盖他席后续＝归属篡改）。
+- ⚑本班不当班执行批量反捞的承重证据（不是回避）＝72 路径中 `scripts/commit_queue.py`／`scripts/git_commit.py`／`scripts/governance/commit_queue_landing.py` 三件＝**正门与落地链本体**，其袋面基 `base_head` 属 10-15/10-16 之交的旧 dev 面，按 blob 重基会连带回退今日已落的他人改动；`src/` 35 路径跨多域；且 #539 的"断链台账入库门位"工单在 ⑫ 手里未归。⇒ 反捞须按路径逐件三态复核后分批投，且需⑩派单归属，单班 75 分配额装不下；本班把**尺与清单**交出去（`triage.jsonl` 逐件含 bag/disk/head 三 sha16＋qid），下一班按 §2 优先级 ①③ 起批即可零重测。
+
+### 3 新案坐实＝prestage 误杀的真凶位不在⑩所指文件（本席实测，判据零改动）
+
+⑩1016-08/11 两班给⑤的处方＝"prestage 对已跟踪件误杀，把喂给闸的输入改为已跟踪即放行"，并点名 `git check-ignore --no-index`。本班追调用面得**与该处方不同的结论**：
+
+- 报错文本真凶位＝`scripts/governance/commit_queue_landing.py:2702-2710`＝落地前置对 `adds` 全体跑 `check-ignore --no-index`，**命中即无条件 raise**，无 tracked 豁免支路 ⇒ 这才是"已跟踪但父目录被 `scripts/data/*` 覆盖"的件恒死的点（实测样本 `scripts/data/bdpan_tick_watch.py`：HEAD 127／INDEX 127／DISK 168、status ` M`、tracked=True）。
+- 而⑩指向的 `src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3117`（`_filter_gitignored`）＋ `:3163`（`_stage_gitignored_tracked`）**已经**按 Owner 正解处理 tracked+ignored＝`git add -f`／`git rm --cached` 分离暂存；且该处 `--no-index` 是被在册回归测试**要求**的＝`tests/gov/git/test_git_commit_gateway.py:1022` 类 `TestGitignoredTrackedDeleted` 原文："根因修复：`_filter_gitignored` 必须用 `check-ignore --no-index`（默认 check-ignore 跳过已跟踪文件，不加 --no-index 会漏检→git add 整批失败）"。
+- ⇒ **若按⑩字面去改 gateway 那处＝直接拆掉在册回归防线并把整批失败换回来**。修法指向应落在 landing 侧：把 `adds` 先按 `git ls-files --` 分诊，`check-ignore --no-index` 只喂**未跟踪子集**，已跟踪+ignored 件复用 gateway 的 `-f` 通道（＝字面"已跟踪即放行"，不弱化再生产物区拦截、不加白名单、不加豁免旗）。
+- 设计稿（呈批，本席未动码）＝在 `:2698 if adds:` 内先算 `tracked = set(self._git_wt("ls-files","--",*adds).stdout.splitlines())`，`probe = [a for a in adds if a not in tracked]`，仅对 `probe` 跑 check-ignore 与 raise；`tracked ∩ ignored` 不 raise。回退命令＝该文件 revert 本班落地提交即复原（单件单函数，无跨件依赖）。测试方案＝在 tmp_path 造 `scripts/data/*` 被 ignore 且该件已 tracked 的仓，断言 prestage 不 raise 且落地面含该件；同例再造**未跟踪** ignored 件断言照 raise（防"过度放行"，双向防呆）。
+- 本席不当班施工的承重证据＝改的是 13 席共用的落地链本体＋该改动会同时影响今日最大死族（landing 异常 71 枚）的判据面，须带真袋回放自证（在册：提修法须 patch＋反向自证＋真实字节回放），本班余时不足以做反向自证，不做半验落地。
+
+### 4 主区盘面自犯风险留痕（一次"实现体蒸发"假象，双证后才排除）
+
+- 15:20 量＝calibration_exam 盘 1162 行／命中 3、`git diff --numstat HEAD`＝94/0 纯插入；16:5x 复量＝同件 `git hash-object` 与 `git rev-parse HEAD:` **同一 blob 91937c098a**（＝盘==HEAD，实现体"消失"）。本班未 panic，按在册三态核实：`git status` 仍 `MM`（index 1115／命中 0 未变）＋`git log -- <件>` 出现 `8caf2743b9`（16:48 chief 落地）＋盘面 17:19 再测 1163 行／命中 3 ⇒ 判定＝**不是盘面被洗，而是 HEAD 追上盘面**，中间那次"逐字节相同"读数是 HEAD 侧落地完成后的一致态。
+- 教训入册（本席第四把尺自犯预防）＝判"意图内容只活在 blobs"前必须先排"他席已把同一内容落进 HEAD"，否则会把已落地件当孤儿重投＝覆盖他席；`triage.jsonl` 的 `HEAD_EQ_BAG_DISK_MOVED` 一类就是这条尺的产物。相关＝[[half-landed-delivery-tests-without-code-20261016]]、[[main-index-auto-staged-mixed-pool]]。
+
+### 5 转单段（移交 02 班／⑫／⑩）
+
+1. **→⑤ 02 班首件**＝按 §2 优先级①起批：`DISK_EQ_BAG_HEAD_DIFF` 1433 件次（盘==袋，无需碰 blobs）逐件对现 HEAD 重基投袋；**禁把 `scripts/commit_queue.py`/`scripts/git_commit.py`/`scripts/governance/commit_queue_landing.py` 三件与他件混袋**（落地链本体须单独袋＋自带测试）；`HEAD_EQ_BAG_DISK_MOVED` 25 件次禁捞。清单在本班 `.runtime/tmp`（TTL，02 班须先复跑 `blob_triage.py` 再取面，勿按本班读数直接投——本班读数落笔后即陈旧）。
+2. **→⑫／运行班**＝⑩1016-09 请"把 blob 面列为禁清面并给留存判据"，本席实测复述＝`.runtime/commit_queue/blobs` 现 9193 件（本班 15:16 量，⑩ 06:55 量 8996＝**在涨**），删除语义在 HEAD 面仅 `_compact_pending` 一处；本班补一条**可执行判据**＝`scripts/commit_queue.py:200-202` `_DONE_TTL_DAYS_DEFAULT=7.0` 只清 done 态，故 blob 存活性 = 其引用袋的存活性；禁清面应写成"凡被 dead/∪dead_archive 袋引用的 blob 一律不可删"，谓词＝先建 blob_ref 引用集再放行任何 blob GC。
+3. **→⑩**＝§3 那条"改 gateway"的处方请把指向改到 `commit_queue_landing.py:2702`；本席不动 gateway 判据面、不列白名单、不加豁免旗（Owner 在册正解＝只改输入指向）。另 `ruling_registry.yaml` +94 行的落地面 0 命中本班再次复证（§1），运行面与本席量尺无关的 cron 层不在此重复。
+4. **→⑥ 席**＝在册"卡面不携带执行器路径，绑定属⑥席载体面"未变；`_shape_preflight` 已由 chief 落 HEAD，若卡面要接该执行器名，归⑥席。
+
+### 6 [BLOCKER] 行
+
+- `[BLOCKER]` 2026-10-16|⑤席1016-01|判据缺失|X2 断链池 72 个唯一路径的意图字节唯一存活处＝队列 blobs，但 blob 面无留存判据、且 `_DONE_TTL_DAYS_DEFAULT=7.0` 令引用袋可被修剪＝抢救窗口不可估|证据＝本班 `blob_triage.py` 全池读数（85 袋／1970 件次／BLOB_ABSENT=0／THREE_WAY_DIFF 229 件次→72 路径）、`scripts/commit_queue.py:200-202`|要⑫把"凡被 dead∪dead_archive 袋引用的 blob_ref 禁删"写成禁清面谓词，要⑩派单归属后再分批反捞（本席不当班批投）|高
+- `[BLOCKER]` 2026-10-16|⑤席1016-01|工具缺陷|⑩1016-08/11 两班给⑤的 prestage 修法指向错文件：真凶＝`scripts/governance/commit_queue_landing.py:2702-2710`（对 adds 全体跑 check-ignore --no-index 且无 tracked 豁免），而 `git_commit_gateway.py:3117` 的 `--no-index` 是**在册回归防线要求**的（`tests/gov/git/test_git_commit_gateway.py:1022` 原文"必须用 --no-index"），按字面改＝拆防线并把整批 git add 失败换回来|证据＝本班两处代码实读＋测试 docstring 原文＋`scripts/data/bdpan_tick_watch.py` 三面现测（HEAD127/INDEX127/DISK168）|要⑩把处方指向改到 landing 侧；本席已出设计稿＋双向防呆测试方案（§3），不当班施工（改的是 13 席共用落地链本体）|高
+- `[BLOCKER]` 2026-10-16|⑤席1016-01|需Owner|裁定 #537/#538/#539 在 HEAD 面 0 命中而盘 +94/−0，本班 15:2x 与 17:2x 两次复量同值＝治理面与运行面持续脱钩；该册 +94 行只活在盘与 chief 两枚死信 blobs 内，他席按 HEAD 基重放即可能净删三裁定|证据＝`git show HEAD:…/ruling_registry.yaml \| grep -c "^- ruling_id: 裁定#53[789]"`=0、`wc -l` 盘 5119/HEAD 5025|要⑫/⑤按当日四态分诊接面并先读 dead_reason 修因（此判据归⑩与 chief，本席不代裁不追认）|高
+- `[BLOCKER]` 2026-10-16|⑤席1016-01|流程问题|本班耗时约 140 分（超 75 分班窗近一倍），主因＝班中两件在册催办被 chief 席落地＋主区盘面中途出现"实现体蒸发"假象需三态排雷|证据＝首命令 15:12:44 与落笔 17:3x 的 date 实测、`8caf2743b9`(16:48) 与 `23e28b2cb7`(15:47) 两笔时间落在本班窗内|要⑩把"班中他席收口在册催办件"写成短报即收的改道判据（本席已按实记，不涂前段）|中
+- `[BLOCKER]` 2026-10-16|⑤席1016-01|无|其余例行项零问题：GPU 本班未 acquire（免执行，`scripts/gpu/gpu_watchman.py status` 未跑因零 GPU 作业）；零 spawn 子代理＝零孤儿；零自建 worktree|证据＝§0|—|低
+
+### 7 收班八件（本班袋终态以落地时间为准另记）
+
+- ①release＝本班袋落地后 `--release-only` 释放四件 claim（ledger／checkpoint／calibration_exam.py／test_calibration_shape_preflight.py），`lock_files.py list` 面 p05-1016-01 命中 0 为收工尺。
+- ②心跳注销＝按在册改正通道＝先摘注册表条目再读回末行：`SessionRegistry.unregister('st-qoder-p05-1016-01')` 后守护应自写 `status:"exited"`（reason=session not in registry）；仅当 >60 秒仍 alive 才按 **PID 40740** 兜底终止（绝不按镜像名批杀）。收班双证＝pid 文件 ABSENT＋末行 exited。
+- ③耗时＝首命令 15:12:44 → 本节落笔 17:3x ≈ 140 分（见 §6 第 4 行，例行取证段与改道段分账：改道两段（chief 抢单＋盘面排雷）合计约 35 分）。
+- ④[BLOCKER]＝本席段共 5 行（高3／中1／低1），行首形态承本台账既有约定（`- \`[BLOCKER]\`` 可被 `grep -n "\[BLOCKER\]"` 命中），旧行逐字不涂。
+- ⑤自清＝`.runtime/tmp/st-qoder-p05-1016-01/`（blob_triage.py＋triage.jsonl）与 `/c/tmp/ce_head.py` 类临时面在本袋投出后删除；`.runtime/sessions/st-qoder-p05-1016-01/staging/` 两枚快照件（61264B＋9758B，sha256 a8e7c40a…／62a09e58…）**随袋落地后同删**（落地后 HEAD 面即权威面，不留第六态）；项目根零临时件；四件套外零散落。
+- ⑥GPU 还牌＝本班未 acquire，如实免（`scripts/gpu/gpu_watchman.py status` 未跑；无 GPU 作业）。
+- ⑦后台子任务清点＝零 spawn ⇒ 零孤儿（收班时进程表内本席仅剩心跳守护，随②收）。
+- ⑧零 worktree＝本班未创建任何 worktree 目录；发现的历史遗留 `.worktrees/st-*`（含本席旧班 p05-1015-06 树）**禁自行清理**，已在 §5-3 报⑩交清理专班。
+
+## 10-16 22:3x · 班次 02（st-qoder-p05-1016-02）领单＝P0 首件 blob 反捞（最新袋收敛＋三元净合尺）；本班交付＝尺三面＋本席 01 班在途面收口，零代码件落地（据实自陈，见 §2）
+
+### 0 冷启动·防重入·时间账（date 实测）
+
+- 21:20:08 首命令＝Python 3.12.8 ✓；`lock_files.py cleanup`＝CLEAN 无死锁；reaper `source=live`（scanned=13 whitelist_hits=12 killed=0／watermark commit_pct 52.53・cpu 19.8・ram_used 55.1・degraded=False・breached=[]）⇒ 允许写；worktree_changes=1378・stash_count=30 ⇒ 本班零子代理、零并发施工。
+- **防重入三证**（判前任 1016-01 已停手）＝①`tasklist //FI "PID eq 40740"` 无匹配（该班在册心跳 PID）；②`Get-CimInstance Win32_Process -Filter "Name like 'python%'"` 过滤 cmdline `p05|heartbeat`＝**零 p05 命中**（同表 p04-1016-01・p01-1016-01・chief-1016-01 三在他席在岗⇒本班只避不碰）；③`find .runtime/commit_queue -name "*p05-1016-01*"`＝零命中＝无在途袋可撞回退弹 ⇒ 接手为 02 班。
+- ⚑**游标陈旧面复证**＝本班进场读到盘面 `cursor: 2026-10-15 班次 06 未完`，而 HEAD 面＝`班次 07 已入袋`（`git diff --numstat HEAD` 该件＝4/4）＝01 班未推游标；本班正解＝**以 HEAD 面为基**原地替换 cursor/last_run/last_batch/notes 四行（禁整档覆写，禁按盘旧面续写）。
+- **01 班在途面**＝盘面 ledger 比 HEAD 多 **73 行**（该班 §0–§7 全文）而队列内零袋＝该班 140 分长班被掐后"台账只落盘未入袋"（本席同型病灶第三次复发：05 班三投全 DENIED／06 班袋阵亡／01 班零袋）。本班随自家袋收口＝不重做不涂改。
+- **零 worktree**（TRAE-079 Phase 2）＝全程主区；租约四步一次到位＝`register(sid,pid=0,held_files=ledger+checkpoint)` → `claim_file` **2/2 True** → 心跳守护 PID **40164**（`heartbeat.jsonl` 末行 `status:"alive"`）→ `register_heartbeat_keepalive(ttl=7200s)` 具名 grant 可读回（granted_at 1792157004／expires_at 1792164204）。
+
+### 1 P0 首件＝blob 反捞三把尺（全只读，零写盘、零 worktree）
+
+口径链＝**①按"最新袋"收敛**（01 班尺＝"任一批次三态异即报"，把已被后续袋或后续落地吸收的旧袋面计入待捞＝假扩）→**②对现 HEAD 跑 `git merge-file -p --diff3`**（base＝袋内 per-file `base_blob`、ours＝`git show HEAD:<rel>`、theirs＝袋 blob 字节）判净合性→**③按 difflib 量"袋意图差分实体"**（base→theirs 的 ins/del/rep 行数）排伪影。
+
+- 面积（21:4x 现测）＝**85 袋／1970 件次／452 唯一路径**；最新袋判决＝`LATEST_EQ_HEAD` 62｜`LATEST_BAG_AHEAD` 388｜`LATEST_HEAD_ABSENT_BAG_HAS` 2。
+- 排除落地链本体六件＋`src/zephyr/shared/io/file_utils.py`（今日已落 CAS 口径改动＝勿捞）后 **384** 件进净合尺＝**CLEAN 378／CONFLICT 6**；其中"合并面≠HEAD 面（真有增量可重基）"＝**100** 件。
+- ⚑**本班关键负结果＝"按字节写回"整条路是死的**：以行序判"袋面按行包含 HEAD 面（纯增、零删零替换）"这一严格安全谓词，384 件命中 **0**；再按"袋意图差分 base→theirs 为纯插入"筛，modify 型件命中 **0**；唯一纯增面＝**两件 HEAD 查无的全新件**（`scripts/governance/apply_meta_question_ddl.py` 339 行／`scripts/generate_mount_obligation_manifest.py` 209 行，同一枚 `q-20261016-st-qoder-x2-1015-0070`）。⇒ 反捞须逐件读语义后重基，任何 `checkout 袋字节` 式批量必然回退他人后续改动＝归属篡改。**这解释了 X2 74 袋集体死于"双侧皆改"是结构性的，不是门禁误杀。**
+- 六枚 CONFLICT 件与逐件读数（qid/conflicts/net_lines_vs_head/merged_lines）＝`.runtime/tmp/st-qoder-p05-1016-02/merge_rebase.jsonl`（384 行）。
+- 尺与读数四件（TTL，随班删；**口径已全量写入本节可复跑**）＝`blob_triage.py`（搬自 01 班，重跑同 85 袋／1970 件次，仅分类计数微变 1429↔1433）／`latest_bag_triage.py`→`latest.jsonl`／`merge_rebase_scan.py`→`merge_rebase.jsonl`／`substance_scan.py`→`substance.jsonl`。
+- **自犯预防在册复证（本班自犯一次已当场纠正）**＝第一把尺的卡面交叉腿 glob `docs/03_modules/**/exam_cards/*.yaml` 返回 **0 文件**＝零命中是我的模式坏（卡实际在 `exam_cards/<flow>/**`）不是卡为零；改 `rglob` 后扫 **553** 张卡，"反捞件文件名 × blocked 卡全文"命中 **0**。
+
+### 2 本班未做与理由（保底自陈，不涂）
+
+- 本班**零代码件落地**＝反捞不存在批量安全形制（§1 负结果）。唯二可批投的两件新件须 creation_token＋14 字段头＋**至少一个消费者**同袋（在册：零消费者新件死 ORPHAN-MODULE），且本班未证"盘 face＝袋 face"（只证 HEAD 查无），余时不足 15 分做反向自证 ⇒ 不投半验袋。
+- ⑩催办两件本班不动＝①`_shape_preflight` 已由 chief 16:48 落 HEAD（01 班在册复证 HEAD grep＝3・测试 7 passed）；②prestage 误杀属 13 席共用落地链本体，真凶位与设计稿＋双向防呆测试方案已由 01 班落在 §3（本班不重复施工、不拆防线）。
+
+### 3 转单段（→03 班／⑩／⑫）
+
+1. **→⑤ 03 班首件（反捞唯一安全形制）**＝只批投两件全新件：字节取 `q-20261016-st-qoder-x2-1015-0070` 的 blob_ref（HEAD 查无＝零回退风险），同袋必带 creation_token 两件＋`add_module_translation.py` 简介＋一个真消费者；投前先量"盘 face 是否逐字节等袋 face"（本班未量此面）。
+2. **→⑤ 03 班次件**＝`latest.jsonl`/`merge_rebase.jsonl` 的 100 件净合面按**域分批**（`src/zephyr/ai_layer/**` 14 件、`scripts/backtest/**` 考试执行器族各一袋），逐件现算 `git merge-file -p` 合并面（勿按本班读数写死＝落笔即陈旧），投前必查该件盘面是否被在活他席 claim。
+3. **→⑩**＝据 §1 负结果把派单口径从"对现 HEAD 重基"细化为"**仅两枚全新件可批投，其余 382 件须逐件语义复核**"，并给 X2 断链池一个归属裁决（本席不代裁）。另复证 ⑩1016-12 §⑦"正门每落地一次把主区 index 留在落地前一版"的**第三形态**＝本席 `ledger.md` index 面比 HEAD **少 97 行**（`git diff --cached --numstat HEAD`＝0/97）而盘面比 HEAD 多 73 行＝三态各停一代；本班只刷新自家两件，余 321 件不碰。
+4. **→⑫／运行班**＝承 01 班"凡被 dead∪dead_archive 袋引用的 blob_ref 禁删"判据，本班补一条实测依据＝**384 件意图字节今日仍 100% 可从 blobs 取回（BLOB_ABSENT=0）**；blob 一旦被修剪，382 件的意图面只剩"盘 vs HEAD 的 MIXED 差额"＝不可复原。
+5. **→⑥ 制卡席**＝§1 末条：卡面不携带执行器文件名 ⇒ 反捞件与 blocked 卡无法机连（553 卡 ∩ 383 件＝0）；本席**本班零卡可翻**，如实报。
+
+### 4 [BLOCKER] 行
+
+- `[BLOCKER]` 2026-10-16|⑤席1016-02|流程问题|X2 断链反捞不存在"批量安全形制"：384 件里按行包含现 HEAD 的纯增件＝0，唯二纯增面是两件 HEAD 查无的新件（还须 token＋接线三件同袋）|证据＝`.runtime/tmp/st-qoder-p05-1016-02/{latest.jsonl,merge_rebase.jsonl,substance.jsonl}` 本班现测（85袋/1970件次/452路径/CLEAN378/CONFLICT6/100件有增量/PURE_ADD=0/纯增modify=0）|要⑩把派单口径改为"两枚新件可批投、382 件逐件语义复核"并给 X2 池归属裁定|高
+- `[BLOCKER]` 2026-10-16|⑤席1016-02|流程问题|01 班 140 分长班被掐后台账 73 行只落盘未入袋、游标未推（盘面游标停 10-15 班次 06 而 HEAD 停 07）＝本席同型病灶第三次复发|证据＝进场 `git diff --numstat HEAD` checkpoint=4/4・ledger=+73/−0，`find .runtime/commit_queue -name "*p05-1016-01*"` 零命中|要⑩把"班尾袋未投即游标不得算已推"写进各席收班判据（本席已按小步收班当场入袋）|中
+- `[BLOCKER]` 2026-10-16|⑤席1016-02|判据缺失|卡面不引用执行器文件名⇒反捞件与 blocked 卡无法机连|证据＝`docs/03_modules/**/exam_cards` rglob 553 文件全文检索 383 个候选件名零命中；对照 `grep -rl blocked_on_impl docs/03_modules`＝138 命中（尺自证：谓词能命中卡面状态字段）|要⑥制卡席在卡面增执行器路径字段；本席本班零卡可翻如实报|中
+- `[BLOCKER]` 2026-10-16|⑤席1016-02|无|其余例行项零问题：GPU 未 acquire（零 GPU 作业）／零子代理／零 worktree／reaper 在岗|证据＝§0|—|低
+
+### 5 收班八件
+
+- ①release＝投袋后 `git_commit.py --release-only` 放 ledger＋checkpoint 两件，`lock_files.py` 面 p05-1016-02 命中 0 为收工尺。
+- ②心跳注销＝先 `SessionRegistry.unregister('st-qoder-p05-1016-02')` 再读回末行 `status:"exited"`；>60 秒仍 alive 才按 PID **40164** 精确兜底终止（禁按镜像名批杀）。
+- ③耗时＝首命令 21:20:08 → 本节落笔＝**11.7** 分（三把只读尺段约 17 分，写册与入袋段另计）。
+- ④[BLOCKER]＝4 行（高1／中2／低1），行首 `- \`[BLOCKER]\`` 可被 `grep -n "\[BLOCKER\]"` 命中，旧行逐字不涂。
+- ⑤自清＝`.runtime/tmp/st-qoder-p05-1016-02/` 本班四把尺＋三份读数＋写入器＋`merge/` 三枚临时 ours/base/theirs 随班删除（尺口径已全量写入 §1 可复跑）；项目根零临时件；本班零未竟待办（反捞起批以 §3 转单交出）。
+- ⑥GPU 还牌＝本班未 acquire，如实免（零 GPU 作业）。
+- ⑦后台子任务清点＝唯一后台任务＝`blob_triage.py`（已 completed rc=0）；零 spawn 子代理⇒零孤儿。
+- ⑧零 worktree＝本班未创建任何 worktree 目录；历史遗留 `.worktrees/st-*`（含本席 1015-06 旧树）**未动**，已在册报⑩交清理专班。
