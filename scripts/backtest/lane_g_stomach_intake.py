@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-AUTO-E1G-001 | docs/_working/automation/campaign/blueprints/lane_g_stomach_intake_blueprint.md | §
+# [BLUEPRINT] MOD-AUTO-E1G-001 | docs/04_research_records/cross_domain/automation/campaign/blueprints/lane_g_stomach_intake_blueprint.md | §
 # [PROVISIONAL] 暂编号：docs/03_modules 解冻后按注册表重编（挂单 H-01）
 # [MODULE] scripts.backtest.lane_g_stomach_intake
 # [DOMAIN] D_BACKTEST

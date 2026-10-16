@@ -4,7 +4,7 @@
 # [DEPENDENCIES] pathlib/json; zephyr.data.ch_reader（CH 只读，可选注入）
 # [CONSUMERS] scripts.backtest.factory_intake_pipeline（FL2：E1 进货方向读数，编排层只读不评分）;
 #   scripts.backtest.hypothesis_precheck（FL1：E2 预审先验注记，注入 prompt/notes）;
-#   docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md §二 feedback_loops（FL1/FL2 定义真源）
+#   docs/04_research_records/data/fullflow_mining/00_skeleton/00_全环节总册.md §二 feedback_loops（FL1/FL2 定义真源）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯读零写（回灌边消费端不产数据——E6/E9 写入端各自在岗，本件只聚合读数）;

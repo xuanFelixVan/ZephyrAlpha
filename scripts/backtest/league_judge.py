@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-AUTO-L11-JUDGE | docs/_working/fullflow_mining/03_promotion_ab/02_ab_league.md | 堵点2/3（晋升判据执行器+相关性闸）
+# [BLUEPRINT] MOD-AUTO-L11-JUDGE | docs/04_research_records/data/fullflow_mining/03_promotion_ab/02_ab_league.md | 堵点2/3（晋升判据执行器+相关性闸）
 # [MODULE] scripts.backtest.league_judge
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] yaml; numpy; zephyr.data.ch_reader; zephyr.pf_core.core.msprt_champion_challenger; zephyr.factor.analysis.bhy_fdr; zephyr.shared.io.file_utils

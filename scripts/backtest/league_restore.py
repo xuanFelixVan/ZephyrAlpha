@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-AUTO-L11-RESTORE | docs/_working/fullflow_mining/03_promotion_ab/02_ab_league.md | 第1节
+# [BLUEPRINT] MOD-AUTO-L11-RESTORE | docs/04_research_records/data/fullflow_mining/03_promotion_ab/02_ab_league.md | 第1节
 # [MODULE] scripts.backtest.league_restore
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] yaml; scripts.backtest.league_archive（指纹采集复用）; zephyr.shared.utils.time_utils

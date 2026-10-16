@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-SCRIPT-001 | docs/_working/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md | §4 成交模型 M0（本件=同语义路径并行核，判据零改动）
+# [BLUEPRINT] SH-SCRIPT-001 | docs/_archive/_working_cleared/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md | §4 成交模型 M0（本件=同语义路径并行核，判据零改动）
 # [MODULE] t0_material_line_fast
 # create-guard-not-dup: 本件是 t0_material_line 建模循环的路径并行加速核（同语义复刻+批量向量化），非配对判据/成交模型的第二实现——判据真源仍是 cost_trio_exam.build_pairs，M0 语义真源仍是 t0_material_line.run_model_m0（逐标量复刻，对拍钉死）
 # [DOMAIN] D_BACKTEST

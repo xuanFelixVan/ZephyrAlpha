@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-SCRIPT-001 | docs/_working/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md | §4 M0（对拍 harness：legacy 循环 vs 路径并行核）
+# [BLUEPRINT] SH-SCRIPT-001 | docs/_archive/_working_cleared/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md | §4 M0（对拍 harness：legacy 循环 vs 路径并行核）
 # [MODULE] t0_material_line_parity
 # create-guard-not-dup: 本件是材料线路径并行改造的对拍+计时 harness（运维/验收通道），非判据实现——配对判据真源仍是 cost_trio_exam，M0 语义真源仍是 t0_material_line
 # [DOMAIN] D_BACKTEST

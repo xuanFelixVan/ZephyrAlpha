@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-SCRIPT-001 | docs/_working/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md | §4 成交模型 M0 + §5 窗规则
+# [BLUEPRINT] SH-SCRIPT-001 | docs/_archive/_working_cleared/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md | §4 成交模型 M0 + §5 窗规则
 # [MODULE] t0_material_line
 # create-guard-not-dup: 本件是T0做T材料线数据面(M0成交模型公共骨架,判据复用cost_trio_exam),命中词系材料/成交语文巧合,非生成器自动触发能力的第二实现（材料线管线：分钟数据→做T对语料；L05-C02 执行件草案）
 # [DOMAIN] D_BACKTEST
@@ -291,7 +291,7 @@ def run_pipeline(
 
     engine 分派（st-mx07-W1 单点切挂，裁定#489⑤ 路径并行）：
     - "fast"（默认）：t0_material_line_fast.run_pipeline_fast（numba/向量化路径并行核，
-      对拍逐位+耗时实测=docs/_working/matrix_campaign/mining/t0_material_line_parallel_v1.md；
+      对拍逐位+耗时实测=docs/04_research_records/data/matrix_campaign/mining/t0_material_line_parallel_v1.md；
       fast 输入契约=价格列 float64 规范化，语义缝披露见其 INVARIANTS 与对拍 harness 披露段）；
     - "legacy"：下方原逐 symbol-day Python 循环（回滚口径：engine="legacy" 一参回退，
       零代码改动；或 revert 本切挂 diff——legacy 循环体未动）。

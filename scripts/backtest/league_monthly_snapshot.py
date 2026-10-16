@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-AUTO-L11-SNAPSHOT | docs/_working/fullflow_mining/03_promotion_ab/02_ab_league.md | 第1节
+# [BLUEPRINT] MOD-AUTO-L11-SNAPSHOT | docs/04_research_records/data/fullflow_mining/03_promotion_ab/02_ab_league.md | 第1节
 # [MODULE] scripts.backtest.league_monthly_snapshot
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.data.ch_reader; scripts.backtest.league_registry; zephyr.shared.io.file_utils

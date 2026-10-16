@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-AUTO-L11-REGISTRY | docs/_working/fullflow_mining/03_promotion_ab/02_ab_league.md | 第1节
+# [BLUEPRINT] MOD-AUTO-L11-REGISTRY | docs/04_research_records/data/fullflow_mining/03_promotion_ab/02_ab_league.md | 第1节
 # [MODULE] scripts.backtest.league_registry
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] yaml; zephyr.shared.io.file_utils; zephyr.shared.utils.time_utils

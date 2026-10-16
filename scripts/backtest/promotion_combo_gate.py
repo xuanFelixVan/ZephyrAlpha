@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-AUTO-L2-001(暂编号，解冻后转正) | docs/_working/automation/campaign/blueprints/promotion_combo_gate_blueprint.md | §
+# [BLUEPRINT] MOD-AUTO-L2-001(暂编号，解冻后转正) | docs/04_research_records/cross_domain/automation/campaign/blueprints/promotion_combo_gate_blueprint.md | §
 # [MODULE] scripts.backtest.promotion_combo_gate
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.data.ch_reader; zephyr.shared.io.file_utils

@@ -7,13 +7,13 @@
 # [CONSUMERS] LANE-REEXAM 退役/在册策略重考首考批；Owner 复查窗
 # [STARTUP] manual CLI
 # [MATURITY] experimental
-# [INVARIANTS] 判据单一真源=docs/_working/reexam_strategy_lane/pre_registration_card.md 内嵌
+# [INVARIANTS] 判据单一真源=docs/04_research_records/backtest/campaigns/reexam_strategy_lane/pre_registration_card.md 内嵌
 #   reexam_prereg_params_v1 块（sha256 锁，改卡=作废重开；跑前必验锁，不一致拒绝跑批）；
 #   禁新造切分器/DSR/PBO 数学（一律委托 cpcv + MOD-SIM-024）；成本档引用
 #   config/exam_scale_cost_gate.yaml 冻结件，本件不自设数值；同卷同纪=历史成绩列仅观察禁入判据；
 #   闭卷窗 >closed_book_from 的数据禁用于判档；逐条串行+限线程（RAM 紧，禁 GPU）；
 #   断点续跑禁覆盖已判格；材料不足判 INSUFFICIENT_MATERIAL 禁混入判负；
-#   每批必入 N 账本（漏计=DSR 分母污染）；产物只写 docs/_working/reexam_strategy_lane/runs/
+#   每批必入 N 账本（漏计=DSR 分母污染）；产物只写 docs/04_research_records/backtest/campaigns/reexam_strategy_lane/runs
 #   （.md/.csv/.yaml 三格式，DCR-005/006）；本件不接实盘不下单、不改 strategy_registry 状态
 #   （过复活线只给"模拟盘试用资格"，转正归 Owner 门位）
 # [MODIFY-GUARD] tests/backtest/test_reexam_cpcv_harness.py
