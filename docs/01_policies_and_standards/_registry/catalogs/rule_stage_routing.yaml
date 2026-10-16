@@ -1,0 +1,293 @@
+schema_version: 1.0.0
+module_id: PS-REG-RULEMAP
+ttl: permanent
+doc_type: register
+title: 规则环节路由表（规则地图图17 机读面）
+total_rules: 87
+stages:
+  S0:
+    name: 治理与裁定
+    when_to_read: 开裁定/审计战役前；口径争执时；判定某条规则该留该改该退役时
+    rules:
+    - TRAE-024
+    - TRAE-025
+    - TRAE-026
+    - TRAE-027
+    - TRAE-041
+    - TRAE-042
+    - TRAE-043
+    - TRAE-044
+    - TRAE-060
+    - TRAE-081
+    dual_pointers:
+    - TRAE-087
+    sop:
+    - sop/governance_sop/adjudication_routing_policy.md
+    - sop/governance_sop/agent_constitution_l0.md
+    - sop/governance_sop/agent_constitution_legacy_v1.md
+    - sop/governance_sop/alignment_checklist.md
+    - sop/governance_sop/commit_guide_sources/index.md
+    - sop/governance_sop/commit_navigation_playbook.md
+    - sop/governance_sop/construction_ledger_method_policy.md
+    - sop/governance_sop/deep_adjudication_method_policy.md
+    - sop/governance_sop/index.md
+    - sop/review_sop/deep_review_policy.md
+    - sop/review_sop/defect_pattern_checklist.md
+    - sop/review_sop/index.md
+    - sop/review_sop/rule_disposition_policy.md
+    policies:
+    - workspace_governance_policy.md
+    casebooks:
+    - ruling_registry.yaml（裁定册）
+    - casebook_registry.yaml（案例册）
+    - alignment_checklist.md
+    intermap: —
+  S1:
+    name: 开工前置
+    when_to_read: 写第一行业务代码前；新建文件/模块前；领任务卡时
+    rules:
+    - TRAE-002
+    - TRAE-003
+    - TRAE-034
+    - TRAE-035
+    - TRAE-056
+    - TRAE-065
+    - TRAE-077
+    - TRAE-087
+    dual_pointers: []
+    sop:
+    - sop/library_sop/blood_flesh_cataloging_sop.md
+    - sop/library_sop/index.md
+    - sop/library_sop/offzone_retrieval_boundary_sop.md
+    policies: []
+    casebooks:
+    - creation_token 账本
+    - module_translation_registry.yaml
+    intermap: —
+  S2:
+    name: 施工建造
+    when_to_read: 新模块施工前；前端拆件前；文档定稿前
+    rules:
+    - TRAE-004
+    - TRAE-005
+    - TRAE-010
+    - TRAE-011
+    - TRAE-012
+    - TRAE-013
+    - TRAE-014
+    - TRAE-015
+    - TRAE-016
+    - TRAE-017
+    - TRAE-028
+    - TRAE-029
+    - TRAE-030
+    - TRAE-032
+    - TRAE-033
+    - TRAE-036
+    - TRAE-037
+    - TRAE-038
+    - TRAE-046
+    - TRAE-047
+    - TRAE-052
+    - TRAE-054
+    - TRAE-055
+    - TRAE-058
+    - TRAE-061
+    - TRAE-080
+    - TRAE-082
+    - TRAE-083
+    - TRAE-086
+    dual_pointers:
+    - TRAE-001
+    sop:
+    - sop/construction_sop/construction_workflow_policy.md
+    - sop/construction_sop/document_review_and_optimization_policy.md
+    - sop/construction_sop/frontend_component_split_policy.md
+    - sop/construction_sop/index.md
+    - sop/construction_sop/lane_construction_discipline_policy.md
+    - sop/construction_sop/task_card_work_order_policy.md
+    policies:
+    - c3_translation_pipeline_ruling.md
+    casebooks:
+    - defect_pattern_checklist.md（缺陷模式册）
+    - fms_deadref_baseline.yaml
+    intermap: 图14 施工流（map_build/fig14_construction/）
+  S3:
+    name: 提交落地
+    when_to_read: 提交前；冲突/死信/接管时；清理 worktree 前
+    rules:
+    - TRAE-064
+    - TRAE-066
+    - TRAE-067
+    - TRAE-068
+    - TRAE-069
+    - TRAE-070
+    - TRAE-071
+    - TRAE-072
+    - TRAE-073
+    - TRAE-074
+    - TRAE-075
+    - TRAE-076
+    - TRAE-078
+    - TRAE-079
+    - TRAE-084
+    - TRAE-085
+    dual_pointers:
+    - TRAE-001
+    sop:
+    - sop/ops_sop/emergency_runbook.md
+    - sop/ops_sop/index.md
+    - sop/ops_sop/merge_conflict_resolution_policy.md
+    - sop/ops_sop/worktree_cleanup_policy.md
+    - sop/governance_sop/commit_navigation_playbook.md
+    policies:
+    - branch_strategy_policy.md
+    - parallel_session_coordination_policy.md
+    casebooks:
+    - death_cases_registry.yaml（死信册）
+    - landing_journey_registry.yaml
+    intermap: 图11 提交链（map_build/fig11_delivery/）
+  S4:
+    name: 数据供给
+    when_to_read: 数据回灌/坏数据修复/表结构变更/判重/缺口处置前
+    rules:
+    - TRAE-045
+    - TRAE-050
+    - TRAE-059
+    - TRAE-062
+    - TRAE-063
+    dual_pointers:
+    - TRAE-051
+    sop:
+    - sop/data_ops_sop/data_ops_policy.md
+    - sop/data_ops_sop/data_source_onboarding_sop.md
+    - sop/data_ops_sop/index.md
+    - sop/data_audit_sop/index.md
+    - sop/data_audit_sop/industry_chain_data_audit_policy.md
+    policies:
+    - graph_quality_standard.md
+    - expectation_consumption_design_policy.md
+    casebooks:
+    - 回填台账（daily_valuation/stock_basic）
+    intermap: 图12 数据链
+  S5:
+    name: 挖矿研究
+    when_to_read: 全网调研/找方案/建策略前；新域开工挖骨架前
+    rules: []
+    dual_pointers:
+    - TRAE-050
+    sop:
+    - sop/mining_sop/factor_mining_sop_policy.md
+    - sop/mining_sop/index.md
+    - sop/mining_sop/indicator_mining_sop_policy.md
+    - sop/mining_sop/mining_sop_policy.md
+    - sop/mining_sop/skeleton_mining_policy.md
+    - sop/mining_sop/trading_decision_map_pathfinding_policy.md
+    - sop/mining_sop/vertical_map_mounting_policy.md
+    policies: []
+    casebooks:
+    - experiment_registry.yaml
+    intermap: —
+  S6:
+    name: 业务决策
+    when_to_read: 回测施工/策略入库/E4 正考前；改判据/建蓝图锚前
+    rules:
+    - TRAE-051
+    dual_pointers: []
+    sop:
+    - sop/backtest_system_sop/exam_policy.md
+    - sop/backtest_system_sop/index.md
+    - sop/backtest_system_sop/README.md
+    - sop/backtest_system_sop/sop_a_full_map_orchestration.md
+    - sop/backtest_system_sop/sop_b_node_loop.md
+    - sop/backtest_system_sop/sop_c_strategy_library_intake.md
+    - sop/backtest_system_sop/sop_d_run_archive_naming.md
+    - sop/trading_decision_map_sop/index.md
+    - sop/trading_decision_map_sop/tdm_consumption_policy.md
+    - sop/trading_decision_map_sop/trading_decision_map_layering_policy.md
+    policies:
+    - strategy_intake_acceptance6_evidence.md
+    casebooks:
+    - backtest_backlog.yaml（预注册 backlog）
+    - trial_ledger_registry.yaml（试次册）
+    intermap: TDM 地图（docs/02_enterprise_architecture/10_trading_map/）
+  S7:
+    name: 运维自动化
+    when_to_read: 系统应急时；排班/插单前；清理前
+    rules:
+    - TRAE-048
+    - TRAE-049
+    - TRAE-053
+    dual_pointers: []
+    sop:
+    - sop/ops_sop/emergency_runbook.md
+    - sop/ops_sop/index.md
+    - sop/ops_sop/merge_conflict_resolution_policy.md
+    - sop/ops_sop/worktree_cleanup_policy.md
+    - sop/automation_sop/automation_crew_policy.md
+    - sop/automation_sop/index.md
+    policies: []
+    casebooks:
+    - takeover_ledger.jsonl（接管台账）
+    - process_reaper_keep.txt
+    intermap: 图13 日周期（map_build/fig13_daycycle/）
+  X:
+    name: 横切轴
+    when_to_read: 任何环节都生效：写文件/调 LLM/碰密钥/输出结论时
+    rules:
+    - TRAE-001
+    - TRAE-006
+    - TRAE-007
+    - TRAE-008
+    - TRAE-009
+    - TRAE-018
+    - TRAE-019
+    - TRAE-020
+    - TRAE-021
+    - TRAE-022
+    - TRAE-023
+    - TRAE-031
+    - TRAE-039
+    - TRAE-040
+    - TRAE-057
+    dual_pointers:
+    - TRAE-062
+    - TRAE-065
+    - TRAE-077
+    sop: []
+    policies: []
+    casebooks:
+    - ruling_registry.yaml
+    - casebook_registry.yaml
+    intermap: —
+purpose_tags:
+- tag: T1
+  label: 新东西上户口
+  plain_zh: 新建的东西必须登记姓名籍贯，否则门禁见一次拦一次
+- tag: T2
+  label: 施工队还活着吗
+  plain_zh: 证明施工队没死，死了别让它继续代表你说话
+- tag: T3
+  label: 规则谁在执行
+  plain_zh: 每条规则都要说得清谁在替它出手，否则就是纸上法律
+- tag: T4
+  label: 坏了谁发现
+  plain_zh: 每个环节都挂着一本病历本，环节病了翻得到档案
+- tag: T5
+  label: 一个东西只有一个真源
+  plain_zh: 同一事实只许一个家，其他副本都是快照
+- tag: T6
+  label: AI 不吹牛
+  plain_zh: AI 说的每句话都要能回到真源，不能靠记忆拍脑袋
+- tag: T7
+  label: 钥匙不外泄
+  plain_zh: 密钥权限走专道，裸拿硬编码都是开门揖盗
+- tag: T8
+  label: Owner 看得懂
+  plain_zh: 非开发的人一遍能读懂这资产干嘛的、何时用它
+- tag: T9
+  label: 改坏能回来
+  plain_zh: 任何动作都要留得下回头路，删之前先想好怎么活过来
+- tag: T10
+  label: 累犯必须机械化
+  plain_zh: 同一个错犯第三次，就该把它变成机器判据而不是又写一遍提示词
