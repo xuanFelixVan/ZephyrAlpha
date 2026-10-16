@@ -5338,3 +5338,121 @@ rows:
     mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
   fails:
   - '未支持判据键（机判面待扩，fail-closed）: [''gap_k3_vs_k0_5d_max'']'
+- card_id: TDM-E-L9-A01/calibration/03_分钟已实现波动
+  node_id: TDM-E-L9-A01
+  run_id: p07c-1017-03-l9-a01-03
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  - recovery
+  date: '2026-10-17'
+  metrics:
+    ic_mean: -0.06391761724040428
+    ic_ir: -0.46133498310142135
+    mono_spearman: null
+    regime_ic:
+      bull: -0.06974323938763924
+      bear: -0.06755919914071835
+      recovery: -0.0591562724301745
+    oos_ic: -0.06036188510250912
+    n: 893
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - half_life_note
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0639 < 0.02
+  - ic_ir -0.461 < 0.3
+- card_id: TDM-E-L2-02-2/calibration/02_板块见顶预警三信号
+  node_id: TDM-E-L2-02-2
+  run_id: p07a-1017-02-l2-02-2-calibration-02
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bear
+  - rebound
+  date: '2026-10-17'
+  metrics:
+    ic_mean: 0.04207784821389372
+    mono_spearman: 0.6242424242424242
+    n: 996
+    regime_ic:
+      bear: -0.028605438304385986
+      rebound: 0.0055352264019009195
+    oos_ic: 0.12516681316942546
+    ic_ir: null
+    net_bucket_medians:
+    - -0.003054
+    - -0.004326
+    - -0.002746
+    - -0.003807
+    - -0.003207
+    - -0.004186
+    - -0.001766
+    - -0.001975
+    - -0.002313
+    - -0.002229
+    round_trip_cost_bp: 25.0
+    signal_turnover_daily: 0.8213
+    n_buckets_used: 10
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      ic_ir_min: ic_ir 无从评估（series 路恒 None／panel 路 NaN＝ICIR 面未接，judge 同时跳过加败）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - precision_floor
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - 'regime_sign_flip {''bear'': -0.028605438304385986, ''rebound'': 0.0055352264019009195}'
+- card_id: TDM-E-L3-03/ablation/02_双池代理合成
+  node_id: TDM-E-L3-03
+  run_id: p07a-1017-02-l3-03-ablation-02
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-17'
+  metrics:
+    ic_mean: -0.02328400872913283
+    ic_ir: -0.19428287778594677
+    mono_spearman: null
+    regime_ic:
+      bull: -0.022108362520677036
+      bear: -0.019176709273240684
+    oos_ic: -0.02222539465746636
+    n: 1621
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - pool_correlation
+    - regime_stability
+    - response_monotonicity
+    - single_vs_double
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0233 < 0.02
+  - ic_ir -0.194 < 0.3
