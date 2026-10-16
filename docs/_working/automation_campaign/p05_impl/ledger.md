@@ -709,3 +709,65 @@ cd /d/ZephyrAlpha/.worktrees/st-qoder-p05-1015-05 && git --no-pager diff --cache
 - ⚑**本班自犯②＝"三把尺总耗时 <1 分"是把冷缓存首跑抽样当全集**＝本班 §3-2 与 §7-③/⑤ 引的 12.1s／12.3s 只是首两次运行的 bash `time` 读数，重跑实测＝`zero_drift_scan 36.7s ＋ real_change_scan 2.3s ＋ substance_scan 19.1s ＝ 58.1 秒`，另加 `preflight2 6.9s／preflight 3.0s`＝五把合计 68.0 秒。⇒ "<1 分"改成"58.1 秒（含四／五把尺全链约 68 秒）"，下一班排产请按 1-2 分钟预算而非"零成本"。
 - 修法与留痕＝两册**尚未入袋**（本班盘＝唯一面），故按在册"改数不改结构"在原地改这 7 处串（每处断言恰 1 命中，改后残留旧串＝0），并把旧读数逐字留在本节不删；游标行仍按"原地替换四键"口径写。
 - 入册教训（给下一班的尺面提醒，非新闸）＝①**截断的汇总行不能当读数来源**——凡"计数类"自述必须来自本班亲眼见到的那一行原文，`tail`/`head` 截过的输出要重跑取全（在册律 [[observer-created-signal-grids-and-tail-counts]]／[[rglob-counts-dirs-empty-shell-false-green]] 的同型复发）；②一次性脚本**禁止硬编码"要追加哪一节"**（本班 `append2.py` 因此把 §5 重复追加一次，已整块裁回并在 §6 留痕）。
+
+## 10-17 00:2x · 班次 04（st-qoder-p05-1016-04）领单＝P0 首件反捞续投（六腿合一尺对现 HEAD 复跑，34 件三袋）＋次件 ALGO-NOTE-SYNC 族承接（⑩1016-05 件2）
+
+### 0 冷启动·防重入·水位·租约（date 实测，非体感）
+
+- 23:50:52 首命令＝Python 3.12.8 ✓；`setup_dev_env.py --check`（00:0x 复量）＝usercustomize 在册 points to D:\ZephyrAlpha ✓；`lock_files.py cleanup`＝"CLEAN — 无死锁需要清理"（对照 03 班 CLEANED 10 枚，本班进场零死锁）。
+- 进场水位＝`probe_system_watermark()` 直读（00:09:09）＝commit_pct **85.56**／cpu_pct 0.0／`degraded=False`，对照 03 班进场 95.11／96.1／True＝本班比上班宽松，故单袋上限取 12 件（上班 14→本班 12 不扩，保持返捞面稳态）。
+- 防重入三证（判前任 03 班已停手）＝①03 班游标已写"下一班（04）领单序列，按序执行"且其 §7 收班节逐节齐；②03 册袋已落 HEAD＝`git show HEAD:docs/_working/automation_campaign/p05_impl/ledger.md | grep -c "班次 03（st-qoder-p05-1016-03）"`＝**1**（承载提交 `81865b5d58`），盘面 711 行与 HEAD 面 diff 全空＝无在途册面；③03 三件代码袋**非 dead**＝`pending/q-...-03-0001/0002/0003` 逐一读 `dead_reason=None`、`attempts=None`，故本班首务（核四态）结论＝"仍排队、无因可修、禁重投"。
+- ⚑03 班心跳守护 PID **30124** 本班仍在（`Get-CimInstance` cmdline 逐字认人）＝03 按在册"袋未落地不注销"自留续期，本班**不代杀**，交其尾袋落地后的当班按其 PID 收（禁按镜像名批杀在册律）。
+- 本班租约＝`register(sid, pid=0, held_files=ledger+checkpoint)` → `claim_file(SID, file)` **2/2 True** → 心跳 daemon PID **9568** → `register_heartbeat_keepalive(root, sid, reason, requested_by, ttl=7200)` 回读 granted_at 1792166549／expires_at 1792173749。
+- ⚑本班自犯①＝`SessionRegistry.claim_file` 参数序写反（签名=(session_id, file_path)，我按 (file, sid) 连调两次）＝当场生成两条以册路径为 session_id 的伪会话；处置＝`get_session(<伪id>)` 复量 absent（未落册面）＋`lock_files.py check` 两册 FREE＋`.ailocks/registry.json` 全 20 条锁面 owner 零命中本班 ⇒ 判定＝零污染、无需回收，但**这是自造条目，如实留痕**。之后按正确参数序重claim 才得 2/2 True。
+- ⚑本班自犯②＝`bagA.txt` 由 python `open('w')` 写盘带 CRLF，`tr '\n' ' '` 后路径尾带 `\r`，`git add` 报 `fatal: pathspec '...py?' did not match any files`（rc=128）＝零入库、当场暴露；处置＝三张清单统一 `tr -d '\r'` 出 `.lf` 面再暂存，此后所有清单消费一律走 `.lf`。
+- 零 worktree（TRAE-079 Phase 2）＝本班未调用任何工棚/工作树启动入口，全程主区＋`--allow-non-worktree`；平台随会话注册自建的 `.aidrafts/<sid>` 影子树本班不清理，按在册交清理专班。
+
+### 1 首件＝反捞续投三袋 34 件（六腿合一尺，对现 HEAD 复跑 45.9 秒）
+
+- 尺＝`.runtime/tmp/st-qoder-p05-1016-04/ruler.py`（一次性只读，随班删）＝把 03 班"三把尺＋preflight 六维"合并为单进程一趟，口径逐条承 03 班次节 §1/§5，不新造判据。袋集合＝四态目录 ∪ `dead_archive*` 内 `session_id` 含 `x2` 的袋，按"同路径取 created_at 最新袋"收敛。
+- 现测读数（00:07:28）＝`bags=94 unique_paths=452 zero_drift=365 six_leg_pass=95`；六腿＝①`base_blob==现 HEAD blob`（一趟 `git ls-tree -r HEAD` 建全树 blob 表，免逐件起进程）②盘面字节==袋 blob **逐字节**（不做 EOL 归一，归一腿另存 `rescue.jsonl`）③无他席 claim（`.ailocks/registry.json` 按 `expires_at>now` 取活锁）④该件不在任何 pending/processing 在途袋面 ⑤对 HEAD 全量变更行 strip 后一律以井号开头 ⑥袋面新指向路径逐条 `os.path.exists`。
+- 失败腿分账（这四项就是"为什么不能批投"的可读答案）＝leg5 含非注释行 **215**・leg4 在他席在途袋面 **41**・leg6 新指向查无 **42**・leg2 盘≠袋 **5**。
+- ⚑**负对照已过**＝六腿全过 95 件中"袋字节==HEAD 字节"的 noop 件＝**0**（⇒ 这 95 件全是真增量，尺不是恒绿）；leg4 命中 41 枚恰含 03 班已投的 40 件（＋1 件他席），⇒ 该腿有判别力且自动挡住同件双袋。
+- 60 件 `src/zephyr` 候选本班**不自取**（承 03 班 §3-1(c) 与指令卡④：跨 ai_layer/intelligence/plan_engine 多域，须⑩归属派单）。
+- 本班投袋＝**3 袋 34 件**（域分组，袋内零同件）＝`q-20261017-st-qoder-p05-1016-04-0001`（files=11，scripts 混合域：ai_layer/automation/backtest/ch/entity_graph 剔后/sector_line/两枚单件脚本）／`-0002`（files=12，governance 剩 4＋matrix_rescued_tmp 8）／`-0003`（files=11，scripts/tasks 全 .ps1）。三袋均 `--enqueue --allow-non-worktree --allow-overlap --adopt-prior-work`，前两袋另带 `--allow-multi-domain` 留痕。
+- 投前逐件语义复核＝`verify.py` 量"新增行含非 ASCII 字符数"与"非注释新增行数"，并另眼验两件（`scripts/ch/waste_table_scanner.py` 仅 `[BLUEPRINT]` 行改指归档区、`register_ollama_serve_task.ps1` 仅注释证据路径改指归档区）＝纯锚点级。matrix_rescued_tmp 8 件在 HEAD 即已跟踪（leg1 成立才入选），本班不动其存废。
+- 归属声明＝袋字节全部取 x2 席袋原样，本席零改写零新增＝代投反捞；落地后以 `git log -1 --name-only` 核实真实归属。
+- 本班窗内落地判据**未达成**（00:22:58 现测全局 pending 35／processing 1，03 三袋位 17/19/20、本班三袋位 32/33/34；`git show HEAD:scripts/ch/waste_table_scanner.py | grep -c _working_cleared`＝0）⇒ 交付判据交下一班核，本班按在册不 unregister。
+
+### 2 次件＝ALGO-NOTE-SYNC 族承接（⑩1016-05 件2 路由本席，本席=该族唯一合法施工方）
+
+- 在册处方真源＝`scripts/governance/wave1b/dead_letter_prescriptions.py:493-500`：fix＝"实现代码被触碰 ⇒ 同袋改对应节点 `algo_note_zh`，或写 `note_confirmed: <YYYY-MM-DD>`（确认语义仅在说明未变时合法）"，forbid＝"禁用 note_confirmed 掩盖真实算法变更；禁只改代码不改说明"。
+- 族面积现测（`family_census.py`，含 dead_archive 合并面）＝全池该族死袋 **25 枚**／唯一实现件命中 **13** 个（`scripts/backtest/core/walk_forward.py` 5 枚最多，另 `ex_core/price_cage.py`・`plan_engine/judgment_ledger.py`・`position/.../position_checkup_orchestrator.py` 各 3）；地图 `module_ref` 去重 **118** 个；本班反捞候选 365 件里仅 **4** 件命中、六腿全过 95 件里仅 **2** 件（`scripts/entity_graph/equity_penetration.py`、`src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py`）⇒ **族面是有界的，不是整池堵**。
+- 门执行体直接复现（不走推断，`gate_probe.py`/`gate_probe2.py` 调 `check_algo_note_sync` 本体）＝①CASE1 只投该码件、地图面零改动 → `blocked=True`，消息点名 `TDM-E-L9-G3（module_ref=…equity_penetration.py）`；②CASE2 负对照＝同袋投 `scripts/ch/waste_table_scanner.py`（非 module_ref）→ `blocked=False`，⇒ 尺有判别力；③CASE3v2＝在 **G3 节点块内**第 **7170** 行把 `note_confirmed: 2026-09-23` 改为 `2026-10-16/17` → `blocked=False`＝**族的唯一合法出口实测可通行，且只需一行地图面**。
+- ⚑**本班自犯③（差点误报门坏）**＝CASE3v1 我先按"文件里第一个 `note_confirmed` 行"（第 805 行，属别的节点）造补丁，门仍报红，我当时写的结论是"note_confirmed 走不通"；复核后定位＝**本席锚点选错**，不是门判据失效（门用行号→node_id 精确归因，改别的节点自然不满足 G3）。旧案卷逐字留在本节，正解见 CASE3v2。教训＝判"闸不吃修法"前先量"我改的那一行落在哪个归属块里"。
+- 本班**不当班投该地图面**，理由实测三条齐：①`config/trading_decision_map.yaml` 现被两枚在途袋持有（`q-20261016-st-chfinalw3-20261016-0007` 袋内地图 8029 行／含 `note_confirmed: 2026-10` 6 处；`q-20261016-st-infoaxis-land-20261014-0005` 8028 行／5 处）；②盘面 8029 行 vs HEAD 8018 行＝盘上已含他席 11 行未落地内容，本班若按盘面入袋＝把他人未落地条目随自家袋提交＝归属篡改（在册律）；③按 HEAD 重基只改一行虽字节干净，但落地收尾会把盘上那 11 行工作面拍回＝同族回退弹。⇒ 结论＝**待地图面 free（盘==HEAD ∧ 零在途袋）后由一班单独承袋**，本班交精确补丁位点不交半截改动。
+- 五族面其余四族＝本班零触碰（ALGO-FLOW-LINK／MAP-ALIGNMENT／DEPGRAPH-ENFORCEMENT／TRANSLATION-COVERAGE 未改一字节），故无"改哪面·为何·回退命令"登记项；本班改动的只有 §1 的 34 件注释锚点与本席两册。
+
+### 3 转单段（→05 班／⑩／⑥）
+
+1. **→⑤ 05 班首件**＝同谓词续投，`scripts/governance` 剩面已不多了：本班六腿全过面里 governance 仅 4 件（已被本班 -0002 吃掉），下一班复跑请先重取 HEAD（HEAD 每 3-5 分动一次，本班 22:5x 与 00:0x 读数已不同形）；可投面优先次序建议＝`src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py` 与 `scripts/entity_graph/equity_penetration.py` **两件必须与地图一行 note_confirmed 同袋**（判据见本席 §2），否则必死于 ALGO-NOTE-SYNC；其余非 module_ref 件可继续按六腿批投。
+2. **→⑩（族承接裁定，请当班拍）**＝三条路只有三条：(a) 给"地图面独占窗口"——某一刻起令各席停投含 `config/trading_decision_map.yaml` 的袋，由⑤席一趟把 13 个命中件的 note_confirmed/algo_note_zh 补齐；(b) Owner 定 X2/b4 该族件**停投**（则 25 枚死袋可判 absorbed 销账）；(c) 维持现状＝每班各自撞门再死。本席实测面积＝118 个 module_ref／13 个命中件，(a) 的工量是"13 件 × 每节点一行"，不是整册重写。本席不自裁、不改门判据（Owner 在册正解＝改喂给闸的输入指向，禁弱化／禁白名单／禁新豁免）。
+3. **→⑩（口径澄清，承 03 班 §3-3）**＝本班 `bags=94／unique_paths=452／zero_drift=365／six_leg=95` 与 03 班"446 唯一路径／360 候选"差 6 路径 5 候选＝差额来自本班排除集为空（03 班排除已落地的 `ibt_runner.py` 等 8 件）且 leg1 判据同形；请派单按"六腿"记面，别再并列 93/360/365 三套数。
+4. **→⑥ 制卡席（第三班复证）**＝卡面 `impl_gap` 仍是自然语言四要件，无 `gap_id＋关闭谓词` 机读面 ⇒ 本班 34 件落地对翻卡零贡献，**本班零翻卡**如实报；本班新增一条可用证据＝反捞候选 365 件与 `blocked_on_impl` 卡面的可连边只能靠"文件名出现在卡面"这种弱尺，建议 ⑥ 席把执行器路径与闭合谓词结构化。
+5. **→⑫／运行班（观测面，非本席诉求）**＝本班窗口内 pending 由 25→35、03 班三袋 position_ahead 由 10/12/13→17/19/20（＝排空速度落后入袋速度的直接读数，位次数会倒退）；`heartbeat` pid 文件面本班 00:0x 起 daemon 后 `cat` 仍查无（keepalive grant 回读里 daemon_pid=49648 而进程表认的是本班自起 9568）＝两处 pid 记法不同源，请核（本席不动他人锁与守护）。
+
+### 4 [BLOCKER] 行
+
+- `[BLOCKER]` 2026-10-17|⑤席1016-04|流程问题|ALGO-NOTE-SYNC 族的唯一合法出口要求"地图面与实现件同袋"，而地图正是全仓最热的在途件（本班实测两枚他席袋持有＋盘面比 HEAD 多 11 行）＝按盘面随袋会归属篡改、按 HEAD 重基会拍掉他席工作面，两难无解只能靠串行化窗口|证据＝本班 `gate_probe2.py` 三案读数（CASE1 blocked=True／CASE2 负对照 False／CASE3v2 改 G3 块内第 7170 行 note_confirmed 后 blocked=False）＋`family_census.py`（死袋 25 枚／命中件 13／地图 module_ref 去重 118）＋两枚在途袋 blob 行数 8029/8028 与 `note_confirmed: 2026-10` 计 6/5|要⑩当班在 §3-2 三选一（建议 (a) 独占窗），禁各席继续自行撞门；本席不改门判据|高
+- `[BLOCKER]` 2026-10-17|⑤席1016-04|工具缺陷|`SessionRegistry.claim_file` 参数序=(session_id, file_path) 与 ⑩ 在册工单里"claim_file <file> <sid>"的书写习惯相反，传反不报错反而**自动注册一条以文件路径为 session_id 的伪会话**，把注册表面污染成看似在飞的死会话|证据＝本班 stdout 原文两行 `claim_file auto-registering session=docs/_working/.../ledger.md`＋事后 `get_session` 两面 absent／`.ailocks/registry.json` 20 条锁零命中|要⑤席下法＝把该 API 参数序写进本席指令面；请⑫评估 auto-register 是否应改为未知 session 直接 ValueError（现为静默建档）|中
+- `[BLOCKER]` 2026-10-17|⑤席1016-04|工具缺陷|python `open('w')` 生成的清单文件带 CRLF，下游用 `tr '\n' ' '` 拼 pathspec 时行尾 `\r` 不可见，`git add` 报 `pathspec '...py?' did not match any files`（rc=128），容易被误读成"件不存在/盘面无该件"|证据＝本班首次 stage 失败原文＋`od -c` 尾字节读数＋改走 `.lf` 面后同命令 stage 计数=11/12/11|要各席＝跨班清单一律 `newline=` 显式 LF 或落盘后 `tr -d '\r'`；本席已按后者处置并留痕|低
+- `[BLOCKER]` 2026-10-17|⑤席1016-04|判据缺失|本班 34 件落地零翻卡（第三班复证）＝卡面无机读 gap 闭合谓词|证据＝本班 §3-4|要⑥席加 `gap_id＋关闭谓词` 结构化字段|低
+- `[BLOCKER]` 2026-10-17|⑤席1016-04|无|其余例行项零问题＝GPU 未 acquire（零 GPU 作业）／零子代理＝零孤儿／零自建 worktree 入口／reaper 在岗／本班零新建 .py 入库（尺与探针全在 `.runtime/tmp` 随班删）／五族面除 §2 复现外零改动|证据＝§0 与 §2|—|低
+
+### 5 收班次序（小步化，逐件已当场做①②③④，本节为班尾终核）
+
+- ①release＝本班三件代码袋 claim 与两册 claim 一律由本班自跑 `git_commit.py --release-only` 释放（承 10-16 更正律"入队不代释"，本班实测 `ENQUEUE-RENEW: claim 续租 0/11 件` 三行原文为证），收工尺＝`lock_files.py list` 面 p05-1016-04 命中 0。
+- ②心跳注销＝先 `SessionRegistry.unregister('st-qoder-p05-1016-04')` 再读回 `heartbeat.jsonl` 末行须 `status:"exited"`；>60 秒仍 alive 才按 PID **9568** 精确终止（禁按镜像名批杀）。⚑03 班的 PID 30124 由 03 尾袋落地后的当班收，本班不代杀。
+- ③耗时＝首命令 23:50:52 → 本行写时刻（date 现测见 §5 末行）；带时刻写数、不写无时刻终值＝在册"追加型终值自述落笔即假"律。分账＝冷启动与防重入取证约 8 分・尺重建与复跑 46 秒・三袋投出约 5 分・族面复现与门探针约 6 分・本册追加与游标推送＝此刻。
+- ④[BLOCKER]＝本班次节登记行 **5** 条（高1／中2／低2）；`grep -c "\[BLOCKER\]"` 在本班新增 62 行里的命中数＝**7**（＝5 条登记行＋节标题"### 4 [BLOCKER] 行"＋本行自身），本班先前落笔写成"＋5"＝把"登记条数"当成"grep 命中数"两口径混写，已当场按现测改正（在册律＝计数落笔前现量）。
+- ⑤自清＝`.runtime/tmp/st-qoder-p05-1016-04/`（`ruler.py`／`verify.py`／`family_census.py`／`gate_probe.py`／`gate_probe2.py`／`probe_map.py`／`probe_map_face.py`／`reg.py`／`reg2.py`／`ka.py`＋`rescue.jsonl`／`six.txt`／`bagA-C.txt(.lf)`／`msgA-C.txt`／`enqA-C.out`）随册袋投出后整目录删除；尺口径全量写入 §1/§2 可复跑（实测 45.9 秒）；项目根零临时件。
+- ⑥GPU 还牌＝本班未 acquire（零 GPU 作业），如实免。
+- ⑦后台子任务清点＝零 spawn 子代理 ⇒ 零孤儿；本班唯一后台存活＝自家心跳守护 PID 9568（按②收）＋一条本班起的 reaper `--status` 只读巡检（后台输出文件，按 §5 末行读完后即为其收口）。
+- ⑧零 worktree 确认＝本班未调用任何工棚/工作树启动入口；`.aidrafts/st-qoder-p05-1016-04` 影子树系平台随会话注册自建（在册：非本席所建、本席不自删），历史遗留 `.worktrees/st-*` 同样未动＝交清理专班。
+
