@@ -348,3 +348,11 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。旧案全文在 `
 ⚑本班**零 [BLOCKER] 新增**（本补记不登问题，四条已随首袋入落地面＝`git show HEAD:…ledger.md | grep -c "\[BLOCKER\] 2026-10-17|②1017-04|"` 现读 4）。
 
 `P02-1017-04-CP-B`（本补记节独有标记，落地面核验谓词须按行首形态＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c '^\`P02-1017-04-CP-B\`'` 应为 1；上一节各行逐字仍在）
+
+**2026-10-17 05:1x 游标补录（P02-1017-04-CP-C，逐字追加不改上文，含对本班件 6 ③ 的更正，旧文留上不抹）**＝
+①**耗时更正**＝本班件 6 ③ 写的"03:50:16 进场→04:16:39 写账＝26 分 23 秒（未超 60 硬窗）"对**写账那一刻**成立，但**整班实测到 05:13:59 现读＝1 小时 23 分 43 秒，超窗**；超因分账＝例行 26 分（起手对账＋探针＋九块主批＋写面）＋**返工/等待 57 分**，两袋各排 drain＝首袋 04:23:03 入队→04:28:46 done、末袋 04:50:23 入队→04:57:07 done；队列 depth 现读 pending 16/processing 1，head 是他席 `st-grandc`；另＝主批九块墙钟 999 秒，rb1 的 elapsed=115s 于本班 04:01:13 那次轮询已可见⇒发起≈03:59（本班未单独落笔发起时刻，此处给反推值不装作现测）。⚑按在册"追加型台账里计数与终值自述＝落笔即假"，本班不再给任何"末袋/共 N 袋"式终值。
+②**收班①②⑤ 终态读数（两袋皆 done 后执行，非计划）**＝release 回执 `RELEASED: 2 files (verified)`＋`BATCH-SUMMARY released=2 denied=0`；②按在册三步闭环＝`psutil` argv 逐元断言（`heartbeat_daemon` ∧ sid 全等元素）命中**恰一枚**＝pid **55080** → `terminate()` 的 `wait()` 回 **15（SIGTERM）** → `revoke_heartbeat_keepalive(ROOT, sid, reason=…, requested_by=…)` 回 `None`（本班未 `register_heartbeat_keepalive` 过＝无 grant 可撤，本班**不宣称落了 revoke 事件**）→ `unregister(sid)` 回 **True**；**三证尺**现读＝argv 复扫 **0 枚**＋分片 `.runtime/session_registry/st-qoder-p02-1017-04.json` **exists=False**＋`heartbeat.jsonl` mtime **05:11:07→05:11:07 冻结跨 95 秒（>30 秒节拍）**；自家死 pid 文件 `.runtime/locks/heartbeat_st-qoder-p02-1017-04.pid` 已删（属本班号段＝收班即清，他人号段不代删）；保活令牌 CAS 摘自家一枚＝`process_reaper_keep.txt` **443→442 行**（delta −1，`sid_still False`，他席 15 枚 `st-qoder-p*` 令牌完好未动）；⑤tmp 目录 `.runtime/tmp/p02_1017_04/` 已整删（现读 0 命中），主区 `git diff --numstat HEAD` 两件**空返回**＝盘==HEAD 全落地，项目根零本席散落件；⑧`.worktrees/` 对本席 sid 命中 **0**＝零 worktree。
+③**本补录袋＝本班第三次网关调用**，故②的复做（若入袋时代起了新守护）与 release 将在该袋 done 之后由本班或下班按同款三步＋三证尺执行；下班若见本席 `heartbeat.jsonl` 行数继续增长＝运行面在替前任写，**勿判本班谎报**（承 CP-B 同条）。
+④⚑**报⑩线长一条（禁自行清理面）**＝本班值守内（05:1x 收口那条命令）shell cwd 曾被恢复到 `.worktrees/st-m1-lane-a-20260923`（09-23 旧车道壳仍在盘上，harness 自行回正到主区），本班**未触碰未清理**＝按本卡"发现历史遗留 `.worktrees/st-*` 报⑩交清理专班"这条只登记不处置。
+
+`P02-1017-04-CP-C`（本补录节独有标记，落地面核验谓词按行首形态＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c '^\`P02-1017-04-CP-C\`'` 应为 1；上两节各行逐字仍在）
