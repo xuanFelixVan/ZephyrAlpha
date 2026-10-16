@@ -198,3 +198,23 @@ flags:
     queue_backlog: 150
     description: "九面遥测预算阈值（root-cure-plan §3-L5 红线有警，st-diskp0-20261015）：dead 袋数/tmp GiB/worktree 车道数/主区 staged+untracked 数/quarantine GiB/sessions 目录数/audit GiB（gate_audit+audit 合计）/.runtime 根散件数/队列 pending+dead 数；任一面读数>=阈值即超限告警（判据=value < budget 为健康）；enabled:false=出厂 OFF 只测不告警，开闸属 Owner 门位"
     implementation_status: "gated_mvp"
+
+  # [st-diskp0-20261015 接线队 A，st-wirea-1016] reaper 三条自动化维护线（root-cure-plan §7
+  # 重校准裁定①②+L3 补件）：挂点=process_reaper._run_safety_wires 既有计划任务扫描循环
+  # （禁新常驻进程，宪法 §9.3）；实现=zephyr.shared.maintenance.reaper_auto_wires；三线语义
+  # 真源各自工具（dead-archive/archive/git 本体），判定逻辑零复制。裁定语义禁改面：死信
+  # age=7 天（--days 7，Kafka 168h 同频）/git gc 自带 2 周宽限（禁 --prune=now，深清=Owner）/
+  # 死车道判型=仅 zero_loss 自动收（needs_rescue 只告警）。回滚=对应键 enabled:false（下一轮
+  # reaper 即停，无需重启——reaper 每 10min one-shot 新进程读盘）。
+  dead_archive_auto:
+    enabled: true
+    description: "死信自动归档线（裁定②维持照准）：commit_queue.py dead-archive --days 7 --content-level --execute，age>7 天袋才归档（fail-closed 语义零改，mv 可逆+manifest 反向还原）；审计=.runtime/audit/dead_archive_wire.jsonl"
+    implementation_status: "gated_mvp"
+  git_gc_auto:
+    enabled: true
+    description: "git gc --auto 例行维护线（裁定①例行半）：git 内建 2 周宽限+gc.auto 阈值判断，无事即退零成本；--prune=now 深清永久禁用（=Owner 门位）；审计=.runtime/audit/git_gc_wire.jsonl"
+    implementation_status: "gated_mvp"
+  dead_lane_autoreap:
+    enabled: true
+    description: "死车道自动收线（root-cure-plan §8 L3 补件）：扫 .aidrafts/.worktrees 车道→判活同源 session_worktree（registry+锁+免疫标记）+mtime>48h 双确认→dry-run 判型→仅 zero_loss 自动 archive --execute；needs_rescue 只写 workspace_alerts 告警件；执行轮工具内侧死判硬拒仍为最后防线；审计=.runtime/audit/dead_lane_wire.jsonl"
+    implementation_status: "gated_mvp"

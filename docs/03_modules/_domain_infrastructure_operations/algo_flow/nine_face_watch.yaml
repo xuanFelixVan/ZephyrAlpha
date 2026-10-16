@@ -1,0 +1,71 @@
+# ALGO_FLOW 外部真源——nine_face_watch（_domain_infrastructure_operations 域，真源 scripts/ops/nine_face_watch.py）
+# 2026-10-16 st-ninewatch-1016（st-diskp0-20261015 L5 红线有警，root-cure-plan §3-L5）：
+# 九面遥测预算只读巡检；唯一新工程=把"6 天 3 观测点"变"每小时全-face 巡检+超限即喊"（零删停，处置=Owner 门位）。
+doc_type: architecture_view
+ttl: permanent
+module: scripts.ops.nine_face_watch
+source_of_truth: scripts/ops/nine_face_watch.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: repo_root / 落点参数
+    #   fields: 参数 repo_root，类型注解 Path | str；alert_dir/audit_dir 缺省 root/.runtime 派生
+    #   code: patrol_once 形参（AST 提取）
+    # - id: I2
+    #   name: 节流与模式参数
+    #   fields: min_interval_min/alert_cooldown_min（env NFW_MIN_INTERVAL/NFW_ALERT_COOLDOWN 缺省 60）；once/dry_run/note
+    #   code: patrol_once 形参（AST 提取）
+    # - id: I3
+    #   name: 预算真源
+    #   fields: config/flags.yaml flags.nine_face_budget.*（enabled 出厂 false；FACE_KEYS 九键；缺键回 FACTORY_BUDGETS）
+    #   code: read_nine_face_budget_config（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 九面只读测量
+    #   name_en: measure_faces
+    #   intro: dead 袋 q-*.json 计数/tmp·quarantine·audit 递归尺寸/车道 porcelain 解析去主区·pool·serializer/staged+untracked 行计数/sessions 子目录/根散件/队列积压；单面失能=None+errors 行内继续，永不抛。
+    #   desc: 目录面 glob/scandir 累计；git 面 worktree list --porcelain 与 status --porcelain 只读子命令（测试注入口=porcelain 形参）。
+    #   inputs: repo_root worktree_porcelain status_porcelain
+    #   outputs: (faces: dict[str, float|None], errors: list[str])
+    # - id: A2
+    #   name_zh: ② 预算判读
+    #   name_en: evaluate_budgets
+    #   intro: 判据=value < budget 为健康，读数>=阈值即超限；任一侧缺席该面跳过。
+    #   inputs: faces budgets
+    #   outputs: list[{face, value, budget}]
+    # - id: A3
+    #   name_zh: ③ 基线原子刷新
+    #   name_en: _write_baseline_atomic
+    #   intro: 每轮真跑把最新九面行写 .runtime/audit/nine_face_baseline.json（tmp+os.replace，--once 首跑即首份基线）。
+    #   inputs: baseline_path row
+    #   outputs: None（OSError 上抛由 patrol_once 捕为 action=error/exit 2）
+    # - id: A4
+    #   name_zh: ④ 超限升级告警
+    #   name_en: write_escalation
+    #   intro: enabled 且 breach 且过冷却（读告警审计末行 ts 判距）→ workspace_alerts 件 + nine_face_alerts.jsonl 审计行双落点（append_audit_jsonl，50MB 轮转）；severity=escalated 只升 Owner 不自动处置。
+    #   inputs: alert_dir audit_dir row breaches
+    #   outputs: {alert_file, audit_line}
+    # - id: A5
+    #   name_zh: ⑤ 巡检编排
+    #   name_en: patrol_once
+    #   intro: 节流（读基线自身 ts，零额外状态文件）→配置→测量→判读→落基线→告警；dry-run 只算零写；永不抛。
+    #   desc: exit 0=无超限/节流；exit 1=超限（budget_state=breach）；exit 2=基线不可写。
+    #   inputs: I1 I2 I3
+    #   outputs: {action, faces, budgets, enabled, budget_state, breaches, row, alert, errors}
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 基线快照+告警双落点
+    #   name_en: baseline/alerts
+    #   intro: .runtime/audit/nine_face_baseline.json（最新读数即基线）；超限时 .runtime/workspace_alerts/nine_face_<stamp>.json + .runtime/audit/nine_face_alerts.jsonl。
+    #   downstream: Owner（escalated 告警处置门位）；reaper/schtasks 小时级 one-shot 触发源
+    # [/ALGO_FLOW]
+    #
+    # I3 --> A5
+    # I1 --> A1
+    # I2 --> A5
+    # A1 --> A2
+    # A2 --> A3
+    # A2 --> A4
+    # A3 --> O1
+    # A4 --> O1

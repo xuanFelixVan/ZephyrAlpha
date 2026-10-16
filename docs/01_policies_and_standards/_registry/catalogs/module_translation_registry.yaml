@@ -17801,6 +17801,13 @@ entries:
   plain_zh: R5 端到端告警验证脚本（#ARCH-DR-CH-RESTART-001）。启动一个 HeartbeatMonitor + Alerter 探针，指向真实 CH。
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
+- module_path: scripts/ops/nine_face_watch.py
+  desc_zh: 九面只读巡检（dead袋/tmp/车道/staged/quarantine/sessions/audit/根散件/队列积压）+flags.nine_face_budget 预算判读+超限 escalated 告警双落点+小时节流+基线快照原子刷新；出厂 enabled:false，开闸属 Owner 门位
+  name_en: nine_face_watch
+  name_zh: 九面遥测预算巡检告警器
+  plain_zh: 每小时给仓库的九个垃圾出口量一次体温：死信袋、临时文件、并行车道、未提交件、隔离区、会话壳、审计日志、runtime根散件、队列积压，哪一面超过预算线就写告警件喊Owner来处理。它只拿尺子量数不扫垃圾，绝不自动删任何东西，防止10-15满盘事故再来一次。
+  domain_id: D_INFRA_RUNTIME
+  responsibility_layer: infrastructure
 - module_path: scripts/ops/ollama_version_guard.py
   desc_en: ""
   desc_zh: ""
@@ -45916,6 +45923,11 @@ entries:
   name_en: Owner Trust Gauge
   name_zh: Owner信任度评估
   plain_zh: 共享基础·维护的owner 信任 gauge：处理owner 信任 gauge的具体事务，给共享基础·维护这条线打下手，保证日常运转不出岔子。
+  domain_id: D_SHARED
+  responsibility_layer: infrastructure
+- module_path: src/zephyr/shared/maintenance/reaper_auto_wires.py
+  name_zh: reaper自动维护三线
+  plain_zh: 给 reaper 看门循环装三条自动维护线：定期把死满 7 天的提交队列死信搬进归档袋、例行跑 git 垃圾回收（只跑自动挡、深清留给老板）、把确认死透且零丢失的车道自动拆掉（有脏文件的车道只贴告警条不动手）。三条都能用配置开关一键关掉，出问题不影响看门循环本身。
   domain_id: D_SHARED
   responsibility_layer: infrastructure
 - module_path: src/zephyr/shared/maintenance/slo_review_assistant.py
