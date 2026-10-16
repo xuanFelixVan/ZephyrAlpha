@@ -1546,4 +1546,20 @@ ledger 144186B / 9d164ad49349ed8f…、checkpoint 11347B / 86da95fc811265f3…�
 3. **本班 10 卡与上席 10 卡的落地判据只认** `git cat-file -e HEAD:<path>`（禁 `git ls-files`＝主区 index 滞后面，本席位面 1017-01 已自纠在册）。
 4. **token 面**＝本班 capability 沿用 `p03_named_cards`（与上席同能力名，内收不新立），created_by=本席 sid；本班 10 枚逐件 `--prefix` 登记（宽前缀不可用：同目录含他席 553 枚在册卡，宽扫=把别人的骨架登记成本班创建）。
 5. **本班袋面终读**＝见 §十（两袋：上席 10 卡袋＋本班内容袋）。
+### 十、收班八件（逐项现测，落笔 02:15:53＝datetime.now 现取；date 同帧=Sat Oct 17 02:15:53     2026）
 
+- 收班①**claim**＝`lock_files.py release-all <sid>` rc=0，随后 `list --session` 读回＝`CLEAN — 持有者 st-qoder-p03-1017-03 无任何文件锁`（本班曾 acquired 22 件=12＋10，denied=0；承在册更正「入队不代释」⇒本班自跑 release）。
+- 收班②**心跳**＝本班自起守护 pid=**15708**（唯一一枚，01:48:03 起）＋投袋代起面；杀前宽谓词现读 `[(7612, ''), (15708, '30')]`，按 pid 文件单 PID＋argv 逐元断言 terminate 枚数=**2**（pids=['7612', '15708']；TERM_FAIL 面=无），pid 文件摘除面见 log；睡 75 秒后同尺复量 `[]`，**同尺正对照**（不过滤 sid 的全仓守护计数）=**15** 枚⇒尺能命中而本席位面为零，非伪空。注销 `SessionRegistry.unregister`=True，`load()` 命中本 sid=`[]`；heartbeat.jsonl 末行 `{"ts": "2026-10-16T18:13:43.097292+00:00", "pid": 7612, "status": "alive"}`（外部 terminate 不留 exited 行=在册常态）。
+- 收班③**实耗**＝发车 01:42:34（date 实测）→ 本段落笔 02:15:53（datetime.now 现取，与 `date`=Sat Oct 17 02:15:53     2026 同帧同基）＝约 **33 分钟**（跨 02 点，按分钟数直算；45 分班期与本班超/守的判定写在本行读数上，不由本班自封）。
+- 收班④**[BLOCKER]**＝本班 §八 六行（高1/中2/低2/余面1），谓词=`grep -c "^\[BLOCKER\] 2026-10-17|③席1017-03"`；沿在册「追加型台账里计数与终值自述落笔即假」，本行只给谓词不复量该数。
+- 收班⑤**自清**＝`.runtime/tmp/p03_1017_03/` 终面=**27 件**（清单=['append_ledger.py', 'bag.py', 'closeout.log', 'closeout.py', 'closeout2.log', 'closeout2.py', 'faces.py', 'faces.txt', 'fetch.log', 'fetch_perday.py', 'files_all.txt', 'files_bag2.txt', 'files_new10.txt', 'inventory.py', 'make_cards_03.py', 'msg_body.enqueue.log', 'msg_body.txt', 'msg_cards.enqueue.log', 'register_tokens.py', 'sec10.py', 'sec6.py', 'setup_session.py', 'specs03.py', 'tokens.log', 'verify.py', 'verify.txt', 'written.txt']）；全部为本班台账引用锚点（setup/fetch/faces/make_cards_03+specs03/verify/register_tokens/bag/append_ledger/closeout/sec6/sec10＋日志与清单面）＝本班不自签「零引用件已删」前先 grep 消费者（沿 1016-04/1017-02 在册「删前须 grep」）；本班当场删的零引用件与遗留面见本节末「自纠段」；四件套外散落=0（本班只动 ledger/checkpoint/20 张卡三面＋队列与 .runtime 自家面）。
+- 收班⑥**GPU**＝本班零领牌（全程零 CH 采数、零 GPU 作业）⇒免还牌。
+- 收班⑦**后台子任务**＝本班零子代理 spawn；本班自起后台两件＝fetch 腿（已完成，exit 0，被水位闸早退）＋token 循环（已完成）⇒零孤儿。
+- 收班⑧**worktree**＝本班未调用任何工棚/工作树启动入口（TRAE-079 Phase 2 照守）；现测 `git worktree list` 总行数=**82**、命中本 sid=**[]**；`.aidrafts` 面本席命中=`[]`；`.worktrees` 目录存在=True。如实申明＝本班未自删任何他会话工棚面，发现即报 ⑩ 交清理专班。
+- 本班袋面终读＝袋 A `q-20261017-st-qoder-p03-1017-03-0001` state=**done**（10 件入 HEAD，落地提交 a434598d05，逐件 blob↔盘 exact=10）＝本班门柱实测已成立（§六）；袋 B `q-...-0002`（files=12）本节取数时点 state=**processing**（pending=0／done=1／dead=0，全席面 counts={   "queue_root": "D:\\ZephyrAlpha\\.runtime\\commit_queue",   "counts": {     "pending": 0,     "processing": 1,     "d）；袋 C＝本节所附 ledger 单件袋。
+- ⚑自纠段（本班第四处同型自犯，落笔时立即改正）＝`Path / "字面串" % 变量` 优先级错在同一班内**四次**现形（setup_session.py 心跳复量段、bag.py 消息面、sec10/closeout 的 hb 面——最后一枚使 closeout.py 在②件读数之后崩，③⑤⑥⑦⑧ 四面改由 closeout2.py 补取并同帧落笔，读数面零缺失）；与上席在册「自造水位尺漏括号得 -6.69 型尺坏」同族但形态不同⇒处方升级＝本席脚本内一律 `Path("…/" + var)` 拼接或先赋值再格式化，禁 `ROOT / "%s" % x` 形制（本席已把该条写进 §八 无、正文自纠段，不另开 BLOCKER，属自家纪律面）。
+- ⚑尾袋与收班②的递归出口（沿 1016-04/1017-01/1017-02 在册，本席不自签终态）＝袋 C 投出后网关必再代起一枚本席守护；本班②件终态读数（上条）取于袋 C 之前，故**本班不为记读数补第四袋**，交下班按谓词现测＝`psutil.process_iter` 逐 argv 等值断言（含模块名 `zephyr.gov_enforcement.rule_bridge.heartbeat_daemon` ∧ argv 恰含 `st-qoder-p03-1017-03`）＋`.runtime/locks/heartbeat_st-qoder-p03-1017-03*` pid 文件面，命中即按 PID 精确杀（禁子串扫、禁按镜像名，沿 memory: kill-scan-substring-hits-own-parent-shell／never-kill-processes-by-image-name）。
+- GPU 面如实登记＝本班零领牌（全程零 CH 采数、零 GPU 作业）⇒⑥件免还牌；本班补读的 `python -m zephyr.security.access_control.gpu_watchman status` 现测 rc=1「No module named …」＝**模块名在本席面上不成立**，不代表本席有未还牌（无牌可还），该面以「零领牌」自证为准，模块真名待 ⑤/⑩ 校正指令卡引用。
+
+
+- 收班③ 补行（本段随袋 C 落笔时点现算）＝发车 01:42:34（date 实测）→ 袋 C 提交前现测 02:17:08 ⇒本班全程实耗约 **35 分**（其中上条 33 分是②⑤⑥⑦⑧ 读数取数时点，余为 §十 组装与尾袋投递；45 分班期的守/超以本行为准，不由本班自封）。
