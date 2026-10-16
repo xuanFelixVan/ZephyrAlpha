@@ -780,4 +780,4 @@ gates:
   factory_function: make_campaign_goal_block_gate
   source: in_process
   register_line: 0  # priority=142（实测空段；113 被 DEPGRAPH-ENFORCEMENT 占）；enabled=false＝自举两段（auto_registrar 从主区 src 导入，模块未达 dev 前开=true 即 fail-closed 死锁；模块合并 dev 后由 infoaxis 总包收班袋翻 true）；2026-10-13 st-infoaxis-20261013 Q7（裁定#516）：新开班令（本笔 git A 态 .md＋docs/ 下＋正文前 80 行含 开班令/总包令/派工令/施工令/开工令/统筹令/开役令）必须带 frontmatter goal_block 三要（goal_statement＋exam_ref|acceptance_criteria＋campaign_ref）；own-scope（外来 staged 降级 warn+审计不连坐）；豁免=frontmatter goal_block_exempt:<理由≥10字> 留痕；git/读盘异常 fail-open；净零声明=新执法面无旧门可替代（开班令结构校验此前零覆盖），gate/ 子目录=FOLDER-CAPACITY 治本（library/＋read_side/ 同款先例）；预告时刻=infoaxis/00_ledger.md §3-Q7（30 分钟窗）；测试 tests/gov/governance/goal/test_campaign_goal_block_gate.py（落 goal/ 子目录＝tests/gov/governance 已达 120 件 FOLDER-CAPACITY 硬上限，GOV-DOC-018）
-  enabled: false  # 自举两段：模块达 dev 后翻 true（收班袋）
+  enabled: true  # 自举两段段二：门模块已达 dev（袋 grandc-0033），翻真启用（st-grandc-20261017 A3 收口）
