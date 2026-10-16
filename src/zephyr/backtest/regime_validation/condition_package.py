@@ -20,7 +20,7 @@
 可计 n、可进判据；观察标注层 = 板块腿（sector_state 仅 17 交易日）只做行级标注，
 禁入统计判据、禁当独立样本计 n（precheck §2.4·甲）。
 
-数字真源 = docs/_working/e2e_integration/w3_w5_precheck_20260923.md（实测，勿重测）：
+数字真源 = docs/_archive/_working_cleared/e2e_integration/w3_w5_precheck_20260923.md（实测，勿重测）：
 闭卷窗 1,622 交易日；band5 窗内分布 cooling 120 / mild 594 / warming 655 / boiling 253
 （冰点 0 日空层）。
 
@@ -51,6 +51,9 @@ _MAX_STATES_IN_WINDOW: Final = 5  # F4 族实测 3 态；>5 = 混入他族信号
 _STATE_FAMILY: Final = "F4_BDI_MOMENTUM_Z20"  # 市场状态轴唯一真身族（本班选族自纠，见模块 docstring）
 _EMOTION_TABLE: Final = "market_emotion_index"  # 逻辑品类名 → c1_market.emotion_index
 _STATE_TABLE: Final = "market_alt_regime_signal"  # 逻辑品类名 → c1_market.alt_regime_signal
+_PS_TO_F4: Final = {"bull": "risk_on", "bear": "risk_off"}
+# P-S 两态 shadow→F4 语义映射（一致率对照用；两态引擎无 neutral 对应=计不一致）。
+# shadow 铁律：只并行记录（market_regime_ps/ps_agree 列），禁替换/影响 F4 判据地位。
 
 
 def grey_band(value: float) -> str:
@@ -103,9 +106,13 @@ def _tsv_to_frame(tsv: str, columns: list[str]) -> pd.DataFrame:
 
 _SQL_EMOTION = (
     "SELECT toString(trade_date) AS d, toFloat64(emotion_index) AS v "
-    "FROM {table} FINAL WHERE trade_date >= toDate('{start}') AND trade_date <= toDate('{end}') "
+    "FROM {table} FINAL WHERE stage = 'close_final' "  # noqa: bare-sql  bare-sql豁免: 既有集中化常量修改,加stage过滤修复OOS多stage行MergeError,域内SQL集中通道§5.160.2
+    "AND trade_date >= toDate('{start}') AND trade_date <= toDate('{end}') "
     "ORDER BY d"
 )
+# stage 过滤依据（2026-10-15 实测）：闭卷窗 8,361 行 100% close_final（过滤=no-op，结果集不变）；
+# OOS 窗 2025-09 起引入 pre_open/auction 多 stage 行（26 日 3 行/日），不滤则 inner join
+# one_to_one 校验 MergeError——滤后语义与闭卷窗同源（当日收盘终读数），非改公式。
 _SQL_STATE = (
     "SELECT toString(signal_date) AS d, state FROM {table} FINAL "
     "WHERE signal_id = '{family}' AND signal_date >= toDate('{start}') AND signal_date <= toDate('{end}') "
@@ -113,12 +120,46 @@ _SQL_STATE = (
 )
 
 
+def _attach_ps_shadow(frame: pd.DataFrame, ps_shadow: pd.Series, provenance: dict) -> None:
+    """P-S 两态 shadow 接线（加列不改既有列）：逐月 phase → market_regime_ps + 逐日一致率。
+
+    Args:
+        frame: 条件包逐日帧（就地追加 shadow 列）。
+        ps_shadow: 逐月两态 phase 序列（index=月末 Timestamp，值='bull'/'bear'；
+            zephyr.backtest.regime_validation.ps_shadow.build_ps_shadow 产出）。
+        provenance: provenance dict（就地追加 shadow 台账键）。
+    """
+    idx = pd.to_datetime(pd.Series(ps_shadow.index)).dt.to_period("M")
+    month_phase = dict(zip(idx, ps_shadow.astype(str), strict=True))
+    ps_col = frame["date"].dt.to_period("M").map(month_phase)
+    ps_col = ps_col.where(ps_col.isin(_PS_TO_F4))  # 非两态字面量/缺月 → NaN
+    frame["market_regime_ps"] = ps_col.astype(object).where(ps_col.notna(), None)
+    mapped = ps_col.map(_PS_TO_F4)
+    frame["ps_agree"] = [None if pd.isna(m) else bool(m == s) for m, s in zip(mapped, frame["state"], strict=True)]
+    covered = frame["ps_agree"].notna()
+    agree_rate = float(frame.loc[covered, "ps_agree"].mean()) if bool(covered.any()) else None
+    provenance.update(
+        {
+            "ps_shadow": "P-S 两态引擎 shadow 并行记录（不替换 F4 判据地位；态源=ps_shadow.build_ps_shadow）",
+            "ps_mapping": dict(_PS_TO_F4),
+            "ps_days_total": int(covered.sum()),
+            "ps_agree_days": int(frame.loc[covered, "ps_agree"].sum()),
+            "ps_agree_rate": round(agree_rate, 6) if agree_rate is not None else None,
+        }
+    )
+
+
 def load_condition_pack(
     start: str = _CLOSED_BOOK_START,
     end: str = _CLOSED_BOOK_END,
     floor_days: int = _CELL_FLOOR_DAYS,
+    ps_shadow: pd.Series | None = None,
 ) -> ConditionPack:
-    """从 CH 加载两轴、闭卷窗内组装条件包。任一轴缺失即抛（fail-closed）。"""
+    """从 CH 加载两轴、闭卷窗内组装条件包。任一轴缺失即抛（fail-closed）。
+
+    ps_shadow（可选）：P-S 两态引擎逐月 phase 序列——提供时仅追加 shadow 列
+    （market_regime_ps/ps_agree），既有列零改动（shadow 语义铁律）。
+    """
     reg = get_registry()
     emo_t, st_t = reg.table(_EMOTION_TABLE), reg.table(_STATE_TABLE)
     emo = _tsv_to_frame(
@@ -134,7 +175,7 @@ def load_condition_pack(
     merged = emo.merge(st, on="date", how="inner", validate="one_to_one")
     if merged.empty:
         raise RuntimeError("情绪轴与状态轴在闭卷窗内零重叠日——输入包不可用")
-    return build_condition_pack(merged, start=start, end=end, floor_days=floor_days)
+    return build_condition_pack(merged, start=start, end=end, floor_days=floor_days, ps_shadow=ps_shadow)
 
 
 def build_condition_pack(
@@ -142,11 +183,14 @@ def build_condition_pack(
     start: str = _CLOSED_BOOK_START,
     end: str = _CLOSED_BOOK_END,
     floor_days: int = _CELL_FLOOR_DAYS,
+    ps_shadow: pd.Series | None = None,
 ) -> ConditionPack:
     """纯函数：逐日 [date, value, state] → ConditionPack（测试直供面板）。
 
     状态字面量守卫：窗内去重 >5 抛 ValueError（precheck §2.4——全史 17 种中英混排，
     映射册只在把窗拉到窗外时才建，此处 fail-closed 防静默扩窗）。
+
+    ps_shadow（可选）：提供时追加 shadow 列（market_regime_ps/ps_agree），既有列零改动。
     """
     states = tuple(sorted(daily["state"].astype(str).unique()))
     if len(states) > _MAX_STATES_IN_WINDOW:
@@ -190,6 +234,8 @@ def build_condition_pack(
         "observational_layer_note": "sector_state 仅 17 交易日=观察层禁入统计（ Owner 裁决①）；"
         "columns_forbidden=[capital_score, net_inflow_pct] 以不加载执行",
     }
+    if ps_shadow is not None:
+        _attach_ps_shadow(frame, ps_shadow, provenance)  # shadow 铁律：只加列，既有列零改动
     return ConditionPack(
         frame=frame,
         cells=cells,

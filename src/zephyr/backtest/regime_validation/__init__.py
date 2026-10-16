@@ -21,6 +21,7 @@ D_BACKTEST — Regime 回测验证包（11_regime_backtest_validation_plan 验�
 from zephyr.backtest.regime_validation import chart_condition_consumer  # noqa: I001,F401 单行刻意写法：ORPHAN行级grep认（图形条件轴消费适配器·st-zcloseout接线袋）
 from zephyr.backtest.regime_validation import chart_condition_package  # noqa: I001,F401 单行刻意写法：ORPHAN行级grep认（图形条件轴输入包·波10 G-A）
 from zephyr.backtest.regime_validation import condition_package  # noqa: I001,F401 单行刻意写法：ORPHAN行级grep认（条件轴输入包）
+from zephyr.backtest.regime_validation import ps_shadow  # noqa: I001,F401 单行刻意写法：ORPHAN行级grep认（P-S 两态 shadow 接线装载器·condaxis）
 from zephyr.backtest.regime_validation import exam_cost_gate  # noqa: F401 考尺成本门
 from zephyr.backtest.regime_validation.c1_comparator import (
     C1ComparisonResult,
@@ -138,4 +139,5 @@ __all__ = [
     "chart_condition_consumer",
     "chart_condition_package",
     "condition_package",
+    "ps_shadow",
 ]
