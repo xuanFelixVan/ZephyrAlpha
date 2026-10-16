@@ -1343,3 +1343,101 @@ title: ⑨成绩官·findings台账
 - **本班未动面申明**＝分数册字节零改动（只读）；`calibration_exam.py`／`comparison_exam.py`／`signal_orthogonality.py` 零改动；`feedback/to_impl.md`／`to_miners.md`／`to_datasource.md` 零写入（⑩ 单写共写面）；治理图与流程五族面零改动；未复位 index；未 pop/drop/clean 任何 stash（reaper 现读 `stash_count=27`）；未 requeue 任何死袋；未 release 他会话 claim。
 - **收班八件**＝①claim：本班四面 `acquire-batch` 回执与投袋后释放按实报（投袋即 `--release-only` 手工释，沿 1016-02 实测教训"入队可能续租而非代释"）；②心跳：本席无 `heartbeat_daemon` 进程（TRAE-079 Phase 2 禁建 worktree ⇒ 无 daemon 代起），本班改用**同进程 `SessionRegistry().heartbeat(SID)` 逐步续活**，实测锚见 §11.9 末条；③实际耗时＝起批锚 `23:50:48`（冷启动 `date` 实测）→ 本段落笔时点由游标行按实记；④[BLOCKER]＝本班 **4 条**（3 高/中见 §11.8，均可 `grep -n "\[BLOCKER\]"` 命中）；⑤自清收口＝`.runtime/tmp/st-qoder-p09-1016-03/` 本班件在投袋后整目录删除（在册尺副本与分诊尺随 TTL 自清，正文已把可复跑命令原样写入 §11.6/§11.4，且本班据此把"尺必须入库"上升为 修㉖）；⑥GPU＝本席未 acquire 看门人，无牌可还；⑦后台子任务＝本席未 spawn 子代理，零孤儿（本班两次 Bash 超时转后台的均是**只读量测命令**，已各自取回读数：reaper `--status` 与卡池 glob 定位，零在途）；⑧零 worktree＝本班未调用任何工棚/工作树入口；`.aidrafts/` 面若出现本席号段目录＝正门落地链自建（沿 1016-02 §10 在册结论），本席不删、报 ⑩ 与清理专班。
 - ⚑ **本班纪律旗（自报）**＝§11.6 首版尺的谓词错（把队列 `blob_ref` 当 git object）＝本席自犯、当场以"10/10 全空不合理"识破并纠正，旧版脚本行为留卷不涂改；另 S-12 正文里"先跑无 `--pool` 版本 rc=2"是本班踩参数缺省的正常回执，不另立 BLOCKER。
+
+
+### §11.10 收班终核（2026-10-17 00:23:19 实测，旧句 §11.9 留卷不涂改）
+
+- **收班③耗时（实测非自报）**＝起批锚 `2026-10-16 23:50:48`（冷启动 `date` 与 reaper 日志时戳同值）→ 本段落笔 `00:23:19`＝**约 32.5 分**，在班限 40 分内（跨日班，班限口径按 10-16 指令卡〔名额半日预算降频·60 分制·班限 40 分〕）。
+- **收班①claim＝自跑释放达成**＝`git_commit.py --release-only --files <四面>` 回执逐字 `BATCH-SUMMARY — released=4 denied=0 total=4`＋`RELEASED: 4 files (session=st-qoder-p09-1016-03, verified)`，复核 `lock_files.py list | grep -c st-qoder-p09-1016-03`＝**0**。⚑ 本班**再次实测到"入队即续租"**＝投袋回执逐字 `ENQUEUE-RENEW: claim 续租 4/4 件（ttl=7200s）`，与在册更正句（入队不代释、恒定班须自跑 release）同形、与旧句（入队成功即释放全部 claim）相反 ⇒ 该分型在册第二例，本席不重开单、沿在册。
+- **收班②心跳＝本班申报值换代（1016-02 班"无进程可杀"在今晚被换代）**＝`.runtime/locks/heartbeat_st-qoder-p09-1016-03.pid` 实测出现于 `00:18:27`＝**本席首次调用 `git_commit.py` 的同一分钟**（袋 created 00:18:50），pid 文件读数＝`28084`；本席全程**未调用任何工棚/工作树/心跳守护启动入口**，故②件处置＝按该 PID 核活后终止（并以 cmdline 复验防 PID 复用），**绝不按镜像名批杀**（在册铁律）。
+- **收班⑧worktree＝工具链自建面实测**＝`.aidrafts/st-qoder-p09-1016-03` 现读存在、`du -sh`＝**399M 整树影子壳**（`git worktree` 同族形态），`.worktrees/*p09-1016-03*` 实测**不存在**；本席**不自删**（在册结论＝正门/注册链代建，删除属清理专班与⑩权限面），只在此报⑩。⇒ 与在册"零 worktree 确认在现实现下无法靠席位自律达成"同型，本席申报值取**"本班未调用入口＋影子壳由链自建"**两句话并存，不写成"零 worktree"。
+- **收班⑤自清＝排在所有复走流程之后**（规避在册"清 tmp 断自家脚本依赖"坑）＝本班件（`measure03_book.py`／`reconcile03_landed.py`／`dead_triage03.py` 与 `-03b.py`／`write03_faces.py`／四个 block 件／`msg_03.txt`／`pool_report_03.txt`／`head_book.yaml`）在投袋、release、心跳处置全部完成后整目录清理；**可复跑正文已写在 §11.4/§11.6 与本段，不依赖这些件存活**（此即本班 修㉖ 的自律面：本席先把谓词写进正文，再清盘）。
+- **收班④[BLOCKER]＝本班共 4 条**（§11.8，全部行首 `- [BLOCKER] 2026-10-17|⑨成绩官 st-qoder-p09-1016-03|<类型>|`，`grep -n "\[BLOCKER\]"` 可命中；类型分布＝流程问题 2／工具缺陷 1／判据缺失 1，严重度＝高 1／中 3）。
+- **收班⑥GPU／⑦后台子任务**＝本席未 acquire 看门人⇒无牌可还；本班零 spawn 子代理⇒零孤儿；两次因超时转后台的均为**只读量测命令**（reaper `--status`、卡池定位），各自已取回读数并用于正文。
+- **落袋面最终态（实测）**＝`q-20261017-st-qoder-p09-1016-03-0001` state=pending（qid 日期段随入队时刻跨到 10-17）／`base_head=a175a2a0ebcf`／`created=2026-10-17T00:18:50+08:00`／files=4 且**四件 `blob==disk` 归一后逐件 True**（本班 `00:19:51` 实测）。⚑ **本班不投第二袋**＝本节 8 行随下一班超集袋落地（前车之鉴在册＝1016-01 班三枚回退弹与 1016-02 班 §10 同通道），盘面是唯一工作真源；本席袋内不含分数册、不含 feedback 共写面、不含任何代码件。
+
+
+### §11.11 收班补记二（心跳处置实测，00:29:24，旧句 §11.10 留卷）
+
+- **代起守护 cmdline 逐字**（本班在终止**前**按 PID 读 `Get-CimInstance Win32_Process`，防 PID 复用）＝`C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon st-qoder-p09-1016-03 D:\ZephyrAlpha 30 D:\ZephyrAlpha\.aidrafts\st-qoder-p09-1016-03`＝`heartbeat_daemon <本席sid> <仓根> 30 <本席 .aidrafts 影子壳>`，间隔 30 秒、影子壳路径同 ⑧ 件那枚 399M 目录 ⇒ **一条 cmdline 同时坐实"②心跳代起"与"⑧影子树代建"两件事**，且本席全程未调用任何启动入口。
+- **终止与复测（双读）**＝`taskkill /PID 28084 /F` 回执成功、`00:27:16` 同串 `tasklist //FI "PID eq 28084"` 回执"无匹配"；**62 秒后**复测（在册"杀须最后并等待复测"口径）＝pid 文件 mtime 仍 `00:18`（未重生）、全表按 sid 词命中＝**1 枚且是本探针自身**（其 cmdline 含本席号段）⇒ **真实守护零复活**；本班随后删除自家陈旧 pid 文件（在册申明"光删文件不解决"＝本席是先杀进程、后清文件，非以清文件冒充收工）。
+- **收班③耗时终值**＝`2026-10-16 23:50:48` → 本段落笔 `00:29:24`＝**约 38.6 分**（贴班限 40 分；§11.10 落笔时点 `00:23:54` 算得约 33.1 分，两句皆按各自当时实测并列，非涂改）。
+- **下一班（1017-01）接手面**＝①本班袋 `q-20261017-st-qoder-p09-1016-03-0001` pending（base_head `a175a2a0ebcf`，四件 blob==disk 已验）；②盘面 ledger 现含本节与 §11.10（未随该袋入 HEAD，**由下一班超集袋收养**＝在册同通道，非重投）；③游标 `rows[109]`、判卷取数面＝HEAD；④10 枚死袋分诊结论已出（零抢救缺口），只在租约空闲窗走正门 `dead-archive --content-level`，勿重跑分诊。
+
+## §12 · 1017-01 班（⑨成绩官·10-17 首班：起批 `2026-10-17 00:50:14` → 落笔 `01:0x`；当日增量＝**0 行**；本班主产出＝**[⑨-新] 结案的落地面复核**（A/B 腿复现成立、C 腿**改判**）＋在册四单（修㉒/㉓/㉖/㉗）落地面复量＝**㉓㉗ 已闭合、㉒ 未闭合且净删已固化、㉖ 延续**＋**阵亡十七班案卷转正入库**）
+
+### 12.0 冷启动与防重入（实测）
+
+- `python --version`＝3.12.8；起批 `date` 实测 `00:50:14`。
+- `python scripts/lock_files.py cleanup`＝`CLEANED — 7 个死锁已清理`（p08_examiner_b ledger/checkpoint、p12_maintenance ledger/checkpoint/scope、p04_scout_web ledger/checkpoint）＋`SALVAGED — 死会话 st-qoder-p01-1017-01 遗物已回收（merge=skipped, stash=0件, 释放claim=0）`。
+- `python -m zephyr.trading.process_reaper --status`＝`source=live`／`scanned=34 whitelist_hits=30 killed=0 reported=26`／`drift={'stash_count': 27, 'worktree_changes': 1456}`／水位 `ram_used_pct 73.0・commit_pct 79.89・cpu_pct 85.9・degraded=False`（⚑ `cpu_pct 85.9` 与 `commit_pct 79.89` 本班只记不判，未据此减量）。
+- 防重入＝读 `checkpoint.md`：上一班（1016-03）游标推进记录完整、且台账 §11.9/§11.10/§11.11 收班段齐（含"下一班接手面"四条）⇒ 判上一班已完，本班取 10-17 首号 `st-qoder-p09-1017-01`（台账 `grep -c st-qoder-p09-1017` 起批＝**0**）。
+- claim＝`lock_files.py acquire-batch` 四面 `BATCH-SUMMARY — acquired=4 denied=0 total=4`；写前逐面 `check` 自证在册（沿在册"写前必 check"）。会话注册＝`SessionRegistry().register(sid, pid=<本班进程>, held_files=四面, logical=True)`＋每步同进程 `heartbeat(sid)`（本席无 worktree⇒无 daemon，90 秒新鲜窗内续活）。
+
+### 12.1 工序 1-2 判卷面＝当日增量 0 行（游标不推进）
+
+- **三面读数（本班 00:5x 同帧实测，谓词＝`yaml.safe_load_all` 取含 `rows` 的 doc 后数顶层序列长度）**＝HEAD `rows=110`／归一 sha16 `a9532fceb0899c94`；磁盘 `rows=110`／同 sha16；index `rows=106`／sha16 `05bc7ce014f204a0`。⇒ **判卷取数面沿用 1016-03 在册换代＝HEAD（落地面）**；index 落后四行＝在册"正门每落地一次主区 index 停在落地前一版"形态第三次复证，本席不复位。
+- ⚑ **本班自犯并当场纠正（尺形制版，旧行为留卷）**＝首版尺用 `yaml.safe_load` 直读该册→`ComposerError: expected a single document`。根因＝分数册是 **frontmatter + `---` + 正文** 的两段 YAML 流（磁盘首 8 行即 doc0 头），凡"分数册复跑尺"必须 `safe_load_all` 取含 `rows` 的 doc——这正是 HEAD `1c79317949d` 在执行器侧修掉的同一断点，本席尺第一次踩实。另第二处自犯＝卡池目录凭记忆写 `data/exam_cards/**` →命中 0；实际卡池根＝`docs/03_modules/_domain_backtest/exam_cards/`，下按入出库流向与层级分目录（本班实测命中的两枚＝`entry_flow/L9/TDM-E-L9-A01__calibration__02_日线动量截面.yaml`、`entry_flow/L3/TDM-E-L3-07-3__calibration__02_二十日动量排名.yaml`，两枚 `git cat-file -e HEAD:` 皆在册）；本席据此改按 basename 定位并在正文文字化谓词，见 12.4。
+- 全册现值分账（HEAD 面）＝`verdict` **fail 106／pass 2／blocked 2**；pass 行仍＝rows[76]/[78]（本班未重跑、红线"fail 永不升级"未触碰）；blocked 仍＝rows[90]/[91]（沿在册分诊未重烧）。`distinct card_id=86`、**同卡多行组 14**（明细见 12.5 S-15）。
+- 游标＝`rows[109]` 不推进；`rows[110]` 起待判。本班判卷对象＝空集 ⇒ **零新 fail 路由、零 pass 升级、零新排**。
+
+### 12.2 [⑨-新] 主产出＝panel 读数不可复现**结案的落地面复核**（⑦席转办；本班判语＝A/B 成立、C 改判）
+
+**被复核的在册结论**＝阵亡十七班（同串 `st-qoder-p09-1016-01`，案卷正文长期只活在 `.runtime/tmp/.../frag_ledger.md`，见 12.6）的结案三腿 A/B/C 与判语"根因＝产出行者物化码未落库＋口径未申报，非数据时移"。本班按"只有考试口径算数"逐腿复量：
+
+- **腿 A（产出行者身份）＝复现成立**。按 `run_id` 分类（谓词文字化＝NONSEAT 词表 {`st-e2e`,`autoplan`} 优先，SEAT 词表次之，两表皆不命中＝未归类）：三枚 panel 行的产出通道＝rows[73] `st-e2e-test-p09-02_二十日动量排名`／rows[74] `st-probe-04mig15-02_日线动量截面`／rows[95] `st-autoplan-verify-20261015`。⇒ 三枚**皆非席位生产班**，十七班"非席位产出"定性成立；但本班会把它给的"非席位 3 枚"改记为**非席位 2 枚＋未归类 1 枚（rows[74] 走 `st-probe-*` 探针串，非席位亦非在册席位号段）**，谓词差异如实分面、不合并。
+- **腿 B（同卡双行、两产出行者、两个样本面）＝复现成立且算式复核通过**。`TDM-E-L9-A01/calibration/02_日线动量截面` 在册两行＝rows[74]（`n=1601`，`ic_mean=-0.040641157971004885`）与 rows[95]（`n=1621`，`ic_mean=-0.04026245066618168`）；**卡面 lineage 实测**＝`status: examined`、`lineage.run_id: st-autoplan-verify-20261015`、`lineage.score_row: exam_scores_v1.yaml#rows[95]`、`confidence_writeback: TDM.nodes.TDM-E-L9-A01.confidence` ⇒ rows[74] 确为**在册孤儿行**（卡面不指它，但它永久占册一行并带完整 metrics）。`TDM-E-L3-07-3/calibration/02_二十日动量排名` 仅 rows[73] 一行，卡面 `lineage.score_row` 正指 rows[73]。⑦席网格最近命中 `−0.0405968419728668` 复算＝与 rows[95] 差 **3.3439e-4**（即转办单里的"最小绝对差 3.34e-4"）、与 rows[74] 差 **4.4316e-5**，且 `min(rows[95],rows[74]) < 网格值 < max(...)`＝**True** ⇒ "网格最近命中恰落在两支读数之间"成立，且**离它近 7.5 倍的是那条卡面已不承认的孤儿行**。这条是本班对"15 组合为何全不中"给出的最强机械解释：网格在按 rows[95] 复现，而库里另有一支同卡不同样本面的读数在竞争同一个最小差。
+- **腿 C（物化码未落库）＝半成立半改判，本班改判在册后果句**。
+  - 成立的部分＝三枚 `run_id` 在 **HEAD 的 `*.py` 面零命中**（谓词 `git grep -l <token> HEAD -- "*.py"`→空×3），而**同 token 不加 `-- "*.py"` 限定则命中 5/5/7 件**（全在 docs 叙述面）＝正对照在场，故"产出驱动器从未入库"对这三枚历史读数成立。
+  - **不成立的部分＝十七班（与本席 1016-02/03 两班沿用至今）的"全岗唯一 panel 装载口＝⑦A 席 tmp 件 `shift06_panel_materialize.py`"这句**。实测＝`scripts/backtest/fexam/ch_data.py:149 def load_panel(...)` **自 10-06 21:01 就在 HEAD**（`git log -S"def load_panel" -- .../ch_data.py`→`465178c8249 [st-matrix-20261006] 矩阵考试战役·E车道基建`），消费面 HEAD 命中含 `calibration_exam.py`／`card_binding.py`／`conditional_exam.py` 等；且 `8caf2743b9b`（10-16 16:48，`st-qoder-chief-1016-01`）标题即"**panel 卡 CLI 解禁**"，同批带测试 `tests/backtest/fexam/test_calibration_exam_cli_panel_target.py`（`git show --name-only 8caf2743b9b` 两文件清单之一）。
+  - ⇒ **结案判语须收窄**为：*"panel 族**历史三枚读数**无入库锚（不可复原，只能按现面重跑）"*，**撤销**在册"panel 族分数行永久不可复现／案卷抢救窗口动态收窄"与 修㉔"不收编则永久不可复现"的后果句。给 ⑦ 席的动作也随之换代：停烧 15 组合网格仍然成立（该网格在无锚历史读数上找最小差＝判据无判别力，见腿 B），但替代路径不是"等 ⑤ 收编 tmp 装载口"，而是**走 HEAD 现面的 `ch_data.load_panel`＋`calibration_exam` panel 卡路径重跑并自证 lineage**。
+  - ⚠ 同时如实记：那个 tmp 装载口本身**已被 TTL 物理清扫**（`os.path.isfile(.runtime/tmp/p07/shift06_panel_materialize.py)`＝False，且 `git ls-files '*shift06_panel_materialize*'` 空）⇒ 谁若还想按 10-15 那支持缓存复现，已无件可用，只能现跑；此事实与"库内早有装载口"并存，不互相抵消。
+
+### 12.3 在册四单落地面复量＝修㉓／修㉗ **已闭合**，修㉒ **未闭合且净删固化**，修㉖ **延续**
+
+- **修㉗（正交闸输入面失败打印 ERROR 却 rc=0）＝已闭合**。本班 00:5x 实跑 `python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6 --out .runtime/tmp/st-qoder-p09-1017-01/pool_report_17.txt`⇒ stderr `[SIGNAL-ORTHOGONALITY] ERROR: --pool 未命中任何信号 CSV: ...`、**rc=2**、`--out` 件未生成（`os.path.isfile`=False）。代码面锚＝`signal_orthogonality.py:53 ERROR_EXIT_CODE = 2`＋`:194-196 except ValueError → return ERROR_EXIT_CODE`＋件头 `:18 [ERROR_CONTRACT]`；入库作者面＝`23e28b2cb70`（10-16 15:47，`st-qoder-chief-1016-01`，裁定#538 在册原文标题＝“三件孤儿交付抢救——gpu_watchman/signal_orthogonality/comparison_exam 连同三测试件以 chief 载体袋走正门入库（D6 恢复；内容零改动）”）。⇒ 1016-03 班在册的 rc=0 读数在**其落笔时点为真**（当时盘上还是 218 行旧码面），本班不复算成事故、只记换代；S-13 自本班起状态改"**已闭合**"。
+- **修㉓（OD-1 交付面无落地载体）＝已闭合**：`comparison_exam.py` HEAD 335 行==磁盘 335；`signal_orthogonality.py` **已在 HEAD 祖先链**（`git merge-base --is-ancestor 23e28b2cb70 HEAD`＝真）且 217 行==磁盘 217（`git diff --numstat HEAD` 空）。十七班在册"signal_orthogonality 查无 HEAD／磁盘 218 行未跟踪第六态"两句自此作废（旧案留卷，见本节首列）。
+- **修㉒（PE 止血闸三面无一可用 → 净删）＝未闭合，且本班把它从"风险"改判为"存量"**。三符号（`_bucket_type_off_vocab`／`_bucket_caliber_proxy`／`_PE_PROXY_MONO_NOTE`）历史面读数＝`e7285c6d5f6`(10-14 13:52)**8 命中／1115 行** → `1c79317949d`(10-16 03:14)**0 命中／1068 行** → **HEAD(现)** 0 命中／**1163 行**；磁盘==HEAD（`git diff --numstat HEAD` 空、两面皆 0 命中）。⇒ 净删的**肇事 commit 本班钉死＝`1c79317949d`**（该笔自述只讲"分数册双文档读写兼容"，未声明删 PE 闸）；其后 `8caf2743b9b` 补了 97 行（含 `_shape_preflight`，现 HEAD 命中 True）却**仍未恢复三符号**。后果定级：PE 闸规约是 warn-only/shadow（"不进 fails、不改 verdict、零数值零阈值"，`11_pe_shadow_plan.yaml`），故**在册 110 行无一因缺失而改判**，本席不改判任何历史行；缺的是**披露位**＝桶型 off-vocab／分位代理型假阳自此对判卷面永久不可见。
+- **修㉖（恒定班复跑尺与正交池面寄身 24h-TTL）＝延续且今日再加一例**：`pool2`／`pool6`／`pool_datesig` 三面 `is_file()` 谓词全＝**0 文件**（按在册"rglob 把空目录计入"教训改用文件谓词分层数），父目录仍在＝典型空壳；PR=2.1272 自此不可复现（本班**不重烧 15 员池物化面**，遵上一班"禁烧面"令）。
+
+### 12.4 工序 3 归因四分诊（0 新行 ⇒ 零新路由；本班转单全部来自 12.2/12.3 的原因层）
+
+- **转⑤（修㉒′，高，沿 1016-01 在册单号不另起）**＝以 `e7285c6d5f6` 的三符号面为**基**向 HEAD 现值**按符号重放**（含其调用位与 `_unjudged_pillars` 影子披露键），**禁整档快照**；同袋带 `tests/` 用例。**反向自证判据（本班已把"改前"半边量好）**＝改前 `git show HEAD:该件 | grep -c <三符号>` 实测＝**0**，改后须 >0；且 `git diff --numstat HEAD -- 该件` 删除行须＝0（防再演 `1c79317949d` 形态）。本席不自改码。
+- **转⑦（换代动作，中）**＝[⑨-新] 结案判语按 12.2 收窄后，⑦ 席的下一步＝**停烧 15 组合网格**（在册建议不变）**且不再等 tmp 装载口收编**，改走 `ch_data.load_panel`＋`calibration_exam` panel 路按现面重跑，重跑件的 `lineage.score_row` 必须新起行、**禁止覆盖 rows[73]/[74]/[95]**（only-add；rows[74] 孤儿行也不删，永久册只登记不复原）。
+- **呈批草稿 P-11（判据缺失，沿在册单号，本席不自拍判据）**＝永久分数册**无产出行者申报位**：行内只有 `run_id` 自由文本，无"席位/非席位、物化件路径、口径来源"字段 ⇒ 跨班复现天然无锚。本班新增佐证＝同一谓词下三枚非席位/探针读数与 17 枚席位读数在册面上**形态完全同质**（无字段可分），要区分只能靠 `run_id` 字符串猜词表——本席 12.2 腿 A 用的就是猜词表，且它把 rows[74] 判入"未归类"。请 Owner/⑩ 定：①是否加 `producer_face` 申报位；②非席位 run_id 写永久册并翻卡 `examined`＋声明 `confidence_writeback` 是否需前置闸（卡面实测三枚 examined 里有两枚由非席位 run_id 翻成）。
+- **〔对照〕（沿 1016-01/十七班在册对照单，本班不新排）**＝"唯一变量＝产出通道"的对照卡仍未由 ⑥ 席兑现；兑现后本席按 only-add 判卷，不复用 rows[73]/[95]。
+- **零缺数单、零方向单**＝本班无新 fail 需要数据侧解释；⑩ 停发令未撤，本席不 enable 任何席、不广播可恢复。
+
+### 12.5 工序 5 结构性观察（家族级规律，≥1 条义务达成）
+
+- **S-14｜恒定班在册判语只会"被继承"，不会"被复量"＝失效单向累积**。证据链（同一条错判跨三班）＝十七班 18:2x 落"全岗唯一 panel 装载口＝⑦A tmp 件"→ 1016-02、1016-03 两班按原句沿用并据此开 修㉔ 后果句 → 本班 1 条 `git log -S"def load_panel"`＋1 条 `grep -n "def load_panel"`（成本 <1 分钟）证伪：库内装载口自 **10-06** 就在。⇒ 处方（请 ⑩ 认）＝凡"下一班首查判据"**引用库内函数/件**者，交接句须带**入库 commit 锚**；无锚者下一班默认复量，复量结果无论正反一律落账。本席本班把该判据反向用在 修㉒/㉓/㉗/㉖ 四单上，一次跑出两单一闭合、一单固化、一单延续——这就是它值 1 分钟的原因。
+- **S-15｜"按 card_id 取行"在 110 行面上有 14 组歧义**。实测 distinct `card_id`=86 而行数 110 ⇒ **14 组同卡多行**（最重者 `TDM-X-R1-01/comparison/07_熔断五级…五态仓位锚定版` 7 行＝rows{44,45,66,67,90,91,92}；`07b_…复位阶梯锚定版` 4 行）。家族后果＝任何下游按 card_id 聚合/首命中取数，会把非席位或历史臂读数当席位现行读数（12.2 腿 B 的网格失败正是该形态的一次实测代价）。唯一正确谓词＝**卡面 `lineage.score_row` 指针**。⇒ 请 ⑩ 汇总进全线口径；本席判卷今后一律"卡面指针优先，无指针则按 `run_id` 通道分面并报数"。
+
+### 12.6 阵亡十七班案卷转正入库（本席写域内的抢救动作）
+
+- ⚑ **在册三时点读数互斥，本班只声明现测、不判谁错（旧句留卷）**＝同一 `.runtime/tmp/st-qoder-p09-1016-01/` 目录，台账记到三个不一致读数：
+  - `ledger.md:1181`（1016-01 班）＝五件 frag_* **在盘**，mtime 17:46–18:37，尺寸 24511/2987/1908/2297/1610；
+  - `ledger.md:1205`＋`:1260`（1016-02 班）＝**frag_\* 零命中**、"目录内 12 件全为 21:5x–22:34 时间戳"，并据此开 [BLOCKER]（转正义务"物理无法执行"，要求 ⑩/⑫ 给未落地整班成果入库优先）；
+  - **本班 00:5x 现测**＝目录 **26 件／64644B**（谓词 `is_file()` 分层数，非 `rglob('*')`），五件**全在且尺寸与 1181 逐字同值**＝`frag_ledger.md 24511`／`frag_checkpoint.md 2987`／`frag_iterhist.md 1908`／`frag_pulse.md 2297`／`selfcheck17.py 1610`。
+  - ⇒ 两种解释并存且本班无法裁决：①1016-02 起批时确有清扫、其后有人**保 mtime** 放回（18:2x 时间戳未被刷新）；②1016-02 那把尺口径不同。可复跑谓词（任何班一条命令）＝`python -c "from pathlib import Path;d=Path('.runtime/tmp/st-qoder-p09-1016-01');fs=[p for p in d.rglob('*') if p.is_file() and p.name.startswith('frag_')];print(len(fs),[ (p.name,p.stat().st_size) for p in fs])"`。**无论哪种解释成立，"转正义务物理不可执行"这句在本班现测面已不成立**，故本班执行转正（下条）。
+- **转正范围＝十七班 §3 的判语与三条证据的结论层（其数值已由本班 12.2 逐腿复量），非全文 24511B 搬运**；全文仍寄身 24h-TTL 面，是否整卷 promote 请 ⑫/⑩ 定，本席不代删、也不代它宣布失效。
+- 转正判语（写在此处以便后续班不必再进 tmp）＝**"[⑨-新] 已结案，根因＝历史三枚 panel 读数的产出行者无入库锚＋册面无产出行者申报位；非数据时移（⑦席已排除，本班 12.2 复核）；panel 族装载口自 10-06 在库，故族级永久不可复现一句作废"**。
+- ⚠ 本席纪律旗＝十七班与本席同串（`st-qoder-p09-1016-01`）＝在册"取号靠数台账"必撞名的第四例；本班按 10-17 首号取名，未占用、未 requeue、未 release 他会话 claim。
+
+### 12.7 自检两轮
+
+- **轮一（交付命令原样实跑，正文命令逐条回放）**＝①`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6 --out <本班件>`→ 实跑读数 **rc=2**／stderr ERROR 行逐字见 12.3／out 件不存在；②`git grep -l st-e2e-test-p09 HEAD -- "*.py"`→ **空**（正对照：同 token 去 `-- "*.py"` 限定＝5 件）；③`git show HEAD:scripts/backtest/fexam/calibration_exam.py | grep -c "_bucket_type_off_vocab\|_bucket_caliber_proxy\|_PE_PROXY_MONO_NOTE"`→ **0**（负对照：同尺打 `e7285c6d5f6` 面＝**8**）；④`os.path.isfile('.runtime/tmp/p07/shift06_panel_materialize.py')`→ **False**。四把尺皆有正/负对照同框，未出现"零命中即结论"。
+- **轮二（抽 3 行回卡体核对门柱未走样）**＝rows[73]/[95]/[109] 按**卡面 `pillars_numeric` 现值**（`ic_mean_min: 0.02`／`ic_ir_min: 0.3`／`regime_same_sign: true`／`oos_same_sign: true`／`mono_spearman_min: 0.6`，本班从 L3-07-3 卡面读出，**不背数**）独立复算：rows[73]＝ic_mean FAIL／ic_ir FAIL／牛熊 PASS／IS-OOS PASS，与册面 fails 两腿逐字同（`mono_spearman=None`＝NO_FACE，故 fails 无 mono 腿＝与 ⑦c 在册"panel 路 mono 恒 None"一致）；rows[95]＝同形态，fails 两腿逐字同；rows[109]＝复算 **三腿 FAIL**（ic_mean −0.0007／ic_ir −0.0099／牛熊异号 bull −0.0031 bear +0.0041）而**册面 fails 只有一条**`未支持判据键（机判面待扩，fail-closed）: ['gap_k3_vs_k0_5d_max']`⇒ 复算与册面**判定方向一致（皆 fail、皆 pillars_all_pass=False）**，但**理由面走样＝在册 coverage-only fail 形态第三次复现**（修㉕ 未兑现，本席不动判据字节）。⚑ 三行 verdict 无一被本班改判，pass 集合仍＝{76,78}。
+
+### 12.8 问题登记（本班 [BLOCKER]，共 4 条；类型分布＝流程 2／工具 1／判据缺失 1；严重度＝高 1／中 2／低 1）
+
+- [BLOCKER] 2026-10-17|⑨成绩官 st-qoder-p09-1017-01|流程问题|恒定班在册判语只被继承不被复量，导致一条错判跨三班沿用并据它开过后果句：十七班"全岗唯一 panel 装载口＝⑦A 席 tmp 件 shift06_panel_materialize.py"（1016-02／1016-03 两班原句沿用）经本班两把尺证伪＝`scripts/backtest/fexam/ch_data.py:149 def load_panel` 自 10-06 21:01 即在 HEAD（`git log -S"def load_panel" -- scripts/backtest/fexam/ch_data.py`→`465178c8249`），消费面含 calibration_exam.py／card_binding.py，另 `8caf2743b9b`(10-16 16:48) 已带 panel 卡 CLI＋测试|证据=`ch_data.py:149`／`git log -S` 读数／台账 12.2 腿 C 改判段|要 ⑩ 在 SOP §3⑨ 与恒定班指令卡加一条"交接判据引用库内函数/件须带入库 commit 锚，无锚默认复量"（本席 S-14 处方）|中
+- [BLOCKER] 2026-10-17|⑨成绩官 st-qoder-p09-1017-01|工具缺陷|修㉒ 在册预言的 PE 止血闸净删**已从风险变成落地面存量**且肇事 commit 已钉死：三符号面 `e7285c6d5f6`(10-14)8 命中/1115 行 → `1c79317949d`(10-16 03:14)0 命中/1068 行 → HEAD 现面 0 命中/1163 行、磁盘==HEAD；其后 `8caf2743b9b` 补 97 行仅带回 `_shape_preflight`，未恢复 PE 闸披露位。后果＝warn-only/shadow 故在册 110 行零改判，但桶型 off-vocab／分位代理型假阳对判卷面永久不可见|证据=`git show <commit>:scripts/backtest/fexam/calibration_exam.py | grep -c` 三值（8/0/0）与行数（1115/1068/1163）；台账 12.3 末段|要 ⑤ 接 **修㉒′**：以 `e7285c6d5f6` 面为基按符号重放、禁整档快照，反向自证＝改前 HEAD 命中 0（本班已量）／改后>0 且删除行 0|高
+- [BLOCKER] 2026-10-17|⑨成绩官 st-qoder-p09-1017-01|流程问题|恒定班复跑面今日再断一处＋在册"抢救义务不可执行"结论在本班现测面翻案：①正交池 `pool2`/`pool6`/`pool_datesig` 三面 `is_file()` 全＝0 文件（空壳父目录仍在）⇒12 班逐班复现的 PR=2.1272 确认不可复现（修㉖ 延续）；②阵亡班案卷 frag 五件在台账里有两个互斥读数（`:1181` 在盘／`:1205`＋`:1260` 零命中并据此判"转正 §3 义务物理无法执行"），本班 00:5x 现测＝目录 26 件 64644B、五件全在且尺寸与 `:1181` 逐字同值（24511/2987/1908/2297/1610）⇒义务可执行、本班已完成 §3 判语转正，但该卷仍寄身 24h-TTL 面且无人认领|证据=台账 12.6 三时点段（含可复跑谓词一行）；`ls --time-style .runtime/tmp/st-qoder-p09-1016-01/`|要 ⑫ 给 TTL 清扫加"被在册引用的抢救案卷"白名单并把该目录 promote 或续期，要 ⑩ 认整卷归属；同时请 ⑩ 认"交接读数互斥时须带可复跑谓词落账"入 SOP|中
+- [BLOCKER] 2026-10-17|⑨成绩官 st-qoder-p09-1017-01|判据缺失|在册 coverage-only fail（fails 文案只有覆盖型短路理由、零经济腿）本班第三次复现＝rows[109] 复算三腿 FAIL 而册面只记一条 `未支持判据键…['gap_k3_vs_k0_5d_max']`：短路语义令 ③④ 生成端拿到"死因＝键不认识"而非真实三腿强度|证据=台账 12.7 轮二读数（bull −0.0031／bear +0.0041／ic_mean −0.0007／ic_ir −0.0099）；在册单号 修㉕ 自 1016-02 起未兑现|要 ⑤ 接 修㉕ 两点披露腿（短路前仍评估有面柱／`oos_ok` 一类布尔的"同号≠达标"语义声明位），要 ⑩ 在 SOP §3⑨ 认 coverage-only fail 的读法|低
+
+### 12.9 本班收班段（小步收口＋收班八件申报值）
+
+- **本班未动面申明**＝分数册字节零改动（只读）；`calibration_exam.py`／`comparison_exam.py`／`signal_orthogonality.py`／`ch_data.py` 零改动；`feedback/to_impl.md`／`to_miners.md`／`to_datasource.md` 零写入（⑩ 单写共写面）；治理图与流程五族面零改动；未复位 index（106 vs 110 的落差本席只记不修）；未 pop/drop/clean 任何 stash（reaper 现读 `stash_count=27`）；未 requeue 任何死袋；未 release 他会话 claim；未 mv 销账任何 dead 袋。
+- **dead 袋销账本班仍未执行（沿 1016-03 在册，本班只复量）**＝`process_reaper --status` 现读 `dead_archive: ok=False rc=1`；`.runtime/commit_queue/serializer.lease` 现读 `pid=47508`、mtime 距本班起批 47.7 秒（＝仍在刷新）⇒ 租约继续未空闲，本席不绕不手搬；分诊结论沿用前任"零抢救缺口"，**本席代分诊不代销账**，请 ⑩ 在租约空闲窗走正门 `dead-archive --content-level`。
+- **本班自犯并当场纠正两处（旧行为留卷）**＝①首版分数册尺 `yaml.safe_load`→ComposerError（12.1）；②卡池目录凭记忆→0 命中（12.1，违根宪法"路径禁凭记忆"），改 basename 定位后 2/2 命中。两处均为只读量测，无写副作用。
