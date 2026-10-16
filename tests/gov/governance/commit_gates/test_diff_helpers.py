@@ -453,6 +453,32 @@ class TestExtractSqlConstantLines:
         content = '_SQL_PATTERN = re.compile(r"SELECT")\n'
         assert _extract_sql_constant_lines(content) == {1}
 
+    def test_annassign_final_constant_exempt(self):
+        """AnnAssign（`_SQL_X: Final = ...`）整段豁免——st-opsv-20261015 补盲区。
+
+        仓内标准风格是带 Final 注解的常量（如 recon_runner._SQL_INSERT_DIFFERENCE），
+        旧 walker 只认裸 Assign：新增 Final SQL 常量整段被误拦（存量件只因非新增行
+        从未显影）。括号多行 Final 形态（recon_runner 实测命中面）必须整段豁免。
+        """
+        content = (
+            "from typing import Final\n"
+            "_SQL_INSERT: Final = (\n"  # L2
+            '    "INSERT INTO runs "\n'  # L3
+            '    "(trade_date) VALUES (?)"\n'  # L4
+            ")\n"  # L5
+        )
+        assert _extract_sql_constant_lines(content) == {2, 3, 4, 5}
+
+    def test_annassign_single_line_exempt(self):
+        """AnnAssign 单行：SQL_X: Final[str] = "SELECT..." → 豁免 L1。"""
+        content = 'SQL_GET: Final[str] = "SELECT col FROM tbl"\n'
+        assert _extract_sql_constant_lines(content) == {1}
+
+    def test_annassign_non_sql_prefix_not_exempt(self):
+        """AnnAssign 非 SQL_* 前缀仍不豁免（豁免面只收窄不放宽）。"""
+        content = 'QUERY: Final[str] = "SELECT * FROM tbl"\n'
+        assert _extract_sql_constant_lines(content) == set()
+
     def test_syntax_error_fail_open(self):
         """语法错误时 fail-open 返回空集合（不豁免，可能误报但不漏检）。"""
         content = 'def foo(:\n    SQL_X = "SELECT 1"\n'

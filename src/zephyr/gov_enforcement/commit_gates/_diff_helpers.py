@@ -196,6 +196,16 @@ def _extract_sql_constant_lines(file_content: str) -> set[int]:
                     for i in range(start, end + 1):
                         sql_const_lines.add(i)
                     break  # 一个 target 命中即可豁免整个 Assign
+        elif isinstance(node, ast.AnnAssign):
+            # st-opsv-20261015 补盲区：仓内标准风格是 `_SQL_X: Final = (...)`（AnnAssign
+            # 带注解赋值），旧 walker 只认裸 Assign——新增 Final SQL 常量整段被误拦
+            # （存量件只因"非新增行"从未显影；recon_runner.py 新增 run 台账 SQL 常量实测命中）。
+            target = node.target
+            if isinstance(target, ast.Name) and _SQL_CONSTANT_NAME_RE.match(target.id):
+                start = node.lineno
+                end = getattr(node, "end_lineno", start)
+                for i in range(start, end + 1):
+                    sql_const_lines.add(i)
     return sql_const_lines
 
 
