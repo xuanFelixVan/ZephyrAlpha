@@ -1,0 +1,67 @@
+# ALGO_FLOW 外部真源——runtime_hygiene（_domain_shared 域，真源 src/zephyr/shared/io/runtime_hygiene.py）
+# 2026-10-15 st-prevw-20261015（st-diskp0-20261015 D3）：.runtime 卫生面函数库（审计轮转+tmp TTL），
+# 唯一消费挂点=process_reaper._run_safety_wires 既有计划任务扫描循环（禁新常驻进程）。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.shared.io.runtime_hygiene
+source_of_truth: src/zephyr/shared/io/runtime_hygiene.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: repo_root 参数
+    #   fields: 参数 repo_root，类型注解 Path | str
+    #   code: sweep_audit_segment/sweep_runtime_tmp/run_runtime_hygiene 形参（AST 提取）
+    # - id: I2
+    #   name: max_bytes / backup_count 参数
+    #   fields: 判据常量同源引用 audit_jsonl_writer.DEFAULT_MAX_BYTES/DEFAULT_BACKUP_COUNT（禁复制数值）
+    #   code: rotate_audit_segment 形参（AST 提取）
+    # - id: I3
+    #   name: ttl_hours / protected / dry_run 参数
+    #   fields: DEFAULT_TMP_TTL_HOURS=48.0；rescue/.gitkeep 永久豁免；dry_run 只报不删
+    #   code: sweep_runtime_tmp 形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① rotate_audit_segment
+    #   name_en: rotate_audit_segment
+    #   intro: 单文件 ≥50MB 入口闸：移位轮转（<file>.<N> 同型）且最老段 gzip 化（B-016 压缩保留替代 unlink 丢弃）。
+    #   desc: 当前段 stat ≥ max_bytes → 最老段 <file>.<backup_count> 压成 .gz（覆盖旧 .gz，有界保留）→ 其余段序号 +1 → 当前段变 .1；返回动作串 rotated_gz/rotated/gzip_legacy/ok/error:…
+    #   inputs: path max_bytes backup_count dry_run
+    #   outputs: str
+    # - id: A2
+    #   name_zh: ② sweep_audit_rotation
+    #   name_en: sweep_audit_rotation
+    #   intro: 扫 .runtime/gate_audit 与 .runtime/audit 的全部当前段 *.jsonl 过同一道轮转闸。
+    #   desc: 目录逐文件精确后缀匹配（历史段 .jsonl.N/.gz 不进轮转面），单项失败记 errors 继续。
+    #   inputs: repo_root subdirs max_bytes backup_count dry_run
+    #   outputs: dict(scanned/rotated/gzipped/errors)
+    # - id: A3
+    #   name_zh: ③ sweep_runtime_tmp
+    #   name_en: sweep_runtime_tmp
+    #   intro: .runtime/tmp 顶层条目 mtime >48h 清扫（rescue/.gitkeep 豁免；今日在班车 mtime 新鲜天然豁免）。
+    #   desc: 判据=条目 mtime；删除走 safe_rmtree（allowed_prefix=tmp 目录自身）；目录/散文件分计，dry-run 只计数。
+    #   inputs: repo_root tmp_rel ttl_hours protected dry_run now_ts
+    #   outputs: dict(scanned/removed_dirs/removed_files/freed_bytes/skipped_protected/errors)
+    # - id: A4
+    #   name_zh: ④ run_runtime_hygiene
+    #   name_en: run_runtime_hygiene
+    #   intro: 单入口（消费方挂点）：审计轮转+tmp TTL 两腿各自独立 try，永不抛。
+    #   desc: 挂点=process_reaper._run_safety_wires 第三条 wire；任一腿失能记入返回值不反噬宿主。
+    #   inputs: repo_root dry_run max_bytes backup_count tmp_ttl_hours
+    #   outputs: dict(dry_run/audit_rotation/tmp_ttl)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: dict 统计报告
+    #   name_en: stats dict
+    #   intro: 各 sweep 返回计数与 errors 清单（消费方 _print_status 展示）。
+    #   downstream: zephyr.trading.process_reaper; tests.shared.test_runtime_hygiene
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> O1
+    # A2 --> O1
+    # A3 --> O1
+    # A4 --> O1

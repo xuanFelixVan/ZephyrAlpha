@@ -1553,9 +1553,9 @@ def _reap_cycle(dry_run: bool, report: ReapReport) -> ReapReport:
 
 
 def _run_safety_wires(report: ReapReport) -> None:
-    """一轮保命链评估：应急保命轨（BRK-078）+ 系统内存/提交水位（BRK-066）。
+    """一轮保命链评估：应急保命轨（BRK-078）+ 系统内存/提交水位（BRK-066）+ .runtime 卫生（st-diskp0 D3）。
 
-    永不抛：两条链各自独立 try，任一失能不吞另一件，且失能本身记入 report.errors
+    永不抛：三条链各自独立 try，任一失能不吞另一件，且失能本身记入 report.errors
     （静默失能=假绿，正是本仓 #ARCH-327 事故的形态）。
     """
     wires: dict[str, Any] = {}
@@ -1577,6 +1577,16 @@ def _run_safety_wires(report: ReapReport) -> None:
     except Exception as exc:  # noqa: BLE001 — 水位看护失能不得反噬收割主链
         logger.error("全系统内存水位看护不可用（BRK-066 复断，请人工介入）: %r", exc)
         report.errors.append(f"system_watermark_unavailable: {exc!r}")
+    # .runtime 卫生线（st-diskp0-20261015 D3：审计 50MB 轮转+最老段 gzip、tmp 48h TTL）。
+    # 挂点=本计划任务既有扫描循环（禁新常驻进程）；dry-run 轮=只报不删（零副作用语义对齐）。
+    # 函数库=zephyr.shared.io.runtime_hygiene（本件零判定逻辑复制）。
+    try:
+        from zephyr.shared.io.runtime_hygiene import run_runtime_hygiene
+
+        wires["runtime_hygiene"] = run_runtime_hygiene(REPO_ROOT, dry_run=report.dry_run)
+    except Exception as exc:  # noqa: BLE001 — 卫生线失能不得反噬收割主链
+        logger.error(".runtime 卫生线不可用（轮转/TTL 清扫跳过，请人工介入）: %r", exc)
+        report.errors.append(f"runtime_hygiene_unavailable: {exc!r}")
     report.safety_wires = wires
 
 
@@ -1625,11 +1635,21 @@ def _print_status() -> int:
     if wires:
         track = wires.get("emergency_track") or {}
         mark = wires.get("system_watermark") or {}
+        hygiene = wires.get("runtime_hygiene") or {}
+        hy_rot = hygiene.get("audit_rotation") or {}
+        hy_tmp = hygiene.get("tmp_ttl") or {}
         print(
             f"safety_wires: emergency_track_state={track.get('state')} "
             f"confirmations={track.get('confirmations')} "
             f"breaches={len(track.get('breaches') or [])} | "
-            f"watermark={mark.get('watermark')} breached={mark.get('breached')}"
+            f"watermark={mark.get('watermark')} breached={mark.get('breached')} | "
+            f"hygiene: rotated={hy_rot.get('rotated')} gzipped={hy_rot.get('gzipped')} "
+            f"tmp_dirs={hy_tmp.get('removed_dirs')} tmp_files={hy_tmp.get('removed_files')}"
+            + (
+                f" hygiene_errors={len((hy_rot.get('errors') or []) + (hy_tmp.get('errors') or []))}"
+                if (hy_rot.get("errors") or hy_tmp.get("errors"))
+                else ""
+            )
         )
     if data.get("errors"):
         print(f"errors={data.get('errors')}")

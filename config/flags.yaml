@@ -166,3 +166,35 @@ flags:
     description: "裸 duckdb.connect 运行时拦截门（M3-C1，宪法 §9.1 运行时侧补齐，挖矿册 04 T1；实现=zephyr.infrastructure.duckdb_runtime_gate，对齐 runtime_interceptor 模式：eager patch+meta_path finder；白名单豁免 DatabaseService 自身与既有直连点 zephyr.factor.offline_store；审计落 .runtime/audit/duckdb_runtime_gate.jsonl）；mode=warn 出厂态（放行+审计），翻转 mode:block 属 Owner 门位（flag 出厂翻转=high tier）；kill-switch=ZEPHYR_RUNTIME_GATE=0；回滚=flag enabled:false 或 revert"
     audit_path: ".runtime/audit/duckdb_runtime_gate.jsonl"
     implementation_status: "gated_mvp"
+
+  # [st-diskp0-20261015 防复发，W 班 st-prevw-20261015] D 盘空间地板（GiB）：
+  # 车道创建前置闸（scripts/session_worktree.py _check_disk_floor）与 VHDX 增长采样
+  # 红线（scripts/ops/vhdx_floor_watch.py）共用同一阈值键——单一真源，禁复制字面量。
+  # 背景：2026-10-15 D 盘 732G 100% 满（剩余 3.2MB），结构层 vhdx 569.8GiB+触发层
+  # 裂变车道/tmp 审计当日吃满；阈值低于午间警戒线（19.5GiB 余量即已告急）。
+  # enabled:false=两处消费面降级（create 闸放行仅 WARN、采样只记不告警）；回滚=本键改值或 enabled:false。
+  disk_floor:
+    enabled: true
+    min_free_gib: 15
+    description: "D 盘剩余空间地板 GiB（2026-10-15 满盘 3.2MB 剩余事故防复发，st-diskp0-20261015）：session_worktree create 前置闸拒绝线 + vhdx_floor_watch 告警红线共用；调整属 Owner 门位（阈值放宽=降低防线）"
+    implementation_status: "gated_mvp"
+  # [st-diskp0-20261015 L5，st-ninewatch-1016] 九面遥测预算（scripts/ops/nine_face_watch.py）：
+  # 只读巡检九面（dead 袋数/.runtime/tmp 体积/worktree 车道/主区 staged+untracked/quarantine 体积/
+  # sessions 目录数/gate_audit+audit 体积/.runtime 根散件/队列 pending+dead），
+  # 每面一个预算阈值，任一超限→workspace_alerts 告警件+nine_face_alerts.jsonl 审计行（小时节流）。
+  # 单一真源=本节（禁复制字面量）；阈值放宽=降低防线属 Owner 门位。
+  # enabled:false=出厂 OFF（只测记基线不告警）；开闸=Owner 翻本键（flag 出厂态翻转=high tier）；
+  # 回滚=本键改值或 enabled:false。
+  nine_face_budget:
+    enabled: false
+    dead_bags: 80
+    tmp_gib: 5
+    lanes: 60
+    staged: 600
+    quarantine_gib: 1.5
+    sessions: 120
+    audit_gib: 2.5
+    root_files: 40
+    queue_backlog: 150
+    description: "九面遥测预算阈值（root-cure-plan §3-L5 红线有警，st-diskp0-20261015）：dead 袋数/tmp GiB/worktree 车道数/主区 staged+untracked 数/quarantine GiB/sessions 目录数/audit GiB（gate_audit+audit 合计）/.runtime 根散件数/队列 pending+dead 数；任一面读数>=阈值即超限告警（判据=value < budget 为健康）；enabled:false=出厂 OFF 只测不告警，开闸属 Owner 门位"
+    implementation_status: "gated_mvp"

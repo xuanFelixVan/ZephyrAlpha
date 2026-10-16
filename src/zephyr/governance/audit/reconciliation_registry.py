@@ -7804,9 +7804,15 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
         `<filename>.1/.2/.3`（RotatingFileHandler 同型，N 越大越老）——3 个历史段全部不匹配，
         于是在册承诺"旧段移位保留不物理删除（B-016）"被本 TTL 腿静默击穿；
         实测 .runtime/gate_audit 内 >7d 件数=39，正是这些旧段。
+        补腿（st-diskp0-20261015 D3）：runtime_hygiene 轮转把最老段压成
+        `<filename>.<N>.gz`（"更旧 gzip"，压缩保留比 unlink 丢弃更保守）——.gz 段同为
+        取证面，不豁免会被本 TTL 腿重演同型击穿。
         """
         if name.endswith(_PROTECTED_SUFFIX):
             return True
+        if name.endswith(".gz"):
+            head_gz, _, tail_gz = name[: -len(".gz")].rpartition(".")
+            return tail_gz.isdigit() and head_gz.endswith(_PROTECTED_SUFFIX)
         head, _, tail = name.rpartition(".")
         return tail.isdigit() and head.endswith(_PROTECTED_SUFFIX)
 
