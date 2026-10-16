@@ -604,3 +604,31 @@ cd /d/ZephyrAlpha/.worktrees/st-qoder-p05-1015-05 && git --no-pager diff --cache
   禁弱化闸）。重投袋＝`q-...-0004`。
 - 顺带在册复证＝首袋 -0001 落地后主区 index 停在落地前一版（本席两册三态各停一代现象由
   ⑩1016-12 §⑦ 记为结构性），本班不动他家 staged 面（宪法 §3.4，门面对 29＋9 枚外来件只 warn 不阻断）。
+
+### 7 收班终核（date 实测读数，非计划句）
+
+- 落地判据三面全达＝`git show HEAD:docs/.../ledger.md | grep -c "末袋死因与修因"`=1 且
+  `grep -c "班次 02 次节"`=1（承载提交 `a3c0370d3e` 21:55:23）；`git show HEAD:docs/.../checkpoint.md
+  | grep -c 95d004c348`=1；`git show HEAD:scripts/backtest/ibt/ibt_runner.py | grep -c dampen`=13
+  （承载提交 `95d004c348` 21:39:33）。本席三件 `git diff --numstat HEAD`＝**全空**（盘＝HEAD，零在途残留）。
+- 袋四态终账＝`-0001`（两册）done／`-0002`（ibt_runner 单件独袋）done／`-0003` **dead**（证据引文字面
+  命中 gate-detect-git-dangerous，死因与修因见 §6，未盲重投）／`-0004`（修因后重投）done。
+- ①release＝`--release-only` 三件 released=3 denied=0 verified（其中两件在落地收尾已由网关自放，
+  报 NOT FOUND 属常态非事故）；②心跳双证＝`SessionRegistry.unregister` 后 `heartbeat.jsonl` 末行
+  `status:"exited" reason:"session not in registry"`（ts 13:58:29Z＝21:58:29 本地），进程表
+  PID 40164 与 31440 复量均 GONE，残 `.runtime/locks/heartbeat_<sid>.pid` 已摘（本班自证停手面留给
+  03 班防重入用，故 `.runtime/sessions/st-qoder-p05-1016-02/` 两枚 jsonl **保留不删**）；
+- ③耗时＝首命令 21:20:08 → 本行落笔 **41.0** 分（75 分班窗内；施工段＝尺 7 分＋次件取证验证 6 分＋
+  三袋落地等待 16 分，返工段＝末袋死因分诊与改写 3 分）。
+- ⑤自清＝`.runtime/tmp/st-qoder-p05-1016-02/`（四把尺＋四份读数 jsonl＋三份写入器＋两枚 message
+  ＋`merge/` 三面临时件）整目录删除，复跑口径全在 §1/§2/§3 与游标 notes；项目根零临时件
+  （`git status --porcelain` 根层扩展名匹配计数＝0）；⑥GPU 未 acquire 如实免；⑦零子代理＝零孤儿，
+  唯一后台任务（首把尺）completed rc=0。
+- ⚑⑧修正自报（承 1016-01 §5-⑧ 同型口径）＝本班**未调用任何工棚/工作树启动入口**，但
+  `git worktree list` 现含 `D:/ZephyrAlpha/.aidrafts/st-qoder-p05-1016-02`（分支
+  `session/st-qoder-p05-1016-02`，停在 `f149929a90`＝本班末袋落地前）＝会话影子指令面由平台侧
+  自建（对照 chief 席在册心跳守护命令行亦带 `.aidrafts/<sid>` 参数），非本席建树。本班**不自行清理**
+  （在册律＝遗留树交清理专班），请 03 班与⑩据此把"零 worktree"判据从"树目录不存在"改读为
+  "未调用工棚入口＋影子树归清理专班"，并报⑩路由处置该枚影子树。
+- 残余呈批面＝`-0003` 死信件留 `dead/` 作审计证据（其意图已由 `-0004` 内容级吸收，可判 absorbed，
+  但销账须走 mv 通道＋机生台账行，本席不跑全池 `dead-archive` 以免触碰他席袋）。
