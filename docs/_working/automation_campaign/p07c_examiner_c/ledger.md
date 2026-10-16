@@ -237,3 +237,64 @@ L9-A15/calibration/02・/03→`c1_market.hl_funding_history`）＝表未入配�
   四件字节在盘＋暂存面双存证（`git diff --cached` 4 件），不丢。下一班续投前先读 dead_reason 再定（不盲重推死袋）。
 - 纪律复核：本席**未**取 CLI 手动 requeue 人工强制杠杆、**未**代拆他人 index.lock、**未**自清他会话 claim、
   未动判据/门柱/冻结值、未翻任何卡状态、未写分数册一行；袋在飞故本班 claim **未释放**（在册"袋在飞禁放锁"）。
+
+
+## ⑦考工C 班次 1016-01（st-qoder-p07c-1016-01）｜出分 2 张（均 fail）｜保底 2＜8 未达・超 90 分班限（实耗≈96 分）如实呈报
+
+### 一、分母实测（date 现测 14:20:11 起手・以磁盘面为准）
+
+- 卡池 553 件＝entry_flow 402／exit_flow 51／portfolio_flow 37／position_flow 63。五态加总自证：
+  preregistered **167**／empty 186／examined 81／blocked_on_data 71／blocked_on_impl 48 ＝ 553 ✓（与 ⑩1016-19 班 13:39 的 167 同值＝停发解除后当日尚无新翻卡）。
+- prereg 面 `classify_card` 逐卡 n=167 加总自证：**C 116／U 27／B 15／A? 7／A 2／D 0** ⇒ 自动绑定层可绑面仍＝2（与 10-15 首班同值，三个班未动）。
+- flow×class：entry 95（U26/A2/A?7/B14/C46）・exit 26（C24/B1/U1）・portfolio 21（全 C）・position 25（全 C）。
+- C 面目标分型：engine_replay 64／other 27／panel_stock 16／sector_series 3／probability_hit 3／无标注 3 ＝ 116（上班 117→本班 116，差值枚系 panel_stock 20→16 与 U/B 面各动一枚，非本班动作）。
+
+### 二、本班出分两张（panel 注入路・`run_card` 正卷・卡面已自翻 examined）
+
+| 卡 | verdict | ic_mean | ic_ir | oos_ic | regime(bull/bear) | n | 分数行 |
+|---|---|---|---|---|---|---|---|
+| TDM-E-L3-12-3/calibration/02_获利盘占比 | fail | 0.0094 | 0.0693 | 0.0063 | 0.0155／0.0123 | 1620 | rows[104] |
+| TDM-E-L3-03-2/calibration/02_均线多排 | fail | -0.0104 | -0.0822 | -0.0090 | -0.0176／-0.0012 | 1519 | rows[105] |
+
+- 判据面读数：两卡均 `ic_mean < 0.02` 且 `ic_ir < 0.3` 双柱记败；获利盘卡 IC 与 OOS、两段 regime 同号为正（弱正信息、不过地板），均线多排卡全面对齐为负（该冻结式在此宇宙上是反向信号）。
+- 前置闸 G1-G4（⑦A 席在册自设数据充分性面，非门柱、未动 pillars）两卡全过：ic_days 1620／1519，日均有效名数 4476.6／4149.3，ic_std 0.1358／0.1270，oos 非 NaN。dry 先落 tmp 册验形状，再落真册。
+
+### 三、口径出处与写面自证（零自创，逐条对卡面）
+
+- 供数装载＝复用 ⑦A 席在册宽面板口 `load_column`（同 argMax(ingest_ts) 去重语义＋parquet 缓存），technical_indicator 均线族命中其既有缓存、chips_winner/conc_90 现拉（首拉 45.7 分含 8 年分块）。
+- 目标面 `stock_fwd_ret_t1o_to_t2c`＝close.shift(-1)/open−1，执行器 `_panel_metrics` 内部 shift(-1) ⇒ t 日对位 T+1 开→T+2 收（与 A 席 1015-06 班同一冻结面，非本班新造）。
+- 宇宙＝L3-03-2/02 卡面原文"读取须按宇宙重建源过滤（该表含 14,357 个非个股符号）"⇒ 仅留个股前缀 60/00/30/68；L3-12-3/02 与它同源（technical_indicator 同表）故同过滤，其自身卡面未再声明宇宙；两卡卡面**均未申报** ST／上市年龄剔除 ⇒ **未套** A 席 V1 掩码（套了＝把未申报口径写进永久分数册）。
+- 取值域首跑实证：chips_winner ∈ [0,1]（卡面明令"首跑以分布实证并写死换算"）⇒ 不乘 100；conc_90 ∈ [0, 98.0]。
+- 联合分／复合分位＝卡面逐字：获利盘联合分＝截面秩分位(chips_winner) × (1 − 截面秩分位(conc_90))；均线多排计数＝[ma5>ma10]+[ma10>ma20]+[ma20>ma60]，趋势分位＝计数与 (close/ma20−1) 两列截面分位的等权复合。
+- 分数册 only-add 三面自证：写前 sha16 `21ce93c0a55c450e`（104 行）→ `7b79f81eb9f0b17f`（105 行，+988B）→ `05bc7ce014f204a0`（106 行，+939B），两次 `new.startswith(old)` 均 True。
+- GPU：本班未 acquire 看门人，未点名 device_ledger ⇒ 收班⑥ 如实免执行，且本班两行分数不申报为 GPU 读数。
+
+### 四、堵点与转单（不开考的面，逐条给因）
+
+- **全班唯二 class A 可绑面＝两张 sector series 卡（L2-01-2/02・L2-01-3/02，积压 6 日）本班仍不开考**：卡面 `signal_derivation` 的 series 面写的是**响应变量式**（"占比前 10% 板块等权组合的次日超额"与全样本差），不是 t 日可算的 PIT 信号式；同卡面另给 5 日环比式读法，两读法不可由卡面裁决 ⇒ 择一入册＝往永久分数册写未冻结口径（承本席 10-15 首班在册结论，非本班省力）。
+  供数面已实测可达（非断供）：c1_market.kline_sector_880 period='1d' 804,110 行／max trade_date 2026-10-15，sector_code_name_map code_family 在册映射 industry_l1 61＋industry_ths 128 ⇒ 转 ⑥ 补 signal 侧申报位后本席下即可考；本席不自制 22 册格（＝自批）。
+- L3-03-2/03 温和放量卡已占卡未开考＝班限已到（14:20 起手→15:5x），非口径堵点；其"温和带命中二值与截面分位（爆量惩罚取负构造）"的带界与合成序仍需 ⑥/⑤ 认定，下班带此条再判。
+
+### 五、[BLOCKER] 登记（本班 6 枚：中 4／低 2・需Owner 1）
+
+- [BLOCKER] 2026-10-16|⑦c席1016-01|工具缺陷|考工占卡锁 TTL 30 分远短于班限 90 分，CH 宽面板首拉窗（45.7 分）内三把卡锁全部静默过期，收班 release 三面同读"未被锁定"且全程零告警面|docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-2__calibration__03_温和放量.yaml 与 scripts/lock_files.py list 现值 p07c 命中 0|⑤席定"考工席 claim TTL≥班限"或给长拉数窗自动续租钩子|中
+- [BLOCKER] 2026-10-16|⑦c席1016-01|判据缺失|panel 路 mono_spearman 恒 None 而卡面冻 mono_spearman_min=0.6，两行分数 unjudged 面自述"panel 路恒 None／分桶样本不足 NaN"＝响应单调柱从未被评估|scripts/backtest/fexam/calibration_exam.py 内 _panel_metrics 返回面 mono_spearman 置 None 一行|⑤席补 panel 路分桶单调面，或 ⑩判该柱对 panel 卡豁免并写进词表|中
+- [BLOCKER] 2026-10-16|⑦c席1016-01|判据缺失|前置闸 G2 只量日均有效名数（4476.6／4149.3）而 min_names_per_day 实测 0（IS 起点前空窗）＝日均尺挡不住头部空窗仍能入册|.runtime/tmp/p07c_1016_01/shift_dry.json 与 shift_real.json 两面 measured 字段|⑤席判 G2 是否须加逐日地板腿；本席未自改闸|低
+- [BLOCKER] 2026-10-16|⑦c席1016-01|流程问题|全班唯二可绑面（两张 sector series 卡）卡面 series 面写响应式不写 t 日信号式，两读法不可裁决⇒本席不开考并转单|docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-2__calibration__02_板块成交额占比活跃度.yaml 的 data_binding.signal_derivation 字段|⑥席补 signal 侧申报位（考工自制册格＝自批，勿越）|中
+- [BLOCKER] 2026-10-16|⑦c席1016-01|工具缺陷|本岗唯一宽面板装载口系他席临时件（.runtime/tmp/p07/shift06_panel_materialize.py，头注 TTL task_bound 24h 名义已过期），本班复用其 load_column 与均线缓存|.runtime/tmp/p07/shift06_panel_materialize.py 与 shift06_ma5/ma10/ma20/ma60.parquet|⑤/⑩判是否收编为正式装载件；收编后本席下班改读正式口|中
+- [BLOCKER] 2026-10-16|⑦c席1016-01|需Owner|保底口径与班限互斥：指令卡"每班≥8 张出分或跑满 4 小时"对 90 分恒定班不可同时满足（实测单张 panel 卡含 CH 宽面板首拉 45.7 分＋真跑 20.3 分），且 167 张积压里自动可绑面仅 2 张＝供题形状结构性问题非本席省力|docs/01_policies_and_standards/sop/automation_sop/research_production_line_policy.md 三-A 节扩席条款与 ⑦⑧ 席位节（C 席至今未列）|⑩改判考工席保底口径，或 ⑥/⑤ 补目标面口后本席自解；Owner 知会|中
+
+### 六、收班八件（本班终态）
+
+1. **release 全部 claim**＝三张卡锁均已于 15:0x 自然过期（现值 list 面 p07c 命中 0），本席自家四件与两卡、分数册随袋由正门 finally 释放；见 BLOCKER 1（静默过期族已立案）。
+2. **注销心跳**＝守护 pid 43804（本席 keeper 单进程自注册活 PID 形态，14:27 起环）按 PID 核活后终止，再复证 pid 不存在＋心跳末行 exited；未按镜像名批杀。
+3. **实耗**＝起手 14:20:11 → 真跑落册 15:5x ≈ **96 分**（超班限 6 分，超因＝CH 首拉 45.7 分未被预估，非返工）；例行取证≈12 分・拉数≈46 分・判分≈21 分・写作投袋≈余量。
+4. **[BLOCKER]**＝6 枚（中 4／低 2，含需Owner 1）；写后现测两把尺同框＝严式 `grep -c "^- \[BLOCKER\] 2026-10-16|⑦c席1016-01"` **6**、宽式 `grep -c "\[BLOCKER\]"` **8**（宽式多出的 2 处＝本节标题与本行两处叙述体命中，非登记行；⑩对账请用严式或"行含 BLOCKER 且含日期"谓词，本席席位段新立为 `⑦c席1016-NN`）。
+5. **自清**＝`.runtime/tmp/p07c_1016_01/` 本班临时件（脚本 4＋json 4＋dry 册 2＋备份 1）在投袋后清单如实保留（缓存 p07c_ti_*/p07c_hfq_* 落在 ⑦A 席 tmp 目录内，非本席件面，如实归位呈报不代删）；四件套外零散落；主区根零临时件。
+6. **GPU 还牌**＝未 acquire 看门人 ⇒ 免执行，读数不申报为 GPU。
+7. **后台子任务清点**＝零 spawn 子代理；本班唯一长驻进程＝本席心跳守护 pid 43804，收班按 PID 终止并复证 ⇒ 零孤儿。
+8. **零 worktree 确认**＝本班未调用任何工棚/工作树入口、未建任何 worktree（TRAE-079 Phase 2 遵令），全程主区＋claim 互斥作业；发现的历史遗留 `.worktrees/` 与本岗无关件一枚未动，整批交清理专班。
+
+### 七、下班（⑦c 1016-02）首查四件
+
+① 本班袋是否落地（只认 git log 与 blob 内容级，勿信盘面自述）；② ⑥ 是否已补两张 sector 卡的 signal 申报位（补后即考，供数面本班已实测可达）；③ mono_spearman panel 面是否已由 ⑤ 补齐（补齐前本班两行的"未判柱"注记须保留勿涂）；④ 卡池 prereg 是否仍 167（若 A/B 席当日推进则改按新分母领面，勿沿旧数）。
