@@ -1154,6 +1154,8 @@ gaps:
   # === 2026-09-19 批：bizmine 通宵夜战七项数据缺口批量登记（st-bizmine-co-20260919，各证据=docs/_archive/_working_cleared/archive/2026-09/bizmine_night/ 实测报告）===
 
   # === ① consensus_daily 值类列 PIT 已坏（平推快照；F 车道另类探针实测）===
+    p01_probe_20261015r: >-
+      ①席 1015-14 个股估值深史与 is_st 源实测：现腿真源方向＝daily_valuation data_source 全表只有 local_valuation 254151 行（2026-08-03..2026-10-14）＋repair_kline_join 1280 行（09-16..09-18）＝零外源腿、本库自算派生（该定性在册 verification_20260918 已有，本键只补源侧）。可得性四测＝①baostock 匿名 bs.login error_code=0，query_history_k_data_plus('sh.600000','date,code,close,peTTM,pbMRQ,psTTM,pcfNcfTTM,turn,isST',freq='d') 三窗真跑：2017-01-03..02-28=36 行（peTTM 6.510568/pbMRQ 1.068165/psTTM 2.218362/pcfNcfTTM -5.559678/isST 0）、2019-01-04..02-28=35 行（5.228507/0.687150/isST 0）、2026-10-08..10-15=6 行且右端=开班当日（6.267070/0.425902/isST 0）；query_stock_basic 给上市日 1999-11-10。⇒④席'is_st 真实填充源'该问结案＝有逐日真值列，禁再由名称反推。本席只测 1 票×3 窗，未测全市场规模、未逐年二分左界、未证 2017 前无；pcfNcfTTM 可为负禁当缺数。②tushare pro.daily_basic 既有 token 真跑 20190104=3556 行(0.32s)／20170103=2832 行(0.23s)，列无 is_st；官方载该 API 最低 2000 积分起⇒无权限报错返回全市场截面＝反证本仓 token 已达 2000 档（零现金）。③akshare 个股估值腿未通：stock_a_indicator_lg 在 1.18.75 不存在（hasattr False），stock_zh_valuation_baidu 真跑 TypeError 'NoneType' object is not subscriptable⇒不外推'akshare 无估值腿'。④东财腿未重跑，引在册先例（13 班四条 em 腿全 ConnectionError＋macro_data_eastmoney_ssl_eof_chronic）。规模半实测＝2373 交易日×0.23-0.32s＋官方表 2000 档每分钟 200 次/每天 10 万次每 API⇒串行下限≈12 分钟；第三方口径冲突（50/200/500）如实登记，真档位以②起跑报错为准。断供风险在册＝tasks.yaml:1069/:1077 注释原文'baostock 有 IP 黑名单史'（#ARCH-DATA-015，10001011）⇒可得≠可续供，禁单腿常设。出建设单 B-28（复用本仓 baostock_provider.py，禁新建 provider）。
   - id: "consensus_daily_value_cols_pit_broken"
     p01_probe_20261015f: |-
       probed_by: st-qoder-p01-1015-08  # ①数据源席第08班本机只读实测（CH query_rows ＋ tushare 真调用）
@@ -1220,6 +1222,8 @@ gaps:
     created: "2026-09-19"
 
   # === ③ technical_indicator 日频重复 (date,symbol) 行待 ingest_ts 去重（IND 三切片实测）===
+    p01_probe_20261015o: >-
+      ①席 1015-13 ETF 日线浅史改判实测（FINAL 按年）＝现面 117,393 行/1,696 只/单腿 miniqmt；2021=203、2022=242、2023=242、2024=242、2025=243 而 uniq(symbol) 恒 1（唯一试点票 159865，1,359 个 trade_date）、2026=116,221/1,696⇒在册『浅史』低估了病：2019 窗内除一只票外零样本。三渠道真跑＝tushare pro.fund_daily(159865.SZ, 20210101..20261015)=1,359 行，与本库该票 uniq 日 1,359 逐位同（正对照成立）；pro.fund_basic(market_type='E')=15,000 行含 list_date/delist_date；akshare fund_etf_hist_sina('sz159865')=1,358 行全史单次；akshare 东财 fund_etf_hist_em 两票真跑全 ConnectionError（同批另四条东财腿同签名）⇒判两处可用、东财匿名腿已死。本席新发结构性判据（给②⑨⑤）＝回补必须按 fund_basic 的 list_date/delist_date 建当期宇宙，本库 1,696 只是在市口径，按今日名单回补＝幸存者偏差（同族在册先例＝kline_daily/stk_limit 2019 前仅约 237 只宇宙断崖）。规模面＝13 班未估 1,696 次逐票调用耗时；14 班半实测闭合（单次 0.23-0.32s 亲测＋官方 2000 积分档每分钟 200 次⇒下限约 9 分钟，不含新浪腿与并发上限）。首张建设单＝B-26。
   - id: "technical_indicator_duplicate_rows_ingest_ts"
     table: "c1_market.technical_indicator"
     gap_type: "upstream_data_corruption"
@@ -1550,6 +1554,10 @@ gaps:
     channel_note: "模拟盘 tick 服务器保留≈1 个月（09-01 可下/08-18 已失效实测），30 天内缺口均可按本配方回补；分钟/日线族深度数年不受清退影响。评估详见 docs/04_research_records/data/data_fix_campaign/p0_sim_as_source_assessment.md"
     created: "2026-09-21"
     last_updated: "2026-09-21"
+    p01_probe_20261015q: >-
+      ①席 1015-14 复量 tick 族近端面（严格读 FINAL，正对照 SELECT 1=[(1,)]）：逐日 rows/uniq_symbol＝10-08 20203768/5224、10-09 6708423/5224、10-12 357130/8317、10-13 整日零行、10-14 14582/7937（④席 p04-01 报 8027，本班复量多 6555 行＝该日仍在写入）、10-15 9207409/7937；分源＝miniqmt 36134182（10-08..10-15）＋qmt_bridge 357130（仅 10-12），两源加总 36491312 与逐日加总逐值相等。tick_depth_5 同日面＝09-29 仅 1 行、10-08/10-09/10-13 三整日零行、10-12 139053、10-14 14582、10-15 1589618（vs 09-28 22827093）。定性＝源活在/采集退化非源断供（决定性一条：同终端同窗 kline_1min 六日全满采 1340442..1342129 行、uniq symbol 恒 5562-5569）。回补通道四测＝①xtquant 连接成功（127.0.0.1:58610，路径 E:\国金QMT交易端模拟\bin.x64/../userdata_mini/datadir），get_market_data_ex(['000001.SZ'],period='tick') 10-08=4859 行可取／10-13=0／09-28=0／10-15=0，本席未跑 download_history_data（写终端目录属施工面）故服务端可读窗未证；②akshare tick 族仅剩 stock_zh_a_tick_tx_js（签名无日期参数，真跑 4721 行）＝历史窗结构性不可回；③tushare 分笔＝本席探针尺无效作废（hasattr 对 Pro 对象恒真，未真调）；④baostock frequency='t' 官方拒绝 error_code=10004012 请求数据类型不正确＝无 tick 腿确证。时限＝date 实测 2026-10-15 为周四、下个周日 2026-10-18、其 minus7=2026-10-11⇒tasks.yaml:2368 tick_backfill_weekly(backfill_days=7) 的自动窗将不含 10-08/10-09。判据缺陷＝该任务 threshold=5000000 按行数判缺⇒10-08/10-09 均>5M 被判不缺，而宇宙 5224 对正常 7937＝少 34.2% 零告警⇒建议改双指标（行数 AND uniqExact(symbol) 下限）。出建设单 B-27。
+    p01_probe_20261015t: >-
+      ①席 1015-15 tick 近端复量＋外部免费逐笔腿四渠道穷尽（严格读正对照 SELECT 1=[(1,)]；表列面先过 system.columns，真列=trade_date/timestamp 等 18 列，无 ts 列）：rows/uniq(symbol)/笔票比＝09-28 24496516/7934/3087.5、10-08 20203768/5224/3867.5、10-09 6708423/5224/1284.2、10-12 357130/8317/42.9、10-14 14582/7937/1.8、10-15 9207409/7937/1160.1；10-13 整日零行；data_source 三日实测恒单源 miniqmt。决定性＝10-15 的 9207409/1160.1 与 14 班 18:4x 读数逐位相同，本班 19:5x 复量零增长⇒收盘后 4.6h 无补写，判'当日腿定格 1160 笔/票'非'写入中'。外部免费逐笔四测＝tushare pro.query 14 个候选接口名全报 '请指定正确的接口名'（正对照同码路 daily_basic 20261014=5563 行/3.47s），stk_mins 真存在但配额实测 '频率超限(1次/小时)'；akshare 1.18.75 tick 族仅 stock_zh_a_tick_tx_js 且签名无日期参数＝当日 only；baostock frequency='t' 官方拒绝 10004012；xtquant 可连且 10-08 单票 4,859 行可取（服务端可读窗未证，归②席 10-18 02:00 前试下载）。零放行、零改判据与 threshold 本体。
 
   # === 2026-09-21: 09-18 清退过渡日竞价缺口（桥午后才通，竞价窗落真空；分包2 移交单①，仿 A3 先例）===
   - id: "auction_20260918_transition_gap"
@@ -1722,6 +1730,15 @@ gaps:
     impact: "c1_market 表 msci_adjustment 无数据可读；下游若按表名接线将读空集，普查/对齐侧会误判缺件或假绿。"
     evidence: "docs/_archive/_working_cleared/fullconnect_campaign/a_data_foundation/06_f06_ch_hot_warehouse.md §三+§四W1；scripts/governance/wave3/recheck_empty_tables.py CENSUS_TABLES 在册点名"
     resolution_plan: "建腿 vs 退役逐表裁=Owner 门（F06 卷 W1 后半步）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
+    searched_channels:
+      - MSCI 官网 index-review 页（检索命中的官方 URL）＝可达性经 15 班真跑已证；公告条目正文是否含逐只名单本席面未证
+      - 官方通稿 PDF MSCI_Aug26_QIRPR.pdf＝只汇总数，无逐只名单
+      - 官方明细 PDF MSCI_Aug26_STPublicList.pdf＝15 班实测 HTTP200/pdfplumber 文本层可抽但 extract_tables 5 页全 0（两列版式并行不可判增删）⇒可解析性未证且无结构
+      - 国内媒体转载（21财经/新京报/东财财富号/雪球/同花顺/证券时报 e 公司）＝有逐只名单与生效日但人工转载、无结构、不可自动化
+    p01_probe_20261015p: >-
+      ①席 1015-13 MSCI 调整公告三渠道判不放行＝渠道一 MSCI 官网 index-review 页（检索命中的官方 URL，非自造）；渠道二 官方 PDF 直链（app2.msci.com/eqb/pressreleases/archive/MSCI_Aug26_QIRPR.pdf 通稿只汇总数；www.msci.com/eqb/gimi/stdindex/MSCI_Aug26_STPublicList.pdf 明细）；渠道三 国内媒体转载（21财经 2026-08-13／新京报／东方财富财富号 2026-05-29／雪球／同花顺／证券时报 e 公司 2026-05-13）＝逐只名单＋生效日可读但人工转载、无结构、不可自动化。本班自纠留痕＝13 班曾对 index-review 页 WebFetch 取数用的 URL 系本席自造的代理域缓存串（违反 AGENTS §8 禁自造 URL），其返回『页面公开可达但正文无公告条目』不采信、当场作废，故该班判可达性为未证。口径雷＝同轮 2026-08 调整的检索摘要载『首页统计剔除 32 只 vs 明细打印 33 行（多出 LEO GROUP CO A）』官方明细自相矛盾，并载明预发布明细允许勘误、正式名单以生效日收盘后为准⇒将来建腿 PIT 必须 announcement_date 与 effective_date 两列分离，禁把预发布明细当最终真值入册。续供节奏＝季度，2026 年下一轮 11-11 公布/12-01 生效，但无结构化 API、只能 PDF/网页解析⇒五门『续供＝是否自动化』该班答未证⇒不放行。⚑本键的『可达性未证』口径已被 15 班 p01_probe_20261015s 覆盖：该班取 13 班在册检索原文 URL 真跑得 HTTP200＋ctype=application/pdf，可达性由未证改判已证可达，并新增许可证硬门不过的终局判定，故本案卷终值以 s 键为准、本键只作 13 班截面留痕。
+    p01_probe_20261015s: >-
+      ①席 1015-15 MSCI 清单五门复量＝许可证硬门不过（判终局不放行，非证据不足）：两条官方直链取 13 班在册检索原文，真跑实测 HTTP200/ctype=application/pdf/123817B(3.0s) 与 15440B(1.8s)，pdfplumber 文本层可抽（3 页／5 页）。可解析性判不过＝extract_tables 在 5 页全 0、两列版式并成一行（实测同步行 'KINSUS INTERCONNECT TECH CALIWAY BIOPHARMA'、'None ROCKWOOL B'）、逐行动作标记 (ADDED|DELETED|MOVED|INCREMENTAL) 命中 0/5 页⇒文本层无法判增删归属。该 PDF p4 官方 Notice 原文：'The Information may not be modified, reverse-e…'／'reproduced or redisseminated in whole or in part without prior written permission from MSCI.'／'may not be used to create derivative works or to verify or correct other data'⇒入库即 modified+derivative works，许可证门明文不过。PIT 同文件自证双日期＝announcement 2026-08-12(Geneva) 与 effective 'as of the close of August 31, 2026'。续供自动化仍未过（文件名含 Aug26 季度轮，无固定可派生 URL）。下一班禁重烧本探测；翻案只走 Owner 书面许可通道。
     created: "2026-09-29"
     last_updated: "2026-09-29"
 
