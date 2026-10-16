@@ -854,3 +854,31 @@ python -c "import glob,os,json,datetime;c=datetime.datetime(2026,10,15,18,12).ti
 [BLOCKER] 2026-10-16|⑩线长1016-17班|工具缺陷|本席自踩并当场改正三处：①卡面 status 首遍只读前 40 行把 preregistered 误量成 90（真值 167，status 字段在第 40 行之外）②引用 git_commit.py:957 实为 :954③网关路径写成构造式怪路径——后两处均在落笔前经 grep 现值改正|.runtime/tmp/p10_17_pulse.py・docs/03_modules/_domain_backtest/exam_cards（^status: 全文件锚定 553 件）|要⑦C 采卡数谓词统一 ^status: 全文件锚定（本席已自改尺，不代改他席判据）|低
 
 耗时分账＝例行段（起手 12:05:10→claim 12:16→落笔 12:22）≈17 分，其中只读量测 11 分、等待闸门自然开启为被动项（未空转）；返工段＝引用与谓词自查改正 2 次（约 2 分），未产生第二次落袋。
+
+## §33 · st-qoder-p10-1016-17 班更正补行（2026-10-16 12:28，另起留旧案，§32 各行逐字不改）
+
+[BLOCKER] 2026-10-16|⑩线长1016-17班|流程问题|收班⑧"零 worktree 确认"本班改判为"代建面"＝本席全程未调任何工棚/工作树入口，claim 步后实测 `.aidrafts/st-qoder-p10-1016-17` 不存在（12:16 读＝不建），走 git_commit.py --enqueue 后 12:26:33 实测该目录存在＋git worktree list 命中 1 行＋.runtime/locks/heartbeat_st-qoder-p10-1016-17.pid=31812 存活（cmdline 点名 .aidrafts\st-qoder-p10-1016-17）⇒ 建面点坐实在网关入队链内部，§32 第 3 行"疑点在 commit 步"的推测升为第一手实测；判据口径不动|.runtime/locks/heartbeat_st-qoder-p10-1016-17.pid・git worktree list・src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:20|要⑤席按 §32 第 3 行给"不建会话壳"通道；代建面 1 枚＋心跳 1 枚交清理专班/运行班，本席不自删（红线＝不自清他会话产物＋物理不可逆面）|高
+[BLOCKER] 2026-10-16|⑩线长1016-17班|流程问题|本班袋悬空期实测三读同框＝自动波次再次停摆：daemon online=false・pool_wave.log 末行 11:42:21（距 12:26 零新增 44 分）・而 lease holder pid 32152 alive・state=drain-active・head=q-20261016-st-diskp0-20261015-0079 waiting 2177s・11:36–12:04 那 19 件落地无对应 wave 日志行＝落地由非波次通道（drain 手波）驱动；此系在册"belt_daemon.lock 陈旧 pid／env_aborted 项不被自动波次拾取"族第三次观测（08:36 与 09:17 两读在册）|.runtime/commit_queue/pool_wave.log・.runtime/commit_queue/belt_daemon.lock(pid 40676 mtime 12:08:26)・.runtime/commit_queue/belt_daemon.heartbeat(mtime 10-15 20:02:02 pid 40328 已不存在)|要⑫后勤席按当日四态分诊接面＋⑤席核带工对 env_aborted 项重拾分支；本席不删任何 .git/队列内部态锁|高
+
+自检两轮＝第一轮（写前）改正两处引用（git_commit.py:957→:954、网关怪路径→全路径）＋一处卡面谓词（前 40 行→^status: 全文件）；第二轮（写后）＝git diff HEAD 四席 instruction 全为纯增（+9/+9/+10/+9，−0）・pulse/dispatch 相对 index 版独有行丢失 0・本班八件自扫门尺 0 findings（GATE-SELFDOC 豁免 1+3 行留痕）。
+
+## §34 · st-qoder-p10-1016-17 班收班八件核对（2026-10-16 12:30，追加行，§32／§33 逐字不改）
+
+- ①claim＝本班八件全部 release（pulse／dispatch／p10 ledger／p10 checkpoint／①②③⑥ 四席 instruction），release 于本行写毕后执行，终值以 `git_commit.py --release-only` 回读为准。
+- ②心跳＝`.runtime/locks/heartbeat_st-qoder-p10-1016-17.pid`=31812 经 psutil 核活后按 PID 精确终止（在册铁律：禁按镜像名杀；光删 pid 文件不解决——daemon 会继写 alive）；终止后 `psutil.pid_exists(31812)` 与 pid 文件两态同量。
+- ③耗时＝起手 12:05:10 → 闸自然开 12:11 → 首笔写盘 12:16 → 首袋入队 12:26:06 → 收班 12:30（例行段约 21 分＝只读量测 11 分＋写域 6 分＋袋务 4 分；返工段约 3 分＝两处引用现改＋一处卡面谓词改正；被动等待＝闸门 6 分，其间全程在跑只读工序，未空转）。
+- ④[BLOCKER]＝本班新增 11 行（§32 九行＋§33 两行），严重度＝高 5／中 5／低 1；需Owner 类 3 行（断链台账入库门位・防重入闸自锁修法・停发期是否豁免收班）。
+- ⑤自清＝`.runtime/tmp/p10_17_instruct.py`・`p10_17_pulse.py`・`p10_17_close.py`・`p10_17_fix.py`・`p10_17_msg.txt`・`selftest_gitedit.md` 六件本班删除；四件套外零散落件（写域清单＝袋内八件，逐件对得过）。
+- ⑥GPU＝本班未 acquire 看门人，零牌占用（无需 release）。
+- ⑦后台子任务＝本班未 spawn 子代理 ⇒ 零孤儿。
+- ⑧worktree＝本班**主动建面 0 枚**（未调任何工棚/工作树入口），但网关入队链**代建 1 枚**（`.aidrafts/st-qoder-p10-1016-17`＋`session/*` 分支 1 条＋心跳 1 枚），实测与归因见 §33 第 1 行；代建面不自删，交清理专班。
+- 队列自证＝首袋 `q-20261016-st-qoder-p10-1016-17-0001`（8 件・base_head=3e01a846ac08＝入队当刻 HEAD 现算・custody=True）；§33/§34 内容随 0002 单袋投（在册"禁同件并存在途"⇒待 0001 定态后再投，不做双袋并飞）。
+
+## §35 · st-qoder-p10-1016-17 班终量（12:33 现测，追加行，§32／§33／§34 逐字不改）
+
+- 首袋定态＝`q-20261016-st-qoder-p10-1016-17-0001` **done**，landed `14df647a9a`（12:31）；`git log -1 --name-only` 件面＝本席八面逐字对得过、零外来件；盘面七件 `git diff HEAD` 同字节（ledger.md 因 §33/§34/§35 后写不在七件内，随 0002 投）。
+- **前置②＝未成（本班首测出判别力）**：本班窗 12:05:00 起新死袋 **4 枚**，逐只＝`q-20261016-st-diskp0-20261015-0071`（12:10:34）・`-0074`（12:17:11）・`-0075`（12:23:06）・`-0078`（12:29:57），死因全＝`COMMIT_FAILED: 门禁 GATE-PRECOMMIT-RUN 阻断`，四枚 meta.custody 全 True＝存活闸零误杀、四枚皆内容门自杀；本席自家袋 0 死 1 落地。判据不动、口径不改：②写的是"全族零新死袋"，故 4 枚即未成（上班历轮因 pending=0 无从量此腿，本班为该腿第一次真读数）。
+- 前置终值＝①成（三腿同窗齐，附 custody 构造性赦免注）／②未成（窗内 4 枚新死，族＝GATE-PRECOMMIT-RUN・全 diskp0）／③未成（⑦A 定性材料 0 枚）⇒ **不广播可恢复、零席 enable**，全线继续停发。
+- 恢复路径上当前唯一出血点＝GATE-PRECOMMIT-RUN 族：11:26 后本班窗内已至 8 枚（12:04 前 4 枚＋本班窗 4 枚），recurrence 由 91→96（0071=93・0074=94・0075=95・0078=96）且 fused=True，节奏约 6 分一枚＝diskp0 每波必死一袋；此族不收口则②永不可能转成。要⑫/运行班按当日四态分诊接面，本席不 requeue 他人袋、不改门柱。
+- 队列终量（12:34:03 现测）＝pending 1／processing 1／done 901／dead 508（env 122／item 224／other 162＝item 族 +4 恰为本班窗四枚）；今日死信按 dead_at 253 枚・max dead_at 12:29:57；`belt_daemon.lock` 末写 12:28:10 pid 39532・`pool_wave.log` 末行仍 11:42:21（自动波次 52 分零新增而落地照常发生＝落地由 drain 手波驱动，与 08:36／09:17 两读同族，本席不删锁不代修）。
+- 本班写域终态＝8 件（4 席 instruction 补齐令＋脉冲面＋派单面＋本席 ledger/checkpoint）；对他席 checkpoint 零写入（工序 9 强制收班提醒自 00:53 已在册，本班判定不重复追加）；判据/门柱/冻结值/分数册＝零触碰。
