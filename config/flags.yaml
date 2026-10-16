@@ -218,3 +218,19 @@ flags:
     enabled: true
     description: "死车道自动收线（root-cure-plan §8 L3 补件）：扫 .aidrafts/.worktrees 车道→判活同源 session_worktree（registry+锁+免疫标记）+mtime>48h 双确认→dry-run 判型→仅 zero_loss 自动 archive --execute；needs_rescue 只写 workspace_alerts 告警件；执行轮工具内侧死判硬拒仍为最后防线；审计=.runtime/audit/dead_lane_wire.jsonl"
     implementation_status: "gated_mvp"
+  # [st-diskp0-20261015 接线队 B，st-wireb-1016] git 面自动化两件（裁定⑤升级版+裁定③）：
+  # 挂点=process_reaper._run_safety_wires 既有扫描循环 subprocess --once（禁新常驻/禁 cron，
+  # 宪法 §9.3）；dry-run 轮透传 --dry-run 零副作用；回滚=对应键 enabled:false（reaper 每
+  # 10min one-shot 新进程读盘，下一轮即停，无需重启）。
+  stash_sentinel:
+    enabled: true
+    min_age_days: 30
+    description: "absorbed stash 内容级判定+quarantine ref 自动迁移（裁定⑤升级版，scripts/ops/stash_sentinel.py）：stash 侧 blob 集⊆HEAD∪refs/quarantine/* 才算 absorbed（正像全集+集合差，禁条数估、禁负向排除——负向传播实测误报）；absorbed 且龄>min_age_days 才 update-ref→回读核验同 sha→stash drop（fail-closed：核验败=零 drop+自建 ref 回滚）；非 absorbed 超龄只写告警件零动作；台账=.runtime/audit/stash_sentinel.jsonl 含双侧 sha"
+    implementation_status: "gated_mvp"
+  quarantine_pack:
+    enabled: true
+    threshold_gib: 1.5
+    mtime_days: 90
+    description: "quarantine 陈旧子目录 tar+gz 归仓（裁定③，scripts/ops/quarantine_packer.py）：一级子目录 mtime 超 mtime_days→packs/ 归仓+原位 README 指针（pack 前逐文件 sha256 压前/压内比对全等才许移除原目录=零删除，解压即复活）；总量超 threshold_gib 但无超龄候选只发 escalated 告警零动作；INDEX=.runtime/quarantine/packs/INDEX.md 机生 CAS 追加"
+    implementation_status: "gated_mvp"
+

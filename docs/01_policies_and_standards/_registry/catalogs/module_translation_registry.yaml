@@ -17816,6 +17816,13 @@ entries:
   plain_zh: Ollama 版本治本守卫（#移交③，2026-09-16，lane J）。背景（真源）：docs/_working/forensics/llama_server_crash_forensics_202609.md（治理战役 M4）—— Ollama 0.32.1 内嵌 llama-server.exe 的 `libllama.dll +0x2a230` 访问违例（AV）为确定性构建缺陷（8 例崩溃收敛 3 签名族，AV 四例同模块同偏移=野指针/越界固有路径，非随机内存翻转）。VRAM 超订只是放大器；
   domain_id: D_INFRA_OPS
   responsibility_layer: infrastructure
+- module_path: scripts/ops/quarantine_packer.py
+  desc_zh: quarantine 陈旧子目录 tar+gz 归仓：mtime 超 90 天候选，逐文件 sha256 压前/压内全等才移除原目录（零删除），原位 README 指针+INDEX 机生追加
+  name_en: quarantine packer
+  name_zh: quarantine 打包器
+  plain_zh: quarantine 打包器：把隔离区里放了 90 天以上的旧目录整体打包存进 packs/ 仓库，原位置留说明文件教你怎么解压找回；打包前后每个文件都做校验和比对，对不上就不动原目录——只搬不删。
+  domain_id: D_INFRA_RUNTIME
+  responsibility_layer: infrastructure
 - module_path: scripts/ops/r6_restore_check.py
   desc_en: ""
   desc_zh: ""
@@ -17846,6 +17853,13 @@ entries:
   plain_zh: 把 4 个已有零件串成一条命令，做灰度发布的安全网：先检查能不能上线，再开个影子进程跑同样的输入但不接真券商，然后比对两边输出是否一致，分歧小就放行、分歧大就回滚。专门满足 EX-021 那半 CI/CD 灰度门禁。
   domain_id: D_GOV_ENFORCEMENT
   responsibility_layer: governance
+- module_path: scripts/ops/stash_sentinel.py
+  desc_zh: absorbed stash 内容级判定+quarantine ref 自动迁移：blob 集⊆HEAD∪refs/quarantine/* 才迁移，drop 前强制 ref 核验同 sha（fail-closed），非 absorbed 超龄只告警
+  name_en: stash sentinel
+  name_zh: stash 哨兵
+  plain_zh: stash 哨兵：定期检查 git stash 里放了很久的暂存改动，确认内容仓库里已经有（被吸收）就先把整包搬进 quarantine 备份 ref 再删原条目——内容一个字节不丢；内容是独有的就只写告警找人来看，绝不自动删。
+  domain_id: D_INFRA_RUNTIME
+  responsibility_layer: infrastructure
 - module_path: scripts/ops/verify_header_completeness.py
   desc_en: ""
   desc_zh: 对标 trae_047 GOV-ENG-002：按扩展名路由到 SSoT 解析器，校验每种格式的必填字段。
@@ -45926,8 +45940,10 @@ entries:
   domain_id: D_SHARED
   responsibility_layer: infrastructure
 - module_path: src/zephyr/shared/maintenance/reaper_auto_wires.py
-  name_zh: reaper自动维护三线
-  plain_zh: 给 reaper 看门循环装三条自动维护线：定期把死满 7 天的提交队列死信搬进归档袋、例行跑 git 垃圾回收（只跑自动挡、深清留给老板）、把确认死透且零丢失的车道自动拆掉（有脏文件的车道只贴告警条不动手）。三条都能用配置开关一键关掉，出问题不影响看门循环本身。
+  desc_zh: reaper 扫描循环三条自动化维护线（死信自动归档/git gc --auto 例行/死车道 zero_loss 自动收）函数库，无 daemon 挂点在消费方既有周期面，三 flag 出厂 ON
+  name_en: reaper auto wires
+  name_zh: reaper 自动维护线函数库
+  plain_zh: 把死信归档、git 垃圾回收、死车道回收三件已批准的例行维护活，挂到 reaper 既有的定期扫描里顺带干，不开新后台进程；每条线有独立开关，随时能一键关掉。
   domain_id: D_SHARED
   responsibility_layer: infrastructure
 - module_path: src/zephyr/shared/maintenance/slo_review_assistant.py

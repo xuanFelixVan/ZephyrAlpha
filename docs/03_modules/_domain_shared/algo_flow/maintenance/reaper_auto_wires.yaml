@@ -1,0 +1,67 @@
+# ALGO_FLOW 外部真源——reaper_auto_wires（_domain_shared 域，真源 src/zephyr/shared/maintenance/reaper_auto_wires.py）
+# 2026-10-16 st-wirea-1016（st-diskp0-20261015 接线队 A，root-cure-plan §7 重校准裁定①②+L3 补件）：
+# reaper 扫描循环三条自动化维护线（死信自动归档/git gc --auto 例行/死车道自动收）函数库，
+# 唯一消费挂点=process_reaper._run_safety_wires 既有计划任务扫描循环（禁新常驻进程）。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.shared.maintenance.reaper_auto_wires
+source_of_truth: src/zephyr/shared/maintenance/reaper_auto_wires.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: repo_root 参数
+    #   fields: 参数 repo_root，类型注解 Path | str
+    #   code: run_dead_archive_wire/run_git_gc_auto_wire/run_dead_lane_wire 形参（AST 提取）
+    # - id: I2
+    #   name: dry_run/days/timeout_s/runner/now_ts 参数
+    #   fields: DEAD_ARCHIVE_DAYS=7.0（裁定②，禁改）；DEAD_LANE_MIN_AGE_HOURS=48.0（L3，禁改）；
+    #           _WIRE_SUBPROCESS_TIMEOUT_S=600；runner 缺省 run_subprocess_hidden
+    #   code: 三个 run_*_wire 形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① run_dead_archive_wire
+    #   name_en: run_dead_archive_wire
+    #   intro: wire④ 死信自动归档（裁定②）：子进程调 commit_queue.py dead-archive --days 7 --content-level [--execute] --json。
+    #   desc: flag=flags.dead_archive_auto.enabled（缺省 True，读失败跳过）；dry_run 不带 --execute；
+    #         解析工具 --json 尾块得 archived/kept/bag；失败/超时/不可解析记 status=error；
+    #         真跑轮审计行 .runtime/audit/dead_archive_wire.jsonl；永不抛。
+    #   inputs: repo_root dry_run days timeout_s runner
+    #   outputs: dict(status/rc/archived/kept/bag/audit_written)
+    # - id: A2
+    #   name_zh: ② run_git_gc_auto_wire
+    #   name_en: run_git_gc_auto_wire
+    #   intro: wire⑤ git gc --auto 例行维护（裁定①例行半）：git 自带 2 周宽限+阈值，无事即退零成本。
+    #   desc: flag=flags.git_gc_auto.enabled；命令面=GIT_GC_CMD 冻结常量（含 --prune 字样拒绝执行，
+    #         深清=Owner）；dry_run 直接跳过（gc 无只读形态）；真跑轮审计行 .runtime/audit/git_gc_wire.jsonl。
+    #   inputs: repo_root dry_run timeout_s runner
+    #   outputs: dict(status/rc/elapsed_s/stderr_tail/audit_written)
+    # - id: A3
+    #   name_zh: ③ run_dead_lane_wire
+    #   name_en: run_dead_lane_wire
+    #   intro: wire⑥ 死车道自动收（L3 补件）：判活同源+mtime>48h 双确认→dry-run 判型→仅 zero_loss 自动 --execute。
+    #   desc: 扫 .aidrafts/.worktrees 顶层车道；排除表/判活/注册表同源引用 scripts.session_worktree
+    #         （_ARCHIVE_ALL_EXCLUDED_MARKERS/_check_archive_target_dead/_list_worktree_registry，零复制）；
+    #         判型行取工具 dry-run 输出（_VERDICT_RE），zero_loss 才追加 --execute（工具内侧死判硬拒
+    #         =竞态窗最后防线）；needs_rescue 写 .runtime/workspace_alerts/dead_lane_needs_rescue_<sid>.json
+    #         （仅执行轮）；superseded_shell/ahead_only 只记账；真跑轮审计行 .runtime/audit/dead_lane_wire.jsonl。
+    #   inputs: repo_root dry_run timeout_s runner now_ts
+    #   outputs: dict(scanned/dead_candidates/auto_archived/needs_rescue/other_verdicts/errors/audit_written)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: dict wire 报告+审计行
+    #   name_en: wire report dict
+    #   intro: 各 wire 返回 status/计数/errors（消费方 _run_safety_wires 收进 safety_wires、_print_status 展示）。
+    #   downstream: zephyr.trading.process_reaper; tests.shared.test_reaper_auto_wires
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I1 --> A2
+    # I2 --> A2
+    # I1 --> A3
+    # I2 --> A3
+    # A1 --> O1
+    # A2 --> O1
+    # A3 --> O1

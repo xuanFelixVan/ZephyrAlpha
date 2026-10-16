@@ -1587,6 +1587,58 @@ def _run_safety_wires(report: ReapReport) -> None:
     except Exception as exc:  # noqa: BLE001 — 卫生线失能不得反噬收割主链
         logger.error(".runtime 卫生线不可用（轮转/TTL 清扫跳过，请人工介入）: %r", exc)
         report.errors.append(f"runtime_hygiene_unavailable: {exc!r}")
+    # 三条自动化维护线（root-cure-plan §7 重校准裁定①②+L3 补件，st-diskp0 接线队 A st-wirea-1016）：
+    # 死信自动归档④/git gc --auto 例行⑤/死车道自动收⑥。挂点=本计划任务既有扫描循环
+    # （禁新常驻进程，宪法 §9.3）；语义真源=各自工具 CLI（zephyr.shared.maintenance.reaper_auto_wires
+    # 零判定逻辑复制）；出厂 ON，回滚=flags.yaml 对应键 enabled:false；dry-run 轮零副作用；
+    # 任一失能只入 report.errors 不反噬收割主链（口径同上三条线）。
+    try:
+        from zephyr.shared.maintenance.reaper_auto_wires import run_dead_archive_wire
+
+        wires["dead_archive"] = run_dead_archive_wire(REPO_ROOT, dry_run=report.dry_run)
+    except Exception as exc:  # noqa: BLE001 — 死信归档线失能不得反噬收割主链
+        logger.error("死信自动归档线不可用（dead-archive 跳过，请人工介入）: %r", exc)
+        report.errors.append(f"dead_archive_wire_unavailable: {exc!r}")
+    try:
+        from zephyr.shared.maintenance.reaper_auto_wires import run_git_gc_auto_wire
+
+        wires["git_gc_auto"] = run_git_gc_auto_wire(REPO_ROOT, dry_run=report.dry_run)
+    except Exception as exc:  # noqa: BLE001 — gc 线失能不得反噬收割主链
+        logger.error("git gc --auto 例行维护线不可用（请人工介入）: %r", exc)
+        report.errors.append(f"git_gc_auto_wire_unavailable: {exc!r}")
+    try:
+        from zephyr.shared.maintenance.reaper_auto_wires import run_dead_lane_wire
+
+        wires["dead_lane"] = run_dead_lane_wire(REPO_ROOT, dry_run=report.dry_run)
+    except Exception as exc:  # noqa: BLE001 — 死车道线失能不得反噬收割主链
+        logger.error("死车道自动收线不可用（请人工介入）: %r", exc)
+        report.errors.append(f"dead_lane_wire_unavailable: {exc!r}")
+    # git 面自动化两件（st-diskp0-20261015 裁定⑤升级版+裁定③，接线队 B st-wireb-1016）：
+    # absorbed stash 内容级判定+quarantine ref 迁移（scripts/ops/stash_sentinel.py）+
+    # quarantine 陈旧子目录 tar+gz 归仓（scripts/ops/quarantine_packer.py）。挂点=本计划任务
+    # 既有扫描循环（禁新常驻/禁 cron，宪法 §9.3）；实现=scripts/ops 两件 subprocess --once
+    # （语义真源各自脚本，本件零判定逻辑复制，同 cleanup_stash 调用形态）；开关真源=
+    # flags.yaml flags.stash_sentinel / flags.quarantine_pack（脚本自闸读盘，回滚=enabled:false
+    # 下一轮即停）；dry-run 轮透传 --dry-run 零副作用；rc 语义 0=完成 1=有告警 2=设施故障；
+    # 任一失能只入 report.errors 不反噬收割主链（口径同上各线）。
+    for _wire_name, _script in (
+        ("stash_sentinel", "scripts/ops/stash_sentinel.py"),
+        ("quarantine_packer", "scripts/ops/quarantine_packer.py"),
+    ):
+        try:
+            _cmd = [sys.executable, _script, "--once"] + (["--dry-run"] if report.dry_run else [])
+            _proc = _run_hidden(_cmd, cwd=str(REPO_ROOT), timeout=300)
+            _tail = [ln for ln in (_proc.stdout or "").splitlines() if ln.strip()]
+            wires[_wire_name] = {
+                "status": "ok" if _proc.returncode == 0 else ("alert" if _proc.returncode == 1 else "error"),
+                "rc": _proc.returncode,
+                "summary": _tail[-1].strip() if _tail else "",
+            }
+            if _proc.returncode not in (0, 1):
+                report.errors.append(f"{_wire_name}_wire_rc{_proc.returncode}: {(_proc.stderr or '').strip()[:200]}")
+        except Exception as exc:  # noqa: BLE001 — git 面自动化线失能不得反噬收割主链
+            logger.error("%s 线不可用（本轮跳过，请人工介入）: %r", _wire_name, exc)
+            report.errors.append(f"{_wire_name}_wire_unavailable: {exc!r}")
     report.safety_wires = wires
 
 
@@ -1651,6 +1703,25 @@ def _print_status() -> int:
                 else ""
             )
         )
+        # 三条自动化维护线（root-cure-plan §7 裁定①②+L3 补件，接线队 A st-wirea-1016）
+        da = wires.get("dead_archive") or {}
+        gc = wires.get("git_gc_auto") or {}
+        lane = wires.get("dead_lane") or {}
+        print(
+            f"auto_wires: dead_archive={da.get('status')} archived={len(da.get('archived') or [])} | "
+            f"gc={gc.get('status')} rc={gc.get('rc')} | "
+            f"lane={lane.get('status')} scanned={lane.get('scanned')} candidates={lane.get('dead_candidates')} "
+            f"archived={len(lane.get('auto_archived') or [])} planned={len(lane.get('planned') or [])} "
+            f"rescue={len(lane.get('needs_rescue') or [])}"
+            + (f" lane_errors={len(lane.get('errors') or [])}" if lane.get("errors") else "")
+        )
+        # git 面自动化两件（裁定⑤升级版+裁定③，接线队 B st-wireb-1016）
+        ss = wires.get("stash_sentinel") or {}
+        qp = wires.get("quarantine_packer") or {}
+        if ss or qp:
+            print(
+                f"git_wires: stash_sentinel={ss.get('status')} rc={ss.get('rc')} | quarantine_pack={qp.get('status')} rc={qp.get('rc')}"
+            )
     if data.get("errors"):
         print(f"errors={data.get('errors')}")
     return 0
