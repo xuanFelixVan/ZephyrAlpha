@@ -151,6 +151,7 @@ class _StubGateway:
         allow_tracked_drift: bool = False,  # #ARCH-310 B2：landing 传入（衍生漂移容忍）
         allow_multi_domain: bool = False,  # #ARCH-310 B3：landing 传入（队列项单任务豁免）
         allow_promote: bool = False,  # #ARCH-310 B3b：landing 传入（永久区新文件准入透传）
+        allow_overlap: bool = False,  # 二层⑤（2026-10-05）：landing 传入（袋即持锁，队列路径不二次执法 CLAIM）
         lock_wait_timeout: float | None = None,  # 2026-09-16：landing 传入（全局锁等待放宽）
     ) -> CommitResult:
         self.events.append(
@@ -219,6 +220,7 @@ class _PathspecStubGateway:
         allow_tracked_drift: bool = False,
         allow_multi_domain: bool = False,
         allow_promote: bool = False,
+        allow_overlap: bool = False,  # 二层⑤（2026-10-05）landing 实参，存量桩追齐（同 :2535 注）
         lock_wait_timeout: float | None = None,
     ) -> CommitResult:
         self.events.append(("commit", {"session_id": session_id, "files": list(files), "message": message}))
@@ -988,6 +990,65 @@ class TestUntrackedNewFileLanding:
         assert "[诊断]" in reason, "自愈重试仍败附 git status 诊断（下次可归因）"
         # dev 未被推进（失败项不落盘）
         assert _dev_commit_count(tmp_repo) == 0, "死信项不得推进 dev"
+
+
+# ---------------------------------------------------------------------------
+# 5b. prestage 观测面＝只未跟踪件（⑤1017-03，⑩1016-08/11/12 班三续单）
+#     病形：check-ignore --no-index 对"已跟踪但父目录命中 ignore 规则"的件恒报忽略，
+#     而 git 本体允许提交该件（三态实测=ls-files 命中/check-ignore 默认 rc=1/
+#     --no-index rc=0/add --dry-run rc=0）⇒ 已跟踪件被误判成"再生产物禁入 git"整袋判死。
+# ---------------------------------------------------------------------------
+
+
+class TestPrestageTrackedUnderIgnore:
+    @staticmethod
+    def _track_ignored_dir(tmp_repo: Path) -> str:
+        """把 tools/* 写进 ignore 规则，并把 tools/keep.py 以 -f 纳入跟踪后推进 dev（回 dev sha）。"""
+        (tmp_repo / ".gitignore").write_text(".runtime/\n.ailocks/\ntools/*\n", encoding="utf-8")
+        (tmp_repo / "tools").mkdir(exist_ok=True)
+        (tmp_repo / "tools" / "keep.py").write_text("v1\n", encoding="utf-8")
+        _git(tmp_repo, "add", "-f", ".gitignore", "tools/keep.py")
+        _git(tmp_repo, "commit", "-qm", "track a file under an ignore rule")
+        _git(tmp_repo, "update-ref", "refs/heads/dev", "HEAD")
+        return _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+
+    def test_tracked_file_under_ignore_rule_lands(self, tmp_repo: Path, queue_root: Path) -> None:
+        """已跟踪件（父目录被 ignore 规则覆盖）经正门落地不得死信。"""
+        base = self._track_ignored_dir(tmp_repo)
+        before = _dev_commit_count(tmp_repo)
+        landing, _stub = _make_landing_pathspec(tmp_repo, queue_root)
+        item = cq.enqueue_item(
+            "sess-tracked-under-ignore",
+            "feat: 已跟踪件正常更新",
+            [("tools/keep.py", b"v2\n")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(base_head=base),
+        )
+
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["dead"] == 0, f"已跟踪件被 prestage 误杀: {stats}"
+        assert stats["done"] == 1, stats
+        assert _dev_commit_count(tmp_repo) == before + 1, "落地恰推进 dev 一笔"
+        assert _git_bytes(tmp_repo, "show", "dev:tools/keep.py") == b"v2\n", "落地面=袋内字节"
+
+    def test_untracked_file_under_ignore_rule_still_rejected(self, tmp_repo: Path, queue_root: Path) -> None:
+        """反向自证：未跟踪的再生产物仍被同一支拒绝（判据零放宽）。"""
+        base = self._track_ignored_dir(tmp_repo)
+        before = _dev_commit_count(tmp_repo)
+        landing, _stub = _make_landing_pathspec(tmp_repo, queue_root)
+        item = cq.enqueue_item(
+            "sess-untracked-under-ignore",
+            "feat: 未跟踪再生件必须被拦",
+            [("tools/regen.py", b"cache dump\n")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(base_head=base),
+        )
+
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["dead"] == 1 and stats["done"] == 0, f"未跟踪 ignore 件必须照旧判死: {stats}"
+        dead = json.loads((queue_root / "dead" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+        assert "prestage 拒绝" in dead["dead_reason"], dead["dead_reason"]
+        assert _dev_commit_count(tmp_repo) == before, "被拦项不得推进 dev"
 
 
 # ---------------------------------------------------------------------------

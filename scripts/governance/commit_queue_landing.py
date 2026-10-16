@@ -2699,15 +2699,24 @@ class WorktreeLanding:
             # Mode A 治本（st-commitspeed-20260916 晚，st-dbgap-fix/st-tickdrain 死信
             # 实证）：scripts/data/* 等 gitignored 路径混入快照，git add rc=1 整项死，
             # RuntimeError 截断后 AI 读不到病灶。前置 check-ignore 精确点名+可行动指引。
-            chk = self._git_wt("check-ignore", "--no-index", "--", *adds, check=False)
-            if chk.returncode == 0 and chk.stdout.strip():
-                ignored = [x for x in chk.stdout.strip().splitlines() if x.strip()]
-                raise RuntimeError(
-                    "prestage 拒绝：以下快照路径被 .gitignore 忽略（再生产物区，禁入 git）：\n"
-                    + "\n".join(f"  - {x}" for x in ignored[:10])
-                    + "\n修复：①把文件移到非忽略目录（如 scripts/data/ 下代码应移 scripts/）后重新入队；"
-                    "②或确认该路径应入库，修 .gitignore 精确豁免（对齐 sz_open_data 先例）后重新入队"
-                )
+            # Mode B 收敛（st-qoder-p05-1017-03，⑩1016-08/11/12 三续单 4 只死袋实证）：
+            # --no-index 支路对"已跟踪但父目录命中 ignore 规则"的件恒报忽略，而 git 本体
+            # 允许暂存该件（主面实测 scripts/data/bdpan_tick_watch.py：ls-files 命中・
+            # check-ignore 默认 rc=1・--no-index rc=0・add --dry-run rc=0）⇒ 本闸的判据对象
+            # 只有未跟踪件才成立。故只把未跟踪路径喂给闸，tracked 件退出观测面（判据本体
+            # 一字未动，未加白名单/豁免）。
+            tracked = {x.strip() for x in self._git_wt("ls-files", "--", *adds, check=False).stdout.splitlines()}
+            probe = [x for x in adds if x not in tracked]
+            if probe:
+                chk = self._git_wt("check-ignore", "--no-index", "--", *probe, check=False)
+                if chk.returncode == 0 and chk.stdout.strip():
+                    ignored = [x for x in chk.stdout.strip().splitlines() if x.strip()]
+                    raise RuntimeError(
+                        "prestage 拒绝：以下快照路径被 .gitignore 忽略（再生产物区，禁入 git）：\n"
+                        + "\n".join(f"  - {x}" for x in ignored[:10])
+                        + "\n修复：①把文件移到非忽略目录（如 scripts/data/ 下代码应移 scripts/）后重新入队；"
+                        "②或确认该路径应入库，修 .gitignore 精确豁免（对齐 sz_open_data 先例）后重新入队"
+                    )
             pathspec = self.worktree_path / ".git_prestage_add_paths.txt"
             pathspec.write_text("\n".join(adds) + "\n", encoding="utf-8")
             try:
