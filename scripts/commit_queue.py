@@ -4070,6 +4070,52 @@ def dead_archive_letters(
     }
 
 
+def dead_archive_auto(
+    queue_root: str | os.PathLike | None = None,
+    *,
+    days: float = 7.0,
+    verify_landed: bool = True,
+    now: datetime | None = None,
+    landed_checker: Callable[[str, str], bool] | None = None,
+) -> dict:
+    """dead-archive 归档常态化（车道N st-sN2-hygiene-20261004）：serializer 空闲即自动 execute。
+
+    --auto 语义（对人工 --execute 的加法，人工通道行为零变化）：
+      ① 先读 serializer.lease 快照——活体持有（正在磨）→ 整体跳过（skipped=True，
+        零盘面动作），调用方（reaper 脉冲）下轮重试；僵尸/缺席租约 = 空闲；
+      ② 空闲 → 走 dead_archive_letters(execute=True) 全套三闸（年龄/revival 互斥/
+        落地校验）——被闸住的信照旧留原位+处方，自动通道不放松任何门禁；
+      ③ 竞态兜底：判空闲后、动手前租约被抢 → DeadArchiveError 同样降级为 skipped
+        （对自动通道这是常态节律非失败，CLI 映射 exit 0）。
+    """
+    root = resolve_queue_root(queue_root)
+    snap = _lease_snapshot(root)
+    if snap.get("present") and snap.get("alive"):
+        return {
+            "skipped": True,
+            "reason": f"serializer_busy（pid={snap.get('holder_pid')}，lease 活体持有）",
+            "lease": {"holder_pid": snap.get("holder_pid"), "state": snap.get("state")},
+        }
+    try:
+        result = dead_archive_letters(
+            root,
+            days=days,
+            verify_landed=verify_landed,
+            execute=True,
+            now=now,
+            landed_checker=landed_checker,
+        )
+    except DeadArchiveError as exc:  # 判闲→抢租约竞态：降级跳过非失败
+        return {
+            "skipped": True,
+            "reason": f"serializer_busy_raced（{exc}）",
+            "lease": {"state": "drain-active"},
+        }
+    result["skipped"] = False
+    result["auto"] = True
+    return result
+
+
 # ---------------------------------------------------------------------------
 # status（66 号 §6.6 落盘确认接口：会话 push/声明完成前 MUST 先确认队列项全部 done）
 # ---------------------------------------------------------------------------
@@ -5379,26 +5425,37 @@ def _cmd_dead_archive(args: argparse.Namespace) -> int:
             "只清自己名下的袋请给 --session <sid>，防误碰他人死信（在册红线：代投/驱逐他人面＝归属篡改）",
             file=sys.stderr,
         )
+    auto = bool(getattr(args, "auto", False))
     try:
-        result = dead_archive_letters(
-            args.queue_root,
-            days=args.days,
-            verify_landed=not args.no_verify_landed,
-            execute=args.execute,
-            sessions=sessions or None,
-            content_gate=(make_dead_letter_content_gate(args.queue_root) if args.content_level else None),
-        )
+        if auto:
+            result = dead_archive_auto(
+                args.queue_root,
+                days=args.days,
+                verify_landed=not args.no_verify_landed,
+            )
+        else:
+            result = dead_archive_letters(
+                args.queue_root,
+                days=args.days,
+                verify_landed=not args.no_verify_landed,
+                execute=args.execute,
+                sessions=sessions or None,
+                content_gate=(make_dead_letter_content_gate(args.queue_root) if args.content_level else None),
+            )
     except DeadArchiveError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
+    if auto and result.get("skipped"):
+        print(f"DEAD-ARCHIVE AUTO: skipped（{result['reason']}）——零盘面动作，下轮脉冲重试")
+        return 0
     kept = result["kept"]
     print(
-        f"DEAD-ARCHIVE: archived={len(result['archived'])} "
+        f"DEAD-ARCHIVE{' AUTO' if auto else ''}: archived={len(result['archived'])} "
         f"kept={sum(kept.values()) + result['skipped_corrupt']} "
         f"(young={kept['young']}/unlanded={kept['unlanded']}/revival_in_flight={kept['revival_in_flight']}"
         f"/other_session={kept['other_session']}/content_held={kept['content_held']}"
         f"/skipped_corrupt={result['skipped_corrupt']}) days={args.days:g} "
-        f"verify={result['verify']} execute={args.execute} bag={result['bag']}"
+        f"verify={result['verify']} execute={True if auto else args.execute} bag={result['bag']}"
         f" content_gate={'on' if args.content_level else 'off'}"
         f"{' sessions=' + ','.join(sorted(sessions)) if sessions else ''}"
     )
@@ -5532,6 +5589,11 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         metavar="SID",
         help="只归档该 sid 名下的死信（可重复给或逗号分隔；不给=全量旧行为，全量模式会跨会话、需人工确认避让他人袋）",
+    )
+    p_da.add_argument(
+        "--auto",
+        action="store_true",
+        help="归档常态化（车道N）：自动判 serializer 空闲→直接 execute；busy/竞态=优雅跳过 exit 0 下轮重试",
     )
     p_da.add_argument("--json", action="store_true", help="机器可读输出（archived 清单/kept 分布/未落处方）")
     p_da.add_argument(

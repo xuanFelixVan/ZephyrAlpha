@@ -2342,3 +2342,85 @@ class TestDocsOnlyFastLane:
             options=cq.EnqueueOptions(deletes=["src/gone_g6.py"]),
         )
         assert mixed_del["meta"]["priority"] == 0, "含非 docs 删除路径的袋被打标"
+
+
+# ---------------------------------------------------------------------------
+# 归档常态化 --auto（车道N st-sN2-hygiene-20261004）：serializer 空闲→自动 execute；
+# busy/竞态→优雅跳过（skipped=True，CLI exit 0）；三闸不放松。复用 RB2 夹具与替身。
+# ---------------------------------------------------------------------------
+class TestDeadArchiveAuto:
+    """dead_archive_auto：空闲判定 / busy 跳过 / 竞态降级 / 门禁保全。"""
+
+    @staticmethod
+    def _checker(landed: set[str]):
+        def _check(path: str, action: str) -> bool:
+            return path in landed
+
+        return _check
+
+    @staticmethod
+    def _write_lease(root: Path, pid: int) -> None:
+        root.mkdir(parents=True, exist_ok=True)
+        (root / "serializer.lease").write_text(
+            json.dumps({"pid": pid, "acquired_at": time.time(), "renewed_at": time.time()}),
+            encoding="utf-8",
+        )
+
+    def test_auto_busy_lease_skips_zero_disk(self, queue_root: Path) -> None:
+        """活体租约（pid=本进程）→ 整体跳过：skipped=True、信不动、不建袋。"""
+        _hand_dead_bag(queue_root, "q-20261004-auto-a-0001", ["docs/a.md"])
+        self._write_lease(queue_root, os.getpid())
+        result = cq.dead_archive_auto(queue_root, days=7, landed_checker=self._checker({"docs/a.md"}))
+        assert result["skipped"] is True
+        assert "serializer_busy" in result["reason"]
+        assert (queue_root / "dead" / "q-20261004-auto-a-0001.json").exists()
+        assert not list(queue_root.glob("dead_archive_*")), "busy 跳过零盘面动作"
+
+    def test_auto_busy_lease_cli_exit_zero(self, queue_root: Path, capsys: pytest.CaptureFixture) -> None:
+        """CLI --auto 遇 busy：优雅跳过 exit 0（自动通道常态节律非失败）。"""
+        _hand_dead_bag(queue_root, "q-20261004-auto-b-0001", ["docs/a.md"])
+        self._write_lease(queue_root, os.getpid())
+        rc = cq.main(["--queue-root", str(queue_root), "dead-archive", "--auto"])
+        assert rc == 0
+        out = capsys.readouterr().out
+        assert "AUTO: skipped" in out and "serializer_busy" in out
+        assert (queue_root / "dead" / "q-20261004-auto-b-0001.json").exists()
+
+    def test_auto_idle_executes_archive(self, queue_root: Path) -> None:
+        """无租约=空闲 → 自动 execute：袋落根级+manifest，auto=True/skipped=False。"""
+        _hand_dead_bag(queue_root, "q-20261004-auto-c-0001", ["docs/a.md"])
+        result = cq.dead_archive_auto(queue_root, days=7, landed_checker=self._checker({"docs/a.md"}))
+        assert result["skipped"] is False and result["auto"] is True
+        assert result["archived"] == ["q-20261004-auto-c-0001"]
+        assert not (queue_root / "dead" / "q-20261004-auto-c-0001.json").exists()
+        bag = queue_root / f"dead_archive_{datetime.now():%Y%m%d}"
+        assert (bag / "q-20261004-auto-c-0001.json").exists()
+        assert (bag / "manifest.jsonl").exists()
+
+    def test_auto_zombie_lease_treated_idle(self, queue_root: Path) -> None:
+        """僵尸租约（pid 已死）= 空闲：照常自动归档（对齐既有 zombie 不拦语义）。"""
+        _hand_dead_bag(queue_root, "q-20261004-auto-d-0001", ["docs/a.md"])
+        self._write_lease(queue_root, 999999999)
+        result = cq.dead_archive_auto(queue_root, days=7, landed_checker=self._checker({"docs/a.md"}))
+        assert result["skipped"] is False
+        assert result["archived"] == ["q-20261004-auto-d-0001"]
+
+    def test_auto_race_lease_grabbed_degrades_to_skip(self, queue_root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """竞态兜底：判闲后租约被抢（dead_archive_letters 抛 DeadArchiveError）→ skipped 非失败。"""
+
+        def _raced(*a, **k):
+            raise cq.DeadArchiveError("serializer 租约存活（pid=1），拒绝并行维护操作")
+
+        monkeypatch.setattr(cq, "dead_archive_letters", _raced)
+        result = cq.dead_archive_auto(queue_root, days=7)
+        assert result["skipped"] is True
+        assert "serializer_busy_raced" in result["reason"]
+
+    def test_auto_gates_intact_unlanded_kept(self, queue_root: Path) -> None:
+        """自动通道不放松门禁：未落信留原位+处方（三闸回归）。"""
+        _hand_dead_bag(queue_root, "q-20261004-auto-e-0001", ["docs/never-landed.md"])
+        result = cq.dead_archive_auto(queue_root, days=7, landed_checker=self._checker(set()))
+        assert result["skipped"] is False
+        assert result["archived"] == [] and result["kept"]["unlanded"] == 1
+        assert result["prescriptions"], "未落处方照发"
+        assert (queue_root / "dead" / "q-20261004-auto-e-0001.json").exists()

@@ -129,6 +129,12 @@ CLI（脚本直跑，绕过包 __init__）：
     python src/zephyr/trading/process_reaper.py --dry-run  # 只报告不杀（验证用）
     python src/zephyr/trading/process_reaper.py --status   # 读上次运行状态
 
+工棚清扫（车道N st-sN2-hygiene-20261004 纯增量段）：每轮脉冲顺带扫 .aidrafts/ 车道
+工棚——>48h 且 SessionRegistry 无活跃 → session_worktree_abort（Z1 退役存证
+fail-closed，上限 5 棚/轮、最老优先）；12-48h 死工棚仅告警；活跃会话工棚永不动；
+SessionRegistry 不可达 = fail-safe 全部不动。dead-archive 自动归档钩子同轮挂载
+（serializer 空闲才跑，详见 _run_dead_archive_auto）。
+
 # [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/process_reaper.yaml
 """
 
@@ -279,6 +285,9 @@ class ReapReport:
     drift: dict[str, Any] = field(default_factory=dict)
     errors: list[str] = field(default_factory=list)
     safety_wires: dict[str, Any] = field(default_factory=dict)
+    # 纯增量字段（车道N st-sN2-hygiene-20261004）：工棚清扫 / dead-archive 自动归档钩子
+    workshops: dict[str, Any] = field(default_factory=dict)
+    dead_archive: dict[str, Any] = field(default_factory=dict)
 
 
 # ============== 白名单 ==============
@@ -1200,6 +1209,170 @@ def _reap_derived_orphans(
         )
 
 
+# ============== 工棚清扫（.aidrafts/ 死车道回收，车道N st-sN2-hygiene-20261004）==============
+# 背景：并行车道工棚（.aidrafts/<sid> = git worktree + session/<sid> 分支）只增不清，
+# 会话被配额杀/异常死亡后工棚永生，沦为 TAKEOVER 温床（2026-10-04 实测 61 棚、
+# 28 个 >12h、2 个 >48h）。本节把「死工棚回收」并入 reaper 既有 OS 托管脉冲
+# （不新建 cron/Timer/sleep-loop——宪法 §9.3）。判定三闸：mtime 年龄 +
+# SessionRegistry 活跃 + 每轮上限；清扫动作 = rule_bridge 官方 API
+# session_worktree_abort（Z1 退役 patch 存证 fail-closed：存证失败保留工棚不动）。
+
+
+_AIDRAFTS_ROOT = REPO_ROOT / ".aidrafts"
+_WORKSHOP_TAKEOVER_AGE_S = 48 * 3600  # >48h 且会话死 → abort（TAKEOVER 温床）
+_WORKSHOP_WARN_AGE_S = 12 * 3600  # 12-48h 且会话死 → 仅告警观察
+_WORKSHOP_MAX_ABORT_PER_RUN = 5  # 每轮 abort 上限（增量收紧，最老优先）
+
+
+def classify_workshop(*, age_s: float, session_active: bool) -> str:
+    """工棚判定纯函数（不碰盘，可单测）：'abort' | 'warn' | 'skip'。
+
+    活跃会话工棚永不碰（哪怕超龄）——SessionRegistry 活跃是绝对免死牌；
+    年龄取工棚目录 mtime（目录直系子项变动即刷新）。
+    """
+    if session_active:
+        return "skip"
+    if age_s > _WORKSHOP_TAKEOVER_AGE_S:
+        return "abort"
+    if age_s > _WORKSHOP_WARN_AGE_S:
+        return "warn"
+    return "skip"
+
+
+def _workshop_active_sids() -> set[str] | None:
+    """SessionRegistry 活跃 sid 集（函数内惰性 import，与 keep 清理同法）。
+
+    不可达返回 None——调用方 fail-safe：判不了生死就一律不动（只留痕）。
+    """
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        return {s.session_id for s in SessionRegistry(str(REPO_ROOT)).list_active()}
+    except Exception as e:  # noqa: BLE001 — 注册表不可达=不动作
+        logger.warning("SessionRegistry 不可达，工棚清扫降级为只留痕: %s", e)
+        return None
+
+
+def _workshop_abort_fn():
+    """session_worktree_abort 惰性取件（轻导入隔离；单测经 monkeypatch 注入替身）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_abort
+
+    return session_worktree_abort
+
+
+def _reap_stale_workshops(dry_run: bool, report: ReapReport) -> dict[str, Any]:
+    """清扫超龄死工棚：>48h 死→abort（上限 5、最老优先）；12-48h 死→告警；活跃→skip。
+
+    纯增量段：不改既有收割链任何一步；本段自身异常由 _reap_cycle 独立 try 兜住
+    （与幽灵/drift/保命链同模式，任一段失能不连坐其余）。dry-run 只出计划清单零动作。
+    """
+    summary: dict[str, Any] = {
+        "scanned": 0,
+        "aborted": [],
+        "planned": [],
+        "warned": [],
+        "deferred": [],
+        "skipped_active": 0,
+        "skipped_registry_unreachable": 0,
+    }
+    if not _AIDRAFTS_ROOT.is_dir():
+        return summary
+    # m46-time：本模块零 zephyr 包 import（轻导入隔离），now_utc 不可用，退 stdlib UTC
+    now = datetime.now(timezone.utc).timestamp()
+    active = _workshop_active_sids()
+    entries: list[tuple[float, str]] = []
+    try:
+        children = list(_AIDRAFTS_ROOT.iterdir())
+    except OSError as e:
+        logger.warning(".aidrafts/ 枚举失败（本轮跳过工棚清扫）: %s", e)
+        return summary
+    for child in children:
+        if not child.is_dir():
+            continue  # .carry_list.json 等平文件不属车道
+        try:
+            age_s = now - child.stat().st_mtime
+        except OSError:
+            continue
+        summary["scanned"] += 1
+        entries.append((age_s, child.name))
+    entries.sort(reverse=True)  # 最老优先（上限窗内先收最危）
+    budget = _WORKSHOP_MAX_ABORT_PER_RUN
+    for age_s, sid in entries:
+        if active is None:
+            # SessionRegistry 不可达：判不了生死，fail-safe 一律不动；超龄者留痕供人工。
+            if age_s > _WORKSHOP_TAKEOVER_AGE_S:
+                summary["skipped_registry_unreachable"] += 1
+                report.reported.append(
+                    {
+                        "sid": sid,
+                        "reason": "workshop_abort_deferred:registry_unreachable",
+                        "age_h": round(age_s / 3600, 2),
+                    }
+                )
+            continue
+        verdict = classify_workshop(age_s=age_s, session_active=sid in active)
+        if verdict == "skip":
+            if active is not None and sid in active:
+                summary["skipped_active"] += 1
+            continue
+        if verdict == "warn":
+            summary["warned"].append({"sid": sid, "age_h": round(age_s / 3600, 1)})
+            report.reported.append(
+                {"sid": sid, "reason": f"workshop_watch:age={age_s / 3600:.1f}h", "age_h": round(age_s / 3600, 2)}
+            )
+            logger.warning("workshop watch sid=%s age=%.1fh（12-48h 观察窗，不动）", sid, age_s / 3600)
+            continue
+        # verdict == "abort"：>48h 死车道
+        if budget <= 0:
+            summary["deferred"].append({"sid": sid, "age_h": round(age_s / 3600, 1)})
+            continue
+        budget -= 1
+        if dry_run:
+            summary["planned"].append({"sid": sid, "age_h": round(age_s / 3600, 1)})
+            logger.info("[dry-run] would abort workshop sid=%s age=%.1fh", sid, age_s / 3600)
+            continue
+        try:
+            result = _workshop_abort_fn()(sid, project_root=str(REPO_ROOT))
+            ok = bool(result.get("aborted"))
+            message = str(result.get("message", ""))[:120]
+        except Exception as e:  # noqa: BLE001 — 单棚失败不连坐其余
+            ok = False
+            message = repr(e)[:120]
+            logger.warning("workshop abort 失败 sid=%s: %s", sid, e)
+        summary["aborted"].append({"sid": sid, "age_h": round(age_s / 3600, 1), "ok": ok, "message": message})
+        logger.warning("workshop abort sid=%s age=%.1fh ok=%s", sid, age_s / 3600, ok)
+    return summary
+
+
+# ============== dead/ 归档常态化钩子（车道N st-sN2-hygiene-20261004）==============
+# 归档率 19%（744 袋只归 141）根因=官方归档通道靠人记得跑。本钩子把
+# commit_queue dead-archive --auto 挂进 reaper 既有 OS 托管脉冲：serializer
+# 空闲（lease 无活体持有）才跑、忙碌优雅跳过下轮再试；三闸（年龄/revival 互斥/
+# 落地校验）由 dead_archive_letters 本体保证，钩子不放松任何门禁。脚本子进程
+# 调用（保持本模块零 zephyr import 轻隔离）；reaper dry-run 时同步降级 dry-run
+# （不带 --auto 即人工通道默认只读形态，零动盘）。
+
+
+def _run_dead_archive_auto(dry_run: bool) -> dict[str, Any]:
+    """子进程调 commit_queue dead-archive：非 dry-run 带 --auto（空闲即 execute）。"""
+    cmd = [sys.executable, "scripts/commit_queue.py", "dead-archive", "--json"]
+    if not dry_run:
+        cmd.append("--auto")
+    try:
+        r = _run_hidden(cmd, cwd=str(REPO_ROOT), timeout=480)
+        ok = r.returncode == 0
+        if not ok:
+            logger.warning(
+                "dead-archive auto 钩子退出码=%s: %s",
+                r.returncode,
+                (r.stderr or "")[-200:],
+            )
+        return {"ok": ok, "rc": r.returncode, "stdout_tail": (r.stdout or "")[-400:]}
+    except Exception as e:  # noqa: BLE001 — 归档钩子失败不连坐收割主链
+        logger.warning("dead-archive auto 钩子异常: %s", e)
+        return {"ok": False, "error": repr(e)[:200]}
+
+
 # ============== 主流程 ==============
 
 
@@ -1547,6 +1720,21 @@ def _reap_cycle(dry_run: bool, report: ReapReport) -> ReapReport:
     except Exception as exc:  # noqa: BLE001
         report.errors.append(f"drift_stage_failed: {exc!r}")
         logger.error("drift 指标采集失能（继续跑保命链）: %s", exc, exc_info=True)
+
+    # 5) 工棚清扫（.aidrafts/ 死车道回收，车道N 2026-10-04）——独立 try 不连坐
+    try:
+        report.workshops = _reap_stale_workshops(dry_run, report)
+    except Exception as exc:  # noqa: BLE001
+        report.errors.append(f"workshop_stage_failed: {exc!r}")
+        logger.error("工棚清扫失能（继续跑保命链）: %s", exc, exc_info=True)
+
+    # 6) dead/ 归档常态化钩子（serializer 空闲即跑，车道N 2026-10-04）——独立 try 不连坐
+    try:
+        report.dead_archive = _run_dead_archive_auto(dry_run)
+    except Exception as exc:  # noqa: BLE001
+        report.errors.append(f"dead_archive_stage_failed: {exc!r}")
+        logger.error("dead-archive 归档钩子失能（不阻断收割）: %s", exc, exc_info=True)
+
     _run_safety_wires(report)
 
     return report
@@ -1683,6 +1871,16 @@ def _print_status() -> int:
     print(f"killed={len(data.get('killed', []) or [])} reported={len(data.get('reported', []) or [])}")
     print(f"ghosts={data.get('ghosts')}")
     print(f"drift={data.get('drift')}")
+    ws = data.get("workshops") or {}
+    if ws:
+        print(
+            f"workshops: scanned={ws.get('scanned')} aborted={len(ws.get('aborted', []))} "
+            f"warned={len(ws.get('warned', []))} deferred={len(ws.get('deferred', []))} "
+            f"skipped_active={ws.get('skipped_active', 0)}"
+        )
+    da = data.get("dead_archive") or {}
+    if da:
+        print(f"dead_archive: ok={da.get('ok')} rc={da.get('rc')}")
     wires = data.get("safety_wires") or {}
     if wires:
         track = wires.get("emergency_track") or {}
@@ -1764,6 +1962,8 @@ def main() -> None:
                 "whitelist_hits": report.whitelist_hits,
                 "trae_hits": report.trae_descendant_hits,
                 "ghosts": report.ghosts,
+                "workshops_abort": len(report.workshops.get("aborted", [])) + len(report.workshops.get("planned", [])),
+                "dead_archive_ok": report.dead_archive.get("ok"),
                 "dry_run": report.dry_run,
             },
             ensure_ascii=False,

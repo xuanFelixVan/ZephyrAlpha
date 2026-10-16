@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 import time
@@ -977,3 +978,232 @@ class TestKeepCoversNonPythonForms:
         report = pr.ReapReport()
         pr._reap_derived_orphans(procs, False, report)
         assert killed == [11]
+
+
+# ---------------------------------------------------------------------------
+# 工棚清扫（.aidrafts/ 死车道回收，车道N st-sN2-hygiene-20261004）：
+# 判定纯函数 classify_workshop + 阶段函数 _reap_stale_workshops。
+# 夹具：tmp 工棚目录（os.utime 陈化 mtime）+ monkeypatch 注入活跃集/abort 替身，
+# 零 git 零 SessionRegistry 依赖，全 tmp 隔离（测试隔离铁律 §9.6）。
+# ---------------------------------------------------------------------------
+class TestWorkshopSweep:
+    """工棚清扫：>48h 死→abort（上限5）；12-48h→告警；活跃→skip；registry 不可达→不动。"""
+
+    @staticmethod
+    def _make_workshops(root, monkeypatch, ages_h: dict[str, float]) -> Path:
+        """造工棚夹具：root 下按 {sid: 年龄小时} 建目录并 utime 陈化。"""
+        root.mkdir(parents=True, exist_ok=True)
+        now = time.time()
+        for sid, age_h in ages_h.items():
+            d = root / sid
+            d.mkdir(parents=True, exist_ok=True)
+            os.utime(d, (now - age_h * 3600, now - age_h * 3600))
+        monkeypatch.setattr(pr, "_AIDRAFTS_ROOT", root)
+        return root
+
+    @staticmethod
+    def _stub_abort(monkeypatch) -> list[tuple[str, str]]:
+        """注入 abort 替身（记录调用，返回 aborted=True），返回调用记录列表。"""
+        calls: list[tuple[str, str]] = []
+
+        def _fake_abort(sid, files=None, project_root=None):
+            calls.append((sid, str(project_root)))
+            return {"session_id": sid, "aborted": True, "message": "stub", "unregistered": True}
+
+        monkeypatch.setattr(pr, "_workshop_abort_fn", lambda: _fake_abort)
+        return calls
+
+    def test_over_48h_dead_aborted(self, tmp_path, monkeypatch):
+        """>48h 死工棚 → abort；同棚 24h/6h 死工棚不动（warn/skip）。"""
+        root = self._make_workshops(
+            tmp_path / "aidrafts",
+            monkeypatch,
+            {"st-old-dead": 49.0, "st-mid-dead": 24.0, "st-young": 6.0},
+        )
+        monkeypatch.setattr(pr, "_workshop_active_sids", lambda: set())
+        calls = self._stub_abort(monkeypatch)
+        report = pr.ReapReport()
+        summary = pr._reap_stale_workshops(dry_run=False, report=report)
+        assert [c[0] for c in calls] == ["st-old-dead"]
+        assert summary["scanned"] == 3
+        assert [a["sid"] for a in summary["aborted"]] == ["st-old-dead"]
+        assert summary["aborted"][0]["ok"] is True
+        assert [w["sid"] for w in summary["warned"]] == ["st-mid-dead"]
+        assert any("workshop_watch" in r["reason"] for r in report.reported)
+        assert (root / "st-young").exists()  # 扫描不删目录（abort 替身无副作用）
+
+    def test_active_session_workshop_never_touched(self, tmp_path, monkeypatch):
+        """活跃会话工棚永不碰：哪怕 >48h 也 skip（TAKEOVER 保护对称面）。"""
+        self._make_workshops(tmp_path / "aidrafts", monkeypatch, {"st-live-lane": 72.0})
+        monkeypatch.setattr(pr, "_workshop_active_sids", lambda: {"st-live-lane"})
+        calls = self._stub_abort(monkeypatch)
+        summary = pr._reap_stale_workshops(dry_run=False, report=pr.ReapReport())
+        assert calls == []
+        assert summary["aborted"] == []
+        assert summary["skipped_active"] == 1
+
+    def test_warn_only_window_12_to_48h(self, tmp_path, monkeypatch):
+        """12-48h 死工棚仅告警：abort 零调用 + reported 留痕。"""
+        self._make_workshops(tmp_path / "aidrafts", monkeypatch, {"st-watch-me": 30.0})
+        monkeypatch.setattr(pr, "_workshop_active_sids", lambda: set())
+        calls = self._stub_abort(monkeypatch)
+        report = pr.ReapReport()
+        summary = pr._reap_stale_workshops(dry_run=False, report=report)
+        assert calls == []
+        assert summary["warned"] == [{"sid": "st-watch-me", "age_h": 30.0}]
+        assert summary["aborted"] == []
+        assert report.reported and report.reported[0]["sid"] == "st-watch-me"
+
+    def test_abort_cap_5_per_run_oldest_first(self, tmp_path, monkeypatch):
+        """上限 5：7 个 >48h 死工棚只清最老 5 个，余 2 个 deferred 下轮再收。"""
+        ages = {f"st-dead-{i:02d}": 50.0 + i for i in range(7)}  # 50..56h，编号大=更老
+        self._make_workshops(tmp_path / "aidrafts", monkeypatch, ages)
+        monkeypatch.setattr(pr, "_workshop_active_sids", lambda: set())
+        calls = self._stub_abort(monkeypatch)
+        summary = pr._reap_stale_workshops(dry_run=False, report=pr.ReapReport())
+        assert len(calls) == 5 and len(summary["aborted"]) == 5
+        # 最老优先：56/55/54/53/52h（st-dead-06..02）
+        assert [a["sid"] for a in summary["aborted"]] == [
+            "st-dead-06",
+            "st-dead-05",
+            "st-dead-04",
+            "st-dead-03",
+            "st-dead-02",
+        ]
+        assert [d["sid"] for d in summary["deferred"]] == ["st-dead-01", "st-dead-00"]
+
+    def test_dry_run_plans_without_action(self, tmp_path, monkeypatch):
+        """dry-run：出计划清单（planned）、abort 零调用、零盘面变化。"""
+        root = self._make_workshops(tmp_path / "aidrafts", monkeypatch, {"st-plan-me": 60.0})
+        monkeypatch.setattr(pr, "_workshop_active_sids", lambda: set())
+        calls = self._stub_abort(monkeypatch)
+        before = sorted(str(p) for p in root.rglob("*"))
+        summary = pr._reap_stale_workshops(dry_run=True, report=pr.ReapReport())
+        assert calls == []
+        assert summary["planned"] == [{"sid": "st-plan-me", "age_h": 60.0}]
+        assert summary["aborted"] == []
+        assert sorted(str(p) for p in root.rglob("*")) == before
+
+    def test_registry_unreachable_fail_safe_no_abort(self, tmp_path, monkeypatch):
+        """SessionRegistry 不可达（None）→ 判不了生死：>48h 也不动，只留痕。"""
+        self._make_workshops(tmp_path / "aidrafts", monkeypatch, {"st-unknown": 70.0, "st-watch": 20.0})
+        monkeypatch.setattr(pr, "_workshop_active_sids", lambda: None)
+        calls = self._stub_abort(monkeypatch)
+        report = pr.ReapReport()
+        summary = pr._reap_stale_workshops(dry_run=False, report=report)
+        assert calls == []
+        assert summary["skipped_registry_unreachable"] == 1
+        assert summary["warned"] == []  # active=None 时 20h 工棚也不告警（判不了属主）
+        assert any("registry_unreachable" in r["reason"] for r in report.reported)
+
+    def test_abort_failure_does_not_break_the_run(self, tmp_path, monkeypatch):
+        """单棚 abort 抛异常：记 ok=False 继续，不连坐本轮其余判定。"""
+        self._make_workshops(tmp_path / "aidrafts", monkeypatch, {"st-boom": 49.0, "st-fine": 51.0})
+
+        def _boom(sid, files=None, project_root=None):
+            if sid == "st-boom":
+                raise RuntimeError("Z1 存证失败")
+            return {"session_id": sid, "aborted": True, "message": "ok"}
+
+        monkeypatch.setattr(pr, "_workshop_active_sids", lambda: set())
+        monkeypatch.setattr(pr, "_workshop_abort_fn", lambda: _boom)
+        summary = pr._reap_stale_workshops(dry_run=False, report=pr.ReapReport())
+        by_sid = {a["sid"]: a for a in summary["aborted"]}
+        assert by_sid["st-boom"]["ok"] is False
+        assert by_sid["st-fine"]["ok"] is True
+
+    def test_flat_files_and_missing_root_ignored(self, tmp_path, monkeypatch):
+        """平文件（.carry_list.json 等）不入 scanned；.aidrafts/ 缺席=空摘要零异常。"""
+        root = self._make_workshops(tmp_path / "aidrafts", monkeypatch, {"st-real": 1.0})
+        (root / ".carry_list.json").write_text("{}", encoding="utf-8")
+        monkeypatch.setattr(pr, "_workshop_active_sids", lambda: set())
+        calls = self._stub_abort(monkeypatch)
+        summary = pr._reap_stale_workshops(dry_run=False, report=pr.ReapReport())
+        assert summary["scanned"] == 1 and calls == []
+        # 缺席根
+        monkeypatch.setattr(pr, "_AIDRAFTS_ROOT", tmp_path / "no_such_dir")
+        empty = pr._reap_stale_workshops(dry_run=False, report=pr.ReapReport())
+        assert empty == {
+            "scanned": 0,
+            "aborted": [],
+            "planned": [],
+            "warned": [],
+            "deferred": [],
+            "skipped_active": 0,
+            "skipped_registry_unreachable": 0,
+        }
+
+
+class TestClassifyWorkshop:
+    """判定纯函数边界：48h/12h 严格大于；活跃绝对免死。"""
+
+    @pytest.mark.parametrize(
+        ("age_s", "active", "want"),
+        [
+            (48 * 3600 + 1, False, "abort"),  # 刚过 48h
+            (48 * 3600, False, "warn"),  # 恰 48h = 观察窗内（严格 >）
+            (12 * 3600 + 1, False, "warn"),  # 刚过 12h
+            (12 * 3600, False, "skip"),  # 恰 12h = 年轻（严格 >）
+            (11 * 3600, False, "skip"),
+            (100 * 3600, True, "skip"),  # 活跃免死牌，哪怕 100h
+            (30 * 3600, True, "skip"),
+        ],
+    )
+    def test_boundaries(self, age_s, active, want):
+        assert pr.classify_workshop(age_s=age_s, session_active=active) == want
+
+
+# ---------------------------------------------------------------------------
+# dead/ 归档常态化钩子（车道N st-sN2-hygiene-20261004）：reaper 脉冲子进程调
+# commit_queue dead-archive；dry-run 同步降级（不带 --auto）；失败不连坐。
+# ---------------------------------------------------------------------------
+class TestDeadArchiveHook:
+    """_run_dead_archive_auto：--auto 旗语 / dry-run 降级 / 失败容错。"""
+
+    @staticmethod
+    def _capture_cmd(monkeypatch, rc=0, stderr="", exc=None):
+        captured: dict = {}
+
+        class _R:
+            def __init__(self):
+                self.returncode = rc
+                self.stdout = '{"archived": []}'
+                self.stderr = stderr
+
+        def _fake_run_hidden(cmd, **kwargs):
+            captured["cmd"] = cmd
+            captured["kwargs"] = kwargs
+            if exc is not None:
+                raise exc
+            return _R()
+
+        monkeypatch.setattr(pr, "_run_hidden", _fake_run_hidden)
+        return captured
+
+    def test_execute_mode_includes_auto_flag(self, monkeypatch):
+        """非 dry-run：子进程命令带 --auto（空闲即自动 execute 归档）。"""
+        captured = self._capture_cmd(monkeypatch)
+        result = pr._run_dead_archive_auto(dry_run=False)
+        assert "--auto" in captured["cmd"]
+        assert captured["cmd"][:3] == [sys.executable, "scripts/commit_queue.py", "dead-archive"]
+        assert result["ok"] is True and result["rc"] == 0
+
+    def test_dry_run_mode_omits_auto_zero_disk(self, monkeypatch):
+        """dry-run：不带 --auto（人工通道默认只读形态，零动盘）。"""
+        captured = self._capture_cmd(monkeypatch)
+        result = pr._run_dead_archive_auto(dry_run=True)
+        assert "--auto" not in captured["cmd"]
+        assert result["ok"] is True
+
+    def test_nonzero_rc_reports_not_ok(self, monkeypatch):
+        """子进程退出码非 0：ok=False 留痕，钩子本体不抛。"""
+        self._capture_cmd(monkeypatch, rc=1, stderr="boom")
+        result = pr._run_dead_archive_auto(dry_run=False)
+        assert result["ok"] is False and result["rc"] == 1
+
+    def test_subprocess_exception_swallowed(self, monkeypatch):
+        """子进程异常（超时等）：捕获降级 ok=False，不连坐收割主链。"""
+        self._capture_cmd(monkeypatch, exc=OSError("timeout boom"))
+        result = pr._run_dead_archive_auto(dry_run=False)
+        assert result["ok"] is False
+        assert "timeout boom" in result["error"]
