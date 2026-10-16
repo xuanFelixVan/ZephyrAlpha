@@ -1035,3 +1035,22 @@ python -c "import glob,os,json,datetime;c=datetime.datetime(2026,10,15,18,12).ti
 - [BLOCKER] 2026-10-16|⑩1016-20|流程问题|断链普查三件（2490 处断链唯一分母面）连续第 8 班从未 `git add`，且裁定#539 的"快照当场做"腿在盘面查无副本＝一次外来栈覆盖即永久失明|`git ls-files docs/04_research_records/governance/working_ref_sweep_20261015/` 空返回・三件 size 786491/324794/647B mtime 10-15 18:22/16:41・父目录 mtime 11:56:26・快照谓词（`.runtime/tmp/*broken*`＋`*sweep*`＋`docs/_archive/**/*working_ref*`）命中 0・⑫处置单已出＝docs/_working/automation_campaign/p12_maintenance/ledger.md:303 §14.3|要 chief 按 ⑫ §14.3 判据（FILE-PLACEMENT-TTL 规则1 准入旗＋frontmatter＋随袋）重投并先读 dead_reason 修因；本席不碰 X1/X2 在施面|中
 - [BLOCKER] 2026-10-16|⑩1016-20|数据问题|done 面有界修剪继续收窄案卷抢救窗口：14:40 读 887→21:52 读 872，而同期真落地 16 枚 commit＝修剪与新增交错|`.runtime/commit_queue/done/*.json` 计数 872（21:52:23 现测）・p19 §39 在册三读 888/885/887・`git log --since=15:00 --oneline` 16 枚|要⑫明示队列 blobs 保留策略（抢救时限口径），否则死信反查通道随时关门|低
 - [BLOCKER] 2026-10-16|⑩1016-20|工具缺陷|`commit_queue.py health` 不计 `pending/.stale/` 墓碑面，报 pending 与盘面真实待落数不同源|`.runtime/commit_queue/pending/.stale/` 现测 176 件（21:52:23）・同刻 `health` pending 5・p19 §39 在册读数 186/205 同族|转⑤定权威尺（p19 已转一次，本席复现并附新读数）|低
+## §40.2 · st-qoder-p10-1016-20 班收班八件（追加节，§40/§40.1 各行逐字不改）
+
+- 收班④ [BLOCKER] 实测（22:03:2x 现读，`grep -c` 口径）＝本席 `⑩1016-20` 席位段 **8 行**＝1 高／5 中／2 低；全册 `[BLOCKER]` 行 213・今日 199・§40 系节 2 个（§40 与 §40.1）＝结构计数自证，非仅正文绿。
+- 收班① release＝本席四面 claim（ledger・checkpoint・dispatch・pulse）**于本班末袋落地后**由 `git_commit.py --session st-qoder-p10-1016-20 --release-only` 释放（写面时刻本席 claim 实测仍 held，`lock_files.py list` 四面持有者＝st-qoder-p10-1016-20）；全程未 release、未触碰他会话 claim（⑥/④/⑫/⑧ 的锁面只观测）。
+- 收班② 心跳＝**于本班末袋落地后**按 keeper PID 精确核活→终止→复证→删除，并在心跳末行留 `exited` 自证（在册红线：禁按镜像名批杀；本席 keeper 为 `.runtime/tmp/p10_20_keeper.py`，因守护三连自退案卷见 §40.1 行 3）。
+- 收班③ 耗时尺＝起手 21:35:11（date 实测）→三轮量测 21:35/21:47/21:52→三面 CAS 写面 21:5x（游标行分钟位留 `21:5x`＝约 21:57–21:59 窗，本席不事后补精确秒值）→0001 入队 22:00:56→pulse 行 22:02:08→收班面 22:13；被动等闸 0 分（防重入一次到位）；返工段＝一次尺自纠（HEAD 行数首测用 `shell=True` 走 cmd.exe，`2>/dev/null` 无效重定向⇒13 席 head=0 假读数，改 argv 列表后全 NEWER/EQ，旧案不涂见 §40 工序14 行）。
+- 收班⑤ 自清＝**于本班末袋落地后**删除本席 `.runtime/tmp/` 自造件 14 枚（探针 6・写块 5・message 2・append 1），删除前逐一确认已被袋快照吸收（写块与 message 属可再生物，探针属只读量测物）；四件套外零散落件、项目根零临时件；本班无半成品待办面（派单令 ⑩1016-20 节已全部下达）。
+- 收班⑥ GPU＝本席全程未 acquire 看门人⇒免还牌（p19 在册读数 active (none)）。
+- 收班⑦ 后台子任务＝本班零 spawn 子代理⇒零孤儿；仅一枚 keeper 进程（收班② 处理）。
+- 收班⑧ 零 worktree＝本班未创建任何 worktree 目录、未调任何工棚入口（TRAE-079 Phase 2）；`.aidrafts/st-qoder-p10-1016-20` 若由网关阶段3 代建则与其它 43 枚壳一并交清理专班，本席不自删。
+- 袋序＝0001（`ledger.md`＋`checkpoint.md`＋`dispatch/daily_dispatch.md` 三面）22:00:56 入队・0002（本 §40.2＋checkpoint 游标补行＋pulse 行三面）随写随投；追加型自述终值落笔即假，本节不称末袋、不称终量；下班 ⑩1016-21 判落地一律 `git log -1 --name-only` 与 blob（首查四件见 dispatch ⑩1016-20 节末行）。
+
+## §40.3 · st-qoder-p10-1016-20 班断线归因更正（22:13 现测，追加节，§40/§40.1/§40.2 各行逐字不改・旧案不涂）
+
+- ⚑**外部案卷接上＝本班 §40.1 行 2 的"⑩ 断线 6h55m"两段拆分**：项目记忆在册案卷（chief 席 20:40 巡检＋21:0x 定性，Owner 亲证）＝**18:50→21:0x 段根因＝平台级发车引擎停摆**＝千问免费档日名额只够十几个自动化并发跑约半天，14:35 全线 enable 后 4 小时烧穿 ⇒ 12 席 cron `lastRunStatus=session-failed`（连败 3-4）・`nextRunAt` 全消・手动触发同败；二次伤害＝连败熔断自动置 `enabled=false`，账号切换后**不会自愈**，须逐席 re-enable（21:0x 已全部恢复、连败计数清零、21:05-21:35 窗重排）⇒ 本班 21:35:11 起手正落在该重排窗内＝本席是恢复后第一班，非越闸补班。该段归因成立后，§40.1 行 2 的"要 Owner/运行班核 cron"诉求**部分已被处置**（处置者＝chief＋Owner），本席按在册律另起留旧案不涂。
+- ⚠**仍未归因段＝14:40→18:50（约 4 小时 3 个 30 分档零 ⑩ 班）**：该段他席真实在跑并有落地面痕迹＝chief 抢救袋 `23e28b2cb7` 15:47・⑦c 首袋 `98410ca45f` 16:17・merge-train `c6a6e8153c`~`3c13513c71` 16:50-17:00・⑤ 席 `a3c0370d3e` 21:55（另计入死袋 wirea/wireb 15:04-16:07 与 p12-04 17:06/17:33/18:35）＝**引擎级停摆始于 18:50，无法解释 14:40 起 ⑩ 自身三档不起**⇒ 该段升为"要运行班查 App Automations 面 ⑩ 席 lastRunStatus 与 consecutiveFailures 历史"的单席缺陷嫌疑（同档 21:0x 后 ⑩⑥⑨ 三席改为 60 分/班，与本卡一致）。
+- 与 chief 代注销面交叉（锚点已 grep 命中，非转述）＝chief 已代注销三枚谎心跳，实测面 `.runtime/sessions/st-qoder-p10-1016-15/heartbeat.jsonl` 末行＝`{"ts":"2026-10-16T20:47:23","status":"exited","reason":"chief_1016_proxy_close","evidence":"pid 17888 dead, pidfile mtime age 551min"}`＝本席 §40.1 行 3 的"守护三连自退而注册表键面仍在"与之同族（说谎心跳形态），但形态不同：chief 面＝pid 死而心跳仍写 alive，本席面＝会话在册而守护判 "not in registry" 即退⇒两案并呈⑤定"在岗判定"单口，本席不重复开单。
+- 判别注意承记（在册）＝PID 复用会让"死 pid"复活（③ 席实测），故收班② 终止 keeper 必须按 cmdline 点名本席 sid 再杀，禁按镜像名批杀（红线）。
+- 本班工序12/11 免执行实测理由＝工序12 晨报仅限 08:45 前的班（本班 21:35 起手，date 实测）；工序11 周册仅每周一早班（2026-10-16＝周五）＝两项均非漏做。
