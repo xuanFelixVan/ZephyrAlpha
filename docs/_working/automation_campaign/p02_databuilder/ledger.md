@@ -722,3 +722,177 @@ WHOLE [(21792, datetime.date(2005, 1, 4), datetime.date(2026, 10, 14))]
 
 `P02-1015-09-ENDSTATE`（本班终态独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1015-09-ENDSTATE"`）
 
+---
+
+## 2026-10-16 17:1x · st-qoder-p02-1016-01 · **B-25 续深两基入库 131,802 行（2020 全年＋2022 全年，全覆零缺口）＋1015-10 未竟班遗物抢救＋工序 4 B-15 开工前自验（令面三数不符＝按令记堵点不起批）**
+
+进场 `date` 实测 **14:54:48**，写账时现测 **17:13:18**＝本班实跨 **2 小时 19 分**（超 60 分班限，按卡内"CAS 拒写非事故勿进堵点（班限 60 分必超期属常态）"如实记不粉饰；⚑本班自犯第 1 枚见"自犯"段＝体感钟把 99 分钟估成 40 分钟）。
+
+### 件①＝冷启动与前置（逐项现测，非推断）
+
+- Python **3.12.8** ✓；`lock_files.py cleanup` ✓（清 1 枚死锁 `tests/gov/governance/scripts_governance/test_tdm_goal_blocks.py`＋SALVAGED 两枚死会话遗物 `st-mtrain-1016`、`st-qoder-p12-1016-04`，均非本席面）；`process_reaper --status` ✓ `source=live`（守门成，可写）。
+- reaper 水位 **15:13:22 现读**＝`ram_used_pct 77.4 / commit_pct 65.54 / cpu_pct 30.6 / degraded False / breached []`＝**连续五班 ≥87 后的第一次缓解**（1015-05..09 五班 92.07→94.03→87.31→93.17→91.94 全记在册，本班据此判定"第一闸已开"并写进件④⑦给下班）。
+- ⚑同份输出内一处**自报矛盾**（本班只观测不改码）：`scan_mode=live_dryrun（只读现算：零杀/零自动清理/不写状态文件）` 声明与同行 `killed=1` 不同源，而日志里那一 PID 的实际处置是 `incubation skip: PID=39608 身份复核不符（image_diverged…）——赦免并销账`＝**"赦免"被计进了 killed**。登 [BLOCKER]（工具缺陷／低）交⑤/⑫。
+- 防重入＝checkpoint 游标 `last_batch: st-qoder-p02-1015-08`、ledger HEAD 面有 `P02-1015-09-ENDSTATE`（1015-09 已收口）⇒ 无未完本班；**但本班在件②查出该游标本身已过期**（1015-10 起过工未收班），游标面由本班在 checkpoint 补齐。
+- 禁建 worktree（TRAE-079 Phase 2）＝本班零 worktree、直改主区、`--files` 只含本席清单两件。
+
+### 件②＝⚑起手第一件＝本席 ledger 盘面对账并复位（⑩ 两道令面在册，本班按其处方执行）
+
+- 三态实测（14:54–14:56）：盘 **132,542 B／630 行** vs HEAD **155,353 B／724 行**；`git diff HEAD --numstat` ＝ **0 insertions／94 deletions**；`git status --porcelain` ＝ ` M ledger.md`（index==HEAD）＋ `MM checkpoint.md`／`MM instruction.md`（index 落后而盘面==HEAD＝在册"正门每落地一次主区 index 停在落地前一版"生成源，本席不代复位）。
+- 缺的 94 行＝**本席自家 1015-09 班全段**（`grep -c "P02-1015-09"` 盘 0／HEAD 2）。令面两处独立在册：`instruction.md` 的 **[P10-1016-17]**（三态量 盘630/index724/HEAD724＋处方"①checkout ②复量应=724 ③再追加"）与 `feedback/to_builder.md` 的 **⑩1016-05**（"②席下班首件请先把自家面以落地面字节重放，否则重投即'双侧皆改'判死"）；根因面＝长期记忆 `main-area-foreign-stash-apply-contamination-20261016`（03:22 主区 1,583 件被外来 `stash@{27}` apply 覆盖、13 件净落后落地面，判"台账变短"先三态核实、只复位自家单写面）。
+- 执行序＝先 `cp` 存证 `.runtime/tmp/p02_1016_01/ledger_diskpre_1016_01.bak`（sha256 前 16＝`57c65c4ae8455f438fe2`）→ `git checkout HEAD -- docs/_working/automation_campaign/p02_databuilder/ledger.md` → 复量 **155,353 B／724 行**且 `git diff HEAD -- <该件>` 空输出＝盘与 HEAD 逐字节全等 ✓。
+- **复位前置判据（非"看到变短就 checkout"）**：只有 `git diff HEAD` 为**纯删除、零插入**（盘是 HEAD 的子集）时复位才零损失；若盘面含 HEAD 没有的字节＝禁复位，改走热册超集差分配方。本班该谓词实测成立后才动手。
+
+### 件③＝⚑发现 1015-10 未竟班遗物（本席自家第六态）并抢救为落地
+
+- 线索（扫 `.runtime/tmp/` 时发现，非按令查）：`p02_b25_collect_1015_10.py`＋`…_10.log`（末行 `ERR 20220603`、**无 DONE**）＋`p02_b25_rows_1015_10.tsv.gz`（1,405,930 B，mtime 10-15 20:20）＋`p02_boot_1015_10.py`＋`p02_diskwrite_probe_1015_10.bin`（0 B）⇒ 有一班起过工、采过集、**没写账、没入库、没收班**。
+- 三面复证＝①台账面 `git show HEAD:…ledger.md | grep -c "1015-10"` ＝**0**（该班在 ledger 无任何段）；②袋面 `git log -- …p02_databuilder/` 查无 `st-qoder-p02-1015-10` 落地；③旁证＝`data/runtime/process_reaper_keep.txt:408-409` 仍挂 `st-qoder-p02-1015-10`／`p02_b25_collect_1015_10` 两枚令牌＝该班按机制登记过长批防误杀（**其确在跑**而非起手即崩），与 1015-09 §件⑥ 第 3 枚"长批被静默终止、psutil 查无、日志无 traceback"同型复发，这次连台账都没留下。
+- 处置＝**既不重建也不丢弃**：①冻结（`cp` → `p02_b25_rows_1016_01_a.tsv.gz`，sha256[:16] `65ebc24e7bbd3d60` 与该班日志末次 `FLUSH month=202205 … sha16=65ebc24e7bbd3d60` **逐字相等**＝文件自那之后未再被改写，字节级归属坐实）；②结构化验列（14 字段 0 违例、89,916 键、`data_source` 唯一值 `sse_official`、`exchange` 唯一 `SHO`）；③续采补完；④入库。
+
+### 件④＝B-25 续深两基入库 **131,802 行**（本班保底，已写库并逐位验收）
+
+- **基 A**（遗物原样＝2020 全年 62,138＋2022-01-02..06-01 27,778＝89,916 键，日期跨度 2020-01-02..2022-06-01）：干跑读数 `P0 键互斥（与在产腿同窗既有行）=0`、`P0b 库内 sse_official 既有键=256,434`、`跳过后写集=89,916`、`ROLLBACK-PREDICATE-COUNT-BEFORE=0` ⇒ 实写两块 **全 `disposition=ch_committed detail=http`**（2020＝12 分区、2022＝6 分区，均 ≤12＝在册"Too many partitions for single INSERT block (>100)"死因的安全档）。
+- **续采**（16:33:42 起，`nohup python .runtime/tmp/p02_b25_collect_1015_10.py`）＝该脚本**本身可续传**（起手打印 `resume: 已有键 89916`，且按月 FLUSH 幂等键去重），16:46:24 `DONE calls=522 empty=37 err=37 keys=131802 bytes=2089386 sha16=b279816341537236 elapsed=736s`（＝13.2 分，与 1015-09 的 1.8 秒/次实测同量级）；37 枚空/错日**全为节假日**（样例 20200101／20200124-31／20200406／20200501・04-05／20200625-26／20201001-08／20220103／20220131-0204／20220404-05／20220502-04／20220603），同一 `KeyError "None of [Index(['TRADE_DATE','SECURITY_ID','CONTRACT_ID',…"` 形态＝1015-08/09 在册的"akshare 空帧抛异常非无史"判例续用，**未据以判"该窗无史"**。
+- **基 B**（131,802 全量重放同一正门）＝`P0b` 自动命中并跳过 A 已入库的 89,916，增量 **41,886 行**（2022-06-02..12-30，145 日，7 分区）`ch_committed`。⇒ **本班顺序 A→B 本身就是一次幂等实测**（第二次跑写集从 131,802 缩到 41,886＝跳过数逐值等于第一次实写数）。
+- **逐位验收**（9 列字符串同形对拍，判据同 1015-09）：A 基 `base_keys=89,916 FINAL_after=346,350 missing=0 mismatch=0 extra_not_from_base=256,434 dup_raw=0`，负对照移位配对失配 **89,915/89,915**（尺能红）；B 基 `base_keys=41,886 FINAL_after=388,236 missing=0 mismatch=0 dup_raw=0`，负对照 **41,885/41,885**。`extra_not_from_base` 是读回谓词取全部 `sse_official` 行的预期值，非异常。
+- **表终态**（现读 17:0x）：`raw 419,801 == FINAL 419,801 == uniqExact((underlying,trade_date,strike,expiry,option_type)) 419,801` ⇒ **全表零键塌缩保持**（1015-09 的 287,861 → 本班 419,801）；`sse_official` 腿 **388,236 行／1,099 交易日／2019-01-02..2025-12-31**；`delta=0` 占比官方腿 **3,560/388,236＝0.92%**（上班 1.04%，随深史扩面继续降；对照 `miniqmt` 仍 100%、`akshare_sina` 31.14%）；`option_type=''` 官方腿仍 **0**。
+- **①席验收判据②（断面）四值逐位不变**＝2019-01-02=154／2021-01-04=242／2023-01-03=360／2024-08-16=526 ⇒ 本班写集（2020/2022）**没有污染在产腿断面**。
+- **⚑本班新增正对照＝采集完整度按"逐年交易日对拍"而非"文件数/行数对上"**（尺＝与 `c1_market.kline_daily` FINAL 同日 `uniqExact(trade_date)`）：official/kline 逐年＝2019 244/244、**2020 243/243**、2021 1/243、**2022 242/242**、2023 1/242、2024 242/242、2025 126/243 ⇒ **两年全覆、缺口日集合实测为空**（Python 侧集合差，避 CH JOIN 在册自相矛盾坑），三段仍待续＝2021／2023／2025-H1（合计 605 个交易日≈18 分采集）。
+- **⚑标的面新证（转⑨/⑥，卡面按票池取数须知）**：`510050.SH` 1,099 日（2019-01-02 起）／`510300.SH` 862 日（**2019-12-23 起**）／`510500.SH` 439 日（**2022-09-19 起**）／`588000.SH`・`588080.SH` 各 368 日（**2024-01-02 起**）⇒ "2019 起 5 标的全窗"是**假象**，逐年标的数是变动的；按固定票池取 IV 会在新上市标的上取到空。
+- **回退谓词在册未执行**：A 基 `data_source='sse_official' AND ingest_ts >= '2026-10-16 08:44:25'`＝89,916；B 基 `>= '2026-10-16 08:54:20'`＝41,886（两条写前均实测 0）。本班**未执行回退**。
+
+### 件⑤＝工序 4 B-15 冷归档挂回 开工前自验（令面三处对不上＝按令记堵点上报，本班不起批）
+
+判据照本席指令卡原文执行："开工前先实测自验：manifest 行数与 verified 计数逐一对得上才动工；对不上＝记堵点上报，禁按令面数字直接信"。实测底＝`.runtime/tmp/p02_1016_01/b15_manifest_1016_01.py`（只读，零删零移）。
+
+- **条数不符**：真条目 **2,539**（令面 2,533，**差 6**）。差值已定位到条目级＝10-15 之后新追加的 6 条 `c1_market.kline_etf_30min` 分区 201109/201110/201111/201112/201201/201202，`max(archived_at)=2026-10-15T23:03:22Z`＝今晨 07:03 本地，文件 mtime 亦 **2026-10-16 07:03:22**／790,567 B（上班 1015-09 量到 789,332 B@10-15 12:31:06）⇒ **挂回清单是活面，动工前必须以当班快照（sha256）为准，令面任何静态数字都会过期**。
+- **verified 计数成**：2,539/2,539 全 `verified:true & dropped:true` ✓（令面这一条成立）。
+- **文件在盘成**：2,539 条 `parquet_path` 逐条 `.exists()` ＝查无 **0** ✓（本班按 `is_file()` 谓词，不拿目录计数＝在册 `rglob-counts-dirs-empty-shell-false-green` 坑）。
+- **⚑本班头号可执行发现＝manifest 头 3 字节是 UTF-8 BOM**（`raw[:3]==b'\xef\xbb\xbf'`）：以 `encoding="utf-8"` 逐行 `json.loads` 的读法**首条恒失败**（本班第一遍实测 `lines 2539 / unparsable 1`，改 `utf-8-sig` 后 `unparsable 0`），而**总条数照样"对得上"**⇒ 任何"按条数对上就动工"的挂回器会**静默漏掉第一条**，第一条内容恰是 `c1_market.kline_60min` 分区 **200006＝该表最早一个月**。处方三条已登 [BLOCKER]：读取必须 `utf-8-sig`、禁吞异常、断言 `parsed == lines`。
+- **容量实测（D 盘＝项目盘，CH 在此）**：manifest 合计 **159.29 GiB**；按表＝`tick_data` 48 分区 **96.26 GiB**（202201..202512）、`kline_1min` 255 分区 26.38 GiB、`technical_indicator_60min` 11.04、`_120min` 6.89、`kline_5min` 6.10、`technical_indicator` 5.41、`kline_15min` 2.56、`news_data` 1.77、`kline_30min` 1.35、`kline_60min` 0.75、`kline_etf_1min` 0.57、`kline_lof_1min` 0.12、`kline_etf_15min` 0.09、`kline_etf_30min` 0.00 ⇒ **分钟线族（≤202108 那批）63.03 GiB 对 D 盘现余 100.31 GiB＝62.8%，可派**；**tick 腿 96.26 GiB 名义装得下但只剩 4 GiB 缓冲**（CH merge 临时空间＋日常写同盘）⇒ 禁一把梭。源侧 F 盘余 1,477.66 GiB、G 盘余 2,358.02 GiB＝瓶颈在 D。
+- **⚑行数一栏结构上不可验**：manifest 字段只有 `parquet_size_bytes`，**无任何行数字段** ⇒ 令面"分笔 119 亿行 2022-2025／分钟线 24.4 亿行 ≤2021-08-31"本班既不能证实也不能证伪（119 亿行对 96.26 GiB＝8.1 B/行 vs 1015-04 实测 tick 18.10 B/行，差 2.2 倍，但压缩后字节不可直推行数，本班**不据此反推**）。按令面判据处置＝记堵点上报，交①/⑩给"行数权威尺"（parquet footer 或归档前 CH 统计表），否则该行永不进 B-15 验收判据。
+- **不起批的第二条理由**＝本班已跨 2h19m，63 GiB 级逐批对账不可能在下个班限内收口；且⑩停发面未解禁（在册 `chief-1016-rulings-resume-line`＝裁定册 #537-539 盘上未落），大批写库产物要排队正门。**给下班的正面读数**＝第一闸 `commit_pct 65.54／degraded False／breached []` 已缓解（五班以来首次）、闸四归档器最近追加在 10.2 小时前（1015-09 用"394.3 分钟无追加"同尺已解除），但清单会继续长。
+- 分块铁律仍在册（1015-09 三验）：按年/按月切、逐批行数对账、分区 ≤12；本班两基 4 块再次验证该档够用。
+
+### 件⑥＝B-25 右端窗仍不可达＋续供第四查仍不过（本班不翻 status、不写 unblocked.md）
+
+- 1015-09 件③ 的"排序键加合约身份（`symbol`/`deal_no`）＋加版本列"仍未做（本班零代码改动、不重建表）⇒ 官方腿右界仍 **2025-12-31**；2026-09-17..10-14 窗仍由 `akshare_sina`（现读 2,142 行／30 日／右端 2026-10-15）与 `miniqmt`（右端冻 2026-09-16）占据，无版本列写该窗＝与在产腿同键互吃（08 班 B-23"先⑤改表再回补"同型判例）。
+- 第四查（续供确认）不过＝`src/zephyr/data/config/tasks.yaml:971` 本班现读该腿仍 `source: miniqmt`＋`schedule: intraday_realtime`（未改），`ak.option_risk_indicator_sse` **无在册调度**⇒按 SOP"采集调度在册且常设才准翻 completed"，本班与上班同样**不翻** `option_iv_greeks_leg_stale_and_official_sse_source`（现值 `open`）。
+- `known_data_gaps.yaml` 工作区面本班进场仍 ` M`（①席在写，未落地）⇒ 继续压班不随袋（在册热册连坐判例）。
+
+### 件⑦＝本班自犯三枚（另起留旧案，不改上文结论）
+
+1. **体感钟再前移（在册形态 N 次）**：16:33 现测距起手 14:54 已 **99 分**，而本班心里估"约 40 分、窗口将尽"⇒ 一切"耗时/超窗"叙述落笔前 `date` 现测（`my-elapsed-time-sense-runs-2x-fast` 第 N 次自证；处方＝写账段开头即贴两个实测 ts）。
+2. **CH SQL 两处自犯并当场改正**：`GROUP BY toYear`（别名不可引，须写全表达式 `GROUP BY toString(toYear(trade_date))`）与 `WHERE '2020'=toString(toYear(trade_date))`（字符串对 Date 比较 → `Code 47 Unknown expression identifier` ＋一整屏 C++ stack trace）⇒ 键级/集合对拍一律改走 Python 侧（1015-08 §件③坑④"CH JOIN 配 countIf 自相矛盾"同族，本班不与之纠缠）。
+3. **差点把自家工具坑当数据事故上报**：首份 manifest 脚本用 `encoding="utf-8"` 读出 `unparsable=1`，本班第一判断是"清单坏了一条"；改 `utf-8-sig` 后 2,539/2,539 全解 ⇒ **该"坏一条"其实是本班读法造成的**，而真事故是"首条在 utf-8 读法下恒不可解析而总数不变"这一形态（件⑤④）。两处合并留案：负对照（改正读法）在前、报红在后。
+
+### 交付复核命令（正文原样可跑；"本班实跑读数"＝字面输出非脑估）
+
+| # | 命令（在 `D:\ZephyrAlpha`，先按 §RULE-ENV 置 PATH） | 本班实跑读数 |
+|---|---|---|
+| 1 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.infrastructure.database_service import DatabaseService as D;c=D().get_clickhouse_conn();T='c1_market.option_iv_surface';print(c.execute(f'SELECT count() FROM {T}')[0][0],c.execute(f'SELECT count() FROM {T} FINAL')[0][0],c.execute(f'SELECT uniqExact((underlying,trade_date,strike,expiry,option_type)) FROM {T}')[0][0])"` | `419801 419801 419801`（三值相等＝全表零塌缩） |
+| 2 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.infrastructure.database_service import DatabaseService as D;c=D().get_clickhouse_conn();print(c.execute(\"SELECT data_source,count(),uniqExact(trade_date),min(trade_date),max(trade_date) FROM c1_market.option_iv_surface FINAL GROUP BY data_source ORDER BY data_source\"))"` | `[('akshare_sina',2142,30,Date(2026,8,14),Date(2026,10,15)),('miniqmt',29423,133,Date(2026,1,29),Date(2026,9,16)),('sse_official',388236,1099,Date(2019,1,2),Date(2025,12,31))]` |
+| 3 | `python -c "import sys,gzip;rows=[l.split('\t') for l in gzip.open('.runtime/tmp/p02_b25_rows_1016_01_b.tsv.gz','rt',encoding='utf-8')];print(len(rows),len({(r[2],r[0],r[3],r[4],r[5]) for r in rows}))"` | `131802 131802`（基底行数＝键数＝写集规模，两基无塌缩） |
+| 4 | `python -c "import gzip,hashlib;p=open('.runtime/tmp/p02_b25_rows_1016_01_b.tsv.gz','rb').read();print(len(p),hashlib.sha256(p).hexdigest()[:16])"` | `2089386 b279816341537236`（与续采日志 `DONE … sha16=b279816341537236` 逐字相等＝归属坐实） |
+| 5 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.infrastructure.database_service import DatabaseService as D;c=D().get_clickhouse_conn();print(c.execute(\"SELECT toString(toYear(trade_date)),count(DISTINCT trade_date) FROM c1_market.option_iv_surface FINAL WHERE data_source='sse_official' GROUP BY toString(toYear(trade_date)) ORDER BY 1\"))"` | `[('2019',244),('2020',243),('2021',1),('2022',242),('2023',1),('2024',242),('2025',126)]`（2020/2022 与 `kline_daily` 同日值逐位相等＝全覆） |
+| 6 | `P02_BASES=.runtime/tmp/p02_b25_rows_1016_01_b.tsv.gz python .runtime/tmp/p02_b25_commit_1015_09.py`（**不带 `P02_COMMIT`＝干跑**） | `P0b 库内 sse_official 既有键 = 388236`→`P0b 跳过后本班写集 = 0`→`IDEMPOTENT-NOOP: 本基全部键已在库，零写入退出`（幂等第三次复验，本班未跑此行；A→B 顺序已实测同闸） |
+| 7 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.infrastructure.database_service import DatabaseService as D;c=D().get_clickhouse_conn();T='c1_market.option_iv_surface';print(c.execute(f\"SELECT count() FROM {T} WHERE data_source='sse_official' AND ingest_ts >= '2026-10-16 08:44:25'\")[0][0],c.execute(f\"SELECT count() FROM {T} WHERE data_source='sse_official' AND ingest_ts >= '2026-10-16 08:54:20'\")[0][0])"` | `89916 41886`（两道回退谓词命中面，**本班未执行回退**） |
+| 8 | `python -c "print(open('F:/zephyr_cold/50_archive/by_project/zephyralpha/archive_manifest.jsonl','rb').read(3)==b'\xef\xbb\xbf')"` | `True`（BOM 在位；本席首份读取脚本因此首条恒失败） |
+| 9 | `wc -l docs/_working/automation_campaign/p02_databuilder/ledger.md`（复位后） | `724`（复位前 630；与 ⑩ [P10-1016-17] 处方要求同值） |
+
+⚑#3/#4/#6/#7/#8 本班逐字实跑；#6 该行是**下班可直接跑的幂等复验**（本班未跑，读数行已标"本班未跑此行"，不冒充实跑）；#1/#2/#5/#9 本班实跑。
+
+### 完工自检（两轮）
+
+- **第一轮（结构计数）**：`grep -c '^## '` 落地面 **10** → 盘 **11**（本班 +1）；`grep -c '^### '` 落地面 **77** → 盘 **88**（本班 +11＝件①..件⑦ 七段＋交付复核/自检/排产/转单 四段）；`grep -c "P02-1016-01"`＝**2**（段标题＋ENDSTATE）；`grep -c "P02-1015-08-ENDSTATE\|P02-1015-09-ENDSTATE"`＝**5**（上班两班游标行逐字仍在，含正文引用位）；`grep -c "^\*\*\[BLOCKER\] 2026-10-16"`＝**8**；`git diff --numstat HEAD`＝**113 insertions / 0 deletions＝纯加行**。⚑本行按在册律＝追加型台账里的计数与终值自述**落笔即假**，故每个数字都配**可复量谓词**，落地面请以 `git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c '^## '`（应＝11）等三条复量。⚑**本班自犯第 4 枚（同段抓出，未落地前改正）**：本行首版写的是"写账前 22／写账后 23"与"99→106"＝**又一次先写数后量数**（连 N₀ 占位符都没填），量得 10→11／77→88 后改正；旧估不涂、改正留册（`counters-in-append-ledger-self-falsify` 本班第二次触发）。
+- **第二轮（数值互证）**：①本班入库合计 131,802＝A 基 89,916＋B 增量 41,886 ✓；②表 FINAL 419,801＝`akshare_sina 2,142`＋`miniqmt 29,423`＋`sse_official 388,236` ✓；③`sse_official` 388,236＝上班 256,434＋本班 131,802 ✓（逐值相等＝本班两基全部键都在库且无外来行掺入该腿）；④A 基 89,916＝按年 62,138＋27,778 ✓；⑤D 盘余 100.31 GiB 与分钟线族 63.03＋tick 96.26＝159.29 GiB 合计自洽 ✓；⑥本班 manifest 条数 2,539＝2,539（BOM 修后）且 `verified&dropped` 2,539 ✓、差令面 2,533 ＝新 6 条 ✓（6 条清单已逐条列出）。零处拿上班数值当代测。
+- **两处如实留白**：①37 枚空/错日本班按 1015-09 同形判"节假日"，未逐日与官方交易日历对拍（仅样例日与两班样例一致）；②2021/2023/2025-H1 三段本班未采（605 日≈18 分），不据"两年全覆"外推"续采即全史"。
+
+### 本班排产与下班待办（修订 1015-09 §下一班待办序）
+
+1. **B-25 续深剩三段**＝2021（除 01-04 断面已有）、2023（除 01-03）、2025-H1，共 605 交易日；**脚本可直接续用**（`p02_b25_collect_1015_10.py` 的 `RANGES` 改三段即可，resume 与按月 FLUSH 与 P0b 幂等三闸全备），采完直接 `P02_BASES=<新基> P02_COMMIT=1 python .runtime/tmp/p02_b25_commit_1015_09.py`；⚑该脚本与基底 **TTL 24h**（基底 mtime 今 16:46⇒**明日 16:4x 过期**），过期后按本段口径重造。
+2. **姊妹表 `option_greeks` 仍空窗**（1015-09 在册现读仅 `akshare_sina 2,218`／`miniqmt 3,721`）＝同形制顺手可写，但须先按件④ 的"键映射＋单位定标＋P0 键互斥"三步重做（官方腿 `RHO_VALUE` 无处安放＝该表列形制本班未 DESCRIBE）。
+3. **B-15 起批条件已具备两条**（内存闸缓解＋归档器静默 10.2h），但本班把"令面数字不可自验"这一条前置给⑩/①：动工前须（a）重拍 manifest 快照并记 sha256、（b）用 `utf-8-sig` 读且断言 `parsed==lines`、（c）**只挂分钟线族 63.03 GiB**（tick 腿 96.26 GiB 只剩 4 GiB 缓冲＝禁并入同一批，扩容/腾挪属 Owner/⑩ 门）。
+4. **B-26 先做规模标定**（1015-09 判定不变）；**B-27 tick 回补起手动作**（xtquant 试下载 10-08/10-09）硬时限 **10-18 02:00**＝本班未接（本班落 B-25＋工序 4 自验），下一班若不接则 tick 腿断供登记由①席工序 5 落；B-1/B-2/B-9 仍等 Owner 一字裁；B-11..B-14 转⑤。
+5. **本班不翻任何 status、不写 `unblocked.md`、不 promote 进 04**（结案报告须等件⑥ 改表腿与 B-15 至少一段挂回，现阶段留 `_working`）。
+
+### 转单（本席全文，交⑩汇总到 `feedback/unblocked.md`）
+
+- **→⑤（三件，本班零代码改动）**：(a) **新案**＝`archive_manifest.jsonl` 消费侧必须 `utf-8-sig`＋禁吞异常＋断言 `parsed==lines`（件⑤④，首条＝`kline_60min/200006` 会在"总数对得上"的表象下静默漏挂）；(b) 上班在册三件不变＝`tasks.yaml:971` 期权 IV 腿改挂 `ak.option_risk_indicator_sse(date=)`＋按 `data_source` 分轨＋日行数下限、`c1_market.option_iv_surface` 排序键加合约身份＋加版本列、`miniqmt_provider.py:8` INVARIANTS 的 `delta/gamma/theta/vega` 列声明自查回填或退役该四列；(c) `process_reaper --status` 的 `killed` 计数面与 `live_dryrun"零杀"` 声明面不同源（件①）。
+- **→⑨/⑥（判据面）**：官方腿可用面**本班又推深两年**＝`sse_official` 现 **388,236 行／1,099 交易日／2019-01-02..2025-12-31**，但**逐年标的数变动**（2019 仅 510050、2019-12-23 起加 510300、2022-09-19 起加 510500、2024-01-02 起加 588000/588080）⇒ 楼8 隐含轴卡面若按固定票池取数会在早年取空；右端窗（2026-09-17 后）仍不可达；`quality_flag` 恒 1／`option_type=''` 24,811 行属旧轨。
+- **→①（口径面）**：B-15 令面"manifest 2,533 行"现测 **2,539**（新 6 条已列），且令面**行数字段在 manifest 中不存在**＝不可验，请给行数权威尺或从令面删除该行；另 tick 腿容量口径请改按 `parquet_size_bytes`（96.26 GiB）而非"119 亿行"表述。
+- **→⑩（流程＋红线面）**：①**1015-10 未竟班**＝有采集基底、无台账、无袋、无收班＋keep 令牌两枚仍在册（`process_reaper_keep.txt:408-409`），本班已抢救入库而非丢弃；请判"长批静默终止"的可查面（1015-09 [BLOCKER] 同型复发且这次损失更大），并把**未竟班遗物清点**列入收班第八件之外的巡检项；②本席 `ledger.md` 回退弹已按 [P10-1016-17] 处方复位（纯删除谓词成立才动），**该波另有 12 件面未复位**（在册记忆记 13 件净落后），本席只动自家单写面；③本班未动 `to_builder.md`／`unblocked.md`／`known_data_gaps.yaml`／`tasks.yaml`／治理图五族任何跨席共写面；新建件仅 `.runtime/tmp/p02_1016_01/` 与 4 枚 `p02_b25_rows_1016_01_*`/续采日志（均 `[TTL] task_bound` 24h）。
+- **→⑫（hygiene 面，Owner 批方案 3 新职）**：`process_reaper_keep.txt` 内本席自家陈旧令牌 **8 枚**（:393 `p02_backfill_rating_change_1015`／:398・:399 08 班／:403・:405-407 09 班／:408-409 10 班）对应会话均已终态；本班**未摘**（该册整档重写＝在册热册蒸发判例，且本班袋在飞），请代按行级谓词摘除或告知本席安全通道。
+
+**[BLOCKER] 2026-10-16|②1016-01|工具缺陷|`archive_manifest.jsonl` 头 3 字节 UTF-8 BOM⇒`encoding="utf-8"` 逐行 `json.loads` 首条恒失败（实测 unparsable=1；utf-8-sig 后 0）而总条数不变，挂回器会静默漏掉第一条＝`kline_60min/200006` 最早一月|F:/zephyr_cold/50_archive/by_project/zephyralpha/archive_manifest.jsonl:1（`raw[:3]==b'\xef\xbb\xbf'` 复核命令 #8）|要⑤：挂回/统计消费侧读取统一 `utf-8-sig`＋禁吞异常＋断言 parsed==lines|中**
+**[BLOCKER] 2026-10-16|②1016-01|数据问题|B-15 令面"manifest 2,533 行"与现测 2,539 不符（10-15 后新增 6 条 `kline_etf_30min` 201109..201202；mtime 2026-10-16 07:03:22／790,567 B）＝挂回清单是活面|`.runtime/tmp/p02_1016_01/b15_manifest_1016_01.py` 输出|要①/⑩：令面静态数字改为"以当班快照 sha256＋实测条数为准"|中**
+**[BLOCKER] 2026-10-16|②1016-01|判据缺失|令面"分笔 119 亿行／分钟线 24.4 亿行"在 manifest 无对应字段（仅 `parquet_size_bytes`）⇒按工序 4"逐一对得上才动工"结构上不可验（既不能证实也不能证伪）|`.runtime/tmp/p02_1016_01/b15_manifest_1016_01.py` 字段面实测|要①/⑩：给行数权威尺（parquet footer 或归档前 CH 统计表），否则该行从 B-15 判据中删除|中**
+**[BLOCKER] 2026-10-16|②1016-01|流程问题|1015-10 未竟班遗物＝有采集基底（89,916 键）无台账段无袋无收班，且 `process_reaper_keep.txt:408-409` 两枚令牌仍在＝长批曾正常在跑；本班按内容级抢救入库 131,802 行而非重建|.runtime/tmp/p02_b25_collect_1015_10.log 末行停 `ERR 20220603`（无 DONE）＋`git show HEAD:…ledger.md|grep -c 1015-10`＝0|要⑩/⑤：给"长批分离进程静默终止"一条可查面（reaper 执法日志或提交内存 OOM 出口）并把未竟班遗物清点纳入巡检|高**
+**[BLOCKER] 2026-10-16|②1016-01|工具缺陷|`process_reaper --status` 自报 `scan_mode=live_dryrun（只读现算：零杀…）` 与同行 `killed=1` 不同源，而该 PID 实际处置行是"incubation skip …赦免并销账"＝赦免被计入 killed|15:13:22 reaper 现读（PID 39608 三行）|要⑤/⑫：dry-run 下 killed 恒 0 或新增 `amnestied` 计数|低**
+**[BLOCKER] 2026-10-16|②1016-01|需Owner|B-15 tick 腿 96.26 GiB 对 D 盘现余 100.31 GiB＝名义装得下只剩 4 GiB 缓冲（CH merge 临时空间＋日常写同盘），分钟线族 63.03 GiB 可容|`.runtime/tmp/p02_1016_01/b15_manifest_1016_01.py` 按表 GiB＋`shutil.disk_usage` 现读|要 Owner：tick 腿三选一（换盘挂回／扩容=花钱／暂缓），分钟线族本席可自派不需授权|中**
+**[BLOCKER] 2026-10-16|②1016-01|流程问题|本席 `ledger.md` 盘面曾落后 HEAD 94 行（03:22 外来 `stash@{27}` apply 波，13 件净落后落地面），本班按 [P10-1016-17] 处方复位为 724 行并留复位前存证；同波其余他席面仍未复位|docs/_working/automation_campaign/p02_databuilder/ledger.md（存证 `.runtime/tmp/p02_1016_01/ledger_diskpre_1016_01.bak`）|要⑫/运行班：对 13 件净落后面逐件三态核实并只复位单写面|中**
+**[BLOCKER] 2026-10-16|②1016-01|流程问题|`data/runtime/process_reaper_keep.txt` 本席自家陈旧保活令牌 8 枚未摘（:393/:398/:399/:403/:405/:406/:407/:408-409 中属 1015-02..10 各班者），本班不敢整档重写（在册热册蒸发判例）|data/runtime/process_reaper_keep.txt:388-409|要⑫：hygiene 巡检按行级谓词代摘，或给本席一条 CAS 删行通道|低**
+
+`P02-1016-01-ENDSTATE`（本班终态独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1016-01-ENDSTATE"`）
+
+
+---
+
+## 2026-10-16 22:1x · st-qoder-p02-1016-02 班（②数据建设席·当日第 2 班）
+
+### 件 0　上班遗产收养（先于领单执行）
+本班起手三态核实＝`git diff --numstat HEAD -- ledger.md` 读 **113 insertions / 0 deletions**（盘 837 行 vs HEAD 724 行）、`checkpoint.md` 读 **24/3**；`commit_queue.py status` 内 `q-20261016-st-qoder-p02-1016-01` **零命中**，`dead/`、`dead_archive/`、`corrupt_20261016/` 三面亦零命中，`git log -1 -- ledger.md` 落地面仍停 **58b0a30063（10-15 19:50＝1015-09 班）** ⇒ 1016-01 班**从未入队**（非死袋、非被吞，是无袋）。同席同写域，本班按在册"收养"处理：那 113＋24 行逐字不改，随本袋一并投出。⚑ 上班游标自称已落地并留 `P02-1016-01-CP-ENDSTATE`，而 `git show HEAD:.../checkpoint.md | grep -c P02-1016-01-CP-ENDSTATE` 实测 **0** ⇒ 该"已落地"自述为假（旧文不抹，另记于此）。
+
+### 件 1　B-27 P0 起手＝服务端可读窗**证结**（硬时限 10-18 02:00，本班 22:0x 提前完成）
+①席 14/15 班在册"最大未闭合处＝`download_history_data` 的服务端保留窗未被证明"，本班按令面做 (票×日) 试下载并申报实际可读窗：
+
+| 标的@日 | 下载前本地可读 | 下载＋等待后可读 | 时间戳跨度 |
+|---|---|---|---|
+| 000001.SZ@20261008 | 4,859（＝①席 14 班读数**逐位复现＝正对照过**）| 4,860 | 09:15:00→15:30:00 |
+| 000001.SZ@20261009 | 900（本地截断态）| 4,866 | 09:15:00→15:30:00 |
+| 000001.SZ@20261013 | **EMPTY** | 4,865 | 09:15:00→15:30:00 |
+| 000001.SZ@20260928 | **EMPTY** | 4,841 | 09:15:00→15:30:00 |
+
+⇒ **判定＝可取 ⇒ 转②回补，①席不需落断供登记**；09-28 由"读不到"变"整日满档"＝**服务端保留深至少到 2026-09-28**，B-27 的 (a) 断供分支据此关闭。10-09 的 900 行判为**本地缓存截断**而非源面稀疏（证据＝首末时间戳 09:15→15:30 覆盖整日而 n 只及开盘段）。复量时刻＝`date` 实测 2026-10-16 21:5x–22:0x，终端 `XtMiniQmt.exe` PID 2980 在岗（`tasklist` 实测），连接读数 `127.0.0.1:58610`／数据路径 `E:\国金QMT交易端模拟\bin.x64/../userdata_mini/datadir`（与①席 14 班同形）。
+
+### 件 2　B-27(b) 回补落地（走正门 `scripts/data/backfill_tick_depth5.py`；红线守住＝只写 `c1_market.tick_depth_5`，`tick_data` 链路零动作）
+写前本席自尺基线（**非引①席读数**，`query_rows` 严格读 FINAL，正对照 `SELECT 1`→`[(1,)]`）＝10-12=139,053/8,317、10-14=14,582/7,937、10-15=1,589,971/7,937、**10-16=23,672,271/7,940（live 腿今日满档）**、09-28=22,827,093/7,934，而 **10-08／10-09／10-13 三整日无分组行＝零行**；`data_source` 全表仅 `miniqmt` 155,552,432 行（2026-07-24..2026-10-16，无 `qmt_bridge` 轨）。
+
+本班入库＝5 票（510300／000001／600000／159915／510050，表内裸码形制）× 3 缺格日 = **15 格全非零**；末趟 CLI 报 `rows=74,893`，CH 现读 **RAW = FINAL = uniqExact(五元键) = 74,878**。逐格 FINAL＝000001 4,859/4,865/4,864、510300 5,142/5,143/5,116、600000 5,050/5,016/4,985、159915 4,924/4,933/4,922、510050 5,010/5,029/5,020（三日序＝10-08/10-09/10-13）。
+**幂等复跑实测**＝同命令共跑 4 趟；首验（2 趟后）000001 三格 4,859/4,865/4,864，终验（4 趟后）**逐值不变** ⇒ "复跑 FINAL 不增行"成立。
+**回退谓词（在册未执行）**＝`ALTER TABLE c1_market.tick_depth_5 DELETE WHERE trade_date IN ('2026-10-08','2026-10-09','2026-10-13') AND symbol IN ('510300','000001','600000','159915','510050')`——写前三日整日零行 ⇒ 该谓词命中集恰等于本批全量，整片删且不误伤。
+**当日封板判定（B-27 验收④由本席给）**＝这三日**未封板**（覆盖率 5/7,934＝**0.063%**）⇒ 下游禁据这三日算宇宙宽度。
+
+### 件 3　四枚缺陷（前三条都直接解释"在册腿明明跑过、库里明明没有"）
+**(A) 工具缺陷·本班最值钱一条**：`scripts/data/backfill_tick_depth5.py` 的 `--download` 在 `_try_download`（`:99` 区）发完 `xtdata.download_history_data` 后**立即读**、且主进程随即退出 ⇒ 在途下载被随进程杀死。实测＝首趟 **8/15 格读回 0 行却全报 `[OK]`**；同 8 格改"发下载→等 60–75s→另一进程再读"⇒ **8/8 格 4,923–5,030 行全有货**（`cold.log` READB 段），去掉 `--download` 第三趟即把 15 格补齐至 5,116–5,143。⇒ 这条在册腿**结构上不可能用单次 CLI 调用补到冷缓存格**，即 10-08/10-09/10-13 三整日零行至今未愈的直接因。处方＝拆两相（下载相独立成批并等完成，或改 `download_history_data2` 带进度回调）＋ `rows=0` 记 FAILED 而非 `[OK]`（在册同族判据＝`kline_sector_880_resample_false_success`、B-22、B-4）。本席不改 CLI 本体（属⑤面）。
+**(B) 判据缺失·改表属 Owner 门**：`ENGINE = ReplacingMergeTree PARTITION BY toYYYYMM(trade_date) ORDER BY (market_type, symbol, trade_date, timestamp, price)` **无版本列**，而 `volume`/`amount` 不在键内 ⇒ 同秒同价、量额不同的相邻快照被静默塌行。实测塌缩＝74,893 写进 / 74,878 在册 = **15 行，恰每格 1 行**；机制由**排除法**坐实（非猜测）＝表内 `uniqExact(timestamp) == count()` 逐票成立（000001 14,588/14,588、510300 15,401/15,401、159915 14,779/14,779、510050 15,059/15,059、600000 15,051/15,051）⇒ 被塌两行必同秒同价。全宇宙面一日 22.8M 行 ⇒ 塌缩按"票×日"计 ≈7,900 行/日。与 1015-08 班 `block_trade` 塌行**同族不同对象**（那张 ORDER BY 连时间戳都没有）。排产＝⑤先给笔次身份入键（Owner 门），再放量回补。
+**(C) 工具缺陷·时区**：`tick_depth_backfill.py:236` 一带的 `recorded_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")`（本地钟）直写 `DateTime64(3,'UTC')` 列（列注释"录制器本地接收时间"）⇒ 本批实测 `recorded_time = 2026-10-16 22:11`（本地钟）而该列语义 UTC ⇒ 用该列算端到端延迟系统性偏 8 小时（可出负延迟），违 RULE-SCHEMA-TZ 显式时区。本席不动（改动会连带 live 腿共用的 recorded_time 语义）。
+**(D) 文档漂移（低）**：`tick_depth_backfill.py:8` 与 `tick_depth_writer.py:8` 两处 `[INVARIANTS]` 都指向 `schemas/categories/intraday/market_tick_depth_5.py`，而 `src/zephyr/data/schemas/` **目录本身不存在**（`ls -d` 实测 No such file）；真列序在 `tick_depth_backfill.py:62 _COLUMNS`。
+
+### 件 4　规模标定（①席 B-27/B-28 两次自陈"未估总耗时"，本班补）
+暖态单格（读 ≈4.9k 行＋装配＋`write_result` 直写）**≈0.7–1.3 秒**（15 格一趟，`date` 实测 22:09:03→22:09:22＝19 秒含两次调用）。全宇宙＝正常日 uniq(symbol) 7,934 ⇒ 3 个缺格日 = **23,802 格**，串行下限 **≈5.5–8.5 小时**（不含下载相与 CH FLUSH），行数面 ≈22.8M/日 ⇒ 3 日 **≈68M 行** ⇒ 属长批：先登记 `data/runtime/process_reaper_keep.txt`，**按标的分块**（单格即一次 FetchResult 直写，按票切与正门天然对齐）。本班**未起全宇宙批**（窗内起＝再造 1015-10 那种未竟遗物）。
+
+### 件 5　在册项复量（机械判据，未起批）
+- **B-15**＝`process_reaper --status` 21:50:56 现读 `commit_pct=77.88`／`degraded=False`／`breached=['ALERT-SYS-001']`／ram_used 69.2%／cpu 83.3% ≥70 ⇒ **不起批**（05→08→本班序列 92.07→94.03→87.31→93.17→77.88，本班为最低但未破闸）。附带 `dead_archive: ok=False rc=1`＋`auto_wires dead_archive=error archived=0` 在册复现（非本班因）。
+- **B-25 续深三段**＝令面"脚本可直接续用"**不实**：`ls .runtime/tmp/p02_b25_*.py` 零命中（`…_collect_1015_10.py`／`…_commit_1015_09.py` 已被 24h TTL 自清），仅三件基底 `.tsv.gz` 仍在（`p02_b25_rows_1016_01_b.tsv.gz` mtime 16:53，**明日 16:5x 过期**）。重造采集＋入库两套超 60 分窗 ⇒ 本班不半起，改落 B-27。
+- **status 一律不翻**：`known_data_gaps.yaml` 工作区面 `MM`（①席在写）＝压班不随袋；三整日未封板；第四查（续供）近端腿在册在产✓、深史回补腿＝一次性，不得据此宣称整表常设。
+
+### 件 6　转单（交⑩汇总）
+1. 历史遗留 worktree 两件 **`.worktrees/st-mtrain-1016`**、**`.worktrees/st-rulemap-20261014`** ⇒ 按 TRAE-079 Phase 2 本席禁自行清理，交清理专班。
+2. `st-rulemap-20261014` 被 `SessionRegistry` 三证翻判**仍判活**（`pid=32916 已退` 而 `QUEUE-BAG-INFLIGHT`＋`BRANCH-WRITE-TRACE` 在场，21:50:56 reaper 日志原文）＝10-14 的会话到 10-16 夜间仍有在途袋面，请⑩核实是否僵尸重投。
+3. 1016-01 班 8 枚陈旧保活令牌仍未摘（承他班 [BLOCKER]，本席不整档重写热册，只 CAS 追加自家 sid）。
+
+### 件 7　[MODULE]/schema 锚点核实记录（防下班重踩）
+`schemas/categories/intraday/market_tick_depth_5.py` 三态实测＝**目录不存在**（`ls -d src/zephyr/data/schemas` No such file）；`src/zephyr/data/tick_depth_writer.py` 与 `implementations/tick_depth_backfill.py` 存在且 `find src/zephyr/data -maxdepth 4 -name "*tick_depth*"` 命中 4 项（含 pyc）。⇒ 判"文档锚点失效"成立，判"schema 真源缺失"**不成立**（列序在 `_COLUMNS`）。
+
+**[BLOCKER] 2026-10-16|②1016-02|工具缺陷|`backfill_tick_depth5.py --download` 发完 download_history_data 立即读且主进程即退⇒在途下载被随进程杀死；实测首趟 8/15 格 0 行却全报 [OK]，同 8 格"下载→等 60–75s→另进程再读"8/8 格 4,923–5,030 行全有货＝三整日零行至今未愈的直接因|`.runtime/tmp/p02_1016_02/cold.log` READB 段 vs `scripts/data/backfill_tick_depth5.py:99` 区 `_try_download` 后紧接 `fetch_symbol_day_depth`|⑤改两相（下载相独立成批或改 download_history_data2 带完成回调）＋rows=0 记 FAILED；②据新 CLI 放量补 23,802 格|高
+**[BLOCKER] 2026-10-16|②1016-02|判据缺失|`c1_market.tick_depth_5`＝ReplacingMergeTree 无版本列，ORDER BY (market_type,symbol,trade_date,timestamp,price) 不含 volume/amount⇒同秒同价相邻快照静默塌行，实测 74,893 写进/74,878 在册＝每格恰 1 行，全宇宙面 ≈7,900 行/日|建表读数 `SELECT create_table_query FROM system.tables WHERE database='c1_market' AND name='tick_depth_5'`；排除法证据＝`.runtime/tmp/p02_1016_02/verify_final.log` COLL 段 uniqExact(timestamp)==count() 逐票成立|⑤给笔次身份入键（改表＝Owner 门）＋排产"先补键再灌数"；⑩据本条决定放量先后|高
+**[BLOCKER] 2026-10-16|②1016-02|工具缺陷|`tick_depth_backfill.py` 用 `datetime.now()` 本地钟串写进 `DateTime64(3,'UTC')` 的 recorded_time⇒用该列算端到端延迟系统性偏 8 小时（可出负延迟），违 RULE-SCHEMA-TZ 显式时区|本批实测 recorded_time=2026-10-16 22:11（`verify_final.log` CELL 段）；列定义见上述 create_table_query|⑤改带时区取时（须同顾 live 腿共用语义，本席不擅动）|中
+**[BLOCKER] 2026-10-16|②1016-02|流程问题|上班 ②1016-01 班 ledger 113 行／checkpoint 24 行**从未入队**（队列＋dead＋dead_archive＋corrupt_20261016 四面零命中，ledger 落地面仍停 58b0a30063＝1015-09 班），而该班游标自称"已落地"并留 ENDSTATE 标记＝自述与落地面不符|`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c P02-1016-01-CP-ENDSTATE` → 0；本班已收养随本袋投出|⑩把"游标自称已落地但 HEAD grep=0"升为收班八件的一条落地面 grep 判据（现仅自报不作数）|中
+**[BLOCKER] 2026-10-16|②1016-02|判据缺失|B-25 续深依赖的采集/入库脚本已被 24h TTL 自清零（令面"脚本可直接续用"不实），只剩基底 .tsv.gz；60 分窗内重造两套＝必留半套遗物|`ls .runtime/tmp/p02_b25_*.py` 零命中 vs `checkpoint.md` 1016-01 段"下班待办序"第 1 条点名的两件|⑩派单把"脚本是否仍在盘面"列为令面前置判据，或把长批脚本升 ttl:permanent 落 scripts/ 侧（⑤面）|中
+**[BLOCKER] 2026-10-16|②1016-02|工具缺陷|`tick_depth_backfill.py:8` 与 `tick_depth_writer.py:8` 的 [INVARIANTS] 指向 `schemas/categories/intraday/market_tick_depth_5.py`，而 `src/zephyr/data/schemas/` 目录不存在；真列序在 `tick_depth_backfill.py:62`|`ls -d src/zephyr/data/schemas` → No such file or directory|⑤把锚点改指真源（列序册或 _COLUMNS 自身）|低
+
+### 件 8　本班自犯（旧文不抹，另记于此）
+①**首版验收查询用 QMT 后缀码查 `tick_depth_5.symbol`⇒读回零行**，该表实为裸码（`301189`/`000001`）＝**测量伪空**（把"查错口径"读成"查无数据"），已当场改裸码重查并落件 5 警示；②**v1 探针把 `after==before` 读成"下载无效"**——真因是 `download_history_data` 异步而 v1 未等待，v2 有等待后同一格由 900 变 4,866／EMPTY 变 4,841⇒v1 的"复跑读数相同"结论作废，只作过程留痕；③首版 SQL 漏 `GROUP BY`⇒`Code: 215` 且 TCP+HTTP 双试各吐整屏 C++ stack trace（`query_rows` 严格读会抛，非静默）；④`keep_add` 脚本按 `res.ok` 取值崩 `AttributeError`（真字段＝`SafeWriteResult.written`），写入本身已成功。
+
+`P02-1016-02-ENDSTATE`（本班台账段终态标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1016-02-ENDSTATE"`）
