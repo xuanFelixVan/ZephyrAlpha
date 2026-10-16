@@ -1162,3 +1162,9 @@ exam_cards **552 文件 552 解析零坏件**；状态面 empty 186／preregiste
 
 ### 八、本班实际耗时
 开班 date 实测 **21:30:12**（reaper 首读 21:30:25）→ 本段落笔 date 实测 **21:43:04**＝约 **12 分钟**（40 分班限内）。本班为只读量测班＝零卡面写动作（领用面实测无具名可领卡），耗时短属实情非美化。
+
+### 九、收班补记（本班末段实测，追加不覆写§八）
+- §八落笔＝21:43:04（写台账那一刻），**本班真收班＝21:58:24＝约 28 分钟**（超出 40 分班限，超支三处如实入账＝①正门 `git_commit.py` 前台跑满 2 分钟被工具转后台（袋 21:5x 入 done/、落地面 `f149929a90` 实测在册）；②本班自犯一次尺假零（`docs/` 后多要一斜杠⇒修⑱ 面积首版恒 0）与一次 `acquire-batch` 位置参数误用，两处各要重跑与取证；③他席在途面使 `grep -rl .runtime/commit_queue/` 全池扫描走满超时，已按 PID 精确终止自家 grep 进程，未伤任何他席进程）。
+- 首袋落地三面自证（只认 git log＋blob，口径＝LF 归一文本 sha256）＝`git log -- ledger.md` 首条＝**f149929a90**；袋内件集＝`git show --name-only` 恰 2 件（ledger＋checkpoint，零他人件、零归属篡改）；`git show f149929a90:<件>` 与盘面对拍＝ledger 45839e39e882==45839e39e882・checkpoint 3ac6cd217ebd==3ac6cd217ebd（两值同时等于 safe_write_text 自报 after_sha＝写器/库面/盘面三面同源）。
+- 工具缺陷追加一行留痕（不新开号）＝经 `timeout 900 python scripts/git_commit.py ...` 前台调用被 CLI 工具转后台后，正门 stdout 报告**整段丢失**（输出文件实测 0 字节而落地已证），故本席收工判据不能含"读到 CLI 回执"这一条；请⑤/工具班评估 gateway 报告是否改落 `.runtime/` 侧审计件而非仅 stdout。
+- 收班八件终态＝①claim：本班两面（ledger／checkpoint）按 `release-batch --files-from` 正解释放（结果见下条下班复量面）；②心跳：守护 pid=**27260** 按 PID 精确终止（禁 /IM 全杀，在册教训），注销后核 heartbeat.jsonl 末行；③耗时＝本条实测 28 分；④[BLOCKER]＝本班 6 行七字段（本席在册历史 0 行⇒⑩强制收班提醒的两班连续零行已终结）；⑤自清＝`.runtime/tmp/st-qoder-p06-1016-01/` 本班临时件（claim_files.txt／ledger_block.md／commit_msg.txt 已由正门自删／heartbeat.out）当场删除，项目根零临时件；⑥GPU＝本班未 acquire 看门人牌，无牌可还（N/A 非漏做）；⑦后台子任务＝本班零子代理，两个后台 Bash 任务皆终态（一已完成、一由本席按 PID 终止）；⑧零 worktree＝本班未创建任何工作树，历史遗留 `.worktrees/st-mtrain-1016` 只报不清（已入 [BLOCKER] 流程问题行）。
