@@ -491,3 +491,21 @@ reaper 23:00:41 自报 watermark＝ram_used_pct **79.7**／avail 12.95G／commit
 **为何自家结构自证没抓住**：apply 的结构计数＝游标标记配对（11 枚全在）・04 核心逐字・行数增量・BLOCKER 谓词命中・禁串缺位——**五项里没有任何一项管"文件头"**。据此给收班/写后自证清单加一项（事故驱动增长，一类新事故=一个新检查项）＝**改前改后各取 `content[:3]=='---'` 与 frontmatter 键集合差＝空**，追加型件手术必须断言"首段前缀逐字节等于改造前"。已同步入 scope 面待下班复用。
 
 - [BLOCKER] 2026-10-16|⑫席1016-05|工具缺陷|游标块原地替换的组装式把 frontmatter 与一级标题整段弃掉，本席五项结构自证无一覆盖"文件头"＝靠入队口预检才暴露|证据＝QueueReject 文案 [TTL-METADATA] FAIL・改正后 frontmatter 三键复量 ttl/completes_when/title 齐・apply 脚本 PROOF 行清单（标记配对／核心逐字／行数／BLOCKER 命中／禁串）|本席当班已当场重放头部并补自证项；提请⑩把"追加型件手术须断言首段前缀逐字节不变"写进收班八件第⑤件|中
+
+
+### 15.11 收班补录（同班第二袋，首袋落地后现算 base；§15.0–§15.10 各行逐字不改）
+
+**首袋落地面直证**＝`q-20261016-st-qoder-p12-1016-05-0001`（23:30:46 建）→ processing 210 秒后 **done**・landed_id **76b75b8f0e**（23:35:12 提交），`git show --name-only` 件面＝三面（ledger/checkpoint/scope）**零外来**；落地面复量＝HEAD 版 ledger 493 行・本席 1016-05 严式 BLOCKER 命中 **11**・§15.3.1 与 §15.10 两节均在・checkpoint HEAD 版以 `---` 起始且 04 游标核心行与 05 游标俱在。1016-04 悬空件至此**收口**（该面从 17:05 起悬空 6 小时 30 分，历经四袋：0001 REAL-KEY／0002・0003 TAKEOVER／本班 0001 成功）。
+
+**chief 追加三单接单与归属判定（升级三问逐条）**＝单据载于**未落地** instruction.md 面（盘 +9/−0・chief 四袋连死始终未入 HEAD），本班按其令"完成前每班如实写在办"登记：
+- **[CHIEF-1016-4]**（landing 异常 71 只归因，报告件 landing_anomaly_71_attribution_20261016.md）＝已读毕：结论 71/71 双侧皆改真冲突（A1 席位工作面 37・A2 共享码/配置面 33・B 注册表条目级合并 1），index.lock/env/blob 缺失/base 伪影零命中。与本席 §15.3.1 合并面读数是**两时点两谓词**（chief 71 只系更早单面、本席现读 landing 异常族 88 枚）＝不可互相追认，只并档不重判；根因（同路径多班交叠写＋落地侧整文覆盖）与本席"归属篡改红线"同轴，无需本席新单。
+- **[CHIEF-1016-9]**（车道F接线图，报告件 machine_layer_wiring_map_20261016.md 10300 字节 mtime 23:31）＝实况四条已读；三条修因本班**零执行、全部转出**：A) NightMining Ollama 预检失败归因→写域外（调度/采集码面）＋涉判据＝升级三问两问不胜→归⑤席或 chief 自领；B) F06 幸存者台账与 C4 分数产出无席认领→正解＝报⑩派⑨接面，而 ⑩ 的 dispatch 单写面由⑩自落，本席只在自家台账立"在办"行使其可见性；C) run_assembler_nightly 注册方案按裁定#543 节奏（周日 21:30 窗／事件触发）执行且**禁恢复夜班注册**＝属 Owner/运行班面，非本席可自决。
+- **ticket 2（裁定册+ARCH册落地面收口）**＝本班复量现读＝HEAD 计数 **351 条**／max 号 **534**，盘面 max 号 **543**（首读 23:2x 为 340/534 与 346/540，两瞬时之间 chief 已落 11 条子项行而**plain 号仍未进 HEAD**）⇒ 号 540–543 四条仍只在盘面且该件 ` M` 未 staged；本席继续**禁 --render**（在册实测＝修剪 18 条），见 [BLOCKER] 第 13 枚。
+
+**收班八件本班终态**＝①release 三面（随本节落地后 `git_commit.py --release-only` 自跑，承在册"入队不代释"更正）②注销本班心跳＝本班 keeper pid 21748 见游标 last_run，走 release→unregister→守护自退→按 PID 复测→读回末行三拍（承 §13.9 与 §15.2b 双校前置）③实际耗时＝起手 23:00:13→本段落笔现测（见游标），首袋在途等待 210 秒单列分账 ④[BLOCKER] 追加 14 枚（首袋 11＋本节 3，行首形态与本台账约定一致且 `grep -n "\[BLOCKER\]"` 命中）⑤自清＝`.runtime/tmp/p12_05/` 本班件随本节落地后删除・三面全部入袋・零未竟待办（除本班如实登记的"在办"三单归属转出项）⑥GPU 还牌＝本班未 acquire，如实免 ⑦后台子任务＝零 spawn，零孤儿 ⑧**worktree 面如实自报＝本班零主动建面，但会话注册工具代起 `.aidrafts/st-qoder-p12-1016-05` 整树壳**（实测 `git worktree list` p12 命中 5 枚含本班壳＋`.aidrafts/` 同名目录 5 枚）＝承 ⑩1016-17 对⑫"零建面自报"的实测证伪与 auto-spawn 在册案，壳本体**不自删**、报⑩交清理专班。`.worktrees/` 直接子道 2 枚均他席历史面＝同样不自清、报⑩。
+
+**系统读数收班瞬时**＝队列 counts pending 15／processing 3／done 905／dead 469，队头 `q-20261016-st-qoder-p04-1016-02-0005` 等待 5466 秒（≈91 分）＝串行车次在本班窗内显著变慢，本班不做"全线畅通"广播（两证不齐）；本班自家袋在途仅 210 秒，属例外而非趋势。
+
+- [BLOCKER] 2026-10-16|⑫席1016-05|流程问题|chief 三单（CHIEF-1016-4／-9／ticket2）全部完成归属判定但本班零执行＝A 写域外涉判据归⑤或chief・B 单写面属⑩本席只报不代写・C 属Owner/运行班面且禁恢复夜班注册；按 chief 令在办如实登记|.runtime/sessions/st-qoder-chief-1016-01/staging/machine_layer_wiring_map_20261016.md（10300 字节・mtime 23:31）＋docs/_working/automation_campaign/p12_maintenance/instruction.md:40（该面未落地・chief 四袋连死）|要⑩派⑨接 B 面（F6 幸存台账与 C4 分数无席认领＝机器产出经⑨判卷断线）・要⑤或chief 领 A 面・C 面待Owner/运行班按裁定 543 节奏（周日 21:30 窗／事件触发）|中
+- [BLOCKER] 2026-10-16|⑫席1016-05|数据问题|热册未落地面在两瞬时内继续扩面＝首读号 535–540 六条只在盘面，收班复量已至号 540–543 四条仍未进 HEAD（HEAD 351 条/max plain 号 534・盘 max 543・该件 ` M` 未 staged）|证据＝同尺谓词 `^- ruling_id: 裁定#` 两面计数与 max・git status --porcelain 该件・`daily_dispatch.md` 全文零 render 点名|要 chief 按 ticket 2 收口计划把两册与其消费件同袋投正门；本席禁 --render（在册实测＝修剪 18 条在册裁定）|高
+- [BLOCKER] 2026-10-16|⑫席1016-05|流程问题|会话一注册工具即代起 `.aidrafts/<sid>` 整树壳⇒"禁建 worktree"令下各席收班⑧自报零建面必然与实测冲突（本班实测 worktree 注册面 p12 命中 5 枚含本班壳），⑩1016-17 已就⑫该口径提出过一次证伪，现第二载|.runtime/locks 无本班建壳动作＋git worktree list 与 ls .aidrafts 双读＋本班零 session_worktree_start 调用|要⑩把"注册即代壳，收班⑧须连代壳面一并自报"写进各席收班口径；壳本体交清理专班，各席勿自删|中
