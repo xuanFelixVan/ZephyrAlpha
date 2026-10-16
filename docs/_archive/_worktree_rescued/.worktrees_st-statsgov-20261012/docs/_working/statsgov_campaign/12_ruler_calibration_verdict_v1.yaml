@@ -1,0 +1,466 @@
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 尺子校准两轴判定 v1（后处理件，令⑥ §7）
+produced_by: .runtime/tmp/statsgov/ruler_calibration_report.py
+raw_run: docs/_working/statsgov_campaign/11_ruler_calibration_v1.yaml
+prereg: docs/_working/statsgov_campaign/10_ruler_calibration_preregistration_v1.md
+plumbing_sanity:
+  positive_configs_distinct_series_pct: 100.0
+  negative_configs_distinct_series_pct: 100.0
+  gate: 低于 90% 判管路退化（选择被静默吞掉），本实验不出结论
+positive_control_2_size:
+  ttl: permanent
+  title: 尺子校准·阳性对照第二件（小市值）v1
+  window:
+  - '2021-01-01'
+  - '2023-12-29'
+  window_reason: 市值表 c1_market.stock_daily_basic 实测自 2021-01-04 起（2020 全年无市值数据），故本件窗口缩短
+  panel_price:
+    window:
+    - '2021-01-01'
+    - '2023-12-29'
+    rows_fetched: 3532444
+    rows_dropped_bad_or_nan: 356
+    days: 727
+    symbols: 5455
+    cells_available_pct: 89.06
+    dtype: float32
+    source: c1_market.kline_daily.market_type='A_share' (DatabaseService CH 只读口)
+  cap_month_ends: 36
+  configs:
+    SIZE_total_mv_q10_monthly:
+      sharpe_annual: 1.2383
+      ann_return: 0.2459
+      skew: -0.4218
+      excess_kurt: 3.8206
+      T: 693
+      rebalances_used: 34
+      mean_turnover: 0.14
+    SIZE_total_mv_q10_biweekly:
+      sharpe_annual: 1.2341
+      ann_return: 0.2496
+      skew: -0.3363
+      excess_kurt: 3.6001
+      T: 708
+      rebalances_used: 71
+      mean_turnover: 0.069
+    SIZE_total_mv_q20_monthly:
+      sharpe_annual: 1.0349
+      ann_return: 0.199
+      skew: -0.7912
+      excess_kurt: 3.0835
+      T: 693
+      rebalances_used: 34
+      mean_turnover: 0.114
+    SIZE_total_mv_q20_biweekly:
+      sharpe_annual: 0.9643
+      ann_return: 0.1895
+      skew: -0.7086
+      excess_kurt: 2.9059
+      T: 708
+      rebalances_used: 71
+      mean_turnover: 0.056
+    SIZE_circ_mv_q10_monthly:
+      sharpe_annual: 0.5038
+      ann_return: 0.1056
+      skew: -0.4242
+      excess_kurt: 3.2861
+      T: 693
+      rebalances_used: 34
+      mean_turnover: 0.136
+    SIZE_circ_mv_q10_biweekly:
+      sharpe_annual: 0.3947
+      ann_return: 0.0845
+      skew: -0.3647
+      excess_kurt: 3.1481
+      T: 708
+      rebalances_used: 71
+      mean_turnover: 0.067
+    SIZE_circ_mv_q20_monthly:
+      sharpe_annual: 0.5455
+      ann_return: 0.1081
+      skew: -0.7189
+      excess_kurt: 2.9241
+      T: 693
+      rebalances_used: 34
+      mean_turnover: 0.108
+    SIZE_circ_mv_q20_biweekly:
+      sharpe_annual: 0.3587
+      ann_return: 0.0727
+      skew: -0.6362
+      excess_kurt: 2.7171
+      T: 708
+      rebalances_used: 71
+      mean_turnover: 0.053
+  best_config: SIZE_total_mv_q10_monthly
+  dsr_governance_N:
+    N: 93820
+    sharpe_annual: 1.2383
+    dsr: 0.008979
+    passes_dsr: false
+    degenerate: false
+  dsr_validity_own_N:
+    N: 8
+    sharpe_annual: 1.2383
+    dsr: 0.709336
+    passes_dsr: false
+    degenerate: false
+  n_pass_own_N: 0
+  n_pass_governance_N: 0
+  pbo_own_pool:
+    pbo: 0.0
+    mean_logit: 0.9674
+    n_splits_used: 70
+    n_splits_generated: 70
+    n_trials: 8
+    passes_pbo_gate: true
+    splits_spec:
+      n_groups: 8
+      k_test: 4
+      t1: None（日频点标签）
+      embargo: 0
+  ew_market_benchmark:
+    sharpe_annual: 0.2902
+    ann_return: 0.0534
+  best_excess_over_ew_market:
+    sharpe_annual: 1.6054
+    ann_return: 0.1925
+  trial_accounting:
+    n_trials: 8
+    ledger_write:
+      batch_id: ruler-calib-20261012-size
+      n_trials: '8'
+      status: recorded
+      cumulative_trials: '40730'
+  denominator:
+    book_cumulative: 40722
+    disk_unrecorded: 53098
+    primary_denominator_N: 93820
+denominator:
+  book_cumulative: 38310
+  disk_unrecorded: 53090
+  primary_denominator_N: 91400
+panel_is:
+  window:
+  - '2020-01-01'
+  - '2023-12-31'
+  rows_fetched: 4502654
+  rows_dropped_bad_or_nan: 548
+  days: 970
+  symbols: 5471
+  cells_available_pct: 84.83
+  dtype: float32
+  source: c1_market.kline_daily.market_type='A_share' (DatabaseService CH 只读口)
+panel_oos:
+  window:
+  - '2024-01-01'
+  - '2025-08-31'
+  rows_fetched: 2167834
+  rows_dropped_bad_or_nan: 57
+  days: 403
+  symbols: 5503
+  cells_available_pct: 97.75
+  dtype: float32
+  source: c1_market.kline_daily.market_type='A_share' (DatabaseService CH 只读口)
+axis_validity_and_governance:
+  positive_control:
+    n_own_trials: 12
+    best_config: REV_L42_q20_monthly_equal
+    best_dsr_own_N: &id001
+      dsr: 0.107158
+      degenerate: false
+      E_max_z: 1.6648
+      passes: false
+    best_dsr_governance_N: &id002
+      dsr: 3.9e-05
+      passes: false
+    n_pass_own_N: 0
+    n_pass_governance_N: 0
+    configs_excerpt:
+      REV_L42_q20_monthly_equal:
+        sharpe_annual: 0.223
+        T: 912
+        dsr_own_N: *id001
+        dsr_governance_N: *id002
+      REV_L10_q20_monthly_equal:
+        sharpe_annual: 0.1738
+        T: 954
+        dsr_own_N:
+          dsr: 0.09205
+          degenerate: false
+          E_max_z: 1.6648
+          passes: false
+        dsr_governance_N:
+          dsr: 2.7e-05
+          passes: false
+      REV_L42_q10_biweekly_equal:
+        sharpe_annual: 0.1291
+        T: 919
+        dsr_own_N:
+          dsr: 0.077998
+          degenerate: false
+          E_max_z: 1.6648
+          passes: false
+        dsr_governance_N:
+          dsr: 1.9e-05
+          passes: false
+      REV_L42_q20_biweekly_equal:
+        sharpe_annual: 0.1257
+        T: 919
+        dsr_own_N:
+          dsr: 0.077044
+          degenerate: false
+          E_max_z: 1.6648
+          passes: false
+        dsr_governance_N:
+          dsr: 1.8e-05
+          passes: false
+      REV_L21_q20_monthly_equal:
+        sharpe_annual: 0.118
+        T: 934
+        dsr_own_N:
+          dsr: 0.075204
+          degenerate: false
+          E_max_z: 1.6648
+          passes: false
+        dsr_governance_N:
+          dsr: 1.7e-05
+          passes: false
+    configs_worst_excerpt:
+      REV_L10_q10_biweekly_equal:
+        sharpe_annual: -0.5043
+        T: 959
+        dsr_own_N:
+          dsr: 0.003934
+          degenerate: false
+          E_max_z: 1.6648
+          passes: false
+        dsr_governance_N:
+          dsr: 0.0
+          passes: false
+      REV_L10_q20_biweekly_equal:
+        sharpe_annual: -0.2954
+        T: 959
+        dsr_own_N:
+          dsr: 0.012403
+          degenerate: false
+          E_max_z: 1.6648
+          passes: false
+        dsr_governance_N:
+          dsr: 0.0
+          passes: false
+      REV_L21_q10_biweekly_equal:
+        sharpe_annual: -0.1254
+        T: 949
+        dsr_own_N:
+          dsr: 0.02817
+          degenerate: false
+          E_max_z: 1.6648
+          passes: false
+        dsr_governance_N:
+          dsr: 2.0e-06
+          passes: false
+      REV_L21_q20_biweekly_equal:
+        sharpe_annual: -0.0202
+        T: 949
+        dsr_own_N:
+          dsr: 0.04419
+          degenerate: false
+          E_max_z: 1.6648
+          passes: false
+        dsr_governance_N:
+          dsr: 5.0e-06
+          passes: false
+      REV_L21_q10_monthly_equal:
+        sharpe_annual: 0.0416
+        T: 934
+        dsr_own_N:
+          dsr: 0.056506
+          degenerate: false
+          E_max_z: 1.6648
+          passes: false
+        dsr_governance_N:
+          dsr: 9.0e-06
+          passes: false
+    configs_full_rows_in: docs/_working/statsgov_campaign/11_ruler_calibration_v1.yaml
+  negative_control:
+    n_own_trials: 2400
+    best_config: RND_r98_L42_q20_monthly
+    best_dsr_own_N: &id003
+      dsr: 0.002541
+      degenerate: false
+      E_max_z: 3.4963
+      passes: false
+    best_dsr_governance_N: &id004
+      dsr: 0.000118
+      passes: false
+    n_pass_own_N: 0
+    n_pass_governance_N: 0
+    configs_excerpt:
+      RND_r98_L42_q20_monthly:
+        sharpe_annual: 0.3681
+        T: 912
+        dsr_own_N: *id003
+        dsr_governance_N: *id004
+      RND_r184_L42_q10_monthly:
+        sharpe_annual: 0.3647
+        T: 912
+        dsr_own_N:
+          dsr: 0.002491
+          degenerate: false
+          E_max_z: 3.4963
+          passes: false
+        dsr_governance_N:
+          dsr: 0.000115
+          passes: false
+      RND_r11_L42_q10_monthly:
+        sharpe_annual: 0.3522
+        T: 912
+        dsr_own_N:
+          dsr: 0.002317
+          degenerate: false
+          E_max_z: 3.4963
+          passes: false
+        dsr_governance_N:
+          dsr: 0.000105
+          passes: false
+      RND_r192_L42_q10_monthly:
+        sharpe_annual: 0.3496
+        T: 912
+        dsr_own_N:
+          dsr: 0.002283
+          degenerate: false
+          E_max_z: 3.4963
+          passes: false
+        dsr_governance_N:
+          dsr: 0.000103
+          passes: false
+      RND_r102_L42_q10_monthly:
+        sharpe_annual: 0.3483
+        T: 912
+        dsr_own_N:
+          dsr: 0.002263
+          degenerate: false
+          E_max_z: 3.4963
+          passes: false
+        dsr_governance_N:
+          dsr: 0.000102
+          passes: false
+    configs_worst_excerpt:
+      RND_r90_L10_q10_biweekly:
+        sharpe_annual: -0.2511
+        T: 959
+        dsr_own_N:
+          dsr: 3.3e-05
+          degenerate: false
+          E_max_z: 3.4963
+          passes: false
+        dsr_governance_N:
+          dsr: 1.0e-06
+          passes: false
+      RND_r119_L10_q10_biweekly:
+        sharpe_annual: -0.212
+        T: 959
+        dsr_own_N:
+          dsr: 4.6e-05
+          degenerate: false
+          E_max_z: 3.4963
+          passes: false
+        dsr_governance_N:
+          dsr: 1.0e-06
+          passes: false
+      RND_r120_L10_q10_biweekly:
+        sharpe_annual: -0.209
+        T: 959
+        dsr_own_N:
+          dsr: 4.7e-05
+          degenerate: false
+          E_max_z: 3.4963
+          passes: false
+        dsr_governance_N:
+          dsr: 1.0e-06
+          passes: false
+      RND_r110_L10_q10_biweekly:
+        sharpe_annual: -0.2041
+        T: 959
+        dsr_own_N:
+          dsr: 4.9e-05
+          degenerate: false
+          E_max_z: 3.4963
+          passes: false
+        dsr_governance_N:
+          dsr: 1.0e-06
+          passes: false
+      RND_r67_L10_q10_biweekly:
+        sharpe_annual: -0.1933
+        T: 959
+        dsr_own_N:
+          dsr: 5.3e-05
+          degenerate: false
+          E_max_z: 3.4963
+          passes: false
+        dsr_governance_N:
+          dsr: 1.0e-06
+          passes: false
+    configs_full_rows_in: docs/_working/statsgov_campaign/11_ruler_calibration_v1.yaml
+benchmark:
+  ew_market_is:
+    window:
+    - '2020-01-01'
+    - '2023-12-31'
+    sharpe_annual: 0.4168
+    ann_return: 0.0836
+    T: 970
+  ew_market_oos:
+    window:
+    - '2024-01-01'
+    - '2025-08-31'
+    sharpe_annual: 0.7281
+    ann_return: 0.2303
+    T: 403
+  note: 等权全市场基准（逐日均横截面可用票均值，未扣成本）——用来分开『异象弱』与『大盘弱』两种解释
+excess_over_benchmark:
+  positive_best:
+    config: REV_L42_q20_monthly_equal
+    abs_sharpe: 0.223
+    excess_sharpe: -0.3485
+    excess_ann_return: -0.0382
+  negative_best:
+    config: RND_r98_L42_q20_monthly
+    abs_sharpe: 0.3681
+    excess_sharpe: -0.1963
+    excess_ann_return: -0.0166
+  caveat: 超额为算术差（等权基准，未对 beta 中性化）；A 股 long-only 无法做空，故超额只表相对强弱不表可实现对冲收益
+pbo_axis:
+  positive_pbo: 0.4714
+  negative_pbo: 0.0286
+  gate: 0.05
+  finding: PBO 不能当全仓统一门，但它的失效方式要说准（三族同尺实测）：①小市值真异象族 PBO=0.0=**判对**；②月频反转族 PBO=0.4714=**也判对**（该族本窗确无稳健效应）；③2,400 个随机选股族 PBO=0.0286=**判错**——噪声冠军照样过 0.05 门。机理不是'方向反'而是**在同质池上失去判别力**：随机选股组合≈全市场组合，池内成员彼此高相关，IS
+    最优≈池中位，故其 OOS 也很少落到中位以下 ⇒ PBO 恒低。⇒ PBO≤0.05 只可作**族内相对指标**（池成员差异明显时），不可作跨族统一晋级门；晨裁 M3 的那一半应撤回。对照之下 DSR 尺在三族上都给出了正确方向（噪声冠军在自身 N=2,400 与治理 N 下均被挂）⇒ 本案未证伪 DSR。
+trial_accounting:
+  n_trials_this_experiment: 2412
+  ledger_write:
+    attempted: true
+    ok: true
+    result:
+      batch_id: ruler-calib-20261012-full
+      n_trials: '2412'
+      status: recorded
+      cumulative_trials: '40722'
+reading_validity: 有效性轴（各自搜索面 N）：阳性最优 DSR=0.107158（N=12，过线=False）；阴性最优 DSR=0.002541（N=2400，过线=False）。
+reading_governance: 治理轴（M1=A，N=91400）：阳性 0/12、阴性 0/2400 过线。
+verdict: 校准结论=**部分有效，不能判 DSR 尺过严**。三件实测：①阴性（2,400 随机）在两把 N 下 DSR 全挂 ⇒ DSR 尺没有给噪声加冕（这一侧未被证伪）；②阳性一件（月频反转）对等权大盘超额为负 ⇒ 它不是合格的阳性对照；③阳性二件（小市值 total_mv q10 monthly，2021-01..2023-12）绝对 Sharpe=1.2383、超额 1.6054、PBO=0.0（过
+  0.05 门）——是真异象，但其单检验 t≈2.0509（T=693），DSR@自身搜索面 N=8 仅 0.709336，不过 0.95。⇒ 该阳性连学术 HLZ t>3.0 也够不着，故本案**无法**据它判'尺过严'：阳性对照在本窗本身就不达标（样本只有 730 天，多头单因子的 t 天花板就在那里）。被证据钉死的是另一条：**PBO 不能当全仓统一门**——真异象 0.0 过、2,400 噪声冠军
+  0.0286 也过（无判别力），而反转族 0.4714 反被挂（池构成依赖）。⇒ 晨裁 M3 的'PBO≤0.05 全仓统一门'应撤回；DSR 尺保留 0.95 但每笔候选须同时报单检验 t 与该 N 下所需 t（让'差多少'可见），并把'更长窗/月频观测的阳性对照'列为下一轮校准前置。
+expectations_vs_measured:
+  positive_normative_EXPECTED: 过
+  positive_machine_prediction_EXPECTED: FAIL_under_M1_A
+  positive_MEASURED:
+    own_N_dsr: 0.107158
+    own_N_pass: false
+    gov_N_pass: false
+  negative_EXPECTED: 不过
+  negative_MEASURED:
+    own_N_dsr: 0.002541
+    own_N_pass: false
+    gov_N_pass: false
+    pbo_pass: true
