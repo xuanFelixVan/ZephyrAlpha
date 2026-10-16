@@ -41,6 +41,7 @@ import http.server
 import json
 import logging
 import os
+import re
 import threading
 import time
 from pathlib import Path
@@ -60,6 +61,7 @@ from zephyr.data.source_circuit_breaker import CircuitBreakerRegistry
 from zephyr.data.task_queue import FAILED, PENDING, RUNNING, SUCCESS, TaskQueue
 from zephyr.data.trading_calendar import TRADING_DAY_GUARDED_SCHEDULES
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.time_utils import now_utc
 
 from . import (
     ch_reader,  # 健康检查走 ch_reader 自动注入 FINAL（裁定 #ARCH-CH-007）
@@ -856,6 +858,127 @@ SQL_DAILY_COVERAGE = (
 )
 
 
+# ============== 破损 part 检测建档（F1z E-7 首触发即建档，Owner 批 2026-10-04） ==============
+# 模块级提出：探测/建档逻辑可脱离守护线程与真实 CH 独立注入测试（红绿测试锚点）。
+
+_CORRUPTED_CHECKSUM_PATTERN = re.compile(r"Checksum doesn't match", re.IGNORECASE)
+_CORRUPTED_PART_PATTERN = re.compile(r"part\s+(\d{6}_[\w]+)", re.IGNORECASE)
+# part 名称安全校验（防 SQL 注入）
+_CORRUPTED_PART_NAME_SAFE_RE = re.compile(r"^[a-zA-Z0-9_-]+$")
+
+
+def _detect_corrupted_parts_from_log(log_text: str) -> list[str]:
+    """从 text_log 查询结果中提取破损 part 名称列表（纯函数）。"""
+    if not log_text or _CORRUPTED_CHECKSUM_PATTERN.search(log_text) is None:
+        return []
+    parts: list[str] = []
+    for match in _CORRUPTED_PART_PATTERN.finditer(log_text):
+        name = match.group(1)
+        if name and name not in parts and _CORRUPTED_PART_NAME_SAFE_RE.match(name):
+            parts.append(name)
+    return parts
+
+
+def _append_corrupted_part_audit(
+    audit_log: Path,
+    part_name: str,
+    db: str,
+    table: str,
+    *,
+    action: str,
+    success: bool,
+    note: str | None = None,
+) -> dict | None:
+    """破损 part 事件落档（E-7 首触发即建档）：追加一条 JSONL 到 audit_log。
+
+    首次写入即建档（父目录+文件自动创建）；写失败只记日志不抛——建档失败
+    不得阻断隔离主流程（原闭包 _write_audit 语义保留）。
+    """
+    try:
+        audit_log.parent.mkdir(parents=True, exist_ok=True)
+        entry: dict = {
+            "timestamp": now_utc().isoformat(),
+            "part_name": part_name,
+            "database": db,
+            "table": table,
+            "action": action,
+            "success": success,
+        }
+        if note:
+            entry["note"] = note
+        with open(audit_log, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        return entry
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        log.error("写入破损 part 审计日志失败: %s", e)
+        return None
+
+
+def _run_corrupted_part_cycle(
+    *,
+    audit_log: Path,
+    query_log_fn: Callable[[], str],
+    find_part_fn: Callable[[str], tuple[str, str] | None],
+    isolate_fn: Callable[[str, str, str], bool],
+    notify_fn: Callable[..., None] | None,
+    processed_parts: set[str],
+) -> list[dict]:
+    """处理一个破损 part 检测周期，返回本周期落档条目列表（空列表=无新破损）。
+
+    E-7 首触发即建档（图12 F1z 呈批件，Owner 批 2026-10-04）：探测到破损
+    part 即写 action=detect 档案。修复前病根=只有隔离完成后才写档，part 不在
+    active 列表（find=None）或隔离前异常时零病历——corrupted_parts_audit.jsonl
+    自 2026-07-16 机制上线零条（"检测器活着但病历本没建过"）。无破损探测→
+    不写档、不建档文件。
+    """
+    entries: list[dict] = []
+    corrupted = _detect_corrupted_parts_from_log(query_log_fn())
+    if not corrupted:
+        return entries
+    new_parts = [p for p in corrupted if p not in processed_parts]
+    if not new_parts:
+        return entries
+    target = new_parts[0]
+    log.error(
+        "检测到破损 part: %s（共 %d 个未处理，本次处理 1 个）",
+        target,
+        len(new_parts),
+    )
+    location = find_part_fn(target)
+    if location is None:
+        log.info("part %s 已不在 active 列表，跳过（已落 detect 档案）", target)
+        entry = _append_corrupted_part_audit(
+            audit_log,
+            target,
+            "",
+            "",
+            action="detect",
+            success=False,
+            note="part_not_in_active",
+        )
+        if entry:
+            entries.append(entry)
+        processed_parts.add(target)
+        return entries
+    db, table = location
+    entry = _append_corrupted_part_audit(audit_log, target, db, table, action="detect", success=True)
+    if entry:
+        entries.append(entry)
+    success = isolate_fn(target, db, table)
+    entry = _append_corrupted_part_audit(audit_log, target, db, table, action="detach", success=success)
+    if entry:
+        entries.append(entry)
+    processed_parts.add(target)
+    if notify_fn is not None:
+        notify_fn(
+            "corrupted_part_isolated",
+            f"破损 part 已隔离: {db}.{table} {target} (success={success})",
+            level=LEVEL_CRITICAL,
+            source="corrupted_part_detector",
+        )
+    return entries
+
+
 class IntegratorScheduler:
     """数据源集成器调度器。
 
@@ -1328,18 +1451,13 @@ class IntegratorScheduler:
         - 单次检测周期只处理一个破损 part（避免并发操作冲突）
         - 处理后冷却 10 分钟（避免频繁操作）
         - 已处理的 part 名称记录在内存集合中（避免重复处理）
+        - E-7 首触发即建档（F1z 批 2026-10-04）：探测到破损 part 即落
+          corrupted_parts_audit.jsonl（action=detect；find=None 分支也落档）——
+          修复前只有隔离完成才写档，检测器活着但病历本可以一直没建过。
         """
-        import re as _re
-
         _CHECK_INTERVAL = 300  # 5 分钟
         _COOLDOWN = 600  # 处理后冷却 10 分钟
         _AUDIT_LOG = REPO_ROOT / "data" / "local_fallback" / "corrupted_parts_audit.jsonl"
-
-        # text_log 中 CHECKSUM_DOESNT_MATCH 检测 + part 名称提取
-        _CHECKSUM_PATTERN = _re.compile(r"Checksum doesn't match", _re.IGNORECASE)
-        _PART_PATTERN = _re.compile(r"part\s+(\d{6}_[\w]+)", _re.IGNORECASE)
-        # part 名称安全校验（防 SQL 注入）
-        _PART_NAME_SAFE_RE = _re.compile(r"^[a-zA-Z0-9_-]+$")
 
         def _query_corrupted_log_entries() -> str:
             """查询 system.text_log 中最近 1 小时的 Checksum 错误日志。"""
@@ -1348,17 +1466,6 @@ class IntegratorScheduler:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.warning("查询 system.text_log 异常: %s", e)
                 return ""
-
-        def _detect_corrupted_parts(log_text: str) -> list[str]:
-            """从 text_log 查询结果中提取破损 part 名称列表。"""
-            if not log_text or not _CHECKSUM_PATTERN.search(log_text):
-                return []
-            parts: list[str] = []
-            for match in _PART_PATTERN.finditer(log_text):
-                name = match.group(1)
-                if name and name not in parts and _PART_NAME_SAFE_RE.match(name):
-                    parts.append(name)
-            return parts
 
         def _find_part(part_name: str) -> tuple[str, str] | None:
             """查询 part 所属的 (database, table)，None 表示 part 不在 active 列表。"""
@@ -1395,23 +1502,6 @@ class IntegratorScheduler:
             # 验证 part 已不在 active 列表
             return _find_part(part_name) is None
 
-        def _write_audit(part_name: str, db: str, table: str, success: bool) -> None:
-            """写入审计日志到 data/local_fallback/corrupted_parts_audit.jsonl。"""
-            try:
-                _AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
-                entry = {
-                    "timestamp": datetime.datetime.now().isoformat(),
-                    "part_name": part_name,
-                    "database": db,
-                    "table": table,
-                    "action": "detach",
-                    "success": success,
-                }
-                with open(_AUDIT_LOG, "a", encoding="utf-8") as f:
-                    f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                log.error("写入审计日志失败: %s", e)
-
         def _detect_loop() -> None:
             processed_parts: set[str] = set()
             last_action_time: float = 0.0
@@ -1423,46 +1513,16 @@ class IntegratorScheduler:
                     continue
 
                 try:
-                    log_text = _query_corrupted_log_entries()
-                    corrupted = _detect_corrupted_parts(log_text)
-
-                    if not corrupted:
-                        time.sleep(_CHECK_INTERVAL)
-                        continue
-
-                    new_parts = [p for p in corrupted if p not in processed_parts]
-                    if not new_parts:
-                        time.sleep(_CHECK_INTERVAL)
-                        continue
-
-                    target = new_parts[0]
-                    log.error(
-                        "检测到破损 part: %s（共 %d 个未处理，本次处理 1 个）",
-                        target,
-                        len(new_parts),
+                    entries = _run_corrupted_part_cycle(
+                        audit_log=_AUDIT_LOG,
+                        query_log_fn=_query_corrupted_log_entries,
+                        find_part_fn=_find_part,
+                        isolate_fn=_isolate_part,
+                        notify_fn=self._alerter.notify,
+                        processed_parts=processed_parts,
                     )
-
-                    location = _find_part(target)
-                    if location is None:
-                        log.info("part %s 已不在 active 列表，跳过", target)
-                        processed_parts.add(target)
-                        time.sleep(_CHECK_INTERVAL)
-                        continue
-
-                    db, table = location
-                    success = _isolate_part(target, db, table)
-
-                    _write_audit(target, db, table, success)
-                    self._alerter.notify(
-                        "corrupted_part_isolated",
-                        f"破损 part 已隔离: {db}.{table} {target} (success={success})",
-                        level=LEVEL_CRITICAL,
-                        source="corrupted_part_detector",
-                    )
-
-                    processed_parts.add(target)
-                    last_action_time = time.time()
-
+                    if entries:
+                        last_action_time = time.time()  # noqa: m46-time — 冷却间隔测量，非时区用途
                 except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     log.error("破损 part 检测线程异常: %s", e)
 
