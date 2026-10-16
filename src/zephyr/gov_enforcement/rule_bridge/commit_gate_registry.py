@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway; zephyr.governance.audit.reconciliation_registry.make_in_process_gate_registry_drift_reconciler (调用 list_gate_ids 进行 YAML↔内存双向校验, #ARCH-GATE-REGISTRY-AUTO-001 Phase 6)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] CommitGateRegistry.register 幂等（同 gate_id 覆盖旧 spec）；同 priority 不同 gate_id 抛 GateRegistrationError 阻断（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2 fail-closed 治本）；check_all 按 priority 升序执行所有 gate；单个 gate 异常降级为 fail-closed（passed=False，安全优先），不阻断后续 gate 执行；S1 分道面（st-commitspeed-tbl-20260924）＝shared_index_gateway 非 None 且非 gateway 时仅 SHARED_INDEX_WITHOUT_OWN_SCOPE 名单内 15 台逐台改发本体 gateway，缺省/同对象=零分派零行为变更
+# [INVARIANTS] CommitGateRegistry.register 幂等（同 gate_id 覆盖旧 spec）；同 priority 不同 gate_id 抛 GateRegistrationError 阻断（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2 fail-closed 治本）；check_all 按 priority 升序执行所有 gate（flag gate_chain_parallel ON 时改分段执行=串行段先行+纯扫描台线程池，结果仍按 priority 原序返回，出厂 OFF=路径零变化）；单个 gate 异常降级为 fail-closed（passed=False，安全优先），不阻断后续 gate 执行；S1 分道面（st-commitspeed-tbl-20260924）＝shared_index_gateway 非 None 且非 gateway 时仅 SHARED_INDEX_WITHOUT_OWN_SCOPE 名单内 15 台逐台改发本体 gateway，缺省/同对象=零分派零行为变更
 # [MODIFY-GUARD] GateSpec 字段结构；GateResult 语义；TEST_EXEMPT_PREFIXES / is_test_exempt（tests/ 豁免真源）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -61,13 +61,20 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import subprocess
 import sys
+import threading
 import time
+from concurrent.futures import Future, ThreadPoolExecutor
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Final
+from types import ModuleType
+from typing import TYPE_CHECKING, Any, Callable, Final
+
+if TYPE_CHECKING:
+    from zephyr.gov_enforcement.rule_bridge.gate_cache_preflight import GateResultCache
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +100,18 @@ def _stat_ms(gate_id: str, ms: float, passed: bool, state: str) -> None:
 
 def _stat_flush(gateway: object) -> None:
     """check_all 结束落一行执行统计；落盘失败静默。"""
+    # P3 统计卫生（st-perfz1-20261015，st-diskp0 总包）：测试环境（ZEPHYR_COMMIT_GATEWAY=test）
+    # 不落生产统计册——.runtime/audit/gate_execution_stats.jsonl 的 24h 窗是缓存白名单
+    # 准入/退役审计的实测真源，测试链次（pytest 进程内直调 check_all）会污染实测口径。
+    # 累计器就地清空防跨链泄漏进同进程后续真实链；非测试环境行为零变化。
+    try:
+        if str(os.environ.get("ZEPHYR_COMMIT_GATEWAY", "")).strip().lower() == "test":
+            with _STAT_LOCK:
+                _STAT_ACC.clear()
+                _PHASE_ACC.clear()
+            return
+    except Exception:  # noqa: BLE001 — 环境读取异常=按非测试环境处理（现行路径）
+        pass
     try:
         root = Path(str(getattr(gateway, "project_root", ".")))
         audit_dir = root / ".runtime" / "audit"
@@ -404,6 +423,162 @@ class GateResult:
     detail: str = ""
 
 
+# ---------------------------------------------------------------------------
+# P1-1 门禁链并行化（st-diskp0-20261015 总包 Z1 队 st-perfz1-20261015 施工）
+# flag gate_chain_parallel（config/flags.yaml，出厂 OFF=默认路径逐字节不变）ON 时
+# check_all 按 priority 分两段：
+#   串行段（先行）＝PARALLEL_SERIAL_GATE_IDS ∪ S1 分道名单台——顺序敏感/信号型/
+#   写共享态/引擎依赖门，本体 gateway 原语义逐台执行；
+#   并行段＝其余纯内容/AST 扫描台——ThreadPoolExecutor(GATE_CHAIN_MAX_WORKERS)，
+#   直用本体 gateway（段内停用 _git_read_cache，见下）。结果槽位按 priority 原序
+#   合并（与串行链同序）。
+#
+# 线程安全审计（2026-10-15，逐面；红轮实测定版=免锁方案，弃链级锁代理）：
+# - gateway 唯一可变共享面＝run_git 的链窗口读缓存 _git_read_cache（可变 dict/None）
+#   → 并行段整体停用（属性置 None：CPython 属性赋值原子，段内所有路径退化为
+#   "无缓存直执行/幂等置 None"，无读-改-写竞态）；红轮实测锁代理方案把重门的
+#   git 子进程全部串行化（同输入链内 4281→5142ms 反而变慢），免锁后 git 子进程
+#   真 4 路并发（diff/show/ls-files 均只读，git 层自身并发安全）；
+# - checker_supervisor 单例自带 _lock（"单 worker + 锁串行"设计）→ 天然安全；
+# - 门实现包（commit_gates/**）写面逐台扫描审计：全部为逐门独立审计 jsonl 追加
+#   （fail-open 非判定路径），无判定路径共享写；
+# - _stat_ms/_phase_ms 已是 _STAT_LOCK 保护的线程安全记账；
+# - 不确定台一律留串行段（本名单 fail-safe 方向：新门缺省并行，协议台显式点名串行）。
+# ---------------------------------------------------------------------------
+#: 串行段名单（锁内先行）：图纸点名信号型 + 锁/claim/协议簇 + 写共享态/引擎依赖台。
+PARALLEL_SERIAL_GATE_IDS: Final[frozenset[str]] = frozenset(
+    {
+        # 信号型/顺序敏感（图纸点名）
+        "RECONCILER-HEALTH",  # 读 reconciler 并发态势台
+        "GIT-CALL-BUDGET",  # 图纸点名信号型（S1 共享索引名单台）
+        "HELD-OVERLAP",  # 锁协议台
+        "TAKEOVER-PENDING",  # 接管台账信号台
+        # 锁/claim/协议/防篡改簇（priority 28-50 治理面）
+        "PROTECTED-PATHS",
+        "FORGED-GW-MARKER",
+        "DIRECTORY-CONTRACT",
+        "SESSION-REQUIRED",
+        "CLAIM-REQUIRED",
+        "WORKTREE-REQUIRED",
+        "FOREIGN-CHANGE-DETECTION",
+        "DERIVED-FILE-DELETION-PROTECTION",
+        "HOT-FILE-BASE-FRESHNESS",
+        "COMMIT-SCOPE",
+        # 写共享态/引擎依赖/协调信号台
+        "CREATE-GUARD",  # 写 creation token 共享态
+        "SNAPSHOT-DRIFT",  # 快照态信号台
+        "CAPABILITY-OVERLAP",  # CloneGuard 引擎依赖（降级语义）
+        "SPLIT-COORDINATION",  # 读 .runtime/coordination 协调台账
+        "GATE-PRECOMMIT-RUN",  # 若在册：pre-commit hook 编排（GIT_INDEX_FILE 临时索引）
+    }
+)
+
+#: 并行段线程数（方案上限 4；线程再多收益受 run_git 锁与 GIL 摊薄）
+GATE_CHAIN_MAX_WORKERS: Final[int] = 4
+
+#: W5 契约逃生口（st-bt-fast-w5-20260906 批次第 2 步判据③）：显式依赖序门的
+#: 运行时串行排除集——生产缺省恒空（P1-1 串行语义由 PARALLEL_SERIAL_GATE_IDS
+#: 静态名单承载）；命中本集的门在并行链中强制进串行段（只影响执行位置，不影响判定）。
+SERIAL_EXECUTION_GATES: frozenset[str] = frozenset()
+
+#: P1-1 并行链 flag 名（config/flags.yaml；读取走 gate_cache_preflight.flag_enabled 同一机制）
+_GATE_CHAIN_PARALLEL_FLAG = "gate_chain_parallel"
+
+#: W5 总闸环境变量（值为 "0" 时无条件回串行——生产急救 kill switch，优先级最高）
+_W5_KILL_SWITCH_ENV = "ZEPHYR_W5_GATE_SPEEDUP"
+
+
+def _resolve_parallel_width() -> int:
+    """并行宽度决议唯一点（W5 契约与本 flag 机制收敛，2026-10-15）。
+
+    优先级：总闸 ``ZEPHYR_W5_GATE_SPEEDUP=0``（生产急救，无条件回串行）＞
+    flag ``gate_chain_parallel``（config/flags.yaml 出厂 OFF，ON=4 线程）＞
+    1（现行串行路径）。返回 1=串行，≥2=并行链（值为线程数）。
+    """
+    try:
+        if str(os.environ.get(_W5_KILL_SWITCH_ENV, "")).strip() == "0":
+            return 1
+    except Exception:  # noqa: BLE001 — 环境读取异常=fail-closed 串行
+        return 1
+    if _gate_chain_parallel_enabled():
+        return GATE_CHAIN_MAX_WORKERS
+    return 1
+
+
+def _gate_chain_parallel_enabled() -> bool:
+    """并行链 flag 读取唯一点（fail-closed OFF；设施任何异常=现行串行路径）。"""
+    try:
+        from zephyr.gov_enforcement.rule_bridge import gate_cache_preflight as _gcp  # noqa: PLC0415
+
+        return bool(_gcp.flag_enabled(_GATE_CHAIN_PARALLEL_FLAG))
+    except Exception:  # noqa: BLE001 — 设施异常=串行现行路径
+        return False
+
+
+class _ChainReadCachePause:
+    """并行段读缓存停用句柄（enter=置 None，exit=恢复原值）。
+
+    存在理由：GitCommitGateway.run_git 维护链窗口读缓存 ``_git_read_cache``
+    （可变 dict/None 共享态，写类命令整窗失效）——并行台并发直调存在失效竞态。
+    红轮实测链级锁代理方案把重门 git 子进程全部串行化（同输入链内反而变慢），
+    定版=段内整体停用读缓存：CPython 属性赋值原子，段内全部路径退化为"无缓存
+    直执行/幂等置 None"，无读-改-写竞态；缓存本身是纯去重（不参与任何门判定），
+    停用只损失重复读的 dedupe，判定语义零变化。gateway 无该属性（树视图替身等）
+    =本句柄 no-op。属性不存在时 getattr 用 sentinel 区分"无属性"与"值就是 None"。
+    """
+
+    _SENTINEL = object()
+
+    def __init__(self, gateway: object) -> None:
+        self._gateway = gateway
+        self._prior: Any = self._SENTINEL
+
+    def __enter__(self) -> _ChainReadCachePause:
+        if hasattr(self._gateway, "_git_read_cache"):
+            self._prior = self._gateway._git_read_cache  # type: ignore[attr-defined]
+            self._gateway._git_read_cache = None  # type: ignore[attr-defined]
+        return self
+
+    def __exit__(self, *exc_info: object) -> None:
+        if self._prior is not self._SENTINEL:
+            self._gateway._git_read_cache = self._prior  # type: ignore[attr-defined]
+            self._prior = self._SENTINEL
+
+
+def _exec_gate_check(
+    spec: GateSpec,
+    gate_gw: object,
+    files: list[str],
+    kwargs: dict,
+    *,
+    cachedable: bool,
+    cache_ctx: GateResultCache | None,
+    own_scope: str,
+) -> GateResult:
+    """单台门执行（串行/并行两路共用的唯一执行语义——OFF/ON 零漂移）。
+
+    ERROR_CONTRACT 不变：check 抛异常降级 fail-closed（passed=False），记账
+    state="exception"；正常路径记账 state="ran"，passed=True 且 cachedable 时
+    回写缓存。与原 check_all 内联体逐步等价（2026-10-15 重构抽出）。
+    """
+    _t_gate = time.monotonic()
+    try:
+        passed, detail = spec.check(gate_gw, files, **kwargs)
+        result = GateResult(gate_id=spec.gate_id, passed=passed, detail=detail)
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("CommitGateRegistry: gate %s 异常降级为 fail-closed: %s", spec.gate_id, e, exc_info=True)
+        _stat_ms(spec.gate_id, (time.monotonic() - _t_gate) * 1000, False, "exception")
+        return GateResult(
+            gate_id=spec.gate_id,
+            passed=False,
+            detail=f"gate 异常（fail-closed）: {e}",
+        )
+    _stat_ms(spec.gate_id, (time.monotonic() - _t_gate) * 1000, passed, "ran")
+    if cachedable and passed and cache_ctx is not None:
+        cache_ctx.store(spec.gate_id, own_scope, detail)
+    return result
+
+
 class GateRegistrationError(RuntimeError):
     """门禁注册异常——priority 冲突时抛出（fail-closed 治本）。
 
@@ -521,6 +696,7 @@ class CommitGateRegistry:
         # S1 分道真源（15 台名单唯一判定点；懒加载且仅 flag ON 链产生成本）：
         # shared_index_gateway 缺省/与 gateway 同对象→不加载名单（零行为变更）。
         _shared_index_gw: object | None = None
+        _shared_index_exempt: frozenset[str] = frozenset()
         if shared_index_gateway is not None and shared_index_gateway is not gateway:
             try:
                 from zephyr.gov_enforcement.commit_gates._tree_view import (  # noqa: PLC0415
@@ -546,13 +722,31 @@ class CommitGateRegistry:
                     cache_ctx = cand
         except Exception:  # noqa: BLE001 — 缓存设施异常=回退全量现算
             cache_ctx = None
-        results: list[GateResult] = []
         # C98-c（st-finaldel-vocabmid-20260930）：added: 第五路的本笔新增集——惰性单次
         # 计算（常态无门声明 added: → 不付任何 git 调用，向后兼容=逐字节不变）。
         added_files: list[str] | None = None
         if any(p.startswith(ADDED_TRIGGER_PREFIX) for s in self._specs.values() for p in s.files_trigger):
             added_files = _staged_added_files(gateway)
-        for spec in sorted(self._specs.values(), key=lambda s: s.priority):
+        ordered_specs = sorted(self._specs.values(), key=lambda s: s.priority)
+        # P1-1：宽度≥2=并行链（串行段先行+纯扫描台线程池，结果原序合并）；
+        # 宽度 1（出厂默认 flag OFF/总闸 ZEPHYR_W5_GATE_SPEEDUP=0）=下行串行
+        # 现行路径，行为逐字节不变。
+        if _resolve_parallel_width() >= 2:
+            return self._check_all_parallel(
+                ordered_specs,
+                gateway=gateway,
+                files=files,
+                skip_gates=skip_gates,
+                preflight_results=preflight_results,
+                shared_index_gw=_shared_index_gw,
+                shared_index_exempt=_shared_index_exempt,
+                cache_ctx=cache_ctx,
+                gcp=_gcp,
+                added_files=added_files,
+                **kwargs,
+            )
+        results: list[GateResult] = []
+        for spec in ordered_specs:
             if spec.files_trigger and not _files_trigger_hit(spec.files_trigger, files, added_files):
                 results.append(
                     GateResult(
@@ -592,33 +786,159 @@ class CommitGateRegistry:
                 results.append(GateResult(gate_id=spec.gate_id, passed=passed, detail=f"preflight: {detail}"))
                 _stat_ms(spec.gate_id, 0.0, passed, "preflight_reused")
                 continue
-            _t_gate = time.monotonic()
-            try:
-                # S1 分道：名单内的 15 台全索引门拿本体 gateway（读真共享暂存区，
-                # 语义含他人噪声是设计）；其余拿 gateway（flag ON 链=视图替身）。
-                _gate_gw = (
-                    _shared_index_gw
-                    if _shared_index_gw is not None and spec.gate_id in _shared_index_exempt
-                    else gateway
+            # S1 分道：名单内的 15 台全索引门拿本体 gateway（读真共享暂存区，
+            # 语义含他人噪声是设计）；其余拿 gateway（flag ON 链=视图替身）。
+            _gate_gw = (
+                _shared_index_gw if _shared_index_gw is not None and spec.gate_id in _shared_index_exempt else gateway
+            )
+            results.append(
+                _exec_gate_check(
+                    spec,
+                    _gate_gw,
+                    files,
+                    kwargs,
+                    cachedable=_cachedable,
+                    cache_ctx=cache_ctx,
+                    own_scope=_own_scope,
                 )
-                passed, detail = spec.check(_gate_gw, files, **kwargs)
-                results.append(GateResult(gate_id=spec.gate_id, passed=passed, detail=detail))
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("CommitGateRegistry: gate %s 异常降级为 fail-closed: %s", spec.gate_id, e, exc_info=True)
-                results.append(
-                    GateResult(
-                        gate_id=spec.gate_id,
-                        passed=False,
-                        detail=f"gate 异常（fail-closed）: {e}",
-                    )
-                )
-                _stat_ms(spec.gate_id, (time.monotonic() - _t_gate) * 1000, False, "exception")
-                continue
-            _stat_ms(spec.gate_id, (time.monotonic() - _t_gate) * 1000, passed, "ran")
-            if _cachedable and passed:
-                cache_ctx.store(spec.gate_id, _own_scope, detail)
+            )
         _stat_flush(gateway)
         return results
+
+    def _check_all_parallel(
+        self,
+        ordered_specs: list[GateSpec],
+        *,
+        gateway: object,
+        files: list[str],
+        skip_gates: frozenset[str],
+        preflight_results: dict[str, tuple[bool, str]] | None,
+        shared_index_gw: object | None,
+        shared_index_exempt: frozenset[str],
+        cache_ctx: GateResultCache | None,
+        gcp: ModuleType,
+        added_files: list[str] | None,
+        **kwargs: Any,
+    ) -> list[GateResult]:
+        """P1-1 并行链（宽度≥2）：串行段先行+纯扫描台线程池。
+
+        三相位：
+        1. 计划面（串行，与串行链同序同语义）：files_trigger / skip_gates /
+           缓存 lookup / preflight 采信——命中者直接落结果槽位；
+        2. 串行段（先行）：PARALLEL_SERIAL_GATE_IDS ∪ SERIAL_EXECUTION_GATES
+           （W5 逃生口）∪ S1 分道名单台，本体 gateway 原语义逐台执行（与串行链
+           同款 dispatch）；独立并行台 <2 时全量折入本段（W5 契约④回退串行）；
+        3. 并行段：其余纯内容/AST 扫描台进 ThreadPoolExecutor，经
+           _ChainGitLockGateway 代理执行；结果槽位按 priority 原序合并
+           （返回列表顺序与串行链逐位一致）。
+        """
+        slots: list[GateResult | None] = [None] * len(ordered_specs)
+        pending: list[tuple[int, GateSpec, bool]] = []
+        # own_scope 为 gate 无关量（files∪held 集合指纹）——链内算一次，值与串行链
+        # 逐台重算逐字节一致；异常=缓存整体禁用（与串行链 per-gate 禁用等价收敛）。
+        own_scope = ""
+        own_scope_ok = False
+        if cache_ctx is not None:
+            try:
+                own_scope = gcp.own_scope_hash(gateway, files)
+                own_scope_ok = True
+            except Exception:  # noqa: BLE001 — 同串行链：不可得=该门不缓存
+                own_scope_ok = False
+        for idx, spec in enumerate(ordered_specs):
+            if spec.files_trigger and not _files_trigger_hit(spec.files_trigger, files, added_files):
+                slots[idx] = GateResult(
+                    gate_id=spec.gate_id,
+                    passed=True,
+                    detail="skipped: files_trigger 未命中（P5 条件触发）",
+                )
+                _stat_ms(spec.gate_id, 0.0, True, "trigger_skip")
+                continue
+            if spec.gate_id in skip_gates:
+                slots[idx] = GateResult(
+                    gate_id=spec.gate_id,
+                    passed=True,
+                    detail="skipped: worktree 物理隔离（无检测对象）",
+                )
+                _stat_ms(spec.gate_id, 0.0, True, "skipped")
+                continue
+            cachedable = cache_ctx is not None and own_scope_ok and spec.gate_id in gcp.CONTENT_SCAN_CACHE_WHITELIST
+            if cachedable:
+                hit = cache_ctx.lookup(spec.gate_id, own_scope)
+                if hit is not None:
+                    slots[idx] = GateResult(gate_id=spec.gate_id, passed=True, detail=f"cache-hit: {hit}")
+                    _stat_ms(spec.gate_id, 0.0, True, "cache_hit")
+                    continue
+            _preflight_hit = preflight_results.get(spec.gate_id) if preflight_results else None
+            if _preflight_hit is not None:
+                passed, detail = _preflight_hit
+                slots[idx] = GateResult(gate_id=spec.gate_id, passed=passed, detail=f"preflight: {detail}")
+                _stat_ms(spec.gate_id, 0.0, passed, "preflight_reused")
+                continue
+            pending.append((idx, spec, cachedable))
+
+        # S1 分道台+W5 逃生口台强制串行（替身链语义：名单门拿本体 gateway）。
+        def _is_serial(s: GateSpec) -> bool:
+            return (
+                s.gate_id in PARALLEL_SERIAL_GATE_IDS
+                or s.gate_id in SERIAL_EXECUTION_GATES
+                or (shared_index_gw is not None and s.gate_id in shared_index_exempt)
+            )
+
+        serial_pending = [(i, s, c) for i, s, c in pending if _is_serial(s)]
+        parallel_pending = [(i, s, c) for i, s, c in pending if not _is_serial(s)]
+        if len(parallel_pending) < 2:
+            # W5 契约④：独立并行台<2（含 0/1）→ 全量折入串行段（线程池无收益）。
+            serial_pending.extend(parallel_pending)
+            parallel_pending = []
+        # 相位2 串行先行：顺序敏感/信号型台——与串行链同款 S1 dispatch（分道名单台
+        # 拿本体 gateway 读真共享面，其余拿本体 gateway），逐台原语义。
+        for idx, spec, cachedable in serial_pending:
+            _gate_gw = (
+                shared_index_gw if shared_index_gw is not None and spec.gate_id in shared_index_exempt else gateway
+            )
+            slots[idx] = _exec_gate_check(
+                spec,
+                _gate_gw,
+                files,
+                kwargs,
+                cachedable=cachedable,
+                cache_ctx=cache_ctx,
+                own_scope=own_scope,
+            )
+        # 相位3 并行段：纯扫描台线程池（段内停用读缓存=免锁真并行，见
+        # _ChainReadCachePause docstring 的线程安全审计）。
+        if parallel_pending:
+            with _ChainReadCachePause(gateway), ThreadPoolExecutor(max_workers=GATE_CHAIN_MAX_WORKERS) as pool:
+                future_to_slot: dict[Future, tuple[int, GateSpec]] = {
+                    pool.submit(
+                        _exec_gate_check,
+                        spec,
+                        gateway,
+                        files,
+                        kwargs,
+                        cachedable=cachedable,
+                        cache_ctx=cache_ctx,
+                        own_scope=own_scope,
+                    ): (idx, spec)
+                    for idx, spec, cachedable in parallel_pending
+                }
+                for fut, (idx, spec) in future_to_slot.items():
+                    try:
+                        slots[idx] = fut.result()
+                    except Exception as e:  # noqa: BLE001 — 执行器层异常=该台 fail-closed
+                        logger.warning(
+                            "CommitGateRegistry: gate %s 并行执行器异常降级 fail-closed: %s",
+                            spec.gate_id,
+                            e,
+                            exc_info=True,
+                        )
+                        slots[idx] = GateResult(
+                            gate_id=spec.gate_id,
+                            passed=False,
+                            detail=f"gate 并行执行器异常（fail-closed）: {e}",
+                        )
+        _stat_flush(gateway)
+        return [s for s in slots if s is not None]
 
     def get(self, gate_id: str) -> GateSpec | None:
         """按 gate_id 获取已注册的 GateSpec（_commit_auto 复用 DCR gate 用）。

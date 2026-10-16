@@ -5,7 +5,7 @@
 # [CONSUMERS] git_commit_gateway（P2⑦ 预跑采信）；commit_gate_registry.check_all（P2⑧ 缓存查/存）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 白名单=实测 top15 命中台（gate_execution_stats 24h 窗）且输入面=own staged∪own_scope∪manifest∪门实现的纯内容/AST 扫描门；只缓存 passed=True（降级态与失败一律不缓存——fail-open 不被缓存放大）；P2⑧ 键=gate_id×own_scope×own 内容哈希(inputs_sha)×spec_sha(门实现面内容哈希)×manifest 输入哈希×flags mtime——禁含 HEAD_sha 与共享暂存树指纹（T7/B2）；P2⑦ 预跑指纹仍含 write-tree/HEAD（锁内重验采信语义不变）；TTL 10min；两 flag（gate_result_cache/gate_preflight）出厂默认 OFF，启用属 Owner 窗口（宪章 B-007）
+# [INVARIANTS] 白名单=实测命中台（gate_execution_stats 24h 窗；2026-10-15 扩容批 15→31，逐台输入面审计）且输入面=own staged∪own_scope∪manifest∪门实现的纯内容/AST 扫描门；只缓存 passed=True（降级态与失败一律不缓存——fail-open 不被缓存放大）；P2⑧ 键=gate_id×own_scope×own 内容哈希(inputs_sha)×spec_sha(门实现面内容哈希)×manifest 输入哈希×flags mtime——禁含 HEAD_sha 与共享暂存树指纹（T7/B2）；P2⑦ 预跑指纹仍含 write-tree/HEAD（锁内重验采信语义不变）；TTL 10min；两 flag（gate_result_cache/gate_preflight）出厂默认 OFF，启用属 Owner 窗口（宪章 B-007）；本模块 flag_enabled 亦承载 gate_chain_parallel（P1-1 并行链，出厂 OFF）读取
 # [MODIFY-GUARD] 2026-09-10 提交通道性能优化方案 §2.2-A3 / §2.3 方案A / §2.6 分级清单（等价性红线：信号型永不缓存/预跑；指纹含 gate 输入清单 sha）；2026-09-25 T7/B2（st-commitspeed-tbl-20260924）：P2⑧ 键去全局态改内容哈希（红证=他人推进 HEAD/暂存他件即全失效为 87 命中/24h 病根），白名单改实测 top15（依据 gate_execution_stats）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -84,24 +84,39 @@ from pathlib import Path
 
 from zephyr.shared.utils.time_utils import now_utc  # RULE-SCHEMA-TZ：时间 SSoT（src 禁裸 time.time()）
 
-#: P2⑧/P2⑦ 共享白名单＝实测 top15 命中台（依据：.runtime/audit/
-#: gate_execution_stats.jsonl 24h 窗 114 链次，2026-09-25 量取；准入判据见模块
-#: docstring"白名单准入"节——判定输入面 ⊆ own staged∪own_scope∪manifest∪门实现，
-#: A3 矩阵逐台核过：head_dependent=false、reads_registry_catalog=false 或已声明
-#: manifest、非信号型、非 CloneGuard 引擎依赖、非 lane 全图门）。
+#: P2⑧/P2⑦ 共享白名单＝实测命中台（依据：.runtime/audit/gate_execution_stats.jsonl
+#: 24h 窗；准入判据见模块 docstring"白名单准入"节——判定输入面 ⊆ own staged∪own_scope
+#: ∪manifest∪门实现，A3 矩阵逐台核过：head_dependent=false 或 HEAD 宽松单调
+#: （added-lines 增量口径，先例=原 15 台中 8 台）、非信号型、非 CloneGuard 引擎依赖、
+#: 非 lane 全图门、非 HEAD 严格面（条目集比对类））。
 #:
-#: 实证复用面（24h preflight_reused/cache_hit 计数）：ENCODING-SAFETY、
+#: 实证复用面（24h preflight_reused/cache_hit 计数，2026-09-25 量取）：ENCODING-SAFETY、
 #: DATETIME-NOW-FORBIDDEN、NO-DOMAIN-NAME-ZH-DIRECT-ACCESS、NO-BARE-SQL、
 #: NO-UPWARD-IMPORT、NO-IMPORT-SIDE-EFFECT、UNDEFINED-NAME、RELATIVE-PATH-LITERAL
 #: （各 84 次）、UNSAFE-DICT-SPREAD、ASYNCIO-RUN-IN-CONTEXT（各 53 次）。
-#: 实证耗时面（24h total_ms top 且判据全绿）：BLUEPRINT-HEADER 1781s、
+#: 实证耗时面（24h total_ms top，准入判据全绿）：BLUEPRINT-HEADER 1781s、
 #: CH-BATCH-SIZE 872s、BLUEPRINT-FORMAT 725s、FILE-COPY 136s、NO-HARDCODED-URL
 #: 124s。退役：NO-LONG-PARAM-LIST/NO-GOD-CLASS/NO-HIGH-COMPLEXITY（24h 零触发
-#: 零消费且不在名册——死条目）。追加 MUST 附同窗实测数据+逐台输入面分析；
-#: 注册表读取类须先在 GATE_INPUT_MANIFEST 声明其输入文件。
+#: 零消费且不在名册——死条目）。
+#:
+#: 扩容批（st-diskp0-20261015 总包 Z1 队 st-perfz1-20261015，24h 窗 75 链次
+#: 2026-10-15 量取，逐台输入面审计后准入 16 台→总数 31）：
+#: GIT-CALL-BUDGET 1960s、MUTABLE-CONST-WITHOUT-FINAL 1158s、CH-VERSION-COL 485s、
+#: PERMANENT-SYSTEM-TRIGGER 740s、NO-SECRET-HARDCODE 578s、TDM-MOUNT-COVERAGE 468s、
+#: NO-BARE-GETENV 379s、BLUEPRINT-NODE-ID-HARDCODE 372s、SSOT-REDEFINITION 345s、
+#: DERIVATION-ANNOTATION 316s、TRANSLATION-COVERAGE 322s、OPEN-WITHOUT-WITH 313s、
+#: FUNCTION-DUP、GATE-ERRCODE-CONSISTENCY、BARE-SUBPROCESS、ZEPHYR-ENV-DIRECT-ACCESS
+#: ——全部 staged 面/注册表读取已声明 manifest（无注册表输入者清单留空）。
+#: 驳回（登记在案，附理由）：REGISTRY-MASS-DELETION（HEAD 条目集严格面——HEAD 增
+#: 条目场景缓存 pass=假绿，恰是本门存在意义的反面）；TEST-SOURCE-CONSISTENCY
+#: （判定含 src 源码树存在性检查，非 manifest 可枚举）；DOC-HEADER-SUITE（子台
+#: DOC-REF-BROKEN 探测全仓树链接目标）；REAL-KEY-REFERENCE-SCAN/FMS-HYGIENE/
+#: COMPLEXITY-GUARD（_read_head_file 内容豁免面，无既有先例覆盖该类，保守不准入）；
+#: DEPGRAPH-ENFORCEMENT（判定读 PG depgraph 库=全局可变态）；GATE-VOCAB（判定经
+#: scripts/ checker，spec_sha 扫描根未覆盖+词表 glob 集不可枚举）。
 CONTENT_SCAN_CACHE_WHITELIST: frozenset[str] = frozenset(
     {
-        # ── 实证复用面（24h preflight_reused/cache_hit）──────────────────
+        # ── 实证复用面（24h preflight_reused/cache_hit，2026-09-25）───────
         "ENCODING-SAFETY",
         "DATETIME-NOW-FORBIDDEN",
         "NO-DOMAIN-NAME-ZH-DIRECT-ACCESS",
@@ -112,21 +127,47 @@ CONTENT_SCAN_CACHE_WHITELIST: frozenset[str] = frozenset(
         "RELATIVE-PATH-LITERAL",
         "UNSAFE-DICT-SPREAD",
         "ASYNCIO-RUN-IN-CONTEXT",
-        # ── 实证耗时面（24h total_ms top，准入判据全绿）──────────────────
+        # ── 实证耗时面（24h total_ms top，准入判据全绿，2026-09-25）──────
         "BLUEPRINT-HEADER",  # 1781s：蓝图头扫描（blueprint_amodule_consistency_gate._header_union_check）
         "CH-BATCH-SIZE",  # 872s：CH 批大小纯算规则
         "BLUEPRINT-FORMAT",  # 725s：[BLUEPRINT] 头格式正则
         "FILE-COPY",  # 136s：own 化后 extract 克隆薄封装（检测器异常 fail-open 不入缓存——只存 passed=True）
         "NO-HARDCODED-URL",  # 124s：URL 字面量正则
+        # ── 扩容批（2026-10-15，24h 窗 75 链次，输入面逐台审计）─────────
+        "GIT-CALL-BUDGET",  # 1960s：AST 检 added 行 git 调用反模式（added-lines 宽松单调，先例 8/15）
+        "MUTABLE-CONST-WITHOUT-FINAL",  # 1158s：AST 纯扫描（零注册表输入）
+        "PERMANENT-SYSTEM-TRIGGER",  # 740s：AST+头部 TTL 标扫描（零注册表输入）
+        "NO-SECRET-HARDCODE",  # 578s：正则纯扫描（registry 仅注释提及，无实际读取）
+        "CH-VERSION-COL",  # 485s：diff --cached 面扫描
+        "TDM-MOUNT-COVERAGE",  # 468s：config/*_map.yaml own 面+豁免册已声明 manifest
+        "NO-BARE-GETENV",  # 379s：AST 纯扫描
+        "BLUEPRINT-NODE-ID-HARDCODE",  # 372s：检测器脚本已声明 manifest（spec_sha 不覆盖 scripts/ 面）
+        "SSOT-REDEFINITION",  # 345s：REGISTRY_YAML 已声明 manifest
+        "TRANSLATION-COVERAGE",  # 322s：module_translation_registry 已声明 manifest
+        "DERIVATION-ANNOTATION",  # 316s：AST 纯扫描
+        "OPEN-WITHOUT-WITH",  # 313s：AST 纯扫描
+        "FUNCTION-DUP",  # own 集 AST 跨件判重（own_split 原语台）
+        "GATE-ERRCODE-CONSISTENCY",  # error_code_registry.yaml 已声明 manifest
+        "BARE-SUBPROCESS",  # AST 纯扫描
+        "ZEPHYR-ENV-DIRECT-ACCESS",  # AST 纯扫描
     }
 )
 
 #: 门级输入清单（T7/B2 判失红测的机制面）：gate_id → 该门判定所读、且不在
-#: own staged 集合内的注册表/配置文件（仓库相对 posix 路径）。清单内文件的工作
-#: 树字节哈希进键 ⇒ 注册表字节篡改一字节即 miss。当前 top15 全部为纯 staged
-#: 扫描器（无注册表输入）⇒ 清单空置；未来准入注册表读取类门 MUST 先在此声明
-#: 其输入文件（白名单准入判据的机械前置），未声明者不准入。
-GATE_INPUT_MANIFEST: dict[str, tuple[str, ...]] = {}
+#: own staged 集合内的注册表/配置/检测器脚本文件（仓库相对 posix 路径）。清单内
+#: 文件的工作树字节哈希进键 ⇒ 注册表/脚本字节篡改一字节即 miss。
+#: 原批 15 台全部为纯 staged 扫描器（无注册表输入）⇒ 清单空置；扩容批
+#: （2026-10-15）注册表读取类门按白名单准入判据机械前置逐台声明如下；
+#: 未声明者不准入。
+GATE_INPUT_MANIFEST: dict[str, tuple[str, ...]] = {
+    "SSOT-REDEFINITION": ("docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml",),
+    "TRANSLATION-COVERAGE": ("docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml",),
+    "GATE-ERRCODE-CONSISTENCY": ("architecture_model/contracts/error_code_registry.yaml",),
+    "TDM-MOUNT-COVERAGE": ("config/tdm_mount_exemption_registry.yaml",),
+    # 检测逻辑 SSoT 在 scripts/ 面（spec_sha 扫描根=src/.../commit_gates 不覆盖），
+    # 检测器脚本字节进键防"脚本改了缓存不失效"。
+    "BLUEPRINT-NODE-ID-HARDCODE": ("scripts/governance/d3_metadata/check_doc_node_id_hardcode.py",),
+}
 
 _CACHE_DIR = ".runtime/gate_cache"
 _TTL_SECONDS = 600.0  # 方案 §2.2-A3：TTL 10min
