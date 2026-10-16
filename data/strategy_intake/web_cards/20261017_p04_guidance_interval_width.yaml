@@ -1,0 +1,162 @@
+# creation_token: p04-webcard-batch-20261017-20261017-p04-guidance-interval-width-20261016 | created_by: st-qoder-p04-1017-05 | ttl: task_bound
+# 登记凭据（本班 2026-10-17 05:3x 现测，非声称）＝与同批卡34 共用一次 batch_creation_tokens 调用：
+#   --prefix data/strategy_intake/web_cards --capability p04-webcard-batch-20261017 → 「新增 2 幂等跳过 0 冲突WARN 0；publish_snapshot v945 (noop=False)；投影重打 quadrant=stale wrote=True」；
+#   create_guard._pg_confirmed_token_files(两枚路径) 现测 both_confirmed True。token 尾串 -20261016＝UTC 日（date -u 实测 2026-10-16 21:10Z）。
+#   本班首稿按分卡 capability 书写头串＝与实际登记口不符，已原地改正并披露（同型先例＝卡头凭据必须与账本一致，禁自造格式）。
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261017-P04-35
+title_zh: 业绩预告区间宽度与精度（下限-上限相对宽度＝管理层信息精度的直接可测量）——盈余指引精度轴首条，含「区间宽度 p50 恰＝20.0pp＝疑似规则填值而非公司自选」与「本库预告类型十档枚举齐备而『预告更正』零列」两条申报
+mining_tower: 管理层披露**内容质量**（说得多确定，而非说了什么方向）。本席在册相邻三卡分别是『高送转强度与合规裕度』(songzhuan_regulatory_slack＝送转比例距监管上限的裕度)、『非标准审计意见广度』(审计人裁定)、『盈余惊喜』(L9-A05＝数值 vs 预期)。本轴对象＝**公司在预告里给出的净利润变动上下限之间的距离相对于中值的比例**＝指引精度/imprecision，与"方向/幅度/是否超预期"三个对象都不同。⚠ 与卡33 的**形状同源**（都是"实测值 vs 监管线"的裕度思路），本班如实登记：对象不同（送转比例 vs 预告区间）、监管线不同（10送10 vs 20%/50% 区间），去冗余交 ⑥/⑨ 判，本席不自判正交。
+birth_seat: ④
+birth_session: st-qoder-p04-1017-05
+birth_batch: 20261017-p04-05
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+source_links:
+  - role: 监管硬约束与本卡归一化分母口径（多所一致口径）
+    url: https://zhuanlan.zhihu.com/p/683202585
+    what_verified: >-
+      本班 WebSearch 命中《上市公司：年度业绩预告披露规则》原文逐字：「对于以区间方式进行业绩预计的，业绩变动范围上下限区间**最大不得超过50%**，
+      一般**20%为宜**。上下限区间计算方式：**[（上限金额-下限金额）/下限金额]的绝对值**」；同篇「业绩预告更正：差异幅度达到20%以上或者盈亏方向
+      发生变化的，应当及时披露更正公告」；另有免于披露的量化门槛「上一年年度每股收益绝对值低于或者等于0.05元／上一年半年度每股收益绝对值低于或者等于0.03元」。
+      ⇒ 本卡的宽度定义（分母取**下限**）与更正触发线（20%/方向变化）全部来自本条；⚠ 知乎专栏无许可声明＝只学思想不入码，且该条口径是"以金额算"，
+      本库 profit_change_min/max 是**百分比**口径（本班实测 p50 13.82/32.00）＝两种分母不可混用，见 caliber_pitfall_zh。
+  - role: 交易所监管问答原文（20%/50% 两线的另一独立来源＋非经常性损益提示义务）
+    url: https://pkulaw.cn/fulltext_form.aspx?Gid=1c1ddce0ad65be7dbdfb
+    what_verified: >-
+      本班 WebSearch 命中《上市公司信息披露监管问答(第一期)》（北大法宝，标注[失效]）原文逐字：「如果采用数值或者比例区间进行业绩预告的，
+      预测的区间不宜过大，较高数值（比例）一般不得超过较低数值（比例）的**20%为宜，且最大区间不得超过50%**」；并「区间方式预计年度末净资产和
+      归属于母公司所有者的扣除非经常性损益的净利润的，相关区间内**不得同时包含正值和负值**」；并列举格式指引第二十七号（预增预减）／第二十八号（预盈）／
+      第二十九号（预亏）。⚑「失效」标记是本班读到的原文状态＝该口径的现行效力交 ⑥ 复核，本席不自证其仍生效。
+      ⇒ "区间不得同时含正负值"这一条＝本库 net_profit_min/max 的符号合法性判据（本班实测 profit_change_min<0 的行 18,859/45,978＝41.0%，属"变动幅度"可为负，与"净利润区间不得跨零"不同物＝禁混）。
+  - role: 学术构造式与可复现数据集（本卡归一化宽度公式的直接出处）
+    url: https://m.blog.csdn.net/zxwk01/article/details/142081909
+    what_verified: >-
+      本班 WebSearch 命中《2003-2022年上市公司业绩预告形式和精度包含原始数据参考顶刊文献含构造过程Stata代码》原文逐字：
+      形式变量「QANT：业绩预告如果为定量描述则为1，否则为0／OPEN：采取开区间估计则为1／CLS：采取闭区间估计则为1」；
+      精度变量「**WIDTH = abs(upper-low)/abs[(upper+low)/2]**：为闭区间宽度，反映业绩预告的精度，宽度越大，精度越低」；
+      样本「全部A股2003-2022年数据，含未剔除与剔除金融和ST/*ST/PT两个版本」；参考文献两篇＝王玉涛、王彦超《金融研究》2012(06):193-206
+      「业绩预告信息对分析师预测行为有影响吗」；李小朔、张嘉伟、滕蕙阳《山西财经大学学报》2021,43(06):99-113「进入者威胁：同行IPO冲击下的
+      公司信息披露策略——来自上市公司业绩预告策略性披露的实证证据」。
+      ⇒ 本卡的**中值归一**腿（本班实测 p50=0.238）取自本条公式（与上一条的"下限归一"是两套不同分母＝本卡两腿并列不合并）；
+      ⚠ 个人博客无许可声明、数据册为作者自整理且标注「原创整理，严禁转载」＝只学公式思想、零数据/代码复制。
+  - role: 券商金工实测参数（本卡"上限夸大／下限保守"不对称腿的出处）
+    url: https://finance.sina.com.cn/stock/stockzmt/2022-07-19/doc-imizirav4350697.shtml
+    what_verified: >-
+      本班 WebSearch 命中《国盛量化 | PEAD.notice：基于预告的盈余惊喜选股策略》(2022-07-19) 原文逐字五条：
+      (1)「2011年以来A股业绩预告平均披露率尚可，均值约42%，同时预告更多集中于中小市值股票」；
+      (2)「预告披露率呈现出明显季节效应，整体上披露率符合：一季报<三季报<中报<年报」；
+      (3)「真实利润一般落在预计区间以内且更靠近于下限的位置，即预计利润上限更容易夸大真实的盈利情况」；
+      (4)「正式业绩预告中的预计利润数据的偏离更小，精度更高。报告期结束后披露的正式业绩预告的偏离宽度约**20.5%**，显著低于报告期结束前披露的
+      预计数据（多来自前期定期报告），其偏离宽度约**32.0%**」；(5)「上限偏离幅度相对下限偏离的比率在**1.5~2倍**之间」。
+      ⇒ 本卡的三条硬参数（披露率≈42% 的季节序、正式 vs 定期报告内嵌预计的两档宽度 20.5%/32.0%、上下限偏离不对称 1.5~2 倍）全部来自本条；
+      ⚠ 券商研报转载＝无开放许可、且其"偏离宽度"是**相对真实值**而本卡是**区间自身宽度**＝同名单位的两个不同量，禁互证。
+  - role: 可知性因子视角（本卡"是否发预告"备用腿的出处）
+    url: https://blog.csdn.net/hbaaron/article/details/135161966
+    what_verified: >-
+      本班 WebSearch 命中《周末轻松学量化 | 球队和硬币因子》原文逐字：「Moskowitz 认为，可以依据公司是否发布了业绩预告：发布了业绩预告的公司，
+      其"可知性"就会提高」，并给实现面「按照 Moskowitz 的原始定义来生成因子，需要提取业绩预告信息。我们可以利用免费的 akshare 来获取这部分信息。
+      stock_yjyg_em_df = ak.stock_yjyg_em(date="20230930")」并列出列名「股票简称/预测指标/业绩变动幅度」。
+      ⇒ 本卡的备用腿（披露与否＝knowability 代理，非宽度）出处在此；⚠ 个人博客无许可、且该文未给 Moskowitz 原始文献年份＝本班不据此写死任何参数。
+
+license:
+  gate_verdict: 只学思想不入码
+  detail_zh: >-
+    五枚来源全为监管问答转载/知乎专栏/CSDN 博客（其中数据册标注「严禁转载」）/券商研报门户转载＝无一把 OSI/CC 许可；
+    GitHub 三筛本班实跑：中文题「业绩预告 上市公司」total=1（0★、无许可、合规咨询类仓）、英文题「earnings guidance China A-share」total=1
+    （2019 无关帖）、正对照 akshare 22,958★/MIT 命中 ⇒ 本轴在 GitHub 无可用实现，伪代码由本班按本库列名自写。
+    另扫出两枚与本席**间接相关**的仓：sngyai/Sequoia-X 8,049★/许可证 None（A股自动选股，pushed 2026-07-10）＝无许可＝只可学思想；
+    fkchaos/a-share-quant-sim 16★/MIT/pushed 2026-10-05 与 AlanFokCo/EasyQuant 16★/MIT/pushed 2026-10-14＝多因子框架，MIT 可用但非本轴实现。
+
+logic_zh: >-
+  业绩预告给的是区间（下限/上限），区间宽度相对于中值就是管理层承认的不确定程度。监管线把它压到"20%为宜、50%为限"，因此宽度天然被截在
+  制度附近；学术构造把 WIDTH 定义为 abs(upper-low)/abs((upper+low)/2) 并直接称其为"精度"（宽度越大精度越低）。机制上有两向：
+  (a) 信息环境差／重大事项未定 → 公司诚实放宽区间（宽度＝真实不确定性，未来应更低质量）；
+  (b) 策略性披露 → 公司故意放宽以便事后"落在区间内"（李小朔等 2021 的"策略性披露"路径）。
+  券商实测给出的形态事实是：真实值更靠近**下限**、上限偏离是下限偏离的 1.5~2 倍 ⇒ 区间不对称本身（(上限−中值)/(中值−下限) 或
+  上下限偏离真实值的比）可能是比宽度更强的一列。本卡把主腿定为宽度、把不对称度与"是否发预告"备用腿并列，全部**不预注册方向**。
+
+pseudocode: |
+  -- 主腿：区间相对宽度（中值归一，学术构造）＋ 下限归一（监管构造）两式并列，禁合并成一个数
+  WITH g AS (
+    SELECT symbol_canonical AS sym, report_period, announce_date, first_announce_date,
+           forecast_type, profit_change_min, profit_change_max, net_profit_min, net_profit_max, last_year_profit
+    FROM c3_fundamental.earnings_forecast FINAL
+    WHERE profit_change_min IS NOT NULL AND profit_change_max IS NOT NULL
+      AND announce_date > DATE'1990-01-01'
+  )
+  SELECT sym, report_period, announce_date, forecast_type,
+         (profit_change_max - profit_change_min)                                     AS width_pp,      -- 百分点，量纲本班实测
+         (profit_change_max - profit_change_min)
+           / abs((profit_change_max + profit_change_min) / 2.)                        AS width_rel_mid, -- 学术 WIDTH 口径
+         (profit_change_max - profit_change_min) / abs(profit_change_min)             AS width_rel_low, -- 监管问答口径（分母=下限）
+         (profit_change_max + profit_change_min) / 2.                                 AS change_mid,
+         if(profit_change_min < 0 AND profit_change_max > 0, 1, 0)                    AS cross_zero     -- 区间跨零＝幅度不可比，须单独档
+  FROM g;
+
+  市场级序列（本卡本班实跑两腿）：
+    腿1 宽指引广度 = 滚动 365 日内 width_pp >= 100 的预告条数 / 窗口内预告条数；
+    腿2 相对宽度中位数 = 滚动 365 日 width_rel_mid 的中位数。
+
+  禁则一：分母 abs((max+min)/2) 在 max+min≈0 时爆炸＝本班实测须把 |mid| < 1（个百分点）的行剔除并单独记档，禁当 0 宽度。
+  禁则二：profit_change_* 与 net_profit_* 单位不同（前者为 %、后者为元），禁在同一式里混算；跨表禁与本库 dividend/rights_issue 混算。
+  禁则三：first_announce_date 与 announce_date 两列语义未确证（本班未验＝不自称确证），做"多次预告/更正"腿前必须先反推确证（同 1017-04 班 announce_date 反推法）。
+  禁则四：本库无「预告更正」事件列（见 data_binding 缺口腿），禁把"更正"当可构造腿。
+
+data_binding:
+  main_table: c3_fundamental.earnings_forecast
+  main_table_measured_zh: >-
+    本班 CH 实跑：全表 FINAL 125,582 行／5,707 票／report_period 1998-12-31..**2027-12-31**（未来报告期＝脏哨兵或前瞻档，须先按
+    report_period <= 当前可用期裁剪）；分析窗 2018-01-01..2024-12-31＝48,575 行／5,299 票；
+    forecast_type 十档枚举与行数逐字＝预增 14,229／略增 6,521／首亏 6,233／预减 6,128／续亏 5,609／扭亏 4,601／略减 3,121／续盈 1,394／
+    不确定 723／其他 16（⇒ "不确定/其他"两档＝宽度语义不适用，须单独档而非并入负方向）。
+    profit_change_min 非空 46,031、max 非空 46,005、两者皆非空 **45,978（占窗内 94.7%）**；(sym,announce_date,forecast_type) 重复 45 行。
+  calibers_measured_zh: >-
+    量纲本班实测＝**百分数（pp）**：pmin p50 13.82／pmax p50 32.00／width_pp p50 **20.00**／p90 77.54／max 38,315.35（＝异常大值须截尾，
+    疑为上年利润近零导致的百分比爆炸）；pmin<0 的行 18,859（41.0%）。中值归一宽度 width_rel_mid p50 **0.238**、p90 1.333、有效 45,656。
+    ⚑⚑ 本班自证伪一条：width_pp 的 p50 **恰＝20.00**，与监管问答"20%为宜"线逐字相同 ⇒ 存在两种解释（公司贴规则线取值 vs ETL/上游按规则填默认区间），
+    本班**未**确证是哪一种（要确证须看同一 (sym,report_period) 的 first_announce_date 与 announce_date 是否总带 ±20 的对称偏移，本班未跑）＝
+    如实登记为"疑似规则填值"红旗，交 ⑥/①② 判；在判前禁把宽度当纯行为变量使用。
+  gap_legs_zh: >-
+    本表 17 列全名单本班已读（symbol/announce_date/report_period/forecast_type/profit_change_min/profit_change_max/net_profit_min/
+    net_profit_max/last_year_profit/first_announce_date/summary/reason/data_source/quality_flag/ingest_ts/exchange/symbol_canonical）。
+    缺三列 ⇒ 三条腿今天不可建：(1) 无「更正公告/revised」列＝监管"差异 20% 或方向变化须更正"这一最强事件无法定位；
+    (2) 无「预告与实际之差」列＝国盛口径的"偏离宽度 20.5%/32.0%"须 join income_statement 实际值才能复刻，属 panel 写面本班未做；
+    (3) 无「扣非/非经常性损益」拆分列＝监管"区间不得跨正负值"判据只能作用在 net_profit_min/max 上，与"扣非净利润"口径不同物。
+  datasource_map_zh: >-
+    AKShare 数据字典（https://akshare.akfamily.xyz/data/index.html）「年报季报」族下含业绩预告／业绩快报／业绩报表条目（本班 WebSearch 逐字命中）；
+    接口 ak.stock_yjyg_em(date='YYYYMMDD')＝东方财富-数据中心-年报季报-业绩预告，date 取 {XXXX0331,XXXX0630,XXXX0931→XXXX0930,XXXX1231}，
+    **从 20081231 开始**（两份独立镜像文档一致确证：https://zhuanlan.zhihu.com/p/18556015904 与 https://www.bookstack.cn/read/akshare/43c9e1e9f815ea0e.md，
+    后者列名字段 forecastl/forecastt＝预计净利润下限/上限、increasel/increaset＝业绩变动幅度下限/上限、forecasttype＝预测类型）；
+    同族 ak.stock_yjkb_em＝业绩快报、ak.stock_yjbb_em＝业绩报表。本库 earnings_forecast 125,582 行、2018+ 窗 48,575 行与本接口覆盖一致。
+    第二源映射（社区实现面）＝biyingapi hicw/yjyg 字段 yjzy 预计摘要/yjzf 预计增幅/ggrq 公告日期/bgq 报告期（本班 WebSearch 命中 CSDN 数据工程第11篇，2026-10-07）。
+  kline_map_zh: 事件研究收益腿走 kline_daily_hfq close（在册令：卡18 须走 hfq，kline_daily.adj_factor 恒 1 死列）。
+
+orthogonal_gate:
+  status_zh: 已实跑・两腿判定相反・判据面不合格（禁读成准入终审）
+  ruler_face_zh: 池面＝③席 24h-TTL 临时候选池 .runtime/tmp/p03_1017_04（is_file 谓词复量 20 员）＝**非在册永久池**（修㉛ 第八次续证）；公共日＝本班自量 **106**（候选自身 366 天）。
+  runs:
+    - leg: c35_wide_guid_breadth365.csv（宽指引广度）
+      command: python scripts/backtest/fexam/signal_orthogonality.py gate --candidate .runtime/tmp/p04_1017_05/c35_wide_guid_breadth365.csv --pool .runtime/tmp/p03_1017_04 --gate 0.3
+      rc: 5
+      verdict_zh: reject max|corr|=0.4588 most_similar=gate_f_flipmom16.csv
+      caveat_zh: 在册判读＝③席 1017-03 已判定 gate_f_flipmom16 是同一路反复吸收本席广度腿的"形状撞车"路；本腿须先分"形状 vs 重复"再谈准入（在册纪律 1017-04 第③条）。
+    - leg: c35_relwidth_med365.csv（相对宽度中位数）
+      command: python scripts/backtest/fexam/signal_orthogonality.py gate --candidate .runtime/tmp/p04_1017_05/c35_relwidth_med365.csv --pool .runtime/tmp/p03_1017_04 --gate 0.3
+      rc: 0
+      verdict_zh: pass max|corr|=0.2720 most_similar=gate_f_dayshape_lag8.csv
+      caveat_zh: 同卡34 的告警——本腿水平带宽 0.1736..0.1970、sd 0.006773＝近常数慢变量，闸对近常数面无判别力；pass 只说明"这条腿还没被证明不重复"。
+  self_pair_zh: 本班未跑 c34 与 c35 四腿的互测（时间窗内未做，如实缺席＝下班勿当作已测）。
+
+self_flag:
+  not_admitted: 是
+  direction_preregistered: 否（宽度大＝"诚实提示不确定" vs "策略性留余地"两向机制并存，本席不自拍，交 ⑥）
+  honesty_zh: >-
+    本卡三条如实：(1) width_pp p50 恰＝监管线 20.0 的**疑似规则填值**红旗未排除；(2) 主腿真正的信息量在"不对称度"与"更正事件"两列上，
+    前者本班未物化、后者本库**无列**＝今天不可建；(3) 与卡33 的裕度思路形状同源，去冗余判权不在本席。
+    本班未物化 panel、未写库、未建永久池、未改任何判据数值与门柱、未碰他席写域。
+caliber_pitfall_zh: >-
+  (1) 三套宽度分母不可混：监管「(上-下)/下」、学术「abs(上-下)/abs((上+下)/2)」、券商「相对真实值的偏离宽度」＝三个不同量，
+  本卡两腿各用一式并列，禁止有人把它们当同一列对拍；(2) profit_change_* 是百分数、net_profit_* 是元；
+  (3) forecast_type「不确定/其他」两档（723＋16 行）不适用宽度语义，须单独档；(4) report_period 有 2027-12-31 等未来值，
+  裁剪谓词必须显式写；(5) 区间跨零（pmin<0<pmax）的行，相对宽度会爆炸＝必须单列档而非纳入主腿。

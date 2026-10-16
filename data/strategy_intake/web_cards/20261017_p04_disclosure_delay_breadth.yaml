@@ -1,0 +1,145 @@
+# creation_token: p04-webcard-batch-20261017-20261017-p04-disclosure-delay-breadth-20261016 | created_by: st-qoder-p04-1017-05 | ttl: task_bound
+# 登记凭据（本班 2026-10-17 05:3x 现测，非声称）＝batch_creation_tokens.py --prefix data/strategy_intake/web_cards
+#   --capability p04-webcard-batch-20261017 → 回显「新增 2 幂等跳过 0 冲突WARN 0；publish_snapshot v945 (noop=False)；投影重打 quadrant=stale wrote=True」；
+#   本班另按 1017-04 班同法现测 create_guard._pg_confirmed_token_files(两枚路径) → both_confirmed True。
+#   token 尾串 -20261016＝意图 API 按 UTC 日生成（本班本地 05:10＝UTC 10-16 21:10，date -u 实测）；本班首稿曾按分卡 capability 书写头串＝与实际登记口不符，05:3x 原地改正并披露。
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261017-P04-34
+title_zh: 财报披露拖延广度（利润表「计划披露日 vs 实际公告日」偏差＞0 的事件流占比）——披露及时性/time-to-metric 轴首条，含「本库三张表的 announce_date 语义＝计划日而非观测日、d<0 恒为 0＝单向钳制」两条硬证伪
+mining_tower: 信息披露行为（何时披露，而非披露了什么）。本席 web_cards 已占『非标准审计意见广度』(nonstandard_audit_opinion_breadth＝审计人对报表的裁定内容)、『商誉高悬停广度』『资产增长异象』(＝报表数字自身的构造)，本轴对象＝**公司把报表推给市场的时间相对其自己申报的计划晚多久**，与上述三条的内容面正交；在册卡名面（docs/03_modules/_domain_backtest/exam_cards/entry_flow/ 全目录 grep「披露及时|timeliness|拖延|time-to-metric|预告」）**零命中同义卡**；L9-A05 盈余惊喜卡用的是 SUE（利润数值面）而**把披露时间只当 PIT 锚**，未把"延迟本身"做成信号＝对象不同。
+birth_seat: ④
+birth_session: st-qoder-p04-1017-05
+birth_batch: 20261017-p04-05
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+source_links:
+  - role: 经典出处（"坏消息倾向延迟披露"＝本卡方向先验的来源）
+    url: https://ideas.repec.org/r/bla/joares/v22y1984i1p21-47.html
+    what_verified: >-
+      本班 WebSearch 命中条目页，被引记录逐字含 Chambers & Penman (1984)「Timeliness Of Reporting And The Stock-Price Reaction To Earnings
+      Announcements」Journal of Accounting Research 22(1):21-47；同页另列 Das/King/Pandit (2026)「Are Delayed Earnings Announcements
+      Informative for Peer Firms?」Journal of Business Finance & Accounting 53(1):435-464 与 Chen/Gao/Liu (2021)「Limited Attention and
+      Post-Earnings Announcement Drift: Evidence from China's Stock Market」IJEF 11(1):1-17。
+      ⇒ 本卡的"延迟＝坏消息／对同业亦有信息含量／中国市场注意力约束"三条方向先验全部来自本条目页书目面；⚠ 本班只读到 RePEc 书目与摘要索引，
+      未取原文全文（期刊付费墙）＝可信度中，方向**不预注册**、交 ⑥。
+  - role: time-to-metric 口径的原始定义面
+    url: https://www.cuhk.edu.hk/acy2/workshop/June2009Wasley/1996TAR).pdf
+    what_verified: >-
+      本班 WebSearch 命中的 Jones (1996, The Accounting Review) PDF 片段逐字：「data are also collected on the frequency of late earnings
+      announcements. This information is relevant because Chambers and Penman (1984) report that "bad news" earnings announcements are
+      more likely to be delayed, causing their stock price effects to be preempted」。
+      ⇒ 本条给出两件事：(1) "late announcement" 是可单独计量的频率量（＝本卡广度腿的原型）；(2) 延迟公告的价格效应会**被提前反映**（preempted）
+      ＝本卡伪代码写死"事件日只允许用 actual_announce_date 次一交易日，禁把延迟本身当 T+0 可成交信息"。⚠ 大学讲义站转载 PDF＝无许可声明，只学思想不入码。
+  - role: 及时性度量的正向可用版本（本卡第二腿"按期/提前披露占比"的出处）
+    url: https://economy.alljournals.cn/relate_search.aspx?aid=718C5653299B31E448AEF43FCD3DF355&cid=E842965A0B2E2676&ctl=0&etl=0&language=&pcid=4182BDE6AAE91C51
+    what_verified: >-
+      本班 WebSearch 命中该期刊聚合页，其下挂摘要逐字（Brooks/Cheng/Liu/Yu, Journal of Corporate Accounting & Finance 2024, 35(1):277-307）：
+      「firms with better earnings news are more likely to file their 10-Ks early … firms filing 10-Ks early in the current year are more
+      likely to have better earnings and higher stock returns in future years … robust to different measures of timeliness」。
+      ⇒ 本条＝"及时性"存在**双向**外部证据（早披露＝好消息 vs 晚披露＝坏消息），故本卡两腿（拖延广度、按期广度）并列而不合并、不自拍符号。
+      ⚠ 聚合站二手摘要、无许可行＝低-中可信度。
+  - role: 本库语义判据的在册互证面（非外部链接，本班按卡面引用）
+    url: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A05__calibration__02_盈余惊喜事件研究.yaml:69-72
+    what_verified: >-
+      该卡 pit_gates 逐字：「一律用 actual_announce_date，announce_date（计划披露日）禁作 PIT 锚」「过滤 announce_date/actual_announce_date
+      <= DATE'1990-01-01' 的 epoch 哨兵脏值」。⇒ 本卡据**册内既有卡**确证 income_statement.announce_date＝计划日、actual_announce_date＝观测日，
+      因此本轴的正解是"用同一张表的两列作差"，不需要跨表 join；同时本班实测与该条互补＝跨表 join 出来的 audit_opinion.announce_date 与
+      disclosure_plan.scheduled_date 有 96.6% 逐日相等＝进一步证明"announce_date"族在本库普遍是计划日口径（见 data_binding 证伪腿）。
+
+license:
+  gate_verdict: 只学思想不入码
+  detail_zh: >-
+    四枚来源面全部为期刊/大学讲义 PDF/聚合摘要站，本班逐条读到的都是书目或摘要面，未获得任何 OSI/CC 许可原文；
+    外部代码面本班按 GitHub 三筛查"annual report filing delay stock"与"tushare 预告"两题 total=0、"earnings guidance China A-share"
+    total=1（2019 年无关 Lyft 帖），＝本轴在 GitHub 无可复用实现，故卡面伪代码全部由本班按本库列名自写，零外部代码复制。
+  positive_control_note: GitHub 三筛正对照＝akfamily/akshare 22,958★/MIT/pushed 2026-10-14 命中（本班 API 实跑，非记忆）。
+
+logic_zh: >-
+  公司在披露前会向交易所申报一个"计划披露日"（本库 income_statement.announce_date），实际公告日为 actual_announce_date。
+  两者之差 d＝actual−plan 是管理层可控的行为量：外部文献给出的机制是"坏消息晚发"（Chambers-Penman 1984）与"晚发的价格效应已被提前
+  消化"（Jones 1996），同时存在"早披露＝好消息"的镜像结论（Brooks 等 2024）。作为横截面特征时可按公司自身 d 分档；作为市场级择时/风险
+  体温计时，用滚动窗口内"晚发事件占比"（拖延广度）与"按期占比"（守时广度）两条腿。本库实测的可用面与不可用面都要写死：d 的分布
+  极端右偏（98.06% 的 d＝0、d>0 仅 2,773 条、但 p99 已达 279.9 日、最大 2,571 日），所以**水平值与中位数腿是恒零退化腿**（本班实测 366/366
+  天中位数＝0），只有"尾部占比"这一种构造在本库有变化度。
+
+pseudocode: |
+  -- 唯一正解：同表两列作差；禁跨表借 announce_date 当实际披露日
+  SELECT symbol_canonical                                   AS sym,
+         report_period,
+         announce_date                                       AS plan_date,      -- 计划披露日（L9-A05 在册判据）
+         actual_announce_date                                AS obs_date,       -- 实际公告日
+         dateDiff('day', announce_date, actual_announce_date) AS d
+  FROM c3_fundamental.income_statement FINAL
+  WHERE announce_date        > DATE'1990-01-01'
+    AND actual_announce_date > DATE'1990-01-01'      -- 剔 epoch 哨兵（L9-A05 pit_gates 第2条）
+    AND exchange IN ('上海主板','深圳主板','创业板','科创板','北京主板')  -- 分层，禁跨板混算
+
+  -- 腿1 拖延广度（市场级日频，滚动 365 日）：晚发事件数 / 窗口内事件数
+  --   锚点日 = obs_date（延迟何时"成为已知"由实际公告决定），禁以 plan_date 锚（前视）
+  -- 腿2 守时广度：d = 0 的占比（与腿1 互补但**不合并**，两腿各自成序列）
+  -- 腿3 极端拖延子档：d > 365（本班实测 1,089 条，事件量级＝全样本 0.76%，须做事件研究而非水平值）
+
+  事件研究口径：事件日 = obs_date 的**次一交易日**（T+1 适配，同 L9-A05 卡面「公告当日不可成交」）；
+  估计窗 [-210,-11]，事件窗 [0,+5]/[0,+20]/[0,+60]；本轴两腿方向不预注册。
+  禁则一：禁用 disclosure_plan.actual_date 当实际披露日＝本班实测该列 98.60% 等于 scheduled_date（265,658/269,416）＝自指抄写面。
+  禁则二：禁用任何 *_pct / 现成分位列（前视，在册 1016 令）。
+  禁则三：d 的右端须铺满日历（在册令「前瞻/滚动窗右端须铺满日历」），最近 60 日窗口未闭合一律记 NaN。
+
+data_binding:
+  main_table: c3_fundamental.income_statement
+  main_table_measured_zh: >-
+    本班 CH 实跑（只读，窗口 2018-01-01..2024-12-31，两列均＞1990）＝143,011 行／5,707 只票／plan 跨度 2018-01-02..2024-12-31。
+    d＝actual−plan 分布逐字：d=0 140,238 行（98.06%）／d>0 2,773 行（1.94%）／**d<0 恰 0 行**；p50=0、p90=0、p99=279.9、min=0、max=2,571；
+    d>365 者 1,089 行、d<-365 者 0 行。⇒ 两条硬结论写死：(1) **本库不存在"提前披露"记录**（d 从不为负）＝要么真实提前披露被 ETL 钳平、
+    要么 plan 列随实际同步改写，两种都意味着"守时/提前"这一腿在本库不可信；(2) 拖延事件绝对量只有 2,773 条＝市场级广度序列的水平变化度
+    仅 0.010241..0.014473（sd 0.001281）＝近常数。
+  falsification_legs_zh: >-
+    (1) c3_fundamental.disclosure_plan（311,266 行 FINAL／5,919 票／report_period 1993-12-31..2026-09-30，(symbol,report_period) 重复组实测 0）
+    三列互等性实测：actual_date=scheduled_date **265,658/269,416＝98.60%**、announce_date=actual_date 仅 11,405、announce_date=scheduled_date 仅 10,664
+    ⇒ 该表的 actual_date 不是独立观测；该表 announce_date 与 scheduled 的中位差 **−33 日**（95.5% 的行 announce 早于 scheduled 最多 435 日）
+    ＝语义更像"预案/决议公告日"而非披露日，本班未确证＝不自称确证。
+    (2) 跨表对拍：disclosure_plan.scheduled_date 与 audit_opinion.announce_date 在 (symbol,report_period) INNER JOIN 75,359 行里**逐日相等 72,772 行＝96.57%**
+    ⇒ 与"announce_date 族＝计划口径"一致（非"两表互相独立确证"，切勿这样读）。
+    (3) disclosure_plan.announce_date 与 audit_opinion.announce_date 同键对拍 69,155 行里 mismatch 69,070＝99.88% ⇒ 两列**不同物**，
+    禁在任何卡里把二者当同一事件日混用（本条转 ⑥/⑨ 作 PIT 立法输入）。
+  degenerate_leg_reported_zh: 本班第二腿（滚动 365 日 d 中位数，截尾 ±90）实测 366/366 天全为 0（sd=0）＝退化，**未喂正交闸**
+    （在册律 1017：恒零面在两池皆 rc=0 pass，"过闸"不是可用性证据；闸前先测 std==0）。
+  alt_axes_measured_absent_zh: >-
+    两条原拟轴本班实测**不可建**，如实登记为负证据面：(a) c1_market.margin_target_adjustment（两融标的调入调出，9 列结构齐备含
+    action/effective_date/exchange）＝**count() 实测 0 行**＝空壳表；(b) c1_market.market_etf_share_snapshot（3,264 行，含 shares/premium_disc_pct/main_net）
+    ＝uniqExact(trade_date) 实测 **2**（仅 2026-09-18 与 2026-10-13 两截面）＝无时间序列，折溢价/份额申赎轴今天不可建。
+    两单均已转 ①/②（本席台账转单段）。
+  datasource_map_zh: >-
+    AKShare 数据字典（https://akshare.akfamily.xyz/data/index.html）在「年报季报」族下本班 WebSearch 命中并逐字确认存在
+    「业绩预告」「预约披露时间-东方财富」「预约披露时间-巨潮资讯」「业绩快报」「业绩报表」条目；
+    接口名由两份独立镜像文档确证：ak.stock_yysj_em(symbol='沪深A股', date='YYYYMMDD')＝预约披露时间-东方财富（symbol 枚举
+    {'沪深A股','沪市A股','科创板','深市A股','创业板','京市A股','ST板'}，date 从 20081231 起）；ak.stock_yjbb_em/ak.stock_yjkb_em/ak.stock_yjyg_em 同族。
+    ⇒ 本卡数据源映射＝本库 income_statement 两列（已落库）＋上游 akshare stock_yysj_em（补"计划日改版历史"用，本库当前**只存终值无改版序列**＝本班实测缺口）。
+
+orthogonal_gate:
+  status_zh: 已实跑・当前判 pass・判据面不合格（禁读成准入终审）
+  ruler_face_zh: >-
+    池面＝③席 24h-TTL 临时候选池 .runtime/tmp/p03_1017_04（20 员，本班 is_file 谓词复量目录仍在・成员 20 枚），
+    **非在册永久池**（在册 32 员永久池第七次缺席续证，修㉛）；公共日＝本班自量 **106**（候选自身 366 天，池 20 员逐员交集皆为 106）。
+  runs:
+    - leg: c34_late_breadth365.csv（拖延广度滚动 365 日占比）
+      command: python scripts/backtest/fexam/signal_orthogonality.py gate --candidate .runtime/tmp/p04_1017_05/c34_late_breadth365.csv --pool .runtime/tmp/p03_1017_04 --gate 0.3
+      rc: 0
+      verdict_zh: pass max|corr|=0.2644 most_similar=ctrl_random.csv
+      caveat_zh: >-
+        ⚑ most_similar 是**随机控制腿**＝这条 pass 是"弱证据的弱形式"：序列 sd 仅 0.001281、水平带宽 0.0102–0.0145，近常数序列对任何
+        信号的 \|corr\| 都会压到阈下。本卡的 pass **不得**读成"该轴与池内正交"，只能读成"该腿变化度不足以被闸判别"。
+        在册 修㉛/修㉝ 同型；请 ⑨ 席把"most_similar=ctrl_random"单独列成一态。
+self_flag:
+  not_admitted: 是
+  direction_preregistered: 否（外部同时存在"晚发＝坏消息"与"早披露＝好消息"两向证据，本席不自拍，交 ⑥）
+  honesty_zh: >-
+    本卡的真正增量是**证伪面**而非信号面：(1) d<0 恒 0＝本库没有"提前披露"这一档，任何以"提前 vs 拖延"做双档的构造在本库会退化成单档；
+    (2) disclosure_plan.actual_date 98.6% 抄 scheduled＝用该表算拖延会得到"全市场永远守时"的假绿；
+    (3) 拖延事件仅 2,773 条＝水平腿近常数、闸对这条无判别力。
+    本班未物化任何 panel、未写库、未建永久池、未改任何判据数值与门柱。
+caliber_pitfall_zh: >-
+  三条易错口径：(1) announce_date 在本库＝计划日（L9-A05 在册判据）且与 scheduled 高度同值，**不是**公告实际发生日；
+  (2) 用 actual_announce_date 锚事件时，"延迟"这件事在 plan 日已知、在 obs 日才被市场确认＝两时点信息集不同，禁把 d 当日频因子直接回看
+  （d 在 obs 日之前不可观测＝前视）；(3) d 的极端右尾（max 2,571 日、>365 日 1,089 条）里混有"长期未披露后补披露"与修订行，
+  同键多披露须取最晚 actual_announce_date（L9-A05 pit_gates 第3条），否则会把 12 年前的补披露算进当期广度。
