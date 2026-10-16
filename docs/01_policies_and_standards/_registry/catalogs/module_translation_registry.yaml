@@ -11128,8 +11128,8 @@ entries:
   desc_en: ""
   desc_zh: ""
   name_en: ""
-  name_zh: 问题
-  plain_zh: g07_sentiment_validation.py — G07 情绪分层相关性验证（28 号 §3.7.2/§3.7.4，30 号 §6.2 施工前必做）。
+  name_zh: G07情绪周期验证脚本
+  plain_zh: 用涨停连板和涨跌家数等公开数据验证情绪周期定位准不准，只读不下单
   domain_id: D_GOVERNANCE
   responsibility_layer: governance
 - module_path: scripts/construction/local_layer_daemon.py
@@ -11217,6 +11217,11 @@ entries:
   name_en: Technical Indicator Coverage Auditor
   name_zh: 技术指标覆盖审计器
   plain_zh: 回填补完数据后跑它验收：把指标宽表的每一列挨个查一遍有没有空列。查询失败会大声报错绝不假装全绿，162 列拆成小批查免得把数据库内存顶爆。全绿打印 AUDIT PASS，有缺口退出码非零
+  domain_id: D_DATA
+  responsibility_layer: business
+- module_path: scripts/data/backfill_bse_minute_history.py
+  name_zh: 北交所分钟历史回补脚本
+  plain_zh: 把北交所股票缺的分钟K线历史按缺口清单回补进库，只补缺的行不动已有的
   domain_id: D_DATA
   responsibility_layer: business
 - module_path: scripts/data/backfill_kline_daily_history.py
@@ -11344,6 +11349,11 @@ entries:
   plain_zh: 从 QMT 本地数据目录把缺的 tick 分笔数据补进 ClickHouse，自带断点防重灌和删数据前的备份检查，是 15.6 亿行行情修复工程的执行工具
   domain_id: D_DATA
   responsibility_layer: business
+- module_path: scripts/data/pattern_event_backfill.py
+  name_zh: 形态事件回填脚本
+  plain_zh: 把形态引擎确认的买卖形态事件回填进数据库事件表，供后续胜率统计直接取用
+  domain_id: D_SIGNAL
+  responsibility_layer: business
 - module_path: scripts/data/repair_etf_minute_tz_split.py
   desc_en: ""
   desc_zh: ETF 分钟族五表 trade_time 2026-06-30 前 UTC 误标 +8h 影子表重建换名修复
@@ -11376,6 +11386,16 @@ entries:
   plain_zh: 每天早上给所有数据源做体检的工具：挨个检查每张源卡片的表里有没有数据、数据新不新鲜、定时任务在不在跑，把体检报告按日期存档，发现哪个源坏了就写告警条给运维看。数据库整个连不上时不慌不炸，统一标记降级。
   domain_id: D_DATA
   responsibility_layer: business
+- module_path: scripts/data/synth_board_index.py
+  name_zh: 板块日线指数合成脚本
+  plain_zh: 把一篮子成分股日线行情按流通市值权重合成为板块指数日K线的只读工具
+  domain_id: D_DATA
+  responsibility_layer: business
+- module_path: scripts/data/synth_board_minute.py
+  name_zh: 板块分钟指数合成脚本
+  plain_zh: 把个股分钟K线按权重合成为板块分钟指数K线的补数脚本，供板块级分钟回测直接读取
+  domain_id: D_DATA
+  responsibility_layer: business
 - module_path: scripts/data/sz_open_data/probe_all_new.py
   desc_en: ""
   desc_zh: ""
@@ -11398,6 +11418,11 @@ entries:
   name_en: TILIB DWM shard runner
   name_zh: tilib指标夜跑分片编排器
   plain_zh: 这是个跑夜班用的总调度小工具：把全市场5000多只股票的指标计算拆成58个小批次一个个跑，每一批单独开进程防止内存爆掉，跑完一批记个条子，中断了重跑会自动跳过已完成批次。
+  domain_id: D_DATA
+  responsibility_layer: business
+- module_path: scripts/data/verify_final.py
+  name_zh: 补数终验脚本
+  plain_zh: 补数跑完后做最终复验：逐表检查行数覆盖是否补齐，再抽几行对数值对不对
   domain_id: D_DATA
   responsibility_layer: business
 - module_path: scripts/data/wipe_tick3days.py
@@ -14528,6 +14553,11 @@ entries:
   plain_zh: 治理·D6 安全的vague terms检测器：自动扫描vague terms的异常迹象，一发现就标记报出，防止治理·D6 安全带病往下传。
   domain_id: D_GOV_SCRIPTS
   responsibility_layer: governance
+- module_path: scripts/governance/d6_security/price_cage/__init__.py
+  name_zh: 价格笼子观察窗工具子包壳
+  plain_zh: 裁定535观察窗两件工具（供数采样器和武装核证判官）的子目录包装壳：因为d6_security平铺目录超限，两件搬进这个子目录；壳本身没有任何算法逻辑，只负责把两件工具组织成一个包。
+  domain_id: D_GOV_SCRIPTS
+  responsibility_layer: governance
 - module_path: scripts/governance/d6_security/price_cage/price_cage_supply_sampler.py
   desc_zh: 裁定#535 观察窗供数侧：交易时段内三重判定（probe 新鲜/age_s≤10/quote.csv 尾行 timetag 差≤60s）追加证据 price_cage_supply.jsonl，非交易日/非时段零写
   name_zh: 价格笼子供数新鲜度采样器
@@ -17448,8 +17478,8 @@ entries:
   desc_en: ""
   desc_zh: ""
   name_en: ""
-  name_zh: 主题联动监控
-  plain_zh: 主题联动监控：0.85 互证映射子集 × 最新行情 → 产业链联动日报。
+  name_zh: 题材联动监控脚本
+  plain_zh: 盯着题材链里各股票45天的涨跌相关性，输出哪条链在联动、谁在领涨
   domain_id: D_DATA
   responsibility_layer: business
 - module_path: scripts/industry_graph/ths_equity_hk_refill.py
