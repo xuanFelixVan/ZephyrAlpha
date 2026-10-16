@@ -969,3 +969,103 @@ cd /d/ZephyrAlpha/.worktrees/st-qoder-p05-1015-05 && git --no-pager diff --cache
 - [BLOCKER] 追加两行（本节随带，行首形态与本台账一致）＝
 - `[BLOCKER]` 2026-10-17|⑤席1017-02|工具缺陷|各席手搓的"index==disk"自检易比错字段（`git ls-files -s` 列序＝mode/sha/**stage**，把 stage 当 sha 即恒不等⇒自检假红拦住合法提交，本班白烧一轮）|证据＝本班第一次 rc=9 的原文读数 `index==disk: [('…calibration_exam.py','0','05f49fb…')]`（左值 0 即 stage）→ 改用 `ls[1]` 后同一条命令打印 OK 且 git_commit rc=0|要⑫给"index↔盘↔袋三面等值"一条标准谓词单口（现每席自写自错），或在提交配方文档里钉明列序|低
 - `[BLOCKER]` 2026-10-17|⑤席1017-02|流程问题|主区共享 index 在恒定班窗内被高频占用，令"小步收班＝当场投袋"这一 Owner 新纪律与共享写手结构性撞车|证据＝本班两帧实测 `.git/index.lock` size=0 而 mtime 于 02:47:39→02:48:21 间刷新∧psutil git 进程数=0∧同刻 reconciler PID 35816 在跑；本班处置＝轮询等待（未删他锁）|要⑫判 reconciler／序列化面是否应改在 worktree 侧动 index 或带退避窗口；本席不代修|中
+
+
+### 8 收班八件终核（06 班班尾，date 现测；本班交付实投＝两枚袋）
+
+- 开班与班尾 date 现测＝开班 02:20:11／本节落笔 02:53:19＝**实际耗时 33 分**（75 分班窗内）；分账（段读数）＝冷启动与租约 5 分・六袋四态分诊与接管疏通 8 分・六腿尺复跑 2 分・语义重基尺（含 S2 谓词返工一轮）4 分・8 枚候选七面复测与二次断链定性 5 分・执行器实现＋四组实测（11 例正向／181 例回归／反向自证）＋ruff 复跑 9 分・台账与游标（含切除重复追加一份）7 分・两枚袋投出与班尾终核 约 3 分。**段和不必等于总**（总以本行两个 date 读数为准，段读数为四舍五入目测），返工三笔＝重复追加切除／stage 字段假红／COMMIT-SCOPE 加旗。
+- ①release＝**现测达零**：`lock_files.py list` 内本班 sid 命中 **0**・注册表本 sid `held_files=0`＝入队即由网关释放该袋 held 面（在册实测），本班不虚报"已释放"也不虚报"未释放"。
+- ②心跳＝**顺延，非漏做**＝两枚袋此刻仍 pending（实测见下"袋态读数"），而在册收班次序"先落地后 unregister"（先摘会被 SESSION-REQUIRED 挡尾袋）；本班自起守护 PID **51892**（末行 status alive 实测）＋网关代起枚（承在册"任何一次 python 调用都会代起守护"）；现测 heartbeat_daemon 且 cmdline 含本 sid 的进程数＝**2**。收法交落地当班＝先 `SessionRegistry.unregister('st-qoder-p05-1017-02')`，读回 `.runtime/sessions/st-qoder-p05-1017-02/heartbeat.jsonl` 末行须 `status:"exited"`，>70 秒仍 alive 才按 PID 逐一核 cmdline 后终止（禁按镜像名批杀、禁只读 pid 文件判活）。
+- ③耗时＝见本节首行（按例行 vs 返工分账，返工约 4 分）。
+- ④[BLOCKER]＝本班共 **8** 行（§5 六行＋§7 两行），全部行首零缩进、`grep -n "\[BLOCKER\]"` 可命中；全册 BLOCKER 行数现测＝365。
+- ⑤自清＝`.runtime/tmp/st-qoder-p05-1017-02/` 本班一次性件（28 枚：boot／ruler／surgical／submit／submit_impl／submit_books／takeover／writelog／cursor／dedup／final_log／wait_submit 十二枚 py＋ruler_out／surgical／submit／submit_impl 等 json 与 msg／candidates／ruler_stdout 等文）排在**本节被册袋快照消费之后**整目录删除（在册"清掉自己要读的清单件"自犯族防复发）；`D:/tmp_p05_1017_02`（pytest 仓外 basetemp）同批删；项目根零临时件；四件套外零散落。
+- ⑥GPU 还牌＝本班零 acquire（零 GPU 作业）⇒ 免执行，如实报。
+- ⑦后台子任务清点＝零 spawn 子代理 ⇒ 零孤儿；后台存活＝自家心跳守护一组（含网关代起枚），随②交落地班收。
+- ⑧worktree 现测＝`git worktree list` 行数＝**36**・其中本班 sid 命中＝**0**・`.aidrafts/st-qoder-p05-1017-02` 存在性＝**No such file or directory**（本班零影子树）⇒ 本班零 worktree（TRAE-079 Phase 2 达，本班全程零次调用工棚入口）。历史遗留 `.worktrees/st-mtrain-1016`・`.worktrees/st-rulemap-20261014` 呈清理专班，本席不动。
+- 袋态读数（本节落笔前现测，02:53:19）＝pending｜q-20261017-st-qoder-p05-1017-02-0001｜files=2｜dead_reason=None；processing｜q-20261017-st-qoder-p05-1017-02-0002｜files=2｜dead_reason=None
+- 交付实投＝**两枚袋**（-0001 执行器 regimes 诚实行 files=2・-0002 册袋 files=2）＋本节所在第三枚册袋 -0003（＝-0002 的严格超集，因本节在 -0002 快照之后追加；超集自证见下"补投自证"行）。⚑本班 §3/游标初稿那句"零代码件落地班"已在 §7 首段按"另起留旧案不涂"更正，不作最终口径。
+
+
+## 10-17 03:35–04:0x · 班次 07（st-qoder-p05-1017-03，承 1017-02 游标）领单＝P0 首件 blob 反捞（自家死袋面＋写域面积机生账）；次件＝⑩ 四班续单 prestage 误杀"已跟踪件"治本
+
+### 0 冷启动·防重入·水位·租约（date 实测，非体感）
+
+- 03:35:11 首命令＝date／Python 3.12.8 ✓；`setup_dev_env.py --check`＝exists True・installed (points to D:\ZephyrAlpha) True；`lock_files.py cleanup`＝"CLEANED — 6 个死锁已清理"（p01 两册＋p01 csv＋p04 两册＋p03 一册＝他席死锁，本班只清锁不碰其内容）；reaper `--status`＝source=live・last_run 03:35:21・killed=0・degraded=False・进场水位 commit_pct **77.28**／cpu_pct **48.7**／ram_used_pct 72.4（对照上班进场 80.87／64.2＝两面更宽，本班仍不扩面）。
+- ⚑reaper 自检带出 `dead-archive auto 钩子退出码=1 … ERROR: serializer 租约存活（pid=47508）`＝上班在册"自动清理腿恒不执行"复证，本班不动、不重复立案。
+- 防重入三证＝①06 游标 notes 已写"下一班（07）领单序列"且 §8 收班八件节齐；②06 班两枚实现/册袋 `-0001/-0002` 均 **done**，真判据按上班给的三条现量＝`git show HEAD:scripts/backtest/fexam/calibration_exam.py | grep -c _regimes_preflight`＝**2**（上班投前 HEAD＝0）・`git show HEAD:tests/backtest/fexam/test_calibration_shape_preflight.py | grep -c regimes_unparsable`＝**2**・袋态 find 读数＝done×2＋dead×1（-0003）；③-0003 内容唯一存活处＝blobs，本班按 §1 反捞带走（不靠袋态判前任停手，也不靠 done 计数判落地）。
+- sid 取号三面并集自检＝台账 grep `st-qoder-p05-1017-03`＝**0**・`.runtime/tmp/` 与 `.runtime/sessions/` 该 sid 目录＝本班本次创建・注册表登记前查无同名 ⇒ 1017-03（总第 07 班）唯一。
+- 租约＝`register(SID, pid=0, held_files=两册)` 回读 `(pid 0, held 2)` → `lock_files.py acquire` 两册均 ACQUIRED → 心跳守护自起 **PID 27952**（14 秒后 `heartbeat.jsonl` 末行 `status:"alive"` 实测）。
+- ⚑本班自犯①（当场抓到并补证）＝首版 boot **只注册未起守护**，实测 `heartbeat.jsonl` 与 `heartbeat_<sid>.pid` **双查无**＝"注册在册"与"心跳在岗"是两面，注册回读 held=2 看着全绿而守护缺席（在册"静默降级与未触发同形"族复犯）。补起守护后两证齐。
+
+### 1 P0 首件＝blob store 反捞（对现 HEAD 重基，不按磁盘）
+
+- 自家面＝上班死袋 `q-20261017-st-qoder-p05-1017-02-0003` 两件逐面实测（`sha256(blob)==袋记 blob_sha256` **True×2**・`blob==盘字节` **True×2**・`HEAD 为 blob 严格前缀` **True×2**；ledger 袋 986 行 vs HEAD 971 行＝§8 收班节 15 行**唯一存活处＝`.runtime/commit_queue/blobs/`**）。
+- 处置＝**不重投死袋**（其 dead_reason＝"非注册表族件双侧皆改真冲突（整文件三方）"，重投必再死），改由本班册袋按"盘==袋⊇HEAD"严格超集基底一次带走，归属双写自陈（本声明即留痕）。checkpoint 面＝blob==盘==HEAD（12 行全等）＝该件在死袋里是 noop，本班游标改写另算增量。
+- 写域面积尺（谓词写死可复跑＝`scan_own_domain.py`）＝扫 `dead/pending/processing` 三态目录内路径前缀 ∈ {`docs/_working/automation_campaign/p05_impl/`、`scripts/backtest/fexam/`、`tests/backtest/fexam/`} 的件（`action=delete` 跳过；逐件先验 sha256 再比三面），读数＝**rows=72／unique_paths=44／DISK_EQ_BAG_UNLANDED=6／其余为 DISK_OTHER 与 DISK_EQ_HEAD_BAG_AHEAD 两族**。
+- 6 枚分账＝①本席 `ledger.md` 1 枚（本班带走）；②`scripts/backtest/fexam/conditional_exam.py` 3 袋同件（`st-scorehome-20261014-0003/0008/0013`）；③`scripts/backtest/fexam/grid_adapter/emit_configs.py` 2 袋（`st-qoder-b4-1015-0001`・`st-qoder-b4b-1016-0001`）。⚑②③＝他席 authored 代码件且盘==袋、HEAD 落后＝本班**不自取**（代落＝把别人意图按自己署名入库＝在册归属篡改形态），只出面积交 ⑩ 派单（§5 一条）。
+- 六腿尺面本班未复跑（谓词与 03–06 班逐条同源，复跑交下一班）；上班已定性的 C 族二次断链面（在册 21 行 `meta_question_answers/{build,casefiles}` 族）本班**照旧不投**，等 ⑫ 词表存在性闸或 ⑩ "重指向／作废"判。
+
+### 2 次件结案＝prestage 对"已跟踪但父目录命中 ignore 规则"的件恒误杀（⑩ 1016-08/09/11/12 四班续单，全史 4 只死袋实证）
+
+- 缺陷面**读码得**（非推断）＝`scripts/governance/commit_queue_landing.py:2702` 把**全部** `adds` 喂给 `git check-ignore --no-index`；`--no-index` 支路只按 `.gitignore` 规则判、不看跟踪态，而 ignore 语义按 git 本体只对**未跟踪**件生效。
+- 主仓三态实测（同一件 `scripts/data/bdpan_tick_watch.py`，本班现跑）＝`git ls-files` 命中 **1**・`git check-ignore`（默认，读 index）rc=**1** 无匹配・`git check-ignore --no-index` rc=**0** 命中 `.gitignore:610 scripts/data/*`・`git add --dry-run` rc=**0** 打印 `add '…'` ⇒ 该闸判死的件 git 自己愿意暂存＝**假阳性**，不是"该拦"。
+- 修法＝只改**喂给闸的输入指向**：先 `git ls-files -- *adds` 取已跟踪集，`probe = adds − tracked`，只把未跟踪路径交给 `--no-index` 一支。⚑判据本体一字未动＝未跟踪再生件的拒绝分支／文案／两条处方指引原样保留，未加白名单、未加豁免旗、未改阈值（Owner 在册正解同形＝"改输入指向而非改闸"）。
+- 能红能绿（同输入对拍，非引用）＝新测试类 `TestPrestageTrackedUnderIgnore`（tmp_path 沙盘仓，零生产路径写）：**改码前**＝`test_tracked_file_under_ignore_rule_lands` FAILED（stats `dead=1`，死信串含"prestage 拒绝"）・反向支 `test_untracked_file_under_ignore_rule_still_rejected` **passed**（闸照拦＝判据未松动实测）；**改码后**＝两支全绿（实跑读数见 §3）。
+- ⚑本班自犯②（落笔前抓到）＝两条断言第一版都写 `_dev_commit_count(tmp_repo) == 0`，而本支沙盘为造"已跟踪件"自身已推进 dev 一笔 ⇒ 反向自证支被自家基线断言打死（假红，实跑 2 failed）。改法＝setup 后取 `before`，正向断 `before+1`、反向断 `==before`；同一条命令改后 1 failed 1 passed＝缺陷可见、判据无松动。
+- 附带结案一支**同件存量病**（同袋带上）＝本文件两支桩 `_StubGateway.commit`／`_PathspecStubGateway.commit` 缺 `allow_overlap` 形参。落地路径自二层⑤（2026-10-05）起在 `commit_queue_landing.py:3513` **无条件**传该实参，存量桩未追齐＝该文件在册"另 27 支既有失败"的成因之一（真源＝同件 `:2535` 注释自陈，非本班新裁）。追齐形制照同件 `:2544` 已在册写法（加 `allow_overlap: bool = False`，桩行为不变）。实测＝追齐前 `TestUntrackedNewFileLanding` 两支 FAILED（死信串本班取证＝`TypeError: _PathspecStubGateway.commit() got an unexpected keyword argument 'allow_overlap'`），追齐后同两支 passed。
+
+### 3 回归采集面（写前必答"跑了哪些件/多少用例"，两时点并列）
+
+- 采集面＝`tests/gov/governance/test_commit_queue_landing.py` **整件单跑**，`--basetemp` 走仓外 `D:/tmp_pt/…`（在册 `commit_queue._strip_lane_prefix` 截根陷阱防复发），`-q --tb=no`；采集数＝改造前 **collected 102**（HEAD 版两件）・改造后 **collected 104**（＝102＋本班新增 2）。
+- 两时点实测（同一条命令，本班各自跑一次）＝**改造前（两件均取 HEAD 版）**＝`27 failed, 75 passed in 129.51s (0:02:09)`・**改造后（prestage 输入指向＋两支桩追齐＋新增 2 支）**＝`13 failed, 91 passed, 1 error in 153.95s (0:02:33)`。
+- 定向面读数＝改码前 `-k "PrestageTrackedUnderIgnore"`＝**1 failed 1 passed 102 deselected**（红＝缺陷可见，绿＝反向自证）；改码后 `-k "PrestageTrackedUnderIgnore or TestUntrackedNewFileLanding"`＝**4 passed 100 deselected in 23.23s**；存量红取证面 `-k "TestUntrackedNewFileLanding or TestPathspecSelfHeal"`（码未改时）＝**2 failed 1 passed**。
+- 失败名单逐条对账（防"计数降了但换了新红"）＝两份日志的 `FAILED/ERROR` 名单排序后作集合差＝**消失 14 条、新增 1 条**，新增那条＝`test_gateway_commit_runs_inside_code_face_scope` 以 **ERROR**（非 FAILED）形态出现＝会话末 teardown 归因（在册族：会话级 tracked 写入守护在最后一个 teardown 报，肇事名单两次跑各不相同）；本班单跑该支＝**1 passed in 3.12s**（仓外 basetemp `D:/tmp_pt/p0503err`）⇒ 判"归因 collateral"不判"本班引入"。
+- lint＝`ruff check` 两件 All checks passed；`ruff format --check` 首跑报 `Would reformat: tests\gov\governance\test_commit_queue_landing.py`（HEAD 版两件均"already formatted"，故差异只可能来自本班新增行）⇒ 执行 `ruff format` 后 `--diff` 复核只改到本班那一条函数签名换行，两件复量 already formatted。
+
+### 4 设计稿与转单（→08 班／⑩／⑫，本班不施工）
+
+1. **→⑫（桩与生产签名漂移的全仓对照尺）**＝本班只追齐 `tests/gov/governance/test_commit_queue_landing.py` 内两支桩。同族扫描尺（本班实跑的谓词＝`def commit(` 后 12 行内含 `allow_overlap` 或 `**kwargs` 记 hits）命中 **0** 的另有三件＝`tests/gov/governance/test_commit_queue_contention_reroute.py`・`test_commit_queue_landing_nightfix.py`・`test_commit_queue_landing_qcure_m5.py`。⚑hits=0 **不等于**必红（这些桩可能不经 `commit_queue_landing.py:3513` 那条无条件传参路径），本班未跑该三件故不据尺定性，只把面交给巡检配一条"桩形参 ⊇ 生产 commit 形参"的机生对照＋能红用例。
+2. **→⑩（派单面，第五班复证）**＝写域面积尺 6 枚里 5 枚属他席 authored 代码件（`conditional_exam.py` 三袋同源・`grid_adapter/emit_configs.py` 两袋），盘==袋、HEAD 落后、唯一存活处＝`blobs/`。本席按指令卡不自取；请 ⑩ 给"哪席取哪件"或"整族停投"（停投则这 5 枚可判 absorbed 销账）。另上班在册 `src/zephyr` 64 枚派单仍未回，本班未复跑六腿尺，面沿用上班读数。
+3. **→⑩／⑫（一族死信的机械快进臂）**＝上班册袋 `-0003` 死因＝"非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）"，而本班三面实测＝`sha256(blob)==袋记` ∧ `blob==盘` ∧ `HEAD 为 blob 严格前缀`＝**袋内容对 dev 现面是纯追加**。这类形态本可机械快进（无信息损失），现在每发生一次就给下一班制造一次"人工反捞"。建议给合并器一条"袋 ⊇ dev 现面 ∧ dev 现面为袋前缀 ⇒ 快进取袋"的臂（判据仍是内容级，不放宽任何冲突判定）。
+4. **→08 班（实现单，承上班未动）**＝①双臂 panel 28 枚崩点设计稿（上班 §4-2 已钉死 `_comparison_metrics:561`→`_series_metrics:217`→`_spearman:97 pd.Series(2D)`，对照族驱动器同帧崩＝两条路都不支持，属结构性大改须先出稿）；②六腿尺对现 HEAD 复跑（谓词逐条承 03–06 班，勿新造判据）。
+5. **五族面登记（本席＝唯一合法施工方）**＝本班对 ALGO-FLOW-LINK／MAP-ALIGNMENT／DEPGRAPH-ENFORCEMENT／ALGO-NOTE-SYNC／TRANSLATION-COVERAGE 五族门本体与地图**零改动**（prestage 属落地链输入指向面，不在五族册内）⇒ 无"改哪面·为何·回退命令"登记项；本班回退面＝`git revert` 本班实现袋（两件＝闸输入指向＋测试）。
+
+### 5 [BLOCKER] 行（本班）
+
+- `[BLOCKER]` 2026-10-17|⑤席1017-03|工具缺陷|落地链 2026-10-05 起无条件传 `allow_overlap`，同件测试桩形参未追齐⇒`test_commit_queue_landing.py` 整件长期大批假红（本席实测整件 104 用例改造前 `27 failed, 75 passed in 129.51s (0:02:09)`）|证据＝死信串实跑取证 `TypeError: _PathspecStubGateway.commit() got an unexpected keyword argument 'allow_overlap'`・真源指针 `scripts/governance/commit_queue_landing.py:3513` 与同件 `tests/gov/governance/test_commit_queue_landing.py:2535` 注释自陈"另 27 支既有失败"|要⑫把"测试桩形参 ⊇ 生产 commit 形参"做成机生对照（本席当班只追齐自家两件，改造后整件降到 `13 failed, 91 passed, 1 error in 153.95s (0:02:33)`）|中
+- `[BLOCKER]` 2026-10-17|⑤席1017-03|需Owner|写域 blob 反捞 5 枚他席代码件（`scripts/backtest/fexam/conditional_exam.py` 三袋・`grid_adapter/emit_configs.py` 两袋）＝盘==袋∧HEAD 落后∧唯一存活处 `blobs/`，本席按指令卡不自取⇒连续第五班零归属|证据＝本班 `scan_own_domain.py` 读数 rows=72／unique_paths=44／DISK_EQ_BAG_UNLANDED=6（谓词三条前缀已写死在 §1，可复跑）|要⑩当班派单"哪席取哪件"或"整族停投"（停投即可判 absorbed 销账）|中
+- `[BLOCKER]` 2026-10-17|⑤席1017-03|流程问题|追加型册的"双侧皆改真冲突"死信对"袋⊇dev 现面∧dev 现面为袋前缀"这一可机械判定的形态仍走人工反捞⇒每死一次就给下一班造一次抢救工|证据＝`dead/q-20261017-st-qoder-p05-1017-02-0003.json` 的 `dead_reason` 原文＋本班三面实测（sha256 对袋记 True×2・blob==盘 True×2・HEAD 为严格前缀 True×2，行数 986 vs 971）|要⑫给合并器一条纯追加快进取袋臂（判据仍内容级）|中
+- `[BLOCKER]` 2026-10-17|⑤席1017-03|工具缺陷|`SessionRegistry.register(pid=0)` 注册回读全绿（held=2）而心跳守护并不自起⇒"在册"与"在岗"两面同形，收班②要杀的守护其实还没起、或起了没人收|证据＝本班首版 boot 后 `heartbeat.jsonl` 与 `heartbeat_<sid>.pid` **双查无**（现测），补 `python -m ...heartbeat_daemon <sid> <root>` 后 PID 27952 末行 `alive`|要⑩把"注册＋起守护"两步写进令卡冷启动租约面，或给 register 一条自起腿|中
+
+### 6 复核命令（正文原样可跑，期望列＝本班实跑读数）
+
+```
+git show HEAD:scripts/governance/commit_queue_landing.py | grep -c "git ls-files"          # 本班投前 HEAD＝0，落地后应 ≥1
+git show HEAD:tests/gov/governance/test_commit_queue_landing.py | grep -c PrestageTrackedUnderIgnore   # 本班投前 HEAD＝0，落地后应 ≥1
+python -m pytest tests/gov/governance/test_commit_queue_landing.py -k "PrestageTrackedUnderIgnore or TestUntrackedNewFileLanding" --basetemp=/d/tmp_pt/p0504check -q   # 本班实跑＝4 passed 100 deselected
+python -m pytest tests/gov/governance/test_commit_queue_landing.py --basetemp=/d/tmp_pt/p0504full -q   # 本班实跑＝见 §3 两时点（改造前 27 failed／改造后 13 failed 91 passed 1 error）
+python -c "import sys;sys.path.insert(0,'src');sys.path.insert(0,'.');import ast;from zephyr.gov_enforcement.commit_gates import msg_exposure_gate as m;print([len(m._detect_msg_exposure(ast.parse(open(f,encoding='utf-8').read()))) for f in ('scripts/governance/commit_queue_landing.py','tests/gov/governance/test_commit_queue_landing.py')])"   # 本班实跑＝[0, 0]
+```
+
+### 7 收班八件终核（date 现测 04:07:28）
+
+- 开班与班尾 date 现测＝开班 03:35:11／本节落笔 04:07:28＝**实际耗时约 31 分**（75 分班窗内）。分账（目测段读数，段和不必等于总）＝冷启动与租约＋防重入三证 5 分・上班交付三判据现量与死袋三面反捞判定 4 分・prestage 三态实测与领单决策 5 分・新测试三支返工（断言基线自犯轮＋base_head 缺项轮＋allow_overlap 存量桩轮）10 分・两时点整件回归（129.51s＋153.95s＋单跑隔离面）6 分・台账与投袋 约 5 分。返工三笔＝`_dev_commit_count` 基线断言・`EnqueueOptions(base_head=)` 缺项・存量桩形参。
+- ①release＝**本班不释放代码面与册面 claim**（在册"袋未落地不释放"＋入队续租实测：投袋 stderr 回显 `ENQUEUED-RENEW`/`claim 续租 2/2 件（ttl=7200s）`）；现测 `lock_files.py list` 内本 sid 命中＝**4** 条。落地班收法＝现量本 sid 归零后再 release。
+- ②心跳＝本班守护自起 **PID 27952**（`heartbeat.jsonl` 末行现测＝`{"ts": "2026-10-16T20:07:27.451609+00:00", "pid": 46908, "status": "alive"}`）；**顺延至落地当班**（在册序"先落地后 unregister"，先摘会被 SESSION-REQUIRED 挡尾袋）。同时本班已替上一班收尾＝`SessionRegistry.unregister('st-qoder-p05-1017-02')` 回读 True，其守护末行现测已翻为 `{"pid": 51892, "status": "exited", "reason": "session not in registry"}`；该 51892 进程表现测＝`��Ϣ: û�����е�����ƥ��ָ����׼��`；其 pid 文件 `heartbeat_st-qoder-p05-1017-02.pid` **仍在位**（非本班所写，交 `lock_files.py cleanup` 的 salvager 腿，本班不手删他席件）。
+- ③耗时＝见本节首行（返工约 6 分单列）。
+- ④[BLOCKER]＝本班会员 **0** 行（§5）＋本节 ⑨ 的"无"占位 1 行＝行首形态与全册一致，`grep -n "\[BLOCKER\]"` 命中；全册 BLOCKER 行数现测＝396。
+- ⑤自清＝本班 `.runtime/tmp/st-qoder-p05-1017-03/` 一次性件（17 枚：boot／spawn_daemon／probe_prestage／scan_own_domain／write_ledger／write_ledger2／write_closeout 七枚 py＋full_before／full_after／full_after_final／scan_out／f_before／f_after／f_after_final／msg_impl 等文）排在**本节被册袋快照消费之后**整目录删除（在册"清掉自己要读的清单件"自犯族防复发）；pytest 仓外 basetemp `D:/tmp_pt/p0503*` 同批删；项目根零临时件；四件套外零散落。
+- ⑥GPU＝本班零 acquire（零 GPU 作业）⇒ 免执行，如实报。
+- ⑦后台子任务清点＝零 spawn 子代理 ⇒ 零孤儿；本班三次后台 pytest 均为同步命令行（两枚后台读数已 completed 回收，无存活作业）；后台存活＝自家心跳守护一组（含网关代起枚），随②交落地班收。
+- ⑧worktree 现测＝`git worktree list` 行数＝**36**・其中本班 sid 命中＝**0**・`.aidrafts/st-qoder-p05-1017-03` 存在性＝**False**（本班零影子树）⇒ 本班零 worktree（TRAE-079 Phase 2 达，全程零次调用工棚入口）。历史遗留 `.worktrees/st-mtrain-1016`・`.worktrees/st-rulemap-20261014` 呈清理专班，本席不动。
+- ⑨例行项零问题＝本班零新建业务 .py（探针与尺全在 `.runtime/tmp` 随班删）⇒ 零 creation_token／大白话简介／[TTL] 头项；零新建目录与数字后缀件；`_registry/catalogs/*.yaml` 零手改；五族门本体与地图零改动（prestage 属落地链输入指向面）；reaper 在岗 degraded=False。
+- 袋态读数（本节落笔前现测 04:07:28）＝pending｜q-20261017-st-qoder-p05-1017-03-0001.json｜files=2｜dead_reason=None
+- ⚑本班自犯③（当场抓到，另起留案）＝本班 §4-1 与 §5-1 一度写成"全仓另有三件测试桩同病、hits=0 即待修"，实跑只测了 `def commit(` 后 12 行内含 `allow_overlap|**kwargs` 这一把**粗尺**，并未跑那三件 ⇒ 已在 §4-1 改写为"hits=0 不等于必红，须由能红用例定性"，不据粗尺派活。根因与在册律同族＝计数前谓词过宽／尺失真须自报旗。
+- 转 08 班的施工约束（本班读码所得，本班不动 `scripts/lock_files.py`）＝⑩ 在册"acquire 两参数形态不写 session_id⇒互斥 0 秒"一案，正解不是把 `bind_session = _parse_opt(args, "--session") or args[2]` 一行加上：`scripts/lock_files.py:1856` 之后紧跟 `_ensure_session_registered(bind_session)`，盲兜会把**非会话形态的 owner 串**（本班 06 班在册见过"owner_id＝另一册路径"那族参数序写反件）自动注册成假会话污染注册表；且 `:198-199` 会话判活支对"session_id 有值但注册表查无"的处置须先读（若判死即回零窗口，等于把病换个方向）。⇒ 08 班施工前须先量这两支，测试面要含"owner 非会话形态"负对照。本班自用面已按在册正解执行＝四枚 claim 全部 `acquire <file> <sid> --session <sid>` 重绑，`.ailocks/*/owner.json` 现测三枚均带 `session_id=st-qoder-p05-1017-03`。
+
+### 8 本班册袋超集自证（投袋前实测 04:12:14，禁"落袋后才发现自报为假"再另投）
+
+- 判据＝本席册袋面须 **⊇ 06 班死袋 -0003 面 ⊇ HEAD 现面**（三段全按行级 difflib 量，不按条数估）。
+- ledger＝行数三段（HEAD/盘/袋）=(971, 1064, 986)・`HEAD 为袋前缀`＝**True**・`袋为盘前缀`＝**True**・盘对袋净增（+/−）＝**(78, 0)**（＝本班 §0–§7 追加，删除 0）・盘对 HEAD 净增＝**(93, 0)**。
+- checkpoint＝行数三段（HEAD/盘/袋）=(12, 12, 12)・`HEAD 为袋前缀`＝**True**・`袋为盘前缀`＝**False**・盘对袋净增＝**(4, 4)**・盘对 HEAD 净增＝**(4, 4)**（游标四行改写＝cursor/last_run/last_batch/notes 键序原地替换，frontmatter 三键与 `# 游标` 标题逐字节未动，本班断言 `keys == [cursor,last_run,last_batch,notes]` 通过）。
+- 结论＝本班**只需一枚册袋**即可同时带走"06 班未落地的 §8 收班节 15 行"与"本班 §0–§8"，故不产生第三枚同件袋（在册"同件后袋静默 supersede 前袋"防复发）；死袋 -0003 保持 dead 不重投，其内容存活证明即本节两行前缀读数。
