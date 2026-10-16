@@ -6,9 +6,9 @@ title: ⑨成绩官·游标
 
 # 游标
 
-cursor: exam_scores_v1.yaml#rows[108]
-last_run: 2026-10-16
-last_batch: 当日增量 5 行全判（本班 st-qoder-p09-1016-01 班尾 22:33:43 复测＝磁盘 sha bb557705beea260f→682ab7cf437164b4／144451B／rows 109；rows[109] 起待判；⚑ 三面同值仅瞬时条件，详见本班游标推进记录与 ledger §14）
+cursor: exam_scores_v1.yaml#rows[109]
+last_run: 2026-10-17
+last_batch: 当日（10-16）增量对 st-qoder-p09-1016-03 班＝0 行⇒判卷对象空集；已判最高行＝rows[109]（110 行全判）；rows[110] 起待判；本班主产出＝判卷取数面换代到落地面（HEAD）＋在册复跑件双断头（修㉖/修㉗）＋本席 10 枚死袋内容级分诊＝零抢救缺口
 notes: 游标由本岗每批推进；监督员(⑩)可代修。
 
 ## 游标推进记录 ｜ st-qoder-p09-1015-02
@@ -282,3 +282,15 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。
 - ⚑ **上一班交给本班的"末袋对拍"首查判据＝本班已跑，结论如下（内容级，禁按条数估）**＝本席同名 `st-qoder-p09-1016-01` 四袋＝`-0001 done`＋`-0002/-0003/-0004 dead`，三枚死因逐字同＝`landing 异常: RuntimeError: [landing] 非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）`。判据与读数＝逐袋读 `files[].blob_sha256`＋`blob_ref` 正文，对现盘面做 `in` 判定与 difflib 行级差：四枚 ledger 正文**全部在盘面内**（`在盘面内=True`×4），行数链＝1165/1177/1188/**1196**，`-0004` 与本班起批基线**逐字节等值**（行差 0、增行 0、且盘是它的超集=True）⇒ **三枚 dead 袋＝同会话后袋把前袋打成回退弹的既有形态，内容零丢失、无需 requeue**；本班袋（1016-02）落地面将原生携带 `-0004` 全文＋本班 §1–§8。⚠ **本班不执行 mv 销账**＝`process_reaper --status` 现读 `dead_archive: ok=False rc=1`，理由逐字＝`ERROR: serializer 租约存活（pid=47508），拒绝并行维护操作`⇒ 在册工具自己挡并行维护，本席不绕、不手搬；判据与读数留此，待租约释放后由正门 `dead-archive --session st-qoder-p09-1016-01 --content-level` 通道销账（要 ⑩ 认这条归属：死信属 ⑨ 席前任，本席代分诊、不代销账）。
 - **下一班首查判据（正文可原样跑）**＝①`python .runtime/tmp/st-qoder-p09-1016-02/replay10_calib.py <起始行> <结束行>`（在册尺副本，若 tmp 已被清扫则回 1015-10 班原件路径 `find .runtime/tmp -name replay10_calib.py`）；正对照＝任一已知 PROBLEMS 0 的行（如 `108 108`）先跑，别把"尺不认新键"读成"判卷不符"（本班 `109 109` 末行 PROBLEMS 1＝尺与执行器同缺 `gap_k3_vs_k0_5d_max` 面，两侧 verdict 皆 fail）。②写前必 `python scripts/lock_files.py check <自家面>` 自证在册＝本班据此抓到自家 4 条 claim 被 ⑧b 席 23:02 的整册写洗掉（详见台账 §8 第一条 [BLOCKER]）。
 - 本班耗时锚＝冷启动 `process_reaper --status` 日志时戳 `2026-10-16 22:50:48`（本席未另测起批那一秒，故只用该实测锚、不自报"约 22:49"）；提交段终值（袋号/files/base_head/对拍）由收班段按实报，禁预写未发生的读数。
+
+## 游标推进记录 ｜ st-qoder-p09-1016-03
+
+- **本班游标＝`rows[109]`（不变）**＝当日（10-16）增量对新班为 **0 行**：磁盘面在起批 `23:5x` 与写盘前 `00:09:22` 两时点同值＝sha256 `a9532fceb0899c94…`／145458B／rows **110**／mtime `2026-10-16 22:45:20`（与 1016-02 班写盘前实测**逐位同**⇒ 值守窗内册面未长）。110 行全判状态延续。
+- **本班同时原地改写本文件头游标行**＝`cursor: exam_scores_v1.yaml#rows[108]` → `rows[109]`（旧值系 1016-01 班班尾补条所写，1016-02 班只追加了推进段、未改头行⇒头行落后一班；本席按"checkpoint 只准追加或原地改游标行"口径纠正，旧值留本段备案）。
+- ⚑ **本班判卷口径换代（下一班请沿用）＝判卷取数面由"磁盘面"改为"HEAD 落地面"**。理由＝本班实测 `git hash-object`(磁盘)==`git rev-parse HEAD:<册>`==`e0f550255886…` 且 row-for-row `card_id` 链 110/110 全等，而 **index 面停在 106 行**（缺末四行 `rows[106]`股东户数集中度／`rows[107]`解禁否决／`rows[108]`连板顺位／`rows[109]`突破失败连续次数）⇒ 三面里唯一"内容型门禁与下游消费都会认"的是 HEAD；本席**不复位 index**（在册形态＝正门每落地一次主区 index 停在落地前一版）。
+- **本班升级＝零**（唯二 pass 仍＝rows[76]/[78]，未重跑；红线"fail 永不升级"）；**复考排程＝零新排**（无新对象首轮）；rows[90]/[91] 两枚 blocked 沿用在册分诊未重烧。
+- **本班新开单号＝修㉖＋修㉗**（在册单号此前止于 修㉕／P-11；`修⑩` 仍悬空＝引用 1 次无定义，沿 14–16 班与 1016-01/02 班未补写）。零呈批草稿、零缺数单、零对照单。结构性观察＝**S-12**（恒定班复跑尺与正交池面寄身 24h-TTL ⇒ 本班一次性双断头）＋**S-13**（`pool-report` 打印 ERROR 却 rc=0＝按退出码判绿必假绿），全文见台账 §11.4/§11.5。
+- ⚑ **本班替前任完成一件事＝本席 10 枚 dead 袋内容级分诊结论＝零抢救缺口、可销账**（18 条差异是游标行原地换代、7 条双面存活、1 条存其加长版＝盘面 `checkpoint.md:62`）；mv 销账**仍未执行**＝`dead_archive: ok=False rc=1`＋serializer 租约 pid 47508 整晚存活（`.runtime/commit_queue/serializer.lease` mtime 23:58 仍在刷新），本席不绕不手搬；分诊尺与逐件判读＝台账 §11.6。**下一班勿重跑分诊，只在租约空闲窗走正门 `dead-archive --content-level`。**
+- **下一班首查判据（三件，全部引用 HEAD 可取回或库内面；本班不再给 tmp 件）**＝①`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool <池面>`——⚠ 在册池面 `.runtime/tmp/st-qoder-p09-1015-04/pool6` **本班实测已空壳**，若 ⑤/⑥ 未新建池面则本班 S-12 的"缺席"结论延续，如实注明缺席即可（勿重烧 15 员池物化面，那是禁烧面）；②判卷取数按 **HEAD 面**（`git show HEAD:docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml`），首查 `rows` 是否 >110；若新增长，只对 `rows[110]` 起逐行判，卡体 join 谓词＝卡内 `card_id` 字段（本班实测 110/110，卡体文件 577 枚）；③写前必 `python scripts/lock_files.py check <自家面>` 自证在册，并**在同一条命令内**先 `SessionRegistry().heartbeat(sid)`（本席无 worktree⇒无 daemon，锁新鲜窗 90s，沿 1016-02 在册绕行法；本班已按该法执行，四面 acquire 回执见台账 §11.9）。
+- **本班耗时锚**＝冷启动 `date` 实测 `23:50:48`（10-16）→ 落笔段 `00:09:22`（10-17，跨日班）；提交段终值（袋号/files/base_head/对拍）不入本游标（防自指回环），由本班收班口头呈 Owner。
+- ⚠ 本班纪律申明＝未动分数册与任何判据字节；未 commit 任何他人代码件；未复位 index；未 pop/drop/clean 任何 stash；未 rm 任何他会话遗留；零 worktree 调用（TRAE-079 Phase 2 遵令）。
