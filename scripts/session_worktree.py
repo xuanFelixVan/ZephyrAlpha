@@ -9,18 +9,25 @@
 # [MATURITY] production
 # [INVARIANTS] worktree 在 .worktrees/ 下；分支前缀 ai/；merge 需用户确认；merge 落地前必须过
 #   _merge_preflight_issues（A-14：merge 通道不触发 pre-commit hooks，补检是该通道唯一防线，
-#   结构性红判不可越权，仅『补检不可执行』态可 --allow-unchecked-merge 显式留痕放行）
+#   结构性红判不可越权，仅『补检不可执行』态可 --allow-unchecked-merge 显式留痕放行）；
+#   merge 失败路径零工作树副作用（st-mergefix-1016：动作前现场快照，失败逐件恢复磁盘字节+暂存态）
 # [MODIFY-GUARD] 2026-10-10 st-maint1-20261010 件③：新增 merge 通道补检 + 审计行 + 越权旗
 # [MODIFY-GUARD] 2026-10-15 st-prevw-20261015（st-diskp0-20261015 防复发 W 班）：
 #   D1=create 前置闸（盘地板拒绝/同岗位死车道复用抑制裂变/创建即打印回收命令行，
 #   阈值真源=config/flags.yaml flags.disk_floor.min_free_gib，死判真源=_check_archive_target_dead
 #   与 archive 执行工具同源禁自造判活尺）；D4=archive-sanitize 子命令（归档落 docs/_archive
 #   前置脱敏：doc_type/ttl/实盘键名，变换逻辑真源=scripts.ops.archive_sanitize 禁本地复制）
+# [MODIFY-GUARD] 2026-10-16 st-mergefix-1016（st-diskp0-20261015 P0）：merge 失败路径零工作树
+#   副作用——_capture_merge_pre_state（动作前现场快照：脏文件∪HEAD...lane 差集的磁盘字节+暂存态，
+#   封顶 2000 件/32MB 单件）+ _restore_merge_pre_state（MERGE_HEAD 残留先 merge --abort，再逐件
+#   恢复字节（写后读回核实）与暂存态（staged==磁盘走 add，staged≠磁盘走 update-index --cacheinfo
+#   index-only 修复非提交通道））；squash 手动 commit 失败改判失败并恢复现场（原为静默吞 rc）；
+#   病灶=2026-10-16 01:43:36 四件工作区回滚（ebe4cbd7d4 陈旧快照二次落地覆盖 6e05b4dc90）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=success; exit 1=error; exit 2=internal error
-# [TESTS] tests/governance/rule_bridge/test_session_worktree*.py; tests/scripts/test_session_worktree_env.py; tests/scripts/test_session_worktree_archive.py; tests/governance/rule_bridge/test_session_worktree_merge_preflight.py; tests/meta/scripts/test_session_worktree_promote.py
+# [TESTS] tests/governance/rule_bridge/test_session_worktree*.py; tests/scripts/test_session_worktree_env.py; tests/scripts/test_session_worktree_archive.py; tests/gov/governance/rule_bridge/test_session_worktree_merge_preflight.py; tests/gov/governance/rule_bridge/test_session_worktree_merge_no_side_effect.py; tests/meta/scripts/test_session_worktree_promote.py
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: AI会话按需调用的CLI worktree协调工具，人工触发非常驻服务/非cron/非daemon
 """
@@ -482,6 +489,166 @@ def _merge_preflight_issues(target: str, branch: str) -> tuple[list[str], str]:
     return preflight_merge_terminal(lambda args: _run_git(args, check=False), target, branch)
 
 
+# ============================================================================
+# st-mergefix-1016（st-diskp0-20261015 P0）：merge 失败路径零工作树副作用
+# ----------------------------------------------------------------------------
+# 病灶（2026-10-16 01:43:36 / 10:0x 两次实锤）：主区 merge 被拒/失败的同窗内，
+# 工作树里已提交进 HEAD 的文件被静默回滚为旧版本（实证=ebe4cbd7d4 把 01:43:36
+# 回滚后的旧字节当快照二次落地，覆盖 6e05b4dc90 完整版→import 断链；reflog
+# "merge X: updating HEAD"=reset 族签名，见 git reset.c set_reflog_message）。
+# 本件把 cmd_merge 的失败路径收口为**零副作用**：merge 动作前抓调用前现场快照
+# （磁盘字节+暂存态，write set=脏文件∪HEAD×lane 差集），任何失败（被拒/冲突
+# 半应用/部分写/异常/squash 后 commit 失败）逐件恢复到调用前状态。成功路径
+# 语义零变化（快照只读，恢复只在失败分支运行）。
+# ============================================================================
+
+_MERGE_PRE_STATE_MAX_FILES = 2000  # 快照封顶：超过视为异常形态，不做半套快照（恢复空快照=零动作）
+_MERGE_PRE_STATE_MAX_FILE_BYTES = 32 * 1024 * 1024  # 单文件字节封顶（防内存失控）
+_INDEX_BATCH = 200  # git 命令行路径批大小（Windows 命令行长度限制）
+
+
+def _chunks(items: list, n: int) -> list[list]:
+    return [items[i : i + n] for i in range(0, len(items), n)]
+
+
+def _capture_merge_pre_state(branch: str) -> dict[str, tuple[bytes | None, str, str | None]]:
+    """merge 前工作树现场快照（只读）：{rel: (磁盘字节|None=不存在, mode, index blob sha|None)}。
+
+    write set = 主区脏文件（status，含 staged）∪ 本次 merge 可能写入的面
+    （diff HEAD...branch = merge-base..lane 变更集）。只记 tracked 面；
+    超限/读败返回 {}（恢复侧容忍空快照=零动作，行为退回无快照现状）。
+    """
+    rels: set[str] = set()
+    st = _run_git(
+        ["status", "--porcelain", "-z", "--no-renames", "--untracked-files=no"],
+        check=False,
+    )
+    if st.returncode == 0 and st.stdout:
+        for entry in st.stdout.split("\0"):
+            if len(entry) > 3:
+                rels.add(entry[3:].replace("\\", "/"))
+    diff = _run_git(["diff", "--name-only", f"HEAD...{branch}"], check=False)
+    if diff.returncode == 0 and diff.stdout:
+        rels.update(ln.strip().replace("\\", "/") for ln in diff.stdout.splitlines() if ln.strip())
+    rels.discard("")
+    if not rels:
+        return {}
+    if len(rels) > _MERGE_PRE_STATE_MAX_FILES:
+        print(
+            f"[WORKTREE] WARN: merge 前现场快照超限（{len(rels)}>{_MERGE_PRE_STATE_MAX_FILES}），"
+            "跳过快照——失败路径自动恢复不可用（行为同旧版）",
+            file=sys.stderr,
+        )
+        return {}
+    index_state: dict[str, tuple[str, str]] = {}  # rel -> (mode, sha)
+    ls = _run_git(["ls-files", "-s"], check=False)
+    if ls.returncode == 0 and ls.stdout:
+        for ln in ls.stdout.splitlines():
+            parts = ln.split("\t", 1)
+            if len(parts) != 2:
+                continue
+            meta = parts[0].split()
+            if len(meta) >= 2:
+                index_state[parts[1].replace("\\", "/")] = (meta[0], meta[1])
+    snap: dict[str, tuple[bytes | None, str, str | None]] = {}
+    for rel in sorted(rels):
+        mode_sha = index_state.get(rel)
+        p = REPO_ROOT / rel
+        try:
+            data = p.read_bytes() if p.is_file() else None
+        except OSError:
+            data = None
+        if data is not None and len(data) > _MERGE_PRE_STATE_MAX_FILE_BYTES:
+            print(
+                f"[WORKTREE] WARN: 现场快照单文件超限 {rel}（{len(data)}B），跳过快照——失败路径自动恢复不可用",
+                file=sys.stderr,
+            )
+            return {}
+        snap[rel] = (data, mode_sha[0] if mode_sha else "100644", mode_sha[1] if mode_sha else None)
+    return snap
+
+
+def _restore_merge_pre_state(
+    pre_state: dict[str, tuple[bytes | None, str, str | None]],
+    *,
+    reason: str,
+) -> int:
+    """merge 失败后逐件恢复调用前现场（磁盘字节+暂存态）；返回恢复动作数。
+
+    恢复顺序：①在途 merge 残留（MERGE_HEAD 冲突半应用态）先走 git 正门
+    `merge --abort`（HEAD 基准）；②逐件比对磁盘字节，差异件写回调用前字节
+    （写后读回核实）；③暂存态先归零 HEAD 再精确放回——staged==磁盘 blob 走
+    `add`，staged≠磁盘（merge 前即暂存了他意内容）走 `update-index --cacheinfo`
+    （**index 修复专用**，非提交通道，不绕过任何 commit 门禁）。
+    """
+    if not pre_state:
+        return 0
+    actions = 0
+    mh = _run_git(["rev-parse", "-q", "--verify", "MERGE_HEAD"], check=False)
+    if mh.returncode == 0:
+        _run_git(["merge", "--abort"], check=False)
+        actions += 1
+    # ② 磁盘字节逐件恢复
+    for rel, (pre_bytes, _mode, _sha) in pre_state.items():
+        p = REPO_ROOT / rel
+        try:
+            cur = p.read_bytes() if p.is_file() else None
+        except OSError:
+            cur = None
+        if cur == pre_bytes:
+            continue
+        try:
+            if pre_bytes is None:
+                if p.exists():
+                    p.unlink()
+            else:
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_bytes(pre_bytes)
+                if p.read_bytes() != pre_bytes:
+                    raise OSError(f"写后读回不一致: {rel}")
+        except OSError as e:
+            print(f"[WORKTREE] WARN: 现场恢复失败 {rel}: {e}", file=sys.stderr)
+            continue
+        actions += 1
+    # ③ 暂存态恢复（只看快照里 tracked 的面）
+    tracked = [rel for rel, (_b, _m, s) in pre_state.items() if s is not None]
+    idx_now: dict[str, str] = {}
+    for chunk in _chunks(tracked, _INDEX_BATCH):
+        ls = _run_git(["ls-files", "-s", "--", *chunk], check=False)
+        if ls.returncode != 0 or not ls.stdout:
+            continue
+        for ln in ls.stdout.splitlines():
+            parts = ln.split("\t", 1)
+            if len(parts) == 2:
+                meta = parts[0].split()
+                if len(meta) >= 2:
+                    idx_now[parts[1].replace("\\", "/")] = meta[1]
+    idx_drift = [rel for rel in tracked if idx_now.get(rel) != pre_state[rel][2]]
+    if idx_drift:
+        for chunk in _chunks(idx_drift, _INDEX_BATCH):
+            _run_git(["reset", "--quiet", "HEAD", "--", *chunk], check=False)
+        disk_rels = [rel for rel in idx_drift if pre_state[rel][0] is not None]
+        disk_sha: dict[str, str] = {}
+        for chunk in _chunks(disk_rels, _INDEX_BATCH):
+            ho = _run_git(["hash-object", "--", *chunk], check=False)
+            if ho.returncode == 0 and ho.stdout:
+                for rel, sha in zip(chunk, ho.stdout.split(), strict=False):
+                    disk_sha[rel] = sha
+        for rel in idx_drift:
+            pre_bytes, mode, pre_sha = pre_state[rel]
+            if pre_sha is None:
+                continue  # 调用前未跟踪——归零即可（reset 已处理）
+            actions += 1
+            if pre_bytes is not None and disk_sha.get(rel) == pre_sha:
+                _run_git(["add", "--quiet", "--", rel], check=False)
+            else:
+                # 精确还原"staged≠磁盘"的调用前暂存态（index-only 修复，零提交通道）
+                _run_git(["update-index", "--cacheinfo", f"{mode},{pre_sha},{rel}"], check=False)
+    if actions:
+        print(f"[WORKTREE] merge 失败现场已恢复（{reason}）：{actions} 项回到调用前状态", file=sys.stderr)
+    return actions
+
+
 def cmd_merge(args: argparse.Namespace) -> int:
     """合并 worktree 分支回主分支（需用户确认）。"""
     session_id = args.session_id
@@ -508,6 +675,7 @@ def cmd_merge(args: argparse.Namespace) -> int:
             return 0
 
     print(f"[WORKTREE] 合并 {branch} → {target}")
+    pre_state: dict[str, tuple[bytes | None, str, str | None]] = {}
     try:
         # A-14 merge 通道补检（st-maint1-20261010 件③）：merge 不触发 pre-commit hooks，
         # 这里是合并终态唯一能拦住结构性违规的位置——红则不落地，主区零污染。
@@ -538,6 +706,9 @@ def cmd_merge(args: argparse.Namespace) -> int:
             if not bypass:
                 return 1
             print("  [显式越权] --allow-unchecked-merge 已放行，责任入 merge_preflight 审计行。", file=sys.stderr)
+        # st-mergefix-1016：merge 动作前抓调用前现场快照——失败路径零工作树副作用
+        # （被拒/冲突半应用/部分写/异常 逐件恢复；成功路径快照只读，语义零变化）。
+        pre_state = _capture_merge_pre_state(branch)
         # 切换到主工作区合并
         merge_cmd = ["merge", "--no-ff"]
         if args.squash:
@@ -545,14 +716,21 @@ def cmd_merge(args: argparse.Namespace) -> int:
 
         result = _run_git(merge_cmd + [branch], check=False)
         if result.returncode != 0:
+            _restore_merge_pre_state(pre_state, reason=f"merge 被拒 rc={result.returncode}")
             print("[WORKTREE] 合并失败:", file=sys.stderr)
             print(result.stderr, file=sys.stderr, end="")
             print("  可能需要解决冲突后 git commit", file=sys.stderr)
             return 1
 
         if args.squash:
-            # squash merge 需要手动 commit
-            _run_git(["commit", "-m", f"merge(ai): {session_id} squashed"], check=False)
+            # squash merge 需要手动 commit；commit 失败＝本次合并未完成——
+            # squash 已写入的工作树/暂存面必须恢复到调用前（零残留，防陈旧快照面再被袋子捡走）
+            commit_result = _run_git(["commit", "-m", f"merge(ai): {session_id} squashed"], check=False)
+            if commit_result.returncode != 0:
+                _restore_merge_pre_state(pre_state, reason="squash 手动 commit 失败")
+                print("[WORKTREE] squash merge 已应用但手动 commit 失败——已恢复合并前现场:", file=sys.stderr)
+                print(commit_result.stderr, file=sys.stderr, end="")
+                return 1
 
         print("[WORKTREE] 合并成功")
         # §11.3.1 v2.1.0: merge 后立即 abort 清理
@@ -560,6 +738,8 @@ def cmd_merge(args: argparse.Namespace) -> int:
         print("[WORKTREE] 自动清理 worktree...")
         return cmd_abort_inner(session_id, exempt_cert1=True)
     except Exception as e:  # noqa: BLE001 — CLI 边界兜底转退出码（存量基线注记）
+        if pre_state:
+            _restore_merge_pre_state(pre_state, reason=f"异常: {e}")
         print(f"[WORKTREE] 内部错误: {e}", file=sys.stderr)
         return 2
 
