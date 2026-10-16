@@ -181,3 +181,56 @@ def test_shape_preflight_unit_rules():
     assert ce._shape_preflight({"card_id": "x"}, panel, fwd) is None  # panel×panel 同列数
     assert ce._shape_preflight({"card_id": "x"}, sig_s, tgt_s) is None  # series×series
     assert ce._shape_preflight({"card_id": "x"}, fwd[["S0000"]], fwd[["S0001"]]) is None  # 1×1 合法
+
+
+# ---------------------------------------------------------------------------
+# 第二腿（⑤席 2026-10-17）：卡面 regimes 散文条目＝"装载崩"根治为诚实 blocked 行
+# 真源＝⑦A 1016-03 与 ⑦c 1017-01 两班在册实测（13 枚卡崩于 pd.Timestamp(散文)）
+# ---------------------------------------------------------------------------
+
+
+def test_regimes_preflight_unit_rules():
+    """只拦"零枚 ISO 日期"一支；**恰一枚日期者照 2026-10-13 裁修走旧语义（整串当单点）＝不拦**；
+    两枚/多段声明/空 regimes/无 window 键皆不拦（负对照面，禁把本腿当恒拦尺）。"""
+    assert ce._regimes_preflight({"window": {"regimes": {"crisis": "两处在册危机段"}}}) is not None
+    assert ce._regimes_preflight({"window": {"regimes": {"crisis": "2020-03-23"}}}) is None  # 裁修旧语义
+    assert ce._regimes_preflight({"window": {"regimes": {"crisis": "2020-02-01..2020-03-23"}}}) is None
+    assert (
+        ce._regimes_preflight({"window": {"regimes": {"c": "2020-02-01..2020-03-23 与 2024-01-02..2024-02-08"}}})
+        is None
+    )
+    assert ce._regimes_preflight({"window": {"regimes": {}}}) is None
+    assert ce._regimes_preflight({}) is None
+
+
+def test_prose_regimes_card_becomes_honest_blocked_row(tmp_path):
+    """事故形态复考：形状配、供数配，只卡面 regime 写成叙述句 ⇒ 旧行为抛 DateParseError，
+    新行为出 verdict=blocked 诚实行（分数册 only-add 一行・卡字节零动不翻 examined・不记试次）
+    ＝该卡从"崩在装载"变成"被诚实记为不可考"，且重发出题后可直接重考。"""
+    p = _card(tmp_path, kind="series")
+    card = yaml.safe_load(Path(p).read_text(encoding="utf-8"))
+    card["window"]["regimes"] = {"crisis": "两处在册危机段（散文，未写日期）"}
+    Path(p).write_text(yaml.safe_dump(card, allow_unicode=True), encoding="utf-8")
+    sig, tgt = _series_pair()
+    p = _with_oos(p, sig.index)
+    before = Path(p).read_bytes()
+    led = tmp_path / "led.yaml"
+    row = ce.run_card(p, signal=sig, target=tgt, scores_path=tmp_path / "s.yaml", ledger_registry_path=led)
+    assert row["verdict"] == "blocked" and row["reason"] == "regimes_unparsable", row
+    assert any(f.startswith("regimes_unparsable: ") and "两处在册危机段" in f for f in row["fails"]), row["fails"]
+    reg = yaml.safe_load((tmp_path / "s.yaml").read_text(encoding="utf-8"))
+    assert len(reg["rows"]) == 1 and reg["rows"][0]["verdict"] == "blocked"
+    assert Path(p).read_bytes() == before  # 卡零触碰（比"status 未翻"更强的钉）
+    assert not led.exists() or "TDM-E-TEST" not in led.read_text(encoding="utf-8")
+
+
+def test_parsable_regimes_still_judged(tmp_path):
+    """负对照＝日期可解析的 regime 绝不被本腿拦；这条若也 blocked＝本腿恒真＝尺坏。"""
+    p = _card(tmp_path, kind="series")
+    card = yaml.safe_load(Path(p).read_text(encoding="utf-8"))
+    card["window"]["regimes"] = {"crisis": "2020-02-01..2020-03-23 与 2024-01-02..2024-02-08"}
+    Path(p).write_text(yaml.safe_dump(card, allow_unicode=True), encoding="utf-8")
+    sig, tgt = _series_pair()
+    p = _with_oos(p, sig.index)
+    row = ce.run_card(p, signal=sig, target=tgt, scores_path=tmp_path / "s2.yaml")
+    assert row["verdict"] != "blocked", row

@@ -945,6 +945,28 @@ def _shape_preflight(card: dict, signal, target) -> str | None:
     return None
 
 
+def _regimes_preflight(card: dict) -> str | None:
+    """卡面 window.regimes 可解析性预检（⑤席 2026-10-17，13 卡装载崩根治件）。
+
+    事故形态（⑦c/⑦A 两席在册实测）＝卡面 regime 串写成叙述句（"两处在册危机段"之类，
+    串内零枚 ISO 日期）⇒ `_span_pairs` 按 2026-10-13 裁修退回"整串当单点"，而
+    `_in_spans` 的 `pd.Timestamp(散文)` 抛 DateParseError＝装载崩（不是判据），整卡进不了
+    可考面。本腿只把这一支改成与形状预检同款的诚实 blocked 行；**恰有一枚日期者照裁修走
+    旧语义（整串当单点），零枚者才拦**——纯 fail-fast，判据/门柱/冻结值零触碰。
+    """
+    bad = [
+        f"{name}={str(span)[:48]!r}"
+        for name, span in ((card.get("window") or {}).get("regimes") or {}).items()
+        if not _DATE_RE.findall(str(span))
+    ]
+    if not bad:
+        return None
+    return (
+        f"卡面 regimes 条目内零枚 ISO 日期（YYYY-MM-DD），无法解析为行情段："
+        f"{'；'.join(bad[:4])}（补齐日期或改写成多段声明后重发出题即可直接重考）"
+    )
+
+
 def _shape_face(signal, target) -> dict:
     """预检拦截行的形状观测面（yaml 可序列化：shape 展平成 [行,列]，非 DataFrame 记 [点数,1]）。"""
 
@@ -996,7 +1018,13 @@ def run_card(
     # （reason=shape_mismatch，分数册 only-add 追加，零异常），卡零触碰不翻 examined；
     # row.run_id 即重考 lineage 指针（卡保持 preregistered，重发出题后无需 --force 直接重考）。
     # 预检拦截＝接线错误非研究试次，不记 n_trial_ledger（不占 DSR 分母）。
+    # 第二腿（⑤席 2026-10-17）＝卡面 regimes 散文条目→同形态诚实行（reason=regimes_unparsable），
+    # 旧行为是 pd.Timestamp(散文) 抛 DateParseError＝装载崩，整卡连"被诚实记为不可考"都做不到。
     mismatch = _shape_preflight(card, signal, target)
+    preflight_reason = "shape_mismatch"
+    if mismatch is None:
+        mismatch = _regimes_preflight(card)
+        preflight_reason = "regimes_unparsable"
     if mismatch is not None:
         row = {
             "card_id": card["card_id"],
@@ -1010,8 +1038,8 @@ def run_card(
             "date": _date.today().isoformat(),
             "metrics": {"shape_preflight": _shape_face(signal, target)},
             "unjudged": _unjudged_pillars(card, {}, _UNION_PILLAR_KEYS),
-            "fails": [f"shape_mismatch: {mismatch}"],
-            "reason": "shape_mismatch",
+            "fails": [f"{preflight_reason}: {mismatch}"],
+            "reason": preflight_reason,
         }
         # 分数册 only-add 追加（双文档 register 兼容，与既有 rows 追加同款；blocked 行专用内联款）
         sp = Path(scores_path)
