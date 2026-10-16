@@ -269,3 +269,25 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。旧案全文在 `
 ②**本班临时件**（`.runtime/tmp/p02_1017_01/`，`[TTL] task_bound 24h`）＝boot/keep_add/probe_channel/b27_run/write_ledger1（已随件消费当场删）/write_ledger2/write_cursor 各 .py＋run.log/run2.log/excl_1017_01.txt/msg_1017_01.txt。
 
 `P02-1017-01-CP-ENDSTATE`（本班游标节独有标记，落地面核验谓词见本段待办序第 2 条；上一班游标节各行逐字仍在）
+---
+
+## 2026-10-17 02:1x · st-qoder-p02-1017-02 班游标（追加节，上文各行逐字不改）
+
+**本班一句话**＝B-27 主落地件＝**在册"试过且空"93 枚经逐票复验全数翻案有货并当场回补入库**（三缺格日 FINAL `(3852976, 313)`→`(5233549, 406)`＝**＋1,380,573 行／＋93 票**，279 格全命中、err 0、票名错配 0）＋**根因定性**＝`download_history_data` 异步派发而采集腿下载后只等 60–100 秒即读终端缓存，未落盘格返回 0 行且 `error=None` 与"确无货"同形⇒前两班"空格率随深度递减""零行段与已试区对齐"两条结论都是同一伪影＋暖态闸谓词改正（只认正对照臂，负对照臂降级为排除集复验尺）＋B-15 第八次复拍 `commit_pct 87.66≥70` 不起批＋本班**零收养面**（上班袋 01:56 已落地）。全文＝`ledger.md` 段「2026-10-17 02:0x · st-qoder-p02-1017-02」，终态标记 `P02-1017-02-CP-ENDSTATE`。
+
+**下班待办序（本班修订）**：
+1. ⚑**起手第一件＝别再抄旧排除集**＝`本台账 1016-04 件 2 的 87 枚＋1017-01 件 5 的 6 枚` 已被本班 **93/93 翻案**（`STILL-EMPTY 0 枚`），该集作废后谓词天然单口＝**UNIVERSE(09-28 FINAL distinct) ∖ DONE(10-08 FINAL distinct)**，无需人工抄录件（本班 [BLOCKER] 第 2 条已请⑩定永久归属；定案前下班按此两面差集起，勿再引 EMPTY-LIST 散文）。
+2. 暖态探针谓词改正＝**正对照臂唯一承重**（DONE 面按 symbol DESC LIMIT 3 × 三缺格日，本班实测 9/9 有货）；负对照臂（旧空票）本班已证其"应为零行"前提不成立⇒降级为"排除集复验尺"，其翻面**不阻断放量**。冷通道判据仍有效＝正对照零命中⇒不起采只报堵。
+3. 节拍与等待配方（本班实测）＝下载派发 **0.28 秒/次**（24 票×3 日 72 次仅 20.0 秒），首块等 100 秒、后续块等 60 秒后 read 相 35.0–48.7 秒/块、**零空零 err**；归因配对序仍须 `seq=[s for s in blk for _ in DAYS]`（票主序，与 `backfill_days` 生成序同构）＋`zip(strict=True)`＋块内 `len(cells)!=len(seq)` 即停。⚑要判"某票真无货"必须**二次复读间隔后仍空且 err 仍 None** 才准记（本班 [BLOCKER] 第 1 条）。
+4. 面值续位＝三缺格日 FINAL `(5233549, 406)`；UNIVERSE=7934；DONE(10-08)=406；剩 **7,528 票**；本班节奏 **5.55 秒/票**（＝516.2 秒/93 票）⇒整面约 11.6 小时单进程量，60 分窗结构性做不完（本班 [BLOCKER] 第 5 条，请⑩重排产）。⚑塌缩守恒式本班余数 **0 行**（每格 1.00），与 1016-04/1017-01 的"每格 0.99 行"同尺不同幅⇒该余数勿当定值验收判据（[BLOCKER] 第 3 条）。
+5. 票码映射禁自造前缀规则＝取 `src/zephyr/data/tick_subscriber.py:620 _get_all_symbols` 同一组 QMT 板块名（沪深A股/京市A股/沪深基金/沪深转债/沪深指数）反查裸码，本班实测入图 **8755** 条、跨板块裸码碰撞 **100** 枚（按板块序首见，本班口径已披露）、**4 枚 UNMAPPED**＝`110075,128134,159047,166007`（转债/基金码不在终端板块面，**禁记进"试过且空"**）。
+6. 工序 4 B-15＝判据只看 `commit_pct<70`（本班 02:03:48 现读 **87.66**＝第八次不起批；起手 01:50:45 那趟 90.08/degraded True）；令面 2,533 vs 实测 2,539 的六次复证继续有效，禁按令面起批、禁重复重拍快照。
+7. `known_data_gaps.yaml` 仍不随袋（本班进场即 `MM`，他席在写）；本班**未翻任何 status**（406/7934＝5.1% 远未封板，三查③与第四查虽"两腿均在册调度"但封板判定未闭）；同目录 `instruction.md` 亦他席件**不随袋**。B-28 仍勿在 60 分窗内半起（需新建调度＋当期宇宙判据）。
+8. 时限复报＝10-18 02:00 的 `tick_backfill_weekly` 自动窗将把 10-08/10-09 滑出（本班 02:16 现算距该窗约 **23.7 小时**）；④席下游评估窗右端仍停 2026-10-07。
+9. 会话与锁三条（本班实测代价换来的）＝(a) boot 脚本必须把**仓根**也送进 `sys.path`，否则 `_spawn_heartbeat_daemon` 报 `No module named 'scripts.ops_guard'` 而**注册仍打印成功且 rc=0**＝活性锚假绿；(b) 起手即 `mark_logical(sid, logical=True)` 上真盾——本班 pid=0 会话在 **claim TTL 远未到期**时被外来回收（02:16 实测 `lock_files.py list` 对本席 sid 命中 0，02:0x 还是 2 件各剩 29.8m），复 acquire 才恢复；(c) 投袋前复 acquire＋杀心跳只认 pid 文件**单 PID**（禁 cmdline 子串扫描）。
+10. 落地面核验谓词（勿用裸子串，正文自带标记名）＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c '^`P02-1017-02-CP-ENDSTATE`'`；上班 1017-01 那条"盘面同尺应为 2"的预言本班实测是 **3**（正文两处抄录该串）⇒计数请按行首形态而非裸子串。
+
+⚑**本班会话与锁（下班照抄）**＝主区零 worktree（TRAE-079 Phase 2）；`register(sid, pid=0, held_files=[两件])`＋`_spawn_heartbeat_daemon(sid, ROOT, 30)`＝daemon_pid **40268**（幂等复跑同 pid）＋`mark_logical(True)`（本班实测回 True，未遇 1015-08 那趟"非 chief 形态降级"）；sid 已 CAS 入 `data/runtime/process_reaper_keep.txt`（本班 base 430→431 行，⚑该册起手 `wc -l` 读到 428、写前读到 430＝他席在本班值守内追加，本班只报自家 delta）；两件采集脚本 argv 末位均带 sid。袋面＝files=**2**（`ledger.md`／`checkpoint.md`，全程纯追加、`git diff --numstat HEAD` 删除集 0）；**排除** `known_data_gaps.yaml`／`feedback/*`／`instruction.md`／`process_reaper_keep.txt`（他席在途或非本席写域）。本班临时件＝`.runtime/tmp/p02_1017_02/` 六 .py＋六文本，读数已逐值抄录入账后按收班⑤删除（⚑`b27_reverify_1017_02.py` 与 `b27_run_1017_02.py` 有 import 依赖，须同批且末件删）。
+
+`P02-1017-02-CP-ENDSTATE`（本班游标节独有标记，落地面核验谓词见上段第 10 条；上一班游标节各行逐字仍在）
+
