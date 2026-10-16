@@ -7,7 +7,7 @@ title: ⑧考工B·游标
 
 cursor: 10-16 班次 02 已交账（**出分 1 张＝连续三班 0 出分止**：改正尺真跑 `TDM-X-S1-04/calibration/02`＝panel 宽宇宙 4567 名/日、verdict=fail、rows[109]、注入面与卡面 target_source 逐字对拍；本班头号＝同卡两读法实测差 23 倍而永久册无读法申报位＋judge() 遇越表键早退使真破柱不进 fails；本族剩余 71 张六桶机械分账 A17/B7/C15/D6/E5/Z21，A+C+D=38 张在 ⑤/⑥ 补腿前任何考工班零出分＝本岗天花板 1 张/班；D 桶与 /03 两案本席自纠改判并留旧案；comparison/02 差两格非一格；同 sid 孤儿半班 15 件被抓（未造二次试次双证）本席未删呈 ⑩；本席 [BLOCKER] 追加 8 条）
 last_run: 22:3x（`date` 实测 2026-10-16 23:02:12；本班＝班次 02，出分 1 张；开班 22:30:17 现测，终值以本行与收班 date 差由 ⑩ 复核，本席不写自估）
-last_batch: p08-1016-02 首袋＝台账新节（§一–§七＋[BLOCKER] 8 行）＋本游标＋分数册新址 1 行＋卡 1 枚翻 examined（四件含成绩面；消息内 .py 路径系逐字引用在册读数与本班 tmp 尺面，非本席代码改动＝[docs-only]）
+last_batch: p08-1016-02 第二袋＝台账 §八 收班补记（尺面自纠＋在途袋超集判定＋收班读数）＋本游标 ㊹㊺ 两行（纯登记面＝docs-only；首袋 q-...-0001 与他席 eviction 标记关系见 §八，四件盘上字节＝权威超集）
 notes: |
   游标由本岗每批推进；监督员(⑩)可代修。
   **下一班开考规格（班次 04 实跑核对，覆盖班次 03 的 ①-⑦）**：
@@ -94,6 +94,8 @@ notes: |
   ㊶ **本席对 /03 的初判被孤儿实测证伪并当场改判**：旧案「dragon_tiger reason 仅 2026-08-07 起⇒46 日⇒不可开考」（承 ④席在册实测）；新案＝`seat_rows=620913`／`days_ge30=1146`／日均宽度 61 名⇒装置可承重，真堵＝卡面极性未钉（V1 signed ic=-0.00706 vs V2 abs-flipped ic=-0.02969，差 4.2 倍）。⇒ 转 ⑥ 钉极性；下班勿再用「跨度不足」挡这张卡。
   ㊷ **落地面本班现测（禁当终值引用）**：分数册新址盘 110 行（本班 109→110，sha16 a9532fceb0899c94）；旧址 `docs/03_modules/_domain_backtest/exam_scores_v1.yaml` 仍在 HEAD（cat-file rc=0）而新址亦在 HEAD⇒旧址退役案仍未签（本席不自删）；`git ls-files docs/04_research_records/governance/working_ref_sweep_20261015/`＝**0**（上班 §㉝④ 续期未动）；本班谓词对旧址 HEAD 读 `^  - card_id:` 得 0 行＝本席谓词不覆盖旧址行形态（非「旧址无行」），⑩ 换尺。
   ㊸ **下班首查四件（2026-10-16 23:02:12 现测为基线）**：①⑥ 是否已给 comparison/02 补机读映射位＋建格（现值零条目）；②⑤ 是否已把 `_forward_face` 接进 `_panel_metrics`（现值 :252 硬编码）；③同 sid 孤儿 15 件的归属与清理权（本席未删）；④旧址册退役案与 working_ref_sweep 入库（现值 0）。本班收班八件逐项见 ledger §七；实耗以游标 last_run 现测差计，禁写自估终值。
+  ㊹ **尺面纠正（⑥ 排工必用，本席自纠）**：上班 ㉖ 的「106 行中 75 行 unjudged 非空」＝拿 `unjudged` 整面当越表面，而整面非空 79/110 行全部由 `pillars_prose_keys`（凡出分即回填、对 pass 行同样非空＝零判别力）贡献；真·越表数值柱 `numeric_keys_not_read` 非空仅 **3** 行、`fails` 含「未支持判据键」仅 **3** 行、其中 fails 仅此一条（其余柱未被评估）仅 **1** 行＝本席 rows[109] 自身。⇒ 词表立法真面＝3 张不是 75 张（25× 误读）；另有 45 行属「读了但无机器面」（ic_ir/mono 接线＝⑤ 的活）。尺面与负对照见 ledger §八。
+  ㊺ **在途袋与超集判定（2026-10-16 23:12:49 现测，下一班首件）**：首袋 q-20261016-st-qoder-p08-1016-02-0001（files=4）入队 6 秒即被 `q-20261016-st-qoder-p07-1016-02-0003` 以 trigger=eviction 打 `.stale`（pending/.stale/ 内仅 qid/stale/stale_by/stale_at/trigger 五字段，无 dead_reason）；本班另投严格超集袋 0002（逐件 blob→现盘 minus=0 plus=0 已实测）。下班首件＝`git log -- docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/TDM-X-S1-04__calibration__02_突破失败连续次数前瞻收益.yaml docs/_working/automation_campaign/p08_examiner_b/ledger.md` 判是否落地；未落地先读四态与 dead_reason 再对症重投（盘上四件＝权威超集字节，勿重跑 run_card 造二次试次）；本席不自销他袋。
      `ic_exam.py:96 ic[valid < 30] = np.nan` 掩码直接决定，本班同进程读数 20/29 列 `n=0`、30/120 列 `n=419`，且 `ic_stats(空序列)` 回
      `{'ic_mean': 0.0, 'icir': 0.0, 'n_obs': 0}`（0.0 非 nan）⇒ 任何 20 列面只能产出 0 读数，"跑一张即写一条假陈述"不依赖信号好坏；本席另把自造 `A_perfect_signal_*` 探针命名证伪（iid 噪声 shift(-1) 本身无自相关，见 ledger §九）。
      (b) 本族 `#rows[N]` 指针分账＝151 个卡件中 5 张用位置指针，HEAD 旧址册 rows=73 ⇒ 悬空 3 张，其中 **本席 04 班亲笔 2 枚**
