@@ -1,0 +1,54 @@
+# ③库内挖矿席 20261017-p03-03 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L3-12/comparison/02_four_dim_sum_count_vs_strict_resonance_vs_any_dim_rank_order_split
+node_id: TDM-E-L3-12
+family: comparison
+title_zh: 四维验证共振·计数求和形制腿 vs 全共振二值腿 vs 任一维腿的排序对照卡
+hypothesis: 图面 dq 承本节点裸骨架（逐行回读）。兄弟卡在册口径原样引用＝资金维=main_net_inflow_pct>0 连 3 日；席位维=机构专用净买为正或一线游资（seat_name 文本判定）净买为正；筹码维=chips_winner 分位处于集中低位档；形态维=看多 pattern_id 命中；正面维数=四布尔求和，col=main_net_inflow_pct / net_amount(seat_type)
+  / chips_winner / pattern_id，目标=stock_fwd_ret_t1o_to_t2c。该卡以「和」代表共振；本卡在同一 symbol-day 集合上对照三种写法＝(A) 0-4 计数（在册）、(B) 全共振=4 二值、(C) 任一维>=1 二值，比三者的截面排序与分档单调性，并报出 (A) 中「4 维」与「2 维但含资金＋席位」两子集的收益差。判读＝若三者排序同序（计数与全共振只差缩放），则共振措辞可派生→§4
+  必并，兄弟卡的 ablation 结论只需保留计数一形；若 (A) 把「资金＋席位」与「筹码＋形态」两类 2 维样本混在同一档而两者收益不同，则求和掩盖了维度互补结构，图面「四维验证结论」应改为成对维描述；(C) 若已给出大部分 (A) 的分离力，则四维里存在冗余维，须由邻域单维消融确认。在册限定＝本卡不改四布尔式（含连 3 日、机构/一线游资文本判定、chips_winner 集中低位档、看多
+  pattern_id）、不新增第五维、不改求和范围；起点缺陷原样同框＝四表任一缺源即维持 blocked_on_data、不出数、不判共振无效（缺源路由 ①②）；禁在 2025-09-09 后取判据值。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L3-12/ablation/02_四维验证共振 的 target 面（primary=stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）），差异只落在对照腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 01:42:58 reaper 权威 watermark 现读 commit_pct=81.79%／cpu_pct=31.2%／degraded=False，01:45 同尺复量=commit_pct=82.44%／cpu_pct=35.1%／ram_used_pct=79.8%／degraded=False（两读数均低于在册「≥85%
+  禁探针」闸，故本班按上班 §九 第1条起候选面重建腿），但 01:48:04 该腿首月开跑前守卫预读 commit_pct=86.69%≥85%⇒当场自停，本班零 CH 请求、零 panel 物化（三分钟内水位跨过闸门＝水位窗未到，非楼内无矿，本班不报枯竭）；产出口=卡面。选题判据＝本班盘点尺（逐字复用上席 .runtime/tmp/p03_1017_02/census.py 与 tiers.py）现读
+  yaml_files=448／零具名面 25／非 L9 零具名 11（T1=1／T2=10／T3=0／T4=0），与本席位面上班游标终值同尺同值作正对照；本面兄弟卡态=blocked_on_data，按上席已呈 ⑩ 未裁的「机械可读性」判据（兄弟卡须带可读 signal_table＋target.primary＋signal_kind）入选，本批同样整批可 revert。形状自检＝signal_kind
+  与 target.shape 同形，值由兄弟卡 TDM-E-L3-12/ablation/02_四维验证共振 的 signal_kind 运行时读回（panel），非本班手打；裸骨架=TDM-E-L3-12/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.money_flow + c1_market.dragon_tiger_seat + c1_market.technical_indicator + c1_market.market_pattern_event
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 ablation/02_四维验证共振（blocked_on_data·panel·c1_market.money_flow + dragon_tiger_seat + technical_indicator + market_pattern_event）；四维布尔式与正面维数求和式逐字承该卡 data_binding.signal_derivation，本卡只换读出形制。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-03
+birth_batch: 20261017-p03-03
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L3-12，decision_question 原文='候选个股的资金/席位/筹码/形态四维验证结论'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family) 补该骨架所缺家族」口径；本班一律走非
+  L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）；入选判据＝兄弟卡带可读 signal_table＋target.primary＋signal_kind（相对上班「须 preregistered/examined」为放宽，本面兄弟卡态=blocked_on_data；放宽事实已按本班盘点分层读数 T1=6/T2=15/T3=0/T4=0 呈 ⑩，未裁前本批可整批
+  revert）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12__comparison__02_four_dim_sum_count_vs_strict_resonance_vs_any_dim_rank_order_split.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-12.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L3
+  node_type: stage
+  market: cn_a
+  decision_question: 候选个股的资金/席位/筹码/形态四维验证结论
+  module_ref: null
+  module_id: null
+  confidence_at_gen: untested
+  purpose_tag: PT-03

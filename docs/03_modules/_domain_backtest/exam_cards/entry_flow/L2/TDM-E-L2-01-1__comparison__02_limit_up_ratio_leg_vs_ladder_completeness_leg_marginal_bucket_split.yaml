@@ -1,0 +1,55 @@
+# ③库内挖矿席 20261017-p03-03 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-1__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-01-1/comparison/02_limit_up_ratio_leg_vs_ladder_completeness_leg_marginal_bucket_split
+node_id: TDM-E-L2-01-1
+family: comparison
+title_zh: 板块内涨停结构·占比腿与梯队完整度腿的边际分档对照卡
+hypothesis: 图面 dq 承本节点裸骨架（逐行回读）。兄弟卡在册口径原样引用＝个股涨停=close>=limit_up（用 stk_limit 在册涨停价，禁自定 9.9% 阈值）；板块内涨停占比=count(涨停股∈成分)/count(成分)；梯队完整度=同板块内 max(consec_limit)>=3 且存在 consec_limit>=2 的家数>=2；两式取板块截面均值→日度 series，目标=next_day_index_return（CSI300
+  次日收益）。该卡把占比与梯队合成同一强度读数；本卡把两腿拆成同一交易日上的两条 series 各自分档，对照三格＝占比高/梯队全、占比高/梯队缺、占比低/梯队全（第三格是兄弟卡合成式里被抹平的一格：占比给分但梯队不给分），各测对次日指数收益的日度均值与样本数。判读＝若「占比高/梯队缺」格与「占比低/梯队全」格的读数都落在合成单值给出的同侧且无额外分离力，则梯队完整度是占比的下游派生（涨停多了自然有梯队），合成式可按
+  §4 并回单腿并删掉图面「梯队」字样；若「占比高/梯队缺」显著劣于「占比低/梯队全」，则两腿跨形不并，且兄弟卡的合成读数在该格上系统性高估情绪强度。在册限定＝本卡不改涨停判定式、不改 >=3/>=2 两阈值与其家数口径、不改板块截面均值聚合向、不自定成分名单（sector_constituent 在册映射逐字回读）；起点缺陷原样同框＝该卡缺源未补即维持 blocked_on_data、不出数、不判信号无（缺源路由
+  ①②）；禁在 2025-09-09 后取判据值。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L2-01-1/calibration/02_板块内涨停结构强度 的 target 面（primary=next_day_index_return（CSI300 次日收益）），差异只落在对照腿。
+  shape: series
+status: empty
+signal_kind: series
+in_registry_readout: 本班零实测（如实登记）＝开班 01:42:58 reaper 权威 watermark 现读 commit_pct=81.79%／cpu_pct=31.2%／degraded=False，01:45 同尺复量=commit_pct=82.44%／cpu_pct=35.1%／ram_used_pct=79.8%／degraded=False（两读数均低于在册「≥85%
+  禁探针」闸，故本班按上班 §九 第1条起候选面重建腿），但 01:48:04 该腿首月开跑前守卫预读 commit_pct=86.69%≥85%⇒当场自停，本班零 CH 请求、零 panel 物化（三分钟内水位跨过闸门＝水位窗未到，非楼内无矿，本班不报枯竭）；产出口=卡面。选题判据＝本班盘点尺（逐字复用上席 .runtime/tmp/p03_1017_02/census.py 与 tiers.py）现读
+  yaml_files=448／零具名面 25／非 L9 零具名 11（T1=1／T2=10／T3=0／T4=0），与本席位面上班游标终值同尺同值作正对照；本面兄弟卡态=blocked_on_data，按上席已呈 ⑩ 未裁的「机械可读性」判据（兄弟卡须带可读 signal_table＋target.primary＋signal_kind）入选，本批同样整批可 revert。形状自检＝signal_kind
+  与 target.shape 同形，值由兄弟卡 TDM-E-L2-01-1/calibration/02_板块内涨停结构强度 的 signal_kind 运行时读回（series），非本班手打；裸骨架=TDM-E-L2-01-1/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.stk_limit + c1_market.sector_constituent
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_板块内涨停结构强度（blocked_on_data·series·c1_market.kline_daily_hfq + c1_market.stk_limit + c1_market.sector_constituent）；close>=limit_up、占比式、梯队二值式与截面均值→series 逐字承该卡
+    data_binding.signal_derivation，本卡不新增第三种结构度量。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-03
+birth_batch: 20261017-p03-03
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-01-1，decision_question 原文='板块情绪结构（涨停比/梯队/趋势）强不强'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family) 补该骨架所缺家族」口径；本班一律走非
+  L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）；入选判据＝兄弟卡带可读 signal_table＋target.primary＋signal_kind（相对上班「须 preregistered/examined」为放宽，本面兄弟卡态=blocked_on_data；放宽事实已按本班盘点分层读数 T1=6/T2=15/T3=0/T4=0 呈 ⑩，未裁前本批可整批
+  revert）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-1__comparison__02_limit_up_ratio_leg_vs_ladder_completeness_leg_marginal_bucket_split.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01-1.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 板块情绪结构（涨停比/梯队/趋势）强不强
+  module_ref: src/zephyr/signal_ashare/sector/sector_analyzer.py
+  module_id: MOD-SIG-026
+  confidence_at_gen: proposed
+  purpose_tag: PT-02

@@ -1,0 +1,54 @@
+# ③库内挖矿席 20261017-p03-03 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-09__ablation.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L3-09/ablation/02_drop_stale_removal_leg_vs_drop_demotion_leg_on_pool_turnover
+node_id: TDM-E-L3-09
+family: ablation
+title_zh: Tier 状态机·删 10 日陈旧剔除腿 vs 删 5 日降级腿的池周转对照消融卡
+hypothesis: 图面 dq 承本节点裸骨架（逐行回读）。兄弟卡在册口径原样引用＝状态机重放=按 L3-03 双池代理分逐日达标判定，连 2 日升/5 日降/10 日剔，产出逐日 Tier；需持久化 Tier 历史方可核对重放一致性；col=tier_slot × c1_market.kline_daily_hfq，目标=stock_fwd_ret_t1o_to_t2c。该卡把三条时间规则合成一台状态机；本卡做消融＝在其余规则不变的前提下各删一腿成两臂：臂
+  A 删「10 日剔」（不合格票永不离开池，只降级），臂 B 删「5 日降」（降级跳失，只剩升与剔），同窗测两臂相对在册全机的池规模、逐日周转率与池内前向收益分档。判读＝若 A、B 给出的池几乎相同（降级本来就是通向剔除的路径），则升降与剔除两腿同真源可派生→§4 必并，状态机可缩为「达标/不达标＋N 日计数」两态并删掉 Tier 层级措辞；若臂 A 池显著膨胀且膨胀部分的前向收益拖低池均值，则剔除腿是承重腿、不可由降级替代，兄弟卡的「持续性」读数须注明剔除腿单独贡献；若臂
+  B 使票长期占位阻塞新票，则降级腿承担的是配额释放功能，与统计有效性无关。在册限定＝本卡不改连 2 日升、5 日降、10 日剔三常数（只做整腿删失，禁改阈值、禁调顺序替换）、不改 L3-03 双池代理分来源、不改 tier_slot 字段；实现缺陷原样同框＝该卡所指 Tier 历史未持久化即维持 blocked_on_impl、不出数、不判状态机无效（缺件路由 ①②⑤）；禁在 2025-09-09
+  后取判据值。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L3-09/calibration/02_Tier状态机持续性 的 target 面（primary=stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）），差异只落在对照腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 01:42:58 reaper 权威 watermark 现读 commit_pct=81.79%／cpu_pct=31.2%／degraded=False，01:45 同尺复量=commit_pct=82.44%／cpu_pct=35.1%／ram_used_pct=79.8%／degraded=False（两读数均低于在册「≥85%
+  禁探针」闸，故本班按上班 §九 第1条起候选面重建腿），但 01:48:04 该腿首月开跑前守卫预读 commit_pct=86.69%≥85%⇒当场自停，本班零 CH 请求、零 panel 物化（三分钟内水位跨过闸门＝水位窗未到，非楼内无矿，本班不报枯竭）；产出口=卡面。选题判据＝本班盘点尺（逐字复用上席 .runtime/tmp/p03_1017_02/census.py 与 tiers.py）现读
+  yaml_files=448／零具名面 25／非 L9 零具名 11（T1=1／T2=10／T3=0／T4=0），与本席位面上班游标终值同尺同值作正对照；本面兄弟卡态=blocked_on_impl，按上席已呈 ⑩ 未裁的「机械可读性」判据（兄弟卡须带可读 signal_table＋target.primary＋signal_kind）入选，本批同样整批可 revert。形状自检＝signal_kind
+  与 target.shape 同形，值由兄弟卡 TDM-E-L3-09/calibration/02_Tier状态机持续性 的 signal_kind 运行时读回（panel），非本班手打；裸骨架=TDM-E-L3-09/ablation/01（status=empty）。
+data_binding:
+  signal_table: （需池状态历史）c1_market.stock_candidate_pool.tier_slot × c1_market.kline_daily_hfq
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_Tier状态机持续性（blocked_on_impl·panel·c1_market.stock_candidate_pool.tier_slot × c1_market.kline_daily_hfq）；连2/5/10 三规则与双池代理分逐日达标式逐字承该卡 data_binding.signal_derivation，本卡只各删一条。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-03
+birth_batch: 20261017-p03-03
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L3-09，decision_question 原文='漏斗日产出怎么更新持久池（Tier 升降级+陈旧剔除）'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family)
+  补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）；入选判据＝兄弟卡带可读 signal_table＋target.primary＋signal_kind（相对上班「须 preregistered/examined」为放宽，本面兄弟卡态=blocked_on_impl；放宽事实已按本班盘点分层读数 T1=6/T2=15/T3=0/T4=0
+  呈 ⑩，未裁前本批可整批 revert）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-09__ablation__02_drop_stale_removal_leg_vs_drop_demotion_leg_on_pool_turnover.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-09.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L3
+  node_type: aggregation
+  market: cn_a
+  decision_question: 漏斗日产出怎么更新持久池（Tier 升降级+陈旧剔除）
+  module_ref: src/zephyr/signal_ashare/core/pool_tier_maintenance.py
+  module_id: MOD-SIG-139
+  confidence_at_gen: proposed
+  purpose_tag: PT-03

@@ -1,0 +1,54 @@
+# ③库内挖矿席 20261017-p03-03 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-1__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-09-1/comparison/02_high_confidence_hit_share_vs_raw_hit_count_with_news_volume_covariate
+node_id: TDM-E-L2-09-1
+family: comparison
+title_zh: 事件图谱置信·高置信占比形制腿与命中计数形制腿的新闻总量协变量对照卡
+hypothesis: 图面 dq 承本节点裸骨架（逐行回读）。兄弟卡在册口径原样引用＝命中=新闻关键词/实体经词表匹配到 ig_node 活节点（剔墓碑与泛化词），置信=匹配强度×节点活性，series=当日高置信命中数/当日新闻总数，目标=next_day_index_return（CSI300 次日收益）。该卡的分母「当日新闻总数」是采集侧产物（受披露节奏与抓取影响），该卡未把它当信号也未把它当噪声检验；本卡同窗对照三列＝(A)
+  在册占比、(B) 高置信命中数绝对值、(C) 当日新闻总数本身，并单独考 (C) 对次日收益的直接映射。判读＝若 (C) 无映射力且 (A)、(B) 排序同序，则占比=计数的缩放，两形制同真源可派生→§4 必并，图面只需留一条并写明用计数；若 (C) 自身有映射力（例如披露密集日恰对应次日弱势），则 (A) 把「信号源」与「采集节奏」混在同一比值里，其读数不可与 (B) 互换，兄弟卡的占比结论必须在
+  (C) 分档内重算才可用。在册限定＝本卡不改命中定义（词表匹配、活节点、剔墓碑与泛化词）、不改置信=匹配强度×节点活性式、不改分母取「当日新闻总数」的在册口径、不自拟事件名单（ig_node/ig_edge/ig_node_company/ig_chain 逐字回读，news_data 侧字段面 col 原文承该卡）；起点缺陷原样同框＝缺源未补即 blocked_on_data、不出数、不判事件无效；禁在
+  2025-09-09 后取判据值。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L2-09-1/calibration/02_事件图谱命中置信度 的 target 面（primary=next_day_index_return（CSI300 次日收益）），差异只落在对照腿。
+  shape: series
+status: empty
+signal_kind: series
+in_registry_readout: 本班零实测（如实登记）＝开班 01:42:58 reaper 权威 watermark 现读 commit_pct=81.79%／cpu_pct=31.2%／degraded=False，01:45 同尺复量=commit_pct=82.44%／cpu_pct=35.1%／ram_used_pct=79.8%／degraded=False（两读数均低于在册「≥85%
+  禁探针」闸，故本班按上班 §九 第1条起候选面重建腿），但 01:48:04 该腿首月开跑前守卫预读 commit_pct=86.69%≥85%⇒当场自停，本班零 CH 请求、零 panel 物化（三分钟内水位跨过闸门＝水位窗未到，非楼内无矿，本班不报枯竭）；产出口=卡面。选题判据＝本班盘点尺（逐字复用上席 .runtime/tmp/p03_1017_02/census.py 与 tiers.py）现读
+  yaml_files=448／零具名面 25／非 L9 零具名 11（T1=1／T2=10／T3=0／T4=0），与本席位面上班游标终值同尺同值作正对照；本面兄弟卡态=blocked_on_data，按上席已呈 ⑩ 未裁的「机械可读性」判据（兄弟卡须带可读 signal_table＋target.primary＋signal_kind）入选，本批同样整批可 revert。形状自检＝signal_kind
+  与 target.shape 同形，值由兄弟卡 TDM-E-L2-09-1/calibration/02_事件图谱命中置信度 的 signal_kind 运行时读回（series），非本班手打；裸骨架=TDM-E-L2-09-1/comparison/01（status=empty）。
+data_binding:
+  signal_table: c3_fundamental.news_data（PG 侧 ig_node/ig_edge/ig_node_company/ig_chain）
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_事件图谱命中置信度（blocked_on_data·series·c3_fundamental.news_data 与 PG 侧 ig_node/ig_edge/ig_node_company/ig_chain）；命中式、置信式与占比分母逐字承该卡 data_binding.signal_derivation，本卡只把分子与分母各自成列。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-03
+birth_batch: 20261017-p03-03
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-09-1，decision_question 原文='这条新闻/事件打在产业链哪个节点上、几分可信'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family)
+  补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）；入选判据＝兄弟卡带可读 signal_table＋target.primary＋signal_kind（相对上班「须 preregistered/examined」为放宽，本面兄弟卡态=blocked_on_data；放宽事实已按本班盘点分层读数 T1=6/T2=15/T3=0/T4=0
+  呈 ⑩，未裁前本批可整批 revert）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-1__comparison__02_high_confidence_hit_share_vs_raw_hit_count_with_news_volume_covariate.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-09-1.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 这条新闻/事件打在产业链哪个节点上、几分可信
+  module_ref: src/zephyr/intelligence/news_chain_node_linker.py
+  module_id: MOD-INT-NEWS-CHAIN
+  confidence_at_gen: proposed
+  purpose_tag: PT-02

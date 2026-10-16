@@ -1,0 +1,54 @@
+# ③库内挖矿席 20261017-p03-03 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-10__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-10/comparison/02_sector_membership_path_vs_chain_graph_path_candidate_set_and_hump_timing
+node_id: TDM-E-L2-10
+family: comparison
+title_zh: 同源补涨·板块成分路面与产业链图谱路候选集与驼峰时标对照卡
+hypothesis: 图面 dq 承本节点裸骨架（逐行回读）。兄弟卡在册口径原样引用＝龙头板块=每日 kline_sector_880 强度榜 Top10；板块内个股由 sector_constituent 映射；补涨缺口=板块自启动涨幅−个股自启动涨幅；按「距启动天数」分桶算超额驼峰；产业链路=同一龙头板块的图谱上下游节点标的（ig_edge/ig_node_company 落点），目标=next_day_index_return（series
+  面）。该卡两路都写但把补涨候选合成一个面板；本卡把两路拆成同一龙头板块同一日的两个候选集，考两件事＝(i) 两集合的重叠率与其补涨缺口分布差；(ii) 两路各自「距启动天数」分桶上的超额驼峰峰位是否同日。判读＝若重叠率高且两路峰位同日，则成分路与图谱路是同一现象的两种映射，可派生→§4 必并，图面应只留一路并声明另一路为其投影；若图谱路峰位系统性滞后（上下游传导需要额外天数），则两路是不同时标对象、禁互相替代，兄弟卡的合成面板在该滞后窗内会把图谱路的未启动误读成「无补涨机会」。在册限定＝本卡不改
+  Top10 龙头定义、不改缺口=板块涨幅−个股涨幅式、不改分桶变量（仍按距启动天数）、不自拟图谱边权重或跳数、不改 MAE/amount 字段面；起点缺陷原样同框＝缺源未补即 blocked_on_data、不出数、不判补涨无效；禁在 2025-09-09 后取判据值。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L2-10/calibration/02_同源补涨滞后 的 target 面（primary=next_day_index_return（CSI300 次日收益，series 面）），差异只落在对照腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 01:42:58 reaper 权威 watermark 现读 commit_pct=81.79%／cpu_pct=31.2%／degraded=False，01:45 同尺复量=commit_pct=82.44%／cpu_pct=35.1%／ram_used_pct=79.8%／degraded=False（两读数均低于在册「≥85%
+  禁探针」闸，故本班按上班 §九 第1条起候选面重建腿），但 01:48:04 该腿首月开跑前守卫预读 commit_pct=86.69%≥85%⇒当场自停，本班零 CH 请求、零 panel 物化（三分钟内水位跨过闸门＝水位窗未到，非楼内无矿，本班不报枯竭）；产出口=卡面。选题判据＝本班盘点尺（逐字复用上席 .runtime/tmp/p03_1017_02/census.py 与 tiers.py）现读
+  yaml_files=448／零具名面 25／非 L9 零具名 11（T1=1／T2=10／T3=0／T4=0），与本席位面上班游标终值同尺同值作正对照；本面兄弟卡态=blocked_on_data，按上席已呈 ⑩ 未裁的「机械可读性」判据（兄弟卡须带可读 signal_table＋target.primary＋signal_kind）入选，本批同样整批可 revert。形状自检＝signal_kind
+  与 target.shape 同形，值由兄弟卡 TDM-E-L2-10/calibration/02_同源补涨滞后 的 signal_kind 运行时读回（panel），非本班手打；裸骨架=TDM-E-L2-10/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_daily_hfq + c1_market.sector_constituent + c1_market.kline_sector_880 （PG ig_edge/ig_node_company 用于产业链路）
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_同源补涨滞后（blocked_on_data·panel·c1_market.kline_daily_hfq + c1_market.sector_constituent + c1_market.kline_sector_880 与 PG ig_edge/ig_node_company）；Top10、缺口式、距启动天数分桶与图谱落点逐字承该卡
+    data_binding.signal_derivation，本卡只把两路拆成两集合并比峰位。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-03
+birth_batch: 20261017-p03-03
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-10，decision_question 原文='龙头板块的同链条/上下游里谁还没涨（补涨候选）'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family)
+  补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）；入选判据＝兄弟卡带可读 signal_table＋target.primary＋signal_kind（相对上班「须 preregistered/examined」为放宽，本面兄弟卡态=blocked_on_data；放宽事实已按本班盘点分层读数 T1=6/T2=15/T3=0/T4=0
+  呈 ⑩，未裁前本批可整批 revert）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-10__comparison__02_sector_membership_path_vs_chain_graph_path_candidate_set_and_hump_timing.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-10.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 龙头板块的同链条/上下游里谁还没涨（补涨候选）
+  module_ref: src/zephyr/signal_ashare/supply_chain_momentum.py
+  module_id: MOD-SIG-118
+  confidence_at_gen: proposed
+  purpose_tag: PT-03

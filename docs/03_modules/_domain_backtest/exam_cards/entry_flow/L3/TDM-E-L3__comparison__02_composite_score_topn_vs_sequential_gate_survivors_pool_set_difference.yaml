@@ -1,0 +1,53 @@
+# ③库内挖矿席 20261017-p03-03 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L3/comparison/02_composite_score_topn_vs_sequential_gate_survivors_pool_set_difference
+node_id: TDM-E-L3
+family: comparison
+title_zh: 板块选票·合成分 Top-N 腿与逐级门槛存活腿的池成员差集对照卡
+hypothesis: 图面 dq 承本节点裸骨架（逐行回读）。兄弟卡在册口径原样引用＝重放=按 L3-01 宇宙剔除 → L3-03-1 涨停基因分 + L3-03-2 趋势/量能分 + L3-05 连板顺位 合成分，取 Top-N（N=10/15/20 三档），逐段产物不落库故由考试车道重放，col=rank_score（重放口径），目标=stock_fwd_ret_t1o_to_t2c。该卡把四段合成一个分再截断；本卡对照两种压缩写法＝(A)
+  合成分 Top-N，(B) 同四段当门槛逐级筛（先 L3-01 宇宙，再各段各自在册阈值/顺位存活），比同一 N 下两池的差集与交集。判读＝若 B⊆A 或差集票的前向收益分布与交集票无差别，则逐级门槛是合成分的可派生实现（§4 同真源→并），漏斗「逐级」措辞只剩展示价值；若差集集中在「早段被剔但合成分靠后两段拉高」的票且该子集前向收益显著不同，则逐级淘汰携带合成分丢掉的否决信息，兄弟卡靠合成分算出的信息保留率会高估该族有效性，图面「板块里选哪只票」的正确实现须写明是门槛形制。在册限定＝本卡不改四段构成（宇宙/L3-03-1/L3-03-2/L3-05）、不改
+  N=10/15/20 三档、不改各段在册阈值与顺位定义、不自立第五段；实现缺陷原样同框＝该卡 blocked_on_impl 原文所指的逐段产物不落库/重放依赖未补齐即维持 blocked、不出数、不判漏斗无效（缺件路由 ①②⑤）；禁在 2025-09-09 后取判据值。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L3/ablation/02_漏斗压缩信息保留 的 target 面（primary=stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）），差异只落在对照腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 01:42:58 reaper 权威 watermark 现读 commit_pct=81.79%／cpu_pct=31.2%／degraded=False，01:45 同尺复量=commit_pct=82.44%／cpu_pct=35.1%／ram_used_pct=79.8%／degraded=False（两读数均低于在册「≥85%
+  禁探针」闸，故本班按上班 §九 第1条起候选面重建腿），但 01:48:04 该腿首月开跑前守卫预读 commit_pct=86.69%≥85%⇒当场自停，本班零 CH 请求、零 panel 物化（三分钟内水位跨过闸门＝水位窗未到，非楼内无矿，本班不报枯竭）；产出口=卡面。选题判据＝本班盘点尺（逐字复用上席 .runtime/tmp/p03_1017_02/census.py 与 tiers.py）现读
+  yaml_files=448／零具名面 25／非 L9 零具名 11（T1=1／T2=10／T3=0／T4=0），与本席位面上班游标终值同尺同值作正对照；本面兄弟卡态=blocked_on_impl，按上席已呈 ⑩ 未裁的「机械可读性」判据（兄弟卡须带可读 signal_table＋target.primary＋signal_kind）入选，本批同样整批可 revert。形状自检＝signal_kind
+  与 target.shape 同形，值由兄弟卡 TDM-E-L3/ablation/02_漏斗压缩信息保留 的 signal_kind 运行时读回（panel），非本班手打；裸骨架=TDM-E-L3/comparison/01（status=empty）。
+data_binding:
+  signal_table: （无单表）候选池合成面：c1_market.kline_daily × c1_market.stk_limit × c1_market.technical_indicator 重放
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 ablation/02_漏斗压缩信息保留（blocked_on_impl·panel·候选池合成面 kline_daily × stk_limit × technical_indicator 重放，col=rank_score）；四段构成、合成分加法结构与 Top-N 三档逐字承该卡 data_binding.signal_derivation，本卡不新增段与权重。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-03
+birth_batch: 20261017-p03-03
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L3，decision_question 原文='板块里选哪只票'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family) 补该骨架所缺家族」口径；本班一律走非
+  L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）；入选判据＝兄弟卡带可读 signal_table＋target.primary＋signal_kind（相对上班「须 preregistered/examined」为放宽，本面兄弟卡态=blocked_on_impl；放宽事实已按本班盘点分层读数 T1=6/T2=15/T3=0/T4=0 呈 ⑩，未裁前本批可整批
+  revert）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3__comparison__02_composite_score_topn_vs_sequential_gate_survivors_pool_set_difference.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L3
+  node_type: stage
+  market: cn_a
+  decision_question: 板块里选哪只票
+  module_ref: null
+  module_id: null
+  confidence_at_gen: untested
+  purpose_tag: PT-03
