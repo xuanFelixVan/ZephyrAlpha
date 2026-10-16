@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L02-031 | docs/_working/data_fix_campaign §批10 验收台账
+# [BLUEPRINT] MOD-L02-031 | docs/04_research_records/data/data_fix_campaign §批10 验收台账
 # [MODULE] data_fix_campaign.audit_technical_indicator_columns
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.data.ch_reader

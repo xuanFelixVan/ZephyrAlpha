@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-043 | docs/_working/cold_backup_automation/00_master_plan.md | §9 表行3
+# [BLUEPRINT] MOD-INF-043 | docs/_archive/_working_cleared/cold_backup_automation/00_master_plan.md | §9 表行3
 # [MODULE] scripts.ch.waste_table_scanner
 # [DOMAIN] D_INFRASTRUCTURE
 # [DEPENDENCIES] zephyr.infrastructure.database_service(经HTTP); PyYAML

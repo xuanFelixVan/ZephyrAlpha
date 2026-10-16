@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-AUTO-L3-001(暂编号) | docs/_working/automation/campaign/blueprints/intel_harvester_blueprint.md | §
+# [BLUEPRINT] MOD-AUTO-L3-001(暂编号) | docs/04_research_records/cross_domain/automation/campaign/blueprints/intel_harvester_blueprint.md | §
 # [MODULE] scripts.automation.intel_harvester
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_chat（内嵌 LSG）; urllib; xml.etree; yaml（PyYAML）
-# [CONSUMERS] docs/_working/automation/inbox/（情报收件箱）; AI 层对话⑥（未来接管方）;
+# [CONSUMERS] docs/04_research_records/cross_domain/automation/inbox/（情报收件箱）; AI 层对话⑥（未来接管方）;
 #   scripts/backtest/lane_g_stomach_intake.py（F20 事件沿：落新班→车道G消化，fire-and-forget）;
 #   config/intel_sources.yaml + config/intel_keywords.yaml（本件消费的两注册表）
 # [STARTUP] manual

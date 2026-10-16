@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-AUTO-L3-001 | docs/_working/automation/campaign/blueprints/intel_harvester_blueprint.md | §
+# [BLUEPRINT] MOD-AUTO-L3-001 | docs/04_research_records/cross_domain/automation/campaign/blueprints/intel_harvester_blueprint.md | §
 # [PROVISIONAL] 暂编号：docs/03_modules 解冻后按注册表重编（挂单 H-01）
 # [MODULE] scripts.automation.validate_intel_registry
 # [DOMAIN] D_GOV_SCRIPTS

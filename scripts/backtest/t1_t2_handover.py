@@ -8,7 +8,7 @@
 # [STARTUP] auto（外部调度器周期调用；本件自身无常驻循环——每次调用=一次有界幂等检查）
 # [MATURITY] experimental
 # [INVARIANTS] 幂等：同一 manifest 重复调用必产出同一 verdict/subspace（确定性算法+固定种子）；
-#   判据口径真源=docs/_working/decision_map_campaign_20260924/17_quantified_acceptance.md §一，本件只执行不改阈值；
+#   判据口径真源=docs/_archive/_working_cleared/decision_map_campaign_20260924/17_quantified_acceptance.md §一，本件只执行不改阈值；
 #   claim 文件 O_EXCL 原子创建防双发 T2（单卡禁共存 prereg vram.concurrency=1）；发车前 E0 问闸+GPU 独占探测，
 #   任一不过=DEFERRED 并撤销本次 claim（下轮重试）；本件永不重启/击杀任何在跑作业（T1_DIED 只报告不处置）；
 #   正式跑批禁跳 E0 问闸——本件在问闸拒绝时同样不发车

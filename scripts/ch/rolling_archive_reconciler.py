@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-043 | docs/_working/cold_backup_automation/00_master_plan.md | §5
+# [BLUEPRINT] MOD-INF-043 | docs/_archive/_working_cleared/cold_backup_automation/00_master_plan.md | §5
 # [MODULE] scripts.ch.rolling_archive_reconciler
 # [DOMAIN] D_INFRASTRUCTURE
 # [DEPENDENCIES] scripts.ch.archiver; zephyr.infrastructure.database_service(经archiver HTTP通道)

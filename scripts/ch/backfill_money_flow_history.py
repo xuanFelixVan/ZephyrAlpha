@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/meta_question_answers/gaps/A06_MONEYFLOW_BACKFILL_workbook.md
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_archive/_working_cleared/meta_question_answers/gaps/A06_MONEYFLOW_BACKFILL_workbook.md
 # [MODULE] scripts.ch.backfill_money_flow_history
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] tushare; zephyr.shared.security.secrets; zephyr.data.ch_reader (日历/幂等探针); zephyr.data.ch_writer (strict 写通道)

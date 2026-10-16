@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-ENTITY-GRAPH | docs/_working/altdata_line/02_entity_graph_equity_person.md | §
+# [BLUEPRINT] MOD-ENTITY-GRAPH | docs/04_research_records/data/altdata_line/02_entity_graph_equity_person.md | §
 # [MODULE] scripts.entity_graph.entity_graph_ingest
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.data.ch_reader (top10_shareholders/stock_basic); zephyr.governance.depgraph_schema (get_depgraph_pg_connection)

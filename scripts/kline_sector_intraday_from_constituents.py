@@ -6,8 +6,8 @@
 # [CONSUMERS] 调度器 intraday_sector 组（kline_sector_intraday 表下游全族：kline_sector_880_resample 口径复核/SEC 逆势榜/Dashboard 板块页）
 # [STARTUP] scheduled
 # [MATURITY] production  # st-fig13-followup-20261006: promoted (equal-weight aggregation chain running since 09-30, 580-sector full coverage, adversarial pair-check passed; ops lane B2)
-# [INVARIANTS] 等权链式聚合（与 docs/_working/disk_reorg_campaign/a7_sector_switch_validation.md 校验批同法：成员分钟收盘前向填充→逐分钟成员收益均值→链乘）；基点=当日首分钟成员等权均价，逐日重置禁跨日拼接（tdx 点位历史不可拼，a7 §一）；code 统一后缀码 880xxx.SH（修复存量行业板裸码暗伤）；data_source='internal_eqw' 可溯源；1m 条为单点条 OHLC 相等（源无分钟内路径），5m/15m/30m/60m 由 1m 路径桶聚合出真实 OHLC；volume/amount=成员真实成交合计；ReplacingMergeTree (code,period,trade_date) 同键重跑幂等（merge 后新数据胜）；停牌成员前向填充收益记 0
-# [MODIFY-GUARD] docs/_working/disk_reorg_campaign/a6_remaining_work_order.md §F+
+# [INVARIANTS] 等权链式聚合（与 docs/_archive/_working_cleared/disk_reorg_campaign/a7_sector_switch_validation.md 校验批同法：成员分钟收盘前向填充→逐分钟成员收益均值→链乘）；基点=当日首分钟成员等权均价，逐日重置禁跨日拼接（tdx 点位历史不可拼，a7 §一）；code 统一后缀码 880xxx.SH（修复存量行业板裸码暗伤）；data_source='internal_eqw' 可溯源；1m 条为单点条 OHLC 相等（源无分钟内路径），5m/15m/30m/60m 由 1m 路径桶聚合出真实 OHLC；volume/amount=成员真实成交合计；ReplacingMergeTree (code,period,trade_date) 同键重跑幂等（merge 后新数据胜）；停牌成员前向填充收益记 0
+# [MODIFY-GUARD] docs/_archive/_working_cleared/disk_reorg_campaign/a6_remaining_work_order.md §F+
 # [STABILITY] testing
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -13,8 +13,8 @@
 #              写（.runtime/ai_layer/perceive/search_orders/ 既有枚举落点，非 data/ 生产路径）；
 #              T3 双前置（R1-F2 裁定）：resource_profile 画像登记 + 裁定登记，两项未齐禁止启用
 #              计划任务——守卫在 register_ai_l1_scan_task.ps1 内置，本件被调时不重复判
-# [MODIFY-GUARD] docs/_working/ai_layer_vision/P1_full_construction_inventory.md L1 项 7；
-#                docs/_working/fullflow_mining/m4_ai_layer/接续收口_20260925/03_f94_f95_construction_orders.md L1-WO-7
+# [MODIFY-GUARD] docs/_archive/_working_cleared/ai_layer_vision/P1_full_construction_inventory.md L1 项 7；
+#                docs/04_research_records/data/fullflow_mining/m4_ai_layer/接续收口_20260925/03_f94_f95_construction_orders.md L1-WO-7
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-SECTOR_LINE | docs/_working/sector_line/sector_layer_skeleton_v0.md | §1 基线冻结
+# [BLUEPRINT] MOD-SECTOR_LINE | docs/04_research_records/data/sector_line/sector_layer_skeleton_v0.md | §1 基线冻结
 # [MODULE] scripts.sector_line.freeze_baseline
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] zephyr.infrastructure.database_service (CH reader)
