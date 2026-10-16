@@ -295,3 +295,25 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。旧案全文在 `
 
 `P02-1017-02-CP-B`（本班补记节独有标记，落地面核验谓词须按行首形态、勿用裸子串＝本段标题行也含该串，裸量会得 2＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c '^`P02-1017-02-CP-B`'` 应为 1；上一节各行逐字仍在）
 
+
+---
+
+## 2026-10-17 03:1x · st-qoder-p02-1017-03 班游标（追加节，上文各行逐字不改）
+
+**本班一句话**＝B-27 五档深史续采一趟把上班"作废旧 EMPTY、靶面改 UNIVERSE∖DONE 单口派生"落成可跑脚本首跑＝起手面值与 1017-02 终态逐值复现（`UNIVERSE=7934 DONE=406 REMAINING=7528`）＋暖态正对照 9/9 有货先证通道活⇒合规放量；主批尝试 144 票×3 日（6 块，预算 600s 触停），入库面三缺格日 FINAL `(5233549, 406)`→`(6788733, 533)`＝净 **+1,555,184 行／+127 票**（DONE 406→533）；归因 381/381 非空格票名全等、错配 0；**二次复读判据本班首落地**＝51 空集（恰 17 票×3 日）重下＋等 60 秒后 recovered 0⇒17 枚够格记真无货（退市/停牌），本班不落永久集只登台账为耐久事实；B-15 第九次复拍 `commit_pct 89.23≥70` 不起批；上班双袋（0001/0002）均 done⇒本班**零收养面**。全文＝`ledger.md` 段「2026-10-17 03:0x · st-qoder-p02-1017-03」，终态标记 `P02-1017-03-CP-ENDSTATE`。
+
+**下班待办序（本班修订）**：
+1. 起手第一件＝靶面仍走**单口派生** `UNIVERSE(09-28 FINAL distinct) ∖ DONE(10-08 FINAL distinct)`，本班后面值＝UNIVERSE 7934／DONE **533**／剩 **7401 票**；**不抄旧 EMPTY**（1017-02 证旧 93 枚全假空作废、本班二次复读又确证 17 枚真无货，两类不可混）。脚本配方全在本档件 1/件 2，tmp 件按收班⑤随班删除勿去 `.runtime/tmp/p02_1017_03/` 找。
+2. 暖态探针谓词承 1017-02 改正＝**正对照臂唯一承重**（DONE 面取 3 票×三缺格日区间下载后等 40 秒读，本班实测 9/9 有货）；冷通道判据＝正对照零命中⇒不起采只报堵。负对照臂（旧 EMPTY）本班**未引**（该面已作废）。
+3. ⚑**二次复读判据本班已落进采集腿**（承上班 [BLOCKER] 第 1 条处方）＝主相 empty 格（0 行且 err=None）末了重下＋等 60 秒＋`backfill_days` 重读，`recovered` 计数；仍空且 err=None 记 `CONFIRMED-EMPTY` 但**不落永久排除集**。本班确证 17 枚真无货名单在 ledger 件 2 `CONFIRMED-EMPTY` 行；该 17 枚因走 DONE 派生仍会留在剩面里每班被重烧≈3 格×17＝请⑩定耐久面（本班 [BLOCKER] 第 1 条），定案前下班照跑不报错（只是浪费约 90 秒/班）。
+4. 面值与节拍续位＝三缺格日 FINAL `(6788733, 533)`（10-08/10-09/10-13 逐日 1017-02 已入、本班为续加）；剩 7401 票；本班 per_sym 末值 **4.5 秒/票**、read 相 24.7–43.1 秒/块（对 CH 负载敏感，排产仍按"票/班"外推勿按秒/票）；预算 600s 内本班做到 6 块 144 票。⚑塌缩守恒式本班余数 **381 行**（恰每非空格 1.0 行）＝四班四幅（1016-04≈0.99／1017-01≈0.99／1017-02=0／本班=1.0），勿当定值验收判据（[BLOCKER] 第 3 条）。
+5. 票码映射＝本班从表 UNIVERSE **直读裸码**再 `normalize_symbol(bare)`→QMT，不涉及上班件 5 的"QMT 板块名反查裸码 100 枚跨板块碰撞"那一面（那是反向建宇宙才有的问题；本班靶面来自已入库裸码，天然无碰撞）。4 枚 UNMAPPED（转债/基金码）只在反向映射面出现，本班读裸码面无此问题。
+6. 工序 4 B-15＝判据只看 `commit_pct<70`（本班 02:58:38 现读 **89.23**＝第九次不起批；起手 02:50:23 那趟 85.39）；令面 2,533 vs 实测 2,539 的六次复证继续有效，禁按令面起批、禁重复重拍快照。
+7. `known_data_gaps.yaml` 本班起手实测 `MM`（他席在写）**不随袋**；本班**未翻任何 status**（533/7934＝6.7% 远未封板，三查③消费侧接线与第四查封板判定未闭）；同目录 `instruction.md` 亦 `MM`＝他席件**不随袋**。B-28（估值深史换源）仍勿在 60 分窗内半起（需新建调度＋复用 baostock provider＋当期宇宙判据）。
+8. 时限复报＝10-18 02:00 的 `tick_backfill_weekly` 自动窗将把 10-08/10-09 滑出在册时限（本班 03:11 现算距该窗约 **22.8 小时**）；整面 7401 票×4.5 秒/票≈9.3 小时单进程量，60 分窗结构性做不完（本班 [BLOCKER] 第 2 条，请⑩重排产或批准 keep 整夜长批）；④席下游评估窗右端仍停 2026-10-07。
+9. 会话与锁四条（本班实测）＝(a) boot 脚本必须把**仓根**先于 src 送进 `sys.path`，否则 `_spawn_heartbeat_daemon` 报 `No module named 'scripts.ops_guard'` 而注册仍打 REGISTERED 且 rc=0＝活性锚假绿（承 1017-02 件 0(d)）；(b) ⚑本席恒定班（pid=0）`mark_logical(sid, logical=True)` 被 **W-29 拒**（非 chief 形态词∧心跳不新鲜），**真盾＝进场即起心跳守护使 `_is_stale` 判活为真**——本班两件 claim 起手 29.8m→复量 25.2m 全程在持未被外来回收（与 1017-02 被清零一案不同＝本席值守窗内未触发外来 cleanup），故下班照抄"进场即 boot 起守护＋不依赖 mark_logical"；(c) 投袋前复 `acquire` 后**立刻** enqueue，中间不插任何动作（承 1017-02 件 8 规避动作）；(d) 收班②杀心跳**终判不以 pid 复扫为准**（承 10-17 在册"本席任何 python 调用都会代起、pid 文件恒指已死首枚"），改以 registry 分片撤除为销据（`unregister` 后分片消失），杀进程按 pid 文件**单 PID**精确执行（禁 cmdline 子串扫描，在册 1017 自杀案）。
+10. 落地面核验谓词（勿用裸子串，正文自带标记名）＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c '^`P02-1017-03-CP-ENDSTATE`'` 应为 **1**（盘面同尺按行首形态；本班正文引用该串多次，裸量会自匹配偏大）。
+
+⚑**本班会话与锁（下班照抄）**＝主区零 worktree（TRAE-079 Phase 2）；`register(sid, pid=0, held_files=[两件])`＋`_spawn_heartbeat_daemon(sid, ROOT, 30)`＝daemon_pid **46328**；`mark_logical` 本班实测 **W-29 DENIED**（如实报，见待办序第 9(b)）；`heartbeat(sid)` 回 True。sid 已 CAS 入 `data/runtime/process_reaper_keep.txt`（本班 **436→437** 行，delta=1，`sid_in=True`；起手 `wc -l` 436＝含他席在值守内追加，本班只报自家 delta）；主批与探针脚本 argv 末位均带 sid（reaper 白名单按 cmdline 子串命中）。袋面＝files=**2**（`ledger.md`／`checkpoint.md`，全程纯追加、本班起手 `git diff --numstat HEAD` 空返回＝盘==HEAD、落地面删除集 0）；**排除** `known_data_gaps.yaml`／`instruction.md`／`feedback/*`／`process_reaper_keep.txt`（他席在途或非本席写域）。本班临时件＝`.runtime/tmp/p02_1017_03/` 五 .py（boot/keep_add/b27_probe/b27_run/append_ledger）＋三 sec_*.md＋run.log，读数已逐值抄录入账后按收班⑤删除（无跨件 import 依赖）。
+
+`P02-1017-03-CP-ENDSTATE`（本班游标节独有标记，落地面核验谓词见上段第 10 条；上一班 1017-02 游标节各行逐字仍在）
