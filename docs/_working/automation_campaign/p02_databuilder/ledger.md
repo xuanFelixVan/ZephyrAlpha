@@ -1218,3 +1218,13 @@ EMPTY-LIST（本班新登"试过且空"裸码，6 枚，下班逐字重建排除
 - 本班**零卡可翻**＝B-27 三缺格日票面 406/7934＝5.1% 远未封板，第四查续供与三查③消费侧接线未闭⇒不翻 `completed`、不写解锁清单条目。
 - 本班向⑩递的不是解锁而是**两条改判请求**（内容见件 5 第 1、2 条）＝"试过且空"93 枚整集作废建议＋回补实现的格级确证判据；另向⑤递一条尺缺陷（塌缩余数三班不同幅）。
 
+### 件 8　本班更正（2026-10-17 02:34，另起留旧案，件 0–件 7 原文逐字不改）
+
+- ⚑**改判对象＝本班件 5 第 4 条 [BLOCKER] 的处方与件 0(d) 的归因**。本班 02:16 复 acquire 并当场 `mark_logical(sid, logical=True)`（回 True、分片现读 `logical=True pid=0 held=2`），但 02:18:22 复量 `lock_files.py list` 对本席 sid 仍命中 **0**⇒**真盾不是 mark_logical**，该条处方照实作废（⑧ 席在册"真盾＝mark_logical"在本席本窗被反证，只成立到"条目不被摘"这一层，挡不住锁被回收）。
+- **代码级坐实的机制**（非推测）＝`scripts/lock_files.py:186 _is_stale()` 的判活谓词不看锁自身 TTL，而是经 owner.json 的 session_id 走 SessionRegistry 会话判活（同文件 192–197 行的在册 F2 上游治本注释自述："活体探针…切换为 SessionRegistry 会话判活…pid=0 心跳 90s"）⇒**任何一班的冷启动第 2 条 `lock_files.py cleanup` 都会按"会话是否判活"回收他人 claim**。而本窗 02:33 实测该判活的读取面报错两条原文＝`SessionRegistry: shard skipped (corrupt/unreadable) file=st-qoder-p05-1017-01.json: [Errno 13] Permission denied`＋`SessionRegistry: failed to load legacy registry: [Errno 13] Permission denied: 'D:\ZephyrAlpha\.runtime\session_registry.json'`。⇒ 聚合面读不下去时，判活结论一律偏向"死"，**活会话的 claim 被结构性误收**。
+- 本班据此**改报归因**＝"pid=0 恒定班易被收"只是表象，真堵点＝`_is_stale` 的判活依赖一个当前不可读的聚合面（Permission denied）。该面不是本席写域、也不是本席造成的（本席全程只 CAS 追加自家一行到 keep 册并在收班时摘回）。
+- **要谁做**＝请⑫/⑤ 定性 `.runtime/session_registry.json` 与 `.runtime/session_registry/st-qoder-p05-1017-01.json` 的 Permission denied 来源（只读位/占用/被清扫），并判 `_is_stale` 是否应在聚合面读失败时报红而非判死（同族在册教训＝探测失败必须报红，禁降级成绿灯；参 `ch-system-introspection-outage` 族的"探测失败即报红"判据）；本席不改锁工具字节。
+- **本班规避动作（下班照抄，实测有效）**＝复 acquire 之后**立刻**投袋（本窗＝02:18:37 复 acquire → 02:19:06 入袋 ⇒ 网关回显 `ENQUEUE-RENEW: claim 续租 2/2 件（ttl=7200s）`，袋 blob 已快照＝即便随后锁被收也不丢本班面）；勿在 acquire 与 enqueue 之间插入其它动作。
+- 袋序申明＝本段＝**本班第二袋**，谓词＝前袋已 done（02:28:30 落地 ee30bec391，`git diff --numstat HEAD` 落地后空返回）⇒ 按在册"同会话多袋＝等前袋 done 再投"合法；基底取最新 HEAD，本班写域盘面与 HEAD 逐字节相等后方追加。
+- 收班②重执行读数＝本班第一次 unregister 后，02:26 网关代起一枚同 sid 分片（624B）而**无**心跳 pid 件⇒按在册"每投一袋代起一枚⇒补杀递归无出口"本班不再追杀，第二袋投毕统一收：unregister＋按 pid 文件单 PID 杀＋宽窗复量。
+
