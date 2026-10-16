@@ -1053,6 +1053,21 @@ entries:
   - A股信号
   - 信号-A股
   stability: planned
+- domain: D_SIGNAL_INTRADAY
+  subdomain: signal_intraday
+  domain_name_zh: 日内做T信号
+  ssot_module: MOD-SIG-165
+  ssot_path: src/zephyr/signal_intraday/
+  covers:
+  - 日内做T信号面（一档盘口订单流特征 OFI/micro-price；做T资格门与做T信号集）
+  - 与执行域（TDM-P-P2 做T执行）配对的信号供给侧
+  aliases:
+  - intraday signal
+  - 日内做T信号
+  - 盘口特征
+  - 订单流
+  stability: experimental
+  ai_autonomy: ai_modifiable
   ai_autonomy: ai_modifiable
 - domain: D_FUNDAMENTAL_SIGNAL
   subdomain: fundamental_signal
