@@ -223,3 +223,22 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。旧案全文在 `
 **23:33 游标补记（P02-1016-03B，逐字追加不改上文）**＝本班件 0 的自然实验结论已改变本班收班动作＝**本班只投一袋**（`q-20261016-st-qoder-p02-1016-03-0001`，files=2，已 ENQUEUED；claim 已 release 2/2；心跳 46956/48360 按 PID 杀并 60s 双读复核 False；投袋后 23:32:12 复现 `.aidrafts/st-qoder-p02-1016-03` 影子树 1 枚＝工具自建、勿自删、已在件 5 挂号转⑩）。⇒ **下班起手第一件改为**：先量 `git diff --numstat HEAD -- ledger.md`，若读数为"纯 insertions 且行数＞本班袋 payload 差值"＝本班件 7 更正段仍未落地，**逐字收养随你班袋投出**；再按待办序第 1 条核本班袋是否已落（`git show HEAD:.../ledger.md | grep -c P02-1016-03-ENDSTATE`）。
 
 `P02-1016-03B`（补记节独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c "P02-1016-03B"`）
+
+---
+
+## 2026-10-17 00:34 · st-qoder-p02-1016-04 班游标（追加节，上文各行逐字不改）
+
+**本班一句话**＝B-27 验收④**幂等复跑销口取得**（重灌 289,558 行，FINAL 289,489→289,489＝**DELTA 0**、RAW 同步零增）＋**空格按票名级交付**（87 枚逐字入台账件 2，上班"交不出空格清单"在采集面解除；⚑归因尺第二层 symbol 列交叉核本班未被非空格触发＝**未触发不是通过**，见 ledger 件 2）＋续采 168 票（uniq 118→199）＋塌缩复现每格 0.99 行（对上班 0.99 同幅）＋B-15 闸值 83.73≥70 第六次复证不起批。全文＝ledger 段「2026-10-17 00:34 · st-qoder-p02-1016-04」。
+
+**下班待办序（本班修订）**：
+1. 起手**两件**＝(a) `git diff --numstat HEAD -- ledger.md checkpoint.md`：若盘面纯 insertions 且含本班段＝**逐字收养随你袋投出**（同席写域），再核 `git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c P02-1016-04-ENDSTATE`；(b) ⚑**本班实测换来的新增判据**＝`python scripts/commit_queue.py status` 里按 `st-qoder-p02-` 扫前任 sid 是否仍 pending/processing——本班 00:28:42 亲历「前任游标三证齐自称收班、38 分钟后自己补投第二袋落地」，故**收班自述不等于无在途袋**，先查队列再动笔可免双写撞面。
+2. B-27 续采＝直接跑自 resume 谓词，参数配方本班复标＝**批 24 票、预算按"票/班"而非秒/票**（本班 7 块 168 票、`per_sym` 末值 5.7 秒/票，比上班 3.9 秒/票慢，因 read 相随 CH 负载漂）；排除集＝**从本班 ledger 件 2 的 EMPTY-LIST 行逐字重建**（⚑`.runtime/tmp/p02_1016_04/excl_1016_04.txt` 按收班⑤自清纪律已随班删除，勿再去 tmp 找——在册教训＝清 tmp 前须 grep 消费者）。⚑起班先 `date` 实测再算窗。
+3. **件 1 幂等腿已销，勿重复做**；本班留一条**未触发判据**待下班销口＝归因尺第二层（每个非空格核 `row[3]` symbol 全等）在本班窗内零行使（全部格零行），**下班须在"有货票面"复跑一次该层**（最省＝直接对 DONE 里任取 24 票跑同一 divmod 尺，非空格数应 >0），跑通才准写"票名归因可用"。另＝放量前严重度复议材料转呈（本班件 4 第 2 行给了"同批内键重复 69 行"这第二层证据）。
+4. B-15 判据只看 `commit_pct<70`（本班 23:51 现读 83.73）；三条前置上班已复核完毕，下班只需再读一次闸值。
+5. `known_data_gaps.yaml` 仍不随袋（本班 `MM` 复证）；期权 IV 腿与 B-26/B-28 各须先规模标定与当期宇宙判据，勿在 60 分窗内半起；**10-18 02:00 前**的 xtquant 试下载腿＝五档面本班已按 (票×日) 试过并逐票归名，`tick_data`（18 列逐笔面）**不在本席红线内、仍未试**，该时限属 ②/① 共认在册，请⑩在 10-17 派单时点名承接者。
+
+⚑**本班会话与锁（下班照抄，本班实测有效）**：`SessionRegistry(ROOT).register(sid, pid=0, held_files=[自家两件])` **并立刻** `_spawn_heartbeat_daemon(sid, Path('D:/ZephyrAlpha'), 30)`（本班 daemon_pid 18124）；sid CAS 入 `process_reaper_keep.txt`（本班 418→419）；runner argv 末位必带 sid（reaper 白名单按 cmdline 子串命中）；`git_commit.py --enqueue` 外层禁套 `timeout`；⑂ 收班删除保活令牌时**只摘自家 sid**（`st-qoder-p02-1016-03` 上班令牌在其袋已落地后仍在册＝本班见 418/419 行相邻，属⑫清扫面，本席不代摘）。
+②**本班 xtquant 新读数**＝区间下载 `20261007→20261013` 一次可喂三缺格日在重灌面同样成立（24 票 dl 11.6s）；终端本地缓存**跨班仍暖**（本班未重下也应得，但本班照配方重下故不作"缓存持久性"结论）。
+②**本班临时件**（`.runtime/tmp/p02_1016_04/`，`[TTL] task_bound 24h`）＝boot/keep_add/b27_idem/b27_run3/write_ledger 五件 .py＋idem.log/run3.log/excl_1016_04.txt/msg_1016_04.txt。
+
+`P02-1016-04-CP-ENDSTATE`（本班游标节独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c "P02-1016-04-CP-ENDSTATE"`；上一班游标节各行逐字仍在）
