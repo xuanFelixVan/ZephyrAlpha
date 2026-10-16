@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-W2 | docs/_working/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0013/0085/0040)
+# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-W2 | docs/_archive/_working_cleared/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0013/0085/0040)
 # [MODULE] scripts.governance.meta_question.wo_a2legs.backfill_sw_member_history
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] tushare(index_classify/index_member, DS-TUSHARE 在册 2000 积分);

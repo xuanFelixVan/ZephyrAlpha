@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-W5 | docs/_working/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0016/0181/0036/0084)
+# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-W5 | docs/_archive/_working_cleared/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0016/0181/0036/0084)
 # [MODULE] scripts.governance.meta_question.wo_a2legs.build_news_sentiment_window
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] c3_fundamental.news_sentiment_score（WO-A2LEGS 派生分数表）;

@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
 # [MODULE] scripts.governance.meta_question.wo006.recompute_pq0064
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] wo006_common（同口径判据/旁挂册）; docs/_working/meta_question_answers/results/b2/PQ-0064.yaml
+# [DEPENDENCIES] wo006_common（同口径判据/旁挂册）; docs/_archive/_working_cleared/meta_question_answers/results/b2/PQ-0064.yaml
 #                （考试在案数字，运行时读入做口径自证，禁凭记忆抄数）; websearch_ingest 词表正则（垃圾节点判据）
 # [CONSUMERS] emit_case_file.py（案卷复算节）；PQ-0064 复考（复考前置即本件输出）
 # [STARTUP] manual

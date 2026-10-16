@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
 # [MODULE] scripts.governance.meta_question.wo006.generate_node_binding_candidates
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] wo006_common（同口径判据复算/旁挂册 CAS 写）; zephyr.governance.depgraph_schema（PG 只读）;

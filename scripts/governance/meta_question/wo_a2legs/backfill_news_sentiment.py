@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-W3 | docs/_working/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0016/0181/0036/0084)
+# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-W3 | docs/_archive/_working_cleared/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0016/0181/0036/0084)
 # [MODULE] scripts.governance.meta_question.wo_a2legs.backfill_news_sentiment
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.intelligence.news_sentiment_analyzer.RuleBasedSentimentScorer（在册生产口径规则法打分器，

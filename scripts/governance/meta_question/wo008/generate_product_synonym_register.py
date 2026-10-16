@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO008-PRODUCT-SYNONYM | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-008
+# [BLUEPRINT] MOD-METAQ-WO008-PRODUCT-SYNONYM | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-008
 # [MODULE] scripts.governance.meta_question.wo008.generate_product_synonym_register
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (PG 只读); zephyr.shared.utils.time_utils (now_iso，RULE-SCHEMA-TZ); pyyaml

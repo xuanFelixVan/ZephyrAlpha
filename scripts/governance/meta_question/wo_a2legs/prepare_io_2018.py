@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-W4 | docs/_working/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0080)
+# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-W4 | docs/_archive/_working_cleared/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0080)
 # [MODULE] scripts.governance.meta_question.wo_a2legs.prepare_io_2018
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] scripts/industry_graph/io_ingest.py（在册装载器，本件 import 复用其 parse 逻辑不另造）;

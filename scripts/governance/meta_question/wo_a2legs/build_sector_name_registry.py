@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-R1 | docs/_working/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0013/0063)
+# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-R1 | docs/_archive/_working_cleared/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0013/0063)
 # [MODULE] scripts.governance.meta_question.wo_a2legs.build_sector_name_registry
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] 本地通达信客户端主数据 (E:/tdx/T0002/hq_cache/tdxzs3.cfg|tdxzs.cfg, GBK);

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO005-BOARD-ROUTING | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-005
+# [BLUEPRINT] MOD-METAQ-WO005-BOARD-ROUTING | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-005
 # [MODULE] scripts.governance.meta_question.wo005.generate_board_symbol_routing
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (PG 只读); zephyr.infrastructure.database_service (CH reader); zephyr.data.table_registry (表名品类真源 #ARCH-CH-024); pyyaml

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO009 | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md | §WO-009（质押事件版本载体回填）
+# [BLUEPRINT] MOD-METAQ-WO009 | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md | §WO-009（质押事件版本载体回填）
 # [MODULE] scripts.governance.meta_question.wo009.backfill_pledge_event_version
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection 读写);

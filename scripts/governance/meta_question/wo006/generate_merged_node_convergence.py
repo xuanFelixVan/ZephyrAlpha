@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
 # [MODULE] scripts.governance.meta_question.wo006.generate_merged_node_convergence
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] wo006_common（只读探针/旁挂册 CAS 写/同口径判据）; PG ig_node/ig_node_company 只读

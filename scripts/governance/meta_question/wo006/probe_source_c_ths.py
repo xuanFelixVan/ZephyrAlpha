@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
 # [MODULE] scripts.governance.meta_question.wo006.probe_source_c_ths
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.security.secrets（凭证只判在不在，禁打印值）; architecture_model/data/data_sources_registry.yaml

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
 # [MODULE] scripts.governance.meta_question.wo006.apply_node_bindings
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] wo006_common（只读复核/RULE-DATA-OPS 留痕/旁挂册）; scripts/industry_graph/websearch_ingest.py

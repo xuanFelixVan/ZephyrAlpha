@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md §WO-006
 # [MODULE] scripts.governance.meta_question.wo006.generate_micro_chain_retirement_nominations
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] wo006_common（只读探针/同口径判据/旁挂册）; scripts/industry_graph/websearch_ingest.py
