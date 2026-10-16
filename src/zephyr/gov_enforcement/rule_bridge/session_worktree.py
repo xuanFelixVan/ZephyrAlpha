@@ -8160,7 +8160,11 @@ def _cas_restore_hot_files(
     if hot_checker is None:
         hot_checker = lambda rel: is_hot_file(root / rel, root)  # noqa: E731
     if disk_hash_reader is None:
-        disk_hash_reader = lambda p: _hashlib.sha256(p.read_bytes()).hexdigest()  # noqa: E731
+        # 口径对齐 safe_write_text 的 before_hash（read_text LF 归一，file_utils 2026-10-16 钉死约定）——
+        # read_bytes 口径对 CRLF 存量热文件恒不等，CAS 还原会被误拒（st-fufix-1016 红蓝同型病灶收口）
+        from zephyr.shared.io.file_utils import content_sha256 as _content_sha256
+
+        disk_hash_reader = lambda p: _content_sha256(p.read_text(encoding="utf-8", errors="replace"))  # noqa: E731
 
     restored: list[str] = []
     refused: list[str] = []
