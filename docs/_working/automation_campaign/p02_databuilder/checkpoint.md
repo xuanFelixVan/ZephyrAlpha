@@ -343,3 +343,8 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。旧案全文在 `
 ⚑**本班临时件**（`.runtime/tmp/p02_1017_04/`，`[TTL] task_bound 24h`）＝`boot_1017_04.py`／`keep_add_1017_04.py`／`b27_probe_1017_04.py`＋`probe.log`／`b27_run_1017_04.py`＋`run.log`／`b27_verify_1017_04.py`／`msg_1017_04.txt`；本班全部关键读数已逐值抄录入账⇒按收班⑤随班删除（无跨件 import 依赖）。⚑另＝`.runtime/tmp/p02_1017_01/` 空目录壳（1017-01 收班只删件未删壳）本班**不代清**，登此一条交⑫巡检面。
 
 `P02-1017-04-CP-ENDSTATE`（本班游标节独有标记，落地面核验谓词见上段第 12 条；上一班 1017-03 游标节各行逐字仍在）
+
+**2026-10-17 04:3x 游标补记（P02-1017-04-CP-B，逐字追加不改上文）**＝本班首袋 `q-20261017-st-qoder-p02-1017-04-0001` 落地实测＝`done` 于 **04:28:46**（四态目录直读 pending=1→processing=1→done=1，04:26:55→04:28:46 三段现读时刻），落地面 commit **59cc9a4aff**、`git log -1 --name-only` 现读**恰本班两件**（`checkpoint.md`／`ledger.md`，零外来吸入＝无归属篡改）；`git show HEAD:` 两件行数 **345／1383** 与盘面逐值相等⇒盘==HEAD。⚑**入袋基底与落地基底不同**＝袋 `base_head=fb3ed53b2e6d`（本班从袋 JSON 直读）而投袋时 HEAD 已是 `ce35b48e081f`（值守内他席连落）⇒队列合并器按 base 差分成功落地，复证"基底≠落地面属常态"，下班勿据此判假落地。⚑**本补记即本班末次网关调用**＝收班①release 与②注销心跳按 ledger 本班件 6 原文承诺在该调用之后执行，故本班**不写进本段**（写了就是"计划动作谎报成已执行"）；②的执行与判定处方＝承 10-17 新在册＝**袋 pending 时②结构性做不到终态**（运行面会在有在途袋的 sid 名下重注册会话并约 1.3 秒复起守护），袋 done 后三步可闭环（argv 逐元断言杀真守护→`revoke_heartbeat_keepalive(project_root, sid, reason=…, requested_by=…)` 两个 keyword-only 全必填→`unregister(sid)`），终态判据用**三证尺**＝argv 复扫 0 枚＋registry 分片撤除＋`heartbeat.jsonl` mtime 冻结跨一个节拍；⚑**勿拿"末行 exited"当停手证据**（SIGTERM 路径不写 exited），⚑下班看到本席 heartbeat.jsonl 行数继续增长＝运行面在替前任写，**勿判本班谎报或未收班**。本班守护首帧 pid＝**55080**（boot 回显，仅作⑫定位线索，本班不宣称该 pid 终态）。
+⚑本班**零 [BLOCKER] 新增**（本补记不登问题，四条已随首袋入落地面＝`git show HEAD:…ledger.md | grep -c "\[BLOCKER\] 2026-10-17|②1017-04|"` 现读 4）。
+
+`P02-1017-04-CP-B`（本补记节独有标记，落地面核验谓词须按行首形态＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c '^\`P02-1017-04-CP-B\`'` 应为 1；上一节各行逐字仍在）
