@@ -882,3 +882,14 @@ python -c "import glob,os,json,datetime;c=datetime.datetime(2026,10,15,18,12).ti
 - 恢复路径上当前唯一出血点＝GATE-PRECOMMIT-RUN 族：11:26 后本班窗内已至 8 枚（12:04 前 4 枚＋本班窗 4 枚），recurrence 由 91→96（0071=93・0074=94・0075=95・0078=96）且 fused=True，节奏约 6 分一枚＝diskp0 每波必死一袋；此族不收口则②永不可能转成。要⑫/运行班按当日四态分诊接面，本席不 requeue 他人袋、不改门柱。
 - 队列终量（12:34:03 现测）＝pending 1／processing 1／done 901／dead 508（env 122／item 224／other 162＝item 族 +4 恰为本班窗四枚）；今日死信按 dead_at 253 枚・max dead_at 12:29:57；`belt_daemon.lock` 末写 12:28:10 pid 39532・`pool_wave.log` 末行仍 11:42:21（自动波次 52 分零新增而落地照常发生＝落地由 drain 手波驱动，与 08:36／09:17 两读同族，本席不删锁不代修）。
 - 本班写域终态＝8 件（4 席 instruction 补齐令＋脉冲面＋派单面＋本席 ledger/checkpoint）；对他席 checkpoint 零写入（工序 9 强制收班提醒自 00:53 已在册，本班判定不重复追加）；判据/门柱/冻结值/分数册＝零触碰。
+
+## §36 · st-qoder-p10-1016-17 班终检与自纠（12:41 现测，追加行，§32–§35 各行逐字不改）
+
+- 更正（自纠，另起留旧案）＝§34 第⑤行写「六件删除」，实为 **7 件**（漏计 p10_17_final.py）；rm 前列举 7 枚、rm 后列举 0 枚两读在册，本班 `.runtime/tmp/` 内 p10_17 系与 selftest 件零残留。
+- 终检第一轮＝本班八件 `git diff HEAD --numstat` 全空＝盘与 HEAD 逐字节同；四席 instruction 在 HEAD 面 grep `[P10-1016-17]` 各 2 命中＝补齐令已入永久可核面（不是只在盘上的口头令）。
+- 终检第二轮＝claim 余 0（lock_files list 对本班 sid 零命中）；心跳 daemon pid 31812 经 psutil 核活后按 PID terminate（中途一次自误＝我调用 `psutil.Process.returncode()`，该类无此方法，但 terminate/wait 两行已生效故只抛错未致误杀，且未触碰任何镜像名批量杀）；心跳面末行现为 status "exited"（reason 点名本班与终止方式）＝下班无须再凑三证；stale pid 文件在证明 pid 不活之后才移除。
+- 代建壳终态＝`.aidrafts/st-qoder-p10-1016-17` 内 `git status --porcelain` 行数 0＝该壳无独有内容，prune 安全（仍交清理专班，本席不自删：红线＝不自清他会话产物＋物理不可逆面）。
+- 本班自踩并当场改正三处（如实记不涂）＝①§35 队列终量落笔前系脑估 done 895／dead 508，现测改正＝pending 1／processing 1／done 901／dead 508（health 12:34:03 读数）・max dead_at 12:29:57；②recurrence 由 91→95 脑推改正为 91→96（逐只现读 0071=93／0074=94／0075=95／0078=96）；③heartbeat exited 行首写夹带无意义字段 writer_pid 恒 0（我把不存在的 kwarg 试出来又塞了个恒 0 表达式），当场只改末行、前 26 行逐字节不动并复量不一致数 0。
+- 写面选择说明（承接 §32 防重入自锁案）＝本节只进 ledger 不再刷脉冲面：再写一行脉冲就是把末行时戳推到 12:41、令下班 p10-1016-18 白等 25 分——在册缺陷未裁前先由本席主动少写一行止血，不改闸不越闸。
+- 前置终值不改＝①成・②未成・③未成 ⇒ 全线继续停发、零席 enable、不广播可恢复。
+- 班终袋序＝0001 done `14df647a9a`（12:31）・0002 done `5d52b08d61`（12:37）・0003＝本件单袋投（ledger 一面），全程零死袋。
