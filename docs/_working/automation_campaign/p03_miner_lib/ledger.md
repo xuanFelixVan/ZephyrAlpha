@@ -1319,3 +1319,24 @@ ledger 144186B / 9d164ad49349ed8f…、checkpoint 11347B / 86da95fc811265f3…�
 ### 九、游标推进（原地改 cursor 行＋前任游标按行保全，见 notes_p03_04_cursor_kept）
 
 - 游标写前现存行数=1 行（`^cursor: ` 锚，第 9 行）；本班原地推进后＝前任游标原文以 `notes_p03_04_cursor_kept` 键整段保全、本班另起 `last_run`/`last_batch` 行，旧案卷零删改。
+
+### 十、收班八件读数（本段落笔 00:48:59＝datetime 现测；发车 00:14:02＝date 实测 ⇒ 本班实耗 34 分）
+
+- ①**claim**＝本班 14 件 `acquire-batch`（acquired=14 denied=0，`list --session` 读回持有者=本席）→ 投袋时网关 `ENQUEUE-RENEW: claim 续租 14/14 件（ttl=7200s）`→ 收班自跑 `release-all`（沿在册更正「入队不代释」）＝**CLEAN — 持有者 st-qoder-p03-1017-01 无任何文件锁**
+- ②**心跳注销**＝守护 pid=**52332**（`_spawn_heartbeat_daemon` 带 PYTHONPATH=仓根返回，本班零二次起代）；`mark_logical` 第 1 次即被 W-29 拒（与 1016-04 同形，本班不自旋第三次，走 keepalive 续命）；按 PID 精确 terminate（禁按镜像名杀）＋20s 双读＝**hb_lines=51 last={"ts": "2026-10-16T16:45:32.194848+00:00", "pid": 52332, "status": "alive"} mtime_age=210s live_daemons=[] pid52332_exists=False**；随后 `unregister`＝**still_active_hits=1**。**本班纪律兑现＝②件排在最后一次网关调用（投袋 00:41:3x）之后**＝沿 1016-04「尾袋复投披露」处方，本班未再触发 SESSION-REQUIRED 返工。
+- ③**实耗**＝发车 00:14:02（date 实测）→ 本段落笔 00:48:59（现测）＝34 分；本班无返工段（②件次序正确省下 1016-04 那一次复走正门）。
+- ④**[BLOCKER]**＝本班 §八 段落 5 行（中3/低2），谓词=`grep -n "^\[BLOCKER\] 2026-10-17|③席1017-01"`；本节自述文本不含该标记字面以外的同型行，故本席位段面值以 §八 为准（沿在册「追加型台账里计数与终值自述落笔即假」，本行不复量该数，只声明谓词）。
+- ⑤**自清收口**＝本班袋面＝**{"pending": [], "processing": [], "done": ["-01-0001.json"], "dead": []}**；袋内件对拍＝**state_dir=done exact=14 eol-only=0 diff=0 files=14 base=bedf463b9935**；队列现框（全席面，非本席面）＝**"counts": { "pending": 20, "processing": 1, "done": 919, "dead": 482 }, "total": 1422, "**。tmp 面=`.runtime/tmp/p03_1017_01/` 共 14 件，全部为台账锚点（keeper.py=活证正门・census 复用上班尺件・probe.py/probe2.py=§六 选题判据 (b)(c) 的来源面・make_cards.py=写卡器・verify.py/verify.txt=§七 交付自证与两轮自检・append_ledger.py=§一-§九 落笔与游标推进・final_close.py=本节①②条读数・written.txt/claim_all.txt/commit_msg.txt/enqueue.log=入袋清单与消息面）＝零引用件当场删 2 枚＝claim_open.txt（claim_all.txt 的前身，本班 §五 起未再引用）与 head_files.txt（本班 §十 落地面自纠段所引的那次 ls-files 错误读数载体，读数已原文写进本节，件本身零引用）。四件套外散落=0（本班只动 ledger/checkpoint/12 张新卡三面）。
+- ⑥**GPU**＝本班零领牌（全程零 CH／零 GPU 作业，水位闸见 §四 第1条）⇒免还牌。
+- ⑦**后台子任务**＝本班零子代理 spawn ⇒ 零孤儿；唯一后台进程=本班心跳守护 52332（已于②件按 PID 终止，复验见上）。本班两次转后台的量测均为只读命令且已各自取回读数。
+- ⑧**worktree**＝本班**未调用任何工棚/工作树启动入口**（TRAE-079 Phase 2 禁建令照守），现测=**git_worktree_list_mine=1 D:/ZephyrAlpha/.aidrafts/st-qoder-p03-1017-01           bedf463b99 [se | .aidrafts_entries=41 | .worktrees_dir=False**；如实申明＝本班**未**自删、只报 ⑩ 交清理专班（沿 1016-03/04 在册口径）。**故本件如实写法＝「本席零自建 worktree」而非「仓内零枚」——`git worktree list` 现测命中 1 行＝`.aidrafts/<本席号段>`（运行面代建整树）。**
+- **落地面判据申明（本班自纠一次）**＝本班 §三 首版曾以 `git ls-files` 读得「前任 12 卡查无」＝**index 滞后伪影**（主区 index 停在落地前一版系在册形态，本班今晚第三次踩同一面：`ls-files` 面 L3=70 行而 `__comparison__02` 命中 0），改判据为 `git cat-file -e HEAD:<path>` 后＝前任12卡(代表件 L3-12-3/comparison__02) HEAD=EXISTS・本班12卡(代表件 L4-13/shadow__02) HEAD=EXISTS・HEAD=960332289b・index L3 行数=70（index 滞后面，禁作落地判据）。
+- **账面差如实登记**＝本节段落笔晚于本班唯一一袋的快照，故盘面台账领先落地面 1 段；本班**不补第二袋**——理由承重＝本班 §八 第3条（同席多袋在途＋HEAD 长时不动的串行化归属无成文判据）与 ⑩ 1016-22 在册「尾袋必死」高危面，本班产能已在袋内（12 卡＋§一-§九），本节只复量上文已声明的动作、不新增待落库面；由下班按「同会话后袋须严格超集」随其袋一并带上，本席不代投。
+
+### 十一、收班② 复量段（另起留旧案卷，§十 ②条原文不改）＝本班新立一条在册形态
+
+- 实测＝§十 ②条写的 `unregister=True` 当时读回 `still=[]` 为真，但本班 00:49:2x 复核时该 sid 条目**又在场**，且 pid=**47508**（＝⑩/⑨ 在册的 serializer 租约持有 pid，非本席 pid=0）、held_files=0、logical=False；本班第二次 `unregister` 返回 True，读回 entries=**[]**。
+- 结论（只报观测不代判）＝恒定班的「注销」不是单次动作可签终值：**落地链的序列化器会以本席 sid 重登记条目**（本席 14 件袋于 00:48:5x 由它落地，时间序自洽），故判「已注销」只认**第二次读回=[]**；本班零在途件⇒不应再被重登，若下班读到本 sid 条目再现＝即该形态复现，非本席未收班。
+- 本班袋终态＝**pending=0 processing=0 done=1 dead=0**；队列现框（全席面）＝**"counts": { "pending": 16, "processing": 2, "done": 920, "dead": 484 }, "total":**；本班守护 pid=52332 复验 `psutil.pid_exists`=False（§十 ②条同值，本班未起第二代守护＝②件次序正确）。
+
+[BLOCKER] 2026-10-17|③席1017-01|流程问题|收班②「注销心跳/会话」在落地链下非单次可签终值＝本班 00:46 注销读回=[]、00:49 复量该 sid 条目复现且 pid 被换成 serializer 的 47508（held=0/logical=False），二注销后才=[]；而各恒定班指令卡与收班清单把②件写成一次性动作⇒按字面执行会留下「已注销」谎报面与幽灵活跃条目双向风险|本班 §十一 两条读数・`.runtime/sessions/st-qoder-p03-1017-01/heartbeat.jsonl` 末行 pid=52332 status=alive ts=16:45:32Z（外部 terminate 不留 exited 行）・⑨席 1016-03 在册「serializer 租约存活(pid=47508)」|要 ⑩ 把收班② 的判据改写为「terminate 按 PID＋unregister＋隔一次工具调用再读回 entries=[]」三证式，要 ⑤ 定性 serializer 为何以他席 sid 重登记（是否应改用 serializer 自己的 sid）；本席不改指令面不改门柱|中
