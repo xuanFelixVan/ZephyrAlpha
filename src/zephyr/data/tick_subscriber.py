@@ -29,6 +29,7 @@ queue.Queue，后台 flush 线程批量出队转14字段 tuple，WalWriter 先�
 from __future__ import annotations
 
 import argparse
+import collections
 import json
 import logging
 import os
@@ -37,8 +38,7 @@ import signal as sig_module
 import sys
 import threading
 import time
-import collections
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from pathlib import Path
 from typing import Final
@@ -47,8 +47,18 @@ from zephyr.data.calendar import MarketCalendar, get_market_calendar
 from zephyr.data.table_registry import get_registry
 from zephyr.shared.observability.metrics import get_registry as _get_metrics_registry
 from zephyr.shared.observability.metrics_server import start_metrics_server
+from zephyr.shared.utils.time_utils import now_utc  # m46：时间戳唯一真源（DATETIME-NOW-FORBIDDEN）
 
 log = logging.getLogger(__name__)
+
+# 业务时区（A 股北京时间，固定 +08:00 不依赖 tzdata）——#ZOMBIE-REPLAY 业务时间戳判活用。
+# 机器本地时区不可信（可能 UTC），"今天"必须显式锚定业务时区。
+_BIZ_TZ: Final = timezone(timedelta(hours=8), name="+08:00")
+
+
+def _biz_today() -> datetime.date:
+    """当前业务日期（北京时间）——m46 时间戳唯一真源 now_utc() 派生。"""
+    return now_utc().astimezone(_BIZ_TZ).date()
 
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
 _TBL_TICK_DATA = get_registry().table("market_tick")
@@ -95,6 +105,8 @@ _BIZ_WATCHDOG_LOOP_S = 15.0
 # #117（2026-08-17 实盘实证）：启动时 QMT 离线致 universe 解析 0 只标的的边缘——
 # 看门狗盘中周期性重试 universe 解析+订阅，指数退避 60s 起翻倍、上限 900s
 _BIZ_UNIVERSE_RETRY_BASE_S = 60.0
+# #ZOMBIE-REPLAY：僵尸回放嫌疑告警限频（秒）——持续重放时避免日志风暴
+_REPLAY_WARN_INTERVAL_S = 300.0
 _BIZ_UNIVERSE_RETRY_MAX_S = 900.0
 
 
@@ -316,6 +328,13 @@ class TickSubscriber:
         # #117：0 标的边缘重试状态（指数退避）
         self._universe_retry_count = 0
         self._universe_retry_next_ts = 0.0
+        # #ZOMBIE-REPLAY（2026-10-14）：业务时间戳判活状态——与墙钟 _last_tick_ts 正交。
+        # 事故形态：桥文件自 10-12 冻结后进程反复重启重放，139,599 行被盖上今日 ingest_ts，
+        # 而墙钟 last_tick_ts=今日、today_rows=139,599、errors=0 → 全链路判活全绿。
+        # 只有"tick 自带的业务时间戳"能区分"在写新数据"与"在重放旧数据"。
+        self._last_biz_dt: datetime | None = None  # 最近 tick 的业务时间戳（tick["time"] 折算）
+        self._rows_biz_today = 0  # 业务日期 == 今日 的 tick 行数（僵尸回放时恒为 0）
+        self._replay_warn_ts = 0.0  # 回放告警限频
 
     def _on_tick(self, datas: dict) -> None:
         """xtdata 回调入口——把 tick 放入队列（QMT 线程调用）。
@@ -347,6 +366,7 @@ class TickSubscriber:
                     self._tick_queue.put_nowait((symbol, tick))
                     self._received += 1  # 无锁计数
                     self._last_tick_ts = time.time()  # 裁定C：业务心跳最近 tick 时刻
+                    self._note_biz_ts(tick)  # #ZOMBIE-REPLAY：业务时间戳判活
                     _get_metrics_registry().inc("zephyr_tick_received_total")
                     # P0-2: 首个 tick 成功入队 → 解除 start() 预热等待
                     # is_set() 仅读 bool（GIL 原子），set() 需加锁，check-first 避免热路径锁竞争
@@ -362,6 +382,27 @@ class TickSubscriber:
         # CAND-OBS-001: Stage on_tick 收尾——observe tick_subscriber_on_tick_duration_seconds
         self._stage_timer.end("on_tick")
 
+    def _note_biz_ts(self, tick: dict) -> None:
+        """记录 tick 自带的**业务时间戳**（#ZOMBIE-REPLAY 判活口径，2026-10-14）。
+
+        与 _last_tick_ts（墙钟接收时刻）正交：墙钟只证明"有东西进来"，业务时间戳
+        才证明"进来的是新数据"。桥文件冻结后重放的陈旧 tick 会把墙钟刷成当前时刻，
+        但业务时间戳恒定停在冻结日——这是唯一能当场识破僵尸回放的判据。
+
+        静默降级：tick 无 time 字段或值非法时直接返回（不阻断采集主流程）。
+        """
+        ms = tick.get("time")
+        if not ms:
+            return
+        try:
+            dt = datetime.fromtimestamp(int(ms) / 1000)
+        except (TypeError, ValueError, OSError, OverflowError):
+            return
+        if self._last_biz_dt is None or dt > self._last_biz_dt:
+            self._last_biz_dt = dt
+        if dt.date() == _biz_today():
+            self._rows_biz_today += 1
+
     def _on_backup_tick(self, symbol: str, tick: dict, source: str = "tdx_backup") -> None:
         """备源 tick 回调——TDX BackupTickPoller / 桥模式 BridgeTickSource 调用（P1-3/P0-1）。
 
@@ -376,6 +417,7 @@ class TickSubscriber:
             self._tick_queue.put_nowait((symbol, tick))
             self._received += 1
             self._last_tick_ts = time.time()  # 裁定C：备源 tick 同样视为业务活性
+            self._note_biz_ts(tick)  # #ZOMBIE-REPLAY：备源同样按业务时间戳判活
             _get_metrics_registry().inc("zephyr_tick_received_total")
         except queue.Full:
             # A4b：备源溢出同样暂存不丢弃
@@ -840,7 +882,22 @@ class TickSubscriber:
             "resub_count": self._resub_count,
             "universe_retry_count": self._universe_retry_count,
             "is_trading_day": self._is_trading_day,
+            # #ZOMBIE-REPLAY：业务时间戳判活字段（消费方 deadman/guard 须以这些字段
+            # 为准，不得再用 last_tick_ts/today_rows 判"数据新鲜"——那两个是墙钟口径）
+            "last_biz_ts": self._last_biz_dt.isoformat(timespec="seconds") if self._last_biz_dt else None,
+            "biz_lag_days": ((_biz_today() - self._last_biz_dt.date()).days if self._last_biz_dt else None),
+            "rows_biz_today": self._rows_biz_today,
+            # 僵尸回放特征：有行在写（today_rows>0）但业务日期不是今天（rows_biz_today=0）
+            "replay_suspected": bool(self._written > self._hb_day_base_written and self._rows_biz_today == 0),
         }
+        if payload["replay_suspected"] and now - self._replay_warn_ts > _REPLAY_WARN_INTERVAL_S:
+            self._replay_warn_ts = now
+            log.error(
+                "僵尸回放嫌疑: 本日已写入 %d 行，但业务时间戳为今日的行数=0"
+                "（最新业务时间戳=%s，桥文件疑似冻结后被重放）",
+                payload["today_rows"],
+                payload["last_biz_ts"],
+            )
         try:
             tmp_path = _BIZ_HEARTBEAT_PATH.with_suffix(".tmp")
             tmp_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
@@ -1146,9 +1203,7 @@ class TickSubscriber:
         self._flush_thread.start()
 
         # A4b：溢出转储线程（队列满暂存的 tick 由它落盘，见 _spill_overflow）
-        self._overflow_thread = threading.Thread(
-            target=self._overflow_flush_loop, daemon=True, name="tick-overflow"
-        )
+        self._overflow_thread = threading.Thread(target=self._overflow_flush_loop, daemon=True, name="tick-overflow")
         self._overflow_thread.start()
 
         # 治本（#ARCH-DATA-TICK-GAP-001 后续，2026-07-31）：
@@ -1242,9 +1297,7 @@ class TickSubscriber:
         self._flush_thread.start()
 
         # A4b：溢出转储线程（队列满暂存的 tick 由它落盘，见 _spill_overflow）
-        self._overflow_thread = threading.Thread(
-            target=self._overflow_flush_loop, daemon=True, name="tick-overflow"
-        )
+        self._overflow_thread = threading.Thread(target=self._overflow_flush_loop, daemon=True, name="tick-overflow")
         self._overflow_thread.start()
 
         self._biz_thread = threading.Thread(

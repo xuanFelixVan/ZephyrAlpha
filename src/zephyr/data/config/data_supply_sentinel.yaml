@@ -334,10 +334,10 @@ tables:
   # ===========================================================================
   # 全流通战役 · 供数新鲜度致盲治理（2026-09-18 车道 st-ff-sentinel-20260918）
   # ===========================================================================
-  # 合并自 z-datagap 交接口片段 docs/_working/fullflow_campaign/lanes/
+  # 合并自 z-datagap 交接口片段 docs/_archive/_working_cleared/fullflow_campaign/lanes/
   #   datagap_sentinel_yaml_fragment.yaml（11 张无哨兵表的业务锚 + 三项机制需求）。
   # 治的不是某一张表，是**判据维度本身**：旧哨兵一条腿（表级 max(date_col) 落后日历日）
-  # 兜不住实测四型盲点（复测数字见 docs/_working/fullflow_campaign/lanes/
+  # 兜不住实测四型盲点（复测数字见 docs/_archive/_working_cleared/fullflow_campaign/lanes/
   # sentinel_premise_recheck.md）：
   #   A 心跳口径致盲  rate_decision_calendar  ingest 腿 lag=0 全绿，max(decision_date)
   #                   =2025-10-30 → 业务滞后 323 天完全不可见（普查 BRK-038 把因果说反）
