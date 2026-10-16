@@ -50,7 +50,7 @@
 # 2) data/runtime/sft_train_authorization.txt contains RUN_SFT_TRAIN_FULL_APPROVED (Owner's button;
 #    the run script consumes it once and renames it .consumed).
 # Why the calendar is disabled by default: measured on the live registry face (see
-# docs/_working/gpuwo_campaign/11_resource_declaration_and_overlap_precheck.yaml), this sch_* entity
+# docs/_archive/_working_cleared/gpuwo_campaign/11_resource_declaration_and_overlap_precheck.yaml), this sch_* entity
 # lands as resource_class=light / pool=default / exclusive_group=[] because the generator has no
 # per-schedule GPU class channel, and Sunday 10:00+300min sits inside sch_f06_grid's
 # Saturday 23:00+1440min window. The conflict gate would call that "zero red" only because it is blind.

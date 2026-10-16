@@ -131,7 +131,7 @@ if ($trainExit -ne 0) {
 }
 
 # Segment 2: dry-run of the GGUF/Ollama chain only. Real conversion needs the llama.cpp toolchain,
-# which is an Owner-gated software install (see docs/_working/gpuwo_campaign/01_anchor_reverify_lanec.yaml R-1).
+# which is an Owner-gated software install (see docs/_archive/_working_cleared/gpuwo_campaign/01_anchor_reverify_lanec.yaml R-1).
 # Keeping this leg at --dry-run means an approved training window can never half-install external tools.
 cmd.exe /c "python scripts\ml\convert_gguf_ollama.py --dry-run >> $Log 2>&1"
 $planExit = $LASTEXITCODE

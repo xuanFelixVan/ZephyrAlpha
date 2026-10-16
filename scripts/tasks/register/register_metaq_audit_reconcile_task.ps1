@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/chain_piling_campaign/infra_mining/20_management_policy.md | 2.2 dual-track ledger + 4 frequency table row 6
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/04_research_records/data/chain_piling_campaign/infra_mining/20_management_policy.md | 2.2 dual-track ledger + 4 frequency table row 6
 # [MODULE] scripts.register_metaq_audit_reconcile_task
 # [DOMAIN] D_GOV_SCRIPTS
 # [STABILITY] evolving

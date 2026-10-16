@@ -40,7 +40,7 @@
 # Usage note: registers DISABLED by default; add -Enable to arm it.
 #
 # Why disabled by default (measured 2026-10-12 03:1x on the live registry face; see
-# docs/_working/gpuwo_campaign/11_resource_declaration_and_overlap_precheck.yaml):
+# docs/_archive/_working_cleared/gpuwo_campaign/11_resource_declaration_and_overlap_precheck.yaml):
 # - sch_f06_grid / sch_factory_lane_c arithmetic: LaneC runs Mon-Fri 20:00 with a 240min ceiling,
 #   i.e. its tail can reach 00:00, and this window opens at 23:00 on the same five nights. Both
 #   batches want the local LLM, so the collision is real even though my run script refuses to

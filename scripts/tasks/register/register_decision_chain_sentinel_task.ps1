@@ -6,7 +6,7 @@
 # [TTL] permanent
 # register_decision_chain_sentinel_task.ps1 - Register the decision chain sentinel daily task
 #
-# Purpose (TRD-A01 / L09-C04, docs/_working/decision_map_campaign_20260924/
+# Purpose (TRD-A01 / L09-C04, docs/_archive/_working_cleared/decision_map_campaign_20260924/
 #   links/L09_review/SKEL.md): alert when the decision chain starves - N or more
 #   consecutive trading days without a new c1_backtest.decision_daily row.
 #   Runs 09:50 on trading days BEFORE the market opens, so a broken overnight

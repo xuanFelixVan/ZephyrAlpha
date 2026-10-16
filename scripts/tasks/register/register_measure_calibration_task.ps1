@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RESCHED-CALIB | docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md | 4-P5
+# [BLUEPRINT] MOD-RESCHED-CALIB | docs/_archive/_working_cleared/resource_schedule/resource_schedule_v2_construction_plan.md | 4-P5
 # [MODULE] scripts.register_measure_calibration_task
 # [DOMAIN] D_GOV_SCRIPTS
 # [STABILITY] evolving
@@ -10,7 +10,7 @@
 #
 # Purpose (schedule v2 P5): weekly Saturday 06:17 run the p90 measured-vs-declared
 # calibrator (read-only arm: sample stream + registry, never writes measured.*) to
-# docs/_working/resource_schedule/calibration_report.yaml. Saturday morning sits in
+# docs/_archive/_working_cleared/resource_schedule/calibration_report.yaml. Saturday morning sits in
 # the mine_vs_exam quiet band (factory_lane_c starts 10:00, c4_exam 14:00); 06:17 is
 # distinct from every declared window (06:13 scan cadence excluded by dow anyway).
 # Deviations over tolerance are flagged as PROPOSALS for a human/AI correction batch

@@ -32,7 +32,7 @@
 #   python scripts\governance\generators\generate_resource_profile_registry.py
 #
 # Why disabled by default (measured on the live registry face, 2026-10-12 03:1x, see
-# docs/_working/gpuwo_campaign/11_resource_declaration_and_overlap_precheck.yaml):
+# docs/_archive/_working_cleared/gpuwo_campaign/11_resource_declaration_and_overlap_precheck.yaml):
 # - the generator has no per-schedule channel for GPU classes, so a fresh sch_* entity from this
 #   script lands as resource_class=light / pool=default / exclusive_group=[] - i.e. the conflict
 #   gate cannot see that this batch wants the gpu_default mutex at all;

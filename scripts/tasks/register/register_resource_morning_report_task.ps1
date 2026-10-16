@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RESCHED-MORNING | docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md | 2.2 L-9 / 4-P5
+# [BLUEPRINT] MOD-RESCHED-MORNING | docs/_archive/_working_cleared/resource_schedule/resource_schedule_v2_construction_plan.md | 2.2 L-9 / 4-P5
 # [MODULE] scripts.register_resource_morning_report_task
 # [DOMAIN] D_GOV_SCRIPTS
 # [STABILITY] evolving

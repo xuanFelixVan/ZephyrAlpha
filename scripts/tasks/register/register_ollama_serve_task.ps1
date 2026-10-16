@@ -44,7 +44,7 @@ if (-not (Test-Path $OllamaExe)) {
 # --- Version precondition (machine-checked, 2026-09-16) -------------------
 # Root cause of the old manual "upgrade Ollama" to-do: Ollama builds <= 0.32.1 embed a
 # llama-server.exe with a deterministic access violation (AV at libllama.dll+0x2a230);
-# evidence = docs/_working/forensics/llama_server_crash_forensics_202609.md.
+# evidence = docs/_archive/_working_cleared/forensics/llama_server_crash_forensics_202609.md.
 # Registering a keep-alive task for a crash-bearing build only feeds the crash-respawn
 # loop, so registration refuses. Floor must equal CRASH_BEARING_CEILING in
 # scripts/ops/ollama_version_guard.py -- the equality is pinned by

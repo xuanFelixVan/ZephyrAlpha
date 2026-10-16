@@ -14,7 +14,7 @@
 #   P2 ruling registered: marker L1_EXTERNAL_SCAN_HOST present in
 #      docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
 #      (ruling number assigned by Owner/governance ONLY; this lane never self-grants
-#      one. See docs/_working/ai_layer_vision/P1_full_construction_inventory.md L1 #7
+#      one. See docs/_archive/_working_cleared/ai_layer_vision/P1_full_construction_inventory.md L1 #7
 #      and night report item 9: Owner ratification + ruling registration).
 # If either gate is unmet the script REFUSES and registers nothing (exit 2).
 # Enabling this is a production-scheduling action = Owner gate. Do not run it until

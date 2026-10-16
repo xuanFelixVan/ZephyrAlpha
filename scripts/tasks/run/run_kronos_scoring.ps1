@@ -10,7 +10,7 @@
 # Fired by Task Scheduler ZephyrAlpha_KronosScoring (00:30 Sun-Thu) or manually:
 #   schtasks /run /tn ZephyrAlpha_KronosScoring
 #
-# Work order GPU-02 (docs/_working/automation/20260917_wo_gpu02_kronos_batch_scoring.md).
+# Work order GPU-02 (docs/04_research_records/cross_domain/automation/20260917_wo_gpu02_kronos_batch_scoring.md).
 #
 # Window arithmetic that this wrapper enforces (and why it is small):
 #   The order asks for a 00:30 start AND the shift constitution asks for ZERO batch activity and
@@ -19,7 +19,7 @@
 #   the adapter (--max-runtime-min) so the run stops itself and reports yield_window_hit=true
 #   instead of silently overrunning into the protected window. Scoring the whole ~5000-symbol
 #   universe inside 25 minutes is NOT achievable; the shortfall is reported to coordination
-#   (see docs/_working/gpuwo_campaign/) rather than hidden by a green exit.
+#   (see docs/_archive/_working_cleared/gpuwo_campaign/) rather than hidden by a green exit.
 #
 # Consumption discipline: predictions land and are NOT wired to any signal face. Making
 # src/zephyr/signal_ashare/ml_forecast/kronos_tsfm_predictor.py consume this table requires B-007
