@@ -1,0 +1,107 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 矿考循环班·探索车道改令回执（先吃仓→定向决定→采样器复活）
+created: '2026-10-11T05:18:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+order: 统筹 2026-10-11 改令（取代"三阶段立即发车"）：①先聚合吃仓（CPU）→假设池→立新预注册卡；
+  ②聚合结果决定是否续扫（边界命中才定向补扫，禁盲扫全空间；面内充足则不扫）；
+  ③GPU 采样器照旧复活（曲线＝GPU 化班的"改前"基线）。
+
+digest:
+  file: docs/_working/mineloop_campaign/23_exploration_digest.yaml
+  how_generated: 机生（重跑命令见该件 generated_by），本件只读不写扫描产物
+  cells: "27,423 = t1 2,462 + p2 24,961（逐 shard 实数，与令文口径逐位吻合）"
+  negatives: "negatives.csv 合计 45 格（backtest_fail: insufficient_net:970），已排除在聚合之外"
+  scanned_window: "2020-01-01..2023-12-31（10 个 batch_meta 逐支实读一致）"
+  top1pct: "sharpe >= 2.3216 共 275 格；全体均值 -0.0001、中位 0.25、正占比 62.5%"
+
+finding_1_dimensions_never_varied: >-
+  16 维里有 7 维在全部 27,423 格中**从未变过**：F_merge_policy=single、I_cost_tier=frozen_l0、
+  J_regime_switch=off、K_capital_ramp=lump、X_breaker/X_sector/X_stop=off。
+  ⇒ 名义 16 维的扫描实际只是 9 维子空间，且**整个风险控制族（成本档/体制开关/熔断/板块/止损/资金爬坡）
+  被钉死在关闭位**。所以"top 区域"不含任何风控信息，任何"这套配置好"的读法都越不出被钉住的那 7 维。
+  这是比"边界邻域"更大的缺口（且属新增维度，不是邻域补扫）。
+
+finding_2_boundary_hits:
+  H_turnover_lambda:
+    means: {lambda_0: -0.5773, lambda_5bp: 0.3938, lambda_15bp: 0.1844}
+    best_is_endpoint: true      # 5bp 是非零最小档
+    cliff: true                 # gap/组内std = 0.585 ≥ 0.5
+    read: 真实最优在 (0, 5bp) 内，格点集在该方向无内侧点 ⇒ 需定向补扫（新档 1/2/3/4bp）
+  B_top_n_in_hs300:
+    means: {top10: 0.2471, top20: 0.2566, top30: 0.2672, top50: 0.2835, top100: 0.3393}
+    best_is_endpoint: true      # top100 是最大档，且在 hs300 每一档都是单调升
+    cliff: false
+    read: 宽度收益未见顶 ⇒ 需定向补扫 top150/top200（仅 hs300 内）
+  A2_combine_weight:
+    means_headline: halflife60 最优，gap/组内std=0.701 且非端点（8 档内测到了内侧峰）
+    read: 面内已闭合 ⇒ 不补扫
+
+finding_3_two_region_definitions_disagree: >-
+  按"均值最优"读，赢面是 hs300（0.4176 领先）；按"top1% 富集度（lift≥1.3）"读，核心区域却是
+  all_a_ex_st。两者不矛盾但含义不同：all_a_ex_st 的分布是**双峰**（多数格很差、少数格极好），
+  hs300 是整体右移。⇒ 稳定性必须分两问回答：区域边界是否悬崖（已判，见 finding_2），
+  以及区域是否跨时间稳定（**本轮不可判**：manifest 只有 2020-2023 单一窗的聚合指标，
+  没有分段净值）——这正是把新卡的考试窗钉在 2024 之后的理由。
+
+decision_rescan:
+  ruling_2_application: 令文"top 区域落在已扫边界上→定向补扫该邻域；面内充足→不扫"
+  verdict: 定向补扫两个窄邻域，不盲扫、不动 GPU
+  neighborhoods:
+    - H_turnover_lambda ∈ {1bp, 2bp, 3bp, 4bp}（其余 8 维按 23_ 的 top 核心区取值固定：
+      A1∈{rank,zscore,industry_neutral}、A2∈{halflife60,ic_ir,ic_mean}、B_top_n∈{top50,top100}、
+      C_sizing∈{equal_weight,signal_strength}）＝4×3×2×2×3×3 = 648 格上限，可按 6 分片切
+    - G_universe=hs300 且 B_top_n ∈ {top150, top200}（其余维同上核心）＝约 216 格
+  cost_estimate: 按 54-60s/格（gpufeed 03 号终报实测速率，非账面 44.8s）
+    = 648 格 ≈ 9.7-10.8 小时；216 格 ≈ 3.2-3.6 小时；两者同批 ≈ 13-14.4 小时 CPU 单线程
+  gpu_stance: 本决定**不用 GPU**；GPU 留给 st-gpux 做基线对拍（③的曲线即其"改前"证据）
+  unexplored_dimension_gap_action: 不自行发车（新增维度＝新扫描面，非邻域）；已作为本回执最大缺口呈统筹定夺
+
+cards_authored:
+  items:
+    - TDM-E-L1/comparison/04_turnover_penalty_three_arm（三档两两对照；λ 档只取已扫格点，不新增档）
+    - TDM-E-L1/comparison/05_pool_breadth_top100_vs_top50（池宽相邻两档；0.03 下限=top100-top50 边际差取半）
+  four_swaps: >-
+    ①假设面写机制＋与扫描先验关系声明（两卡都写明"搜索后预注册"与选择偏差）；
+    ②判据形态＝双臂 NAV 对照（族内已有判官，键集⊆并集词表故路由 dual_arm）；
+    ③阈值碰数前冻（下限全部由 23_ 的既有边际保守推得，未观察 2024+ 任何读数）；
+    ④一轮为限＋再挂即族归档
+  status_of_cards: >-
+    双双 blocked_on_impl —— 与"20 行早期不可复跑行""W-A 试点 5 张"同一个缺口：
+    factory_grid_executor 的 manifest 只落聚合指标，缺**逐日敞口/日净值序列**落盘，
+    双臂判官便无输入。一次改造同时解四件，禁分次做。
+  exam_window_disjoint_from_scan: >-
+    IS 2024-01-02..2025-09-09，OOS 2025-10-09..2026-09-30
+    （扫描窗 2020-01-01..2023-12-31 完全不相交）
+
+gpu_sampler_revival:
+  script: .runtime/tmp/st-mineloop-20261010/gpu_util_sampler.py（600s 一档，240 档=40 小时封顶自退）
+  baseline_curve: .runtime/nightmine/gpu_util_long.log
+    字段逐字沿用改前口径 utilization.gpu|memory.used|memory.total|temperature.gpu（24576 恒为 total，
+    与 10-10 那 97 档同形，GPU 化班的解析器不受影响）
+  attribution_curve_new: .runtime/nightmine/gpu_proc_long.log（新文件，不与基线曲线混写）
+    立第二份的理由：设备 util% 被桌面图形污染（零负载也到几十点），单独作尺不可归因；
+    归因面走 NVML 逐进程 pid/process_name/used_memory
+  running_pid: 22656（复验以 kill_sampler.ps1 现查为准）
+  reaper_keep: 已在册（data/runtime/process_reaper_keep.txt 内 "st-mineloop-20261010" 子串覆盖本件路径）
+  self_report_two_slips: 第一次启动时字段以 ", "→"|" 归一（与历史 "| " 不同形）并多跑了一档，
+    已删除我那两行畸形记录（97 档基线数不变）；另第一版查了不存在的 utilization.sampled 字段
+    与 GBK 中文进程名导致的解码崩，均已修（errors="replace"）。旧实例已停，无重复采样进程。
+
+queue_and_bag:
+  first_bag: q-20261011-st-mineloop-20261010-0048 —— 死信，dead_reason=CREATE-GUARD 无 creation_token（四件皆新建）
+  cure: 意图 API 逐件登记（非手改投影 YAML——门自身写明"投影手改无效，直写轨已退役"）
+  tokens_registered: 4 条 active（PG registry_ledger REG-CAPCAN-001，publish_snapshot v202-v204 实测递增）
+  bag_now: 23_/24_ ＋两张新卡（token 已随袋前登记，PG 侧逐条 SELECT 实证）
+  same_session_merge_watch: 同会话连续两袋被队列并入同一 qid 的现象已入 §13 观察项（不追责，待落地后果定夺）
+
+compliance:
+  scanned_products_modified: 0
+  gpu_launched_by_this_lane: 0
+  cards_modified: 0
+  score_rows_changed: 0
+  registries_modified: 0
+  files_created: 4

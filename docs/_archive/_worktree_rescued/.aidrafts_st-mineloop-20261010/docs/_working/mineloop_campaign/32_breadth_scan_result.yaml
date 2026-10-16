@@ -1,0 +1,178 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 矿考循环班·三批点火结果＋第四次自纠（条件面见顶）＋N 账本分账缺陷 WO-A5
+created: '2026-10-11T21:05:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+order_ref: >-
+  三批点火令（统筹 18:35，触发条件 17:30:38/17:31:24 journal Start-VM+probe=1）＋
+  合并裁定令①②（72 格广度续曲＋纯 CPU 首测回填、top50/top100 36 格内部对照即刻发）
+
+batches_fired:
+  measurement_triple_policy: >-
+    在册 F5：measured 类回填必须 measured_at／run_id／代码面三件齐。代码面本班写**字节 sha**不写 commit 号——
+    跑批时刻的 dev tip 无法事后回溯点名，而队列会重提交改哈希；git rev-parse dev:<件> 取到的 blob sha 可复验且唯一
+  step_0_cpu_first_measure:
+    measured_at: '2026-10-11T18:36:45+08:00'
+    run_id: grid_20261011-183549
+    code_face: 执行器 blob sha 见下方 execution_surface.executor_blob_sha（三批同一代码面，不各写一遍防漂移）
+    cells_done: 8
+    elapsed_s: 55.443
+    s_per_cell_first_measure: 6.93
+    argv_face: --smoke --engine cpu --eval-backend cpu --skip-compute-gate --seed 20261011 --exploration-ledger …step0cpu.jsonl
+    what_it_measures: >-
+      首测口径（含一次价格面加载＋combine 缓存冷启）：progress 尾格 combine=miss／eval_s=6.8829／tot_s=7.2933，
+      稳态看两窄批=0.664／0.351 秒/格。三把尺并列不互冒充：预注册 35.33 秒/格＝T0 全成本带五档成本门，
+      0.58-0.65＝stage-less 夜批口径，本批 6.93＝纯 CPU 冷启动口径
+    smoke_writes_no_ledger_by_design: >-
+      探索分册写盘条件＝run_batch 收尾段 `if not smoke and _EXPLORATION_LEDGER:`（符号名 run_batch＋该 if 现值行号见
+      review_commands.smoke_gate）；N 账本写盘条件同段另有 `if not smoke:`（修前）。
+      ⇒ 盘上不存在 scan_ledger_step0cpu.jsonl **不是丢件**，本班先读码定性再报，未把"查无"当"缺失"
+    anchors_measured_now: >-
+      符号名＋行号双写（行号是路标，落地面 21:0x 实测）：_should_write_neff_slot=2062、_write_neff_slot=2071、
+      run_batch 内走闸调用=2583、探索分册写盘 if=2697（同一 run_batch 内）
+  batch_2_control_36:
+    measured_at: '2026-10-11T20:04:22+08:00'
+    run_id: grid_20261011-200358
+    n_raw: 36
+    evaluated: 36
+    elapsed_s: 23.9
+    s_per_cell_steady: 0.664
+    schema_path: config/position_recipe_grid_schema.yaml（共享册，sha16=b5faa1299cddf3d3）
+    freeze_dims_face: 16 维全钉；B_top_n=[top50, top100]（零新档即可发＝裁定②）
+    exploration_ledger: .runtime/nightmine_exploration/scan_ledger_breadthcontrol_s1.jsonl（n_cells=36）
+  batch_1_probe_72:
+    measured_at: '2026-10-11T20:05:04+08:00'
+    run_id: grid_20261011-200438
+    n_raw: 72
+    evaluated: 72
+    elapsed_s: 25.279
+    s_per_cell_steady: 0.351
+    schema_path: config/position_recipe_grid_schema_v3_breadth_probe.yaml（探针册，sha16=2e8e24cc08cebdaa）
+    freeze_dims_face: 16 维全钉；B_top_n=[top50, top100, top150, top200]
+    exploration_ledger: .runtime/nightmine_exploration/scan_ledger_breadthprobe_s0.jsonl（n_cells=72）
+  execution_surface:
+    repo: D:/ZephyrAlpha（落地面主区，非车道——本会话第二次因此自爆后定的工法）
+    executor_blob_sha: 5c1e49735acd84a752d51c485763229e312285e1
+    executor_blob_prove: git rev-parse dev:scripts/backtest/factory_grid_executor.py
+    note: >-
+      三批发跑时磁盘==dev（同 sha 实测），即跑的就是 WO-A4 转发面修复（_fwd 单点化）落地后的码；
+      该修复的复现证据＝200358 的 batch_meta.freeze_dims 展开为 16 维钉值且 n_picked=36（修前同参数跑成 200 格全空间）
+
+cross_batch_parity: >-
+  两批共有 recipe=36；sharpe 差 >1e-12 的行数=0；set(36 批)⊆set(72 批)=True；72 批净新增 36 格。
+  ⇒ 探针册只加档不动旧档得机械证实：新档进的是**邻域**，旧格数值逐位不变（route B 的核心承诺）。
+  同 seed 同窄面同空间口径下两批可互为重放对照，误跑批 grid_20261011-190142 保留作"同 seed 不同空间口径"的第三样本
+
+result_conditional_curve:
+  design: A1_factor_normalize(3)×A2_combine_weight(3)×C_sizing(2)=18 核，每核 4 个 B_top_n 点＝平衡全因子（72 格）
+  point_mean_sharpe: {top50: 0.4961, top100: 0.4271, top150: 0.4209, top200: 0.4226}
+  adjacent_delta: {top50_to_top100: -0.069, top100_to_top150: -0.0062, top150_to_top200: 0.0017}
+  monotone_increasing_cores: 0/18
+  monotone_decreasing_cores_4point: 9/18（其余 9 核非单调，含 rank 分层 U 形）
+  per_core_top50_to_top200_delta: >-
+    18 个核里 14 个为负（−0.165…−0.043），4 个为正且量级极小（+0.007/+0.007/+0.02/+0.021）
+    ⇒ 没有任何一核在 top50 之后**持续上升**
+  strata_curves:
+    A1_industry_neutral: [0.5513, 0.4865, 0.4778, 0.4687]
+    A1_zscore: [0.5287, 0.4405, 0.4148, 0.3972]
+    A1_rank: [0.4083, 0.3543, 0.3702, 0.402]
+    A2_halflife60: [0.5265, 0.448, 0.4333, 0.4345]
+    A2_ic_ir: [0.4818, 0.4177, 0.4158, 0.4172]
+    A2_ic_mean: [0.48, 0.4157, 0.4137, 0.4162]
+    C_equal_weight: [0.47, 0.3957, 0.396, 0.4022]
+    C_signal_strength: [0.5222, 0.4586, 0.4459, 0.443]
+    shape_note: industry_neutral/zscore 沿池宽单调下降；rank 呈 U 形（谷在 top100，末点 0.402 仍低于起点 0.4083）
+  self_correction_4th: >-
+    本班第四次自纠，且是**用自己的跑批证伪自己的前提**：26_/29_ 写的"广度未见顶 ⇒ 该续扫 top150/200"
+    依据的是 23_ 的**边际均值**（joint_GxTopN_mean_sharpe：top50 0.2835 → top100 0.3393，差 +0.0558，
+    即在整张 72.6 万格全空间的随机样本上按 B 轴分组取均值）。同一对档位在**条件面**
+    （其余三维平衡全因子、只沿 B 轴走）是 −0.069，符号相反。
+    为什么边际会反号——这次有实测样本可看了：误跑批 grid_20261011-190142 的 200 格里
+    top10/top20/top30 占 114 格（实测 B_top_n 分布 {top100:49, top30:41, top20:38, top50:37, top10:35}），
+    而 23_ 那张边际曲线正是这类不平衡样本按 B 轴分组的结果：窄池档与宽池档混算，
+    把"同核沿 B 轴越宽越差"的斜率抹成了"越宽越好"的上升。
+    ⇒ 教训入工法：判"未见顶"必须用**同窄面条件曲线**；边际均值在维度构成不平衡时是伪影，
+      任何"该续扫"的结论先问一句"它是按哪一列分组取的均值"
+
+consequence_for_prereg_card:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1__comparison__05_沪深300池宽top100与top50对照.yaml
+  frozen_gate_on_card: pillars_numeric.sharpe_delta_min=0.03（卡面第 46 行，实测读得）
+  frozen_margin_provenance: >-
+    卡面自述（signal_derivation 第 62 行）＝"0.03 的来源＝23_ 里 top100 与 top50 的边际差 0.0558 保守取半"，
+    边际面即 23_ 的 joint_GxTopN_mean_sharpe（top50 0.2835 → top100 0.3393）
+  why_it_is_now_wrong: >-
+    同一对档位在**条件面**（同窄面沿 B 轴，18 核平衡）是 top50 0.4961 → top100 0.4271＝−0.069，符号相反。
+    不是"数值变了"而是"口径不成立"——按卡面口径开考几乎必判负，而那个负数说的是随机抽样的构成，不是池宽效应
+  card_current_status: status=blocked_on_impl（impl_gap＝逐日敞口/日净值序列未落盘，与 WO-A1 底座同一道缝）
+  disposition: >-
+    G4-5 禁原地改 ⇒ 若要考必须另起新版本卡（06_…）。本班**不自裁是否开卡**：
+    开卡要先定"用条件面还是边际面"这一新判据口径，属 Owner 门位（合并裁定令②只授权 TDM-X-S1-04 批建卡）。
+    另注：本卡现在本就 blocked_on_impl，口径之争未决不影响它今天不能开考——所以呈批但不催
+  options_for_owner:
+    A_开新卡: 以条件面为口径（同窄面沿 B 轴单调性），top50 vs top100 预期判负——诚实，但新增试次且要重定 delta 门柱
+    B_不开卡: 把本卡保持 blocked_on_impl 并另记 caliber 未决，零新试次——旧门柱 0.03 继续挂着（其口径已知不成立）
+
+woa5_accounting_defect:
+  found_by: 三批跑完后顺手核 N 账本（不是跑批前——跑批前我只查了探索分册有没有写）
+  defect: >-
+    factory_grid_executor.run_batch 的 N_eff 披露位写盘条件原先只看 smoke，不看 --exploration-ledger
+    ⇒ 探索窄批按代码会去覆盖考试侧"最新批次 N_eff"（本三批 N_eff=2/2/11，在册考试批为 16），
+    即"探索/考试分账"在 N 账本这一半从未成立过，只在探索分册那一半成立
+  why_no_incident_today: >-
+    撞上的，不是设计的：N 账本 CAS 写被 registry_mass_edit_guard 拒了。实测
+    .runtime/audit/safe_write.jsonl 里 pid=53780（＝200438 批）10 条 event=refused
+    reason=registry_mass_edit_guard deleted_lines=4 threshold=2（CAS 十次重试全拒，executor 的
+    `except Exception` 只 warning ⇒ 静默）
+  chronic_scope_measured: >-
+    同册自 2026-09-22 起累计 1690 次拒写（written 2889 次），2026-10-11 全天 written=0／refused=30；
+    n_trials_effective 披露位现值仍停在 2026-10-07T10:59:22+00:00 的 value=16
+    （note batch:20261007-112020 n=2459）——即"最新批次有效试次"这一披露位已 4 日陈旧
+  blast_radius_honest: >-
+    窄：批级 N_eff 真值仍在各批 summary.json（2/2/11/16…）可读，f06_e4_wfa_exam 的溯源用的是
+    per-record n_trials_eff 不是全局位；全局位现无生产读者（git grep 只见 snapshot() 自身与测试）。
+    宽：任何将来读者会拿到 4 日前的数——所以仍须修，但不是 P0
+  own_half_fixed: >-
+    WO-A5 本班自修：抽 _should_write_neff_slot(smoke, exploration_ledger) 判据 + _write_neff_slot 单点写，
+    run_batch 调用点改为走闸（+25/−7，删除的 7 行＝被替换的旧 if 块与那句旧注释，无别的删行）；
+    测试 tests/research/backtest/test_factory_grid_executor.py::TestNeffLedgerGate 5 支（真值表四态／正常批写一次／
+    smoke 不写／探索分册不写／AST 结构守卫"finalize 段不得再出现裸 set_effective_trials 且恰一处走闸"）；
+    红证＝同一套判据打在 dev 未修字节上三条全红（.runtime/tmp/st-mineloop-20261010/woa5_red_proof.py，
+    R1 裸调用=1 走闸=0、R2 条件名=[len, nets_for_neff, smoke] 不含探索旗、R3 真值表 1 处分叉）
+  referred_not_self_fixed: >-
+    护栏标定不在本班域：registry_mass_edit_guard 的 threshold=max(1, ceil(总行数×0.005))
+    （src/zephyr/shared/io/file_utils.py:437/606-607，符号名 _REGISTRY_MASS_EDIT_MAX_RATIO /
+    _registry_deleted_line_ratio）对 317 行的中等册＝2 行预算，而 CAS 覆盖中段多行标量块**必然**替换 ≥4 旧行
+    ⇒ 合法写常驻失败；判据"删除行数"应改"净删除行数"才对准它要防的蒸发形态（本守卫把 delete+replace 一并计旧行）。
+    file_utils 是治理基建热件且维护二班在飞，本班不代修、不放宽，只把实测与替代判据呈上
+
+woa1_status_parallel: >-
+  适配器施工继续：量纲闸已落地（arm_protocol_binding.require_exposure_face / require_daily_return_face /
+  verify_face_pair_quotes + card_binding._arm_pair_builder 包名单义，落地面 84 passed）；
+  剩下的缝是 ARM_BASE_SOURCES 仍为空册（设计如此），要填它必须逐臂真读"池组合收益回放"产物＝CH 面活儿，
+  现已合法可做。诚实预期照旧：复联后先出 feasible_now 的 3 支双臂卡，其余随装置能力逐支配对，**不是 13 支齐出**
+
+compliance:
+  ch_queries_outside_batches: 0
+  batches_launched: 3
+  gpu_used: 0
+  shared_schema_modified: 0
+  prereg_books_modified: 0
+  exam_cards_modified_in_place: 0
+  judgment_files_modified: 0（判官 calibration_exam.py 与卡面阈值零动）
+  n_trial_ledger_modified_by_me: 0（CAS 拒写→本班未绕闸；WO-A5 只改写盘判据不改账本字节）
+  other_lanes_files_modified: 0
+  files_created: 1（32_ 本册）
+  files_modified: 3（29_ 追加节／executor WO-A5／executor 测试追加类）
+
+review_commands:
+  digest: python .runtime/tmp/st-mineloop-20261010/breadth_digest_32.py（P1..P6：条件曲线／36 格内部对照／分层／对拍／误跑批档分布／三批 n_trials_effective）
+  smoke_gate: git grep -n "if not smoke and _EXPLORATION_LEDGER" -- scripts/backtest/factory_grid_executor.py（现值行号在此，符号名 run_batch 收尾段）
+  neff_gate_landed: git grep -n "_should_write_neff_slot\|_write_neff_slot" -- scripts/backtest/factory_grid_executor.py（定义 2 处＋调用 1 处＝3 段命中）
+  red_proof: python .runtime/tmp/st-mineloop-20261010/woa5_red_proof.py（末行 RED PROOF ESTABLISHED）
+  new_tests: python -m pytest tests/research/backtest/test_factory_grid_executor.py -q -k "NeffLedgerGate or forwards_every_parameter"（应 6 passed）
+  guard_refusals: grep -c registry_mass_edit_guard .runtime/audit/safe_write.jsonl（1690 基线，勿与别册混）
+  slot_still_stale: python -c "import yaml;d=yaml.safe_load(open('docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml',encoding='utf-8'));print(d['n_trials_effective']['value'],d['n_trials_effective']['updated_at'])"（应仍 16／2026-10-07）
+  batch_metas: python -c "import json;[print(b,json.load(open(f'data/strategy_intake/{b}/batch_meta.json',encoding='utf-8'))['schema']['schema_sha256']) for b in ['grid_20261011-200358','grid_20261011-200438']]"（b5faa1299cddf3d3／2e8e24cc08cebdaa）

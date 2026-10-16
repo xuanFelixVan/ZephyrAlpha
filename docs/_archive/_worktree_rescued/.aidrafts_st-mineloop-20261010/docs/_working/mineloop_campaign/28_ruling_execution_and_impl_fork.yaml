@@ -1,0 +1,135 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 矿考循环班·合并裁定令执行账（①实现分叉/②建卡完/③WO-A4 排产/④三态/⑥探针）
+created: '2026-10-11T13:50:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+ruling_2_done: >-
+  TDM-X-S1-04/calibration/06_突破失败连续次数前瞻收益_确认日生效版 已建并落 dev（commit a933a9b465，token v215 随袋前入 PG）。
+  两条定义全冻＝确认日 d5 收盘落定＋前瞻窗自次一交易日起算且与信号窗不得重叠；分档显式 n_buckets=4（走已落地 _n_buckets_from_card）；
+  阈值＝母卡原值逐字沿用（0.6/0.02/0.3/true/true/-0.005），四切点亦同；卡面 caliber_disclosure 按令原文标注"原值此前从未被有效判过"。
+  status=blocked_on_impl 并写理由两条（绑定 op 缺＋gap_k3_vs_k0_5d_max 词表外无判官，实测直调 dev 码 judge 返回 fail-closed 而非静默通过）；
+  未删该键＝禁静默削弱判据面。零 CH、零发跑、零母卡改动。
+
+ruling_4_done_three_state:
+  question: 08:00 那条 f06_grid_v2 线到底有没有跑
+  evidence_process_table: >-
+    Get-CimInstance Win32_Process 过滤 Name~=python 且 CommandLine~=factory_grid_executor ⇒ 零命中；
+    第一次探测报的 4 个 PID 系我自己的命令行自匹配（cmdline 里含关键词），已按 Name=python* 复筛排除
+  evidence_task: >-
+    Get-ScheduledTask ZephyrAlpha_F06Grid：TASK_STATE=Disabled；NextRunTime=10/17/2026 08:00:00；
+    LastRunTime=10/10/2026 21:00:00；LastTaskResult=0 ⇒ 与 Owner 所说"任务现态 Disabled/N/A"一致，
+    我此前引的是预注册册 v2.1 注记（纸面窗纪）不是任务现值，按它等窗会等空
+  evidence_artifacts: data/strategy_intake 最新 heartbeat mtime=10-11 00:22（10-10 23:37 那六分片收尾），今日零新 grid_ 目录
+  verdict_three_state: >-
+    ①无待跑触发（任务 Disabled，下次触发要等 10-17 且届时若仍 Disabled 则不触发）
+    ②无在跑进程（python 侧零命中）
+    ③今日零产物 ⇒ 结论＝该轨今日未跑且不会自己跑；"08:00 考试窗归窗主"这条红线在今天的实际约束力＝空集，
+    本班后续不再按 08:00 让路（改为：任何 grid 发跑前一律先读任务现值＋进程表＋目录 mtime 三件再定窗）
+  honesty_boundary: 三态只覆盖"该任务名＋该执行器命令行＋该产物根"；改名执行或异地产物不在此判据面内
+
+ruling_1_impl_fork:
+  goal: 重开预注册只加池宽 top150/top200，且只对广度邻域生效（保批A/v2 可比性）
+  measured_blocker: >-
+    "只对广度邻域生效"在现器里做不到纯文档化——GridCompiler 的 active_if 是**维级**开关（DimensionSpec.active_if），
+    没有值级门；执行器 SCHEMA_PATH=config/position_recipe_grid_schema.yaml 是硬编码常量（factory_grid_executor.py:120），
+    只有 --subspace-json 过滤器（在 expand 之后过滤），没有 --schema-path 覆盖口，也没有环境变量覆盖（environ 仅 ZEPHYR_GRID_INSTRUMENT/HB_INTERVAL/STALL/PARTIAL 四个）。
+    ⇒ 二选一，代价我都量了（见下两 route）
+  route_a_shared_schema_add:
+    change: config/position_recipe_grid_schema.yaml 的 B_top_n.values 追加两值（＋册头注 N_raw 改写）
+    space_effect: 362,880 → 508,032（真编译实测）；phase=2 名义 725,760 → 1,016,064
+    collateral_measured: >-
+      会被**其他车道**的硬钉断言与冻结册数字绊倒，共 5 处断言＋2 处册面期望：
+      tests/research/backtest/test_f06_e2e_pipeline.py:67（==362880）、
+      tests/research/backtest/test_sector_surface_wiring.py:243（==362880）、
+      tests/research/backtest/test_t3a_grid_s_wiring.py:375-376（362_880 与 725_760）、
+      tests/trade/position/test_position_recipe_compiler.py:132（n_folded==362880，注"立项稿 §十 名义 N 不符"）、
+      config/search_space_prereg_t3a.yaml:31 n_raw_expected: 725760、
+      config/search_space_prereg_t3b.yaml:30 n_raw_expected: 4354560（后者＝T3a 725,760×6，一并失配）
+    cost: 改 4 个他车道测试期望＋2 个 T3a/T3b 冻结册名义空间数＝动别人的冻结数字（性质上接近挪门柱，须那些册的所有者或 Owner 明确点头）
+  route_b_probe_schema:
+    change: >-
+      新增探针册 config/position_recipe_grid_schema_v3_breadth_probe.yaml（＝现册＋B_top_n 两值，其余逐字节同），
+      并给执行器加一个 **缺省零漂移** 的 --schema-path 覆盖口（默认仍指现册）；
+      广度窄批带该旗跑，随机普查批继续用现册 ⇒ 空间不被稀释，批A/v2 可比性天然保持
+    collateral: 共享册数字零动、5 处断言与 2 处册面期望零改；代价＝执行器加一个参数（该文件 st-gpux 在飞：04:52 落 --eval-backend，05:3x 落 vram/host_mem 预算）
+    pairing: >-
+      与裁定③的 WO-A4 同源同文件，建议同批做——WO-A4 要改的正是"展开前冻结"，
+      加 --schema-path 是同一处的顺路改动；WO-A4 本体设计见下节
+  my_recommendation: >-
+    走 route_b 并与 WO-A4 同批落地：既不稀释空间、又不动 T3a/T3b 两个冻结册的名义数字；
+    本班在窗毕前不动 schema、不动预注册册、不动执行器（三件都是他人签批/在飞面），等一句"route_b 同批做"或"route_a 硬改"
+
+ruling_3_wo_a4_spec:
+  title: WO-A4 展开前冻结（pre-expansion dimension freeze）
+  problem_measured: >-
+    执行器次序＝compiler.compile(ctx) 全展开 → 再按 subspace 过滤（factory_grid_executor.py:1951 compile→1954 if subspace→1956 过滤 recipes_all）；
+    且 GridCompiler._expand 在内存里把 combos 整表铺开（position_recipe_compiler.py:269）
+    ⇒ phase>=2/3 或 ramp=True 时空间从 362,880 跳到 725,760/52,254,720，直调 compile 实测 MemoryError；
+    故风控 5 维（J/X_stop/X_breaker/X_sector/K）无法用 --context-json＋--subspace-json 组合窄扫（先炸后筛）
+  design: >-
+    ①给执行器加"维级钉值前置"入口（--freeze-dims-json 或复用 --subspace-json 语义改为编译前生效）：
+    把每维候选集在 compile 之前裁成 subspace 允许的子集，再交给 GridCompiler（GridCompiler.from_yaml 接 dict/路径，
+    可在内存里构造"值子集化后的 schema"，零改编译器语义）；
+    ②加 --schema-path 覆盖口（route_b 同处改动）；
+    ③产物 batch_meta 必须记录 subspace/freeze 与生效 schema 路径＋sha256，否则日后无法区分"同一空间的不同抽样"与"不同空间的同抽样"（可比性判据）；
+    ④验收＝三条：(a) phase=3+ramp=True 全钉 5 维外的核点，compile 不再 MemoryError 且 n_raw=1（逐核点）；
+    (b) 现册默认路径逐字节零漂移（不带新旗时行为与今 dev 一致，须以既有 4 处 n_raw 断言零改动为证）；
+    (c) 与 --eval-backend cpu/gpu 双后端配对时逐位等价（沿用 st-gpux 的 N-3 配对法，禁自造对拍口径）
+  blast_radius: 只动 factory_grid_executor.py 的编译前置段＋batch_meta 两个字段；不动编译器、不动卡面、不动判据；须与 st-gpux 协调同文件
+  trial_ledger: 风控族窄批试次走 --exploration-ledger 探索分册（在册处方），不占考试 N 账本
+  status: 排产待窗（CH 窗内零代码改动）
+
+ruling_6_probe_L0_02_L0_03:
+  probe_1_etf_list_and_translation: >-
+    目标＝L0-02 缺的"kline_etf_1min→实际暴露折算式＋ETF 清单"。窗内只查在册源（零 CH），结果分两半：
+    ①资产面**有**在册真源可引——docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml:6627
+    登记 c1_market.kline_etf_1min（produced_by_job=kline_etf_1min_incremental、pit=strict、
+    format_summary 记 CH 实况 3.2 亿行/136 parts/分区 2019-01-01~2026-09-01、valid_since 2019-01-01、module_id=MOD-L00-004），
+    另 src/zephyr/data/config/known_data_gaps.yaml:1072 给出现成规模口径"聚合日线 1680 只、2019-01-02..2026-09-18 共 1873 交易日"；
+    ②**折算式查无源**——git grep "实际暴露/暴露折算/exposure×etf" 在 config/src 内仅命中风险预算域无关用法
+    （module_translation_registry.yaml:4107、position/core/budget_change_handler.py:471/680 都是"预算 vs 实际"再平衡语义，
+    不是分钟 K→组合暴露的折算），卡面亦无定义 ⇒ 按令"查无源即 blocked 禁编数"：该支 v2 的③量标 blocked_on_data，
+    待 Owner/设计侧给折算式或由本班在在册口径内另立定义件（不自拍数值）。
+    ETF 定版清单仍需窗毕一条枚举（在册只有规模数与表登记，无逐只名单）
+  probe_2_broker_seat_source: >-
+    目标＝L0-03（同节点 03_席位净卖出派发前瞻收益）的席位表是否在册可得——窗毕首查项，本窗未取数（登记为待查，不预判可得性）
+  note: >-
+    评级序 Owner 已裁 B（立场分）＝L2-09/03 解冻开考的前置口径已定；
+    本班窗内不碰（解冻要发考试＝CH），列窗毕第一梯队：口径 B 写进绑定 op 后直接出分，禁再走双口径对照；
+    双口径对照册（09_caliber_deviation_note.yaml）此后仅作历史证据，不再作判据面输入
+
+pool_stale_snapshot_followup:
+  found_by_me: >-
+    主区暂存池（git diff --cached 相对 HEAD 只减不增）普查＝34 个文件处回退形态；
+    其中 15 个"工作区与索引均无 HEAD 外新内容"＝可安全对齐。
+    本班只对齐**自家四本**（陈旧 index blob 先归档 .runtime/tmp/st-mineloop-20261010/index_stale_blobs_20261011/PRE_align__*）：
+    exam_scores_v1.yaml（索引面 469 行 vs HEAD 1,602）、99_checkpoint.md（292 对齐）、
+    tests/backtest/test_calibration_exam.py（191 vs 597）、tests/backtest/test_card_binding.py（164 vs 363），现四本 status 全空。
+  not_mine_left_untouched: >-
+    其余 11 个可安全对齐件属他车道（含 src/zephyr/backtest/gpu_core.py 索引 503 vs HEAD 990、
+    tests/research/backtest/test_l2_gpu_landing.py 376 vs 1,192、docs/_working/nightmine_campaign/99_checkpoint.md、
+    src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py、docs/01_policies_and_standards/policies/parallel_session_coordination_policy.md 等）
+    ⇒ 不代修，呈 Owner/维护二班（根因已转，本件补实测面积与逐本行数供其定点清池）
+  config_case: >-
+    config/search_space_prereg.yaml 也曾同形（索引 116 行 vs HEAD 135，且索引面含一行 HEAD 已废的
+    "concurrency: 1 单卡禁共存"）⇒ 已按同法归档后对齐 HEAD（工作区本就==HEAD，零内容变化）；
+    该册是冻结预算真源，池里旧值若被别袋提交会静默回退 vram/host_mem 两条准入闸——这是本班普查里风险最高的一件
+
+compliance:
+  ch_queries: 0
+  batches_launched: 0
+  schema_modified: 0
+  prereg_modified: 0
+  engine_files_modified: 0
+  cards_created: 1
+  files_created: 1
+
+review_commands:
+  card_landed: git ls-tree dev --name-only docs/03_modules/_domain_backtest/exam_cards/exit_flow/S1/ | grep calibration__06
+  pinned_assertions: git grep -n "n_raw == 362880\|n_base == 362_880\|n_t3 == 725_760\|n_folded == 362880" -- tests
+  prereg_expectations: sed -n '31p' config/search_space_prereg_t3a.yaml；sed -n '30p' config/search_space_prereg_t3b.yaml
+  pool_census: git diff --cached --numstat | awk 'NF==3 && $1=="0" && $2+0>0 {print $2"\t"$3}' | sort -rn | head -20
+  task_realsate: powershell -NoProfile -Command "(Get-ScheduledTask -TaskName 'ZephyrAlpha_F06Grid').State; (Get-ScheduledTask -TaskName 'ZephyrAlpha_F06Grid' | Get-ScheduledTaskInfo).NextRunTime"

@@ -1,0 +1,249 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 矿考循环班·三工单立项书（逐臂适配器／5 分钟切片器／门柱词表立法）按 16 支分型
+created: '2026-10-11T02:42:31+0800'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+order_wording: 统筹 2026-10-11 01:35 批复④：「逐臂适配器＋5 分钟切片器＋门柱词表立法（对齐卡面冻结键名禁改值）三件立项，按 16 支分型出施工单开工。」
+typology_source:
+  file: docs/_working/mineloop_campaign/W-A_arm_pilot_spec.yaml
+  measured_by: scripts/backtest/fexam/arm_protocol_binding.py（MOD-BT-249）
+  population: 19 张有臂协议面的卡（含 arm_protocol 键 17＋散文声明 paired_arm_protocol 2）
+  state_counts:
+    feasible_now: 3
+    needs_matching_engine: 16
+    unfrozen_arm_definition: 0
+  spec_own_clusters:
+    panel_or_path_replay: 10
+    minute_or_tick_slicer: 5
+    partial_reduction_capability: 1
+  this_document_cluster_rule: 本件按 missing_device 文字面关键词重新分箱：A1=命中 适配器/横截面/回放/配对面；A2=命中 切片器/分钟/逐笔/聚合器；A3=命中 部分减仓/部分退出/ladder。三箱允许重叠（一支卡可同时缺切片器与部分退出能力），并集=16
+    支全覆盖（未覆盖 0）。与册内自带 10/5/1 的差异＝分箱关键词不同源，非数据差异：A1 取到 13 是因为几乎所有 panel 卡的 missing_device 都另带『逐臂日净值配对面』一段（该面属适配器工单的收货面而非第三台装置）。两套数字都留档，禁只引一套。
+  cluster_counts_here:
+    wo_a1_per_arm_adapter: 13
+    wo_a2_5min_slicer: 5
+    wo_a3_partial_exit: 3
+wo_a1_per_arm_adapter:
+  title: WO-A1 逐臂参数化适配器（每臂自目标收益面）
+  why_now: 执行核实测事实（W-A _spec binning_rules.executor_facts）：run_card 的 comparison/ablation 分支对两臂恒走 _series_metrics + _arm_nav_metrics(exposure,
+    target)，且两臂共用同一 target 序列。⇒ 臂只要是『同一底座上的敞口变换 f(base)』就现已能出分（feasible_now 3 支实证）；真正缺件的只有『臂本身要重新撮合/改持仓路径』这一类＝16 支，其共同缺口是装置不接受按臂参数化调用。
+  scope_must:
+  - 把在册重放装置（simulate 族）调用面从『一套参数跑一次』扩成『按臂参数跑 N 次并各自产日频敞口/净值序列』；禁止新造第二台撮合引擎（宪法 §4.2 内收判据：同真源可派生→必并）
+  - 每臂自目标收益面：臂 i 的 target 由臂 i 的持仓路径导出，喂给既有 _comparison_metrics 的两臂配对面（不改判据核）
+  - 适配器只做参数搬运与产物对齐，任何阈值/门柱/窗一律从卡内读（card_binding 的 prose_quote 双校验同形复用）
+  scope_must_not:
+  - 禁改卡面 pillars_numeric 键值与 window/buckets（G4-5；改动=新版本卡）
+  - 禁把 panel 臂降级成日频标量近似（在册 ORDINAL_FALLTHROUGH／语义走偏事故面）
+  - 禁在适配器内自行补未冻参数（arm_protocol_binding.ArmParamUnfrozen 的硬拒纪律继承）
+  unblocks:
+  - card_id: TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+    family: comparison
+    arm_count: 3
+    missing_device: 在册装置部分减仓能力（卡面自证 simulate 仅全仓进出）＋按臂参数化调用适配器＋逐臂日净值配对面
+    keys_outside_comparison_vocab: 2
+    pending_numeric_params: []
+  - card_id: TDM-X-S1-01/comparison/02_六桶分类增益对照
+    family: comparison
+    arm_count: 3
+    missing_device: 横截面桶标注回放＋逐臂日净值配对面（另：misfire_reduction_min 核内无机判面=必记败）
+    keys_outside_comparison_vocab: 0
+    pending_numeric_params: []
+  - card_id: TDM-X-S1-02/comparison/02_时间止损档对照
+    family: comparison
+    arm_count: 2
+    missing_device: 横截面/逐仓持有期回放＋逐臂日净值配对面
+    keys_outside_comparison_vocab: 1
+    pending_numeric_params: []
+  - card_id: TDM-X-S1-03/comparison/02_止盈族三式对照
+    family: comparison
+    arm_count: 2
+    missing_device: 横截面止盈规则回放＋逐臂日净值配对面（三臂→两两配对 3 跑）
+    keys_outside_comparison_vocab: 2
+    pending_numeric_params: []
+  - card_id: TDM-X-S1-06/comparison/02_K3连续破位强清对照
+    family: comparison
+    arm_count: 2
+    missing_device: 分钟/逐笔执行切片器＋按臂参数化调用装置的适配器
+    keys_outside_comparison_vocab: 1
+    pending_numeric_params: []
+  - card_id: TDM-X-S1/ablation/02_卖出信号段整体消融对照
+    family: ablation
+    arm_count: 3
+    missing_device: 横截面离场判定回放＋逐臂日净值配对面
+    keys_outside_comparison_vocab: 4
+    pending_numeric_params: []
+  - card_id: TDM-X-S1-05/ablation/02_融合权重与去抖消融
+    family: ablation
+    arm_count: null
+    missing_device: 融合引擎→装置适配器＋部分退出能力＋逐臂日净值配对面（权重表 0.9/0.7/0.5/0.5 卡面已冻结）
+    keys_outside_comparison_vocab: 5
+    pending_numeric_params: []
+  - card_id: TDM-X-S2-04/comparison/02_本地条件单追单闭环对照
+    family: comparison
+    arm_count: 2
+    missing_device: 分钟/逐笔切片器＋条件单状态机回放
+    keys_outside_comparison_vocab: 2
+    pending_numeric_params: &id001
+    - 追单状态机步进参数（卡面只给机制名）
+  - card_id: TDM-X-S2-06/ablation/02_卖出闭环三率反馈权重消融
+    family: ablation
+    arm_count: null
+    missing_device: 逐月调权回放（反馈通道在码件）＋逐臂日净值配对面（钉死表 0.9/0.7/0.5/0.5+0.2 卡面已冻结）
+    keys_outside_comparison_vocab: 5
+    pending_numeric_params: []
+  - card_id: TDM-X-S2/ablation/02_执行约束层现实性税度量
+    family: ablation
+    arm_count: 2
+    missing_device: 逐笔约束开关（参与率硬顶/顺延）＋逐臂日净值配对面
+    keys_outside_comparison_vocab: 4
+    pending_numeric_params: []
+  - card_id: TDM-X-FLOW/ablation/02_离场信号整链消融总账
+    family: ablation
+    arm_count: 3
+    missing_device: 整链按臂 simulate 调用＋逐臂日净值配对面
+    keys_outside_comparison_vocab: 6
+    pending_numeric_params: []
+  - card_id: TDM-E-L2-07/comparison/03_追高与低吸胜率对照
+    family: comparison
+    arm_count: 2
+    missing_device: 横截面权重帧日频组合回放（含逐标的可成交性约束）＋逐臂日净值配对面
+    keys_outside_comparison_vocab: 0
+    pending_numeric_params: []
+  - card_id: TDM-E-L2-09/comparison/02_催化剂加权形式板块恒定与标的指数衰减
+    family: comparison
+    arm_count: 2
+    missing_device: 横截面权重帧→日组合收益轻量回放（含 T+1 与涨停不可买）＋逐臂日净值配对面
+    keys_outside_comparison_vocab: 0
+    pending_numeric_params: []
+  first_slice_this_shift: 本轮交付＝路由真源 pillars_route() 抽取（执行核与普查共用，禁两处抄分派式）＋词表普查件（WO-V 开工件）。A1 的装置改造需先读在册 simulate 族的参数注入面，属跨会话在飞域（重放引擎工单本尊），不当班硬闯。
+  acceptance:
+  - 选中一支 2 臂 panel 卡（建议 TDM-X-S1-02/comparison/02_时间止损档对照）出双臂分数行，unjudged.numeric_keys_not_read=[]
+  - 判别力测试：两臂参数互换 ⇒ maxdd_improvement_pp 与 sharpe_delta 同号翻转（证明适配器真按臂走而非恒等）
+  - 试次照计 n_trial_ledger（DSR 分母面不得绕过）
+wo_a2_five_min_slicer:
+  title: WO-A2 5 分钟执行切片器（单列，不与 A1 混收）
+  why_separate: 统筹明令『5 分钟切片器 listed separately』；该装置改变的是执行价的时间分辨率，A1 改变的是臂参数注入面，两者验收面不同源
+  precondition_data_probe:
+  - 先查 TableRegistry 是否已有个股 5min/1min 品类（已知 market_etf_kline_1min/5min/15min/30min 在册）；若个股分钟面缺表＝本工单先落 data-unlock 申请，不得用日频近似冒充分钟面（断供面禁硬考）
+  - 分钟表多版本行须先钉 anyLast/argMax 去重口径（在册 30 倍放大事故面）
+  unblocks:
+  - card_id: TDM-X-S1-06/comparison/02_K3连续破位强清对照
+    family: comparison
+    arm_count: 2
+    missing_device: 分钟/逐笔执行切片器＋按臂参数化调用装置的适配器
+    keys_outside_comparison_vocab: 1
+    pending_numeric_params: []
+  - card_id: TDM-X-S2-01/comparison/02_执行方式路由与流动性三查对照
+    family: comparison
+    arm_count: 3
+    missing_device: 分钟/逐笔执行切片器（卡面自证仓内无 5min 执行器）；三查数值卡面已给（10% 参与率、1% 阈值、3 批×1/3）
+    keys_outside_comparison_vocab: 2
+    pending_numeric_params: []
+  - card_id: TDM-X-S2-03/comparison/02_执行口径净收益对照
+    family: comparison
+    arm_count: 3
+    missing_device: 分钟聚合器（vwap 臂）＋按臂执行价列改写
+    keys_outside_comparison_vocab: 2
+    pending_numeric_params: []
+  - card_id: TDM-X-S2-04/comparison/02_本地条件单追单闭环对照
+    family: comparison
+    arm_count: 2
+    missing_device: 分钟/逐笔切片器＋条件单状态机回放
+    keys_outside_comparison_vocab: 2
+    pending_numeric_params: *id001
+  - card_id: TDM-X-S2/ablation/02_执行约束层现实性税度量
+    family: ablation
+    arm_count: 2
+    missing_device: 逐笔约束开关（参与率硬顶/顺延）＋逐臂日净值配对面
+    keys_outside_comparison_vocab: 4
+    pending_numeric_params: []
+  acceptance:
+  - vwap 臂（TDM-X-S2-03 卡面冻结的执行口径）在 5min 面上可复算，且与日频收盘口径的差逐日单列出数（两口径都留档）
+  - 卡面已给数值者照抄（S2-01 三查：10% 参与率／1% 阈值／3 批×1/3），未给数值者一律 ArmParamUnfrozen 硬拒
+wo_a3_partial_exit:
+  title: WO-A3 部分退出/分批减仓能力（A1 的子装置，单列登记避免被并掉）
+  unblocks:
+  - card_id: TDM-X-R1-02/comparison/02_L3减仓顺序三臂对照
+    family: comparison
+    arm_count: 3
+    missing_device: 在册装置部分减仓能力（卡面自证 simulate 仅全仓进出）＋按臂参数化调用适配器＋逐臂日净值配对面
+    keys_outside_comparison_vocab: 2
+    pending_numeric_params: []
+  - card_id: TDM-X-S1-05/ablation/02_融合权重与去抖消融
+    family: ablation
+    arm_count: null
+    missing_device: 融合引擎→装置适配器＋部分退出能力＋逐臂日净值配对面（权重表 0.9/0.7/0.5/0.5 卡面已冻结）
+    keys_outside_comparison_vocab: 5
+    pending_numeric_params: []
+  - card_id: TDM-X-S2-05/comparison/02_分批止盈阶梯对照
+    family: comparison
+    arm_count: 2
+    missing_device: ladder 分批退出能力（装置全仓进出）
+    keys_outside_comparison_vocab: 1
+    pending_numeric_params: []
+  note: spec 自计 partial_reduction_capability=1 与本件重分箱=3 之差同上（关键词面），两套数字并存
+wo_v_pillar_vocab:
+  title: WO-V 门柱词表立法（对齐卡面冻结键名，禁改键值）
+  started_this_shift:
+    generator: scripts/backtest/fexam/card_binding.py --mode vocab-census（宪法 §9.5：条目清单必须生成器产出，禁手维护）
+    census_file: docs/_working/mineloop_campaign/16_pillar_vocab_census.yaml
+    measured:
+      card_total: 487
+      cards_without_numeric_face: 186
+      cards_with_keys_outside_route_vocab: 119
+      unique_keys_outside_vocab: 181
+      tally_route:
+        series: 269
+        dual_arm: 218
+      top_keys:
+      - key: turnover_or_cost_gate
+        cards: 19
+      - key: ic_ir_min
+        cards: 18
+      - key: ic_mean_min
+        cards: 18
+      - key: regime_same_sign
+        cards: 18
+      - key: mono_spearman_min
+        cards: 17
+      - key: maxdd_delta_max
+        cards: 15
+      - key: sharpe_vs_baseline_min
+        cards: 14
+      - key: turnover_cost_gate
+        cards: 11
+      - key: tracking_diff_max
+        cards: 10
+      - key: car_t_stat_min
+        cards: 8
+      - key: pairs_min_for_verdict
+        cards: 6
+      - key: car_min_bp
+        cards: 4
+    single_source: 词表两侧直读执行核 _CALIBRATION_JUDGED_KEYS / _COMPARISON_KNOWN_KEYS；路由直读 pillars_route()；普查件内零复制定义（测试钉住，改一处即红）
+  legislation_shape:
+  - 立法=为每个在册冻结键名补『机判面』或在词表册登记其覆盖路由，键值（阈值数字）永不改
+  - 无面键的三种正当去向：①补实现（工单内）②显式标 no_machine_face 并由 fail-closed 拦新考生（本轮已落）③新版本卡换掉该柱（G4-5，禁原地改）
+  mixed_shape_finding: 普查显形一类新缺陷（此前无人报过）：19 张卡路由=双臂判官却仍带校准侧键（mono/ic/regime），另有 47 张卡路由=校准判官却带 NAV/事件研究侧键。两侧判官各自只看自家词表，混形卡的另一侧柱＝结构性未判面。本件只报数与点名，扩面属判据路由面改动，不自决，见
+    owner_decision_needed。
+  owner_decision_needed:
+    question: pillars_route 的分派是否从『仅 comparison/ablation 按键集分派』扩为『全族按键集并集分派』（并集＝两词表之和；含 shadow 族 35 张里带 NAV 键者，现状一律走校准判官并已被未知键 fail-closed 拦下）
+    blast_radius_measured:
+      series_route_unknown: 47
+      dual_arm_route_carrying_calibration_keys: 19
+      shadow_family_total: 35
+    why_not_self_decided: 路由决定『哪个判官说了算』＝判据面邻域；本班红线『判据冻结面零动』＋AGENTS §10 指令/数据边界，口头批复不构成豁免，须经裁定登记或正式通道
+    interim_effect: 在裁定前，两侧未覆盖的柱一律由 fail-closed 判 fail 并在 unjudged 面点名——即宁可不出假绿，不出真绿冒牌
+net_zero:
+  new_modules: 0
+  new_registries: 0
+  replacement_note: WO-V 普查三件全并入既有 MOD-BT-248（card_binding 新增 --mode vocab-census 分支）与 MOD-BT-243（执行核路由真源抽取），不新建模块、不新建注册表；16_ 与 15_ 是本战役台账袋内新增件（同族
+    MINELOOP-CAMPAIGN），无重复真源
+compliance:
+  pillar_key_values_changed: 0
+  pillar_thresholds_changed: 0
+  cards_modified: 0
+  historical_score_rows_touched: 0
+  ch_queries_this_doc: 0
+  files_created: 2

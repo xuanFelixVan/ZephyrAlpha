@@ -1,0 +1,171 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 矿考循环班·T1 反向复审结果账（A 类事件开关卡，一轮为限）
+created: '2026-10-11T04:32'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+schema_version: mineloop-reverse-audit/v1
+generated_at: 2026-10-11T04:32
+sid: st-mineloop-20261010
+order_clause: 日班总令 T1（头号）：31 行分诊→A 类 4 张按四换立事件开关卡→同批跑；晋级率头号卡另加 walk-forward 条款
+delivered:
+  triage_ledger: docs/_working/mineloop_campaign/20_reverse_triage.yaml
+  judge_face: scripts/backtest/fexam/calibration_exam.py：judge_event + _event_metrics + _welch_t（判官族内，无第二真源；仓内另有三处一次性脚本各抄过 Welch，收编属后续，本班不代改他人件）
+  binding_op: card_binding.op_event_flag_rolling_pctile（基序列二选一：base_op 复用已在册算子 / base_csv 复用本仓入库序列；分位一律历史滚动窗含当日，禁全样本分位＝用未来定过去门槛）
+  cards:
+  - TDM-E-L1-S2/calibration/16_max_streak_high_event_v2
+  - TDM-E-L1-S3/calibration/07_promotion_rate_high_event_v2
+  - TDM-E-L1-S3/calibration/08_limit_up_premium_high_event_v2
+  - TDM-E-L2-09/calibration/06_catalyst_density_high_event_v2（blocked_on_impl，算子未在册）
+  run_evidence: docs/_working/mineloop_campaign/21_exam_run_limit_up… 21_exam_run_event_switch.yaml
+result:
+  TDM-E-L1-S2/calibration/16_max_streak_high_event_v2:
+    card_id: TDM-E-L1-S2/calibration/16_max_streak_high_event_v2
+    verdict: fail
+    fails:
+    - t_stat 0.174 > -2.0（负向命题要求更显著）
+    - oos_gap 反号 oos=5.53bp is=-1.40bp
+    is_gap_bp: -1.4
+    full_gap_bp: 1.54
+    t_stat: 0.174
+    n_event: 295
+    n_none: 1078
+    oos_gap_bp: 5.53
+    oos_t: 0.32
+    oos_n_event: 104
+    regime_gap_bp:
+      bull: -4.42
+      bear: -0.66
+    binding:
+      base: csv:max_streak_height.csv
+      base_rows: 1622
+      signal_col: max_streak_high_event_v2_event_flag
+      pctile_window: 250
+      pct_threshold: 0.8
+      rows: 1373
+      n_event_days: 295
+      event_share: 0.21485797523670794
+      pit_statement: 事件判定只用 t 及以前的基序列（rolling 窗含当日），次日收益由执行器 shift(-1) 吃
+      warmup_dropped_days: 249
+      op: event_flag_rolling_pctile
+      prose_quote: 过去 250 日**滚动**分位 > 0.80
+      reviewed_by: st-mineloop-20261010
+      review_note: 'A 类第三张（连板高度命题：06 母卡口径与 13 导生口径在册指标逐字段全等＝同一命题，分诊规则去重后
+
+        立 06 口径这一张）。底座走本仓已入库 CSV（零 CH）。已知弱点写在卡面：母卡两段牛熊反号
+
+        （bull -0.063 / bear +0.016），event_regime_gap_same_sign 为硬柱，分段反号即 fail。
+
+        '
+  TDM-E-L1-S3/calibration/07_promotion_rate_high_event_v2:
+    card_id: TDM-E-L1-S3/calibration/07_promotion_rate_high_event_v2
+    verdict: fail
+    fails:
+    - t_stat -0.985 > -2.0（负向命题要求更显著）
+    - oos_gap 反号 oos=9.49bp is=-17.62bp
+    is_gap_bp: -17.62
+    full_gap_bp: -9.48
+    t_stat: -0.985
+    n_event: 270
+    n_none: 1100
+    oos_gap_bp: 9.49
+    oos_t: 0.469
+    oos_n_event: 81
+    regime_gap_bp:
+      bull: -11.03
+      bear: -15.2
+    binding:
+      base: op:promotion_rate_from_limit_panel
+      base_prose_quote: 分母 <20 置 NaN
+      base_rows: 1619
+      base_op_evidence:
+        rows_kept: 1619
+        panel_rows: 1703
+      signal_col: promotion_rate_high_event_v2_event_flag
+      pctile_window: 250
+      pct_threshold: 0.8
+      rows: 1370
+      n_event_days: 270
+      event_share: 0.19708029197080293
+      pit_statement: 事件判定只用 t 及以前的基序列（rolling 窗含当日），次日收益由执行器 shift(-1) 吃
+      warmup_dropped_days: 249
+      op: event_flag_rolling_pctile
+      prose_quote: 过去 250 日**滚动**分位 > 0.80
+      reviewed_by: st-mineloop-20261010
+      review_note: 'T1 反向复审车道 A 类头号卡（分诊册 20_reverse_triage.yaml）。基序列复用母卡 06 同一算子
+
+        （禁第二取数路），事件日=历史滚动分位>0.80，非事件日=其余；阈值 0.80 由"族内事件日下限 200
+
+        ÷ 可用日 1369 ⇒ 频率须 ≥14.6%"反推取 20% 留余量，未观察任何收益读数（碰数前冻）。
+
+        判据走族内新落的事件开关判官（judge_event：gap≤0 且 Welch t≤-2，OOS 同号，两段同号，n≥200）。
+
+        '
+  TDM-E-L1-S3/calibration/08_limit_up_premium_high_event_v2:
+    card_id: TDM-E-L1-S3/calibration/08_limit_up_premium_high_event_v2
+    verdict: fail
+    fails:
+    - t_stat -0.009 > -2.0（负向命题要求更显著）
+    - oos_gap 反号 oos=23.05bp is=-9.30bp
+    - 'regime_gap 反号 {''bull'': {''n_event'': 67, ''n_none'': 287, ''mean_event'': 0.0012947549262275532, ''mean_none'': 0.000575062676245909,
+      ''gap_bp'': 7.196922499816442, ''t_stat'': 0.36122452275214245}, ''bear'': {''n_event'': 133, ''n_none'': 495, ''mean_event'': -0.0017642477113940054,
+      ''mean_none'': -0.0004669887547816746, ''gap_bp'': -12.972589566123307, ''t_stat'': -1.3113017199352706}}'
+    is_gap_bp: -9.3
+    full_gap_bp: -0.08
+    t_stat: -0.009
+    n_event: 276
+    n_none: 1094
+    oos_gap_bp: 23.05
+    oos_t: 1.092
+    oos_n_event: 79
+    regime_gap_bp:
+      bull: 7.2
+      bear: -12.97
+    binding:
+      base: op:limit_up_premium_close_mean
+      base_prose_quote: 全部比值在后复权空间内计算
+      base_rows: 1619
+      base_op_evidence:
+        rows_kept: 1619
+        panel_rows: 1703
+      signal_col: limit_up_premium_high_event_v2_event_flag
+      pctile_window: 250
+      pct_threshold: 0.8
+      rows: 1370
+      n_event_days: 276
+      event_share: 0.20145985401459854
+      pit_statement: 事件判定只用 t 及以前的基序列（rolling 窗含当日），次日收益由执行器 shift(-1) 吃
+      warmup_dropped_days: 249
+      op: event_flag_rolling_pctile
+      prose_quote: 过去 250 日**滚动**分位 > 0.80
+      reviewed_by: st-mineloop-20261010
+      review_note: 'A 类第二张。基序列=母卡 05 同一算子（收盘口径截面均值）。已知弱点写在卡面：母卡 OOS 读数近零
+
+        （-0.0025），本卡若一轮未确认即族归档，禁改分位阈再考。
+
+        '
+reading_of_result:
+  headline: 三张可跑的事件开关卡全部 fail：过热档（基序列历史滚动分位>0.80）日的次日指数收益差在样本内要么不显著（t=-0.99 / -0.01 / +0.17）要么方向都不对，且**三张的 OOS 窗全部反号**（+9.5 / +23.1 / +5.5 bp）
+  what_it_does_not_refute: 这不否定母卡在册的**时序相关**负号（Spearman IC 度量的是单调共动，全样本所有日子一起算）；它否定的是更强的可交易形式——『负效应集中在高分位过热日』。两者是不同命题，本车道只审后者。
+  one_round_limit_executed: 按各卡面预写的『一轮为限』：三张命题本轮未确认 ⇒ 族 reverse_triage_T1_20261011 归档，禁改分位阈/改窗长再考（这就是多重比较防线的落地点）
+  floor_strongest_reading: 本轮把 n≥200 的族内下限从『全窗』扩到『被用来确认的那一窗』（OOS 窗实测只有 79-104 个事件日，不足 200 即不得拿'OOS 同号'当确认证据）；该改动只增 fail 不增 pass＝单向收紧，非放松
+walk_forward:
+  card_id: TDM-E-L1-S3/calibration/07_promotion_rate_high_event_v2
+  clause_frozen_in_card_face: true
+  trigger_face_status: 未接线（核对器禁 cron/Timer，须数据落地事件触发）＝T7 接线工单同批；本轮不改判、不申报确认
+trial_discipline:
+  trials_recorded: 3
+  ledger_hook_untouched: true
+  rows_before: 41
+  rows_after: 44
+  historical_rows_lost: 0
+  historical_rows_field_differing: 0
+compliance:
+  mother_cards_modified: 0
+  mother_score_rows_rejudged: 0
+  pillar_values_changed_on_existing_cards: 0
+  new_cards: 4
+  ch_queries: 3 次取数（两卡共用涨停面板底座＋一次 CSV 零 CH）
+  invented_thresholds: 无：分位阈 0.80 与窗长 250 的推导写在卡面（族内下限 200 ÷ 可用日数 反推频率），未观察收益读数

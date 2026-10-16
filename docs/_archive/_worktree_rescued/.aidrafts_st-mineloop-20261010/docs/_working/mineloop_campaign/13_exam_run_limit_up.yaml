@@ -1,0 +1,138 @@
+schema_version: mineloop-binding-run/v1
+ch_window_override: 统筹 01:35 批复①：让路窗无对象（夜跑/周 OPTIMIZE/F06Grid 三任务 Disabled 实测＋clickhouse 进程数 0，02:09 复测），04:00 等待取消；本件为 G-CAL-1 消解后 05/06 卡的裁定③放行跑
+requested:
+- TDM-E-L1-S3/calibration/05_limit_up_premium_derived
+- TDM-E-L1-S3/calibration/06_promotion_rate_derived
+results:
+- card_id: TDM-C-L1/comparison/02_btc_trend_altseason_gate
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-AGG/ablation/02_state_input_replacement
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-AGG/calibration/02_四档风险轴前向收益单调
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0-1/calibration/03_market_scope_sentiment_series
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0/calibration/02_货币卡
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0/calibration/03_流动性卡
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0/calibration/04_海外卡
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S0/calibration/05_政策事件卡
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S1/calibration/03_黄白线交叉
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S2/calibration/07_连板家数分布
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S3/calibration/02_昨日涨停溢价
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S3/calibration/03_晋级率
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S3/calibration/04_情绪先锋四态
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S3/calibration/05_limit_up_premium_derived
+  verdict: fail
+  binding:
+    min_set_size: 20
+    rows_kept: 1619
+    days_below_set_floor: 84
+    suspended_missing_symbol_days: 255
+    days_with_missing: 195
+    mean_daily_limit_up: 70.92425132119789
+    max_daily_limit_up: 1032
+    signal_col: limit_up_premium_close_derived
+    panel_rows: 1703
+    warmup_start: '2018-09-01'
+    limit_tol: 0.002
+    open_form_days: 1619
+    open_form_median: 0.0215998547211777
+    unjudged_pillar_note: 开盘口径仅建档未占机判入口
+    op: limit_up_premium_close_mean
+    prose_quote: 全部比值在后复权空间内计算
+    reviewed_by: st-mineloop-20261010
+    review_note: '开考前置门 G-CAL-1 已消解（实测面=12_gcal1_reconciliation.yaml，2026-10-11 02:0x）：
+
+      卡面比值口径逐日涨停家数年均 64.8/80.9/87.3/76.8/43.9/89.1/78.7（2019..2025），
+
+      与卡面 evidence 锚「年均 44-89 家（65.4/81.9/87.9/77.0/44.1/89.2/77.0）」逐年吻合（差 ≤1.5 家=后续新日入库）；
+
+      不复权比值口径与后复权比值口径差 ≤0.3 家/日（表选择对本卡信号无实质影响）；
+
+      在册 R1_L11_ledger.md:77「hfq 得 3882 荒谬值」根因实测=后复权**绝对价** × 不复权**涨停绝对价** 混空间
+
+      （该式逐年均值 3147/3303/3456/3639/3893/4098/4207，2023 段正落在 3882 量级），非卡面比值式之过。
+
+      接线全部取卡面原文：S_{t-1}=r_{t-1}>=limit_pct-0.002（r=close/lag(close)-1，后复权空间），
+
+      主信号=mean_{i∈S_{t-1}}(close_{i,t}/close_{i,t-1}-1)，|S_{t-1}|<20 置 NaN，
+
+      目标=csi300 次日收益（与执行器 shift(-1) 同口径）。
+
+      开盘口径另档建档（中位数与天数入运行附注），未占机判入口（卡面 two_form_spread 自记不作一票否决门柱）。
+
+      未判柱清单（分数册附注必带，G-ANNOT-1）：ic_floor 的 IC_IR 半边（series 路 ic_ir=None）、
+
+      lag_profile（t+1..t+3，现器硬编码 shift(-1)）、two_form_spread（无冻结检验量）。
+
+      '
+  metrics:
+    ic_mean: -0.05154480920427792
+    mono_spearman: -0.2121212121212121
+    n: 1619
+    oos_ic: -0.002536745550204953
+    regime_ic:
+      bull: -0.08460297478481232
+      bear: -0.03867747558465549
+- card_id: TDM-E-L1-S3/calibration/06_promotion_rate_derived
+  verdict: fail
+  binding:
+    min_set_size: 20
+    rows_kept: 1619
+    days_below_set_floor: 84
+    suspended_missing_symbol_days: 255
+    mean_daily_limit_up: 70.92425132119789
+    max_daily_limit_up: 1032
+    den_col: n_lu_prev（=countIf(is_lu_{t-1})，非当日在市家数）
+    signal_col: promotion_rate_derived
+    panel_rows: 1703
+    warmup_start: '2018-09-01'
+    limit_tol: 0.002
+    unjudged_pillar_note: 分板率 ladder 档需卡 13/14 streak 串，本绑定未实现
+    op: promotion_rate_from_limit_panel
+    prose_quote: 分母 <20 置 NaN
+    reviewed_by: st-mineloop-20261010
+    review_note: '与 05 卡共用同一日度聚合底座（load_limit_up_panel），分母严格取 n_lu_prev=countIf(is_lu_{t-1})
+
+      即"昨板家数"，非当日在市家数（卡面 hardest_step 原文防误算成涨停占比）；
+
+      is_lu 式与 05 卡同冻结（-0.002 容差、后复权比值空间、G-CAL-1 已消解）。
+
+      暖机取 2018-09-01 起（卡面「串须 IS 前 60 交易日暖机」）。
+
+      分板率 ladder 档（1→2/2→3/>=3→+1）需卡 13/14 streak 串＝另一建档面，本绑定未实现，
+
+      如实写进运行附注（未判柱清单）。
+
+      未判柱清单：IC_IR 半边、lag_profile(t+1..t+3)、promotion_ladder。
+
+      '
+  metrics:
+    ic_mean: -0.06355515867668221
+    mono_spearman: -0.4787878787878787
+    n: 1619
+    oos_ic: -0.07004138030988162
+    regime_ic:
+      bull: -0.09725005828746959
+      bear: -0.05553789360325285
+- card_id: TDM-E-L1-S4/calibration/02_期权IV主路径
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S4/calibration/03_合成VIX后备
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S5/calibration/02_11信号环比
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1-S5/calibration/03_derived_signal_shock_panel
+  skipped: not_in_approve_list
+- card_id: TDM-E-L1/comparison/02_anchored_cap_curve_on_off
+  skipped: not_in_approve_list

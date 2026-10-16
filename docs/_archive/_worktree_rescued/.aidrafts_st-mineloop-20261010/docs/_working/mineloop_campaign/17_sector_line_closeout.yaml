@@ -1,0 +1,74 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 矿考循环班·板块族 8 支处置终账（专道收口，含一支翻前车道判定）
+created: '2026-10-11T03:22:00+08:00'
+sid: st-mineloop-20261010
+family_id: MINELOOP-CAMPAIGN
+---
+
+scope: sector_lane_spec.yaml 点名的 8 支卡逐支终态；本件不新增判定方法，只用 22e481951e 绑定前复核三闸
+  （①信号面有无未来量 ②卡面是否已冻结数值/分桶协议现器能否判 ③口径与在册真源是否互斥）。
+scored_this_campaign: 3 支出分（TDM-E-L2-02 接棒撤离榜／L2-03 调整周期进度／L2-04-2 虹吸态成交集中度，
+  其中后两支与接棒榜同属 quantile_quintile，00:38 分桶口径修复后三卡已于 q-0026 正门重跑，旧行保留）。
+
+disposition:
+  - card_id: TDM-E-L2-01-2/calibration/02_板块成交额占比活跃度
+    sector_lane_verdict: implementable
+    package_owner_rejudgment: reject_pending_new_version
+    overturn_because: >-
+      闸一命中（口径不同源，非数据缺失）。卡面 series 面原文＝"占比前 10% 板块等权组合的次日超额与全样本差"，
+      即 s 日序列值本身已消费 s+1 的板块收益；而执行器 _series_metrics（calibration_exam.py:154）
+      做的是 `tgt = target.shift(-1)`＝把 s 日信号对 s+1 日指数收益。两相叠加后实际配对是
+      "板块 s+1 超额 ↔ 指数 s+1 收益"＝**同日共动**，不是卡面 pillars.response_monotonicity 与
+      hypothesis 所声明的"对次日指数收益单调正相关"。出分不会报错，但会出一张答错题的卷子——
+      与本班拒绝 02-2（主判据面含未来量）、01-3（两级分桶不可执行）同类，故不自决改写、走新版本卡。
+    also_note: 次生缺陷＝buckets.on 是（日×板块）截面值，现器 _bucket_response 只吃单序列（同 01-3 病），
+      即卡面分桶对象与执行器分桶面不同源，须在新版本卡里二选一并冻结。
+    unblock_path: 分段/口径卡面修订工单（新版本卡走 G4-5，禁原地改）：要么把 series 面改成不含 s+1 的
+      "s 日 Top10% 池标识 × s+1 收益由执行器算"（即绑 share/占比水平或环比作信号，收益留给 shift(-1)），
+      要么把 pillars 的"次日"改写成"同日共动"并重新预注册——两者都必须由卡面先冻结，本班不代拍。
+  - card_id: TDM-E-L2-01-3/calibration/02_多周期动量主导度
+    sector_lane_verdict: two_level_bucket_reject
+    package_owner_rejudgment: same（维持）
+    reason: buckets.type=categorical_then_quantile 两级分桶现器无面（grep 全 fexam 目录该词零命中）
+  - card_id: TDM-E-L2-02-2/calibration/02_板块见顶预警三信号
+    sector_lane_verdict: implementable
+    package_owner_rejudgment: rejected（已落绑定册 status=rejected，禁改回 approved）
+    reason: 三因并见＝卡面未冻结 RSI 见顶阈值（车道草案 rsi_threshold=75.0 属替卡拍数）／
+      分桶对象是面板命中数 {0,1,2} 现器 series 路不可判／主判据含未来 5 日超额与 shift(-1) 不同源
+  - card_id: TDM-E-L2-04-1/calibration/02_轮动五态调节分
+    sector_lane_verdict: unfrozen
+    package_owner_rejudgment: same（维持）
+    reason: 二维各三分位=3×3=9 格而卡只给 5 个态名，态生成规则未冻结；进 approve 名单即替卡拍映射
+  - card_id: TDM-E-L2-09/calibration/03_评级上调聚集
+    sector_lane_verdict: implementable
+    package_owner_rejudgment: rejected（22e481951e 已判，bind_args 里 rating_score_map=__TBD_BY_OWNER__）
+    reason: 上调/下调方向＝信号全部，而卡面把序数映射列为"开考前实测钉死"的待办；
+      实测只能定取值集合（买入/增持/持有/中性/减持/卖出/回避＋空串）不能定序，两个在册映射互斥＝呈 Owner
+  - card_id: TDM-E-L2-01/comparison/02_等权与IC加权双臂
+    sector_lane_verdict: needs_engine
+    package_owner_rejudgment: same（维持）→ WO-A1
+    concrete_gap: ①绑定层全链单 Series（card_binding.run_binding_book / run_one 无 signal_b 通道）
+      ②_ARM_NAV 语义＝把臂序列当敞口（calibration_exam.py:236 `e.shift(0)*r.shift(-1)`），
+      与卡面"池组合收益回放"口径冲突＝会出假分不是出错
+  - card_id: TDM-E-L2-01/comparison/03_缺路处置律重归一与剔除双臂
+    sector_lane_verdict: needs_engine
+    package_owner_rejudgment: same（维持）→ WO-A1
+    concrete_gap: 同上两条，另加"剔除臂改变截面分母须与保留臂共享同一 rank 调用序"
+  - card_id: TDM-E-L2/ablation/02_板块候选池整体边际
+    sector_lane_verdict: needs_engine
+    package_owner_rejudgment: same（维持）→ WO-A1
+    concrete_gap: conduction 臂在个股层 A1/A2 之后、Top-N 之前注入 X_sector，须装置级参数化（非绑定层可补）
+
+tally: {cards: 8, scored: 3, rejected_or_pending_new_version: 5, of_which_overturned_by_package_gate: 1}
+
+feeds:
+  wo_a1: [TDM-E-L2-01/comparison/02, TDM-E-L2-01/comparison/03, TDM-E-L2/ablation/02]
+  wo_v_vocab_keys: [categorical_then_quantile, dim_pair, ablation_arm]
+  wo_v_vocab_note: 三桶型在 scripts/backtest/fexam 全目录 grep 零命中＝词表与分桶协议同缺（WO-V 与卡面修订双工单）
+  card_revision_workorder: [L2-01-2, L2-01-3, L2-02-2, L2-04-1, L2-09/03]
+
+sector_line_closed: true
+next_sector_action: 无——8 支全处置；余 5 支全部挂工单，禁为凑 T1 数量硬考（断供面禁硬考＝本令红线）
+
+compliance: {cards_modified: 0, binding_book_modified: 0, scores_modified: 0, ch_queries: 0, code_modified: 0, files_created: 1}
