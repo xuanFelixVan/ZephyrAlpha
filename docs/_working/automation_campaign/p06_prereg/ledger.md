@@ -1104,3 +1104,61 @@ exam_cards **552 文件 552 解析零坏件**；状态面 empty 186／preregiste
 - **R1（门柱与冻结值逐字一致＋单变量核对）**：尺＝`.runtime/tmp/st-qoder-p06-1015-12/make_card13.py` 的**建卡即断言**（写盘前同进程跑，非事后追述），**31 项全 CLEAN**：①对 `git show HEAD:A02/12` 逐面 parsed 全等＝window 整块（含 in_sample/oos/regimes/frozen_note 四子面与 `&id001` 锚）・pillars_numeric 整块＋键集相等・buckets.type 与 min_obs_per_bucket・discipline・signal_kind・target.primary/secondary・data_binding.target_source；②三面锚等＝`oos_window_ref == 本卡 window.oos == 源卡值`；③③席 046 行五面 verbatim（definition_zh 同进 hypothesis 严格后缀与 signal_derivation 整值・example_value・orthogonal_gate_note・sample_window 进 universe_guard・data_source_table 进 signal_table，且 signal_table 与源卡值**逐字同值**＝本班实测断言）；④③席 052 行五面 verbatim 整行入卡；⑤五键跨面同值＝并与 A01/08・A02/10・A02/11 三面 parsed 全等（消"多口径择一"）；⑥自判＝无 `generated` 键・`buckets.on` 不含 ASCII 数字（写"十六档"中文数词，承 10 班在册坑）・status 在五态枚举内・card_id↔文件名互推成立・**目标件写前不存在**（不覆盖他件）・全文无 `...` 文档终止符行。⑦**对照卡 diff＝本班 N/A（如实记不记绿）**：本班领用面零新 [对照] 申请（§一.4），无 champion/challenger 可 diff；新卡系新造具名子题卡，与各自抄源卡的差异面＝信号对象本身，已在 `prereg_provenance.single_variable_note` 声明。⑧**零张裸骨架卡被本席自行填死**＝本班写入面只 1 件新卡（骨架谓词 `skeleton=False`）＋骨架 empty 面 186 件本班零写入（R2 状态面反证）。
 - **R2（归属·净零·保底·进程外核实）**：①卡池 **552→553**（本班新建 1 件）。**开班实测面**＝empty 186／preregistered 175／examined 73／blocked_on_data 71／blocked_on_impl 47（加总 552）；**收班实测面**＝empty 186／preregistered **167**／examined **81**／blocked_on_data 71／blocked_on_impl **48**（加总 553）。本班净贡献只有 **blocked_on_impl +1**（本班新建那张）；**其余 −8/+8 发生在本班值守内、由上游推进**＝`exam_cards` 全池按 mtime>18:21:19 谓词实测 **92 件在同一秒 19:00:53 被批量触及**（尺 `.runtime/tmp/st-qoder-p06-1015-12/bulkface.py`），其中 **28 件 HEAD≠盘面＝在途面**（本班一律不随袋）、`pillars_numeric` 被洗掉 **0 件**（10 班在册"骨架重渲染洗键"缺陷本波未触发，实测为证）。8 张 preregistered→examined 属考工席跑批，与在册"判官跑完重写卡面本身"同型⇒**本班零翻态**（反证＝本班 claim 面只 3 件＝新卡＋台账＋游标，且 28 件在途卡面本班逐件未写）。②`oos_window_ref` 命中文件数 **363→364**＝恰本班新建 1 件带该键（本班实测两时点读数，加总自证）。③本班 3 件全部 `lock_files.py acquire-batch --skip-naming-check` 实测 **acquired=3 denied=0**（在册逃生口，理由＝新卡名沿用同族 `TDM-*__<family>__NN_*` 体例供 ⑦⑧⑨ 按 card_id↔文件名与卡内 card_id 消费）；④会话＝`SessionRegistry().register(st-qoder-p06-1015-12, pid=0, held_files=3)` 实测 `get_session` 转真（返回 SessionInfo），官方守护 spawn 面缺陷见 findings 第 5 条，改由本班直起 `run_daemon(interval=25)` 心跳存活；**claim TTL=30 分 < 本班实际耗时**（承 ⑨席 14 班在册条）⇒ 本班入队前同串重 claim＋重注册（结果见收班补记）；⑤令牌＝`batch_creation_tokens.py --capability exam-card --created-by st-qoder-p06-1015-12` 逐件前缀登记，实跑回 **`OK: 已登记 1 条（意图 API 三步 register→publish→render）`**・`publish_snapshot v868 (noop=False)`，token 串＝`exam-card-tdm-e-l9-a02--calibration--13-crossday-minutepath-shape-corr-20261015`（尾日期取 UTC＝20261015，与本班 `date` 本地 19:2x 同日，在册口径）；投影册同件反查在册后**照在册不随袋**（该热册含他班在途条目，且本次 render 顺带补了 5 条"PG 有行而盘上无"的滞后行，样本含他席 p07c 两件＝本班不为其入袋）；⑥台账走 `safe_write_text` CAS＋**纯前缀断言**（删除集=空集，写后进程外读回）；⑦净零＝零新 gate・零新规则册・零新注册表・零脚本入册・零新卡除 1 张承接件；呈批**新立 1 件（OD-31）**，OD-26/OD-30 只追加复测不新开同义号，13 张缺绑定走"归口呈请"而非新号（同真源可派生→必并）；⑧保底＝**领用面 100% 处置**（③席 7/7＝1 成卡＋5 不立卡＋1 整行入卡；⑧点名 3/3＝并名呈批＋臂参数停手＋gap 判不改；⑨席 2/2＝P-9 待裁登记＋07c 复测已承接；[对照] 新单 0；骨架 186 按在册停手；13 张缺绑定停手＋归口；D-05 复证零新增＋mv 腿第三证），卡面动作 **1 件新卡**（不足 5 张，按"或领用卡 100% 处置完"这一出口达标，如实记不美化）。
 - **本班实际耗时**：开班 `date` 实测 18:21:19（reaper 首读 18:21:53）→ 本段落笔 `date` 实测 **2026-10-15 19:30:23**＝**约 69 分钟**（超 SOP 40 分钟一班节奏；三条增量如实入账＝①在册臂三态机读器全池实跑一轮＋在册分类器逐件调用属重活，在 commit_pct 85% 水位下各占用数分钟；②心跳守护 spawn 缺陷逼出绕行取证；③建卡器两处自犯（正对照选错、目录存在性尺）各要重跑）。
+
+## 2026-10-16 21:3x ｜ st-qoder-p06-1016-01（⑥制卡席·1016 首班）
+
+### 一、冷启动与防重入
+- 环境：`python --version`=3.12.8；`lock_files.py cleanup`＝CLEANED 3 枚死锁（known_data_gaps.yaml／p01 ledger／p01 checkpoint）＋SALVAGED st-diskp0-20261015（merge=skipped）；reaper `--status`＝source=live・last_run=21:30:20・scanned=16・killed=0⇒写操作前提成立。
+- 防重入：游标行＝"本班已收尾（1015-11）"，台账末节＝1015-12 且含"本班实际耗时"收口行⇒11/12 两班皆终态，本班可开工。⚠新游标＝游标停 11 班而台账有 12 班＝12 班未推游标行（在册"游标由本岗每批推进"腿漏一棒），本班按台账实况接续，班号取 1016-01。
+- 会话与心跳：`SessionRegistry().register(sid, pid=0, held_files=2, logical=True)`＝注册转真（get_session 返回 SessionInfo・held_files 两面），logical 被 chief-form 校验降级为 False（工具自陈 fail-open，非事故）；官方 spawn 面缺陷沿 1015-12 班在册，本班直起 `run_daemon(sid, root, interval=25)`＝heartbeat.jsonl 实测末行 `{"ts":"2026-10-16T13:36:55+00:00","pid":27260,"status":"alive"}`（UTC＝本地 21:36:55，三点对齐）。
+- claim（工具缺陷已自犯一次并纠正）：`acquire-batch` 的位置参数形态会把**第一个文件当会话名**吞掉（本机实测 `acquire-batch <ledger> <checkpoint> --session X` 得 acquired=1 且"持有者: <ledger>"，checkpoint 被 ledger 名义锁定）；正解＝`acquire-batch <sid> --files-from <清单>`（--help 原文即此形）。本班按正解重跑＝**acquired=2 denied=0**（错锁经 RECLAIMED 过期回收，零外来 claim 受损）。
+- 零 worktree：本班未调用任何工棚/工作树入口（TRAE-079 Phase 2）；在途发现的历史遗留面见 [BLOCKER] 流程问题行。
+
+### 二、领用面 100% 处置（本班零张可领卡）
+1. 领卡面（工序 1）＝**0 张**：全池完整 walk＝553 件（is_file 谓词，非 rglob('*') 计数），状态分账＝preregistered 163／empty 186／blocked_on_data 71／blocked_on_impl 48／examined 83／examining 2（加总 553 自洽）。**empty∩具名＝0**、empty∩骨架＝186（谓词＝`card_id` 末段=="01" 或 `title_zh` 含"骨架"之并集，逐件 yaml.safe_load 判定，两格互斥加总=553）。卡池 552→553＝上班 1 张新卡入池。⇒本班无可领具名卡，非本班怠工。
+2. 骨架退回单＝沿在册停手口径不重开（186 件本班零写入，本班卡面动作面见§三～§五，全为只读量测）。
+3. [对照] 申请面＝**0 张新单**：to_impl.md mtime 实测 2026-10-16 10:10:12，逐节 grep `⑥|制卡` 在 10-16 各节（⑩05/08/09/11/12 班）**零命中**；在册未销三条沿旧判不重烧＝X-R1-01/07 披露探针（10 班已成卡 07c）／扩面 rows[8]/[75]/[77]/[79]（承 OD-15 停手）／P2-04・/07 IS-only（已并 OD-15）。
+4. 本席台账「接单」段＝`grep -n 接单` **零命中**⇒该段在本台账不存在（指令卡措辞与册面不符，登记以免下一班再找）。本班以 to_impl 逐节点名尺替代。
+5. ⑨席点名⑥席两单＝修㉑（复核义务→§三）、修⑱（断链面积→§四），两单本班皆处置。
+6. 保底判定＝本班卡面动作＝**0 件改写**（零冻结、零新卡、零补键），领用面 100% 处置达标＝①具名 empty 0（实测）②骨架 186 停手（实测）③[对照] 0（实测）④修㉑ 复核定性成文⑤修⑱ 面积复量成文⑥形状新法可机判性成文。如实记不美化。
+
+### 三、修㉑ 复核定性＝**卡面零串位（单变量纪律成立），真病灶＝对照族 2×2 塌格**
+尺＝六卡逐字段 `yaml.safe_load` 差集＋五字段绑定元组（signal_table/signal_column/signal_derivation/target_source/universe_rule）。母↔腿差集（逐卡实测，剔除身份/溯源键 card_id・title_zh・arm_protocol・control_provenance・lineage・preregistered_at/by）＝
+- L3母→L3-target腿（rows[96]）＝仅 `target`＋`data_binding.target_source`；
+- L3母→L3-universe腿（rows[98]）＝仅 `data_binding.universe_rule`＋`exclusions`；
+- L9母→L9-universe腿（rows[97]）＝仅 `universe_rule`；
+- L9母→L9-target腿（rows[99]）＝仅 `target`＋`target_source`。
+⇒ 四张腿卡各只换声明的那一轴，**制卡侧不存在"母卡血统被复制错"形态**＝⑨席请本席判的"是否为绑定侧串位"＝**否**。
+结构解释＝两枚母卡本身在 **(target 口径 × 宇宙过滤)** 两轴上**同时**不同（L3母＝t1o_to_t2c×有过滤；L9母＝close_to_close×无过滤），故四张单变量腿卡只落进 2×2 的两个格、每格被两卡重复度量：格(close_to_close×有过滤)＝rows[96]∪rows[97]；格(t1o_to_t2c×无过滤)＝rows[98]∪rows[99]；另两格＝两枚母卡自身（rows[73]、rows[95]）。⇒ ⑨席两观（"四卡塌成 2 面"＋"target 腿读到对侧量级"）皆由该格点重复派生，**无需引入串位假设**。
+残留未解（本席不代裁机制）＝同为格内重复，rows[96]==rows[97] 逐位全等而 rows[98]/[99] 差 8.5e−5；两对的卡面差集形态相同（皆只差 signal_derivation/signal_column 散文，元组级零等值对＝本班实测 EQUAL 集为空），故"同格⇒同读数"不足以解释该不对称⇒请⑤席按序列解析口径判（`截面分位/Top-N 降序` 与 `rank_pct 归一` 两套窗下是否解析为同一对象）。
+本席侧修法候选（不改任何冻结卡、不动判据）＝对照出卡前置加**格点查重**：新腿卡与在册同族卡按 (target_source, universe_rule) 二元组对表，落同格即判重复、禁冻结；两轴皆不同的母卡禁互为对照基线（须先拆单轴基线）。属本席工序纪律候选，非新 gate／非新注册表（全资产净零）。
+
+### 四、修⑱ 复量＝面积世代漂移（在册 84→现测 33），差因已坐实非尺差
+- 本班尺（谓词逐字）＝正则 `docs/_working/[^\s'"`，。；;）)、|]+`，取 `#` 前段、剥尾标点，`Path.exists()` 相对主区根判存，面＝553 件全文含注释行。尺自纠一次留痕＝首版误写 `docs/` 后再要 `/_working/`（多一个斜杠）⇒恒 0 命中，被"在册 84"与本机 grep 94 件当场证伪后修正；正对照＝`docs/_working/automation_campaign/p06_prereg/ledger.md` exists=True；负对照面＝同尺下现存无 False 样本（本班如实记：此面不构成"谓词恒真"证明，仅说明死面稀少）。
+- 现测＝含 `docs/_working/` 引用卡 94 件；死引用 **33 件／36 次**；活引用 134 次。按字段分面＝死址落**机器字段**（lineage/data_binding/pillars*/window/oos_window_ref/target/*_spec）者 **5 件**，仅散文/证据字段 28 件。五件机器字段死址＝`TDM-E-L1-S2/calibration/16`（nightmine_campaign/series/max_streak_height.csv 全角括号截断处）、`TDM-P-P1-05/shadow/05`（matrix_campaign/90_execution_log.md）、`TDM-P-P2-01/comparison/02`（t0_matrix/six_phase_history_v1.csv）、`TDM-P-P2-04/ablation/04` 与 `TDM-P-P3-01/comparison/02`（皆 `docs/_working/2026-09-04-trading-decision-map-discussion.md`）。
+- 与在册 84 件之差**归因**＝`docs/_working/fexam/`、`nightmine_campaign/series/`、`matrix_campaign/`、`t0_matrix/` 等于 **10-15 19:00 整批复现并入库**（mtime 齐 19:00・`git ls-files` 有面・`git cat-file -e HEAD:docs/_working/fexam/00_exam_campaign_summary_v1.md` 通过）⇒⑨席 18:1x 读数不假、本班读数亦不假，两数分属两个盘面世代。**跨班引用"84 件"这个数须带世代标签**（下班勿按 84 复烧）。
+- 处置＝本席**不改写任何已冻结卡体的证据路径**（卡体＝冻结面，事后改指属挪门柱族）；五件清单随本节入册，归口请⑩定（属判卷可复验性腿，与修⑰ 写侧路径缺陷同族）。
+
+### 五、形状匹配新法（SOP v1.6.2 工序 4／[⑥-新]）在卡面的可机判性＝当前无载体
+- 卡面实测＝`target` 顶键全池仅 `note,primary,secondary`（291）／`primary,secondary`（43）／`primary`（26）／`note,primary`（5）／无 target（188），**带形状机读键（shape|form|granularity）的卡＝0/553**；`signal_kind` 面完整＝series 184／panel 183／None 186，且 None 集合与 empty 骨架集合**完全重合**（非empty∩缺 signal_kind＝0 件）＝缺键是骨架而非漏写，正/负对照自证。
+- 执行器侧本班复量＝`git show HEAD:scripts/backtest/fexam/calibration_exam.py | grep -c _shape_preflight`＝**3**（函数 `:913`、调用 `:999`）⇒比在册 ⑩1016-12 班催办读数（HEAD=0）前进一格，该催办已可收口；而该函数**签名吃 card 却不读 card**，只按装载后的 pandas 对象形状判⇒制卡席在冻结前无法用同尺预检。
+- 散文筛（**筛查非判定**）＝谓词 `signal_kind==panel 且 target.primary 含 next_day_index_return|CSI300|指数|市场级|全市场|基准指数`＝命中 **19 件**＝preregistered 14／blocked_on_data 4／examined 1。已证 1 件假阳＝`TDM-E-L9-A03/calibration/02_880板块相对强弱持续性`（target=880 板块指数次日收益，板块指数为多列面板，panel↔panel 合法）⇒其余 **18 件**（14 prereg＋4 blocked）为"panel 信号配市场级单序列"同号形态候选。
+- 与在册"B 族 14 卡 ill-formed"关系＝**未对表**（B 族逐卡点名清单在③席面，本班未取到）⇒勿把两个"14"当同一物，本班只报现测。
+- 处置＝18 件本班**一律不翻态、不撤卡、不自行填死**（撤卡与重出题不在本席写域；本班亦未跑装载腿＝那等价半次考试，本席恒定禁跑）。请③席按 TDM 节点重出或声明聚合路径；请⑤席若把形状申报落进卡面机读键，本席下班即可在冻结前用同尺预检。
+
+### 六、[BLOCKER] 登记（§8-A-2，七字段）
+[BLOCKER] 2026-10-16|⑥席1016-01|判据缺失|形状匹配新法在卡面无机读载体（target 零形状键 0/553），制卡席冻结前只能散文筛，且筛出 18 张 panel×市场级单序列同号形态卡仍在冻结面（14 张 preregistered）|docs/03_modules/_domain_backtest/exam_cards（谓词见§五）＋scripts/backtest/fexam/calibration_exam.py:913|请③席重出 18 张或声明聚合路径；请⑤席给 target 侧形状申报机读键|高
+[BLOCKER] 2026-10-16|⑥席1016-01|判据缺失|修㉑ 对照族 2×2 塌格：两枚母卡在 target 与 universe 两轴同时不同，四张单变量腿卡只产 2 个面；格内重复一对逐位全等、另一对差 8.5e-5，卡面无法解释该不对称|exam_cards/entry_flow/L3/TDM-E-L3-07-3__calibration__03_target_close_to_close_control.yaml＋entry_flow/L9/TDM-E-L9-A01__calibration__04_universe_st_and_age_control.yaml|请⑤席按序列解析口径判不对称成因；本席"格点查重"工序纪律候选请⑩定是否入 SOP|中
+[BLOCKER] 2026-10-16|⑥席1016-01|数据问题|修⑱ 面积世代漂移：在册 84 件→本班现测 33 件（死引用 36 次／机器字段 5 件），差因＝docs/_working/fexam 等于 10-15 19:00 整批复现并入库（跨班引用该数不带世代即造二次矛盾）|docs/_working/fexam/ mtime 19:00・git cat-file -e HEAD:docs/_working/fexam/00_exam_campaign_summary_v1.md 通过|请⑨席下班按世代重报修⑱ 分母；请⑩定五件机器字段死址归口（本席禁改冻结卡体）|中
+[BLOCKER] 2026-10-16|⑥席1016-01|流程问题|指令卡措辞与册面不符两处＝①本席台账无「接单」段（grep 零命中）②游标停 1015-11 而台账已有 1015-12 收口行（游标推进腿漏一棒）|docs/_working/automation_campaign/p06_prereg/ledger.md（grep -n 接单 空）＋checkpoint.md cursor 行|请⑩线长定：接单面是否改指 to_impl 逐节点名尺；下班起游标是否由本班格式补正|低
+[BLOCKER] 2026-10-16|⑥席1016-01|工具缺陷|lock_files.py acquire-batch 位置参数形态把第一个文件当会话名吞掉且仍报 ACQUIRED（实测 acquired=1・持有者=<另一个待锁文件>），无入参校验提示|scripts/lock_files.py（--help 正解＝acquire-batch <conv> --files-from <list>）|请⑤/工具班给"位置参数非会话名即报错"输入校验；本席已改 --files-from 正解并重锁 acquired=2|低
+[BLOCKER] 2026-10-16|⑥席1016-01|需Owner|本班呈批零新立（OD 号止于 OD-31）；形状新法无载体属"判据缺失"而非新裁面，本席不据§五的 18 张候选请 Owner 撤卡或改判据|本节＋§五（在册停手口径：撤卡不在本席写域）|无（本班无呈批件待 Owner 点头；若 Owner 要一次性处置 18 张候选，请经⑩开单号）|低
+
+### 七、本班未做与理由（防下班重烧）
+- 零冻结、零新卡、零补键：领用面实测具名 empty=0、[对照] 新单 0；形状候选 18 张不在本席撤卡写域。
+- 未跑考试／正交闸／CH 探针／装载腿（本席恒定与§五边界）。
+- 未动判据门柱、未动任何卡体、未碰 `scripts/backtest/fexam/**`（⑤席写域）、未随袋 to_impl.md（⑩单写面）。
+- 未清理他席在途面与历史遗留 worktree（TRAE-079 Phase 2 令只报不清）。
+
+### 八、本班实际耗时
+开班 date 实测 **21:30:12**（reaper 首读 21:30:25）→ 本段落笔 date 实测 **21:43:04**＝约 **12 分钟**（40 分班限内）。本班为只读量测班＝零卡面写动作（领用面实测无具名可领卡），耗时短属实情非美化。
