@@ -1,0 +1,185 @@
+# creation_token: p04-webcard-audit-songzhuan-20261017-20261017-p04-nonstandard-audit-opinion-breadth-20261016 | created_by: st-qoder-p04-1017-04 | ttl: task_bound
+# capability=p04-webcard-audit-songzhuan-20261017（登记凭据 publish_snapshot v941，投影重打 wrote=True；token 尾串 -20261016＝意图 API 按 UTC 日生成，本班本地时刻 2026-10-17 03:5x＝UTC 10-16 19:5x）
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261017-P04-32
+title_zh: 非标准审计意见存量与新增广度（GAQ 四档合计占比＋年报季新增非标事件流）——财报可信度/审计意见轴首条，含「本库意见类型列齐备而『非标成因』零列＝持续经营型与范围受限型不可分」的诚实申报
+mining_tower: 财报可信度与审计意见（本库 web_cards 已占『现金流应计』(cashflow_accruals)、『商誉高悬停广度』(goodwill_heavy_breadth，=资产构成里的并购溢价)、『资产增长异象』(asset_growth_anomaly，=资产规模增速)，但『外部独立审计人对本期财报出具的意见类型』这条**第三方鉴证结论**轴未占；应计＝报表数字自身的构造、商誉＝某一项资产的质量、本轴＝审计人对该报表整体的可采信裁定＝三个不同对象与三个不同信息源）。⑨席 1015-09 在册令『正交方向请去无人占的轴（波动率/流动性/资金面/另类数据的未占段）』＝本轴属另类数据（鉴证类公告）未占段。
+birth_seat: ④
+birth_session: st-qoder-p04-1017-04
+birth_batch: 20261017-p04-04
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-17 03:32 起批后真实 WebSearch/WebFetch 命中；未读全文者逐条标核验面）
+source_links:
+  - role: 实务回避口径与本卡主判据（"非标＝无条件回避"的原始出处）
+    url: https://m.toutiao.com/article/7664332676233249320/
+    what_verified: >-
+      本班 WebSearch 命中原文，摘要逐字：『凡是年报被出具非标准审计意见，尤其是"无法表示意见"或"保留意见"的，必须无条件回避』；
+      同篇另给两条姊妹排雷项（『高存高贷』双高＝货币资金与有息负债同时畸高、『严密监控大股东的高比例质押行为』）。
+      ⇒ 第一条＝本卡主判据（意见类型分档回避）；第三条已在本席 1017-03 班独立成卡（卡30 股权质押广度）＝同篇不同腿，不属重复开采。
+      ⚠ 门户资讯稿（无作者署名许可行）＝只学思想不入码，禁复制正文入库；可信度＝中。
+  - role: 事件窗形状与"反应缓慢"这一关键滞后参数
+    url: https://wk.baidu.com/view/7c6b27e20e22590102020740be1e650e52eacfdc
+    what_verified: >-
+      本班 WebSearch 命中《资本市场对审计意见反应的实证研究》摘要逐字：我国独立审计准则把审计意见分为『标准无保留意见』与『非标准无保留意见』两类；
+      样本＝2005/2006/2007 年报中 265 个非标准无保留意见；事件日＝年报公布日；方法＝Mikkelson & Partch 事件分析法；观察窗＝事件日前后 15 天共 31 天；
+      结论逐字：『当非标准无保留意见被签发的时候，具有信息含量存在。虽然不会立刻对股价产生负面的影响，但是在事件日以后的10天左右股价会下降，异常收益水平显著，说明资本市场对非标准审计意见的反应比较缓慢』；
+      并按四类成因（违反会计准则／审计范围受限／持续经营／强调其它重大事项的保留）分别检验 CAR，另检验『首次出现』与『连续』两类。
+      ⇒ 本卡的滞后窗参数面（反应缓慢≈10 日）与"首次 vs 连续"两态划分**全部来自本条**；⚠ 学位论文/文库稿＝无开放许可、本班只读检索摘要＝中低可信度，成因四分类的**可分性**在本库不可复刻（见 data_binding 缺口腿）。
+  - role: 前后窗不对称（本卡"前窗是否已有信息泄露"判据）
+    url: https://xueshu.baidu.com/usercenter/paper/show?paperid=80cd3734ac889bb0cd0c0b73091be6f4
+    what_verified: >-
+      本班 WebSearch 命中《非标准审计意见对股价影响的实证研究》摘要逐字：研究期间扩展到『非标准审计意见公告日前30日至非标准审计意见公告日后60日』；
+      并『着重考察了非标准审计意见发表前资本市场的表现情况，以考察在相关信息公告前是否存在信息被提前泄露的现象』，且按是否为正常上市公司、非标类型与审计意见分段。
+      ⇒ 本卡的"前 30 日泄露腿"与"后 60 日反应腿"的窗长取自本条（不作冻结值，交 ⑥ 显式立法）。
+  - role: 类型可分性（本卡为何必须按意见**档位**分腿而不是二元 0/1）
+    url: https://economy.alljournals.cn/view_abstract.aspx?pcid=&jid=29F31B97543B4E5BDA5001FFE0B4134D&aid=898EB11C6095895494DDFC7F5CBD4108&yid=67289AFF6305E306
+    what_verified: >-
+      本班 WebSearch 命中《上市公司非标准审计意见市场反应的差异性研究》（郭志勇、陈龙春，2008, 23(3): 38-43）摘要逐字：
+      『China's stock market can identify the difference of information content between going concern modified audit opinion and nongoing concern modified audit opinion, but cannot identify the diff…』（截断）
+      ⇒ 结论方向＝市场能分辨"持续经营型"与"非持续经营型"非标，但对下一层差异分辨不足；本卡据此写死"分档不合并"，⚠ 本班只读到截断摘要＝中可信度，许可行未标注。
+  - role: 第二套事件窗读数与"发布时点"调节变量（本卡年报季分母口径）
+    url: https://m.zhangqiaokeyan.com/academic-conference-cn_meeting-59698_thesis/020222626035.html
+    what_verified: >-
+      本班 WebSearch 命中《非标准审计报告的市场反应研究——来自中国股票市场的证据》（第 16 届中国财务学年会，2010，1028-1035，作者 吴晓伟/韩存娇/张金鑫）摘要逐字四条：
+      (1)『非标准审计报告公告后上市公司股票往往会有负的超额回报，但是并不是特别显著』；(2) 正常公司与 ST(*ST) 的差异显著发生在**公告前**；
+      (3)『不同类型的非标准审计报告的市场反应有着显著不同』；(4)『对于年报发布期最后一周发布的非标准审计报告，上市公司股票负的超额回报更为显著』。
+      ⇒ 本条给出本卡第二腿（年报季末周集中披露的高危子档）的直接依据；⚠ 会议论文库条目，样本仅 2008 年沪市＝外推到 2015+ 全市场须 ⑥ 重证；无开放许可。
+  - role: 量化社区实操打分口径（本卡分档赋值的三档写法来源）
+    url: https://blog.csdn.net/xuxiatian/article/details/82745269
+    what_verified: >-
+      本班 WebSearch 命中《提高量化策略收益的三个排雷方法》原文逐字：果仁系统打分口径＝『年报审计结果为："标准无保留意见"标记为1／"附带说明的无保留意见"标记为2／"保留"、"无法出具"、"拒绝"以及未经审计标记为3』，
+      『如果想选出"非标"审计意见的公司，就可以将筛选条件设置为"年报审计意见>1"』；并给形态读数『今年被出具"非标"审计意见的上市公司达到了2010年以来的峰值水平』、
+      『这类股票，在15年之前表现良好，但是从17年后，这种现象就被完全逆转了』、样本特征『以今年这127只股票为例，小于50亿市值的股票多达79只。ST股票有46只』。
+      ⇒ 本卡的分档映射（1/2/3 三档）与"方向随时期翻转"的**制度断点告警**都由本条给出；⚠ 个人博客（CSDN）无许可声明＝只学思想不入码；其"15年前正向/17年后逆转"为作者自述统计、本班未见其原始计算＝低-中可信度，交 ⑥ 决定是否把断点写进卡面。
+  - role: 与国际文献的对接面（本卡伪代码里"审计师变更"备用腿的出处）
+    url: https://www.tandfonline.com/doi/full/10.1080/21697213.2023.2239672
+    what_verified: >-
+      本班 WebSearch 命中《Goodwill impairment, auditor dismissal and opinion …》(Emerald/T&F 开放条目) 片段逐字：
+      『Opinion represents the auditor's opinion in the year before the turnover, which takes the value one if a company is issued a modified audit opinion』；
+      『CAR [-1,1] equals 3-day (-1, 0, +1) abnormal returns of firm centred on the dismissal announcement date』；并『Consistent with this view, Horton and Serafeim (2010) find negative abnormal returns for goodwill impairment』。
+      ⇒ 本条同时把本轴与本席卡31（商誉）在**机制层**连起来（商誉减值→审计师变更→改非标意见）；本班按 T&F 页面读取＝版权在出版商，只取题录与方法名，禁复制正文。
+  - role: 元分析线索（非标成因决定意见，本库无成因列的对照证据）
+    url: https://www.emerald.com/insight/content/doi/10.1108/mbe-09-2023-0123/full/html
+    what_verified: >-
+      本班 WebSearch 命中《Organization capital and modified audit opinion》(Managerial Auditing Journal, doi 10.1108/mbe-09-2023-0123) 参考列表逐字含
+      『Habib, A. (2013), "A meta-analysis of the determinants of modified audit opinion decisions", Managerial Auditing Journal, Vol 28 No 3, pp. 184-216』
+      ⇒ 本班据此判定"非标成因（持续经营/范围受限/违规）在文献里是可分维度"，而本库仅有结论列、无成因列＝本卡必须把成因不可分写进缺口腿；⚠ 只读参考列表未读全文＝本班不引用其任何系数。
+  - role: 数据源侧对照（本库同源接口的日期坍缩反例，非本轴列语义证据）
+    url: https://tushare.pro/document/2?doc_id=103
+    what_verified: >-
+      本班 WebFetch 亲验的是 Tushare `dividend` 接口文档（ann_date=公告日 与 imp_ann_date=实施公告日 **两列分离**）——
+      该条**不是**审计意见接口，本班只把它当一条反证：同一"权益/鉴证公告"族里外部接口会保留两个以上公告日维度，
+      而本库两表（audit_opinion / rights_issue）各自只留一列日期⇒本库在公告日期维度上是**坍缩版**。
+      本库两表 data_source 均实测单值 'bd'＝非 Tushare 同源，故本班不把任何外部接口字段名当本库列语义的证据。
+
+license:
+  external_code_ingested: false
+  verdict: 只学思想不入码
+  basis_zh: >-
+    本班为本卡检索到的八路来源**全部没有开放许可证声明**：门户资讯（头条）、文库/学位论文、会议论文库条目、期刊摘要页（T&F/Emerald 版权在出版商）、
+    个人博客（CSDN）、数据商接口文档。逐条许可行未标注或明示版权方。故本卡只允许出现"本班自算构造＋伪代码"，
+    ⚑ 禁止把上述任何站点或仓库的代码/正文复制入库；伪代码是本班按本库列名自写，不构成对任何外部实现的派生。
+    交易所/监管规则类来源同按"官方规则文本，无 SPDX"处理（见卡33）。
+
+logic_zh: >-
+  机制：年度审计报告是外部独立审计人对财报整体可采信度的**唯一正式裁定**，意见类型分五档（标准无保留／带强调事项段的无保留／保留／无法表示／否定），
+  后四档合计即"非标"。非标意味着或报表存在重大错报风险、或审计人拿不到充分证据（范围受限）、或持续经营存疑。
+  已验证的市场行为形态＝**反应缓慢**（事件日后约 10 日才走出显著负收益，前窗反而可能已有泄露型异动）＋**年报季末周披露的负超额更显著**＋**类型可分（持续经营型 vs 非持续经营型）**＋
+  **分档回避是实务主流动作**（"非标必须无条件回避"）。本卡因此不做单一二元事件，而是把三件事分开构造：
+  (a) 存量广度＝截至今日"最近一次年报意见为非标"的票占比（横截面风险敞口的市场级度量）；
+  (b) 新增事件流＝当日/近窗首次落入非标的家数（信息到达速率，去共趋势的变化腿）；
+  (c) 档位强度＝按四档加权（强调事项段 < 保留 < 无法表示/否定），不做合并 0/1。
+  ⚑ 本班**不预注册方向**：外部六路里五路给负向（回避/负超额），但 CSDN 实务稿自述『15 年之前这类股票表现良好、17 年后完全逆转』＝存在制度断点；
+  且存量广度与"小市值/ST 集中"强绑定（该稿读数：127 只里 79 只<50 亿、46 只 ST）⇒ 本轴很可能在市值/ST 轴上被吸收。方向与断点处理权全部交 ⑥。
+
+pseudocode: |
+  # 本班自写，零外部代码；列名全部来自本班 system.columns 实测（见 data_binding）
+  NS_TYPES = ("带强调事项段的无保留意见", "保留意见", "无法表示意见", "否定意见")   # 本班实测四档字面枚举
+  SEV = {"带强调事项段的无保留意见": 1, "保留意见": 2, "无法表示意见": 3, "否定意见": 4}  # 档位权重＝本席自定，未冻结，交⑥立法
+  SQL_EVENTS = """
+    SELECT symbol_canonical, announce_date, audit_result
+    FROM c3_fundamental.audit_opinion FINAL
+    WHERE announce_date > toDate('1990-01-01')          -- 本班实测 150 行 1970 哨兵必须剔
+      AND audit_result IS NOT NULL                       -- 实测 3 行 \N
+  """
+  # 关键 PIT 规则（本班实测得出，不得反过来写）：
+  #   announce_date 与 report_period 的年差分桶实测 = +1年 81,206 / >1年 9,991 / 同年 4,663 / 负 150
+  #   ⇒ announce_date 只可作"可得日"下界使用；同年/负值两桶（4,813 行）不得当事件日直接喂信号
+  def build_signal(cal_dates, universe_size):
+      ev = read(SQL_EVENTS)                        # (symbol, announce_date, audit_result)
+      latest = {}                                  # symbol -> 最近一次意见（按 announce_date 单调推进）
+      level, new_ns = [], []
+      for t in cal_dates:
+          todays = ev[ev.announce_date == t]
+          for r in todays: latest[r.symbol] = r.audit_result
+          n_stock   = sum(1 for v in latest.values() if v in NS_TYPES)          # 存量广度分子
+          n_new     = sum(1 for r in todays if r.audit_result in NS_TYPES)      # 新增家数
+          sev_w     = sum(SEV.get(r.audit_result, 0) for r in todays)           # 档位强度
+          level.append(n_stock / universe_size)
+          new_ns.append((n_new, sev_w))
+      breadth = zscore_rolling(level, 250)          # ⚑ 分位/z分一律自算滚动窗，禁取表内现成分位列（在册前视坑）
+      churn   = log1p(new_ns) - log1p(new_ns).shift(TRAIL)   # 变化腿：本班实测 76% 交易日为 0，须如实披露弱证据
+      return DataFrame(date=cal_dates, sig_breadth=breadth, sig_churn=churn)
+
+data_binding:
+  primary_table: c3_fundamental.audit_opinion
+  columns_verified_this_shift_zh: >-
+    本班 system.columns（database='c3_fundamental' AND table='audit_opinion' 等值谓词）实测列面 12 列逐字节：
+    symbol, announce_date(Date), report_period(Date), audit_result(Nullable(String)), audit_fee(Nullable(Float64)),
+    accounting_firm(Nullable(String)), signing_accountant(Nullable(String)), data_source(String), quality_flag(UInt8),
+    ingest_ts(DateTime64(3,'UTC')), exchange(LowCardinality(String)), symbol_canonical(String)。
+  measured_face_zh: >-
+    本班只读探针实测（正对照 SELECT 1 → 1 先行，全程零写库零 panel 物化）：
+    ①总量＝count() 96,010 行、uniqExact(symbol) 5,852 票；FINAL 与非 FINAL 同值＝该表无版本重复面；
+    ②audit_result 五档分布（GROUP BY 全量，非抽样）＝标准无保留意见 90,785／带强调事项段的无保留意见 2,652／保留意见 1,487／无法表示意见 1,066／否定意见 17／\N 3
+      ⇒ 非标四档合计 **5,222 行＝5.44%**，涉及 **1,327 只票**（uniqExact(symbol_canonical) 实测）；
+    ③跨度＝min(announce_date) 1970-01-01・max 2026-05-29・report_period 1997-12-31..2025-12-31；
+      剔除哨兵与 \N 后**非标事件子面跨度 1998-04-17..2026-05-21**（本班等值谓词实测）；
+    ④PIT 年差分桶（toYear(announce_date) − toYear(report_period)）＝+1 年 81,206／>1 年 9,991／0 年 4,663／负 150
+      ⇒ 负 150＝"公告早于报告期末"的逻辑不可能行，与 1970 哨兵同量级＝本表 announce_date 不可无过滤直用；
+    ⑤年度非标计数（GROUP BY toYear(report_period)）＝2014 112／2015 117／2016 121／2017 147／2018 237／2019 297／2020 285／2021 289／2022 268／2023 294／2024 306／2025 314
+      ⇒ 2017 是明显的制度性抬升年（121→237，与 CSDN 稿"17 年后逆转"的时点**方向一致但口径不同**＝本班不据此判因果）；
+    ⑥audit_fee 非空 42,030/96,010＝43.8% 覆盖，audit_fee>0 子面 n 42,029・p50 910,000・p90 2,400,000（单位＝元，本班实测）・uniqExact(accounting_firm) 662；
+    ⑦data_source 单值 'bd'（96,010/96,010）＝本表**无第二源**，与卡29 的 snapshot_diff 型单源同族，其时间列语义须按同一条在册公理先验（本班已做年差分桶，见④）；
+    ⑧候选腿基座＝2015-01-01..2025-12-31 非标事件 2,459 条（去重后 (sym,date) 唯一）、851 票。
+  missing_face_zh: >-
+    ⚑本卡最大缺口＝**非标成因列不存在**：文献四分类（违反会计准则／审计范围受限／持续经营／强调其它重大事项）在本表只有结论档（audit_result），
+    成因文本列零命中（本班未见任何 cause/reason 列，system.columns 全列面见上）⇒ 外部证据里"持续经营型 vs 非持续经营型可分"这一层**本库今天不可复刻**，
+    本卡只能做到"档位可分、成因不可分"。次缺口＝**未经审计**这一档在 CSDN 口径里与保留/无法出具同记 3，而本表五档枚举里无"未经审计"字面值⇒分档映射存在一处**外部枚举与本库枚举不等价**，交 ⑥ 对齐。
+    第三缺口＝audit_fee 覆盖仅 43.8% ⇒ "审计费用异常/议价能力"这条姊妹腿**不可全窗使用**（本班不建该卡，只登记为待源）。
+  source_line_mapping: SL-A05 财务（DS-TUSHARE/BAOSTOCK・季频）＋ 鉴证类公告段（源线谱无独立"审计意见"线，本班按财务线挂靠并在台账转单请 ① 议增设）
+  pit_anchor_zh: 只用 announce_date（剔 1970 哨兵与负年差桶）；report_period 仅用于同期比较，禁当可得日
+
+orthogonal_gate:
+  status_zh: 已实跑・当前判 reject（水平腿）／pass（变化腿）・判据面不合格（非在册永久池）
+  pool_face_zh: >-
+    本班池＝`.runtime/tmp/p03_1017_04`（③席今日新池），is_file 谓词复量 n=20 枚合法 date,sig CSV、公共日 106、窗 2024-02-23..2024-12-31；
+    本班另复量 `.runtime/tmp/p03_1016_03` 仍在（43 件、其中 20 枚池 CSV）⇒ **1017-03 班四读可复现**（首查①结案）。
+    ⚑ 在册 32 员永久池面本班未复量到（⑨席 pool_datesig/pool6 上次实测目录整体消失＝第六次退化面继续有效）⇒ 本池属他席 24h-TTL 临时面，非准入终审。
+  runs_zh: >-
+    命令原文（本班实跑，rc 不经管道直取）＝
+    `python scripts/backtest/fexam/signal_orthogonality.py gate --candidate .runtime/tmp/p04_1017_04/<件>.csv --pool .runtime/tmp/p03_1017_04 --gate 0.3`
+    ①c32_nonga_breadth365.csv（存量广度水平腿，rows=313・sd=0.003147・min=0.023148・max=0.054259・zero_days=0）
+      ⇒ verdict=**reject** max|corr|=**0.4114** most_similar=gate_f_flipmom16.csv **rc=5**
+    ②c32_nonga_breadth_chg5.csv（5 日差分变化腿，rows=308・sd=0.003177・min=−0.025185・max=0.03037・**zero_days=237/308**）
+      ⇒ verdict=**pass** max|corr|=**0.1943** most_similar=gate_f_halfselfq16.csv **rc=0**
+    ⚑ 判读纪律：水平腿 reject 属"窄窗共趋势＋慢变量"形态（与 1017-03 班三枚 reject 同型），**禁读成准入终审**；
+    变化腿虽 pass，但其 76.6% 交易日为 0（年报事件高度集中于 4 月）＝公共日上有效样本极薄，本班判为**弱证据 pass**，不作"真交"证明。
+    两卡状态一律记「已实跑・水平腿 reject・变化腿 pass(弱)・判据面不合格」。
+
+self_flag:
+  - 方向未预注册（外部五路负向＋一条实务稿自述"17 年后逆转"的制度断点告警），本席不翻号、交 ⑥
+  - 档位权重 SEV 1/2/3/4＝本席自定，未冻结，须在制卡时被 ⑥ 显式写进参数面或删除
+  - TRAIL/窗口 365 日与 250 日 z-score＝本席自定参数，非既有冻结值
+  - 存量广度与"小市值/ST 集中"存在被吸收风险（外部读数：127 只里 79 只<50 亿、46 只 ST）＝本班如实申报可能非独立
+  - 本班候选腿为市场级聚合（非横截面 panel），池成员同为市场级⇒同形可测，但**不等价于横截面选股信号的独立性**
+
+caliber_pitfall_zh: >-
+  ①本表 announce_date 有 150 行 1970-01-01 哨兵＋150 行"公告早于报告期末"，另有 4,663 行与报告期同年、9,991 行年差>1；
+    未经过滤直接按公告日起算＝把不可信行喂进事件研究（与卡29 announcement_date 语义证伪同族，但本表是"部分脏"不是"整列错义"）。
+  ②data_source 单值 'bd'＝无第二源交叉，凡"两源对拍"式验证在本轴不可做，只能靠年差分桶这类内部一致性尺。
+  ③非标是**低频高截面**事件：本班实测日频水平腿 sd 仅 0.0031（breadth 在 2.31%–5.43% 间缓变）＝近常数慢变量，
+    与任何共趋势序列都相关，这类腿的 reject 只能读成"形状问题"不能读成"重复开采"。
+  ④audit_result 字面值必须**逐字等值**匹配（'带强调事项段的无保留意见' 全称 13 字）；LIKE/子串谓词会把"标准无保留意见"里的"无保留意见"计成非标＝假扩面（本卡伪代码用 IN 元组，禁改 LIKE）。
+  ⑤"未经审计"在外部口径里属非标档、本库五档枚举无该值＝分档映射不可假定等价。

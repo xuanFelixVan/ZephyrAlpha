@@ -1,0 +1,222 @@
+# creation_token: p04-webcard-audit-songzhuan-20261017-20261017-p04-songzhuan-regulatory-slack-20261016 | created_by: st-qoder-p04-1017-04 | ttl: task_bound
+# capability=p04-webcard-audit-songzhuan-20261017（登记凭据 publish_snapshot v942，投影重打 wrote=True；token 尾串 -20261016＝意图 API 按 UTC 日生成，本班本地时刻 2026-10-17 03:5x＝UTC 10-16 19:5x）
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261017-P04-33
+title_zh: 高送转强度与合规裕度（每10股送转比例÷近两年净利复合增长率＋解禁窗口违例标记）——股本拆分事件轴首条，含「本库单列 announce_date 实为实施公告日、预案公告腿几乎无源」的诚实申报
+mining_tower: 股本拆分与公司行为（本库 web_cards 已占『限售解禁广度』(unlock_breadth)、『回购执行兑现度』(repurchase_execution_credibility，=承诺兑现轴)、『指数调样生效窗』(index_rebalance_flow_window)、『股权质押广度』(equity_pledge_risk_breadth)，但『送转比例的股本结构效应＋监管对送转比例的业绩挂钩约束』这条**名义价格与合规裕度**轴未占。回购＝现金流出、解禁＝筹码供给、本轴＝股数×价格的机械重排＝三个不同对象。⚑全考工卡池 609 册里『送转』二字仅命中两张**执行/复权口径**卡（X-S1-04 除权除息参考价分母、P-P1-01 复权口径对照）＝同一数据面的成本腿已在册，但作为横截面信号轴未占，本班如实申报该连接并交 ⑥/⑨ 判是否同族。
+birth_seat: ④
+birth_session: st-qoder-p04-1017-04
+birth_batch: 20261017-p04-04
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-17 03:32 起批后真实 WebSearch/WebFetch 命中；未读全文者逐条标核验面）
+source_links:
+  - role: 本卡基座＝监管把送转比例与业绩硬挂钩（"合规裕度"这一构造的唯一直源）
+    url: http://cj.sina.cn/articles/view/7879922977/1d5ae152101901dzje
+    what_verified: >-
+      本班 WebSearch 命中《向"滥送转"开刀 沪深交易所发布高送转指引》（每日经济新闻稿）原文逐字：
+      『11月23日晚，沪深交易所双双发布关于上市公司高送转信息披露的指引文件』；上交所规定逐字＝
+      『上市公司披露高送转方案的，其最近两年同期净利润应当持续增长，且每股送转比例不得高于上市公司最近两年同期净利润的复合增长率；
+      上市公司在报告期内实施再融资、并购重组导致净资产有较大变化的，每股送转比例可以不受前款规定的限制，但不得高于上市公司报告期末净资产较之于期初净资产的增长率；
+      上市公司最近两年净利润持续增长且最近3年每股收益均不低于1元，上市公司认为确有必要提出高送转方案的，每股送转比例可以不受前两款规定的限制，但应当充分披露高送转方案的主要考虑及其合理性，向投资者揭示风险，且其送转后每股收益不得低于0.5元』；
+      并『对上市公司控股股东、董监高等在上市公司高送转前后的减持行为作出了详细规定』。
+      ⇒ 本卡主构造（送转比例 ÷ 净利润复合增长率＝合规裕度，>1 即越线须走例外/豁免分支）**直接由本条规则的三档分支生成**；
+      ⚠ 门户转载稿（无许可行）＝只学规则要点、不复制文本，规则真源应以交易所正式文件为准（本班未取到交易所 PDF＝缺席登记见下）。
+  - role: 深市门槛定义与负面清单（本卡分交易所口径与违例标记腿）
+    url: https://mguba.eastmoney.com/mguba/article/0/794067058/
+    what_verified: >-
+      本班 WebSearch 命中《深交所：上市公司净利润为负不得披露高送转方案》原文逐字：
+      文件全称『《深圳证券交易所上市公司信息披露指引第1号——高比例送转股份》』；
+      定义『该方案所称高送转，是指主板、中小板、创业板上市公司每十股送红股与公积金转增股本合计分别达到或者超过五股、八股、十股』；
+      负面清单『上市公司报告期净利润为负、净利润同比下降50%以上或者送转股后每股收益低于0.2元的，不得披露该报告期的高送转方案』；
+      减持窗口『上市公司相关股东在前三个月存在减持情形或者后三个月存在减持计划的，公司不得披露高送转方案』＋『上市公司不得利用送转方案配合股东减持』。
+      ⇒ 本卡的**分交易所阈值**（5/8/10 三档，故不可用单一 10 送 5 全国阈值）与"解禁/减持窗口违例"腿由本条给出；⚠ 股吧转载无许可声明＝只取规则要点。
+  - role: 沪市门槛定义与解禁窗口禁披（违例标记腿的第二处出处）
+    url: https://k.sina.cn/article_7879922977_1d5ae152101901e4vw.html
+    what_verified: >-
+      本班 WebSearch 命中《最严高送转新规来了!共有十大要点!》原文逐字：
+      『上交所的提出的是"10送5以上"，深交所则是"每10股分别达到或者超过5股、8股、10股"』；
+      『上市公司存在限售股（股权激励限售股除外）的，在相关股东所持限售股解除限售前后3个月内，不得披露高送转方案』。
+      ⇒ 本卡违例标记腿的 ±90 日窗宽与"股权激励限售股除外"这一豁免口径**逐字来自本条**（本班据此写伪代码时保留该排除项，尽管本库无股权激励标识列→列入缺口腿）。
+  - role: 阶段划分（预期/预案抢权/填权三段，本卡的窗口分层依据）
+    url: https://m.toutiao.com/article/7686490437615551015/
+    what_verified: >-
+      本班 WebSearch 命中《高送转：数字游戏还是真利好？填权行情才是关键》原文逐字：
+      『高送转炒作的三个阶段：预期、抢权、填权』；『第一阶段：预期炒作。每年10月至次年4月，市场根据公司每股资本公积、每股未分配利润、净利润增速、股价高低，筛选"高送转潜力股"』；
+      『第二阶段：预案公告与抢权。公司公布高送转预案后，股价往往连续涨停』；『高送转本身没有实质利好，它更多是市场情绪和主力炒作的载体。真正有价值的，是公司高成长能否支撑股本扩张后的每股收益不被稀释』。
+      ⇒ 本卡把"预期段（潜力股筛选）"与"抢权段（预案公告后）"分成两腿，⚑ 本班实测本库**只能做抢权段的实施公告腿、做不了预期段的预案腿**（见 data_binding）＝这条外部阶段划分恰恰暴露了本库的可复刻边界。
+  - role: 现行市场实测口径与"送转家数/登记日→除权日"节拍（本卡分母与窗口的对照读数）
+    url: https://www.stcn.com/article/detail/4038909.html
+    what_verified: >-
+      本班 WebSearch 命中证券时报·数据宝《抢权行情能否上演？这些股即将实施分红》原文逐字：
+      『2025年度分配方案中含送转股的有401家』；『以除权除息日计算，目前有3459家公司分配方案已经实施，未来一段时间需要关注的就是这些公司股价能否走出"填权"行情』；
+      『股权登记日则是对本次分红"抢权"的最后一个交易日』；『从送转比例来看，股权登记日为今天的即将实施分红公司中，斯迪克、新风光每10股均送转4.00股，送转比例最高』。
+      ⇒ 本条给出**每10股口径**的现行市场书写方式（与本班实测本库 bonus+capitalized 的 p50=4.888/p90=10 同量纲，见 caliber_pitfall 第①条），
+      并给出年度含送转股家数（401 家）这一分母量级；⚠ 资讯稿无许可声明。
+  - role: 填权/贴权的市况依赖（本卡不预注册方向的理由之一）
+    url: https://caifuhao.eastmoney.com/news/20260609183416118289940
+    what_verified: >-
+      本班 WebSearch 命中《A股高送转填权行情已拉开序幕》原文逐字：『当前处于"填权博弈期"。5月下旬至6月是年报高送转方案的集中除权实施期』；
+      『历史规律显示，牛市多填权，熊市多贴权』；『填权行情能否持续，核心取决于公司业绩增长与资金认可度』；并给两例逐字『新易盛：分红派息股权登记日：2026年6月10日，除权除息日为：2026年6月11日。向全体股东每10股派发现金股利人民币10元（含税），同时以资本公积金向全体股东每10股转增4股』。
+      ⇒ 本卡因此把"填权腿"写成**须带市况条件**（regime 交互）而不写死方向；样本期与本班实测的年度送转家数峰值（2015 年 753 件）不同期＝外推须 ⑥ 重证。
+  - role: 多因子形态读数（本卡组合因子腿的候选清单出处）
+    url: http://caijing.chinadaily.com.cn/2015-05/14/content_20712619.htm
+    what_verified: >-
+      本班 WebSearch 命中中国日报财经《高送转具迷惑性引入多因子选股提升收益率》原文逐字：
+      『高送转是一个庞大的主题投资领域且具有潜在的超额收益，具体个股表现与公司对股价诉求、所在行业板块、每股资本公积金与未分配利润数之和、送转比例、流通股本、净资产收益率、归属母公司股东的净利润同比增长率、实施送转方案前股价水平等有较大的相关性』；
+      『涨幅前30名个股平均涨幅为220.09%，平均每股资本公积金与未分配利润数之和为3.78，平均送转比例为10送8.4，平均流通股本为1.61亿股，平均加权净资产收益率为9.62%』；
+      『28只表现出对股价的上涨诉求，表现为6家公司实际控制人提议高送转、15家公司出现限售即将解禁或股东减持、17家公司正在推进再融资、12家公司股东有股权质押』。
+      ⇒ 本条把本轴与本席卡30（质押广度）、解禁广度、再融资在**机制层**连起来（高送转常与减持/解禁/质押并存），本班据此写 self_flag 的共线申报；⚠ 2015 年样本、无许可声明＝只取因子清单不取系数。
+  - role: 学术化的"预测下一年高送转"构造（本卡预期段腿的方法参照，本库不可复刻）
+    url: https://m.163.com/dy/article/G4JNR95K0538N19X.html
+    what_verified: >-
+      本班 WebSearch 命中《专栏丨基于数据挖掘的上市公司高送转预测(一)》（统计建模类论文全文转载）逐字：
+      『针对 3466 支股票年数据、日数据和基础数据……筛选出对上市公司实施高送转方案有较大影响的因子』；
+      『对年数据而言，添加了重要特征因子：本年是否进行高送转；设定因变量为：下一年是否高送转』；
+      『影响上市公司实施高送转的因子主要有两类：一是基本因子，包括股价、总股本、上市年限等；二是成长因子，包括每股未分配利润、每股资本公积、每股现金流、每股收益等』；
+      『很多股票在公布派送预案的第二天直接涨停，而等除权后再买入可能会面临很大的回撤风险』。
+      ⇒ 本条再次确认**预案公告日是本轴真正的信息到达时点**，而本班实测本库预案行仅 108 条（送转子面）＝该腿今天不可建；⚠ 论文全文转载无许可声明＝只学方法。
+  - role: 口径对照反例（证明"公告日坍缩"是本库特有问题而非行业惯例）
+    url: https://quant.10jqka.com.cn/view/dataplatform/detail/117
+    what_verified: >-
+      本班 WebSearch 命中同花顺量化平台『分红送股信息』字段表逐字：
+      『plan_announcement_day 预案公告日』、『announcement_date_of_gmos 股东大会公告日』、『dividend_announcement_date 分红实施公告日』、
+      『ex_dividend_date 除权除息日』、『date_of_record 股权登记日』、『bonus_shares_trading_day 红股上市交易日』、『per_share_bonus 每股红股』、『per_share_capital_stock 每股转增股本』、『pre_disclosure_announcement_date 预披露公告日期』。
+      ⇒ 外部数据面把送转事件拆成**预披露/预案/股东通过/实施/登记/除权/红股上市七个时点**，而本库 rights_issue 只有 announce_date＋ex_date/record_date/listing_date＋(配股专用)ex_rights_date；
+      且外部字段名为**每股**口径（per_share_*）而本库实测为**每10股**口径＝两重不可互换。本班据此判本卡必须写死"实施公告日单锚＋每10股口径"两条禁则。
+  - role: 数据源接口文档（本班 WebFetch 亲验的字段口径外部对照）
+    url: https://tushare.pro/document/2?doc_id=103
+    what_verified: >-
+      本班 WebFetch 直读 Tushare `dividend` 接口文档，回显逐字：『ann_date:公告日; div_proc:实施进度; stk_div:每股送转; stk_bo_rate:每股送股比例; stk_co_rate:每股转增比例; record_date:股权登记日; ex_date:除权除息日; imp_ann_date:实施公告日』，
+      起始日期『2000-01-01』，并明示『影响上市公司股本变化的另一类活动——配股，并未记录在本接口数据中』。
+      ⇒ 三点直接用于本卡：(1) 外部把**预案公告日 ann_date 与实施公告日 imp_ann_date 分成两列**，本库只有一列 ⇒ 本库 announce_date 到底是哪一列须由本班实测反推（已反推＝实施公告日，见 measured_face ⑤）；
+      (2) 外部口径为**每股**、本库实测为**每10股**⇒ 量纲禁互换；(3) 外部**不含配股**而本库 rights_issue 有 1,185 行 type='配股' ⇒ 本库该表非 Tushare 同源（本班实测 data_source 单值 'bd'）。
+
+license:
+  external_code_ingested: false
+  verdict: 只学思想不入码
+  basis_zh: >-
+    本卡十路来源全部无开放许可证声明：交易所规则为**官方规则文本**（无 SPDX，可引用规则要点、不可声称代码授权）；
+    门户/股吧/资讯（新浪・东方财富・证券时报・头条・网易・中国日报）与论文转载＝版权或无声明；
+    数据商文档（Tushare・同花顺量化平台）＝接口说明文档，其客户端仓 waditu/tushare 本班经 GitHub API 正对照亲验为 **BSD-3-Clause 15,450★・pushed 2024-03-13**，
+    但本席**不复制其代码**、不 import 外部实现，伪代码为本班按本库列名自写。
+  github_three_filter_zh: >-
+    本班 GitHub API 实跑（三筛＝star＋活跃度＋许可证）：窄词 `分红 送转` total_count=**2**（wujiapi1314/Financial-Android 1★・license null・pushed 2026-08-26；
+    wujiapi1314/Financial-Winform 0★・license null）；`stock split abnormal returns` total_count=**2**（MV46384/Stock-Split-Event-Study 0★・license null；
+    NathanArimilli24/stock-split-event-study 0★・license null）；`audit opinion stock` total_count=**1** 且为无关 ERP 仓（1★・null・2020 停更）。
+    ⚑正对照（证尺有效，非零命中假绿）＝`tushare` total_count=**1011**，首位 waditu/tushare 15,450★ BSD-3-Clause、waditu/czsc 6,414★ NOASSERTION、mpquant/Ashare 3,906★ null。
+    ⇒ 结论＝**两轴都没有"高 star＋干净许可＋在维护"三者齐备的实现源**，本卡只取思想；NOASSERTION/无许可仓一律按"不入码"处理。
+
+logic_zh: >-
+  机制（两层）：
+  (1) **名义价格与流动性层**——送转不改股东权益、只把 1 股拆成 (1+送转比例/10) 股，降低名义股价；
+      A 股散户对低价股的偏好＋除权缺口可被"填权"叙事利用，使该事件在**实施公告→除权日**的短窗与**除权日后**的填权窗都产生可交易的行为性需求；
+      外部阶段划分（预期/抢权/填权）与"牛市多填权、熊市多贴权"的市况依赖都由链接面给出。
+  (2) **合规裕度层（本卡真正的新颖腿，直接由监管规则生成）**——2018-11-23 起沪深交易所把"每股送转比例"与
+      "最近两年同期净利润复合增长率"硬挂钩：送转比例 ÷ 净利复合增长率 > 1 即越线，须走"再融资/并购致净资产大变"例外（上限＝净资产期初→期末增长率）
+      或"近三年 EPS≥1 元＋送转后 EPS≥0.5 元"豁免分支；另有负面清单（净利为负／同比下降 50% 以上／送转后 EPS<0.2 元）
+      与窗口禁披（解禁前后 3 个月、股东前 3 个月减持或后 3 个月减持计划）。
+      ⇒ 于是"合规裕度"＝实际送转比例 ÷ 允许上限，以及"违例风险"＝公告日是否落在他股解禁 ±90 日窗内，
+      是两个**由规则文本定义、可用本库两表自算**的可检验量；其经济含义＝越线/违例的送转更可能是配合减持或市值管理的"滥送转"，
+      其后续回撤（外部逐字：『等除权后再买入可能会面临很大的回撤风险』）应更强。
+  ⚑ 本班**不预注册方向**：外部既有"高送转具潜在超额收益"（多因子稿）又有"利好兑现易贴权"（填权稿）与"滥送转后续回撤"（监管与预测稿）三种相反断言；
+  本库预案腿无源使最要紧的"预期段"无法检验。方向、断点与窗长全部交 ⑥。
+
+pseudocode: |
+  # 本班自写，零外部代码；列名全部来自本班 system.columns 实测（见 data_binding）
+  SZ = "coalesce(bonus_shares,0) + coalesce(capitalized_shares,0)"    # 本库口径＝每10股送转X股（本班实测 p50 4.888/p90 10）
+  # 分交易所高送转门槛（逐字来自深交所指引；上交所统一 5）——阈值交 ⑥ 冻结，本席不拍
+  THRESH = {"SZ_MAIN": 5.0, "SZ_SME": 8.0, "SZ_GEM": 10.0, "SH": 5.0}
+  SQL_EVENTS = f"""
+    SELECT symbol_canonical, announce_date, ex_date, record_date, exchange, status, type,
+           {SZ} AS sz_ratio, coalesce(dividend_pre_tax,0) AS cash_ps, coalesce(base_capital,0) AS base_cap
+    FROM c3_fundamental.rights_issue FINAL
+    WHERE type = '分红' AND ({SZ}) > 0
+      AND announce_date > toDate('1990-01-01')      -- 实测 31 行 1970 哨兵
+      AND status IN ('实施','预案')                  -- 实测 送转子面：实施 12,417／预案 108／不分配 3
+  """
+  SQL_PROFIT = """  -- 合规裕度的分母：同期净利润（income_statement，本班未见列面异常，但 PIT 列语义须 ⑤ 复验）
+    SELECT symbol_canonical, report_period, net_profit_incl_minority
+    FROM c3_fundamental.income_statement FINAL
+  """
+  SQL_UNLOCK = "SELECT symbol_canonical, unlock_date FROM c3_fundamental.share_unlock FINAL"  # 违例窗口腿
+  def build(ev, profit, unlock, t):
+      yoy = cagr_same_period(profit, ev.end_period)     # 最近两年同期净利润复合增长率（规则原文口径）
+      cap_ratio = ev.sz_ratio / 10.0                    # 转成每股送转比例（规则用的是"每股"口径！本库是每10股）
+      slack     = cap_ratio / max(yoy, EPS_FLOOR)       # 合规裕度：>1＝越线（须例外/豁免分支）
+      net_asset_exception = na_growth(profit)           # 例外分支上限＝报告期末/期初净资产增长率（本库须用 balance_sheet，本班未建此腿）
+      violation_unlock = in_window(ev.announce_date, unlock, +/-90)   # 解禁前后3个月禁披 → 违例标记
+      violation_eps    = eps_after_split(ev, cap) < 0.5               # 送转后 EPS 下限（豁免分支要求）/ <0.2 属负面清单
+      high_flag        = ev.sz_ratio >= THRESH[map_board(ev.exchange, ev.symbol_canonical)]
+      lead_days        = dateDiff('day', ev.announce_date, ev.ex_date)  # 本班实测中位 7 日、p90 9 日
+      return {"breadth_hi": mean(high_flag among active),      # 市场级高送转广度（本班实测 max 0.002778＝极稀）
+              "churn":  count(high_flag & announce==t) / universe,     # 新增事件流
+              "slack":  zscore_rolling(mean(slack of events in TRAIL), 250),   # 合规裕度（自算窗，禁取表内现成分位）
+              "vio":    zscore_rolling(mean(violation_unlock of events in TRAIL), 250)}
+
+data_binding:
+  primary_table: c3_fundamental.rights_issue
+  secondary_tables: [c3_fundamental.income_statement, c3_fundamental.balance_sheet, c3_fundamental.share_unlock, c1_market.kline_daily_hfq]
+  columns_verified_this_shift_zh: >-
+    本班 system.columns 等值谓词实测 rights_issue 列面 24 列逐字节：symbol, stock_name, announce_date(Date), bonus_shares(Nullable(Float64)),
+    capitalized_shares(Nullable(Float64)), dividend_pre_tax(Nullable(Float64)), status(String), ex_date(Nullable(Date)), record_date(Nullable(Date)),
+    listing_date(Nullable(Date)), type(String), rights_ratio(Nullable(Float64)), rights_price(Nullable(Float64)), base_capital(Nullable(Float64)),
+    ex_rights_date(Nullable(Date)), payment_start(Nullable(Date)), payment_end(Nullable(Date)), rights_listing_date(Nullable(Date)),
+    total_funds_raised(Nullable(Float64)), data_source(String), quality_flag(UInt8), ingest_ts(DateTime64(3,'UTC')),
+    exchange(LowCardinality(String)), symbol_canonical(String)。
+  measured_face_zh: >-
+    本班只读探针实测（正对照 SELECT 1 → 1 先行，零写库零 panel 物化）：
+    ①总量＝80,803 行（FINAL 与非 FINAL 同值）・uniqExact(symbol_canonical) 5,823 票・announce_date 跨度 1970-01-01..2026-06-30；
+    ②type 分布＝分红 79,618／配股 1,185；status 分布＝实施 57,023／不分配 21,472／空串 1,185（＝配股行）／预案 1,123；
+    ③腿计数＝送转(bonus+capitalized)>0 **12,528 行**／送转≥3 10,273 行／配股 rights_ratio>0 1,185 行／现金 dividend_pre_tax>0 53,834 行；
+    ④**送转子面内 status 分布＝实施 12,417／预案 108／不分配 3**⇒ 预案公告腿在本表几乎无源（108/12,528＝0.86%）；
+    ⑤日期可得性（送转子面 n=12,528）＝announce_date 空 0・ex_date 空 235・record_date 空 113・**listing_date 空 9,467（75.6%）**・**ex_rights_date 空 12,528（100%，该列仅配股行可用）**；
+      在 ex_date 非空且 announce>1990 的 12,291 行里 announce_date ≤ ex_date 共 **12,289 行（99.98%）**，
+      dateDiff(announce→ex) 中位 **7 日**・p90 **9 日** ⇒ 本库 announce_date 语义＝**实施公告日**（不是 Tushare 的 ann_date 预案公告日）；
+    ⑥量纲＝送转比例 p50 **4.888**・p90 **10**・max **83.94** ⇒ 本库为**每10股**口径；极端值逐张抽样实读＝002309 2024-12-18 转增 24.5・002251 2024-07-30 转增 22・600136 2023-12-15 转增 25・
+      000620 2023-12-20 转增 20.9582・002321 2021-12-28 转增 29.92・000564 2021-12-27 转增 22.0357 ⇒ **带小数的转增比＝破产重整式资本公积转增**（与常规"10转5/10送10"不同物），
+      本卡必须把它当独立子档处理或设上界截尾，否则单只票可把市场级强度推到 8 倍标准差之外；
+    ⑦重复＝GROUP BY (symbol_canonical, announce_date) HAVING count>1 实测 **0 键**；1970 哨兵 31 行、announce<1990 亦 31 行＝同一批；
+    ⑧exchange 拆分（送转子面・announce>1990・ex_date 非空）＝SZ 7,411／SH 4,671／**BJ 209**⇒ 北交所存在但规则链接里未给北交所门槛＝该 209 行的分档阈值**无外部真源**；
+    ⑨年度送转家数＝2015 753／2016 605／2017 494／2018 623／2019 477／2020 399／2021 436／2022 516／2023 560／2024 409／2025 375／2026 414（⇒ 2017 年后中枢下移，与新规 2018-11 生效的方向一致但滞后）；
+    ⑩可成交性＝送转子面 distinct symbol_canonical **4,374 只**与 c1_market.kline_daily_hfq 的 distinct INNER JOIN 实测命中 **4,374/4,374（100%）**；
+    ⑪2015+ 子面＝事件 5,647 行／3,247 票／送转≥5 的 2,638 行・该子面 r_p50 4.5・r_max 30（⇒ 极值 83.94 属 2015 前老股，本班候选腿窗内不会撞上）。
+  missing_face_zh: >-
+    ⚑缺口一＝**预案/预披露/股东大会通过三类公告日在本表全部无列**（外部对照面有 7 个时点，见链接"口径对照反例"）⇒
+      外部共识里最强的"预期段"信号（10 月至次年 4 月的潜力股埋伏、预案公告次日涨停）今天不可复刻；本卡只能做实施公告→除权→填权三段。
+    缺口二＝**"是否高送转"无标记列**且板块（主板/中小板/创业板）不在本表 ⇒ 分交易所的 5/8/10 三档阈值须外部板级映射（本班未见 industry_class_suppl 是否含板块标识，未验证＝不自称可用）。
+    缺口三＝**减持事件列不存在**（在册 L3-04 已判"减持公告无表"）⇒ 规则里的"前3个月减持/后3个月减持计划"这一条违例判据不可算，只能退化为解禁窗（share_unlock）。
+    缺口四＝北交所 209 行无对应监管阈值真源。
+    缺口五＝红股上市日 listing_date 缺 75.6% ⇒ "红股上市即抛压"这条腿不可建。
+  source_line_mapping: SL-A05 财务（DS-TUSHARE/BAOSTOCK・季频/随披露）＋SL-A01 日线行情（除权与可成交校验，本卡实测 4,374/4,374 JOIN）；源线谱无独立"权益分派/公司行为"线，本班转单请 ① 议增设
+  pit_anchor_zh: 单锚 announce_date（＝本班反推的实施公告日）；ex_date 只用于窗口分层与截尾，不得反推成"信息可得日"；1970 哨兵 31 行必剔
+
+orthogonal_gate:
+  status_zh: 已实跑・两腿均当前判 reject・判据面不合格（非在册永久池）
+  pool_face_zh: 同卡32＝`.runtime/tmp/p03_1017_04`（③席今日新池 20 员・106 公共日・2024-02-23..2024-12-31），他席 24h-TTL 临时面非终审
+  runs_zh: >-
+    命令原文＝`python scripts/backtest/fexam/signal_orthogonality.py gate --candidate .runtime/tmp/p04_1017_04/<件>.csv --pool .runtime/tmp/p03_1017_04 --gate 0.3`
+    ①c33_hisz_breadth90.csv（≥5 高送转 90 日滚动广度，rows=313・sd=0.000741・min=0.0・max=0.002778・zero_days=36）
+      ⇒ verdict=**reject** max|corr|=**0.3190** most_similar=gate_f_flipmom16.csv **rc=5**（仅越线 0.019＝边界档）
+    ②c33_any_sz_breadth90.csv（任意送转 90 日滚动广度，rows=313・sd=0.025319・min=0.000185・max=0.069444）
+      ⇒ verdict=**reject** max|corr|=**0.6806** most_similar=gate_f_flipmom16.csv **rc=5**
+    ⚑ 两枚 reject 都与同一路 `gate_f_flipmom16` 相撞且都属"季节性广度"形态（送转集中于 4-6 月年报实施季⇒与任何季节/动量型市场级序列共趋势）＝
+      本班判为**形状性吸收**而非"该轴已被开采"（本轴在 641 册去重面上零命中，见下），但**绝不得据此声称通过**；
+      合规裕度腿（slack/vio）本班**未物化**（须 join 三表并做同期净利复合增长率，属 panel 写面，轻档令下本班未做）⇒ 本卡最核心的那条腿的正交性**未测**。
+
+self_flag:
+  - 方向未预注册（外部同时存在"潜在超额收益"与"利好兑现贴权/滥送转回撤"相反断言），本席不翻号、交 ⑥
+  - 本卡真正的增量＝合规裕度腿与违例窗腿，二者本班**未物化未测正交**＝"已实跑"仅覆盖两条季节性广度腿
+  - THRESH 5/8/10 取自监管规则原文但**板块映射未验**；±90 日窗宽与 EPS_FLOOR、TRAIL 等参数＝本席自定，未冻结
+  - 共线申报：与卡30（质押广度）、unlock_breadth（解禁广度）经中国日报稿的"28/30 只有股价上涨诉求＝解禁/减持/质押并存"机制连接，非实测数
+  - 极值申报：重整式转增（小数转增比、max 83.94）与常规高送转不同物，若并入强度腿会造成单票主导
+
+caliber_pitfall_zh: >-
+  ①**量纲禁互换**：本库 bonus_shares/capitalized_shares＝每10股口径（实测 p50 4.888/p90 10），
+    Tushare 官方 dividend 接口＝每股口径（stk_div/stk_bo_rate，本班 WebFetch 亲验『每股送转』），同花顺平台字段亦『每股红股/每股转增股本』；
+    规则文本用的也是"每股送转比例"⇒ 任何直接拿本库数值当"每股比例"或与外部接口混算的写法都把结果放大 10 倍。
+  ②**announce_date 语义＝实施公告日**（本班 12,289/12,291 行 announce≤ex・中位 7 日的反推）＝外部接口里的 imp_ann_date，不是 ann_date；
+    按外部文献的"预案公告事件窗"口径直接套本库 announce_date＝把信号起点整体后移数月，且会把"预期段"误记成"抢权段"。
+  ③ex_rights_date 对送转行 100% 为空（12,528/12,528）＝该列属配股专用；拿它当"除权日"会让送转样本整体空集（在册"恒真空操作"型坑）。
+  ④status='不分配' 在本库可与 bonus+capitalized>0 并存（实测 3 行）＝脏标；分档过滤须同时看金额列不能只看 status。
+  ⑤本表 type 只有"分红/配股"两值、无"送转"独立类型⇒送转必须从 bonus_shares+capitalized_shares 的数值面构造，任何按 type='送转' 的谓词恒 0（在册英文/中文枚举同型坑）。
