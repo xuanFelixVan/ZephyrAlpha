@@ -111,14 +111,34 @@ logger = logging.getLogger(__name__)
 # 锚点故障静默降级（logger.debug），绝不影响原失败语义。
 _GUIDE_REL = "docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md"
 _DIGEST_REL = "docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml"
+# 递送审计 sink（D11-C02 收口件，st-opsv-20261015）：GUIDE 递送一行 jsonl 回执——
+# 时间戳×exit 码×命中词条×是否递送。"递送面无审计 sink"（图11 D11-C02 输出面 warn）
+# 收口：递送次数可数、命中词条可查，自动化观测回路从断到通。
+_GUIDE_SINK_REL = ".runtime/audit/commit_guidance_deliveries.jsonl"
 
 
-def _print_guide_anchor(detail: str) -> None:
-    """检索失败文案中的已蒸馏门禁名，打印指南锚点行（_own_guide 递送面）。"""
+def _append_guide_delivery_sink(record: dict) -> bool:
+    """GUIDE 递送回执追加一行 jsonl（fail-open：sink 故障只 debug，零递送语义影响）。"""
+    try:
+        from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415
+
+        sink = REPO_ROOT / _GUIDE_SINK_REL
+        sink.parent.mkdir(parents=True, exist_ok=True)
+        with open(sink, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
+        return True
+    except Exception as exc:  # noqa: BLE001 — 递送审计是加法面，故障零影响
+        logger.debug("guide delivery sink skipped: %s", exc)
+        return False
+
+
+def _print_guide_anchor(detail: str, exit_code: int | None = None, status: str | None = None) -> None:
+    """检索失败文案中的已蒸馏门禁名，打印指南锚点行（_own_guide 递送面）+审计回执。"""
     try:
         import yaml as _yaml
 
         from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415
+        from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
 
         digest = _yaml.safe_load((REPO_ROOT / _DIGEST_REL).read_text(encoding="utf-8")) or {}
         names = [str(g.get("gate_id")) for g in (digest.get("gates") or []) if g.get("gate_id")]
@@ -129,6 +149,16 @@ def _print_guide_anchor(detail: str) -> None:
                 f"（对应 GATE 卡片含判据/豁免格式/处方；改源头册后用 generate_commit_guide.py 重生成）",
                 file=sys.stderr,
             )
+        _append_guide_delivery_sink(
+            {
+                "ts": now_utc().isoformat(timespec="seconds"),
+                "exit_code": exit_code,
+                "status": status,
+                "matched": hit,
+                "delivered": bool(hit),
+                "detail_head": (detail or "")[:120],
+            }
+        )
     except Exception as exc:  # noqa: BLE001 — 锚点递送是加法面，故障零影响
         logger.debug("guide anchor skipped: %s", exc)
 
@@ -232,7 +262,11 @@ def _format_commit_result(result) -> int:
             file=out,
         )
     if exit_code != 0:
-        _print_guide_anchor(result.message or "")
+        _print_guide_anchor(
+            result.message or "",
+            exit_code=exit_code,
+            status=getattr(result.status, "value", None) or str(result.status),
+        )
     return exit_code
 
 
@@ -1043,6 +1077,75 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
     return 0
 
 
+def _sanitize_archive_zone_files(files: list[str], project_root: str) -> None:
+    """D4（st-diskp0-20261015）：docs/_archive 写面前置脱敏（自动档）。
+
+    病灶：2026-10-15 死会话收班归档落 docs/_archive 三连拦实锤——EXEMPT-ZONE-FM
+    （doc_type，138 件）/ FILE-PLACEMENT-TTL 规则2（ttl=task_bound，3 件）/
+    REAL-KEY-REFERENCE-SCAN（实盘键名，22 件）。本函数在提交流程最前（enqueue 快速路径
+    之前）对清单中落在 docs/_archive/ 的件自动跑三变换并 git add 同步暂存区——队列快照
+    与门禁看到的都是脱敏后字节。
+    变换逻辑真源=scripts.ops.archive_sanitize（本件零复制）；回滚通道=
+    env ZEPHYR_ARCHIVE_SANITIZE=0（停用自动档，恢复手动 archive-sanitize 面）；
+    变换面失败=warn 放行（门禁仍在其位把关，不因脱敏面失能而阻断提交）。
+    """
+    if os.environ.get("ZEPHYR_ARCHIVE_SANITIZE", "1").strip() == "0":
+        return
+    zone_files = [f for f in files if f.replace("\\", "/").startswith("docs/_archive/")]
+    if not zone_files:
+        return
+    try:
+        try:
+            from scripts.ops.archive_sanitize import sanitize_file
+        except ImportError:  # python scripts/git_commit.py 直跑：sys.path[0]=scripts/
+            from ops.archive_sanitize import sanitize_file
+    except Exception as e:  # noqa: BLE001 — 脱敏面缺席不阻断提交（fail-open，门禁兜底）
+        print(f"ARCHIVE-SANITIZE WARN: 模块不可用，跳过自动脱敏: {e}", file=sys.stderr)
+        return
+    root = Path(project_root)
+    changed: list[str] = []
+    remaining: list[str] = []
+    for rel in zone_files:
+        p = root / rel
+        if not p.is_file():
+            continue  # staged delete 场景无盘面文件
+        report = sanitize_file(p, execute=True)
+        if report.get("read_failed") or report.get("write_failed"):
+            print(f"ARCHIVE-SANITIZE WARN: {rel}: {report}", file=sys.stderr)
+            continue
+        if report.get("changed"):
+            changed.append(rel)
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+            r = run_subprocess_hidden(["git", "add", "--", rel], cwd=str(root), capture_output=True, text=True)
+            if r.returncode != 0:
+                print(f"ARCHIVE-SANITIZE WARN: git add 失败 {rel}: {(r.stderr or '').strip()[:120]}", file=sys.stderr)
+        if (report.get("stats") or {}).get("remaining_markers"):
+            remaining.append(rel)
+    if changed or remaining:
+        print(
+            f"ARCHIVE-SANITIZE: 前置脱敏完成（execute）——变换 {len(changed)} 件"
+            + (f": {changed[:10]}" if changed else "")
+            + (f"；含裸 Marker 需 Owner 裁定准入 {len(remaining)} 件: {remaining[:10]}" if remaining else ""),
+            file=sys.stderr,
+        )
+        try:
+            from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
+
+            append_audit_jsonl(
+                root / ".runtime" / "gate_audit",
+                "archive_sanitize.jsonl",
+                {
+                    "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                    "event": "archive_zone_pretransform",
+                    "changed": changed,
+                    "remaining_markers": remaining,
+                },
+            )
+        except Exception:  # noqa: BLE001 — 审计失败不阻断
+            pass
+
+
 def main() -> int:
     # P2-5 治本（红蓝 v3，2026-09-14）：输出链路强制 UTF-8。病根：管道/重定向场景
     # Windows Python 默认按 ANSI 代码页（GBK）编码中文门禁消息，采集端（agent
@@ -1317,6 +1420,10 @@ def main() -> int:
             return 1
         if tracked_but_deleted:
             logger.info("以下文件已跟踪但工作区已删除（将作为删除提交）: %s", tracked_but_deleted)
+
+        # D4（st-diskp0-20261015）：docs/_archive 写面前置脱敏（自动档；enqueue 之前=队列快照同字节；
+        # 回滚=env ZEPHYR_ARCHIVE_SANITIZE=0）
+        _sanitize_archive_zone_files(files, args.project_root)
 
         # P2⑨ 交互式入队快速路径（在 claim/commit 流程之前分流）
         if getattr(args, "enqueue", False):

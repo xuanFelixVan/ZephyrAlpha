@@ -11,11 +11,16 @@
 #   _merge_preflight_issues（A-14：merge 通道不触发 pre-commit hooks，补检是该通道唯一防线，
 #   结构性红判不可越权，仅『补检不可执行』态可 --allow-unchecked-merge 显式留痕放行）
 # [MODIFY-GUARD] 2026-10-10 st-maint1-20261010 件③：新增 merge 通道补检 + 审计行 + 越权旗
+# [MODIFY-GUARD] 2026-10-15 st-prevw-20261015（st-diskp0-20261015 防复发 W 班）：
+#   D1=create 前置闸（盘地板拒绝/同岗位死车道复用抑制裂变/创建即打印回收命令行，
+#   阈值真源=config/flags.yaml flags.disk_floor.min_free_gib，死判真源=_check_archive_target_dead
+#   与 archive 执行工具同源禁自造判活尺）；D4=archive-sanitize 子命令（归档落 docs/_archive
+#   前置脱敏：doc_type/ttl/实盘键名，变换逻辑真源=scripts.ops.archive_sanitize 禁本地复制）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=success; exit 1=error; exit 2=internal error
-# [TESTS] tests/governance/rule_bridge/test_session_worktree*.py; tests/scripts/test_session_worktree_env.py; tests/scripts/test_session_worktree_archive.py; tests/governance/rule_bridge/test_session_worktree_merge_preflight.py
+# [TESTS] tests/governance/rule_bridge/test_session_worktree*.py; tests/scripts/test_session_worktree_env.py; tests/scripts/test_session_worktree_archive.py; tests/governance/rule_bridge/test_session_worktree_merge_preflight.py; tests/meta/scripts/test_session_worktree_promote.py
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: AI会话按需调用的CLI worktree协调工具，人工触发非常驻服务/非cron/非daemon
 """
@@ -27,6 +32,7 @@ Session Worktree — 每 AI 独立 checkout + 分支（§11.3.1 v2.1.0 简化版
 v2.1.0 简化:
   - 去 7 天告警（22 路审查是一次性的，merge 后立即 abort 清理）
   - create/exec/merge/abort/list 五命令
+  - promote（2026-10-15 st-opsv-20261015 补，D11-S05 收口）：staging→docs/_working 晋升
 
 目录结构:
     d:\\ZephyrAlpha\\
@@ -41,6 +47,7 @@ CLI:
     python scripts/session_worktree.py merge <session-id> [--to dev] [--squash] [--yes]
     python scripts/session_worktree.py abort <session-id>
     python scripts/session_worktree.py list
+    python scripts/session_worktree.py promote <session-id>
     python scripts/session_worktree.py archive <session名|分支名|worktree路径> [--execute]
         [--batch-file <清单>] [--all] [--skip-rescue] [--base dev]
 """
@@ -50,6 +57,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -173,6 +181,93 @@ def _find_branch_for_session(session_id: str) -> str | None:
 # ============================================================================
 
 
+# ============================================================================
+# D1 车道创建前置闸（st-diskp0-20261015 防复发，W 班 st-prevw-20261015）
+# ----------------------------------------------------------------------------
+# 病灶：2026-10-15 D 盘 732G 100% 满（剩余 3.2MB）——结构层 HyperV data.vhdx 569.8GiB
+# 静态地板 + 触发层当日 100 棵新车道≈36GiB（重试不复用：同岗位裂变 -02..-N）+
+# tmp/审计≈8GiB，监控 6 天 3 观测点零报警。本闸把防线前移到 create 入口：
+#   (a) 盘地板：项目根所在盘剩余 < flags.disk_floor.min_free_gib → 拒绝并给清障指引；
+#   (b) 裂变抑制：同岗位家系存在**死车道** → 拒绝新建序号车道，提示复用或先归档；
+#       判活尺与 archive 执行工具同源（_check_archive_target_dead），禁自造判活；
+#   (c) 回收责任：创建成功即打印回收命令行（收班必执行其一，不给下一班留第六态）。
+# ============================================================================
+
+_DISK_FLOOR_FLAGS_REL = Path("config") / "flags.yaml"
+_DISK_FLOOR_DEFAULT_GIB = 15.0
+# 序号后缀=-02..-999（2-3 位数字）；日期尾（如 -20261015，8 位）不匹配 → 不误切家系
+_LANE_ORDINAL_RE = re.compile(r"-(\d{2,3})$")
+
+
+def _disk_floor_config(repo_root: Path | None = None) -> tuple[bool, float]:
+    """读 flags.yaml flags.disk_floor → (enabled, min_free_gib)。
+
+    阈值单一真源=该键；读取实现单口=scripts.ops.vhdx_floor_watch.read_disk_floor_config
+    （本函数只做委托+独立运行兜底，禁在此复制读取逻辑）；读不到=出厂值 (True, 15.0)
+    ——地板闸 fail-closed（缺配置不豁免检查）。
+    """
+    root = repo_root or REPO_ROOT
+    try:
+        try:
+            from scripts.ops.vhdx_floor_watch import read_disk_floor_config
+        except ImportError:  # python scripts/session_worktree.py 直跑：sys.path[0]=scripts/
+            from ops.vhdx_floor_watch import read_disk_floor_config
+        return read_disk_floor_config(root)
+    except Exception:  # noqa: BLE001 — 读取面不可用回出厂值，不豁免闸
+        return True, _DISK_FLOOR_DEFAULT_GIB
+
+
+def _check_disk_floor(repo_root: Path | None = None) -> tuple[bool, str]:
+    """(a) 项目根所在盘剩余空间 < 地板 → 拒绝创建新车道。返回 (通过, 消息)。"""
+    root = repo_root or REPO_ROOT
+    enabled, floor = _disk_floor_config(root)
+    usage = shutil.disk_usage(str(root))
+    free_gib = usage.free / (1024**3)
+    if not enabled:
+        return True, f"磁盘地板闸 flags.disk_floor.enabled=false（降级放行；剩余 {free_gib:.1f}GiB）"
+    if free_gib < floor:
+        return False, (
+            f"磁盘剩余 {free_gib:.2f}GiB < 地板 {floor:.1f}GiB——拒绝创建新车道"
+            "（2026-10-15 满盘事故防复发：一棵新车道≈0.36GiB，满盘时再建只会加速触底）\n"
+            "  先腾空间再 create（任选/组合）：\n"
+            "    python scripts/ops/cleanup_runtime_tmp_residue.py --execute   # 清 .runtime/tmp 旧件\n"
+            "    python scripts/session_worktree.py archive --all --execute    # 归档死车道（dry-run 先看计划）\n"
+            "    阈值调整=config/flags.yaml flags.disk_floor.min_free_gib（Owner 门位）"
+        )
+    return True, f"磁盘地板 PASS（剩余 {free_gib:.1f}GiB ≥ 地板 {floor:.1f}GiB）"
+
+
+def _lane_base(session_id: str) -> str:
+    """同岗位基名：剥 -02..-999 序号后缀（无序号=本名）。"""
+    m = _LANE_ORDINAL_RE.search(session_id)
+    return session_id[: m.start()] if m else session_id
+
+
+def _find_reusable_dead_lanes(session_id: str) -> list[dict]:
+    """(b) 同岗位家系中的死车道清单（判活真源=_check_archive_target_dead，与 archive 同源）。
+
+    家系=registry（git worktree list，唯一真源）中 basename==基名 或 basename 以
+    基名+"-" 起头的车道；本尊（session_id 自身）除外——已存在由 wt_path.exists() 分支处理。
+    """
+    base = _lane_base(session_id)
+    if not base:
+        return []
+    family: list[dict] = []
+    for e in _list_worktree_registry():
+        name = Path(e["path"]).name
+        if name == session_id:
+            continue
+        if name == base or name.startswith(base + "-"):
+            family.append(e)
+    dead: list[dict] = []
+    for e in family:
+        sid = Path(e["path"]).name
+        is_dead, reason = _check_archive_target_dead(sid)
+        if is_dead:
+            dead.append({"sid": sid, "path": e["path"], "branch": e.get("branch"), "reason": reason})
+    return dead
+
+
 def cmd_create(args: argparse.Namespace) -> int:
     """创建 worktree + 分支。"""
     session_id = args.session_id
@@ -180,9 +275,34 @@ def cmd_create(args: argparse.Namespace) -> int:
     wt_path = _worktree_path(session_id)
     branch = _branch_name(session_id, task_id)
 
+    # D1 前置闸 (a)：盘地板（2026-10-15 满盘事故防复发）——两道闸都过了才动 git
+    ok, msg = _check_disk_floor()
+    print(f"[WORKTREE] 前置闸(a) 磁盘地板: {'PASS' if ok else '拒绝'}——{msg}")
+    if not ok:
+        return 1
+
     if wt_path.exists():
         print(f"[WORKTREE] 错误: worktree 已存在: {wt_path}", file=sys.stderr)
         print(f"  如需重建，先执行: python scripts/session_worktree.py abort {session_id}", file=sys.stderr)
+        return 1
+
+    # D1 前置闸 (b)：同岗位死车道复用（抑制 -02..-N 重试裂变——判活与 archive 同源）
+    dead_lanes = _find_reusable_dead_lanes(session_id)
+    if dead_lanes:
+        print(
+            f"[WORKTREE] 错误: 同岗位（基名 {_lane_base(session_id)}）存在 {len(dead_lanes)} 棵死车道，"
+            "禁止新建序号车道裂变（2026-10-15 p01/p09 裂 13/14 棵实证）:",
+            file=sys.stderr,
+        )
+        for d in dead_lanes[:10]:
+            print(f"  - {d['sid']}  分支={d['branch'] or '(detached)'}  路径={d['path']}", file=sys.stderr)
+        print("  复用或清场后再 create：", file=sys.stderr)
+        print(f"    复用（推荐，直接进既有车道工作）: cd {dead_lanes[0]['path']}", file=sys.stderr)
+        print(
+            f"    清场后重建: python scripts/session_worktree.py archive {dead_lanes[0]['sid']} --execute"
+            "（dry-run 先看处置计划）",
+            file=sys.stderr,
+        )
         return 1
 
     # 创建 worktree 根目录
@@ -263,6 +383,11 @@ def cmd_create(args: argparse.Namespace) -> int:
                 print(f"  heartbeat daemon 已启动（PID {_hb_proc.pid}，30s 心跳；注销/idle>1800s 自动退出）")
         except Exception as e:  # noqa: BLE001 — daemon spawn 失败不阻断创建（仍有 90s 心跳窗+TTL）
             print(f"  WARN: heartbeat daemon 启动失败（不阻断创建）: {e}", file=sys.stderr)
+        # D1 前置闸 (c)：创建即注册退出回收责任——收班必执行其一（会话收尾序列已有
+        # archive 面，这里把命令行在创建时刻就交到手上，防"建了忘收"留第六态给下一班）
+        print("  回收责任（收班必执行其一，收班即清）:")
+        print(f"    归档收班: python scripts/session_worktree.py archive {session_id} --execute")
+        print(f"    放弃重建: python scripts/session_worktree.py abort {session_id}")
         print(f"  进入 worktree: cd {wt_path}")
         return 0
     except Exception as e:  # noqa: BLE001 — CLI 边界兜底转退出码（存量基线注记）
@@ -779,7 +904,7 @@ def cmd_list(args: argparse.Namespace) -> int:
 
 # ============================================================================
 # lane-archive（RB-4 车道生命周期治本）
-# 真源: docs/_working/root_cure_campaign/RB4_lane_lifecycle.md §2
+# 真源: RB4_lane_lifecycle（原件已散佚未入库，墓碑台账 batch4） §2
 # 流程: 死判（活跃硬拒）→ V 判型（ahead+cherry+dirty 三查）→ patch 存证+？？rescue
 #       → worktree remove --force --force → prune+进程外核实 → branch -d（真 ahead 落台账，禁 -D）
 # ============================================================================
@@ -1094,7 +1219,7 @@ def _tomb_ctx_factory():
 def _patch_new_file_bytes(patch_path: str | Path, rel: str) -> bytes | None:
     """从退役 patch 里取某个"新增文件"段的正文字节（存证真读回，不信任自报 sha）。
 
-    与 `docs/_working/examunlock_campaign/17 号件 §六` 的复原约定一致：块内正文＝源文件
+    与 `docs/04_research_records/backtest/campaigns/examunlock_campaign/17 号件 §六` 的复原约定一致：块内正文＝源文件
     去掉末尾换行后的全部内容，复原时补一个换行；CRLF 归一为 LF 后比对。
     取不到段（非新增件/被排除/格式外）→ None＝该行判不覆盖（宁可不放行）。
     """
@@ -1343,6 +1468,178 @@ def _archive_collect_targets(args: argparse.Namespace, registry: list[dict]) -> 
     return targets
 
 
+# ============================================================================
+# S05 staging→docs/_working 晋升（D11-S05 收口件，st-opsv-20261015）
+# ============================================================================
+
+#: 晋升审计台账（jsonl 追加，_audit_abort 同款落点纪律）
+STAGING_PROMOTE_AUDIT_REL = ".runtime/gate_audit/staging_promote.jsonl"
+
+
+def _audit_promote(
+    session_id: str,
+    verdict: str,
+    staging: Path,
+    dest: Path,
+    moved: list[str],
+    *,
+    source_removed: bool = True,
+) -> None:
+    """promote 操作审计落盘（非阻断，jsonl 追加，防覆盖拒绝也留痕）。"""
+    audit_dir = REPO_ROOT / ".runtime" / "gate_audit"
+    try:
+        audit_dir.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        return
+    record = {
+        "timestamp": time.time(),
+        "session_id": session_id,
+        "verdict": verdict,
+        "staging_dir": str(staging),
+        "dest_dir": str(dest),
+        "moved_count": len(moved),
+        "moved": moved[:50],  # 防巨单撑爆台账行；moved_count 才是账面真值
+        "source_removed": source_removed,
+        "pid": os.getpid(),
+    }
+    try:
+        with (audit_dir / "staging_promote.jsonl").open("a", encoding="utf-8", newline="\n") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError:
+        pass
+
+
+def _sid_shape_ok(session_id: str) -> bool:
+    """sid 形状白名单（_prune_session_shell ①同款）：禁空/点/分隔符——防路径穿越。"""
+    sid = str(session_id or "")
+    if not sid or sid in (".", ".."):
+        return False
+    seps = {"/", "\\", os.sep}
+    if os.altsep:
+        seps.add(os.altsep)
+    return not any(sep in sid for sep in seps)
+
+
+def _bulk_approved_ctx():
+    """取真实装了补丁的 ops_guard 实例的授权直通（bulk_delete_approved）。
+
+    safe_rmtree 的直通面 `from scripts.ops_guard import ...` 在车道 CLI 进程内分裂：
+    本脚本 main() 装补丁走 `from ops_guard import ...` 兜底（车道内 scripts.* 包
+    不可达），_BULK_APPROVED 是模块实例态 ContextVar——跨实例取不到直通=授权通道
+    反被自家补丁拦（st-opsv-20261015 promote 实测）。这里从 sys.modules 取真实
+    装了补丁的那个实例；都不在（测试直调 cmd_* 未过 main()）=无补丁，直通无谓。
+    """
+    import contextlib
+
+    m = sys.modules.get("scripts.ops_guard") or sys.modules.get("ops_guard")
+    if m is not None and hasattr(m, "bulk_delete_approved"):
+        return m.bulk_delete_approved()
+    return contextlib.nullcontext()
+
+
+def cmd_promote(args: argparse.Namespace) -> int:
+    """S05 staging 晋升：.runtime/sessions/<sid>/staging/ → docs/_working/<sid>-promoted/。
+
+    D11-S05 收口件（晋升实现全仓空集→最小子命令）：mv 通道（拷贝全部→逐件核验→
+    safe_rmtree 授权通道删源，all-or-nothing 零半迁态）+审计行+防覆盖（目标目录或
+    任一同名文件已存在=整单拒绝）。删源受阻时成果不回迁（已核验在位），WARN 留痕
+    交 24h TTL reconciler 或人工清理。
+    """
+    session_id = args.session_id
+    if not _sid_shape_ok(session_id):
+        print(f"[PROMOTE] 错误: session_id 形状非法（禁空/点/路径分隔符）: {session_id!r}", file=sys.stderr)
+        return 1
+    staging = REPO_ROOT / ".runtime" / "sessions" / session_id / "staging"
+    if not staging.is_dir():
+        print(
+            f"[PROMOTE] 错误: staging 目录不存在: {staging}（24h TTL reconciler 可能已清理，或成果从未暂存）",
+            file=sys.stderr,
+        )
+        return 1
+    files = sorted(p for p in staging.rglob("*") if p.is_file())
+    if not files:
+        print(f"[PROMOTE] 错误: staging 为空（无成果可晋升）: {staging}", file=sys.stderr)
+        return 1
+    dest_root = REPO_ROOT / "docs" / "_working" / f"{session_id}-promoted"
+    rels = [f.relative_to(staging) for f in files]
+    # 防覆盖预检（先逐件后整目录——TOCTOU 竞态下逐件检查仍有意义）：
+    conflicts = [str(r) for r in rels if (dest_root / r).exists()]
+    if conflicts:
+        print(
+            f"[PROMOTE] 拒绝: {len(conflicts)} 个同名目标已存在（防覆盖，整单拒绝）: " + "; ".join(conflicts[:5]),
+            file=sys.stderr,
+        )
+        _audit_promote(session_id, "REFUSED_CONFLICT", staging, dest_root, conflicts, source_removed=False)
+        return 1
+    if dest_root.exists():
+        print(
+            f"[PROMOTE] 拒绝: 目标目录已存在（防覆盖，same sid 二次晋升请先人工处置）: {dest_root}",
+            file=sys.stderr,
+        )
+        _audit_promote(session_id, "REFUSED_DEST_EXISTS", staging, dest_root, [], source_removed=False)
+        return 1
+    # ── mv 通道（guard 合规实现：拷贝全部→逐件核验→授权通道删源）──
+    # 实测（st-opsv-20261015）：staging 在车道内解析为 .worktrees/<lane>/.runtime/...
+    # 命中 OPS-GUARD `.worktrees` 保护区，shutil.move 出源=删除变体被拦——
+    # 且 move 逐件进行中断即半迁。拷贝全部+核验后经 safe_rmtree 授权通道
+    # （硬断言+直通+自带留痕，abort 收班同款）删源：all-or-nothing 且守闸。
+    moved: list[str] = []
+    try:
+        for f, rel in zip(files, rels, strict=True):
+            tgt = dest_root / rel
+            tgt.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(str(f), str(tgt))
+            moved.append(rel.as_posix())
+    except (shutil.Error, OSError) as exc:
+        _promote_rollback(dest_root)
+        print(f"[PROMOTE] 错误: 拷贝失败已回滚（零半迁态）: {exc}", file=sys.stderr)
+        _audit_promote(session_id, "COPY_FAILED_ROLLED_BACK", staging, dest_root, moved, source_removed=False)
+        return 2
+    bad = [
+        str(rel)
+        for f, rel in zip(files, rels, strict=True)
+        if not (dest_root / rel).is_file() or (dest_root / rel).stat().st_size != f.stat().st_size
+    ]
+    if bad:
+        _promote_rollback(dest_root)
+        print(f"[PROMOTE] 错误: 拷贝核验不过已回滚（{len(bad)} 件不一致）: {'; '.join(bad[:5])}", file=sys.stderr)
+        _audit_promote(session_id, "VERIFY_FAILED_ROLLED_BACK", staging, dest_root, moved, source_removed=False)
+        return 2
+    # 授权通道删源（assert 硬断言=授权完成 + 同实例直通；abort 收班同款判据。
+    # 不走 safe_rmtree：其 scripts.ops_guard 直通面在车道 CLI 内实例分裂见 _bulk_approved_ctx）
+    source_removed = True
+    try:
+        from zephyr.shared.io.file_utils import assert_safe_rmtree_target
+
+        sessions_base = REPO_ROOT / ".runtime" / "sessions"
+        resolved = assert_safe_rmtree_target(staging, allowed_prefix=str(sessions_base))
+        with _bulk_approved_ctx():
+            shutil.rmtree(resolved)
+    except Exception as exc:  # noqa: BLE001 — 删源受阻不回迁成果（成果已核验在位）
+        source_removed = False
+        print(
+            f"[PROMOTE] WARN: 成果已全部迁入并核验，但源清理被阻（safe_rmtree: {exc}）"
+            f"——staging 残留待 24h TTL reconciler 或人工清理: {staging}",
+            file=sys.stderr,
+        )
+    _audit_promote(session_id, "PROMOTED", staging, dest_root, moved, source_removed=source_removed)
+    print(f"[PROMOTE] OK: {len(moved)} 件已迁入 {dest_root}（源清理={'完成' if source_removed else '受阻留痕'}）")
+    print("  审计: .runtime/gate_audit/staging_promote.jsonl")
+    return 0
+
+
+def _promote_rollback(dest_root: Path) -> None:
+    """回滚本次晋升新建的目标目录（硬断言+同实例直通授权通道，失败留现场不抛）。"""
+    try:
+        from zephyr.shared.io.file_utils import assert_safe_rmtree_target
+
+        resolved = assert_safe_rmtree_target(dest_root, allowed_prefix=str(REPO_ROOT / "docs" / "_working"))
+        with _bulk_approved_ctx():
+            shutil.rmtree(resolved, ignore_errors=True)
+    except Exception:  # noqa: BLE001 — 回滚失败不掩盖主错误，残留现场供人工
+        pass
+
+
 def cmd_archive(args: argparse.Namespace) -> int:
     """lane-archive：死车道归档（dry-run 默认，--execute 显式；RB-4 治本）。"""
     registry = _list_worktree_registry()
@@ -1375,6 +1672,23 @@ def cmd_archive(args: argparse.Namespace) -> int:
             rc = rc or one_rc
     print(f"[ARCHIVE] 汇总: {done}/{len(targets)} 处理完成（execute={execute}）")
     return rc
+
+
+def cmd_archive_sanitize(args: argparse.Namespace) -> int:
+    """D4：归档写面前置脱敏（doc_type/ttl/实盘键名 三变换；变换逻辑真源=scripts.ops.archive_sanitize，
+    本件零判定逻辑复制——归档落 docs/_archive 前跑一遍，EXEMPT-ZONE-FM / FILE-PLACEMENT-TTL /
+    REAL-KEY-REFERENCE-SCAN 三连拦的预防面）。dry-run 默认，--execute 才落盘。
+    """
+    try:
+        from scripts.ops.archive_sanitize import main as _sanitize_main
+    except ImportError:  # python scripts/session_worktree.py 直跑：sys.path[0]=scripts/
+        from ops.archive_sanitize import main as _sanitize_main
+    argv: list[str] = [*args.paths]
+    if args.execute:
+        argv.append("--execute")
+    if getattr(args, "json", False):
+        argv.append("--json")
+    return _sanitize_main(argv)
 
 
 def main() -> int:
@@ -1439,6 +1753,14 @@ def main() -> int:
     p_list = sub.add_parser("list", help="列出所有 worktree")
     p_list.set_defaults(func=cmd_list)
 
+    # promote（S05 staging→docs/_working 晋升，D11-S05 收口件 st-opsv-20261015）
+    p_promote = sub.add_parser(
+        "promote",
+        help="staging 成果晋升 docs/_working/<sid>-promoted/（mv 通道+审计行+防覆盖）",
+    )
+    p_promote.add_argument("session_id", help="session ID（staging=.runtime/sessions/<sid>/staging/）")
+    p_promote.set_defaults(func=cmd_promote)
+
     # archive（RB-4 lane-archive：dry-run 默认，--execute 显式）
     p_archive = sub.add_parser(
         "archive",
@@ -1475,6 +1797,20 @@ def main() -> int:
         help="ahead/cherry 判定基线分支（默认 dev）",
     )
     p_archive.set_defaults(func=cmd_archive)
+
+    # archive-sanitize（st-diskp0-20261015 D4）：归档写面前置脱敏（收班归档落 docs/_archive 前跑）
+    p_sanitize = sub.add_parser(
+        "archive-sanitize",
+        help="归档写面前置脱敏（doc_type→archived_doc_type / ttl→permanent / 实盘键名→Marker；dry-run 默认）",
+    )
+    p_sanitize.add_argument("paths", nargs="+", help="归档件或目录（docs/_archive/...）")
+    p_sanitize.add_argument(
+        "--execute",
+        action="store_true",
+        help="真正写盘（默认 dry-run 只报）",
+    )
+    p_sanitize.add_argument("--json", action="store_true", help="JSON 输出")
+    p_sanitize.set_defaults(func=cmd_archive_sanitize)
 
     args = parser.parse_args()
     try:

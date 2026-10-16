@@ -23,7 +23,9 @@ D_TRADING — 回测 vs 模拟盘日终对账编排器（56号文 §2 G7，testi
 → 返回结构化结果（含 C 类清单供当日告警，56号文 §6 C10 闭环首查项）。
 
 设计真源: docs/.../design_memos/56_backtest_vs_sim_reconciliation_plan.md
-触发方式: 57号文日循环 SOP §5「15:30 收盘后」人工/后续调度触发（本模块不挂调度）。
+触发方式: 交易日 15:40 eod_reconciliation 特殊槽（zephyr.data.scheduler._run_special_schedule
+编排分支，2026-10-07 laneB 接线；本模块零自建调度原语，编排职责在调度分支）+
+57号文日循环 SOP §5「15:30 收盘后」人工触发并存（原"本模块不挂调度"自陈已滞后，2026-10-15 修正）。
 
 调用示例（SOP 用）::
 
@@ -67,7 +69,7 @@ from __future__ import annotations
 
 import logging
 import sqlite3
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from decimal import Decimal
 from enum import Enum
@@ -98,6 +100,7 @@ __all__: Final = [
     "AttributionItem",
     "ReconBrokerSource",
     "ReconDailyResult",
+    "record_recon_run",
     "run_daily_reconciliation",
 ]
 
@@ -120,6 +123,43 @@ _SQL_INSERT_DIFFERENCE: Final = (
     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 )
 _SCHEMA_VERSION: Final = "1.0"
+
+# ── run 台账（SDSC-15 fail 收口件 / D13-G03 A7 no-drift 留痕，st-opsv-20261015）──
+# 差异表只在有差异时落行（_persist_differences 空集早退），"跑过且零差异"与"没跑"
+# 不可分=图12 DSC-GAP-TERMINUS/DSC-GAP-RECDIFF 不可证根。本表一次执行一行（含
+# skip/error 路径——scheduler 分支经 record_recon_run 入账），三态可分：
+#   没跑=当日无行｜跑过零差异=verdict='ran' AND rows_written=0 AND db_error IS NULL
+#   跑过有差异=verdict='ran' AND rows_written>0（差异明细仍在 reconciliation_differences）
+_RUN_VERDICT_RAN: Final = "ran"
+_RUN_VERDICT_SKIPPED_NO_ARTIFACT: Final = "skipped_no_artifact"
+_RUN_VERDICT_SKIPPED_BROKER_ERROR: Final = "skipped_broker_error"
+_RUN_VERDICT_ERROR: Final = "error"
+_SQL_CREATE_RUN_LOG: Final = (
+    "CREATE TABLE IF NOT EXISTS reconciliation_runs ("
+    "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+    "trade_date TEXT NOT NULL, "
+    "run_id TEXT, "
+    "verdict TEXT NOT NULL, "
+    "l1_matched INTEGER, "
+    "l1_drifts INTEGER, "
+    "l2_drifts INTEGER, "
+    "l3_status TEXT, "
+    "attributions_a INTEGER, "
+    "attributions_b INTEGER, "
+    "attributions_c INTEGER, "
+    "rows_written INTEGER NOT NULL DEFAULT 0, "
+    "db_error TEXT, "
+    "detail TEXT, "
+    "detected_at TEXT NOT NULL, "
+    "schema_version TEXT NOT NULL DEFAULT '1.0')"
+)
+_SQL_INSERT_RUN_LOG: Final = (
+    "INSERT INTO reconciliation_runs "
+    "(trade_date, run_id, verdict, l1_matched, l1_drifts, l2_drifts, l3_status, "
+    "attributions_a, attributions_b, attributions_c, rows_written, db_error, detail, "
+    "detected_at, schema_version) "
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+)
 
 
 class ReconBrokerSource(Protocol):
@@ -171,6 +211,7 @@ class ReconDailyResult:
     rows_written: int
     db_path: str
     db_error: str | None = None
+    ledger_error: str | None = None  # run 台账落账失败标记（账可查性缺陷显性化，非 None 须人工补登记）
 
     def to_dict(self) -> dict:
         """SOP 打印/落 tracker 用的 JSON 快照。"""
@@ -193,6 +234,7 @@ class ReconDailyResult:
             ],
             "rows_written": self.rows_written,
             "db_error": self.db_error,
+            "ledger_error": self.ledger_error,
         }
 
 
@@ -389,6 +431,74 @@ def _persist_differences(
     return len(rows)
 
 
+def record_recon_run(
+    trade_date: str,
+    verdict: str,
+    *,
+    run_id: str | None = None,
+    l1_matched: bool | None = None,
+    l1_drifts: int | None = None,
+    l2_drifts: int | None = None,
+    l3_status: str | None = None,
+    attributions_a: int | None = None,
+    attributions_b: int | None = None,
+    attributions_c: int | None = None,
+    rows_written: int = 0,
+    db_error: str | None = None,
+    detail: str | None = None,
+    db_path: str | Path | None = None,
+) -> bool:
+    """写一行 run 台账（reconciliation_runs，一次执行一行，append-only 仅 INSERT）。
+
+    SDSC-15 fail 收口件（图12 DSC-GAP-TERMINUS/DSC-GAP-RECDIFF 不可证根）：差异表
+    只在有差异时落行，本台账使"跑过/没跑/差异"三态可分——没跑=当日无行、跑过零
+    差异=verdict='ran' AND rows_written=0 AND db_error IS NULL（no-drift 留痕 A7）、
+    跑过有差异=rows_written>0（明细在 reconciliation_differences）。skip/error 路径
+    （无产物/broker 失败/执行异常）由 scheduler 分支以对应 verdict 入账。
+
+    永不抛异常（台账故障不得反噬对账/调度主流程，alerter 不抛同款契约）；失败
+    返回 False 并 log.exception 出声（账可查性缺陷不得静默蒸发）。
+
+    Returns:
+        是否成功落账。
+    """
+    resolved_db = Path(db_path) if db_path is not None else DB_PATH
+    detected_at = datetime.now(UTC).isoformat()
+    try:
+        conn = sqlite3.connect(str(resolved_db))
+        try:
+            with conn:  # 事务：建表+插行同批提交
+                conn.execute(_SQL_CREATE_RUN_LOG)
+                conn.execute(
+                    _SQL_INSERT_RUN_LOG,
+                    (
+                        trade_date,
+                        run_id,
+                        verdict,
+                        None if l1_matched is None else int(l1_matched),
+                        l1_drifts,
+                        l2_drifts,
+                        l3_status,
+                        attributions_a,
+                        attributions_b,
+                        attributions_c,
+                        rows_written,
+                        db_error,
+                        detail,
+                        detected_at,
+                        _SCHEMA_VERSION,
+                    ),
+                )
+        finally:
+            conn.close()
+        return True
+    except (sqlite3.Error, OSError) as exc:
+        _logger.exception(
+            "reconciliation_runs run 台账落账失败（trade_date=%s verdict=%s）: %s", trade_date, verdict, exc
+        )
+        return False
+
+
 def run_daily_reconciliation(
     trade_date: str,
     run_id: str,
@@ -465,6 +575,27 @@ def run_daily_reconciliation(
         db_path=str(resolved_db),
         db_error=db_error,
     )
+    # ── run 台账（SDSC-15 fail 收口件）：跑没跑可证——落账失败显性标记不静默 ──
+    if not record_recon_run(
+        trade_date,
+        _RUN_VERDICT_RAN,
+        run_id=run_id,
+        l1_matched=l1.matched,
+        l1_drifts=len(l1.drifts),
+        l2_drifts=len(l2.drifts),
+        l3_status=l3.status.value if l3 else "SKIPPED",
+        attributions_a=sum(1 for a in attributions if a.category is AttributionClass.A_SLIPPAGE),
+        attributions_b=sum(1 for a in attributions if a.category is AttributionClass.B_PARTIAL_FILL),
+        attributions_c=len(c_class_items),
+        rows_written=rows_written,
+        db_error=db_error,
+        detail=f"l1_matched={l1.matched} l1_drifts={len(l1.drifts)} l2_drifts={len(l2.drifts)}",
+        db_path=resolved_db,
+    ):
+        result = replace(
+            result,
+            ledger_error="reconciliation_runs 落账失败（见日志）——三态可分性缺陷，须人工补登记",
+        )
     _logger.info(
         "日终对账完成: trade_date=%s l1_matched=%s l2_matched=%s l3=%s 归因 A=%d B=%d C=%d 费用参考=%d 落库=%d 行",
         trade_date,

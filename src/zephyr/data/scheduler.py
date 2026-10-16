@@ -614,7 +614,7 @@ def _run_special_schedule(
             log.info("时段 %s 跳过：总闸 eod_reconciliation.disabled 存在", schedule_name)
             return {"eod_reconciliation": False}
         trade_date = datetime.date.today().isoformat()
-        from zephyr.trading.recon_runner import run_daily_reconciliation
+        from zephyr.trading.recon_runner import record_recon_run, run_daily_reconciliation
 
         run_id, _artifact_day = _resolve_eod_recon_run_id(trade_date)
         if run_id is None:
@@ -626,6 +626,15 @@ def _run_special_schedule(
                 level="WARN",
                 source="eod_reconciliation",
             )
+            # run 台账 skip 路径入账（SDSC-15：跑没跑可证——skip 不得蒸发，失败仅日志）
+            try:
+                record_recon_run(
+                    trade_date,
+                    "skipped_no_artifact",
+                    detail="无当日回测产物（data/backtest_artifacts 最新产物超当窗）",
+                )
+            except Exception:  # noqa: BLE001 — 台账故障不反噬调度结论
+                pass
             return {"eod_reconciliation": False}
         try:
             from zephyr.ex_core.adapters.miniqmt_broker import MiniQmtBroker
@@ -639,6 +648,15 @@ def _run_special_schedule(
                 level="ERROR",
                 source="eod_reconciliation",
             )
+            try:
+                record_recon_run(
+                    trade_date,
+                    "skipped_broker_error",
+                    run_id=run_id,
+                    detail=f"broker 装配/连接失败: {str(exc)[:200]}",
+                )
+            except Exception:  # noqa: BLE001 — 台账故障不反噬调度结论
+                pass
             return {"eod_reconciliation": False}
         try:
             result = run_daily_reconciliation(trade_date=trade_date, run_id=run_id, broker=broker)
@@ -649,6 +667,15 @@ def _run_special_schedule(
                 level="ERROR",
                 source="eod_reconciliation",
             )
+            try:
+                record_recon_run(
+                    trade_date,
+                    "error",
+                    run_id=run_id,
+                    detail=f"run_daily_reconciliation 异常: {str(exc)[:200]}",
+                )
+            except Exception:  # noqa: BLE001 — 台账故障不反噬调度结论
+                pass
             return {"eod_reconciliation": False}
         finally:
             try:
@@ -1713,11 +1740,18 @@ class IntegratorScheduler:
                 return QWeatherProvider()
             elif source == "akshare_alt":
                 # 另类数据第 1 批免注册直连源（千股千评/航运运价，2026-09-12，
-                # docs/_working/2026-09-12-alt-data-handoff.md §8-1）：独立于 akshare 主
+                # docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/2026-09-12-alt-data-handoff.md §8-1）：独立于 akshare 主
                 # provider 成件，接口漂移风险由 alt_source_health_manager 独立监控
                 from zephyr.data.implementations.akshare_alt_provider import AkshareAltProvider
 
                 return AkshareAltProvider()
+            elif source == "irm":
+                # 深交所互动易官方接口（st-infoaxis-20261013 D1 修复，裁定#516 千股千评·
+                # 互动易域 P2 首刀）：此前无分支致 tasks.yaml source=irm 两任务孤儿
+                # （irm_interactive_qa/ir_activity_record 死水根因）
+                from zephyr.data.implementations.irm_provider import IrmProvider
+
+                return IrmProvider()
             elif source == "alt_fx_ecb":
                 # L1.1 正门路由（夜班战役 2026-09-17，台账 §1.5）：上架流水线首源 ECB 汇率
                 # 由 Windows 任务旁路升格调度器正门（capability=fx_ecb_daily，槽位 daily_alt_fx）

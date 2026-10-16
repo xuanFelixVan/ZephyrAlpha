@@ -17,7 +17,8 @@
 覆盖：三层串联（L1 交易级/L2 持仓级/L3 PnL 级）、归因三分类
 （A 滑点/B 部分成交/C 拒单缺失 + 费用参考列不归类）、
 reconciliation_differences 落库（trade/position/cash 三层，tmp 库复刻生产
-schema）、L3 SKIPPED/MISMATCH、db_error 降级路径、C 类当日告警清单。
+schema）、L3 SKIPPED/MISMATCH、db_error 降级路径、C 类当日告警清单、
+run 台账 reconciliation_runs（跑过/没跑/差异三态可分，SDSC-15 fail 收口件）。
 """
 
 from __future__ import annotations
@@ -35,6 +36,7 @@ from zephyr.shared.contracts.position import PositionSnapshot
 from zephyr.trading.recon_runner import (
     AttributionClass,
     ReconDailyResult,
+    record_recon_run,
     run_daily_reconciliation,
 )
 
@@ -384,3 +386,155 @@ class TestDbDegradation:
         assert result.db_path == str(redirected)
         assert result.rows_written == 1
         assert len(_read_rows(redirected)) == 1
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# run 台账 reconciliation_runs（SDSC-15 fail 收口件：跑过/没跑/差异三态可分）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _read_run_rows(db_path: Path) -> list[sqlite3.Row]:
+    try:
+        conn = sqlite3.connect(str(db_path))
+    except sqlite3.OperationalError:
+        return []  # 库文件未能开（目录不存在等）=零行
+    conn.row_factory = sqlite3.Row
+    try:
+        return conn.execute("SELECT * FROM reconciliation_runs ORDER BY id").fetchall()
+    except sqlite3.OperationalError:
+        return []  # 表未建=没跑过
+    finally:
+        conn.close()
+
+
+class TestRecordReconRunUnit:
+    def test_writes_row_and_auto_creates_table(self, tmp_path: Path):
+        """首次落账自建表；一行入账字段齐全。"""
+        db = tmp_path / "g.db"
+        assert record_recon_run(
+            TRADE_DATE,
+            "ran",
+            run_id=RUN_ID,
+            l1_matched=True,
+            l1_drifts=0,
+            l2_drifts=0,
+            l3_status="MATCH",
+            attributions_a=0,
+            attributions_b=0,
+            attributions_c=0,
+            rows_written=0,
+            detail="unit",
+            db_path=db,
+        )
+        rows = _read_run_rows(db)
+        assert len(rows) == 1
+        r = rows[0]
+        assert r["trade_date"] == TRADE_DATE
+        assert r["run_id"] == RUN_ID
+        assert r["verdict"] == "ran"
+        assert r["l1_matched"] == 1
+        assert r["l1_drifts"] == 0
+        assert r["l3_status"] == "MATCH"
+        assert r["rows_written"] == 0
+        assert r["db_error"] is None
+        assert r["detected_at"]  # UTC ISO8601 在账
+
+    def test_skip_verdict_lands(self, tmp_path: Path):
+        """skip 路径入账（scheduler 分支同款调用形）——没跑出声不蒸发。"""
+        db = tmp_path / "g.db"
+        assert record_recon_run(
+            TRADE_DATE,
+            "skipped_no_artifact",
+            detail="无当日回测产物",
+            db_path=db,
+        )
+        rows = _read_run_rows(db)
+        assert rows[0]["verdict"] == "skipped_no_artifact"
+        assert rows[0]["run_id"] is None
+
+    def test_never_raises_on_bad_db(self, tmp_path: Path):
+        """台账故障永不反噬主流程：坏路径返回 False 不抛（alerter 不抛同款契约）。"""
+        bad = tmp_path / "no_dir" / "x.db"
+        assert record_recon_run(TRADE_DATE, "ran", db_path=bad) is False
+
+
+class TestRunLedgerThreeState:
+    """三态可分：没跑=当日无行｜跑过零差异=ran+rows_written=0｜跑过有差异=rows_written>0。"""
+
+    def test_zero_diff_run_leaves_no_drift_heartbeat(self, env):
+        """全对平（零差异）：差异表 0 行但 run 台账留 no-drift 心跳行（A7 收口）。"""
+        result = _run(
+            env,
+            trade_log=[_bt_trade("600000.SH", "buy", 10.0, 100, "2026-08-21 10:30:00")],
+            sim_fills=[_sim_fill("600000.SH", "10.0", "100", "1001", 30)],
+            sim_holdings={"600000.SH": "100"},
+        )
+        assert result.rows_written == 0
+        assert _read_rows(env["db_path"]) == []  # 差异表仍零行（语义不变）
+        runs = _read_run_rows(env["db_path"])
+        assert len(runs) == 1
+        r = runs[0]
+        assert r["verdict"] == "ran" and r["rows_written"] == 0 and r["db_error"] is None
+        assert r["l1_matched"] == 1 and r["l1_drifts"] == 0
+        assert result.ledger_error is None  # 落账成功无缺陷标记
+        assert result.to_dict()["ledger_error"] is None
+
+    def test_drift_run_rows_written_gt_zero(self, env):
+        """有差异：run 台账 rows_written>0，明细在差异表——与零差异态可分。"""
+        result = _run(
+            env,
+            trade_log=[_bt_trade("600000.SH", "buy", 10.0, 100, "2026-08-21 10:30:00")],
+            sim_fills=[_sim_fill("600000.SH", "10.05", "100", "1001", 30)],
+            sim_holdings={"600000.SH": "100"},
+        )
+        assert result.rows_written == 1
+        runs = _read_run_rows(env["db_path"])
+        assert runs[0]["verdict"] == "ran" and runs[0]["rows_written"] == 1
+
+    def test_rerun_appends_not_overwrites(self, env):
+        """补跑同日再入一行（append-only 台账）——两拍均有痕可查。"""
+        for _ in range(2):
+            _run(
+                env,
+                trade_log=[_bt_trade("600000.SH", "buy", 10.0, 100, "2026-08-21 10:30:00")],
+                sim_fills=[_sim_fill("600000.SH", "10.0", "100", "1001", 30)],
+                sim_holdings={"600000.SH": "100"},
+            )
+        runs = _read_run_rows(env["db_path"])
+        assert len(runs) == 2
+
+    def test_ledger_failure_marks_ledger_error(self, env, monkeypatch):
+        """落账失败不丢对账结果：ledger_error 显性标记（账可查性缺陷不静默蒸发）。"""
+        from zephyr.trading import recon_runner
+
+        monkeypatch.setattr(recon_runner, "record_recon_run", lambda *a, **k: False)
+        result = _run(
+            env,
+            trade_log=[_bt_trade("600000.SH", "buy", 10.0, 100, "2026-08-21 10:30:00")],
+            sim_fills=[_sim_fill("600000.SH", "10.0", "100", "1001", 30)],
+            sim_holdings={"600000.SH": "100"},
+        )
+        assert result.ledger_error is not None
+        assert "落账失败" in result.ledger_error
+        assert result.to_dict()["ledger_error"] == result.ledger_error
+        # 对账结果本身仍有效（零差异判定不受台账故障影响）
+        assert result.db_error is None and result.rows_written == 0
+
+    def test_db_failure_still_ledgers(self, env, tmp_path: Path):
+        """差异落库失败（db_error）当拍 run 台账结果如实入结果体（不静默）。"""
+        bad_db = tmp_path / "nonexistent_dir" / "x.db"
+        _write_artifact(
+            env["artifact_dir"],
+            [_bt_trade("600000.SH", "buy", 10.0, 100, "2026-08-21 10:30:00")],
+        )
+        result = run_daily_reconciliation(
+            trade_date=TRADE_DATE,
+            run_id=RUN_ID,
+            broker=MockBroker([_sim_fill("600000.SH", "10.05", "100", "1001", 30)], {"600000.SH": "100"}),
+            db_path=bad_db,
+            storage_path=env["artifact_dir"],
+        )
+        assert result.db_error is not None
+        # 台账与差异表同库同坏（目录不存在）：双败如实双标记，绝不静默
+        assert result.ledger_error is not None
+        assert _read_run_rows(bad_db) == []  # 表未能建=零行，"没跑成"在 ledger_error 显影

@@ -18,8 +18,11 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
+
+import pytest
 
 import scripts.governance.d3_metadata.batch_creation_tokens as bct
 
@@ -31,6 +34,21 @@ def _load_git_commit():
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
+
+
+@pytest.fixture()
+def guide_sink(tmp_path, monkeypatch):
+    """递送审计 sink 重定向到 tmp（零生产写不变量；绝对路径 join 覆盖 REPO_ROOT 前缀）。"""
+    sink = tmp_path / "audit" / "commit_guidance_deliveries.jsonl"
+    m = _load_git_commit()
+    monkeypatch.setattr(m, "_GUIDE_SINK_REL", str(sink))
+    return m, sink
+
+
+def _read_sink(sink: Path) -> list[dict]:
+    if not sink.exists():
+        return []
+    return [json.loads(line) for line in sink.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 def test_detect_file_types_matrix():
@@ -68,26 +86,69 @@ def test_emit_guide_degrades_fail_open(capsys, monkeypatch):
     assert "commit_navigation_playbook.md" in out
 
 
-def test_git_commit_guide_anchor_hits_gate(capsys):
+def test_git_commit_guide_anchor_hits_gate(guide_sink, capsys):
     """红：CREATE-GUARD 死因文案 → 必须附带指南锚点行。"""
-    m = _load_git_commit()
+    m, sink = guide_sink
     m._print_guide_anchor("CREATE-GUARD fail-closed: 无 creation_token，禁止造第二真源: docs/x.md")
     err = capsys.readouterr().err
     assert "GUIDE: 指路锚点" in err
     assert "CREATE-GUARD" in err
 
 
-def test_git_commit_guide_anchor_silent_on_no_match(capsys):
-    m = _load_git_commit()
+def test_git_commit_guide_sink_records_delivery(guide_sink, capsys):
+    """D11-C02 收口件：GUIDE 递送必须留 jsonl 回执（时间戳×exit 码×命中词条×delivered）。"""
+    m, sink = guide_sink
+    m._print_guide_anchor("CREATE-GUARD fail-closed: 无 creation_token: docs/x.md", exit_code=1, status="COMMIT_FAILED")
+    capsys.readouterr()
+    rows = _read_sink(sink)
+    assert len(rows) == 1
+    r = rows[0]
+    assert r["delivered"] is True
+    assert "CREATE-GUARD" in r["matched"]
+    assert r["exit_code"] == 1
+    assert r["status"] == "COMMIT_FAILED"
+    assert r["ts"]  # UTC 时间戳在账
+
+
+def test_git_commit_guide_sink_records_miss(guide_sink, capsys):
+    """未命中词条（无 GUIDE 行）也留 delivered=false 行——递送 vs 无锚可分。"""
+    m, sink = guide_sink
+    m._print_guide_anchor("某个与门禁无关的普通失败", exit_code=2, status="LOCK_TIMEOUT")
+    err = capsys.readouterr().err
+    assert "GUIDE: 指路锚点" not in err
+    rows = _read_sink(sink)
+    assert len(rows) == 1
+    assert rows[0]["delivered"] is False
+    assert rows[0]["matched"] == []
+
+
+def test_git_commit_guide_sink_fail_open(guide_sink, capsys, tmp_path, monkeypatch):
+    """sink 故障（目录被文件占位）零影响递送主面：不抛、GUIDE 行照出。"""
+    m, sink = guide_sink
+    blocker = tmp_path / "blocker_file"
+    blocker.write_text("x", encoding="utf-8")
+    # 把 sink 指到"文件路径下的子目录"→ mkdir 必败
+    monkeypatch.setattr(m, "_GUIDE_SINK_REL", str(blocker / "audit" / "sink.jsonl"))
+    m._print_guide_anchor("CREATE-GUARD fail-closed: 无 creation_token: docs/x.md", exit_code=1, status="FAILED")
+    err = capsys.readouterr().err
+    assert "GUIDE: 指路锚点" in err  # 递送主面不受 sink 故障影响
+
+
+def test_git_commit_guide_anchor_silent_on_no_match(guide_sink, capsys):
+    m, _sink = guide_sink
     m._print_guide_anchor("某个与门禁无关的普通失败")
     err = capsys.readouterr().err
     assert "GUIDE: 指路锚点" not in err
 
 
 def test_git_commit_guide_anchor_fail_open(capsys, monkeypatch):
-    """源册不可达时静默降级（零输出零异常）。"""
+    """源册不可达时静默降级（零输出零异常零 sink 行）。"""
     m = _load_git_commit()
     monkeypatch.setattr(m, "_DIGEST_REL", "nonexistent/digest.yaml")
+    sink = _REPO / ".runtime" / "audit" / "commit_guidance_deliveries.jsonl"
+    before = sink.stat().st_size if sink.exists() else 0
     m._print_guide_anchor("CREATE-GUARD 某失败")
     captured = capsys.readouterr()
     assert "GUIDE: 指路锚点" not in captured.err
+    after = sink.stat().st_size if sink.exists() else 0
+    assert after == before  # 降级路径零 sink 写（真仓 .runtime 不被测试污染）
