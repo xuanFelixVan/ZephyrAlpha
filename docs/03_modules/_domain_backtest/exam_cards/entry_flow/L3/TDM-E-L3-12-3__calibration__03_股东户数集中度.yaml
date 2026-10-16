@@ -2,8 +2,8 @@ schema_version: '1.0'
 card_id: TDM-E-L3-12-3/calibration/03_股东户数集中度
 node_id: TDM-E-L3-12-3
 family: calibration
-title_zh: "筹码分布·股东户数变化（集中度代理）校准卡"
-hypothesis: "股东户数环比下降（筹码向少数人集中）的个股后续 20 日收益更高，户数变化率截面分位（取负构造）对 20 日前向收益单调正向——这是筹码集中的独立代理口径，可与 chips_winner 交叉验证。"
+title_zh: 筹码分布·股东户数变化（集中度代理）校准卡
+hypothesis: 股东户数环比下降（筹码向少数人集中）的个股后续 20 日收益更高，户数变化率截面分位（取负构造）对 20 日前向收益单调正向——这是筹码集中的独立代理口径，可与 chips_winner 交叉验证。
 window:
   in_sample:
   - '2019-01-04'
@@ -14,31 +14,31 @@ window:
   regimes:
     bull: 2019-01-04..2021-06-30（流动性牛）
     bear: 2021-07-01..2024-01-31（贴现率熊+微盘熊）
-  frozen_note: "看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data"
+  frozen_note: 看数前冻结（作业簿 §二，与既有 20 卡同窗）；窗口禁改，数据不足即 blocked_on_data
 buckets:
-  type: "quantile_decile"
-  'on': "−户数环比变化 截面十分位"
+  type: quantile_decile
+  'on': −户数环比变化 截面十分位
   min_obs_per_bucket: 60
 pillars:
-  response_monotonicity: "十桶中位 20 日前向收益单调（rho>=0.6）"
-  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）"
-  lag_profile: "户数是季频慢变量：主判 t+20，半衰期>=10 交易日；t+1 IC 记 n/a（诚实声明，非门柱放宽）"
-  regime_stability: "牛/熊两段同号且均过 ic_floor"
-  pit_lag_control: "户数只有 announce_date 口径（PIT 必须用公告日而非 end_date 归属日），首跑须同时报两种对齐的 IC 差以证前视风险"
-  cross_check: "与 chips_winner 的截面相关须报出（>0.7=同真源可派生，按 §4 内收判据二者取一）"
+  response_monotonicity: 十桶中位 20 日前向收益单调（rho>=0.6）
+  ic_floor: 日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（机构对标地板，与既有 20 卡同口径）
+  lag_profile: 户数是季频慢变量：主判 t+20，半衰期>=10 交易日；t+1 IC 记 n/a（诚实声明，非门柱放宽）
+  regime_stability: 牛/熊两段同号且均过 ic_floor
+  pit_lag_control: 户数只有 announce_date 口径（PIT 必须用公告日而非 end_date 归属日），首跑须同时报两种对齐的 IC 差以证前视风险
+  cross_check: 与 chips_winner 的截面相关须报出（>0.7=同真源可派生，按 §4 内收判据二者取一）
 target:
-  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
-  secondary: "10 日前向收益"
-  note: "季频 vs 日频两口径互证，防单口径幻觉"
-status: preregistered
+  primary: stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）
+  secondary: 10 日前向收益
+  note: 季频 vs 日频两口径互证，防单口径幻觉
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: st-qoder-p07c-1016-02
+  score_row: exam_scores_v1.yaml#rows[106]
   confidence_writeback: TDM.nodes.TDM-E-L3-12-3.confidence
 preregistered_by: st-nightmine-20261010-L2
 preregistered_at: '2026-10-10'
-discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger"
+discipline: 冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger
 signal_kind: panel
 pillars_numeric:
   mono_spearman_min: 0.6
@@ -48,9 +48,17 @@ pillars_numeric:
   oos_same_sign: true
 oos_window_ref: *id001
 data_binding:
-  signal_table: "c3_fundamental.shareholder_count"
-  signal_column: "holder_count"
-  signal_derivation: "户数变化=ln(holder_count_t/holder_count_prev)，取同符号上一期（按 announce_date 严格 <=T 的最近已公告期）；signal=−变化 截面分位（户数减少=高分）；未公告期一律不填充（禁前视填充）"
-  target_source: "kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts) 去重后按 symbol×trade_date 对齐"
-  universe_rule: "宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol 前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily 的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。"
-  data_window_evidence: "@shc：SELECT toYear(end_date),count(DISTINCT symbol),count() FROM c3_fundamental.shareholder_count WHERE end_date BETWEEN 2019-01-01 AND 2025-09-09 GROUP BY y → 2019=3,804/28,624、2020=4,452/31,729、2021=4,951/36,036、2022=5,352/40,366、2023=5,495/44,266、2024=5,485/49,439、2025=5,492/31,344（全窗季频无断供；表另有 announce_date/actual 语义列与 quality_flag）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov4.py J1 / l2_backend.py）：SELECT toYear(end_date),count(DISTINCT symbol),count() FROM c3_fundamental.shareholder_count WHERE end_date BETWEEN 2019-01-01 AND 2025-09-09 GROUP BY y → 2019=3,804/28,624、2020=4,452/31,729、2021=4,951/36,036、2022=5,352/40,366、2023=5,495/44,266、2024=5,485/49,439、2025=5,492/31,344（季频，全窗无断供）；列含 holder_count/announce_date/end_date/quality_flag。"
+  signal_table: c3_fundamental.shareholder_count
+  signal_column: holder_count
+  signal_derivation: 户数变化=ln(holder_count_t/holder_count_prev)，取同符号上一期（按 announce_date 严格 <=T 的最近已公告期）；signal=−变化 截面分位（户数减少=高分）；未公告期一律不填充（禁前视填充）
+  target_source: kline_daily_hfq：close_t→close_{t+1}/close_{t+2} 按 T+1 可成交口径取 open_{t+1}→close_{t+2}，全面板按 argMax(ingest_ts)
+    去重后按 symbol×trade_date 对齐
+  universe_rule: 宇宙口径写死（禁裸扩）：窗内 stock_basic 无创业板（仅自 2026-08-14）与北交所（仅自 2026-09-15）行，故宇宙由 c1_market.kline_daily 的 exchange+symbol
+    前缀重建（60/00 沪深主板、30 创业板、68 科创板；8/4 开头北交所整段不入窗并显式排除）；ST/*ST 判定用 stk_limit.st_flag 而非 stock_basic.name；上市满 60 交易日=该符号在 kline_daily
+    的首条行情日往后 60 个日历交易日；停牌代理=交易日历有该日而该符号无行情行；退市判定=该符号行情序列终止于窗内且 stock_basic.valid_to 已到。
+  data_window_evidence: '@shc：SELECT toYear(end_date),count(DISTINCT symbol),count() FROM c3_fundamental.shareholder_count
+    WHERE end_date BETWEEN 2019-01-01 AND 2025-09-09 GROUP BY y → 2019=3,804/28,624、2020=4,452/31,729、2021=4,951/36,036、2022=5,352/40,366、2023=5,495/44,266、2024=5,485/49,439、2025=5,492/31,344（全窗季频无断供；表另有
+    announce_date/actual 语义列与 quality_flag）。 ｜命令原文与实测数字（本轮 l2_ch_* 探针，读库通道 scripts/backtest/fexam/ch_data.py）：实测（l2_ch_cov4.py
+    J1 / l2_backend.py）：SELECT toYear(end_date),count(DISTINCT symbol),count() FROM c3_fundamental.shareholder_count WHERE
+    end_date BETWEEN 2019-01-01 AND 2025-09-09 GROUP BY y → 2019=3,804/28,624、2020=4,452/31,729、2021=4,951/36,036、2022=5,352/40,366、2023=5,495/44,266、2024=5,485/49,439、2025=5,492/31,344（季频，全窗无断供）；列含
+    holder_count/announce_date/end_date/quality_flag。'
