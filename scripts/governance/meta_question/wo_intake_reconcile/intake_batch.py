@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/chain_piling_campaign/infra_mining/10_intake_gate_design.md | §5.1 限流三参数+§7.1 校验顺序+§7.3 审计事件
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/04_research_records/data/chain_piling_campaign/infra_mining/10_intake_gate_design.md | §5.1 限流三参数+§7.1 校验顺序+§7.3 审计事件
 # [MODULE] scripts.governance.meta_question.wo001_003.intake_batch
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.meta_question.meta_question_registry（MetaQuestionRegistry=登记唯一写入口+五要素机检真检判定复用，禁在本件复刻判据）;
@@ -17,7 +17,7 @@
 #              五要素判定复用 registry._check_five_elements（本件不自建判据，防 extract 级克隆）；
 #              零越界：只产 registered 态，禁 transition/禁考试回写（那是《13 考试回填闭环》/B1 writeback 的地盘）；
 #              批 YAML 契约=W6 批次快照同构（batch_id/session/generated_date/count/questions[]），禁另立格式
-# [MODIFY-GUARD] docs/_working/chain_piling_campaign/infra_mining/10_intake_gate_design.md §5/§7（改限流或校验顺序先改设计稿+裁定）
+# [MODIFY-GUARD] docs/04_research_records/data/chain_piling_campaign/infra_mining/10_intake_gate_design.md §5/§7（改限流或校验顺序先改设计稿+裁定）
 # [STABILITY] new
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

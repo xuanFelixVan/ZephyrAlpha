@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # [TTL] task_bound
 # [STARTUP] on_demand: 施工/审计/落地窗口手工跑；升 gate 后由 commit 门禁按 own-diff 触发（本尺自身不注册 gate）
-# [CONSUMERS] docs/_working/total_command_closeout/wave1a/dead_store_triage.md §3（违规清单）; 后续 W-180.2 gate 注册时的判据函数原型; tests/governance/test_wave1a_query_shape_ruler.py
+# [CONSUMERS] docs/_archive/_working_cleared/total_command_closeout/wave1a/dead_store_triage.md §3（违规清单）; 后续 W-180.2 gate 注册时的判据函数原型; tests/governance/test_wave1a_query_shape_ruler.py
 # [MODULE] module_id=MOD-GOV-wave1a-ch_read_shape_ruler | layer=script | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [DOMAIN] D_GOV_CODE_QUALITY

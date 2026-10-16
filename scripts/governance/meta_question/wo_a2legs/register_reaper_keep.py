@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-R0 | docs/_working/meta_question_answers/01_phase2_plan.md §数据施工需求清单
+# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-R0 | docs/_archive/_working_cleared/meta_question_answers/01_phase2_plan.md §数据施工需求清单
 # [MODULE] scripts.governance.meta_question.wo_a2legs.register_reaper_keep
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.shared.io.file_utils.safe_write_text + content_sha256（热文件 CAS 读改写，RULE-13）

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/chain_piling_campaign/infra_mining/20_management_policy.md | §2.2 差集仲裁（pg_only→回放补账）+ §4 频率表 #6
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/04_research_records/data/chain_piling_campaign/infra_mining/20_management_policy.md | §2.2 差集仲裁（pg_only→回放补账）+ §4 频率表 #6
 # [MODULE] scripts.governance.meta_question.wo001_003.replay_audit_to_jsonl
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection, read_only=True 唯一读通道);
@@ -17,7 +17,7 @@
 #              when=PG created_at 的 UTC isoformat（禁 now_utc() 重取——重取即造新时点，逐日窗对不上）；
 #              what 越 AUDIT_WHAT_VOCAB 的行一律拒放并计 finding；read 事件不入（20§2.2：read 仅 JSONL 侧，PG 无此行）；
 #              PG 读失败=fail-closed 退出 2，零写入零半成品
-# [MODIFY-GUARD] docs/_working/chain_piling_campaign/infra_mining/20_management_policy.md §2 + scripts/governance/check_meta_question_audit_reconcile.py（键口径真源，改一边必改另一边）
+# [MODIFY-GUARD] docs/04_research_records/data/chain_piling_campaign/infra_mining/20_management_policy.md §2 + scripts/governance/check_meta_question_audit_reconcile.py（键口径真源，改一边必改另一边）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

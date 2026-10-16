@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-METAQ-EXAMLOOP | docs/_working/chain_piling_campaign/infra_mining/13_exam_backfill_loop_design.md | §1.2 六查 / §3 复考周期 / §7 P1-P7 提案（未过评审=台账降级实现）
+# [BLUEPRINT] MOD-METAQ-EXAMLOOP | docs/04_research_records/data/chain_piling_campaign/infra_mining/13_exam_backfill_loop_design.md | §1.2 六查 / §3 复考周期 / §7 P1-P7 提案（未过评审=台账降级实现）
 # [MODULE] scripts.governance.meta_question.wo_b1_examloop.run_exam_loop
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] src/zephyr/governance/meta_question/meta_question_registry.py（冻结件，只 import 不改：连接注入/审计双轨真源）; src/zephyr/governance/meta_question/exam_loop/*（本簇四件：event_codes/exam_plan/reexam_scheduler/ledger）
@@ -12,7 +12,7 @@
 #              题面原文零改写：threshold/criterion/method 原值保留，只追加机解投影与 plan_version；
 #              幂等：已带 plan_version 且机解一致者跳过（重跑零写）；
 #              终态与退役问不进复考台账（13§4.3），对账器禁 sleep-loop/cron（宪法§9.3），本件只按需触发
-# [MODIFY-GUARD] docs/_working/chain_piling_campaign/infra_mining/13_exam_backfill_loop_design.md §1.2/§3（改判据先改设计稿）
+# [MODIFY-GUARD] docs/04_research_records/data/chain_piling_campaign/infra_mining/13_exam_backfill_loop_design.md §1.2/§3（改判据先改设计稿）
 # [STABILITY] new
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

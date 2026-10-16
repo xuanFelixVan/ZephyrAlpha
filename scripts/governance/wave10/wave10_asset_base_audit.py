@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-GOV-WAVE10-ASSET-BASE-AUDIT | docs/_working/total_command_closeout/wave10/wave10_base_audit_and_ga_wiring.md
+# [BLUEPRINT] MOD-GOV-WAVE10-ASSET-BASE-AUDIT | docs/_archive/_working_cleared/total_command_closeout/wave10/wave10_base_audit_and_ga_wiring.md
 # [MODULE] scripts.governance.wave10.wave10_asset_base_audit
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] stdlib(ast/re/subprocess/pathlib/collections); pyyaml(仅输出序列化); git CLI(只读 ls-tree/diff)
-# [CONSUMERS] docs/_working/total_command_closeout/wave10/wave10_base_audit_and_ga_wiring.md §1 底数表; 波10 G-A.1 盘点表; 总包排产判据（人工/编排调用，无自动触发）
+# [CONSUMERS] docs/_archive/_working_cleared/total_command_closeout/wave10/wave10_base_audit_and_ga_wiring.md §1 底数表; 波10 G-A.1 盘点表; 总包排产判据（人工/编排调用，无自动触发）
 # [STARTUP] manual
 #   （原值 standalone_only——GATE-VOCAB 词表归正 manual）
 # [MATURITY] experimental

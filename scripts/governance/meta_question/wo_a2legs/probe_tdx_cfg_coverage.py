@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-P2 | docs/_working/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0013/0063)
+# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-P2 | docs/_archive/_working_cleared/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0013/0063)
 # [MODULE] scripts.governance.meta_question.wo_a2legs.probe_tdx_cfg_coverage
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] 本地通达信客户端主数据文件 (E:/tdx/T0002/hq_cache/*.cfg); zephyr.infrastructure.database_service (reader)

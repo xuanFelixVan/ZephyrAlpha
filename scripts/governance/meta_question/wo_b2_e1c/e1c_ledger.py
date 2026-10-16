@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/chain_piling_campaign/infra_mining/11_template_generator_design.md §6（N_eff 塌缩防线·组合空间预注册）
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/04_research_records/data/chain_piling_campaign/infra_mining/11_template_generator_design.md §6（N_eff 塌缩防线·组合空间预注册）
 # [MODULE] scripts.governance.meta_question.wo_b2_e1c.e1c_ledger
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.depgraph_schema.get_depgraph_pg_connection (read_only=False 合法架构写通道);

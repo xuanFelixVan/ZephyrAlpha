@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/chain_piling_campaign/infra_mining/13_exam_backfill_loop_design.md §1.1(断言段 pit_assertion) + 工单 WO-B3
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/04_research_records/data/chain_piling_campaign/infra_mining/13_exam_backfill_loop_design.md §1.1(断言段 pit_assertion) + 工单 WO-B3
 # [MODULE] scripts.governance.meta_question.wo_b3_macro.macro_vintage
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.data.macro_vintage（唯一真源，scripts 侧不可直接 import 先例同 tests：本地 sys.path 引导）

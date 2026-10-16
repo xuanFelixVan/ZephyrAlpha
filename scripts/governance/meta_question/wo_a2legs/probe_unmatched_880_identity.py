@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-P3 | docs/_working/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0063)
+# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-P3 | docs/_archive/_working_cleared/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0063)
 # [MODULE] scripts.governance.meta_question.wo_a2legs.probe_unmatched_880_identity
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.infrastructure.database_service (reader)

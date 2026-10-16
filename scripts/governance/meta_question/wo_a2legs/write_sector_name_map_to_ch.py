@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-W1 | docs/_working/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0013/0063)
+# [BLUEPRINT] MOD-METAQ-WO-A2LEGS-W1 | docs/_archive/_working_cleared/meta_question_answers/01_phase2_plan.md §数据施工需求清单(PQ-0013/0063)
 # [MODULE] scripts.governance.meta_question.wo_a2legs.write_sector_name_map_to_ch
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] data/registers/metaq_sector_name/sector_code_name_registry.yaml (真源册);
