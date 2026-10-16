@@ -859,3 +859,75 @@ WO-07 | exit_flow\X1\TDM-X-R1__shadow__02_拔电源影子运行对照
 - ⑧**零 worktree 确认**＝`git worktree list` 含本席 sid 实测 0 行・`.aidrafts/st-qoder-p07c-1017-02` 存在性＝False⇒本班未调用任何工棚/工作树入口（TRAE-079 Phase 2 遵令）；历史遗留整树一枚未动，交 ⑩/清理专班。
 - **分数册三面（收班同帧复量）**＝disk 110 行／HEAD 110 行／本班写入 0 行⇒本班零动作；台账当前盘面 773 行。
 - **本班袋申明**＝本班只投一袋（§一—§十），袋终态若未达 done，本班不加投第二袋（在册两难＝同会话后袋在前袋落地后必判双侧皆改而死＋每调一次网关各代起一枚心跳＝收班② 递归无出口）；本班写作时刻之后的尾巴由下班袋承接，下班领面以**盘面**为权威。
+## ⑦考工C 班次 1017-03（st-qoder-p07c-1017-03）｜起手 03:50:15・CH 禁跑窗 01:00–04:00 与本班前 10 分重叠、04:00 后开闸・本班出分 1 张（保底双口径均未达，如实呈报）・零改判据/门柱/冻结值・零 worktree・零子代理
+
+### 一、冷启动与交班四查（date 现测，磁盘面为准）
+
+- python 3.12.8；`lock_files.py cleanup`＝CLEAN 无死锁；reaper 03:50:35 实测 source=live・last_run=03:50:25・killed=0 reported=7・degraded False・commit_pct 77.35・ram_used 71.1%・cpu 63.9%・stash_count 27・worktree_changes 1524・dead_archive ok=False rc=1（serializer 租约 pid=47508 存活）⇒ 允许写。
+- 班号三面并集自证（在册教训＝只数台账会撞鬼班）：台账面 1017 现有 01・02；tmp 面 `p07c_1017_02` 存在、`p07c_1017_03` 本班新建；心跳面本班起手时 `heartbeat_st-qoder-p07c-1017-03.pid` 不存在 ⇒ 本班＝**1017-03** 唯一。
+- 上班 1017-02 袋终态实测＝`commit_queue status --session st-qoder-p07c-1017-02` 回显 state=done・landed_id=0041d793b5d7349c7ceb05c3448f6fe89b52540c ⇒ 上班台账已落地，本席台账盘面 861 行＝HEAD 861 行。
+- 上班 §九 开闸工单（首八枚）本班逐条复量：装置依赖四枚（WO-03/04/05/07）本班未领；**WO-00/WO-01/WO-06 三枚本班实测全部落在"卡面 primary 是多日前向面且未成对申报"堵面**（§六 第 1 枚），照领会写方向错误读数 ⇒ 未领；WO-02 需 l2_tick/tick_depth_5 重面，本班窗内未领。
+- 上班首查三件回批：① 本班袋终态见 §八；② 上班尾巴面是否被本班带走＝本班袋只含本席 `_working` 两件＋本席翻过的一枚卡，不含分数册（理由见 §八 袋申明）；③ 04:00 开闸后 prereg 面值与供数覆盖＝本班已复量（§二）并按窗与列判据实测 research_report／money_flow 两表（§四・§五）。
+
+### 二、分母实测（本班尺 03:57:46 现测，磁盘面为准）
+
+- 四族 yaml **609** 件；六态加总自证＝preregistered **163**／empty 240／blocked_on_impl 48／blocked_on_data 71／examined 87 → 163+240+48+71+87＝609 ✓。
+- prereg **163**（上班在册 162，面值移动 +1）；kind 分面＝panel 80／series 83；绑定层 `classify_card` 面＝C 113／U 27／B 14／A? 7／A 2（加总 163 ✓，D 0）。
+- 分数册三面（04:19:49 现测）＝磁盘 **113** 行／HEAD **110** 行／index 面含他会话在途册件；本班写入 1 行（rows[110]），⑦A 席 1017-02 班同期写入 rows[111]（L2-02-2/02）・rows[112] 共 2 行**未落地** ⇒ 盘面-HEAD 差 3 行由两席分别持有，本班不代落他人字节（§八 袋申明）。
+- **本班一把尺的空转如实登记**：survey.py 的 route 面取 `card_binding.pillars_route` ⇒ 该符号在 card_binding 内 0 命中（真源在 `calibration_exam.pillars_route`），本班 `hasattr` 兜底使 route_census 全为 None＝**尺缺字段，不是面值真为 None**；本班未据该面下任何结论，正解＝单口取真源不写兜底缺省。
+- 断供避让按"窗与列"判、禁按表名命中判（复量上班在册纪律）：`c3_fundamental.research_report` 实测 publish_date 2017-01-02..2026-10-14・rows 294,066・uniqExact(symbol) 4,711 ⇒ 该表在挂 open 缺口的名义下仍有源，L2-09/03 的堵点不在数据而在卡面口径（§五 第 6 枚）。
+
+### 三、本班主产出＝一枚真实入册分（落笔前自证：全册 113 行中 run_id 带 `p07c` 前缀者＝1，即本班这枚；HEAD 面 0）
+
+- 卡＝`docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9/TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml`；run_id＝`p07c-1017-03-l9-a01-03`；分数册 rows[110]（盘 110→111）。
+- 双腿＝卡面逐字自物化：signal＝RV=Σ_i(1min 对数收益²) 按 symbol×日聚合后**当日横截面 rank_pct**（卡面 deriv 原文）；target＝`c1_market.kline_daily_hfq` close→t 日实现收益（执行器 `_panel_metrics` 内部 shift(-1) 配对＝卡面 primary `next_day_stock_return`）；卡面 `fallback_table=kline_60min` 属"须卡外声明降精"面，本席不自批降级 ⇒ 只用 1min。
+- 取数＝CH 服务端聚合（`groupArray(tuple(trade_time,close))`＋`arraySort`＋`arrayMap` 一次算完，零逐日 `.loc`）；预量实测单月切片 19 交易日 84,755 行 0.8 秒，整窗分四段年拉无超时；判分面形状 894×5,602、信号非空 4,398,604 格、ic_days 893、日均配对名数 4,914.4、最小 0（末日无 t+1 配对）。
+- 读数：ic_mean **−0.0639176**／ic_ir **−0.461335**／oos_ic −0.0603619／n 893／regime_ic bull −0.0697432・bear −0.0675592・recovery −0.0591563（三段同号负）。
+- verdict＝**fail**；fails 两条逐字＝`ic_mean -0.0639 < 0.02`／`ic_ir -0.461 < 0.3`；unjudged 面＝mono_spearman 无面（panel 路恒 None）＋散文柱 five 条（half_life_note/ic_floor/lag_profile/regime_stability/response_monotonicity）。
+- 纯加与落盘自证：difflib **minus=0**／plus=36／rows 110→111；CAS promote written=True・before_sha a9532fceb0899c94・after_sha d2bba893ea2fdb2d・equals_staging=True；卡由 `run_card` 本体翻 status=examined 并写 lineage.run_id＋score_row=`exam_scores_v1.yaml#rows[110]`（本席未手写卡面 status，亦未前置翻 examining）。
+- 本枚实耗＝**2 分 34 秒**（04:06:47→04:09:52 同帧现测，含占卡/双腿/判分/promote）。
+- **一条方向性发现（本席不裁，呈 ⑥/⑨）**：本枚实测三段同号负 IC＝卡面 hypothesis 自己预期的方向（"高 RV→不确定性抬升→次日折价（负 IC）"），而卡面 `pillars_numeric.ic_mean_min: 0.02` 是**正地板**、散文柱 `ic_floor` 写的是"均值**绝对值** >= 0.02"⇒ 同一张卡内数值柱与散文柱方向互斥，执行器按数值柱判，方向正确的读数被记 fail。同族第二例＝上班游标在册的 `TDM-P-P1-04/calibration/04`（冻负地板）；本席不改判据，只报两柱原文与实读数。
+
+### 四、本班第二枚尝试＝活跑坐实残留崩面＋一处本席尺错自纠（零副作用）
+
+- 卡＝`entry_flow/L9/TDM-E-L9-A06__calibration__02_主力净流入截面.yaml`；error＝`DateParseError: Unknown datetime string format, unable to parse: 2019-2021H1 牛段 money_flow 无数据…`（与 ⑦A 1016-03 那次同源）。
+- 副作用面 04:14:20 复量＝卡 status 前后均 **preregistered**・lineage 三键均 null・分数册零动作、卡锁已 RELEASED ⇒ 崩在判分之前；本席"不前置翻 examining"的工序选择避免了 ⑦A 1016-03 留下的孤儿 examining 形态（上班游标首查④项同源）。
+- 与 ⑦B/p08-1017-04 [BLOCKER]（"恰一枚 ISO 日期"那一支 CRASH 而不拦）＝**两把独立尺同判**（彼＝三态探针，彼＝读码；本＝活跑）；⑤ 今日 commit e7dada4fe5 自述"把 13 枚卡的装载崩根治成诚实不可考行"的实测覆盖面＝**零枚日期**支（本班另测 iso=0 面 prereg 8 枚），非"≤一枚"支。
+- 本班自尺面积（04:21:10 现测）＝prereg 按 regimes 最小 ISO 日期枚数分面：≥2 枚 **147**／恰 1 枚 **5**／0 枚 **8**；**恰一枚 5 枚与 ⑦B 在册 prereg 5 枚逐值相等**（两席独立同判）；**加总 160 ≠ 163，差 3 枚＝本班这把尺未覆盖（no_regimes 计数 0 而差仍存）**，本席不补判、如实留差，下班若要该面请先把尺补全（可能是 window 缺段或解析异常件）。
+- **本席一处判案错（另起留旧案不涂）**：04:11:15 本班曾以 `_span_pairs(card.regimes)` 返回 2 枚 span 判"⑤ 腿已生效⇒L9-A06 可考"并据此起批——活跑证伪。根因＝`_span_pairs` 不是崩点消费面（崩在 `_in_spans` 遍历 `regimes.items()` 无键名过滤），且本班那次探针自身参数序写错抛 TypeError，被本班误当成"无异常"证据链的一节。正解＝判崩面只认活跑或消费点探针，**存在性/局部函数返回≠内容判据**（在册红线复现，本席自犯第 N 次登记）。
+- 该卡另有第二重不可考＝数据面无源：`c1_market.money_flow` 判分窗 2021-01-04..2025-09-09 实测 5,509,521 行中 **pct_change 非空非零 0・close 非空 0**（main_net_inflow_pct 5,495,405・super_large_net_inflow_pct 4,129,051）⇒ 卡面申报的 OLS 回归元在申报表内取不到，本席实跑 resid 非空格＝**0**；本席不自拟替代价源（那等于把卡面冻结的回归式换到另一张表的构造），转 ⑥/①（§六 第 3 枚）。
+
+### 五、本班可跑面穷尽审计＝严格可跑 7 枚，逐枚堵因具名（下班勿再逐枚烧窗）
+
+尺（本班自设五谓词，全部可从卡面复核）＝primary 命中 `next_day` ∧ 不命中多日词 ∧ 全部 regime 值 ISO≥2 枚 ∧ 桶名在执行器 8 词表内 ∧ data_binding 有可算式 ∧ 不挂"两路合成分/共用重算" ⇒ **7 枚**（含本班已烧的 L9-A01/03）：
+
+1. `entry_flow/L0/TDM-E-L0-02__calibration__03_偏离幅度分位响应曲线`＝需 kline_etf_1min 盘中实际暴露代理＋盘前边界（组合层构造），非纯列面；
+2. `entry_flow/L1/TDM-E-L1-AGG__calibration__03_子信号族到状态轴传导保真度`＝**主柱对象被换**：卡面 `numeric_face_mapping_note` 冻结 mono＝(三腿合成分秩, AGG 状态档序秩)，而执行器 series 路 mono＝分桶×前向收益中位单调 ⇒ 出分即非卡面命题；
+3. `entry_flow/L2/TDM-E-L2-01-2__calibration__02_板块成交额占比活跃度`＝其 "series 面"定义本身含 t+1 收益（"占比前 10% 板块等权组合的次日超额与全样本差"），作信号＝前视；
+4. `entry_flow/L2/TDM-E-L2-05-1__calibration__02_水温档读数与月级封顶`＝"月级允许上限"表卡面只钉死"熊市反弹→降为温"一条，余 6 态上限＝考工自批；
+5. `entry_flow/L2/TDM-E-L2-07-1__calibration__03_死常量两腿_结构破坏与超窗横盘`＝卡面自相矛盾：`signal_kind: panel` 而 primary 注"series 面，执行器 shift(-1) 现器可考"、buckets.on＝板块×日的 S（panel 主对象）⇒ panel 路要 panel 目标，本席无合法单列注法，转 ⑥ 定形；
+6. `entry_flow/L2/TDM-E-L2-09__calibration__03_评级上调聚集`＝"series=行业**加权**均值"（deriv）与"市场级取行业**均值**"（buckets.on）两措辞互斥且权重未定；卡面另自注行业宇宙漂移须登记名单版本；
+7. `entry_flow/L9/TDM-E-L9-A10__calibration__02_全球风险隔夜传导`＝"signal＝日变化率**或** z-score(60 日)"二选一未钉＋五指标合面权重未定。
+
+⇒ **下班勿把这 6 枚当可考面领**；每一枚要出分都得考工席自定一处卡面未钉口径＝往永久册写假陈述。另：多日前向面 20 枚见 §六 第 1 枚闸口；恰一日期面 5 枚见 §四。
+
+### 六、[BLOCKER] 登记（本班 5 枚：高 2／中 3）
+
+- [BLOCKER] 2026-10-17|⑦c席1017-03|判据缺失|执行器对"卡面 primary 是多日前向面且未成对申报 target_forward_face+target_horizon_days"的卡**静默退化成次日面出分且分数行零披露**＝`_forward_face` 现读 face=="" ∧ hraw is None ⇒ return (1, False)，非次日面的读数被当成卡面主柱成绩写进永久分数册；面积实测＝prereg 163 枚中 primary/target_source 命中多日前向词 **20 枚**、其中成对申报 **0 枚**；上班 §九 工单 WO-00/WO-01/WO-06 三枚全落该面（本席据此未领，照领即写方向错误读数）|尺面 `.runtime/tmp/p07c_1017_03/survey.json` 的 all[].primary＋data_binding 逐枚正则读数（多日 20／申报 0）与代码锚 `scripts/backtest/fexam/calibration_exam.py` `_forward_face` 缺省退 1 一支・`_series_metrics` shift(-1)・`_panel_metrics` shift(-1)|⑤＝把"primary 含多日词且未成对申报"改成像非在册 face 那样 `_ToolError` 拒出分（＝改喂闸的输入形态，不弱化闸、不加白名单、不开新豁免）；⑥＝该 20 枚补成对申报位；⑨/⑩＝补位前禁任何考工席领多日卡|高
+- [BLOCKER] 2026-10-17|⑦c席1017-03|工具缺陷|⑤ 今日 e7dada4fe5"regimes 诚实行"腿的实测覆盖面窄于自述＝"恰一枚 ISO 日期"那一支本席**活跑**仍 DateParseError（卡 L9-A06/calibration/02，错误串与 ⑦A 1016-03 同源），消费点 `_series_metrics`/`_panel_metrics` 遍历 `regimes.items()` 无键名过滤；与 ⑦B/p08-1017-04 三态探针同判＝两把独立尺同判；本席自尺面积＝prereg 面 ≥2 枚 147／恰 1 枚 5／0 枚 8，其中"恰 1 枚＝5"与 ⑦B 在册 prereg 5 枚逐值相等|本班 run.json L9-A06 条 error 字段逐字＋卡 status/lineage 04:14:20 复量（preregistered・三键 null＝零副作用）＋`.runtime/tmp/p07c_1017_03/iso_face.json`|⑤＝把拦条件从"零枚"改成"<两枚且整串非纯日期"，或对注记类键名（*_note）不入段——属实现面 fail-fast，不动判据；⑦c/⑦A 两席在飞领面序在修前均避开该 5 枚|高
+- [BLOCKER] 2026-10-17|⑦c席1017-03|数据问题|卡 L9-A06/calibration/02 的两个回归元在申报 signal_table 内无源＝`c1_market.money_flow` 判分窗 2021-01-04..2025-09-09 实测 5,509,521 行中 pct_change 非空非零 **0**・close 非空 **0**（main_net_inflow_pct 5,495,405・super_large_net_inflow_pct 4,129,051 有源）⇒ 卡面 OLS(main_net_inflow_pct ~ pct_change+20 日动量) 按申报表取不出残差（本席实跑 resid 非空格＝0）；⑦A 1016-03 同形制装配器当年崩在 regimes 之前，故该缺源面从未暴露|CH 实测三列 countIf 读数（04:14:20 现测）＋本班 run.json L9-A06 legs 行 resid_cells=0|⑥＝该卡把回归元显式绑到含该列的表或改 signal_table；①＝money_flow 的 pct_change/close 两列是否属采集缺口（可补则该卡恢复原申报）|中
+- [BLOCKER] 2026-10-17|⑦c席1017-03|流程问题|指令卡占卡工序原文 `lock_files.py acquire <卡路径> <sid>` 两参数形态互斥实测 **0 秒**＝锁按 acquire 那次 CLI 瞬时 PID 判活、命令一退即 stale，他席 acquire 或 `cleanup` 都能静默回收在岗席的锁；本席按内存 claim-mutex-zero-window 补 `--session <sid>` 后实测回显"会话绑定: st-qoder-p07c-1017-03（裁定#252）"；全线八张自动化指令卡仍是不带旗形态|`scripts/lock_files.py` acquire 支现读（`bind_session = _parse_opt(args, "--session")` 只有给旗才写 session_id）＋本班 run.json 两次 lock.out 逐字对照|⑩＝更新考工 A/B/C 三席指令面与 SOP §3⑦ 占卡工序为"三参数＋--session"；本席未改判据亦未自建永久工具件（净零增长）|中
+- [BLOCKER] 2026-10-17|⑦c席1017-03|工具缺陷|`lock_files.py acquire` 收到非仓根可解析路径时报"NAMING VIOLATION 命名不合规（N-01 连续大写字母／N-13 非 snake_case）"而非"路径查无"＝把考工引向"给在册合规卡改中文名/改名"方向（＝资产破坏向量）；本席首跑传卡目录相对面即中招，被拒对象正是 `TDM-E-L9-A01__calibration__03_分钟已实现波动.yaml` 这种在册合规命名件，改仓相对全路径后同一把锁立即 ACQUIRED|本席 tmp run.json 04:06:54 那次 lock.out 逐字＋04:07 手动全路径 ACQUIRED 对照＋04:09 活跑成功|⑤＝命名闸前先判路径可解析性，查无路径报 PATH-NOT-FOUND 类错误码，禁把路径问题升格成命名问题；本席不改工具|中
+
+### 七、为何本班不硬凑到 8 枚（承重证据，非态度陈述）
+
+- 保底口径＝出分 1＜8 且未跑满 4 小时（班限 90 分）⇒ **双口径均未达，如实呈报**。
+- 面积账：prereg 163＝可忠实消费且本班已烧 **1**／严格可跑但卡面口径未钉 6／多日静默退化面 20／恰一日期崩面 5／零日期（⑤ 新腿可出诚实 blocked 行）8／其余 123＝C 类目标面（`target_face_not_index_next_day` 族）与装置依赖面，前四班已逐形制定性、本班复量面值未动。
+- 那 6 枚若强出分，每枚都要考工自定一处卡面未钉的口径（权重/上限表/主柱对象/前视面定义）＝往永久分数册写假陈述；本席在册红线（考工自制册格＝自批勿越）禁之。
+- GPU：本班**未 acquire**，且实测 `run_card` 出分行**无 device 字段**（`device_ledger` 只在 `conditional_exam.py:515`／`ic_exam.py:249,447`／`strategy_exam.py:333` 三条批量路存在）⇒ 指令卡"[⑦-新] device_ledger 记实际用芯"对考工 run_card 路不成立；本班收班⑥按"未 acquire＋无 ledger 落点"如实登记，**不申报用芯**，禁把回退报成 GPU 读数。
+
+### 八、本班实耗与收班读数（同帧现测）
+
+- 起手 2026-10-17 03:50:15（首条冷启动命令 date）→ §八 落笔现测见打印面；本班唯一出分枚实耗 2 分 34 秒，另第二枚尝试（崩面活跑）1 分 37 秒含双腿装载。
+- 本班袋申明＝只投一袋，件面只含 `docs/_working/automation_campaign/p07c_examiner_c/ledger.md`・`checkpoint.md` 与本席翻过的 `entry_flow/L9/TDM-E-L9-A01__calibration__03_*.yaml`；**不含分数册**＝分数册盘面 113 行含 ⑦A 席 1017-02 班未落地的 rows[111]・rows[112] 两行，随袋即归属篡改（在册红线）；后果与待办如实登记＝本卡 lineage.score_row=rows[110] 在 HEAD 册面暂为悬指，待持册者落地即闭合，本席不代落、不自 drain、不 requeue 他人袋。
+- 纪律面＝本班未建 worktree（TRAE-079 Phase 2）・未动他席指令面・未 requeue 任何死袋・未代复位孤儿卡・未 release 他会话 claim・未动判据/门柱/冻结值/桶数・分数册 only-add 一行且纯加自证 minus=0。

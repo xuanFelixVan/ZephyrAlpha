@@ -3,9 +3,8 @@ card_id: TDM-E-L9-A01/calibration/03_分钟已实现波动
 node_id: TDM-E-L9-A01
 family: calibration
 title_zh: 源线·日线/分钟行情·分钟已实现波动与日内偏度校准卡
-hypothesis: 由 1 分钟 K 线构造的当日已实现波动（RV）与日内收益偏度对次日个股收益有横截面预测力：
-  高 RV=不确定性抬升→次日折价（负 IC）；负偏度（跳水型日内）在散户主导盘里对次日额外为负。
-  IS 段只能取 2022 年起（kline_1min 自 2021-09-01），与本战役统一 IS 起点不同，故本卡自带窄窗并声明。
+hypothesis: 由 1 分钟 K 线构造的当日已实现波动（RV）与日内收益偏度对次日个股收益有横截面预测力： 高 RV=不确定性抬升→次日折价（负 IC）；负偏度（跳水型日内）在散户主导盘里对次日额外为负。 IS 段只能取 2022 年起（kline_1min
+  自 2021-09-01），与本战役统一 IS 起点不同，故本卡自带窄窗并声明。
 window:
   in_sample:
   - '2022-01-04'
@@ -32,11 +31,11 @@ target:
   primary: next_day_stock_return（个股次日 hfq 收盘收益）
   secondary: next_day_return_reversal_of_intraday（日内偏度分组下的次日反转幅度）
   note: A01 决策问题的"分钟面"分支；与 02 卡（日线动量）互补不重复
-status: preregistered
+status: examined
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: p07c-1017-03-l9-a01-03
+  score_row: exam_scores_v1.yaml#rows[110]
   confidence_writeback: TDM.nodes.TDM-E-L9-A01.confidence
 preregistered_by: st-nightmine-20261010-L7
 preregistered_at: '2026-10-10'
@@ -52,17 +51,12 @@ oos_window_ref: *id001
 data_binding:
   signal_table: c1_market.kline_1min
   signal_column: close
-  signal_derivation: RV_t = sum_i r_{t,i}^2（日内 240 根 1min 对数收益平方和）；日内偏度
-    = skew(r_{t,i})；按 symbol×trade_date 聚合后横截面 rank_pct
+  signal_derivation: RV_t = sum_i r_{t,i}^2（日内 240 根 1min 对数收益平方和）；日内偏度 = skew(r_{t,i})；按 symbol×trade_date 聚合后横截面 rank_pct
   fallback_table: c1_market.kline_60min（1min 资源不可承受时的 5 根小时线近似，须卡外声明降精）
   target_source: kline_daily_hfq close→next_day_return（与 02 卡同 target，禁各自改口径）
-  data_window_evidence: |
-    命令原文：
-      python -c "
-      import sys; sys.path.insert(0,'scripts/backtest')
-      from fexam.ch_data import ch_query_df
-      r=ch_query_df(\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date) FROM c1_market.kline_1min\")"
-    实测：trade_date 2021-09-01..2026-10-09 rows=1493285247 days=1233
-    对照：c1_market.kline_60min trade_date 2021-09-01..2026-10-09 rows=24750376 days=1233
-    ⇒ 1min 起 2021-09-01，早于此无任何日内数据（IS 起点必须内缩至 2022-01-04，已写进 window）。
+  data_window_evidence: "命令原文：\n  python -c \"\n  import sys; sys.path.insert(0,'scripts/backtest')\n  from fexam.ch_data\
+    \ import ch_query_df\n  r=ch_query_df(\\\"SELECT min(toString(trade_date)),max(toString(trade_date)),count(),uniq(trade_date)\
+    \ FROM c1_market.kline_1min\\\")\"\n实测：trade_date 2021-09-01..2026-10-09 rows=1493285247 days=1233\n对照：c1_market.kline_60min\
+    \ trade_date 2021-09-01..2026-10-09 rows=24750376 days=1233\n⇒ 1min 起 2021-09-01，早于此无任何日内数据（IS 起点必须内缩至 2022-01-04，已写进\
+    \ window）。\n"
   readiness: IS 段约 480 交易日 × 全市场，样本充分；regime 牛段不可用（已如实声明并改两段）
