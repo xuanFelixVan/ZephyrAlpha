@@ -49,3 +49,41 @@ title: ⑫后勤席·输入清单与写域
 | keepalive grant 的 `daemon_pid` 记写手进程而非守护 | **⑫1016-03 首载**＝本席 grant 落 `daemon_pid=48512`（13:23:46 现测已 NoSuchProcess），真 keeper＝39932 在跑 | 待下班复量 | 转⑤席定字段语义（改记守护 pid 或更名 `writer_pid`）；收班②"守护 pid 唯一来源＝heartbeat.jsonl 末行"须⑩写进通令；本席不改码 |
 | `dead-archive` 归档袋目录无互斥＋`dead/` 内非袋异形件 | **⑫1016-03 首载**＝本席 13:29:36–37 限 3 席 8 枚与并发第二跑 13:30:04–07 全量 84 枚同写 `dead_archive_20261016/manifest.jsonl`（92 行、qid 零重复）；异形件 `_recurrence_state.json`（572460 字节）使 `len(dead/*.json)` 恒比 `health.counts.dead` 大 1 | 同班复量同值（13:33 与 13:35 两读一致） | 转⑤席给归档袋加锁或按 sid 分目录并把非袋件移出 `dead/`；全线计数一律读 `health` 字段或"必有 qid/dead_at"谓词 |
 | PID 复用使"按记录 pid 判活"失真 | **⑫1016-03 首载**＝gpux2 pid 文件 9260 现属 `svchost.exe`；p07-1015-07 末行 exited 所记 28084 现属 `E:\同花顺远航版\bin\modules\performance\hxperformance.exe` | 待复量 | 判活与终止须叠 create_time＋cmdline 双校（与在册"禁按镜像名杀"互为一对）；转⑤席在 ghost 判定与收班②工具面加双校腿，WO-12-01 同批评估 |
+
+
+---
+
+## 5 尺面增补与族续册（1016-04 班追加；§1–§4 各行逐字不涂）
+
+### 5.1 dim1 会话名尺改正（本席自犯假阳，旧尺行保留在 §3.1）
+
+旧正则 `^st-qoder-p(0[1-9]|1[0-2])-<MMDD>-<NN>$` 不含子车道字母位，实测把合法 ⑦C 席会话名 `st-qoder-p07c-1016-01` 判成"当日新违 1 枚"＝**假阳**。改正尺＝`^st-qoder-p(0[1-9]|1[0-2])[a-z]?-<MMDD>-<NN>$`；跑者位仍单列不自罚。此改只扩"合法子车道形态"，不放松任何真实违规判定（非 p 前缀仍归跑者位、日期/班号缺位仍判违）。
+
+### 5.2 新增输入口三面（1016-04 起常设，皆零写只读）
+
+| 输入口 | 尺 | 1016-04 读数 |
+|---|---|---|
+| reaper 计划任务轮自报（系统腿实况，非手动 --status） | `python -c "import json;d=json.load(open('.runtime/process_reaper/last_run.json'))['safety_wires'];print(d['dead_archive'],d['git_gc_auto'])"` ＋顶层 `errors` | lane 腿 `ModuleNotFoundError("No module named 'scripts.session_worktree'")`；dead_archive rc=1 error；gc ok elapsed 240.8s |
+| 死信自动归档腿审计 | `.runtime/audit/dead_archive_wire.jsonl`（每行含 wire/dry_run/days/status/rc/error/stderr_tail/audit_written） | 全册 2 行，全 error・archived=0・"serializer 租约存活（pid=46988）" ⇒ 自动腿今日零归档 |
+| 裁定册账本 vs 投影漂移（零写象限判） | `python scripts/governance/registry_projection/registry_projection_generator.py --check --registry-id REG-RULING-001 --physical-path docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml` | `ok=false, quadrant=private_edit, wrote=false`；diff 点名待删 #522–#539 共 18 条 ⇒ **禁直接 render**（第 2 载复现） |
+
+### 5.3 复发族续册（同 §4 表头；首载记"首现"，第二载起记立法候选）
+
+| 族签名 | 首次在册 | 第二载 | 本席处置 |
+|---|---|---|---|
+| 死信归档台账不可归因（manifest 行无 actor/session 列） | ⑫1016-04 直证（92 行字段集实测；13:30 全量 84 枚跑者至今不明） | 待下班复量 | 转⑤席加 actor 列＋全量模式硬要求 --session 或显式确认旗 |
+| 降级态与未触发同形（手动轮腿 ok／计划任务轮腿恒死） | ⑩1016-19（gpu_watchman 路径与子命令写错致 rc=2 误记工具缺陷，非此族）→ 本席 ⑫1016-04 重定义为真族 | **⑫1016-04 第 1 真载**＝reaper `lane` 腿：计划任务轮 ModuleNotFoundError vs 手动轮 lane=ok scanned=32 同机两读 | 立法候选候选成立；要⑤席给"腿不可用"独立计数与告警消费面，禁再以手动轮绿自证 |
+| 自动维护腿把正常互斥记 error（观测噪声掩真故障） | ⑫1016-04 首载（dead_archive 今日 2/2 error，均为排空租约存活＝设计行为） | 待复量 | 转⑤席给 skipped_lease_active 态＋占用分支出 JSON |
+| CAS 审计面 session 归属恒空（热文件写入不可归因） | ⑫1016-04 首载（safe_write.jsonl(+.1) 对 ruling_registry 命中 300 行 session 全空；#450 涂改写手因此不可定位） | 待复量 | 转⑤席补归属腿（contextvar/env 取 sid，缺失记 unknown 而非空串）；本席不自改码 |
+| 心跳守护多枚并存（正门/落地链每袋为同 sid 代起新守护） | ⑫1016-03 首载（第二枚 45428，pid 文件只记它） | **⑫1016-04 第二载**＝第三枚 34592（14:17:15/14:17:45 alive，14:18:15 由注销单口自退写 exited）⇒ 同签名第二次＝立法候选，报⑩进 SOP 收班② | ⑤席"已在册即复用"＋pid 文件按 sid 记全列表；⑩把收班②尺改为"release→unregister→读回末行"（本席 §13.9 提案续挂，本载为正向复验） |
+
+
+### 5.2 1016-05 班改正尺与新增谓词面（15. 节同班实测，§5.1 及以前各行逐字不涂）
+
+- **dim2 登记尺（改正，取代旧尺的"仅 `^- \[BLOCKER\]` "谓词）**：`^[-*]\s*\[BLOCKER\]` + 可选反引号 + `\s+<当日 YYYY-MM-DD>\|`。实测同框对照＝改正尺当日 372 枚 vs 旧尺 223 枚，失明 149 枚全为反引号/星号形态（⑤席 22 枚整体在盲区内）。旧尺读数与结论（1016-03/04 记"⑤⑨各 1 枚"）**保留不涂**，本条为改正条。
+- **dim2 段数谓词**：合规＝日期之后恰 6 段（`班号|类型|描述|证据|要谁做什么|严重度`）；`||` 空尾记"缺严重度"，段数 <6 记"字段不足"，>6 记"描述内含竖线"（须人工判读，不自动定罪）。
+- **dim1 命名尺白名单续挂**：子车道字母后缀（`p0[1-9]c?`、`p1[0-2]c?`）合法，承 §5.1；`--help` 假面一律剔出分母。
+- **dim4 说谎面谓词（本席新立，供下班复用）**：`末行 status=alive` 且 `进程表无 cmdline 含 heartbeat_daemon＋该 sid 的进程` ⇒ 计一枚；分母剔 `.runtime/sessions/--help/`；须**两瞬时并报**（进程起停抖动实测使单点读数在 14/15 间摆）。
+- **代注销执行前置（本席新立，写入操作序）**：删 pid 面前先做**三校**＝①`psutil.Process(pid)` 是否 NoSuchProcess（AccessDenied 带 name 者＝PID 复用，禁终止）②同 sid 是否仍有在跑守护（有则 HOLD，不写 exited）③heartbeat.jsonl 末行是否已 exited（是则只删面不写行）。三校缺一即降级为"只记录不动盘"。
+
+- **追加型件手术自证项（1016-05 自犯后新增，收班/写后必跑）**：任何"替换游标块／搬移留档块"的组装式改写，改前改后各断言 ①`content[:3] == '---'` ②frontmatter 键集合与改造前**逐字节前缀相等**（取第一个游标标记前的整段作前缀，改造后新文件必须以该前缀原样开头）③一级标题行在。本席实测五项旧自证（标记配对／核心行逐字／行数增量／BLOCKER 谓词命中／禁串缺位）全部通过而文件头已被弃 ⇒ 结构计数必须含"头部前缀相等"这一条，否则假绿。
