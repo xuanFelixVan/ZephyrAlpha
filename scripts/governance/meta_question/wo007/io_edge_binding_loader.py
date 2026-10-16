@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO007-IOBINDLOADER | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md#WO-007
+# [BLUEPRINT] MOD-METAQ-WO007-IOBINDLOADER | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md#WO-007
 # [MODULE] scripts.governance.meta_question.wo007.io_edge_binding_loader
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] PyYAML; data/registers/metaq_io_edge/io_edge_binding_register.yaml（件 2 产物）;

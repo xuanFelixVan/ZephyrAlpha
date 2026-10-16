@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-TASK_SYSTEM | docs/_working/total_command_closeout/10_wave_plan.md#波1A-1A.6
+# [BLUEPRINT] MOD-TASK_SYSTEM | docs/_archive/_working_cleared/total_command_closeout/10_wave_plan.md#波1A-1A.6
 # [MODULE] scripts.governance.wave1a.cross_session_view
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] 标准库 sqlite3/argparse/json; zephyr.shared.io.paths（仅推导 DB 默认路径）
-# [CONSUMERS] docs/_working/total_command_closeout/wave1a/delivery_cards_report.md; 各后继会话交接
+# [CONSUMERS] docs/_archive/_working_cleared/total_command_closeout/wave1a/delivery_cards_report.md; 各后继会话交接
 # create-guard-not-dup: 死车道抢救件（字节代投非新能力），与canonical同名能力无职责重叠，逐词误报批量豁免（st-chief7-20260928 第12+轮实测均为关键词巧合命中）
 # [TTL] task_bound
 #   （原值 permanent——CLI 审计工具按需人工触发，PERM-TRIGGER 手动模式铁律归 task_bound）

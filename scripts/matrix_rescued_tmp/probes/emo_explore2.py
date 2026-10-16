@@ -3,7 +3,7 @@
 # [MODULE] scripts.matrix_rescued_tmp.probes.emo_explore2
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] 见文件内 import
-# [CONSUMERS] 无（一次性考卷/对拍/计时证据件；随附数据在 docs/_working/matrix_campaign/rescued_tmp_20261007/）
+# [CONSUMERS] 无（一次性考卷/对拍/计时证据件；随附数据在 docs/04_research_records/data/matrix_campaign/rescued_tmp_20261007）
 # [STARTUP] manual
 # [MATURITY] new
 # [INVARIANTS] 抢救证据件原样保留，判定面不入核；表名走 TableRegistry 真源

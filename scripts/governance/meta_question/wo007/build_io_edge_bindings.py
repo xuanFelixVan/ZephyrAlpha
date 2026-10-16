@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-METAQ-WO007-IOEDGEBIND | docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md#WO-007
+# [BLUEPRINT] MOD-METAQ-WO007-IOEDGEBIND | docs/_archive/_working_cleared/meta_question_answers/gaps/WORKORDER_MASTER.md#WO-007
 # [MODULE] scripts.governance.meta_question.wo007.build_io_edge_bindings
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (PG reader); PyYAML;
