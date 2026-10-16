@@ -242,3 +242,30 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。旧案全文在 `
 ②**本班临时件**（`.runtime/tmp/p02_1016_04/`，`[TTL] task_bound 24h`）＝boot/keep_add/b27_idem/b27_run3/write_ledger 五件 .py＋idem.log/run3.log/excl_1016_04.txt/msg_1016_04.txt。
 
 `P02-1016-04-CP-ENDSTATE`（本班游标节独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c "P02-1016-04-CP-ENDSTATE"`；上一班游标节各行逐字仍在）
+
+**2026-10-17 00:39 游标补记（P02-1016-04-CP-B，逐字追加不改上文）**＝本班首袋 `q-20261017-st-qoder-p02-1016-04-0001` 收班时现读 **pending／队前 8**，而本班件 8 收班补记（含①②⑧实测读数与"同目录 instruction.md 3/0 系外来临时未随袋"一条）**写在盘面未随袋**⇒ 下班起手第一件改为：先 `python scripts/commit_queue.py status --session st-qoder-p02-1016-04`，若仍 pending⇒把本席盘面 `P02-1016-04B` 整段**逐字不改收养**随你袋投出；若已 done⇒照件 8 读数核 `git show HEAD:.../ledger.md | grep -c P02-1016-04B`，缺则另投（条件＝前袋 done 且 base 取最新 HEAD，本班已把该正解写进件 0）。
+
+`P02-1016-04-CP-B`（补记节独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c "P02-1016-04-CP-B"`）
+
+
+---
+
+## 2026-10-17 01:2x · st-qoder-p02-1017-01 班游标（追加节，上文各行逐字不改）
+
+**本班一句话**＝B-27 五档深史续采一趟分块落地，入库面（三缺格日 FINAL）`(2457070, 199) → (3852976, 313)`＋**归因尺第二层在有货面正式销口**（上班零行使 ⇒ 本班 ATTRIBUTION {'非空格': 342, '票名全等': 342, '票名错配': 0} MISMATCH_SAMPLE []，错配 0 起"裸码归因可用"成立）＋**新立放量前置闸＝通道暖态探针**（正对照 9/9 有货、负对照 2/2 零行、`_COLUMNS.index('symbol')=3` 实测）＋工序 4 B-15 第七次复拍 `commit_pct 84.46≥70` 不起批＋上班 00:39 未落地收班段（ledger 15 行／checkpoint 4 行）逐字收养随本袋。全文＝ledger 段「2026-10-17 01:0x · st-qoder-p02-1017-01」，终态标记 `P02-1017-01-CP-ENDSTATE`。
+
+**下班待办序（本班修订）**：
+1. 起手三件＝(a) `python scripts/commit_queue.py status --session st-qoder-p02-1017-01` 看本班袋四态；(b) ⚑**本班已把上班要求的"队列面按 sid 扫前任在途"跑通**（四态目录直读、零依赖，读数＝本席前任 34 枚中 pending/processing=0）⇒ 下班照抄该尺再动笔，勿只信前任游标自述；(c) `git diff --numstat HEAD -- docs/_working/automation_campaign/p02_databuilder/ledger.md checkpoint.md`，若纯插入且含本班段＝逐字收养随你袋投出。
+2. **落地面核验谓词请照抄本条、勿用裸子串**（本席正文自带标记名，裸 `grep -c` 会把自家引用也数进去）＝
+   `git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c '^`P02-1017-01-CP-ENDSTATE`'`（应为 1，盘面同尺应为 2）。
+3. B-27 续采＝**同脚本同谓词直接续跑**（排除集自 resume，无需人工游标）：脚本配方已在册（本档 1016-03/04 与本班段），⚑**本班新登的 6 枚"试过且空"耐久真源＝ledger 本班 EMPTY-LIST 行**（承 1016-04 的 87 枚另加），tmp 件按收班⑤随班删除勿找；起班先 `date` 实测再算窗，批 24 票、本班末块节奏 per_sym=9.2 秒/票（含 70s 等待摊销），⚑**放量前必跑通道暖态探针**（正对照取 DONE 面 DESC LIMIT 3、负对照取排除集首两枚），冷通道禁放量。
+4. **件 1 幂等腿与件 5 归因腿均已销口，勿重复做**；下班若要再证塌缩，用守恒式（写前 FINAL＋写入−写后 FINAL），本班两趟复量读数已入 ledger 件 4，与两班在册"每格 0.99 行"同幅。
+5. B-15 判据只看 `commit_pct<70`（本班 01:01:09 现读 84.46＝第七次不起批）；三条前置上班已复核完毕，下班只需再读一次闸值。令面 2,533 vs 实测 2,539 的六次复证继续有效，禁按令面起批。
+6. `known_data_gaps.yaml` 仍不随袋（他席在写面，本班进场即 `MM`）；本班**未翻任何 status**（三整日票面远未封板）；B-28（估值深史换源）＝需新建调度＋复用 baostock provider＋当期宇宙判据，**勿在 60 分窗内半起**；期权 IV 腿续供第四查仍不过（承在册）。
+7. ⚑**10-18 02:00 的 `tick_backfill_weekly` 自动窗将把 10-08/10-09 滑出在册时限**（①席 B-27 时限＋1016-04 同条）＝距该窗本班现算约 25 小时；本班未越权改 threshold（属⑤/Owner 面），只把时限再报一次给⑩排产。
+
+⚑**本班会话与锁（下班照抄，本班实测有效）**：主区无 worktree（TRAE-079 Phase 2 遵令）；`SessionRegistry(ROOT).register(sid, pid=0, held_files=[自家两件])` **并立刻** `_spawn_heartbeat_daemon(sid, Path('D:/ZephyrAlpha'), 30)`（本班 boot 回显 daemon_pid 35008）；sid CAS 入 `data/runtime/process_reaper_keep.txt`（本班 419→420 行，`SafeWriteResult` 真字段＝`written`）；⚑**两趟采集的 argv 末位均带 sid**（reaper 白名单按 cmdline 子串命中）；`lock_files.py acquire <两件> <sid>` TTL 30 分 < 班限 60 分 ⇒ **投袋前必复 acquire**；`git_commit.py --enqueue` 外层禁套 `timeout`；收班②杀心跳须**末次网关调用之后**且按 pid 文件单 PID 精确杀（禁 cmdline 子串扫，在册 1017 自杀案）。
+②**本班 xtquant 新读数**＝本班共试 120 票 ×3 日＝360 格，其中有货格 342、零行格 18（5.0%）、异常格 0；新登"三日皆空"票 6 枚（占本班试票 5.0%），对照头段在册 87/216≈40% ⇒ **越往深段走空格率越低、单位时间入库效率越高**，下班排产按"票/班"外推，本班末块节奏 per_sym=9.2 秒/票。
+②**本班临时件**（`.runtime/tmp/p02_1017_01/`，`[TTL] task_bound 24h`）＝boot/keep_add/probe_channel/b27_run/write_ledger1（已随件消费当场删）/write_ledger2/write_cursor 各 .py＋run.log/run2.log/excl_1017_01.txt/msg_1017_01.txt。
+
+`P02-1017-01-CP-ENDSTATE`（本班游标节独有标记，落地面核验谓词见本段待办序第 2 条；上一班游标节各行逐字仍在）

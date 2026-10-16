@@ -1065,3 +1065,79 @@ WHOLE [(21792, datetime.date(2005, 1, 4), datetime.date(2026, 10, 14))]
 ⚑**代价如实**＝本次自犯多耗约 7 分钟并迫使本段落盘重跑；**数据面（件 1／件 2 的入库行）不受影响**＝两次跑的都是"只读日志＋只写台账"，未重跑任何采集命令，且件 1 的幂等结论恰好证明重跑不增行。
 
 `P02-1016-04-ENDSTATE`（本班台账段终态标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1016-04-ENDSTATE"`；上班 01/02/03 各段与其第二袋落地的件 7／03B 各行逐字仍在）
+
+### 件 8　收班读数补记（2026-10-17 00:39，另起留旧案，本班件 0–件 7 原文逐字不改）
+
+- 袋＝`q-20261017-st-qoder-p02-1016-04-0001`（files=2）已 ENQUEUED，现读四态＝pending／队前 8 枚，建袋时刻 00:37:02。原文面读数＝`"pending": 1, |     "done": 0, |     "dead": 0 |       "state": "pending", |       "created_at": "2026-10-17T00:37:02+08:00", |       "position_ahead": 4 |     "state": "drain-active" |     "created_at": "2026-10-17T00:3`
+- 收班① ＝`--release-only` 实跑 `released=2 denied=0 total=2`＋`RELEASED: 2 files (verified)`，随后 `lock_files.py list | grep -c 本席 sid` 现读 **0**（＝件 6 第①条的"预期 0"已成就为实测）。
+- 收班⑤ ＝本席自家保活令牌 `st-qoder-p02-1016-04` 已按**逐行等值谓词** CAS 摘除（在册 419→418 行，删除数恰 1、他席行零伤亡），故本席**不再给⑫留陈旧令牌**；上班 `st-qoder-p02-1016-03` 那枚本席不代摘（非本席登记面）。
+- 收班⑧ ＝`git worktree list | grep -c p02-1016-04` 现读 **1**＋`.aidrafts/st-qoder-p02-1016-04` 目录存在＝**工具在会话注册/网关调用时自建整树影子面**（与 1016-02／03 两班复证同族，在册 `auto-spawned-aidrafts-worktree-shell`）；本席**未调用任何工棚/工作树启动入口**这条不变，按 TRAE-079 Phase 2 与"勿自删"令保留不动，转⑩。
+- ⚑**同目录外来未落地面一条（请⑩定性）**＝收班 `git diff --numstat HEAD -- docs/_working/automation_campaign/p02_databuilder/` 现读除本席两件外还有 **`instruction.md` 3/0**（＝本席指令卡的运行面注入行，非本席所写、本席从未写它）⇒ 本席**刻意未随袋**（随袋＝把他人未落地条目吃进自己 commit＝归属篡改，在册 `queue-attribution-when-hotregistry-dirty`）；请⑩按"谁写谁投"或"专窗单写手"定口径。
+- 收班②③⑥⑦ ＝② 心跳 daemon_pid 18124 于**末次网关调用之后**按 PID 精确终止（绝不按镜像名批杀，在册教训），60 秒后进程表双读；③ 耗时见件 6 分段账＋返工账；⑥ 本班未取任何 GPU 牌；⑦ 本班 `Agent` 零调用＝零孤儿。
+- **本段不追第二袋的理由（实测支撑）**＝本班窗内首袋仍 pending 且队前 8 枚，"等前袋 done 再投"（件 4 第 1 行与上班 00:28:42 那条正解）在本班剩余窗内不可期望；故按在册"补记落盘面、待下班收养"处理，本班班限 60 分（23:50→00:4x）至此收口。
+
+`P02-1016-04B`（收班补记节独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1016-04B"`）
+
+- 件 8 第"②③⑥⑦"行的**收班②更正（2026-10-17 00:41，另起不改上文）**＝本班 boot 脚本回显 daemon_pid **18124**，而收班扫描按 cmdline 命中的**在活进程实为 pid 10580**（`Get-CimInstance Win32_Process` 按 heartbeat_daemon＋本席 sid 双条件过滤）⇒ 18124 在班内已亡、10580 系运行面在网关调用链上代起的替代守护（在册 `orthogonal-ruler-rc0-and-chain-spawned-heartbeat-20261017`"调 git_commit 即被代起心跳守护"本班复证）；`taskkill /F /PID 10580` rc=0，**60 秒后同谓词复扫＝空返回**（未见杀而复活，双读两趟）。⚑一条尺缺陷如实登记＝taskkill 在中文 Windows 输出 GBK，本席 `subprocess(text=True)` 侧 `UnicodeDecodeError` 致其 stdout 丢失（KILL 记录 msg 为空即此因），故本班"杀成功"的证据**只有 SCAN-2 空返回这一条**，不据 rc=0 单独作结。
+- 收班时刻袋态现读＝`"state": "pending",       "position_ahead": 2     "state": "drain-active"`
+
+## 2026-10-17 01:0x · st-qoder-p02-1017-01 班（②数据建设席·10-17 当日第 1 班，班限 60 分）
+
+**本班一句话**＝B-27 五档深史续采按**新增放量前置闸**（通道暖态探针）起跑＋归因尺第二层在有货面正式销口＋工序 4 B-15 第七次复拍不起批＋上班 00:39 未落地收班段（ledger 15 行／checkpoint 4 行）逐字收养随本袋。
+
+### 件 0　起手三态核实与收养判定（承上班游标定办序第 1 条两件）
+
+- (a) 落地面＝上班袋已落地：`python scripts/commit_queue.py status --session st-qoder-p02-1016-04` 现读 `pending=0 processing=0 done=1 dead=0`，唯一件 `q-20261017-st-qoder-p02-1016-04-0001` state=done、`landed_id=78b2afd47968e53d0acb68461cd40cb517b58053`；`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1016-04-ENDSTATE"` 现读 **1**。
+- (b) ⚑**在册新判据本班首次实跑＝队列面按 sid 扫前任在途**（上班 [BLOCKER] 第 6 条要求、本班即用它给自己放行）：直读 `.runtime/commit_queue/{pending,processing,done,dead}/*.json` 的 `session_id` 前缀 `st-qoder-p02-` ⇒ 四态共 **34** 枚，其中 **pending=0、processing=0**（done 11、dead 23，死族全为 10-15/10-16 早期 `ghost_session`/`[landing] 非注册表`，属⑫清扫面非本席动作）⇒ 本班起手无前任在途撞面风险，该判据**可用且成本为零**（一次目录扫），请⑩据本件把它写进 SOP 收班序（本席不自改 SOP）。
+- (c) 未落地面＝上班 00:39/00:41 的收班补记写在袋 ENQUEUED（00:37:02）之后⇒按在册"袋字节取命令启动时的 git add 面"未进袋：`git diff --numstat HEAD -- ledger.md checkpoint.md` 现读 `15  0`／`4  0`（**纯插入、删除 0**），`git show HEAD:.../checkpoint.md | grep -c "P02-1016-04-CP-B"` 现读 **0**。处置＝本班不复位、不重打，直接把盘面（含上班两枚独有标记 `P02-1016-04B` 与 `P02-1016-04-CP-B`）作为自家写域面随本袋投出＝逐字收养。盘面标记计数现读 `P02-1016-04B`=1、`P02-1016-04-CP-B`=1、`P02-1016-04-ENDSTATE`=1、`P02-1016-03-ENDSTATE`=2。
+
+### 件 1　放量前置闸＝通道暖态探针（本班新立，先探针后放量）
+
+- 立闸理由（防假"试过且空"）＝xtquant 终端冷/断时 `fetch_symbol_day_depth` 一律返回零行，与"该票确无货"**同形**；直接放量会把冷通道零行逐票登记进"试过且空"排除集⇒跨班唯一耐久真源（本台账 EMPTY-LIST）被污染，且该集永不重试。
+- 实跑读数（`.runtime/tmp/p02_1017_01/probe.log` mtime 00:56:42，一趟含 70 秒等待）＝正对照 `SELECT 1`→`[(1,)]`；`_COLUMNS.index("symbol")=3`（归因尺下标由实测而非记忆给出）；正对照面＝`tick_depth_5 FINAL trade_date='2026-10-08'` 按 symbol **DESC** LIMIT 3 取 `600000/510300/510050` × 三缺格日 = **9/9 格有货**（n=4,986..5,144，err 全 None，`row[3]` 集合恒为裸码单元素）；负对照面＝`000003/000004`（承本台账 1016-04 件 2 EMPTY-LIST 首两枚）× 10-08 = **2/2 零行且 err=None**；下载相 `dl_err=0`、2.0 秒发完 5 票 ⇒ **判通道暖、终端在连、本班方可放量**。
+- 该闸是"未触发不是通过"的同族防护（承上班件 2 归因尺教训）＝探针正对照若零命中，本席动作是**不起采、只报堵**，而不是"照采但把零行记进排除集"。
+
+### 件 2　工序 4 B-15 冷归档深史重挂＝第七次自验复拍，仍不起批
+
+- 闸值现读（唯一判据 `commit_pct<70`）＝`python -m zephyr.trading.process_reaper --status` 本班 01:01:09 完成那趟的 watermark 原文 `commit_pct': 84.46`、`ram_used_pct': 74.4`、`degraded': False` ⇒ **84.46 ≥ 70＝闸门未开，本班不起批**。
+- 按上班游标"下班只需再读一次闸值"执行＝本班**未**重拍 manifest 快照（承在册：令面 2,533 与实测 2,539 已**六次**复证不符、快照 sha 与三条前置均在册），禁按令面数字起批这条继续生效。
+
+### 件 3　工序 1 对表＝建设单与缺口册状态口径
+
+- 建设单最新条目＝`docs/_working/automation_campaign/feedback/to_builder.md` 末节 `## 2026-10-16 04:2x ｜ ⑩ 线长席 st-qoder-p10-1016-05`（⑩→② 零新单、一条面级提醒＝②席自家面以落地面字节重基再追加，本班按件 0(c) 收养即满足其**实质**，未复位盘面）⇒ 本班窗内**零新单**。
+- 在途两张在建单 B-27／B-28 的「续供确认（四问）」栏**实测齐备**（各含 ①采集通道／②更新频率／③是否自动化／④断供风险四段）⇒ 按本卡工序 1「缺栏可拒收」判**不拒收**，本班继续 B-27。
+- ⚑口径不符一条（本席不改卡、只登记）＝指令卡工序 1 写"读 `known_data_gaps.yaml` 的 **pending** 回补项"，本班实跑该册 `gaps` 列表 85 条的状态分布＝`open 29 / accepted 19 / resolved 13 / no_source 7 / monitoring 5 / mitigated 4 / completed 7 / retired_quarantine 1`，**pending=0**⇒按字面谓词本班首轮即空集；本班实际工作项来自 `to_builder.md` 与游标定办序。见本件末 [BLOCKER]。
+
+**[BLOCKER] 2026-10-17|②1017-01|判据缺失|指令卡工序 1 要读 `known_data_gaps.yaml` 的 pending 回补项，实测该册 85 条零 pending（态族=open/accepted/resolved/no_source/monitoring/mitigated/completed/retired_quarantine）⇒按字面谓词每班首轮空集，回补项真源实际在 `feedback/to_builder.md`，两册职责未在册分清|本台账件 3 读数（本班 `yaml.safe_load` 直数 `gaps` 列表 Counter）＋册路径 src/zephyr/data/config/known_data_gaps.yaml|⑤/⑩定指令卡工序 1 措辞改指 open+accepted（或给缺口册补 pending 态并迁移），本席不自改卡面与册|低**
+**[BLOCKER] 2026-10-17|②1017-01|流程问题|收班次序"末袋补记写完再 release/再投"仍未在册固化⇒连续三班（1016-02/03/04）出现"收班补记写在投袋之后"，每班都给下班留一段未落地字节（本班实测上班 15+4 行未进袋，HEAD 面 CP-B=0），本席每班起手都要先做收养才能动笔|本班件 0(c) 三面读数（numstat 15/0 与 4/0、HEAD grep 计数 0、袋 created_at 00:37:02 早于补记 00:39）＋①席 1017-01 班同族自纠（release 后动笔）已在册|请⑩把「末次补记完成→才投袋→再 release→最后杀心跳」写进 SOP 收班序（承 1016-04 [BLOCKER] 第 6 条与本席件 0(b) 队列面判据）|中**
+
+
+### 件 4　B-27 五档深史续采＝本班一趟分块回补落地读数（预算按块间判定，末块越窗属在册常态）（承上班"按票/班排产"处方）
+
+- 谓词自 resume（无游标文件）＝UNIVERSE(09-28 FINAL distinct) ∖ DONE(10-08 FINAL distinct) ∖ EXCL(本台账 1016-04 件 2 的 87 枚逐字内嵌进脚本＋本班逐块追加件)：
+  UNIVERSE=7934 DONE=199 EXCL_TRIED_EMPTY=87 REMAINING=7648 PICK=168 BATCH=24 BUDGET=880.0
+- 本班 PICK 面扫段跨度（逐票起止，供下班判断该段是否已封）＝
+  FIRST5 ['000663', '000665', '000668', '000669', '000670'] LAST5 ['000899', '000900', '000901', '000902', '000903']
+  ⇒ ⚑本班起手段与上班末段逐位续上＝pass1 `BEFORE-ALL3DAYS (2457070, 199)` 与上班 1016-04 件 2 的 `AFTER-ALL3DAYS (2457070, 199)` **逐值相同**（跨班同尺同面复现，非本班重打）。
+- 块行读数（每块即时 flush，在册长批防静默消失配方）＝
+  [b1] syms=24 dl=9.0s wait=70s read=45.5s cum_rows=245620 ok=63 empty=9 err=0 非空格=63 全等=63 错配=0 new_empty=3 elapsed=124s per_sym=5.2s
+  [b2] syms=24 dl=9.9s wait=70s read=49.4s cum_rows=526704 ok=132 empty=12 err=0 非空格=132 全等=132 错配=0 new_empty=1 elapsed=254s per_sym=5.3s
+  [b3] syms=24 dl=11.1s wait=70s read=49.3s cum_rows=828662 ok=204 empty=12 err=0 非空格=204 全等=204 错配=0 new_empty=0 elapsed=384s per_sym=5.3s
+  [b4] syms=24 dl=12.3s wait=70s read=320.4s cum_rows=1130411 ok=276 empty=12 err=0 非空格=276 全等=276 错配=0 new_empty=0 elapsed=787s per_sym=8.2s
+  [b5] syms=24 dl=13.3s wait=70s read=229.5s cum_rows=1396246 ok=342 empty=18 err=0 非空格=342 全等=342 错配=0 new_empty=2 elapsed=1100s per_sym=9.2s
+- 入库面（三缺格日合计，FINAL）＝`(2457070, 199)` → `(3852976, 313)`＝净增 **1,395,906 行 / +114 票**；本班试 120 票，有货格 342、零行格 18、异常格 0（日志 `ERR/DLERR` 行数实测 0）；RAW 面现读 `(3852976, 313)`。
+- 守恒式复量塌缩（在册正解，禁 `RAW−FINAL`）＝`写前FINAL(2457070) + 本班写入(1396246) − 写后FINAL(3852976) = 340` 行，对有货格 342 ＝ **每格 0.99 行**；对照 1016-03/1016-04 两班在册"每格 0.99 行"同幅复现（尺连续三班可比）。
+- 节奏（供⑩/⑫排产，禁据本班单点改在册 8.4 小时估算）＝pass1 WALL_S 1100.6 01:18:09；触顶情况＝pass1 BUDGET-STOP at index 120/168。
+- ⚑票面封段推进＝本班把上条 first5 行所示 PICK 面逐票试过，新登"试过且空"共 **6** 枚，口径＝三日皆零行且零 err（部分空不算空，禁污染排除集）；逐字清单见本件末行 EMPTY-LIST，下班按行重建。
+
+### 件 5　归因尺第二层销口＝上班"未触发不是通过"那条判据本班在有货面正式行使
+
+- 上班在册缺口（1016-04 游标定办序第 3 条）＝"每个非空格核 `row[3]` symbol 全等"这一层在上班窗内**零行使**（其窗全为零行格），故"票名归因可用"**当时不得宣称**。
+- 本班实跑（下标由探针实测，`_COLUMNS.index('symbol')=3`）＝`ATTRIBUTION` 汇总＝非空格 **342**、票名全等 **342**、票名错配 **0**（逐趟读数：ATTRIBUTION {'非空格': 342, '票名全等': 342, '票名错配': 0} MISMATCH_SAMPLE []）⇒ 行使面 >0 且错配 0 ⇒ **本班起"裸码归因可用"成立**，下班可直接引用本件，勿再把该层列为待办。
+- ⚑**本班自犯并当场纠正一处（落笔前披露，旧案不涂）**＝主脚本首版把配对序写成 `qmt * len(DAYS)`（日主序），而 `backfill_days` 生成序是**票主序**（sym0×3 日 → sym1×3 日），两者不同构⇒一旦放量，归因尺会把每一格都判成"票名错配"，本席极可能据此上报一条**假数据问题**。本班在起跑前用"生成序同构"注释位改成 `sym_seq = [s for s in qmt for _ in DAYS]`，并加 `zip(..., strict=True)` 兜长度；真跑 342 格错配 0 反证改后配对序正确（若仍错配，错配计数会是 342 量级而非 0）。同一轮还自纠两处＝首版 `sorted(X) - Y` 是 list−set（必 TypeError，编译期未caught 因是运行期语义）、以及一次 Edit 误删 `ef = HERE / ...` 两行（改后 `Read` 回读确认未丢，本班如实记：那次"误删"判断本身也是误判，回读证明两行仍在）。
+
+EMPTY-LIST（本班新登"试过且空"裸码，6 枚，下班逐字重建排除集用；耐久真源＝本行）：
+  `000687,000689,000693,000699,000814,000827`
+
+**[BLOCKER] 2026-10-17|②1017-01|流程问题|"试过且空"排除集已连续三班在册挂号（1016-03 首提、1016-04 同条、本班第三次）却仍只靠台账散文人肉续命，本班实测在册累计 =87+6=93 枚，而指令卡工序 5 只给"解锁清单写本席台账转单段"、没给排除集落盘面⇒每班 PICK 仍要先花一次逐字抄录|本台账 1016-04 件 2 EMPTY-LIST 行（87 枚）＋本件 EMPTY-LIST 行（6 枚）＋本班 pass1 谓词读数 `EXCL_TRIED_EMPTY=87`|请⑩定永久面归属（本席不自建永久件以免违 §4.1 净零）；定了即下班首轮可用|中**
+
