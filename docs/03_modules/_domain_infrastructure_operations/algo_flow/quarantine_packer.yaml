@@ -1,0 +1,74 @@
+# ALGO_FLOW 外部真源——quarantine_packer（_domain_infrastructure_operations 域，真源 scripts/ops/quarantine_packer.py）
+# 2026-10-16 st-wireb-1016（st-diskp0-20261015 裁定③接线）：quarantine 陈旧子目录 tar+gz 归仓，
+# 零删除语义=逐文件 sha256 压前/压内全等才许移除原目录，解压即复活。
+doc_type: architecture_view
+ttl: permanent
+module: scripts.ops.quarantine_packer
+source_of_truth: scripts/ops/quarantine_packer.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: repo_root / 落点参数
+    #   fields: 参数 repo_root，类型注解 Path | str；quarantine_dir/audit_dir/alert_dir 缺省 root/.runtime 派生
+    #   code: run_once 形参（AST 提取）
+    # - id: I2
+    #   name: 模式与阈值参数
+    #   fields: dry_run；mtime_days/threshold_gib 单轮覆写位；note
+    #   code: run_once 形参（AST 提取）
+    # - id: I3
+    #   name: 配置真源
+    #   fields: config/flags.yaml flags.quarantine_pack.*（enabled 出厂 true；threshold_gib=1.5；mtime_days=90；缺配置回出厂）
+    #   code: read_quarantine_pack_config（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① quarantine 面只读扫描
+    #   name_en: scan_candidates
+    #   intro: 总量/超阈值判读+一级子目录 mtime 超 mtime_days 候选（reason=mtime_over）；packs/ 自身、README 指针壳、散件不入。
+    #   desc: 指针壳判定=目录仅含 README.md 且含 quarantine-pack pointer 标记（再跑不重打包）。
+    #   inputs: quarantine_dir threshold_gib mtime_days
+    #   outputs: {total_bytes, total_gib, over_threshold, candidates, errors}
+    # - id: A2
+    #   name_zh: ② 单目录打包与零删除闸
+    #   name_en: pack_one / _verify_pack
+    #   intro: packs/<name>.tar.gz（tmp→原子改名）→成员集==原文件集且逐文件 sha256 压内解出==原文件→全等才 rmtree 原目录→原位 README 指针（复活命令）。
+    #   desc: 任一步败=自建 pack 清零+原目录零动作（fail-closed）；manifest jsonl 逐文件证据；单目录失败不反噬整轮。
+    #   inputs: quarantine_dir name dry_run
+    #   outputs: {action, pack, pack_sha256, orig_bytes, file_count, error?}
+    # - id: A3
+    #   name_zh: ③ INDEX.md 机生追加
+    #   name_en: _append_index
+    #   intro: packs 表（pack|原路径|原体积|压后体积|sha256）+运行台账双表追加；占位行让位；safe_write_text CAS；缺文件按标准头初始化。
+    #   desc: 表定位失败=报错不追加（宁缺勿错位，pack 本体与 manifest 已留证）。
+    #   inputs: index_path pack_rows run_rows
+    #   outputs: bool
+    # - id: A4
+    #   name_zh: ④ 超阈值无候选告警
+    #   name_en: run_once（告警支）
+    #   intro: 总量>threshold_gib 但零候选→workspace_alerts 告警件（escalated 只升 Owner）+台账行；活跃面零动作。
+    #   inputs: scan
+    #   outputs: alert_file | None
+    # - id: A5
+    #   name_zh: ⑤ 整轮编排
+    #   name_en: run_once
+    #   intro: 配置→扫描→逐候选打包→告警支→INDEX 追加；永不抛。
+    #   desc: exit 0=完成；exit 1=超阈值无候选告警；exit 2=设施故障；enabled:false=全零动作只报读数。
+    #   inputs: I1 I2 I3
+    #   outputs: (summary, errors)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: packs 仓+指针壳+manifest+INDEX+台账
+    #   name_en: packs/README/manifest/INDEX/ledger
+    #   intro: .runtime/quarantine/packs/<name>.tar.gz+pack_run_<utc>.manifest.jsonl+INDEX.md；原位 README 指针；.runtime/audit/quarantine_packer.jsonl。
+    #   downstream: Owner（escalated 处置门位）；process_reaper wire（subprocess --once 事件触发）
+    # [/ALGO_FLOW]
+    #
+    # I3 --> A5
+    # I1 --> A1
+    # I2 --> A5
+    # A1 --> A2
+    # A1 --> A4
+    # A2 --> A3
+    # A2 --> O1
+    # A3 --> O1
+    # A4 --> O1

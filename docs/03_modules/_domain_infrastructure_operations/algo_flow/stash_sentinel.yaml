@@ -1,0 +1,73 @@
+# ALGO_FLOW 外部真源——stash_sentinel（_domain_infrastructure_operations 域，真源 scripts/ops/stash_sentinel.py）
+# 2026-10-16 st-wireb-1016（st-diskp0-20261015 裁定⑤升级版接线）：absorbed stash 内容级判定+
+# quarantine ref 自动迁移；drop 永不越过 ref 核验（fail-closed），内容零丢失（同 sha 双侧互推）。
+doc_type: architecture_view
+ttl: permanent
+module: scripts.ops.stash_sentinel
+source_of_truth: scripts/ops/stash_sentinel.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: repo_root / 落点参数
+    #   fields: 参数 repo_root，类型注解 Path | str；audit_dir/alert_dir 缺省 root/.runtime 派生
+    #   code: run_once 形参（AST 提取）
+    # - id: I2
+    #   name: 模式与阈值参数
+    #   fields: dry_run；min_age_days 覆写位；note
+    #   code: run_once 形参（AST 提取）
+    # - id: I3
+    #   name: 配置真源
+    #   fields: config/flags.yaml flags.stash_sentinel.*（enabled 出厂 true；min_age_days=30；缺配置回出厂）
+    #   code: read_stash_sentinel_config（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① stash 枚举与归宿集
+    #   name_en: list_stashes / reachable_blob_ids
+    #   intro: git stash list（%H/%ct/%gd）逐枚取 sha+创建时刻；归宿集=HEAD∪refs/quarantine/* 正像全枚举对象 id（每轮一次缓存）。
+    #   desc: 负向排除（rev-list ^HEAD）实测在边界提交截断树遍历致同 blob 误报独有——禁用；归宿侧只取 id 集做成员判定（sha 即内容身份）。
+    #   inputs: repo_root
+    #   outputs: (stashes, err) / (home_ids, err)
+    # - id: A2
+    #   name_zh: ② absorbed 内容级判定
+    #   name_en: stash_tree_blob_ids
+    #   intro: stash 侧=stash 本体+基/index/untracked 各父之树 rev-list --objects（树参数只走树）→cat-file batch-check 分类出 blob 集；absorbed ⟺ blob 集⊆归宿集。
+    #   desc: 基树一并覆盖（HEAD 改写后基 blob 可能仅由 stash 保活，fail-closed）；判失败=保守零动作。
+    #   inputs: stash_sha
+    #   outputs: (blob_ids, all_ids, path_of, err)
+    # - id: A3
+    #   name_zh: ③ 迁移（fail-closed 三闸）
+    #   name_en: migrate_absorbed
+    #   intro: absorbed 且龄>min_age_days：update-ref refs/quarantine/stash/at{N}_<sha12>_<utc>→rev-parse 回读同 sha→stash@{N} 复读同 sha→git stash drop→drop 后 ref 终核验；台账双侧 sha。
+    #   desc: 闸①ref 已存在=跳过；闸②回读不符=回滚删自建 ref 零 drop；闸③索引位移=保 ref 零 drop（内容已被 ref 保活）；dry-run 止于判定零写。
+    #   inputs: index sha dry_run
+    #   outputs: {action, qref, dropped, error?}
+    # - id: A4
+    #   name_zh: ④ 超龄非 absorbed 告警
+    #   name_en: write_overage_alert
+    #   intro: 独有 blob>0 且超龄→聚合告警件 workspace_alerts/stash_sentinel_<utc>.json（escalated 只升 Owner 零处置）+台账行含路径样本。
+    #   inputs: items dry_run
+    #   outputs: alert_file | None
+    # - id: A5
+    #   name_zh: ⑤ 整轮编排
+    #   name_en: run_once
+    #   intro: 配置→枚举→归宿集→按索引降序逐枚判定处置（drop 高位不影响低位编号+逐枚 drop 前复读防并发位移）；永不抛。
+    #   desc: exit 0=完成；exit 1=有告警；exit 2=设施故障；enabled:false=全零动作只报扫描数。
+    #   inputs: I1 I2 I3
+    #   outputs: (summary, errors)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: quarantine refs+台账+告警
+    #   name_en: refs/ledger/alerts
+    #   intro: refs/quarantine/stash/*（迁移后 stash 全图永活）；.runtime/audit/stash_sentinel.jsonl；workspace_alerts 告警件。
+    #   downstream: Owner（escalated 处置门位）；process_reaper wire（subprocess --once 事件触发）
+    # [/ALGO_FLOW]
+    #
+    # I3 --> A5
+    # I1 --> A1
+    # I2 --> A5
+    # A1 --> A2
+    # A2 --> A3
+    # A2 --> A4
+    # A3 --> O1
+    # A4 --> O1
