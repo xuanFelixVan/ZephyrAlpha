@@ -21073,6 +21073,12 @@ entries:
   plain_zh: 告警触发条件（蓝图 §6.5）：
   domain_id: D_DATA
   responsibility_layer: business
+- module_path: src/zephyr/data/assembly_runtime.py
+  name_en: Event Hook Factory
+  name_zh: 装配器共享运行时
+  plain_zh: 六域装配件的公共事件钩子工厂：统一生成唤醒过滤、同业务日节流、全捕获不反噬的 maybe_emit 钩子，装配件只传自己的读数函数和表名
+  domain_id: D_DATA
+  responsibility_layer: business
 - module_path: src/zephyr/data/auto_backfiller.py
   desc_en: ""
   desc_zh: ""

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INT-CHAIN-IMPACT | 待统筹登记（蓝图未建，真源=docs/_working/2026-09-09-news-industry-wiring-directive.md W4 行 + §3 入图交接协议）
+# [BLUEPRINT] MOD-INT-CHAIN-IMPACT | 待统筹登记（蓝图未建，真源=docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/2026-09-09-news-industry-wiring-directive.md W4 行 + §3 入图交接协议）
 # [MODULE] zephyr.intelligence.chain_impact_resolver
 # [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.intelligence.news_chain_node_linker（ChainNodeHit 输入契约）; zephyr.governance.depgraph_schema（ig_edge/ig_node/ig_node_company 只读连接）; zephyr.shared.foundation.errors
@@ -30,7 +30,7 @@ MOD-INT-CHAIN-IMPACT ChainImpactResolver — 图谱节点冲击→受影响标�
          不做事件类型细分（涨价/降价/断供/扩产的方向反号模型留后续迭代）；
          不写库不挂调度（清单由调用方消费）。
 
-依据: docs/_working/2026-09-09-news-industry-wiring-directive.md W4 行
+依据: docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/2026-09-09-news-industry-wiring-directive.md W4 行
 SSoT: depgraph MOD-INT-CHAIN-IMPACT（design 态 node 见 depgraph DB）
 Version: 0.1.0
 
@@ -239,6 +239,9 @@ class ChainImpactResolver:
         self._nodes = _build_node_table(nodes)
         self._adj = _build_adjacency(edges, self._nodes)
         self._companies = _build_company_map(company_rows)
+        # supplies_to 有向对（供→客）＝方向语义角色判定真源（st-infoaxis-20261013 P2
+        # 传导链 v2：resolve_directed 用；structure/supply 边不进此集）
+        self._supply_pairs = {(f, t) for f, t, et in edges if et == "supplies_to"}
 
     # ------------------------------------------------------------------
     # 图数据加载
@@ -307,12 +310,8 @@ class ChainImpactResolver:
             if prev is None or hit.confidence > prev.confidence:
                 seeds[hit.node_id] = hit
         # ② BFS 扩散（只走活节点表；visited 防环）
-        reach: dict[str, tuple[int, tuple[str, ...]]] = {
-            node_id: (0, (node_id,)) for node_id in seeds
-        }
-        queue: deque[tuple[str, int, tuple[str, ...]]] = deque(
-            (node_id, 0, (node_id,)) for node_id in seeds
-        )
+        reach: dict[str, tuple[int, tuple[str, ...]]] = {node_id: (0, (node_id,)) for node_id in seeds}
+        queue: deque[tuple[str, int, tuple[str, ...]]] = deque((node_id, 0, (node_id,)) for node_id in seeds)
         visited: set[str] = set(seeds)
         while queue:
             cur, hop, path = queue.popleft()
@@ -358,21 +357,52 @@ class ChainImpactResolver:
                     prev.symbol,
                 ):
                     best_by_symbol[symbol] = target
-        out = [
-            ImpactTarget(**{**t.__dict__, "sources": sources[t.symbol]})
-            for t in best_by_symbol.values()
-        ]
+        out = [ImpactTarget(**{**t.__dict__, "sources": sources[t.symbol]}) for t in best_by_symbol.values()]
         out.sort(key=lambda t: (t.hop, -t.confidence, t.symbol))
+        return tuple(out)
+
+    def resolve_directed(
+        self,
+        hits: Sequence[ChainNodeHit],
+        polarity: float,
+        event_type: str | None = None,
+    ) -> tuple[ImpactTarget, ...]:
+        """方向感知解析（P2 传导链 v2，st-infoaxis-20261013）。
+
+        在 resolve() 同款 BFS/去重/衰减之上叠加角色翻号：
+        - hop0（事件主体）：supplier_side（涨价/断供/扩产的事件主体=供给侧）；
+        - hop1 经 supplies_to 边：seed→nxt=customer_side；nxt→seed=supplier_side；
+        - 其余（structure/supply 边或 hop≥2）：role 未知→乘子 +1（同向 MVP 行为保留）。
+        event_type=None 时全图同向（与 resolve() 等价——向后兼容逃生）。
+        """
+        from zephyr.intelligence.chain_direction_semantics import effective_sign
+
+        base_targets = self.resolve(hits, polarity)
+        polarity_sign = _sign(polarity)
+        if event_type is None or not base_targets:
+            return base_targets
+        out: list[ImpactTarget] = []
+        for t in base_targets:
+            if t.hop == 0:
+                side = "supplier_side"
+            elif t.hop == 1 and len(t.path) >= 2:
+                seed, nxt = t.path[0], t.path[1]
+                if (seed, nxt) in self._supply_pairs:
+                    side = "customer_side"
+                elif (nxt, seed) in self._supply_pairs:
+                    side = "supplier_side"
+                else:
+                    side = ""
+            else:
+                side = ""
+            eff = effective_sign(polarity_sign, event_type, side) if side else polarity_sign
+            out.append(ImpactTarget(**{**t.__dict__, "direction": eff}))
         return tuple(out)
 
 
 # SQL 常量（NO-BARE-SQL gate 豁免：_SQL_ 前缀，与 news_symbol_linker 同约定）
 # 活节点表（剔墓碑，与 W3 词表同口径）；边全量（1.3k 行小表）；公司映射只取 PIT 有效行
 # （valid_to IS NULL，与 api_server cm_* 通道同口径）
-_SQL_NODES: Final[str] = (
-    "SELECT node_id, chain_id, name, tier FROM ig_node WHERE name NOT LIKE '%已并入%'"  # noqa: bare-sql  模块级 SQL 常量（集中化专项另行治理）
-)
+_SQL_NODES: Final[str] = "SELECT node_id, chain_id, name, tier FROM ig_node WHERE name NOT LIKE '%已并入%'"  # noqa: bare-sql  模块级 SQL 常量（集中化专项另行治理）
 _SQL_EDGES: Final[str] = "SELECT from_node, to_node, edge_type FROM ig_edge"  # noqa: bare-sql  模块级 SQL 常量（集中化专项另行治理）
-_SQL_COMPANIES: Final[str] = (
-    "SELECT node_id, symbol, role, confidence FROM ig_node_company WHERE valid_to IS NULL"  # noqa: bare-sql  模块级 SQL 常量（集中化专项另行治理）
-)
+_SQL_COMPANIES: Final[str] = "SELECT node_id, symbol, role, confidence FROM ig_node_company WHERE valid_to IS NULL"  # noqa: bare-sql  模块级 SQL 常量（集中化专项另行治理）

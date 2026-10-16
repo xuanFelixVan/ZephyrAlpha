@@ -391,10 +391,61 @@ acknowledged:
 - id: cg-bm-remove-op-pair-20261004
   verdict: intentional
   stable_key: "scripts/governance/apply_battle_map.py:op_remove_anchor||scripts/governance/apply_battle_map.py:op_remove_edge"
-  note: 删除操作存量同构对（按 id SELECT 存在性→dry-run 打印→DELETE→返回 op 名，anchor/edge 各自字面 SQL 防拼接），
-    MODIFY-GUARD 对标 apply_decisiongraph.py 同形对（跨文件既定惯例），本批未触碰两函数实现，仅因文件随批改动暴露
-    （轴归一手术批1 仅加 tdm_node_id 白名单+校验）；合并=参数化泛型需动两文件对标面，超出本批边界（st-tclose-bmsurg-20261004）
+  note: 删除操作存量同构对（按 id SELECT 存在性→dry-run 打印→DELETE→返回 op 名，anchor/edge 各自字面 SQL 防拼接）， MODIFY-GUARD 对标 apply_decisiongraph.py 同形对（跨文件既定惯例），本批未触碰两函数实现，仅因文件随批改动暴露 （轴归一手术批1 仅加 tdm_node_id 白名单+校验）；合并=参数化泛型需动两文件对标面，超出本批边界（st-tclose-bmsurg-20261004）
 - id: cg-cq-recurrence-lockmerge-20261016
   verdict: intentional
   stable_key: scripts/commit_queue.py:_recurrence_state_path||scripts/lock_files.py:_main_merge_head_path
   note: HEAD 存量 2 行路径构造器同构对（_recurrence_state_path=dead/_recurrence_state.json 落点/_main_merge_head_path=.git/MERGE_HEAD 落点——语义对象不同非逻辑克隆），本批未触碰其实现，仅因 commit_queue.py 随托管正门批修改而暴露（st-custody2-1016）；合并需跨模块提升公共路径helper，超出本批最小侵入边界，按宪法 RULE-CLONEGUARD 合理重复通道登记 acknowledged
+- id: cg-stage4-specs-prop-20261016
+  verdict: intentional
+  stable_key: src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py:specs||src/zephyr/governance/audit/reconciliation_registry.py:specs
+  note: 'Stage 4 公共化（2026-07-29）注册表族 specs property getter/setter 房规样板对（docstring=族内固定文案）：commit_gate_registry._specs: dict[str, GateSpec]（Z1 P1-1 门禁链并行化 Stage4 公共化只读面）与 reconciliation_registry._specs: list[ReconcilerSpec]（存量件）容器/元素类型均不同，合并需引入泛型注册表基类=超本批边界的结构重构，非逻辑克隆（纯访问器样板）；按宪法 RULE-CLONEGUARD 合理重复通道登记 acknowledged（st-perfz1-20261015 主区收尾批）'
+
+- id: cg-q7-idem-dbpath-pair-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/ex_core/adapters/miniqmt_broker.py:_default_order_idempotency_db||src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py:_default_order_idempotency_db"
+  note: 幂等账本默认路径构造器 3 行样板对（DB_PATH.parent/_ORDER_IDEMPOTENCY_DB_NAME，各自模块常量）：Q7/#ARCH-TRADING-IDEMPOTENCY-001 两腿（file-bridge/miniqmt）按 R-L3 既有幂等形态平行落地，真源共享=同一账本文件（两腿单真源）而非代码合并；合并需跨适配器提升公共 helper 或引入共享基类=耦合两腿独立临界区契约，超出死袋修因重投边界（A4 恢复车道 st-grandc-20261017；克隆对系 0024 快照既含内容非本批新造，并袋落地时门暴露）
+- id: cg-q7-idem-store-prop-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/ex_core/adapters/miniqmt_broker.py:idempotency_store||src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py:idempotency_store"
+  note: 幂等账本惰性构建 property+setter 样板对（SQLiteIdempotencyStore ttl=0，docstring 各自战役语义）：同上两腿平行形态（miniqmt=R-L3 存量先例/file-bridge=Q7 同构复制），账本文件单真源、property 为适配器本地惯用面；合并=共享基类重构超修因重投边界，按宪法 RULE-CLONEGUARD 合理重复通道登记 acknowledged（A4 恢复车道 st-grandc-20261017）
+- id: cg-infoaxis-emit-expectation-retail-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/alt_data/expectation_revision_assembler.py:maybe_emit_expectation_revision||src/zephyr/alt_data/retail_comment_signals.py:maybe_emit_retail_comment_signals"
+  note: 四域装配件样板族（裁定#516 st-infoaxis 战役，acknowledged by st-grandc-20261017 A3 收口车道）：意图性重复——各域 reader/writer/表名依赖注入不同，合并参数化泛型引入跨域耦合违背最小 diff；L9/GOAL-AGG 同款纪律
+- id: cg-infoaxis-emit-expectation-equity-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/alt_data/expectation_revision_assembler.py:maybe_emit_expectation_revision||src/zephyr/signal_ashare/equity_link_signals.py:maybe_emit_equity_link"
+  note: 四域装配件样板族（裁定#516 st-infoaxis 战役，acknowledged by st-grandc-20261017 A3 收口车道）：意图性重复——各域 reader/writer/表名依赖注入不同，合并参数化泛型引入跨域耦合违背最小 diff；L9/GOAL-AGG 同款纪律
+- id: cg-infoaxis-emit-expectation-pead-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/alt_data/expectation_revision_assembler.py:maybe_emit_expectation_revision||src/zephyr/signal_fundamental/pead_assembly.py:maybe_emit_pead_assembly"
+  note: 四域装配件样板族（裁定#516 st-infoaxis 战役，acknowledged by st-grandc-20261017 A3 收口车道）：意图性重复——各域 reader/writer/表名依赖注入不同，合并参数化泛型引入跨域耦合违背最小 diff；L9/GOAL-AGG 同款纪律
+- id: cg-infoaxis-emit-retail-equity-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/alt_data/retail_comment_signals.py:maybe_emit_retail_comment_signals||src/zephyr/signal_ashare/equity_link_signals.py:maybe_emit_equity_link"
+  note: 四域装配件样板族（裁定#516 st-infoaxis 战役，acknowledged by st-grandc-20261017 A3 收口车道）：意图性重复——各域 reader/writer/表名依赖注入不同，合并参数化泛型引入跨域耦合违背最小 diff；L9/GOAL-AGG 同款纪律
+- id: cg-infoaxis-emit-retail-pead-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/alt_data/retail_comment_signals.py:maybe_emit_retail_comment_signals||src/zephyr/signal_fundamental/pead_assembly.py:maybe_emit_pead_assembly"
+  note: 四域装配件样板族（裁定#516 st-infoaxis 战役，acknowledged by st-grandc-20261017 A3 收口车道）：意图性重复——各域 reader/writer/表名依赖注入不同，合并参数化泛型引入跨域耦合违背最小 diff；L9/GOAL-AGG 同款纪律
+- id: cg-infoaxis-emit-equity-pead-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/signal_ashare/equity_link_signals.py:maybe_emit_equity_link||src/zephyr/signal_fundamental/pead_assembly.py:maybe_emit_pead_assembly"
+  note: 四域装配件样板族（裁定#516 st-infoaxis 战役，acknowledged by st-grandc-20261017 A3 收口车道）：意图性重复——各域 reader/writer/表名依赖注入不同，合并参数化泛型引入跨域耦合违背最小 diff；L9/GOAL-AGG 同款纪律
+- id: cg-infoaxis-chq-retail-equity-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/alt_data/retail_comment_signals.py:_default_ch_query||src/zephyr/signal_ashare/equity_link_signals.py:_default_ch_query"
+  note: 四域装配件样板族（裁定#516 st-infoaxis 战役，acknowledged by st-grandc-20261017 A3 收口车道）：意图性重复——各域 reader/writer/表名依赖注入不同，合并参数化泛型引入跨域耦合违背最小 diff；L9/GOAL-AGG 同款纪律
+- id: cg-infoaxis-chq-retail-pead-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/alt_data/retail_comment_signals.py:_default_ch_query||src/zephyr/signal_fundamental/pead_assembly.py:_default_ch_query"
+  note: 四域装配件样板族（裁定#516 st-infoaxis 战役，acknowledged by st-grandc-20261017 A3 收口车道）：意图性重复——各域 reader/writer/表名依赖注入不同，合并参数化泛型引入跨域耦合违背最小 diff；L9/GOAL-AGG 同款纪律
+- id: cg-infoaxis-chq-equity-pead-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/signal_ashare/equity_link_signals.py:_default_ch_query||src/zephyr/signal_fundamental/pead_assembly.py:_default_ch_query"
+  note: 四域装配件样板族（裁定#516 st-infoaxis 战役，acknowledged by st-grandc-20261017 A3 收口车道）：意图性重复——各域 reader/writer/表名依赖注入不同，合并参数化泛型引入跨域耦合违背最小 diff；L9/GOAL-AGG 同款纪律
+- id: cg-infoaxis-w-equity-pead-20261017
+  verdict: intentional
+  stable_key: "src/zephyr/signal_ashare/equity_link_signals.py:w||src/zephyr/signal_fundamental/pead_assembly.py:w"
+  note: 四域装配件样板族（裁定#516 st-infoaxis 战役，acknowledged by st-grandc-20261017 A3 收口车道）：意图性重复——各域 reader/writer/表名依赖注入不同，合并参数化泛型引入跨域耦合违背最小 diff；L9/GOAL-AGG 同款纪律

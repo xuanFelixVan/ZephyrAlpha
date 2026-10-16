@@ -1973,7 +1973,7 @@ nodes:
   algo_refs: []
   module_ref: src/zephyr/intelligence/chain_impact_resolver.py
   module_id: MOD-INT-CHAIN-IMPACT
-  note_confirmed: 2026-10-16
+  note_confirmed: 2026-10-17
   strategy_mounts: []
   activation: continuous
   ai_autonomy: auto
