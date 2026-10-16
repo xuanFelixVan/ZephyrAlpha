@@ -24,7 +24,7 @@
 用法:
   python scripts/backtest/ibt/ibt_runner.py --window W_IS|W_OOS|W_HOLDOUT|W_POSTD
   python scripts/backtest/ibt/ibt_runner.py --window W_IS --sensitivity   (成本敏感性扫描, 仅 IS/OOS)
-产物: docs/_working/integrated_backtest/artifacts/<WINDOW>/*.yaml|csv（机读=.yaml，批H③口径）
+产物: docs/04_research_records/cross_domain/integrated_backtest/artifacts<WINDOW>/*.yaml|csv（机读=.yaml，批H③口径）
 """
 
 from __future__ import annotations
@@ -39,6 +39,7 @@ sys.path.insert(0, str(ROOT))  # schemas/ DDL-as-code 真源包在仓根（alloc
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts" / "backtest" / "translated"))
 
+import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 ART_ROOT = (
@@ -151,7 +152,13 @@ def build_panels(wname: str) -> dict[str, pd.DataFrame]:
     cache = PANEL_CACHE / (f"{wname}_pooloverride.pkl" if _POOL_OVERRIDE_ACTIVE else f"{wname}.pkl")
     if cache.exists() and not _POOL_OVERRIDE_ACTIVE:
         obj = pd.read_pickle(cache)
-        log(f"panels cache hit: {len(obj)} members")
+        # 缓存写侧是 {"panels": {...}, "meta": {...}}（见本函数末尾 pd.to_pickle），
+        # 读侧必须解包——否则调用方拿到的是 2 键嵌套 dict 而非 {sid: DataFrame}
+        # （2026-10-14 修：compose_sweep/breadth_diag 因此报 "cache hit: 2 members" 且 .empty 崩）。
+        if isinstance(obj, dict) and "panels" in obj and "meta" in obj:
+            log(f"panels cache hit: {len(obj['panels'])} members (unwrapped)")
+            return obj["panels"]
+        log(f"panels cache hit: {len(obj)} members (legacy flat)")
         return obj
     s, e = WINDOWS[wname]
     panels: dict[str, pd.DataFrame] = {}
@@ -301,6 +308,70 @@ def compose(panels: dict[str, pd.DataFrame]):
 
     report = compose_weight_panels(make_plan(), panels)
     return report
+
+
+# ---------------------------------------------------------------------------
+# 降换手改造（T1；判据/成本参数一字未动，仅施加于成员权重面板）
+# ---------------------------------------------------------------------------
+def parse_dampen(spec: str | None) -> tuple[float, float, float] | None:
+    """`--dampen tau,min_w,band` 解析（缺省 None=关闭=行为零变化）。"""
+    if not spec:
+        return None
+    parts = [p.strip() for p in spec.split(",") if p.strip()]
+    if len(parts) != 3:
+        raise SystemExit(f"--dampen 格式须为 tau,min_w,band，实得: {spec!r}")
+    tau, min_w, band = (float(p) for p in parts)
+    if tau < 1.0:
+        raise SystemExit(f"--dampen tau 须 >=1（1=不平滑），实得 {tau}")
+    if min_w < 0 or band < 0:
+        raise SystemExit(f"--dampen min_w/band 须 >=0，实得 min_w={min_w} band={band}")
+    return tau, min_w, band
+
+
+def dampen(w: pd.DataFrame, tau: float, min_w: float, band: float) -> pd.DataFrame:
+    """成员权重面板降换手三件套（EWMA 平滑 + min_w 剪尾 + no-trade 缓冲带）。
+
+    w: dates×symbols 权重面板，行和为成员 alpha。不改判据、不改成本口径。
+      - EWMA 平滑: 抑制逐日噪声 churn（换手主降项）
+      - min_w 剪尾: EWMA 在宽宇宙会拖出碎尾长仓，必配，否则成交笔数反升
+      - no-trade band: |Δw|<=band 不动，砍掉无意义微调
+      - 行和归一: 剪尾/缓冲带漏掉的权重按原 alpha 摊回，保持成员权重不变
+    """
+    if tau <= 1.0 and min_w <= 0 and band <= 0:
+        return w
+    X = w.fillna(0.0).astype(float)
+    smoothed = X.ewm(alpha=1.0 / float(tau), adjust=False).mean() if tau > 1.0 else X
+
+    row_scale = X.abs().sum(axis=1).replace(0.0, np.nan)
+    if min_w > 0:
+        thr = row_scale * min_w
+        smoothed = smoothed.where(smoothed.abs().ge(thr, axis=0), 0.0)
+
+    if band > 0:
+        held = np.zeros(len(X.columns))
+        rows = []
+        for _, row in smoothed.iterrows():
+            v = row.to_numpy(dtype=float)
+            d = v - held
+            held = held + np.where(np.abs(d) > band, d, 0.0)
+            rows.append(held.copy())
+        out = pd.DataFrame(rows, index=smoothed.index, columns=smoothed.columns)
+    else:
+        out = smoothed
+
+    cur = out.abs().sum(axis=1)
+    f = (row_scale / cur.replace(0.0, np.nan)).fillna(0.0).replace([np.inf, -np.inf], 0.0)
+    return out.mul(f, axis=0).fillna(0.0)
+
+
+def turnover_x(trades: pd.DataFrame, nav: pd.Series) -> dict:
+    """换手口径对齐 exam_cost_gate E7（_c4_engine:864 Σ|Δw|/2 → ×244 年化）。"""
+    days_basis = 244  # exam_scale_cost_gate.turnover_gate.days_basis（只读，不修改）
+    nav_mean = float(nav.mean())
+    n_days = max(len(nav) - 1, 1)
+    notional = float(trades["total_cost"].abs().sum())
+    one_side = notional / nav_mean / 2.0 / n_days * days_basis
+    return {"turnover_1side_x": round(one_side, 2), "notional": notional, "n_days": int(n_days)}
 
 
 def run_engine(
@@ -464,6 +535,13 @@ def main() -> None:
         "--pool-file", default=None, help="IBT-v2 池清单 yaml（协议 v1.1: members 覆盖；缺省=协议 v1 冻结池）"
     )
     ap.add_argument("--sensitivity", action="store_true")
+    ap.add_argument(
+        "--dampen",
+        default=None,
+        metavar="tau,min_w,band",
+        help="降换手开关（T1）：EWMA平滑tau + min_w剪尾 + no-trade缓冲带band，施加于成员权重面板"
+        "（compose 之前）。缺省 None=关闭=行为零变化。例: --dampen 120,0.001,0.004",
+    )
     ap.add_argument("--holdout-guard", action="store_true", help="W_HOLDOUT 单次烧毁确认（须显式传）")
     args = ap.parse_args()
     variants = [v.strip().upper() for v in args.variants.split(",") if v.strip()]
@@ -492,6 +570,14 @@ def main() -> None:
     if not usable:
         raise RuntimeError("无可用面板")
 
+    damp = parse_dampen(args.dampen)
+    if damp is not None:
+        tau, min_w, band = damp
+        log(f"dampen ON: tau={tau} min_w={min_w} band={band}（成员面板级，compose 之前）")
+        usable = {sid: dampen(p, tau=tau, min_w=min_w, band=band) for sid, p in usable.items()}
+    else:
+        log("dampen OFF（缺省=行为零变化）")
+
     report = compose(usable)
     log(f"composed: {report.panel.shape} participants={len(report.participants)} skipped={report.skipped}")
     report.panel.to_pickle(out_dir / "composed_panel.pkl")
@@ -517,6 +603,7 @@ def main() -> None:
         "shrink_map": SHRINK_MAP,
         "variants_run": [f"IBT-{v}" for v in variants],
         "throttle_enabled": bool(args.enable_regime_throttle),
+        "dampen": ({"tau": damp[0], "min_w": damp[1], "band": damp[2]} if damp else None),
     }
 
     variants_map = {"A": (signals_a, None), "B": (signals_b, schedule)}
@@ -531,8 +618,11 @@ def main() -> None:
         if portfolio is not None:
             portfolio.nav_series.to_frame("nav").to_csv(out_dir / f"nav_{vid}.csv")
             pd.DataFrame(portfolio.trades_log).to_csv(out_dir / f"trades_{vid}.csv", index=False)
+            summary[vid]["turnover"] = turnover_x(pd.DataFrame(portfolio.trades_log), portfolio.nav_series)
         log(
-            f"  {vid}: ret={result.total_return:.4f} sharpe={result.sharpe_ratio:.3f} dd={result.max_drawdown:.4f} trades={result.trades_count} ({summary[vid]['wall_sec']}s)"
+            f"  {vid}: ret={result.total_return:.4f} sharpe={result.sharpe_ratio:.3f} dd={result.max_drawdown:.4f} "
+            f"trades={result.trades_count} turn={summary[vid].get('turnover', {}).get('turnover_1side_x')}x "
+            f"({summary[vid]['wall_sec']}s)"
         )
 
     # 成员单跑（个股层）
