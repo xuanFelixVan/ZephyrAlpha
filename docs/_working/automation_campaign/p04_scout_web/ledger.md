@@ -937,3 +937,375 @@ creation_token 经 batch_creation_tokens.py 正门登记（register→publish→
 ⑧worktree＝本班**未调用任何工棚/工作树入口**（TRAE-079 Phase 2），实测 `.aidrafts/st-qoder-p04-1016-04`＝不存在；
   `git worktree list | grep p04`＝命中 1 行 `D:/ZephyrAlpha/.aidrafts/st-qoder-p04-1016-02`＝1016-02 班在册会话壳，
   本席不自删，随 §六 呈 ⑩/清理专班。
+
+### 八.1 收班尾读（本段落笔 23:33:5x＝date 实测；本段只在盘面追加，不再投第二袋，理由见末行）
+
+- ①claim＝本班 `git_commit.py --release-only` 真回显逐件 **RELEASED ledger.md／RELEASED checkpoint.md／
+  BATCH-SUMMARY released=2 denied=0 total=2**（23:33:2x 实测）⇒ 本班零残留 claim。
+- ②心跳＝本席 daemon **pid 48660** 按 PID 精确注销（禁镜像名全杀，遵在册红线）；
+  注销后 60 秒双读进程表＋heartbeat.jsonl 末行复验（防运行面代起新守护的"杀而复活"形态）＝读数见下两行。
+- ③耗时＝起批 23:00:13 → 本段 23:33:5x ⇒ **≈34 分**，名义 45 分窗内（超预算面＝§四 三处脚本返工＋
+  §二 三枚候选被自家去重闸排掉后的重定向，两笔均在台账分账）。
+- ④[BLOCKER]＝本班 **5 行**已落 §六（正对照＝同一 grep 尺可命中 1016-02 的 4 行＋本班 5 行＝9 行今日面；
+  零问题写"无"的合规行＝§六 第 5 枚「无（余面）」）。
+- ⑤自清＝`.runtime/tmp/p04_1016_04/` 本班件删除执行面＝
+  **删**：fut_census.py／basis_roll_census.py／materialize_basis_proxy.py／daemon_pid.txt／commit_msg.txt（网关因
+  exit=None 保留，本班自删）／ledger_block.md（已进台账，留副本无益）；
+  **留**：mkt_basis_pctile250.csv（游标③点名给下班喂闸）＋scan_github.md／scan_academic.md／scan_cn_community.md
+  （三个发现班案卷，下班引用其未取用面时须能复查 URL）＝留存面已随 §六 第 1 枚 [BLOCKER] 呈 ⑩ 定判据，
+  本席不自建"尺件永久面"；四件套外散落件＝本班零（写域只有两卡＋ledger＋checkpoint）。
+- ⑥GPU＝本班未 acquire 看门人 ⇒ 零牌可还（`gpu_watchman` 本班零调用）。
+- ⑦后台子任务＝3 个发现班全部终态回信（GitHub／学术／中文社区），**零孤儿**；
+  其未取用面已分级记在 §一 表（含 github.com HTML 全 HTTP 000、SSRN 全数 fetch 失败、雪球 JS 壳等失败取证），
+  本班**未采信**任何"派班自报已验证"＝凡进卡面引用一律本班重取或降级标注。
+- ⑧worktree＝本班零调用工棚/工作树入口（TRAE-079 Phase 2）；实测 `.aidrafts/st-qoder-p04-1016-04` 不存在；
+  `git worktree list | grep p04` 命中 1 行＝1016-02 班会话壳（`.aidrafts/st-qoder-p04-1016-02`），
+  本席不自删，已随 §六 呈 ⑩/清理专班。
+- 袋面实测＝`q-20261016-st-qoder-p04-1016-04-0001` state=**pending**、created_at 2026-10-16T23:32:35+08:00、
+  **position_ahead=17**、池 counts pending=1（本席面）；队头＝他席 `p01-1016-03-0003`（waiting 157s）、
+  lease=drain-active（holder pid 47508 alive）、**daemon.online=false**。
+  ⇒ 本班**不等落地、不投第二袋**：本班袋快照已入 blobs（网关原话"快照入袋即完成（零丢失）"），
+  而 §八.1 这段收班尾读若另投一袋＝同 sid 同件后袋会让前袋四态全无（在册形态）或超集袋被判双侧皆改而死，
+  两败俱伤；故本段留在盘面，由下班本班写域袋按追加型台账自然带走。
+  **下班首查＝对本席这只 pending 袋做内容级四态分诊**（判落地只认 `git log -1 --name-only` 与 blob 字节），
+  若见 dead 先读 dead_reason 对症——尤其注意本席在 position_ahead=17 且 daemon 下线的窗内注销了自家心跳，
+  落地侧若判 ghost_session 属**本班可预见并如实登记的后果**，勿改判据、勿加白名单，按在册正解重投。
+
+- ⚠ 更正（另起留旧案，§八.1 原文不涂）＝上段两处「23:33:5x」是**写入时占位、非 date 实测**（在册同族自犯：[[my-elapsed-time-sense-runs-2x-fast-date-before-time-gates]]）。现测真值＝§八.1 那次 safe_write 完成于 23:34:37（append_closeout.py 同行 date 回显），本更正行落笔 23:35:29；本班实耗＝起批 23:00:13 → 本行 23:35:29 ≈ 35.3 分（名义 45 分窗内）。不变的两点实测＝release 回显 23:33:2x、袋 created_at 23:32:35。
+
+- ⚠ 收班②⑧终核更正（另起留旧案，§八.1 原文不涂）＝本班落笔 23:34:37 时两处自述现已失真，实测改判如下：①**§八.1 ⑧「.aidrafts/st-qoder-p04-1016-04 不存在」→ 现测存在且已注册为 worktree**＝`git worktree list | grep p04` 本班 23:38:5x 现测 **2 行**（`.aidrafts/st-qoder-p04-1016-02` 与 `.aidrafts/st-qoder-p04-1016-04 [session/st-qoder-p04-1016-04]`）＝**运行面代建**（本席全程零调用工棚入口，TRAE-079 Phase 2 遵令不变；代建动作发生在本班末次网关调用之后，其守护 cmdline 尾参直接带着 `.aidrafts/st-qoder-p04-1016-04` 为证）⇒ 本席不自删（他会话产物＋物理不可逆面），与 1016-02 班的同类壳一并随本段呈 ⑩/清理专班；②**收班②实际跑了两次注销**＝首杀 pid 48660（23:35:3x taskkill 成功回显）后运行面**代起新守护 pid 9540**（23:36:0x 现测 cmdline＝heartbeat_daemon st-qoder-p04-1016-04 D:\ZephyrAlpha 30 D:\ZephyrAlpha.aidrafts…）＝在册「心跳杀而复活」形态在本席自家会话面首次复现；二杀 9540 后 23:38:5x→23:39:2x 双读＝进程面 `Name='python.exe'` 全表 cmdline 含 p04-1016-04 **零命中**＋heartbeat.jsonl 末行停在 `ts 15:36:00Z pid 9540 status alive`（此后零新增）⇒ 注销终态成立，且**两次杀均按 PID 精确执行、未用 /IM 镜像名**（遵在册红线）。本班耗时终值＝起批 23:00:13 → 本行 23:41:06 ≈ 40.9 分（名义 45 分窗内）。
+
+## §九 ④席 1016-05 班（起批 2026-10-16 23:45:48 date 实测・跨零点续行至 10-17・会话 st-qoder-p04-1016-05・batch 20261016-p04-05・零 worktree 遵 TRAE-079 Phase 2）
+
+### 一、起批三证与水位（本机 date 实测同行）
+
+- 冷启动读数＝python 3.12.8／`lock_files.py cleanup` 清 5 死锁并 SALVAGE 四席遗物（含本席 04 班，
+  merge=skipped・释放claim=0）／`process_reaper --status` source=live last_run=23:46:10＝**值守在位**；
+  水位现测＝`commit_pct 84.87%`（＜85 ⇒ 依 ⑩ 20 单在册令允许轻档，本班据此**零 CH 探针、零 panel 物化**，
+  全部实测量＝网络取证＋册面 grep）・`ram_used_pct 74.2`・`worktree_changes 1414`・`degraded False`。
+- 防重入＝前任 04 判**已收官**非在途（三证＝① ledger 末行 §八.1 终核更正落笔 23:41:06 且八件逐件自述；
+  ② 进程面 `Get-CimInstance` 全表 cmdline 含 p04-1016-04 **零命中**；③ heartbeat.jsonl 末行停在
+  `ts 15:36:00Z pid 9540 status alive`＝本班 23:53 复量已 stale 17.6 分钟）。
+  在册三只孤儿 daemon（pid 28048/31248/45068＝01/02/03 班）本班**复量仍全部存活**，本席零代杀，随 §六 呈 ⑫。
+- 本班注册＝`register(pid=0)`＋`_spawn_heartbeat_daemon`（daemon pid **35288**）＋
+  `register_heartbeat_keepalive(ttl=7200)`＋`mark_logical(True)`；三态实测 in_registry=True／
+  logical=True／hb 末行 `ts 15:55:46Z pid 35288 alive`（＝23:55:46 本地，与 date 同行）。
+  ⚑ 在册处方复证＝`SessionConcurrency` 系**错名**（ImportError 实测），正解类名＝`SessionRegistry`。
+
+### 二、下班首查＝本席两只在途袋内容级四态分诊（04 游标⑧点名件，先做）
+
+尺＝`.runtime/commit_queue/pending/*.json` 逐件读 base_blob/blob_ref，袋 blob 与 `git show HEAD:` 现值
+做 **difflib 内容级**比对（CRLF/LF 先归一，遵在册"袋 blob 直比盘 sha 会造假不一致"）。读数（00:0x 现测）：
+
+- `q-20261016-st-qoder-p04-1016-04-0001`＝state **pending**、position_ahead=20、base_head=a54015c19。
+  **判健康可落地**＝其 ledger 件 base_blob `c83e28bd86d3` **逐字等于** dev 现 HEAD 的 ledger blob
+  `c83e28bd86d3`（checkpoint 件 base_blob `ac8321434047` 亦等于 HEAD 现值）＝基底未动⇒袋面是 HEAD 的
+  **纯追加前缀**（vs HEAD hunks=1 kinds=['insert'] isPrefixAppend=True），不属"双侧皆改"死族；
+  其 vs 盘面 1 处 delete＝04 班 §八.1 收班尾读写在落袋之后（游标⑧预告的同型），由本班盘面追加自然带走。
+- `q-20261016-st-qoder-p04-1016-02-0005`＝state **pending**、position_ahead=5、base_head=0a0e61997。
+  ledger 件 base_blob `2ec8204f43ca` ≠ HEAD 现值 `c83e28bd86d3`＝**基底已被前袋推进**，但其袋面相对 HEAD
+  仍是纯追加超集（isPrefixAppend=True）⇒ 落地侧若走"纯 append 超集容忍"则活、若按整文件三方判则死
+  （02-0002/03/04 三班同因 dead 在册，dead_reason 逐字＝『非注册表族件双侧皆改真冲突』）；
+  ⚠**该袋 checkpoint 件相对 HEAD 是 4 处 replace 且非纯追加**＝其快照止于 02 班 22:05，若真落地会
+  **把 03/04 两班游标整段覆回 02 版**＝追加型游标面的整档覆写风险。本席不自投不 requeue 他班会话袋，
+  按 §六 第 2 枚 [BLOCKER] 呈 ⑩/⑫ 定夺（该席两枚新卡已在 HEAD＝卡面 payload 无损失，风险面只剩游标覆写）。
+- 主区 index 面异象如实登记（非本席所造）＝`git status --porcelain` 对本席 4 枚**已落 HEAD** 的卡显示
+  `D `（暂存删除）而同路径盘面又是 `??`；逐件三态测＝HEAD blob == 磁盘 blob（e3bd8757/5f9b104e/1c01a895/
+  d65a9afc 四组 SAME）、index 面 (absent) ⇒ 判定＝**index 停在落地前一版的落后象**（在册
+  main-index-auto-staged-mixed-pool 的 10-16 生成源结论），不是真删除、不是归属篡改；
+  本席不起复位（勿代复位在册令），只随 §六 第 3 枚 [BLOCKER] 报 ⑩/⑫ 留证。
+
+### 三、渠道扫描面与双闸读数（本班实测量＝网络取证＋册面 grep，零 DB）
+
+**渠道计八面（保底 ≥5 达成；TASC 面缺席如实登记）**
+
+1. GitHub 检索端点（**本班亲验**）＝`api.github.com/search/repositories` 三查询面＋一次 raw-body 复核；
+   读数：`q=volatility+risk+premium&sort=stars` 返回 6 枚（52★/null、14★/null、14★/null、
+   10★/MIT/2026-07-20、5★/MIT、4★/MIT/2026-03-01）；`q="volume shock" stock`、
+   `q=volume decay half-life`、`q=trading volume half-life` **三面 total_count=0**。
+   ⚑零命中带正对照＝同端点前 12 分钟那条返回 6 枚真条目，且 raw 复核逐字取回
+   『{"total_count":0,"incomplete_results":false,"items":[]}』⇒ 排除限流 message 与空壳假象
+   （遵在册"0 命中须正对照"）。三筛结论＝**该两轴均无"高 star＋干净许可＋在维护"三者齐备的实现源**。
+2. arXiv（**本班亲验整页**）＝abs/2506.07928 逐字取到 title/author『Austin Pollok』/submitted『Mon, 9 Jun 2025』/
+   摘要首二句/许可行『Creative Commons Attribution 4.0 International License』；其 html 面属搜索摘要级（VRP 定义句）。
+3. 开放获取学术（摘要级）＝PMC9355410（冲击响应衰减速率随序列构造而变）、MDPI 2227-7072/13/1/7
+   （量能按流通股本归一＋post-shock k≤6 持久）。**两页许可行本班未亲验＝按"未取证"消费**。
+4. 学术索引/中文文献面（摘要级）＝xueshu.baidu 股东处置效应 A 股量能传导题录、zhangqiaokeyan 两篇题录、
+   ScienceDirect『Variance risk premium and equity returns』题录。
+5. 策略订阅站（摘要级）＝Quantpedia『Leveraged ETFs in Low-Volatility Environments』
+   （RV 长窗／IV 短窗的窗长不对称形制提示；页面无许可证声明）。
+6. 行情商文档（摘要级）＝barchart IV−HV 定义与『nearest monthly … 30-days out or more』到期档口径、
+   macroption 词汇表 HV=realized volatility 旁证。
+7. 中文技术社区（摘要级）＝cnblogs『量化交易系列（九）』IV>RV 与 VRP 表（S&P 1990-2025 IV19.8/RV15.2/VRP4.6 等
+   市场级读数）＝**社区自述非同行评议，一律不入本库数值面**。
+8. 自媒体（证据级最低，只取方法名）＝Medium @magpiai『AR(1) 建模半衰期』＋@deepml1818 波动率套利题录；
+   NYU Vlab 教学演示页（Persistence 0.955／Half-life 15 days 的**成对呈现形制**，数值与本库无关）。
+   ⚑TASC 专栏＝本班两次定向检索（IV−RV 主题）**未命中 TASC 原文页**＝该渠道本班缺席，不假装扫过。
+
+**双闸读数**
+
+- 许可证闸＝两卡均判**只学思想不入码**。卡24 唯一干净许可腿是 arXiv CC BY 4.0（文本许可≠代码许可），
+  GitHub 腿为 4-14★ 个人 MIT 仓（本席未逐仓读 LICENSE 正文与上游依赖，不足以判"可复制"）；
+  卡25 GitHub 面零命中＝无复制对象。quantpedia／barchart／macroption／cnblogs／medium／aiquantforge／
+  vlab 七面本班未见许可声明。
+- 去重闸（**内容级**，三面）＝面一 web_cards 全名面 ls＝23 枚（本班起手清单逐枚过目，无 VRP／无量能衰减轴）；
+  面二 L9 校准卡名面 `git ls-files "*entry_flow/L9*"`＝**115** 件、具名构造 44 条逐条过目
+  （A01 族含"分钟已实现波动/单日分钟方差占比/收益率自相关 lag1"，A02 族含"收益率自相关 lag2/跨日分钟路径形corr"
+  ⇒ 本席两卡本体分别是**跨源价差**与**量能序列持久度**，与上述不重合）；
+  面三 strategy_registry 谓词计数＝『风险溢价』0／『VRP』0／『variance risk』0／『半衰』0／『persistence』0／
+  『AR(1)』0／『冲击响应』0／『回复速度』0／『volume_shock』0；『衰减』9 命中、『decay』811 命中＝
+  **逐条读后判非同一本体**（9 处全为因子 IC 衰减／decayed 生命周期态，811 处为词表与 decay_threshold／
+  decay_detection_method 字段行）⇒ 该二词是**族盲尺**，下班勿按裸 grep 计数得出相反判读（在册 ⑥ 条同型教训）。
+  排面命中＝『涨跌停』4 枚卡命中（均属宇宙筛/限制语，非本席选题）、『广度』2 枚＋L9 一枚（本席未选题）。
+- 正交闸＝**本班未跑**（不是判过零命中）＝池面缺席实测见 §一 第 2 条＋§五 第 2 条转单；
+  两卡"真交"一律记 **未证**，册内自查面亦未跑（③席在册结论＝池面闸对册内重复零判别力）。
+
+### 四、本班产卡两件（均新轴，方向一律不预注册）
+
+- 卡24＝`data/strategy_intake/web_cards/20261016_p04_vrp_implied_minus_realized.yaml`
+  （SIC-20261016-P04-24，波动率族第三条＝**跨信息源溢价** IV−RV；五必备齐，links=5，self_flag=5，
+  口径坑 7 条；关键自限＝本班零 DB 读数，隐含腿面存在性**引用** 卡20 在册盘面实测非本班证；
+  文献原口径是 IV−**未来**已实现，本卡只交同期近似＝两口径禁混列）。
+- 卡25＝`data/strategy_intake/web_cards/20261016_p04_volume_shock_halflife.yaml`
+  （SIC-20261016-P04-25，量能**时间形状**＝冲击后 AR(1) 持久度与半衰期；五必备齐，links=7，self_flag=5，
+  口径坑 7 条；取体来源＝卡23 卡面逐字标注"属另一轴、该班未取用"的邻轴具名取下；
+  阈值 5× 系外部分钟口径转述，**日频下事件密度未量＝禁直接冻结**，本班写死"先量分布再定阈值"）。
+- 两卡 yaml.safe_load 双过＋五必备键逐件核（missing=[]，读数见本班执行面）；
+  creation_token 经 `batch_creation_tokens.py` 意图 API 正门登记（先 --dry-run 验计划面＝各恰 1 条无扩面，
+  再实跑；capability＝p04_webcard_vrp_implied_minus_realized／p04_webcard_volume_shock_halflife，
+  merge-evaluation 随 payload 填净零判定）＝回显与在册判据见 §八。
+
+### 五、转单段（全文，由 ⑩ 汇总到 feedback/to_impl.md 与 to_datasource.md；本席不自写共写面）
+
+1. **转 ①/⑩＝源线册缺衍生品线（本班实测缺口）**＝`02_source_line_registry.md` 的 SL 表实测 29 条
+   （A01..A16／B01..B10／C01..C03），谓词『期权|衍生品|衍生|option』全文命中 **0**（rc=1，尺见台账 §三）
+   ⇒ 期权 IV 面（`c1_market.option_iv_surface`，卡20 在册实测 n=419,801、2019-01-02..2026-10-15）
+   **无处挂 SL 编号**，故凡绑隐含腿的卡（卡20、本席卡24）数据源映射字段只能写"缺线"。
+   请 ① 席补一条衍生品源线并标采集口，或由 ⑩/⑤ 明确"衍生品面不入源线册"的判据口径（本席不自裁）。
+2. **转 ⑨/⑤＝正交闸池面二次退化**＝04 班实测三面"目录在、件没了（空壳）"，本班 00:0x 复量＝
+   `.runtime/tmp/p04_06_pool` 仍 is_file=0 空壳，而 ⑨席 `pool_datesig` 与 `pool6` 两个**目录面已不存在**
+   （比上班又退一步）。本席两班（04/05）连续无法开闸＝候选卡只能记"真交未证"。
+   请 ⑨ 席给 pool_datesig 的生成口与复活时点（该面归 ⑨ 席产出，本席无生成权，且禁在本席窗内重烧 CH 重建 32 员池＝⑤ 席活）。
+3. **转 ①/⑤＝分钟腿与逐笔腿跨度普查仍是三张卡的共同堵点**＝卡23（VPIN 正版）、卡25（量能冲击正版）
+   都缺 SL-A01 分钟腿／SL-A02 逐笔腿的可用跨度读数，本席两班均未测（零 DB 高水位令）。
+   请 ① 席一次普查、两卡共用，别各班重问一遍。
+4. **转 ⑥＝两张期权/量能卡的冻结前置**＝卡24 的 IV/RV 配对标的（ETF 期权 underlying 8 只 vs
+   kline_daily 的 symbol_canonical 面能否 INNER JOIN）本席未量；卡25 的 float_share 列是否存在本席未量。
+   两处都属"冻结前必须有实测面"的判据缺失，本席按 SOP 只出案卷不出裁定。
+
+### 六、[BLOCKER] 登记（本席 1016-05 班，六枚；行首形态与本台账既有约定一致）
+
+[BLOCKER] 2026-10-17|④席1016-05|数据问题|衍生品／期权面在数据源线册上**无编号**，凡绑隐含腿的卡（本席卡20 与卡24）的"数据源映射"字段只能写缺线，九必填表头挂不上 TDM 交叉轴|docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md:24-52（SL 表实测 A01..A16／B01..B10／C01..C03＝29 条）＋谓词『期权|衍生品|衍生|option』全文命中 0（rc=1）|要 ① 席补一条 SL 衍生品线并标采集口，或由 ⑩/⑤ 明确"衍生品面不入源线册"的判据口径；本席不自建源|中
+[BLOCKER] 2026-10-17|④席1016-05|流程问题|同席 02 班在途袋 `q-20261016-st-qoder-p04-1016-02-0005` 的 **checkpoint 件相对 HEAD 是 4 处 replace 且非纯追加**＝其快照止于 02 班 22:05，一旦真落地会把游标整段**覆回 02 版、抹掉 03/04 两班游标面**（追加型件被整档覆写）|.runtime/commit_queue/pending/q-20261016-st-qoder-p04-1016-02-0005.json（blob_ref 与 `git show HEAD:` 做 difflib：hunks=4 kinds=['replace'] isPrefixAppend=False；同袋 ledger 件却是纯追加＝两件不同命运）|要 ⑩/⑫ 在该袋落地前把 checkpoint 件从袋内摘除，或让落地侧对"追加型游标件"禁整档覆写；本席不自投不 requeue 他会话袋|高
+[BLOCKER] 2026-10-17|④席1016-05|判据缺失|正交闸池面**二次退化**＝04 班实测"目录在、件没了（空壳）"，本班复量 ⑨ 席 `pool_datesig`／`pool6` **目录面整体不存在**、`p04_06_pool` 仍 is_file=0；本席连续两班（04/05）无法开闸，四枚新卡全部只能记"真交未证"|`.runtime/tmp/p04_06_pool`（is_file=0）・`.runtime/sessions/st-qoder-p09-1015-04/staging/{pool_datesig,pool6}`（exists=False，00:0x 现测，谓词 is_file 分层计数）|要 ⑨ 席给 pool_datesig 的生成口与复活时点（该面归 ⑨ 席产出，本席无生成权）＋⑤ 席接"尺件被清"在册工单；本席遵令不在自家窗内重烧 CH 重建 32 员池|中
+[BLOCKER] 2026-10-17|④席1016-05|工具缺陷|主区 index 对本席**已落 HEAD** 的 4 枚卡呈 `D ` 暂存删除象（同路径盘面又是 `??`），肉眼读"文件被删"会误判成事故或诱发误清理|`git status --porcelain data/strategy_intake/web_cards/` 面 4 枚 D＋逐件三态哈希＝HEAD blob 与磁盘 blob 四组全 SAME（e3bd8757/5f9b104e/1c01a895/d65a9afc）、index 面 absent|要 ⑩ 复证在册生成源（正门每落地一次主区 index 停在落地前一版）并给巡检一个"勿代复位"的显式口径；本席未起任何 checkout/reset|低
+[BLOCKER] 2026-10-17|④席1016-05|流程问题|本班**跨零点**（起批 10-16 23:45:48／成文 10-17 00:2x）＝恒定班"当日第几班"取号与台账日期面在零点两侧归属未定义；另本席在册三只孤儿 daemon（pid 28048/31248/45068＝01/02/03 班）本班 23:53 复量**仍全部存活**`Get-CimInstance` 三行 cmdline 逐字含各该 sid|本台账 §九 §一 行首时间戳＋`.runtime/sessions/st-qoder-p04-1016-0{1,2,3}/heartbeat.jsonl`|要 ⑫ 按 PID 精确注销三只（禁镜像名全杀，遵在册红线）＋要 ⑩ 给跨零点班号的日期归属口径；本席零代杀他会话共享态|中
+[BLOCKER] 2026-10-17|④席1016-05|工具缺陷|外部许可取证有"渲染不稳定"新形态＝同一 arXiv abs 页相隔约 20 分钟两次 WebFetch 得到**两种许可行**（『Creative Commons Attribution 4.0 International License』vs『Rights to this article.』）⇒ 单次 fetch 不足以证许可证|卡24 source_links 第 1 条逐字并存两次读数（本班自检第二轮发现）|要 ⑤/⑥ 消费前自取许可页**原字节**；本席已把卡24 的 arXiv 许可腿就地降为"未确证"、闸判不放宽；建议 ⑤ 评估"许可取证须两次一致或取原字节"进矿工席工序 3|中
+
+### 七、自检两轮（抽 3 条复核许可证与去重/正交，含尺的正负对照）
+
+**轮一＝先证尺能命中，再复判本席写过的三句结论**
+
+- 尺对照面（同尺同谓词，face 分三层）＝正对照『波动率』命中 web=11／L9 正文=1／registry=6 ⇒ **尺非恒零**；
+  负向主张面『VRP』『AR(1)』『回复速度』『volume_shock』web＋L9＋registry 三面皆 0。
+  ⚑计数前已排除本班两卡自身（分母＝web_cards 23 枚，非 25），谓词＝子串、大小写不敏感，写明以免下班误读分母。
+- **复核条 (a)＝卡24 去重理由句被本班自改判**＝原写『『variance risk』仅命中两张斜率卡，其本体是期限方向』
+  ＝不准确；逐条读命中原文＝两枚皆**上班 arXiv 检索式留痕**（SIC-20261015-P04-14 记 entries=2、
+  第 1 条题目含『Unspanned Dimension of the Variance Risk Pr…』published 2026-08-20；lhb_seat 卡记同查询 2 条）
+  ⇒ "判不撞"结论仍成立（两卡各自本体不是 IV−RV 差），但**理由换成引用面重叠**并新增披露＝
+  本卡与 卡14 共用同一外部题录，⑥ 冻结时须去重引用。卡面已就地更正（该卡未落地，原地改属本席写域）。
+- **复核条 (b)＝卡25 的去重尺是"名面"，正文面会把结论反过来**＝按 L9 **卡名** grep『半衰』=0，
+  按 L9 **正文** grep=**28 枚文件命中**；逐条读全部是『lag_profile: …|IC| 达峰值且半衰期 >= 1 交易日』
+  这类**信号预测力时滞判据**（另含 A01__03『波动类信号半衰期应短（<=3 日）——超 5 日仍强读=疑似与市值/
+  流动性共线，需正交化复挖』、A03『RS 信号半衰期 > 10 日须查共线』、A05『drift_persistence』）
+  ＝对象是 IC 衰减与 CAR 漂移，**不是成交量序列**⇒ 判不撞成立；卡面已补该读数并写死
+  "两套半衰期同名不同物，⑥ 冻结时须与 L9 lag_profile 显式区分"。⚑这条是本班最有信息量的一处自纠＝
+  若只按卡名面下结论，下班复扫会得出"本席漏查 28 处"的反向指控。
+- **复核条 (c)＝许可证闸复核唯一被证伪风险面**＝卡24 的 arXiv 许可腿两次渲染不一致（见 §六 第 6 枚）
+  ⇒ 按保守缺省降为未确证，闸判"不入码"不因该腿放宽；GitHub 面 6 枚许可读数属本班亲验（一次 fetch 整批读数），
+  卡25 的三面 total_count=0 属**带正对照**的零命中（正对照＝同端点 12 分钟内返回 6 枚＋raw 复核非限流体）。
+
+**轮二＝结构与落地面复核**
+
+- 两卡 `yaml.safe_load` 双过（编辑后复跑，keys=14／links=5 与 7／self_flag=5×2）；
+  五必备键 missing=[]（source_links／license／logic_zh／pseudocode／data_binding 逐件核）。
+- creation_token 两件各经意图 API 正门：`--dry-run` 计划面＝**恰 1 条/件无扩面**，实跑回显
+  『登记: 新增 1 幂等跳过 0 冲突WARN 0；publish_snapshot **v914**（卡24）／**v915**（卡25）』＋
+  『投影重打: quadrant=stale wrote=True』＋『OK: 已登记 1 条』；两次均出现
+  『PG 有行而盘上无=1 条（滞后，本次 render 补上）』告警＝热册投影由工具写，**本席不随袋投该热册**
+  （在册令＋归属篡改红线；CREATE-GUARD 走 PG 第三源正证）。
+- 台账追加面两次均 `is_prefix_of_after=True`（976→1017→1095 行），零删除；§九 新增区
+  REFERENCE-INTEGRITY 自扫＝『裁定#<数字>』与『AGENTS.md §N.M』两形态命中 **0**（grep -c 实测）。
+- 正交闸状态＝**未跑**（池面缺席，§六 第 3 枚）；本席四枚卡（含上班两枚）在册面全部标"真交未证"，
+  无人可把这四枚当"过闸候选"引用。
+
+### 八、收班八件逐件实测（本段落笔在落袋**之后**＝盘面追加，本班袋内快照不含本段，由下班写域袋自然带走；同型先例见 04 班 §八.1）
+
+- ①claim＝本班 00:07:27 对四件（两卡＋ledger＋checkpoint）逐一 acquire 成功（回显『持有者
+  st-qoder-p04-1016-05／TTL 30 分钟』四条）；收班 `--release-only` 真回显＝
+  **四件各报『NOT FOUND — 未被锁定』而 BATCH-SUMMARY released=4 denied=0 total=4 ＋
+  『RELEASED: 4 files (session=st-qoder-p04-1016-05, verified)』**＝终态无残留 claim，
+  ⚑但**claim 在 00:07 与 00:25 之间自行脱落**（TTL 30 分未到期），投袋时 `ENQUEUE-RENEW: claim 续租 0/4 件`
+  即同一事实的前向读数。两个候选因本班未定＝(a) pid=0 逻辑会话被外来回收（在册两例：
+  seat-claim-keeper-duality／examcard-wrong-dir-and-pid0-claim-reaped）；(b) 网关直连支失败后 finally 释放
+  （本次确有一条 `commit 失败 exit=None` 的 message-file 保留行，随后自动改道入队）。
+  本班无损害＝四件 blob 与盘面逐件相等已验；该脱落面另起 §八 第 7 枚 [BLOCKER]。
+- ②心跳＝本席 daemon **pid 35288** 按 PID 精确终止（00:27:36 taskkill 成功回显，**未用 /IM 镜像名**）；
+  65 秒后双读复验＝进程面 `Get-CimInstance` 全表 cmdline 含 p04-1016-05 **零命中**＋
+  heartbeat.jsonl 末行停在 `ts 16:27:18Z pid 35288 status alive`（此后零新增，共 66 行）
+  ⇒ 注销终态成立，**本班未复现 04 班"杀而复活"形态**（该班二杀 pid 9540 在册）。
+- ③耗时＝起批 23:45:48 → 本段落笔 date 同行读数（见本段命令回显）＝名义 45 分窗内偏上限；
+  分账＝例行面（冷启动＋分诊＋检索＋两卡）为多数，返工面两处＝push_cursor 首次 SyntaxError（自造多余引号）
+  与自检轮一把 L9 尺从"卡名面"改判为"正文面"（后者属**必须**的判据返工，非耗损）。
+- ④[BLOCKER]＝本班 **7 行**已落（§六 六枚＋本段第 7 枚），行首形态与本台账既有约定一致，
+  `grep -c "\[BLOCKER\]"` 全册命中数追加前后读数见 §八 末行命令回显（零问题面不适用＝本班有实报）。
+- ⑤自清＝`.runtime/tmp/p04_1016_05/` 本班件（register_shift.py／verify_alive.py／append_ledger.py／
+  push_cursor.py／ledger_block1-3.md／section9_now.md／qs.json／commit_msg.txt）在**全部消费者跑完后**
+  整目录删除（遵在册"删前 grep 消费者、排在末件"处方）；四件套外散落件＝**零**（写域只有四件，
+  卡24/卡25 与台账/游标全在袋内）；该提交的全提交＝四件已随 `--enqueue` 入袋并逐件 blob==盘 验真；
+  零未竟待办＝本班无在途探针、无未物化候选（两卡候选序列属 ⑤/⑥ 前置，已列 §五 转单）。
+  ⚑04 班留存面（`.runtime/tmp/p04_1016_04/` 四件含 mkt_basis_pctile250.csv）**本席不删不动**，
+  归属已由 04 班随其 §六 第 1 枚呈 ⑩ 定判据。
+- ⑥GPU＝本班**零 acquire** 看门人（`gpu_watchman` 零调用，本班零 DB 零 panel）⇒ 零牌可还，无 status 复核项。
+- ⑦后台子任务＝本班**未 spawn 任何子代理**（全程主线程＋检索工具直连）＝零孤儿；
+  自有后台 bash 两支均到终态＝(a) 全盘 `find` 找 L9（超时转后台后 completed，其结论被 `git ls-files`
+  正解取代，该面作废不引用）；(b) `batch_creation_tokens.py` 两件实登（completed，exit 0，
+  v914／v915 回显已在 §七）。
+- ⑧worktree＝本班**零调用**工棚/工作树入口（TRAE-079 Phase 2 遵令）；⚑现测＝
+  `git worktree list | grep -c p04` 得 **3 行**（`.aidrafts/st-qoder-p04-1016-02`、`-04`、`-05`，
+  末行尾参 `[session/st-qoder-p04-1016-05]` 且其 HEAD=a175a2a0eb）＝**运行面在会话注册时代建整树壳**
+  在本席自家面的**连续第三班复现**（02→04→05）；本席不自删（他会话产物＋物理不可逆面），
+  随 §六 呈 ⑩/清理专班，并请与 TRAE-079 Phase 2 令面的同轨冲突归口 ⑤（⑩ 1016-21 单已列 ⑤ 席工单②）。
+
+- 袋面实测（本段落笔前现读）＝`q-20261017-st-qoder-p04-1016-05-0001` state=**pending**、
+  created_at 2026-10-17T00:25:55+08:00、base_head=**a175a2a0ebcf**（＝当轮 dev HEAD）；
+  四件 `blob_ref` 与磁盘逐件 **blob==disk: True**、`blob_sha256` 重算 **match: True**、
+  ledger 件 base_blob `c83e28bd86`＝HEAD 现值（checkpoint `ac83214340` 同）＝**纯追加非"双侧皆改"**，
+  不属本席今日死族；⚑q 号日期段是 **20261017** 而会话名与 batch 是 **1016-05**＝跨零点两面不同形，
+  本班不据己意改判号（见 §六 第 5 枚）。
+- 本班不投第二袋（在册理由同 04 班：同 sid 同件后袋会让前袋四态全无或被判双侧皆改）＝
+  §八 这段只随盘面走，下班首查请对本席袋做内容级四态分诊，判落地只认 `git log -1 --name-only` 与 blob 字节。
+
+[BLOCKER] 2026-10-17|④席1016-05|工具缺陷|claim 在 acquire 后 18 分钟（TTL 30 分未到期）自行脱落＝投袋时 `ENQUEUE-RENEW 续租 0/4`、收班 `--release-only` 四件报『NOT FOUND 未被锁定』却同时回显『released=4／RELEASED 4 files (verified)』两形态并存；本班无损害（四件 blob==盘已验）但同窗他席可无扰写入本席写域|`python scripts/git_commit.py … --enqueue` 原样回显两行＋`--release-only` 回显四行 NOT FOUND＋`.runtime/lock_files` 面本席四件零条目（lock list grep 命中他席六件为照）|要 ⑤ 席查 pid=0 逻辑会话的 claim 回收路径与网关直连失败 finally 释放两条候选因（在册两例同型：seat-claim-keeper-duality／pid0-claim-reaped），并给"released=N 但逐件 NOT FOUND"该回显是幂等成功还是漏放的判据；本席不自改锁码|中
+
+- ⚠ 更正（另起留案，§八 原文不涂）＝§八 ③ 行「名义 45 分窗内」是该段落笔时读数（00:29:47＝起批后 44.0 分），
+  本班**末次现测**＝00:31:29（收班②复验那次 date 同行）＝起批 23:45:48 → 00:31:29 ≈ **45.7 分**，
+  即**略超名义 45 分窗约 0.7 分**。超窗两处返工面＝① push_cursor.py 首跑 SyntaxError（我自己多写一个引号）
+  ② 自检轮一把 L9 去重尺从"卡名面 0 命中"改判为"正文面 28 命中后逐条读"（后者属必做判据返工，非耗损）。
+  在册铁律复证＝追加型台账里"耗时/终值"这类自述数字**落笔即假**，须与同行命令回显同时出现；本行按该处方
+  另起留旧案，不改 §八 原句。本班写域终态无变化（袋 pending 未动、claim 已 release、心跳终态零命中）。
+
+
+## 2026-10-17 00:3x ｜ st-qoder-p04-1017-01（④网矿席·本日首班＝p04-1017-01・batch 20261017-p04-01：渠道轮扫 6 面＋产两枚新轴卡＝卡26 资产增长异象(公司投资轴首条)＋卡27 最大日收益彩票需求因子(收益分布右尾轴首条)）
+
+- 起手与防重入＝起批 00:33:30（date 实测）；reaper 存活 source=live／rc=0／last_run 现算 00:33:41；
+  lock cleanup 清 2 枚 p10 死锁＋回收 2 枚死会话遗物。前任 1016-05 班三证判**已收官**＝
+  ①ledger §八 收班块+更正段落笔 00:31:29、[BLOCKER] 行齐；②游标已推进 last_batch=20261016-p04-05；
+  ③心跳 daemon pid 35288 现测 `psutil.pid_exists=False`（末行仍 status=alive＝运行面 app-exit 掐死的说谎心跳，非在途）。
+  本班取号＝并集+1（今日 1017 台账面零 p04 班⇒01）。冷启动 Python 3.12.8 实测；禁建 worktree（TRAE-079 Phase 2）遵令、未调任何工棚/工作树入口。
+- 起批水位自证（高水位轻档令）＝commit_pct **83.87%**＜85 ⇒ 允许轻档但本班**零 CH 探针、零 panel 物化**（两卡市场级序列未物化＝正交闸顺延，见下）；ram 可用 15.03/63.85 GB。
+- 池面复量＝下班首查②已执行：`.runtime/tmp/p04_06_pool`、`.runtime/tmp/st-qoder-p09-1015-04/pool_datesig`、`.../pool6`
+  三面**目录在而 is_file() 计数全为 0**＝池面第三次退化（04 班「目录在件没了」→05 班「目录整体不存在」→本班「目录重建但空壳」）。
+  实跑闸 `python scripts/backtest/fexam/signal_orthogonality.py gate --candidate .runtime/tmp/p04_1016_04/mkt_basis_pctile250.csv --pool .runtime/tmp/p04_06_pool --gate 0.3`
+  回显＝「[SIGNAL-ORTHOGONALITY] ERROR: --pool 未命中任何信号 CSV」而 **rc=0**（在册假绿红线：rc=0≠通过，⑨席 1017 同型）⇒ 两卡「真交未证」逐字写进卡面 orthogonal_gate，禁下班把 grep 0 命中读成正交通过。
+  04 班留存候选 mkt_basis_pctile250.csv（17,252B, mtime 10-16 23:23）本班复量仍在＝**卡22 基差分位候选，与本席卡26/27 不同对象，未代其喂闸**，继续留下班。
+- 渠道轮扫（无定向单＝按 SOP §9 轮转；本班命中的真实渠道面 6 枚）＝
+  ① 学术索引（xueshu.baidu/ScienceDirect/RePEc-IDEAS）② SSRN 工作纸面 ③ GitHub（gh 亲验：`gh search repos "lottery demand factor"`=[]、
+  `gh api repos/marketneutral/alphatools`=467★/Apache-2.0/pushed 2023-02-02 陈旧、AG 面 2 枚复现仓 Clara-star/siddy1999 均 0★+无许可证）
+  ④ 量化社区（Quantpedia/知乎/360doc/pingu）⑤ 会议论文 PDF（EFMA 2025 Greece factor-MAX 直链）⑥ TASC 专栏（**本班定向检索未命中我两轴原文页＝缺席如实登记，不假装扫过**，命中的 TASC 面是 TradingView Ultimate Oscillator 脚本页非本轴）。
+  GitHub 三筛结论＝两轴都无「高 star＋干净许可＋在维护」三者齐备实现源 ⇒ 许可证闸走「只学思想不入码」，GPL=0。
+- 双闸执行＝
+  ① 许可证闸：两卡基座均为学术期刊/会议论文（无代码许可证）＋GitHub 侧无许可证/陈旧仓 ⇒ 伪代码全部本席按本库实测列名自拟，零行取自任何仓库；gpl_hits=0。
+  ② 去重闸（三面窄谓词实跑）：strategy_registry.yaml／L9 校准卡**正文面**（docs/03_modules/_domain_backtest/exam_cards/entry_flow/L9，遵 1016-04 令读正文不只看卡名）／自家 web_cards 文件名面——
+     『资产增长|asset.growth』与『MAX效应|彩票|lottery|maximum daily return』两面均 **0 命中**＝本体空白。⚑谓词自证防假扩：宽串『MAX』曾一次性命中 20+ 无关卡（各卡正文『最大』字样），窄谓词收敛后=0；
+     cashflow_accruals 早先宽命中系 total_assets 作应计**分母**（非 AG 的 Δassets 增速），判不撞成立，已顺带证实 financial_derived.total_assets 列零缺值可算 AG。
+  ③ 正交闸：池面缺席（见上），本班未编 corr 数。
+- 产卡（data/strategy_intake/web_cards/，creation_token 已走 batch_creation_tokens 意图 API 三步，publish_snapshot **v917**／render wrote=True）＝
+  - **卡26 SIC-20261017-P04-26 资产增长异象**（`20261017_p04_asset_growth_anomaly.yaml`）＝总资产同比增速 Δtotal_assets 横截面负向预测，
+    基座 Cooper-Gulen-**Schill (2008) JF 63(4):1609–1651**（作者经四路独立检索核实＝非我初判的 Gomes，验证救了错引）；数据映射 c3_fundamental.financial_derived.total_assets；方向交 ⑥ 不预注册。
+  - **卡27 SIC-20261017-P04-27 最大日收益彩票需求因子**（`20261017_p04_max_lottery_demand.yaml`）＝过去一月 top-5 日收益均值横截面负向，
+    A股口径 EFMA 2025《Factor MAX in the Chinese Market》(样本 2000-01..2022-12)、原始 Bali-Cakici-Whitelaw(2011)；数据映射 c1_market.kline_daily_hfq.pct_change（后复权，沿 realized_skewness 同口径）；
+    A股涨跌停右尾截断使观测 MAX 低估真实 EPR（RMAX 需 stk_limit 但 pre-2019 不可靠）＝已写死 caliber_pitfall；方向交 ⑥。
+  计产按轴＝2 条新轴（公司投资强度＋收益分布右尾，两轴均本库未占）。
+- ⚑本班新增在册情报（供 ⑥/⑨ 并员评估，非本席写域）＝**彩票族三卡共线**＝文献把 PRC/ISKEW(本库 realized_skewness)/IVOL(本库 idiosyncratic_vol)/MAX(本班卡27) 并列为 lottery proxies（卡27 source 第4条），
+  且 **AG(卡26) 与 MAX(卡27) 经 Lu-Yang-Ho-Ko(2022, FRL) 证相关**（『higher AG premium among high MAX stocks』）⇒ 本班两卡若同入池，|corr| 很可能越 0.3；池面缺席无法实测，已在两卡 orthogonal_gate+self_flag 双向申报，交 ⑤ 物化后跑闸、⑥/⑨ 判是否同族合并，本席不自并、不改他卡、不翻号。
+- 小步收班＝①[BLOCKER] 三行随本节当场追加（见下）；②本班临时件写完即删（append 脚本随件清）；③④游标随本段落当场推进（见 checkpoint）。班尾八件见下。
+
+[BLOCKER] 2026-10-17|④席1017-01|工具缺陷|正交闸池面第三次退化＝p04_06_pool/pool_datesig/pool6 三面目录在而 is_file=0，gate 命令回显「ERROR --pool 未命中任何信号 CSV」却 rc=0（假绿），致本班卡26/卡27「真交未证」无法机械闭合|`python scripts/backtest/fexam/signal_orthogonality.py gate --candidate .runtime/tmp/p04_1016_04/mkt_basis_pctile250.csv --pool .runtime/tmp/p04_06_pool --gate 0.3` 原样回显 rc=0＋三面 is_file() 复量=0|要 ⑨/⑤ 席接池面生成口（pool_datesig 由 ⑨ 席产出，本席无生成权）并给「rc=0 但报未命中」是空池还是闸坏的判据；本席不自重烧 CH 重建 32 员池（⑤席活＋③席在册同族「尺件被清」）|中
+
+[BLOCKER] 2026-10-17|④席1017-01|判据缺失|彩票族跨卡共线（卡27 MAX↔既有 realized_skewness/idiosyncratic_vol）＋跨族关联（卡26 AG↔卡27 MAX 经 Lu2022 相关）判据缺源＝池面缺席时无法跑 |corr|≤0.3 正交闸，去重闸三面全绿也查不出同族高相关（同型在册：③席 1016-03「池面对册内重复零判别力」9 条构造池面 9/9 全绿而册内 6/9 越闸）|卡27 data_binding.source_links 第4条 zhangqiaokeyan 博士论文五变量并列 ISKEW/IVOL/MAX＋卡26 source_links 第4条 alphaarchitect 摘 Lu-Yang-Ho-Ko(2022,FRL)『higher AG premium among high MAX stocks』|要 ⑥/⑨ 在并员评估时把「彩票族(MAX/偏度/异质波动/PRC)」与「AG-MAX 跨族」两条相关性簇显式建判据（池复活后由 ⑤ 同宇宙同日期基跑闸），本席不自判同族、不改他卡|中
+
+[BLOCKER] 2026-10-17|④席1017-01|流程问题|creation_token 意图 API 登记时投影滞后＝render 前「PG 有行而盘上无=2 条」（本班两枚新卡），render 本次补上 wrote=True（属在册 create-guard-projection-lag-false-block 自愈族，非新故障）|batch_creation_tokens 实跑回显首行「投影双向一致性告警 capability_canonical_file_registry.yaml：PG 有行而盘上无=2 条（滞后，本次 render 补上）」＋尾行「OK: 已登记 2 条」publish_snapshot v917|本班无损害；若落地侧 REGISTRY-YAML-PARSE 按「相对 HEAD 少 N 条」拦袋即此滞后形态，请 ⑤ 关注；令牌热册 capability_canonical_file_registry.yaml **不随本席袋投**（他席在途热册）|低
+
+
+## 2026-10-17 2026-10-17 01:01:05 ｜ ④席1017-01 收班八件（追加段・上方 §起批块与三枚 [BLOCKER] 逐字不改；本段落笔于末次网关 00:58:25 之后，随盘面走不入本班已快照之袋＝与 04/05 班同形制，下班首查请对本席袋做内容级四态分诊，判落地只认 `git log -1 --name-only` 与 blob）
+
+- ①release＝`python scripts/git_commit.py --session st-qoder-p04-1017-01 … --release-only` 回显 BATCH-SUMMARY released=4 denied=0 total=4・RELEASED 4 files (verified)；逐件报『NOT FOUND 未被锁定』＝本班 claim 在入袋时 ENQUEUE-RENEW 续租 0/4 已脱落所致（复现 1016-05 在册 duality『released=N 但逐件 NOT FOUND』＝幂等成功非漏放，本班四件 blob 已 content-hunks=0 验吃全，无损害）。
+- ②注销心跳＝本班 heartbeat.jsonl 现测两枚守护同写＝pid 55484（冷启动原起）＋pid 35324（调 git_commit 被运行面代起，复现在册『每投一袋代起一枚心跳』）；两枚均 terminate **按精确 PID** 且先断言 argv 含 heartbeat_daemon+本席 sid（未用 /IM 镜像名、未用 cmdline 子串匹配，遵在册红线）；≥70s 后复验读数见本节末『心跳终态复验』行。
+- ③实耗＝起批 00:33:30（date 实测）→ 本段落笔 2026-10-17 01:01:05（同行命令回显，非预写）；名义 45 分窗内。
+- ④[BLOCKER]＝三枚已于 §起批块当场追加（正交空池 rc=0 假绿=中／彩票族共线判据缺源=中／creation_token 投影滞后自愈=低）；本班 [BLOCKER] 累计 **3 条**全部事中当场追加，`grep -n "\[BLOCKER\]"` 本席今日面命中 3。
+- ⑤自清收口＝本班 .runtime/tmp/p04_1017_01/ 三件临时件（append_ledger.py／push_cursor.py／msg.txt）写完即删；msg.txt 系网关因首行假信号『commit 失败 exit=None』而保留件（实为入袋成功 ENQUEUED q-20261017-st-qoder-p04-1017-01-0001），本班自删；04 班留存面 mkt_basis_pctile250.csv＋scan_*.md **不删不动**（归属 04 班，随其 §六 呈 ⑩ 定判据）；本班零 DB 零花钱零翻号零改判据数值与门柱零新建 .py；四件套外零散落件。
+- ⑥GPU＝本班**零 acquire** gpu_watchman（全程零 DB／零 panel 物化，两卡市场级序列未物化）＝零牌可还，无需 status 复核。
+- ⑦后台子任务＝本班**未 spawn 任何子代理**＝零孤儿；自有后台 bash 一支（心跳 daemon pid 55484）已 terminate（后台任务回执 exit 15=SIGTERM，非崩溃、非漏杀）。
+- ⑧worktree＝本班**零调用**工棚/工作树启动入口（TRAE-079 Phase 2 遵令，未 session_worktree_start）；现测＝`git worktree list` 命中 `.aidrafts/st-qoder-p04-1017-01`（HEAD f57150f6f2・尾参 `[session/st-qoder-p04-1017-01]`）＝运行面在会话注册时代建整树壳，本席自家面连续复现（04→05→1017-01 同型）；本席不自删（运行面/物理不可逆面），已在本席游标 notes 第⑧条与在册归口（⑩1016-21 列 ⑤ 席工单②、TRAE-079 Phase 2 令面同轨冲突归口 ⑤）登记，随本件报 ⑩/⑤。
+
+- 心跳终态复验＝2026-10-17 01:01:17（date 实测，距 00:59:31 两枚 terminate 已 106 秒）现测 pid 55484／35324 `psutil.pid_exists` 双 False、heartbeat.jsonl 末行停在 00:59:24 后再无新增（30s 节拍至此应现 3 次 tick＝零出现 ⇒ 非暂停是真停）、正对照＝本尺对当前活进程 pid 读 True 承重（证双 False 非尺坏）⇒ 心跳注销终态成立，两枚守护零复活；末次网关 00:58:25 后本席未再调 git_commit＝无重生触发面。
+
+
+## 2026-10-17 02:00:16 ｜ st-qoder-p04-1017-02（④网矿席·本日第二班＝p04-1017-02・batch 20261017-p04-02：渠道轮扫 6 面（TASC 缺席如实登记）＋产两枚新轴卡＝卡28 回购执行兑现度(公司行为·承诺兑现轴首条)＋卡29 指数调样生效窗被动流(资金面·被动强制流轴首条)＋⚑本班用 CH 只读探针证伪一列在册字段语义）
+
+- 起手与防重入＝起批 02:00:16（date 实测）；reaper 存活 source=live／last_run 现算 02:00:32／degraded=False；
+  lock cleanup 清 11 枚死锁（含 p02/p07a/p07c/p12 四席台账与 checkpoint）＋回收死会话 st-qoder-p07c-1017-01 遗物（merge=skipped, stash=0件）。
+  前任 1017-01 班三证判**已收官**＝①游标 last_batch 已推进＝20261017-p04-01；②本席台账 §收班八件段落笔 01:01:05 且『心跳终态复验』01:01:17（106 秒后两枚守护双 False＋正对照承重量）；
+  ③本班开工前复量本席心跳面无 p04-1017-01 活跃守护在写。本班取号＝并集+1（台账面 1017 现仅 01 班⇒02）。冷启动 Python 3.12.8 实测；禁建 worktree（TRAE-079 Phase 2）遵令、未调任何工棚/工作树入口。
+- 起批水位自证（高水位轻档令）＝commit_pct **84.43%**＜85 ⇒ 轻档允许，本班据此**只跑只读探针、零 panel 物化、零写库**；ram 可用 17.87/63.85 GB。
+- 会话与心跳＝register(pid=0) 成功＋_spawn_heartbeat_daemon 回显 **40136**＋register_heartbeat_keepalive grant 记录 daemon_pid **52508**（ttl 7200s，reason 具名）；
+  ⚑两值不一已随 §六 第 5 枚 [BLOCKER] 登记（工具缺陷/低）＝同一 sid 一次开会话出现两个 daemon 号，收班②须按 **pid 文件单 PID＋argv 逐元断言**精杀（在册红线：禁 cmdline 子串匹配，10-17 实测会命中携带自家脚本正文的父壳）。
+- 渠道轮扫（无定向单＝按 SOP §9 轮转；本班命中的真实渠道面 6 枚，逐条标明核验面）＝
+  ① **arXiv**（唯一由本班 WebFetch 直连取到许可证实体的一手面）＝arXiv:2506.21775《On the hidden costs of passive investing》Iro Tasitsiomi，2025-10-20，**License: nonexclusive-distrib/1.0**（WebFetch 原样回显）。
+  ② **GitHub 三筛**（gh 亲验，带正对照防假空）＝`gh search repos "index rebalance strategy"`=[] 与 `"passive fund flow index inclusion"`=[] 而正对照 `"pairs trading"` 返 347★/200★/129★＝尺有效；
+     窄词 `"index inclusion effect"` 真命中 2 枚（Spandan-Dutta1/… 0★、xiaoqi-huang-aria/… 0★，license 字段缺省＝无许可证）；`"stock repurchase"` 真命中 5 枚（hutaosufe 0★无许可、Foha2001 0★无许可、JBharwani2 0★无许可 2021 停更、Ali-Choubdaran 3★ MIT 但是 SEC 抽取器非因子、zararmrwt 0★无许可）；`"share repurchase factor"`／`"buyback event strategy backtest"` 均 [] 而正对照 `"buyback"` 返 42★BSD-3／25★MIT＝尺有效。
+     ⇒ 两轴三筛结论均＝**无**『高 star＋干净许可＋在维护』三者齐备实现源 ⇒ 走『只学思想不入码』，GPL=0。
+  ③ **卖方金工/券商研究面**＝源达证券《回购赋能，价值重塑》(2025-03-27，预案日/完成日分档超额)、华安证券金工《分散化投资是否驱动大盘股需求？》(再平衡需求→前 35 交易日 −0.44% t=−3.21)、国盛/中泰调样测算（转引于门户财经页）。
+  ④ **门户/百科/机构洞察面**＝百度百科『股份回购』条目（忽悠式回购／2026 前 7 月 4 家停止回购公告后均跌超 10%）、EastSpring《Navigating index rebalancing effects》（收盘集合竞价冲击随地域而异）、中财网北证 50 调仓预测（15 次调整调入前 5 日跑赢概率 87%／+4.7%）。
+  ⑤ **量化数据平台/社区面**＝bigquant 论文库检索命中（两融因子族，本席据此发现该轴已被前班占，见下『主动放弃』）。
+  ⑥ **TASC 专栏＝本班定向检索未命中本轴原文页＝缺席如实登记，不假装扫过**（命中的 TASC 面只有 traders.com 2007-04 TRADERS' TIPS 存档页与论坛求 PDF 帖，与回购/调样两轴均无关）。
+- 双闸执行＝
+  ① 许可证闸：arXiv nonexclusive-distrib/1.0＝**可引用、不等于可取码**；GitHub 面两轴全部 0★／无许可证或许可错配（SEC 抽取器）⇒ 零入码；研报/媒体面无代码许可证对象；gpl_hits_this_round=0；两卡伪代码均由本席按本班 CH 探针**实测列名**自拟。
+  ② 去重闸（四面实跑，谓词窄＋**逐条读上下文**，遵 1016-05『读正文不只看卡名』在册令）：
+     strategy_registry.yaml 两组谓词（回购面五谓词＋调样面六谓词）**均 0 命中**；
+     exam_cards 全树（609 枚 yaml）『repurchase』=0／『指数调整』『成分股调整』『MSCI』『reconstitution』『被动资金』『index_adjustment』**全 =0**；
+     ⚑两处**负对照**（谓词有效但内容不同物，故判不占轴）＝『回购』命中 3 枚经读上下文全是 **DR007／GC001 逆回购**（资金融出，与公司股份回购不同物）；『inclusion』命中 3 枚全是 `band_edge_inclusion`（日内时段端点归属）；『exclusion』13 枚／『effective_date』1 枚经读为通用词面。
+     factor_registry 两条经读判不同物＝『子板块成分股等权指数构造』(板块因子)、『沪深300成分股大单资金流降权 50%』(主动大单拆单，非被动强制流)。
+     ⚑**本班主动放弃一条原拟轴**＝『两融余额变化』：原拟作卡29，但 institutional_seat_netbuy 卡面在册句明文『与 1016-01 ghost 班已判重的 margin_bal_chg／margin_repay_pressure 不同物（那两枚＝两融余额时序）』⇒ 该轴已被前班判重占过，重挖＝造同义卡（违 ⑨ 席在册令），故本班改取指数调样轴；本条属『闸生效非矿枯竭』的正证。
+  ③ 正交闸：池面**第四次退化**（见 §六 第 4 枚 [BLOCKER]）＝`.runtime/tmp/p04_06_pool`、`.runtime/tmp/st-qoder-p09-1015-04/pool_datesig`、`.../pool6` 三面目录在而 is_file() 计数全 0；
+     本班未编任何 corr 数，两卡 orthogonal_gate 逐字写『真交未证』；在册假绿红线续用＝⑨ 席 1017 已记该闸『打 ERROR 却 rc=0』修成 rc=2 但 --out 件仍不生成 ⇒ **空池任何 rc 都不构成通过**。
+- ⚑本班 CH 只读探针实测面（正对照 SELECT 1→[(1,)] 先行，四跑零写盘）＝
+  (a) `c3_fundamental.repurchase`＝20 列逐字名、count FINAL **6,210**、uniq(symbol) **2,952**、announce_date 跨度 **2006-03-02..2026-10-17**（末值＝本班起批当日⇒仍在日更）、progress 七值实测分布＝完成实施 4,937／实施中 608／董事会预案 372／停止实施 123／股东大会通过 81／**字面 'nan' 81**／股东大会否决 8（加总 6,210 ✓ 守恒）。
+  (b) `c1_market.index_adjustment`＝11 列、count FINAL **14,763**、uniq(symbol) 3,534、uniq(index_code) 5、uniq(effective_date) 96 批、action＝exclusion 7,384／inclusion 7,379（✓ 无第三态）、weight NULL＝7,384＝**恰等 exclusion 行数**（调出侧权重 100% 缺）。
+  (c) **⚑本班最硬一条实测＝证伪一列在册字段语义**＝`dateDiff(day, announcement_date, effective_date)` 均值 **−18.758**／min −30／max 0；分组复量『announce 晚于 effective』＝**14,758 行 / 相等 5 行 / 早于 0 行**；`data_source` 唯一值＝**snapshot_diff**（14,763/14,763）；抽样 000300.SH 2026-06-15 批 4 行 announce 全＝2026-06-30（晚 15 日）。
+     ⇒ 结论＝本表 announcement_date **不是公告日而是成分快照差异化的落库日**；若按它起算信号＝把起点放到事件后约 18 天，若用它做 PIT 筛＝前视。卡29 因此只准 effective_date 单锚并写死禁则；此结论对**任何先前用过该列的件**都构成重查义务，已按数据问题呈 ①/②/⑤。
+  (d) 被动规模腿三处无源＝`msci_adjustment` count()=**0 行**（外资调样彻底无源）；`etf_list` 2,194 行但 index_code 空值 **2,194/2,194＝100%**（ETF↔指数映射断链）；`etf_nav` 105,334 行 span 2021-07-29..2026-10-15 但 total_assets=0 的行 **103,773＝98.5%**；`index_weight` 仅 5,550 行（相对 3,534 票×96 批极稀）。
+  (e) `c1_market.margin_trading`＝2,115,143 行／4,934 票，但跨度仅 **2024-09-02..2026-10-14**（≈2.1 年）＋ margin_balance=0 有 123 行（NULL 0 行）⇒ 该轴即使未被判重也面临短窗，本席放弃面因此是双证。
+- 产卡（data/strategy_intake/web_cards/，creation_token 已走 batch_creation_tokens 意图 API 三步，实跑回显＝新增 2／幂等跳过 0／冲突 WARN 0，**publish_snapshot v938 (noop=False)**，投影重打 quadrant=stale wrote=True，**OK: 已登记 2 条**）＝
+  - **卡28 SIC-20261017-P04-28 回购执行兑现度与用途结构**（`20261017_p04_repurchase_execution_credibility.yaml`）＝承诺规模强度 plan_pct_mid 与执行兑现率 exec_ratio＝done_amount/plan_amount_max 的横截面『承诺—兑现』缺口轴；
+    命门＝本表 progress/done_amount 是**快照态**且**无进展公告日列**⇒ 事件日直接用即前视，本卡写死『只在 start_date＋OBS_MONTHS(=12) 之后进入特征面』；用途腿（注销 vs 激励）表内**无列**＝已转 ①/② 补源；方向交 ⑥ 不预注册。
+  - **卡29 SIC-20261017-P04-29 指数调样生效窗被动资金冲击**（`20261017_p04_index_rebalance_flow_window.yaml`）＝dir(±1)×1{d≤T_eff}×可消化度代理 g（w_delta/自算 ADV20）的事件研究轴＋独立反转腿 CAR(1,5)/CAR(1,20) 分列；
+    基座＝arXiv:2506.21775（『five days before to one day after the effective date』『~8.8% during the reconstitution window』『a portion of the price impact tends to persist』）＋生效日当日纳入股已由 +0.9% 转 −0.5% 的 A 股读数 ⇒ 信号腿严格止于 T_eff 前；调出侧 weight 全 NULL＝两侧不可对称构造已写死；方向交 ⑥。
+  计产按轴＝**2 条新轴**（公司行为·承诺兑现＋资金面·被动强制流，两轴均本库未占）。
+- ⚑本班新增在册情报（供 ①/②/⑤/⑥/⑨ 判，非本席写域）＝
+  ①**三卡跨轴机制连接**＝卡29(调样) ↔ 卡22(期指基差)：东Spring/门户两面均给『股指期货基差变化能够提前反映市场对调整冲击的预期』⇒ 两卡同入池 |corr| 很可能越 0.3；
+  卡28(回购兑现) ↔ 卡26(资产增长)：回购＝同一笔现金流出，在 AG 里压低 total_assets、在卡28 里表现为承诺执行 ⇒ 构造性负相关；
+  卡29 ↔ 本席微观结构族（Amihud/VPIN/OFI/队列）＝机制相反（规则强制流 vs 主动选股）＝本卡主张独立成轴的理由而非结论，须闸测。
+  ②**『事后快照被当成事前字段』是本库一类通用风险形态**＝本班在 index_adjustment 上量到 snapshot_diff 冒充 announcement_date；同形态可疑面＝凡 data_source 含 snapshot/diff 字样的事件类表都应先验『事件时间列到底是公告日还是落库日』，请 ①/② 建一条机判尺（本席不自建、不改判据）。
+- 小步收班＝①[BLOCKER] 五行随本节当场追加（见下）；②本班临时件写完即删；③claim 收班①自跑 --release-only；④游标随本段当场推进（见 checkpoint）。班尾八件见下节。
+
+[BLOCKER] 2026-10-17|④席1017-02|数据问题|c1_market.index_adjustment 的 announcement_date 语义被实测证伪＝它不是公告日而是成分快照落库日（dateDiff(day,announce,effective) 均值 −18.758 日、『announce 晚于 effective』14,758/14,763 行、早于 0 行、data_source 唯一值 snapshot_diff），照原语义起算＝把信号起点放到事件之后约 18 日，照它做 PIT 筛＝前视|探针原样回显（正对照 SELECT 1→[(1,)]）：`python -c` 经 zephyr.data.ch_reader.query_rows 跑 `SELECT min(dateDiff(day,announcement_date,effective_date)), max(...), avg(...) FROM c1_market.index_adjustment FINAL` 与 `SELECT countIf(announcement_date>effective_date), countIf(announcement_date=effective_date), count() FROM c1_market.index_adjustment FINAL`＋`SELECT data_source, count() ... GROUP BY data_source`⇒(−30,0,−18.758)／(14758,5,14763)／snapshot_diff 14763|要 ①/② 席补『指数调样真实公告日＋审核截止日＋定期/临时标记』三列（外部制度面：中财网北证50 给『审核截止 2026-07-31→生效 2026-09-14』的时距形制），并给『data_source 含 snapshot/diff 的事件表其事件时间列属哪一类』一条机判尺；本席不自改表、不自造公告日、不改任何判据|高
+
+[BLOCKER] 2026-10-17|④席1017-02|数据问题|被动资金『规模』腿在本库三处同时无源⇒指数调样冲击只能算相对序不能算绝对倍数：msci_adjustment count()=0 行（外资调样全空）／etf_list 2,194 行 index_code 空值 2,194/2,194=100%（ETF↔标的指数映射断链）／etf_nav 105,334 行 total_assets=0 的行 103,773=98.5%（规模列不可用）／index_weight 仅 5,550 行相对 3,534 票×96 批极稀|探针回显见本节『CH 只读探针实测面 (d)』；卡片=data/strategy_intake/web_cards/20261017_p04_index_rebalance_flow_window.yaml 的 data_binding.face_gap_zh 第(2)(3)条|要 ①/② 接 ETF 份额/规模与跟踪指数映射的采集线（在册另有 sentiment_rebuild 卡面记 market_etf_share_snapshot 为候选面），并在补源前把卡29 标注为『退化版：仅 w_delta/ADV20 相对序』；本席不自采、不臆造 AUM|中
+
+[BLOCKER] 2026-10-17|④席1017-02|判据缺失|回购轴的四个高信息量变量在本库全部无列⇒卡28 与外部研报读数**不同物**却无在册判据说明『缺列时该轴算不算可考』：c3_fundamental.repurchase 20 列实测无『回购用途（注销/股权激励/市值管理）』、无『方案号』、无『进展公告日』、无『回购期限/截止日』；另 progress 有 **81 行字面 'nan'**（IS NULL 谓词查不到，会被静默读成第八种状态）|探针回显＝`SELECT name FROM system.columns WHERE database='c3_fundamental' AND table='repurchase'`（20 列逐字名见卡面 measured_face_zh）＋`SELECT progress, count() ... GROUP BY progress`⇒完成实施 4937/实施中 608/董事会预案 372/停止实施 123/股东大会通过 81/'nan' 81/股东大会否决 8（加总 6210 ✓）|要 ⑥/⑨ 判『缺列轴的开考资格』口径（若判『缺腿即不可考』则本卡停在 C1；若判『退化版可考』须由 ⑥ 把 OBS_MONTHS=12 这个本席自定参数显式写进卡面参数面，禁留隐含）；'nan' 谓词坑请 ⑤ 在采集侧或算子侧给一条机判|中
+
+[BLOCKER] 2026-10-17|④席1017-02|工具缺陷|正交闸池面第四次退化＝p04_06_pool／⑨席 pool_datesig／⑨席 pool6 三面目录在而 is_file() 计数全 0，本班两卡『真交未证』无法机械闭合；在册假绿形态续用＝⑨ 席 1017 记该闸『打 ERROR 却 rc=0』已修成 rc=2 但 --out 件仍不生成⇒任何 rc 在空池下都不构成通过|本班复量口径＝`python -c` 逐面 `Path(d).exists(), .is_dir(), sum(1 for f in d.rglob('*') if f.is_file())`⇒(True,True,0)×3；闸本体命令＝`python scripts/backtest/fexam/signal_orthogonality.py gate --candidate <csv> --pool <池目录> --gate 0.3`（本席窗内未重烧，因空池无可喂对象）|要 ⑨/⑤ 席接池面生成口（pool_datesig 由 ⑨ 席产出，本席无生成权）并给『空池应显式 DENIED 而非静默 rc』的判据；本席不在本席窗内重烧 CH 重建 32 员池（⑤席活＋③席在册同族『尺件被清』）；04 班留存候选 .runtime/tmp/p04_1016_04/mkt_basis_pctile250.csv 本班复量仍在（属卡22 对象，本席未代喂）|中
+
+[BLOCKER] 2026-10-17|④席1017-02|流程问题|一次开会话出现两个心跳 daemon 号＝_spawn_heartbeat_daemon 回显 40136 而同批 register_heartbeat_keepalive grant 记录 daemon_pid=52508，本席无法判定哪一枚是在写本席心跳面，收班②若按镜像名或 cmdline 子串清理必误伤|本班实跑回显＝`.runtime/tmp/p04_1017_02/open_session.py` 打印 `DAEMON_PID= 40136` 与 `KEEPALIVE= {... 'daemon_pid': 52508, 'ttl_seconds': 7200, 'ts': '2026-10-16T18:03:48+00:00'}`（同一次调用内两值）|要 ⑤/⑫ 给一条『grant.daemon_pid 与 spawn 返回值谁为准』的在册判据（在册 10-17 另有『 keeper 兜底是否已被⑤修掉』与本形态同族）；本席收班②一律按 pid 文件单 PID＋argv 逐元断言精杀，零批量|低

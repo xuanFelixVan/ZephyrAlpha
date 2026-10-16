@@ -1,0 +1,183 @@
+# creation_token: p04-webcard-index-rebalance-flow-window-20261017 | created_by: st-qoder-p04-1017-02 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261017-P04-29
+title_zh: 指数调样生效窗被动资金冲击事件研究（资金面/被动流轴首条，含「本库 announcement_date 是 snapshot_diff 伪影、恒晚于 effective_date 故公告腿不可用」这一实测硬结论与四处可消化度代理断链）
+mining_tower: 资金面·被动资金强制流（本库 web_cards 已占『Amihud 离散度』『队列不平衡』『OFI-L1』『VPIN』『微价格不平衡』＝全部是**主动交易侧**微观结构，『指数基金被强制调仓』这条**被动流**轴未占＝新轴；⑨ 席 1015 在册空白轴清单里『资金面分户／流动性与冲击成本』的未占段正对应此轴）
+birth_seat: ④
+birth_session: st-qoder-p04-1017-02
+birth_batch: 20261017-p04-02
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-17 真实 WebSearch/WebFetch 命中；逐条标明核验面）
+source_links:
+  - role: 本卡基座（学术综述层，唯一由本班 **WebFetch 直连页面**取到许可证实体的来源）
+    url: https://arxiv.org/abs/2506.21775
+    what_verified: >-
+      本班 WebFetch 直连 arXiv abs 页实读回显＝『On the hidden costs of passive investing. Author: Iro Tasitsiomi. Date: 20 Oct 2025. License: nonexclusive-distrib/1.0.』
+      ⇒ 许可证腿**已亲验**（arXiv 非独占分发许可＝可学思想与引用结论，**不等于代码可复制**，本卡零取码）。
+      同文正文面（本班 WebSearch 命中其 html 版 https://arxiv.org/html/2506.21775v2 摘要片段）给出本卡构造所依据的三条一手经验事实：
+      『index reconstitutions offer a unique lens into the behavior of financial markets』『stocks added to indices tend to experience abnormal returns both before and after inclusion.
+      These effects begin shortly after the announcement and often peak near the reconstitution date, consistent with anticipatory buying and front-running』
+      『Although some post-event reversal is observed, a portion of the price impact tends to persist, suggesting limits to arbitrage』
+      『additions to the S&P 500 index between 1990 and 2002 result in average abnormal returns from five days before to one day after the effective date, with about 4% reversing in the following month』
+      『Russell 2000 additions experience price increases of [~]8.8% during the reconstitution window, driven by predictable flows … institutional ownership rises significantly post-rebalance』。
+      ⇒ 本卡因此把事件窗锚在 **effective_date**（原文明述『five days before to one day after the effective date』），并要求 ⑤ 另存『生效后 20 日反转腿』作为独立读数（原文＝部分反转、部分持续）。
+  - role: A 股生效日两侧的逐日分档读数（本卡窗口的定形依据）
+    url: https://baijiahao.baidu.com/s?id=1875775255761866487
+    what_verified: >-
+      本班 WebSearch 命中正文片段＝『2024 年 12 月 13 日沪深 300 定期调整生效日的盘面数据显示，被剔除个股在生效日前一交易日平均超额下跌 1.2%，生效日当天平均超额下跌 0.8%；
+      被纳入个股在生效日前一交易日平均超额上涨 0.9%，生效日当天平均超额下跌 0.5%』（该文另引 Wind 与申万宏源策略 2026 年 8 月《风格切换的最后一公里》）
+      ⇒ 关键点＝**纳入股在生效日当天已由正转负**（+0.9%→−0.5%）＝冲击在生效日收盘基本完成 ⇒ 本卡的进场腿必须严格落在 T_eff 之前，T_eff 当天及以后是**兑现/离场腿**而非信号腿；
+      同页另给『股指期货基差变化能够提前反映市场对调整冲击的预期』⇒ 与本席卡22（期指基差分位）存在跨卡连接点，须由 ⑤/⑥ 判是否同节点。
+  - role: 临时调整（非定期）样本的分段读数与衰减形态
+    url: https://baijiahao.baidu.com/s?id=1875687160579682686
+    what_verified: >-
+      本班 WebSearch 命中正文片段＝『统计 2019 年至 2025 年间沪深 300 指数进行的 7 次临时调整（非 6 月、12 月定期调整），生效日前一个交易日，被新纳入的样本股平均获得 2.3% 的超额收益，
+      而被剔除的样本股平均跑输基准 1.8%；生效日当日，新纳入股超额收益均值收窄至 0.8%，剔除股则继续跑输 1.1%；生效后三个交易日内，两者超额收益差逐渐收敛』
+      ⇒ 两点进卡：(a) 临时调整样本 7 次＝**样本极稀**，本库若只有定期调整面则该腿不可考；(b) 收敛发生在生效后 3 日内 ⇒ 反转腿窗须 ≤5 日。
+      ⚠ 该文另有一句对本卡直接不利＝『该策略的拥挤度逐年上升，超额收益已从数年前的高个位数衰减至如今的低个位数甚至为负』＝本卡不得预设效应量级。
+  - role: 小盘指数调样胜率的独立读数（窗口与方向的外部旁证）
+    url: http://sj.cfi.cn/p20260803000362.html
+    what_verified: >-
+      本班 WebSearch 命中中财网转机构研报＝『历史上北证 50 指数 15 次调整中，调入成分股在调整生效日前五个交易日跑赢指数概率达 87%，平均超额收益率 4.7%，
+      而调出成分股跑输概率 80%，平均超额收益率为 −3.1%』；该文并给出**可预测性机制**＝『北证 50 指数预计 2026 年 9 月 14 日进行成分股调整，审核截止日为 2026 年 7 月 31 日』
+      ⇒ 本卡『预测名单』构造的制度依据＝调样有公开的『审核截止日→生效日』两段时距，故 **T_eff 前 5 日的信号是事前可得的**；这与本库 data_source=snapshot_diff（事后快照）正好构成落差，见 face_gap_zh。
+  - role: 被动流冲击的执行层机制与地域差异（本卡『可消化度』腿的出处）
+    url: https://www.eastspring.com/insights/deep-dives/navigating-index-rebalancing-effects-key-insights-for-smarter-execution
+    what_verified: >-
+      本班 WebSearch 命中片段＝『the market impact of passive flows during closing auctions on index rebalancing dates varies by region』
+      与『base of marginal buyers following their index inclusion, while downweighted ones slightly lag due to selling pressure from passive funds exiting positions』
+      ⇒ 机制＝冲击集中在**收盘集合竞价**⇒ ⑤ 物化时若用日线收盘收益读数会**同时吃到信号与自身冲击**，须把 T_eff 当日收盘单列（本卡 caliber_pitfall ④）。
+  - role: 主动再平衡需求与后续收益的独立学术读数（本卡的『反向腿』线索，非同一构造）
+    url: https://m.sohu.com/a/930966143_122014422/?pvid=000115_3w_a
+    what_verified: >-
+      本班 WebSearch 命中【华安证券·金融工程】《分散化投资是否驱动大盘股需求？》＝『每季度再平衡需求的一个标准差（作为卖出倾向）预测了在前 35 个交易日内 −0.44%（t=−3.21）的回报，
+      以及在该季度剩余时间内 0.27%（t=2.60）的正回报……它们集中在股票领域中的较大股票上』
+      ⇒ 该读数属于**基金组合均值回归再平衡**（主动、跨期），与本卡的**指数成分调样强制流**不同物，本席只作『再平衡类需求可预测且收益形态呈前负后正』的方法旁证，**不并入构造**（防 ⑥ 误并，已在边界声明写明）。
+  - role: GitHub 面命中实况（许可证闸样本，本班零取码）
+    url: https://github.com/Spandan-Dutta1/Index-Inclusion-effect-on-Indias-yield-curve
+    what_verified: >-
+      gh 亲验（本班实跑）：`gh search repos "index rebalance strategy"` 与 `"passive fund flow index inclusion"` **均返回 []**，同尺正对照 `"pairs trading"` 返回 347★/200★/129★ 三枚（证零命中是尺有效非尺坏）；
+      改窄词 `"index inclusion effect"` 真命中 2 枚＝Spandan-Dutta1/…（0★、印度收益率曲线 RDD、非股票截面）、xiaoqi-huang-aria/Sharp-RDD-Estimation-of-Simulated-Index-Inclusion-Effects（0★、模拟数据 RDD），二者 gh 回显 license 字段缺省＝无许可证。
+      ⇒ 三筛结论＝本轴无『高 star＋干净许可＋在维护』实现源；两枚 0★ 无许可证仓只作存在性佐证不入码。
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: >-
+    arXiv 基座＝nonexclusive-distrib/1.0（本班 WebFetch 亲验，只许引用与学思想、不授权取码）；GitHub 面 2 枚 index-inclusion 仓 license 缺省＝无声明；EastSpring/华安/中财网＝机构研究或媒体页面，无代码许可证对象。GPL=0；『无许可证』按在册口径同等收紧＝禁取码。
+  gate_verdict: 通过（零可复制代码：伪代码由本席按本班 CH 探针实测列名自拟；『调样事件窗』是可公开观测的市场事实，不构成代码著作权客体）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；无许可证仓不入码；实现走 C3 翻译适配重实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机＝被动指数基金为控跟踪误差必须在**生效日前夕**完成强制调仓，这笔流不以基金经理判断为转移（界面/中财网/东Spring 三面一致），
+  于是『被调入/调出』在 T_eff 前形成一段方向确定、规模可估的**与基本面无关**的价格压力；学术基座（arXiv 2506.21775）把它叫 anticipatory buying and front-running，
+  并明说『a portion of the price impact tends to persist』＝不是纯流动性幻觉。本库这条轴在 web_cards 里完全空白＝新轴。
+  本卡本体（两腿，均只用本班实测可得的列）＝
+    事件腿 event_dir ∈ {+1 调入, −1 调出}，事件时间锚 T_eff = index_adjustment.effective_date（**唯一可用锚**，理由见下）；
+    信号 s_i,d = event_dir × f(距 T_eff 交易日数) × 可消化度代理 g_i,d，其中 g 用『本次 weight 变动额 ÷ 该股 T−1 前 20 日日均成交额』＝把强制流折算成『占该股正常成交的倍数』，
+    市场级折叠＝按批次对所有事件票取 event_dir 加权的 g 均值或调入−调出组的 CAR 差（供正交闸喂闸用）。
+  ⚠ 本卡**最硬的一条实测结论**（本班 CH 探针跑出来的，不是抄的）＝本库 index_adjustment 的 announcement_date **不可当公告日用**：
+    14,763 行里 dateDiff(day, announcement_date, effective_date) 均值 −18.76 日、min −30、max 0，且 `announcement_date > effective_date` 的行数＝**14,758 / 14,763（99.97%）**、相等 5 行、**没有任何一行是『公告早于生效』**；
+    再配 data_source 单一值＝`snapshot_diff` 14,763/14,763 ⇒ 该列是**本库成分快照差异化的落库日**（事后推断），不是交易所/中证指数公司的真实公告日。
+    ⇒ 后果：若 ⑤ 按『announcement_date 起算』构造，会把信号起点放在**事件已发生之后 18 天**＝读到的是历史而非预测；若按 effective_date 起算并用 announcement_date 做 PIT 过滤，则是**前视**（用未来才知道的落库标记筛过去）。
+    本卡因此只准 `effective_date` 单锚＋显式滞后腿，并声明：**真实公告日/审核截止日本库无源**（中财网那种『审核截止 7-31→生效 9-14』的制度时距本库拿不到）＝本卡最强的合法性缺口，见 face_gap_zh 第 (1) 条。
+  方向本席**不预注册**：外部三面给『调入前正/调出前负』，但同文亦给『拥挤度上升，超额已衰减至低个位数甚至为负』；本库 99.97% 行为事后快照更使量级不可信 ⇒ 符号与量级须 ⑥ 带独立先验另立 card_id 预注册，本席遵 ⑨ 席在册令不选边不翻号。
+  与相邻对象边界＝(1) 本席已占的 Amihud/VPIN/OFI/队列不平衡＝**主动单**微观结构（流的方向由交易者选择），本卡流由**规则强制**、与个股信息无关，二者机制正相反（这是本卡主张独立成轴的理由，非结论，须闸测）；
+  (2) index_weight／index_constituent 是**状态面**（谁在池内、权重多少），本卡是**变化事件面**（谁被加入/移除）＝在册『指数宇宙读取源＝sector_constituent，裸扩即造回归』警告同样适用本卡：禁把本表当成分全集用，只准取 action 非空的事件行；
+  (3) smart_money_ratio／institutional_seat_netbuy／龙虎榜族＝主动资金身份面；本卡被动流是**不同主体**，且 institutional_seat_netbuy 卡面已自述其窗仅 2026-08-07 起＝本卡与其样本窗不同物；
+  (4) 华安『季度再平衡需求』＝主动组合均值回归，与本卡强制流不同物，本席只在 source_links 第 6 条作方法旁证，**不并入构造**；
+  (5) hk_kline／kline_global／msci_adjustment＝外资/跨市场调样腿，本卡本班实测 msci_adjustment **count=0 行**⇒该腿直接无源，不自欺。
+
+# ── 必备④ 伪代码（本席自拟，零外部转录；列名均为本班 CH 只读探针实测名，见 data_binding.measured_face_zh）
+pseudocode: |
+  # 本体：指数调样事件的『距生效交易日数 × 可消化度』信号，供 ⑤ 物化为 panel 与市场级 csv
+  # 输入 c1_market.index_adjustment(symbol 裸6位, index_code, action, effective_date, weight, data_source, exchange)
+  # 输入 c1_market.kline_daily_hfq(symbol, trade_date, pct_change, amount)  ← 后复权与成交额（在册：禁取 kline_daily.adj_factor 恒1死列）
+  # 标签 c1_market.kline_daily_hfq.pct_change（前向收益）；基准 CSI300 指数面（在册：基准 000300 vs 880001 之争未裁 ⇒ ⑥ 必须钉一个）
+  事件集（只用变化，禁当成分全集）：
+    ev = SELECT symbol, index_code, action, effective_date, weight FROM index_adjustment FINAL
+         WHERE action IN ('inclusion','exclusion')
+    dir = +1 if action=='inclusion' else -1
+    ⚠ 禁以任何方式使用 announcement_date 作事件起点或 PIT 筛（本班实测 99.97% 晚于 effective_date 且 data_source=snapshot_diff ⇒ 它是落库日）
+  日历与窗：
+    n_i = 该股在 [T_eff, T_eff+n] 的**交易日**数（前瞻/滚动窗右端须铺满日历＝在册 1015-08 铁律；不足则整枚记缺测禁右截断）
+    CAR_i(a,b) = Π_{d=a..b}(1 + r_i,d − r_bmk,d) − 1     # 超额用基准差，基准由 ⑥ 钉
+  可消化度代理（本库唯一可算的一腿）：
+    w_delta_i = weight_i(inclusion 行)                 # 本班实测：exclusion 行 weight **全为 NULL**（7384/7384）⇒ 调出侧 w_delta 不可得
+    ADV20_i,d = mean(amount_i over 前 20 个交易日, 截至 d-1)   # 自算滚动窗，禁取表内现成分位/均值列
+    g_i,d = w_delta_i × IndexSize_proxy / ADV20_i,d     # IndexSize_proxy＝被动跟踪规模，本班实测无源 ⇒ 本卡退化版只能取 g ∝ w_delta_i/ADV20（缺比例常数）
+  信号：s_i,d = dir × 1{d ≤ T_eff} × g_i,d             # 生效日当天及以后禁入信号腿（外部读数：纳入股 T_eff 当日已由 +0.9% 转 −0.5%）
+  反转腿（与信号腿独立存数，禁混成一个读数）：CAR_i(1,5) 与 CAR_i(1,20) 分列，对应原文『about 4% reversing in the following month』
+  市场级折叠（喂正交闸用）：sig_date = Σ_i dir_i × g_i,d 或 mean(CAR_incl)−mean(CAR_excl) 按批次聚合 ⇒ (date, sig) 两列 csv
+  纪律：同 (symbol, effective_date, index_code) 多枚 action 行须先定优先级（一同一日既入又出的情形若存在⇒记冲突禁相加）；
+        一票被多指数同日调整⇒各指数独立算 g 再按 dir 聚合，禁先合并 weight；
+        涨跌停/停牌日 amount=0 或不可成交⇒该股当日 g 记缺测（否则 1/0 会炸出无穷大并静默主导截面）
+  禁则：禁把本表当成分全集；禁用 snapshot_diff 的 announcement_date；禁调出侧用 NULL 权重补 0；禁 T_eff 后进场读『前 5 日超额』当可实现收益
+
+# ── 必备⑤ 数据源映射
+data_binding:
+  primary_table: c1_market.index_adjustment
+  sl_ref: SL-M02 指数与成分线（c1_market 库）；本卡主用 index_adjustment 的 action/effective_date/weight 三列，另用 index_weight(5,550 行)／index_constituent／etf_list／etf_nav 做可消化度腿的可行性实测
+  label_table: c1_market.kline_daily_hfq（前向收益与成交额；基准腿须 ⑥ 钉 000300 或 880001）
+  measured_face_zh: >-
+    本班 CH 只读探针四跑（zephyr.data.ch_reader.query_rows；起批水位 commit_pct **84.43%＜85** 轻档令，正对照 SELECT 1→[(1,)] 先过后跑）实测＝
+    ① index_adjustment 20 列? 实为 **11 列**逐字名＝announcement_date, effective_date, index_code, symbol, action, weight, data_source, ingest_ts, exchange, symbol_canonical（＋库表元数据）；
+      count() FINAL=14,763；uniq(symbol)=3,534；uniq(index_code)=5；uniq(effective_date)=96＝96 个调整批次；
+    ② action 枚举＝exclusion 7,384／inclusion 7,379（加总 14,763 ✓ 无第三态）；weight NULL 计数＝7,384＝**恰等于 exclusion 行数**⇒调出侧权重全缺、调入侧全有；
+    ③ 指数分布＝000852.SH 4,874／000906.SH 4,096／000905.SH 3,936／000300.SH 1,852／000985.SH 5（末值仅 5 行＝中证全指面近乎空）；
+      跨度 announcement 2005-07-29..2026-09-14／effective 2005-07-01..2026-09-14（**末批＝2026-09-14**，与中财网所述北证 50『预计 2026-09-14 调整』同日，属旁证但本表无北证 50 指数代码）；
+    ④ 关键红旗实跑＝dateDiff(day, announcement_date, effective_date) 均值 −18.758、min −30、max 0；
+      分组复量『announce 晚于 effective』＝**14,758 行 / 5 行相等 / 0 行早于**；data_source 唯一值＝snapshot_diff(14,763)；样本 4 行 000300.SH 2026-06-15 批全部 announce=2026-06-30（晚 15 日）；
+    ⑤ 可消化度腿四面试可行＝msci_adjustment count()=**0 行**（外资调样彻底无源）；etf_list 2,194 行但 index_code 空值率 **2,194/2,194=100%**⇒ETF↔指数映射断链；
+      etf_nav 105,334 行 span 2021-07-29..2026-10-15 但 total_assets=**0 的行 103,773（98.5%）**⇒被动规模腿不可用；index_weight 5,550 行（列 trade_date/index_code/symbol/weight/valid_from/valid_to）＝有权重但相对 3,534 票×96 批**极稀**。
+  face_gap_zh: >-
+    四处断链，本卡一律不假装可得：
+    (1) **真实公告日无源**＝announcement_date 被实测证伪为 snapshot_diff 落库日（99.97% 晚于生效），本库无『中证指数公司公告日/审核截止日』列
+      ⇒ 外部文献里最强的『公告→生效』抢跑窗（本卡 5 日腿）**无法按公告锚复刻**，只能按 effective_date 反推 T−5；这在事前可得性上**弱于**真实公告锚（因为 T_eff 本身也是公开日历，故仍可用，但『公告当日』的信息增量拿不到）；
+    (2) **被动跟踪规模无源**＝etf_list.index_code 100% 空＋etf_nav.total_assets 98.5% 为 0 ⇒ g_i,d 的比例常数 IndexSize 缺，本卡退化版只剩 w_delta/ADV 相对序；
+      转 ①/② 席：补 ETF↔标的指数映射列与份额/AUM 面（在册另有 sentiment_rebuild 卡面已记 market_etf_share_snapshot 为候选面）；
+    3) **调出侧权重无源**＝exclusion 行 weight 100% NULL ⇒ 调出腿只剩方向无规模，调入/调出两侧**不可对称构造**（本卡因此不许写『对称多空』读数）；
+    (4) **批次稀＋外资腿空**＝96 批×5 指数、中证全指仅 5 行、msci 0 行 ⇒ 横截面自由度低且『富时/MSCI 外资调样』这一 A 股重要流源完全缺失；
+      ⇒ 市场级序列的事件数上限≈96 批，日频 IC 与事件研究分母都偏小，须 ⑥ 按在册『30 对/日 IC 地板』与『事件族 OOS 地板 48.8% 密度不可达』两判据先算可行性再谈开考。
+  orthogonal_gate_zh: >-
+    正交闸【本班缺席，如实申报，未编数】。本班复量池面三面（.runtime/tmp/p04_06_pool、.runtime/tmp/st-qoder-p09-1015-04/pool_datesig、.../pool6）＝**目录在而 is_file() 全为 0**＝第四次退化；
+    在册假绿红线续用＝⑨ 席 1017 记该闸『打 ERROR 却 rc=0』已修 rc=2 但 --out 件仍不生成 ⇒ 空池任何 rc 都不构成通过。
+    ⇒ 交 ⑤/下班：物化 index_rebalance_market.csv(date,sig) 后跑
+      `python scripts/backtest/fexam/signal_orthogonality.py gate --candidate <该csv> --pool <复活后池目录> --gate 0.3`；
+      并**必须与本席同批卡28 及既有卡22(期指基差) 两两对测**——东Spring/百家号两面均给『股指期货基差提前反映调整冲击预期』⇒ 卡29 与卡22 存在同源机制连接，|corr| 很可能越 0.3。本席不自造 corr 数值。
+  dedupe_gate_zh: >-
+    去重闸（本班实跑，谓词窄＋逐条读上下文）：
+    ① strategy_registry.yaml『index_adjustment|指数调整|调样|成分股调整|rebalance|被动资金』= **0 命中**；
+    ② exam_cards 全树 609 枚『index_adjustment』=0、『指数调整』=0、『成分股调整』=0、『MSCI』=0、『reconstitution』=0、『被动资金』=0；
+      『inclusion』=3 枚命中经逐条读＝全部是 `band_edge_inclusion`（日内时段端点归属，L9-A01__06/A02__10/A02__11），与本轴不同物（此即本席要的负对照：谓词有效但内容不对）；
+      『exclusion』=13 枚、『effective_date』=1 枚亦经读上下文判为『剔除/生效』通用词面，非指数调样构造；
+    ③ web_cards 名面 grep(index_adj|recons|调样)=空；正文面『被动资金』=0；
+    ④ factor_registry 命中两条经逐条读＝『子板块成分股等权指数构造』(formula 面，属板块因子非调样事件)、『沪深300成分股大单资金流降权 50%』(算法拆单致大单因子失效，属主动大单非被动流) ⇒ 判不占本轴。
+  pool_face_note_zh: 池为市场级成员（在册历史 n_members=32）；本卡的市场级折叠是**事件批次序列**（96 批），与池内日频价量成员的时间聚合粒度不同，引用者勿把『日频 vs 批次频』的低相关误读为正交性证明
+
+self_flag:
+  - >-
+    方向与量级均未预注册＝本卡最大约束：外部给前 5 日调入正/调出负，同面亦给『拥挤度上升、超额已衰减至低个位数甚至为负』，本库快照伪影再降一档可信度；须 ⑥ 另立 card_id 预注册，本席不选边不翻号。
+  - >-
+    **本班实测证伪了一列在册可用字段**＝index_adjustment.announcement_date 不是公告日而是 snapshot_diff 落库日（99.97% 晚于 effective、0 行早于）
+    ⇒ 任何先前把该列当公告日的用法都需重查；本席已按此重写事件锚并在 caliber_pitfall ① 写死禁则，同时把它作为 [BLOCKER] 数据问题呈 ①/②/⑤。
+  - >-
+    本卡是**退化版构造**：IndexSize 常数缺（etf 面 100%/98.5% 无源）＋调出侧权重全 NULL ⇒ 只能给『相对可消化度序』而非真实冲击规模；引用者勿把本卡 g 值当成『被动买入金额/成交额』的绝对倍数。
+  - >-
+    样本自由度偏低＝96 批、5 指数、中证全指 5 行、MSCI 0 行、临时调整面本库无法区分（表内无『定期/临时』标记列）⇒ 外部研报的『7 次临时调整』分组读数本库不可复刻。
+  - >-
+    正交闸缺席本班未编数；且本卡与卡22(期指基差)、卡28(回购执行率) 均有机制连接点（基差提前反映／回购注销减资影响指数加权与成分），三卡若同入池须两两对测，本席不自并、不改他卡、不翻号。
+  - >-
+    本卡基座许可＝arXiv nonexclusive-distrib/1.0（本班 WebFetch 亲验），属『可引用不可取码』级；其余五面为机构研报/媒体，证据等级低于同行评议，⑤ 实现前宜补一手 A 股学术调样研究。
+
+caliber_pitfall_zh: >-
+  (1) **事件锚唯一性**＝只准 effective_date；用 announcement_date 即把起点放到事件后 18 日（均值），用『announce 是否已落库』做 PIT 筛则是前视（落库标记本身是未来信息）。
+  ⑤ 若需要『事前可得』的硬证据，须等 ①/② 补真实公告日历列，本卡不自造。
+  (2) **FINAL 与快照双计**＝本表 ReplacingMergeTree，本班实跑已带 FINAL；不加 FINAL 时同一 (symbol,batch) 可能多版本共存⇒事件数虚高（在册 CTE 显式 FINAL 铁律同样适用本卡）。
+  (3) **T_eff 当日收盘是被污染的价格**＝被动流集中在收盘集合竞价（EastSpring/中财网两面），日线收盘收益同时含信号与自身冲击 ⇒ 读 T_eff 当日『超额』不可当可实现收益，本卡已把 T_eff 排除在信号腿外并单列冲击腿。
+  (4) **调出侧 weight=NULL 禁补 0**＝补 0 会把 7,384 枚调出事件静默读成『零冲击』，与『冲击可忽略』同形⇒截面均值被拉向调入侧，制造假的单边正效应（本席在册『零行与确无货同形』族的直接对应物）。
+  (5) **ADV20=0/停牌**＝amount 为 0 时 1/ADV 炸开；停牌票事件窗内日历天数不足须整枚剔除（前瞻窗右端须铺满日历＝在册铁律），禁右截断。
+  (6) **基准未钉**＝000300 vs 880001 之争在册未裁；本卡超额收益对基准选择敏感（调样面集中在宽基），⑥ 冻结时须显式写基准 id，否则同一事件集两套读数。
+  (7) **成分全集误用**＝本表只含变化行（action 非空），禁当『该指数该日全部成分』用；取全集须走 index_constituent／sector_constituent（在册：sector_constituent 是三处采集宇宙唯一读取源，裸扩即造回归）。

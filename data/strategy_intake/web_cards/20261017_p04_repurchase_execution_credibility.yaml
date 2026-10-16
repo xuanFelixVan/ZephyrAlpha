@@ -1,0 +1,155 @@
+# creation_token: p04-webcard-repurchase-execution-credibility-20261017 | created_by: st-qoder-p04-1017-02 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261017-P04-28
+title_zh: 回购执行兑现度与用途结构（『承诺—兑现』缺口轴首条，含「本表 progress/done_amount 是快照态、非公告态」与「用途列缺失⇒注销式腿无源」两处实测硬边界）
+mining_tower: 公司行为·资本运作兑现（本库 web_cards 已占『解禁宽度』(unlock_breadth)、『股东集中度』(holder_concentration)、『应计』(cashflow_accruals)、『估值溢价』(erp_valuation)、『资产增长』(asset_growth_anomaly)，但『回购承诺的实际执行强度』这条轴未占＝新轴）
+birth_seat: ④
+birth_session: st-qoder-p04-1017-02
+birth_batch: 20261017-p04-02
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-17 真实 WebSearch 命中；逐条标明核验面，未直连全文者如实标『摘要级』）
+source_links:
+  - role: 券商金工专题（本卡读数密度最高的一条，给出预案日/完成日的分档超额与『主动 vs 被动回购』『回购比例与超额正相关』两组分层）
+    url: https://finance.sina.cn/2025-03-27/detail-inerayne4991910.d.html
+    what_verified: >-
+      本班 WebSearch 命中并读到正文片段＝源达证券《回购赋能，价值重塑》(2025-03-27)：『回购预案公告 30 日后绝对/相对收益率均值为 1.84%/1.17%，90 日后为 3.74%/1.94%』；
+      『【回购完成公告】后超额收益显著，公告后 1 年的绝对/相对收益率均值为 12.85%/6.42%，2 年后为 21.70%/11.32%』；
+      『主动回购的超额收益率高于被动回购：其他/股权激励/市值管理类回购预案日后 90 日平均超额收益率为 4.36%/2.82%/3.01%，预案日至完成日的平均区间超额收益率高达 12.46%/7.17%/6.47%』；
+      『回购比例与超额收益率正相关：回购比例为 >5% 和 1%-5% 的公司在预案公告日 90 日后平均超额收益率为 4.48% 和 4.36%，其他仅不足 1.5%；回购比例 >5% 的公司从预案日至完成日的区间平均超额收益率高达 19.27%』。
+      ⇒ 本卡基座读数＝『完成日』的效应显著大于『预案日』，且按**回购比例分档**单调。⚠ 该研报是卖方专题（非同行评议），本班只取检索命中片段、未直连 PDF 全文核对样本区间与中性化口径，已在 self_flag 记等级。
+  - role: 『忽悠式回购/停止回购』的负面事件面（本卡为何不能只做『有回购＝利好』单向构造的一手依据）
+    url: https://baike.baidu.com/item/%E8%82%A1%E4%BB%BD%E5%9B%9E%E8%B4%AD/68624708
+    what_verified: >-
+      本班 WebSearch 命中『股份回购（2026 年上半年 A 股市场购回行为活跃事件）』条目正文：『部分上市公司存在"忽悠式回购"，宣布后不执行或执行不力』；
+      『监管层对未完成回购承诺的公司强化监管措施，并记入诚信档案；2026 年前 7 个月有 4 家公司宣告停止回购，公告后股价均跌超 10%，反映出市场对失信行为的负面反应』；
+      『以维护公司价值及股东权益、市值管理为目的的回购，股价提振效果更为明显』；『万得股票回购指数自发布以来累计涨幅大幅跑赢上证指数，且 2021 年至 2026 年每年均跑赢』。
+      ⇒ 关键点＝市场对『承诺落空』的负反应（−10% 级）量级上大于对『预案』的正反应 ⇒ 单看涨方向会漏掉左尾，构造须能区分『兑现/停止/否决』三态。
+  - role: 落地率的时序结构与『注销式 vs 股权激励』用途分野（本卡用途腿无源的对照物）
+    url: https://m.toutiao.com/article/7658897567938150950/
+    what_verified: >-
+      本班 WebSearch 命中《告别空头预案！A 股回购，正在从口头承诺变成真金白银》(2026-07-05)：『2026 年上半年全市场累计回购资金 648.39 亿元，披露回购预案的上市公司整体执行落地率达到 87.6%；把时间拉回 2018 年，当年回购方案的完成率仅只有 62%』；
+      『2026 年上半年注销式回购在全部预案中的占比大幅走高，拟注销回购金额占总规模比重突破 34%』；『前几年大部分回购股份都被留作股权激励库存股，回购只是临时托一下股价，股本没有缩减』。
+      ⇒ 后果两节：(a) 落地率是**时变量**（62%→87.6%）⇒ 任何『执行率』阈值的判据须带年份分层，禁把 2026 年门槛套到 2018 年样本上；(b) 本卡想要的『注销 vs 激励』分野＝本库 repurchase 表**无用途列**（见 data_binding 实测 20 列清单）⇒ 该腿只能转 ①/② 补源，本卡不自造。
+  - role: 执行率缺口的具例（『完成度』作为连续变量而非二值旗的证据）
+    url: https://m.toutiao.com/a7579949361413636608/
+    what_verified: >-
+      本班 WebSearch 命中《6 亿回购仅兑现 2100 万？山子高科整改问责引热议》(2025-12-04)：『曾承诺拿出 6 亿-10 亿元回购股份，最终累计仅兑现 2101.74 万元，完成率不足 3.5%』，并给出判别线索『当回购金额远超公司货币资金储备，或公司面临高额债务压力时，承诺的兑现概率会大幅降低』。
+      ⇒ 本卡据此把『执行率』写成连续比率，并声明其**条件变量**（货币资金/短债）落在 c3_fundamental 面，须 ⑤ 与资产负债表联立才是完整构造。
+  - role: GitHub 面命中实况（许可证闸样本，本班零取码）
+    url: https://github.com/hutaosufe/Quantitative-trading-strategy-based-on-stock-repurchase
+    what_verified: >-
+      gh 亲验（本班实跑）：`gh search repos "share repurchase factor"` 与 `"buyback event strategy backtest"` 两条检索式**均返回 []**，而同尺正对照 `"buyback"` 返回 42★/BSD-3 与 25★/MIT 的仓（证零命中是尺有效非尺坏）；
+      改窄词 `"stock repurchase"` 真命中 5 枚＝hutaosufe/Quantitative-trading-strategy-based-on-stock-repurchase（0★、license 空、upd 2025-09-15）、Foha2001/stock-repurchase（0★、无许可证）、
+      JBharwani2/Stock-Repurchase-Macro（0★、无许可证、2021 停更）、Ali-Choubdaran/sec-repurchase-extractor（3★、MIT、2026-03-28，但本体是 SEC 文件抽取器非因子实现）、zararmrwt/debt-impact-analysis（0★、无许可证）。
+      ⇒ 三筛（star＋活跃度＋许可证）结论＝本轴**无**『高 star＋干净许可＋在维护』三者齐备的实现源，四枚 0★ 无许可证仓按在册口径＝只学思想不入码。
+
+# ── 必备② 许可证闸
+license:
+  github_repo_license: >-
+    四枚 stock-repurchase 仓 license=null（无许可证声明）、一枚 MIT(3★ 且为 SEC 抽取器非因子)；研报/百科/媒体面＝无代码许可证对象。GPL=0，但『无许可证』按本席在册口径同等收紧＝禁取码。
+  gate_verdict: 通过（零可复制代码：伪代码由本席按本班 CH 探针实测列名自拟；『执行率』是公开财务比率，不构成代码著作权客体）
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；无许可证仓只作存在性佐证不入码；实现走 C3 翻译适配重实现
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  动机＝本库『公司行为』一维只占了『解禁宽度』(供给冲击)与『股东集中度/增持』，而『管理层公开承诺买回自家股份之后**是否真的买、买多少、为何停**』这条兑现强度轴从未占；
+  它不是解禁/增持的同义改写——解禁是被动供给、增持是买方身份、回购兑现度是『承诺与执行的缺口』，三者事件主体与可观测变量各异（本班去重三面实跑，见 dedupe_gate_zh）。
+  一手读数（源达 2025-03-27）＝『完成公告』后 1 年相对收益 6.42%、2 年 11.32%，远大于『预案公告』后 30/90 日的 1.17%/1.94%，且按回购比例分档单调（>5% 档 90 日超额 4.48% vs 其他档不足 1.5%）
+  ⇒ 信息含量集中在**执行与规模**，不在『宣布』这一动作本身；反向（百科面）＝宣告停止回购公告后股价均跌超 10% ⇒ 承诺落空的左尾比预案的正尾更陡。
+  本卡本体＝对每一枚回购方案，算两个横截面可算量：
+    (1) 承诺规模强度 plan_pct_mid = (plan_pct_min + plan_pct_max)/2（表内既有『占股本比例』两列，无需外部市值即可归一，且研报的分档正相关结论正好以比例为条件变量）；
+    (2) 执行兑现率 exec_ratio = done_amount / plan_amount_max（plan_amount_max 缺则退回 plan_amount_min；两者皆缺⇒记缺测禁以 0 代，0 会被静默读成『完全没买』）。
+  ⚠ 本卡最大约束不是方向而是**时间可用性**：本班实测本表 progress 与 done_amount 是**快照态**（同一行随后续采集被覆盖），表内**没有『进展公告日』列**、
+  也没有『方案截止日/回购期限』列 ⇒ 在事件日 T 直接用 done_amount 即前视；可证的只有『方案启动日 start_date 之后的一段确定滞后』之后的读数，
+  ⇒ 故本卡的诚实形态＝『用 start_date＋固定观察期（如 12 个月，即研报所称回购周期）读到的 exec_ratio，去预测该观察期**结束以后**的收益』，属『历史兑现信誉』型低频横截面因子，不是事件日抢跑型信号。
+  方向本席**不预注册**：研报给『正』（兑现高/比例高⇒未来强），百科给『落空⇒负』，两者实为同一变量的两侧，但符号与门柱须由 ⑥ 预注册定；本席遵 ⑨ 席在册令不选边不翻号。
+  与相邻对象边界＝(1) unlock_breadth＝限售解禁供给冲击（被动卖压，主体是限售股持有人），本卡＝公司主动买入承诺（资金流入），方向相反且事件主体不同；
+  (2) holder_concentration／在册 FCT-LIQ-036『股东增持信号』＝股东/高管**增持**，该卡 alpha_source 明写『①回购 vs 增持（2026 年 A 股 712 家样本：回购上涨比例 71.8% 远优于增持整体 36%）』＝**它自己已声明回购是不同物**，本卡不是它换名；
+  (3) asset_growth_anomaly(卡26)＝总资产增速（投资强度），回购减资会机械压低 total_assets ⇒ 与本卡存在**负向构造性相关**（同一笔现金流出，在 AG 里表现为资产减少、在本卡里表现为承诺执行），须物化后测 |corr|，本席主动申报不臆断；
+  (4) erp_valuation/市值因子＝本卡是**事件/行为**类，非估值水平类。
+
+# ── 必备④ 伪代码（本席自拟，零外部转录；列名均为本班 CH 只读探针实测名，见 data_binding.measured_face_zh）
+pseudocode: |
+  # 本体：逐枚回购方案的「承诺规模强度」与「执行兑现率」，横截面排序键（供 ⑤ 物化成 panel）
+  # 输入 c3_fundamental.repurchase(symbol 裸6位, announce_date, start_date, progress,
+  #        plan_pct_min, plan_pct_max, plan_amount_min, plan_amount_max, done_amount, done_qty, data_source, exchange)
+  # 标签 c1_market.kline_daily_hfq.pct_change（后复权，沿本席在册口径；禁取 kline_daily.adj_factor＝恒1死列）
+  方案归组（本表无方案号列⇒须自造键）：
+    scheme_key_i = (symbol, announce_date, start_date, plan_amount_min, plan_amount_max)
+    同键多行＝ReplacingMergeTree 快照版本⇒按 ingest_ts 取**最新一版**作为该方案的终态读数（禁跨版本相加＝会双计金额）
+  可读窗闸（PIT 纪律，本卡命门）：
+    T_obs = start_date + OBS_MONTHS 个月（OBS_MONTHS=12，依据＝研报/百科所述『回购周期 12 个月之内』）
+    ⇒ exec_ratio 只允许在 T_obs 当日及以后进入特征面；T < T_obs 的样本该特征记缺测（禁把「尚未执行完」读成「零执行」）
+    ⇒ 若 start_date 为空/为哨兵⇒该方案整枚剔除，禁以 announce_date 顶替 start_date（两列语义不同：预案公告 vs 首次买入）
+  算子：
+    plan_pct_mid = (plan_pct_min + plan_pct_max) / 2          # 承诺规模强度（占股本比，表内自带分母）
+    denom = plan_amount_max if plan_amount_max>0 else (plan_amount_min if plan_amount_min>0 else NaN)
+    exec_ratio = done_amount / denom                          # denom 缺⇒NaN 禁填 0
+    state_flag = progress ∈ {完成实施, 实施中, 董事会预案, 股东大会通过, 股东大会否决, 停止实施, 'nan'}   # 本班实测七值
+  截面键：横截面对 (exec_ratio, plan_pct_mid) 排序；『停止实施/股东大会否决』单列为负向事件腿（研报与百科两面都给 ≥10% 级负反应）
+  剔除腿：停牌/退市前 N 日、ST（沿本席在册 st_stock_list 与 is_st 铁律）、金融股是否剔＝本卡不像 AG 那样必须剔（回购对金融股语义成立），但须与 ⑥ 冻结口径一致
+  禁则：禁取表内任何现成『分位/pct』列（在册 *_pct 前视坑）；禁把 progress 当公告时点状态用；禁 exec_ratio>1 时截断为 1（超额回购真实存在，见东财进展公告面）
+
+# ── 必备⑤ 数据源映射
+data_binding:
+  primary_table: c3_fundamental.repurchase
+  sl_ref: SL-F01 基本面/公司事件线（c3_fundamental 库）；本卡主用 repurchase 的 plan_pct/plan_amount/done_amount/progress 四组列
+  label_table: c1_market.kline_daily_hfq（未来收益标签 pct_change，横截面 IC/多空用）
+  measured_face_zh: >-
+    本班 CH 只读探针三跑（zephyr.data.ch_reader.query_rows，轻档令下执行；起批水位 commit_pct 84.43%＜85，正对照 SELECT 1→[(1,)] 先过后跑）实测＝
+    ① 表存在且引擎＝ReplacingMergeTree；列 20 根逐字名＝announce_date, symbol, name, plan_price_range, plan_qty_min, plan_qty_max, plan_pct_min, plan_pct_max,
+      plan_amount_min, plan_amount_max, start_date, progress, done_price_min, done_price_max, done_qty, done_amount, data_source, ingest_ts, exchange, symbol_canonical；
+    ② count() FINAL = 6,210 行；uniq(symbol) = 2,952 只票；announce_date 跨度 2006-03-02 .. 2026-10-17（**末值＝本班起批当日**⇒该表仍在被日更采集，非陈旧面）；
+    ③ progress 枚举七值实测计数＝完成实施 4,937／实施中 608／董事会预案 372／停止实施 123／股东大会通过 81／'nan' 81／股东大会否决 8（加总 6,210 ✓ 守恒）；
+    ④ 表内**无** 用途列（注销/股权激励/市值管理）、**无** 方案号、**无** 进展公告日、**无** 回购期限/截止日 ⇒ 研报的『注销式 vs 激励』分野与『承诺后逐月买入进度』两类关键变量在本库不可得。
+  face_gap_zh: >-
+    三处硬落差（本卡不许被读成『列在即可考』）：
+    (1) **用途腿无源**＝表内无用途列 ⇒ 源达研报里含金量最高的分层变量（其他/股权激励/市值管理三类 90 日超额 4.36%/2.82%/3.01%）本库**复刻不了**，本卡只能退到『比例分档＋执行率』两腿；
+      ⇒ 转 ①/② 席补『回购用途/回购期限/进展公告序列』三列（或按公告号取原始 PDF 结构化）；
+    (2) **事件时间只有一根**＝announce_date 与 start_date 之间无『进展公告』序列 ⇒ 研报里『预案日至完成日的区间超额 12.46%』这种**路径型**读数本库不可复刻，
+      只能做『方案结束后看未来』的信誉型读数（本卡 pseudocode 已按此写死 T_obs 闸）；
+    (3) 市场级可闸代理（本轴的多空/分层收益市场级时序）本班**未物化** ⇒ 轴合法性未证，正交闸顺延（见 orthogonal_gate_zh）。
+  orthogonal_gate_zh: >-
+    正交闸【本班缺席，如实申报，未编数】。本班实跑复量池面三面（.runtime/tmp/p04_06_pool、.runtime/tmp/st-qoder-p09-1015-04/pool_datesig、.../pool6）
+    ＝**目录在而 is_file() 计数全为 0**＝第四次退化（04 班『目录在件没了』→05 班『目录整体不存在』→1017-01 班『目录重建但空壳』→本班『同形复现』）；
+    04 班留存候选 mkt_basis_pctile250.csv 本班复量仍在（属卡22 基差候选，对象不同，本席未代其喂闸）。
+    在册假绿红线续用＝⑨ 席 1017 已记该闸『打 ERROR 却 rc=0』形态于 10-17 修复为 rc=2，但 --out 件仍不生成 ⇒ 无论 rc 几，**空池一律不构成通过**。
+    ⇒ 交 ⑤/下班：物化 repurchase_exec_market.csv(date,sig) 后跑
+      `python scripts/backtest/fexam/signal_orthogonality.py gate --candidate <该csv> --pool <复活后池目录> --gate 0.3`；reject(rc=5) 记重复、pass(rc=0) 记过，
+      且须核对回显非『未命中任何 CSV』；并与卡26 asset_growth（同笔现金流出的另一面）做两两对测。本席不自造 corr 数值。
+  dedupe_gate_zh: >-
+    去重闸（本班实跑，谓词均窄＋逐条读上下文，遵 1016-05『读正文不只看卡名』在册令）：
+    ① 存量册 strategy_registry.yaml 五谓词『repurchase|回购|buyback|margin_balance|融资融券』= **0 命中**；
+    ② exam_cards 全树（609 枚 yaml）『repurchase』=0 枚命中；『回购』=3 枚命中，**逐条读上下文后判不撞**＝
+      TDM-E-L1-S0__calibration__03『DR007/逆回购』、TDM-F-C1__comparison__03『GC001 逆回购利率』、TDM-F-C2-02『现金 sleeve 逆回购』＝三枚全是**央行/交易所逆回购（资金融出）**，与公司股份回购不同物（此即本席需要的负对照：谓词能命中就说明谓词有效，命中内容不对就不算占轴）；
+    ③ 相邻概念复量＝在册 FCT-LIQ-036『股东增持信号』alpha_source 自述『①回购 vs 增持 …71.8% 远优于 36%』＝该卡把回购当**对照物**而非本体 ⇒ 未占本轴；
+    ④ web_cards 名面 grep(repurch|buyback)=空、正文面四枚命中经逐条读＝全部是 margin_trading/两融/『两融杠杆』旁证（holder_concentration/sentiment_rebuild/institutional_seat_netbuy/erp_valuation），无一枚以回购为本体；
+    ⑤ 附带排雷＝本席原拟第二候选『两融余额变化』本班**主动放弃**：institutional_seat_netbuy 卡面在册句『与 1016-01 ghost 班已判重的 margin_bal_chg／margin_repay_pressure 不同物（那两枚＝两融余额时序）』
+      ⇒ 两融余额时序轴已被前班判重占过，重挖＝同义卡，故本班改取指数调样轴（见同批卡29）。
+  pool_face_note_zh: 池为市场级成员（在册历史 n_members=32）；本卡是**个股横截面事件/行为**因子，其市场级代理只能是多空/分层收益时序，与池内价量波动成员应天然低相关，但与卡26(资产增长)存在同源现金流量的构造性负相关，须物化后测
+
+self_flag:
+  - >-
+    方向未预注册＝本卡最大约束：研报给正（兑现高/比例高⇒未来强）、百科给落空⇒负（≥10% 级），本席遵 ⑨ 令不选边不翻号；须 ⑥ 带独立外部先验另立 card_id 方可开考。
+  - >-
+    正交闸缺席本班未编数：已给池面第四次退化 is_file() 复量＋在册 rc 修复续证＋下班可直接执行的 gate 命令；勿把『列存在』读成『本卡已过闸』。
+  - >-
+    证据等级低于学术期刊基座＝本班本轴命中的最强读数面是**卖方金工专题**（源达 2025-03-27）与门户/百科转述，未读到同行评议原文与样本口径（区间、中性化、剔 ST 与否均未对表）；
+    ⑤ 实现前宜由 ⑦/⑧ 或 ⑥ 找一手学术（Ikenberry-Lakonishok-Vermaelen 1995 JFE／Peyer-Vermaelen 2005 JB 型）做基座替换或补强，本席未搜到该基座的干净许可实现源（GitHub 三筛结论）。
+  - >-
+    用途腿与路径腿均无源（注销 vs 激励、逐月进展）＝本卡读数与研报读数**不同物**，引用者勿把本卡的 exec_ratio 当成研报里的『注销式回购』分层；已转 ①/② 补列。
+  - >-
+    exec_ratio 的 T_obs 是本席自定（12 个月，依据＝外部所述『回购周期 12 个月之内』，非表内列）⇒ 该参数改动即改读数，⑥ 冻结时须把它写进卡面参数而非留作隐含；
+    若 ⑤ 发现表内 start_date 缺值率高，本卡须降级为『仅用 announce_date＋固定 12 月』的近似版，并另记 start_date 缺值率实测数（本班未量该列缺值率＝残余待办，见台账）。
+  - >-
+    与卡26(资产增长异象)存在构造性负相关（同一笔回购现金流出在 AG 里压低 total_assets）＝跨卡共线一手风险已申报，池缺席无法测，交 ⑥/⑨ 并员评估，本席不自并、不改他卡、不翻号。
+
+caliber_pitfall_zh: >-
+  (1) **快照态命门**＝progress/done_amount 随采集被后续版本覆盖且无进展公告日列 ⇒ 在事件日 T 直接用＝前视；本卡 pseudocode 已写死『只在 start_date＋OBS_MONTHS 之后进入特征面』，T 之前记缺测；
+  (2) **零值语义陷阱**＝done_amount=0 与『该方案尚未开始』同形，plan_amount_max 缺与『承诺零金额』同形 ⇒ 禁以 0 代缺，一律 NaN＋单独计数上报覆盖率；
+  (3) **单位未对表**＝plan_amount/done_amount 是元还是万元本班未验（本库在册先例＝大宗两表同物异单位 10^4）⇒ exec_ratio 是同表同列相除，单位在分子分母相消**不受影响**，但若 ⑤ 想加绝对金额门槛（如『≥1 亿元』）必须先对表单位；
+  (4) **progress 的 'nan' 值**＝81 行字面 'nan'（本班实测七值守恒）⇒ 字符串谓词 `progress IS NULL` 查不到它们，须按等值 'nan' 或建枚举映射，否则『状态缺失』会被静默读成第八种状态；
+  (5) **剔 ST/停牌**＝本库在册 is_st 与停牌面另表（c1_market.suspend 本班实测存在但未验跨度），回购期内停牌会拉长实际执行窗 ⇒ ⑤ 须与 suspend 联立决定 OBS_MONTHS 是否顺延；
+  (6) announce_date 末值＝2026-10-17（本班当日）⇒ 该表日更，但『当日公告』的行在 T_obs 之前不可进特征面，勿因『数据新』误以为『信号可用』。
