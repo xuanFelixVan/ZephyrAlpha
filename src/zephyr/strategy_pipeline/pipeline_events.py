@@ -1288,14 +1288,12 @@ def maybe_record_auction_hit(task_id: object = None, success: bool = True, **_kw
 
 
 # ---------- L5 排产段工单守护 spawn（F82 P0，2026-09-30 st-circ-a7-20260930）----------
-# 处方真源：docs/_working/total_circulation_night/s5_skeleton.md §5 P0-1——order_daemon 全仓
 # 无生产 spawn 点（仅 DDL 脚本引用），胜者→任务书→施工队事件链断；守护本体
 # （单例锁 PID+TTL+僵尸检测 / last_read_offset 断点续读 / 毒丸留档）齐备于
 # zephyr.ai_layer.scheduling.order_daemon，缺的只是"谁在事件到达后唤它一轮"。
 # F82 续段（2026-10-01 st-ffchief-20261001 lane-f82）：spawn 缺省 dry-run（工单只进回执即
 # 蒸发=断链后半段）→挂 OrderFileStore 落库 sink（当日序号防同日多胜者互踩）；生产边
 # L4 胜者落库→evolution_winner_due 由 comparator.compare_events.maybe_emit_evolution_winner
-# 同批补齐（台账=docs/_working/circulation_chief/skeleton/E_execution/f82_order_daemon_wiring.md）。
 ORDER_DAEMON_PREFIX = "[ORDER-DAEMON]"
 
 
@@ -1532,6 +1530,55 @@ def wire_data_scheduler(scheduler) -> None:
                 maybe_emit_l9_readiness(**_kwargs)
             except Exception:  # noqa: BLE001  导入级故障与模块内异常同待遇：出声不反噬
                 log.warning("[L9-AGG] 就绪度读数唤醒失败（不影响后续链）", exc_info=True)
+            # 目标就绪度读数（2026-10-14 st-infoaxis Q6 目标机制件，裁定#516）：TDM 186 节点
+            # goal 面（151 核心分母）绿/黄/红/挂起读数唯一自动产出者。与 L9 同款纪律——纯读取
+            # 聚合（禁采集）、事件唤醒（exam/tdm/goal 系 task SUCCESS，内部自过滤非唤醒点＋同业务日
+            # 60min 节流）；内部全捕获永不反噬（fail-open：拼装失败/写未确认=error 出声，禁静默零读数），
+            # 导入失败独立吞掉（读数件是增益不是依赖）。
+            # [接线锚] MANUAL-ONLY-PERMANENT 口径：本模块产线触发即本处 subscribe，
+            # 模块内 `__main__` 仅为人工复现/调试入口（同 L9 先例）。
+            try:
+                from zephyr.data.goal_readiness_aggregator import maybe_emit_goal_readiness
+
+                maybe_emit_goal_readiness(**_kwargs)
+            except Exception:  # noqa: BLE001  导入级故障与模块内异常同待遇：出声不反噬
+                log.warning("[GOAL-AGG] 目标就绪度读数唤醒失败（不影响后续链）", exc_info=True)
+            # 信息供给轴四域装配件唤醒（2026-10-15 st-infoaxis 收班：PERMANENT-SYSTEM-TRIGGER 门
+            # 暴露"钩子已写但从未订阅"——装配件此前只有 CLI 人工入口，产线不会自动出信号。
+            # 本处按 L9/GOAL-AGG 同款纪律统一接线：各自 maybe_emit_* 内部自过滤非唤醒点＋
+            # 同业务日节流＋全捕获不反噬；单件失败不连坐其余（增益非依赖）。
+            #   ① 股权三信号族（edge_holding/equity_pledge/top10/equity 系任务）
+            #   ② 研报预期修正面（research_report/consensus/expectation 系任务）
+            #   ③ PEAD 事件装配（income_statement/financial/consensus/pead 系任务）
+            #   ④ 千股千评·互动易评论信号（comment/irm/guba 系任务）
+            try:
+                from zephyr.signal_ashare.equity_link_signals import maybe_emit_equity_link
+
+                maybe_emit_equity_link(**_kwargs)
+            except Exception:  # noqa: BLE001  单件失败不连坐其余（增益非依赖）
+                log.warning("[EQUITY-LINK] 装配唤醒失败（不影响后续链）", exc_info=True)
+            try:
+                from zephyr.alt_data.expectation_revision_assembler import (
+                    maybe_emit_expectation_revision,
+                )
+
+                maybe_emit_expectation_revision(**_kwargs)
+            except Exception:  # noqa: BLE001
+                log.warning("[EXPREV] 装配唤醒失败（不影响后续链）", exc_info=True)
+            try:
+                from zephyr.signal_fundamental.pead_assembly import maybe_emit_pead_assembly
+
+                maybe_emit_pead_assembly(**_kwargs)
+            except Exception:  # noqa: BLE001
+                log.warning("[PEAD] 装配唤醒失败（不影响后续链）", exc_info=True)
+            try:
+                from zephyr.alt_data.retail_comment_signals import (
+                    maybe_emit_retail_comment_signals,
+                )
+
+                maybe_emit_retail_comment_signals(**_kwargs)
+            except Exception:  # noqa: BLE001
+                log.warning("[RETAIL-IR] 装配唤醒失败（不影响后续链）", exc_info=True)
             # 情绪线日批快照件（5_self_sustaining 日批半施工，st-cdx-sent-20261013）：
             # emotion_index 收盘定格态落表 SUCCESS=快照器自然唤醒（append-only PIT 证据面，
             # 手工 CLI 挂上事件门的薄接线）。置于唤醒链最末（证据面不占分配/拍板时序；
