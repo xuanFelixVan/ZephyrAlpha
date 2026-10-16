@@ -23,13 +23,23 @@
 #   投影按真源剔除属合法收敛，放行并落审计 event=head_token_lag_pg_cleared（实证形态＝
 #   10-13 夜 6 袋全被同一条 retired token 拦死）。账本不可达／查询异常／非复合身份
 #   ⇒ 全条照旧阻断（只加对账不放行，与 create_guard T4 第三源同哲学）
+#   2026-10-15 分级与共析（st-perfz2-20261015 P0-1，Owner 今晚 st-diskp0 总包图纸①）：
+#   ①结构序检查降 warn——顶层非 mapping／根键重复／di_seam_exemptions 缺失或非末位／
+#   creation_tokens 非 list 四类结构序问题改 logger.warning+审计（warn_issues 字段）放行，
+#   **仅 yaml.safe_load 语法错误 fail-closed**（投影私改 tamper 与 A-12 token 滞后两执法
+#   面不属结构序，照旧阻断；preflight_merge_terminal 判据零变化——merge 通道仍全量阻断）；
+#   ②共析接共享缓存——staged 字节经 _capability_registry_io.parse_registry_text_cached
+#   喂入（键=盘面 path+mtime_ns+size，sha256 校验把关；staged≠盘面只返回不回填），与
+#   CREATE-GUARD/SSOT/OVERLAP 同册一次 yaml.safe_load（96,697 行册单次 ~4.8s，实测每轮
+#   全链解析 5→3 次、不变轮 3→0）；staged identities 从共享 data 派生零重析，HEAD identities
+#   按内容 sha 进程内 memo（HEAD 文本不可变，纯 memo 判据零变化）
 # [MODIFY-GUARD] gate_id="REGISTRY-YAML-PARSE"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；
 #   2026-10-10 st-maint1-20261010 件③：新增公开判据函数 preflight_merge_terminal（merge 通道补检，
 #   git merge-tree 算合并终态字节+就地复用本门 _structural_issues，两条 merge 通道共用单一真源）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——git diff 失败/文件不可读 → fail-open 跳过（encoding 类 gate 覆盖）；staged 版本 YAML 解析失败/根键重复/capability 注册表结构破坏 → fail-closed 阻断（passed=False，报错附正确追加姿势教学）；审计写失败静默降级。preflight_merge_terminal 永不抛异常——git/装载失败归 state="unavailable" 交调用方（调用方默认同样阻断，禁把"跑不动"读成"通过"）
+# [ERROR_CONTRACT] check 永不抛异常——git diff 失败/文件不可读 → fail-open 跳过（encoding 类 gate 覆盖）；staged 版本 YAML 语法解析失败/投影私改（tamper）/token 滞后（A-12）→ fail-closed 阻断（passed=False，报错附正确追加姿势教学）；结构序四类（非 mapping/根键重复/exemptions 末位/creation_tokens list）→ 降 warn 放行+审计（st-perfz2-20261015 P0-1 分级）；审计写失败静默降级。preflight_merge_terminal 永不抛异常——git/装载失败归 state="unavailable" 交调用方（调用方默认同样阻断，禁把"跑不动"读成"通过"），其判据零变化（merge 通道仍全量阻断）
 # [TESTS] tests/governance/commit_gates/test_registry_yaml_parse_gate.py; tests/gov/governance/rule_bridge/test_session_worktree_merge_preflight.py（merge 通道补检红蓝，含生产通道）
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L
 # [TTL] permanent
@@ -53,13 +63,18 @@
 
 检测逻辑（对 staged 文本，按档案分档）：
     capability_registry 档：
-        1. yaml.safe_load 通过（解析炸直接阻断）
+        1. yaml.safe_load 通过（解析炸直接阻断——唯一 fail-closed 结构判据）
         2. 顶层根键唯一（yaml.compose 判重）
         3. 顶层 di_seam_exemptions 键存在且为末位键（尾追悬挂判别式）
         4. creation_tokens 键存在且为 list（结构走样拦截）
     data_asset_registry 档：
         1. yaml.safe_load 通过
         2. 顶层根键唯一
+
+    st-perfz2-20261015 P0-1 分级：上述 2/3/4 与"顶层非 mapping"四类**结构序检查降
+    warn**（logger.warning+审计 warn_issues，放行不阻断）——结构序走样是"投影器次序
+    病"，由投影器侧真源修复，不再把无辜提交人挡在门外；仅语法错误 fail-closed。
+    另两类执法面（tamper 投影私改/A-12 token 滞后）不属结构序，照旧阻断。
 
 触发范围：staged 命中 _WATCH_FILES（capability_canonical_file_registry.yaml /
 data_asset_registry.yaml，两个高频追加热注册表）——紧范围不加宽（净删防护由
@@ -209,14 +224,19 @@ _SQL_PG_ACTIVE_TOKEN_BY_KEY = (
 )
 
 
-def _creation_token_identities(text: str) -> dict[str, str] | None:
-    """顶层 creation_tokens 条目复合身份集（file|token= → 展示名）。解析失败/结构不符 → None。"""
-    try:
-        import yaml
+def _creation_token_identities(text: str, data: object = None) -> dict[str, str] | None:
+    """顶层 creation_tokens 条目复合身份集（file|token= → 展示名）。解析失败/结构不符 → None。
 
-        data = yaml.safe_load(text)
-    except Exception:  # noqa: BLE001 — 解析失败由 _structural_issues 报告
-        return None
+    st-perfz2 P0-1：``data`` 给定时（共享缓存已解析的同一字节产物）零重析直接派生；
+    None 时保持旧行为自行 safe_load（HEAD 面等无共享键的字节）。
+    """
+    if data is None:
+        try:
+            import yaml
+
+            data = yaml.safe_load(text)
+        except Exception:  # noqa: BLE001 — 解析失败由 _structural_issues 报告
+            return None
     if not isinstance(data, dict):
         return None
     ct = data.get("creation_tokens")
@@ -242,7 +262,7 @@ def _pg_endorsed_token_ids(gateway, missing_ids: list[str]) -> tuple[set[str], s
     """问 PG 账本：HEAD 有而投影无的条目里，哪些**真源仍背书**（该留在拦截止里）。
 
     病根实证（非推测）：10-13 夜 6 只死信全被同一条拦——
-    ``tdm_goal_structure_research_2026_10_13（task_bound 已清出临时区，G备份20261013 可溯）`` 的 token 条目。查 PG：
+    ``docs/_working/tdm_goal_structure_research_2026_10_13.md`` 的 token 条目。查 PG：
     该 entry ``status='retired'``（真源 15470 active／181 retired），而当时 HEAD 的
     YAML 还挂着它的退役残留，新重打的投影已按真源剔除 ⇒ 本守门拿**滞后的 HEAD** 当
     基准，把六个无辜袋连杀三轮以上。令卡处方＝"token 真源＝PG，判据读面与真源方向
@@ -316,14 +336,21 @@ def _pg_endorsed_token_ids(gateway, missing_ids: list[str]) -> tuple[set[str], s
     return endorsed, f"PG 对账：{len(endorsed)} 条 active 照拦／{cleared_n} 条真源不背书放行"
 
 
-def _head_token_lag_issue(gateway, watch_file: str, staged_text: str, message: str) -> str | None:
-    """直提通道 capability 册 token 级只增不减判别（返回问题文案或 None=通过/不适用）。永不抛异常。"""
+def _head_token_lag_issue(
+    gateway, watch_file: str, staged_text: str, message: str, staged_data: object = None
+) -> str | None:
+    """直提通道 capability 册 token 级只增不减判别（返回问题文案或 None=通过/不适用）。永不抛异常。
+
+    st-perfz2 P0-1：staged 侧 identities 从共享缓存 data 派生（零重析）；HEAD 侧文本
+    按 sha 进程内 memo（HEAD 文本不可变——同 sha 必同 identities，纯 memo 判据零变化）。
+    """
     try:
         result = gateway.run_git(["git", "show", f"HEAD:{watch_file}"])
         if result.returncode != 0:
             return None  # 新文件/无 HEAD → fail-open
-        head_ids = _creation_token_identities(result.stdout)
-        staged_ids = _creation_token_identities(staged_text)
+        head_text = result.stdout
+        head_ids = _identities_cached(head_text)
+        staged_ids = _creation_token_identities(staged_text, data=staged_data)
         if head_ids is None or staged_ids is None:
             return None  # 判不了 → fail-open（结构面由 _structural_issues 把守）
         missing = sorted(set(head_ids) - set(staged_ids))
@@ -414,14 +441,103 @@ def _duplicate_root_keys(text: str) -> list[str]:
 _PARSE_CACHE: dict[str, tuple[str, list[str]]] = {}
 _PARSE_CACHE_MAX = 8
 
+# ── st-perfz2-20261015 P0-1 共析面 ────────────────────────────────────────────
+# yaml.compose 与 safe_load 同价（96,697 行册各 ~4.8s）——根键判重结果按内容 sha 进程内
+# memo（同 sha 必同节点树，纯 memo 判据零变化）；有界溢出整表弃（缓存不是判据真源）。
+_DUPKEYS_CACHE: dict[str, list[str]] = {}
+_DUPKEYS_CACHE_MAX = 16
 
-def _structural_issues(text: str, profile: str) -> list[str]:
-    """二层⑦缓存（Owner 全批 2026-10-05）：13k 条热册 yaml.safe_load 每次 ~2s，
-    同内容重复解析 36 次/天=白跑 72s。以 sha256(text) 为键缓存结果，命中即返。
-    fail-open：缓存写入失败静默跳过（安全不降级=每次都全量解析）。"""
+# HEAD 文本 identities memo（HEAD blob 不可变；同 sha 必同身份集）。键=text sha256 前 24 位。
+_HEAD_IDENTITIES_CACHE: dict[str, dict[str, str] | None] = {}
+_HEAD_IDENTITIES_CACHE_MAX = 8
+
+
+def _text_cache_key(text: str, profile: str) -> str:
     import hashlib as _hl
 
-    _key = f"{profile}:{_hl.sha256(text.encode('utf-8')).hexdigest()[:16]}"
+    return f"{profile}:{_hl.sha256(text.encode('utf-8', errors='replace')).hexdigest()[:24]}"
+
+
+def _identities_cached(text: str) -> dict[str, str] | None:
+    """HEAD 文本 identities（sha 键 memo；None 结果同样入 memo——负结果对不可变文本是稳态）。"""
+    try:
+        key = _text_cache_key(text, "identities")
+        if key in _HEAD_IDENTITIES_CACHE:
+            return _HEAD_IDENTITIES_CACHE[key]
+        ids = _creation_token_identities(text)
+    except Exception:  # noqa: BLE001 — memo 设施故障退直析（fail-open 不改判定）
+        return _creation_token_identities(text)
+    if len(_HEAD_IDENTITIES_CACHE) >= _HEAD_IDENTITIES_CACHE_MAX:
+        _HEAD_IDENTITIES_CACHE.clear()
+    _HEAD_IDENTITIES_CACHE[key] = ids
+    return ids
+
+
+def _duplicate_root_keys_cached(text: str, cache_key: str) -> list[str]:
+    """根键判重 sha-memo 版（同内容跨轮零 compose）。"""
+    try:
+        cached = _DUPKEYS_CACHE.get(cache_key)
+        if cached is not None:
+            return list(cached)
+        dups = _duplicate_root_keys(text)
+    except Exception:  # noqa: BLE001 — memo 故障退直算
+        return _duplicate_root_keys(text)
+    if len(_DUPKEYS_CACHE) >= _DUPKEYS_CACHE_MAX:
+        _DUPKEYS_CACHE.clear()
+    _DUPKEYS_CACHE[cache_key] = list(dups)
+    return dups
+
+
+def _shared_registry_data(gateway, watch_file: str, staged_text: str) -> tuple[object, object]:
+    """staged 字节喂共享解析缓存（st-perfz2 P0-1）。返回 (data, exc)，永不抛异常。
+
+    盘面锚序与 create_guard._load_capability_registry 同款（主仓根→project_root）——
+    键=盘面 (path, mtime_ns, size)，与 CREATE-GUARD/SSOT/OVERLAP 同一条目：它们先解析过
+    （staged==盘面常态）本门零解析命中。staged≠盘面时 parse_registry_text_cached 只返回
+    不回填（sha 把关，防毒化盘面真源条目）。锚设施/共享模块故障 → (None, None)，
+    _structural_issues 自行 safe_load（退旧路径，fail-open 不改判定）。
+    """
+    try:
+        from pathlib import Path as _P
+
+        from zephyr.gov_enforcement.commit_gates._capability_registry_io import (
+            parse_registry_text_cached,
+        )
+        from zephyr.shared.io.paths import anchor_main_root
+
+        root = _P(str(getattr(gateway, "project_root", ".") or "."))
+        try:
+            main_root = anchor_main_root(root)
+        except Exception:  # noqa: BLE001 — 锚设施异常退 project_root
+            main_root = root
+        for base in (main_root, root):
+            cand = base / watch_file
+            try:
+                if cand.exists():
+                    return parse_registry_text_cached(cand, staged_text)
+            except OSError:
+                continue
+        import yaml
+
+        return yaml.safe_load(staged_text), None  # 无盘面锚=纯解析（无键不缓存）
+    except Exception:  # noqa: BLE001 — 共析设施故障退旧路径（_structural_issues 自析）
+        return None, None
+
+
+def _is_syntax_issue(issue: str) -> bool:
+    """结构序降级（st-perfz2 P0-1）分级判别：仅 yaml.safe_load 语法错误属 fail-closed 级。"""
+    return issue.startswith("yaml.safe_load 解析失败")
+
+
+def _structural_issues(text: str, profile: str, data: object = None) -> list[str]:
+    """二层⑦缓存（Owner 全批 2026-10-05）：13k 条热册 yaml.safe_load 每次 ~2s，
+    同内容重复解析 36 次/天=白跑 72s。以 sha256(text) 为键缓存结果，命中即返。
+    fail-open：缓存写入失败静默跳过（安全不降级=每次都全量解析）。
+
+    st-perfz2 P0-1：``data`` 给定时（共享缓存产物）跳过本函数自己的 safe_load——
+    一次解析喂 safe_load 断言+compose 判重两判据；compose 结果亦按 sha memo。
+    """
+    _key = _text_cache_key(text, profile)
     _cached = _PARSE_CACHE.get(_key)
     if _cached is not None:
         return list(_cached)
@@ -431,17 +547,22 @@ def _structural_issues(text: str, profile: str) -> list[str]:
     data_asset_registry 档：parse + 根键唯一。
     """
     issues: list[str] = []
-    try:
-        import yaml
+    if data is None:
+        try:
+            import yaml
 
-        data = yaml.safe_load(text)
-    except Exception as exc:  # noqa: BLE001 — 解析失败=阻断本体
-        issues.append(f"yaml.safe_load 解析失败: {str(exc)[:160]}")
-        return issues
+            data = yaml.safe_load(text)
+        except Exception as exc:  # noqa: BLE001 — 解析失败=阻断本体
+            issues.append(f"yaml.safe_load 解析失败: {str(exc)[:160]}")
+            if len(_PARSE_CACHE) < _PARSE_CACHE_MAX * 2:
+                _PARSE_CACHE[_key] = list(issues)
+            return issues
     if not isinstance(data, dict):
         issues.append(f"顶层不是 mapping（实际 {type(data).__name__}）")
+        if len(_PARSE_CACHE) < _PARSE_CACHE_MAX * 2:
+            _PARSE_CACHE[_key] = list(issues)
         return issues
-    dups = _duplicate_root_keys(text)
+    dups = _duplicate_root_keys_cached(text, _key)
     if dups:
         issues.append(f"顶层根键重复: {dups}（PyYAML 静默取后者——前段条目会被解析层无感忽略，必须合并为单键）")
     if profile == "capability_registry":
@@ -538,24 +659,40 @@ def make_registry_yaml_parse_gate() -> GateSpec:
         if not watched:
             return True, ""
 
+        # st-perfz2 P0-1 结构序降级分档：blocking=语法错误+tamper+token 滞后（fail-closed 不变）；
+        # 结构序四类（非 mapping/根键重复/exemptions 末位/creation_tokens list）降 warn 放行。
         all_issues: list[tuple[str, list[str]]] = []
+        warn_issues: list[tuple[str, list[str]]] = []
         for watch_file, profile in watched:
             staged_text = _read_staged_file(gateway, watch_file)
             if staged_text is None:
                 continue  # fail-open：读失败（encoding 类 gate 覆盖）
-            issues = _structural_issues(staged_text, profile)
+            shared_data, _shared_err = _shared_registry_data(gateway, watch_file, staged_text)
+            issues = _structural_issues(staged_text, profile, data=shared_data)
+            syntax = [i for i in issues if _is_syntax_issue(i)]
+            structural = [i for i in issues if not _is_syntax_issue(i)]
             tamper = _projection_tamper_issue(gateway, watch_file)
             if tamper:
-                issues.append(tamper)
+                syntax.append(tamper)
             if profile == "capability_registry":
                 # A-12 直提通道守门：投影指纹只证 staged==PG 投影，不证投影未落后 HEAD——
                 # token 级只增不减补上双轨滞后窗（复用 own-scope：外来 staged 不拦，§3.1）
-                lag = _head_token_lag_issue(gateway, watch_file, staged_text, str(kwargs.get("commit_message") or ""))
+                lag = _head_token_lag_issue(
+                    gateway, watch_file, staged_text, str(kwargs.get("commit_message") or ""), staged_data=shared_data
+                )
                 if lag:
-                    issues.append(lag)
-            if issues:
-                all_issues.append((watch_file, issues))
+                    syntax.append(lag)
+            if syntax:
+                all_issues.append((watch_file, syntax))
+            if structural:
+                warn_issues.append((watch_file, structural))
 
+        for f, w in warn_issues:
+            logger.warning(
+                "REGISTRY-YAML-PARSE 结构序警告（降 warn 放行，st-perfz2 P0-1）: %s: %s",
+                f,
+                "; ".join(w),
+            )
         _audit(
             gateway,
             {
@@ -564,15 +701,29 @@ def make_registry_yaml_parse_gate() -> GateSpec:
                 "action": "block" if all_issues else "pass",
                 "session_id": session_id or "?",
                 "files": {f: issues for f, issues in all_issues} if all_issues else [f for f, _ in watched],
+                **({"warn_issues": {f: w for f, w in warn_issues}} if warn_issues else {}),
             },
         )
         if not all_issues:
+            if warn_issues:
+                warn_detail = "\n".join(
+                    line
+                    for f, w in warn_issues
+                    for line in (f"REGISTRY-YAML-PARSE（warn，不阻断）: {f}:", *(f"  - {i}" for i in w))
+                )
+                return True, warn_detail
             return True, ""
         detail = "\n".join(
             line
             for f, issues in all_issues
             for line in (f"REGISTRY-YAML-PARSE: {f} 结构校验未过:", *(f"  - {i}" for i in issues))
         )
+        if warn_issues:
+            detail += "\n" + "\n".join(
+                line
+                for f, w in warn_issues
+                for line in (f"REGISTRY-YAML-PARSE（warn，不阻断）: {f}:", *(f"  - {i}" for i in w))
+            )
         msg = f"{detail}\n  {_TEACH}"
         logger.error(msg)
         return False, msg

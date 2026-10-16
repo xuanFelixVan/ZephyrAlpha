@@ -164,6 +164,8 @@ def _evidence_chain_complete(entry: dict) -> tuple[bool, str]:
     ev = entry.get("death_evidence")
     if not isinstance(ev, dict):
         return False, "death_evidence 缺失/非字典"
+    if isinstance(ev.get("pid"), bool):
+        return False, "pid 为布尔（True→int=1 伪 pid，红蓝 2026-10-16 攻击面）"
     try:
         pid = int(ev.get("pid") or 0)
     except (TypeError, ValueError):
@@ -176,6 +178,15 @@ def _evidence_chain_complete(entry: dict) -> tuple[bool, str]:
     threshold = ev.get("threshold_seconds")
     if not isinstance(age, (int, float)) or not isinstance(threshold, (int, float)):
         return False, "idle/threshold 缺失或非数值"
+    if isinstance(age, bool) or isinstance(threshold, bool):
+        return False, "idle/threshold 为布尔（伪数值）"
+    import math as _math
+
+    if not (_math.isfinite(age) and _math.isfinite(threshold)):
+        return (
+            False,
+            f"idle/threshold 非有限数（age={age}, threshold={threshold}；NaN/Inf 令比较恒 False，红蓝 2026-10-16 攻击面）",
+        )
     if age <= threshold:
         return False, f"idle 未超阈值（age={age} <= threshold={threshold}）"
     side = ev.get("alive_side_evidence")
@@ -227,6 +238,22 @@ def _try_autoreclaim(gateway, root: Path, ledger, entry: dict, matched: list[str
     except LookupError:
         note += "；resolve 时条目已不在（他方收口竞态，按回收成功计）"
     except Exception as exc:  # noqa: BLE001 — resolve 失败=条目仍 open，照旧阻断
+        # 红蓝 2026-10-16 缺口：release 已生效而 resolve 失败＝状态变更必须留痕（零审计行=无主改面）
+        _audit_autoreclaim(
+            root,
+            {
+                "ts": _now_iso(),
+                "event": "takeover_autoreclaim_partial",
+                "gate": "TAKEOVER-PENDING",
+                "sid": sid,
+                "evidence": _evidence_chain_complete(entry)[1],
+                "liveness_state": state,
+                "liveness_signal": signal,
+                "released_files": released_n,
+                "resolve_error": f"{type(exc).__name__}: {exc}",
+                "outcome": "released_but_open",
+            },
+        )
         return False, f"resolve_entry 失败（{type(exc).__name__}: {exc}），条目仍 open 照旧阻断"
     _audit_autoreclaim(
         root,
