@@ -694,3 +694,90 @@ dim2 附：⑨席 1 枚 8 段（描述内含竖线）、⑤/⑦c/③各"无（�
 起手 01:19:10→本段落笔 02:08:42＝**班期 49 分 32 秒**（在册班限 60 分，本班未超）；分账＝例行取证与巡检≈22 分／写作与组装≈12 分／等待与慢命令≈15 分（含 reaper --status 与全树 glob 各一次超时改道，见下）。冷启动三步与首查六件耗时含在内，正门等待由下班按落地时间自算，本席不预估终值。
 
 收班八件（八件全部排在末次网关调用之后执行，本班终态由下班按落地面复量＝沿在册律「本席不预签」）＝①release 三面 claim（`git_commit.py --release-only`）②注销心跳＝自家 keeper 34024 与网关为本袋代起的那枚一并按 PID 核活处置，末行须 exited（承 §17.3 通道：release→unregister→读回；每投一袋网关代起一枚＝禁为记读数再补袋，防递归无出口）③耗时已记（本段）④[BLOCKER] 已追加 11 枚（高3／中5／低3，含「无」1 枚），谓词自扫命中数见 §17.9 上方组装 PROOF 行⑤自清收口＝`.runtime/tmp/p12_02/` 本班临时件在末件位删除（先 grep 消费者，承在册「清 tmp 断自家脚本依赖」教训），四件套外零散落、项目根零临时件；本班 scratch 进程 30920/33988 已按 PID 精确停（argv 断言 duty1.py）⑥GPU 还牌＝本班未 acquire，如实免⑦后台子任务＝零 spawn，本班自起的守护 34024 须在②后核 pid_exists=False（≥70 秒宽谓词复量＋同尺正对照）⑧零 worktree＝本班未调用任何工棚/工作树入口；现测 `git worktree list`＝82 行・`.worktrees/st-*`＝2 枚（均他席历史遗留，报⑩交清理专班，本席不自删）・`.aidrafts/st-qoder-p12-*` 壳 5 枚（工具为提交会话代起，属历史壳族，不自删）。
+
+## §18 1017-03 班（起手 02:16:34 date 现测／本段落笔见 §18.8 同尺现测）
+
+### 18.1 上班交件六查逐件交（源＝checkpoint 1017-02 notes 排定六件）
+
+- ①上班袋定态＝`71bb6ed686` 02:16 落地・件面＝ledger/checkpoint/scope 三面・instruction.md 本班零触（chief 在途面＝盘 +15/−0 未落地，随袋即归属篡改）。本班起手另核＝三面盘 sha 与 `git show HEAD:<件>` blob sha 两两相等（ledger a9d9111e3bc612da／checkpoint 29b7105a3327b992）＝盘==HEAD 无归一差；porcelain 三面 `MM`＝主区 index 停着队列落地前的旧版（沿 10-16 在册判读「非他班在途，勿代复位」）。
+- ②时间窗硬件＝源面 `.runtime/tmp/st-qoder-p09-1016-01/` 按 `is_file()` 谓词现读 **26 件**・mtime 带 10-16 21:56–22:36 ⇒ **本班窗内未跨 24h 线**（0a aged 集实测不含该目录，上班"逐件跨线"预测在本班未成）；rescue 全面 **33 件**（≥33 达标）・其中 p09 镜像 26 件。源面与复制面本班零动。
+- ③第五校分布复量（02:27:44 同帧）＝pid 面 27／alive 9／dead_pid 18／说谎面（pid 亡＋末行 alive）16／`_session_ghost_verdict` dead=true **2**／dead=false 25。⚠上班结论「若⑩已改方案3b 措辞则本班可执行面须重判」＝本班现读 §5.5 条面未改 ⇒ 「可执行面天然≈0」结论沿用成立（非照抄：本班 16 枚逐只过闸得同一结果）。
+- ④dim2 一律用 §5.5 改正尺（见 18.5）；点名筛用 §5.5 谓词（见 18.3）。
+- ⑤号段 535–543 **第十度**复量＝HEAD 面 5025 行／身份条 351／最大号 534／九号 **0 命中**；盘与 index 同面 4810 行／338／最大号 521（两面逐字节同值）；正对照＝同尺在 HEAD 面命中 522–534 十三条、盘面 0。断链三件**第 13 班**＝`git ls-files` 该目录 0・盘 3 件・`broken_records.yaml` 19921 行・porcelain `??`。
+- ⑥reaper 自动腿＝`last_run.json`（02:17:27・dry_run False）`errors` 顶层已空，但 `safety_wires.runtime_hygiene.tmp_ttl.errors` **仍含** `pc_cache: rmtree_incomplete`（scanned=1／removed_files=0／freed_bytes=0）；自家守护 34024＝`psutil.pid_exists` False＋其心跳末行 status=exited（reason 为守护自写分支「session not in registry」，非上班预设的 shift-close 字样，如实记）＋p12 pid 面 0 枚＝收班② 通道第四载正向复验。
+
+### 18.2 职责0 三件执行面（Owner 2026-10-16 批·方案3）
+
+- **0a tmp 文件级 >24h**＝谓词＝递归 `is_file()` 且 mtime>24h，HOLD 三面＝`rescue/**`・`test_guard/**`・自家 `.runtime/tmp/p12_03/**`（防自吃依赖，沿在册律）。起手普查 02:23:42＝**16 枚／112205B**（顶层条目 aged>48h 尺另给 1 枚＝pc_cache，见 18.4-bis）→ 执行 02:27:44＝planned 16／**deleted 16**／chmod 协助 **0**（本轮零只读位件，与上班 322 枚形态不同＝如实报量级不照抄）／failed 0；删后同尺残留复量 **0**・进程外第三读（`find … -newermt` prune 式）同值 **0**＝两尺一致。`.runtime/tmp` 总文件数 02:28:17 现读 **16014**（起手 15947）＝他席再生仍在跑，本班不据「删 16」推「tmp 已净」。
+- **0b 说谎心跳代注销**＝27 面逐只 `psutil` 核活＋逐元 argv 断言（脚本落文件跑，禁子串批杀，沿 10-17 在册红线）⇒ 说谎面 16 枚全部过第五校＝`dead=false` ⇒ **HOLD 16／EXECUTABLE 0**（§5.5 结论第三载复证，非硬凑）。另按卡面「末行已 exited 只删 pid 文件」支执行 **2 枚**＝`AI-PROBE-001`（pid 34408）・`st-cli-1`（pid 58772），四校全通过（gv dead=true＋末行 exited＋pid 亡＋面龄 82.8/83.1 分>30＋该 sid 在途袋 0）⇒ 零 append・零 terminate；面数 **27→25**。
+- **0c 孤儿守护 gpux2**＝`heartbeat_st-gpux2-20261011.pid` ABSENT／`.runtime/sessions/st-gpux2-20261011/` ABSENT／`locks/*gpux2*` 0 枚；pid 9260＝`pid_exists` True 但 `name()` 现属 **svchost.exe** 且 `cmdline()` AccessDenied ⇒ 不可证属＝**禁终止零动作**（PID 复用族第四载）。
+
+### 18.3 职责1 当日 [BLOCKER] 全量与升级三问分流
+
+- 改正尺当日全量＝**191 枚**（02:37 面；同一谓词 02:31 面 189＝他席仍在追加，两时点并列报）。旧尺（行首弹头）同框 59 枚＝**失明 132**（与 §5.5 首载 92 同形，形态未变）。
+- 分席＝①30／②14／③24／④16／⑤13／⑦A12／⑦c6／⑧20／⑨15／⑩21／⑫20・**⑥⑪各 0**。
+- 点名归⑫（§5.5 谓词，已剔「本席不自改」惯用语）＝**20 枚**。分流＝①**当班自执行 3**（0a 手删／0b 两支／rescue 面复量对表）；②**保护性零动作 2**（pc_cache 不可证空 HOLD／gpux2 不可证属 HOLD）；③**转⑤席修改单 4**（见 18.4 与 §18.6-bis：门袋支零审计・门落地侧判定面读共享 index・清理腿缺 ACL 探测・claim 锁腿不承重）；④**HOLD 交回判据 3**（②席塌缩守恒尺是否含 ReplacingMergeTree merge 观测位・④席「spawn 回显 pid vs grant daemon_pid 谁为准」・⑤席 owner_id 非会话形态拒写机械闸）；⑤**呈 Owner 2**（裁定册主区洗除面处置＋恢复载体落地席与批次）；⑥**点名他席 6**（⑥⑪复班落行／⑨⑩对 p09 案卷 promote／⑩给各席在册班频真源指针／①席收班②案卷与本席同轴合并）。
+
+### 18.3-bis 职责3 结构性工单承接＝[CHIEF-1016-10] 加项 (d) 死会话壳清扫（本席首班执行）
+
+- 接单判据＝`grep -c "CHIEF-1016-10" ledger.md` 现读 **0**＝chief 10-17 0:5x 下达后 1017-01／1017-02 两班均未承接（属本班头号执行项，非新案）。工单原文在本席 instruction.md:47（该件盘 +15/−0 未落地＝本班仍零触不入袋）。
+- 谓词与门＝**三证齐才动**：①本席独立双证筛（`SessionRegistry.list_active_readonly` 不含该名 且 `get_session` None ＋ `.runtime/sessions/<名>/heartbeat.jsonl` 末行 status=exited；`NO-HB`／`alive` 一律 HOLD）②工具自家死判守卫 PASS ③判型＝zero_loss（ahead=0・脏文件=0）。每班上限 ≤10 枚（防锁爆，工单字面）。
+- 读数（起手 02:45:01・执行后 02:47:04）＝`.aidrafts` 全目录 66 枚（02:35 面）／其中 `st-*` 39 枚→候选双证达标 **16 枚**→HOLD 23 枚→取前 10 枚 dry-run 计划＝10/10 全 zero_loss・死判 PASS→`--execute` **10/10 处理完成**・壳面 `st-*` **39→29**；`git worktree list` 行数与 `.worktrees/st-*` 2 枚（他席历史遗留）本班**零动**＝按本席令卡报⑩交清理专班，不与 (d) 混面。
+- 一处工单书写不实（登记见 §18.7）＝工单点名 `python scripts/governance/session_worktree_cli.py archive --execute`，该 CLI 实测**只有 {sweep, list} 两个子命令、无 archive 也无 --execute**；`archive --execute` 真入口＝`scripts/session_worktree.py`（`--help` 三态实测：可执行・子命令齐・默认 dry-run）。本班按"工具三态先测"在册律换用真入口，未据工单字面盲试危险命令。
+
+### 18.4 本班头号新案＝恢复载体袋被幻影删除拦死（四件证据齐，只读取证）
+
+⑩1017-01 在册两行给出一对互斥前提：「唯一 pending 携带该册的袋＝现存最佳超集」＋「该件 base 面与现 HEAD 面逐字节相同＝袋侧单侧改本应干净落地」。本班实测**两条均已在盘面翻案**，且找到死因链：
+
+1. **袋已不是 pending**＝`q-20261016-st-qoder-chief-1016-01-0010` 现处 `dead/`・`recurrence_count=10`・dead_reason 全文首行「网关落盘失败（COMMIT_FAILED）: 门禁 REGISTRY-MASS-DELETION 阻断」。同族 0001–0006 亦全 dead（死因各异：PERM-TRIGGER／MSG-EXPOSURE／BARE-SUBPROCESS／REGISTRY-MASS-DELETION）。
+2. **载体仍存活但有时限**＝袋引用 blob `.runtime/commit_queue/blobs/d070ed31…`（618120B・mtime 10-16 23:29）现读 5178 行／身份条 360／最大号 543・含 522–534 全 13 条与 535–543 全 9 条・`sha256(raw)` 前缀与 blob_ref 等值（沿在册「死信袋 blob 会被 purge，抢救有时限」）。
+3. **超集论断用门自家尺成立**＝import `registry_mass_deletion_gate` 的 `_entry_identity_keys`/`_line_delta`/`_yaml_entry_count`（禁自造尺）对 HEAD 面 vs 袋面＝**HEAD 有而袋无 0 条**・袋新增 9・行差 `(deleted=0, added=153)`＝纯插入。⇒ 袋内容本身不可能触发净删。
+4. **拦它的不是袋面而是主区共享 index**＝dead_reason 内嵌读数「条目数 **352 -> 339** 减少・净删行 deleted=215 added=0・身份消失 13 条（示例 522/523/524）」＝与本班 18.1⑤ 复量到的主区洗除面（4810 行／338 条／最大号 521，porcelain `M `）同源。门源码里「判定面=袋 diff」的分支只在**入队预检**传 `bag_contents` 时生效（:222 起），落地/网关侧走 index-mode ⇒ **洗除面未清则任何含该册的袋都被幻影删除判死**，且该分支的 `_audit()` 只在 :324/:346 两处 index-mode 调用，袋面被拦零审计——本班在 `gate_audit/registry_mass_deletion.jsonl` 全量筛 chief-1016-01 得 **0 行**（同册近 24h 有记录的只有 10-16 21:59:25 `st-condaxis-20261013` block del=215/add=0/lost_ids=13，即洗除面的写入尝试被门拦住）。
+5. **由此得一条新事实**＝洗除面的写入者与时点有了门审计直证（10-16 21:59:25・session `st-condaxis-20261013`・215 删/0 插/13 身份消失），比⑩案卷所引 safe_write 取证（expected_base=None・pid 30772）更硬；而该面自 21:59 起停在主区 index 至今（02:37 复量仍在）＝**风险敞口已 4 小时 38 分**。
+
+本席处置＝**零写零复位**（裁定册＝Owner 门＋热册禁手改＋「勿代复位主区 index」在册判读），只把上述五步锚点交回⑩/Owner；禁把「可恢复」当结论外播（判据归⑩）。
+
+### 18.4-bis pc_cache 死因改判（更正条，旧案卷留 §5.4 不涂）
+
+§5.4 处方写「残留若为 444 件先 `os.access(W_OK)` 探针＋chmod S_IWRITE 再 unlink」并把 pc_cache 归为同根因。本班现读证伪该归因＝`.runtime/tmp/pc_cache` `stat` 给 **mode 0o777／os.access(W_OK)=True**・`os.scandir()` 报 **WinError 5 拒绝访问**・`icacls` 亦「拒绝访问」・`cmd dir /a /s`「找不到文件」（与不可枚举不可分）。⇒ 自动腿 `rmtree_incomplete` 的真因是**目录级 ACL 拒绝枚举**（不是 posix 只读位），且本班 0a aged 集里只读件为 **0**（与上班 322 枚形态不同）。
+
+两条独立旁证（本班后台全仓检索所得，均在 `.aidrafts/**` 未落地面＝引用须标等级）＝①**来源坐实**＝pytest 缓存目录（`-o cache_dir=.runtime/tmp/pc_cache`，见 09-15 F06-DSR handoff 第 84 行）⇒ 功能上可再生，无码面消费者（`src/`・`scripts/` grep 命中 0）；②**他班已在册同判**＝finalclean2 波三 lane_tmp_lanes.md:20/:198 记「一级条目 1546＝…＋1 扫不动面（pc_cache，`os.scandir` EACCES 拒绝访问，非 reparse point，读数 0＝盲区）」并明令「**禁据本卷对其处置**，须以更高权限或属主车道复扫后补账」；disk_reorg a1_ledger:76 亦记「pc_cache 1 项系统锁跳过」。⇒ 本班处置＝**HOLD 不删**（不可枚举⇒不可证空，双证不齐，沿在册「双证齐才删」）；另给⑤一条附带建议＝该面既已被两处案卷判定不可动，自动腿每小时撞它一次并把 error 反复写进 `last_run.json` 属**重复失败噪声**，宜登记在册豁免或一次性提权处置后清账（禁为此新开门禁）。
+
+### 18.5 职责2 四维合规（改正尺全量）
+
+- **dim1 会话名**＝尺取 §5.1 改正式（含子车道字母位）。union 面（registry ∪ 队列袋 ∪ …）＝652・seat_like 160・BAD **3 枚全为 1015 历史**（p05-gpu-1015-01／p05-shape-1015／p05b-1015）・**当日新违 0**・跑者位 492 枚单列不自罚。⚠本席自犯一载＝本班首跑用旧正则把 ⑦C 席 4 枚合法名判成 BAD，落笔前 §5.1 复核才纠正＝「每班须现抄尺不得凭记忆」第四载（记入 §5.6）。
+- **dim2 输出格式**＝当日 191 枚中零问题「无」行 4・段数<6 者 4・段数>6 者 11（后者＝描述内含竖线，按 §5.2 只登记不自动定罪）。<6 者逐条判读＝⑨席 3 枚系正文**引用登记模板**的 `<类型>` 占位行（非登记行＝尺假阳，改正尺待下班定形）＋①席 `p01_datasource/ledger.md:904` 1 枚真缺段（该行全文仅 3 根竖线＝缺「要谁做什么」与「严重度」两段，证据内联在描述里）。
+- **dim3 存放位置**＝战役区 `docs/_working/automation_campaign/**/*.md` 64 件・无 frontmatter 0・非法 ttl 0・`doc_type` 0＝违例 0（与 1016-05／1017-01／1017-02 四班同值）。
+- **dim4 收班八件可观测面**＝`git worktree list` 74 行・`.worktrees/st-*` 2 枚（均他席历史遗留＝报⑩交清理专班，本席不自清）・`.aidrafts/` 全目录 66 枚（02:35）其中 `st-*` 39 枚（02:45）→本班 (d) 清 10 枚后 29 枚（02:47）・`st-qoder-p12-*` 5 枚（系工具代起壳面，非本席建，本班未自清以免自断工作面，收班⑤另行处置）・当日零 [BLOCKER] 行的席＝**⑥⑪**（承⑩1017-01 工序9 点名，本班第 2 次提醒）。
+
+### 18.6 职责4 复发防控（族续册与载数）
+
+| 族签名 | 本班读数 | 载数 | 处置 |
+|---|---|---|---|
+| 方案3b 卡面谓词与守卫单口不同源 | 说谎面 16 枚 gv 全 false ⇒ EXECUTABLE 0 | **第三载** | 升级⑩：改卡面措辞而非逐班手删（禁第三次已破） |
+| 心跳代起口无终态可达（任何 python 调用复起守护＋pid 面恒指已死首枚） | ①席 1017-04 直证・与本席 0b「按 pid 核活」同轴 | **第三载**（⑫1016-03 首载 keepalive 记写手／④1017-02 第二载 两号并现） | 报⑩进 SOP 收班②与 0b 措辞：终判改取 registry 文件撤除面 |
+| 本席尺自犯（旧尺冒充改正尺） | dim1 首跑复现 §5.1 旧雷 | **第四载**（§5.1 首载／§5.5 两处） | §5.6 立「每班起手逐字抄尺」规约 |
+| 主区 claim 锁腿不承重（.lock 被当死锁自跳） | 本班 acquire 两文件后 `check` 连报「死锁已被自动清理」・另须 `register(pid=0)` 才不再被判死 | **第三载**（⑩1016-01／⑫1016-01） | 转⑤修改单＋§5.6 绕行序（注册→同进程取锁-写盘-入队串联） |
+| 引用行号漂移 | 本班当班 grep 复核 §5.4/§5.5 全部锚点：`commit_queue.py:2097`／`runtime_hygiene.py:62/65/156`／`heartbeat_daemon.py:796` **全部现值与在册一致（零漂移）** | 首载续册 | 规约生效，续按班 grep |
+| 只读位挡清理 | 本班 aged 集只读件 **0**；形态与上班 322 枚不同 | 第二载续存（非复现） | 与 18.4-bis 合并为「ACL/只读位两形」待⑤定标 |
+
+### 18.7 本班问题登记（追加式，零删改旧行）
+
+- [BLOCKER] 2026-10-17|⑫席1017-03|需Owner|裁定册主区面自 10-16 21:59 停着洗除面（4810 行／338 条／最大号 521・numstat 0加215删・porcelain ' M '・敞口 4 小时 38 分），任何含该册的袋被幻影删除连带判死|证据锚点=git diff --numstat HEAD 现读 0/215＋gate 审计 .runtime/gate_audit/registry_mass_deletion.jsonl 10-16 21:59:25 行（del=215 add=0 lost_ids=13）＋袋 dead_reason 内嵌「352->339」|要 Owner 签两件事：①主区洗除面处置席（本席按在册「勿代复位」不动）②恢复载体（blob d070ed31…＝5178行/360条/最大号543）落地批次|高
+- [BLOCKER] 2026-10-17|⑫席1017-03|工具缺陷|REGISTRY-MASS-DELETION 的袋面判定分支零审计（`_audit()` 只在 :324/:346 两处 index-mode 调用）⇒被袋面拦下的袋在审计面查无，下班只能靠死因文案反推|证据锚点=src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py:324,:346 现读＋审计文件筛 chief-1016-01 得 0 行|要⑤席给袋支补审计行（不改判据阈值）|中
+- [BLOCKER] 2026-10-17|⑫席1017-03|工具缺陷|落地/网关侧判定面取主区共享 index 而非袋面，严格超集袋被幻影删除拦死且 recurrence 已 10|证据锚点=dead_reason 内嵌读数 352->339/lost_ids 13 与袋 blob 自尺对表（HEAD有袋无=0・行差 0/153 纯插）同帧并存|要⑤席把 :222 袋面分支扩到落地链（改喂给闸的输入指向，勿弱化门）|高
+- [BLOCKER] 2026-10-17|⑫席1017-03|数据问题|自动卫生腿对 `.runtime/tmp/pc_cache` 连续报 rmtree_incomplete，真因＝目录级 ACL 拒绝枚举（`scandir` WinError 5／`icacls` 拒绝访问）而非 posix 只读位，清理腿只有 W_OK 探针故判不了也清不掉|证据锚点=.runtime/process_reaper/last_run.json 02:17:27 safety_wires.runtime_hygiene.tmp_ttl.errors＋本班三读对表（stat 0o777/access True/scandir 拒）|要⑤席给清理腿加「不可枚举即报红并留 ACL 错误」支（禁 fail-open 静默）；本席 HOLD 不删（不可证空）|中
+- [BLOCKER] 2026-10-17|⑫席1017-03|流程问题|收班②与 0b 共用的「按 pid 面核活」这把尺结构性读假：代起口＝本席任何一次 python 解释器调用，pid 面恒指已死首枚|证据锚点=①席 p01_datasource/ledger.md:904（处杀 27568 后 82 秒复量 3 枚且 PID 全换代・create_time 与测量命令同秒）＋本班 0b 执行面 gv 全 false|要⑩把「终判取 registry 文件撤除面」写进 SOP 收班②与职责0b 措辞（同案三载，禁第三次已破）|高
+- [BLOCKER] 2026-10-17|⑫席1017-03|流程问题|主区 claim 锁腿不承重第三载：`lock_files.py acquire` 后同文件 `check` 连报「死锁已被自动清理」，另须先 `SessionRegistry.register(pid=0)` 才不被判死|证据锚点=本班 02:33 首跑两面 FREE＋02:4x 注册后 acquire 仍 FREE（脚本 .runtime/tmp/p12_03/register_self.py 输出）|要⑤席定「未知/pid=0 会话的 .lock 不得当死锁自跳」判据；本席绕行＝取锁-写盘-入队同进程串联|中
+- [BLOCKER] 2026-10-17|⑫席1017-03|判据缺失|②席塌缩守恒式余数三班不同幅（0／0.99／0.99）不可当定值外推，问「ReplacingMergeTree 后台 merge 时点是否进这条尺」——本席无 CH merge 观测面读数，判据风险非零|证据锚点=p02_databuilder/ledger.md 当日 ②1017-02 行＋本班未跑任何 CH 查询（如实报缺）|要⑤席给该尺补 merge 观测位；本席 HOLD 不代判|中
+- [BLOCKER] 2026-10-17|⑫席1017-03|工具缺陷|dim2 段数尺对「正文引用登记模板」的占位行给假阳（本班 <6 段 4 枚里 3 枚系⑨席 `<类型>` 引用行）|证据锚点=.runtime/tmp/p12_03/duty2_reread.py 输出 seg_rows 三条 p09 行＋⑨席原文含反引号包裹的模板串|要⑤/⑩定 dim2 是否加「含占位尖括号即剔出分母」谓词；本席先按 §5.5 自检规约披露假阳|低
+- [BLOCKER] 2026-10-17|⑫席1017-03|流程问题|⑥⑪ 两席当日台账仍零 [BLOCKER] 行（本班第 2 次点名）|证据锚点=dim2 per_seat 读数 ⑥=0／⑪=0・⑩1017-01 首点行在册|要⑥⑪复班并按工序9 落行|低
+- [BLOCKER] 2026-10-17|⑫席1017-03|流程问题|chief 工单 [CHIEF-1016-10] 点名的清理 CLI 路径与子命令均不实（`scripts/governance/session_worktree_cli.py` 实测只有 {sweep,list}・无 archive・无 --execute），照字面盲试会停在"工具做不了"而漏清或误用兜底危险命令|证据锚点=两次 --help 三态实测（该 CLI 输出 invalid choice: 'archive'；真入口 scripts/session_worktree.py --help 列 archive/--execute/默认 dry-run）＋本班已换真入口清 10 枚（壳面 st-* 39→29）|要 chief/⑩ 把 instruction.md:47 该行更正为 `scripts/session_worktree.py archive --execute`（本席 instruction.md 在途面不随袋，更正须由 chief 落）|中
+- [BLOCKER] 2026-10-17|⑫席1017-03|无|其余例行面零问题＝本班零主动建 worktree（仅量得 `.worktrees/st-*` 2 枚均他席遗留，报⑩不自清）／GPU 未 acquire（本班零 GPU 作业）＝免／本班零 spawn 子代理＝零孤儿／断链三件第 13 班未入库属在册旧案非本班新问题／0c gpux2 不可证属零动作|证据锚点=本文 §18.2・§18.5・§18.1⑤|无需他人动作（登记性质）|低
+
+### 18.8 耗时两时点与收班八件（本段落笔时点见下行现测）
+
+- 起手 date 现测 02:16:34／本节正文成文前现测 02:43:07（实际写盘与进程外读回时点见下条，两时点并列不写终值自述）。
+- 写盘谓词＝三面各 `safe_write_text(expected_base_sha256=写前盘面 sha)`＋ledger/scope 只追加（旧行逐字保留断言＝新文 startswith 旧文前 200 字节）・checkpoint 组装式换顶块（断言 frontmatter 头 `---`・前缀逐字节相等・上班游标块整段逐字在_new・`^[a-z][a-z_]*: ` 键数不减，沿 §5.2 手术自证项与 10-17「游标重写丢键」在册案）。
+- 分账＝例行巡检与取证≈本班主要开销（0a 普查+执行、0b 27 面逐只、dim1–4 两遍重跑）／返工＝dim1 旧尺重跑 1 次＋duty0_read.py 语法错重跑 1 次＋claim 注册补跑 1 次（三处自犯如实记，见 §18.6）。
+- 收班八件＝①release 三面 claim（`git_commit.py --release-only` 或 gateway.release_files）②注销心跳（按 18.6 第三载：本席守护代起口使「杀而复活」结构性无终态 ⇒ 终判取 registry 文件撤除面并如实报残余，不预签「已净」）③本班耗时两时点已上 ④本班 [BLOCKER] 行谓词＝`grep -c "2026-10-17|⑫席1017-03" docs/_working/automation_campaign/p12_maintenance/ledger.md`，终值由下班按落地面复量（本席不自签计数，沿 10-17「追加型台账计数落笔即假」在册案）⑤自清＝`.runtime/tmp/p12_03/` 本班脚本与中间件收班前清零，**故正文所引脚本名只是生成时刻留痕、不作下班可复跑锚点**——可复跑性一律靠本节写明的谓词；四件套外零散落件 ⑥GPU 未 acquire 免（本班零 GPU 作业）⑦零子代理＝零孤儿 ⑧零 worktree 自证＝本班未调任何工棚/车道入口，`git worktree list` 与 `.worktrees/st-*` 读数见 §18.5。

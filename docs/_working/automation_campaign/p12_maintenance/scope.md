@@ -107,3 +107,12 @@ title: ⑫后勤席·输入清单与写域
 - **引用行号谓律（本班新立）**＝跨班引用他码行号（含本席自家在册条）在落笔前 MUST 当班 grep 函数名取现行号，禁照抄；实测 1017-01 引 `heartbeat_daemon.py:816`，本班现读 `_run_cli` 在 **:796**＝行号漂移首载。书写式＝`<file>:<当前 grep 行号> <函数名>`。
 - **活死判定第五校执行面（承 §5.4 与上班 scope 条）**＝0b 动手前对每个候选 sid 现读 `scripts/commit_queue.py:2097 _session_ghost_verdict(sid, runtime_root=Path('.runtime'))`，`dead=false` 即 HOLD；本班实测 29 枚分布＝alive/false 27・judged_dead/true 2，且守卫 evidence 面不含 pid 面与面龄（上班案卷续存，第二载）⇒ **在⑩改方案3b 措辞前，0b 的可执行面天然≈0**，逐班如实报量级不硬凑。
 - **rescue 保护区用法（本班新立，事故驱动）**＝他席"跨班复跑件／抢救案卷"若寄身 `.runtime/tmp/**` 且即将跨 24h 线，本席动作＝`cp` 进 `.runtime/tmp/rescue/<sid>/`（`runtime_hygiene.py:62` 豁免名单在册）＋逐件 sha256 等值自证＋**不动源面、不入 git、可整目录回退**；正解（promote 到 docs/_working）写域属该席或⑩，本席只保命不代判。
+
+### 5.6 1017-03 班尺面改正与操作序增补（§5.1–§5.5 各行逐字不涂，本条为更正条与新立条）
+
+- **起手抄尺律（本席自犯第四载所立）**＝每班 dim1/dim2/0b 三类谓词 MUST 从 §5.1・§5.5・§5.4 当班 `sed` 原文取，禁凭记忆重打。实证＝本班首跑 dim1 用旧正则（不含子车道字母位）把 ⑦C 席 4 枚合法名判成 BAD，§5.1 早在 1016-04 已改正＝**在册改正尺被本席自家重跑覆盖**，属"同一坑第四次"，第三次禁线已破⇒升⑩。
+- **只读位两形分判（更正 §5.4「只读位复位绕行」的适用范围）**＝动手前三读定形＝①`stat` mode ②`os.access(W_OK)` ③`os.scandir()`/`icacls`。**posix 只读位形**＝mode 444＋W_OK False＋可枚举 ⇒ chmod S_IWRITE 后 unlink（§5.4 原方，本班 aged 集实测此类 0 枚）；**ACL 拒枚举形**＝mode 777＋W_OK True＋scandir WinError 5 ⇒ 绕行无效且不可证空 ⇒ **一律 HOLD＋报红**，禁按只读位方硬试。实证面＝`pc_cache`（pytest `cache_dir` 来源，两处他班案卷已判"禁据卷处置"），本班起为在册 HOLD 名单第 ⑤ 项。
+- **HOLD 名单续挂（承 §5.4 四条）**＝⑤`.runtime/tmp/pc_cache`（ACL 拒枚举・不可证空）⑥`.runtime/tmp/st-qoder-p09-1016-01/**`（他班抢救案卷源面，待⑨/⑩ promote 判定；本班实测 26 件 mtime 未跨 24h 线，天然不在 0a 集内）。
+- **claim 承重前置序（本班直证，承 ⑩1016-01／⑫1016-01 同族第三载）**＝恒定班在主区取锁 MUST 三步同跑：①`SessionRegistry('.runtime').register(sid, pid=0, held_files=[…])` ＋ `heartbeat(sid)` ②`lock_files.py acquire <file> <sid>` ③**取锁—写盘—入队同一进程链串联**（复 acquire 后立刻投袋）。实证＝未注册时 acquire 后 `check` 连报"死锁已被自动清理"；注册 pid=0 后 acquire 仍被外来 cleanup 收走（与 10-17 在册反证「mark_logical 挡不住他人 cleanup」同形）。
+- **(d) 死会话壳清扫三证序（[CHIEF-1016-10] 承接配方，真入口更正）**＝工具＝`scripts/session_worktree.py archive [targets] [--execute]`（**不是**工单字面的 `scripts/governance/session_worktree_cli.py`，该 CLI 只有 {sweep,list}）。三证＝①本席双证筛（`list_active_readonly` 不含该名＋`get_session` None＋`heartbeat.jsonl` 末行 `exited`；`NO-HB`/`alive` 一律 HOLD）②工具自家死判守卫 PASS ③判型 zero_loss（ahead=0・脏文件=0）。上限 ≤10 枚/班；`.worktrees/st-*` 与 `git worktree list` 面**不属本项**（按令卡报⑩交清理专班）。
+- **dim2 段数尺剔引用行（本班直证）**＝段数谓词命中含 `<类型>`／`<占位>` 尖括号的登记模板**引用行**时先剔出分母再定罪（本班 <6 段 4 枚里 3 枚系⑨席引用行＝尺假阳）；真违例判据＝全文竖线根数（`tr -cd '|' | wc -c`）而非描述内竖线。
