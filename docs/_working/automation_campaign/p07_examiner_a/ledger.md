@@ -1184,3 +1184,184 @@ entry_flow 卡面 402 件按 `^status:` 逐件读磁盘面：`preregistered 89�
 - **交付面未受损**＝三袋 payloads 的全部字节仍活在盘面（本班工作树＝唯一完整副本），死袋 blob 系第四态存证；本班以现 HEAD 为基底重投第四袋（严格超集，纯追加）。销账（mv 通道＋机生台账行）属 ⑩/⑫，本席不手删死袋。
 
 [BLOCKER] 2026-10-17|⑦A席1016-03|工具缺陷|引用型案卷与自家门互斥在本席第二次复现：GATE-PRECOMMIT-RUN 的 GIT-DANGEROUS 扫整档快照，凡台账逐字引用死信原文（含危险命令串）则该件首上正门必被拦、且未落地期间**每袋连坐**；本班三袋全死即此形（⑩席 1016-01 同题已立案并已给出加标正解，本席只补第二例与"永久挡本席每一袋"的强陈述）|证据：dead/q-20261016-st-qoder-p07-1016-03-0001..0003.json 的 dead_reason 原文（三处行号由门打印）・`.runtime/tmp/p07/shift03_selfdoc.py` 加标前后自证读数・门尺复跑 rc=0|请 ⑩/⑤ 与 Owner 定"谁有权给旧行加标记"（⑩ 已开此单：已落地旧行加标＝改旧行；不加＝门永拦）；本席只给自家**未落地**稿行加标（同 ⑩ 口径），已落地案卷零触碰|高
+
+## 十四、⑦A 1017-02 班开班·接班取证与前班 1017-01 退班案卷并入
+
+- **date 实测起手**＝2026-10-17T01:38:18+08:00（本机时刻；心跳 jsonl 是 UTC＝本地−8h，勿混读）。本席班号取 02 的理由＝会话面上 `st-qoder-p07-1017-01` 已由前 20 分钟那一班占用并自证死亡（见下条），沿用同 sid 会把两班心跳与 staging 混成一册，故 ledger 内 1017 面首枚班号让给 1017-01（其正文本段搬运），本席记 1017-02。
+- **判前任 st-qoder-p07-1016-03 已停手＝三证现测齐（同帧，本席自尺，不沿 1017-01 账面）**：①心跳末行 status＝`alive`（pid 8480，ts 2026-10-16T17:28:48.112091+00:00，jsonl mtime 本地 2026-10-17T01:28:48＝停更）；②argv 逐元断言（cmdline 含 `heartbeat_daemon` 与本 sid 各占独立参数）＝现存活守护 **0 支**（其收班② 自杀件 shift03_killkeeper.py 现测仍在跑，pid [3912, 38692, 44996, 52232, 60108]，故"守护查无"系该班自清而非事故）；③队列四态现测＝pending 0／processing 0／done 1／dead 3，其中 1017 日袋名＝['q-20261017-st-qoder-p07-1016-03-0003.json', 'q-20261017-st-qoder-p07-1016-03-0004.json']。内容面旁证＝ledger 盘 1186 行 vs HEAD 1186 行，整档 sha 相等＝True（上班 §一~§十三 全部落地，无在途字节）。⇒ 共写面此刻无属主，本席 acquire 两件 rc=0 后方动笔。
+- **本班对 CH 维护窗的处置（不复开单，复证 1017-01 枚③）**＝01:00–04:00 重活禁入是硬纪律，本席不拿「窗内跑考试」赌门；本班形态＝窗内做零 CH 的盘上领面普查与前案搬运，04:00 开窗即开考，班长按 §3⑦ 保底"跑满 4 小时"口径走（01:3x→05:3x）。本席不自改班限，改派权在 ⑩。
+- **前班 1017-01 案卷位置与状态**＝`.runtime/sessions/st-qoder-p07-1017-01/staging/shift01_reentry_abort_body.md`（本班现测存在＝True，ttl 24h 会自清，故其 §四 四枚 [BLOCKER] 由本席**逐字原样**并入下方；其 §三 自纠一条本席一并留案＝该班曾以"三袋全死⇒无在飞"对前任两件活文档执行 release 并自 claim，定性＝把"袋死"读成"会话死"，属真实风险敞口，非本席代其销案）。
+
+### 十四·一 搬运 1017-01 待并入 [BLOCKER] 四枚（逐字，本席零涂改）
+
+[BLOCKER] 2026-10-17|⑦A席1017-01|流程问题|防重入判据只读 checkpoint 末段必假阳＝前任三袋全死仍在活体返工（新守护 01:15:04 起、第四袋 01:15:46 processing、tmp 三件晚于本班开班），而游标面看得到的是"已收班读数"；本席据此开出的动作＝摘走在飞属主的 claim（见 §三 自纠）|.runtime/sessions/st-qoder-p07-1016-03/heartbeat.jsonl 末行 alive(pid 8480)＋队列 q-20261017-st-qoder-p07-1016-03-0004 processing＋.runtime/sessions/st-qoder-p07-1017-01/staging/shift01_reentry_abort_evidence.json|请 ⑩ 把工序"防重入"从单读游标改为三证现测（心跳末行 status＋按 argv 逐元核 cmdline 的守护＋队列在飞袋），三证不齐一律退班并留退班证|中
+[BLOCKER] 2026-10-17|⑦A席1017-01|工具缺陷|`lock_files.py release <file> <sid>` 对**非死会话**直接放行（本席以 st-qoder-p07-1016-03 为参执行 rc=0，而其守护当时仍在写心跳），等于任何席都能摘走他人活锁；在册 §2 第 7 条只授权"死会话 stale claim"精准释放|本班实跑读数 release_files 两件均 True＋前任随后写入未受损（CAS 兜住内容、兜不住锁面）|请 ⑤ 给 release 加属主存活闸（判活三证不齐即拒并打印拒因），本席未动门|中
+[BLOCKER] 2026-10-17|⑦A席1017-01|流程问题|恒定 60 分班落在 CH 维护窗 01:00–04:00 内＝整班零可跑面（SOP §3⑦ 工序 4"CH 窗避让"＋§排班表"重活禁入"与本席班限互斥），本班 01:03 开班即全窗|docs/01_policies_and_standards/sop/automation_sop/research_production_line_policy.md:124・:251・:266＋⑦c-1017-01 同窗并存（其袋 01:16:03 亦在 processing）|与 ⑧B 1017-01 §⑤ 同题（复证不重复开单）：请 ⑩ 把考工三席班次改派 04:00–07:00 或 20:00–23:00；本席不自改班限|高
+[BLOCKER] 2026-10-17|⑦A席1017-01|工具缺陷|经 `python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <sid> <root> 30 ""` 直起的守护**不写 pid 文件**（本席现测 pid 文件 before/after 均缺席），使收班②"按 pid 文件单 PID＋argv 逐元断言终止"没有入口，只能靠 `unregister` 让守护自退|.runtime/sessions/st-qoder-p07-1017-01/staging/shift01_reentry_abort_evidence.json 的 daemon_by_pidfile＋heartbeat.jsonl 末行 exited/session not in registry 01:20:54|请 ⑤ 在 `_run_cli` 入口补 pid 文件写入（或让调用方拿 spawn 返回 pid 落盘）；本席未按镜像名批杀任何进程|低
+
+复证与归属说明：枚①枚④属 1017-01 当班自犯自纠面，枚②枚③转 ⑤/⑩ 定夺，本席不代拍、不重复开同题单。
+
+## 十五、⑦A 1017-02 班领面普查账（date 实测 2026-10-17T01:54:27+08:00，全部本席自尺现算）
+
+- **分母（磁盘面为准）**＝entry_flow 卡池 448 件（`is_file()` 谓词，不计目录）＝preregistered 91／empty 177／blocked_on_data 69／blocked_on_impl 29／examined 81／examining 1。
+  加总自证＝448。examining 那枚＝`TDM-E-L3-03-2/calibration/03_温和放量`（1016-02 遗留，翻回权属 ⑩，本席不代翻；执行器状态闸只认 preregistered ⇒ 对全席不可考）。
+- **权威分型（`card_binding --mode classify` 现跑，绝对路径 --cards-dir）**＝A 2／A? 7／B 14／C 42／D 0／U 26，加总 91（与 1016-03 班读数逐桶相等 ⇒ 本族分母一日未动）。
+- **形状面新读（借 C 席 1017-01 预演件 `preflight.jsonl` 的逐行原值，本席只切族不作分数来源）**＝entry 91 里 `outcome=ran` **80**／`crash` **11**（route 面 series 77／dual_arm 3；kind 面 series 55／panel 25）。
+  ⚑ 该预演的两面是**互独立白噪声**（C 席 §六 自述），所以 "ran" 只证明**执行器形状收得下**，不证明可考——本席据此把"形状可跑"与"口径闭合"分成两把尺，没拿它当出分依据（在册"干跑信号≠执行闸"同型纪律）。
+- **口径闭合度分账（本班头号产出，可复算件＝`.runtime/tmp/p07_1017_02/stratify.json`＋`zero_fork.json`）**：
+  80 张形状可跑卡里，按申报完备度切＝**E0 无 signal 侧申报 12**（data_binding 缺段或 signal_column/derivation 双空 ⇒ 本席无法按卡面物化，转 ⑥）／**E1 点到断供表 40**（status∈{open,no_source} 词表）／**E2 申报齐且未断供 28**。
+  E2 再过"零口径分叉"闸＝**通过 0 张**，缺件具名＝须重放引擎或 CAR/NAV 类目标 23／信号合成式两式而合成序未声明 3／pillars_numeric 含执行器不可读键 2。
+  ⇒ **本班 entry 族"零自创即可物化"面＝0 张**，这是四把独立机械尺（classify／断供词表／散文 regimes／分叉闸）同向读数，不是本席省力结论。
+- **E1 里的结构性可疑面（本班开窗后第一优先实测）**＝E1 的 40 张中 **29** 张其实只卡"断供"这一闸（regimes 全可解析＋目标是次日收益族），而这 29 张里 **25 张点到同一张表＝`c1_market.kline_sector_880`**。
+  旁证在册＝⑦c 1016-01 班实测该表 `period='1d'` 804,110 行、max(trade_date) 2026-10-15，与断供册面 `status: open` 互斥；⑤席 1015-05 班已对本表同族另一张（c3_fundamental.research_report）实测翻案过"册面陈旧"一次。
+  ⇒ 本班 04:00 开窗即对该表族做 count/min/max 三件现测（谓词写明：min/max(toString(trade_date))／count()／uniq(sector_code)），据读数把 29 张卡改判"可考面"或坐实"真断供"，改册权属 ① 席，本席不自写断供册。
+- **最接近可考的 5 枚具名（缺件逐名，供 ⑤/⑥ 定点补）**＝`TDM-E-L1-AGG/calibration/03_子信号族到状态轴传导保真度`（趋势腿两式 close/ma60−1 与 ma20/ma60−1 未声明合成序）、
+  `TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶`（"在册六段阈值"在本仓查不到 emotion_index→S0..S5 数值表，唯一同族真源是 `condition_package.py:8` 的**五档**灰度边界 (0.2,0.4,0.6,0.8]，另有月级"允许上限"映射未写死）、
+  `TDM-E-L4-05/comparison/02_daban_mode_three_way`（三臂归属标记式）、
+  `TDM-E-L9-V2/ablation/02_情绪相位六段快照就绪` 与 `TDM-E-L9-V1/ablation/02_大盘状态快照T-1纪律`（各含 1 枚执行器不可读柱：`ring_justified_if_random_stage_drop_ge`／`same_day_inflation_min`）。
+  本席对五枚**一律不开考**：择一读法＝往永久分数册写未冻结口径（承 1016-02 班对 L3-03-2/03 的同判据）。
+
+### 十五·一 对 §十四 一处谓词的当场更正（旧句不涂）
+
+§十四 写"其收班② 自杀件 shift03_killkeeper.py 现测仍在跑，pid [3912, 38692, 44996, 52232, 60108]"——**过宽**。该读数谓词＝`cmdline 含 shift03_killkeeper 子串`，会把携带该脚本名的父壳一并计入（在册实测同型坑＝子串匹配命中父壳）。更正读数＝同帧按 `name=python.exe` ∧ argv 逐元断言，真身仅 **44996** 一支；余下 4 支系该班 agent 侧 bash 包装壳。原判据（"守护查无＝该班自清非事故"）不受影响，因其依据是 `heartbeat_daemon` 的 argv 逐元断言（现测 0 支），非本条 pid 集合。
+
+### 十五·二 本班 [BLOCKER] 登记（5 枚：高 1／中 3／低 1）
+
+[BLOCKER] 2026-10-17|⑦A席1017-02|数据问题|断供册面与实测互斥在本席第二次复现且这次是**整族 25 张**：`c1_market.kline_sector_880` 册面 status=open，而 ⑦c 席 1016-01 班实测 `period='1d'` 804,110 行／max trade_date 2026-10-15；本班机械尺量出 entry prereg 里 29 张只卡这一闸、其中 25 张点到该表 ⇒ 若册面确属陈旧，本族可考面被过判停在闸外|src/zephyr/data/config/known_data_gaps.yaml（status 词表面）・⑦c 席 1016-01 台账实测行・本班 `.runtime/tmp/p07_1017_02/e1_potential.json`（表频读数现算）・本班 04:00 后 CH 三件现测（count/min/max/uniq，读数落 `.runtime/tmp/p07_1017_02/ch_probe.json`）|请 ① 席按本班 CH 复量改册（改 YAML 同步 DB，RULE-SSOT），本席不自写断供册；改后本席下班即可考这 29 张|高
+[BLOCKER] 2026-10-17|⑦A席1017-02|流程问题|考工席指令面与已落地执行器面相反：卡面写"panel 卡禁走 CLI（--target-csv 砍单列缺陷未修）"且 [⑦-新] 重申"panel 卡禁走 CLI 不变（形状预检施工中）"，而 HEAD 已含 chief 1016-01 袋 8caf2743b9b＝`main()` 对 --target-csv 改为与 --signal-csv 同款语义（单列→Series、多列→整面）＋ `_shape_preflight` 实现码补齐（该袋自述 104/104 绿）⇒ 指令面在拦一条已修通的通道，本席若照卡面执行就少一条合法路|git show 8caf2743b9b（提交正文逐字）・scripts/backtest/fexam/calibration_exam.py `_panel_metrics`/`_shape_preflight` 现读・tests/backtest/fexam/test_calibration_exam_cli_panel_target.py|请 ⑩ 更新考工三席指令面（panel CLI 解禁位＋形状预检已落地位），并写明"panel 走 CLI 是否仍须 run_card 兜底"；本席不改判据也不自辟通道|中
+[BLOCKER] 2026-10-17|⑦A席1017-02|判据缺失|E2"申报齐且未断供"的 28 张里零口径分叉面＝0，缺件三型具名已入本节十五·末：合成式两式而无合成序（3 张）／目标面须重放引擎或 CAR/NAV 装置（23 张）／pillars_numeric 含执行器不可读柱（2 张）——前两型属 ⑥ 出题面申报位、第三型属 ⑤ 执行器柱面|本班 `.runtime/tmp/p07_1017_02/zero_fork.json`（谓词正文写在件头注释，可复算）・5 枚具名与其卡面逐字段・执行器数值面真源 scripts/backtest/fexam/calibration_exam.py 的 `_series_metrics`/`_panel_metrics` 返回键集（ic_mean／mono_spearman／ic_ir／oos_ic／regime_ic 五键，本席现读）|请 ⑥ 给 L1-AGG/03 与 L2-05-1/02 补合成序与水温阈值真源指针（后者本席按"在册六段"在仓内只找到五档灰度边界，具名 condition_package.py:8），请 ⑤ 定 L9-V1/V2 两枚柱是接线还是移入散文柱；本席不自拍也不写 fail|中
+[BLOCKER] 2026-10-17|⑦A席1017-02|判据缺失|水温档类卡把分段阈值写成"在册 emotion_index 六段口径"这一**指针式引用**而不落数值，本席检索全仓（`grep -rn` 六段/SIX_STATES/水温档/BUDGET_BANDS/R2SIX）只得到两类件＝六段**词表**（environment_switch.SIX_STATES，无 emotion_index 数值边界）与**五档**灰度边界 (0.2,0.4,0.6,0.8]（condition_package.py:8，冻结但档数不同），第三种"六段数值阈值"查无 ⇒ 任一选法都等于本席自创分档|卡面 TDM-E-L2-05-1/calibration/02 window.frozen_note 原文・上述两件 file:line・本席检索命令与命中集合（`.runtime/tmp/p07_1017_02/` 下检索留证）|请 ⑥ 出题面把分档数值写死在卡面（或给唯一真源 file:line），请 ⑤ 判"词表≠阈值"是否要立一条出题门柱；本席按红线不开考该卡|中
+[BLOCKER] 2026-10-17|⑦A席1017-02|工具缺陷|`heartbeat_daemon` 独立进程入口不写 pid 文件的问题本席复现并给出可抄处方：`Popen` 返回 pid（现测 55908）与守护自报/argv 断言 pid（现测 50872）**不等**，Popen 那支是 launcher 壳、随即消失 ⇒ 直接落盘 Popen.pid 会让收班②"按 pid 文件单 PID 精杀"杀不到人；正解＝起进程后 sleep 数秒再按 `argv 含 heartbeat_daemon ∧ sid 为独立 argv 元素` 断言取真 pid 落盘|.runtime/tmp/p07_1017_02/boot_report.json（daemon_pid 与 daemon_asserted_pids 两键现测）・.runtime/locks/heartbeat_st-qoder-p07-1017-02.pid 现读=50872|与 ⑦A 1017-01 枚④同题（复证不重复开单，本条只补"Popen.pid 也不可用"这一层）；请 ⑤ 在 `_run_cli` 落 pid 文件时同时打印真 pid，本席收班按 argv 断言 pid 终止|低
+
+## 十六、⑦A 1017-02 班对本席 §十五 头条结论的当场更正（旧段不涂；date 实测 2026-10-17T02:07:53+08:00）
+
+**§十五 那句"本班 entry 族零自创即可物化面＝0 张"是错的，错在本班自己的尺，不是卡面没面。** 三枚谓词面盲逐条具名：
+
+1. F2"须重放引擎"桶 23 张里含全部 `signal_kind=panel` ∧ 目标写成 **T+1 可成交 `close_{t+1}/close_{t+2}`／open_{t+1}→close_{t+2}`** 的卡——本班正则只认 `next_day|次日|shift(-1)`，没认花括号下标写法，于是把**在册正解目标形**误判成引擎面。
+2. 本班把 `card_binding --mode classify` 的 **B/C 当后置依据**用了。这是 ⑦A 席 10-15 班次 06 已推翻过的在册同型尺错（原文：B 的 reason 逐字＝`panel_deferred(去重/撮合口径须逐表面核)`＝**考工本席自己的逐表面工序**；C 的第一道触发 `_INDEX_TARGET_RE` 只认指数级目标，对 panel 卡而言"个股次日宽表"本是正解却被判死），本班隔着十一天的游标把它复现了一遍。
+3. F1"合成式无合成序"桶里，panel 卡的多列信号被本班当成缺件——**panel 面多列本是正解形**（各列截面分位/分位等权由卡面逐项给死），本班拿 series 面的单列直觉去量 panel 面。
+
+**改判后的本班真分账（同帧现测，件＝`.runtime/tmp/p07_1017_02/panel_face.json`）**＝按 06 班纠偏②谓词（`signal_kind=panel` ∧ 目标含个股次日/T+1 宽表族）重扫 prereg 面得 **9** 张，其中 **零断供零散文 regimes 的 CLEAN 面 3 张**＝TDM-E-L3-01/comparison/04_宇宙口径完整性对照、TDM-E-L3-03/ablation/02_双池代理合成、TDM-E-L3-07-2/ablation/02_IC加权对等权；另 5 张只卡"断供册面"一闸（开窗后由 CH 现测定性）。series 面另得两张卡面口径自足者＝`TDM-E-L2-02-2/calibration/02_板块见顶预警三信号`（hypothesis 逐字钉 RSI>75＋放量滞涨，卡面 buckets 自证"两信号"，散文 regimes＝无）与 `TDM-E-L2-09/calibration/03_评级上调聚集`（上调/下调定义＋分母<3 记 NaN＋rating 编码序由考前实测钉死并写 evidence，属卡面授权动作非本席自创）。
+
+**本班开考队列（≤5，开窗后按占卡三步逐张跑）**＝上述 3 张 CLEAN panel 卡＋2 张 series 卡；实现配方逐字照 06 班在册件（目标面喂法＝T+1 可成交卡喂 `close.shift(-1)/open - 1`，前置闸与判官同面并以**已在册行**当正对照，退化截面禁入册因 `ic_exam.ic_stats` 对 len<2 返回 0.0 而非 NaN）。保底 ≥8 仍不达，如实按队列上限呈报，不自凑、不把 CLEAN 面之外的卡硬塞。
+
+- **分数册归属面现测（投袋前置，同帧）**＝盘 110 行／HEAD 110 行；盘独有 card_id＝无；HEAD 独有＝无；该件 git status 面＝`MM docs/04_research_records/backtest/sco`；盘 sha16＝a9532fceb0899c94／HEAD sha16＝a9532fceb0899c94。⇒ 本班只往盘上 append 自家行，投袋前复核本段两数仍等（不等即停手上报，勿让整档快照吸他人未落地行）。
+
+### 十六·一 本班自犯更正类 [BLOCKER] 两枚
+
+[BLOCKER] 2026-10-17|⑦A席1017-02|工具缺陷|本席 §十五 的"零分叉面=0"是一枚**没有正对照的零命中尺**（在册红线＝零命中须拿已知正样本量一遍）：本班正则未认 panel 面的 T+1 花括号写法与多列正解形，把 06 班已推翻的"可考面=0"同型尺错复现进台账，且同册 §十五 已把该错结论写成"四把尺同向、非省力结论"的强陈述|.runtime/tmp/p07_1017_02/panel_face.json（同谓词改尺后 panel∩个股目标 9 张／CLEAN 3 张）・⑦A 席 10-15 班次 06 台账 §二 纠偏①②原文（B=本席逐表面工序・C 词表只认指数目标）・本班 zero_fork.json 的 F2 桶清单|请 ⑩ 在考工指令面把"领面谓词"钉成 06 班纠偏后的两条（signal_kind×目标族正则含 T+1 花括号写法；classify 的 B/C 禁止作为后置理由）；本席已当场改尺并把队列改判到本节，§十五 原文按留旧案规矩不涂|高
+[BLOCKER] 2026-10-17|⑦A席1017-02|流程问题|恒定班 60 分对 01:00–04:00 CH 维护窗的处置在**同一天出现两种交班形态**＝⑦A 1017-01 班 01:03 开班即全窗→判"零可跑面"退班（留四枚 BLOCKER），本班 01:29 开班同窗→选择窗内做盘上普查＋04:00 开考、按"跑满 4 小时"口径交班；两班对同一条纪律的读法不同，下一班无从判断哪种是被认可的形态|.runtime/sessions/st-qoder-p07-1017-01/staging/shift01_reentry_abort_body.md §四枚③・docs/01_policies_and_standards/sop/automation_sop/research_production_line_policy.md:124・:125・:251・:266・本班 §十五/§十六 两时点读数|请 ⑩ 定一纸"窗内班形态"（窗内只做零 CH 盘上工序并等开窗，还是直接退班留证），并同批定考工三席改派 04:00–07:00 与否（1017-01 枚③与 ⑦c 1017-01 §八枚④同题，本席不重复开单）|中
+
+## 十七、⑦A 1017-02 班开考段＝两张真分入册＋两张转单（date 实测 2026-10-17T04:17:33+08:00）
+
+### 十七·一 真跑两张（本席自 1016-02 班"1 张/班"以来的首次两连，分数册盘 110 行→113 行）
+
+- **rows[111] `TDM-E-L2-02-2/calibration/02_板块见顶预警三信号`**（series 路）＝verdict **fail**；
+  ic_mean 0.04207784821389372／mono_spearman 0.6242424242424242／oos_ic 0.12516681316942546／n 996；regime bear -0.028605438304385986／rebound 0.0055352264019009195；
+  触发柱逐字＝`regime_sign_flip {'bear': -0.028605438304385986, 'rebound': 0.0055352264019009195}`；卡面 status=examined・lineage 回指 rows[111]・run_id=`p07a-1017-02-l2-02-2-calibration-02`。
+  读数直译＝见顶预警密度（板块 RSI>75 或"成交额创 20 日新高而 5 日滞涨"的命中家数占比）对次日沪深300收益**过 ic/mono 两柱且 OOS 更强**，
+  但 2021-08..2022-10 贴现率熊段反号 ⇒ 该信号不是全窗通用预警，只在修复段可用（此结论属读数，非本席改判据）。
+- **rows[112] `TDM-E-L3-03/ablation/02_双池代理合成`**（panel 路，个股宽面板）＝verdict **fail**；
+  ic_mean -0.02328400872913283／ic_ir -0.19428287778594677／oos_ic -0.02222539465746636／n 1621；regime bull -0.022108362520677036／bear -0.019176709273240684（两段同号**均为负**）；
+  触发柱逐字＝`ic_mean -0.0233 < 0.02`；卡面 status=examined・lineage 回指 rows[112]・run_id=`p07a-1017-02-l3-03-ablation-02`。
+  读数直译＝短线池（60 日涨停次数＋当日涨幅）与波段池（均线多排＋温和量能带＋回撤质量）等权合成的双池代理分
+  在本宇宙（前缀重建 5,378 码／日均 4,284 名／IS∪OOS 裁窗后 1,621 交易日）上**方向与卡面先验相反**（负 IC 全段一致），
+  这是"该冻结式在本宇宙上反向"而非"弱正不过地板"，与 1016-02 班连板顺位卡、1016-01 班均线多排卡同形态第三例。
+- **口径零自创（逐字可复算）**：两卡的信号与目标均由卡面 `data_binding` 原文驱动——
+  series 卡＝`kline_sector_880` period='1d'（本班 CH 04:01 现测 818617 行／2020-03-17..2026-10-16／uniq(sector_code) 729）＋族 industry_l1∪industry_ths（实测 189 码），
+  目标＝`kline_index` symbol='000300' close→next_day_return；
+  panel 卡＝`kline_daily`(close/volume)×`stk_limit`(limit_up/st_flag)×`technical_indicator`(ma_5/10/20/60)＋`kline_daily_hfq` 目标，
+  涨停判定逐字"收盘=涨停价-0.011 内"、量能带逐字"1.2≤vol/MA20vol≤2.5"、多排逐字"ma_5>ma_10>ma_20>ma_60 计数/4"，
+  宇宙逐字按 universe_rule 三条（前缀 {60,00,30,68}／8-4 显式排除／ST 用 st_flag 实测值域 {0,1}／上市满 60 交易日按首条行情日后推）；
+  停牌与退市两条款卡面给的是"判定式"，行情面板里本就是无行=NaN，故无需额外动作（如实记此未动因）。
+- **三道在册验收同帧**：①闸与判官**同面**——series 卡闸 ic_mean 0.04207784821389372/n 996 对行 0.04207784821389372/996，panel 卡闸 -0.02328400872913283/1621 对行 -0.02328400872913283/1621，逐位等值；
+  ②**判分面已裁冻结窗**——series 1012→997 行、panel 1783→1622 行（避掉 1016-02 在册"含窗外 45 日把 n 判成 1664"）；
+  ③真卡跑前用 tmp 副本预演，`real_card_untouched=True`（两件 proof sha16 见 `.runtime/tmp/p07_1017_02/run_dry_*.json`）。
+- **执行器无机器面两柱如实复证（不报成隐身）**：series 路 `ic_ir` 恒 None（行内 unjudged.numeric_keys_no_machine_face 自述）、
+  panel 路 `mono_spearman` 恒 None 同款；本席未把"未判柱"改写成"过/不过"，两条均在册（⑦c 1017-01 与 ⑧B 1016-02 同题，复证不重复开单）。
+- **GPU 面如实**：本班两次真跑**零 acquire 看门人**（`gpu_watchman status` 现测 active=(none)／free_gb 22.1），
+  两行读数一律**不申报为 GPU 读数**；收班⑥据卡面条款免执行并留此声明。
+
+### 十七·二 转单两件（不开考、不翻态、不代拍）
+
+1. `TDM-E-L2-09/calibration/03_评级上调聚集`：卡面主口径写"rating_change 列若有值则以其为准并与自算对账，差异>5% 先查口径再开考"。
+   本班 04:11 窗内实读 113,033 行后对账＝`'上调'` 11,721 行中 **10,859 行前后 rating 同值（买入→买入）**、
+   `'下调'` 11,109 行中 **9,252 行同值（增持→增持）**；值域分布＝维持 75,488（67%）／上调 15,060／下调 14,810／空 6,548／首次 1,127；
+   由该列方向边推编码序**有环**（环上＝中性/买入/卖出/增持/持有＋空串，仅"回避"可单点定序）⇒ 一致率 <10% 越 5% 线，**按卡面自身规矩不开考**。
+   另 rating 列非空主体仅四档（买入 83,230／增持 23,538／持有 451／中性 335／卖出 6／回避 2／减持 1＋空串 5,470），
+   ⇒ "买入>增持>中性>减持"这类卡面举例式编码序在本表实际取值面上**不可自洽成立**（减持仅 1 行）。
+2. `TDM-E-L3-07-2/ablation/02_IC加权对等权`：三变体（IC 加权／等权／随机权重）各判一整套四件套，而执行器单信号消费 ⇒
+   本班可写的只有"主变体"一行；且卡面对权重**归一化与否未声明**（"过去 60 日截面 IC 的半衰加权均值×因子符号"与"等权=六因子分位算术均值"两式的量纲不同，
+   权重是否 Σ=1、分位指 rank-pct 还是 z 分位均无在册真源）⇒ 择一即自创，**不开考**；
+   与同族 `L2-01/ablation/03_六指数分布选优`、`L2-05-2/ablation/02b_信号响应三件套` 同型＝"多臂声明 × 单臂执行器"结构性缺件（承 ⑦c 1017-01 双臂 BLOCKER 同族，面积不同名不同）。
+
+### 十七·三 CH 可用性现测与 §十五 枚① 的数值复证（同帧 04:01:0x）
+
+- `kline_sector_880`（册面 open）＝period='1d' **818617 行／2020-03-17..2026-10-16／729 码**；`technical_indicator`（册面 open）＝**385531229 行／2019-01-02..2026-10-16／14361 符号**；
+  `auction_snapshot`（册面 **no_source**）＝**300617 行／2026-06-01..2026-10-15／6612 符号**⇒ 有货但窗仅 2026-06 起，属"有货短窗"第三态，册面二值表达不了；
+- 六表探针首跑 `HTTP 404`（含 research_report/shareholder_count/hl_funding_history/macro_data/sector_constituent/sentiment_panel），
+  逐张 `table_columns` 复量后全部定性为**缺列/键名不同**而非缺表（这六张无 trade_date 或无 symbol）⇒ CH 侧"缺列"与"缺表"同形，已在 §十六 之外另开一枚工具缺陷行；
+- 本班对以上**零改册**（RULE-SSOT：改 YAML 同步 DB 的写权在 ① 席），读数落 `.runtime/tmp/p07_1017_02/ch_probe.json` 供 ① 直接抄。
+
+### 十七·四 本班开考件 [BLOCKER] 追加（三枚：高 1／中 2）
+
+[BLOCKER] 2026-10-17|⑦A席1017-02|数据问题|`c3_fundamental.research_report.rating_change` 参照系与卡面"同一 (org_name,symbol) 相邻变化方向"假设不符：本班窗内 113,033 行实测＝'上调' 11,721 行中 10,859 行前后 rating 同值（买入→买入）・'下调' 11,109 行中 9,252 行同值（增持→增持）・值域'维持'占 75,488(67%)・由该列方向边推编码序有环（中性/买入/卖出/增持/持有＋空串）⇒ 对账一致率 <10%，按卡面 own 的"差异>5% 先查口径再开考"本班不开考 L2-09/03|证据＝.runtime/tmp/p07_1017_02/cache/research_report.parquet 与 rating_order.json（cycle_nodes 原文）・卡面 data_binding.frozen_note 逐字・本席 §十七·二 数值|请 ① 席复该列生成语义并钉参照系入册；请 ⑥ 在语义定前把该卡主口径改为"自算相邻变化＋编码序以实测分布钉死写入 evidence"；本席未动判据、未写 fail|高
+[BLOCKER] 2026-10-17|⑦A席1017-02|流程问题|考工指令卡"占卡三步"第②步（先翻 status=examining 再开跑）与执行器状态闸结构性互斥：`calibration_exam.py:979-980` 只认 preregistered、非 force 直接抛 ⇒ 按卡面顺序执行就每场都得用 force，而 force 的在册语义是"重考已出分卡"（⑦c 1017-01 已就该旗定性）；本班正解＝acquire（**带 --session**，见下枚）→ run_card 由判官自翻 examined → release|scripts/backtest/fexam/calibration_exam.py:979-980・本席 .runtime/tmp/p07_1017_02/exam_run.py 的 real_run 序・两卡 lineage.score_row 现指 rows[111]/rows[112]|请 ⑩ 把三席卡面第②步改为"占锁即视为在考，态由判官自翻"，或明写 examining 只适用于非 run_card 通道；本席未自造 force|中
+[BLOCKER] 2026-10-17|⑦A席1017-02|工具缺陷|两处取数/占位口在本班同帧各咬一次：①`lock_files.py acquire <file> <sid>` **不带 --session 时 owner.json 不写 session_id**，锁改按瞬时 PID 判活、命令一退即判 stale ⇒ 占卡互斥窗≈0 秒（本班首投即此形态，复证 ⑩/他席 1017 在册条目）；②CH 侧"列不存在"与"表不存在"同形返回 `HTTP 404`，且 `fexam.ch_data.ch_query_df` 对带别名/表达式的列一律回名 `c1..cN`（别名被丢）⇒ 按列名取数 KeyError、探针把缺列误读成缺表|scripts/lock_files.py:1850-1862（--session 绑定位）・本席 .runtime/tmp/p07_1017_02/shift02_load.py 的 q(names=) 位置改名补丁与 ch_probe.json 六条 404 原文|请 ⑤ 把 acquire 的 --session 设为缺省或在缺省时打告警面；请 ⑤ 在 ch_data 分型 404（缺表/缺列）并保留别名；本席未动门|中
+
+## 十七、⑦A 1017-02 班开考段＝两张真分入册＋两张转单（date 实测 2026-10-17T04:17:49+08:00）
+
+### 十七·一 真跑两张（本席自 1016-02 班"1 张/班"以来的首次两连，分数册盘 110 行→113 行）
+
+- **rows[111] `TDM-E-L2-02-2/calibration/02_板块见顶预警三信号`**（series 路）＝verdict **fail**；
+  ic_mean 0.04207784821389372／mono_spearman 0.6242424242424242／oos_ic 0.12516681316942546／n 996；regime bear -0.028605438304385986／rebound 0.0055352264019009195；
+  触发柱逐字＝`regime_sign_flip {'bear': -0.028605438304385986, 'rebound': 0.0055352264019009195}`；卡面 status=examined・lineage 回指 rows[111]・run_id=`p07a-1017-02-l2-02-2-calibration-02`。
+  读数直译＝见顶预警密度（板块 RSI>75 或"成交额创 20 日新高而 5 日滞涨"的命中家数占比）对次日沪深300收益**过 ic/mono 两柱且 OOS 更强**，
+  但 2021-08..2022-10 贴现率熊段反号 ⇒ 该信号不是全窗通用预警，只在修复段可用（此结论属读数，非本席改判据）。
+- **rows[112] `TDM-E-L3-03/ablation/02_双池代理合成`**（panel 路，个股宽面板）＝verdict **fail**；
+  ic_mean -0.02328400872913283／ic_ir -0.19428287778594677／oos_ic -0.02222539465746636／n 1621；regime bull -0.022108362520677036／bear -0.019176709273240684（两段同号**均为负**）；
+  触发柱逐字＝`ic_mean -0.0233 < 0.02`；卡面 status=examined・lineage 回指 rows[112]・run_id=`p07a-1017-02-l3-03-ablation-02`。
+  读数直译＝短线池（60 日涨停次数＋当日涨幅）与波段池（均线多排＋温和量能带＋回撤质量）等权合成的双池代理分
+  在本宇宙（前缀重建 5,378 码／日均 4,284 名／IS∪OOS 裁窗后 1,621 交易日）上**方向与卡面先验相反**（负 IC 全段一致），
+  这是"该冻结式在本宇宙上反向"而非"弱正不过地板"，与 1016-02 班连板顺位卡、1016-01 班均线多排卡同形态第三例。
+- **口径零自创（逐字可复算）**：两卡的信号与目标均由卡面 `data_binding` 原文驱动——
+  series 卡＝`kline_sector_880` period='1d'（本班 CH 04:01 现测 818617 行／2020-03-17..2026-10-16／uniq(sector_code) 729）＋族 industry_l1∪industry_ths（实测 189 码），
+  目标＝`kline_index` symbol='000300' close→next_day_return；
+  panel 卡＝`kline_daily`(close/volume)×`stk_limit`(limit_up/st_flag)×`technical_indicator`(ma_5/10/20/60)＋`kline_daily_hfq` 目标，
+  涨停判定逐字"收盘=涨停价-0.011 内"、量能带逐字"1.2≤vol/MA20vol≤2.5"、多排逐字"ma_5>ma_10>ma_20>ma_60 计数/4"，
+  宇宙逐字按 universe_rule 三条（前缀 {60,00,30,68}／8-4 显式排除／ST 用 st_flag 实测值域 {0,1}／上市满 60 交易日按首条行情日后推）；
+  停牌与退市两条款卡面给的是"判定式"，行情面板里本就是无行=NaN，故无需额外动作（如实记此未动因）。
+- **三道在册验收同帧**：①闸与判官**同面**——series 卡闸 ic_mean 0.04207784821389372/n 996 对行 0.04207784821389372/996，panel 卡闸 -0.02328400872913283/1621 对行 -0.02328400872913283/1621，逐位等值；
+  ②**判分面已裁冻结窗**——series 1012→997 行、panel 1783→1622 行（避掉 1016-02 在册"含窗外 45 日把 n 判成 1664"）；
+  ③真卡跑前用 tmp 副本预演，`real_card_untouched=True`（两件 proof sha16 见 `.runtime/tmp/p07_1017_02/run_dry_*.json`）。
+- **执行器无机器面两柱如实复证（不报成隐身）**：series 路 `ic_ir` 恒 None（行内 unjudged.numeric_keys_no_machine_face 自述）、
+  panel 路 `mono_spearman` 恒 None 同款；本席未把"未判柱"改写成"过/不过"，两条均在册（⑦c 1017-01 与 ⑧B 1016-02 同题，复证不重复开单）。
+- **GPU 面如实**：本班两次真跑**零 acquire 看门人**（`gpu_watchman status` 现测 active=(none)／free_gb 22.1），
+  两行读数一律**不申报为 GPU 读数**；收班⑥据卡面条款免执行并留此声明。
+
+### 十七·二 转单两件（不开考、不翻态、不代拍）
+
+1. `TDM-E-L2-09/calibration/03_评级上调聚集`：卡面主口径写"rating_change 列若有值则以其为准并与自算对账，差异>5% 先查口径再开考"。
+   本班 04:11 窗内实读 113,033 行后对账＝`'上调'` 11,721 行中 **10,859 行前后 rating 同值（买入→买入）**、
+   `'下调'` 11,109 行中 **9,252 行同值（增持→增持）**；值域分布＝维持 75,488（67%）／上调 15,060／下调 14,810／空 6,548／首次 1,127；
+   由该列方向边推编码序**有环**（环上＝中性/买入/卖出/增持/持有＋空串，仅"回避"可单点定序）⇒ 一致率 <10% 越 5% 线，**按卡面自身规矩不开考**。
+   另 rating 列非空主体仅四档（买入 83,230／增持 23,538／持有 451／中性 335／卖出 6／回避 2／减持 1＋空串 5,470），
+   ⇒ "买入>增持>中性>减持"这类卡面举例式编码序在本表实际取值面上**不可自洽成立**（减持仅 1 行）。
+2. `TDM-E-L3-07-2/ablation/02_IC加权对等权`：三变体（IC 加权／等权／随机权重）各判一整套四件套，而执行器单信号消费 ⇒
+   本班可写的只有"主变体"一行；且卡面对权重**归一化与否未声明**（"过去 60 日截面 IC 的半衰加权均值×因子符号"与"等权=六因子分位算术均值"两式的量纲不同，
+   权重是否 Σ=1、分位指 rank-pct 还是 z 分位均无在册真源）⇒ 择一即自创，**不开考**；
+   与同族 `L2-01/ablation/03_六指数分布选优`、`L2-05-2/ablation/02b_信号响应三件套` 同型＝"多臂声明 × 单臂执行器"结构性缺件（承 ⑦c 1017-01 双臂 BLOCKER 同族，面积不同名不同）。
+
+### 十七·三 CH 可用性现测与 §十五 枚① 的数值复证（同帧 04:01:0x）
+
+- `kline_sector_880`（册面 open）＝period='1d' **818617 行／2020-03-17..2026-10-16／729 码**；`technical_indicator`（册面 open）＝**385531229 行／2019-01-02..2026-10-16／14361 符号**；
+  `auction_snapshot`（册面 **no_source**）＝**300617 行／2026-06-01..2026-10-15／6612 符号**⇒ 有货但窗仅 2026-06 起，属"有货短窗"第三态，册面二值表达不了；
+- 六表探针首跑 `HTTP 404`（含 research_report/shareholder_count/hl_funding_history/macro_data/sector_constituent/sentiment_panel），
+  逐张 `table_columns` 复量后全部定性为**缺列/键名不同**而非缺表（这六张无 trade_date 或无 symbol）⇒ CH 侧"缺列"与"缺表"同形，已在 §十六 之外另开一枚工具缺陷行；
+- 本班对以上**零改册**（RULE-SSOT：改 YAML 同步 DB 的写权在 ① 席），读数落 `.runtime/tmp/p07_1017_02/ch_probe.json` 供 ① 直接抄。
+
+### 十七·四 本班开考件 [BLOCKER] 追加（三枚：高 1／中 2）
+
+[BLOCKER] 2026-10-17|⑦A席1017-02|数据问题|`c3_fundamental.research_report.rating_change` 参照系与卡面"同一 (org_name,symbol) 相邻变化方向"假设不符：本班窗内 113,033 行实测＝'上调' 11,721 行中 10,859 行前后 rating 同值（买入→买入）・'下调' 11,109 行中 9,252 行同值（增持→增持）・值域'维持'占 75,488(67%)・由该列方向边推编码序有环（中性/买入/卖出/增持/持有＋空串）⇒ 对账一致率 <10%，按卡面 own 的"差异>5% 先查口径再开考"本班不开考 L2-09/03|证据＝.runtime/tmp/p07_1017_02/cache/research_report.parquet 与 rating_order.json（cycle_nodes 原文）・卡面 data_binding.frozen_note 逐字・本席 §十七·二 数值|请 ① 席复该列生成语义并钉参照系入册；请 ⑥ 在语义定前把该卡主口径改为"自算相邻变化＋编码序以实测分布钉死写入 evidence"；本席未动判据、未写 fail|高
+[BLOCKER] 2026-10-17|⑦A席1017-02|流程问题|考工指令卡"占卡三步"第②步（先翻 status=examining 再开跑）与执行器状态闸结构性互斥：`calibration_exam.py:979-980` 只认 preregistered、非 force 直接抛 ⇒ 按卡面顺序执行就每场都得用 force，而 force 的在册语义是"重考已出分卡"（⑦c 1017-01 已就该旗定性）；本班正解＝acquire（**带 --session**，见下枚）→ run_card 由判官自翻 examined → release|scripts/backtest/fexam/calibration_exam.py:979-980・本席 .runtime/tmp/p07_1017_02/exam_run.py 的 real_run 序・两卡 lineage.score_row 现指 rows[111]/rows[112]|请 ⑩ 把三席卡面第②步改为"占锁即视为在考，态由判官自翻"，或明写 examining 只适用于非 run_card 通道；本席未自造 force|中
+[BLOCKER] 2026-10-17|⑦A席1017-02|工具缺陷|两处取数/占位口在本班同帧各咬一次：①`lock_files.py acquire <file> <sid>` **不带 --session 时 owner.json 不写 session_id**，锁改按瞬时 PID 判活、命令一退即判 stale ⇒ 占卡互斥窗≈0 秒（本班首投即此形态，复证 ⑩/他席 1017 在册条目）；②CH 侧"列不存在"与"表不存在"同形返回 `HTTP 404`，且 `fexam.ch_data.ch_query_df` 对带别名/表达式的列一律回名 `c1..cN`（别名被丢）⇒ 按列名取数 KeyError、探针把缺列误读成缺表|scripts/lock_files.py:1850-1862（--session 绑定位）・本席 .runtime/tmp/p07_1017_02/shift02_load.py 的 q(names=) 位置改名补丁与 ch_probe.json 六条 404 原文|请 ⑤ 把 acquire 的 --session 设为缺省或在缺省时打告警面；请 ⑤ 在 ch_data 分型 404（缺表/缺列）并保留别名；本席未动门|中
