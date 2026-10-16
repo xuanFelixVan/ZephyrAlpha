@@ -40,8 +40,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import pandas as pd
-
-from _c4_engine import emit, filter_st, load_px, load_st_flags, run_backtest, run_query, wide
+from _c4_engine import _T_KLINE_DAILY, emit, filter_st, load_px, load_st_flags, run_backtest, run_query, wide
 
 logger = logging.getLogger(__name__)
 
@@ -57,8 +56,10 @@ def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     close = filter_st(close, load_st_flags(load_start, end))
     # 不复权价（价格水平过滤）
     raw = pd.DataFrame(
-        run_query(f"SELECT trade_date, symbol, toFloat64(close) AS close FROM c1_market.kline_daily "
-                  f"WHERE trade_date >= '{load_start}' AND trade_date <= '{end}'"),
+        run_query(
+            f"SELECT trade_date, symbol, toFloat64(close) AS close FROM {_T_KLINE_DAILY} FINAL "  # noqa: bare-sql  存量回测脚本直读仅补FINAL，SQL集中化另行专项
+            f"WHERE trade_date >= '{load_start}' AND trade_date <= '{end}'"
+        ),
         columns=["trade_date", "symbol", "close"],
     )
     raw["trade_date"] = pd.to_datetime(raw["trade_date"])
@@ -89,8 +90,16 @@ def main() -> None:
 
     weights, closes = build(C4_START, C4_END)
     stats = run_backtest(weights, closes)
-    print(json.dumps(emit(STRATEGY_ID, stats, ["D1 全A剔ST/次新", "D2 T+1收盘", "D3 原始价过滤",
-                                               "D4 公开反转因子不登记", "D5 壳不译"]), ensure_ascii=False))
+    print(
+        json.dumps(
+            emit(
+                STRATEGY_ID,
+                stats,
+                ["D1 全A剔ST/次新", "D2 T+1收盘", "D3 原始价过滤", "D4 公开反转因子不登记", "D5 壳不译"],
+            ),
+            ensure_ascii=False,
+        )
+    )
 
 
 if __name__ == "__main__":

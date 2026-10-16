@@ -40,8 +40,17 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import numpy as np
 import pandas as pd
-
-from _c4_engine import emit, filter_st, load_px, load_hs300, load_st_flags, run_backtest, run_query, wide
+from _c4_engine import (
+    _T_KLINE_DAILY,
+    emit,
+    filter_st,
+    load_hs300,
+    load_px,
+    load_st_flags,
+    run_backtest,
+    run_query,
+    wide,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -61,8 +70,10 @@ def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     vol = wide(px, "volume").ffill().reindex(close.index).ffill().reindex(columns=close.columns)
 
     raw = pd.DataFrame(
-        run_query(f"SELECT trade_date, symbol, toFloat64(close) AS close FROM c1_market.kline_daily "
-                  f"WHERE trade_date >= '{load_start}' AND trade_date <= '{end}'"),
+        run_query(
+            f"SELECT trade_date, symbol, toFloat64(close) AS close FROM {_T_KLINE_DAILY} FINAL "  # noqa: bare-sql  存量回测脚本直读仅补FINAL，SQL集中化另行专项
+            f"WHERE trade_date >= '{load_start}' AND trade_date <= '{end}'"
+        ),
         columns=["trade_date", "symbol", "close"],
     )
     raw["trade_date"] = pd.to_datetime(raw["trade_date"])
@@ -85,7 +96,7 @@ def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     syy = ((sw - ybar[:, :, None]) ** 2).sum(axis=2)
     with np.errstate(invalid="ignore", divide="ignore"):
         r = np.where((sxx > 0) & (syy > 0), sxy / np.sqrt(sxx * syy), 0.0)
-    idx_win = close.index[_WIN - 1:]
+    idx_win = close.index[_WIN - 1 :]
     ks = pd.DataFrame(k, index=idx_win, columns=close.columns)
     bs = pd.DataFrame(b, index=idx_win, columns=close.columns)
     rs = pd.DataFrame(r, index=idx_win, columns=close.columns)
@@ -112,8 +123,12 @@ def main() -> None:
 
     weights, closes = build(C4_START, C4_END)
     stats = run_backtest(weights, closes)
-    print(json.dumps(emit(STRATEGY_ID, stats, ["D1 成分快照", "D2 周首收盘", "D3 原始价上限",
-                                               "D4 趋势量不入库", "D5 壳不译"]), ensure_ascii=False))
+    print(
+        json.dumps(
+            emit(STRATEGY_ID, stats, ["D1 成分快照", "D2 周首收盘", "D3 原始价上限", "D4 趋势量不入库", "D5 壳不译"]),
+            ensure_ascii=False,
+        )
+    )
 
 
 if __name__ == "__main__":
