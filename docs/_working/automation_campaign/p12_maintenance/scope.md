@@ -87,3 +87,13 @@ title: ⑫后勤席·输入清单与写域
 - **代注销执行前置（本席新立，写入操作序）**：删 pid 面前先做**三校**＝①`psutil.Process(pid)` 是否 NoSuchProcess（AccessDenied 带 name 者＝PID 复用，禁终止）②同 sid 是否仍有在跑守护（有则 HOLD，不写 exited）③heartbeat.jsonl 末行是否已 exited（是则只删面不写行）。三校缺一即降级为"只记录不动盘"。
 
 - **追加型件手术自证项（1016-05 自犯后新增，收班/写后必跑）**：任何"替换游标块／搬移留档块"的组装式改写，改前改后各断言 ①`content[:3] == '---'` ②frontmatter 键集合与改造前**逐字节前缀相等**（取第一个游标标记前的整段作前缀，改造后新文件必须以该前缀原样开头）③一级标题行在。本席实测五项旧自证（标记配对／核心行逐字／行数增量／BLOCKER 谓词命中／禁串缺位）全部通过而文件头已被弃 ⇒ 结构计数必须含"头部前缀相等"这一条，否则假绿。
+
+
+### 5.4 1017-01 班尺面增补与禁手段（§5.1–§5.3 各行逐字不涂）
+
+- **tmp 谓词对表尺（本班新立，职责0a 起手必跑）**＝在册自动腿 `src/zephyr/shared/io/runtime_hygiene.py:156-196 sweep_runtime_tmp`＝只扫 `.runtime/tmp` **顶层条目**（`:186 iterdir` 无递归）・判据＝条目自身 `st_mtime>48h`（`:65 DEFAULT_TMP_TTL_HOURS=48.0`）・豁免＝`:62 _TMP_PROTECTED_NAMES=("rescue",".gitkeep")`・删除走 `safe_rmtree`。方案3 卡面＝文件级 mtime>24h 递归。两尺不同物⇒执行前先按"顶层条目是否新于 48h"分层，aged 文件藏在新鲜目录内＝自动腿盲区（本班实测残留 266/262 枚即此形），一律只删文件不动目录。
+- **HOLD 白名单（本班起，写进操作序）**＝① `.runtime/tmp/rescue/**`（代码面在册保护・内藏未落地件抢救副本，删＝销毁唯一存活面）② `.runtime/tmp/test_guard/**`（守护腿逐 pid 活面，须按 `report_<pid>.json` 记名 pid 存活逐件判，禁按目录一刀切）③ `locks/heartbeat_<sid>.pid` 中 sid 名下有 pending/processing 袋者（**第四腿**，防给 ghost_session/TAKEOVER-PENDING 供燃料）④同 sid 仍有在跑真守护（正 python.exe/pythonw.exe＋cmdline 含 heartbeat_daemon＋该 sid；bash 包装行不计，本班实测 32 命中里真守护仅 16）。
+- **只读位复位绕行**＝残留若为 git loose object 等 444 件，`os.access(W_OK)` 探针先行（正对照＝本班 262/262 零可写），再 `os.chmod(S_IWRITE)`＋unlink；进程外第三读用 `find ... -newermt` prune 式与 python 尺交叉对表。
+- **`schtasks` 在 Git Bash 不可用**＝`/query` 被路径转换吃掉、`MSYS_NO_PATHCONV=1` 配 `//query` 仍报无效参数 ⇒ 查计划任务一律走 PowerShell `Get-ScheduledTask`/`Get-ScheduledTaskInfo`（State＋LastRunTime＋NextRunTime＋LastTaskResult；rc=267014＝运行中，非失败）。
+- **禁手段（本席自犯立）**＝禁对 `python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon` 跑 `--help`（无 sid 校验，会把 `--help` 当会话名建档并污染 dim4 分母；API 面一律走 `inspect.signature` 读签名，本班已用此法取到 `register_heartbeat_keepalive`/`run_daemon` 签名）。
+- **`git log --format` 必须整体加引号**＝`--format=%h %s` 不带引号会被拆成第二个 pathspec ⇒ 返回空串＝**尺坏非册坏**（本班 00:4x 自犯一次，改正后取回 5fbfbc3add）。
