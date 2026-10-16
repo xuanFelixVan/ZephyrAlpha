@@ -185,3 +185,24 @@ title: 独立信号清单（⑨成绩官每日维护）
 - ⚑ **给 ④ 席生成端与正交闸的本班直测（原因层）＝"某柱从未被评估"要先算方向性再谈独立面**：全册冻 `ic_ir_min` 的 **69** 行里机判过 **14（20.3%）**、无面 **55**；但无面行的其余四柱**逐一有面**（`face_when_noface={4: 55}`），而缺一根否决柱**只可能放宽、不可能加严**⇒ 真正受影响的判语面＝**唯二 pass 行 rows[76]/[78]**。生成端据此知：**这 55 行的 IC 读数面本身有效**（mono/regime/oos/ic_mean 四脚齐），不必把它们当"废分"重挖。
 - 尺与对照（可复跑）＝`.runtime/tmp/st-qoder-p09-1015-16/measure16_icir_coverage.py`（只读）；负对照 `ic_ir_min_typo`→`rows_with_pillar=0`，正对照 `mono_spearman_min`→`69 行／机判 55（79.7%）／无面 14`（与 ic_ir 的 14 显著不同＝尺有判别力）。
 - 三面可用性提示（给从 HEAD 起跑的车道）＝`calibration_exam.py` 与 `comparison_exam.py` 在 **HEAD/index/磁盘** 三面各缺一条腿（详见本席 ledger 16 班 §4/§5＋两条 [BLOCKER]）；`signal_orthogonality.py` 本班跑的是**磁盘面**。
+
+
+## 2026-10-16 22:1x ｜ st-qoder-p09-1016-01（⑨成绩官·1016 首班·独立信号清单：增量 2 行＝两个新对象首轮读数面，**零新轴入占**；本班直测给生成端的原因层＝**全册"五柱全有面"的行＝0**）
+
+> 读面声明（本班正文原样跑，写盘前复测同值）：磁盘面 sha256 `05bc7ce014f204a0…`／141704B／rows=**106**／mtime `2026-10-16 15:49:46`；**index==HEAD==磁盘**（三面同 sha 同 106 行，`git cat-file -p` 直读）⇒ 本岗 02–16 班在册"该册不在 HEAD／唯一存活面＝磁盘"的旧判据自本班起作废，下一班可改用三面同值作基线（但"行数骤降先查 `git stash list`"仍保留，reaper 现读 `stash_count=30`）。本班未动分数册任何字节、未动任何阈值与门柱。
+
+- **工具实跑**＝`python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6` → `n_members=6 n_common_dates=1855 effective_n_signals(PR)=2.1272`（rc=0，`22:01:33` 实测）＝**在册同值复现，非新读数**（04 班首测，11–16 班复现）；本班未新建池面。15 员池物化面＝在册禁烧面（`c1_market.factor_signal`／`factor_feature_value` 各 0 行，03–11 班三度同值），本班**未重烧**；`ART_ROOT` 未复查；在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"（本席累计十一班无产物可再现该数）。
+- **在册工具可用性换代（给从 HEAD 起跑的车道，本班直测）**＝`scripts/backtest/fexam/comparison_exam.py`（OD-1 对照执行器）与 `signal_orthogonality.py` **现已在 HEAD**：磁盘/index/HEAD 三面逐字节同（`git hash-object`＝`04682070c42a…`／`a8a760ae0883…`，`git status` 干净）⇒ 14/15/16 班在册"HEAD 无／index 无／磁盘 `??`＝从 HEAD 起跑这两个工具不存在"的红旗**今日解除**。⚠ 同窗另一件 `calibration_exam.py` 的反向读数（PE 止血闸被净删、index 面落后一版）见本席 ledger 1016-01 班 §3(2) 修㉔，勿把"工具在 HEAD"读成"件面完好"。
+- **本班增量 2 行对分母的含义**＝`rows[104]` `TDM-E-L3-12-3/calibration/02_获利盘占比`（筹码维）与 `rows[105]` `TDM-E-L3-03-2/calibration/02_均线多排`（趋势维）＝两枚**新对象首轮**（轮次 1 桶 66→68，distinct card_id 80→**82**），读数面可区分（一正一负、n 1620/1519）⇒ 名义 **+2 个读数面**；但两行 `verdict=fail` 且 `mono_spearman_min` 无面 ⇒ **正确读法＝两个新的弱读数面（方向一正一负、强度均不过地板），不是"两条已检验过的独立信号"**。两轴（筹码、趋势）本已被其他卡占用 ⇒ **零新轴入占**，未占/稀薄轴维持 04/09 班在册方向（波动率期限结构、流动性与冲击成本、资金面分户、另类数据）。
+- ⚑ **给 ④ 席生成端与正交闸的本班直测（原因层）＝"门柱合取"在账面上从未两腿齐判**：全册 **106 行里五柱全有面的行＝0**（缺面计数 `ic_ir_min` **55**／`mono_spearman_min` **16**／`regime_same_sign` 1／`oos_same_sign` 2）。两条路各缺**一条不同的**柱＝panel/近路 16 行（rows{73,74,83,93,94,95,96,97,98,99,100,101,102,103,104,105}）`ic_ir` 有实数而 `mono` 恒 None；series 路（rows[0..40,72,75..89]）`mono` 有实数而 `ic_ir` 无面（此腿＝**裁定#520** 已入册事实"ic_ir_min 在 series 路恒不被评估／本裁定不修尺"，非本班新发现）。⇒ 生成端据此知：**panel 卡的 fail 不可读成"单调性已被检验并否定"，series 卡的 fail 不可读成"ICIR 已被检验并否定"**；检索该簇请用**行号集**（上面两集合）而非族名（`signal_kind` 只在卡面不在册面）。
+- **尺与对照（可复跑）**＝`.runtime/tmp/st-qoder-p09-1016-01/m01_clusters.py`＋`clusters.out`（只读）：`A_JOIN rows=106 card_files=553 distinct_card_ids=553 bad=[]`；正对照＝同尺读 `numeric_keys_no_machine_face` 命中 **75/106**（键存在性尺能命中⇒"PE 披露键 0 命中"是实测非空尺）；负对照＝`numeric_keys_bucket_caliber_proxy_typo`＝0、`ic_mean_typo`＝0（计数为 0 时 rc=1 属正常，非命令坏）。
+- 空白轴地图判读面限定沿用：按 `card_id` 命名语义归类，本班逐卡读体的面＝rows[104]/[105] 两枚新卡＋轮一抽的 rows[76]（校准尺 `replay10_calib.py 76 76` 回卡体，PROBLEMS 0）。
+
+
+### 本班补条（22:12–22:14 实测，旧句留卷）
+
+- ⚑ 上面"读面声明"里的**"三面同值"要收窄为瞬时条件**＝`22:12:21` 复测磁盘＝sha `bb557705beea260f…`／143510B／rows **108**／mtime `22:09:54`，而 **index==HEAD==106 行**（`git status`＝` M`、`git diff --numstat HEAD`＝67 增 0 删）⇒ 换代事实仍成立（**该册已在 HEAD**，02–16 班"不在 HEAD"判据作废），但"三面同值"只在 21:52–22:11 两时点成立，⑦c 出分与正门落地都会单边推进磁盘面。下一班勿当常备绿灯。
+- 当日增量 **4 行**（补 `rows[106]` `TDM-E-L3-12-3/calibration/03_股东户数集中度`、`rows[107]` `TDM-E-L3-04/calibration/02_解禁否决`，`run_id=st-qoder-p07c-1016-02`）＝再 +2 个**新对象首轮读数面**（distinct card_id 82→**84**，1 轮桶 68→70），两行皆 `verdict=fail`、`mono_spearman=None` ⇒ **仍零新轴入占**（筹码维第二卡、事件/供给维否决式），独立信号分母按在册口径**最多 +2 个读数面、不是 +2 条已检验信号**。
+- 108 行现值账替换上面正文数＝`ic_ir` 冻柱 **73**／机判 **18（24.7%）**／无面 55；panel 且冻 `mono_spearman_min` 无面 **18 行**（行集与 `ic_ir` 有实数 18 行逐位同＝rows{73,74,83,93..107}）；同号负向簇 **18 行未变**；join **108/108**（`bad=[]`）。
+- ⚑ **给生成端/⑥ 制的本班新谓词（可 grep）**＝全册 `metrics.ic_ir >= 0.3` 只命中 **2 行**＝rows[101]（`…/02_一字板不可成交`，ic_ir 0.385）与 rows[107]（`…/02_解禁否决`，ic_ir 0.339），**两枚都只败在 `ic_mean` 地板（0.0099／0.0097 vs 0.02＝门槛的 49%）且 mono 同无面**。⇒ 若后续同谓词命中数 ≥3 且仍全败 `ic_mean`，本席将按判据问题走呈批通道（"剔除/否决类子集型信号"是否该配子集内均值口径，属 Owner/⑩ 门位）；样本＝2 时**本席不判族、不改判、不开单**。
+- 本班补条的 [BLOCKER] 登记＝**无**（同窗并发出分属正常，非缺陷）。

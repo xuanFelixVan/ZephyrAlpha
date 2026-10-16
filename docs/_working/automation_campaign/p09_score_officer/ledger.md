@@ -1069,3 +1069,97 @@ title: ⑨成绩官·findings台账
 - `[BLOCKER]` 2026-10-15|⑨成绩官 st-qoder-p09-1015-16|种子行口径不可再现（非事故，登记以免他席照抄）|证据=种子句"52 根/3 根/5.8%"，本班三口径实测＝行数口径 69/14/20.3%、唯一卡口径 54/14、旧面 rows[0..92] 口径 58/3/5.2%；机判行清单 rows{73, 74, 83, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103}|要 ⑩ 席若持原始取数口径请贴出，本席按该口径复跑；否则请以本班数为正解|低
 - `[BLOCKER]` 2026-10-15|⑨成绩官 st-qoder-p09-1015-16|心跳残留供料面未清|证据=`.runtime/locks/` 心跳文件 218 枚，其中本席 02–15 班 14 枚全在（15 班班毕三件第二件未做）|要 ⑩ 席统清本岗历史心跳并立法"收班即注销心跳"复核位（本席本班只注销自家 16 班）|低
 - `[BLOCKER]` 2026-10-16|p09（更正行·Owner 裁定三）|判据缺失|**合并声明：以下关于 ic_ir 门柱机判覆盖率的各行（本台账 grep「种子预填」与「⑨席种子」命中行）为同一问题，以本条为准**；全册 52 根 ic_ir 门柱仅 3 根经机判（5.8%），“RankIC 且 IC_IR”近似单脚。旧行不删（追加制纪律）|证据锚点：docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml 的 ic_ir 柱机判覆盖面计数|要Owner定判据面补全方案，⑥席据此制卡|中|状态：观察
+
+
+## 2026-10-16 ｜ st-qoder-p09-1016-01（⑨成绩官·1016 首班：当日增量＝**2 行全判（两枚皆 fail）**；主产出＝新单 **修㉔**（PE 止血闸净删坐实＝16 班 S-2 预言兑现）＋呈批 **P-11**（全册"五柱全有面"＝0 行）＋在册两条事实换代（分数册三面同值／OD-1 两工具已落 HEAD））
+
+### 1 冷启动与防重入
+
+- `python --version`＝**3.12.8**；`date` 起批＝**21:50:13**。断链警戒面＝本班**未触发**（本班读过的 `docs/_working/**` 与 `docs/04_research_records/**` 路径全部可读，未遇"路径不存在"）⇒ 未查 `broken_records.yaml`。
+- `python scripts/lock_files.py cleanup`＝**CLEANED 2 枚死锁**（`p01_datasource/ledger.md`、`p01_datasource/checkpoint.md`）＋**SALVAGED 三个死会话遗物**（`chief-coordinator-st-20261014`／`st-docconsol-20261014`／`st-rulemap-20261014`，各 merge=skipped／stash=0 件／释放 claim=0＋registry）。
+- `python -m zephyr.trading.process_reaper --status`＝`source=live`／`last_run=21:50:33`／`scanned=27 whitelist_hits=21 killed=0 reported=18`／`ghosts scanned=0`／水位 `commit_pct=76.83`、`ram_avail_gb=20.08`、`cpu_pct=76.1`、`degraded=False`、`breached=[]`／`drift stash_count=30 worktree_changes=1686`／`auto_wires dead_archive=error archived=0`（同段报"serializer 租约存活 pid=30712，拒绝并行维护操作"）⇒ **写在岗**；⚠ `worktree_changes=1686` 与 16 班 5018 同量级＝全线仍脏，本班全程窄面取证（未跑全树 `find`/`rglob`，卡池只走 `exam_cards/**` 定向 glob，袋扫描只读 `commit_queue.py status` 的 JSON 面）。
+- 防重入＝`checkpoint.md` 末节＝1015-16 班游标推进记录**完整**（含耗时与提交段自述）；`.runtime/locks/` 内 `heartbeat_*p09*` **命中 0**；台账与本游标内 `st-qoder-p09-1016` 字符串 **命中 0** ⇒ 今日零班，本班取 **01** 号（会话名 `st-qoder-p09-1016-01`）。
+- 会话与 claim＝`register(SID, pid=0, held_files=[4 件], task_files=[4 件])`＋`heartbeat`＝True＋`get_session`＝True＋`list_active` 自见＝True，与 `lock_files.py acquire-batch` **串成一条命令**（08/11/16 班在册压缩窗口配方）⇒ **acquired=4 denied=0**；写盘段前续活一次＝**acquired=4 denied=0**（读数见脚本打印）。⚠ 在册缺口沿用：claim TTL **30 分 < 班限 60 分**（本席已按 10-16 半日预算降频口径）。
+- 只 claim 自家四面（ledger／checkpoint／iteration_history／pulse），**不随袋带** `feedback/to_impl.md`、`feedback/to_miners.md`（⑩ 线长单写面，沿 16 班红线③）。
+- **零 worktree**＝遵 TRAE-079 Phase 2 与本班指令卡，未调用任何工棚/工作树启动入口，主区作业＋claim 互斥＋只 `--files` 自家清单。
+- 队列态（本班实测）＝`lease.present=True holder_pid=30712 state=drain-active`、`head=q-20261016-st-qoder-p05-1016-02-0004`（p05 在等 198s）、`daemon.online=False` ⇒ 本班**只走 `--enqueue`**，不直连。
+
+### 2 判卷面（工序 1–2）
+
+- 游标 `rows[103]` → 现值面 **106 行** ⇒ **当日增量＝2 行**＝`rows[104]`／`rows[105]`，`date=2026-10-16`、`run_id=st-qoder-p07c-1016-01`、`kind=exam`，两行 `verdict=fail` ⇒ 当日增量 **100% 判卷**。
+- **三面读数（本班首测＋写盘前复测，逐位同）**＝磁盘 sha256 `05bc7ce014f204a0…`（141704B／mtime `15:49:46`／rows **106**）；**index==HEAD==磁盘**（`git cat-file -p` 三面同 sha、同 106 行）；落地链＝`e1033fb48d`（10-16 03:14，"P0保护:分数册104行落HEAD"）→ `98410ca45f`（10-16 16:17，⑦c 袋 ＋rows[104]/[105]）。⚑ 本岗 02–16 班在册"该册不在 HEAD／唯一存活面＝磁盘／判落地只认 `git log`"的旧判据**自本班起作废**（见 §5 S-3）。
+- **门柱一票否决机械核对**＝在册尺**正文原样实跑** `python .runtime/tmp/st-qoder-p09-1015-10/replay10_calib.py 104 105` → 末行 **PROBLEMS 0**。逐柱读数＝rows[104] `ic_ir_min FAIL 0.069 vs >=0.3`／`ic_mean_min FAIL 0.0094 vs >=0.02`／`oos_same_sign PASS`（oos 0.0063 vs is 0.0094）／`regime_same_sign PASS`（bull +0.0155, bear +0.0123 同号）／`mono_spearman_min NO_FACE`；rows[105] `ic_ir FAIL −0.082`／`ic_mean FAIL −0.0104`／`oos PASS`（−0.0090/−0.0104）／`regime PASS`（bull −0.0176, bear −0.0012 同号负）／`mono NO_FACE`。⇒ 两行 fail 各由**两柱独立成立**，与册面 fails 串 `["ic_mean 0.0094 < 0.02","ic_ir 0.069 < 0.3"]`／`["ic_mean -0.0104 < 0.02","ic_ir -0.082 < 0.3"]` **逐字咬合**＝门柱未走样、未被放宽。
+- **负结果如实入册核对**＝两行均 `verdict=fail` 且 `fails` 非空、`pillars_all_pass=false`、`unjudged.numeric_keys_not_read=[]`（无"该读未读"被涂成过）、`numeric_keys_no_machine_face` 如实披露 `mono_spearman_min` 无面（原文"panel 路恒 None／分桶样本不足 NaN"）⇒ **无"把未检验当通过"形态**。⚠ `oos_ok=true` 只表 OOS 符号腿成立、**不等于过线**（在册两代语义，引用勿误读）。
+- **IS/OOS 符号观察**＝rows[104] IS +0.0094／OOS +0.0063／bull +0.0155／bear +0.0123＝**四段同号正**，`ic_mean` 达门槛 **47%**、`ic_ir` 达门槛 **23%**（方向在、强度不足）；rows[105] IS −0.0104／OOS −0.0090／bull −0.0176／bear −0.0012＝**四段同号负**（与卡面假设反号）。按 15 班在册谓词（`ic_mean<0 且 oos_ic<0 且 regime 有效段全负`）：rows[105] 进**同号负向簇 17→18 行**（行集 [29,30,33,34,73,74,87,88,94,95,96,97,98,99,100,102,103]＋105），rows[104] 不入（正号不过地板，按 15 班 rows[101] 同型读法＝"幅度不够"不是"方向反了"，勿并档）。
+- **全册现值账（本班尺 `.runtime/tmp/st-qoder-p09-1016-01/m01_clusters.py` 现测）**＝rows **106**／distinct card_id **82**／verdict `{'fail':102,'pass':2,'blocked':2}`／卡体 join **106/106**（`bad=[]`，卡池 553 件＝553 个 distinct card_id）／轮次直方图 `{1:68, 2:9, 3:3, 4:1, 7:1}`（1 轮桶 66→68＝两枚新对象首轮）。
+- **卡↔册双向咬合**＝两枚卡体 `status=examined`、`lineage.run_id=st-qoder-p07c-1016-01`、`lineage.score_row=exam_scores_v1.yaml#rows[104]`／`#rows[105]` 与册行行号逐字相等；卡面 `pillars_numeric`＝五柱词表（`mono_spearman_min 0.6`／`ic_mean_min 0.02`／`ic_ir_min 0.3`／`regime_same_sign true`／`oos_same_sign true`）两卡同套；`target.primary` 两卡同为 `stock_fwd_ret_t1o_to_t2c`（冻结目标面，非本班新造）。
+
+### 3 归因四分诊／转单段（工序 3；全文写本段，本席**不自写** feedback 共写面，由 ⑩ 汇总）
+
+**(1) 信号真无效 → ③④席＝本班零新开方向单。** 两条独立依据：①`docs/_working/automation_campaign/feedback/to_miners.md` 末节 ⑩ 线长席 `st-qoder-p10-1016-05`（10-16 04:2x）在册续令原文："全线**继续停发生产配额**（前置②③未成，实测见第十三单 §4）＝本班零新方向单、零 mined_out 判定、零解锁"；②**本班落地面自测**＝chief 会话 10-16 的"停发解除"三裁定（#537-539）在**盘与 HEAD 两面均查无**＝`wc -l` 盘 5025／HEAD 5025 逐位同，`grep -o "ruling_id: 裁定#[0-9]*"` 两侧**最大值都＝#534**，`grep 裁定#53[6-9]` 两面 **0 命中**，`ARCH-383` 在该册 **0 命中**，该册最后一次 commit＝`5fbfbc3add`（10-14 21:37）。⇒ 按宪法"判落地一律 git log 与 blob"，**停发令对本席有效**（⑩ 1016-19 班在册更正同判，且本班读到的蒸发面比该班更严：该班时点盘上有 +94 行，本班时点连盘面也没了）。只登记事实两笔：rows[104] 方向对而强度不足（差 2.1 倍／4.3 倍）；rows[105] 与卡面假设反号且四段同号（属"方向面多次同号成立、强度面不足"族的第 **18** 枚）。按 07 班在册口径**单行不判死**：本班不做 mined_out、不排复考（两枚皆新对象首轮）。
+
+**(2) 实现／落地面问题 → ⑤席，抄 ⑩＝新单 修㉔（PE 止血闸被整档快照式落地净删，16 班在册 S-2 预言兑现）。**
+- 符号级证据链（每条都可原样复跑）＝`git cat-file -p 1c79317949^:scripts/backtest/fexam/calibration_exam.py | grep -c _bucket_caliber_proxy`＝**4** vs `git cat-file -p 1c79317949:<同件>`＝**0**；行数 **1115→1068**（净 **−47**）；同批消失 `_bucket_type_off_vocab`（2→0）与披露键 `numeric_keys_bucket_caliber_proxy`（2→0）。该 commit 首行只述 `[st-autoplan-20261015][修r536迁移断点:分数册双文档读写兼容]`，**一字未提被删功能**。后继 `8caf2743b9`（10-16 16:48，`[ARCH-APPROVAL:#ARCH-383]`，"calibration_exam 补齐半落地交付＋panel 卡 CLI 解禁"）对本件 **96 增 1 删**，HEAD 现面 PE 符号仍＝**0** ⇒ "补齐"未恢复该腿。
+- 三面现值＝磁盘 **1163 行**／PE **0**／`:60 SCORES_PATH`→**04 永久区 ✓**；HEAD **与磁盘逐字节同**（`git hash-object`＝`91937c098a3d…`＝`git rev-parse HEAD:<件>`）；index 面 **1115 行／PE 4／`SCORES_PATH`→03 旧址**＝落后一版（属在册"正门每落地一次主区 index 停在落地前一版"形态，本席**不复位、不 commit 他人件**；`git status` 该件＝`MM`）。
+- **受影响面诚实账（先算面积再开单，沿 16 班 S-1 纪律）**＝上界 **55 行**（谓词＝卡面 `buckets.type` 不在词表/`quantile_<n>` 形 **且** `metrics.mono_spearman` 为实数；尺＝`m01_clusters.py`，正对照＝同尺读 `numeric_keys_no_machine_face` 命中 **75/106**、负对照＝typo 键 **0**），其中 **41 行产出于 PE 施工（10-14 13:52，`e7285c6d5f`）之前**、**14 行（rows[75..89]，run_id＝`p07a-agg8-20261015-*`／`p07a-sector6-20261015-*`）产出于施工后**；**但全册 106 行里 `numeric_keys_bucket_caliber_proxy` 命中＝0** ⇒ 该闸自施工起在分数册上**零产出**。⇒ 本班定性＝**功能净删（治理／落地事故），不是读数污染**：不追溯任何既有分数行，也**不影响本班两枚新行**（其 `mono_spearman=None`，PE 条件③必不成立）。
+- **要 ⑤ 答的两读未分**＝为何在册 26 小时零触发：①条件②腿（`signal_unique > n_buckets_used`，册面无 `signal_unique` 不可反算）从未成立；或②运行面读的是不含该闸的旧码（在册 `runtime-code-behind-head` 族）。修法判据由 ⑤ 定，**本席不改码、不定修法**；请恢复净删腿时附"符号计数 before/after 相等"的反向自证。严重度＝**高**（不是因为读数受损，而是因为**已批功能的静默消失可以藏在一条只述 A 的 commit 消息里**）。
+- 在册 修㉒（16 班开的"三面无一可用"）事实收口＝`SCORES_PATH`→04 腿**已落 HEAD**（本班直读 `:60`），但 PE 腿净删 ⇒ 修㉒ 只算**半收口**，其余面并入本单 修㉔，不重复派工。
+
+**(3) 判据问题 → 呈批草稿 P-11（本席不代裁、未动任何判据字节）。** 先划清已裁面＝**裁定#520**（`ruling_registry.yaml:4765`，10-14 批）原文已把"执行器三公共缺件（**`ic_ir_min` 在 series 路恒不被评估**／`min_obs_per_bucket` 零读取方／`net_fee` 节缺失致净费 NaN）随本批**入册为在册事实，本裁定不修尺**"⇒ series 路缺 ic_ir 这条腿**不是本班新发现、也不待裁**。本班新增的是三条**量化与新腿**：①**全册 106 行中"五柱全有面"的行＝0**（缺面计数 `ic_ir_min` **55**／`mono_spearman_min` **16**／`regime_same_sign` 1／`oos_same_sign` 2；双臂行按在册另面排除）；②两路各缺**一条不同的**否决柱＝panel/近路（`ic_ir` 有实数而 `mono` 恒 None 的 **16 行**＝rows{73,74,83,93,94,95,96,97,98,99,100,101,102,103,104,105}，沿 修⑭ 的 panel 路 mono 腿）与 series 路（`mono` 有实数而 `ic_ir` 无面，沿 裁定#520）；③`ic_ir` 冻柱面本班复量＝**71 行／机判 16＝22.5%／无面 55**（分母由 16 班的 69 升至 71＝本班两枚新卡也冻该柱）。⇒ 在册合取门柱"RankIC 且 IC_IR"**从未在同一行上被两腿同时检验**。请 Owner/⑩ 在两条里拍：**(甲)** 承认"路别决定可用柱集"，把每路可用柱写进卡面披露位并在册行加声明位（＝判据面变，须裁）；**(乙)** 判 ⑤ 补两条实现腿（panel 路 mono＋series 路 ic_ir；后者即 裁定#520 已登记而不修的那条），判据字节不变，存量重考面由 ⑤ 报。**本席荐乙**（甲越本席写域，且按 16 班方向性账，补柱对既有 fail 行只增文案、唯二 pass 行才是真受影响面）。与 P-10 的关系＝P-10 问"存量是否重考"、P-11 问"先补哪条腿"，**合并权在 ⑩/Owner，本席不并**。
+- 附带署名事实（不构成豁免）＝台账末行 `[BLOCKER] 2026-10-16|p09（更正行·Owner 裁定三）…` 仍重述"52 根／3 根／5.8%"并自称"以本条为准"。本班两面实测＝`ruling_registry.yaml` 盘 5025 行／HEAD 5025 行逐位同，`grep 判据面补全`／`近似单脚`／`门柱机判` 三词 **0 命中**，且"裁定三"字面若指 chief 10-16 的 #537-539 三裁定，则**两面查无**（最大值＝#534，见 §3(1)）；在册最接近者＝**裁定#520**，其文字是"入册为在册事实，**本裁定不修尺**"⇒ 是**登记缺口**不是"已裁补全方案"。本班按**未裁**续记，并把现值数更新为 **71/16/22.5%**（若 ⑩ 能给出 52/3 的取数口径，本席按该口径复跑）。
+
+**(4) 需对照验证 → 〔对照〕转 ⑥席＝本班零新开对照单，但据实销一条。** 16 班的对照申请（为 rows[76]/[78] 各制一枚"唯一变量＝ic_ir 柱接入"的对照卡）**至今未被接**＝本班在卡池 553 件内 grep `41_agg_lu_count_z20_fwd10`／`43_agg_lu_ratio_z20_fwd10` **只命中两枚母卡自身**、零对照卡文件 ⇒ 沿单未闭，本席不重复派第二张同事实的工。支撑该申请必要性的本班实测＝`replay10_calib.py 76 76` 原样实跑 **PROBLEMS 0**，五柱读数 `ic_ir_min NO_FACE`（册面披露原文"ic_ir 无从评估（series 路恒 None／panel 路 NaN）"）＋其余四柱 PASS ⇒ 该 pass 行"四脚缺一脚"状态**延续未改善**。
+- blocked 两行（rows[90]/[91]）＝本班**未重烧**，在册分诊沿用（**禁按"信号无效"分诊、禁作 fail 升降级**）；现值 verdict 分布仍 `blocked=2`。OD-1 执行器面已可用（见 §5 S-4 换代读数）。
+
+**(5) 数据面（①席）＝本班零新开单。** 两枚新行的供数面（`chips_winner`／均线四缓存／后复权 close-open）由 ⑦c 席在其台账自述在册，本席不复烧、不代证；15 员池物化面＝在册禁烧面（本班未第四次重烧）。
+
+### 4 pass 行与升级（工序 4，本班零升级）
+
+- 本班**零新 pass**（增量两行皆 fail）。在册唯二 pass＝rows[76]/[78]，本班**未重跑**（本席不考试），且轮一实测 rows[76] 的 `ic_ir_min` 仍 **NO_FACE** ⇒ 沿两条红线（**fail 永不升级**＋柱不齐不升）**不升 verified**，**TDM 挂接记录零新增**。
+
+### 5 结构性观察（工序 5，家族级）
+
+- **S-1＝"消息面只述 A、件面实做 A+B"是净删的载体形态**：16 班 S-2 预言"三面无一可用＋按磁盘面落地＝静默净删 47 行 PE 闸"在 **6.5 小时后**由 `1c79317949` 兑现，而 commit 消息一字未提被删功能；16:48 的"补齐"袋（`8caf2743b9`）也没补回来。含义＝**判一次落地是否无害不能读 commit 消息**，必须对被改代码件做符号级 before/after 计数（可复跑尺＝`git cat-file -p <rev>:<file> | grep -c <symbol>`）。请 ⑩ 考虑把"净删自证"从死因清单升为**落地前置观测项**（本席不自立闸，越写域）。
+- **S-2＝"净删"与"读数污染"必须分账，别拿上界当事故面积**：上界 55 行读起来像"半数成绩受影响"，但披露键在 106 行里**零命中**⇒ 现值影响＝0 行。若不先跑这一腿，本席会给 ⑤ 开一枚 55 行的过头单（与 16 班 §11-1 同型；本席连续四班把"受影响面"放在开单**之前**）。
+- **S-3＝分数册三面首次同值，本岗在册判据须换代**：02–16 班一律记"该册不在 HEAD／唯一存活面＝磁盘／判落地只认 `git log -1 -- <册>`"；本班实测磁盘=index=HEAD 三面同 sha 同 106 行（`e1033fb48d` 保护性入库＋`98410ca45f` ⑦c 袋落地）。下一班可用三面同值作基线，但**"行数骤降先查 `git stash list`"必须保留**（全域 `stash@{0}` 未 drop，本班 reaper 现读 `stash_count=30`）。
+- **S-4＝在册执行器可用性换代（本席 修㉓ 收口）**＝`scripts/backtest/fexam/comparison_exam.py` 与 `signal_orthogonality.py` **现已在 HEAD**（磁盘/index/HEAD 三面逐字节同，`git hash-object` 分别＝`04682070c42a…`／`a8a760ae0883…`，`git status` 干净）⇒ 14/15/16 班在册"HEAD 无／index 无／磁盘 `??`＝从 HEAD 起跑两工具不存在"的红旗**今日解除**；本席只销账不重开。含义＝对照族（OD-1）从 HEAD 起跑的**载体面已通**，rows[90]/[91] 那类 blocked 是否解除属⑤/⑦实测面，本席不代判。
+- **S-5＝门柱覆盖率的正确分母是"冻该柱的行数"，且它每批都在长**：`ic_ir_min` 冻柱行 69→**71**（本班两枚新卡带入）、机判 14→**16**、无面 55 不变。⇒ 凡引用"覆盖率 X%"必须同时给**分母世代**，否则跨班不可比（沿 修⑯"判据换代留痕"与 15 班三代册面在册）。
+
+### 6 工具实跑（工序 5 正交闸）
+
+- `python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/st-qoder-p09-1015-04/pool6` → `n_members=6 n_common_dates=1855 effective_n_signals(PR)=2.1272`（rc=0）＝**在册同值复现**（04 班首测，11–16 班复现），非新增读数；本班未新建池面。15 员池物化面＝在册禁烧面（`c1_market.factor_signal`／`factor_feature_value` 各 0 行，03–11 班三度同值），本班**未重烧**；`ART_ROOT` 未复查；在册叙述值 4.4（`research_production_line_policy.md:274`）继续标"**未复现**"（本席累计十一班无产物可再现该数）。
+- 独立信号清单本班行＝`docs/_working/automation_campaign/pulse/independent_signals.md` 末节（该面本席单写，写前已读现值）。
+
+### 7 本班自犯与当场纠正（旧句留卷）
+
+1. **三面读数首跑误报"册不在 index"**＝本班第一次取 index/HEAD 面时用 Python `Path` 拼出的**反斜杠**路径喂 `git cat-file`，git 报 "exists on disk, but not in the index／not in 'HEAD'"，差点写成"册只活磁盘"的旧账。正解＝git 路径一律**正斜杠**＋`git cat-file -p ":<path>"`；改后实测三面同值。⚠ 沿在册 `windows-gitbash-python-path-domains` 族，本席第四次命中同型。
+2. **`git show --numstat <rev> -- <file>` 版式误读**＝本班第一次把"只见 commit 头行、numstat 行被 `cut`/`head` 截掉"读成"该 commit 未碰此件"，改用**两面符号计数直接对比**（`<rev>^` vs `<rev>`）才拿到 1115→1068 的净删数字。旧句留卷：判"某袋动没动某件"用 `git cat-file` 双面计数，不读排版。
+
+### 8 自检两轮（工序 6）
+
+- **轮一（抽 3 行回卡体核门柱）**＝三条命令**正文原样实跑**：`replay10_calib.py 104 105`（两枚新行）与 `replay10_calib.py 76 76`（在册 pass 行），末行均 **PROBLEMS 0**；逐柱读数与册面 `fails`／`unjudged.numeric_keys_no_machine_face` **逐字同**（rows[104] `ic_ir 0.069 vs >=0.3`、rows[105] `−0.082 vs >=0.3`、rows[76] `ic_ir_min NO_FACE` 而四柱 PASS ⇒ verdict=pass 再现）。⇒ 门柱未走样，且尺**能绿**（非只认 fail 的单向尺）。
+- **轮二（全集 join＋尺的判别力与能红性）**＝`A_JOIN rows=106 card_files=553 distinct_card_ids=553 bad=[]`；正对照＝同尺读 `numeric_keys_no_machine_face` 命中 **75/106**（键存在性尺能命中⇒"PE 披露键 0 命中"是实测非空尺）；负对照＝`numeric_keys_bucket_caliber_proxy_typo`＝**0**、`ic_mean_typo`＝**0**（0 命中时 rc=1 属计数正常，非命令坏）；五柱齐判尺读数＝**0 行**，缺面分布 `{ic_ir 55, mono 16, regime 1, oos 2}`。
+- 游标纪律＝写后核 16/15/14 班游标推进记录仍在（见写盘脚本 PREV 行）；结构计数见 STRUCT 行（removed 期望 0，尾单换行伪影按在册 `ledger-append-trailing-newline-phantom` 判读）。
+
+### 9 本班耗时
+
+- 起批 `date` 实测＝**21:50:13**；写盘段落笔时点＝以本班追加脚本打印的 `NOW=` 为准（**禁预写未发生的读数**）；班中续 claim 实测见 §1 读数行。提交面终值（ENQUEUED 袋号／files 数／base_head／对拍结果）由 §11 补条登记，不在本节预填。
+
+### 10 问题登记（[BLOCKER]，SOP §8-A-2；追加制禁删改旧行）
+
+- [BLOCKER] 2026-10-16|⑨成绩官 st-qoder-p09-1016-01|流程问题|已批 warn-only 功能（PE 止血闸）被"只述分数册路径兼容"的整档快照袋净删 47 行、16:48 补齐袋未恢复，commit 消息面零声明；现值受影响面＝0 行（披露键全册零命中），但功能面消失|证据=`git cat-file -p 1c79317949^:scripts/backtest/fexam/calibration_exam.py` 命中 4 vs `1c79317949` 面 0、行数 1115→1068、`8caf2743b9` 后 HEAD 仍 0、尺 `.runtime/tmp/st-qoder-p09-1016-01/clusters.out`|要 ⑤ 席恢复净删腿并附符号级 before/after 反向自证＋答"26 小时零触发"的两读；要 ⑩ 把"净删自证"列为落地前置观测项|高
+- [BLOCKER] 2026-10-16|⑨成绩官 st-qoder-p09-1016-01|判据缺失|全册 106 行"五柱全有面"的行＝**0**（`ic_ir` 无面 55／`mono` 无面 16），panel 路与 series 路各缺一条**不同的**否决柱 ⇒ 在册合取门柱"RankIC 且 IC_IR"从未在同一行两腿齐判|证据=本班尺五柱计数读数＋行集 rows{73,74,83,93..105}；卡面 `pillars_numeric` 五柱键；`ic_ir` 冻柱 71／机判 16＝22.5%|要 Owner/⑩ 对呈批 **P-11** 表态（甲＝路别可用柱披露位入册／乙＝⑤ 补 panel 路 mono＋series 路 ic_ir 两条实现腿），本席荐乙，判据字节未动|中
+- [BLOCKER] 2026-10-16|⑨成绩官 st-qoder-p09-1016-01|需Owner|台账末行署名"Owner 裁定三"的 ic_ir 更正行仍重述 52/3/5.8% 并自称"以本条为准"，而裁定册两面（盘 5025 行／HEAD 5025 行）对 `判据面补全`／`近似单脚`／`门柱机判` 三词 **0 命中**、`ruling_id` 最大值**两侧都＝#534**（#537-539 连盘面也没了，10-16 15:19 时点盘上尚有 +94 行）⇒ 署名在册查无＋热册三裁定疑已蒸发，本席按未裁续记并给现值 71/16/22.5%|证据=`docs/_working/automation_campaign/p09_score_officer/ledger.md` 末节该行＋`docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml` 两面 grep（最后一次 commit=`5fbfbc3add` 10-14 21:37）＋在册最接近者＝**裁定#520**"本裁定不修尺"|要 Owner 确认该行署名与出处（是否指 #537-539）；要 ⑫/⑩ 走"裁定册落地面收口"工单抢救三裁定（chief staging 救援件 blob c5c67013/87af5b43 为在册唯一存活面）|高
+- [BLOCKER] 2026-10-16|⑨成绩官 st-qoder-p09-1016-01|工具缺陷|claim TTL 30 分 < 班限 60 分（本席半日预算降频后仍短），"班中必续"全靠人肉；同窗 reaper 报 `dead_archive=error archived=0`（serializer 租约 pid=30712 存活期拒并行维护）⇒ 宪法 §2.6"当日四态分诊不隔夜"在排空窗内做不动|证据=`python -m zephyr.trading.process_reaper --status` 末行＋`lock_files.py acquire-batch` 输出"TTL: 30 分钟"＋`commit_queue.py status` 的 `lease.holder_pid=30712 state=drain-active`|要 ⑩/维护班把"续 claim"并入心跳节拍，并给死信分诊一条租约友好的口|低
+- [BLOCKER] 2026-10-16|⑨成绩官 st-qoder-p09-1016-01|数据问题|无（本班增量 2 行的供数面由 ⑦c 席自述在册、本席未复烧亦未遇缺数；15 员池物化面系在册禁烧面，本班未重烧）|—|—|低
+
+
+### 11 本班补条（写盘后 22:12–22:13 实测，旧句留卷不改）
+
+- ⚑ **当日增量由 2 行变为 4 行＝本班值守内册面在长**＝`22:12:21` 复测磁盘 sha `bb557705beea260f…`／**143510B**／rows **108**／mtime `22:09:54`（起批时点＝`05bc7ce014f204a0…`／141704B／106 行）⇒ 新出两行 `rows[106]`/`rows[107]`，`run_id=st-qoder-p07c-1016-02`（⑦c 02 班与本班**同窗出分**）。本班按"当日增量 100% 判卷"补齐，**游标改推 `rows[107]`**。
+- **补判两行（在册尺正文原样实跑 `replay10_calib.py 106 107`，末行 PROBLEMS 0）**＝rows[106] `TDM-E-L3-12-3/calibration/03_股东户数集中度`：`ic_ir FAIL 0.184 vs >=0.3`＋`ic_mean FAIL 0.0079 vs >=0.02`，oos/regime 同号 PASS，mono NO_FACE ⇒ fail 由两柱独立成立；rows[107] `TDM-E-L3-04/calibration/02_解禁否决`：**`ic_ir PASS 0.339 vs >=0.3`**（全册第二枚过 ICIR 腿）而 `ic_mean FAIL 0.0097`，oos/regime PASS，mono NO_FACE ⇒ **单柱 fail**。两行 fails 串与尺读数逐字同，门柱未走样；两行 `unjudged.numeric_keys_not_read=[]`、mono 无面如实披露 ⇒ 负结果如实入册核对通过。
+- ⚠ **对本班 S-3 的当场收窄（旧句留卷）**＝§2/§5 S-3 那句"三面同值"只在 `21:52`–`22:11` 两时点成立；`22:12` 复测＝**磁盘 108 行领先，index==HEAD==106 行**（`git status`＝` M`，`git diff --numstat HEAD`＝**67 增 0 删**）⇒ 正解＝**"该册已在 HEAD"是换代事实（判据作废仍成立），而"三面同值"只是瞬时条件、非新稳态**（⑦c 出分与正门落地都会单边推进磁盘面）。下一班勿把"三面同值"当常备绿灯，仍须逐面读数。
+- **108 行现值账（本班尺 `clusters_108.out` 现测，替换 §2 的 106 行账）**＝rows **108**／distinct card_id **84**／verdict `{'fail':104,'pass':2,'blocked':2}`／卡体 join **108/108**（`bad=[]`）／轮次直方图 `{1:70,2:9,3:3,4:1,7:1}`；`ic_ir` 冻柱 **73 行**／机判 **18＝24.7%**／无面 55；panel 且冻 `mono_spearman_min` 无面 **18 行**（行集与 `ic_ir` 有实数 18 行**逐位同**＝rows{73,74,83,93..107}）；同号负向簇 **18 行不变**（rows[106]/[107] 皆正号，不入簇）。
+- **S-6（本班补条新增的家族级观察）＝全册唯一两枚过 ICIR 腿的行都是"否决/剔除类"信号，且都只败在 `ic_mean` 地板**＝`grep` 可验谓词＝`metrics.ic_ir>=0.3` 在 108 行里命中 **2 行**＝rows[101]（`TDM-E-L3-10/calibration/**02_一字板不可成交**`，ic_ir 0.385／ic_mean 0.0099）与 rows[107]（`TDM-E-L3-04/calibration/**02_解禁否决**`，ic_ir 0.339／ic_mean 0.0097），两枚卡名同含否决语义、两枚 ic_mean 同落在门槛的 **49%**、两枚 mono 同无面。⇒ 含义＝合取门柱"RankIC≥0.02 且 IC_IR≥0.3"对**样本稀释型（作用于子集的剔除/否决式）信号**呈系统性偏紧：ICIR 是均值/标准差之比，剔除式易得高比率高均值；而 `ic_mean` 按全样本截面均值计，剔除式的真实效应被未受影响票稀释。**本席此两行不改判、不呈批、不开对照单**（样本＝2，按 07 班"单行不判死"扩到"两行不判族"），只登记为待观察候选：若该谓词命中数 ≥3 且仍全败于 `ic_mean`，本席下另有班按判据问题走呈批通道（＝否决类信号是否该配"子集内均值"口径，属 Owner/⑩ 门位，非本席写域）。
+- **本班自犯登记（旧句留卷）**＝§7-1 反斜杠坑在本班**再次命中同型**＝`m01_book.py` 三面读数段照旧用 `Path` 拼出的反斜杠路径喂 git，`22:12` 复测仍报 "not in the index／not in 'HEAD'"，与 §7-1 同一错、隔 20 分钟再犯；正解已固化为命令行内直接用正斜杠变量（本班 `f_INDEX.yaml`/`f_HEAD.yaml` 那次读即正确值 106 行）。⇒ 处方给下一班：**三面读数别写进脚本的 Path 拼接**，一律 shell 侧正斜杠＋`git cat-file -p ":$B"`。
+- **本班补条的 [BLOCKER] 登记＝无**（增行判卷属正常并发，非缺陷；在册红线"当日增量 100% 判卷"本班已兑现）。
