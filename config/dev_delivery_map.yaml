@@ -293,6 +293,9 @@ nodes:
     gates: 0
     gates_with_consumers: 0
     sample_consumers: []
+  p50_seconds: 0.25428
+  latency_samples: 1
+  latency_source: .runtime/audit/s_lane_timings.jsonl
 - node_id: D11-S02
   name_zh: worktree 分配与池化
   stage: S
@@ -1115,16 +1118,17 @@ nodes:
   node_type: stage
   decision_question: shell 侧门禁在网关临时索引通道里拿到执行权了吗？（数量以册 total_gates 字段为准）
   note_zh: 网关内以子进程重放 pre-commit 框架的补执行拍（git hooks 对经网关的提交恒不触发——提交走 --no-verify，故本环不是「git hook 通道」而是重放通道，作业簿 05 §3
-    旁向三证钉界）：_run_precommit_channel+_precommit_build_temp_index（GIT_INDEX_FILE own-scope 临时索引）；开关读 gate_precommit_run_enabled（**在册键名是
-    gate_precommit_run ⇒ 未注册 × default=True ⇒ 恒 ON，回滚面失效见 gap 节点 D11-G02**）；SKIP 名单实含 3 门（gate-commit-gw/gate-worktree-required/gate-protected-paths，2026-09-24
-    四死信实证后加第三门，flags.yaml 描述仍写两门=文档矛盾待总包收口）；失败裁决四态：infra_error→warn 放行、mutation 重跑仍变异→阻断、own_failed→阻断、foreign_failed→warn
-    放行；叶层=shell 门禁册（条目明细归生成器 generate_gate_registry.py，本图只挂指针）
+    旁向三证钉界）：_run_precommit_channel+_precommit_build_temp_index（GIT_INDEX_FILE own-scope 临时索引）；开关读 _PRECOMMIT_RUN_FLAG=gate_precommit_run（**2026-09-30
+    b192fa39126 旗标名对齐后与 flags.yaml 在册键同名，回滚通道复活=flag OFF 真停通道，回归钉=tests/governance/rule_bridge/test_precommit_flag_alignment.py；历史缺口档案见
+    gap 节点 D11-G02**）；SKIP 名单实含 3 门（gate-commit-gw/gate-worktree-required/gate-protected-paths，2026-09-24 四死信实证后加第三门，flags.yaml
+    描述仍写两门=文档矛盾待总包收口）；失败裁决四态：infra_error→warn 放行、mutation 重跑仍变异→阻断、own_failed→阻断、foreign_failed→warn 放行；叶层=shell
+    门禁册（条目明细归生成器 generate_gate_registry.py，本图只挂指针）
   build_status: built
   build_status_zh: built
   confidence: verified
   verified_scope: production
   evidence:
-  - config/flags.yaml gate_precommit_run 在册 + gateway:358 代码键 gate_precommit_run_enabled（两名不同=实查）
+  - config/flags.yaml gate_precommit_run 在册 + gateway _PRECOMMIT_RUN_FLAG 同名（b192fa39126 对齐后实查）
   - gateway _run_precommit_channel/_precommit_build_temp_index 行锚实查
   - machine_facts 双计数由本生成器动态产出
   exec_evidence:
@@ -1135,7 +1139,7 @@ nodes:
   source_anchors:
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3189
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3091
-  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:358
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:383
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:401
   runtime_refs: []
   data_refs:
@@ -1904,30 +1908,32 @@ nodes:
   trigger_facts: null
   consumers: null
 - node_id: D11-G02
-  name_zh: precommit 通道回滚旗恒失效（代码键未注册 × default=True）
+  name_zh: precommit 通道回滚旗恒失效（已闭合档案：2026-09-30 旗标名对齐修复）
   stage: C
   lane: C
   node_type: gap
-  decision_question: 把 flag 关掉能不能停掉 precommit 重放通道？Owner 门位「flag 翻转」在本通道可翻转吗？
-  note_zh: 代码读 `gate_precommit_run_enabled`（gateway:358，is_enabled(…, default=True) :424），在册键却是 `gate_precommit_run`（flags.yaml:96）——未注册键走
-    default ⇒ 通道恒 ON；gateway:413 docstring 自述「Owner 紧急停用=flags.yaml flag OFF」在本通道不可兑现；唯一可停手柄 env `ZEPHYR_PRECOMMIT_FAST_SUBSET=0`
-    只关 Phase-A 子集不关通道本体（gateway:390-398）⇒ 回滚面=幽灵引用（red_reason ghost_ref），开关面与注册表必须同名
+  decision_question: 把 flag 关掉能不能停掉 precommit 重放通道？Owner 门位「flag 翻转」在本通道可翻转吗？（已修复=可）
+  note_zh: 历史缺口（2026-09-24 建档）：代码读 `gate_precommit_run_enabled`（未注册键）× is_enabled(…, default=True) ⇒ 通道恒 ON，Owner
+    回滚手柄不可兑现。**已闭合**：2026-09-30 b192fa39126（ND-E9 SW15 R-5）一行对齐——gateway 常量 _PRECOMMIT_RUN_FLAG 'gate_precommit_run_enabled'→'gate_precommit_run'
+    与 flags.yaml 在册键同名，回滚通道复活（flag OFF 真停通道）；machine_facts.precommit_flag_pair 恒绿（code_key=gate_precommit_run, registered=True）；回归钉=tests/governance/rule_bridge/test_precommit_flag_alignment.py（键对齐+OFF
+    通道真停+叙事同步三钉，st-sO2-probe-20261004）。本节点保留=环节契约全集封顶（28+2），退役决策归总包（red terminal=已终局封存待退役裁定）
   build_status: partial
   build_status_zh: partial
   confidence: verified
   verified_scope: structure
   evidence:
-  - gateway:358 常量与 flags.yaml:96 在册键逐字比对（本车道 2026-09-25 复跑一致）
-  - 复跑（簿05 §末-3 命令 3）：`gate_precommit_run_enabled` in global_flag_registry._flags=False 而 is_enabled(default=True)=True；`gate_precommit_run`
-    已注册且 is_enabled=True
+  - gateway _PRECOMMIT_RUN_FLAG 常量与 flags.yaml 在册键逐字比对（b192fa39126 后一致）
+  - 复跑（st-sO2-probe-20261004）：`gate_precommit_run` in global_flag_registry._flags=True 且 _PRECOMMIT_RUN_FLAG 同名；`gate_precommit_run_enabled`
+    in _flags=False（旧幽灵键无册）
+  - 复跑（st-sO2-probe-20261004）：flag set OFF ⇒ _precommit_run_enabled()=False（回滚手柄实弹验证）
   exec_evidence:
   - 复跑（簿05 §末-3 命令 3）：代码键 gate_precommit_run_enabled 未注册而 is_enabled(default=True)=True ⇒ 恒 ON
   module_id: null
   module_ref: null
   source_anchors:
-  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:358
-  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:424
-  - config/flags.yaml:96
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:383
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:563
+  - config/flags.yaml:109
   - src/zephyr/shared/foundation/flags.py:279
   runtime_refs: []
   data_refs: []
@@ -1937,8 +1943,8 @@ nodes:
   - docs/_archive/_working_cleared/map_build/03_final_blueprint_and_schema.md §4 图11 判据②
   - docs/_archive/_working_cleared/map_build/fig11_delivery/00_skeleton.md §6 封顶声明（骨架外 gap 件）
   - docs/_archive/_working_cleared/map_build/fig11_delivery/05_门禁链与precommit通道.md
-  wiring_status: unwired_slot_hollow
-  red_reason: ghost_ref
+  wiring_status: wired
+  red_reason: terminal
   machine_facts:
     precommit_flag_pair:
       code_key: gate_precommit_run
@@ -2039,8 +2045,8 @@ counts:
   by_wiring_status:
     partial: 4
     unwired_no_caller: 2
-    unwired_slot_hollow: 2
-    wired: 22
+    unwired_slot_hollow: 1
+    wired: 23
   blood:
     purpose_labels: 12
     gates_mounted: 190

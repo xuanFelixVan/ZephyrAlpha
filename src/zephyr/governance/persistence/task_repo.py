@@ -2526,6 +2526,10 @@ class TaskRepository:
             elif result.status is CommitStatus.NOTHING_TO_COMMIT:
                 logger.info("DM-202918: files_in_scope 无 staged 变更，跳过 commit (task=%s)", task_id)
             elif result.status is CommitStatus.STASH_CONFLICT:
+                # [D11-G01 孤儿消费支，st-sO2-probe-20261004 考古]：STASH_CONFLICT 阶段3 弃用后
+                # 全仓零生产者——本 elif 永不触发（历史分派残留）。保留=防御性向后兼容；
+                # 退役决策（连同 CLI 码 2/4 死支）归总包，回归钉见
+                # tests/governance/rule_bridge/test_exit_code_dead_branches.py。
                 logger.warning(
                     "DM-202918: commit 成功但 stash pop 失败，数据保留在 stash (task=%s): %s",
                     task_id,
@@ -3420,9 +3424,7 @@ class TaskRepository:
     # UPSERT（scaffold 批量补录）
     # ------------------------------------------------------------------
 
-    def upsert(
-        self, task: Task, *, files: list[dict[str, str]] | None = None, batch_id: str | None = None
-    ) -> Task:
+    def upsert(self, task: Task, *, files: list[dict[str, str]] | None = None, batch_id: str | None = None) -> Task:
         """
         ON CONFLICT DO UPDATE 语义：task_id 已存在则更新（保留 created_at），否则新建。
 

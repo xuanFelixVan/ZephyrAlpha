@@ -132,6 +132,7 @@ import os
 import subprocess
 import sys
 import time
+from datetime import datetime, timezone  # S 道时延探针 ts 用（RULE-SCHEMA-TZ 显式时区）
 from pathlib import Path
 from typing import TypedDict
 
@@ -354,6 +355,93 @@ def _inject_ok(fn):
         return r
 
     return wrapper
+
+
+# ---------------------------------------------------------------------------
+# S 车道时延探针（图11 D11-S01..S09 九环节全盲计时，st-sO2-probe-20261004）
+#
+# 纪律红线：session_worktree.py 是提交链心脏——本探针只加计时零改既有逻辑，
+# 全程 fail-open（计时/落盘任何异常静默降级 debug 日志，绝不阻断被包裹函数；
+# 被包裹函数自身异常照常传播，finally 补记时延）。
+# 落盘=.runtime/audit/s_lane_timings.jsonl（追加式 JSONL，每行一条）：
+#   {sid, phase, duration_seconds, ts}
+#   phase=图11 S 道节点 id（D11-S01..S09）；ts=UTC 显式时区（RULE-SCHEMA-TZ）。
+# 图11 生成器 generate_dev_delivery_map.py 读本文件聚合 p50_seconds 挂 S 道节点。
+# 测试隔离：monkeypatch _S_LANE_TIMINGS_PATH 指向 tmp_path（禁写生产路径）。
+# 环节↔函数映射（九处 @_s_lane_probe 装饰）：
+#   D11-S01=_run_startup_health_check（开班检查，无 sid 参数）
+#   D11-S02=session_worktree_start（worktree 分配与池化，sid=args[0]）
+#   D11-S03=_spawn_heartbeat_daemon（心跳 spawn+活性确认，sid=args[0]）
+#   D11-S04=claim_files_for_edit（改前 claim，sid=args[0]）
+#   D11-S05=_wt_stage_changes（在途编辑同步+暂存前置链，sid=args[2]）
+#   D11-S06=session_worktree_commit（会话内 worktree 提交，sid=args[0]）
+#   D11-S07=session_worktree_merge（合并回主区，sid=args[0]）
+#   D11-S08=session_worktree_abort（放弃与死会话回收，sid=args[0]）
+#   D11-S09=_run_post_merge_reconcile（收尾对账链，注销前收尾，sid=args[1]）
+# ---------------------------------------------------------------------------
+
+_S_LANE_TIMINGS_PATH = REPO_ROOT / ".runtime" / "audit" / "s_lane_timings.jsonl"
+
+# pytest 默认停写（测试隔离红线：禁写生产路径）；探针单测显式置 True 后按
+# monkeypatch 的 _S_LANE_TIMINGS_PATH 写 tmp_path。
+_S_LANE_TIMINGS_TEST_MODE = False
+
+
+def _s_lane_emit_timing(phase: str, duration_seconds: float, session_id: str | None) -> None:
+    """fail-open 落盘一条 S 道时延记录（任何异常吞掉，绝不阻断业务）。"""
+    try:
+        if "PYTEST_CURRENT_TEST" in os.environ and not _S_LANE_TIMINGS_TEST_MODE:
+            return
+        record = {
+            "sid": session_id if isinstance(session_id, str) and session_id else "",
+            "phase": phase,
+            "duration_seconds": round(float(duration_seconds), 6),
+            "ts": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
+        }
+        path = Path(_S_LANE_TIMINGS_PATH)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 探针 fail-open：计时失败不阻断
+        logger.debug("s_lane timing emit failed (phase=%s)", phase, exc_info=True)
+
+
+def _s_lane_probe(phase: str, sid_index: int | None = None):
+    """装饰器版 S 道时延探针：单调钟差值计时，fail-open（零改被包裹逻辑）。
+
+    计时原语=time.perf_counter()（棒次原文 time.time() 差值经 DATETIME-NOW-FORBIDDEN
+    门校正：src/zephyr/ 全量禁 time.time()；perf_counter 单调钟无回拨、区间测量更正确）。
+
+    Args:
+        phase: 图11 S 道节点 id（D11-S01..S09 之一，见模块内映射表）。
+        sid_index: session_id 在被包裹函数位置参数中的下标（None=该环节无 sid 参数，
+            落盘时 sid=""）。
+    """
+
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            _t0 = time.perf_counter()
+            try:
+                return fn(*args, **kwargs)
+            finally:
+                _sid: str | None = None
+                if sid_index is not None:
+                    try:
+                        _arg = args[sid_index] if len(args) > sid_index else kwargs.get("session_id")
+                        if isinstance(_arg, str):
+                            _sid = _arg
+                    except Exception:  # noqa: BLE001 — sid 提取失败不影响计时
+                        _sid = None
+                # emit 自身 fail-open——此处再兜一层防 finally 内二次抛出
+                try:
+                    _s_lane_emit_timing(phase, time.perf_counter() - _t0, _sid)
+                except Exception:  # noqa: BLE001 — 探针 fail-open
+                    logger.debug("s_lane probe emit raised (phase=%s)", phase, exc_info=True)
+
+        return wrapper
+
+    return decorator
 
 
 # worktree 路径下跳过的 gate（session_worktree 有自己的 held_files 机制替代
@@ -1436,6 +1524,7 @@ def _reap_daemon_proc(session_id: str) -> None:
         pass
 
 
+@_s_lane_probe("D11-S03", 0)
 def _spawn_heartbeat_daemon(
     session_id: str,
     root: Path,
@@ -2533,6 +2622,7 @@ def _check_duplicate_task(
     return None
 
 
+@_s_lane_probe("D11-S01")
 def _run_startup_health_check(root: Path) -> dict:
     """AI session 启动健康度 smoke test（#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S7 Phase 3.3）。
 
@@ -2660,6 +2750,7 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 @_inject_ok
+@_s_lane_probe("D11-S02", 0)
 def session_worktree_start(
     session_id: str | None = None,
     project_root: str | Path | None = None,
@@ -4706,6 +4797,7 @@ def _print_wt_bottleneck_banner(root: Path) -> None:
 
 
 @_inject_ok
+@_s_lane_probe("D11-S06", 0)
 def session_worktree_commit(
     session_id: str,
     files: list[str],
@@ -4773,6 +4865,7 @@ def session_worktree_commit(
     return result
 
 
+@_s_lane_probe("D11-S05", 2)
 def _wt_stage_changes(
     root: Path,
     wt_path: Path,
@@ -5568,6 +5661,7 @@ def get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
     return _get_other_session_claimed_files(root, session_id)
 
 
+@_s_lane_probe("D11-S04", 0)
 def claim_files_for_edit(
     session_id: str,
     files: list[str],
@@ -6727,6 +6821,7 @@ def _execute_merge_and_build_msg(
     return merged, cleaned, msg
 
 
+@_s_lane_probe("D11-S09", 1)
 def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
     """merge 后触发 reconciler 验证，返回 reconcile_results。
 
@@ -6886,6 +6981,7 @@ def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -
 
 
 @_inject_ok
+@_s_lane_probe("D11-S07", 0)
 def session_worktree_merge(
     session_id: str,
     project_root: str | Path | None = None,
@@ -7688,6 +7784,7 @@ def _clean_main_workdir_on_abort(
 
 
 @_inject_ok
+@_s_lane_probe("D11-S08", 0)
 def session_worktree_abort(
     session_id: str,
     files: list[str] | None = None,

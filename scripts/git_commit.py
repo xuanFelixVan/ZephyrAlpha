@@ -166,6 +166,11 @@ def _print_guide_anchor(detail: str, exit_code: int | None = None, status: str |
 # commit 结果状态查表：CommitStatus → (exit_code, line_template, help_text, to_stdout)
 # line_template 使用 {message}/{commit_hash}/{stash_ref} 占位符；
 # 未列出的状态走 _COMMIT_RESULT_DEFAULT（exit 1, FAILED）。
+# [D11-G01 死分支注记，st-sO2-probe-20261004 考古]：下表 STASH_CONFLICT→2 与 SSOT_VIOLATION→4
+# 两支零生产者（全仓无 CommitStatus.STASH_CONFLICT/SSOT_VIOLATION 构造点——gateway 枚举
+# STASH_CONFLICT 行内注「阶段3 已弃用，保留向后兼容」；task_repo.py elif 消费支为孤儿支路）。
+# 按内收判据「零触发零消费→退役」适用，退役/补生产者处置权在总包（图11 gap 节点 D11-G01 档案）；
+# 回归钉=tests/governance/rule_bridge/test_exit_code_dead_branches.py（零生产者守卫+专码钉测）。
 _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
     CommitStatus.OK: (0, "OK: {message} (hash={commit_hash})", None, True),
     CommitStatus.NOTHING_TO_COMMIT: (1, "SKIP: {message}", None, True),
@@ -176,7 +181,7 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
         "建议对 exit 2 做指数退避重试（5s→15s→45s…）而非固定间隔盲轮询。",
         False,
     ),
-    CommitStatus.STASH_CONFLICT: (
+    CommitStatus.STASH_CONFLICT: (  # [D11-G01 死分支] 零生产者——见表头注记
         2,
         "STASH_CONFLICT: {message}",
         "  stash_ref={stash_ref} (数据保留在 stash，未丢失)",
@@ -189,7 +194,7 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
         "（2026-08-13 裁定：AI 可默认使用，前置=creation_token 已登记，审计留痕）。",
         False,
     ),
-    CommitStatus.SSOT_VIOLATION: (
+    CommitStatus.SSOT_VIOLATION: (  # [D11-G01 死分支] 码 4 零生产者——见表头注记
         4,
         "SSOT_VIOLATION: {message}",
         "  新增文件声明了已有 module_path——请扩展已有文件而非新建。",

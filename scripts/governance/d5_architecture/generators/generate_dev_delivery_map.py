@@ -7,6 +7,7 @@
 #   scripts.governance._shared.module_translation_loader（get_module_translation）；
 #   zephyr.shared.io.file_utils（safe_write_text，热写通道复用）；git（只读 show 取 HEAD 提交时间派生时间戳）；
 #   docs/03_modules/path_ownership_map.yaml（depgraph_node 在册 module_id 派生面，只读）；
+#   .runtime/audit/s_lane_timings.jsonl（S 道时延探针聚合面，只读扫，st-sO2-probe-20261004 手术1c）；
 #   validate_dev_delivery_map（scan_skeleton_status 单源导入——CLONEGUARD 收内 2026-10-04，
 #   先例 dc0bc34cff 家族方向：校验器=判据单一真源，生成器禁持副本）
 # [CONSUMERS] config/dev_delivery_map.yaml（唯一产出物）；
@@ -82,6 +83,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import json
 import re
 import subprocess
 import sys
@@ -120,6 +122,8 @@ _BOOK_DIR = "docs/_archive/_working_cleared/map_build/fig11_delivery"
 _PATH_OWNERSHIP = "docs/03_modules/path_ownership_map.yaml"
 # 两个 gap 节点的作业簿出处（骨架外显性化缺口件，禁指骨架§1——骨架无此行）
 _GAP_BOOK_OF = {"D11-G01": "04_提交正门与全局锁.md", "D11-G02": "05_门禁链与precommit通道.md"}
+# S 车道时延探针合法 phase 集（session_worktree.py @_s_lane_probe 九处映射；手术1c）
+_S_LANE_PHASES = frozenset(f"D11-S{i:02d}" for i in range(1, 10))
 # 作业簿编号→覆盖环节（骨架 §5 契约：01→S01-S03 … 08→D01-D06）
 _BOOK_OF = {
     "S01": "01_会话启动与worktree池.md",
@@ -557,17 +561,19 @@ N: dict[str, dict[str, Any]] = {
         mech="网关内以子进程重放 pre-commit 框架的补执行拍（git hooks 对经网关的提交恒不触发——提交走 "
         "--no-verify，故本环不是「git hook 通道」而是重放通道，作业簿 05 §3 旁向三证钉界）："
         "_run_precommit_channel+_precommit_build_temp_index（GIT_INDEX_FILE own-scope 临时索引）；"
-        "开关读 gate_precommit_run_enabled（**在册键名是 gate_precommit_run ⇒ 未注册 × default=True ⇒ "
-        "恒 ON，回滚面失效见 gap 节点 D11-G02**）；SKIP 名单实含 3 门（gate-commit-gw/gate-worktree-required/"
+        "开关读 _PRECOMMIT_RUN_FLAG=gate_precommit_run（**2026-09-30 b192fa39126 旗标名对齐后与 "
+        "flags.yaml 在册键同名，回滚通道复活=flag OFF 真停通道，回归钉="
+        "tests/governance/rule_bridge/test_precommit_flag_alignment.py；历史缺口档案见 gap 节点 D11-G02**）；"
+        "SKIP 名单实含 3 门（gate-commit-gw/gate-worktree-required/"
         "gate-protected-paths，2026-09-24 四死信实证后加第三门，flags.yaml 描述仍写两门=文档矛盾待总包收口）；"
         "失败裁决四态：infra_error→warn 放行、mutation 重跑仍变异→阻断、own_failed→阻断、foreign_failed→warn 放行；"
         "叶层=shell 门禁册（条目明细归生成器 generate_gate_registry.py，本图只挂指针）",
         ref=f"{_GW}:3189",
-        anc=[f"{_GW}:3189", f"{_GW}:3091", f"{_GW}:358", f"{_GW}:401"],
+        anc=[f"{_GW}:3189", f"{_GW}:3091", f"{_GW}:383", f"{_GW}:401"],
         data=[_SHELL_REG, "config/flags.yaml"],
         ev=[
             "gateway _run_precommit_channel/_precommit_build_temp_index 行锚实查",
-            "config/flags.yaml gate_precommit_run 在册 + gateway:358 代码键 gate_precommit_run_enabled（两名不同=实查）",
+            "config/flags.yaml gate_precommit_run 在册 + gateway _PRECOMMIT_RUN_FLAG 同名（b192fa39126 对齐后实查）",
             "machine_facts 双计数由本生成器动态产出",
         ],
         gate_facts=_SHELL_REG,
@@ -814,25 +820,30 @@ N: dict[str, dict[str, Any]] = {
         gap=True,
         lane="C",
         status="🔨",
-        name="precommit 通道回滚旗恒失效（代码键未注册 × default=True）",
-        q="把 flag 关掉能不能停掉 precommit 重放通道？Owner 门位「flag 翻转」在本通道可翻转吗？",
-        mech="代码读 `gate_precommit_run_enabled`（gateway:358，is_enabled(…, default=True) :424），"
-        "在册键却是 `gate_precommit_run`（flags.yaml:96）——未注册键走 default ⇒ 通道恒 ON；"
-        "gateway:413 docstring 自述「Owner 紧急停用=flags.yaml flag OFF」在本通道不可兑现；"
-        "唯一可停手柄 env `ZEPHYR_PRECOMMIT_FAST_SUBSET=0` 只关 Phase-A 子集不关通道本体"
-        "（gateway:390-398）⇒ 回滚面=幽灵引用（red_reason ghost_ref），开关面与注册表必须同名",
+        name="precommit 通道回滚旗恒失效（已闭合档案：2026-09-30 旗标名对齐修复）",
+        q="把 flag 关掉能不能停掉 precommit 重放通道？Owner 门位「flag 翻转」在本通道可翻转吗？（已修复=可）",
+        mech="历史缺口（2026-09-24 建档）：代码读 `gate_precommit_run_enabled`（未注册键）× "
+        "is_enabled(…, default=True) ⇒ 通道恒 ON，Owner 回滚手柄不可兑现。"
+        "**已闭合**：2026-09-30 b192fa39126（ND-E9 SW15 R-5）一行对齐——gateway 常量 "
+        "_PRECOMMIT_RUN_FLAG 'gate_precommit_run_enabled'→'gate_precommit_run' 与 flags.yaml 在册键"
+        "同名，回滚通道复活（flag OFF 真停通道）；machine_facts.precommit_flag_pair 恒绿"
+        "（code_key=gate_precommit_run, registered=True）；回归钉="
+        "tests/governance/rule_bridge/test_precommit_flag_alignment.py（键对齐+OFF 通道真停+叙事同步三钉，"
+        "st-sO2-probe-20261004）。本节点保留=环节契约全集封顶（28+2），退役决策归总包"
+        "（red terminal=已终局封存待退役裁定）",
         anc=[
-            "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:358",
-            "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:424",
-            "config/flags.yaml:96",
+            "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:383",
+            "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:563",
+            "config/flags.yaml:109",
             "src/zephyr/shared/foundation/flags.py:279",
         ],
         ev=[
-            "复跑（簿05 §末-3 命令 3）：`gate_precommit_run_enabled` in global_flag_registry._flags=False "
-            "而 is_enabled(default=True)=True；`gate_precommit_run` 已注册且 is_enabled=True",
-            "gateway:358 常量与 flags.yaml:96 在册键逐字比对（本车道 2026-09-25 复跑一致）",
+            "复跑（st-sO2-probe-20261004）：`gate_precommit_run` in global_flag_registry._flags=True 且 "
+            "_PRECOMMIT_RUN_FLAG 同名；`gate_precommit_run_enabled` in _flags=False（旧幽灵键无册）",
+            "复跑（st-sO2-probe-20261004）：flag set OFF ⇒ _precommit_run_enabled()=False（回滚手柄实弹验证）",
+            "gateway _PRECOMMIT_RUN_FLAG 常量与 flags.yaml 在册键逐字比对（b192fa39126 后一致）",
         ],
-        red="ghost_ref",
+        red="terminal",
     ),
 }
 
@@ -850,7 +861,7 @@ WIRING: dict[str, str] = {
     "D11-C10": "partial",  # interactive 正门 base_head 恒 None ⇒ 非注册表整文件覆盖支路无基底比对
     "D11-D05": "unwired_slot_hollow",  # base_blob 恒 None ⇒ _revalidate_stale_base 结构空转（永远判"仍适用"）
     "D11-G01": "unwired_no_caller",
-    "D11-G02": "unwired_slot_hollow",
+    "D11-G02": "wired",  # b192fa39126 旗标名对齐后回滚通道复活（st-sO2-probe-20261004 复核）
 }
 RED: dict[str, str] = {
     "D11-S05": "unwired",
@@ -1489,6 +1500,51 @@ def load_blood_mount(root: Path) -> dict[str, Any]:
     }
 
 
+def load_s_lane_p50(root: Path) -> dict[str, dict[str, Any]]:
+    """S 车道时延探针聚合（st-sO2-probe-20261004 手术1c）。
+
+    读 ``.runtime/audit/s_lane_timings.jsonl``（session_worktree.py 九处 @_s_lane_probe
+    装饰器追加式落盘，每行 {sid, phase, duration_seconds, ts}），按 phase=D11-S01..S09
+    聚合 p50（奇数取中位、偶数取双中均值的经典口径）+ 样本数。
+
+    fail-open：文件缺失/单行解析失败/无 S 道样本 ⇒ 返回 {}（worktree/CI 无 .runtime
+    时不产 p50 字段——结构校验器同口径不查此面，缺省不红）。
+    """
+    out: dict[str, dict[str, Any]] = {}
+    path = root / ".runtime" / "audit" / "s_lane_timings.jsonl"
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return {}
+    buckets: dict[str, list[float]] = {}
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rec = json.loads(line)
+            phase = str(rec.get("phase", ""))
+            dur = float(rec.get("duration_seconds"))
+        except (ValueError, TypeError):
+            continue
+        if phase not in _S_LANE_PHASES or dur < 0:
+            continue
+        buckets.setdefault(phase, []).append(dur)
+    for phase, durs in buckets.items():
+        if not durs:
+            continue
+        s = sorted(durs)
+        n = len(s)
+        mid = n // 2
+        p50 = s[mid] if n % 2 else (s[mid - 1] + s[mid]) / 2.0
+        out[phase] = {
+            "p50_seconds": round(p50, 6),
+            "latency_samples": n,
+            "source": ".runtime/audit/s_lane_timings.jsonl",
+        }
+    return out
+
+
 def build_machine_facts(root: Path) -> dict[str, Any]:
     """一次全扫产出 {node_id: machine_facts} + 顶层 machine 计数块。"""
     facts: dict[str, Any] = {}
@@ -1643,6 +1699,17 @@ def build_document(as_of: str, root: Path) -> dict[str, Any]:
         node["consumers"] = blood["cons_by_node"].get(
             nid, {"gates": 0, "gates_with_consumers": 0, "sample_consumers": []}
         )
+    # S 车道时延探针挂载（手术1c）：phase=D11-Sxx → 节点补 p50_seconds+latency_samples；
+    # 无 jsonl/无样本 ⇒ 不挂（fail-open，结构校验器不查此面）。
+    s_lane_p50 = load_s_lane_p50(root)
+    for node in nodes:
+        if node.get("lane") != "S":
+            continue
+        lat = s_lane_p50.get(node["node_id"])
+        if lat:
+            node["p50_seconds"] = lat["p50_seconds"]
+            node["latency_samples"] = lat["latency_samples"]
+            node["latency_source"] = lat["source"]
     edges = [list(e) for e in EDGES]
     lane_dist = {"S": 0, "C": 0, "D": 0}
     type_dist: dict[str, int] = {}
