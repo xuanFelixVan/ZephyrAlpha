@@ -416,11 +416,11 @@ DEFAULT_HOT_FILES: Final = frozenset(
         "docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml",
         "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml",
         "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml",
-        "docs/_working/archive/2026-09/design_memos/construction_progress_tracker.md",
-        "docs/_working/archive/2026-09/design_memos/00_index_trading_decision.md",
+        "docs/_archive/_working_cleared/archive/2026-09/design_memos/construction_progress_tracker.md",
+        "docs/_archive/_working_cleared/archive/2026-09/design_memos/00_index_trading_decision.md",
         # AI-DRIFT-001（2026-08-26）：94号当日连遭 4 起并发覆写事故（frontmatter 回滚/
         # 候选表行丢失/秒级反复覆写），扩列纳入 CAS 写前读新+commit base 新鲜度门禁覆盖。
-        "docs/_working/archive/2026-09/design_memos/94_crypto_quant_expansion.md",
+        "docs/_archive/_working_cleared/archive/2026-09/design_memos/94_crypto_quant_expansion.md",
     }
 )
 
@@ -486,7 +486,10 @@ class RegistryMassEditRefused(DetailsCarryingError):
 
 
 class WriteVerificationError(DetailsCarryingError):
-    """写后回读校验失败——落盘内容与预期不符（details 字段承载路径/哈希）。"""
+    """写后回读校验失败——落盘字节与期望落盘字节不符（字节口径，红蓝 2026-10-16 (b)）。
+
+    details 字段承载路径/哈希；expect/disk 均为各自字节的 sha256。
+    """
 
 
 @dataclass
@@ -498,8 +501,28 @@ class SafeWriteResult:
 
 
 def content_sha256(text: str) -> str:
-    """UTF-8 语义内容 hash（调用方读文件后计算，作为 expected_base 传入）。"""
+    """UTF-8 语义内容 hash（调用方读文件后计算，作为 expected_base 传入）。
+
+    口径钉死（红蓝 2026-10-16 (a)）：入参必须是 ``read_text()``（universal-newlines，
+    CRLF→LF 归一）返回的**归一文本**，即 ``content_sha256(path.read_text(encoding=...))``。
+    对 CRLF 文件用原生字节（``read_bytes()``）直接 hash 与本口径不符——作
+    ``expected_base_sha256`` 传入会对 CRLF 存量误报 StaleWriteRefused（防线正确、
+    口径陷阱；session_worktree 热文件还原链路的 read_bytes 口径即此陷阱现形处）。
+    """
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _expected_written_bytes(content: str, encoding: str, newline: str | None) -> bytes:
+    """按 TextIOWrapper 写侧 newline 语义折算期望落盘字节（回读校验同口径真源）。
+
+    写侧翻译规则与 open()/TextIOWrapper 文档逐字对齐：仅 ``"\\n"``→分隔符；
+    ``newline="\\n"``/``""`` 不翻译，``None`` 用 ``os.linesep``；``"\\r"`` 原样透传。
+    勿另立口径——回读校验（safe_write_text ④）依赖本函数与真实写盘字节一致。
+    """
+    if newline in ("\n", ""):
+        return content.encode(encoding)
+    sep = os.linesep if newline is None else newline
+    return content.replace("\n", sep).encode(encoding)
 
 
 def _safe_write_audit(repo_root: Path, record: dict) -> None:
@@ -541,6 +564,11 @@ def safe_write_text(
         content: 新内容。
         expected_base_sha256: 调用方读到的原内容 hash（content_sha256 计算）。
             热文件必填；非热文件可选（给了就校验）。
+            口径钉死（红蓝 2026-10-16 (a)，含 LF 归一说明）：**LF 归一文本 hash**——
+            必须对 ``read_text()``（universal-newlines，CRLF→LF 归一）返回的文本计算，
+            即 ``content_sha256(path.read_text(encoding=...))``。对 CRLF 存量文件用
+            原生字节（``read_bytes()``）口径计算会误报 StaleWriteRefused（防线正确、
+            口径陷阱，误报时 details 的 expected/disk 均为各自口径真值）。
         repo_root: 仓根（热文件判定/审计锚定）；None 时经 paths.REPO_ROOT 解析。
         encoding: 读写编码。
         newline: 行尾策略（透传 atomic_write）。默认 ``"\\n"``（.gitattributes
@@ -550,10 +578,16 @@ def safe_write_text(
             ``/_registry/catalogs/`` 下且删除行数 >0.5% 时，缺省拒写；只有
             外科脚本/裁定授权的批量编辑显式传 True 才放行（审计留痕）。
 
+    Returns:
+        SafeWriteResult——``before_sha256``=写前磁盘文本（LF 归一口径）hash；
+        ``after_sha256``=写后磁盘**字节** hash（与 content.encode() 同口径可互核，
+        CRLF content 场景即其原生字节 hash）。
+
     Raises:
         StaleWriteRefused: 热文件未带 base，或 base 与磁盘不符（拒写，不落盘）。
         RegistryMassEditRefused: 注册表族删除行数超阈值且未显式 allow_mass_edit。
-        WriteVerificationError: 回读校验失败（落盘内容≠预期）。
+        WriteVerificationError: 回读校验失败（字节口径：落盘字节≠期望落盘字节；
+            期望侧经 _expected_written_bytes 与写盘 newline 语义同源折算）。
     """
     from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415
 
@@ -631,10 +665,15 @@ def safe_write_text(
     # ③ 原子写（复用本模块 atomic_write 真源）
     atomic_write(target, content, encoding=encoding, newline=newline)
 
-    # ④ 写后回读校验（防"修改已生效"假象）
-    after_hash = content_sha256(target.read_text(encoding=encoding))
-    expected_after = content_sha256(content)
-    if after_hash != expected_after:
+    # ④ 写后回读校验（防"修改已生效"假象）——字节口径：写出的字节==回读的字节。
+    # 禁用文本口径（content_sha256(read_text)）：read_text 走 universal-newlines 会把
+    # CRLF 归一 LF，调用方传 CRLF content 时会"已字节原样落盘却报校验失败"假阴性
+    # （红蓝 2026-10-16 (b)）。期望字节经 _expected_written_bytes 与写盘侧同源折算。
+    expected_bytes = _expected_written_bytes(content, encoding, newline)
+    after_bytes = target.read_bytes()
+    after_hash = hashlib.sha256(after_bytes).hexdigest()
+    if after_bytes != expected_bytes:
+        expected_after = hashlib.sha256(expected_bytes).hexdigest()
         _safe_write_audit(root, {**base_record, "event": "verify_failed", "after_sha256": after_hash})
         raise WriteVerificationError(
             "写后回读校验失败（落盘内容与预期不符）",

@@ -12,6 +12,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -92,6 +93,42 @@ def test_write_then_reread_consistency(repo: Path) -> None:
     content = "# 中文内容混合 ascii 12345\n" * 100
     safe_write_text(repo / "plain.txt", content, repo_root=repo)
     assert (repo / "plain.txt").read_text(encoding="utf-8") == content
+
+
+# ── CRLF 口径双缺陷回归（红蓝 2026-10-16 (a)(b)，st-fufix-1016）───────────────
+
+
+def test_crlf_content_written_and_verified(repo: Path) -> None:
+    """红蓝 (b) 正例：CRLF content 原样落盘且回读校验通过（不再假阴性）。
+
+    修前：回读校验按 read_text（universal-newlines 归一 LF）文本口径比对，
+    CRLF content 已字节原样落盘仍抛 WriteVerificationError（已落盘却报失败）。
+    修后：字节口径——写出的字节==回读的字节。
+    """
+    content = "line1\r\nline2\r\nline3\r\n"
+    result = safe_write_text(repo / "plain.txt", content, repo_root=repo)
+    assert result.written
+    assert (repo / "plain.txt").read_bytes() == content.encode("utf-8")
+    assert result.after_sha256 == hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+
+def test_crlf_base_hash_convention_pinned(repo: Path) -> None:
+    """红蓝 (a) 反例：CRLF 存量文件的 expected_base_sha256 口径=LF 归一文本（钉死）。
+
+    错误口径（read_bytes 原生字节 hash——session_worktree 热文件还原链路同款）
+    对 CRLF 文件必被拒：防线语义不放松，口径陷阱由 docstring 钉死+本用例锁定；
+    正确口径（content_sha256(read_text)）放行（CRLF 存量不误拒）。
+    """
+    crlf = "rule v1\r\nrule v2\r\n"
+    (repo / "plain.txt").write_bytes(crlf.encode("utf-8"))
+    wrong_convention = hashlib.sha256(crlf.encode("utf-8")).hexdigest()  # read_bytes 口径
+    with pytest.raises(StaleWriteRefused):
+        safe_write_text(repo / "plain.txt", "rule v3\n", expected_base_sha256=wrong_convention, repo_root=repo)
+    assert (repo / "plain.txt").read_bytes() == crlf.encode("utf-8")  # 拒写不落盘
+    good_base = content_sha256((repo / "plain.txt").read_text(encoding="utf-8"))  # LF 归一口径
+    result = safe_write_text(repo / "plain.txt", "rule v3\n", expected_base_sha256=good_base, repo_root=repo)
+    assert result.written
+    assert (repo / "plain.txt").read_bytes() == b"rule v3\n"
 
 
 # ── safe_rmtree 删除硬断言（CAND-GOVSEC-001 ① 红队用例）──────────────────────
