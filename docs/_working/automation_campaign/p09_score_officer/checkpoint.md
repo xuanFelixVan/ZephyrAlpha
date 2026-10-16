@@ -8,7 +8,7 @@ title: ⑨成绩官·游标
 
 cursor: exam_scores_v1.yaml#rows[109]
 last_run: 2026-10-17
-last_batch: 当日（10-17 起批至 00:5x）对 HEAD 落地面增量＝0 行（rows=110 未长）⇒判卷对象空集・已判最高行仍＝rows[109]・rows[110] 起待判；本班主产出＝[⑨-新] 结案落地面复核（A/B 成立・C 改判）＋修㉒㉓㉖㉗ 四单复量（㉓㉗ 闭合・㉒ 存量・㉖ 延续）＋十七班案卷 §3 判语转正入库
+last_batch: 当日（10-17 起批至 03:0x）对 HEAD 落地面增量＝0 行（rows=110 未长・盘与 HEAD sha 前缀同为 a9532fceb0899c94）⇒判卷对象空集・已判最高行仍＝rows[109]・rows[110] 起待判；本班主产出＝落地面洞从个案升家族的第一份分母账（代码文本引用 4628 枚／真洞 224／抽验 4 枚分流 1注释:2真读:1在途⇒修㉜ 分层判据）＋判卷面唯一性坐实（旧址 73 行键集 100% 为 110 行册子集・零孤行）＋修㊀ 归因纠偏（shadow 族通道两册自陈互斥）
 notes: 游标由本岗每批推进；监督员(⑩)可代修。
 
 ## 游标推进记录 ｜ st-qoder-p09-1015-02
@@ -318,3 +318,16 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。
 - **下一班（1017-03）首查判据（三条，全部引 HEAD 可取回或库内面，本席不再给 tmp 件）**＝①判卷取数面＝HEAD，首查 rows 是否 >110；若新增长只对 `rows[110]` 起逐行判，**join 谓词＝指针双侧一致优先、不一致回退册 `run_id`**（见上条①，别单用 S-15）；②凡执行器/考工要读分数馆任一件，**先跑 `git rev-parse -q --verify HEAD:<该件>` 定落地面存在性**（本班实测 19/20 查无，主册是唯一正对照）；③写前 `python scripts/lock_files.py check <自家面>` 自证在册，并在**同一条命令内**先 `SessionRegistry().heartbeat(sid)`（本席无 worktree⇒无 daemon；⚠ 本班实测 `register(logical=True)` 被降为 False 且 `mark_logical` 报 `MARK_LOGICAL_DENIED`（非 chief 形态词∧心跳不新鲜），`register_heartbeat_keepalive` **不在 SessionRegistry 上**⇒ 本班只有 30 分 claim TTL，班尾写共写件前必须重新 acquire；`lock_files.py list` 命中本席号段＝4 条）。
 - ⚠ 本班纪律申明＝未动分数册与任何判据字节；未复位 index；未 pop/drop/clean 任何 stash（reaper 现读 `stash_count=27`）；未 rm 任何他会话遗留（含 10-15 回灌的 `docs/_working/fexam/**` 31 件）；未 requeue 任何死袋；未 release 他会话 claim；未 mv 销账（`dead_archive ok=False rc=1` 本班复量）；未跑任何考试；零 worktree 调用（TRAE-079 Phase 2 遵令）。
 - **本班耗时锚**＝冷启动 `date` 实测 `2026-10-17 01:50:12`；写盘与提交段终值由本班收班段按实记（**禁预写未发生的读数**），提交面（袋号／files／base_head／对拍）不入本游标（防自指回环）。
+
+## 游标推进记录 ｜ st-qoder-p09-1017-03
+
+- cursor: `exam_scores_v1.yaml#rows[109]`（**未推进**＝当日增量 0 行，rows=110 与游标行号自洽；⚑ 本班盘面与 HEAD 两面 sha 前缀同值 `a9532fceb0899c94`，非"取数面落后"）
+- last_run: 2026-10-17
+- last_batch: 判卷对象空集・零升级・零新 fail 路由・零呈批草稿・零对照单；主产出＝修㉜㉝㉞㉟㊀ 五条新开＋在册七单复量（㉘㉙㉚㉛㉒′㉕ 六条未闭合／㉖ 延续／㉗ 闭合维持）＋卡面归属唯一性坐实（597 枚零 DUP）＋本席号段两枚 .aidrafts 遗留（396M/399M）交 ⑩
+- 本班耗时锚＝冷启动 `date` 实测 `2026-10-17 02:50:14`；本段 `datetime.now()` 同帧 `2026-10-17 03:09:56`
+- **下一班（1017-04）首查判据（四条，全部引 HEAD 可取回或库内面）**＝
+  ①判卷取数面＝HEAD，首查 rows 是否 >110；只对 `rows[110]` 起逐行判；join 谓词用**"卡面 `card_id` == 册行 `card_id` ∧ 卡面 `run_id` == 册行 `run_id`"**（本班 14.7 实测卡体第 34 行左右带 `run_id:` 回声，双侧闸无需新造字段；1017-01 S-15／1017-02 S-17 两级谓词可被此式取代）。
+  ②⚑ **读主分数册必须用 `yaml.safe_load_all` 并取含 `rows` 的那份**＝该件是**双文档 YAML**（第 8 行 `---`），`safe_load` 直接抛 `ComposerError: expected a single document`；用 `safe_load` 的班会把"册面异常"记成事故（本班 14.0/[BLOCKER]7）。
+  ③归属对账禁裸 `git grep -l -F "card_id: X"`＝该谓词对 rows[4] 命中 2 件（卡件＋旧址冻结册 `docs/03_modules/_domain_backtest/exam_scores_v1.yaml:99`，行形态 `- card_id:`）；须限定 `docs/03_modules/_domain_backtest/exam_cards/` 且按"行内容以 `card_id:` 起始"解析（本班改正尺＝`carduniq17c_fix.py` 谓词文字化于 14.7）。
+  ④池面本班实测**未如 1017-02 预言消失**＝`.runtime/tmp/` 下 `p03_1017_04`(20员・PR 15.7887・新)／`p03_1016_03`(20员・14.2148)／`p03_1016`(7员・4.2437)／`p04_01`(5员・2.8593)／`p04_1016_04`(1员・退化) 五面同窗并存；报数须带 **PR/n** 五件套（修㉞），members 须先 `basename` 归一（修㉟）。
+- ⚠ 本班纪律申明＝未动分数册与任何判据字节；未跑任何考试；未复位 index；未 pop/drop/clean 任何 stash（reaper 现读 27）；未 rm 任何他会话遗留；未 requeue 死袋；未 release 他会话 claim；未 mv 销账（`dead_archive ok=False rc=1` 本班复量）；未清理本席号段两枚遗留 worktree（报 ⑩）；零 worktree 调用（TRAE-079 Phase 2 遵令）。
