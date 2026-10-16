@@ -880,6 +880,109 @@ MANUAL_GATES: list[dict] = [
 ]
 
 
+# ═══ own_scope 审定覆盖层（车道M own_scope 扩面班 st-sM2-ownscope-20261004，2026-10-04）═══
+# 判据（逐台源码/入口实读审定，任务令：内容扫描型→true；结构校验型→false）：
+#   TRUE  ⟺ ①无未 own 化的全暂存区直扫（_get_staged_*/diff --cached 全量——若有则先源码推广，
+#            见批1 五台 _split_own_foreign 插入）②无工作树全仓遍历（rglob/os.walk/ls-tree 全树/
+#            --all-files 主路径）③判定不依赖他会话活跃态/stash 数/全局健康报告等外来共享态。
+#            注册表/HEAD/固定已知路径只读核对（成本有界，非全仓扫描）不破 TRUE；pre-commit 通道台
+#            经 GATE-PRECOMMIT-RUN 临时索引构造性 own（索引驱动/--staged/pass_filenames 传入面）。
+#   FALSE ⟺ 结构校验型（全仓 glob/rglob/walk/ls-tree 全树/跨册交叉对齐）或全局共享态判定
+#            （跨会话协调/depgraph 缓存新鲜度/.runtime 报告全集/stash 数）。
+# 净零申报（宪法 §4）：本审定层替代旧「源码文本 _build_own_scope 单一启发式」作为 own_scope 真源
+# （启发式降级为未审定台的缺省层，两者一致时零漂移）；裁定#341 enforcement_channel 同款"生成器内
+# 手工审定清单"先例=MANUAL_GATES。墓碑台（status=deprecated）机械规则见 _apply_own_scope_audit。
+OWN_SCOPE_AUDIT_TRUE: dict[str, str] = {
+    # ── commit-gate 批（27 台：files 参数面/本会话登记面/固定路径有界核对）──
+    "ALGO-FLOW-LINK": "own-diff 单一真源模式（docstring 自述：只查本次 commit files 清单，他会话 staged 零接触）",
+    "ALGO-NOTE-SYNC": "files 参数+指定地图 staged diff 归因，无全暂存/全仓面",
+    "BUSINESS-REGISTRY": "files 尾缀触发的注册表存在性核对（固定路径只读）",
+    "CAPABILITY-LOOKUP-REQUIRED": "files 豁免面判定，无仓库遍历",
+    "CLAIM-REQUIRED": "本 session held_files vs 本次 files 比对（own 登记态）",
+    "COMMIT-SCOPE": "files 域映射（--allow-multi-domain 豁免面），扫面=own files",
+    "CONSUMERS-ACCURACY": "warn-only 无阻断面（外来违规本就不硬阻断）+扫描面=staged 自身",
+    "REFERENCE-INTEGRITY": "files 中新增 AGENTS.md §引用 vs AGENTS.md 固定路径核对",
+    "DIRECTORY-CONTRACT": "rel_files 传参给子校验器（超大批 --all-files 回退为例外路径）",
+    "ENCODING-SAFETY": "files 分块送检，扫面=own files",
+    "GATE-ERRCODE-CONSISTENCY": "files 触发的错误码一致性核对（固定注册表只读）",
+    "FOREIGN-CHANGE-DETECTION": "本次 files vs 本 session claim 快照（own 归因面）",
+    "FORGED-GW-MARKER": "本 commit 元数据+session 注册核验，无文件扫面",
+    "HOT-FILE-BASE-FRESHNESS": "本次 files 的 claim 锚新鲜度核对（own 登记态）",
+    "ID-UNIQUENESS": "files 含配置册才触发的单文件校验",
+    "GATE-PRECOMMIT-OFFLINE": "files 含 .pre-commit-config.yaml 才触发的单文件校验",
+    "PROTECTED-PATHS": "files 受保护路径命中判定（own files 面）",
+    "R5-DIGIT-SUFFIX": "files 目录+ls-tree HEAD 有界存在性核对（逐 own 目录，非全树）",
+    "RECONCILER-FILE-OPS": "files 治理代码裸删除/移动原语扫描",
+    "RULE-EXECUTION-PAIRING": "files 中 trae 规则↔执行配对核对（固定真源只读）",
+    "RULE-FOUR-WAY-ALIGN": "files 触发的四方对齐（固定真源 YAML/DB 只读，无工作树遍历）",
+    "RULING-COMMIT-VERIFIED": "files 裁定引用原子性核对（ruling_registry 固定路径只读）",
+    "SCHEMA-FILE-EXISTS": "files 含 YAML 才触发的悬挂引用核对",
+    "SESSION-REQUIRED": "本 session 注册校验（commit 元数据面，无外来共享态判定）",
+    "TABLE-NAME-REGISTRY": "own files 优先（#ARCH-GATE-OWN-SCOPE-001 推广批自述；全 staged 回退仅 files 空直调场景）",
+    "TAKEOVER-PENDING": "本次 files ∩ 接管台账标准面（own files 归一比对）",
+    "META-TESTS-COVERAGE": "files 触发的对应测试存在性核对（目标路径有界）",
+    # ── pre-commit 通道批（批3，22 台：staged/索引/argv 面——经 GATE-PRECOMMIT-RUN 临时索引构造性 own）──
+    "GATE-PROTECTED-PATHS": "--staged 面（check_protected_paths 只查 staged）",
+    "GATE-ALGO-FLOW": "pass_filenames=true（argv=own 文件，docstring 自述'只查 staged 的 src/zephyr'）",
+    "GATE-DEBT-BRIDGE": "--ci --staged（scan_debt 变更检测模式只扫 staged .py，rglob 仅 CI 全量模式）",
+    "GATE-ANY-ABUSE": "--ci --staged（check_any_abuse 变更检测模式，rglob 仅无 --staged 默认态）",
+    "GATE-ENCODING": "args=[--staged]（check_encoding --staged 只查 staged，92s→亚秒先例自述）",
+    "GATE-GEN-NO-REALTIME-TIME": "只读 staged 生成器文件（INVARIANTS 自述，无 staged 生成器 exit 0）",
+    "GATE-MODULE-LIFECYCLE": "--staged（validate_module_lifecycle 只校验 staged 面）",
+    "GATE-SRC-NO-DATA": "默认 staged 面（裁定#354 九台 staged-only 检测器之一，--full-tree 仅周期审计）",
+    "GATE-VMS-SSOT": "默认 staged 面（裁定#354 九台 staged-only 检测器之一）",
+    "GATE-NO-TESTS-UNIT": "默认 staged 面（裁定#354 九台 staged-only 检测器之一）",
+    "GATE-NO-COMMIT-DERIVED": "默认 staged 面（裁定#354 九台 staged-only 检测器之一）",
+    "GATE-FRONTMATTER": "增量模式（有文件参数且无 --all-files——pass_filenames=true 时只校验传入文件）",
+    "GATE-TEST-SYMBOL": "positional files（空参才全量扫 tests/，pre-commit 恒传文件）",
+    "GATE-RETURN-CONTRACT": "positional paths（ff=true 传入面；rglob 仅目录参数回退）",
+    "GATE-WORKTREE-OPS-TELEMETRY": "positional paths（ff=true 传入面；rglob 仅目录参数回退）",
+    "GATE-ID-UNIQ": "单一固定配置文件校验（.pre-commit-config.yaml hook id 唯一性）",
+    "GATE-ADM": "单一固定清单文件校验（script_manifest.yaml 结构）",
+    "GATE-PYTEST-CONFIG-DRIFT": "固定双配置对读（pyproject.toml vs py.ini，无仓库遍历）",
+    "GATE-WORKTREE-REQUIRED": "本 session skip 计数判定（_read_skip_count(project_root, session_id) own 态）",
+    "GATE-COMMIT-GW": "本 commit 上下文协议门（hook 运行即裸 commit 判定/MERGE_HEAD/worktree 上下文，无扫面）",
+    "GATE-NAMING": "--check-new 增量（pass_filenames 传入面+git ls-files 索引基线，os.walk 仅 --scan manual 模式）",
+    "GATE-INTEGRITY": "固定 8 关键规则文件哈希看守（金hash DB 对照+staged 在途感知，无工作树全仓遍历）",
+    # ── pre-commit None 降级批（批3，4 台：内联/manual 台经入口实读定谳）──
+    "GATE-DETECT-GIT-DANGEROUS": "pass_filenames=true（scan_files(own)；scan_repo 仅空参默认态）",
+    "GATE-DETECT-SHELL-DANGEROUS": "pass_filenames=true（scan_files(own)；scan_repo 仅空参默认态）",
+    "GATE-DETECT-PERMANENT-DELETION": "git diff --diff-filter=D 索引驱动（通道内=临时索引 own 删除集）",
+    "GATE-TEST": "bash 内联 git diff --cached --name-only 索引驱动（通道内=临时索引 own 面）+pytest 传入文件",
+    # ── 批4：机制实名台 ──
+    "COMMIT-CRITICAL-SECTION-LOCK": "commit 临界区全局锁机制：非扫描门，无文件扫面（外来内容零接触）",
+}
+
+# 审定 FALSE（含 None 降级台——不可机械判定者经源码实读定谳，解除 pending_owner）
+OWN_SCOPE_AUDIT_FALSE: dict[str, str] = {
+    "GATE-ZR": "None 降级定谳：ZeroResidueScanner 自述'检测范围全项目'（always_run 全仓工作树扫描）",
+}
+
+
+# 墓碑机械规则开关（批4 启用常开：status=deprecated 台 own_scope=True 机械规则生效）
+_TOMBSTONE_RULE_ENABLED = True
+
+
+def _apply_own_scope_audit(gates: list[dict]) -> None:
+    """own_scope 审定覆盖层应用（TRUE/FALSE 台 + 墓碑机械规则），原地更新。
+
+    优先级：审定 TRUE > 审定 FALSE > 墓碑规则（status=deprecated→True，无执行体
+    不构成扫描面或外来阻断面）> 文本启发式缺省（extract_* 已派生值原样保留）。
+    审定命中台附 own_scope_reason 字段（机读留痕，供对账工具与周审计取用）。
+    """
+    for g in gates:
+        gid = g.get("gate_id")
+        if gid in OWN_SCOPE_AUDIT_TRUE:
+            g["own_scope"] = True
+            g["own_scope_reason"] = OWN_SCOPE_AUDIT_TRUE[gid]
+        elif gid in OWN_SCOPE_AUDIT_FALSE:
+            g["own_scope"] = False
+            g["own_scope_reason"] = OWN_SCOPE_AUDIT_FALSE[gid]
+        elif _TOMBSTONE_RULE_ENABLED and g.get("status") == "deprecated" and "own_scope" not in g:
+            g["own_scope"] = True
+            g["own_scope_reason"] = "墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面"
+
+
 def _locate_entry_script(entry: str) -> Path | None:
     """定位 entry 命令的脚本源文件（scripts/ 或 src/ 下任意 .py 路径 token）。
 
@@ -1151,6 +1254,8 @@ def generate(entry_count: int | None = None) -> dict:
             gates = [mg if g["gate_id"] == mg["gate_id"] else g for g in gates]
         elif mg["gate_id"] not in auto_ids:
             gates.append(mg)
+    # own_scope 审定覆盖层（车道M st-sM2-ownscope-20261004）：审定清单>墓碑规则>文本启发式缺省。
+    _apply_own_scope_audit(gates)
     # 裁定#341（2026-09-19 W1-D2）：enforcement_channel 执行通道字段——照 source 现值
     # 机械标注（pre-commit 55 台 / commit-gate 113 台 / manual 1 台），防"守规会话永久
     # 免检"类通道归属误判再生（#341 亲验：in_process 113 与 commit-gate 全等、与

@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-10-14T09:16:55Z'
+generated_at: '2026-10-16T08:22:34Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -19,7 +19,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: --staged 面（check_protected_paths 只查 staged）
   enforcement_channel: pre-commit
 - gate_id: GATE-WORKTREE-REQUIRED
   name: 'GATE-WORKTREE-REQUIRED: 主工作区 commit 渐进式软门禁（#ARCH-GIT-SELF-HARM-GUARD L3.1）'
@@ -31,7 +32,9 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 本 session skip 计数判定（_read_skip_count(project_root, session_id)
+    own 态）
   enforcement_channel: pre-commit
 - gate_id: GATE-ALGO-FLOW
   name: 'GATE-ALGO-FLOW: src/zephyr 模块必须含 ALGO_FLOW docstring 标记（§4.16）'
@@ -43,7 +46,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: pass_filenames=true（argv=own 文件，docstring 自述'只查 staged 的 src/zephyr'）
   enforcement_channel: pre-commit
 - gate_id: GATE-PYTEST-CONFIG-DRIFT
   name: 'GATE-PYTEST-CONFIG-DRIFT: pyproject 与 py.ini [pytest] 段双配置语义对齐（2026-09-15
@@ -57,7 +61,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 固定双配置对读（pyproject.toml vs py.ini，无仓库遍历）
   enforcement_channel: pre-commit
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -80,7 +85,9 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: --check-new 增量（pass_filenames 传入面+git ls-files 索引基线，os.walk 仅
+    --scan manual 模式）
   enforcement_channel: pre-commit
 - gate_id: GATE-NAMING-AUDIT
   name: 'GATE-NAMING-AUDIT: 全仓命名审计+SSOT一致性（不阻断 #ARCH-PRECOMMIT-INCREMENTAL）'
@@ -116,7 +123,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 单一固定配置文件校验（.pre-commit-config.yaml hook id 唯一性）
   enforcement_channel: pre-commit
 - gate_id: GATE-INTEGRITY
   name: 'GATE-INTEGRITY: 规则文件完整性 golden hash 校验（C 层兜底）'
@@ -128,6 +136,7 @@ gates:
   status: active
   source: pre-commit
   own_scope: true
+  own_scope_reason: 固定 8 关键规则文件哈希看守（金hash DB 对照+staged 在途感知，无工作树全仓遍历）
   enforcement_channel: pre-commit
 - gate_id: GATE-12
   name: 'GATE-12: 蓝图真源准入门禁（Wave 0 V-12）'
@@ -161,7 +170,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 增量模式（有文件参数且无 --all-files——pass_filenames=true 时只校验传入文件）
   enforcement_channel: pre-commit
 - gate_id: GATE-FRONTMATTER-AUDIT
   name: 'GATE-FRONTMATTER-AUDIT: 全仓 frontmatter 审计（规则FM+SSoT+断链，不阻断 #ARCH-PRECOMMIT-INCREMENTAL）'
@@ -234,7 +244,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 默认 staged 面（裁定#354 九台 staged-only 检测器之一，--full-tree 仅周期审计）
   enforcement_channel: pre-commit
 - gate_id: GATE-DIRECTORY-CONTRACT
   name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008，真源 directory_contract.yaml）'
@@ -263,7 +274,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 默认 staged 面（裁定#354 九台 staged-only 检测器之一）
   enforcement_channel: pre-commit
 - gate_id: GATE-SCHEMA-TRUTH
   name: 'GATE-SCHEMA-TRUTH: DDL-as-Code 真源 vs ClickHouse 漂移阻断（#ARCH-CH-025）'
@@ -300,7 +312,8 @@ gates:
   category: zero_residue
   status: active
   source: pre-commit
-  own_scope: null
+  own_scope: false
+  own_scope_reason: None 降级定谳：ZeroResidueScanner 自述'检测范围全项目'（always_run 全仓工作树扫描）
   enforcement_channel: pre-commit
 - gate_id: GATE-SSOT-CODE
   name: 'GATE-SSOT-CODE: 代码 SSoT 合并门禁（GATE-SSOT/SINGLESOURCE/NO-PURE-SHIM 三合一）'
@@ -333,7 +346,9 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: null
+  own_scope: true
+  own_scope_reason: bash 内联 git diff --cached --name-only 索引驱动（通道内=临时索引 own 面）+pytest
+    传入文件
   enforcement_channel: pre-commit
 - gate_id: GATE-TEST-SYMBOL
   name: 'GATE-TEST-SYMBOL: 孤儿测试符号检测（CAND-GATEMECH-007）'
@@ -344,7 +359,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: positional files（空参才全量扫 tests/，pre-commit 恒传文件）
   enforcement_channel: pre-commit
 - gate_id: GATE-ERRCODE
   name: 'GATE-ERRCODE: error_code 注册表↔代码双向对账（#ARCH-ERRCODE-001）'
@@ -406,7 +422,8 @@ gates:
   category: manifest_admission
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 单一固定清单文件校验（script_manifest.yaml 结构）
   enforcement_channel: pre-commit
 - gate_id: GATE-21
   name: 'GATE-21: 静态清单漂移阻断（§6.2）'
@@ -456,7 +473,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: positional paths（ff=true 传入面；rglob 仅目录参数回退）
   enforcement_channel: pre-commit
 - gate_id: GATE-WORKTREE-OPS-TELEMETRY
   name: 'GATE-WORKTREE-OPS-TELEMETRY: 主工作区擦除操作遥测审计（P2-6/P3-1）'
@@ -468,7 +486,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: positional paths（ff=true 传入面；rglob 仅目录参数回退）
   enforcement_channel: pre-commit
 - gate_id: GATE-MCP
   name: 'GATE-MCP: Tool Contract 一致性（R3）'
@@ -532,7 +551,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: args=[--staged]（check_encoding --staged 只查 staged，92s→亚秒先例自述）
   enforcement_channel: pre-commit
 - gate_id: GATE-COMMIT-GW
   name: 'GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513）'
@@ -544,7 +564,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 本 commit 上下文协议门（hook 运行即裸 commit 判定/MERGE_HEAD/worktree 上下文，无扫面）
   enforcement_channel: pre-commit
 - gate_id: GATE-NO-TESTS-UNIT
   name: 'GATE-NO-TESTS-UNIT: 禁止 tests/unit/ 旧路径重引入（ARCH-029 防漂移）'
@@ -555,7 +576,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 默认 staged 面（裁定#354 九台 staged-only 检测器之一）
   enforcement_channel: pre-commit
 - gate_id: GATE-DEDUP
   name: 'GATE-DEDUP: 代码重复检测（code_dedup 引擎 verify）'
@@ -579,7 +601,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: --ci --staged（scan_debt 变更检测模式只扫 staged .py，rglob 仅 CI 全量模式）
   enforcement_channel: pre-commit
 - gate_id: GATE-ANY-ABUSE
   name: 'GATE-ANY-ABUSE: 类型注解 Any 滥用（5.145 维度防复发，Phase 3 commit 阻断）'
@@ -592,7 +615,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: --ci --staged（check_any_abuse 变更检测模式，rglob 仅无 --staged 默认态）
   enforcement_channel: pre-commit
 - gate_id: GATE-ALGO-QUALITY
   name: 'GATE-ALGO-QUALITY: 算法糊弄检测（代码AST+blueprint 双层，6类pattern）'
@@ -616,7 +640,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 只读 staged 生成器文件（INVARIANTS 自述，无 staged 生成器 exit 0）
   enforcement_channel: pre-commit
 - gate_id: GATE-NO-COMMIT-DERIVED
   name: GATE-NO-COMMIT-DERIVED
@@ -628,7 +653,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 默认 staged 面（裁定#354 九台 staged-only 检测器之一）
   enforcement_channel: pre-commit
 - gate_id: GATE-MODULE-LIFECYCLE
   name: GATE-MODULE-LIFECYCLE
@@ -641,7 +667,8 @@ gates:
   category: unknown
   status: active
   source: pre-commit
-  own_scope: false
+  own_scope: true
+  own_scope_reason: --staged（validate_module_lifecycle 只校验 staged 面）
   enforcement_channel: pre-commit
 - gate_id: ALGO-FLOW-LINK
   name: 'ALGO-FLOW-LINK: ALGO_FLOW external 锚链接校验门禁（ALGO-FLOW-LINK）（CommitGate, priority=108）'
@@ -652,7 +679,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: own-diff 单一真源模式（docstring 自述：只查本次 commit files 清单，他会话 staged 零接触）
   enforcement_channel: commit-gate
 - gate_id: ALGO-NOTE-SYNC
   name: 'ALGO-NOTE-SYNC: 算法锚与大白话同步绑定门禁（ALGO-NOTE-SYNC，Owner 2026-09-09 任务三）（CommitGate,
@@ -664,7 +692,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 参数+指定地图 staged diff 归因，无全暂存/全仓面
   enforcement_channel: commit-gate
 - gate_id: ARCH-REFERENCE
   name: 'ARCH-REFERENCE: #ARCH-NNN 悬空引用检测（已合并至 REFERENCE-INTEGRITY，st-gslim-20260923
@@ -679,6 +708,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: REFERENCE-INTEGRITY
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: ASYNCIO-RUN-IN-CONTEXT
   name: 'ASYNCIO-RUN-IN-CONTEXT: ASYNCIO-RUN-IN-CONTEXT（CommitGate, priority=122）'
   entry: in-process (GitCommitGateway)
@@ -736,6 +767,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: MAP-ALIGNMENT
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: BLUEPRINT-HEADER
   name: 'BLUEPRINT-HEADER: A_module 头声明一致性聚合（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
     T8簇2）'
@@ -749,6 +782,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DOC-HEADER-SUITE
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: BLUEPRINT-AMODULE-CROSS-CHECK
   name: 'BLUEPRINT-AMODULE-CROSS-CHECK: 蓝图↔A_module 交叉校验（已合并至 BLUEPRINT-HEADER，st-gslim-20260923
     P4）'
@@ -762,11 +797,16 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: BLUEPRINT-HEADER
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: DOC-HEADER-SUITE
   name: 'DOC-HEADER-SUITE: DOC-HEADER-SUITE（CommitGate, priority=77）'
   entry: in-process (GitCommitGateway)
   description: DOC-HEADER-SUITE
-  files_trigger: ''
+  files_trigger:
+  - docs/01_policies_and_standards/
+  - docs/02_enterprise_architecture/
+  - blueprint.md
   always_run: false
   category: commit_gate
   status: active
@@ -777,7 +817,8 @@ gates:
   name: 'BLUEPRINT-NODE-ID-HARDCODE: BLUEPRINT-NODE-ID-HARDCODE（CommitGate, priority=57）'
   entry: in-process (GitCommitGateway)
   description: BLUEPRINT-NODE-ID-HARDCODE
-  files_trigger: ''
+  files_trigger:
+  - blueprint.md
   always_run: false
   category: commit_gate
   status: active
@@ -789,18 +830,22 @@ gates:
     priority=139）'
   entry: in-process (GitCommitGateway)
   description: 业务资产库入库门禁（BUSINESS-REGISTRY，priority=139）
-  files_trigger: ''
+  files_trigger:
+  - docs/01_policies_and_standards/_registry/
+  - architecture_model/data/data_sources_registry.yaml
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 尾缀触发的注册表存在性核对（固定路径只读）
   enforcement_channel: commit-gate
 - gate_id: CAP-CONSISTENCY
   name: 'CAP-CONSISTENCY: CAP-CONSISTENCY（CommitGate, priority=101）'
   entry: in-process (GitCommitGateway)
   description: CAP-CONSISTENCY
-  files_trigger: ''
+  files_trigger:
+  - '*_provider.py'
   always_run: false
   category: commit_gate
   status: active
@@ -816,7 +861,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 豁免面判定，无仓库遍历
   enforcement_channel: commit-gate
 - gate_id: CAPABILITY-OVERLAP
   name: 'CAPABILITY-OVERLAP: CAPABILITY-OVERLAP（CommitGate, priority=200）'
@@ -838,7 +884,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: CH-FINAL-GATE
   name: 'CH-FINAL-GATE: CH-FINAL-GATE（CommitGate, priority=37）'
@@ -873,7 +919,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 本 session held_files vs 本次 files 比对（own 登记态）
   enforcement_channel: commit-gate
 - gate_id: COMMIT-SCOPE
   name: 'COMMIT-SCOPE: COMMIT-SCOPE（CommitGate, priority=50）'
@@ -884,7 +931,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 域映射（--allow-multi-domain 豁免面），扫面=own files
   enforcement_channel: commit-gate
 - gate_id: CONSUMERS-ACCURACY
   name: 'CONSUMERS-ACCURACY: CONSUMERS-ACCURACY（CommitGate, priority=116）'
@@ -896,7 +944,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: warn-only 无阻断面（外来违规本就不硬阻断）+扫描面=staged 自身
   enforcement_channel: commit-gate
 - gate_id: CREATE-GUARD
   name: 'CREATE-GUARD: CREATE-GUARD（CommitGate, priority=60）'
@@ -921,7 +970,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 中新增 AGENTS.md §引用 vs AGENTS.md 固定路径核对
   enforcement_channel: commit-gate
 - gate_id: DATETIME-NOW-FORBIDDEN
   name: 'DATETIME-NOW-FORBIDDEN: DATETIME-NOW-FORBIDDEN（CommitGate, priority=34）'
@@ -946,6 +996,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: MAP-ALIGNMENT
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: DEPGRAPH-FRESHNESS
   name: 'DEPGRAPH-FRESHNESS: DEPGRAPH-FRESHNESS（CommitGate, priority=67）'
   entry: in-process (GitCommitGateway)
@@ -983,11 +1035,16 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DEPGRAPH-ENFORCEMENT
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: DERIVATION-ANNOTATION
   name: 'DERIVATION-ANNOTATION: DERIVATION-ANNOTATION（CommitGate, priority=65）'
   entry: in-process (GitCommitGateway)
   description: DERIVATION-ANNOTATION
-  files_trigger: ''
+  files_trigger:
+  - added:*.py
+  - added:*.yaml
+  - added:*.yml
   always_run: false
   category: commit_gate
   status: active
@@ -1015,7 +1072,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: rel_files 传参给子校验器（超大批 --all-files 回退为例外路径）
   enforcement_channel: commit-gate
 - gate_id: DOC-REF-BROKEN
   name: 'DOC-REF-BROKEN: 文档相对路径断裂引用（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
@@ -1030,6 +1088,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DOC-HEADER-SUITE
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: GATE-DOMAIN-FK
   name: 'GATE-DOMAIN-FK: GATE-DOMAIN-FK（CommitGate, priority=78）'
   entry: in-process (GitCommitGateway)
@@ -1058,7 +1118,8 @@ gates:
   name: 'EMPTY-HANDLER: EMPTY-HANDLER（CommitGate, priority=84）'
   entry: in-process (GitCommitGateway)
   description: EMPTY-HANDLER
-  files_trigger: ''
+  files_trigger:
+  - added:*.py
   always_run: false
   category: commit_gate
   status: active
@@ -1074,7 +1135,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 分块送检，扫面=own files
   enforcement_channel: commit-gate
 - gate_id: GATE-ERRCODE-CONSISTENCY
   name: 'GATE-ERRCODE-CONSISTENCY: error_code 注册表↔代码真源对账门禁 in-process 版（GATE-ERRCODE-CONSISTENCY）（CommitGate,
@@ -1087,7 +1149,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 触发的错误码一致性核对（固定注册表只读）
   enforcement_channel: commit-gate
 - gate_id: EXEMPT-ZONE-FM
   name: 'EXEMPT-ZONE-FM: 豁免区 frontmatter doc_type（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
@@ -1102,6 +1165,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DOC-HEADER-SUITE
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: FILE-COPY
   name: 'FILE-COPY: FILE-COPY（CommitGate, priority=85）'
   entry: in-process (GitCommitGateway)
@@ -1130,6 +1195,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DOC-HEADER-SUITE
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: FOLDER-CAPACITY-HARD-LIMIT
   name: 'FOLDER-CAPACITY-HARD-LIMIT: FOLDER-CAPACITY-HARD-LIMIT（CommitGate, priority=112）'
   entry: in-process (GitCommitGateway)
@@ -1150,7 +1217,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 本次 files vs 本 session claim 快照（own 归因面）
   enforcement_channel: commit-gate
 - gate_id: FORGED-GW-MARKER
   name: 'FORGED-GW-MARKER: Forged GW Marker 前置检测门禁（FORGED-GW-MARKER，#ARCH-PREVENTABILITY-LAYER-001
@@ -1163,7 +1231,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 本 commit 元数据+session 注册核验，无文件扫面
   enforcement_channel: commit-gate
 - gate_id: FRONTEND-MAP
   name: 'FRONTEND-MAP: 前端全景图对齐（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）'
@@ -1177,11 +1246,14 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: MAP-ALIGNMENT
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: FRONTEND-TRUTH-SOURCE
   name: 'FRONTEND-TRUTH-SOURCE: FRONTEND-TRUTH-SOURCE（CommitGate, priority=136）'
   entry: in-process (GitCommitGateway)
   description: FRONTEND-TRUTH-SOURCE
-  files_trigger: ''
+  files_trigger:
+  - src/zephyr/frontend/dashboard/web/*.js
   always_run: false
   category: commit_gate
   status: active
@@ -1212,7 +1284,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: NO-GOD-CLASS
   name: 'NO-GOD-CLASS: God Class 检测（已合并至 COMPLEXITY-GUARD，st-gslim-20260923 P4）'
@@ -1226,6 +1298,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: COMPLEXITY-GUARD
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: NO-HARDCODED-URL
   name: 'NO-HARDCODED-URL: NO-HARDCODED-URL（CommitGate, priority=98）'
   entry: in-process (GitCommitGateway)
@@ -1267,12 +1341,21 @@ gates:
   name: 'HOT-FILE-BASE-FRESHNESS: HOT-FILE-BASE-FRESHNESS（CommitGate, priority=47）'
   entry: in-process (GitCommitGateway)
   description: HOT-FILE-BASE-FRESHNESS
-  files_trigger: ''
+  files_trigger:
+  - AGENTS.md
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/_archive/_working_cleared/archive/2026-09/design_memos/construction_progress_tracker.md
+  - docs/_archive/_working_cleared/archive/2026-09/design_memos/00_index_trading_decision.md
+  - docs/_archive/_working_cleared/archive/2026-09/design_memos/94_crypto_quant_expansion.md
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 本次 files 的 claim 锚新鲜度核对（own 登记态）
   enforcement_channel: commit-gate
 - gate_id: ID-UNIQUENESS
   name: 'ID-UNIQUENESS: ID-UNIQUENESS（CommitGate, priority=86）'
@@ -1284,13 +1367,15 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 含配置册才触发的单文件校验
   enforcement_channel: commit-gate
 - gate_id: NO-UPWARD-IMPORT
   name: 'NO-UPWARD-IMPORT: NO-UPWARD-IMPORT（CommitGate, priority=97）'
   entry: in-process (GitCommitGateway)
   description: NO-UPWARD-IMPORT
-  files_trigger: ''
+  files_trigger:
+  - src/zephyr/shared/*.py
   always_run: false
   category: commit_gate
   status: active
@@ -1320,6 +1405,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: MAP-ALIGNMENT
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: BLOOD-FLESH
   name: 'BLOOD-FLESH: BLOOD-FLESH（CommitGate, priority=59）'
   entry: in-process (GitCommitGateway)
@@ -1373,6 +1460,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: COMPLEXITY-GUARD
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: MANUAL-ONLY-PERMANENT
   name: 'MANUAL-ONLY-PERMANENT: 永久系统 manual 无订阅检测（已合并至 PERMANENT-SYSTEM-TRIGGER，st-gslim-20260923
     P4）'
@@ -1386,6 +1475,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: PERMANENT-SYSTEM-TRIGGER
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: CONSTRUCTION-WORKFLOW-MAP
   name: 'CONSTRUCTION-WORKFLOW-MAP: AI 施工升级流图（图 14）结构门禁（CONSTRUCTION-WORKFLOW-MAP）（CommitGate,
     priority=100）'
@@ -1470,6 +1561,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DOC-HEADER-SUITE
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: MSG-EXPOSURE
   name: 'MSG-EXPOSURE: MSG-EXPOSURE（CommitGate, priority=83）'
   entry: in-process (GitCommitGateway)
@@ -1496,12 +1589,13 @@ gates:
   name: 'MUTABLE-CONST-WITHOUT-FINAL: MUTABLE-CONST-WITHOUT-FINAL（CommitGate, priority=123）'
   entry: in-process (GitCommitGateway)
   description: MUTABLE-CONST-WITHOUT-FINAL
-  files_trigger: ''
+  files_trigger:
+  - added:src/*.py
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: NEW-FILE-DEPGRAPH-ENFORCEMENT
   name: 'NEW-FILE-DEPGRAPH-ENFORCEMENT: 新 py 未登记 depgraph（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923
@@ -1516,6 +1610,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DEPGRAPH-ENFORCEMENT
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: NO-IMPORT-SIDE-EFFECT
   name: 'NO-IMPORT-SIDE-EFFECT: NO-IMPORT-SIDE-EFFECT（CommitGate, priority=103）'
   entry: in-process (GitCommitGateway)
@@ -1525,7 +1621,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: NOQA-VALIDATION
   name: 'NOQA-VALIDATION: NOQA-VALIDATION（CommitGate, priority=71）'
@@ -1553,7 +1649,8 @@ gates:
   name: 'ORPHAN-MODULE: ORPHAN-MODULE（CommitGate, priority=89）'
   entry: in-process (GitCommitGateway)
   description: ORPHAN-MODULE
-  files_trigger: ''
+  files_trigger:
+  - added:src/*.py
   always_run: false
   category: commit_gate
   status: active
@@ -1622,7 +1719,8 @@ gates:
   name: 'PERMANENT-SYSTEM-TRIGGER: PERMANENT-SYSTEM-TRIGGER（CommitGate, priority=155）'
   entry: in-process (GitCommitGateway)
   description: PERMANENT-SYSTEM-TRIGGER
-  files_trigger: ''
+  files_trigger:
+  - added:*.py
   always_run: false
   category: commit_gate
   status: active
@@ -1639,7 +1737,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 含 .pre-commit-config.yaml 才触发的单文件校验
   enforcement_channel: commit-gate
 - gate_id: PROTECTED-PATHS
   name: 'PROTECTED-PATHS: PROTECTED-PATHS（CommitGate, priority=28）'
@@ -1650,7 +1749,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 受保护路径命中判定（own files 面）
   enforcement_channel: commit-gate
 - gate_id: PURE-ASSERTION
   name: 'PURE-ASSERTION: PURE-ASSERTION（CommitGate, priority=69）'
@@ -1687,7 +1787,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 目录+ls-tree HEAD 有界存在性核对（逐 own 目录，非全树）
   enforcement_channel: commit-gate
 - gate_id: FMS-HYGIENE
   name: 'FMS-HYGIENE: FMS-HYGIENE（CommitGate, priority=138）'
@@ -1713,7 +1814,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 治理代码裸删除/移动原语扫描
   enforcement_channel: commit-gate
 - gate_id: RECONCILER-HEALTH
   name: 'RECONCILER-HEALTH: RECONCILER-HEALTH（CommitGate, priority=64）'
@@ -1741,7 +1843,8 @@ gates:
   name: 'REGISTRY-MASS-DELETION: REGISTRY-MASS-DELETION（CommitGate, priority=161）'
   entry: in-process (GitCommitGateway)
   description: REGISTRY-MASS-DELETION
-  files_trigger: ''
+  files_trigger:
+  - docs/01_policies_and_standards/_registry/
   always_run: false
   category: commit_gate
   status: active
@@ -1752,7 +1855,8 @@ gates:
   name: 'REGISTRY-YAML-PARSE: 注册表结构硬化门禁（防尾追悬挂/防重复根键）（CommitGate, priority=54）'
   entry: in-process (GitCommitGateway)
   description: 注册表结构硬化门禁（防尾追悬挂/防重复根键）
-  files_trigger: ''
+  files_trigger:
+  - docs/01_policies_and_standards/_registry/
   always_run: false
   category: commit_gate
   status: active
@@ -1783,6 +1887,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DEPGRAPH-ENFORCEMENT
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: RESOURCE-SCHEDULE
   name: 'RESOURCE-SCHEDULE: 排班冲突检测 commit gate（MOD-RESCHED-GATE，B2 闸）。（CommitGate,
     priority=144）'
@@ -1808,7 +1914,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 中 trae 规则↔执行配对核对（固定真源只读）
   enforcement_channel: commit-gate
 - gate_id: RULE-FOUR-WAY-ALIGN
   name: 'RULE-FOUR-WAY-ALIGN: RULE-FOUR-WAY-ALIGN（CommitGate, priority=76）'
@@ -1821,7 +1928,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 触发的四方对齐（固定真源 YAML/DB 只读，无工作树遍历）
   enforcement_channel: commit-gate
 - gate_id: RULING-COMMIT-VERIFIED
   name: 'RULING-COMMIT-VERIFIED: RULING-COMMIT-VERIFIED（CommitGate, priority=109）'
@@ -1832,7 +1940,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 裁定引用原子性核对（ruling_registry 固定路径只读）
   enforcement_channel: commit-gate
 - gate_id: RULING-REFERENCE
   name: 'RULING-REFERENCE: 裁定 #NNN 悬空引用检测（已合并至 REFERENCE-INTEGRITY，st-gslim-20260923
@@ -1847,6 +1956,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: REFERENCE-INTEGRITY
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: SCHEMA-FILE-EXISTS
   name: 'SCHEMA-FILE-EXISTS: SCHEMA-FILE-EXISTS（CommitGate, priority=121）'
   entry: in-process (GitCommitGateway)
@@ -1857,7 +1968,8 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 含 YAML 才触发的悬挂引用核对
   enforcement_channel: commit-gate
 - gate_id: SCRIPTS-IMPORT-INTEGRITY
   name: 'SCRIPTS-IMPORT-INTEGRITY: scripts/governance 用 _shared.constants 符号未 import（已退役并入
@@ -1872,6 +1984,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: UNDEFINED-NAME
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: NO-SECRET-HARDCODE
   name: 'NO-SECRET-HARDCODE: NO-SECRET-HARDCODE（CommitGate, priority=128）'
   entry: in-process (GitCommitGateway)
@@ -1887,7 +2001,9 @@ gates:
   name: 'SECRET-REGISTRY-CONSISTENCY: SECRET-REGISTRY-CONSISTENCY（CommitGate, priority=127）'
   entry: in-process (GitCommitGateway)
   description: SECRET-REGISTRY-CONSISTENCY
-  files_trigger: ''
+  files_trigger:
+  - .env.example
+  - config/secret_registry.yaml
   always_run: false
   category: commit_gate
   status: active
@@ -1903,13 +2019,15 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 本 session 注册校验（commit 元数据面，无外来共享态判定）
   enforcement_channel: commit-gate
 - gate_id: SNAPSHOT-DRIFT
   name: 'SNAPSHOT-DRIFT: SNAPSHOT-DRIFT（CommitGate, priority=40）'
   entry: in-process (GitCommitGateway)
   description: SNAPSHOT-DRIFT
-  files_trigger: ''
+  files_trigger:
+  - data/runtime_violation_snapshot/latest.json
   always_run: false
   category: commit_gate
   status: active
@@ -1962,6 +2080,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: MAP-ALIGNMENT
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: SYNTAX-VALIDATION
   name: 'SYNTAX-VALIDATION: SYNTAX-VALIDATION（CommitGate, priority=49）'
   entry: in-process (GitCommitGateway)
@@ -1982,7 +2102,9 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: own files 优先（#ARCH-GATE-OWN-SCOPE-001 推广批自述；全 staged 回退仅 files
+    空直调场景）
   enforcement_channel: commit-gate
 - gate_id: TAKEOVER-PENDING
   name: 'TAKEOVER-PENDING: TAKEOVER-PENDING（CommitGate, priority=160）'
@@ -1993,13 +2115,18 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: 本次 files ∩ 接管台账标准面（own files 归一比对）
   enforcement_channel: commit-gate
 - gate_id: TDM-MOUNT-COVERAGE
   name: 'TDM-MOUNT-COVERAGE: TDM-MOUNT-COVERAGE（CommitGate, priority=151）'
   entry: in-process (GitCommitGateway)
   description: TDM-MOUNT-COVERAGE
-  files_trigger: ''
+  files_trigger:
+  - added:docs/03_modules/*.md
+  - added:src/*.py
+  - added:scripts/*.py
+  - config/*.yaml
   always_run: false
   category: commit_gate
   status: active
@@ -2038,13 +2165,16 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
+  own_scope_reason: files 触发的对应测试存在性核对（目标路径有界）
   enforcement_channel: commit-gate
 - gate_id: TRANSLATION-COVERAGE
   name: 'TRANSLATION-COVERAGE: TRANSLATION-COVERAGE（CommitGate, priority=59）'
   entry: in-process (GitCommitGateway)
   description: TRANSLATION-COVERAGE
-  files_trigger: ''
+  files_trigger:
+  - added:src/*.py
+  - added:scripts/*.py
   always_run: false
   category: commit_gate
   status: active
@@ -2064,6 +2194,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DOC-HEADER-SUITE
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: UNDEFINED-NAME
   name: 'UNDEFINED-NAME: UNDEFINED-NAME（CommitGate, priority=106）'
   entry: in-process (GitCommitGateway)
@@ -2102,6 +2234,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: GATE-VOCAB
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: WORKTREE-REQUIRED
   name: 'WORKTREE-REQUIRED: WORKTREE-REQUIRED（CommitGate, priority=44）'
   entry: in-process (GitCommitGateway)
@@ -2137,6 +2271,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: BLUEPRINT-HEADER
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: BLUEPRINT-FORMAT
   name: 'BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式检测（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
     T8簇2）'
@@ -2150,6 +2286,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DOC-HEADER-SUITE
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: DANGLING-REFERENCE
   name: 'DANGLING-REFERENCE: AGENTS §X.Y 悬空引用检测（已合并至 REFERENCE-INTEGRITY，st-gslim-20260923
     P4）'
@@ -2163,6 +2301,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: REFERENCE-INTEGRITY
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: DEPGRAPH-PRE-REGISTRATION
   name: 'DEPGRAPH-PRE-REGISTRATION: depgraph planned→production（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923
     P4）'
@@ -2176,6 +2316,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DEPGRAPH-ENFORCEMENT
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: NO-HIGH-COMPLEXITY
   name: 'NO-HIGH-COMPLEXITY: 高循环复杂度检测（已合并至 COMPLEXITY-GUARD，st-gslim-20260923 P4）'
   entry: N/A (merged into COMPLEXITY-GUARD, see redirect_to)
@@ -2188,6 +2330,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: COMPLEXITY-GUARD
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: GATE-PANORAMA-ALIGNMENT
   name: 'GATE-PANORAMA-ALIGNMENT: 三图模块对齐（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）'
   entry: N/A (merged into MAP-ALIGNMENT, see redirect_to)
@@ -2200,6 +2344,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: MAP-ALIGNMENT
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: PERM-TRIGGER
   name: 'PERM-TRIGGER: 时间触发无订阅检测（已合并至 PERMANENT-SYSTEM-TRIGGER，st-gslim-20260923 P4）'
   entry: N/A (merged into PERMANENT-SYSTEM-TRIGGER, see redirect_to)
@@ -2212,6 +2358,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: PERMANENT-SYSTEM-TRIGGER
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: POOL-REGRESSION-DIRECTION
   name: 'POOL-REGRESSION-DIRECTION: 构造池面回退方向 GateSpec（own-scope 硬阻断型，priority=161＝治理簇尾
     160 之后空段）（CommitGate, priority=161）'
@@ -2236,6 +2384,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: GATE-VOCAB
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: COMMIT-CRITICAL-SECTION-LOCK
   name: 'COMMIT-CRITICAL-SECTION-LOCK: commit 临界区全局文件锁（裁定#347 实名登记）'
   entry: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_GlobalCommitLock（in-process
@@ -2248,6 +2398,8 @@ gates:
   status: active
   source: commit-gateway
   enforcement_channel: commit-gateway
+  own_scope: true
+  own_scope_reason: commit 临界区全局锁机制：非扫描门，无文件扫面（外来内容零接触）
 - gate_id: GATE-PRECOMMIT-RUN
   name: 'GATE-PRECOMMIT-RUN: 落地前 own-scope pre-commit run 通道（超时 fail-closed，E4 治本）'
   entry: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_run_precommit_channel（in-process
@@ -2277,12 +2429,14 @@ gates:
   status: deprecated
   redirect_to: GATE-C2
   source: manual
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
   enforcement_channel: manual
 - gate_id: DATA-TASK-COMPLETENESS
   name: 'DATA-TASK-COMPLETENESS: 数据任务完整性门禁（已退役 2026-09-23，st-gslim P3）'
   entry: N/A (retired, see redirect_to)
   description: 【已退役】warn-only 零触发零消费（窗口期 0 拦截 0 运行触发，src/scripts 外零引用）——w5_1 条2 退役判据直接命中。门文件+测试+in_process
-    条目+token 同批删除；tasks.yaml 内三处历史warn 提示注释为历史事实留档。退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md
+    条目+token 同批删除；tasks.yaml 内三处历史warn 提示注释为历史事实留档。退役依据：docs/_archive/_working_cleared/registry_incident_20260922/gate_audit_report_v1.md
     §C1/§E。
   files_trigger: ''
   always_run: false
@@ -2291,11 +2445,13 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: gate_audit_report_v1.md#C1
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: ISSUE-RESOLVED-INTEGRITY
   name: 'ISSUE-RESOLVED-INTEGRITY: issue 标记真实性门禁（已退役 2026-09-23，st-gslim P3）'
   entry: N/A (retired, see redirect_to)
   description: 【已退役】warn-only；计时数据中从未出现（连执行都没有）；零消费方（0 处引用）——w5_1 条2 退役判据直接命中。门文件+测试+in_process
-    条目+token+外锚同批删除。退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md
+    条目+token+外锚同批删除。退役依据：docs/_archive/_working_cleared/registry_incident_20260922/gate_audit_report_v1.md
     §C1/§E。
   files_trigger: ''
   always_run: false
@@ -2304,12 +2460,14 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: gate_audit_report_v1.md#C1
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: LIBRARY-COVERAGE
   name: 'LIBRARY-COVERAGE: 馆藏覆盖观察闸（已退役 2026-09-23，st-gslim P3）'
   entry: N/A (retired, see redirect_to)
   description: 【已退役】warn-only 自述观察闸；0 拦截 0 触发；零消费方（0 处引用）——w5_1 条2 退役判据直接命中。门文件+测试+in_process
     条目+token+外锚+fail_open 行同批删除；_has_call_number 纯函数迁 zephyr.library.ledger_schema（测试改挂
-    7 passed）。退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md
+    7 passed）。退役依据：docs/_archive/_working_cleared/registry_incident_20260922/gate_audit_report_v1.md
     §C1/§E。
   files_trigger: ''
   always_run: false
@@ -2318,6 +2476,8 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: gate_audit_report_v1.md#C1
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: STRATEGY-CARD-LIFECYCLE-MAP
   name: 'STRATEGY-CARD-LIFECYCLE-MAP: 策略卡生命周期图（图15）结构门禁（行入册于 2026-10-05，实现从未落位）'
   entry: N/A (no implementation in any ref, see redirect_to)
@@ -2325,14 +2485,16 @@ gates:
     src/zephyr/gov_enforcement/commit_gates/ 下 strategy_card_lifecycle_map_gate.py
     在 HEAD 树与全史双向零命中（git ls-tree -r HEAD 与 git log --all --diff-filter=D 皆空=从未有实现，非删除遗留）；同名测试
     tests/gov/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py 采集期即
-    ImportError。status 由 active 如实改 deprecated（在册假闸判据：缺源禁装/0 占位禁）；取证与判据=班账 K8（docs/_working/libghost_campaign/00_ledger.md）。复活方式=实现落位后删本墓碑条目，生成器第二遍自动出行。
+    ImportError。status 由 active 如实改 deprecated（在册假闸判据：缺源禁装/0 占位禁）；取证与判据=班账 K8（docs/_archive/_working_cleared/libghost_campaign/00_ledger.md）。复活方式=实现落位后删本墓碑条目，生成器第二遍自动出行。
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: deprecated
   source: manual
   enforcement_channel: manual
-  redirect_to: docs/_working/libghost_campaign/00_ledger.md
+  redirect_to: docs/_archive/_working_cleared/libghost_campaign/00_ledger.md
+  own_scope: true
+  own_scope_reason: 墓碑/重定向锚点：无执行体，不构成扫描面或外来阻断面
 - gate_id: GATE-DETECT-GIT-DANGEROUS
   name: 检测危险 git 命令（65 号 §7.13，ABS-26/27/28）
   entry: python scripts/governance/d6_security/detect_git_dangerous.py
@@ -2345,6 +2507,8 @@ gates:
   status: active
   source: pre-commit
   enforcement_channel: pre-commit
+  own_scope: true
+  own_scope_reason: pass_filenames=true（scan_files(own)；scan_repo 仅空参默认态）
 - gate_id: GATE-DETECT-SHELL-DANGEROUS
   name: 检测危险 shell 命令（65 号 §7.13，ABS-38/39）
   entry: python scripts/governance/d6_security/detect_shell_dangerous.py
@@ -2355,6 +2519,8 @@ gates:
   status: active
   source: pre-commit
   enforcement_channel: pre-commit
+  own_scope: true
+  own_scope_reason: pass_filenames=true（scan_files(own)；scan_repo 仅空参默认态）
 - gate_id: GATE-DETECT-PERMANENT-DELETION
   name: 检测 ttl:permanent 文件删除（65 号 §7.13，PS-STD-012 V1）
   entry: python scripts/governance/d6_security/detect_permanent_file_deletion.py
@@ -2365,3 +2531,5 @@ gates:
   status: active
   source: pre-commit
   enforcement_channel: pre-commit
+  own_scope: true
+  own_scope_reason: git diff --diff-filter=D 索引驱动（通道内=临时索引 own 删除集）

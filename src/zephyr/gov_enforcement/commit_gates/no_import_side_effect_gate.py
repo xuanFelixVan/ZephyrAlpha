@@ -83,6 +83,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_added_lines,
     _get_staged_py_files,
     _read_staged_file,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -283,8 +284,15 @@ def make_no_import_side_effect_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged added/modified .py 文件
-        staged = _get_staged_py_files(gateway, gate_name="NO-IMPORT-SIDE-EFFECT")
+        # 1. 获取 staged added/modified .py 文件（own-scope 推广 st-sM2-ownscope-20261004：
+        #    外来 staged 不扫描、降级 warn+审计；own_scope=None 退化旧行为扫全量）
+        staged, _foreign = _split_own_foreign(
+            gateway,
+            _get_staged_py_files(gateway, gate_name="NO-IMPORT-SIDE-EFFECT"),
+            files,
+            kwargs.get("session_id"),
+            gate_name="NO-IMPORT-SIDE-EFFECT",
+        )
         if not staged:
             return True, ""
 

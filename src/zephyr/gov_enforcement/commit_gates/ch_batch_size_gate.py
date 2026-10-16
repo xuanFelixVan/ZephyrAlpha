@@ -72,6 +72,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_added_lines,
     _get_staged_py_files,
     _read_staged_file,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -140,11 +141,17 @@ def make_ch_batch_size_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        py_files = [
-            f
-            for f in _get_staged_py_files(gateway, "CH-BATCH-SIZE")
-            if not is_test_exempt(f) and not _is_exempt_file(f)
-        ]
+        # own-scope 推广（车道M st-sM2-ownscope-20261004，宪法 §3.1）：全暂存面拆分为
+        # 本 session 文件——外来 staged 不扫描、降级 warn+审计（_split_own_foreign 契约），
+        # own_scope=None（历史直调）退化为旧行为扫全量，保守面不改宽。
+        staged_own, _foreign = _split_own_foreign(
+            gateway,
+            _get_staged_py_files(gateway, "CH-BATCH-SIZE"),
+            files,
+            kwargs.get("session_id"),
+            gate_name="CH-BATCH-SIZE",
+        )
+        py_files = [f for f in staged_own if not is_test_exempt(f) and not _is_exempt_file(f)]
         if not py_files:
             return True, ""
 
