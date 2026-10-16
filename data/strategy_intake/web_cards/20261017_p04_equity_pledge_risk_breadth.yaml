@@ -1,0 +1,210 @@
+# creation_token: p04-webcard-equity-pledge-risk-breadth-20261017 | created_by: st-qoder-p04-1017-03 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261017-P04-30
+title_zh: 股权质押风险广度（整体质押比例≥30%/≥50% 高危标的占比＋高质押否决腿）——治理与杠杆化持股风险轴首条，含「外部两类文献方向相反（崩盘风险↑ vs 实测系数 −0.0178 反向）」与「快照周频无公告日＝PIT 缺腿」的诚实申报
+mining_tower: 治理与杠杆化持股风险（本库 web_cards 已占『筹码集中度』(holder_concentration 股东户数)、『限售解禁广度』(unlock_breadth)、『回购兑现度』(repurchase_execution_credibility)、『席位净买』(institutional_seat_netbuy／lhb_seat_disaggregation)、『被动强制流』(index_rebalance_flow_window)，但『股东把持股质押出去融资』这条**杠杆化持股风险**轴未占＝不同对象（持股是否被押 vs 持股多寡/谁在买）＝新轴；strategy_registry.yaml 对 质押|pledge|商誉|goodwill 四词 grep 命中 0）
+birth_seat: ④
+birth_session: st-qoder-p04-1017-03
+birth_batch: 20261017-p04-03
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+# ── 必备① 原文链接（全部为本班 2026-10-17 02:45–03:50 真实 WebSearch/gh 命中；未读全文者逐条标核验面）
+source_links:
+  - role: 本卡基座之一（A股质押→崩盘风险，H1＝质押比例越高崩盘概率越高，样本 2009–2019 A股）
+    url: https://www.hanspub.org/journal/paperinformation?paperid=35558
+    what_verified: >-
+      WebSearch 命中汉斯出版社《金融》开放获取论文『股权质押对股价崩盘风险影响的实证研究』（DOI: 10.12677/FIN.2020.103020）正文检索片段：
+      『China's 2009-2019 A-share listed companies as the research object, and examines the impact of large shareholder equity pledge on stock price crash』；
+      假设原文『H1：在其他条件不变的情况下，大股东的股权质押比例越高，股价崩盘的可能性越高』；机制原文『质权人在处理质押股票的过程中，会有大量股票在卖方市场出现，极易造成股价下跌；
+      公司控制权存在转移风险……是一种利空信号……从而进一步提高股价崩盘风险』。⚠ 本班只读检索片段＋摘要面，未逐页读实证表与系数＝标『摘要级』，且未确认其许可证行（汉斯 OA 通常 CC BY，本班未亲验＝许可腿记未确证）。
+  - role: 反向证据（同题近邻文献，本班 WebFetch 亲验全文页——与本卡基座一方向相反，故本席不自拍方向）
+    url: https://pmc.ncbi.nlm.nih.gov/articles/PMC11501027/
+    what_verified: >-
+      本班 WebFetch 该页得：标题『Insurance participation, equity pledge and stock price crash risk』，期刊 PLoS One 2024;19，许可行『Creative Commons Attribution License』(CC BY，亲验)，
+      样本 Shanghai/Shenzhen A-shares 2007–2021，**核心读数＝『Equity pledge reduces crash risk (coeff -0.0178)』＝质押与崩盘风险负相关**。
+      ⇒ ⚑情报冲突在册：上条说质押↑崩盘↑，本条实测系数为负；两文样本窗与控制变量不同（且本条主问题是保险参与，质押是解释变量之一）。
+      本席据此**不把方向写进伪代码**，只把『方向存在外部相反证据』写进 self_flag，方向与前提须 ⑥ 预注册时裁定并显式声明控制集。
+      该文参考文献面另给两条可追源：Huang & Xue (2016) China Journal of Accounting Research 9(2):137–152（share pledges in China，doi 10.1016/J.CJAR.2015.11.001）；
+      Wang & Chou (2018) Journal of Banking & Finance 89:1–13（share pledging regulations，doi 10.1016/j.jbankfin.2018.01.016）。
+  - role: 因子级（异常收益截面）论文存在性证据——本轴的『可交易化』一手依据
+    url: https://sf.cufe.edu.cn/info/1485/13953.htm
+    what_verified: >-
+      WebSearch 命中中央财经大学金融学院 朱一峰 教师主页论文列表原文条目：『"Stock Pledging by Individual Shareholders and Abnormal Returns: Evidence from China" with Pingshu Gui and Yang Yang』。
+      ⇒ 关键点＝该题把质押与**Abnormal Returns（异常收益截面）**直接挂钩，正是本卡『可作横截面因子』而非仅作风险披露的外部依据；
+      ⚠ 本班只读到主页列表行，未见期刊/工作纸正文与年份＝标『题录级』，禁据本条下任何系数或方向结论。
+  - role: 制度与成因侧（质押改革与融资约束，JCF 2023 正式发表）
+    url: https://ems.nwu.edu.cn/info/1098/5592.htm
+    what_verified: >-
+      WebSearch 命中西北大学经济管理学院 石阳 主页成果列表原文：『Shi, Yang, Jiachen Li, and Ruiming Liu. Financing constraints and share pledges: Evidence from the share pledge reform in China,
+      Journal of Corporate Finance, 2023, Vol 78, 102337. (SSCI, ABS rating 4)』。⇒ 本卡机制腿『质押是大股东在融资约束下的选择，且受质押新规约束』的制度依据；同条主页另有『Fund renaming and fund flows:
+      Evidence from China's stock market crash in 2015』＝崩盘度量在 A股有成熟用法。⚠ 本班未读正文＝题录级。
+  - role: 实务阈值口径（本卡 30%/50%/80% 三档阈值的唯一出处＝外部风控模型，非本库冻结值）
+    url: https://m.sohu.com/a/1087788521_122014422/
+    what_verified: >-
+      WebSearch 命中搜狐财经『华体科技新增质押』一文，其内嵌『鹰眼预警评级模型』评级标准表原文逐字：
+      『公司整体质押比例 <30% / 30%-50% / >=50%』对应『正常/风险/高风险』，『核心股东质押比例 <50% / 50%-80% / >=80%』，
+      且『评级分类方法：将质押股票分类为"正常"、"风险"、"高风险"三类级别……主要为股价触发预警线或核心股东质押比例50%至80%或单只股票整体质押比例30%至50%』；
+      同族另两篇（今日头条 学大教育 2026-09-16、雪球 和而泰 2026-09-01）给同一张表＋『质押股价预警线（预估）/平仓线（预估）』的具体价（如 22.92/…）。
+      ⇒ 本卡只取该**分档形制**（整体比例 30/50 与核心股东 50/80 两套），并在 caliber_pitfall 写死『阈值属外部风控商用品，非本库裁定值，⑥ 冻结前禁当既有门柱』。
+      ⚠ 该模型为商业资讯号自述口径，无学术出处＝中可信度，且『平仓线/预警线』是**预估**价（外部按质押起始股价×比例推算），本库无质押履约保障比例列＝该腿不可复现（见 face_gap）。
+  - role: 数据源语义真源（本库质押表就是这条接口，周频快照＋无公告日的根因）
+    url: https://akshare.akfamily.xyz/data/stock/stock.html
+    what_verified: >-
+      WebSearch 命中 AKShare 官方文档『股票数据』页原文片段：接口『stock_gpzy_pledge_ratio_em』，描述『东方财富网-数据中心-特色数据-股权质押-上市公司质押比例』，
+      入参『date="20240906"; 请访问 查询具体交易日』，示例输出首行日期 2014-03-07／2014-03-14／2014-03-21／2014-03-28……＝**周五周频快照序列**。
+      ⇒ 与本库实测完全对齐：c3_fundamental.equity_pledge_summary 跨度 min=2014-03-07、2024 年 uniqExact(end_date)=51（周频）、max=2026-10-09；
+      该接口按『交易日』取当日全部公司的**存量快照**，无逐笔公告日＝本卡 PIT 缺腿的外部根因坐实（不是采集掉了字段，是源侧没有）。
+  - role: 监管硬约束条文（本卡 50%/30% 两档的**非商业**依据，优先级高于上面的商用评级阈值）
+    url: https://guba.sina.cn/view_1107_177571.html
+    what_verified: >-
+      WebSearch 命中新浪财经股吧长文（创建于 2019，转述 2018 年修订《股票质押式回购交易及登记结算业务办法》）逐字条文：
+      『2、股票质押率上限不得超过60%；3、不得导致单只A股股票市场整体质押比例超过50%；4、单一证券公司接受单只A股股票质押的数量不得超过该股票A股股本的30%』；
+      同文另给存量分布读数『A股3000千多只股票，有2800只股票存在股权质押，占比高达约85%』（数据来源标注为『网』＝不明，本席**不采信该读数**，只采条文）。
+      ⇒ 本卡两条硬结论：①TH_VETO_ALL=50 与 TH_HIGH=30 不只是商业评级商口径，**50% 是监管对单只股票整体质押比例的上限**（触及即代表全市场层面已顶格），
+        30% 是单一券商集中度上限——两者语义不同物，⑥ 冻结时**禁把两档当同一连续风险刻度**使用；
+      ②『质押率上限 60%』指贷款额/市值的质押率（履约保障维度），本库无该列 ⇒ 该条仍不可复现（与 face_gap 第(2)条一致）。
+      ⚠ 条文系媒体转述，本席**未核交易所/中登正式文本**＝标『转述级』，入判据前须 ① 席或 ⑤ 席对正式文本一次。
+  - role: 量化社区/投教专栏面（阈值实务口径与『双高』交叉形态；TASC 专栏未定位，本面为替代命中）
+    url: https://xueqiu.com/u/betalpha
+    what_verified: >-
+      WebSearch 命中倍发科技（betalpha）雪球专栏页：清华『中国A股量化因子数据库』在其系统上线，且其质押研究摘要逐字
+      『相较2018年二季度，A股总体的股权质押规模现在已经下降了22.18%……高质押比例的企业往往市值较小，财务杠杆比率较高，并且呈现更多的成长性企业特征』
+      ⇒ 这是**因子库级别**（非仅学术命题）把质押比例做成可入库因子并给出风格暴露画像的社区证据，支撑本卡『截面腿为主信号』；
+      同族另两条：扬子晚报/ews 内容页『大股东质押股权占比已超过90%，甚至高达100%，商誉占净资产比例达到了5成以上』19 家『双高』＝本卡与姊妹卡31 的**机制交叉外部读数**；
+      股吧个人风控口径『质押基本上百分之三十以下吧……0到10可能会更理想一点』＝散户级，只作阈值形制旁证，禁入判据。⚠ UGC 与厂商内容页，无许可声明＝摘要级。
+  - role: GitHub 三筛面（许可证闸样本，本班零取码）
+    url: https://github.com/terancejiang/Turtle_investment_framework
+    what_verified: >-
+      gh api search/repositories 实跑（非记忆）：查询『pledge 质押 factor in:name,description,readme』total_count=31，按 star 排序首条＝本仓 352★、pushed_at=2026-07-04、**license=null**；
+      查询『pledge ratio A股…』total_count=34，首条 pysnowball 1852★ Apache-2.0（＝行情数据接口仓，非质押因子实现）；
+      正对照（证尺有效非零命中）＝『pairs trading』total_count=4853。
+      ⇒ 三筛结论＝本轴**无**「高 star＋干净许可＋在维护」三者齐备的因子实现源；最高星质押相关仓无许可证 ⇒ 按 Owner 定性『只学思想不入码』，本卡伪代码全部由本席按本库 DESCRIBE 实测列名自拟，零行取自任何仓库。
+  - role: 实务风险扫描栏目存在性（质押作为独立风险维被产品化）
+    url: https://finance.sina.com.cn/roll/2025-04-01/doc-inerrxpq2993128.shtml
+    what_verified: >-
+      WebSearch 命中新浪财经转载西部证券『必读！4月个股风险提前看』原文：『03 质押风险：股权质押在市场环境较差时，尤其是市场出现大幅下跌时，高比例股权质押的上市公司，
+      容易触及股权质押的预警线乃至平仓风险，也将对公司股价造成负反馈』，并注明『数据来源：wind』＋『17 大类及 30 余个细项因子』的扫雷产品口径。
+      ⇒ 佐证『质押风险』在实务侧是与减持/退市并列的**独立维度**（支持本卡独立成轴），且『负反馈』只出现在下跌状态条件下＝本卡 regime 交互腿（质押高危 × 市场下行）的外部依据；⚠ 卖方资讯号内容，非学术＝低-中可信度，只作形制佐证。
+
+# ── 必备② 许可证闸
+license:
+  external_license_face: >-
+    学术面＝PLoS One 2024 经本班 WebFetch 亲验为 CC BY（开放获取，可自由转载但须署名）；汉斯《金融》OA 论文许可行**本班未亲验＝记未确证**；
+    中财大/西北大学两主页＝教师成果列表（题录引用，不涉及代码许可）；搜狐/头条/雪球/新浪＝商业资讯与转载页，**无许可证声明**＝只可引用其口径形制，禁复制正文入库。
+  code_license_face: >-
+    数据端仓库 AKShare 经本班 `gh api repos/akfamily/akshare` 亲验＝license=MIT、stars=22957、pushed_at=2026-10-14（活跃）；
+    Tushare `gh api repos/waditu/tushare`＝BSD-3-Clause、stars=15450、pushed_at=2024-03-13（陈旧）。
+    因子实现面＝首条 352★ 无许可证 ⇒ **许可证闸对"取码"判拒**；对"读接口字段语义与分档形制"判放行。
+  gate_verdict: 思想与口径可学；外部代码零取入（本卡伪代码自拟）。无许可证资讯页禁逐字复制。
+
+# ── 必备③ 逻辑描述
+logic_zh: >-
+  大股东/控股股东把所持流通股质押给券商、银行、信托换取融资，形成『股价—平仓—再下跌』的内生脆弱性：
+  (1) 价格机制：跌到预警线须补仓或提前赎回，补不出就被强制卖出＝非基本面卖压；强平盘在卖方市场集中出现直接压低价格（外部基座一机制原文）。
+  (2) 控制权机制：质押比例越高，控制权转移风险越大＝对中小投资者是利空信号，且恐慌本身抬升崩盘概率。
+  (3) 行为机制：为守住平仓线，大股东有动机促使公司释放利好/隐藏利空（Huang & Xue 2016 即研究持股质押对财务报告的影响），信息囤积到一定程度一次性释放＝崩盘。
+  (4) 反向证据：PLoS One 2024 实测系数 −0.0178（质押降低崩盘风险），与本卡基座一方向相反 ⇒ 本席判定本轴**方向未定**，
+      只有『机制存在』与『可交易化为截面因子（Abnormal Returns 题录）』两件事被外部支撑，方向须 ⑥ 预注册时连同控制变量一起定，本席不自拍。
+  截面信号＝每票在其『最近一个可得质押快照日』的整体质押比例（pledge_ratio，百分数量纲），高比例组期望收益低于低比例组（作为待检验命题而非结论）；
+  市场级广度腿＝高质押标的占比，用作择时/风控面（外部实务口径：『高比例质押的公司在市场大幅下跌时容易触及预警线乃至平仓』＝该腿与指数下行状态交互才是完整命题）。
+  否决腿（veto，非预测腿）＝整体质押比例≥50% 或 核心股东质押占其持股≥80% 者剔除——该两档阈值来自外部鹰眼评级形制，属**风控排除**而非收益预测，可绕开方向争议先落地。
+
+# ── 必备④ 伪代码（列名全部来自本班 2026-10-17 CH 只读探针实测，非记忆）
+pseudocode: |
+  # 真源面（本班实测）：c3_fundamental.equity_pledge_summary
+  #   12 列 = symbol, end_date(Date), pledge_count, unrestricted_pledge, restricted_pledge,
+  #            total_shares, pledge_ratio(Nullable Float64), data_source, quality_flag,
+  #            ingest_ts DateTime64(3,'UTC'), exchange, symbol_canonical
+  #   实测面：n=1,723,197／uniq(symbol)=4,441／min(end_date)=2014-03-07／max=2026-10-09
+  #           pledge_ratio 非空 1,720,967（99.87%）／>0 计 1,649,000／>=30 计 235,219
+  #           量纲实测分位 p10=0.04, p50=9.54, p90=34.27, max=86.32 ⇒ **百分数（0–100），不是 0–1 小数**
+  #           重复性实测：按 (symbol,end_date) HAVING count()>1 ⇒ 0 行 ⇒ FINAL 语义安全
+  #           源分布：bdpan 1,718,742／ifind 4,440／akshare 15（单源主导 99.74%）
+  PIT_LAG_DAYS      = <未冻结：源侧无公告日，须 ⑥ 裁定；外部制度形制＝东财/中登周频快照滞后 0–7 日>
+  TH_HIGH_ALL       = 30.0   # 外部鹰眼『风险』档下沿（百分数），非本库门柱
+  TH_VETO_ALL       = 50.0   # 外部鹰眼『高风险』档下沿
+  TH_VETO_CORE      = 80.0   # 外部鹰眼『核心股东质押占其持股』高风险下沿
+
+  # A. 个股截面腿（PIT 网格：交易日 t 只用 end_date + PIT_LAG_DAYS <= t 的最近快照）
+  snap(t) = latest_by(symbol, end_date) WHERE end_date + PIT_LAG_DAYS <= t AND pledge_ratio IS NOT NULL
+  ratio_i(t) = snap(t).pledge_ratio[i]                  # 百分数，禁再乘 100
+  sort_group_i(t) = 按 ratio_i(t) 截面分位（分位须自算滚动窗，禁取表内现成排名/分位列）
+  veto_i(t) = (ratio_i(t) >= TH_VETO_ALL)                # 否决腿，先于收益预测可用
+
+  # B. 市场级广度腿（本班实跑物化面，51 个 2024 周频快照日）
+  breadth(t) = countIf(pledge_ratio >= TH_HIGH_ALL) / countIf(pledge_ratio > 0)
+             实测 2024：51 点，range=(0.0562, 0.0681)，median=0.0629 ⇒ ⚠振幅极窄（±10% 内）
+  level(t)   = quantile(0.5)(pledge_ratio)   实测 2024：range=(8.64, 9.24)（同样窄）
+  #   ⇒ 两腿都是**慢变量**：与日频价格族信号做时间序列相关必然受共趋势支配，正交闸读数须按此读（见 orthogonal_gate_zh）
+
+  # C. 核心股东腿（detail 表，本班实测 21 列含 shareholder_name/type/pledge_shares/total_holdings/
+  #    total_pledged/pledge_ratio/holding_ratio/is_released/release_date/pledgeee/announce_date）
+  #    实测 n=120,628／uniq(symbol)=3,759（覆盖面远窄于 summary 的 4,441＝只到"有披露明细"的票）
+  core_ratio_i(t) = 按 shareholder 级 pledge_ratio 取 holding_ratio 最大者（『核心股东』外部定义）
+  ⚠ detail 有 announce_date 列而 summary 没有 ⇒ 若要严格 PIT，只有 detail 腿可用公告日，summary 腿只能靠滞后参数
+
+# ── 必备⑤ 数据源映射
+data_binding:
+  primary_source: c3_fundamental.equity_pledge_summary（主）＋ c3_fundamental.equity_pledge_detail（核心股东/明细与 release 腿）
+  secondary_source: c1_market.kline_daily_hfq（收益与回撤状态，后复权面，与上班两卡统一口径）
+  sl_ref: >-
+    ⚑ 源线册（真源=docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md）16 条 SL-A 中**无「股权质押」条目**
+    （SL-A13=股东户数线 DS-EASTMONEY_DATACENTER，对象不同）。最近邻＝SL-A13（同东财数据中心特色数据族）＋SL-A05（财务线，若走 detail 的公告日）。
+    本席不自改源线总册（RULE-SSOT：册为真源，改册走 ①/② 采集线与意图 API），本条只作『缺口＋最近邻』呈报，已随 [BLOCKER] 转 ①/②/⑩。
+  measured_face_zh: >-
+    本班只读探针（正对照 SELECT 1→[(1,)] 先行）实测：summary 1,723,197 行／4,441 票／2014-03-07→2026-10-09；
+    2024 内快照日 51 个（周频，min=2024-01-05, max=2024-12-27）；pledge_ratio 量纲为百分数（p50=9.54／p90=34.27／max=86.32）；
+    ≥30% 的行 235,219；detail 120,628 行／3,759 票，含 announce_date 与 is_released/release_date；
+    市场级两腿已实跑物化为 .runtime/tmp/p04_1017_03/cand_pledge_highrisk_breadth.csv（52 行含表头）与 cand_pledge_median_level.csv。
+  face_gap_zh: >-
+    (1) **PIT 缺腿**：summary 无公告日/披露日列，源侧接口即『按交易日取当日全部存量快照』，end_date 是统计日不是披露日 ⇒ 可用日须靠 PIT_LAG_DAYS 参数，
+        该参数**本席未冻结**（自定＝违在册『缺列轴的开考资格须 ⑥ 判』同族）。
+    (2) 履约保障比例/预警线/平仓线**本库无列**（外部资讯里的『预警价』是第三方按质押起始股价推算的预估）⇒ 外部三档中的『是否触发预警/平仓』这一维不可复现，本卡只能做『比例分档』。
+    (3) detail 只覆盖 3,759 票且是逐笔披露，与 summary 的 4,441 票存量快照不同分母 ⇒ 两表混用会造出『明细加总≠存量』的假矛盾，须分层使用。
+    (4) 单源主导 bdpan 1,718,742/1,723,197＝99.74%，ifind/akshare 仅 4,440/15 行 ⇒ 无跨源对拍面（在册『重算须验来源独占』同族风险：跨源换轨时该列口径可能整体位移）。
+  orthogonal_gate_zh: >-
+    ⚑ 本班**首次实跑出数**（不再空池缺席）：`python scripts/backtest/fexam/signal_orthogonality.py gate --candidate <csv> --pool .runtime/tmp/p03_1016_03 --gate 0.3 --out <json>`，
+    三腿读数与 rc 逐条：breadth 腿 verdict=**reject** max|corr|=**0.4286**（最像 gate_r_ovntbridge.csv，rc=5）；median 腿 verdict=**reject** max|corr|=**0.6000**（最像 gate_r_lag1.csv，rc=5）；
+    与同班姊妹卡（商誉广度腿）互测 verdict=**pass** max|corr|=**0.1623**（rc=0）＝两卡不同物。
+    ⚑ 但**禁把本读数当准入终审**：本次所用池＝③席 1016-03 班遗留在 `.runtime/tmp`（24h TTL）的 20 员临时面（gate_f_*×10＋gate_r_*×9＋ctrl_random×1），
+    **不是在册 32 员永久池**；且本卡两腿为周频 51 点慢变量，与池内日频信号公共日仅约 44 日（在册 ⑨席结论『43 公共日窗上 PR 判别力低』同型）。
+    结论形态＝『已实跑、当前判 reject、判据面不可终审』；两枚 reject 的机械解释＝窄窗共趋势＋周频/日频节拍错配，属『同窗窄面相关被趋势支配』，
+    非『本轴与池内某轴同义』——故本席**不自判重复**，把三条腿的 reject 原样进台账并随 [BLOCKER] 请 ⑨ 在永久池＋同频对齐网格上复测。
+  dedupe_gate_zh: >-
+    内容级三面窄谓词（本班实跑）：①`grep -cE "质押|pledge|商誉|goodwill" strategy_registry.yaml`＝**0**（全册零命中，非仅卡名）；
+    ②entry_flow 全树（含 L0/L1/L2/L3/L4/L9/LROOT）`grep -rl "质押"`＝**仅 1 件** TDM-E-L9-G3__ablation__02_股权穿透关联收益.yaml，
+      逐条读该行＝其『正查命令输出摘录』里列出 CH 只有 equity_pledge_detail/summary 两张表（表名枚举，非把质押当信号）⇒ 不构成轴占用；
+    ③`ls data/strategy_intake/web_cards/` 对 pledge/goodwill＝**0 件**。
+    ⇒ 去重闸放行（新轴）。附赠情报：L9-G3 那张卡的对象是**股权穿透关联收益**（PG entity_graph 跨存储），与本卡『质押比例』不同物，勿因同表名相邻而合并。
+  pool_face_note_zh: 在册 32 员永久池本窗仍缺席＝本班改用 ③席临时 20 员面跑出真读数；引用者须带『临时面＋周频腿＋约 44 公共日』三件限定，勿跨面当池级结论
+
+self_flag:
+  - 方向未定是本席如实呈报，非偷懒：两条外部证据方向相反（基座一 H1 正向 vs PLoS One 系数 −0.0178），本席无权拍方向＝交 ⑥ 预注册。
+  - 30/50/80 三档阈值全部来自外部商用风控模型（搜狐/头条/雪球三篇同表），本库无裁定值；本席**未冻结**，⑥ 冻结前禁当门柱使用。
+  - PIT_LAG_DAYS 本席未定值＝与上班卡28 OBS_MONTHS=12 同族『本席自定参数须 ⑥ 显式写进参数面』，本卡更保守（连自定都没有，直接留空并注明源侧无列）。
+  - 汉斯那篇的许可证行未亲验＝许可腿标未确证，不放宽闸判（在册 1016-05『同页两次 WebFetch 得两种许可行』教训的同一处置法）。
+  - 中财大/西北大学两条＝题录级（只证论文存在与作者），禁据此引任何系数；本班未读到正文。
+  - 平仓线/预警线维度本库不可复现（无履约保障比例列），本卡只交『比例分档』形制，勿读成已具备强平价监控能力。
+  - 两腿振幅实测极窄（breadth 0.0562–0.0681），若 ⑥ 要把市场级广度做成择时信号，须先判『这个振幅够不够驱动仓位』，本席不判。
+  - ⚑**本班自检抓到的本席断言偏差（如实更正，不涂改原判）**：本卡 measured_face/pseudocode 原写 `p50=9.54／p90=34.27`，
+    班尾复跑同一条 quantile 三值得到 **9.47／9.48／9.54（p50）与 34.197／34.27（p90）**，而**行数 1,723,197 与 max(end_date)=2026-10-09 两读完全恒等**
+    ⇒ 差异不是数据在长，是 `quantile()` 在 ClickHouse 并行聚合下的**跨运行伪影**（同输入不同序）。
+    ⇒ 后果与处置：①量纲结论（百分数，非 0–1）**不受影响**，因为 9.5 与 0.095 之差远大于该伪影；
+    ②但任何把本卡分位数当**精确常数**去写断言/测试的下游都会偶发红 ⇒ 已在本卡把所有分位读数改为**带区间写法**（见 caliber_pitfall 第(8)条）；
+    ③阈值 30/50/80 是分位**以外的绝对档**，不经 quantile 函数，故不受此伪影影响——这也是本卡优先用绝对档而非分位档的附带理由。
+  - TASC 专栏面本班**班尾补做定向检索仍未定位到该专栏载体页**（检索式见台账 §二 缺席面⑦ 更正段），命中到的是新浪股吧/雪球专栏/扬子晚报等替代社区面 ⇒ 在册『TASC 连续缺席』计数本班按『已扫未命中』记，**不再记未扫**（与上班措辞区分）。
+
+caliber_pitfall_zh: >-
+  (1) **量纲坑**：pledge_ratio 是百分数（p50=9.54／max=86.32），任何写 `< 0.3` 的代码恒真、任何再乘 100 的写法直接错档；
+      在册 1017-02 卡29『按直觉字段名读』同族——本列名带 ratio 但值域是百分数。
+  (2) **end_date ≠ 公告日**：源侧是周频存量快照（AKShare 文档接口 stock_gpzy_pledge_ratio_em 逐字为证），按 end_date 起算＝可能前视；
+      本库另有 data_source 含 snapshot/diff 的事件表事件时间列须先验的在册红线（上班卡29 announcement_date 语义证伪＝高严重度），本卡是同族第二例。
+  (3) **Nullable 列**：pledge_ratio IS NULL 1,720,967 vs count() 1,723,197＝有 2,230 行 NULL；`IS NULL` 谓词与 `=0` 不等价（在册 'nan' 字面坑同族：本表是 NULL 不是 'nan'，但同样禁把空当 0）。
+  (4) **分位/排名列禁取现成**：本表无分位列，但若后续接入含 *_pct 的派生表，须自算滚动窗（在册 `*_pct` 前视坑）。
+  (5) **两表分母不同物**：summary 4,441 票 vs detail 3,759 票；加总明细去推存量。
+  (6) **单源**：bdpan 占 99.74%，无跨源对拍＝换源时的口径位移无人发现得了（在册『来源独占』判据反向应用）。
+  (7) 收益口径统一 c1_market.kline_daily_hfq 后复权面（与 1017-01/02 三班四卡一致，勿混用未复权 pct_change 做跨期收益）。
+  (8) ⚑**分位数读数不可当精确常数**（本班班尾自检实测抓到的自身断言偏差）：同一条 `quantile(0.5)(pledge_ratio)` 三跑得到 **9.54／9.48／9.47**，p90 得 **34.27／34.197**，
+      而 `count()`=1,723,197 与 `max(end_date)`=2026-10-09 **两读完全恒等** ⇒ 差异不是数据在长，是 ClickHouse 并行聚合下 quantile 的**跨运行序伪影**（在册『同seed同参≠同输入』同族，本条是该族在**聚合函数面**的新实例）。
+      ⇒ 下游写断言须用**区间**（本卡口径改写为 p50∈[9.4,9.6]、p90∈[34.1,34.3]）或改用**绝对档**（30/50/80 三档不经 quantile 函数＝稳定）；禁把 9.54 逐字节钉进任何测试或门柱。
+      ⇒ 附带理由：本卡优先采用外部**绝对档**而非截面分位档，除可解释性外，也正因为分位档在本库当前聚合面上读数不可复现。
