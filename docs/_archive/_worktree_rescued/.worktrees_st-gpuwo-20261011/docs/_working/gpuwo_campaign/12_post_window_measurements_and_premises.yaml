@@ -1,0 +1,153 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 四 GPU 工单施工班·04:00 后实测三件与三条前提校正（显存预算/档位单点/分片轮转）
+created: '2026-10-12T03:46:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+meta:
+ 编制纪律: 本册先写"不依赖 CH 的实测与校正"，04:00 让路窗结束后把三项跑数补进 measured_* 三节再投袋；
+   若某项没跑成，该节改标 NOT_RUN 并写原因，不留空壳也不编数。
+
+premise_corrections_measured_locally:
+  vram_budget_conflicts_with_the_8g_ask:
+    truth_source: config/gguf_vram_budget.yaml（MOD-INF-060，created 2026-08-30，10-12 03:4x 实读）
+    hard_cap_gb: 21.6
+    night_quota_gb: 4.0
+    night_window: 15:30-08:30（note 原文＝跨日窗口；LLM 最小集与训练互斥时分共享）
+    per_model_vram_gb:
+      "qwen3:8b": 5.4
+      "deepseek-r1:8b": 5.4
+      "qwen3:14b": 9.2
+      "deepseek-r1:14b": 9.2
+      "qwen2.5-coder:14b": 9.2
+      "Qwen3-Embedding:latest": 4.8
+      "BGE-M3:latest": 1.2
+
+    what_that_means: >-
+      两条不一致：①R-4 令文的"≤8G 验收"与在册预算册的夜窗 4.0GB 配额不同轴——我的 Kronos 打分就跑在
+      00:30（夜窗内），真尺量到 5-8GB 会"过 8G 却超夜窗配额"；②在册 qwen3:8b 单模型就标 5.4GB，
+      而夜窗配额是 4.0GB ⇒ 现产线（22:30 情绪批）本就长期跑在预算册之外，这本册的夜窗数字与运行时脱节。
+      我把两把尺都摆出来，不自行择一把当"合格线"。
+  tier_switch_is_not_a_single_knob:
+    card_premise: GPU-01 令文＝胜出模型"进 MODEL_DEFAULT/OLLAMA_INFERENCE_MODEL"
+    measured_sites:
+      MODEL_DEFAULT_constants:
+        - scripts/backtest/lane_c2_agentic_miner.py:57
+        - scripts/backtest/hypothesis_translator.py:59
+        - scripts/backtest/graph_enrich_staging.py:54
+        - scripts/ch/irm_extract_batch.py:57
+      env_readers:
+        - src/zephyr/integration/local_model/ollama_chat.py:67（INFERENCE_MODEL = getenv("OLLAMA_INFERENCE_MODEL", "qwen3:8b")）
+        - src/zephyr/integration/llm_runtime_gateway.py:638（同 env，缺省 qwen3:8b）
+    why_env_alone_does_not_work: >-
+      上面四个脚本都是 OllamaChat(model=model, ...) 显式传模（lane_c2_agentic_miner.py:360、
+      hypothesis_translator.py:204 实测），显式传参覆盖 env 缺省 ⇒ 只设 OLLAMA_INFERENCE_MODEL
+      这四处仍跑旧档。定版真面目＝改 4 处常量，或先做一次"单点解析"收口（后者属基础设施改造，不在本班授权面）。
+  shard_rotation_choice_verified: >-
+    我的 runner 用 (Get-Date).DayOfYear % 4 轮片，任务只在 Sun-Thu 触发（Fri/Sat 不跑），所以轮转序列不是连续整数。
+    我把这条与"按星期映射"另一方案一起量了 40 夜（8 周）：doy%4 的四片占比＝32.5%/35%/35%/37.5%，
+    按星期映射那版＝27.5%/27.5%/27.5%/55%（0 片被周一/周四双取，严重偏斜）。
+    ⇒ 保留实现中的 doy%4；这不是"没验证的直觉"，是量过之后的选择。前 12 夜序列（doy%4）＝1,2,3,0,3,0,1,2,3,2,3,0。
+    另一条如实标注的固有近似：宇宙是每晚按当日成交额重排的 top-N ⇒ 分片切的是"当晚宇宙"，
+    跨夜成员会变，四夜一轮覆盖的是"4×当晚 top-300"而非一个固定全集的稳定划分。
+
+queue_throughput_arithmetic_for_owner:
+  measured_2026_10_12_033x: >-
+    落地速率按 done/ 里 landed_at 实测：30 分钟 2 袋、60 分钟 3 袋、3 小时 13 袋（4.33/h）、
+    6 小时 29 袋（4.83/h）、24 小时 81 袋（3.38/h）。最近六次落地时刻＝01:27 01:34 02:33 03:08 03:13 03:21。
+  backlog: pending=55（03:26 实测），最老 172 分钟，中位 94.6 分钟
+  my_bags_eta_at_4_per_hour: >-
+    本班 9 袋在队，按 FIFO 排位×15 分钟/袋估：0008(前 10)≈06:15、0009(24)≈09:45、0011(32)≈11:45、
+    0012(34)≈12:15、0013(35)≈12:30、0014(41)≈14:00、0015(42)≈14:15、0017(53)≈17:00、0018(54)≈17:15。
+    两条前提写明白：①他班持续入队（83 分钟里 pending 从 40 涨到 55）但新件按 FIFO 进队尾，不推挤我的位次；
+    ②带 --priority 的件会插队，故上表是"无插队"口径的下界估计。
+  consequence_for_the_two_deadlines: >-
+    LaneC 修件（0008）按估计在周一清晨落地，赶得上周一 20:00 那一夜 ⇒ 批复的"10-12 20:00 前落地"能达；
+    而 GPU-02 表三件（0012）与 R-3 分片袋（0013）要中午才落 ⇒ "机械四步"（建表＋注册）在我醒来时点做不了，
+    只能等落地或走加急，这条就是晨间包 G-8/G-5 的实数依据。
+
+measurements_after_0400:
+  r4_smoke:
+    when: 2026-10-12 04:04-04:08（date 实测；让路窗 04:00 之后开跑）
+    command: python .runtime/tmp/gpuwo_r4_smoke.py --cap-min 24 --out .runtime/tmp/gpuwo_r4_smoke.out（rc=0）
+    scope_per_R4: 5 只票／每票 pred_len=1 sample_count=8／synthetic 标记强制／**零写生产表**
+    per_symbol_seconds: {600519.SH: 3.22, "000001.SZ": 0.45, 300750.SZ: 0.41, 600000.SH: 0.39, "002415.SZ": 0.48}
+    mean_seconds_per_symbol: 0.99
+    warm_cache_seconds_per_symbol: 0.43
+    quantiles_monotonic: 5/5 只票 q005≤q025≤q050≤q075≤q095 全单调
+    bars_used: 278（fetch_kline(days=250) 实得，尾部窗 400 不足即全用）
+    vram_ruler:
+      channel_a_nvml_per_process_memory: not_attributable（本 PID 在 NVML 计算进程表里有行，
+        但 usedGpuMemory 返回 WDDM 哨兵 0xFFFFFFFFFFFFFFFF＝本机不可逐进程归因）
+      channel_b_nvml_per_process_smUtil: not_attributable（驱动侧行宽非公开头所写，
+        候选步长解出的 pid 过不了"必须全在计算进程表内"的正对照 ⇒ 整条通道作废，不发布对不上人的数）
+      channel_c_torch_per_process: peak allocated 126 MiB / reserved 142 MiB（按构造即逐进程）
+      channel_d_device_level_旁证: used 17966 MiB / total 24576 MiB（含桌面与其他进程，明确不当尺）
+    acceptance_8g_verdict: >-
+      以 torch 进程内自计为尺＝142 MiB ≤ 8192 MiB ⇒ 过，且余量两个数量级。
+      诚实定级：R-4 要的是"逐进程真尺"，本机 NVML 的两条逐进程通道都判不可归因（A 哨兵、B 步长对不上人），
+      所以这个"过"只有 channel_c 一条真尺撑着；若 Owner 要 NVML 口径的硬证，需换 pynvml/装 NVML 绑定
+      或在 Linux 机上重跑（pynvml 与 py3nvml 本机实测均未安装：find_spec 双双 False）。
+    r3_calibration_payoff: >-
+      首夜标定要的就是这个数：热态 0.43 秒/标的 ⇒ 25 分钟上限约装 3400 只票；
+      今晚 R-3 的"一夜一片×四夜一轮"对 top-300 来说严重过配（一片 75 只≈32 秒）。
+      ⇒ 可呈的下一步不是把窗口拉长，而是把 top_n 提到 1000-2000 级（仍留大量余量），
+      这条改不改由 Owner 定，我不自行放大覆盖面（那是消费面扩产）。
+    not_covered_by_this_run: >-
+      本次没量到"真实夜窗含落表写 CH 的整段耗时"（落表被 R-4 明令禁写）；
+      也没在车道码上跑——vendor\Kronos 与 vendor\kronos_weights 只在主区工作树存在，
+      车道里 load_predictor 必 RuntimeError（实测报的就是车道路径），
+      故模型侧三函数取主区 dev 码、把车道新增的 5 行尾窗切片逐字内联。
+      数值路径同一条（score_forward 本就只是 predict_close_quantiles 的转发），但口径上属"主区码＋内联"级，标清楚。
+
+  w1_depth_join:
+    when: 2026-10-12 04:00-04:12（两条尺：gpuwo_w1_depth_join.py 与正对照 gpuwo_w1_control.py，rc=0）
+    execution_report_face:
+      rows_total: 1
+      rows_total_final: 1
+      rows_with_decision_timestamp: 0
+      distinct_symbols: 1
+      the_single_row: "order_id=f216058c…，symbol=510300.SH，execution_start=2026-09-18 10:26:15.033+00:00，decision_timestamp=NULL，slippage_bps=-10000.0"
+    tick_depth_5_face:
+      months_with_rows: {"202607": 48, "202608": 4, "202609": 130146930}
+      max_trade_date: 2026-09-30
+      october_2026_rows: 0
+      distinct_symbols_september: 8720
+      daily_rows_september_sample: {"2026-09-30": 3822768, "2026-09-29": 1, "2026-09-28": 22830201, "2026-09-21": 14567}
+    join_test_result: "1 只抽样标的，可联 0 条"
+    why_this_probe_is_inconclusive_by_construction: >-
+      语料只有 1 行，抽样比例无从谈起；而且把该行的 execution_start(10:26:15 UTC) 按 +8h 换成北京时间是 18:26，
+      已过收盘，落在深度表的无数据时段；同日该标的那张表确实有 2015 行（正对照查过）
+      ⇒ 到底是"写入方把本地时间贴了 UTC 标签"还是"这行本就是测试行"，一行语料判不了。
+      我不把 joinable_share=0.0 当成"连不上"的结论报，那是我的时区算法与一行数据互相喂出来的数。
+    decisive_finding_for_the_replay_leg: >-
+      M-2／真实 replay 腿的真正拦路石不是"obs 缺档口"（07 册那句只到第二层），
+      而是**上游根本没有语料**：execution_report 全库 1 行且 slippage_bps=-10000、decision_timestamp=NULL；
+      另一侧 tick_depth_5 自 2026-09-30 之后 0 行（10 月整天 0 行，9-29 只有 1 行、9-21 只有 1.4 万行这种窟窿），
+      也就是说档级行情的采集面在最近 12 天是断的。两条合起来：
+      "从真实成交+真实盘口重建 24 维 obs"这条路今夜量出来是**双重空集**，不是工作量问题。
+      这直接改 B-007 材料包的依据：真训练若要"真实流水"，先要有写者把 execution_report 填起来、
+      并把档级采集恢复；否则只能走合成盘口（=现在 env 的 book_provider 形态），而那要如实标"合成"。
+    ownership_note: 档级采集断档与 execution_report 无写者，都属数据车道/采集链的账，本班只报数不代修。
+
+  gold_pack_expansion_draft:
+    when: 2026-10-12 04:00:08-04:02:06（chain 第 3 步，rc=0）
+    command: python scripts/ml/build_distilled_sft_dataset.py gold-pack --target 40 --spot 60（模型 qwen3:8b，在车道内跑，PYTHONPATH 指车道）
+    measured:
+      pool: 360（9 层 × 每层取 40，池内先按 stable_key 排序再截 ⇒ 承 P0 的可复现口径）
+      labeled: 360
+      teacher_errors: 0（错误率上限闸 TEACHER_ERROR_RATE_MAX=0.2 未触发）
+      draft_dist: {positive: 117, negative: 55, neutral: 188}
+      throughput: 前 50 条 45 秒（含模型冷启），其后约 10-12 秒/50 条＝0.2-0.24 秒/条
+      outputs_lane_paths:
+        draft: .worktrees/st-gpuwo-20261011/data/eval/gold_expansion_draft_v1.jsonl（360 条）
+        spot_pack: .worktrees/st-gpuwo-20261011/docs/_working/gpuwo_campaign/gold_expansion_spotcheck_pack.md（60 行表格＋表头）
+    status_line: "DRAFT_NOT_GOLD——冻结须 Owner 抽检（GPU-03B P1 的线）；本包 human_label 全空＝待您判"
+    what_is_not_done: >-
+      没冻结、没训练、没跑 distill-train 子命令；教师草稿只到"可抽检"这一步。
+      另记一条环境观察（不属本班授权面，只报不改）：跑程中 LSG 打了
+      "AgentSecurityLayer: 未传 hmac_key 且 ZEPHYR_L4_HMAC_SECRET 未设置，明确降级（无默认密钥）"＝
+      L4 安全层此刻是降级态，本机跑通不代表它在受控路径上。
+

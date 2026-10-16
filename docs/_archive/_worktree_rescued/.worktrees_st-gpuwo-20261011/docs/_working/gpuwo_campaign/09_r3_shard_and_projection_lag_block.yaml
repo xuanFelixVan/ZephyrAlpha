@@ -1,0 +1,117 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 四 GPU 工单施工班·R-3 分片落码＋翻译投影落后卡点（通宵令，零 CH 零跑批零训练）
+created: '2026-10-12T02:31:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+meta:
+  clock_measured: 2026-10-12 02:31（date 实测；01:00-04:00 让路窗内＝零跑批零 CH 查询，本件只读 PG 一次）
+  queue_pressure_at_write: pending=40 processing=1 head=q-20261012-st-gpuwo-20261011-0006（已等 123 分钟）
+  scope: 本节两件事——① 统筹 R-3 分片裁定落码（GPU-02 夜窗打分）；② GPU-03B P1/P2 管线件被 TRANSLATION-COVERAGE 卡住的取证与呈批
+
+r3_shard_landing:
+  ruling_restated: >-
+    R-3 批复口径：00:30 那片按"一夜一片、四夜一轮"切；单夜硬上限 25 分钟；首夜要出标定数；
+    分片没跑完禁报绿；不许把打分挪到周日白天。本节把这四句变成代码与 runner 的实参。
+  python_side:
+    file: scripts/backtest/kronos_adapter.py
+    new_function: shard_universe(universe, *, shard_index, shard_count)
+    slicing_rule: >-
+      宇宙序＝SQL_UNIVERSE 成交额降序（真源次序），切片只按位置取 [idx*size, (idx+1)*size)，
+      size 用 ceil ⇒ 末片可短但不漏票；越界 shard_index 抛 ValueError（禁"取不到就当没活干"）。
+    cli_flags: --shard-index / --shard-count（缺省 0 / 1＝不分片，老 runner 的字节口径零变更）
+    summary_fields_added: universe_total shard_index shard_count shard_size shard_status calibration
+    calibration_meaning: >-
+      elapsed_min / sec_per_symbol / symbols_fit_in_cap 三个数就是"首夜标定"要的实测吞吐：
+      分片粒度合不合适只能由跑出来的秒数说，不能由我拍头的 shard_count 说。
+    exit_code_contract:
+      "0": 本片全部标的成功落表
+      "1": 硬败（宇宙空／本片空／分片参数非法／落表失败／一行都没落）
+      "3": 本片跑完但有标的取数或打分失手（覆盖有洞）
+      "4": 25 分钟让路闸把本片掐断（覆盖不全，明晚那一片不等于今晚这片跑完了）
+  runner_side:
+    file: scripts/tasks/run/run_kronos_scoring.ps1
+    rotation_formula: shard_index = (Get-Date).DayOfYear % shard_count，shard_count 缺省 4
+    rotation_note: >-
+      Sun-Thu 五夜里按日序取模轮片，多出来那一夜只是重复某一片；预测表主键含 as_of_date，
+      同一天同一只票重复打分是 ReplacingMergeTree 的幂等覆盖，不产生第二种口径。
+    env_overrides: KRONOS_TOP_N / KRONOS_MAX_RUNTIME_MIN / KRONOS_SAMPLE_COUNT / KRONOS_SHARD_COUNT / KRONOS_SHARD_INDEX
+    rc_policy: >-
+      rc!=0 一律写 NOT GREEN 行＋Alerter ERROR 并按原 rc 退出（不折成 0）；rc=0 才写 green。
+      这一段是本班 LaneC 教训的复用：静默把"没跑完"记成"跑完了"比不跑更坏。
+    ascii_ruler: 字节 5505／非 ASCII 0；Parser::ParseFile=SYNTAX-OK（PS5.1 中文注释会假报语法错，在册红线）
+  guards:
+    test_file: tests/research/backtest/test_kronos_score_only.py
+    measured: 19 passed（本袋新增 9 支）；同批 test_lane_b_idea_generator.py 20 passed，两文件合计 39 passed
+    new_predicates:
+      - 四片拼回逐位等于原宇宙（防切片顺手重排＝跨夜口径漂移）
+      - ceil 分片不漏票（10 票 4 片＝3/3/3/1）
+      - 越界 shard_index 抛 ValueError
+      - CLI 里必须有 --shard-index/--shard-count（防参数只活在代码常量里）
+      - run_score_only 函数体内必须真的调用 shard_universe（防 runner 传参是装饰品）
+      - 中断且有行＝rc4；有失手＝rc3；全成＝rc0 且标定三字段齐
+      - shard_count=1 时本片＝全宇宙（老口径零变更）
+    red_proof: >-
+      同一套 9 条判据打在 dev 未修码上 9/9 判败，打在车道已修码上 0 判败。
+      尺子脚本 .runtime/tmp/gpuwo_redproof_shard.py（只读，零写盘）。
+  untouched: >-
+    walk-forward 评估腿、判定尺、K 线取数、模型加载、落表列序单点全部未动；
+    本节的分片只发生在 --score-only 腿的宇宙切片上。
+
+projection_lag_block:
+  what_is_held: >-
+    GPU-03B 的 P1/P2 管线件 scripts/ml/build_distilled_sft_dataset.py（333 行）与它的 9 支测试
+    tests/meta/scripts/test_distilled_sft_pipeline.py，今夜留在车道工作树里入不了队。
+    件本身是绿的：与 P0 件合并跑过 15 passed；creation_token、depgraph 节点、大白话简介都登记过。
+  denial_evidence: >-
+    两次 enqueue 均 DENIED: [TRANSLATION-COVERAGE] 无 plain_zh 简介[scripts/ml/build_distilled_sft_dataset.py]。
+    第一次是投影册由车道渲染（错面）；第二次我按"渲染必须从主区跑"重跑 add_module_translation.py，
+    工具回报 publish v32、PG active 行 version=2、主区投影册命中该行——但 enqueue 仍判败。
+  root_cause_chain:
+    - "入队预检 src/zephyr/gov_enforcement/rule_bridge/commit_preflight.py 的 _translation_sim_map：
+       翻译册不在本袋 files 时，判定面=git show HEAD 的投影册（落地仿真态，M2.1 同源口径）"
+    - "落地物化 scripts/governance/commit_queue_landing.py 的 _pg_render_registry_text 与 _merge_registry_file：
+       已入账本册的袋内字节整体退出物化，落地内容由 PG render 决定"
+    - "查询面 scripts/governance/_shared/module_translation_loader.py 的 _ensure_loaded：只读 YAML 投影，无 PG 通道
+       ⇒ 锁内那道真门读到的还是 HEAD 投影，所以这不是预检过严，是整条链都要求投影先追上账本"
+  measured_numbers_2026_10_12_02_3x:
+    head_projection_rows: 8105
+    pg_ledger_active_entries: 8113
+    pg_registered_but_projection_missing: 8
+    projection_present_but_ledger_missing: 0
+    my_row_in_ledger: "entry_key=module_path=scripts/ml/build_distilled_sft_dataset.py status=active version=2"
+    queue_wide_new_py_blocked: >-
+      在册队列扫描（pending+processing 共 40 袋 136 个件面）：被同一道门卡住的新 .py＝0 件。
+      我这件之所以不在统计里，是因为它连队都没入——它是今夜这一类的第一件，不是唯一会遇到的。
+    stray_rows_in_ledger: >-
+      那 8 行里除我这一行外还有 6 行看着像测试夹具名（src/zephyr/degraded.py、layered.py、lying.py、
+      new_mod.py、orphan.py、with_extras.py）另加 1 行是别车新登记。这 6 行该不该在册不归我判，
+      呈册主车道——它们会让任何一次 render 袋把它们一起带进 HEAD。
+  why_i_did_not_self_fix: >-
+    三条路我都没走，各有各的禁：① 把投影册塞进我的袋＝让 PG render 的整册（含他人 7 行）进我的 commit，
+    这正是 Owner 2026-10-10 明确禁掉的"重打投影袋"，而且自 502 号 B 件之后这条路已经不是"手工挑行"，
+    是整册代表——禁它的理由（归属篡改）今天依然成立；② 直接给门加 PG 通道＝改判官件，超出本班授权面，
+    我不自裁；③ 绕开预检直调内部入队函数带 skip 旗＝这套防绕过正是为堵这种走法造的（波 1B 包 1.7）。
+    所以今夜如实停在"件在车道、卡点入册"，不硬闯也不装绿。
+  options_for_owner:
+    option_1_registry_lane_render:
+      what: 册主车道跑 reconcile＋registry_projection_generator --render，出一个净增 8 行的投影袋
+      cost: 一个小袋；落地后我的袋原样 enqueue 即可通过
+      note: 这是 Owner 自己在 2026-10-10 写的正道，且顺手把那 6 行夹具名条目定性（清或留）
+    option_2_give_the_gate_a_pg_third_source:
+      what: 给 TRANSLATION-COVERAGE 的查询面加 PG 账本第三源（先 PG 命中即放行，PG 不可达退回投影册照拦）
+      precedent: >-
+        CREATE-GUARD 已经吃过同样的药：src/zephyr/gov_enforcement/commit_gates/create_guard.py 里
+        "PG 第三源"就是 2026-10-10 补的（账本在册＋投影落后＝合法路径被冤杀）。这不是弱化门，
+        是把喂给门的输入指向真源——Owner 固定正解"改喂给闸的输入指向，禁弱化／禁白名单／禁新豁免"
+      cost: 判官件一处改动＋一支红绿测；一次修好，后面每条车道的夜批都不再撞
+      risk: 改的是门本身，须由册主车道或治理车道出，不该由我这个施工班自裁
+    option_3_wait:
+      what: 我的 P1/P2 件继续在车道里等下一次自然 render
+      cost: GPU-03B 的 P1 扩题草稿与 P2 蒸馏管线今夜不入 HEAD；晨间包如实标"未落"，不标假落地
+  my_recommended_default: >-
+    按通宵令"预签裁定＞既定默认＞最保守"的序：预签裁定＝Owner 10-10 已经写了正道是册主车道出 render 袋，
+    所以我推荐 option_1 今夜先走（便宜、不碰判官件），同时把 option_2 立成治理续单（治本、防止每条车道重演）。
+    我不自裁 option_2，因为那要动判官件。

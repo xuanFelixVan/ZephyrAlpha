@@ -1,0 +1,91 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 四 GPU 工单施工班·排班申报面与钟面撞车预检（含我自己一句假话的更正）
+created: '2026-10-12T03:20:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+meta:
+  clock_measured: 2026-10-12 03:0x-03:2x（date 实测，让路窗内＝零 CH 零跑批；本册只读本地 YAML 与 Task Scheduler 查询）
+  why_this_bag_exists: >-
+    令文要求"计划任务注册后必跑资源册再生，实体挂 gpu_default/llm_local 互斥组；冲突闸对既有批零红才算过"。
+    我在今夜真去核这句话时发现：我这三件新任务**根本没有挂互斥组的通道**，而我上册已经把这句话说成事实。
+
+correction_of_my_own_record:
+  old_claim: 03 册与我给 Owner 的口头进度里那句"实体挂 gpu_default/llm_local 互斥组"
+  truth_measured: >-
+    generate_resource_profile_registry.py 的申报面只有两处能定 resource_class/互斥组：
+    ①MANUAL_ENTITY_SEED（手动/事件实体种子表，如 manual_kronos_adapter 才是 class=gpu grp=gpu_default）；
+    ②schedule.yaml 槽位特化表。计划任务（sch_*）由 register_*.ps1 解析"任务名/触发器/时限"生成，
+    class 走默认值。⇒ 我的三件新任务落册时是 light/default/无互斥组，不是我说的 gpu_default/llm_local。
+  evidence: >-
+    实测已落地那件的册面：sch_sft_train_window｜class=light｜pool=default｜exclusive_group=[]｜
+    window=cron "0 10 * * 0"｜est_duration_min=300｜peak_mem_gb=0.5｜status=active｜
+    schedule_truth_source=scripts/tasks/register/register_sft_train_window_task.ps1
+    （它已随 a2c46fddca 落进 dev，册在 2026-10-12 00:25 的再生里收编了它）。
+  how_i_am_fixing_it: >-
+    按 Owner 固定正解"改喂给闸的输入指向，不动判据"：我不去改生成器（那是资源车道的册），
+    而是把**申报诚实度**补回来——三个 register 脚本改成缺省注册为 DISABLED＋显式 -Enable 才上膛，
+    并在脚本头把"闸此刻看不见互斥"这条写死。这样"零红"不会因为看不见而假绿，
+    而"上膛"变成一个有痕迹的动作。生成器缺通道这条另立续单呈资源车道。
+
+clock_face_overlaps_measured: >-
+  用真实 cron＋申报时长手算的钟面撞车（不是我那把尺的输出，尺的局限见下）：
+  1) sch_f06_grid = "0 23 * * 6"，est_duration_min=1440 ⇒ 周六 23:00 一直占位到周日 23:00；
+     而 GPU-03 的周日 10:00-15:00 训练窗与 GPU-02 的周日 00:30-00:55 打分窗都落在它里面。
+  2) sch_factory_lane_c = "0 20 * * 1-5"，est_duration_min=240 ⇒ 周一到周五 20:00-00:00；
+     GPU-01 的夜窗 23:00-01:00 与它重叠整整一小时，且两批都要用本机 Ollama（LaneC 翻译腿今晨才被我确诊过依赖）。
+  3) sch_decision_chain_sentinel = "50 9 * * *"，15 分钟 ⇒ 09:50-10:05，与周日 10:00 训练窗头 5 分钟相接
+     （轻任务，属可接受，但如实列）。
+  含义：令文那句"冲突闸零红才算过"我今天**给不出**——不是因为闸报红，而是因为闸此刻看不见这三件的重量。
+
+ruler_limits_disclosed: >-
+  我那把预检尺（.runtime/tmp/gpuwo_conflict_precheck.py）跑出来 5 个候选，其中 3 个是尺本身的毛病：
+  ①est_duration_min 为 0/None 的实体被当成"零长窗"，点状窗口照样判重叠；
+  ②多 cron 用竖线拼在一个字段里（如 "5 10 * * *|5 11 * * *"），croniter 解析失败后我按"无窗口"跳过＝漏报方向；
+  ⇒ 所以本册的结论只认手算那三条，尺的输出不作数。这类"我的观测工具自己造的数"是已在册的坑，别再转手当证据。
+
+action_taken_in_this_bag:
+  files:
+    - scripts/tasks/register/register_kronos_scoring_task.ps1（改：param([switch]$Enable)，缺省 Disable-ScheduledTask，上膛走 Enable-ScheduledTask）
+    - scripts/tasks/register/register_night_mining_task.ps1（同上，并把 LaneC 尾段撞车写进脚注）
+    - scripts/tasks/register/register_sft_train_window_task.ps1（同上；并写明训练要跑须两闸都真：日历上膛＋sft_authorization.txt 旗）
+  behaviour_change: 现产线零变更——这三件计划任务此刻在 Task Scheduler 里**并不存在**
+    （实测 schtasks /query /tn ZephyrAlpha_NightMining 与 /tn ZephyrAlpha_SftTrainWindow 均"系统找不到指定的文件"），
+    注册动作属"机械四步"，必须等件落地后再做。
+  rulers: 三件均 Parser::ParseFile=SYNTAX-OK；非 ASCII 字节 0（4336/5099/5770 字节）
+
+remaining_after_landing:
+  - 机械四步按 03 册 review_commands 逐条跑：三个 register（此刻会建出**停用**任务）→ 主区根跑 regen →
+    冲突闸看真实红绿 → apply_market_tables_ddl 建表。
+  - 呈 Owner 的一问：GPU-01 夜窗与 LaneC 尾段重叠这一小时怎么办——
+    我的默认推荐＝夜窗改到 LaneC 之后（如 00:15 起，或周五/周六夜里跑），而不是把 LaneC 掐短；
+    理由是 LaneC 是现产线在跑的批，动它=动现网，而夜窗今日本来就该保持停用待上膛。
+  - 续单（资源车道）：给生成器补一条"计划任务的资源类别申报通道"，
+    否则每一条新车道都会像我一样，把"挂了互斥组"当成一句自我安慰。
+
+novelty_correction_on_stray_ledger_rows: >-
+  09 册里我把"账本有 6 条形如测试夹具的简介行（src/zephyr/degraded.py、layered.py、lying.py、new_mod.py、
+  orphan.py、with_extras.py）"当新发现报。他班今晨已在册（项目记忆：弃用路径的 token/简介行须 api.retire 撤账，
+  render 会把幽灵行物化进投影；另有"新 .py 第二道死闸＝该门 loader 只读投影册无 PG 第三源"同案在册）。
+  ⇒ 本班只是第二次量到同一件事，不是首发；引用请按在册案卷，勿当我这条新立。
+
+r4_ruler_channels_measured_2026_10_12_032x: >-
+  冒烟尺在建的过程中先出三条实测（都是尺本身的成败，不是被测数）：
+  ①NVML 逐进程 usedGpuMemory：本机能开 nvml.dll、能列 21 个计算进程，但对本 PID 返回哨兵值
+  0xFFFFFFFFFFFFFFFF（WDDM 下不可归因）⇒ 这条只报 not_attributable，不报数；
+  ②NVML 逐进程 smUtil（nvmlDeviceGetProcessUtilization）：结构行宽非公开头所写 32B（实测 rc=7 时驱动回填
+  "需要 72 行"），按候选步长解出的 pid 过不了"必须全部落在计算进程表里"的正对照 ⇒ 整条通道判 not_attributable，
+  我不拿它出数；
+  ③设备级 nvmlDeviceGetMemoryInfo(v1，_v2 在本机 rc=2)：total=24576MiB、used≈3562-4163MiB 波动，
+  **只作旁证不当验收尺**（在册教训：设备级被桌面图形污染，零负载也能 8-57%）。
+  ⇒ 今夜 R-4 的"≤8G 验收"只能由 ④torch 进程内自计（max_memory_allocated/max_memory_reserved）承担，
+  这一条按构造就是逐进程的。若它也不可用（跑在 CPU 上），我就如实报"显存验收无真尺可用"，不交假数。
+
+review_commands:
+  - python -c "import yaml;d=yaml.safe_load(open('config/resource_profile_registry.yaml',encoding='utf-8'));print([ (e['task_id'],e['resource_class'],e['pool'],e['exclusive_group'],e['est_duration_min']) for e in d['entities'] if e['task_id'].startswith('sch_sft') or e['task_id']=='sch_f06_grid'])"
+  - powershell -NoProfile -ExecutionPolicy Bypass -File .runtime/tmp/gpuwo_psdircheck.ps1 -Root "D:/ZephyrAlpha/scripts/tasks/register"（落地后应全 OK 且 nonascii=0）
+
+  - MSYS_NO_PATHCONV=1 schtasks /query /tn ZephyrAlpha_NightMining（落地注册前应为"系统找不到指定的文件"）
+  - git show dev:scripts/tasks/register/register_sft_train_window_task.ps1 里 grep -c "param(\[switch\]\$Enable)"（落地后应见 1）

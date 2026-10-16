@@ -1,0 +1,81 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 四 GPU 工单施工班·GPU-03B P0＋P1/P2 管线袋（通宵令，零 CH 零训练）
+created: '2026-10-12T02:10:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+scope: 通宵令第五节 GPU 工单班第 6 项——GPU-03B：P0 可复现性修复＋P2 蒸馏管线＋P1 扩题（草稿）。
+  评测集冻结与真训练＝Owner 醒后抽检才动，本班停在那条线上，今夜**零 CH 查询、零跑批、零训练**。
+
+p0_reproducibility_fix:
+  file: scripts/ml/build_sft_dataset.py（改，车道基线已验==dev 同字节）
+  root_cause: >-
+    三条腿全都在"来货序"上抽样：collect_news 查 CH 无 ORDER BY、datasets 加载序也不固定，
+    而 balance_sample 用 random.Random(seed).sample(pool, k) ⇒ 同 seed 换池序就换样本。
+    修前实测重跑只重合 1178/3600（jaccard 0.1956）——这就是"重灌＝换考卷"的机制面。
+  changes:
+    - 新增稳定键 stable_key()（中文腿用 news_id；无 news_id 的英文腿用 source+title+content）
+    - collect_chinese_news 出口按 stable_key 排死
+    - balance_sample 每类池先排再抽（并保留池序日志口径）
+    - fetch_fpb_english 出口排序
+    - "头部 [INVARIANTS] 增补『样本级可复现』条款（把判据写进件头，注释级约束也是约束面）"
+  guard_test: tests/meta/scripts/test_build_sft_dataset_determinism.py（6 支，零 CH 零网络）
+  red_green_evidence:
+    green: "同一判据打在修后码＝GREEN；6 支测全过；跨进程二次跑同一判据仍 GREEN"
+    red: >-
+      同一判据打在 **dev 未修副本**（git show dev:scripts/ml/build_sft_dataset.py 落临时件）＝
+      RED(不可复现) 首个差异 index0 N00017 vs N00012 —— 守卫不是空跑
+    also: 采集腿出口序单独有一支断言（给逆序来货仍出升序键），不足目标数时另有一支断"两次逐位一致＋集合完整"
+
+p1_p2_pipeline:
+  file: scripts/ml/build_distilled_sft_dataset.py（新）
+  why_not_rewrite: >-
+    复用而非新造三处：分层沿用 build_eval_set.STRATA（不另造第二套分层口径）；排序键沿用
+    build_sft_dataset.stable_key（与 P0 同一把尺）；教师腿调生产同一函数
+    nlp_inference.infer_sentiment（含 LSG 网关与 prompt 口径），推理源=run_sentiment_batch 用的同一 OllamaChat。
+  subcommands:
+    gold-pack: 分层扩采→教师预标草稿→data/eval/gold_expansion_draft_v1.jsonl ＋ Owner 抽检包
+      docs/_working/gpuwo_campaign/gold_expansion_spotcheck_pack.md（默认抽 60 条，human_label 留空＝待判）
+    distill-train: 分层扩采→教师预标→data/sft_distill/{train,eval_split}.jsonl
+      （出口 schema 与 build_sft_dataset 一致，run_sft_train 可直接吃）
+  invariants_enforced_in_code:
+    - 严格分源：distill 排除面＝人工金标 200 ∪ 关键词评估集 ∪ 金标草稿，**交集非空即 ValueError 抛出**
+      （同源循环＝分数虚高，正是 GPU-03B 立项理由，所以它必须是断言而不是注释）
+    - 教师不可达（quick_alive 假）⇒ RuntimeError 直接退出，不出货
+    - 模型不在 Ollama 在册面 ⇒ RuntimeError（服务活着但模型缺＝10-08 每条 llm_error 却报绿的形态；
+      OllamaChat 只有服务级 quick_alive，没有模型级断言，故本班自读 /api/tags 补这道，
+      并把这个理由写进代码注释——不留"为什么多一次 HTTP"的谜）
+    - 教师错误率超 20%（或 --max-errors）⇒ 抛，不把半残数据集当成功
+    - 只写 data/sft_distill 与 data/eval/gold_expansion_*，**绝不碰 data/sft/{train,eval}.jsonl**
+      （现网唯一训练输入面且无 git 跟踪，重灌不可回滚——第一袋 R-2 已记）
+  guard_test: tests/meta/scripts/test_distilled_sft_pipeline.py（9 支，教师与采集两腿全注入替身）
+  red_green_evidence:
+    green: "15 passed（两支新文件合跑）＋ruff format/check 全清"
+    red_per_criterion:
+      - 分源重叠：不抛即 AssertionError（测里反向断言"必须抛 ValueError"）
+      - 教师不可达：不抛即 AssertionError（"会交出一份全错数据集并报绿"）
+      - 来货序变化：选取不一致即 AssertionError，消息直接点出"新管线复发 P0 病"
+  not_run_tonight: >-
+    两个子命令今夜**都没跑**：gold-pack/distill-train 都要读 CH（c3_fundamental.news_data），
+    现值 02:1x 正处 01:00-04:00 CH 让路窗（本令 §3 红线第 4 条＝窗内零跑批零 CH 查询）。
+    排期：04:00 后先跑一条小样本（--target 20 --spot 60）验通路与教师错误率，再跑正式量。
+    金标**冻结**与任何真训练都不在今夜面（GPU-03B P1/P3 明确等 Owner 抽检）。
+
+governance_registration:
+  creation_token: publish_snapshot v292
+  module_translation: publish v31（PG active version=1＋投影命中 1 行）
+  depgraph_node: node_id=16612341 granularity=file
+    （带同款 WARN：工具按 docs/03_modules/MOD-NLP-PIPELINE/blueprint.md 猜路径未命中标 missing；
+     本件 [BLUEPRINT] 与兄弟件 build_sft_dataset.py:2 逐字相同，属工具路径口径，备案不硬改）
+
+next_in_this_order: 六件里今夜还剩 GPU-04 两腿（影子对拍＋replay 流水，零训练）与 R-3 分片落码（撞在飞件，待 q-0006 落地）；
+  机械四步与冒烟等落地＋出 CH 窗。GPU-03B 的 P1 草稿与 P2 数据在 04:00 后开跑，抽检包届时已备。
+
+review_commands:
+  - python -m pytest tests/meta/scripts/test_build_sft_dataset_determinism.py tests/meta/scripts/test_distilled_sft_pipeline.py -q（应见 15 passed）
+  - python -c "import pathlib;print('stable_key' in pathlib.Path('scripts/ml/build_sft_dataset.py').read_text(encoding='utf-8'))"（落地后应 True）
+  - 落地面跑同一判据复算（只读）：python -m pytest tests/meta/scripts/test_build_sft_dataset_determinism.py -q 应 6 passed；
+    再按 p0.red_green_evidence.red 描述对 dev 副本跑一次，应仍见 RED（证明红证可复现，非一次性）
+  - 通路小样本（04:00 后）：python scripts/ml/build_distilled_sft_dataset.py gold-pack --target 20 --spot 10

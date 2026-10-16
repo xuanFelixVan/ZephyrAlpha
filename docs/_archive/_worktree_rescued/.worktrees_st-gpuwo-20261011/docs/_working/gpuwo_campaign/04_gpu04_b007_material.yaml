@@ -1,0 +1,97 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 四 GPU 工单施工班·GPU-04 B-007 申请材料包（只呈批零施工）＋本班终态账
+created: '2026-10-12T01:10:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+premise_correction_first: >-
+  工单 GPU-04（2026-09-17）§1 写"trainer 不存在"、本派工令 §2 P3 写"TD3 选型**建议**"——
+  两条都已被现盘事实超越，且超出的部分是**按 H-04 新口径正当解禁的**：
+  src/zephyr/ex_sor/services/rl_trainer/ 现有一包三件（__init__.py 1774B／td3_agent.py 8168B／trainer.py 6833B，
+  mtime 2026-09-23 14:29），算法**已经是 TD3**，且 rl_exec_env.py:42-45 原文记
+  "训练器施工已按 H-04 新口径解禁（HANDOFF_20260921_ab_league.md 62 行，实现=zephyr.ex_sor.services.rl_trainer）；
+  真训练管线触发与训练后模型上实盘仍属 Owner 闸门"。
+  ⇒ 因此本袋**不是**"trainer 设计方案"，而是**"要不要按下 --real-training"这件事的材料包**。
+  我不重写已存在的选型，只把已存在的实现如实呈上＋把还缺的东西点名缺。
+
+what_is_already_in_place:  # 逐条给 file:line，Owner 可当场核
+  env_side:
+    - src/zephyr/ex_sor/core/rl_exec_env.py:8 INVARIANTS＝step 必经硬边界层（策略不可绕过）／奖励=-实现短缺／
+        数量守恒 filled+remaining=total／reset(seed) 确定性可复现／骨架不真训
+    - 回合语义 rl_exec_env.py:29-36：一回合=单笔母单执行切片（≤slice_count 步），
+        BUY is_step=(成交价-arrival_price)×量，SELL 反向，未成交/被拒步 reward=0.0，**reward 永不为正**
+    - 动作域 rl_exec_env.py:32：RlExecAction=价格偏移档位索引＋数量比例＋市价标志（不是裸下单量）
+    - 撮合复用 zephyr.backtest.core.matching_logic（回测=实盘一致性，含 2026-08-21 #233 费率口径与 1bps 滑点）
+    - 安全级 src/zephyr/ex_sor/core/rl_exec_env.py:11 [SAFETY] H（全项目最高档之一）
+  trainer_side:
+    - 算法已是 TD3：td3_agent.py:8 INVARIANTS＝动作域 [-1,1]^2 双 tanh／双 Q 取 min 抑制过估／
+        目标网软更新 tau／延迟策略更新 policy_freq／checkpoint 含优化器状态
+    - BC/replay 预热**已实现**：trainer.py:161 warmup_from_history(env, agent, buffer, episodes, seed0)，
+        默认 warmup_episodes=2（trainer.py:82）；real_training=False 时**只攒 buffer 零梯度更新**（trainer.py:20-21）
+    - Owner 门已在位＝CLI --real-training 显式旗，库层默认 False（trainer.py:8 与 :88）
+    - 失败面 fail-loud：td3_agent.py:14 形状错 ValueError／checkpoint 缺键 KeyError；
+        trainer.py:14 env 合同缺键 fail-loud／路径不可写 fail-loud
+    - 守卫测在册：tests/ex_sor/test_td3_trainer.py（三件 [TESTS] 同指这一支）
+
+what_is_genuinely_missing:  # 呈批要批的就这几条，不夸大也不隐瞒
+  - id: M-1
+    name: 影子评估对拍腿未接
+    text: >-
+      INVARIANTS 写"产物只进模拟盘对拍"，但我**没有找到**把 checkpoint 跑进模拟盘并与现行执行算法
+      逐单对拍 implementation shortfall 的实现件（候选宿主=src/zephyr/ex_sor/services/
+      execution_quality_scorer.py 21215B／slippage_analyzer.py 20666B，两者是否已具备对拍入口=未证）。
+      工单 §2.4 要的"影子评估设计"因此应是**补一条对拍腿**而不是新设计一套评估。
+  - id: M-2
+    name: 离线行为克隆的**数据面**未接
+    text: >-
+      warmup_from_history 吃的是 env 合成盘口回合，不是 local_replay 真实流水。工单 §2.2 要的
+      "replay 流水（local_replay 产物）做 behavior-cloning 预热"在代码里对应的是**预热壳已有、真实流水源未接**。
+      这条是 GPU-04 唯一真正的**新增施工**，且它读的是 replay 生产流水＝业务数据面（只读，不判死）。
+  - id: M-3
+    name: 训练窗未登记
+    text: gpu_default 组里现在只有 manual_kronos_finetune(240min)/manual_convert_gguf(60min)/manual_run_sft_train(240min)，
+      **没有 rl 训练实体**；要窗就得按本班已验证的两件套模式补一对 register/run .ps1（同 SFT 窗的 Owner 按钮设计）。
+      本班**未建**该窗——P3 令文写"只呈批不施工"，建窗属施工面，留给批复后。
+  - id: M-4
+    name: 种子与复现纪律的可核凭证
+    text: >-
+      env 侧 reset(seed) 确定性已声明、trainer 侧 warmup(seed0) 已参数化，但"同一 seed 跑两次得同一 checkpoint"
+      这件事今天**没有盘上凭证**（我没跑，也不该在批复前跑）。批复后第一动作应是双跑对拍 checkpoint 哈希，
+      而不是直接上长训。
+
+decision_requested:  # 一句话能批的那种，不摊三层菜单
+  question: 是否批准 GPU-04 进入"先补 M-1/M-2 两腿、再以 --real-training 触发一次短程真训（240min 周日窗）"的施工？
+  my_recommendation: >-
+    建议批**只补腿不触发**（M-1＋M-2 施工，--real-training 再单独批一次）。
+    理由三条都可在盘上核：①安全级 [SAFETY] H 且奖励语义是"永不为正"的滑价成本，训练本身不危险但**产物去向**危险；
+    ②影子对拍腿不存在＝今天真训完也没有能判定它好坏的尺，训了也只能拿 loss 曲线自证（那是我最不想交给 Owner 的那种绿）；
+    ③本班今夜刚实测到一类同族病（GPU-03 的 SFT 线：模型跑出来 0.6290 而基线 0.7869，15.8pp 差距——
+    根因之一就是**先训后想尺**）。把尺先立起来，成本 2 条腿，收益是"训完能判生死"。
+  if_denied: GPU-04 转"trainer 已在位、材料已呈、待裁"归档，零训练动作维持。
+
+tech_selection_note: >-
+  工单 §2.1 的"建议先 TD3（连续动作=下单力度，样本效率高于 PPO）"这条**选型判断已被实现吸收**，
+  无需重裁；我要补充一条原工单没写的观察：现实现的动作域是 [-1,1]^2 双 tanh（价格偏移档＋数量比例），
+  与 env 侧 RlExecAction 的"档位索引＋比例＋市价标志"三要素**不是同一形状**（缺市价标志维），
+  解码腿 trainer.py INVARIANTS 声称"动作解码输出恒在契约域内"——这两处是否等价需一次显式对拍，
+  列为批复后施工第一件（不改判据，只补测）。
+
+campaign_closeout:  # 本班到本袋为止的账（供统筹直接抄）
+  bags_landed_or_in_queue:
+    - q-20261011-st-gpuwo-20261011-0001 dead（ghost_session 存活闸误判，修因后 --force 取回）
+    - q-20261011-st-gpuwo-20261011-0002 dead（基底含新件被判"dev 已删"，改由未含件的 HEAD 重投）
+    - q-20261011-st-gpuwo-20261011-0003 done ccf6d852cc ＝ 第一袋（§1 重验＋LaneC 体检）
+    - q-20261011-st-gpuwo-20261011-0004 ＝ 第二袋 GPU-03 证据＋训练窗两件套
+    - q-20261012-st-gpuwo-20261011-0005 ＝ 第三袋A 预测表三件（D_DATA，先行）
+    - q-20261012-st-gpuwo-20261011-0006 ＝ 第三袋B 施工九件（D_BACKTEST，--depends-on 0005）
+    - 本袋 ＝ 第四袋 GPU-04 材料＋终态账（docs/_working 两件）
+  three_state_summary:
+    GPU-01: 受阻（机制全在位：夜窗两件套＋lane_b 档位参；档位 A/B **未出数**——今夜起跑不进 23:00 窗）
+    GPU-02: 受阻（三缺件全落码＋守卫测 10 支；表未建、任务未注册，且令文 00:30 与 CH 让路窗算术冲突已呈）
+    GPU-03: 部分完成＋呈批（步骤 1/2 完成；步骤 3 full 真跑被三重实测拦路，且现 adapter 实测 0.6290 vs 基线 0.7869）
+    GPU-04: 只呈批（本袋＝材料包；premise 已过时，trainer 早在位）
+  not_touched_honored: gpu_core.py／factory_grid_executor.py／fexam 判官件／考试卡面／N 账本真源／
+    情绪批与 LaneC 任务本体／.runtime 根直写——全部零接触
+  open_for_coordination: 详见 00_ledger.md 第 2 节三条现场信号（死锁被清／主区池 657 脏／Ollama 曾不可达）

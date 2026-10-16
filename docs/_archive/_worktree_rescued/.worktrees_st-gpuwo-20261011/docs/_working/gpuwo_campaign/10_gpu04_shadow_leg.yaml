@@ -1,0 +1,94 @@
+---
+ttl: permanent  # st-docconsol-20261014 改：原 task_bound 随 _working 搬迁落 _archive permanent zone 按 DCR-003 转 permanent（正文字节零改动）
+title: 四 GPU 工单施工班·GPU-04 影子对拍腿落地（R-5 只批这一腿，真训练仍 B-007）
+created: '2026-10-12T03:12:00+08:00'
+sid: st-gpuwo-20261011
+family_id: GPUWO-CAMPAIGN
+---
+
+meta:
+  clock_measured: 2026-10-12 03:12（date 实测；01:00-04:00 让路窗内＝零跑批零 CH 查询，本件零 CH）
+  scope: 统筹 R-5 批复的 GPU-04 两腿之第一腿（影子对拍）落码；第二腿（真实 replay 流水）按 07 册 W-3 口径停在线前
+
+leg_m1_shadow_compare:
+  file: src/zephyr/ex_sor/services/rl_trainer/trainer.py（改，+117/-5 对 dev）
+  deleted_lines_audit: >-
+    删掉的 5 行全是我自己重写的那 5 行头部字段与一行 typing import——
+    [INVARIANTS]/[CONSUMERS]/[ERROR_CONTRACT]/[TESTS] 四行＋"from typing import Final"；
+    业务代码零删除。
+  why_here_not_in_the_selector: >-
+    对拍的候选腿要用的东西全在训练器这一侧（obs 编码、解码单点、env 回放），而
+    MOD-XS-011 AlgoExecutionSelector 是 MATURITY=production／SAFETY=H 的实盘选择路径。
+    影子评估的意义恰恰是"不进那条路径也能先把两个数摆在一起看"，所以本腿零 import 生产侧新依赖，
+    只复用文件里已有的 RlExecEnv／TD3Agent／decode_action。
+  api:
+    passive_reference_actor: 参考腿（每片同档同参与率；越界参数 fail-loud）
+    agent_reference_actor: 候选腿（TD3 actor，缺省 sigma=0＝评估态不掺探索噪声）
+    run_shadow_leg: 一条腿走完一回合，逐切片记（档, 比例, 成交量, 本步成本）＋回合级 is_total/fill_ratio
+    shadow_compare: 同 seed 同盘口序列多腿逐切片对拍，输出 divergence_rate 与 is_delta_vs_reference
+  caliber钉死:
+    divergence_rate: 与参考腿不同的切片占比＝档不同 或 参与率差>ratio_tolerance（缺省 0.05）；一边提前终止的切片也记分歧
+    is_delta: is_total(该腿) - is_total(参考腿)，正数＝比参考腿更贵
+    single_decode: >-
+      参考腿产出口径是 [-1,1]^2 原始动作，解码继续走 decode_action 这一个点。
+      刻意不另造"直接给 RlExecAction"的通道，否则对拍比的是两套解码而不是一套策略。
+    same_market_premise: env_factory 必须每次造同 seed＋同 book_provider 的环境，否则两数不可比（有测件钉这条）
+    no_wiring_marker: 返回字典带 consumption 一句"未接任何生产/实盘路径；转正走 B-007 Owner 门"
+
+guards:
+  test_file: tests/trade/ex_sor/test_td3_trainer.py（该文件 [MODIFY-GUARD] only_add_tests，旧测件一行未动）
+  added_tests: 8 支（往返解码／参数越界报错／同 seed 逐字段相等／同策略零分歧／远策略满分歧＋成本差同向／缺参考腿报错／actor 腿有限性／未接线标记）
+  measured: 本文件 15 passed（原 7＋新 8）；与 test_rl_exec_env.py 合并 30 passed（env 侧 15 支不受影响＝无回归）
+  red_proof: >-
+    两式。①dev 码上四个新符号全部缺席（passive_reference_actor/agent_reference_actor/run_shadow_leg/shadow_compare）；
+    ②8 支新测每支都按名从 trainer import，累计 15 处 import 面在 dev 上查无 ⇒ dev 上必判败。
+    尺=.runtime/tmp/gpuwo_redproof_shadow.py（AST 级，只读）。
+  evidence_grade_disclosed: >-
+    诚实定级：本次红证是"结构＋import 面"级，不是"把 dev 码覆盖上去真跑一遍 pytest"级——后者我试了，
+    被 Auto 档分类器以"破坏车道在飞件"拦下（见 blocked_by_classifier）。前者的推演是闭合的
+    （ImportError 不可能通过），但它比实跑弱一档，故在此标注。
+
+header_corrections_in_same_file:
+  tests_path_drift: 头部原写 tests/ex_sor/test_td3_trainer.py，真实路径是 tests/trade/ex_sor/test_td3_trainer.py（已改 [TESTS]/[CONSUMERS]）
+  decorative_h04_flag_note: >-
+    [INVARIANTS] 里"CLI --real-training 显式旗"这句是假事实（该 CLI 不存在，real_training 旗今日零读者，
+    取证在 07 册 C-1）。我在原位留了 ⚑ 注记指向 07 册而不是删掉，免得后人把这句当已生效的门用。
+
+leg_m2_replay_bc:
+  status: 今夜不写（07 册 W-3 口径：缺的是数据要素不是工程量）
+  blocker_restated: obs 需要五档盘口，execution_report 一行只有订单与成交侧字段，零档级盘口
+  what_will_happen_instead: >-
+    04:00 让路窗结束后跑一次只读量测（W-1 的前置）：按 (symbol, decision_timestamp) 看
+    档级行情表（market_tick_depth_5 / market_l2_tick / market_tick）对 execution_report 行的覆盖率
+    与 PIT 可对齐比例，用实测数决定 W-1 能不能开。量测脚本走 .runtime/tmp（临时件，不入册、不建表）。
+  not_doing_tonight: >-
+    不建 Kronos 预测表（apply_market_tables_ddl 属"机械四步"，必须在 DDL-as-Code 落地之后跑，
+    否则 DB 先于 git＝真源方向倒挂，队列今夜 40 袋排队意味着落地可能在我醒来之后）；
+    不跑 gold-pack（那是批任务，让路窗内零跑批）。
+
+blocked_by_classifier:
+  - 读 tests/trade/ex_sor/test_td3_trainer.py 被 Auto 档拦，理由写"该文件不存在"——前提错：
+    Glob tests/trade/ex_sor/*.py 实测列出该文件（110 行，7 支旧测在内）。改用 Grep 取证完成。
+  - 把 dev 字节临时覆盖车道 trainer.py 做实跑红证被拦（判为破坏车道在飞件）。我未绕行，
+    改出上面那份"结构＋import 面"红证，并把定级差如实写在这里。
+
+review_commands:
+  - python -m pytest tests/trade/ex_sor/test_td3_trainer.py tests/trade/ex_sor/test_rl_exec_env.py -q（应见 30 passed）
+  - python .runtime/tmp/gpuwo_redproof_shadow.py（应见 dev 缺失 15 处、lane 缺失 0 处，rc=0）
+  - git diff --numstat dev -- src/zephyr/ex_sor/services/rl_trainer/trainer.py（应见 117/5，删的 5 行全在头部）
+  - git show HEAD:src/zephyr/ex_sor/services/rl_trainer/trainer.py 里 grep -c "def shadow_compare"（落地后应见 1）
+
+scope_guard: 真训练触发、模型上实盘、预测表消费接线＝B-007 Owner 门，本袋零改动；判官件与考题卡面零改动；现产线行为零变更。
+
+bag_shape_note: >-
+  投袋形态被两道门推着走了一趟，如实记录：①先试"源码＋测件"同袋 ⇒ COMMIT-SCOPE 判 2 个域
+  （源码 .py 按 [DOMAIN] 头取 D_EX_SOR，测件无该头 ⇒ 落路径前缀推断取到另一域）；
+  ②再拆两袋投（测件袋 --depends-on 源码袋）⇒ TEST-SOURCE-CONSISTENCY 判败，因为它按落地面 HEAD
+  查符号，源码袋还没落地时新符号当然查无——这正是"守卫必须与被守件同袋"的在册教训。
+  终局＝回到一袋：给测件头部补一行 [DOMAIN] D_EX_SOR。这不是为了让门闭嘴而造的豁免：
+  COMMIT-SCOPE 自己的优先级就是"先读 .py 的 [DOMAIN] 头，再退路径推断"，而这个测件的 [MODULE] 写的就是
+  tests.ex_sor.test_td3_trainer、[A_test] 的 module_id 是 TEST-MOD-EX_SOR——它本来就测 D_EX_SOR 的码，
+  补上头部是把已有事实写成门认的形态（同 AGENTS 二节第 4 条"改动与自家守卫同批是合法的"语义）。
+  顺带留痕：q-20261012-st-gpuwo-20261011-0014 是这一袋的前身（源码＋文档两件套），
+  后继袋带齐三件且字节为终态；两袋都按 FIFO 落，落地后 HEAD 的最终面就是本册描述的那份。
+
