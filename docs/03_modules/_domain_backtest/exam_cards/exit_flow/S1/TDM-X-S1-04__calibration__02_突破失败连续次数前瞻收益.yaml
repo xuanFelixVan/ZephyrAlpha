@@ -3,7 +3,8 @@ card_id: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
 node_id: TDM-X-S1-04
 family: calibration
 title_zh: 突破失败（买入理由消失）·连续失败次数分档校准卡
-hypothesis: 个股"创 20 日新高后跌回且量能萎缩"的连续失败次数 K（0/1/2/3）对次日及未来 5 日个股收益有单调负向预测力（取反向标定值后应为正 IC）；K≥3 档的后续收益显著劣于 K=0 基线——这正是 TDM 把 K≥3 定为强制清仓触发器的经验根据。
+hypothesis: 个股"创 20 日新高后跌回且量能萎缩"的连续失败次数 K（0/1/2/3）对次日及未来 5 日个股收益有单调负向预测力（取反向标定值后应为正 IC）；K≥3 档的后续收益显著劣于 K=0 基线——这正是 TDM 把 K≥3
+  定为强制清仓触发器的经验根据。
 signal_kind: panel
 window:
   in_sample:
@@ -39,17 +40,23 @@ target:
   note: 纯读数环节（本节点三路信号里唯一长窗可算的一路）；情绪退潮/龙虎榜两路各自另卡，见本卡 data_window_evidence 的断供披露
 lineage:
   card: null
-  run_id: null
-  score_row: null
+  run_id: p08b-1016-02-x-s1-04-02
+  score_row: exam_scores_v1.yaml#rows[109]
   confidence_writeback: TDM.nodes.TDM-X-S1-04.confidence
 data_binding:
   signal_table: c1_market.kline_daily_hfq
   signal_column: high / close / volume（衍生 20 日新高、跌回判定、量能萎缩比）
-  signal_derivation: 突破=当日 high > 前 20 交易日最高 close；失败=此后 5 个交易日内收盘跌回突破日前高之下 且 当日 volume < 20 日均 volume×0.8；连续失败计数 K 在同票滚动 20 日内累加，成功站稳（收盘连续 2 日高于突破前高）或超 20 日清零；信号取反向标定值 sig=-K 使正相关假设成立（K 越大越该卖）
-  target_source: kline_daily_hfq close 的 T+1 简单收益（load_close/forward_returns 复用 ch_data.py:190-199）；超额面基准=kline_index symbol='000300' close（实测覆盖 2005-01-04..2026-10-09 共 5284 行）
-  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df; print(ch_query_df(''SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq''))" → 实测 1990-12-19..2026-09-30 rows=10098785 nsym=5916；kline_index(000300) 实测 2005-01-04..2026-10-09 rows=5284'
-  blocked_faces: '情绪退潮路=断供不弃卡：六段态在 CH 仅有 c1_backtest.decision_daily.market_state（实测 138 行、2026-09-16..2026-10-12、值域 expansion/unknown），无历史六段序列；c1_market.emotion_index.stage 实测枚举=close_final/pre_open/auction（快照阶段标记，非情绪六段），不可误用作退潮代理；sector_snapshot 实测 2026-08-14 起 122746 行、market_breadth_snapshot 2026-08-24 起 174 行，窗均不足 → 该路 status=blocked_on_data（缺=2019..2025 段六段态表）'
-status: preregistered
+  signal_derivation: 突破=当日 high > 前 20 交易日最高 close；失败=此后 5 个交易日内收盘跌回突破日前高之下 且 当日 volume < 20 日均 volume×0.8；连续失败计数 K 在同票滚动
+    20 日内累加，成功站稳（收盘连续 2 日高于突破前高）或超 20 日清零；信号取反向标定值 sig=-K 使正相关假设成立（K 越大越该卖）
+  target_source: kline_daily_hfq close 的 T+1 简单收益（load_close/forward_returns 复用 ch_data.py:190-199）；超额面基准=kline_index symbol='000300'
+    close（实测覆盖 2005-01-04..2026-10-09 共 5284 行）
+  data_window_evidence: '命令原文: python -c "import sys; sys.path.insert(0,''scripts/backtest''); from fexam.ch_data import ch_query_df;
+    print(ch_query_df(''SELECT min(trade_date),max(trade_date),count(),uniqExact(symbol) FROM c1_market.kline_daily_hfq''))"
+    → 实测 1990-12-19..2026-09-30 rows=10098785 nsym=5916；kline_index(000300) 实测 2005-01-04..2026-10-09 rows=5284'
+  blocked_faces: 情绪退潮路=断供不弃卡：六段态在 CH 仅有 c1_backtest.decision_daily.market_state（实测 138 行、2026-09-16..2026-10-12、值域 expansion/unknown），无历史六段序列；c1_market.emotion_index.stage
+    实测枚举=close_final/pre_open/auction（快照阶段标记，非情绪六段），不可误用作退潮代理；sector_snapshot 实测 2026-08-14 起 122746 行、market_breadth_snapshot
+    2026-08-24 起 174 行，窗均不足 → 该路 status=blocked_on_data（缺=2019..2025 段六段态表）
+status: examined
 preregistered_by: st-nightmine-20261010-L5
 preregistered_at: '2026-10-10'
 discipline: 冻结后开考；试次全入 n_trial_ledger；读数卡与碰钱卡分面，本卡不判执行增益

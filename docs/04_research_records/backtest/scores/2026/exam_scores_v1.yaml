@@ -5269,3 +5269,72 @@ rows:
     mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
   fails:
   - ic_mean 0.0097 < 0.02
+- card_id: TDM-E-L3-05/calibration/02_连板顺位
+  node_id: TDM-E-L3-05
+  run_id: st-qoder-p07-1016-02
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-16'
+  metrics:
+    ic_mean: -0.021138514060901243
+    ic_ir: -0.4685837944310852
+    mono_spearman: null
+    regime_ic:
+      bull: -0.023301743589087143
+      bear: -0.01753632645004816
+    oos_ic: -0.023220204276208363
+    n: 1620
+  unjudged:
+    numeric_keys_not_read: []
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - ic_floor
+    - lag_profile
+    - one_word_exclusion
+    - rank_stability
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - ic_mean -0.0211 < 0.02
+  - ic_ir -0.469 < 0.3
+- card_id: TDM-X-S1-04/calibration/02_突破失败连续次数前瞻收益
+  node_id: TDM-X-S1-04
+  run_id: p08b-1016-02-x-s1-04-02
+  kind: exam
+  verdict: fail
+  pillars_all_pass: false
+  oos_ok: true
+  regimes:
+  - bull
+  - bear
+  date: '2026-10-16'
+  metrics:
+    ic_mean: -0.000734072650043669
+    ic_ir: -0.009900784848837567
+    mono_spearman: null
+    regime_ic:
+      bull: -0.003087827007538709
+      bear: 0.0041258710591856205
+    oos_ic: -0.004189248317371538
+    n: 1665
+  unjudged:
+    numeric_keys_not_read:
+    - gap_k3_vs_k0_5d_max
+    numeric_keys_no_machine_face:
+      mono_spearman_min: mono_spearman 无面（panel 路恒 None／分桶样本不足 NaN）
+    pillars_prose_keys:
+    - gap_vs_baseline
+    - ic_floor
+    - lag_profile
+    - regime_stability
+    - response_monotonicity
+    mapping_note: prose↔numeric 映射无在册真源，本面不代拍（词表立法工单对象）
+  fails:
+  - '未支持判据键（机判面待扩，fail-closed）: [''gap_k3_vs_k0_5d_max'']'
