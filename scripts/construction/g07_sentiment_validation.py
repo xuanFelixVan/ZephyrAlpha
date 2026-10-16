@@ -2,7 +2,7 @@
 # [MODULE] scripts.construction.g07_sentiment_validation
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.data.ch_config; zephyr.signal_ashare.sentiment.sentiment_cycle（只读消费，禁改本体）
-# [CONSUMERS] docs/_working/2026-09-11-g07-sentiment-validation.md（G07 报告）
+# [CONSUMERS] docs/_archive/_working_cleared/archive/2026-09/c_class_scattered/2026-09-11-g07-sentiment-validation.md（G07 报告）
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 只读验证脚本（A 类一次性，零实盘副作用）；复用 sentiment_cycle production 函数不重复实现；禁碰 trading_decision_map.yaml
@@ -30,6 +30,7 @@
   [--no-bootstrap]   # 跳过增补项（block-bootstrap 2000 次 + Hawkes 简化 MLE）
 输出：tmp/g07_results.json + 控制台三态裁定摘要。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -71,13 +72,15 @@ def fetch_daily(start: str, end: str) -> pd.DataFrame:
                toFloat64(pct_change) AS pc,
                coalesce(toFloat64(adj_factor), 1.0) AS af,
                toFloat64(amount) AS amt
-        FROM c1_market.kline_daily
+        FROM c1_market.kline_daily FINAL  # noqa: bare-sql  存量验证脚本直读仅补FINAL，SQL集中化另行专项（CH支持#行注释）
         WHERE trade_date >= '{start}' AND trade_date <= '{end}'
           AND market_type = 'A_share'
         ORDER BY trade_date, symbol
         """
     )
-    df = pd.DataFrame(rows, columns=["trade_date", "symbol", "open", "high", "close", "pct_change", "adj_factor", "amount"])
+    df = pd.DataFrame(
+        rows, columns=["trade_date", "symbol", "open", "high", "close", "pct_change", "adj_factor", "amount"]
+    )
     df["trade_date"] = pd.to_datetime(df["trade_date"])
     if df.empty:
         raise RuntimeError("kline_daily 返回空数据集——检查窗口/表可用性")
@@ -98,6 +101,7 @@ def build_signals(df: pd.DataFrame) -> pd.DataFrame:
     )
     df["touched"] = (df["high"] / df["prev_close"] - 1.0) >= df["limit_ratio"] - 0.002  # 触及涨停
     df["sealed_prev"] = df.groupby("symbol", sort=False)["sealed"].transform(lambda s: s.shift(1).fillna(False))
+
     # 连板链：昨日封板则 +1，否则重置
     def _streak(s: pd.Series) -> pd.Series:
         out, cur = np.zeros(len(s), dtype=int), 0
@@ -123,7 +127,9 @@ def daily_market_metrics(df: pd.DataFrame) -> pd.DataFrame:
     m["touched"] = day["touched"].sum()
     m["explosion"] = m["touched"] - m["sealed"]
     m["limit_up"] = m["sealed"]  # 近似：封板数≈涨停家数（ST 5% 档漏判，报告披露）
-    m["limit_down"] = day.apply(lambda x: (x["pct_change"] <= -(x["limit_ratio"] * 100 - 0.2)).sum(), include_groups=False)
+    m["limit_down"] = day.apply(
+        lambda x: (x["pct_change"] <= -(x["limit_ratio"] * 100 - 0.2)).sum(), include_groups=False
+    )
     m["advancing"] = day.apply(lambda x: (x["pct_change"] > 0).sum(), include_groups=False)
     m["declining"] = day.apply(lambda x: (x["pct_change"] < 0).sum(), include_groups=False)
     m["amount_total"] = day["amount"].sum()
@@ -151,7 +157,9 @@ def run_locator(m: pd.DataFrame, ladder: pd.DataFrame) -> pd.Series:
     phases, prior = {}, None
     uniform = {p: 0.2 for p in SentimentPhase}
     for d in m.index:
-        cons_today = {int(k): int(v) for k, v in (ladder.loc[d].items() if d in ladder.index else []) if v > 0 and k >= 1}
+        cons_today = {
+            int(k): int(v) for k, v in (ladder.loc[d].items() if d in ladder.index else []) if v > 0 and k >= 1
+        }
         cons_prev = {}
         loc = m.index.get_loc(d)
         if loc > 0:
@@ -168,7 +176,9 @@ def run_locator(m: pd.DataFrame, ladder: pd.DataFrame) -> pd.Series:
                 yesterday_consecutive=cons_prev,
                 daban_next_day_premium=premium,
                 avg_turnover_rate=1.0,
-                market_amount_ratio_vs_ma20=float(m.at[d, "amount_ratio"]) if not math.isnan(m.at[d, "amount_ratio"]) else 1.0,
+                market_amount_ratio_vs_ma20=float(m.at[d, "amount_ratio"])
+                if not math.isnan(m.at[d, "amount_ratio"])
+                else 1.0,
                 dragon_tiger_net_buy_ratio=0.0,  # 历史缺失；不参与 _score_phase 评分（权重 0）
                 northbound_net_inflow=0.0,  # 2024-05 起停发；不参与评分
                 yesterday_phase_prob=prior,
@@ -212,8 +222,13 @@ def hawkes_mle(event_days: np.ndarray) -> dict:
                 lam = lam0 + alpha * e
                 ll = np.log(lam).sum() - lam0 * T - (alpha / beta) * integ_tail
                 if best is None or ll > best["log_lik"]:
-                    best = {"log_lik": float(ll), "lambda_0": float(lam0), "alpha": float(alpha),
-                            "beta": float(beta), "eta": float(alpha / beta)}
+                    best = {
+                        "log_lik": float(ll),
+                        "lambda_0": float(lam0),
+                        "alpha": float(alpha),
+                        "beta": float(beta),
+                        "eta": float(alpha / beta),
+                    }
     return best
 
 
@@ -253,13 +268,26 @@ def main() -> int:
         "n_symbols": int(raw["symbol"].nunique()),
         "phase_distribution": {k.name: int(v) for k, v in pd.Series(phase_seq).value_counts().items()},
         "full_matrix": full_matrix,
-        "full_max_rho": max(abs(full_matrix[a][b]) for i, a in enumerate(returns) for j, b in enumerate(returns) if i < j),
+        "full_max_rho": max(
+            abs(full_matrix[a][b]) for i, a in enumerate(returns) for j, b in enumerate(returns) if i < j
+        ),
         "stratified": {
             p.name: {
                 "n_days": t.n_days,
                 "matrix": t.correlation_matrix,
-                "max_rho": (max((abs(t.correlation_matrix[a][b]) for i, a in enumerate(returns) for j, b in enumerate(returns) if i < j), default=None)
-                            if t.correlation_matrix else None),
+                "max_rho": (
+                    max(
+                        (
+                            abs(t.correlation_matrix[a][b])
+                            for i, a in enumerate(returns)
+                            for j, b in enumerate(returns)
+                            if i < j
+                        ),
+                        default=None,
+                    )
+                    if t.correlation_matrix
+                    else None
+                ),
                 "is_pass": t.is_pass,
             }
             for p, t in strat.items()
@@ -273,7 +301,9 @@ def main() -> int:
         rho_overall = None
     else:
         rho_overall = max(v["max_rho"] for v in qualified)
-        verdict = "HYPOTHESIS_HOLD" if rho_overall < 0.3 else ("PARTIAL" if rho_overall < 0.6 else "COMBINATION_INVALID")
+        verdict = (
+            "HYPOTHESIS_HOLD" if rho_overall < 0.3 else ("PARTIAL" if rho_overall < 0.6 else "COMBINATION_INVALID")
+        )
     result["verdict"] = verdict
     result["rho_overall"] = rho_overall
 
@@ -281,15 +311,22 @@ def main() -> int:
         print("[6/6] 增补：block-bootstrap 2000 次 + Hawkes 简化 MLE ...")
         temp_by_day = {}
         for d in axis:
-            row_ladder = {int(k): int(v) for k, v in (ladder.loc[d].items() if d in ladder.index else []) if v > 0 and k >= 2}
+            row_ladder = {
+                int(k): int(v) for k, v in (ladder.loc[d].items() if d in ladder.index else []) if v > 0 and k >= 2
+            }
             temp_by_day[d] = compute_sentiment_temperature(
-                int(m.at[d, "limit_up"]), int(m.at[d, "limit_down"]), int(m.at[d, "explosion"]),
-                int(m.at[d, "sealed"]), row_ladder, int(m.at[d, "advancing"]), int(m.at[d, "declining"]),
+                int(m.at[d, "limit_up"]),
+                int(m.at[d, "limit_down"]),
+                int(m.at[d, "explosion"]),
+                int(m.at[d, "sealed"]),
+                row_ladder,
+                int(m.at[d, "advancing"]),
+                int(m.at[d, "declining"]),
             ).score
         intensity = [temp_by_day[d] / 100.0 for d in axis]
         result["bootstrap"] = analyze_sentiment_driven_correlation(returns, intensity, n_bootstrap=2000, block_size=5)
         thr = np.quantile(m.loc[axis, "sealed"].to_numpy(dtype=float), 0.90)
-        burst = np.where((m.loc[axis, "sealed"].to_numpy(dtype=float) > max(thr, 20)))[0]
+        burst = np.where(m.loc[axis, "sealed"].to_numpy(dtype=float) > max(thr, 20))[0]
         if len(burst) >= 20:
             result["hawkes"] = hawkes_mle(burst.astype(float))
         else:
