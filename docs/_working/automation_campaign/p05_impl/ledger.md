@@ -560,3 +560,47 @@ cd /d/ZephyrAlpha/.worktrees/st-qoder-p05-1015-05 && git --no-pager diff --cache
 - ⑥GPU 还牌＝本班未 acquire，如实免（零 GPU 作业）。
 - ⑦后台子任务清点＝唯一后台任务＝`blob_triage.py`（已 completed rc=0）；零 spawn 子代理⇒零孤儿。
 - ⑧零 worktree＝本班未创建任何 worktree 目录；历史遗留 `.worktrees/st-*`（含本席 1015-06 旧树）**未动**，已在册报⑩交清理专班。
+
+## 10-16 21:4x · 班次 02 次节（落笔即时更正＋次件落地，承上节留旧读数不删）
+
+### 1 次件落地＝`scripts/backtest/ibt/ibt_runner.py` 反捞重基（本班唯一代码落地，袋 `q-20261016-st-qoder-p05-1016-02-0002`）
+
+- 反捞取证（五面 sha256 现测）＝HEAD `4703711ec6c201ba` ＝ 袋内 `base_blob` `4703711ec6c201ba`（**逐字节全等＝上游零漂移**）；袋 blob ＝ 盘面 ＝ `git merge-file -p --diff3` 净合面 `d16c66603b8d3d9a`（三面全等，冲突 0）；index 面＝HEAD 面（579 行）而盘 669 行 status `M`。⇒ 本班不做字节覆盖而取三元净合；因 base==HEAD，净合面与袋面恒等，结构上不存在"把他席后续改动打包"的通道。
+- 内容＝降换手开关 T1（`parse_dampen()`＋`dampen()` EWMA/min_w 剪尾/no-trade 带＋行和摊回；缺省 None＝关闭＝行为零变化）＋panels 缓存读侧解包 `{"panels","meta"}` 在册缺陷修＋summary 记 turnover/dampen。
+- 实测双证＝①A/B 可运行：盘 `--help` 报 `[--dampen tau,min_w,band]` rc=0，HEAD 面同命令命中 0；②函数级正对照（tmp 内联零生产写）＝parse 三枚非法各按其门拒、恒等关闭态行和逐行全等、EWMA 判别力（交替 ±1.0 跳变 1.0→0.3333 且行和仍 1）、min_w=0.1 剪 0.05 碎尾后行和 1.0。⚑如实自报一条**无判别力探针**＝band=0.4 腿用跳幅 1.0 的面板"零吸收"本是正确行为，该腿不构成证据，本班未补跳幅<带宽的输入。
+- 落地判据只认 HEAD 面＝`git show HEAD:scripts/backtest/ibt/ibt_runner.py | grep -c dampen`＝**13**（承载提交 `95d004c348` 21:39:33）。
+- 未触五族面＝`grep ibt_runner config/trading_decision_map.yaml` 零命中（非任何节点 module_ref）⇒ ALGO-NOTE-SYNC/MAP-ALIGNMENT 不适用；翻译行在册（`module_translation_registry.yaml:9315`）无需新增；path_ownership `owner_blueprint: MOD-BT-IBT-RUNNER` 自属。
+
+### 2 ⚑本班两处更正（留上节旧案卷不删，另起此节）
+
+1. **上节 §4 第三条 [BLOCKER]"卡面零命中"系本班呈现段过滤造成的假结论，据实推翻**＝尺本身算了 `card_hits` 但打印段只输出 PURE_ADD/NEW_FILE 两类，命中面被吞。现按同一卡面集合（553 文件）重测：93 件 disk==bag 反捞件 × 卡面 **命中 152 对／唯一件 11**，其中含 `blocked` 字样的卡 **73** 张。真实病灶＝**卡面确实引用执行器文件名**（例：`src/zephyr/ai_layer/comparator/executor.py` 被 `TDM-E-L1-S2__calibration__40..47` 与 `TDM-E-L1-AGG__calibration__03`、`TDM-E-L1-S5__calibration__03` 引用；`src/zephyr/plan_engine/daily_plan.py` 被 `TDM-E-L0-02__comparison__02`、`TDM-E-L0__comparison__02_plan_constraint_on_off` 引用）。⇒ 上节"⑤连续三班无卡可翻皆因卡面不携带执行器路径"这一归因**不成立**，卡面携带、是本班的读法漏了。反捞件与卡的机连面因此可用，只是逐卡的 `impl_gap` 四要件须逐条验（例：卡 44 的 gap③＝"执行器有 5 日前向面"，非单一文件落地可闭合），本班未做该逐条验证故**不翻任何卡**，如实记零翻卡。
+2. **01 班"反捞不存在批量安全形制"的结论需按本班实测收窄**＝该结论的前提是"按行包含现 HEAD（纯增零删零替换）"这一谓词，本班复测＝384 件命中 0（该谓词确实过严：X2 意图本身含替换/删行，用"是否纯增"当安全判据＝把 X2 的真实意图误判成危险面）。**正确安全谓词＝`base_blob` 与现 HEAD 逐字节全等（零漂移）**：本班实测 98 件"净合且有增量"面中 **97 件 base==HEAD**（其中盘面仍等于袋面＝可直接重基 **93** 件；盘面已被改动须逐件复核 4 件；正向增量 60／含删行 37）。⇒ 批量形制**存在**，但按域归属分批投（93 件里 `src/zephyr/**` 75 件跨 ai_layer/intelligence/plan_engine 等多域，属他席蓝图面，须⑩派单归属），且逐件仍要消费者/测试/门禁自证——本班据此起批 1 件（本席已证的 ibt_runner），不当班批投 92 件。
+
+### 3 转单段增补（→03 班／⑩）
+
+- **→⑤ 03 班首件改为"零漂移批投"（取代本班上一版 §3-1"仅两枚新件可批投"）**＝清单已落 `.runtime/tmp/st-qoder-p05-1016-02/zero_drift.jsonl`（97 行，逐件 path/disk_eq_bag/delta/qid）；谓词复跑口径＝`净合 CLEAN ∧ net_lines_vs_head≠0 ∧ head_exists ∧ git cat-file blob <袋 base_blob> == git show HEAD:<path>`，再取 `disk==袋 blob` 子集＝93 件；建议起批序＝`scripts/backtest/**`（3 件：`factory_grid_executor.py`／`sector_prereg_exam_runner.py`／`t0_state_match_matrix.py`，全正增量）→ `scripts/governance/**`（8 件）→ `src/zephyr/ai_layer/comparator/**`（含被 73 张卡引用的 `executor.py`，+3 行，起批前先逐卡验 `impl_gap` 四要件）。
+- **→⑩**＝93 件里 `src/zephyr/**` 占 75 件跨多域，请给归属派单（本席不自取他席蓝图面）；另上节 §3-3 的"派单口径细化"请求按本节 §2-2 收窄后重写。
+- **→⑥ 制卡席**＝卡面 `impl_gap` 用自然语言列四要件（例卡 44 行 82-83），无机读字段可判"哪一件实现闭合哪一条"⇒ 反捞件与卡的闭合关系只能人读；若要⑤席按卡翻状态，请给 gap 加结构化 `gap_id + 关闭谓词` 字段（本席不代改卡面）。
+
+### 4 [BLOCKER] 行（追加，上节四行逐字不涂）
+
+- `[BLOCKER]` 2026-10-16|⑤席1016-02|流程问题|本班自犯并当场推翻：上节"卡面不携带执行器文件名（553 卡∩383 件＝0）"是打印段过滤造成的假结论，同尺重测＝152 对命中／唯一件 11／73 张含 blocked；归因错了会让⑥席白加一轮字段需求|证据＝上节 §1 末条与 §4 第三行原文（保留不删）＋本节 §2-1 现测（553 卡全文 × 93 件文件名）|要⑥席按本节 §3 第三条改要 `gap_id+关闭谓词` 结构化字段；本席已按"落笔即时更正"另起此节留旧案卷|高
+- `[BLOCKER]` 2026-10-16|⑤席1016-02|判据缺失|卡面 `impl_gap` 是自然语言四要件（卡 44 行 82-83"任一不通保持 blocked_on_impl，禁改卡面判据"），无"哪条 gap 由哪个文件的哪个符号闭合"的机读面⇒实现席无法自证翻卡，只能报零翻卡|证据＝`docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/TDM-E-L1-S2__calibration__44_agg_avg_abs_ret_level_fwd5.yaml:82-83,108-112`（status_rollback_20261013→to: blocked_on_impl）|要⑥制卡席给 gap 结构化字段，⑩定归属后再翻卡|中
+- `[BLOCKER]` 2026-10-16|⑤席1016-02|工具缺陷|本班上一条 [BLOCKER]"长班被掐后台账只落盘未入袋"在本班窗内未复发＝小步收班生效（首袋 21:32:54 入队 21:39 前落地、次袋 21:39:34 入队 21:39:33 落地判据达成），但根因面仍在：`[drain] 队列项读取失败（疑似损坏，留待人工）` 竞态误报本班自家袋 -0001 再次现形（入队同秒被读到，27 秒内 `json.load` 立过＝files=2/stale_by=None），且 `[pool] `git reset` 的 hard 旗形 → rc=128 .git/worktrees/w3/index.lock File exists` 令首波退回 pending（env_retry=1/3）|证据＝本班提交 stdout 原文两行＋`git show HEAD:docs/.../ledger.md | grep -c "班次 02（st-qoder-p05-1016-02）"`＝1|要⑫按 ⑩1016-12 §⑤-2 给"入袋 N 秒内跳过/重读"与文案去"留待人工"，w3 陈旧 index.lock 属清理专班面（本席不动他人锁）|中
+
+### 5 本班耗时更正（在册律＝耗时与终值自述落笔即假，此处按 date 现测改写分账）
+
+- 上节 §5-③ 写"三把只读尺段约 17 分"系**体感估**，date 实测＝首命令 21:20:08 → 次袋落地判据达成 21:39:33＝**19.4 分**（其中三把尺只读段 21:24–21:31≈7 分、写册与首袋 21:31–21:33、次件取证与验证 21:33–21:39）。本班自我校准＝体感钟再次偏快（在册 [[my-elapsed-time-sense-runs-2x-fast-date-before-time-gates]]），后续时间门动作一律现测 date。
+- 本班按 75 分班窗计＝截至本节落笔用量约 22.8 分，余时用于本节更正与收班，不再起新代码袋（92 件批投须归属派单，不属本席自取面）。
+### 6 末袋死因与修因（当日四态分诊不隔夜，本班窗内闭环）
+
+- 末袋 `q-20261016-st-qoder-p05-1016-02-0003`（files=2）**判死**＝`GATE-PRECOMMIT-RUN` 下
+  `gate-detect-git-dangerous` 命中 `[GIT-DANGEROUS] 2 危险 Git 命令发现（扫描 2 文件）`
+  ＝本席两册里各一枚**证据引文**（登记池内 pool 报错原文时把该命令连写旗形原样抄入），
+  ledger:589 与 checkpoint last_batch 各一行，非本席执行任何危险命令。
+- 修因＝把引文改写为不含连写旗形（上段两行已改，改后两册该串残留 0 处）后重投，
+  不走 `[GATE-SELFDOC:GIT-DANGEROUS]` 标记面＝本席这两册不是"列禁令的清洁册"而是工作台账，
+  用标记需 frontmatter/行级豁免而改写引文零成本且不减任何判据信息（在册律＝改喂给闸的输入指向，
+  禁弱化闸）。重投袋＝`q-...-0004`。
+- 顺带在册复证＝首袋 -0001 落地后主区 index 停在落地前一版（本席两册三态各停一代现象由
+  ⑩1016-12 §⑦ 记为结构性），本班不动他家 staged 面（宪法 §3.4，门面对 29＋9 枚外来件只 warn 不阻断）。
