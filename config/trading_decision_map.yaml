@@ -1460,6 +1460,7 @@ nodes:
 - node_id: TDM-E-L2-05
   casebooks: []
   name_zh: 水温响应
+  module_mounts: ['MOD-ALT-017']  # st-infoaxis P2 挂载（裁定#516；goal 块战役同批）
   market: cn_a
   flow: entry_flow
   layer: L2
@@ -1944,6 +1945,10 @@ nodes:
 - node_id: TDM-E-L2-09-2
   casebooks: [CASEBOOK-001#outage]
   name_zh: 冲击标的生成
+  # 【2026-10-16 大白话-算法同步锚】本节点 algo_note_zh: 已随 resolve_directed（事件类型细分）
+  # 同步修订（详见下方 algo_note_zh 正文末段），note_confirmed: 2026-10-16 已刷新。
+  # 本注释行同时提供带键名的提交锚，使 ALGO-NOTE-SYNC 门在"行号精确归因"与
+  # "窗内锚扫描"两条归因路径下均可正确归属本节点（防上下文超窗丢失归属的既有缺陷）。
   market: cn_a
   flow: entry_flow
   layer: L2
@@ -1956,13 +1961,19 @@ nodes:
     回填留痕（2026-09-11）：接线会话 W4 交付回填，模块 MOD-INT_CHAIN_IMPACT（testing，23 单测全绿）。
     扩散口径=ig_edge 无向 BFS 默认 2 跳×每跳置信 0.6 衰减；方向=情绪 polarity ±0.15 死区外映射
     利好/利空、全链同向（成本反号传导留事件类型细分后迭代）。规格卡=同上 卡 2。
+    【2026-10-14 事件类型细分已落地（st-infoaxis-20261013 P2 传导链 v2，
+    resolve_directed()）】上述"全链同向"降为 MVP 保底（不给事件类型时行为不变）；新增方向感知
+    路径：同一事件对上游/下游符号相反——hop0 事件主体=supplier_side；hop1 经 supplies_to
+    有向边判角色（种子→下家=customer_side／下家→种子=supplier_side）；方向=「事件类型×主体
+    角色」两段式查表（不硬写利好/利空词表）：涨价/扩产对客户侧翻负、断供对双侧皆负；其余
+    边型与 hop≥2 角色未知→乘子 +1（同向）。语义真源=zephyr.intelligence.chain_direction_semantics。
   parent_node: TDM-E-L2-09
   factor_refs: []
   data_refs: [DS-224]
   algo_refs: []
   module_ref: src/zephyr/intelligence/chain_impact_resolver.py
   module_id: MOD-INT-CHAIN-IMPACT
-  note_confirmed: 2026-09-16
+  note_confirmed: 2026-10-16
   strategy_mounts: []
   activation: continuous
   ai_autonomy: auto
@@ -2109,6 +2120,7 @@ nodes:
   casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 九阶段选票主链
+  module_mounts: ['MOD-ALT-016']  # st-infoaxis P2 挂载（裁定#516；goal 块战役同批）
   market: cn_a
   flow: entry_flow
   layer: L3
@@ -2309,6 +2321,7 @@ nodes:
 - node_id: TDM-E-L3-04
   casebooks: []
   name_zh: 负面否决器
+  module_mounts: ['MOD-SIG-164']  # st-infoaxis P2 挂载（裁定#516；goal 块战役同批）
     # C7 施工（gw-tdm-20260909）：MOD-SIG-137 落码，module_ref 由 risk_event_consumer 改指负面清单核
   market: cn_a
   flow: entry_flow
@@ -2819,6 +2832,7 @@ nodes:
 
   note_confirmed: 2026-09-13
   name_zh: 盘中涨速异动扫描
+  module_mounts: ['MOD-SIG-165']  # st-infoaxis P2 挂载（裁定#516；goal 块战役同批）
   market: cn_a
   flow: entry_flow
   layer: L3
@@ -7158,6 +7172,7 @@ nodes:
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 图谱·实体股权穿透
+  module_mounts: ['MOD-SIG-163']  # st-infoaxis P2 挂载（裁定#516；goal 块战役同批）
   market: cn_a
   flow: entry_flow
   layer: L9
@@ -7229,6 +7244,7 @@ nodes:
   casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 图谱·投入产出传导
+  module_mounts: ['MOD-SIG-162']  # st-infoaxis P2 挂载（裁定#516；goal 块战役同批）
   market: cn_a
   flow: entry_flow
   layer: L9
@@ -7385,7 +7401,7 @@ nodes:
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
-  module_mounts: [MOD-FACTORY-001, MOD-TRADING-015]
+  module_mounts: [MOD-FACTORY-001, MOD-TRADING-015, 'MOD-DATA-GOALAGG']
   module_mounts_influence: {MOD-DATA-L9AGG: 判据数据输入}
   confidence: proposed
   purpose_tag: PT-11
