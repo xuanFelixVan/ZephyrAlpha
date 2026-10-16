@@ -289,3 +289,19 @@ title: 独立信号清单（⑨成绩官每日维护）
 **本班不动任何分数册字节・不物化池面・不下"信号无效"结论**（铁律：判卷端只报形态与读数，判死权在门柱与 Owner）。
 
 **⚑ 本班 14.7 段补一条口径收紧（更正另起、旧表不涂）**＝上表 p04_01 行写的"PR 与 1017-02 班在册读数**逐字复现**（2.859343252311835）"，严格说只能声明到 **4 位小数**＝本班原值 `2.859343252311835`、在册原值只记到 `2.8593`，故"逐字"仅指 4 位一致，非 15 位一致（在册"期望列不得脑估"红线，本席自纠）。另补一枚成员级新读数＝`margin_bal_chg`↔`margin_repay_pressure`＝**−0.879**（本班尺 4 位舍入），⇒ ④席 5 路去冗后约 **3** 个独立方向。
+
+
+## ⑨成绩官 1017-04 班 ｜ 独立信号清单维护读数（`date` 实测 `2026-10-17 03:59:55`；五池，全部 `pool-report` rc=0）
+
+| 池路径 | 成员数 n | 公共日 d | PR | PR/n | **池用途（修㊁ 新列）** | 命令行（可原样复跑） |
+|---|---|---|---|---|---|---|
+| `.runtime/tmp/p03_1017_05` | 22 | 106 | 6.8883 | 0.3131 | **标定池**（含 `ctrl_random` ＋ `gate_r_lag1_dup`/`_repro` 植入恒等对 ＋ `poolctl/` 六枚 `ctl_r_*`） | `python scripts/backtest/fexam/signal_orthogonality.py pool-report --pool .runtime/tmp/p03_1017_05 --out <本班件>` |
+| `.runtime/tmp/p03_1017_04` | 20 | 106 | 15.7887 | 0.7894 | 候选池 | 同上换 `--pool .runtime/tmp/p03_1017_04` |
+| `.runtime/tmp/p03_1016_03` | 20 | 109 | 14.2148 | 0.7107 | 候选池 | 同上换 `--pool .runtime/tmp/p03_1016_03` |
+| `.runtime/tmp/p04_1017_04` | 4 | 308 | 3.2832 | 0.8208 | 候选池（卡 32 股权质押／卡 33 商誉广度四枚） | 同上换 `--pool .runtime/tmp/p04_1017_04` |
+| `.runtime/tmp/p04_01` | 5 | 43 | 2.8593 | 0.5719 | 候选池（**含恒等两路**） | 同上换 `--pool .runtime/tmp/p04_01` |
+
+- ⚑ 本班核心结论＝**PR/n 跨池直比必须带"池用途"**（修㊁）：p03_1017_05 的 0.3131 是标定池设计值（dup↔repro corr **1.0000**、lag1↔dup/repro **0.9997**），不是产卡质量退化；与候选池 0.7894 直比即误读。
+- 恒等/强对逐字（basename 归一后）＝`block_disc_amtwt`↔`block_disc_eq` **1.0000**（第四次复现，修㉝）；`margin_bal_chg`↔`margin_repay_pressure` **−0.879**；标定池另 `b16ent`↔`b16hhi` **−0.9671**／`dddepth16`↔`signbal16` **−0.9291**／`b16ent`↔`madmed` **0.9092**／`b16iqspr`↔`madmed` **0.8644**。
+- 修㉞㉟ 首查＝`--out` JSON 顶层键仅 `correlation_matrix／effective_n_signals／eigenvalues／kind／members／n_common_dates／n_members／participation_ratio` ⇒ 无 `PR_per_member`・无 `signal_name`・members 仍为反斜杠路径串＝**两单均未兑现**。
+- 修㉛ 第六次复现＝`docs/**` 永久区 `date,sig` 池件现读 **0 枚**；全仓 39 个池目录 100% 在 `.runtime/tmp/**`（含 `panel_fix_bt2/3/4` 九组 pytest 产物池）⇒ 在册"池面全在 24h-TTL"继续成立。

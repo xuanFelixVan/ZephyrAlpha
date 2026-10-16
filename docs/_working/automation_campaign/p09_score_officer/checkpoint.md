@@ -331,3 +331,15 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。
   ③归属对账禁裸 `git grep -l -F "card_id: X"`＝该谓词对 rows[4] 命中 2 件（卡件＋旧址冻结册 `docs/03_modules/_domain_backtest/exam_scores_v1.yaml:99`，行形态 `- card_id:`）；须限定 `docs/03_modules/_domain_backtest/exam_cards/` 且按"行内容以 `card_id:` 起始"解析（本班改正尺＝`carduniq17c_fix.py` 谓词文字化于 14.7）。
   ④池面本班实测**未如 1017-02 预言消失**＝`.runtime/tmp/` 下 `p03_1017_04`(20员・PR 15.7887・新)／`p03_1016_03`(20员・14.2148)／`p03_1016`(7员・4.2437)／`p04_01`(5员・2.8593)／`p04_1016_04`(1员・退化) 五面同窗并存；报数须带 **PR/n** 五件套（修㉞），members 须先 `basename` 归一（修㉟）。
 - ⚠ 本班纪律申明＝未动分数册与任何判据字节；未跑任何考试；未复位 index；未 pop/drop/clean 任何 stash（reaper 现读 27）；未 rm 任何他会话遗留；未 requeue 死袋；未 release 他会话 claim；未 mv 销账（`dead_archive ok=False rc=1` 本班复量）；未清理本席号段两枚遗留 worktree（报 ⑩）；零 worktree 调用（TRAE-079 Phase 2 遵令）。
+
+
+## 游标推进记录 ｜ st-qoder-p09-1017-04
+
+- cursor: `exam_scores_v1.yaml#rows[109]`（**不推进，原地未改**＝当日增量 0 行・连续第四班；HEAD 与磁盘两面归一 sha16 同值 `a9532fceb0899c94`・rows=110；index 仍 `05bc7ce014f204a0`＝106 行・`git status` 该册 `MM`＝第六次复证"落地后主区 index 停在落地前一版"，本席不复位）
+- last_run: 2026-10-17
+- last_batch: 判卷对象空集・零升级（唯二 pass 仍 rows[76]/[78]，册面 sha 未变⇒未重跑两腿）・零新 fail 路由・零呈批新开；主产出＝修㉘ 逐值复现（19/20，本班一度读 20/20＝glob 混分隔符尺伪影，当场推翻并双正对照钉死）＋修㊁（池用途缺申报位＝PR/n 跨池直比第二次失真，p03_1017_05 是标定池 PR/n=0.3131）＋修㊂（尺伪影两型自纠）＋修㉞㉟ 开班首查均未兑现＋修㉝ 第四次复现（④席已另起 c32/c33 广度新池但未在同池退役恒等两路）；新开单号＝**修㊁＋修㊂**（在册定义此前止于 修㊀）
+- **本班自检两轮**＝轮一四条命令正文原样回放（`git rev-parse` rc=0・`git ls-tree` 1 行・五池 `pool-report` RC=0×5・自建尺 RC=0 join 110/110）；轮二＝rows[24]/[62]/[79] 回卡体现读柱名与阈值，三行门柱均未走样（rows[62] 按**嵌套** `oos.n_event=109` 取，未犯标量谓词类型盲假红）；三行无一改判
+- **下一班（1017-05）首查判据（四条，全引 HEAD 可取回面，不给 tmp 件）**＝①判卷取数面＝HEAD，首查 rows 是否 >110；读册必须 `yaml.safe_load_all`（双文档，第 8 行 `---`）；②分数馆落地面分母首选一条命令 `git ls-tree -r --name-only HEAD -- docs/04_research_records/backtest/scores/`（现读 **1**；禁再用 python `glob`+`os.path.join` 拼 `HEAD:<path>`＝混分隔符必整批假查无＝修㊂①）；③卡体 join 谓词＝卡面 `(card_id, run_id)` 双侧一致优先、缺 `run_id` 回退单侧（本班 110/110，卡池 609）；④池面五池并存，其中 `p03_1017_05`＝**标定池**（含 dup/repro 恒等对与 `poolctl/` 六枚对照），其 PR/n=0.3131 **禁**与候选池直比（修㊁）；`find .runtime/tmp -name "replay10_*.py"` 已零命中＝S-12 第四次复现，判卷尺须按台账 15.5/15.7 谓词重建，勿据"尺不存在"判"判卷不可执行"
+- **上一班尾巴收养**＝1017-03 袋 `q-20261017-st-qoder-p09-1017-03-0001` 本班现读 `state=done`・`landed_id=636f44f81996473e11222fe1fee9088a50ed1b47`（03:20:02）；`git show HEAD:<ledger> | grep -c ""`＝1629 而盘＝1639 ⇒ 其 §14.8 十行由本班袋收养（在册通道，非重投）；checkpoint/pulse 两件已 `==HEAD` 干净
+- ⚠ 本班纪律申明＝未动分数册与任何判据字节；未跑任何考试；未复位 index；未 pop/drop/clean 任何 stash；未 rm 任何他会话遗留；未 requeue 死袋；未 release 他会话 claim；未 mv 销账（serializer 租约 pid=47508 仍活跃）；未清理本席号段两枚历史遗留 `.aidrafts` 整树；零 worktree 调用（TRAE-079 Phase 2 遵令）
+- **本班耗时锚**＝冷启动 `date` 实测 `2026-10-17 03:50:12`；写盘与提交段终值由本班收班段按实记（禁预写未发生的读数）
