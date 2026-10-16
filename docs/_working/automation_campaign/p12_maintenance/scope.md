@@ -97,3 +97,13 @@ title: ⑫后勤席·输入清单与写域
 - **`schtasks` 在 Git Bash 不可用**＝`/query` 被路径转换吃掉、`MSYS_NO_PATHCONV=1` 配 `//query` 仍报无效参数 ⇒ 查计划任务一律走 PowerShell `Get-ScheduledTask`/`Get-ScheduledTaskInfo`（State＋LastRunTime＋NextRunTime＋LastTaskResult；rc=267014＝运行中，非失败）。
 - **禁手段（本席自犯立）**＝禁对 `python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon` 跑 `--help`（无 sid 校验，会把 `--help` 当会话名建档并污染 dim4 分母；API 面一律走 `inspect.signature` 读签名，本班已用此法取到 `register_heartbeat_keepalive`/`run_daemon` 签名）。
 - **`git log --format` 必须整体加引号**＝`--format=%h %s` 不带引号会被拆成第二个 pathspec ⇒ 返回空串＝**尺坏非册坏**（本班 00:4x 自犯一次，改正后取回 5fbfbc3add）。
+
+
+### 5.5 1017-02 班尺面改正与自检规约（§5.1–§5.4 各行逐字不涂，本条为更正条与新立条）
+
+- **dim2 登记行判定改正尺（取代 §5.2 首条的"行首弹头＋标记"谓词）**＝`\[BLOCKER\]\s*`?\s*(<YYYY-MM-DD>)\|`，**只判三段相邻（标记＋日期＋竖号），禁锚定行首弹头**。实测两尺同框对照（01:5x）＝当日 10-17 改正尺 128 枚 vs 旧尺 31 枚（失明 92），10-16 面 437 vs 248（失明 189）。盲区三形态＝①行首无 `-`/`*` 弹头（③席、⑦A席大量）②`**[BLOCKER]` 粗体（②席全席）③`` `[BLOCKER]` `` 标记后置反引号（⑤席）。负对照＝⑥席 7 枚 10-16 行在 10-17 谓词下 0 命中（无跨日期串味）；正对照＝本席自家 9 枚三面形态在两尺下同值。旧尺读数与结论（1016-05 记"372 枚"、1017-01 记"当日 19 枚"）**保留不涂**，本条为改正条。
+- **点名筛规约（本班新立，防假扩）**＝"点名归⑫"判据＝段内 `(要|请|交)\s*(⑤/)?⑫` 或 `⑫/Owner` 或 `后勤席` 或 `归⑫`；**禁把各席句尾惯用语"本席不自改/不代投"计入点名**（本班首筛 37 枚 vs 真点名 12 枚＝假扩 3.1 倍）。
+- **反捞与巡检类尺的自检规约（⑤席 1017-01 点名所立，本班采纳）**＝每条采集腿必须满足三件：①打印**真实命中数**或明说零命中，禁止只打"通过/未见异常"；②取零命中者必带**正对照**（同尺在已知存在面必须命中）；③读嵌套结构一律**现读键路径**再取值，禁凭字段名直觉（本班实测 `safety_wires.system_watermark.watermark.commit_pct` 为三层，两层取空非读数异常）；④集合类对表须先把两侧**归一为同一形态**（sid↔文件名混比曾造 25 枚假新增）。
+- **引用行号谓律（本班新立）**＝跨班引用他码行号（含本席自家在册条）在落笔前 MUST 当班 grep 函数名取现行号，禁照抄；实测 1017-01 引 `heartbeat_daemon.py:816`，本班现读 `_run_cli` 在 **:796**＝行号漂移首载。书写式＝`<file>:<当前 grep 行号> <函数名>`。
+- **活死判定第五校执行面（承 §5.4 与上班 scope 条）**＝0b 动手前对每个候选 sid 现读 `scripts/commit_queue.py:2097 _session_ghost_verdict(sid, runtime_root=Path('.runtime'))`，`dead=false` 即 HOLD；本班实测 29 枚分布＝alive/false 27・judged_dead/true 2，且守卫 evidence 面不含 pid 面与面龄（上班案卷续存，第二载）⇒ **在⑩改方案3b 措辞前，0b 的可执行面天然≈0**，逐班如实报量级不硬凑。
+- **rescue 保护区用法（本班新立，事故驱动）**＝他席"跨班复跑件／抢救案卷"若寄身 `.runtime/tmp/**` 且即将跨 24h 线，本席动作＝`cp` 进 `.runtime/tmp/rescue/<sid>/`（`runtime_hygiene.py:62` 豁免名单在册）＋逐件 sha256 等值自证＋**不动源面、不入 git、可整目录回退**；正解（promote 到 docs/_working）写域属该席或⑩，本席只保命不代判。
