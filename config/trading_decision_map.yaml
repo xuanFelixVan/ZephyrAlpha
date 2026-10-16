@@ -7365,7 +7365,7 @@ nodes:
 
 - node_id: TDM-E-L9-AGG
   casebooks: [CASEBOOK-001#task_reconcile]
-  note_confirmed: 2026-10-14  # st-infoaxis：A02 源线口径引用式更正同批确认（裁定#516 Q10）
+  note_confirmed: 2026-10-14  # st-infoaxis-land-20261014：A02 源线口径引用式更正同批确认（裁定#516 Q10——miniQMT 模拟盘常挂在跑＝实时源；QMT 桥可取 tick 五档、比 miniQMT 慢 3-5 秒，桥数据进回测须计入该延迟防前视；旧「miniQMT 清退后无在跑源」记载作废留痕）；本袋 algo_note_zh 同批补 A02 三句口径（大白话侧同步，非仅确认日期）。前次 2026-09-28 st-c8-l9：G3 换源确认（ig_equity_edge→entity_graph 六表 edge_holding）
   name_zh: 知识供给汇聚
   market: cn_a
   flow: entry_flow
@@ -7375,7 +7375,7 @@ nodes:
   decision_question: "知识供给轴（源线/图谱/状态变量）的覆盖与健康总览？"
   activation: continuous
   algo_note_zh: >-
-    知识供给汇聚：29源线+5图谱+3状态快照的就绪度读数生产者（纯读取聚合零采集，f34册最小件；G3股权穿透读数已切entity_graph六表现行版本edge_holding，valid_to IS NULL口径，ig_equity_edge退役第一步）；daily_kline系SUCCESS事件唤醒+同日60min节流，逐线绿/黄/红与挂起/跳过读数落c1_market.l9_readiness_daily，T日聚合读数喂次日数据就绪度；本节点只承载结构与指向，不存实时数据。
+    知识供给汇聚：29源线+5图谱+3状态快照的就绪度读数生产者（纯读取聚合零采集，f34册最小件；G3股权穿透读数已切entity_graph六表现行版本edge_holding，valid_to IS NULL口径，ig_equity_edge退役第一步）；daily_kline系SUCCESS事件唤醒+同日60min节流，逐线绿/黄/红与挂起/跳过读数落c1_market.l9_readiness_daily，T日聚合读数喂次日数据就绪度；本节点只承载结构与指向，不存实时数据。2026-10-14 修订（裁定#516 Q10）：A02 Tick分笔源线口径更正——miniQMT模拟盘常挂在跑＝在跑实时源；QMT桥可取tick五档但比miniQMT慢3-5秒，桥数据进回测须计入该延迟防前视；旧「miniQMT清退后无在跑源」记载作废，本节点读数面按新口径引用式更正。
   factor_refs: []
   data_refs: []
   algo_refs: []

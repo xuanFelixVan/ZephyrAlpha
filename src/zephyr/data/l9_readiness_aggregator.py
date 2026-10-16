@@ -111,7 +111,14 @@ class _LineSpec:
 
 _A_LINES_CH: Final = (
     _LineSpec("A01", "A", "market_kline_daily", "trade_date", 3, "日线/分钟行情（daily）"),
-    _LineSpec("A02", "A", "market_tick", "trade_date", 3, "Tick 分笔（realtime；历史断档 PIT 已登记）"),
+    _LineSpec(
+        "A02",
+        "A",
+        "market_tick",
+        "trade_date",
+        3,
+        "Tick 分笔（realtime=miniQMT 模拟盘常挂在跑；QMT 桥可取 tick 五档、慢 3-5 秒进回测须计入防前视——裁定#516 Q10 口径，旧「清退后无在跑源」记载作废；历史断档 PIT 已登记）",
+    ),
     _LineSpec("A03", "A", "market_sector_state", "trade_date", 3, "板块/概念指数（f30 实测口径=sector_state）"),
     _LineSpec("A04", "A", "market_daily_valuation", "trade_date", 3, "估值（daily）"),
     _LineSpec("A05", "A", "fund_income_statement", "announce_date", 100, "财务（quarterly，公告日 PIT）"),
