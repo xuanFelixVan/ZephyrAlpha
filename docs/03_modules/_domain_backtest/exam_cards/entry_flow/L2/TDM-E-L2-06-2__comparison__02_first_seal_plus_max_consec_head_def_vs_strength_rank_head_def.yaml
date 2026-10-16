@@ -1,0 +1,53 @@
+# ③库内挖矿席 20261017-p03-02 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-2__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-06-2/comparison/02_first_seal_plus_max_consec_head_def_vs_strength_rank_head_def
+node_id: TDM-E-L2-06-2
+family: comparison
+title_zh: 龙头四态定位·最先涨停＋最高连板腿 vs 板块强度榜第一腿的态归属错配对照卡
+hypothesis: 图面 dq 承本节点裸骨架（逐行回读）。兄弟卡在册定义原样引用＝板块维度用 limit_up_pool.industry（自带行业列，绕开成分表）；龙头=同 industry 内 first_seal_time 最早 **且** consec_limit 取最大；MAE=（未来 5 日最低价/当日收盘 −1）。该卡 hypothesis 里对龙头另给了一句「板块强度榜第一且最先涨停」＝同一态名在本卡面存在两个第一性判据（封板时序面
+  vs 强度榜面）。本卡对照题设＝同一 sector×同一交易日两定义各自的龙头归属，把错配日单独成集（A=最先涨停但非强度第一；B=强度第一但封板更晚），对两集分别测前向 5 日超额与各态 MAE 分位差。判读＝若两定义在 >=90% 的板块-日上给出同一标的，则「龙头」在两种写法下派生同一对象→必并，卡面须收敛为一条判据以免四态排序结论被口径分叉稀释；若 A 集显著强于 B 集（或反），则「止损宽度按定位分级（龙头宽/跟风窄）」这条主张的承重项被换成封板时序，强度榜版结论不可直接引用。在册限定＝本卡不改
+  first_seal_time/consec_limit 的取法、不自立第三种龙头定义、MAE 式逐字承该卡；该卡在册缺源须同框登记＝consec_limit 面起点受限（本线多次复证仅自 2026-09 起可用），故本卡把「分母不足即不出数」写为前置，缺源未补维持 blocked_on_data、不判四态无效（缺源件路由 ①②）；target 承该卡 next_day_index_return（series
+  面），禁在 2025-09-09 后取判据值。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L2-06-2/calibration/02_龙头四态定位 的 target 面（primary=next_day_index_return（CSI300 次日收益，series 面）），差异只落在对照腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 权威 watermark 现读 commit_pct=90.51%／cpu_pct=94.3%／ram_used_pct=76.2%／degraded=True（01:04:25 同帧取），≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。候选面通道本班亦未用＝双重堵因分层：(a)
+  唯一低成本输入 .runtime/tmp/p03_07/perday.json 已被清（1017-01 在册 ABSENT，本班未翻案）；(b) 本班 01:02:44 自建输入面长跑在首月开跑前即被本班水位守卫自停（预读 88.82%≥85%），零月落地。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池 35 枚、非 L9 平铺 21 枚，与上班终值同尺同值）；本面兄弟卡态=blocked_on_data，按本班放宽后的机械可读性判据入选（放宽呈
+  ⑩，未裁前可整批 revert）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L2-06-2/calibration/02_龙头四态定位 的 signal_kind 运行时读回（panel），非本班手打；裸骨架=TDM-E-L2-06-2/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.limit_up_pool + c1_market.kline_daily_hfq + c1_market.sector_constituent
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_龙头四态定位（blocked_on_data·panel·c1_market.limit_up_pool + kline_daily_hfq + sector_constituent）；industry 取列、龙头双判据与 MAE 式逐字承该卡 data_binding，本卡不新增态名。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-02
+birth_batch: 20261017-p03-02
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-06-2，decision_question 原文='它是龙头/中军/跟风/中位股哪一种'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family) 补该骨架所缺家族」口径；本班一律走非
+  L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）；入选判据＝兄弟卡带可读 signal_table＋target.primary＋signal_kind（相对上班「须 preregistered/examined」为放宽，本面兄弟卡态=blocked_on_data；放宽事实已按本班盘点分层读数 T1=6/T2=15/T3=0/T4=0 呈 ⑩，未裁前本批可整批
+  revert）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-2__comparison__02_first_seal_plus_max_consec_head_def_vs_strength_rank_head_def.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-06-2.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 它是龙头/中军/跟风/中位股哪一种
+  module_ref: src/zephyr/signal_ashare/sector/sector_leader.py
+  module_id: MOD-SIG-062
+  confidence_at_gen: proposed
+  purpose_tag: PT-03

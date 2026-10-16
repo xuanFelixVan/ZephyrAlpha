@@ -1,0 +1,52 @@
+# ③库内挖矿席 20261017-p03-02 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L3-11/comparison/02_auction_channel_newly_added_vs_speed_channel_newly_added_split
+node_id: TDM-E-L3-11
+family: comparison
+title_zh: 日内双通道·竞价通道新增腿 vs 涨速通道新增腿的增量价值分账对照卡
+hypothesis: 图面 dq 承本节点裸骨架（逐行回读）。兄弟卡在册口径原样引用＝竞价通道=9:25 竞价量比与竞价涨幅规则（11-1 卡口径）；涨速通道=5 分钟涨幅>2% 且 5 分钟量比>3（11-2 卡口径）；与盘前池取差集得日内新增；blocked_reason 原文＝「两条日内通道的数据起点全部晚于冻结窗（竞价全窗缺、5 分钟缺 IS 前 2/3），组合级增量无法在同一窗内对齐」。该卡把双通道捆在一起考「去掉双通道后组合收益不降则本层退役」；本卡把增量分账到通道＝同一交易日日内新增集合按来源拆成仅竞价(A)、仅涨速(B)、两者同给(C)
+  三集，各测当日/次日实现收益与该卡在册 target。判读＝若 C 集为空且 A、B 两集增益同号，则双通道是同一「日内异动」轴的两个触发器→按 §4 同域重复簇收敛为一条触发器＋一份参数册，该卡的「本层退役」判据不必分通道；若 A 集增益为正而 B 集近零（或 C 集显著），则捆合考会由强腿带动弱腿得到假阳，「本层退役」的结论必须逐通道下，该卡现形制的退役判据不足以支撑退役决定。在册限定＝本卡不改
+  2%/量比>3 两值、不自立第三条日内通道、9:25 竞价规则与 5 分钟涨速规则逐字回读 11-1/11-2 两在册卡；**在册起点缺陷原样同框**（竞价全窗缺、5 分钟缺 IS 前 2/3）⇒本卡只在两通道均有行的子面上出题且把「分母不足即不出数」写为前置，缺源未补维持 blocked_on_data、不判通道无增量（缺源路由 ①②）。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L3-11/ablation/02_日内双通道增量 的 target 面（primary=stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）），差异只落在对照腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 权威 watermark 现读 commit_pct=90.51%／cpu_pct=94.3%／ram_used_pct=76.2%／degraded=True（01:04:25 同帧取），≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。候选面通道本班亦未用＝双重堵因分层：(a)
+  唯一低成本输入 .runtime/tmp/p03_07/perday.json 已被清（1017-01 在册 ABSENT，本班未翻案）；(b) 本班 01:02:44 自建输入面长跑在首月开跑前即被本班水位守卫自停（预读 88.82%≥85%），零月落地。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池 35 枚、非 L9 平铺 21 枚，与上班终值同尺同值）；本面兄弟卡态=blocked_on_data，按本班放宽后的机械可读性判据入选（放宽呈
+  ⑩，未裁前可整批 revert）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L3-11/ablation/02_日内双通道增量 的 signal_kind 运行时读回（panel），非本班手打；裸骨架=TDM-E-L3-11/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.auction_snapshot + c1_market.kline_5min + c1_market.kline_daily_hfq
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 ablation/02_日内双通道增量（blocked_on_data·panel·c1_market.auction_snapshot + kline_5min + kline_daily_hfq）；两通道触发规则、与盘前池取差集的构造式与 blocked_reason 逐字承该卡 data_binding。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-02
+birth_batch: 20261017-p03-02
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L3-11，decision_question 原文='盘中实时扫描产出哪些候选（涨速榜 3-7% 拉升/异动资金）'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family)
+  补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）；入选判据＝兄弟卡带可读 signal_table＋target.primary＋signal_kind（相对上班「须 preregistered/examined」为放宽，本面兄弟卡态=blocked_on_data；放宽事实已按本班盘点分层读数 T1=6/T2=15/T3=0/T4=0
+  呈 ⑩，未裁前本批可整批 revert）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11__comparison__02_auction_channel_newly_added_vs_speed_channel_newly_added_split.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-11.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L3
+  node_type: stage
+  market: cn_a
+  decision_question: 盘中实时扫描产出哪些候选（涨速榜 3-7% 拉升/异动资金）
+  module_ref: null
+  module_id: null
+  confidence_at_gen: untested
+  purpose_tag: PT-03
