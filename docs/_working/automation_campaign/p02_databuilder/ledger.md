@@ -1303,3 +1303,81 @@ EMPTY-LIST（本班新登"试过且空"裸码，6 枚，下班逐字重建排除
 
 - 本班**零卡可翻**＝B-27 三缺格日票面 533/7934＝6.7% 远未封板，第四查续供与三查③消费侧接线未闭⇒不翻 `completed`、不写解锁清单条目。
 - 本班向⑩递的不是解锁而是**一条归属请求＋一条排产复证**＝件 5 第 1 条（真无货 17 枚的耐久登记面，须不与作废假空集处方冲突）＋第 2 条（整面 7,401 票×4.5 秒/票≈9.3 小时 vs 10-18 02:00 时限＝请⑩重排产）；另向⑤/⑫递一条尺观察（件 5 第 3 条塌缩余数四班四幅）。
+
+---
+
+## 2026-10-17 04:1x · st-qoder-p02-1017-04 班（②数据建设席·10-17 当日第 4 班，班限 60 分）
+
+**本班一句话**＝B-27 五档深史续采一趟落地，入库面（三缺格日 FINAL）`(6788733, 533)`→`(9137075, 732)`＝净增 **2,348,342 行／+199 票**（216 票尝试 − 17 枚真无货＝199，与 uniqExact(symbol) 净增逐值相等）；归因 **597/597 非空格票名全等、错配 0**、`格_err=0`；17 枚真无货经二次复读 `recovered_cells=0` **第三次复证且名单与上班逐字相同**（⇒上班"每班重烧"这条 [BLOCKER] 本班为复证非新案）；**起手 claim 踩中 ⑧B 席 04 班在册缺陷**＝两参数形态 `acquire <文件> <sid>` 打印 ACQUIRED 但 `lock_files.py list` 对本席 sid 命中 0（＝互斥窗口 0 秒），补 `--session` 重绑后同尺现读 剩余 30.0m＋`_is_stale` False；B-15 第十次复拍 `commit_pct 82.43≥70` 不起批；上班袋已落地⇒本班**零收养面**。全文＝本段件 0–件 6，终态标记 `P02-1017-04-ENDSTATE`。
+
+### 件 0　起手三态核实（零收养面）＋ claim 缺陷现案
+
+- (a) 盘面基线＝`git diff --numstat HEAD -- ledger.md checkpoint.md` 本班起手现读**空返回**＝两件盘==HEAD 逐字节一致⇒净基追加、无收养面；落地面标记复核 `git show HEAD:.../checkpoint.md | grep -c '^`P02-1017-03-CP-ENDSTATE`'` 现读 **1**⇒上班段已入落地链。
+- (b) 取号三面并集（承在册"取号只数台账⇒撞鬼班"）＝台账面 `grep -o st-qoder-p02-1017-[0-9]*` 现读 01×3／02×8／03×5、tmp 面仅存 `p02_1017_01`（空目录，1017-01 收班只删了件没删壳，本班不代清交⑫）、队列面 `q-20261017-st-qoder-p02-1017-{01,02×2,03}` 无 04⇒**本班号 04 三面皆无前任**。
+- (c) 守卫＝`lock_files.py cleanup` 现读 `CLEAN — 无死锁需要清理`；`process_reaper --status` `source=live`。⚑**两时点并列读数（禁读成单值）**＝进场 03:50:22 那趟 `commit_pct 76.95 / ram_used_pct 70.5 / cpu_pct 62.1 / degraded False / breached=[]`，03:56:28 复拍 `commit_pct 82.43 / ram_used_pct 73.8 / cpu_pct 78.1 / degraded False / breached=[]`⇒本班据此单进程串行跑批、不自起夜批。
+- (d) 会话盾＝`SessionRegistry(ROOT).register(sid, pid=0, held_files=[两件])`＋`_spawn_heartbeat_daemon(sid, ROOT, 30)`＝daemon_pid **55080**、`heartbeat(sid)` 回 True。⚑**本班自犯并当场改正一枚＝在册 boot 处方给的模块名不存在**＝本班按游标原文 `from zephyr.trading.session_registry import SessionRegistry` 起手直接 `ModuleNotFoundError: No module named 'zephyr.trading.session_registry'`（真源＝`zephyr.security.access_control.session_concurrency.SessionRegistry` 与 `zephyr.gov_enforcement.rule_bridge.session_worktree._spawn_heartbeat_daemon`，两枚皆 grep 定义取得非凭记忆）⇒**下班照抄游标 boot 段时须改这两行 import**，否则起手即崩（本班实测崩溃＝非假绿）。
+- (e) ⚑**claim 零互斥窗口缺陷从本席消费侧复证（承 ⑧B 04 班案卷，本班为第二席独立命中）**＝首版按本席指令卡工序原文 `python scripts/lock_files.py acquire <文件> st-qoder-p02-1017-04` 两件各回显 `ACQUIRED`＋`持有者: st-qoder-p02-1017-04`＋`TTL: 30 分钟`，但随后 `lock_files.py list` 对本席 sid **grep 命中 0**（＝锁已被判 stale，命令一退即失互斥）；改正动作＝`acquire <文件> <sid> --session <sid>` 重绑，现读 `list` 两件各 `剩余 30.0m／29.9m`，再按在册"只读探针"直调 `lock_files._is_stale(_lock_dir(p))` 两件均 **False**，且 `owner.json` 现读 `session_id='st-qoder-p02-1017-04'`（首版无该键）。⚑**本席不据此翻案上班"两件全程在持未被外来回收"的自述**＝该自述用的同一把无旗尺，读数形态与本班一致（打了 ACQUIRED 但互斥不成立），上班窗内未出事属"未被触发"而非"受保护"。
+- (f) 接管册前置排雷（承 10-17 在册"同席继任必死两袋"）＝`session_takeover_ledger.load_open_entries(ROOT)` 现读 **OPEN 3 条**＝`st-chfinalw3-20261016`／`st-qoder-diag-1016-01`／`st-qoder-p07-1017-02`，**无一条属本席（p02）**且三条 `resources.held_files` 均为 `[]`⇒本班袋面两件不在任何在途接管条目资源内，无需 release_files/resolve_entry（跨席禁动这条照守）。
+- (g) keep 册＝sid 以 `safe_write_text(expected_base_sha256=content_sha256(read_text()))` CAS 追加，本班实测 **439→440 行**（delta=1，`sid_in` False→True，`SafeWriteResult.written=True`＝在册"真字段是 written 不是 ok"复证）。
+
+### 件 1　暖态探针（放量前置闸＝正对照臂独断，本班首跑承 1017-02 改正）
+
+- 谓词＝DONE 面 `sorted(done)[-3:]`＝`510050/510300/600000`（QMT `510050.SH/510300.SH/600000.SH`）×三缺格日，区间 `download_history_data(q,'tick','20261007','20261013')` 一票一次＋等 40 秒后读；本班不引旧 EMPTY 作负对照（该面 1017-02 已作废）。正对照零命中⇒禁放量只报堵。
+- 读数＝`CTRL-SELECT1 [(1,)]`（`query_rows` 正对照每次先跑的在册配方）；`COL_SYMBOL_IDX 3`（`_COLUMNS.index('symbol')` 实测非记忆）；下载相 3 票 **1.7 秒发完、dl_err 0**；九格逐格非空且 `names_eq True`＝`510050` 5011/5030/5021、`510300` 5143/5144/5117、`600000` 5051/5017/4986 行，`err` 全 None⇒`WARM nonempty_cells=9/9 WARM_CHANNEL True`＝**通道确证暖**（QMT 终端在产），本班据此合规放量。
+- 起手面值＝`UNIVERSE 7934 DONE 533 REMAINING 7401`（与上班件 2 终态**逐值相同**＝跨班同尺同面第五次复现，非本班重打）；`FIRST5 [000847,000849,000851,000853,000854]`（⚑**首段即上班 17 枚真无货名册的前五枚**＝上班 [BLOCKER] 第 1 条"每班重烧"在本班起手面直接可见，非本班推算）、`LAST5 [988006,988007,988106,988107,988201]`。
+- 写前落地面（三缺格日）＝`BEFORE-ALL3DAYS-FINAL (6788733, 533)`；逐日 `10-08 (2221819, 533)／10-09 (2299215, 533)／10-13 (2267699, 533)`（三值和＝6,788,733 与合计面逐位相等）。
+
+### 件 2　B-27 五档深史续采主批（本班主落地件）
+
+- 命令＝`python .runtime/tmp/p02_1017_04/b27_run_1017_04.py 216 24 900 st-qoder-p02-1017-04`（argv 末位带 sid＝在册 reaper 白名单按 cmdline 子串命中；日志即时 flush 防长批静默消失；本班后台跑、有界轮询取回）。
+- 谓词承在册三条改正＝**靶面单口派生** `UNIVERSE(09-28 FINAL distinct) ∖ DONE(10-08 FINAL distinct)`（不抄旧 EMPTY）；区间下载一票一次喂三缺格日（单日 day,day 不落盘＝`backfill_tick_depth5.py:51` 在册头注）；**首块等 100 秒、后续块等 60 秒**（下载异步、读早＝假空＝1017-02 定根因后的配方）；归因配对 `seq=[s for s in blk for _ in DAYS]`（票主序，与 `backfill_days` 的 `for stock_code: for day:` 生成序同构，本班读码核实非引用）＋`zip(strict=True)`＋`len(results)!=len(seq)` 即停＋逐格核 `row[3]` 集合=={该票裸码}。**只写 `c1_market.tick_depth_5`，`tick_data` 链路零触碰**（红线 2）。
+- 块行读数（逐值抄录，禁按 tail 抽当全集）＝
+  [rb1] syms=24 dl=6.1s dl_err=0 wait=100s read=9.1s cum_rows=78663 ok=21 empty=51 err=0 全等=21 错配=0 elapsed=115s per_sym=4.8s
+  [rb2] syms=24 dl=9.4s dl_err=0 wait=60s read=36.5s cum_rows=343433 ok=72 empty=0 err=0 全等=93 错配=0 elapsed=221s per_sym=4.6s
+  [rb3] syms=24 dl=9.6s dl_err=0 wait=60s read=38.6s cum_rows=607937 ok=72 empty=0 err=0 全等=165 错配=0 elapsed=329s per_sym=4.6s
+  [rb4] syms=24 dl=9.4s dl_err=0 wait=60s read=31.6s cum_rows=877676 ok=72 empty=0 err=0 全等=237 错配=0 elapsed=430s per_sym=4.5s
+  [rb5] syms=24 dl=9.5s dl_err=0 wait=60s read=31.2s cum_rows=1159176 ok=72 empty=0 err=0 全等=309 错配=0 elapsed=531s per_sym=4.4s
+  [rb6] syms=24 dl=9.8s dl_err=0 wait=60s read=38.2s cum_rows=1461975 ok=72 empty=0 err=0 全等=381 错配=0 elapsed=639s per_sym=4.4s
+  [rb7] syms=24 dl=9.5s dl_err=0 wait=60s read=76.2s cum_rows=1759461 ok=72 empty=0 err=0 全等=453 错配=0 elapsed=785s per_sym=4.7s
+  [rb8] syms=24 dl=10.0s dl_err=0 wait=60s read=36.9s cum_rows=2063844 ok=72 empty=0 err=0 全等=525 错配=0 elapsed=892s per_sym=4.6s
+  [rb9] syms=24 dl=9.5s dl_err=0 wait=60s read=37.9s cum_rows=2348939 ok=72 empty=0 err=0 全等=597 错配=0 elapsed=999s per_sym=4.6s
+  ⚑**本班 BUDGET 语义如实登记**＝预算 900 秒未在块界触停（`BUDGET-STOP` 零命中），因检查发生在块首而 rb9 起点 elapsed=892s<900s⇒**九块 216 票全部起完**，rb7 的 read 相 76.2 秒（对 CH 负载敏感，与上班 24.7–43.1 秒区间不同幅）是超窗主因。
+- 面值自洽（三把尺同向）＝216×3=**648 格**＝ok 597＋empty 51＋err 0；尝试 216 票 − 真无货 17 票＝**199**＝`uniqExact(symbol)` 净增（533→732）**逐值相等**（无外来吸入、无重复计数）；`data_source` 分组面现读**单轨** `('miniqmt', 9137075, 732)`＝三缺格日全表只有一个写者轨道。
+- 归因尺终读＝`ATTRIBUTION {'非空格': 597, '票名全等': 597, '票名错配': 0} MISMATCH_SAMPLE []`＝597 个非空格逐格票名全等（承 1017-01 销口、1017-03 第二趟，本班为第三趟有货面复行使）。
+- 二次复读判真空（承上班已落地判据）＝`RECHECK emptied_cells_initial=51 syms=17`→重下＋等 60 秒＋重读→`RECHECK recovered_cells=0`＋`CONFIRMED-EMPTY 17 ['000847','000849','000851','000853','000854','000855','000857','000865','000867','000891','000914','000934','000974','000982','000986','000991','000992']`＝**与上班件 2 名册逐字相同（第三班复现）**；本班照旧**不落永久排除集**（归属未定，见件 5 第 1 条）。
+- 入库面（本班写后独立复核脚本 `b27_verify_1017_04.py` 现读，非采集腿自述）＝`AFTER-FINAL (9137075, 732)`、`AFTER-RAW (9137075, 732)`（Raw 与 FINAL 同值＝本班窗内无待合并分片）；逐日 `10-08 (2980453, 732)／10-09 (3102707, 732)／10-13 (3053915, 732)`＝三值和 **9,137,075** 与合计面逐位相等；净增＝`9137075 − 6788733 =`**2,348,342 行／+199 票**。
+- ⚑**守恒余数本班如实登记不美化**＝`写前FINAL(6788733) + 写入(2348939) − 写后FINAL(9137075) = 597 行`＝恰对 597 个非空格**每格 1.0 行**（与 1016-04 的 ≈0.99／1017-01 的 ≈0.99／1017-02 的 0／1017-03 的 1.0 同尺**第五幅**读数）⇒该余数仍不可当定值验收判据（件 5 第 3 条，承在册勿当新案卖）。
+- 节奏与剩面续位＝主批九块墙钟 999 秒（rb9 elapsed 读数）＋二次复读另加约 130 秒（下载＋60 秒等待＋重读）；`per_sym` 末值 **4.6 秒/票**；剩面由 7401 改判为 `UNIVERSE 7934 − DONE 732 =`**7202 票**，按 4.6 秒/票外推整面约 **9.2 小时**单进程量（含 17 枚每班重烧的约 130 秒浪费）。本班窗内做到 216 票，未起整面长批（起手 commit_pct 76.95／复拍 82.43 属高内存态，禁自起夜批）。
+
+### 件 3　工序 4 B-15 冷归档深史重挂＝第十次自验复拍，仍不起批
+
+- 唯一判据现读（`commit_pct<70`）＝`process_reaper --status` 本班 03:56:28 那趟 watermark 原文 `'commit_pct': 82.43`、`ram_used_pct': 73.8`、`cpu_pct': 78.1`、`degraded': False`、`breached=[]`；进场 03:50:22 那趟 `76.95／70.5／62.1／False／[]`⇒两读均 ≥70＝**闸门未开，本班不起批**（1015-05→1016-01 的 65.54 是史上唯一破闸读数；序列 92.07→94.03→87.31→93.17→77.88→83.73→84.46→87.66→89.23→76.95/82.43）。
+- 承上班处方＝本班**未**重拍 manifest 快照、**未**重跑三条前置（令面 2,533 vs 实测 2,539 已六次复证不符，禁按令面起批继续生效）；⚑另登一条＝本班 `lock_files.py cleanup` 与 reaper 的 `dead_archive` 自动钩子均报 `ok=False rc=1`，原文 `ERROR: serializer 租约存活（pid=47508），拒绝并行维护操作`＝**在册"主区 index.lock 不挡入袋只挡直连落地"同族的租约面**，本班不代处置、只登读数供⑩判断落地通道是否受影响（本班走队列正门，实测入袋成功＝见件 6 ⑤）。
+
+### 件 4　工序 1 对表＝建单零新增、B-27/B-28 不拒收、缺口册仍不随袋
+
+- `docs/_working/automation_campaign/feedback/to_builder.md` 本班实测 **439 行**、末节仍是 ⑩ 席 1016-05（零新单）＋①席 1015-15 的 B-27 复量补记⇒本班窗内**零新建单**（承 1017-02/03 同读，非本班重估）；在途 B-27／B-28 两张的「续供确认（四问）」栏齐备（①采集通道／②更新频率／③是否自动化／④断供风险四段）⇒按本卡工序 1"缺栏可拒收"判**不拒收**，本班继续 B-27；B-28（估值深史换源）需新建调度＋当期宇宙判据，**勿在 60 分窗内半起**（承上班游标定办序）。
+- `src/zephyr/data/config/known_data_gaps.yaml` 本班**不重烧 pending 普查**（该面已由 1017-01 件 3 实跑挂号）；本班只读工具面复量＝`yaml.safe_load` 直读非 completed 条目 **78 条**（首版打印 `gap_id` 得 `None`＝本班字段名猜错，该册真字段名待下班核实后再引，本班据此**不引用这个 78 当在册分母**，只登记为"字段名未核实的粗读"）。
+- ⚑`known_data_gaps.yaml` 本班起手 `git diff --numstat HEAD` 实测该册工作区面仍在被他席写（本班未随袋、**未翻任何 status**）＝三缺格日票面 732/7934＝**9.2%** 远未封板，三查③消费侧接线与第四查封板判定未闭；同目录 `instruction.md` 起手 `git diff --numstat HEAD` 现读 **3 insertions／0 deletions 未落地**＝他席件**不随袋**（承 1017-02/03 同判）。
+
+### 件 5　本班 [BLOCKER] 登记
+
+**[BLOCKER] 2026-10-17|②1017-04|工具缺陷|本席指令卡工序原文给的 `lock_files.py acquire <文件> <sid>` 两参数形态实测互斥窗口＝0 秒——回显 ACQUIRED 且打印持有者/TTL，但命令一退 owner.json 无 session_id 键，锁按该次 CLI 瞬时 PID 判活即被判 stale，`lock_files.py list` 对本席 sid 命中 0；补 `--session <sid>` 重绑后同尺现读 剩余 30.0m 且直调 `_is_stale` 回 False（＝⑧B 席 04 班案卷的第二席独立复证，本席为消费侧命中）|本班件 0(e) 三组对照读数（无旗→list 命中 0／有旗→list 30.0m＋`_is_stale` False＋owner.json `session_id=st-qoder-p02-1017-04`）＋真源 `scripts/lock_files.py:186 _is_stale(lock_dir)` 与 `:192` 裁定#252 注释＋⑧B 案卷 `docs/_working/automation_campaign/p08_examiner_b/ledger.md` §八|请⑩ 定全线九张指令卡的 claim 工序措辞是否统一补 `--session <sid>`（本席不自改指令卡面），请⑤/⑫ 判是否让 `acquire` 缺旗时以位置参数 sid 兜底写 session_id（＝改喂闸的输入、非弱化闸）；本席本班起已按有旗形态执行|高**
+**[BLOCKER] 2026-10-17|②1017-04|数据问题|真无货 17 枚（000847/000849/000851/000853/000854/000855/000857/000865/000867/000891/000914/000934/000974/000982/000986/000991/000992）本班第三次复现＝二次复读 recovered_cells=0 且名单与 1017-03 逐字相同，但"整集作废、改由 DONE 面单口派生"的处方使它们永久留在剩面里每班重烧（本班实测 51 格＝17×3 与约 130 秒）；⚑本班起手面 FIRST5 直接就是这五枚＝重烧成本在靶面首段可见而非推算|本班件 1 `FIRST5` 行＋件 2 `RECHECK/CONFIRMED-EMPTY` 行原文读数（对 1017-03 件 2 同名列册第三次复现）|请⑩/① 定"二次复读仍空且 err=None"之真无货面的耐久登记归属（须与 1017-02 作废假空 93 枚的处方不冲突＝只登记经判据确证者）；本席不自建永久册以免违 AGENTS §4.1 净零，仅在台账留名册为耐久事实|中**
+**[BLOCKER] 2026-10-17|②1017-04|流程问题|B-27 整面剩面在本班后为 7,202 票（`UNIVERSE 7934 − DONE 732`），按本班实测 per_sym 4.6 秒/票外推单进程约 9.2 小时，而 10-18 02:00 的 `tick_backfill_weekly` 自动窗将把 10-08/10-09 滑出在册时限＝本班 04:16:39 现算距该窗约 21.7 小时⇒时限与产能仍不可同时满足（本班做到 216 票，整面需 ≈9 个同等班）|本班件 2 节奏读数（九块 999 秒／216 票）＋`date` 现测 04:16:39＋UNIVERSE/DONE 两面值＝1017-02/03 件 5 第 2 条同族复证＋新分母（7528→7401→7202），勿当新案卖|⑩按"票/班"重排产（或批准登记 keep 的整夜长批，本班 commit_pct 两读 76.95/82.43 属高档＝本班不自起）；④席下游评估窗右端仍停 2026-10-07|中**
+**[BLOCKER] 2026-10-17|②1017-04|判据缺失|同尺同式的塌缩守恒余数本班＝`6788733+2348939−9137075=597 行`＝恰每非空格 1.0 行，与 1016-04 的 241/243（≈0.99）、1017-01 的 340/342（≈0.99）、1017-02 的 0/279（=1.00 无损）、1017-03 的 381/381（=1.0）四班四幅不同⇒该余数不可当定值，也不能用作"写入完整性"验收判据；本班 Raw 与 FINAL 两读同值（9137075）＝窗内无待合并分片，仍不能解释四幅差异|本班件 2 CONSERVATION 行原文算式＋件 2 复核脚本 AFTER-FINAL/AFTER-RAW 两读（`b27_verify_1017_04.py` 输出已逐值入账）|请⑤/⑫ 判 ReplacingMergeTree 后台 merge 时点是否进这条尺（若是该尺须带 merge 观测位）；本席不改表不改判据|低**
+
+### 件 6　收班八件（本班按小步纪律：件 0–件 5 已即时落账）
+
+① **claim**＝本班两件起手无旗 claim 实测失效（见件 0(e)），已用 `--session` 形态重绑并双证在持；投袋前复 acquire，release 在末次网关调用之后执行（袋在飞不放锁＝在册铁律）。
+② **心跳**＝本班 boot 守护 daemon_pid **55080**；收班终判不以 pid 复扫为准（承 10-17 在册"本席任何 python 调用都会代起、pid 文件恒指已死首枚"），改以 registry 分片撤除为销据（`unregister` 后 `.runtime/session_registry/st-qoder-p02-1017-04.json` 消失），杀进程按 pid 文件**单 PID**精确执行（禁 cmdline 子串扫描，在册 1017 自杀案）。
+③ **实际耗时**＝`date` 实测 03:50:16 进场→04:16:39 写账＝**26 分 23 秒**（未超 60 硬窗）；其中主批九块墙钟 999 秒＋二次复读约 130 秒＝采集窗约 19 分。⚑返工账＝**两笔**（boot import 路径错崩一次＝改真源后成功；采集腿终查 SQL 崩一次＝见末段自犯申报，写库面未受影响、复核改走独立只读脚本）。
+④ **[BLOCKER]**＝本班追加 **4 行**（工具缺陷 1／数据问题 1／流程问题 1／判据缺失 1），行首形态与本台账既有约定一致；本班刻意不在本节复述完整行首串（防自计数污染）。
+⑤ **自清收口**＝`.runtime/tmp/p02_1017_04/` 本班件清单＝`boot_1017_04.py`／`keep_add_1017_04.py`／`b27_probe_1017_04.py`＋`probe.log`／`b27_run_1017_04.py`＋`run.log`／`b27_verify_1017_04.py`＋`msg_1017_04.txt`（提交说明）；本班全部关键读数（件 1/件 2 面值与九块逐值）已逐值抄录入账⇒投袋后按收班⑤删除本目录；主区四件套之外零散落件（本班未在项目根目录写任何文件）。⚑`b27_verify_1017_04.py` 无 import 依赖他件可独立删；`p02_1017_01` 空目录壳非本班产物，本班不代清（交⑫）。
+⑥ **GPU 还牌**＝本班**未** acquire 过看门人⇒无牌可还，`n/a` 非漏项。
+⑦ **后台子任务清点**＝本班**零 spawn 子代理**（采集批走本机 python 后台命令、已自然终态）⇒零孤儿。
+⑧ **零 worktree 确认**＝本班未调用任何工棚/工作树启动入口、未创建任何 worktree 目录（TRAE-079 Phase 2 遵令，主区直改自家写域两件）。
+⚑**本班自犯申报（照实不美化，两枚）**＝**(1)** 采集腿最后一段把 `FINAL` 写在 `WHERE` 之后（`... WHERE trade_date IN (...) FINAL`），服务端回 `Code: 62 Syntax error: failed at position 124 (FINAL)`（正确形制＝`FROM <表> FINAL WHERE`），脚本**在全部写库完成之后**才崩＝数据面零受损，但本班因此没拿到 AFTER/WALL 三行自述读数⇒改走独立只读复核脚本 `b27_verify_1017_04.py` 重取（该脚本只读、无第二次写，故不产生在册"崩在写完才报⇒重跑把台账追加两份"风险；本班未重跑采集腿）。**(2)** boot 照抄游标给的模块名导致起手 `ModuleNotFoundError`（真源见件 0(d)），改正后成功——**游标原文仍有毒，下班照抄前先读码**。
+⚑**偏差申报**＝本班写本段时投袋尚未发生，①release 与②杀心跳在末次网关调用之后执行；若本班袋在窗内未落地则按在册"袋在飞禁放锁"延后，本班把延后事实与下班取回谓词写进游标段、不伪装成已收。本班不 requeue 任何死袋、不动他会话 claim、不碰 `known_data_gaps.yaml`／`instruction.md`／任何判据或门柱字节、未翻任何 status。
+
+`P02-1017-04-ENDSTATE`
