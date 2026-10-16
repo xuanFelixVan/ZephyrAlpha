@@ -1,0 +1,50 @@
+# ③库内挖矿席 20261017-p03-01 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-05__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L3-05/comparison/02_board_height_only_rank_vs_height_plus_anomaly_strength_rank
+node_id: TDM-E-L3-05
+family: comparison
+title_zh: 全市场顺位·连板高度单腿序 vs 高度＋异常强势加档合成序对照卡
+hypothesis: 图面 dq＝「活下来的候选按全市场顺位谁排最前（妖>龙>中军>核心>趋势>跟风+加分项）」。兄弟卡在册定义原样引用＝连板高度=同符号连续收盘涨停日数（涨停判定 close>=limit_up−0.011，argMax 去重，断板清零不跨板）；异常强势=当日涨幅截面分位>=0.99 加 1 档；顺位分=连板高度档+异常强势档后在宇宙内做截面分位；并登记「在册 limit_up_pool.consec_limit
+  仅 2026-09 起可用故本卡一律自建」。本卡对照题设＝同一全局交易日两条排序序列——只用高度档（并列不打破）vs 合成顺位——的秩相关，以及合成腿真正起作用的那批标的（高度并列、由异常强势决定先后）相对同高度未加档标的在 stock_fwd_ret_t1o_to_t2c 上的截面差。若合成腿的增益全部来自并列打破（等价于一条上移规则）则「加分项」一词属可派生冗余→必并；若合成腿在未连板/低高度标的上单独产生排序力则跨维不可并。在册限定＝宇宙口径逐字承该卡
+  universe_rule 写死面（窗内 stock_basic 无创业板与北交所行⇒由 kline_daily 的 exchange+symbol 前缀重建，禁裸扩）；0.011、0.99 与自建 consec 的理由三处原样引用，本席不新立阈值、不改判定式。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L3-05/calibration/02_连板顺位 的 target 面（primary=stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）），差异只落在对照腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 现读 commit_pct=88.86%／cpu_pct=37.3%／ram_used_pct=80.9%／degraded=False，≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池
+  47 枚、非 L9 平铺 33 枚）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L3-05/calibration/02_连板顺位 的 signal_kind 运行时读回（panel），非本班手打；裸骨架=TDM-E-L3-05/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.stk_limit × c1_market.kline_daily
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_连板顺位（examined·panel·c1_market.stk_limit × c1_market.kline_daily）；涨停判定/去重/断板清零/宇宙重建谓词逐字承该卡 data_binding 与 universe_rule。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-01
+birth_batch: 20261017-p03-01
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L3-05，decision_question 原文='活下来的候选按全市场顺位谁排最前（妖>龙>中军>核心>趋势>跟风+加分项）'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node,
+  family) 补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-05__comparison__02_board_height_only_rank_vs_height_plus_anomaly_strength_rank.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-05.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L3
+  node_type: stage
+  market: cn_a
+  decision_question: 活下来的候选按全市场顺位谁排最前（妖>龙>中军>核心>趋势>跟风+加分项）
+  module_ref: src/zephyr/signal_fundamental/selection_confidence.py
+  module_id: MOD-SIG-141
+  confidence_at_gen: proposed
+  purpose_tag: PT-03

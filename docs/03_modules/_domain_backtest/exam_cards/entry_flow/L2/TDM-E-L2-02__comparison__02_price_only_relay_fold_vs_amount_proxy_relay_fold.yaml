@@ -1,0 +1,50 @@
+# ③库内挖矿席 20261017-p03-01 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-02/comparison/02_price_only_relay_fold_vs_amount_proxy_relay_fold
+node_id: TDM-E-L2-02
+family: comparison
+title_zh: 接棒撤离榜·价格单维腿 vs 价格×量能环比代理腿的日度折叠对照卡
+hypothesis: 图面 dq＝「资金正从哪些板块撤出、正接棒进哪些板块」。兄弟卡在册原文两条限定须同框＝(a)「资金'连进'用 amount 环比代理（主力净流入不可得，见 L2-01-4 卡的 blocked 证据），差异已在本行声明，不得当作资金流结论使用」；(b) series 面＝当日(接棒板块数−撤离板块数)/板块总数。本卡对照题设＝两条榜单定义各自折叠成上述 series 面后的日度序列之差：单维版接棒＝连续
+  3 日 close.pct_change>0；双维版＝该条件 ∧ amount 3 日滑动均值>前 5 日均值（撤离榜对称反向）。分歧日（双维净方向与单维净方向反号或幅度显著背离）单独成档并各测对 next_day_index_return 的响应。若双维剔掉的标的数不足以改变日度净方向（分岔日极少）则 amount 环比腿零贡献，属同真源可派生→必并；若分岔日恰是次日走弱的那批则该代理腿在 money_flow
+  板块聚合腿缺源期具独立判别力（保留两轴）。本卡结论面只到「代理腿有无独占信息」，不得升级成「主力资金方向已证」（缺源归 ① 席，沿 L2-01-4 blocked_on_data 在册态）。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L2-02/calibration/02_接棒撤离榜 的 target 面（primary=next_day_index_return（CSI300 次日收益）），差异只落在对照腿。
+  shape: series
+status: empty
+signal_kind: series
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 现读 commit_pct=88.86%／cpu_pct=37.3%／ram_used_pct=80.9%／degraded=False，≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池
+  47 枚、非 L9 平铺 33 枚）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L2-02/calibration/02_接棒撤离榜 的 signal_kind 运行时读回（series），非本班手打；裸骨架=TDM-E-L2-02/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_接棒撤离榜（examined）；接棒/撤离定义与 series 折叠式逐字承该卡 data_binding，本卡不新定义榜单口径、不改 3 日/5 日窗。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-01
+birth_batch: 20261017-p03-01
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-02，decision_question 原文='资金正从哪些板块撤出、正接棒进哪些板块'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family) 补该骨架所缺家族」口径；本班一律走非
+  L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02__comparison__02_price_only_relay_fold_vs_amount_proxy_relay_fold.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-02.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 资金正从哪些板块撤出、正接棒进哪些板块
+  module_ref: src/zephyr/signal_ashare/sector/sector_divergence.py
+  module_id: MOD-SIG-060
+  confidence_at_gen: proposed
+  purpose_tag: PT-02

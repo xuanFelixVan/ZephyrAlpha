@@ -1,0 +1,51 @@
+# ③库内挖矿席 20261017-p03-01 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-3__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L3-07-3/comparison/02_target_caliber_axis_vs_universe_filter_axis_interaction
+node_id: TDM-E-L3-07-3
+family: comparison
+title_zh: topn 动量链·目标口径轴 vs 宇宙过滤轴同批打开的归因对照卡
+hypothesis: 图面 dq＝「eventdriven 事件清单/topn 动量排名/default 基础池怎么选」。本节点在册三员把两条轴各占一腿且 hypothesis 原文同句（「20 日涨幅截面排名进入前 N（N=10/20/30）的个股，其后续 5 日截面收益高于宇宙等权且随排名单调衰减」）＝02 主卡 target=stock_fwd_ret_t1o_to_t2c（T+1 开盘可成交→T+2
+  收盘，后复权）＋宇宙写死；03 control 仅换 target 为 next_day_stock_return（hfq 收盘价口径，与 A 股面板考尺同源）；04 control 仅把宇宙过滤换成无过滤面。本卡对照题设＝两轴同批打开的交互面（不重复单轴消融，该两腿已由 03/04 占位）＝同一 signal（ret_20 截面分位，Top-N 宇宙内降序）在「可成交口径 ∧ 宇宙裸扩」同时改动时，分档单调性与符号是否翻转：若单轴各自不翻而同批翻，则该族结论的真正承重项在两轴的交互（须双轴同框才可报数，任何单轴
+  control 结论都不可外推）；若只有 target 轴翻则争点在可成交性（开盘买不进的高动量标的），宇宙轴属噪声。在册限定＝本卡不新立 ret_20 定义（=close_t/close_{t-20}−1，后复权，同符号 argMax 去重，不足 20 日不取值）、不新设 Top-N 档、不改三条宇宙重建谓词；两轴取值一律逐字回读本节点三员；三员均 examined＝本班可查其出分面而未在本班复算（本班零
+  CH 请求）。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L3-07-3/calibration/02_二十日动量排名 的 target 面（primary=stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）），差异只落在对照腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 现读 commit_pct=88.86%／cpu_pct=37.3%／ram_used_pct=80.9%／degraded=False，≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池
+  47 枚、非 L9 平铺 33 枚）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L3-07-3/calibration/02_二十日动量排名 的 signal_kind 运行时读回（panel），非本班手打；裸骨架=TDM-E-L3-07-3/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_daily_hfq
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_二十日动量排名・03_target_close_to_close_control・04_universe_no_filter_control（三员均 panel·c1_market.kline_daily_hfq）；两 target 口径与两宇宙形制逐字承该三员，本卡不引入第四形制。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-01
+birth_batch: 20261017-p03-01
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L3-07-3，decision_question 原文='eventdriven 事件清单/topn 动量排名/default 基础池怎么选'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按
+  (node, family) 补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-3__comparison__02_target_caliber_axis_vs_universe_filter_axis_interaction.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-07-3.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L3
+  node_type: stage
+  market: cn_a
+  decision_question: eventdriven 事件清单/topn 动量排名/default 基础池怎么选
+  module_ref: src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py
+  module_id: MOD-L05-001
+  confidence_at_gen: verified
+  purpose_tag: PT-03

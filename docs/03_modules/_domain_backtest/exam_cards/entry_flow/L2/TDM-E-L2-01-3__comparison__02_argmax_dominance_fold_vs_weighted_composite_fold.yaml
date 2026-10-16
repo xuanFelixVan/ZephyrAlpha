@@ -1,0 +1,50 @@
+# ③库内挖矿席 20261017-p03-01 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-3__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-01-3/comparison/02_argmax_dominance_fold_vs_weighted_composite_fold
+node_id: TDM-E-L2-01-3
+family: comparison
+title_zh: 多周期动量·主导周期离散折叠腿 vs 加权和连续折叠腿对照卡
+hypothesis: 图面 dq＝「是真启动还是一日游（q20/q5/q3 谁主导）」。兄弟卡在册定义＝三周期收益 q_i=close/close.shift(i)−1（i∈{3,5,20}，按 sector_code 分组）、截面 rank-pct 归一、主导度=argmax_i(rank_i)、连续面=0.2·rank_q3+0.3·rank_q5+0.5·rank_q20（照在码先验权重原样取）。本卡对照题设＝两腿各自按日折叠成市场级序列后的分歧：离散腿折叠＝当日(q3
+  主导板块数−q20 主导板块数)/板块总数，连续腿折叠＝当日连续面截面均值；两序列在同一交易日上的分岔日（一升一降或幅度背离）单独成档，再各测对 next_day_index_return 的单调响应。若两折叠序列高度同向且对次日收益的响应同形，则「谁主导」只是连续分的一种读数形制（同真源可派生→按根宪法 §4 必并）；若分岔日集中在极烫/极冷两端且只有离散腿在那两档给出反向信号，则 argmax
+  承载了连续分丢掉的形状信息（跨形不并）。在册矛盾须同框裁决＝兄弟卡原文登记「现码先验权重 q3/q5/q20=0.2/0.3/0.5 与节点文字（q3 主导最优）方向相反——本卡即裁决该矛盾」，本班两腿一律共用该权重，禁在本卡改权（改权＝改判据，归 ⑩/Owner 门）。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L2-01-3/calibration/02_多周期动量主导度 的 target 面（primary=next_day_index_return（CSI300 次日收益）），差异只落在对照腿。
+  shape: series
+status: empty
+signal_kind: series
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 现读 commit_pct=88.86%／cpu_pct=37.3%／ram_used_pct=80.9%／degraded=False，≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池
+  47 枚、非 L9 平铺 33 枚）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L2-01-3/calibration/02_多周期动量主导度 的 signal_kind 运行时读回（series），非本班手打；裸骨架=TDM-E-L2-01-3/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_多周期动量主导度；三周期式、rank-pct 归一路与 0.2/0.3/0.5 权重逐字承该卡 data_binding，本卡不新立列名、不新设权重、不改分组键。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-01
+birth_batch: 20261017-p03-01
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-01-3，decision_question 原文='是真启动还是一日游（q20/q5/q3 谁主导）'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family)
+  补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-01-3__comparison__02_argmax_dominance_fold_vs_weighted_composite_fold.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-01-3.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 是真启动还是一日游（q20/q5/q3 谁主导）
+  module_ref: src/zephyr/signal_ashare/sector/sector_momentum.py
+  module_id: MOD-SIG-026
+  confidence_at_gen: proposed
+  purpose_tag: PT-02

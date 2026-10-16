@@ -1,0 +1,50 @@
+# ③库内挖矿席 20261017-p03-01 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-1__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-06-1/comparison/02_gate_then_weight_sequence_vs_joint_conjunction_pool_membership
+node_id: TDM-E-L2-06-1
+family: comparison
+title_zh: 三级放行·先 gate 后 weight 序列腿 vs 门槛并入打分合取腿的池成员对照卡
+hypothesis: 图面 dq＝「这只股配不配进打分池（先 gate 后 weight）」。兄弟卡在册三关原样引用＝关1 板块强度 10 分制>6（两路合成分/10，与 L2-01 共用重算）；关2 个股自身强度>5（个股 20 日收益截面 rank-pct×10）；关3 当日成交金额>2e8（kline_daily_hfq.amount）；三关合取后才计入池，池内再按 arm 决定是否 weight。本卡对照题设＝同一日两个形制产出的池成员集合与池内排序：序列形制（先三关合取成池→池内
+  weight 排序）vs 合取形制（把三关折算成打分项与权重同批并入一个总分再排序，不设硬剔除）。分歧标的＝「权重高但至少一关未过」那批（合取形制可保留、序列形制必剔），重点看微盘/低成交段。若两集合与排序无差则「先 gate」只是措辞（可派生→并）；若序列形制系统性剔掉合取形制保留的高权重低门槛标的，则顺序本身是一枚真实门（与兄弟卡「三关的顺序亦为消融对象」同轴，但本卡换的是形制不是单关）。在册限定＝本卡不删关、不改
+  >6/>5/>2e8 三值；关3 的 amount 单位口径未定（兄弟卡 deriv 原文＝「单位元口径须在开考前实测确认，若为万元/手需换算——该换算写进 evidence，禁看数后改」），故本卡把该未定单位列为开考前置，不在本班自选单位。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L2-06-1/ablation/02_三级放行门槛 的 target 面（primary=next_day_index_return（CSI300 次日收益，组合层对齐）），差异只落在对照腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 现读 commit_pct=88.86%／cpu_pct=37.3%／ram_used_pct=80.9%／degraded=False，≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池
+  47 枚、非 L9 平铺 33 枚）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L2-06-1/ablation/02_三级放行门槛 的 signal_kind 运行时读回（panel），非本班手打；裸骨架=TDM-E-L2-06-1/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_daily_hfq + c1_market.sector_constituent
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 ablation/02_三级放行门槛（preregistered·panel·kline_sector_880＋kline_daily_hfq＋sector_constituent）；三关定义与 arm 集合逐字承该卡 data_binding。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-01
+birth_batch: 20261017-p03-01
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-06-1，decision_question 原文='这只股配不配进打分池（先 gate 后 weight）'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family)
+  补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-1__comparison__02_gate_then_weight_sequence_vs_joint_conjunction_pool_membership.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-06-1.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 这只股配不配进打分池（先 gate 后 weight）
+  module_ref: src/zephyr/signal_ashare/sector/sector_gate.py
+  module_id: MOD-SIG-026
+  confidence_at_gen: proposed
+  purpose_tag: PT-04

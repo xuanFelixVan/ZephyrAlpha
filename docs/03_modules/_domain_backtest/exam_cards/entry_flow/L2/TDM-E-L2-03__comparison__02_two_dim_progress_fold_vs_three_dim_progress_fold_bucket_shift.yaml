@@ -1,0 +1,50 @@
+# ③库内挖矿席 20261017-p03-01 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-03__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-03/comparison/02_two_dim_progress_fold_vs_three_dim_progress_fold_bucket_shift
+node_id: TDM-E-L2-03
+family: comparison
+title_zh: 调整周期进度·两维重归一折叠腿 vs 加量能第三维折叠腿对照卡
+hypothesis: 图面 dq＝「目标板块的调整走完了没有、能不能低吸」。兄弟卡在册三维公式原样引用＝时间维=min(1, 距 60 日高点交易日数/8)、回撤维=min(1,(高点−close)/高点/0.15)、量能维=min(1,max(0,1−roll_mean(amount,5)/roll_max(amount,60)×3))，且「原三维中扩散维 0.3 不可算 ⇒ 重归一为 0.4·时间+0.3·回撤(+量能)」；该卡另主张进度对低吸后
+  5 日板块超额呈倒 U，并把现码「进度>=80% 才放行 LATE」列为待推翻候选。本卡对照题设＝两腿各自折叠为市场级日度序列（当日全板块进度截面均值与当日各档板块占比：两维重归一版 vs 三维含量能版）后的档构成迁移：若加量能维后日度档占比几乎不变，则量能维属可派生冗余（按 §4 必并，节点文字里的「缩量到高峰 1/3 以下=尾声」只是回撤/时间维的另一种读数）；若迁移集中发生在 80% 门控两侧（把标的从放行侧搬到不可放行侧或反之），则量能维是「门控方向之争」的必要前提，不加该维判不动该争。在册限定＝本卡不改
+  0.4/0.3/0.3、不改 >=80%、不改三维公式，扩散维缺源判据原样承该卡；缺源未补不判信号无。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L2-03/calibration/02_调整周期进度 的 target 面（primary=next_day_index_return（CSI300 次日收益，series 面）），差异只落在对照腿。
+  shape: series
+status: empty
+signal_kind: series
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 现读 commit_pct=88.86%／cpu_pct=37.3%／ram_used_pct=80.9%／degraded=False，≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池
+  47 枚、非 L9 平铺 33 枚）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L2-03/calibration/02_调整周期进度 的 signal_kind 运行时读回（series），非本班手打；裸骨架=TDM-E-L2-03/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_sector_880
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_调整周期进度（examined）；三维式、重归一说明与倒 U 主张逐字承该卡 data_binding 与 hypothesis，本卡不新设立即档边界。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-01
+birth_batch: 20261017-p03-01
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-03，decision_question 原文='目标板块的调整走完了没有、能不能低吸'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family) 补该骨架所缺家族」口径；本班一律走非
+  L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-03__comparison__02_two_dim_progress_fold_vs_three_dim_progress_fold_bucket_shift.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-03.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 目标板块的调整走完了没有、能不能低吸
+  module_ref: src/zephyr/signal_ashare/sector/sector_adjustment.py
+  module_id: MOD-SIG-040
+  confidence_at_gen: proposed
+  purpose_tag: PT-02

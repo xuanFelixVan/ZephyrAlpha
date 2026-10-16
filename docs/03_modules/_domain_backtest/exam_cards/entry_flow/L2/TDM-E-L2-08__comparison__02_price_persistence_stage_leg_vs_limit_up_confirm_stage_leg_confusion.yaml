@@ -1,0 +1,50 @@
+# ③库内挖矿席 20261017-p03-01 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-08__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-08/comparison/02_price_persistence_stage_leg_vs_limit_up_confirm_stage_leg_confusion
+node_id: TDM-E-L2-08
+family: comparison
+title_zh: 板块生命周期·价格面持续性四段腿 vs 涨停潮/炸板确认面四段腿对照卡
+hypothesis: 图面 dq＝「这个板块自己走到生命周期哪一段了（启动/发酵/高潮/熄火）」。兄弟卡在册两出面原样引用＝可算面：强度分（两路合成分，共用 L2-01 重算）的 5 日自相关 A(5)，与板块 20 日收益/20 日波动的 t 值，两指标各自二分交叉成四段；确认面（该卡自标受限）：高潮=板块内涨停家数占比（需成分）、熄火=龙头断板 ∧ 炸板率>40%（需 limit_up_pool.open_board_count/首触数据）。本卡对照题设＝同一
+  sector×同一全局交易日两面对四段的归属一致率与混淆结构，重点在两类错配＝确认面判「高潮」而价格面判「发酵」、确认面判「熄火」而价格面判「高潮」。若价格面已能覆盖确认面的档划分（混淆集中于可容忍档），则生命周期可只用 kline_sector_880 复算，确认腿属可派生冗余→必并；若错配集中在高潮/熄火两端，则该族门柱在确认史补齐前不得以价格面替代（跨源不并）。有效分母限定＝两面均可算的 sector×日
+  子面；在册缺源须同框登记＝limit_up_pool 的 consec_limit 面仅自 2026-09 起可用（本线多次复证），故本班把「分母不足即不出数」写为判据前置，禁把价格面单侧结论读成生命周期已证。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L2-08/calibration/02_板块生命周期动量持续性 的 target 面（primary=next_day_index_return（CSI300 次日收益，series 面）），差异只落在对照腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 现读 commit_pct=88.86%／cpu_pct=37.3%／ram_used_pct=80.9%／degraded=False，≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池
+  47 枚、非 L9 平铺 33 枚）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L2-08/calibration/02_板块生命周期动量持续性 的 signal_kind 运行时读回（panel），非本班手打；裸骨架=TDM-E-L2-08/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_sector_880（可算面）+ c1_market.daban_board_event / c1_market.limit_up_pool（确认面，受限）
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_板块生命周期动量持续性（preregistered·panel·kline_sector_880 可算面 + daban_board_event/limit_up_pool 确认面受限）；A(5)、t 值与四段交叉定义逐字承该卡 data_binding。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-01
+birth_batch: 20261017-p03-01
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-08，decision_question 原文='这个板块自己走到生命周期哪一段了（启动/发酵/高潮/熄火）'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family)
+  补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-08__comparison__02_price_persistence_stage_leg_vs_limit_up_confirm_stage_leg_confusion.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-08.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 这个板块自己走到生命周期哪一段了（启动/发酵/高潮/熄火）
+  module_ref: src/zephyr/signal_ashare/sector/sector_momentum_persistence.py
+  module_id: MOD-SIG-098
+  confidence_at_gen: proposed
+  purpose_tag: PT-02

@@ -1,0 +1,49 @@
+# ③库内挖矿席 20261017-p03-01 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-13__shadow.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L4-13/shadow/02_shadow_real_flows_vs_injection_arm_detection_gap
+node_id: TDM-E-L4-13
+family: shadow
+title_zh: 三方对账·真实流水影子腿 vs 故障注入臂腿的检出率盲区对照卡
+hypothesis: 图面 dq＝「我以为发出的、券商说发出的、实际成交的三方对上账了吗（断线重连/对账/RTO<5min）」。兄弟卡在册现实原样引用＝三方对账需要三份账，实测只有本地成交终态可用（委托回报侧与成交确认侧实测无表），故该族只能以「故障注入仿真」形态落地：以 sim_trade_log 为真值基座，按冻结比例扰动生成伪造的委托侧与成交侧账，再验对账件检出能力；实现件=src/zephyr/trading/three_way_reconciliation.py（该卡实测存在）。本卡对照题设＝把对账件在真实运行面上以影子方式并行运行（不参与下单，只逐笔比对真实可得流水与本地账），得「真实面检出率」与「注入臂检出率」之差＝注入面测得出而真实面测不出的盲区量，用作注入臂假绿风险的上界。判读＝若影子腿因两腿无表而比对分母=0，则注入臂检出率属无对账基座的自证，本节点结论只能挂
+  blocked_on_data；若真实影子面出现注入臂判「平」而真实面不平的漏检，则误平率被系统性低估，须先修对账件再谈 RTO。在册红线同框＝该卡 deriv 原文「禁把伪造账当真实券商账报检出率（须在分数册标注）」；infra_gap 四条（两份账缺表＋三方账故障注入驱动器 1 件＋族卡驱动执行器共用）逐字承该卡，缺源未补即 blocked_on_data，不判对账件无效。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L4-13/comparison/02_three_way_recon_injection 的 target 面（primary=detection_rate / false_reconciled_count），差异只落在对照腿。
+  shape: series
+status: empty
+signal_kind: series
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 现读 commit_pct=88.86%／cpu_pct=37.3%／ram_used_pct=80.9%／degraded=False，≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池
+  47 枚、非 L9 平铺 33 枚）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L4-13/comparison/02_three_way_recon_injection 的 signal_kind 运行时读回（series），非本班手打；裸骨架=TDM-E-L4-13/shadow/01（status=empty）。
+data_binding:
+  signal_table: c1_backtest.sim_trade_log（本地成交侧，实测唯一可用账）+ 委托回报侧（实测无表）+ 成交确认侧（实测无表）
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 comparison/02_three_way_recon_injection（preregistered·series·c1_backtest.sim_trade_log 为实测唯一可用账）；三臂×三类注入 buckets 与 detection_rate/false_reconciled_count 目标面逐字承该卡，本卡不自立注入比例。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-01
+birth_batch: 20261017-p03-01
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L4-13，decision_question 原文='我以为发出的、券商说发出的、实际成交的三方对上账了吗（断线重连/对账/RTO<5min）'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按
+  (node, family) 补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L4/TDM-E-L4-13__shadow__02_shadow_real_flows_vs_injection_arm_detection_gap.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L4-13.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L4
+  node_type: cross_cutting
+  market: cn_a
+  decision_question: 我以为发出的、券商说发出的、实际成交的三方对上账了吗（断线重连/对账/RTO<5min）
+  module_ref: src/zephyr/trading/three_way_reconciliation.py
+  module_id: MOD-TRADING-013
+  confidence_at_gen: proposed
+  purpose_tag: PT-05

@@ -1,0 +1,50 @@
+# ③库内挖矿席 20261017-p03-01 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-06__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L3-06/comparison/02_relative_percentile_switch_vs_absolute_line_switch_divergence_days
+node_id: TDM-E-L3-06
+family: comparison
+title_zh: 选股链启停·成交额相对分位开关腿 vs 8000 亿绝对线开关腿分歧日对照卡
+hypothesis: 图面 dq＝「今天的档位下哪些选股链开、哪些停（首板筛选器实证：两市成交<8000 亿首板链暂停；板块 RPS<90 降仓）」。兄弟卡 buckets 面已把两形制并列在册＝「两市成交额 20 日滚动分位十分位（另以 8000 亿元绝对线做二值对照档）」，且成交额=SUM(kline_index.amount) WHERE symbol IN ('000001','399001')
+  同日相加、signal 的 20 日滚动分位当日不含未来。本卡对照题设＝同一交易日两开关各自的启/停判定，把分歧日单独成集并分两类：相对判开而绝对判停（成交额趋势上行期的真实缩量）、相对判停而绝对判开（长缩量结构下的绝对线长期恒停）；对两类分歧日分别测该卡在册目标面（次日前向收益／首板样本次日溢价）。若绝对线在缩量时代恒停而相对口径仍判出正收益日，则绝对口径属时代错位（须以相对为主、绝对仅作标注）；若绝对线挡掉的恰是系统性负收益段，则图面「实证
+  8000 亿」是不可派生的独立门（跨形不并）。在册限定＝本卡不改 8000 亿、不改 20 日窗、不改 RPS<90；单位声明承该卡「须在卡内声明是否换算为亿元」前置，禁在 2025-09-09 后取判据值。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L3-06/calibration/02_地量档位开关 的 target 面（primary=next_day_index_return（CSI300 次日收益）），差异只落在对照腿。
+  shape: series
+status: empty
+signal_kind: series
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 现读 commit_pct=88.86%／cpu_pct=37.3%／ram_used_pct=80.9%／degraded=False，≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池
+  47 枚、非 L9 平铺 33 枚）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L3-06/calibration/02_地量档位开关 的 signal_kind 运行时读回（series），非本班手打；裸骨架=TDM-E-L3-06/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_index
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_地量档位开关（examined·series·c1_market.kline_index）；成交额合成式、20 日滚动分位与辅助 emotion_index.stage 六段重算说明逐字承该卡 data_binding。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-01
+birth_batch: 20261017-p03-01
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L3-06，decision_question 原文='今天的档位下哪些选股链开、哪些停（首板筛选器实证：两市成交<8000 亿首板链暂停；板块 RPS<90 降仓）'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡
+  0 张，属在册「按 (node, family) 补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-06__comparison__02_relative_percentile_switch_vs_absolute_line_switch_divergence_days.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-06.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L3
+  node_type: stage
+  market: cn_a
+  decision_question: 今天的档位下哪些选股链开、哪些停（首板筛选器实证：两市成交<8000 亿首板链暂停；板块 RPS<90 降仓）
+  module_ref: src/zephyr/signal_ashare/core/environment_switch.py
+  module_id: MOD-SIG-138
+  confidence_at_gen: proposed
+  purpose_tag: PT-01

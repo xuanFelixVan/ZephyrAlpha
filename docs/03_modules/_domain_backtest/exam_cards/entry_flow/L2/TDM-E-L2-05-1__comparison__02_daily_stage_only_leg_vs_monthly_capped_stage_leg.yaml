@@ -1,0 +1,50 @@
+# ③库内挖矿席 20261017-p03-01 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-1__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-05-1/comparison/02_daily_stage_only_leg_vs_monthly_capped_stage_leg
+node_id: TDM-E-L2-05-1
+family: comparison
+title_zh: 水温档·纯日级档腿 vs 月级封顶后最终档腿的改档日分账对照卡
+hypothesis: 图面 dq＝「日级温度计（S5 当日读数主判）落在哪档+月/周封顶后最终档位」。兄弟卡在册合成式原样引用＝日级档=emotion_index 按在册六段阈值分档（S0..S5）；月级态=自然月聚合 000300 月收盘的 7 态（月收盘 vs 月 MA3 上下 × 月涨跌三档 × 连续两月同向修正，其中「月级熊市反弹」判定=月收盘<月 MA3 且当月涨幅>0）；最终档=min(日级档,
+  月级允许上限)。本卡对照题设＝把交易日按两腿是否同档分成「同档日／改档日」两集，只在改档日上分账月级封顶的独占贡献＝该日集合上纯日级档对 next_day_index_return 的错配方向与幅度，相对全体差异日的占比。若改档日极少则月级腿属低频冗余（可派生→并）；若改档日集中于「月级熊市反弹」态且这些日子纯日级档系统性偏高，则月级腿覆盖的是另一对象（月级结构），跨维不并。在册限定＝六段词表与
+  7 态定义逐字承兄弟卡（六段词表已裁定在册，勿重裁），本卡不重算日级档、不改 min 语义、禁在 2025-09-09 后取判据值。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：逐字承本节点在册兄弟卡 TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶 的 target 面（primary=next_day_index_return（CSI300 次日收益）），差异只落在对照腿。
+  shape: series
+status: empty
+signal_kind: series
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 现读 commit_pct=88.86%／cpu_pct=37.3%／ram_used_pct=80.9%／degraded=False，≥ 在册「≥85% 禁探针」水位闸⇒本班零 CH 请求、零 panel 物化，产出口=卡面。选题判据＝本班盘点实测本 (node, family) 裸骨架存在而具名卡 0 张（零具名面全池
+  47 枚、非 L9 平铺 33 枚）。形状自检＝signal_kind 与 target.shape 同形，值由兄弟卡 TDM-E-L2-05-1/calibration/02_水温档读数与月级封顶 的 signal_kind 运行时读回（series），非本班手打；裸骨架=TDM-E-L2-05-1/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.emotion_index + c1_market.kline_index
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02_水温档读数与月级封顶（preregistered·c1_market.emotion_index + c1_market.kline_index）；六段档、月级 7 态与封顶式逐字承该卡 data_binding。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1017-01
+birth_batch: 20261017-p03-01
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-05-1，decision_question 原文='日级温度计（S5 当日读数主判）落在哪档+月/周封顶后最终档位'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node,
+  family) 补该骨架所缺家族」口径；本班一律走非 L9 平铺面（承 ⑩ p10-1016-21 班 FOLDER-CAPACITY 硬约束）。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-1__comparison__02_daily_stage_only_leg_vs_monthly_capped_stage_leg.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-05-1.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 日级温度计（S5 当日读数主判）落在哪档+月/周封顶后最终档位
+  module_ref: src/zephyr/signal_ashare/sentiment/sentiment_cycle.py
+  module_id: MOD-SIG-140
+  confidence_at_gen: proposed
+  purpose_tag: PT-02
