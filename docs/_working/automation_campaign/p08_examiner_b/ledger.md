@@ -989,3 +989,183 @@ C 正对齐（target=fwd.shift(1)）ic_mean = 1.0000   # 证明工具配对的�
 - ⑦**后台子任务**：本班未 spawn 任何子代理（Explore/general 均未用）⇒ 零孤儿。
 - ⑧**零 worktree**：本班未调用任何工棚/工作树启动入口（TRAE-079 Phase 2）；收班现测 `git worktree list` 对本 sid 命中数与历史遗留面见本节末行；历史 `st-qoder-p08-*` 遗留壳不自清、报 ⑩。
 - 本班四小步执行面（Owner 方案1／CHIEF-1016-2）＝每节落笔即追加（§一→§七逐件成文即写）、卡锁零把无需释放、游标本节成文后当场推进、tmp 件按⑤定性与下一班复用案保留；本班无 `[BLOCKER]` 攒到班尾的件（§七在提交前一次成文）。
+
+
+## 10-17 01:4x · 班次 02 追加节（同班·第二袋）：发现工具内已有官方词表普查单口（本班尺与之逐卡对账 42/42 全等）＋CH 让路窗真源在代码里且**本班 §七 那条排班建议有一半落窗内＝当场更正**＋claim 入队后归零第五枚复证＋本席自犯一枚桶名"共 26 种"计数目测错改正（现算＝37 种/68 张）
+
+### 九-1 官方单口发现（本班最重要一条，给 ⑥/⑩ 与全线三席）
+
+等袋期读码发现：`scripts/backtest/fexam/card_binding.py:2083 build_vocab_census()` 与 CLI
+`python scripts/backtest/fexam/card_binding.py --mode vocab-census --cards-dir <绝对路径> --out <件>`
+**已经是**"判官路由＋越表柱键集"普查的机生底座，函数头自述用途＝「WO-V 词表立法的机生底座」，并自带
+`discipline` 块（`threshold_values_written: 0 / cards_modified: 0 / ch_queries: 0 /
+route_expression_copies: "1（pillars_route 单一真源，普查与判决同式）"`）。
+
+本班实测（01:48 跑，秒级返回，只写本班 out 件）＝全库 `card_total=599`／
+`cards_without_numeric_face=230`／`cards_with_keys_outside_route_vocab=125`／`unique_keys_outside_vocab=172`／
+`tally_status{preregistered 162, empty 230, blocked_on_impl 48, blocked_on_data 71, examined 87, examining 1}`／
+`tally_route{series 518, dual_arm 57, event 24}`；官方 `vocab_sources` 三侧词表现值＝series **5** 键／
+dual_arm(union) **14** 键／event **7** 键，且注明"直读执行核常量，本件不复制定义"＝与本班 §二 读数同值。
+
+**逐卡对账（`.runtime/tmp/st-qoder-p08-1017-02/compare_official_census.py`＋json，只读）＝
+本班尺 42 张（38 假红路＋4 真判可达）与官方口 `rows` 按 card_id 前缀 TDM-X/F/P 过滤后
+`per_card_agree_n=42 / per_card_disagree=[]`（越表键集逐卡全等）** ⇒ 本班 §三 的分母可信，且可整体换成官方口申报。
+
+两条必须一起申报（否则官方口会被读错）：
+1. **官方口不分路径**＝`official_distinguishes_paths=false`（其 `rows` 把 series 越表卡与 dual_arm 越表卡混列，
+   本族前缀 81 行＝series 49＋dual_arm 32）。⇒ "越表柱卡数"≠"假红暴露卡数"；本班的
+   **假红路 38／停驱动分诊路 29** 拆分是官方读数里**没有**的一层，⑥/⑨ 引用官方件时必须自带该层，
+   否则会把 29 张"跑下去写 blocked（不翻卡不记试次）"的卡误当成"跑下去写 fail"。
+2. 官方口按 `card_id` 前缀而非目录归属，且含非 prereg 态（本族前缀 81 行 vs 本班 prereg 面 42 行）。
+   该差集 43 张＝examined/blocked 态带越表柱的卡（例 `TDM-P-P1-01/comparison/02`），属 ⑨ 读历史成绩面。
+3. **附带一条＝本班差点误报工具缺陷，同帧双测证伪后归位**：官方 01:48 件 `card_total=599`，而本席 01:57 同尺盘面
+   `is_file()` 数得 600→605，形似"官方口静默跳过 1–6 枚无 card_id 件"。逐枚验（严格 UTF-8 解码＋`card_id` 非空断言）
+   ＝**undecodable=0／no_card_id=0／is_dir=0**，且 01:57 同帧复跑官方口＝`card_total=609` 与盘面 `is_file=609`
+   **逐值相等**（件 `vocab_census_official_v2.yaml`，`generated_at 01:57`）⇒ 差异全因**卡面正被 ⑥ 实时新增**
+   （599@01:48 → 609@01:57，10 枚/9 分），非工具漏扫。在册律 `measured-readings-must-share-claim-sentence-timepoint`
+   第七枚复证＝**跨时点读数不得直接相减当缺陷**。同时一条真实增量给 ⑥/⑩：全库 empty 208(上班)→230(01:48)→240(01:57)
+   而 prereg 恒 162＝出题面在铺空壳、未推 prereg。
+
+**内收建议（宪法 §4.2 同域重复簇→收敛唯一／§9.5 静态清单必须生成器产出）**：本岗四班自造尺
+（1015-04 `census.py`／1016-01 `census2.py`／1016-02 `block_census.py`／1016-03 `census_fine.py`／
+1017-01 `census_judge_face_v2.py`／本班 `false_red_probe.py`）与官方 `--mode vocab-census` 属同一件事的多份实现；
+下一班起**申报口径应换官方口**，本岗自留的只该是官方口没有的**路径拆分层**（§三 三行谓词）。
+本席不自删他席尺面。
+
+### 九-2 本班 §七 排班建议当场更正（留旧案不涂）
+
+代码真源＝`card_binding.py:2075-2080 _in_ch_yield_window()`：
+- `21:00-22:30`（W1 v2 提前窗让路，真源注=examcard_campaign/00_campaign_ledger.md 20:55 段）
+- `01:00-04:00`（夜跑让路窗，矿考循环班令 §三 红线）
+
+本班 §七 第 2 条（中）给 ⑩ 的建议原文是"改派 ⑧B 到 04:00 后**或 20:00–23:00**"——
+**后一半落在让路窗内＝建议本身有缺陷**，当场更正：⑧B 真自由窗＝**04:00–21:00** 与 **22:30–24:00**。
+另 `comparison_exam.py:311-314` 现读＝窗内若带 `--binding-book`（`ch_free=False`）且无
+`--override-ch-window-with-reason` ⇒ 直接 `{"refused": win}` **return 3**；
+而**注入通道（`--signal-csv/--target-csv`，`ch_free = not args.binding_book`）窗内不受该闸拦**。
+⇒ 给下一班一条实用结论：窗内若非要跑一张，唯一合法通道是**自己把双腿注进 CLI/`run_card`**（零 CH），
+但这属"越窗留痕"面且须 `--override-ch-window-with-reason`，本席本班未行使、不自签豁免。
+
+### 九-3 收班实测三件（现测）
+
+- **claim 入队后归零＝本席第五枚独立复证**：本班 01:40:30 acquire 两件成功（回执"持有者 st-qoder-p08-1017-02／TTL 30 分"），
+  01:46:29 入袋 `q-20261017-st-qoder-p08-1017-02-0001`（files=2），01:47:03 `lock_files.py list` 对 `p08` 命中 **0**
+  （grep rc=1＝零命中正常形态），同回执面出现 `ENQUEUE-RENEW: claim 续租 0/2 件（ttl=7200s）`
+  ＝上班 §九(a) 两机制候选中的 **(a) 网关入队链路自释**这一支在本班复现（(b) 外来 cleanup 回收仍无法排除，本席不择一定论）。
+- **零 worktree 复证**：`git worktree list` 现测 **82** 行，对本 sid 命中 **0**；`.runtime/aidrafts/` 本班号段 0 枚；
+  历史遗留 `st-qoder-p08-1016-02`／`1016-03`／`1017-01` **三枚**整树壳仍在（较上班"两枚"＋1＝上一班网关自建），
+  按 TRAE-079 与在册 auto-spawned 案本席不自删，报 ⑩/清理专班。
+- **主项尺换口**：本班 §三 数字面（38/29/4）与官方件 `vocab_census_official.yaml` 逐卡全等＝尺自洽，
+  下一班可直接 `--mode vocab-census` 复跑（命令原文见游标 60 行）。
+- **零触面二帧复量（防"跨时点读数当终值"在册坑）**：分数册盘面 01:36:33 与 02:03:20 两帧均＝
+  145,458B／sha16 a9532fceb0899c94／rows 110（同值＝本班与上班之间他席也未推进该册）；
+  收班 `git status --porcelain` 对本册与本席三族两张卡（`X-S1-04/calibration/02`、`X-R1-01/comparison/07`）
+  读到的 **`MM` 形态经 `git diff HEAD --stat` 复验＝空**＝在册"index 落后"形态而非内容漂移，
+  **本席本班对该册与三族卡面零写字节**（本班全部取证走只读函数与 `--dry-run`/`--mode vocab-census` 只写自派 out 件）。
+  另记一条主区面＝`git diff --cached --name-only` 对 `exam_scores_v1` 命中 7 行＝多会话混合池在册形态，非本席 staged。
+
+### 九-4 两枚零写执行实验（把 §九-2 与 §三 的两处"读码"升级为"实测"）
+
+**E1＝官方分诊口对三张零越表双臂卡逐张实跑**（`python scripts/backtest/fexam/comparison_exam.py --card <绝对路径> --dry-run`，01:53 现测，`dry` 分支先于状态闸且零写，见 :215-227）：
+
+| 卡 | book_entry | route | binding_class | binding_reason |
+|----|-----------|-------|---------------|----------------|
+| `TDM-X-R1-01/comparison/02` | false | dual_arm | **C** | `target_face_not_index_next_day` |
+| `TDM-X-S1-01/comparison/02` | false | dual_arm | **C** | `target_face_not_index_next_day` |
+| `TDM-X-S1-03/comparison/02_dualwindow` | false | dual_arm | **U** | `no_data_binding_section` |
+
+⇒ **上班与本班首稿的"三张只差一格（补册格即解锁）"过强，当场收窄**：三张各差不同件＝两张的 target 面被绑定层判为"非指数次日口径"（`classify_card:329-338` 现读，无申报前向面且 `target_source`/`target.primary` 均不匹 `_INDEX_TARGET_RE`），第三张**卡面根本没有 `data_binding` 段**（:309-310 ⇒ cls=U，属 ⑥ 出题面缺件而非 ⑤/⑥ 补格）。
+同时按在册 ㉗ 口径钉死一条＝**class C/U 是"绑定层不覆盖"，不等于考工跑不了**（本岗 1015-04 两张真分就是自物化跑的）⇒ 这三张的正解有两条腿：补册格走绑册通道，或走注入通道自物化（但双臂 NAV 装置属 ⑤/⑪ 产出面，本席不物化、不自装第二份）。
+
+**E2＝CH 让路窗闸的自然实验（本班不越窗，只量它拦不拦）**：同一条命令加 `--binding-book`（使 `ch_free = not args.binding_book` 变 False）后 01:53:58 实跑＝（件 mtime 现读 01:53:58）
+stdout `{"refused": "01:00-04:00 夜跑让路窗（矿考循环班令 §三 红线）"}`、**退出码经直接重定向实测 rc=3**（首遍用 `| tail` 量到 rc=0＝在册"管道后 $? 量的是 tail"同坑，已改正；件 `.runtime/tmp/st-qoder-p08-1017-02/e2_refused.txt`）。
+⇒ §九-2 的窗面从读码升级为执行级：绑册通道在窗内**硬拒**，注入通道窗内不受该闸拦（本席未行使、未自签 `--override-ch-window-with-reason` 豁免）。
+
+**E3＝刻意不跑**：证明"缺册格→写 blocked 行"需去掉 `--dry-run`，那会向永久分数册 only-add 一条真实行＝本席工序 5"缺数据源不开考"禁止，且会给 ⑨ 覆盖尺添一枚非考试口径行。该结论停在代码级（`comparison_exam.py:255-266`＋`_blocked_row:129-135`）。
+
+
+### 九-5 官方族无关分诊口把本族 71 张首尾摊平（并据此收窄本班 §三 一处过强措辞）
+
+尺＝`comparison_exam._route_vocab(card)`（**族无关**，直调 `pillars_route`＋`card_binding.classify_card`，零 CH，
+件 `.runtime/tmp/st-qoder-p08-1017-02/official_triage_all71.json`，n=71 与 §一 prereg 同帧自洽）。
+`family|route|binding_class` 交叉表现测＝
+
+| 组合 | 张数 |
+|------|------|
+| comparison\|dual_arm\|C | 18 |
+| comparison\|dual_arm\|**U** | 1（＝`X-S1-03/comparison/02_dualwindow`） |
+| ablation\|dual_arm\|C | 7 |
+| **shadow\|dual_arm\|C** | **3** |
+| comparison\|series\|C | 18 |
+| calibration\|series\|C | 13 |
+| shadow\|series\|C | 11 |
+
+加总＝dual_arm **29**（18+1+7+3）／series **42**（18+13+11）＝71 ✓ 与本班 §三 同值（两把尺同帧互证）。
+binding_class 面＝**70 张 C／1 张 U**；44 张对照+消融子集的 reason 账＝`target_face_not_index_next_day` 43／
+`no_data_binding_section` 1（件 `official_triage_own_dualarm.json`）。按在册 ㉗ 口径钉死＝
+**C＝"绑定层不覆盖"≠"考工跑不了"**（本岗 1015-04 两张真分即自物化跑的），故该列是 ⑤ 的接线账、不是可考账。
+
+**据此收窄本班 §三 一处过强措辞（首袋 blob 已入 HEAD，另起本节留旧案）**：§三 表格把 29 张 dual_arm
+一律写成"→ 驱动 `comparison_exam.py:255-266` 返回 `_blocked_row`"。实测＝**只有 26 张（comparison 19＋ablation 7）
+能进该驱动器**；`shadow` 族 **3 张** 被族闸 `comparison_exam.py:85 _FAMILIES=("comparison","ablation")`＋`:202-205`
+**抛 `_ToolError` 异常**（实跑 14 张 shadow 逐张撞同一条，件 `official_triage_own_dualarm.json` 的
+`driver_errors` 14 条、错误串逐字＝"family='shadow' 非对照/消融族——本件只考 ['comparison','ablation']"），
+**不是 blocked 行**。⇒ 两条后果＝①那 3 张在两个驱动器之间当前无如实入册通道（`calibration_exam.run_card`
+不分族、但 route=dual_arm 缺 `signal_b` 时按其 :1036-1047 形态"硬报错不冒判"）；②"族闸拒收"以**异常**形态出现
+＝考工若按 §三 旧措辞去跑 shadow 双臂卡，崩的是整批而不是一条诚实行。
+（负对照自校：本席首遍用 `grep -rln "'ablation'" scripts/backtest/fexam/*.py` 查"谁消费 shadow 族"得 **0 命中**，
+同尺换已知存在词 `'ablation'` 亦 **0 命中**＝该 grep 尺在单引号形态上恒零、无判别力，结论已改由实跑驱动函数取得，
+在册律 `zero-hit-ruler-needs-known-positive-control` 复证一枚。）
+
+[BLOCKER] 2026-10-17|⑧B/p08-1017-02|工具缺陷|本族 prereg 里 `family=shadow` 的 **14 张**（其中 dual_arm 3 张）在族驱动器面**无如实入册通道**＝`comparison_exam.py:85` 族闸只收 comparison/ablation，`:202-205` 对 shadow **抛 _ToolError**（14/14 逐张实跑复现，错误串逐字见件 driver_errors）；而 §三 旧措辞"29 张双臂→blocked 行"实为 26 张，3 张 shadow 双臂既进不了对照驱动器、在 run_card 面又缺 signal_b（:1036-1047 硬报错不冒判）⇒ 崩批形态而非诚实 blocked 行|尺面 `.runtime/tmp/st-qoder-p08-1017-02/{official_triage_own_dualarm.json,official_triage_all71.json}`（n=44＋14 errors／n=71 交叉表）；代码锚 scripts/backtest/fexam/comparison_exam.py:85・:202-205・:215-227・calibration_exam.py:1036-1047・card_binding.py:306-338|⑤ 判两选一＝把 shadow 纳入 `_FAMILIES`（则 3 张走 blocked 通道）或让族闸对越族卡返回 `_blocked_row` 而非抛异常（**同族在册处方＝改喂闸的输入形态、不弱化闸**）；本席不自改工具不越族代考；另 ⑥/⑩ 知悉＝官方 `--mode vocab-census` 与本尺 `_route_vocab` 均不分族，shadow 14 张一直在分诊面内、只在执行面外|中
+
+
+### 九-6 本席自犯改正 1 枚（旧案留卷，不另立 [BLOCKER]，归 §七 第 5 条同族）
+
+§三 那句"其余为自造名（…共 **26 种**）"**读数错**，现测改正＝本族 71 张 `buckets.type` 三档分布＝
+**在册 8 词命中 3 张**（全为 `quantile_decile`）／**自造名 68 张、distinct 37 种**（TOP＝arm_matrix 12、
+arm_comparison 11、ablation_set 5、event_sample 2、allocator_scheme 2、ordinal_three_level 2）／
+**空申报 0 张**；三档加总 3+68+0=71 与 §一 卡池 prereg=71 同尺自洽（尺面
+`.runtime/tmp/st-qoder-p08-1017-02/false_red_probe.json` 的 `summary.own_bucket_types`，
+distinct 计数＝去掉 `quantile_decile` 与空串后的键数＝37）。
+错因＝首版把"打印出来的前几项"当全集目测估数，未跑 `len()`；该错句已随**首袋 blob 入 HEAD**，
+故按在册"更正另起一节留旧案卷"处置，不回改首袋字节。给下班一条＝**"共 N 种/N 张"这类计数落笔前必须 `len()` 现算**
+（在册律 `counters-in-append-ledger-self-falsify` 第六枚复证）。
+
+
+本班追加节仍零 CH、零 GPU、零卡面写、零分数册字节、零判据与词表改动、零 worktree；共写面零字节。
+本席 [BLOCKER] 第二袋追加 3 条＝§九-5 内联 1 条（中，shadow 族闸）＋本节末 2 条（中 1＝普查口径收敛唯一／低 1＝排班建议一半错）；本班两袋累计 8 条（高 1／中 4／低 3）：
+
+[BLOCKER] 2026-10-17|⑧B/p08-1017-02|流程问题|**工具内已有官方词表普查单口而三席六班一直在自造尺**＝`card_binding.py:2083 build_vocab_census()`＋CLI `--mode vocab-census`（自带 discipline 块＝零写/零CH/路由表达式单份），本班尺与其逐卡对账 42/42 全等；但官方口**不分路径**（本族前缀 81 行混列 series 49＋dual_arm 32），直接引用会把 29 张"跑下去写 blocked（不翻卡不记试次）"误当"写 fail"⇒ ⑥ 立法底座应换官方件＋本岗路径拆分层，全线普查口径应收敛唯一（宪法 §4.2 同域重复簇／§9.5 清单必须生成器产出）|scripts/backtest/fexam/card_binding.py:2075-2080・:2083-2140；scripts/backtest/fexam/comparison_exam.py:295・:311-314；尺面 .runtime/tmp/st-qoder-p08-1017-02/{vocab_census_official.yaml,compare_official_census.py,compare_official_census.json}（per_card_agree_n=42／disagree=[]／official_distinguishes_paths=false）|⑩ 判普查口径收敛（本岗与 ⑦A/⑦c 停自造尺、改官方口＋路径层）；⑥ 立法工单输入面直接取 `--mode vocab-census` 产物；本席不自删他席尺面不代改工具|中
+[BLOCKER] 2026-10-17|⑧B/p08-1017-02|工具缺陷|本席 §七 第 2 条给 ⑩ 的排班建议有一半错＝原文"改派 04:00 后或 20:00–23:00"，而让路窗真源 `card_binding.py:2076` 含 **21:00–22:30**⇒ 若 ⑩ 按建议采纳 20:00–23:00 会把班排进第二个让路窗；更正＝真自由窗 04:00–21:00 与 22:30–24:00（旧案留卷不涂）；同帧量到官方 `tally_status.empty=230` vs 上班 §㊾ 现测 208＝全库 empty +22 未定源（属 ⑥ 出题面新增，本席不判）|scripts/backtest/fexam/card_binding.py:2075-2080（两窗逐字）；comparison_exam.py:311-314（窗内 refused→return 3 仅绑册通道，注入通道 ch_free=True 不受拦）；.runtime/tmp/st-qoder-p08-1017-02/vocab_census_official.yaml tally_status.empty=230|⑩ 采纳更正后的两窗；⑥/⑩ 判全库 empty 208→230 的新增归属；本席不代裁|低
+
+
+### 九-7 与 ⑦c 席已落地案卷合流（02:0x 班尾补记，据此起见归位不当新案卖）＋本族双臂面收窄一枚硬后果
+
+⑦c 席 1017-01 案卷（可 grep 源＝`docs/_working/automation_campaign/p07c_examiner_c/ledger.md`，命中标记
+`_comparison_metrics`）给出两条结构性堵点与一条令卡过时项。本班把这三条**落到本席三族面上定量化**（只读直调
+`pillars_route`＋卡面字段，02:0x 现测，尺面 `official_triage_all71.json`）：
+
+| 收窄项 | 本席三族现测 | 与 ⑦c 全库面的关系 |
+|--------|--------------|--------------------|
+| `dual_arm ∧ signal_kind=panel` | 本族 **24** 张（dual_arm 29＝panel 24＋series 5；route×kind 全表＝dual_arm\|panel 24／dual_arm\|series 5／series\|panel 22／series\|series 20＝71） | ⑦c 报全库 28 枚 ⇒ **24 枚在本席三族**＝本席双臂面主形态 |
+| `window.regimes` 条目 ISO 日期不足两个 | 本族 **6** 张（`X-S1-04/comparison/05`、`X-S2-02/calibration/03`、`P-P2-01/comparison/02`、`P-P2-03/comparison/02`、`P-P2/comparison/02`、`P-P3-01/comparison/03`）；**负对照＝同谓词架 examined 87 张＝0** ⇒ 尺有判别力 | ⑦c 报全库 13 枚 ⇒ 本族占 6 枚 |
+| 令卡「panel 卡禁走 CLI（`--target-csv` 砍单列缺陷未修）」 | 本班零开考未复跑 CLI ⇒ 只登记为**指令面过时嫌疑**转 ⑩，本席不代签 | ⑦c 逐字引 HEAD 面「panel 目标保列语义与 --signal-csv 同款（禁砍单列）」，源=`8caf2743b9` |
+
+⇒ **对 ⑥/⑤ 排工的一条硬后果（本班新增，⑦c 未量化到本族）**：§九-5 说"3 张 shadow 双臂进不了对照驱动器"，
+本节再收一层＝**即便 ⑥ 给那 24 张 `dual_arm∧panel` 补上绑定册 arms 格，它们仍会崩在
+`calibration_exam.py:561 _comparison_metrics → :217 _series_metrics → :97 pd.Series(2D)`**
+（⑦c 双面实测：`run_card` 与 `run_card_comparison(dry=False)` 崩在同一帧）。
+所以本族双臂面"**补格即解锁**"的上界实测只有 **5 张**（dual_arm∧series），另 24 张须先有 panel 双臂腿（属 ⑤/⑪ 产出面）。
+本班据此把 §三"停驱动分诊路 29"的后果列改写为三档＝**26 张**进对照驱动器拿 blocked 行（其中 24 张补格后转崩）、
+**3 张** shadow 被族闸抛 `_ToolError`、**5 张**是本岗短期真候选（且仍须过注入面与截面闸）。
+
+**本班自犯一枚当场打死（不入正文数字）**：首版 regimes 散文谓词写成
+`sum(x.isdigit() and x=='-' for x in vv) < 2`，而 `'-'` 非数字 ⇒ 表达式恒 0 ⇒ **71/71 恒真**假扩；
+改正为 `len(re.findall(r"\d{4}-\d{2}-\d{2}", v)) < 2` 后得 6 张＋负对照 0/87。
+与 §四4、§九-6 同族＝**尺坏与查无同形／满命中亦须负对照**（在册律 `zero-hit-ruler-needs-known-positive-control` 复证）。
+
+[BLOCKER] 2026-10-17|⑧B/p08-1017-02|判据缺失|本族双臂面"补册格即解锁"的上界实测只有 **5 张**＝29 张 dual_arm 里 **24 张 `signal_kind=panel`**，而 ⑦c 已实跑出 `dual_arm∧panel` 崩在 `calibration_exam.py:561→:217→:97 pd.Series(2D)` 且 `run_card_comparison(dry=False)` 崩在同一帧（＝双腿 panel 两条路都不支持）⇒ ⑥ 若按"补格救 26 张"排工会拿到 24 个崩批而不是 24 个诚实 blocked 行；本族另 6 张 `window.regimes` 条目 ISO 日期不足两个（同形崩点 `_in_spans`，⑦c 报全库 13 枚本族占 6）|可 grep 源 `docs/_working/automation_campaign/p07c_examiner_c/ledger.md`（命中 `_comparison_metrics`）＋本班尺面 `.runtime/tmp/st-qoder-p08-1017-02/official_triage_all71.json`（route×kind 交叉 24/5/22/20，负对照 examined 87＝0）；代码锚 calibration_exam.py:561・:217・:97・:72-84・comparison_exam.py:85・:202-205|⑤/⑪ 判 panel 双臂腿（`:217` 的 2D 面）；⑥ 排工按 **5 张**上界而非 26 张，并把"卡面 regimes 必须是日期对"立成出题闸（属判据面须 chief，本席不自立）；本席不自改执行器不越族代考|中
+
+本节末追加一条＝本班 [BLOCKER] 累计 **9 条（高 1／中 5／低 3）**：首袋 5（§七）＋第二袋前段 3（§九-5 内联中 1＝shadow 族闸／本节末中 1＝普查口径收敛唯一／本节末低 1＝排班建议一半错）＋本节 1（中＝panel 双臂上界）。
+本班仍零 CH、零 GPU、零卡面写、零分数册字节、零判据与词表改动、零 worktree；共写面零字节。
