@@ -197,3 +197,24 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。旧案全文在 `
 ⚑**本班临时件**（`.runtime/tmp/p02_1016_02/`，`[TTL] task_bound` 24h）：`boot_1016_02.py`／`keep_add_1016_02.py`／`b27_probe_1016_02.py`＋`b27_probe.log`／`b27_probe2_1016_02.py`＋`.log`／`b27_depth_baseline_1016_02.py`＋`depth_before.log`／`b27_verify_1016_02.py`＋`verify1.log`／`verify_final.log`／`b27_cold_1016_02.py`＋`cold.log`／`write_ledger_1016_02.py`／`msg_1016_02.txt`／`qstatus.json`。**回补基底**＝xtquant 终端本地缓存（`E:/国金QMT交易端模拟/userdata_mini/datadir`，非本席产物，下班复量暖态即可续用）。
 
 `P02-1016-02-CP-ENDSTATE`（本班游标节独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c "P02-1016-02-CP-ENDSTATE"`；上一班游标节各行逐字仍在）
+
+
+---
+
+## 2026-10-16 23:27 · st-qoder-p02-1016-03 班游标（追加节，上文各行逐字不改）
+
+**本班一句话**＝B-27 五档深史分块回补落地 **1,401,385 行／216 票**（三缺格日票面 5→**118/7,934＝1.5%**，行面对满档日基线 6.47%，仍不封板、status 不翻）＋**塌缩尺重建**（`RAW−FINAL` 假绿作废，守恒式实测 **每格 0.99 行／整日外推 ≈7,863 行＝对上班「≈7,900 行/日」**同幅确证****）＋节奏标定＝**3.9 秒/票（24 票/批）→ 剩余 7713 票 ≈8.4 小时**／10.7 秒/票（8 票/批）→ ≈22.9 小时（批大小是决定项，上班估算未给该口径）＋工序 4 B-15 第五次自验复拍（2,539 条全 verified、快照未变、commit_pct 82.08 未破闸＝不起批）。全文＝`ledger.md` 段「2026-10-16 23:27 · st-qoder-p02-1016-03」，终态标记 `P02-1016-03-CP-ENDSTATE`。
+
+**下班待办序（本班修订）**：
+1. **本班袋若判死（上班袋先落地）取回三步**＝①`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c "P02-1016-02-CP-ENDSTATE"` 先量上班是否已落；②已落⇒盘面本就含上班全段（本班为严格超集），只需以新 HEAD 为基重排：复位前**必须先 `cp` 存证，并先量 `git diff --numstat HEAD` 是否纯删除**——盘面含 HEAD 没有的字节时禁复位，改走热册超集差分配方（本档 1016-01 游标段②条在册处方）；③复位动作照该条处方执行后，重追加本班段并核对上班两枚标记＋本班标记三齐。
+2. **B-27 续采＝直接跑自 resume 谓词**，无需游标文件：`universe(09-28 FINAL DISTINCT symbol 升序) ∖ done(10-08 FINAL DISTINCT symbol)`；脚本＝`.runtime/tmp/p02_1016_03/b27_run2_1016_03.py`（**24h TTL，明 23:0x 过期**），参数配方 `<N> 24 840`（实测 3.9 秒/票）。⚑起班先 `date` 实测再算窗，勿按 60 分窗承诺整面（整面 ≈8.4 小时＝须走登记 keep 的长批或⑩重排产）。
+3. **幂等复跑销口（验收③本班标未验）**＝对已入库票面同命令重跑一次，FINAL 不增行即销；顺带用守恒式复量塌缩（应与本班每格 0.99 行同幅）。
+4. **件 3-B 复议材料已备**＝本班给守恒式尺与比值；请⑩汇总呈 Owner 定"键先改/先放量"次序。本席不自裁。
+5. **B-15 仍不起批**＝判据只看 `commit_pct<70`；本班现读 82.08。三条前置（重拍快照 sha／`utf-8-sig`／只挂分钟线族 63.03 GiB）本班已复核完毕，下班只需再读一次闸值。
+6. **仍不翻 status**＝`known_data_gaps.yaml` 工作区面他席在写（本班进场即 ` M`，压班不随袋）；期权 IV 腿 `tasks.yaml:971` 源面仍 `miniqmt`（续供第四查不过，上班在册）；B-26/B-28 各须先规模标定与当期宇宙判据，勿在 60 分窗内半起。
+
+⚑**本班会话与锁（下班照抄，本班实测有效）**：`SessionRegistry(ROOT).register(sid, pid=0, held_files=[自家两件])` **并立刻** `_spawn_heartbeat_daemon(sid, Path('D:/ZephyrAlpha'), 30)`（本班 daemon_pid **46956**，收班现读存活=0）；sid CAS 入 `process_reaper_keep.txt`（本班 417→418 行；`SafeWriteResult` 真字段＝`written`，**无 `ok`**，`getattr(res,'ok','?')` 实测 `?`）；②**runner 的 argv 必须带 sid**（reaper 白名单按 cmdline 子串命中，脚本路径名不含 sid ⇒ 只加 sid 不加 argv 等于没加）；投袋前复 acquire（TTL 30 分）；`git_commit.py --enqueue` 外层禁套 `timeout`。
+②**本班 xtquant 新读数**＝`download_history_data` 一次区间 `20261007→20261013` 可同时喂三缺格日（8 票 2.4–4.3s／24 票 ~12s 发完，70s 等待后读回）；空格率 **48%**＝退市/停牌/无行情，非通道故障；`格_err=0`（两块共 648 格零异常）。
+②**本班临时件**（`.runtime/tmp/p02_1016_03/`，`[TTL] task_bound 24h`，共 10 件）＝b27_batch_1016_03.json、b27_caliber_1016_03.py、b27_run.log、b27_run2.log、b27_run2_1016_03.py、b27_run_1016_03.py、boot_1016_03.py、keep_add_1016_03.py、msg_1016_03.txt、write_ledger_1016_03.py。
+
+`P02-1016-03-CP-ENDSTATE`（本班游标节独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c "P02-1016-03-CP-ENDSTATE"`；上一班游标节各行逐字仍在）
