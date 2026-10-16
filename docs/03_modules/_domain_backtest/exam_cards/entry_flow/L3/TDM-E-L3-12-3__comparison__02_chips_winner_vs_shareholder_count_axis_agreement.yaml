@@ -1,0 +1,47 @@
+# ③库内挖矿席 20261016-p03-04 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L3-12-3/comparison/02_chips_winner_vs_shareholder_count_axis_agreement
+node_id: TDM-E-L3-12-3
+family: comparison
+title_zh: 筹码分布·技术面筹码代理 vs 基本面股东户数代理·口径对照卡
+hypothesis: 图面 dq＝「筹码低位集中吸筹还是高位上移派发」。本节点两条集中度代理分属两表：技术面 chips_winner/conc_*（CYQ 迭代衰减口径派生）与基本面股东户数变化（季/月披露）。对照题设＝同一 symbol×同一全局交易日上两代理的截面排序是否同向——同向则二者可按 根宪法 §4 内收判据取一；系统性分歧（尤其户数披露滞后造成的台阶）则「集中度」一词必须拆成「分布形态维」与「持有人结构维」两轴，禁混用作同一门柱。已知在册缺陷须同框复核＝一字板/停牌单日退化注入全网格均匀分布致
+  chips_winner 摊薄（本节点 calibration/02 卡 known_defect_FA1 原文登记），故分歧归因要先排除该缺陷日。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：承本节点在册 TDM-E-L3-12-3__calibration__02_获利盘占比.yaml 的 target 面（calibration/02），差异只落在信号腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 实测 commit_pct=84.41%／cpu=70.2%／degraded=False，本席产出口为卡面、零 CH 请求、零 panel 物化。在册可查面＝本节点已有具名卡 TDM-E-L3-12-3__calibration__02_获利盘占比.yaml；裸骨架=TDM-E-L3-12-3/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.technical_indicator
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体两腿＝本节点在册 calibration/02（technical_indicator·chips_winner）与 calibration/03（c3_fundamental.shareholder_count·股东户数变化）；本卡不新立任何列名，两腿列面逐字承该两卡 data_binding。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1016-04
+birth_batch: 20261016-p03-04
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L3-12-3，decision_question 原文='筹码低位集中吸筹还是高位上移派发'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family) 补该骨架所缺家族」口径。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__comparison__02_chips_winner_vs_shareholder_count_axis_agreement.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-12-3.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L3
+  node_type: stage
+  market: cn_a
+  decision_question: 筹码低位集中吸筹还是高位上移派发
+  module_ref: src/zephyr/regime/features/chip_distribution_engine.py
+  module_id: MOD-REGIME-005
+  confidence_at_gen: proposed
+  purpose_tag: PT-03

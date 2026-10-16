@@ -1,0 +1,48 @@
+# ③库内挖矿席 20261016-p03-04 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-05-2/comparison/02_signal_trio_weight_vs_threshold_vs_quadrant_decisive_dim
+node_id: TDM-E-L2-05-2
+family: comparison
+title_zh: 信号响应三件套·权重/门槛阈值/象限过滤三维决定性对照卡
+hypothesis: 图面 dq＝「信号权重/门槛阈值/象限过滤今天分别取什么值」。本卡对照题设＝水温→信号响应链上三维各自单独放开（其余两维固定在码值）时，当日市场级信号输出（开/关与强度）相对三维齐开基线的变化幅度；幅度最大的那一维＝判别力所在，其余两维若边际幅度落在读数噪声内则为可派生冗余（按 根宪法 §4 同真源可派生→必并）。在册限定＝本族在册双 EMA 口径版（02b/ablation
+  02b）已占「计算口径」一维，本卡不重复测口径，只在同一口径下做三维对照；shape 承本族在册 series 形态（市场级时序），禁降为截面 panel。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：承本节点在册 TDM-E-L2-05-2__ablation__02_信号响应三件套.yaml 的 target 面（calibration/02），差异只落在信号腿。
+  shape: series
+status: empty
+signal_kind: series
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 实测 commit_pct=84.41%／cpu=70.2%／degraded=False，本席产出口为卡面、零 CH 请求、零 panel 物化。在册可查面＝本节点已有具名卡 TDM-E-L2-05-2__ablation__02_信号响应三件套.yaml；裸骨架=TDM-E-L2-05-2/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.emotion_index + c1_market.kline_index
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 ablation/02 与 02b（kline_sector_880 ＋ emotion_index ＋ kline_*，preregistered）；表列逐字承该两卡 data_binding。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1016-04
+birth_batch: 20261016-p03-04
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-05-2，decision_question 原文='信号权重/门槛阈值/象限过滤今天分别取什么值'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family)
+  补该骨架所缺家族」口径。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__comparison__02_signal_trio_weight_vs_threshold_vs_quadrant_decisive_dim.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-05-2.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 信号权重/门槛阈值/象限过滤今天分别取什么值
+  module_ref: src/zephyr/signal_ashare/sector/sector_gate.py
+  module_id: MOD-SIG-026
+  confidence_at_gen: proposed
+  purpose_tag: PT-02

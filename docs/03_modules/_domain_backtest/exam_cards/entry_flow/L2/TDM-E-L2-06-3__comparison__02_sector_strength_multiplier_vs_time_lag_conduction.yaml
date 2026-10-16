@@ -1,0 +1,47 @@
+# ③库内挖矿席 20261016-p03-04 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-3__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-06-3/comparison/02_sector_strength_multiplier_vs_time_lag_conduction
+node_id: TDM-E-L2-06-3
+family: comparison
+title_zh: 强度加权传导·当日乘数阶梯 vs 时滞曲线两腿一致性对照卡
+hypothesis: 图面 dq＝「板块强度给个股 score 加成或打几折」。本卡对照题设＝同一 sector×symbol×同一日，用「当日强度→乘数阶梯」与用「强度时滞曲线（滞后 k 日加权）」两种传导各自给出的个股 score 调整是否同号同幅；同号同幅则时滞腿可派生（取一），符号随滞后阶翻转则传导存在相位，任何用当日强度的门柱必须注明相位。在册限定＝两腿共用 kline_sector_880
+  强度列，该列的前视性未被本席复核，本卡只主张两腿之差、不主张强度列本身可用（若列面为前视则两腿同时失效，须先由数据侧定性）。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：承本节点在册 TDM-E-L2-06-3__calibration__02_强度乘数阶梯.yaml 的 target 面（calibration/02），差异只落在信号腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 实测 commit_pct=84.41%／cpu=70.2%／degraded=False，本席产出口为卡面、零 CH 请求、零 panel 物化。在册可查面＝本节点已有具名卡 TDM-E-L2-06-3__calibration__02_强度乘数阶梯.yaml；裸骨架=TDM-E-L2-06-3/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_daily_hfq + c1_market.sector_constituent
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02（kline_sector_880＋kline_daily_hfq＋sector 成分·乘数阶梯，preregistered）与 03（kline_sector_880＋kline_daily_hfq＋emotion_index·时滞曲线，preregistered）；列面逐字承该两卡 data_binding。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1016-04
+birth_batch: 20261016-p03-04
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-06-3，decision_question 原文='板块强度给个股 score 加成或打几折'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family) 补该骨架所缺家族」口径。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-3__comparison__02_sector_strength_multiplier_vs_time_lag_conduction.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-06-3.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 板块强度给个股 score 加成或打几折
+  module_ref: src/zephyr/signal_ashare/core/sector_conduction.py
+  module_id: MOD-SIG-136
+  confidence_at_gen: proposed
+  purpose_tag: PT-03

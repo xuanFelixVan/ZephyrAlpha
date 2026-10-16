@@ -949,3 +949,291 @@ ledger 144186B / 9d164ad49349ed8f…、checkpoint 11347B / 86da95fc811265f3…�
   游标 last_run 里"约 99 分／超班期 54 分"一段同属假时刻派生，已随本次一并改写。
 - 结构自证（改写面＝本班自家节，未触他文）：ledger HEAD-only 行仍=0、HEAD 前缀性仍 True、
   BLOCKER 行总数与上文对表后如实打印；游标三字段各仍=1（无重复键、无被吃标题）。
+
+
+## 10-16 22:21 · st-qoder-p03-1016-02 · ③库内挖矿席（1016 本席第 2 班·产出=具名子题卡 10 张·零 CH）
+
+### 一、开班三实测（防重入／守护／水位）
+
+- **防重入＝前任三证齐→判死接手**：`.runtime/sessions/st-qoder-p03-1016-01/heartbeat.jsonl` 末行自证
+  `{"ts":"2026-10-16T07:01:15+00:00","pid":38972,"status":"exited","reason":"idle timeout","idle_seconds":1802.6}`；
+  pid 38972 不在 tasklist（`没有运行的任务匹配指定标准`）；`.ailocks/registry.json` p03 条目 0 且
+  21:55 `lock_files.py cleanup` 的三笔 SALVAGED 无一属 p03。该会话末次盘面动作＝候选册 mtime **18:44:24**。
+  ⇒ 本班取号 **02**（台账今日 0 行，但 birth_batch=20261016-p03-01 已被前任占用，避号不夺号）。
+- **守护面**：计划任务 `\ZephyrAlpha_ProcessReaper` 在册（schtasks CSV 面＝正在运行，下次 22:07:22）；
+  reaper `--status`＝source=live・last_run=2026-10-16 21:58:33・scanned=36・killed=0・drift.stash_count=30。
+- **水位（22:00:20 读数，落笔前另测 date）**：commit_pct **86.83%**／ram_used_pct 71.9／cpu_pct 95.6／degraded False。
+
+### 二、接单（真源=⑩线长 p10-1016-20 派单段，起手 21:35:11 现测）
+
+- 令＝**③席复岗首查：empty 186 裸骨架转具名子题**（真源 `config/trading_decision_map.yaml` 图节点定义，非自拟）；
+  保底绩效＝每班 ≥5 新候选 **或** ≥10 张骨架；⚑⑩ 给的新料面＝候选册 77 行与卡面 id 对拍零碰撞可安全出题。
+- **本班实测对"转正"口径的收敛（登记不改 SOP 措辞）**：186 枚 empty 全部落在"已有 ≥1 张具名卡"的节点上
+  （zero-named 节点计数=**0**，尺=按 node_id 分组数具名卡）⇒ 可执行含义＝**按 (node, family) 补该骨架所缺家族的具名子题**，
+  不是"节点空白填补"。SOP §3③/§3⑥ 的"转正"措辞对这一层未写死，列入 §七 判据缺失行。
+- **与 ④ 席同节点查重令**：④ 今日台账 `grep -o "TDM-"` 命中 **0**（实测）⇒ 无节点面可对拍；
+  本席改以"节点族＋在册素材锚点"自证不重复（见 §六 轮1）。
+
+### 三、接手分账（前任 1016-01 未落地面处置，不重做不撤销）
+
+- 三面裸字节实测（候选册）＝盘 **158791B**／index **89950B**／HEAD **139355B** ⇒ 前任 6 行（071-076，
+  birth_batch=20261016-p03-01）只存在盘上，index 停在落地前一版（在册主区机制，非本班异常）。
+- 处置＝本班袋以盘面整档快照承载（本席自家写域，非他席件，不构成归属篡改）；
+  **071 行不出题**＝其闸读数只在未落地的前任台账里、本班查不到（缺自证即不出题）；
+  **074/075/076 不出题**＝三行在册判定分别为"判重复／贴线／贴线"（逐字读自候选册 orthogonal_gate_note）。
+- 本班新入池候选＝**0 行** ⇒ 本班保底走卡面（10 张）。
+
+### 四、产出（具名子题卡 10 张·全部 status=empty·门柱 null·冻结归 ⑥）
+
+| # | 卡文件（entry_flow 下） | TDM 节点 id | family/idx | 素材锚点（在册可 grep） |
+|---|---|---|---|---|
+| 1 | L9/TDM-E-L9-A01__calibration__09_crossday_absintensity_profile_lag1 | TDM-E-L9-A01 | calibration/09 | CAND-P0-MIABSPROF1-065（池面 pass 0.1038 rc=0） |
+| 2 | L9/TDM-E-L9-A01__calibration__10_crossday_absintensity_profile_lag2 | TDM-E-L9-A01 | calibration/10 | CAND-P0-MIABSPROF2-070（净新轴，册内 ≤0.166） |
+| 3 | L9/TDM-E-L9-A01__calibration__11_amount_band_slope_crossday_drift | TDM-E-L9-A01 | calibration/11 | CAND-P0-MIAQSLOPEDRIFT1-069（净新轴·半段反号如实登记） |
+| 4 | L9/TDM-E-L9-A01__calibration__12_amount_band_profile_crossday_lag1 | TDM-E-L9-A01 | calibration/12 | CAND-P0-MIAQLAG1-073（未撞但贴线 max 0.2763） |
+| 5 | L9/TDM-E-L9-A02__calibration__14_overnight_shape_bridge | TDM-E-L9-A02 | calibration/14 | CAND-P0-MIOVNTBRIDGE-072（净新轴，三面 <0.3） |
+| 6 | L9/TDM-E-L9-A02__calibration__15_crossday_signed_minutepath_shape_lag2 | TDM-E-L9-A02 | calibration/15 | CAND-P0-MIDAYSHAPEL2-053（池面 pass 0.1252＋贴线在册记法） |
+| 7 | L2/TDM-E-L2-01-2__comparison__02_turnover_dim_vs_amount_share_control | TDM-E-L2-01-2 | comparison/02 | nightmine L1_ledger §5 第 6 条（换手率维未挖）＋§6 第 1 条 |
+| 8 | L2/TDM-E-L2-02-2__comparison__02_intraday_vs_daily_sector_topwarning_control | TDM-E-L2-02-2 | comparison/02 | 同册 §5 第 7 条（kline_sector_intraday 2026-07-20 起短窗） |
+| 9 | L2/TDM-E-L2-04-2__comparison__02_concept_vs_industry_universe_drift_control | TDM-E-L2-04-2 | comparison/02 | 同册 §5 第 1 条（概念族 850 codes 宇宙漂移＝冒充信号红旗） |
+| 10 | L2/TDM-E-L2-09__comparison__03_coverage_change_vs_catalyst_density_control | TDM-E-L2-09 | comparison/03 | 同册 §6 第 3 条（研报覆盖度变化未挖）＋§5 第 10 条（三套行业口径未对卡） |
+
+- 归口写法＝每张卡带 `tdm_attribution_note`：卡 1-4/6 载体 A01／本体 A02 双标注（锚点
+  `config/trading_decision_map.yaml:6042`（A01 节点块起）与 `:6077` 族先例，沿 p03-08/09 在册不重复裁）；
+  卡 5 归 A02 本体。
+- 形状自检＝`signal_kind=panel` ↔ `target.shape=panel`，本班 **10/10 同形**；不同形一律未出题（无退回 ⑥ 面）。
+- 门柱面＝`window/buckets/pillars` 三键 **10/10 全 null**＝本席零编判据数值；冻结与翻态一律归 ⑥（本席未翻任何态、未改任何在册卡字节）。
+
+### 五、本班零 CH 声明＋一处在册状态翻案
+
+- 零 CH 请求、零 panel 物化＝承重证据＝开班水位 commit_pct 86.83%／cpu 95.6%（§一读数）＋本班产能全给卡面。
+- **翻案（另起留旧案，不改 p03-08/09 原文）**：正交闸件 `scripts/backtest/fexam/signal_orthogonality.py`
+  本班三态实测＝盘在（10942B）／`git ls-files --error-unmatch` rc=0（tracked）／`git show HEAD:` 同 10942B
+  ⇒ 上班在册"三面查无、唯一存活处＝⑤席在途袋 blob 8c27ccb4e778976c…"的状态已被 ⑤ 席落地**翻态**。
+  本班未跑闸＝原因"零候选入池"，非"池未物化"，两者不混记。
+
+### 六、自检两轮（真实读数，含一处本班自犯的尺伪空）
+
+- 轮1 抽 3 轴反向核对未挖过＝在册卡面 grep（排除本席 10 卡）：065 命中 **0**、072 命中 **0**、053 命中 **0**。
+- 轮2 抽 3 卡回查 TDM 真源：L2-01-2 dq 图内逐字命中 **1**；A01 首读逐字命中 **0**＝**尺的伪空**
+  （图面写作 `decision_question: "…"` 带双引号、卡面继承生成器不带引号）⇒ 改正则口径后在
+  `config/trading_decision_map.yaml:6052` 命中原文、节点在 `:6043`；`node_id` 在图可 grep。
+  在册"零命中须正对照"本班再踩一型＝**逐字等值比较对引号敏感**，已按子串级复核并留痕。
+- 结构计数自证（承在册"改后数结构不只 grep 正文"）＝卡池 yaml **553→565**（本席 +10、并发他席 +2
+  ＝L3-11-1/L3-11-2 现势窗两枚，本班未触）；全池 `card_id` 重复 **0**；本席 10 卡必填 15 键缺失 **0**；
+  `yaml.safe_load` 10/10 通过。**首版 10/10 全炸**＝`source_candidate` 二空格缩进落在顶层（伪键），
+  当场作废 10 件、删净重落（在册「零突变基线先行」同型教训：新建模板件须先证明单件能解析再批量落）。
+
+### 七、[BLOCKER] 行见下（本席第 1016 首行，破 ③ 席今日 0 行面）
+
+[BLOCKER] 2026-10-16|③席1016-02|判据缺失|SOP §3③/§3⑥ 的"empty 裸骨架转正＝③④席补具名子题"未写死按 (node,family) 还是按 node 补，实测 186 枚 empty 全部位于已有具名卡的节点（zero-named 节点=0），下一班若按"节点空白"理解将得零可挖面|docs/01_policies_and_standards/sop/automation_sop/research_production_line_policy.md:113 ＋ 本班 §二 计数读数|要 ⑩ 把口径写进 SOP 一句（本席不改 SOP）|中
+[BLOCKER] 2026-10-16|③席1016-02|流程问题|上班 st-qoder-p03-1016-01 心跳 15:01:15 自证 exited（idle timeout 1802.6s）后仍在 18:44:24 写候选册 6 行，随后无台账无游标无 [BLOCKER]＝小步收班纪律对该班未生效，交付面停在盘上 3h35 分|docs/_working/automation_campaign/p03_miner_lib/checkpoint.md 游标行＋候选册 mtime＋.runtime/sessions/st-qoder-p03-1016-01/heartbeat.jsonl 末行|要 ⑩ 认"心跳先退、正文后写"这一形态并定复岗班接手时的默认处置（本班处置＝盘面整袋承载＋071 不出题）|中
+[BLOCKER] 2026-10-16|③席1016-02|工具缺陷|图面 exam_ref 的"（N 张）"计数与卡面实测漂移：config/trading_decision_map.yaml:6073 写 TDM-E-L9-A01「3 张」而卡面本班实测该节点 calibration 家族 12 枚（含本班 4 新增）＝手工静态计数面，违反 §9.5 生成器铁律|config/trading_decision_map.yaml:6073 ＋ 本班 §六 卡池 553→565 计数|要 ⑤ 席把 exam_ref 张数改生成器派生（或删计数只留 glob），本席不动图|中
+[BLOCKER] 2026-10-16|③席1016-02|数据问题|本班 4 张 L2 对照卡（#7-10）的前置取证全部落在 ①②席面且在册明列为"未反查/未量测"：sector_meta.float_share 生产方与更新史、kline_sector_intraday 可用日数、880 概念族宇宙漂移史、research_report 三套行业口径映射|docs/04_research_records/mining/ledgers/nightmine_20261010/L1_ledger.md §5 第 1/4/7/10 条|要 ⑩ 派 ① 席按四条逐个出可达性读数，否则 ⑥ 冻结时只能整批判 blocked_on_data|中
+[BLOCKER] 2026-10-16|③席1016-02|无（余面）|本班零 CH 请求、零在册卡改写、零卡态翻动、无 worktree、无 GPU 领牌||||低
+
+### 八、本班实耗
+
+发车 **21:55:16**（date 现测）→ 本行落笔现测 **22:21:09**＝**25.9 分**（两端皆 date/datetime 实测，非体感推定）。
+
+
+### 本班（20261016-p03-02）§十 投袋前撞结构闸＝exam_cards/L9 目录容量硬上限（22:35:25 现测 date；另起留旧案，§四 表内 L9 路径据此更正）
+
+- 首投预检读数＝`PREFLIGHT BLOCKED [FOLDER-CAPACITY-HARD-LIMIT]`，原文
+  `D:\ZephyrAlpha\docs\03_modules\_domain_backtest\exam_cards\entry_flow\L9/: 121 文件 > 120 硬上限（GOV-DOC-018 T_soft=120）`，
+  耗时 13.2s、零入袋（锁外预检，未烧锁）。
+- 本席 6 枚 L9 新卡＝越线最后一批（迁出后 L9 直接子文件实测 **115**，越线前为 121＝本席占 6）。
+  按门给的正解（"文件挪子目录（平铺目录容量上限）"）执行＝本席自家 6 件移入
+  `entry_flow/L9/p03_crossday_shape/`，并同步卡内 `lineage.card` 为实路径
+  （自证＝逐件 `yaml.safe_load` 后断言 `lineage.card == 实际 posix 路径`，不一致 **0**）。
+  L2 目录本班 4 枚落位后实测直接子文件 **84**（未近顶）。
+- token 面随路径重登＝意图 API 三步 register→publish→render 三批读数
+  **v908**（L9 目录批 3 枚）／**v909**（L2 批 4 枚）／**v910**（迁位后子目录批 6 枚）；
+  首枚（09）与 10/11 的部分登记发生在上一批逐枚通道（在册 token 条目现值 grep `st-qoder-p03-1016-02` 命中）。
+- **本班自犯并留痕**＝重登时用 python 拼清单未给 `new` 列表补换行，与前一行的带 `
+` 元素直接相联，
+  生成出一条拼接假路径并被 `acquire-batch` 当合法路径收下（total 少算 6 枚、list 读回 8 锁 5 卡面）；
+  正解＝写清单一律逐元素显式 `+'\n'` 且 `acquire` 后必用 `list --session` 计数读回对表（本班第二次才做对）。
+- 本班 §四 表内第 1-6 行的目录列以本节为准（L9 → L9/p03_crossday_shape），卡文件名与节点 id 零变化。
+- **投袋面（不代改他席）**＝注册表脏面实测 `capability_canonical_file_registry.yaml` 盘面 vs HEAD＝**+95 行 / −0 行**，
+  其中 41 行属本席 token、**54 行属 ④ 席 st-qoder-p04-1016-02 未落地条目（其两袋当时 pending）**
+  ⇒ 依在册归属律不随袋提交他席未落地条目，本袋 registry 面零包含（token 生效面靠 PG→投影，落地后由正门重放）。
+
+[BLOCKER] 2026-10-16|③席1016-02|数据/结构|exam_cards 平铺目录触 FOLDER-CAPACITY 硬上限：entry_flow/L9 实测 121>120（GOV-DOC-018 T_soft=120），本班 6 枚为越线最后一批；现值 115 仅因本席临时把自家 6 件挪进子目录，下一枚任何 L9 新卡（含 ⑥ 冻结批）仍会撞同一门|预检原文见本节＋L9 直接子文件实测 121→115|要 ⑤/⑩ 定 L9 拆层正解（按节点或按腿分目录）并同步卡面检索 glob，本席不自拆他席件|高
+[BLOCKER] 2026-10-16|③席1016-02|工具缺陷|batch_creation_tokens 逐枚登记实测约 5 分/枚（10 枚＝超班期），目录前缀批登才可在 1 分内完成；且 token 按相对路径精确比对＝文件一旦挪位必须重登，挪位无原子通道|本班三次 batch 读数 v908/v909/v910＋§十分节耗时|要 ⑤ 席给「改路径同时换绑 token」的单口命令（或让挪位走 git mv 同步 token），本席不自改工具|中
+
+
+## 10-16 22:40 发车 · st-qoder-p03-1016-03 · ③库内挖矿席（1016 本席第 3 班·产出=候选册 9 行·零 CH 请求）
+
+### 一、接单与前置（令面=⑩ p10-1016-20 派单 21:52:23 现测）
+
+- 冷启动三关实测＝python 3.12.8／`setup_dev_env.py --check` installed True（指向 D:\ZephyrAlpha）／`lock_files.py cleanup`＝CLEANED 4 枚死锁并 **SALVAGED 前任 st-qoder-p03-1016-02 遗物**（merge=skipped、stash=0 件、释放 claim=0）／reaper `--status`＝source=live・last_run=22:40:33・scanned=28・killed=0。
+- 起手水位实测（reaper 同框读数）＝commit_pct **77.74%**・ram_used 74.8%・cpu 74.6%・degraded False ⇒ 依在册高水位避让令（≥85% 才禁探针）本班允许轻档；本班实际零 CH 请求（产出口不需要，非受闸所迫）。
+- 防重入＝上班游标 `last_run: 2026-10-16 22:24:27 收班`・实耗 29.2 分・收班八件在册 ⇒ 判已完成，本班续班。班号取号＝本席 ledger 今日已有 1016-01・1016-02 两节 ⇒ 本班 = **1016-03**。
+- 领单＝⑩ 令「复岗首查＝empty 裸骨架转具名子题／保底 ≥5 新候选 或 ≥10 张骨架」。**本班产出口选「候选面」而非「卡面」的承重理由（不自作主张，摆证据）**：①上班 1016-02 已交 10 张具名子题卡且全部在池待 ⑥ 冻结（本班不重复出同一出口）；②上班在册 [BLOCKER]|高＝`exam_cards/entry_flow/L9` 直接子文件实测 115、再落任何一枚 L9 新卡即撞 FOLDER-CAPACITY（GOV-DOC-018 T_soft=120），本班不产卡＝不替 ⑤/⑩ 的拆层决策预支越线件；③本班复量 L9 直接子文件=**115**、L2=**84**（与上班读数值一致＝该面本班窗内零变化）。
+- 新料面复量＝`data/strategy_intake/lane_p0_obi_candidates.csv` 本班开工时盘面 **78 行**（表头＋77 候选，末号 076）；⑩ 令面写的"77 行"＝同册去表头读数，两处一物 ⇒ 本班以 csv 解析器取数（86 行含本班 9 行），不拿 wc -l 当分母。
+
+### 二、本班九条构造与判定（输入面=离线复用 `.runtime/tmp/p03_07/perday.json` 57007 行／52.9MB，采样宇宙 cityHash64(symbol)%10=3）
+
+面板＝109 个共同交易日（116 在册交易日 −lag-7 需七日前值 −九轴同日 ≥50 票闸），逐日 454-506 票；HOLDOUT/OOS（2025-09-09 后）零接触。
+
+| # | candidate_id | 构造（对象轴） | 池面闸 | 册内自查（对照 29/32 面） | 判定 |
+|---|---|---|---|---|---|
+| 077 | CAND-P0-MIHALFSELF-077 | 同日两半段形状相关 pear(b[0:8],b[8:16])（**不跨日**） | pass 0.1079 rc=0 | 越闸 **0**，max 0.2230（p06/leg11） | **净新轴** |
+| 078 | CAND-P0-MIAQCURV-078 | aq 四标度向量 ln-ln 二阶差分（曲率≠斜率≠斜率变化） | pass 0.1968 rc=0 | 越闸 2＝leg1 +0.5523、|b|lag1 +0.3448 | 判重复（盲区第 20 例） |
+| 079 | CAND-P0-MITVDLAG1-079 | 跨日归一 |b| 形状总变差距离（L1 度量族换轴） | pass 0.1864 rc=0 | 越闸 2＝|b|lag1 −0.6350、|b|lag2 −0.3042 | 判重复（第 21 例） |
+| 080 | CAND-P0-MIDAYSHAPEL7-080 | 同位复制 lag-7（≈一自然周；lag 族已占 1-6） | pass 0.0920 rc=0 | 越闸 **0**，max 0.2075（p06/leg7） | **净新轴** |
+| 081 | CAND-P0-MIAQLAG2-081 | aq 向量跨日 lag-2（4 点相关，自由度 3） | pass 0.2725 rc=0 | 越闸 2＝aq lag1 +0.4963、p03_1016/f_aqlag1 +0.4952 | 判重复（第 22 例） |
+| 082 | CAND-P0-MIPEAKREP1-082 | 峰位重现率（|b| 最大档位是否同日隔日相同，0/1） | pass 0.1325 rc=0 | 越闸 **13**，顶 = |b|lag1 **+0.9212** | 判重复（第 23 例；本行是「位置型统计量在截面均面尺上退化为幅度相关」的实证） |
+| 083 | CAND-P0-MIZCRLAG1-083 | 符号翻转率跨位移位 zcr(b_t)−zcr(b_{t−1})（碎/整的形） | pass 0.0917 rc=0 | 越闸 **0**，max 0.1899（lag6 面） | **净新轴** |
+| 084 | CAND-P0-MIKURTLAG1-084 | 超额峰度跨位移位 | pass 0.0683 rc=0 | 越闸 3＝leg10 +0.3482、leg5 −0.3329、leg6 −0.3172 | 判重复（第 24 例） |
+| 085 | CAND-P0-MISEMIGAP1-085 | 半日幅度份额跨位移位 | pass 0.0491 rc=0 | 越闸 5＝leg6 −0.3922、leg5 −0.3624、leg10 +0.3208、|b|lag2 +0.3097 | 判重复（第 25 例） |
+
+- 净新 3 条（077/080/083）＝可给 ⑥ 的出题面；判重复 6 条一律**本席自退不推给 ⑥**（沿 074/075/076 在册体例，只作池外/册内盲区登记，盲区例数由上班第 19 例续到本班**第 25 例**）。
+- 三条净新轴的**离闸余量**（保守口径，沿 p03-08 在册"贴线不出题"续条）＝077 距闸 0.0770／080 距闸 0.0925／083 距闸 0.1101 ⇒ 三条皆非贴线。
+- TDM 归属＝九行 definition 一律双标注并带本班重定位锚点：载体 kline_1min→**TDM-E-L9-A01**（config/trading_decision_map.yaml:6043 node_id／:6052 decision_question=价量趋势与动量能否预测N日收益？）／信息本体→**TDM-E-L9-A02**（同件 :6078 node_id／:6087 decision_question=日内微观结构能否预测次日方向与冲击成本？）。本席未改任何卡、未翻任何态、未自裁归口。
+
+### 三、前任 071 缺证一笔已补（上班游标在册待处置件）
+
+- 上班游标第①条＝「候选面下班须先处置前任 071 行（其闸读数在册缺失＝本班不出题，须重跑正交闸补自证才可出题）」。本班实测＝取上班留档面 `.runtime/tmp/p03_1016/gate_f_dayshape_lag6.csv` 走同一把闸＝**rc=0・pass max|corr|=0.1450・most_similar=avg_abs_ret**，与在册登记值 0.1450 **逐位同** ⇒ 缺证补齐，071 现可进入出题流程（本班不出，归 ⑥）。
+- 同批本班另立参照＝上班 p03_09 参照件 `ref046.csv` 今日实测**已不在盘**（`.runtime/tmp/p03_09/gate/` 目录存在但 `ls` 读数 0 件），故本班把"参照腿"改指 071 面；换腿事实如实登记，不称"与上班同一参照"。
+
+### 四、闸尺三对照与尺对齐（负/正对照必做，防尺失真）
+
+- 正对照＝池成员 `pool6/avg_abs_ret.csv` 原样自投 → **reject 1.0000 rc=5**（尺能红）。
+- 负对照＝同日轴随机高斯（seed 202610163）→ pass 0.1310 rc=0（尺非恒拦）。
+- 参照＝071 面复跑 → pass 0.1450（见 §三）。
+- 尺对齐＝本班重现的 lag1 日频序列对 `p03_1016/gate_f_dayshape_lag1.csv`：共日 109・max|diff|=0.004087・mean|diff|=0.000138・corr=0.999981 ⇒ **同尺非逐位同**（面板日数差所致），故本班九行 example 值只作同尺内相对对拍，禁与上班读数混用为同一笔。
+- 池面口径＝⑨席 pool6 绕行面（6 员，非正式面）；15 员正式池仍未物化＝该池无源（在册事实，本班未新增缺席原因）。
+
+### 五、工序 6 两轮自检
+
+- 轮 1 反向核对（抽 3 条：077/080/083 是否已被挖过）＝在候选册 86 行内按关键词逐查，HALFSELF／ZCR／DAYSHAPEL7／半段自相似／符号翻转／lag-7 **各命中 1 行＝本班次新行**（0 命中面＝未曾挖过）；如实记一条谓词敏感＝`lag7`（不带中划线）命中 **0**，本班新行写的是 `lag-7` ⇒ 反查用词须与册面写法同形，勿把"谓词不匹配"读成"未挖过"。
+- 轮 2 具名卡回查 TDM＝本班零新卡 ⇒ 该抽项对本班不适用；改为复量图面锚点（见 §六）。
+- 追加后结构自证＝`candidate_id` 全册重复 **0**、csv 解析行数 78→87（+9）、EOL 归一（首投误用 csv 默认 `\r\n`，与原册 LF 不同＝本班已整批回滚重投，回滚后字节数 158791 与投前逐位同）。
+
+### 六、图面复量（不改动，只出读数）
+
+- 上班 [BLOCKER]|工具缺陷「exam_ref 手工张数漂移」本班复量＝图面 `:6073` 写 TDM-E-L9-A01「3 张」而卡面实测 **12**；`:6109` 写 A02「2 张」实测 **15** ⇒ 连续第 2 班未修，仍归 ⑤ 生成器派生（本席不动图）。
+- 卡池分母本班实测＝文件 565 枚、逐枚首行 `status:` 全命中（565/565），六态求和 = 162+196+48+71+87+1 = **565**（先记这条是因为本班第一次加总误算成 465 并几乎据此登记"100 枚无 status 行"＝算术滑，改判据前先自量；在册的 ⑩ 派单 553/186 读数与本班 565/196 差 12＝上班 10 枚新卡＋他席 2 枚，非本班动作）。
+- 图面行号漂移新证＝上班在册锚点 `:6033/:6042/:6068/:6077` 本班逐行读回全部错位（现值 `:6043/:6052/:6078/:6087`，node_id 面 +10）；且上班写作 `dq` 的字段真名是 `decision_question` ⇒ 任何按行号引图面的件都须重定位（已入 §九 第 4 条 [BLOCKER]）。
+
+### 七、本班自犯三处（当场改，留旧案）
+
+1. 首投候选 id 用 `a.split('f_')[1].upper()[:10]` 生成 ⇒ 产出 `MITVD_LAG1-079/MIDAYSHAPE_L-080` 这类带尾下划线的截断名，与在册体例（MIDAYSHAPEL6/MIAQLAG1/MIB16ENTD 无下划线）不一致；同批 `csv.DictWriter` 默认 `\r\n` 与原册 LF 相异。正解＝显式短名表 + `lineterminator="\n"`，并按精确谓词回滚本班 9 行后重投（回滚字节数与投前逐位同＝未碰他班次新行）。
+2. 盲区例号误拿候选号当序号（`20+k`，k=77..85 ⇒ 写成第 98/99/101/102/104/105 例）；正解＝只对"判重复"行自增计数，本班续上班第 19 例得第 **20-25** 例，已逐行定点替换并复量残留＝全册 `盲区第 N 例` 读数回到 12-25 连续区间。
+3. 第二轮尺件 `mine2.py` 的 REFS 里列了未计算的 `r_aq_lag1` ⇒ 九轴同日 ≥50 的条件永不成立、`common` 空集、`min()` 抛 ValueError（**空集合不是红灯而是伪空**，沿在册"零集合非红"续条）；正解＝删该伪列，aq 族参照面改从第一轮 `daily_out.json` 取。
+
+### 八、下班可挖面（本班实测口径）
+
+- 楼 1 分钟腿在册"高阶统计维"本班已吃掉四条（曲率／L1 距离／峰位重现／半幅份额），**全部判重复**；剩下唯一未被在册占用的可挖面＝①**同日内部轴**（077 已开，族内可换统计量但须逐条自查 vs 077/046/072 三面，均面尺退化风险＝本班 082 的教训）；②**符号维族**（083 已开，同族可测"最长同号段"与"翻转率的二阶矩"，禁再用日截面分层——在册 075/076 已证条件面＝本体子集）；③lag 族只剩 **lag-8 以上**与"lag 阶间的衰减曲线斜率"（后者与 055 f_decay_lag12 同对象风险高）。
+- 本班按 SOP 不报枯竭＝本班有 3 条净新增（连续两轮零新增才准自报），楼 1 未封矿、继续为本席最高优先（P0）。
+
+### 九、[BLOCKER] 登记（本席只写自家台账，汇总口在 ⑩）
+
+[BLOCKER] 2026-10-16|③席1016-03|流程问题|小步收班第②件"本班 tmp 当场删除"与候选册 birth_source 尺件指针＋离线挖矿通道互斥：本班实测上班三处参照面已被清（.runtime/tmp/p03_09/gate/ 目录存在但 0 件），导致本班"参照腿"只能改指 071 面、册内自查须自建 5-6 条同族面重算；照字面执行②＝每班把下一班的尺子磨短一截|`.runtime/tmp/p03_09/gate/` ls 读数 0・本班 `.runtime/tmp/p03_1016_03/`（mine/mine2/gate_run/append_csv＋daily_out*.json＋gate.log＋15 枚闸面）・候选册 077-085 九行 birth_source 字段|要 ⑩ 定"尺件留存面"判据（哪些 .runtime/tmp 件属可复验证据禁删、TTL 多久、由谁清），并明确收班②的执行谓词|高
+[BLOCKER] 2026-10-16|③席1016-03|工具缺陷|池面正交闸对"册内重复"零判别力已连续可见：本班 9 条构造池面 9/9 全绿（max 0.2725）而册内自查 6/9 越闸，其中 082 对在册 065 面 =+0.9212（几乎同物）；根因＝15 员正式池未物化、闸只能吃 ⑨ 席 pool6 绕行面（6 员）|本班 §四 三对照读数＋§二 表列越闸明细（盲区例数由第 19 续到第 25）|要 ⑤ 席物化 15 员正式池、要 ⑩ 认"池外/册内盲区已累计 25 例"是否进 SOP §9 七门槛的强制册内自查腿|高
+[BLOCKER] 2026-10-16|③席1016-03|判据缺失|TDM 图面引用形制无判据：上班在册锚点 :6033/:6042/:6068/:6077 本班逐行读回全部错位（现值 :6043/:6052/:6078/:6087，node_id 面 +10），且上班写作 `dq` 的字段真名是 `decision_question`＝按行号＋简称引用一旦图面增删即静默失效|config/trading_decision_map.yaml:6043/:6052/:6078/:6087・本班九行 definition 已按现值重写并声明漂移|要 ⑩ 给一句口径：卡面与台账引 TDM 一律用 node_id＋decision_question 原文（禁行号），本席不自定规范|中
+[BLOCKER] 2026-10-16|③席1016-03|工具缺陷|上班 [BLOCKER]「exam_ref 手工张数漂移」本班复量仍未修：图面 :6073 写 TDM-E-L9-A01「3 张」卡面实测 12、:6109 写 A02「2 张」实测 15＝连续第 2 班；同条上班还挂了 L9 目录容量越线（现值 115/120）未解|config/trading_decision_map.yaml:6073/:6109＋卡池实测计数（565 枚全命中 status 行）＋L9 直接子文件 115・L2 84|要 ⑤ 席把张数改生成器派生＋给 L9 拆层正解；本席不动图、不自拆他席件，本班也因此未产卡（见 §一 承重理由）|高
+[BLOCKER] 2026-10-16|③席1016-03|无（余面）|本班零 CH 请求・零卡改写・零卡态翻动・零 worktree 自建・无 GPU 领牌；三态回退弹本班自查＝ledger/index/HEAD 面本班写后 HEAD 前缀性 True||||低
+
+
+### 十、收班八件读数（本段落笔 23:05:17＝datetime.now() 现测，非体感）
+
+- ①**claim**＝本班三件（ledger/checkpoint/候选册）`acquire-batch --ttl 60` acquired=3 denied=0，并以 `list --session` 读回持有者=本席自证；入队成功后实测 `list --session` = **CLEAN**（0 锁）＝gateway 在 enqueue 时替席位释放 claim，故本班不判"漏 release"，判据改记为"袋是否落地"。
+- ②**心跳注销**＝`heartbeat.jsonl` 末行 pid=**41756**，psutil 按该 pid 核活＝alive=True，cmdline=C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon ⇒ 收班按 PID 精确终止（禁按镜像名杀，在册红线），随后 `unregister` 会话。
+- ③**实耗**＝发车 22:40:13（date 实测）→ 本段落笔 23:05:17（datetime.now 实测）＝**25.1 分**，守 45 分班期。⚠本班第二次自我校准＝本席中途体感"已超窗 20 分"与实测差 20 分（与在册"体感钟跑快"同型，落笔一律现测）。
+- ④**[BLOCKER]**＝本班 §九 已追加 5 行（高2/中2/余面1）＋本节新 2 行＝**共 7 行**，`grep -c "\[BLOCKER\]"` 命中见本节末复量行。
+- ⑤**自清收口**＝本班 tmp 目录 `.runtime/tmp/p03_1016_03/` **31 件 / 165KB 未删**——不是漏执行，而是本班把小步收班第②件与"尺件可复验"互斥这一条按 §九 第1条 [BLOCKER]|高 上报待 ⑩ 定夺（候选册 077-085 九行的 `birth_source` 字段逐行指向该目录，删了即把在册引用变悬空引用）；本班在四件套外的写盘面散落=**0 件**（只动本席 ledger/checkpoint/候选册三面）；该提交的全提交（见本节末队列读数）。
+- ⑥**GPU**＝本班零领牌（全程零 CH／零 GPU 作业），无需还牌。
+- ⑦**后台子任务**＝本班零子代理 spawn ⇒ 零孤儿。
+- ⑧**worktree**＝本班**未调用任何工棚/工作树启动入口**（无 `session_worktree_start`、无 `.worktrees/st-qoder-p03-1016-03`，实测该路径 `No such file`）；但实测 **`.aidrafts/st-qoder-p03-1016-03/` 存在**（顶层 41 件、含 `.git`＝真 worktree 壳），系会话注册时运行面自动代建（全仓 `git worktree list` 现测 64 行）⇒ 依在册先例本席不自删、列入 §九 新 [BLOCKER] 报 ⑩ 交清理专班。**故本件如实写法＝"本席零自建 worktree"而非"仓内零 worktree"。**
+- 队列读数（现测）＝counts={'pending': 1, 'processing': 0, 'done': 0, 'dead': 0}；本班袋面={"q-20261016-st-qoder-p03-1016-03-0001": ["pending", 18]}。第一袋快照只含 §一-§九，本节＋§十一属第二袋（严格超集，沿在册"同会话后袋须做成超集"配方）＝本班共投 2 袋，破上班"只投一袋"纪律的理由＝第一袋快照已不含收班段，不补投则收班八件永无库面。
+- 候选册终值＝物理行 87（表头＋86 候选，本班 +9）；`candidate_id` 全册重复 0。
+
+[BLOCKER] 2026-10-16|③席1016-03|工具缺陷|会话一注册即由运行面自动建 .aidrafts/<sid> 整树 worktree 壳（实测顶层 41 件・含 .git・全仓 git worktree list 64 行），与本席指令卡"禁建 worktree（TRAE-079 Phase 2）＋收班八件⑧零 worktree 确认"正面冲突＝本席未调任何建树入口却必然留下树；本班处置＝不自删（在册红线：不删他链创建的树）只上报|`.aidrafts/st-qoder-p03-1016-03/`・`.worktrees/st-qoder-p03-1016-03` 实测不存在・本班台账 §十 第⑧条|要 ⑩ 定 ⑧ 件判据口径（"本席零自建"还是"仓内零枚"），并给自动建壳一个收尾自清钩子；与上班 1016-02 在册"收班自清钩子"请求同族|高
+[BLOCKER] 2026-10-16|③席1016-03|流程问题|收班八件①"release 全部 claim"与 2 件"注销心跳"在现实现下由 gateway/运行面代做，席位无法自证执行面：实测入队即 `list --session` CLEAN（claim 被代释放），心跳守护 pid=41756 由会话注册自动 spawn（本席未起）⇒ 检查项写"席位做完"名实不符，会让下一班把"已被代做"读成"漏做"或直接空转|本班 §十 第①②条实测读数・`.runtime/sessions/st-qoder-p03-1016-03/heartbeat.jsonl` 末行|要 ⑩ 把八件①②改写成"读回判据"（判 lock 面 CLEAN・判 daemon 不在）而非"动作判据"|中
+- 游标写后核读数（现测）＝本班游标首投只做到『原地改行』，未做『保全上一班正文』，险把 1016-02 的游标叙事（186-empty 收敛＋CH 方言硬知识两条在册续条）洗成不可读；⚑翻案一条＝本班第一次从 HEAD 取回的是**更早一版**游标（HEAD 落后＝1016-02 袋仍 pending），据此写的保全行内容错版，已当场作废；真源＝在途袋 `q-20261016-st-qoder-p03-1016-02-0001` 的 checkpoint blob（10758B，本班 sha256 逐字节自证 True）⇒ 已在 `notes_p03_02_cursor:` 行逐字补回。工序补条＝游标保全的取数面是**队列 blob**，不是 HEAD、不是盘面。
+
+- **本班终值（23:12:34 datetime.now 现测）**＝实耗 **32.4 分**（§十 落笔时记 25.1 分系班中读数、游标 last_run 记 25.9 分同病＝追加型册里『耗时/终值』落笔即假，本行为终值，旧读数不删只被本行取代）；心跳 daemon 复量＝`live heartbeat_daemon for target sid: []`（注：本席第一次用 `python -c` 探进程表时，探针自身 cmdline 含目标 sid 字面量而自匹配出 4 枚「活着的 daemon」＝观测者自造信号，改写成不含 sid 字面量的盘上脚本后真值 0 枚）；claim=CLEAN、会话已 unregister；本班袋面现态={"3-0001": ["pending", 19], "3-0002": ["pending", 23]}（袋 1=§一-§九快照、袋 2=含 §十 收班段、袋 3=本终值行，逐袋严格超集）。
+
+
+## 10-16 23:25 发车 · st-qoder-p03-1016-04 · ③库内挖矿席（1016 本席第 4 班·产出=具名子题卡 12 张·零 CH）
+
+### 一、开班三实测（防重入／守护／水位，全部现测）
+
+- 防重入＝本班起读 `docs/_working/automation_campaign/p03_miner_lib/checkpoint.md` 游标末态＝前任 20261016-p03-03 游标行在册且 last_run=23:12:34 已写收班（last_run 23:12:34 在册＋本班 23:25:11 进场时 ledger/checkpoint mtime 均=23:12）⇒ 前任已收口，本班不重入、不代投。
+- 环境＝`python --version` 3.12.8 实测；`lock_files.py cleanup`=CLEAN 无死锁；`process_reaper --status`=source=live・last_run 23:25:28・水位 commit_pct=84.41%／cpu=70.2%／ram_used=72.6%／degraded=False。
+- 活证正门＝`register(pid=0, held_files=三件)` → `_spawn_heartbeat_daemon(sid, REPO, 30)` → `register_heartbeat_keepalive(reason="miner seat shift 45min", ttl=3600)` → `mark_logical`。本班实测两处工具面事实（登记不追因）：①首跑守护 spawn 失败=`No module named 'scripts.ops_guard'`，带 `PYTHONPATH=D:/ZephyrAlpha` 复跑即成（daemon_pid=34924）⇒ 恒定班正门须同框带 PYTHONPATH；②`mark_logical` 两次均被 W-29 拒（`非 chief 形态词 ∧ 心跳不新鲜`），本班按在册处方改用 keepalive 续命，未自旋重试第三次。
+- 断链警戒面＝本班未触发（未遇 `_working`/`_archive` 路径查无）。
+
+### 二、接单（令面真源=⑩ p10-1016-21 班派单，起手 23:26 读本席在册面）
+
+- 配额面＝该单 (a)(b)(c) 三判据全未命中⇒**生产配额按卡面继续发**（本席读到的原文判据：ghost 判据近 60 分 0・pending 22<50・commit_pct 72.92%<90%）。
+- 方向单＝`pulse/mining_directions.md` 楼 1（P0 盘口微结构）仍列「未开／P0」＝该册面与楼 1 实际在挖态长期互斥（在册：汇总口在 ⑩，本席不判该册、不改该册）；本班按「未封矿且优先级最高」实质仍认楼 1，唯本班产出口不在楼 1 候选面（理由见 §四）。
+- ⑩ 硬约束一条照做＝`exam_cards/entry_flow/L9` 触 FOLDER-CAPACITY（T_soft=120，现值 115）⇒**新卡禁入 L9 平铺面**。本班 12 张全部落 L2（+5）与 L3（+7），L9 平铺面本班零字节（实测 L9 平铺仍=115、子目录 p03_crossday_shape 仍=6）。
+- 在册链①（⑥退回裸骨架→③按 TDM 图补具名子题）＝本班无新裸骨架回流（⑩ 1016-19 班原文），本班不据此停工，改按「零具名 (node,family) 面补首族」执行同一链的实质。
+
+### 三、接手分账（前任 1016-03 在册待处置面）
+
+- 前任 §八 在册「下班可挖面」三条（同日内部轴／符号维族／lag-8 以上＋衰减曲线斜率）＝本班**未处置**，本班产能全给卡面（§四 承重理由），该三条原样留给下班，不作废不重述。
+- 前任在册 [BLOCKER]|高 两条（小步收班② 与 尺件留存面互斥／池面正交闸对册内重复零判别力）＝本班**复证第一条已实际发生**：本班 23:27 查 `.runtime/tmp/p03_07/perday.json`＝ABSENT（上班离线挖矿输入面 57007 行被清），直接后果＝本班候选面通道（复用 perday 面板）不可用，只能改产卡面。此为「②件当场删 tmp」在本席挖矿通道上的**首个可量化代价**，非本席臆测。
+- 前任三袋（0001/0002/0003）本班开工时现态＝pending（前任自报），本班未 requeue、未代投。
+
+### 四、产出口判定＝卡面（承重理由三条，非偏好）
+
+1. 候选面输入被清＝`perday.json` ABSENT（§三），而本班窗内重建该面板需 CH 大读；水位 84.41% 距在册「≥85% 禁探针」仅 0.59 个百分点＋在册 CH 并发面板装载 7.14GiB 墙（本线 10-13 实测 HTTP 500 形态）⇒ 本班按避让纪律不开 CH 大读，零 CH 请求。
+2. ⑩ 明令新卡禁入 L9 平铺面＝卡面约束已给死，而 L2/L3 有余量（实测 L2 84→89、L3 70→77，均<120）⇒ 本班把卡面从「撞容量门」改道为「非 L9 族补齐」，是 ⑩ 约束下的可行解而非绕开约束。
+3. 本班 12 张全部落在**该 (node, family) 具名卡数为 0** 的面＝补齐动作有在册口径依据（前任 1016-02 收敛出的可执行含义＝按 (node, family) 补该骨架所缺家族），不是同族加第 N 张的重复建设（净零增长判据）。
+
+### 五、卡池盘点尺（含正/负对照与一处本班自犯的尺伪宽）
+
+- 尺 v1 自犯＝裸骨架判定用 `^TDM-E-…__(\w+)\.yaml$`，而 `\w` 含下划线⇒把 `…__calibration__02b_rrg_quadrant_10_26_caliber.yaml` 这类具名件误判成骨架，得「零具名面 62 枚」的**伪宽**读数；当场作废并改族白名单尺 v2，同时加正对照（三个已知有具名卡的 (node,family) 命中 11/1/1）与负对照（不存在节点=0）⇒ 终值＝零具名 (node,family) **59 枚**（L2 21／L3 21／L9 14／L4 2／FLOW 1）。
+- 交付自证尺（`.runtime/tmp/p03_1016_04/verify.py` 现算）＝卡池 yaml 文件 **426** 枚／card_id 唯一性重复 **0**／本班批次件 **12**／形状自检 signal_kind≠target.shape **0**／window=buckets=pillars 非 null **0**（断言级）；负对照＝往 id 集合塞一条真在册 id 后重复检测命中 1 枚＝该尺能红。
+- 裸骨架零改动＝本班 12 件全部为新文件（only-add），前任与他会话的 ` M`/`M ` 面本班零触碰；实测 `git status --porcelain -- …/entry_flow` 本班件形态=`??`×12（其余 `??`/` M`/`MM` 共 36 面属他会话在途，本席不代修不随袋）。
+
+### 六、产出清单（具名子题卡 12 张·全部 status=empty·门柱 null·冻结归 ⑥）
+
+选题规则＝TDM 图节点（真源 `config/trading_decision_map.yaml`）的 `decision_question` 原文为题面锚，族=该节点裸骨架所缺且具名数为 0 的第一族（本班全为 `comparison`），序号一律 `02`（骨架占 `01`）；数据绑定/目标口径**运行时从本节点在册兄弟具名卡读回**，非本席手打。
+
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__comparison__02_rrg_quadrant_benchmark_leg_000300_vs_880001.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-05-2__comparison__02_signal_trio_weight_vs_threshold_vs_quadrant_decisive_dim.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06-3__comparison__02_sector_strength_multiplier_vs_time_lag_conduction.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-07-1__comparison__02_pullback_fib_leg_only_vs_four_factor_composite.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-09-2__comparison__02_chain_impact_hop_decay_vs_graph_valid_row_filter.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-03-2__comparison__02_swing_pool_trend_leg_vs_volume_leg_weighting.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-04__comparison__02_veto_unlock_leg_vs_seven_check_union_exit_sets.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-07-1__comparison__02_daban_seal_quality_leg_vs_lanban_exclusion_leg.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-10__comparison__02_tradability_one_word_board_vs_suspension_coverage.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-1__comparison__02_auction_ratio_leg_vs_fivelevel_book_leg_candidate_overlap.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-2__comparison__02_rise_velocity_leg_vs_volume_ratio_leg_golden_window.yaml`
+- `docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-12-3__comparison__02_chips_winner_vs_shareholder_count_axis_agreement.yaml`
+
+逐卡题面一句话（详面在卡内 hypothesis）：筹码两代理同向性／RRG 基准腿 000300vs880001／否决单检 vs 并集独占率／波段池趋势腿 vs 量能腿权重／回踩 Fib 单腿 vs 四因子迁移矩阵／涨速腿 vs 量比腿×黄金窗／竞价量比腿 vs 五档腿重叠／一字板腿 vs 停牌腿互斥性／封单质量腿 vs 烂板腿／乘数阶梯 vs 时滞曲线同号性／图谱跳数衰减 vs valid_to 过滤／三件套哪一维决定性。
+
+### 七、工序 6 两轮自检（真实读数）
+
+- 轮 1（反向核对未挖过）＝抽 3 张（L3-12-3/comparison、L3-04/comparison、L2-06-3/comparison）回查卡池：写卡前该 (node,family) 具名数实测均=0（盘点尺 v2 输出），写卡后 card_id 全池唯一⇒三张确未挖过。尺别限定＝该核对按 **card_id 集合**不按文件名子串（子串会把 02b 类同尾名计入＝在册 endswith 过宽同型）。
+- 轮 2（具名卡回查 TDM）＝抽 3 张逐字段比对 `config/trading_decision_map.yaml` 本节点块：`decision_question`/`module_ref`/`module_id`/`purpose_tag` 四字段逐字相等（脚本内 `assert chk["tdm"]["decision_question"] == dq` 为断言级，12/12 通过）；引用形制按前任在册续条＝**一律用 node_id＋decision_question 原文，禁行号**（前任实测图面行号 +10 漂移）。
+- 形状自检（本席指令卡工序 4 补条）＝signal_kind 与 target.shape 同形 12/12（panel×10、series×2）；不同形的题本班不出（无需退回自证）。
+
+### 八、[BLOCKER] 登记（本席只写自家台账，汇总口在 ⑩）
+
+[BLOCKER] 2026-10-16|③席1016-04|流程问题|小步收班第②件（本班 tmp 当场删）与③席离线挖矿输入面互斥已由臆测变实害＝前任 §九 第1条登记后本班即撞上：`.runtime/tmp/p03_07/perday.json`（57007 行面板，候选面唯一低成本输入）本班 23:27 实测 ABSENT，直接后果＝本班候选面通道不可用、产出口被迫改卡面|`ls .runtime/tmp/p03_07/`=8KB・perday.json 查无・本班台账 §四 第1条・前任 1016-03 台账 §十 第⑤条（其自述 31 件未删正是为保 birth_source 指针）|要 ⑩ 给「尺件留存面」判据（哪些 .runtime/tmp 件属可复验证据/输入面禁删、TTL 多久、由谁清）并把收班② 的执行谓词写成排除该面的形式；本席不自清他人面|高
+[BLOCKER] 2026-10-16|③席1016-04|工具缺陷|恒定班活证正门三步在本机现实现下不可一次走通：`_spawn_heartbeat_daemon` 首跑崩 `No module named 'scripts.ops_guard'`（需带 PYTHONPATH=仓根才起），起后 `mark_logical` 仍被 W-29 以「非 chief 形态词 ∧ 心跳不新鲜」连拒两次＝指令卡写的「keeper 兜底」路径对新注册 pid=0 会话无成文可用序列|`.runtime/tmp/p03_1016_04/keeper.py`・本班台账 §一 第3条两次拒标原文・`src/zephyr/security/access_control/session_concurrency.py` mark_logical 判据|要 ⑤ 席给恒定班（非 chief 形态）一条成文续命序列（含 PYTHONPATH 与心跳新鲜度前置），要 ⑩ 在指令卡把「mark_logical」改为「keepalive＋心跳新鲜度双读回」；本席不自改指令面|中
+[BLOCKER] 2026-10-16|③席1016-04|判据缺失|裸骨架「转正」可执行面缺成文判据：本班按前任 1016-02 收敛的「按 (node, family) 补该骨架所缺家族」执行，实测该口径下全池尚有 59 枚 (node,family) 零具名，而 ⑩ 只约束了「禁入 L9 平铺面」未给优先级序（哪个族/哪一层先补）⇒ 每班自选 12 枚＝排产不可复现|`.runtime/tmp/p03_1016_04/census2.py` 输出 59 枚清单・本班台账 §五 §四|要 ⑩ 在派单给一句序（例：先 L2/L3 comparison 后 L4 shadow，L9 走子目录），或明令「本席自选合法、按 §四 净零判据验收」；本席不自立优先级规范|中
+[BLOCKER] 2026-10-16|③席1016-04|数据问题|本班 12 张卡的在册兄弟腿多枚处于 `blocked_on_data`/`blocked_on_impl`（L3-11-1/02、L3-11-2/02、L3-04/03、L3-07-1/03、L2-09-2/02·03、L3-12-4/02·03、L3-03-2/04）＝对照卡两腿若同挂缺源则该题面可考面=0，本班已在卡内逐条写明「缺口未补即 blocked_on_data，不判信号无」，但**卡面能否开考取决于腿面可达性而非题面**，该前置归 ①②⑤ 席|本班台账 §六 表内各卡 sibling 引用＋卡内 in_registry_readout 与 tdm_attribution_note 字段|要 ⑩ 把「可考面前置」列入考工席派单判据（现 ⑦⑧ 按 preregistered 面取题，取不到本族题非因无题乃因无腿）|低
+[BLOCKER] 2026-10-16|③席1016-04|无（余面）|本班零 CH 请求・零候选新增（不报枯竭：楼 1 分钟腿前任在册三条可挖面未动，本班非零新增班）・零卡改写・零卡态翻动・零 GPU 领牌・零子代理 spawn・本席零自建 worktree（`.worktrees/st-qoder-p03-1016-04` 实测不存在；`.aidrafts/` 会话壳属运行面代建，沿前任口径不自删只报 ⑩）||||低
+
+### 十、收班八件读数（本段落笔 23:56:54＝datetime.now() 现测，非体感；本班发车 23:25:11 date 实测）
+
+- ①**claim**＝本班 14 件走 `lock_files.py acquire-batch <sid> --files-from <清单> --session <sid> --ttl 60 --skip-naming-check`（exam_cards 大写+连字符命名在册拒锁，沿 1016-02/03 续条）＝acquired=14 denied=0，并以 `list --session` 读回持有者=本席（非拿 rc=0 当 claim 生效）。入队后实测 `list --session` 读回=14 条；本班收班按在册更正口径（入队不代释）**自跑 --release-only**，读数见本节末复量行。
+- ②**心跳注销**＝本班守护 pid=**34924**（`_spawn_heartbeat_daemon` 实测返回，带 PYTHONPATH=仓根才起，见 §一）；heartbeat.jsonl 末两行=['{"ts": "2026-10-16T15:56:14.866360+00:00", "pid": 34924, "status": "al', '{"ts": "2026-10-16T15:56:44.891343+00:00", "pid": 34924, "status": "al']；按 PID 精确终止（禁按镜像名杀，在册红线）后 60s 双读进程表，读数见本节末复量行，随后 unregister。
+- ③**实耗**＝发车 23:25:11（date 实测）→ 本段落笔 23:56:54（现测）＝**约 34 分**，守 45 分班期。⚠本班自犯同型一次＝23:25 起班后我在 23:43 前后一度体感"已近零点半"（跑快约 25 分），与在册「体感钟跑快＋耗时落笔即假」同型，故本行两个时刻均为现测且与同行命令输出同时出现（承 ⑩ 1016-21 班收班口径新条：末次读数类自述数字必须与命令输出同框）。
+- ④**[BLOCKER]**＝本班 §八 已追加 **5 行**（高1/中2/低1/余面1），本席位段标记行数＝**5**（§八 四条事＋一条余面），谓词=`grep -c "^\[BLOCKER\] 2026-10-16|③席1016-04"`（本节自述文本亦含该标记字面，故全册出现次数不作面值＝在册「追加型台账里计数落笔即假」同型，本班不复量该数）（在册双面并集口径：盘面即袋内同面；HEAD 面本班不复量＝1016-03 三袋仍 pending，HEAD 尚不含前任行）。
+- ⑤**自清收口**＝本班 `.runtime/tmp/p03_1016_04/` 现 **18** 件未删——**不是漏执行**：本班台账 §五 §六 与 12 张卡的自证锚点逐条指向该目录（census2.py 盘点尺／verify.py 交付自证／make_cards.py 写卡器／dump.py 图面取证），照字面删②件即把在册引用变悬空引用＝前任 1016-03 §九 第1条 [BLOCKER]|高 的具体化（本班 §三 已给出该互斥的首个实害证据：perday.json 被清导致本班候选面通道不可用）。本班只清**零引用件 5 枚**＝claim_all.txt/claim_files.txt/files.txt/files_arg.txt/pick.py（均为可再生的入袋清单与筛选中间面），尺件 13 枚留盘（census.py=本班自犯伪宽尺原件、census2.py/verify.py/dump.py/make_cards.py/enqueue.log 等＝台账 §五 §六 §十 引用锚点）＝留删判据同 §八 第1条 [BLOCKER]|高 待 ⑩ 定夺。四件套外写面散落=0（本班只动 ledger/checkpoint/12 张新卡三面）；该提交的全提交=14 件入 1 袋（state=pending，base_head=a175a2a0ebcf 现读，袋 blob↔现盘逐字节对拍 14/14 全等、EOL-only 0、content-diff 0）。
+- ⑥**GPU**＝本班零领牌（全程零 CH／零 GPU 作业），无需还牌。
+- ⑦**后台子任务**＝本班零子代理 spawn ⇒ 零孤儿；唯一后台进程=本班心跳守护 34924（归②件处置）与 `batch_creation_tokens`（rc=0 已完成，实测主区投影 slug 命中 12）。
+- ⑧**worktree**＝本班**未调用任何工棚/工作树启动入口**，`.worktrees/st-qoder-p03-1016-04` 实测存在=False；`.aidrafts/st-qoder-p03-1016-04` 会话壳实测存在=True（运行面代建，沿 1016-03 在册口径不自删、只报 ⑩ 交清理专班）。**故本件如实写法＝"本席零自建 worktree"而非"仓内零枚"。**
+- 队列现框读数（现测）＝counts={'pending': 24, 'processing': 1, 'done': 905, 'dead': 469}；本班袋面={'q-20261016-st-qoder-p03-1016-04-0001': ["pending", 14]}。本班按"改写未收口前只投一袋"纪律**只投一袋**，收班段与游标终值走同件**第二袋（严格超集）**，破一袋纪律的理由与 1016-03 同＝第一袋快照不含本节，不补投则收班八件永无库面；两袋撞同件若判「双侧皆改」按在册口径让它死，由下班对现 HEAD 重基，不做盲目 requeue。
+- 台账面值＝本节落笔前 1226 行（纯追加，vs HEAD 行级 lost=0 已由本班 §五 尺复量）；卡池终值见游标。

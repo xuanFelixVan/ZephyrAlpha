@@ -1,0 +1,48 @@
+# ③库内挖矿席 20261016-p03-04 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-1__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L3-11-1/comparison/02_auction_ratio_leg_vs_fivelevel_book_leg_candidate_overlap
+node_id: TDM-E-L3-11-1
+family: comparison
+title_zh: 竞价选股·竞价量比腿 vs 五档挂单腿候选重叠对照卡
+hypothesis: 图面 dq＝「9:26-9:28 竞价瞬间产出当日候选（竞价量比/资金挂单/涨停试盘）」。本卡对照题设＝同一 symbol×同一日，仅按竞价量比（snapshot 面）入池与仅按五档挂单结构（book 面）入池两集合的重叠率，以及二者对当日涨停试盘标的的独占率；若 book 面独占率高则五档腿不可由 snapshot 派生（跨维不并），若重叠近全则 book 腿属冗余。在册限定＝book
+  五档可用深度存在历史起点限制（该约束在本节点在册兄弟卡 data_binding 原文登记），本卡只在其可算面上主张结论。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：承本节点在册 TDM-E-L3-11-1__calibration__02_竞价量比.yaml 的 target 面（calibration/02），差异只落在信号腿。
+  shape: panel
+status: empty
+signal_kind: panel
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 实测 commit_pct=84.41%／cpu=70.2%／degraded=False，本席产出口为卡面、零 CH 请求、零 panel 物化。在册可查面＝本节点已有具名卡 TDM-E-L3-11-1__calibration__02_竞价量比.yaml；裸骨架=TDM-E-L3-11-1/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.auction_snapshot × c1_market.auction_book × c1_market.kline_daily
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02（auction_snapshot × auction_book × kline_*，blocked_on_data）与 03（auction_snapshot × kline_daily·现势窗 v2，preregistered）；两腿表列逐字承该两卡，本卡不自立 book 列名。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1016-04
+birth_batch: 20261016-p03-04
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L3-11-1，decision_question 原文='9:26-9:28 竞价瞬间产出当日候选（竞价量比/资金挂单/涨停试盘）'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按
+  (node, family) 补该骨架所缺家族」口径。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L3/TDM-E-L3-11-1__comparison__02_auction_ratio_leg_vs_fivelevel_book_leg_candidate_overlap.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L3-11-1.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L3
+  node_type: stage
+  market: cn_a
+  decision_question: 9:26-9:28 竞价瞬间产出当日候选（竞价量比/资金挂单/涨停试盘）
+  module_ref: src/zephyr/signal_ashare/auction_microstructure_analyzer.py
+  module_id: MOD-SIG-089
+  confidence_at_gen: proposed
+  purpose_tag: PT-03

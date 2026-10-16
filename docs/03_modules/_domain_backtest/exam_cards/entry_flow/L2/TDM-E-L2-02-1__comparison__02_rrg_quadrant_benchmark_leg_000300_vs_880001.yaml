@@ -1,0 +1,48 @@
+# ③库内挖矿席 20261016-p03-04 具名子题卡（手工卡·无 generated 标＝受生成器保护，only-add 新文件，裸骨架原文件未改）。
+# 转正对象＝裸骨架 docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__comparison.yaml（status=empty，机生门柱 null 不可考）；
+# 本卡只出矿规侧题面与在册引用，window/buckets/pillars 一律 null＝冻结归 ⑥ 制卡席。
+schema_version: '1.0'
+card_id: TDM-E-L2-02-1/comparison/02_rrg_quadrant_benchmark_leg_000300_vs_880001
+node_id: TDM-E-L2-02-1
+family: comparison
+title_zh: RRG 轮动序列·基准腿 000300 vs 880001 象限归属对照卡
+hypothesis: 图面 dq＝「每个板块处在接棒/见顶/回避/布局哪个阶段」。RRG 的相对强度必须有基准腿，而基准腿取宽基指数（000300）还是全市场加权（880001）在册明列为未裁分叉（与本族在册复合族案卷同一条）。对照题设＝同板块同日的 RS/RRG 象限归属在两基准下的一致率与迁移时点差；若一致率高则基准腿属可派生冗余（取一即可），若低则本族所有象限类门柱必须带基准腿标签才可复现，否则读数不可比。本卡只对照象限归属本身，不改在册双
+  EMA 口径（02b/03b 已在册）。
+window: null
+buckets: null
+pillars: null
+target:
+  primary: 本卡不新立目标定义：承本节点在册 TDM-E-L2-02-1__calibration__02_RRG象限迁移.yaml 的 target 面（calibration/02），差异只落在信号腿。
+  shape: series
+status: empty
+signal_kind: series
+in_registry_readout: 本班零实测（如实登记）＝开班 reaper 实测 commit_pct=84.41%／cpu=70.2%／degraded=False，本席产出口为卡面、零 CH 请求、零 panel 物化。在册可查面＝本节点已有具名卡 TDM-E-L2-02-1__calibration__02_RRG象限迁移.yaml；裸骨架=TDM-E-L2-02-1/comparison/01（status=empty）。
+data_binding:
+  signal_table: c1_market.kline_sector_880 + c1_market.kline_index
+  signal_column: 列面逐字承本节点在册兄弟具名卡 data_binding，本席不在本班重取列面（禁自拟列名）。
+  signal_derivation: 载体＝本节点在册 calibration/02 与 02b、ablation/03 与 03b 四员的 signal_table（kline_sector_880 ＋ kline_index）；本卡不新立列面，基准腿两取值须在该表 symbol 列上等值筛取（禁 LIKE 猜测，在册 CH 尺续条）。
+  universe_rule: 宇宙与过滤规则逐字承本节点在册兄弟具名卡；禁用 HOLDOUT/OOS 窗（2025-09-09 后）出判据值；排除 1970-01-01 脏行。
+birth_seat: ③
+birth_session: st-qoder-p03-1016-04
+birth_batch: 20261016-p03-04
+birth_channel: p03_miner_lib
+source_candidate_id: null
+tdm_attribution_note: 具名依据＝真源 config/trading_decision_map.yaml 本节点块（node_id=TDM-E-L2-02-1，decision_question 原文='每个板块处在接棒/见顶/回避/布局哪个阶段'）；族选择依据＝本班卡池盘点实测本 (node, family) 裸骨架存在而具名卡 0 张，属在册「按 (node, family)
+  补该骨架所缺家族」口径。
+lineage:
+  card: docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-02-1__comparison__02_rrg_quadrant_benchmark_leg_000300_vs_880001.yaml
+  run_id: null
+  score_row: null
+  confidence_writeback: TDM.nodes.TDM-E-L2-02-1.confidence
+tdm:
+  map_id: TDMAP-001
+  effective_from: '2026-10-05'
+  flow: entry_flow
+  layer: L2
+  node_type: stage
+  market: cn_a
+  decision_question: 每个板块处在接棒/见顶/回避/布局哪个阶段
+  module_ref: src/zephyr/signal_ashare/sector/sector_rrg.py
+  module_id: MOD-SIG-026
+  confidence_at_gen: proposed
+  purpose_tag: PT-02
