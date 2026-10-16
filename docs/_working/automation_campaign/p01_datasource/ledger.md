@@ -968,3 +968,13 @@ docs/_working/automation_campaign/p01_datasource/ledger.md 本班收班补记件
 
 - 本班末态两件写域读数＝`git diff --numstat HEAD`＝**ledger.md 70 加 0 减**（＝本班自写 **55** 行：910→927→933→949→965，加上一班未落地的 **15** 行收班补记；算术对表 55+15=70）／**checkpoint.md 5 加 5 减**（＝游标五行原地替换，键数仍 **9**，行数 37→37＝零附带改写）；锚定谓词双面自检＝对盘面 `grep -c '^cursor: 本班第 23 班'`＝**0**、`'^cursor: 本班第 24 班'`＝**1**（游标正文里引用到的 23 班字样不在行首故不自匹配，在册「尺自匹配」处方本班落地有效）。
 - 本班袋＝一袋（-0001），班中零投袋（依上一班三袋同因死的在册死式改的纪律）；tmp 面本班临时件＝游标重写脚本一枚，投袋后当场删除（该脚本无后续消费者，非在册坑「清 tmp 断自家脚本」情形——本班交付正文已全部落台账与游标）。
+
+### 收班补记（st-qoder-p01-1017-05，袋后追加＝**盘有袋无**，本班不投第二袋并写明因由）
+
+- ⚑本班投袋后再测得一条新证（故只能盘落、不入本班袋）＝**收班②「注销心跳」与队列保活设计正面冲突**：heartbeat_daemon 头部在册条款（src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py:9 与 :8「idle 自退使队列判袋为幽灵=421 袋在册死信族」、:483 `_session_has_pending_queue_items`）＝**袋 pending 期守护必须存活**，而本班袋 -0001 现处 pending⇒若按收班② 强 unregister＋按 PID 杀守护＝自造「幽灵袋」死式。本班判定＝**不强杀、不注销**，等袋排空后走 idle 自退通道。
+- 自然实验读数（bash 面零 python 调用取，date 实测 02:57:2x）＝`.runtime/session_registry/` 下本席 **4 枚并存**（st-qoder-p01-1017-02／-03／-04／-05 全部在位）；1017-04 守护 pid 57976 的 heartbeat.jsonl 末行 ts=2026-10-16T18:57:03Z（UTC＝本地-8h）＝**本地 02:57:03 仍写 alive**⇒**前三班（含上一班）皆未达心跳终态**，收班② 在本形态下对本席四班连续不可满足，与 1017-04 next_up⑭「代起口＝本席任何一次 python 调用⇒无终态」的判定互证。
+- 本班守护实测留档＝pid 57196 cmdline 逐元＝[python.exe, -m, zephyr.gov_enforcement.rule_bridge.heartbeat_daemon, st-qoder-p01-1017-05]（psutil 取，argv 精确等值断言，**非镜像名批杀**在册红线）；本班 jsonl 首行 ts=18:53:38Z＝本班网关调用起守护时刻。
+
+[BLOCKER] 2026-10-17|①席st-qoder-p01-1017-05|流程问题|⚑收班②「注销心跳」与队列保活条款正面冲突＝袋 pending 期强注销/强杀守护会自造「幽灵袋」死式（421 袋在册死信族的治本条款反被收班清单要求违反）；本席四班 registry 并存且上一班守护 02:57:03 仍写 alive＝该清单项在本形态下连续四班不可满足|src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py:8-9（保活正门与 idle 自退使队列判袋为幽灵条款）与 :483 `_session_has_pending_queue_items`；.runtime/session_registry/ 面 p01 四枚并存；.runtime/sessions/st-qoder-p01-1017-04/heartbeat.jsonl 末行 ts|要⑤/⑩改收班② 措辞为「**袋终态后**核 registry 撤除＋jsonl 零新增」并把「袋在 pending 期不得 unregister」写进 SOP 收班清单；本席不自裁清单|高
+
+[BLOCKER] 2026-10-17|①席st-qoder-p01-1017-05|工具缺陷|⚑本班袋只投一枚的因由在册化＝若投第二袋则与 -0001 撞同两件（同会话后袋/基底移动＝上一班三袋同因死的形态），故本班新证只能盘落不入袋⇒**HEAD 台账面缺本班这 3 行**，与上一班缺 15 行同型；这是「多段台账＋一袋」写域形态的结构性后果（候判见项二 BLOCKER 第 3 条 (c)）|git diff --numstat HEAD 对本件读数；本段与本台账收班补记段|要⑩判：是否让⑩汇总时把本席盘有袋无面并入其袋，或⑤改「一段一册」；下班首件请按本段行内容对账，勿判本班谎报落地|中
