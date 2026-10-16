@@ -218,3 +218,8 @@ notes: 游标由本岗每批推进；监督员(⑩)可代修。旧案全文在 `
 ②**本班临时件**（`.runtime/tmp/p02_1016_03/`，`[TTL] task_bound 24h`，共 10 件）＝b27_batch_1016_03.json、b27_caliber_1016_03.py、b27_run.log、b27_run2.log、b27_run2_1016_03.py、b27_run_1016_03.py、boot_1016_03.py、keep_add_1016_03.py、msg_1016_03.txt、write_ledger_1016_03.py。
 
 `P02-1016-03-CP-ENDSTATE`（本班游标节独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c "P02-1016-03-CP-ENDSTATE"`；上一班游标节各行逐字仍在）
+
+
+**23:33 游标补记（P02-1016-03B，逐字追加不改上文）**＝本班件 0 的自然实验结论已改变本班收班动作＝**本班只投一袋**（`q-20261016-st-qoder-p02-1016-03-0001`，files=2，已 ENQUEUED；claim 已 release 2/2；心跳 46956/48360 按 PID 杀并 60s 双读复核 False；投袋后 23:32:12 复现 `.aidrafts/st-qoder-p02-1016-03` 影子树 1 枚＝工具自建、勿自删、已在件 5 挂号转⑩）。⇒ **下班起手第一件改为**：先量 `git diff --numstat HEAD -- ledger.md`，若读数为"纯 insertions 且行数＞本班袋 payload 差值"＝本班件 7 更正段仍未落地，**逐字收养随你班袋投出**；再按待办序第 1 条核本班袋是否已落（`git show HEAD:.../ledger.md | grep -c P02-1016-03-ENDSTATE`）。
+
+`P02-1016-03B`（补记节独有标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/checkpoint.md | grep -c "P02-1016-03B"`）

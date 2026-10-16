@@ -981,3 +981,9 @@ WHOLE [(21792, datetime.date(2005, 1, 4), datetime.date(2026, 10, 14))]
 ⑧ **零 worktree**＝本班**未调用任何工棚/工作树启动入口**；`git worktree list` 现读 本班 sid 零命中；盘面遗留 `.worktrees/st-mtrain-1016`、`.worktrees/st-rulemap-20261014` 两枚**非本席产物**，按令不自行清理，已在册转⑩。
 
 `P02-1016-03-ENDSTATE`（本班台账段终态标记，落地面核验＝`git show HEAD:docs/_working/automation_campaign/p02_databuilder/ledger.md | grep -c "P02-1016-03-ENDSTATE"`；上班两枚标记 P02-1016-01/02 各行逐字仍在）
+
+
+### 件 7　本班段落笔后的窗内更正（另起留旧案，件 5／件 6 原文逐字不改）
+件 5 第 7 行与件 6 第⑧条在 **23:27** 的读数"本班 sid 零命中"当时属实；**投袋后 23:32:12 复现 `.aidrafts/st-qoder-p02-1016-03`**，`git worktree list | grep -c p02-1016-03` 现读 **1** ⇒ 定性＝**入队链路替本席自建的影子树**（与上班 1016-02 同族、⑤席 1016-02 先例同形），**非本席违规施工**（"本班未调用任何工棚/工作树启动入口"这条仍成立）。按 TRAE-079 Phase 2 与在册"勿自删"令，本席保留不动，转⑩已在件 5 第 7 行挂号（该行的"零命中"读数按本节为准，旧文不抹）。
+同窗复核读数＝全仓 `heartbeat_daemon` 进程 **27 枚**（皆非本席名下；本席两枚 46956／48360 已按 **PID 精确终止**，60 秒后双读进程表 `pid_exists` 两面 **False** ⇒ 未见"杀而复活"）；`lock_files.py list` 含本席 sid 现读 **0**（release 2/2 verified）；本袋 `q-20261016-st-qoder-p02-1016-03-0001` 已 ENQUEUED（files=2）。
+⚑**本段刻意未随第二袋投出**＝本班件 0 的自然实验已坐实"同席尾袋 base_blob 停在首袋落地前 ⇒ 必被'双侧皆改'打死"，故本班不再投第二袋（投即自造下一个死袋）；本段**留盘面由下班逐字收养**，下班起手第一步按 `git diff --numstat HEAD` 量盘面领先行数（应为纯 insertions 且比本班袋 payload 多出本段）后随其袋一并投出。
