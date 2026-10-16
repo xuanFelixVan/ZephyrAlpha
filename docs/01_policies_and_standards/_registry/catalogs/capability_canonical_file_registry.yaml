@@ -61146,6 +61146,26 @@ creation_tokens:
   capability: autopipeline
   created_by: st-autoplan-20261014
   merge_evaluation: "整装回测席四件套:生产线第11席运行副本(内收,零新规则)"
+- file: docs/_working/automation_campaign/p12_maintenance/checkpoint.md
+  token: autopipeline-checkpoint-20261016
+  capability: autopipeline
+  created_by: st-qoder-p12-1016-01
+  merge_evaluation: "⑫后勤席四件套:生产线SOP v1.7.0新增岗位的运行副本(内收,零新规则/gate);指令真源在SOP §3⑫,本套为运行面"
+- file: docs/_working/automation_campaign/p12_maintenance/instruction.md
+  token: autopipeline-instruction-20261016
+  capability: autopipeline
+  created_by: st-qoder-p12-1016-01
+  merge_evaluation: "⑫后勤席四件套:生产线SOP v1.7.0新增岗位的运行副本(内收,零新规则/gate);指令真源在SOP §3⑫,本套为运行面"
+- file: docs/_working/automation_campaign/p12_maintenance/ledger.md
+  token: autopipeline-ledger-20261016
+  capability: autopipeline
+  created_by: st-qoder-p12-1016-01
+  merge_evaluation: "⑫后勤席四件套:生产线SOP v1.7.0新增岗位的运行副本(内收,零新规则/gate);指令真源在SOP §3⑫,本套为运行面"
+- file: docs/_working/automation_campaign/p12_maintenance/scope.md
+  token: autopipeline-scope-20261016
+  capability: autopipeline
+  created_by: st-qoder-p12-1016-01
+  merge_evaluation: "⑫后勤席四件套:生产线SOP v1.7.0新增岗位的运行副本(内收,零新规则/gate);指令真源在SOP §3⑫,本套为运行面"
 - file: docs/_working/automation_campaign/pulse/batch4_tombstones.md
   token: batch4-adjudication-batch4-tombstones-20261015
   capability: batch4_adjudication
