@@ -1,0 +1,195 @@
+---
+card_id: SIC-20261016-P04-20
+title_zh: 期权隐含波动率期限结构斜率（近月-远月 ATM IV 比值）＝波动率期限结构轴
+mining_tower: >-
+  波动率期限结构（⑨ 1015-02/04/09 班在册空白轴「波动率期限结构」首条）。
+  与存量区别＝本库已占的波动率成员（ti_ew_garman_klass_20_v1、avg_abs_ret、idiosyncratic_vol）
+  全部是**标的已实现波动**的二阶矩时序统计量；本卡取**期权隐含方差的期限方向**（同一天两个到期档的
+  IV 之比），信息源＝衍生品市场定价而非标的价格序列＝不同信息本体。
+birth_seat: ④
+birth_session: st-qoder-p04-1016-02
+birth_batch: 20261016-p04-02
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+source_links:
+  - role: 期限结构本体存在性（本席本班直连取到条目正文摘要＝最高证据级）
+    url: http://export.arxiv.org/api/query?search_query=all:%22implied%20volatility%20term%20structure%22&start=0&max_results=6
+    what_verified: >-
+      本班 WebFetch 该 arXiv API 地址返回 200＋5 条条目（逐条读到标题/作者/arXiv id/年份/摘要首二句）。
+      与本命题最相关＝Bandi, Fusari 等『Ultra-short-term volatility surfaces』(arXiv 2603.29430, 2026)
+      摘要原句＝『the pronounced oscillations observed in the at-the-money implied-volatility term
+      structure across ultra-short-term tenors』⇒ 外部同行确认 ATM IV 期限结构**存在独立于水平值的变动信息**，
+      这是本卡构造成立的前提。⚠ 但 arXiv 本渠道命中的 5 条全是定价/建模类，
+      **没有一条给出「斜率→未来收益」的方向性实证结论**＝本卡方向无外部先验可引（见 self_flag 第 1 条）。
+  - role: 命题基座期刊出处（引擎题录命中，本席自取失败＝证据级如实降级）
+    url: http://m.zhangqiaokeyan.com/academic-journal-foreign_european-financial-management_thesis/0204112927788.html
+    what_verified: >-
+      本班 WebSearch 引擎返回的摘要正文含完整四元＝Wang Yaw-Huei; Yen Kuang-Chieh,
+      『The information content of the implied volatility term structure on future returns』,
+      European Financial Management 2019 年第 2 期 380-406 页；摘要原句＝
+      『Both the in-sample and out-of-sample analyses suggest that the information content of the
+      term structure variable is significant and a strong complement to that of the level variable,
+      especially for shorter-term excess returns』（标的＝S&P 500 指数）⇒ 支持「期限结构腿与水平腿是两个信息面」。
+      ⚠ 本席对该 URL 亲自 WebFetch 返回的是阿里验证码 JS 壳（零正文）＝**未取得全文、未取得符号方向**；
+      引用者须按「题录级」而非「全文级」消费。
+  - role: A 股期权期限结构应用（题录命中，自取失败）
+    url: https://d.wanfangdata.com.cn/thesis/D03033071
+    what_verified: >-
+      本班 WebSearch 引擎返回题录＋摘要片段＝『我国期权隐含波动率期限结构及其应用研究』，摘要含
+      『对期权隐含波动率期限结构的斜率和跨式期权策略组合收益率关系的探讨』『利用期权隐含波动率期限结构的斜率
+      进行买卖操作时，建议交易上市时间早的期权品种』⇒ 中国市场确有该轴的**应用级**先验（标的＝国内期权品种）。
+      ⚠ 本席对该 URL 亲自 WebFetch 只取到万方平台页头页脚 JS（零正文、作者/年份/院校 ABSENT）＝未逐字核。
+      另注：该摘要把斜率用于**跨式期权策略损益**（期权自身收益），与本卡拟检验的「斜率→标的股票/指数未来收益」
+      不是同一命题，禁跨面引用为同一证据。
+  - role: 方向先验（本席派出的学术发现班亲验 200，本席未亲验＝降级消费，禁当本席证据）
+    url: https://ideas.repec.org/a/wly/jfutmk/v42y2022i6p1002-1038.html
+    what_verified: >-
+      发现班呈卷：Yoon, Jungah & Ruan, Xinfeng & Zhang, Jin E., 2022,
+      『VIX option-implied volatility slope and VIX futures returns』, Journal of Futures Markets 42(6)
+      1002-1038, DOI 10.1002/fut.22317；该班对 RePEc 英文摘要页 WebFetch 返回 200 并读到完整摘要＝
+      **IV smirk 的期限结构斜率**预测 VIX 期货未来 1 日至 1 个月收益，且优于既有股市/期权情绪代理，
+      机制＝VIX–VVIX 时变相关、VIX 跳跃、期货净持仓。⇒ 这是本席本班四条自取链接里唯一**带方向性实证结论**的
+      外部先验（对象＝VIX 期货收益，非股票/指数收益＝不同对象，禁直接搬到本卡标的上；
+      但它是 ⑥ 若要为「斜率腿」预注册方向时可以引用的第一手题录）。本席未亲自复核该 200＝证据级如实标子班级。
+  - role: GitHub 渠道同轴现成件（本席亲验 API，许可证闸主要对象）
+    url: https://github.com/quantskills/skill-options-vol-analyst
+    what_verified: >-
+      本班派出的 GitHub 发现班呈卷（REST API 实读），本席再亲自 curl api.github.com/repos/ 复核＝
+      full_name 命中、stargazers_count=7、license spdx_id=**GPL-3.0**、pushed_at=2026-07-16T09:38:06Z、
+      description 原句含『option-chain, IV/HV』。该仓库自述口径覆盖 IV vs HV、IV 历史分位(252d)、
+      **期限结构**、偏斜/微笑、波动率溢价。⇒ 本轴在 GitHub 侧有可参考的**流程口径**（不是策略代码），
+      但 GPL-3.0＝copyleft⇒按许可证闸只能学思想、禁复制其表达式与代码。
+  - role: 相邻面（横截面 IV 微笑斜率，用于申报相邻不申报同物）
+    url: https://m.zhangqiaokeyan.com/academic-journal-foreign_international-review-financial-analysis_thesis/020414395279.html
+    what_verified: >-
+      本班 WebSearch 命中题录＋摘要＝Feng Shu; Zhang Yi; Friesen, 『The relationship between the
+      option-implied volatility smile, stock returns and heterogeneous beliefs』, International Review
+      of Financial Analysis（2015 年第 10 期 62-73 页），摘要原句＝『Stocks with a steeper put slope
+      earn lower future returns, while stocks with a steeper call slope earn higher future returns』。
+      ⚠ 该文献的 slope 是**同一天同一到期档内跨执行价的微笑斜率**（横截面 strike 维），
+      本卡 slope 是**同一 ATM 档跨到期日**（时间维）＝两形不同变量，本卡不引用其方向，只作相邻面申报。
+
+license:
+  github_repo_license: >-
+    学术侧四条外链全为题录/摘要（arXiv API／EMFT 镜像／万方／IRFA 镜像），零软件许可证字段；
+    arXiv 条目分发许可本席未逐条读取＝UNKNOWN（按无许可证处理）。
+    GitHub 侧本班新增一枚同轴现成件＝quantskills/skill-options-vol-analyst，
+    本席亲验 api.github.com＝**GPL-3.0**／7★／pushed 2026-07-16；
+    另 GitHub 发现班呈卷的同轴 MIT 件（option-lab=MIT 0★ pushed 2026-09-29、
+    commodity-options-daily-review=MIT 0★ pushed 2026-08-30）本席**未亲验**，
+    按未验证处理、不参与本卡许可判定，只作 ⑤ 参考线索。
+  gate_verdict: >-
+    通过（许可证闸，附一条降档）＝本卡零外部代码摄入：pseudocode 由本席按本库实测列名自拟，
+    IV/期限结构斜率＝公开金融统计量定义，不构成著作权客体；论文正文与图表一律不复制。
+    该 GPL-3.0 仓库＝只学思想不入码（其 SKILL.md/analysis-playbook 的流程口径不复制原文表述）。
+  gpl_hits_this_round: 1
+  iron_rule_note: 外部代码禁直接复制入库；实现走 C3 翻译适配重实现
+
+logic_zh: >-
+  经济直觉＝隐含方差的期限方向刻画市场对「近期风险 vs 远期风险」的相对定价。
+  近月 IV 高于远月（backwardation／倒挂斜率）＝恐慌集中在眼前，通常对应已发生的冲击与短期超额收益；
+  远月高于近月（contango／正向斜率）＝风险被定价在未来，对应平静期或对未来不确定性的预防性定价。
+  与本库既有波动率成员的关键差别＝既有成员只量「波动多大」，本卡量「波动多久」＝一个序列的水平，一个序列的导数方向。
+  构造（本班实跑口径）＝逐 (trade_date, underlying) 取 |delta-0.5|≤0.1 且 iv>0 的期权作 ATM 档，
+  按到期日升序取剩余期限 ≥5 天的最近两档（近月 n、远月 f），各档对 call/put 混合取 IV 算术均值，
+  信号＝iv_f/iv_n − 1；同日多标的（510050.SH/510300.SH/510500.SH）取均值，当日不足 2 个标的则弃该日。
+  方向＝**不预注册**（见 self_flag）。
+
+pseudocode: |-
+  # 市场级代理腿（本席本班实跑＝正交闸采信的序列即此腿，非个股面板腿）
+  # 真源表：c1_market.option_iv_surface（ReplacingMergeTree，读侧必带 FINAL）
+  rows = ch.query_strict("""
+      SELECT trade_date, underlying, expiry, option_type, delta, iv
+      FROM c1_market.option_iv_surface FINAL
+      WHERE underlying IN ('510050.SH','510300.SH','510500.SH')
+        AND option_type IN ('call','put')          -- 实测 option_type='' 有 24811 行，必须排除
+        AND abs(delta - 0.5) <= 0.1                -- ATM 档按 delta 选（该表无标的现价列，不能用 strike 距 ATM）
+        AND iv > 0
+        AND trade_date >= '2019-01-01'
+  """)                                             # 本班实测返回 19113 行
+
+  by = defaultdict(lambda: defaultdict(list))      # (date, underlying) -> expiry -> [iv]
+  for td, und, exp, _ot, _dl, iv in rows:
+      by[(td, und)][exp].append(float(iv))
+
+  sig = defaultdict(list)                          # date -> [slope]
+  for (td, und), emap in by.items():
+      exps = sorted(e for e in emap if (e - td).days >= 5)   # 剔到期日<5天的档（到期跳变污染）
+      if len(exps) < 2:
+          continue
+      iv_n = mean(emap[exps[0]])                   # 近月 ATM 均值 IV
+      iv_f = mean(emap[exps[1]])                   # 次近月 ATM 均值 IV
+      if iv_n <= 0:
+          continue
+      sig[td].append(iv_f / iv_n - 1.0)            # 斜率：远月相对近月的 IV 比
+
+  # 日频序列 = 同日跨标的均值；标的覆盖 <2 的日子弃（本班实测＝右删失，见 caliber_pitfall 第 3 条）
+  out = [(d, mean(v)) for d in sorted(sig) if len(sig[d]) >= 2]   # csv 列名固定 date,sig
+
+  # 备考第二形（本席未物化，交 ⑤/⑥ 判定是否另立 card_id）：
+  #   水平腿 iv_n 与斜率腿 slope 是两列，1015-02 班在册「市场级水平值已 fail」只判了水平腿，
+  #   本卡主张的是斜率腿；若 ⑥ 要同楼双臂并考，须另立卡禁在本卡翻构造。
+
+data_binding:
+  primary_source: c1_market.option_iv_surface
+  sl_ref: 数据源映射读 docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md（④席不自建源，缺源走本席台账转单①）
+  measured_face_zh: >-
+    本班 system.tables／system.columns 实测（非记忆）：option_iv_surface 列面＝
+    trade_date Date / symbol String / underlying String / strike Decimal(18,4) / expiry Date /
+    iv Decimal(18,6) / option_type LowCardinality(String) / delta,gamma,theta,vega Decimal(18,6) /
+    data_source / quality_flag UInt8 / ingest_ts DateTime64(3,'UTC') / exchange / symbol_canonical；
+    跨度与基数（FINAL）＝n=419,801，min(trade_date)=2019-01-02，max=2026-10-15；
+    option_type 域值＝put 197,562／call 197,428／空串 24,811；
+    underlying 头部＝510050.SH 154,709／510300.SH 111,937／510500.SH 55,217／588080.SH 44,998／
+    588000.SH 42,627／159915.SZ 2,850／159922.SZ 2,605／159901.SZ 2,514；
+    quality_flag 恒 1（419,801/419,801）＝该列无判别力，禁当质量筛使用。
+    本班候选序列实跑面＝取回 19,113 行 → 计算 1,108 个 (date,underlying) 有值日 → 落 csv 865 个日频点。
+  face_gap_zh: >-
+    三处缺口如实申报：①本卡物化的是**市场级代理腿**（三大 ETF 期权斜率的日均值），
+    而命题原形可以是横截面面板腿（按 ETF 成分股展开）＝两腿不同分母，引用者禁跨面把市场级读数当选股证据；
+    ②标的现价列缺失（表内只有 strike 没有 underlying 当日 close），ATM 只能按 delta 近似，
+    delta 本身是上游采集值＝本席无法独立校验其定价一致性；
+    ③本班未测 588080/588000/159915 等其余 5 个标的的斜率是否与三主标的同向（未纳入＝样本面选择，非结论）。
+  orthogonal_gate_zh: >-
+    本班实跑（不是缺席）：python scripts/backtest/fexam/signal_orthogonality.py gate
+    --candidate .runtime/tmp/p04_1016_02/iv_term_slope.csv --pool .runtime/tmp/p04_06_pool --gate 0.3
+    → verdict=pass max|corr|=0.1612 most_similar=.runtime\tmp\p04_06_pool\ti_ew_garman_klass_20_v1.csv
+    rc=0（池面＝32 员，与本席 1015 系列在册同分母）。
+  dedupe_gate_zh: >-
+    本班实跑尺＝grep -ci 对 docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
+    （该册 total 条目 162）：隐含波动率 0／波动率期限 0／期限结构 0／implied 0／偏斜 0／skew 0／
+    贴水 0／基差 0／大宗 0／block_trade 0／basis 3。⚠ basis 的 3 枚命中经本班逐行核＝
+    全部是字段名 card_state_frozen_basis（第 133/12290/12625 行），非基差因子＝假阳性，已排除。
+    ⇒ 波动率期限结构轴在存量册零命中＝空白轴本体。
+  pool_face_note: 池目录 .runtime/tmp/p04_06_pool 本班实存 32 枚 csv（ls 计数）＝闸可用，非缺席申报
+
+self_flag:
+  - >-
+    方向未预注册＝本卡最大约束。本班三条外部证据只支持「斜率腿含有独立于水平腿的信息」，
+    没有任何一条给出可引用的符号：arXiv 命中全是建模类，EMFT 题录摘要未含方向，万方只读引擎片段且命题是
+    期权跨式损益（不同对象）。⇒ 须 ⑥ 带独立外部先验另立 card_id 才能开考，本席不翻号、不选边。
+  - >-
+    市场级代理腿与面板原形是两条腿（承 1015-08 班在册第①条同型申报）。正交闸只对代理腿的 865 日序列负责，
+    不对未来面板腿担保。
+  - >-
+    865/1108＝本班实测的日频点损失（243 个单日标的覆盖日按 len>=2 谓词弃样）。
+    这是**构造性右删失**，不是数据缺失：早期只有 50ETF/300ETF 两个品种时该谓词会系统性弃掉样本开头，
+    ⑤ 实现前若要满日历须改谓词（改法＝允许 1 标的日并入并标 coverage 列），本席未擅改。
+  - >-
+    delta-based ATM 与 strike-based ATM 不等价；本库 option_greeks 表与 option_iv_surface 的 delta 是否同源未核，
+    ⑤ 定 FINAL 前建议对本卡序列做一次「改 |delta-0.5|≤0.2」的口径敏感性（本席未做，不声称稳健）。
+  - >-
+    quality_flag 恒 1＝该列不能当筛子；若上游某天开始写 0，本卡 SQL 未过滤它＝会吃进降级行，
+    属已知暴露面，交 ⑤ 决定是否加过滤。
+
+caliber_pitfall_zh: >-
+  五条硬口径坑（全部本班实测或在册，禁凭记忆引用本卡）：
+  ①ReplacingMergeTree 不 FINAL 会吃重复档→斜率分母被旧版本污染（在册 ch-query-fails-soft-trap：
+  ch_writer.query 出错返回空串而非抛，query_strict 才自带显式 FINAL，本席全程用 query_strict）。
+  ②option_type 空串 24,811 行＝若不过滤会把同一 (date,expiry) 混进未知方向期权，均值 IV 口径漂移。
+  ③到期日 <5 天的档必须剔（本卡用 (expiry-date).days>=5 谓词）：到期当档 IV 常被置 0 或缺失，
+  会让 iv_n 塌到极小、斜率爆表——这类极值若留下会伪装成「深度倒挂」信号。
+  ④期限结构斜率与「已实现波动期限结构」（如 RV5/RV60）不是同一物：后者属本库已判边际零的
+  avg_abs_ret 族（⑨ 1015-04 班在册），引用者禁把两者混为一轴。
+  ⑤万方那条摘要的命题是斜率→跨式期权策略收益（期权端），与本卡斜率→标的未来收益（股票/指数端）
+  不同对象，禁跨面当同一证据。
