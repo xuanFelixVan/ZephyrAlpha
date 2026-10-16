@@ -1126,3 +1126,39 @@ auction_window_pre_202606_gap（且无 primary_alternative）／bt_trade_log_att
 - 不广播「队列畅通」：pending 0 但 processing 1，两证不齐。
 - 不自入 04 永久区：断链三件 promote 属生产者义务；E 面 196 处＝Owner 保留面。
 - 不自签恢复前置①"判得准"：该腿永真（在册 245/245 单值＋本班 pending=0）。
+## ⑩线长 st-qoder-p10-1016-20 班派单（起手 21:35:11 date 实测・防重入未撞闸＝pulse 末行 13:58・零 worktree 遵 TRAE-079 Phase 2・追加节，上班各节逐字不改）
+
+### 一、全线状态（21:52:23 现测，非终值）
+
+- 发车判定＝**继续发车**：自动回退三判据全未命中＝(a) ghost 闸 `custody=True ∧ dead=true` 命中 0（11:36 后 111 条读数 100% `custody_excused`）・(b) pending 5＜50・(c) commit_pct 75.97%＜90%。
+- 治理面差额（呈批件，不阻断本班发车）＝裁定#537/#538/#539 `git show HEAD:` 命中 0／盘面 3，热册 +94 行 staged 未 commit，册最近 commit `5fbfbc3add`(10-14 21:37)；佐证"运行面已真实发车"＝注册表 15 键中生产席 ①④④⑤⑥⑧⑪ 心跳齐活＋15:00 后 16 枚落地面 commit（①席首袋 `2543f8f190` 21:24／⑦c 席首袋 `98410ca45f` 16:17）。
+- 卡池分母（553 件全树 `^status:` 锚定）＝preregistered **163**／empty **186**／blocked_on_impl **48**／blocked_on_data **71**／examined **83**／examining **2**。
+- 瓶颈环＝**考工**：按 SOP §3-A 每 50 张一席，163/50⇒需 ≥4 席，现编 3 席且仅 ⑧ 在岗（⑦A/⑦C 无在册会话）⇒ 结构缺口 1 席，本班不自行增编（cron 属 App 层，本席无量尺），列呈批。
+- 四态＝pending 5／processing 1／done 872／dead 441（合并死信面今日 278 枚，max dead_at 21:44:55；archive manifest 94 行全 `A_LANDED`）。
+- 收班面（今日 `[BLOCKER]` 行数）＝①8・②8・⑤13・⑥6・⑦C7・⑧9・⑨1・⑪7・⑫42・⑩191；**0 行席＝③④⑦A**（较 p18/p19 的九席 0 行大幅收敛＝发车后到岗面真实改善）；三态回退弹＝24 面全 NEWER/EQ・**零 REGRESS**（p19 在册四席缺口已闭合）。
+- 水位＝ram 69.2%（较 p19 的 88.1% 降 18.9 点）・commit 75.97%・cpu 92%（并发高位）・degraded False・`worktree_changes` 起手 1379＞50 预警在册。
+
+### 二、各席本班配额与令（在册令不重复追加）
+
+- **① 数据源席**：复岗确认（首袋 21:24 已落＝`known_data_gaps.yaml` 六枚探针键）。本班配额＝blocked_on_data 71 张按域取 **2 张/班** 的缺口取证单；⚑勿重复挖已落六键（查重尺＝该册现值 grep 键名）。给 ⑥ 的 `unblocked` 回执须带 file:line 或 SQL 锚点。
+- **② 数据具料席**：心跳末行 `exited` 18:22＝断线。首件令＝**先补齐再谈提交**（盘 838／HEAD 723＝115 行在盘未入库），补齐后随自家袋收口；未补齐前禁把该件放进任何袋。本班不派新具料件。
+- **③ 挖矿席（库）**：断线（游标 587 分未跳・今日 0 行）。复岗首查＝empty 186 裸骨架转具名子题（真源=`config/trading_decision_map.yaml` 图节点定义，非自拟），保底绩效＝每班 ≥5 新候选或 ≥10 张骨架。⚑新料已备：`data/strategy_intake/lane_p0_obi_candidates.csv` 77 行（18:44 落盘）经与卡面 id 对拍**零碰撞**（仅 1 张卡已引用 CAND-P0-OBI 族）⇒ 可安全出题不重复。
+- **④ 挖矿席（网）**：在岗两班（p04-01・p04-02）。高水位节拍承本席在册令：起批实测 commit_pct≥85% 则零 CH 探针／零 panel 物化，现测 75.97%⇒允许轻档但须在台账带自证读数。查重令＝与 ③ 不得同节点，领车道时先读该 lane 台账 `mined_out` 段（真源分散于 `docs/04_research_records/mining/ledgers/*/R1_L*_ledger.md`，聚合面缺失系本席在册缺陷，暂以三面对拍＝卡面 family＋车道台账＋intake CSV mtime）。
+- **⑤ 施工席**：在飞袋 `q-20261016-st-qoder-p05-1016-02-0003` 21:44:55 死 `GATE-PRECOMMIT-RUN`＝**读 dead_reason 修因再投，禁盲重投**（本席不 requeue 他人袋）。三枚工具缺陷工单挂本席（详见台账 §40.1 行 3/4/5/8）＝守护与注册表两把尺・占卡锁 TTL 30＜班限 90・`health` 不计 `pending/.stale/` 墓碑面（现测 176）。
+- **⑥ 制卡席**：上批游标自报"零卡面写动作、零冻结、零新卡"＝吞吐空转。本班配额＝从 163 preregistered 中**冻结 ≥8 张**（=4 席×每班 2 张的考工进料面）＋为考工占卡补 `holder_session` 字段出骨架（走 `scripts/backtest/generate_exam_card_skeleton.py` only-add 通道，属判据缺失的处置腿）。
+- **⑦A／⑦C 考工席**：断线（无在册会话）。⑦C 的"三锁静默过期"案卷已转⑤，勿自改锁码。复岗后首查＝两枚悬空卡（`entry_flow/L3/TDM-E-L3-03-2__calibration__03_温和放量`・`...TDM-E-L3-05__calibration__02_连板顺位`，盘 examining／HEAD preregistered／锁 FREE／悬空 3.2 小时）是否系本席所取——**若是请置终态，若否请如实写"未取"**；本班 ⑩ 不代翻（工序4 第二证不可判）。
+- **⑧ 考工席**：在岗但 checkpoint 自报"连续三班 0 出分"＝全线最重吞吐缺口（瓶颈环内）。硬配额＝本班 **≥2 张出分**，或按四判诊（信号真无／数据不足／判据缺源／执行器故障）如实归因入册并带 file:line。⚑若 0 出分根因＝N-16 册未落地的下游症状（你 checkpoint (b) 自述），请把该症状单独写成一枚 `[BLOCKER]|数据问题|高` 给 ⑨/⑫ 接面，不要在卡面上反复试跑。
+- **⑨ 成绩官**：今日仅 1 行・游标仍 `rows[103]`（02:47 后未落地）。配额＝对 ⑧ 的"连续三班 0 出分"做册面核对（判据＝成绩册现读 vs ⑧ 台账自报），并复核 ⑦C 两枚 fail 出分是否已入册；全域 `stash@{0}` 未 drop 前回灌风险在册＝行数骤降先查 stash 再判事故。
+- **⑪ 整装席**：ledger 盘 92 行／HEAD 面**查无**（`git log -1` 空返回）＝从未 commit。首袋令＝四件套入库（含本台账），未入库前禁把该件放进任何后续袋；盘点班"未硬跑"状态请在游标行原地更新。
+- **⑫ 维护席**：工单已接（`p12_maintenance/ledger.md:303` §14.3 处置单＋`:~320` §14.4 升级不执行）。下一步＝按 §14.3 判据代把 chief 死袋 `q-20261016-st-qoder-chief-1016-01-0001/-0002` 的修因通道理清（PERMANENT-SYSTEM-TRIGGER／MANUAL-ONLY-PERMANENT 逐件声明），断链三件与热册 94 行的入库义务按你自判仍归 chief 载体袋；另请给队列 blobs 保留策略一个明示（done 887→872 的有界修剪已收窄抢救窗口）。⚑REG-RULING-001 回填 18 条缺集（#522–#539）你升级正确＝该册非你写域，本席同样不碰。
+- **⑩ 本席**：本班工序 2/3/4/5/6/7/8/9/10/14 全量执行，收班八件见台账 §40 与本班袋面；下班 ⑩1016-21 首查四件＝①本班袋四态（判落地只认 `git log -1 --name-only` 与 blob）②两张悬空卡是否已被 ⑦A/⑦C/⑧ 任一一席自证终态（若仍 FREE＋无在途⇒按工序4 翻回 preregistered）③热册 94 行是否已入 HEAD（尺＝`git show HEAD:docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml | grep -cE "^- ruling_id: 裁定#53[789]"`，现值 0）④keeper 兜底是否已被⑤修掉（若 `heartbeat_daemon` 仍自退，继续用 keeper 并在收班②按 PID 终止）。
+
+### 三、本席本班不做（带承重证据）
+
+- 不翻两张 examining 卡：工序4 两证中第二证不可机械判（卡面无持有者字段＋⑧ 在岗且 21:20 新持他卡锁）＝并发避让优先于清账。
+- 不重复追加各席强制收班提醒：reminder 块实测已在各席 checkpoint 在册；今日 0 行席已缩至 ③④⑦A 三席，根因仍系到岗性非指令面。
+- 不清理任何 worktree／会话壳：51 行清单・43 枚 `.aidrafts` 壳（含本席 19 枚）・3 枚 `.worktrees` 车道，整批交清理专班（承 p17/p18 改判＝网关阶段3 代建非席位违规）。
+- 不碰 `ruling_registry.yaml`／断链三件／X1・X2 在施面，不 requeue 他人死袋，不改任何判据门柱与冻结值。
+- 不广播"队列畅通"：pending 现测 5≠0，两证不齐；D6 245 件对账留待 pending 归零班。
+- 不自签恢复前置①"判得准"：11:36 后 `judged_dead` 零新增系 custody 赦免腿构造性保证（在册 caveat），非后测经验。
+- 不自行增编考工第 4 席：名额与 cron 属 Owner／运行班面，本席只出结构缺口读数。
