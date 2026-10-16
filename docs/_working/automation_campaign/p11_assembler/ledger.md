@@ -89,3 +89,26 @@ title: ⑪整装回测席·整装成绩台账
 - [BLOCKER] 2026-10-16|⑪1016-01|流程问题|21:30 夜窗机器编排面无注册（排班线未建），本席自立席起九班零发车；dispatch 在册令＝pool yaml 未交付前不硬跑，本班遵令只盘点|config/trading_day_cycle_map.yaml grep「21:30|整装|p11|ibt」零命中＋docs/_working/automation_campaign/dispatch/daily_dispatch.md:57,142,503|要⑩汇总呈 Owner 排班面（非指令面缺口），或明确改本席频次|中
 - [BLOCKER] 2026-10-16|⑪1016-01|工具缺陷|heartbeat_daemon CLI 不校验 session id 形态，`python -m ...heartbeat_daemon --help` 把「--help」当 sid 往 .runtime/sessions/--help/heartbeat.jsonl 追加 started/exited 两行（本席本班触发的 --help 探测复现，末行 status=exited reason="session not in registry"）|.runtime/sessions/--help/heartbeat.jsonl 末两行 ts=2026-10-16T13:39:27Z/13:39:28Z＋src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py:810-819 argv 直取 sid|要⑫席给 _run_cli 加 sid 形态校验并清该 stray 目录；本席未删该目录（非本席所建，10-14 15:12 已存在）|低
 - [BLOCKER] 2026-10-16|⑪1016-01|数据问题|无（本班未触发 CH 腿，三窗产物齐；无缺数诉求）|—|—|—
+- [BLOCKER] 2026-10-16|⑪1016-01|工具缺陷|禁建 worktree 令（TRAE-079 Phase 2，Owner 2026-10-16）与提交正门互斥：本席零调用任何建道入口，但 `git_commit.py --enqueue` 在入队路径上无条件调 `session_worktree_start(session_id, allow_workspace_drift=True)`，实测 21:52:01 为本 sid 自动开出整份检出车道（.aidrafts/st-qoder-p11-1016-01，files=22555/dirs=3222 按 is_file 谓词分层实测），并起第二个心跳 daemon（pid 38408，与本席手工 39696 并存；.runtime/locks/heartbeat_*.pid 只记 38408＝手工那路无 pid 面可查，收班须按 PID 双杀）|scripts/git_commit.py:1028-1036（兜底意图=会话存活保障，副作用=建道）＋.git/worktrees/st-qoder-p11-1016-01 mtime 21:52:02＋heartbeat.jsonl 末两行 pid 38408/39696 同 sid alive|要⑤席把存活保障与建道解耦（只 re-register＋拉 daemon，禁 add worktree），禁弱闸/禁白名单/禁新豁免（在册先例＝改喂给闸的输入指向）；本席未删该车道（袋 pending 中，删道恐连坐落地）|高
+
+### 补强与更正（本班后半段另 found 在册下浮尺，旧案卷保留不改）
+
+- **更正**：上方转单结构类①与 [BLOCKER] 判据缺失条说"下浮率全仓无在册定义"——该断言只对**⑪席/整装协议面**成立（`IBT-PROTOCOL-V1.md` §8 四门无衰减项，grep 命中仅 SOP 散文），对**E4 在库监控面不成立**：在册尺=`c1_backtest.strategy_screen.oos_years_decay`，判据=`strategy_decay_certifier.py:38-40`（DSR≥0.5 ∧ decay<0.5→certified；decay≥0.5→failed）与 `strategy_lifecycle_advisor.py:36`／`strategy_screen_query.py:150` DECAY_SUSPECT=0.5 三处同源。旧行不删，按此更正读。
+- **v2 池在册下浮尺实测（本班新增唯一硬数据，14/14 有值零 NULL）**：`oos_years_decay` 中位 **0.0000**／均值 **0.0543**／**≥0.5 存疑数 0**／最劣 **0.3033**（CAND-9ce75aa27ce5），正衰减仅 4 员（0.0779/0.0991/0.2795/0.3033），其余 10 员为 0.0；`argMax(deflated_sharpe, screened_at)` 全员 ≤0.0065 ⇒ 按 certified 判据 **0/14 可 certified**。查询走 `zephyr.data.ch_reader.query`（IN 清单先过 `[A-Za-z0-9_-]{4,40}` 白名单正则断言 len 相等，禁裸拼；正对照=14 员全回行、缺席集空）。
+- **读法（直给 Owner）**：这套池的问题**不在下浮，在上浮之前就是负的**——六员 FACT 族 `is_sharpe` 实测 -0.218~-1.038（`-0.492/-0.218/-1.038/-0.623/+0.138/-0.527`），叠加成本后 OOS 唯一正读数（+0.457）也跑输基准 14.59pct。所以"能不能赚钱=不能"的成因链＝①成员绝对水平低＋②成本容量（IS 成本拖累 38.6pct 在册）＋③DSR≈0（多重检验校正后无显著性），而非 IS→OOS 衰减。
+- **新触发的判据矛盾（已另起 [BLOCKER]）**：写腿 `scripts/backtest/c4_batch_screen.py:379-385` 对 decay 做 `min(1.0, max(0.0, ...))` 裁断⇒**负衰减（OOS 优于 IS）恒被压成 0.0**，而 `config/comparison_policy.yaml:43 oos_is_decay_negative: true` 注释明写"OOS 优于 IS（oos_years_decay<0）即触发"——经本腿入库的行该分支恒不成立。本席未逐腿查证其余三条 INSERT 供数腿（intake_load_screen_c2.py:46／sim_deviation_report.py:258 透传），故只判"本腿供数面恒空转"，不判"政策分支全局死"。
+- 通道三态实测（防"查空"伪装"查无"）：`SELECT 1`→`'1
+'` 通道活；`count_strict` 于本表抛 `ClickHouseQueryError(engine_probe: 空返回（未知引擎）)`，而 `system.tables WHERE name='strategy_screen'` 等值定位＝**c1_backtest.strategy_screen，engine=MergeTree**（非 ReplacingMergeTree）⇒ 严格读死在引擎探测腿，不是表缺；本表读数一律走等值定位＋非严格 query，在册 [[ch-query-fails-soft-trap]] 复证。
+
+### 收班八件（本班逐件实测）
+
+1. **release 全部 claim**＝本班 2 件（ledger.md/checkpoint.md）走 `git_commit.py --release-only` 出口，读数见班末回报。
+2. **注销心跳**＝本 sid 实测**两个** daemon 并存需双杀：pid 39696（21:40:43 本席手工起，pid 面无记录）＋pid 38408（21:52:05 正门 `git_commit.py:1028-1036` 兜底起，`.runtime/locks/heartbeat_st-qoder-p11-1016-01.pid` 只记这一个）；按 PID 精确杀，禁 /IM 全杀（在册 [[never-kill-processes-by-image-name]]）。
+3. **实际耗时**＝21:30:33 进场（reaper 首行时戳）→21:58:47 写本段，**≈28 分**（含等袋 6 分，袋仍 pending 未阻收班，快照入袋即安全）。
+4. **[BLOCKER] 行**＝本班累计 10 行（含数据问题类写"无"一行），`grep -c "\[BLOCKER\]"` 命中面见班末复量。
+5. **自清收口**＝`.runtime/tmp/` 本班临时件全部删除（池探针目录 p11_1016_01 两件＋message 文件），主区无本班散落件；四件套已入队 q-20261016-st-qoder-p11-1016-01-0001。
+6. **GPU 还牌**＝本班**未 acquire 看门人**（零算力腿），status 免核。
+7. **后台子任务清点**＝本班 **零子代理** spawn；唯一后台进程=本席心跳（归第 2 件），零孤儿。
+8. **零 worktree 确认**＝**未达**：本席零调用建道入口，但正门 `--enqueue` 于 21:52:01 自动为 sid 开出 `.aidrafts/st-qoder-p11-1016-01`（files=22555/dirs=3222，is_file 谓词分层实测；.git/worktrees 元数据 mtime 21:52:02）⇒ 第 8 件本班如实记"被正门代建"，处置见上方 [BLOCKER] 工具缺陷条，本席不删（袋 pending 中，删道连坐落地风险）。历史遗留面另报⑩：`git worktree list` 现 51 条（43 条在 `.aidrafts/`），本席禁自行清理，交清理专班。
+- [BLOCKER] 2026-10-16|⑪1016-01|判据缺失|更正当班自纠——本席前一条"下浮率全仓无在册定义"只对⑪席/整装协议面成立，E4 侧其实有在册尺 oos_years_decay（三处同源：strategy_decay_certifier.py:38-40／strategy_lifecycle_advisor.py:36／strategy_screen_query.py:150 判存疑线 0.5），而 IBT 协议 §8 四门与 SOP:157,162 均未把该尺接进本席晨报口径|config/comparison_policy.yaml:43＋scripts/backtest/c4_batch_screen.py:379-385 写腿＋实测 v2 池 14 员 decay 中位 0.0/均值 0.0543/≥0.5 零员/最劣 0.3033，DSR 全员≤0.0065⇒0/14 certified|要⑩或 Owner 定一句：⑪席晨报下浮率是否直接引"池内成员 oos_years_decay 中位＋≥0.5 计数"为该席在册口径（旧行保留不删，按此更正读）|中
+- [BLOCKER] 2026-10-16|⑪1016-01|工具缺陷|下浮尺写腿把负衰减裁成 0.0，政策面等不到的分支恒不成立——`min(1.0, max(0.0, ...))` 使 OOS 优于 IS 的负值不可见，而在册政策明写 decay<0 即触发；本席实测 10/14 成员落 0.0 与真零衰减面不可分（非 NULL，NULL 仅出现在 is_sharpe 映射缺失时）|scripts/backtest/c4_batch_screen.py:384-385 裁断式＋config/comparison_policy.yaml:43 期望值域＋本席 argMax 读数（14/14 有值零 NULL）|要⑤席定性并给处方（去裁断或加负值列/符号位，属改判据数值面须走裁定，本席禁改）；本席只判"经本腿入库面恒空转"，未查另两条透传腿不判全局死|中
