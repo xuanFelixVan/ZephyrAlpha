@@ -12,6 +12,8 @@
 # [INVARIANTS] 只考 preregistered 卡（empty=未冻结禁考；examined=已出分，重考须 --force 且新分数行
 #   only-add 追加禁改旧行）；判据门柱=卡内 pillars_numeric（裁定#501 冻结面，执行器零裁量）；
 #   verdict=门柱全过才 pass（一票否决）；分数行落 exam_scores_v1.yaml only-add；试次入 n_trial_ledger；
+#   形状预检（_shape_preflight，判分前 fail-fast）：signal/target 两面形状不配→verdict=blocked
+#   行（reason=shape_mismatch，only-add 追加、卡不翻 examined、零异常、不记试次）；
 #   信号/目标可注入（测试零 CH），缺省经 ch_data 按 signal_spec/target_spec 取数。
 #   试次册路径可注入（run_card 的 ledger_registry_path，缺省=生产真源不变）：测试一律注入 tmp_path，
 #   禁经单测写生产 N 账本（根宪法 §9 条目 6；10-12 实测泄漏形态=examcard:TDM-E-TEST/* 进生产册）。
@@ -908,6 +910,57 @@ def _declared_local_faces(card: dict) -> tuple[object, object]:
     return (_load(b.get("derived_series")), _load(b.get("target_series")))
 
 
+def _shape_preflight(card: dict, signal, target) -> str | None:
+    """执行器形状预检（⑤席 2026-10-15，B 族 14 卡 ill-formed 教训根治件）：判分前问一句
+    "注入的两面形状配不配"。配→返回 None 照常判分（通过预检的卡走的判分路径与判分结果
+    逐字不变——纯 fail-fast，零判据面改动）；不配→返回机器可读的 mismatch 细节，
+    由 run_card 出 verdict=blocked 诚实行（分数册追加、卡不翻 examined、零异常）。
+
+    三条规则（与事故形态一一对应）：
+      ① signal=panel（DataFrame）而 target=市场级单序列（Series）——截面算法无法对单序列
+        （fast_rank_ic 取 ret.columns 即崩，本件 panel 路实测 TypeError）；
+      ② signal=Series 而 target=DataFrame——分桶/时序判分面同样无法对多列面板（同向不配）；
+      ③ 双面板但 target 仅 1 列而 signal 多列（悬殊且单列，对单列目标至少 2 倍差）——
+        单列目标撑不起多符号截面逐符号对位（fast_rank_ic 列交集为空→空 IC→ic_stats
+        假 0 分＝静默错分，比崩更危险）。
+    """
+    sig_df, tgt_df = isinstance(signal, pd.DataFrame), isinstance(target, pd.DataFrame)
+    sig_cols = int(signal.shape[1]) if sig_df else 1
+    tgt_cols = int(target.shape[1]) if tgt_df else 1
+    if sig_df and not tgt_df:
+        return (
+            f"panel 信号（{signal.shape[0]}x{sig_cols} DataFrame）配市场级单序列目标"
+            f"（{type(target).__name__}）——截面算法无法对单序列（疑似 target_spec 绑到市场级卡面）"
+        )
+    if tgt_df and not sig_df:
+        return (
+            f"series 信号（{len(signal)} 点 {type(signal).__name__}）配 panel 目标"
+            f"（{target.shape[0]}x{tgt_cols} DataFrame）——分桶/时序判分面无法对多列面板"
+        )
+    if sig_df and tgt_df and tgt_cols == 1 and sig_cols > 1:
+        return (
+            f"panel 目标仅 {tgt_cols} 列而信号 {sig_cols} 列（悬殊且单列）——单列目标撑不起多符号截面"
+            "（疑似市场级序列误装 DataFrame；列交集为空会静默错分）"
+        )
+    return None
+
+
+def _shape_face(signal, target) -> dict:
+    """预检拦截行的形状观测面（yaml 可序列化：shape 展平成 [行,列]，非 DataFrame 记 [点数,1]）。"""
+
+    def _dims(x) -> list[int]:
+        return [int(x.shape[0]), int(x.shape[1])] if isinstance(x, pd.DataFrame) else [int(len(x)), 1]
+
+    return {
+        "signal_type": type(signal).__name__,
+        "target_type": type(target).__name__,
+        "signal_shape": _dims(signal),
+        "target_shape": _dims(target),
+        "signal_cols": _dims(signal)[1],
+        "target_cols": _dims(target)[1],
+    }
+
+
 def run_card(
     card_path: str | Path,
     *,
@@ -939,6 +992,47 @@ def run_card(
             "缺省 CH 取数面未接（signal_spec/target_spec 绑定属 W4 运行期配置）——"
             "请注入 signal/target 或先行落绑定册（防误绑数据面）"
         )
+    # 执行器形状预检（⑤席 2026-10-15）：判分前 fail-fast——两面形状不配→verdict=blocked 诚实行
+    # （reason=shape_mismatch，分数册 only-add 追加，零异常），卡零触碰不翻 examined；
+    # row.run_id 即重考 lineage 指针（卡保持 preregistered，重发出题后无需 --force 直接重考）。
+    # 预检拦截＝接线错误非研究试次，不记 n_trial_ledger（不占 DSR 分母）。
+    mismatch = _shape_preflight(card, signal, target)
+    if mismatch is not None:
+        row = {
+            "card_id": card["card_id"],
+            "node_id": card["node_id"],
+            "run_id": run_id or f"examcard-{_date.today().isoformat()}",
+            "kind": "exam",
+            "verdict": "blocked",
+            "pillars_all_pass": False,
+            "oos_ok": False,
+            "regimes": [],
+            "date": _date.today().isoformat(),
+            "metrics": {"shape_preflight": _shape_face(signal, target)},
+            "unjudged": _unjudged_pillars(card, {}, _UNION_PILLAR_KEYS),
+            "fails": [f"shape_mismatch: {mismatch}"],
+            "reason": "shape_mismatch",
+        }
+        # 分数册 only-add 追加（双文档 register 兼容，与既有 rows 追加同款；blocked 行专用内联款）
+        sp = Path(scores_path)
+        if sp.exists():
+            docs = [d for d in yaml.safe_load_all(sp.read_text(encoding="utf-8")) if isinstance(d, dict)] or [{}]
+            reg = next((d for d in docs if d.get("rows") is not None), docs[-1])
+            brows = reg.get("rows") or []
+        else:
+            reg = {"schema_version": "1.0", "title": "考试卡分数册（成绩汇总面，方案 §6 D4）", "rows": []}
+            docs = [reg]
+            brows = reg["rows"]
+        brows.append(row)
+        reg["rows"] = brows
+        sp.parent.mkdir(parents=True, exist_ok=True)
+        bdump = (
+            yaml.safe_dump_all(docs, allow_unicode=True, sort_keys=False, width=140)
+            if len(docs) > 1
+            else yaml.safe_dump(reg, allow_unicode=True, sort_keys=False, width=140)
+        )
+        sp.write_text(bdump, encoding="utf-8", newline="\n")
+        return row
     family = card.get("family")
     # 判官按判据键分派（W-A 臂协议配方面 2026-10-10 三连裁③v2）：路由判据本体见 pillars_route()——
     # 该函数是 run_card 与门柱词表普查（card_binding --mode vocab-census）的唯一共用真源，禁两处各抄。
@@ -1057,7 +1151,8 @@ def main() -> int:
         sig_b = sb.iloc[:, 0] if sb.shape[1] == 1 else sb
     if args.target_csv:
         t = pd.read_csv(args.target_csv, index_col=0, parse_dates=True)
-        tgt = t.iloc[:, 0]
+        # panel 目标保列语义与 --signal-csv 同款：单列→Series，多列→整面 DataFrame（禁砍单列）
+        tgt = t.iloc[:, 0] if t.shape[1] == 1 else t
     row = run_card(args.card, signal=sig, signal_b=sig_b, target=tgt, force=args.force)
     print(json.dumps(row, ensure_ascii=False, indent=2, default=str))
     return 0 if row["verdict"] == "pass" else 1
