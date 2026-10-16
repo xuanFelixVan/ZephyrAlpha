@@ -35,6 +35,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+import zephyr.ex_core.adapters.qmt_file_bridge_broker as bridge_mod
 from zephyr.ex_core.adapters.qmt_file_bridge_broker import (
     QmtFileBridgeBroker,
     QmtFileBridgeError,
@@ -44,6 +45,14 @@ from zephyr.ex_core.order_manager import OrderManager
 from zephyr.ex_core.trading_session import TradingSession, TradingSessionConfig
 from zephyr.governance.adapters.risk_validation_bridge import RiskViolation
 from zephyr.shared.contracts.order import Order, OrderSide, OrderType
+
+
+@pytest.fixture(autouse=True)
+def _isolated_idempotency_ledger(tmp_path, monkeypatch):
+    """Q7 测试隔离：默认幂等账本路径重定向到 tmp——禁触生产 data/（跨用例零污染）。"""
+    monkeypatch.setattr(bridge_mod, "_default_order_idempotency_db", lambda: tmp_path / "idem_ledger.db")
+
+
 from zephyr.shared.contracts.position import PositionSnapshot
 from zephyr.shared.utils.time_utils import now_utc
 
