@@ -1129,8 +1129,29 @@ def _check_hot_overlap_escalation(project_root: object, session_id: str) -> tupl
 # （rev-parse/show/status）与慢速写命令（commit/merge）共用上限。改为按命令类型
 # 分级，单个慢命令不会耗尽整个 session 预算。
 _GIT_TIMEOUT_READ = 15  # rev-parse/show/status/diff/log/ls-tree/merge-base/config
-_GIT_TIMEOUT_WRITE = 60  # commit/merge/checkout/reset/update-ref/rebase
 _GIT_TIMEOUT_DEFAULT = 30  # 其他默认
+
+
+def _git_timeout_write_from_ssot() -> int:
+    """写类 git 超时秒数——SSoT 单口：thresholds.yaml
+    ``git_operations.commit_queue_git_timeout_seconds``（缺省回退 300）。
+
+    病灶（A2 提交吞吐车道 2026-10-17）：原 ``_GIT_TIMEOUT_WRITE=60`` 硬编码与阈值
+    SSoT（现值 300，scripts/governance/commit_queue_landing.py 同键同款先例）脱钩——
+    并发施工期写类 git（commit/merge/checkout/reset…）60s 三连超时死袋
+    （q-20261016-st-qoder-p05-1016-03-0003 实锤）。fail-open：SSoT 不可达或非法值
+    回退 300（与 SSoT 现值一致，不回退病灶本尊 60）。
+    """
+    try:
+        from scripts.governance._shared.thresholds import get as _threshold_get  # noqa: PLC0415
+
+        value = int(_threshold_get("git_operations.commit_queue_git_timeout_seconds", 300))
+        return value if value > 0 else 300
+    except Exception:  # noqa: BLE001 — SSoT 不可达 fail-open（可用性优先）
+        return 300
+
+
+_GIT_TIMEOUT_WRITE = _git_timeout_write_from_ssot()  # commit/merge/checkout/reset/update-ref/rebase
 
 # Stage 4 公共化：timeout 常量公共别名。
 GIT_TIMEOUT_READ = _GIT_TIMEOUT_READ
@@ -1193,7 +1214,9 @@ def _classify_git_timeout(cmd: list[str]) -> int:
         cmd: git 命令列表（如 ``["git", "show", "HEAD"]``）。
 
     Returns:
-        timeout 秒数：read 类 15s / write 类 60s / 其他默认 30s。
+        timeout 秒数：read 类 15s / write 类 SSoT 阈值
+        （thresholds ``git_operations.commit_queue_git_timeout_seconds``，现值 300）/
+        其他默认 30s。
         非 git 命令或空列表返回默认 30s。
     """
     if len(cmd) < 2 or cmd[0] != "git":

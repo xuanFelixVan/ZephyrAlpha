@@ -1473,7 +1473,10 @@ class TestNonWorktreeCommitWarning:
 # ---------------------------------------------------------------------------
 # P2-2b 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
 # classify_git_timeout 单元测试——验证按 git 子命令类型分类 timeout。
-# 原硬编码 timeout=120s → 改为 read 15s / write 60s / default 30s。
+# 原硬编码 timeout=120s → 改为 read 15s / write 60s / default 30s；
+# 2026-10-17（A2 提交吞吐车道）：write 档改读阈值 SSoT
+# git_operations.commit_queue_git_timeout_seconds（现值 300，缺省回退同值），
+# 60s 硬编码与 SSoT 脱钩系死袋病灶（q-20261016-st-qoder-p05-1016-03-0003）。
 # ---------------------------------------------------------------------------
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E402
     GIT_TIMEOUT_DEFAULT,
@@ -1504,8 +1507,8 @@ class TestClassifyGitTimeout:
                 f"git {subcmd} 应返回 READ timeout ({GIT_TIMEOUT_READ}s)"
             )
 
-    def test_write_commands_return_60s(self) -> None:
-        """commit/merge/checkout/reset 等 write 子命令返回 60s。"""
+    def test_write_commands_return_ssot_timeout(self) -> None:
+        """commit/merge/checkout/reset 等 write 子命令返回 SSoT 阈值（现值 300s）。"""
         for subcmd in [
             "commit",
             "merge",
@@ -1542,9 +1545,9 @@ class TestClassifyGitTimeout:
         # 仅 1 个元素不能取 cmd[1]，返回 default
 
     def test_timeout_values_unchanged(self) -> None:
-        """timeout 值常量未被意外修改。"""
+        """timeout 值常量未被意外修改（write 档=阈值 SSoT 现值 300）。"""
         assert GIT_TIMEOUT_READ == 15
-        assert GIT_TIMEOUT_WRITE == 60
+        assert GIT_TIMEOUT_WRITE == 300
         assert GIT_TIMEOUT_DEFAULT == 30
         # read < default < write（read 应最快，write 最慢）
         assert GIT_TIMEOUT_READ < GIT_TIMEOUT_DEFAULT < GIT_TIMEOUT_WRITE
@@ -1553,7 +1556,7 @@ class TestClassifyGitTimeout:
         """_run_git 调用 run_subprocess_hidden 时使用分类 timeout（集成测试）。
 
         Mock run_subprocess_hidden 捕获 timeout 参数，验证 read 命令传 15s、
-        write 命令传 60s。
+        write 命令传 SSoT 阈值（GIT_TIMEOUT_WRITE）。
         """
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
@@ -1576,7 +1579,7 @@ class TestClassifyGitTimeout:
         gw.run_git(["git", "status", "--porcelain"])
         assert captured_timeouts[-1] == GIT_TIMEOUT_READ, f"git status 应传 READ timeout: {captured_timeouts[-1]}"
 
-        # write 命令 → 60s（需 _in_commit_flow=True 避开守卫）
+        # write 命令 → SSoT 阈值（需 _in_commit_flow=True 避开守卫）
         gw.in_commit_flow = True
         try:
             gw.run_git(["git", "commit", "-m", "test", "--allow-empty"])
