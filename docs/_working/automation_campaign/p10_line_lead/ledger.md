@@ -893,3 +893,12 @@ python -c "import glob,os,json,datetime;c=datetime.datetime(2026,10,15,18,12).ti
 - 写面选择说明（承接 §32 防重入自锁案）＝本节只进 ledger 不再刷脉冲面：再写一行脉冲就是把末行时戳推到 12:41、令下班 p10-1016-18 白等 25 分——在册缺陷未裁前先由本席主动少写一行止血，不改闸不越闸。
 - 前置终值不改＝①成・②未成・③未成 ⇒ 全线继续停发、零席 enable、不广播可恢复。
 - 班终袋序＝0001 done `14df647a9a`（12:31）・0002 done `5d52b08d61`（12:37）・0003＝本件单袋投（ledger 一面），全程零死袋。
+
+## §37 · st-qoder-p10-1016-17 班终态（12:45 现测，追加行，§32–§36 各行逐字不改）
+
+[BLOCKER] 2026-10-16|⑩线长1016-17班|流程问题|前置②本班窗终态改判为 **6 枚／三族**（§35 的 4 枚系 12:34:03 时点读数、非错量）＝`q-20261016-st-diskp0-20261015-0071`(12:10:34 GATE-PRECOMMIT-RUN rec93)・`-0074`(12:17:11 rec94)・`-0075`(12:23:06 rec95)・`-0078`(12:29:57 rec96)＋`q-20261016-st-opsv-20261015-0001`(12:36:32 NO-BARE-SQL rec2)＋`q-20261016-st-perfz1-20261015-0003`(12:41:33 CAPABILITY-OVERLAP rec11)；六枚 meta.custody 全 True＝存活闸仍零误杀，六枚全为内容门自杀；本席死袋 0 枚三袋全 done|.runtime/commit_queue/dead/ 六只 json・python scripts/commit_queue.py health 12:44:53 读数|要⑫后勤席按当日四态分诊接这三族（GATE-PRECOMMIT-RUN 族已成节奏性出血 96 次 fused）、要⑤席核 NO-BARE-SQL 与 CAPABILITY-OVERLAP 两族的 own-scope 喂入面；本席不 requeue 他人袋不改门柱|高
+[BLOCKER] 2026-10-16|⑩线长1016-17班|工具缺陷|心跳守护按袋重生＝0003 提交后网关再次代起 daemon（pid 31288，前一枚 31812 已于 12:39 注销并写 exited），故收班②"注销心跳"的时点 MUST 放在末袋落地之后，否则注销后仍复生、下班见 pid 文件即误判本席未收班；本班第二次终止仍按 PID 精确杀并复证不活后才移除 pid 文件|.runtime/locks/heartbeat_st-qoder-p10-1016-17.pid（两次生成・两次证不活后移除）・.runtime/sessions/st-qoder-p10-1016-17/heartbeat.jsonl 末行 exited pid 31288|要⑤席给"末袋后不再 respawn"或"袋数与守护数对账"的收尾判据（09 班同案在册：本席与各班判死活改用三证）|中
+
+- 终量（12:45）＝pending 0／processing 1／done 903／dead 510；今日死信按 dead_at 255 枚・max 12:41:33；本席三袋 `14df647a9a`／`5d52b08d61`／`3448869c9d` 全 done・零死袋。
+- 收班面终态＝claim 持有 0・`.runtime/tmp/` 本班件 0（7 件全清）・代建壳 `.aidrafts/st-qoder-p10-1016-17` `git status --porcelain` 行数 0（无独有内容，prune 安全，交清理专班不自删）・心跳面末行自证 exited（下班无须再凑三证＝本班给下一班留的可见性）。
+- 前置终值不改＝①成・②未成・③未成 ⇒ 全线继续停发、零席 enable、不广播可恢复。
