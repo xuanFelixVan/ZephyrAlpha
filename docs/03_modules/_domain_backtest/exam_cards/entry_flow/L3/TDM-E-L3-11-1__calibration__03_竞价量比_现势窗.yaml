@@ -1,0 +1,47 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-11-1/calibration/03_竞价量比_现势窗
+node_id: TDM-E-L3-11-1
+family: calibration
+title_zh: "竞价选股·竞价量比与涨幅校准卡（现势窗 v2）"
+hypothesis: "同 02 卡（9:25 竞价量比>5 且竞价涨幅 2-5% 的个股当日与次日收益高于无竞价异动组；涨幅过高档反向）。v2=现势窗重立：竞价史 9:15-9:25 过程任何渠道不存在（P0 实查更正），2019 回填永不成立，v1 卡按其冻结纪律永久 blocked 留史；本卡为独立预注册（非挪门柱——v1 原卡不动）。"
+window:
+  in_sample:
+  - '2026-06-01'
+  - '2026-08-31'
+  oos: &id001
+  - '2026-09-01'
+  - '2026-09-30'
+  regimes:
+    single_state: "2026-06..09 单一市场态（窗短无法分牛熊）——regime_stability 支柱免考留痕非删（P1-C4 声明）"
+  frozen_note: "看数前冻结（st-infoaxis P1-C4 默认 A：窗改窄即刻可考）；窗口禁改；数据覆盖=auction_snapshot 2026-06-01..2026-09-30 实测 288,909 行/6,590 符号/56 日（02 卡 evidence 同源实测）"
+buckets:
+  type: "quantile_decile"
+  'on': "竞价量比档（<1/1-3/3-5/>5）×竞价涨幅档（0-2/2-5/5-7/>7%）双轴分桶"
+  min_obs_per_bucket: 30  # 现势窗样本少→下限从 60 收窄至 30（短窗适配，非判据放松——IC 地板不动）
+pillars:
+  response_monotonicity: "双轴主对角单调（rho>=0.6），过高涨幅档须现拐点"
+  ic_floor: "日频 IC 均值 >= 0.02 且 IC_IR >= 0.3（照抄 02 卡在册值零自拟）"
+  lag_profile: "t+0 当日实现收益（日内信号）；9:25 前假象密集区剔除（同 02 卡）"
+  regime_stability: "免考留痕（单态窗局限显式声明）"
+target:
+  primary: "stock_fwd_ret_t1o_to_t2c（个股 T+1 开盘可成交→T+2 收盘，后复权）"
+  secondary: "当日收盘封板率与次日溢价"
+status: preregistered
+preregistered_by: st-infoaxis-20261013
+preregistered_at: '2026-10-14'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；试次全入 n_trial_ledger；v1 卡（02）保持 blocked_on_data 原状留史禁动"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false  # 单态窗免考（显式 false=免考声明，非删键）
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.auction_snapshot × c1_market.kline_daily（auction_book 五档 2026-07-21 起子集可用）"
+  signal_column: "auction_volume,auction_price,匹配量/前 5 日均量"
+  signal_derivation: "同 02 卡（竞价量比/竞价涨幅口径零改动）"
+  target_source: "同 02 卡（kline_daily_hfq T+1 可成交口径）"
+  universe_rule: "同 02 卡宇宙重建口径（60/00/30/68 前缀；北交所排除；ST 用 stk_limit）"
+  data_window_evidence: "@auc v2：auction_snapshot 实测 2026-06-01..2026-09-30（56 密集日）；IS 段 2026-06-01..08-31 / OOS 段 2026-09-01..09-30 均有覆盖；自 2026-10 起桥流自积滚动扩窗（月批追加窗尾=新预注册，禁改本窗）"

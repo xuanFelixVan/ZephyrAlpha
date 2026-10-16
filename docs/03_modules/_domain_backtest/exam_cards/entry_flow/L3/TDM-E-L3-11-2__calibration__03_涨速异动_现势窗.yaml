@@ -1,0 +1,44 @@
+schema_version: '1.0'
+card_id: TDM-E-L3-11-2/calibration/03_涨速异动_现势窗
+node_id: TDM-E-L3-11-2
+family: calibration
+title_zh: "盘中涨速异动·5 分钟涨速校准卡（现势窗 v2）"
+hypothesis: "同 02 卡（5 分钟涨速突破档的后续动量延续性高于基线组）。v2=现势窗重立：kline_5min 缺 2019-2021-08 段（P0 实查），v1 卡按冻结纪律 blocked 留史；本卡用 2025-01 起 5min 全覆盖窗独立预注册。"
+window:
+  in_sample:
+  - '2025-01-01'
+  - '2025-12-31'
+  oos: &id001
+  - '2026-01-01'
+  - '2026-09-30'
+  regimes:
+    single_state: "2025-2026 窗（牛熊分段不可靠）——regime_stability 免考留痕"
+  frozen_note: "看数前冻结；窗口禁改；kline_5min 自 2025-01 起全覆盖（P0 实查=f30/A02 断档登记同源）"
+buckets:
+  type: "quantile_quartile"
+  'on': "5 分钟涨速档（<1%/1-3%/3-5%/>5%）"
+  min_obs_per_bucket: 60
+pillars:
+  response_monotonicity: "涨速档对 t+15m..t+60m 延续收益单调（rho>=0.6）"
+  ic_floor: "日内 IC 均值 >= 0.02 且 IC_IR >= 0.3（照抄在册口径）"
+  lag_profile: "预测力衰减分钟级（信号半衰期<=60 分钟——15 号作业簿 §3 OFI 同族时窗纪律）"
+  regime_stability: "免考留痕（单态窗局限显式声明）"
+target:
+  primary: "intraday_fwd_ret_15m_to_60m（5min bar 后续延续收益）"
+status: preregistered
+preregistered_by: st-infoaxis-20261013
+preregistered_at: '2026-10-14'
+discipline: "冻结后开考；事后挪门柱=作废（G4-5）；v1 卡（02）保持 blocked 原状禁动"
+signal_kind: panel
+pillars_numeric:
+  mono_spearman_min: 0.6
+  ic_mean_min: 0.02
+  ic_ir_min: 0.3
+  regime_same_sign: false
+  oos_same_sign: true
+oos_window_ref: *id001
+data_binding:
+  signal_table: "c1_market.kline_5min × c1_market.kline_daily"
+  signal_column: "5min close 涨速（vs 5min 前收盘）"
+  target_source: "kline_5min 后续 bar 收益（15m..60m）"
+  data_window_evidence: "kline_5min 覆盖 2025-01-01 起（A02 断档登记同源）；IS/OOS 均全覆盖"
