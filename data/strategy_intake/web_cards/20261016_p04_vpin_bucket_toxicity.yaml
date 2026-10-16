@@ -1,0 +1,119 @@
+# creation_token: p04-webcard-vpin-bucket-toxicity-20261016 | created_by: st-qoder-p04-1016-04 | ttl: task_bound
+# 产出席=④全网战法矿工席（真源=SOP research_production_line_policy.md §3④）；下游=C1 盘点归一→⑤实现→⑥制卡冻结
+card_id: SIC-20261016-P04-23
+title_zh: 成交量桶化买卖不平衡（VPIN／BVC 口径）＝流水毒性轴首条
+mining_tower: >-
+  微观结构流水毒性（成交侧）。与存量区别＝本席已占的三个盘口成员
+  （SIC-20261015-P04-01＝L1 订单流失衡 OFI，快照差分**报价侧**；queue_imbalance＝排队不平衡；
+  imbalance_microprice＝微价偏离）全部取**委托簿状态**为信息本体；本卡取**已成交量**按量桶切分后
+  的买卖差＝不同本体（trade flow vs quote state）。全库 grep 实测＝
+  「vpin／知情交易概率／toxicity」在 web_cards＋L9 校准卡＋strategy_registry 三面 **0 命中**（本班尺见台账）。
+birth_seat: ④
+birth_session: st-qoder-p04-1016-04
+birth_batch: 20261016-p04-04
+intake_stage: C1 盘点归一（未实现，禁直接引用为已证信号）
+
+source_links:
+  - role: 实现本体存在性＋许可证（本席本班直连 api.github.com 取到＝最高证据级）
+    url: https://api.github.com/repos/hudson-and-thames/mlfinlab/license
+    what_verified: >-
+      本班 WebFetch 该 API 地址返回 200，逐字读到：license spdx＝『Other (NOASSERTION)』、
+      许可证文件路径＝『LICENSE.txt』、正文首段原句＝『Copyright 2019, Hudson and Thames Quantitative
+      Research』＋『Copyright Protection Notice and Licensing Agreement』＋『LAST UPDATED November 2021』、
+      仓 html_url＝『https://github.com/hudson-and-thames/mlfinlab』。⇒ **该仓不是 OSI 开源许可证**，
+      走「只学思想不入码」通道（见 license.gate_verdict）。
+  - role: 仓活跃度与规模（本席本班直连 api.github.com 取到）
+    url: https://api.github.com/repos/hudson-and-thames/mlfinlab
+    what_verified: >-
+      本班 WebFetch 返回 200，逐字读到 full_name＝『hudson-and-thames/mlfinlab』、
+      stargazers_count＝『4942』、pushed_at＝『2023-10-02T03:05:19Z』、
+      license＝『{"spdx_id": "NOASSERTION", "name": "Other"}』、description 原句＝
+      『MlFinLab helps portfolio managers and traders who want to leverage the power of machine
+      learning by providing reproducible, interpretable, and easy to use tools.』
+      ⇒ 三筛读数＝star 4,942（过）／活跃度 **2023-10-02 最后一次 push＝距今约 3 年，活跃度弱**（本卡据此降级为
+      「形制参考源」而非「在维护实现源」）／许可证 NOASSERTION（闸判＝不入码）。
+  - role: VPIN 公式与桶化口径的中文可读源（本席本班仅取到搜索摘要，未亲自 fetch＝证据级如实降级）
+    url: https://quant67.com/post/quant/03-microstructure/03-microstructure.html
+    what_verified: >-
+      本班 WebSearch 命中该页，摘要给出原句『Easley、López de Prado、O'Hara（2012）提出 VPIN
+      （Volume-Synchronized PIN）作为高频版本。它把时间桶换成【成交量桶】：每凑齐一个固定成交量 V，
+      就计算这一桶里的买卖不平衡』与公式『VPIN = (1/n) Σ|V^B_i - V^S_i| / V』，
+      同页另给『实证上做法：筛出"足够大"的事件样本（例如成交量超过当日 10 分钟均值 5 倍）…』
+      的冲击半衰期口径（**属另一轴，本卡未取用**）。⚠ 本席未对该 URL 做本班 WebFetch，
+      页面无版权声明可见⇒引用只到「搜索摘要级」，且禁据此搬该页文字入本库。
+  - role: 桶化 SQL 形制对照（同上降级＝仅搜索摘要命中）
+    url: https://questdb.com/docs/cookbook/sql/finance/vpin/
+    what_verified: >-
+      本班 WebSearch 命中，摘要可见其实现骨架＝按 symbol 时序累计 quantity，
+      用 `sum(CASE WHEN side='buy' THEN quantity ELSE 0.0 END) AS buyvol` /
+      对称的 sellvol 与 `bucketstats` 聚合，再除以一个容量常量（摘要中形如 `/1000000`）＝
+      与上一条公式同构，可作为「桶表如何落地」的形制参考。⚠ 本席**未** WebFetch 该文档页，
+      未取证其许可证＝只取 SQL 形制思路，禁复制语句入库。
+
+license:
+  github_repo_license: >-
+    hudson-and-thames/mlfinlab＝NOASSERTION（本班亲验原文首行『Copyright 2019, Hudson and Thames
+    Quantitative Research』，另有『Copyright Protection Notice and Licensing Agreement』条款体）。
+    quant67.com 与 questdb.com 两页本班未取得许可证声明（仅搜索摘要）。
+  gate_verdict: >-
+    许可证闸＝**只学思想不入码**（三源全为非 OSI／无声明面）。本卡只登记"量桶化＋买卖差"这一构造形制，
+    ⑤席实现须走 C3 翻译适配自写，禁复制 mlfinlab 的 Python 与 questdb 的 SQL 文本；
+    若后续需要引用 mlfinlab 的 HTT 许可条款细节，属 Owner 门位（对外部许可文本的合规判读），本席不自裁。
+  gpl_hits_this_round: 0
+  iron_rule_note: 外部代码禁直接复制入库；实现走 C3 翻译适配重实现
+
+logic_zh: >-
+  把一日成交按**固定成交量**切成 n 个桶（而非按固定时间切），每桶用买卖方向分类后取
+  |V_B - V_S|，对 n 个桶求均值再除以桶容量 V＝VPIN。VPIN 高＝该时段成交里"方向单边"的成分高
+  ＝知情交易者比例高的可观测代理；用于①横截面排序（谁的流水毒性强）②时序上的毒性突增预警。
+  本库可落地形态＝先用**分钟 K 线**做 BVC（Bulk Volume Classification：分钟收盘≥上一分钟收盘
+  记为买量，否则记为卖量；相等按 0.5/0.5 分摊），再用日频 OHLCV 做退化版（当日成交量整体归类）
+  ＝退化版信息量显著低于原方法，须按"下限形制"消费。
+
+pseudocode: |-
+  # BVC（Bulk Volume Classification，日频/分钟频退化口径）
+  # 输入 A：c1_market.kline_daily(symbol_canonical, trade_date, close, volume)   # 退化版
+  # 输入 B：分钟 K 线（SL-A01 分钟腿，①席在册跨度确认后启用）                    # 正版
+  dir[t]        = +1 if close[t] > close[t-1] else (-1 if close[t] < close[t-1] else 0)
+  V_B[t]        = volume[t] if dir[t]==+1 else (0.5*volume[t] if dir[t]==0 else 0)
+  V_S[t]        = volume[t] - V_B[t]
+  # 量桶切分（按累计成交量凑满 bucket_size 即封桶，跨日允许）
+  buckets       = split_by_cumulative_volume( (V_B[t], V_S[t]), bucket_size )
+  imbalance_i   = | sum(V_B in bucket i) - sum(V_S in bucket i) |
+  VPIN          = mean(imbalance_i over last n buckets) / bucket_size       # n 常取 50（Easley 等原文形制）
+  signal[t]     = z250( VPIN[t] )        # 或 rank_cs(VPIN[t]) 做横截面排序，两条腿禁混报
+  # 自检（写死，防本班踩过的恒零假绿）：
+  #   zero_value_days == 0 且 nonzero_bucket_ratio > 0.9，否则该序列禁入闸
+  #   bucket_size 取全样本日成交量的分位数时**禁**用未来分位（在册 *_pct 前视坑）
+
+data_binding:
+  primary_source: c1_market.kline_daily（退化版）／SL-A01 分钟 K 线（正版）／SL-A02 Tick（最优但跨度待确认）
+  sl_ref: 数据源映射读 docs/04_research_records/data/chain_piling_campaign/02_source_line_registry.md（④席不自建源，缺源走本席台账转单①）
+  measured_face_zh: >-
+    本班实测面＝只核到"本库有 close+volume 日频面可算退化版"这一条（kline_daily 系在册，
+    本班未做分钟腿与 Tick 腿的跨度普查＝该两面属**未测**，禁按本卡叙述当成可用）。
+    与在册坑位对表＝kline_daily.adj_factor 恒 1 死列（1015-08 在册）与本卡无关（本卡不用复权因子）；
+    但 `*_pct` 分位列＝前视（同在册）⇒ 伪代码里的分位/桶容量一律自算滚动窗，禁取表内现成分位列。
+  missing_face_zh: >-
+    缺①逐笔买卖方向真值（本库无成交方向标志面，故 BVC 只能靠价格 tick 近似，
+    这是 VPIN 文献本身承认的最大误差源——本班搜索命中的『The sensitivity of VPIN to the choice of
+    trade classification algorithm』即该主题的题录，**未取证全文**）；
+    缺②分钟/Tick 腿的可用跨度未测⇒正版能否落地待 ① 席回话。
+
+self_flag:
+  - 与报价侧三张存量卡（OFI／queue_imbalance／imbalance_microprice）**本体不同但同属失衡族**＝
+    去重闸按 grep 判 0 命中，正交闸本班未跑⇒"是否真交"未证，禁止把本卡当独立新轴直接进考试队列。
+  - 退化版（日频 BVC）与原方法（逐笔/分钟量桶）不是同一个量：日频下 V_B/V_S 的日内正负会互相抵消，
+    VPIN 的绝对水平被系统性低估＝引用者须按"方向性下限"消费，不可与文献数值对标。
+  - 许可证闸结论是**不入码**，不是"可用"＝mlfinlab 为 NOASSERTION，questdb/quant67 无声明；
+    任何实现必须由 ⑤ 席自写，且禁以"参考实现"名义复制片段。
+  - 活跃度三筛＝该仓最后 push 2023-10-02（约 3 年前）＝"在维护"这一筛**未过**，
+    本卡据此只作形制源；若 ⑥/⑤ 需要可执行参照，须另找活跃实现（本席本班未找到许可证干净的活跃仓）。
+
+caliber_pitfall_zh: >-
+  ①桶容量 bucket_size 的选取直接决定 VPIN 水平值，文献用"按股票定容"，跨标的比较时**禁**用同一绝对容量
+  （否则大票桶数多、小票桶数少，均值口径不可比）；②时间桶 vs 量桶混用＝VPIN 定义失守，
+  量桶的"同步"指成交量同步而非时钟同步；③BVC 的价格相等分支（dir=0）如何分摊会改变不平衡量，
+  必须写进冻结口径（本卡取 0.5/0.5，属**本席自定**而非外部源给定，⑥ 席可改判但须留痕）；
+  ④"n=50 桶／日频 8 桶"两类外部读数不可互替（本班搜索命中的中文数据售卖页称"n=8 桶、1 分钟间隔、
+  静态估计"，属**付费数据册自述**，非论文口径，禁当权威参数引用）。
