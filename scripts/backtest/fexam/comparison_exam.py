@@ -28,6 +28,7 @@
 # [TESTS] tests/backtest/test_comparison_exam.py
 # [A_module] module_id=MOD-BT-CAPEXAM | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: 本件=人工/席位按需调用的对照考试 CLI（--card 逐卡开考），非常驻服务，事件订阅不适用（裁定#538 抢救入库时按 m11 逐件声明通道补登）
 # [not-trading: 回测研究面工具（对照/消融考试卡族驱动器），不在实盘交易决策路径上]
 """对照/消融卡考试执行器（OD-1）——族闸 + 双腿装载 + blocked fail-closed → 复用校准执行核出分。
 
