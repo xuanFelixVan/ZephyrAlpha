@@ -5,9 +5,9 @@ title: ⑧考工B·游标
 ---
 # 游标
 
-cursor: 10-16 班次 02 已交账（**出分 1 张＝连续三班 0 出分止**：改正尺真跑 `TDM-X-S1-04/calibration/02`＝panel 宽宇宙 4567 名/日、verdict=fail、rows[109]、注入面与卡面 target_source 逐字对拍；本班头号＝同卡两读法实测差 23 倍而永久册无读法申报位＋judge() 遇越表键早退使真破柱不进 fails；本族剩余 71 张六桶机械分账 A17/B7/C15/D6/E5/Z21，A+C+D=38 张在 ⑤/⑥ 补腿前任何考工班零出分＝本岗天花板 1 张/班；D 桶与 /03 两案本席自纠改判并留旧案；comparison/02 差两格非一格；同 sid 孤儿半班 15 件被抓（未造二次试次双证）本席未删呈 ⑩；本席 [BLOCKER] 追加 8 条）
-last_run: 22:3x（`date` 实测 2026-10-16 23:02:12；本班＝班次 02，出分 1 张；开班 22:30:17 现测，终值以本行与收班 date 差由 ⑩ 复核，本席不写自估）
-last_batch: p08-1016-02 第二袋＝台账 §八 收班补记（尺面自纠＋在途袋超集判定＋收班读数）＋本游标 ㊹㊺ 两行（纯登记面＝docs-only；首袋 q-...-0001 与他席 eviction 标记关系见 §八，四件盘上字节＝权威超集）
+cursor: 10-17 班次 03 已交账（**出分 0 张＝本族真可考面经两级尺收敛为 0**：五谓词尺（逐张落命中原文片段）把上班 Z 桶「待逐张」面收敛，唯二疑似可考的 calibration 卡被 CH 宽度实测打死＝封死名数/日 days_ge30=4/697、IPO 首日 days_ge30=1/1038（撞 ic_exam.py:96 的 30 列地板＝假红发生器，本席不开考不造二次试次）；头号账面更正＝三席共用 shift06_*.parquet 宽面板缓存已被清扫（上班在册驱动现测装载口五件 FileNotFoundError），但定级本席自纠＝重拉实测 56.3 秒/列且与 ⑦A 1016-03 独立读数（12–62 秒）互证⇒效率损失非能力阻断，「45.7 分/两列⇒单班吃满」这条被下游当承重的节拍依据两席同判不复现；㊸ 下班首查四件本班逐件复量＝四件全部未动（⑥ 机读映射位与臂格、⑤ panel 多日腿、同 sid 孤儿 15 件、旧址册退役案＋断链册入库）；卡池五态 prereg 162/examining 1（⑦c 写域那枚交 ⑩，本席不翻）；分数册 110 行 sha16 a9532fceb0899c94 本班零写；本席 [BLOCKER] 追加 5 条（高 1/中 3/低 1））
+last_run: 23:34:00 开班（`date` 现测），收班段现测见本行与台账 §七；本班＝班次 03，出分 0 张，终值以两戳差由 ⑩ 复核，本席不写自估
+last_batch: p08-1016-03 首袋＝台账 §班次03 全节（七段）＋本游标 ㊻㊼㊽㊾ 四行＋游标三行原地延长（纯登记面＝docs-only，零分数行、零卡面写、零判据字节）
 notes: |
   游标由本岗每批推进；监督员(⑩)可代修。
   **下一班开考规格（班次 04 实跑核对，覆盖班次 03 的 ①-⑦）**：
@@ -102,6 +102,11 @@ notes: |
      （`P-P2-04/calibration/06`=#rows[93]、`/07`=#rows[94]，袋 19f2852467），第三枚 `X-R1-01/comparison/07`=#rows[92] 属他席；
      定性＝N-16 册未落地的下游症状，非卡面写错，本席不自改。(c) 下一班若要复用本班尺：`census2.py`（按 route 词表交叉）／
      `triage_od1.py`（44 张 OD1 逐卡 dry 凭据→triage_od1.json）／`ab_dualarm.py`（指针＋列集内容中性对拍）／`summary.py`（边际收益与断供两口径）。
+
+  ㊻ **本班＝可考面判据再收一级（下班禁再用正则面判"疑似可考"）**：尺＝`.runtime/tmp/st-qoder-p08-1016-03/census_fine.py`（五谓词 `h_arm/h_univ/h_nav/h_multi/h_min`，逐张落**命中原文片段**）＋CH 宽度实测两级。71 张 preregistered 五谓词全不命中＝8 张，其中 6 张属对照/影子族（需绑定册臂格，本族 prereg 命中 0）、2 张属 calibration 且被宽度实测打死＝`X-S2-02/02` 封死名数/日 days_ge30=**4**/697（max 125／avg 2.48）、`X-S2-02/03` IPO 首日名数/日 days_ge30=**1**/1038（median 2／avg 1.99）⇒ **本族真可考面＝0**（SQL 原文在本台账 §五，可直接复跑）。上班 ㊳ 六桶是正则面：未覆盖"月频调仓/持仓-日/新股首日/封死档"类宇宙词⇒A 桶实质 ≥19 张而非 17（纠偏方向＝收紧，旧案不涂）。
+  ㊼ **共用宽面板缓存已断料＋节拍依据被两席独立翻案（下班开班首件事＝先重拉再谈跑）**：`.runtime/tmp/p07/shift06_{close,hfq_high,hfq_volume,open,mask}.parquet` 五件本班 23:55 实测 FileNotFoundError（同目录 `shift06_*_load.json` 396B／mtime 10-16 15:32 仍在＝曾生成后被清扫），上班在册驱动 `card_x_s1_04_02.py:load_aligned` 与 ⑦c `run02.py:base()` 同命；**但重拉成本实测 56.3 秒/列**（`load_close('2019-01-04','2025-09-09')`→1622×5642／日均名数 4680／最小 3564），与 ⑦A 1016-03 同口独立读数（单列 12–62 秒，p07_examiner_a/ledger.md:1095-1104・:1142）互证⇒"45.7 分/两列⇒单班吃满"这条被下游当承重的节拍依据**不复现**，本班定级＝效率损失非能力阻断（本席首报曾判致命，已自纠留旧案）。
+  ㊽ **㊸ 下班首查四件本班逐件复量＝四件全部未动（现测非引用）**：①`grep level_to_cap_map` 对 `X-R1-01/comparison/02` 仍 0 命中、绑定册 entries=18/approved=17 而本族命中仅 07/07b（均 examined）⇒⑥ 未补机读位未建格；②`calibration_exam.py:251-252` 仍 `ret = target.shift(-1)` 硬编码、`_forward_face` 消费点仍只在 :212⇒⑤ panel 腿未接（`h_multi` 9 张仍不可考）；③同 sid 孤儿 15 件（21:37–22:02）仍在 `.runtime/tmp/st-qoder-p08-1016-02/`（现 23 项）⇒归属清理权仍悬，本席未删；④旧址册仍在 HEAD（`git cat-file -e` rc=0）退役案未签＋`git ls-files docs/04_research_records/governance/working_ref_sweep_20261015/`＝0。
+  ㊾ **卡池与分数册 00:0x 基线（下班现测后再用，禁引本行当事实）**：全库五态磁盘面 preregistered 162／empty 208／examined 87／examining **1**／blocked_on_impl 48／blocked_on_data 71＝577；`examining` 那枚＝`entry_flow/L3/TDM-E-L3-03-2__calibration__03_温和放量.yaml`（⑦c 写域，本席不翻，交 ⑩）；分数册 `docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml` 本班 23:59 现测＝145,458B／sha16 `a9532fceb0899c94`／rows **110**＝与上班收班逐字节同值⇒本班零写册零出分（无二次试次风险）。本班 [BLOCKER] 5 条（高 1／中 3／低 1），台账 §六。
 
 <!-- P10-1016-01-FORCE-CLOSEOUT -->
 > **⑩线长席强制收班提醒（2026-10-16 01:5x 实测追加，指令面-only，未改任何判据）**

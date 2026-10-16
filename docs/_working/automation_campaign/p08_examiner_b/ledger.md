@@ -732,3 +732,63 @@ C 正对齐（target=fwd.shift(1)）ic_mean = 1.0000   # 证明工具配对的�
 - **本班收班读数（`date` 实测 2026-10-16 23:12:49）**：出分 1 张（保底 ≥8 未达，根因见 §四 六桶与 §五 转单，本席未自造读数、未弱化任何闸）；`[BLOCKER]` 行首本班累计 **9** 条（§六 8 条＋下方 §八 1 条尺面自纠）；claim 面＝入队续租 ttl=7200s 后由本席 `--release-only` 收尾；心跳 daemon pid=25040 按 PID 核活后终止（禁 /IM 全杀，在册红线）；`.worktrees/st-qoder-*` 本班零创建、`.aidrafts/<sid>` 自动壳未自删（§六 第 8 条）；本班零 spawn 子任务；GPU 用芯未声明（未读 device_ledger，禁把回退报成 GPU 读数）。
 
 [BLOCKER] 2026-10-16|⑧B/p08-1016-02|判据缺失|上班 ㉖ 的「册 106 行中 75 行 unjudged 非空」被当「越表柱面」引用＝把无条件回填的 `pillars_prose_keys` 子面误当数值越表面，真面差 25 倍（⑥ 若按 75 排词表立法即错排工）|docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml 现 110 行：整面非空 79／`numeric_keys_not_read` 非空 3／`numeric_keys_no_machine_face` 非空 45／fails 含未支持判据键 3（其中仅此一因 1＝本席 rows[109]）；负对照＝2 行 pass 同样带 prose_keys 非空|⑥ 按 3 排词表立法、⑤ 按 45 排「读了无机器面」接线腿；⑩ 把 SOP 工序 5 的「越表」措辞钉到 numeric_keys_not_read 子面|中
+
+## 10-16 23:34 开班 · 班次 03（st-qoder-p08-1016-03）本班出分 0 张＝本族真可考面经 CH 宽度实测收敛为 0（上班 Z 桶"待逐张"两张疑似可考被实测打死：封死名数/日 days_ge30=4/697、IPO 首日名数/日 days_ge30=1/1038）；头号账面更正＝三席共用宽面板缓存已被清扫，但定级本席自纠＝重拉实测仅 56.3 秒/列（效率损失非能力阻断）；㊸ 下班首查四件逐件复量全部未动
+
+### 一、冷启动与防重入（三尺并读＋取号前扫 tmp 已按上班 ㊱ 执行）
+
+- `python --version`＝3.12.8（23:34:00 现测）。`lock_files.py cleanup`＝CLEANED 3 枚死锁（全部 ⑫ 席四件套）＋SALVAGED 死会话 `st-qoder-p01-1016-03` 遗物（merge=skipped／stash=0 件／释放 claim=0）＝本席未触。
+- `process_reaper --status`＝`source=live`／scanned=32／whitelist_hits=26／killed=0／reported=23／ghosts killed=0／水位 `commit_pct=78.03`、`ram_used_pct=72.1`、`cpu_pct=57.1`、degraded=False、breached=[]；`dead_archive ok=False rc=1`＝serializer 租约存活（pid=47508）＋全量模式自挡，非本班事（在册同值续期）。
+- 防重入三尺：①游标末态＝10-16 班次 02 已交账（23:02:12 现测）；②`cleanup` 面 p08 零命中；③**取号前扫 `.runtime/tmp/st-qoder-p08-1016-*`**（承上班 ㊱ 本席自犯律）＝仅 01（12 件）/02（23 件）两目录⇒本班取 **03** 无撞名、无孤儿半班混入。
+- 会话登记＝`open_session(sid, held_files=[], task_files=[])`＋`_spawn_heartbeat_daemon`（daemon pid=**40224**，`heartbeat_st-qoder-p08-1016-03.pid` 回读＝40224）；运行面自报 `logical=True downgraded (chief-form verification failed)`＝按 fail-open 继续（在册 W-29 面，非本班事）。
+- 上班在途袋面（㊺ 首件已解）：`git log` 命中 `0b3c365c74`（02 班主袋）＋`a54015c19f`（第三袋收班补记）⇒ 盘上四件＝HEAD 现值，本班无须重投、未 requeue 任何袋。
+- 卡池五态（磁盘面全库，供 ⑩ 对账，本班非终值）：preregistered **162**／empty 208／examined 87／examining **1**／blocked_on_impl 48／blocked_on_data 71＝加总 577。`examining` 那一枚＝`entry_flow/L3/TDM-E-L3-03-2__calibration__03_温和放量.yaml`（⑦c 席 1016-01 自报"已占卡未开考＝班限已到"续存）＝**非本席写域，本席不翻不回，交 ⑩ 按僵卡规程处置**。
+
+### 二、本班出分面＝0 张（分数册零 only-add；判据全部实测凭据，非散文判）
+
+- 分数册现测（23:59）＝145,458B／sha16 `a9532fceb0899c94`／rows **110**＝上班收班读数逐字节同值⇒22:3x 后全线零新增，本班未写册（无二次试次风险、无 ComposerError）。
+- 本族领面＝preregistered **71** 张（磁盘面，＝上班 72−上班出分翻 examined 1 张；目录实名 exit_flow/portfolio_flow/position_flow）；family 分账＝comparison 37／shadow 14／calibration 13／ablation 7＝71；route＝series 42／dual_arm 29。
+- **本班新尺**（`.runtime/tmp/st-qoder-p08-1016-03/census_fine.py`，只读零写，产物 `census_fine.json` 逐张带**命中原文片段**禁空判）五谓词分账：`h_arm`(臂协议/双臂) 31 张、`h_univ`(宇宙=持仓池/月频调仓/prereg_frozen/top20/columns_cap24) 28 张、`h_nav`(组合 NAV 装置) 17 张、`h_multi`(primary 多日且无 `target_forward_face`) 9 张、`h_min`(分钟线) 10 张；**四者全不命中＝8 张**。
+- 那 8 张的族闸归属：6 张 family∈{comparison,shadow} 且 primary 是臂间差/成本面（净额轧平、切账失真、预算带插值…）⇒ 须 `comparison_exam`＋绑定册臂格（本族 prereg 臂格命中＝**0**，见 §四①）；2 张 family=calibration＝本席逐张实测（下条）。
+- **实测打死两张"疑似可考"（承 ㉖ 改正尺：真硬闸＝截面 30 列地板，`ic_exam.py:96`）**：
+  - `TDM-X-S2-02/calibration/02_连续跌停开板概率与次日处置`（卡面 `signal_kind: series` 但 derivation 是**个股级** N 档＝形状自相矛盾）：SQL 原文见 §五，读数＝封死（`close<=limit_down`）名数/日 **days_ge30=4／days_total=697／max=125／avg=2.48／min=1** ⇒ 按个股截面读法在 693/697 日（99.4%）撞 30 列地板＝`ic_stats(空)` 回 0.0 非 nan 的假红发生器（在册三复证族）；按日频标量读法则须自拟"个股级 N 档→日频概率"聚合口径（卡面无申报位）⇒ 本席禁自拟，不开考。
+  - `TDM-X-S2-02/calibration/03_新股首日分层卖出三臂`：读数＝IPO 首日名数/日（`uniqExact(symbol)` 按 `list_date`）`days_ge30=`**1**／days=1038／max=31／median=2／avg=1.99 ⇒ 同一地板；另卡面自述 `issue_price` 面 2015..2023-08 段局部 blocked_on_data、primary 是**三臂中位差**且 target 含 T+1/T+5/T+20 多日＝D 桶在册禁自拟锚（上班 ㊴），且 `comparison_exam.py:202` 的族闸会拒 calibration 族代考⇒ 不开考。
+- **对上班尺的纠偏（另起留旧案，不涂上班 ㊳ 表）**：上班六桶＝正则面（A17 系 `top20|top_n=20|columns_cap24`），未覆盖"月频调仓/持仓-日/新股首日/封死档"这类**宇宙词与事件宽度**；本班实测面＝A 桶实质 ≥19 张（17＋上两张）。方向是**收紧**，与本席 10-15 在册"endswith 过宽假扩"同族教训。
+- 结论：**本族 preregistered 71 张在本班口径下真可考面＝0**（非"本班省力"）＝⑤ panel 多日腿未接（§四②）＋⑥ 臂格未建（§四①）＋⑥ 读法申报位未补（上班 [BLOCKER] 高续存）三件他席缺件的合取。
+
+### 三、三席共用宽面板缓存断料＝本班头号账面更正（含定级自纠）
+
+- 磁盘实测（23:55）：`pd.read_parquet` 对 `.runtime/tmp/p07/shift06_close.parquet`／`shift06_hfq_high.parquet`／`shift06_hfq_volume.parquet`／`shift06_open.parquet`／`shift06_mask.parquet` **五件全 FileNotFoundError**；同目录 `shift06_chips_winner_load.json`／`shift06_conc_90_load.json` 仍在（各 396B，mtime 10-16 15:32）＝缓存曾在该处生成、其后被清扫面收走。全库 `.runtime/tmp` 现仅 **6** 枚 parquet（`find` 实测），其中 4 枚属 ⑦c 席 1016-02 班自家信号面件。
+- 命中面＝**三席**（产者⑦A、消者⑧B 与⑦c）：本席上班在册驱动 `card_x_s1_04_02.py:load_aligned` 读 close/high/volume 三件⇒现测不可跑；⑦c 席在册 `run02.py:base()` 读 `shift06_close/open/mask` 三件⇒同一断料同命。
+- **定级本席自纠（禁把事故报大）**：`ch_data.load_close('2019-01-04','2025-09-09')` 现测 **elapsed=56.3 秒**、shape **1622×5642**、日均名数 4680／最小日名数 3564 ⇒ 五列全重拉≈5 分钟＝**效率损失，非能力阻断**。（首报口径曾按 ⑦c 在册"首拉 45.7 分"心算成致命级，被本班实测推翻；旧口径留卷不删。）
+- **两席独立复证（非本席单方读数）**：⑦A 席 1016-03 班同口逐列现测＝`load_panel` 单列全市场宽面板 **12–62 秒**、四列合计 104.4 秒（该席台账 `docs/_working/automation_campaign/p07_examiner_a/ledger.md:1095-1104`，并已在同文件 :1142 立案翻掉"45.7 分/两列⇒单班吃满"这条被下游当承重用的节拍依据）⇒ 本班 56.3 秒落在其带内，两席各自独立把同一条在册节拍依据判为不复现。
+- 给 ⑫/⑩ 的准确口径：清扫面若不给共享只读缓存加白名单（形如 `shift06_*.parquet`／`*_wide.parquet`），代价＝三席×每班≈5 分钟重复拉数＋CH 并发压力；若加白名单，须同时定"谁有权删"（本席不自取）。
+
+### 四、㊸ 下班首查四件＝本班逐件复量，四件全部未动（现测非引用上班）
+
+1. `grep level_to_cap_map` 对 `exit_flow/X1/TDM-X-R1-01__comparison__02_熔断五级梯度减仓对照.yaml`＝**0 命中**；`02_binding_book.yaml` 现测 entries=**18**／approved=**17**，本族命中仅 `comparison/07` 与 `/07b` 两格（两卡均 examined）⇒ ⑥ 既未补卡面机读映射位、也未建格（上班 ㊵ 续存）。
+2. `scripts/backtest/fexam/calibration_exam.py:251-252` 现值仍 `_panel_metrics(...)` 内 `ret = target.shift(-1)` **硬编码**；`_forward_face` 消费点仍只 `:212`（series 路）⇒ ⑤ panel 腿未接，本族多日 panel 卡（`h_multi` 9 张）仍不可考。
+3. 同 sid 孤儿面：`.runtime/tmp/st-qoder-p08-1016-02/` 现 **23** 项，其中 mtime 21:37–22:02 的 15 件外来半班件仍在位（上班已呈 ⑩）＝归属与清理权仍悬，本席未删未改。
+4. 旧址册 `docs/03_modules/_domain_backtest/exam_scores_v1.yaml` **仍在 HEAD**（`git cat-file -e` rc=0）⇒ ⑩ 退役案未签；`git ls-files docs/04_research_records/governance/working_ref_sweep_20261015/`＝**0**⇒ 断链三件入库义务连续第 N 班未执行（本席无写权，不自补）。
+
+### 五、转单段（工序 5：不开考件按 owner 分派，本席零自裁；SQL 原文可复跑）
+
+- 封死宽度尺（⑥/⑩ 复跑）：`SELECT countIf(n>=30), count(), max(n), min(n), avg(n) FROM (SELECT td, count() AS n FROM (SELECT a.trade_date AS td, a.symbol AS s FROM (SELECT trade_date, symbol, close FROM c1_market.kline_daily_hfq WHERE trade_date>='2019-01-04' AND trade_date<='2025-09-09' AND close>0) a INNER JOIN (SELECT trade_date, symbol, limit_down FROM c1_market.stk_limit WHERE trade_date>='2019-01-04' AND trade_date<='2025-09-09' AND limit_down>0) b ON a.trade_date=b.trade_date AND a.symbol=b.symbol WHERE a.close<=b.limit_down) GROUP BY td)`
+- IPO 首日宽度尺（⑥/⑩ 复跑）：`SELECT max(n), avg(n), quantile(0.5)(n), countIf(n>=30), count() FROM (SELECT list_date, uniqExact(symbol) AS n FROM c1_market.stock_basic WHERE list_date>='2019-01-04' AND list_date<='2025-09-09' GROUP BY list_date)`
+- 转 **⑥**：(a) `X-S2-02/02` 卡面 `signal_kind: series` 与 derivation 的个股级 N 档互斥⇒需族/形状认定＋日频聚合申报位（若判 panel 则实测宽度已不足，建议改判 blocked_on_shape 而非留 prereg）；(b) `X-S2-02/03` 的三臂中位差属对照族而 family=calibration⇒族归位由 ⑥ 判，本席不代改族；(c) comparison/02 机读映射位（续上班）。
+- 转 **⑤**：panel 多日 `target_forward_face` 消费腿（续上班 [BLOCKER] 高）；另新增一条＝`ch_data.ch_query` 把 HTTP 404 一律包成 `CHAccessError` 且只回显 `sql[:120]`（`ch_data.py:103`），复杂 JOIN 排障看不到真因（本席两次才通：`ANY LEFT JOIN…USING`＋`period='daily'` 组合 404，改内联子查询＋`INNER JOIN…ON` 才返回）。
+- 转 **⑫/⑩**：共享宽面板缓存白名单（§三）；`entry_flow/L3/TDM-E-L3-03-2__calibration__03` 的 examining 僵卡（⑦c 写域）由 ⑩ 翻回。
+- 转 **⑨**：本班零新分数行⇒无新增覆盖型 fail；上班 rows[109] 的"fails 面早退、真破柱只在 metrics"判读约束续期未解。
+
+### 六、本班 [BLOCKER] 行（五条，追加式，逐条当场入册非班尾攒写）
+
+[BLOCKER] 2026-10-17|⑧B/p08-1016-03|判据缺失|本族 preregistered 71 张经"五谓词＋CH 宽度实测"两级尺收敛为真可考面 0 张；上班六桶正则面系统性偏松（未覆盖月频调仓/持仓-日/新股首日/封死档等宇宙词），A 桶实质 ≥19 张而非 17|.runtime/tmp/st-qoder-p08-1016-03/census_fine.json（逐张带命中原文片段）＋封死面 days_ge30=4/697、IPO 首日 days_ge30=1/1038（SQL 原文见 §五）＋docs/04_research_records/backtest/scores/2026/exam_scores_v1.yaml 现测 rows=110 sha16 a9532fceb0899c94 未变|⑩ 汇总呈 Owner：本岗在生产岗口径下连续两班 0/1 张＝改判"普查＋转单岗"或由 ⑤/⑥ 先清 §四①② 两腿；本席不自裁|高
+[BLOCKER] 2026-10-17|⑧B/p08-1016-03|数据问题|三席共用宽面板缓存被清扫面收走（⑦A 产、⑦c/⑧B 消），上班在册真跑驱动现测装载口五件全 FileNotFoundError；定级经本席实测纠正为效率损失非能力阻断＝重拉 56.3 秒/列（五列≈5 分/席/班）|.runtime/tmp/p07/shift06_{close,hfq_high,hfq_volume,open,mask}.parquet 五件 FileNotFoundError（23:55 现测）；同目录 shift06_chips_winner_load.json／shift06_conc_90_load.json 396B mtime 10-16 15:32 仍在＝曾生成；load_close 计时读数 REPULL elapsed_s=56.3 shape=(1622,5642)，与 ⑦A 席 1016-03 同口独立读数（单列 12–62 秒，p07_examiner_a/ledger.md:1095-1104・:1142）互证|⑫ 给共享只读缓存加白名单（形如 shift06_*.parquet／*_wide.parquet）并定"谁有权删"；⑩ 判清扫面边界；本席不自取删权|中
+[BLOCKER] 2026-10-17|⑧B/p08-1016-03|工具缺陷|fexam 只读 CH 层把 HTTP 404 一律包成 CHAccessError 且异常只回显 sql[:120]，复杂 JOIN 排障看不到服务端真因（本席首版 ANY LEFT JOIN＋USING＋period='daily' 404，改内联子查询＋INNER JOIN ON 才通，中间一次无效重试）|scripts/backtest/fexam/ch_data.py:103（`raise CHAccessError(f"CH 查询失败: {exc}: {sql[:120]}")`）；两次 SQL 全文在本台账 §五|⑤ 把 CH 响应体/错误码截进异常 details（不改判据只改可诊断性）|中
+[BLOCKER] 2026-10-17|⑧B/p08-1016-03|工具缺陷|本席自犯入册：计时探针把待报数值与派生量写在同一 print，`df.memory_usage(deep=False).memory`（DataFrame 上无 `.memory` 属性）抛 AttributeError 连带丢掉已跑完的 elapsed 读数，须整跑重试才拿到 56.3s|首跑 traceback 止于 pandas/core/generic.py:6321（'Series' object has no attribute 'memory'）而 pull 已成功；重试输出 elapsed_s=56.3|本席当班改正（计时类探针先 print 待报值再算派生量）；无需他席动作|低
+[BLOCKER] 2026-10-17|⑧B/p08-1016-03|流程问题|在册账面债连续续期且本席无写权＝旧址分数册退役案未签（仍在 HEAD）＋断链册 working_ref_sweep_20261015 目录 git ls-files 仍 0＋⑦c 写域 1 张卡停在 examining 无人翻|git cat-file -e HEAD:docs/03_modules/_domain_backtest/exam_scores_v1.yaml rc=0；git ls-files docs/04_research_records/governance/working_ref_sweep_20261015/ 计数 0；卡池五态 examining=1＝entry_flow/L3/TDM-E-L3-03-2__calibration__03_温和放量.yaml|⑩ 按僵卡规程翻该卡并排断链册入库与旧址退役案；本席不代翻代删|中
+
+### 七、本班收班读数（八件逐项，现测非终值）
+
+- ①claim 全部当场 release（ledger/checkpoint/两把册锁；见收班命令面回执）；②心跳按 pid=40224 核活后终止＋60 秒双读进程表与 heartbeat jsonl 末行 pid 复证（承在册 closeout-order-land-bags-before-unregister 处方）；③实耗＝开班 23:34:00 现测至收班 date 现测，终值以游标 last_run 两戳差计，本席不写自估；④[BLOCKER] 5 条（§六，高1/中3/低1）；⑤自清＝`.runtime/tmp/st-qoder-p08-1016-03/` 本班件（open_session/census_runnable/census_fine/json/land 脚本）按在册 ㊱ 与 ⑫ 白名单案**保留给下一班复用尺面**，本席不自删并如实呈 ⑩；四件套外零散落、项目根零临时件；⑥GPU＝本班未 acquire 看门人（零 ic 实跑）⇒免执行且本班零分数行、无"回退报成 GPU"风险；⑦零 spawn 子代理⇒零孤儿；⑧零 worktree＝本班未调用任何工棚/工作树入口（`.aidrafts` 自动壳若出现按在册 auto-spawned 案呈 ⑩，本席不自删）。
+- 并发避让：本班只写自家四件二面（ledger.md＋checkpoint.md）；卡面零翻（无开考故无 examining/examined 写）；分数册零字节；known_data_gaps.yaml 零字节；判据/门柱/阈值零改动；无 requeue、无代投他席件、无裸 git commit。
