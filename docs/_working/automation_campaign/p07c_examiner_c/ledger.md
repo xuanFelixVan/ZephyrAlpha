@@ -600,3 +600,262 @@ L9-A15/calibration/02・/03→`c1_market.hl_funding_history`）＝表未入配�
 - 本班未做（如实）＝零出分・零翻卡・未 requeue 任何死袋・未 release 他会话 claim・未动判据/门柱/冻结值・未动它席指令面・未动分数册字节・未 spawn 子代理・未 acquire GPU。
 - 游标推进＝本席 checkpoint 只追加本班游标节（上文各节逐字不涂），写后复核上一班游标行仍在。
 
+
+### 十、收班实测（01:57:00 现测，本班唯一尾巴节・上文 §一—§九 逐字不涂）
+
+- **本班实耗＝66.2 分**（锚＝本班首条冷启动命令实测 00:50:46，落笔时点 01:57:00 现测；keeper.log 末次写盘 01:40:17＝守护心跳循环写痕，**非出生锚**，本席不用它算耗时）⇒ 90 分班限内收班，未超窗。
+- **本班袋终态**（`commit_queue.py status --session st-qoder-p07c-1017-01` 现读）：counts={'pending': 0, 'processing': 0, 'done': 1, 'dead': 0}・head 位=`q-20261017-st-qoder-p01-1017-02-0002`（waiting 1996.4 秒）
+    - `q-20261017-st-qoder-p07c-1017-01-0001` state=**done** landed_id=`1562d8d066e5` dead_reason=无
+- **落地面复量**：台账 HEAD 面 602 行 vs 盘面 602 行；游标 HEAD 面 173 行 vs 盘面 173 行。
+  盘面严式行首 `[BLOCKER]`＝**追加前现测 17／追加后本机自算 18**（本节含 BLOCKER 1 枚；§九 那句"本班 4 枚"系该节落笔时点读数，旧文不涂）；HEAD 面取数 rc=0。
+- **心跳两枚现测（收班② 依据，逐枚列下）**：
+    - pid 39796 alive=True cmdline=[C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe .runtime/tmp/p07c_1017_01/keeper.py]
+    - pid 46040 alive=True cmdline=[C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon st-qoder-p07c-1017-]
+  ＝本席 keeper（39796）与网关入队时代起的 `heartbeat_daemon`（pid 文件持 46040）并存，与 10-17 ⑨席在册读数"每调一次网关各代起一枚"同形。
+- **worktree 面（收班⑧ 现测）**：`git worktree list` 共 82 行，含本席 sid 者 **0** 枚；
+  `.aidrafts/st-qoder-p07c-1017-01` 存在性＝**False**（本班实测**未**自动生成影子整树，与 1016-02 班"会话一注册即生成整树"读数不同＝如实报两读，本席不自删任何 worktree/aidrafts 面）。
+- **GPU（收班⑥）**：本班全程 IC_DEVICE=cpu，未 acquire 看门人；`python scripts/gpu/gpu_watchman.py status` 现读 active=(none)・free_gb=21.57・util_pct=14.0 ⇒ 本席无牌可还，免执行成立。
+- **下班供数分组面（现算，供领面排序；一表可服务多卡）**：c1_market.kline_daily_hfq=53; c1_market.kline_sector_880=26; c1_market.kline_index=25; c1_market.emotion_index=12; c1_market.stk_limit=11; c1_backtest.regime_state_anchored=9; c1_market.tick_data=9; c1_market.kline_daily=7；另 **13 枚 ran 卡面零表名 token**（供题面缺口，须人读卡面或转 ⑥ 补申报）。
+- **断供候选交叉（本尺只给候选，真挡须按"窗与列"在 CH 窗内逐条读，禁按表名命中判——本席不据此排除任何卡）**：
+  `src/zephyr/data/config/known_data_gaps.yaml` 解析 85 条，未了账态（no_source/open/monitoring/retired_quarantine）共 42 条・点名表 40 张；
+  121 枚 ran 中按表名命中未了账表者 37 枚，其中集中于 `c1_market.kline_sector_880`（26 枚 ran 提该表）——该表在册 gap 的 impact 逐字为"15/30/60min 缺失、日K腿无恙"⇒ **按在册判法不挡 `period='1d'`**，本席据此把 37 枚候选**降级为不挡**，不作避让。
+- **下班领面序（ran 面按 mtime 最旧 12 枚，本机时戳现读；本席扩席令面＝收积压最久）**：
+    - 10-09 20:25 | kind=panel route=series | entry_flow/L1/TDM-E-L1-S0__calibration__02_货币卡.yaml
+    - 10-09 20:25 | kind=series route=series | entry_flow/L1/TDM-E-L1-S0__calibration__03_流动性卡.yaml
+    - 10-09 20:25 | kind=series route=series | entry_flow/L1/TDM-E-L1-S0__calibration__04_海外卡.yaml
+    - 10-09 20:25 | kind=panel route=series | entry_flow/L1/TDM-E-L1-S0__calibration__05_政策事件卡.yaml
+    - 10-09 20:25 | kind=panel route=series | entry_flow/L1/TDM-E-L1-S1__calibration__03_黄白线交叉.yaml
+    - 10-09 20:25 | kind=series route=series | entry_flow/L1/TDM-E-L1-S2__calibration__07_连板家数分布.yaml
+    - 10-09 20:25 | kind=series route=series | entry_flow/L1/TDM-E-L1-S3__calibration__02_昨日涨停溢价.yaml
+    - 10-09 20:25 | kind=series route=series | entry_flow/L1/TDM-E-L1-S3__calibration__03_晋级率.yaml
+    - 10-09 20:25 | kind=series route=series | entry_flow/L1/TDM-E-L1-S3__calibration__04_情绪先锋四态.yaml
+    - 10-09 20:25 | kind=series route=series | entry_flow/L1/TDM-E-L1-S4__calibration__02_期权IV主路径.yaml
+    - 10-09 20:25 | kind=series route=series | entry_flow/L1/TDM-E-L1-S4__calibration__03_合成VIX后备.yaml
+    - 10-09 20:25 | kind=series route=series | entry_flow/L1/TDM-E-L1-S5__calibration__02_11信号环比.yaml
+- **prereg 收班复量＝162**（起手 162，本班值守内未动；本班零翻卡）。
+- **令卡一条已过时（现测双证）**＝本席指令卡仍写「panel 卡禁走 CLI（--target-csv 砍单列缺陷未修）」，
+  而该缺陷**已由 ⑤ 于 10-16 16:48 落地治本**：`git show HEAD:scripts/backtest/fexam/calibration_exam.py` 第 1154-1155 行
+  ＝「panel 目标保列语义与 --signal-csv 同款：单列→Series，多列→整面 DataFrame（禁砍单列）」＋`tgt = t.iloc[:, 0] if t.shape[1] == 1 else t`，
+  磁盘面与 HEAD 面同读该两行（禁只信盘面的在册纪律），落地 commit=`8caf2743b9`（消息自述"panel 卡 CLI 解禁"）；
+  `python scripts/backtest/fexam/calibration_exam.py --help` 实测三态＝口存在且带 `--signal-csv/--signal-b-csv/--target-csv/--force`。
+  **本席未做端到端真跑**＝CLI 无 scores_path 旗，真跑会往生产分数册写行，而本席合成两面无研究含义 ⇒ 只出码面自证，
+  下班可在 CH 窗内用真供数走 CLI 首验（该路一旦确证，panel 卡开考成本从"自物化注入"降为"两个 csv"）。
+- [BLOCKER] 2026-10-17|⑦c席1017-01|流程问题|考工席指令卡的「panel 卡禁走 CLI（--target-csv 砍单列缺陷未修）」一条已被 ⑤ 治本袋作废（HEAD 面逐行可 grep），令面未随动⇒下班仍会按旧条放弃一条更省力的开考通道，且本席三班连续按"自物化注入"重造同一件事；本席不改他席指令面|`git show HEAD:scripts/backtest/fexam/calibration_exam.py` 第 1154-1155 行・落地 commit=8caf2743b9(10-16 16:48, 消息含"panel 卡 CLI 解禁")・`--help` 实跑读数四旗齐|⑩ 在 ⑦ 系令卡把该句改为"panel 可走 CLI，本席须自验首张；series 路照旧"并注实测锚；本席已把该口存在性与未真跑缘由如实登记|中
+- **本班收班次序申明**：袋终态若非 done，则收班② 延后——本席 keeper 39796 与网关代起枚按上列 PID 交下班核活后精确终止（禁按镜像名批杀），本席不自 drain、不 requeue、不手搬队列件。
+- **本节归属申明**＝本节写于袋① 快照之后 ⇒ **不为本节加投第二袋**（在册两难＝同会话后袋在前袋落地后必判双侧皆改而死，且每调一次网关各代起一枚心跳＝收班② 递归无出口）；本节由下班袋承接落地，下班领面以**盘面**为权威（同 1016-02 班尾巴面形态）。
+- **本班 tmp 处置**＝按小步收班② 于收班末删除 `.runtime/tmp/p07c_1017_01/`（消费者次序：先出本节读数，再删；keep 名册第 420-422 行属白名单面保留）。预演器本体随之消失，**方法与参数已全数写在 §三**（副本＋双 tmp 写面＋固定种子＋两面形状＋IC_DEVICE=cpu），下班据此可 15 分钟内重建；本席不在永久区自建工具件（净零增长与 CREATE-GUARD/token/翻译登记义务不擅动）。
+
+### 十一、收班末段（02:00x 现测・§十 之后第二截尾巴，上文 §一—§十 逐字不涂）
+
+- **心跳真身终局实测（推翻 §十 里"alive=True"的时点后状态，两行各自在其时点为真）**：01:58:33 现测 pid **39796（本席 keeper）alive=False**・pid **46040（网关代起的 heartbeat_daemon，pid 文件持者）alive=False**；
+  `keeper.log` 末次写盘 **01:40:17**，末行逐字＝`SessionRegistry: failed to load legacy registry: [Errno 13] Permission denied: 'D:\ZephyrAlpha\.runtime\session_registry.json'`
+  ⇒ 本席守护死于**共享注册表读取被拒**（不是被 reaper 收割：本班两行 keep 名册在位且 01:40 后零收割事件指向本席 pid）。这是 1016-02 班 §十三"登记即免杀被证伪、杀手未定论"两候选之外的**第三条候选机制**，本席只登记观测不代他席定论。
+- **⚑ 本班单样本反证（要 ⑩ 定性，不改条款）**：本席袋 `q-20261017-st-qoder-p07c-1017-01-0001` 实际落地时刻＝**01:55:51**（`git log -1 -- 台账` 现读，commit=1562d8d066），
+  而两枚守护最迟于 **01:40:17** 后已不在写痕、01:58 实测双双不存在 ⇒ **袋在无自家心跳的约 15 分钟里照常 drain 成 done**。
+  ⇒ 在册前提「袋落地期间 keeper 必须在岗，否则推进 ghost_session 死族」（本席 10-15 首班实证＋keep 名册第 43 行）在本样本未被复现；
+  1016-02 §八 那枚"收班② 与在途袋互斥"待裁 BLOCKER 的必要性因此**下调为证据不足**，请 ⑩ 判措辞（本席不自改指令面与 SOP）。
+- **收班② 终态处置**＝本班不重启 keeper（重启只为记录末段读数＝在册"为记读数再补袋＝递归无出口"同型浪费），
+  只按 pid 文件精确清尾：`.runtime/locks/heartbeat_st-qoder-p07c-1017-01.pid` 内容 46040 而进程已亡 ⇒ 删除该 stale pid 文件（防"说谎心跳"面）；
+  宽谓词枚举实测 4 枚命中里 **3 枚是携带本席脚本正文的父 bash 壳（pid 8036/40260/56264）＝在册"按 cmdline 子串批杀会自杀"陷阱本班再次同框，本席一律不动**，
+  正对照＝同尺可枚举到他席守护，谓词非空。
+- **本班不再补第二袋（申明理由）**＝§十/§十一 系本班袋① 快照之后所写，留作**盘面尾巴由下班袋承接**；
+  理由不是省力而是本班实测：袋① 从入队（01:16:03）到落地（01:55:51）耗时 **39.8 分**（head 位一度为他班 1504 秒旧袋），
+  此刻 02:00 再投一袋按该节拍必超本班 90 分窗（终点约 02:20），结果＝给下班留"在飞袋＋必须重起心跳"的更坏面；
+  留尾巴的代价本席已知且被 1016-02 先例覆盖（下班读盘面为准，卡状态与台账均以磁盘面为权威）。
+- **收班其余各件现测**＝①claim：本班末次 `--release-only` 01:57:19 回执 `RELEASED: 2 files (verified)`，随后 `lock_files.py list` 全量面 grep 本席 sid＝**0 命中**（01:58:33 复量；§十一 写作前按"改前 claim"重新 acquire 台账一枚，末段后由 ② 一并 release）；
+  ③耗时＝00:50:46→02:00 约 **69 分**（90 分班限内）；④[BLOCKER]＝本节再追加 1 枚 ⇒ 盘面严式行首计数由 18 增至 **19**（起手 13＋§九 4＋本节 1，逐节各在其时点为真）；
+  ⑤自清＝`.runtime/tmp/p07c_1017_01/` 全部本班件（预演器/普查器/收班读数器/副本卡目录/合成分数册）在本节落笔后删除，keep 名册 420-422 行属白名单面保留；
+  ⑥GPU＝全程 IC_DEVICE=cpu・`gpu_watchman.py status` 现读 active=(none) ⇒ 无牌可还；⑦零 spawn 子代理 ⇒ 零孤儿；
+  ⑧`git worktree list` 含本席 sid **0 枚**・`.aidrafts/st-qoder-p07c-1017-01` 实测不存在 ⇒ 本班零自建整树。
+- **本班出分＝0 张（保底未达，如实呈报）**：双口径均未达（0＜8 张・69 分＜4 小时），根因非省力＝CH 禁跑窗与班限互斥＋两条零 CH 路实测无面（§二）。
+  本班净产出＝162 枚积压的执行器面分类（121 可吃／41 避让且具名）＋两条结构性堵点定位到行（双臂 panel 路 28 枚・regimes 散文 13 枚）
+  ＋令卡一条已过时的现证（panel CLI 已解禁）＋一条在册前提的单样本反证（心跳与在途袋）。
+- [BLOCKER] 2026-10-17|⑦c席1017-01|工具缺陷|恒定班心跳守护可在"登记进 reaper 白名单之后"死于共享注册表读取被拒（Permission denied），非收割所致且死前无任何退出码回执，导致"在途袋须守护在岗"这一收班条款的执行面不可依赖：本席 keeper 末行逐字=[Errno 13] Permission denied: .runtime/session_registry.json（01:40:17 写痕），01:58 实测 keeper 与网关代起枚双双不存在，而袋仍于 01:55:51 成 done ⇒ 同一条款两头都失准（既没保住该保的，也没杀死该杀的）|.runtime/tmp/p07c_1017_01/keeper.log 末行（tmp 随本班收班删除，此处逐字引文为唯一留痕）・commit=1562d8d066 时间戳・lock_files list 本席 sid 0 命中・宽谓词枚举 3 枚父壳同框|⑤/运行班判 session_registry.json 的并发读写是否须改 per-session 文件或加重试；⑩ 判"收班② 与在途袋互斥"条款按本样本改措辞（本席不自改）|中
+
+### 十二、证据指针申明（02:0x 现测・本节之后本班即自清 tmp，上文逐字不涂）
+
+- 本台账 §三/§四/§六/§八 内引用的 `.runtime/tmp/p07c_1017_01/*`（预演器本体・`preflight.jsonl`・`preflight_scores.yaml`・`keeper.log`・卡副本目录）**自本节起按 Owner 方案1 小步收班②全部删除＝指针按设计失效**，勿再按路径取件、勿据此判"证据灭失=案卷作废"。
+- 可久留面＝本台账自身：§三＝方法与隔离参数（副本卡＋双 tmp 写面＋固定种子＋两面形状＋IC_DEVICE=cpu），§四＝162＝ran 121＋crash 41 的分类与两处崩点行号，§五＝41 枚具名（已按 `is_file()`＋`status: preregistered` 双谓词反查＝41/41 在位、零转抄错），§六＝两枚白噪声 pass 的实读数值，§十/§十一＝令卡过时项与心跳反证。
+- 本班收班终态一行＝出分 0・零翻卡・零改判据/门柱/冻结值・分数册字节零动作・自家 claim 0・自家心跳件 0・tmp 0・子代理 0・worktree 0・实耗约 71 分（00:50:46→02:0x）・袋① done(1562d8d066)・§十—§十二 留盘面交下班袋承接。
+
+## ⑦考工C 班次 1017-02（st-qoder-p07c-1017-02）｜起手 02:20:21・CH 禁跑窗整班覆盖・本班出分 0 张（保底双口径均未达，如实呈报）・零翻卡零改判据/门柱/冻结值・分数册字节零动作
+
+### 一、冷启动与上班交班四查（date 现测，磁盘面为准）
+
+- python 3.12.8；`lock_files.py cleanup`＝CLEAN 无死锁；reaper 02:21:20 实测 source=live・killed=0 reported=30・degraded False・commit_pct 82.53・ram_used 73.5%・cpu 75.7%⇒允许写。
+- 本班整班落在 **CH 禁跑窗 01:00–04:00**（起手 02:20:21，班限终点约 03:50，窗解 04:00 已超班限 10 分）⇒本班零真分；该"窗与班限互斥"已在册（上班 §八 第 4 枚），本班不重复立案，只补一条新读见 §五。
+- 交班四查逐条回批（上班台账 §十/游标"下班首查四件"）：
+  ① **上班袋① done**（landed_id=1562d8d066，`commit_queue status --session st-qoder-p07c-1017-01` counts done=1 dead=0）；**但上班尾巴面（台账 §十—§十二）至今未落地**＝本席台账 HEAD 面 602 行 vs 盘面 679 行（差 77 行）、盘面严式行首 `[BLOCKER]` 19 行 vs HEAD 面 17 行⇒本班随袋承接。
+  ② **⑤ 双臂×panel 腿未修**（两面同证）：`scripts/backtest/fexam/calibration_exam.py` 磁盘面与 HEAD 面 sha16 全等（a8e7c40a1531ee6b），:557 `_comparison_metrics` 仍是单路、:561-562 无条件进 `_series_metrics`、:1049 无条件调用，无按 signal_kind 分派支⇒28 枚崩面原样在位。
+  ③ **⑥ regimes 散文未修**：prereg 面本班复量 13 枚，逐名与上班 §五(b) 名单相等（含 10-16 22:15 新出的 L3-11-1/03・L3-11-2/03）；`TDM-E-L9-A06__calibration__02` 卡面 bull_note mtime 仍 10-10 08:35＝本席零触碰。
+  ④ **孤儿卡未复位**：`entry_flow/L3/TDM-E-L3-03-2__calibration__03_温和放量` 盘 status=examining／HEAD=preregistered／mtime 仍 10-16 18:38:44；本班未翻、未 release 他会话 claim（归 ⑦A/⑩）。
+
+### 二、分母复量与正对照（两把尺同框）
+
+- 四族文件总数 **609**（上班 589）；六态加总自证＝empty 240／preregistered **162**／examined 87／blocked_on_data 71／blocked_on_impl 48／examining 1＝609 ✓。
+- prereg 族分片＝91／25／21／25＝162（与上班逐值相等）。
+- **面值移动复量＝0**：prereg 中 mtime 晚于上班 01:03 读数者 0 枚⇒上班"162＝ran 121＋crash 41"的名录与分母可直接引用，下班不必重跑预演（这是本班实测，不是推断）。
+- 正对照（真源单口 `pillars_route(card)`，禁抄第二份）＝route {'series': 126, 'dual_arm': 36}／signal_kind {'series': 83, 'panel': 79}／交叉 dual_arm/panel=28／dual_arm/series=8／series/panel=51／series/series=75；dual_arm×panel＝**28**（上班在册 28）；regimes 散文＝**13**（上班在册 13）⇒两把尺与上班逐字复现＝面值确未动。
+- 分数册三面（起手 02:3x 现测）＝disk **110** 行＝HEAD **110** 行（严式 `- card_id:` 谓词）、index 106 行（在册"正门每落地一次 index 停在落地前一版"形态复现，本席不复位）；本班自带备份 `.runtime/tmp/p07c_1017_02/scorebook_backup.bin`（与盘逐字节相等，sha16 a9532fceb0899c94），本班未写一行。
+
+### 三、本班主产出＝领面序纠偏（零 CH，直接改下班动作）
+
+- 尺＝领面全集（162 减 41 避让＝**121** 枚）按 mtime 升序，逐张量 `data_binding.signal_derivation` 非空＝本席 1016-01 在册那一关"卡面是否给出 t 日可算式"。
+- 结果＝**有可算式 108／整块无 data_binding 13**（加总 108+13=121 ✓）。13 枚具名：
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S0__calibration__02_货币卡.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S0__calibration__03_流动性卡.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S0__calibration__04_海外卡.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S0__calibration__05_政策事件卡.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S1__calibration__03_黄白线交叉.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S2__calibration__07_连板家数分布.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S3__calibration__02_昨日涨停溢价.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S3__calibration__03_晋级率.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S3__calibration__04_情绪先锋四态.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S4__calibration__02_期权IV主路径.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S4__calibration__03_合成VIX后备.yaml
+   - 10-09 20:25 | entry_flow\L1\TDM-E-L1-S5__calibration__02_11信号环比.yaml
+   - 10-10 19:37 | exit_flow\X1\TDM-X-S1-03__comparison__02_dualwindow.yaml
+- **指令卡"按 mtime 从旧到新取积压最久"在本面积的前 12 枚全部命中无绑定面**＝按序领面会白烧 12×15 分窗（≈三班）。首个带可算式者位序＝index 12＝`exit_flow/S1/TDM-X-S1-04__calibration__03_席位净卖出派发前瞻收益`（10-10 08:14）。
+- 这 13 枚不是本班新堵：10-15 首班在册"13 张整块无 data_binding（含 10-09 20:25 十二张最久积压者多数）"已点名，本班复量＝**同 12 枚仍在 prereg 且仍排在领面序最前**＝五个班未动，而排序规则会把每一班都送到它们面前。⇒⑥ 补绑定块是前置条件；下班领面序改指 10-10 08:14 批起。
+- 10-10 批供数侧本班只读卡面（禁跑窗内不查 CH）：X1 族三枚（R1-01/ablation/03・R1-01/comparison/02・R1/shadow/02）的 signal 需 `exit_simulator.simulate` 产出的日净值面＝类 C engine_replay 依赖，不是"两个 csv"能了⇒下班优先 08:14/08:16 批的简单绑定面，勿先领 X1。
+- 断供候选交叉（只给候选，真挡须按窗与列在 CH 窗内逐条读，禁按表名命中判）：
+   - [18] exit_flow\X1\TDM-X-R1-03__calibration__02_宽基ETF天量与护盘滞后结构 | 表=c1_market.kline_etf_daily | [('kline_etf_daily_shallow_depth', 'open')]
+
+### 四、本班新发现＝缺陷前移（今晚新出 32 枚骨架，其中 17 枚 panel 形双臂题）
+
+- 实测 mtime≥10-17 00:00 的四族卡文件 **32** 枚，逐件 status 全为 **empty**（出生骨架，不在 prereg 面积内），birth_seat=③、三批 00:29／01:13／02:10。
+- 形状分账：
+   - status=empty kind=panel family=ablation | 1 枚
+   - status=empty kind=panel family=comparison | 16 枚
+   - status=empty kind=series family=ablation | 1 枚
+   - status=empty kind=series family=comparison | 12 枚
+   - status=empty kind=series family=shadow | 2 枚
+- 关键判读（本班不自欺之处）：这 32 枚 `pillars` 现值＝None ⇒ `pillars_route` 对其返回缺省支 "series"＝**route 现在还判不出来**。本班**不宣称**这 17 枚已落进崩类 (a)；能宣称的是它们按 family 是双臂对照/消融题，一旦按兄弟卡补出 NAV 专有键即翻 dual_arm，而 ⑤ 那条 panel 腿仍未修（§一②）⇒届时无一可考，崩面上限从 28 涨到 28+17=45。
+- 17 枚具名：
+   - entry_flow\L2\TDM-E-L2-06-1__comparison__02_gate_then_weight_sequence_vs_joint_conjunction_pool_membership.yaml
+   - entry_flow\L2\TDM-E-L2-06-2__comparison__02_first_seal_plus_max_consec_head_def_vs_strength_rank_head_def.yaml
+   - entry_flow\L2\TDM-E-L2-06__comparison__02_multiplier_step_form_vs_additive_offset_form_rank_flip.yaml
+   - entry_flow\L2\TDM-E-L2-08__comparison__02_price_persistence_stage_leg_vs_limit_up_confirm_stage_leg_confusion.yaml
+   - entry_flow\L2\TDM-E-L2-10__comparison__02_sector_membership_path_vs_chain_graph_path_candidate_set_and_hump_timing.yaml
+   - entry_flow\L3\TDM-E-L3-02__comparison__02_nine_stage_order_permutation_vs_stage_set_membership_pool_stability.yaml
+   - entry_flow\L3\TDM-E-L3-03-1__comparison__02_rolling60_event_count_vs_cumulative_event_intensity_rank_flip.yaml
+   - entry_flow\L3\TDM-E-L3-05__comparison__02_board_height_only_rank_vs_height_plus_anomaly_strength_rank.yaml
+   - entry_flow\L3\TDM-E-L3-07-2__comparison__02_ic_weighted_ham_half_life_vs_flat_mean_weight_sensitivity.yaml
+   - entry_flow\L3\TDM-E-L3-07-3__comparison__02_target_caliber_axis_vs_universe_filter_axis_interaction.yaml
+   - entry_flow\L3\TDM-E-L3-07__comparison__02_union_from_replayed_labels_vs_single_chain_removal_marginal.yaml
+   - entry_flow\L3\TDM-E-L3-09__ablation__02_drop_stale_removal_leg_vs_drop_demotion_leg_on_pool_turnover.yaml
+   - entry_flow\L3\TDM-E-L3-11__comparison__02_auction_channel_newly_added_vs_speed_channel_newly_added_split.yaml
+   - entry_flow\L3\TDM-E-L3-12-1__comparison__02_cross_sectional_quantile_form_vs_absolute_20pct_line_form_pool_migration.yaml
+   - entry_flow\L3\TDM-E-L3-12-4__comparison__02_max_confidence_per_symbol_day_vs_event_count_per_symbol_day.yaml
+   - entry_flow\L3\TDM-E-L3-12__comparison__02_four_dim_sum_count_vs_strict_resonance_vs_any_dim_rank_order_split.yaml
+   - entry_flow\L3\TDM-E-L3__comparison__02_composite_score_topn_vs_sequential_gate_survivors_pool_set_difference.yaml
+- 给 ⑤ 的时序建议（本席不裁）＝在 ③/⑥ 补齐这 32 枚之前修 `_comparison_metrics` 的 signal_kind 分派比之后修便宜。给 ⑩ 的一条事实＝"⑥ 未修 13 枚散文"与"③ 新出 32 枚骨架"并存＝制卡侧在推进、执行器侧未推进。
+
+### 五、本班为何零出分（现测，非引用上班）
+
+- 硬互斥见 §一。零 CH 出分路两条实测均无面：① prereg 162 枚逐卡 `data_binding.derived_series`／`target_series` 命中 **0**；② 目标腿缓存＝按 close/open/panel/fwd/target/mask/ret 关键词扫 `.runtime/tmp` 命中 **0 枚**（信号侧在册件仍在盘：mf_mnp 32,007,191B・mf_pc 2,743,763B・shc_delta_wide・unl_nearest_wide・p07c_ti_chips_winner・conc_90，但无目标面⇒任何一张真分都要 CH）。
+- **本班新读（请 ⑩ 排窗内任务书时采纳）**＝窗内班的可产出面不是零：本班的领面纠偏（§三）与缺陷前移（§四）两件都是窗内零 CH 产出的，且领面纠偏直接省下班 12×15 分。上班给的是执行器面分类，本班给的是领面序本身——两班互补，非重复劳动。
+
+### 六、本班自犯一处（另起留旧案，不涂）
+
+- 断供册首版尺＝把 `src/zephyr/data/config/known_data_gaps.yaml` **当 list 迭代**（真身＝顶层 dict，键 `gaps`/`last_updated`）⇒未了账表命中恒 **0**＝把"尺坏"读成"无缺口"，与本席在册红线"0 命中须正对照"同型。改正后现测＝items 85／未了账 42／点名表 45。上班在册读数为"点名表 40 张"，本班 45 张的差＝正则面不同（本班 `\bc\d_[a-z]+\.[A-Za-z_0-9]+` 扫整条 dump），**本席不判谁错，两读各留**。
+- 班号三面并集自证（在册教训＝取号只数台账会撞鬼班）＝台账面 1017 仅 01・`.runtime/tmp` 面 p07c_1017_* 仅本班（`p07_1017_02` 系 ⑦A 席 sid 不同物）・心跳面本班起手时 `heartbeat_st-qoder-p07c-1017-02.pid` 不存在⇒本班＝02 号唯一。
+
+### 七、[BLOCKER] 登记（本班 3 枚：高 1／中 2）
+
+- [BLOCKER] 2026-10-17|⑦c席1017-02|流程问题|指令卡领面排序规则"按 mtime 从旧到新取积压最久"把每一班都送到 13 枚整块无 data_binding 的卡面前：本班实测领面全集 121 枚的前 12 位全命中该面＝按序开领会白烧 12×15 分窗；该批系 10-09 20:25 entry_flow/L1 十二枚，10-15 首班已点名、连续五个班未动且仍排最前|docs/03_modules/_domain_backtest/exam_cards/entry_flow/L1/ 全 12 枚逐件 data_binding 键缺失（具名在本班台账 §三）＋本班 tmp binding_census 读数 121=108+13|⑥ 席补该 12 枚绑定块（前置条件面）；⑩ 席判是否把各考工席领面序改为"先按 signal_derivation 非空筛、再按 mtime"|中
+- [BLOCKER] 2026-10-17|⑦c席1017-02|判据缺失|断供册无在册读取单口，各席现写正则⇒同一条数据两读不等：本席首版把 known_data_gaps.yaml 当 list 迭代（真身＝顶层 dict 键 gaps/last_updated）命中恒 0＝把尺坏读成无缺口，改正后 85 条/未了账 42/点名表 45 张，而上班在册为 40 张；两读本席均留不判谁错|src/zephyr/data/config/known_data_gaps.yaml 顶层键面实测＋本班 tmp gap_cross 改正版读数|① 数据源席或 ⑤ 给断供册一个读取单口（含 status 口径与表名提取规则），各席禁各自现写正则；本席不自建永久件（净零增长）|中
+- [BLOCKER] 2026-10-17|⑦c席1017-02|工具缺陷|执行器双臂 panel 腿未修的同时制卡侧在批量出双臂 panel 题：今晚新增 32 枚骨架卡（逐件 status=empty・birth_seat=③）里 kind=panel 且 family∈{comparison,ablation} 者 17 枚，现 pillars=None⇒route 尚判 series（本席不宣称已崩），一旦补出 NAV 专有键即翻 dual_arm 且无一可考，崩面上限 28→45；崩点两面同证＝磁盘面与 HEAD 面 sha16 全等 a8e7c40a1531ee6b 的 calibration_exam.py:557 单路 _comparison_metrics（:561-562 无条件进 _series_metrics、:1049 无条件调用）|本班 tmp newcard_probe 的 17 枚具名（台账 §四）＋docs/03_modules/_domain_backtest/exam_cards/entry_flow/L2/TDM-E-L2-06__comparison__02_multiplier_step_form_vs_additive_offset_form_rank_flip.yaml 样本件|⑤ 在 ③/⑥ 补齐这 32 枚之前给 _comparison_metrics 加 signal_kind 分派（或显式 fail-closed 出 blocked 行）；⑩ 判制卡与执行器两侧的推进次序|高
+
+### 八、本班实耗与收班读数（同帧现测）
+
+- 起手 2026-10-17 02:20:21（首条冷启动命令实测）→ 本节落笔 02:36:27 现测＝**16.1 分**（本班唯一耗时自述，其余读数各自同帧）。
+- 本班出分 **0** 张・翻卡 **0**・判据/门柱/冻结值改动 **0**・分数册字节动作 **0**・worktree **0**・子代理 **0**・GPU 未 acquire（全程 IC_DEVICE=cpu）・未 requeue 任何死袋・未 release 他会话 claim。
+
+### 九、开闸工单（04:00 后首八枚逐张拆好的照单面・零 CH・机生件逐字转抄，禁手打）
+
+- 尺＝领面全集按 mtime 升序取前 8 枚，逐张读卡面四件＝要拉哪张表哪个窗／目标面卡面冻结式／宇宙谓词是否申报／是否依赖装置产出（engine_replay 类）。
+- 全面积分账（**写入同帧现测**：可算式 108 枚＝领面 121 减无绑定 13）：**panel/series=39・series/dual_arm=7・series/series=62**；其中**装置依赖 9 枚**（需 `exit_simulator.simulate` 日净值或 `strategy_exam.window_metrics` 产出）＝**纯列面可算 99 枚**。
+- **前 8 枚里 4 枚是装置依赖面**（WO-03・WO-04・WO-05・WO-07）＝按 mtime 直领会在开闸首小时撞上"两个 csv 了不了"的面；本班建议下班先领 **WO-00・WO-01・WO-02・WO-06** 四枚纯列面（其中 WO-02 需 l2_tick/tick_depth_5 重面，WO-00 的 OOS 到 2026-09-30 需先实测龙虎榜两表覆盖）。
+- 供数集中面（108 枚表→卡数 top，一表可服务多卡，先拉大表）：kline_daily_hfq=53／kline_sector_880=26／kline_index=25／emotion_index=12／stk_limit=11／regime_state_anchored=9／tick_data=9／kline_daily=7／sim_trade_log=6／sector_state=6／sector_constituent=6／regime_snapshot_history=5。
+- **宇宙谓词一条纪律复量（本班逐字读出）**＝前 8 枚卡面 `data_binding.universe_rule` 实测**未申报者 8/8**⇒按本席 1016-01 在册口径**不套** ST/年龄掩码（套了＝把未申报口径写进永久分数册）；下班勿因为 ⑦A 席掩码缓存在盘就顺手套。
+- 工单原文（本班机生件逐字，含每张的 IS/OOS/regimes/pillars 键集/表清单/target 冻结式/装置依赖）：
+
+```
+WO-00 | exit_flow\S1\TDM-X-S1-04__calibration__03_席位净卖出派发前瞻收益
+      mtime=10-10 08:14 kind=panel route=series pillars=['gap_bucket3_vs_0_20d_max', 'ic_ir_min', 'ic_mean_min', 'mono_spearman_min', 'oos_same_sign', 'regime_same_sign']
+      IS=['2022-01-04', '2025-09-09'] OOS=['2025-10-09', '2026-09-30'] regimes={'bull': '2024-09-14..2025-09-09（段界=ch_data.regime_series SMA200 帘子 trend_up 段，裁定#489②，考时按实取）', 'bear': '2022-01-04..2024-02-05（含 2024-01 微盘流动性危机子段的下行段）'}
+      tables=['c1_market.dragon_tiger', 'c1_market.dragon_tiger_seat', 'c1_market.kline_index']
+      target=forward_5d_excess_vs_000300（未来 5 日相对 000300 超额，主轴）
+      universe=(卡面未申报宇宙谓词)
+      device_dependency=无（纯列面可算）
+
+WO-01 | exit_flow\S1\TDM-X-S1-04__calibration__04_除权除息参考价分母误判清仓
+      mtime=10-10 08:14 kind=panel route=series pillars=['ic_ir_min', 'ic_mean_min', 'misjudge_cost_gap_min', 'misjudge_rate_ratio_min', 'mono_spearman_min', 'oos_same_sign', 'regime_same_sign']
+      IS=['2019-01-04', '2023-12-31'] OOS=['2024-01-02', '2025-09-09'] regimes={'bull': '2019-01-04..2021-06-30（流动性牛）', 'bear': '2021-07-01..2024-01-31（贴现率熊+微盘熊）'}
+      tables=['c1_market.kline_daily', 'c1_market.kline_daily_hfq', 'c1_market.kline_index', 'c1_market.suspend', 'c3_fundamental.ex_dividend_event']
+      target=ex 日破位误判率双臂比（pre_close 臂 / dr 臂）
+      universe=(卡面未申报宇宙谓词)
+      device_dependency=无（纯列面可算）
+
+WO-02 | exit_flow\S2\TDM-X-S2-02__calibration__02_连续跌停开板概率与次日处置
+      mtime=10-10 08:14 kind=series route=series pillars=['ic_ir_min', 'ic_mean_min', 'mono_spearman_min', 'n3_unopen_prob_max', 'oos_same_sign', 'regime_same_sign', 'volume_split_gap_min']
+      IS=['2015-01-05', '2023-12-31'] OOS=['2024-01-01', '2025-09-09'] regimes={'bull': '2019-01-04..2021-06-30（流动性牛，战役模板同轴）', 'bear': '2021-07-01..2024-01-31（贴现率熊+微盘熊）'}
+      tables=['c1_market.kline_daily_hfq', 'c1_market.kline_index', 'c1_market.l2_tick', 'c1_market.stk_limit', 'c1_market.tick_depth_5']
+      target=next_day_unopen_probability（次日开板条件概率，主轴）
+      universe=(卡面未申报宇宙谓词)
+      device_dependency=无（纯列面可算）
+
+WO-03 | exit_flow\S2\TDM-X-S2-02__comparison__04_T1可卖额度做T回转延迟成本
+      mtime=10-10 08:14 kind=panel route=series pillars=['binding_rate_min', 'deferral_cost_bad_median', 'deferral_cost_cheap_band', 'ic_ir_min', 'ic_mean_min', 'oos_same_sign', 'regime_same_sign']
+      IS=['2019-01-04', '2023-12-31'] OOS=['2024-01-02', '2025-09-09'] regimes={'bull': '2019-01-04..2021-06-30（流动性牛）', 'bear': '2021-07-01..2024-01-31（贴现率熊+微盘熊）'}
+      tables=['c1_backtest.sim_trade_log', 'c1_market.kline_daily_hfq', 'c1_market.kline_index', 'c1_market.stk_limit']
+      target=T+0 撞额笔次的顺延执行价差中位与分位数带
+      universe=(卡面未申报宇宙谓词)
+      device_dependency=['build_signals', 'signals/reb_rows']
+
+WO-04 | exit_flow\X1\TDM-X-R1-01__ablation__03_市场体制条件下熔断减仓增量
+      mtime=10-10 08:14 kind=series route=dual_arm pillars=['cost_tier_bp_required', 'decomposition_abs_error_max_pp', 'missed_crisis_trigger_max', 'oos_same_sign', 'orthogonal_maxdd_increment_min_pp', 'regime_same_sign', 'sharpe_delta_min', 'turnover_delta_annual_max']
+      IS=['2018-01-02', '2025-09-30'] OOS=['2025-10-09', '2026-09-30'] regimes={'bull': '2019-01-04..2021-06-30（流动性牛）', 'bear': '2021-07-01..2024-01-31（贴现率熊+微盘熊）', 'crisis': '2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（在册危机段）'}
+      tables=['c1_backtest.decision_daily', 'c1_backtest.regime_snapshot_history', 'c1_market.emotion_index', 'c1_market.kline_daily_hfq']
+      target=both-vs-regime_only 的 OOS MaxDD 净增量（pp）与分解加和误差
+      universe=(卡面未申报宇宙谓词)
+      device_dependency=['回放']
+
+WO-05 | exit_flow\X1\TDM-X-R1-01__comparison__02_熔断五级梯度减仓对照
+      mtime=10-10 08:14 kind=series route=dual_arm pillars=['cost_tier_bp_required', 'maxdd_improvement_min', 'maxdd_improvement_vs_no_hysteresis_min_pp', 'missed_crisis_trigger_max', 'oos_same_sign', 'sharpe_delta_min', 'turnover_delta_annual_max', 'whipsaw_roundtrip_ratio_max']
+      IS=['2018-01-02', '2025-09-30'] OOS=['2025-10-09', '2026-09-30'] regimes={'bull': '2019-01-04..2021-06-30（流动性牛）', 'bear': '2021-07-01..2024-01-31（贴现率熊+微盘熊）', 'crisis': '2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段，T3b 窗+微盘流动性危机窗）'}
+      tables=['c1_market.account_nav_daily', 'c1_market.kline_daily_hfq']
+      target=OOS 组合 MaxDD / 年化 Sharpe（strategy_exam.window_metrics，244 年化）
+      universe=(卡面未申报宇宙谓词)
+      device_dependency=['exit_simulator', 'simulate(', 'strategy_exam', 'window_metrics', '回放']
+
+WO-06 | exit_flow\X1\TDM-X-R1-03__calibration__02_宽基ETF天量与护盘滞后结构
+      mtime=10-10 08:14 kind=series route=series pillars=['ic_ir_min', 'ic_mean_min', 'lag_median_days_min', 'min_events', 'mono_spearman_min', 'oos_same_sign', 'regime_same_sign']
+      IS=['2021-03-08', '2025-09-09'] OOS=['2025-10-09', '2026-09-30'] regimes={'bull': '2024-09-14..2025-09-09（段界=ch_data.regime_series SMA200 帘子 trend_up 段，裁定#489②，考时按实取）', 'bear': '2021-03-08..2024-02-05（含 2024-01 微盘危机子段的下行段）'}
+      tables=['c1_market.kline_etf_daily', 'c1_market.kline_index', 'c1_market.market_etf_share_snapshot']
+      target=forward_20d_index_return（000300 未来 20 日收益，主轴）
+      universe=(卡面未申报宇宙谓词)
+      device_dependency=无（纯列面可算）
+
+WO-07 | exit_flow\X1\TDM-X-R1__shadow__02_拔电源影子运行对照
+      mtime=10-10 08:14 kind=series route=dual_arm pillars=['cost_tier_bp_required', 'false_trigger_rate_max', 'forgone_gain_max_pp', 'loss_avoided_min_pp', 'oos_same_sign', 'sharpe_delta_min']
+      IS=['2018-01-02', '2025-09-30'] OOS=['2025-10-09', '2026-09-30'] regimes={'bull': '2019-01-04..2021-06-30（流动性牛）', 'bear': '2021-07-01..2024-01-31（贴现率熊+微盘熊）', 'crisis': '2020-02-01..2020-03-23 与 2024-01-02..2024-02-08（两处在册危机段）'}
+      tables=['c1_market.kline_daily_hfq', 'c1_market.kline_index']
+      target=假想净值 OOS MaxDD 改善与错失收益（strategy_exam.window_metrics）
+      universe=(卡面未申报宇宙谓词)
+      device_dependency=['exit_simulator', 'simulate(', 'strategy_exam', 'window_metrics']
+```
+
+### 十、收班八件（02:40:57 现测・本班唯一投袋＝袋①，尾巴由下班承接）
+
+- ①**release 全部 claim**＝本节落笔时本席名下锁面实测 1 把（['    持有者: st-qoder-p07c-1017-02 | 剩余 29.9m｜来源=acquire 原 TTL，ttl=30m']）；本班只写本席两件 _working 件，投袋后由正门 finally 释放，下班仍须按 `lock_files.py list` 复量。
+- ②**注销心跳**＝本班不在此节执行（在册无终态面：任何一次 python 调用都会被代起守护，本席 1017-01 与 ⑨ 席 10-17 同记）；交接读数＝keeper pid **24336**（registry present=True・entry_pid=24336・last_heartbeat 秒级新鲜），重复起的 58428 已于 02:30 按 PID＋argv 逐元断言终止（**未按镜像名批杀**）。本班末次网关动作之后由本席以非 python 通道（taskkill 单 PID）终止，终判读 registry 文件撤除，不读 pid 文件（在册教训＝pid 文件恒指已死首枚）。
+- ③**实耗**＝起手 02:20:21（首条冷启动命令实测）→ 本节 02:40:57 ＝ **20.6 分**（此为本节落笔同帧读数；§八 那句 16.1 分系该节时点读数，旧文不涂，本班终值以班末袋复量之后的收班末段为准）。
+- ④**[BLOCKER]**＝本班 3 枚（§七，高 1／中 2）；写后同帧盘面严式行首计数见 §八 打印面（19→22，含上班尾巴 3 枚未落地行）。
+- ⑤**自清收口**＝`.runtime/tmp/p07c_1017_02/` 本班件实测 15 件／221 KB（普查器・工单器・keep 追加器・keeper・分数册备份・读数件）；按小步收班② 于班末删除，方法与读数全部写进本台账（§二／§三／§四／§九），下班据此可在 15 分内重建；本席不在永久区自建工具件（净零增长）。四件套外零散落，项目根零临时件。
+- ⑥**GPU 还牌确认**＝本班全程 IC_DEVICE=cpu、未 acquire 看门人⇒免执行，读数不申报为 GPU。
+- ⑦**后台子任务清点**＝本班零 spawn 子代理⇒零孤儿；唯一长驻进程＝keeper pid 24336（② 已写明销法与交接）。
+- ⑧**零 worktree 确认**＝`git worktree list` 含本席 sid 实测 0 行・`.aidrafts/st-qoder-p07c-1017-02` 存在性＝False⇒本班未调用任何工棚/工作树入口（TRAE-079 Phase 2 遵令）；历史遗留整树一枚未动，交 ⑩/清理专班。
+- **分数册三面（收班同帧复量）**＝disk 110 行／HEAD 110 行／本班写入 0 行⇒本班零动作；台账当前盘面 773 行。
+- **本班袋申明**＝本班只投一袋（§一—§十），袋终态若未达 done，本班不加投第二袋（在册两难＝同会话后袋在前袋落地后必判双侧皆改而死＋每调一次网关各代起一枚心跳＝收班② 递归无出口）；本班写作时刻之后的尾巴由下班袋承接，下班领面以**盘面**为权威。

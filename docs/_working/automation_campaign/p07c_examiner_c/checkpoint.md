@@ -171,3 +171,15 @@ cursor: 班次 01（st-qoder-p07c-1015-01，18:50:19 开班→19:25 交账≈35 
 - **纪律与自纠（另起留旧案卷）**：本班一处**本席脚本自犯**＝keep 名册追加件首版把结果面写成 `res.ok`（SafeWriteResult 真字段＝written/before_sha256/after_sha256）⇒ AttributeError 于写后的打印行，**实质追加已成功且不重复**（复量＝422 行、本席三行在位、前缀 intact），本班已就地改为幂等版（已在位则零动作）并按该形态给复核命令；本班未起 GPU（IC_DEVICE=cpu 全程）⇒ 收班⑥免执行；本班未建 worktree、未 spawn 子代理、未 release 他会话 claim、未 requeue 死袋。
 - **水位与资源（本班读数，勿沿用）**：reaper 00:50:46 source=live・commit_pct 81.46・ram_used 73.3%・cpu 87.2%・degraded False・stash_count 27・worktree_changes 1456・dead_archive ok=False rc=1（serializer 租约 pid=47508 存活）；D 盘余量本班未量。
 - **心跳交接**：本席 keeper pid **39796**（01:01:33 registered present=True entry_pid=39796）。本班收班按 PID 精确终止并在末次网关动作之后复量（在册更正＝调网关即被代起守护，杀须排最后＋等 ≥70 秒双谓词读）；keep 名册本席两行（421–422 行）与注释行 420 留岗（属白名单面，非本班临时件）。
+
+---
+
+## 游标（⑦c 1017-02 班末 02:36 追加，上文 1017-01 各节逐字不涂）
+
+- **本班终值＝出分 0 张・零翻卡・零改判据/门柱/冻结值・分数册字节零动作**（CH 禁跑窗 01:00–04:00 与本班 02:20→03:50 班限整段重叠，两条零 CH 路现测均无面）。本班产出＝**领面序纠偏＋缺陷前移案卷**。
+- **下班领面序（本班实测，直接照此改动作）**：跳过按 mtime 最旧的前 12 枚——它们整块无 `data_binding`（10-09 20:25 entry_flow/L1 十二枚＋10-10 19:37 一枚，具名在本席台账 §三），改从 **10-10 08:14 批 `exit_flow/S1/TDM-X-S1-04__calibration__03_席位净卖出派发前瞻收益`** 起；该枚起 84 枚集中在 10-10 批且全部有 t 日可算式（121=108+13）。X1 族三枚需 `exit_simulator.simulate` 日净值面（类 C engine_replay），勿当"两个 csv"面领。
+- **上班名录仍有效**（本班实测面值移动 0 枚）：prereg 162＝ran/领面 121＋避让 41；避让 41 枚分两形制＝双臂×panel 28（⑤ 未修，两面 sha 全等）・regimes 散文 13（⑥ 未修，L9-A06 mtime 仍 10-10 08:35）；正对照 route 126/36・kind 83/79 与上班逐字复现。
+- **本班新增前瞻面**＝今晚 ③ 席出 32 枚骨架卡（全 status=empty），其中 17 枚 kind=panel 双臂题；现 pillars=None 故 route 未定，**别把它们当可考面领**，但请在 ⑤ 修腿之前持续盯住（上限 28→45）。
+- **下班首查三件**：① 本班袋终态（`commit_queue.py status --session st-qoder-p07c-1017-02`）＋台账是否落地（只认 `git log -1 --name-only` 与 blob 内容级）；② 上班与本班的未落地尾巴是否被本班袋带走（本班袋含台账＝77 行上班尾巴＋本班 §一—§八）；③ 04:00 开闸后先复量 prereg 面值与 10-10 批首枚供数覆盖（OOS 2025-10-09..2026-09-30 需 dragon_tiger/dragon_tiger_seat 到 2026-09-30）。
+- **心跳与 keeper 交接**：本席 keeper pid **24336**（02:30 起，registry present=True・entry_pid=24336・last_heartbeat 秒级新鲜）；重复起的 58428 已按 PID＋argv 逐元断言终止（未按镜像名批杀，循在册红线）。keep 名册本席两行已幂等追加（该册 gitignore 不入库，非本班袋内容）。收班按在册序＝末次网关动作之后按 PID 精确销＋≥70 秒复量。
+- **纪律申明**：本班未建 worktree・未动它席指令面・未 requeue 死袋・未代复位孤儿卡・未 acquire GPU・本班袋只含本席两件 _working 件（不含分数册、不含卡面、不含热 token 册）。
