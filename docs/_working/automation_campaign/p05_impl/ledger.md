@@ -632,3 +632,80 @@ cd /d/ZephyrAlpha/.worktrees/st-qoder-p05-1015-05 && git --no-pager diff --cache
   "未调用工棚入口＋影子树归清理专班"，并报⑩路由处置该枚影子树。
 - 残余呈批面＝`-0003` 死信件留 `dead/` 作审计证据（其意图已由 `-0004` 内容级吸收，可判 absorbed，
   但销账须走 mv 通道＋机生台账行，本席不跑全池 `dead-archive` 以免触碰他席袋）。
+
+## 10-16 23:1x · 班次 03（st-qoder-p05-1016-03）领单＝P0 首件零漂移批投（三把尺复跑＋纯注释子集 12 件入袋）
+
+### 0 冷启动·防重入·时间账（date 实测）
+
+- 22:35:14 首命令＝Python 3.12.8 ✓；`setup_dev_env.py --check`＝usercustomize 在册（points to D:\ZephyrAlpha）✓；`lock_files.py cleanup`＝CLEANED 10 枚死锁（p01/p04/p07/p10 各席册面与一枚 exam_cards 卡，非本席件，本班不动他席）＋SALVAGED `st-infoaxis-land-20261014`／`st-qoder-p02-1016-01` 两遗物；reaper `source=live` ✓。
+- ⚑**进场水位实测（非体感）**＝commit_pct **95.11**／cpu_pct **96.1**／ram_used 75.6／`degraded=True`／`breached=[ALERT-SYS-001, ALERT-SYS-003]`，对照 02 班进场 52.53／19.8／False＝**两小时内翻近一倍**。按在册"起批前先读 commit_pct"本班自我设限＝零子代理、单袋件数压到 12、批投只取零行为改动子集、不并发施工。
+- 防重入三证＝①游标自报 02 班 41.0 分窗内收班＋"收班双证齐（unregister 后末行 exited／PID 40164・31440 均 GONE／claim released=3 verified）"；②`find .runtime/commit_queue -name "*p05-1016-02*"`＝done 4 枚（-0001/-0002/-0004/-0005）＋dead 1 枚（-0003，该班 §6 已分诊＝意图被 -0004 内容级吸收）；③盘面两册 `git diff --numstat HEAD`＝**全空**（盘==HEAD，无在途残留）⇒ 无在途 ⑤ 写手，接手为 03 班。
+- 零 worktree（TRAE-079 Phase 2）＝本班未调用任何工棚/工作树启动入口，全程主区＋`--allow-non-worktree`；历史遗留 `.worktrees/st-*` 与本席 1015-06 旧树**未动**，按在册交清理专班（已在本席 §4 再呈⑩）。
+- 租约四步＝`register(sid, pid=0, held_files=ledger+checkpoint)` → `claim_file` **2/2 True** → 心跳 daemon PID **30124** → `register_heartbeat_keepalive(ttl=7200s)` 可读回（granted_at 1792161578／expires_at 1792168778）。
+
+### 1 首件＝谓词复跑（交接清单已被 TTL 清，按 02 班次节 §3 口径重建三把尺）
+
+- 进场实测 `.runtime/tmp/st-qoder-p05-1016-02/zero_drift.jsonl`＝**No such file or directory**（TTL 已清，属条款预期内）⇒ 本班复跑，口径全量写入本节，下一班零重测。
+- **尺一** `zero_drift_scan.py`＝袋集合口径＝四态目录 ∪ `dead_archive_*` 内 `session_id` 含 `x2` 的袋（实测入面 **94** 枚；本班首写 44 系另一条只扫 10-16 代袋的临时 glob 读数，见 §6 更正条），按"最新袋"（created_at 最大）收敛到唯一路径；零漂移判据＝**一次 `git ls-tree -r HEAD --format=%(path)\t%(objectname)` 取全 HEAD 面 blob**，与袋内 per-file `base_blob` 直比（base_blob 本身就是 git blob sha，免逐件起进程＝本班相对 02 班的提速面）。排除集＝落地链本体六件＋`file_utils.py`＋已落的 `ibt_runner.py`。
+- **尺二** `real_change_scan.py`＝补"袋字节 ≠ HEAD 字节"一腿。⚑本班自犯预防＝尺一只看行差 `delta_lines`，实测 360 件里大量件 delta=0（等行替换），若不加此腿会把"已落地件"当候选＝假扩。袋内容 blob sha 用 in-process sha1("blob N\0"+bytes) 计算，并与 `git hash-object` 逐件对表**全等**（449b0972dbb5 双向同值）＝尺自证；同件另测 `disk==bag` 逐字节 True。
+- **尺三** `substance_scan.py`＝EOL 归一分层（在册律＝袋 sha 与盘/HEAD 直比会因 CRLF 造假不一致）＋difflib 行级 ins/del/rep。读数＝候选 **360**／EOL-only 伪差 **0**／真内容差 **360**。按域分布＝`src/zephyr` **202**・`scripts/governance` **96**・`scripts/backtest` **18**・`scripts/tasks` 11・`scripts/matrix_rescued_tmp` 9・其余 24。
+- ⚑**本班负结果**＝"纯插入件（del=0 ∧ rep=0）"＝**0 件**。⇒ 02 班次节"正向增量 60／含删行 37"这一两分在本谓词面不成立：断链批次件几乎全是**等行替换**（rep≤3 ∧ del=0 ∧ ins≤3 的小改面＝**246/360**），安全判据只能靠"base==HEAD 零漂移"而非"纯增"。
+
+### 2 本班交付＝纯注释／文档串级子集 12 件入袋（袋 `q-20261016-st-qoder-p05-1016-03-0001`，files=12）
+
+- 选面判据＝本班先做**零行为改动**面：逐件 `git diff -U0 HEAD` 全量 28 行中，非井号行仅 **1 对**文档串行（`t0_material_line.py`），其余 13 对全是 `[BLUEPRINT]`／`[INVARIANTS]`／`[CONSUMERS]` 头部锚点与注释；含真运行常量的 `p1_conditional_tables.py`（读侧 pathlib 路径）／`t0_rule_engine.py`（`DEFAULT_CARDS_DIR`）／`t0_state_match_matrix.py`（`SIX_PHASE_CSV`＋argparse 默认 out-dir）／`factory_grid_executor.py`（＋6 行 M5 thesis 叠加腿＝真代码）**本班不投**，留 §3 转单。
+- 投前四维现测（`preflight.py`，12/12 PASS）＝①`base_blob` 与现 HEAD blob 逐字节全等；②盘面字节==袋 blob（exact 非归一）；③无他席 claim；④袋面新指向路径逐条存在（缺失集空）。⚑claim 腿做过正对照＝`.ailocks/registry.json` 实读 5 条他席条目（p01 两枚／p08 一枚…）且 `lock_files.py check` 单件复核 FREE ⇒ 该尺非恒绿。
+- 语义复核＝改动＝`docs/_working/<campaign>/…` 改指 `docs/04_research_records/<域>/…`（永久区）或 `docs/_archive/_working_cleared/<campaign>/…`（归档区），与本指令卡 §1b 断链口径（B_永久区→04・C_归档区→_working_cleared）一致；新指向面本班逐条 `os.path.exists` 验真。
+- 可运行性自证＝`py_compile` **12/12 通过**＋**负对照**（故意写坏一件被拒＝尺有判别力）。⚑本班第一次 py_compile 全 12 红＝**本班自犯的尺 bug**（`cfile=os.devnull`→"nul is a non-regular file"），非文件坏；换真实临时 cfile 后全绿，如实留痕。
+- 五族面适用性＝本批 12 件在 `config/trading_decision_map.yaml` 内 module_ref 命中 **0**（逐件计数全 0）⇒ ALGO-NOTE-SYNC／MAP-ALIGNMENT 不适用，本班未动五族码与册；投前预扫危险命令字面 **0** 命中（承 02 班末袋死因＝证据引文字面命中该钩，本班不落此类字面）。
+- 归属声明＝袋字节全部取 x2 席袋原样（本席不改写、不合并、不新增内容）＝**代投反捞**，非本席自产；落地后以 `git log -1 --name-only` 核实真实归属。
+
+### 3 转单段（→04 班／⑩／⑥）
+
+1. **→⑤ 04 班首件**＝同谓词面剩 **348** 件，按风险分层起批＝(a) `scripts/governance` 96 件（多数 rep=1 注释级，谓词与本班完全同形，可直接复跑 `preflight.py` 换域清单）；(b) `scripts/backtest` 剩 6 件＝**含真运行常量**，投前必逐件跑"改前改后同一读路径存在性"＋该件至少一个消费者实跑；(c) `src/zephyr` 202 件＝跨 ai_layer/intelligence/plan_engine 多域，**须⑩归属派单**，本席不自取他席蓝图面。
+2. **→⑤ 04 班复跑口径**（tmp 将被 TTL 清）＝三把尺在 `.runtime/tmp/st-qoder-p05-1016-03/`（`zero_drift_scan.py`→`real_change_scan.py`→`substance_scan.py`→`preflight.py`），实测合计 **58.1 秒**（36.7／2.3／19.1 三把；冷缓存首跑曾 12.1s，故本班先前写的"<1 分"是把首跑抽样当全集）；⚑勿沿用本班 22:5x 读数起批＝落笔即陈旧，HEAD 每 3-5 分动一次。
+3. **→⑩**＝①93→360 的口径差需澄清后再派单：02 班"93 件可直接重基"用的是 merge-file 净合面，本班用 `base_blob==HEAD` 直比得 **360** 件（同谓词、同袋集），差额＝02 班把 384 件先过了一道"净合且有增量"筛而本班按 blob 等值直筛；②`src/zephyr` 202 件归属请给裁定；③X2 池 blob 面仍是唯一存放处，本班复证 `BLOB_ABSENT=0`（94 枚 x2 袋全部 blob 可取回，unique_paths=446／zero_drift=364／disk_eq=360），请⑫把"凡被 dead∪dead_archive 袋引用的 blob_ref 禁删"落成禁清面。
+4. **→⑥ 制卡席**（承 02 班次节 §3-3，本班再次实测零翻卡）＝卡面 `impl_gap` 仍是自然语言四要件，无 `gap_id＋关闭谓词` 机读面 ⇒ 本班 12 件落地后**零卡可翻**，如实报。
+5. **本班 -0003 死信销账**＝02 班那枚属"意图已被后袋内容级吸收"可判 absorbed，但 `dead-archive` 现被序列化租约挡住（本班 22:35 实测 `ERROR: serializer 租约存活（pid=47508），拒绝并行维护操作`）⇒ 本班不跑全池分诊以免触碰他席袋，留给租约释放后的当班，且 MUST 带 `--session`。
+
+### 4 [BLOCKER] 行
+
+- `[BLOCKER]` 2026-10-16|⑤席1016-03|工具缺陷|02 班交接的候选清单 `.runtime/tmp/st-qoder-p05-1016-02/zero_drift.jsonl` 进场即不存在（TTL 已清），下一班只能靠复跑尺重建＝交接物不可当持久面|证据＝本班 22:4x 实测 `ls: cannot access ...`＋台账 §1 复跑读数（360/0/246）|要⑩把"跨班候选清单"改落 `docs/_working/automation_campaign/p05_impl/` 侧（或给 tmp 交接面一个不被 TTL 清的白名单），别再让每班重烧一遍尺|中
+- `[BLOCKER]` 2026-10-16|⑤席1016-03|流程问题|反捞安全谓词两班不同形（02 班 93 件 vs 本班 360 件），派单口径若不统一会让⑩按 93 记账而⑤按 360 施工|证据＝02 班次节 §2-2 原文"98 件净合…93 件可直投" vs 本班 §1 三把尺读数（44 袋／360 候选／EOL 伪差 0）|要⑩定唯一谓词口径（本班建议＝`base_blob == 现 HEAD blob` ∧ `盘==袋 exact` ∧ 新指向存在 ∧ 无他席 claim，四腿齐即安全）并把 src/zephyr 202 件归属裁掉|高
+- `[BLOCKER]` 2026-10-16|⑤席1016-03|需Owner|进场系统水位 degraded=True（commit_pct 95.11／cpu 96.1／breached 两枚），02 班同尺 52.53／19.8／False＝两小时翻近一倍；本班已按在册自限规模，但该水位下 git 链路（尤其 add）历史崩过 0xC0000142|证据＝reaper `--status` 原文 watermark 字段＋`dead-letter-genealogy`／内存事故在册|要⑩／运行班看是否限并发班次数或先排空在途池；本席不擅自扩面|高
+- `[BLOCKER]` 2026-10-16|⑤席1016-03|判据缺失|本班 12 件落地对"翻卡"零贡献＝卡面无机读 gap 闭合谓词（同 02 班在册）|证据＝本班 §3-4|要⑥加结构化字段|低
+- `[BLOCKER]` 2026-10-16|⑤席1016-03|无|其余例行项零问题＝GPU 未 acquire（零 GPU 作业，免执行）／零子代理／零 worktree 入口调用／reaper 在岗／本班零新建 .py 入库（三把尺全在 .runtime/tmp 且随班删）|证据＝§0|—|低
+
+### 5 次件与三件（同谓词换域）＝governance 纯注释面 28 件两袋投出
+
+- 复跑尺三 `preflight2.py` 把本班首件的四维扩到**六维**（补两腿＝④该件零出现在他席在途袋面⑤`git diff -U0` 全量变更行 strip 后**必须全部以井号开头**），对 `scripts/governance` 96 件池现测＝六维全过 **28**／未过面里 fail_leg5（含非注释行＝真运行常量）与 fail_leg6（袋面新指向查无该路径）两类各自分离可读，28 件按路径序切两袋投出＝`-0002`（1-14 位）与 `-0003`（15-28 位），**两袋零同件**＝不触发在册"同会话同件后袋杀前袋"。
+- 未过面如实留证（下一班别当"池子空"）＝`check_meta_question_audit_reconcile.py`／`chief_lease.py`／`d3_metadata/reconcile_gate_rosters.py`／`d5_architecture/generators/*`（generate_connection_matrix 等）全因 leg5 含代码行改动；`align_all.py` 与 `reconcile_gate_rosters.py` 另有 leg6 缺路径＝`docs/_archive/_working_cleared/map_build/30/31`、`.../t14_roster_report.yaml` 现查不存在（这两件的袋面指向已失效，属断链批次的**二次断链**，本班不投并转⑩）。
+- 本班三次自犯全部当场抓到并当场纠正，逐条留痕不涂＝①首件 py_compile 12/12 全红＝我把 `cfile` 指到 `os.devnull`（"nul is a non-regular file"），换真实临时 cfile 后 12/12 绿＋加负对照（坏件被拒）才敢当证据；②第三批切片先按"覆写后的同名清单"做差集＝得 0 件，改用**袋 json 作权威集**反差别会话读数才得 14 件（在册律＝交接面不可信自家磁盘读数，要信库面/袋面）；③本班两次把体感当钟（22:35 起批后我自估"已 23:2x"，date 实测 22:55＝用量 19.9 分），承 [[my-elapsed-time-sense-runs-2x-fast-date-before-time-gates]]，后续时间门动作前一律现测 date。
+- ⚑**本班最重要的一条外部读数**＝本班三袋投出时队头是 `q-20261016-st-docconsol-20261014-0007`（40 件，created 22:12:45，22:55 实测已等 **2544.7 秒＝42.4 分**）而 `daemon.online=false`／`processing=0`＝**排空速度落后入袋速度**。本班不据此判事故（02 班在册：`[pool] git reset` 硬旗形与 `[drain] 疑似损坏` 竞态均属已登记族），但如实记：本班交付的落地判据**不在本班窗内达成**，故本班按在册"keeper 续期"配方留 `register_heartbeat_keepalive(ttl=7200s，expires_at 1792168778)` 且**不在袋落地前 unregister**（在册 [[closeout-order-land-bags-before-unregister]]＝先注销会被 SESSION-REQUIRED 挡尾袋）。下一班首务＝核 `-0001/-0002/-0003` 三态，dead 则读 dead_reason 对症修因，禁盲重投。
+- 本班累计反捞落地面（以袋计）＝**40 件意图字节**（backtest 12＋governance 28），剩 `scripts/governance` 68＋`scripts/backtest` 6（含真运行常量）＋`src/zephyr` 202 未投；本班零翻卡（承 §3-4 判据缺失，如实报）。
+
+### 6 [BLOCKER] 行（追加，上节各行逐字不涂）
+
+- `[BLOCKER]` 2026-10-16|⑤席1016-03|数据问题|断链批次存在**二次断链**＝x2 袋的新指向本身已查无路径，按袋面直投＝把一条断链换成另一条断链|证据＝本班 `preflight2.py` leg6 实测（`scripts/governance/d5_architecture/generators/align_all.py`→`docs/_archive/_working_cleared/map_build/30/31`；`scripts/governance/d3_metadata/reconcile_gate_rosters.py`→`docs/_archive/_working_cleared/commit_speedup_campaign/30_gate_census/t14_roster_report.yaml`，两者 `os.path.exists`=False）|要⑩定这两件是"重新判目标后再投"还是"整件作废"；本席不当班自创新路径（指令卡 §1b 明文禁自创）|中
+- `[BLOCKER]` 2026-10-16|⑤席1016-03|流程问题|本班三袋（40 件）投出后窗内零落地，队头一枚 40 件袋已等 42.4 分且 `daemon.online=false`／`processing=0`＝排空落后入袋速度，交付落地判据只能由下一班核|证据＝22:55:05 现测 `commit_queue.py status`＝pending 2／processing 0／head=q-20261016-st-docconsol-20261014-0007・waiting_s=2544.7・created 22:12:45|要⑩／运行班看该族是否属在册"波次日志零行≠无人拾取"同型（本席不擅动在途袋、不 requeue 他席件）|中
+- `[BLOCKER]` 2026-10-16|⑤席1016-03|流程问题|本班自犯留痕＝追加器 `append2.py` 把"要追加的节路径"硬编码，本班误当通用追加器连跑不存在的脚本后把它重跑一次＝§5 被重复追加一份（685→693 行）；已按"整块裁回＋断言计数"修复（裁前断言文件尾缀恰为该块且该块出现 2 次，裁后断言剩 1 次），旧文零损失|证据＝修复器输出三行断言读数（重复块出现次数=2／§5 出现 1 次／前文保真=True）＋`git show HEAD:…ledger.md` 面尚无本节＝本班盘可整块回退|要下一班**别复用带硬编码的一次性脚本**，追加一律走参数化入口；本席已把参数化版留在 `append_generic.py`（但它同样只跑一次，脚本本身随班删）|低
+- `[BLOCKER]` 2026-10-16|⑤席1016-03|无|本班五族面零改动（ALGO-FLOW-LINK／MAP-ALIGNMENT／DEPGRAPH-ENFORCEMENT／ALGO-NOTE-SYNC／TRANSLATION-COVERAGE 全未触碰＝40 件在 `config/trading_decision_map.yaml` 内 module_ref 命中 0，无新建 .py 故无翻译登记义务）；零 GPU acquire／零子代理／零 worktree 入口调用|证据＝本班逐件计数读数＋§0|—|低
+
+### 7 收班终核（date 实测读数，非计划句）
+
+- ①release＝本班三件代码袋与末枚册袋**全部 `--enqueue` 出袋**，按在册实测（[[gateway-releases-claims-at-enqueue]]）入队成功即由网关释放该袋 held 面，本班不判"漏 release"；本班窗内实测 `claim 续租 0/12・0/14・0/14` 三行原文＝入队时旧 claim 已被让位（非事故）。收班尺读数见本节末行。
+- ②心跳注销＝**本班如实报"顺延"，不是漏做**＝三袋 40 件在本班窗内未落地（23:0x 现测 pending 仍在），而在册收班次序=[[closeout-order-land-bags-before-unregister]]"先 unregister 会被 SESSION-REQUIRED 挡尾袋"⇒ 本班保留 register＋心跳 daemon PID **30124**＋keepalive（expires_at 1792168778＝2h 带宽），把 ②件交落地后的当班执行，命令＝`SessionRegistry.unregister('st-qoder-p05-1016-03')` 后读 `heartbeat.jsonl` 末行须 `status:"exited"`，>60 秒仍 alive 才按 PID 30124 精确终止（禁按镜像名批杀）。
+- ③耗时＝首命令 22:35:14 → 本行写时刻 23:06:38＝用量 31.4 分（75 分班窗内；带时刻写数、不写无时刻终值＝在册「追加型终值自述落笔即假」律）。本班两次体感误判为 23:2x，实测 22:55＝19.9 分，承体感钟偏快案。分账＝三把尺复跑 58 秒・首件取证与预检约 6 分・次件/三件扩维与投袋约 9 分・册面追加与重复块修复约 6 分（修复段＝本班自犯）。
+- ④[BLOCKER]＝本班次节共 **4** 行（中2／低2），加首节 5 行共 9 行；行首形态承本台账既有约定 `- \`[BLOCKER]\``，`grep -n "\[BLOCKER\]"` 命中数本班＋9。
+- ⑤自清＝`.runtime/tmp/st-qoder-p05-1016-03/` 全部一次性尺与读数（`zero_drift_scan.py`／`real_change_scan.py`／`substance_scan.py`／`preflight.py`／`preflight2.py`／`show_diffs.py`／`collide_probe.py`／`slice3.py`／`append_*.py`／`dedup_and_append.py`＋四份 jsonl＋三份清单＋三份 message）随册袋投出后整目录删除，口径全量写入 §1/§5 可复跑（实测复跑成本 58.1 秒）；项目根零临时件；`pyc/` 子目录同删。
+- ⑥GPU 还牌＝本班未 acquire（零 GPU 作业），如实免。
+- ⑦后台子任务清点＝零 spawn 子代理⇒零孤儿；本班唯一后台存活＝自家心跳守护 PID 30124（按②留给落地班收）。
+- ⑧零 worktree 确认＝本班**未调用任何工棚/工作树启动入口**（全程主区＋`--allow-non-worktree`）；但 ⚑承 02 班在册修正＝会话一注册平台即自建 `.aidrafts/<sid>` 影子工作树（本席实测该面随 register 出现，非本班所建），本班**不清理**，按在册交⑩路由清理专班；历史遗留 `.worktrees/st-*`（含本席 1015-06 旧树）同样未动。
+- 终核尺读数（date 现测见下）＝`git show HEAD:…ledger.md | grep -c "班次 03"` 待本册袋落地后应为 ≥1；`git show HEAD:scripts/backtest/league_registry.py | grep -c 04_research_records`＝首件落地判据。
+
+### 6.1 落笔即时更正（第二轮自检抓到本班两处自报读数不实，留旧读数不删）
+
+- ⚑**本班自犯①＝"x2 袋 44 枚"是错的，正读＝94 枚**＝本班首把尺的汇总行被终端截断（`tail` 只留下明细段），本班没读到 `bags=` 就把**另一条临时 glob**（只匹配 `q-20261016-st-qoder-x2*` 的前缀）量到的 44 当成本班袋集入面数写进 §1/§3/游标三处。第二轮自检把五把尺全部重跑并进程内计时，实读＝`bags=94 unique_paths=446 zero_drift=364 disk_eq_bag=360`。⇒ 更正后的对照：01 班"85 袋／1970 件次／452 唯一路径"与本班"94 袋／446 唯一路径（去重最新袋后）"差额＝本班另做了 8 件排除集与"最新袋收敛"，非计数矛盾。
+- ⚑**本班自犯②＝"三把尺总耗时 <1 分"是把冷缓存首跑抽样当全集**＝本班 §3-2 与 §7-③/⑤ 引的 12.1s／12.3s 只是首两次运行的 bash `time` 读数，重跑实测＝`zero_drift_scan 36.7s ＋ real_change_scan 2.3s ＋ substance_scan 19.1s ＝ 58.1 秒`，另加 `preflight2 6.9s／preflight 3.0s`＝五把合计 68.0 秒。⇒ "<1 分"改成"58.1 秒（含四／五把尺全链约 68 秒）"，下一班排产请按 1-2 分钟预算而非"零成本"。
+- 修法与留痕＝两册**尚未入袋**（本班盘＝唯一面），故按在册"改数不改结构"在原地改这 7 处串（每处断言恰 1 命中，改后残留旧串＝0），并把旧读数逐字留在本节不删；游标行仍按"原地替换四键"口径写。
+- 入册教训（给下一班的尺面提醒，非新闸）＝①**截断的汇总行不能当读数来源**——凡"计数类"自述必须来自本班亲眼见到的那一行原文，`tail`/`head` 截过的输出要重跑取全（在册律 [[observer-created-signal-grids-and-tail-counts]]／[[rglob-counts-dirs-empty-shell-false-green]] 的同型复发）；②一次性脚本**禁止硬编码"要追加哪一节"**（本班 `append2.py` 因此把 §5 重复追加一次，已整块裁回并在 §6 留痕）。
