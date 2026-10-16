@@ -19609,10 +19609,20 @@ creation_tokens:
   capability: nine_face_watch
   created_by: st-ninewatch-1016
   merge_evaluation: "ALGO_FLOW 外部真源配套件（随 nine_face_watch.py 主 token 同批）：architecture_view 派生文档非第二真源，source_of_truth 指回 scripts/ops/nine_face_watch.py，同真源可派生故与主件同 capability 归并"
+- file: docs/03_modules/_domain_infrastructure_operations/algo_flow/quarantine_packer.yaml
+  token: stash-sentinel-pack-quarantine-packer-20261016
+  capability: stash_sentinel_pack
+  created_by: st-wireb-1016
+  merge_evaluation: "跨域不同对象：两 yaml 系两脚本 [ALGO_FLOW] external 真源锚，既有 algo_flow 册内无同对象条目不并"
 - file: docs/03_modules/_domain_infrastructure_operations/algo_flow/runtime_topology_visualizer.yaml
   token: btfix-p1p2-runtime-topology-visualizer-20260916
   capability: btfix_p1p2
   created_by: st-btfix-p17-20260916
+- file: docs/03_modules/_domain_infrastructure_operations/algo_flow/stash_sentinel.yaml
+  token: stash-sentinel-pack-stash-sentinel-20261016
+  capability: stash_sentinel_pack
+  created_by: st-wireb-1016
+  merge_evaluation: "跨域不同对象：两 yaml 系两脚本 [ALGO_FLOW] external 真源锚，既有 algo_flow 册内无同对象条目不并"
 - file: docs/03_modules/_domain_infrastructure_operations/algo_flow/storage_cost_calculator.yaml
   token: btfix-p1p2-storage-cost-calculator-20260916
   capability: btfix_p1p2
@@ -71794,6 +71804,41 @@ creation_tokens:
   capability: master_backlog
   created_by: st-docconsol-20261014
   merge_evaluation: "全域问题清单（未施工、临时）；非第二真源：唯一按地图归类的遗留问题总账，无同名/同职责既有文件"
+- file: docs/_working/master_tc_20261006/01_skeleton/00_环节总表.md
+  token: master-tc-skeleton-00--20261016
+  capability: master_tc_skeleton
+  created_by: st-mtrain-1016
+  merge_evaluation: "merge-train 笔5 落地他班已施工件（上游 session/st-mastertc-mine f73bf8714d，原会话 token 只落分支侧不可见主区——结构性，本批补登记承接同一能力非第二真源；骨架七件=r5 真源复用挂接视图零新 taxonomy，r5_exemption=目录级豁免门位件③处方既有形制先例）"
+- file: docs/_working/master_tc_20261006/01_skeleton/01_block_data_supply.md
+  token: master-tc-skeleton-01-block-data-supply-20261016
+  capability: master_tc_skeleton
+  created_by: st-mtrain-1016
+  merge_evaluation: "merge-train 笔5 落地他班已施工件（上游 session/st-mastertc-mine f73bf8714d，原会话 token 只落分支侧不可见主区——结构性，本批补登记承接同一能力非第二真源；骨架七件=r5 真源复用挂接视图零新 taxonomy，r5_exemption=目录级豁免门位件③处方既有形制先例）"
+- file: docs/_working/master_tc_20261006/01_skeleton/02_block_signal_strategy.md
+  token: master-tc-skeleton-02-block-signal-strategy-20261016
+  capability: master_tc_skeleton
+  created_by: st-mtrain-1016
+  merge_evaluation: "merge-train 笔5 落地他班已施工件（上游 session/st-mastertc-mine f73bf8714d，原会话 token 只落分支侧不可见主区——结构性，本批补登记承接同一能力非第二真源；骨架七件=r5 真源复用挂接视图零新 taxonomy，r5_exemption=目录级豁免门位件③处方既有形制先例）"
+- file: docs/_working/master_tc_20261006/01_skeleton/03_block_backtest_exam.md
+  token: master-tc-skeleton-03-block-backtest-exam-20261016
+  capability: master_tc_skeleton
+  created_by: st-mtrain-1016
+  merge_evaluation: "merge-train 笔5 落地他班已施工件（上游 session/st-mastertc-mine f73bf8714d，原会话 token 只落分支侧不可见主区——结构性，本批补登记承接同一能力非第二真源；骨架七件=r5 真源复用挂接视图零新 taxonomy，r5_exemption=目录级豁免门位件③处方既有形制先例）"
+- file: docs/_working/master_tc_20261006/01_skeleton/04_block_live_execution.md
+  token: master-tc-skeleton-04-block-live-execution-20261016
+  capability: master_tc_skeleton
+  created_by: st-mtrain-1016
+  merge_evaluation: "merge-train 笔5 落地他班已施工件（上游 session/st-mastertc-mine f73bf8714d，原会话 token 只落分支侧不可见主区——结构性，本批补登记承接同一能力非第二真源；骨架七件=r5 真源复用挂接视图零新 taxonomy，r5_exemption=目录级豁免门位件③处方既有形制先例）"
+- file: docs/_working/master_tc_20261006/01_skeleton/05_block_governance_gates.md
+  token: master-tc-skeleton-05-block-governance-gates-20261016
+  capability: master_tc_skeleton
+  created_by: st-mtrain-1016
+  merge_evaluation: "merge-train 笔5 落地他班已施工件（上游 session/st-mastertc-mine f73bf8714d，原会话 token 只落分支侧不可见主区——结构性，本批补登记承接同一能力非第二真源；骨架七件=r5 真源复用挂接视图零新 taxonomy，r5_exemption=目录级豁免门位件③处方既有形制先例）"
+- file: docs/_working/master_tc_20261006/01_skeleton/06_block_infrastructure.md
+  token: master-tc-skeleton-06-block-infrastructure-20261016
+  capability: master_tc_skeleton
+  created_by: st-mtrain-1016
+  merge_evaluation: "merge-train 笔5 落地他班已施工件（上游 session/st-mastertc-mine f73bf8714d，原会话 token 只落分支侧不可见主区——结构性，本批补登记承接同一能力非第二真源；骨架七件=r5 真源复用挂接视图零新 taxonomy，r5_exemption=目录级豁免门位件③处方既有形制先例）"
 - file: docs/_working/master_tc_20261006/lanes/L3_commitchain/00_workbook.md
   token: master-tc-l3-commitchain-workbook-20261007
   capability: master_tc_l3_commitchain
@@ -71814,6 +71859,11 @@ creation_tokens:
   capability: master_tc_l5_data
   created_by: st-mastertc-l5
   merge_evaluation: "复插:C299 卡面交付物(对齐方案文档),替代物=无,同域不并"
+- file: docs/_working/master_tc_20261006/r5_exemption.md
+  token: master-tc-skeleton-r5-exemption-20261016
+  capability: master_tc_skeleton
+  created_by: st-mtrain-1016
+  merge_evaluation: "merge-train 笔5 落地他班已施工件（上游 session/st-mastertc-mine f73bf8714d，原会话 token 只落分支侧不可见主区——结构性，本批补登记承接同一能力非第二真源；骨架七件=r5 真源复用挂接视图零新 taxonomy，r5_exemption=目录级豁免门位件③处方既有形制先例）"
 - file: docs/_working/master_tc_night/00_orchestration.md
   token: master-tc-night-00-orchestration-20261007
   capability: master_tc_night
@@ -88060,6 +88110,11 @@ creation_tokens:
   token: ollama-version-guard-ollama-version-guard-20260916
   capability: ollama_version_guard
   created_by: st-qoder-t1a-20260915
+- file: scripts/ops/quarantine_packer.py
+  token: quarantine-packer-quarantine-packer-20261016
+  capability: quarantine_packer
+  created_by: st-wireb-1016
+  merge_evaluation: "跨域不同对象：quarantine 面归仓搬运（零删除），与 nine_face 只测告警/compaction 一次性工单不同对象不并；packs 机制承既有 INDEX.md 口径收敛为唯一机生入口"
 - file: scripts/ops/r6_restore_check.py
   token: auction-backfill-r6-restore-check-20260916
   capability: auction_backfill
@@ -88078,6 +88133,11 @@ creation_tokens:
   capability: cd_pipeline
   created_by: session-cicd-infra-ex021-0803
   blueprint_id: MOD-CD-001
+- file: scripts/ops/stash_sentinel.py
+  token: stash-sentinel-stash-sentinel-20261016
+  capability: stash_sentinel
+  created_by: st-wireb-1016
+  merge_evaluation: "跨域不同对象：git ref 面内容级 absorbed 判定+迁移，与按条数盲清理的 cleanup_stash.py 不同层不并；reaper drift 只计数无判定，本件承接其处置腿"
 - file: scripts/ops/verify_header_completeness.py
   token: auction-backfill-verify-header-completeness-20260916
   capability: auction_backfill
